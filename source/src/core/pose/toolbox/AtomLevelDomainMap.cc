@@ -370,6 +370,7 @@ AtomLevelDomainMap::setup_movemap( core::kinematics::MoveMap & mm,
 	for ( Size ii = 1; ii <= pose.size(); ii++ ) {
 
 		utility::vector1< TorsionID > torsion_ids;
+
 		for ( Size torsion_number = 1; torsion_number <= pose.residue( ii ).mainchain_torsions().size(); torsion_number++ ) {
 			if ( check_for_vrt_phos ) {
 				if ( pose.residue( ii ).has_variant_type( core::chemical::VIRTUAL_PHOSPHATE ) &&
@@ -384,8 +385,26 @@ AtomLevelDomainMap::setup_movemap( core::kinematics::MoveMap & mm,
 			torsion_ids.emplace_back( ii, id::CHI, torsion_number );
 		}
 
+		// let's say -- for now -- that if a 5' cap residue can
+		// minimize then all its torsions can.
 		for ( TorsionID const & torsion_id : torsion_ids ) {
-			if ( get( torsion_id, pose.conformation() ) ) mm.set( torsion_id, true );
+			if ( get( torsion_id, pose.conformation() ) ||
+					pose.residue_type( torsion_id.rsd() ).has_variant_type( core::chemical::FIVEPRIME_CAP ) ) {
+				mm.set( torsion_id, true );
+			}
+		}
+
+		// Minimize bond lengths and angles associated with FIVEPRIME_CAP residues:
+		// they only work when branch_conn and linear_branch_conn are on anyway, and those
+		// should be sufficient to sort out the geometry.
+		// For now: Just look at the D dof that defines the P bonded to the FIVEPRIME_CAP
+		// since that's the (ex) jump.
+		//if ( pose.residue_type( ii ).has_variant_type( core::chemical::FIVEPRIME_CAP ) ) {
+		// mm.set( DOF_ID( AtomID( pose.residue_type( ii ).atom_index( "ZO3'" ), ii ), D ), true );
+		//}
+		if ( ii < pose.size() && pose.residue_type( ii ).has_variant_type( core::chemical::CUTPOINT_UPPER ) &&
+				pose.residue_type( ii + 1 ).has_variant_type( core::chemical::FIVEPRIME_CAP ) ) {
+			mm.set( DOF_ID( AtomID( pose.residue_type( ii ).atom_index( "P" ), ii ), D ), true );
 		}
 	}
 
