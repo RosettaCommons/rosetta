@@ -666,6 +666,7 @@ int main(int argc, char *argv[]) {
 
 	} catch ( utility::excn::Exception const & e ) {
 		std::cerr << "caught exception " << e.msg() << std::endl;
+		std::exit( 1 );
 	}
 	return 0;
 }
