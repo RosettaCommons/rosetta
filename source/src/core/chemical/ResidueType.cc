@@ -645,6 +645,7 @@ ResidueType::set_lower_connect_atom( std::string const & atm_name )
 			auto to_erase( residue_connections_.begin() );
 			to_erase += lower_connect_id_ - 1;
 			residue_connections_.erase(  to_erase );
+			update_icoors_after_connection_deletion( lower_connect_id_ );
 			update_residue_connection_mapping();
 			debug_assert( n_polymeric_residue_connections_ != 0 );
 			--n_polymeric_residue_connections_;
@@ -695,6 +696,8 @@ ResidueType::set_upper_connect_atom( std::string const & atm_name )
 			auto to_erase( residue_connections_.begin() );
 			to_erase += upper_connect_id_ - 1;
 			residue_connections_.erase(  to_erase );
+			update_icoors_after_connection_deletion( lower_connect_id_ );
+			update_residue_connection_mapping();
 			debug_assert( n_polymeric_residue_connections_ != 0 );
 			--n_polymeric_residue_connections_;
 			if ( upper_connect_id_ < lower_connect_id_ ) { --lower_connect_id_; }
@@ -3004,6 +3007,27 @@ ResidueType::add_actcoord_atom( std::string const & atom )
 	tr.Trace << "adding act coord atom: " << name_ << ' ' << atom << std::endl;
 	Size atomindex = atom_index( atom );
 	actcoord_atoms_.push_back( ordered_atoms_[atomindex] );
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+/// @brief After deleting a connection, update the icoors of any atoms dependent on HIGHER-numbered
+/// connections.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+void
+ResidueType::update_icoors_after_connection_deletion(
+	core::Size const conn_id_deleted
+) {
+	for ( std::map< VD, AtomICoor >::iterator it( icoor_.begin() ); it != icoor_.end(); ++it ) {
+		AtomICoor & curicoor( it->second );
+		for ( core::Size ii(1); ii<=3; ++ii ) {
+			if ( curicoor.stub_atom(ii).is_connect() || curicoor.stub_atom(ii).is_polymer_lower() || curicoor.stub_atom(ii).is_polymer_upper() ) {
+				if ( curicoor.stub_atom(ii).atomno() > conn_id_deleted ) {
+					curicoor.stub_atom(ii).atomno( curicoor.stub_atom(ii).atomno() - 1 );
+				}
+			}
+		}
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////

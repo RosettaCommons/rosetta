@@ -2351,6 +2351,11 @@ public:
 	// private methods
 private:
 
+	/// @brief After deleting a connection, update the icoors of any atoms dependent on HIGHER-numbered
+	/// connections.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	void update_icoors_after_connection_deletion( core::Size const conn_id_deleted );
+
 	/// set up atom ordering map old2new, called by finalize()
 	void
 	setup_atom_ordering();

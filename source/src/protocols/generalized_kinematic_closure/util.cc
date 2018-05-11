@@ -200,7 +200,10 @@ correct_polymer_dependent_atoms_in_pose_segment (
 	utility::vector1 < std::pair < core::Size, core::Size > > const &residue_map
 ) {
 	for ( core::Size i=1, imax=residue_map.size(); i<=imax; ++i ) {
-		original_pose.conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only( residue_map[i].second );
+		//original_pose.conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only( residue_map[i].second );
+		for ( core::Size j=1, jmax=original_pose.conformation().residue( residue_map[i].second ).n_possible_residue_connections(); j<=jmax; ++j ) {
+			original_pose.conformation().rebuild_residue_connection_dependent_atoms( residue_map[i].second, j );
+		}
 	}
 }
 

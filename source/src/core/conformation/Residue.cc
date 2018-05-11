@@ -1396,8 +1396,6 @@ Residue::inter_residue_connection_partner(
 	int connid,
 	Conformation const & conformation
 ) const {
-	if ( is_lower_terminus() ) --connid;
-	if ( is_upper_terminus() ) --connid;
 
 	Size const partner_seqpos( residue_connection_partner( connid ) );
 	if ( partner_seqpos < 1 || partner_seqpos > conformation.size() ) {
