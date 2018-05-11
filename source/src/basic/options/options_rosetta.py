@@ -8210,7 +8210,10 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 
 		# Option( 'filterdist'       ,'Real' ,desc="MC temp for cen fold", default="2.0" ),
 	), #-willmatch
-
+	Option_Group( 'PDB_diagnostic',
+		Option( 'reading_only', 'Boolean', desc="if true, become a no-op (only structure reading is tested). Useful for not-mega-clusters where packing a virus/ribosome will crush memory.", default="false" ),
+		Option( 'skip_pack_and_min', 'Boolean', desc="Skip the packing and minimization steps (leaving in the scoring and ResidueType analyses). Good for speed, or for shallower tests.", default="false"),
+		), #-PDB_diagnostic
   #The following option group is for internal testing purposes - not to be used for actual protocols
 	Option_Group( 'testing',
 		Option( 'HCF', 'Boolean', desc="Cause Rosetta to exit immediately with an error.", default="false" ),

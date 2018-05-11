@@ -194,6 +194,9 @@ sources = {
 		"RDC_energies",
 		"RDC_main",
 	],
+	"devel/scientific_tests": [
+		"PDBDiagnosticMover",
+	],
         "devel/splice": [
 				"AddFoldUnit",
 				"AlignEndsMover",

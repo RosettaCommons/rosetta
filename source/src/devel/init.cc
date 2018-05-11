@@ -41,6 +41,7 @@
 #include <devel/replica_docking/AddEncounterConstraintMoverCreator.hh>
 #include <devel/replica_docking/ModulatedMoverCreator.hh>
 #include <devel/loophash_loopclosure/LoopHashLoopClosureMoverCreator.hh>
+#include <devel/scientific_tests/PDBDiagnosticMoverCreator.hh>
 #include <devel/splice/SpliceCreator.hh>
 #include <devel/splice/DesignInterfacesOperationCreator.hh>
 #include <devel/splice/FindEndpointsOperationCreator.hh>
@@ -106,6 +107,7 @@ static protocols::moves::MoverRegistrator< devel::matdes::GenericSymmetricSample
 static protocols::moves::MoverRegistrator< replica_docking::AddEncounterConstraintMoverCreator > reg_AddEncounterConstraintMoverCreator;
 static protocols::moves::MoverRegistrator< replica_docking::ModulatedMoverCreator > reg_ModulatedMoverCreator;
 static protocols::moves::MoverRegistrator< loophash_loopclosure::LoopHashLoopClosureMoverCreator > reg_LoopHashLoopClosureMoverCreator;
+static protocols::moves::MoverRegistrator< scientific_tests::PDBDiagnosticMoverCreator > reg_PDBDiagnosticMoverCreator;
 static protocols::moves::MoverRegistrator< devel::splice::SpliceCreator > reg_SpliceCreator;
 static protocols::moves::MoverRegistrator< devel::splice::RBOutMoverCreator > reg_RBOutMoverCreator;
 static protocols::moves::MoverRegistrator< devel::splice::RBInMoverCreator > reg_RBInMoverCreator;
