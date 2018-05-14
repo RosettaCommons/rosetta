@@ -25,6 +25,7 @@
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <utility/numbers.hh> // for isfinite
 
 static basic::Tracer TR( "core.scoring.loop_graph.evaluator.SixDTransRotPotential" );
 
@@ -170,6 +171,7 @@ SixDTransRotPotential::evaluate( Vector const & t, Vector const & rotation_vecto
 	Real value( 0.0 );
 	if ( use_cubic_interp_ ) {
 		value = numeric::interpolation::polycubic_interpolate_catmull_rom( tensor_, minval_, binwidth_, outvals, boundary_, tensor_deriv, compute_deriv );
+		runtime_assert( utility::isfinite( value ) );
 	} else {
 		value = numeric::interpolation::multilinear_interpolation( tensor_, minval_, binwidth_, outvals, tensor_deriv, compute_deriv );
 	}

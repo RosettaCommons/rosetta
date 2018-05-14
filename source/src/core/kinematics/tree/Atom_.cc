@@ -649,6 +649,7 @@ Atom_::transform_Ax_plus_b_recursive(
 )
 {
 	position_ = A * position_ + b;
+	debug_assert( position_.is_finite() );
 
 	for ( auto & atom : atoms_ ) {
 		atom->transform_Ax_plus_b_recursive( A, b, res_change_list );

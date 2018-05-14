@@ -20,19 +20,35 @@
 #include <limits>
 #include <cmath>
 
-
 #if defined(WIN32)  &&  !defined(__CYGWIN__)
 #include <float.h>
-namespace std {
-// C++11 compliant compilers should already have std::isnan & std::isinf ...
-inline int isnan(double x) { return _isnan(x); }
-inline int isinf(double x) { return !_finite(x); }
-}
-inline double round(double x) { return x < 0.0 ? ceil(x - 0.5) : floor(x + 0.5); }
-inline double copysign(double x, double y) { return _copysign(x, y); }
 #endif
 
 namespace utility {
+
+#if defined(WIN32)  &&  !defined(__CYGWIN__)
+
+// C++11 compliant compilers should already have std::isnan & std::isinf
+// Are these even needed anymore?
+
+inline int isnan(double x) { return _isnan(x); }
+inline int isinf(double x) { return !_finite(x); }
+inline int isfinite(double x) { return _finite(x); }
+
+inline double round(double x) { return x < 0.0 ? ceil(x - 0.5) : floor(x + 0.5); }
+inline double copysign(double x, double y) { return _copysign(x, y); }
+
+#else
+
+inline bool isnan( platform::Real const & val) { return std::isnan( val ); }
+inline bool isinf( platform::Real const & val) { return std::isinf( val ); }
+inline bool isfinite( platform::Real const & val) { return std::isfinite( val ); }
+
+inline platform::Real round( platform::Real const & val) { return std::round(val); }
+inline platform::Real copysign(platform::Real const & x, platform::Real const & y) { return std::copysign(x, y); }
+
+#endif
+
 
 /// @brief Get a numeric value for Size that represents an "undefined" value
 inline
@@ -63,25 +79,6 @@ bool is_undefined( platform::Real const & val) {
 	return std::isnan( val ) || std::isinf( val ) || val == get_undefined_real();
 }
 
-inline
-bool isnan( platform::Real const & val) {
-	return std::isnan( val );
-}
-
-inline
-bool isinf( platform::Real const & val) {
-	return std::isinf( val );
-}
-
-inline
-platform::Real round( platform::Real const & val) {
-	return ::round(val);
-}
-
-inline
-platform::Real copysign(platform::Real const & x, platform::Real const & y) {
-	return ::copysign(x, y);
-}
 
 } // utility
 

@@ -32,6 +32,7 @@
 #include <algorithm>
 
 #include <utility/vector1.hh>
+#include <utility/vector1.functions.hh>
 
 #ifdef WIN32
 #include <functional>
@@ -643,6 +644,7 @@ Minimizer::lbfgs(
 	Real prior_func_value = func_(X);
 	pf[1] = FRET = prior_func_value;
 	func_.dfunc(X,G);
+	debug_assert( is_finite( G ) );
 
 	if ( w_rescore ) {  //fpd   reevaluate score after gradient computation
 		pf[1] = FRET = prior_func_value = func_(X);
@@ -792,6 +794,7 @@ Minimizer::lbfgs(
 			line_min->fetch_stored_derivatives( G );
 		} else {
 			func_.dfunc(X,G);
+			debug_assert( is_finite( G ) );
 			if ( w_rescore ) {  //fpd   reevaluate score after gradient computation
 				FRET = func_(X);
 			}

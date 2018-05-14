@@ -25,7 +25,7 @@
 
 #include <core/types.hh>
 #include <utility/vector1.hh>
-
+#include <utility/numbers.hh>
 
 namespace core {
 namespace scoring {
@@ -322,6 +322,18 @@ public:
 			total += val * val;
 		}
 		return total;
+	}
+
+	/// @brief Check that there aren't any non-finite (inf, NaN) entries.
+	bool
+	is_finite() {
+		for ( int ii = 1; ii <= n_score_types; ++ii ) {
+			Real const val( operator[]( ScoreType(ii) ) );
+			if ( val != 0.0 && ! utility::isfinite( val ) ) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/// @brief Prints the non-zero positions of the energy map

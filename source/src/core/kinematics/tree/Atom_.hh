@@ -301,6 +301,7 @@ public: // Properties
 	void
 	position( Position const & position_a )
 	{
+		debug_assert( position_a.is_finite() );
 		position_ = position_a;
 	}
 

@@ -490,8 +490,7 @@ rigid_body_move(
 	numeric::xyzVector<core::Real> center_of_rotation
 	/* = numeric::xyzVector<core::Real>(std::numeric_limits<double>::quiet_NaN(), 0, 0) */) {
 
-	if ( std::isnan( center_of_rotation.x() ) || std::isnan( center_of_rotation.y() )
-			|| std::isnan( center_of_rotation.z() ) ) {
+	if ( ! center_of_rotation.is_finite() ) {
 		center_of_rotation = core::pose::center_of_mass( pose, subset );
 	}
 

@@ -267,6 +267,7 @@ void FastSAXSEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const &
 		// store chi residuals for derivative computations
 		r_chi2[k+1] = temp/i_sig[k];
 	}
+	debug_assert( NQ != 1 );
 	chi2 /= (NQ-1);
 
 	// shamelessly stolen from RDC code
@@ -547,7 +548,17 @@ void load_fastsax_spectrum(
 				saved_i_obs.push_back( i_k );
 				saved_i_sig.push_back( sig_k );
 			}
+
+			if ( saved_q.size() <= 1 ) { // We do 1 here because there's a division by (NQ -1) in scoring which will lead to divide by zero
+				TR.Error << "Error reading SAXS spectrum from '" << file_name << "': insufficient datapoints." << std::endl;
+				TR.Error << "    Check file format." << std::endl;
+				utility_exit_with_message("Error reading SAXS spectrum from file.");
+			}
 		}
+	}
+
+	if ( saved_q.size() <= 1 ) {
+		utility_exit_with_message("Insufficient SAXS spectrum data for the FastSAXSEnergy term.");
 	}
 
 	q = saved_q.begin();

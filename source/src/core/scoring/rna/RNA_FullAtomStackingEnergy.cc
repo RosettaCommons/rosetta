@@ -285,6 +285,7 @@ RNA_FullAtomStackingEnergy::residue_pair_energy(
 	}
 
 	// TR << rsd1.name3()  << rsd1.seqpos() << "---" << rsd2.name3() << rsd2.seqpos() << ": " << (score1+score2) << std::endl;
+	debug_assert( emap.is_finite() );
 }
 
 

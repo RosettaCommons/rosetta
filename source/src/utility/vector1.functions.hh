@@ -19,6 +19,7 @@
 // Unit headers
 #include <utility/vector1.hh>
 
+#include <utility/numbers.hh>
 
 namespace utility {
 
@@ -244,6 +245,18 @@ binary_search_ranges(
 
 }
 
+/// @brief Are any of the values contained in the vector non-finite (NaN, inf)
+template< platform::SSize L, typename T >
+bool
+is_finite( utility::vectorL< L, T > const & vect )
+{
+	for ( T const & v: vect ) {
+		if ( ! utility::isfinite(v) ) {
+			return false;
+		}
+	}
+	return true;
+}
 
 
 } // namespace utility

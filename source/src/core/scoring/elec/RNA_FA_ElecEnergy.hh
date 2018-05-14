@@ -85,10 +85,8 @@ public:
 		EnergyMap & totals
 	) const;
 
-	virtual
 	void
 	setup_for_packing( pose::Pose & pose, utility::vector1< bool > const &, utility::vector1< bool > const & ) const;
-
 
 	/// @brief overrides parent class implementation which would have
 	/// created several tries

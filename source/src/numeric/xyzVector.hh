@@ -363,6 +363,11 @@ public: // Assignment
 
 public: // Methods
 
+	/// @brief Test if there's any non-finite (inf, NAN) values in the vector
+	bool
+	is_finite() const {
+		return utility::isfinite(x_) && utility::isfinite(y_) && utility::isfinite(z_);
+	}
 
 	/// @brief to_string, useful for utility exits
 	inline

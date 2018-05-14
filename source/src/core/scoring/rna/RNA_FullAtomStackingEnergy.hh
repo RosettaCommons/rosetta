@@ -74,6 +74,10 @@ public:
 
 	virtual
 	void
+	setup_for_packing( pose::Pose & , utility::vector1< bool > const &, utility::vector1< bool > const & ) const {}
+
+	virtual
+	void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,

@@ -148,6 +148,7 @@ RNA_SuiteEnergy::residue_pair_energy(
 	if ( scorefxn.has_nonzero_weight( suiteness_bonus ) && rna_suite_potential_for_suiteness_bonus_->eval_score( rsd1, rsd2, pose, torsion_ids, score, deriv ) ) {
 		emap[ suiteness_bonus ] += score;
 	}
+	debug_assert( emap.is_finite() );
 }
 
 void

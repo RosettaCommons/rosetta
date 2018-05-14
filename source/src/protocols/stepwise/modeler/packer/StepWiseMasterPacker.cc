@@ -31,6 +31,8 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
+#include <core/scoring/Energies.hh>
+
 #include <basic/Tracer.hh>
 #include <utility>
 
@@ -113,6 +115,8 @@ StepWiseMasterPacker::initialize_packer() {
 void
 StepWiseMasterPacker::do_prepack( pose::Pose & pose ) {
 	if ( phosphate_sampler_ != nullptr ) phosphate_sampler_->do_prepack( pose, working_parameters_->working_moving_res_list() ); // must be fixed.
+	//scorefxn_->show(pose);
+	//debug_assert(pose.energies().total_energies().is_finite());
 	packer_->do_prepack( pose );
 }
 

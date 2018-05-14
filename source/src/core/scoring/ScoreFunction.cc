@@ -825,6 +825,7 @@ ScoreFunction::operator()( pose::Pose & pose ) const
 	PROF_START( basic::SCORE_DOT );
 
 	// dot the weights with the scores
+	debug_assert( pose.energies().total_energies().is_finite() ); // Catch if we have scoring issues.
 	pose.energies().total_energy() = pose.energies().total_energies().dot( weights_ );
 	pose.energies().total_energies()[ total_score ] = pose.energies().total_energy();
 

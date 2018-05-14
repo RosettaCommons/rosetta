@@ -531,6 +531,7 @@ RNA_FA_ElecEnergy::finalize_total_energy(
 				} else if (  (atom1_is_phosphate && atom2_is_phosphate)  ) {
 					totals[ fa_elec_rna_phos_phos ] += wt_envdep*score;
 				}
+				debug_assert( totals.is_finite() );
 			}
 		}
 	}

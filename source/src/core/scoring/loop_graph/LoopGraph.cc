@@ -38,6 +38,7 @@
 // Utility headers
 #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
+#include <utility/numbers.hh> // for is_finite
 #include <utility/tools/make_vector1.hh>
 
 static basic::Tracer TR( "core.scoring.loop_graph.LoopGraph" );
@@ -114,7 +115,6 @@ LoopGraph::update( pose::Pose & pose, bool const verbose /* = false */ ){
 	current_pose_loop_score_evaluators_.clear();
 	total_energy_ = 0.0;
 	check_for_unexpected_cutpoints( pose );
-
 	for ( Size k = 1; k <= loop_cycles_.size(); ++k ) {
 		LoopCycle & loop_cycle = loop_cycles_[ k ];
 		LoopClosePotentialEvaluatorCOP potential_evaluator( get_loop_close_potential( pose, loop_cycle, loop_fixed_cost_, use_6D_potential_ ) );
@@ -124,9 +124,11 @@ LoopGraph::update( pose::Pose & pose, bool const verbose /* = false */ ){
 		if ( potential_evaluator->involves_current_pose() ) { // save for derivative calculations
 			current_pose_loop_score_evaluators_.push_back( potential_evaluator );
 		}
+
 	}
 
 	if ( verbose ) TR << TR.Blue << "Total loop close energy  ==> " << total_energy_ << TR.Reset << std::endl;
+	debug_assert( utility::isfinite( total_energy_ ) );
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////

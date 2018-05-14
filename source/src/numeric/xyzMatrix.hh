@@ -1482,6 +1482,13 @@ public: // Properties: rows
 
 public: // Properties: scalars
 
+	/// @brief Test if there's any non-finite (inf, NAN) values in the vector
+	bool
+	is_finite() const {
+		return utility::isfinite(xx_) && utility::isfinite(xy_) && utility::isfinite(xz_) &&
+			utility::isfinite(yx_) && utility::isfinite(yy_) && utility::isfinite(yz_) &&
+			utility::isfinite(zx_) && utility::isfinite(zy_) && utility::isfinite(zz_);
+	}
 
 	/// @brief Value xx const
 	inline

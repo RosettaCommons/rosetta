@@ -112,6 +112,8 @@ LoopCloseEnergy::finalize_total_energy(
 
 	totals[ loop_close          ] = loop_graph_->total_energy();
 
+	debug_assert( totals.is_finite() );
+
 } // finalize_total_energy
 
 ///////////////////////////////////////////////////////////////////////////////

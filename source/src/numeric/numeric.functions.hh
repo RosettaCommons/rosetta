@@ -710,18 +710,6 @@ gt_tol( T const & x, T const & y, T const & r_tol, T const & a_tol )
 	return ( x > y - min( r_tol * max( std::abs( x ), std::abs( y ) ), a_tol ) );
 }
 
-
-/// @brief You must supply 1.0 and 0.0 as arguments a and b.
-/// and no you can't short cut this, because the compiler will optimize it away!
-inline
-bool
-is_a_finitenumber( double s, double  a, double b ){
-	if ( utility::isnan(s) || utility::isinf(s) ) return false;
-	if ( (a*s) != (s*cos(b)) )       return false; //  NAN!
-	if ( s * 100.0 == s * 1000.00 ) return false; //  INF!
-	return true;
-}
-
 // Prototype for below.
 template< typename T > T factorial( T const & N );
 

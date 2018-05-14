@@ -1530,7 +1530,7 @@ hb_energy_deriv(
 	Real const HDdis2( HDunit.length_squared() );
 
 	// NaN check
-	if ( ! numeric::is_a_finitenumber( HDdis2, 1.0, 0.0 ) ) {
+	if ( ! utility::isfinite( HDdis2 ) ) {
 		std::string const warning( "NAN occurred in H-bonding calculations!" );
 		PyAssert(false, warning); // allows for better error handling from within Python
 		tr.Error << warning << std::endl;

@@ -83,7 +83,6 @@ get_loop_close_potential( pose::Pose const & pose,
 	core::Real const & loop_fixed_cost,
 	bool const use_6D_potential /* = false */ )
 {
-
 	if ( use_6D_potential &&
 			loop_cycle.size() == 1  /* later, we could actually generalize to handle more complex loop cycles, if we can figure out SE(3) 6D convolutions */ ) {
 		LoopClosePotentialEvaluatorCOP potential_evaluator = get_6D_trans_rot_potential_evaluator( loop_cycle, loop_fixed_cost, pose );

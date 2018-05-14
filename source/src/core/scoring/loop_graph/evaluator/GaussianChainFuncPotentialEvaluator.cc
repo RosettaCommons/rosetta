@@ -79,20 +79,19 @@ GaussianChainFuncPotentialEvaluator::initialize( LoopCycle const & loop_cycle,
 
 	for ( Size n = 1; n <= loop_cycle.size(); n++ ) {
 		Loop const & takeoff_loop = loop_cycle.loop( n );
-		Size const & takeoff_pos  = takeoff_loop.takeoff_pos();
-		Size const & takeoff_domain = takeoff_loop.takeoff_domain();
+		Size const takeoff_pos  = takeoff_loop.takeoff_pos();
+		Size const takeoff_domain = takeoff_loop.takeoff_domain();
 
 		get_loop_atom( takeoff_pos, pose, takeoff_atom_id, takeoff_xyz, true /*takeoff*/ );
 
 		// Now need to follow cycle around to find loop that ends on this same domain. There should be only one.
 		Size const landing_loop_idx  = loop_cycle.find_index_for_loop_landing_at_domain( takeoff_domain );
 		Loop const & landing_loop = loop_cycle.loop( landing_loop_idx );
-		Size const & landing_pos  = landing_loop.landing_pos();
-		Size const & landing_domain = landing_loop.landing_domain();
+		Size const landing_pos  = landing_loop.landing_pos();
+		Size const landing_domain = landing_loop.landing_domain();
 		runtime_assert( takeoff_domain == landing_domain );
 
 		get_loop_atom( landing_pos, pose, landing_atom_id, landing_xyz, false /*takeoff*/ );
-
 		Distance d = ( landing_xyz - takeoff_xyz ).length();
 		all_distances.push_back( d );
 		if ( takeoff_domain == 1 ) {
@@ -113,7 +112,15 @@ GaussianChainFuncPotentialEvaluator::initialize( LoopCycle const & loop_cycle,
 
 	// Note loop_fixed_cost_ needs to be my current loop_fixed_cost_ but corrected by 1.5 * k_B_T_ * log( rna_persistence_length2_ )
 	func_ = FuncOP( new GaussianChainFunc( total_gaussian_variance, loop_fixed_cost(), other_distances ) );
-	set_loop_closure_energy( func_->func( main_distance ) );
+
+	if ( main_distance > 5000 ) {
+		// AMW: currently coming up in integration test "swm_dna_loop"
+		// where this should be utterly impossible.
+		set_loop_closure_energy( std::numeric_limits< Real >::max() );
+		TR.Warning << "Residues are absurdly far apart; this shouldn't be happening." << std::endl;
+	} else {
+		set_loop_closure_energy( func_->func( main_distance ) );
+	}
 
 	if ( current_pose_idx_in_cycle ) {
 		set_involves_current_pose( true );

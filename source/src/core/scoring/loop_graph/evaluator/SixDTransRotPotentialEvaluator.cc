@@ -24,6 +24,7 @@
 #include <numeric/xyzVector.io.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/constants.hh>
+#include <utility/numbers.hh>
 #include <basic/Tracer.hh>
 
 static basic::Tracer TR( "core.scoring.loop_graph.evaluator.SixDTransRotPotentialEvaluator" );
@@ -112,6 +113,7 @@ SixDTransRotPotentialEvaluator::evaluate( pose::Pose const & pose )
 	j_ = Jump( stub1, stub2 );
 
 	Real const score = loop_fixed_cost() + potential_.evaluate( j_ );
+	debug_assert( utility::isfinite( score ) );
 	return score;
 }
 
