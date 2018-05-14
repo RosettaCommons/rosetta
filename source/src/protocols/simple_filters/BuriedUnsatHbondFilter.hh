@@ -88,6 +88,7 @@ public:
 	void set_ignore_surface_res( bool ignore_surface_res ){ ignore_surface_res_ = ignore_surface_res; };
 	void set_ignore_bb_heavy_unsats( bool ignore_bb_heavy_unsats ){ ignore_bb_heavy_unsats_ = ignore_bb_heavy_unsats; };
 	void set_use_ddG_style( bool use_ddG_style ){ use_ddG_style_ = use_ddG_style; };
+	void set_ddG_style_dont_recalc_surface( bool ddG_style_dont_recalc_surface ) { ddG_style_dont_recalc_surface_ = ddG_style_dont_recalc_surface; }
 	void set_print_out_info_to_pdb( bool print_out_info_to_pdb ){ print_out_info_to_pdb_ = print_out_info_to_pdb; };
 	void set_use_reporter_behavior( bool use_reporter_behavior ){ use_reporter_behavior_ = use_reporter_behavior; };
 	void set_use_hbnet_behavior( bool use_hbnet_behavior ){ use_hbnet_behavior_ = use_hbnet_behavior; };
@@ -159,6 +160,7 @@ private:
 	bool use_sc_neighbors_;
 	bool only_interface_;
 	bool use_ddG_style_;
+	bool ddG_style_dont_recalc_surface_;
 	bool print_out_info_to_pdb_;
 	bool use_reporter_behavior_;
 	bool use_hbnet_behavior_;

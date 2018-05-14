@@ -299,7 +299,7 @@ BuriedUnsatisfiedPolarsCalculator::recompute( Pose const & this_pose )
 
 	if ( this_pose.size() != residue_bur_unsat_polars_.size() ) {
 		residue_bur_unsat_polars_.resize( this_pose.size() );
-		// 17/07/28  fix from Brian Coventry bcov@uw.edu
+
 		pose::initialize_atomid_map( atom_bur_unsat_, this_pose.conformation(), false ); // allocate for all atoms of pose
 	}
 	basic::MetricValue< core::id::AtomID_Map< core::Size > > atom_hbonds;

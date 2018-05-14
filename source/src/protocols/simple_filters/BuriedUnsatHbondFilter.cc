@@ -71,6 +71,7 @@ BuriedUnsatHbondFilter::BuriedUnsatHbondFilter() :
 	use_sc_neighbors_( false ),
 	only_interface_( false ),
 	use_ddG_style_( false ),
+	ddG_style_dont_recalc_surface_( false ),
 	print_out_info_to_pdb_( false ),
 	use_reporter_behavior_( true ), // default is now report all heavy unsats
 	use_hbnet_behavior_( false ),
@@ -120,6 +121,7 @@ BuriedUnsatHbondFilter::BuriedUnsatHbondFilter( core::Size const upper_threshold
 	use_sc_neighbors_( use_sc_neighbors ),
 	only_interface_( only_interface ),
 	use_ddG_style_( use_ddG_style ),
+	ddG_style_dont_recalc_surface_( false ),
 	print_out_info_to_pdb_( false ),
 	use_reporter_behavior_( true ), // default is now report all heavy unsats
 	use_hbnet_behavior_( use_hbnet_behavior ),
@@ -161,6 +163,7 @@ BuriedUnsatHbondFilter::BuriedUnsatHbondFilter( BuriedUnsatHbondFilter const & r
 	use_sc_neighbors_( rval.use_sc_neighbors_ ),
 	only_interface_( rval.only_interface_ ),
 	use_ddG_style_( rval.use_ddG_style_ ),
+	ddG_style_dont_recalc_surface_( rval.ddG_style_dont_recalc_surface_ ),
 	print_out_info_to_pdb_( rval.print_out_info_to_pdb_ ),
 	use_reporter_behavior_( rval.use_reporter_behavior_ ), // options from TJ
 	use_hbnet_behavior_( rval.use_hbnet_behavior_ ),
@@ -191,6 +194,7 @@ BuriedUnsatHbondFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache
 	ignore_bb_heavy_unsats_ = tag->getOption<bool>( "ignore_bb_heavy_unsats", false );
 	use_sc_neighbors_ = tag->getOption<bool>( "use_sc_neighbors", false );
 	use_ddG_style_ = tag->getOption<bool>( "use_ddG_style", false );
+	ddG_style_dont_recalc_surface_ = tag->getOption<bool>( "ddG_style_dont_recalc_surface", false );
 	print_out_info_to_pdb_ = tag->getOption<bool>( "print_out_info_to_pdb", false );
 	only_interface_ = tag->getOption<bool>( "only_interface", false );
 
@@ -449,7 +453,13 @@ BuriedUnsatHbondFilter::compute( core::pose::Pose const & pose ) const {
 		unbound.update_residue_neighbors();
 		(*sfxn_)(unbound ); // score the new pose, or we get assertion error.
 
-		BuriedUnsatisfiedPolarsCalculator calc_unbound( name_of_sasa_calc_, name_of_hbond_calc, region_to_calculate, burial_cutoff_, probe_radius_, residue_surface_cutoff_, generous_hbonds_, legacy_counting_, use_vsasa_, use_sc_neighbors_, ignore_surface_res_ );
+		bool unbound_ignore_surface_res = ignore_surface_res_;
+		if ( ddG_style_dont_recalc_surface_ ) {
+			std::cout << "Not using ignore_surface_res for unbound state" << std::endl;
+			unbound_ignore_surface_res = false;
+		}
+
+		BuriedUnsatisfiedPolarsCalculator calc_unbound( name_of_sasa_calc_, name_of_hbond_calc, region_to_calculate, burial_cutoff_, probe_radius_, residue_surface_cutoff_, generous_hbonds_, legacy_counting_, use_vsasa_, use_sc_neighbors_, unbound_ignore_surface_res );
 		basic::MetricValue< core::Size > mv_all_heavy_unbound, mv_bb_heavy_unbound, mv_countable_nonheavy_unbound, mv_all_unsat_unbound;
 		calc_unbound.get("all_heavy_unsats", mv_all_heavy_unbound, unbound);
 		calc_unbound.get("bb_heavy_unsats", mv_bb_heavy_unbound, unbound);
@@ -478,6 +488,15 @@ BuriedUnsatHbondFilter::compute( core::pose::Pose const & pose ) const {
 		std::string user_name = this->get_user_defined_name();
 		oss << std::endl << filter_name << " " << user_name + ": " << std::endl;
 	}
+
+	if ( ddG_was_computed && ddG_style_dont_recalc_surface_ ) {		// we need to recalculate these because they could potentially be negative
+		all_heavy_atom_unsats = 0;
+		bb_heavy_atom_unsats = 0;
+		sc_heavy_atom_unsats = 0;
+		countable_nonheavy_unsats = 0;
+		all_unsats = 0;
+	}
+
 	for ( core::Size r = 1; r <= mv_unsat_map.value().size(); ++r ) {
 		for ( core::Size a = 1; a <= mv_unsat_map.value().n_atom(r); ++a ) {
 			if ( ignore_bb_heavy_unsats_ && pose.residue(r).atom_is_backbone(a) && a <= pose.residue(r).nheavyatoms() /* don't want backbone H's */ ) continue;
@@ -487,6 +506,20 @@ BuriedUnsatHbondFilter::compute( core::pose::Pose const & pose ) const {
 				std::string temp_str = "      Unsatisfied " + unsat_type + " polar atom at residue " + utility::to_string( r ) + ": " + pose.residue( r ).name3() + " " + pose.residue(r).atom_name(a);
 				buried_unsat_hbond_filter_tracer << temp_str << std::endl;
 				if ( print_out_info_to_pdb_ ) oss << temp_str << std::endl;
+
+				if ( ddG_was_computed && ddG_style_dont_recalc_surface_ ) {
+					if ( a <= pose.residue(r).nheavyatoms() ) {
+						all_heavy_atom_unsats += 1;
+						if ( pose.residue(r).atom_is_backbone(a) ) {
+							bb_heavy_atom_unsats += 1;
+						} else {
+							sc_heavy_atom_unsats += 1;
+						}
+					} else {
+						countable_nonheavy_unsats += 1;
+					}
+					all_unsats += 1;
+				}
 			}
 		}
 	}
@@ -560,6 +593,7 @@ void BuriedUnsatHbondFilter::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 		+ XMLSchemaAttribute::attribute_w_default( "ignore_bb_heavy_unsats", xsct_rosetta_bool, "ignore bb heayy atom unsats when using hbnet-style behavior", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "use_sc_neighbors", xsct_rosetta_bool, "use sc_neighbors insteady of SASA for burial calculations", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "use_ddG_style", xsct_rosetta_bool, "perform ddG style calcation: the Unsats are calculated by subtracting all unsats in bound state from unbound state; this is how the original BuriedUnsatHBondsFilter works", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "ddG_style_dont_recalc_surface", xsct_rosetta_bool, "don't recalculate surface residues in the unbound pose when using ddG_style", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "only_interface", xsct_rosetta_bool, "restrict unsat search only to interface residues; if true and more than one chain it's ignored", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "print_out_info_to_pdb", xsct_rosetta_bool, "print all info to pdb file into addition to tracer", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "jump_number", xsct_non_negative_integer, "The jump over which to evaluate the filter; only applies to use_ddG_style", "1" )
