@@ -2883,8 +2883,8 @@ SimpleCycpepPredictApplication::genkic_close(
 			if ( i!=first_loop_res && i!=middle_loop_res && i!=last_loop_res ) continue; //Just filter the pivots.
 			if ( (cyclization_type() == SCPA_terminal_disulfide || cyclization_type() == SCPA_sidechain_isopeptide ) &&
 					( i == cyclization_point_end || i == cyclization_point_start ) ) continue;
-			else if ( cyclization_type() == SCPA_nterm_isopeptide_lariat && i == cyclization_point_end ) continue;
-			else if ( cyclization_type() == SCPA_cterm_isopeptide_lariat && i == cyclization_point_start ) continue;
+			else if ( cyclization_type() == SCPA_nterm_isopeptide_lariat && i == cyclization_point_start ) continue;
+			else if ( cyclization_type() == SCPA_cterm_isopeptide_lariat && i == cyclization_point_end ) continue;
 
 			if ( use_rama_prepro_for_sampling() ) {
 				genkic->add_filter( protocols::generalized_kinematic_closure::filter::rama_prepro_check );

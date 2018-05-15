@@ -489,7 +489,7 @@ BuriedUnsatHbondFilter::compute( core::pose::Pose const & pose ) const {
 		oss << std::endl << filter_name << " " << user_name + ": " << std::endl;
 	}
 
-	if ( ddG_was_computed && ddG_style_dont_recalc_surface_ ) {		// we need to recalculate these because they could potentially be negative
+	if ( ddG_was_computed && ddG_style_dont_recalc_surface_ ) {  // we need to recalculate these because they could potentially be negative
 		all_heavy_atom_unsats = 0;
 		bb_heavy_atom_unsats = 0;
 		sc_heavy_atom_unsats = 0;
