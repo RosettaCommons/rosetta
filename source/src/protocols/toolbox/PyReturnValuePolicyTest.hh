@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file	protocols/toolbox/PyReturnValuePolicyTest.hh
-/// @brief	A few functions test how PyRosetta handle boost ReturnValuePolicy
-/// @author	Sergey Lyskov
+/// @file protocols/toolbox/PyReturnValuePolicyTest.hh
+/// @brief A few functions test how PyRosetta handle boost ReturnValuePolicy
+/// @author Sergey Lyskov
 
 #ifndef INCLUDED_protocols_toolbox_PyReturnValuePolicyTest_hh
 #define INCLUDED_protocols_toolbox_PyReturnValuePolicyTest_hh
@@ -53,8 +53,8 @@ public:
 private:
 };
 
-inline DummyClassOP PyReturnValuePolicyTest_DummyClassOP(void) { return DummyClassOP( DummyClass::create() ); };
-inline DummyClassCOP PyReturnValuePolicyTest_DummyClassCOP(void) { return DummyClassCOP( DummyClass::create() ); };
+inline DummyClassOP PyReturnValuePolicyTest_DummyClassOP(void) { return DummyClassOP( DummyClass::create() ); }
+inline DummyClassCOP PyReturnValuePolicyTest_DummyClassCOP(void) { return DummyClassCOP( DummyClass::create() ); }
 //inline DummyClassAP PyReturnValuePolicyTest_DummyClassAP(void)  { return DummyClass::create(); };
 //inline DummyClassCAP PyReturnValuePolicyTest_DummyClassCAP(void)  { return DummyClass::create(); };
 
@@ -84,26 +84,31 @@ public:
 
 	virtual SF_ReplicaOP clone() const { return nullptr; };
 
-	virtual core::Real operator ()( core::pose::Pose & pose ) const { return 0.0; };
+	virtual core::Real operator ()( core::pose::Pose &) const { return 0.0; };
 
 private:
-	int some_private_int_;
+	//int some_private_int_;
 };
 
-inline SF_ReplicaOP PyReturnValuePolicyTest_SF_ReplicaOP(void) { return SF_ReplicaOP( new SF_Replica ); };
-inline SF_ReplicaCOP PyReturnValuePolicyTest_SF_ReplicaCOP(void) { return SF_ReplicaCOP( new SF_Replica ); };
+inline SF_ReplicaOP PyReturnValuePolicyTest_SF_ReplicaOP(void) { return SF_ReplicaOP( new SF_Replica ); }
+inline SF_ReplicaCOP PyReturnValuePolicyTest_SF_ReplicaCOP(void) { return SF_ReplicaCOP( new SF_Replica ); }
 //inline SF_ReplicaAP PyReturnValuePolicyTest_SF_ReplicaAP(void)  { return new SF_Replica; };
 //inline SF_ReplicaCAP PyReturnValuePolicyTest_SF_ReplicaCAP(void)  { return new SF_Replica; };
 
 
-inline core::pose::PoseOP PyReturnValuePolicyTest_PoseOP(void) { return core::pose::PoseOP(new core::pose::Pose() ); };
-inline core::pose::PoseCOP PyReturnValuePolicyTest_PoseCOP(void) { return core::pose::PoseOP( new core::pose::Pose() ); };
+inline core::pose::PoseOP PyReturnValuePolicyTest_PoseOP(void) { return core::pose::PoseOP(new core::pose::Pose() ); }
+inline core::pose::PoseCOP PyReturnValuePolicyTest_PoseCOP(void) { return core::pose::PoseOP( new core::pose::Pose() ); }
 //inline core::pose::PoseAP PyReturnValuePolicyTest_PoseAP(void)  { return new core::pose::Pose(); };
 //inline core::pose::PoseCAP PyReturnValuePolicyTest_PoseCAP(void)  { return new core::pose::Pose(); };
 
-inline core::scoring::ScoreFunctionOP PyReturnValuePolicyTest_ScoreFunctionOP(void) { return core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ); };
-inline core::scoring::ScoreFunctionCOP PyReturnValuePolicyTest_ScoreFunctionCOP(void) { return core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ); };
-inline core::scoring::ScoreFunctionCOP PyReturnValuePolicyTest_ScoreFunctionCOP2(void) { return core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() ); };
+inline core::scoring::ScoreFunctionOP PyReturnValuePolicyTest_ScoreFunctionOP(void) { return core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ); }
+inline core::scoring::ScoreFunctionCOP PyReturnValuePolicyTest_ScoreFunctionCOP(void) { return core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ); }
+inline core::scoring::ScoreFunctionCOP PyReturnValuePolicyTest_ScoreFunctionCOP2(void) { return core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() ); }
+
+
+
+// test for out-of-bounds access handling
+void out_of_bounds_memory_access();
 
 
 } //toolbox

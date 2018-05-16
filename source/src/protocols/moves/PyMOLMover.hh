@@ -287,6 +287,8 @@ private:
 
 std::ostream &operator<< (std::ostream & output, UDPSocketClient const & client);
 
+
+/// @brief Special Mover designed to send Pose information into PyMOL instance running
 class PyMOLMover : public protocols::moves::Mover
 {
 	static std::string  default_address();
@@ -457,6 +459,7 @@ private:
 // Insertion operator (overloaded so that PyMOLMover can be "printed") in PyRosetta).
 std::ostream &operator<< (std::ostream & output, PyMOLMover const & mover);
 
+/// @brief Special Observer which apply PyMOLMover if Pose is changed
 class PyMOLObserver : public core::pose::datacache::CacheableObserver
 {
 public:

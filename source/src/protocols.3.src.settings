@@ -417,7 +417,7 @@ sources = {
 		"SimpleMetricFilter",
 
 		"BuriedUnsatHbondFilter",
-		
+
 		"AbinitioBaseFilter",
 		"AveragePathLengthFilter",
 		"AtomicContactFilter",
@@ -429,7 +429,7 @@ sources = {
 		"ChainCountFilter",
 		"ChainBreakFilter",
 		"COFilter",
-		
+
 
 		"ContactMapEvaluator",
 		"ContactMapEvaluatorCreator",
@@ -483,7 +483,7 @@ sources = {
 		"HelixHelixAngleFilter",
 		"TerminusDistanceFilter",
 		"MPSpanAngleFilter",
-		
+
 		# NMR
 		"RDC_Evaluator",
 		"RdcEvaluatorCreator",
@@ -500,7 +500,7 @@ sources = {
 		"ResidueSelectionDistanceFilter",
 		"ResidueSetChainEnergyFilter",
 		"RGFilter",
-		
+
 		# RMSD
 		"RmsdEvaluator",
 		"RmsdEvaluatorCreator",
@@ -518,11 +518,11 @@ sources = {
 		"ShapeComplementarityFilter",
 		"SheetFilter",
 		"SimpleHbondsToAtomFilter",
-		
+
 		"SSMotifFinderFilter",
 		"StemFinderFilter",
 		"SymmetricMotifFilter",
-		
+
 		"TaskAwareSASAFilter",
 		"TaskAwareScoreTypeFilter",
 		"TotalSasaFilter",
@@ -556,7 +556,7 @@ sources = {
 		"TaskAwareSymMinMover",
 	],
 	"protocols/simple_moves": [
-		
+
 		# Chain manipulations
 		"CutChainMover",
 		"DeleteChainMover",
@@ -564,16 +564,16 @@ sources = {
 		"ChainSplitMover",
 		"AddChainMover",
 		"SwitchChainOrderMover",
-		
-		
+
+
 		# Backbone dihedrals
 	   	"RandomTorsionMover",
 		"RandomOmegaFlipMover",
 		"BBGaussianMover",
 		"BBDihedralSamplerMover",
 		"BackboneMover",
-		
-		
+
+
 		# Variant types
 		"ConvertRealToVirtualMover",
 		"ConvertVirtualToRealMover",
@@ -589,51 +589,51 @@ sources = {
 		"SaveSequenceToCommentsMover",
 		"WriteFiltersToPose",
 
-		
+
 		# Creates a totally new pose
-	
+
 		"AddCavitiesMover",
-		
+
 		"AlignChainMover",
 		"ChangeAndResetFoldTreeMover",
 		"BBConRotMover",
-		
-		
+
+
 		"CombinePoseMover",
-		
-		
+
+
 		"ConstrainToIdealMover",
-		
+
 		"ContingentAcceptMover",
-		
-		
+
+
 		"CopyDofMover",
 		"CopyRotamerMover",
 		"CoupledMover",
- 		
+
 		"CyclizationMover",
 		"DME_FilterMover",
 		"DOFHistogramRecorder",
-		
+
 		"DisulfideInsertionMover",
 		"DisulfideInsertionMoverCreator",
-		
+
 		"DumpPdb",
 		"DumpSingleResidueRotamers",
-		
+
 		"FavorSequenceProfile",
 		"FavorSymmetricSequence",
 		"FindConsensusSequence",
-		
+
 		"ReportEffectivePKA",
 		"FragmentMover",
 		"GunnCost",
 		"LoadUnboundRotMover",
-		
+
 
 		"MembraneTopology",
 		"MissingDensityToJumpMover",
-		
+
 		"MSDMover",
 		"MutateResidue",
 		"PackPwatRotamersMover",
@@ -718,6 +718,7 @@ sources = {
 		"InteratomicVarianceMatrix",
 		"KCluster",
 		"NetworkAlgorithms",
+		"PyReturnValuePolicyTest",
 		"superimpose",
 	],
 	"protocols/toolbox/match_enzdes_util": [
