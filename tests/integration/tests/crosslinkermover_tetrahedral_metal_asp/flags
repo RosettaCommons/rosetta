@@ -1,0 +1,7 @@
+-parser:protocol inputs/test.xml
+-in:file:s inputs/tetrahedral_test.pdb
+-nstruct 1
+-output_virtual true
+-write_all_connect_info
+-jd2:failed_job_exception true
+-out:levels protocols.cyclic_peptide.CrosslinkerMover:500 protocols.cyclic_peptide.crosslinker.TetrahedralMetal_Helper:500

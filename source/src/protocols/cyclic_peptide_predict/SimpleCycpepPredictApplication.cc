@@ -101,6 +101,7 @@
 #include <protocols/cyclic_peptide/CrosslinkerMover.hh>
 #include <protocols/cyclic_peptide/crosslinker/TBMB_Helper.hh>
 #include <protocols/cyclic_peptide/crosslinker/TMA_Helper.hh>
+#include <protocols/cyclic_peptide/crosslinker/TetrahedralMetal_Helper.hh>
 
 // Project Headers
 #include <protocols/cyclic_peptide/PeptideStubMover.hh>
@@ -188,6 +189,10 @@ protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::register_opti
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::use_TMA_filters                      );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::TMA_sidechain_distance_filter_multiplier   );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::TMA_constraints_energy_filter_multiplier   );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::tetrahedral_metal_positions          );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::use_tetrahedral_metal_filters        );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::tetrahedral_metal_sidechain_distance_filter_multiplier   );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::tetrahedral_metal_constraints_energy_filter_multiplier   );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::require_symmetry_repeats             );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::require_symmetry_mirroring           );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::require_symmetry_angle_threshold     );
@@ -334,6 +339,10 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication(
 	use_tma_filters_(true),
 	tma_sidechain_distance_filter_multiplier_(1.0),
 	tma_constraints_energy_filter_multiplier_(1.0),
+	tetrahedral_metal_positions_(),
+	use_tetrahedral_metal_filters_(true),
+	tetrahedral_metal_sidechain_distance_filter_multiplier_(1.0),
+	tetrahedral_metal_constraints_energy_filter_multiplier_(1.0),
 	required_symmetry_repeats_(1),
 	required_symmetry_mirroring_(false),
 	required_symmetry_angle_threshold_(10.0),
@@ -430,6 +439,10 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication( SimpleCycpepPred
 	use_tma_filters_(src.use_tma_filters_),
 	tma_sidechain_distance_filter_multiplier_(src.tma_sidechain_distance_filter_multiplier_),
 	tma_constraints_energy_filter_multiplier_(src.tma_constraints_energy_filter_multiplier_),
+	tetrahedral_metal_positions_(src.tetrahedral_metal_positions_),
+	use_tetrahedral_metal_filters_(src.use_tetrahedral_metal_filters_),
+	tetrahedral_metal_sidechain_distance_filter_multiplier_(src.tetrahedral_metal_sidechain_distance_filter_multiplier_),
+	tetrahedral_metal_constraints_energy_filter_multiplier_(src.tetrahedral_metal_constraints_energy_filter_multiplier_),
 	required_symmetry_repeats_(src.required_symmetry_repeats_),
 	required_symmetry_mirroring_(src.required_symmetry_mirroring_),
 	required_symmetry_angle_threshold_(src.required_symmetry_angle_threshold_),
@@ -677,6 +690,14 @@ SimpleCycpepPredictApplication::initialize_from_options(
 	use_tma_filters_ = option[basic::options::OptionKeys::cyclic_peptide::use_TMA_filters]();
 	tma_sidechain_distance_filter_multiplier_ = option[basic::options::OptionKeys::cyclic_peptide::TMA_sidechain_distance_filter_multiplier]();
 	tma_constraints_energy_filter_multiplier_ = option[basic::options::OptionKeys::cyclic_peptide::TMA_constraints_energy_filter_multiplier]();
+
+	//Store the tetrahedral metal positions.
+	if ( option[basic::options::OptionKeys::cyclic_peptide::tetrahedral_metal_positions].user() ) {
+		set_tetrahedral_metal_positions_from_string_vector( option[basic::options::OptionKeys::cyclic_peptide::tetrahedral_metal_positions]() );
+	}
+	use_tetrahedral_metal_filters_ = option[basic::options::OptionKeys::cyclic_peptide::use_tetrahedral_metal_filters]();
+	tetrahedral_metal_sidechain_distance_filter_multiplier_ = option[basic::options::OptionKeys::cyclic_peptide::tetrahedral_metal_sidechain_distance_filter_multiplier]();
+	tetrahedral_metal_constraints_energy_filter_multiplier_ = option[basic::options::OptionKeys::cyclic_peptide::tetrahedral_metal_constraints_energy_filter_multiplier]();
 
 	//Options for symmetric sampling:
 	runtime_assert_string_msg( option[basic::options::OptionKeys::cyclic_peptide::require_symmetry_repeats]() > 0, "Error in simple_cycpep_predict application: The \"-cyclic_peptide:require_symmetry_repeats\" flag must be provided with a positive value." );
@@ -933,6 +954,62 @@ SimpleCycpepPredictApplication::set_cartesian_relax_rounds(
 	core::Size const rounds_in
 ) {
 	cartesian_relax_rounds_ = rounds_in;
+}
+
+/// @brief Given an input vector of strings of the form "res1,res2,res3,res4,metal_name", parse this and populate
+/// the tetrahedral_metal_positions_ vector.
+/// @details Resets the tetrahedral_metal_positions_ vector.
+void
+SimpleCycpepPredictApplication::set_tetrahedral_metal_positions_from_string_vector(
+	utility::vector1< std::string > const &vect
+) {
+	core::Size const nstrings( vect.size() );
+	reset_tetrahedral_metal_positions();
+	if ( !nstrings ) return; //Do nothing more for size 0 vector.
+
+	utility::fixedsizearray1< int, 4 > resnums; //Deliberately ints.
+	std::string element;
+
+	for ( core::Size i(1); i<=nstrings; ++i ) {
+		std::istringstream ss( vect[i] );
+		core::Size counter(0);
+		while ( std::getline(ss, element, ',') ) {
+			++counter;
+			if ( counter < 5 ) {
+				resnums[counter] = std::atoi(element.c_str());
+				runtime_assert_string_msg( resnums[counter] > 0, "Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::set_tetrahedral_metal_positions_from_string_vector(): All residue numbers must be greater than zero when setting residue indices for tetrahedrally-coordinated metals." );
+			} else if ( counter > 5 ) {
+				utility_exit_with_message( "Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::set_tetrahedral_metal_positions_from_string_vector(): A tetrahedrally-coordinated metal setup input flag was provided that was not of the form \"res1,res2,res3,res4,metal_name\".  Comma-separated lists of five entries (four numbers and a metal name) are required." );
+			}
+		}
+		add_entry_to_tetrahedral_metal_positions(static_cast<core::Size>(resnums[1]), static_cast<core::Size>(resnums[2]), static_cast<core::Size>(resnums[3]), static_cast<core::Size>(resnums[4]), element);
+		TR << "Parsed tetrahedral metal setup where res1=" << resnums[1] << ", res2=" << resnums[2] << ", res3=" << resnums[3] << ", res4=" << resnums[4] << ", metal=" << element << std::endl;
+	}
+}
+
+/// @brief Resets the tetrahedral_metal_positions_ vector.
+void
+SimpleCycpepPredictApplication::reset_tetrahedral_metal_positions() {
+	tetrahedral_metal_positions_.clear();
+}
+
+/// @brief Adds an entry to the tetrahedral_metal_positions_ vector.
+void
+SimpleCycpepPredictApplication::SimpleCycpepPredictApplication::add_entry_to_tetrahedral_metal_positions(
+	core::Size const res1,
+	core::Size const res2,
+	core::Size const res3,
+	core::Size const res4,
+	std::string const & metal_type
+) {
+	utility::vector1< core::Size > residues(4);
+	runtime_assert(res1 > 0 && res2 > 0 && res3 > 0 && res4 > 0);
+	runtime_assert(!metal_type.empty());
+	residues[1] = res1;
+	residues[2] = res2;
+	residues[3] = res3;
+	residues[4] = res4;
+	tetrahedral_metal_positions_.push_back( std::make_pair( residues, metal_type) );
 }
 
 /// @brief Set whether we're using RamaPrePro tables for sampling.
@@ -2470,6 +2547,19 @@ SimpleCycpepPredictApplication::genkic_close(
 	debug_assert( last_loop_res < anchor_res );
 	debug_assert( anchor_res < first_loop_res );
 
+	//If the anchor res torsions are to be set, set 'em here:
+	if ( pose->residue_type(anchor_res).is_alpha_aa() ) {
+		core::Size const anchor_res_in_original( original_position(anchor_res, cyclic_offset, pose->total_residue() ) ); //Get the index of the anchor residue in the original pose (prior to any circular permutation).
+		if ( user_set_alpha_dihedrals_.count(anchor_res_in_original) ) { //If this position is being set to a particular value...
+			utility::vector1< core::Size > const &diheds( user_set_alpha_dihedrals_.at(anchor_res_in_original) );
+			debug_assert(diheds.size() == 3); //Should be true
+			pose->set_phi( anchor_res_in_original, diheds[1] );
+			pose->set_psi( anchor_res_in_original, diheds[2] );
+			pose->set_omega( anchor_res_in_original, diheds[3] );
+			pose->update_residue_neighbors();
+		}
+	}
+
 	//Randomly pick a residue to be the middle pivot residue.  Can't be first in loop, last in loop, or anchor res.
 	core::Size middle_loop_res( numeric::random::rg().random_range(cyclization_point_end, cyclization_point_start-3 ) );
 	if ( middle_loop_res == last_loop_res ) { middle_loop_res += 3; }
@@ -2557,6 +2647,27 @@ SimpleCycpepPredictApplication::genkic_close(
 			std::stringstream movername;
 			movername << "TMA_link_" << i;
 			pp->add_mover_filter_pair( threelinker, movername.str(), nullptr );
+		}
+	}
+
+	//If we're considering tetrahedral metal crosslinks, add 'em here:
+	if ( tetrahedral_metal_positions_.size() > 0 ) {
+		for ( core::Size i(1), imax(tetrahedral_metal_positions_.size()); i<=imax; ++i ) {
+			utility::vector1< core::Size > const & resnums( tetrahedral_metal_positions_[i].first );
+			debug_assert(resnums.size() == 4); //Should always be true.
+			core::select::residue_selector::ResidueIndexSelectorOP index_selector( new core::select::residue_selector::ResidueIndexSelector );
+			for ( core::Size j(1); j<=4; ++j ) index_selector->append_index( current_position( resnums[j], cyclic_offset, nres ) );
+			protocols::cyclic_peptide::CrosslinkerMoverOP metallinker( new protocols::cyclic_peptide::CrosslinkerMover );
+			metallinker->set_residue_selector(index_selector);
+			metallinker->set_linker_name("tetrahedral_metal");
+			metallinker->set_metal_type(tetrahedral_metal_positions_[i].second);
+			metallinker->set_behaviour(true, true, true, false);
+			metallinker->set_filter_behaviour(use_tetrahedral_metal_filters_, use_tetrahedral_metal_filters_, false, 0.0, tetrahedral_metal_sidechain_distance_filter_multiplier_, tetrahedral_metal_constraints_energy_filter_multiplier_);
+			metallinker->set_scorefxn( sfxn_highhbond );
+			metallinker->set_sidechain_frlx_rounds(3);
+			std::stringstream movername;
+			movername << "tetrahedral_metal_link_" << i;
+			pp->add_mover_filter_pair( metallinker, movername.str(), nullptr );
 		}
 	}
 
@@ -3168,6 +3279,11 @@ SimpleCycpepPredictApplication::depermute (
 		re_append_linker_residues( pose, newpose, offset, tma_positions_, "TMA" );
 	}
 
+	//Re-append tetrahedral metal linker residues:
+	if ( tetrahedral_metal_positions_.size() > 0 ) {
+		re_append_tetrahedral_metal_residues( pose, newpose );
+	}
+
 	//I don't bother to set up cyclic constraints, since we won't be doing any more minimization after calling this function.
 
 	//Set up disulfide variants, if we're doing disulfide cyclization.
@@ -3444,6 +3560,26 @@ SimpleCycpepPredictApplication::re_append_linker_residues(
 			res_indices[1] = linker_positions[i][2]; res_indices[2] = linker_positions[i][3]; res_indices[3] = linker_positions[i][1];
 		}
 		helper->add_linker_bonds_asymmetric( *newpose, res_indices, newpose->total_residue() );
+	}
+}
+
+/// @brief Given a pose with tetrahedral metal variants and another pose without the variants, add back the variants to the latter.
+/// @details This function is called at the end of the protocol, and therefore doesn't bother to add back contraints.
+void
+SimpleCycpepPredictApplication::re_append_tetrahedral_metal_residues(
+	core::pose::PoseCOP pose,
+	core::pose::PoseOP newpose
+) const {
+	debug_assert( pose->total_residue() == newpose->total_residue() );
+	for ( core::Size i(1), imax(tetrahedral_metal_positions_.size()); i<=imax; ++i ) {
+		utility::vector1< core::Size > const &residues( tetrahedral_metal_positions_[i].first );
+		debug_assert(residues.size() == 4);
+		protocols::cyclic_peptide::crosslinker::TetrahedralMetal_Helper helper;
+		core::select::residue_selector::ResidueSubset selection( newpose->total_residue() );
+		for ( core::Size i(1); i<=4; ++i ) {
+			selection[residues[i]] = true;
+		}
+		helper.add_linker_asymmetric( *newpose, selection );
 	}
 }
 

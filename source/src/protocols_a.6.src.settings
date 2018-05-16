@@ -27,6 +27,7 @@ sources = {
 	],
 	"protocols/cyclic_peptide/crosslinker": [
 		"TBMB_Helper",
+		"TetrahedralMetal_Helper",
 		"TMA_Helper",
 		"CrosslinkerMoverHelper",
 	],

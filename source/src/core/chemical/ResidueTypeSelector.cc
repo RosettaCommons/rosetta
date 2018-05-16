@@ -81,6 +81,16 @@ residue_selector_single_from_line( std::string const & line )
 		}
 		if ( !name3s.empty() )  return ResidueTypeSelectorSingleOP( new Selector_NAME3( name3s, desired_result ) );
 
+	} else if ( tag == "BASENAME" ) {
+		std::string basename;
+		utility::vector1< std::string > basenames;
+		l >> basename;
+		while ( !l.fail() ) {
+			basenames.push_back( basename );
+			l >> basename;
+		}
+		if ( !basenames.empty() )  return ResidueTypeSelectorSingleOP( new Selector_BASENAME( basenames, desired_result ) );
+
 	} else if ( tag == "HAS_ATOMS" ) {
 		std::string atom_name;
 		utility::vector1< std::string > atom_names;
@@ -191,6 +201,27 @@ core::chemical::Selector_AA::load( Archive & arc ) {
 SAVE_AND_LOAD_SERIALIZABLE( core::chemical::Selector_AA );
 CEREAL_REGISTER_TYPE( core::chemical::Selector_AA )
 
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::Selector_BASENAME::Selector_BASENAME() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::Selector_BASENAME::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::ResidueTypeSelectorSingle >( this ) );
+	arc( CEREAL_NVP( basenames_ ) ); // utility::vector1<std::string>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::Selector_BASENAME::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::ResidueTypeSelectorSingle >( this ) );
+	arc( basenames_ ); // utility::vector1<std::string>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::Selector_BASENAME );
+CEREAL_REGISTER_TYPE( core::chemical::Selector_BASENAME )
 
 /// @brief Default constructor required by cereal to deserialize this class
 core::chemical::Selector_NAME3::Selector_NAME3() {}

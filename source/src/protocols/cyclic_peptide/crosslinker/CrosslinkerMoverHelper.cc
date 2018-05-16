@@ -9,7 +9,7 @@
 
 /// @file protocols/cyclic_peptide/crosslinker/CrosslinkerMoverHelper.cc
 /// @brief A base class for helper objects that the CrosslinkerMover uses to set up specific types
-/// of threefold linkers.
+/// of linkers.
 /// @author Vikram K. Mulligan (vmullig@u.washington.edu)
 
 // Unit headers
@@ -120,7 +120,7 @@ CrosslinkerMoverHelper::selection_is_symmetric(
 	core::pose::Pose const &pose,
 	core::Size const expected_subunit_count
 ) const {
-	//First, get the indices (checking in the process that exactly three residues are selected).
+	//First, get the indices.
 	utility::vector1< core::Size > res_indices;
 	get_sidechain_indices( selection, res_indices );
 
@@ -131,19 +131,23 @@ CrosslinkerMoverHelper::selection_is_symmetric(
 	//Get the symmetry information object, which can tell us about relationships between residues:
 	core::conformation::symmetry::SymmetryInfoCOP symminfo( conf->Symmetry_Info() );
 	if ( symminfo->subunits() != expected_subunit_count ) return false;
-	if ( res_indices.size() != expected_subunit_count ) return false;
+	if ( (res_indices.size() != expected_subunit_count) && (res_indices.size() % expected_subunit_count != 0) ) return false;
 
 	for ( core::Size i(1), imax(res_indices.size()); i<=imax; ++i ) {
 		if ( symminfo->bb_is_independent( res_indices[i] ) ) {
+			bool has_symmetry_copy( false );
 			for ( core::Size j(1), jmax(res_indices.size()); j<=jmax; ++j ) {
 				if ( i==j ) continue;
-				if ( symminfo->bb_follows( res_indices[j] ) != res_indices[i] ) return false;
+				if ( symminfo->bb_follows( res_indices[j] ) == res_indices[i] ) {
+					has_symmetry_copy = true;
+					break;
+				}
 			}
-			return true;
+			if ( !has_symmetry_copy ) return false;
 		}
 	}
 
-	return false;
+	return true;
 }
 
 /// @brief Optional steps that the helper can apply before every relaxation round.
@@ -170,6 +174,13 @@ CrosslinkerMoverHelper::post_relax_round_update_steps(
 	bool const /*linker_was_added*/
 ) const {
 	//By default, do nothing.
+}
+
+/// @brief Get the number of expected symmetry subunits, given the symmetry type.
+core::Size
+CrosslinkerMoverHelper::symm_subunits_expected() const {
+	if ( symm_type() == 'D' ) return symm_count()*2;
+	return symm_count();
 }
 
 /// @brief Determine whether the sidechain-crosslinker system has too high a constraints score.  Both the symmetric and asymmetric versions call this code.

@@ -1,0 +1,35 @@
+ 	<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<ScoreFunction name="r15" weights="ref2015.wts" />
+		<ScoreFunction name="r15_cst" weights="ref2015_cst.wts" />
+	</SCOREFXNS>
+	<TASKOPERATIONS>
+		<RestrictToRepacking name="repack_only" />
+	</TASKOPERATIONS>
+	<FILTERS>
+	</FILTERS>
+	<RESIDUE_SELECTORS>
+		<Index name="select_connecting" resnums="2,8,14,20" />
+	</RESIDUE_SELECTORS>
+	<MOVERS>
+		<DeclareBond name="bond1" res1="1" atom1="N" res2="24" atom2="C" add_termini="true" />
+
+		<CrosslinkerMover name="place_metal"
+			residue_selector="select_connecting"
+			linker_name="tetrahedral_metal" scorefxn="r15"
+			filter_by_constraints_energy="true"
+			metal_type="Zn"
+		/>
+
+		<FastRelax name="relax" scorefxn="r15_cst" repeats="1" />
+
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover="bond1" />
+		<Add mover="place_metal" />
+		Add mover="relax" />
+	</PROTOCOLS>
+	<OUTPUT scorefxn="r15_cst" />
+</ROSETTASCRIPTS>

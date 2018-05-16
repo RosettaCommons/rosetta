@@ -106,6 +106,10 @@ public: // public methods
 	/// @note Higher values of the filter multiplier make it more permissive.
 	bool filter_by_constraints_energy_symmetric( core::pose::Pose const &pose, core::select::residue_selector::ResidueSubset const & selection, bool const linker_was_added, core::Real const &filter_multiplier) const override;
 
+	/// @brief Does this CrosslinkerMoverHelper add a residue for the linker?
+	/// @details Yes, it does.
+	bool helper_adds_linker_residue() const override { return true; }
+
 private: // private methods
 
 

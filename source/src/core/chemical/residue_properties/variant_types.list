@@ -83,6 +83,7 @@ SIDECHAIN_CONJUGATION  # for chemically conjugatable residues and side-chain con
 SG_CONNECT   # Add a connection to the SG sidechain atom
 NE2_CONNECT  # Adds a connection to the NE2 sidechain atom
 ZN_CONNECT   # Adds a connect to the ZN atom
+VIRTUAL_METAL_CONJUGATION # Adds virtual atoms representing metals to metal-binding sites
 ## TODO: Can we convert these purpose-driven connects to more general forms
 
 # JOINT CHEMICAL/CONNECTIVITY CHANGES

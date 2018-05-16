@@ -1,0 +1,45 @@
+ 	<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<ScoreFunction name="r15" weights="ref2015.wts" />
+		<ScoreFunction name="r15_cst" weights="ref2015_cst.wts" >
+			<Reweight scoretype="chainbreak" weight="50" />
+		</ScoreFunction>
+	</SCOREFXNS>
+	<TASKOPERATIONS>
+		<RestrictToRepacking name="repack_only" />
+	</TASKOPERATIONS>
+	<FILTERS>
+	</FILTERS>
+	<RESIDUE_SELECTORS>
+		<Index name="select_connecting" resnums="2,8,14,20" />
+		<Index name="upper_cutpoint" resnums="1" />
+		<Index name="lower_cutpoint" resnums="24" />
+	</RESIDUE_SELECTORS>
+	<MOVERS>
+		<DeclareBond name="bond1" res1="1" atom1="N" res2="24" atom2="C" add_termini="true" />
+
+		<ModifyVariantType name="upper_cutpoints" add_type="CUTPOINT_UPPER" residue_selector="upper_cutpoint" />
+		<ModifyVariantType name="lower_cutpoints" add_type="CUTPOINT_LOWER" residue_selector="lower_cutpoint" />
+
+		<CrosslinkerMover name="place_metal"
+			residue_selector="select_connecting"
+			linker_name="tetrahedral_metal" scorefxn="r15"
+			filter_by_constraints_energy="true"
+			constraints_energy_filter_multiplier="10.0"
+			metal_type="Zn"
+		/>
+
+		<FastRelax name="relax" scorefxn="r15_cst" repeats="1" />
+
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover="bond1" />
+		<Add mover="upper_cutpoints" />
+		<Add mover="lower_cutpoints" />
+		<Add mover="place_metal" />
+		<Add mover="relax" />
+	</PROTOCOLS>
+	<OUTPUT scorefxn="r15_cst" />
+</ROSETTASCRIPTS>

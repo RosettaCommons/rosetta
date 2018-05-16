@@ -8,9 +8,9 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file protocols/cyclic_peptide/CrosslinkerMover.hh
-/// @brief This mover links three cysteine residues with a three-way cross-linker.  It adds the crosslinker,
-/// sets up constraints, optionally packs and energy-mimizes it into place (packing/minimizing only the crosslinker
-/// and the side-chains to which it connects), andthen optionally relaxes the whole structure.
+/// @brief This mover links two or more residues with a (possibly symmetric) cross-linker.  It adds the crosslinker, sets up constraints,
+/// optionally packs and energy-mimizes it into place (packing/minimizing only the crosslinker and the side-chains to which it connects),
+/// and then optionally relaxes the whole structure.
 /// @author Vikram K. Mulligan (vmullig@u.washington.edu)
 
 #ifndef INCLUDED_protocols_cyclic_peptide_CrosslinkerMover_hh
@@ -44,12 +44,15 @@ enum CrossLinker {
 
 	TBMB,
 	TMA,
+	tetrahedral_metal,
 
 	unknown_crosslinker, //Keep this second-to-last.
 	end_of_crosslinker_list = unknown_crosslinker //Keep this last.
 };
 
-///@brief This mover links three cysteine residues with a threefld-symmetric cross-linker.  It adds the crosslinker, sets up constraints, optionally packs and energy-mimizes it into place (packing/minimizing only the crosslinker and the side-chains to which it connects), andthen optionally relaxes the whole structure.
+/// @brief This mover links two or more residues with a (possibly symmetric) cross-linker.  It adds the crosslinker, sets up constraints,
+/// optionally packs and energy-mimizes it into place (packing/minimizing only the crosslinker and the side-chains to which it connects),
+/// and then optionally relaxes the whole structure.
 class CrosslinkerMover : public protocols::moves::Mover {
 
 public:
@@ -73,8 +76,8 @@ public:
 
 public:
 	/// @brief Apply the mover
-	virtual void
-	apply( core::pose::Pose & pose );
+	void
+	apply( core::pose::Pose & pose ) override;
 
 	/// @brief Given a CrossLinker enum, get its name.
 	///
@@ -93,12 +96,11 @@ public:
 	std::string
 	mover_name();
 
-	virtual void
-	show( std::ostream & output = std::cout ) const;
+	/// @brief Show the contents of the Mover
+	void show( std::ostream & output = std::cout ) const override;
 
 	/// @brief Get the name of the Mover
-	virtual std::string
-	get_name() const;
+	std::string get_name() const override;
 
 	///////////////////////////////
 	/// Rosetta Scripts Support ///
@@ -106,13 +108,13 @@ public:
 
 	/// @brief Parse XML tag (to use this Mover in Rosetta Scripts).
 	///
-	virtual void
+	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
 	/// @brief Provide information on what options are available in XML tag.
 	///
@@ -123,12 +125,10 @@ public:
 	//CrosslinkerMover & operator=( CrosslinkerMover const & src );
 
 	/// @brief required in the context of the parser/scripting scheme
-	virtual protocols::moves::MoverOP
-	fresh_instance() const;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	/// @brief required in the context of the parser/scripting scheme
-	virtual protocols::moves::MoverOP
-	clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	/// @brief Set the residue selector to use.
 	///
@@ -218,6 +218,11 @@ public:
 	/// specify C3 symmetry.  A value of 1 means asymmetry.  1 by default.
 	inline core::Size symm_count() const { return symm_count_; }
 
+	/// @brief For metal-mediated crosslinkers, set what metal mediates the crosslink.
+	void set_metal_type( std::string const &metal_in );
+
+	/// @brief For metal-mediated crosslinkers, what metal mediates the crosslink?
+	inline std::string const & metal_type() const { return metal_type_; }
 
 private: // methods
 
@@ -233,11 +238,11 @@ private: // methods
 	/// @details Returns TRUE for failure (too high a constraints score) and FALSE for success.
 	bool filter_by_constraints_energy_symmetric( core::pose::Pose const &pose, core::select::residue_selector::ResidueSubset const & selection, protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelperCOP helper, bool const linker_was_added ) const;
 
-	/// @brief Given a selection of exactly three residues, add a crosslinker, align it crudely to the
+	/// @brief Given a selection of residues, add a crosslinker, align it crudely to the
 	/// selected residues, and set up covalent bonds.  This version is for symmetric poses.
 	void add_linker_symmetric( core::pose::Pose &pose, core::select::residue_selector::ResidueSubset const & selection, protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelperCOP helper ) const;
 
-	/// @brief Given a selection of exactly three residues that have already been connected to a crosslinker,
+	/// @brief Given a selection of residues that have already been connected to a crosslinker,
 	/// add constraints for the crosslinker.  This version is for symmetric poses.
 	void add_linker_constraints_symmetric( core::pose::Pose &pose, core::select::residue_selector::ResidueSubset const & selection, protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelperCOP helper, bool const linker_was_added ) const;
 
@@ -257,21 +262,17 @@ private: // methods
 	/// @details Returns TRUE for failure (too high an overall score) and FALSE for success.
 	bool filter_by_total_score( core::pose::Pose const &pose ) const;
 
-	/// @brief Given a selection of exactly three residues, add a crosslinker, align it crudely to the
+	/// @brief Given a selection of residues, add a crosslinker, align it crudely to the
 	/// selected residues, and set up covalent bonds.
 	void add_linker_asymmetric( core::pose::Pose &pose, core::select::residue_selector::ResidueSubset const & selection, protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelperCOP helper ) const;
 
-	/// @brief Given a selection of exactly three residues that have already been connected to a crosslinker,
+	/// @brief Given a selection of residues that have already been connected to a crosslinker,
 	/// add constraints for the crosslinker.
 	void add_linker_constraints_asymmetric( core::pose::Pose &pose, core::select::residue_selector::ResidueSubset const & selection, protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelperCOP helper ) const;
 
 	/// @brief Repack and minimize the sidechains.
 	/// @details Also repacks and minimzes the linker, letting the jump vary.
 	void pack_and_minimize_linker_and_sidechains( core::pose::Pose &pose, core::select::residue_selector::ResidueSubset const & selection, protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelperCOP helper, bool const whole_structure, bool const symmetric ) const;
-
-	/// @brief Given a selection from a ResidueSelector, check that exactly three residues have been selected.
-	/// @details Returns true if exactly three have been selected, false otherwise.
-	bool exactly_three_selected( core::select::residue_selector::ResidueSubset const & selection ) const;
 
 	/// @brief Are we filtering by sidechain distance before placing the linker?
 	///
@@ -307,12 +308,12 @@ private: // methods
 
 private: // data
 
-	/// @brief A residue selector to select exactly three cysteine residues to cross-link.
+	/// @brief A residue selector to select residues to cross-link.
 	///
 	core::select::residue_selector::ResidueSelectorCOP residue_selector_;
 
-	/// @brief The three-way crosslinker to use.
-	/// @details Must be set.  See definition of CrossLinker enum in ThrefoldLinkerMover.hh.
+	/// @brief The crosslinker to use.
+	/// @details Must be set.  See definition of CrossLinker enum in CrosslinkerMover.hh.
 	CrossLinker linker_;
 
 	/// @brief Should we add the linker?
@@ -376,6 +377,10 @@ private: // data
 	/// @brief The symmetry copy count.  For example, symm_type_='C' and symm_count_=3 would
 	/// specify C3 symmetry.  A value of 1 means asymmetry.  1 by default.
 	core::Size symm_count_;
+
+	/// @brief For metal-mediated crosslinkers, what metal mediates the crosslink?
+	/// @details Defaults to "Zn".
+	std::string metal_type_;
 
 };
 

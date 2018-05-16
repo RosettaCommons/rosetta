@@ -162,9 +162,41 @@ public:
 
 };
 
+////////////////////////////////////////////////////////////////////////////////////////
+/// @brief  Does the residue have to ANY of these basenames?
+class Selector_BASENAME : public ResidueTypeSelectorSingle {
+public:
+
+	Selector_BASENAME(
+		utility::vector1< std::string > const & basenames_in,
+		bool const result
+	):
+		ResidueTypeSelectorSingle( result ),
+		basenames_( basenames_in )
+	{}
+
+	// select by three-letter code
+	bool
+	operator[]( ResidueType const & rsd ) const override {
+		return (  ( std::find( basenames_.begin(), basenames_.end(), rsd.base_name() ) != basenames_.end() ) == desired_result() );
+	}
+
+private:
+	utility::vector1< std::string > basenames_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	Selector_BASENAME();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
+};
 
 ////////////////////////////////////////////////////////////////////////////////////////
-/// @brief  Does the residue have to ANY of these three-letter codes?
+/// @brief  Does the residue have ANY of these three-letter codes?
 class Selector_NAME3 : public ResidueTypeSelectorSingle {
 public:
 

@@ -1,0 +1,21 @@
+-in:file:native inputs/tetrahedral_test.pdb
+-nstruct 3
+-output_virtual true
+-write_all_connect_info
+-cyclic_peptide:sequence_file inputs/seq.txt
+-cyclic_peptide:rama_cutoff 3.0
+-cyclic_peptide:tetrahedral_metal_positions 2,8,14,20,Zn
+-cyclic_peptide:tetrahedral_metal_sidechain_distance_filter_multiplier 1.0
+-cyclic_peptide:tetrahedral_metal_constraints_energy_filter_multiplier 4.0
+-cyclic_peptide:fast_relax_rounds 3
+-cyclic_peptide:min_genkic_hbonds 4
+-cyclic_peptide:min_final_hbonds 4
+-cyclic_peptide:user_set_alpha_dihedrals 1 -72.6 -27.4 178.8 2 -69.2 -14.6 -173.1 3 -74.6 1.5 173.4 4 -86.3 -7.7 179.1 5 -117.7 -179.7 -179.5 6 -135.1 164.1 172.9 7 73.4 26.4 -179.0 8 69.2 14.7 172.8 9 75.0 -2.3 -173.3 10 85.8 8.4 -178.9 11 117.8 179.4 179.6 12 134.7 -164.7 -172.6 13 -73.5 -26.2 178.8 14 -69.3 -14.5 -173.2 15 -74.4 1.3 173.2 16 -86.3 -7.8 179.1 17 -116.8 180.0 178.7 18 -135.5 162.8 173.2 19 72.7 27.1 -178.6 20 69.3 14.2 173.5 21 73.8 -1.0 -173.4 22 86.4 7.8 -179.0 23 117.2 -175.9 180.0 24 131.4 -163.8 -173.2
+-cyclic_peptide:user_set_alpha_dihedral_perturbation 3.0
+#-cyclic_peptide:require_symmetry_repeats 4
+#-cyclic_peptide:require_symmetry_mirroring true
+#-cyclic_peptide:require_symmetry_angle_threshold 20.0
+#-cyclic_peptide:require_symmetry_perturbation 5.0
+-mute protocols.protein_interface_design.design_utils
+-jd2:failed_job_exception false
+-out:levels protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication:500 protocols.cyclic_peptide.CrosslinkerMover:500 protocols.cyclic_peptide.crosslinker.TBMB_Helper:500

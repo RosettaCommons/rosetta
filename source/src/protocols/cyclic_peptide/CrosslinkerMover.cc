@@ -8,9 +8,9 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file protocols/cyclic_peptide/CrosslinkerMover.cc
-/// @brief This mover links three cysteine residues with a three-way cross-linker.  It adds the crosslinker,
-/// sets up constraints, optionally packs and energy-mimizes it into place (packing/minimizing only the crosslinker
-/// and the side-chains to which it connects), andthen optionally relaxes the whole structure.
+/// @brief This mover links two or more residues with a (possibly symmetric) cross-linker.  It adds the crosslinker, sets up constraints,
+/// optionally packs and energy-mimizes it into place (packing/minimizing only the crosslinker and the side-chains to which it connects),
+/// and then optionally relaxes the whole structure.
 /// @author Vikram K. Mulligan (vmullig@u.washington.edu)
 
 // Unit headers
@@ -19,6 +19,7 @@
 #include <protocols/cyclic_peptide/crosslinker/CrosslinkerMoverHelper.hh>
 #include <protocols/cyclic_peptide/crosslinker/TBMB_Helper.hh>
 #include <protocols/cyclic_peptide/crosslinker/TMA_Helper.hh>
+#include <protocols/cyclic_peptide/crosslinker/TetrahedralMetal_Helper.hh>
 
 // Core headers
 #include <core/pose/Pose.hh>
@@ -76,7 +77,8 @@ CrosslinkerMover::CrosslinkerMover():
 	sidechain_distance_filter_multiplier_(1.0),
 	constraints_energy_filter_multiplier_(1.0),
 	symm_type_('A'),
-	symm_count_(1)
+	symm_count_(1),
+	metal_type_("Zn")
 {
 
 }
@@ -105,9 +107,6 @@ CrosslinkerMover::apply( core::pose::Pose& pose){
 
 	core::select::residue_selector::ResidueSubset const selection( residue_selector()->apply(pose) );
 
-	//Check that we've selected exactly three residues:
-	runtime_assert_string_msg( exactly_three_selected( selection ), "Error in protocols::cyclic_peptide::CrosslinkerMover::apply():  The residue selector did not select exactly three residues." );
-
 	//Create the helper, which has the functions that set up specific types of crosslinkers:
 	protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelperOP helper;
 	switch( linker_ ) {
@@ -116,6 +115,9 @@ CrosslinkerMover::apply( core::pose::Pose& pose){
 		break;
 	case TMA :
 		helper = protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelperOP( protocols::cyclic_peptide::crosslinker::TMA_HelperOP( new protocols::cyclic_peptide::crosslinker::TMA_Helper ) );
+		break;
+	case tetrahedral_metal :
+		helper = protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelperOP( protocols::cyclic_peptide::crosslinker::TetrahedralMetal_HelperOP( new protocols::cyclic_peptide::crosslinker::TetrahedralMetal_Helper( metal_type() ) ) );
 		break;
 	default :
 		utility_exit_with_message( "Error in protocols::cyclic_peptide::CrosslinkerMover::apply(): Invalid crosslinker specified." );
@@ -144,6 +146,8 @@ CrosslinkerMover::get_crosslinker_name(
 		return "TBMB";
 	case TMA :
 		return "TMA";
+	case tetrahedral_metal :
+		return "tetrahedral_metal";
 	default :
 		break;
 	}
@@ -195,6 +199,9 @@ CrosslinkerMover::parse_my_tag(
 
 	set_symmetry( tag->getOption<std::string>("symmetry", "A1") );
 
+	set_metal_type( tag->getOption<std::string>("metal_type", "Zn") );
+
+
 	set_behaviour(
 		tag->getOption<bool>( "add_linker", add_linker() ),
 		tag->getOption<bool>( "constrain_linker", constrain_linker() ),
@@ -227,7 +234,7 @@ CrosslinkerMover::provide_xml_schema(
 	using namespace utility::tag;
 
 	XMLSchemaRestriction linker_names_allowed;
-	std::string const linker_possibles("TBMB|TMA");
+	std::string const linker_possibles("TBMB|TMA|tetrahedral_metal");
 	linker_names_allowed.name("linker_names_allowed");
 	linker_names_allowed.base_type( xs_string );
 	linker_names_allowed.add_restriction( xsr_pattern, linker_possibles + "(," + linker_possibles + ")+" );
@@ -237,6 +244,7 @@ CrosslinkerMover::provide_xml_schema(
 		+ XMLSchemaAttribute::required_attribute( "name", xs_string, "A unique name for this instance of the CrosslinkerMover." )
 		+ XMLSchemaAttribute::required_attribute( "linker_name", xs_string, "The name of the type of linker to use.  For example, use TBMB for 1,3,5-tris(bromomethyl)benzene. (Allowed options are " + linker_possibles + ".)" )
 		+ XMLSchemaAttribute( "symmetry", xs_string, "The symmetry of the input pose.  For example, \"C3\" for cyclic, threefold symmetry.  The symmetry must be a character followed by an integer.  Allowed characters are 'A' (asymmetric), 'C' (cyclic), 'D' (dihedral), and 'S' (mirror cyclic)." )
+		+ XMLSchemaAttribute( "metal_type", xs_string, "For crosslinks mediated by metals, which metal is mediating the crosslink?  Defaults to \"Zn\".  (Should be written as an element name -- e.g. \"Cu\", \"Ca\", \"Fe\", etc.)" )
 		+ XMLSchemaAttribute( "add_linker", xsct_rosetta_bool, "Should the linker geometry be added to the pose?  Default true." )
 		+ XMLSchemaAttribute( "constrain_linker", xsct_rosetta_bool, "Should constraints for the linker be added to the pose?  Default true." )
 		+ XMLSchemaAttribute( "pack_and_minimize_linker_and_sidechains", xsct_rosetta_bool, "Should the linker and the connecting sidechains be repacked, and should the jump to the linker, and the linker and connnecting side-chain degrees of torsional freedom, be energy-minimized?  Default true." )
@@ -251,9 +259,9 @@ CrosslinkerMover::provide_xml_schema(
 		+ XMLSchemaAttribute( "final_energy_cutoff", xsct_real, "If we are exiting with error status if the final energy is too high, this is the energy cutoff.  Default 0.0." )
 		;
 	//get attributes for parse residue selector
-	core::select::residue_selector::attributes_for_parse_residue_selector_when_required( attlist, "residue_selector", "A previously-defined residue selector that has been set up to select exactly three residues." );
+	core::select::residue_selector::attributes_for_parse_residue_selector_when_required( attlist, "residue_selector", "A previously-defined residue selector that has been set up to select the residues that will be cross-linked." );
 	protocols::rosetta_scripts::attributes_for_parse_score_function_w_description_when_required(attlist, "scorefxn", "A scorefunction to use for packing, energy-minimization, and filtering.  If constraints are turned off in this score function, they will be turned on automatically at apply time." );
-	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Adds a three-way crosslinker linking three user-specified side-chains.", attlist );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Adds a crosslinker linking two or more user-specified side-chains.", attlist );
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -433,6 +441,14 @@ CrosslinkerMover::set_symm_count(
 	symm_count_ = static_cast< core::Size >( count_in );
 }
 
+/// @brief For metal-mediated crosslinkers, set what metal mediates the crosslink.
+void
+CrosslinkerMover::set_metal_type(
+	std::string const &metal_in
+) {
+	metal_type_ = metal_in;
+}
+
 std::ostream &
 operator<<( std::ostream & os, CrosslinkerMover const & mover )
 {
@@ -475,7 +491,7 @@ CrosslinkerMover::symmetric_apply(
 	protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelperCOP helper
 ) {
 	runtime_assert_string_msg( symm_type() != 'A' && symm_count() > 1, "Error in protocols::cyclic_peptide::CrosslinkerMover::symmetric_apply(): The function was called, but the mover has not been set for symmetry.");
-	runtime_assert_string_msg( helper->selection_is_symmetric( selection, pose, symm_count() ), "Error in protocols::cyclic_peptide::CrosslinkerMover::symmetric_apply(): Either the pose lacks symmetry matching the expected symmetry, or the selector does not select equivalent, symmetric residues." );
+	runtime_assert_string_msg( helper->selection_is_symmetric( selection, pose, helper->symm_subunits_expected() ), "Error in protocols::cyclic_peptide::CrosslinkerMover::symmetric_apply(): Either the pose lacks symmetry matching the expected symmetry, or the selector does not select equivalent, symmetric residues." );
 
 	core::pose::PoseOP pose_copy( pose.clone() );
 
@@ -549,7 +565,7 @@ CrosslinkerMover::filter_by_constraints_energy_symmetric(
 	return helper->filter_by_constraints_energy_symmetric( pose, selection, linker_was_added, constraints_energy_filter_multiplier() );
 }
 
-/// @brief Given a selection of exactly three residues, add a crosslinker, align it crudely to the
+/// @brief Given a selection of residues, add a crosslinker, align it crudely to the
 /// selected residues, and set up covalent bonds.  This version is for symmetric poses.
 void
 CrosslinkerMover::add_linker_symmetric(
@@ -560,7 +576,7 @@ CrosslinkerMover::add_linker_symmetric(
 	helper->add_linker_symmetric(pose, selection);
 }
 
-/// @brief Given a selection of exactly three residues that have already been connected to a crosslinker,
+/// @brief Given a selection of residues that have already been connected to a crosslinker,
 /// add constraints for the crosslinker.  This version is for symmetric poses.
 void
 CrosslinkerMover::add_linker_constraints_symmetric(
@@ -681,7 +697,7 @@ CrosslinkerMover::filter_by_total_score(
 	return failed;
 }
 
-/// @brief Given a selection of exactly three residues, add a crosslinker, align it crudely to the
+/// @brief Given a selection of residues, add a crosslinker, align it crudely to the
 /// selected residues, and set up covalent bonds.
 void
 CrosslinkerMover::add_linker_asymmetric(
@@ -692,7 +708,7 @@ CrosslinkerMover::add_linker_asymmetric(
 	helper->add_linker_asymmetric(pose, selection);
 }
 
-/// @brief Given a selection of exactly three residues that have already been connected to a crosslinker,
+/// @brief Given a selection of residues that have already been connected to a crosslinker,
 /// add constraints for the crosslinker.
 void
 CrosslinkerMover::add_linker_constraints_asymmetric(
@@ -730,15 +746,17 @@ CrosslinkerMover::pack_and_minimize_linker_and_sidechains(
 
 			helper->get_sidechain_indices( selection, res_indices );
 			if ( symmetric ) {
-				if ( add_linker() ) {
+				if ( add_linker() && helper->helper_adds_linker_residue() ) {
 					for ( core::Size i(2), imax(res_indices.size()); i<=imax; ++i ) {
-						res_indices[i] += (i-1);
+						res_indices[i] += (i-1); // This may need to be made a virtual function, overridden by derived classes, at some point.
 					}
 				}
 				helper->get_linker_indices_symmetric(pose, res_indices, linker_indices);
 			} else {
-				linker_indices.resize(1);
-				linker_indices[1] = helper->get_linker_index_asymmetric( pose, res_indices );
+				if ( helper->adds_crosslinker_residue() ) {
+					linker_indices.resize(1);
+					linker_indices[1] = helper->get_linker_index_asymmetric( pose, res_indices );
+				}
 			}
 
 			core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
@@ -753,13 +771,17 @@ CrosslinkerMover::pack_and_minimize_linker_and_sidechains(
 				movemap->set_chi(linker_indices[i], true);
 			}
 			if ( symmetric ) {
-				utility::vector1< core::Size > jump_indices;
-				get_jump_indices_for_symmetric_crosslinker( pose, linker_indices, jump_indices );
-				for ( core::Size i(1), imax(jump_indices.size()); i<=imax; ++i ) {
-					movemap->set_jump(jump_indices[i], true);
+				if ( helper->adds_crosslinker_residue() ) {
+					utility::vector1< core::Size > jump_indices;
+					get_jump_indices_for_symmetric_crosslinker( pose, linker_indices, jump_indices );
+					for ( core::Size i(1), imax(jump_indices.size()); i<=imax; ++i ) {
+						movemap->set_jump(jump_indices[i], true);
+					}
 				}
 			} else {
-				movemap->set_jump( get_jump_index_for_crosslinker( pose, linker_indices[1] ), true );
+				if ( helper->adds_crosslinker_residue() ) {
+					movemap->set_jump( get_jump_index_for_crosslinker( pose, linker_indices[1] ), true );
+				}
 			}
 
 			frlx.set_movemap(movemap);
@@ -768,21 +790,6 @@ CrosslinkerMover::pack_and_minimize_linker_and_sidechains(
 		frlx.apply(pose);
 		helper->post_relax_round_update_steps(pose, selection, whole_structure, symmetric, add_linker());
 	}
-}
-
-/// @brief Given a selection from a ResidueSelector, check that exactly three residues have been selected.
-/// @details Returns true if exactly three have been selected, false otherwise.
-bool
-CrosslinkerMover::exactly_three_selected(
-	core::select::residue_selector::ResidueSubset const & selection
-) const {
-	core::Size const nres( selection.size() );
-	if ( nres< 3 ) return false;
-	core::Size count(0);
-	for ( core::Size i=1; i<=nres; ++i ) {
-		if ( selection[i] ) ++count;
-	}
-	return (count == 3);
 }
 
 /// @brief Given a pose and the index of a crosslinker, figure out the jump in the foldtree that moves the crosslinker.
@@ -810,7 +817,10 @@ CrosslinkerMover::get_jump_indices_for_symmetric_crosslinker(
 	utility::vector1< core::Size > & jump_indices_out
 ) const {
 	core::Size const linker_count( linker_indices_in.size() );
-	runtime_assert_string_msg( linker_count > 0, "Error in protocols::cyclic_peptide::CrosslinkerMover::get_jump_indices_for_symmetric_crosslinker(): At least one linker index must be provided as input." );
+	if ( linker_count == 0 ) { //There's no linker, so return no jump indices.
+		jump_indices_out.clear();
+		return;
+	}
 	jump_indices_out.resize(linker_count);
 
 	core::kinematics::FoldTree const &foldtree( pose.fold_tree() ); //Get a reference to the fold tree.

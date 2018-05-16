@@ -8,6 +8,9 @@ patches/protein_cutpoint_lower.txt
 patches/disulfide.txt
 patches/SidechainConjugation.txt    # SIDECHAIN_CONJUGATION
 
+## Metals
+patches/metals/VirtualMetalConjugation.txt
+
 ## DNA standard
 patches/nucleic/dna/LowerDNA.txt
 patches/nucleic/dna/UpperDNA.txt

@@ -1,0 +1,47 @@
+ 	<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<ScoreFunction name="r15" weights="ref2015.wts" />
+		<ScoreFunction name="r15_cst" weights="ref2015_cst.wts" symmetric="true" />
+	</SCOREFXNS>
+	<TASKOPERATIONS>
+		<RestrictToRepacking name="repack_only" />
+	</TASKOPERATIONS>
+	<FILTERS>
+	</FILTERS>
+	<RESIDUE_SELECTORS>
+		<Index name="select_connecting" resnums="7,17,27,37" />
+	</RESIDUE_SELECTORS>
+	<MOVERS>
+		<BundleGridSampler name="bgs" scorefxn="r15" max_samples="36" use_degrees="true" set_bondlengths="true" set_bondangles="true" set_dihedrals="true" crick_params_file="alpha_helix_100" reset="true" nstruct_mode="true" residue_name="GLY">
+			<Helix r0="6.6" omega0_min="1" omega0_max="3" omega0_samples="3" delta_omega0="45" delta_omega1_min="60" delta_omega1_max="90" delta_omega1_samples="4" z1_offset_min="-1.5" z1_offset_max="-0.5" z1_offset_samples="3" />
+			<Helix r0_copies_helix="1" pitch_from_helix="1" delta_omega0="-45" delta_omega1_copies_helix="1" z1_offset_copies_helix="1" invert="true" />
+		</BundleGridSampler>
+
+		<MutateResidue name="make_his" target="7" new_res="HIS" />
+		<MutateResidue name="make_glu" target="17" new_res="GLU" />
+
+		<SetupForSymmetry name="c2_symm" definition="inputs/C2.symm" />
+
+		<CrosslinkerMover name="place_metal"
+			residue_selector="select_connecting"
+			linker_name="tetrahedral_metal" scorefxn="r15"
+			filter_by_constraints_energy="true"
+			metal_type="Zn"
+			symmetry="C2"
+		/>
+
+		<FastRelax name="relax" scorefxn="r15_cst" repeats="1" />
+
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover="bgs" />
+		<Add mover="make_his" />
+		<Add mover="make_glu" />
+		<Add mover="c2_symm" />
+		<Add mover="place_metal" />
+		Add mover="relax" />
+	</PROTOCOLS>
+	<OUTPUT scorefxn="r15_cst" />
+</ROSETTASCRIPTS>
