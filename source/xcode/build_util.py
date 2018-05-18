@@ -1,57 +1,7 @@
 from __future__ import print_function
 import os, stat, shutil, sys
 
-KNOWN_PROJECTS = [
-    'basic',
-    'utility',
-    'numeric',
-    'ObjexxFCL',
-    'core.1',
-    'core.2',
-    'core.3',
-    'core.4',
-    'core.5',
-    #'interactive',
-    #'game',
-    'devel',
-    ]
 
-if 'cygwin' in sys.platform:
-    KNOWN_PROJECTS.append('protocols.1')
-    KNOWN_PROJECTS.append('protocols.2')
-else:
-    KNOWN_PROJECTS += [
-    'protocols.1',
-    'protocols_a.2',
-    'protocols_b.2',
-    'protocols.3',
-    'protocols_a.4',
-    'protocols_b.4',
-    'protocols_c.4',
-    'protocols_d.4',
-    'protocols_e.4',
-    'protocols_f.4',
-    'protocols_g.4',
-    'protocols_h.4',
-    'protocols_a.5',
-    'protocols_b.5',
-    'protocols_c.5',
-    'protocols_d.5',
-    'protocols_e.5',
-    'protocols.6',
-    'protocols.7',
-        ]
-
-KNOWN_TESTS = [
-    'basic',
-    'apps',
-    'core',
-    'demo',
-    'devel',
-    'numeric',
-    'protocols',
-    'utility',
-    ]
 
 TEST_DIR = 'test_area/'
 CXX_TEST_TEMPLATE_FORMAT = '%stest/cxxtest_main.tpl'
@@ -217,25 +167,7 @@ def clean_test(path_to_mini, test_path, test_files, test_inputs):
             print('removing: ' + rem)
             os.remove(rem)
 
-def project_main(path_to_mini, argv, project_callback):
-    if len(argv) < 2:
-        print('usage: %s [project]...' % argv[0])
-        print('  known projects:')
-        for p in KNOWN_PROJECTS + ['all']:
-            print('    %s' % p)
-        sys.exit(-1)
 
-    projects = argv[1:]
-    if projects == ['all']:
-        projects = KNOWN_PROJECTS
-
-    for project in projects:
-        if project not in KNOWN_PROJECTS:
-            print('unknown project: ' + project)
-            sys.exit(-1)
-
-        project_path, project_files = list_project_files(path_to_mini, project)
-        project_callback(project, project_path, project_files)
 
 def test_main(path_to_mini, argv, project_callback = None):
     if len(argv) < 2:

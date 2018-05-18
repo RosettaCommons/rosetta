@@ -4,10 +4,35 @@ import hashlib, os, string, sys
 #sys.path.append(PATH_TO_ROOT + 'script/')
 import build_util
 
+
+#HOW TO UPDATE XCODE PROJECT WITH NEW LIBRARIES
+#==============================================
+
+#NOTE: This is ONLY for adding new Rosetta libraries - aka protocols.4.src.settings. 
+#If you add, move, delete files and directories, no change needs to happen for you and re-running make_project.py will 
+#update xcode with your new code. 
+
+#You will need to first add the new library to your Xcode project.  Automation will happen at some point, but is not trivial.
+#
+# Steps:
+#        1) Double Click on Rosetta.  See the Target list.  Right click on the closest library to yours and hit duplicate
+#        2) Click on the target like you do on Mac finder window and rename.  Drag the target to where it should be.
+#        3) Double click on your target.  To the right select build phases.  Add your dependencies that are missing to target dependancies
+#             and link binary to library
+#        4) Right click sources, hit create group.  Name the group the library.  Drag the group to the appropriate place.
+#        5) Now, you have to open the src.setting file and find a directory within it.  Right click on your new library in sources.
+#            Add the file into the group.  Select options (lower left).  Make sure the target is selected and new group is checked
+#        6) Finally, meander back to targets. Go to build phases.  If you see a compile sources section, click the upper right x to clear it.
+#           Next, select the + button on the upper left.  Select 'new compile sources' tag.  Under the section, click the + button.
+#           Select a .cc file corresponding in the directory named the same as this target.
+#        7) Run make_project.py - make sure everything works.  Copy your .pbxproj file into .pbxproj.template.
+#        8) Use the grep commands below to get the keys.  Source key is right before it says /* source * /
+
 # group keys grep:
-# grep -A 30 'BE8A17150CA8365000D67A6F \/\* Sources \*\/ =' Rosetta.xcodeproj/project.pbxproj
+# grep -A 50 'BE8A17150CA8365000D67A6F \/\* Sources \*\/ =' Rosetta.xcodeproj/project.pbxproj
 # protocols sources keys grep:
-# grep -A 500 '^\/\* Begin PBXNativeTarget' Rosetta.xcodeproj/project.pbxproj | grep -A 6 '\/\* protocols' | grep -E '(\/\* Sources|\/\* protocols)'
+# grep -A 2000 '^\/\* Begin PBXNativeTarget' Rosetta.xcodeproj/project.pbxproj | grep -A 6 '\/\* protocols' | grep -E '(\/\* Sources|\/\* protocols)'
+
 
 PROJECT_KEYS = {  #        group                       sources
     'basic'       :      ('D1FC4A1A13687F50006C102D', 'D1FC49F813687F42006C102D'),
@@ -23,22 +48,21 @@ PROJECT_KEYS = {  #        group                       sources
     'protocols_a.2' :    ('3D5BA02E1492D69900524FBB', '3B945C85148C9D5200C2FBE5'),
     'protocols_b.2' :    ('3D5BA0311492D6BB00524FBB', '3D5BA0861492D95800524FBB'),
     'protocols.3'   :    ('3D5BA02B1492D66A00524FBB', '3B94613C148CA62A00C2FBE5'),
-    'protocols_a.4' :    ('3D5BA02F1492D6A100524FBB', '3B9461B7148CB2B700C2FBE5'),
-    'protocols_b.4' :    ('3D5BA0321492D6C900524FBB', '3B946329148CBAD200C2FBE5'),
-    'protocols_c.4' :    ('3D5BA0341492D6DF00524FBB', '3B946374148CBAD400C2FBE5'),
-    'protocols_d.4' :    ('3D5BA0361492D6F200524FBB', '3B9463BE148CBAD600C2FBE5'),
-    'protocols_e.4' :    ('3D5BA0381492D70A00524FBB', '3B946408148CBB3F00C2FBE5'),
-    'protocols_f.4' :    ('3D5BA03A1492D71B00524FBB', '3B946452148CBB4200C2FBE5'),
-    'protocols_g.4' :    ('3D5BA03C1492D73300524FBB', '3D5BA0A61492D96800524FBB'),
-    'protocols_h.4' :    ('3D5BA03D1492D73D00524FBB', '3D5BA0C61492D97300524FBB'),
+    'protocols.4'   :    ('7092E3B920AA0DC000495DD9', '7092E45120AA126100495DD9'),
     'protocols_a.5' :    ('3D5BA0301492D6AD00524FBB', '3B9464A6148CBD9D00C2FBE5'),
     'protocols_b.5' :    ('3D5BA0331492D6D200524FBB', '3B9464EE148CBE0A00C2FBE5'),
     'protocols_c.5' :    ('3D5BA0351492D6E700524FBB', '3B946529148CBE0C00C2FBE5'),
     'protocols_d.5' :    ('3D5BA0371492D6FC00524FBB', '3D5BA06A1492D94500524FBB'),
     'protocols_e.5' :    ('3D5BA0391492D71200524FBB', '3B94656E148CBF6800C2FBE5'),
     'protocols_f.5' :    ('3D5BA03B1492D72800524FBB', '3B9465A0148CBF6E00C2FBE5'),
-    'protocols.6' :      ('3D5BA02C1492D67F00524FBB', '3B9465D1148CBF7000C2FBE5'),
+    'protocols_a.6' :    ('7092E67220AA3D9C00495DD9', '7092EB3420AA59CD00495DD9'),
+    'protocols_b.6' :    ('7092E67320AA3DB600495DD9', '7092EB3620AA5A7700495DD9'),
+    'protocols_c.6' :    ('7092E88A20AA575A00495DD9', '7092EB3820AA5B8500495DD9'),
+    'protocols_d.6' :    ('7092E88B20AA576500495DD9', '7092EB3A20AA5BC700495DD9'),
+    'protocols_e.6' :    ('7092E8F120AA57B600495DD9', '7092EB3C20AA5BF400495DD9'),
     'protocols.7'   :    ('3D5BA02D1492D68900524FBB', '3B94661A148CBFBF00C2FBE5'),
+    'protocols.8':       ('7092EA7B20AA58BA00495DD9', '7092EB3E20AA5C2700495DD9'),
+
     #'interactive' :      ('BE8A199B0CA8367500D67A6F', 'BEDC41120CA85A65000FAD97'),
     #'game'        :      ('D1CA2C0E110BFEC30085C48B', 'D1CA2C08110BFE910085C48B'),
     #'interactive.test' : ('D18BC31A0FCDF26D000AE673', 'D18BC3030FCDF1C6000AE673'),
