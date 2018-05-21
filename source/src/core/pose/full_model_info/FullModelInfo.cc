@@ -502,7 +502,6 @@ FullModelInfo::in_a_submotif_seed( utility::vector1< Size > const & res_list, bo
 SubMotifInfoOP
 FullModelInfo::submotif_info_containing_residues( utility::vector1< Size > const & res_list, bool const & check_other_poses /*= false*/ ) const
 {
-	utility::vector1< SubMotifInfoOP >::iterator itr;
 	for ( auto const & elem : submotif_info_list_ ) {
 		bool found_all_residues( true );
 		for ( Size n = 1; n <= res_list.size(); n++ ) {
@@ -526,7 +525,6 @@ FullModelInfo::submotif_info_containing_residues( utility::vector1< Size > const
 void
 FullModelInfo::update_submotif_info_list()
 {
-	utility::vector1< SubMotifInfoOP >::iterator itr;
 	utility::vector1< SubMotifInfoOP > submotif_info_to_delete;
 	for ( auto const & elem : submotif_info_list_ ) {
 		for ( Size n = 1; n <= elem->res_list().size(); ++n ) {
@@ -557,7 +555,6 @@ FullModelInfo::add_submotif_info(
 /// @brief Add a list of SubMotifInfoOPs to the submotif_info_list_.
 void
 FullModelInfo::add_submotif_info( utility::vector1< SubMotifInfoOP > submotif_info_list ) {
-	utility::vector1< SubMotifInfoOP >::iterator itr;
 	for ( auto const & elem : submotif_info_list ) {
 		add_submotif_info( elem );
 	}
@@ -570,7 +567,6 @@ void
 FullModelInfo::add_submotif_info( SubMotifInfoOP submotif_info_op )
 {
 	// could try .index()/.has_value() -- but only if overloaded operator== is used
-	utility::vector1< SubMotifInfoOP >::iterator itr;
 	for ( auto const & elem : submotif_info_list_ ) {
 		if ( elem == submotif_info_op ) return;
 	}
@@ -623,7 +619,6 @@ void
 FullModelInfo::show_submotif_info_list( bool const & for_all_poses /*= false*/ ) const
 {
 	if ( !submotif_info_list_.size() ) return;
-	utility::vector1< SubMotifInfoOP >::iterator itr;
 	std::cout << "SUBMOTIF_INFO FOR POSE" << std::endl;
 	for ( auto const & elem : submotif_info_list_ ) {
 		std::cout << elem << std::endl;

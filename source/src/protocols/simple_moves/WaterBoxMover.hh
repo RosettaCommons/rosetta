@@ -88,7 +88,7 @@ private:
 	core::pack::task::TaskFactoryCOP task_factory_;
 
 	bool point_waters_;
-	bool make_rotatable_, make_point_, make_point_1_, del_virt_, remove_all_;
+	bool make_rotatable_, make_point_, /*make_point_1_,*/ del_virt_, remove_all_;
 	bool bb_sol_, sc_sol_, lig_sol_;
 };
 

@@ -76,8 +76,8 @@ RNA_AnalyticLoopCloser::RNA_AnalyticLoopCloser ( Size const moving_suite, Size c
 	verbose_ ( false ),
 	nsol_ ( 0 ),
 	choose_least_perturb_solution_ ( true ),
-	choose_best_solution_ ( false ),
-	choose_random_solution_ ( false )
+	choose_best_solution_ ( false )
+	//choose_random_solution_ ( false )
 {
 	Mover::type ( "RNA_AnalyticLoopCloser" );
 }
@@ -385,7 +385,6 @@ RNA_AnalyticLoopCloser::apply_solutions ( core::pose::Pose & pose ) {
 
 		fill_solution ( pose, best_sol );
 	} else {
-		debug_assert ( choose_random_solution_ );
 		Size const n = static_cast< int > ( nsol_ * numeric::random::rg().uniform() ) + 1;
 		fill_solution ( pose, n );
 	}

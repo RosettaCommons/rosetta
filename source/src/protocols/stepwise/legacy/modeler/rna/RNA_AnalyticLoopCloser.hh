@@ -135,7 +135,7 @@ private:
 
 	bool choose_least_perturb_solution_;
 	bool choose_best_solution_;
-	bool choose_random_solution_;
+	//bool choose_random_solution_;
 
 }; // class RNA_AnalyticLoopCloser
 

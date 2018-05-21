@@ -818,9 +818,9 @@ private:
 	std::vector< HBondNetStructOP > native_networks_;
 	std::vector< std::vector< core::Size > > merged_vecs_;
 	std::vector< std::set< core::Size > > output_vector_;
-	core::Real pore_radius_;                                //for SASA calculations
+	//core::Real pore_radius_;                                //for SASA calculations
 	std::map<char,std::pair<core::Size,core::Size> > chain_bounds_;
-	core::Real atom_burial_cutoff_;
+	//core::Real atom_burial_cutoff_;
 	core::Real hydrogen_bond_threshold_;                    //2-body cutoff; if < means we found h-bond
 	core::Real onebody_hb_threshold_;                       //1-body cutoff for symmetric one-residue networks
 	core::Real charge_charge_rep_cutoff_;

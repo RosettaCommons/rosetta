@@ -71,8 +71,8 @@ CoarseRNA_LoopCloser::CoarseRNA_LoopCloser():
 	nsol_( 0 ),
 	which_scratch_res_is_cut_( 0 ),
 	choose_least_perturb_solution_( true ),
-	choose_best_solution_( false ),
-	choose_random_solution_( false )
+	choose_best_solution_( false )
+	// choose_random_solution_( false )
 {
 	Mover::type("CoarseRNA_LoopCloser");
 }
@@ -820,7 +820,6 @@ CoarseRNA_LoopCloser::apply_solutions( core::pose::Pose & pose ){
 
 	} else {
 
-		assert( choose_random_solution_ );
 		Size const n = static_cast<int>( nsol_ * numeric::random::rg().uniform() ) + 1;
 		fill_solution( pose, n );
 
