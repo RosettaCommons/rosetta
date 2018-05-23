@@ -102,6 +102,7 @@
 #include <protocols/cyclic_peptide/crosslinker/TBMB_Helper.hh>
 #include <protocols/cyclic_peptide/crosslinker/TMA_Helper.hh>
 #include <protocols/cyclic_peptide/crosslinker/TetrahedralMetal_Helper.hh>
+#include <protocols/cyclic_peptide/crosslinker/OctahedralMetal_Helper.hh>
 
 // Project Headers
 #include <protocols/cyclic_peptide/PeptideStubMover.hh>
@@ -193,6 +194,10 @@ protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::register_opti
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::use_tetrahedral_metal_filters        );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::tetrahedral_metal_sidechain_distance_filter_multiplier   );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::tetrahedral_metal_constraints_energy_filter_multiplier   );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::octahedral_metal_positions          );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::use_octahedral_metal_filters        );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::octahedral_metal_sidechain_distance_filter_multiplier   );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::octahedral_metal_constraints_energy_filter_multiplier   );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::require_symmetry_repeats             );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::require_symmetry_mirroring           );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::require_symmetry_angle_threshold     );
@@ -343,6 +348,10 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication(
 	use_tetrahedral_metal_filters_(true),
 	tetrahedral_metal_sidechain_distance_filter_multiplier_(1.0),
 	tetrahedral_metal_constraints_energy_filter_multiplier_(1.0),
+	octahedral_metal_positions_(),
+	use_octahedral_metal_filters_(true),
+	octahedral_metal_sidechain_distance_filter_multiplier_(1.0),
+	octahedral_metal_constraints_energy_filter_multiplier_(1.0),
 	required_symmetry_repeats_(1),
 	required_symmetry_mirroring_(false),
 	required_symmetry_angle_threshold_(10.0),
@@ -443,6 +452,10 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication( SimpleCycpepPred
 	use_tetrahedral_metal_filters_(src.use_tetrahedral_metal_filters_),
 	tetrahedral_metal_sidechain_distance_filter_multiplier_(src.tetrahedral_metal_sidechain_distance_filter_multiplier_),
 	tetrahedral_metal_constraints_energy_filter_multiplier_(src.tetrahedral_metal_constraints_energy_filter_multiplier_),
+	octahedral_metal_positions_(src.octahedral_metal_positions_),
+	use_octahedral_metal_filters_(src.use_octahedral_metal_filters_),
+	octahedral_metal_sidechain_distance_filter_multiplier_(src.octahedral_metal_sidechain_distance_filter_multiplier_),
+	octahedral_metal_constraints_energy_filter_multiplier_(src.octahedral_metal_constraints_energy_filter_multiplier_),
 	required_symmetry_repeats_(src.required_symmetry_repeats_),
 	required_symmetry_mirroring_(src.required_symmetry_mirroring_),
 	required_symmetry_angle_threshold_(src.required_symmetry_angle_threshold_),
@@ -698,6 +711,14 @@ SimpleCycpepPredictApplication::initialize_from_options(
 	use_tetrahedral_metal_filters_ = option[basic::options::OptionKeys::cyclic_peptide::use_tetrahedral_metal_filters]();
 	tetrahedral_metal_sidechain_distance_filter_multiplier_ = option[basic::options::OptionKeys::cyclic_peptide::tetrahedral_metal_sidechain_distance_filter_multiplier]();
 	tetrahedral_metal_constraints_energy_filter_multiplier_ = option[basic::options::OptionKeys::cyclic_peptide::tetrahedral_metal_constraints_energy_filter_multiplier]();
+
+	//Store the octahedral metal positions.
+	if ( option[basic::options::OptionKeys::cyclic_peptide::octahedral_metal_positions].user() ) {
+		set_octahedral_metal_positions_from_string_vector( option[basic::options::OptionKeys::cyclic_peptide::octahedral_metal_positions]() );
+	}
+	use_octahedral_metal_filters_ = option[basic::options::OptionKeys::cyclic_peptide::use_octahedral_metal_filters]();
+	octahedral_metal_sidechain_distance_filter_multiplier_ = option[basic::options::OptionKeys::cyclic_peptide::octahedral_metal_sidechain_distance_filter_multiplier]();
+	octahedral_metal_constraints_energy_filter_multiplier_ = option[basic::options::OptionKeys::cyclic_peptide::octahedral_metal_constraints_energy_filter_multiplier]();
 
 	//Options for symmetric sampling:
 	runtime_assert_string_msg( option[basic::options::OptionKeys::cyclic_peptide::require_symmetry_repeats]() > 0, "Error in simple_cycpep_predict application: The \"-cyclic_peptide:require_symmetry_repeats\" flag must be provided with a positive value." );
@@ -987,10 +1008,47 @@ SimpleCycpepPredictApplication::set_tetrahedral_metal_positions_from_string_vect
 	}
 }
 
+/// @brief Given an input vector of strings of the form "res1,res2,res3,res4,metal_name", parse this and populate
+/// the octahedral_metal_positions_ vector.
+/// @details Resets the octahedral_metal_positions_ vector.
+void
+SimpleCycpepPredictApplication::set_octahedral_metal_positions_from_string_vector(
+	utility::vector1< std::string > const &vect
+) {
+	core::Size const nstrings( vect.size() );
+	reset_octahedral_metal_positions();
+	if ( !nstrings ) return; //Do nothing more for size 0 vector.
+
+	utility::fixedsizearray1< int, 6 > resnums; //Deliberately ints.
+	std::string element;
+
+	for ( core::Size i(1); i<=nstrings; ++i ) {
+		std::istringstream ss( vect[i] );
+		core::Size counter(0);
+		while ( std::getline(ss, element, ',') ) {
+			++counter;
+			if ( counter < 7 ) {
+				resnums[counter] = std::atoi(element.c_str());
+				runtime_assert_string_msg( resnums[counter] > 0, "Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::set_octahedral_metal_positions_from_string_vector(): All residue numbers must be greater than zero when setting residue indices for octahedrally-coordinated metals." );
+			} else if ( counter > 7 ) {
+				utility_exit_with_message( "Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::set_octahedral_metal_positions_from_string_vector(): A octahedrally-coordinated metal setup input flag was provided that was not of the form \"res1,res2,res3,res4,metal_name\".  Comma-separated lists of seven entries (six numbers and a metal name) are required." );
+			}
+		}
+		add_entry_to_octahedral_metal_positions(static_cast<core::Size>(resnums[1]), static_cast<core::Size>(resnums[2]), static_cast<core::Size>(resnums[3]), static_cast<core::Size>(resnums[4]), static_cast<core::Size>(resnums[5]), static_cast<core::Size>(resnums[6]), element);
+		TR << "Parsed octahedral metal setup where res1=" << resnums[1] << ", res2=" << resnums[2] << ", res3=" << resnums[3] << ", res4=" << resnums[4] << ", res5=" << resnums[5] << ", res6=" << resnums[6] << ", metal=" << element << std::endl;
+	}
+}
+
 /// @brief Resets the tetrahedral_metal_positions_ vector.
 void
 SimpleCycpepPredictApplication::reset_tetrahedral_metal_positions() {
 	tetrahedral_metal_positions_.clear();
+}
+
+/// @brief Resets the octahedral_metal_positions_ vector.
+void
+SimpleCycpepPredictApplication::reset_octahedral_metal_positions() {
+	octahedral_metal_positions_.clear();
 }
 
 /// @brief Adds an entry to the tetrahedral_metal_positions_ vector.
@@ -1002,7 +1060,7 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication::add_entry_to_tet
 	core::Size const res4,
 	std::string const & metal_type
 ) {
-	utility::vector1< core::Size > residues(4);
+	utility::fixedsizearray1< core::Size, 4 > residues;
 	runtime_assert(res1 > 0 && res2 > 0 && res3 > 0 && res4 > 0);
 	runtime_assert(!metal_type.empty());
 	residues[1] = res1;
@@ -1011,6 +1069,30 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication::add_entry_to_tet
 	residues[4] = res4;
 	tetrahedral_metal_positions_.push_back( std::make_pair( residues, metal_type) );
 }
+
+/// @brief Adds an entry to the octahedral_metal_positions_ vector.
+void
+SimpleCycpepPredictApplication::SimpleCycpepPredictApplication::add_entry_to_octahedral_metal_positions(
+	core::Size const res1,
+	core::Size const res2,
+	core::Size const res3,
+	core::Size const res4,
+	core::Size const res5,
+	core::Size const res6,
+	std::string const & metal_type
+) {
+	utility::fixedsizearray1< core::Size, 6 > residues;
+	runtime_assert(res1 > 0 && res2 > 0 && res3 > 0 && res4 > 0 && res5 > 0 && res6 > 0);
+	runtime_assert(!metal_type.empty());
+	residues[1] = res1;
+	residues[2] = res2;
+	residues[3] = res3;
+	residues[4] = res4;
+	residues[5] = res5;
+	residues[6] = res6;
+	octahedral_metal_positions_.push_back( std::make_pair( residues, metal_type) );
+}
+
 
 /// @brief Set whether we're using RamaPrePro tables for sampling.
 /// @details Setting this to "false" lets us use classic rama tables.  True by default.
@@ -2653,8 +2735,7 @@ SimpleCycpepPredictApplication::genkic_close(
 	//If we're considering tetrahedral metal crosslinks, add 'em here:
 	if ( tetrahedral_metal_positions_.size() > 0 ) {
 		for ( core::Size i(1), imax(tetrahedral_metal_positions_.size()); i<=imax; ++i ) {
-			utility::vector1< core::Size > const & resnums( tetrahedral_metal_positions_[i].first );
-			debug_assert(resnums.size() == 4); //Should always be true.
+			utility::fixedsizearray1< core::Size, 4 > const & resnums( tetrahedral_metal_positions_[i].first );
 			core::select::residue_selector::ResidueIndexSelectorOP index_selector( new core::select::residue_selector::ResidueIndexSelector );
 			for ( core::Size j(1); j<=4; ++j ) index_selector->append_index( current_position( resnums[j], cyclic_offset, nres ) );
 			protocols::cyclic_peptide::CrosslinkerMoverOP metallinker( new protocols::cyclic_peptide::CrosslinkerMover );
@@ -2667,6 +2748,26 @@ SimpleCycpepPredictApplication::genkic_close(
 			metallinker->set_sidechain_frlx_rounds(3);
 			std::stringstream movername;
 			movername << "tetrahedral_metal_link_" << i;
+			pp->add_mover_filter_pair( metallinker, movername.str(), nullptr );
+		}
+	}
+
+	//If we're considering octahedral metal crosslinks, add 'em here:
+	if ( octahedral_metal_positions_.size() > 0 ) {
+		for ( core::Size i(1), imax(octahedral_metal_positions_.size()); i<=imax; ++i ) {
+			utility::fixedsizearray1< core::Size, 6 > const & resnums( octahedral_metal_positions_[i].first );
+			core::select::residue_selector::ResidueIndexSelectorOP index_selector( new core::select::residue_selector::ResidueIndexSelector );
+			for ( core::Size j(1); j<=6; ++j ) index_selector->append_index( current_position( resnums[j], cyclic_offset, nres ) );
+			protocols::cyclic_peptide::CrosslinkerMoverOP metallinker( new protocols::cyclic_peptide::CrosslinkerMover );
+			metallinker->set_residue_selector(index_selector);
+			metallinker->set_linker_name("octahedral_metal");
+			metallinker->set_metal_type(octahedral_metal_positions_[i].second);
+			metallinker->set_behaviour(true, true, true, false);
+			metallinker->set_filter_behaviour(use_octahedral_metal_filters_, use_octahedral_metal_filters_, false, 0.0, octahedral_metal_sidechain_distance_filter_multiplier_, octahedral_metal_constraints_energy_filter_multiplier_);
+			metallinker->set_scorefxn( sfxn_highhbond );
+			metallinker->set_sidechain_frlx_rounds(3);
+			std::stringstream movername;
+			movername << "octahedral_metal_link_" << i;
 			pp->add_mover_filter_pair( metallinker, movername.str(), nullptr );
 		}
 	}
@@ -2803,16 +2904,16 @@ SimpleCycpepPredictApplication::genkic_close(
 
 	//If we're filtering by symmetry, do so again here:
 	if ( required_symmetry_repeats_ > 1 ) {
-		protocols::cyclic_peptide::CycpepSymmetryFilterOP symmfilter1( new protocols::cyclic_peptide::CycpepSymmetryFilter );
-		symmfilter1->set_symm_repeats( required_symmetry_repeats_ );
-		symmfilter1->set_mirror_symm( required_symmetry_mirroring_ );
-		symmfilter1->set_angle_threshold( required_symmetry_angle_threshold_ );
+		protocols::cyclic_peptide::CycpepSymmetryFilterOP symmfilter2( new protocols::cyclic_peptide::CycpepSymmetryFilter );
+		symmfilter2->set_symm_repeats( required_symmetry_repeats_ );
+		symmfilter2->set_mirror_symm( required_symmetry_mirroring_ );
+		symmfilter2->set_angle_threshold( required_symmetry_angle_threshold_ );
 		core::select::residue_selector::ResidueIndexSelectorOP iselector( new core::select::residue_selector::ResidueIndexSelector );
 		std::stringstream pep_indices("");
 		pep_indices << "1-" << sequence_length();
 		iselector->set_index( pep_indices.str() );
-		symmfilter1->set_selector( iselector );
-		pp->add_mover_filter_pair(nullptr, "Cycpep_Symmetry_Filter_2", symmfilter1);
+		symmfilter2->set_selector( iselector );
+		pp->add_mover_filter_pair(nullptr, "Cycpep_Symmetry_Filter_2", symmfilter2);
 	}
 
 	//Create the mover and set options:
@@ -2925,41 +3026,6 @@ SimpleCycpepPredictApplication::genkic_close(
 						}
 					}
 				}
-				if ( required_symmetry_repeats_ > 1 && i > res_per_symm_repeat ) { //This is a symmetry repeat
-					core::Size res_to_copy( i % res_per_symm_repeat );
-					if ( res_to_copy == 0 ) { res_to_copy = res_per_symm_repeat; }
-					if ( required_symmetry_mirroring_ && ( (i-1) / res_per_symm_repeat ) % 2 == 1 ) {
-						genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::mirror_backbone_dihedrals );
-					} else {
-						genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::copy_backbone_dihedrals );
-					}
-					genkic->add_residue_to_perturber_residue_list( res_to_copy );
-					genkic->add_residue_to_perturber_residue_list( i );
-					if ( required_symmetry_perturbation_ != 0.0 ) {
-						genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::perturb_dihedral );
-						if ( pose->residue_type(i).is_alpha_aa() ) {
-							core::id::NamedAtomID const Natom( "N", i );
-							core::id::NamedAtomID const CAatom( "CA", i );
-							core::id::NamedAtomID const Catom( "C", i );
-							utility::vector1< core::id::NamedAtomID > phivect; phivect.push_back( Natom ); phivect.push_back( CAatom );
-							utility::vector1< core::id::NamedAtomID > psivect; psivect.push_back( CAatom ); psivect.push_back( Catom );
-							genkic->add_atomset_to_perturber_atomset_list(phivect);
-							genkic->add_atomset_to_perturber_atomset_list(psivect);
-						} else if ( pose->residue_type(i).is_oligourea() ) {
-							core::id::NamedAtomID const Natom( "N", i );
-							core::id::NamedAtomID const CAatom( "CA", i );
-							core::id::NamedAtomID const CMatom( "CM", i );
-							core::id::NamedAtomID const NUatom( "NU", i );
-							utility::vector1< core::id::NamedAtomID > phivect; phivect.push_back( Natom ); phivect.push_back( CAatom );
-							utility::vector1< core::id::NamedAtomID > thetavect; thetavect.push_back( CAatom ); thetavect.push_back( CMatom );
-							utility::vector1< core::id::NamedAtomID > psivect; psivect.push_back( CMatom ); psivect.push_back( NUatom );
-							genkic->add_atomset_to_perturber_atomset_list(phivect);
-							genkic->add_atomset_to_perturber_atomset_list(thetavect);
-							genkic->add_atomset_to_perturber_atomset_list(psivect);
-						}
-						genkic->add_value_to_perturber_value_list( required_symmetry_perturbation_ );
-					}
-				}
 			}
 		} else {
 			//TODO Randomize mainchain torsions here for beta- and gamma-amino acids.
@@ -2981,6 +3047,50 @@ SimpleCycpepPredictApplication::genkic_close(
 				genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::sample_cis_peptide_bond );
 				genkic->add_value_to_perturber_value_list( sample_cis_pro_frequency() );
 				genkic->add_residue_to_perturber_residue_list( i==1 ? nres : i-1 ); //The residue PRECEDING the proline is perturbed
+			}
+		}
+	}
+
+	//Very last sampling: copy symmetric positions.  Must be after ALL other perturbers.
+	if ( required_symmetry_repeats_ > 1 ) {
+		for ( core::Size i(1), imax(pose->total_residue()); i<=imax; ++i ) { //This time, we loop through all residues in order.
+			//Since symmetric sampling is only compatible with N-to-C cyclization, we don't need to worry
+			//about tail residues.  We only need to exclude the anchor residue:
+			if ( i == anchor_res ) continue;
+			if ( i > res_per_symm_repeat ) { //This is a symmetry repeat
+				core::Size res_to_copy( i % res_per_symm_repeat );
+				if ( res_to_copy == 0 ) { res_to_copy = res_per_symm_repeat; }
+				if ( required_symmetry_mirroring_ && ( (i-1) / res_per_symm_repeat ) % 2 == 1 ) {
+					genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::mirror_backbone_dihedrals );
+				} else {
+					genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::copy_backbone_dihedrals );
+				}
+				genkic->add_residue_to_perturber_residue_list( res_to_copy );
+				genkic->add_residue_to_perturber_residue_list( i );
+				if ( required_symmetry_perturbation_ != 0.0 ) {
+					genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::perturb_dihedral );
+					if ( pose->residue_type(i).is_alpha_aa() ) {
+						core::id::NamedAtomID const Natom( "N", i );
+						core::id::NamedAtomID const CAatom( "CA", i );
+						core::id::NamedAtomID const Catom( "C", i );
+						utility::vector1< core::id::NamedAtomID > phivect; phivect.push_back( Natom ); phivect.push_back( CAatom );
+						utility::vector1< core::id::NamedAtomID > psivect; psivect.push_back( CAatom ); psivect.push_back( Catom );
+						genkic->add_atomset_to_perturber_atomset_list(phivect);
+						genkic->add_atomset_to_perturber_atomset_list(psivect);
+					} else if ( pose->residue_type(i).is_oligourea() ) {
+						core::id::NamedAtomID const Natom( "N", i );
+						core::id::NamedAtomID const CAatom( "CA", i );
+						core::id::NamedAtomID const CMatom( "CM", i );
+						core::id::NamedAtomID const NUatom( "NU", i );
+						utility::vector1< core::id::NamedAtomID > phivect; phivect.push_back( Natom ); phivect.push_back( CAatom );
+						utility::vector1< core::id::NamedAtomID > thetavect; thetavect.push_back( CAatom ); thetavect.push_back( CMatom );
+						utility::vector1< core::id::NamedAtomID > psivect; psivect.push_back( CMatom ); psivect.push_back( NUatom );
+						genkic->add_atomset_to_perturber_atomset_list(phivect);
+						genkic->add_atomset_to_perturber_atomset_list(thetavect);
+						genkic->add_atomset_to_perturber_atomset_list(psivect);
+					}
+					genkic->add_value_to_perturber_value_list( required_symmetry_perturbation_ );
+				}
 			}
 		}
 	}
@@ -3284,6 +3394,11 @@ SimpleCycpepPredictApplication::depermute (
 		re_append_tetrahedral_metal_residues( pose, newpose );
 	}
 
+	//Re-append octahedral metal linker residues:
+	if ( octahedral_metal_positions_.size() > 0 ) {
+		re_append_octahedral_metal_residues( pose, newpose );
+	}
+
 	//I don't bother to set up cyclic constraints, since we won't be doing any more minimization after calling this function.
 
 	//Set up disulfide variants, if we're doing disulfide cyclization.
@@ -3572,11 +3687,30 @@ SimpleCycpepPredictApplication::re_append_tetrahedral_metal_residues(
 ) const {
 	debug_assert( pose->total_residue() == newpose->total_residue() );
 	for ( core::Size i(1), imax(tetrahedral_metal_positions_.size()); i<=imax; ++i ) {
-		utility::vector1< core::Size > const &residues( tetrahedral_metal_positions_[i].first );
+		utility::fixedsizearray1< core::Size, 4 > const &residues( tetrahedral_metal_positions_[i].first );
 		debug_assert(residues.size() == 4);
 		protocols::cyclic_peptide::crosslinker::TetrahedralMetal_Helper helper;
 		core::select::residue_selector::ResidueSubset selection( newpose->total_residue() );
 		for ( core::Size i(1); i<=4; ++i ) {
+			selection[residues[i]] = true;
+		}
+		helper.add_linker_asymmetric( *newpose, selection );
+	}
+}
+
+/// @brief Given a pose with octahedral metal variants and another pose without the variants, add back the variants to the latter.
+/// @details This function is called at the end of the protocol, and therefore doesn't bother to add back contraints.
+void
+SimpleCycpepPredictApplication::re_append_octahedral_metal_residues(
+	core::pose::PoseCOP pose,
+	core::pose::PoseOP newpose
+) const {
+	debug_assert( pose->total_residue() == newpose->total_residue() );
+	for ( core::Size i(1), imax(octahedral_metal_positions_.size()); i<=imax; ++i ) {
+		utility::fixedsizearray1< core::Size, 6 > const &residues( octahedral_metal_positions_[i].first );
+		protocols::cyclic_peptide::crosslinker::OctahedralMetal_Helper helper;
+		core::select::residue_selector::ResidueSubset selection( newpose->total_residue() );
+		for ( core::Size i(1); i<=6; ++i ) {
 			selection[residues[i]] = true;
 		}
 		helper.add_linker_asymmetric( *newpose, selection );

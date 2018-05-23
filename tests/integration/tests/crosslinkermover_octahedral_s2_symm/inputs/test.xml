@@ -1,0 +1,44 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<ScoreFunction name="r15" weights="ref2015.wts" />
+	</SCOREFXNS>
+	<TASKOPERATIONS>
+	</TASKOPERATIONS>
+	<FILTERS>
+	</FILTERS>
+	<RESIDUE_SELECTORS>
+		<Index name="select_ligands" resnums="9,29,49,69,89,109" />
+	</RESIDUE_SELECTORS>
+	<MOVERS>
+
+		<BundleGridSampler name="bgs1" helix_length="20" scorefxn="r15" use_degrees="true"
+				r0="8.4" nstruct_mode="true" max_samples="9" >
+			<Helix invert="false" delta_omega0="-60" omega0="0" z1_offset="1.375" delta_omega1="6" />
+			<Helix delta_omega0="0" r0="7.2" invert="true" pitch_from_helix="1" z1_offset_min="-0.675" z1_offset_max="-0.075" z1_offset_samples="3" />
+			<Helix r0_copies_helix="1" delta_omega0="60" invert="false" pitch_from_helix="1" z1_offset="2.75" delta_omega1_min="10" delta_omega1_max="15" delta_omega1_samples="3" />
+		</BundleGridSampler>
+
+		<DeclareBond name="add_termini" add_termini="true" res1="1" res2="2" atom1="C" atom2="N" />
+		
+		<MutateResidue name="mut1" target="9" new_res="HIS" />
+		<MutateResidue name="mut2" target="29" new_res="HIS" />
+		<MutateResidue name="mut3" target="49" new_res="GLU" />
+		
+		<SetupForSymmetry name="c2_symm" definition="inputs/S2.symm" />
+
+		<CrosslinkerMover name="xlink" scorefxn="r15" linker_name="octahedral_metal" symmetry="S2" metal_type="Fe2" residue_selector="select_ligands" constraints_energy_filter_multiplier="1.0" sidechain_distance_filter_multiplier="1.5" />
+
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover="bgs1" />
+		<Add mover="add_termini" />
+		<Add mover="mut1" />
+		<Add mover="mut2" />
+		<Add mover="mut3" />
+		<Add mover="c2_symm" />
+		<Add mover="xlink" />
+	</PROTOCOLS>
+
+</ROSETTASCRIPTS>

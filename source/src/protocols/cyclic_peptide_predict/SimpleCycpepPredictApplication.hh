@@ -36,6 +36,7 @@
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
+#include <utility/fixedsizearray1.hh>
 
 // C++ headers
 #include <cstdio>
@@ -194,11 +195,22 @@ public:
 	/// @details Resets the tetrahedral_metal_positions_ vector.
 	void set_tetrahedral_metal_positions_from_string_vector( utility::vector1< std::string > const &vect );
 
+	/// @brief Given an input vector of strings of the form "res1,res2,res3,res4,metal_name", parse this and populate
+	/// the octahedral_metal_positions_ vector.
+	/// @details Resets the octahedral_metal_positions_ vector.
+	void set_octahedral_metal_positions_from_string_vector( utility::vector1< std::string > const &vect );
+
 	/// @brief Resets the tetrahedral_metal_positions_ vector.
 	void reset_tetrahedral_metal_positions();
 
+	/// @brief Resets the octahedral_metal_positions_ vector.
+	void reset_octahedral_metal_positions();
+
 	/// @brief Adds an entry to the tetrahedral_metal_positions_ vector.
 	void add_entry_to_tetrahedral_metal_positions( core::Size const res1, core::Size const res2, core::Size const res3, core::Size const res4, std::string const & metal_type );
+
+	/// @brief Adds an entry to the octahedral_metal_positions_ vector.
+	void add_entry_to_octahedral_metal_positions( core::Size const res1, core::Size const res2, core::Size const res3, core::Size const res4, core::Size const res5, core::Size const res6, std::string const & metal_type );
 
 	/// @brief Set whether we're using RamaPrePro tables for sampling.
 	/// @details Setting this to "false" lets us use classic rama tables.  True by default.
@@ -588,6 +600,10 @@ private:
 	/// @details This function is called at the end of the protocol, and therefore doesn't bother to add back contraints.
 	void re_append_tetrahedral_metal_residues( core::pose::PoseCOP pose, core::pose::PoseOP newpose ) const;
 
+	/// @brief Given a pose with octahedral metal variants and another pose without the variants, add back the variants to the latter.
+	/// @details This function is called at the end of the protocol, and therefore doesn't bother to add back contraints.
+	void re_append_octahedral_metal_residues( core::pose::PoseCOP pose, core::pose::PoseOP newpose ) const;
+
 	/// @brief Get the cyclization type (N-to-C cyclic, terminal disulfide, etc.).
 	/// @details Const-access only.
 	inline SCPA_cyclization_type cyclization_type() const { return cyclization_type_; }
@@ -941,7 +957,7 @@ private:
 
 	/// @brief List of positions linked by a tetrahedrally-coordinated metal.
 	/// @details This is a vector of pairs of (lists of four residues, metal type string).
-	utility::vector1< std::pair< utility::vector1< core::Size >, std::string > > tetrahedral_metal_positions_;
+	utility::vector1< std::pair< utility::fixedsizearray1< core::Size, 4 >, std::string > > tetrahedral_metal_positions_;
 
 	/// @brief If true, filters are applied based on distance between metal-conjugated residues and on constraints to discard
 	/// GenKIC solutions that can't be crosslinked easily.
@@ -955,6 +971,23 @@ private:
 	/// @brief Multiplier to make the tetrahedral metal constraints energy filter more permissive.
 	/// @details Default 1.0.
 	core::Real tetrahedral_metal_constraints_energy_filter_multiplier_;
+
+	/// @brief List of positions linked by a octahedrally-coordinated metal.
+	/// @details This is a vector of pairs of (lists of four residues, metal type string).
+	utility::vector1< std::pair< utility::fixedsizearray1< core::Size, 6 >, std::string > > octahedral_metal_positions_;
+
+	/// @brief If true, filters are applied based on distance between metal-conjugated residues and on constraints to discard
+	/// GenKIC solutions that can't be crosslinked easily.
+	/// @details True by default.
+	bool use_octahedral_metal_filters_;
+
+	/// @brief Multiplier to make the octahedral metal distance filter more permissive.
+	/// @details Default 1.0.
+	core::Real octahedral_metal_sidechain_distance_filter_multiplier_;
+
+	/// @brief Multiplier to make the octahedral metal constraints energy filter more permissive.
+	/// @details Default 1.0.
+	core::Real octahedral_metal_constraints_energy_filter_multiplier_;
 
 	/// @brief If this option is used, then only backbones that are cN (or sN, if mirror symmetry is required) symmetric will be accepted.
 	/// For example, if set to 2, then only c2-symmetric backbones will be accepted.

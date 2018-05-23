@@ -1,0 +1,1687 @@
+core.init: command: ROSETTA/main/source/bin/rosetta_scripts.default.linuxgccrelease @flags -database ROSETTA/main/database -testing:INTEGRATION_TEST
+core.init: Constant seed mode, seed=1111111 seed_offset=0 real_seed=1111111
+protocols.evaluation.ChiWellRmsdEvaluatorCreator: Evaluation Creator active ... 
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet centroid: Skipping patch VirtualBB as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet centroid: Skipping patch N_acetylated as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet centroid: Skipping patch C_methylamidated as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet centroid: Skipping patch ser_phosphorylated as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet centroid: Skipping patch thr_phosphorylated as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet centroid: Skipping patch ShoveBB as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet centroid: Skipping patch LowerDNA as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet centroid: Skipping patch UpperDNA as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet centroid: Skipping patch VirtualDNAPhosphate as requested
+core.chemical.GlobalResidueTypeSet: Finished initializing centroid residue type set.  Created 62 residue types
+protocols.rosetta_scripts.RosettaScriptsParser: dock_design_filename=inputs/test.xml
+protocols.rosetta_scripts.RosettaScriptsParser: Generating XML Schema for rosetta_scripts...
+protocols.rosetta_scripts.RosettaScriptsParser: ...done
+protocols.rosetta_scripts.RosettaScriptsParser: Initializing schema validator...
+protocols.rosetta_scripts.RosettaScriptsParser: ...done
+protocols.rosetta_scripts.RosettaScriptsParser: Validating input script...
+protocols.rosetta_scripts.RosettaScriptsParser: ...done
+protocols.rosetta_scripts.RosettaScriptsParser: Parsed script:
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<ScoreFunction name="r15" weights="ref2015.wts"/>
+	</SCOREFXNS>
+	<TASKOPERATIONS/>
+	<FILTERS/>
+	<RESIDUE_SELECTORS>
+		<Index name="select_ligands" resnums="9,29,49,69,89,109"/>
+	</RESIDUE_SELECTORS>
+	<MOVERS>
+		<BundleGridSampler helix_length="20" max_samples="9" name="bgs1" nstruct_mode="true" r0="8.4" scorefxn="r15" use_degrees="true">
+			<Helix delta_omega0="-60" delta_omega1="6" invert="false" omega0="0" z1_offset="1.375"/>
+			<Helix delta_omega0="0" invert="true" pitch_from_helix="1" r0="7.2" z1_offset_max="-0.075" z1_offset_min="-0.675" z1_offset_samples="3"/>
+			<Helix delta_omega0="60" delta_omega1_max="15" delta_omega1_min="10" delta_omega1_samples="3" invert="false" pitch_from_helix="1" r0_copies_helix="1" z1_offset="2.75"/>
+		</BundleGridSampler>
+		<DeclareBond add_termini="true" atom1="C" atom2="N" name="add_termini" res1="1" res2="2"/>
+		<MutateResidue name="mut1" new_res="HIS" target="9"/>
+		<MutateResidue name="mut2" new_res="HIS" target="29"/>
+		<MutateResidue name="mut3" new_res="GLU" target="49"/>
+		<SetupForSymmetry definition="inputs/S2.symm" name="c2_symm"/>
+		<CrosslinkerMover constraints_energy_filter_multiplier="1.0" linker_name="octahedral_metal" metal_type="Fe2" name="xlink" residue_selector="select_ligands" scorefxn="r15" sidechain_distance_filter_multiplier="1.5" symmetry="S2"/>
+	</MOVERS>
+	<APPLY_TO_POSE/>
+	<PROTOCOLS>
+		<Add mover="bgs1"/>
+		<Add mover="add_termini"/>
+		<Add mover="mut1"/>
+		<Add mover="mut2"/>
+		<Add mover="mut3"/>
+		<Add mover="c2_symm"/>
+		<Add mover="xlink"/>
+	</PROTOCOLS>
+</ROSETTASCRIPTS>
+core.scoring.ScoreFunctionFactory: SCOREFUNCTION: ref2015
+core.scoring.etable: Starting energy table calculation
+core.scoring.etable: smooth_etable: changing atr/rep split to bottom of energy well
+core.scoring.etable: smooth_etable: spline smoothing lj etables (maxdis = 6)
+core.scoring.etable: smooth_etable: spline smoothing solvation etables (max_dis = 6)
+core.scoring.etable: Finished calculating energy tables.
+basic.io.database: Database file opened: scoring/score_functions/hbonds/ref2015_params/HBPoly1D.csv
+basic.io.database: Database file opened: scoring/score_functions/hbonds/ref2015_params/HBFadeIntervals.csv
+basic.io.database: Database file opened: scoring/score_functions/hbonds/ref2015_params/HBEval.csv
+basic.io.database: Database file opened: scoring/score_functions/hbonds/ref2015_params/DonStrength.csv
+basic.io.database: Database file opened: scoring/score_functions/hbonds/ref2015_params/AccStrength.csv
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch LowerDNA as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch UpperDNA as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch VirtualDNAPhosphate as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch ShoveBB as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch VirtualBB as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch N_acetylated as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch C_methylamidated as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch SpecialRotamer as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch Cterm_amidation as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch pro_hydroxylated_case1 as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch pro_hydroxylated_case2 as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch ser_phosphorylated as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch thr_phosphorylated as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch tyr_phosphorylated as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch tyr_sulfated as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch lys_monomethylated as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch lys_dimethylated as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch lys_trimethylated as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch lys_acetylated as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch glu_carboxylated as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch cys_acetylated as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch tyr_diiodinated as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch MethylatedProteinCterm as requested
+basic.io.database: Database file opened: scoring/score_functions/rama/fd/all.ramaProb
+basic.io.database: Database file opened: scoring/score_functions/rama/fd/prepro.ramaProb
+basic.io.database: Database file opened: scoring/score_functions/omega/omega_ppdep.all.txt
+basic.io.database: Database file opened: scoring/score_functions/omega/omega_ppdep.gly.txt
+basic.io.database: Database file opened: scoring/score_functions/omega/omega_ppdep.pro.txt
+basic.io.database: Database file opened: scoring/score_functions/omega/omega_ppdep.valile.txt
+basic.io.database: Database file opened: scoring/score_functions/P_AA_pp/P_AA
+basic.io.database: Database file opened: scoring/score_functions/P_AA_pp/P_AA_n
+core.scoring.P_AA: shapovalov_lib::shap_p_aa_pp_smooth_level of 1( aka low_smooth ) got activated.
+basic.io.database: Database file opened: scoring/score_functions/P_AA_pp/shapovalov/10deg/kappa131/a20.prop
+core.scoring.etable: Starting energy table calculation
+core.scoring.etable: smooth_etable: changing atr/rep split to bottom of energy well
+core.scoring.etable: smooth_etable: spline smoothing lj etables (maxdis = 6)
+core.scoring.etable: smooth_etable: spline smoothing solvation etables (max_dis = 6)
+core.scoring.etable: Finished calculating energy tables.
+basic.io.database: Database file opened: scoring/score_functions/PairEPotential/pdb_pair_stats_fine
+basic.io.database: Database file opened: scoring/score_functions/InterchainPotential/interchain_env_log.txt
+basic.io.database: Database file opened: scoring/score_functions/InterchainPotential/interchain_pair_log.txt
+basic.io.database: Database file opened: scoring/score_functions/EnvPairPotential/env_log.txt
+basic.io.database: Database file opened: scoring/score_functions/EnvPairPotential/cbeta_den.txt
+basic.io.database: Database file opened: scoring/score_functions/EnvPairPotential/pair_log.txt
+basic.io.database: Database file opened: scoring/score_functions/EnvPairPotential/cenpack_log.txt
+core.scoring.ramachandran: shapovalov_lib::shap_rama_smooth_level of 4( aka highest_smooth ) got activated.
+basic.io.database: Database file opened: scoring/score_functions/rama/shapovalov/kappa25/all.ramaProb
+protocols.jd2.parser.ScoreFunctionLoader: defined score function "r15" with weights "ref2015.wts"
+protocols.helical_bundle.BundleGridSampler: Parsing options for BundleGridSampler ("bgs1") mover.
+protocols.helical_bundle.BundleGridSampler: Setting maximum number of samples to 9.
+protocols.helical_bundle.BundleGridSampler: Setting mover to interpret angles in RosettaScripts as though they were specified in degrees.  Note that internally and in output, the mover uses radians.
+protocols.helical_bundle.MakeBundle: Default helix length set to 20.
+protocols.helical_bundle.BundleGridSampler: Setting reset mode to true.
+protocols.helical_bundle.BundleGridSampler: Setting nstruct mode to true.  This means that each job will sample a different set of Crick parameters.
+protocols.helical_bundle.BundleGridSampler: Setting nstruct repeats to 1.
+protocols.helical_bundle.BundleGridSampler: Setting default r0 value to 8.4.
+basic.io.database: Database file opened: protocol_data/crick_parameters/alpha_helix.crick_params
+protocols.helical_bundle.BundleGridSampler: Added a helix.
+protocols.helical_bundle.MakeBundle: 	Set delta_omega1 value (minor helix rotation) to 6.
+protocols.helical_bundle.MakeBundle: 	Set invert value (should the helix be flipped?) to false.
+protocols.helical_bundle.BundleGridSampler: Setting the omega0 value for helix 1 to 0.
+protocols.helical_bundle.BundleGridSampler: Setting the delta_omega0 value for helix 1 to -60.
+protocols.helical_bundle.BundleGridSampler: Setting the delta_omega1 value for helix 1 to 6.
+protocols.helical_bundle.BundleGridSampler: Setting the z1_offset value for helix 1 to 1.375.
+basic.io.database: Database file opened: protocol_data/crick_parameters/alpha_helix.crick_params
+protocols.helical_bundle.BundleGridSampler: Added a helix.
+protocols.helical_bundle.MakeBundle: 	Set invert value (should the helix be flipped?) to true.
+protocols.helical_bundle.BundleGridSampler: Setting the r0 value for helix 2 to 7.2.
+protocols.helical_bundle.BundleGridSampler: Setting omega0 for helix 2 to be set to match the pitch angle for helix 1.
+protocols.helical_bundle.BundleGridSampler: Setting the delta_omega0 value for helix 2 to 0.
+protocols.helical_bundle.BundleGridSampler: Setting z1_offset_min and z1_offset_max values for helix 2 to -0.675 and -0.075, respectively.
+protocols.helical_bundle.BundleGridSampler: Setting z1_offset samples for helix 2 to 3.
+basic.io.database: Database file opened: protocol_data/crick_parameters/alpha_helix.crick_params
+protocols.helical_bundle.BundleGridSampler: Added a helix.
+protocols.helical_bundle.MakeBundle: 	Set invert value (should the helix be flipped?) to false.
+protocols.helical_bundle.BundleGridSampler: Setting r0 for helix 3 to copy the r0 value for helix 1.
+protocols.helical_bundle.BundleGridSampler: Setting omega0 for helix 3 to be set to match the pitch angle for helix 1.
+protocols.helical_bundle.BundleGridSampler: Setting the delta_omega0 value for helix 3 to 60.
+protocols.helical_bundle.BundleGridSampler: Setting delta_omega1_min and delta_omega1_max values for helix 3 to 10 and 15, respectively.
+protocols.helical_bundle.BundleGridSampler: Setting delta_omega1 samples for helix 3 to 3.
+protocols.helical_bundle.BundleGridSampler: Setting the z1_offset value for helix 3 to 2.75.
+protocols.rosetta_scripts.RosettaScriptsParser: Defined mover named "bgs1" of type BundleGridSampler
+protocols.rosetta_scripts.RosettaScriptsParser: Defined mover named "add_termini" of type DeclareBond
+protocols.rosetta_scripts.RosettaScriptsParser: Defined mover named "mut1" of type MutateResidue
+protocols.rosetta_scripts.RosettaScriptsParser: Defined mover named "mut2" of type MutateResidue
+protocols.rosetta_scripts.RosettaScriptsParser: Defined mover named "mut3" of type MutateResidue
+core.conformation.symmetry.SymmData: [ WARNING ] Setting weight of master jump ( jump-id=1 ) to 1.0 (was undefined)
+core.conformation.symmetry.SymmData: [ WARNING ] Setting jump_group JUMPGROUP1: [master 1]  2:0 
+core.conformation.symmetry.SymmData: symmetry name: s2
+core.conformation.symmetry.SymmData: number of subunits: 2
+core.conformation.symmetry.SymmData: number of interfaces: 1
+core.conformation.symmetry.SymmData: score subunit number: VRT0001
+core.conformation.symmetry.SymmData: anchor the subunits at residue: COM
+core.conformation.symmetry.SymmData:  Virtual coordinate system VRT0001
+core.conformation.symmetry.SymmData: x: 1 0 0
+core.conformation.symmetry.SymmData: y: 0 0 1
+core.conformation.symmetry.SymmData: origin: 0 0 0
+core.conformation.symmetry.SymmData:  Virtual coordinate system VRT0002
+core.conformation.symmetry.SymmData: x: -1 0 0
+core.conformation.symmetry.SymmData: y: 0 0 -1
+core.conformation.symmetry.SymmData: origin: 0 0 0
+core.conformation.symmetry.SymmData: Dof for jump: 1
+core.conformation.symmetry.SymmData: x 1:50,50:0,0 n2c
+core.conformation.symmetry.SymmData: y 0:0,0:0,0 n2c
+core.conformation.symmetry.SymmData: z 0:0,0:0,0 n2c
+core.conformation.symmetry.SymmData: x_angle 1:0,360:0,0 n2c
+core.conformation.symmetry.SymmData: y_angle 1:0,360:0,0 n2c
+core.conformation.symmetry.SymmData: z_angle 1:0,360:0,0 n2c
+core.conformation.symmetry.SymmData: Jump JUMP1 VRT0001 VRT0002
+core.conformation.symmetry.SymmData: Jump JUMP2 VRT0001 SUBUNIT
+core.conformation.symmetry.SymmData: Jump JUMP3 VRT0002 SUBUNIT
+core.conformation.symmetry.SymmData: Include subunit: 1 2
+core.conformation.symmetry.SymmData: Output subunit: 1 2
+core.conformation.symmetry.SymmData: SlideType: RANDOM
+core.conformation.symmetry.SymmData: SlideCriteriaType: CEN_DOCK_SCORE
+core.conformation.symmetry.SymmData: SlideCriteriaVal: AUTOMATIC
+core.conformation.symmetry.SymmData: SlideOrder: none
+protocols.simple_moves.symmetry.SetupForSymmetryMover: [ WARNING ] Symmetry is being set globally, which can cause conflicts with certain protocols, but is necessary for backwards compatibility.
+protocols.simple_moves.symmetry.SetupForSymmetryMover: [ WARNING ] If you are experiencing unexpected behaviour related to symmetry, try setting set_global_symmetry_at_parsetime=0 in <SetupForSymmetry>.
+protocols.rosetta_scripts.RosettaScriptsParser: Defined mover named "c2_symm" of type SetupForSymmetry
+core.select.residue_selector.util: Found residue selector select_ligands
+protocols.rosetta_scripts.RosettaScriptsParser: Defined mover named "xlink" of type CrosslinkerMover
+protocols.rosetta_scripts.ParsedProtocol: ParsedProtocol mover with the following movers and filters
+protocols.rosetta_scripts.ParsedProtocol: added mover "bgs1" with filter "true_filter"
+protocols.rosetta_scripts.ParsedProtocol: added mover "add_termini" with filter "true_filter"
+protocols.rosetta_scripts.ParsedProtocol: added mover "mut1" with filter "true_filter"
+protocols.rosetta_scripts.ParsedProtocol: added mover "mut2" with filter "true_filter"
+protocols.rosetta_scripts.ParsedProtocol: added mover "mut3" with filter "true_filter"
+protocols.rosetta_scripts.ParsedProtocol: added mover "c2_symm" with filter "true_filter"
+protocols.rosetta_scripts.ParsedProtocol: added mover "xlink" with filter "true_filter"
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER BundleGridSampler - bgs1=======================
+protocols.helical_bundle.BundleGridSampler: Performing Crick parameter space grid sampling.
+protocols.helical_bundle.BundleGridSampler: A total of 9 grid points will be sampled.
+protocols.helical_bundle.BundleGridSampler: Creating BundleGridSamplerHelper object.
+protocols.helical_bundle.BundleGridSamplerHelper: Initializing samples.
+protocols.helical_bundle.BundleGridSamplerHelper: The following parameter values will be sampled:
+protocols.helical_bundle.BundleGridSamplerHelper: Helix	DoF	Parameter values
+protocols.helical_bundle.BundleGridSamplerHelper: 3	delta_omega1	0.1745	0.2182	0.2618	
+protocols.helical_bundle.BundleGridSamplerHelper: 2	z1_offset	-0.6750	-0.3750	-0.0750	
+protocols.helical_bundle.BundleGridSamplerHelper: 
+protocols.helical_bundle.BundleGridSampler: Grid point 1: attempting to build a helical bundle with the following parameters:
+protocols.helical_bundle.BundleGridSampler: Helix	r0	omega0	delta_omega0	delta_omega1	delta_t	z1_offset	z0_offset	epsilon
+protocols.helical_bundle.BundleGridSampler: 1	8.4000	0.0000	-1.0472	0.1047	0.0000	1.3750	0.0000	1.0000
+protocols.helical_bundle.BundleGridSampler: 2	7.2000	0.0000	0.0000	0.0000	0.0000	-0.6750	0.0000	1.0000
+protocols.helical_bundle.BundleGridSampler: 3	8.4000	0.0000	1.0472	0.1745	0.0000	2.7500	0.0000	1.0000
+protocols.helical_bundle.BundleGridSampler: 
+protocols.helical_bundle.MakeBundle: Building a helical bundle using the Crick equations.
+protocols.helical_bundle.MakeBundleHelix: Building a helix in a helical bundle using the Crick equations.
+protocols.helical_bundle.MakeBundleHelix: Building a helix in a helical bundle using the Crick equations.
+protocols.helical_bundle.MakeBundleHelix: Building a helix in a helical bundle using the Crick equations.
+protocols.helical_bundle.BundleGridSampler: Bundle generated successfully.
+basic.io.database: Database file opened: scoring/score_functions/elec_cp_reps.dat
+core.scoring.elec.util: Read 40 countpair representative atoms
+core.pack.dunbrack.RotamerLibrary: shapovalov_lib_fixes_enable option is true.
+core.pack.dunbrack.RotamerLibrary: shapovalov_lib::shap_dun10_smooth_level of 1( aka lowest_smooth ) got activated.
+protocols.helical_bundle.BundleGridSampler: Energy is 210.9878.  This is the lowest encountered so far.
+protocols.helical_bundle.BundleGridSampler: Success!  Returning lowest-energy pose.
+protocols.helical_bundle.BundleGridSampler: Parameters yielding the lowest-energy bundle:
+Helix	r0	omega0	delta_omega0	delta_omega1	delta_t	z1_offset	z0_offset	epsilon
+1	8.4000	0.0000	-1.0472	0.1047	0.0000	1.3750	0.0000	1.0000
+2	7.2000	0.0000	0.0000	0.0000	0.0000	-0.6750	0.0000	1.0000
+3	8.4000	0.0000	1.0472	0.1745	0.0000	2.7500	0.0000	1.0000
+
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER DeclareBond - add_termini=======================
+core.conformation.Residue: [ WARNING ] Residue connection id changed when creating a new residue at seqpos 1
+core.conformation.Residue: [ WARNING ] ResConnID info stored on the connected residue (residue 2) is now out of date!
+core.conformation.Residue: [ WARNING ] Connection atom name (in src):  C  
+core.conformation.Residue: [ WARNING ] Residue connection id changed when creating a new residue at seqpos 21
+core.conformation.Residue: [ WARNING ] ResConnID info stored on the connected residue (residue 22) is now out of date!
+core.conformation.Residue: [ WARNING ] Connection atom name (in src):  C  
+core.conformation.Residue: [ WARNING ] Residue connection id changed when creating a new residue at seqpos 41
+core.conformation.Residue: [ WARNING ] ResConnID info stored on the connected residue (residue 42) is now out of date!
+core.conformation.Residue: [ WARNING ] Connection atom name (in src):  C  
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER MutateResidue - mut1=======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER MutateResidue - mut2=======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER MutateResidue - mut3=======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER SetupForSymmetry - c2_symm=======================
+core.pose.util: [ WARNING ] conf2pdb_chain(): PDBInfo does not exist, returning default map 1=A, 2=B, ...
+core.conformation.symmetry.Conformation: MIRRORED subunits: 2 
+core.conformation.symmetry.Conformation: MIRRORED jumps: 3u 3d 4u 4d 6u 6d 7d 
+core.conformation.symmetry.Conformation: Inverting restypes
+core.conformation.symmetry.util: =================== SYM FOLD TREE, jump notation: =symfixed= *indep* #symdof# jump[=follows] ========================
+VRT0001(121)
+|----#j5#----->29:Sub1B(21-40)21-----*j1*------>1:Sub1A(1-20)1------*j2*----->41:Sub1C(41-60)
+\----=j7=---->VRT0002(122)----j6=5----->89:Sub2B(81-100)81-----j3=1----->61:Sub2A(61-80)61-----j4=2---->101:Sub2C(101-120)
+protocols.simple_moves_symmetry.SymDockingInitialPerturbation: Reading options...
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER CrosslinkerMover - xlink=======================
+protocols.cyclic_peptide.CrosslinkerMover: Symmetric sidechain distance filter PASSED.
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+protocols.relax.FastRelax: ================== Using default script ==================
+protocols.relax.FastRelax: CMD: repeat  7.50847e+06  0  0  0.55
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 113 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 20076 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  3031.7  0  0  0.011
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 37 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3416 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  3307.65  0  0  0.1375
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 29 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3224 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  3666.32  0  0  0.3025
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 23 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3080 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  4202.35  0  0  0.55
+protocols.relax.FastRelax: MRP: 0  4202.35  4202.35  0  0  
+protocols.relax.FastRelax: CMD: accept_to_best  4202.35  0  0  0.55
+protocols.relax.FastRelax: CMD: endrepeat  4202.35  0  0  0.55
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols.relax.FastRelax: ================== Using default script ==================
+protocols.relax.FastRelax: CMD: repeat  4202.35  0  0  0.55
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 105 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 17676 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  3031.69  0  0  0.011
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 37 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3416 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  3307.69  0  0  0.1375
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 29 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3224 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  3666.32  0  0  0.3025
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 23 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3080 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  4202.4  0  0  0.55
+protocols.relax.FastRelax: MRP: 0  4202.4  4202.4  0  0  
+protocols.relax.FastRelax: CMD: accept_to_best  4202.4  0  0  0.55
+protocols.relax.FastRelax: CMD: endrepeat  4202.4  0  0  0.55
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols.relax.FastRelax: ================== Using default script ==================
+protocols.relax.FastRelax: CMD: repeat  4202.4  0  0  0.55
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 105 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 17676 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  3031.69  0  0  0.011
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 37 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3416 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  3307.65  0  0  0.1375
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 29 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3224 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  3666.37  0  0  0.3025
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 23 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3080 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  4202.36  0  0  0.55
+protocols.relax.FastRelax: MRP: 0  4202.36  4202.36  0  0  
+protocols.relax.FastRelax: CMD: accept_to_best  4202.36  0  0  0.55
+protocols.relax.FastRelax: CMD: endrepeat  4202.36  0  0  0.55
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols::checkpoint: Deleting checkpoints of FastRelax
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+protocols.cyclic_peptide.crosslinker.CrosslinkerMoverHelper: Constraint energy for crosslinked pose is 3398.13.  Filter failed.
+protocols.cyclic_peptide.CrosslinkerMover: Symmetric linker constraints filter FAILED.
+protocols.cyclic_peptide.CrosslinkerMover: Symmetric CrosslinkerMover reports FAILURE.  Returning input pose.
+protocols.rosetta_scripts.ParsedProtocol: Mover CrosslinkerMover reports failure!
+protocols.jd2.JobDistributor: [ WARNING ] S_0001 reported failure 1 times and will no longer retry (permanent failure)
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER BundleGridSampler - bgs1=======================
+protocols.helical_bundle.BundleGridSampler: Performing Crick parameter space grid sampling.
+protocols.helical_bundle.BundleGridSampler: A total of 9 grid points will be sampled.
+protocols.helical_bundle.BundleGridSampler: Creating BundleGridSamplerHelper object.
+protocols.helical_bundle.BundleGridSamplerHelper: Initializing samples.
+protocols.helical_bundle.BundleGridSamplerHelper: The following parameter values will be sampled:
+protocols.helical_bundle.BundleGridSamplerHelper: Helix	DoF	Parameter values
+protocols.helical_bundle.BundleGridSamplerHelper: 3	delta_omega1	0.1745	0.2182	0.2618	
+protocols.helical_bundle.BundleGridSamplerHelper: 2	z1_offset	-0.6750	-0.3750	-0.0750	
+protocols.helical_bundle.BundleGridSamplerHelper: 
+protocols.helical_bundle.BundleGridSampler: Grid point 2: attempting to build a helical bundle with the following parameters:
+protocols.helical_bundle.BundleGridSampler: Helix	r0	omega0	delta_omega0	delta_omega1	delta_t	z1_offset	z0_offset	epsilon
+protocols.helical_bundle.BundleGridSampler: 1	8.4000	0.0000	-1.0472	0.1047	0.0000	1.3750	0.0000	1.0000
+protocols.helical_bundle.BundleGridSampler: 2	7.2000	0.0000	0.0000	0.0000	0.0000	-0.3750	0.0000	1.0000
+protocols.helical_bundle.BundleGridSampler: 3	8.4000	0.0000	1.0472	0.1745	0.0000	2.7500	0.0000	1.0000
+protocols.helical_bundle.BundleGridSampler: 
+protocols.helical_bundle.MakeBundle: Building a helical bundle using the Crick equations.
+protocols.helical_bundle.MakeBundleHelix: Building a helix in a helical bundle using the Crick equations.
+protocols.helical_bundle.MakeBundleHelix: Building a helix in a helical bundle using the Crick equations.
+protocols.helical_bundle.MakeBundleHelix: Building a helix in a helical bundle using the Crick equations.
+protocols.helical_bundle.BundleGridSampler: Bundle generated successfully.
+protocols.helical_bundle.BundleGridSampler: Energy is 177.6449.  This is the lowest encountered so far.
+protocols.helical_bundle.BundleGridSampler: Success!  Returning lowest-energy pose.
+protocols.helical_bundle.BundleGridSampler: Parameters yielding the lowest-energy bundle:
+Helix	r0	omega0	delta_omega0	delta_omega1	delta_t	z1_offset	z0_offset	epsilon
+1	8.4000	0.0000	-1.0472	0.1047	0.0000	1.3750	0.0000	1.0000
+2	7.2000	0.0000	0.0000	0.0000	0.0000	-0.3750	0.0000	1.0000
+3	8.4000	0.0000	1.0472	0.1745	0.0000	2.7500	0.0000	1.0000
+
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER DeclareBond - add_termini=======================
+core.conformation.Residue: [ WARNING ] Residue connection id changed when creating a new residue at seqpos 1
+core.conformation.Residue: [ WARNING ] ResConnID info stored on the connected residue (residue 2) is now out of date!
+core.conformation.Residue: [ WARNING ] Connection atom name (in src):  C  
+core.conformation.Residue: [ WARNING ] Residue connection id changed when creating a new residue at seqpos 21
+core.conformation.Residue: [ WARNING ] ResConnID info stored on the connected residue (residue 22) is now out of date!
+core.conformation.Residue: [ WARNING ] Connection atom name (in src):  C  
+core.conformation.Residue: [ WARNING ] Residue connection id changed when creating a new residue at seqpos 41
+core.conformation.Residue: [ WARNING ] ResConnID info stored on the connected residue (residue 42) is now out of date!
+core.conformation.Residue: [ WARNING ] Connection atom name (in src):  C  
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER MutateResidue - mut1=======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER MutateResidue - mut2=======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER MutateResidue - mut3=======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER SetupForSymmetry - c2_symm=======================
+core.pose.util: [ WARNING ] conf2pdb_chain(): PDBInfo does not exist, returning default map 1=A, 2=B, ...
+core.conformation.symmetry.Conformation: MIRRORED subunits: 2 
+core.conformation.symmetry.Conformation: MIRRORED jumps: 3u 3d 4u 4d 6u 6d 7d 
+core.conformation.symmetry.Conformation: Inverting restypes
+core.conformation.symmetry.util: =================== SYM FOLD TREE, jump notation: =symfixed= *indep* #symdof# jump[=follows] ========================
+VRT0001(121)
+|----#j5#----->29:Sub1B(21-40)21-----*j1*------>1:Sub1A(1-20)1------*j2*----->41:Sub1C(41-60)
+\----=j7=---->VRT0002(122)----j6=5----->89:Sub2B(81-100)81-----j3=1----->61:Sub2A(61-80)61-----j4=2---->101:Sub2C(101-120)
+protocols.simple_moves_symmetry.SymDockingInitialPerturbation: Reading options...
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER CrosslinkerMover - xlink=======================
+protocols.cyclic_peptide.CrosslinkerMover: Symmetric sidechain distance filter PASSED.
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+protocols.relax.FastRelax: ================== Using default script ==================
+protocols.relax.FastRelax: CMD: repeat  7.41122e+06  0  0  0.55
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 113 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 20076 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  476.132  0  0  0.011
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 38 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3856 bytes
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 3.8147e-08 Deriv= -2.40811 Finite Diff= 0.39022
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 3.8147e-06 Deriv= -2.40811 Finite Diff= 0.390919
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#1
+protocols.relax.FastRelax: CMD: ramp_repack_min  706.016  0  0  0.1375
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 23 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3080 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  1005.54  0  0  0.3025
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 17 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 2936 bytes
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 3.05176e-07 Deriv= -0.0179913 Finite Diff= 0.00897422
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 3.63173e-06 Deriv= -4.4132 Finite Diff= 3.35394
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#13
+protocols.relax.FastRelax: CMD: ramp_repack_min  1454.58  0  0  0.55
+protocols.relax.FastRelax: MRP: 0  1454.58  1454.58  0  0  
+protocols.relax.FastRelax: CMD: accept_to_best  1454.58  0  0  0.55
+protocols.relax.FastRelax: CMD: endrepeat  1454.58  0  0  0.55
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols.relax.FastRelax: ================== Using default script ==================
+protocols.relax.FastRelax: CMD: repeat  1454.58  0  0  0.55
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 111 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 19476 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  476.134  0  0  0.011
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 38 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3856 bytes
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 3.8147e-08 Deriv= -2.49229 Finite Diff= -0.185966
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 3.8147e-06 Deriv= -2.49229 Finite Diff= -0.185087
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#1
+protocols.relax.FastRelax: CMD: ramp_repack_min  706.016  0  0  0.1375
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 23 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3080 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  1005.54  0  0  0.3025
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 17 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 2936 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  1454.58  0  0  0.55
+protocols.relax.FastRelax: MRP: 0  1454.58  1454.58  0  0  
+protocols.relax.FastRelax: CMD: accept_to_best  1454.58  0  0  0.55
+protocols.relax.FastRelax: CMD: endrepeat  1454.58  0  0  0.55
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols.relax.FastRelax: ================== Using default script ==================
+protocols.relax.FastRelax: CMD: repeat  1454.58  0  0  0.55
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 111 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 19476 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  476.132  0  0  0.011
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 38 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3856 bytes
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 3.8147e-08 Deriv= -2.81904 Finite Diff= 1.92432
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 3.8147e-06 Deriv= -2.81904 Finite Diff= 1.92541
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#1
+protocols.relax.FastRelax: CMD: ramp_repack_min  706.016  0  0  0.1375
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 23 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3080 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  1005.53  0  0  0.3025
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 17 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 2936 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  1454.59  0  0  0.55
+protocols.relax.FastRelax: MRP: 0  1454.59  1454.59  0  0  
+protocols.relax.FastRelax: CMD: accept_to_best  1454.59  0  0  0.55
+protocols.relax.FastRelax: CMD: endrepeat  1454.59  0  0  0.55
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols::checkpoint: Deleting checkpoints of FastRelax
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+protocols.cyclic_peptide.crosslinker.CrosslinkerMoverHelper: Constraint energy for crosslinked pose is 861.912.  Filter passes.
+protocols.cyclic_peptide.CrosslinkerMover: Symmetric linker constraints filter PASSED.
+protocols.cyclic_peptide.CrosslinkerMover: Symmetric CrosslinkerMover reports SUCCESS.  Updating pose.
+protocols.rosetta_scripts.ParsedProtocol: setting status to success
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER BundleGridSampler - bgs1=======================
+protocols.helical_bundle.BundleGridSampler: Performing Crick parameter space grid sampling.
+protocols.helical_bundle.BundleGridSampler: A total of 9 grid points will be sampled.
+protocols.helical_bundle.BundleGridSampler: Creating BundleGridSamplerHelper object.
+protocols.helical_bundle.BundleGridSamplerHelper: Initializing samples.
+protocols.helical_bundle.BundleGridSamplerHelper: The following parameter values will be sampled:
+protocols.helical_bundle.BundleGridSamplerHelper: Helix	DoF	Parameter values
+protocols.helical_bundle.BundleGridSamplerHelper: 3	delta_omega1	0.1745	0.2182	0.2618	
+protocols.helical_bundle.BundleGridSamplerHelper: 2	z1_offset	-0.6750	-0.3750	-0.0750	
+protocols.helical_bundle.BundleGridSamplerHelper: 
+protocols.helical_bundle.BundleGridSampler: Grid point 3: attempting to build a helical bundle with the following parameters:
+protocols.helical_bundle.BundleGridSampler: Helix	r0	omega0	delta_omega0	delta_omega1	delta_t	z1_offset	z0_offset	epsilon
+protocols.helical_bundle.BundleGridSampler: 1	8.4000	0.0000	-1.0472	0.1047	0.0000	1.3750	0.0000	1.0000
+protocols.helical_bundle.BundleGridSampler: 2	7.2000	0.0000	0.0000	0.0000	0.0000	-0.0750	0.0000	1.0000
+protocols.helical_bundle.BundleGridSampler: 3	8.4000	0.0000	1.0472	0.1745	0.0000	2.7500	0.0000	1.0000
+protocols.helical_bundle.BundleGridSampler: 
+protocols.helical_bundle.MakeBundle: Building a helical bundle using the Crick equations.
+protocols.helical_bundle.MakeBundleHelix: Building a helix in a helical bundle using the Crick equations.
+protocols.helical_bundle.MakeBundleHelix: Building a helix in a helical bundle using the Crick equations.
+protocols.helical_bundle.MakeBundleHelix: Building a helix in a helical bundle using the Crick equations.
+protocols.helical_bundle.BundleGridSampler: Bundle generated successfully.
+protocols.helical_bundle.BundleGridSampler: Energy is 173.7986.  This is the lowest encountered so far.
+protocols.helical_bundle.BundleGridSampler: Success!  Returning lowest-energy pose.
+protocols.helical_bundle.BundleGridSampler: Parameters yielding the lowest-energy bundle:
+Helix	r0	omega0	delta_omega0	delta_omega1	delta_t	z1_offset	z0_offset	epsilon
+1	8.4000	0.0000	-1.0472	0.1047	0.0000	1.3750	0.0000	1.0000
+2	7.2000	0.0000	0.0000	0.0000	0.0000	-0.0750	0.0000	1.0000
+3	8.4000	0.0000	1.0472	0.1745	0.0000	2.7500	0.0000	1.0000
+
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER DeclareBond - add_termini=======================
+core.conformation.Residue: [ WARNING ] Residue connection id changed when creating a new residue at seqpos 1
+core.conformation.Residue: [ WARNING ] ResConnID info stored on the connected residue (residue 2) is now out of date!
+core.conformation.Residue: [ WARNING ] Connection atom name (in src):  C  
+core.conformation.Residue: [ WARNING ] Residue connection id changed when creating a new residue at seqpos 21
+core.conformation.Residue: [ WARNING ] ResConnID info stored on the connected residue (residue 22) is now out of date!
+core.conformation.Residue: [ WARNING ] Connection atom name (in src):  C  
+core.conformation.Residue: [ WARNING ] Residue connection id changed when creating a new residue at seqpos 41
+core.conformation.Residue: [ WARNING ] ResConnID info stored on the connected residue (residue 42) is now out of date!
+core.conformation.Residue: [ WARNING ] Connection atom name (in src):  C  
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER MutateResidue - mut1=======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER MutateResidue - mut2=======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER MutateResidue - mut3=======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER SetupForSymmetry - c2_symm=======================
+core.pose.util: [ WARNING ] conf2pdb_chain(): PDBInfo does not exist, returning default map 1=A, 2=B, ...
+core.conformation.symmetry.Conformation: MIRRORED subunits: 2 
+core.conformation.symmetry.Conformation: MIRRORED jumps: 3u 3d 4u 4d 6u 6d 7d 
+core.conformation.symmetry.Conformation: Inverting restypes
+core.conformation.symmetry.util: =================== SYM FOLD TREE, jump notation: =symfixed= *indep* #symdof# jump[=follows] ========================
+VRT0001(121)
+|----#j5#----->29:Sub1B(21-40)21-----*j1*------>1:Sub1A(1-20)1------*j2*----->41:Sub1C(41-60)
+\----=j7=---->VRT0002(122)----j6=5----->89:Sub2B(81-100)81-----j3=1----->61:Sub2A(61-80)61-----j4=2---->101:Sub2C(101-120)
+protocols.simple_moves_symmetry.SymDockingInitialPerturbation: Reading options...
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER CrosslinkerMover - xlink=======================
+protocols.cyclic_peptide.CrosslinkerMover: Symmetric sidechain distance filter PASSED.
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+protocols.relax.FastRelax: ================== Using default script ==================
+protocols.relax.FastRelax: CMD: repeat  7.31942e+06  0  0  0.55
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 117 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 21276 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  1820.46  0  0  0.011
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 28 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3404 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  2099.7  0  0  0.1375
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 19 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 2984 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  2458.44  0  0  0.3025
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 17 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 2936 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  2988.28  0  0  0.55
+protocols.relax.FastRelax: MRP: 0  2988.28  2988.28  0  0  
+protocols.relax.FastRelax: CMD: accept_to_best  2988.28  0  0  0.55
+protocols.relax.FastRelax: CMD: endrepeat  2988.28  0  0  0.55
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols.relax.FastRelax: ================== Using default script ==================
+protocols.relax.FastRelax: CMD: repeat  2988.28  0  0  0.55
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 113 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 20076 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  1820.46  0  0  0.011
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 28 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3404 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  2099.7  0  0  0.1375
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 19 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 2984 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  2458.46  0  0  0.3025
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 17 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 2936 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  2988.27  0  0  0.55
+protocols.relax.FastRelax: MRP: 0  2988.27  2988.27  0  0  
+protocols.relax.FastRelax: CMD: accept_to_best  2988.27  0  0  0.55
+protocols.relax.FastRelax: CMD: endrepeat  2988.27  0  0  0.55
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols.relax.FastRelax: ================== Using default script ==================
+protocols.relax.FastRelax: CMD: repeat  2988.27  0  0  0.55
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 113 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 20076 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  1820.44  0  0  0.011
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 28 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3404 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  2099.69  0  0  0.1375
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 19 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 2984 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  2458.44  0  0  0.3025
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 17 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 2936 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  2988.28  0  0  0.55
+protocols.relax.FastRelax: MRP: 0  2988.28  2988.28  0  0  
+protocols.relax.FastRelax: CMD: accept_to_best  2988.28  0  0  0.55
+protocols.relax.FastRelax: CMD: endrepeat  2988.28  0  0  0.55
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols::checkpoint: Deleting checkpoints of FastRelax
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+protocols.cyclic_peptide.crosslinker.CrosslinkerMoverHelper: Constraint energy for crosslinked pose is 2202.44.  Filter failed.
+protocols.cyclic_peptide.CrosslinkerMover: Symmetric linker constraints filter FAILED.
+protocols.cyclic_peptide.CrosslinkerMover: Symmetric CrosslinkerMover reports FAILURE.  Returning input pose.
+protocols.rosetta_scripts.ParsedProtocol: Mover CrosslinkerMover reports failure!
+protocols.jd2.JobDistributor: [ WARNING ] S_0003 reported failure 1 times and will no longer retry (permanent failure)
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER BundleGridSampler - bgs1=======================
+protocols.helical_bundle.BundleGridSampler: Performing Crick parameter space grid sampling.
+protocols.helical_bundle.BundleGridSampler: A total of 9 grid points will be sampled.
+protocols.helical_bundle.BundleGridSampler: Creating BundleGridSamplerHelper object.
+protocols.helical_bundle.BundleGridSamplerHelper: Initializing samples.
+protocols.helical_bundle.BundleGridSamplerHelper: The following parameter values will be sampled:
+protocols.helical_bundle.BundleGridSamplerHelper: Helix	DoF	Parameter values
+protocols.helical_bundle.BundleGridSamplerHelper: 3	delta_omega1	0.1745	0.2182	0.2618	
+protocols.helical_bundle.BundleGridSamplerHelper: 2	z1_offset	-0.6750	-0.3750	-0.0750	
+protocols.helical_bundle.BundleGridSamplerHelper: 
+protocols.helical_bundle.BundleGridSampler: Grid point 4: attempting to build a helical bundle with the following parameters:
+protocols.helical_bundle.BundleGridSampler: Helix	r0	omega0	delta_omega0	delta_omega1	delta_t	z1_offset	z0_offset	epsilon
+protocols.helical_bundle.BundleGridSampler: 1	8.4000	0.0000	-1.0472	0.1047	0.0000	1.3750	0.0000	1.0000
+protocols.helical_bundle.BundleGridSampler: 2	7.2000	0.0000	0.0000	0.0000	0.0000	-0.6750	0.0000	1.0000
+protocols.helical_bundle.BundleGridSampler: 3	8.4000	0.0000	1.0472	0.2182	0.0000	2.7500	0.0000	1.0000
+protocols.helical_bundle.BundleGridSampler: 
+protocols.helical_bundle.MakeBundle: Building a helical bundle using the Crick equations.
+protocols.helical_bundle.MakeBundleHelix: Building a helix in a helical bundle using the Crick equations.
+protocols.helical_bundle.MakeBundleHelix: Building a helix in a helical bundle using the Crick equations.
+protocols.helical_bundle.MakeBundleHelix: Building a helix in a helical bundle using the Crick equations.
+protocols.helical_bundle.BundleGridSampler: Bundle generated successfully.
+protocols.helical_bundle.BundleGridSampler: Energy is 212.0007.  This is the lowest encountered so far.
+protocols.helical_bundle.BundleGridSampler: Success!  Returning lowest-energy pose.
+protocols.helical_bundle.BundleGridSampler: Parameters yielding the lowest-energy bundle:
+Helix	r0	omega0	delta_omega0	delta_omega1	delta_t	z1_offset	z0_offset	epsilon
+1	8.4000	0.0000	-1.0472	0.1047	0.0000	1.3750	0.0000	1.0000
+2	7.2000	0.0000	0.0000	0.0000	0.0000	-0.6750	0.0000	1.0000
+3	8.4000	0.0000	1.0472	0.2182	0.0000	2.7500	0.0000	1.0000
+
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER DeclareBond - add_termini=======================
+core.conformation.Residue: [ WARNING ] Residue connection id changed when creating a new residue at seqpos 1
+core.conformation.Residue: [ WARNING ] ResConnID info stored on the connected residue (residue 2) is now out of date!
+core.conformation.Residue: [ WARNING ] Connection atom name (in src):  C  
+core.conformation.Residue: [ WARNING ] Residue connection id changed when creating a new residue at seqpos 21
+core.conformation.Residue: [ WARNING ] ResConnID info stored on the connected residue (residue 22) is now out of date!
+core.conformation.Residue: [ WARNING ] Connection atom name (in src):  C  
+core.conformation.Residue: [ WARNING ] Residue connection id changed when creating a new residue at seqpos 41
+core.conformation.Residue: [ WARNING ] ResConnID info stored on the connected residue (residue 42) is now out of date!
+core.conformation.Residue: [ WARNING ] Connection atom name (in src):  C  
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER MutateResidue - mut1=======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER MutateResidue - mut2=======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER MutateResidue - mut3=======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER SetupForSymmetry - c2_symm=======================
+core.pose.util: [ WARNING ] conf2pdb_chain(): PDBInfo does not exist, returning default map 1=A, 2=B, ...
+core.conformation.symmetry.Conformation: MIRRORED subunits: 2 
+core.conformation.symmetry.Conformation: MIRRORED jumps: 3u 3d 4u 4d 6u 6d 7d 
+core.conformation.symmetry.Conformation: Inverting restypes
+core.conformation.symmetry.util: =================== SYM FOLD TREE, jump notation: =symfixed= *indep* #symdof# jump[=follows] ========================
+VRT0001(121)
+|----#j5#----->29:Sub1B(21-40)21-----*j1*------>1:Sub1A(1-20)1------*j2*----->41:Sub1C(41-60)
+\----=j7=---->VRT0002(122)----j6=5----->89:Sub2B(81-100)81-----j3=1----->61:Sub2A(61-80)61-----j4=2---->101:Sub2C(101-120)
+protocols.simple_moves_symmetry.SymDockingInitialPerturbation: Reading options...
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER CrosslinkerMover - xlink=======================
+protocols.cyclic_peptide.CrosslinkerMover: Symmetric sidechain distance filter PASSED.
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+protocols.relax.FastRelax: ================== Using default script ==================
+protocols.relax.FastRelax: CMD: repeat  7.46674e+06  0  0  0.55
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 107 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 18276 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  3031.26  0  0  0.011
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 39 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3696 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  3312.94  0  0  0.1375
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 29 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3224 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  3677.76  0  0  0.3025
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 23 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3080 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  4221.97  0  0  0.55
+protocols.relax.FastRelax: MRP: 0  4221.97  4221.97  0  0  
+protocols.relax.FastRelax: CMD: accept_to_best  4221.97  0  0  0.55
+protocols.relax.FastRelax: CMD: endrepeat  4221.97  0  0  0.55
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols.relax.FastRelax: ================== Using default script ==================
+protocols.relax.FastRelax: CMD: repeat  4221.97  0  0  0.55
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 101 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 16476 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  3031.26  0  0  0.011
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 39 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3696 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  3312.94  0  0  0.1375
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 29 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3224 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  3677.76  0  0  0.3025
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 23 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3080 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  4221.97  0  0  0.55
+protocols.relax.FastRelax: MRP: 0  4221.97  4221.97  0  0  
+protocols.relax.FastRelax: CMD: accept_to_best  4221.97  0  0  0.55
+protocols.relax.FastRelax: CMD: endrepeat  4221.97  0  0  0.55
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols.relax.FastRelax: ================== Using default script ==================
+protocols.relax.FastRelax: CMD: repeat  4221.97  0  0  0.55
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 101 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 16476 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  3031.27  0  0  0.011
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 39 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3696 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  3313.06  0  0  0.1375
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 29 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3224 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  3677.76  0  0  0.3025
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 23 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3080 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  4221.97  0  0  0.55
+protocols.relax.FastRelax: MRP: 0  4221.97  4221.97  0  0  
+protocols.relax.FastRelax: CMD: accept_to_best  4221.97  0  0  0.55
+protocols.relax.FastRelax: CMD: endrepeat  4221.97  0  0  0.55
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols::checkpoint: Deleting checkpoints of FastRelax
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+protocols.cyclic_peptide.crosslinker.CrosslinkerMoverHelper: Constraint energy for crosslinked pose is 3393.42.  Filter failed.
+protocols.cyclic_peptide.CrosslinkerMover: Symmetric linker constraints filter FAILED.
+protocols.cyclic_peptide.CrosslinkerMover: Symmetric CrosslinkerMover reports FAILURE.  Returning input pose.
+protocols.rosetta_scripts.ParsedProtocol: Mover CrosslinkerMover reports failure!
+protocols.jd2.JobDistributor: [ WARNING ] S_0004 reported failure 1 times and will no longer retry (permanent failure)
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER BundleGridSampler - bgs1=======================
+protocols.helical_bundle.BundleGridSampler: Performing Crick parameter space grid sampling.
+protocols.helical_bundle.BundleGridSampler: A total of 9 grid points will be sampled.
+protocols.helical_bundle.BundleGridSampler: Creating BundleGridSamplerHelper object.
+protocols.helical_bundle.BundleGridSamplerHelper: Initializing samples.
+protocols.helical_bundle.BundleGridSamplerHelper: The following parameter values will be sampled:
+protocols.helical_bundle.BundleGridSamplerHelper: Helix	DoF	Parameter values
+protocols.helical_bundle.BundleGridSamplerHelper: 3	delta_omega1	0.1745	0.2182	0.2618	
+protocols.helical_bundle.BundleGridSamplerHelper: 2	z1_offset	-0.6750	-0.3750	-0.0750	
+protocols.helical_bundle.BundleGridSamplerHelper: 
+protocols.helical_bundle.BundleGridSampler: Grid point 5: attempting to build a helical bundle with the following parameters:
+protocols.helical_bundle.BundleGridSampler: Helix	r0	omega0	delta_omega0	delta_omega1	delta_t	z1_offset	z0_offset	epsilon
+protocols.helical_bundle.BundleGridSampler: 1	8.4000	0.0000	-1.0472	0.1047	0.0000	1.3750	0.0000	1.0000
+protocols.helical_bundle.BundleGridSampler: 2	7.2000	0.0000	0.0000	0.0000	0.0000	-0.3750	0.0000	1.0000
+protocols.helical_bundle.BundleGridSampler: 3	8.4000	0.0000	1.0472	0.2182	0.0000	2.7500	0.0000	1.0000
+protocols.helical_bundle.BundleGridSampler: 
+protocols.helical_bundle.MakeBundle: Building a helical bundle using the Crick equations.
+protocols.helical_bundle.MakeBundleHelix: Building a helix in a helical bundle using the Crick equations.
+protocols.helical_bundle.MakeBundleHelix: Building a helix in a helical bundle using the Crick equations.
+protocols.helical_bundle.MakeBundleHelix: Building a helix in a helical bundle using the Crick equations.
+protocols.helical_bundle.BundleGridSampler: Bundle generated successfully.
+protocols.helical_bundle.BundleGridSampler: Energy is 178.2239.  This is the lowest encountered so far.
+protocols.helical_bundle.BundleGridSampler: Success!  Returning lowest-energy pose.
+protocols.helical_bundle.BundleGridSampler: Parameters yielding the lowest-energy bundle:
+Helix	r0	omega0	delta_omega0	delta_omega1	delta_t	z1_offset	z0_offset	epsilon
+1	8.4000	0.0000	-1.0472	0.1047	0.0000	1.3750	0.0000	1.0000
+2	7.2000	0.0000	0.0000	0.0000	0.0000	-0.3750	0.0000	1.0000
+3	8.4000	0.0000	1.0472	0.2182	0.0000	2.7500	0.0000	1.0000
+
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER DeclareBond - add_termini=======================
+core.conformation.Residue: [ WARNING ] Residue connection id changed when creating a new residue at seqpos 1
+core.conformation.Residue: [ WARNING ] ResConnID info stored on the connected residue (residue 2) is now out of date!
+core.conformation.Residue: [ WARNING ] Connection atom name (in src):  C  
+core.conformation.Residue: [ WARNING ] Residue connection id changed when creating a new residue at seqpos 21
+core.conformation.Residue: [ WARNING ] ResConnID info stored on the connected residue (residue 22) is now out of date!
+core.conformation.Residue: [ WARNING ] Connection atom name (in src):  C  
+core.conformation.Residue: [ WARNING ] Residue connection id changed when creating a new residue at seqpos 41
+core.conformation.Residue: [ WARNING ] ResConnID info stored on the connected residue (residue 42) is now out of date!
+core.conformation.Residue: [ WARNING ] Connection atom name (in src):  C  
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER MutateResidue - mut1=======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER MutateResidue - mut2=======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER MutateResidue - mut3=======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER SetupForSymmetry - c2_symm=======================
+core.pose.util: [ WARNING ] conf2pdb_chain(): PDBInfo does not exist, returning default map 1=A, 2=B, ...
+core.conformation.symmetry.Conformation: MIRRORED subunits: 2 
+core.conformation.symmetry.Conformation: MIRRORED jumps: 3u 3d 4u 4d 6u 6d 7d 
+core.conformation.symmetry.Conformation: Inverting restypes
+core.conformation.symmetry.util: =================== SYM FOLD TREE, jump notation: =symfixed= *indep* #symdof# jump[=follows] ========================
+VRT0001(121)
+|----#j5#----->29:Sub1B(21-40)21-----*j1*------>1:Sub1A(1-20)1------*j2*----->41:Sub1C(41-60)
+\----=j7=---->VRT0002(122)----j6=5----->89:Sub2B(81-100)81-----j3=1----->61:Sub2A(61-80)61-----j4=2---->101:Sub2C(101-120)
+protocols.simple_moves_symmetry.SymDockingInitialPerturbation: Reading options...
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER CrosslinkerMover - xlink=======================
+protocols.cyclic_peptide.CrosslinkerMover: Symmetric sidechain distance filter PASSED.
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+protocols.relax.FastRelax: ================== Using default script ==================
+protocols.relax.FastRelax: CMD: repeat  7.36948e+06  0  0  0.55
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 111 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 19476 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  1138.09  0  0  0.011
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 34 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3344 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  1457.89  0  0  0.1375
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 23 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3080 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  1859.65  0  0  0.3025
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 17 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 2936 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  2432.96  0  0  0.55
+protocols.relax.FastRelax: MRP: 0  2432.96  2432.96  0  0  
+protocols.relax.FastRelax: CMD: accept_to_best  2432.96  0  0  0.55
+protocols.relax.FastRelax: CMD: endrepeat  2432.96  0  0  0.55
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols.relax.FastRelax: ================== Using default script ==================
+protocols.relax.FastRelax: CMD: repeat  2432.96  0  0  0.55
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 107 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 18276 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  1138.12  0  0  0.011
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 34 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3344 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  1457.89  0  0  0.1375
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 23 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3080 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  1859.65  0  0  0.3025
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 17 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 2936 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  2432.96  0  0  0.55
+protocols.relax.FastRelax: MRP: 0  2432.96  2432.96  0  0  
+protocols.relax.FastRelax: CMD: accept_to_best  2432.96  0  0  0.55
+protocols.relax.FastRelax: CMD: endrepeat  2432.96  0  0  0.55
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols.relax.FastRelax: ================== Using default script ==================
+protocols.relax.FastRelax: CMD: repeat  2432.96  0  0  0.55
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 107 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 18276 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  1138.13  0  0  0.011
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 34 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3344 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  1457.89  0  0  0.1375
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 23 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3080 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  1859.66  0  0  0.3025
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 17 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 2936 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  2432.96  0  0  0.55
+protocols.relax.FastRelax: MRP: 0  2432.96  2432.96  0  0  
+protocols.relax.FastRelax: CMD: accept_to_best  2432.96  0  0  0.55
+protocols.relax.FastRelax: CMD: endrepeat  2432.96  0  0  0.55
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols::checkpoint: Deleting checkpoints of FastRelax
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+protocols.cyclic_peptide.crosslinker.CrosslinkerMoverHelper: Constraint energy for crosslinked pose is 1842.54.  Filter failed.
+protocols.cyclic_peptide.CrosslinkerMover: Symmetric linker constraints filter FAILED.
+protocols.cyclic_peptide.CrosslinkerMover: Symmetric CrosslinkerMover reports FAILURE.  Returning input pose.
+protocols.rosetta_scripts.ParsedProtocol: Mover CrosslinkerMover reports failure!
+protocols.jd2.JobDistributor: [ WARNING ] S_0005 reported failure 1 times and will no longer retry (permanent failure)
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER BundleGridSampler - bgs1=======================
+protocols.helical_bundle.BundleGridSampler: Performing Crick parameter space grid sampling.
+protocols.helical_bundle.BundleGridSampler: A total of 9 grid points will be sampled.
+protocols.helical_bundle.BundleGridSampler: Creating BundleGridSamplerHelper object.
+protocols.helical_bundle.BundleGridSamplerHelper: Initializing samples.
+protocols.helical_bundle.BundleGridSamplerHelper: The following parameter values will be sampled:
+protocols.helical_bundle.BundleGridSamplerHelper: Helix	DoF	Parameter values
+protocols.helical_bundle.BundleGridSamplerHelper: 3	delta_omega1	0.1745	0.2182	0.2618	
+protocols.helical_bundle.BundleGridSamplerHelper: 2	z1_offset	-0.6750	-0.3750	-0.0750	
+protocols.helical_bundle.BundleGridSamplerHelper: 
+protocols.helical_bundle.BundleGridSampler: Grid point 6: attempting to build a helical bundle with the following parameters:
+protocols.helical_bundle.BundleGridSampler: Helix	r0	omega0	delta_omega0	delta_omega1	delta_t	z1_offset	z0_offset	epsilon
+protocols.helical_bundle.BundleGridSampler: 1	8.4000	0.0000	-1.0472	0.1047	0.0000	1.3750	0.0000	1.0000
+protocols.helical_bundle.BundleGridSampler: 2	7.2000	0.0000	0.0000	0.0000	0.0000	-0.0750	0.0000	1.0000
+protocols.helical_bundle.BundleGridSampler: 3	8.4000	0.0000	1.0472	0.2182	0.0000	2.7500	0.0000	1.0000
+protocols.helical_bundle.BundleGridSampler: 
+protocols.helical_bundle.MakeBundle: Building a helical bundle using the Crick equations.
+protocols.helical_bundle.MakeBundleHelix: Building a helix in a helical bundle using the Crick equations.
+protocols.helical_bundle.MakeBundleHelix: Building a helix in a helical bundle using the Crick equations.
+protocols.helical_bundle.MakeBundleHelix: Building a helix in a helical bundle using the Crick equations.
+protocols.helical_bundle.BundleGridSampler: Bundle generated successfully.
+protocols.helical_bundle.BundleGridSampler: Energy is 178.5483.  This is the lowest encountered so far.
+protocols.helical_bundle.BundleGridSampler: Success!  Returning lowest-energy pose.
+protocols.helical_bundle.BundleGridSampler: Parameters yielding the lowest-energy bundle:
+Helix	r0	omega0	delta_omega0	delta_omega1	delta_t	z1_offset	z0_offset	epsilon
+1	8.4000	0.0000	-1.0472	0.1047	0.0000	1.3750	0.0000	1.0000
+2	7.2000	0.0000	0.0000	0.0000	0.0000	-0.0750	0.0000	1.0000
+3	8.4000	0.0000	1.0472	0.2182	0.0000	2.7500	0.0000	1.0000
+
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER DeclareBond - add_termini=======================
+core.conformation.Residue: [ WARNING ] Residue connection id changed when creating a new residue at seqpos 1
+core.conformation.Residue: [ WARNING ] ResConnID info stored on the connected residue (residue 2) is now out of date!
+core.conformation.Residue: [ WARNING ] Connection atom name (in src):  C  
+core.conformation.Residue: [ WARNING ] Residue connection id changed when creating a new residue at seqpos 21
+core.conformation.Residue: [ WARNING ] ResConnID info stored on the connected residue (residue 22) is now out of date!
+core.conformation.Residue: [ WARNING ] Connection atom name (in src):  C  
+core.conformation.Residue: [ WARNING ] Residue connection id changed when creating a new residue at seqpos 41
+core.conformation.Residue: [ WARNING ] ResConnID info stored on the connected residue (residue 42) is now out of date!
+core.conformation.Residue: [ WARNING ] Connection atom name (in src):  C  
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER MutateResidue - mut1=======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER MutateResidue - mut2=======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER MutateResidue - mut3=======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER SetupForSymmetry - c2_symm=======================
+core.pose.util: [ WARNING ] conf2pdb_chain(): PDBInfo does not exist, returning default map 1=A, 2=B, ...
+core.conformation.symmetry.Conformation: MIRRORED subunits: 2 
+core.conformation.symmetry.Conformation: MIRRORED jumps: 3u 3d 4u 4d 6u 6d 7d 
+core.conformation.symmetry.Conformation: Inverting restypes
+core.conformation.symmetry.util: =================== SYM FOLD TREE, jump notation: =symfixed= *indep* #symdof# jump[=follows] ========================
+VRT0001(121)
+|----#j5#----->29:Sub1B(21-40)21-----*j1*------>1:Sub1A(1-20)1------*j2*----->41:Sub1C(41-60)
+\----=j7=---->VRT0002(122)----j6=5----->89:Sub2B(81-100)81-----j3=1----->61:Sub2A(61-80)61-----j4=2---->101:Sub2C(101-120)
+protocols.simple_moves_symmetry.SymDockingInitialPerturbation: Reading options...
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER CrosslinkerMover - xlink=======================
+protocols.cyclic_peptide.CrosslinkerMover: Symmetric sidechain distance filter PASSED.
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+protocols.relax.FastRelax: ================== Using default script ==================
+protocols.relax.FastRelax: CMD: repeat  7.27769e+06  0  0  0.55
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 115 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 20676 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  2122.17  0  0  0.011
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 29 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3440 bytes
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 3.8147e-06 Deriv= -8.41134e-05 Finite Diff= 0.00158453
+protocols.relax.FastRelax: CMD: ramp_repack_min  2449.26  0  0  0.1375
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 20 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3008 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  2863.34  0  0  0.3025
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 17 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 2936 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  3458.56  0  0  0.55
+protocols.relax.FastRelax: MRP: 0  3458.56  3458.56  0  0  
+protocols.relax.FastRelax: CMD: accept_to_best  3458.56  0  0  0.55
+protocols.relax.FastRelax: CMD: endrepeat  3458.56  0  0  0.55
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols.relax.FastRelax: ================== Using default script ==================
+protocols.relax.FastRelax: CMD: repeat  3458.56  0  0  0.55
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 117 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 21276 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  2122.17  0  0  0.011
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 29 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3440 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  2449.26  0  0  0.1375
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 20 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3008 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  2863.34  0  0  0.3025
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 17 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 2936 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  3458.56  0  0  0.55
+protocols.relax.FastRelax: MRP: 0  3458.56  3458.56  0  0  
+protocols.relax.FastRelax: CMD: accept_to_best  3458.56  0  0  0.55
+protocols.relax.FastRelax: CMD: endrepeat  3458.56  0  0  0.55
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols.relax.FastRelax: ================== Using default script ==================
+protocols.relax.FastRelax: CMD: repeat  3458.56  0  0  0.55
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 117 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 21276 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  2122.17  0  0  0.011
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 29 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3440 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  2449.26  0  0  0.1375
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 20 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3008 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  2863.34  0  0  0.3025
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 17 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 2936 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  3458.56  0  0  0.55
+protocols.relax.FastRelax: MRP: 0  3458.56  3458.56  0  0  
+protocols.relax.FastRelax: CMD: accept_to_best  3458.56  0  0  0.55
+protocols.relax.FastRelax: CMD: endrepeat  3458.56  0  0  0.55
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols::checkpoint: Deleting checkpoints of FastRelax
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+protocols.cyclic_peptide.crosslinker.CrosslinkerMoverHelper: Constraint energy for crosslinked pose is 2809.99.  Filter failed.
+protocols.cyclic_peptide.CrosslinkerMover: Symmetric linker constraints filter FAILED.
+protocols.cyclic_peptide.CrosslinkerMover: Symmetric CrosslinkerMover reports FAILURE.  Returning input pose.
+protocols.rosetta_scripts.ParsedProtocol: Mover CrosslinkerMover reports failure!
+protocols.jd2.JobDistributor: [ WARNING ] S_0006 reported failure 1 times and will no longer retry (permanent failure)
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER BundleGridSampler - bgs1=======================
+protocols.helical_bundle.BundleGridSampler: Performing Crick parameter space grid sampling.
+protocols.helical_bundle.BundleGridSampler: A total of 9 grid points will be sampled.
+protocols.helical_bundle.BundleGridSampler: Creating BundleGridSamplerHelper object.
+protocols.helical_bundle.BundleGridSamplerHelper: Initializing samples.
+protocols.helical_bundle.BundleGridSamplerHelper: The following parameter values will be sampled:
+protocols.helical_bundle.BundleGridSamplerHelper: Helix	DoF	Parameter values
+protocols.helical_bundle.BundleGridSamplerHelper: 3	delta_omega1	0.1745	0.2182	0.2618	
+protocols.helical_bundle.BundleGridSamplerHelper: 2	z1_offset	-0.6750	-0.3750	-0.0750	
+protocols.helical_bundle.BundleGridSamplerHelper: 
+protocols.helical_bundle.BundleGridSampler: Grid point 7: attempting to build a helical bundle with the following parameters:
+protocols.helical_bundle.BundleGridSampler: Helix	r0	omega0	delta_omega0	delta_omega1	delta_t	z1_offset	z0_offset	epsilon
+protocols.helical_bundle.BundleGridSampler: 1	8.4000	0.0000	-1.0472	0.1047	0.0000	1.3750	0.0000	1.0000
+protocols.helical_bundle.BundleGridSampler: 2	7.2000	0.0000	0.0000	0.0000	0.0000	-0.6750	0.0000	1.0000
+protocols.helical_bundle.BundleGridSampler: 3	8.4000	0.0000	1.0472	0.2618	0.0000	2.7500	0.0000	1.0000
+protocols.helical_bundle.BundleGridSampler: 
+protocols.helical_bundle.MakeBundle: Building a helical bundle using the Crick equations.
+protocols.helical_bundle.MakeBundleHelix: Building a helix in a helical bundle using the Crick equations.
+protocols.helical_bundle.MakeBundleHelix: Building a helix in a helical bundle using the Crick equations.
+protocols.helical_bundle.MakeBundleHelix: Building a helix in a helical bundle using the Crick equations.
+protocols.helical_bundle.BundleGridSampler: Bundle generated successfully.
+protocols.helical_bundle.BundleGridSampler: Energy is 223.2071.  This is the lowest encountered so far.
+protocols.helical_bundle.BundleGridSampler: Success!  Returning lowest-energy pose.
+protocols.helical_bundle.BundleGridSampler: Parameters yielding the lowest-energy bundle:
+Helix	r0	omega0	delta_omega0	delta_omega1	delta_t	z1_offset	z0_offset	epsilon
+1	8.4000	0.0000	-1.0472	0.1047	0.0000	1.3750	0.0000	1.0000
+2	7.2000	0.0000	0.0000	0.0000	0.0000	-0.6750	0.0000	1.0000
+3	8.4000	0.0000	1.0472	0.2618	0.0000	2.7500	0.0000	1.0000
+
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER DeclareBond - add_termini=======================
+core.conformation.Residue: [ WARNING ] Residue connection id changed when creating a new residue at seqpos 1
+core.conformation.Residue: [ WARNING ] ResConnID info stored on the connected residue (residue 2) is now out of date!
+core.conformation.Residue: [ WARNING ] Connection atom name (in src):  C  
+core.conformation.Residue: [ WARNING ] Residue connection id changed when creating a new residue at seqpos 21
+core.conformation.Residue: [ WARNING ] ResConnID info stored on the connected residue (residue 22) is now out of date!
+core.conformation.Residue: [ WARNING ] Connection atom name (in src):  C  
+core.conformation.Residue: [ WARNING ] Residue connection id changed when creating a new residue at seqpos 41
+core.conformation.Residue: [ WARNING ] ResConnID info stored on the connected residue (residue 42) is now out of date!
+core.conformation.Residue: [ WARNING ] Connection atom name (in src):  C  
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER MutateResidue - mut1=======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER MutateResidue - mut2=======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER MutateResidue - mut3=======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER SetupForSymmetry - c2_symm=======================
+core.pose.util: [ WARNING ] conf2pdb_chain(): PDBInfo does not exist, returning default map 1=A, 2=B, ...
+core.conformation.symmetry.Conformation: MIRRORED subunits: 2 
+core.conformation.symmetry.Conformation: MIRRORED jumps: 3u 3d 4u 4d 6u 6d 7d 
+core.conformation.symmetry.Conformation: Inverting restypes
+core.conformation.symmetry.util: =================== SYM FOLD TREE, jump notation: =symfixed= *indep* #symdof# jump[=follows] ========================
+VRT0001(121)
+|----#j5#----->29:Sub1B(21-40)21-----*j1*------>1:Sub1A(1-20)1------*j2*----->41:Sub1C(41-60)
+\----=j7=---->VRT0002(122)----j6=5----->89:Sub2B(81-100)81-----j3=1----->61:Sub2A(61-80)61-----j4=2---->101:Sub2C(101-120)
+protocols.simple_moves_symmetry.SymDockingInitialPerturbation: Reading options...
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER CrosslinkerMover - xlink=======================
+protocols.cyclic_peptide.CrosslinkerMover: Symmetric sidechain distance filter PASSED.
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+protocols.relax.FastRelax: ================== Using default script ==================
+protocols.relax.FastRelax: CMD: repeat  7.4246e+06  0  0  0.55
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 107 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 18276 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  3242.75  0  0  0.011
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 36 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3392 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  3387.47  0  0  0.1375
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 29 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3224 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  3727.15  0  0  0.3025
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 24 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3104 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  4297.6  0  0  0.55
+protocols.relax.FastRelax: MRP: 0  4297.6  4297.6  0  0  
+protocols.relax.FastRelax: CMD: accept_to_best  4297.6  0  0  0.55
+protocols.relax.FastRelax: CMD: endrepeat  4297.6  0  0  0.55
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols.relax.FastRelax: ================== Using default script ==================
+protocols.relax.FastRelax: CMD: repeat  4297.6  0  0  0.55
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 101 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 16476 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  3054.61  0  0  0.011
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 36 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3392 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  3346.56  0  0  0.1375
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 29 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3224 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  3727.15  0  0  0.3025
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 24 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3104 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  4297.56  0  0  0.55
+protocols.relax.FastRelax: MRP: 0  4297.56  4297.56  0  0  
+protocols.relax.FastRelax: CMD: accept_to_best  4297.56  0  0  0.55
+protocols.relax.FastRelax: CMD: endrepeat  4297.56  0  0  0.55
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols.relax.FastRelax: ================== Using default script ==================
+protocols.relax.FastRelax: CMD: repeat  4297.56  0  0  0.55
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 101 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 16476 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  3054.61  0  0  0.011
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 36 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3392 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  3346.57  0  0  0.1375
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 29 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3224 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  3727.19  0  0  0.3025
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 24 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3104 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  4297.56  0  0  0.55
+protocols.relax.FastRelax: MRP: 0  4297.56  4297.56  0  0  
+protocols.relax.FastRelax: CMD: accept_to_best  4297.56  0  0  0.55
+protocols.relax.FastRelax: CMD: endrepeat  4297.56  0  0  0.55
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols::checkpoint: Deleting checkpoints of FastRelax
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+protocols.cyclic_peptide.crosslinker.CrosslinkerMoverHelper: Constraint energy for crosslinked pose is 3467.92.  Filter failed.
+protocols.cyclic_peptide.CrosslinkerMover: Symmetric linker constraints filter FAILED.
+protocols.cyclic_peptide.CrosslinkerMover: Symmetric CrosslinkerMover reports FAILURE.  Returning input pose.
+protocols.rosetta_scripts.ParsedProtocol: Mover CrosslinkerMover reports failure!
+protocols.jd2.JobDistributor: [ WARNING ] S_0007 reported failure 1 times and will no longer retry (permanent failure)
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER BundleGridSampler - bgs1=======================
+protocols.helical_bundle.BundleGridSampler: Performing Crick parameter space grid sampling.
+protocols.helical_bundle.BundleGridSampler: A total of 9 grid points will be sampled.
+protocols.helical_bundle.BundleGridSampler: Creating BundleGridSamplerHelper object.
+protocols.helical_bundle.BundleGridSamplerHelper: Initializing samples.
+protocols.helical_bundle.BundleGridSamplerHelper: The following parameter values will be sampled:
+protocols.helical_bundle.BundleGridSamplerHelper: Helix	DoF	Parameter values
+protocols.helical_bundle.BundleGridSamplerHelper: 3	delta_omega1	0.1745	0.2182	0.2618	
+protocols.helical_bundle.BundleGridSamplerHelper: 2	z1_offset	-0.6750	-0.3750	-0.0750	
+protocols.helical_bundle.BundleGridSamplerHelper: 
+protocols.helical_bundle.BundleGridSampler: Grid point 8: attempting to build a helical bundle with the following parameters:
+protocols.helical_bundle.BundleGridSampler: Helix	r0	omega0	delta_omega0	delta_omega1	delta_t	z1_offset	z0_offset	epsilon
+protocols.helical_bundle.BundleGridSampler: 1	8.4000	0.0000	-1.0472	0.1047	0.0000	1.3750	0.0000	1.0000
+protocols.helical_bundle.BundleGridSampler: 2	7.2000	0.0000	0.0000	0.0000	0.0000	-0.3750	0.0000	1.0000
+protocols.helical_bundle.BundleGridSampler: 3	8.4000	0.0000	1.0472	0.2618	0.0000	2.7500	0.0000	1.0000
+protocols.helical_bundle.BundleGridSampler: 
+protocols.helical_bundle.MakeBundle: Building a helical bundle using the Crick equations.
+protocols.helical_bundle.MakeBundleHelix: Building a helix in a helical bundle using the Crick equations.
+protocols.helical_bundle.MakeBundleHelix: Building a helix in a helical bundle using the Crick equations.
+protocols.helical_bundle.MakeBundleHelix: Building a helix in a helical bundle using the Crick equations.
+protocols.helical_bundle.BundleGridSampler: Bundle generated successfully.
+protocols.helical_bundle.BundleGridSampler: Energy is 184.1058.  This is the lowest encountered so far.
+protocols.helical_bundle.BundleGridSampler: Success!  Returning lowest-energy pose.
+protocols.helical_bundle.BundleGridSampler: Parameters yielding the lowest-energy bundle:
+Helix	r0	omega0	delta_omega0	delta_omega1	delta_t	z1_offset	z0_offset	epsilon
+1	8.4000	0.0000	-1.0472	0.1047	0.0000	1.3750	0.0000	1.0000
+2	7.2000	0.0000	0.0000	0.0000	0.0000	-0.3750	0.0000	1.0000
+3	8.4000	0.0000	1.0472	0.2618	0.0000	2.7500	0.0000	1.0000
+
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER DeclareBond - add_termini=======================
+core.conformation.Residue: [ WARNING ] Residue connection id changed when creating a new residue at seqpos 1
+core.conformation.Residue: [ WARNING ] ResConnID info stored on the connected residue (residue 2) is now out of date!
+core.conformation.Residue: [ WARNING ] Connection atom name (in src):  C  
+core.conformation.Residue: [ WARNING ] Residue connection id changed when creating a new residue at seqpos 21
+core.conformation.Residue: [ WARNING ] ResConnID info stored on the connected residue (residue 22) is now out of date!
+core.conformation.Residue: [ WARNING ] Connection atom name (in src):  C  
+core.conformation.Residue: [ WARNING ] Residue connection id changed when creating a new residue at seqpos 41
+core.conformation.Residue: [ WARNING ] ResConnID info stored on the connected residue (residue 42) is now out of date!
+core.conformation.Residue: [ WARNING ] Connection atom name (in src):  C  
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER MutateResidue - mut1=======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER MutateResidue - mut2=======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER MutateResidue - mut3=======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER SetupForSymmetry - c2_symm=======================
+core.pose.util: [ WARNING ] conf2pdb_chain(): PDBInfo does not exist, returning default map 1=A, 2=B, ...
+core.conformation.symmetry.Conformation: MIRRORED subunits: 2 
+core.conformation.symmetry.Conformation: MIRRORED jumps: 3u 3d 4u 4d 6u 6d 7d 
+core.conformation.symmetry.Conformation: Inverting restypes
+core.conformation.symmetry.util: =================== SYM FOLD TREE, jump notation: =symfixed= *indep* #symdof# jump[=follows] ========================
+VRT0001(121)
+|----#j5#----->29:Sub1B(21-40)21-----*j1*------>1:Sub1A(1-20)1------*j2*----->41:Sub1C(41-60)
+\----=j7=---->VRT0002(122)----j6=5----->89:Sub2B(81-100)81-----j3=1----->61:Sub2A(61-80)61-----j4=2---->101:Sub2C(101-120)
+protocols.simple_moves_symmetry.SymDockingInitialPerturbation: Reading options...
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER CrosslinkerMover - xlink=======================
+protocols.cyclic_peptide.CrosslinkerMover: Symmetric sidechain distance filter PASSED.
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+protocols.relax.FastRelax: ================== Using default script ==================
+protocols.relax.FastRelax: CMD: repeat  7.32734e+06  0  0  0.55
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 107 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 18276 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  679.31  0  0  0.011
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 34 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3344 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  822.44  0  0  0.1375
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 23 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3080 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  1178.61  0  0  0.3025
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 17 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 2936 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  1709.57  0  0  0.55
+protocols.relax.FastRelax: MRP: 0  1709.57  1709.57  0  0  
+protocols.relax.FastRelax: CMD: accept_to_best  1709.57  0  0  0.55
+protocols.relax.FastRelax: CMD: endrepeat  1709.57  0  0  0.55
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols.relax.FastRelax: ================== Using default script ==================
+protocols.relax.FastRelax: CMD: repeat  1709.57  0  0  0.55
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 107 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 18276 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  546.974  0  0  0.011
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 34 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3344 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  822.431  0  0  0.1375
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 23 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3080 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  1178.61  0  0  0.3025
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 17 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 2936 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  1709.57  0  0  0.55
+protocols.relax.FastRelax: MRP: 0  1709.57  1709.57  0  0  
+protocols.relax.FastRelax: CMD: accept_to_best  1709.57  0  0  0.55
+protocols.relax.FastRelax: CMD: endrepeat  1709.57  0  0  0.55
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols.relax.FastRelax: ================== Using default script ==================
+protocols.relax.FastRelax: CMD: repeat  1709.57  0  0  0.55
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 107 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 18276 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  546.974  0  0  0.011
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 34 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3344 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  822.431  0  0  0.1375
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 23 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3080 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  1178.61  0  0  0.3025
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 17 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 2936 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  1709.57  0  0  0.55
+protocols.relax.FastRelax: MRP: 0  1709.57  1709.57  0  0  
+protocols.relax.FastRelax: CMD: accept_to_best  1709.57  0  0  0.55
+protocols.relax.FastRelax: CMD: endrepeat  1709.57  0  0  0.55
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols::checkpoint: Deleting checkpoints of FastRelax
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+protocols.cyclic_peptide.crosslinker.CrosslinkerMoverHelper: Constraint energy for crosslinked pose is 916.075.  Filter passes.
+protocols.cyclic_peptide.CrosslinkerMover: Symmetric linker constraints filter PASSED.
+protocols.cyclic_peptide.CrosslinkerMover: Symmetric CrosslinkerMover reports SUCCESS.  Updating pose.
+protocols.rosetta_scripts.ParsedProtocol: setting status to success
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER BundleGridSampler - bgs1=======================
+protocols.helical_bundle.BundleGridSampler: Performing Crick parameter space grid sampling.
+protocols.helical_bundle.BundleGridSampler: A total of 9 grid points will be sampled.
+protocols.helical_bundle.BundleGridSampler: Creating BundleGridSamplerHelper object.
+protocols.helical_bundle.BundleGridSamplerHelper: Initializing samples.
+protocols.helical_bundle.BundleGridSamplerHelper: The following parameter values will be sampled:
+protocols.helical_bundle.BundleGridSamplerHelper: Helix	DoF	Parameter values
+protocols.helical_bundle.BundleGridSamplerHelper: 3	delta_omega1	0.1745	0.2182	0.2618	
+protocols.helical_bundle.BundleGridSamplerHelper: 2	z1_offset	-0.6750	-0.3750	-0.0750	
+protocols.helical_bundle.BundleGridSamplerHelper: 
+protocols.helical_bundle.BundleGridSampler: Grid point 9: attempting to build a helical bundle with the following parameters:
+protocols.helical_bundle.BundleGridSampler: Helix	r0	omega0	delta_omega0	delta_omega1	delta_t	z1_offset	z0_offset	epsilon
+protocols.helical_bundle.BundleGridSampler: 1	8.4000	0.0000	-1.0472	0.1047	0.0000	1.3750	0.0000	1.0000
+protocols.helical_bundle.BundleGridSampler: 2	7.2000	0.0000	0.0000	0.0000	0.0000	-0.0750	0.0000	1.0000
+protocols.helical_bundle.BundleGridSampler: 3	8.4000	0.0000	1.0472	0.2618	0.0000	2.7500	0.0000	1.0000
+protocols.helical_bundle.BundleGridSampler: 
+protocols.helical_bundle.MakeBundle: Building a helical bundle using the Crick equations.
+protocols.helical_bundle.MakeBundleHelix: Building a helix in a helical bundle using the Crick equations.
+protocols.helical_bundle.MakeBundleHelix: Building a helix in a helical bundle using the Crick equations.
+protocols.helical_bundle.MakeBundleHelix: Building a helix in a helical bundle using the Crick equations.
+protocols.helical_bundle.BundleGridSampler: Bundle generated successfully.
+protocols.helical_bundle.BundleGridSampler: Energy is 185.5316.  This is the lowest encountered so far.
+protocols.helical_bundle.BundleGridSampler: Success!  Returning lowest-energy pose.
+protocols.helical_bundle.BundleGridSampler: Parameters yielding the lowest-energy bundle:
+Helix	r0	omega0	delta_omega0	delta_omega1	delta_t	z1_offset	z0_offset	epsilon
+1	8.4000	0.0000	-1.0472	0.1047	0.0000	1.3750	0.0000	1.0000
+2	7.2000	0.0000	0.0000	0.0000	0.0000	-0.0750	0.0000	1.0000
+3	8.4000	0.0000	1.0472	0.2618	0.0000	2.7500	0.0000	1.0000
+
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER DeclareBond - add_termini=======================
+core.conformation.Residue: [ WARNING ] Residue connection id changed when creating a new residue at seqpos 1
+core.conformation.Residue: [ WARNING ] ResConnID info stored on the connected residue (residue 2) is now out of date!
+core.conformation.Residue: [ WARNING ] Connection atom name (in src):  C  
+core.conformation.Residue: [ WARNING ] Residue connection id changed when creating a new residue at seqpos 21
+core.conformation.Residue: [ WARNING ] ResConnID info stored on the connected residue (residue 22) is now out of date!
+core.conformation.Residue: [ WARNING ] Connection atom name (in src):  C  
+core.conformation.Residue: [ WARNING ] Residue connection id changed when creating a new residue at seqpos 41
+core.conformation.Residue: [ WARNING ] ResConnID info stored on the connected residue (residue 42) is now out of date!
+core.conformation.Residue: [ WARNING ] Connection atom name (in src):  C  
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER MutateResidue - mut1=======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER MutateResidue - mut2=======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER MutateResidue - mut3=======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER SetupForSymmetry - c2_symm=======================
+core.pose.util: [ WARNING ] conf2pdb_chain(): PDBInfo does not exist, returning default map 1=A, 2=B, ...
+core.conformation.symmetry.Conformation: MIRRORED subunits: 2 
+core.conformation.symmetry.Conformation: MIRRORED jumps: 3u 3d 4u 4d 6u 6d 7d 
+core.conformation.symmetry.Conformation: Inverting restypes
+core.conformation.symmetry.util: =================== SYM FOLD TREE, jump notation: =symfixed= *indep* #symdof# jump[=follows] ========================
+VRT0001(121)
+|----#j5#----->29:Sub1B(21-40)21-----*j1*------>1:Sub1A(1-20)1------*j2*----->41:Sub1C(41-60)
+\----=j7=---->VRT0002(122)----j6=5----->89:Sub2B(81-100)81-----j3=1----->61:Sub2A(61-80)61-----j4=2---->101:Sub2C(101-120)
+protocols.simple_moves_symmetry.SymDockingInitialPerturbation: Reading options...
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER CrosslinkerMover - xlink=======================
+protocols.cyclic_peptide.CrosslinkerMover: Symmetric sidechain distance filter PASSED.
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+protocols.relax.FastRelax: ================== Using default script ==================
+protocols.relax.FastRelax: CMD: repeat  7.23555e+06  0  0  0.55
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 111 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 19476 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  2024.56  0  0  0.011
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 27 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3368 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  2474.83  0  0  0.1375
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 19 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 2984 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  2513.31  0  0  0.3025
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 17 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 2936 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  3076.57  0  0  0.55
+protocols.relax.FastRelax: MRP: 0  3076.57  3076.57  0  0  
+protocols.relax.FastRelax: CMD: accept_to_best  3076.57  0  0  0.55
+protocols.relax.FastRelax: CMD: endrepeat  3076.57  0  0  0.55
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols.relax.FastRelax: ================== Using default script ==================
+protocols.relax.FastRelax: CMD: repeat  3076.57  0  0  0.55
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 115 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 20676 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  1840.06  0  0  0.011
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 27 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3368 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  2132.09  0  0  0.1375
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 19 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 2984 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  2512.6  0  0  0.3025
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 17 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 2936 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  3079.97  0  0  0.55
+protocols.relax.FastRelax: MRP: 0  3079.97  3079.97  0  0  
+protocols.relax.FastRelax: CMD: accept_to_best  3079.97  0  0  0.55
+protocols.relax.FastRelax: CMD: endrepeat  3079.97  0  0  0.55
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols.relax.FastRelax: ================== Using default script ==================
+protocols.relax.FastRelax: CMD: repeat  3079.97  0  0  0.55
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 115 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 20676 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  1840.02  0  0  0.011
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 27 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3368 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  2132.34  0  0  0.1375
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 19 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 2984 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  2512.11  0  0  0.3025
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 17 rotamers at 3 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 2936 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  3079.96  0  0  0.55
+protocols.relax.FastRelax: MRP: 0  3079.96  3079.96  0  0  
+protocols.relax.FastRelax: CMD: accept_to_best  3079.96  0  0  0.55
+protocols.relax.FastRelax: CMD: endrepeat  3079.96  0  0  0.55
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols::checkpoint: Deleting checkpoints of FastRelax
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+protocols.cyclic_peptide.crosslinker.CrosslinkerMoverHelper: Constraint energy for crosslinked pose is 2229.76.  Filter failed.
+protocols.cyclic_peptide.CrosslinkerMover: Symmetric linker constraints filter FAILED.
+protocols.cyclic_peptide.CrosslinkerMover: Symmetric CrosslinkerMover reports FAILURE.  Returning input pose.
+protocols.rosetta_scripts.ParsedProtocol: Mover CrosslinkerMover reports failure!
+protocols.jd2.JobDistributor: [ WARNING ] S_0009 reported failure 1 times and will no longer retry (permanent failure)
+protocols.jd2.JobDistributor: no more batches to process... 

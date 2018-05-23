@@ -1,0 +1,47 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<ScoreFunction name="r15" weights="ref2015.wts" />
+	</SCOREFXNS>
+	<TASKOPERATIONS>
+	</TASKOPERATIONS>
+	<FILTERS>
+	</FILTERS>
+	<RESIDUE_SELECTORS>
+		<Index name="select_ligands" resnums="9,29,49,69,89,109" />
+	</RESIDUE_SELECTORS>
+	<MOVERS>
+
+		<BundleGridSampler name="bgs1" helix_length="20" scorefxn="r15" use_degrees="true"
+				r0="8.2" nstruct_mode="true" max_samples="27" >
+			<Helix invert="false" omega0_min="-1.2" omega0_max="-0.8" omega0_samples="3" z1_offset_min="1.6" z1_offset_max="1.8" z1_offset_samples="3" delta_omega1="12" />
+			<Helix delta_omega0="60" invert="true" pitch_from_helix="1" z1_offset_copies_helix="1" />
+			<Helix delta_omega0="120" r0_min="7.0" r0_max="7.2" r0_samples="3" invert="false" pitch_from_helix="1" z1_offset_copies_helix="1" />
+			<Helix delta_omega0="180" invert="true" pitch_from_helix="1" z1_offset_copies_helix="1" delta_omega1="340" />
+			<Helix delta_omega0="240" invert="false" pitch_from_helix="1" z1_offset_copies_helix="1" />
+			<Helix delta_omega0="300" r0_copies_helix="1" invert="true" pitch_from_helix="1" z1_offset_copies_helix="1" />
+		</BundleGridSampler>
+		
+		<MutateResidue name="mut1" target="9" new_res="HIS" />
+		<MutateResidue name="mut2" target="29" new_res="HIS" />
+		<MutateResidue name="mut3" target="49" new_res="GLU" />
+		<MutateResidue name="mut4" target="69" new_res="HIS" />
+		<MutateResidue name="mut5" target="89" new_res="HIS" />
+		<MutateResidue name="mut6" target="109" new_res="GLU" />
+		
+		<CrosslinkerMover name="xlink" scorefxn="r15" linker_name="octahedral_metal" symmetry="A1" metal_type="Fe2" residue_selector="select_ligands" constraints_energy_filter_multiplier="25" sidechain_distance_filter_multiplier="2.0" />
+
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover="bgs1" />
+		<Add mover="mut1" />
+		<Add mover="mut2" />
+		<Add mover="mut3" />
+		<Add mover="mut4" />
+		<Add mover="mut5" />
+		<Add mover="mut6" />
+		<Add mover="xlink" />
+	</PROTOCOLS>
+
+</ROSETTASCRIPTS>

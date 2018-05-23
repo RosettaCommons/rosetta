@@ -1,0 +1,614 @@
+core.init: command: ROSETTA/main/source/bin/simple_cycpep_predict.default.linuxgccrelease @flags -database ROSETTA/main/database -run:constant_seed -nodelay -testing:INTEGRATION_TEST
+core.init: Constant seed mode, seed=1111111 seed_offset=0 real_seed=1111111
+apps.public.cyclic_peptide.simple_cycpep_predict: Starting simple_cycpep_predict.cc
+apps.public.cyclic_peptide.simple_cycpep_predict: Application created 16 September 2015 by Vikram K. Mulligan, Ph.D., Baker laboratory.
+apps.public.cyclic_peptide.simple_cycpep_predict: For questions, contact vmullig@uw.edu.
+apps.public.cyclic_peptide.simple_cycpep_predict: 
+core.scoring.ScoreFunctionFactory: SCOREFUNCTION: ref2015
+core.scoring.etable: Starting energy table calculation
+core.scoring.etable: smooth_etable: changing atr/rep split to bottom of energy well
+core.scoring.etable: smooth_etable: spline smoothing lj etables (maxdis = 6)
+core.scoring.etable: smooth_etable: spline smoothing solvation etables (max_dis = 6)
+core.scoring.etable: Finished calculating energy tables.
+basic.io.database: Database file opened: scoring/score_functions/hbonds/ref2015_params/HBPoly1D.csv
+basic.io.database: Database file opened: scoring/score_functions/hbonds/ref2015_params/HBFadeIntervals.csv
+basic.io.database: Database file opened: scoring/score_functions/hbonds/ref2015_params/HBEval.csv
+basic.io.database: Database file opened: scoring/score_functions/hbonds/ref2015_params/DonStrength.csv
+basic.io.database: Database file opened: scoring/score_functions/hbonds/ref2015_params/AccStrength.csv
+basic.io.database: Database file opened: scoring/score_functions/rama/fd/all.ramaProb
+basic.io.database: Database file opened: scoring/score_functions/rama/fd/prepro.ramaProb
+basic.io.database: Database file opened: scoring/score_functions/omega/omega_ppdep.all.txt
+basic.io.database: Database file opened: scoring/score_functions/omega/omega_ppdep.gly.txt
+basic.io.database: Database file opened: scoring/score_functions/omega/omega_ppdep.pro.txt
+basic.io.database: Database file opened: scoring/score_functions/omega/omega_ppdep.valile.txt
+basic.io.database: Database file opened: scoring/score_functions/P_AA_pp/P_AA
+basic.io.database: Database file opened: scoring/score_functions/P_AA_pp/P_AA_n
+core.scoring.P_AA: shapovalov_lib::shap_p_aa_pp_smooth_level of 1( aka low_smooth ) got activated.
+basic.io.database: Database file opened: scoring/score_functions/P_AA_pp/shapovalov/10deg/kappa131/a20.prop
+basic.io.database: Database file opened: protocol_data/generalizedKIC/bin_params/ABBA.bin_params
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: Loaded ABBA.bin_params.
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: Parsed octahedral metal setup where res1=5, res2=10, res3=15, res4=20, res5=25, res6=30, metal=Fe2
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: Opened inputs/seq.txt for read.
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: Parsing "GLY GLY GLY GLY ASP GLY GLY GLY GLY DHIS GLY GLY GLY GLY HIS GLY GLY GLY GLY DASP GLY GLY GLY GLY HIS GLY GLY GLY GLY DHIS".
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: Parsed the following sequence:
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: GLY, GLY, GLY, GLY, ASP, GLY, GLY, GLY, GLY, DHIS, GLY, GLY, GLY, GLY, HIS, GLY, GLY, GLY, GLY, DASP, GLY, GLY, GLY, GLY, HIS, GLY, GLY, GLY, GLY, DHIS.
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: Importing native structure from inputs/native.pdb.
+core.import_pose.import_pose: File 'inputs/native.pdb' automatically determined to be of type PDB
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  OXT on residue DHIS:CtermProteinFull 30
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: Improrting native structure from inputs/native.pdb.
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: Stripping termini from native structure.
+core.chemical.AtomICoor: [ WARNING ] IcoorAtomID::atom_id(): Cannot get atom_id for POLYMER_LOWER of residue GLY 1.  Returning BOGUS ID instead.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue: [ WARNING ]  --> generating it using idealized coordinates.
+core.conformation.Residue: [ WARNING ] Residue connection id changed when creating a new residue at seqpos 1
+core.conformation.Residue: [ WARNING ] ResConnID info stored on the connected residue (residue 2) is now out of date!
+core.conformation.Residue: [ WARNING ] Connection atom name (in src):  C  
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: Removed lower terminus type from first residue.
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: Removed upper terminus type from last residue.
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: Setting up terminal bond for the native pose between residue 1, atom  N   and residue 30, atom  C  .
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: Circularly shifted residue list by 0.  New list is: GLY, GLY, GLY, GLY, ASP, GLY, GLY, GLY, GLY, DHIS, GLY, GLY, GLY, GLY, HIS, GLY, GLY, GLY, GLY, DASP, GLY, GLY, GLY, GLY, HIS, GLY, GLY, GLY, GLY, DHIS
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: Building sequence GLY GLY GLY GLY ASP GLY GLY GLY GLY DHIS GLY GLY GLY GLY HIS GLY GLY GLY GLY DASP GLY GLY GLY GLY HIS GLY GLY GLY GLY DHIS.
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: Build successful.
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: Setting up terminal bond between residue 1, atom  N   and residue 30, atom  C  .
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: Setting up cyclic constraints.
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: The following four atoms define the terminal bond:
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: 1.	Res=30	Atom= CA 
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: 2.	Res=30	Atom= C  
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: 3.	Res=1	Atom= N  
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: 4.	Res=1	Atom= CA 
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: Finished setting up constraints.
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: Randomizing mainchain torsions.
+core.scoring.ramachandran: shapovalov_lib::shap_rama_smooth_level of 4( aka highest_smooth ) got activated.
+basic.io.database: Database file opened: scoring/score_functions/rama/shapovalov/kappa25/all.ramaProb
+core.kinematics.AtomTree: [ WARNING ] DOF for this torsion angle could not be found in AtomTree.
+core.conformation.Conformation: [ WARNING ] Unable to set torsion angle in atom_tree: TorsionID 1 BB 1
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ WARNING ] DOF for this torsion angle could not be found in AtomTree.
+core.conformation.Conformation: [ WARNING ] Unable to set torsion angle in atom_tree: TorsionID 30 BB 2
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: Performing GeneralizedKIC closure of loop.
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: Setting up terminal bond between residue 1, atom  N   and residue 30, atom  C  .
+protocols.relax.FastRelax: ================== Using default script ==================
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols.generalized_kinematic_closure.GeneralizedKIC: Applying pre-selection mover to solution 1 from attempt 4.
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER DeclareBond - Update_cyclization_point_polymer_dependent_atoms_1=======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER NullMover - Cycpep_Symmetry_Filter_1=======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============Begin report for ==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: This peptide is s6 symmetric.
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============End report for ==================
+protocols.rosetta_scripts.ParsedProtocol: =======================END FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER CrosslinkerMover - octahedral_metal_link_1=======================
+protocols.cyclic_peptide.CrosslinkerMover: Sidechain distance filter PASSED.
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+protocols.relax.FastRelax: ================== Using default script ==================
+basic.io.database: Database file opened: scoring/score_functions/elec_cp_reps.dat
+core.scoring.elec.util: Read 40 countpair representative atoms
+core.pack.dunbrack.RotamerLibrary: shapovalov_lib_fixes_enable option is true.
+core.pack.dunbrack.RotamerLibrary: shapovalov_lib::shap_dun10_smooth_level of 1( aka lowest_smooth ) got activated.
+protocols.relax.FastRelax: CMD: repeat  5.0033e+06  0  0  0.55
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 115 rotamers at 6 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 30496 bytes
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+protocols.relax.FastRelax: CMD: ramp_repack_min  9070.95  0  0  0.011
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 84 rotamers at 6 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 19548 bytes
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+protocols.relax.FastRelax: CMD: ramp_repack_min  9439.24  0  0  0.1375
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 74 rotamers at 6 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 16888 bytes
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+protocols.relax.FastRelax: CMD: ramp_repack_min  9911.48  0  0  0.3025
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 65 rotamers at 6 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 14920 bytes
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+protocols.relax.FastRelax: CMD: ramp_repack_min  10601  0  0  0.55
+protocols.relax.FastRelax: MRP: 0  10601  10601  0  0  
+protocols.relax.FastRelax: CMD: accept_to_best  10601  0  0  0.55
+protocols.relax.FastRelax: CMD: endrepeat  10601  0  0  0.55
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols.relax.FastRelax: ================== Using default script ==================
+protocols.relax.FastRelax: CMD: repeat  10601  0  0  0.55
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 115 rotamers at 6 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 30496 bytes
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+protocols.relax.FastRelax: CMD: ramp_repack_min  9070.96  0  0  0.011
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 84 rotamers at 6 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 19548 bytes
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+protocols.relax.FastRelax: CMD: ramp_repack_min  9439.25  0  0  0.1375
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 74 rotamers at 6 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 16888 bytes
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+protocols.relax.FastRelax: CMD: ramp_repack_min  9911.48  0  0  0.3025
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 65 rotamers at 6 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 14920 bytes
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+protocols.relax.FastRelax: CMD: ramp_repack_min  10601  0  0  0.55
+protocols.relax.FastRelax: MRP: 0  10601  10601  0  0  
+protocols.relax.FastRelax: CMD: accept_to_best  10601  0  0  0.55
+protocols.relax.FastRelax: CMD: endrepeat  10601  0  0  0.55
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols.relax.FastRelax: ================== Using default script ==================
+protocols.relax.FastRelax: CMD: repeat  10601  0  0  0.55
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 115 rotamers at 6 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 30496 bytes
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+protocols.relax.FastRelax: CMD: ramp_repack_min  9070.95  0  0  0.011
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 84 rotamers at 6 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 19548 bytes
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+protocols.relax.FastRelax: CMD: ramp_repack_min  9439.22  0  0  0.1375
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 74 rotamers at 6 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 16888 bytes
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+protocols.relax.FastRelax: CMD: ramp_repack_min  9911.49  0  0  0.3025
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 65 rotamers at 6 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 14920 bytes
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+protocols.relax.FastRelax: CMD: ramp_repack_min  10601  0  0  0.55
+protocols.relax.FastRelax: MRP: 0  10601  10601  0  0  
+protocols.relax.FastRelax: CMD: accept_to_best  10601  0  0  0.55
+protocols.relax.FastRelax: CMD: endrepeat  10601  0  0  0.55
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols::checkpoint: Deleting checkpoints of FastRelax
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+core.scoring.constraints.ConstraintsIO: Read in 1 constraints
+protocols.cyclic_peptide.crosslinker.CrosslinkerMoverHelper: Constraint energy for crosslinked pose is 9026.27.  Filter passes.
+protocols.cyclic_peptide.CrosslinkerMover: Linker constraints filter PASSED.
+protocols.cyclic_peptide.CrosslinkerMover: CrosslinkerMover reports SUCCESS.  Updating pose.
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER FastRelax - High_Hbond_FastRelax=======================
+protocols.relax.FastRelax: CMD: repeat  10601  0  0  0.55
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 139 rotamers at 30 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 111360 bytes
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 3.55271e-15 Deriv= -754084 Finite Diff= 12424
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 3.00383e-09 Deriv= -14708.4 Finite Diff= 901.771
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 1.94837e-07 Deriv= -1533.34 Finite Diff= 26.0303
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#136
+protocols.relax.FastRelax: CMD: ramp_repack_min  35.4977  1.16466  1.16466  0.011
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 73 rotamers at 30 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 89180 bytes
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 3.72529e-09 Deriv= -1.1968e+06 Finite Diff= 192435
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 9.09872e-09 Deriv= -3413.02 Finite Diff= 692.618
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 5.61508e-09 Deriv= -662.692 Finite Diff= 49.6547
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 6.38619e-09 Deriv= -2182.83 Finite Diff= 1049.91
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 7.75579e-09 Deriv= -1821.31 Finite Diff= 299.375
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 8.16081e-09 Deriv= -2544.23 Finite Diff= 447.846
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 2.75213e-07 Deriv= -768.5 Finite Diff= -63.3671
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#100
+protocols.relax.FastRelax: CMD: ramp_repack_min  -16.1708  1.33011  1.33011  0.1375
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 97 rotamers at 30 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 93660 bytes
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 3.8147e-08 Deriv= -301.22 Finite Diff= 37.2031
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 4.3959e-07 Deriv= -301.22 Finite Diff= 37.3176
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#1
+protocols.relax.FastRelax: CMD: ramp_repack_min  18.9641  1.33011  1.33011  0.3025
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 95 rotamers at 30 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 92996 bytes
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 9.53674e-09 Deriv= -1120.43 Finite Diff= 465.207
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 5.85612e-09 Deriv= -1963.84 Finite Diff= 413.909
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 3.30129e-07 Deriv= -534.089 Finite Diff= 177.304
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#11
+protocols.relax.FastRelax: CMD: ramp_repack_min  71.5567  1.33041  1.33041  0.55
+protocols.relax.FastRelax: MRP: 0  71.5567  71.5567  1.33041  1.33041  
+protocols.relax.FastRelax: CMD: accept_to_best  71.5567  1.33041  1.33041  0.55
+protocols.relax.FastRelax: CMD: endrepeat  71.5567  1.33041  1.33041  0.55
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 144 rotamers at 30 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 114056 bytes
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 9.53674e-09 Deriv= -718.943 Finite Diff= 235.345
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 3.10883e-09 Deriv= -773.854 Finite Diff= 589.534
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 9.80611e-09 Deriv= -1268.08 Finite Diff= 217.315
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 6.84595e-07 Deriv= -124.198 Finite Diff= 49.5401
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#12
+protocols.relax.FastRelax: CMD: ramp_repack_min  -42.7856  1.33009  1.33009  0.011
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 114 rotamers at 30 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 100772 bytes
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 4.76837e-09 Deriv= -567.078 Finite Diff= 218.183
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 2.67224e-07 Deriv= -815.137 Finite Diff= -79.4817
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#4
+protocols.relax.FastRelax: CMD: ramp_repack_min  -15.7729  1.3303  1.3303  0.1375
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 98 rotamers at 30 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 94452 bytes
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 9.53674e-09 Deriv= -643.586 Finite Diff= 342.287
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 4.43163e-07 Deriv= -296.383 Finite Diff= 32.8515
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#7
+protocols.relax.FastRelax: CMD: ramp_repack_min  19.3796  1.33032  1.33032  0.3025
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 96 rotamers at 30 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 93788 bytes
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 9.53674e-09 Deriv= -747.934 Finite Diff= 371.891
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 5.95198e-09 Deriv= -924.968 Finite Diff= 295.021
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 3.56332e-07 Deriv= -458.427 Finite Diff= 204.456
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#11
+protocols.relax.FastRelax: CMD: ramp_repack_min  71.9828  1.33058  1.33058  0.55
+protocols.relax.FastRelax: MRP: 1  71.9828  71.5567  1.33041  1.33041  
+protocols.relax.FastRelax: CMD: accept_to_best  71.9828  1.33058  1.33058  0.55
+protocols.relax.FastRelax: CMD: endrepeat  71.9828  1.33058  1.33058  0.55
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 144 rotamers at 30 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 114056 bytes
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 9.53674e-09 Deriv= -337.363 Finite Diff= 186.915
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 3.15572e-09 Deriv= -263.723 Finite Diff= 330.08
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 5.49301e-09 Deriv= -491.003 Finite Diff= 174.732
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 7.11729e-07 Deriv= -114.908 Finite Diff= 111.742
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#12
+protocols.relax.FastRelax: CMD: ramp_repack_min  -42.3132  1.3303  1.3303  0.011
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 114 rotamers at 30 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 100772 bytes
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 4.76837e-09 Deriv= -207.905 Finite Diff= 128.523
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 3.62688e-07 Deriv= -442.5 Finite Diff= 210.274
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#4
+protocols.relax.FastRelax: CMD: ramp_repack_min  -15.321  1.33049  1.33049  0.1375
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 98 rotamers at 30 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 94848 bytes
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 9.53674e-09 Deriv= -430.985 Finite Diff= 313.925
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 4.64407e-07 Deriv= -269.887 Finite Diff= 243.672
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#6
+protocols.relax.FastRelax: CMD: ramp_repack_min  19.8129  1.33061  1.33061  0.3025
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 96 rotamers at 30 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 93788 bytes
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 9.53674e-09 Deriv= -601.187 Finite Diff= 289.783
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 4.62349e-09 Deriv= -688.869 Finite Diff= 550.917
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 2.74471e-07 Deriv= -772.658 Finite Diff= 103.12
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#10
+protocols.relax.FastRelax: CMD: ramp_repack_min  72.3547  1.33076  1.33076  0.55
+protocols.relax.FastRelax: MRP: 2  72.3547  71.5567  1.33041  1.33041  
+protocols.relax.FastRelax: CMD: accept_to_best  72.3547  1.33076  1.33076  0.55
+protocols.relax.FastRelax: CMD: endrepeat  72.3547  1.33076  1.33076  0.55
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER DeclareBond - Update_cyclization_point_polymer_dependent_atoms_2=======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER NullMover - Cycpep_Symmetry_Filter_2=======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============Begin report for ==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: This peptide is s6 symmetric.
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============End report for ==================
+protocols.rosetta_scripts.ParsedProtocol: =======================END FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: setting status to success
+protocols.generalized_kinematic_closure.GeneralizedKIC: Storing solution 1 from attempt 4.
+protocols.generalized_kinematic_closure.selector.GeneralizedKICselector: Choosing GeneralizedKIC solution.
+protocols.generalized_kinematic_closure.GeneralizedKIC: Closure successful.
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: Closure successful.
+protocols.relax.FastRelax: ================== Using default script ==================
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: Setting up terminal bond between residue 1, atom  N   and residue 30, atom  C  .
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: Applying final FastRelax, round 1.
+protocols.relax.FastRelax: CMD: repeat  198.502  0  0  0.55
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 144 rotamers at 30 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 114056 bytes
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 9.53674e-09 Deriv= -1917.9 Finite Diff= 165.905
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 7.29234e-09 Deriv= -952.554 Finite Diff= 445.46
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 5.0402e-09 Deriv= -1193.01 Finite Diff= 375.988
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 2.77543e-07 Deriv= -755.649 Finite Diff= -1.51636
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#13
+protocols.relax.FastRelax: CMD: ramp_repack_min  84.4217  0.00352139  0.00352139  0.011
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 110 rotamers at 30 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 98072 bytes
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 3.8147e-08 Deriv= -364.156 Finite Diff= 97.6966
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 3.99803e-07 Deriv= -364.156 Finite Diff= 98.0415
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#1
+protocols.relax.FastRelax: CMD: ramp_repack_min  111.362  0.00352139  0.00352139  0.1375
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 96 rotamers at 30 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 93392 bytes
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 9.53674e-09 Deriv= -1879.63 Finite Diff= 784.121
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 5.98237e-09 Deriv= -1163.23 Finite Diff= 222.785
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 2.2864e-07 Deriv= -1113.47 Finite Diff= -107.797
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#10
+protocols.relax.FastRelax: CMD: ramp_repack_min  146.465  0.0040899  0.0040899  0.3025
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 94 rotamers at 30 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 92744 bytes
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 3.72529e-11 Deriv= -3002.15 Finite Diff= -91.8755
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 3.29996e-07 Deriv= -534.519 Finite Diff= 174.315
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#9
+protocols.relax.FastRelax: CMD: ramp_repack_min  198.857  0.00607133  0.00607133  0.55
+protocols.relax.FastRelax: MRP: 0  198.857  198.857  0.00607133  0.00607133  
+protocols.relax.FastRelax: CMD: accept_to_best  198.857  0.00607133  0.00607133  0.55
+protocols.relax.FastRelax: CMD: endrepeat  198.857  0.00607133  0.00607133  0.55
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: Applying final FastRelax, round 2.
+protocols.relax.FastRelax: CMD: repeat  198.502  0  0  0.55
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 144 rotamers at 30 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 114056 bytes
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 9.53674e-09 Deriv= -1917.9 Finite Diff= 165.905
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 7.29234e-09 Deriv= -952.554 Finite Diff= 445.46
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 5.0402e-09 Deriv= -1193.01 Finite Diff= 375.988
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 2.77543e-07 Deriv= -755.649 Finite Diff= -1.51636
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#13
+protocols.relax.FastRelax: CMD: ramp_repack_min  84.4217  0.00352139  0.00352139  0.011
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 110 rotamers at 30 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 98072 bytes
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 3.8147e-08 Deriv= -364.156 Finite Diff= 97.6966
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 3.99803e-07 Deriv= -364.156 Finite Diff= 98.0415
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#1
+protocols.relax.FastRelax: CMD: ramp_repack_min  111.362  0.00352139  0.00352139  0.1375
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 96 rotamers at 30 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 93392 bytes
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 9.53674e-09 Deriv= -1879.63 Finite Diff= 784.121
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 5.98237e-09 Deriv= -1163.23 Finite Diff= 222.785
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 2.2864e-07 Deriv= -1113.47 Finite Diff= -107.797
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#10
+protocols.relax.FastRelax: CMD: ramp_repack_min  146.465  0.0040899  0.0040899  0.3025
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 94 rotamers at 30 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 92744 bytes
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 3.72529e-11 Deriv= -3002.15 Finite Diff= -91.8755
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 3.29996e-07 Deriv= -534.519 Finite Diff= 174.315
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#9
+protocols.relax.FastRelax: CMD: ramp_repack_min  198.857  0.00607133  0.00607133  0.55
+protocols.relax.FastRelax: MRP: 0  198.857  198.857  0.00607133  0.00607133  
+protocols.relax.FastRelax: CMD: accept_to_best  198.857  0.00607133  0.00607133  0.55
+protocols.relax.FastRelax: CMD: endrepeat  198.857  0.00607133  0.00607133  0.55
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: Applying final FastRelax, round 3.
+protocols.relax.FastRelax: CMD: repeat  198.502  0  0  0.55
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 144 rotamers at 30 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 114056 bytes
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 9.53674e-09 Deriv= -1917.9 Finite Diff= 165.905
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 7.29234e-09 Deriv= -952.554 Finite Diff= 445.46
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 5.0402e-09 Deriv= -1193.01 Finite Diff= 375.988
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 2.77543e-07 Deriv= -755.649 Finite Diff= -1.51636
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#13
+protocols.relax.FastRelax: CMD: ramp_repack_min  84.4217  0.00352139  0.00352139  0.011
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 110 rotamers at 30 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 98072 bytes
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 3.8147e-08 Deriv= -364.156 Finite Diff= 97.6966
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 3.99803e-07 Deriv= -364.156 Finite Diff= 98.0415
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#1
+protocols.relax.FastRelax: CMD: ramp_repack_min  111.362  0.00352139  0.00352139  0.1375
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 96 rotamers at 30 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 93392 bytes
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 9.53674e-09 Deriv= -1879.63 Finite Diff= 784.121
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 5.98237e-09 Deriv= -1163.23 Finite Diff= 222.785
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 2.2864e-07 Deriv= -1113.47 Finite Diff= -107.797
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#10
+protocols.relax.FastRelax: CMD: ramp_repack_min  146.465  0.0040899  0.0040899  0.3025
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 94 rotamers at 30 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 92744 bytes
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-1, 30-2, 30-3, 1-1!
+core.kinematics.AtomTree: [ ERROR ] No proper DoF can be found for these four atoms: 30-2, 30-3, 1-1, 1-2!
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 3.72529e-11 Deriv= -3002.15 Finite Diff= -91.8755
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 3.29996e-07 Deriv= -534.519 Finite Diff= 174.315
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#9
+protocols.relax.FastRelax: CMD: ramp_repack_min  198.857  0.00607133  0.00607133  0.55
+protocols.relax.FastRelax: MRP: 0  198.857  198.857  0.00607133  0.00607133  
+protocols.relax.FastRelax: CMD: accept_to_best  198.857  0.00607133  0.00607133  0.55
+protocols.relax.FastRelax: CMD: endrepeat  198.857  0.00607133  0.00607133  0.55
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: Final symmetry filter passes.  This peptide has s6symmetry.
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: omega1=-167.321
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: omega2=-163.082
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: omega3=-176.762
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: omega4=178.465
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: omega5=-178.107
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: omega6=175.501
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: omega7=-175.516
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: omega8=-174.856
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: omega9=170.592
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: omega10=-166.369
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: omega11=-174.384
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: omega12=-168.142
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: omega13=174.25
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: omega14=-163.815
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: omega15=178.406
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: omega16=170.346
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: omega17=171.871
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: omega18=-178.66
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: omega19=170.917
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: omega20=170.247
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: omega21=-159.492
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: omega22=174.461
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: omega23=170.827
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: omega24=-168.213
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: omega25=169.299
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: omega26=177.721
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: omega27=-175.985
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: omega28=-166.559
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: omega29=170.937
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: omega30=179.017
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: Result	RMSD	Energy	Hbonds	CisPepBonds
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: 1	1.88988	192.376	10	0
+protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication: 1 jobs attempted.  1 jobs returned solutions.
+apps.public.cyclic_peptide.simple_cycpep_predict: Finished simple_cycpep_predict.cc.  Exiting.

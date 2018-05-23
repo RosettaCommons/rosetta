@@ -45,6 +45,7 @@ enum CrossLinker {
 	TBMB,
 	TMA,
 	tetrahedral_metal,
+	octahedral_metal,
 
 	unknown_crosslinker, //Keep this second-to-last.
 	end_of_crosslinker_list = unknown_crosslinker //Keep this last.

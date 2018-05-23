@@ -1,3 +1,4 @@
+
 #
 # This is a command file.
 #
@@ -26,14 +27,14 @@
 # All command files should start with this line:
 #
 
-cd %(workdir)s
+cd /local/vmullig/rosetta_git_devcopy3/Rosetta/main/tests/integration/new/crosslinkermover_octahedral_s2_symm
 
-[ -x %(bin)s/simple_cycpep_predict.%(binext)s ] || exit 1
-%(bin)s/simple_cycpep_predict.%(binext)s %(additional_flags)s @flags1 -database %(database)s -testing:INTEGRATION_TEST 2>&1 \
+[ -x /local/vmullig/rosetta_git_devcopy3/Rosetta/main/source/bin/rosetta_scripts.default.linuxgccrelease ] || exit 1
+/local/vmullig/rosetta_git_devcopy3/Rosetta/main/source/bin/rosetta_scripts.default.linuxgccrelease  @flags -database /local/vmullig/rosetta_git_devcopy3/Rosetta/main/database -testing:INTEGRATION_TEST  2>&1 \
     | egrep -vf ../../ignore_list \
-    > log1
+    > log
 
-test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 
 # The following should ensure that at least one PDB file was written
 ls -1 *.pdb >/dev/null 2>/dev/null
@@ -48,13 +49,13 @@ test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executabl
 # Here's a typical test for a Mini binary, assuming there's a "flags" file
 # in this directory too:
 #
-## %(bin)s/MY_MINI_PROGRAM.%(binext)s %(additional_flags)s @flags -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
+## /local/vmullig/rosetta_git_devcopy3/Rosetta/main/source/bin/MY_MINI_PROGRAM.default.linuxgccrelease  @flags -database /local/vmullig/rosetta_git_devcopy3/Rosetta/main/database -testing:INTEGRATION_TEST  2>&1 \
 ##     | egrep -v 'Finished.+in [0-9]+ seconds.' \
 ##     | egrep -v 'Dunbrack library took .+ seconds to load' \
 ##     > log
 #
 # Or if you don't care whether the logging output changes:
 #
-## %(bin)s/MY_MINI_PROGRAM.%(binext)s %(additional_flags)s @flags -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
+## /local/vmullig/rosetta_git_devcopy3/Rosetta/main/source/bin/MY_MINI_PROGRAM.default.linuxgccrelease  @flags -database /local/vmullig/rosetta_git_devcopy3/Rosetta/main/database -testing:INTEGRATION_TEST  2>&1 \
 ##     > /dev/null
 #

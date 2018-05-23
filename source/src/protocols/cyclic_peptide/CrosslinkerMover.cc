@@ -20,6 +20,7 @@
 #include <protocols/cyclic_peptide/crosslinker/TBMB_Helper.hh>
 #include <protocols/cyclic_peptide/crosslinker/TMA_Helper.hh>
 #include <protocols/cyclic_peptide/crosslinker/TetrahedralMetal_Helper.hh>
+#include <protocols/cyclic_peptide/crosslinker/OctahedralMetal_Helper.hh>
 
 // Core headers
 #include <core/pose/Pose.hh>
@@ -119,6 +120,10 @@ CrosslinkerMover::apply( core::pose::Pose& pose){
 	case tetrahedral_metal :
 		helper = protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelperOP( protocols::cyclic_peptide::crosslinker::TetrahedralMetal_HelperOP( new protocols::cyclic_peptide::crosslinker::TetrahedralMetal_Helper( metal_type() ) ) );
 		break;
+	case octahedral_metal :
+		helper = protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelperOP( protocols::cyclic_peptide::crosslinker::OctahedralMetal_HelperOP( new protocols::cyclic_peptide::crosslinker::OctahedralMetal_Helper( metal_type() ) ) );
+		break;
+
 	default :
 		utility_exit_with_message( "Error in protocols::cyclic_peptide::CrosslinkerMover::apply(): Invalid crosslinker specified." );
 	}
@@ -148,6 +153,8 @@ CrosslinkerMover::get_crosslinker_name(
 		return "TMA";
 	case tetrahedral_metal :
 		return "tetrahedral_metal";
+	case octahedral_metal :
+		return "octahedral_metal";
 	default :
 		break;
 	}
@@ -234,7 +241,7 @@ CrosslinkerMover::provide_xml_schema(
 	using namespace utility::tag;
 
 	XMLSchemaRestriction linker_names_allowed;
-	std::string const linker_possibles("TBMB|TMA|tetrahedral_metal");
+	std::string const linker_possibles("TBMB|TMA|tetrahedral_metal|octahedral_metal");
 	linker_names_allowed.name("linker_names_allowed");
 	linker_names_allowed.base_type( xs_string );
 	linker_names_allowed.add_restriction( xsr_pattern, linker_possibles + "(," + linker_possibles + ")+" );

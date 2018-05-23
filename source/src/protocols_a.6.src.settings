@@ -26,10 +26,12 @@ sources = {
 		"TryDisulfPermutations",
 	],
 	"protocols/cyclic_peptide/crosslinker": [
+		"CrosslinkerMoverHelper",
+		"Metal_HelperBase",
+		"OctahedralMetal_Helper",
 		"TBMB_Helper",
 		"TetrahedralMetal_Helper",
 		"TMA_Helper",
-		"CrosslinkerMoverHelper",
 	],
 	"protocols/denovo_design" : [
 		"util",

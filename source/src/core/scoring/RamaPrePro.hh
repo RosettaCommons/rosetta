@@ -10,7 +10,7 @@
 /// @file   core/scoring/RamaPrePro.hh
 /// @brief  RamaPrePro potential class delcaration
 /// @author Frank DiMaio
-/// @author Vikram K. Mulligan (vmullig@uw.edu) Feb 2016 -- made this compatible with canonical D-amino acids; returns 0 for noncanonicals.
+/// @author Vikram K. Mulligan (vmullig@uw.edu) Feb 2016 -- made this compatible with D-amino acids, and with arbitrary noncanonicals that specify rama maps in their params files.
 
 #ifndef INCLUDED_core_scoring_RamaPrePro_hh
 #define INCLUDED_core_scoring_RamaPrePro_hh

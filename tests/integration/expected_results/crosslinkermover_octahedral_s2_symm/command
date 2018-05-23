@@ -28,12 +28,12 @@
 
 cd %(workdir)s
 
-[ -x %(bin)s/simple_cycpep_predict.%(binext)s ] || exit 1
-%(bin)s/simple_cycpep_predict.%(binext)s %(additional_flags)s @flags1 -database %(database)s -testing:INTEGRATION_TEST 2>&1 \
+[ -x %(bin)s/rosetta_scripts.%(binext)s ] || exit 1
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s @flags -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
     | egrep -vf ../../ignore_list \
-    > log1
+    > log
 
-test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 
 # The following should ensure that at least one PDB file was written
 ls -1 *.pdb >/dev/null 2>/dev/null

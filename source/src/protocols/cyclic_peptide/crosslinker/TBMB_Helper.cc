@@ -204,8 +204,9 @@ TBMB_Helper::add_linker_symmetric(
 	core::Size const tbmb_res1( res_per_subunit + 1 );
 	core::Size const tbmb_res2( 2*res_per_subunit + 2 );
 	pose.append_residue_by_jump( tbmb_pose.residue(1), cys1 );
-	cys2 += 1;
-	cys3 += 2;
+	//Uncomment the following two lines if ever we need to do anything more with cys2 or cys3:
+	//cys2 += 1;
+	//cys3 += 2;
 
 	add_linker_bonds_symmetric(pose, cys1, tbmb_res1, tbmb_res2);
 }

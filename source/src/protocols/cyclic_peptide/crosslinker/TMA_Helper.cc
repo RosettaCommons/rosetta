@@ -182,8 +182,9 @@ TMA_Helper::add_linker_symmetric(
 	core::Size const tmares1( res_per_subunit + 1 );
 	core::Size const tmares2( 2*res_per_subunit + 2 );
 	pose.append_residue_by_jump( symm_tma_pose.residue(1), res1 );
-	res2 += 1;
-	res3 += 2;
+	//Uncomment the following two lines if ever we need to do anything more with these two residue indices:
+	//res2 += 1;
+	//res3 += 2;
 
 	//Declare covalent bonds:
 	add_linker_bonds_symmetric(pose, res1, tmares1, tmares2);
