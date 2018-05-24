@@ -20,10 +20,13 @@
 #include <devel/denovo_design/ConnectJumps.fwd.hh>
 
 // Protocol headers
+//#include <protocols/denovo_design/connection/BridgeChains.hh>
+#include <protocols/forge/components/VarLengthBuild.fwd.hh>
 #include <protocols/denovo_design/movers/BridgeChainsMover.hh>
 
 // Core headers
 #include <core/pose/Pose.fwd.hh>
+#include <core/scoring/constraints/Constraint.fwd.hh>
 
 namespace devel {
 namespace denovo_design {
@@ -42,6 +45,7 @@ public:
 	protocols::moves::MoverOP clone() const override;
 
 	/// @brief Apply the ConnectJumps. Overloaded apply function from mover base class.
+
 	void apply( core::pose::Pose & pose ) override;
 
 	std::string

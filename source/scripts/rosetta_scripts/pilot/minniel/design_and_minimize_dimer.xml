@@ -1,0 +1,79 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+	  <hard_with_coord_cnst weights=talaris2013_downAla symmetric=1 >
+	    <Reweight scoretype=coordinate_constraint weight=1.0/> 
+	    <Reweight scoretype=atom_pair_constraint weight=1.0/>
+	    <Reweight scoretype=angle_constraint weight=1.0/>
+	  </hard_with_coord_cnst>
+	  <hard_symm weights=talaris2013_downAla symmetric=1 >
+	    <Reweight scoretype=atom_pair_constraint weight=1.0/>
+	    <Reweight scoretype=angle_constraint weight=1.0/>
+	    <Reweight scoretype=res_type_constraint weight=1.0/>	
+	  </hard_symm>
+	  <hard weights=talaris2013_downAla symmetric=0 />
+	  <soft_symm weights=soft_rep_design symmetric=1 >
+	    <Reweight scoretype=atom_pair_constraint weight=1.0/>
+	    <Reweight scoretype=angle_constraint weight=1.0/>
+	    <Reweight scoretype=res_type_constraint weight=1.0/>	
+	  </soft_symm>
+	</SCOREFXNS>
+	<RESIDUE_SELECTORS>
+	  <ResidueName name=select_ca residue_name3=" CA" />
+	  <Bonded name=select_ca_bound_res selector=select_ca />
+	  <Bonded name=select_res_near_ca selector=select_ca_bound_res />
+	  <Not name=not_ca_bound selector=select_ca_bound_res/>
+	  <Index name=non_local resnums=%%nonlocal_res%% />
+	</RESIDUE_SELECTORS>
+	<TASKOPERATIONS>
+	  <OperateOnResidueSubset name="dontrepackcaresidues" selector=select_ca_bound_res>
+	    <PreventRepackingRLT />
+	  </OperateOnResidueSubset>
+	  <OperateOnResidueSubset name=dont_repack_res_near_ca selector=select_res_near_ca>
+	    <RestrictToRepackingRLT />
+	  </OperateOnResidueSubset>
+	  <OperateOnResidueSubset name=only_repack_bound_res selector=not_ca_bound>
+	    <PreventRepackingRLT />
+	  </OperateOnResidueSubset>
+	  <OperateOnResidueSubset name=dont_repack_ca selector=select_ca>
+	    <PreventRepackingRLT />
+	  </OperateOnResidueSubset>
+	  <OperateOnResidueSubset name=dont_design_nonlocal selector=non_local>
+	    <PreventRepackingRLT />
+	  </OperateOnResidueSubset> 
+	  <RestrictAbsentCanonicalAAS name=des_task resnum=0 keep_aas="ADEFGIKLNQRSTVWY" />
+	  <ExtraRotamersGeneric name=ex1_ex2 ex1=1 ex2=1/>
+	  <LayerDesign name=layer_design layer=core_boundary_surface_Nterm_Cterm use_symmetry=true />
+	</TASKOPERATIONS>
+    <FILTERS>
+	  <ScoreType name=totalscorefilter scorefxn=hard_symm threshold=0.0 />
+	  <DesignableResidues name=number_of_ca_bound_res task_operations=only_repack_bound_res,dont_repack_ca lower_cutoff=4 />
+	  <SecondaryStructureHasResidue name=must_have_core_res />
+    </FILTERS>
+    <MOVERS>
+	  <SetupForSymmetry   name=setup_symm definition="C2_Z.sym"/>
+	  <FavorNativeResidue name=favor_native_res />
+	  <AddConstraintsToCurrentConformationMover name=add_cst  use_distance_cst=0 max_distance=12. coord_dev=2.5  min_seq_sep=8 CA_only=1 />	  
+	  <TaskAwareSymMinMover name=min_start scorefxn=hard_with_coord_cnst type=lbfgs_armijo_nonmonotone tolerance=0.0001 chi=0 bb=1 rb=0 task_operations=dont_repack_res_near_ca />	   
+	  <SymMinMover name=hardmin_sc scorefxn=hard_symm type=lbfgs_armijo_nonmonotone tolerance=0.0001  chi=1 bb=0 jump=0 cartesian=0/>
+	  <TaskAwareSymMinMover name=min_final scorefxn=hard_with_coord_cnst  type=lbfgs_armijo_nonmonotone tolerance=0.0001  chi=1 bb=1 rb=0 task_operations=dont_repack_res_near_ca />
+	  <SymPackRotamersMover name=des_sc_soft scorefxn=soft_symm task_operations=dont_design_nonlocal,dontrepackcaresidues,des_task,layer_design/> 
+	  <SymPackRotamersMover name=des_sc_hard scorefxn=hard_symm task_operations=dont_design_nonlocal,dontrepackcaresidues,ex1_ex2,des_task,layer_design/> 
+	  InterfaceAnalyzerMover name=fullanalyze scorefxn=hard_symm packstat=1 pack_input=0 pack_separated=0 fixedchains=A,B tracer=0 use_jobname=1 resfile=0 /
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<OUTPUT scorefxn = hard_with_coord_cnst/>
+	<PROTOCOLS>
+	  <Add mover = setup_symm/>
+	  <Add mover = favor_native_res/>
+	  <Add mover = add_cst/>
+	  <Add mover = des_sc_soft/>
+	  <Add mover = min_start/> 
+	  <Add mover = hardmin_sc/> 
+	  <Add mover = des_sc_hard/>  
+	  <Add mover = min_final/>
+	  <Add filter_name = totalscorefilter/>
+	  <Add filter_name = number_of_ca_bound_res />
+	  <Add filter_name = must_have_core_res />
+	</PROTOCOLS>
+</ROSETTASCRIPTS>

@@ -1,7 +1,7 @@
 -legacy_sewing:mode hash
 -legacy_sewing:assembly_type discontinuous
--model_file_name test.models
--score_file_name test.scores
--num_segments_to_match 2
--min_hash_score 10
--max_clash_score 0
+-legacy_sewing:model_file_name test.models
+-legacy_sewing:score_file_name test.scores
+-legacy_sewing:num_segments_to_match 2
+-legacy_sewing:min_hash_score 10
+-legacy_sewing:max_clash_score 0

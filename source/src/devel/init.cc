@@ -19,10 +19,13 @@
 // Factories
 #include <core/pack/task/operation/TaskOperationRegistrator.hh>
 #include <core/pack/task/operation/TaskOperationFactory.hh>
+#include <core/select/residue_selector/ResidueSelectorFactory.hh>
+#include <core/select/residue_selector/ResidueSelectorRegistrator.hh>
 #include <core/scoring/methods/EnergyMethodRegistrator.hh>
 #include <protocols/filters/FilterFactory.hh>
 #include <protocols/evaluation/EvaluatorFactory.hh>
 #include <protocols/moves/MoverFactory.hh>
+#include <protocols/parser/DataLoaderFactory.hh>
 //#include <devel/constrained_sequence_design/SequenceConstraintFactory.hh>
 
 //mover creators
@@ -65,8 +68,11 @@
 #include <devel/replica_docking/FnonnatFilterCreator.hh>
 #include <devel/replica_docking/WrapFilterAsEvaluatorCreator.hh>
 
+//ResidueSelector creators
+#include <core/select/residue_selector/ResidueSelectorCreators.hh>
 // Energy method creators
 #include <devel/denovo_design/scoring/SideChainNeighborsEnergyCreator.hh>
+
 
 // dataloader creators
 //#include <devel/constrained_sequence_design/SequenceConstraintLoaderCreator.hh>
@@ -137,8 +143,13 @@ static protocols::filters::FilterRegistrator< devel::buns::BuriedUnsatHbondFilte
 
 static protocols::evaluation::EvaluatorRegistrator< devel::replica_docking::WrapFilterAsEvaluatorCreator > reg_WrapFilterAsEvaluatorCreator;
 
+
 // Energy methods
 static core::scoring::methods::EnergyMethodRegistrator< core::scoring::methods::SideChainNeighborsEnergyCreator > reg_SideChainNeighborsEnergyCreator;
+
+
+
+
 
 void init( int argc, char * argv [] )
 {

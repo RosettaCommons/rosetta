@@ -217,11 +217,12 @@ sources = {
 		"Hasher",
     ],
 	"protocols/legacy_sewing/scoring": [
-        "LegacyBlosumScorer",
-        "LegacyClashScorer",
-        "LegacyInterModelMotifScorer",
-        "LegacyMotifScorer",
-		"LegacyPartnerMotifScorer",
+	    "LegacyBlosumScorer",
+	    "LegacyClashScorer",
+	    "LegacyInterModelMotifScorer",
+	    "LegacyMotifScorer",
+	    "LegacyPartnerMotifScorer",
+	    "LegacyCalciumMotifScorer",
     ],
 	"protocols/legacy_sewing/sampling": [
 		"LegacyAddStartnodeFragments",

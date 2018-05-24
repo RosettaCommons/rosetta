@@ -126,13 +126,13 @@ def execute(message, command_line, return_='status', until_successes=False, term
     if not silent: print(message);  print(command_line); sys.stdout.flush();
     while True:
 
-        # p = subprocess.Popen(command_line, bufsize=0, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        # output, errors = p.communicate()
-        # output = output + errors
-        # output = output.decode(encoding='utf-8', errors='backslashreplace')
-        # exit_code = p.returncode
+        p = subprocess.Popen(command_line, bufsize=0, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        output, errors = p.communicate()
+        output = output + errors
+        output = output.decode(encoding='utf-8', errors='backslashreplace')
+        exit_code = p.returncode
 
-        exit_code, output = subprocess.getstatusoutput(command_line)
+        #exit_code, output = subprocess.getstatusoutput(command_line)
 
         if (exit_code  and  not silence_output_on_errors) or  not (silent or silence_output): print(output); sys.stdout.flush();
 

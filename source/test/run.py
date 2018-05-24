@@ -28,6 +28,45 @@ SUITE_FACTOR = 3
 UnitTestExecutable = ["protocols.test", "core.test", "basic.test", "ObjexxFCL.test", "numeric.test", "utility.test", "apps.test", "devel.test"]
 #UnitTestExecutable = ["numeric.test", "utility.test"]
 
+
+def execute(message, command_line, return_='status', until_successes=False, terminate_on_failure=True, silent=False, silence_output=False, silence_output_on_errors=False, add_message_and_command_line_to_output=False):
+    if not silent: print(message);  print(command_line); sys.stdout.flush();
+    while True:
+
+        p = subprocess.Popen(command_line, bufsize=0, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        output, errors = p.communicate()
+        output = output + errors
+        output = output.decode(encoding='utf-8', errors='backslashreplace')
+        exit_code = p.returncode
+
+        #exit_code, output = subprocess.getstatusoutput(command_line)
+
+        if (exit_code  and  not silence_output_on_errors) or  not (silent or silence_output): print(output); sys.stdout.flush();
+
+        if exit_code and until_successes: pass  # Thats right - redability COUNT!
+        else: break
+
+        print( "Error while executing {}: {}\n".format(message, output) )
+        print("Sleeping 60s... then I will retry...")
+        sys.stdout.flush();
+        time.sleep(60)
+
+    if add_message_and_command_line_to_output: output = message + '\nCommand line: ' + command_line + '\n' + output
+
+    if return_ == 'tuple': return(exit_code, output)
+
+    if exit_code and terminate_on_failure:
+        print("\nEncounter error while executing: " + command_line)
+        if return_==True: return True
+        else:
+            print('\nEncounter error while executing: ' + command_line + '\n' + output);
+            raise BenchmarkError('\nEncounter error while executing: ' + command_line + '\n' + output)
+
+    if return_ == 'output': return output
+    else: return exit_code
+
+
+
 # Output info class, simple wrapper for named collection of fields.
 class OI:
     def __init__(self, **entries): self.__dict__.update(entries)
@@ -278,17 +317,13 @@ class Tester:
 
         for lib in UnitTestExecutable:
             tests = set()
-            p = subprocess.Popen(self.testpath + '/' + lib + ' _ListAllTests_',
-                                 stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                                 stderr=subprocess.PIPE, shell=True)
-            command_output, _ = p.communicate()
-            command_output = command_output.decode('utf-8', errors="replace")
-            status = p.returncode
 
-            if status != 0:
+            exit_code, command_output = execute('Getting list of test for {lib}...'.format(**locals()), self.testpath + '/' + lib + ' _ListAllTests_', return_='tuple', silent=True)
+
+            if exit_code:
                 # The output doesn't contain a test list, only an error message
-                print("Error running unit test executable for", lib, "- not all tests may be availible.")
-                print('\t', '\n\t'.join(command_output.split('\n')))
+                print('Could not acquire list of available tests from library {lib}, request terminated with error:\n{command_output}\nTerminating...'.format(**locals()))
+                sys.exit(1)
             else:
                 for test in command_output.split():
                     tests.add( (lib, test.split(':')[0]) )
@@ -297,21 +332,15 @@ class Tester:
             self.all_test_suites.extend( tests )
             self.all_test_suites_by_lib[lib] = tests
 
+
+        self.all_tests.sort( key = lambda x: x.lower() )
         #print 'Suites:', self.all_test_suites
         #print 'Tests:', self.all_tests
 
         if Options.one:  # or Options.jobs < 5:
             if Options.one not in [s for (l,s) in self.all_test_suites] + self.all_tests:
                 print('\nTest suite %s not found!' % Options.one)
-                print("Available test suites are:")
-                tests = [s for (l,s) in self.all_test_suites]
-                def make_lower(string):
-                    '''A lower function which works on both regular strings and unicode strings.'''
-                    return string.lower()
-                for test in sorted(tests,key=make_lower):
-                    print("\t%s" % test)
-                if len(tests) == 0:
-                    print("\t(No Tests Found!)")
+                print( "Available test suites are: {tests}".format(tests = ' '.join(self.all_tests) ) )
                 sys.exit(1)
 
             for lib in UnitTestExecutable:
@@ -513,7 +542,7 @@ def parse_valgrind_options(options, option_parser):
         sys.exit(1)
 
 def main(args):
-    ''' Script to run Unit test in Rosetta3.  For debugging, you must use the --unmute option to unmute tracers you are interested in. 
+    ''' Script to run Unit test in Rosetta3.  For debugging, you must use the --unmute option to unmute tracers you are interested in.
     '''
     parser = OptionParser(usage="usage: %prog [OPTIONS] [TESTS]")
     parser.set_description(main.__doc__)

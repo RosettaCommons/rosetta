@@ -310,7 +310,7 @@ sources = {
         "init" : [
                 "features_reporter_creators",
                 "filter_creators",
-                "mover_creators"
+                #"mover_creators"
         ],
 	"jd2" : [
 		"JobOutputter",
@@ -353,6 +353,12 @@ sources = {
 	"drug_design": [
 		"orphan_restypes",
 	],
+
+
+	"legacy_sewing" : [
+		"SewingHasherTests",
+	],
+
 
 	"ligand_docking": [
 		"HighResEnsemble",
@@ -553,11 +559,12 @@ sources = {
 		"InterchainPairEnergy",
 		"Interface",
 	],
-
-	"legacy_sewing" : [
-		"SewingHasherTests",
+	"sewing/data_storage" : [
+		"SmartAssemblyTests",
 	],
-
+        "sewing/hashing" : [
+            "HasherTests",
+        ],
 	"simple_filters" : [
 		"DdgFilter",
 		"DdGScan",
@@ -911,6 +918,7 @@ testinputfiles = [
 	"kinematic_closure/inputs/1srp.pdb",
 	"kinematic_closure/inputs/1exm.pdb",
 	"kinematic_closure/inputs/3cla.pdb",
+	"legacy_sewing/inputs/1ten_m8.db3",
 	"ligand_docking/7cpa.params",
 	"ligand_docking/7cpa_7cpa_native.pdb",
 	"ligand_docking/7cpa_confs.pdb",
@@ -1080,7 +1088,9 @@ testinputfiles = [
 	"rosetta_scripts/test2.xml",
 	"scoring/Interface.u",
 	"scoring/dock_in.pdb",
-	"legacy_sewing/inputs/1ten_m8.db3",
+        "sewing/inputs/test.segments",
+        "sewing/inputs/single_helix.pdb",
+        "sewing/inputs/zinc_site_10_12.pdb",
 	"simple_moves/1bl0_auto.fasta.pssm",
 	"simple_moves/design.resfile",
 	"simple_moves/design2.resfile",

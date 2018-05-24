@@ -105,12 +105,31 @@ HBS_POST  # hydrogen bond surrogates, second residue
 A3B_HBS_PRE   # a3b hydrogen bond surrogates, first residue (will also be a terminus)
 A3B_HBS_POST  # a3b hydrogen bond surrogates, second residue
 
-# CHEMICAL CHANGES
+# METAL-BINDING VARIANTS
+SG_CONNECT
+NE2_CONNECT
+ZN_CONNECT
+CA_CONNECT
+CA_CONNECT2
+CA_CONNECT3
+CA_CONNECT4
+CA_CONNECT5
+CA_CONNECT6
+CA_CONNECT7
+OE1_CONNECT
+OE2_CONNECT
+OD1_CONNECT
+OD2_CONNECT
+O_CONNECT
+OG_CONNECT
+OG1_CONNECT
 
+# CHEMICAL CHANGES
 ## PROTONATION STATES (pH)
 PROTONATED    # Convert a residue to its normal (pH-dependent) protonated form
 DEPROTONATED  # Convert a residue to its normal (pH-dependent) deprotonated form
 ALTERNATIVE_PROTONATION # A non-standard (but still pH-dependent) protonated form
+
 
 # POST-TRANSLATIONAL MODIFICATIONS
 METHYLATION    # Add a single methyl group to the "standard" (sidechain) location

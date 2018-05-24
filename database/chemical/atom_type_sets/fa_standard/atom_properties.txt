@@ -42,6 +42,7 @@ F        F    1.7100    0.0750   -6.0000    3.5000   11.5000 SP3_HYBRID  # radiu
 Cl      CL    2.0700    0.2400   -5.0000    3.5000   24.4000 SP3_HYBRID  # radius/wdepth: taken from MM3 forcefield; LK vol wild guess 4/3 pi r^3; LK dgfree wild guess
 Br      BR    2.2200    0.3200   -4.0000    3.5000   35.5000 SP3_HYBRID  # radius/wdepth: taken from MM3 forcefield; LK vol wild guess 4/3 pi r^3; LK dgfree wild guess
 I        I    2.3600    0.4240   -3.0000    3.5000   44.6000 SP3_HYBRID  # radius/wdepth: taken from MM3 forcefield; LK vol wild guess 4/3 pi r^3; LK dgfree wild guess
+#Zn2p    ZN    0.5000    0.2500   -5.0000    3.5000    5.4000 SP3_HYBRID  # TEMPORARY zinc with small radius to avoid fake clashes with coordinating HIS
 Zn2p    ZN    1.0900    0.2500   -5.0000    3.5000    5.4000 SP3_HYBRID  # radius/wdepth: ion radius CHARMM27; LK vol wild guess 4/3 pi r^3; LK dgfree wild guess
 Co2p    CO    1.5680    0.2500   -5.0000    3.5000   16.1483 SP3_HYBRID  # radius/wdepth: ion radius for zinc from CHARMM27 times the ratio of the van der Waals radii of Co to Zn; LK vol wild guess 4/3 pi r^3; LK dgfree wild guess
 Cu2p    CU    1.0978    0.2500   -5.0000    3.5000    5.5419 SP3_HYBRID  # radius/wdepth: ion radius for zinc from CHARMM27 times the ratio of the van der Waals radii of Cu to Zn; LK vol wild guess 4/3 pi r^3; LK dgfree wild guess

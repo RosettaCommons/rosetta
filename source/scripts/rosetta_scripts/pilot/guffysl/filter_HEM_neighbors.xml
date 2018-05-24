@@ -1,0 +1,17 @@
+<ROSETTASCRIPTS>
+  <SCOREFXNS>
+  </SCOREFXNS>
+  <RESIDUE_SELECTORS>
+    <ResidueName name="select_hem" residue_name3="HEM" />
+  </RESIDUE_SELECTORS>
+  <FILTERS>
+    <NonSequentialNeighbors name="hem_neighbors" distance_threshold="10.0" neighbor_cutoff="10" bound="true" residue_selector="select_hem" confidence="1" />
+  </FILTERS>
+  <MOVERS>
+  </MOVERS>
+  <APPLY_TO_POSE>
+  </APPLY_TO_POSE>
+  <PROTOCOLS>
+    <Add filter_name="hem_neighbors" />
+  </PROTOCOLS>
+</ROSETTASCRIPTS>

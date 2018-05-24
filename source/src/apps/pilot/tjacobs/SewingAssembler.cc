@@ -66,7 +66,7 @@ main( int argc, char * argv [] ) {
 	core::Size num_assemblies = option[SewAssembler::num_assemblies].def(10);
 	core::Size path_size = option[SewAssembler::path_size].def(4);
 
-	std::map< int, Model > models = read_model_file(model_filename);
+	std::map< int, Model > models = read_model_file(model_filename).second;
 
 	Hasher hash;
 	ScoreResults scores = hash.read_scores_from_disk(score_filename);

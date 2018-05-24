@@ -1,0 +1,13 @@
+Things that should be tested in this folder:
+* LigandBindingResPlacer needs its own set of tests, but ligand input files are relatively large and slow to read in
+* AlignmentFileGeneratorMover
+  * Mostly because of add_pose_segments_to_segment_vector. We're already using this in SmartAssemblyTests, but we should test it explicitly--namely how it handles good vs bad input, terminal loops, & that the output structures match what we're expecting
+  * Same with parse_ligands_tag--another ugly static function
+  * Apply function really just calls BMG's recurse_over_segments
+* BasisMapGenerator
+  * We'll need to manually create an EdgeMap for testing purposes--can be really small
+  * recurse_over_segments will fill up the BasisMap for the segment(s) it's called for
+  * Series of functions for retrieving basis pairs for local or constant segments for use in HashedSmartAssembly
+* EdgeMapGenerator--both reads and creates edge files
+* ModelFileReader--reads segment files. It only has one function (which is static), so it could be tested anywhere.
+  

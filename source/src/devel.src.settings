@@ -18,6 +18,10 @@ sources = {
 		"BuriedUnsatisfiedPolarsCalculator2",
 		"BuriedUnsatHbondFilter2",
 	],
+	"devel/calcium_site": [
+		#"PreventCalciumSiteRepack",
+	        #"CalciumMotifScorer",
+	],
 	"devel/cartesian_frags": [
 		"CartesianFragment",
 		"DNA_FragLib",

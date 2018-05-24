@@ -1,0 +1,99 @@
+<ROSETTASCRIPTS>
+  <RESIDUE_SELECTORS>
+    <ResidueName name=select_ca residue_name3=" CA" />
+    <Bonded name=around_ca selector=select_ca />
+    <Bonded name=around_binding_site selector=around_ca />
+  </RESIDUE_SELECTORS>
+  <TASKOPERATIONS>
+    <OperateOnResidueSubset name="donotrepackbinders" selector=around_ca >
+      <PreventRepackingRLT />
+    </OperateOnResidueSubset>
+    <OperateOnResidueSubset name="preserveloop" selector=around_binding_site >
+      <RestrictToRepackingRLT />
+    </OperateOnResidueSubset>
+    <InitializeFromCommandline name=init />
+    <RestrictAbsentCanonicalAAS name=nocys keep_aas="ADEFGHIKLMNPQRSTVWY" />
+    <IncludeCurrent name=current />
+    <RestrictToRepacking name=no_design />
+  </TASKOPERATIONS>
+  <SCOREFXNS>
+    Need an asymmetric score function with constraints (for initial repack),
+    a symmetric score function with constraints (for symmdock), and (if we do
+    design) a low repulsive weight symmetric score function with constraints
+    <initial_repack weights=talaris2014 symmetric=0>
+      <Reweight scoretype=atom_pair_constraint weight=1.0 />
+      <Reweight scoretype=angle_constraint weight=1.0 />
+    </initial_repack>
+    <symm_docking_with_constraints weights=docking symmetric=1>
+      <Reweight scoretype=atom_pair_constraint weight=1.0 />
+      <Reweight scoretype=angle_constraint weight=1.0 />
+    </symm_docking_with_constraints>
+    <soft_symm_with_constraints weights=soft_rep_design symmetric=1>
+      <Reweight scoretype=atom_pair_constraint weight=1.0 />
+      <Reweight scoretype=angle_constraint weight=1.0 />
+    </soft_symm_with_constraints>
+    <symm_no_constraints weights=talaris2014 symmetric=1 />
+    <symm_with_constraints weights=talaris2014 symmetric=1>
+      <Reweight scoretype=atom_pair_constraint weight=1.0 />
+      <Reweight scoretype=angle_constraint weight=1.0 />
+    </symm_with_constraints>
+    <symm_centroid_with_constraints weights=interchain_cen symmetric=1>
+      <Reweight scoretype=atom_pair_constraint weight=1.0 />
+      <Reweight scoretype=angle_constraint weight=1.0 />
+    </symm_centroid_with_constraints>
+  </SCOREFXNS>
+  <MOVERS>
+    <ConstraintSetMover name=cst_mvr add_constraints=1 cst_file=%%filename%% />
+    First, do a (non-symmetric) repack of the whole structure
+    <PackRotamersMover name=prepack scorefxn=initial_repack task_operations=no_design,donotrepackbinders,init,current />
+    Then we'll make the symmetry partner
+    <SetupForSymmetry name=make_symmetric definition="C2_Z.sym" />
+    Now we'll actually do our docking
+    Check on the default low- and high-res scorefunctions for symdock, because I'll want to add constraints to them to use them
+    Default low res = interchain_cen
+    Default high res = docking; also check out the docking_min patch
+
+    So we want to save our sidechain conformations, then remove all metal binding variant types, then use the lowres-only symdock protocol, then restore the sidechains using SaveAndRetrieveSidechains, then do highres docking/min/pack.
+
+    <SaveAndRetrieveSidechains name=preservevt allsc=1 multi_use=1 two_step=1 />
+    Apply before and after centroid stage of docking
+
+    <ModifyVariantType name=unbind remove_type=OD1_CONNECT,OD2_CONNECT,O_CONNECT,OE1_CONNECT,OE2_CONNECT,CA_CONNECT,CA_CONNECT2,CA_CONNECT3,CA_CONNECT4,CA_CONNECT5,CA_CONNECT6,CA_CONNECT7 />
+
+    I think for calcium, I actually have to mutate it to get rid of the virtual atoms
+    Does MutateResidue take a residue selector or taskoperation? It should.
+    <MutateResidue name=rm_va new_res=CA preserve_atom_coords=1 target=%%target_res%% />
+    MutateResidue name=restore target=29,58 new_res=CA preserve_atom_coords=1 /
+
+    <SwitchResidueTypeSetMover name=switch_to_centroid set=centroid sloppy=1 />
+    <SwitchResidueTypeSetMover name=switch_to_fa set=fa_standard sloppy=1 />
+    SwitchResidueTypeSetMover ( set=CENTROID, or maybe chemical::CENTROID)
+
+    (apply SaveAndRetrieveSidechains again, same one, after centroid docking)
+
+    Split this one up into two parts
+    <SymDockProtocol name=symdock_centroid docking_score_low=symm_centroid_with_constraints sc_min=0 local_refine=0 fullatom=0 />
+    <SymDockProtocol name=symdock_fullatom docking_score_high=symm_docking_with_constraints task_operations=donotrepackbinders,init,current,nocys sc_min=1 local_refine=1 fullatom=1 />
+    <SymMinMover name=symmin scorefxn=symm_with_constraints bb=1 chi=1 jump=ALL />
+    <SymPackRotamersMover name=sympack scorefxn=soft_symm_with_constraints task_operations=donotrepackbinders,init,current,nocys />
+  </MOVERS>
+  <APPLY_TO_POSE>
+  </APPLY_TO_POSE>
+  <PROTOCOLS>
+    <Add mover_name=prepack />
+    <Add mover_name=rm_va />
+    <Add mover_name=preservevt />
+    <Add mover_name=make_symmetric />
+    <Add mover_name=switch_to_centroid />
+    <Add mover_name=cst_mvr />
+    <Add mover_name=symdock_centroid />
+    <Add mover_name=switch_to_fa />
+    <Add mover_name=preservevt />
+    <Add mover_name=rm_va />
+    <Add mover_name=symdock_fullatom />
+    <Add mover_name=symmin />
+    <Add mover_name=sympack />
+    <Add mover_name=symmin />
+  </PROTOCOLS>
+  <OUTPUT scorefxn=symm_no_constraints />
+</ROSETTASCRIPTS>

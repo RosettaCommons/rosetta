@@ -122,7 +122,7 @@ main( int argc, char * argv [] ) {
 	}
 
 
-	std::map< int, Model > models_from_file = read_model_file(model_filename);
+	std::map< int, Model > models_from_file = read_model_file(model_filename).second;
 	models.insert(models_from_file.begin(), models_from_file.end());
 
 

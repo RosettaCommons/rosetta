@@ -1,0 +1,51 @@
+<ROSETTASCRIPTS>
+  <RESIDUE_SELECTORS>
+    <Index name=loopres resnums=%%loopresnums%% />
+    <Neighborhood name=neighbors selector=loopres distance=10.0 />
+    <Not name=not_loop selector=loopres />
+    <And name=neighbors_not_loop selectors=not_loop,neighbors />
+    <Not name=everything_else> 
+      <Or selectors=loopres,neighbors />
+    </Not>
+  </RESIDUE_SELECTORS>
+  <TASKOPERATIONS>
+    <OperateOnResidueSubset name=design_loop selector=everything_else>
+      <PreventRepackingRLT />
+    </OperateOnResidueSubset>
+    <OperateOnResidueSubset name=repack_neighbors selector=neighbors_not_loop>
+      <RestrictToRepackingRLT />
+    </OperateOnResidueSubset>
+    <OperateOnResidueSubset name=design_no_repack selector=loopres >
+      <PreventRepackingRLT />
+    </OperateOnResidueSubset>
+  </TASKOPERATIONS>
+  <SCOREFXNS>
+    <centroid weights=fldsgn_cen />
+    <fullatom weights=talaris2014_cart />
+  </SCOREFXNS>
+  <MOVERS>
+    <BridgeChains name=connect chain1=1 chain2=2 scorefxn=centroid overlap=3 length=%%length%% check_abego=0 />
+    <FoldTreeFromLoops name=set_fold_tree loops=%%loopdef%% />
+    <FastDesign name=relax scorefxn=fullatom task_operations=design_loop,repack_neighbors cartesian=1 bondangle=1 bondlength=1 >
+      <MoveMap>
+	<Span begin=1 end=%%nominend1%% chi=0 bb=0 />
+	<Span begin=%%minbegin%% end=%%minend%% chi=1 bb=1 />
+	<Span begin=%%nominbegin2%% end=%%nominend2%% chi=0 bb=0 />
+      </MoveMap>
+    </FastDesign>
+    LoophashLoopInserter name=loophash loop_anchor=46 loop_sizes=2,3,4,5,6 modify_flanking_regions=1 /
+    FragmentLoopInserter name=loophash loop_anchor=46 /
+    CCDLoopCloser name=closer /
+    LoopCreationMover name=loopmover loop_closer=closer loop_inserter=loophash attempts_per_anchor=10 filter_by_lam=1 include_neighbors=1 /
+  </MOVERS>
+  <FILTERS>
+  </FILTERS>
+  <APPLY_TO_POSE>
+  </APPLY_TO_POSE>
+  <PROTOCOLS>
+    <Add mover_name=connect />
+    <Add mover_name=set_fold_tree />
+    <Add mover_name=relax />
+  </PROTOCOLS>
+  <OUTPUT scorefxn=fullatom />
+</ROSETTASCRIPTS>

@@ -81,7 +81,7 @@ append_subpose_to_pose(
 	pose1.append_residue_by_jump(pose2.residue(start_res), pose1.size() , "", "", new_chain);
 	for ( core::Size i=start_res+1; i<=end_res; ++i ) {
 		if ( pose2.residue(i).is_lower_terminus() ) {
-			if ( i > 1 && pose2.chain(i) == pose2.chain(i-1) ) {
+			if ( i > 1 && pose2.chain(i) != pose2.chain(i-1) ) {
 				pose1.append_residue_by_jump(pose2.residue(i), pose1.size(), "","", false);
 			} else {
 				if ( pose2.residue(i).is_protein() ) {

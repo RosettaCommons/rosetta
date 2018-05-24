@@ -1,4 +1,3 @@
-
 # -*- mode:python;indent-tabs-mode:t;show-trailing-whitespace:t; -*-
 #
 # Project settings for rosetta sources
@@ -287,6 +286,16 @@ sources = {
 	    ],
 	"public/legacy_sewing": [
 		"sewing_hasher",
+	],
+	"public/sewing": [
+		"segment_file_generator",
+	        "edge_file_generator",
+	],
+	"public/sewing/ligand_sewing_tools": [
+		"metal_site_finder",
+	        "zinc_statistic_generator",
+	        "generate_starting_zinc_sites",
+  	        "backside_hbond_finder",
 	],
 	"public/surface_docking": [
 		"surface_docking",

@@ -334,7 +334,8 @@ LoopCreationMover::apply(
 			}
 		}
 		if ( !loop_closed ) {
-			TR << "Unable to create a closed loop between residues "
+			stringstream err;
+			err << "Unable to create a closed loop between residues "
 				<< loop_inserter_->loop_anchor() << " and " << loop_inserter_->loop_anchor()+1
 				<< ", consider longer loop lengths or a different LoopInserter and/or LoopCloser." << endl;
 			set_last_move_status(protocols::moves::FAIL_RETRY);
@@ -342,7 +343,8 @@ LoopCreationMover::apply(
 			//utility_exit_with_message(err.str());
 		}
 		if ( !loop_passed ) {
-			TR << "No closed loops between residues "
+			stringstream err;
+			err << "No closed loops between residues "
 				<< loop_inserter_->loop_anchor() << " and " << loop_inserter_->loop_anchor()+1
 				<< " passed filters. Try relaxing filters." << endl;
 			//utility_exit_with_message(err.str());
@@ -367,22 +369,22 @@ LoopCreationMover::apply(
 				if ( pose.residue(i).is_protein() ) {
 					last_protein_resnum = i;
 				}
+
+				utility::vector1<core::Size> chain_endings;
+				chain_endings.push_back( cur_anchor + last_created_loop_.size() );
+				while ( dup_anchor < last_protein_resnum ) //strictly less than so we don't try to build a loop that connects to nothing
+						{
+					TR << "Duplication loop build on anchor " << cur_anchor << " to new anchor: " << dup_anchor << std::endl;
+					copy_last_loop_to_new_anchor(pose, dup_anchor);
+					chain_endings.push_back( dup_anchor + last_created_loop_.size() );
+					dup_anchor+=temp_asym_size;
+
+				}
+
+				pose.conformation().chain_endings( chain_endings );
+
+
 			}
-
-			utility::vector1<core::Size> chain_endings;
-			chain_endings.push_back( cur_anchor + last_created_loop_.size() );
-			while ( dup_anchor < last_protein_resnum ) //strictly less than so we don't try to build a loop that connects to nothing
-					{
-				TR << "Duplication loop build on anchor " << cur_anchor << " to new anchor: " << dup_anchor << std::endl;
-				copy_last_loop_to_new_anchor(pose, dup_anchor);
-				chain_endings.push_back( dup_anchor + last_created_loop_.size() );
-				dup_anchor+=temp_asym_size;
-
-			}
-
-			pose.conformation().chain_endings( chain_endings );
-
-
 		}
 	}//loop anchors
 }

@@ -1,0 +1,33 @@
+<ROSETTASCRIPTS>
+  <SCOREFXNS>
+  </SCOREFXNS>
+  <RESIDUE_SELECTORS>
+    <ResidueName name="res_select" residue_name3="HEM"/>    
+  </RESIDUE_SELECTORS>
+  <TASKOPERATIONS>
+  </TASKOPERATIONS>
+  <FILTERS>
+  </FILTERS>
+  <MOVERS>
+    <AppendAssemblyMover name="assembler" model_file_name="/nas02/home/a/l/alliwat/netscr/heme_sewing/smotifs_H_5_40_L_1_6_H_5_40.segments-2.txt" start_temperature="2" hashed="false">
+      <Ligands>
+	<Ligand ligand_selector="res_select" auto_detect_contacts="true">
+	</Ligand>
+      </Ligands>
+      <AssemblyScorers>
+	<MotifScorer weight="1" />
+	<InterModelMotifScorer weight="10"/>
+	<LigandScorer weight="1"/>
+      </AssemblyScorers>
+      <AssemblyRequirements>
+	<ClashRequirement/>
+	<LigandClashRequirement />
+	<SizeInSegmentsRequirement minimum_size="5" maximum_size="9" />
+	<DsspSpecificLengthRequirement dssp_code="H" minimum_length="10" maximum_length="25"/>
+      </AssemblyRequirements>
+    </AppendAssemblyMover>
+  </MOVERS>
+  <PROTOCOLS>
+    <Add mover="assembler"/>
+  </PROTOCOLS>
+</ROSETTASCRIPTS>
