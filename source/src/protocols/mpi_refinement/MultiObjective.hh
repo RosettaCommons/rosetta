@@ -110,6 +110,9 @@ public:
 	void set_iha_penalty_mode( std::string value ) { iha_penalty_mode_ = value; }
 	std::string iha_penalty_mode() const { return iha_penalty_mode_; }
 
+	void set_nremain_reset( core::Size value ) { nremain_reset_ = value; }
+	core::Size nremain_reset() const { return nremain_reset_; }
+
 	void
 	calculate_pool_diversity( protocols::wum::SilentStructStore &structs ) const;
 
@@ -143,7 +146,7 @@ private:
 	core::Real iha_cut_;
 	core::Real iha_penalty_slope_;
 	std::string iha_penalty_mode_;
-
+	core::Size nremain_reset_;
 };
 
 }

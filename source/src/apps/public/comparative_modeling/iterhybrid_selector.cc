@@ -219,6 +219,7 @@ retag( protocols::wum::SilentStructStore &library_inout,
 		core::io::silent::SilentStructOP ss = library_inout.get_struct( iss );
 		ss->add_string_value( "poolid", std::to_string(iss) );
 		ss->set_decoy_tag( prefix+std::to_string(iss)+".pdb" );
+		ss->add_energy( "nuse", 0.0 );
 		// check if this is call-by-ref
 	}
 }
@@ -235,6 +236,27 @@ read_library_simple( std::string const & silentfile )
 	for ( core::io::silent::SilentFileData::iterator iter = sfd.begin();
 			iter != sfd.end(); ++iter ) {
 		core::io::silent::SilentStructOP ss( *iter );
+		library.add( ss );
+	}
+	return library;
+}
+
+protocols::wum::SilentStructStore
+read_library_w_simpose( std::string const & silentfile, core::pose::Pose const &pose0 )
+{
+
+	protocols::wum::SilentStructStore library;
+	core::io::silent::SilentFileOptions sopt;
+	core::io::silent::SilentFileData sfd( sopt );
+	sfd.read_file( silentfile );
+
+	core::pose::Pose pose;
+	for ( core::io::silent::SilentFileData::iterator iter = sfd.begin();
+			iter != sfd.end(); ++iter ) {
+		core::io::silent::SilentStructOP ss( *iter );
+		ss->fill_pose( pose );
+		core::scoring::calpha_superimpose_pose( pose, pose0 ); //superimpose to input struct instead...
+		ss->fill_struct( pose );
 		library.add( ss );
 	}
 	return library;
@@ -569,6 +591,7 @@ int main( int argc, char * argv [] )
 		bool const is_iterative_selection( seeds.size() > 0 );
 
 		core::Real dcut( option[ cm::similarity_cut ]() );
+
 		core::Real dcut_ref( 0.0 );
 		bool add_penalty_to_ref( false );
 
@@ -591,10 +614,13 @@ int main( int argc, char * argv [] )
 
 		// read reference structures from in:file:template_silent
 		if ( option[ in::file::template_silent ].user() ) {
-			library_inout = read_library_simple( option[ in::file::template_silent ]() );
+			//library_inout = read_library_simple( option[ in::file::template_silent ]() );
+			library_inout = read_library_w_simpose( option[ in::file::template_silent ](), pose0 );
 		}
 
 		core::Size const nout( option[ out::nstruct ]() );
+		core::Size const nremain_reset =
+			option[ cm::nremain_reset ].user()? option[ cm::nremain_reset ]() : 3; // default
 
 		if ( is_iterative_selection ) {
 			// takes only 1 input
@@ -608,6 +634,7 @@ int main( int argc, char * argv [] )
 			if ( pose0.total_residue() > 0 ) fobj.set_iha_cut( dcut_ref );
 
 			//fobj.update_library_NSGAII( library_inout, library_add, nout, false );
+			fobj.set_nremain_reset( nremain_reset );
 			fobj.update_library_seeds( library_inout, library_add, dcut, seeds, prefix,
 				scorename );
 
@@ -617,11 +644,12 @@ int main( int argc, char * argv [] )
 
 			utility::vector1< core::Real > nquota = get_quota_per_silent( nsilent, nout );
 
+			core::Size keep_topn = nout*2>100 ? 100 : nout*2; // take twice bigger of noutput or 100 whichever bigger
 			for ( core::Size isilent = 1; isilent <= nsilent; ++isilent ) {
 				utility::vector1< core::Real > scores;
 				library_add = read_silent_input_as_library( option[ in::file::silent ](isilent), pose0, scores,
 					dcut_ref, scorename,
-					20 ); // keep top100
+					keep_topn ); // keep top100
 
 				protocols::wum::SilentStructStore library_tmp =
 					energy_cluster( library_add, core::Size(nquota[isilent]), scores,

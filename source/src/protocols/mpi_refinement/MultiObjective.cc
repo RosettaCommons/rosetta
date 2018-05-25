@@ -150,6 +150,7 @@ MultiObjective::set_defaults()
 	iha_cut_ = 25.0;
 	iha_penalty_slope_ = 10.0;
 	iha_penalty_mode_ = "relative";
+	nremain_reset_ = 3;
 }
 
 // Check if ss1 is better than ss2 by any obj function
@@ -509,6 +510,8 @@ MultiObjective::update_library_seeds(protocols::wum::SilentStructStore &structs,
 		}
 	}
 
+	core::Size nused_structs( 0 );
+	core::Size ntotal( ref_structs.size() );
 	for ( core::Size i = 0; i < ref_structs.size(); ++i ) {
 		SilentStructOP ss = ref_structs.get_struct( i );
 		std::stringstream sstream( "" );
@@ -522,8 +525,18 @@ MultiObjective::update_library_seeds(protocols::wum::SilentStructStore &structs,
 				ss->add_energy( "nuse", nuse );
 			}
 		}
+		if ( ss->get_energy( "nuse" ) > 0 ) nused_structs++;
+
 		ss->set_decoy_tag( sstream.str() );
 		structs.add( ss );
+	}
+
+	// reset condition
+	if ( ( ntotal-nused_structs ) <= nremain_reset() ) {
+		for ( core::Size iss = 0; iss < structs.size(); ++iss ) {
+			core::io::silent::SilentStructOP ss = structs.get_struct( iss );
+			ss->add_energy( "nuse", 0.0 );
+		}
 	}
 
 	// report
@@ -546,7 +559,7 @@ MultiObjective::update_library_seeds(protocols::wum::SilentStructStore &structs,
 	}
 
 	return true;
-}
+} // update_library_seeds
 
 // Update library pool based on NSGAII rule, the multiobj GA
 bool

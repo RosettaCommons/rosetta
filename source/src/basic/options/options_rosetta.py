@@ -4518,6 +4518,8 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		),
 		Option( 'seeds','IntegerVector', desc='list of tags used as seed parents at prv iteration'
 				),
+		Option( 'nremain_reset','Integer', desc='threshold for number of unused structures to invoke reset', default = '3'
+				),
 		Option( 'quota_per_silent','RealVector', desc='quota for picking input structures associated with -in:file:silent'
 		),
 		Option( 'similarity_cut','Real', desc='Distance cut on the structure population, used for CSA (in S-score)'

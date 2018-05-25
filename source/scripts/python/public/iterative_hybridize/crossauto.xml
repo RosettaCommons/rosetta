@@ -11,15 +11,12 @@
             <Reweight scoretype="cen_hb" weight="5.0"/>
             <Reweight scoretype="cart_bonded" weight="0.2"/>
         </ScoreFunction>
-        <ScoreFunction name="fullatom" weights="beta_cart" symmetric="0">
-            <Reweight scoretype="atom_pair_constraint" weight="1.0"/>
-        </ScoreFunction>
-        <ScoreFunction name="fullatom2" weights="beta_cart" symmetric="0"/>
+        <ScoreFunction name="fullatom" weights="%%wts%%" symmetric="0"/>
     </SCOREFXNS>
     <FILTERS>
     </FILTERS>
     <MOVERS>
-        <Hybridize name="hybridize" stage1_scorefxn="stage1" stage2_scorefxn="stage2" fa_scorefxn="fullatom2" fa_cst_file="../fa.cst"  batch="1" 
+        <Hybridize name="hybridize" stage1_scorefxn="stage1" stage2_scorefxn="stage2" fa_scorefxn="fullatom" fa_cst_file="../fa.cst"  batch="1" 
 		   stage1_increase_cycles="0.5" stage2_increase_cycles="0.5">
             <Fragments small="../t000_.3mers" big="../t000_.9mers"/>
             <Template pdb="%%template1%%" weight="1.0" cst_file="AUTO"/>

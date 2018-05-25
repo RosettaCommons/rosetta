@@ -1,3 +1,5 @@
+import os,sys
+
 class OptionClass:
     def __init__(self,argv,curr):
         self.curr = curr
@@ -17,11 +19,13 @@ class OptionClass:
         self.simple = False
         self.iha = 20.0 ## difficulty in estimated GDT-HA
         self.max_min_terminate=240.0 #kill if each iter last longer than this time
-        self.max_min_perjob=30.0 #kill if not producing single job in this time
+        self.max_min_perjob=60.0 #kill if not producing single job in this time
         self.nodefile = ''
 
-        # Restraint setup
+        
+        # Score/Restraint setup
         self.penalize_wrt_init = True
+        self.wts = ''
 
         # CSA /genetic algorithm setup  
         self.dcut0 = 0.6 #default unless specified 
@@ -38,9 +42,15 @@ class OptionClass:
         self.mulfactor_phase0 = 2.0
 
     def parse_argv(self,argv):
-        if len(argv) < 2:
-            print 'USAGE: python iter.run7.py [mode] [options]'
+        if len(argv) < 2 or not ('-difficulty' in argv or '-iha' in argv):
+            print 'USAGE: python IterationMaster.py -difficulty [value] [options]'
             print 'List of options:'
+            print '-difficulty : Expected similarity of final refined model from init.pdb, in TM-score/GDT-TS percent'
+            print '-niter      : [optional] num. iterations of process (default 50)'
+            print '-wts        : [optional] user-defined score wts file (default ref2015_cart)'
+            print '-native     : [optional] pdb with native struct; for benchmarking (default none)'
+            print '-debug      : [optional] turn on debug mode (default false)'
+            print '-simple     : [optional] turn on simple mode (use pre-set simpler schedule, default false)'
 
         # Process
         if '-debug' in argv: self.debug=True
@@ -52,6 +62,11 @@ class OptionClass:
             self.simple = True
             print "Using simpler schedule!"
 
+        if '-wts' in argv:
+            self.wts = argv[argv.index('-wts')+1]
+            self.wts = os.path.abspath(self.wts)
+            print "Using user-defined wts file: %s"%self.wts
+            
         # default: 20
         if '-iha' in argv:
             self.iha = float(argv[argv.index('-iha')+1])
@@ -81,12 +96,14 @@ class OptionClass:
 
     def set_dependent_options(self):
         if self.simple: #Use twice more efficient scheduling as we have good driving force now
-            self.nseed=15 #number of seeds to be used every iteration
-            self.nperseed=2 # for cross only
+            self.nseed=6 #number of seeds to be used every iteration
+            self.nperseed=5 # for cross only
             self.ngen_per_job=2 #total jobs: NSEED*NPERSEED*NGEN_PER_JOB = 60
             self.nmutperseed = {} #no mutation
             self.n0_to_reset = 5 # rapid cut for the phase to prevent tailing with larger NSEED
             self.cross1_only = True
+            self.mulfactor_phase0 = 1.0
+            self.niter = 30
 
         else:
             self.nseed=10 #number of seeds to be used every iteration
