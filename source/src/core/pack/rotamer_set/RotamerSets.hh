@@ -73,10 +73,11 @@ public:
 		utility::graph::GraphCOP packer_neighbor_graph
 	);
 
+	//fd add explicit rotamers at a position.  Deletes current rotamers at this position!
 	void
-	build_pwat_rotsets(
-		pose::Pose & pose,
-		utility::vector1< utility::vector1< Vector > > const & new_pwat_rotsets
+	set_explicit_rotamers(
+		core::Size moltenresid,
+		RotamerSetOP rotamers
 	);
 
 	void
@@ -171,9 +172,12 @@ public:
 		pose::Pose & /*pose*/
 	) const {}
 
+	///fd: make this public
+	///    the reason?  we now can update rotamersets interactively from code, so this should be exposed
+	void update_offset_data();
+
 private:
 	void copy_residue_conenctions_and_variants(pose::Pose const & pose, conformation::ResidueOP cloneRes, Size seqpos, Size asym_length);
-	void update_offset_data();
 
 
 public:

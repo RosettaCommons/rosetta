@@ -50,12 +50,13 @@ public:
 		}
 
 		int nrot = (int)std::floor(360.0 / theta + 0.5);
+		theta_ = 360.0 / nrot; //fd: use the exact angle
 		rotlist_.resize(nrot);
 
 		Quaternion<Real> quat;
 		xyzMatrix<Real> rot_matrix;
 		for ( int j=0; j<nrot; ++j ) {
-			Real rot_deg = j*theta;
+			Real rot_deg = j*theta_;
 			quat = Quaternion<Real>( axis.normalize(), conversions::radians(rot_deg), true );
 			quat2R( quat, rot_matrix );
 			rotlist_[j+1] = rot_matrix;

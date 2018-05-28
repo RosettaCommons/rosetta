@@ -24,6 +24,7 @@
 #include <core/types.hh>
 
 #include <core/kinematics/FoldTree.hh>
+#include <core/kinematics/MoveMap.hh>
 
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -32,6 +33,7 @@
 
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/ResidueLevelTask_.hh>
 #include <core/pack/task/TaskFactory.hh>
 
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
@@ -43,7 +45,10 @@
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
+#include <core/pose/PDBInfo.hh>
 
+#include <core/chemical/ResidueTypeSet.hh>
+#include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/scoring/methods/PoissonBoltzmannEnergy.hh>
@@ -53,10 +58,12 @@
 #include <protocols/simple_task_operations/RestrictToInterface.hh>
 #include <protocols/simple_ddg/ddG.hh>
 #include <protocols/simple_ddg/ddGCreator.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <basic/datacache/DataMap.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/filters/Filter.hh>
+#include <protocols/simple_moves/WaterBoxMover.hh>
 
 #include <numeric/xyzVector.hh>
 
@@ -90,29 +97,12 @@ using basic::Warning;
 
 static basic::Tracer TR( "protocols.protein_interface_design.movers.ddG" );
 
-// XRW TEMP moves::MoverOP ddGCreator::create_mover() const
-// XRW TEMP {
-// XRW TEMP  return moves::MoverOP( new ddG );
-// XRW TEMP }
-
-// XRW TEMP std::string ddG::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "ddG";
-// XRW TEMP }
-
-// XRW TEMP std::string ddGCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return ddG::mover_name();
-// XRW TEMP }
-
 using namespace core;
 using namespace protocols::simple_ddg;
 using namespace core::scoring;
 
 ddG::ddG() :
 	moves::Mover(ddG::mover_name()),
-	//bound_total_energy_(0.0),
-	//unbound_total_energy_(0.0),
 	repeats_(0),
 	rb_jump_(0),
 	per_residue_ddg_(false),
@@ -121,6 +111,7 @@ ddG::ddG() :
 	use_custom_task_(false),
 	repack_bound_(true),
 	relax_bound_(false),
+	solvate_(false),
 	pb_enabled_(false),
 	translate_by_(1000)
 {
@@ -133,8 +124,6 @@ ddG::ddG() :
 ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in,
 	core::Size const jump/*=1*/) :
 	moves::Mover(ddG::mover_name()),
-	//bound_total_energy_(0.0),
-	//unbound_total_energy_(0.0),
 	repeats_(1),
 	rb_jump_(jump),
 	per_residue_ddg_(false),
@@ -143,6 +132,7 @@ ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in,
 	use_custom_task_(false),
 	repack_bound_(true),
 	relax_bound_(false),
+	solvate_(false),
 	pb_enabled_(false),
 	translate_by_(1000)
 {
@@ -177,6 +167,7 @@ ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in,
 	use_custom_task_(false),
 	repack_bound_(true),
 	relax_bound_(false),
+	solvate_(false),
 	pb_enabled_(false),
 	translate_by_(1000)
 {
@@ -197,6 +188,7 @@ ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in,
 		pb_enabled_ = false;
 	}
 }
+
 void ddG::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap  & data,
@@ -215,6 +207,7 @@ void ddG::parse_my_tag(
 	use_custom_task( tag->hasOption("task_operations") );
 	repack_bound_ = tag->getOption<bool>("repack_bound",true);
 	relax_bound_ = tag->getOption<bool>("relax_bound",false);
+	solvate_ = tag->getOption<bool>("solvate",false);
 	translate_by_ = tag->getOption<core::Real>("translate_by", 1000);
 
 	if ( tag->hasOption( "relax_mover" ) ) {
@@ -297,7 +290,6 @@ void ddG::apply(Pose & pose)
 		EnergyMethodOptionsOP energy_options( new core::scoring::methods::EnergyMethodOptions(scorefxn_->energy_method_options()) );
 		energy_options->hbond_options().decompose_bb_hb_into_pair_energies(true);
 		scorefxn_->set_energy_method_options(*energy_options);
-
 	}
 	Real average_ddg = 0.0;
 	std::map<Size, Real> average_per_residue_ddgs;
@@ -468,8 +460,29 @@ ddG::calculate( pose::Pose const & pose_original )
 		setup_task(pose);
 	}
 
-	if ( repack_bound() ) {
+	// fd: now solvate the bound pose
+	if ( solvate_ ) {
+		if ( ! repack_bound_ ) {
+			// make a "null" packer task
+			task_ = core::pack::task::TaskFactory::create_packer_task( pose );
+			for ( Size i(1); i <= pose.total_residue(); ++i ) {
+				task_->nonconst_residue_task(i).prevent_repacking();
+			}
+		}
+
+		core::scoring::ScoreFunctionOP sfwater = scorefxn_->clone();
+		sfwater->set_weight( core::scoring::pointwater, 1.0 );
+		setup_task(pose);
+		protocols::simple_moves::WaterBoxMover wb(sfwater);
+		wb.set_taskop( task_ );
+		wb.apply( pose );
+		setup_solvated_task( pose, true ); // true = we're bound
+	}
+
+	if ( repack_bound() || solvate_ ) {
 		pack::pack_rotamers( pose, *scorefxn_, task_ );
+		// if we're solvating, we also need to minimize
+		if ( solvate_ ) do_minimize( pose );
 	}
 
 	if ( relax_bound() && relax_mover() ) {
@@ -488,10 +501,20 @@ ddG::calculate( pose::Pose const & pose_original )
 	if ( unbind(pose) ) {
 		if ( pb_enabled_ ) cached_data->set_energy_state(emoptions.pb_unbound_tag());
 
-		if ( repack_unbound_ ) {
+		// solvation mode requires updating packer task
+		if ( solvate_ ) {
+			setup_solvated_task( pose, false ); // false = we're unbound
+		}
+
+		// if we solvate, even if we don't repack unbound,
+		//    we need to give waters a chance to virtualize
+		if ( solvate_ || repack_unbound_ ) {
 			// Use the same task which was setup earlier
 			pack::pack_rotamers( pose, *scorefxn_, task_ );
+			// if we're solvating, we also need to minimize
+			if ( solvate_ ) do_minimize( pose );
 		}
+
 		if ( relax_mover() ) {
 			relax_mover()->apply( pose );
 		}
@@ -548,6 +571,103 @@ ddG::setup_task( pose::Pose const & pose) {
 	} // use_custom_task
 }
 
+//fd: Set up the packertask for the unbound pose in "solvate" mode
+//    - it duplicates the input task and only modifies water behavior
+//      (since unbinding creates additional waters)
+void
+ddG::setup_solvated_task( Pose const & pose, bool bound ) {
+	core::pack::task::PackerTaskOP task_new = core::pack::task::TaskFactory::create_packer_task( pose );
+	task_new->or_include_current( true );
+
+	for ( core::Size i=1; i<=task_new->total_residue(); ++i ) {
+		if ( pose.residue(i).is_water() ) {
+			// allow repacking
+			task_new->nonconst_residue_task(i).restrict_to_repacking();
+		} else {
+			// use normal unbound behavior
+			runtime_assert( i <= task_->total_residue() );
+			if ( (bound && repack_bound_) || (!bound && repack_unbound_) ) {
+				core::pack::task::ResidueLevelTask_ & newtask_i(
+					dynamic_cast<core::pack::task::ResidueLevelTask_ &>(task_new->nonconst_residue_task(i) ) );
+				newtask_i.update_commutative( task_->residue_task(i) );
+			} else {
+				task_new->nonconst_residue_task(i).prevent_repacking();
+			}
+		}
+	}
+
+	task_ = task_new;
+}
+
+// fd: Before the "unbind", we want to duplicate waters that are "near" both interfaces to be on both sides
+void
+ddG::duplicate_waters_across_jump( Pose & pose, Size jumpnum ) const {
+	core::chemical::ResidueTypeSetCOP rsd_set( pose.residue_type_set_for_pose( core::chemical::FULL_ATOM_t ) );
+	core::conformation::ResidueOP vrt_wat = core::conformation::ResidueFactory::create_residue( rsd_set->name_map("HOH_V") );
+
+	core::Size nres = pose.total_residue();
+
+	utility::vector1< bool > pose_split = pose.fold_tree().partition_by_jump(jumpnum);
+
+	for ( core::Size i=nres; i>=1; --i ) {
+		core::conformation::Residue const &res = pose.residue(i);
+
+		if ( res.is_water() ) {
+			core::Real mindist = 10.0;
+			core::Size minres = 1;
+			for ( core::Size j=1; j<=nres; ++j ) {
+				if ( pose_split[i] == pose_split[j] ) continue;
+				core::Vector xyz1 = pose.residue(i).xyz( pose.residue(i).nbr_atom() );
+				core::Vector xyz2 = pose.residue(j).xyz( pose.residue(j).nbr_atom() );
+				core::Real dist_i = (xyz1 - xyz2).length();
+				if ( dist_i<mindist ) {
+					mindist=dist_i;
+					minres=j;
+				}
+			}
+
+			if ( mindist<5.0 ) {
+				core::conformation::ResidueOP new_res = core::conformation::ResidueOP( new core::conformation::Residue( *vrt_wat ) );
+				new_res->set_xyz(  "O", res.atom("O").xyz() );
+				new_res->set_xyz( "H1", res.atom("H1").xyz() );
+				new_res->set_xyz( "H2", res.atom("H2").xyz() );
+				pose.append_residue_by_jump( *new_res, mindist );
+
+				// this chain lettering is currently rejected -- need to fix  // fd: ???
+				pose.pdb_info()->set_resinfo( pose.total_residue(), pose.pdb_info()->chain(minres), pose.total_residue(), ' ');
+			}
+		}
+	} // main for loop water duplication
+}
+
+//fd: Perform a task-aware minimize (only called if we've packed with waters)
+void
+ddG::do_minimize( Pose & pose ) const
+{
+	protocols::minimization_packing::MinMoverOP min_mover(new protocols::minimization_packing::MinMover);
+	min_mover->score_function( scorefxn_ );
+	core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap() );
+	mm->set_jump( false );
+	mm->set_chi( false );
+	mm->set_bb( false );
+
+	Size const nres( task_->total_residue() );
+	for ( Size i(1); i <=nres; ++i ) {
+		if ( pose.residue(i).is_water() ) {
+			core::Size jump_i = pose.fold_tree().get_jump_that_builds_residue( i );
+			mm->set_jump( jump_i, true );
+		} else {
+			if ( task_->design_residue( i ) || task_->pack_residue( i ) ) {
+				mm->set_chi( i, true );
+			}
+		}
+	}
+
+	min_mover->movemap( mm );
+	min_mover->apply( pose );
+}
+
+
 bool
 ddG::unbind( pose::Pose & pose ) const
 {
@@ -555,6 +675,9 @@ ddG::unbind( pose::Pose & pose ) const
 		auto & symm_conf( dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
 		std::map< Size, core::conformation::symmetry::SymDof > dofs ( symm_conf.Symmetry_Info()->get_dofs() );
 
+		if ( solvate_ ) {
+			utility_exit_with_message("solvate_=True currently unsupported for symmetry");
+		}
 		rigid::RigidBodyDofSeqTransMoverOP translate( new rigid::RigidBodyDofSeqTransMover( dofs ) );
 		translate->step_size( translate_by_ );
 		translate->apply( pose );
@@ -563,7 +686,11 @@ ddG::unbind( pose::Pose & pose ) const
 		Vector translation_axis(1,0,0);
 		for ( core::Size current_chain_id : chain_ids_ ) {
 			core::Size current_jump_id = core::pose::get_jump_id_from_chain_id(current_chain_id,pose);
+			if ( solvate_ ) {
+				duplicate_waters_across_jump( pose, current_jump_id );
+			}
 			rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( pose, current_jump_id) );
+
 			// Commented by honda: APBS blows up grid > 500.  Just use the default just like bound-state.
 			translate->step_size( translate_by_ );
 			translate->trans_axis(translation_axis);
@@ -571,6 +698,9 @@ ddG::unbind( pose::Pose & pose ) const
 		}
 	} else if ( rb_jump_ != 0 ) {
 		rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( pose, rb_jump_ ) );
+		if ( solvate_ ) {
+			duplicate_waters_across_jump( pose, rb_jump_ );
+		}
 
 		// Commented by honda: APBS blows up grid > 500.  Just use the default just like bound-state.
 		translate->step_size( translate_by_ );
@@ -591,11 +721,6 @@ protocols::filters::FilterOP
 ddG::filter() const {
 	return filter_;
 }
-
-// XRW TEMP std::string
-// XRW TEMP ddG::get_name() const {
-// XRW TEMP  return "ddG";
-// XRW TEMP }
 
 protocols::moves::MoverOP
 ddG::clone() const {
@@ -664,6 +789,12 @@ ddG::define_ddG_schema() {
 	attlist + XMLSchemaAttribute(
 		"chain_name", xs_string,
 		"XSD XRW TO DO");
+
+	// fd
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"solvate", xsct_rosetta_bool,
+		"Solvate both bound and unbound pose (using WaterBox mover)",
+		"false");
 
 	XMLSchemaComplexTypeGeneratorOP ct_gen( new XMLSchemaComplexTypeGenerator );
 

@@ -350,64 +350,13 @@ RotamerSets::build_rotamers(
 	update_offset_data();
 }
 
-// build lkball/pwat solvation sites
-// and update pose accordingly
+//fd add explicit rotamers at a position.  Deletes current rotamers at this position!
 void
-RotamerSets::build_pwat_rotsets(
-	pose::Pose & pose,
-	utility::vector1< utility::vector1< Vector > > const & new_pwat_rotsets
-)
-{
-	// remove original pwat rotsets
-	// requires that all water rotamer sets come at end of pose
-	Size truncate_index=0;
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
-		if ( task_->pack_residue(i) || task_->design_residue(i) ) {
-			if ( (pose.residue(i).name() != "PWAT") && (pose.residue(i).name() != "PWAT_V") ) {
-				++truncate_index;
-			}
-		}
-	}
-	// keep only non-bbpwat rotamers sets
-	set_of_rotamer_sets_.resize( truncate_index );
-	// expand to include new pwat rotsets
-	set_of_rotamer_sets_.resize( truncate_index + new_pwat_rotsets.size() );
-
-	using namespace core::conformation;
-
-	core::chemical::ResidueTypeSetCOP rsd_set( pose.residue_type_set_for_pose( core::chemical::FULL_ATOM_t ) );
-	ResidueOP pwat = ResidueFactory::create_residue( rsd_set->name_map("PWAT") );
-	ResidueOP vwat = ResidueFactory::create_residue( rsd_set->name_map("PWAT_V") );
-	Vector const OH1( pwat->xyz("V1") - pwat->xyz("O") );
-	Vector const OH2( pwat->xyz("V2") - pwat->xyz("O") );
-	ResidueOP new_wat = ResidueOP( new Residue( *pwat ) );
-	ResidueOP vrt_wat = ResidueOP( new Residue( *vwat ) );
-
-	// delete existing PWAT built on backbone for statistical-based solvation purposes
-	Size nres = pose.total_residue();
-	for ( Size i=nres; i>=1; --i ) {
-		Residue const &res = pose.residue(i);
-		if ( (res.name() == "PWAT") || (res.name() == "PWAT_V") ) {
-			pose.conformation().delete_residue_slow( i );
-		}
-	}
-	nres = pose.total_residue();
-	for ( Size i=1; i<=new_pwat_rotsets.size(); ++i ) {
-		// add one new PWAT residue to pose for each new rotset
-		vrt_wat->set_xyz("O",  new_pwat_rotsets[i][1]);
-		vrt_wat->set_xyz("V1", new_pwat_rotsets[i][1]+OH1);
-		vrt_wat->set_xyz("V2", new_pwat_rotsets[i][1]+OH2);
-		pose.append_residue_by_jump( *vrt_wat, nres );
-
-		// build rotset for PWAT rotamers
-		nres = pose.total_residue();
-		RotamerSetOP rotset( RotamerSetFactory::create_rotamer_set( pose ) );
-		rotset->set_resid( nres );
-		rotset->build_pwat_rotamers( pose, nres, new_pwat_rotsets[i] );
-		++truncate_index;
-		set_of_rotamer_sets_[ truncate_index ] = rotset;
-	}
-
+RotamerSets::set_explicit_rotamers(
+	core::Size moltenresid,
+	RotamerSetOP rotamers
+) {
+	set_of_rotamer_sets_[ moltenresid ] = rotamers;
 }
 
 void RotamerSets::copy_residue_conenctions_and_variants(pose::Pose const & pose, conformation::ResidueOP cloneRes, Size seqpos, Size asym_length){

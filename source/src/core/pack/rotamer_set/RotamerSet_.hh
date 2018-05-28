@@ -88,14 +88,6 @@ public:
 		utility::graph::GraphCOP packer_neighbor_graph
 	) override;
 
-	/// @brief Build pwat rotamers for supplied lkb/statistical water intersection positions
-	virtual
-	void build_pwat_rotamers(
-		pose::Pose const & pose,
-		Size resid,
-		utility::vector1< Vector > const & new_pwat_rotset
-	) override;
-
 	virtual
 	void
 	add_rotamer(
@@ -356,14 +348,6 @@ private:
 		scoring::ScoreFunction const & scorefxn,
 		task::PackerTask const & task,
 		chemical::ResidueTypeCOP concrete_residue,
-		conformation::Residue const & existing_residue,
-		utility::graph::GraphCOP packer_neighbor_graph
-	);
-
-	/// @brief logic for building point water rotamers
-	void build_virtualizable_point_water_rotamers(
-		pose::Pose const & pose,
-		task::PackerTask const & task,
 		conformation::Residue const & existing_residue,
 		utility::graph::GraphCOP packer_neighbor_graph
 	);

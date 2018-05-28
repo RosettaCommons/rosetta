@@ -40,7 +40,6 @@ sources = {
 		"optimizeH",
 		"pack_missing_sidechains",
 		"pack_rotamers",
-		"prepack_pwat_rotamers",
 		"packer_neighbors",
 		"rotamer_trials",
 		"rtmin",

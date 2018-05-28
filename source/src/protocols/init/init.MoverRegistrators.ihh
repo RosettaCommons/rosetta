@@ -534,7 +534,6 @@ static MoverRegistrator< monte_carlo::MonteCarloResetCreator > reg_MonteCarloRes
 static MoverRegistrator< monte_carlo::MonteCarloTestCreator > reg_MonteCarloTestCreator;
 static MoverRegistrator< simple_moves::MSDMoverCreator > reg_MSDMoverCreator;
 static MoverRegistrator< simple_moves::MutateResidueCreator > reg_MutateResidueCreator;
-static MoverRegistrator< simple_moves::PackPwatRotamersMoverCreator > reg_PackPwatRotamersMoverCreator;
 static MoverRegistrator< simple_moves::PDBReloadMoverCreator > reg_PDBReloadMoverCreator;
 static MoverRegistrator< simple_moves::PeriodicBoxMoverCreator > reg_PeriodicBoxMoverCreator;
 static MoverRegistrator< simple_moves::PoseFromPoseResourceMoverCreator > reg_PoseFromPoseResourceMoverCreator;

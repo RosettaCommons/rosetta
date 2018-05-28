@@ -636,7 +636,6 @@ sources = {
 
 		"MSDMover",
 		"MutateResidue",
-		"PackPwatRotamersMover",
 		"PDBReloadMover",
 		"PeriodicBoxMover",
 		"PoseFromPoseResourceMover",

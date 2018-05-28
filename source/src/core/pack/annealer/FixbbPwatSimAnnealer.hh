@@ -7,11 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/pack/annealer/FixbbPwatSimAnnealer.hh
-/// @brief  Packer's standard annealer class declaration, originally written by Brian Kuhlman
-/// and factored into base and derived classes by Jenny Hu.
-/// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
-/// @author modified by Ryan Pavlovicz (rpavlov@uw.edu)
+/// @file   core/pack/annealer/FixbbPwatSimAnnealer.cc
+/// @brief  fixed temperature annealer for packing with statistical PWAT water model
+/// @author Ryan Pavlovicz (rpavlov@uw.edu)
 
 #ifndef INCLUDED_core_pack_annealer_FixbbPwatSimAnnealer_hh
 #define INCLUDED_core_pack_annealer_FixbbPwatSimAnnealer_hh
@@ -21,13 +19,9 @@
 
 // Package Headers
 #include <core/pack/annealer/RotamerAssigningAnnealer.hh>
-
 #include <core/pack/interaction_graph/AnnealableGraphBase.fwd.hh>
-
 #include <core/pack/rotamer_set/FixbbRotamerSets.fwd.hh>
-
-#include <core/pack/prepack_pwat_rotamers.hh>
-//#include <protocols/simple_moves/PackPwatRotamersMover.hh>
+#include <numeric/xyzVector.hh>
 
 // Utility headers
 #include <utility/vector0.hh>
@@ -40,7 +34,12 @@ namespace core {
 namespace pack {
 namespace annealer {
 
-class FixbbPwatSimAnnealer;
+// store dwelltimes of water during packing in this struct
+struct PointDwell {
+	core::Vector xyz;
+	core::Real dwell;
+};
+
 
 class FixbbPwatSimAnnealer : public RotamerAssigningAnnealer
 {
@@ -57,19 +56,28 @@ public:
 		FixbbRotamerSetsCOP rotamer_sets,
 		ObjexxFCL::FArray1_int & current_rot_index,
 		bool calc_rot_freq,
-		ObjexxFCL::FArray1D< core::PackerEnergy > & rot_freq,
-		utility::vector1< PointDwell > & all_rot
+		ObjexxFCL::FArray1D< core::PackerEnergy > & rot_freq
 	);
 
 	virtual ~FixbbPwatSimAnnealer();
 	void run();
 
-	utility::vector1< PointDwell > & all_rot();
+	void
+	set_min_dwell(core::Real mindwell) {
+		min_dwell_ = mindwell;
+	}
+
+	utility::vector1< PointDwell > &
+	get_dwell_times() {
+		return all_rot_;
+	}
 
 private:
 	AnnealableGraphBaseOP ig_;
 	FixbbPwatSimAnnealer(const FixbbPwatSimAnnealer& rhs);
-	utility::vector1< PointDwell > & all_rot_;
+
+	utility::vector1< PointDwell > all_rot_;
+	core::Real min_dwell_;
 };
 
 }//end namespace annealer

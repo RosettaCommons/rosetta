@@ -216,16 +216,47 @@ RestrictToInterface::apply(
 
 	core::Size num_jump_ = movable_jumps().size();
 	for ( Size jj=1; jj<=num_jump_; jj++ ) {
-		protocols::scoring::Interface interface( movable_jumps()[jj] );
-		interface.distance( distance_ );
-		interface.calculate( pose );
+		//protocols::scoring::Interface interface( movable_jumps()[jj] );
+		//interface.distance( distance_ );
+		//interface.calculate( pose );
+		//for ( Size ii=1; ii<=pose.size(); ++ii ) {
+		// if ( interface.is_interface(ii) ) {
+		//  is_interface[ii] = true;
+		// }
+		//}
 
-		for ( Size ii=1; ii<=pose.size(); ++ii ) {
-			if ( interface.is_interface(ii) ) {
-				//        TR << " adding residue " << pose.residue(ii).name() << " " << ii << " to interface" << std::endl;
-				is_interface[ii] = true;
-			}
-		}
+		//fd logic above is very problematic:
+		// * it uses only the stored energy graph, which may be computed with less distance than distance_
+		// * it depends on interaction radius of last scorefunction used, which may vary, giving diff results
+		// * Instead we replace this logic.  Similar to it, though, we use neighboratoms for all but ligands.
+		ObjexxFCL::FArray1D_bool partition( pose.size(),false );
+		pose.fold_tree().partition_by_jump( movable_jumps()[jj], partition );
+
+		for ( Size ires=1; ires<=pose.size(); ++ires ) {
+			if ( pose.residue_type(ires).is_water() ) continue;
+			bool i_is_lig = pose.residue_type(ires).is_ligand();
+			core::Size niatm = i_is_lig ? pose.residue_type(ires).nheavyatoms() : 1;
+			for ( Size iatm=1; iatm<=niatm; ++iatm ) {
+				core::Vector xyz_i = i_is_lig ?
+					pose.residue(ires).xyz( iatm ) : pose.residue(ires).xyz( pose.residue(ires).nbr_atom() );
+
+				for ( Size jres=ires+1; jres<=pose.size(); ++jres ) {
+					if ( partition(ires) == partition(jres) ) continue;
+					if ( pose.residue_type(jres).is_water() ) continue;
+					bool j_is_lig = pose.residue_type(jres).is_ligand();
+					core::Size njatm = j_is_lig ? pose.residue_type(jres).nheavyatoms() : 1;
+					for ( Size jatm=1; jatm<=njatm; ++jatm ) {
+						core::Vector xyz_j = j_is_lig ?
+							pose.residue(jres).xyz( jatm ) : pose.residue(jres).xyz( pose.residue(jres).nbr_atom() );
+
+						if ( (xyz_i-xyz_j).length_squared() <= distance_*distance_ ) {
+							is_interface[ires] = is_interface[jres] = true;
+						}
+					} // jatm
+				} // jj
+
+			} // iatm
+		} // ii
 	}
 
 	if ( loopy_interface_ ) {
@@ -240,7 +271,6 @@ RestrictToInterface::apply(
 	if ( include_all_water_ ) {
 		for ( Size ii=1; ii<=pose.total_residue(); ++ii ) {
 			if ( pose.residue(ii).is_water() ) {
-				//        TR << " adding residue " << pose.residue(ii).name() << " " << ii << " to interface" << std::endl;
 				is_interface[ii] = true;
 			}
 		}

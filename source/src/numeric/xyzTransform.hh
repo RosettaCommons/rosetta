@@ -135,7 +135,8 @@ public:
 
 	static    Transform align( Vector const & to, Vector const & from = Vector(1,0,0) ){
 		Vector  const axis = to.cross(from);
-		T const angle = std::acos(to.normalized().dot(from.normalized()));
+		Real dotprod = std::max( (Real)(-1.0), (Real)std::min((Real)1.0,(Real)to.normalized().dot(from.normalized()) ) ); //fd
+		T const angle = std::acos(dotprod);
 		return Transform(rotation_matrix(axis,-angle));
 	}
 	static    Transform align_fast( V const & to, V const & from = V(1.0, 0.0, 0.0) ){ // rot 180 around avg. axis

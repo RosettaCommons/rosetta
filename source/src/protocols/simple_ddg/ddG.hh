@@ -53,6 +53,7 @@ public :
 	virtual void calculate( Pose const & pose_in );
 	virtual void report_ddG( std::ostream & out ) const;
 	virtual Real sum_ddG() const;
+
 	core::Size rb_jump() const { return rb_jump_; }
 	void rb_jump( core::Size j ) { rb_jump_ = j; }
 	core::Size repeats() const { return repeats_; }
@@ -103,6 +104,11 @@ private :
 	bool unbind(Pose & pose) const;
 	void setup_task(Pose const & pose);
 
+	//fd: a few functions specific to solvated mode
+	void duplicate_waters_across_jump( Pose & pose, Size jumpnum ) const;
+	void setup_solvated_task( Pose const & pose, bool bound );
+	void do_minimize( Pose & pose ) const;
+
 	std::map< ScoreType, Real > bound_energies_;
 	std::map< ScoreType, Real > unbound_energies_;
 
@@ -128,6 +134,7 @@ private :
 	bool use_custom_task_;
 	bool repack_bound_;
 	bool relax_bound_;
+	bool solvate_; //fd solvate the bound and unbound states
 
 	/// info carrier for poisson-boltzmann potential energy computation
 	core::scoring::methods::PBLifetimeCacheOP pb_cached_data_;

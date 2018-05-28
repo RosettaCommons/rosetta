@@ -21,6 +21,7 @@ namespace core {
 namespace pack {
 namespace annealer {
 
+struct PointDwell;
 class FixbbPwatSimAnnealer;
 
 typedef utility::pointer::shared_ptr< FixbbPwatSimAnnealer > FixbbPwatSimAnnealerOP;

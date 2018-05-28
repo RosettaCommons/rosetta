@@ -1042,6 +1042,16 @@ init_beta_nov16_correction( utility::options::OptionCollection & options, bool s
 		params.push_back("fa_standard:S:LK_DGFREE:-4.89802");
 		params.push_back("fa_standard:SH1:LK_DGFREE:2.07945");
 
+		//fd & rpav: water
+		params.push_back("fa_standard:Opoint:LJ_RADIUS:1.542743");
+		params.push_back("fa_standard:Opoint:LJ_WDEPTH:0.161947");
+		params.push_back("fa_standard:Opoint:LK_VOLUME:0");
+		params.push_back("fa_standard:Owat:LJ_RADIUS:1.542743");
+		params.push_back("fa_standard:Owat:LJ_WDEPTH:0.161947");
+		params.push_back("fa_standard:Owat:LK_DGFREE:-4.5480");
+		params.push_back("fa_standard:Hwat:LJ_RADIUS:0.901681");
+		params.push_back("fa_standard:Hwat:LJ_WDEPTH:0.01");
+
 		options[ basic::options::OptionKeys::chemical::set_atom_properties ].value(params);
 	} else {
 		TR.Warning << "Flag -beta_nov16 is set but -set_atom_properties are also specified.  Not changing atom properties!" << std::endl;
@@ -1733,6 +1743,12 @@ init_beta_nov16_correction( utility::options::OptionCollection & options, bool s
 		params.push_back("fa_standard:DVA:HB:0.12155");
 		params.push_back("fa_standard:DVA:N:-0.77049");
 		params.push_back("fa_standard:DVA:O:-0.76511");
+
+		// fd & rpav water
+		params.push_back("fa_standard:HOH:O:-0.2896");
+		params.push_back("fa_standard:HOH:H1:0.1448");
+		params.push_back("fa_standard:HOH:H2:0.1448");
+
 		options[ basic::options::OptionKeys::chemical::set_atomic_charge ].value(params);
 	} else {
 		TR.Warning << "Flag -beta_nov16 is set but -set_atomic_charge is also specified.  Not changing atom properties!" << std::endl;
@@ -1807,7 +1823,7 @@ init_beta_nov16_correction( utility::options::OptionCollection & options, bool s
 		params.push_back( "hbacc_IMD:1.13");
 		params.push_back( "hbacc_IME:1.17");
 		params.push_back( "hbacc_PBA:1.19");
-		params.push_back( "hbacc_H2O:1.15");
+		params.push_back( "hbacc_H2O:1.23");
 		options[ basic::options::OptionKeys::score::hb_acc_strength ].value(params);
 	} else {
 		TR.Warning << "Flag -beta_nov16 is set but -hb_acc_strength are also specified.  Not changing atom properties!" << std::endl;
@@ -1824,7 +1840,7 @@ init_beta_nov16_correction( utility::options::OptionCollection & options, bool s
 		params.push_back( "hbdon_IME:1.42");
 		params.push_back( "hbdon_IND:1.15");
 		params.push_back( "hbdon_PBA:1.45");
-		params.push_back( "hbdon_H2O:1.15");
+		params.push_back( "hbdon_H2O:1.26");
 		options[ basic::options::OptionKeys::score::hb_don_strength ].value(params);
 	} else {
 		TR.Warning << "Flag -beta_nov16 is set but -hb_don_strength are also specified.  Not changing atom properties!" << std::endl;

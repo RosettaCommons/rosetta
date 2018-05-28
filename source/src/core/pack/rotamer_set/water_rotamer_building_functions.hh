@@ -38,52 +38,6 @@ namespace core {
 namespace pack {
 namespace rotamer_set {
 
-struct WaterRot {
-	WaterRot( numeric::xyzVector< core::Real > const &coords, std::string aa, std::string aatm, std::string abase1, std::string abase2) :
-		coords_(coords), aa_(aa), aatm_(aatm), abase1_(abase1), abase2_ (abase2)
-	{ }
-
-	numeric::xyzVector< core::Real > coords_;
-	std::string aa_, aatm_, abase1_, abase2_;
-};
-
-class WaterRotsDB {
-private:
-	utility::vector1< WaterRot > protein_rots_,ligand_rots_;
-	bool init_;
-
-public:
-	WaterRotsDB() : init_(false) {};
-
-	bool
-	is_initialized() {
-		return init_;
-	}
-
-	core::Size
-	n_protein_rots() {
-		return protein_rots_.size();
-	}
-
-	core::Size
-	n_ligand_rots() {
-		return ligand_rots_.size();
-	}
-
-	void
-	initialize();
-
-	WaterRot const &
-	protein_rot(core::Size i) {
-		return protein_rots_[i];
-	}
-
-	WaterRot const &
-	ligand_rot(core::Size i) {
-		return ligand_rots_[i];
-	}
-};
-
 core::PackerEnergy
 bump_check(
 	core::conformation::ResidueCOP rotamer,
@@ -101,16 +55,6 @@ build_rotated_water_rotamers(
 	pose::Pose const & pose,
 	scoring::ScoreFunction const & scorefxn,
 	utility::graph::GraphCOP packer_neighbor_graph,
-	utility::vector1< conformation::ResidueOP > & new_rotamers,
-	bool incl_vrt
-);
-
-void
-build_backbone_point_water_rotamers(
-	Size const seqpos_water,
-	pack::task::PackerTask const & task,
-	pose::Pose const & pose,
-	utility::graph::GraphCOP , //packer_neighbor_graph,
 	utility::vector1< conformation::ResidueOP > & new_rotamers,
 	bool incl_vrt
 );

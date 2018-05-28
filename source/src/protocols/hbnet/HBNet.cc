@@ -2760,7 +2760,7 @@ HBNet::water_oxygen_clashes_with_residue( Vector const water_oxygen, Residue con
 		//skip virtual atoms but not virtual waters!
 		std::string resname( res.name() );
 		//we want to compare against all waters, even if VRT (but skip other VRT atoms)
-		if ( res.atom_type( at2 ).lj_wdepth() == 0.0 && !(resname == "PWAT_V" || resname == "BB_PWAT_V" || resname == "VWAT" || resname == "VWAT_V") ) continue;
+		if ( res.atom_type( at2 ).lj_wdepth() == 0.0 && !(resname == "HOH_V" || resname == "PWAT_V") ) continue; //fd: update following water simplification
 		Real const dist2( water_oxygen.distance_squared( res.xyz( at2 ) ) );
 		if ( !(res.atom_is_backbone( at2 )) && res.atom_is_polar_hydrogen( at2 ) && dist2 < hpol_cutoff_sq ) {
 			return true;

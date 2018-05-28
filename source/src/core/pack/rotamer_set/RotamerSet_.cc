@@ -341,10 +341,6 @@ RotamerSet_::build_rotamers_for_concrete(
 		// virtualizable full-atom water using either uniform or axis rotation sampler
 		build_virtualizable_rotatable_water_rotamers( pose, scorefxn, task, concrete_residue, existing_residue, packer_neighbor_graph );
 
-	} else if ( concrete_residue->name() == "PWAT" || concrete_residue->name() == "PWAT_V" ) {
-		// point water residues for low-resolution, statistical-based scoring of potential water sites
-		build_virtualizable_point_water_rotamers( pose, task, existing_residue, packer_neighbor_graph );
-
 	} else { // All other residues ///////////////////////////////////////////////////////////////////////
 
 		utility::vector1< utility::vector1< Real > > extra_chi_steps( concrete_residue->nchi() );
@@ -544,10 +540,6 @@ RotamerSet_::build_optimize_H_rotamers(
 	} else if ( concrete_residue->name() == "HOH" || concrete_residue->name() == "HOH_V" ) {
 		// virtualizable full-atom water using either uniform or axis rotation sampler
 		build_virtualizable_rotatable_water_rotamers( pose, scorefxn, task, concrete_residue, existing_residue, packer_neighbor_graph );
-
-	} else if ( concrete_residue->name() == "PWAT" || concrete_residue->name() == "PWAT_V" ) { //fpd  virtualizable water
-		// point water residues for low-resolution, statistical-based scoring of potential water sites
-		build_virtualizable_point_water_rotamers( pose, task, existing_residue, packer_neighbor_graph );
 
 	} else {
 		/// Rotatable proton chi
@@ -1224,40 +1216,14 @@ RotamerSet_::build_virtualizable_rotatable_water_rotamers(
 	using namespace basic::options;
 
 	utility::vector1< ResidueOP > new_rotamers;
-	//  bool include_vrt = true;
 	bool include_vrt = option[ OptionKeys::corrections::water::include_vrt ].value();
 	build_rotated_water_rotamers( resid(), task, pose, scorefxn, packer_neighbor_graph, new_rotamers, include_vrt );
-
-	for ( Size ii=1; ii<= new_rotamers.size(); ++ii ) {
-		new_rotamers[ii]->seqpos( resid() );
-		new_rotamers[ii]->chain( existing_residue.chain() );
-		push_back_rotamer( new_rotamers[ii] );
-	}
 
 	if ( task.include_current( resid() ) && existing_residue.name() == concrete_residue->name() ) {
 		ResidueOP rot = existing_residue.create_rotamer();
 		push_back_rotamer( rot );
 		id_for_current_rotamer_ = num_rotamers();
 	}
-}
-
-/// @details refactored into its own method so that it could be used in both regular packing
-/// and also in optimizeH.
-void
-RotamerSet_::build_virtualizable_point_water_rotamers(
-	pose::Pose const & pose,
-	task::PackerTask const & task,
-	conformation::Residue const & existing_residue,
-	utility::graph::GraphCOP packer_neighbor_graph
-)
-{
-	utility::vector1< ResidueOP > new_rotamers;
-	//bool include_vrt = basic::options::option[ basic::options::OptionKeys::packing::include_vrt ].value();
-	bool include_vrt = true;  // can't think of a case where you wouldn't want the possibility of virtualization
-	build_backbone_point_water_rotamers( resid(), task, pose, packer_neighbor_graph, new_rotamers, include_vrt );
-
-	if ( new_rotamers.size() == 0 ) return;
-	if ( new_rotamers.size() == 1 && include_vrt ) return;
 
 	for ( Size ii=1; ii<= new_rotamers.size(); ++ii ) {
 		new_rotamers[ii]->seqpos( resid() );
@@ -1265,7 +1231,6 @@ RotamerSet_::build_virtualizable_point_water_rotamers(
 		push_back_rotamer( new_rotamers[ii] );
 	}
 }
-
 
 void
 RotamerSet_::prepare_for_new_residue_type( core::chemical::ResidueType const & restype )
@@ -1515,48 +1480,6 @@ RotamerSet_::build_dependent_rotamers_for_concrete(
 
 	} else {
 		utility_exit_with_message( "unsupported restype for dependent rotamer building: "+concrete_residue->name() );
-	}
-}
-
-
-void
-RotamerSet_::build_pwat_rotamers( pose::Pose const & pose, Size resid, utility::vector1< Vector > const & new_pwat_rotset )
-{
-	using namespace core::pack::rotamer_set;
-	using namespace core::conformation;
-
-	core::chemical::ResidueTypeSetCOP rsd_set( pose.residue_type_set_for_pose( core::chemical::FULL_ATOM_t ) );
-	ResidueOP pwat = ResidueFactory::create_residue( rsd_set->name_map("PWAT") );
-	ResidueOP vwat = ResidueFactory::create_residue( rsd_set->name_map("PWAT_V") );
-	Vector const OH1( pwat->xyz("V1") - pwat->xyz("O") );
-	Vector const OH2( pwat->xyz("V2") - pwat->xyz("O") );
-	ResidueOP new_wat = ResidueOP( new Residue( *pwat ) );
-	ResidueOP vrt_wat = ResidueOP( new Residue( *vwat ) );
-
-	utility::vector1< ResidueOP > new_rotamers;
-	for ( Size i=1; i<=new_pwat_rotset.size(); ++i ) {
-		ResidueOP new_rot = ResidueOP( new Residue( *pwat ) );
-		core::Vector O = new_pwat_rotset[i];
-		new_rot->set_xyz("O", O);
-		new_rot->set_xyz("V1", O+OH1);
-		new_rot->set_xyz("V2", O+OH2);
-		new_rotamers.push_back( new_rot );
-		// add PWAT_V as final rotamer
-		if ( i==new_pwat_rotset.size() ) {
-			ResidueOP vrt_wat = ResidueOP( new Residue( *vwat ) );
-			vrt_wat->set_xyz("O", O);
-			vrt_wat->set_xyz("V1", O+OH1);
-			vrt_wat->set_xyz("V2", O+OH2);
-			new_rotamers.push_back( vrt_wat );
-		}
-	}
-
-	prepare_for_new_residue_type( pwat->type() );
-
-	for ( Size ii=1; ii<= new_rotamers.size(); ++ii ) {
-		new_rotamers[ii]->seqpos( resid );
-		new_rotamers[ii]->chain( pose.residue(resid).chain() );
-		push_back_rotamer( new_rotamers[ii] );
 	}
 }
 

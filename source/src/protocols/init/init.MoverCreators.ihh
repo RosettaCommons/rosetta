@@ -523,7 +523,6 @@
 #include <protocols/monte_carlo/MonteCarloTestCreator.hh>
 #include <protocols/simple_moves/MSDMoverCreator.hh>
 #include <protocols/simple_moves/MutateResidueCreator.hh>
-#include <protocols/simple_moves/PackPwatRotamersMoverCreator.hh>
 #include <protocols/simple_moves/PDBReloadMoverCreator.hh>
 #include <protocols/simple_moves/PeriodicBoxMoverCreator.hh>
 #include <protocols/simple_moves/PoseFromPoseResourceMoverCreator.hh>
