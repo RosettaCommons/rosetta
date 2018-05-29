@@ -59,7 +59,7 @@
   AHR   Ara           ->?)-alpha-L-Araf
   ARW   Ara           ->?)-beta-D-Arap
 
-  XYP   Xyl           ->?)-beta-D-Xylp
+  XYP   Xyl           ->?)-beta-D-Xylp default
   LXC   Xyl           ->?)-beta-L-Xylp
   XLS   Xyl           ->?)-D-Xyl
 
@@ -210,5 +210,5 @@
   NGF   Neu           ->?)-Neu
   SI3   Neu           ->?)-Neu
   SID   Neu           ->?)-alpha-Neup
-  SLB   Neu           ->?)-beta-Neup
+  SLB   Neu           ->?)-beta-Neup default
   SIA   Neu           ->?)-alpha-Neup 5-Ac

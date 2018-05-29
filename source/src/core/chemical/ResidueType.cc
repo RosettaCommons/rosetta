@@ -243,6 +243,8 @@ ResidueType::operator=( ResidueType const & residue_type )
 	proton_chi_extra_samples_ = residue_type.proton_chi_extra_samples_;
 	nu_atoms_ = residue_type.nu_atoms_;
 	ring_atoms_ = residue_type.ring_atoms_;
+	anomeric_pseudotorsion_ = residue_type.anomeric_pseudotorsion_;
+	anomeric_sidechain_ = residue_type.anomeric_sidechain_;
 	path_distance_ = residue_type.path_distance_;
 	atom_name_to_vd_.clear(); // This must be regenerated below to hold the new vertex_descriptors
 	atom_aliases_ = residue_type.atom_aliases_;
@@ -1773,6 +1775,20 @@ ResidueType::add_ring( core::uint const ring_num, utility::vector1< std::string 
 		low_ring_conformers_.resize( ring_num );
 	}
 	ring_atoms_[ ring_num ] = atoms;
+}
+
+// Add alternate atoms for anomeric  pseudo torsion
+void
+ResidueType::set_anomeric_pseudotorsion( utility::vector1< std::string > const & alternate_atoms )
+{
+	anomeric_pseudotorsion_ = alternate_atoms;
+}
+
+// Add alternate atoms for anomeric  pseudo torsion
+void
+ResidueType::set_anomeric_sidechain( utility::vector1< std::string > const & anomeric_sidechain )
+{
+	anomeric_sidechain_ = anomeric_sidechain;
 }
 
 // Set this cyclic residue's lowest-energy ring conformer for the nth ring by IUPAC name.
@@ -5193,6 +5209,8 @@ core::chemical::ResidueType::save( Archive & arc ) const {
 	arc( CEREAL_NVP( chi_atoms_indices_ ) ); // utility::vector1<AtomIndices>
 	arc( CEREAL_NVP( nu_atoms_indices_ ) ); // utility::vector1<AtomIndices>
 	arc( CEREAL_NVP( ring_atoms_indices_ ) ); // utility::vector1<AtomIndices>
+	arc( CEREAL_NVP( anomeric_pseudotorsion_ ) ); // utility::vector1< std::string >
+	arc( CEREAL_NVP( anomeric_sidechain_ ) ); // utility::vector1< std::string >
 	arc( CEREAL_NVP( mainchain_atoms_indices_ ) ); // AtomIndices
 	arc( CEREAL_NVP( nbr_atom_indices_ ) ); // Size
 	arc( CEREAL_NVP( actcoord_atoms_indices_ ) ); // AtomIndices
@@ -5402,6 +5420,8 @@ core::chemical::ResidueType::load( Archive & arc ) {
 	arc( chi_atoms_indices_ ); // utility::vector1<AtomIndices>
 	arc( nu_atoms_indices_ ); // utility::vector1<AtomIndices>
 	arc( ring_atoms_indices_ ); // utility::vector1<AtomIndices>
+	arc( anomeric_pseudotorsion_ ); //utility::vector1<std::string>
+	arc( anomeric_sidechain_ ); //utility::vector1<std::string>
 	arc( mainchain_atoms_indices_ ); // AtomIndices
 	arc( nbr_atom_indices_ ); // Size
 	arc( actcoord_atoms_indices_ ); // AtomIndices

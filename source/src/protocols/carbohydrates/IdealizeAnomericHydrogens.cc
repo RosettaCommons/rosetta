@@ -90,11 +90,23 @@ IdealizeAnomericHydrogens::apply( core::pose::Pose & pose )
 
 	for ( core::Size i=1; i<=pose.size(); i++ ) {
 		if ( !pose.residue_type(i).is_carbohydrate() ) continue;
-		core::Size anomeric_h = pose.residue_type(i).atom_index("H1");
-		core::chemical::AtomICoor icoor = pose.residue_type(i).icoor(anomeric_h);
-		core::id::AtomID id(anomeric_h,i);
-		numeric::xyzVector<core::Real> icoor_xyz = icoor.build(pose.residue(i), pose.conformation());
-		pose.conformation().set_xyz( id, icoor_xyz);
+		utility::vector1< std::string > anomeric_sidechain = pose.residue_type(i).get_anomeric_sidechain();
+		if ( anomeric_sidechain.size() == 0 ) {
+			anomeric_sidechain.push_back("H1");//Set the default value to the H1 hydrogen. This will be the case for most glycans.
+		}
+		utility::vector1< core::Size > anomeric_indexes;
+		utility::vector1<core::id::AtomID> atom_ids;
+		utility::vector1<numeric::xyzVector<core::Real>> positions;
+		for ( core::Size ii=1; ii<=anomeric_sidechain.size(); ii++ ) {
+			core::Size sc_atom = pose.residue_type(i).atom_index(anomeric_sidechain[ii]);
+			core::chemical::AtomICoor icoor = pose.residue_type(i).icoor(sc_atom);
+			core::id::AtomID id(sc_atom,i);
+			numeric::xyzVector<core::Real> icoor_xyz = icoor.build(pose.residue(i), pose.conformation());
+			atom_ids.push_back(id);
+			positions.push_back(icoor_xyz);
+			pose.conformation().set_xyz( id, icoor_xyz );
+		}
+		//pose.conformation().batch_set_xyz( atom_ids, positions);
 	}
 }
 

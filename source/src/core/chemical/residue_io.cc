@@ -846,6 +846,18 @@ read_topology_file(
 				l >> atom1;
 			}
 			rsd->add_ring( ring_num, ring_atoms );
+		} else if ( tag == "ANOMERIC_PSEUDOTORSION" ) {
+			l >> atom1 >> atom2 >> atom3 >> atom4;
+			utility::vector1< std::string > atoms = {atom1,atom2,atom3,atom4};
+			rsd->set_anomeric_pseudotorsion(atoms);
+		} else if ( tag == "ANOMERIC_SIDECHAIN" ) {
+			utility::vector1< std::string > anomeric_sidechain;
+			l >> atom1;
+			while ( !l.fail() ) {
+				anomeric_sidechain.push_back(atom1);
+				l >> atom1;
+			}
+			rsd->set_anomeric_sidechain(anomeric_sidechain);
 		} else if ( tag == "LOWEST_RING_CONFORMER" ) {
 			uint ring_num;
 			std::string conformer;

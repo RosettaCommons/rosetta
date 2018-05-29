@@ -3194,10 +3194,29 @@ CartesianBondedEnergy::eval_interresidue_ring_energy(
 		if ( rsd2.type().ring_atoms( jj ).size() != 6 ) continue;
 
 		// 2 constrain torsion
-		core::Size lower = rsd1.connect_atom( rsd2 );//lower
-		core::Size c1 = rsd2.type().atom_index("C1");
-		core::Size c5 = rsd2.type().atom_index("C5");
-		core::Size c6 = rsd2.type().atom_index("C6");
+		core::Size atom1, atom2, atom3, atom4;
+		utility::vector1< std::string > alternate_atoms = rsd2.type().get_anomeric_pseudotorsion();
+		if ( alternate_atoms.size() == 0 ) {
+			atom1 = rsd1.connect_atom( rsd2 );//lower
+			atom2 = rsd2.type().atom_index("C1");
+			atom3 = rsd2.type().atom_index("C5");
+			atom4 = rsd2.type().atom_index("C6");
+		} else {
+			utility::vector1<core::Size> alternate_indexes;
+			for ( core::Size i=1; i<=alternate_atoms.size(); i++ ) {
+				core::Size aa_index;
+				if ( alternate_atoms[i] == "LOWER" ) {
+					aa_index = rsd1.connect_atom( rsd2 );//lower
+				} else {
+					aa_index = rsd2.type().atom_index(alternate_atoms[i]);
+				}
+				alternate_indexes.push_back(aa_index);
+			}
+			atom1 = alternate_indexes[1];
+			atom2 = alternate_indexes[2];
+			atom3 = alternate_indexes[3];
+			atom4 = alternate_indexes[4];
+		}
 
 		Real alpha = -2.0944;
 		Real beta = 0;
@@ -3206,7 +3225,7 @@ CartesianBondedEnergy::eval_interresidue_ring_energy(
 			phi0 = alpha;
 		}
 		core::Real angle = numeric::dihedral_radians(
-			rsd1.xyz( lower ), rsd2.xyz( c1 ), rsd2.xyz( c5 ), rsd2.xyz( c6 ) );
+			rsd1.xyz( atom1 ), rsd2.xyz( atom2 ), rsd2.xyz( atom3 ), rsd2.xyz( atom4 ) );
 		Real del_phi = basic::subtract_radian_angles(angle, phi0);
 
 		Real energy_torsion = eval_score( del_phi, Ktheta, 0 );
@@ -3215,8 +3234,8 @@ CartesianBondedEnergy::eval_interresidue_ring_energy(
 			TR.Debug << pose.pdb_info()->name() << " seqpos: " << rsd2.seqpos() << " pdbpos: " <<
 				pose.pdb_info()->number(rsd2.seqpos()) << " RING torsion: " <<
 				get_restag(rsd2.type()) << " : " <<
-				rsd1.atom_name( lower ) << " , " << rsd2.atom_name( c1 ) << " , " <<
-				rsd2.atom_name( c5 ) << " , " << rsd2.atom_name( c6 ) << "   (" <<
+				rsd1.atom_name( atom1 ) << " , " << rsd2.atom_name( atom2 ) << " , " <<
+				rsd2.atom_name( atom3 ) << " , " << rsd2.atom_name( atom4 ) << "   (" <<
 				Ktheta << ") " << 180/3.14 * angle << " " << 180/3.14 * phi0 << "    sc="  << energy_torsion << std::endl;
 		}
 
@@ -4169,11 +4188,30 @@ CartesianBondedEnergy::eval_interresidue_ring_derivatives(
 
 		//only apply this to 6 residue rings
 		if ( rsd2.type().ring_atoms( jj ).size() != 6 ) continue;
+		core::Size atom1, atom2, atom3, atom4;
+		utility::vector1< std::string > alternate_atoms = rsd2.type().get_anomeric_pseudotorsion();
+		if ( alternate_atoms.size() == 0 ) {
+			atom1 = rsd1.connect_atom( rsd2 );//lower
+			atom2 = rsd2.type().atom_index("C1");
+			atom3 = rsd2.type().atom_index("C5");
+			atom4 = rsd2.type().atom_index("C6");
+		} else {
+			utility::vector1<core::Size> alternate_indexes;
+			for ( core::Size i=1; i<=alternate_atoms.size(); i++ ) {
+				core::Size aa_index;
+				if ( alternate_atoms[i] == "LOWER" ) {
+					aa_index = rsd1.connect_atom( rsd2 );//lower
+				} else {
+					aa_index = rsd2.type().atom_index(alternate_atoms[i]);
+				}
+				alternate_indexes.push_back(aa_index);
+			}
+			atom1 = alternate_indexes[1];
+			atom2 = alternate_indexes[2];
+			atom3 = alternate_indexes[3];
+			atom4 = alternate_indexes[4];
+		}
 
-		core::Size lower = rsd1.connect_atom( rsd2 );//lower
-		core::Size c1 = rsd2.type().atom_index("C1");
-		core::Size c5 = rsd2.type().atom_index("C5");
-		core::Size c6 = rsd2.type().atom_index("C6");
 
 		Real alpha = -2.0944;
 		Real beta = 0;
@@ -4186,7 +4224,7 @@ CartesianBondedEnergy::eval_interresidue_ring_derivatives(
 		Real phi=0, dE_dphi;
 
 		numeric::deriv::dihedral_p1_cosine_deriv(
-			rsd1.xyz( lower ), rsd2.xyz( c1 ), rsd2.xyz( c5 ), rsd2.xyz( c6 ), phi, f1, f2 );
+			rsd1.xyz( atom1 ), rsd2.xyz( atom2 ), rsd2.xyz( atom3 ), rsd2.xyz( atom4 ), phi, f1, f2 );
 		Real del_phi = basic::subtract_radian_angles(phi, phi0);
 		//del_phi = basic::periodic_range( del_phi, phi_step );
 		if ( linear_bonded_potential_ && std::fabs(del_phi)>1 ) {
@@ -4194,26 +4232,26 @@ CartesianBondedEnergy::eval_interresidue_ring_derivatives(
 		} else {
 			dE_dphi = weight * Ktheta * del_phi;
 		}
-		r1_atom_derivs[ lower ].f1() += dE_dphi * f1;
-		r1_atom_derivs[ lower ].f2() += dE_dphi * f2;
+		r1_atom_derivs[ atom1 ].f1() += dE_dphi * f1;
+		r1_atom_derivs[ atom1 ].f2() += dE_dphi * f2;
 
 		f1 = f2 = Vector(0.0);
 		numeric::deriv::dihedral_p2_cosine_deriv(
-			rsd1.xyz( lower ), rsd2.xyz( c1 ), rsd2.xyz( c5 ), rsd2.xyz( c6 ), phi, f1, f2 );
-		r2_atom_derivs[ c1 ].f1() += dE_dphi * f1;
-		r2_atom_derivs[ c1 ].f2() += dE_dphi * f2;
+			rsd1.xyz( atom1 ), rsd2.xyz( atom2 ), rsd2.xyz( atom3 ), rsd2.xyz( atom4 ), phi, f1, f2 );
+		r2_atom_derivs[ atom2 ].f1() += dE_dphi * f1;
+		r2_atom_derivs[ atom2 ].f2() += dE_dphi * f2;
 
 		f1 = f2 = Vector(0.0);
 		numeric::deriv::dihedral_p2_cosine_deriv(
-			rsd2.xyz( c6 ), rsd2.xyz( c5 ), rsd2.xyz( c1 ), rsd1.xyz( lower ), phi, f1, f2 );
-		r2_atom_derivs[ c5 ].f1() += dE_dphi * f1;
-		r2_atom_derivs[ c5 ].f2() += dE_dphi * f2;
+			rsd2.xyz( atom4 ), rsd2.xyz( atom3 ), rsd2.xyz( atom2 ), rsd1.xyz( atom1 ), phi, f1, f2 );
+		r2_atom_derivs[ atom3 ].f1() += dE_dphi * f1;
+		r2_atom_derivs[ atom3 ].f2() += dE_dphi * f2;
 
 		f1 = f2 = Vector(0.0);
 		numeric::deriv::dihedral_p1_cosine_deriv(
-			rsd2.xyz( c6 ), rsd2.xyz( c5 ), rsd2.xyz( c1 ), rsd1.xyz( lower ), phi, f1, f2 );
-		r2_atom_derivs[ c6 ].f1() += dE_dphi * f1;
-		r2_atom_derivs[ c6 ].f2() += dE_dphi * f2;
+			rsd2.xyz( atom4 ), rsd2.xyz( atom3 ), rsd2.xyz( atom2 ), rsd1.xyz( atom1 ), phi, f1, f2 );
+		r2_atom_derivs[ atom4 ].f1() += dE_dphi * f1;
+		r2_atom_derivs[ atom4 ].f2() += dE_dphi * f2;
 	}
 }
 

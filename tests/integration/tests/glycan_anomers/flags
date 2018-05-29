@@ -1,0 +1,20 @@
+-in::file::s inputs/anomers.pdb
+-parser:script_vars symmdef=cryst.symm 
+-crystal_refine
+-ignore_zero_occupancy false
+-ignore_unrecognized_res 
+-no_optH false
+-alternate_3_letter_codes pdb_sugar
+-overwrite
+-include_sugars 
+-auto_detect_glycan_connections 
+-write_pdb_link_records
+-write_glycan_pdb_codes
+-use_pdb_format_HETNAM_records false
+#-output_alternate_atomids true
+-maintain_links true
+-ideal_sugars true
+-parser:protocol anomers.xml
+-glycan_virtual_offset 1e-9
+-missing_density_to_jump
+-beta
