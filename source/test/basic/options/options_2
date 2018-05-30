@@ -1,0 +1,5 @@
+-fold_cst::violation_skip_basis 36
+-fold_cst::seq_sep_stages 65.87
+
+-fold_cst::seq_sep_stages 73.19
+-fold_cst::violation_skip_basis 28

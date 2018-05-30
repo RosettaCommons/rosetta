@@ -11,6 +11,7 @@
 
 sources = {
 	"options" : [
+		"CmdlineOptionsOrderTests",
 		"options_system",
 	],
 	"datacache" : [
@@ -41,4 +42,6 @@ libraries	= [
 ]
 subprojects  = []
 testinputfiles = [
+	"options/options_1",
+	"options/options_2",
 ]
