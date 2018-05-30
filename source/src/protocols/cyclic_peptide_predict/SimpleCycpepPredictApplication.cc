@@ -139,10 +139,11 @@ protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::register_opti
 	using namespace basic::options::OptionKeys;
 
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::sequence_file                        );
-	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::cyclization_type );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::cyclization_type                     );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::genkic_closure_attempts              );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::genkic_min_solution_count            );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::cyclic_permutations                  );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::exclude_residues_from_rms            );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::use_rama_filter                      );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::rama_cutoff                          );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::high_hbond_weight_multiplier         );
@@ -356,6 +357,7 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication(
 	required_symmetry_mirroring_(false),
 	required_symmetry_angle_threshold_(10.0),
 	required_symmetry_perturbation_(0.0),
+	exclude_residues_from_rms_(),
 	lariat_sidechain_index_(0),
 	sidechain_isopeptide_indices_(std::pair<core::Size, core::Size>(0,0))
 	//TODO -- initialize variables here.
@@ -460,6 +462,7 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication( SimpleCycpepPred
 	required_symmetry_mirroring_(src.required_symmetry_mirroring_),
 	required_symmetry_angle_threshold_(src.required_symmetry_angle_threshold_),
 	required_symmetry_perturbation_(src.required_symmetry_perturbation_),
+	exclude_residues_from_rms_(src.exclude_residues_from_rms_),
 	lariat_sidechain_index_(src.lariat_sidechain_index_),
 	sidechain_isopeptide_indices_(src.sidechain_isopeptide_indices_)
 	//TODO -- copy variables here.
@@ -731,6 +734,18 @@ SimpleCycpepPredictApplication::initialize_from_options(
 	required_symmetry_mirroring_ = option[basic::options::OptionKeys::cyclic_peptide::require_symmetry_mirroring]();
 	required_symmetry_angle_threshold_ = option[basic::options::OptionKeys::cyclic_peptide::require_symmetry_angle_threshold]();
 	required_symmetry_perturbation_ = option[basic::options::OptionKeys::cyclic_peptide::require_symmetry_perturbation]();
+
+	if ( option[basic::options::OptionKeys::cyclic_peptide::exclude_residues_from_rms].user() ) {
+		core::Size const noptions( option[basic::options::OptionKeys::cyclic_peptide::exclude_residues_from_rms]().size() );
+		runtime_assert_string_msg( noptions > 0, "Error in simple_cycpep_predict application: The \"-cyclic_peptide:exclude_residues_from_rms\" option must be followed by at least one residue index.");
+		exclude_residues_from_rms_.reserve( noptions );
+		for ( core::Size i(1); i<=noptions; ++i ) {
+			runtime_assert_string_msg( option[basic::options::OptionKeys::cyclic_peptide::exclude_residues_from_rms]()[i] > 0, "Error in simple_cycpep_predict application: The \"-cyclic_peptide:exclude_residues_from_rms\" option must be followed by a vector of positive integers representing residue indices." );
+			exclude_residues_from_rms_.push_back( static_cast< core::Size >(option[basic::options::OptionKeys::cyclic_peptide::exclude_residues_from_rms]()[i]) );
+		}
+	} else {
+		exclude_residues_from_rms_.clear();
+	}
 
 	if ( option[basic::options::OptionKeys::cyclic_peptide::lariat_sidechain_index].user() ) {
 		runtime_assert_string_msg( is_lariat_type( cyclization_type_ ), "Error in simple_cycpep_predict application: The \"-cyclic_peptide:lariat_sidechain_index\" option may only be used with a lariat cyclization type." );
@@ -1428,16 +1443,13 @@ SimpleCycpepPredictApplication::run() const {
 	return;
 }
 
-/// @brief Is a value in a vector?
+/// @brief Is this residue to be ignored in calculating RMSDs?
 bool
-SimpleCycpepPredictApplication::is_in_list(
-	core::Size val,
-	utility::vector1 <core::Size> const & vect
+SimpleCycpepPredictApplication::is_residue_ignored_in_rms(
+	core::Size const res_index
 ) const {
-	for ( core::Size i(1), imax(vect.size()); i<=imax; ++i ) {
-		if ( vect[i]==val ) return true;
-	}
-	return false;
+	if ( exclude_residues_from_rms_.empty() ) return false;
+	return exclude_residues_from_rms_.has_value( res_index );
 }
 
 ///  @brief Is a given cyclization type a lariat type (i.e. one where a side-chain connects to backbone)?
@@ -2259,7 +2271,7 @@ SimpleCycpepPredictApplication::set_mainchain_torsions (
 					utility::vector1< core::Size > const & covered_torsions( ramaprepro.get_mainchain_torsions_covered( pose->conformation(), pose->residue_type_ptr(i), following_rsd ) );
 					debug_assert( pose->residue(i).mainchain_torsions().size() - 1 == rand_torsions.size() ); //Should be true.
 					for ( core::Size j(1), jmax(rand_torsions.size()); j<=jmax; ++j ) {
-						if ( !is_in_list( j, covered_torsions ) ) {
+						if ( !covered_torsions.has_value(j) ) {
 							rand_torsions[j] = pose->residue(i).mainchain_torsions()[j]; //Copy torsion values for torsions that are not covered by the mainchain potential -- i.e. don't set these to 0.
 						}
 					}
@@ -3431,6 +3443,7 @@ SimpleCycpepPredictApplication::align_and_calculate_rmsd(
 	core::id::AtomID_Map< core::id::AtomID > amap;
 	core::pose::initialize_atomid_map(amap, *pose, core::id::AtomID::BOGUS_ATOM_ID());
 	for ( core::Size ir=1, irmax=native_pose->total_residue(); ir<=irmax; ++ir ) {
+		if ( is_residue_ignored_in_rms(ir) ) continue;
 		if ( !native_pose->residue_type(ir).is_alpha_aa() && !native_pose->residue_type(ir).is_oligourea() ) continue;
 		++res_counter;
 		runtime_assert_string_msg( res_counter <= nres, "Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::align_and_calculate_rmsd(): The native pose has more residues than the input sequence." );
@@ -3446,7 +3459,7 @@ SimpleCycpepPredictApplication::align_and_calculate_rmsd(
 		}
 	}
 
-	runtime_assert_string_msg( res_counter == nres, "Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::align_and_calculate_rmsd(): The native pose has fewer residues than the input sequence." );
+	runtime_assert_string_msg( res_counter == nres - exclude_residues_from_rms_.size(), "Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::align_and_calculate_rmsd(): The native pose has fewer residues than the input sequence." );
 
 	return core::scoring::superimpose_pose( *pose, *native_pose, amap ); //Superimpose the pose and return the RMSD.
 }

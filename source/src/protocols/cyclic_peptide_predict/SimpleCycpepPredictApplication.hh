@@ -223,8 +223,8 @@ public:
 private:
 	/// ------------- Methods ----------------------------
 
-	/// @brief Is a value in a vector?
-	bool is_in_list( core::Size val, utility::vector1 <core::Size> const & vect ) const;
+	/// @brief Is this residue to be ignored in calculating RMSDs?
+	bool is_residue_ignored_in_rms( core::Size const res_index ) const;
 
 	/// @brief Is a given cyclization type a lariat type (i.e. one where a side-chain connects to backbone)?
 	bool is_lariat_type( SCPA_cyclization_type const type_in ) const;
@@ -1004,6 +1004,9 @@ private:
 	/// @brief The random perturbation, in degrees, to be applied when copying mainchain torsion values to produce symmetric conformations.
 	/// @details Defaults to 0.0 (no perturbation).
 	core::Real required_symmetry_perturbation_;
+
+	/// @brief Residues to exclude from the RMSD calculation.  Defaults to empty list.
+	utility::vector1< core::Size > exclude_residues_from_rms_;
 
 	/// @brief If the cyclization type is a lariat type, this is the index of the residue that provides the sidechain that
 	/// connects to the N- or C-terminus.
