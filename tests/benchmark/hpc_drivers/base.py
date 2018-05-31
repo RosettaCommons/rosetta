@@ -98,11 +98,14 @@ class HPC_Driver:
 
     def wait_until_complete(self, jobs=None):
         ''' Helper function, wait until given jobs list is finished, if no argument is given waits until all jobs known by driver is finished '''
-        jobs = jobs if jobs else self.jobs
+        jobs = list( jobs if jobs else self.jobs )
+
+        print(f'Waiting for Condor to finish {jobs} jobs...')
 
         while jobs:
             for j in jobs:
                 if self.complete(j): jobs.remove(j)
+                else: break
 
             if jobs:
                 #total_cpu_queued  = sum( [j.jobs_queued  for j in jobs] )

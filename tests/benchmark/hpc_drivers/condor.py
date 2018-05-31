@@ -21,8 +21,6 @@ request_memory = {memory}
 
 GetEnv       = True
 
-Requirements = (Machine <= "rosetta012.graylab.jhu.edu")
-
 # Target: {name}
 Output  = {log_dir}/.hpc.{name}.output.$(Process).log
 Error   = {log_dir}/.hpc.{name}.errors.$(Process).log
@@ -40,6 +38,9 @@ queue {jobs_to_queue}
 #Requirements = Arch == "X86_64"
 #Requirements = (Memory > %(memory)s) %(requirements)s
 
+# requirelements for old nodes:
+# Requirements = (Machine <= "rosetta012.graylab.jhu.edu")
+
 
 T_condor_target_template = '''
 '''
@@ -50,9 +51,16 @@ T_condor_target_template = '''
 class Condor_HPC_Driver(HPC_Driver):
     def get_condor_accumulated_usage(self, user='$USER@'):
         # Expected output: sergey@UT64 0.50 0.50 1.00 0 196.86 12/26/2010 23:30  9/27/2011 23:55
-        o = execute('', 'condor_userprio -all -allusers | grep {}'.format(user), return_='output', terminate_on_failure=False).split()
-        if len(o) >= 6: return max(1.0, float( o[5] ) )
-        else: return 0.0
+        for _ in range(8):
+            try:
+                o = execute('', 'condor_userprio -all -allusers | grep {}'.format(user), return_='output', terminate_on_failure=False).split()
+                if len(o) >= 6: return max(1.0, float( o[5] ) )
+                else: return 0.0
+            except ValueError as _: pass
+
+            time.sleep(32)
+
+        return 0.0
 
 
 
@@ -113,7 +121,7 @@ class Condor_HPC_Driver(HPC_Driver):
 
         # creating shell wrapper in order to reliably capture output
         #execute_sh = os.path.abspath( self.working_dir + '/.hpc.execute.{}.sh'.format(name) )
-        #with file(execute_sh, 'w') as f: f.write('#!/bin/bash\n$*\n');  os.fchmod(f.fileno(), stat.S_IEXEC | stat.S_IREAD | stat.S_IWRITE)
+        #with open(execute_sh, 'w') as f: f.write('#!/bin/bash\n$*\n');  os.fchmod(f.fileno(), stat.S_IEXEC | stat.S_IREAD | stat.S_IWRITE)
 
         arguments = arguments.format(process='$(Process)')
         run_time=int(time*60*60)
@@ -122,15 +130,15 @@ class Condor_HPC_Driver(HPC_Driver):
         #???? p = dict(j, , arguments=j['arguments'].format(process='$(Process)') )
 
         #execute_sh = os.path.abspath(self.working_dir + '/.hpc.execute.{}.sh'.format(j['target']))
-        #with file(execute_sh, 'w') as f: f.write('#!/bin/bash\n{executable} {arguments}\n'.format(**j));  os.fchmod(f.fileno(), stat.S_IEXEC | stat.S_IREAD | stat.S_IWRITE)
+        #with open(execute_sh, 'w') as f: f.write('#!/bin/bash\n{executable} {arguments}\n'.format(**j));  os.fchmod(f.fileno(), stat.S_IEXEC | stat.S_IREAD | stat.S_IWRITE)
 
-        condor_file = self.working_dir + '/.hpc.{}.condor'.format(name)
+        condor_file = working_dir + '/.hpc.{}.condor'.format(name)
         condor_spec = T_condor_job_template.format(name=name, executable=executable, arguments=arguments, working_dir=working_dir, jobs_to_queue=jobs_to_queue, log_dir=log_dir,
                                                    memory=memory, process='$(Process)', run_time=run_time)
                                                    #requirements=self.config.get('condor', 'requirements'),
                                                    #execute_sh=execute_sh)
 
-        with file(condor_file, 'w') as f: f.write(condor_spec)
+        with open(condor_file, 'w') as f: f.write(condor_spec)
         condor_job_id = int( execute('Submitting jobs to condor...', 'cd {} && condor_submit {}'.format(self.working_dir, condor_file),
                                      tracer=self.tracer, return_='output').split()[-1][:-1] )
 

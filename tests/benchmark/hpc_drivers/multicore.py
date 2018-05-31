@@ -59,7 +59,7 @@ class MultiCore_HPC_Driver(HPC_Driver):
             if not pid:  # we are child process
                 command_line = 'cd {} && {} {}'.format(working_dir, executable, arguments.format(process=process) )
                 log = execute('Running job {}.{}...'.format(name, i), command_line, tracer=self.tracer, return_='output')
-                with codecs.open(self.working_dir+'/hpc.{name}.{i}.log'.format(**vars()), 'w', encoding='utf-8', errors='replace') as f: f.write(command_line+'\n'+log)
+                with codecs.open(log_dir+'/hpc.{name}.{i}.log'.format(**vars()), 'w', encoding='utf-8', errors='replace') as f: f.write(command_line+'\n'+log)
                 sys.exit(0)
 
             process += 1
@@ -71,6 +71,11 @@ class MultiCore_HPC_Driver(HPC_Driver):
         self.cpu_usage += cpu_usage * jobs_to_queue  # approximation...
 
         signal.signal(signal.SIGINT, previous_handler)
+
+
+
+    def complete(self, condor_job_id):
+        return True
 
 
     def __repr__(self):

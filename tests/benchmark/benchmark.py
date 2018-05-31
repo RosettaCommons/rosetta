@@ -112,10 +112,10 @@ def main(args):
     Config.set('DEFAULT', 'memory',    str(memory) )
 
     config = Config.items('config')
-    config = dict(config, cpu_count=Config.getint('DEFAULT', 'cpu_count'), memory=memory)
+    config = dict(config, cpu_count=Config.getint('DEFAULT', 'cpu_count'), memory=memory, debug=Options.debug)
     if 'prefix' not in config: config['prefix'] = os.path.abspath('./results/prefix')
-    if Options.skip_compile is not None:
-        config['skip_compile'] = Options.skip_compile
+
+    if Options.skip_compile is not None: config['skip_compile'] = Options.skip_compile
 
     print('Config:{}, Platform:{}'.format(json.dumps(config, sort_keys=True), Platform))
 
@@ -177,7 +177,7 @@ def main(args):
             if os.path.isdir(working_dir): shutil.rmtree(working_dir);  #print('Removing old job dir %s...' % working_dir)  # remove old dir if any
             os.makedirs(working_dir)
 
-            hpc_driver = eval(config['hpc_driver'] + '_HPC_Driver')(working_dir, Config, tracer=lambda x: print_(x), set_daemon_message=lambda x:None)
+            hpc_driver = eval(config['hpc_driver'] + '_HPC_Driver')(working_dir, Config, tracer=print, set_daemon_message=lambda x:None)
 
             api_version = test_suite._api_version_ if hasattr(test_suite, '_api_version_') else ''
 
