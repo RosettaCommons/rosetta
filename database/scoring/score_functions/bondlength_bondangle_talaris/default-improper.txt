@@ -2,8 +2,8 @@
 ##    all planar groups in protein and RNA, nonpolar Hs as well
 ##    spring constants are basically guesses
 ##
-* CA C N H  3.1416 40 2
-* O  C N H  3.1416 40 2
+* CA C N H  3.14159265358979323846264338327950288419716939937510582097 40 2
+* O  C N H  3.14159265358979323846264338327950288419716939937510582097 40 2
 * CA N C O  0 40 2
 * CD C N CA 0 40 2
 ALA C N CA CB 4.1445 81 1

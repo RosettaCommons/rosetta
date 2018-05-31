@@ -444,9 +444,19 @@ IdealParametersDatabase::read_length_database(
 		param2 = it2->second;
 		core::Real const avgmu( (param1->mu(0.0, 0.0) + param2->mu(0.0, 0.0)) / 2.0 );
 		core::Real const avgK( (param1->K(0.0, 0.0) + param2->K(0.0, 0.0)) / 2.0 );
-		bondlengths_indep_.erase(tuple1); bondlengths_indep_.erase(tuple2);
+		bondlengths_indep_.erase(it); bondlengths_indep_.erase(it2);
 		bondlengths_indep_.insert( std::make_pair(tuple1, CartBondedParametersOP( new BBIndepCartBondedParameters(avgmu, avgK) ) ) );
 		bondlengths_indep_.insert( std::make_pair(tuple2, CartBondedParametersOP( new BBIndepCartBondedParameters(avgmu, avgK) ) ) );
+#ifndef NDEBUG
+		{ // Sanity checks -- debug mode only.
+			boost::unordered_map<atm_name_pair,CartBondedParametersOP>::iterator it3 = bondlengths_indep_.find( tuple1 );
+			boost::unordered_map<atm_name_pair,CartBondedParametersOP>::iterator it4 = bondlengths_indep_.find( tuple2 );
+			CartBondedParametersOP param3( it3->second );
+			CartBondedParametersOP param4( it4->second );
+			debug_assert( param3->mu(0, 0) == param4->mu(0, 0) );
+			debug_assert( param3->K(0, 0) == param4->K(0, 0) );
+		}
+#endif
 	}
 }
 
@@ -485,6 +495,9 @@ IdealParametersDatabase::read_angle_database(
 		core::Real const avgK( (bondangles_indep_[ tuple1 ]->K(0.0, 0.0) + bondangles_indep_[ tuple2 ]->K(0.0, 0.0)) / 2.0 );
 		bondangles_indep_[ tuple1 ] = CartBondedParametersOP( new BBIndepCartBondedParameters(avgmu, avgK) );
 		bondangles_indep_[ tuple2 ] = CartBondedParametersOP( new BBIndepCartBondedParameters(avgmu, avgK) );
+		//Debug-mode sanity checks:
+		debug_assert( bondangles_indep_[tuple1]->mu(0,0) == bondangles_indep_[tuple2]->mu(0,0) );
+		debug_assert( bondangles_indep_[tuple1]->K(0,0) == bondangles_indep_[tuple2]->K(0,0) );
 	}
 }
 
@@ -539,7 +552,7 @@ IdealParametersDatabase::add_impropers_from_stream(std::istream & instream) {
 void
 IdealParametersDatabase::read_improper_database(
 	std::string const & infile,
-	bool const symmetrize_gly
+	bool const //symmetrize_gly
 ) {
 
 	utility::io::izstream instream;
@@ -564,21 +577,6 @@ IdealParametersDatabase::read_improper_database(
 
 		TR << "Read " << impropers_indep_.size() - size_before << " extra improper tors.";
 		TR << extra_file << std::endl;
-	}
-
-	if ( symmetrize_gly ) {
-		TR << "Symmetrizing glycine improper dihedrals table." << std::endl;
-		//We'll ADD parameters for glycine for this.
-		atm_name_quad const tuple1( boost::make_tuple( "GLY", "CA", "C", "N", "H" ) );
-		atm_name_quad const tuple2( boost::make_tuple( "GLY", "O", "C", "N", "H" ) );
-		atm_name_quad const tuple3( boost::make_tuple( "*", "CA", "C", "N", "H" ) );
-		atm_name_quad const tuple4( boost::make_tuple( "*", "O", "C", "N", "H" ) );
-		core::Real const mu( numeric::constants::d::pi );
-		core::Real const K( 40 );
-		impropers_indep_[ tuple1 ] = CartBondedParametersOP( new BBIndepCartBondedParameters(mu, K) );
-		impropers_indep_[ tuple2 ] = CartBondedParametersOP( new BBIndepCartBondedParameters(mu, K) );
-		impropers_indep_[ tuple3 ] = CartBondedParametersOP( new BBIndepCartBondedParameters(mu, K) );
-		impropers_indep_[ tuple4 ] = CartBondedParametersOP( new BBIndepCartBondedParameters(mu, K) );
 	}
 }
 
@@ -2049,7 +2047,7 @@ CartesianBondedEnergy::eval_residue_pair_derivatives(
 	if ( res1first ) {
 		eval_residue_pair_derivatives_sorted( rsd1, rsd2, min1, min2, min12, pose, wts, r1_derivs, r2_derivs );
 	} else { //Assumes that residue 1 is connected to residue 2's C-terminus.
-		eval_residue_pair_derivatives_sorted( rsd1, rsd2, min1, min2, min12, pose, wts, r1_derivs, r2_derivs );
+		eval_residue_pair_derivatives_sorted( rsd2, rsd1, min2, min1, min12, pose, wts, r2_derivs, r1_derivs );
 	}
 }
 
@@ -3016,7 +3014,8 @@ CartesianBondedEnergy::eval_interresidue_improper_energy(
 	if ( !rsd1.is_protein() || !rsd2.is_protein() || !rsd1.is_polymer_bonded( rsd2 ) ) return;
 
 	// exit if this is not a backbone connection
-	if ( rsd1.is_upper_terminus() || rsd1.residue_connection_partner( rsd1.upper_connect().index() ) != rsd2.seqpos() ) return;
+	if ( rsd1.is_upper_terminus() || !rsd1.has_upper_connect() || rsd1.residue_connection_partner( rsd1.upper_connect().index() ) != rsd2.seqpos() ) return;
+	if ( rsd2.is_lower_terminus() || !rsd2.has_lower_connect() || rsd2.residue_connection_partner( rsd2.lower_connect().index() ) != rsd1.seqpos() ) return;
 
 	const core::Real d_multiplier2 = core::chemical::is_canonical_D_aa(rsd2.aa()) ? -1.0 : 1.0 ; //Multiplier for D-amino acid derivatives
 
@@ -3026,7 +3025,7 @@ CartesianBondedEnergy::eval_interresidue_improper_energy(
 	// backbone CA-Cprev-N-H
 	if ( (rsd2.aa() != aa_pro && rsd2.aa() != aa_dpr /*Not D- or L-proline*/) && rsd2params.bb_H_index() != 0 ) {
 		CartBondedParametersCOP tor_params = rsd2params.ca_cprev_n_h_interres_improper_params();
-		if ( !tor_params->is_null() ) {
+		if ( tor_params != nullptr && !tor_params->is_null() ) {
 			Real const Kphi = tor_params->K(0,0);
 			Real const phi0 = d_multiplier2 * tor_params->mu(0,0);
 			Real const phi_step = 2*pi/tor_params->period();
@@ -3064,7 +3063,7 @@ CartesianBondedEnergy::eval_interresidue_improper_energy(
 	if ( (rsd2.aa() != aa_pro && rsd2.aa() != aa_dpr /*Not D- or L-proline*/) && rsd2params.bb_H_index() != 0
 			&& rsd1params.bb_O_index() != 0 ) {
 		CartBondedParametersCOP tor_params = rsd2params.oprev_cprev_n_h_interres_improper_params();
-		if ( !tor_params->is_null() ) {
+		if ( tor_params != nullptr && !tor_params->is_null() ) {
 			Real const Kphi = tor_params->K(0,0);
 			Real const phi0 = d_multiplier2 * tor_params->mu(0,0);
 			Real const phi_step = 2*pi/tor_params->period();
@@ -3102,7 +3101,7 @@ CartesianBondedEnergy::eval_interresidue_improper_energy(
 	// backbone CA-Nnext-C-O
 	{
 		CartBondedParametersCOP tor_params = rsd1params.ca_nnext_c_o_interres_improper_params();
-		if ( !tor_params->is_null() ) {
+		if ( tor_params != nullptr && !tor_params->is_null() ) {
 			Real const Kphi = tor_params->K(0,0);
 			Real const phi0 = d_multiplier2 * tor_params->mu(0,0);
 			Real const phi_step = 2*pi/tor_params->period();
@@ -3138,7 +3137,7 @@ CartesianBondedEnergy::eval_interresidue_improper_energy(
 	// proline N planarity
 	if ( rsd2.aa() == core::chemical::aa_pro || rsd2.aa() == core::chemical::aa_dpr ) { //D- or L-proline
 		CartBondedParametersCOP tor_params = rsd2params.pro_cd_cprev_n_ca_interres_improper_params();
-		if ( tor_params && !tor_params->is_null() ) {
+		if ( tor_params != nullptr && !tor_params->is_null() ) {
 			Real const Kphi = tor_params->K(0,0);
 			Real const phi0 = d_multiplier2 * tor_params->mu(0,0);
 			Real const phi_step=2*pi/tor_params->period();
@@ -3621,7 +3620,7 @@ CartesianBondedEnergy::eval_interresidue_angle_derivs_two_from_rsd1(
 	using namespace core::chemical;
 	bool rsd1_is_protein = (rsd1.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd1.aa()));
 	bool rsd2_is_protein = (rsd2.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd2.aa()));
-	bool rsd12_peptide_bonded = !rsd1.is_upper_terminus() && rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos();
+	bool rsd12_peptide_bonded = !rsd1.is_upper_terminus() && rsd1.has_upper_connect() && rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos() && !rsd2.is_lower_terminus() && rsd2.has_lower_connect() && rsd2.residue_connection_partner( rsd2.lower_connect().index() ) == rsd1.seqpos();
 	if ( rsd1_is_protein && rsd2_is_protein && rsd12_peptide_bonded ) {
 
 		/// Assumption: rsd1 and rsd2 share a peptide bond and only a peptide bond.
@@ -3747,7 +3746,7 @@ CartesianBondedEnergy::eval_interresidue_angle_derivs_two_from_rsd2(
 	using namespace core::chemical;
 	bool rsd1_is_protein = (rsd1.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd1.aa()));
 	bool rsd2_is_protein = (rsd2.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd2.aa()));
-	bool rsd12_peptide_bonded = !rsd1.is_upper_terminus() && rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos();
+	bool rsd12_peptide_bonded = !rsd1.is_upper_terminus() && rsd1.has_upper_connect() && rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos() && !rsd2.is_lower_terminus() && rsd2.has_lower_connect() && rsd2.residue_connection_partner( rsd2.lower_connect().index() ) == rsd1.seqpos();
 	if ( rsd1_is_protein && rsd2_is_protein && rsd12_peptide_bonded ) {
 
 		/// Assumption: rsd1 and rsd2 share a peptide bond and only a peptide bond.
@@ -3869,7 +3868,7 @@ CartesianBondedEnergy::eval_interresidue_bond_length_derivs(
 	using namespace core::chemical;
 	bool rsd1_is_protein = (rsd1.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd1.aa()));
 	bool rsd2_is_protein = (rsd2.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd2.aa()));
-	bool rsd12_peptide_bonded = !rsd1.is_upper_terminus() && rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos();
+	bool rsd12_peptide_bonded = !rsd1.is_upper_terminus() && rsd1.has_upper_connect() && rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos() && !rsd2.is_lower_terminus() && rsd2.has_lower_connect() && rsd2.residue_connection_partner( rsd2.lower_connect().index() ) == rsd1.seqpos();
 	if ( rsd1_is_protein && rsd2_is_protein && rsd12_peptide_bonded ) {
 
 		// lookup Kd and d0
@@ -3961,18 +3960,23 @@ CartesianBondedEnergy::eval_interresidue_improper_derivatives(
 	using namespace core::chemical;
 	using numeric::constants::d::pi;
 
+	// backbone C-N-CA-H
+	if ( !res1.is_protein() || !res2.is_protein() || !res1.is_polymer_bonded( res2 ) ) return;
+
+	// exit if this is not a backbone connection
+	if ( res1.is_upper_terminus() || !res1.has_upper_connect() || res1.residue_connection_partner( res1.upper_connect().index() ) != res2.seqpos() ) return;
+	if ( res2.is_lower_terminus() || !res2.has_lower_connect() || res2.residue_connection_partner( res2.lower_connect().index() ) != res1.seqpos() ) return;
+
 	//Multipliers for D-amino acids:
 	//const core::Real d_multiplier1 = core::chemical::is_canonical_D_aa(res1.aa()) ? -1.0 : 1.0 ;
 	const core::Real d_multiplier2 = core::chemical::is_canonical_D_aa(res2.aa()) ? -1.0 : 1.0 ;
 
-	// backbone C-N-CA-H
-	if ( !res1.is_protein() || !res2.is_protein() || !res1.is_polymer_bonded( res2 ) ) return;
 	Real weight = weights[ cart_bonded_improper ] + weights[ cart_bonded_torsion ] + weights[ cart_bonded ];
 
 	// backbone Oprev-Cprev-N-H
 	if ( (res2.aa() != aa_pro && res2.aa() != aa_dpr /*NOT D- or L-proline*/) && rsd2params.bb_H_index() != 0 ) {
 		CartBondedParametersCOP tor_params = rsd2params.oprev_cprev_n_h_interres_improper_params();
-		if ( !tor_params->is_null() ) {
+		if ( tor_params != nullptr && !tor_params->is_null() ) {
 			Real const Kphi = tor_params->K(0,0);
 			Real const phi0 = d_multiplier2 * tor_params->mu(0,0);
 			Real const phi_step = 2*pi/tor_params->period();
@@ -4021,7 +4025,7 @@ CartesianBondedEnergy::eval_interresidue_improper_derivatives(
 	// backbone CA-Cprev-N-H
 	if ( (res2.aa() != aa_pro && res2.aa() != aa_dpr /*NOT D- or L-proline*/) && rsd2params.bb_H_index() != 0 ) {
 		CartBondedParametersCOP tor_params = rsd2params.ca_cprev_n_h_interres_improper_params();
-		if ( !tor_params->is_null() ) {
+		if ( tor_params != nullptr && !tor_params->is_null() ) {
 			Real const Kphi = tor_params->K(0,0);
 			Real const phi0 = d_multiplier2 * tor_params->mu(0,0);
 			Real const phi_step = 2*pi/tor_params->period();
@@ -4069,7 +4073,7 @@ CartesianBondedEnergy::eval_interresidue_improper_derivatives(
 	// backbone CA-Nnext-C-O
 	{
 		CartBondedParametersCOP tor_params = rsd1params.ca_nnext_c_o_interres_improper_params();
-		if ( !tor_params->is_null() ) {  // however, if it is in the db but with 0 weight, that is OK
+		if ( tor_params != nullptr && !tor_params->is_null() ) {  // however, if it is in the db but with 0 weight, that is OK
 			core::Size const atm1 = rsd1params.bb_CA_index();
 			core::Size const atm2 = rsd2params.bb_N_index();
 			core::Size const atm3 = rsd1params.bb_C_index();
@@ -4119,7 +4123,7 @@ CartesianBondedEnergy::eval_interresidue_improper_derivatives(
 	// proline N planarity
 	if ( res2.aa() == core::chemical::aa_pro || res2.aa() == core::chemical::aa_dpr /*D- or L-proline*/ ) {
 		CartBondedParametersCOP tor_params = rsd2params.pro_cd_cprev_n_ca_interres_improper_params();
-		if ( tor_params && !tor_params->is_null() ) {
+		if ( tor_params != nullptr && !tor_params->is_null() ) {
 			core::Size const atm1 = rsd2params.pro_CD_index();
 			core::Size const atm2 = rsd1params.bb_C_index();
 			core::Size const atm3 = rsd2params.bb_N_index();

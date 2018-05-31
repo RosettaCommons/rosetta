@@ -105,10 +105,7 @@ HBS_POST  # hydrogen bond surrogates, second residue
 A3B_HBS_PRE   # a3b hydrogen bond surrogates, first residue (will also be a terminus)
 A3B_HBS_POST  # a3b hydrogen bond surrogates, second residue
 
-# METAL-BINDING VARIANTS
-SG_CONNECT
-NE2_CONNECT
-ZN_CONNECT
+# MORE METAL-BINDING VARIANTS
 CA_CONNECT
 CA_CONNECT2
 CA_CONNECT3

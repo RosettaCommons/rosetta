@@ -82,52 +82,52 @@ public:
 		{
 			EnergyMap emap;
 			cartbond_energy.residue_pair_energy( trpcage.residue( 1 ), trpcage.residue( 2 ), trpcage, sfxn, emap );
-			TS_ASSERT_DELTA( emap[ cart_bonded ], 12.99893037146363, 1e-12 );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 12.99891757711877, 1e-12 );
 		}
 		{
 			EnergyMap emap;
 			cartbond_energy.residue_pair_energy( trpcage.residue( 2 ), trpcage.residue( 3 ), trpcage, sfxn, emap );
-			TS_ASSERT_DELTA( emap[ cart_bonded ], 1.670908068144996, 1e-12 );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 1.670928807100395, 1e-12 );
 		}
 		{
 			EnergyMap emap;
 			cartbond_energy.residue_pair_energy( trpcage.residue( 3 ), trpcage.residue( 4 ), trpcage, sfxn, emap );
-			TS_ASSERT_DELTA( emap[ cart_bonded ], 1.026308451585347, 1e-12 );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 1.026272212589282, 1e-12 );
 		}
 		{
 			EnergyMap emap;
 			cartbond_energy.residue_pair_energy( trpcage.residue( 4 ), trpcage.residue( 5 ), trpcage, sfxn, emap );
-			TS_ASSERT_DELTA( emap[ cart_bonded ], 0.4940667766854936, 1e-12 );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 0.4940665165864973, 1e-12 );
 		}
 		{
 			EnergyMap emap;
 			cartbond_energy.residue_pair_energy( trpcage.residue( 5 ), trpcage.residue( 6 ), trpcage, sfxn, emap );
-			TS_ASSERT_DELTA( emap[ cart_bonded ], 3.130359919922689, 1e-12 );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 3.130342439381777, 1e-12 );
 		}
 		{
 			EnergyMap emap;
 			cartbond_energy.residue_pair_energy( trpcage.residue( 6 ), trpcage.residue( 7 ), trpcage, sfxn, emap );
-			TS_ASSERT_DELTA( emap[ cart_bonded ], 1.648683978275906, 1e-12 );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 1.64870343595507, 1e-12 );
 		}
 		{
 			EnergyMap emap;
 			cartbond_energy.residue_pair_energy( trpcage.residue( 7 ), trpcage.residue( 8 ), trpcage, sfxn, emap );
-			TS_ASSERT_DELTA( emap[ cart_bonded ], 1.642616044020445, 1e-12 );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 1.642634525253636, 1e-12 );
 		}
 		{
 			EnergyMap emap;
 			cartbond_energy.residue_pair_energy( trpcage.residue( 8 ), trpcage.residue( 9 ), trpcage, sfxn, emap );
-			TS_ASSERT_DELTA( emap[ cart_bonded ], 0.3603073020482437, 1e-12 );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 0.3602964976693921, 1e-12 );
 		}
 		{
 			EnergyMap emap;
 			cartbond_energy.residue_pair_energy( trpcage.residue( 9 ), trpcage.residue( 10 ), trpcage, sfxn, emap );
-			TS_ASSERT_DELTA( emap[ cart_bonded ], 2.095097861001622, 1e-12 );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 2.095058440392133, 1e-12 );
 		}
 		{
 			EnergyMap emap;
 			cartbond_energy.residue_pair_energy( trpcage.residue( 10 ), trpcage.residue( 11 ), trpcage, sfxn, emap );
-			TS_ASSERT_DELTA( emap[ cart_bonded ], 0.1955605633369391, 1e-12 );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 0.1955367409683154, 1e-12 );
 		}
 		{
 			EnergyMap emap;
@@ -137,22 +137,22 @@ public:
 		{
 			EnergyMap emap;
 			cartbond_energy.residue_pair_energy( trpcage.residue( 12 ), trpcage.residue( 13 ), trpcage, sfxn, emap );
-			TS_ASSERT_DELTA( emap[ cart_bonded ], 1.632773667916785, 1e-12 );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 1.632823256379405, 1e-12 );
 		}
 		{
 			EnergyMap emap;
 			cartbond_energy.residue_pair_energy( trpcage.residue( 13 ), trpcage.residue( 14 ), trpcage, sfxn, emap );
-			TS_ASSERT_DELTA( emap[ cart_bonded ], 1.746114817683947, 1e-12 );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 1.746148733158697, 1e-12 );
 		}
 		{
 			EnergyMap emap;
 			cartbond_energy.residue_pair_energy( trpcage.residue( 14 ), trpcage.residue( 15 ), trpcage, sfxn, emap );
-			TS_ASSERT_DELTA( emap[ cart_bonded ], 3.989628042010722, 1e-12 );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 3.989570030909071, 1e-12 );
 		}
 		{
 			EnergyMap emap;
 			cartbond_energy.residue_pair_energy( trpcage.residue( 15 ), trpcage.residue( 16 ), trpcage, sfxn, emap );
-			TS_ASSERT_DELTA( emap[ cart_bonded ], 0.2788007305449911, 1e-12 );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 0.2788293912262143, 1e-12 );
 		}
 		{
 			EnergyMap emap;
@@ -172,7 +172,7 @@ public:
 		{
 			EnergyMap emap;
 			cartbond_energy.residue_pair_energy( trpcage.residue( 19 ), trpcage.residue( 20 ), trpcage, sfxn, emap );
-			TS_ASSERT_DELTA( emap[ cart_bonded ], 1.578406893572016, 1e-12 );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 1.578362520553334, 1e-12 );
 		}
 
 	}
@@ -194,7 +194,7 @@ public:
 		std::cout << "MINE: " << score << std::endl;
 		std::cout.precision( before_precision );*/
 
-		adv.validate_start_func_matches_start_score( 30.81908882929741, false );
+		adv.validate_start_func_matches_start_score( 30.81905264781152, false );
 	}
 
 	void test_cartbonded_deriv_check_w_total_flexibility()
