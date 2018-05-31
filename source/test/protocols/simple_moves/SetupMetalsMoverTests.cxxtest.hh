@@ -28,6 +28,9 @@
 #include <core/select/residue_selector/ResidueNameSelector.hh>
 #include <basic/datacache/DataMap.hh>
 #include <utility/tag/Tag.hh>
+#include <basic/Tracer.hh>
+
+static basic::Tracer TR("SetupMetalsMoverTests");
 
 class SetupMetalsMoverTests: public CxxTest::TestSuite {
 
@@ -95,7 +98,7 @@ public:
 		ss << "<SetupMetalsMover name=\"metal\" remove_hydrogens=\"false\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\" />" << std::endl;
 		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss );
-		TS_TRACE( "Tag with no selector or resnums" );
+		TR << "Tag with no selector or resnums" << std::endl;
 		basic::datacache::DataMap dm;
 		protocols::filters::Filters_map fm;
 		protocols::moves::Movers_map mm;
@@ -150,7 +153,7 @@ public:
 		ss_string_and_selector << "<SetupMetalsMover name=\"metal\" metal_resnums=\"154,155\" remove_hydrogens=\"false\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\"><Index resnums=\"154,155\" /></SetupMetalsMover>" << std::endl;
 		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss_string_and_selector );
-		TS_TRACE( "Tag with embedded selector and resnums" );
+		TR << "Tag with embedded selector and resnums" << std::endl;
 		TS_ASSERT_THROWS_ANYTHING( new_mover.parse_my_tag( tag, dm, fm, mm, *pose_ ) );
 		*/
 		/*
@@ -159,7 +162,7 @@ public:
 		ss_two_embedded << "<SetupMetalsMover name=\"metal\" remove_hydrogens=\"false\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\"><Index resnums=\"154,155\" /><Chain chains=\"A\" /></SetupMetalsMover>" << std::endl;
 		tag = utility::tag::TagOP( new utility::tag::Tag() );
 		tag->read( ss_two_embedded );
-		TS_TRACE( "Tag with two embedded selectors" );
+		TR << "Tag with two embedded selectors" << std::endl;
 		TS_ASSERT_THROWS_ANYTHING( new_mover.parse_my_tag( tag, dm, fm, mm, *pose_ ) );
 		*/
 		//Provide a selector that isn't in the data map
@@ -167,7 +170,7 @@ public:
 		ss_bad_selector << "<SetupMetalsMover name=\"metal\" remove_hydrogens=\"false\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\" metal_residue_selector=\"dummy\" />" << std::endl;
 		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss_bad_selector );
-		TS_TRACE( "Tag with undefined residue selector" );
+		TR << "Tag with undefined residue selector" << std::endl;
 		TS_ASSERT_THROWS_ANYTHING( new_mover.parse_my_tag( tag, dm, fm, mm, *pose_ ) );
 
 		//Add selector to the data map
@@ -179,7 +182,7 @@ public:
 		ss_good_selector << "<SetupMetalsMover name=\"metal\" remove_hydrogens=\"false\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\" metal_residue_selector=\"dummy\" />" << std::endl;
 		tag = utility::tag::TagOP( new utility::tag::Tag() );
 		tag->read( ss_good_selector );
-		TS_TRACE( "Tag with defined residue selector" );
+		TR << "Tag with defined residue selector" << std::endl;
 		TS_ASSERT_THROWS_NOTHING( new_mover.parse_my_tag( tag, dm, fm, mm, *pose_ ) );
 		/*
 		//Try to provide a selector string and an embedded selector
@@ -187,7 +190,7 @@ public:
 		ss_selector_two_ways << "<SetupMetalsMover name=\"metal\" remove_hydrogens=\"false\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\" metal_residue_selector=\"dummy\" ><Index resnums=\"154,155\" /></SetupMetalsMover>" << std::endl;
 		tag = utility::tag::TagOP( new utility::tag::Tag() );
 		tag->read( ss_selector_two_ways );
-		TS_TRACE( "Tag with selector two ways" );
+		TR << "Tag with selector two ways" << std::endl;
 		TS_ASSERT_THROWS_ANYTHING( new_mover.parse_my_tag( tag, dm, fm, mm, *pose_ ) );
 		*/
 		//Try to provide a selector string and a resnum string
@@ -195,7 +198,7 @@ public:
 		ss_select_string_and_resnum_string << "<SetupMetalsMover name=\"metal\" metal_resnums=\"154,155\" remove_hydrogens=\"false\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\" metal_residue_selector=\"dummy\" />" << std::endl;
 		tag = utility::tag::TagOP( new utility::tag::Tag() );
 		tag->read( ss_select_string_and_resnum_string );
-		TS_TRACE( "Tag with selector string and resnum string" );
+		TR << "Tag with selector string and resnum string" << std::endl;
 		TS_ASSERT_THROWS_ANYTHING( new_mover.parse_my_tag( tag, dm, fm, mm, *pose_ ) );
 	}
 
@@ -229,7 +232,7 @@ public:
 		ss_all << "<SetupMetalsMover name=\"metal\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\" metal_residue_selector=\"all\" />" << std::endl;
 		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss_all );
-		TS_TRACE( "Tag with selector to select all metals" );
+		TR << "Tag with selector to select all metals" << std::endl;
 		TS_ASSERT_THROWS_NOTHING( new_mover.parse_my_tag( tag, dm, fm, mm, *pose_ ) );
 		//Check all default values
 		TS_ASSERT_EQUALS( new_mover.get_remove_hydrogens(), true );
@@ -272,7 +275,7 @@ public:
 		ss_a << "<SetupMetalsMover name=\"metal\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\" metal_residue_selector=\"chain\" />" << std::endl;
 		tag = utility::tag::TagOP( new utility::tag::Tag() );
 		tag->read( ss_a );
-		TS_TRACE( "Tag with selector to select chain A" );
+		TR << "Tag with selector to select chain A" << std::endl;
 		TS_ASSERT_THROWS_NOTHING( new_mover.parse_my_tag( tag, dm, fm, mm, *pose_ ) );
 		//Check all default values
 		TS_ASSERT_EQUALS( new_mover.get_remove_hydrogens(), true );
@@ -314,7 +317,7 @@ public:
 		ss_zn << "<SetupMetalsMover name=\"metal\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\" metal_residue_selector=\"zinc\" />" << std::endl;
 		tag = utility::tag::TagOP( new utility::tag::Tag() );
 		tag->read( ss_zn );
-		TS_TRACE( "Tag with selector to select zinc ions" );
+		TR << "Tag with selector to select zinc ions" << std::endl;
 		TS_ASSERT_THROWS_NOTHING( new_mover.parse_my_tag( tag, dm, fm, mm, *pose_ ) );
 		//Check all default values
 		TS_ASSERT_EQUALS( new_mover.get_remove_hydrogens(), true );
@@ -357,7 +360,7 @@ public:
 		ss_none << "<SetupMetalsMover name=\"metal\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\" metal_residue_selector=\"none\" />" << std::endl;
 		tag = utility::tag::TagOP( new utility::tag::Tag() );
 		tag->read( ss_none );
-		TS_TRACE( "Tag with selector that should not include any of the metal ions" );
+		TR << "Tag with selector that should not include any of the metal ions" << std::endl;
 		TS_ASSERT_THROWS_NOTHING( new_mover.parse_my_tag( tag, dm, fm, mm, *pose_ ) );
 		//Check all default values
 		TS_ASSERT_EQUALS( new_mover.get_remove_hydrogens(), true );
@@ -404,7 +407,7 @@ public:
 		ss_all << "<SetupMetalsMover name=\"metal\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\" metal_resnums=\"154,155,309,310\" />" << std::endl;
 		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss_all );
-		TS_TRACE( "Tag with resnums to select all metals" );
+		TR << "Tag with resnums to select all metals" << std::endl;
 		TS_ASSERT_THROWS_NOTHING( new_mover.parse_my_tag( tag, dm, fm, mm, *pose_ ) );
 		//Check all default values
 		TS_ASSERT_EQUALS( new_mover.get_remove_hydrogens(), true );
@@ -447,7 +450,7 @@ public:
 		ss_a << "<SetupMetalsMover name=\"metal\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\" metal_resnums=\"1-155\" />" << std::endl;
 		tag = utility::tag::TagOP( new utility::tag::Tag() );
 		tag->read( ss_a );
-		TS_TRACE( "Tag with resnums to select chain A" );
+		TR << "Tag with resnums to select chain A" << std::endl;
 		TS_ASSERT_THROWS_NOTHING( new_mover.parse_my_tag( tag, dm, fm, mm, *pose_ ) );
 		//Check all default values
 		TS_ASSERT_EQUALS( new_mover.get_remove_hydrogens(), true );
@@ -489,7 +492,7 @@ public:
 		ss_zn << "<SetupMetalsMover name=\"metal\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\" metal_resnums=\"155,310\" />" << std::endl;
 		tag = utility::tag::TagOP( new utility::tag::Tag() );
 		tag->read( ss_zn );
-		TS_TRACE( "Tag with resnums to select zinc ions" );
+		TR << "Tag with resnums to select zinc ions" << std::endl;
 		TS_ASSERT_THROWS_NOTHING( new_mover.parse_my_tag( tag, dm, fm, mm, *pose_ ) );
 		//Check all default values
 		TS_ASSERT_EQUALS( new_mover.get_remove_hydrogens(), true );
@@ -532,7 +535,7 @@ public:
 		ss_none << "<SetupMetalsMover name=\"metal\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\" metal_resnums=\"1,2,3\" />" << std::endl;
 		tag = utility::tag::TagOP( new utility::tag::Tag() );
 		tag->read( ss_none );
-		TS_TRACE( "Tag with selection that should not include any of the metal ions" );
+		TR << "Tag with selection that should not include any of the metal ions" << std::endl;
 		TS_ASSERT_THROWS_NOTHING( new_mover.parse_my_tag( tag, dm, fm, mm, *pose_ ) );
 		//Check all default values
 		TS_ASSERT_EQUALS( new_mover.get_remove_hydrogens(), true );

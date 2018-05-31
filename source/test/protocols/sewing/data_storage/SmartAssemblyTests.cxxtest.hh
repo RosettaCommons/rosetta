@@ -63,7 +63,7 @@ public:
 	}
 
 	void test_set_starting_segment(){
-		TS_TRACE( "Begin set_starting_segment" );
+		TR << "Begin set_starting_segment" << std::endl;
 		TS_ASSERT( 31 <= segment_vector_->size() );
 		assembly_->set_starting_segment( segment_vector_->at( 28 ), "all" );
 		TS_ASSERT( assembly_->get_n_terminal_segment() );
@@ -73,127 +73,127 @@ public:
 	}
 
 	void test_can_make_chimera1(){
-		TS_TRACE( "Begin can_make_chimera1" );
+		TR << "Begin can_make_chimera1" << std::endl;
 		assembly_->set_starting_segment( segment_vector_->at( 28 ), "all" );
 
 		//first basis (c-term)
-		//TS_TRACE( "first basis" );
+		//TR << "first basis" << std::endl;
 		core::Size first_res_id = 15;
 		bool n_term = false;
 
 		//second basis (n-term)
-		//TS_TRACE( "second basis" );
+		//TR << "second basis" << std::endl;
 		core::Size second_seg_id = 7;
 		TS_ASSERT( 7 <= segment_vector_->size() );
 		core::Size second_res_id = 2;
 		try{
-			TS_TRACE( "Trying to Chimerize" );
+			TR << "Trying to Chimerize" << std::endl;
 			bool added = assembly_->add_segment( n_term, second_seg_id, first_res_id , second_res_id ) ;
 			//   bool added = assembly_->add_segment( n_term );
 			TS_ASSERT( added ); // assert seperately so as not to mess up the assembly trace
-			TS_TRACE( "Checking if continuous" );
+			TR << "Checking if continuous" << std::endl;
 			TS_ASSERT( assembly_->is_continuous() );
-			TS_TRACE( "... Done. Now exporting pose:" );
+			TR << "... Done. Now exporting pose:" << std::endl;
 			core::pose::Pose assem_pose = assembly_->to_pose( "fa_standard" );
-			TS_TRACE( "Making sure length is correct:" );
+			TR << "Making sure length is correct:" << std::endl;
 			TS_ASSERT( assem_pose.total_residue() == assembly_->get_length() );
 			assem_pose.dump_pdb( "30_7_15_2_test.pdb" );
-			TS_TRACE( "...Done.");
+			TR << "...Done."<< std::endl;
 		}catch(...){
 			TS_FAIL( "Problem with chimerize" );
 		}
 	}
 
 	void test_can_make_chimera2(){
-		TS_TRACE( "Begin can_make_chimera2" );
+		TR << "Begin can_make_chimera2" << std::endl;
 		assembly_->set_starting_segment( segment_vector_->at( 28 ), "all" );
 
 		//first basis (c-term)
-		TS_TRACE( "first basis" );
+		TR << "first basis" << std::endl;
 		core::Size first_res_id = 12;
 		bool n_term = false;
 
 		//second basis (n-term)
-		TS_TRACE( "second basis" );
+		TR << "second basis" << std::endl;
 		core::Size second_seg_id = 19;
 		TS_ASSERT( 19 <= segment_vector_->size() );
 		core::Size second_res_id = 7;
 		try{
-			TS_TRACE( "Trying to Chimerize" );
+			TR << "Trying to Chimerize" << std::endl;
 			bool added = assembly_->add_segment( n_term, second_seg_id, first_res_id , second_res_id ) ;
 			//   bool added = assembly_->add_segment( n_term );
 			TS_ASSERT( added ); // assert seperately so as not to mess up the assembly trace
-			TS_TRACE( "Checking if continuous" );
+			TR << "Checking if continuous" << std::endl;
 			TS_ASSERT( assembly_->is_continuous() );
-			TS_TRACE( "... Done. Now exporting pose:" );
+			TR << "... Done. Now exporting pose:" << std::endl;
 			core::pose::Pose assem_pose = assembly_->to_pose( "fa_standard" );
-			TS_TRACE( "Making sure length is correct:" );
+			TR << "Making sure length is correct:" << std::endl;
 			TS_ASSERT( assem_pose.total_residue() == assembly_->get_length() );
 			assem_pose.dump_pdb( "30_19_12_7_test.pdb" );
-			TS_TRACE( "...Done.");
+			TR << "...Done."<< std::endl;
 		}catch(...){
 			TS_FAIL( "Problem with chimerize" );
 		}
 	}
 
 	void test_can_make_chimera3(){
-		TS_TRACE( "Begin can_make_chimera3" );
+		TR << "Begin can_make_chimera3" << std::endl;
 		assembly_->set_starting_segment( segment_vector_->at( 13 ), "all" );
 
 		//first basis (c-term)
-		TS_TRACE( "first basis" );
+		TR << "first basis" << std::endl;
 		core::Size first_res_id = 8;
 		bool n_term = false;
 
 		//second basis (n-term)
-		TS_TRACE( "second basis" );
+		TR << "second basis" << std::endl;
 		core::Size second_seg_id = 7;
 		TS_ASSERT( 7 <= segment_vector_->size() );
 		core::Size second_res_id = 5;
 		try{
-			TS_TRACE( "Trying to Chimerize" );
+			TR << "Trying to Chimerize" << std::endl;
 			bool added = assembly_->add_segment( n_term, second_seg_id, first_res_id , second_res_id ) ;
 			//   bool added = assembly_->add_segment( n_term );
 			TS_ASSERT( added ); // assert seperately so as not to mess up the assembly trace
-			TS_TRACE( "Checking if continuous" );
+			TR << "Checking if continuous" << std::endl;
 			TS_ASSERT( assembly_->is_continuous() );
-			TS_TRACE( "... Done. Now exporting pose:" );
+			TR << "... Done. Now exporting pose:" << std::endl;
 			core::pose::Pose assem_pose = assembly_->to_pose( "fa_standard" );
-			TS_TRACE( "Making sure length is correct:" );
+			TR << "Making sure length is correct:" << std::endl;
 			TS_ASSERT( assem_pose.total_residue() == assembly_->get_length() );
 			assem_pose.dump_pdb( "15_7_8_5_test.pdb" );
-			TS_TRACE( "...Done.");
+			TR << "...Done." << std::endl;
 		}catch(...){
 			TS_FAIL( "Problem with chimerize" );
 		}
 	}
 
 	void test_simple_assembly_size(){
-		TS_TRACE( "Begin simple_assembly_size" );
+		TR << "Begin simple_assembly_size" << std::endl;
 		assembly_ = sewing_testing::create_simple_assembly( assembly_ );
-		TS_TRACE( assembly_->get_forward_assembly() );
+		TR << assembly_->get_forward_assembly() << std::endl;
 		TS_ASSERT( assembly_->get_size() == 7 );
 	}
 
 	void test_simple_assembly_length(){
-		TS_TRACE( "Begin simple_assembly_length" );
+		TR << "Begin simple_assembly_length" << std::endl;
 		assembly_ = sewing_testing::create_simple_assembly( assembly_ );
-		TS_TRACE( assembly_->get_forward_assembly() );
+		TR << assembly_->get_forward_assembly() << std::endl;
 		core::Size assembly_length = 0;
 		data_storage::SmartSegmentOP current_seg = assembly_->get_n_terminal_segment();
 		while ( current_seg != nullptr ) {
 			assembly_length = assembly_length +  current_seg->get_length();
 			current_seg = current_seg->get_c_terminal_neighbor();
 		}
-		TS_TRACE( "Reported assembly length: " + utility::to_string( assembly_->get_length() ) );
-		TS_TRACE( "Calculated assembly length: " + utility::to_string( assembly_length ) );
+		TR << "Reported assembly length: " + utility::to_string( assembly_->get_length() ) << std::endl;
+		TR << "Calculated assembly length: " + utility::to_string( assembly_length ) << std::endl;
 		TS_ASSERT( assembly_->get_length() == assembly_length );
 	}
 
 	void test_simple_assembly_parent_connectivity(){
-		TS_TRACE( "Begin simple_assembly_parent_connectivity" );
+		TR << "Begin simple_assembly_parent_connectivity" << std::endl;
 		assembly_ = sewing_testing::create_simple_assembly( assembly_ );
-		TS_TRACE( assembly_->get_forward_assembly() );
+		TR << assembly_->get_forward_assembly() << std::endl;
 		//Chimerized 4 and 21, 6 and 13
 		TS_ASSERT( data_storage::SmartSegment::get_c_most_segment( assembly_->get_n_terminal_segment(), false )->is_chimaeric() );
 		TS_ASSERT( data_storage::SmartSegment::get_c_most_segment( assembly_->get_n_terminal_segment(), true )->get_segment_id() == 15 );
@@ -214,11 +214,11 @@ public:
 	}
 
 	void test_simple_delete_nterm(){
-		TS_TRACE( "Begin simple_delete_nterm" );
+		TR << "Begin simple_delete_nterm" << std::endl;
 		assembly_ = sewing_testing::create_simple_assembly( assembly_ );
 		bool nterm = true;
 		assembly_->delete_segment( nterm );
-		TS_TRACE( assembly_->get_forward_assembly() );
+		TR << assembly_->get_forward_assembly() << std::endl;
 		//Chimaera is 6 an 13
 		TS_ASSERT( assembly_->get_last_change_was_n_terminal() );
 		TS_ASSERT( assembly_->get_size() == 5 );
@@ -239,11 +239,11 @@ public:
 	}
 
 	void test_simple_delete_cterm(){
-		TS_TRACE( "Begin simple_delete_cterm" );
+		TR << "Begin simple_delete_cterm" << std::endl;
 		assembly_ = sewing_testing::create_simple_assembly( assembly_ );
 		bool nterm = false;
 		assembly_->delete_segment( nterm );
-		TS_TRACE( assembly_->get_forward_assembly() );
+		TR << assembly_->get_forward_assembly() << std::endl;
 		//Chimaera is 4 and 21
 		TS_ASSERT( !assembly_->get_last_change_was_n_terminal() );
 		TS_ASSERT( assembly_->get_size() == 5 );
@@ -266,7 +266,7 @@ public:
 
 
 	void test_do_not_delete_vital_segments_nterm(){
-		TS_TRACE( "Begin do_not_delete_vital_segments_nterm" );
+		TR << "Begin do_not_delete_vital_segments_nterm" << std::endl;
 		assembly_ = sewing_testing::create_simple_assembly( assembly_ );
 		bool nterm = true;
 		bool deleted_first = assembly_->delete_segment( nterm );
@@ -275,7 +275,7 @@ public:
 		TS_ASSERT( !deleted_second );
 	}
 	void test_do_not_delete_vital_segments_cterm(){
-		TS_TRACE( "Begin do_not_delete_vital_segments_cterm" );
+		TR << "Begin do_not_delete_vital_segments_cterm" << std::endl;
 		assembly_ = sewing_testing::create_simple_assembly( assembly_ );
 		bool nterm = false;
 		bool deleted_first = assembly_->delete_segment( nterm );
@@ -286,7 +286,7 @@ public:
 
 
 	void test_do_not_hash_the_unhashable(){
-		TS_TRACE( "Begin do_not_hash_the_unhashable" );
+		TR << "Begin do_not_hash_the_unhashable" << std::endl;
 		//Make sure it won't hash a helix against a loop
 		//Function should return 0
 		core::Size bpnum;
@@ -312,7 +312,7 @@ public:
 
 
 	void test_iterate_over_basis_pairs_basic(){
-		TS_TRACE( "Begin iterate_over_basis_pairs_basic" );
+		TR << "Begin iterate_over_basis_pairs_basic" << std::endl;
 		//Make sure it returns the right number of basis pairs
 		//Make sure all the basis pairs it returns are in range (TODO)
 		//Length of segment 4: 9
@@ -344,14 +344,14 @@ public:
 
 	void test_simple_switch_nterm(){
 		assembly_ = sewing_testing::create_simple_assembly( assembly_ );
-		TS_TRACE( "Begin simple_switch_nterm" );
-		TS_TRACE( assembly_->get_forward_assembly() );
+		TR << "Begin simple_switch_nterm" << std::endl;
+		TR << assembly_->get_forward_assembly() << std::endl;
 		bool nterm = true;
 		//Unfortunately switch currently does not have a non-random version
 		//This will rely on iterate_over_basis_pairs
 		assembly_->switch_segment( nterm );
-		TS_TRACE( assembly_->get_forward_assembly() );
-		TS_TRACE( assembly_->get_reverse_assembly() );
+		TR << assembly_->get_forward_assembly() << std::endl;
+		TR << assembly_->get_reverse_assembly() << std::endl;
 		//This should not fail with our starting assembly
 		TS_ASSERT( assembly_->get_last_change_was_n_terminal() );
 		//Make sure the length was handled properly
@@ -362,8 +362,8 @@ public:
 			assembly_length = assembly_length +  current_seg->get_length();
 			current_seg = current_seg->get_c_terminal_neighbor();
 		}
-		TS_TRACE( "Reported assembly length: " + utility::to_string( assembly_->get_length() ) );
-		TS_TRACE( "Calculated assembly length: " + utility::to_string( assembly_length ) );
+		TR << "Reported assembly length: " + utility::to_string( assembly_->get_length() ) << std::endl;
+		TR << "Calculated assembly length: " + utility::to_string( assembly_length ) << std::endl;
 		TS_ASSERT( assembly_->get_length() == assembly_length );
 		//Make sure the assembly reads the same forward and backward
 		TS_ASSERT( assembly_->get_forward_assembly() == assembly_->get_reverse_assembly() );
@@ -371,13 +371,13 @@ public:
 	}
 
 	void test_simple_switch_cterm(){
-		TS_TRACE( "Begin simple_switch_cterm" );
+		TR << "Begin simple_switch_cterm" << std::endl;
 		assembly_ = sewing_testing::create_simple_assembly( assembly_ );
-		TS_TRACE( assembly_->get_forward_assembly() );
+		TR << assembly_->get_forward_assembly() << std::endl;
 		bool nterm = false;
 		//Unfortunately switch currently does not have a non-random version
 		assembly_->switch_segment( nterm );
-		TS_TRACE( assembly_->get_forward_assembly() );
+		TR << assembly_->get_forward_assembly() << std::endl;
 		//This should not fail with our starting assembly
 		TS_ASSERT( !assembly_->get_last_change_was_n_terminal() );
 		//Make sure the length was handled properly
@@ -388,8 +388,8 @@ public:
 			//assembly_length += current_seg->get_length();
 			current_seg = current_seg->get_c_terminal_neighbor();
 		}
-		TS_TRACE( "Reported assembly length: " + utility::to_string( assembly_->get_length() ) );
-		TS_TRACE( "Calculated assembly length: " + utility::to_string( assembly_length ) );
+		TR << "Reported assembly length: " + utility::to_string( assembly_->get_length() ) << std::endl;
+		TR << "Calculated assembly length: " + utility::to_string( assembly_length ) << std::endl;
 		TS_ASSERT( assembly_->get_length() == assembly_length );
 		//Make sure the assembly reads the same forward and backward
 		TS_ASSERT( assembly_->get_forward_assembly() == assembly_->get_reverse_assembly() );
@@ -397,7 +397,7 @@ public:
 	}
 
 	void test_iterate_over_basis_pairs_chimaera_cterm_first(){
-		TS_TRACE( "Begin iterate_over_basis_pairs_chimaera_cterm_first" );
+		TR << "Begin iterate_over_basis_pairs_chimaera_cterm_first" << std::endl;
 		//Length of segment 4: 9
 		//Length of segment 6: 13
 		//Length of segment 1: 6
@@ -413,7 +413,7 @@ public:
 		core::Size resID_2 = 3; //Any residue numbers in seg2 will be increased by 3
 		//Add segment 1 to the C terminus
 		assembly_->add_segment( nterm, segID_2, resID_1, resID_2 );
-		TS_TRACE( assembly_->get_forward_assembly() );
+		TR << assembly_->get_forward_assembly() << std::endl;
 		TS_ASSERT( assembly_->get_n_terminal_segment()->is_chimaeric() );
 		//Make sure parent connectivity is still maintained
 		//Chimaera is 31 and 1
@@ -432,7 +432,7 @@ public:
 		TS_ASSERT( bpnum == (7 * 5 ) );
 	}
 	void test_iterate_over_basis_pairs_chimaera_nterm_first(){
-		TS_TRACE( "Begin iterate_over_basis_pairs_chimaera_nterm_first" );
+		TR << "Begin iterate_over_basis_pairs_chimaera_nterm_first" << std::endl;
 		//First make a basic chimaera between our single segment and a triplet to the n terminus
 		//Then call function on c_terminal_segment and a new triplet
 		//Length of segment 4: 9
@@ -451,7 +451,7 @@ public:
 
 		//Add segment 21 to the N terminus
 		assembly_->add_segment( nterm, segID_2, resID_1, resID_2 );
-		TS_TRACE( assembly_->get_forward_assembly() );
+		TR << assembly_->get_forward_assembly() << std::endl;
 		TS_ASSERT( assembly_->get_c_terminal_segment()->is_chimaeric() );
 		TS_ASSERT_EQUALS( assembly_->get_c_terminal_segment()->get_basis_pair().first.segment_id(), 31 );
 		TS_ASSERT_EQUALS( assembly_->get_c_terminal_segment()->get_basis_pair().second.segment_id(), 21 );
@@ -463,22 +463,22 @@ public:
 		TS_ASSERT( data_storage::SmartSegment::get_n_most_segment( assembly_->get_c_terminal_segment(), false )->get_segment_id() == assembly_->get_c_terminal_segment()->get_segment_id() );
 		TS_ASSERT( data_storage::SmartSegment::get_n_most_segment( assembly_->get_c_terminal_segment(), true )->get_segment_id() == 19 );
 		TS_ASSERT( assembly_->get_forward_assembly() == assembly_->get_reverse_assembly() );
-		TS_TRACE( assembly_->get_comprehensive_forward_assembly() );
+		TR << assembly_->get_comprehensive_forward_assembly() << std::endl;
 		//Then call function on n_terminal_segment and a new triplet
 		core::Size bpnum;
 		bpnum = ( assembly_->iterate_over_basis_pairs( assembly_->get_c_terminal_segment(), assembly_->get_segment_vector()->at( 1 ), false ) ).second;
 		//Segment 1 is 6 residues long
 		//Chimaera has 5 residues after the basis residue
-		TS_TRACE( "Predicted number of available bp: 30" );
-		TS_TRACE( "Calculated number: " + utility::to_string( bpnum ) );
+		TR << "Predicted number of available bp: 30" << std::endl;
+		TR << "Calculated number: " + utility::to_string( bpnum ) << std::endl;
 
 		TS_ASSERT( bpnum == ( 6 * 5 ) );
 	}
 
 	void test_double_chimerize_single_helix_two_triplets_nterm_first(){
-		TS_TRACE( "Begin double_chimerize_single_helix_two_triplets_nterm_first" );
+		TR << "Begin double_chimerize_single_helix_two_triplets_nterm_first" << std::endl;
 		assembly_ = sewing_testing::make_double_chimaera_nterm_first( assembly_ );
-		TS_TRACE( assembly_->get_forward_assembly() );
+		TR << assembly_->get_forward_assembly() << std::endl;
 		//Test size
 		TS_ASSERT( assembly_->get_size() == 5 );
 		//Test length
@@ -489,8 +489,8 @@ public:
 			//assembly_length += current_seg->get_length();
 			current_seg = current_seg->get_c_terminal_neighbor();
 		}
-		TS_TRACE( "Reported assembly length: " + utility::to_string( assembly_->get_length() ) );
-		TS_TRACE( "Calculated assembly length: " + utility::to_string( assembly_length ) );
+		TR << "Reported assembly length: " + utility::to_string( assembly_->get_length() ) << std::endl;
+		TR << "Calculated assembly length: " + utility::to_string( assembly_length ) << std::endl;
 		TS_ASSERT( assembly_->get_length() == assembly_length );
 		//Test all connectivity (TODO)
 		//19-20-(21|31||1)-2-3
@@ -516,9 +516,9 @@ public:
 	}
 
 	void test_double_chimerize_single_helix_two_triplets_cterm_first(){
-		TS_TRACE( "Begin double_chimerize_single_helix_two_triplets_cterm_first" );
+		TR << "Begin double_chimerize_single_helix_two_triplets_cterm_first" << std::endl;
 		assembly_ = sewing_testing::make_double_chimaera_cterm_first( assembly_ );
-		TS_TRACE( assembly_->get_forward_assembly() );
+		TR << assembly_->get_forward_assembly() << std::endl;
 		//Test size
 		TS_ASSERT( assembly_->get_size() == 5 );
 		//Test length
@@ -529,8 +529,8 @@ public:
 			//assembly_length += current_seg->get_length();
 			current_seg = current_seg->get_c_terminal_neighbor();
 		}
-		TS_TRACE( "Reported assembly length: " + utility::to_string( assembly_->get_length() ) );
-		TS_TRACE( "Calculated assembly length: " + utility::to_string( assembly_length ) );
+		TR << "Reported assembly length: " + utility::to_string( assembly_->get_length() ) << std::endl;
+		TR << "Calculated assembly length: " + utility::to_string( assembly_length ) << std::endl;
 		TS_ASSERT( assembly_->get_length() == assembly_length );
 		//Test all connectivity (TODO)
 		//19-20-(21||31|1)-2-3
@@ -553,11 +553,11 @@ public:
 	}
 
 	void test_basis_pair_calculations_recursive_unchimerize_n_term(){
-		TS_TRACE( "Begin test_basis_pair_calculations_recursive_unchimerize_n_term" );
+		TR << "Begin test_basis_pair_calculations_recursive_unchimerize_n_term" << std::endl;
 		assembly_ = sewing_testing::make_double_chimaera_nterm_first( assembly_ );
 		bool nterm = true;
 		assembly_->delete_segment( nterm );
-		TS_TRACE( assembly_->get_forward_assembly() );
+		TR << assembly_->get_forward_assembly() << std::endl;
 		//First check that the chimaera in the assembly has the correct basis pair
 		//Correct answer will be (6, 3)
 		core::Size seg1 = assembly_->get_n_terminal_segment()->get_basis_pair().first.segment_id();
@@ -589,10 +589,10 @@ public:
 
 
 	void test_basis_pair_calculations_recursive_unchimerize_c_term(){
-		TS_TRACE( "Begin test_basis_pair_calculations_recursive_unchimerize_c_term" );
+		TR << "Begin test_basis_pair_calculations_recursive_unchimerize_c_term" << std::endl;
 		assembly_ = sewing_testing::make_double_chimaera_cterm_first( assembly_ );
-		TS_TRACE( assembly_->get_forward_assembly() );
-		TS_TRACE( "Testing connectivity of parent chimaera" );
+		TR << assembly_->get_forward_assembly() << std::endl;
+		TR << "Testing connectivity of parent chimaera" << std::endl;
 		data_storage::SmartSegmentOP chimaera = assembly_->local_segments().at( 2 )->get_n_terminal_neighbor(); //Double chimaera, actually
 		TS_ASSERT( chimaera->get_n_terminal_parent()->get_segment_id() == 21 );
 		TS_ASSERT( chimaera->get_n_terminal_parent()->get_n_terminal_neighbor()->get_segment_id() == 20 );
@@ -600,12 +600,12 @@ public:
 		TS_ASSERT( chimaera->get_c_terminal_parent()->get_n_terminal_parent()->get_segment_id() == 31 );
 		TS_ASSERT( chimaera->get_c_terminal_parent()->get_c_terminal_parent()->get_segment_id() == 1 );
 		TS_ASSERT( chimaera->get_c_terminal_parent()->get_c_terminal_parent()->get_c_terminal_neighbor()->get_segment_id() == 2 );
-		TS_TRACE( "Testing connectivity of parent chimaera" );
+		TR << "Testing connectivity of parent chimaera" << std::endl;
 		TS_ASSERT( chimaera->get_c_terminal_parent()->get_c_terminal_neighbor() );
 		TS_ASSERT( chimaera->get_c_terminal_parent()->get_c_terminal_neighbor()->get_segment_id() == 2 );
 		bool nterm = false;
 		assembly_->delete_segment( nterm );
-		TS_TRACE( assembly_->get_forward_assembly() );
+		TR << assembly_->get_forward_assembly() << std::endl;
 		//First check that the chimaera in the assembly has the correct basis pair
 		//Correct answer will be (2, 4)
 		core::Size seg1 = assembly_->get_c_terminal_segment()->get_basis_pair().first.segment_id();
@@ -631,11 +631,11 @@ public:
 
 
 	void test_double_unchimerize_single_helix_two_triplets_nterm(){
-		TS_TRACE( "Begin double_unchimerize_single_helix_two_triplets_nterm" );
+		TR << "Begin double_unchimerize_single_helix_two_triplets_nterm" << std::endl;
 		assembly_ = sewing_testing::make_double_chimaera_nterm_first( assembly_ );
 		bool nterm = true;
 		assembly_->delete_segment( nterm );
-		TS_TRACE( assembly_->get_forward_assembly() );
+		TR << assembly_->get_forward_assembly() << std::endl;
 		//Now we're going to test all the parameters of the assembly
 		TS_ASSERT( assembly_->get_size() == 3 );
 		//Test length
@@ -646,8 +646,8 @@ public:
 			assembly_length = assembly_length +  current_seg->get_length();
 			current_seg = current_seg->get_c_terminal_neighbor();
 		}
-		TS_TRACE( "Reported assembly length: " + utility::to_string( assembly_->get_length() ) );
-		TS_TRACE( "Calculated assembly length: " + utility::to_string( assembly_length ) );
+		TR << "Reported assembly length: " + utility::to_string( assembly_->get_length() ) << std::endl;
+		TR << "Calculated assembly length: " + utility::to_string( assembly_length ) << std::endl;
 		TS_ASSERT( assembly_->get_length() == assembly_length );
 		//Make sure the termini are right
 		TS_ASSERT( assembly_->get_c_terminal_segment()->get_segment_id() == 3 );
@@ -689,11 +689,11 @@ public:
 
 	//PROBLEM TEST??
 	void test_double_unchimerize_single_helix_two_triplets_cterm(){
-		TS_TRACE( "Begin double_unchimerize_single_helix_two_triplets_cterm" );
+		TR << "Begin double_unchimerize_single_helix_two_triplets_cterm" << std::endl;
 		assembly_ = sewing_testing::make_double_chimaera_cterm_first( assembly_ );
 		bool nterm = false;
 		assembly_->delete_segment( nterm );
-		TS_TRACE( assembly_->get_forward_assembly() );
+		TR << assembly_->get_forward_assembly() << std::endl;
 		//Now we're going to test all the parameters of the assembly
 		TS_ASSERT( assembly_->get_size() == 3 );
 		//Test length
@@ -704,8 +704,8 @@ public:
 			//assembly_length += current_seg->get_length();
 			current_seg = current_seg->get_c_terminal_neighbor();
 		}
-		TS_TRACE( "Reported assembly length: " + utility::to_string( assembly_->get_length() ) );
-		TS_TRACE( "Calculated assembly length: " + utility::to_string( assembly_length ) );
+		TR << "Reported assembly length: " + utility::to_string( assembly_->get_length() ) << std::endl;
+		TR << "Calculated assembly length: " + utility::to_string( assembly_length ) << std::endl;
 		TS_ASSERT( assembly_->get_length() == assembly_length );
 		//Make sure the termini are right
 		TS_ASSERT( assembly_->get_n_terminal_segment()->get_segment_id() == 19 );
@@ -745,7 +745,7 @@ public:
 	//In theory, if the delete works properly, the switch should work since it's just an add after the delete
 
 	void test_reverting_double_unchimerize_nterm(){
-		TS_TRACE( "Begin double_unchimerize_single_helix_two_triplets_nterm" );
+		TR << "Begin double_unchimerize_single_helix_two_triplets_nterm" << std::endl;
 		assembly_ = sewing_testing::make_double_chimaera_nterm_first( assembly_ );
 		bool nterm = true;
 		assembly_->delete_segment( nterm );
@@ -754,7 +754,7 @@ public:
 		TS_ASSERT( assembly_->local_segments().at( 20 )->is_in_Assembly() == false );
 		TS_ASSERT( assembly_->local_segments().at( 21 )->is_in_Assembly() == false );
 
-		TS_TRACE( assembly_->get_forward_assembly() );
+		TR << assembly_->get_forward_assembly() << std::endl;
 		assembly_->revert();
 
 		//Now run all the tests on it that we ran when we first made it
@@ -768,8 +768,8 @@ public:
 			//assembly_length += current_seg->get_length();
 			current_seg = current_seg->get_c_terminal_neighbor();
 		}
-		TS_TRACE( "Reported assembly length: " + utility::to_string( assembly_->get_length() ) );
-		TS_TRACE( "Calculated assembly length: " + utility::to_string( assembly_length ) );
+		TR << "Reported assembly length: " + utility::to_string( assembly_->get_length() ) << std::endl;
+		TR << "Calculated assembly length: " + utility::to_string( assembly_length ) << std::endl;
 		TS_ASSERT( assembly_->get_length() == assembly_length );
 		//Test all connectivity (TODO)
 		//19-20-(21||31|1)-2-3
@@ -792,16 +792,16 @@ public:
 	}
 
 	void test_reverting_double_unchimerize_cterm(){
-		TS_TRACE( "Begin double_unchimerize_single_helix_two_triplets_cterm" );
+		TR << "Begin double_unchimerize_single_helix_two_triplets_cterm" << std::endl;
 		assembly_ = sewing_testing::make_double_chimaera_cterm_first( assembly_ );
 		bool nterm = false;
 		assembly_->delete_segment( nterm );
-		TS_TRACE( assembly_->get_forward_assembly() );
+		TR << assembly_->get_forward_assembly() << std::endl;
 		TS_ASSERT( assembly_->local_segments().at( 1 )->is_in_Assembly() == false );
 		TS_ASSERT( assembly_->local_segments().at( 2 )->is_in_Assembly() == false );
 		TS_ASSERT( assembly_->local_segments().at( 3 )->is_in_Assembly() == false );
 		assembly_->revert();
-		TS_TRACE( assembly_->get_forward_assembly() );
+		TR << assembly_->get_forward_assembly() << std::endl;
 		TS_ASSERT( assembly_->get_size() == 5 );
 		//Test length
 		core::Size assembly_length = 0;
@@ -811,8 +811,8 @@ public:
 			//assembly_length += current_seg->get_length();
 			current_seg = current_seg->get_c_terminal_neighbor();
 		}
-		TS_TRACE( "Reported assembly length: " + utility::to_string( assembly_->get_length() ) );
-		TS_TRACE( "Calculated assembly length: " + utility::to_string( assembly_length ) );
+		TR << "Reported assembly length: " + utility::to_string( assembly_->get_length() ) << std::endl;
+		TR << "Calculated assembly length: " + utility::to_string( assembly_length ) << std::endl;
 		TS_ASSERT( assembly_->get_length() == assembly_length );
 		//Test all connectivity (TODO)
 		//19-20-(21|31||1)-2-3
@@ -1047,7 +1047,7 @@ public:
 
 
 	void test_assemblies_are_continuous(){
-		TS_TRACE( "Begin assemblies_are_continuous" );
+		TR << "Begin assemblies_are_continuous" << std::endl;
 		assembly_ = sewing_testing::make_double_chimaera_nterm_first( assembly_ );
 		TS_ASSERT( assembly_->is_continuous() );
 		assembly_ = data_storage::SmartAssemblyOP( new data_storage::SmartAssembly( segment_vector_ ) );
@@ -1062,7 +1062,7 @@ public:
 	void test_auto_detect_contacts(){
 		assembly_ = sewing_testing::initial_assembly_with_auto_detected_ligand_contacts( assembly_ );
 		//Check that the owner segment of the ligand is correct--segID should be 32
-		TS_TRACE( "Ligand owner segment is " + utility::to_string( assembly_->get_local_ligands().at( 1 )->get_owner_segment()->get_segment_id() ) );
+		TR << "Ligand owner segment is " + utility::to_string( assembly_->get_local_ligands().at( 1 )->get_owner_segment()->get_segment_id() ) << std::endl;
 		TS_ASSERT( assembly_->get_local_ligands().at( 1 )->get_owner_segment()->get_segment_id() == 33 );
 		TS_ASSERT( assembly_->get_local_ligands().at( 1 )->get_owner_segment()->get_const_owned_ligand_residues().size() > 0);
 		TS_ASSERT( assembly_->get_local_ligands().at( 1 )->get_owner_segment()->get_const_owned_ligand_residues().at( 1 ) ==  assembly_->get_local_ligands().at( 1 ) );
@@ -1072,7 +1072,7 @@ public:
 		//All will have ligand_atom 1, segment_id 32, residue_atom 10
 		//residue_number will be 10 for 1 and 12 for the other
 		for ( data_storage::LigandContactOP contact: contacts ) {
-			TS_TRACE( "Ligand contact is " + utility::to_string( contact->ligand_atom ) + ": " + utility::to_string( contact->segment_id ) + "-" + utility::to_string( contact->residue_number ) + "-" + utility::to_string( contact->residue_atom ) );
+			TR << "Ligand contact is " + utility::to_string( contact->ligand_atom ) + ": " + utility::to_string( contact->segment_id ) + "-" + utility::to_string( contact->residue_number ) + "-" + utility::to_string( contact->residue_atom ) << std::endl;
 			TS_ASSERT( contact->ligand_atom == 1 );
 			TS_ASSERT( contact->residue_atom == 10 );
 			TS_ASSERT( contact->segment_id == 33 );
@@ -1090,12 +1090,12 @@ public:
 		//Now do the add for real at basis residue 15 (this would be segment 13, which is 14 residues long)
 		TS_ASSERT( assembly_->add_segment( nterm, 13, 15, 7 ) );
 		core::Size chimaera_seg_id = assembly_->get_last_chimaera()->get_segment_id();
-		TS_TRACE( "Chimaera is segment " + utility::to_string( chimaera_seg_id ) );
+		TR << "Chimaera is segment " + utility::to_string( chimaera_seg_id ) << std::endl;
 		//Contacts should be exactly the same except for the segID, which should be that of the new chimaera
 		TS_ASSERT( assembly_->get_local_ligands().count( 1 ) != 0 );
 		utility::vector1< data_storage::LigandContactOP > const & contacts = assembly_->get_local_ligands().at( 1 )->get_current_contacts();
 		for ( data_storage::LigandContactOP contact: contacts ) {
-			TS_TRACE( "Ligand contact is " + utility::to_string( contact->ligand_atom ) + ": " + utility::to_string( contact->segment_id ) + "-" + utility::to_string( contact->residue_number ) + "-" + utility::to_string( contact->residue_atom ) );
+			TR << "Ligand contact is " + utility::to_string( contact->ligand_atom ) + ": " + utility::to_string( contact->segment_id ) + "-" + utility::to_string( contact->residue_number ) + "-" + utility::to_string( contact->residue_atom ) << std::endl;
 			TS_ASSERT( contact->ligand_atom == 1 );
 			TS_ASSERT( contact->residue_atom == 10 );
 			TS_ASSERT( contact->segment_id == chimaera_seg_id );
@@ -1105,7 +1105,7 @@ public:
 		TS_ASSERT( std::dynamic_pointer_cast< data_storage::LigandSegment const >( assembly_->get_last_chimaera() ) != nullptr );
 		TS_ASSERT( std::dynamic_pointer_cast< data_storage::LigandSegment const >( assembly_->get_last_chimaera() )->get_const_owned_ligand_residues().size() > 0 );
 		//The ligand should know that its owner is the new chimaera
-		TS_TRACE( "Ligand owner segment is " + utility::to_string( assembly_->get_local_ligands().at( 1 )->get_owner_segment()->get_segment_id() ) );
+		TR << "Ligand owner segment is " + utility::to_string( assembly_->get_local_ligands().at( 1 )->get_owner_segment()->get_segment_id() ) << std::endl;
 		TS_ASSERT( assembly_->get_local_ligands().at( 1 )->get_owner_segment()->get_segment_id() == chimaera_seg_id );
 		//The old segment should still think that it owns the ligand
 		TS_ASSERT( std::dynamic_pointer_cast< data_storage::LigandSegment const >( assembly_->local_segments().at( 33 ) )->get_const_owned_ligand_residues().size() > 0 );
@@ -1123,13 +1123,13 @@ public:
 		//Residue numbering will change due to n terminal chimerization
 		//Since seg1's basis residue was 1 and seg2's was 4, all resnums decrease by 1
 		core::Size chimaera_seg_id = assembly_->get_last_chimaera()->get_segment_id();
-		TS_TRACE( "Chimaera is segment " + utility::to_string( chimaera_seg_id ) );
+		TR << "Chimaera is segment " + utility::to_string( chimaera_seg_id ) << std::endl;
 		//Contacts should have the new segID, the same atoms, but their residue numbers will have changed--NEW = OLD + N - C
 		//10 + 4 - 5 = 9; 14 + 4 - 5 = 13
 		TS_ASSERT( assembly_->get_local_ligands().count( 1 ) != 0 );
 		utility::vector1< data_storage::LigandContactOP > const & contacts = assembly_->get_local_ligands().at( 1 )->get_current_contacts();
 		for ( data_storage::LigandContactOP contact: contacts ) {
-			TS_TRACE( "Ligand contact is " + utility::to_string( contact->ligand_atom ) + ": " + utility::to_string( contact->segment_id ) + "-" + utility::to_string( contact->residue_number ) + "-" + utility::to_string( contact->residue_atom ) );
+			TR << "Ligand contact is " + utility::to_string( contact->ligand_atom ) + ": " + utility::to_string( contact->segment_id ) + "-" + utility::to_string( contact->residue_number ) + "-" + utility::to_string( contact->residue_atom ) << std::endl;
 			TS_ASSERT( contact->ligand_atom == 1 );
 			TS_ASSERT( contact->residue_atom == 10 );
 			TS_ASSERT( contact->segment_id == chimaera_seg_id );
@@ -1139,7 +1139,7 @@ public:
 		TS_ASSERT( std::dynamic_pointer_cast< data_storage::LigandSegment const >( assembly_->get_last_chimaera() ) != nullptr );
 		TS_ASSERT( std::dynamic_pointer_cast< data_storage::LigandSegment const >( assembly_->get_last_chimaera() )->get_const_owned_ligand_residues().size() > 0 );
 		//The ligand should know that its owner is the new chimaera
-		TS_TRACE( "Ligand owner segment is " + utility::to_string( assembly_->get_local_ligands().at( 1 )->get_owner_segment()->get_segment_id() ) );
+		TR << "Ligand owner segment is " + utility::to_string( assembly_->get_local_ligands().at( 1 )->get_owner_segment()->get_segment_id() ) << std::endl;
 		TS_ASSERT( assembly_->get_local_ligands().at( 1 )->get_owner_segment()->get_segment_id() == chimaera_seg_id );
 		//The old segment should still think that it owns the ligand
 		TS_ASSERT( std::dynamic_pointer_cast< data_storage::LigandSegment const >( assembly_->local_segments().at( 33 ) )->get_const_owned_ligand_residues().size() > 0 );
@@ -1166,15 +1166,15 @@ public:
 		TS_ASSERT( std::dynamic_pointer_cast< data_storage::LigandSegment const >( initial_chimaera )->get_const_owned_ligand_residues().size() > 0 );
 		TS_ASSERT( std::dynamic_pointer_cast< data_storage::LigandSegment const >( double_chimaera )->get_const_owned_ligand_residues().size() > 0 );
 		//BUT the ligand should know that it's really the double chimaera who owns it
-		TS_TRACE( "Ligand owner segment is " + utility::to_string( assembly_->get_local_ligands().at( 1 )->get_owner_segment()->get_segment_id() ) );
-		TS_TRACE( "Double chimaera is segment " + utility::to_string( double_chimaera->get_segment_id() ) );
-		TS_TRACE( "Initial chimaera is segment " + utility::to_string( initial_chimaera->get_segment_id() ) );
+		TR << "Ligand owner segment is " + utility::to_string( assembly_->get_local_ligands().at( 1 )->get_owner_segment()->get_segment_id() ) << std::endl;
+		TR << "Double chimaera is segment " + utility::to_string( double_chimaera->get_segment_id() ) << std::endl;
+		TR << "Initial chimaera is segment " + utility::to_string( initial_chimaera->get_segment_id() ) << std::endl;
 		TS_ASSERT( assembly_->get_local_ligands().at( 1 )->get_owner_segment()->get_segment_id() == double_chimaera->get_segment_id() );
 		//The ligand contacts should reflect that the contacts are in the double chimaera and have the correct residue/atom numbers
 		TS_ASSERT( assembly_->get_local_ligands().count( 1 ) != 0 );
 		utility::vector1< data_storage::LigandContactOP > const & contacts = assembly_->get_local_ligands().at( 1 )->get_current_contacts();
 		for ( data_storage::LigandContactOP contact: contacts ) {
-			TS_TRACE( "Ligand contact is " + utility::to_string( contact->ligand_atom ) + ": " + utility::to_string( contact->segment_id ) + "-" + utility::to_string( contact->residue_number ) + "-" + utility::to_string( contact->residue_atom ) );
+			TR << "Ligand contact is " + utility::to_string( contact->ligand_atom ) + ": " + utility::to_string( contact->segment_id ) + "-" + utility::to_string( contact->residue_number ) + "-" + utility::to_string( contact->residue_atom ) << std::endl;
 			TS_ASSERT( contact->ligand_atom == 1 );
 			TS_ASSERT( contact->residue_atom == 10 );
 			TS_ASSERT( contact->segment_id == double_chimaera->get_segment_id() );
@@ -1203,17 +1203,17 @@ public:
 		TS_ASSERT( std::dynamic_pointer_cast< data_storage::LigandSegment const >( initial_chimaera )->get_const_owned_ligand_residues().size() > 0 );
 		TS_ASSERT( std::dynamic_pointer_cast< data_storage::LigandSegment const >( double_chimaera )->get_const_owned_ligand_residues().size() > 0 );
 		//BUT the ligand should know that it's really the double chimaera who owns it
-		//TS_TRACE( "Ligand owner segment is " + utility::to_string( assembly_->get_local_ligands().at( 1 )->get_owner_segment()->get_segment_id() ) );
-		TS_TRACE( "Ligand owner segment is " + utility::to_string( assembly_->get_local_ligands().at( 1 )->get_owner_segment()->get_segment_id() ) );
-		TS_TRACE( "Double chimaera is segment " + utility::to_string( double_chimaera->get_segment_id() ) );
-		TS_TRACE( "Initial chimaera is segment " + utility::to_string( initial_chimaera->get_segment_id() ) );
+		//TR << "Ligand owner segment is " + utility::to_string( assembly_->get_local_ligands().at( 1 )->get_owner_segment()->get_segment_id() ) << std::endl;
+		TR << "Ligand owner segment is " + utility::to_string( assembly_->get_local_ligands().at( 1 )->get_owner_segment()->get_segment_id() ) << std::endl;
+		TR << "Double chimaera is segment " + utility::to_string( double_chimaera->get_segment_id() ) << std::endl;
+		TR << "Initial chimaera is segment " + utility::to_string( initial_chimaera->get_segment_id() ) << std::endl;
 
 		TS_ASSERT( assembly_->get_local_ligands().at( 1 )->get_owner_segment()->get_segment_id() == double_chimaera->get_segment_id() );
 		//The ligand contacts should reflect that the contacts are in the double chimaera and have the correct residue/atom numbers
 		TS_ASSERT( assembly_->get_local_ligands().count( 1 ) != 0 );
 		utility::vector1< data_storage::LigandContactOP > const & contacts = assembly_->get_local_ligands().at( 1 )->get_current_contacts();
 		for ( data_storage::LigandContactOP contact: contacts ) {
-			TS_TRACE( "Ligand contact is " + utility::to_string( contact->ligand_atom ) + ": " + utility::to_string( contact->segment_id ) + "-" + utility::to_string( contact->residue_number ) + "-" + utility::to_string( contact->residue_atom ) );
+			TR << "Ligand contact is " + utility::to_string( contact->ligand_atom ) + ": " + utility::to_string( contact->segment_id ) + "-" + utility::to_string( contact->residue_number ) + "-" + utility::to_string( contact->residue_atom ) << std::endl;
 			TS_ASSERT( contact->ligand_atom == 1 );
 			TS_ASSERT( contact->residue_atom == 10 );
 			TS_ASSERT( contact->segment_id == double_chimaera->get_segment_id() );
@@ -1229,9 +1229,9 @@ public:
 		data_storage::SmartSegmentOP chimaera = assembly_->get_last_chimaera();
 		assembly_->delete_segment( nterm );
 		//The assembly should be as it was before any add/delete
-		TS_TRACE( "Ligand owner segment is " + utility::to_string( assembly_->get_local_ligands().at( 1 )->get_owner_segment()->get_segment_id() ) );
-		//TS_TRACE( "Double chimaera is segment " + utility::to_string( double_chimaera->get_segment_id() ) );
-		//TS_TRACE( "Initial chimaera is segment " + utility::to_string( initial_chimaera->get_segment_id() ) );
+		TR << "Ligand owner segment is " + utility::to_string( assembly_->get_local_ligands().at( 1 )->get_owner_segment()->get_segment_id() ) << std::endl;
+		//TR << "Double chimaera is segment " + utility::to_string( double_chimaera->get_segment_id() ) << std::endl;
+		//TR << "Initial chimaera is segment " + utility::to_string( initial_chimaera->get_segment_id() ) << std::endl;
 
 		TS_ASSERT( assembly_->get_local_ligands().at( 1 )->get_owner_segment()->get_segment_id() == 33 );
 		TS_ASSERT( assembly_->get_local_ligands().at( 1 )->get_owner_segment()->get_const_owned_ligand_residues().size() > 0);
@@ -1242,7 +1242,7 @@ public:
 		//All will have ligand_atom 1, segment_id 32, residue_atom 10
 		//residue_number will be 10 for 1 and 12 for the other
 		for ( data_storage::LigandContactOP contact: contacts ) {
-			TS_TRACE( "Ligand contact is " + utility::to_string( contact->ligand_atom ) + ": " + utility::to_string( contact->segment_id ) + "-" + utility::to_string( contact->residue_number ) + "-" + utility::to_string( contact->residue_atom ) );
+			TR << "Ligand contact is " + utility::to_string( contact->ligand_atom ) + ": " + utility::to_string( contact->segment_id ) + "-" + utility::to_string( contact->residue_number ) + "-" + utility::to_string( contact->residue_atom ) << std::endl;
 			TS_ASSERT( contact->ligand_atom == 1 );
 			TS_ASSERT( contact->residue_atom == 10 );
 			TS_ASSERT( contact->segment_id == 33 );
@@ -1260,9 +1260,9 @@ public:
 		data_storage::SmartSegmentOP chimaera = assembly_->get_last_chimaera();
 		assembly_->delete_segment( nterm );
 		//The assembly should be as it was before any add/delete
-		TS_TRACE( "Ligand owner segment is " + utility::to_string( assembly_->get_local_ligands().at( 1 )->get_owner_segment()->get_segment_id() ) );
-		//TS_TRACE( "Double chimaera is segment " + utility::to_string( double_chimaera->get_segment_id() ) );
-		//TS_TRACE( "Initial chimaera is segment " + utility::to_string( initial_chimaera->get_segment_id() ) );
+		TR << "Ligand owner segment is " + utility::to_string( assembly_->get_local_ligands().at( 1 )->get_owner_segment()->get_segment_id() ) << std::endl;
+		//TR << "Double chimaera is segment " + utility::to_string( double_chimaera->get_segment_id() ) << std::endl;
+		//TR << "Initial chimaera is segment " + utility::to_string( initial_chimaera->get_segment_id() ) << std::endl;
 
 		TS_ASSERT( assembly_->get_local_ligands().at( 1 )->get_owner_segment()->get_segment_id() == 33 );
 		TS_ASSERT( assembly_->get_local_ligands().at( 1 )->get_owner_segment()->get_const_owned_ligand_residues().size() > 0);
@@ -1273,7 +1273,7 @@ public:
 		//All will have ligand_atom 1, segment_id 32, residue_atom 10
 		//residue_number will be 10 for 1 and 12 for the other
 		for ( data_storage::LigandContactOP contact: contacts ) {
-			TS_TRACE( "Ligand contact is " + utility::to_string( contact->ligand_atom ) + ": " + utility::to_string( contact->segment_id ) + "-" + utility::to_string( contact->residue_number ) + "-" + utility::to_string( contact->residue_atom ) );
+			TR << "Ligand contact is " + utility::to_string( contact->ligand_atom ) + ": " + utility::to_string( contact->segment_id ) + "-" + utility::to_string( contact->residue_number ) + "-" + utility::to_string( contact->residue_atom ) << std::endl;
 			TS_ASSERT( contact->ligand_atom == 1 );
 			TS_ASSERT( contact->residue_atom == 10 );
 			TS_ASSERT( contact->segment_id == 33 );
@@ -1300,13 +1300,13 @@ public:
 		utility::vector1< data_storage::LigandContactOP > const & contacts = assembly_->get_local_ligands().at( 1 )->get_current_contacts();
 
 
-		TS_TRACE( "Ligand owner segment is " + utility::to_string( assembly_->get_local_ligands().at( 1 )->get_owner_segment()->get_segment_id() ) );
-		TS_TRACE( "Double chimaera is segment " + utility::to_string( double_chimaera->get_segment_id() ) );
-		TS_TRACE( "Initial chimaera is segment " + utility::to_string( initial_chimaera->get_segment_id() ) );
-		TS_TRACE( "Final chimaera is segment " + utility::to_string( final_chimaera->get_segment_id() ) );
+		TR << "Ligand owner segment is " + utility::to_string( assembly_->get_local_ligands().at( 1 )->get_owner_segment()->get_segment_id() ) << std::endl;
+		TR << "Double chimaera is segment " + utility::to_string( double_chimaera->get_segment_id() ) << std::endl;
+		TR << "Initial chimaera is segment " + utility::to_string( initial_chimaera->get_segment_id() ) << std::endl;
+		TR << "Final chimaera is segment " + utility::to_string( final_chimaera->get_segment_id() ) << std::endl;
 
 		for ( data_storage::LigandContactOP contact: contacts ) {
-			TS_TRACE( "Ligand contact is " + utility::to_string( contact->ligand_atom ) + ": " + utility::to_string( contact->segment_id ) + "-" + utility::to_string( contact->residue_number ) + "-" + utility::to_string( contact->residue_atom ) );
+			TR << "Ligand contact is " + utility::to_string( contact->ligand_atom ) + ": " + utility::to_string( contact->segment_id ) + "-" + utility::to_string( contact->residue_number ) + "-" + utility::to_string( contact->residue_atom ) << std::endl;
 			TS_ASSERT( contact->ligand_atom == 1 );
 			TS_ASSERT( contact->residue_atom == 10 );
 			TS_ASSERT( contact->segment_id == final_chimaera->get_segment_id() );
@@ -1337,12 +1337,12 @@ public:
 		//The assembly should behave test_wise just like if we had only ever added to the c terminus
 		TS_ASSERT( assembly_->get_local_ligands().count( 1 ) != 0 );
 		utility::vector1< data_storage::LigandContactOP > const & contacts = assembly_->get_local_ligands().at( 1 )->get_current_contacts();
-		TS_TRACE( "Ligand owner segment is " + utility::to_string( assembly_->get_local_ligands().at( 1 )->get_owner_segment()->get_segment_id() ) );
-		TS_TRACE( "Double chimaera is segment " + utility::to_string( double_chimaera->get_segment_id() ) );
-		TS_TRACE( "Initial chimaera is segment " + utility::to_string( initial_chimaera->get_segment_id() ) );
-		TS_TRACE( "Final chimaera is segment " + utility::to_string( final_chimaera->get_segment_id() ) );
+		TR << "Ligand owner segment is " + utility::to_string( assembly_->get_local_ligands().at( 1 )->get_owner_segment()->get_segment_id() ) << std::endl;
+		TR << "Double chimaera is segment " + utility::to_string( double_chimaera->get_segment_id() ) << std::endl;
+		TR << "Initial chimaera is segment " + utility::to_string( initial_chimaera->get_segment_id() ) << std::endl;
+		TR << "Final chimaera is segment " + utility::to_string( final_chimaera->get_segment_id() ) << std::endl;
 		for ( data_storage::LigandContactOP contact: contacts ) {
-			TS_TRACE( "Ligand contact is " + utility::to_string( contact->ligand_atom ) + ": " + utility::to_string( contact->segment_id ) + "-" + utility::to_string( contact->residue_number ) + "-" + utility::to_string( contact->residue_atom ) );
+			TR << "Ligand contact is " + utility::to_string( contact->ligand_atom ) + ": " + utility::to_string( contact->segment_id ) + "-" + utility::to_string( contact->residue_number ) + "-" + utility::to_string( contact->residue_atom ) << std::endl;
 			TS_ASSERT( contact->ligand_atom == 1 );
 			TS_ASSERT( contact->residue_atom == 10 );
 			TS_ASSERT( contact->segment_id == final_chimaera->get_segment_id() );

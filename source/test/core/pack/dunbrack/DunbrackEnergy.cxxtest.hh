@@ -31,12 +31,13 @@
 #include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.hh>
 #include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.tmpl.hh>
 
-
+#include <basic/Tracer.hh>
 #include <basic/basic.hh>
 
 //Auto Headers
 #include <utility/vector1.hh>
 
+static basic::Tracer TR( "DunbrackEnergyTests" );
 
 // --------------- Test Class --------------- //
 
@@ -95,13 +96,13 @@ public:
 		//debug_assert( std::abs( nbins * angle_step - angle_range ) < 1e-15 );
 
 		Real real_bin_lower = ( ang - angle_start ) / angle_step;
-		std::cout << "rea_bin_lower " << real_bin_lower << std::endl;
+		TR << "rea_bin_lower " << real_bin_lower << std::endl;
 		Size bin_prev = static_cast< Size > ( real_bin_lower );
-		std::cout << "bin_prev      " << bin_prev << std::endl;
+		TR << "bin_prev      " << bin_prev << std::endl;
 		bin_lower = 1 + numeric::mod( bin_prev, nbins );
-		std::cout << "bin_lower     " << bin_lower << std::endl;
+		TR << "bin_lower     " << bin_lower << std::endl;
 		bin_upper = numeric::mod( bin_lower, nbins ) + 1;
-		std::cout << "bin_upper     " << bin_upper << std::endl;
+		TR << "bin_upper     " << bin_upper << std::endl;
 		angle_alpha = ( (ang - angle_start ) - ( bin_prev * angle_step ) ) / angle_step;
 	}
 
@@ -155,9 +156,9 @@ public:
 
 		for ( Real i(-180); i <= 180; i += 2 ) {
 			get_bb_bins_mod( i, bb_bin, bb_bin_next, bin_alpha );
-			std::cout << "BLARG angle: "  << std::setw(4) << i << " bb_bin " << bb_bin << " bb_bin_next " << bb_bin_next << " bin_alpha " << bin_alpha << std::endl;
+			TR << "BLARG angle: "  << std::setw(4) << i << " bb_bin " << bb_bin << " bb_bin_next " << bb_bin_next << " bin_alpha " << bin_alpha << std::endl;
 		}
-		std::cout << "DOUG DOUG DOUG STOP" << std::endl;
+		TR << "DOUG DOUG DOUG STOP" << std::endl;
 	}
 
 	void test_peptoid_energy_snap()
@@ -184,7 +185,7 @@ public:
 		sfxn( peptoid_cis );
 		sfxn( peptoid_cislike );
 
-		//std::cout << " 30 vs 40 " << std::endl;
+		//TR << " 30 vs 40 " << std::endl;
 		TS_ASSERT_DELTA( peptoid_cis.energies().total_energy(), peptoid_cislike.energies().total_energy(), 1e-6 );
 
 		peptoid_cis.set_omega( 1, 150 );
@@ -193,7 +194,7 @@ public:
 		sfxn( peptoid_cis );
 		sfxn( peptoid_cislike );
 
-		//std::cout << "150 vs 140 " << std::endl;
+		//TR << "150 vs 140 " << std::endl;
 		TS_ASSERT_DELTA( peptoid_cis.energies().total_energy(), peptoid_cislike.energies().total_energy(), 1e-6 );
 
 		peptoid_cis.set_omega( 1, -30 );
@@ -202,7 +203,7 @@ public:
 		sfxn( peptoid_cis );
 		sfxn( peptoid_cislike );
 
-		//std::cout << "-30 vs -40 " << std::endl;
+		//TR << "-30 vs -40 " << std::endl;
 		TS_ASSERT_DELTA( peptoid_cis.energies().total_energy(), peptoid_cislike.energies().total_energy(), 1e-6 );
 
 		peptoid_cis.set_omega( 1, -150 );
@@ -211,7 +212,7 @@ public:
 		sfxn( peptoid_cis );
 		sfxn( peptoid_cislike );
 
-		//std::cout << "-150 vs -140 " << std::endl;
+		//TR << "-150 vs -140 " << std::endl;
 		TS_ASSERT_DELTA( peptoid_cis.energies().total_energy(), peptoid_cislike.energies().total_energy(), 1e-6 );
 	}
 

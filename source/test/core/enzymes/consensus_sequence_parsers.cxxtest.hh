@@ -21,10 +21,13 @@
 
 // Utility header
 #include <utility/vector1.hh>
+#include <basic/Tracer.hh>
 
 // C++ header
 #include <string>
 
+
+static basic::Tracer TR("ConcensusSequenceParserTests");
 
 class ConsensusSequenceParserTests : public CxxTest::TestSuite {
 public: // Standard methods ///////////////////////////////////////////////////
@@ -46,7 +49,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 		using namespace std;
 		using namespace utility;
 
-		TS_TRACE( "Testing get_3_letter_codes_from_peptide_consensus_sequence()..." );
+		TR << "Testing get_3_letter_codes_from_peptide_consensus_sequence()..." << std::endl;
 
 		string const sequence( "HE(S/H/E)ISX" );
 		vector1< vector1< string > > consensus_residues;

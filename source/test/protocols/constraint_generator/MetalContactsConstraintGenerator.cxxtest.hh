@@ -76,7 +76,7 @@ public:
 		TS_ASSERT_DELTA( cst_gen.get_dist_cutoff_multiplier(), 1.0, TOLERANCE );
 		//Other numeric values have bogus/empty defaults
 		TS_ASSERT( !cst_gen.get_score_against_internal_contacts() );
-		TS_TRACE( "Default values" );
+		TR << "Default values" << std::endl;
 		ss_default << "<MetalContactsConstraintGenerator name=\"metal\" ligand_resnum=\"310\" ligand_atom_name=\"ZN\" />" << std::endl;
 		tag->read( ss_default );
 		TS_ASSERT_THROWS_NOTHING( cst_gen.parse_my_tag( tag, datamap ) );
@@ -109,37 +109,37 @@ public:
 		contact_218_226->set_index( "218,226" );
 		datamap.add( "ResidueSelector", "contact_218_226", contact_218_226 );
 
-		TS_TRACE( "Invalid both ligand" );
+		TR << "Invalid both ligand" << std::endl;
 		ss_invalid_both_ligand << "<MetalContactsConstraintGenerator name=\"metal\" ligand_resnum=\"310\" ligand_selector=\"ligand_310\" ligand_atom_name=\"ZN\" />" << std::endl;
-		TS_TRACE( "Invalid neither ligand" );
+		TR << "Invalid neither ligand" << std::endl;
 		ss_invalid_neither_ligand << "<MetalContactsConstraintGenerator name=\"metal\" ligand_atom_name=\"ZN\" />" << std::endl;
-		TS_TRACE( "Invalid no atom" );
+		TR << "Invalid no atom" << std::endl;
 		ss_invalid_no_atom << "<MetalContactsConstraintGenerator name=\"metal\" ligand_resnum=\"310\" />" << std::endl;
-		TS_TRACE( "Invalid both contact" );
+		TR << "Invalid both contact" << std::endl;
 		ss_invalid_both_contact << "<MetalContactsConstraintGenerator name=\"metal\" ligand_resnum=\"310\" ligand_atom_name=\"ZN\" contact_selector=\"contact_218_226\" contact_resnums=\"218,226\" />" << std::endl;
 
 
 
 
-		TS_TRACE( "Invalid both ligand" );
+		TR << "Invalid both ligand" << std::endl;
 		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss_invalid_both_ligand );
 		set_throw_on_next_assertion_failure();
 		TS_ASSERT_THROWS_ANYTHING( cst_gen.parse_my_tag( tag, datamap ) );
 
-		TS_TRACE( "Invalid both contact" );
+		TR << "Invalid both contact" << std::endl;
 		tag = utility::tag::TagOP( new utility::tag::Tag() );
 		tag->read( ss_invalid_both_contact );
 		set_throw_on_next_assertion_failure();
 		TS_ASSERT_THROWS_ANYTHING( cst_gen.parse_my_tag( tag, datamap ) );
 
-		TS_TRACE( "Invalid neither ligand" );
+		TR << "Invalid neither ligand" << std::endl;
 		tag = utility::tag::TagOP( new utility::tag::Tag() );
 		tag->read( ss_invalid_neither_ligand );
 		set_throw_on_next_assertion_failure();
 		TS_ASSERT_THROWS_ANYTHING( cst_gen.parse_my_tag( tag, datamap ) );
 
-		TS_TRACE( "Invalid no atom" );
+		TR << "Invalid no atom" << std::endl;
 		tag = utility::tag::TagOP( new utility::tag::Tag() );
 		tag->read( ss_invalid_no_atom );
 		set_throw_on_next_assertion_failure();
@@ -166,26 +166,26 @@ public:
 		std::stringstream ss_set_bases;
 		basic::datacache::DataMap datamap;
 
-		TS_TRACE( "Set multiplier" );
+		TR << "Set multiplier" << std::endl;
 		ss_set_multiplier << "<MetalContactsConstraintGenerator name=\"metal\" ligand_resnum=\"310\" ligand_atom_name=\"ZN\" dist_cutoff_multiplier=\"2.0\" />" << std::endl;
-		TS_TRACE( "Set ideal values" );
+		TR << "Set ideal values" << std::endl;
 		ss_set_ideal_values << "<MetalContactsConstraintGenerator name=\"metal\" ligand_resnum=\"310\" ligand_atom_name=\"ZN\" ideal_distance=\"2.2\" ideal_angle_about_contact=\"120\" ideal_dihedral_about_contact=\"0,180\" ideal_angle_about_metal=\"109.5\" ideal_dihedral_about_metal=\"30,60,90,120\" ideal_dihedral_3=\"120\"/>" << std::endl;
-		TS_TRACE( "Set score against internal contacts" );
+		TR << "Set score against internal contacts" << std::endl;
 		ss_set_bool << "<MetalContactsConstraintGenerator name=\"metal\" ligand_resnum=\"310\" ligand_atom_name=\"ZN\" score_against_internal_contacts=\"true\" />" << std::endl;
-		TS_TRACE( "Set bases" );
+		TR << "Set bases" << std::endl;
 		ss_set_bases << "<MetalContactsConstraintGenerator name=\"metal\" ligand_resnum=\"310\" ligand_atom_name=\"ZN\" base_atom_name=\"CB\" base_base_atom_name=\"CA\" />" << std::endl;
 
 
 		MetalContactsConstraintGenerator cst_gen;
 		utility::tag::TagOP tag( new utility::tag::Tag() );
-		TS_TRACE( "Set multiplier" );
+		TR << "Set multiplier" << std::endl;
 		tag->read( ss_set_multiplier );
 		TS_ASSERT_THROWS_NOTHING( cst_gen.parse_my_tag( tag, datamap ) );
 		TS_ASSERT_DELTA( cst_gen.get_dist_cutoff_multiplier(), 2.0, TOLERANCE );
 
 		cst_gen = MetalContactsConstraintGenerator();
 		tag = utility::tag::TagOP( new utility::tag::Tag() );
-		TS_TRACE( "Set ideal values" );
+		TR << "Set ideal values" << std::endl;
 		tag->read( ss_set_ideal_values );
 		TS_ASSERT_THROWS_NOTHING( cst_gen.parse_my_tag( tag, datamap ) );
 		TS_ASSERT_DELTA( cst_gen.get_ideal_distance(), 2.2, TOLERANCE );
@@ -198,13 +198,13 @@ public:
 		cst_gen = MetalContactsConstraintGenerator();
 		tag = utility::tag::TagOP( new utility::tag::Tag() );
 		tag->read( ss_set_bool );
-		TS_TRACE( "Set score against internal contacts" );
+		TR << "Set score against internal contacts" << std::endl;
 		TS_ASSERT_THROWS_NOTHING( cst_gen.parse_my_tag( tag, datamap ) );
 		TS_ASSERT_EQUALS( cst_gen.get_score_against_internal_contacts(), true );
 
 		cst_gen = MetalContactsConstraintGenerator();
 		tag = utility::tag::TagOP( new utility::tag::Tag() );
-		TS_TRACE( "Set atom bases" );
+		TR << "Set atom bases" << std::endl;
 		tag->read( ss_set_bases );
 		TS_ASSERT_THROWS_NOTHING( cst_gen.parse_my_tag( tag, datamap ) );
 		TS_ASSERT_EQUALS( cst_gen.get_base_atom_name(), "CB" );
@@ -230,7 +230,7 @@ public:
 		//res_selector
 		MetalContactsConstraintGenerator cst_gen;
 		utility::tag::TagOP tag( new utility::tag::Tag() );
-		TS_TRACE( "Ligand specified with selector" );
+		TR << "Ligand specified with selector" << std::endl;
 		tag->read( ss_res_selector );
 		TS_ASSERT_THROWS_NOTHING( cst_gen.parse_my_tag( tag, datamap ) );
 		TS_ASSERT( cst_gen.get_use_ligand_selector() );
@@ -240,7 +240,7 @@ public:
 		//string
 		cst_gen = MetalContactsConstraintGenerator();
 		tag = utility::tag::TagOP( new utility::tag::Tag() );
-		TS_TRACE( "Ligand specified with string" );
+		TR << "Ligand specified with string" << std::endl;
 		tag->read( ss_string );
 		TS_ASSERT_THROWS_NOTHING( cst_gen.parse_my_tag( tag, datamap ) );
 		TS_ASSERT( !cst_gen.get_use_ligand_selector() );
@@ -265,7 +265,7 @@ public:
 
 		MetalContactsConstraintGenerator cst_gen;
 		utility::tag::TagOP tag( new utility::tag::Tag() );
-		TS_TRACE( "Contacts specified with selector" );
+		TR << "Contacts specified with selector" << std::endl;
 		tag->read( ss_res_selector );
 		TS_ASSERT_THROWS_NOTHING( cst_gen.parse_my_tag( tag, datamap ) );
 		TS_ASSERT( !cst_gen.get_use_ligand_selector() );
@@ -277,7 +277,7 @@ public:
 
 		cst_gen = MetalContactsConstraintGenerator();
 		tag = utility::tag::TagOP( new utility::tag::Tag() );
-		TS_TRACE( "Contacts specified with string" );
+		TR << "Contacts specified with string" << std::endl;
 		tag->read( ss_string );
 		TS_ASSERT_THROWS_NOTHING( cst_gen.parse_my_tag( tag, datamap ) );
 		TS_ASSERT( !cst_gen.get_use_ligand_selector() );

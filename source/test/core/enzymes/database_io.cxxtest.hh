@@ -18,7 +18,9 @@
 
 // Unit header
 #include <core/enzymes/database_io.hh>
+#include <basic/Tracer.hh>
 
+static basic::Tracer TR( "EnzymeDatabaseIOTests" );
 
 class EnzymeDatabaseIOTests : public CxxTest::TestSuite {
 public: // Standard methods ///////////////////////////////////////////////////
@@ -39,7 +41,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 	{
 		using namespace core::enzymes;
 
-		TS_TRACE( "Testing read_enzyme_data_from_file()..." );
+		TR << "Testing read_enzyme_data_from_file()..." << std::endl;
 
 		EnzymeData const rosettase_data( read_enzyme_data_from_file( "core/enzymes/rosettase" ) );
 

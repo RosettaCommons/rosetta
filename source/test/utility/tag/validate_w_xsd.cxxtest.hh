@@ -36,6 +36,9 @@
 
 #include <boost/bind.hpp>
 
+#include <basic/Tracer.hh>
+
+static basic::Tracer TR( "XMLSchemaValidationTests" );
 
 using namespace utility::tag;
 
@@ -430,7 +433,7 @@ public:
 	}
 
 	void dont_test_residue_selector_schemas() {
-		std::cout << "XSD for ResidueSelectors" << std::endl;
+		TR << "XSD for ResidueSelectors" << std::endl;
 		XMLSchemaDefinition xsd;
 		core::select::residue_selector::ResidueSelectorFactory::get_instance()
 			->define_residue_selector_xml_schema( xsd );
@@ -464,34 +467,34 @@ public:
 
 		xsd.add_top_level_element( *rosetta_scripts_element );
 
-		//std::cout << xsd.full_definition() << std::endl;
+		//TR << xsd.full_definition() << std::endl;
 
 		XMLValidationOutput output = test_if_schema_is_valid( xsd.full_definition() );
 		TS_ASSERT( ! output.valid() );
-		std::cout << "output.warnings:\n" << output.warning_messages() << std::endl;
-		std::cout << "output.errors:\n" << output.error_messages() << std::endl;
+		TR << "output.warnings:\n" << output.warning_messages() << std::endl;
+		TR << "output.errors:\n" << output.error_messages() << std::endl;
 	}
 
 	void dont_test_task_op_schemas() {
-		std::cout << "XSD for DsspDesignOperation: " << std::endl;
+		TR << "XSD for DsspDesignOperation: " << std::endl;
 		XMLSchemaDefinition xsd;
 		protocols::task_operations::DsspDesignOperation::provide_xml_schema( xsd );
-		std::cout << xsd.full_definition() << std::endl;
+		TR << xsd.full_definition() << std::endl;
 
-		std::cout << "XSD for LinkResidues" << std::endl;
+		TR << "XSD for LinkResidues" << std::endl;
 		XMLSchemaDefinition xsd2;
 		protocols::task_operations::LinkResidues::provide_xml_schema( xsd2 );
-		std::cout << xsd2.full_definition() << std::endl;
+		TR << xsd2.full_definition() << std::endl;
 
-		std::cout << "XSD for RestrictToAlignedSegments" << std::endl;
+		TR << "XSD for RestrictToAlignedSegments" << std::endl;
 		XMLSchemaDefinition xsd3;
 		protocols::task_operations::RestrictToAlignedSegmentsOperation::provide_xml_schema( xsd3 );
-		std::cout << xsd3.full_definition() << std::endl;
+		TR << xsd3.full_definition() << std::endl;
 
-		std::cout << "XSD for SeqprofConsensusOperation" << std::endl;
+		TR << "XSD for SeqprofConsensusOperation" << std::endl;
 		XMLSchemaDefinition xsd4;
 		protocols::task_operations::SeqprofConsensusOperation::provide_xml_schema( xsd4 );
-		std::cout << xsd4.full_definition() << std::endl;
+		TR << xsd4.full_definition() << std::endl;
 
 		TS_ASSERT( xsd.full_definition().size() > 0 );
 	}
@@ -514,9 +517,9 @@ public:
 		//
 		//xmlSchemaParserCtxtPtr schema_parser_context = xmlSchemaNewDocParserCtxt( xsd_doc );
 		//xmlSchemaPtr schema = xmlSchemaParse( schema_parser_context );
-		////std::cout << "Parsed the schema" << std::endl;
+		////TR << "Parsed the schema" << std::endl;
 		//xmlSchemaValidCtxtPtr schema_validator = xmlSchemaNewValidCtxt( schema );
-		////std::cout << "Created schema validator" << std::endl;
+		////TR << "Created schema validator" << std::endl;
 		//
 		//XMLErrorHandler handler;
 		//xmlSchemaSetValidErrors( schema_validator, handle_xml_error, handle_xml_warning, &handler );
@@ -528,10 +531,10 @@ public:
 		//xmlChar * xml_input_xmlchar = xmlCharStrdup( xml_input_string.c_str() );
 		//xmlDoc * xml_doc = xmlParseDoc( xml_input_xmlchar );
 		//
-		////std::cout << "Validating XML document" << std::endl;
+		////TR << "Validating XML document" << std::endl;
 		//int validation_output = xmlSchemaValidateDoc( schema_validator, xml_doc );
 		//
-		////std::cout << "Validation output: " << validation_output << std::endl;
+		////TR << "Validation output: " << validation_output << std::endl;
 		//
 		//TS_ASSERT_EQUALS( validation_output, 0 );
 		//
@@ -580,7 +583,7 @@ public:
 			"10: \n";
 		TS_ASSERT_EQUALS( output.error_messages(), gold_errors );
 
-		//std::cout << "Errors:\n" << output.error_messages() << std::endl;
+		//TR << "Errors:\n" << output.error_messages() << std::endl;
 
 	}
 
@@ -757,7 +760,7 @@ public:
 
 		TS_ASSERT_EQUALS( output.error_messages(), gold_errors );
 
-		//std::cout << "Errors:\n" << output.error_messages() << std::endl;
+		//TR << "Errors:\n" << output.error_messages() << std::endl;
 
 	}
 
@@ -803,7 +806,7 @@ public:
 
 		TS_ASSERT_EQUALS( output.error_messages(), gold_errors );
 
-		//std::cout << "Errors:\n" << output.error_messages() << std::endl;
+		//TR << "Errors:\n" << output.error_messages() << std::endl;
 
 	}
 
@@ -821,9 +824,9 @@ public:
 
 		xmlSchemaParserCtxtPtr schema_parser_context = xmlSchemaNewDocParserCtxt( xsd_doc );
 		xmlSchemaPtr schema = xmlSchemaParse( schema_parser_context );
-		//std::cout << "Parsed the schema" << std::endl;
+		//TR << "Parsed the schema" << std::endl;
 		xmlSchemaValidCtxtPtr schema_validator = xmlSchemaNewValidCtxt( schema );
-		//std::cout << "Created schema validator" << std::endl;
+		//TR << "Created schema validator" << std::endl;
 
 		XMLErrorHandler handler;
 		xmlSetStructuredErrorFunc( & handler, handle_structured_xml_error );
@@ -837,11 +840,11 @@ public:
 		//xmlChar * xml_input_xmlchar = xmlCharStrdup( xml_input_string.c_str() );
 		//xmlDoc * xml_doc = xmlParseDoc( xml_input_xmlchar );
 
-		//std::cout << "Validating XML document" << std::endl;
+		//TR << "Validating XML document" << std::endl;
 		//int validation_output = xmlSchemaValidateDoc( schema_validator, xml_doc );
 		int validation_output = xmlSchemaValidateFile( schema_validator, "protocols/jd3/example_bad.xml", 0 );
 
-		//std::cout << "Validation output: " << validation_output << std::endl;
+		//TR << "Validation output: " << validation_output << std::endl;
 
 		TS_ASSERT_EQUALS( validation_output, 1824 );
 		TS_ASSERT_EQUALS( handler.errors().size(), 2 );

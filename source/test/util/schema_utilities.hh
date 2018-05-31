@@ -22,6 +22,10 @@
 #include <map>
 #include <string>
 
+#include <basic/Tracer.hh>
+
+static basic::Tracer TR2( "schema_utilities" );
+
 inline
 void recurse_through_subtags_for_attribute_descriptions(
 	utility::tag::TagCOP tag,
@@ -61,7 +65,7 @@ ensure_all_cts_for_creators_have_documentation_strings(
 		XMLSchemaDefinition xsd;
 		iter.second->provide_xml_schema( xsd );
 		std::string full_def = xsd.full_definition();
-		//std::cout << "full def: " << iter.first << "\n" << full_def << std::endl;
+		//TR2 << "full def: " << iter.first << "\n" << full_def << std::endl;
 		TagCOP tag( Tag::create( full_def ) );
 
 		// now we need to search for the xs:complexType with name = ct_naming_function( iter )
@@ -133,7 +137,7 @@ ensure_rosetta_scripts_like_XSD_validates_w_group(
 	XMLValidationOutput output = test_if_schema_is_valid( xsd.full_definition() );
 	TS_ASSERT( output.valid() );
 	if ( ! output.valid() ) {
-		std::cout << output.error_messages() << std::endl;
+		TR2 << output.error_messages() << std::endl;
 	}
 }
 
@@ -166,7 +170,7 @@ ensure_rosetta_scripts_like_XSD_validates_w_ct(
 	XMLValidationOutput output = test_if_schema_is_valid( xsd.full_definition() );
 	TS_ASSERT( output.valid() );
 	if ( ! output.valid() ) {
-		std::cout << output.error_messages() << std::endl;
+		TR2 << output.error_messages() << std::endl;
 	}
 }
 

@@ -735,8 +735,8 @@ public:
 			std::string expected_error =
 				"Exception in MultiplePoseMover with name \"mpm\": Failed to import mover2 from MOVERS";
 			if ( e.msg() != expected_error ) {
-				std::cout << e.msg() << std::endl;
-				std::cout << expected_error << std::endl;
+				TR << e.msg() << std::endl;
+				TR << expected_error << std::endl;
 			}
 			TS_ASSERT( e.msg().find(expected_error) != std::string::npos );
 		}
@@ -777,8 +777,8 @@ public:
 			std::string expected_error =
 				"Exception in MultiplePoseMover with name \"mpm\": Cannot import mover mpm into itself; recursion detected";
 			if ( e.msg() != expected_error ) {
-				std::cout << e.msg() << std::endl;
-				std::cout << expected_error << std::endl;
+				TR << e.msg() << std::endl;
+				TR << expected_error << std::endl;
 			}
 			TS_ASSERT( e.msg().find(expected_error) != std::string::npos );
 		}
@@ -834,8 +834,8 @@ public:
 			std::string expected_error =
 				"Exception in MultiplePoseMover with name \"mpm\": Failed to import filter3 from FILTERS";
 			if ( e.msg() != expected_error ) {
-				std::cout << e.msg() << std::endl;
-				std::cout << expected_error << std::endl;
+				TR << e.msg() << std::endl;
+				TR << expected_error << std::endl;
 			}
 			TS_ASSERT( e.msg().find(expected_error) != std::string::npos );
 		}

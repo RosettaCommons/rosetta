@@ -85,7 +85,7 @@ public:
 		TS_ASSERT_EQUALS( pose_->total_residue(), csts.size() );
 		for ( core::Size i = 1; i <= pose_->total_residue(); ++i ) {
 			if ( i > csts.size() ) {
-				TS_TRACE( "Constraints were not added for every residue!" );
+				TR << "Constraints were not added for every residue!" << std::endl;
 				continue; //Just so we won't crash (we'll have already failed
 			}
 			//Assert that each constraint is non-null
@@ -142,7 +142,7 @@ public:
 		core::scoring::constraints::ConstraintCOPs const csts = rt_gen.apply( *pose_ );
 		for ( core::Size i = 1; i <= pose_->total_residue(); ++i ) {
 			if ( i > csts.size() ) {
-				TS_TRACE( "Constraints were not added for every residue!" );
+				TR << "Constraints were not added for every residue!" << std::endl;
 				continue; //Just so we won't crash (we'll have already failed
 			}
 			//Assert that each constraint is non-null
@@ -212,7 +212,7 @@ public:
 		TS_ASSERT_EQUALS( pose_->total_residue(), csts.size() );
 		for ( core::Size i = 1; i <= pose_->total_residue(); ++i ) {
 			if ( i > csts.size() ) {
-				TS_TRACE( "Constraints were not added for every residue!" );
+				TR << "Constraints were not added for every residue!" << std::endl;
 				continue; //Just so we won't crash (we'll have already failed
 			}
 			//Assert that each constraint is non-null
@@ -307,7 +307,7 @@ public:
 		TS_ASSERT_EQUALS( pose_->total_residue(), csts_1.size() );
 		for ( core::Size i = 1; i <= pose_->total_residue(); ++i ) {
 			if ( i > csts_1.size() ) {
-				TS_TRACE( "Constraints were not added for every residue!" );
+				TR << "Constraints were not added for every residue!" << std::endl;
 				continue; //Just so we won't crash (we'll have already failed
 			}
 			//Assert that each constraint is non-null

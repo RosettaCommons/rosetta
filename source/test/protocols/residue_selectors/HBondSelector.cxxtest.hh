@@ -53,7 +53,7 @@ public:
 		basic::datacache::DataMap dm;
 		HBondSelectorOP rs( new HBondSelector );
 
-		TS_TRACE( "Tag with no options" );
+		TR << "Tag with no options" << std::endl;
 		TS_ASSERT_THROWS_ANYTHING( rs->parse_my_tag( tag, dm ) );
 
 		core::scoring::ScoreFunctionOP dummy_scorefxn( new core::scoring::ScoreFunction );
@@ -62,10 +62,10 @@ public:
 		std::stringstream ss_scorefxn;
 		ss_scorefxn << "<HBond name=\"hbond\" scorefxn=\"dummy\" />"; //No attributes are required, so this should work
 		tag->read( ss_scorefxn );
-		TS_TRACE( "Tag with dummy scorefxn" );
+		TR << "Tag with dummy scorefxn" << std::endl;
 		TS_ASSERT_THROWS_NOTHING( rs->parse_my_tag( tag, dm ) );
 		//Make sure defaults are set correctly
-		TS_TRACE( "Testing default values" );
+		TR << "Testing default values" << std::endl;
 		TS_ASSERT_EQUALS( rs->get_hbond_energy_cutoff(), -0.5 );
 		TS_ASSERT_EQUALS( rs->get_include_bb_bb(), false );
 		//The score function should be the default
@@ -77,7 +77,7 @@ public:
 
 		std::stringstream ss_set_options;
 		ss_set_options << "<HBond name=\"hbond\" scorefxn=\"dummy\" hbond_energy_cutoff=\"-1\" include_bb_bb=\"true\" />";
-		TS_TRACE( "Tag with options but no selector(s)" );
+		TR << "Tag with options but no selector(s)" << std::endl;
 		tag->read( ss_set_options );
 		TS_ASSERT_THROWS_NOTHING( rs->parse_my_tag( tag, dm ) );
 		TS_ASSERT_EQUALS( rs->get_hbond_energy_cutoff(), -1 );

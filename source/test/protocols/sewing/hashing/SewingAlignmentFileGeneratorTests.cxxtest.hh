@@ -53,7 +53,7 @@ public:
 			AlignmentFileGenerator alignment_file_generator = AlignmentFileGenerator(edge_file_reader, test_model_file_name);
 			TS_ASSERT_EQUALS( alignment_file_generator.version(), edge_file_reader->version() );
 			Model model_to_test = (*alignment_file_generator.model_map())[ test_model_id ];
-			TS_TRACE( model_to_test );
+			TR << model_to_test << std::endl;
 		} catch (...) {
 			TS_FAIL("AFG could not import files");
 		}
@@ -68,7 +68,7 @@ public:
 			Model model_to_test = (*alignment_file_generator.model_map())[ test_model_id ];
 			core::Size segment_id = 3;
 			SewSegment segment_to_test = model_to_test.find_segment(segment_id);
-			TS_TRACE( "Time to Calculate Alignments" );
+			TR << "Time to Calculate Alignments" << std::endl;
 			BasisMap::iterator alignments = alignment_file_generator.get_alignments(segment_to_test);
 			std::pair< int , core::Size > test_seg1 = std::make_pair( 101555, 25 );
 			std::pair< int , core::Size > test_seg2 = std::make_pair( 121140, 3 );
