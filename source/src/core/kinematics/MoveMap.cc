@@ -19,6 +19,7 @@
 // Project headers
 #include <core/id/DOF_ID.hh>
 #include <core/id/TorsionID.hh>
+#include <core/id/AtomID.hh>
 
 // Utility headers
 #include <utility/py/PyAssert.hh>
@@ -91,6 +92,13 @@ MoveMap::clear()
 void
 MoveMap::set_jump( id::JumpID const & jump, bool const setting ) {
 	jump_id_map_[ jump ] = setting;
+}
+
+///@brief Set a specific AtomID movable.
+/// This is specifically for cartesian-space kinematics
+void
+MoveMap::set_atom( id::AtomID const & atom, bool const setting ){
+	atom_id_map_[ atom ] = setting;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -227,6 +235,20 @@ MoveMap::get_jump( id::JumpID const & jump ) const {
 		return get( id::JUMP );
 	}
 }
+
+///@brief Get specific AtomID settings (used to set specific atoms in CartesianMin)
+///
+///@details
+///  Per-atom interface not available to discourage general use
+///  IE - In order to ask if an ATOM is movable with the rest of the MM settings (as the other get functions do)
+///     , one would require a pose.
+///
+std::map< core::id::AtomID, bool> const &
+MoveMap::get_atoms() const{
+	return atom_id_map_;
+
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @details get setting for a specific TorsionType, such as "BB"
@@ -617,6 +639,15 @@ MoveMap::show( std::ostream & out ) const
 			out << I(8,3,res) << ' ' << I(10,3,torsionno) << ' ' << A(8,type) <<' '<< A(8,( boolean ? "TRUE":"FALSE"))<< "\n";
 		}
 	}
+
+	//Individual Atoms
+	if ( ! atom_id_map_.empty() ) {
+		out << "-------------------------------\n";
+		for ( auto atom_pair : torsion_id_map_ ) {
+			bool const & boolean = atom_pair.second;
+			out << atom_pair.first << ' ' << A(8,( boolean ? "TRUE":"FALSE"))<< "\n";
+		}
+	}
 	out << "-------------------------------\n";
 	out << std::endl;
 }
@@ -689,6 +720,13 @@ Size MoveMap::import(
 		}
 	}
 
+	//AtomID
+	for ( auto atom_pair : rval.get_atoms() ) {
+		if ( ( import_true_settings && atom_pair.second ) ||( import_false_settings && ! atom_pair.second ) ) {
+			set_atom( atom_pair.first, atom_pair.second );
+			++n;
+		}
+	}
 	return n;
 }
 
@@ -707,6 +745,7 @@ core::kinematics::MoveMap::save( Archive & arc ) const {
 	arc( CEREAL_NVP( dof_type_map_ ) ); // DOF_TypeMap
 	arc( CEREAL_NVP( dof_id_map_ ) ); // DOF_ID_Map
 	arc( CEREAL_NVP( jump_id_map_ ) ); // JumpID_Map
+	arc( CEREAL_NVP( atom_id_map_) ); //AtomID_Map
 }
 
 /// @brief Automatically generated deserialization method
@@ -719,6 +758,7 @@ core::kinematics::MoveMap::load( Archive & arc ) {
 	arc( dof_type_map_ ); // DOF_TypeMap
 	arc( dof_id_map_ ); // DOF_ID_Map
 	arc( jump_id_map_ ); // JumpID_Map
+	arc( atom_id_map_ ); //AtomID_Map
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::kinematics::MoveMap );

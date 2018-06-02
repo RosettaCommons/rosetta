@@ -89,8 +89,16 @@ set_glycan_iupac_chi_torsions(
 	core::pose::Pose const & pose,
 	core::kinematics::MoveMap & movemap,
 	core::Size resnum,
-	bool action /*true*/)
+	bool action /*true*/,
+	bool cartesian)
 {
+
+	if ( cartesian ) {
+		TR.Debug << "Setting glycan iupac CHI torsion for cartesian: " << resnum << std::endl;
+		movemap.set_chi(resnum, action);
+		return;
+	}
+
 
 	using namespace core::id;
 	for ( core::Size chi_torsion_num = 1; chi_torsion_num <= pose.residue_type( resnum ).nchi(); ++ chi_torsion_num ) {
@@ -110,7 +118,8 @@ set_glycan_iupac_bb_torsions(
 	core::pose::Pose const & pose,
 	core::kinematics::MoveMap & movemap,
 	core::Size resnum,
-	bool action/*true*/)
+	bool action/*true*/,
+	bool cartesian /* false */)
 {
 	using namespace core::id;
 
@@ -128,11 +137,49 @@ set_glycan_iupac_bb_torsions(
 
 	TR.Debug << "Setting up residue " << i << ", with parent " << parent_res << std::endl;
 	//This residue is the protein-linkage. Set the BB up properly.
+
+	//Setup for cartesion to make sure the correct atoms are turned ON vs OFF.
+	//  Works for AA->Glycan connection as well as get_reference_atoms and get_n_glycosidic_torsions work for the connection.
+	if ( cartesian ) {
+		core::Size torsion_start = 2;
+		TR.Debug << "Setting glycan iupac BB torsions for cartesian: " << resnum << " " << pose.pdb_info()->pose2pdb(resnum) << std::endl;
+		movemap.set_bb(i, action);
+
+		Size n_torsions = get_n_glycosidic_torsions_in_res(pose, i);
+		//Turn ON atoms that make up dihedral from the PREVIOUS residue
+
+
+		if ( parent_res != 0 && !pose.residue( parent_res ).is_carbohydrate() ) {
+			TR.Debug << "Setting ASN Linkage Torsion " << parent_res << std::endl;
+			torsion_start = 1;
+			movemap.set_chi(parent_res, action);
+		}
+
+		for ( Size torsion_num = torsion_start; torsion_num <= n_torsions; ++torsion_num ) {
+			utility::vector1< id::AtomID > ref_atoms = conformation::carbohydrates::get_reference_atoms( torsion_num, pose.conformation(), i);
+
+			movemap.set_atom( ref_atoms[2], action);
+		}
+
+		//Turn OFF atoms that make up the dihedral for the NEXT residue(s).
+		utility::vector1< Size > children = pose.glycan_tree_set()->get_node(i)->get_children();
+		for ( auto child : children ) {
+			Size child_torsions = get_n_glycosidic_torsions_in_res(pose, child);
+			for ( Size torsion_num = 2; torsion_num <= child_torsions; ++torsion_num ) {
+				utility::vector1< id::AtomID > ref_atoms = conformation::carbohydrates::get_reference_atoms( torsion_num, pose.conformation(), child);
+				movemap.set_atom( ref_atoms[2], !action);
+			}
+		}
+		return;
+	}
+
 	bool branched_connection = false;
 	if ( parent_res != 0 && !pose.residue( parent_res ).is_carbohydrate() ) {
 		TR.Debug << "Setting ASN Linkage Torsion " << std::endl;
 		movemap.set_chi( parent_res, action);
 		movemap.set_branches( parent_res, action);
+
+
 
 	} else {
 		// Branch Linkage
@@ -220,7 +267,8 @@ create_glycan_movemap_from_residue_selector(
 	select::residue_selector::ResidueSelectorCOP selector,
 	bool include_iupac_chi /* true */,
 	bool include_glycan_ring_torsions /* false */,
-	bool include_bb_torsions /* true */)
+	bool include_bb_torsions /* true */,
+	bool cartesian /* false */)
 {
 	using namespace core::id;
 
@@ -252,11 +300,11 @@ create_glycan_movemap_from_residue_selector(
 			}
 
 			if ( include_iupac_chi ) {
-				set_glycan_iupac_chi_torsions(pose, *movemap, i);
+				set_glycan_iupac_chi_torsions(pose, *movemap, i, true);
 			}
 
 			if ( include_bb_torsions ) {
-				set_glycan_iupac_bb_torsions(pose, *movemap, i);
+				set_glycan_iupac_bb_torsions(pose, *movemap, i, true, cartesian);
 			}
 		}
 	}

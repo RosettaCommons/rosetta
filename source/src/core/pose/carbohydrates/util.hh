@@ -76,7 +76,8 @@ create_glycan_movemap_from_residue_selector(
 	core::select::residue_selector::ResidueSelectorCOP selector,
 	bool include_iupac_chi = true,
 	bool include_glycan_ring_torsions = true,
-	bool include_bb_torsions = true);
+	bool include_bb_torsions = true,
+	bool cartesian=false);
 
 
 ///@brief Turn on/off IUPAC CHIs for a particular residue number.
@@ -85,7 +86,9 @@ set_glycan_iupac_chi_torsions(
 	core::pose::Pose const & pose,
 	core::kinematics::MoveMap & movemap,
 	core::Size resnum,
-	bool action=true );
+	bool action=true,
+	bool cartesian=false
+);
 
 ///@brief Turn on/off IUPAC BBs for a particular residue number.
 void
@@ -93,7 +96,8 @@ set_glycan_iupac_bb_torsions(
 	core::pose::Pose const & pose,
 	core::kinematics::MoveMap & movemap,
 	core::Size resnum,
-	bool action=true);
+	bool action=true,
+	bool cartesian=false);
 
 
 

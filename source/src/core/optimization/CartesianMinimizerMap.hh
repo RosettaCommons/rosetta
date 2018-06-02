@@ -138,7 +138,7 @@ private:
 
 private:
 
-	// map moving atoms->index
+	// map moving atoms->index in the moving_atoms_ vector
 	id::AtomID_Map< core::Size > atom_indices_;
 
 	/// list of all the moving atoms

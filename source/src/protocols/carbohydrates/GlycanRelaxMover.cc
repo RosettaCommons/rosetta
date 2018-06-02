@@ -480,7 +480,8 @@ GlycanRelaxMover::setup_movers(
 		pose,
 		return_subset,
 		true /*chi move */,
-		min_rings_);
+		min_rings_,
+		cartmin_);
 
 
 	//Dihedral masks to tell out samplers which torsions each residue has.
@@ -659,7 +660,6 @@ GlycanRelaxMover::init_objects(core::pose::Pose & pose ){
 
 	// Our selector is now all setup.  Lets use it and check to make sure it only applies to glycan residues!
 	//Need to check here because if residue i is not attached to anything, then it doesn't make sense to sample on it!!!
-	// Need to filter residue selector!!!!!!!! Fuck!!!
 
 	utility::vector1< bool > subset = selector_->apply(pose);
 	utility::vector1< bool > dihedral_subset = subset; //Start of tree has no dihedrals to move.

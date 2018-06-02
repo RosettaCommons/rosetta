@@ -274,6 +274,8 @@ public:
 		return element_;
 	}
 
+	///@brief Get the name of this AtomType.  Note that this is NOT the same as the atom name that is written out to PDB.
+	/// You want pose.residue(i).atom_name(j) for that.
 	std::string
 	atom_type_name() const
 	{
@@ -306,6 +308,8 @@ public:
 		name_ = setting;
 	}
 
+	///@brief Get the name of this AtomType.  Note that this is NOT the same as the atom name that is written out to PDB.
+	/// You want pose.residue(i).atom_name(j) for that.
 	std::string const& name() const { return name_; };
 
 	// data

@@ -132,14 +132,14 @@ public:
 		TR << std::endl << std::endl;
 
 		TR << "Manual Constraints" << std::endl;
-		TR << "Manual Constraint Size" << manual_single_cst.size() << std::endl;
+		TR << "Manual Constraint Size " << manual_single_cst.size() << std::endl;
 		cst_set_manual.show_definition(TR, pose_ );
 
 		TS_ASSERT( manual_single_cst.size() == 1);
 
 
-		TR << "Auto   " << auto_single_cst[1]->score( pose_ );
-		TR << "Manual " << manual_single_cst[1]->score( pose_ );
+		TR << "Auto   " << auto_single_cst[1]->score( pose_ ) << std::endl;
+		TR << "Manual " << manual_single_cst[1]->score( pose_ ) << std::endl;
 
 
 		TS_ASSERT( auto_single_cst[1]->score_type() == manual_single_cst[1]->score_type() );

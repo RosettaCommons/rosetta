@@ -976,7 +976,7 @@ public:
 	// backbone torsions
 	// peptides and saccharides
 
-	/// @brief Returns the phi torsion angle of residue  <seqpos>
+	/// @brief Returns the phi torsion angle of residue  <seqpos> in degrees
 	/// @note assumes the residue is an amino acid or monosaccharide
 	///
 	/// example(s):
@@ -1002,7 +1002,7 @@ public:
 	void
 	set_phi( Size const seqpos, Real const setting );
 
-	/// @brief Returns the psi torsion angle of residue  <seqpos>
+	/// @brief Returns the psi torsion angle of residue  <seqpos> in degrees
 	/// Note: assumes the residue is an amino acid or monosaccharide
 	///
 	/// example(s):
@@ -1028,7 +1028,7 @@ public:
 	void
 	set_psi( Size const seqpos, Real const setting );
 
-	/// @brief Returns the omega torsion angle of residue  <seqpos>
+	/// @brief Returns the omega torsion angle of residue  <seqpos> in degrees
 	/// @note assumes the residue is an amino acid or monosaccharide
 	///
 	/// example(s):

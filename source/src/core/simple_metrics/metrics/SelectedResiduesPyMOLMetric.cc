@@ -167,7 +167,7 @@ SelectedResiduesPyMOLMetric::calculate(const pose::Pose & pose) const {
 		if ( i == 1 ) {
 			subselection = "(chain "+chain+" and resid ";
 		} else {
-			subselection = subselection + "or "+"(chain "+chain+" and resid ";
+			subselection = subselection + " or "+"(chain "+chain+" and resid ";
 		}
 		for ( core::Size x = 1; x <= chain_residues[ chain ].size(); ++x ) {
 			std::string res = chain_residues[chain][x];

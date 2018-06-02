@@ -7,9 +7,10 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/kinematics/min.cc
+/// @file   CartesianMinimizerMap
 /// @brief  Kinematics
-/// @author Phil Bradley
+/// @author Frank Dimaio
+/// @author Jared Adolf-Bryfogle (per-atom min control)
 
 // Unit headers
 #include <core/optimization/CartesianMinimizerMap.hh>
@@ -23,6 +24,7 @@
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/symmetry/util.hh>
+#include <core/pose/PDBInfo.hh> //JAB - temp
 
 // Numeric headers
 
@@ -30,10 +32,14 @@
 #include <cstdlib>
 
 #include <core/id/DOF_ID_Map.hh>
+#include <core/id/AtomID_Map.hh>
 #include <utility/vector1.hh>
 
 //Auto Headers
 #include <core/pose/util.tmpl.hh>
+
+// Options - TEMP
+#include <core/select/util.hh>
 
 namespace core {
 namespace optimization {
@@ -176,6 +182,7 @@ CartesianMinimizerMap::setup(
 	kinematics::MoveMap const & mm
 )
 {
+
 	// this clears moving_atoms_
 	reset( pose );
 
@@ -202,39 +209,73 @@ CartesianMinimizerMap::setup(
 	core::pose::initialize_atomid_map( moving_xyz, pose, false );
 	core::pose::initialize_atomid_map( moving_dof, pose, false );
 
+	id::AtomID_Map< bool > atom_mask;
+	core::pose::initialize_atomid_map( atom_mask, pose, false );
+
 	for ( Size i = 1; i <= n_res; ++i ) {
+
 		conformation::Residue const & rsd( pose.residue(i) );
 
 		bool const bb_move( mm.get_bb(i) );
 		bool const chi_move( mm.get_chi(i) );
-		bool const is_independent = (!symm_info || symm_info->bb_is_independent(i));
 
 		//fpd  do not let aa_vrt move
-		if ( rsd.aa() == chemical::aa_vrt ) continue;
+		if ( (rsd.aa() == chemical::aa_vrt )|| rsd.is_virtual_residue() ) continue;
 
 		// cartesian logic ...
 		//    if (chi_move && !bb_move) sc atoms only
 		//    if (bb_move) all atoms
+		//
+		//JAB - specific torsions do not make sense as multiple atoms can potentially define a specific torsion,
+		//  So enabling a torsion does not nessessarily enable the atoms that you are expecting.
+		//  Instead, I have implemented the ability for the MoveMap to set specific atoms.
+
+
 		if ( chi_move || bb_move ) {
 			Size start1 = rsd.first_sidechain_atom();
 			Size stop1  = rsd.nheavyatoms();
 			Size start2 = rsd.first_sidechain_hydrogen();
 			Size stop2  = rsd.natoms();
 
+			//std::cout << "original enable: rsd=" << i << " : " << pose.pdb_info()->pose2pdb(i) << std::endl;
+			//std::cout << start1 << " " << stop1 << " " << start2 <<" "<< stop2 << std::endl;
 			for ( Size j=1; j<=stop2; ++j ) {
 				if ( !bb_move && j<start1 ) continue;
 				if ( !bb_move && j>stop1 && j<start2 ) continue;
 
 				id::AtomID atm_ij( j,i );
-				moving_xyz[ atm_ij ] = true;
-				if ( is_independent ) {
-					moving_atoms_.push_back( atm_ij );
-					atom_indices_[ atm_ij ] = moving_atoms_.size();
-				}
+
+				atom_mask.set( atm_ij, true);
 			}
 		}
 	} // i=1,n_res
 
+	//JAB - go through specific atom OVERRIDEs to the default behavior.
+	std::map< AtomID, bool > const & atoms = mm.get_atoms();
+	for ( auto atom_pair : atoms ) {
+		atom_mask.set( atom_pair.first, atom_pair.second);
+	}
+
+	//Now go through all atoms and add to the list of movable atoms.
+	for ( core::Size i= 1; i <= pose.size(); ++i ) {
+		bool const is_independent = (!symm_info || symm_info->bb_is_independent(i));
+		for ( core::Size x = 1; x <= atom_mask.n_atom( i ); ++x ) {
+			AtomID atom = AtomID( x, i ); //Think about adding a Size,Size accessor to AtomID to increase speed here.
+			if ( atom_mask.get(atom) ) {
+				moving_xyz[ atom ] = true;
+
+				if ( is_independent ) {
+					moving_atoms_.push_back( atom );
+					atom_indices_[ atom ] = moving_atoms_.size();
+				}
+			}
+		}
+	}
+
+	//std::cout << "Total moving atoms: " << moving_atoms_.size() << std::endl;
+
+	//JAB - enable this for debugging to get all atoms moving during cartesian min.
+	//std::cout << select::get_pymol_selection_for_atoms(pose, moving_atoms_, "moving") << std::endl;
 
 	/////////////////////
 	// get a list of torsional DOFs which are implicitly moved by these xyzs

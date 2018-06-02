@@ -2695,7 +2695,7 @@ Conformation::set_torsion( TorsionID const & tor_id, Real const setting )
 }
 
 
-// Returns the torsion angle defined by  <atom[1-4]>
+///@brief Returns the torsion angle defined by  <atom[1-4]> in Radians
 Real
 Conformation::torsion_angle(
 	AtomID const & atom1,

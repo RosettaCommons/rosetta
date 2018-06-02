@@ -947,7 +947,7 @@ setup_dof_to_torsion_map( pose::Pose const & pose, id::DOF_ID_Map< id::TorsionID
 ///////////////////////////////////////////////////////////////////////////////
 // Convert from allow-bb/allow-chi MoveMap to simple DOF_ID boolean mask needed by the minimizer
 void
-setup_dof_mask_from_move_map( kinematics::MoveMap const & mm, pose::Pose const & pose, id::DOF_ID_Mask & dof_mask )
+setup_dof_mask_from_move_map( kinematics::MoveMap const & mm, pose::Pose const & pose, id::DOF_ID_Mask & dof_mask)
 {
 	using namespace id;
 
@@ -995,6 +995,7 @@ setup_dof_mask_from_move_map( kinematics::MoveMap const & mm, pose::Pose const &
 			} else {
 				mm_setting = mm.get( torsion );
 			}
+
 			if ( mm_setting == PHI_default ) { continue; }
 			DOF_ID const & id( pose.conformation().dof_id_from_torsion_id( torsion ) );
 			if ( id.valid() ) {  // If not valid, it's probably just a terminal/chainbreak torsion.
@@ -1007,6 +1008,7 @@ setup_dof_mask_from_move_map( kinematics::MoveMap const & mm, pose::Pose const &
 		for ( uint j = 1; j <= n_chi_torsions; ++j ) {
 			TorsionID const torsion( i, CHI, j );
 			bool const mm_setting( mm.get( torsion ) );
+
 			if ( mm_setting == PHI_default ) { continue; }
 			DOF_ID const & id( pose.conformation().dof_id_from_torsion_id( torsion ) );
 			if ( id.valid() ) {
@@ -1026,6 +1028,7 @@ setup_dof_mask_from_move_map( kinematics::MoveMap const & mm, pose::Pose const &
 		for ( uint j( 1 ); j <= n_nu_torsions; ++j ) {
 			TorsionID const torsion( i, NU, j );
 			bool const mm_setting = mm.get( torsion );
+
 			if ( mm_setting == PHI_default ) { continue; }
 			DOF_ID const & id( pose.conformation().dof_id_from_torsion_id( torsion ) );
 			if ( id.valid() ) {
@@ -1044,6 +1047,7 @@ setup_dof_mask_from_move_map( kinematics::MoveMap const & mm, pose::Pose const &
 			// warning at the moment. ~Labonte
 			TorsionID const torsion( i, BRANCH, j );
 			bool const mm_setting = mm.get( torsion );
+
 			if ( mm_setting == PHI_default ) { continue; }
 			DOF_ID const & id( pose.conformation().dof_id_from_torsion_id( torsion ) );
 			if ( id.valid() ) {
@@ -1059,7 +1063,10 @@ setup_dof_mask_from_move_map( kinematics::MoveMap const & mm, pose::Pose const &
 	for ( Size i=1; i<= pose.num_jump(); ++i ) {
 		if ( mm.get_jump(i) ) {
 			for ( int j=1; j<= 6; ++j ) {
-				DOF_ID const & id( pose.conformation().dof_id_from_torsion_id(TorsionID(i, JUMP, j)));
+
+				TorsionID torsion = TorsionID(i, JUMP, j);
+
+				DOF_ID const & id( pose.conformation().dof_id_from_torsion_id(torsion));
 				dof_mask[ id ] = true;
 			}
 		}

@@ -23,7 +23,9 @@
 #include <core/pose/selection.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/carbohydrates/util.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/id/AtomID.hh>
+#include <core/id/TorsionID.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/select/residue_selector/util.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
@@ -159,39 +161,23 @@ DihedralConstraintGenerator::apply( core::pose::Pose const & pose) const
 			constraints.push_back(cst);
 		} else {
 
-			utility::vector1< AtomID > ref_atoms;
+			AtomID atm1;
+			AtomID atm2;
+			AtomID atm3;
+			AtomID atm4;
 
-			AtomID C_0 =   AtomID(pose.residue(i-1).atom_index("C"), i-1);
-			AtomID N_1 =   AtomID(pose.residue(i).atom_index("N"),   i );
-			AtomID CA_1 =  AtomID(pose.residue(i).atom_index("CA"),  i );
-			AtomID C_1 =   AtomID(pose.residue(i).atom_index("C"),   i );
-			AtomID N_2 =   AtomID(pose.residue(i+1).atom_index("N"), i+1 );
-			AtomID CA_2 =  AtomID(pose.residue(i+1).atom_index("CA"),i+1 );
+			TorsionID torsion_id = TorsionID(i, BB, core::Size( torsion_ ));
+			bool fail = pose.conformation().get_torsion_angle_atom_ids(torsion_id, atm1, atm2, atm3, atm4);
+			if ( ! fail ) {
+				TR.Debug << "Applying dihedral constraints to residue " << i << std::endl;
 
-			if ( torsion_  == phi_dihedral ) {
-				current_torsion_angle = pose.phi( i );
-				ref_atoms.push_back( C_0 );
-				ref_atoms.push_back( N_1 );
-				ref_atoms.push_back( CA_1 );
-				ref_atoms.push_back( C_1 );
-			} else if ( torsion_ == psi_torsion ) {
-				current_torsion_angle = pose.psi( i );
-				ref_atoms.push_back( N_1 );
-				ref_atoms.push_back( CA_1 );
-				ref_atoms.push_back( C_1 );
-				ref_atoms.push_back( N_2 );
-			} else if ( torsion_ == omega_torsion ) {
-				current_torsion_angle = pose.omega( i );
-				ref_atoms.push_back( CA_1 );
-				ref_atoms.push_back( C_1 );
-				ref_atoms.push_back( N_2 );
-				ref_atoms.push_back( CA_2 );
+				current_torsion_angle = pose.conformation().torsion_angle(atm1, atm2, atm3, atm4);
+
+				//core::Real current_torsion_angle_radians = numeric::conversions::radians( current_torsion_angle); Already in radians
+				CircularHarmonicFuncOP circ_func( new core::scoring::func::CircularHarmonicFunc(current_torsion_angle, sd_rad) );
+				DihedralConstraintOP cst( new DihedralConstraint(atm1, atm2, atm3, atm4, circ_func) );
+				constraints.push_back( cst );
 			}
-
-			core::Real current_torsion_angle_radians = numeric::conversions::radians( current_torsion_angle);
-			CircularHarmonicFuncOP circ_func( new core::scoring::func::CircularHarmonicFunc(current_torsion_angle_radians, sd_rad) );
-			DihedralConstraintOP cst( new DihedralConstraint(ref_atoms[1], ref_atoms[2], ref_atoms[3], ref_atoms[4], circ_func) );
-			constraints.push_back( cst );
 		}
 	}
 

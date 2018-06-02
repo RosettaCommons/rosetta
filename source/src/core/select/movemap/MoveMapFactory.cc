@@ -155,6 +155,13 @@ void MoveMapFactory::add_bondlengths_action(
 	bondlengths_actions_.push_back( res_action );
 }
 
+void MoveMapFactory::set_cartesian( bool setting ){
+	cartesian_specific_ = setting;
+}
+bool MoveMapFactory::cartesian() const {
+	return cartesian_specific_;
+}
+
 /// @brief Construct a MoveMap from the internally held ResidueSelectors and JumpSelectors
 kinematics::MoveMapOP
 MoveMapFactory::create_movemap_from_pose(
@@ -183,8 +190,18 @@ MoveMapFactory::edit_movemap_given_pose(
 	std::map< ResidueSelectorCOP, ResidueSubset > res_selections;
 	std::map< JumpSelectorCOP, JumpSubset > jump_selections;
 
-	///////// Backbone /////////
+	//Set all first.  Please keep this here as non-protein torsions are not nessessarily defined using typical chi/bb designations. - JAB
+
+	//////////// All ////////////
 	if ( use_all_bb_ ) mm.set_bb( all_bb_setting_ );
+	if ( use_all_chi_ ) mm.set_chi( all_chi_setting_ );
+	if ( use_all_nu_ ) mm.set_nu( all_nu_setting_ );
+	if ( use_all_branches_ ) mm.set_branches( all_branches_setting_ );
+	if ( use_all_jumps_ ) mm.set_jump( all_jumps_setting_ );
+	if ( use_all_bondangles_ ) mm.set( core::id::THETA, all_bondangles_setting_ );
+	if ( use_all_bondlengths_ ) mm.set( core::id::THETA, all_bondlengths_setting_ );
+
+	///////// Backbone /////////
 	for ( auto const & bb_act : bb_actions_ ) {
 		ResidueSubset selection;
 		if ( res_selections.count( bb_act.selector ) ) {
@@ -197,7 +214,7 @@ MoveMapFactory::edit_movemap_given_pose(
 		for ( Size ii = 1; ii <= selection.size(); ++ii ) {
 			if ( selection[ ii ] ) {
 				if ( pose.residue_type( ii ).is_carbohydrate() ) {
-					set_glycan_iupac_bb_torsions( pose, mm, ii, bb_act.action );
+					set_glycan_iupac_bb_torsions( pose, mm, ii, bb_act.action, cartesian_specific_ );
 				} else {
 					mm.set_bb( ii, bb_act.action );
 				}
@@ -222,7 +239,6 @@ MoveMapFactory::edit_movemap_given_pose(
 	}
 
 	///////// Chi /////////
-	if ( use_all_chi_ ) mm.set_chi( all_chi_setting_ );
 	for ( auto const & chi_act : chi_actions_ ) {
 		ResidueSubset selection;
 		if ( res_selections.count( chi_act.selector ) ) {
@@ -235,7 +251,7 @@ MoveMapFactory::edit_movemap_given_pose(
 		for ( Size ii = 1; ii <= selection.size(); ++ii ) {
 			if ( selection[ ii ] ) {
 				if ( pose.residue_type( ii ).is_carbohydrate() ) {
-					set_glycan_iupac_chi_torsions( pose, mm, ii, chi_act.action );
+					set_glycan_iupac_chi_torsions( pose, mm, ii, chi_act.action, cartesian_specific_ );
 				} else {
 					mm.set_chi( ii, chi_act.action );
 				}
@@ -244,7 +260,6 @@ MoveMapFactory::edit_movemap_given_pose(
 	}
 
 	///////// Nu /////////
-	if ( use_all_nu_ ) mm.set_nu( all_nu_setting_ );
 	for ( auto const & nu_act : nu_actions_ ) {
 		ResidueSubset selection;
 		if ( res_selections.count( nu_act.selector ) ) {
@@ -262,7 +277,6 @@ MoveMapFactory::edit_movemap_given_pose(
 	}
 
 	///////// Branches /////////
-	if ( use_all_branches_ ) mm.set_branches( all_branches_setting_ );
 	for ( auto const & branches_act : branches_actions_ ) {
 		ResidueSubset selection;
 		if ( res_selections.count( branches_act.selector ) ) {
@@ -281,7 +295,6 @@ MoveMapFactory::edit_movemap_given_pose(
 
 
 	///////// Jumps /////////
-	if ( use_all_jumps_ ) mm.set_jump( all_jumps_setting_ );
 	for ( auto const & jump_act : jump_actions_ ) {
 		JumpSubset selection;
 		if ( jump_selections.count( jump_act.selector ) ) {
@@ -299,7 +312,6 @@ MoveMapFactory::edit_movemap_given_pose(
 	}
 
 	///////// BondAngles /////////
-	if ( use_all_bondangles_ ) mm.set( core::id::THETA, all_bondangles_setting_ );
 	for ( auto const & bondangles_act : bondangles_actions_ ) {
 		ResidueSubset selection;
 		if ( res_selections.count( bondangles_act.selector ) ) {
@@ -320,7 +332,6 @@ MoveMapFactory::edit_movemap_given_pose(
 	}
 
 	///////// BondLengths /////////
-	if ( use_all_bondlengths_ ) mm.set( core::id::THETA, all_bondlengths_setting_ );
 	for ( auto const & bondlengths_act : bondlengths_actions_ ) {
 		ResidueSubset selection;
 		if ( res_selections.count( bondlengths_act.selector ) ) {
@@ -366,6 +377,8 @@ void MoveMapFactory::parse_my_tag(
 	if ( tag->hasOption( "jumps" ) ) {
 		all_jumps( tag->getOption< bool >( "jumps" ));
 	}
+
+	set_cartesian(tag->getOption< bool >("cartesian", cartesian_specific_));
 
 	for ( auto const & subtag : tag->getTags() ) {
 		move_map_action enable = move_map_action( subtag->getOption< bool >( "enable", true ) );
@@ -463,7 +476,8 @@ void MoveMapFactory::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 		+ XMLSchemaAttribute( "chi", xsct_rosetta_bool, "Enable or disable movement for all chi torsions." )
 		+ XMLSchemaAttribute( "nu", xsct_rosetta_bool, "Enable or disable movement for all nu torsions." )
 		+ XMLSchemaAttribute( "branches", xsct_rosetta_bool, "Enable or disable movement for all branch torsions." )
-		+ XMLSchemaAttribute( "jumps", xsct_rosetta_bool, "Enable or disable movement for all jump DOFs." );
+		+ XMLSchemaAttribute( "jumps", xsct_rosetta_bool, "Enable or disable movement for all jump DOFs." )
+		+ XMLSchemaAttribute::attribute_w_default( "cartesian", xsct_rosetta_bool, "Set the MMF for specific cartesian overrides.  Currently is only used for glycans in order to maintain IUPAC nomenclature during moves", "false" );
 
 	XMLSchemaComplexTypeGenerator xsct;
 	xsct.element_name( element_name() )

@@ -96,6 +96,7 @@ utility::vector1< core::id::AtomID > get_reference_atoms_for_2nd_omega(
 	uint const sequence_position );
 
 /// @brief  Return the AtomIDs of the four reference atoms for the requested torsion.
+/// @details Works for AA->Glycan connection as well.
 utility::vector1< core::id::AtomID > get_reference_atoms( uint const named_torsion,
 	Conformation const & conf,
 	uint const sequence_position );

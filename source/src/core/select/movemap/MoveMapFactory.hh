@@ -54,8 +54,8 @@ class MoveMapFactory : public utility::pointer::ReferenceCount {
 public:
 
 	/// @brief Constructor.
-	///
 	MoveMapFactory();
+
 	MoveMapFactory( MoveMapFactory const & src );
 	MoveMapFactory & operator = ( MoveMapFactory const & rhs );
 
@@ -86,6 +86,14 @@ public:
 
 	void all_bondlengths( bool setting );
 	void add_bondlengths_action( move_map_action action, residue_selector::ResidueSelectorCOP selector );
+
+
+	///@brief Option to use specific cartesian settings for the movemap.
+	/// Used for glycans as dihedral vs cart MM settings are completely different to move the same
+	/// underlying coordinates in IUPAC definitions
+	void set_cartesian( bool setting );
+	bool cartesian() const;
+
 
 	/// @brief Construct a MoveMap from the internally held ResidueSelectors and JumpSelectors
 	kinematics::MoveMapOP
@@ -174,6 +182,7 @@ private:
 	bool all_bondlengths_setting_ = false;
 	std::list< MMResAction > bondlengths_actions_;
 
+	bool cartesian_specific_ = false; //Option to use specific cartesian settings for the movemap.  Used for glycans as dihedral vs cart MM settings are completely different to move the same underlying coordinates in IUPAC definitions
 	// TO DO:
 	// Specific torsion selectors!
 

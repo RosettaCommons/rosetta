@@ -1,0 +1,32 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+	</SCOREFXNS>
+	<RESIDUE_SELECTORS>
+		<Glycan name="glycan_tree" include_root="1" branch="596H"/>
+		<Neighborhood name="nbrhood" selector="glycan_tree"/>
+		<Not name="all_else" selector="glycan_tree" />
+	</RESIDUE_SELECTORS>
+	<TASKOPERATIONS>
+		<OperateOnResidueSubset name="turn_off_others" selector="all_else">
+			<PreventRepackingRLT/> 
+		</OperateOnResidueSubset>
+		<RestrictToRepacking name="rtrp"/>
+	</TASKOPERATIONS>
+	<MOVE_MAP_FACTORIES>
+		<MoveMapFactory name="fr_mm_factory" bb="0" chi="0" cartesian="1">
+			<Backbone residue_selector="glycan_tree" enable="1" />
+			<Chi residue_selector="glycan_tree" enable="1" />
+		</MoveMapFactory>
+	</MOVE_MAP_FACTORIES>
+	<FILTERS>
+	</FILTERS>
+	<MOVERS>
+		<FastRelax name="fast_relax" task_operations="rtrp,turn_off_others" movemap_factory="fr_mm_factory" cartesian="1" repeats="1"/>
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover_name="fast_relax"/>
+	</PROTOCOLS>
+	<OUTPUT />
+</ROSETTASCRIPTS>

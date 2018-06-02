@@ -21,13 +21,16 @@
 #include <core/pose/carbohydrates/util.hh>
 #include <core/conformation/carbohydrates/util.hh>
 #include <core/conformation/carbohydrates/GlycanTreeSet.hh>
+#include <core/conformation/carbohydrates/GlycanNode.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/select/residue_selector/ReturnResidueSubsetSelector.hh>
+#include <core/select/movemap/MoveMapFactory.hh>
 
 // Package headers
 #include <core/conformation/Residue.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -77,7 +80,8 @@ public:  // Standard methods //////////////////////////////////////////////////
 			"[a-D-Manp-(1->2)-a-D-Manp-(1->6)]-a-D-Manp-(1->6)]-b-D-Manp-(1->4)-b-D-GlcpNAc-(1->4)-b-D-GlcpNAc" );
 		man9_op_ = pose_from_saccharide_sequence( man9_s, "fa_standard", true, false ); //No need to idealize.
 
-		TR << *man9_op_ << std::endl;
+		//TR << *man9_op_ << std::endl;
+
 	}
 
 	// Destruction
@@ -644,6 +648,108 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		TS_ASSERT( ! mm->get( TorsionID( 1, BRANCH, 2) ) );
 
 	}
+
+	void test_glycan_iupac_movemap_setup()
+	{
+		using namespace core::select::movemap;
+		using namespace core::select::residue_selector;
+		using namespace core::pose::carbohydrates;
+		using namespace core::kinematics;
+		using namespace core::id;
+
+		pose_from_file( two_glycans_, "core/chemical/carbohydrates/gp120_2glycans_man5.pdb", core::import_pose::PDB_file); //speed
+
+
+		//Main Chain 1->2
+		utility::vector1< bool > subset( bisected_man_.size(), false);
+		subset[2] = true; //Single Glycan residue.  Make sure all are enabled.
+
+		ReturnResidueSubsetSelectorOP return_subset = ReturnResidueSubsetSelectorOP( new ReturnResidueSubsetSelector( subset));
+
+		//MoveMapOP mm = create_glycan_movemap_from_residue_selector( bisected_man_, return_subset, move_chi, move_ring, move_bb );
+
+		MoveMapFactory mmf = MoveMapFactory();
+		mmf.set_cartesian(true);
+		mmf.add_bb_action(mm_enable, return_subset);
+		mmf.add_chi_action(mm_enable, return_subset);
+
+		MoveMapOP mm = mmf.create_movemap_from_pose(bisected_man_);
+
+		//mm->show(TR);
+
+		TS_ASSERT_EQUALS( mm->get_bb(2), true);
+		TS_ASSERT_EQUALS( mm->get_chi(2),true);
+
+		//Make sure atoms in 1->2 connection are on and 2->3 are off
+		core::Size i = 2;
+		core::Size n_torsions = get_n_glycosidic_torsions_in_res(bisected_man_, i);
+		for ( core::Size torsion_num = 2; torsion_num <= n_torsions; ++torsion_num ) {
+			utility::vector1< core::id::AtomID > ref_atoms = core::conformation::carbohydrates::get_reference_atoms( torsion_num, bisected_man_.conformation(), i);
+
+			TS_ASSERT_EQUALS( mm->get_atoms().at(ref_atoms[2]), true);
+		}
+
+		utility::vector1< core::Size > children = bisected_man_.glycan_tree_set()->get_node(i)->get_children();
+		for ( auto child : children ) {
+			core::Size child_torsions = get_n_glycosidic_torsions_in_res(bisected_man_, child);
+			for ( core::Size torsion_num = 2; torsion_num <= child_torsions; ++torsion_num ) {
+				utility::vector1< core::id::AtomID > ref_atoms = core::conformation::carbohydrates::get_reference_atoms( torsion_num, bisected_man_.conformation(), child);
+				TS_ASSERT_EQUALS(mm->get_atoms().at(ref_atoms[2]), false);
+			}
+		}
+
+		//Branch Connection 1->3
+
+		subset[2] = false;
+		subset[3] = true;
+
+		return_subset->set_residue_subset(subset);
+		mmf.add_bb_action(mm_enable, return_subset);
+		mmf.add_chi_action(mm_enable, return_subset);
+		mm = mmf.create_movemap_from_pose(bisected_man_);
+
+		TS_ASSERT_EQUALS( mm->get_bb(3), true);
+		TS_ASSERT_EQUALS( mm->get_chi(3),true);
+
+		TS_ASSERT_EQUALS( mm->get_bb(2), false);
+		TS_ASSERT_EQUALS( mm->get_chi(2),false);
+
+		TS_ASSERT_EQUALS( mm->get_bb(1), false);
+		TS_ASSERT_EQUALS( mm->get_chi(1),false);
+
+		//Test ASN torsions
+
+		subset.resize( two_glycans_.size(), false);
+		core::Size asn_res = two_glycans_.pdb_info()->pdb2pose('C', 572);
+		core::Size glycan_connect = two_glycans_.pdb_info()->pdb2pose('G', 592);
+
+		subset[glycan_connect] = true;
+		return_subset->set_residue_subset(subset);
+		mmf.add_bb_action(mm_enable, return_subset);
+		mmf.add_chi_action(mm_enable, return_subset);
+		mm = mmf.create_movemap_from_pose(two_glycans_);
+
+		TS_ASSERT_EQUALS( mm->get_bb( asn_res), false );
+		TS_ASSERT_EQUALS( mm->get_chi( asn_res), true );
+		TS_ASSERT_EQUALS( mm->get_bb( glycan_connect), true );
+
+		n_torsions = get_n_glycosidic_torsions_in_res(two_glycans_, glycan_connect);
+		for ( core::Size torsion_num = 1; torsion_num <= n_torsions; ++torsion_num ) {
+			utility::vector1< core::id::AtomID > ref_atoms = core::conformation::carbohydrates::get_reference_atoms( torsion_num, two_glycans_.conformation(), glycan_connect);
+
+			TS_ASSERT_EQUALS(mm->get_atoms().at( ref_atoms[2]), true);
+		}
+
+		children = two_glycans_.glycan_tree_set()->get_node(glycan_connect)->get_children();
+		for ( auto child : children ) {
+			core::Size child_torsions = get_n_glycosidic_torsions_in_res(two_glycans_, child);
+			for ( core::Size torsion_num = 2; torsion_num <= child_torsions; ++torsion_num ) {
+				utility::vector1< core::id::AtomID > ref_atoms = core::conformation::carbohydrates::get_reference_atoms( torsion_num, two_glycans_.conformation(), child);
+				TS_ASSERT_EQUALS(mm->get_atoms().at(ref_atoms[2]), false);
+			}
+		}
+
+	}
 	void test_exocyclic_detection()
 	{
 		using namespace core::id;
@@ -897,4 +1003,7 @@ private:  // Private data /////////////////////////////////////////////////////
 	core::pose::Pose bisected_man_;  // a-D-Manp-(1->3)-[b-d-GlcpNAc-(1->4)]-[a-D-Manp-(1->6)]-b-D-Manp
 	core::pose::Pose exo_test_; // alpha-L-Fucp-(1->6)-D-GlcpNAc-(1->4)-D-GlcpNAc
 	core::pose::PoseOP man9_op_; // a-D-Manp-(1->2)-a-D-Manp-(1->2)-a-D-Manp-(1->3)-[a-D-Manp-(1->2)-a-D-Manp-(1->3)-[a-D-Manp-(1->2)-a-D-Manp-(1->6)]-a-D-Manp-(1->6)]-b-D-Manp-(1->4)-b-D-GlcpNAc-(1->4)-b-D-GlcpNAc
+
+	core::pose::Pose two_glycans_; //Simple PDB with two man5s
+
 };  // class CarbohydratePoseUtilityFunctionTests

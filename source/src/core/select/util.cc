@@ -24,8 +24,11 @@
 #include <core/conformation/Residue.hh>
 #include <core/scoring/Energies.hh>
 #include <core/pose/Pose.hh>
-
+#include <core/pose/PDBInfo.hh>
+#include <core/id/AtomID.hh>
+#include <core/chemical/AtomType.hh>
 #include <numeric/xyzVector.hh>
+#include <utility/string_util.hh>
 
 static basic::Tracer TR( "core.select.util" );
 
@@ -200,6 +203,101 @@ void fill_tenA_neighbor_residues(
 		}
 	}
 }
+
+//Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)
+std::string
+get_pymol_selection_for_atoms(pose::Pose const & pose, utility::vector1< id::AtomID > const & atoms, std::string const & sele_name, bool skip_virts /*true*/ ){
+
+	std::string selection = "select "+sele_name+", ";
+	std::map< std::string, utility::vector1<std::string >> chain_residues;
+	std::map< std::string, utility::vector1<std::string >> residue_to_atoms;
+	utility::vector1< std::string > chains;
+	for ( auto atom : atoms ) {
+
+		core::Size i = atom.rsd();
+
+		if ( pose.residue(i).atom_type( atom.atomno() ).is_virtual() && skip_virts ) continue;
+
+		std::string chain = utility::to_string( pose.pdb_info()->chain(i) );
+		std::string num = utility::to_string( pose.pdb_info()->number(i) );
+		std::string icode = utility::to_string( pose.pdb_info()->icode(i) );
+
+		std::string res = "";
+		if ( icode == utility::to_string(' ') ) {
+			res = num;
+		} else {
+			res = num+icode;
+		}
+
+		std::string atom_name = pose.residue( i ).atom_name( atom.atomno());
+		if ( ! residue_to_atoms.count(res) ) {
+			utility::vector1< std::string > atom_names;
+			residue_to_atoms[res] = atom_names;
+			residue_to_atoms[res].push_back(atom_name);
+
+		} else {
+			residue_to_atoms[res].push_back(atom_name);
+		}
+
+		if ( ! chain_residues.count( chain ) ) {
+			utility::vector1< std::string > residues;
+			chain_residues[chain] = residues;
+			chain_residues[chain].push_back( res );
+			chains.push_back( chain );
+		} else if ( !chain_residues[chain].contains(res) ) {
+			chain_residues[chain].push_back( res );
+		}
+	}
+
+	for ( core::Size i = 1; i <= chains.size(); ++i ) {
+
+		std::string chain = chains[i];
+		std::string subselection = "";
+
+		if ( i == 1 ) {
+			subselection = "(chain "+chain+" and resid ";
+		} else {
+			subselection = subselection + " or "+"(chain "+chain+" and resid ";
+		}
+		for ( core::Size x = 1; x <= chain_residues[ chain ].size(); ++x ) {
+			std::string res = chain_residues[chain][x];
+
+			if ( x == 1 ) {
+				subselection += res;
+			} else {
+				subselection += ("resid "+res);
+			}
+
+			//Atom Subselection
+			std::string atom_subselection = "";
+			//std::cout << x <<" " << residue_to_atoms[res] << std::endl;
+			for ( core::Size A = 1; A <= residue_to_atoms[res].size(); ++A ) {
+				std::string const & atom_name = residue_to_atoms[res][A];
+				if ( A == 1 ) {
+					atom_subselection = " and name ";
+				}
+				atom_subselection += utility::strip(atom_name);
+
+				if ( A != residue_to_atoms[res].size() ) {
+					atom_subselection += "+";
+				}
+			}
+			subselection += atom_subselection;
+
+			if ( x != chain_residues[chain].size() ) {
+				subselection += " or ";
+			}
+
+		}
+		subselection+=")";
+		//TR << chain <<" " <<subselection << std::endl;
+		selection += subselection;
+	}
+
+	return selection;
+}
+
+
 
 } //core
 } //select

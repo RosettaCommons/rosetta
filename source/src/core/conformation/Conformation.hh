@@ -953,7 +953,7 @@ public:  // DoFs/xyzs
 	set_torsion( TorsionID const & id, Real setting );
 
 
-	/// @brief Returns the torsion angle defined by  <atom[1-4]>
+	/// @brief Returns the torsion angle defined by  <atom[1-4]> in Radians
 	Real
 	torsion_angle(
 		AtomID const & atom1,

@@ -18,6 +18,7 @@
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <utility/vector1.hh>
+#include <core/id/AtomID.fwd.hh>
 #include <core/types.hh>
 #include <set>
 
@@ -106,6 +107,9 @@ fill_tenA_neighbor_residues(
 	utility::vector1<bool> & residue_positions
 );
 
+///@brief Return a pymol selection of a set of atoms.
+std::string
+get_pymol_selection_for_atoms(pose::Pose const & pose, utility::vector1< id::AtomID > const & atoms,std::string const & sele_name, bool skip_virts=true );
 
 } //core
 } //select

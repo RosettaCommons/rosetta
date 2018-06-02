@@ -1,0 +1,7 @@
+-s two_glycans.pdb
+-parser:protocol test_glycan_fr.xml
+-overwrite
+-include_sugars
+-cartesian
+-score:weights ref2015_cart.wts
+-out:prefix cart_branch_

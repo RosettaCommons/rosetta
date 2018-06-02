@@ -33,6 +33,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/pose/carbohydrates/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -664,12 +665,9 @@ GlycanTreeRelax::apply( core::pose::Pose & pose){
 		MinMover min_mover = MinMover();
 
 		//For now, we create a movemap from a selector manually.  Refactor this to Andrew's new code!
-		MoveMapOP mm = MoveMapOP( new MoveMap());
-		for ( core::Size resnum = 1; resnum <= pose.size(); ++resnum ) {
-			if ( ! min_subset[ resnum ] ) continue;
-			mm->set_bb( resnum, true);
-			mm->set_chi( resnum, true);
-		}
+		ReturnResidueSubsetSelectorOP return_subset_min = ReturnResidueSubsetSelectorOP( new ReturnResidueSubsetSelector(min_subset));
+
+		MoveMapOP mm = core::pose::carbohydrates::create_glycan_movemap_from_residue_selector(pose,return_subset_min,true /*chi*/,min_rings_,true /*bb*/, cartmin_);
 
 		//Configure the scorefunction:
 		packer.score_function( scorefxn_ );

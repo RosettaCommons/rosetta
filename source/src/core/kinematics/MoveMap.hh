@@ -515,6 +515,11 @@ public:
 	void
 	set_jump( id::JumpID const & jump, bool const setting );
 
+	///@brief Set a specific AtomID movable.
+	/// This is specifically for cartesian-space kinematics
+	void
+	set_atom( id::AtomID const & atom, bool const setting );
+
 	/// @brief set a specific TorsionType movable: currently BB, CHI, NU, BRANCH, or JUMP
 	void
 	set( TorsionType const & t, bool const setting );
@@ -615,6 +620,17 @@ public: // accessors
 
 	bool
 	get_jump( id::JumpID const & jump ) const;
+
+	///@brief Get specific AtomID settings (used to set specific atoms in CartesianMin)
+	///
+	///@details
+	///  Per-atom interface not available to discourage general use
+	///  IE - In order to ask if an ATOM is movable with the rest of the MM settings (as the other get functions do)
+	///     , one would require a pose.
+	///
+	std::map< AtomID, bool> const &
+	get_atoms() const;
+
 
 	/// @brief get setting for a specific TorsionType, such as "BB"
 	bool
@@ -834,6 +850,9 @@ private:
 
 	JumpID_Map jump_id_map_;
 
+	/// @brief flexible or fixed for a single specific ATOM.
+	///  Used for fine control of cartesian minimization/protocols
+	std::map< AtomID, bool > atom_id_map_;
 
 #ifdef    SERIALIZATION
 public:

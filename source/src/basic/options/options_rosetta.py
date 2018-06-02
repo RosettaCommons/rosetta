@@ -126,6 +126,15 @@ Options = Option_Group( '',
 			desc='Do not load the [common] config file if present. '
 			),
 
+		#JAB - TEMP
+		############################
+		Option( 'skip_classic_cart_setup', 'Boolean',
+			default = 'false',
+			),
+		Option( 'skip_new_cart_setup', 'Boolean',
+			default = 'false',
+			),
+		############################
 
 		# Termini options -----------------------------------------------------
 		#Option( 'termini', 'String', default = 'ALL', desc="Put full N and C termini on input structures"),
