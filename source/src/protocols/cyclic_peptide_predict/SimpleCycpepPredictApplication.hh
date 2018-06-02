@@ -190,6 +190,16 @@ public:
 	///
 	void set_cartesian_relax_rounds( core::Size const rounds_in );
 
+	/// @brief Given an input vector of strings of the form "res1,res2,res3,metal_name", parse this and populate
+	/// the trigonal_pyramidal_metal_positions_ vector.
+	/// @details Resets the trigonal_pyramidal_metal_positions_ vector.
+	void set_trigonal_pyramidal_metal_positions_from_string_vector( utility::vector1< std::string > const &vect );
+
+	/// @brief Given an input vector of strings of the form "res1,res2,res3,metal_name", parse this and populate
+	/// the trigonal_planar_metal_positions_ vector.
+	/// @details Resets the trigonal_planar_metal_positions_ vector.
+	void set_trigonal_planar_metal_positions_from_string_vector( utility::vector1< std::string > const &vect );
+
 	/// @brief Given an input vector of strings of the form "res1,res2,res3,res4,metal_name", parse this and populate
 	/// the tetrahedral_metal_positions_ vector.
 	/// @details Resets the tetrahedral_metal_positions_ vector.
@@ -200,11 +210,23 @@ public:
 	/// @details Resets the octahedral_metal_positions_ vector.
 	void set_octahedral_metal_positions_from_string_vector( utility::vector1< std::string > const &vect );
 
+	/// @brief Resets the trigonal_pyramidal_metal_positions_ vector.
+	void reset_trigonal_pyramidal_metal_positions();
+
+	/// @brief Resets the trigonal_planar_metal_positions_ vector.
+	void reset_trigonal_planar_metal_positions();
+
 	/// @brief Resets the tetrahedral_metal_positions_ vector.
 	void reset_tetrahedral_metal_positions();
 
 	/// @brief Resets the octahedral_metal_positions_ vector.
 	void reset_octahedral_metal_positions();
+
+	/// @brief Adds an entry to the trigonal_pyramidal_metal_positions_ vector.
+	void add_entry_to_trigonal_pyramidal_metal_positions( core::Size const res1, core::Size const res2, core::Size const res3, std::string const & metal_type );
+
+	/// @brief Adds an entry to the trigonal_planar_metal_positions_ vector.
+	void add_entry_to_trigonal_planar_metal_positions( core::Size const res1, core::Size const res2, core::Size const res3, std::string const & metal_type );
 
 	/// @brief Adds an entry to the tetrahedral_metal_positions_ vector.
 	void add_entry_to_tetrahedral_metal_positions( core::Size const res1, core::Size const res2, core::Size const res3, core::Size const res4, std::string const & metal_type );
@@ -596,6 +618,10 @@ private:
 	/// @details This function is called at the end of the protocol, and therefore doesn't bother to add back constraints.
 	void re_append_linker_residues( core::pose::PoseCOP pose, core::pose::PoseOP newpose, core::Size const offset, utility::vector1< utility::vector1< core::Size > > const &linker_positions, std::string const & linker_name ) const;
 
+	/// @brief Given a pose with trigonal pyramidal or trigonal planar metal variants and another pose without the variants, add back the variants to the latter.
+	/// @details This function is called at the end of the protocol, and therefore doesn't bother to add back contraints.  If planar is true, it calls the trigonal planar code; otherwise it calls the trigonal pyramidal.
+	void re_append_trigonal_metal_residues( core::pose::PoseCOP pose, core::pose::PoseOP newpose, bool const planar ) const;
+
 	/// @brief Given a pose with tetrahedral metal variants and another pose without the variants, add back the variants to the latter.
 	/// @details This function is called at the end of the protocol, and therefore doesn't bother to add back contraints.
 	void re_append_tetrahedral_metal_residues( core::pose::PoseCOP pose, core::pose::PoseOP newpose ) const;
@@ -954,6 +980,40 @@ private:
 	/// @brief Multiplier to make the trimesic acid constraints energy filter more permissive.
 	/// @details Default 1.0.
 	core::Real tma_constraints_energy_filter_multiplier_;
+
+	/// @brief List of positions linked by a metal coordinated with trigonal pyramidal geometry.
+	/// @details This is a vector of pairs of (lists of four residues, metal type string).
+	utility::vector1< std::pair< utility::fixedsizearray1< core::Size, 3 >, std::string > > trigonal_pyramidal_metal_positions_;
+
+	/// @brief If true, filters are applied based on distance between metal-conjugated residues and on constraints to discard
+	/// GenKIC solutions that can't be crosslinked easily.
+	/// @details True by default.
+	bool use_trigonal_pyramidal_metal_filters_;
+
+	/// @brief Multiplier to make the trigonal pyramidal metal distance filter more permissive.
+	/// @details Default 1.0.
+	core::Real trigonal_pyramidal_metal_sidechain_distance_filter_multiplier_;
+
+	/// @brief Multiplier to make the trigonal pyramidal metal constraints energy filter more permissive.
+	/// @details Default 1.0.
+	core::Real trigonal_pyramidal_metal_constraints_energy_filter_multiplier_;
+	/// @brief List of positions linked by a metal coordinated with trigonal planar geometry.
+	/// @details This is a vector of pairs of (lists of four residues, metal type string).
+	utility::vector1< std::pair< utility::fixedsizearray1< core::Size, 3 >, std::string > > trigonal_planar_metal_positions_;
+
+	/// @brief If true, filters are applied based on distance between metal-conjugated residues and on constraints to discard
+	/// GenKIC solutions that can't be crosslinked easily.
+	/// @details True by default.
+	bool use_trigonal_planar_metal_filters_;
+
+	/// @brief Multiplier to make the trigonal planar metal distance filter more permissive.
+	/// @details Default 1.0.
+	core::Real trigonal_planar_metal_sidechain_distance_filter_multiplier_;
+
+	/// @brief Multiplier to make the trigonal planar metal constraints energy filter more permissive.
+	/// @details Default 1.0.
+	core::Real trigonal_planar_metal_constraints_energy_filter_multiplier_;
+
 
 	/// @brief List of positions linked by a tetrahedrally-coordinated metal.
 	/// @details This is a vector of pairs of (lists of four residues, metal type string).

@@ -183,8 +183,11 @@ Metal_HelperBase::add_linker_constraints_asymmetric(
 			{ //Angle constraints:
 				add_angle_constraints(pose, res_indices, i, j);
 			}
+
 		}
 	}
+	//Dihedral constraints (e.g. improper dihedrals for torsions):
+	add_dihedral_constraints(pose, res_indices);
 }
 
 /// @brief Given a selection of four residues that have already been connected to a crosslinker,
@@ -229,6 +232,8 @@ Metal_HelperBase::add_linker_constraints_symmetric(
 			}
 		}
 	}
+	//Dihedral constraints (e.g. improper dihedrals for torsions):
+	add_dihedral_constraints(pose, res_indices);
 }
 
 /// @brief Given indices of four residues that are already linked to a linker, get the index
@@ -273,7 +278,7 @@ Metal_HelperBase::filter_by_sidechain_distance_asymmetric(
 
 	core::Real const comparison_val( filter_multiplier*filter_multiplier*MAX_CB_CB_DIST_SQ );
 
-	for ( core::Size i(2); i<=4; ++i ) {
+	for ( core::Size i(2), imax(res_indices.size()); i<=imax; ++i ) {
 		for ( core::Size j(1); j<i; ++j ) {
 			core::Real const distsq( pose.residue(res_indices[i]).xyz("CB").distance_squared( pose.residue(res_indices[j]).xyz("CB") ) );
 			if ( distsq > comparison_val ) return true; //Filter fails if distance > 12
@@ -303,7 +308,7 @@ Metal_HelperBase::filter_by_sidechain_distance_symmetric(
 	core::Real const comparison_val( filter_multiplier*filter_multiplier*MAX_CB_CB_DIST_SQ );
 
 	//Just need to check one residue against the other three, thanks to symmetry.
-	for ( core::Size i(2); i<=4; ++i ) {
+	for ( core::Size i(2), imax(res_indices.size()); i<=imax; ++i ) {
 		core::Real const distsq( pose.residue(res_indices[i]).xyz("CB").distance_squared( pose.residue(res_indices[1]).xyz("CB") ) );
 		if ( distsq > comparison_val ) return true; //Filter fails if distance > 12
 	}
@@ -358,6 +363,16 @@ Metal_HelperBase::metal_type_string() const {
 ///////////////////////
 /// Private Methods ///
 ///////////////////////
+
+/// @brief Given a pose and a list of residues, add dihedral constraints (e.g. improper dihedrals to enforce planarity).
+/// @details Defaults to a function that does nothing.  Can be overridden by derived classes.
+void
+Metal_HelperBase::add_dihedral_constraints(
+	core::pose::Pose &/*pose*/,
+	utility::vector1< core::Size > const &/*res_indices*/
+) const {
+	//GNDN.
+}
 
 /// @brief Given a pose and a residue with the VIRTUAL_METAL_CONJUGATION variant type already added,
 /// set the metal-metal liganding atom bond length appropriately for the metal in question.

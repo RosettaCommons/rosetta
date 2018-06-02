@@ -1,0 +1,21 @@
+-nstruct 5
+-output_virtual true
+-write_all_connect_info
+-cyclic_peptide:sequence_file inputs/seq.txt
+-cyclic_peptide:rama_cutoff 8.0
+-cyclic_peptide:trigonal_planar_metal_positions 6,12,18,Zn
+-cyclic_peptide:trigonal_planar_metal_sidechain_distance_filter_multiplier 2.0
+-cyclic_peptide:trigonal_planar_metal_constraints_energy_filter_multiplier 20.0
+-cyclic_peptide:fast_relax_rounds 3
+-cyclic_peptide:genkic_closure_attempts 1000
+-cyclic_peptide:min_genkic_hbonds 0
+-cyclic_peptide:min_final_hbonds 0
+-cyclic_peptide:filter_oversaturated_hbond_acceptors false
+-cyclic_peptide:user_set_alpha_dihedral_perturbation 10.0
+-cyclic_peptide:require_symmetry_repeats 3
+-cyclic_peptide:require_symmetry_mirroring false
+-cyclic_peptide:require_symmetry_angle_threshold 60.0
+-cyclic_peptide:require_symmetry_perturbation 5.0
+-mute protocols.protein_interface_design.design_utils
+-jd2:failed_job_exception false
+-out:levels protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication:500 protocols.cyclic_peptide.CrosslinkerMover:500 protocols.cyclic_peptide.crosslinker.CrosslinkerMoverHelper:500 protocols.cyclic_peptide.crosslinker.OctahedralMetal_Helper:500

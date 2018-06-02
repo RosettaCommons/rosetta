@@ -16,7 +16,7 @@
 	
 		<SymmetricCycpepAlign name="align" auto_detect_symmetry="true" angle_threshold="15" trim_to_single_repeat="true" invert="true" />
 		
-		<SetupForSymmetry name="sym" definition="inputs/c4m.symm" />
+		<SetupForSymmetry name="sym" definition="inputs/s4.symm" />
 
 		<PeptideCyclizeMover name="bond2" residue_selector="peptide_selector" />
 		

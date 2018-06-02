@@ -40,7 +40,7 @@
 		
 		<AtomTree name="foldtree1" fold_tree_file="inputs/foldtree.txt" />
 	
-		<SetupForSymmetry name="setup_symm" definition="inputs/c2m.symm" />
+		<SetupForSymmetry name="setup_symm" definition="inputs/s2.symm" />
 	
 		<DeclareBond name="connect_ends" res1="24" res2="1" atom1="C" atom2="N" />
 

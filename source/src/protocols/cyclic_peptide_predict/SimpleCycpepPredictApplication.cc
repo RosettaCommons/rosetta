@@ -101,6 +101,8 @@
 #include <protocols/cyclic_peptide/CrosslinkerMover.hh>
 #include <protocols/cyclic_peptide/crosslinker/TBMB_Helper.hh>
 #include <protocols/cyclic_peptide/crosslinker/TMA_Helper.hh>
+#include <protocols/cyclic_peptide/crosslinker/TrigonalPyramidalMetal_Helper.hh>
+#include <protocols/cyclic_peptide/crosslinker/TrigonalPlanarMetal_Helper.hh>
 #include <protocols/cyclic_peptide/crosslinker/TetrahedralMetal_Helper.hh>
 #include <protocols/cyclic_peptide/crosslinker/OctahedralMetal_Helper.hh>
 
@@ -191,6 +193,14 @@ protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::register_opti
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::use_TMA_filters                      );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::TMA_sidechain_distance_filter_multiplier   );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::TMA_constraints_energy_filter_multiplier   );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::trigonal_pyramidal_metal_positions          );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::use_trigonal_pyramidal_metal_filters        );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::trigonal_pyramidal_metal_sidechain_distance_filter_multiplier   );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::trigonal_pyramidal_metal_constraints_energy_filter_multiplier   );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::trigonal_planar_metal_positions          );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::use_trigonal_planar_metal_filters        );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::trigonal_planar_metal_sidechain_distance_filter_multiplier   );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::trigonal_planar_metal_constraints_energy_filter_multiplier   );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::tetrahedral_metal_positions          );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::use_tetrahedral_metal_filters        );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::tetrahedral_metal_sidechain_distance_filter_multiplier   );
@@ -345,6 +355,14 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication(
 	use_tma_filters_(true),
 	tma_sidechain_distance_filter_multiplier_(1.0),
 	tma_constraints_energy_filter_multiplier_(1.0),
+	trigonal_pyramidal_metal_positions_(),
+	use_trigonal_pyramidal_metal_filters_(true),
+	trigonal_pyramidal_metal_sidechain_distance_filter_multiplier_(1.0),
+	trigonal_pyramidal_metal_constraints_energy_filter_multiplier_(1.0),
+	trigonal_planar_metal_positions_(),
+	use_trigonal_planar_metal_filters_(true),
+	trigonal_planar_metal_sidechain_distance_filter_multiplier_(1.0),
+	trigonal_planar_metal_constraints_energy_filter_multiplier_(1.0),
 	tetrahedral_metal_positions_(),
 	use_tetrahedral_metal_filters_(true),
 	tetrahedral_metal_sidechain_distance_filter_multiplier_(1.0),
@@ -450,6 +468,14 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication( SimpleCycpepPred
 	use_tma_filters_(src.use_tma_filters_),
 	tma_sidechain_distance_filter_multiplier_(src.tma_sidechain_distance_filter_multiplier_),
 	tma_constraints_energy_filter_multiplier_(src.tma_constraints_energy_filter_multiplier_),
+	trigonal_pyramidal_metal_positions_(src.trigonal_pyramidal_metal_positions_),
+	use_trigonal_pyramidal_metal_filters_(src.use_trigonal_pyramidal_metal_filters_),
+	trigonal_pyramidal_metal_sidechain_distance_filter_multiplier_(src.trigonal_pyramidal_metal_sidechain_distance_filter_multiplier_),
+	trigonal_pyramidal_metal_constraints_energy_filter_multiplier_(src.trigonal_pyramidal_metal_constraints_energy_filter_multiplier_),
+	trigonal_planar_metal_positions_(src.trigonal_planar_metal_positions_),
+	use_trigonal_planar_metal_filters_(src.use_trigonal_planar_metal_filters_),
+	trigonal_planar_metal_sidechain_distance_filter_multiplier_(src.trigonal_planar_metal_sidechain_distance_filter_multiplier_),
+	trigonal_planar_metal_constraints_energy_filter_multiplier_(src.trigonal_planar_metal_constraints_energy_filter_multiplier_),
 	tetrahedral_metal_positions_(src.tetrahedral_metal_positions_),
 	use_tetrahedral_metal_filters_(src.use_tetrahedral_metal_filters_),
 	tetrahedral_metal_sidechain_distance_filter_multiplier_(src.tetrahedral_metal_sidechain_distance_filter_multiplier_),
@@ -706,6 +732,22 @@ SimpleCycpepPredictApplication::initialize_from_options(
 	use_tma_filters_ = option[basic::options::OptionKeys::cyclic_peptide::use_TMA_filters]();
 	tma_sidechain_distance_filter_multiplier_ = option[basic::options::OptionKeys::cyclic_peptide::TMA_sidechain_distance_filter_multiplier]();
 	tma_constraints_energy_filter_multiplier_ = option[basic::options::OptionKeys::cyclic_peptide::TMA_constraints_energy_filter_multiplier]();
+
+	//Store the trigonal pyramidal metal positions.
+	if ( option[basic::options::OptionKeys::cyclic_peptide::trigonal_pyramidal_metal_positions].user() ) {
+		set_trigonal_pyramidal_metal_positions_from_string_vector( option[basic::options::OptionKeys::cyclic_peptide::trigonal_pyramidal_metal_positions]() );
+	}
+	use_trigonal_pyramidal_metal_filters_ = option[basic::options::OptionKeys::cyclic_peptide::use_trigonal_pyramidal_metal_filters]();
+	trigonal_pyramidal_metal_sidechain_distance_filter_multiplier_ = option[basic::options::OptionKeys::cyclic_peptide::trigonal_pyramidal_metal_sidechain_distance_filter_multiplier]();
+	trigonal_pyramidal_metal_constraints_energy_filter_multiplier_ = option[basic::options::OptionKeys::cyclic_peptide::trigonal_pyramidal_metal_constraints_energy_filter_multiplier]();
+
+	//Store the trigonal planar metal positions.
+	if ( option[basic::options::OptionKeys::cyclic_peptide::trigonal_planar_metal_positions].user() ) {
+		set_trigonal_planar_metal_positions_from_string_vector( option[basic::options::OptionKeys::cyclic_peptide::trigonal_planar_metal_positions]() );
+	}
+	use_trigonal_planar_metal_filters_ = option[basic::options::OptionKeys::cyclic_peptide::use_trigonal_planar_metal_filters]();
+	trigonal_planar_metal_sidechain_distance_filter_multiplier_ = option[basic::options::OptionKeys::cyclic_peptide::trigonal_planar_metal_sidechain_distance_filter_multiplier]();
+	trigonal_planar_metal_constraints_energy_filter_multiplier_ = option[basic::options::OptionKeys::cyclic_peptide::trigonal_planar_metal_constraints_energy_filter_multiplier]();
 
 	//Store the tetrahedral metal positions.
 	if ( option[basic::options::OptionKeys::cyclic_peptide::tetrahedral_metal_positions].user() ) {
@@ -992,6 +1034,70 @@ SimpleCycpepPredictApplication::set_cartesian_relax_rounds(
 	cartesian_relax_rounds_ = rounds_in;
 }
 
+/// @brief Given an input vector of strings of the form "res1,res2,res3,metal_name", parse this and populate
+/// the trigonal_pyramidal_metal_positions_ vector.
+/// @details Resets the trigonal_pyramidal_metal_positions_ vector.
+void
+SimpleCycpepPredictApplication::set_trigonal_pyramidal_metal_positions_from_string_vector(
+	utility::vector1< std::string > const &vect
+) {
+	core::Size const nstrings( vect.size() );
+	reset_trigonal_pyramidal_metal_positions();
+	if ( !nstrings ) return; //Do nothing more for size 0 vector.
+
+	utility::fixedsizearray1< int, 3 > resnums; //Deliberately ints.
+	std::string element;
+
+	for ( core::Size i(1); i<=nstrings; ++i ) {
+		std::istringstream ss( vect[i] );
+		core::Size counter(0);
+		while ( std::getline(ss, element, ',') ) {
+			++counter;
+			if ( counter < 4 ) {
+				resnums[counter] = std::atoi(element.c_str());
+				runtime_assert_string_msg( resnums[counter] > 0, "Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::set_trigonal_pyramidal_metal_positions_from_string_vector(): All residue numbers must be greater than zero when setting residue indices for metals coordinated with trigonal pyramidal geometry." );
+			} else if ( counter > 4 ) {
+				utility_exit_with_message( "Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::set_trigonal_pyramidal_metal_positions_from_string_vector(): A metal setup input flag for trigonal pyramidal metals was provided that was not of the form \"res1,res2,res3,res4,metal_name\".  Comma-separated lists of five entries (four numbers and a metal name) are required." );
+			}
+		}
+		add_entry_to_trigonal_pyramidal_metal_positions(static_cast<core::Size>(resnums[1]), static_cast<core::Size>(resnums[2]), static_cast<core::Size>(resnums[3]), element);
+		TR << "Parsed trigonal pyramidal metal setup where res1=" << resnums[1] << ", res2=" << resnums[2] << ", res3=" << resnums[3] << ", metal=" << element << std::endl;
+	}
+
+}
+
+/// @brief Given an input vector of strings of the form "res1,res2,res3,metal_name", parse this and populate
+/// the trigonal_planar_metal_positions_ vector.
+/// @details Resets the trigonal_planar_metal_positions_ vector.
+void
+SimpleCycpepPredictApplication::set_trigonal_planar_metal_positions_from_string_vector(
+	utility::vector1< std::string > const &vect
+) {
+	core::Size const nstrings( vect.size() );
+	reset_trigonal_planar_metal_positions();
+	if ( !nstrings ) return; //Do nothing more for size 0 vector.
+
+	utility::fixedsizearray1< int, 3 > resnums; //Deliberately ints.
+	std::string element;
+
+	for ( core::Size i(1); i<=nstrings; ++i ) {
+		std::istringstream ss( vect[i] );
+		core::Size counter(0);
+		while ( std::getline(ss, element, ',') ) {
+			++counter;
+			if ( counter < 4 ) {
+				resnums[counter] = std::atoi(element.c_str());
+				runtime_assert_string_msg( resnums[counter] > 0, "Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::set_trigonal_planar_metal_positions_from_string_vector(): All residue numbers must be greater than zero when setting residue indices for metals coordinated with trigonal planar geometry." );
+			} else if ( counter > 4 ) {
+				utility_exit_with_message( "Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::set_trigonal_planar_metal_positions_from_string_vector(): A metal setup input flag for trigonal planar metals was provided that was not of the form \"res1,res2,res3,res4,metal_name\".  Comma-separated lists of five entries (four numbers and a metal name) are required." );
+			}
+		}
+		add_entry_to_trigonal_planar_metal_positions(static_cast<core::Size>(resnums[1]), static_cast<core::Size>(resnums[2]), static_cast<core::Size>(resnums[3]), element);
+		TR << "Parsed trigonal planar metal setup where res1=" << resnums[1] << ", res2=" << resnums[2] << ", res3=" << resnums[3] << ", metal=" << element << std::endl;
+	}
+}
+
+
 /// @brief Given an input vector of strings of the form "res1,res2,res3,res4,metal_name", parse this and populate
 /// the tetrahedral_metal_positions_ vector.
 /// @details Resets the tetrahedral_metal_positions_ vector.
@@ -1054,6 +1160,18 @@ SimpleCycpepPredictApplication::set_octahedral_metal_positions_from_string_vecto
 	}
 }
 
+/// @brief Resets the trigonal_pyramidal_metal_positions_ vector.
+void
+SimpleCycpepPredictApplication::reset_trigonal_pyramidal_metal_positions() {
+	trigonal_pyramidal_metal_positions_.clear();
+}
+
+/// @brief Resets the trigonal_planar_metal_positions_ vector.
+void
+SimpleCycpepPredictApplication::reset_trigonal_planar_metal_positions() {
+	trigonal_planar_metal_positions_.clear();
+}
+
 /// @brief Resets the tetrahedral_metal_positions_ vector.
 void
 SimpleCycpepPredictApplication::reset_tetrahedral_metal_positions() {
@@ -1066,9 +1184,44 @@ SimpleCycpepPredictApplication::reset_octahedral_metal_positions() {
 	octahedral_metal_positions_.clear();
 }
 
+/// @brief Adds an entry to the trigonal_pyramidal_metal_positions_ vector.
+void
+SimpleCycpepPredictApplication::add_entry_to_trigonal_pyramidal_metal_positions(
+	core::Size const res1,
+	core::Size const res2,
+	core::Size const res3,
+	std::string const & metal_type
+) {
+	utility::fixedsizearray1< core::Size, 3 > residues;
+	runtime_assert(res1 > 0 && res2 > 0 && res3 > 0 );
+	runtime_assert(!metal_type.empty());
+	residues[1] = res1;
+	residues[2] = res2;
+	residues[3] = res3;
+	trigonal_pyramidal_metal_positions_.push_back( std::make_pair( residues, metal_type) );
+}
+
+/// @brief Adds an entry to the trigonal_planar_metal_positions_ vector.
+void
+SimpleCycpepPredictApplication::add_entry_to_trigonal_planar_metal_positions(
+	core::Size const res1,
+	core::Size const res2,
+	core::Size const res3,
+	std::string const & metal_type
+) {
+	utility::fixedsizearray1< core::Size, 3 > residues;
+	runtime_assert(res1 > 0 && res2 > 0 && res3 > 0 );
+	runtime_assert(!metal_type.empty());
+	residues[1] = res1;
+	residues[2] = res2;
+	residues[3] = res3;
+	trigonal_planar_metal_positions_.push_back( std::make_pair( residues, metal_type) );
+}
+
+
 /// @brief Adds an entry to the tetrahedral_metal_positions_ vector.
 void
-SimpleCycpepPredictApplication::SimpleCycpepPredictApplication::add_entry_to_tetrahedral_metal_positions(
+SimpleCycpepPredictApplication::add_entry_to_tetrahedral_metal_positions(
 	core::Size const res1,
 	core::Size const res2,
 	core::Size const res3,
@@ -1087,7 +1240,7 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication::add_entry_to_tet
 
 /// @brief Adds an entry to the octahedral_metal_positions_ vector.
 void
-SimpleCycpepPredictApplication::SimpleCycpepPredictApplication::add_entry_to_octahedral_metal_positions(
+SimpleCycpepPredictApplication::add_entry_to_octahedral_metal_positions(
 	core::Size const res1,
 	core::Size const res2,
 	core::Size const res3,
@@ -2744,6 +2897,46 @@ SimpleCycpepPredictApplication::genkic_close(
 		}
 	}
 
+	//If we're considering trigonal pyramidal metal crosslinks, add 'em here:
+	if ( trigonal_pyramidal_metal_positions_.size() > 0 ) {
+		for ( core::Size i(1), imax(trigonal_pyramidal_metal_positions_.size()); i<=imax; ++i ) {
+			utility::fixedsizearray1< core::Size, 3 > const & resnums( trigonal_pyramidal_metal_positions_[i].first );
+			core::select::residue_selector::ResidueIndexSelectorOP index_selector( new core::select::residue_selector::ResidueIndexSelector );
+			for ( core::Size j(1); j<=3; ++j ) index_selector->append_index( current_position( resnums[j], cyclic_offset, nres ) );
+			protocols::cyclic_peptide::CrosslinkerMoverOP metallinker( new protocols::cyclic_peptide::CrosslinkerMover );
+			metallinker->set_residue_selector(index_selector);
+			metallinker->set_linker_name("trigonal_pyramidal_metal");
+			metallinker->set_metal_type(trigonal_pyramidal_metal_positions_[i].second);
+			metallinker->set_behaviour(true, true, true, false);
+			metallinker->set_filter_behaviour(use_trigonal_pyramidal_metal_filters_, use_trigonal_pyramidal_metal_filters_, false, 0.0, trigonal_pyramidal_metal_sidechain_distance_filter_multiplier_, trigonal_pyramidal_metal_constraints_energy_filter_multiplier_);
+			metallinker->set_scorefxn( sfxn_highhbond );
+			metallinker->set_sidechain_frlx_rounds(3);
+			std::stringstream movername;
+			movername << "trigonal_pyramidal_metal_link_" << i;
+			pp->add_mover_filter_pair( metallinker, movername.str(), nullptr );
+		}
+	}
+
+	//If we're considering trigonal planar metal crosslinks, add 'em here:
+	if ( trigonal_planar_metal_positions_.size() > 0 ) {
+		for ( core::Size i(1), imax(trigonal_planar_metal_positions_.size()); i<=imax; ++i ) {
+			utility::fixedsizearray1< core::Size, 3 > const & resnums( trigonal_planar_metal_positions_[i].first );
+			core::select::residue_selector::ResidueIndexSelectorOP index_selector( new core::select::residue_selector::ResidueIndexSelector );
+			for ( core::Size j(1); j<=3; ++j ) index_selector->append_index( current_position( resnums[j], cyclic_offset, nres ) );
+			protocols::cyclic_peptide::CrosslinkerMoverOP metallinker( new protocols::cyclic_peptide::CrosslinkerMover );
+			metallinker->set_residue_selector(index_selector);
+			metallinker->set_linker_name("trigonal_planar_metal");
+			metallinker->set_metal_type(trigonal_planar_metal_positions_[i].second);
+			metallinker->set_behaviour(true, true, true, false);
+			metallinker->set_filter_behaviour(use_trigonal_planar_metal_filters_, use_trigonal_planar_metal_filters_, false, 0.0, trigonal_planar_metal_sidechain_distance_filter_multiplier_, trigonal_planar_metal_constraints_energy_filter_multiplier_);
+			metallinker->set_scorefxn( sfxn_highhbond );
+			metallinker->set_sidechain_frlx_rounds(3);
+			std::stringstream movername;
+			movername << "trigonal_planar_metal_link_" << i;
+			pp->add_mover_filter_pair( metallinker, movername.str(), nullptr );
+		}
+	}
+
 	//If we're considering tetrahedral metal crosslinks, add 'em here:
 	if ( tetrahedral_metal_positions_.size() > 0 ) {
 		for ( core::Size i(1), imax(tetrahedral_metal_positions_.size()); i<=imax; ++i ) {
@@ -3401,6 +3594,16 @@ SimpleCycpepPredictApplication::depermute (
 		re_append_linker_residues( pose, newpose, offset, tma_positions_, "TMA" );
 	}
 
+	//Re-append trigonal planar linker residues:
+	if ( trigonal_planar_metal_positions_.size() > 0 ) {
+		re_append_trigonal_metal_residues( pose, newpose, true );
+	}
+
+	//Re-append trigonal pyramidal linker residues:
+	if ( trigonal_pyramidal_metal_positions_.size() > 0 ) {
+		re_append_trigonal_metal_residues( pose, newpose, false );
+	}
+
 	//Re-append tetrahedral metal linker residues:
 	if ( tetrahedral_metal_positions_.size() > 0 ) {
 		re_append_tetrahedral_metal_residues( pose, newpose );
@@ -3690,6 +3893,34 @@ SimpleCycpepPredictApplication::re_append_linker_residues(
 		helper->add_linker_bonds_asymmetric( *newpose, res_indices, newpose->total_residue() );
 	}
 }
+
+/// @brief Given a pose with trigonal pyramidal or trigonal planar metal variants and another pose without the variants, add back the variants to the latter.
+/// @details This function is called at the end of the protocol, and therefore doesn't bother to add back contraints.  If planar is true, it calls the trigonal planar code; otherwise it calls the trigonal pyramidal.
+void
+SimpleCycpepPredictApplication::re_append_trigonal_metal_residues(
+	core::pose::PoseCOP pose,
+	core::pose::PoseOP newpose,
+	bool const planar
+) const {
+	utility::vector1< std::pair< utility::fixedsizearray1< core::Size, 3 >, std::string > > const & positions( planar ? trigonal_planar_metal_positions_ : trigonal_pyramidal_metal_positions_ );
+	debug_assert( pose->total_residue() == newpose->total_residue() );
+	for ( core::Size i(1), imax(positions.size()); i<=imax; ++i ) {
+		utility::fixedsizearray1< core::Size, 3 > const &residues( positions[i].first );
+		debug_assert(residues.size() == 3);
+		core::select::residue_selector::ResidueSubset selection( newpose->total_residue() );
+		for ( core::Size i(1); i<=3; ++i ) {
+			selection[residues[i]] = true;
+		}
+		if ( planar ) {
+			protocols::cyclic_peptide::crosslinker::TrigonalPlanarMetal_Helper helper;
+			helper.add_linker_asymmetric( *newpose, selection );
+		} else {
+			protocols::cyclic_peptide::crosslinker::TrigonalPyramidalMetal_Helper helper;
+			helper.add_linker_asymmetric( *newpose, selection );
+		}
+	}
+}
+
 
 /// @brief Given a pose with tetrahedral metal variants and another pose without the variants, add back the variants to the latter.
 /// @details This function is called at the end of the protocol, and therefore doesn't bother to add back contraints.

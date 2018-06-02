@@ -21,6 +21,8 @@
 #include <protocols/cyclic_peptide/crosslinker/TMA_Helper.hh>
 #include <protocols/cyclic_peptide/crosslinker/TetrahedralMetal_Helper.hh>
 #include <protocols/cyclic_peptide/crosslinker/OctahedralMetal_Helper.hh>
+#include <protocols/cyclic_peptide/crosslinker/TrigonalPlanarMetal_Helper.hh>
+#include <protocols/cyclic_peptide/crosslinker/TrigonalPyramidalMetal_Helper.hh>
 
 // Core headers
 #include <core/pose/Pose.hh>
@@ -123,7 +125,12 @@ CrosslinkerMover::apply( core::pose::Pose& pose){
 	case octahedral_metal :
 		helper = protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelperOP( protocols::cyclic_peptide::crosslinker::OctahedralMetal_HelperOP( new protocols::cyclic_peptide::crosslinker::OctahedralMetal_Helper( metal_type() ) ) );
 		break;
-
+	case trigonal_planar_metal :
+		helper = protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelperOP( protocols::cyclic_peptide::crosslinker::TrigonalPlanarMetal_HelperOP( new protocols::cyclic_peptide::crosslinker::TrigonalPlanarMetal_Helper( metal_type() ) ) );
+		break;
+	case trigonal_pyramidal_metal :
+		helper = protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelperOP( protocols::cyclic_peptide::crosslinker::TrigonalPyramidalMetal_HelperOP( new protocols::cyclic_peptide::crosslinker::TrigonalPyramidalMetal_Helper( metal_type() ) ) );
+		break;
 	default :
 		utility_exit_with_message( "Error in protocols::cyclic_peptide::CrosslinkerMover::apply(): Invalid crosslinker specified." );
 	}
@@ -155,6 +162,10 @@ CrosslinkerMover::get_crosslinker_name(
 		return "tetrahedral_metal";
 	case octahedral_metal :
 		return "octahedral_metal";
+	case trigonal_planar_metal :
+		return "trigonal_planar_metal";
+	case trigonal_pyramidal_metal :
+		return "trigonal_pyramidal_metal";
 	default :
 		break;
 	}

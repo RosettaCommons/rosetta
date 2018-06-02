@@ -31,6 +31,8 @@ sources = {
 		"OctahedralMetal_Helper",
 		"TBMB_Helper",
 		"TetrahedralMetal_Helper",
+		"TrigonalPlanarMetal_Helper",
+		"TrigonalPyramidalMetal_Helper",
 		"TMA_Helper",
 	],
 	"protocols/denovo_design" : [

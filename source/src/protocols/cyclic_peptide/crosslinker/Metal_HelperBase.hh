@@ -165,6 +165,10 @@ protected: // private methods
 	/// @brief Given a pose, a list of residues, and indices i and j in that list, add angle constraints between the two residues specified.
 	virtual void add_angle_constraints( core::pose::Pose &pose, utility::vector1< core::Size > const &res_indices, core::Size const i, core::Size const j) const = 0;
 
+	/// @brief Given a pose and a list of residues, add dihedral constraints (e.g. improper dihedrals to enforce planarity).
+	/// @details Defaults to a function that does nothing.  Can be overridden by derived classes.
+	virtual void add_dihedral_constraints( core::pose::Pose &pose, utility::vector1< core::Size > const &res_indices ) const;
+
 	/// @brief Given a metal type and a metal-liganding atom type, return the ideal bond length.
 	/// @details This method must be updated if either enum is expanded.
 	virtual core::Real const & ideal_bond_length( Metal_HelperBase_Metal const metal_type, Metal_HelperBase_MetalLigand const ligand_type ) const = 0;
