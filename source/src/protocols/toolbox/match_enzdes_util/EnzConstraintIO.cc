@@ -57,6 +57,7 @@
 
 // option key includes
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
+#include <basic/options/keys/run.OptionKeys.gen.hh> //To check for the preserve_header option.
 
 
 static basic::Tracer tr( "protocols.toolbox.match_enzdes_util.EnzConstraintIO" );
@@ -352,6 +353,12 @@ EnzConstraintIO::process_pdb_header(
 					//make sure at least one of the residues is in the pose
 					if ( !accept_missing_blocks ) {
 						std::cerr << "Error: catalytic map in pdb file and information in cst file don't match, unequal number of constraints. should be " << cst_pairs_.size() << ", is " << counted_blocks << std::endl;
+						//Output additional error messages if -run:preserve_header is not set as an option.
+						//Without the header, Rosetta throws out the REMARK lines at the top of the PDB, which means enzdes can't find them.
+						if ( !basic::options::option[basic::options::OptionKeys::run::preserve_header] ) {
+							tr.Error << "You didn't pass -run:preserve_header as a command line flag.  Rosetta may have discarded your header." << std::endl;
+							tr.Error << "Try running again with -run:preserve_header set." << std::endl;
+						}
 						utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
 					}
 				}
