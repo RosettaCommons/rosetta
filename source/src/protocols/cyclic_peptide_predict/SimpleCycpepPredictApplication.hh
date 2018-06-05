@@ -200,6 +200,16 @@ public:
 	/// @details Resets the trigonal_planar_metal_positions_ vector.
 	void set_trigonal_planar_metal_positions_from_string_vector( utility::vector1< std::string > const &vect );
 
+	/// @brief Given an input vector of strings of the form "res1,res2,res3,res4,res5,metal_name", parse this and populate
+	/// the square_pyramidal_metal_positions_ vector.
+	/// @details Resets the square_pyramidal_metal_positions_ vector.
+	void set_square_pyramidal_metal_positions_from_string_vector( utility::vector1< std::string > const &vect );
+
+	/// @brief Given an input vector of strings of the form "res1,res2,res3,res4,metal_name", parse this and populate
+	/// the square_pyramidal_metal_positions_ vector.
+	/// @details Resets the square_pyramidal_metal_positions_ vector.
+	void set_square_planar_metal_positions_from_string_vector( utility::vector1< std::string > const &vect );
+
 	/// @brief Given an input vector of strings of the form "res1,res2,res3,res4,metal_name", parse this and populate
 	/// the tetrahedral_metal_positions_ vector.
 	/// @details Resets the tetrahedral_metal_positions_ vector.
@@ -216,6 +226,12 @@ public:
 	/// @brief Resets the trigonal_planar_metal_positions_ vector.
 	void reset_trigonal_planar_metal_positions();
 
+	/// @brief Resets the square_pyramidal_metal_positions_ vector.
+	void reset_square_pyramidal_metal_positions();
+
+	/// @brief Resets the square_planar_metal_positions_ vector.
+	void reset_square_planar_metal_positions();
+
 	/// @brief Resets the tetrahedral_metal_positions_ vector.
 	void reset_tetrahedral_metal_positions();
 
@@ -227,6 +243,12 @@ public:
 
 	/// @brief Adds an entry to the trigonal_planar_metal_positions_ vector.
 	void add_entry_to_trigonal_planar_metal_positions( core::Size const res1, core::Size const res2, core::Size const res3, std::string const & metal_type );
+
+	/// @brief Adds an entry to the square_pyramidal_metal_positions_ vector.
+	void add_entry_to_square_pyramidal_metal_positions( core::Size const res1, core::Size const res2, core::Size const res3, core::Size const res4, core::Size const res5, std::string const & metal_type );
+
+	/// @brief Adds an entry to the square_planar_metal_positions_ vector.
+	void add_entry_to_square_planar_metal_positions( core::Size const res1, core::Size const res2, core::Size const res3, core::Size const res4, std::string const & metal_type );
 
 	/// @brief Adds an entry to the tetrahedral_metal_positions_ vector.
 	void add_entry_to_tetrahedral_metal_positions( core::Size const res1, core::Size const res2, core::Size const res3, core::Size const res4, std::string const & metal_type );
@@ -622,6 +644,14 @@ private:
 	/// @details This function is called at the end of the protocol, and therefore doesn't bother to add back contraints.  If planar is true, it calls the trigonal planar code; otherwise it calls the trigonal pyramidal.
 	void re_append_trigonal_metal_residues( core::pose::PoseCOP pose, core::pose::PoseOP newpose, bool const planar ) const;
 
+	/// @brief Given a pose with square pyramidal metal variants and another pose without the variants, add back the variants to the latter.
+	/// @details This function is called at the end of the protocol, and therefore doesn't bother to add back contraints.
+	void re_append_square_pyramidal_metal_residues( core::pose::PoseCOP pose, core::pose::PoseOP newpose ) const;
+
+	/// @brief Given a pose with square planar metal variants and another pose without the variants, add back the variants to the latter.
+	/// @details This function is called at the end of the protocol, and therefore doesn't bother to add back contraints.
+	void re_append_square_planar_metal_residues( core::pose::PoseCOP pose, core::pose::PoseOP newpose ) const;
+
 	/// @brief Given a pose with tetrahedral metal variants and another pose without the variants, add back the variants to the latter.
 	/// @details This function is called at the end of the protocol, and therefore doesn't bother to add back contraints.
 	void re_append_tetrahedral_metal_residues( core::pose::PoseCOP pose, core::pose::PoseOP newpose ) const;
@@ -1014,6 +1044,39 @@ private:
 	/// @details Default 1.0.
 	core::Real trigonal_planar_metal_constraints_energy_filter_multiplier_;
 
+	/// @brief List of positions linked by a metal with square pyramidal geometry.
+	/// @details This is a vector of pairs of (lists of five residues, metal type string).
+	utility::vector1< std::pair< utility::fixedsizearray1< core::Size, 5 >, std::string > > square_pyramidal_metal_positions_;
+
+	/// @brief If true, filters are applied based on distance between metal-conjugated residues and on constraints to discard
+	/// GenKIC solutions that can't be crosslinked easily.
+	/// @details True by default.
+	bool use_square_pyramidal_metal_filters_;
+
+	/// @brief Multiplier to make the square pyramidal metal distance filter more permissive.
+	/// @details Default 1.0.
+	core::Real square_pyramidal_metal_sidechain_distance_filter_multiplier_;
+
+	/// @brief Multiplier to make the square pyramidal metal constraints energy filter more permissive.
+	/// @details Default 1.0.
+	core::Real square_pyramidal_metal_constraints_energy_filter_multiplier_;
+
+	/// @brief List of positions linked by a metal with square planar geometry.
+	/// @details This is a vector of pairs of (lists of four residues, metal type string).
+	utility::vector1< std::pair< utility::fixedsizearray1< core::Size, 4 >, std::string > > square_planar_metal_positions_;
+
+	/// @brief If true, filters are applied based on distance between metal-conjugated residues and on constraints to discard
+	/// GenKIC solutions that can't be crosslinked easily.
+	/// @details True by default.
+	bool use_square_planar_metal_filters_;
+
+	/// @brief Multiplier to make the square planar metal distance filter more permissive.
+	/// @details Default 1.0.
+	core::Real square_planar_metal_sidechain_distance_filter_multiplier_;
+
+	/// @brief Multiplier to make the square planar metal constraints energy filter more permissive.
+	/// @details Default 1.0.
+	core::Real square_planar_metal_constraints_energy_filter_multiplier_;
 
 	/// @brief List of positions linked by a tetrahedrally-coordinated metal.
 	/// @details This is a vector of pairs of (lists of four residues, metal type string).

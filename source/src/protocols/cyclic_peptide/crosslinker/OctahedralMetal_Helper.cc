@@ -199,7 +199,10 @@ OctahedralMetal_Helper::ideal_bond_length(
 		{ std::make_pair( MH_Fe2, MHLigand_Ne_histidine ), 2.204 }, //From See et al. (1998). Inorg. Chem. 37(20):5369-75, "imidazole" table 4, xy-plane values.  DOI: 10.1021/ic971462p.
 		{ std::make_pair( MH_Fe2, MHLigand_N_pyridine ), 2.236 }, //From See et al. (1998). Inorg. Chem. 37(20):5369-75, "pyridine", table 4, xy-plane values.  DOI: 10.1021/ic971462p.
 		{ std::make_pair( MH_Fe2, MHLigand_O_carboxyl ), 2.118 }, //From See et al. (1998). Inorg. Chem. 37(20):5369-75, "water", table 4, xy-plane values.  DOI: 10.1021/ic971462p.
-		{ std::make_pair( MH_Fe2, MHLigand_S_cysteine ), 2.32 } //From Kau et al. (1986).  Inorg. Chem. 25(23):4307-9, "Fe2+P-450-CAM+CO" row in table I.  DOI: 10.1021/ic00243a047.
+		{ std::make_pair( MH_Fe2, MHLigand_S_cysteine ), 2.32 }, //From Kau et al. (1986).  Inorg. Chem. 25(23):4307-9, "Fe2+P-450-CAM+CO" row in table I.  DOI: 10.1021/ic00243a047.
+		{std::make_pair( MH_Ni2, MHLigand_Nd_histidine ), 2.132 }, //From Zhang et al. (2003). Molecules 68(12):866-72. doi:10.3390/81200866
+		{std::make_pair( MH_Ni2, MHLigand_Ne_histidine ), 2.132 }, //From Zhang et al. (2003). Molecules 68(12):866-72. doi:10.3390/81200866
+		{ std::make_pair( MH_Ni2, MHLigand_O_carboxyl ), 2.080 }, //From Carlsson et al. (2004). Inorg. Chem. 43:8252-62.
 		}; //This initialization is threadsafe for const global data in C++11.
 
 	std::map< std::pair< Metal_HelperBase_Metal, Metal_HelperBase_MetalLigand >, core::Real>::const_iterator data( ideal_bond_lengths.find( std::make_pair( metal_type, ligand_type ) ) );

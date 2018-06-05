@@ -103,6 +103,8 @@
 #include <protocols/cyclic_peptide/crosslinker/TMA_Helper.hh>
 #include <protocols/cyclic_peptide/crosslinker/TrigonalPyramidalMetal_Helper.hh>
 #include <protocols/cyclic_peptide/crosslinker/TrigonalPlanarMetal_Helper.hh>
+#include <protocols/cyclic_peptide/crosslinker/SquarePyramidalMetal_Helper.hh>
+#include <protocols/cyclic_peptide/crosslinker/SquarePlanarMetal_Helper.hh>
 #include <protocols/cyclic_peptide/crosslinker/TetrahedralMetal_Helper.hh>
 #include <protocols/cyclic_peptide/crosslinker/OctahedralMetal_Helper.hh>
 
@@ -201,6 +203,14 @@ protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::register_opti
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::use_trigonal_planar_metal_filters        );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::trigonal_planar_metal_sidechain_distance_filter_multiplier   );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::trigonal_planar_metal_constraints_energy_filter_multiplier   );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::square_pyramidal_metal_positions          );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::use_square_pyramidal_metal_filters        );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::square_pyramidal_metal_sidechain_distance_filter_multiplier   );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::square_pyramidal_metal_constraints_energy_filter_multiplier   );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::square_planar_metal_positions          );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::use_square_planar_metal_filters        );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::square_planar_metal_sidechain_distance_filter_multiplier   );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::square_planar_metal_constraints_energy_filter_multiplier   );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::tetrahedral_metal_positions          );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::use_tetrahedral_metal_filters        );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::tetrahedral_metal_sidechain_distance_filter_multiplier   );
@@ -363,6 +373,14 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication(
 	use_trigonal_planar_metal_filters_(true),
 	trigonal_planar_metal_sidechain_distance_filter_multiplier_(1.0),
 	trigonal_planar_metal_constraints_energy_filter_multiplier_(1.0),
+	square_pyramidal_metal_positions_(),
+	use_square_pyramidal_metal_filters_(true),
+	square_pyramidal_metal_sidechain_distance_filter_multiplier_(1.0),
+	square_pyramidal_metal_constraints_energy_filter_multiplier_(1.0),
+	square_planar_metal_positions_(),
+	use_square_planar_metal_filters_(true),
+	square_planar_metal_sidechain_distance_filter_multiplier_(1.0),
+	square_planar_metal_constraints_energy_filter_multiplier_(1.0),
 	tetrahedral_metal_positions_(),
 	use_tetrahedral_metal_filters_(true),
 	tetrahedral_metal_sidechain_distance_filter_multiplier_(1.0),
@@ -476,6 +494,14 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication( SimpleCycpepPred
 	use_trigonal_planar_metal_filters_(src.use_trigonal_planar_metal_filters_),
 	trigonal_planar_metal_sidechain_distance_filter_multiplier_(src.trigonal_planar_metal_sidechain_distance_filter_multiplier_),
 	trigonal_planar_metal_constraints_energy_filter_multiplier_(src.trigonal_planar_metal_constraints_energy_filter_multiplier_),
+	square_pyramidal_metal_positions_(src.square_pyramidal_metal_positions_),
+	use_square_pyramidal_metal_filters_(src.use_square_pyramidal_metal_filters_),
+	square_pyramidal_metal_sidechain_distance_filter_multiplier_(src.square_pyramidal_metal_sidechain_distance_filter_multiplier_),
+	square_pyramidal_metal_constraints_energy_filter_multiplier_(src.square_pyramidal_metal_constraints_energy_filter_multiplier_),
+	square_planar_metal_positions_(src.square_planar_metal_positions_),
+	use_square_planar_metal_filters_(src.use_square_planar_metal_filters_),
+	square_planar_metal_sidechain_distance_filter_multiplier_(src.square_planar_metal_sidechain_distance_filter_multiplier_),
+	square_planar_metal_constraints_energy_filter_multiplier_(src.square_planar_metal_constraints_energy_filter_multiplier_),
 	tetrahedral_metal_positions_(src.tetrahedral_metal_positions_),
 	use_tetrahedral_metal_filters_(src.use_tetrahedral_metal_filters_),
 	tetrahedral_metal_sidechain_distance_filter_multiplier_(src.tetrahedral_metal_sidechain_distance_filter_multiplier_),
@@ -748,6 +774,22 @@ SimpleCycpepPredictApplication::initialize_from_options(
 	use_trigonal_planar_metal_filters_ = option[basic::options::OptionKeys::cyclic_peptide::use_trigonal_planar_metal_filters]();
 	trigonal_planar_metal_sidechain_distance_filter_multiplier_ = option[basic::options::OptionKeys::cyclic_peptide::trigonal_planar_metal_sidechain_distance_filter_multiplier]();
 	trigonal_planar_metal_constraints_energy_filter_multiplier_ = option[basic::options::OptionKeys::cyclic_peptide::trigonal_planar_metal_constraints_energy_filter_multiplier]();
+
+	//Store the square pyramidal metal positions.
+	if ( option[basic::options::OptionKeys::cyclic_peptide::square_pyramidal_metal_positions].user() ) {
+		set_square_pyramidal_metal_positions_from_string_vector( option[basic::options::OptionKeys::cyclic_peptide::square_pyramidal_metal_positions]() );
+	}
+	use_square_pyramidal_metal_filters_ = option[basic::options::OptionKeys::cyclic_peptide::use_square_pyramidal_metal_filters]();
+	square_pyramidal_metal_sidechain_distance_filter_multiplier_ = option[basic::options::OptionKeys::cyclic_peptide::square_pyramidal_metal_sidechain_distance_filter_multiplier]();
+	square_pyramidal_metal_constraints_energy_filter_multiplier_ = option[basic::options::OptionKeys::cyclic_peptide::square_pyramidal_metal_constraints_energy_filter_multiplier]();
+
+	//Store the square planar metal positions.
+	if ( option[basic::options::OptionKeys::cyclic_peptide::square_planar_metal_positions].user() ) {
+		set_square_planar_metal_positions_from_string_vector( option[basic::options::OptionKeys::cyclic_peptide::square_planar_metal_positions]() );
+	}
+	use_square_planar_metal_filters_ = option[basic::options::OptionKeys::cyclic_peptide::use_square_planar_metal_filters]();
+	square_planar_metal_sidechain_distance_filter_multiplier_ = option[basic::options::OptionKeys::cyclic_peptide::square_planar_metal_sidechain_distance_filter_multiplier]();
+	square_planar_metal_constraints_energy_filter_multiplier_ = option[basic::options::OptionKeys::cyclic_peptide::square_planar_metal_constraints_energy_filter_multiplier]();
 
 	//Store the tetrahedral metal positions.
 	if ( option[basic::options::OptionKeys::cyclic_peptide::tetrahedral_metal_positions].user() ) {
@@ -1097,6 +1139,68 @@ SimpleCycpepPredictApplication::set_trigonal_planar_metal_positions_from_string_
 	}
 }
 
+/// @brief Given an input vector of strings of the form "res1,res2,res3,res4,res5,metal_name", parse this and populate
+/// the square_pyramidal_metal_positions_ vector.
+/// @details Resets the square_pyramidal_metal_positions_ vector.
+void
+SimpleCycpepPredictApplication::set_square_pyramidal_metal_positions_from_string_vector(
+	utility::vector1< std::string > const &vect
+) {
+	core::Size const nstrings( vect.size() );
+	reset_square_pyramidal_metal_positions();
+	if ( !nstrings ) return; //Do nothing more for size 0 vector.
+
+	utility::fixedsizearray1< int, 5 > resnums; //Deliberately ints.
+	std::string element;
+
+	for ( core::Size i(1); i<=nstrings; ++i ) {
+		std::istringstream ss( vect[i] );
+		core::Size counter(0);
+		while ( std::getline(ss, element, ',') ) {
+			++counter;
+			if ( counter < 6 ) {
+				resnums[counter] = std::atoi(element.c_str());
+				runtime_assert_string_msg( resnums[counter] > 0, "Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::set_square_pyramidal_metal_positions_from_string_vector(): All residue numbers must be greater than zero when setting residue indices for metals coordinated with square pyramidal geometry." );
+			} else if ( counter > 6 ) {
+				utility_exit_with_message( "Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::set_square_pyramidal_metal_positions_from_string_vector(): A metal setup input flag was provided for square pyramidal geometry that was not of the form \"res1,res2,res3,res4,res5,metal_name\".  Comma-separated lists of five entries (four numbers and a metal name) are required." );
+			}
+		}
+		add_entry_to_square_pyramidal_metal_positions(static_cast<core::Size>(resnums[1]), static_cast<core::Size>(resnums[2]), static_cast<core::Size>(resnums[3]), static_cast<core::Size>(resnums[4]), static_cast<core::Size>(resnums[5]), element);
+		TR << "Parsed square pyramidal metal setup where res1=" << resnums[1] << ", res2=" << resnums[2] << ", res3=" << resnums[3] << ", res4=" << resnums[4] << ", res5=" << resnums[5] << ", metal=" << element << std::endl;
+	}
+}
+
+/// @brief Given an input vector of strings of the form "res1,res2,res3,res4,metal_name", parse this and populate
+/// the square_planar_metal_positions_ vector.
+/// @details Resets the square_planar_metal_positions_ vector.
+void
+SimpleCycpepPredictApplication::set_square_planar_metal_positions_from_string_vector(
+	utility::vector1< std::string > const &vect
+) {
+	core::Size const nstrings( vect.size() );
+	reset_square_planar_metal_positions();
+	if ( !nstrings ) return; //Do nothing more for size 0 vector.
+
+	utility::fixedsizearray1< int, 4 > resnums; //Deliberately ints.
+	std::string element;
+
+	for ( core::Size i(1); i<=nstrings; ++i ) {
+		std::istringstream ss( vect[i] );
+		core::Size counter(0);
+		while ( std::getline(ss, element, ',') ) {
+			++counter;
+			if ( counter < 5 ) {
+				resnums[counter] = std::atoi(element.c_str());
+				runtime_assert_string_msg( resnums[counter] > 0, "Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::set_square_planar_metal_positions_from_string_vector(): All residue numbers must be greater than zero when setting residue indices for metals coordinated with square planar geometry." );
+			} else if ( counter > 5 ) {
+				utility_exit_with_message( "Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::set_square_planar_metal_positions_from_string_vector(): A metal setup input flag was provided for square planar geometry that was not of the form \"res1,res2,res3,res4,metal_name\".  Comma-separated lists of five entries (four numbers and a metal name) are required." );
+			}
+		}
+		add_entry_to_square_planar_metal_positions(static_cast<core::Size>(resnums[1]), static_cast<core::Size>(resnums[2]), static_cast<core::Size>(resnums[3]), static_cast<core::Size>(resnums[4]), element);
+		TR << "Parsed square planar metal setup where res1=" << resnums[1] << ", res2=" << resnums[2] << ", res3=" << resnums[3] << ", res4=" << resnums[4] << ", metal=" << element << std::endl;
+	}
+}
+
 
 /// @brief Given an input vector of strings of the form "res1,res2,res3,res4,metal_name", parse this and populate
 /// the tetrahedral_metal_positions_ vector.
@@ -1172,6 +1276,18 @@ SimpleCycpepPredictApplication::reset_trigonal_planar_metal_positions() {
 	trigonal_planar_metal_positions_.clear();
 }
 
+/// @brief Resets the square_pyramidal_metal_positions_ vector.
+void
+SimpleCycpepPredictApplication::reset_square_pyramidal_metal_positions() {
+	square_pyramidal_metal_positions_.clear();
+}
+
+/// @brief Resets the square_planar_metal_positions_ vector.
+void
+SimpleCycpepPredictApplication::reset_square_planar_metal_positions() {
+	square_planar_metal_positions_.clear();
+}
+
 /// @brief Resets the tetrahedral_metal_positions_ vector.
 void
 SimpleCycpepPredictApplication::reset_tetrahedral_metal_positions() {
@@ -1218,6 +1334,45 @@ SimpleCycpepPredictApplication::add_entry_to_trigonal_planar_metal_positions(
 	trigonal_planar_metal_positions_.push_back( std::make_pair( residues, metal_type) );
 }
 
+/// @brief Adds an entry to the square_pyramidal_metal_positions_ vector.
+void
+SimpleCycpepPredictApplication::add_entry_to_square_pyramidal_metal_positions(
+	core::Size const res1,
+	core::Size const res2,
+	core::Size const res3,
+	core::Size const res4,
+	core::Size const res5,
+	std::string const & metal_type
+) {
+	utility::fixedsizearray1< core::Size, 5 > residues;
+	runtime_assert(res1 > 0 && res2 > 0 && res3 > 0 && res4 > 0 && res5 > 0);
+	runtime_assert(!metal_type.empty());
+	residues[1] = res1;
+	residues[2] = res2;
+	residues[3] = res3;
+	residues[4] = res4;
+	residues[5] = res5;
+	square_pyramidal_metal_positions_.push_back( std::make_pair( residues, metal_type) );
+}
+
+/// @brief Adds an entry to the square_planar_metal_positions_ vector.
+void
+SimpleCycpepPredictApplication::add_entry_to_square_planar_metal_positions(
+	core::Size const res1,
+	core::Size const res2,
+	core::Size const res3,
+	core::Size const res4,
+	std::string const & metal_type
+) {
+	utility::fixedsizearray1< core::Size, 4 > residues;
+	runtime_assert(res1 > 0 && res2 > 0 && res3 > 0 && res4 > 0);
+	runtime_assert(!metal_type.empty());
+	residues[1] = res1;
+	residues[2] = res2;
+	residues[3] = res3;
+	residues[4] = res4;
+	square_planar_metal_positions_.push_back( std::make_pair( residues, metal_type) );
+}
 
 /// @brief Adds an entry to the tetrahedral_metal_positions_ vector.
 void
@@ -2937,6 +3092,46 @@ SimpleCycpepPredictApplication::genkic_close(
 		}
 	}
 
+	//If we're considering square pyramidal metal crosslinks, add 'em here:
+	if ( square_pyramidal_metal_positions_.size() > 0 ) {
+		for ( core::Size i(1), imax(square_pyramidal_metal_positions_.size()); i<=imax; ++i ) {
+			utility::fixedsizearray1< core::Size, 5 > const & resnums( square_pyramidal_metal_positions_[i].first );
+			core::select::residue_selector::ResidueIndexSelectorOP index_selector( new core::select::residue_selector::ResidueIndexSelector );
+			for ( core::Size j(1); j<=5; ++j ) index_selector->append_index( current_position( resnums[j], cyclic_offset, nres ) );
+			protocols::cyclic_peptide::CrosslinkerMoverOP metallinker( new protocols::cyclic_peptide::CrosslinkerMover );
+			metallinker->set_residue_selector(index_selector);
+			metallinker->set_linker_name("square_pyramidal_metal");
+			metallinker->set_metal_type(square_pyramidal_metal_positions_[i].second);
+			metallinker->set_behaviour(true, true, true, false);
+			metallinker->set_filter_behaviour(use_square_pyramidal_metal_filters_, use_square_pyramidal_metal_filters_, false, 0.0, square_pyramidal_metal_sidechain_distance_filter_multiplier_, square_pyramidal_metal_constraints_energy_filter_multiplier_);
+			metallinker->set_scorefxn( sfxn_highhbond );
+			metallinker->set_sidechain_frlx_rounds(3);
+			std::stringstream movername;
+			movername << "square_pyramidal_metal_link_" << i;
+			pp->add_mover_filter_pair( metallinker, movername.str(), nullptr );
+		}
+	}
+
+	//If we're considering square planar metal crosslinks, add 'em here:
+	if ( square_planar_metal_positions_.size() > 0 ) {
+		for ( core::Size i(1), imax(square_planar_metal_positions_.size()); i<=imax; ++i ) {
+			utility::fixedsizearray1< core::Size, 4 > const & resnums( square_planar_metal_positions_[i].first );
+			core::select::residue_selector::ResidueIndexSelectorOP index_selector( new core::select::residue_selector::ResidueIndexSelector );
+			for ( core::Size j(1); j<=4; ++j ) index_selector->append_index( current_position( resnums[j], cyclic_offset, nres ) );
+			protocols::cyclic_peptide::CrosslinkerMoverOP metallinker( new protocols::cyclic_peptide::CrosslinkerMover );
+			metallinker->set_residue_selector(index_selector);
+			metallinker->set_linker_name("square_planar_metal");
+			metallinker->set_metal_type(square_planar_metal_positions_[i].second);
+			metallinker->set_behaviour(true, true, true, false);
+			metallinker->set_filter_behaviour(use_square_planar_metal_filters_, use_square_planar_metal_filters_, false, 0.0, square_planar_metal_sidechain_distance_filter_multiplier_, square_planar_metal_constraints_energy_filter_multiplier_);
+			metallinker->set_scorefxn( sfxn_highhbond );
+			metallinker->set_sidechain_frlx_rounds(3);
+			std::stringstream movername;
+			movername << "square_planar_metal_link_" << i;
+			pp->add_mover_filter_pair( metallinker, movername.str(), nullptr );
+		}
+	}
+
 	//If we're considering tetrahedral metal crosslinks, add 'em here:
 	if ( tetrahedral_metal_positions_.size() > 0 ) {
 		for ( core::Size i(1), imax(tetrahedral_metal_positions_.size()); i<=imax; ++i ) {
@@ -3604,6 +3799,16 @@ SimpleCycpepPredictApplication::depermute (
 		re_append_trigonal_metal_residues( pose, newpose, false );
 	}
 
+	//Re-append square_pyramidal metal linker residues:
+	if ( square_pyramidal_metal_positions_.size() > 0 ) {
+		re_append_square_pyramidal_metal_residues( pose, newpose );
+	}
+
+	//Re-append square_planar metal linker residues:
+	if ( square_planar_metal_positions_.size() > 0 ) {
+		re_append_square_planar_metal_residues( pose, newpose );
+	}
+
 	//Re-append tetrahedral metal linker residues:
 	if ( tetrahedral_metal_positions_.size() > 0 ) {
 		re_append_tetrahedral_metal_residues( pose, newpose );
@@ -3921,6 +4126,45 @@ SimpleCycpepPredictApplication::re_append_trigonal_metal_residues(
 	}
 }
 
+/// @brief Given a pose with square pyramidal metal variants and another pose without the variants, add back the variants to the latter.
+/// @details This function is called at the end of the protocol, and therefore doesn't bother to add back contraints.
+void
+SimpleCycpepPredictApplication::re_append_square_pyramidal_metal_residues(
+	core::pose::PoseCOP pose,
+	core::pose::PoseOP newpose
+) const {
+	debug_assert( pose->total_residue() == newpose->total_residue() );
+	for ( core::Size i(1), imax(square_pyramidal_metal_positions_.size()); i<=imax; ++i ) {
+		utility::fixedsizearray1< core::Size, 5 > const &residues( square_pyramidal_metal_positions_[i].first );
+		debug_assert(residues.size() == 5);
+		protocols::cyclic_peptide::crosslinker::SquarePyramidalMetal_Helper helper;
+		core::select::residue_selector::ResidueSubset selection( newpose->total_residue() );
+		for ( core::Size i(1); i<=5; ++i ) {
+			selection[residues[i]] = true;
+		}
+		helper.add_linker_asymmetric( *newpose, selection );
+	}
+}
+
+/// @brief Given a pose with square planar metal variants and another pose without the variants, add back the variants to the latter.
+/// @details This function is called at the end of the protocol, and therefore doesn't bother to add back contraints.
+void
+SimpleCycpepPredictApplication::re_append_square_planar_metal_residues(
+	core::pose::PoseCOP pose,
+	core::pose::PoseOP newpose
+) const {
+	debug_assert( pose->total_residue() == newpose->total_residue() );
+	for ( core::Size i(1), imax(square_planar_metal_positions_.size()); i<=imax; ++i ) {
+		utility::fixedsizearray1< core::Size, 4 > const &residues( square_planar_metal_positions_[i].first );
+		debug_assert(residues.size() == 4);
+		protocols::cyclic_peptide::crosslinker::SquarePlanarMetal_Helper helper;
+		core::select::residue_selector::ResidueSubset selection( newpose->total_residue() );
+		for ( core::Size i(1); i<=4; ++i ) {
+			selection[residues[i]] = true;
+		}
+		helper.add_linker_asymmetric( *newpose, selection );
+	}
+}
 
 /// @brief Given a pose with tetrahedral metal variants and another pose without the variants, add back the variants to the latter.
 /// @details This function is called at the end of the protocol, and therefore doesn't bother to add back contraints.

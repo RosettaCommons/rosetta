@@ -41,6 +41,7 @@ namespace crosslinker {
 enum Metal_HelperBase_Metal {
 	MH_Zn = 1, //Keep this first.
 	MH_Fe2,
+	MH_Ni2,
 	MH_unknown_metal, //Keep this second-to-last.
 	MH_end_of_list = MH_unknown_metal //Keep this last.
 };

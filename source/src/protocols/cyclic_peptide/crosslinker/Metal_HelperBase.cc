@@ -430,6 +430,8 @@ Metal_HelperBase::metal_type_string_from_enum(
 		return "Zn";
 	case MH_Fe2 :
 		return "Fe2";
+	case MH_Ni2 :
+		return "Ni2";
 	case MH_unknown_metal :
 		utility_exit_with_message( "Error in protocols::cyclic_peptide::crosslinker::Metal_HelperBase::metal_type_string_from_enum(): The metal is unknown!" );
 	}

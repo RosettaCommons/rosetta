@@ -29,6 +29,8 @@ sources = {
 		"CrosslinkerMoverHelper",
 		"Metal_HelperBase",
 		"OctahedralMetal_Helper",
+		"SquarePlanarMetal_Helper",
+		"SquarePyramidalMetal_Helper",
 		"TBMB_Helper",
 		"TetrahedralMetal_Helper",
 		"TrigonalPlanarMetal_Helper",

@@ -1,0 +1,38 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<ScoreFunction name="r15" weights="ref2015.wts" />
+	</SCOREFXNS>
+	<TASKOPERATIONS>
+	</TASKOPERATIONS>
+	<FILTERS>
+	</FILTERS>
+	<RESIDUE_SELECTORS>
+		<Index name="select_ligands" resnums="9,29,49,69" />
+	</RESIDUE_SELECTORS>
+	<MOVERS>
+
+		<BundleGridSampler name="bgs1" helix_length="20" scorefxn="r15" use_degrees="true"
+				nstruct_mode="true" max_samples="27" >
+			<Helix invert="false" r0_min="8.4" r0_max="8.6" r0_samples="3" delta_omega0="-45" omega0="0" z1_offset_min="4.75" z1_offset_max="5.25" z1_offset_samples="3" delta_omega1_min="21" delta_omega1_max="30" delta_omega1_samples="3" />
+		</BundleGridSampler>
+
+		<DeclareBond name="add_termini" add_termini="true" res1="1" res2="2" atom1="C" atom2="N" />
+		
+		<MutateResidue name="mut1" target="9" new_res="HIS" />
+		
+		<SetupForSymmetry name="d2_symm" definition="inputs/D2.symm" />
+
+		<CrosslinkerMover name="xlink" scorefxn="r15" linker_name="square_planar_metal" symmetry="D2" metal_type="Ni2" residue_selector="select_ligands" constraints_energy_filter_multiplier="1.0" sidechain_distance_filter_multiplier="1.5" />
+
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover="bgs1" />
+		<Add mover="add_termini" />
+		<Add mover="mut1" />
+		<Add mover="d2_symm" />
+		<Add mover="xlink" />
+	</PROTOCOLS>
+
+</ROSETTASCRIPTS>

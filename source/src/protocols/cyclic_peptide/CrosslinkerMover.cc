@@ -23,6 +23,8 @@
 #include <protocols/cyclic_peptide/crosslinker/OctahedralMetal_Helper.hh>
 #include <protocols/cyclic_peptide/crosslinker/TrigonalPlanarMetal_Helper.hh>
 #include <protocols/cyclic_peptide/crosslinker/TrigonalPyramidalMetal_Helper.hh>
+#include <protocols/cyclic_peptide/crosslinker/SquarePlanarMetal_Helper.hh>
+#include <protocols/cyclic_peptide/crosslinker/SquarePyramidalMetal_Helper.hh>
 
 // Core headers
 #include <core/pose/Pose.hh>
@@ -131,6 +133,12 @@ CrosslinkerMover::apply( core::pose::Pose& pose){
 	case trigonal_pyramidal_metal :
 		helper = protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelperOP( protocols::cyclic_peptide::crosslinker::TrigonalPyramidalMetal_HelperOP( new protocols::cyclic_peptide::crosslinker::TrigonalPyramidalMetal_Helper( metal_type() ) ) );
 		break;
+	case square_planar_metal :
+		helper = protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelperOP( protocols::cyclic_peptide::crosslinker::SquarePlanarMetal_HelperOP( new protocols::cyclic_peptide::crosslinker::SquarePlanarMetal_Helper(metal_type() ) ) );
+		break;
+	case square_pyramidal_metal :
+		helper = protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelperOP( protocols::cyclic_peptide::crosslinker::SquarePyramidalMetal_HelperOP( new protocols::cyclic_peptide::crosslinker::SquarePyramidalMetal_Helper(metal_type() ) ) );
+		break;
 	default :
 		utility_exit_with_message( "Error in protocols::cyclic_peptide::CrosslinkerMover::apply(): Invalid crosslinker specified." );
 	}
@@ -166,6 +174,10 @@ CrosslinkerMover::get_crosslinker_name(
 		return "trigonal_planar_metal";
 	case trigonal_pyramidal_metal :
 		return "trigonal_pyramidal_metal";
+	case square_planar_metal :
+		return "square_planar_metal";
+	case square_pyramidal_metal :
+		return "square_pyramidal_metal";
 	default :
 		break;
 	}
@@ -252,7 +264,7 @@ CrosslinkerMover::provide_xml_schema(
 	using namespace utility::tag;
 
 	XMLSchemaRestriction linker_names_allowed;
-	std::string const linker_possibles("TBMB|TMA|tetrahedral_metal|octahedral_metal");
+	std::string const linker_possibles("TBMB|TMA|tetrahedral_metal|octahedral_metal|trigonal_planar_metal|trigonal_pyramidal_metal|square_planar_metal|square_pyramidal_metal");
 	linker_names_allowed.name("linker_names_allowed");
 	linker_names_allowed.base_type( xs_string );
 	linker_names_allowed.add_restriction( xsr_pattern, linker_possibles + "(," + linker_possibles + ")+" );

@@ -194,10 +194,11 @@ TrigonalPlanarMetal_Helper::add_dihedral_constraints(
 		is_his[i] = ( rtypes[i]->aa() == core::chemical::aa_his || rtypes[i]->aa() == core::chemical::aa_dhi );
 	}
 	bool const any_his( is_his[1] || is_his[2] || is_his[3] );
-	utility::fixedsizearray1< utility::fixedsizearray1 < core::Size, 3 >, 3 > res_permutations;
-	res_permutations[1] = utility::fixedsizearray1< core::Size, 3 > { 1, 2, 3 };
-	res_permutations[2] = utility::fixedsizearray1< core::Size, 3 > { 2, 3, 1 };
-	res_permutations[3] = utility::fixedsizearray1< core::Size, 3 > { 3, 1, 2 };
+	static utility::fixedsizearray1< utility::fixedsizearray1 < core::Size, 3 >, 3 > const res_permutations {
+		utility::fixedsizearray1< core::Size, 3 > { 1, 2, 3 },
+		utility::fixedsizearray1< core::Size, 3 > { 2, 3, 1 },
+		utility::fixedsizearray1< core::Size, 3 > { 3, 1, 2 }
+		};
 	for ( core::Size permutation(1); permutation <= 3; ++permutation ) {
 		std::stringstream cststring;
 		if ( any_his ) {
