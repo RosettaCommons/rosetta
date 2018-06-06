@@ -80,7 +80,8 @@ bool LazySilentFilePoseInputStream::has_another_pose() {
 
 void LazySilentFilePoseInputStream::fill_pose(
 	core::pose::Pose & pose,
-	core::chemical::ResidueTypeSet const & residue_set
+	core::chemical::ResidueTypeSet const & residue_set,
+	bool const metapatches /*= true*/
 ) {
 	// check to make sure that we have more poses!
 	if ( !has_another_pose() ) {
@@ -98,7 +99,7 @@ void LazySilentFilePoseInputStream::fill_pose(
 			<< current_struct_->decoy_tag() << " = " << debug_rmsd << std::endl;
 	}
 
-	current_struct_->fill_pose( pose, residue_set );
+	current_struct_->fill_pose( pose, residue_set, metapatches );
 
 	using namespace basic::datacache;
 	pose.data().set(
@@ -126,7 +127,8 @@ void LazySilentFilePoseInputStream::fill_pose(
 } // fill_pose
 
 void LazySilentFilePoseInputStream::fill_pose(
-	core::pose::Pose & pose
+	core::pose::Pose & pose,
+	bool const metapatches /*= true*/
 ) {
 	// check to make sure that we have more poses!
 	if ( !has_another_pose() ) {
@@ -144,7 +146,7 @@ void LazySilentFilePoseInputStream::fill_pose(
 			<< current_struct_->decoy_tag() << " = " << debug_rmsd << std::endl;
 	}
 
-	current_struct_->fill_pose( pose );
+	current_struct_->fill_pose( pose, metapatches );
 
 	using namespace basic::datacache;
 	pose.data().set(

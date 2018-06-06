@@ -558,7 +558,8 @@ BinarySilentStruct::resize(
 }
 
 void BinarySilentStruct::fill_pose (
-	core::pose::Pose & pose
+	core::pose::Pose & pose,
+	bool const metapatches// = true
 ) const {
 	using namespace core::chemical;
 	ResidueTypeSetCOP residue_set;
@@ -568,12 +569,13 @@ void BinarySilentStruct::fill_pose (
 	} else {
 		residue_set = pose.residue_type_set_for_pose( CENTROID_t );
 	}
-	fill_pose( pose, *residue_set );
+	fill_pose( pose, *residue_set, metapatches );
 } // fill_pose
 
 void BinarySilentStruct::fill_pose(
 	core::pose::Pose & pose,
-	core::chemical::ResidueTypeSet const & residue_set
+	core::chemical::ResidueTypeSet const & residue_set,
+	bool const metapatches// = true
 ) const {
 
 	runtime_assert( nres() != 0 );
@@ -584,7 +586,7 @@ void BinarySilentStruct::fill_pose(
 		if ( core::pose::symmetry::is_symmetric(pose) ) {
 			core::pose::symmetry::make_asymmetric_pose( pose );
 		}
-		core::pose::make_pose_from_sequence( pose, sequence(), residue_set, false /*auto_termini*/ );
+		core::pose::make_pose_from_sequence( pose, sequence(), residue_set, false /*auto_termini*/, metapatches /*use metapatches*/ );
 	}
 
 	for ( Size i_conn=1; i_conn <= noncanonical_residue_connections_.size(); ++i_conn ) {

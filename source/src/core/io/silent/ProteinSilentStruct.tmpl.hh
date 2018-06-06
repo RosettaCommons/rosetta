@@ -430,7 +430,8 @@ ProteinSilentStruct_Template<T>::resize_chi() {
 
 template <class T>
 void ProteinSilentStruct_Template<T>::fill_pose(
-	core::pose::Pose & pose
+	core::pose::Pose & pose,
+	bool const metapatches /*= true*/
 ) const {
 	using namespace core::chemical;
 	ResidueTypeSetCOP residue_set;
@@ -440,13 +441,14 @@ void ProteinSilentStruct_Template<T>::fill_pose(
 	} else {
 		residue_set = ChemicalManager::get_instance()->residue_type_set( CENTROID );
 	}
-	fill_pose( pose, *residue_set );
+	fill_pose( pose, *residue_set, metapatches );
 } // fill_pose
 
 template <class T>
 void ProteinSilentStruct_Template<T>::fill_pose(
 	core::pose::Pose & pose,
-	core::chemical::ResidueTypeSet const & residue_set
+	core::chemical::ResidueTypeSet const & residue_set,
+	bool const metapatches /*= true*/
 ) const {
 	basic::ProfileThis doit( basic::SILENT_FILL_POSE );
 	runtime_assert( nres() != 0 );
@@ -456,7 +458,7 @@ void ProteinSilentStruct_Template<T>::fill_pose(
 	// core::pose::make_pose_from_sequence( pose, sequence(), residue_set );
 	//}
 	//if ( pss_tr.Debug.visible() ) pss_tr.Debug << "FOLD TREE: " << fold_tree();
-	core::pose::make_pose_from_sequence( pose, sequence(), residue_set );
+	core::pose::make_pose_from_sequence( pose, sequence(), residue_set, metapatches );
 	pss_tr.Debug << "FOLD TREE: " << fold_tree();
 
 	// set fold_tree

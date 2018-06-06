@@ -77,14 +77,16 @@ public:
 	// @brief Fill a Pose with the conformation information in this
 	// SilentStruct and the FA_STANDARD ResidueTypeSet.
 	virtual void fill_pose(
-		core::pose::Pose & pose
+		core::pose::Pose & pose,
+		bool const metapatches = true
 	) const;
 
 	/// @brief non-virtual interface that takes a ResidueTypeSetCOP (instead of a const & to one)
 	/// and invokes the virtual method that takes the const &.
 	void fill_pose(
 		core::pose::Pose & pose,
-		core::chemical::ResidueTypeSetCOP residue_set
+		core::chemical::ResidueTypeSetCOP residue_set,
+		bool const metapatches = true
 	) const;
 
 	/// @brief Fill a Pose with the conformation information in this
@@ -93,7 +95,8 @@ public:
 	/// SilentStruct.
 	virtual void fill_pose(
 		core::pose::Pose & pose,
-		core::chemical::ResidueTypeSet const & residue_set
+		core::chemical::ResidueTypeSet const & residue_set,
+		bool const metapatches = true
 	) const;
 
 	/// @brief Sets the tag from the Pose DataCache.

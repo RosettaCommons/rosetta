@@ -43,7 +43,8 @@ void ExtendedPoseInputStream::reset() {
 
 void ExtendedPoseInputStream::fill_pose(
 	core::pose::Pose & pose,
-	core::chemical::ResidueTypeSet const & residue_set
+	core::chemical::ResidueTypeSet const & residue_set,
+	bool const metapatches /*= true*/
 ) {
 	// check to make sure that we have more poses!
 	if ( !has_another_pose() ) {
@@ -55,7 +56,8 @@ void ExtendedPoseInputStream::fill_pose(
 	core::pose::make_pose_from_sequence(
 		pose,
 		seq_,
-		residue_set
+		residue_set,
+		metapatches
 	);
 
 	for ( Size pos = 1; pos <= pose.size(); pos++ ) {
@@ -68,7 +70,8 @@ void ExtendedPoseInputStream::fill_pose(
 } // fill_pose
 
 void ExtendedPoseInputStream::fill_pose(
-	core::pose::Pose &
+	core::pose::Pose &,
+	bool const //metapatches /*= true*/
 ) {
 	utility_exit_with_message(
 		"ExtendedPoseInputStream: called fill_pose, but without ResidueType Set"

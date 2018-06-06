@@ -56,7 +56,8 @@ Size get_sequence_len( std::string const & sequence_in );
 chemical::ResidueTypeCOPs residue_types_from_sequence(
 	std::string const & sequence_in,
 	chemical::ResidueTypeSet const & residue_set,
-	bool const auto_termini = true
+	bool const auto_termini = true,
+	bool const metapatches = true
 );
 
 
@@ -122,14 +123,16 @@ void make_pose_from_sequence(
 	pose::Pose & pose,
 	std::string const & sequence,
 	chemical::ResidueTypeSet const & residue_set,
-	bool const auto_termini = true
+	bool const auto_termini = true,
+	bool const metapatches = true
 );
 
 void make_pose_from_sequence(
 	pose::Pose & pose,
 	std::string const & sequence,
 	chemical::ResidueTypeSetCOP residue_set,
-	bool const auto_termini = true
+	bool const auto_termini = true,
+	bool const metapatches = true
 );
 
 /// @brief Creates a Pose from the annotated protein sequence  <sequence>
@@ -140,7 +143,8 @@ void make_pose_from_sequence(
 	pose::Pose & pose,
 	std::string const & sequence,
 	std::string const & type_set_name,
-	bool const auto_termini = true
+	bool const auto_termini = true,
+	bool const metapatches = true
 );
 
 
@@ -175,7 +179,8 @@ std::string annotated_to_oneletter_sequence( std::string const & annotated_seq )
 /// @brief use efficient residue type finder to find simplest residue type with this AA & requested termini.
 core::chemical::ResidueTypeCOP
 get_rsd_type_from_aa( chemical::ResidueTypeSet const & residue_set,
-	core::chemical::AA const & my_aa, bool const & is_lower_terminus, bool const & is_upper_terminus );
+	core::chemical::AA const & my_aa, bool const & is_lower_terminus, bool const & is_upper_terminus,
+	bool const metapatches = true );
 
 } // namespace core
 } // namespace pose

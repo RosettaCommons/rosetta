@@ -174,14 +174,16 @@ kinematics::FoldTree const& RigidBodySilentStruct::fold_tree() const {
 
 void RigidBodySilentStruct::fill_pose(
 	core::pose::Pose & pose,
-	core::chemical::ResidueTypeSet const &
+	core::chemical::ResidueTypeSet const &,
+	bool const //metapatches// = true
 ) const {
 	tr.Warning << "RigidBodySilentStruct cannot regenerate the pose, and thus residue_type_set is ignored" << std::endl;
 	fill_pose( pose );
 }
 
 void RigidBodySilentStruct::fill_pose(
-	core::pose::Pose & pose
+	core::pose::Pose & pose,
+	bool const //metapatches// = true
 ) const {
 	using namespace core::chemical;
 	tr.Debug << "fill_pose: RigidBodySilentStruct " << std::endl;

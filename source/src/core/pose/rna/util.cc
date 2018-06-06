@@ -112,9 +112,18 @@ mutate_position( pose::Pose & pose, Size const i, char const new_seq ) {
 	ResidueTypeSetCOP rsd_set = pose.residue_type_set_for_pose( pose.residue_type( i ).mode() );
 
 	ResidueProperty base_property = ( pose.residue_type( i ).is_RNA() ) ? RNA : NO_PROPERTY;
-	ResidueTypeCOP new_rsd_type( ResidueTypeFinder( *rsd_set ).name1( new_seq ).variants( pose.residue_type(i).variant_types() ).base_property( base_property ).get_representative_type() );
+	bool const metapatches = false; // don't use metapatches
+	ResidueTypeCOP new_rsd_type( ResidueTypeFinder( *rsd_set ).name1( new_seq ).variants( pose.residue_type(i).variant_types() ).base_property( base_property ).get_representative_type( metapatches ) );
 
 	ResidueOP new_rsd( ResidueFactory::create_residue( *new_rsd_type, pose.residue( i ), pose.conformation() ) );
+
+	// AMW TODO: Ideally we would have a quick function to detect if any of the variants on a residue
+	// are metapatched variants, so that we could avoid generating any IF NEEDED.
+	// As is, because we don't do enzdes, -auto_setup_metals, or my old HTS code with
+	// stepwise, and this function is almost only applied then, let's avoid.
+	if ( !new_rsd ) { // possible now
+		utility_exit_with_message( "new_rsd could not be generated; most likely cause: the original residue had metapatches (was involved in a metal coordination bond or enzyme design constraint)" );
+	}
 
 	Real const save_chi = pose.chi(i);
 	pose.replace_residue( i, *new_rsd, false );

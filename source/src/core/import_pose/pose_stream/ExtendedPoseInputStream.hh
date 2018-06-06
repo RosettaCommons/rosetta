@@ -42,9 +42,11 @@ public:
 
 	virtual void fill_pose(
 		core::pose::Pose & pose,
-		core::chemical::ResidueTypeSet const & residue_set
+		core::chemical::ResidueTypeSet const & residue_set,
+		bool const metapatches = true
 	);
-	virtual void fill_pose( core::pose::Pose& );
+	virtual void fill_pose( core::pose::Pose&,
+		bool const metapatches = true );
 
 private:
 	std::string seq_;

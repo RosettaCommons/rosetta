@@ -77,7 +77,8 @@ public:
 	/// @brief Configure the conformation of the given Pose with the conformational data within this PDBSilentStruct.
 	/// Calls pose.clear() and rebuilds Pose from scratch using FA_STANDARD residue types.
 	void fill_pose(
-		core::pose::Pose & pose
+		core::pose::Pose & pose,
+		bool const metapatches = true
 	) const override;
 
 	/// @brief Configure the conformation of the given Pose with the
@@ -85,7 +86,8 @@ public:
 	/// rebuilds Pose from scratch using the / user-specified residue types.
 	void fill_pose(
 		core::pose::Pose & pose,
-		core::chemical::ResidueTypeSet const & residue_set
+		core::chemical::ResidueTypeSet const & residue_set,
+		bool const metapatches = true
 	) const override;
 
 	/// @brief opposite of fill_pose

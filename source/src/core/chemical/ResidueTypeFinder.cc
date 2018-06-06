@@ -79,16 +79,16 @@ ResidueTypeFinder::~ResidueTypeFinder() = default;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ResidueTypeCOP
-ResidueTypeFinder::get_representative_type() const
+ResidueTypeFinder::get_representative_type( bool const metapatches ) const
 {
 	ResidueTypeCOPs rsd_types;
 	rsd_types = get_possible_base_residue_types( false /* include_unpatchable */ );
 	rsd_types = apply_patches_recursively( rsd_types, 1 /*start with this patch*/, true /*get_first_residue_found*/ );
-	rsd_types = apply_metapatches_recursively( rsd_types, 1 /*start with this patch*/, true );
+	if ( metapatches ) rsd_types = apply_metapatches_recursively( rsd_types, 1 /*start with this patch*/, true );
 	// We need to apply metapatches again just in case there are some double variants.
 	// Only needed for packing metapatched residues.
 	// TODO: this is atrocious.
-	rsd_types = apply_metapatches_recursively( rsd_types, 1 /*start with this patch*/, true );
+	if ( metapatches ) rsd_types = apply_metapatches_recursively( rsd_types, 1 /*start with this patch*/, true );
 	if ( rsd_types.size() == 0 ) rsd_types =  get_possible_unpatchable_residue_types();
 
 	rsd_types = apply_filters_after_patches( rsd_types, true /* allow_extra_variants */ );

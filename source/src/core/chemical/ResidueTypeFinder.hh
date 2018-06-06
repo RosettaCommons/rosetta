@@ -48,7 +48,7 @@ public:
 	/// Typically this will be the "simplest" type that does so, though that's not guaranteed.
 	/// Will ignore preferences/discouragements.
 	ResidueTypeCOP
-	get_representative_type() const;
+	get_representative_type( bool const metapatches = true ) const;
 
 	/// @brief Find all residues which match the requirement criteria
 	/// Will apply preferences/discouragements.

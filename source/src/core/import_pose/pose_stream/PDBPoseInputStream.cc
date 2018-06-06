@@ -61,7 +61,8 @@ void PDBPoseInputStream::reset(){
 
 void PDBPoseInputStream::fill_pose(
 	core::pose::Pose & pose,
-	core::chemical::ResidueTypeSet const & residue_set
+	core::chemical::ResidueTypeSet const & residue_set,
+	bool const //metapatches /*= true*/
 ) {
 	// check to make sure that we have more poses!
 	if ( !has_another_pose() ) {
@@ -83,7 +84,8 @@ void PDBPoseInputStream::fill_pose(
 }
 
 void PDBPoseInputStream::fill_pose(
-	core::pose::Pose & pose
+	core::pose::Pose & pose,
+	bool const //metapatches /*= true*/
 ) {
 	// check to make sure that we have more poses!
 	if ( !has_another_pose() ) {

@@ -132,21 +132,23 @@ SilentStruct& SilentStruct::operator= ( SilentStruct const & src ) {
 }
 
 void SilentStruct::fill_pose(
-	core::pose::Pose & pose
+	core::pose::Pose & pose,
+	bool const metapatches /*= true*/
 ) const {
 	runtime_assert( nres_ != 0 );
 	using namespace core::chemical;
 	ResidueTypeSetCOP residue_set( pose.residue_type_set_for_pose( FULL_ATOM_t ) );
-	fill_pose( pose, residue_set );
+	fill_pose( pose, residue_set, metapatches );
 }
 
 /// @brief Fill a Pose with the conformation information in this SilentStruct
 /// and the ResidueTypeSetCOP provided by the caller
 void SilentStruct::fill_pose(
 	core::pose::Pose & pose,
-	core::chemical::ResidueTypeSetCOP rts
+	core::chemical::ResidueTypeSetCOP rts,
+	bool const metapatches /*= true*/
 ) const {
-	fill_pose( pose, *rts );
+	fill_pose( pose, *rts, metapatches );
 }
 
 /// @brief Fill a Pose with the conformation information in this SilentStruct
@@ -154,7 +156,8 @@ void SilentStruct::fill_pose(
 /// which must be implemented by classes derived from SilentStruct.
 void SilentStruct::fill_pose(
 	core::pose::Pose &,
-	core::chemical::ResidueTypeSet const &
+	core::chemical::ResidueTypeSet const &,
+	bool const //metapatches = true
 ) const {
 	tr.Error << "SilentStruct::fill_pose method stubbed out!" << std::endl;
 }

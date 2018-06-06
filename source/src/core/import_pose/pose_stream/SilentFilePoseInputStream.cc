@@ -191,7 +191,8 @@ bool SilentFilePoseInputStream::has_another_pose() {
 
 void SilentFilePoseInputStream::fill_pose(
 	core::pose::Pose & pose,
-	core::chemical::ResidueTypeSet const & residue_set
+	core::chemical::ResidueTypeSet const & residue_set,
+	bool const metapatches /*= true*/
 ) {
 	// check to make sure that we have more poses!
 	if ( !has_another_pose() ) {
@@ -208,7 +209,7 @@ void SilentFilePoseInputStream::fill_pose(
 			<< current_position_->decoy_tag() << " = " << debug_rmsd << std::endl;
 	}
 
-	current_position_->fill_pose( pose, residue_set );
+	current_position_->fill_pose( pose, residue_set, metapatches );
 
 	// set up a tag using decoy_tag from SilentStruct
 	using namespace basic::datacache;
@@ -226,7 +227,8 @@ void SilentFilePoseInputStream::fill_pose(
 } // fill_pose
 
 void SilentFilePoseInputStream::fill_pose(
-	core::pose::Pose & pose
+	core::pose::Pose & pose,
+	bool const metapatches /*= true*/
 ) {
 	// check to make sure that we have more poses!
 	if ( !has_another_pose() ) {
@@ -243,7 +245,7 @@ void SilentFilePoseInputStream::fill_pose(
 			<< current_position_->decoy_tag() << " = " << debug_rmsd << std::endl;
 	}
 
-	current_position_->fill_pose( pose );
+	current_position_->fill_pose( pose, metapatches );
 
 	// set up a tag using decoy_tag from SilentStruct
 	using namespace basic::datacache;
@@ -255,7 +257,7 @@ void SilentFilePoseInputStream::fill_pose(
 
 	core::pose::setPoseExtraScore( pose, "silent_score", current_position_->get_energy( "score" ) );
 
-	preprocess_pose( pose );
+	preprocess_pose( pose  );
 
 	++current_position_;
 } // fill_pose

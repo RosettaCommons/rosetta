@@ -117,7 +117,8 @@ bool ScoreFileSilentStruct::init_from_lines(
 
 void ScoreFileSilentStruct::fill_pose(
 	core::pose::Pose & pose,
-	core::chemical::ResidueTypeSet const & /* residue_set */
+	core::chemical::ResidueTypeSet const & /* residue_set */,
+	bool const //metapatches = true
 ) const {
 	basic::ProfileThis doit( basic::SILENT_FILL_POSE );
 

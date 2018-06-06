@@ -134,7 +134,8 @@ public:
 	void
 	fill_and_sample_full_model(
 		Pose & start_pose, // because of show()?
-		utility::vector1< PoseOP > const & other_ops
+		utility::vector1< PoseOP > const & other_ops,
+		core::scoring::ScoreFunctionOP const & sfxn
 	);
 
 private:
@@ -307,11 +308,10 @@ void BuildFullModel::make_built_residues_virtual(
 void
 BuildFullModel::fill_and_sample_full_model(
 	Pose & start_pose, // because of show() and score
-	utility::vector1< PoseOP > const & other_ops
+	utility::vector1< PoseOP > const & other_ops,
+	core::scoring::ScoreFunctionOP const & scorefxn
 ) {
 	using namespace OptionKeys;
-	// setup score function
-	core::scoring::ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( "stepwise/rna/rna_res_level_energy4" );
 
 	std::string const tag = tag_from_pose( start_pose );
 
@@ -466,12 +466,23 @@ build_full_model_test()
 
 	BuildFullModel bfm;
 
+
+	// setup score function
+	core::scoring::ScoreFunctionOP scorefxn = nullptr;
+	if ( option[ score::weights ].user() ) {
+		scorefxn = ScoreFunctionFactory::create_score_function( option[ score::weights ]() );
+	} else {
+		scorefxn = ScoreFunctionFactory::create_score_function( "stepwise/rna/rna_res_level_energy4" );
+	}
+
+	// This happens after stepwise protocols, which do not currently use (slow) metapatches.
+	bool metapatches = false;
 	// iterate over input stream
 	while ( input->has_another_pose() ) {
 
 		Pose start_pose;
 
-		input->fill_pose( start_pose, *rsd_set );
+		input->fill_pose( start_pose, *rsd_set, metapatches );
 
 		utility::vector1< PoseOP > other_ops = nonconst_full_model_info( start_pose ).other_pose_list();
 		// I don't think this is necessary (and may be confusin) -- Andy, if you can confirm, please delete the line -- Rhiju
@@ -503,7 +514,7 @@ build_full_model_test()
 			}
 		}
 
-		bfm.fill_and_sample_full_model( start_pose, other_ops );
+		bfm.fill_and_sample_full_model( start_pose, other_ops, scorefxn );
 	}
 }
 

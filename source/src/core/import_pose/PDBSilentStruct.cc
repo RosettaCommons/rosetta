@@ -180,7 +180,8 @@ bool PDBSilentStruct::init_from_lines(
 
 void PDBSilentStruct::fill_pose(
 	core::pose::Pose & pose,
-	core::chemical::ResidueTypeSet const & residue_set
+	core::chemical::ResidueTypeSet const & residue_set,
+	bool const //metapatches /*= true*/ <-- you don't need this!
 ) const {
 	// TODO: TEMP: for Andy to fix.
 	io::StructFileRepOP sfr_op = sfr_->clone();
@@ -189,12 +190,13 @@ void PDBSilentStruct::fill_pose(
 } // fill_pose
 
 void PDBSilentStruct::fill_pose(
-	core::pose::Pose & pose
+	core::pose::Pose & pose,
+	bool const metapatches /*= true*/
 ) const {
 
 	using namespace core::chemical;
 	ResidueTypeSetCOP residue_set( pose.residue_type_set_for_pose( FULL_ATOM_t ) );
-	fill_pose( pose, *residue_set );
+	fill_pose( pose, *residue_set, metapatches );
 	finish_pose( pose );
 } // fill_pose
 

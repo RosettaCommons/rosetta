@@ -152,6 +152,7 @@ build_full_model( pose::Pose const & start_pose, pose::Pose & full_model_pose, b
 	options->set_skip_bulge_frequency( skip_bulge_freq ); // to avoid getting stuck
 	options->set_from_scratch_frequency( 0.0 ); // to avoid getting stuck
 	options->set_filter_complex_cycles( false ); // also to avoid getting stuck.
+	options->set_use_precomputed_library( false ); // don't read in massive fileset every decoy
 	mover::StepWiseMasterMover master_mover( scorefxn, options );
 	master_mover.build_full_model( start_pose, full_model_pose, !enumerate );
 }

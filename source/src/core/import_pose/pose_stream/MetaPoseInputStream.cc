@@ -65,7 +65,8 @@ void MetaPoseInputStream::reset(){
 
 void MetaPoseInputStream::fill_pose(
 	core::pose::Pose & pose,
-	core::chemical::ResidueTypeSet const & residue_set
+	core::chemical::ResidueTypeSet const & residue_set,
+	bool const metapatches /*= true*/
 ) {
 	// check to make sure that we have more poses!
 	if ( !has_another_pose() ) {
@@ -73,11 +74,12 @@ void MetaPoseInputStream::fill_pose(
 	}
 
 	// (*current_input_stream_)->fill_pose( pose, residue_set );
-	input_streams_[ current_index_ ]->fill_pose( pose, residue_set );
+	input_streams_[ current_index_ ]->fill_pose( pose, residue_set, metapatches );
 }
 
 void MetaPoseInputStream::fill_pose(
-	core::pose::Pose & pose
+	core::pose::Pose & pose,
+	bool const metapatches /*= true*/
 ) {
 	// check to make sure that we have more poses!
 	if ( !has_another_pose() ) {
@@ -85,7 +87,7 @@ void MetaPoseInputStream::fill_pose(
 	}
 
 	// (*current_input_stream_)->fill_pose( pose, residue_set );
-	input_streams_[ current_index_ ]->fill_pose( pose );
+	input_streams_[ current_index_ ]->fill_pose( pose, metapatches );
 }
 
 } // pose_stream

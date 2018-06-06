@@ -372,19 +372,21 @@ RNA_SilentStruct::resize(
 
 // @brief Fill a Pose with the data in this RNA_SilentStruct.
 void RNA_SilentStruct::fill_pose(
-	core::pose::Pose & pose
+	core::pose::Pose & pose,
+	bool const metapatches /*= true*/
 ) const {
 	using namespace core::chemical;
 	ResidueTypeSetCOP residue_set;
 	if ( fullatom() ) {
 		residue_set = pose.residue_type_set_for_pose( FULL_ATOM_t );
 	}
-	fill_pose( pose, *residue_set );
+	fill_pose( pose, *residue_set, metapatches );
 } // fill_pose
 
 void RNA_SilentStruct::fill_pose(
 	core::pose::Pose & pose,
-	core::chemical::ResidueTypeSet const & /*residue_set*/
+	core::chemical::ResidueTypeSet const & /*residue_set*/,
+	bool const metapatches /*= true*/
 ) const {
 	using namespace core::chemical;
 
@@ -396,7 +398,7 @@ void RNA_SilentStruct::fill_pose(
 		//RHIJU HACK!
 		//tr.Info << "USING RNA PARAMS FILES " << std::endl;
 		ResidueTypeSetCOP rna_residue_set = pose.residue_type_set_for_pose( FULL_ATOM_t );
-		core::pose::make_pose_from_sequence( pose, sequence(), *rna_residue_set );
+		core::pose::make_pose_from_sequence( pose, sequence(), *rna_residue_set, metapatches );
 	}
 	tr.Debug << "FOLD TREE: " << fold_tree();
 

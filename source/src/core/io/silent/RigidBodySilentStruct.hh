@@ -90,7 +90,8 @@ public:
 	/// conformational data within this RigidBodySilentStruct.
 	/// sets the jump stored in the RigidBodySilentStruct
 	virtual void fill_pose(
-		core::pose::Pose & pose
+		core::pose::Pose & pose,
+		bool const metapatches = true
 	) const;
 
 	/// @brief Configure the conformation of the given Pose with the
@@ -98,7 +99,8 @@ public:
 	// invalid to use
 	virtual void fill_pose(
 		core::pose::Pose & pose,
-		core::chemical::ResidueTypeSet const & residue_set
+		core::chemical::ResidueTypeSet const & residue_set,
+		bool const metapatches = true
 	) const;
 
 	/// @brief opposite of fill_pose

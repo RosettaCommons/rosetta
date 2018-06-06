@@ -84,7 +84,8 @@ public:
 	/// rebuilds Pose from scratch using the / user-specified residue types.
 	virtual void fill_pose(
 		core::pose::Pose & pose,
-		core::chemical::ResidueTypeSet const & residue_set
+		core::chemical::ResidueTypeSet const & residue_set,
+		bool const metapatches  = true
 	) const;
 
 	/// @brief opposite of fill_pose

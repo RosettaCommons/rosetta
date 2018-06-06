@@ -148,7 +148,8 @@ Size get_sequence_len( std::string const & sequence_in ) {
 chemical::ResidueTypeCOPs residue_types_from_sequence(
 	std::string const & sequence_in,
 	chemical::ResidueTypeSet const & residue_set,
-	bool const auto_termini /* true */
+	bool const auto_termini /* true */,
+	bool const metapatches /* = true*/
 ) {
 	chemical::ResidueTypeCOPs requested_types;
 
@@ -197,7 +198,7 @@ chemical::ResidueTypeCOPs residue_types_from_sequence(
 			is_lower_terminus = auto_termini && ( seqpos == 1 || one_letter_sequence[ seqpos-2 ]=='/');
 			is_upper_terminus = auto_termini && ( seqpos == one_letter_sequence.length() || one_letter_sequence[ seqpos ]=='/' );
 
-			ResidueTypeCOP rsd_type = get_rsd_type_from_aa( residue_set, my_aa, is_lower_terminus, is_upper_terminus );
+			ResidueTypeCOP rsd_type = get_rsd_type_from_aa( residue_set, my_aa, is_lower_terminus, is_upper_terminus, metapatches );
 
 			if ( rsd_type == nullptr ) {
 				utility_exit_with_message( " can't find residue type for " + std::string(1,aa) + " at pos " + ObjexxFCL::string_of(seqpos) +
@@ -596,7 +597,7 @@ append_pose_with_glycan_residues(
 void make_pose_from_sequence(
 	pose::Pose & pose,
 	chemical::ResidueTypeCOPs requested_types,
-	bool const /* auto_termini=true */)
+	bool const /* auto_termini=true */ )
 {
 	// clear the pose
 	pose.clear();
@@ -680,15 +681,16 @@ void make_pose_from_sequence(
 	pose::Pose & pose,
 	std::string const & sequence_in,
 	chemical::ResidueTypeSet const & residue_set,
-	bool const auto_termini /* true */
+	bool const auto_termini, /* true */
+	bool const metapatches /* = true */
 )
 {
 	// grab residue types
-	chemical::ResidueTypeCOPs requested_types = core::pose::residue_types_from_sequence( sequence_in, residue_set, auto_termini );
+	chemical::ResidueTypeCOPs requested_types = core::pose::residue_types_from_sequence( sequence_in, residue_set, auto_termini, metapatches );
 	debug_assert( core::pose::annotated_to_oneletter_sequence( sequence_in ).length() == requested_types.size() );
 
 	make_pose_from_sequence(
-		pose, requested_types, auto_termini);
+		pose, requested_types, auto_termini );
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -707,11 +709,12 @@ void make_pose_from_sequence(
 	pose::Pose & pose,
 	std::string const & sequence_in,
 	chemical::ResidueTypeSetCOP residue_set,
-	bool const auto_termini /* true */
+	bool const auto_termini, /* true */
+	bool const metapatches /* = true */
 )
 {
 	// grab residue types
-	chemical::ResidueTypeCOPs requested_types = core::pose::residue_types_from_sequence( sequence_in, *residue_set, auto_termini );
+	chemical::ResidueTypeCOPs requested_types = core::pose::residue_types_from_sequence( sequence_in, *residue_set, auto_termini, metapatches );
 	debug_assert( core::pose::annotated_to_oneletter_sequence( sequence_in ).length() == requested_types.size() );
 
 	make_pose_from_sequence(
@@ -727,10 +730,11 @@ void make_pose_from_sequence(
 	std::string const & sequence_in,
 	std::string const & type_set_name,
 	//chemical::ResidueTypeSet const & residue_set,
-	bool const auto_termini /* true */
+	bool const auto_termini, /* true */
+	bool const metapatches /* = true */
 ) {
 	chemical::ResidueTypeSetCOP residue_set( chemical::ChemicalManager::get_instance()->residue_type_set( type_set_name ) );
-	core::pose::make_pose_from_sequence( pose, sequence_in, *residue_set, auto_termini );
+	core::pose::make_pose_from_sequence( pose, sequence_in, *residue_set, auto_termini, metapatches );
 }
 
 
@@ -882,16 +886,19 @@ std::string annotated_to_oneletter_sequence(
 /// @details ResidueTypeFinder finds simplest residue type with this AA & requested termini.
 chemical::ResidueTypeCOP
 get_rsd_type_from_aa( chemical::ResidueTypeSet const & residue_set,
-	chemical::AA const & my_aa, bool const & is_lower_terminus, bool const & is_upper_terminus )
+	chemical::AA const & my_aa, bool const & is_lower_terminus, bool const & is_upper_terminus,
+	bool const metapatches /*= true*/ )
 {
+	// AMW TODO: We should be able to figure out is_polymer FROM AA rather than going through
+	// two RTF invocations.
 	using namespace core::chemical;
-	ResidueTypeCOP rsd_type = ResidueTypeFinder( residue_set ).aa( my_aa ).get_representative_type();
+	ResidueTypeCOP rsd_type = ResidueTypeFinder( residue_set ).aa( my_aa ).get_representative_type( metapatches );
 	utility::vector1< VariantType > variants;
 	if ( rsd_type->is_polymer() ) {
 		if ( is_lower_terminus ) variants.push_back( LOWER_TERMINUS_VARIANT );
 		if ( is_upper_terminus ) variants.push_back( UPPER_TERMINUS_VARIANT );
 	}
-	return ResidueTypeFinder( residue_set ).aa( my_aa ).variants( variants ).get_representative_type();
+	return ResidueTypeFinder( residue_set ).aa( my_aa ).variants( variants ).get_representative_type( metapatches );
 }
 
 } // namespace core
