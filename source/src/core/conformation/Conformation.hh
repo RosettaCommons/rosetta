@@ -1010,6 +1010,12 @@ public:  // DoFs/xyzs
 		Real setting
 	);
 
+	/// @brief    Return the normalized vector of the bond between these two atoms.
+	core::Vector bond_orientation( AtomID const & atom1, AtomID const & atom2 ) const;
+
+	/// @brief    Return the normalized vector of the bond about which this torsion angle twists.
+	core::Vector bond_orientation( core::id::TorsionID const torsion ) const;
+
 	/// @brief Returns the Jump with jump number  <jump_number>
 	const Jump &
 	jump( int jump_number ) const;

@@ -20,12 +20,17 @@
 #include <core/conformation/util.hh>
 
 // Package Header
+#include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/carbohydrates/util.hh>
 
 // Project Headers
 #include <core/types.hh>
+#include <core/chemical/rings/RingConformer.hh>
+#include <core/chemical/rings/RingConformerSet.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
+#include <core/id/TorsionID.hh>
 
 // Utility Header
 #include <utility/vector1.hh>
@@ -51,6 +56,133 @@ public:  // Standard methods //////////////////////////////////////////////////
 
 
 public:  // Tests /////////////////////////////////////////////////////////////
+	void test_find_bond_torsion_with_nearest_orientation()
+	{
+		using namespace std;
+		using namespace utility;
+		using namespace core::id;
+		using namespace core::chemical::rings;
+		using namespace core::pose;
+		using namespace core::conformation;
+		using namespace core::conformation::carbohydrates;
+
+		TR << "Testing that the best torsions are chosen to minimize downstream effects of a move." << endl;
+		TR << "Testing a peptide." << endl;
+
+		Pose peptide;
+		make_pose_from_sequence( peptide, "AAA", "fa_standard" );
+		// Ensure that these are trans peptides.
+		peptide.set_omega( 1, 180.0 );
+		peptide.set_omega( 2, 180.0 );
+
+		vector1< TorsionID > const peptide_torsions = {
+			TorsionID( 1, BB, 1 ),  // Phi1
+			TorsionID( 1, BB, 2 ),  // Psi1
+			TorsionID( 2, BB, 1 ),  // Phi2
+			TorsionID( 2, BB, 2 ),  // Psi2
+			TorsionID( 3, BB, 1 ),  // Phi3
+			TorsionID( 3, BB, 2 )   // Psi3
+			};
+
+		TS_ASSERT_EQUALS( find_bond_torsion_with_nearest_orientation(
+			peptide.conformation(), peptide_torsions, TorsionID( 2, BB, 1 ) ),
+			TorsionID( 1, BB, 2 ) );  // Because omega is trans, Psi1 should undo a move at Phi2.
+		TS_ASSERT_EQUALS( find_bond_torsion_with_nearest_orientation(
+			peptide.conformation(), peptide_torsions, TorsionID( 2, BB, 2 ) ),
+			TorsionID( 3, BB, 1 ) );  // Because omega is trans, Phi3 should undo a move at Psi2.
+
+
+		vector1< TorsionID > sugar_torsions;
+		TorsionID phi2;
+		TorsionID psi2;
+		TorsionID omega2;
+		TorsionID phi3;
+		TorsionID psi3;
+		TorsionID omega3;
+		TorsionID phi4;
+		TorsionID psi4;
+		TorsionID omega4;
+
+
+		TR << "Testing a beta-1,4-oligosaccharide with 4C1 all-equatorial rings." << endl;
+
+		Pose to4_beta_sugar;
+		make_pose_from_saccharide_sequence( to4_beta_sugar,
+			"b-D-Glcp-(1->4)-b--D-Glcp-(1->4)-b-D-Glcp-(1->4)-b-D-Glcp", "fa_standard" );
+
+		phi2 = get_non_NU_TorsionID_from_AtomIDs(
+			to4_beta_sugar.conformation(), get_reference_atoms_for_phi( to4_beta_sugar.conformation(), 2 ) );
+		psi2 = get_non_NU_TorsionID_from_AtomIDs(
+			to4_beta_sugar.conformation(), get_reference_atoms_for_psi( to4_beta_sugar.conformation(), 2 ) );
+		phi3 = get_non_NU_TorsionID_from_AtomIDs(
+			to4_beta_sugar.conformation(), get_reference_atoms_for_phi( to4_beta_sugar.conformation(), 3 ) );
+		psi3 = get_non_NU_TorsionID_from_AtomIDs(
+			to4_beta_sugar.conformation(), get_reference_atoms_for_psi( to4_beta_sugar.conformation(), 3 ) );
+		phi4 = get_non_NU_TorsionID_from_AtomIDs(
+			to4_beta_sugar.conformation(), get_reference_atoms_for_phi( to4_beta_sugar.conformation(), 4 ) );
+		psi4 = get_non_NU_TorsionID_from_AtomIDs(
+			to4_beta_sugar.conformation(), get_reference_atoms_for_psi( to4_beta_sugar.conformation(), 4 ) );
+
+		sugar_torsions.push_back( phi2 );
+		sugar_torsions.push_back( psi2 );
+		sugar_torsions.push_back( phi3 );
+		sugar_torsions.push_back( psi3 );
+		sugar_torsions.push_back( phi4 );
+		sugar_torsions.push_back( psi4 );
+
+		TS_ASSERT_EQUALS( find_bond_torsion_with_nearest_orientation(
+			to4_beta_sugar.conformation(), sugar_torsions, phi3),
+			psi4 );  // 4C1 beta-glucose is all-equatorial; the ring holds Psi4 near-parallel to Phi3.
+
+
+		TR << "Testing a alpha-1,6-oligosaccharide with 1C4 all-axial rings." << endl;
+
+		Pose to6_beta_sugar;
+		make_pose_from_saccharide_sequence( to6_beta_sugar,
+			"b-D-Glcp-(1->6)-b--D-Glcp-(1->6)-b-D-Glcp-(1->6)-b-D-Glcp", "fa_standard" );
+		RingConformerSet const conformers( 6, "", vector1< string >() );
+		RingConformer const & flipped_chair( conformers.get_ideal_conformer_by_name( "1C4" ) );
+
+		for ( core::uint i( 1 ); i <= 4; ++i ) {
+			to6_beta_sugar.set_psi( i, 90.0 );  // Ensure that none of the psis are near 180 so that test passes.
+			to6_beta_sugar.set_ring_conformation( i, 1, flipped_chair );
+		}
+
+		phi2 = get_non_NU_TorsionID_from_AtomIDs(
+			to6_beta_sugar.conformation(), get_reference_atoms_for_phi( to6_beta_sugar.conformation(), 2 ) );
+		psi2 = get_non_NU_TorsionID_from_AtomIDs(
+			to6_beta_sugar.conformation(), get_reference_atoms_for_psi( to6_beta_sugar.conformation(), 2 ) );
+		omega2 = get_non_NU_TorsionID_from_AtomIDs(
+			to6_beta_sugar.conformation(), get_reference_atoms_for_1st_omega( to6_beta_sugar.conformation(), 2 ) );
+		phi3 = get_non_NU_TorsionID_from_AtomIDs(
+			to6_beta_sugar.conformation(), get_reference_atoms_for_phi( to6_beta_sugar.conformation(), 3 ) );
+		psi3 = get_non_NU_TorsionID_from_AtomIDs(
+			to6_beta_sugar.conformation(), get_reference_atoms_for_psi( to6_beta_sugar.conformation(), 3 ) );
+		omega3 = get_non_NU_TorsionID_from_AtomIDs(
+			to6_beta_sugar.conformation(), get_reference_atoms_for_1st_omega( to6_beta_sugar.conformation(), 3 ) );
+		phi4 = get_non_NU_TorsionID_from_AtomIDs(
+			to6_beta_sugar.conformation(), get_reference_atoms_for_phi( to6_beta_sugar.conformation(), 4 ) );
+		psi4 = get_non_NU_TorsionID_from_AtomIDs(
+			to6_beta_sugar.conformation(), get_reference_atoms_for_psi( to6_beta_sugar.conformation(), 4 ) );
+		omega4 = get_non_NU_TorsionID_from_AtomIDs(
+			to6_beta_sugar.conformation(), get_reference_atoms_for_1st_omega( to6_beta_sugar.conformation(), 4 ) );
+
+		sugar_torsions.clear();
+		sugar_torsions.push_back( phi2 );
+		sugar_torsions.push_back( psi2 );
+		sugar_torsions.push_back( omega2 );
+		sugar_torsions.push_back( phi3 );
+		sugar_torsions.push_back( psi3 );
+		sugar_torsions.push_back( omega3 );
+		sugar_torsions.push_back( phi4 );
+		sugar_torsions.push_back( psi4 );
+		sugar_torsions.push_back( omega4 );
+
+		TS_ASSERT_EQUALS( find_bond_torsion_with_nearest_orientation(
+			to6_beta_sugar.conformation(), sugar_torsions, phi3 ),
+			omega4 );  // 1C4 beta-glucose is all-axial; the ring holds Omega4 near-parallel to Phi3.
+	}
+
 	// Confirm that the position of a substituent on a ring can be correctly assigned.
 	void test_position_of_atom_on_ring()
 	{

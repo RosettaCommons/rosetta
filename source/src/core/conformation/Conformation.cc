@@ -2623,7 +2623,9 @@ Conformation::torsion( TorsionID const & tor_id ) const
 	case id::NU :
 		return residue( tor_id.rsd() ).nu( tor_id.torsion() );
 	case id::BRANCH :
-		// TODO: Convert to degrees.
+		if ( residue_coordinates_need_updating_ ) { update_residue_coordinates(); }
+		if ( residue_torsions_need_updating_ ) { update_residue_torsions(); }
+		// Convert to degrees.
 		return degrees( atom_tree_->dof( dof_id_from_torsion_id( tor_id ) ) );
 	case id::JUMP :
 		// jump rigid-body offset
@@ -2663,7 +2665,7 @@ Conformation::set_torsion( TorsionID const & tor_id, Real const setting )
 			residues_[tor_id.rsd()]->nus()[tor_id.torsion()] = setting;
 			break;
 		case id::BRANCH :
-			// Residue does not store branch point connection torsions -- nothing to do here.
+			// Residue does not store branch point connection torsions -- nothing else to do here.
 			break;
 		default :
 			TR.Warning << "Unknown torsion type." << std::endl;
@@ -2807,6 +2809,30 @@ Conformation::set_bond_length(
 	}
 }
 
+/// @brief    Return the normalized vector of the bond between these two atoms.
+/// @details  This function assumes a bond and will return an orientation even if the atoms are not technically bonded.
+core::Vector
+Conformation::bond_orientation( AtomID const & atom1, AtomID const & atom2 ) const
+{
+	PointPosition const ref_atm1_coord( xyz( atom1 ) );
+	PointPosition const ref_atm2_coord( xyz( atom2 ) );
+	return ( ref_atm2_coord - ref_atm1_coord ).normalized();
+}
+
+/// @brief    Return the normalized vector of the bond about which this torsion angle twists.
+/// @details  This function will only work properly if all the reference atoms for <torsion> are defined.
+///           If they are not defined, the function will return a zero vector.
+core::Vector
+Conformation::bond_orientation( core::id::TorsionID const torsion ) const
+{
+	AtomID dummy_atm1, bond_atm1, bond_atm2, dummy_atm2;
+	bool const failure(
+		get_torsion_angle_atom_ids( torsion, dummy_atm1, bond_atm1, bond_atm2, dummy_atm2 ) );
+
+	if ( failure ) { return Vector( 0, 0, 0 ); }
+
+	return bond_orientation( bond_atm1, bond_atm2 );
+}
 
 Conformation::Jump const &
 Conformation::jump( int const jump_number ) const

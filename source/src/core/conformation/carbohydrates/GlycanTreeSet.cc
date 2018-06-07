@@ -239,6 +239,12 @@ GlycanTreeSet::get_parent(const core::Size glycan_residue) const {
 	return get_node(glycan_residue)->get_parent();
 }
 
+core::uint
+GlycanTreeSet::get_mainchain_child( const core::Size glycan_residue ) const
+{
+	return get_node( glycan_residue )->get_mainchain_child();
+}
+
 core::Size
 GlycanTreeSet::get_distance_to_start(const core::Size glycan_residue ) const {
 	return get_node(glycan_residue)->get_distance_to_start();

@@ -9,7 +9,6 @@
 
 /// @file   protocols/moves/SmallMover.cxxtest.hh
 /// @brief  test suite for protocols::simple_moves::SmallMover.cc
-/// @author Monica Berrondo
 
 
 // Test headers
@@ -34,27 +33,14 @@
 #include <basic/Tracer.hh>
 
 
-static basic::Tracer TR("protocols.moves.SmallMover.cxxtest");
+static basic::Tracer TR( "protocols.moves.SmallMover.cxxtest" );
 
 // using declarations
 using namespace core;
 using namespace core::pose;
 using namespace protocols::moves;
 
-///////////////////////////////////////////////////////////////////////////
-/// @name SmallMoverTest
-/// @brief: test a single small move using all default values
-/// @details Default values used are 0, 5, 6 (H,E,L)
-///      nmoves=1, all residues movable
-///       The values for the new phi and psi torsion angles
-///      were checked against values calculated by hand using
-///      4 significant figures for the calculations.
-///      Residue number 77 is the residue that is picked
-///      The new phi angle is -73.1381 (assuming only L is being used)
-///      The new psi angle is -26.9266
-///
-/// @author Monica Berrondo October 09 2007
-///////////////////////////////////////////////////////////////////////////
+
 class SmallMoverTest : public CxxTest::TestSuite {
 
 public:
@@ -81,27 +67,24 @@ public:
 		the_pose.reset();
 	}
 
-	void test_OneSmallMover() {
-		protocols::simple_moves::SmallMover mover; // create a default small mover
-		core::Real correct_phi ( 113.453390089941 );
-		core::Real correct_psi ( -131.084764764517 );
-		// make the move
+	/// @author Labonte <JWLabonte@jhu.edu>
+	void test_one_small_move() {
+		protocols::simple_moves::SmallMover mover;
+
+		// Force the 77th residue of this pose to move.
+		core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
+		mm->set_bb( false );
+		mm->set_bb( 77, true );
+		mover.movemap( mm );
+
+		Angle const initial_phi( the_pose->phi( 77 ) ), initial_psi( the_pose->psi( 77 ) );
 		mover.apply( *the_pose );
 
-		core::Real phi = mover.new_phi();
-		core::Real psi = mover.new_psi();
-
-		//std::cout.precision( 15 );
-		//std::cout << "phi: " << phi << " psi: " << psi << std::endl;
-
-		// compare to the correct answer
-		float const TOLERATED_ERROR = 0.0001;
-
-		TS_ASSERT_DELTA( phi, correct_phi, TOLERATED_ERROR );
-		TS_ASSERT_DELTA( psi, correct_psi, TOLERATED_ERROR );
-		TR << "test_OneSmallMover completed!! " << std::endl;
+		TS_ASSERT( the_pose->phi( 77 ) != initial_phi );
+		TS_ASSERT( the_pose->psi( 77 ) != initial_psi );
 	}
 
+	/// @author Monica Berrondo
 	void test_SmallMover() {
 		// this is assuming that the residue is of type L so that the max_angle is 6.0
 		const int size = 6; ///< size of array to store numbers
@@ -123,8 +106,8 @@ public:
 
 		// make an initial move and get the phi and psis
 		mover.apply( *the_pose );
-		core::Real phi = mover.new_phi();
-		core::Real psi = mover.new_psi();
+		core::Real phi = the_pose->phi( resnum );
+		core::Real psi = the_pose->psi( resnum );
 		// store the phi and psi as the original ones to go back to
 		core::Real orig_phi = phi;
 		core::Real orig_psi = psi;
@@ -132,8 +115,8 @@ public:
 		// make the move 100 times
 		for ( int i=0; i<N; ++i ) {
 			mover.apply( *the_pose );
-			phi = mover.new_phi();
-			psi = mover.new_psi();
+			phi = the_pose->phi( resnum );
+			psi = the_pose->psi( resnum );
 			int phi_ind = int( phi - orig_phi + int(size/2) );
 			int psi_ind = int( psi - orig_psi + int(size/2) );
 			phi_V[phi_ind] += 1;
@@ -171,10 +154,11 @@ public:
 		TR << "test_SmallMover completed!! " << std::endl;
 	}
 
+	/// @author Labonte <JWLabonte@jhu.edu>
 	void test_SmallMover_w_sugar() {
 		protocols::simple_moves::SmallMover mover;
 
-		// Force the 2nd residue of this two-residue sugar to move by only setting its parent's torsions free to move..
+		// Force the 2nd residue of this two-residue sugar to move by only setting its parent's torsions free to move.
 		core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
 		mm->set_bb( false );
 		mm->set_bb( 1, true );
@@ -189,8 +173,5 @@ public:
 		TS_ASSERT( the_sugar_pose->psi( 2 ) != initial_psi );
 		TS_ASSERT( the_sugar_pose->omega( 2 ) != initial_omega );
 	}
-
-	// APL Note: removing the "test_comprehensiveSmallMover" unit test
-
 };
 

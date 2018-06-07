@@ -153,6 +153,10 @@ public:
 	core::Size
 	get_parent( core::Size glycan_residue ) const;
 
+	/// @brief Convenience function to get the main-chain child residue number from a GlycanNode.
+	core::uint
+	get_mainchain_child( core::Size glycan_residue ) const;
+
 	///@brief Convenience function to get the starting position of a particular tree which contains the residue.
 	/// This is the first Glycan Residue of the tree.
 	/// Accessed from a stored GlycanTree class.

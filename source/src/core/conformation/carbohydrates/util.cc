@@ -73,7 +73,8 @@ namespace carbohydrates {
 /// @return  The sequence position of the residue before this one (n-1) or the residue in the parent chain from which
 /// the branch occurs or zero if N/A, i.e., if this is the lower terminus.
 core::uint
-find_seqpos_of_saccharides_parent_residue( conformation::Residue const & residue ) {
+find_seqpos_of_saccharides_parent_residue( conformation::Residue const & residue )
+{
 	debug_assert( residue.is_carbohydrate() );
 
 
@@ -100,7 +101,8 @@ find_seqpos_of_saccharides_parent_residue( conformation::Residue const & residue
 
 
 core::uint
-find_seqpos_of_saccharides_mainchain_child( conformation::Residue const & residue ){
+find_seqpos_of_saccharides_mainchain_child( conformation::Residue const & residue )
+{
 	core::uint linkage_position = residue.carbohydrate_info()->mainchain_glycosidic_bond_acceptor();
 	return find_seqpos_of_saccharides_child_residue_at( residue, linkage_position);
 }
@@ -673,13 +675,34 @@ get_non_NU_TorsionID_from_AtomIDs( Conformation const & conf, utility::vector1< 
 	}
 
 	if ( ! torsionnum ) {
-		TR.Error << "get_mainchain_or_branch_TorsionID_from_AtomIDs() could not determine the BB id for the";
+		TR.Error << "get_non_NU_TorsionID_from_AtomIDs() could not determine the BB id for the";
 		TR.Error << "TorsionID defined by these atoms:";
 		TR.Error << upstream_bond_atom_parent << "; " << upstream_bond_atom << "; ";
 		TR.Error << downstream_bond_atom << "; " << downstream_bond_atom_child << endl;
 	}
 
 	return TorsionID( resnum, type, torsionnum );
+}
+
+/// @brief   Get a list of the TorsionIDs of all glycosidic torsions for the residue at this position.
+/// @author  Labonte <JWLabonte@jhu.edu>
+utility::vector1< core::id::TorsionID >
+get_glycosidic_TorsionIDs( core::conformation::Conformation const & conf, uint const seq_pos )
+{
+	using namespace core::id;
+	using namespace core::conformation::carbohydrates;
+
+	debug_assert( conf.residue( seq_pos ).is_carbohydrate() );
+
+	utility::vector1< TorsionID > torsions;
+	for ( core::uint i( 1 ); i <= 4; ++i ) {  // 4 covers phi, psi, and up to two omegas.
+		TorsionID const torsion(
+			get_non_NU_TorsionID_from_AtomIDs( conf, get_reference_atoms( i, conf, seq_pos ) ) );
+		if ( torsion == TorsionID::BOGUS_TORSION_ID() ) { break; }
+		torsions.push_back( torsion );
+	}
+
+	return torsions;
 }
 
 

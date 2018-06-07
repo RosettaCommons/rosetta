@@ -42,7 +42,7 @@ namespace carbohydrates {
 core::uint find_seqpos_of_saccharides_parent_residue( conformation::Residue const & residue );
 
 /// @brief  Use the mainchain acceptor to find the mainchain child.
-///         Typically, this is N+1, but this is independant of the residue number.
+///         Typically, this is N+1, but this is independent of the residue number.
 ///         Returns 0 if it has no child.
 core::uint find_seqpos_of_saccharides_mainchain_child( conformation::Residue const & residue );
 
@@ -106,6 +106,11 @@ utility::vector1< core::id::AtomID > get_reference_atoms( uint const named_torsi
 core::id::TorsionID get_non_NU_TorsionID_from_AtomIDs(
 	Conformation const & conf,
 	utility::vector1< core::id::AtomID > const & atoms );
+
+/// @brief  Get a list of the TorsionIDs of all glycosidic torsions for the residue at this position.
+utility::vector1< core::id::TorsionID > get_glycosidic_TorsionIDs(
+	core::conformation::Conformation const & conf,
+	uint const seq_pos );
 
 
 /// @brief  Set coordinates of virtual atoms (used as angle reference points) within a saccharide residue of the given

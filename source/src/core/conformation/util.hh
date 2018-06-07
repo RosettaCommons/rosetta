@@ -34,6 +34,7 @@
 #include <core/id/NamedAtomID.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
 #include <core/id/NamedStubID.fwd.hh>
+#include <core/id/TorsionID.fwd.hh>
 
 #include <core/kinematics/tree/Atom.fwd.hh>
 #include <core/kinematics/AtomTree.fwd.hh>
@@ -424,6 +425,12 @@ stub_id_to_named_stub_id(
 	id::StubID const & stub_id,
 	conformation::Residue const & rsd
 );
+
+
+core::id::TorsionID find_bond_torsion_with_nearest_orientation(
+	core::conformation::Conformation const & conf,
+	utility::vector1< core::id::TorsionID > const & torsions,
+	core::id::TorsionID const & query_torsion );
 
 
 // Ring-related Functions /////////////////////////////////////////////////////

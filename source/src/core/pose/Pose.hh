@@ -738,10 +738,8 @@ public:
 	/// will not invoke DSSP to determine the secondary structure
 	/// if e.g. it has not been made from fragments.
 	/// 'H' = helical
-	/// 'S' = strand or sheet
-	/// 'E' = loop
-	/// JKL: is this correct? DsspDesignOperations says that
-	/// H = helix, E = strand, and L = loop
+	/// 'E' = strand or sheet
+	/// 'L' = loop
 	///
 	/// example(s):
 	///     pose.secstruct(3)

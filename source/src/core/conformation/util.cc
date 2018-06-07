@@ -2374,6 +2374,41 @@ disulfide_bonds( conformation::Conformation const& conformation, utility::vector
 }
 
 
+/// @brief    Return a nearby TorsionID with approximately the same 3D orientation, selected from the give TorsionIDs.
+/// @details  The downstream effects of a torsion move can be minimized by twisting a nearby torsion in the opposite
+///           direction with the same magnitude, resulting in a net "shearing" motion, if and only if the orientation
+///           of the two bonds are similar, that is, if the two bonds are approximately parallel.  This function is
+///           useful for finding such a torsion from a supplied list of torsions.
+/// @param    <conf>            the Conformation
+/// @param    <torsions>        a list of torsions to search
+/// @param    <query_torsion>   the TorsionID to compare
+/// @author   Labonte <JWLabonte@jhu.edu>
+core::id::TorsionID
+find_bond_torsion_with_nearest_orientation(
+	core::conformation::Conformation const & conf,
+	utility::vector1< core::id::TorsionID > const & torsions,
+	core::id::TorsionID const & query_torsion )
+{
+	using namespace core;
+
+	Vector const ref_bond_vector( conf.bond_orientation( query_torsion ) );
+
+	Real max_dot_product( 0.0 );
+	id::TorsionID best_torsion;
+	for ( auto torsion : torsions ) {
+		if ( torsion == query_torsion ) { continue; }  // Do not compare to self.
+		Vector const query_bond_vector( conf.bond_orientation( torsion ) );
+		Real const dot_product( fabs( numeric::dot( query_bond_vector, ref_bond_vector ) ) );
+		if ( dot_product > max_dot_product ) {
+			max_dot_product = dot_product;
+			best_torsion = torsion;
+		}
+	}
+
+	return best_torsion;
+}
+
+
 // Ring-related Functions /////////////////////////////////////////////////////
 
 // What is the attachment position of the query atom on the given ring?

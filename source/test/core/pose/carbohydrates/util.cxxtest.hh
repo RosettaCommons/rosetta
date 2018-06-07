@@ -533,6 +533,49 @@ public:  // Tests /////////////////////////////////////////////////////////////
 			get_non_NU_TorsionID_from_AtomIDs( isomaltose_.conformation(), omega2_atoms ), TorsionID( 1, BB, 5 ) );
 	}
 
+	void test_get_glycosidic_TorsionIDs()
+	{
+		using namespace core::id;
+		using namespace core::conformation::carbohydrates;
+
+		TR << "Testing get_glycosidic_TorsionIDs() function." << std::endl;
+
+		utility::vector1< TorsionID > glycosidic_torsions;
+
+
+		// Test Lewis X: beta-D-Galp-(1->4)-[alpha-D-Fucp-(1->3)]-D-GlcpNAc
+		// D-GlcpNAc
+		glycosidic_torsions =
+			get_glycosidic_TorsionIDs( Lex_.conformation(), 1 );
+		TS_ASSERT_EQUALS( glycosidic_torsions.size(), 0 );  // 1st residue has no glycosidic bond.
+
+		// beta-D-Galp
+		glycosidic_torsions =
+			get_glycosidic_TorsionIDs( Lex_.conformation(), 2 );
+		TS_ASSERT_EQUALS( glycosidic_torsions.size(), 2 );
+		TS_ASSERT_EQUALS( glycosidic_torsions[ 1 ], TorsionID( 1, BB, 5 ) );
+		TS_ASSERT_EQUALS( glycosidic_torsions[ 2 ], TorsionID( 1, BB, 4 ) );
+
+		// alpha-D-Fucp
+		glycosidic_torsions =
+			get_glycosidic_TorsionIDs( Lex_.conformation(), 3 );
+		TS_ASSERT_EQUALS( glycosidic_torsions.size(), 2 );
+		TS_ASSERT_EQUALS( glycosidic_torsions[ 1 ], TorsionID( 1, BRANCH, 1 ) );
+		TS_ASSERT_EQUALS( glycosidic_torsions[ 2 ], TorsionID( 1, CHI, 3 ) );
+
+		// Test isomaltose: alpha-D-Glcp-(1->6)-D-Glcp
+		glycosidic_torsions =
+			get_glycosidic_TorsionIDs( isomaltose_.conformation(), 1 );
+		TS_ASSERT_EQUALS( glycosidic_torsions.size(), 0 );  // 1st residue has no glycosidic bond.
+
+		glycosidic_torsions =
+			get_glycosidic_TorsionIDs( isomaltose_.conformation(), 2 );
+		TS_ASSERT_EQUALS( glycosidic_torsions.size(), 3 );
+		TS_ASSERT_EQUALS( glycosidic_torsions[ 1 ], TorsionID( 1, BB, 7 ) );
+		TS_ASSERT_EQUALS( glycosidic_torsions[ 2 ], TorsionID( 1, BB, 6 ) );
+		TS_ASSERT_EQUALS( glycosidic_torsions[ 3 ], TorsionID( 1, BB, 5 ) );
+	}
+
 	void test_get_downstream_residue_that_this_torsion_moves()
 	{
 		using namespace core::id;
@@ -750,6 +793,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		}
 
 	}
+
 	void test_exocyclic_detection()
 	{
 		using namespace core::id;
