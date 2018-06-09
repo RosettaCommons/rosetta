@@ -291,7 +291,6 @@ void DockingInitialPerturbation::apply( core::pose::Pose & pose )
 		}
 	}
 
-
 	runtime_assert( !movable_jumps_.empty() );
 
 	for ( DockJumps::const_iterator it=movable_jumps_.begin(); it != movable_jumps_.end(); ++it ) {
@@ -650,6 +649,7 @@ void DockingSlideIntoContact::apply( core::pose::Pose & pose )
 	TR << "Moving away" << std::endl;
 	core::Size const counter_breakpoint( 500 );
 	core::Size counter( 0 );
+
 
 	// Move chains away from each other until ScoreType or delta surpasses threshold
 	core::Real last_score = pose.energies().total_energies()[ scoretype_for_contact_ ];

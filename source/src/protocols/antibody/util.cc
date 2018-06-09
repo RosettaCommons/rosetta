@@ -844,12 +844,17 @@ is_H3_rama_kinked(std::string const & rama){
 
 void
 kink_constrain_antibody_H3( core::pose::Pose & pose, AntibodyInfoOP const antibody_info ) {
+	// Get relevant residue numbers
+	Size kink_begin = antibody_info->kink_begin( pose );
+	kink_constrain_antibody_H3( pose, kink_begin );
+}
+
+void
+kink_constrain_antibody_H3( core::pose::Pose & pose, core::Size kink_begin ) {
 
 	using namespace core::scoring::constraints;
 
 	TR << " Automatically setting kink constraint! " << std::endl;
-	// Get relevant residue numbers
-	Size kink_begin = antibody_info->kink_begin( pose );
 
 	// Constraints operate on AtomIDs:
 	Size CA( 2 ); // CA is atom 2; AtomIDs can only use numbers
@@ -879,6 +884,8 @@ kink_constrain_antibody_H3( core::pose::Pose & pose, AntibodyInfoOP const antibo
 	pose.add_constraint( tau_cst );
 	pose.add_constraint( alpha_cst );
 }
+
+
 
 PDBLandmarkCOP
 get_matching_landmark(

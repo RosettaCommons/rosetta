@@ -56,6 +56,13 @@ namespace protocols {
 namespace antibody {
 
 
+CDRsMinPackMin::CDRsMinPackMin() : Mover() {
+	user_defined_ = false;
+	ab_info_ = nullptr;
+
+	init();
+}
+
 CDRsMinPackMin::CDRsMinPackMin(AntibodyInfoOP antibody_info) : Mover() {
 	user_defined_ = false;
 
@@ -96,6 +103,8 @@ void CDRsMinPackMin::init() {
 	min_tolerance_ = 0.1;
 	update_rounds_ = 0;
 
+	alter_foldtree_ = true;
+
 	if ( !user_defined_ ) {
 		tf_ = nullptr;
 		allcdr_map_ = nullptr;
@@ -120,8 +129,10 @@ void CDRsMinPackMin::finalize_setup( pose::Pose & pose ) {
 	cdr_sequence_move_ = protocols::moves::SequenceMoverOP( new moves::SequenceMover() );
 
 	// **************** FoldTree ****************
-	pose.fold_tree( * ab_info_->get_FoldTree_AllCDRs(pose)  );
-	TR<<pose.fold_tree()<<std::endl;
+	if ( alter_foldtree_ ) {
+		pose.fold_tree( * ab_info_->get_FoldTree_AllCDRs(pose)  );
+		TR<<pose.fold_tree()<<std::endl;
+	}
 
 	// adding cutpoint variants for chainbreak score computation
 	loops::remove_cutpoint_variants( pose, true ); //remove first
@@ -135,12 +146,12 @@ void CDRsMinPackMin::finalize_setup( pose::Pose & pose ) {
 		allcdr_map_ = core::kinematics::MoveMapOP( new kinematics::MoveMap() );
 		*allcdr_map_=ab_info_->get_MoveMap_for_Loops(pose, *ab_info_->get_AllCDRs_in_loopsop(), false, true, 10.0);
 	} else {
-		if ( update_rounds_ > 0 ) {
+		if ( update_rounds_ > 0 && ab_info_ ) {
+			// for now, don't updated if no ab_info_, later fix
 			allcdr_map_->clear();
 			*allcdr_map_=ab_info_->get_MoveMap_for_Loops(pose, *ab_info_->get_AllCDRs_in_loopsop(), false, true, 10.0);
 		}
 	}
-
 
 	//**************** TaskFactory ****************
 	if ( !tf_ ) { //use this if, because sometimes a user may input a taskfactory at the beginning
@@ -149,7 +160,7 @@ void CDRsMinPackMin::finalize_setup( pose::Pose & pose ) {
 		//core::pack::task::PackerTaskOP my_task2(tf_->create_task_and_apply_taskoperations(pose));
 		//TR<<*my_task2<<std::endl; //exit(-1);
 	} else {
-		if ( update_rounds_ > 0 ) {
+		if ( update_rounds_ > 0 && ab_info_ ) {
 			tf_->clear();
 			tf_ = ab_info_->get_TaskFactory_AllCDRs(pose);
 		}

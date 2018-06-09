@@ -160,6 +160,9 @@ is_H3_rama_kinked(std::string const & rama);
 
 /// @brief Apply auto-generated kink constraint
 void
+kink_constrain_antibody_H3( core::pose::Pose & pose, core::Size kink_begin );
+
+void
 kink_constrain_antibody_H3( core::pose::Pose & pose, AntibodyInfoOP const antibody_info );
 
 ///@brief get the equivalent landmark in a numbering scheme.  Set the resnum to zero if not found.

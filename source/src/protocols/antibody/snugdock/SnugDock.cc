@@ -21,13 +21,14 @@
 #include <protocols/antibody/snugdock/SnugDockCreator.hh>
 
 // Package headers
+#include <protocols/loops/Loops.hh>
+#include <protocols/loops/loops_main.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/CDRsMinPackMin.hh>
 #include <protocols/antibody/RefineOneCDRLoop.hh>
 #include <protocols/antibody/design/util.hh>
 
 // Project headers
-#include <protocols/analysis/InterfaceAnalyzerMover.hh>
 #include <protocols/docking/DockingProtocol.hh>
 #include <protocols/docking/DockMCMCycle.hh>
 #include <protocols/docking/DockTaskFactory.hh>
@@ -37,9 +38,11 @@
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/minimization_packing/RepackSidechainsMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
+#include <protocols/simple_moves/DumpPdb.hh>
 
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/pose/Pose.hh>
+#include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/types.hh>
@@ -188,11 +191,10 @@ void SnugDock::init_from_options() {
 
 void SnugDock::apply( Pose & pose ) {
 
-	using namespace protocols::analysis;
-
 	TR << "Beginning apply function of " + get_name() + "." << std::endl;
 	show( TR );
 
+	( * scorefxn() )( pose ); // necessary because setup object uses loops:select_loops_residues()
 	if ( ! high_resolution_step_ ) setup_objects( pose );
 
 	/// minimize the CDRs before move to full-atom SnugDock cycle. Remove clashes which may dissociate L-H
@@ -201,7 +203,8 @@ void SnugDock::apply( Pose & pose ) {
 	TR << "Reinitializing the shared MC object before applying the high resolution phase of " + get_name() + "."
 		<< std::endl;
 
-	( * scorefxn() )( pose );
+	TR << "The Monte Carlo object!!" << std::endl;
+	TR << *mc_ << std::endl;
 	mc_->reset( pose );
 
 	for ( core::Size i = 0; i < number_of_high_resolution_cycles_; ++i ) {
@@ -212,18 +215,6 @@ void SnugDock::apply( Pose & pose ) {
 
 	TR << "Setting the structure to the state with the best score observed during the simulation" << std::endl;
 	mc_->recover_low( pose );
-
-	/// Set the pose's foldtree to Ab-Ag docking (LH_A) to ensure the correct interface.
-	pose.fold_tree(antibody_info_->get_FoldTree_LH_A(pose));
-
-	if ( antibody_info_->antigen_present() ) {
-		TR << "Running Interface AnalyzerMover" << std::endl;
-
-		InterfaceAnalyzerMover analyzer = InterfaceAnalyzerMover(design::get_dock_chains_from_ab_dock_chains(antibody_info_,  antibody_info_->get_antibody_chain_string() + "_A"), false /* tracer */, scorefxn(), false /* compute_packstat */ , false /* pack_input */,  true /* pack_separated */) ;
-
-		analyzer.apply(pose); //Adds PoseExtraScore_Float to be output into scorefile.
-	}
-
 
 }
 
@@ -237,6 +228,22 @@ void SnugDock::number_of_high_resolution_cycles( Size const number_of_high_resol
 
 void SnugDock::set_antibody_info( AntibodyInfoOP antibody_info ) {
 	antibody_info_ = antibody_info;
+}
+
+void SnugDock::set_CDR_loops( std::map<CDRNameEnum,loops::Loop> cdr_loops ) {
+	CDR_loops_ = cdr_loops;
+}
+
+void SnugDock::set_ab_has_light_chain( bool ab_has_light_chain ) {
+	ab_has_light_chain_ = ab_has_light_chain;
+}
+
+void SnugDock::set_vh_vl_jump( bool vh_vl_jump ) {
+	vh_vl_jump_ = vh_vl_jump;
+}
+
+void SnugDock::set_task_factory( core::pack::task::TaskFactoryCOP tf ) {
+	tf_ = tf->clone();
 }
 
 void SnugDock::setup_objects( Pose const & pose ) {
@@ -255,46 +262,69 @@ void SnugDock::setup_objects( Pose const & pose ) {
 
 	TR << "Setting up data for " + get_name() + "." << std::endl;
 
-	/// AntibodyInfo is used to store information about the Ab-Ag complex and to generate useful helper objects based on
-	/// that information (e.g. the various FoldTrees that are needed for SnugDock).
-	if ( ! antibody_info_ ) antibody_info_ = AntibodyInfoOP( new AntibodyInfo( pose ) );
+	// create LoopsOP of all loops
+	loops::LoopsOP CDR_loopsop ( new loops::Loops() );
+	// add in the heavy chain CDRs
+	CDR_loopsop->add_loop( CDR_loops_[h1] );
+	CDR_loopsop->add_loop( CDR_loops_[h2] );
+	CDR_loopsop->add_loop( CDR_loops_[h3] );
+	// add in the light chain CDRs
+	if ( ab_has_light_chain_ ) {
+		CDR_loopsop->add_loop( CDR_loops_[l1] );
+		CDR_loopsop->add_loop( CDR_loops_[l2] );
+		CDR_loopsop->add_loop( CDR_loops_[l3] );
+	}
 
+	// set up movemap for minimization from loops
+	// when the universal FT is compatible with AntibodyInfo
+	// this should be removed and handled that way!
+	kinematics::MoveMapOP CDR_movemap ( new kinematics::MoveMap() );
+	CDR_movemap->clear();
+	CDR_movemap->set_chi( false );
+	CDR_movemap->set_bb( false );
+	CDR_movemap->set_jump( false );
 
-	pre_minimization_ = antibody::CDRsMinPackMinOP( new CDRsMinPackMin( antibody_info_ ) );
+	utility::vector1< bool> bb_is_flexible( pose.size(), false );
+	utility::vector1< bool> sc_is_flexible( pose.size(), false );
 
+	TR << "Here are my loops:\n" << *CDR_loopsop << std::endl;
 
-	/// A vanilla DockMCMCycle can be used because AntibodyInfo will always make the first jump in the FoldTree dockable.
-	DockMCMCycleOP standard_dock_cycle( new DockMCMCycle );
+	loops::select_loop_residues( pose, *CDR_loopsop, false, bb_is_flexible, 10.0);
+	CDR_movemap->set_bb( bb_is_flexible );
+
+	loops::select_loop_residues( pose, *CDR_loopsop, true, sc_is_flexible, 10.0);
+	CDR_movemap->set_chi( sc_is_flexible );
+
+	// use the non-AntibodyInfo dependent CDRsMinPackMin (set TF later)
+	pre_minimization_ = antibody::CDRsMinPackMinOP( new CDRsMinPackMin() );
+	pre_minimization_->set_alter_foldtree( false );
+	pre_minimization_->set_move_map( CDR_movemap );
+
+	// Alter this because in the universal fold tree jump 1 is Ab-Ag, whereas jump 3 is H-L if it exists
+	//DockMCMCycleOP standard_dock_cycle( new DockMCMCycle );
+	DockMCMCycleOP ab_ag_dock_cycle( new DockMCMCycle );
+	DockMCMCycleOP vh_vl_dock_cycle;
+
+	if ( ab_has_light_chain_ ) {
+		// when specifying a jump for docking, the sfxn has to be specified
+		// for both docking packing -- no idea why, so I'm using the defaults
+		vh_vl_dock_cycle = DockMCMCycleOP( new DockMCMCycle(vh_vl_jump_, core::scoring::ScoreFunctionFactory::create_score_function("docking", "docking_min"), core::scoring::get_score_function_legacy(core::scoring::PRE_TALARIS_2013_STANDARD_WTS)) );
+		vh_vl_dock_cycle->set_task_factory( tf_ );
+	}
 
 	/// Set a default docking task factory to the DockMCMCycle.
 	/// The DockingHighRes base class provides a mechanism to do this.
-	tf2()->create_and_attach_task_factory( this, pose );
-	standard_dock_cycle->set_task_factory( task_factory() );
+	ab_ag_dock_cycle->set_task_factory( tf_ );
+
+	// Set the TF for CDRsMinPackMin
+	pre_minimization_->set_task_factory( tf_ );
 
 	/// This MonteCarlo instance uses 'standard' with the docking patch and a temperature factor of 0.8.
 	/// All movers in the high resolution step will share this MonteCarlo instance to provide consistent results.
-	mc_ = standard_dock_cycle->get_mc();
+	mc_ = ab_ag_dock_cycle->get_mc();
 
-	ChangeFoldTreeMoverOP set_foldtree_for_ab_ag_docking( new ChangeFoldTreeMover(
-		antibody_info_->get_FoldTree_LH_A( pose )
-		) );
-	ChangeFoldTreeMoverOP set_foldtree_for_vH_vL_docking( new ChangeFoldTreeMover(
-		antibody_info_->get_FoldTree_L_HA( pose )
-		) );
-
-	SequenceMoverOP antibody_antigen_dock_cycle( new SequenceMover(
-		set_foldtree_for_ab_ag_docking,
-		standard_dock_cycle
-		) );
-
-	SequenceMoverOP vH_vL_dock_cycle( new SequenceMover(
-		set_foldtree_for_vH_vL_docking,
-		standard_dock_cycle
-		) );
-
-	/// TODO: Does CDRsMinPackMin need a TaskFactory to be set?  Does it get this from AntibodyInfo?
-	CDRsMinPackMinOP minimize_all_cdr_loops_base( new CDRsMinPackMin( antibody_info_ ) );
-	TrialMoverOP minimize_all_cdr_loops( new TrialMover( minimize_all_cdr_loops_base, mc_ ) );
+	// wrap MinPackMin in TrialMover
+	TrialMoverOP minimize_all_cdr_loops( new TrialMover( pre_minimization_, mc_ ) );
 
 	/// FIXME: The chain break weight configuration and constraint weight should be handled by RefineOneCDRLoop.
 	ScoreFunctionOP high_res_loop_refinement_scorefxn = scorefxn_pack()->clone();
@@ -308,13 +338,10 @@ void SnugDock::setup_objects( Pose const & pose ) {
 		high_res_loop_refinement_scorefxn->set_weight( scoring::angle_constraint, 1.0 );
 	}
 
-	RefineOneCDRLoopOP refine_cdr_h2_base( new RefineOneCDRLoop( antibody_info_, h2, loop_refinement_method_, high_res_loop_refinement_scorefxn ) );
-	refine_cdr_h2_base->set_h3_filter( false );
+	RefineOneCDRLoopOP refine_cdr_h2_base( new RefineOneCDRLoop( CDR_loops_[h2], loop_refinement_method_, high_res_loop_refinement_scorefxn ) );
 	TrialMoverOP refine_cdr_h2( new TrialMover( refine_cdr_h2_base, mc_ ) );
 
-	RefineOneCDRLoopOP refine_cdr_h3_base( new RefineOneCDRLoop( antibody_info_, h3, loop_refinement_method_, high_res_loop_refinement_scorefxn ) );
-	refine_cdr_h3_base->set_h3_filter( h3_filter_ );
-	refine_cdr_h3_base->set_num_filter_tries( h3_filter_tolerance_ );
+	RefineOneCDRLoopOP refine_cdr_h3_base( new RefineOneCDRLoop( CDR_loops_[h3], loop_refinement_method_, high_res_loop_refinement_scorefxn ) );
 	TrialMoverOP refine_cdr_h3( new TrialMover( refine_cdr_h3_base, mc_ ) );
 
 
@@ -322,15 +349,23 @@ void SnugDock::setup_objects( Pose const & pose ) {
 	/// of the streaming operator.
 	if ( debug_ ) {
 		high_resolution_step_ = moves::MoverContainerOP( new SequenceMover );
-		high_resolution_step_->add_mover( antibody_antigen_dock_cycle );
-		high_resolution_step_->add_mover( vH_vL_dock_cycle);
-		high_resolution_step_->add_mover( minimize_all_cdr_loops);
+		//high_resolution_step_->add_mover( moves::MoverOP(new simple_moves::DumpPdb("pre_highres.pdb")) );
+		high_resolution_step_->add_mover( ab_ag_dock_cycle );
+		//high_resolution_step_->add_mover( moves::MoverOP(new simple_moves::DumpPdb("ab_ag_dock.pdb")) );
+		if ( ab_has_light_chain_ ) {
+			high_resolution_step_->add_mover( vh_vl_dock_cycle );
+			//high_resolution_step_->add_mover( moves::MoverOP(new simple_moves::DumpPdb("vh_vl_dock.pdb")) );
+		}
+		high_resolution_step_->add_mover( minimize_all_cdr_loops );
+		//high_resolution_step_->add_mover( moves::MoverOP(new simple_moves::DumpPdb("min_all_cdrs.pdb")) );
 		high_resolution_step_->add_mover( refine_cdr_h2 );
+		//high_resolution_step_->add_mover( moves::MoverOP(new simple_moves::DumpPdb("refine_h2.pdb")) );
 		high_resolution_step_->add_mover( refine_cdr_h3 );
+		//high_resolution_step_->add_mover( moves::MoverOP(new simple_moves::DumpPdb("refine_h3.pdb")) );
 	} else {
 		high_resolution_step_ = moves::MoverContainerOP( new RandomMover );
-		high_resolution_step_->add_mover( antibody_antigen_dock_cycle, 0.4 );
-		high_resolution_step_->add_mover( vH_vL_dock_cycle, 0.4 );
+		high_resolution_step_->add_mover( ab_ag_dock_cycle, 0.4 );
+		if ( ab_has_light_chain_ ) { high_resolution_step_->add_mover( vh_vl_dock_cycle, 0.4 ); }
 		high_resolution_step_->add_mover( minimize_all_cdr_loops, 0.1 );
 		high_resolution_step_->add_mover( refine_cdr_h2, 0.05 );
 		high_resolution_step_->add_mover( refine_cdr_h3, 0.05 );

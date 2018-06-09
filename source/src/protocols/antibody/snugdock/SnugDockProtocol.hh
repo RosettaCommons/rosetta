@@ -22,16 +22,22 @@
 // Unit headers
 #include <protocols/antibody/snugdock/SnugDockProtocol.fwd.hh>
 #include <protocols/moves/Mover.hh>
+#include <protocols/antibody/AntibodyEnum.hh>
+#include <protocols/loops/Loops.hh>
 
 // Package headers
 #include <protocols/antibody/AntibodyInfo.fwd.hh>
 #include <protocols/antibody/RefineOneCDRLoop.fwd.hh>
 
 // Project headers
+#include <core/pose/PDBInfo.fwd.hh>
+#include <core/kinematics/FoldTree.fwd.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
 #include <protocols/docking/DockingProtocol.fwd.hh>
 
 // C++ headers
 #include <iostream>
+#include <set>
 
 namespace protocols {
 namespace antibody {
@@ -74,10 +80,15 @@ public: // boiler plate / virtuals
 public:
 	void show( std::ostream & out=std::cout ) const override;
 	friend std::ostream & operator<<(std::ostream& out, SnugDockProtocol const & snugdockprotocol );
+	// TODO: Move to AntibodyInfo() and generalize
+	core::pack::task::TaskFactoryOP repack_tf_from_residue_sets(Pose const & pose, std::set< core::Size > const & ab_residues, std::set< core::Size > const & ag_residues);
+	void setup_ab_ag_foldtree( Pose & pose, AntibodyInfoOP antibody_info );
+
 
 private: // methods
-	void setup_objects( Pose const & pose );
+	void setup_objects( Pose & pose );
 	void setup_loop_refinement_movers();
+	void update_fold_tree_from_bool_vector();
 	void init();
 	void init_for_equal_operator_and_copy_constructor( SnugDockProtocol & lhs, SnugDockProtocol const & rhs);
 	void init_from_options();
@@ -87,6 +98,14 @@ private: // methods
 
 private: // data
 	AntibodyInfoOP antibody_info_;
+	core::pose::PDBInfoOP pdb_info_;
+	std::map<protocols::antibody::CDRNameEnum,loops::Loop> CDR_loops_;
+	bool ab_has_light_chain_;
+	core::Size vh_vl_jump_;
+	// sets are necessary for interface calculation
+	std::set< core::Size > ab_residues_;
+	std::set< core::Size > ag_residues_;
+	core::pack::task::TaskFactoryOP tf_;
 
 	// Movers
 	RefineOneCDRLoopOP low_res_refine_cdr_h2_;

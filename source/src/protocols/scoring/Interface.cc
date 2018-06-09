@@ -127,7 +127,12 @@ Interface::calculate( core::pose::Pose const & pose )
 	Size upstream_jump_res, downstream_jump_res;
 	upstream_jump_res = fold_tree.upstream_jump_residue( jump_number_ );
 	downstream_jump_res = fold_tree.downstream_jump_residue( jump_number_ );
-	if ( pose.residue( upstream_jump_res ).is_ligand()  || pose.residue( downstream_jump_res ).is_ligand()  ) {
+
+	// temporary hack to see if this resolves issue in SnugDock ...
+	if ( (pose.residue( upstream_jump_res ).is_ligand() and
+			!pose.residue( upstream_jump_res ).is_virtual_residue()) or
+			(pose.residue( downstream_jump_res ).is_ligand() and
+			!pose.residue( downstream_jump_res ).is_virtual_residue()) ) {
 		TR.Debug << "One of the residues is a ligand, calculating the interface between ligand and protein" << std::endl;
 		ligand_calculate( pose );
 		return;
@@ -191,7 +196,7 @@ Interface::protein_calculate( core::pose::Pose const & pose )
 			// if ( is_interface_(i) && is_interface_(j) ) continue;
 			Real const cendist = edge->square_distance();
 			if ( cendist < distance_squared_ ) {
-				//    TR << "interface edge: " << i << ' ' << j << ' ' << cendist << std::endl;
+				//TR << "interface edge: " << i << ' ' << j << ' ' << cendist << std::endl;
 				is_interface_(i) = is_interface_(j) = true;
 				pair_list_[1].push_back(i);
 				pair_list_[2].push_back(j);
@@ -209,6 +214,7 @@ Interface::protein_calculate( core::pose::Pose const & pose )
 	std::sort( pair_list_[2].begin(), pair_list_[2].end() );
 	new_end_pos = std::unique( pair_list_[2].begin(), pair_list_[2].end() );
 	pair_list_[2].erase( new_end_pos, pair_list_[2].end() );
+
 }
 
 // The Rosetta++ criterion for which sidechains repack/minimize in docking:

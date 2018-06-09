@@ -39,6 +39,9 @@ public:
 	/// @brief default constructor
 	RefineOneCDRLoop();
 
+	/// @brief constructor with specified loop
+	RefineOneCDRLoop( loops::Loop, std::string refine_mode, core::scoring::ScoreFunctionCOP scorefxn );
+
 	/// @brief constructor with arguments
 	RefineOneCDRLoop( AntibodyInfoOP antibody_info);
 
@@ -90,6 +93,8 @@ public:
 private:
 
 	AntibodyInfoOP ab_info_;
+	loops::Loop one_cdr_loop_;
+	bool preset_foldtree_;
 	bool user_defined_;
 	bool benchmark_;
 	core::scoring::ScoreFunctionOP scorefxn_;

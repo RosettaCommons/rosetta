@@ -58,6 +58,9 @@ sources = {
 		"regex_manager",
 		"scs_functor_filtering",
 	],
+	"antibody/snugdock":[
+		"SnugDockProtocol_setup_ab_ag_foldtree",
+	],
 	"antibody/task_operations":[
 		"AntibodyTaskOps",
 	],
@@ -776,6 +779,7 @@ testinputfiles = [
 	"antibody/2r0l_1_1.pdb",
 	"antibody/aho_with_antigen.pdb",
 	"antibody/4LGS_AHO.pdb",
+	"antibody/4dka.aho.pdb",
 	"antibody/database/cdr_set_instructions.txt",
 	"antibody/database/cdr_set_instructions_load_test.txt",
 	"antibody/design/graft_des_instructions.txt",

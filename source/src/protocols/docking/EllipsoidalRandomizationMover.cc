@@ -628,9 +628,12 @@ EllipsoidalRandomizationMover::calculate_plane_axes( core::pose::Pose & pose_in 
 		utility::vector1< bool > is_interface = get_interface_residues( pose_in, interface_distance_cutoff );
 		TR << "Getting interface residues at " << interface_distance_cutoff << " Angstroms" << std::endl;
 		for ( Size i=partner_residue_start_stop[1]; i<=partner_residue_start_stop[2]; ++i ) {
-			c_alpha_non_ellipsoid_coords.push_back( pose_in.residue( i ).xyz( "CA" ) );
-			if ( is_interface[i] ) {
-				c_alpha_plane_coords.push_back( pose_in.residue( i ).xyz( "CA" ) );
+			// check for CAs first -- RNA for example would not have this
+			if ( pose_in.residue_type(i).has("CA") ) {
+				c_alpha_non_ellipsoid_coords.push_back( pose_in.residue( i ).xyz( "CA" ) );
+				if ( is_interface[i] ) {
+					c_alpha_plane_coords.push_back( pose_in.residue( i ).xyz( "CA" ) );
+				}
 			}
 		}
 		n_res_plane = c_alpha_plane_coords.size();

@@ -22,6 +22,8 @@
 // Unit headers
 #include <protocols/antibody/snugdock/SnugDock.fwd.hh>
 #include <protocols/docking/DockingHighRes.hh>
+#include <protocols/loops/Loops.hh>
+#include <protocols/antibody/AntibodyEnum.hh>
 
 // Package headers
 #include <protocols/antibody/AntibodyInfo.fwd.hh>
@@ -31,6 +33,7 @@
 
 // Project headers
 #include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.fwd.hh>
@@ -80,6 +83,10 @@ public:
 	Size number_of_high_resolution_cycles() const;
 	void number_of_high_resolution_cycles( Size const number_of_high_resolution_cycles );
 	void set_antibody_info( AntibodyInfoOP antibody_info );
+	void set_CDR_loops( std::map<protocols::antibody::CDRNameEnum,loops::Loop> cdr_loops );
+	void set_ab_has_light_chain( bool ab_has_light_chain );
+	void set_vh_vl_jump( bool vh_vl_jump );
+	void set_task_factory( core::pack::task::TaskFactoryCOP tf );
 
 	// Accessors for auto kink-constraint options
 	bool high_res_kink_constraint() const { return high_res_kink_constraint_; }
@@ -110,6 +117,14 @@ private: // methods
 private: // data
 	AntibodyInfoOP antibody_info_;
 	moves::MonteCarloOP mc_;
+
+	// CDR loops for universal FT (alternative to antibody info
+	std::map<protocols::antibody::CDRNameEnum,loops::Loop> CDR_loops_;
+	// Normally handled by AntibodyInfo, but AI is not compatible with
+	// the universal fold tree. Future TODO is to fix that issue.
+	bool ab_has_light_chain_;
+	core::Size vh_vl_jump_;
+	core::pack::task::TaskFactoryOP tf_;
 
 	// Movers
 	moves::MoverContainerOP high_resolution_step_;

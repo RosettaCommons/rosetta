@@ -41,6 +41,8 @@ namespace antibody {
 class CDRsMinPackMin: public moves::Mover {
 public:
 
+	CDRsMinPackMin();
+
 	CDRsMinPackMin(AntibodyInfoOP antibody_info);
 
 	CDRsMinPackMin(
@@ -69,6 +71,9 @@ public:
 	void set_turnoff_minimization(bool setting) {
 		turnoff_minimization_=setting;
 	}
+	void set_alter_foldtree(bool setting) {
+		alter_foldtree_ = setting;
+	}
 
 	void show( std::ostream & out=std::cout ) const override;
 	friend std::ostream & operator<<(std::ostream& out, const CDRsMinPackMin & ab_m_2 );
@@ -78,6 +83,9 @@ private:
 	bool sc_min_;
 	bool rt_min_;
 	bool turnoff_minimization_;
+
+	// do not touch the foldtree
+	bool alter_foldtree_;
 
 	// Benchmark mode for shorter_cycles
 	bool benchmark_;

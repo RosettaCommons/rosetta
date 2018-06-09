@@ -130,7 +130,7 @@ void H3RefineCCD::init( ) {
 
 void H3RefineCCD::set_default() {
 	include_neighbors_ = true;
-	H3_filter_         = true;
+	H3_filter_         = false; // use the kink constraint insted, this is deprecated
 	flank_relax_       = true;
 
 	benchmark_         = false;

@@ -87,15 +87,17 @@ DockingEnsemble::DockingEnsemble(
 
 	load_ensemble();
 	ensemble_size_ = ensemble_list_.size();
-
 	runtime_assert(ensemble_size_ > 0);
 	conf_size_ = ensemble_list_[1].size();
-	runtime_assert((end_res_ - start_res_ + 1) == conf_size_);
 
 	TR << "ensemble summary: start_res_ " << start_res_ <<
 		" end_res_ " << end_res_ <<
 		" conf_size_ " << conf_size_ <<
 		" ensemble_size_ " << ensemble_size_ << std::endl;
+
+	runtime_assert((end_res_ - start_res_ + 1) == conf_size_);
+
+
 }
 
 void DockingEnsemble::load_ensemble()

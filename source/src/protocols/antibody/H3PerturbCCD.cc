@@ -113,7 +113,7 @@ void H3PerturbCCD::set_default() {
 
 	is_camelid_         = false;
 	current_loop_is_H3_ = true;
-	H3_filter_          = true;
+	H3_filter_          = false; // use the kink constraint insted, this is deprecated
 
 
 	if ( !user_defined_ ) {

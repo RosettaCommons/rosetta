@@ -36,6 +36,7 @@
 
 
 #include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
 
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
@@ -97,6 +98,7 @@
 //#include <protocols/jobdist/Jobs.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+#include <utility/string_util.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
@@ -118,6 +120,7 @@ DockingProtocol::DockingProtocol()
 	if_ensemble_ = false; // valgrind complains about uninitialized variable w/o this.
 	init(utility::tools::make_vector1<core::SSize>(1), false, false, true, nullptr, nullptr);
 }
+
 
 DockingProtocol::DockingProtocol(
 	Size const rb_jump,
@@ -529,6 +532,51 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 		set_input_pose( input_pose );
 	}
 
+	// assuming partners chains are continuous in pose numbering,
+	// some magic to extract partner size (start/end) without relying on the FoldTree
+	// use partners flag and PDBInfo to parse out start/end residues for each partner
+	utility::vector1< std::string > partner_split = utility::string_split( partners_, '_' );
+
+	// necessary for loading ensembles later
+	// instatiate as 0 and possibly check later if values have been altered
+	core::Size p1_start = 0, p1_end = 0, p2_start = 0, p2_end = 0;
+
+	// only do this if partners_ is given ...
+	if ( not (partners_ == "_") ) {
+		std::string partner1_chains = partner_split[ 1 ]; // chains comprising partner 1
+		std::string partner2_chains = partner_split[ 2 ]; // chains comprising partner 2
+
+		// map to store chain : pose number relationship
+		std::map< char, utility::vector1< core::Size >> chain_residue_map;
+
+		// loop over residues and store in vectors, by chain
+		for ( core::Size i = 1; i <= pose.size(); ++i ) {
+			chain_residue_map[ pose.pdb_info()->chain(i) ].push_back(i);
+		}
+
+		// now we know all the pose numbers associated with each chain, so extract the min/max...
+		// clump all chains into a single vector and find min/max from that
+		utility::vector1< core::Size > all_partner1_residues;
+		utility::vector1< core::Size > all_partner2_residues;
+
+		for ( char& c : partner1_chains ) {
+			all_partner1_residues.insert( all_partner1_residues.end(),
+				chain_residue_map[c].begin(),
+				chain_residue_map[c].end() );
+		}
+		for ( char& c : partner2_chains ) {
+			all_partner2_residues.insert( all_partner2_residues.end(),
+				chain_residue_map[c].begin(),
+				chain_residue_map[c].end() );
+		}
+
+		p1_start = *std::min_element(all_partner1_residues.begin(), all_partner1_residues.end());
+		p1_end = *std::max_element(all_partner1_residues.begin(), all_partner1_residues.end());
+
+		p2_start = *std::min_element(all_partner2_residues.begin(), all_partner2_residues.end());
+		p2_end = *std::max_element(all_partner2_residues.begin(), all_partner2_residues.end());
+	}
+
 	// if an ensemble file is defined for either partner, both partners must be defined
 	if ( ensemble1_filename_ != "" || ensemble2_filename_ != "" ) {
 		if ( ensemble1_filename_ == "" || ensemble2_filename_ == "" ) utility_exit_with_message( "Must define ensemble file for both partners");
@@ -540,21 +588,26 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 
 		runtime_assert( movable_jumps_.size() == 1 ); // ensemble mode is only allowed for traditional docking
 		core::Size const rb_jump = movable_jumps_[1];
-		Size start_res(1), end_res(1), cutpoint(pose.fold_tree().cutpoint_by_jump( rb_jump ));
+		core::Size cutpoint(pose.fold_tree().cutpoint_by_jump( rb_jump ));
+
+		// if partners_ were not given, define by jump here
+		if ( partners_ == "_" ) {
+			p1_start = 1;
+			p1_end = cutpoint;
+
+			p2_start = cutpoint + 1;
+			p2_end = pose.size();
+		}
 
 		//lowres_inner_cycles_ = 25; // Should be 50 (default value for traditional docking); modified by DK
 
 		TR << "Ensemble 1: " << ensemble1_filename_ << std::endl;
-		start_res = 1;
-		end_res = cutpoint;
 
-		ensemble1_ = protocols::docking::DockingEnsembleOP( new DockingEnsemble( start_res, end_res, rb_jump, ensemble1_filename_, "dock_ens_conf1", docking_scorefxn_low_, docking_scorefxn_high_ ) );
+		ensemble1_ = protocols::docking::DockingEnsembleOP( new DockingEnsemble( p1_start, p1_end, rb_jump, ensemble1_filename_, "dock_ens_conf1", docking_scorefxn_low_, docking_scorefxn_high_ ) );
 
 		TR << "Ensemble 2: " << ensemble2_filename_ << std::endl;
-		start_res = cutpoint + 1;
-		end_res = pose.size();
 
-		ensemble2_ = protocols::docking::DockingEnsembleOP( new DockingEnsemble( start_res, end_res, rb_jump, ensemble2_filename_, "dock_ens_conf2", docking_scorefxn_low_, docking_scorefxn_high_ ) );
+		ensemble2_ = protocols::docking::DockingEnsembleOP( new DockingEnsemble( p2_start, p2_end, rb_jump, ensemble2_filename_, "dock_ens_conf2", docking_scorefxn_low_, docking_scorefxn_high_ ) );
 
 		// recover sidechains mover is not needed with ensemble docking since the sidechains are recovered from the partners in the ensemble file
 		recover_sidechains_ = nullptr;
