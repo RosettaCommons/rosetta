@@ -47,11 +47,7 @@
 #include <devel/replica_docking/AddEncounterConstraintMoverCreator.hh>
 #include <devel/replica_docking/ModulatedMoverCreator.hh>
 #include <devel/loophash_loopclosure/LoopHashLoopClosureMoverCreator.hh>
-#include <devel/splice/SpliceCreator.hh>
-#include <devel/splice/RBOutMoverCreator.hh>
-#include <devel/splice/RBInMoverCreator.hh>
-#include <devel/splice/AlignEndsMoverCreator.hh>
-#include <devel/cutoutdomain/CutOutDomainCreator.hh>
+
 
 class BackwardsDevelMoverCreatorTests : public CxxTest::TestSuite
 {
@@ -123,20 +119,6 @@ public:
 	void test_devel_loophash_loopclosure_LoopHashLoopClosureMoverCreator_name()
 	{ devel::loophash_loopclosure::LoopHashLoopClosureMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "LoopHashLoopClosureMover" ); }
 
-	void test_devel_splice_SpliceCreator_name()
-	{ devel::splice::SpliceCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "Splice" ); }
-
-	void test_devel_splice_RBOutMoverCreator_name()
-	{ devel::splice::RBOutMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "RBOut" ); }
-
-	void test_devel_splice_RBInMoverCreator_name()
-	{ devel::splice::RBInMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "RBIn" ); }
-
-	void test_devel_splice_AlignEndsMoverCreator_name()
-	{ devel::splice::AlignEndsMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "AlignEnds" ); }
-
-	void test_devel_cutoutdomain_CutOutDomainCreator_name()
-	{ devel::cutoutdomain::CutOutDomainCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "CutOutDomain" ); }
 
 
 

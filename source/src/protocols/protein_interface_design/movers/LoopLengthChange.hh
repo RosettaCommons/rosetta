@@ -50,6 +50,8 @@ public:
 	void delta( int const d );
 	void tail( bool b );
 	int delta() const;
+	bool direction() {return direction_;}
+	void direction( bool b );
 
 	std::string
 	get_name() const override;
@@ -67,6 +69,7 @@ private:
 	int delta_; // delta_: by how much to change
 	bool tail_segment_; //if the tail
 	char restype_char_ = 'A'; //What residue type should be inserted if delta is positive?  Assuming canonical 20.
+	bool direction_;// true means n-ter tail, false means c-ter
 };
 
 

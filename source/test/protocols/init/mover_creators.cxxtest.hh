@@ -394,6 +394,11 @@
 #include <protocols/membrane/AddMPLigandMoverCreator.hh>
 #include <protocols/relax/membrane/MPFastRelaxMoverCreator.hh>
 #include <protocols/vardist_solaccess/LoadVarSolDistSasaCalculatorMover.hh>
+#include <protocols/splice/SpliceCreator.hh>
+#include <protocols/splice/RBOutMoverCreator.hh>
+#include <protocols/splice/RBInMoverCreator.hh>
+#include <protocols/splice/AlignEndsMoverCreator.hh>
+#include <protocols/cutoutdomain/CutOutDomainCreator.hh>
 
 
 class BackwardsProtocolsMoverCreatorTests : public CxxTest::TestSuite
@@ -1557,6 +1562,22 @@ public:
 
 	void test_protocols_vardist_solaccess_LoadVarSolDistSasaCalculatorMoverCreator_name()
 	{ protocols::vardist_solaccess::LoadVarSolDistSasaCalculatorMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "LoadVarSolDistSasaCalculatorMover" ); }
+
+	void test_devel_splice_SpliceCreator_name()
+	{ protocols::splice::SpliceCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "Splice" ); }
+
+	void test_devel_splice_RBOutMoverCreator_name()
+	{ protocols::splice::RBOutMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "RBOut" ); }
+
+	void test_devel_splice_RBInMoverCreator_name()
+	{ protocols::splice::RBInMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "RBIn" ); }
+
+	void test_devel_splice_AlignEndsMoverCreator_name()
+	{ protocols::splice::AlignEndsMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "AlignEnds" ); }
+
+	void test_devel_cutoutdomain_CutOutDomainCreator_name()
+	{ protocols::cutoutdomain::CutOutDomainCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "CutOutDomain" ); }
+
 
 	// void test_protocols_aa_composition_AddCompositionConstraintMoverCreator()
 	// { protocols::aa_composition::AddCompositionConstraintMoverCreator cr; std::cout << "protocols::aa_composition::AddCompositionConstraintMoverCreator " << cr.keyname() << std::endl; }

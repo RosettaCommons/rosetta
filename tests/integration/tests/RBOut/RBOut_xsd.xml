@@ -1,0 +1,35 @@
+<ROSETTASCRIPTS>
+         <TASKOPERATIONS>
+		<ProteinInterfaceDesign name="pido" design_chain1="1" design_chain2="1"/>
+    		<InitializeFromCommandline name="init"/>
+		<RestrictToRepacking name="rtr"/>
+	<SeqprofConsensus name="seqprofcons" min_aa_probability="2" probability_larger_than_current="0" ignore_pose_profile_length_mismatch="1">
+        </SeqprofConsensus>
+  	</TASKOPERATIONS>
+        <SCOREFXNS>
+		<ScoreFunction name="talaris_cal" weights="ref2015">
+			<Reweight scoretype="coordinate_constraint" weight="100"/>
+			<Reweight scoretype="dihedral_constraint" weight="1"/>
+			<Reweight scoretype="res_type_constraint" weight="0.5"/>
+			<Reweight scoretype="chainbreak" weight="1"/>
+		</ScoreFunction>
+
+		<ScoreFunction name="talaris_cal_chainbreak" weights="ref2015">
+			<Reweight scoretype="chainbreak" weight="100"/>
+		</ScoreFunction>
+        </SCOREFXNS>
+
+       
+
+        <MOVERS>
+		<RBOut name="rbo" template_fname="%%template%%" jump_dbase_fname="%%name%%" />
+
+
+        </MOVERS>
+
+        <PROTOCOLS>
+                <Add mover="rbo"/>
+                Add mover="spliceout"/>
+                Add filter="chainbreak_val"/>
+        </PROTOCOLS>
+</ROSETTASCRIPTS>

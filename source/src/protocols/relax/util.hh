@@ -25,6 +25,8 @@
 #include <utility/vector1.hh>
 #include <utility/options/OptionCollection.fwd.hh>
 #include <utility/options/keys/OptionKeyList.fwd.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
+#include <core/scoring/constraints/Constraints.hh>
 
 
 //// C++ headers
@@ -72,6 +74,10 @@ fixH (
 /// @author Vikram K. Mulligan, Baker laboratory (vmullig@uw.edu) -- moved from protocols/forge/methods/util.hh/cc
 void
 cyclize_pose(core::pose::Pose & pose);
+
+core::scoring::constraints::ConstraintCOPs
+add_coordinate_constraint_func_atoms( core::pose::Pose const & pose, core::Size const resnum, core::conformation::Residue const & rsd_i, core::scoring::func::HarmonicFuncOP coord_cst_func, core::id::AtomID const & anchor_atom );
+
 
 }
 } // protocols

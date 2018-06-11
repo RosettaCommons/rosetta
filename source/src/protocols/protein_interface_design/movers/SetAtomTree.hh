@@ -57,6 +57,8 @@ public :
 	void update_residue_variants(bool b){update_residue_variants_=b;}
 	bool update_residue_variants(){return update_residue_variants_;}
 	void add_cutpoint_variants( core::pose::Pose & pose );
+	void chain(core::Size i){host_chain_ = i;}
+	core::Size chain(){return host_chain_ ;}
 
 	std::string
 	get_name() const override;

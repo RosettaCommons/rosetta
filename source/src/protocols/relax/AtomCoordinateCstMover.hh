@@ -28,6 +28,8 @@
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/types.hh>
+#include <protocols/relax/util.hh>
+
 
 // C++ headers
 #include <string>
@@ -42,10 +44,15 @@ public:
 public:
 
 	AtomCoordinateCstMover();
+	AtomCoordinateCstMover( AtomCoordinateCstMover const & );
 	~AtomCoordinateCstMover() override;
 
 	void
 	apply( core::pose::Pose & pose ) override;
+
+	std::string
+	get_name() const override;
+
 
 
 	protocols::moves::MoverOP fresh_instance() const override;
@@ -76,11 +83,12 @@ public:
 	void ambiguous_hnq( bool flip_hnq ) { amb_hnq_ = flip_hnq; }
 	bool ambiguous_hnq( ) const { return amb_hnq_; }
 
+	void func_groups( bool b ) { func_groups_ = b; }
+	bool func_groups( ) const { return func_groups_; }
+
 	void set_loop_segments( protocols::loops::LoopsCOP loops);
 	void set_task_segments( core::pack::task::TaskFactoryCOP taskfactory);
 
-	std::string
-	get_name() const override;
 
 	static
 	std::string
@@ -89,7 +97,6 @@ public:
 	static
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
-
 
 private:
 	core::select::residue_selector::ResidueSubset
@@ -103,6 +110,11 @@ private:
 
 	core::scoring::constraints::ConstraintCOPs
 	generate_constraints( core::pose::Pose const & pose );
+
+	core::scoring::constraints::ConstraintCOPs
+	set_constraints_on_func_groups(core::pose::Pose const & pose);
+
+
 
 private:
 	/// @brief If set, the pose to make the constraints to
@@ -128,6 +140,11 @@ private:
 
 	/// @brief A task definition of constrained segments
 	core::pack::task::TaskFactoryCOP task_segments_;
+	/// @brief If set to true then coordinate constraints are applied only to the functional groups of the side_chain
+
+	bool func_groups_;
+
+
 };
 
 }

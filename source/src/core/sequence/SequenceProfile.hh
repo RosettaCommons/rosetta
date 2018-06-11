@@ -22,6 +22,8 @@
 // Project headers
 #include <core/types.hh>
 #include <core/sequence/Sequence.hh>
+#include <core/chemical/AA.hh>
+
 
 // Utility headers
 #include <utility/file/FileName.fwd.hh>

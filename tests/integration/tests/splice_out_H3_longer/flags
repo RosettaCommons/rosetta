@@ -1,21 +1,17 @@
--TailSegment::refine_cycles 1
-#-linmem_ig 10
-#-use_input_sc
-#-extrachi_cutoff 5
+-constant_seed 1
+-nodelay
+-use_input_sc
 -ignore_unrecognized_res
--chemical:exclude_patches LowerDNA  UpperDNA Cterm_amidation SpecialRotamer VirtualBB ShoveBB VirtualDNAPhosphate VirtualNTerm CTermConnect sc_orbitals pro_hydroxylated_case1 pro_hydroxylated_case2 ser_phosphorylated thr_phosphorylated  tyr_phosphorylated tyr_sulfated lys_dimethylated lys_monomethylated  lys_trimethylated lys_acetylated glu_carboxylated cys_acetylated tyr_diiodinated N_acetylated C_methylamidated MethylatedProteinCterm
-
+-jd2:ntrials 10
+-overwrite
 -loops:refine_outer_cycles 1
 -loops:max_inner_cycles 1
+-out:file:fullatom
+-pdb_comments true ## this is the mover reades the comments in the input pdb file. The comments contain the pdb segments comprising the input pdb
 
--parser:script_vars  source=3SM5.pdb  
+-s 2BRR.ppk_ideal.pdb
+-parser:protocol spliceOutAntibody_xsd.xml
+-parser:script_vars start_pdb=2BRR.ppk_ideal.pdb source=3SM5H.pdb name=3SM5H
 
-
--parser:protocol splice_out_H3.xml
--overwrite
--use_occurrence_data
--pdb_comments true
--unmute protocols.simple_filters.ScoreTypeFilter
--mute protocols.toolbox.task_operations.SeqprofConsensusOperation
-
--restore_talaris_behavior
+-TailSegment::refine_cycles 1
+-out:path:score score

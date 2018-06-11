@@ -48,6 +48,9 @@ sources = {
 		"SimpleGlycosylateMover",
 		"util",
 	],
+	"protocols/cutoutdomain" : [
+		"CutOutDomain",
+	],
 	"protocols/pb_potential": [
 		"SetupPoissonBoltzmannPotential",
 	],
@@ -261,7 +264,6 @@ sources = {
 		"ScoreCutoffFilter",
 		"GeometryFilter",
 	],
-	
 	"protocols/task_operations": [
 	    "AlignedThreadOperation",
 		"CrystalContactsOperation",

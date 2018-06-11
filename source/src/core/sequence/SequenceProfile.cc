@@ -26,7 +26,6 @@
 #include <utility/file/FileName.hh>
 #include <utility/pointer/owning_ptr.hh>
 
-#include <core/chemical/AA.hh>
 
 #include <iostream>
 #include <string>
@@ -52,7 +51,7 @@
 namespace core {
 namespace sequence {
 
-static basic::Tracer tr( "core.sequence.SequenceProfile" );
+static  basic::Tracer tr( "core.sequence.SequenceProfile" );
 
 void SequenceProfile::read_from_checkpoint(
 	utility::file::FileName const & fn,
@@ -285,7 +284,6 @@ void SequenceProfile::read_from_file(
 	std::string seq;
 	while ( getline( input, line ) ) {
 		std::istringstream line_stream( line );
-		//std::cout << "line = " << line << std::endl;
 		Size pos;
 		string aa;
 
@@ -304,9 +302,11 @@ void SequenceProfile::read_from_file(
 		Size index(1);
 		while ( !line_stream.fail() && index <= order.size() ) {
 			prof_row[ order[index] ] = score;
+			alphabet_[ order[index] ] = core::chemical::oneletter_code_from_aa(order[index]) ;
 			line_stream >> score;
 			++index;
 		}
+
 
 
 		//using the same while loop to read % matrix in the pssm file. All the numbers after index 20 are stored in the percentage matrix. I am doing it this way
@@ -338,11 +338,15 @@ void SequenceProfile::read_from_file(
 	}
 
 	tr.Debug << "Read sequence " << seq << " from  " << fn << std::endl;
-	tr.Debug << "profile dimensions are " << profile_.size() << "x"
-		<< profile_.front().size() << "." << std::endl;
+	tr.Debug << "profile dimensions are " << profile_.size() << "x"<< profile_.front().size() << "." << std::endl;
 	sequence( seq );
 	id( std::string(fn) );
-	//tr<<" the size of profile_ is: "<<profile_.size()<<" and the size of occurrence_data_ is: "<<occurrence_data_.size()<<std::endl;
+	// Resetting alphabet order so it matches the order of the PSSM vector in Rosetta (from 3 let alphabet order to 1 let alphabet order, GideonJun18
+	core::Size i=1;
+	while ( i <= order.size() ) {
+		alphabet_[ order[i] ] = core::chemical::oneletter_code_from_aa(order[i]) ;
+		++i;
+	}
 } // read_from_file
 
 
@@ -355,6 +359,7 @@ void SequenceProfile::generate_from_sequence( Sequence const & seq, std::string 
 		utility::vector1< Real > prof_row( mat.values_for_aa( seq[ii] ) );
 		prof_row.resize( core::chemical::num_canonical_aas, -10000 );
 		new_prof.push_back(prof_row);
+		//tr<<prof_row<<std::endl;
 	}
 
 	sequence( seq.sequence() );
@@ -561,6 +566,7 @@ bool SequenceProfile::check_internals_() const {
 
 	return true;
 }
+
 
 } // sequence
 } // core

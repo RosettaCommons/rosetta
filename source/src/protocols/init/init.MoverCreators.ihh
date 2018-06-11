@@ -410,7 +410,6 @@
 #include <protocols/protein_interface_design/movers/SetupHotspotConstraintsMoverCreator.hh>
 #include <protocols/protein_interface_design/movers/SetupHotspotConstraintsLoopsMoverCreator.hh>
 #include <protocols/protein_interface_design/movers/SpinMoverCreator.hh>
-//#include <protocols/protein_interface_design/movers/SpliceCreator.hh> //moved to devel due to release embargo
 #include <protocols/protein_interface_design/movers/TaskAwareCstsCreator.hh>
 #include <protocols/protein_interface_design/movers/SubroutineMoverCreator.hh>
 #include <protocols/protein_interface_design/movers/TryRotamersCreator.hh>
@@ -579,6 +578,22 @@
 #include <protocols/simple_moves/asym_fold_and_dock/AsymFoldandDockMoveRbJumpMoverCreator.hh>
 #include <protocols/simple_moves/asym_fold_and_dock/AsymFoldandDockRbTrialMoverCreator.hh>
 
+#include <protocols/splice/SampleRotamersFromPDBCreator.hh>
+#include <protocols/splice/SpliceCreator.hh>
+#include <protocols/splice/SpliceInCreator.hh>
+#include <protocols/splice/SpliceInTailCreator.hh>
+#include <protocols/splice/SpliceInAntibodyCreator.hh>
+#include <protocols/splice/SpliceOutCreator.hh>
+#include <protocols/splice/TailSegmentMoverCreator.hh>
+#include <protocols/splice/SpliceOutAntibodyCreator.hh>
+#include <protocols/splice/SpliceOutTailCreator.hh>
+#include <protocols/splice/RotLibOutCreator.hh>
+#include <protocols/splice/DesignInterfacesOperationCreator.hh>
+#include <protocols/splice/FindEndpointsOperationCreator.hh>
+#include <protocols/splice/AlignEndsMoverCreator.hh>
+#include <protocols/cutoutdomain/CutOutDomainCreator.hh>
+#include <protocols/splice/RBOutMoverCreator.hh>
+#include <protocols/splice/RBInMoverCreator.hh>
 // T //////////////////////////////////////////////////////////////////////////
 
 #include <protocols/task_operations/StoreCombinedStoredTasksMoverCreator.hh>

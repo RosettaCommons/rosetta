@@ -115,6 +115,8 @@ test_res_res_aln( core::conformation::Residue const & res1, core::conformation::
 	return( true );
 }
 
+
+
 core::scoring::constraints::ConstraintCOPs
 add_coordinate_constraints( pose::Pose & pose, core::Size const resnum, core::conformation::Residue const & rsd_i, core::scoring::func::HarmonicFuncOP coord_cst_func, core::id::AtomID const & anchor_atom )
 {

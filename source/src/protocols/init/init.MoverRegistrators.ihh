@@ -596,6 +596,24 @@ static MoverRegistrator< symmetric_docking::SymFoldandDockRbTrialMoverCreator > 
 
 static MoverRegistrator< symmetric_docking::membrane::MPSymDockMoverCreator > reg_MPSymDockMoverCreator;
 
+
+static protocols::moves::MoverRegistrator< splice::SpliceCreator > reg_SpliceCreator;
+static protocols::moves::MoverRegistrator< splice::SpliceInCreator > reg_SpliceInCreator;
+static protocols::moves::MoverRegistrator< splice::SpliceInTailCreator > reg_SpliceInTailCreator;
+static protocols::moves::MoverRegistrator< splice::SpliceInAntibodyCreator > reg_SpliceInAntibodyCreator;
+static protocols::moves::MoverRegistrator< splice::SpliceOutCreator > reg_SpliceOutCreator;
+static protocols::moves::MoverRegistrator< splice::TailSegmentMoverCreator > reg_TailSegmentMoverCreator;
+static protocols::moves::MoverRegistrator< splice::SpliceOutAntibodyCreator > reg_SpliceOutAntibodyCreator;
+static protocols::moves::MoverRegistrator< splice::SpliceOutTailCreator > reg_SpliceOutTailCreator;
+static protocols::moves::MoverRegistrator< splice::RBOutMoverCreator > reg_RBOutMoverCreator;
+static protocols::moves::MoverRegistrator< splice::RBInMoverCreator > reg_RBInMoverCreator;
+static protocols::moves::MoverRegistrator< splice::RotLibOutCreator > reg_RotLibOutCreator;
+static core::pack::task::operation::TaskOperationRegistrator<splice::DesignInterfacesOperationCreator > reg_DesignInterfacesOperationCreator;
+static core::pack::task::operation::TaskOperationRegistrator< splice::FindEndpointsOperationCreator > reg_FindEndpointsOperationCreator;
+static protocols::moves::MoverRegistrator< splice::AlignEndsMoverCreator > reg_AlignEndsMoverCreator;
+static protocols::moves::MoverRegistrator< cutoutdomain::CutOutDomainCreator > reg_CutOutDomainCreator;
+static core::pack::task::operation::TaskOperationRegistrator< splice::SampleRotamersFromPDBCreator > reg_SampleRotamersFromPDBCreator;
+
 // T //////////////////////////////////////////////////////////////////////////
 
 static MoverRegistrator< task_operations::StoreCombinedStoredTasksMoverCreator > reg_StoreCombinedStoredTasksMoverCreator;

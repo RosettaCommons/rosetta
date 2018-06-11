@@ -1,16 +1,9 @@
--corrections::correct
--corrections::score:no_his_his_pairE
--extrachi_cutoff 12
--ignore_unrecognized_res
--chemical:exclude_patches LowerDNA  UpperDNA Cterm_amidation SpecialRotamer VirtualBB ShoveBB VirtualDNAPhosphate VirtualNTerm CTermConnect sc_orbitals pro_hydroxylated_case1 pro_hydroxylated_case2 ser_phosphorylated thr_phosphorylated  tyr_phosphorylated tyr_sulfated lys_dimethylated lys_monomethylated  lys_trimethylated lys_acetylated glu_carboxylated cys_acetylated tyr_diiodinated N_acetylated C_methylamidated MethylatedProteinCterm
 -overwrite
 -nstruct 1
-#-out:file:silent_struct_type binary
--restore_pre_talaris_2013_behavior
--score:patch score12_w_corrections.wts
--score:weights pre_talaris_2013_standard
 
--s 1dl7_aligned.pdb 
--parser:protocol rb_db.xml 
--parser:script_vars dbName=1dl7_aligned.pdb.db
+-parser:protocol RBOut_xsd.xml
+-parser:script_vars dbName=test.db
+-s 1AHW_vl_vh.pdb
 
+-parser:script_vars  name=1AHW_vl_vh  template=1AHW_2BRR.ppk_ideal_0001.pdb  
+-out:prefix  1AHW_ 

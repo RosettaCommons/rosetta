@@ -709,6 +709,7 @@ void ParsedProtocol::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 		+ XMLSchemaAttribute( "mover", xs_string, "The mover whose execution is desired" );
 	add_subattlist + XMLSchemaAttribute( "filter_name", xs_string, "The filter whose execution is desired" )
 		+ XMLSchemaAttribute( "filter", xs_string, "The filter whose execution is desired" );
+	add_subattlist + XMLSchemaAttribute("apply_probability", xsct_real,"by default equal probability for all tags");
 	add_subattlist + XMLSchemaAttribute::attribute_w_default(
 		"report_at_end", xsct_rosetta_bool,
 		"Report filter value via filter re-evaluation on final pose after "

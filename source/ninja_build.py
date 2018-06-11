@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2.7
 
 #Build Rosetta using CMake + Ninja.
 from __future__ import print_function

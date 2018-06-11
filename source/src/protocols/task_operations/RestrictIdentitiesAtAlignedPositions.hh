@@ -68,6 +68,10 @@ public:
 	std::string keep_aas() const{ return keep_aas_; }
 	void restrict_identities( bool const b ){ restrict_identities_ = b; }
 	bool restrict_identities() const { return restrict_identities_; }
+	void repack_shell(core::Real r){repack_shell_=r;}
+	core::Real repack_shell(){return repack_shell_;}
+	core::Real design_shell(){return design_shell_;}
+	void design_shell(core::Real r){design_shell_=r;}
 private:
 	core::pose::PoseOP source_pose_;
 	utility::vector1< core::Size > res_ids_; // start and end will be parsed at apply time to determine the relevant residue numbers
@@ -76,6 +80,8 @@ private:
 	bool prevent_repacking_; //dflt 0; if the identity of the aligned and target residue is the same, should we prevent repacking?
 	std::string keep_aas_;//dflt "ACDEFGHIKLMNPQRSTVWY"
 	bool restrict_identities_; //dflt false; set to true, then keep_aas_ above takes effect
+	core::Real design_shell_;//set the design shell around the aligned identities
+	core::Real repack_shell_;//set the design shell around the aligned identities
 };
 
 } //namespace protocols

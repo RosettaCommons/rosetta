@@ -1,18 +1,14 @@
-#-ex1
-#-ex2aro
-#-use_input_sc
-#-extrachi_cutoff 10
+-constant_seed 1
+-nodelay
+-use_input_sc
 -ignore_unrecognized_res
--chemical:exclude_patches LowerDNA  UpperDNA Cterm_amidation SpecialRotamer VirtualBB ShoveBB VirtualDNAPhosphate VirtualNTerm CTermConnect sc_orbitals pro_hydroxylated_case1 pro_hydroxylated_case2 ser_phosphorylated thr_phosphorylated  tyr_phosphorylated tyr_sulfated lys_dimethylated lys_monomethylated  lys_trimethylated lys_acetylated glu_carboxylated cys_acetylated tyr_diiodinated N_acetylated C_methylamidated MethylatedProteinCterm
-#-restore_pre_talaris_2013_behavior
-#-score:weights score12_w_corrections.wts
-
--parser:protocol add_loops.xml
--pdb_comments true
 -overwrite
--parser:script_vars source_pdb=../../../../database/protocol_data/splice/antibodies/template_pdbs/2BRR.ppk.pdb
--s ../../../../database/protocol_data/splice/antibodies/template_pdbs/2BRR.ppk.pdb
+-out:file:fullatom
+-pdb_comments true ## this is the mover reades the comments in the input pdb file. The comments contain the pdb segments comprising the input pdb
 
--unmute devel.splice.Splice
--unmute devel.splice.SpliceSegments
+-s 2BRR.ppk_ideal.pdb
+-parser:protocol add_loops.xml
+-parser:script_vars start_pdb=2BRR.ppk_ideal.pdb source=2BRR.ppk_ideal.pdb 
 
+-TailSegment::refine_cycles 1
+-out:path:score score

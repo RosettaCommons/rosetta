@@ -1,5 +1,6 @@
 # -*- mode:python;indent-tabs-mode:t;show-trailing-whitespace:t; -*-
 #
+#
 # Project settings for rosetta sources
 # (c) Copyright Rosetta Commons Member Institutions.
 # (c) This file is part of the Rosetta software suite and is made available under license.
@@ -47,9 +48,6 @@ sources = {
 	"devel/coupled_sidechains": [
 		"CoupledSidechainProtocol2",
 	],
-  	"devel/cutoutdomain": [
-		"CutOutDomain", #moved to devel due to release embargo
-        ],
 	"devel/cstEnergyBalance": [
 		"minimalCstRelaxUtil",
 	],
@@ -198,21 +196,11 @@ sources = {
 		"RDC_energies",
 		"RDC_main",
 	],
+
 	"devel/scientific_tests": [
 		"PDBDiagnosticMover",
 	],
-        "devel/splice": [
-				"AddFoldUnit",
-				"AlignEndsMover",
-		"Splice",
-		"SpliceSegment",
-		"RBOutMover",
-		"RBInMover",
-		"DesignInterfacesOperation",
-		"FindEndpointsOperation",
-		"TailSegmentMover",
-		"FoldUnitsFilter"
-        ],
+      
 	#"devel/ssrbrelax": [
 	#	"SSRbClass",
 	#	"SSrbrelax",

@@ -38,7 +38,6 @@
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>
 #include <core/pack/task/operation/OperateOnCertainResidues.hh>
 
-
 // C++ Headers
 
 using basic::Error;
@@ -74,13 +73,15 @@ RestrictIdentitiesAtAlignedPositionsOperation::RestrictIdentitiesAtAlignedPositi
 	design_only_target_residues_( false ),
 	prevent_repacking_( false ),
 	keep_aas_( "ACDEFGHIKLMNPQRSTVWY" ),
-	restrict_identities_( false )
+	restrict_identities_( false ),
+	design_shell_(0.01),
+	repack_shell_(6.0)
 {
 	source_pose_ = core::pose::PoseOP( new core::pose::Pose );
 	res_ids_.clear();
 }
 
-RestrictIdentitiesAtAlignedPositionsOperation::~RestrictIdentitiesAtAlignedPositionsOperation() = default;
+RestrictIdentitiesAtAlignedPositionsOperation::~RestrictIdentitiesAtAlignedPositionsOperation() {}
 
 core::pack::task::operation::TaskOperationOP RestrictIdentitiesAtAlignedPositionsOperation::clone() const
 {
@@ -94,14 +95,16 @@ RestrictIdentitiesAtAlignedPositionsOperation::apply( core::pose::Pose const & p
 	using namespace core::pack::task::operation;
 
 	DesignAroundOperation dao;
-	dao.design_shell( 0.01 );
-	dao.repack_shell( 6.0 );
-	for ( core::Size const resid : res_ids_ ) {
+	dao.design_shell(design_shell_ );
+	dao.repack_shell( repack_shell_ );
+	for ( auto const resid: res_ids_ ) {
 		core::Size const nearest_to_res = find_nearest_res( pose, *source_pose_, resid, chain() );
 		if ( nearest_to_res == 0 ) {
 			TR.Warning << "could not find a residue near to "<<resid<<std::endl;
 			continue;
 		}//fi
+		TR<<"Residue nearest is: "<<nearest_to_res<<std::endl;
+		TR<<"Residue nearest is: "<<source_pose_->residue(resid).name3()<<resid<<std::endl;
 		RestrictAbsentCanonicalAASRLTOP racaas1( new RestrictAbsentCanonicalAASRLT ); /// used to determine the single residue identity taken from the source pose
 		RestrictAbsentCanonicalAASRLTOP racaas2( new RestrictAbsentCanonicalAASRLT ); /// used to limit identities to those specified by the user
 		PreventRepackingRLTOP pr( new PreventRepackingRLT );
@@ -140,15 +143,17 @@ RestrictIdentitiesAtAlignedPositionsOperation::parse_tag( TagCOP tag , DataMap &
 {
 	using namespace protocols::rosetta_scripts;
 	utility::vector1< std::string > pdb_names, start_res, stop_res;
+	design_shell( tag->getOption< core::Real >( "design_shell",0.01 ) );
+	repack_shell( tag->getOption< core::Real >( "repack_shell",6.0 ) );
 	source_pose( tag->getOption< std::string >( "source_pdb" ) );
 	std::string const res_list( tag->getOption< std::string >( "resnums" ) );
 	utility::vector1< std::string > const split_reslist( utility::string_split( res_list,',' ) );
 	chain( tag->getOption< core::Size >( "chain", 1 ) );
 	TR<<"source_pdb: "<<tag->getOption< std::string >( "source_pdb" )<<" restricting residues: ";
-	for ( std::string const & res_str : split_reslist ) {
+	for ( auto const res_str: split_reslist ) {
 		res_ids_.push_back( core::pose::parse_resnum( res_str, *source_pose_ ) );
 		TR<<res_str<<",";
-	}
+	}//foreach
 	design_only_target_residues( tag->getOption< bool >( "design_only_target_residues", false ) );
 	prevent_repacking( tag->getOption< bool >( "prevent_repacking", false ) );
 	keep_aas_ = tag->getOption< std::string >( "keep_aas", "ACDEFGHIKLMNPQRSTVWY" );
@@ -161,14 +166,16 @@ void RestrictIdentitiesAtAlignedPositionsOperation::provide_xml_schema( utility:
 	AttributeList attributes;
 
 	attributes
-		+ XMLSchemaAttribute::required_attribute( "source_pdb", xs_string , "XRW TO DO" )
-		+ XMLSchemaAttribute::required_attribute( "resnums", xsct_int_cslist , "XRW TO DO" )
-		+ XMLSchemaAttribute::attribute_w_default(  "chain", xsct_non_negative_integer, "XRW TO DO",  "1"  )
-		+ XMLSchemaAttribute::attribute_w_default(  "design_only_target_residues", xsct_rosetta_bool, "XRW TO DO",  "false"  )
-		+ XMLSchemaAttribute::attribute_w_default(  "prevent_repacking", xsct_rosetta_bool, "XRW TO DO",  "false"  )
-		+ XMLSchemaAttribute::attribute_w_default(  "keep_aas", xs_string, "XRW TO DO",  "ACDEFGHIKLMNPQRSTVWY"  );
+		+ XMLSchemaAttribute::required_attribute( "source_pdb", xs_string,"Template pdb to use" )
+		+ XMLSchemaAttribute::required_attribute( "resnums", xsct_int_cslist,"residue numbers to restrcit" )
+		+ XMLSchemaAttribute::attribute_w_default(  "chain", xsct_non_negative_integer,"chain attribute" ,"1" )
+		+ XMLSchemaAttribute::attribute_w_default(  "design_only_target_residues", xs_boolean,"should we design only target residues?" ,"false" )
+		+ XMLSchemaAttribute::attribute_w_default(  "prevent_repacking", xs_boolean, "Don't repack these positions" ,"false" )
+		+ XMLSchemaAttribute::attribute_w_default(  "keep_aas", xs_string,"Which AA's to keep" ,"ACDEFGHIKLMNPQRSTVWY" )
+		+ XMLSchemaAttribute::attribute_w_default(  "design_shell", xs_string,"Design_shell" ,"0.01" )
+		+ XMLSchemaAttribute::attribute_w_default(  "repack_shell", xsct_real,"Repack_chell" ,"6.0" );
 
-	task_op_schema_w_attributes( xsd, keyname(), attributes, "XRW TO DO" );
+	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }
 
 

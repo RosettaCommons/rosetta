@@ -1,0 +1,38 @@
+<ROSETTASCRIPTS>
+         <TASKOPERATIONS>
+    		<InitializeFromCommandline name="init"/>
+		<RestrictToRepacking name="rtr"/>
+	 <NoRepackDisulfides name="NRD" />
+
+	</TASKOPERATIONS>
+        <SCOREFXNS>
+		<ScoreFunction name="talaris_cal" weights="ref2015">
+			<Reweight scoretype="coordinate_constraint" weight="10"/>
+			<Reweight scoretype="res_type_constraint" weight="0.5"/>
+			<Reweight scoretype="chainbreak" weight="100"/>
+		</ScoreFunction>
+
+		<ScoreFunction name="talaris_cal_chainbreak" weights="ref2015">
+			<Reweight scoretype="chainbreak" weight="100"/>
+		</ScoreFunction>
+        </SCOREFXNS>
+
+        <FILTERS>
+	        <ScoreType name="chainbreak_val" scorefxn="talaris_cal_chainbreak" score_type="chainbreak" threshold="10" confidence="1"/>
+        </FILTERS>
+
+        <MOVERS>
+		<LoopMover_Refine_CCD name="ccd" temp_initial="5" scorefxn="talaris_cal"/>
+		<MinMover name="min" scorefxn="talaris_cal" chi="1" bb="1" jump="0" max_iter="1000" tolerance="0.000001"/>
+		<TailSegmentMover name="tail" scorefxn="talaris_cal"/>
+
+		<SpliceOutAntibody name="spliceout" source_pdb="%%source%%" torsion_database="%%name%%_H1_H2.db" scorefxn="talaris_cal" rms_cutoff="0.3" rms_cutoff_loop="0.3" splice_filter="chainbreak_val" template_file="%%start_pdb%%" task_operations="NRD,init"  debug="0" mover="min" tail_mover="tail" segment="H3" use_sequence_profile="0" superimposed="1" CG_const="0" design_shell="0" repack_shell="0"> 
+		</SpliceOutAntibody>
+
+
+        </MOVERS>
+
+        <PROTOCOLS>
+                <Add mover="spliceout"/>
+        </PROTOCOLS>
+</ROSETTASCRIPTS>

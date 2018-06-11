@@ -243,7 +243,11 @@ SetAtomTree::set_ab_fold_tree( core::pose::Pose & pose)
 
 	auto AB_CoM = (core::Size ) core::pose::residue_center_of_mass( pose, conf.chain_begin(host_chain_), conf.chain_end(host_chain_) );
 	TR<<"Antibody center of mass is residue: "<<AB_CoM<<std::endl;
-	core::Size cys_CoM=find_nearest_disulfide(pose, AB_CoM);
+
+
+	//Sometimes the center of mass is in the VL and soemtimes it's in the VH. I don't want this uncertainty So I will just set it to be VL like it is in RB mover, Gideon Jan15
+	//core::Size cys_CoM=find_nearest_disulfide(pose, AB_CoM);
+	core::Size cys_CoM=cys_pos[4];//I assume that antibody strctures are awlway going to be VL before VH, Gideon Jan2015
 	TR<<"Antibody cysteine center of mass: "<<cys_CoM<<std::endl;
 	if ( conf.num_chains()>1 ) {
 
@@ -454,11 +458,14 @@ SetAtomTree::apply( core::pose::Pose & pose )
 	core::Size anchor_num( 0 );
 	std::string connect_from( connect_from_ );
 	if ( anchor_res_ != "" ) {
+		TR<<"anchor_res_"<<anchor_res_<<std::endl;
 		core::pose::PDBPoseMap const pose_map( pose.pdb_info()->pdb2pose() );
 		char const chain( anchor_res_[ anchor_res_.length() - 1 ] );
 		std::stringstream ss( anchor_res_.substr( 0, anchor_res_.length() - 1 ) );
 		core::Size number;
 		ss >> number;
+		TR<<"anchor_res_"<<number<<std::endl;
+
 		anchor_num  = pose_map.find( chain, number );
 		TR<<"anchor_num::: " << anchor_num << "and pdbnum:::" << resnum_ <<std::endl;
 

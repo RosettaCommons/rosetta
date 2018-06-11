@@ -23,6 +23,7 @@ namespace relax {
 class AtomCoordinateCstMoverCreator : public moves::MoverCreator
 {
 public:
+	static  std::string mover_name();
 	protocols::moves::MoverOP create_mover() const override;
 	std::string keyname() const override;
 	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;

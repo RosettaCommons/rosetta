@@ -33,7 +33,8 @@
 #include <core/scoring/constraints/AmbiguousConstraint.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/constraints/BoundConstraint.hh>
-
+#include <core/pose/util.hh>
+#include <core/import_pose/import_pose.hh>
 #include <basic/datacache/DataMap.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -44,8 +45,10 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+#include <core/scoring/ScoreFunction.hh>
 
-static basic::Tracer TR( "protocols.relax.AtomCoordinateCstMover" );
+
+static  basic::Tracer TR( "protocols.relax.AtomCoordinateCstMover" );
 
 namespace protocols {
 namespace relax {
@@ -79,8 +82,12 @@ AtomCoordinateCstMover::AtomCoordinateCstMover() :
 	cst_sidechain_( false ),
 	amb_hnq_( false ),
 	loop_segments_(),
-	task_segments_()
+	task_segments_(),
+	func_groups_(false)
+
 {}
+
+AtomCoordinateCstMover::AtomCoordinateCstMover( AtomCoordinateCstMover const  & ) =default;
 
 AtomCoordinateCstMover::~AtomCoordinateCstMover() = default;
 
@@ -91,9 +98,15 @@ protocols::moves::MoverOP AtomCoordinateCstMover::clone() const {
 	return protocols::moves::MoverOP( new AtomCoordinateCstMover( *this ) );
 }
 
+std::string
+AtomCoordinateCstMover::get_name() const {
+	return AtomCoordinateCstMoverCreator::mover_name();
+}
+
 void
 AtomCoordinateCstMover::apply( core::pose::Pose & pose ) {
 	pose.add_constraints( generate_constraints( pose ) );
+
 }
 
 void
@@ -110,7 +123,50 @@ void
 AtomCoordinateCstMover::set_refstruct( core::pose::PoseCOP ref ) {
 	refpose_ = ref;
 }
+core::scoring::constraints::ConstraintCOPs
+AtomCoordinateCstMover::set_constraints_on_func_groups(core::pose::Pose const & pose){
+	using namespace core::scoring::constraints;
 
+	core::scoring::constraints::ConstraintCOPs csts;
+	core::scoring::constraints::ConstraintCOPs csts_tmp;
+	core::pose::PoseOP constraint_target_pose = get_constraint_target_pose( pose ); //based on what the user passed uses refpose or the input pose
+	TR<<"Setting constraints on functional groups"<<std::endl;
+	TR<< "reference pose is:"<< constraint_target_pose->pdb_info()->name();
+	core::Size nres = pose.size();
+	core::select::residue_selector::ResidueSubset const constrain_residues = compute_residue_subset( pose );
+	/* if ( task_segments_ ) {
+	task = task_segments_->create_task_and_apply_taskoperations(pose);
+	}
+	for ( core::Size ii = 1; ii <= nres; ++ii ) {
+	// Constrain residue if in task, or if we don't have task limitations.
+	if ( ( task && task->being_designed(ii) )  ) {
+	constrain_residues[ ii ] = true;
+	//if (constrain_residues[ ii ]) TR<<"Applying constraints to residue: "<<ii<<" "<<pose.residue(ii).name3<<std::endl;
+	}
+	}//for core::Size ii
+	*/
+	//check if at least one position is designated as design
+	if ( std::find(constrain_residues.begin(), constrain_residues.end(), true) == constrain_residues.end() ) {
+		TR<<TR.Red<<"WARNING!! No position in the pose is marked as designable, this is probably a mistake"<<TR.Reset<<std::endl;
+	}
+	core::id::AtomID const anchor_atom(core::id::AtomID(pose.residue(1).atom_index("CA"), 1));
+	for ( core::Size i = 1; i<= nres; ++i ) {
+
+		if ( pose.residue( i ).aa() == core::chemical::aa_vrt ) continue; // Skip virtual residues.
+		if ( !constrain_residues[i] ) continue;
+		core::Size nearest_res_on_refpose = protocols::rosetta_scripts::find_nearest_res(*constraint_target_pose, pose, i, 0);
+		core::conformation::Residue const source_resi=constraint_target_pose->residue(nearest_res_on_refpose);
+		//core::Size const pose_i(i);
+		if ( bounded_ ) {
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Currently, if you are using \"functional groups\" constraints you can only use harmonic constraints.");
+		}
+		core::scoring::func::HarmonicFuncOP coord_cst_func(new core::scoring::func::HarmonicFunc( 0.0, cst_sd_ ));
+		TR<<"Retrieving constraints from residue: "<<nearest_res_on_refpose<<" "<<source_resi.name3()<<std::endl;
+		csts_tmp=add_coordinate_constraint_func_atoms(pose,i,source_resi,coord_cst_func,anchor_atom);
+		csts.insert(std::end(csts), std::begin(csts_tmp), std::end(csts_tmp));
+	}//for core::Size i
+	return csts;
+}
 core::select::residue_selector::ResidueSubset
 AtomCoordinateCstMover::compute_residue_subset( core::pose::Pose const & pose ) const
 {
@@ -123,9 +179,7 @@ AtomCoordinateCstMover::compute_residue_subset( core::pose::Pose const & pose ) 
 	for ( core::Size ii = 1; ii <= nres; ++ii ) {
 		if ( pose.residue( ii ).aa() == core::chemical::aa_vrt ) continue; // Skip virtual residues.
 		// Constrain residue if it's in a loop, or in the task, or if we don't have task/loop limitations.
-		if ( (loop_segments_ && loop_segments_->is_loop_residue( ii )) ||
-				( task && task->being_packed(ii) ) ||
-				( !loop_segments_ && !task ) ) {
+		if ( (loop_segments_ && loop_segments_->is_loop_residue( ii )) ||( task && task->being_packed(ii) ) ||( !loop_segments_ && !task ) ) {
 			constrain_residues[ ii ] = true;
 		}
 	}
@@ -146,7 +200,9 @@ core::scoring::constraints::ConstraintCOPs
 AtomCoordinateCstMover::generate_constraints( core::pose::Pose const & pose )
 {
 	using namespace core::scoring::constraints;
-
+	if ( func_groups_ ) { //This entire section is only relevant if applying constraints on the functional groups
+		return set_constraints_on_func_groups(pose);
+	}
 	// constraints will be generated to the coordinates in constraint_target_pose
 	// constraint_target_pose needs to be non-const due to possible superimposing below
 	core::pose::PoseOP constraint_target_pose = get_constraint_target_pose( pose );
@@ -261,6 +317,8 @@ AtomCoordinateCstMover::parse_my_tag(
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const &
 ) {
+
+	func_groups( tag->getOption< bool >( "func_groups", false ) );
 	cst_sd( tag->getOption< core::Real >( "coord_dev", 0.5 ) );
 	bounded( tag->getOption< bool >( "bounded", false ) );
 	cst_width( tag->getOption< core::Real >( "bound_width", 0 ) );
@@ -279,14 +337,11 @@ AtomCoordinateCstMover::parse_my_tag(
 			refpose_ = ref_pose;
 		}
 		if ( ! refpose_ ) {
-			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Use native for AtomCoordinateCstMover specified, but not native pose is availible.");
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Use native for AtomCoordinateCstMover specified, but not native pose is available.");
 		}
 	}
 }
 
-std::string AtomCoordinateCstMover::get_name() const {
-	return mover_name();
-}
 
 std::string AtomCoordinateCstMover::mover_name() {
 	return "AtomCoordinateCstMover";
@@ -297,16 +352,19 @@ void AtomCoordinateCstMover::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 	// TO DO!
 	using namespace utility::tag;
 	AttributeList attlist; // TO DO: add attributes to this list
-	attlist + XMLSchemaAttribute::attribute_w_default( "coord_dev", xsct_real, "XRW TO DO", "0.5")
-		+ XMLSchemaAttribute::attribute_w_default("bounded", xsct_rosetta_bool, "XRW TO DO", "false")
-		+ XMLSchemaAttribute::attribute_w_default("bound_width", xsct_real, "XRW TO DO", "0")
-		+ XMLSchemaAttribute::attribute_w_default("sidechain", xsct_rosetta_bool, "XRW TO DO", "false")
+	attlist + XMLSchemaAttribute::attribute_w_default( "coord_dev", xsct_real, "the strength/deviation of the constraints to use", "0.5")
+		+ XMLSchemaAttribute::attribute_w_default("bounded", xsct_rosetta_bool, "whether to use harmonic (false) or bounded (true) constraints", "false")
+		+ XMLSchemaAttribute::attribute_w_default("bound_width", xsct_real, "the width of the bounded constraint (e.g. -relax::coord_cst_width)", "0")
+		+ XMLSchemaAttribute::attribute_w_default("sidechain", xsct_rosetta_bool, "whether to constrain just the backbone heavy atoms (false) or all heavy atoms (true) ", "false")
 		+ XMLSchemaAttribute::attribute_w_default("flip_hnq", xsct_rosetta_bool, "XRW TO DO", "false")
-		+ XMLSchemaAttribute::attribute_w_default("native", xsct_rosetta_bool, "XRW TO DO", "false");
-
+		+ XMLSchemaAttribute::attribute_w_default("native", xsct_rosetta_bool, "if true, use the pose from -in:file:native as the reference instead of the pose at apply time", "false")
+		+ XMLSchemaAttribute( "func_groups", xsct_rosetta_bool, "f true, will apply coordinate constraints on the functional atoms of the constraints residues." );
 	protocols::rosetta_scripts::attributes_for_parse_task_operations( attlist );
-
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string AtomCoordinateCstMoverCreator::mover_name() {
+	return "AtomCoordinateCstMover";
 }
 
 std::string AtomCoordinateCstMoverCreator::keyname() const {

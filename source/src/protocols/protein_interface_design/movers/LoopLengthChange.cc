@@ -48,26 +48,25 @@ using namespace core::scoring;
 
 static basic::Tracer TR( "protocols.protein_interface_design.movers.LoopLengthChange" );
 
-// XRW TEMP std::string
-// XRW TEMP LoopLengthChangeCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return LoopLengthChange::mover_name();
-// XRW TEMP }
+std::string LoopLengthChangeCreator::mover_name() {
+	return "LoopLengthChange";
+}
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP LoopLengthChangeCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new LoopLengthChange );
-// XRW TEMP }
+std::string
+LoopLengthChangeCreator::keyname() const
+{
+	return LoopLengthChangeCreator::mover_name();
+}
 
-// XRW TEMP std::string
-// XRW TEMP LoopLengthChange::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "LoopLengthChange";
-// XRW TEMP }
+protocols::moves::MoverOP
+LoopLengthChangeCreator::create_mover() const {
+	return protocols::moves::MoverOP( new LoopLengthChange );
+}
+
 
 LoopLengthChange::LoopLengthChange() :
-	Mover( LoopLengthChange::mover_name() ),
-	loop_start_( 0 ), loop_end_( 0 ), delta_( 0 ), tail_segment_(false)/*, restype_char_('A') (in .hh)*/
+	Mover( LoopLengthChangeCreator::mover_name() ),
+	loop_start_( 0 ), loop_end_( 0 ), delta_( 0 ), tail_segment_(false),direction_(false)
 {
 }
 
@@ -97,24 +96,28 @@ LoopLengthChange::apply( core::pose::Pose & pose )
 	core::kinematics::FoldTree const & ft = pose.fold_tree();
 	core::Size jump_count( 0 );
 	if ( delta() < 0 ) {
-		TR << "DEBUG: I will try to delete residues" << std::endl;
-		TR << "Loop end is " << loop_end() << " delta is " << delta() << std::endl;
+		//TR << "DEBUG: I will try to delete residues" << std::endl;
+		//TR << "Loop end is " << loop_end() << " delta is " << delta() << std::endl;
 
 
 		for ( int del(0); del>delta(); --del ) {
 			//TR<<"loop_end -delta()+ del =" <<loop_end()-delta()+ del<<std::endl;
 			if ( tail_segment_ ) {
-				TR << "DEBUG: I will now delete residue " << loop_end() + del << std::endl;
-				//string res = static_cast<ostringstream*>( &(ostringstream() << loop_end() + del) )->str();
-				//pose.dump_pdb("llc_res_before_del_res_"+res+".pdb");
-				pose.delete_polymer_residue( loop_end() + del ); // there will never be jumps within the tail segment
+
+				if ( direction() ) { //if "direction" is true then tail is n-ter
+					//TR << "DEBUG: I will now delete residue " << loop_start() - del << std::endl;
+					pose.delete_residue_slow( loop_start() ); // there will never be jumps within the tail segment
+				} else {
+					//TR << "DEBUG: I will now delete residue " << loop_end() + del << std::endl;
+					pose.delete_polymer_residue(loop_end() + del ); // there will never be jumps within the tail segment
+				}
 			} else {
 				if ( ft.is_jump_point( loop_end() + del - delta() - jump_count ) ) {
 					TR<<"LoopLengthChange called across a jump. I'm skipping the jump residue"<<std::endl;
 					jump_count++;
 				}
 
-				TR << "DEBUG: I will now delete residue " << loop_end() + del - delta() - jump_count << std::endl;
+				//TR << "DEBUG: I will now delete residue " << loop_end() + del - delta() - jump_count << std::endl;
 				//string res = static_cast<ostringstream*>( &(ostringstream() << loop_end() + del - delta() - jump_count) )->str();
 				//pose.dump_pdb("llc_res_before_del_res_"+res+".pdb");
 				pose.delete_polymer_residue( loop_end() + del - delta() - jump_count ); // was before pose.delete_polymer_residue( loop_end() + del - delta() + jump_count );
@@ -127,23 +130,33 @@ LoopLengthChange::apply( core::pose::Pose & pose )
 		using namespace core::chemical;
 		using namespace core::conformation;
 
-		ResidueTypeSetCOP residue_set( pose.residue_type_set_for_pose() );
-		runtime_assert(oneletter_code_specifies_aa(restype_char())); //ensure that we aren't about to try this with aa_unk
+		ResidueTypeSetCOP residue_set( pose.residue_type_set_for_pose() ); // residuetypeset is noncopyable
 		ResidueCOP new_res = ResidueFactory::create_residue( residue_set->name_map( name_from_aa( aa_from_oneletter_code( restype_char() ) ) ) );
 		if ( tail_segment_ ) {
-			/* This will be ugly: For some reason you cannot use .append_polymer_residue_after_seqpos to add residues
-			*        to the very last position. Instead we are here adding n+1 residues to the second last position.  */
-			for ( core::Size leng(1); leng<=(core::Size) delta() + 1; ++leng ) {
-				pose.conformation().append_polymer_residue_after_seqpos( *new_res, loop_end()-2+leng, true/*build_ideal*/); // start growing the new loop from res loopEnd-1
+			//TR<<"This is a tail segment"<<std::endl;
+			if ( direction() ) { //if "direction" is true then tail is n-ter
+				for ( core::Size leng(1); leng<=(core::Size) delta() ; ++leng ) {
+					pose.conformation().safely_prepend_polymer_residue_before_seqpos( *new_res,loop_start(), true/*build_ideal*/); // start growing the new loop from res 1
+					//string res = static_cast<ostringstream*>( &(ostringstream() << leng) )->str();
+					//pose.dump_pdb("llc_res_before_del_res_"+res+".pdb");
+				}
+			} else {
+				/* This will be ugly: For some reason you cannot use .append_polymer_residue_after_seqpos to add residues
+				*        to the very last position. Instead we are here adding n+1 residues to the second last position.  */
+				for ( core::Size leng(1); leng<=(core::Size) delta() + 1; ++leng ) {
+					pose.conformation().append_polymer_residue_after_seqpos( *new_res, loop_end()-2+leng, true/*build_ideal*/); // start growing the new loop from res loopEnd-1
+				}
+				// Now we need to delete the last residue
+				core::Size unwantedLastResidueNo =  loop_end()  + delta() + 1;
+				// TR << "Delta is " << delta() << std::endl;
+				//pose.dump_pdb("before_delete.pdb");
+				pose.conformation().delete_polymer_residue( unwantedLastResidueNo );
+				//pose.dump_pdb("after_delete.pdb");
 			}
-			// Now we need to delete the last residue
-			core::Size unwantedLastResidueNo =  loop_end()  + delta() + 1;
-			//TR << "Delta is " << delta() << std::endl;
-			//pose.dump_pdb("before_delete.pdb");
-			pose.conformation().delete_polymer_residue( unwantedLastResidueNo );
-			//pose.dump_pdb("after_delete.pdb");
+
 		} else {
 			for ( core::Size leng(1); leng<=(core::Size) delta(); ++leng ) {
+				//TR<<"Loop end res:"<<loop_end()<<std::endl;
 				pose.conformation().prepend_polymer_residue_before_seqpos( *new_res, loop_end()+1, true/*build_ideal*/);
 				// string res = static_cast<ostringstream*>( &(ostringstream() << leng ))->str();
 				// pose.dump_pdb("llc_res_"+res+".pdb");
@@ -157,10 +170,10 @@ LoopLengthChange::apply( core::pose::Pose & pose )
 	if ( pose.pdb_info() ) pose.pdb_info()->obsolete( true );
 }
 
-// XRW TEMP std::string
-// XRW TEMP LoopLengthChange::get_name() const {
-// XRW TEMP  return LoopLengthChange::mover_name();
-// XRW TEMP }
+std::string
+LoopLengthChange::get_name() const {
+	return LoopLengthChangeCreator::mover_name();
+}
 
 void
 LoopLengthChange::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & pose )
@@ -245,15 +258,14 @@ void
 LoopLengthChange::tail( bool b ){
 	tail_segment_ = b;
 }
-
-std::string LoopLengthChange::get_name() const {
-	return mover_name();
+void
+LoopLengthChange::direction( bool b ){
+	direction_ = b;
 }
 
 std::string LoopLengthChange::mover_name() {
 	return "LoopLengthChange";
 }
-
 void LoopLengthChange::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	using namespace utility::tag;
@@ -266,21 +278,10 @@ void LoopLengthChange::provide_xml_schema( utility::tag::XMLSchemaDefinition & x
 
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "A Mover for changing the length of a loop; does not close the loop afterwards.", attlist );
 }
-
-std::string LoopLengthChangeCreator::keyname() const {
-	return LoopLengthChange::mover_name();
-}
-
-protocols::moves::MoverOP
-LoopLengthChangeCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LoopLengthChange );
-}
-
 void LoopLengthChangeCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
 	LoopLengthChange::provide_xml_schema( xsd );
 }
-
 
 } //movers
 } //protein_interface_design

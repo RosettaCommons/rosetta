@@ -16,6 +16,8 @@
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
+#include <core/id/AtomID.hh>
+
 #include <core/types.hh>
 #include <core/scoring/func/HarmonicFunc.fwd.hh>
 #include <core/scoring/constraints/Constraint.fwd.hh>
@@ -32,6 +34,8 @@
 
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/vector1.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
+
 
 
 // C++ headers
@@ -45,9 +49,6 @@ namespace movers {
 bool
 test_res_res_aln( core::conformation::Residue const & res1, core::conformation::Residue const & res2, core::Real & C_N_angle, core::Real & CB_CA_angle  );
 
-/*core::scoring::constraints::ConstraintCOPs
-add_coordinate_constraints( core::pose::Pose & pose, core::Size const host_chain, core::Size const resnum, core::Real const coord_sdev, core::scoring::constraints::HarmonicFuncOP & coord_cst_func );
-*/
 
 core::scoring::constraints::ConstraintCOPs
 add_coordinate_constraints( core::pose::Pose & pose, core::conformation::Residue const & source, core::Size const host_chain, core::Size const resnum, core::Real const coord_sdev, core::scoring::func::HarmonicFuncOP & coord_cst_func );
