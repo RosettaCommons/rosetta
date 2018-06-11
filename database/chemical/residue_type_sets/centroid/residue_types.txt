@@ -57,21 +57,28 @@ residue_types/staple/08B.params
 ### Aldopentoses
 #### Arabanoses
 residue_types/carbohydrates/to5-alpha-L-Araf.params
+residue_types/carbohydrates/to5-beta-L-Araf.params
 #### Xyloses
+residue_types/carbohydrates/to3-alpha-D-Xylp.params
 residue_types/carbohydrates/to3-beta-D-Xylp.params
 residue_types/carbohydrates/to4-alpha-D-Xylp.params
+residue_types/carbohydrates/to4-beta-D-Xylp.params
 ### Aldohexoses
 #### Glucoses
+residue_types/carbohydrates/to2-alpha-D-Glcp.params
 residue_types/carbohydrates/to2-beta-D-Glcp.params
 residue_types/carbohydrates/to3-alpha-D-Glcp.params
 residue_types/carbohydrates/to3-beta-D-Glcp.params
 residue_types/carbohydrates/to4-alpha-D-Glcp.params
 residue_types/carbohydrates/to4-beta-D-Glcp.params
-residue_types/carbohydrates/to4-beta-D-Quip.params
 residue_types/carbohydrates/to6-alpha-D-Glcp.params
 residue_types/carbohydrates/to6-beta-D-Glcp.params
+residue_types/carbohydrates/to3-alpha-Bacp.params
 residue_types/carbohydrates/to3-beta-Bacp.params
+residue_types/carbohydrates/to4-alpha-D-Quip.params
+residue_types/carbohydrates/to4-beta-D-Quip.params
 #### Galactoses
+residue_types/carbohydrates/to2-alpha-D-Galp.params
 residue_types/carbohydrates/to2-beta-D-Galp.params
 residue_types/carbohydrates/to3-alpha-D-Galp.params
 residue_types/carbohydrates/to3-beta-D-Galp.params
@@ -82,33 +89,45 @@ residue_types/carbohydrates/to6-beta-D-Galp.params
 residue_types/carbohydrates/to3-alpha-L-Fucp.params
 residue_types/carbohydrates/to3-beta-L-Fucp.params
 residue_types/carbohydrates/to4-alpha-L-Fucp.params
+residue_types/carbohydrates/to4-beta-L-Fucp.params
 residue_types/carbohydrates/to4-alpha-D-Abep.params
+residue_types/carbohydrates/to4-beta-D-Abep.params
 residue_types/carbohydrates/to4-alpha-Daup.params
 #### Mannoses
-residue_types/carbohydrates/to3-beta-D-Manp.params
 residue_types/carbohydrates/to2-alpha-D-Manp.params
+residue_types/carbohydrates/to2-beta-D-Manp.params
 residue_types/carbohydrates/to3-alpha-D-Manp.params
+residue_types/carbohydrates/to3-beta-D-Manp.params
 residue_types/carbohydrates/to4-alpha-D-Manp.params
 residue_types/carbohydrates/to4-beta-D-Manp.params
+residue_types/carbohydrates/to4-alpha-L-Manp.params
 residue_types/carbohydrates/to4-beta-L-Manp.params
-residue_types/carbohydrates/to6-beta-D-Manp.params
 residue_types/carbohydrates/to6-alpha-D-Manp.params
+residue_types/carbohydrates/to6-beta-D-Manp.params
 residue_types/carbohydrates/to3-alpha-L-Rhap.params
+residue_types/carbohydrates/to3-beta-L-Rhap.params
 residue_types/carbohydrates/to4-alpha-L-Rhap.params
+residue_types/carbohydrates/to4-beta-L-Rhap.params
 #### Idoses
 residue_types/carbohydrates/to4-alpha-L-Idop.params
+residue_types/carbohydrates/to4-beta-L-Idop.params
 #### Guloses
+residue_types/carbohydrates/to4-alpha-L-Gulp.params
 residue_types/carbohydrates/to4-beta-L-Gulp.params
 #### Altroses
+residue_types/carbohydrates/to4-alpha-L-Altp.params
 residue_types/carbohydrates/to4-beta-L-Altp.params
 ### Ketohexoses
 #### Fructoses
+residue_types/carbohydrates/to4-alpha-D-Fruf.params
 residue_types/carbohydrates/to4-beta-D-Fruf.params
 #### Psicoses
+residue_types/carbohydrates/to5-alpha-D-Psip.params
 residue_types/carbohydrates/to5-beta-D-Psip.params
 ### Ketononoses
 #### Ketoaldonic Acids (e.g., Sialic Acids)
 residue_types/carbohydrates/to8-alpha-Neup.params
+residue_types/carbohydrates/to8-beta-Neup.params
 
 ## Membrane Types
 residue_types/membrane/EMB.params

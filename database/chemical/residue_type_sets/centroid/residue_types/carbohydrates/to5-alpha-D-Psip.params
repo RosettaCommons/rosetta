@@ -1,4 +1,4 @@
-NAME ->5)-beta-D-Psip      # ->5)-beta-D-psicopyranosyl
+NAME ->5)-alpha-D-Psip     # ->5)-alpha-D-psicopyranosyl
 IO_STRING Psi Z            # Note lower case!
 TYPE POLYMER
 AA UNK
@@ -105,7 +105,7 @@ NU 5  C5   C6   O6   VC2
 #NU 6 is across the CUT_BOND
 LOWEST_RING_CONFORMER 1 1C4  # in this case, actually 2C5
 
-PROPERTIES  POLAR CYCLIC CARBOHYDRATE KETOSE HEXOSE D_SUGAR PYRANOSE BETA_SUGAR
+PROPERTIES  POLAR CYCLIC CARBOHYDRATE KETOSE HEXOSE D_SUGAR PYRANOSE ALPHA_SUGAR
 
 NBR_ATOM  C3
 NBR_RADIUS 6.091377
@@ -125,10 +125,10 @@ ICOOR_INTERNAL    C6   -58.633512   75.278652    1.576050   C5    C4    C3
 ICOOR_INTERNAL    O6    59.276113   69.354076    1.493092   C6    C5    C4
 ICOOR_INTERNAL    VO6  -55.8657     72.77        1.447      C2    C3    C4  # must build as branch from main chain, unlike O6
 ICOOR_INTERNAL    VC2  -62.8        66.7         1.447      O6    C6    C5  # must build from end of ring, unlike C2
-ICOOR_INTERNAL  LOWER   66.573      64.612569    1.431041   C2    C3    C4 
+ICOOR_INTERNAL  LOWER  180.0        64.612569    1.431041   C2    C3    C4 
 # now the side-chain heavy atoms
-ICOOR_INTERNAL    C1  -179.873347   66.003162    1.545188   C2    C3    C4
-ICOOR_INTERNAL    O2    66.573      64.612569    1.431041   C2    C3    C4
+ICOOR_INTERNAL    C1    60.0        66.003162    1.545188   C2    C3    C4
+ICOOR_INTERNAL    O2   180.0        64.612569    1.431041   C2    C3    C4
 ICOOR_INTERNAL    O1  -164.557952   85.086488    1.410937   C1    C2    C3
 ICOOR_INTERNAL    O3   111.402413   65.837036    1.386857   C3    C2    C4
 ICOOR_INTERNAL    O4   113.565300   82.066041    1.324664   C4    C3    C5

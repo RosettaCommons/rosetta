@@ -1,5 +1,5 @@
-NAME ->2)-beta-D-Manp     # ->2)-beta-D-mannopyranosyl
-IO_STRING Man Z            # Note lower case!
+NAME ->2)-alpha-D-Galp     # ->2)-alpha-D-galactopyranosyl
+IO_STRING Gal Z            # Note lower case!
 TYPE POLYMER
 AA UNK
 
@@ -95,7 +95,7 @@ CHI_ROTAMERS 6  60 0
 CHI_ROTAMERS 6 180 0
 CHI_ROTAMERS 6 300 0
 
-ADD_RING 1 C1 C2 C3 C4 C5 O5 
+ADD_RING 1 C1 C2 C3 C4 C5 O5
 
 NU 1  VO5  C1   C2   C3    # duplicates BB 1, but defined differently
 NU 2  C1   C2   C3   C4
@@ -105,43 +105,43 @@ NU 5  C4   C5   O5   VC1
 #NU 6 is across the CUT_BOND
 LOWEST_RING_CONFORMER 1 4C1
 
-PROPERTIES  POLAR CYCLIC CARBOHYDRATE ALDOSE HEXOSE D_SUGAR PYRANOSE BETA_SUGAR
+PROPERTIES  POLAR CYCLIC CARBOHYDRATE ALDOSE HEXOSE D_SUGAR PYRANOSE ALPHA_SUGAR
 
 NBR_ATOM  C4
-NBR_RADIUS 10.621406
+NBR_RADIUS 6.924169
 
 MAINCHAIN_ATOMS  C1 C2 O2
 FIRST_SIDECHAIN_ATOM  O1
 
 # must build main chain 1st!
 ICOOR_INTERNAL    C1     0.000000    0.000000    0.000000   C1    C2    O2
-ICOOR_INTERNAL    C2     0.000000    0.000000    1.527772   C1    C2    O2
-ICOOR_INTERNAL    O2     0.000001   71.613743    1.342689   C2    C1    O2
-ICOOR_INTERNAL  UPPER  -58.9458     72.601649    1.500049   O2    C2    C1
+ICOOR_INTERNAL    C2     0.000000  179.999999    1.491337   C1    C2    O2
+ICOOR_INTERNAL    O2     0.000000   69.183       1.41887    C2    C1    O2
+ICOOR_INTERNAL  UPPER  -59.3297     65.838       1.43398    O2    C2    C1
 # then the rest of the backbone heavy atoms
-ICOOR_INTERNAL    C3   120.959      68.145414    1.484510   C2    C1    O2
-ICOOR_INTERNAL    C4   -62.556893   74.464186    1.518591   C3    C2    C1
+ICOOR_INTERNAL    C3  -121.501      70.444       1.50577    C2    C1    O2
+ICOOR_INTERNAL    C4   -60.512023   73.843937    1.569720   C3    C2    C1
 ICOOR_INTERNAL    C5    60.023516   70.036253    1.562526   C4    C3    C2
-ICOOR_INTERNAL    O5   -57.917154   70.697608    1.443028   C5    C4    C3
+ICOOR_INTERNAL    O5   -61.061789   71.134273    1.433482   C5    C4    C3
 ICOOR_INTERNAL    VO5   60.755967   71.897802    1.457688   C1    C2    C3  # must build as branch from main chain, unlike O5
 ICOOR_INTERNAL    VC1   56.8        66.2         1.457688   O5    C5    C4  # must build from end of ring, unlike C1
-ICOOR_INTERNAL  LOWER  180.0        71.218273    1.456186   C1    C2    C3
+ICOOR_INTERNAL  LOWER  -60.0        73.093678    1.393201   C1    C2    C3
 # now the side-chain heavy atoms
-ICOOR_INTERNAL    O1   180.0        71.218273    1.456186   C1    C2    C3
+ICOOR_INTERNAL    O1   -60.0        73.093678    1.393201   C1    C2    C3
 ICOOR_INTERNAL    O3   177.552      70.190983    1.448831   C3    C2    C1
-ICOOR_INTERNAL    O4  -179.166214   71.758824    1.391257   C4    C3    C2
-ICOOR_INTERNAL    C6  -175.112472   68.828198    1.578649   C5    C4    C3
-ICOOR_INTERNAL    O6   -59.874527   64.749256    1.473304   C6    C5    C4
+ICOOR_INTERNAL    O4   -57.422550   68.476187    1.469471   C4    C3    C2
+ICOOR_INTERNAL    C6  -179.288386   67.562812    1.540525   C5    C4    C3
+ICOOR_INTERNAL    O6   -62.797083   67.644322    1.449102   C6    C5    C4
 # now all the Hs (improper torsions used for hydrogens to ensure good placement no matter the backbone conformation)
-ICOOR_INTERNAL    H1  -120.0        71.0         1.10       C1  LOWER   C2
-ICOOR_INTERNAL    HO1   58.728312   68.473625    0.980761   O1    C1    C2
-ICOOR_INTERNAL    H2   120.0        71.0         1.10       C2    C1    C3
-ICOOR_INTERNAL    HO2  -58.9458     72.601649    0.994831   O2    C2    C1
+ICOOR_INTERNAL    H1   120.0        71.0         1.10       C1  LOWER   C2
+ICOOR_INTERNAL    HO1  -60.137396   68.024989    0.994980   O1    C1    C2
+ICOOR_INTERNAL    H2  -120.0        71.0         1.10       C2    C1    C3
+ICOOR_INTERNAL    HO2 -179.445405   72.039553    0.990268   O2    C2    C1
 ICOOR_INTERNAL    H3   120.0        71.0         1.10       C3    C2    C4
-ICOOR_INTERNAL    HO3  175.931102   72.601649    1.0        O3    C3    C2
-ICOOR_INTERNAL    H4  -120.0        71.0         1.10       C4    C3    C5
-ICOOR_INTERNAL    HO4  -57.780020   71.802996    1.0        O4    C4    C3
+ICOOR_INTERNAL    HO3  178.810585   72.973678    0.980355   O3    C3    C2
+ICOOR_INTERNAL    H4   120.0        71.0         1.10       C4    C3    C5
+ICOOR_INTERNAL    HO4 -120.000011   64.875311    1.0        O4    C4    C3
 ICOOR_INTERNAL    H5  -120.0        71.0         1.10       C5    C4    C6
-ICOOR_INTERNAL    HO6 -178.762824   69.485622    1.026667   O6    C6    C5
+ICOOR_INTERNAL    HO6 -176.382127   69.133630    1.044317   O6    C6    C5
 ICOOR_INTERNAL   1H6  -120.0        71.0         1.10       C6    C5    O6
 ICOOR_INTERNAL   2H6   120.0        71.0         1.10       C6    C5    O6
