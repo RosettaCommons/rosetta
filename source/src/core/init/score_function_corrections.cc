@@ -1939,7 +1939,7 @@ init_beta_nov16_correction( utility::options::OptionCollection & options, bool s
 
 	// corrected torsions
 	if ( ! options[ basic::options::OptionKeys::corrections::score::rama_pp_map ].user() ) {
-		options[ basic::options::OptionKeys::corrections::score::rama_pp_map ].value("scoring/score_functions/rama/fd");
+		options[ basic::options::OptionKeys::corrections::score::rama_pp_map ].value("scoring/score_functions/rama/fd_beta_nov2016");
 	}
 	if ( ! options[ basic::options::OptionKeys::corrections::score::dun10_dir ].user() ) {
 		options[ basic::options::OptionKeys::corrections::score::dun10_dir ].value("rotamer/beta_nov2016");
