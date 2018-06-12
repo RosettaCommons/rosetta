@@ -13,3 +13,6 @@
 [submodule "source/external/libzmq"]
 	path = source/external/libzmq
 	url = git@github.com:RosettaCommons/libzmq.git
+[submodule "database/additional_protocol_data"]
+	path = database/additional_protocol_data
+	url = git@github.com:RosettaCommons/additional_protocol_data.git
