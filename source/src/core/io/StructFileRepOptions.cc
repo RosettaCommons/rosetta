@@ -58,7 +58,6 @@ StructFileRepOptions::StructFileRepOptions( utility::options::OptionCollection c
 StructFileRepOptions::~StructFileRepOptions() = default;
 
 /// @brief Copy this object and return an owning pointer to the copy.
-///
 StructFileRepOptionsOP
 StructFileRepOptions::clone() const {
 	return StructFileRepOptionsOP( new StructFileRepOptions(*this) );
@@ -102,6 +101,7 @@ void StructFileRepOptions::parse_my_tag( utility::tag::TagCOP tag )
 	set_auto_detect_glycan_connections( tag->getOption< bool >( "auto_detect_glycan_connections", false) );
 	set_write_glycan_pdb_codes( tag->getOption< bool >( "write_glycan_pdb_codes", false) );
 	set_output_alternate_atomids( tag->getOption< bool >( "output_alternate_atomids", false) );
+	set_output_ligands_as_separate_chains( tag->getOption< bool >( "output_ligands_as_separate_chains", false ) );
 	set_maintain_links( tag->getOption< bool >( "maintain_links", false) );
 	set_max_bond_length( tag->getOption< core::Real >( "max_bond_length", 1.6) );
 	set_min_bond_length( tag->getOption< core::Real >( "min_bond_length", 1.3) );
@@ -160,6 +160,7 @@ bool StructFileRepOptions::suppress_zero_occ_pdb_output() const { return suppres
 bool StructFileRepOptions::auto_detect_glycan_connections() const { return auto_detect_glycan_connections_; }
 bool StructFileRepOptions::write_glycan_pdb_codes() const { return write_glycan_pdb_codes_; }
 bool StructFileRepOptions::output_alternate_atomids() const { return output_alternate_atomids_; }
+bool StructFileRepOptions::output_ligands_as_separate_chains() const { return output_ligands_as_separate_chains_; }
 bool StructFileRepOptions::maintain_links() const { return maintain_links_; }
 core::Real StructFileRepOptions::max_bond_length() const { return max_bond_length_; }
 core::Real StructFileRepOptions::min_bond_length() const { return min_bond_length_; }
@@ -288,6 +289,9 @@ void StructFileRepOptions::set_write_glycan_pdb_codes( bool const write_glycan_p
 void StructFileRepOptions::set_output_alternate_atomids( bool const output_alternate_atomids )
 { output_alternate_atomids_ = output_alternate_atomids; }
 
+void StructFileRepOptions::set_output_ligands_as_separate_chains( bool const output_ligands_as_separate_chains )
+{ output_ligands_as_separate_chains_ = output_ligands_as_separate_chains; }
+
 void StructFileRepOptions::set_maintain_links( bool const maintain_links )
 { maintain_links_ = maintain_links; }
 
@@ -370,6 +374,7 @@ StructFileRepOptions::list_options_read( utility::options::OptionKeyList & read_
 		+ out::file::write_pdb_parametric_info
 		+ inout::write_all_connect_info
 		+ inout::output_alternate_atomids
+		+ out::file::output_ligands_as_separate_chains
 		+ in::show_all_fixes
 		+ in::constraints_from_link_records
 		+ out::file::output_pose_energies_table
@@ -414,6 +419,7 @@ StructFileRepOptions::append_schema_attributes( utility::tag::AttributeList & at
 		+ Attr::attribute_w_default( "no_chainend_ter", xsct_rosetta_bool, "TO DO",  "0" )
 		+ Attr::attribute_w_default( "no_output_cen", xsct_rosetta_bool, "TO DO",  "0" )
 		+ Attr::attribute_w_default( "normalize_to_thk", xsct_rosetta_bool, "TO DO",  "0" )
+		+ Attr::attribute_w_default( "output_ligands_as_separate_chains", xsct_rosetta_bool, "Forces Rosetta to reassign .pdb file chainIDs to ligands sharing chain IDs with peptide chains.", "false" )
 		+ Attr::attribute_w_default( "output_secondary_structure", xsct_rosetta_bool, "TO DO",  "false" )
 		+ Attr::attribute_w_default( "output_torsions", xsct_rosetta_bool, "TO DO",  "0" )
 		+ Attr::attribute_w_default( "output_virtual", xsct_rosetta_bool, "TO DO",  "0" )
@@ -448,7 +454,7 @@ StructFileRepOptions::append_schema_attributes( utility::tag::AttributeList & at
 /// 2. add an accessor for that data member (of course!)
 /// 3. add a mutator for that data member such that it can be set programmatically
 /// 4. add the option key to the OptionKeyList in list_options_read
-/// 5. add a read to the (XML) Tag object in the parse_my_tag funciton
+/// 5. add a read to the (XML) Tag object in the parse_my_tag function
 /// 6. list the XML attribute (aka "Tag option") that you read from in parse_my_tag to the provide_xml_schema function.
 /// 7. add to operator < and operator ==
 /// 8. add to init_from_options (here)
@@ -499,6 +505,7 @@ void StructFileRepOptions::init_from_options( utility::options::OptionCollection
 	set_auto_detect_glycan_connections( options[ in::auto_detect_glycan_connections ]() );
 	set_write_glycan_pdb_codes( options[ out::file::write_glycan_pdb_codes ]() );
 	set_output_alternate_atomids( options[ inout::output_alternate_atomids ]() );
+	set_output_ligands_as_separate_chains( options[ out::file::output_ligands_as_separate_chains ]() );
 	set_maintain_links( options[ in::maintain_links ]() );
 	set_max_bond_length( options[ in::max_bond_length ]() );
 	set_min_bond_length( options[ in::min_bond_length ]() );
@@ -564,6 +571,7 @@ StructFileRepOptions::operator == ( StructFileRepOptions const & other ) const
 	if ( auto_detect_glycan_connections_                        != other.auto_detect_glycan_connections_                       ) return false;
 	if ( write_glycan_pdb_codes_                                != other.write_glycan_pdb_codes_                               ) return false;
 	if ( output_alternate_atomids_                              != other.output_alternate_atomids_                             ) return false;
+	if ( output_ligands_as_separate_chains_                     != other.output_ligands_as_separate_chains_                    ) return false;
 	if ( maintain_links_                                        != other.maintain_links_                                       ) return false;
 	if ( max_bond_length_                                       != other.max_bond_length_                                      ) return false;
 	if ( min_bond_length_                                       != other.min_bond_length_                                      ) return false;
@@ -659,6 +667,8 @@ StructFileRepOptions::operator < ( StructFileRepOptions const & other ) const
 	if ( write_glycan_pdb_codes_                                != other.write_glycan_pdb_codes_                               ) return false;
 	if ( output_alternate_atomids_                              <  other.output_alternate_atomids_                             ) return true;
 	if ( output_alternate_atomids_                              != other.output_alternate_atomids_                             ) return false;
+	if ( output_ligands_as_separate_chains_                     <  other.output_ligands_as_separate_chains_                    ) return true;
+	if ( output_ligands_as_separate_chains_                     != other.output_ligands_as_separate_chains_                    ) return false;
 	if ( maintain_links_                                        <  other.maintain_links_                                       ) return true;
 	if ( maintain_links_                                        != other.maintain_links_                                       ) return false;
 	if ( max_bond_length_                                       <  other.max_bond_length_                                      ) return true;
@@ -666,7 +676,6 @@ StructFileRepOptions::operator < ( StructFileRepOptions const & other ) const
 	if ( min_bond_length_                                       <  other.min_bond_length_                                      ) return true;
 	if ( min_bond_length_                                       != other.min_bond_length_                                      ) return false;
 	return false;
-
 }
 
 
@@ -714,6 +723,7 @@ core::io::StructFileRepOptions::save( Archive & arc ) const {
 	arc( CEREAL_NVP( auto_detect_glycan_connections_ ) ); // _Bool
 	arc( CEREAL_NVP( write_glycan_pdb_codes_ ) ); // _Bool
 	arc( CEREAL_NVP( output_alternate_atomids_ ) ); // _Bool
+	arc( CEREAL_NVP( output_ligands_as_separate_chains_ ) );  // _Bool
 	arc( CEREAL_NVP( maintain_links_ ) ); // _Bool
 	arc( CEREAL_NVP( max_bond_length_ ) ); // core::Real
 	arc( CEREAL_NVP( min_bond_length_ ) ); // core::Real
@@ -769,6 +779,7 @@ core::io::StructFileRepOptions::load( Archive & arc ) {
 	arc( auto_detect_glycan_connections_ ); // _Bool
 	arc( write_glycan_pdb_codes_ ); // _Bool
 	arc( output_alternate_atomids_ ); // _Bool
+	arc( output_ligands_as_separate_chains_ );  // _Bool
 	arc( maintain_links_ ); // _Bool
 	arc( max_bond_length_ ); // core::Real
 	arc( min_bond_length_ ); // core::Real

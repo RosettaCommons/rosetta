@@ -144,7 +144,8 @@ public:
 	///
 	StructFileRepOP sfr();
 
-private:
+
+private: //PRIVATE FUNCTIONS:
 
 	/// @brief Determines the atom indices, which are needed for CONECT info
 	void determine_atom_indices( pose::Pose const & pose );
@@ -156,8 +157,9 @@ private:
 		core::Size atom_index,
 		bool use_pdb_info ) const;
 
-	bool use_pdb_info_for_num( pose::Pose const & pose, Size resnum );
+	utility::vector1< char > get_new_chainIDs( pose::Pose const & pose );
 
+	bool use_pdb_info_for_num( pose::Pose const & pose, Size resnum );
 
 	/// @brief Append just residue-based info to StructFileRep
 	///  For now, it is only HETNAM Data
@@ -189,10 +191,6 @@ private:
 
 	core::Size get_new_atom_serial_num() const;
 
-private: //PRIVATE FUNCTIONS:
-
-
-
 	/// @brief Set whether to write the fold tree, in the
 	/// StructFileRepOptions object (options_).
 	void set_fold_tree_io( bool const setting);
@@ -203,11 +201,7 @@ private: //PRIVATE FUNCTIONS:
 	/// @param [in] normalize_to_thk Normalized MEM lines, useful for visualizing the boundaries
 	/// of the membrane by coupling the NORM and THK coordinates.  Added by Rebecca.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	void
-	grab_membrane_info(
-		core::pose::Pose const &pose,
-		bool const normalize_to_thk
-	);
+	void grab_membrane_info( core::pose::Pose const & pose, bool const normalize_to_thk );
 
 	/// @brief Get the conect record information from the pose and store it in the
 	/// StructFileRep for output to pdbs/mmCIF/whatnot.
@@ -219,13 +213,11 @@ private: //PRIVATE FUNCTIONS:
 	/// @param [in] write_virtuals Are virtual atoms being written out?
 	/// @param [in/out] ai The AtomInformation object that's being set up.  Modified by this function
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	void
-	grab_conect_records_for_atom(
+	void grab_conect_records_for_atom(
 		core::pose::Pose const &pose,
 		core::Size const res_index,
 		core::Size const atom_index_in_rsd,
-		core::io::AtomInformation &ai
-	);
+		core::io::AtomInformation &ai );
 
 	/// @brief Get the foldtree from the pose and store it in the
 	/// StructFileRep for output to pdbs/mmCIF/whatnot.
@@ -253,55 +245,47 @@ private: //PRIVATE FUNCTIONS:
 
 	/// @brief Get the total number of atoms in the SFR.
 	///
-	core::Size
-	total_sfr_atoms( StructFileRep const & sfr) const;
+	core::Size total_sfr_atoms( StructFileRep const & sfr) const;
 
 	/// @brief Get the total number of atoms in a chain in the SFR.
-	///
-	core::Size
-	total_sfr_atoms( StructFileRep const & sfr, core::Size const chain_num ) const;
+	core::Size total_sfr_atoms( StructFileRep const & sfr, core::Size const chain_num ) const;
 
 	/// @brief Return the PDB resName, chainID, resSeq, and iCode for the given Rosetta sequence position.
 	/// @details Output is res_info.
-	void
-	get_residue_information(
+	void get_residue_information(
 		core::pose::Pose const & pose,
 		core::uint const seqpos,
 		bool const use_PDB/*=true*/,
 		bool const renumber_chains/*=false*/,
+		utility::vector1< char > const & new_chainIDs,
 		core::Size const new_tercount,
 		ResidueInformation & res_info ) const;
 
-	void
-	get_residue_information(
+	void get_residue_information(
 		core::pose::Pose const & pose,
 		core::uint const seqpos,
 		bool const use_PDB/*=true*/,
 		bool const renumber_chains/*=false*/,
+		utility::vector1< char > const & new_chainIDs,
 		core::Size const new_tercount,
 		ResidueInformation & res_info,
-		core::pose::PDBInfoOP & fresh_pdb_info
-	) const;
+		core::pose::PDBInfoOP & fresh_pdb_info ) const;
 
 	/// @brief fills HELIXInformation and SHEETInformation for SFR
-	void generate_secondary_structure_informations(
-		core::pose::Pose const & pose
-	);
+	void generate_secondary_structure_informations( core::pose::Pose const & pose );
 
 	/// @brief fills one HELIXInformation into SFR
 	void generate_HELIXInformation(
 		ResidueInformation const & start_info,
 		ResidueInformation const & stop_info,
 		core::Size const index,
-		core::Size const length
-	);
+		core::Size const length );
 
 	/// @brief fills one SHEETInformation into SFR
 	void generate_SHEETInformation(
 		ResidueInformation const & start_info,
 		ResidueInformation const & stop_info,
-		core::Size const index
-	);
+		core::Size const index );
 
 private: // PRIVATE DATA:
 

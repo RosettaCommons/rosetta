@@ -743,6 +743,14 @@ Options = Option_Group( '',
 					desc="Enable full-atom output of PDB or centroid structures"),
 			Option( 'suppress_zero_occ_pdb_output', 'Boolean', default='false',
 					desc="Suppress output of atoms with zero (or negative) occupancy"),
+			Option('output_ligands_as_separate_chains', 'Boolean',
+					desc='Set whether or not ligands are output with unique '
+							'chainIDs, even if they share a chainID with one of '
+							'the peptide chains in the input structure.  '
+							'The default value is false.',
+					short='Reassign ligand chainIDs?',
+					legal=['true', 'false'],
+					default='false'),
 			Option( 'output_virtual', 'Boolean', default='false', desc="Output virtual atoms in output of PDB"),
 			Option( 'output_virtual_zero_occ', 'Boolean', default='false', desc="Set occupancy to 0.0 for virtual atoms in output of PDB"),
 			Option( 'no_chainend_ter', 'Boolean', desc="If true, TER records are not written at the ends of chains in PDB files -- only at the end of all of the ATOM records (the legacy Rosetta behaviour).  False by default (which results in TER records at the ends of every chain).", default='false' ),

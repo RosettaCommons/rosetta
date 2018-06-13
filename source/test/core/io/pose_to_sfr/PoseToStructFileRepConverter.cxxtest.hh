@@ -21,18 +21,23 @@
 #include <test/util/pose_funcs.hh>
 
 // Unit headers
-#include <core/io/StructFileRep.hh>
 #include <core/io/pose_to_sfr/PoseToStructFileRepConverter.hh>
+
+// Package headers
+#include <core/io/StructFileRep.hh>
+#include <core/io/AtomInformation.hh>
 
 // Project headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
 #include <protocols/membrane/AddMembraneMover.hh>
 
 // Utility headers
+#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 // Basic headers
@@ -46,7 +51,8 @@ public:  // Standard methods //////////////////////////////////////////////////
 	// Initialization
 	void setUp()
 	{
-		core_init_with_additional_options( "-write_all_connect_info -connect_info_cutoff 0.0" );
+		core_init_with_additional_options(
+			"-write_all_connect_info -connect_info_cutoff 0.0 -include_sugars -output_ligands_as_separate_chains" );
 	}
 
 	// Destruction
@@ -58,7 +64,6 @@ public:  // Tests /////////////////////////////////////////////////////////////
 	// Input Methods //////////////////////////////////////////////////////////
 
 	/// @brief Check that the conect records are properly written out to the StructFileRep.
-	///
 	void test_conect_records () {
 		core::pose::PoseOP testpose( pdb1rpb_poseop() );
 		core::io::pose_to_sfr::PoseToStructFileRepConverter pose_to_sfr;
@@ -77,7 +82,6 @@ public:  // Tests /////////////////////////////////////////////////////////////
 	}
 
 	/// @brief Check that the membrane HETATM stuff is properly written out to the StructFileRep.
-	///
 	void test_membrane_hetatm () {
 		// Load in pose from pdb
 		core::pose::PoseOP pose( new core::pose::Pose );
@@ -134,7 +138,6 @@ public:  // Tests /////////////////////////////////////////////////////////////
 	}
 
 	/// @brief Check that the foldtree records are properly written out to the StructFileRep.
-	///
 	void test_foldtree_records () {
 		core::pose::PoseOP testpose( pdb1ubq5to13_poseop() );
 		core::io::pose_to_sfr::PoseToStructFileRepConverter pose_to_sfr;
@@ -145,7 +148,6 @@ public:  // Tests /////////////////////////////////////////////////////////////
 	}
 
 	/// @brief Check that the torsion records are properly written out to the StructFileRep.
-	///
 	void test_torsion_records () {
 		core::pose::PoseOP testpose( new core::pose::Pose );
 		core::pose::make_pose_from_sequence( *testpose, "AAAAAA", "fa_standard");
@@ -165,6 +167,35 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		pose_to_sfr.grab_torsion_records( *testpose, true );
 		if ( TR.visible() ) TR << pose_to_sfr.sfr()->additional_string_output() << std::endl;
 		TS_ASSERT_EQUALS( pose_to_sfr.sfr()->additional_string_output(), "REMARK torsions: res    res    chain seq dssp phi psi omega\nREMARK    1    1 1 A L     0.000   -41.000   180.000\nREMARK    2    2 1 A L   -61.000   -41.000   180.000\nREMARK    3    3 1 A L  -135.000   135.000   180.000\nREMARK    4    4 1 A L   -61.000   -41.000   180.000\nREMARK    5    5 1 A L   -61.000   -41.000   180.000\nREMARK    6    6 1 A L   -61.000     0.000     0.000\n" );
+	}
+
+	void test_assignment_of_new_chainIDs_for_ligands() {
+		using namespace core;
+		using namespace io;
+		using namespace import_pose;
+
+		TR << "Testing that a .pdb file with a ligand labeled the same as a nearby peptide chain will have the ligands "
+			"chain ID reassigned adequately if the option is set to do so." << std::endl;
+
+		pose::Pose pose;
+		pose_from_file( pose, "core/io/pose_to_sfr/2_peptides_2_glycan_ligands.pdb", PDB_file);
+
+		// Rosetta reorders the chains by default from how they appear in the .pdb file itself,
+		// grouping the three chain As together.
+		TS_ASSERT_EQUALS( pose.pdb_info()->chain( 1 ), 'A' );  // peptide chain
+		TS_ASSERT_EQUALS( pose.pdb_info()->chain( 6 ), 'A' );  // oligosaccharide chain
+		TS_ASSERT_EQUALS( pose.pdb_info()->chain( 11 ), 'A' );  // oligosaccharide chain
+		TS_ASSERT_EQUALS( pose.pdb_info()->chain( 16 ), 'B' );  // peptide chain
+
+		pose_to_sfr::PoseToStructFileRepConverter pose_to_sfr_converter;
+		pose_to_sfr_converter.init_from_pose( pose );
+		StructFileRepCOP sfr( pose_to_sfr_converter.sfr() );
+		utility::vector0< utility::vector0< AtomInformation > > const & chains( sfr->chains() );
+
+		TS_ASSERT_EQUALS( chains[ 1 ][ 0 ].chainID, 'A' );  // Why are these vector0s if 0 is skipped?  ~ Labonte
+		TS_ASSERT_EQUALS( chains[ 2 ][ 0 ].chainID, 'C' );
+		TS_ASSERT_EQUALS( chains[ 3 ][ 0 ].chainID, 'D' );
+		TS_ASSERT_EQUALS( chains[ 4 ][ 0 ].chainID, 'B' );
 	}
 
 	//SEE ALSO StructFileRep.cxxtest.hh; unclear if test_generate_secondary_structure_informations belongs here or there

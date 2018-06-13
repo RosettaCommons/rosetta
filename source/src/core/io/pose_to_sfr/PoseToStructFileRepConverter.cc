@@ -47,7 +47,6 @@
 #include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 
-
 // Basic headers
 #include <basic/Tracer.hh>
 #include <basic/datacache/BasicDataCache.hh>
@@ -164,8 +163,7 @@ PoseToStructFileRepConverter::init_from_pose( core::pose::Pose const & pose, Str
 void
 PoseToStructFileRepConverter::init_from_pose(
 	core::pose::Pose const & pose,
-	utility::vector1< core::Size > const & residue_indices
-)
+	utility::vector1< core::Size > const & residue_indices )
 {
 	using namespace core;
 
@@ -245,14 +243,21 @@ PoseToStructFileRepConverter::init_from_pose(
 		renumber_chains = true;
 	}
 
-	//TR << " WE " << ( renumber_chains ? " are " : " aren't " ) << " renumebring chains" << std::endl;
+	//TR << " WE " << ( renumber_chains ? " are " : " aren't " ) << " renumbering chains" << std::endl;
 	//utility::vector1< bool > res_info_added( pose.size(), false );
 
 	core::Size new_atom_num( 1 );
 	core::Size new_tercount( 0 );
 
 	pose::PDBInfoOP fresh_pdb_info = nullptr;
-	if ( !pose.pdb_info() ) fresh_pdb_info = pose::PDBInfoOP( new pose::PDBInfo( pose ) );
+	if ( !pose.pdb_info() ) {
+		fresh_pdb_info = pose::PDBInfoOP( new pose::PDBInfo( pose ) );
+	}
+
+	utility::vector1< char > new_chainIDs;
+	if ( options.output_ligands_as_separate_chains() && pose.pdb_info() ) {
+		new_chainIDs = get_new_chainIDs( pose );
+	}
 
 	for ( Size resnum = 1, resnum_max = pose.size(); resnum <= resnum_max; ++resnum ) {
 		conformation::Residue const & rsd( pose.residue( resnum ) );
@@ -263,7 +268,7 @@ PoseToStructFileRepConverter::init_from_pose(
 		}
 
 		ResidueInformation res_info;
-		get_residue_information( pose, resnum, use_pdb_info, renumber_chains, new_tercount, res_info, fresh_pdb_info );
+		get_residue_information( pose, resnum, use_pdb_info, renumber_chains, new_chainIDs, new_tercount, res_info, fresh_pdb_info );
 		//TR << "In init_from_pose " << resnum << " " << pose.residue_type( resnum ).name() << " " << pose.pdb_info()->chain( resnum ) << std::endl;
 		//TR << "In init_from_pose " << resnum << " " << res_info.chainID() << std::endl;
 
@@ -318,9 +323,15 @@ PoseToStructFileRepConverter::append_residue_to_sfr(
 	if ( options_.per_chain_renumbering() ) {
 		renumber_chains = true;
 	}
+
+	vector1< char > new_chainIDs;
+	if ( options_.output_ligands_as_separate_chains() && pose.pdb_info() ) {
+		new_chainIDs = get_new_chainIDs( pose );
+	}
+
 	//TR << " append_residue " << resnum << " " << pose.pdb_info()->segmentID( resnum ) << std::endl;
 	ResidueInformation res_info;
-	get_residue_information( pose, resnum, use_pdb_info, renumber_chains, new_tercount, res_info );
+	get_residue_information( pose, resnum, use_pdb_info, renumber_chains, new_chainIDs, new_tercount, res_info );
 	//TR << " append_residue " << resnum << " " << res_info.segmentID() << std::endl;/
 	append_residue_info_to_sfr( res_info, rsd );
 
@@ -484,6 +495,51 @@ PoseToStructFileRepConverter::add_atom_to_sfr(
 	}
 
 	return true;
+}
+
+utility::vector1< char >
+PoseToStructFileRepConverter::get_new_chainIDs( pose::Pose const & pose )
+{
+	using namespace core;
+
+	conformation::Conformation const & conf( pose.conformation() );
+	Size const n_chains( pose.num_chains() );
+
+	// Loop through a 1st time to get a list of all current chain IDs.
+	utility::vector1< char > chainIDs( n_chains );
+	for ( uint chain_num( 1 ); chain_num <= n_chains; ++chain_num ) {
+		char chainID( pose.pdb_info()->chain( conf.chain_begin( chain_num ) ) );
+		if ( chainID == pose::PDBInfo::empty_record() ) {
+			TR.Warning << "PDBInfo chain ID was left as character '" << pose::PDBInfo::empty_record()
+				<< "', denoting an empty record; for convenience, replacing with space." << std::endl;
+			chainID = ' ';
+		}
+		chainIDs[ chain_num ] = chainID;
+	}
+
+	// Loop through a 2nd time and check that each unconnected chain has a unique ID.
+	for ( uint i( 2 ); i <= n_chains; ++i ) {
+		// Check if chain i is connected to anything.
+		conformation::Residue const & chain_begin_res( pose.residue( conf.chain_begin( i ) ) );
+		if ( ( ! chain_begin_res.is_protein() ) && ( ! chain_begin_res.connected_residue_at_lower() ) &&
+				( ! pose.residue( conf.chain_end( i ) ).connected_residue_at_upper() ) ) {
+			// Chain i is not a peptide and is not connected and thus should have a unique ID, if that option is set.
+			// First, check if it already does.
+			for ( uint j( 1 ); j <= n_chains; ++j ) {
+				if ( i == j ) { continue; }
+				if ( chainIDs[ i ] == chainIDs[ j ] ) {
+					// It is not currently unique.  Give it a new potential ID.
+					char new_chainID( chemical::chr_chains[ ( i - 1 ) % chemical::chr_chains.size() ] );
+					while ( chainIDs.contains( new_chainID ) ) {
+						++new_chainID;
+					}
+					chainIDs[ i ] = new_chainID;
+					break;
+				}
+			}
+		}
+	}
+	return chainIDs;
 }
 
 bool
@@ -1072,7 +1128,7 @@ PoseToStructFileRepConverter::grab_pose_energies_table(
 	core::Real pose_total = 0.0;
 	if ( pose.energies().energies_updated() ) {
 		std::vector<std::string> line;
-		line.emplace_back("pose" );
+		line.emplace_back( "pose" );
 		for ( core::scoring::ScoreType const & score_type : score_types ) {
 			core::Real score = (emap_weights[score_type] * pose.energies().total_energies()[ score_type ]);
 			line.push_back( restrict_prec(score) );
@@ -1170,6 +1226,7 @@ PoseToStructFileRepConverter::get_residue_information(
 	core::uint const seqpos,
 	bool const use_PDB,
 	bool const renumber_chains,
+	utility::vector1< char > const & new_chainIDs,
 	core::Size const new_tercount,
 	ResidueInformation & res_info ) const
 {
@@ -1179,24 +1236,28 @@ PoseToStructFileRepConverter::get_residue_information(
 	using namespace core::pose;
 	using core::chemical::chr_chains;
 
-	res_info.resName( pose.residue_type(seqpos).name3() );
+	res_info.resName( pose.residue_type( seqpos ).name3() );
 
 	// Use PDB-specific information?
 	if ( use_PDB ) {
 		PDBInfoCOP pdb_info = pose.pdb_info();
 
-		res_info.chainID( pdb_info->chain( seqpos ) );
-		if ( res_info.chainID() == PDBInfo::empty_record() ) {  // safety
-			TR.Warning << "PDBInfo chain ID was left as character '" << PDBInfo::empty_record()
-				<< "', denoting an empty record; for convenience, replacing with space." << endl;
-			res_info.chainID( ' ' );
+		if ( new_chainIDs.empty() ) {
+			res_info.chainID( pdb_info->chain( seqpos ) );
+			if ( res_info.chainID() == PDBInfo::empty_record() ) {  // safety
+				TR.Warning << "PDBInfo chain ID was left as character '" << PDBInfo::empty_record()
+					<< "', denoting an empty record; for convenience, replacing with space." << endl;
+				res_info.chainID( ' ' );
+			}
+		} else {
+			res_info.chainID( new_chainIDs[ pose.chain( seqpos ) ] );
 		}
 		res_info.resSeq(    pdb_info->number( seqpos ) );
 		res_info.iCode(     pdb_info->icode( seqpos ) );
 		res_info.segmentID( pdb_info->segmentID( seqpos ) );
 		res_info.terCount( new_tercount );
-		// ...or not?
-	} else {
+
+	} else {  // ...or not?
 		uint const chain_num = pose.chain( seqpos );
 		runtime_assert( chain_num > 0 );
 
@@ -1221,12 +1282,15 @@ PoseToStructFileRepConverter::get_residue_information(
 	//TR << " res_info chain is " << res_info.chainID() << std::endl;
 }
 
+
+// Why is this function cut-and-pasted?  This is terrible! ~Labonte
 void
 PoseToStructFileRepConverter::get_residue_information(
 	core::pose::Pose const & pose,
 	core::uint const seqpos,
 	bool const use_PDB,
 	bool const renumber_chains,
+	utility::vector1< char > const & new_chainIDs,
 	core::Size const new_tercount,
 	ResidueInformation & res_info,
 	pose::PDBInfoOP & fresh_pdb_info ) const
@@ -1243,11 +1307,15 @@ PoseToStructFileRepConverter::get_residue_information(
 	if ( use_PDB ) {
 		PDBInfoCOP pdb_info = pose.pdb_info();
 
-		res_info.chainID( pdb_info->chain( seqpos ) );
-		if ( res_info.chainID() == PDBInfo::empty_record() ) {  // safety
-			TR.Warning << "PDBInfo chain ID was left as character '" << PDBInfo::empty_record()
-				<< "', denoting an empty record; for convenience, replacing with space." << endl;
-			res_info.chainID( ' ' );
+		if ( new_chainIDs.empty() ) {
+			res_info.chainID( pdb_info->chain( seqpos ) );
+			if ( res_info.chainID() == PDBInfo::empty_record() ) {  // safety
+				TR.Warning << "PDBInfo chain ID was left as character '" << PDBInfo::empty_record()
+					<< "', denoting an empty record; for convenience, replacing with space." << endl;
+				res_info.chainID( ' ' );
+			}
+		} else {
+			res_info.chainID( new_chainIDs[ pose.chain( seqpos ) ] );
 		}
 		res_info.resSeq(    pdb_info->number( seqpos ) );
 		res_info.iCode(     pdb_info->icode( seqpos ) );
@@ -1317,11 +1385,11 @@ std::string restrict_prec( core::Real inval )
 
 /// @brief fills HELIXInformation and SHEETInformation for SFR - wrappers for individual functions
 /// @author Steven Lewis smlewi@gmail.com, but cribbed from code of Yifan Song as part of Cyrus Biotechnology
-/// option dependencies in this function: options_.output_secondary_structure() controls if it runs at all, options_.per_chain_renumbering() is used with ResidueInformation, and it also calls get_residue_information()
-void PoseToStructFileRepConverter::generate_secondary_structure_informations(
-	core::pose::Pose const & pose
-) {
-
+/// option dependencies in this function: options_.output_secondary_structure() controls if it runs at all,
+/// options_.per_chain_renumbering() is used with ResidueInformation, and it also calls get_residue_information()
+void
+PoseToStructFileRepConverter::generate_secondary_structure_informations( core::pose::Pose const & pose )
+{
 	//skip if option not requested
 	if ( !options_.output_secondary_structure() ) return;
 
@@ -1348,6 +1416,11 @@ void PoseToStructFileRepConverter::generate_secondary_structure_informations(
 	core::Size n_helix = 0, n_sheet = 0;//, n_loop = 0;
 	core::Size new_tercount( 0 ); //we have to track this for ResidueInformation
 
+	utility::vector1< char > new_chainIDs;
+	if ( options_.output_ligands_as_separate_chains() && pose.pdb_info() ) {
+		new_chainIDs = get_new_chainIDs( pose );
+	}
+
 	//Now we are going to iterate through the pose, identifying secondary structure elements
 	for ( Size ires=1; ires<pose.size(); ++ires ) {
 		char secstruct = secstructs[ires-1]; //H, E, or L; note indexing fix
@@ -1369,8 +1442,8 @@ void PoseToStructFileRepConverter::generate_secondary_structure_informations(
 		}
 
 		ResidueInformation ires_info, jres_info;
-		get_residue_information(pose, ires, use_pdb_info_for_num(pose, ires), options_.per_chain_renumbering(), new_tercount, ires_info);
-		get_residue_information(pose, jres, use_pdb_info_for_num(pose, jres), options_.per_chain_renumbering(), new_tercount, jres_info);
+		get_residue_information(pose, ires, use_pdb_info_for_num(pose, ires), options_.per_chain_renumbering(), new_chainIDs, new_tercount, ires_info);
+		get_residue_information(pose, jres, use_pdb_info_for_num(pose, jres), options_.per_chain_renumbering(), new_chainIDs, new_tercount, jres_info);
 
 		if ( secstruct == 'H' ) {
 			n_helix += 1;

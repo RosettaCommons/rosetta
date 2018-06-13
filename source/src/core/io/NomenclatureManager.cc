@@ -88,7 +88,6 @@ NomenclatureManager::pdb_code_from_rosetta_name(std::string const & rosetta_name
 	utility::vector1<std::string> base_patches;
 	base_patches.push_back("non-reducing_end");
 	base_patches.push_back("reducing_end");
-	base_patches.push_back("branch_lower_terminus");
 	base_patches.push_back("cutpoint_lower");
 	base_patches.push_back("cutpoint_upper");
 	for ( core::Size i=1; i<=patches.size(); i++ ) {
