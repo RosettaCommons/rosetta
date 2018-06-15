@@ -971,7 +971,9 @@ eigenvalue_jacobi( xyzMatrix< T > const & a, T const & tol )
 	using std::abs;
 
 	// May need a tolerance based test here
-	assert( ( a.xy_ == a.yx_ ) && ( a.xz_ == a.zx_ ) && ( a.yz_ == a.zy_ ) );
+	//assert( ( a.xy_ == a.yx_ ) && ( a.xz_ == a.zx_ ) && ( a.yz_ == a.zy_ ) );
+	//fd yes we do
+	debug_assert( std::fabs(a.xy_-a.yx_)<=tol && std::fabs(a.xz_-a.zx_)<=tol &&  std::fabs(a.yz_-a.zy_)<=tol );
 
 	// Copy matrix as it will be modified by the algorithm
 	xyzMatrix< T > m( a );
@@ -1035,7 +1037,9 @@ eigenvector_jacobi( xyzMatrix< T > const & a, T const & tol, xyzMatrix< T > & J 
 	using std::abs;
 
 	// May need a tolerance based test here
-	assert( ( a.xy_ == a.yx_ ) && ( a.xz_ == a.zx_ ) && ( a.yz_ == a.zy_ ) );
+	//assert( ( a.xy_ == a.yx_ ) && ( a.xz_ == a.zx_ ) && ( a.yz_ == a.zy_ ) );
+	//fd yes we do
+	debug_assert( std::fabs(a.xy_-a.yx_)<=tol && std::fabs(a.xz_-a.zx_)<=tol &&  std::fabs(a.yz_-a.zy_)<=tol );
 
 	// Copy matrix as it will be modified by the algorithm
 	xyzMatrix< T > m( a );

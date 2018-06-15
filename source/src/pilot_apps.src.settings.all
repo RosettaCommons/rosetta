@@ -317,7 +317,7 @@ sources = {
 	"pilot/frank" : [
 		"pdb_to_map", # /* Frank Dimaio,Documentation Location,Demo Location */
 		"min_test", # /* Frank Dimaio,Documentation Location,Demo Location */
-		#"mirrorsymm_test", # /* Frank Dimaio,Documentation Location,Demo Location */
+		#"cryst_gen", # /* Frank Dimaio,Documentation Location,Demo Location */
 		"pdb_gen_cryst", # /* Frank Dimaio,Documentation Location,Demo Location */
 		"cryst_design", # /* Frank Dimaio,Documentation Location,Demo Location */
 		"calc_ssm_energies", # /* Frank Dimaio,Documentation Location,Demo Location */
