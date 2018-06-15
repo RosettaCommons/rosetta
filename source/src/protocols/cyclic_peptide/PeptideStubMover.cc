@@ -85,17 +85,23 @@ void PeptideStubMover::apply( core::pose::Pose & pose )
 
 		// first stub always starts with a jump
 		if ( istub == 1 && pose.size() == 0 ) {
-			runtime_assert_string_msg(stub_mode_[istub] == append, "Can only use append for the first residue");
+			runtime_assert_string_msg(stub_mode_[istub] == PSM_append, "Can only use append for the first residue");
 			pose.append_residue_by_jump(*new_rsd, 1);
 			for ( Size i_repeat = 2; i_repeat <= stub_rsd_repeat_[istub]; ++i_repeat ) {
 				pose.append_residue_by_bond(*new_rsd, true);
 			}
 		} else {
 			Size anchor_rsd(stub_anchor_rsd_[istub]);
-			if ( anchor_rsd == 0 ) anchor_rsd = pose.size();
+			if ( anchor_rsd == 0 ) {
+				if ( stub_mode_[istub] == PSM_prepend ) {
+					anchor_rsd = 1;
+				} else {
+					anchor_rsd = pose.size();
+				}
+			}
 
 			if ( stub_rsd_jumping_[istub] ) {
-				runtime_assert_string_msg(stub_mode_[istub] == append, "Can only use append for jumps");
+				runtime_assert_string_msg(stub_mode_[istub] == PSM_append, "Can only use append for jumps");
 				pose.append_residue_by_jump(*new_rsd, anchor_rsd);
 				for ( Size i_repeat = 2; i_repeat <= stub_rsd_repeat_[istub]; ++i_repeat ) {
 					pose.append_residue_by_bond(*new_rsd, true);
@@ -114,6 +120,9 @@ void PeptideStubMover::apply( core::pose::Pose & pose )
 
 				core::Size anchor_connecting_id(0);
 				if ( stub_anchor_rsd_connecting_atom_[istub] == "" ) {
+					if ( pose.residue_type(anchor_rsd).is_upper_terminus() ) {
+						core::pose::remove_upper_terminus_type_from_pose_residue(pose, anchor_rsd);
+					}
 					anchor_connecting_id = pose.residue_type(anchor_rsd).upper_connect_id();
 				} else {
 					core::Size atomid(pose.residue_type(anchor_rsd).atom_index(stub_anchor_rsd_connecting_atom_[istub]));
@@ -140,14 +149,14 @@ void PeptideStubMover::apply( core::pose::Pose & pose )
 					}
 				}
 
-				if ( stub_mode_[istub] == append ) {
+				if ( stub_mode_[istub] == PSM_append ) {
 					pose.append_residue_by_bond(*new_rsd, true, connecting_id, anchor_rsd, anchor_connecting_id, false);
 					//rebuild the polymer bond dependent atoms:
 					rebuild_atoms(pose, anchor_rsd);
-				} else if ( stub_mode_[istub] == prepend ) {
+				} else if ( stub_mode_[istub] == PSM_prepend ) {
 					pose.prepend_polymer_residue_before_seqpos(*new_rsd, anchor_rsd, true);
 					rebuild_atoms(pose, anchor_rsd);
-				} else if ( stub_mode_[istub] == insert ) {
+				} else if ( stub_mode_[istub] == PSM_insert ) {
 					if ( stub_insert_pos_[istub] != 0 ) {
 						pose.insert_residue_by_bond(*new_rsd, stub_insert_pos_[istub], anchor_rsd, true, stub_anchor_rsd_connecting_atom_[istub], stub_rsd_connecting_atom_[istub], false, true);
 						//pose.dump_pdb("test.pdb");
@@ -159,13 +168,13 @@ void PeptideStubMover::apply( core::pose::Pose & pose )
 
 				for ( Size i_repeat = 2; i_repeat <= stub_rsd_repeat_[istub]; ++i_repeat ) {
 					if ( stub_rsd_connecting_atom_[istub] == "" && stub_anchor_rsd_connecting_atom_[istub] == "" ) {
-						if ( stub_mode_[istub] == append ) {
+						if ( stub_mode_[istub] == PSM_append ) {
 							pose.append_residue_by_bond(*new_rsd, true);
-						} else if ( stub_mode_[istub] == insert ) {
+						} else if ( stub_mode_[istub] == PSM_insert ) {
 							if ( stub_insert_pos_[istub] == 0 ) {
 								pose.append_polymer_residue_after_seqpos(*new_rsd, anchor_rsd + i_repeat - 1, true);
 							}
-						} else if ( stub_mode_[istub] == prepend ) {
+						} else if ( stub_mode_[istub] == PSM_prepend ) {
 							pose.prepend_polymer_residue_before_seqpos(*new_rsd, anchor_rsd, true);
 						}
 					} else {
@@ -251,6 +260,7 @@ PeptideStubMover::parse_my_tag(
 
 
 /// @brief Adds a residue to the list of residues to be appended, prepended, or inserted.
+/// @details Calls add_residue() override that uses PSM_StubMode.
 void PeptideStubMover::add_residue(
 	std::string const &stubmode,
 	std::string const &resname,
@@ -264,14 +274,39 @@ void PeptideStubMover::add_residue(
 
 	runtime_assert_string_msg( stubmode=="Append" || stubmode=="Prepend" || stubmode=="Insert", "In PeptideStubMover::add_residue(): unrecognized stub creation mode.  Mode must be one of \"Append\", \"Prepend\", or \"Insert\"." );
 
+	PSM_StubMode stubmode2;
+
 	if ( stubmode == "Append" ) {
-		stub_mode_.push_back(append);
+		stubmode2 = PSM_append;
 	} else if ( stubmode == "Prepend" ) {
-		stub_mode_.push_back(prepend);
-	} else if ( stubmode == "Insert" ) {
-		stub_mode_.push_back(insert);
+		stubmode2 = PSM_prepend;
+	} else {
+		debug_assert( stubmode == "Insert" ); //Should be true, given assertion above.
+		stubmode2 = PSM_insert;
 	}
 
+	add_residue( stubmode2, resname, position, jumpmode, connecting_atom, repeat, anchor_rsd, anchor_atom );
+
+	return;
+}
+
+/// @brief Adds a residue to the list of residues to be appended, prepended, or inserted.
+/// @details This version uses enums.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+void
+PeptideStubMover::add_residue(
+	PSM_StubMode const stubmode,
+	std::string const &resname,
+	core::Size const position,
+	bool const jumpmode,
+	std::string const &connecting_atom,
+	core::Size const repeat,
+	core::Size const anchor_rsd,
+	std::string const &anchor_atom
+) {
+	runtime_assert_string_msg( stubmode == PSM_append || stubmode == PSM_prepend || stubmode == PSM_insert, "Error in PeptideStubMover::add_residue(): Invalid stub mode provided." );
+
+	stub_mode_.push_back(stubmode);
 	stub_rsd_names_.push_back( resname );
 	stub_insert_pos_.push_back( position );
 	stub_rsd_jumping_.push_back( jumpmode );

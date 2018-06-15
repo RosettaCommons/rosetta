@@ -1,0 +1,11 @@
+<ROSETTASCRIPTS>
+    <MOVERS>
+        <PeptideStubMover name="psm" reset="false">
+            <Append resname="ALA" anchor_rsd="72" repeat="3"/>
+            <Prepend resname="ALA" anchor_rsd="1" repeat="3"/>
+        </PeptideStubMover>
+    </MOVERS>
+    <PROTOCOLS>
+        <Add mover_name="psm"/>
+    </PROTOCOLS>
+</ROSETTASCRIPTS>

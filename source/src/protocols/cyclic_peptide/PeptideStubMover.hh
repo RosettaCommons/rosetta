@@ -20,10 +20,10 @@
 namespace protocols {
 namespace cyclic_peptide {
 
-enum StubMode {
-	append,
-	prepend,
-	insert
+enum PSM_StubMode {
+	PSM_append,
+	PSM_prepend,
+	PSM_insert
 };
 
 class PeptideStubMover : public moves::Mover {
@@ -73,8 +73,23 @@ public:
 
 
 	/// @brief Adds a residue to the list of residues to be appended, prepended, or inserted.
+	/// @details Calls add_residue() override that uses PSM_StubMode.
 	void add_residue(
 		std::string const &stubmode,
+		std::string const &resname,
+		core::Size const position,
+		bool const jumpmode,
+		std::string const &connecting_atom,
+		core::Size const repeat,
+		core::Size const anchor_rsd,
+		std::string const &anchor_atom
+	);
+
+	/// @brief Adds a residue to the list of residues to be appended, prepended, or inserted.
+	/// @details This version uses enums.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	void add_residue(
+		PSM_StubMode const stubmode,
 		std::string const &resname,
 		core::Size const position,
 		bool const jumpmode,
@@ -103,7 +118,7 @@ private:
 	/// @brief As residues are added, should the PDB numbering be updated?  Default true.
 	bool update_pdb_numbering_;
 
-	utility::vector1<StubMode> stub_mode_;
+	utility::vector1<PSM_StubMode> stub_mode_;
 	utility::vector1<std::string> stub_rsd_names_;
 	utility::vector1<bool> stub_rsd_jumping_;
 	utility::vector1<std::string> stub_rsd_connecting_atom_;
