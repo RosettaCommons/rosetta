@@ -700,11 +700,18 @@ def create_package(rosetta_source_path, path):
         os.symlink('./setup/' + d, path + '/' + d)
 
         for dir_name, dirs, files in os.walk(package_prefix + '/' + d):
-            if '__pycache__' in dirs: shutil.rmtree(dir_name + '/__pycache__')
+            #if '__pycache__' in dirs: shutil.rmtree(dir_name + '/__pycache__')
+            for d in '__pycache__ .git'.split():
+                if d in dirs:
+                    shutil.rmtree(dir_name + '/' + d)
+
             for f in files:
-                if f.endswith('.pyc'): os.remove(dir_name + '/' + f)
+                if f.endswith('.pyc') or f in ['.git']: os.remove(dir_name + '/' + f)
+
+    for d in 'pyrosetta/database/additional_protocol_data'.split(): shutil.rmtree(package_prefix + '/' + d)
 
     generate_version_file(rosetta_source_path, path + '/version.json')
+
 
 def create_wheel(rosetta_source_path, wheel_path):
     print("Creating Python wheel at: {}...".format(wheel_path));  sys.stdout.flush()
@@ -712,6 +719,7 @@ def create_wheel(rosetta_source_path, wheel_path):
     build_prefix = get_binding_build_root(rosetta_source_path, build=True)
 
     execute('Building wheel...', 'cd {build_prefix} && {python} setup.py bdist_wheel -d {output_path}'.format(python=sys.executable, output_path=os.path.abspath(wheel_path), **vars()))
+
 
 def main(args):
     ''' PyRosetta building script '''

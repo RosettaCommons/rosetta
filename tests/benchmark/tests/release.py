@@ -97,7 +97,8 @@ def release(name, package_name, package_dir, working_dir, platform, config, rele
             git_truncate = 'git checkout --orphan _temp_ {oldest_sha} && git commit -m "Truncating git history" && git rebase --onto _temp_ {oldest_sha} master && git checkout master && git branch -D _temp_'.format(**vars())  #
             execute('Trimming git history...', 'cd {working_dir}/{git_repository_name} && {git_truncate}'.format(**vars()))
 
-        execute('Pushing changes...', 'cd {working_dir}/{git_repository_name} && git gc --prune=now && git remote prune origin && git push -f'.format(**vars()))
+        #execute('Pushing changes...', 'cd {working_dir}/{git_repository_name} && git gc --prune=now && git remote prune origin && git push -f'.format(**vars()))
+        execute('Pushing changes...', 'cd {working_dir}/{git_repository_name} && git remote prune origin && git push -f'.format(**vars()))
 
         execute('Pruning origin...', 'cd {git_origin} && git gc --prune=now'.format(**vars()))
 
