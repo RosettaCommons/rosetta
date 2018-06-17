@@ -38,6 +38,9 @@ queue {jobs_to_queue}
 #Requirements = Arch == "X86_64"
 #Requirements = (Memory > %(memory)s) %(requirements)s
 
+# requirelements for a new nodes:
+#Requirements = (Machine > "rosetta012.graylab.jhu.edu")
+
 # requirelements for old nodes:
 # Requirements = (Machine <= "rosetta012.graylab.jhu.edu")
 
@@ -70,7 +73,7 @@ class Condor_HPC_Driver(HPC_Driver):
 
         execute('Releasing condor jobs...', 'condor_release $USER', return_='tuple')
 
-        s = execute('', 'condor_q $USER | grep $USER | grep {}'.format(condor_job_id), return_='output', terminate_on_failure=False)
+        s = execute('', 'condor_q $USER | grep $USER | grep {}'.format(condor_job_id), return_='output', terminate_on_failure=False).replace(' ', '').replace('\n', '')
         if s: return False
 
             # #setDaemonStatusAndPing('[Job #%s] Running... %s condor job(s) in queue...' % (self.id, len(s.split('\n') ) ) )

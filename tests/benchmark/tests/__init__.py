@@ -155,31 +155,78 @@ def execute_through_pexpect(command_line):
 def execute_through_pty(command_line):
     import pty, select
 
-    master, slave = pty.openpty()
-    p = subprocess.Popen(command_line, shell=True, stdout=slave, stdin=slave,
-                         stderr=subprocess.STDOUT, close_fds=True)
-    buffer = []
-    while True:
-        if select.select([master], [], [], 0.2)[0]:  # has something to read
-            data = os.read(master, 1 << 22)
-            if data: buffer.append(data)
-            # else: break  # # EOF - well, technically process _should_ be finished here...
+    if sys.platform == "darwin":
 
-        # elif time.sleep(1) or (p.poll() is not None): # process is finished (sleep here is intentional to trigger race condition, see solution for this on the next few lines)
-        #     assert not select.select([master], [], [], 0.2)[0]  # should be nothing left to read...
-        #     break
+        master, slave = pty.openpty()
+        p = subprocess.Popen(command_line, shell=True, stdout=slave, stdin=slave,
+                             stderr=subprocess.STDOUT, close_fds=True)
 
-        elif (p.poll() is not None)  and  (not select.select([master], [], [], 0.2)[0] ): break  # process is finished and output buffer if fully read
+        buffer = []
+        while True:
+            try:
+                if select.select([master], [], [], 0.2)[0]:  # has something to read
+                    data = os.read(master, 1 << 22)
+                    if data: buffer.append(data)
 
-    assert not select.select([master], [], [], 0.2)[0]  # should be nothing left to read...
+                elif (p.poll() is not None)  and  (not select.select([master], [], [], 0.2)[0] ): break  # process is finished and output buffer if fully read
 
-    os.close(slave)
-    os.close(master)
+            except OSError: break  # OSError will be raised when child process close PTY descriptior
 
-    output = b''.join(buffer).decode(encoding='utf-8', errors='backslashreplace')
-    exit_code = p.returncode
+        output = b''.join(buffer).decode(encoding='utf-8', errors='backslashreplace')
+
+        os.close(master)
+        os.close(slave)
+
+        p.wait()
+        exit_code = p.returncode
+
+        '''
+        buffer = []
+        while True:
+            if select.select([master], [], [], 0.2)[0]:  # has something to read
+                data = os.read(master, 1 << 22)
+                if data: buffer.append(data)
+                # else: break  # # EOF - well, technically process _should_ be finished here...
+
+            # elif time.sleep(1) or (p.poll() is not None): # process is finished (sleep here is intentional to trigger race condition, see solution for this on the next few lines)
+            #     assert not select.select([master], [], [], 0.2)[0]  # should be nothing left to read...
+            #     break
+
+            elif (p.poll() is not None)  and  (not select.select([master], [], [], 0.2)[0] ): break  # process is finished and output buffer if fully read
+
+        assert not select.select([master], [], [], 0.2)[0]  # should be nothing left to read...
+
+        os.close(slave)
+        os.close(master)
+
+        output = b''.join(buffer).decode(encoding='utf-8', errors='backslashreplace')
+        exit_code = p.returncode
+        '''
+
+    else:
+
+        master, slave = pty.openpty()
+        p = subprocess.Popen(command_line, shell=True, stdout=slave, stdin=slave,
+                             stderr=subprocess.STDOUT, close_fds=True)
+
+        os.close(slave)
+
+        buffer = []
+        while True:
+            try:
+                data = os.read(master, 1 << 22)
+                if data: buffer.append(data)
+            except OSError: break  # OSError will be raised when child process close PTY descriptior
+
+        output = b''.join(buffer).decode(encoding='utf-8', errors='backslashreplace')
+
+        os.close(master)
+
+        p.wait()
+        exit_code = p.returncode
 
     return exit_code, output
+
 
 
 def execute(message, command_line, return_='status', until_successes=False, terminate_on_failure=True, silent=False, silence_output=False, silence_output_on_errors=False, add_message_and_command_line_to_output=False):

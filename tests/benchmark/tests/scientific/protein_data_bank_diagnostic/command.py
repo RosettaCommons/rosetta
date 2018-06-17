@@ -21,10 +21,24 @@ _api_version_ = '1.0'  # api version
 
 _number_of_jobs_ = 1024
 
-imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/../__init__.py')  # A bit of Python magic here, what we trying to say is this: from ../__init__ import *, but init path is calculated relatively to this location
+imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/../../__init__.py')  # A bit of Python magic here, what we trying to say is this: from ../__init__ import *, but init path is calculated relatively to this location
 
 Job = namedtuple('Job', 'name pdbs path rosetta_dir command_line')  #  hpc_job_id
 #Job.__new__.__defaults__ = (None, )
+
+
+class TestMode(enum.Enum):
+    def __str__(self): return f'{self.name}'  # (self.__class__.__name__, self.name)
+
+    fast = enum.auto()
+    full = enum.auto()
+
+
+_timeouts_ = {
+    TestMode.fast : 5,
+    TestMode.full : 32,
+}
+
 
 def download_all_pdb_files(config):
     ''' Download all PDB files from www.rcsb.org and store them at given prefix (from config).
@@ -58,11 +72,23 @@ _index_html_template_ = '''\
 <title>Protein Data Bank Diagnostic test results</title>
 <p>Diagnostic was run on <b>{len_pdbs:,}</b> PDB's. The <b>{len_passed:,}</b> files passed the test and <b>{len_failed:,}</b> failed!</p>
 <br/>
-<p>Command line used:<pre style="white-space: pre-wrap; word-wrap: break-word;">{command_line}</pre></p>
+<p>Command line used: <div style="white-space: pre-wrap; font-family: Monaco, 'Liberation Mono', Courier, monospace; font-size:12px;">{command_line}</div>
 <br/>
 <p>
     Total <b>{len_failed:,}</b> PDB's failed with various error codes:
     <div style="white-space: pre-wrap; font-family: Monaco, 'Liberation Mono', Courier, monospace; font-size:12px;">{failed}</div>
+</p>
+<br/>
+<p>
+    {explanation}
+    <div style="white-space: pre-wrap; font-family: Monaco, 'Liberation Mono', Courier, monospace; font-size:12px;">{explanations}</div>
+</p>
+{note}
+<br/>
+<p>
+ To update reference results please commit:<br/>
+ &nbsp;&nbsp;&nbsp;&nbsp;<a href="reference-results.{mode}.new.json">reference-results.{mode}.new.json</a> → <a href="https://github.com/RosettaCommons/main">「main repository」</a> as <a href="https://github.com/RosettaCommons/main/tree/master/tests/benchmark/tests/scientific/protein_data_bank_diagnostic/reference-results.{mode}.json">tests/scientific/protein_data_bank_diagnostic/reference-results.{mode}.json</a><br/>
+ &nbsp;&nbsp;&nbsp;&nbsp;<a href="blacklist.{mode}.new.json">blacklist.{mode}.new.json</a> → <a href="https://github.com/RosettaCommons/main">「main repository」</a> as <a href="https://github.com/RosettaCommons/main/tree/master/tests/benchmark/tests/scientific/protein_data_bank_diagnostic/reference-results.{mode}.json">tests/scientific/protein_data_bank_diagnostic/blacklist.{mode}.json</a><br/>
 </p>
 </body></html>
 '''
@@ -73,8 +99,19 @@ _code_html_template_ = '''\
 <pre>{logs}</pre>
 </body></html>
 '''
+#<pre style="white-space: pre-wrap; word-wrap: break-word;">{command_line}</pre></p>
 
-def protein_data_bank_diagnostic(rosetta_dir, working_dir, platform, config, hpc_driver, verbose, debug):
+
+def get_blacklist(rosetta_dir, mode):
+    with open(f'{rosetta_dir}/tests/benchmark/tests/scientific/protein_data_bank_diagnostic/blacklist.{mode}.json') as f: blacklist = json.load(f)
+    return blacklist
+
+
+def remove_blacklisted_pdbs(pdbs, rosetta_dir, mode):
+    for p in get_blacklist(rosetta_dir, mode)['ignore']: pdbs.pop(p, None)
+
+
+def protein_data_bank_diagnostic(mode, rosetta_dir, working_dir, platform, config, hpc_driver, verbose, debug):
     #exit_code, output = execute('Checking if execute_through_pty is working...', 'echo "start" && sleep 10 && echo "one" && sleep 10 && sleep 10 && sleep 10 && echo "almost finish!" && sleep 10', return_='tuple')
     #print(f'Result: exit_code:{exit_code}, output:{output}')
     # for i in range(1000):
@@ -88,18 +125,30 @@ def protein_data_bank_diagnostic(rosetta_dir, working_dir, platform, config, hpc
                      _LogKey_ : 'Building rosetta failed!\n{}\n{}\n'.format(build_command_line, output) }
     else:
         extension = calculate_extension(platform)
-        command_line = f'{rosetta_dir}/source/bin/PDB_diagnostic.{extension} -no_color -PDB_diagnostic::skip_pack_and_min true -PDB_diagnostic::reading_only true -out:file:score_only /dev/null -s {{input_file}}'
+
+        command_line = f'{rosetta_dir}/source/test/timelimit.py {_timeouts_[mode]} {rosetta_dir}/source/bin/PDB_diagnostic.{extension} -no_color -out:file:score_only /dev/null -jd2::delete_old_poses true -ignore_unrecognized_res false -load_PDB_components true -packing::pack_missing_sidechains false -packing::repack_only true -s {{input_file}}'
+        command_line += ' -ignore_zero_occupancy false'
+        command_line += ' -in:file:obey_ENDMDL true'  # necessary to read PDB-sourced multimodel NMR files
+
+        if   mode == TestMode.fast: command_line += ' -PDB_diagnostic::skip_pack_and_min true  -PDB_diagnostic::reading_only true'
+        elif mode == TestMode.full: command_line += ' -PDB_diagnostic::skip_pack_and_min false -PDB_diagnostic::reading_only false'
+        else: raise BenchmarkError(f'protein_data_bank_diagnostic: Unknown mode {mode}!')
+
 
         all_pdbs = download_all_pdb_files(config)
 
-        if debug:
-            global _number_of_jobs_
-            _all_pdbs_ = all_pdbs
-            _number_of_jobs_, all_pdbs = 2, { k : all_pdbs[k] for k in list(all_pdbs.keys())[10:10] } # 18
+        number_of_jobs = _number_of_jobs_ if mode == TestMode.fast else _number_of_jobs_ * 1
 
-            all_pdbs.update( { k : _all_pdbs_[k] for k in '2agd 2gtx 1bbi'.split() } )  # 1ehd 106d 145d 154d 159d 6enz 6eor
-            #_number_of_jobs_ , pdbs = 5, { k : pdbs[k] for k in list(pdbs.keys())[:1000] }
+        if debug:
+            _all_pdbs_ = all_pdbs
+            number_of_jobs, all_pdbs = 2, { k : all_pdbs[k] for k in list(all_pdbs.keys())[10:10] } # 18
+
+            all_pdbs.update( { k : _all_pdbs_[k] for k in '100d 101d 1bz9 2agd 2gtx 1bbi'.split() } )  # 1ehd 106d 145d 154d 159d 6enz 6eor
+            #number_of_jobs , pdbs = 5, { k : pdbs[k] for k in list(pdbs.keys())[:1000] }
             #pdbs = { str(i): '_'+str(i)+'_' for i in range(10) }
+
+
+        remove_blacklisted_pdbs(all_pdbs, rosetta_dir, mode)
 
 
         hpc_logs = f'{working_dir}/.hpc-logs';  os.makedirs(hpc_logs)
@@ -108,7 +157,7 @@ def protein_data_bank_diagnostic(rosetta_dir, working_dir, platform, config, hpc
 
         jobs,  hpc_job_ids = [], []
         keys = list( all_pdbs.keys() );  keys.sort()
-        slice = ( len(keys) + _number_of_jobs_ - 1 ) // _number_of_jobs_
+        slice = ( len(keys) + number_of_jobs - 1 ) // number_of_jobs
         for i in range(0, len(keys), slice):
             job_index = i // slice
 
@@ -152,6 +201,40 @@ def protein_data_bank_diagnostic(rosetta_dir, working_dir, platform, config, hpc
 
         len_failed = len(all_pdbs) - len(results['passed'])
 
+
+        # Generating new reference results
+        reference_results = dict(passed=results['passed'], failed = { code : list( results['failed'][code].keys() ) for code in results['failed'] } )
+        with open(f'{working_dir}/reference-results.{mode}.new.json', 'w') as f: json.dump(reference_results, f, sort_keys=True, indent=2)
+
+        state, explanations = _S_passed_, ''
+        with open(f'{rosetta_dir}/tests/benchmark/tests/scientific/protein_data_bank_diagnostic/reference-results.{mode}.json') as f: reference = json.load(f)
+        for pdb in reference['passed']:
+            if pdb not in results['passed']:
+                category = None
+                for c, pdbs in results['failed'].items():
+                    if pdb in pdbs:
+                        category, log_path = c, pdbs[pdb]
+                        break
+
+                if category:
+                    state = _S_failed_
+                    explanations += f'PDB <a href="https://www.rcsb.org/structure/{pdb.upper()}">{pdb.upper()}</a> was passing test before but now faild with <a href="pdbs.{category}.html">「{category}」</a> error! Its run-log could be found in <a href="{log_path}">「{pdb.upper()}」</a>\n'
+
+        explanation = '' if state == _S_passed_ else '<p>Test marked as <b>FAILED</b> due to following errors:</p>'
+
+
+        # Generating new blacklist based on PBD's in `exceed_timeout` and old blacklist
+        blacklist = get_blacklist(rosetta_dir, mode)['ignore']
+        for p in results['failed'].get('exceed_timeout', []): blacklist.append(p)
+        with open(f'{working_dir}/blacklist.{mode}.new.json', 'w') as f: json.dump( dict(ignore = sorted( set(blacklist) ) ), f, sort_keys=True, indent=2)
+
+
+        new_passed_pdbs = ''
+        for pdb in results['passed']:
+            if pdb not in reference['passed']: new_passed_pdbs += f' {pdb.upper()}'
+
+        note = f"<br/><p>NOTE: following PDB's passed the tests but was not listed in reference results: {new_passed_pdbs}</p>" if new_passed_pdbs else ''
+
         with open(f'{working_dir}/index.html', 'w') as f:
 
             failed = []
@@ -162,6 +245,7 @@ def protein_data_bank_diagnostic(rosetta_dir, working_dir, platform, config, hpc
                 _index_html_template_.format(
                     command_line = command_line, len_pdbs = len(all_pdbs), len_passed = len(results['passed']), len_failed = len_failed,
                     failed = ''.join(failed), #failed = ''.join( ( f'<p>{len(results["failed"][c]):,6} <a href=pdbs.{c}.html>「{c}」</a></p>' for c in sorted( results['failed'].keys(), key=lambda k: -len(results['failed'][k]) ) ) )
+                    explanation = explanation, explanations = explanations, mode=mode, note=note,
                 )
             )
 
@@ -170,17 +254,16 @@ def protein_data_bank_diagnostic(rosetta_dir, working_dir, platform, config, hpc
                 f.write(_code_html_template_.format(code = c, logs = ''.join( ( f'<a href={log}>{pdb.upper()}</a>\n' for pdb, log in results['failed'][c].items() ) ) ) )
 
 
-        return { _StateKey_  : _S_passed_, _ResultsKey_ : {},
-                 _LogKey_    : f'Protein Data Bank Diagnostic is finished.\n{len(results["passed"]):,} PDB files tested - {len_failed:,} structures failed.\nPlease see HTML output for details.',
+        return { _StateKey_  : state, _ResultsKey_ : {},
+                 _LogKey_ : f'Protein Data Bank Diagnostic is finished.\n{len(results["passed"]):,} PDB files tested - {len_failed:,} structures failed.\nPlease see HTML output for details.',
                  _IgnoreKey_ : [ os.path.basename(hpc_logs) + '/' + f for f in os.listdir(hpc_logs)]
         }
 
 
 
 def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
-    if test == "____": return protein_data_bank_diagnostic(rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-
-    elif test == '': return protein_data_bank_diagnostic(rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    if test == "full": return protein_data_bank_diagnostic(TestMode.full, rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test == '':   return protein_data_bank_diagnostic(TestMode.fast, rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
 
     else: raise BenchmarkError('Unknown scripts test: {}!'.format(test))
 
@@ -191,7 +274,7 @@ class PDB_Diagnostic_Codes(enum.Enum):
 
     unknown               = enum.auto()
 
-    ace                   = enum.auto()
+    #ace                   = enum.auto()
 
     sugar_variant                       = enum.auto()
     zero_atom_restype                   = enum.auto()
@@ -204,11 +287,13 @@ class PDB_Diagnostic_Codes(enum.Enum):
 
     partly_recognized     = enum.auto()
 
-    fill                  = enum.auto()
+    fill_missing_atoms    = enum.auto()
     rotno                 = enum.auto()
 
     zero_length_xyzVector = enum.auto()
     zero_nres             = enum.auto()
+
+    exceed_timeout        = enum.auto()
 
     assert_segfault       = enum.auto()
     misc_segfault         = enum.auto()
@@ -237,7 +322,7 @@ def classify_pdb_diagnostic_log(log):
 
 
     error_map = OrderedDict( [ # Pattern → error_code, Note that order is slightly different from original code: it is now grouped by-pattern types for readability
-        ( P(previous='ace'), PDB_Diagnostic_Codes.ace ),
+        #( P(previous='ace'), PDB_Diagnostic_Codes.ace ),
 
         ( P(line='unable to find desired variant residue:'),    PDB_Diagnostic_Codes.sugar_variant ),
         ( P(line=('atom name', 'not available in residue'), ),  PDB_Diagnostic_Codes.unknown_atom_name ),
@@ -252,7 +337,7 @@ def classify_pdb_diagnostic_log(log):
 
         ( P(next='with 3-letter code:'), PDB_Diagnostic_Codes.partly_recognized ),
 
-        ( P(splited='fill_missing_atoms!'),                   PDB_Diagnostic_Codes.fill ),
+        ( P(splited='fill_missing_atoms!'),                   PDB_Diagnostic_Codes.fill_missing_atoms ),
         ( P(splited='packed_rotno_conversion_data_current_'), PDB_Diagnostic_Codes.rotno ),
 
         ( P(log=('Cannot normalize xyzVector of length() zero', 'src/numeric/xyzVector.hh') ), PDB_Diagnostic_Codes.zero_length_xyzVector ),
@@ -274,10 +359,12 @@ def classify_pdb_diagnostic_log(log):
             return PDB_Diagnostic_Codes.unknown
 
 
-    if '*****COMPLETED*****' in previous_line: return None
-    else:
-        if 'assertion' in log  and  'failed.' in log: return PDB_Diagnostic_Codes.assert_segfault
-        return PDB_Diagnostic_Codes.misc_segfault
+    #if '*****COMPLETED*****' in previous_line: return None
+    #else:
+    if 'assertion' in log  and  'failed.' in log: return PDB_Diagnostic_Codes.assert_segfault
+    elif 'exceeded the timeout and will be killed!' in log: return PDB_Diagnostic_Codes.exceed_timeout
+
+    return PDB_Diagnostic_Codes.misc_segfault
 
 
 
@@ -288,7 +375,7 @@ def main(args):
     with open(job_file_name) as f: job = Job( **json.load(f) )
 
     error_logs = os.path.abspath(f'./error-logs')
-    os.makedirs(error_logs)
+    if not os.path.isdir(error_logs): os.makedirs(error_logs)
 
     results = dict(passed=[], failed=dict())
     for pdb, path in job.pdbs.items():

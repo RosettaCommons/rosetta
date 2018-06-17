@@ -29,13 +29,14 @@ def main(argv):
     commline = ' '.join(argv[2:])
     proc = subprocess.Popen(["bash", "-c", commline])
     start = time.time()
+    retcode = None
     while time.time() - start <= timeout*60:
         retcode = proc.poll()
         if retcode is not None: break
         time.sleep(5)
     if retcode is None:
         print("*** '%s' exceeded the timeout and will be killed!" % commline)
-        os.kill(proc.pid, signal.SIGTERM)
+        os.kill(proc.pid, signal.SIGKILL)  # signal.SIGTERM
         return 1
     return retcode
 
