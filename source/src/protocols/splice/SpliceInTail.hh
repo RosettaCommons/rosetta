@@ -78,7 +78,6 @@ public:
 
 private:
 	utility::vector1< core::Size > tail_dbase_subset_; //dflt false;
-	bool tail_dbase_iterate_; //dflt false;
 	DataccacheBoolDataOP end_tail_dbase_subset_;
 
 };
