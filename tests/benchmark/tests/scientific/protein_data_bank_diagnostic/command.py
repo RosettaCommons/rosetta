@@ -35,7 +35,7 @@ class TestMode(enum.Enum):
 
 
 _timeouts_ = {
-    TestMode.fast : 5,
+    TestMode.fast : 8,
     TestMode.full : 32,
 }
 
