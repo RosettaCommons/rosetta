@@ -52,10 +52,10 @@ def download_all_pdb_files(config):
     #${RSYNC} -rlpt -v -z --delete --port=$PORT ${SERVER}/data/structures/divided/pdb/ $MIRRORDIR > $LOGFILE 2>/dev/null
     #SERVER=rsync.wwpdb.org::ftp                                   # RCSB PDB server name
     #PORT=33444                                                    # port RCSB PDB server is using
-    if config['debug']: print('WARNING:Debug mode, skipping PBD downloading...')
-    else: execute("Downloading PDB's from www.rcsb.org...", f'cd {prefix} && rsync -rlpt -v -z --delete --port=33444 rsync.wwpdb.org::ftp/data/structures/divided/pdb/ {prefix}')
+    if config['debug']: print('WARNING: Debug mode, skipping PBD downloading...')
+    else: execute("Downloading PDBs from www.rcsb.org...", f'cd {prefix} && rsync -rlpt -v -z --delete --port=33444 rsync.wwpdb.org::ftp/data/structures/divided/pdb/ {prefix}')
 
-    files = execute("Getting list of avalible PDB's...", f"cd {prefix} && find -name 'pdb*.ent.gz'", return_='output', silence_output=True).split()
+    files = execute("Getting list of available PDBs...", f"cd {prefix} && find -name 'pdb*.ent.gz'", return_='output', silence_output=True).split()
 
     #print(f'files:{files}')
 
@@ -68,14 +68,37 @@ def download_all_pdb_files(config):
 
 
 _index_html_template_ = '''\
-<html><head>
-<title>Protein Data Bank Diagnostic test results</title>
-<p>Diagnostic was run on <b>{len_pdbs:,}</b> PDB's. The <b>{len_passed:,}</b> files passed the test and <b>{len_failed:,}</b> failed!</p>
+<html>
+<head>
+    <title>Protein Data Bank Diagnostic test results</title>
+
+  <style>
+    fixed {{background-color: #eee; white-space: pre-wrap; font-family: Monaco, 'Liberation Mono', Courier, monospace; font-size:12px; }}
+  </style>
+</head>
+<body>
+<p>
+    The PDB diagnostic was run on <b>{len_pdbs:,}</b> PDB files. <b>{len_passed:,}</b> files passed the test and <b>{len_failed:,}</b> failed!
+    This test tries to load every PDB file in the PDB database and classifies the failures that occur.
+    The command line below shows what was done; broadly all versions of this test examine load-time problems and more expensive versions
+    (<fixed>&#8209;PDB_diagnostic::skip_pack_and_min&nbsp;false</fixed>) also check for errors during scoring, packing, and minimization.
+</p>
+
+<p><i>"Hunting down these bugs is the most fun thing you can do on a Thursday morning"</i> - Andy Watkins, probably.</p>
+
+<p>An individual PDB passes or fails this test based on whether it errors out or completes the diagnostic.  The test as a whole passes or fails based on a "reference results" system, like an expected result in a unit test.  About 16,000 PDBs fail at the time of this writing; the purpose of the test is to document the failures and watch for new ones, so PDBs failing in an expected manner does not constitute an overall test failure.  The test will fail if PDBs pass or fail <b>UNEXPECTEDLY</b>, where the expectation is defined by the reference results (see below).</p>
+
+<p>If you find that this page is telling you the test failed because there are <b>FEWER</b> errors: <b>GREAT</b>!  You fixed some bugs!  You can update the reference results following the instructions at the bottom of the page.</p>
+
+<p>If you find that there are <b>MORE</b> failures than expected, especially non-timeout failures, consider it a warning that recent code changes may have introduced bugs into the PDB reading machinery. If you don't know what's going on: post to Slack or devel. <b>DO NOT</b> just update the reference results in this case.</p>
+
+<p>If you want to know more about what this test does - pester Steven Lewis to write proper documentation.</p>
+
 <br/>
-<p>Command line used: <div style="white-space: pre-wrap; font-family: Monaco, 'Liberation Mono', Courier, monospace; font-size:12px;">{command_line}</div>
+<p>Command line used: <fixed>{command_line}</fixed>
 <br/>
 <p>
-    Total <b>{len_failed:,}</b> PDB's failed with various error codes:
+    <b>{len_failed:,}</b> total PDBs failed with the following error codes:
     <div style="white-space: pre-wrap; font-family: Monaco, 'Liberation Mono', Courier, monospace; font-size:12px;">{failed}</div>
 </p>
 <br/>
@@ -86,7 +109,7 @@ _index_html_template_ = '''\
 {note}
 <br/>
 <p>
- To update reference results please commit:<br/>
+ To update reference results please copy the files below into the main repository:<br/>
  &nbsp;&nbsp;&nbsp;&nbsp;<a href="reference-results.{mode}.new.json">reference-results.{mode}.new.json</a> → <a href="https://github.com/RosettaCommons/main">「main repository」</a> as <a href="https://github.com/RosettaCommons/main/tree/master/tests/benchmark/tests/scientific/protein_data_bank_diagnostic/reference-results.{mode}.json">tests/scientific/protein_data_bank_diagnostic/reference-results.{mode}.json</a><br/>
  &nbsp;&nbsp;&nbsp;&nbsp;<a href="blacklist.{mode}.new.json">blacklist.{mode}.new.json</a> → <a href="https://github.com/RosettaCommons/main">「main repository」</a> as <a href="https://github.com/RosettaCommons/main/tree/master/tests/benchmark/tests/scientific/protein_data_bank_diagnostic/reference-results.{mode}.json">tests/scientific/protein_data_bank_diagnostic/blacklist.{mode}.json</a><br/>
 </p>
@@ -243,7 +266,8 @@ def protein_data_bank_diagnostic(mode, rosetta_dir, working_dir, platform, confi
 
             f.write(
                 _index_html_template_.format(
-                    command_line = command_line, len_pdbs = len(all_pdbs), len_passed = len(results['passed']), len_failed = len_failed,
+                    command_line = command_line.replace('-', '&#8209;'),
+                    len_pdbs = len(all_pdbs), len_passed = len(results['passed']), len_failed = len_failed,
                     failed = ''.join(failed), #failed = ''.join( ( f'<p>{len(results["failed"][c]):,6} <a href=pdbs.{c}.html>「{c}」</a></p>' for c in sorted( results['failed'].keys(), key=lambda k: -len(results['failed'][k]) ) ) )
                     explanation = explanation, explanations = explanations, mode=mode, note=note,
                 )
