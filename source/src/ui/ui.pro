@@ -23,6 +23,8 @@ SOURCES += \
     config/config_dialog.cpp \
     config/util.cpp \
     network/bowman.cpp \
+    network/bowman_model.cpp \
+    network/bowman_thread.cpp \
     task/job_submit.cpp \
     task/job_view.cpp \
     task/file.cpp \
@@ -40,7 +42,9 @@ SOURCES += \
     ui_protocols/helical_bundle/HelixOptionWidget.cpp \
     ui_core/pose_draw/SimplePoseDrawOpenGLWidget.cpp \
     ui_protocols/helical_bundle/HelicalBundlePoseDrawOpenGLWidget.cpp \
-    viewers/score_file_view.cpp
+    viewers/score_file_view.cpp \
+    widgets/pose_editor.cpp \
+
 
 
 HEADERS  += \
@@ -48,6 +52,8 @@ HEADERS  += \
     config/config_dialog.h \
     config/util.h \
     network/bowman.h \
+    network/bowman_model.h \
+    network/bowman_thread.h \
     task/job_submit.h \
     task/job_view.h \
     task/file.fwd.h \
@@ -75,7 +81,10 @@ HEADERS  += \
     ui_protocols/helical_bundle/HelicalBundlePoseDrawOpenGLWidget.fwd.h \
     util/exception.h \
     util/serialization.h \
-    viewers/score_file_view.h
+    viewers/score_file_view.h \
+    widgets/pose_editor.h \
+
+
 
 FORMS    += \
     config/config_dialog.ui \
@@ -86,7 +95,9 @@ FORMS    += \
     task/task_view.ui \
     ui_protocols/helical_bundle/HelicalBundleDialogueWidget.ui \
     ui_protocols/helical_bundle/HelixOptionWidget.ui \
-    viewers/score_file_view.ui
+    viewers/score_file_view.ui \
+    widgets/pose_editor.ui
+
 
 LIBS += \
         -L$$OUT_PWD/../rosetta/external         -lexternal \

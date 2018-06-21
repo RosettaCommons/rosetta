@@ -17326,7 +17326,17 @@ inline nlohmann::json::json_pointer operator "" _json_pointer(const char* s, std
 #undef NLOHMANN_BASIC_JSON_TPL
 #undef NLOHMANN_JSON_HAS_HELPER
 
-// Rosetta specifics: pulling `nlohmann::json` into top level `json` namespace
+/// Rosetta specifics: pulling `nlohmann::json` into top level `json` namespace plus mininal convenience typedefs
+
 using json = nlohmann::json;
+using JSON = nlohmann::json;
+
+using JSON_UP = std::unique_ptr<nlohmann::json>;
+using JSON_CUP = std::unique_ptr<nlohmann::json const>;
+
+using JSON_SP = std::shared_ptr<nlohmann::json>;
+using JSON_CSP = std::shared_ptr<nlohmann::json const>;
+
+/// end of Rosetta specifics ------------------------------------------------------------------------------------
 
 #endif

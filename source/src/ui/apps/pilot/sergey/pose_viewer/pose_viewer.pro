@@ -19,13 +19,12 @@ QMAKE_CXXFLAGS += \
 
 
 SOURCES += \
-        main.cpp \
-        mainwindow.cpp
+        main.cpp
 
 
-HEADERS  += mainwindow.h
+HEADERS  +=
 
-FORMS    += mainwindow.ui
+FORMS    +=
 
 
 LIBS += \
@@ -64,3 +63,16 @@ LIBS += \
         -L$$OUT_PWD/../rosetta/cifparse         -lcifparse \
         -L$$OUT_PWD/../rosetta/external         -lexternal \
         -lz
+
+macx {
+LIBS += \
+        -framework OpenGL \
+        -framework GLUT
+}
+
+unix:!macx {
+LIBS += \
+        -lglut \
+        -lGLU \
+        -lGL
+}

@@ -1,4 +1,4 @@
-#include "mainwindow.h"
+#include <ui/widgets/pose_editor.h>
 #include <QApplication>
 
 #include <protocols/init/init.hh>
@@ -10,13 +10,18 @@
 
 int main(int argc, char *argv[])
 {
+	qRegisterMetaType<JSON_SP> ("JSON_SP");
+	qRegisterMetaType<JSON_CSP>("JSON_CSP");
+
+	qRegisterMetaType<std::string>("std::string");
+
     qDebug() << "test::main: Calling Rosetta init()...";
 
     protocols::init::init(argc, argv);
     ui::ui_lib_test::test();
 
     QApplication a(argc, argv);
-    MainWindow w;
+	ui::widgets::PoseEditor w;
     w.show();
 
     return a.exec();

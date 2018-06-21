@@ -279,7 +279,12 @@ void TaskView::action_output_save_as()
 						QFileInfo fi( it->second->file_name() );
 						file_name = dir + '/' + fi.fileName();
 					}
-					else file_name = QFileDialog::getSaveFileName(this, tr("Save Output file as..."), it->second->file_name());
+					else {
+						QDir qd(".");
+						QString suggested_name = qd.absolutePath() + "/" + QFileInfo(it->first).fileName();
+						//qDebug() << "dir: " << suggested_name;
+						file_name = QFileDialog::getSaveFileName(this, tr("Save Output file as..."), suggested_name);
+					}
 
 					QFile file(file_name);
 					if( file.open(QIODevice::WriteOnly) ) {

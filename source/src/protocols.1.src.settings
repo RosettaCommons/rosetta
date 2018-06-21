@@ -273,6 +273,8 @@ sources = {
 		"WhileMover",
 	],
 	"protocols/network": [
+		"hal",
+		"ui_mover",
 		"util",
 	],
 	"protocols/parser": [

@@ -156,10 +156,10 @@ def upgrade_submodule(submodule_path, rosetta_dir, working_dir, platform, config
     output = ''
 
     output += execute('Upgrading main to latest origin/master...', 'cd {rosetta_dir} && {upgrade_master_to_origin_master}'.format(**vars()), add_message_and_command_line_to_output=True, return_='output')
-    output += execute('Checking if there is no local changes in main repository...', 'cd {rosetta_dir} && ( git diff --exit-code >/dev/null && git diff --exit-code --cached >/dev/null ) '.format(**vars()), add_message_and_command_line_to_output=True, return_='output')
+    output += execute('Checking if there is no local changes in main repository...', 'cd {rosetta_dir} && ( git --no-pager diff --no-color --exit-code >/dev/null && git --no-pager diff --no-color --exit-code --cached >/dev/null ) '.format(**vars()), add_message_and_command_line_to_output=True, return_='output')
 
     output += execute('Upgrading submodule {submodule_path} to latest origin/master...'.format(**vars()), 'cd {rosetta_dir}/{submodule_path} && {upgrade_master_to_origin_master}'.format(**vars()), add_message_and_command_line_to_output=True, return_='output')
-    output += execute('Checking if there is no local changes in {submodule_path} submodule...'.format(**vars()), 'cd {rosetta_dir}/{submodule_path} && ( git diff --exit-code >/dev/null && git diff --exit-code --cached >/dev/null ) '.format(**vars()), add_message_and_command_line_to_output=True, return_='output')
+    output += execute('Checking if there is no local changes in {submodule_path} submodule...'.format(**vars()), 'cd {rosetta_dir}/{submodule_path} && ( git --no-pager diff --no-color --exit-code >/dev/null && git --no-pager diff --no-color --exit-code --cached >/dev/null ) '.format(**vars()), add_message_and_command_line_to_output=True, return_='output')
 
 
     if submodule_path == 'pyrosetta_scripts':

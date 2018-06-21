@@ -154,12 +154,12 @@ def main(args):
         test_suite = imp.load_source('test_suite', file_name)
 
         if Options.compare:
-            working_dir_1 = os.path.abspath('./results/' + test + '.' + Options.compare[0])
+            working_dir_1 = os.path.abspath( f'./results/{Platform["os"]}.{test}.{Options.compare[0]}' )
             res_1 = json.load( open(working_dir_1 + '/output.results.json') )["results"]
 
             if Options.compare[1] == 'None': res_2, working_dir_2 = None, None
             else:
-                working_dir_2 = os.path.abspath('./results/' + test + '.' + Options.compare[1])
+                working_dir_2 = os.path.abspath( f'./results/{Platform["os"]}.{test}.{Options.compare[1]}' )
                 res_2 = json.load( open(working_dir_2 + '/output.results.json') )["results"]
 
             res = test_suite.compare(test, res_1, working_dir_1, res_2, working_dir_2)
@@ -173,7 +173,7 @@ def main(args):
 
 
         else:
-            working_dir = os.path.abspath('./results/' + test + Options.suffix)
+            working_dir = os.path.abspath( f'./results/{Platform["os"]}.{test}{Options.suffix}' )
             if os.path.isdir(working_dir): shutil.rmtree(working_dir);  #print('Removing old job dir %s...' % working_dir)  # remove old dir if any
             os.makedirs(working_dir)
 

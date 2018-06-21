@@ -107,7 +107,7 @@ def run_documentation_update(rosetta_dir, working_dir, platform, config, hpc_dri
         shutil.copyfile('{rosetta_dir}/source/src/basic/options/full-options-list.md'.format(**vars()), '{doc_dir}/full-options-list.md'.format(**vars()))
 
         # Don't bother adding full option list unless more than the date changes
-        res, output = execute('Checking fulloption list differences ...', 'cd {doc_dir} && git diff --numstat -- full-options-list.md'.format(**vars()), return_='tuple')
+        res, output = execute('Checking fulloption list differences ...', 'cd {doc_dir} && git --no-pager diff --no-color --numstat -- full-options-list.md'.format(**vars()), return_='tuple')
         if len(output.split()) == 3 and output.split() == ['1','1','full-options-list.md']:
             execute('Reverting date-only change to full-options-list.md ...', 'cd {doc_dir} && git checkout -- ./full-options-list.md'.format(**vars()) )
         else:

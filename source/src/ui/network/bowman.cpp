@@ -3,185 +3,123 @@
 
 #include <protocols/network/util.hh>
 
-#include <utility/CSI_Sequence.hh>
+//#include <json.hpp>
 
-#include <libzmq/include/zmq.hpp>
 
-#include <json.hpp>
-
+#include <QDebug>
+//#include <QCoreApplication>
 
 // qDebug is not thread safe so we using raw std::cout instead
-#include <iostream>
+//#include <iostream>
+
+using namespace ui::network;
+using namespace protocols::network;
+
 
 namespace ui {
 namespace network {
 
-using std::string;
-using namespace utility;
-using namespace protocols::network;
-
-string as_hexadecimal(string const &s)
+Bowman::Bowman(QObject *parent) : QObject(parent)
 {
-	std::ostringstream o;
-	//o << s.size() << "_";
+	bowman_thread_.start();
+	connect(&bowman_thread_, &BowmanThread::client_connected,       this, &Bowman::client_connected);
+	connect(&bowman_thread_, &BowmanThread::client_disconnected,    this, &Bowman::client_disconnected);
+	//connect(&bowman_thread_, &BowmanThread::specification_received, this, &Bowman::specification_received);  ← we can't simply re-emit the signal because we want to update inner specification list first, so `specification_received` will be emited manually from on_bowman_thread_specification_received
+	connect(&bowman_thread_, &BowmanThread::result_received,        this, &Bowman::on_bowman_thread_result_received);
+	connect(&bowman_thread_, &BowmanThread::progress_data_received, this, &Bowman::on_bowman_thread_progress_data_received);
 
-	for(unsigned char c : s) { // cast to `unsigned char` is intentional here
-		if( c >= 33 && c < 127) o << c;
-		else o << std::hex /*<< std::setw(2)*/ << std::setfill('0') << static_cast<short>(c);
-	}
-	//o << std::resetiosflags(std::ios_base::basefield);
-	return o.str();
+	//QMetaObject::connectSlotsByName(this);
+
+	connect(&bowman_thread_, &BowmanThread::specification_received, this, &Bowman::on_bowman_thread_specification_received);
 }
 
-quint64 as_number(string const &s)
+void Bowman::on_bowman_thread_specification_received(std::string const &client_id, JSON_CSP const &specification)
 {
-	quint64 r = 0;
-	for(unsigned char c : s) r += c*256; // cast to `unsigned char` is intentional here
-	return r;
+	back_ends_.emplace(client_id, specification);
+
+	Q_EMIT specification_received(client_id, specification);
+
+	// bool is_main_thread = QThread::currentThread() == QCoreApplication::instance()->thread();
+	// bool is_bowman_thread = QThread::currentThread() == &bowman_thread_;
+	// std::cout << "Bowman::on_bowman_thread_specification_received: is_main_thread = " << std::boolalpha << is_main_thread << std::endl;
+	// std::cout << "Bowman::on_bowman_thread_specification_received: is_bowman_thread = " << std::boolalpha << is_bowman_thread << std::endl;
 }
 
-
-BowmanThread::BowmanThread(QObject *parent) : QThread(parent)
+void Bowman::on_bowman_thread_client_disconnected(std::string const &id)
 {
-	//context();
-	//bus(); // making sure bus socket is created and bound _before_ thread start to execute
-
-	context_ = std::make_shared<zmq::context_t>(1);
-
-	bus_.reset( new zmq::socket_t(*context_, ZMQ_PAIR) );
-	bus_->bind(_bus_address_);
+	auto it = back_ends_.find(id);
+	if( it != back_ends_.end() ) back_ends_.erase(it);
 }
 
 
-//BowmanThread::~BowmanThread() = default;
-BowmanThread::~BowmanThread()
+
+/// Initiate execution of given command on `back_end`.
+/// If no command is specified, - execute `null` command
+/// If no back_end specified, - execute of first avalible back_end
+void Bowman::execute(core::pose::Pose const &pose, std::string const & command_name, std::string back_end)
 {
-	send_message(*bus_, _m_quit_);
-	wait();
+	auto pose_binary = protocols::network::pose_to_bytes(pose);
+
+	JSON_SP j = std::make_shared<nlohmann::json>();
+	(*j)[_f_name_] = command_name;
+	(*j)[_f_arguments_] = {
+						   {_f_pose_, pose_binary},
+	};
+
+	execute(j, back_end);
 }
 
-
-void BowmanThread::run()
+/// Initiate execution of given command on `back_end`.
+/// If no back_end specified, - execute of first avalible back_end
+void Bowman::execute(JSON_CSP const &command, std::string back_end)
 {
-	std::cout << "BowmanThread::run() starting..." << std::endl;
+	if( back_ends_.empty() ) return;
 
-	zmq::socket_t bus(*context_, ZMQ_PAIR);
-	bus.connect(_bus_address_);
-
-	zmq::socket_t hal(*context_, ZMQ_ROUTER);
-	hal.bind(_server_address_);
-
-	std::vector<zmq_pollitem_t> items = { {hal, 0, ZMQ_POLLIN, 0 }, {bus, 0, ZMQ_POLLIN, 0 } };
-
-	auto const timeout = std::chrono::milliseconds(2500);
-	auto const ping_interval = std::chrono::milliseconds(500);
-	std::chrono::steady_clock::time_point last_ping_time = std::chrono::steady_clock::now() - ping_interval;
-
-	std::map<string, std::chrono::steady_clock::time_point> clients; // client_id -> time of last message from that client
-
-	while (true) {
-		//zmq::message_t id;
-
-		if( zmq::poll( items, std::chrono::milliseconds(500) ) > 0 ) {
-
-			if ( items [0].revents & ZMQ_POLLIN ) { // messages from hal clients
-
-				std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
-
-				//std::cout << "got message from hal: " << receive_message(hal) << std::endl;
-				zmq::multipart_t message(hal);
-
-				if( message.size() >= 2 ) {
-					string id = message.popstr();
-					string type = message.popstr();
-					//std::cout << "got message from hal with id:" << as_hexadecimal(id) << std::endl;
-
-					auto it = clients.find(id);
-
-					if( it == clients.end() ) {
-						std::cout << "BowmanThread::run(): " << CSI_bgGreen() << CSI_Black() << "Client " << as_hexadecimal(id) << " connected!" << CSI_Reset() << std::endl;
-						clients.emplace(id, now);
-						Q_EMIT client_connected( as_number(id) ); // NOTE: this is cross-thread emit
-					} else it->second = now;
-
-					//std::cout << "got message from hal: " << message.str() << std::endl;
-					//id = std::move(message[0]);
-
-					//ping_count = max_ping_count;
-					if( message.size() == 1  and  type == _m_specification_ ) {
-						string specification = message.popstr();
-						std::cout << "BowmanThread::run(): " << CSI_bgBlue() << CSI_Black() << "Got specification from client " << as_hexadecimal(id) << ":" << CSI_Reset() << json::from_msgpack( Bytes(specification.begin(), specification.end() ) ) << std::endl;
-
-					}
-
-				} else std::cout << "BowmanThread::run(): ERROR Got unexpected number of parts in multipart message:" << message.size() << "!" << std::endl;
-
-			}
-
-			if ( items [1].revents & ZMQ_POLLIN ) { // messages from main UI thread
-				std::cout << "got message from main thread: " << receive_message(bus) << std::endl;
-				break;
-			}
-		}
-
-		// if ( --ping_count == 0 ) {
-		// 	std::cout << "UI server seems to be dead, re-connecting..." << std::endl;
-
-		// 	ui.release();
-		// 	ui = create_ui_socket(*context);
-		// 	ping_count = max_ping_count;
-		// }
-
-		std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
-		if( clients.size()  and  now - last_ping_time > ping_interval ) { // std::chrono::duration_cast<std::chrono::milliseconds>(now - last_ping_time) > ping_interval
-			last_ping_time = now;
-
-			for (auto it = clients.begin(); it != clients.end(); ) {
-				if( now - it->second > timeout ) { // std::chrono::duration_cast<std::chrono::milliseconds>(now - it->second) > timeout
-					std::cout << "BowmanThread::run(): " << CSI_bgRed() << CSI_Black() << "Client " << as_hexadecimal(it->first) << " has disconnected!" << CSI_Reset() << std::endl;
-
-					Q_EMIT client_disconnected( as_number(it->first) ); // NOTE: this is cross-thread emit
-
-					it = clients.erase(it);
-				} else ++it;
-			}
-
-			for(auto & it : clients) {
-				//std::cout << "Sending ping to " << it.first << std::endl;
-				send_message(hal, it.first, ZMQ_SNDMORE);
-				send_message(hal, _m_ping_);
-			}
-		}
-
-		//std::cout << ping_count;
+	std::string chosen_back_end;
+	if( back_end.empty() ) chosen_back_end = back_ends_.begin()->first;
+	else {
+		auto it = back_ends_.find(back_end);
+		if( it == back_ends_.end() ) return;
+		else chosen_back_end = back_ends_.begin()->first;
 	}
 
-	std::cout << "BowmanThread::run() exiting..." << std::endl;
+	bowman_thread_.execute(chosen_back_end, command);
 }
 
 
-// BowmanThread::ContextSP BowmanThread::context()
-// {
-// 	static ContextSP context = std::make_shared<zmq::context_t>(1);
-// 	return context;
-// }
-// BowmanThread * BowmanThread::get_instance()
-// {
-// 	static std::unique_ptr<BowmanThread> bowman( new BowmanThread() );
-// 	if( not bowman->isRunning() ) bowman->start();
-// 	return bowman.get();
-// }
+void Bowman::on_bowman_thread_result_received(JSON_SP const &_result)
+{
+	json & result = *_result;
 
-// zmq::socket_t & BowmanThread::bus()
-// {
-// 	static SocketUP bus;
-// 	if( not bus) {
-// 		bus.reset( new zmq::socket_t(*context(), ZMQ_PAIR) );
-// 		bus->bind(_bus_address_);
-// 	}
-// 	return *bus;
-// }
+	core::pose::PoseOP pose;
+	auto it_pose = result.find(_f_pose_);
+	if( it_pose != result.end() ) {
+		pose = protocols::network::bytes_to_pose( it_pose.value() );
+		result.erase(it_pose);
+	}
+	Q_EMIT result_received(pose, _result);
+}
 
+
+void Bowman::on_bowman_thread_progress_data_received(JSON_SP const &_result)
+{
+	json & result = *_result;
+
+	core::pose::PoseOP pose;
+	auto it_pose = result.find(_f_pose_);
+	if( it_pose != result.end() ) {
+		pose = protocols::network::bytes_to_pose( it_pose.value() );
+		result.erase(it_pose);
+	}
+	Q_EMIT progress_data_received(pose, _result);
+}
+
+
+
+// void Bowman::on_bowman_thread_client_connected(std::string const &)
+// {
+// 	//qDebug() << "Bowman::on_bowman_thread__client_connected(...)";
+// }
 
 
 } // namespace network

@@ -258,12 +258,12 @@ def run_beautify_test(rosetta_dir, working_dir, platform, config, hpc_driver=Non
 
     execute('Updating options, ResidueTypes and version info...', 'cd {}/source && ./update_options.sh && ./update_ResidueType_enum_files.sh && python version.py'.format(rosetta_dir) )
 
-    res, _ = execute('Checking if there is local changes in main repository...', 'cd {} && ( git diff --exit-code >/dev/null || git diff --exit-code --cached >/dev/null ) '.format(rosetta_dir), return_='tuple')
+    res, _ = execute('Checking if there is local changes in main repository...', 'cd {} && ( git --no-pager diff --no-color --exit-code >/dev/null || git --no-pager diff --no-color --exit-code --cached >/dev/null ) '.format(rosetta_dir), return_='tuple')
     if res:
         state, output = _S_failed_, 'Working directory is not clean! `git status`:\n{}\nThis might be because you trying to beautify pull-request..., please try too schedule `beautify` test for a branch or SHA1...\n'.format( execute('Checking if there is local changes in main...', 'cd {} && git status'.format(rosetta_dir), return_='output') )
 
     else:
-        o = execute('Getting list of branches where HEAD is present...', 'cd {} && git branch --contains HEAD && git branch -r --contains HEAD'.format(rosetta_dir), return_='output')
+        o = execute('Getting list of branches where HEAD is present...', 'cd {} && git branch --no-color --contains HEAD && git branch --no-color -r --contains HEAD'.format(rosetta_dir), return_='output')
         branches = set()
         for line in o.split('\n'):
             br = line.replace('*', '').split()
@@ -296,10 +296,10 @@ def run_beautify_test(rosetta_dir, working_dir, platform, config, hpc_driver=Non
             else:
                 output += o
 
-                res, _ = execute('Checking if there is local changes in main repository...', 'cd {} && ( git diff --exit-code >/dev/null && git diff --exit-code --cached >/dev/null ) '.format(rosetta_dir), return_='tuple')
+                res, _ = execute('Checking if there is local changes in main repository...', 'cd {} && ( git --no-pager diff --no-color --exit-code >/dev/null && git --no-pager diff --no-color --exit-code --cached >/dev/null ) '.format(rosetta_dir), return_='tuple')
 
                 if res:
-                    output += execute('Calculating changes...', "cd {} && git diff".format(rosetta_dir), return_='output')
+                    output += execute('Calculating changes...', "cd {} && git --no-pager diff --no-color".format(rosetta_dir), return_='output')
                     res, o = execute('Committing and pushing changes...', "cd {} && git commit -a -m 'beautifying' --author='{user_name} <{user_email}>' && git fetch && git rebase && git push".format(rosetta_dir, branch, user_name=config['user_name'], user_email=config['user_email']), return_='tuple')
 
                     output += o
