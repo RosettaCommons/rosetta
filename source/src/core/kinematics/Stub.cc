@@ -72,7 +72,13 @@ Stub::from_four_points(
 	e1.normalize();
 
 	Vector e3( cross( e1, c - b ) );
-	e3.normalize();
+	e3.normalize_or_zero();
+	if ( e3.is_zero() ) {
+		// a/b/c are colinear. We adjust arbitrarily to make sure there's a proper frame.
+		// (The additional vector is chosen to be small and unlikely to be coincident with anything.)
+		e3 = cross( e1, c-b + Vector( 1.4e-7, 6.7e-8, 2.3e-7 ) );
+		e3.normalize();
+	}
 
 	Vector e2( cross( e3,e1) );
 	M.col_x( e1 ).col_y( e2 ).col_z( e3 );

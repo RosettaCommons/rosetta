@@ -413,6 +413,13 @@ AtomICoor::build(
 	Vector v1, Vector v2, Vector v3
 ) const
 {
+	if ( (v1-v2).is_zero() ) {
+		// Will cause built_stub to crash.
+		// Throw in a little bit of a shift and try again
+		core::Real delta = 1e-6;
+		v1 = (v3-v2).normalized() + Vector( delta, 0, 0 );
+	}
+
 	kinematics::Stub built_stub( v1, v2, v3 );
 
 	if ( ! built_stub.is_orthogonal( 0.001 ) ) {
