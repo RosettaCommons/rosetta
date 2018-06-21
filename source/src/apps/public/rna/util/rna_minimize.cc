@@ -65,6 +65,7 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
+#include <basic/options/keys/stepwise.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/full_model.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
@@ -154,15 +155,9 @@ rna_fullatom_minimize_test()
 		input = PoseInputStreamOP( new PDBPoseInputStream( option[ in::file::s ]() ) );
 	}
 
-	// native pose setup
-	pose::Pose native_pose;
-	bool native_exists( false );
-	if ( option[ in::file::native ].user() ) {
-		std::string native_pdb_file  = option[ in::file::native ];
-		core::import_pose::pose_from_file( native_pose, *rsd_set, native_pdb_file , core::import_pose::PDB_file);
-		cleanup( native_pose );
-		native_exists = true;
-	}
+	// native pose setup -- also align pose for the sake of StepWisePoseAligner-compatible setup
+	pose::PoseOP native_pose = nullptr;
+	pose::PoseOP align_pose = nullptr;
 
 	using namespace core::import_pose::options;
 	// minimizer setup
@@ -172,7 +167,6 @@ rna_fullatom_minimize_test()
 
 	// Silent file output setup
 	std::string const & silent_file = option[ out::file::silent  ]();
-
 
 	// Only if -overwrite
 	if ( option[ out::overwrite ]() ) {
@@ -222,6 +216,16 @@ rna_fullatom_minimize_test()
 			builder.initialize_further_from_options();
 			builder.build(); // should update input_poses[1] which is pose
 		}
+	
+		// We only want to do this at most once, but we must do it once
+		// pose exists. Doesn't have to be the EXACT one because in this
+		// use case I think they should all have the same FMI.
+
+		// In theory, if you are trying to minimize multiple silent files 
+		// of different modeling problems in one executable, this is trouble.
+		if ( !native_pose && option[ in::file::native ].user() ) {
+			core::import_pose::initialize_native_and_align_pose( native_pose, align_pose, rsd_set, pose );
+		}
 
 		if ( option[OptionKeys::constraints::cst_fa_file].user() ) {
 			// Just Reads the first cst_file...
@@ -233,18 +237,6 @@ rna_fullatom_minimize_test()
 				option[OptionKeys::constraints::cst_fa_file][1], ConstraintSetOP( new ConstraintSet ), test_pose );
 			pose->constraint_set( cst_set );
 		}
-
-		// RNA_DeNovoPoseInitializer parameters;
-		// if ( option[params_file].user() ) {
-		//  parameters.initialize_for_de_novo_protocol(
-		//   pose, option[params_file],
-		//   basic::database::full_name("sampling/rna/1jj2_RNA_jump_library.dat"),
-		//   false /*ignore_secstruct*/
-		//  );
-		//  // parameters.set_suppress_bp_constraint( 1.0 );
-		//  parameters.setup_base_pair_constraints( pose );
-		//  //rna_minimizer.set_atom_level_domain_map( parameters.atom_level_domain_map() );
-		// }
 
 		AtomLevelDomainMapOP atom_level_domain_map( new AtomLevelDomainMap( *pose ) );
 		if ( option[ in::file::minimize_res ].user() ) {
@@ -283,34 +275,14 @@ rna_fullatom_minimize_test()
 		pose::Pose pose_init = *pose;
 		rna_minimizer.apply( *pose );
 
-		// Do alignment to native
-		if ( native_exists ) {
-			utility::vector1< Size > superimpose_res;
-			for ( Size k = 1; k <= pose->size(); ++k ) superimpose_res.push_back( k );
-			core::id::AtomID_Map< id::AtomID > const & alignment_atom_id_map_native =
-				protocols::stepwise::modeler::align::create_alignment_id_map_legacy( *pose, native_pose, superimpose_res ); // perhaps this should move to toolbox.
-			core::scoring::superimpose_pose( *pose, native_pose, alignment_atom_id_map_native );
-			core::scoring::superimpose_pose( pose_init, native_pose, alignment_atom_id_map_native );
-		}
-
 		BinarySilentStruct s( opts, *pose, tag );
 
-		if ( native_exists ) {
-			Real const rmsd_init = all_atom_rmsd( native_pose, pose_init );
-			Real const rmsd      = all_atom_rmsd( native_pose, *pose );
-			std::cout << "All atom rmsd: " << rmsd_init  << " to " << rmsd << std::endl;
+		if ( native_pose ) {
+			Real rmsd;
+			
+			rmsd = protocols::stepwise::modeler::align::superimpose_with_stepwise_aligner( *pose, *native_pose, option[ OptionKeys::stepwise::superimpose_over_all ]() );
+			std::cout << "All atom rmsd over moving residues: " << tag << " " << rmsd << std::endl;
 			s.add_energy( "rms", rmsd );
-			s.add_energy( "rms_init", rmsd_init );
-
-			// Stem RMSD
-			// if ( option[params_file].user() ) {
-			//  std::list< Size > stem_residues( parameters.get_stem_residues( pose ) );
-			//  if ( !stem_residues.empty()/*size() > 0*/ ) {
-			//   Real const rmsd_stems = all_atom_rmsd( native_pose, pose, stem_residues );
-			//   s.add_energy( "rms_stem", rmsd_stems );
-			//   std::cout << "Stems rmsd: " << rmsd_stems << std::endl;
-			//  }
-			// }
 		}
 
 		std::cout << "Outputting " << tag << " to silent file: " << silent_file << std::endl;
@@ -320,9 +292,7 @@ rna_fullatom_minimize_test()
 		if ( is_dump_pdb ) {
 			dump_pdb( *pose, out_file );
 		}
-
 	}
-
 }
 
 

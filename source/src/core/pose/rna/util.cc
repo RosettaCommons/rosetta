@@ -2182,7 +2182,8 @@ detect_sugar_contacts( pose::Pose const & pose, Size const moving_res,
 //////////////////////////////////////////////////////////////////////
 void
 setup_three_prime_phosphate_based_on_next_residue( pose::Pose & pose, Size const n ) {
-	if ( pose.residue_type( n ).has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) {
+	if ( pose.residue_type( n ).has_variant_type( chemical::VIRTUAL_RNA_RESIDUE )
+			|| pose.residue_type( n ).has_variant_type( chemical::VIRTUAL_PHOSPHATE ) ) {
 		// can't meaningfully do this sort of thing
 		return;
 	}
