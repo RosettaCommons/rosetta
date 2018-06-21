@@ -1048,7 +1048,7 @@ get_glycosidic_torsion( uint const named_torsion, Conformation const & conf, uin
 	}
 
 	Angle const angle_in_radians(
-		conf.torsion_angle( ref_atoms[ 1 ], ref_atoms[ 2 ], ref_atoms[ 3 ], ref_atoms[ 4 ]) );
+		conf.torsion_angle( ref_atoms[ 1 ], ref_atoms[ 2 ], ref_atoms[ 3 ], ref_atoms[ 4 ] ) );
 	return principal_angle_degrees( conversions::degrees( angle_in_radians ) );
 }
 
@@ -1191,21 +1191,16 @@ get_distance_to_start( conformation::Conformation const & conf, core::Size const
 }
 
 utility::vector1< bool >
-get_glycan_start_points(conformation::Conformation const & conf){
-
-	utility::vector1< bool > glycan_start_points(conf.size(), false);
+get_glycan_start_points( conformation::Conformation const & conf )
+{
+	utility::vector1< bool > glycan_start_points( conf.size(), false );
 
 	for ( core::Size i = 1; i <= conf.size(); ++i ) {
-
-		//Branch point - definitely a start the glycan
-		if ( conf.residue( i ).is_branch_point() && ! conf.residue(i).is_carbohydrate() ) {
-			Size glycan_plus_one = get_glycan_connecting_protein_branch_point(conf, i);
-			if ( glycan_plus_one != 0 ) {
-				glycan_start_points[ glycan_plus_one ] = true;
-			}
-		} else if ( conf.residue( i ).is_carbohydrate() ) {
-			//Indicates a glycan that is not part of a protein chain. - SO we make sure the parent residue is 0 to indicate the start point.
-			if ( find_seqpos_of_saccharides_parent_residue( conf.residue(i)) == 0 ) {
+		Residue const & residue( conf.residue( i ) );
+		if ( residue.is_carbohydrate() ) {
+			core::uint const parent( find_seqpos_of_saccharides_parent_residue( residue ) );
+			if ( ( ! parent ) || ( ! conf.residue( parent ).is_carbohydrate() ) ) {
+				// If there is no parent or if the parent is not a saccharide, this is the start of a glycan tree.
 				glycan_start_points[ i ] = true;
 			}
 		}
@@ -1273,15 +1268,16 @@ get_carbohydrate_residues_and_tips_of_branch(
 
 ///@brief Get the carbohydrate residue connecting the protein branch point.
 core::Size
-get_glycan_connecting_protein_branch_point(conformation::Conformation const & conf, core::Size const protein_branch_point_resnum){
-
-	debug_assert(conf.residue(protein_branch_point_resnum).is_branch_point());
+get_glycan_connecting_protein_branch_point(
+	conformation::Conformation const & conf,
+	core::Size const protein_branch_point_resnum )
+{
+	debug_assert( conf.residue( protein_branch_point_resnum ).is_branch_point() );
 
 	core::Size parent_residue = protein_branch_point_resnum - 1;
 
 	Size connections = conf.residue( protein_branch_point_resnum ).n_possible_residue_connections();
 	for ( core::Size connection = 1; connection <= connections; ++connection ) {
-
 		Size connecting_res = conf.residue( protein_branch_point_resnum ).connected_residue_at_resconn( connection );
 
 		if ( connecting_res != 0 && connecting_res != parent_residue && conf.residue( connecting_res ).is_carbohydrate() ) {
@@ -1289,12 +1285,10 @@ get_glycan_connecting_protein_branch_point(conformation::Conformation const & co
 		}
 	}
 	return 0;
-
 }
 
 ///@brief Get the particular resnum from a glycan position, givin the protein branch point.
 /// The glycan_position is numbered 1 -> length of glycan. This is useful for easily identifying a particular glycan position.
-///
 core::Size
 get_resnum_from_glycan_position(conformation::Conformation const & conf, core::Size const glycan_one, core::Size const glycan_position){
 	using namespace utility;

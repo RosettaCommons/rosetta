@@ -869,21 +869,23 @@ Pose::phi( Size const seqpos ) const
 {
 	using namespace id;
 
-	debug_assert( residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_carbohydrate() );
-	PyAssert( (seqpos<=size()&&seqpos!=0), "Pose::phi( Size const seqpos ): variable seqpos is out of range!" );
-	PyAssert( (residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_carbohydrate() ),
+	debug_assert( residue_type( seqpos ).is_protein() || residue_type( seqpos ).is_peptoid() ||
+		residue_type( seqpos ).is_carbohydrate() );
+	PyAssert( (seqpos <= size() && seqpos != 0 ), "Pose::phi( Size const seqpos ): variable seqpos is out of range!" );
+	PyAssert( (residue_type( seqpos ).is_protein() || residue_type( seqpos ).is_peptoid() ||
+		residue_type( seqpos ).is_carbohydrate() ),
 		"Pose::phi( Size const seqpos ): residue seqpos is not part of a protein, peptoid, or carbohydrate!" );
 
-	if ( residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() ) {
-		if ( residue_type(seqpos).is_beta_aa() ) {
-			return residue(seqpos).mainchain_torsion(phi_torsion_beta_aa);
-		} else if ( residue_type(seqpos).is_oligourea() ) {
-			return residue(seqpos).mainchain_torsion(phi_torsion_oligourea);
+	if ( residue_type( seqpos ).is_protein() || residue_type( seqpos ).is_peptoid() ) {
+		if ( residue_type( seqpos ).is_beta_aa() ) {
+			return residue( seqpos ).mainchain_torsion(phi_torsion_beta_aa );
+		} else if ( residue_type( seqpos ).is_oligourea() ) {
+			return residue( seqpos ).mainchain_torsion(phi_torsion_oligourea );
 		} else { //Default case, including peptoids and alpha-amino acids:
-			return residue(seqpos).mainchain_torsion(phi_torsion);
+			return residue( seqpos ).mainchain_torsion( phi_torsion );
 		}
 	} else /*is carbohydrate*/ {
-		return carbohydrates::get_glycosidic_torsion(phi_torsion, *this, seqpos);
+		return carbohydrates::get_glycosidic_torsion( phi_torsion, *this, seqpos );
 	}
 }
 

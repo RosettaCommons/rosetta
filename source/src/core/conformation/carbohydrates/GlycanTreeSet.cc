@@ -66,10 +66,9 @@ GlycanTreeSet::GlycanTreeSet():
 }
 
 /// @brief Standard constructor
-GlycanTreeSet::GlycanTreeSet(conformation::Conformation const & conf):
-	utility::pointer::ReferenceCount()
+GlycanTreeSet::GlycanTreeSet( conformation::Conformation const & conf ): utility::pointer::ReferenceCount()
 {
-	setup_glycan_trees(conf);
+	setup_glycan_trees( conf );
 }
 
 
@@ -279,7 +278,8 @@ GlycanTreeSet::~GlycanTreeSet()= default;
 
 
 void
-GlycanTreeSet::setup_glycan_trees(conformation::Conformation const & conf){
+GlycanTreeSet::setup_glycan_trees( conformation::Conformation const & conf )
+{
 	glycan_tree_set_.clear();
 	// find the first residue of all glycans and use them to populate the set.
 
@@ -288,22 +288,20 @@ GlycanTreeSet::setup_glycan_trees(conformation::Conformation const & conf){
 
 
 	for ( core::Size i = 1; i <= conf.size(); ++i ) {
-		if ( start_points[i] ) {
+		if ( start_points[ i ] ) {
 			//TR << "Setting up " << start_points[i] << std::endl;
-			GlycanTreeOP GT = GlycanTreeOP( new GlycanTree( conf, i ));
-			glycan_tree_set_[i] = GT;
+			GlycanTreeOP GT = GlycanTreeOP( new GlycanTree( conf, i ) );
+			glycan_tree_set_[ i ] = GT;
 
 			//Populate res to tree map.
 			for ( core::Size res : GT->get_residues() ) {
-				glycan_res_to_tree_[res] = GT;
+				glycan_res_to_tree_[ res ] = GT;
 			}
 		}
 	}
 	TR << "Found " << glycan_tree_set_.size() << " glycan trees." << std::endl;
 
 	//pose.reference_pose_from_current(ref_pose_name_, true /*Replace any currently set refpose*/);
-
-
 }
 void
 GlycanTreeSet::on_length_change( core::conformation::signals::LengthEvent const & event ){

@@ -776,8 +776,7 @@ Conformation::check_valid_membrane() const {
 ///////////////////////////////////////////////////////////////////////////////
 
 
-///@brief
-/// Get the glycan tree set.  Null if not present.
+/// @brief Get the glycan tree set.  Null if not present.
 carbohydrates::GlycanTreeSetCOP
 Conformation::glycan_tree_set() const {
 	if ( tree_set_observer_ ) {
@@ -787,17 +786,15 @@ Conformation::glycan_tree_set() const {
 	}
 }
 
-///@brief
-/// Setup glycan trees and attach length observer.
+/// @brief Setup glycan trees and attach length observer.
 void
 Conformation::setup_glycan_trees(){
 	if ( ! tree_set_observer_ ) {
-		tree_set_observer_ = carbohydrates::GlycanTreeSetObserverOP( new carbohydrates::GlycanTreeSetObserver( *this ));
+		tree_set_observer_ = carbohydrates::GlycanTreeSetObserverOP( new carbohydrates::GlycanTreeSetObserver( *this ) );
 		tree_set_observer_->attach_to(*this);
 	} else {
 		TR << "GlycanTreeSet already present. Nothing to be done." << std::endl;
 	}
-
 }
 
 void

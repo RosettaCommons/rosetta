@@ -63,11 +63,8 @@ namespace core {
 namespace conformation {
 namespace carbohydrates {
 
-GlycanTree::GlycanTree():
-	utility::pointer::ReferenceCount()
-{
-
-}
+GlycanTree::GlycanTree(): utility::pointer::ReferenceCount()
+{}
 
 
 // @brief standard constructor
@@ -82,10 +79,8 @@ GlycanTree::GlycanTree( conformation::Conformation const & conf, Size const star
 
 GlycanTree::GlycanTree( Size const start_pos ):
 	utility::pointer::ReferenceCount(),
-	start_pos_(start_pos)
-{
-
-}
+	start_pos_( start_pos )
+{}
 
 GlycanTree::GlycanTree( GlycanTree const & src ):
 	utility::pointer::ReferenceCount(),
@@ -101,8 +96,6 @@ GlycanTree::GlycanTree( GlycanTree const & src ):
 }
 
 
-
-
 GlycanTreeOP
 GlycanTree::clone() const {
 	return GlycanTreeOP( new GlycanTree( *this ) );
@@ -112,13 +105,15 @@ GlycanTree::clone() const {
 GlycanTree::~GlycanTree()= default;
 
 void
-GlycanTree::setup_glycan_nodes(conformation::Conformation const & conf, Size const start_pos) {
+GlycanTree::setup_glycan_nodes( conformation::Conformation const & conf, Size const start_pos )
+{
 	tree_.clear();
 	start_pos_ = start_pos;
 
 
 	// Find all residues belonging to the tree starting at start_pos
-	std::pair<utility::vector1< Size >, utility::vector1< Size>> branch_and_tips = get_carbohydrate_residues_and_tips_of_branch(conf, start_pos, true /*include_start_position*/);
+	std::pair< utility::vector1< Size >, utility::vector1< Size> > branch_and_tips =
+		get_carbohydrate_residues_and_tips_of_branch( conf, start_pos, true /*include_start_position*/ );
 
 	utility::vector1< Size > branch_residues = branch_and_tips.first;
 
@@ -139,7 +134,7 @@ GlycanTree::setup_glycan_nodes(conformation::Conformation const & conf, Size con
 		tree_[pos] = GlycanNodeOP( new GlycanNode(conf, start_pos, pos));
 	}
 
-	root_ = find_seqpos_of_saccharides_parent_residue( conf.residue(start_pos) );
+	root_ = find_seqpos_of_saccharides_parent_residue( conf.residue( start_pos ) );
 }
 
 bool

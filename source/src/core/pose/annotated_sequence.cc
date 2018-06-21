@@ -552,7 +552,12 @@ append_pose_with_glycan_residues(
 			for ( uint i( 1 ); i <= n_branches; ++i ) {
 				branch_points.emplace_back( resnum_to_be_appended, branch_atom_names[ i ] );
 			}
-		} else {
+		} else if ( residue_to_be_appended.is_upper_terminus() ) {
+			TR.Warning << "append_pose_with_glycan_residues( " <<
+				"pose::Pose & pose, chemical::ResidueTypeCOPs residue_types ): " <<
+				"The provided anchor residue of <pose> is an upper terminus yet has no branch point at which to "
+				"append the glycan chain." << endl;
+		} else if ( ! residue_to_be_appended.has_incomplete_connection() ) {
 			TR.Warning << "append_pose_with_glycan_residues( " <<
 				"pose::Pose & pose, chemical::ResidueTypeCOPs residue_types ): " <<
 				"The provided anchor residue of <pose> has no branch point at which to append the glycan chain." << endl;

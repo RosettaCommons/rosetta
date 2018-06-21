@@ -68,10 +68,10 @@ public:
 	clone() const;
 
 	// standard constructor
-	GlycanTree( conformation::Conformation const & conf, Size const start_pos);
+	GlycanTree( conformation::Conformation const & conf, Size const start_pos );
 
 	// constructor that still needs updating by pose
-	GlycanTree(Size const start_pos);
+	GlycanTree( Size const start_pos );
 
 
 public:

@@ -340,7 +340,6 @@ create_glycan_movemap_from_residue_selector(
 /// substituents and written as prefixes.  In other words, sugars are usually drawn and named with residue 1 to the
 /// right.
 /// At present time, param files only exist for a limited number of sugars! ~ Labonte
-/// Also, I've not written this to handle creation of glycolipids yet.
 void
 glycosylate_pose(
 	Pose & pose,
@@ -368,21 +367,24 @@ glycosylate_pose(
 	}
 
 	if ( TR.Trace.visible() ) {
-		TR.Trace << "Ready to append the following residue types:  " << endl;
+		TR.Trace << "Ready to append the following residue type(s): ";
 		for ( auto residue_type : residue_types ) {
 			TR.Trace << residue_type->name() << ' ';
 		}
 		TR.Trace << endl;
+		TR.Trace << "...appending to: " << residue.type().name() << ' ' << sequence_position << endl;
 	}
 
 	Size const initial_nres( pose.size() );  // used below for setting up PDBInfo
 
 	// Prepare the glycosylation site for branching.
-	// TODO: Add code to attach to lipids.
 	if ( residue.is_carbohydrate() ) {
 		chemical::VariantType const variant(
 			chemical::carbohydrates::CarbohydrateInfoManager::branch_variant_type_from_atom_name( atom_name ) );
 		add_variant_type_to_pose_residue( pose, variant, sequence_position );
+	} if ( ( ( residue.type().has_property( NUCLEOTIDE_DIPHOSPHATE ) ) || ( residue.type().is_lipid() ) ) &&
+			( residue.is_upper_terminus() ) ) {
+		remove_upper_terminus_type_from_pose_residue( pose, sequence_position );
 	} else {  // It's a typical branch point, in that it has a single type of branch point variant.
 		add_variant_type_to_pose_residue( pose, SC_BRANCH_POINT, sequence_position );
 	}
@@ -445,8 +447,8 @@ glycosylate_pose(
 	}
 
 	//TR << "InitialNRES: " << initial_sizes << " NRES: "<< pose.size() << " PDBINFO: "<< pose.pdb_info()->nres() << std::endl;
-	TR << "Glycosylated pose with " << iupac_sequence << '-' << atom_name <<
-		pose.residue( sequence_position ).name3() << sequence_position << endl;
+	TR << "Glycosylated pose with a(n) " << iupac_sequence << '-' << atom_name <<
+		pose.residue( sequence_position ).name3() << sequence_position << " bond." << endl;
 
 	//Make sure that the new pose has a GlycanTreeSetObserver.
 	if ( ! pose.glycan_tree_set() ) {
@@ -460,7 +462,8 @@ glycosylate_pose(
 }
 
 // Glycosylate the Pose at the given sequence position using an IUPAC sequence.
-/// @details  This is a wrapper function for standard AA cases, i.e., glycosylation at Asn, Thr, Ser, or Trp.
+/// @details  This is a wrapper function for standard cases, i.e., glycosylation at Asn, Thr, Ser, or Trp.
+/// It also can handle glycosylation of nucleotide diphosphates.
 void
 glycosylate_pose(
 	Pose & pose,
@@ -469,20 +472,27 @@ glycosylate_pose(
 	bool const idealize_linkages /*true*/,
 	bool keep_pdb_info /*true*/ )
 {
-	std::string const & glycosylation_site( pose.residue( sequence_position ).name3() );
-	if ( glycosylation_site == "ASN" ) {
-		glycosylate_pose( pose, sequence_position, "ND2", iupac_sequence, idealize_linkages, keep_pdb_info );
-	} else if ( glycosylation_site == "SER" ) {
-		glycosylate_pose( pose, sequence_position, "OG", iupac_sequence, idealize_linkages, keep_pdb_info );
-	} else if ( glycosylation_site == "THR" ) {
-		glycosylate_pose( pose, sequence_position, "OG1", iupac_sequence, idealize_linkages, keep_pdb_info );
-	} else if ( glycosylation_site == "TRP" ) {
-		glycosylate_pose( pose, sequence_position, "CD1", iupac_sequence, idealize_linkages, keep_pdb_info );
+	using namespace chemical;
+
+	conformation::Residue const & glycosylation_site( pose.residue( sequence_position ) );
+	AA const aa( glycosylation_site.aa() );
+	std::string atom_name;
+	if ( aa == aa_asn ) {
+		atom_name = "ND2";
+	} else if ( aa == aa_ser ) {
+		atom_name = "OG";
+	} else if ( aa == aa_thr ) {
+		atom_name = "OG1";
+	} else if ( aa == aa_trp ) {
+		atom_name = "CD1";
+	} else if ( glycosylation_site.type().has_property( chemical::NUCLEOTIDE_DIPHOSPHATE ) ) {
+		atom_name = "3OPB";
 	} else {
-		utility_exit_with_message( glycosylation_site + " is not a common site of glycosylation or else it is "
+		utility_exit_with_message( glycosylation_site.name3() + " is not a common site of glycosylation or else it is "
 			"ambiguous; Rosetta cannot determine attachment atom.  Use glycosylate_pose( Pose & pose, uint const "
 			"sequence_position, std::string const & atom_name, std::string const & iupac_sequence ) instead." );
 	}
+	glycosylate_pose( pose, sequence_position, atom_name, iupac_sequence, idealize_linkages, keep_pdb_info );
 }
 
 
@@ -987,20 +997,7 @@ setup_existing_glycans(Pose &pose)
 }
 
 
-
-
-
 ////////////////////////////////////////    Branch Information    /////////////////////////////////////////
-///
-///
-///
-
-
-
-
-
-
-
 
 /// @brief Get residues further down the branch from this residue.  starting_position ->
 /// @details Calls get_carbohydrate_residues_and_tips_of_branch
@@ -1013,7 +1010,6 @@ get_carbohydrate_residues_of_branch(
 }
 
 
-
 /// @brief Get tips (end residue of linear components of branches) further down the branch from this residue.  starting_position ->
 /// @details Calls get_carbohydrate_residues_and_tips_of_branch
 utility::vector1< core::Size >
@@ -1023,7 +1019,6 @@ get_carbohydrate_tips_of_branch(
 {
 	return get_carbohydrate_residues_and_tips_of_branch(pose, starting_position).second;
 }
-
 
 
 /// @brief Get residues further down the branch from this residue.  starting_position ->
@@ -1039,9 +1034,6 @@ get_carbohydrate_residues_and_tips_of_branch(
 {
 	return conformation::carbohydrates::get_carbohydrate_residues_and_tips_of_branch(pose.conformation(), starting_position);
 }
-
-
-
 
 
 ///@brief Get the carbohydrate residue connecting the protein branch point.
@@ -1068,7 +1060,6 @@ get_glycan_position_from_resnum(Pose const & pose, core::Size const glycan_one, 
 	return conformation::carbohydrates::get_glycan_position_from_resnum( pose.conformation(), glycan_one, glycan_residue );
 
 }
-
 
 
 select::residue_selector::ResidueSubset
@@ -1113,9 +1104,6 @@ get_resnums_from_glycan_positions(Pose const & pose, utility::vector1< core::Siz
 
 
 ////////////////////////////////////////    Branch Deletion    /////////////////////////////////////////
-///
-///
-///
 
 utility::vector1< bool >
 get_mainchain_children( Pose const & pose, core::Size starting_resnum, bool include_starting_resnum){

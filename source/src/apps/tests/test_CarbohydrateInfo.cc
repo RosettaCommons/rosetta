@@ -297,6 +297,15 @@ main( int argc, char *argv[] )
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;
+		cout << "Creating UDP-D-Glc through glycosylation:" << endl;
+
+		make_pose_from_sequence( UDP_D_Glc, "Z[UDP:non-conjugated]", *residue_set );
+		pose::carbohydrates::glycosylate_pose( UDP_D_Glc, 1, "a-D-Glcp-" );
+
+		test_sugar( UDP_D_Glc );
+
+
+		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Importing CAPRI Round 27 Target 57, a crazy, heparin-like hexamer with uronic acids, sulfates, and "
 			"sulfonamidos:" << endl;
 

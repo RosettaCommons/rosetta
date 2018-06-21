@@ -101,7 +101,7 @@ SugarBackboneEnergy::residue_energy(
 	core::Size prev_rsd_num;
 
 	if ( pose.glycan_tree_set() ) {
-		prev_rsd_num =  pose.glycan_tree_set()->get_parent(rsd.seqpos() );
+		prev_rsd_num =  pose.glycan_tree_set()->get_parent( rsd.seqpos() );
 		is_exocyclic_bond = pose.glycan_tree_set()->has_exocyclic_glycosidic_linkage( rsd.seqpos() );
 	} else {
 		prev_rsd_num =  find_seqpos_of_saccharides_parent_residue( rsd );
