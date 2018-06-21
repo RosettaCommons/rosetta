@@ -2293,6 +2293,7 @@ FoldTree::jump_edge( Size const jump_number )
 
 bool
 FoldTree::residue_is_in_fold_tree( Size seqpos ) const {
+	if ( empty() ) { return false; } // No residues in foldtree means it's not present. (Also a prerequisite for root()).
 	if ( seqpos == root() ) {
 		return true;
 	}

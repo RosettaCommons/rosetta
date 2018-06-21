@@ -227,6 +227,11 @@ ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 			TR << "Input molecular structure '" << restype->name() << "' has too many bonds (" << restype->nbonds( ii ) << ") on atom " << restype->atom(ii).name() << std::endl;
 			return ResidueTypeOP( nullptr );
 		}
+		// There's a bunch of assumptions in the code about hydrogen only belonging to a single atom (e.g. in atom ordering).
+		if ( restype->atom(ii).element() == core::chemical::element::H && restype->nbonds( ii ) != 1 ) {
+			TR << "Input molecular structure '" << restype->name() << "' has " << restype->nbonds( ii ) << " bonds to hydrogen " << restype->atom(ii).name() << " - Hydrogens should only have one bond!" << std::endl;
+			return ResidueTypeOP( nullptr );
+		}
 	}
 	if ( n_no_coords > 1 ) {
 		TR << "Input molecular structure '" << restype->name() << "' has too many zero coordinate atoms (" << n_no_coords << "): cannot convert to ResidueType." << std::endl;
