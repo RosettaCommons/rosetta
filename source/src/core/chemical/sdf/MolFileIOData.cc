@@ -222,7 +222,12 @@ ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 	// Also, if bonds are messed up (too many bonds to one atom) also kill the molecule
 	core::Size n_no_coords(0);
 	for ( core::Size ii(1); ii <= restype->natoms(); ++ii ) {
-		if ( restype->atom( ii ).ideal_xyz().is_zero() ) { ++n_no_coords; }
+		if ( restype->atom( ii ).ideal_xyz().is_zero() ) {
+			if ( ! restype->is_protein() && restype->atom( ii ).name() != "H" ) {
+				// We'll reset the position of the (added) hydrogen later, based on coordinates.
+				++n_no_coords;
+			}
+		}
 		if ( restype->nbonds( ii ) > 10 ) {
 			TR << "Input molecular structure '" << restype->name() << "' has too many bonds (" << restype->nbonds( ii ) << ") on atom " << restype->atom(ii).name() << std::endl;
 			return ResidueTypeOP( nullptr );
