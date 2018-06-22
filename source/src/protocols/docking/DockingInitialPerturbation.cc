@@ -156,10 +156,12 @@ DockingInitialPerturbation::DockingInitialPerturbation(
 
 DockingInitialPerturbation::DockingInitialPerturbation(
 	DockJumps const movable_jumps,
-	bool const slide
+	bool const slide,
+	bool const autofoldtree
 ) :
 	Mover(),
 	slide_( slide ),
+	autofoldtree_( autofoldtree ),
 	movable_jumps_( movable_jumps ),
 	rigid_body_info_( /* NULL */ )
 {
@@ -308,7 +310,7 @@ DockingInitialPerturbation::apply_body(core::pose::Pose & pose, core::Size jump_
 		TR << "randomize1: true" << std::endl;
 		if ( use_ellipsoidal_randomization_ ) {
 			TR << "use_ellipsoidal_randomization: true" << std::endl;
-			EllipsoidalRandomizationMover mover( jump_number, true );
+			EllipsoidalRandomizationMover mover( jump_number, true, autofoldtree_ );
 			mover.apply( pose );
 			slide_axis_ = mover.get_slide_axis();
 			spin_center_ = mover.get_spin_center();
@@ -332,7 +334,7 @@ DockingInitialPerturbation::apply_body(core::pose::Pose & pose, core::Size jump_
 		TR << "randomize2: true" << std::endl;
 		if ( use_ellipsoidal_randomization_ ) {
 			TR << "use_ellipsoidal_randomization: true" << std::endl;
-			EllipsoidalRandomizationMover mover( jump_number, false );
+			EllipsoidalRandomizationMover mover( jump_number, false, autofoldtree_ );
 			mover.apply( pose );
 			slide_axis_ = mover.get_slide_axis();
 			spin_center_ = mover.get_spin_center();

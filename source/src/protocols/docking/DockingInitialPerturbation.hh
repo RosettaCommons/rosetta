@@ -63,7 +63,8 @@ public:
 	///  will use slide into contact, false will not).
 	DockingInitialPerturbation(
 		DockJumps const movable_jumps,
-		bool const slide=true
+		bool const slide=true,
+		bool const autofoldtree=true
 	);
 
 	//destructor
@@ -138,6 +139,8 @@ public:
 private:
 	/// do slide into context?
 	bool slide_;
+	/// adjust foldtree in Ellipsoidal docking?
+	bool autofoldtree_;
 
 	// docking
 	DockJumps movable_jumps_;

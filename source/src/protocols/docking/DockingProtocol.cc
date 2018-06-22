@@ -288,7 +288,7 @@ void DockingProtocol::sync_objects_with_flags()
 		}
 
 		if ( !perturber_ ) {
-			perturber_ = protocols::docking::DockingInitialPerturbationOP( new DockingInitialPerturbation( movable_jumps_, true /*slide into contact*/ ) );
+			perturber_ = protocols::docking::DockingInitialPerturbationOP( new DockingInitialPerturbation( movable_jumps_, true /*slide into contact*/, autofoldtree_ ) );
 		}
 
 		if ( !docking_lowres_mover_ ) {
@@ -540,6 +540,8 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 	// necessary for loading ensembles later
 	// instatiate as 0 and possibly check later if values have been altered
 	core::Size p1_start = 0, p1_end = 0, p2_start = 0, p2_end = 0;
+	std::string p1_seq, p2_seq;
+
 
 	// only do this if partners_ is given ...
 	if ( not (partners_ == "_") ) {
@@ -552,6 +554,13 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 		// loop over residues and store in vectors, by chain
 		for ( core::Size i = 1; i <= pose.size(); ++i ) {
 			chain_residue_map[ pose.pdb_info()->chain(i) ].push_back(i);
+			// also store sequences, to later ensure chain order within a partner e.g. HL_A vs. LH_A
+			if ( partner1_chains.find(pose.pdb_info()->chain(i)) != std::string::npos ) {
+				p1_seq += pose.sequence()[i-1];
+			}
+			if ( partner2_chains.find(pose.pdb_info()->chain(i)) != std::string::npos ) {
+				p2_seq += pose.sequence()[i-1];
+			}
 		}
 
 		// now we know all the pose numbers associated with each chain, so extract the min/max...
@@ -575,6 +584,8 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 
 		p2_start = *std::min_element(all_partner2_residues.begin(), all_partner2_residues.end());
 		p2_end = *std::max_element(all_partner2_residues.begin(), all_partner2_residues.end());
+
+
 	}
 
 	// if an ensemble file is defined for either partner, both partners must be defined
@@ -597,7 +608,12 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 
 			p2_start = cutpoint + 1;
 			p2_end = pose.size();
+
+			// and define sequence by jump
+			p1_seq = pose.sequence().substr(0, cutpoint);
+			p2_seq = pose.sequence().substr(cutpoint, pose.size() - cutpoint);
 		}
+
 
 		//lowres_inner_cycles_ = 25; // Should be 50 (default value for traditional docking); modified by DK
 
@@ -605,9 +621,19 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 
 		ensemble1_ = protocols::docking::DockingEnsembleOP( new DockingEnsemble( p1_start, p1_end, rb_jump, ensemble1_filename_, "dock_ens_conf1", docking_scorefxn_low_, docking_scorefxn_high_ ) );
 
+		// check sequence
+		if ( ensemble1_->get_conformer(1).sequence().compare(p1_seq) != 0 ) {
+			utility_exit_with_message( "Sequence for partner1: \n" + p1_seq + "\n does not match first member of ensemble1: \n" + ensemble1_->get_conformer(1).sequence());
+		}
+
 		TR << "Ensemble 2: " << ensemble2_filename_ << std::endl;
 
 		ensemble2_ = protocols::docking::DockingEnsembleOP( new DockingEnsemble( p2_start, p2_end, rb_jump, ensemble2_filename_, "dock_ens_conf2", docking_scorefxn_low_, docking_scorefxn_high_ ) );
+
+		// check sequence
+		if ( ensemble2_->get_conformer(1).sequence().compare(p2_seq) != 0 ) {
+			utility_exit_with_message( "Sequence for partner2: \n" + p2_seq + "\n does not match first member of ensemble2: \n" + ensemble2_->get_conformer(1).sequence());
+		}
 
 		// recover sidechains mover is not needed with ensemble docking since the sidechains are recovered from the partners in the ensemble file
 		recover_sidechains_ = nullptr;

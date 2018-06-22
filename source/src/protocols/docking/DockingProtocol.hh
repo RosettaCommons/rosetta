@@ -170,7 +170,6 @@ public:
 	/// @brief returns the docking partners chain identifiers
 	std::string partners() const { return partners_;}
 
-
 	/// @brief returns ref to the jumps vector for docking
 	DockJumps & movable_jumps(){ return movable_jumps_;}
 

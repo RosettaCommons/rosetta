@@ -40,7 +40,7 @@ public:
 	EllipsoidalRandomizationMover( EllipsoidalRandomizationMover const & object_to_copy );
 
 	/// @brief Constructor with arguments
-	EllipsoidalRandomizationMover( core::Size, bool );
+	EllipsoidalRandomizationMover( core::Size rb_jump, bool ellipsoid_is_first_partner, bool autofoldtree );
 
 	/// @brief Assignment operator
 	EllipsoidalRandomizationMover & operator=( EllipsoidalRandomizationMover const & object_to_copy );
@@ -94,7 +94,7 @@ public:
 	void set_foldtree( core::pose::Pose & );
 
 	/// @brief Identifies residues at interface of docking partners.
-	utility::vector1< bool > get_interface_residues( core::pose::Pose &, core::Real );
+	utility::vector1< bool > get_interface_residues( core::pose::Pose & pose_in, core::Real interface_distence_cutoff, bool autofoldtree );
 
 	/// @brief Calculates two vectors defining a plane at the docking interface.
 	utility::vector1< core::Vector > calculate_plane_axes( core::pose::Pose & );
@@ -145,6 +145,7 @@ private:
 	core::Size rb_jump_;
 
 	bool ellipsoid_is_first_partner_;
+	bool autofoldtree_;
 
 	std::string partners_;
 

@@ -61,6 +61,7 @@
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 
 // Utility headers
+#include <utility/tools/make_vector1.hh>
 #include <utility/excn/Exceptions.hh>
 
 // C++ headers
@@ -670,8 +671,7 @@ docking::DockingProtocolOP SnugDockProtocol::docking() const {
 	if ( ! docking_ ) {
 		/// The full DockingProtocol is used with a custom high resolution phase and post-low-resolution phase
 		/// All FoldTrees will be setup through AntibodyInfo so DockingProtocol's autofoldtree setup is disabled.
-		docking_ = docking::DockingProtocolOP( new docking::DockingProtocol );
-		docking_->set_autofoldtree(false);
+		docking_ = docking::DockingProtocolOP( new docking::DockingProtocol(utility::tools::make_vector1<core::SSize>(1), false, false, false, nullptr, nullptr));
 	}
 	return docking_;
 }

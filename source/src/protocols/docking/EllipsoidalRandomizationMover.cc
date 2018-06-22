@@ -72,13 +72,14 @@ EllipsoidalRandomizationMover::EllipsoidalRandomizationMover( EllipsoidalRandomi
 	copy_data( *this, object_to_copy );
 }
 
-EllipsoidalRandomizationMover::EllipsoidalRandomizationMover( core::Size rb_jump, bool ellipsoid_is_first_partner ) : moves::Mover()
+EllipsoidalRandomizationMover::EllipsoidalRandomizationMover( core::Size rb_jump, bool ellipsoid_is_first_partner, bool autofoldtree ) : moves::Mover()
 {
 	set_default();
 	init_from_options();
 
 	ellipsoid_is_first_partner_ = ellipsoid_is_first_partner;
 	rb_jump_ = rb_jump;
+	autofoldtree_ = autofoldtree;
 }
 
 EllipsoidalRandomizationMover &
@@ -114,6 +115,7 @@ EllipsoidalRandomizationMover::set_default()
 	normal_to_plane_.zero();
 
 	ellipsoid_is_first_partner_ = true;
+	autofoldtree_ = true;
 	partners_ = "_";
 	return;
 }
@@ -575,15 +577,17 @@ EllipsoidalRandomizationMover::set_foldtree( core::pose::Pose & pose_in )
 }
 
 utility::vector1< bool >
-EllipsoidalRandomizationMover::get_interface_residues( core::pose::Pose & pose_in, core::Real interface_distance_cutoff )
+EllipsoidalRandomizationMover::get_interface_residues( core::pose::Pose & pose_in, core::Real interface_distance_cutoff, bool autofoldtree )
 {
 	using namespace core::scoring;
 	using ObjexxFCL::FArray1D_bool;
 
-	set_foldtree( pose_in );
+	if ( autofoldtree ) {
+		set_foldtree( pose_in );
+		FArray1D_bool partner1_( pose_in.size(), false );
+		pose_in.fold_tree().partition_by_jump( rb_jump_, partner1_);
+	}
 
-	FArray1D_bool partner1_( pose_in.size(), false );
-	pose_in.fold_tree().partition_by_jump( rb_jump_, partner1_);
 	protocols::scoring::Interface interface_obj( rb_jump_ );
 	pose_in.update_residue_neighbors();
 	interface_obj.distance( interface_distance_cutoff );
@@ -625,7 +629,7 @@ EllipsoidalRandomizationMover::calculate_plane_axes( core::pose::Pose & pose_in 
 		if ( interface_distance_cutoff > 20.0 ) {
 			utility_exit_with_message("Docking partners are not within 20.0 Angstroms. Please move partners closer together in input file");
 		}
-		utility::vector1< bool > is_interface = get_interface_residues( pose_in, interface_distance_cutoff );
+		utility::vector1< bool > is_interface = get_interface_residues( pose_in, interface_distance_cutoff, autofoldtree_ );
 		TR << "Getting interface residues at " << interface_distance_cutoff << " Angstroms" << std::endl;
 		for ( Size i=partner_residue_start_stop[1]; i<=partner_residue_start_stop[2]; ++i ) {
 			// check for CAs first -- RNA for example would not have this

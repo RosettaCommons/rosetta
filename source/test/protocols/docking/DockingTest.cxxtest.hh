@@ -266,7 +266,7 @@ public:
 
 		basic::options::option[ basic::options::OptionKeys::docking::partners ].value( "E_I" );
 
-		protocols::docking::EllipsoidalRandomizationMoverOP mover( new EllipsoidalRandomizationMover( rb_jump, false ) );
+		protocols::docking::EllipsoidalRandomizationMoverOP mover( new EllipsoidalRandomizationMover( rb_jump, false, true ) );
 		mover->apply( fullatom_pose );
 
 		core::Real a_axis = mover->get_a_axis();
