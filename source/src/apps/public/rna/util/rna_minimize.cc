@@ -216,12 +216,12 @@ rna_fullatom_minimize_test()
 			builder.initialize_further_from_options();
 			builder.build(); // should update input_poses[1] which is pose
 		}
-	
+
 		// We only want to do this at most once, but we must do it once
 		// pose exists. Doesn't have to be the EXACT one because in this
 		// use case I think they should all have the same FMI.
 
-		// In theory, if you are trying to minimize multiple silent files 
+		// In theory, if you are trying to minimize multiple silent files
 		// of different modeling problems in one executable, this is trouble.
 		if ( !native_pose && option[ in::file::native ].user() ) {
 			core::import_pose::initialize_native_and_align_pose( native_pose, align_pose, rsd_set, pose );
@@ -279,7 +279,7 @@ rna_fullatom_minimize_test()
 
 		if ( native_pose ) {
 			Real rmsd;
-			
+
 			rmsd = protocols::stepwise::modeler::align::superimpose_with_stepwise_aligner( *pose, *native_pose, option[ OptionKeys::stepwise::superimpose_over_all ]() );
 			std::cout << "All atom rmsd over moving residues: " << tag << " " << rmsd << std::endl;
 			s.add_energy( "rms", rmsd );
