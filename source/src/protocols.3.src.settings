@@ -532,6 +532,7 @@ sources = {
 		"MembAccesResidueLipophilicityFilter",
 		"ResidueChiralityFilter",
 		"TMsAACompFilter",
+		"InterfaceHydrophobicResidueContactsFilter",
 	],
 	"protocols/minimization_packing": [
 		"BoltzmannRotamerMover",

@@ -137,6 +137,7 @@
 #include <protocols/simple_filters/HolesFilterCreator.hh>
 #include <protocols/simple_filters/InterfaceSasaFilterCreator.hh>
 #include <protocols/simple_ddg/InterfaceBindingEnergyDensityFilterCreator.hh>
+#include <protocols/simple_filters/InterfaceHydrophobicResidueContactsFilterCreator.hh>
 #include <protocols/simple_filters/InterRepeatContactFilterCreator.hh>
 #include <protocols/simple_filters/IntraRepeatContactFilterCreator.hh>
 #include <protocols/simple_filters/LeastNativeLike9merFilterCreator.hh>

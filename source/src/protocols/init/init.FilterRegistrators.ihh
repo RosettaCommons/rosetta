@@ -161,6 +161,7 @@ static FilterRegistrator< protocols::simple_filters::FileExistFilterCreator > re
 static FilterRegistrator< protocols::simple_filters::FileRemoveFilterCreator > reg_FileRemoveFilterCreator;
 static FilterRegistrator< protocols::simple_filters::HolesFilterCreator > reg_HolesFilterCreator;
 static FilterRegistrator< protocols::simple_filters::InterfaceSasaFilterCreator > reg_InterfaceSasaFilterCreator;
+static FilterRegistrator< protocols::simple_filters::InterfaceHydrophobicResidueContactsFilterCreator > reg_InterfaceHydrophobicResidueContactsFilterCreator;
 static FilterRegistrator< protocols::simple_filters::InterRepeatContactFilterCreator > reg_InterRepeatContactFilterCreator;
 static FilterRegistrator< protocols::simple_filters::IntraRepeatContactFilterCreator > reg_IntraRepeatContactFilterCreator;
 static FilterRegistrator< protocols::simple_filters::LeastNativeLike9merFilterCreator > reg_LeastNativeLike9merFilterCreator;
