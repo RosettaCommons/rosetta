@@ -458,6 +458,7 @@ PoseFromSFRBuilder::pass_2_resolve_residue_types()
 			utility_exit_with_message( "No match found for unrecognized residue at position " +
 				boost::lexical_cast< std::string >(ii) + "( PDB ID: " + resid + " )" +
 				"\nLooking for" + variant + " residue with 3-letter code: " + name3 +
+				( known_connect_atoms_on_this_residue.empty() ? "" : "\nWith inter-residue connections to atom(s) " + utility::join(known_connect_atoms_on_this_residue,",") ) +
 				"\nThis can be caused by wrong residue naming. E.g. a BMA (beta-mannose) is named MAN (alpha-mannose)");
 		}
 
