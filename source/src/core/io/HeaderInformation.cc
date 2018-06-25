@@ -81,7 +81,7 @@ HeaderInformation::HeaderInformation() : utility::pointer::ReferenceCount(),
 	keywords_(),
 	keyword_in_progress_(false),
 	compounds_(),
-	compound_in_progress_(false),
+	compound_in_progress_(""),
 	experimental_techniques_(),
 	experimental_technique_in_progress_("")
 {}
@@ -409,6 +409,7 @@ std::string
 HeaderInformation::compound_token_to_string(CompoundToken token) {
 	string token_str;
 	switch ( token ) {
+	case UNKNOWN_CMPD :    token_str = "UNKNOWN";         break;
 	case MOL_ID :          token_str = "MOL_ID";          break;
 	case MOLECULE :        token_str = "MOLECULE";        break;
 	case BIOLOGICAL_UNIT : token_str = "BIOLOGICAL_UNIT"; break;
@@ -427,7 +428,7 @@ HeaderInformation::compound_token_to_string(CompoundToken token) {
 }
 
 HeaderInformation::CompoundToken
-HeaderInformation::string_to_compound_token(std::string const & token) {
+HeaderInformation::string_to_compound_token(std::string const & token, bool warn_on_unrecognized) {
 	if ( token == "MOL_ID" )               { return MOL_ID; }
 	else if ( token == "MOLECULE" )        { return MOLECULE; }
 	else if ( token == "BIOLOGICAL_UNIT" ) { return BIOLOGICAL_UNIT; }
@@ -439,10 +440,12 @@ HeaderInformation::string_to_compound_token(std::string const & token) {
 	else if ( token == "MUTATION" )        { return MUTATION; }
 	else if ( token == "OTHER_DETAILS" )   { return OTHER_DETAILS; }
 	else {
-		TR.Error << "Unrecognized compound token string '" << token << "'" << endl;
-		utility_exit();
+		if ( warn_on_unrecognized ) {
+			TR.Error << "Unrecognized compound token string '" << token << "'" << endl;
+		}
+		return UNKNOWN_CMPD;
 	}
-	return CompoundToken_max;
+	return UNKNOWN_CMPD;
 }
 
 
@@ -453,39 +456,30 @@ HeaderInformation::string_to_compound_token(std::string const & token) {
 void
 HeaderInformation::store_compound(std::string const & compound) {
 
-	if ( compound_in_progress_ ) {
-		size_t v_end(compound.find(';'));
-		compound_in_progress_ = (v_end == std::string::npos);
-		compounds_[compounds_.size()].second.append(
-			rstripped_whitespace(compound.substr(0,v_end)));
+	size_t t_end(compound.find(':'));
+	if ( t_end == std::string::npos ) {
+		// Continuation of current compound
+		compound_in_progress_ += " ";
+		compound_in_progress_ += stripped_whitespace( compound );
 		return;
 	}
 
 	size_t t_begin(compound.find_first_not_of(' '));
-	size_t t_end(compound.find(':', t_begin));
-	if ( t_end == std::string::npos ) {
-		TR.Error
-			<< "Attempting to add compound to header information "
-			<< "but no compund token was found in '" << compound << "'" << endl;
-		return;
-		//utility_exit();
-	}
 	CompoundToken token(
-		string_to_compound_token(compound.substr(t_begin,t_end - t_begin)));
+		string_to_compound_token( stripped_whitespace(compound.substr(t_begin,t_end - t_begin)), /*warn_on_unrecognized*/false ));
+	if ( token == UNKNOWN_CMPD ) {
+		// Probably still part of the same compound record.
+		compound_in_progress_ += " ";
+		compound_in_progress_ += stripped_whitespace( compound );
+		return;
+	}
 
-	size_t v_begin(compound.find_first_not_of(' ', t_end + 1));
-	if ( v_begin == std::string::npos ) {
-		TR.Error
-			<< "Attempting to add compound to header information "
-			<< "but no compund value was found in '" << compound << "'" << endl;
-		utility_exit();
-	}
-	size_t v_end(compound.find(';', v_begin));
-	if ( v_end == std::string::npos ) {
-		compound_in_progress_ = true;
-	}
-	compounds_.push_back(
-		make_pair(token, compound.substr(v_begin, v_end - v_begin)));
+	// We're in a new compound record type - process what we have so far
+	finalize_compound_records();
+
+	// Now add the current value to the to-be-processed list.
+	// (We can't actually process it untill we know that it's the end of the record.)
+	compound_in_progress_ += stripped_whitespace( compound );
 }
 
 void
@@ -503,12 +497,39 @@ HeaderInformation::compounds() const{
 
 void
 HeaderInformation::finalize_compound_records() {
-	compound_in_progress_ = false;
+	if ( compound_in_progress_.empty() ) { return; }
+
+	size_t t_begin(compound_in_progress_.find_first_not_of(' '));
+	size_t t_end(compound_in_progress_.find(':', t_begin));
+	if ( t_end == std::string::npos ) {
+		TR.Error << "Malformed Compound record found: '" << compound_in_progress_ << "'" << std::endl;
+		return; // Just ignore.
+	}
+
+	CompoundToken token(
+		string_to_compound_token( stripped_whitespace(compound_in_progress_.substr(t_begin,t_end - t_begin)), /*warn_on_unrecognized*/true ));
+	if ( token == UNKNOWN_CMPD ) { return; } // Already warned, just ignore.
+
+	// We assume all the records are semicolon separated.
+	size_t curpos( t_end + 1 );
+	while ( curpos < compound_in_progress_.size() ) {
+		size_t nextsemi(compound_in_progress_.find(';', curpos));
+		std::string entry;
+		if ( nextsemi == std::string::npos ) {
+			entry = stripped_whitespace( compound_in_progress_.substr(curpos, std::string::npos) );
+			curpos = std::string::npos;
+		} else {
+			entry = stripped_whitespace( compound_in_progress_.substr(curpos, nextsemi-curpos ) );
+			curpos = nextsemi + 1;
+		}
+		compounds_.push_back( make_pair(token, entry) );
+	}
+	compound_in_progress_ = "";
 }
 
 bool
 HeaderInformation::compound_in_progress() const {
-	return compound_in_progress_;
+	return !compound_in_progress_.empty();
 }
 
 void
@@ -548,6 +569,7 @@ HeaderInformation::experimental_technique_to_string(
 ) {
 	string t;
 	switch(technique){
+	case UNKNOWN_EXPDTA :           t = "UNKNOWN";                  break;
 	case X_RAY_DIFFRACTION :        t = "X-RAY DIFFRACTION";        break;
 	case FIBER_DIFFRACTION :        t = "FIBER DIFFRACTION";        break;
 	case NEUTRON_DIFFRACTION :      t = "NEUTRON DIFFRACTION";      break;
@@ -557,6 +579,8 @@ HeaderInformation::experimental_technique_to_string(
 	case SOLUTION_NMR :             t = "SOLUTION NMR";             break;
 	case SOLUTION_SCATTERING :      t = "SOLUTION SCATTERING";      break;
 	case THEORETICAL_MODEL :        t = "THEORETICAL MODEL";        break;
+
+	case EPR :                      t = "EPR";                      break;
 
 	case ELECTRON_DEFRACTION :
 		t = "ELECTRON DEFRACTION";
@@ -597,7 +621,7 @@ HeaderInformation::experimental_technique_to_string(
 		TR.Error
 			<< "Unrecognized experimental technique value '"
 			<< technique << "'" << endl;
-		utility_exit();
+		t = "UNKNOWN";
 	}
 	return t;
 }
@@ -616,6 +640,7 @@ HeaderInformation::string_to_experimental_technique(
 	else if ( technique == "SOLUTION NMR" )        return SOLUTION_NMR;
 	else if ( technique == "SOLUTION SCATTERING" ) return SOLUTION_SCATTERING;
 	else if ( technique == "THEORETICAL MODEL" )   return THEORETICAL_MODEL;
+	else if ( technique == "EPR" )                 return EPR;
 
 	// Handle obsolete technique strings
 	else if ( technique == "ELECTRON DEFRACTION" ) {
@@ -642,9 +667,9 @@ HeaderInformation::string_to_experimental_technique(
 		TR.Error
 			<< "Unrecognized experimental technique string '"
 			<< technique << "'" << endl;
-		utility_exit();
+		return UNKNOWN_EXPDTA;
 	}
-	return THEORETICAL_MODEL;
+	return UNKNOWN_EXPDTA;
 }
 
 void
@@ -665,7 +690,7 @@ HeaderInformation::store_experimental_techniques(
 		t_end = exp.find(';', t_begin);
 		if ( t_end == SSize(std::string::npos) ) {
 			experimental_technique_in_progress_ =
-				rstripped_whitespace(exp.substr(t_begin, t_len));
+				rstripped_whitespace(exp.substr(t_begin, std::string::npos));
 			return;
 		} else if ( exp.length() - t_begin >= 3 && exp.compare(t_begin, 3, "NMR") == 0 ) {
 			// The obsolete NMR tag took extra information that is ignored here
@@ -675,10 +700,10 @@ HeaderInformation::store_experimental_techniques(
 		}
 		if ( experimental_technique_in_progress_.empty() ) {
 			experimental_techniques_.push_back(
-				string_to_experimental_technique(exp.substr(t_begin, t_len)));
+				string_to_experimental_technique(stripped_whitespace(exp.substr(t_begin, t_len))));
 		} else {
 			experimental_technique_in_progress_.append(" ");
-			experimental_technique_in_progress_.append(exp.substr(t_begin, t_len));
+			experimental_technique_in_progress_.append(stripped_whitespace(exp.substr(t_begin, t_len)));
 			experimental_techniques_.push_back(
 				string_to_experimental_technique(experimental_technique_in_progress_));
 			experimental_technique_in_progress_.clear();

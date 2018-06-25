@@ -194,6 +194,8 @@ public: //  Fields for COMPND Records
 	*/
 
 	enum CompoundToken {
+		UNKNOWN_CMPD=0,
+
 		// Numbers each component; also used in SOURCE to associate the information.
 		MOL_ID=1,
 
@@ -238,7 +240,7 @@ public: //  Fields for COMPND Records
 	static compound_token_to_string(CompoundToken token);
 
 	CompoundToken
-	static string_to_compound_token(std::string const & token);
+	static string_to_compound_token(std::string const & token, bool warn_on_unrecognized = true);
 
 	void
 	store_compound(std::string const & compound);
@@ -264,6 +266,7 @@ public: //  Fields for COMPND Records
 public: /// Fields for the EXPDTA Record
 
 	enum ExperimentalTechnique {
+		UNKNOWN_EXPDTA = 0,
 		// Experimental Techniques for spec version 3.3
 		X_RAY_DIFFRACTION = 1,
 		FIBER_DIFFRACTION,
@@ -276,6 +279,9 @@ public: /// Fields for the EXPDTA Record
 
 		THEORETICAL_MODEL,
 		ExperimentalTechnique_max_current = THEORETICAL_MODEL,
+
+		// Additional non-obsolete code.
+		EPR,
 
 		// Obsolete technique codes
 		ELECTRON_DEFRACTION,
@@ -366,7 +372,7 @@ private: // Data for COMPND Record
 
 	Compounds compounds_;
 
-	bool compound_in_progress_;
+	std::string compound_in_progress_;
 
 private: // data for EXPDTA Record
 
