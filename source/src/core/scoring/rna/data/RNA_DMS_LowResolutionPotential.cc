@@ -329,7 +329,8 @@ bool
 RNA_DMS_LowResolutionPotential::get_wc_near_o2prime( core::pose::Pose const & pose, Size const i ) {
 	using namespace core::scoring;
 	using namespace core::scoring::rna;
-	RNA_LowResolutionPotential const & rna_low_res_potential = ScoringManager::get_instance()->get_RNA_LowResolutionPotential();
+	// AMW TODO: we really should be reaching into energy method options here but not anymore.
+	RNA_LowResolutionPotential const & rna_low_res_potential = *( ScoringManager::get_instance()->get_RNA_LowResolutionPotential( "scoring/rna/rna_base_pair_xy.dat" ) );
 	RNA_ScoringInfo  const & rna_scoring_info( rna_scoring_info_from_pose( pose ) );
 	RNA_CentroidInfo const & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
 	utility::vector1< Vector > const & base_centroids( rna_centroid_info.base_centroids() );

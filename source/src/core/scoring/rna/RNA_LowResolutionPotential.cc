@@ -32,6 +32,8 @@
 #include <core/scoring/rna/RNA_CentroidInfo.hh>
 #include <core/pose/rna/RNA_RawBaseBaseInfo.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
+#include <core/scoring/methods/EnergyMethodOptions.hh>
+#include <core/scoring/rna/RNA_EnergyMethodOptions.hh>
 #include <core/scoring/rna/RNA_ScoringUtil.hh>
 
 #include <core/scoring/Energies.hh>
@@ -65,9 +67,9 @@ namespace rna {
 /// never an instance already in use
 methods::EnergyMethodOP
 RNA_LowResolutionPotentialCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	methods::EnergyMethodOptions const & options
 ) const {
-	return methods::EnergyMethodOP( new RNA_LowResolutionPotential );
+	return methods::EnergyMethodOP( new RNA_LowResolutionPotential( options.rna_options().rna_base_pair_xy_filename() ) );
 }
 
 ScoreTypes
@@ -98,6 +100,10 @@ using namespace ObjexxFCL::format;
 //////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
 RNA_LowResolutionPotential::RNA_LowResolutionPotential():
+	RNA_LowResolutionPotential( "scoring/rna/rna_base_pair_xy.dat" )
+{}
+
+RNA_LowResolutionPotential::RNA_LowResolutionPotential( std::string const & rna_base_pair_xy_filename ):
 	parent( methods::EnergyMethodCreatorOP( new RNA_LowResolutionPotentialCreator ) )
 {
 	// These don't *have* to be hard-wired numbers.
@@ -114,6 +120,7 @@ RNA_LowResolutionPotential::RNA_LowResolutionPotential():
 	debug_assert( Size( basepair_xy_bin_width_   * basepair_xy_num_bins_/ 2.0 )   == basepair_xy_table_size_ );
 	debug_assert( Size( base_backbone_bin_width_ * base_backbone_num_bins_/ 2.0 ) == base_backbone_table_size_ );
 
+	rna_base_pair_xy_filename_ = rna_base_pair_xy_filename;
 	rna_basepair_xy_ = 0.0;
 	rna_axis_ = 0.0;
 	rna_stagger_ = 0.0;
@@ -138,16 +145,16 @@ RNA_LowResolutionPotential::RNA_LowResolutionPotential():
 void
 RNA_LowResolutionPotential::initialize_rna_basepair_xy(){
 
-	std::string const filename( "scoring/rna/rna_base_pair_xy.dat" );
-	utility::io::izstream data_stream(  basic::database::full_name( filename )  );
+	// rna_base_pair_xy_filename_ is initialized from options.
+	utility::io::izstream data_stream(  basic::database::full_name( rna_base_pair_xy_filename_ )  );
 
 	if ( !data_stream ) {
-		std::cerr << "Can't find specified basepair potential file: " << filename << std::endl;
+		std::cerr << "Can't find specified basepair potential file: " << rna_base_pair_xy_filename_ << std::endl;
 		utility::exit( EXIT_FAILURE, __FILE__, __LINE__ );
 		//return;
 	}
 
-	tr << "Reading basepair x - y potential file: " << filename << std::endl; ;
+	tr << "Reading basepair x - y potential file: " << rna_base_pair_xy_filename_ << std::endl; ;
 	// read data
 	Size res1, res2, xbin, ybin, direction;
 	Real potential;
@@ -156,7 +163,7 @@ RNA_LowResolutionPotential::initialize_rna_basepair_xy(){
 		rna_basepair_xy_( xbin, ybin, res1, res2, direction ) = potential;
 	}
 
-	tr << "Finished reading basepair x - y potential file: " << filename << std::endl; ;
+	tr << "Finished reading basepair x - y potential file: " << rna_base_pair_xy_filename_ << std::endl; ;
 
 	//close file
 	data_stream.close();
@@ -220,6 +227,8 @@ RNA_LowResolutionPotential::initialize_RNA_backbone_oxygen_atoms(){
 void
 RNA_LowResolutionPotential::initialize_rna_base_backbone_xy(){
 
+	// AMW TODO: options access
+	//std::string const filename( "scoring/rna/refit/rna_base_backbone_xy.dat" );
 	std::string const filename ( "scoring/rna/rna_base_backbone_xy.dat" );
 
 	// open file
@@ -260,7 +269,7 @@ RNA_LowResolutionPotential::initialize_rna_backbone_backbone_weights(){
 void
 RNA_LowResolutionPotential::initialize_rna_backbone_backbone()
 {
-
+	// AMW: this doesn't get refit directly; no need.
 	std::string const filename = "scoring/rna/rna_backbone_backbone.dat";
 
 	// open file

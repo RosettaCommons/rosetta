@@ -54,11 +54,12 @@ class RNA_LowResolutionPotential : public methods::WholeStructureEnergy { //util
 
 public:
 	RNA_LowResolutionPotential();
+	RNA_LowResolutionPotential( std::string const & filename );
 
 	/// clone
 	virtual
 	methods::EnergyMethodOP
-	clone() const { return methods::EnergyMethodOP( new RNA_LowResolutionPotential ); }
+	clone() const { return methods::EnergyMethodOP( new RNA_LowResolutionPotential( rna_base_pair_xy_filename_ ) ); }
 
 	virtual
 	void indicate_required_context_graphs( utility::vector1< bool > & ) const {}
@@ -398,6 +399,9 @@ private: // data
 	bool const rna_verbose_ = false;
 
 	bool more_precise_base_pair_classification_ = false;
+
+	// This is also the default options value; extra reinforcement.
+	std::string rna_base_pair_xy_filename_ = "scoring/rna/rna_base_pair_xy.dat";
 
 public:
 	// This must be public for PyRosetta.  It's quite silly.

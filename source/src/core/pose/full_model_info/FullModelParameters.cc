@@ -374,9 +374,15 @@ FullModelParameters::conventional_to_full( std::tuple< utility::vector1< int >, 
 	utility::vector1< int  > const & resnum = std::get< 0 >( resnum_and_chain_and_segid );
 	utility::vector1< char > const & chain  = std::get< 1 >( resnum_and_chain_and_segid );
 	utility::vector1< std::string > const & segid  = std::get< 2 >( resnum_and_chain_and_segid );
+	// AMW TODO: There is an issue in how segid is sometimes empty here. It should probably
+	// be filled by all clients of this function, so this function can check for that...
 	runtime_assert( resnum.size() == chain.size() );
 	for ( Size n = 1; n <= resnum.size(); n++ ) {
-		res_list_in_full_numbering.push_back( conventional_to_full( resnum[n], chain[n], segid[n] ) );
+		if ( !segid.empty() ) {
+			res_list_in_full_numbering.push_back( conventional_to_full( resnum[n], chain[n], segid[n] ) );
+		} else {
+			res_list_in_full_numbering.push_back( conventional_to_full( resnum[n], chain[n], "    " ) );
+		}
 	}
 	return res_list_in_full_numbering;
 }

@@ -53,6 +53,7 @@ void RNA_EnergyMethodOptions::initialize_from_options() {
 	syn_G_potential_bonus_ = basic::options::option[ basic::options::OptionKeys::score::rna::syn_G_potential_bonus ]();
 	torsion_potential_ = basic::options::option[ basic::options::OptionKeys::score::rna_torsion_potential ]();
 	suiteness_bonus_ = basic::options::option[ basic::options::OptionKeys::score::rna::suiteness_bonus ]();
+	rna_base_pair_xy_filename_ = basic::options::option[ basic::options::OptionKeys::score::rna::rna_base_pair_xy_filename ]();
 }
 
 ////////////////////////////
@@ -61,7 +62,8 @@ operator==( RNA_EnergyMethodOptions const & a, RNA_EnergyMethodOptions const & b
 
 	return ( ( a.syn_G_potential_bonus_ == b.syn_G_potential_bonus_ ) &&
 		( a.torsion_potential_ == b.torsion_potential_  ) &&
-		( a.suiteness_bonus_ == b.suiteness_bonus_ ) );
+		( a.suiteness_bonus_ == b.suiteness_bonus_ ) && 
+		( a.rna_base_pair_xy_filename_ == b.rna_base_pair_xy_filename_ ) );
 }
 
 ////////////////////////////
@@ -78,6 +80,7 @@ RNA_EnergyMethodOptions::show( std::ostream & out ) const
 	out <<"RNA_EnergyMethodOptions::show: syn_G_potential_bonus: " << syn_G_potential_bonus_ << std::endl;
 	out <<"RNA_EnergyMethodOptions::show: torsion_potential: " << torsion_potential_ << std::endl;
 	out <<"RNA_EnergyMethodOptions::show: suiteness_bonus: " << suiteness_bonus_ << std::endl;
+	out <<"RNA_EnergyMethodOptions::show: rna_base_pair_xy_filename: " << rna_base_pair_xy_filename_ << std::endl;
 }
 
 } //rna
@@ -93,6 +96,7 @@ core::scoring::rna::RNA_EnergyMethodOptions::save( Archive & arc ) const {
 	arc( CEREAL_NVP( syn_G_potential_bonus_ ) ); // core::Real
 	arc( CEREAL_NVP( torsion_potential_ ) ); // std::string
 	arc( CEREAL_NVP( suiteness_bonus_ ) ); // std::string
+	arc( CEREAL_NVP( rna_base_pair_xy_filename_ ) ); // std::string
 }
 
 /// @brief Automatically generated deserialization method
@@ -102,6 +106,7 @@ core::scoring::rna::RNA_EnergyMethodOptions::load( Archive & arc ) {
 	arc( syn_G_potential_bonus_ ); // core::Real
 	arc( torsion_potential_ ); // std::string
 	arc( suiteness_bonus_ ); // std::string
+	arc( rna_base_pair_xy_filename_ ); // std::string
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::scoring::rna::RNA_EnergyMethodOptions );

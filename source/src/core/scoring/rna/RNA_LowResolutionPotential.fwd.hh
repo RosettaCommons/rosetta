@@ -33,6 +33,7 @@ namespace rna {
 
 class RNA_LowResolutionPotential;
 typedef utility::pointer::shared_ptr< RNA_LowResolutionPotential > RNA_LowResolutionPotentialOP;
+typedef utility::pointer::shared_ptr< RNA_LowResolutionPotential const > RNA_LowResolutionPotentialCOP;
 
 } //rna
 } //scoring

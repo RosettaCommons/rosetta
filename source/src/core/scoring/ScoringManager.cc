@@ -233,7 +233,7 @@ ScoringManager::ScoringManager() :
 	carbonhbond_bool_(false),
 	//rna_suite_bool_(false),
 	//loopclose_sixdtransrot_bool_(false),
-	rna_lowres_bool_(false),
+	//rna_lowres_bool_(false),
 	rnp_lowres_bool_(false),
 	rnp_lowresstack_bool_(false),
 	rna_chemshift_bool_(false),
@@ -739,12 +739,13 @@ ScoringManager::get_LoopCloseSixDPotential( std::string const & database_file ) 
 /// @brief Get an instance of the RNA_LowResolutionPotential scoring object.
 /// @details Threadsafe and lazily loaded.
 /// @author Rewritten by Vikram K. Mulligan (vmullig@uw.edu).
-rna::RNA_LowResolutionPotential const &
-ScoringManager::get_RNA_LowResolutionPotential() const
+rna::RNA_LowResolutionPotentialCOP
+ScoringManager::get_RNA_LowResolutionPotential( std::string const & database_file ) const
 {
-	boost::function< rna::RNA_LowResolutionPotentialOP () > creator( boost::bind( &ScoringManager::create_rna_lowresolutionpotential_instance) );
-	utility::thread::safely_create_load_once_object_by_OP( creator, rna_low_resolution_potential_, SAFELY_PASS_MUTEX( rna_lowres_mutex_ ), SAFELY_PASS_THREADSAFETY_BOOL( rna_lowres_bool_ ) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
-	return *rna_low_resolution_potential_;
+	boost::function< rna::RNA_LowResolutionPotentialOP () > creator( boost::bind( &ScoringManager::create_rna_lowresolutionpotential_instance, boost::cref( database_file ) ) );
+	return rna::RNA_LowResolutionPotentialCOP(
+		utility::thread::safely_check_map_for_key_and_insert_if_absent( creator, SAFELY_PASS_MUTEX( rna_lowres_mutex_ ), database_file, rna_low_resolution_potential_ )
+	);
 }
 
 /// @brief Get an instance of the RNP_LowResPotential scoring object.
@@ -1710,10 +1711,19 @@ ScoringManager::create_sixdtransrotpotential_instance(
 /// @brief Create an instance of the RNA_LowResolutionPotential object, by owning pointer.
 /// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!
 /// @note Not intended for use outside of ScoringManager.
-/// @author Vikram K. Mulligan (vmullig@uw.edu)
+/// @author Andrew M. Watkins (amw579@stanford.edu)
 rna::RNA_LowResolutionPotentialOP
-ScoringManager::create_rna_lowresolutionpotential_instance() {
-	return rna::RNA_LowResolutionPotentialOP( new rna::RNA_LowResolutionPotential );
+ScoringManager::create_rna_lowresolutionpotential_instance( std::string const & database_file ) {
+	// OK. CHECK for the full_name version but don't wrap it in ctor.
+	if ( utility::file::file_exists(  database_file ) )  {
+		TR << "Reading in: " << database_file << std::endl;
+		return rna::RNA_LowResolutionPotentialOP( new rna::RNA_LowResolutionPotential( database_file ) );
+	} else if ( utility::file::file_exists( basic::database::full_name( database_file ) ) ) {
+		TR << "Reading in: " << basic::database::full_name( database_file ) << std::endl;
+		return rna::RNA_LowResolutionPotentialOP( new rna::RNA_LowResolutionPotential( database_file ) );
+	}
+	TR.Warning << "File " << database_file << " does not exist!" << std::endl;
+	return nullptr;
 }
 
 /// @brief Create an instance of the RNP_LowResPotential object, by owning pointer.

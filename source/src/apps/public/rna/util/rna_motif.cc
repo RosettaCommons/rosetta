@@ -96,7 +96,7 @@ rna_motif_test()
 	}
 
 	pose::Pose full_pose, pose;
-	RNA_LowResolutionPotential potential;
+	RNA_LowResolutionPotential potential( "scoring/rna/rna_base_pair_xy.dat" );
 	ScoreFunctionOP hires_scorefxn( new ScoreFunction );
 	hires_scorefxn->set_weight( hbond_sc, 1 );
 	ScoreFunctionOP denovo_scorefxn( ScoreFunctionFactory::create_score_function( RNA_LORES_WTS ) );

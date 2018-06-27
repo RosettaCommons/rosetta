@@ -51,11 +51,15 @@ public:
 
 	/// @brief Parameter for changing torsion_potential directory name.
 	std::string torsion_potential() const { return torsion_potential_; }
-	void torsion_potential( std::string setting ){ torsion_potential_ = setting; }
+	void torsion_potential( std::string const & setting ){ torsion_potential_ = setting; }
 
 	/// @brief Parameter for changing suiteness_bonus directory name.
 	std::string suiteness_bonus() const { return suiteness_bonus_; }
-	void suiteness_bonus( std::string setting ){ suiteness_bonus_ = setting; }
+	void suiteness_bonus( std::string const & setting ){ suiteness_bonus_ = setting; }
+
+	/// @brief Parameter for changing rna_base_pair_xy file name.
+	std::string rna_base_pair_xy_filename() const { return rna_base_pair_xy_filename_; }
+	void rna_base_pair_xy_filename( std::string const & setting ){ rna_base_pair_xy_filename_ = setting; }
 
 	friend
 	bool
@@ -73,6 +77,9 @@ private:
 	core::Real syn_G_potential_bonus_;
 	std::string torsion_potential_;
 	std::string suiteness_bonus_;
+
+	// Option for the RNA_LowResolutionPotential
+	std::string rna_base_pair_xy_filename_;
 
 #ifdef    SERIALIZATION
 public:

@@ -92,9 +92,10 @@ using Matrix = numeric::xyzMatrix<Real>;
 
 
 /// c-tor
+// AMW TODO: We really should be reaching into the options here but I'm tired and this won't matter soon..
 RNA_PairwiseLowResolutionEnergy::RNA_PairwiseLowResolutionEnergy() :
 	parent( methods::EnergyMethodCreatorOP( new RNA_PairwiseLowResolutionEnergyCreator ) ),
-	rna_low_resolution_potential_( ScoringManager::get_instance()->get_RNA_LowResolutionPotential() )
+	rna_low_resolution_potential_( *( ScoringManager::get_instance()->get_RNA_LowResolutionPotential( "scoring/rna/rna_base_pair_xy.dat" ) ) )
 {}
 
 //clone

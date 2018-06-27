@@ -365,7 +365,7 @@ public:
 	/// @details Threadsafe and lazily loaded.
 	/// @note Targeted object is also threadsafe, to the best of my ability to tell.
 	/// @author Rewritten by Vikram K. Mulligan (vmullig@uw.edu).
-	rna::RNA_LowResolutionPotential const & get_RNA_LowResolutionPotential() const;
+	rna::RNA_LowResolutionPotentialCOP get_RNA_LowResolutionPotential( std::string const & database_file ) const;
 
 	/// @brief Get an instance of the RNP_LowResPotential scoring object.
 	/// @details Threadsafe and lazily loaded.
@@ -857,7 +857,7 @@ private:
 	/// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!
 	/// @note Not intended for use outside of ScoringManager.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	static rna::RNA_LowResolutionPotentialOP create_rna_lowresolutionpotential_instance();
+	static rna::RNA_LowResolutionPotentialOP create_rna_lowresolutionpotential_instance( std::string const & database_file );
 
 	/// @brief Create an instance of the RNP_LowResPotential object, by owning pointer.
 	/// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!
@@ -1102,7 +1102,7 @@ private:
 	mutable utility::thread::ReadWriteMutex rna_suite_mutex_;
 	mutable std::mutex tna_suite_mutex_;
 	mutable utility::thread::ReadWriteMutex loopclose_sixdtransrot_mutex_;
-	mutable std::mutex rna_lowres_mutex_;
+	mutable utility::thread::ReadWriteMutex rna_lowres_mutex_;
 	mutable std::mutex rnp_lowres_mutex_;
 	mutable std::mutex rnp_lowrespairdist_mutex_;
 	mutable std::mutex rnp_lowresstack_mutex_;
@@ -1172,7 +1172,7 @@ private:
 	//mutable std::atomic_bool rna_suite_bool_;
 	mutable std::atomic_bool tna_suite_bool_;
 	//mutable std::atomic_bool loopclose_sixdtransrot_bool_;
-	mutable std::atomic_bool rna_lowres_bool_;
+	//mutable std::atomic_bool rna_lowres_bool_;
 	mutable std::atomic_bool rnp_lowres_bool_;
 	mutable std::atomic_bool rnp_lowrespairdist_bool_;
 	mutable std::atomic_bool rnp_lowresstack_bool_;
@@ -1235,7 +1235,7 @@ private:
 	mutable dna::DNATorsionPotentialOP dna_torsion_potential_;
 	mutable dna::DNA_BasePotentialOP DNA_base_potential_;
 	mutable carbon_hbonds::CarbonHBondPotentialOP carbon_hbond_potential_;
-	mutable rna::RNA_LowResolutionPotentialOP rna_low_resolution_potential_;
+	mutable std::map< std::string, rna::RNA_LowResolutionPotentialOP > rna_low_resolution_potential_;
 	mutable rna::RNP_LowResPotentialOP rnp_low_res_potential_;
 	mutable rna::RNP_LowResPairDistPotentialOP rnp_low_res_pair_dist_potential_;
 	mutable rna::RNP_LowResStackDataOP rnp_low_res_stack_data_;
