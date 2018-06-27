@@ -293,7 +293,7 @@ MinMover::minimize(pose::Pose & pose, core::kinematics::MoveMap & active_movemap
 	PROF_STOP( basic::MINMOVER_APPLY );
 
 	// emit statistics
-	scorefxn_->show(TR.Debug, pose);
+	scorefxn_->show( TR.Debug, pose );
 	TR.Debug << std::endl;
 }
 
@@ -324,7 +324,8 @@ MinMover::inner_run_minimizer( core::pose::Pose & pose, core::kinematics::MoveMa
 }
 
 void
-MinMover::apply(pose::Pose & pose) {
+MinMover::apply( pose::Pose & pose )
+{
 	// lazy default initialization
 	MoveMapOP active_movemap( movemap(pose)->clone() );
 

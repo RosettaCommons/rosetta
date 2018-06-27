@@ -940,10 +940,13 @@ is_glycosidic_omega_torsion( Conformation const & conf, id::TorsionID const & to
 				// If this is a main-chain torsion, we need the next residue on the main chain.
 				next_rsd_num = torsion_id.rsd() + 1;
 				if ( conf.residue( next_rsd_num ).is_carbohydrate() ) {
-					chemical::carbohydrates::CarbohydrateInfoCOP info( residue.carbohydrate_info() );
-					if ( info->has_exocyclic_linkage_to_child_mainchain() ) {
-						return ( torsion_id.torsion() == residue.n_mainchain_atoms() - 2 );
+					if ( residue.is_carbohydrate() ) {
+						chemical::carbohydrates::CarbohydrateInfoCOP info( residue.carbohydrate_info() );
+						if ( ! info->has_exocyclic_linkage_to_child_mainchain() ) {
+							return false;
+						}
 					}
+					return ( torsion_id.torsion() == residue.n_mainchain_atoms() - 2 );
 				}
 			}
 			break;

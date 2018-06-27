@@ -49,7 +49,11 @@ using namespace scoring;
 using namespace protocols;
 
 
-string const PATH = "input/";
+// Constants
+int const SUCCESS( 0 );
+int const FAILURE( -1 );
+
+string const PATH( "input/" );
 
 
 Real
@@ -156,7 +160,7 @@ main( int argc, char *argv[] )
 		devel::init( argc, argv );
 
 		// Declare Pose variables.
-		Pose maltobiose, lactose, isomaltose, LeX, bisected_man, N_linked_glycan, O_linked_glycan;
+		Pose maltobiose, lactose, isomaltose, LeX, bisected_man, N_linked_glycan, O_linked_glycan, UDP_D_Glc, GalCer;
 
 		// Set up ScoreFunctions.
 		ScoreFunctionOP sf_full( get_score_function() );
@@ -217,6 +221,7 @@ main( int argc, char *argv[] )
 		cout << "(The best angles should be close to -60/90.)" << endl;
 		cout << "(The worst angles should be close to 120/-120 or -15.)" << endl;
 
+
 		cout << endl << "-------------------------------------------------------------------------------" << endl;
 
 		cout << "Importing isomaltose (D-alpha1->6 linkage):" << endl << endl;
@@ -246,6 +251,7 @@ main( int argc, char *argv[] )
 
 		cout << "(The minimized angles should be close to -60/90.)" << endl;
 
+
 		cout << endl << "-------------------------------------------------------------------------------" << endl;
 
 		cout << "Setting isomaltose's glycosidic bond on slope toward minimum..." << endl;
@@ -262,6 +268,7 @@ main( int argc, char *argv[] )
 		output_score( isomaltose, 2, *sf_full );
 
 		cout << "(The minimized angles should be close to 75/180/-60.)" << endl;
+
 
 		cout << endl << "-------------------------------------------------------------------------------" << endl;
 
@@ -287,6 +294,7 @@ main( int argc, char *argv[] )
 
 		cout << "(The minimized angles should be close to -60/90 for residue 2.)" << endl;
 		cout << "(The minimized angles should be close to -75/-90 for residue 3.)" << endl;
+
 
 		cout << endl << "-------------------------------------------------------------------------------" << endl;
 
@@ -321,6 +329,7 @@ main( int argc, char *argv[] )
 		cout << "(The minimized angles should be close to -60/90 for residue 3.)" << endl;
 		cout << "(The minimized angles should be close to 75/180/-60 for residue 4.)" << endl;
 
+
 		cout << endl << "-------------------------------------------------------------------------------" << endl;
 
 		cout << "Importing sample N-linked glycan (D-beta1->NAsn linkage):" << endl << endl;
@@ -339,6 +348,7 @@ main( int argc, char *argv[] )
 		output_score( N_linked_glycan, 6, *sf_full );
 
 		cout << "(The minimized angles should be close to -60/NA.)" << endl;
+
 
 		cout << endl << "-------------------------------------------------------------------------------" << endl;
 
@@ -359,9 +369,49 @@ main( int argc, char *argv[] )
 
 		cout << "(The minimized angles should be close to 75/NA.)" << endl;
 
+
+		cout << endl << "-------------------------------------------------------------------------------" << endl;
+
+		cout << "Importing sample UDP-linked glycan (D-alpha1->phosphodiester linkage):" << endl << endl;
+
+		pose_from_file( UDP_D_Glc, PATH + "UDP-alpha-D-Glcp.pdb", PDB_file );
+
+		cout << "Setting sample UDP-linked glycan's glycosidic bond on slope toward minimum..." << endl;
+		UDP_D_Glc.set_phi( 2, -120.0 );
+
+		output_score( UDP_D_Glc, 2, *sf_full );
+
+		cout << "Minimizing UDP-linked glycan using sugar_bb scoring term only..." << endl;
+
+		minimizer.apply( UDP_D_Glc );
+
+		output_score( UDP_D_Glc, 2, *sf_full );
+
+		cout << "(The minimized angles should be close to 75/NA.)" << endl;
+
+
+		cout << endl << "-------------------------------------------------------------------------------" << endl;
+
+		cout << "Importing sample lipid-linked glycan (D-beta1->O1Cer linkage):" << endl << endl;
+
+		pose_from_file( GalCer, PATH + "GalCer.pdb", PDB_file );
+
+		cout << "Setting sample lipid-linked glycan's glycosidic bond on slope toward minimum..." << endl;
+		GalCer.set_phi( 2, -90.0 );
+
+		output_score( GalCer, 2, *sf_full );
+
+		cout << "Minimizing lipid-linked glycan using sugar_bb scoring term only..." << endl;
+
+		minimizer.apply( GalCer );
+
+		output_score( GalCer, 2, *sf_full );
+
+		cout << "(The minimized angles should be close to -60/NA.)" << endl;
+
 	} catch (excn::Exception const & e ) {
 		cerr << "Caught exception: " << e.msg() << endl;
-		return -1;
+		return FAILURE;
 	}
-	return 0;
+	return SUCCESS;
 }

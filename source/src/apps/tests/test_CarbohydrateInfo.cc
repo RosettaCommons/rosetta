@@ -50,7 +50,7 @@ using namespace conformation;
 int const SUCCESS( 0 );
 int const FAILURE( -1 );
 
-string const PATH = "input/";
+string const PATH( "input/" );
 
 
 void

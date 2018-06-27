@@ -37,7 +37,7 @@ CHIEnergyFunctionLinkageType get_CHI_energy_function_linkage_type_for_phi_for_re
 	pose::Pose const & pose,
 	core::uint rsd_num );
 
-/// @brief Get the CHI Energy Function linkage type for phi for a particular residue.
+/// @brief Get the CHI Energy Function linkage type for psi for a particular residue.
 CHIEnergyFunctionLinkageType get_CHI_energy_function_linkage_type_for_psi_for_residue_in_pose(
 	pose::Pose const & pose,
 	core::uint rsd_num );

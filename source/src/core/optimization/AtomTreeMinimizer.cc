@@ -61,7 +61,6 @@ AtomTreeMinimizer::run(
 	MinimizerOptions const & options
 ) /*const*/
 {
-
 	check_setup( pose, move_map, scorefxn, options);
 
 	if ( options.deriv_check() ) {
@@ -77,8 +76,10 @@ AtomTreeMinimizer::run(
 	// it's important that the structure be scored prior to nblist setup
 	Real const start_score( scorefxn( pose ) );
 
-	//std::cout << "start_score:" << start_score << std::endl;
-	//pose.energies().show( std::cout );
+	if ( TR.Debug.visible() ) {
+		TR.Debug << "start_score:" << start_score << std::endl;
+		pose.energies().show( TR.Trace );
+	}
 
 	// setup the map of the degrees of freedom
 	MinimizerMap min_map;
@@ -104,7 +105,9 @@ AtomTreeMinimizer::run(
 
 	Real const start_func( f( dofs ) );
 
-	//pose.energies().show( std::cout );
+	if ( TR.Trace.visible() && ! use_nblist ) {
+		pose.energies().show( TR.Trace );
+	}
 
 	// now do the optimization with the low-level minimizer function
 	Minimizer minimizer( f, options );
@@ -112,8 +115,10 @@ AtomTreeMinimizer::run(
 
 	Real const end_func( f( dofs ) );
 
-	//std::cout << "end_func: " << end_func << std::endl;
-	//pose.energies().show( std::cout );
+	if ( TR.Debug.visible() && ! use_nblist ) {
+		TR.Debug << "end_func: " << end_func << std::endl;
+		pose.energies().show( TR.Trace );
+	}
 
 	// turn off nblist
 	if ( use_nblist ) pose.energies().reset_nblist();
@@ -128,13 +133,15 @@ AtomTreeMinimizer::run(
 	// rescore
 	Real const end_score( scorefxn( pose ) );
 
-	//std::cout << "end_score:" << std::endl;
-	//pose.energies().show( std::cout );
+	if ( TR.Debug.visible() && ! use_nblist ) {
+		TR.Debug << "end_score:" << std::endl;
+		pose.energies().show( TR.Trace );
+	}
 
 	// we may not really need all these extra function evaluations
 	// good for diagnostics though
 
-	scorefxn.finalize_after_minimizing(pose);
+	scorefxn.finalize_after_minimizing( pose );
 
 	basic::TracerImpl core_optimize( "core.optimize", basic::t_debug );
 	core_optimize << "AtomTreeMinimizer::run: nangles= " << min_map.nangles() <<

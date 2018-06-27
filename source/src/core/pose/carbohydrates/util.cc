@@ -595,15 +595,6 @@ align_virtual_atoms_in_carbohydrate_residue( Pose & pose, uint const sequence_po
 
 
 // TorsionID Queries //////////////////////////////////////////////////////////
-// Is this is the phi torsion angle of a glycosidic linkage?
-/// @details  Carbohydrate linkages are defined as the torsion angles leading back to the previous residue.  Much
-/// of Rosetta code relies on TorsionIDs and assumes TorsionID( n, BB, 1 ) is phi.  For a sugar, phi (of the next
-/// residue) is the last torsion, and the number of main-chain torsions varies per saccharide residue.
-bool
-is_glycosidic_phi_torsion( Pose const & pose, id::TorsionID const & torsion_id )
-{
-	return core::conformation::carbohydrates::is_glycosidic_phi_torsion( pose.conformation(), torsion_id);
-}
 
 ///@brief Get the torsion num that this torsionID moves.
 core::Size
@@ -615,6 +606,15 @@ which_glycosidic_torsion(Pose const & pose, id::TorsionID const & torsion_id ){
 	else return 0;
 }
 
+// Is this is the phi torsion angle of a glycosidic linkage?
+/// @details  Carbohydrate linkages are defined as the torsion angles leading back to the previous residue.  Much
+/// of Rosetta code relies on TorsionIDs and assumes TorsionID( n, BB, 1 ) is phi.  For a sugar, phi (of the next
+/// residue) is the last torsion, and the number of main-chain torsions varies per saccharide residue.
+bool
+is_glycosidic_phi_torsion( Pose const & pose, id::TorsionID const & torsion_id )
+{
+	return core::conformation::carbohydrates::is_glycosidic_phi_torsion( pose.conformation(), torsion_id);
+}
 
 // Is this is the psi torsion angle of a glycosidic linkage?
 /// @details  Carbohydrates linkages are defined as the torsion angles leading back to the previous residue.  Much
@@ -626,48 +626,63 @@ which_glycosidic_torsion(Pose const & pose, id::TorsionID const & torsion_id ){
 bool
 is_glycosidic_psi_torsion( Pose const & pose, id::TorsionID const & torsion_id )
 {
-	return is_glycosidic_torsion(pose, torsion_id, core::id::psi_dihedral);
+	return is_glycosidic_torsion( pose, torsion_id, core::id::psi_dihedral );
 }
 
-// Is this is an omega torsion angle of a glycosidic linkage?
+// Is this is a 1st omega torsion angle of a glycosidic linkage?
 /// @details  Carbohydrates linkages are defined as the torsion angles leading back to the previous residue.  Much
 /// of Rosetta code relies on TorsionIDs and assumes TorsionID( n, BB, 3 ) is omega.  For a sugar, omega (of the next
 /// residue) is the 3rd-to-last torsion, and the number of main-chain torsions varies per saccharide residue.
-/// @note     This function currently will not recognize additional omegas beyond omega1.\n
-/// Also, this function will return false if the TorsionID is a CHI and the torsion is already covered by an equivalent
-/// BB.  In other words, TorsionIDs for CHIs only return true for branch connections, where the ONLY way to access that
-/// torsion is through CHI.
+/// @note     This function will return false if the TorsionID is a CHI and the torsion is already covered by an
+/// equivalent BB.  In other words, TorsionIDs for CHIs only return true for branch connections, where the ONLY way to
+/// access that torsion is through CHI.
 bool
 is_glycosidic_omega_torsion( Pose const & pose, id::TorsionID const & torsion_id )
 {
-	return is_glycosidic_torsion(pose, torsion_id, core::id::omega_dihedral);
+	return is_glycosidic_torsion( pose, torsion_id, core::id::omega_dihedral );
 }
 
-// Is this is an omega torsion angle of a glycosidic linkage?
+// Is this is a 2nd omega torsion angle of a glycosidic linkage?
 /// @details  Carbohydrates linkages are defined as the torsion angles leading back to the previous residue.  Much
-/// of Rosetta code relies on TorsionIDs and assumes TorsionID( n, BB, 3 ) is omega.  For a sugar, omega (of the next
-/// residue) is the 3rd-to-last torsion, and the number of main-chain torsions varies per saccharide residue.
-/// @note     This function currently will not recognize additional omegas beyond omega1.\n
-/// Also, this function will return false if the TorsionID is a CHI and the torsion is already covered by an equivalent
-/// BB.  In other words, TorsionIDs for CHIs only return true for branch connections, where the ONLY way to access that
-/// torsion is through CHI.
+/// of Rosetta code relies on TorsionIDs and assumes TorsionID( n, BB, 3 ) is omega.  For a sugar, omega2 (of the next
+/// residue) is the 4th-to-last torsion, and the number of main-chain torsions varies per saccharide residue.
+/// @note     This function will return false if the TorsionID is a CHI and the torsion is already covered by an
+/// equivalent BB.  In other words, TorsionIDs for CHIs only return true for branch connections, where the ONLY way to
+/// access that torsion is through CHI.
 bool
 is_glycosidic_omega2_torsion( Pose const & pose, id::TorsionID const & torsion_id )
 {
-	return is_glycosidic_torsion(pose, torsion_id, core::id::omega2_dihedral);
+	return is_glycosidic_torsion( pose, torsion_id, core::id::omega2_dihedral );
 }
+
+// Is this is a 3rd omega torsion angle of a glycosidic linkage?
+/// @details  Carbohydrates linkages are defined as the torsion angles leading back to the previous residue.  Much
+/// of Rosetta code relies on TorsionIDs and assumes TorsionID( n, BB, 3 ) is omega.  For a sugar, omega3 (of the next
+/// residue) is the 5th-to-last torsion, and the number of main-chain torsions varies per saccharide residue.
+/// @note     This function will return false if the TorsionID is a CHI and the torsion is already covered by an
+/// equivalent BB.  In other words, TorsionIDs for CHIs only return true for branch connections, where the ONLY way to
+/// access that torsion is through CHI.
+bool
+is_glycosidic_omega3_torsion( Pose const & pose, id::TorsionID const & torsion_id )
+{
+	return is_glycosidic_torsion( pose, torsion_id, core::id::omega3_dihedral );
+}
+
 
 ///@brief Base function to reduce code-duplication in torsion queries.
 bool
-is_glycosidic_torsion(Pose const & pose, id::TorsionID const & torsion_id, core::id::MainchainTorsionType const & torsion_type){
-
+is_glycosidic_torsion(
+	Pose const & pose, id::TorsionID const & torsion_id,
+	core::id::MainchainTorsionType const & torsion_type )
+{
 	using namespace id;
+
 	core::Size mainchain_offset = 0;
 	core::Size connect_atom_num = 0;
 
 	switch( torsion_type){
 	case phi_dihedral :
-		return is_glycosidic_phi_torsion( pose, torsion_id);
+		return is_glycosidic_phi_torsion( pose, torsion_id );
 
 	case psi_dihedral :
 		mainchain_offset = 1;
@@ -680,13 +695,17 @@ is_glycosidic_torsion(Pose const & pose, id::TorsionID const & torsion_id, core:
 		break;
 
 	case omega2_dihedral :
-		utility_exit_with_message("Omega2 currently unsupported!");
+		mainchain_offset = 3;
+		connect_atom_num = 5;
+		break;
 
 	case omega3_dihedral :
-		utility_exit_with_message("Omega3 currently unsupported");
+		mainchain_offset = 4;
+		connect_atom_num = 6;
+		break;
 
 	default :
-		utility_exit_with_message("Unknown behavior");
+		utility_exit_with_message( "Unknown behavior" );
 	}
 
 	if ( torsion_id.type() == BB || torsion_id.type() == CHI ) {  // Omega for a branched saccharide has a CHI type.
@@ -699,12 +718,13 @@ is_glycosidic_torsion(Pose const & pose, id::TorsionID const & torsion_id, core:
 				// If this is a main-chain torsion, we need the next residue on the main chain.
 				next_rsd_num = torsion_id.rsd() + 1;
 				if ( pose.residue( next_rsd_num ).is_carbohydrate() ) {
-					chemical::carbohydrates::CarbohydrateInfoCOP info( residue.carbohydrate_info() );
-					if ( core::Size(torsion_type) > 2 && ! info->has_exocyclic_linkage_to_child_mainchain() ) {
-						return false;
+					if ( residue.is_carbohydrate() ) {
+						chemical::carbohydrates::CarbohydrateInfoCOP info( residue.carbohydrate_info() );
+						if ( core::Size( torsion_type ) > 2 && ! info->has_exocyclic_linkage_to_child_mainchain() ) {
+							return false;
+						}
 					}
 					return ( torsion_id.torsion() == residue.n_mainchain_atoms() - mainchain_offset );
-
 				}
 			}
 			break;

@@ -30,6 +30,13 @@
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
 
+// Basic Header
+#include <basic/Tracer.hh>
+
+
+// Construct tracer.
+static basic::Tracer TR( "core.scoring.carbohydrates" );
+
 
 namespace core {
 namespace scoring {
@@ -60,7 +67,7 @@ get_CHI_energy_function_linkage_type_for_phi_for_residue_in_pose( pose::Pose con
 	return LINKAGE_NA;
 }
 
-// Get the CHI Energy Function linkage type for phi for a particular residue.
+// Get the CHI Energy Function linkage type for psi for a particular residue.
 /// @return  CHIEnergyFunctionLinkageType, which corresponds to one of four particular CHI Energy Functions specific to
 /// psi, or LINKAGE_NA if the CHI Energy Function is not applicable to this torsion.
 CHIEnergyFunctionLinkageType
@@ -85,7 +92,7 @@ get_CHI_energy_function_linkage_type_for_psi_for_residue_in_pose( pose::Pose con
 
 		Residue const & prev_rsd( pose.residue( prev_rsd_num ));
 		if ( ! prev_rsd.is_carbohydrate() ) {
-			//std::cout <<" getChiFunctionLinkageType "<< "Previous residue is not a carbohydrate!" << std::endl;
+			TR.Trace <<" getChiFunctionLinkageType "<< "Previous residue is not a carbohydrate!" << std::endl;
 			return LINKAGE_NA;
 		}
 
@@ -209,10 +216,8 @@ get_CHI_energy_function_linkage_type_for_residue_in_pose(
 	core::uint rsd_num )
 {
 	if ( torsion == id::phi_dihedral ) {
-		//std::cout <<" getChiFunctionLinkageType "<< "Phi Dihedral" << std::endl;
 		return get_CHI_energy_function_linkage_type_for_phi_for_residue_in_pose( pose, rsd_num );
 	} else if ( torsion == id::psi_dihedral ) {
-		//std::cout <<" getChiFunctionLinkageType "<< "Psi Dihedral" << std::endl;
 		return get_CHI_energy_function_linkage_type_for_psi_for_residue_in_pose( pose, rsd_num );
 	}
 	return LINKAGE_NA;  // CHI Energy Functions only exist for phi and psi.

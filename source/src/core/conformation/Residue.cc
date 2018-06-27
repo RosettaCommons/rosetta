@@ -411,8 +411,8 @@ Residue::set_xyz( std::string const & atm_name, Vector const & xyz_in )
 core::chemical::carbohydrates::CarbohydrateInfoCOP
 Residue::carbohydrate_info() const
 {
-	debug_assert(rsd_type_.is_carbohydrate());
-	PyAssert(rsd_type_.is_carbohydrate(), "Residue::carbohydrate_info(): This residue is not a carbohydrate!");
+	debug_assert( rsd_type_.is_carbohydrate() );
+	PyAssert( rsd_type_.is_carbohydrate(), "Residue::carbohydrate_info(): This residue is not a carbohydrate!" );
 
 	return rsd_type_.carbohydrate_info();
 }

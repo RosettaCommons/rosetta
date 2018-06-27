@@ -19,9 +19,11 @@
 #include <core/optimization/types.hh>
 #include <core/optimization/Multifunc.hh>
 #include <core/optimization/NumericalDerivCheckResult.hh>
+#include <core/optimization/MinimizerMap.hh>
 
 // Project headers
 #include <core/kinematics/AtomTree.hh>
+#include <core/kinematics/tree/Atom.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/DerivVectorPair.hh>
 #include <core/scoring/EnergyMap.hh>
@@ -30,32 +32,18 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/MinimizationGraph.hh>
 
-// // ObjexxFCL headers
-// #include <ObjexxFCL/FArray1A.hh>
-// #include <ObjexxFCL/FArray3A.hh>
-// #include <ObjexxFCL/Fmath.hh>
-#include <ObjexxFCL/format.hh>
-// #include <ObjexxFCL/string.functions.hh>
-
-// // Numeric headers
-#include <numeric/constants.hh>
-// #include <numeric/xyzVector.hh>
-// #include <numeric/xyz.functions.hh>
-
-// // Utility headers
-// #include <utility/exit.hh>
-
-// // C++ headers
-// #include <algorithm>
-// #include <cmath>
-// #include <cstdlib>
-// #include <iostream>
-
+// Basic headers
 #include <basic/Tracer.hh>
 
-#include <core/kinematics/tree/Atom.hh>
-#include <core/optimization/MinimizerMap.hh>
+// Utility headers
 #include <utility/vector1.hh>
+
+// Numeric headers
+#include <numeric/constants.hh>
+
+// ObjexxFCL headers
+#include <ObjexxFCL/format.hh>
+
 
 using basic::Error;
 using basic::Warning;
@@ -111,18 +99,14 @@ static basic::Tracer TR( "core.optimization" );
 ///
 ///car if two atoms are fixed relatively in cartesian space, then dr/dphi = 0
 ///car and there is no contribution to the derivative
-
-
 void
 atom_tree_dfunc(
 	pose::Pose & pose,
 	MinimizerMap & min_map,
 	scoring::ScoreFunction const & scorefxn,
 	Multivec const & vars,
-	Multivec & dE_dvars
-)
+	Multivec & dE_dvars )
 {
-
 	dE_dvars.resize( min_map.nangles() );
 
 	// clear all the F1's and F2's
@@ -148,14 +132,12 @@ atom_tree_dfunc(
 	// immediately downstream atoms
 	atom_tree_get_atompairE_deriv( pose, min_map, scorefxn );
 
-
 	/////////////////////////////////////////////////////////////////////////////
 	// this should only be done once, after all torsion F1,F2's have
 	// been filled in
 	//
 	// this sums all the F1,F2 contributions down the tree from leaves to root
 	min_map.link_torsion_vectors();
-
 
 	/////////////////////////////////////////////////////////////////////////////
 	// now loop over the torsions in the map
@@ -173,12 +155,9 @@ atom_tree_dfunc(
 		Real scale = min_map.torsion_scale_factor( dof_node );
 
 		dE_dvars[ imap ] = torsional_derivative_from_cartesian_derivatives( atom, dof_node, sfxn_dof_deriv, scale );
-
 	} // loop over map
 
-
 	scorefxn.finalize_after_derivatives( pose );
-
 }
 
 /// @details Refactored from atom_tree_dfunc above for use in alternate minimization contexts

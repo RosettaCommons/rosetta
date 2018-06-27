@@ -184,7 +184,7 @@ void align_virtual_atoms_in_carbohydrate_residue( Pose & pose, uint const sequen
 //////////////////////////    On-The-Fly TorsionID Queries    //////////////////////////////////
 
 ///@brief Get the torsion num that this torsionID moves.
-/// Returns 0 if not any of the 4 cannonical BB torsions up to omega2.
+/// Returns 0 if not any of the 4 canonical BB torsions up to omega2.
 core::Size
 which_glycosidic_torsion(Pose const & pose, id::TorsionID const & torsion_id );
 
@@ -195,16 +195,20 @@ bool is_glycosidic_phi_torsion( Pose const & pose, id::TorsionID const & torsion
 /// @brief  Is this is the psi torsion angle of a glycosidic linkage?
 bool is_glycosidic_psi_torsion( Pose const & pose, id::TorsionID const & torsion_id );
 
-/// @brief  Is this is an omega torsion angle of a glycosidic linkage?
+/// @brief  Is this is a 1st omega torsion angle of a glycosidic linkage?
 bool is_glycosidic_omega_torsion( Pose const & pose, id::TorsionID const & torsion_id );
 
-bool
-is_glycosidic_omega2_torsion( Pose const & pose, id::TorsionID const & torsion_id );
+/// @brief  Is this is a 2nd omega torsion angle of a glycosidic linkage?
+bool is_glycosidic_omega2_torsion( Pose const & pose, id::TorsionID const & torsion_id );
 
+/// @brief  Is this is a 3rd omega torsion angle of a glycosidic linkage?
+bool is_glycosidic_omega3_torsion( Pose const & pose, id::TorsionID const & torsion_id );
 
 ///@brief Base function to reduce code-duplication in torsion queries.
-bool
-is_glycosidic_torsion(Pose const & pose, id::TorsionID const & torsion_id, core::id::MainchainTorsionType const & torsion_type);
+bool is_glycosidic_torsion(
+	Pose const & pose, id::TorsionID const & torsion_id,
+	core::id::MainchainTorsionType const & torsion_type );
+
 
 /// @brief  Return the sequence position of the immediate downstream (child) residue affected by this torsion.
 core::uint get_downstream_residue_that_this_torsion_moves( Pose const & pose, id::TorsionID const & torsion_id );
