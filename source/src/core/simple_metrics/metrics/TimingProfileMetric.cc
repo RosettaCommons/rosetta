@@ -114,6 +114,7 @@ TimingProfileMetric::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap &  )
 {
+	SimpleMetric::parse_base_tag( tag );
 	set_calc_in_hours( tag->getOption< bool >( "hours", false));
 }
 

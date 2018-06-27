@@ -101,6 +101,8 @@ SasaMetric::parse_my_tag(
 	basic::datacache::DataMap & datamap  )
 {
 
+	SimpleMetric::parse_base_tag( tag );
+
 	if ( tag->hasOption("residue_selector") ) {
 		set_residue_selector(select::residue_selector::parse_residue_selector( tag, datamap ));
 	}

@@ -40,7 +40,10 @@ StringMetric::StringMetric( StringMetric const & src ):
 
 void
 StringMetric::apply( pose::Pose & pose, std::string prefix, std::string suffix ) const {
-	std::string out_tag = prefix+metric()+suffix;
+
+	std::string custom_type = get_custom_type();
+	if ( custom_type != "" ) custom_type = custom_type+"_";
+	std::string out_tag = prefix + custom_type + metric()+suffix;
 	std::string value = calculate( pose );
 	core::pose::setPoseExtraScore( pose, out_tag, value);
 }

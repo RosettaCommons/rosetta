@@ -30,6 +30,9 @@
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
+
 #include <string>
 
 namespace core {
@@ -77,14 +80,30 @@ public:
 	virtual utility::vector1< std::string >
 	get_metric_names() const = 0;
 
+	void
+	set_custom_type( std::string const & custom_type );
+
+	///@brief Additional setting to prefix/suffix
+	//  so that many different configured SMs can be called in one RunSimpleMetric run
+	/// Output data name will be prefix+custom_type+type+suffix
+	std::string
+	get_custom_type() const;
+
 public:
 
-
-	/// @brief called by parse_my_tag -- should not be used directly
 	virtual void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data ) = 0;
+
+	///Parse the base class tag.  Keep required interface for parse_my_tag.
+	virtual void
+	parse_base_tag(
+		utility::tag::TagCOP tag );
+
+	static
+	utility::tag::XMLSchemaComplexTypeGeneratorOP
+	complex_type_generator_for_simple_metric( utility::tag::XMLSchemaDefinition & );
 
 	std::string
 	type() const {
@@ -95,6 +114,10 @@ private:
 
 	///@brief Type of SimpleMetric.  AKA RealMetric, StringMetric, etc.
 	std::string type_;
+
+	//Additional setting to prefix/suffix for RosettaScripts -
+	//  so that many different configured SMs can be called in one RunSimpleMetric run
+	std::string custom_type_ = "";
 
 }; // SimpleMetric
 

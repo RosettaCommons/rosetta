@@ -117,6 +117,7 @@ PolarGroupBurialPyMolStringMetric::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & datamap  )
 {
+	SimpleMetric::parse_base_tag( tag );
 	set_verbose( tag->getOption<bool>("verbose", false) );
 	set_scorefxn( protocols::rosetta_scripts::parse_score_function( tag, "scorefxn", datamap ) );
 }

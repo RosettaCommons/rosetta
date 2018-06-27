@@ -41,8 +41,12 @@ CompositeRealMetric::CompositeRealMetric( CompositeRealMetric const & src ):
 void
 CompositeRealMetric::apply( pose::Pose & pose, std::string prefix, std::string suffix ) const {
 	std::map< std::string, core::Real > values = calculate( pose );
+
+	std::string custom_type = get_custom_type();
+	if ( custom_type != "" ) custom_type=custom_type+"_";
+
 	for ( auto value_pair : values ) {
-		std::string out_tag = prefix + value_pair.first + "_"+metric() + suffix;
+		std::string out_tag = prefix + value_pair.first + "_" + custom_type + metric() + suffix;
 		core::pose::setPoseExtraScore( pose, out_tag, value_pair.second);
 	}
 }

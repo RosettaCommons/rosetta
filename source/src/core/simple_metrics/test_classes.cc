@@ -54,10 +54,10 @@ TestStringMetric::clone() const {
 
 void
 TestStringMetric::parse_my_tag(
-	utility::tag::TagCOP ,
-	basic::datacache::DataMap &   )
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & )
 {
-
+	SimpleMetric::parse_base_tag( tag );
 }
 
 void
@@ -99,10 +99,10 @@ TestRealMetric::clone() const {
 
 void
 TestRealMetric::parse_my_tag(
-	utility::tag::TagCOP ,
-	basic::datacache::DataMap &   )
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & )
 {
-
+	SimpleMetric::parse_base_tag( tag );
 }
 
 void
@@ -144,10 +144,10 @@ TestCompositeStringMetric::clone() const {
 
 void
 TestCompositeStringMetric::parse_my_tag(
-	utility::tag::TagCOP ,
-	basic::datacache::DataMap &   )
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & )
 {
-
+	SimpleMetric::parse_base_tag( tag );
 }
 
 void
@@ -189,10 +189,10 @@ TestCompositeRealMetric::clone() const {
 
 void
 TestCompositeRealMetric::parse_my_tag(
-	utility::tag::TagCOP ,
-	basic::datacache::DataMap &   )
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & )
 {
-
+	SimpleMetric::parse_base_tag( tag );
 }
 
 void

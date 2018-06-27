@@ -52,8 +52,9 @@ xsd_simple_metric_type_definition_w_attributes(
 	utility::tag::AttributeList const & attributes
 )
 {
-	utility::tag::XMLSchemaComplexTypeGenerator ct_gen;
-	ct_gen.complex_type_naming_func( & complex_type_name_for_simple_metric )
+	utility::tag::XMLSchemaComplexTypeGeneratorOP ct_gen = SimpleMetric::complex_type_generator_for_simple_metric(xsd);
+
+	ct_gen->complex_type_naming_func( & complex_type_name_for_simple_metric )
 		.element_name( rs_type )
 		.description( description )
 		.add_attributes( attributes )

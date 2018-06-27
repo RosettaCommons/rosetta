@@ -41,9 +41,13 @@ CompositeStringMetric::CompositeStringMetric( CompositeStringMetric const & src 
 void
 CompositeStringMetric::apply( pose::Pose & pose, std::string prefix, std::string suffix ) const {
 
+	std::string custom_type = get_custom_type();
+	if ( custom_type != "" ) custom_type = custom_type+"_";
+
+
 	std::map< std::string, std::string > values = calculate( pose );
 	for ( auto value_pair : values ) {
-		std::string out_tag = prefix + value_pair.first + "_"+metric() + suffix;
+		std::string out_tag = prefix + value_pair.first + "_" + custom_type + metric() + suffix;
 		core::pose::setPoseExtraScore( pose, out_tag, value_pair.second);
 	}
 }

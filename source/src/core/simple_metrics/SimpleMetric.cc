@@ -14,6 +14,10 @@
 
 // Unit header or inline function header
 #include <core/simple_metrics/SimpleMetric.hh>
+#include <core/simple_metrics/util.hh>
+#include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/tag/util.hh>
 
 // NOTE: This file should have NO dependencies other than its header.
 
@@ -40,7 +44,45 @@ SimpleMetric::SimpleMetric( SimpleMetric const & src ):
 
 }
 
+void
+SimpleMetric::set_custom_type(std::string const & custom_type){
+	custom_type_ = custom_type;
+}
 
+std::string
+SimpleMetric::get_custom_type() const {
+	return custom_type_;
+}
+
+void
+SimpleMetric::parse_base_tag(utility::tag::TagCOP tag ){
+	set_custom_type(tag->getOption< std::string >("custom_type", custom_type_));
+}
+
+utility::tag::XMLSchemaComplexTypeGeneratorOP
+SimpleMetric::complex_type_generator_for_simple_metric( utility::tag::XMLSchemaDefinition &  ) {
+
+	using namespace utility::tag;
+
+	AttributeList attlist;
+
+	std::string custom_type_descrition = "Additional setting to prefix/suffix "
+		"so that many different configured SMs can be called in one RunSimpleMetric run\n"
+		"  Output data name will be prefix+custom_type+type+suffix";
+
+	attlist
+		+ XMLSchemaAttribute( "custom_type", xs_string, custom_type_descrition );
+
+
+	XMLSchemaComplexTypeGeneratorOP ct_gen( new utility::tag::XMLSchemaComplexTypeGenerator );
+	ct_gen->
+		add_attributes( attlist )
+		.complex_type_naming_func( & complex_type_name_for_simple_metric );
+
+
+	return ct_gen;
+
+}
 
 } //core
 } //metrics

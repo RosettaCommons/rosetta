@@ -107,6 +107,8 @@ SecondaryStructureMetric::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap &  datamap)
 {
+	SimpleMetric::parse_base_tag( tag );
+
 	set_use_dssp_reduced( tag->getOption< bool >("dssp_reduced", true));
 
 	if ( tag->hasOption("residue_selector") ) {

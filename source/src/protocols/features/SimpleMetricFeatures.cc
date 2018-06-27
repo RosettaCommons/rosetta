@@ -173,6 +173,10 @@ SimpleMetricFeatures::write_schema_to_db(
 	for ( SimpleMetricCOP metric : metrics_ ) {
 		utility::vector1< std::string > names = metric->get_metric_names();
 		std::string metric_type="";
+
+		std::string custom_type = metric->get_custom_type();
+		if ( custom_type != "" ) custom_type=custom_type+"_";
+
 		if ( (metric->type() == "StringMetric" )|| (metric->type() == "CompositeStringMetric" ) ) {
 			metric_type = "string";
 		} else if ( ( metric->type() == "RealMetric") || (metric->type() =="CompositeRealMetric") ) {
@@ -182,7 +186,11 @@ SimpleMetricFeatures::write_schema_to_db(
 		}
 
 		for ( std::string m_name : names ) {
-			name_value_type[m_name] = metric_type;
+			if ( (metric->type() == "CompositeStringMetric" )|| (metric->type() == "CompositeRealMetric") ) {
+				name_value_type[m_name+"_"+custom_type+metric->metric()] = metric_type;
+			} else {
+				name_value_type[custom_type  + m_name] = metric_type;
+			}
 		}
 	}
 
@@ -268,34 +276,38 @@ SimpleMetricFeatures::report_features(
 
 
 	for ( SimpleMetricCOP metric: metrics_ ) {
+
+		std::string custom_type = metric->get_custom_type();
+		if ( custom_type != "" ) custom_type=custom_type+"_";
+
 		std::string metric_type = metric->type();
 
 		//Can't use a switch for strings for some reason.
 		if      ( metric_type == "RealMetric" ) {
 			RealMetric const & r_metric = dynamic_cast<RealMetric const & >( *metric );
 			MetricData new_data = MetricData(r_metric.calculate(pose));
-			name_data_map[r_metric.metric() ] = new_data;
+			name_data_map[custom_type+r_metric.metric() ] = new_data;
 
 		} else if ( metric_type == "StringMetric" ) {
 			StringMetric const & r_metric = dynamic_cast<StringMetric const & >( *metric );
 			std::string value = r_metric.calculate(pose);
 			MetricData new_data( value );
-			name_data_map[r_metric.metric() ] = new_data;
-			string_data[r_metric.metric() ] = value;
+			name_data_map[custom_type+r_metric.metric() ] = new_data;
+			string_data[custom_type+r_metric.metric() ] = value;
 		} else if ( metric_type == "CompositeRealMetric" ) {
 			CompositeRealMetric const & r_metric = dynamic_cast<CompositeRealMetric const & >( *metric );
 			std::map< std::string, core::Real > result = r_metric.calculate(pose);
 			for ( auto result_pair : result ) {
 				MetricData new_data( result_pair.second);
-				name_data_map[ result_pair.first ] = new_data;
+				name_data_map[ result_pair.first+"_"+custom_type+r_metric.metric() ] = new_data;
 			}
 		} else if ( metric_type == "CompositeStringMetric" ) {
 			CompositeStringMetric const & r_metric = dynamic_cast<CompositeStringMetric const & >( *metric );
 			std::map< std::string, std::string > result = r_metric.calculate(pose);
 			for ( auto result_pair : result ) {
 				MetricData new_data( result_pair.second);
-				name_data_map[ result_pair.first ] = new_data;
-				string_data[ result_pair.first ] = result_pair.second;
+				name_data_map[ result_pair.first+"_"+custom_type+r_metric.metric() ] = new_data;
+				string_data[ result_pair.first+"_"+custom_type+r_metric.metric() ] = result_pair.second;
 			}
 		} else {
 			utility_exit_with_message("Metric Type not understood! "+ metric_type);

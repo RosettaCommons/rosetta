@@ -153,7 +153,7 @@ TotalEnergyMetric::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & datamap  )
 {
-
+	SimpleMetric::parse_base_tag( tag );
 	if ( tag->hasOption("residue_selector") ) {
 		set_residue_selector(protocols::rosetta_scripts::parse_residue_selector( tag, datamap ));
 	}

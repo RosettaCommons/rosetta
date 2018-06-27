@@ -25,7 +25,6 @@ KNOWN_PROJECTS = [
     'core.5',
     #'interactive',
     #'game',
-    'devel',
     ]
 
 if 'cygwin' in sys.platform:
