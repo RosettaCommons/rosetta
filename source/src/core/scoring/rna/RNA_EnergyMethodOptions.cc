@@ -62,7 +62,7 @@ operator==( RNA_EnergyMethodOptions const & a, RNA_EnergyMethodOptions const & b
 
 	return ( ( a.syn_G_potential_bonus_ == b.syn_G_potential_bonus_ ) &&
 		( a.torsion_potential_ == b.torsion_potential_  ) &&
-		( a.suiteness_bonus_ == b.suiteness_bonus_ ) && 
+		( a.suiteness_bonus_ == b.suiteness_bonus_ ) &&
 		( a.rna_base_pair_xy_filename_ == b.rna_base_pair_xy_filename_ ) );
 }
 
