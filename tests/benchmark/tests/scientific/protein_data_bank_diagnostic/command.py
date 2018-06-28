@@ -33,18 +33,29 @@ class TestMode(enum.Enum):
     fast = enum.auto()
     full = enum.auto()
 
+    cif = enum.auto()
+
+
+class InputType(enum.Enum):
+    def __str__(self): return f'{self.name}'  # (self.__class__.__name__, self.name)
+
+    pdb = enum.auto()
+    cif = enum.auto()
+
 
 _timeouts_ = {
     TestMode.fast : 8,
     TestMode.full : 32,
+
+    TestMode.cif  : 8,
 }
 
 
-def download_all_pdb_files(config):
+def download_all_input_files(kind, config):
     ''' Download all PDB files from www.rcsb.org and store them at given prefix (from config).
         Return a map PDB-code --> absolute path to PDB file
     '''
-    prefix = os.path.abspath(config['prefix'] + '/rcsb')
+    prefix = os.path.abspath(config['prefix'] + f'/rcsb/{kind}')
     if not os.path.isdir(prefix): os.makedirs(prefix)
 
     # taken from https://www.rcsb.org/pages/download/ftp
@@ -52,16 +63,22 @@ def download_all_pdb_files(config):
     #${RSYNC} -rlpt -v -z --delete --port=$PORT ${SERVER}/data/structures/divided/pdb/ $MIRRORDIR > $LOGFILE 2>/dev/null
     #SERVER=rsync.wwpdb.org::ftp                                   # RCSB PDB server name
     #PORT=33444                                                    # port RCSB PDB server is using
-    if config['debug']: print('WARNING: Debug mode, skipping PBD downloading...')
-    else: execute("Downloading PDBs from www.rcsb.org...", f'cd {prefix} && rsync -rlpt -v -z --delete --port=33444 rsync.wwpdb.org::ftp/data/structures/divided/pdb/ {prefix}')
 
-    files = execute("Getting list of available PDBs...", f"cd {prefix} && find -name 'pdb*.ent.gz'", return_='output', silence_output=True).split()
+    suffix = { InputType.pdb: 'pdb', InputType.cif : 'mmCIF'} [kind]
+
+    if config['debug']: print('WARNING: Debug mode, skipping PBD downloading...')
+    else: execute(f"Downloading {str(kind).upper()}s from www.rcsb.org...", f'cd {prefix} && rsync -rlpt -v -z --delete --port=33444 rsync.wwpdb.org::ftp/data/structures/divided/{suffix}/ {prefix}')
+
+    pattern = { InputType.pdb: 'pdb*.ent.gz', InputType.cif : '*.cif.gz'} [kind]
+    files = execute(f"Getting list of available {str(kind).upper()}s...", f"cd {prefix} && find -name '{pattern}'", return_='output', silence_output=True).split()
 
     #print(f'files:{files}')
 
     pdbs = {}
-    for p in files: # expecting ./34/pdb134d.ent.gz
-        code = p.split('/')[-1][len('pdb'):-len('.ent.gz')]
+    for p in files: # expecting ./34/pdb134d.ent.gz or ./34/134d.cif.gz
+        if   kind == InputType.pdb: code = p.split('/')[-1][len('pdb'):-len('.ent.gz')]
+        elif kind == InputType.cif: code = p.split('/')[-1][:4]
+
         pdbs[code] = prefix + p[1:]  # removing leading '.'
 
     return pdbs
@@ -153,12 +170,13 @@ def protein_data_bank_diagnostic(mode, rosetta_dir, working_dir, platform, confi
         command_line += ' -ignore_zero_occupancy false'
         command_line += ' -in:file:obey_ENDMDL true'  # necessary to read PDB-sourced multimodel NMR files
 
-        if   mode == TestMode.fast: command_line += ' -PDB_diagnostic::skip_pack_and_min true  -PDB_diagnostic::reading_only true'
+        if   mode in [TestMode.fast, TestMode.cif]: command_line += ' -PDB_diagnostic::skip_pack_and_min true  -PDB_diagnostic::reading_only true'
         elif mode == TestMode.full: command_line += ' -PDB_diagnostic::skip_pack_and_min false -PDB_diagnostic::reading_only false'
         else: raise BenchmarkError(f'protein_data_bank_diagnostic: Unknown mode {mode}!')
 
+        input_kind = { TestMode.fast : InputType.pdb, TestMode.full : InputType.pdb, TestMode.cif : InputType.cif } [mode]
 
-        all_pdbs = download_all_pdb_files(config)
+        all_pdbs = download_all_input_files(input_kind, config)
 
         number_of_jobs = _number_of_jobs_ if mode == TestMode.fast else _number_of_jobs_ * 1
 
@@ -167,6 +185,7 @@ def protein_data_bank_diagnostic(mode, rosetta_dir, working_dir, platform, confi
             number_of_jobs, all_pdbs = 2, { k : all_pdbs[k] for k in list(all_pdbs.keys())[10:10] } # 18
 
             all_pdbs.update( { k : _all_pdbs_[k] for k in '100d 101d 1bz9 2agd 2gtx 1bbi'.split() } )  # 1ehd 106d 145d 154d 159d 6enz 6eor
+            all_pdbs['aaaa'] = all_pdbs['100d']
             #number_of_jobs , pdbs = 5, { k : pdbs[k] for k in list(pdbs.keys())[:1000] }
             #pdbs = { str(i): '_'+str(i)+'_' for i in range(10) }
 
@@ -252,11 +271,11 @@ def protein_data_bank_diagnostic(mode, rosetta_dir, working_dir, platform, confi
         with open(f'{working_dir}/blacklist.{mode}.new.json', 'w') as f: json.dump( dict(ignore = sorted( set(blacklist) ) ), f, sort_keys=True, indent=2)
 
 
-        new_passed_pdbs = ''
+        new_passed_pdbs = []
         for pdb in results['passed']:
-            if pdb not in reference['passed']: new_passed_pdbs += f' {pdb.upper()}'
+            if pdb not in reference['passed']: new_passed_pdbs.append(pdb)  # f' {pdb.upper()}'
 
-        note = f"<br/><p>NOTE: following PDB's passed the tests but was not listed in reference results: {new_passed_pdbs}</p>" if new_passed_pdbs else ''
+        note = f"<br/><p>NOTE: {len(new_passed_pdbs)} PDB's passed the tests but was not listed in reference results.</p>" if new_passed_pdbs else ''
 
         with open(f'{working_dir}/index.html', 'w') as f:
 
@@ -286,10 +305,12 @@ def protein_data_bank_diagnostic(mode, rosetta_dir, working_dir, platform, confi
 
 
 def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
-    if test == "full": return protein_data_bank_diagnostic(TestMode.full, rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test == '':   return protein_data_bank_diagnostic(TestMode.fast, rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    if test in ['', 'fast']: return protein_data_bank_diagnostic(TestMode.fast, rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test == "full":     return protein_data_bank_diagnostic(TestMode.full, rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
 
-    else: raise BenchmarkError('Unknown scripts test: {}!'.format(test))
+    elif test == 'cif':      return protein_data_bank_diagnostic(TestMode.cif,  rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+
+    else: raise BenchmarkError(f'Unknown scripts test: {test}!')
 
 
 
