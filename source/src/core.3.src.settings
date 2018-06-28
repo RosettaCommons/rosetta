@@ -906,10 +906,11 @@ sources = {
 	"core/select/residue_selector": [
 		"AndResidueSelector",
 		"BinSelector",
-	        "BondedResidueSelector",
+	    	"BondedResidueSelector",
 		"CachedResidueSubset",
 		"ChainSelector",
 		"CloseContactResidueSelector",
+		"DensityFitResidueSelector",
 		"GlycanResidueSelector",
 		"GlycanSequonsSelector",
 		"GlycanPositionSelector",

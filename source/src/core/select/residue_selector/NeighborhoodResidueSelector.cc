@@ -347,12 +347,12 @@ void
 NeighborhoodResidueSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	using namespace utility::tag;
 	AttributeList attributes;
-	attributes + XMLSchemaAttribute( "selector", xs_string        , "XRW TO DO" )
-		+ XMLSchemaAttribute( "resnums",  xs_string     , "XRW TO DO" )
-		+ XMLSchemaAttribute( "distance", xsct_real , "XRW TO DO" )
+	attributes + XMLSchemaAttribute( "selector", xs_string        , "Focus to select around." )
+		+ XMLSchemaAttribute( "resnums",  xs_string     , "Focus to select around." )
+		+ XMLSchemaAttribute( "distance", xsct_real , "Distance to measure neighbors. Default is 10A. " )
 		+ XMLSchemaAttribute("atom_names_for_distance_measure", xs_string, "A list of comma separated atom names, for each focus residue, the positions of which will be used for measuring distance to find neighbors." )
-		+ XMLSchemaAttribute::attribute_w_default("include_focus_in_subset", xsct_rosetta_bool, "XRW TO DO", "true");
-	xsd_type_definition_w_attributes_and_optional_subselector( xsd, class_name(),"XRW TO DO", attributes );
+		+ XMLSchemaAttribute::attribute_w_default("include_focus_in_subset", xsct_rosetta_bool, "Should the focus be included in the returning subset?  Default True", "true");
+	xsd_type_definition_w_attributes_and_optional_subselector( xsd, class_name(),"A Residue Selector that selects neighboring residues to a set of residues (focus).  By default, includes this focus in the resulting selection.", attributes );
 }
 
 

@@ -75,11 +75,11 @@ public:
 
 	////////////////////////////////////
 	// ray's protocol to select residues to refine
-	void automode( core::pose::Pose &pose,
+	void automode( core::pose::Pose & pose,
 		core::Real score_cut );
 
-	void automode_scores( core::pose::Pose &pose,
-		utility::vector1<core::Real> &scores );
+	void automode_scores( core::pose::Pose & pose,
+		std::map< core::Size, core::Real > & scores );
 
 	/////////////////////////////////////////////////////////////
 	void user( std::set<core::Size> user_pos,
@@ -88,18 +88,17 @@ public:
 	////////////////////////////////////
 	// individual method
 
-	void density_nbr( core::pose::Pose &pose );
+	void density_nbr( core::pose::Pose & pose );
 
-	void rama( core::pose::Pose &pose,
+	void rama( core::pose::Pose & pose,
 		core::Real weight=0.2 );
 
-	void geometry( core::pose::Pose &pose,
+	void geometry( core::pose::Pose & pose,
 		core::Real weight=1.0 );
 
 	void density( core::pose::Pose &pose );
 
 	////////////////////////////////
-	void old_rama( core::pose::Pose &pose );
 	void chainbreak( core::pose::Pose &pose );
 	void bfactors( core::pose::Pose &pose );
 	void fragbias_reporter( core::pose::Pose &pose );
@@ -116,12 +115,8 @@ private:
 		utility::vector1<core::Real> &perrsd_score,
 		core::Real weight );
 
-	void cal_zscore( utility::vector1<core::Real> const &input_v,
-		utility::vector1<core::Real> &zscore_v,
-		bool negating=false);
-
 	// This function calls assign_prob_with_rsd_wdw(rsn) to assign probability to the residue with a window controlled by "rsd_wdw_size_".
-	void assign_fragprobs( utility::vector1<core::Real> const &perrsd_score,
+	void assign_fragprobs( std::map< core::Size, core::Real > const & perrsd_score,
 		core::Real threshold );
 
 	void assign_prob_with_rsd_wdw( int rsn );
@@ -142,10 +137,10 @@ private:
 	utility::vector1<core::Real> fragmentProbs_;
 
 	// the per residue container for score terms
-	utility::vector1<core::Real> perrsd_dens_;
-	utility::vector1<core::Real> perrsd_nbrdens_;
-	utility::vector1<core::Real> perrsd_rama_;
-	utility::vector1<core::Real> perrsd_geometry_;
+	std::map< core::Size, core::Real > perrsd_dens_;
+	std::map< core::Size, core::Real > perrsd_nbrdens_;
+	std::map< core::Size, core::Real > perrsd_rama_;
+	std::map< core::Size, core::Real > perrsd_geometry_;
 
 	//utility::vector1<numeric::random::WeightedSampler> frag_bias_;
 }; // class FragmentBiasAssigner

@@ -18,6 +18,8 @@
 #include <numeric/MathNTensor.hh>
 
 #include <algorithm>
+#include <map>
+#include <cmath>
 
 namespace numeric {
 
@@ -315,6 +317,5 @@ get_Real_MathNTensor_dimension_size(
 
 	return 0; //Should never occur, but needed to satisfy compiler.
 }
-
 
 } // numeric

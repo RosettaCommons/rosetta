@@ -72,71 +72,74 @@ KNOWN_TESTS = [
 
 def project_callback(project, project_path, project_files):
 
-	# get keys
-	print project
-	#print project_files
-	group_key = xcode_util.PROJECT_KEYS[project][0]
-	sources_key = xcode_util.PROJECT_KEYS[project][1]
+    # get keys
+    print project
+    #print project_files
+    group_key = xcode_util.PROJECT_KEYS[project][0]
+    sources_key = xcode_util.PROJECT_KEYS[project][1]
 
-	# read file
+    # read file
 
-	xcode_filename = 'Rosetta.xcodeproj/project.pbxproj'
+    xcode_filename = 'Rosetta.xcodeproj/project.pbxproj'
 
-	#if not os.path.exists( xcode_filename ): - JAB - new libraries will fail
-	shutil.copyfile( xcode_filename + '.template', xcode_filename )
 
-	lines = open(xcode_filename, 'r').readlines()
 
-	# find the relevant sections
+    #- JAB - new libraries will fail
+    if not os.path.exists( xcode_filename ):
+        shutil.copyfile( xcode_filename + '.template', xcode_filename )
 
-	build_file_begin_ln = xcode_util.find_line('/* Begin PBXBuildFile section */', lines, 0)
-	build_file_end_ln = xcode_util.find_line('/* End PBXBuildFile section */', lines, build_file_begin_ln)
+    lines = open(xcode_filename, 'r').readlines()
 
-	file_ref_begin_ln = xcode_util.find_line('/* Begin PBXFileReference section */', lines, build_file_end_ln)
-	file_ref_end_ln = xcode_util.find_line('/* End PBXFileReference section */', lines, file_ref_begin_ln)
+    # find the relevant sections
 
-	group_begin_ln = xcode_util.find_line('/* Begin PBXGroup section */', lines, file_ref_end_ln)
-	group_end_ln = xcode_util.find_line('/* End PBXGroup section */', lines, group_begin_ln)
+    build_file_begin_ln = xcode_util.find_line('/* Begin PBXBuildFile section */', lines, 0)
+    build_file_end_ln = xcode_util.find_line('/* End PBXBuildFile section */', lines, build_file_begin_ln)
 
-	proj_sources_ln = xcode_util.find_line('\t\t' + sources_key + ' /* Sources */ = {', lines, group_end_ln)
-	source_files_begin_ln = xcode_util.find_line('\t\t\tfiles = (', lines, proj_sources_ln)
-	source_files_end_ln = xcode_util.find_line('\t\t\t);', lines, source_files_begin_ln)
+    file_ref_begin_ln = xcode_util.find_line('/* Begin PBXFileReference section */', lines, build_file_end_ln)
+    file_ref_end_ln = xcode_util.find_line('/* End PBXFileReference section */', lines, file_ref_begin_ln)
 
-	# separate sections
+    group_begin_ln = xcode_util.find_line('/* Begin PBXGroup section */', lines, file_ref_end_ln)
+    group_end_ln = xcode_util.find_line('/* End PBXGroup section */', lines, group_begin_ln)
 
-	a_lines = lines[0:build_file_begin_ln + 1]
-	build_file_lines = lines[build_file_begin_ln + 1:build_file_end_ln]
-	b_lines = lines[build_file_end_ln:file_ref_begin_ln + 1]
-	file_ref_lines = lines[file_ref_begin_ln + 1:file_ref_end_ln]
-	c_lines = lines[file_ref_end_ln:group_begin_ln + 1]
-	group_lines = lines[group_begin_ln + 1:group_end_ln]
-	d_lines = lines[group_end_ln:source_files_begin_ln + 1]
-	source_files_lines = lines[source_files_begin_ln + 1:source_files_end_ln]
-	e_lines = lines[source_files_end_ln:]
+    proj_sources_ln = xcode_util.find_line('\t\t' + sources_key + ' /* Sources */ = {', lines, group_end_ln)
+    source_files_begin_ln = xcode_util.find_line('\t\t\tfiles = (', lines, proj_sources_ln)
+    source_files_end_ln = xcode_util.find_line('\t\t\t);', lines, source_files_begin_ln)
 
-	# remove current information
+    # separate sections
 
-	xcode_util.remove_groups_and_file_refs(group_key, project, group_lines, file_ref_lines)
-	xcode_util.remove_build_files_and_sources(source_files_lines, build_file_lines)
+    a_lines = lines[0:build_file_begin_ln + 1]
+    build_file_lines = lines[build_file_begin_ln + 1:build_file_end_ln]
+    b_lines = lines[build_file_end_ln:file_ref_begin_ln + 1]
+    file_ref_lines = lines[file_ref_begin_ln + 1:file_ref_end_ln]
+    c_lines = lines[file_ref_end_ln:group_begin_ln + 1]
+    group_lines = lines[group_begin_ln + 1:group_end_ln]
+    d_lines = lines[group_end_ln:source_files_begin_ln + 1]
+    source_files_lines = lines[source_files_begin_ln + 1:source_files_end_ln]
+    e_lines = lines[source_files_end_ln:]
 
-	# generate new information
+    # remove current information
 
-	root = xcode_util.make_groups_and_file_refs(group_key, project, project, project_files)
-	xcode_util.add_new_lines('../src/', root, group_lines, file_ref_lines, build_file_lines, source_files_lines)
+    xcode_util.remove_groups_and_file_refs(group_key, project, group_lines, file_ref_lines)
+    xcode_util.remove_build_files_and_sources(source_files_lines, build_file_lines)
 
-	#write new sections
+    # generate new information
 
-	outfile = open(xcode_filename, 'w')
+    root = xcode_util.make_groups_and_file_refs(group_key, project, project, project_files)
+    xcode_util.add_new_lines('../src/', root, group_lines, file_ref_lines, build_file_lines, source_files_lines)
 
-	outfile.writelines(a_lines)
-	outfile.writelines(build_file_lines)
-	outfile.writelines(b_lines)
-	outfile.writelines(file_ref_lines)
-	outfile.writelines(c_lines)
-	outfile.writelines(group_lines)
-	outfile.writelines(d_lines)
-	outfile.writelines(source_files_lines)
-	outfile.writelines(e_lines)
+    #write new sections
+
+    outfile = open(xcode_filename, 'w')
+
+    outfile.writelines(a_lines)
+    outfile.writelines(build_file_lines)
+    outfile.writelines(b_lines)
+    outfile.writelines(file_ref_lines)
+    outfile.writelines(c_lines)
+    outfile.writelines(group_lines)
+    outfile.writelines(d_lines)
+    outfile.writelines(source_files_lines)
+    outfile.writelines(e_lines)
 
 def project_main(path_to_mini, argv, project_callback, known_projects):
     if len(argv) < 2:
@@ -161,22 +164,22 @@ def project_main(path_to_mini, argv, project_callback, known_projects):
 
 if __name__ == "__main__":
 
-	main_dir = '../../'
-	source_dir = '../'
+    main_dir = '../../'
+    source_dir = '../'
 
-	sys.path.append('..')
+    sys.path.append('..')
 
-	# generate new version file
-	os.system('cd {source_dir}; python version.py'.format(source_dir=source_dir))
+    # generate new version file
+    os.system('cd {source_dir}; python version.py'.format(source_dir=source_dir))
 
-	# (re)generate options files
-	os.system('cd {source_dir}; ./update_options.sh'.format(source_dir=source_dir))
+    # (re)generate options files
+    os.system('cd {source_dir}; ./update_options.sh'.format(source_dir=source_dir))
 
-	# (re)generate ResidueType enum files
-	os.system('cd {source_dir}; ./update_ResidueType_enum_files.sh'.format(source_dir=source_dir))
+    # (re)generate ResidueType enum files
+    os.system('cd {source_dir}; ./update_ResidueType_enum_files.sh'.format(source_dir=source_dir))
 
-	#print repr(KNOWN_PROJECTS)
+    #print repr(KNOWN_PROJECTS)
 
-	test_projects=['protocols.3', 'protocols.4']
+    test_projects=['protocols.3', 'protocols.4']
 
-	project_main(main_dir + 'source/', sys.argv, project_callback, KNOWN_PROJECTS)
+    project_main(main_dir + 'source/', sys.argv, project_callback, KNOWN_PROJECTS)

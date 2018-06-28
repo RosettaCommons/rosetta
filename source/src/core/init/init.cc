@@ -739,6 +739,7 @@ static ResidueSelectorRegistrator< BondedResidueSelectorCreator > reg_BondedResi
 static ResidueSelectorRegistrator< ChainSelectorCreator > reg_ChainSelectorCreator;
 static ResidueSelectorRegistrator< core::pack::task::residue_selector::ClashBasedRepackShellSelectorCreator > reg_ClashBasedRepackShellSelectorCreator;
 static ResidueSelectorRegistrator< CloseContactResidueSelectorCreator > reg_CloseContactResidueSelectorCreator;
+static ResidueSelectorRegistrator< DensityFitResidueSelectorCreator > reg_DensityFitResidueSelectorCreator;
 static ResidueSelectorRegistrator< GlycanResidueSelectorCreator > reg_GlycanResidueSelectorCreator;
 static ResidueSelectorRegistrator< RandomGlycanFoliageSelectorCreator > reg_RandomGlycanFoliageSelectorCreator;
 static ResidueSelectorRegistrator< GlycanLayerSelectorCreator > reg_GlycanLayerSelectorCreator;

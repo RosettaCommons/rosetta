@@ -35,9 +35,11 @@
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
+#include <core/scoring/electron_density/util.hh>
 
 #include <numeric/random/random.hh>
 #include <numeric/random/WeightedSampler.hh>
+#include <numeric/zscores.hh>
 
 #include <utility/vector1.hh>
 
@@ -50,6 +52,7 @@ namespace protocols {
 namespace hybridization {
 
 using namespace core;
+using namespace core::scoring::electron_density;
 
 static basic::Tracer fragbias_tr( "protocols.hybridization.FragmentBiasAssigner" );
 
@@ -197,34 +200,6 @@ cal_perrsd_score(
 }
 
 
-void
-FragmentBiasAssigner::
-cal_zscore(
-	utility::vector1<core::Real> const &input_v,
-	utility::vector1<core::Real> &zscore_v,
-	bool negating
-){
-	//runtime_assert( input_v.size() == nres_ ); // do I need to have this here?
-	Real sum=0, sq_sum=0;
-
-	for ( Size i=1; i<=nres_; ++i ) {
-		sum    += input_v[i];
-		sq_sum += input_v[i]*input_v[i];
-	}
-	Real mean  = sum/nres_;
-	Real stdev = std::sqrt( sq_sum/nres_ - mean*mean );
-
-	for ( Size i=1; i<=nres_; ++i ) {
-
-		Real i_zscore =  (input_v[i]-mean)/stdev;
-
-		if ( negating ) i_zscore = -1*i_zscore;
-
-		zscore_v[i] = i_zscore;
-	}
-}
-
-
 // rsd window size is controlled through set_rsd_wdw_to_assign_prob(rsd_wdw_size_)
 void
 FragmentBiasAssigner::
@@ -261,32 +236,28 @@ automode(
 	// based on parameter scanning to predict regions to refine:
 	// 0.45 0.05 0.15 0.35
 	// density:9, density_nbrzscore:1, rama:3, geometry:7
-	utility::vector1<core::Real> zscore_dens, zscore_nbrdens, zscore_rama, zscore_geometry;
-
-	// to catch some outliers
-	zscore_dens.resize(nres_,0.0);
-	zscore_nbrdens.resize(nres_,0.0);
-	zscore_rama.resize(nres_,0.0);
-	zscore_geometry.resize(nres_,0.0);
+	//std::map< Size, Real > per_rsd_dens, per_rsd_nbrdens, per_rsd_rama, per_rsd_geometry;
+	std::map< Size, Real > zscore_dens, zscore_nbrdens, zscore_rama, zscore_geometry;
+	std::map< Size, Real > scores;
 
 	density_nbr( pose ); // perrsd_dens_ and perrsd_densnbr_
 	rama( pose ); // perrsd_rama_
 	geometry( pose ); // perrsd_geometry_
 
-	cal_zscore( perrsd_dens_,     zscore_dens           );
-	cal_zscore( perrsd_nbrdens_,  zscore_nbrdens        );
-	cal_zscore( perrsd_rama_,     zscore_rama,     true );
-	cal_zscore( perrsd_geometry_, zscore_geometry, true );
+	numeric::calc_zscore( perrsd_dens_,     zscore_dens           );
+	numeric::calc_zscore( perrsd_nbrdens_,  zscore_nbrdens        );
+	numeric::calc_zscore( perrsd_rama_,     zscore_rama,     true );
+	numeric::calc_zscore( perrsd_geometry_, zscore_geometry, true );
 
 	//all_scores.resize(nres_, 0.0);
-	for ( int r=1; r<=(int)nres_; ++r ) {
+	for ( auto r : perrsd_dens_ ) {
 
-		Real score =  0.45*zscore_dens[r]
-			+ 0.05*zscore_nbrdens[r]
-			+ 0.15*zscore_rama[r]
-			+ 0.35*zscore_geometry[r];
+		Real score =  0.45*zscore_dens[r.first]
+			+ 0.05*zscore_nbrdens[r.first]
+			+ 0.15*zscore_rama[r.first]
+			+ 0.35*zscore_geometry[r.first];
 
-		if ( score < score_cut ) assign_prob_with_rsd_wdw(r);
+		if ( score < score_cut ) assign_prob_with_rsd_wdw(r.first);
 
 		//fragbias_tr << "rsn: " << r << " fragProb: " << fragmentProbs_[r] << " score: " << score << std::endl;
 	}
@@ -299,55 +270,53 @@ void
 FragmentBiasAssigner::
 automode_scores(
 	pose::Pose &pose,
-	utility::vector1<Real> &scores
+	std::map< Size, Real > & scores
 ){
 	// based on parameter scanning to predict regions to refine:
 	// 0.45 0.05 0.15 0.35
 	// density:9, density_nbrzscore:1, rama:3, geometry:7
-	utility::vector1<core::Real> zscore_dens, zscore_nbrdens, zscore_rama, zscore_geometry;
-
-	// to catch some outliers
-	zscore_dens.resize(nres_,0.0);
-	zscore_nbrdens.resize(nres_,0.0);
-	zscore_rama.resize(nres_,0.0);
-	zscore_geometry.resize(nres_,0.0);
-	scores.resize(nres_,0.0);
+	//std::map< Size, Real > per_rsd_dens, per_rsd_nbrdens, per_rsd_rama, per_rsd_geometry;
+	std::map< Size, Real > zscore_dens, zscore_nbrdens, zscore_rama, zscore_geometry;
 
 	density_nbr( pose ); // perrsd_dens_ and perrsd_densnbr_
 	rama( pose ); // perrsd_rama_
 	geometry( pose ); // perrsd_geometry_
 
-	cal_zscore( perrsd_dens_,     zscore_dens           );
-	cal_zscore( perrsd_nbrdens_,  zscore_nbrdens        );
-	cal_zscore( perrsd_rama_,     zscore_rama,     true );
-	cal_zscore( perrsd_geometry_, zscore_geometry, true );
+	numeric::calc_zscore( perrsd_dens_,     zscore_dens           );
+	numeric::calc_zscore( perrsd_nbrdens_,  zscore_nbrdens        );
+	numeric::calc_zscore( perrsd_rama_,     zscore_rama,     true );
+	numeric::calc_zscore( perrsd_geometry_, zscore_geometry, true );
 
+	fragbias_tr.Trace << "Size: " << zscore_dens.size() << std::endl;
 	//all_scores.resize(nres_, 0.0);
-	for ( int r=1; r<=(int)nres_; ++r ) {
-		scores[r] =  0.45*zscore_dens[r]
-			+ 0.05*zscore_nbrdens[r]
-			+ 0.15*zscore_rama[r]
-			+ 0.35*zscore_geometry[r];
+	for ( auto r : perrsd_dens_ ) {
+		
+		fragbias_tr.Trace << zscore_dens[r.first] << " " << zscore_nbrdens[r.first] << " " << zscore_rama[r.first] << " " << zscore_geometry[r.first] << std::endl;
+		Real score =  0.45* zscore_dens[r.first]
+			+ 0.05*zscore_nbrdens[r.first]
+			+ 0.15*zscore_rama[r.first]
+			+ 0.35*zscore_geometry[r.first];
+		
+		scores[r.first] = score;
 	}
 }
 
 // assign 1 or 0
 // add values into
 void
-FragmentBiasAssigner::
-assign_fragprobs(
-	utility::vector1<core::Real> const &perrsd_score,
-	Real threshold
-){
-	for ( int r=1; r<=(int)nres_; ++r ) {
-		if ( perrsd_score[r] >= threshold ) {
+FragmentBiasAssigner::assign_fragprobs(
+	std::map< core::Size, core::Real > const & perrsd_score,
+	Real threshold )
+{
+	for ( auto score_pair : perrsd_score) {
+		if ( score_pair.second >= threshold ) {
 			if ( cumulative_ ) {
-				fragmentProbs_[r] += 1.0; // no residue window size control here
+				fragmentProbs_[ score_pair.first ] += 1.0; // no residue window size control here
 			} else {
-				assign_prob_with_rsd_wdw(r);
+				assign_prob_with_rsd_wdw(score_pair.first);
 			}
 		}
-		fragbias_tr.Trace << "rsn: " << r << " fragProb: " << fragmentProbs_[r] << " score: " << perrsd_score[r] << " " << threshold << std::endl;
+		fragbias_tr.Trace << "rsn: " << score_pair.first << " fragProb: " << fragmentProbs_[ score_pair.first ] << " score: " << score_pair.second << " " << threshold << std::endl;
 	}
 }
 
@@ -422,156 +391,32 @@ density_nbr(
 	using namespace core::scoring;
 	// rescore pose
 	fragProbs_assigned_=true;
-
-	core::scoring::electron_density::ElectronDensity &edm = core::scoring::electron_density::getDensityMap();
-	edm.setScoreWindowContext( true );
-	edm.setWindow( 3 );  // smoother to use 3-res window
-
-	// score the pose
-	core::scoring::ScoreFunctionOP myscore( new core::scoring::ScoreFunction() );
-	myscore->set_weight( core::scoring::elec_dens_window, 1.0 );
-
-	if ( pose.is_fullatom() ) {
-		myscore->set_weight( core::scoring::fa_rep, 10e-30 );
-	} else {
-		myscore->set_weight( core::scoring::vdw, 10e-30 );
+	
+	// clean and init the containers
+	perrsd_dens_.clear();
+	perrsd_nbrdens_.clear();
+	for (Size i= 1; i <=nres_; ++i) {
+		perrsd_dens_[i] = 0.0;
+		perrsd_nbrdens_[i] = 0.0;
 	}
-
-	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		myscore = core::scoring::symmetry::symmetrize_scorefunction(*myscore);
-	}
-
-	(*myscore)(pose);
-
-	///////////////////////////////////////////////////////
-	// get density correlation score from pose.size(), rather than nres_
-	// get zscore for real-space density correlation scores
-	perrsd_dens_.resize(nres_, 0.0);
-	core::Real rscc_sum=0, sq_rscc_sum=0;
-
-	for ( Size r=1; r<=pose.size(); ++r ) { // loop over the entire pose
-		if ( pose.residue(r).aa() == core::chemical::aa_vrt ) continue;
-		if ( symminfo_ && !symminfo_->bb_is_independent( r ) ) continue; // only the main chain gets selected
-
-		Real dens_rscc = core::scoring::electron_density::getDensityMap().matchRes( r , pose.residue(r), pose, symminfo_ , false);
-		Size asymm_num_r = ((r-1)%nres_)+1;
-		perrsd_dens_[asymm_num_r] = dens_rscc;
-		rscc_sum    += perrsd_dens_[asymm_num_r];
-		sq_rscc_sum += perrsd_dens_[asymm_num_r]*perrsd_dens_[asymm_num_r];
-
-		fragbias_tr.Trace << "res: " << asymm_num_r << " symmetric num: " << r << " dens_rscc: " << dens_rscc << std::endl;
-	}
-	// get mean and stdev for density rscc
-	Real perrsd_dens_mean  = rscc_sum/nres_;
-	Real perrsd_dens_stdev = std::sqrt( sq_rscc_sum/nres_ - perrsd_dens_mean*perrsd_dens_mean );
-
-
-	///////////////////////////////////////////////////////
-	// for each residue, get neighbors from energy graph,
-	// and calculate density-zscore from neighbors
-	EnergyGraph const & energy_graph( pose.energies().energy_graph() );
-	perrsd_nbrdens_.resize(nres_, 0.0);
-
-	for ( Size i=1; i<=pose.size(); ++i ) {
-		if ( pose.residue(i).aa() == core::chemical::aa_vrt ) continue; // prevent virtual
-		if ( symminfo_ && !symminfo_->bb_is_independent( i ) ) continue; // only the main chain gets selected
-
-		core::conformation::Residue const &rsd_i( pose.residue(i) );
-		//if (rsd_i.name3()=="GLY") continue;
-
-		Size asymm_num_i = ((i-1)%nres_)+1;
-		Real i_dens_rscc = perrsd_dens_[asymm_num_i];
-		Real sum    = i_dens_rscc;
-		Real sq_sum = i_dens_rscc*i_dens_rscc;
-		Size n_nbrs = 1;
-
-		fragbias_tr.Trace << "rsd: " << i << " " << rsd_i.name3() << " i_dens_rscc: " << i_dens_rscc << std::endl;
-
-		// get density score per i
-		for ( utility::graph::Graph::EdgeListConstIter
-				iru  = energy_graph.get_node(i)->const_edge_list_begin(),
-				irue = energy_graph.get_node(i)->const_edge_list_end();
-				iru != irue; ++iru ) {
-
-			auto const * edge( static_cast< EnergyEdge const *> (*iru) );
-			Size const j( edge->get_other_ind(i) );
-			Size asymm_num_j = ((j-1)%nres_)+1;
-
-			conformation::Residue const & rsd_j ( pose.residue(j) );
-			//if (rsd_j.name3()=="GLY") continue;
-
-			Real dist = std::pow( edge->square_distance(), 0.5 );
-			if ( dist <= 10.0 ) {
-				Real j_dens_rscc = perrsd_dens_[asymm_num_j];
-				sum    += j_dens_rscc;
-				sq_sum += j_dens_rscc*j_dens_rscc;
-				n_nbrs ++;
-
-				fragbias_tr.Trace << "computing energy graph: " << j
-					//<< " dist: " <<  caled_dist
-					<< " "                        << rsd_j.name3()
-					<< " dist: "                 << dist
-					<< " j_dens_rscc: "           << j_dens_rscc
-					<< " sum: "                   << sum
-					<< " sq_sum: "               << sq_sum
-					<< " n_nbrs: "               << n_nbrs
-					//<< " delta: "
-					//<< dist-caled_dist
-					<< std::endl;
-			} else {
-				continue;
-			}
-		} // res j
-
-		fragbias_tr.Trace << " sum: " << sum
-			<< " sq_sum: " << sq_sum
-			<< " n_nrbs: " << n_nbrs
-			<< std::endl;
-
-		Real nbrdens_mean  = sum/n_nbrs;
-		Real nbrdens_stdev = std::sqrt( sq_sum/n_nbrs - nbrdens_mean*nbrdens_mean );
-
-		// z-score for rscc of residue i to rscc of its neighbors
-		Real i_nbrdens_zscore = (i_dens_rscc - nbrdens_mean) / nbrdens_stdev;
-		perrsd_nbrdens_[asymm_num_i] = i_nbrdens_zscore;
-
-		// z-score for rscc of residue i to rscc of all residues
-		Real i_perrsd_dens_zscore = (i_dens_rscc-perrsd_dens_mean)/perrsd_dens_stdev;
-
-		fragbias_tr.Trace << "rsd: "              << asymm_num_i
-			<< " rsn: "             << rsd_i.name3()
-			<< " symm_rsd: "        << i
-			<< " dens_rscc: "       << i_dens_rscc
-			<< " nbrdens_mean: "    << nbrdens_mean
-			<< " nbrdens_stdev: "   << nbrdens_stdev
-			<< " i_nbr_zscore: "    << i_nbrdens_zscore
-			<< " i_perrsd_zscore: " << i_perrsd_dens_zscore
-			<< " nbrs: "            << n_nbrs
-			<< std::endl;
-
-		// assign nbr_zscore cutoff
-		/*
-		Real nbr_zscore_cutoff = -2;
-		if ( n_nbrs > 20 ){   // the residue is buried
-		nbr_zscore_cutoff = 0;
-		} else if ( n_nbrs > 15 ){
-		nbr_zscore_cutoff = -0.5;
-		} else if ( n_nbrs > 10 ){
-		nbr_zscore_cutoff = -1;
-		}
-		*/
-
+	
+	calculate_density_nbr( pose, perrsd_dens_, perrsd_nbrdens_, symminfo_ );
+	
+	for (auto score_pair : perrsd_nbrdens_){
+		Real i_perrsd_dens_zscore = score_pair.second;
+		Real i_nbrdens_zscore = perrsd_dens_[ score_pair.first ];
+		
 		if ( i_perrsd_dens_zscore < -1.0 ) { // the rscc for this residue is being considered worse overall
 			if ( i_nbrdens_zscore < -2.0 ) {  // the rscc for this residue is worse than its neighbors
 				if ( cumulative_ ) {
-					fragmentProbs_[asymm_num_i] += 1;
+					fragmentProbs_[score_pair.first] += 1;
 				} else {
-					fragmentProbs_[asymm_num_i] = 1;
+					fragmentProbs_[score_pair.first] = 1;
 				}
 			} // i_perrsd_zscore
 		} // i_nbr_zscore
 
-		fragbias_tr.Trace << "fragmentProbs_: " << asymm_num_i << " rsd: " << i << " prob: " << fragmentProbs_[asymm_num_i] << std::endl;
+		fragbias_tr.Trace << "fragmentProbs_: " << score_pair.first << " rsd: " << score_pair.first << " prob: " << fragmentProbs_[score_pair.first] << std::endl;
 	} // for i in range(pose.size())
 }
 
@@ -605,32 +450,30 @@ density(
 
 	(*myscore)(pose);
 
-	perrsd_dens_.resize(nres_, 0.0);
+	perrsd_dens_.clear();
+	for (Size i= 1; i <=nres_; ++i) perrsd_dens_[i] = 0.0;
+	
 	core::Real CCsum=0, CCsum2=0;
 
 	// turn score_symm_complex flag on; otherwise it won't see symmetry, and will return 0
 	for ( int r=1; r<=(int)nres_; ++r ) {
-		int rsrc = r;
-		if ( symminfo_ && !symminfo_->bb_is_independent(r) ) {
-			rsrc = symminfo_->bb_follows(r);
-		}
 
-		perrsd_dens_[r] = core::scoring::electron_density::getDensityMap().matchRes( rsrc , pose.residue(rsrc), pose, symminfo_, false);
+		perrsd_dens_[r] = core::scoring::electron_density::getDensityMap().matchRes( r, pose.residue(r), pose, symminfo_, false);
 		CCsum += perrsd_dens_[r];
 		CCsum2 += perrsd_dens_[r]*perrsd_dens_[r];
 	}
 	CCsum /= nres_;
 	CCsum2 = sqrt( CCsum2/nres_-CCsum*CCsum );
 
-	for ( int r=1; r<=(int)nres_; ++r ) {
-		if ( perrsd_dens_[r]<0.6 ) {
-			fragmentProbs_[r] = 1.0;
-		} else if ( perrsd_dens_[r]<0.8 ) {
-			fragmentProbs_[r] = 0.25;
+	for ( auto r : perrsd_dens_) {
+		if ( r.second < 0.6 ) {
+			fragmentProbs_[r.first] = 1.0;
+		} else if ( perrsd_dens_[r.first]<0.8 ) {
+			fragmentProbs_[r.first] = 0.25;
 		} else {
-			fragmentProbs_[r] = 0.01;
+			fragmentProbs_[r.first] = 0.01;
 		}
-		fragbias_tr.Trace << "residue " << r << " rscc: " << perrsd_dens_[r] << " weight: " <<fragmentProbs_[r] << std::endl;
+		fragbias_tr.Trace << "residue " << r.first << " rscc: " << r.second << " weight: " <<fragmentProbs_[r.first] << std::endl;
 	}
 }
 
@@ -645,11 +488,10 @@ geometry(
 	if ( score_threshold_ == 9999 ) set_score_threshold( 0.6 );
 
 	// clean the container
-	perrsd_geometry_.resize(nres_, 0.0);
-	cal_perrsd_score( pose,
-		core::scoring::cart_bonded_angle,
-		perrsd_geometry_,
-		weight );
+	perrsd_geometry_.clear();
+	for (Size i= 1; i <=nres_; ++i) perrsd_geometry_[i] = 0.0;
+	
+	calculate_geometry( pose, perrsd_geometry_, n_symm_subunit_, weight);
 
 	assign_fragprobs( perrsd_geometry_,score_threshold_ );
 }
@@ -665,46 +507,13 @@ rama(
 	if ( score_threshold_ == 9999 ) set_score_threshold( 0.7 );
 
 	// clean the container
-	perrsd_rama_.resize(nres_, 0.0);
-	cal_perrsd_score( pose,
-		core::scoring::rama_prepro,
-		perrsd_rama_,
-		weight );
-
+	perrsd_rama_.clear();
+	for (Size i= 1; i <=nres_; ++i) perrsd_rama_[i] = 0.0;
+	
+	calculate_rama( pose, perrsd_rama_, n_symm_subunit_, weight);
+	
 	assign_fragprobs( perrsd_rama_, score_threshold_ );
 }
-
-
-void
-FragmentBiasAssigner::
-old_rama(
-	pose::Pose &pose
-){
-	using namespace core::scoring;
-	fragProbs_assigned_=true;
-
-	// find segments with worst rama score
-	core::Real Rtemp=1;  // again, this is a guess
-
-	// score the pose
-	core::scoring::ScoreFunctionOP myscore( new core::scoring::ScoreFunction() );
-	myscore->set_weight( core::scoring::rama, 1.0 );
-	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		myscore = core::scoring::symmetry::symmetrize_scorefunction(*myscore);
-	}
-
-	core::scoring::Energies & energies( pose.energies() );
-	(*myscore)(pose);
-
-	for ( int r=1; r<=(int)nres_; ++r ) {
-		core::scoring::EnergyMap & emap( energies.onebody_energies( r ) );
-		// i dont think this will work for symmetric systems where 1st subunit is not the scoring one
-		core::Real ramaScore = emap[ core::scoring::rama ];
-		fragmentProbs_[r] = exp( ramaScore / Rtemp );
-		fragbias_tr.Trace << "Prob_dens_rama( " << r << " ) = " << fragmentProbs_[r] << " ; rama=" << ramaScore << std::endl;
-	}
-}
-
 
 void
 FragmentBiasAssigner::

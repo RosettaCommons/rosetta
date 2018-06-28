@@ -17,6 +17,8 @@
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
+#include <core/scoring/ScoreType.hh>
 
 #include <numeric/xyzMatrix.fwd.hh>
 #include <numeric/xyzVector.hh>
@@ -29,7 +31,7 @@
 
 #include <iostream>
 #include <complex>
-
+#include <map>
 
 namespace core {
 namespace scoring {
@@ -143,7 +145,48 @@ void spline_coeffs(
 void spline_coeffs(
 	ObjexxFCL::FArray4D< float > const & data ,
 	ObjexxFCL::FArray4D< double > & coeffs);
+	
+///@brief Calculate the density and relative neighbor density score.
+/// Map must be initialized to number of calculation residues.
+void
+calculate_density_nbr(
+	pose::Pose & pose,
+	std::map< Size, Real > & per_rsd_dens,
+	std::map< Size, Real > & per_rsd_nbrdens,
+	core::conformation::symmetry::SymmetryInfoCOP syminfo,
+	bool mixed_sliding_window = false,
+	Size sliding_window_size=3);
 
+///@brief Calculate the geometry score using cartesian scoring.
+/// Map must be initialized to number of calculation residues.
+void
+calculate_geometry(
+	pose::Pose & pose,
+	std::map< Size, Real > & geometry,
+	Size n_symm_subunit,
+	Real weight = 1.0 );
+
+///@brief Calculate the geometry score using rama or sugar_bb
+/// Map must be initialized to number of calculation residues.
+void
+calculate_rama(
+	pose::Pose & pose,
+	std::map< Size, Real > & rama,
+	Size n_symm_subunit,
+	Real weight = 0.2 );
+
+
+///@brief Fill the weighted per-residue weighted score of a particular score type
+/// Note, does not decompose pair-energies, but does work with symmetry
+void
+calc_per_rsd_score(
+	pose::Pose & pose,
+	scoring::ScoreType const & score_type,
+	std::map<Size, Real > & per_rsd_score,
+	Size n_symm_subunit,
+	Real weight
+);
+	
 
 /// @brief templated helper function to FFT resample a map
 template<class S, class T>

@@ -206,7 +206,8 @@ densityTools()
 	bool bin_squared =  option[ denstools::bin_squared ]();
 	utility::vector1< core::Real > resobins, mapI, maskedmapI, modelI, maskI;
 	utility::vector1< core::Size > resobin_counts;
-	utility::vector1< core::Real > perResCC, perResStrain;
+	utility::vector1< core::Real > perResCC;
+	std::map< core::Size, core::Real > perResStrain;
 
 	utility::vector1< core::Real > mapmapFSC, maskedMapMapFSC;
 	utility::vector1< core::Real > modelmapFSC, maskedModelMapFSC;
@@ -372,7 +373,7 @@ densityTools()
 
 			core::Size nres = fullpose.size();
 			perResCC.resize( nres, 0.0 );
-			perResStrain.resize( nres, 0.0 );
+			for (Size i= 1; i <=nres; ++i) perResStrain[i] = 0.0;
 
 			protocols::electron_density::SetupForDensityScoringMoverOP dockindens( new protocols::electron_density::SetupForDensityScoringMover );
 			dockindens->apply( fullpose );

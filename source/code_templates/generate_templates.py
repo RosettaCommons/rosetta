@@ -177,7 +177,7 @@ class GenerateRosettaTemplates(object):
             if self.options.type == "residue_selector":
 
                 if self.options.namespace[0] == "core":
-                    print("\nRegister in (core.5): \n"+\
+                    print("\nRegister in (core.3): \n"+\
                             "   "+self.get_base_outdir()+"/"+"core/init/init.cc")
                 else:
                     print("\nRegister in (protocols.7):\n" \

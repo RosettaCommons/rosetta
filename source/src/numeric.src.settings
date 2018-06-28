@@ -26,6 +26,7 @@ sources = {
 		"roc_curve",
 		"util",
 		"xyz.serialization",
+		"zscores",
 	],
 	"numeric/crick_equations":[
 		"BundleParams",

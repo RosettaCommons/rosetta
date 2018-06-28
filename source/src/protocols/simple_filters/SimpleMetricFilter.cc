@@ -198,7 +198,7 @@ void SimpleMetricFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 	AttributeList attlist;
 
 	attlist + XMLSchemaAttribute::attribute_w_default("epsilon", xsct_real , "Epsilon for numerical comparisons", ".0001");
-	attlist + XMLSchemaAttribute( "metric", xs_string, "The metric to run in this filter.  Currently must be a RealMetric. IE it calculates one float value.  ");
+	attlist + XMLSchemaAttribute( "metric", xs_string, "The metric to run in this filter. ");
 
 	utility::vector1< std::string > types = get_string_comparison_type_strings();
 	utility::tag::add_schema_restrictions_for_strings( xsd, "comparison_types", types);

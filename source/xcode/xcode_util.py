@@ -67,7 +67,6 @@ PROJECT_KEYS = {  #        group                       sources
     #'game'        :      ('D1CA2C0E110BFEC30085C48B', 'D1CA2C08110BFE910085C48B'),
     #'interactive.test' : ('D18BC31A0FCDF26D000AE673', 'D18BC3030FCDF1C6000AE673'),
     #'game.test'        : ('D1CA2C26110BFFE40085C48B', 'D1CA2C10110BFEDC0085C48B'),
-    'devel'       :      ('3D3A9A1413ECE8330081959A', '3DDF62B913EE13B800401374'),
 }
 
 TEST_KEYS = {  #        group                       sources

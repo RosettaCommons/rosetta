@@ -24,6 +24,7 @@
 #include <limits>
 #include <cmath>
 #include <algorithm>
+#include <map>
 
 namespace numeric {
 
@@ -163,6 +164,7 @@ Real const & const_access_Real_MathNTensor( MathNTensorBaseCOP< Real > tensorbas
 /// @brief Given a MathNTensorBaseCOP, get the size along one dimension.
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
 Size get_Real_MathNTensor_dimension_size( MathNTensorBaseCOP< Real > tensorbase, Size const dimension_index );
+
 
 } // numeric
 
