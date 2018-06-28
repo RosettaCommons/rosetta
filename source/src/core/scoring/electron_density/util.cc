@@ -290,21 +290,20 @@ calculate_density_nbr(
 	///////////////////////////////////////////////////////
 	// get density correlation score from pose.size(), rather than nres_
 	// get zscore for real-space density correlation scores
-	
+
 	core::Real rscc_sum=0, sq_rscc_sum=0;
 	for ( Size r=1; r<=pose.size(); ++r ) { // loop over the entire pose
-		
-		if ( ! per_rsd_dens.count(r)) continue;
-		
-		if (mixed_sliding_window){
-			if (pose.residue(r).is_protein()){
+
+		if ( ! per_rsd_dens.count(r) ) continue;
+
+		if ( mixed_sliding_window ) {
+			if ( pose.residue(r).is_protein() ) {
 				edm.setWindow( 3 );
-			}
-			else {
+			} else {
 				edm.setWindow( 1 );
 			}
 		}
-		
+
 		Real dens_rscc = core::scoring::electron_density::getDensityMap().matchRes( r , pose.residue(r), pose, symminfo , false);
 		Size asymm_num_r = r;
 		per_rsd_dens[asymm_num_r] = dens_rscc;
@@ -324,8 +323,8 @@ calculate_density_nbr(
 	EnergyGraph const & energy_graph( pose.energies().energy_graph() );
 
 	for ( Size i=1; i <= pose.size(); ++i ) {
-		
-		if (! per_rsd_dens.count(i)) continue;
+
+		if ( ! per_rsd_dens.count(i) ) continue;
 
 		core::conformation::Residue const &rsd_i( pose.residue(i) );
 		//if (rsd_i.name3()=="GLY") continue;
@@ -348,17 +347,17 @@ calculate_density_nbr(
 			Size const j( edge->get_other_ind(i) );
 			Size asymm_num_j = j;
 
-			if ( core::pose::symmetry::is_symmetric( pose )  ){
-				if ( ! symminfo->bb_is_independent(j) ){
+			if ( core::pose::symmetry::is_symmetric( pose )  ) {
+				if ( ! symminfo->bb_is_independent(j) ) {
 					asymm_num_j = symminfo->bb_follows(j);
 				}
 			}
-	
+
 			conformation::Residue const & rsd_j ( pose.residue(j) );
 			//if (rsd_j.name3()=="GLY") continue;
 
 			Real dist = std::pow( edge->square_distance(), 0.5 );
-			if ( dist <= 10.0 && per_rsd_dens.count(asymm_num_j)) {
+			if ( dist <= 10.0 && per_rsd_dens.count(asymm_num_j) ) {
 				Real j_dens_rscc = per_rsd_dens[asymm_num_j];
 				sum    += j_dens_rscc;
 				sq_sum += j_dens_rscc*j_dens_rscc;
@@ -390,14 +389,14 @@ calculate_density_nbr(
 
 		// z-score for rscc of residue i to rscc of its neighbors
 		Real i_nbrdens_zscore = (i_dens_rscc - nbrdens_mean) / nbrdens_stdev;
-		
+
 		TR.Trace << "N Neighbors: " << n_nbrs << std::endl;
 		//Protect from NAN, use density zscore if no neighbors to estimate
-		if (n_nbrs <= 3) {
+		if ( n_nbrs <= 3 ) {
 			i_nbrdens_zscore = (i_dens_rscc - per_rsd_dens_mean) / per_rsd_dens_stdev;
 		}
-		
-		
+
+
 		per_rsd_nbrdens[asymm_num_i] = i_nbrdens_zscore;
 
 		// z-score for rscc of residue i to rscc of all residues
@@ -428,8 +427,8 @@ calculate_rama(
 
 	core::scoring::ScoreFunctionOP myscore( new core::scoring::ScoreFunction() );
 	myscore->set_weight( core::scoring::rama_prepro, weight );
-	
-	if ( pose.conformation().contains_carbohydrate_residues() ){
+
+	if ( pose.conformation().contains_carbohydrate_residues() ) {
 		myscore->set_weight( core::scoring::sugar_bb, weight );
 	}
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
@@ -439,15 +438,13 @@ calculate_rama(
 	(*myscore)(pose);
 
 	for ( Size r=1; r<=pose.size(); ++r ) {
-		if (rama.count(r) == 0 ) continue;
-		
-		if (pose.residue(r).is_protein()){
+		if ( rama.count(r) == 0 ) continue;
+
+		if ( pose.residue(r).is_protein() ) {
 			rama[r] = weight*(pose.energies().residue_total_energies(r)[ core::scoring::rama_prepro ]/n_symm_subunit);
-		}
-		else if (pose.residue(r).is_carbohydrate()){
+		} else if ( pose.residue(r).is_carbohydrate() ) {
 			rama[r] = weight*(pose.energies().residue_total_energies(r)[ core::scoring::sugar_bb ]/n_symm_subunit);
-		}
-		else{
+		} else {
 			rama[r] = 0.0;
 		}
 	}
@@ -492,7 +489,7 @@ calc_per_rsd_score(
 	//myscore->show_line( fragbias_tr, pose ); fragbias_tr << std::endl;
 
 	for ( auto score_pair : per_rsd_score ) {
-		
+
 		Size r = score_pair.first;
 		per_rsd_score[r] = weight*(pose.energies().residue_total_energies(r)[ score_type ]/n_symm_subunit);
 	}

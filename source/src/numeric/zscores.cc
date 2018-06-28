@@ -30,7 +30,7 @@ calc_zscore(
 	std::map< Size, Real > & zscore_v,
 	bool negating
 ){
-	
+
 	Real sum=0, sq_sum=0;
 	Size nres = input_v.size();
 
@@ -40,14 +40,14 @@ calc_zscore(
 	}
 	Real mean  = sum/nres;
 	Real stdev = std::sqrt( sq_sum/nres - mean * mean );
-	
+
 	//std::cout << mean << " " << stdev << std::endl;
-	
+
 	for ( auto score_pair : input_v ) {
-		
+
 		//std::cout << "rscore: " << score_pair.second << std::endl;
 		Real i_zscore =  (score_pair.second - mean)/stdev;
-		
+
 		//std::cout << "iscore: " << i_zscore << std::endl;
 		if ( negating ) i_zscore = -1*i_zscore;
 

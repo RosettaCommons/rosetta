@@ -373,7 +373,7 @@ densityTools()
 
 			core::Size nres = fullpose.size();
 			perResCC.resize( nres, 0.0 );
-			for (Size i= 1; i <=nres; ++i) perResStrain[i] = 0.0;
+			for ( Size i= 1; i <=nres; ++i ) perResStrain[i] = 0.0;
 
 			protocols::electron_density::SetupForDensityScoringMoverOP dockindens( new protocols::electron_density::SetupForDensityScoringMover );
 			dockindens->apply( fullpose );

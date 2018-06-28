@@ -145,7 +145,7 @@ void spline_coeffs(
 void spline_coeffs(
 	ObjexxFCL::FArray4D< float > const & data ,
 	ObjexxFCL::FArray4D< double > & coeffs);
-	
+
 ///@brief Calculate the density and relative neighbor density score.
 /// Map must be initialized to number of calculation residues.
 void
@@ -186,7 +186,7 @@ calc_per_rsd_score(
 	Size n_symm_subunit,
 	Real weight
 );
-	
+
 
 /// @brief templated helper function to FFT resample a map
 template<class S, class T>

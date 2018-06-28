@@ -290,13 +290,13 @@ automode_scores(
 	fragbias_tr.Trace << "Size: " << zscore_dens.size() << std::endl;
 	//all_scores.resize(nres_, 0.0);
 	for ( auto r : perrsd_dens_ ) {
-		
+
 		fragbias_tr.Trace << zscore_dens[r.first] << " " << zscore_nbrdens[r.first] << " " << zscore_rama[r.first] << " " << zscore_geometry[r.first] << std::endl;
 		Real score =  0.45* zscore_dens[r.first]
 			+ 0.05*zscore_nbrdens[r.first]
 			+ 0.15*zscore_rama[r.first]
 			+ 0.35*zscore_geometry[r.first];
-		
+
 		scores[r.first] = score;
 	}
 }
@@ -308,7 +308,7 @@ FragmentBiasAssigner::assign_fragprobs(
 	std::map< core::Size, core::Real > const & perrsd_score,
 	Real threshold )
 {
-	for ( auto score_pair : perrsd_score) {
+	for ( auto score_pair : perrsd_score ) {
 		if ( score_pair.second >= threshold ) {
 			if ( cumulative_ ) {
 				fragmentProbs_[ score_pair.first ] += 1.0; // no residue window size control here
@@ -391,21 +391,21 @@ density_nbr(
 	using namespace core::scoring;
 	// rescore pose
 	fragProbs_assigned_=true;
-	
+
 	// clean and init the containers
 	perrsd_dens_.clear();
 	perrsd_nbrdens_.clear();
-	for (Size i= 1; i <=nres_; ++i) {
+	for ( Size i= 1; i <=nres_; ++i ) {
 		perrsd_dens_[i] = 0.0;
 		perrsd_nbrdens_[i] = 0.0;
 	}
-	
+
 	calculate_density_nbr( pose, perrsd_dens_, perrsd_nbrdens_, symminfo_ );
-	
-	for (auto score_pair : perrsd_nbrdens_){
+
+	for ( auto score_pair : perrsd_nbrdens_ ) {
 		Real i_perrsd_dens_zscore = score_pair.second;
 		Real i_nbrdens_zscore = perrsd_dens_[ score_pair.first ];
-		
+
 		if ( i_perrsd_dens_zscore < -1.0 ) { // the rscc for this residue is being considered worse overall
 			if ( i_nbrdens_zscore < -2.0 ) {  // the rscc for this residue is worse than its neighbors
 				if ( cumulative_ ) {
@@ -451,8 +451,8 @@ density(
 	(*myscore)(pose);
 
 	perrsd_dens_.clear();
-	for (Size i= 1; i <=nres_; ++i) perrsd_dens_[i] = 0.0;
-	
+	for ( Size i= 1; i <=nres_; ++i ) perrsd_dens_[i] = 0.0;
+
 	core::Real CCsum=0, CCsum2=0;
 
 	// turn score_symm_complex flag on; otherwise it won't see symmetry, and will return 0
@@ -465,7 +465,7 @@ density(
 	CCsum /= nres_;
 	CCsum2 = sqrt( CCsum2/nres_-CCsum*CCsum );
 
-	for ( auto r : perrsd_dens_) {
+	for ( auto r : perrsd_dens_ ) {
 		if ( r.second < 0.6 ) {
 			fragmentProbs_[r.first] = 1.0;
 		} else if ( perrsd_dens_[r.first]<0.8 ) {
@@ -489,8 +489,8 @@ geometry(
 
 	// clean the container
 	perrsd_geometry_.clear();
-	for (Size i= 1; i <=nres_; ++i) perrsd_geometry_[i] = 0.0;
-	
+	for ( Size i= 1; i <=nres_; ++i ) perrsd_geometry_[i] = 0.0;
+
 	calculate_geometry( pose, perrsd_geometry_, n_symm_subunit_, weight);
 
 	assign_fragprobs( perrsd_geometry_,score_threshold_ );
@@ -508,10 +508,10 @@ rama(
 
 	// clean the container
 	perrsd_rama_.clear();
-	for (Size i= 1; i <=nres_; ++i) perrsd_rama_[i] = 0.0;
-	
+	for ( Size i= 1; i <=nres_; ++i ) perrsd_rama_[i] = 0.0;
+
 	calculate_rama( pose, perrsd_rama_, n_symm_subunit_, weight);
-	
+
 	assign_fragprobs( perrsd_rama_, score_threshold_ );
 }
 

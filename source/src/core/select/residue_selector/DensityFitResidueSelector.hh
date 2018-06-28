@@ -102,48 +102,48 @@ public:
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 public:
-	
+
 	///@brief Use density correlation instead of a zscore to fit to density
 	/// Default False.  Useful for comparison to other densities of different resolution.
 	void
 	set_match_mode( bool match_mode );
-	
+
 	///@brief Set the scorecut to use.  From -3 up.  -.5 is default.  Anything higher, is deemed 'good' for zscore.
 	///  This is also the correlation for match_mode.  Correlation of 1.0 fits density completely.  .7 is a good cutoff.
 	void
 	set_score_cut( Real score_cut );
-	
+
 	///@brief Set a residue selector mask to calculate the Zscore OVER these residues.
 	/// Useful to get bad density over a specific area, especially glycans, as the resolution of density can be heterogenous.
 	void
 	set_residue_mask( ResidueSelectorCOP selector);
-	
+
 	///@brief Use the selector as true mask to calculate the Zscore.  Otherwise, use it just as a selection for computation.  Default true.
 	void
 	set_use_selector_as_mask( bool selector_as_mask );
-	
-	
+
+
 	///@brief Set the sliding window size.  Default is 3.  If you have anything other than protein, you probably want 1.
 	/// Only used for Z-score mode.
 	void
 	set_sliding_window_size( core::Size window_size );
-	
+
 	///@brief Set the code to use a mixed sliding window depending on the residue.  3 for protein, 1 for everything else.
 	/// Only used for Z-score mode.
 	void
 	set_mixed_sliding_window( bool mixed_sliding_window );
-	
-	
+
+
 	///@brief Set to invert - IE select BAD density instead of GOOD.
 	void
 	set_invert( bool invert );
-	
 
-	
 
-	
+
+
+
 private:
-	
+
 	///@brief Compute All per-residue scores
 	void
 	compute_scores(
@@ -160,14 +160,14 @@ private:
 
 	core::Real score_cut_ = -.5; //Number usually goes from -3 up.
 	bool invert_ = false; // Invert to select bad fit.
-	
+
 	// More Control //
 	Size sliding_window_size_ = 1;
 	bool mixed_sliding_window_ = false;
 	ResidueSelectorCOP mask_ = nullptr;
 	bool match_res_ = false;
 	bool use_selector_as_mask_ = true;
-	
+
 #ifdef    SERIALIZATION
 public:
 	template< class Archive > void save( Archive & arc ) const;
