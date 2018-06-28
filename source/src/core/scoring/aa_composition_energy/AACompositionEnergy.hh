@@ -61,7 +61,7 @@ public:
 	AACompositionEnergy( core::scoring::methods::EnergyMethodOptions const &options );
 
 	/// @brief Copy constructor.
-	///
+	/// @details Note that there's no deep-copying here.
 	AACompositionEnergy( AACompositionEnergy const &src );
 
 	/// @brief Default destructor.
@@ -101,9 +101,13 @@ public:
 	///
 	void report() const;
 
-	/// @brief Cache data from the pose in this EnergyMethod in anticipation of scoring.
+	/// @brief Cache data from the pose in this EnergyMethod in anticipation of packing.
 	///
 	void set_up_residuearrayannealableenergy_for_packing( core::pose::Pose &pose, core::pack::rotamer_set::RotamerSets const &rotamersets, core::scoring::ScoreFunction const &sfxn) override;
+
+	/// @brief Clear the cached data from the pose after packing.
+	///
+	void clean_up_residuearrayannealableenergy_after_packing( core::pose::Pose &pose ) override;
 
 	/// @brief Disable this energy during minimization.
 	void setup_for_minimizing( pose::Pose & pose, ScoreFunction const & sfxn, kinematics::MinimizerMapBase const & minmap ) const override;

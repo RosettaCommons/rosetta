@@ -92,7 +92,7 @@ TaskAwareSymMinMover::TaskAwareSymMinMover(
 	min_chi_(false),
 	min_bb_(false),
 	min_rb_(false),
-	min_type_("dfpmin_armijo_nonmonotone"),
+	min_type_("lbfgs_armijo_nonmonotone"),
 	tolerance_(1e-5),
 	minmover_(std::move(minmover_in)),
 	factory_(std::move(factory_in)),

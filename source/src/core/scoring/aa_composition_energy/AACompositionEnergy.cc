@@ -89,22 +89,15 @@ AACompositionEnergy::AACompositionEnergy ( core::scoring::methods::EnergyMethodO
 }
 
 /// @brief Copy constructor.
-///
+/// @details Note that there's no deep-copying here.
 AACompositionEnergy::AACompositionEnergy( AACompositionEnergy const &src ) :
 	parent1( core::scoring::methods::EnergyMethodCreatorOP( new AACompositionEnergyCreator ) ),
 	parent2( src ),
 	disabled_( src.disabled_ ),
-	setup_helpers_(), //CLONE the helper data below; don't copy them.
-	setup_helpers_for_packing_(), //CLONE these below, too -- don't copy them.
+	setup_helpers_( src.setup_helpers_ ),
+	setup_helpers_for_packing_( src.setup_helpers_for_packing_ ),
 	setup_helper_masks_for_packing_(  src.setup_helper_masks_for_packing_ )
-{
-	for ( core::Size i=1, imax=src.setup_helpers_.size(); i<=imax; ++i ) {
-		setup_helpers_.push_back( src.setup_helpers_[i]->clone() );
-	}
-	for ( core::Size i=1, imax=src.setup_helpers_for_packing_.size(); i<=imax; ++i ) {
-		setup_helpers_for_packing_.push_back( src.setup_helpers_for_packing_[i]->clone() );
-	}
-}
+{}
 
 /// @brief Default destructor.
 ///
@@ -302,6 +295,17 @@ AACompositionEnergy::set_up_residuearrayannealableenergy_for_packing (
 		TR.Debug.flush();
 	}
 	return;
+}
+
+/// @brief Clear the cached data from the pose after packing.
+///
+void
+AACompositionEnergy::clean_up_residuearrayannealableenergy_after_packing(
+	core::pose::Pose &//pose
+) {
+	TR << "Cleaning up cached AACompositionEnergy data after packing." << std::endl;
+	setup_helpers_for_packing_.clear();
+	setup_helper_masks_for_packing_.clear();
 }
 
 /// @brief Disable this energy during minimization.
