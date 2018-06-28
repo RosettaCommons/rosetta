@@ -72,7 +72,7 @@ def run_score_tests(mode, rosetta_dir, working_dir, platform, config, hpc_driver
             results[_LogKey_]   = 'Compiling: {}\nRunning: {}\n'.format(build_command_line, command_line) + output  # ommiting compilation log and only including sfxn_fingerprint.py output
             return results
 
-    with open(working_dir + '/full-log.txt', 'w') as f: f.write( to_bytes(full_log) )
+    with open(working_dir + '/full-log.txt', 'wb') as f: f.write( to_bytes(full_log) )
 
     ignore = []
     for d in os.listdir(files_location):

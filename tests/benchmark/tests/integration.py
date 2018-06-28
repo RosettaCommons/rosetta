@@ -138,7 +138,7 @@ def run_integration_tests(mode, rosetta_dir, working_dir, platform, config, hpc_
     files_location = rosetta_dir+'/tests/integration/new/'
     copy_files(files_location, working_dir)
 
-    with open(working_dir + '/full-log.txt', 'w') as f: f.write( to_bytes(full_log) )
+    with open(working_dir + '/full-log.txt', 'wb') as f: f.write( to_bytes(full_log) )
 
     if mode in ['ubsan','addsan']:
         # Don't queue for comparison - sanitizers are hard pass/fail.
@@ -183,7 +183,7 @@ def run_demo_tests(mode, rosetta_dir, working_dir, platform, config, hpc_driver=
     files_location = os.path.realpath(rosetta_dir+'/../demos/new')
     copy_files(files_location, working_dir)
 
-    with open(working_dir + '/full-log.txt', 'w') as f: f.write( to_bytes(full_log) )
+    with open(working_dir + '/full-log.txt', 'wb') as f: f.write( to_bytes(full_log) )
 
     #Do a DIFF to indicate pass or f
     if diff_causes_failure:
@@ -262,7 +262,7 @@ def run_valgrind_tests(mode, rosetta_dir, working_dir, platform, config, hpc_dri
             state = _S_passed_
         json_results['tests'][test] = {_StateKey_: state, _LogKey_: log }
 
-    with open(working_dir + '/full-log.txt', 'w') as f: f.write( to_bytes(full_log) )
+    with open(working_dir + '/full-log.txt', 'wb') as f: f.write( to_bytes(full_log) )
 
     results[_LogKey_]    =  'Compiling: {}\nRunning: {}\n'.format(build_command_line, command_line) + output  # omitting compilation log and only including integration.py output
     results[_IgnoreKey_] = ignore

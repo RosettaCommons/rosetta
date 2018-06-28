@@ -72,16 +72,16 @@ def Tracer(verbose=False):
 
 
 def to_unicode(b):
-    ''' Conver str to unicode and handle the errors. If argument is already in unicode - do nothing
+    ''' Conver bytes to string and handle the errors. If argument is already in string - do nothing
     '''
     #return b if type(b) == unicode else unicode(b, 'utf-8', errors='replace')
     return b if type(b) == str else str(b, 'utf-8', errors='backslashreplace')
 
 
 def to_bytes(u):
-    ''' Conver unicode to str and handle the errors. If argument is already in str - do nothing
+    ''' Conver string to bytes and handle the errors. If argument is already of type bytes - do nothing
     '''
-    return u if type(u) == str else u.encode('utf-8', errors='replcae')
+    return u if type(u) == bytes else u.encode('utf-8', errors='backslashreplace')
 
 
 ''' Python-2 version

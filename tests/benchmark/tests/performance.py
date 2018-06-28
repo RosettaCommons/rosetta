@@ -35,7 +35,7 @@ def run_performance_tests(rosetta_dir, working_dir, platform, config, hpc_driver
 
     res, output, build_command_line = build_rosetta(rosetta_dir, platform, config, mode=mode, verbose=verbose)
 
-    with open(working_dir+'/build-log.txt', 'w') as f: f.write( to_bytes( u'Running: {}\n{}\n'.format(build_command_line, output) ) )
+    with open(working_dir+'/build-log.txt', 'wb') as f: f.write( to_bytes( u'Running: {}\n{}\n'.format(build_command_line, output) ) )
 
     results = {}
 
