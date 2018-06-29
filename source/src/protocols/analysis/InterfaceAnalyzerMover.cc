@@ -42,10 +42,12 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
+#include <core/kinematics/util.hh>
 
 #include <protocols/jd2/util.hh>
 
 #include <protocols/rigid/RigidBodyMover.hh>
+#include <protocols/toolbox/rigid_body/util.hh>
 
 #include <core/pose/metrics/CalculatorFactory.hh>
 //#include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
@@ -361,17 +363,17 @@ void InterfaceAnalyzerMover::apply_const( core::pose::Pose const & pose){
 		}
 	}
 
+	core::pose::Pose separated_pose;
+
 	//check for multichain poses
 	if ( explicit_constructor_ ) {
 		//fix the foldtree to reflect the fixed chains we want
 		TR << "Using explicit constructor" << std::endl;
+
 		if ( dock_chains_.size() != 0 ) {
 			setup_for_dock_chains( complexed_pose, dock_chains_ );
 		}
 
-		//Find the jump to move relative chains:
-		core::Size newjump = reorder_foldtree_find_jump( complexed_pose, fixed_chains_ );
-		interface_jump_ = newjump;
 	} else if ( pose.conformation().num_chains() > 2 ) {
 		//if multi chains with wrong constructor, work but print a warning
 		TR.Warning << "more than 2 chains present w/o using the explicit constructor!  Values might be over the wrong jump." << std::endl;
@@ -402,7 +404,12 @@ void InterfaceAnalyzerMover::apply_const( core::pose::Pose const & pose){
 	setup_scorefxn();
 
 	//init compexed and separated pose objects
-	core::pose::Pose separated_pose( make_separated_pose( complexed_pose, interface_jump_) );
+	if ( explicit_constructor_ ) {
+		//Don't use the foldtree to determine which residues to move.
+		separated_pose = make_separated_pose(complexed_pose, downstream_chains_);
+	} else {
+		separated_pose = make_separated_pose( complexed_pose, interface_jump_);
+	}
 
 	//Redetect disulfides after separation to cleave any that are in the complex pose between the chains.
 	separated_pose.conformation().detect_disulfides();
@@ -437,12 +444,8 @@ void InterfaceAnalyzerMover::apply( core::pose::Pose & pose )
 {
 	apply_const( pose );
 	add_score_info_to_pose( pose );
-}//end apply
+}
 
-// XRW TEMP std::string
-// XRW TEMP InterfaceAnalyzerMover::get_name() const {
-// XRW TEMP  return "InterfaceAnalyzerMover";
-// XRW TEMP }
 
 void InterfaceAnalyzerMover::set_pose_info( core::pose::Pose const & pose ) {
 	if ( use_jobname_ ) {
@@ -472,8 +475,8 @@ InterfaceAnalyzerMover::setup_for_dock_chains( core::pose::Pose & pose, std::str
 		}
 		return;
 	} else {
+	
 		//Here, we find the chains that we want to ignore in the Mover.
-
 		std::set< int > temp_fixed_chains;
 		for ( core::Size i = 1; i <= pose.conformation().num_chains(); ++i ) {
 			char chain = core::pose::get_chain_from_chain_id( i, pose );
@@ -487,10 +490,9 @@ InterfaceAnalyzerMover::setup_for_dock_chains( core::pose::Pose & pose, std::str
 		}
 
 		//Move the ignored chains far away so they arn't part of the calculations.
-		core::Size temp_jump = reorder_foldtree_find_jump( pose, temp_fixed_chains );
 
 		//Large number to make sure These castaways will not be near mobile chains.  Axis would be find as well here, but this makes them at least 2000 A away.
-		core::pose::Pose sep_pose = make_separated_pose( pose, temp_jump, 3000 );
+		core::pose::Pose sep_pose = make_separated_pose( pose, ignored_chains_, 3000 );
 
 		//Debugging
 		//sep_pose.dump_pdb("ignored_chain_sep.pdb");
@@ -674,15 +676,43 @@ core::Size InterfaceAnalyzerMover::reorder_foldtree_find_jump( core::pose::Pose 
 }//end reorder foldtree
 
 
-/// @details  makes the complexed and separated poses for the mover
+/// @brief Creates a single pose that is separated structurally at the interface
+/// @details Uses the jump number to find downstream residues and move them in the Z axis in cartesian space according to step_size (A)
 core::pose::Pose InterfaceAnalyzerMover::make_separated_pose( core::pose::Pose & pose, core::Size interface_jump, core::Size step_size /* 1000*/){
 	using namespace core;
 
 	( *sf_ )( pose ); //shits, giggles, and segfault prevention
 	pose::Pose separated_pose( pose );
-	protocols::rigid::RigidBodyTransMoverOP translate( new protocols::rigid::RigidBodyTransMover( separated_pose, interface_jump ) );
-	translate->step_size( step_size );
-	translate->apply( separated_pose );
+
+	///Get residues after the jump.
+	core::Vector translation_vector(0, 0, step_size);//Translate on Z-axis
+	utility::vector1< core::Size > residues_after_jump = core::kinematics::residues_downstream_of_jump( pose.fold_tree(), interface_jump);
+	protocols::toolbox::rigid_body::translate(separated_pose, translation_vector, pose, residues_after_jump);
+
+	( *sf_ )( separated_pose );
+	//debugging step to make sure the jump is right
+	//separated_pose.dump_pdb("IAM_test.pdb");
+	return separated_pose;
+}
+
+/// @brief Creates a single pose that is separated structurally at the interface
+/// @details Moves the moving_chains in cartesian space a distance according to step_size (A) in the Z axis
+core::pose::Pose InterfaceAnalyzerMover::make_separated_pose( core::pose::Pose & pose, std::set<Size> const & chain_nums, core::Size step_size /* 1000*/){
+	using namespace core;
+
+	( *sf_ )( pose ); //shits, giggles, and segfault prevention
+	pose::Pose separated_pose( pose );
+
+	utility::vector1< Size > resnums;
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
+		core::Size chain_num = pose.residue( i ).chain();
+		if ( chain_nums.count (chain_num ) ) {
+			resnums.push_back(i);
+		}
+	}
+	core::Vector translation_vector(0, 0, step_size);//Translate on Z-axis
+	protocols::toolbox::rigid_body::translate(separated_pose, translation_vector, pose, resnums);
+
 	( *sf_ )( separated_pose );
 	//debugging step to make sure the jump is right
 	//separated_pose.dump_pdb("IAM_test.pdb");
@@ -717,14 +747,6 @@ void InterfaceAnalyzerMover::register_calculators()
 			<< " already exists, this is hopefully correct for your purposes" << std::endl;
 	} else {
 		CalculatorFactory::Instance().register_calculator( InterfaceNeighborDefinition_, PoseMetricCalculatorOP( new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator( chain1_, chain2_ ) ) );
-	}
-
-	InterfaceSasaDefinition_ = "InterfaceSasaDefinition_" + ijump;
-	if ( CalculatorFactory::Instance().check_calculator_exists( InterfaceSasaDefinition_ ) ) {
-		TR.Warning << "In InterfaceAnalyzerMover, calculator " << InterfaceSasaDefinition_
-			<< " already exists, this is hopefully correct for your purposes" << std::endl;
-	} else {
-		CalculatorFactory::Instance().register_calculator( InterfaceSasaDefinition_, PoseMetricCalculatorOP( new core::pose::metrics::simple_calculators::InterfaceSasaDefinitionCalculator( chain1_, chain2_ ) ) );
 	}
 
 	InterfaceDeltaEnergetics_ = "InterfaceDeltaEnergetics_" + ijump;
@@ -1009,9 +1031,13 @@ void InterfaceAnalyzerMover::compute_interface_energy( core::pose::Pose & comple
 	calc_per_residue_and_regional_data( complexed_pose, separated_pose );
 
 	//crossterm interface energy and ratio
-	basic::MetricValue< core::Real > mv_delta_total;
-	complexed_pose.metric( InterfaceDeltaEnergetics_, "weighted_total", mv_delta_total );
-	data_.crossterm_interface_energy = mv_delta_total.value();
+	// InterfaceDeltaEnergetics only works for two chains.
+	// So, instead of giving odd values, we only calculate it if we only have two chains.
+	if ( complexed_pose.conformation().num_chains() == 2 ) {
+		basic::MetricValue< core::Real > mv_delta_total;
+		complexed_pose.metric( InterfaceDeltaEnergetics_, "weighted_total", mv_delta_total );
+		data_.crossterm_interface_energy = mv_delta_total.value();
+	}
 
 	if ( data_.dSASA[ total ] > 0 ) {
 		data_.crossterm_interface_energy_dSASA_ratio = data_.crossterm_interface_energy / data_.dSASA[ total ];

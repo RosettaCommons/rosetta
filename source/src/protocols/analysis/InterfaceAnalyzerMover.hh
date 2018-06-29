@@ -495,9 +495,15 @@ private:
 	virtual void
 	make_interface_set( core::pose::Pose & pose );
 
-	/// @brief assigns the complexed and separated poses for the entire mover
+	/// @brief Creates a single pose that is separated structurally at the interface
+	/// @details Uses the jump number to find downstream residues and move them in the Z axis in cartesian space according to step_size (A)
 	virtual core::pose::Pose
 	make_separated_pose( core::pose::Pose & pose, core::Size interface_jump, core::Size step_size = 1000 );
+
+	/// @brief Creates a single pose that is separated structurally at the interface
+	/// @details Moves the moving_chains in cartesian space a distance according to step_size (A) in the Z axis
+	virtual core::pose::Pose
+	make_separated_pose( core::pose::Pose & pose, std::set< Size > const & moving_chains, core::Size step_size = 1000 );
 
 	/// @brief reorder the fold tree to allow multichain interfaces to be evaluated
 	///       returns the jump number to use to define the interface
@@ -671,8 +677,6 @@ private:
 	std::string Sasa_;
 	/// @brief InterfaceNeighborDefinition calculator name string
 	std::string InterfaceNeighborDefinition_;
-	/// @brief InterfaceSasaDefinition calculator name string
-	std::string InterfaceSasaDefinition_;
 	/// @brief InterfaceDeltaEnergetics calculator name string
 	std::string InterfaceDeltaEnergetics_;
 	/// @brief NumberHBonds calculator name string

@@ -1,0 +1,13 @@
+-s min_renumbered_AHo.pdb
+-interface LH_A
+-extra_res_cen ./LG.cen.params -extra_res_fa ./LG.fa.params
+
+#-resfile resfile
+
+-tracer_data_print
+#-pack_input
+#-pack_separated
+#-add_regular_scores_to_scorefile
+#-use_resfile
+
+-out:file:score_only score.sc
