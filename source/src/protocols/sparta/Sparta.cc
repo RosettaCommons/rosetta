@@ -758,9 +758,9 @@ GDB Sparta::SpartaLib::get_ANN_data( bool create_output ) {
 				else if ( atomName == "HN" ) pred_2nd_shift /= 2.0;
 				else if ( atomName == "N" ) pred_2nd_shift  *= 2.5;
 
+				/*
 				if ( pred_2nd_shift > 20.0 || pred_2nd_shift < -20.0 ) pred_shift = 0.0;
 
-				/*
 				if(atomName == "HA") pred_2nd_shift = ANN_CS_OUTPUT_FULL[atomName][i][0]/4.0;
 				else if(atomName == "HN") pred_2nd_shift = ANN_CS_OUTPUT_FULL[atomName][i][0]/2.0;
 				else if(atomName == "N") pred_2nd_shift = ANN_CS_OUTPUT_FULL[atomName][i][0]*2.5;

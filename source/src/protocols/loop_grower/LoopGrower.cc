@@ -1724,7 +1724,7 @@ void LoopPartialSolutionStore::push( core::pose::Pose& pose, LoopPartialSolution
 	}
 	core::Size cluster_count;
 	core::Real worst_cluster_score = -99999;
-	core::Size worst_cluster_index;
+	core::Size worst_cluster_index = -1;
 	bool finished_master_beam = false;
 	while ( !checked && !finished_master_beam ) {
 		worst_cluster_score = -99999;
@@ -1742,6 +1742,7 @@ void LoopPartialSolutionStore::push( core::pose::Pose& pose, LoopPartialSolution
 		}
 		if ( cluster_count >= master_beam_width_ ) {
 			if ( newscore < worst_cluster_score ) {
+				debug_assert( worst_cluster_index != core::Size(-1) );
 				solutions_.erase(solutions_.begin() +worst_cluster_index-1 );
 				getnewscores = true;
 				if ( cluster_count == master_beam_width_ ) {
@@ -1780,7 +1781,7 @@ void LoopPartialSolutionStore::push( core::pose::Pose& pose, LoopPartialSolution
 		solutions_.push_back( new_entry );
 		Size newindex = solutions_.size();
 		solutions_[newindex].set_rms(nativeRMS);
-		considered = true;
+		//considered = true;
 	} else if ( !considered ) {
 		solutions_[worstindex] = new_entry;
 		solutions_[worstindex].set_rms(nativeRMS);
@@ -1868,7 +1869,7 @@ LoopPartialSolutionStore::diversityfilter(Size maxbeamsize, Size total_lower ){
 
 	bool done = false;
 	Size masterbeamwidth = 1;
-	bool reported = false;
+	//bool reported = false;
 	Real bestRMS = 999;
 	Size bestrmsrank = 0;
 
@@ -1884,9 +1885,9 @@ LoopPartialSolutionStore::diversityfilter(Size maxbeamsize, Size total_lower ){
 			standardizedscore = absolutebestscore/denominator;
 		}
 		if ( standardizedscore < beamscorecutoff_ ) {
-			if ( !reported ) {
-				reported = true;
-			}
+			//if ( !reported ) {
+			// reported = true;
+			//}
 			break;
 		}
 		if ( filterprevious_ ) {
@@ -1960,7 +1961,7 @@ LoopPartialSolutionStore::diversityfilter(Size maxbeamsize, Size total_lower ){
 		while ( !done ) {
 			for ( Size i=1; i<=filteronly_solutions_.size(); i++ ) {
 				bool addlps = true;
-				reported = false;
+				//reported = false;
 				LoopPartialSolution lps = filteronly_solutions_[i];
 				Size masterbeamcount = 0;
 				if ( filteredsolutions.size() >= maxbeamsize ) {
@@ -1972,9 +1973,9 @@ LoopPartialSolutionStore::diversityfilter(Size maxbeamsize, Size total_lower ){
 				Real standardizedscore = absolutebestscore/(absolutebestscore + std::abs(bestscore-beamscore));
 				//TRACER << "absolutebestscore is " << absolutebestscore << std::endl;
 				if ( standardizedscore < beamscorecutoff_ ) {
-					if ( !reported ) {
-						reported = true;
-					}
+					//if ( !reported ) {
+					// reported = true;
+					//}
 					break;
 				}
 				for ( Size j=1; j<=filteredsolutions.size(); j++ ) {
@@ -2933,8 +2934,8 @@ void LoopGrower::rescoresolutionset( LoopPartialSolutionStore& solutionset, core
 	}
 	if ( dumperrors_ ) {
 		Real bestrms = 99999;
-		Size rank;
-		Real bestscore;
+		Size rank = 0;
+		Real bestscore = 99999;
 		rescoredset.sort();
 		bool reportednn = false;
 		for ( Size i=1; i<=rescoredset.size(); i++ ) {
@@ -3408,9 +3409,9 @@ LoopGrower::add_user_csts(core::pose::Pose & pose){
 
 Real LoopGrower::single_grow( core::pose::Pose& growpose, core::pose::Pose& growpose_cen, LoopPartialSolutionStore& solutionset, const core::chemical::ResidueTypeCOPs& restypes_pose,
 	const core::chemical::ResidueTypeCOPs& restypes_pose_cen, Size lower_pose, Size upper_pose, Size upper_term, int lower_fasta, int upper_fasta, Size torsionrangelo, Size torsionrangehi,
-	bool insert_lower, Size initial_melt_left, bool is_cterm, bool is_nterm, Size cycle, int n_to_insert ){
+	bool insert_lower, Size /*initial_melt_left*/, bool is_cterm, bool is_nterm, Size cycle, int n_to_insert ){
 
-	int insert_pose=0, insert_fasta=0;
+	int insert_pose=0;
 	Size maxfrag = fragments_[1]->max_frag_length();
 	for ( Size i=1; i<=fragments_.size(); i++ ) {
 		core::fragment::FragSetOP fragset = fragments_[i];
@@ -3458,8 +3459,6 @@ Real LoopGrower::single_grow( core::pose::Pose& growpose, core::pose::Pose& grow
 
 		insert_pose = lower_pose+n_to_insert-((int)maxfrag-1);
 		TRACER << "insert " << n_to_insert << " lower at " << insert_pose << std::endl;
-		insert_fasta = lower_fasta - initial_melt_left + ( n_to_insert -((int)maxfrag-(int)initial_melt_left));
-		initial_melt_left = fragmelt_;
 		TRACER << "lower_fasta = " << lower_fasta << std::endl;
 		lower_pose += n_to_insert;
 		lower_fasta += n_to_insert;
@@ -3472,7 +3471,6 @@ Real LoopGrower::single_grow( core::pose::Pose& growpose, core::pose::Pose& grow
 			growpose_cen.conformation().safely_prepend_polymer_residue_before_seqpos(*newres_cen, lower_pose+1, true);
 		}
 		insert_pose = upper_term;
-		insert_fasta = upper_fasta-n_to_insert+1;
 		TRACER << "lower pose & upper pose " << lower_pose << " " << upper_pose << std::endl;
 		upper_pose += n_to_insert;
 		upper_fasta -= n_to_insert;
@@ -3609,6 +3607,7 @@ Real LoopGrower::single_grow( core::pose::Pose& growpose, core::pose::Pose& grow
 		for ( Size fraglistitr=1; fraglistitr<=fragments_.size(); fraglistitr++ ) {
 			core::fragment::FragSetOP fragset = fragments_[fraglistitr];
 			int fraglength = fragset->max_frag_length();
+			int insert_fasta;
 			if ( insert_lower ) {
 				insert_fasta = lower_fasta - fraglength;
 				insert_pose = lower_pose - fraglength + 1;
@@ -3715,10 +3714,10 @@ Real LoopGrower::single_grow( core::pose::Pose& growpose, core::pose::Pose& grow
 
 
 				//this tells refine cycle where to place the sheet residues for refinement
-				int refine_lower = lower_pose-minmelt_;
-				int refine_upper = lower_pose+1+minmelt_;
-				if ( refine_lower < (int)torsionrangelo ) refine_lower = torsionrangelo;
-				if ( refine_upper > (int)torsionrangehi ) refine_upper = torsionrangehi;
+				//int refine_lower = lower_pose-minmelt_;
+				//int refine_upper = lower_pose+1+minmelt_;
+				//if ( refine_lower < (int)torsionrangelo ) refine_lower = torsionrangelo;
+				//if ( refine_upper > (int)torsionrangehi ) refine_upper = torsionrangehi;
 				refine_cycle( growpose, growpose_cen, torsionrangelo, torsionrangehi, false, cycle, ctr, i, is_lower);
 
 

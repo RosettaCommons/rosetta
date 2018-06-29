@@ -103,14 +103,14 @@ void FingerprintBase::print_to_pdb(std::string const & output_pdbname, numeric::
 
 	core::Size counter = 1;
 	std::string record_name = "HETATM";
-	core::Size atom_serial_number = counter;
+	core::Size atom_serial_number; // Will be reset to counter later
 	std::string gap1 = " ";
 	std::string atom_name = "C";
 	std::string alternate_location_indicator = " ";
 	std::string residue_name = "EGG";
 	std::string gap2 = " ";
 	std::string chain_identifier = "A";
-	core::Size residue_sequence_number = counter;
+	core::Size residue_sequence_number; // Will be reset later
 	std::string code_for_insertion_of_residues = " ";
 	std::string gap3 = "   ";
 
@@ -2133,7 +2133,7 @@ void PlaidFingerprint::fp_compare_deriv( FingerprintBase & fp, core::Real const 
 	dE_dv5 /= num_rays;
 	dE_dv6 /= num_rays;
 	Total_score /= num_rays;
-	Differentiable_score /= num_rays;
+	//Differentiable_score /= num_rays;
 
 	std::cout<<"DARC score while computing derivatives: " << Total_score << std::endl;
 	// std::cout<<"DARC score while computing derivatives are total: " << Total_score << " and differentiable part " << Differentiable_score << std::endl;
@@ -2155,12 +2155,13 @@ core::Real PlaidFingerprint::search_random_poses( FingerprintBase & fp, core::Si
 	core::Real best_score = std::numeric_limits<core::Real>::max();
 
 	for ( core::Size j = 0; j < num_pose_search; ++j ) {
+		std::cout<< "JK this code is not yet conformer-enabled, fix it in the app by removing the zero in the call to move_ligand_and_update_rhos_ below..." << std::endl;
+		exit(1);
+
 		core::Real curr_angle1 = (int) (numeric::random::uniform() *359.999);
 		core::Real curr_angle2 = (int) (numeric::random::uniform() *359.999);
 		core::Real curr_angle3 = (int) (numeric::random::uniform() *359.999);
 
-		std::cout<< "JK this code is not yet conformer-enabled, fix it in the app by removing the zero in the call to move_ligand_and_update_rhos_ below..." << std::endl;
-		exit(1);
 		move_ligand_and_update_rhos_( fp, CoM_offset, curr_angle1, curr_angle2, curr_angle3, 0 );
 		core::Real curr_score = fp_compare( fp, missing_point_weight, steric_weight, extra_point_weight );
 		//std::cout<<"curr_score "<<curr_score<< " " << curr_phi << " " <<curr_psi << std::endl;

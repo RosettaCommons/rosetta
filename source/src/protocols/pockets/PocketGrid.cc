@@ -2211,24 +2211,25 @@ void PocketGrid::markEdgeDepth(core::Real const & surf_d, core::Real const & bur
 
 void PocketGrid::markDepth(core::Size x, core::Size y, core::Size z, core::Real const & surf_d, core::Real const & bur_d){
 	auto ssteps=(core::Size)ceil(surf_d/stepSize_);
-	core::Size st;
-	core::Size en;
+
 	if ( ssteps>x ) {
-		st=0;
 		if ( grid_[x][y][z]==POCKET ) {
 			grid_[x][y][z]=PO_EDGE;
 		} else grid_[x][y][z]=TP_EDGE;
 		//clusters_.add(x,y,z, stepSize_);
 		return;
-	} else st=x-ssteps;
+	}
+	core::Size st=x-ssteps;
+
 	if ( x+ssteps>=xdim_ ) {
-		en=xdim_;
 		if ( grid_[x][y][z]==POCKET ) {
 			grid_[x][y][z]=PO_EDGE;
 		} else grid_[x][y][z]=TP_EDGE;
 		//clusters_.add(x,y,z, stepSize_);
-		return ;
-	} else en=x+ssteps+1;
+		return;
+	}
+	core::Size en=x+ssteps+1;
+
 	for ( core::Size i=st; i<en; i++ ) {
 		if ( grid_[i][y][z]==EMPTY ) {
 			if ( grid_[x][y][z]==POCKET ) {
@@ -2237,22 +2238,24 @@ void PocketGrid::markDepth(core::Size x, core::Size y, core::Size z, core::Real 
 			return ;
 		}
 	}
+
 	if ( ssteps>y ) {
-		st=0;
 		if ( grid_[x][y][z]==POCKET ) {
 			grid_[x][y][z]=PO_EDGE;
 		} else grid_[x][y][z]=TP_EDGE;
 		//clusters_.add(x,y,z, stepSize_);
-		return ;
-	} else st=y-ssteps;
+		return;
+	}
+	st=y-ssteps;
+
 	if ( y+ssteps>=ydim_ ) {
-		en=ydim_;
 		if ( grid_[x][y][z]==POCKET ) {
 			grid_[x][y][z]=PO_EDGE;
 		} else grid_[x][y][z]=TP_EDGE;
 		//clusters_.add(x,y,z, stepSize_);
-		return ;
+		return;
 	} else en=y+ssteps+1;
+
 	for ( core::Size i=st; i<en; i++ ) {
 		if ( grid_[x][i][z]==EMPTY ) {
 			if ( grid_[x][y][z]==POCKET ) {
@@ -2261,28 +2264,31 @@ void PocketGrid::markDepth(core::Size x, core::Size y, core::Size z, core::Real 
 			return ;
 		}
 	}
+
 	if ( ssteps>z ) {
-		st=0;
 		if ( grid_[x][y][z]==POCKET ) {
 			grid_[x][y][z]=PO_EDGE;
 		} else grid_[x][y][z]=TP_EDGE;
 		//clusters_.add(x,y,z, stepSize_);
 		return ;
-	} else st=z-ssteps;
+	}
+	st=z-ssteps;
+
 	if ( z+ssteps>=zdim_ ) {
-		en=zdim_;
 		if ( grid_[x][y][z]==POCKET ) {
 			grid_[x][y][z]=PO_EDGE;
 		} else grid_[x][y][z]=TP_EDGE;
 		//clusters_.add(x,y,z, stepSize_);
-		return ;
-	} else en=z+ssteps+1;
+		return;
+	}
+	en=z+ssteps+1;
+
 	for ( core::Size i=st; i<en; i++ ) {
 		if ( grid_[x][y][i]==EMPTY ) {
 			if ( grid_[x][y][z]==POCKET ) {
 				grid_[x][y][z]=PO_SURF;
 			} else grid_[x][y][z]=TP_SURF;
-			return ;
+			return;
 		}
 	}
 
@@ -2663,9 +2669,9 @@ void PocketGrid::findExemplars(core::pose::Pose const & inPose, Size const total
 			Size const hatm( *hnum );
 
 			// Skip buried residues
-			int offset = 9;
-			if ( rsd.seqpos() < 72 ) offset=3;
-			offset=0;
+			//int offset = 9;
+			//if ( rsd.seqpos() < 72 ) offset=3;
+			int offset=0;
 			if ( atom_sasas(j, hatm) < 0.1 && atom_sasas(j, rsd.atom_base(hatm)) < 0.1 ) {
 				std::cout<<rsd.seqpos()+offset<<" Donor "<<rsd.name()<<" "<<rsd.atom_name(rsd.atom_base(hatm))<<" H SASA "<<atom_sasas(j, hatm)<<" Base SASA "<<atom_sasas(j, rsd.atom_base(hatm))<<" being ignored"<<std::endl;
 				continue;
@@ -2769,9 +2775,9 @@ void PocketGrid::findExemplars(core::pose::Pose const & inPose, Size const total
 				anume = rsd.accpt_pos().end(); anum != anume; ++anum ) {
 			Size const aatm( *anum );
 			// Skip buried residues
-			int offset = 9;
-			if ( rsd.seqpos() < 72 ) offset=3;
-			offset=0;
+			//int offset = 9;
+			//if ( rsd.seqpos() < 72 ) offset=3;
+			int offset=0;
 			if ( atom_sasas(j, aatm) < 0.1 ) {
 				std::cout<<rsd.seqpos()+offset<<" Acceptor "<<rsd.name()<<" "<<rsd.atom_name(aatm)<<" SASA "<<atom_sasas(j, aatm)<<" being ignored"<<std::endl;
 				continue;

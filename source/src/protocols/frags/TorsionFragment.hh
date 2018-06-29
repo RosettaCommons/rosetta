@@ -557,11 +557,11 @@ private:
 
 void
 insert_fragment(
-	int const begin,
-	int const end,
+	core::Size const begin,
+	core::Size const end,
 	core::pose::Pose & pose,
 	TorsionFragmentLibrary const & lib,
-	int const desired_insert_pos = 0
+	core::Size const desired_insert_pos = 0
 );
 
 

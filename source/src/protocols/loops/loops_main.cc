@@ -1403,8 +1403,8 @@ void remove_missing_density(
 	Loop const & loop
 )
 {
-	Size cutpoint = loop.cut();
-	if ( cutpoint== 0 ) cutpoint =  (loop.start() + loop.stop()) / 2;
+	//Size cutpoint = loop.cut();
+	//if ( cutpoint== 0 ) cutpoint =  (loop.start() + loop.stop()) / 2;
 	set_single_loop_fold_tree( pose, loop );
 	set_extended_torsions( pose, loop );
 }

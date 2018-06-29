@@ -703,8 +703,8 @@ void
 LoopHashLibrary::get_all(
 	core::pose::Pose& start_pose,
 	std::vector< core::io::silent::SilentStructOP > &lib_structs,
-	core::Size start_res,
-	core::Size stop_res,
+	core::Size /*start_res*/,
+	core::Size /*stop_res*/,
 
 	core::Real min_bbrms,
 	core::Real max_bbrms,
@@ -744,8 +744,8 @@ LoopHashLibrary::get_all(
 	runcount++;
 
 	// figure out start and stop residues
-	if ( stop_res == 0 ) stop_res = nres; // to do the whole protein just set stop_res to 0
-	start_res = std::min( start_res, (core::Size)2 ); // dont start before 2 - WHY ?
+	//if ( stop_res == 0 ) stop_res = nres; // to do the whole protein just set stop_res to 0
+	//start_res = std::min( start_res, (core::Size)2 ); // dont start before 2 - WHY ?
 
 	for ( ir = 2; ir < nres; ir ++ ) {
 		for ( core::Size loop_size : hash_sizes_ ) {

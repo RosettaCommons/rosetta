@@ -411,8 +411,8 @@ ResidueIEFilter::compute_resnums( core::pose::Pose const & pose ) const
 		}
 	}
 
-	bool whole_pose = whole_pose_;
-	bool whole_interface = whole_interface_;
+	bool whole_pose = whole_pose_; // Why are we setting this from member variables when we just reset it later?
+	bool whole_interface = whole_interface_; // Why are we setting this from member variables when we just reset it later?
 	if ( resnums.empty() ) {
 		whole_pose = true;
 		whole_interface = false;
@@ -422,7 +422,7 @@ ResidueIEFilter::compute_resnums( core::pose::Pose const & pose ) const
 		whole_interface = false;
 	}
 
-	if ( whole_interface ) {
+	if ( whole_interface ) { // This is always false (see above)
 		tr << "Detecting target resnums from interface." << std::endl;
 		if ( pose.conformation().num_chains() < 2 ) {
 			std::stringstream msg;

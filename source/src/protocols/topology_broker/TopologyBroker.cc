@@ -822,7 +822,7 @@ void TopologyBroker::apply( core::pose::Pose & pose ) {
 	tr.Debug << "Start FinalRound-Broking..." << std::endl;
 	claims::DofClaims final_claims;
 	generate_final_claims( final_claims );
-	if ( ok ) ok = broking( final_claims, pre_accepted );
+	if ( ok ) /*ok =*/ broking( final_claims, pre_accepted );
 
 
 	tr.Debug << "Broking finished" << std::endl;

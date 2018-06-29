@@ -1083,7 +1083,7 @@ void LoopComparator::apply( core::pose::Pose & pose ){
 				working_score = current_score;
 				working_solution = current_solution;
 			} else {
-				current_score = working_score;
+				//current_score = working_score;
 				current_solution = working_solution;
 			}
 		}

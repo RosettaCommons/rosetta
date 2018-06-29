@@ -195,7 +195,6 @@ double TailsScoreMover::score_mode1(int& out_min_ltail_length, int& out_min_rtai
 	int sequence_length = pose.size(); // Need to get protein sequence length
 	utility::vector1< core::Size > tail;
 	Real min_updated_tail_score = score_function()->get_sub_score_exclude_res(pose, tail);
-	Real updated_tail_score = score_function()->get_sub_score_exclude_res(pose, tail);
 	Real min_ltail_length = 0;
 	Real min_rtail_length = 0;
 	int number_of_ltail_steps = sequence_length/2;
@@ -217,7 +216,7 @@ double TailsScoreMover::score_mode1(int& out_min_ltail_length, int& out_min_rtai
 				tail.push_back(sequence_length - rtaillength+rcount);
 			}
 			Real tail_score = score_function()->get_sub_score_exclude_res(pose, tail);
-			updated_tail_score = tail_score - ED*(ltaillength+rtaillength);
+			Real updated_tail_score = tail_score - ED*(ltaillength+rtaillength);
 			in_tail_output <<  updated_tail_score << "    " << ltaillength <<  "     " << rtaillength <<"   "<<tail_score << std::endl;
 			if ( updated_tail_score < min_updated_tail_score ) {
 				min_updated_tail_score = updated_tail_score;

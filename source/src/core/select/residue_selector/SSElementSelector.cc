@@ -92,26 +92,23 @@ utility::vector1<SSElementSelector::SSElement> SSElementSelector::parse_ss(core:
 	//pass 1----------------------------------------
 	char lastSecStruct = dssp.get_dssp_secstruct( start_pose_res );
 	Size startSS = 1;
-	Size endSS = 0;
 	for ( core::Size ii = start_pose_res+1; ii <= end_pose_res; ++ii ) {
 		if ( dssp.get_dssp_secstruct(ii)!=lastSecStruct ) {
 			if ( !skip_first_SS ) { //skip SS assignment for the first loop to compensate for chain offset
-				endSS = ii-1;
+				Size endSS = ii-1;
 				TR.Debug << "type: " << lastSecStruct << " startSS: " << startSS << " endSS: " << endSS << std::endl;
 				SSElementSelector::SSElement ss_element_tmp(startSS,endSS,lastSecStruct);
 				ss_elements.push_back(ss_element_tmp);
 				startSS=ii;
 			} else {
 				TR.Debug << "Chain " << chain_ << " selected, first SS skipped (chain offset)." << std::endl;
-				endSS = ii-1;
 				startSS=ii;
 				skip_first_SS=false;
 			}
 		}
 		lastSecStruct = dssp.get_dssp_secstruct(ii);
 	}
-	endSS = end_pose_res;
-	SSElementSelector::SSElement ss_element_tmp(startSS,endSS,lastSecStruct);
+	SSElementSelector::SSElement ss_element_tmp(startSS,end_pose_res,lastSecStruct);
 	ss_elements.push_back(ss_element_tmp);
 	//pass 2----------------------------------------Remove first and last loop. Could be done faster in above loop, but for future modifications I'm doing it below.
 	if ( !reassign_short_terminal_loop_ ) {

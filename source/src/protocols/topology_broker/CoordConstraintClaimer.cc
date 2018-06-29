@@ -120,13 +120,13 @@ void CoordConstraintClaimer::new_decoy( core::pose::Pose const& pose ) {
 
 void CoordConstraintClaimer::generate_claims( claims::DofClaims& new_claims ) {
 	if ( bLocal_ ) {
-		Size new_root( root_ );
 		RigidChunkClaimer::CM_SuggestFixResidue msg( root_from_label_ );
 		broker().relay_message( msg );
 		tr.Info << label() << " got a returned message: " << msg << std::endl;
 
-		if ( msg.received() ) new_root=msg.good_fix_pos_;
-		else throw CREATE_EXCEPTION(EXCN_Input,  "no fixed region (looked for "+root_from_label_+") found to use as reference for CoordinateConstraints");
+		if ( ! msg.received() ) { throw CREATE_EXCEPTION(EXCN_Input,  "no fixed region (looked for "+root_from_label_+") found to use as reference for CoordinateConstraints"); }
+
+		Size new_root=msg.good_fix_pos_;
 
 		if ( !constraints_ && bUseXYZ_in_cstfile_ ) {
 			//in this case we haven't been able to read the constraints file yet, since this is the first time a valid pose exists...

@@ -244,65 +244,57 @@ core::Size RemodelAccumulator::recover_checkpoint()
 		std::string filename = "ck_" + number + ".pdb";
 		std::cout << "checking checkpointed file: " << filename << std::endl;
 		struct stat stFileInfo;
-		bool boolReturn;
-		int intStat;
 
-		intStat = stat(filename.c_str(), &stFileInfo);
-		if ( intStat == 0 ) {
-			//file exists
-			boolReturn = true;
-		} else {
-			boolReturn = false;
+		if ( stat(filename.c_str(), &stFileInfo) != 0 ) {
+			//file does not exist
 			continue;
 		}
 
-		if ( boolReturn == true ) {
-			core::pose::Pose dummyPose;
-			core::import_pose::pose_from_file( dummyPose, filename.c_str(),false, core::import_pose::PDB_file); //fullatom, ideal, readAllChain
+		core::pose::Pose dummyPose;
+		core::import_pose::pose_from_file( dummyPose, filename.c_str(),false, core::import_pose::PDB_file); //fullatom, ideal, readAllChain
 
-			//RemodelDesignMover designMover(remodel_data_, working_model_);
-			//designMover.set_state("stage");
-			//designMover.apply(dummyPose);
+		//RemodelDesignMover designMover(remodel_data_, working_model_);
+		//designMover.set_state("stage");
+		//designMover.apply(dummyPose);
 
-			//special case for repeat proteins.  they need to carry constraints
-			//from the start.  Build constraints are set in RemodelLoopMover, a bit
-			//different from everything else
+		//special case for repeat proteins.  they need to carry constraints
+		//from the start.  Build constraints are set in RemodelLoopMover, a bit
+		//different from everything else
 
-			if ( option[OptionKeys::remodel::repeat_structure].user() ) {
-				if ( option[OptionKeys::constraints::cst_file].user() ) {
-					protocols::constraint_movers::ConstraintSetMoverOP repeat_constraint( new protocols::constraint_movers::ConstraintSetMover() );
-					repeat_constraint->apply( dummyPose );
-				}
-
-				// ResidueTypeLinkingConstraints
-				Size repeat_number =option[OptionKeys::remodel::repeat_structure];
-				Size count=0;
-				Real bonus = 10;
-				Size segment_length = (dummyPose.size())/repeat_number;
-				for ( Size rep = 1; rep < repeat_number; rep++ ) { // from 1 since first segment don't need self-linking
-					for ( Size res = 1; res <= segment_length; res++ ) {
-						dummyPose.add_constraint( core::scoring::constraints::ConstraintCOP( core::scoring::constraints::ConstraintOP( new ResidueTypeLinkingConstraint(dummyPose, res, res+(segment_length*rep), bonus) ) ) );
-						count++;
-					}
-				}
-				std::cout << "linking " << count << " residue pairs" << std::endl;
+		if ( option[OptionKeys::remodel::repeat_structure].user() ) {
+			if ( option[OptionKeys::constraints::cst_file].user() ) {
+				protocols::constraint_movers::ConstraintSetMoverOP repeat_constraint( new protocols::constraint_movers::ConstraintSetMover() );
+				repeat_constraint->apply( dummyPose );
 			}
 
-			if ( option[OptionKeys::remodel::RemodelLoopMover::cyclic_peptide]() ) { //all processes/constraints has to be applied to checkpointed files
-				protocols::relax::cyclize_pose(dummyPose);
+			// ResidueTypeLinkingConstraints
+			Size repeat_number =option[OptionKeys::remodel::repeat_structure];
+			Size count=0;
+			Real bonus = 10;
+			Size segment_length = (dummyPose.size())/repeat_number;
+			for ( Size rep = 1; rep < repeat_number; rep++ ) { // from 1 since first segment don't need self-linking
+				for ( Size res = 1; res <= segment_length; res++ ) {
+					dummyPose.add_constraint( core::scoring::constraints::ConstraintCOP( core::scoring::constraints::ConstraintOP( new ResidueTypeLinkingConstraint(dummyPose, res, res+(segment_length*rep), bonus) ) ) );
+					count++;
+				}
 			}
-
-			this->apply(dummyPose);
-
-			ScoreFunctionOP scorefxn( get_score_function());
-			sfxn_ = scorefxn;
-
-			ScoreTypeFilter const  pose_total_score( scorefxn, total_score, 100 );
-			core::Real score(pose_total_score.compute( dummyPose ));
-
-
-			std::cout << "checkpointed_pose " << filename << " score = " << score << std::endl;
+			std::cout << "linking " << count << " residue pairs" << std::endl;
 		}
+
+		if ( option[OptionKeys::remodel::RemodelLoopMover::cyclic_peptide]() ) { //all processes/constraints has to be applied to checkpointed files
+			protocols::relax::cyclize_pose(dummyPose);
+		}
+
+		this->apply(dummyPose);
+
+		ScoreFunctionOP scorefxn( get_score_function());
+		sfxn_ = scorefxn;
+
+		ScoreTypeFilter const  pose_total_score( scorefxn, total_score, 100 );
+		core::Real score(pose_total_score.compute( dummyPose ));
+
+
+		std::cout << "checkpointed_pose " << filename << " score = " << score << std::endl;
 	}
 	int ck=0;
 	std::ifstream trajCount("checkpoint.txt");

@@ -596,7 +596,7 @@ void PeakFileFormat::read_assignments( std::istream& is, std::istream& rest_is, 
 		std::string tag;
 		line_stream >> tag;
 		if ( !line_stream.good() ) {
-			weight = 1.0; //no VC -- no partial weights.
+			//weight = 1.0; //no VC -- no partial weights.
 			break; //finish while loop
 		}
 		if ( tag == "#VC" ) {

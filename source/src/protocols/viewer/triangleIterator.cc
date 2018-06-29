@@ -144,7 +144,7 @@ void triangleIterator::aquireNextQueue() {
 					nextZ = z;
 					return;
 				}
-				starting = false;
+				starting = false; // ClangSA: Value stored to 'starting' is never read
 			}
 			starting = false;
 		}

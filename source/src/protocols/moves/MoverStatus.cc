@@ -30,7 +30,7 @@ MoverStatus mstype_from_name( std::string const & name )
 	} else if ( name == "FAIL_BAD_INPUT" ) {
 		ms = FAIL_BAD_INPUT;
 	} else {
-		ms = FAIL_BAD_INPUT;
+		//ms = FAIL_BAD_INPUT;
 		utility_exit_with_message( "Invalid name of mover status !" );
 	}
 	return ms;

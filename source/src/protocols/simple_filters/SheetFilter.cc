@@ -1375,7 +1375,6 @@ SheetFilter::ingo_start_stop(
 
 	int cnt = 0;
 	int start = 0;
-	int stopp = 0;
 	if ( scstr(1) == 2 ) start = 1;
 	int j = 0;
 	while ( j < (nres-1) ) {
@@ -1386,11 +1385,9 @@ SheetFilter::ingo_start_stop(
 			strnm(j) = cnt+1;
 			if ( scstr(j) != scstr(j+1) ) {
 				++cnt;
-				stopp = j;
 				strtpt(cnt) = start;
-				stpppt(cnt) = stopp;
+				stpppt(cnt) = j;
 				start = 0;
-				stopp = 0;
 			}
 		}
 	}

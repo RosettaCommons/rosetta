@@ -1853,7 +1853,6 @@ EnzdesFlexibleRegion::examine_new_loopconf(
 	if ( !frag_close_to_native ) return false;
 
 
-	bool frag_unique(true);
 	//std::cerr << "gotta compare against " << compare_poses.size() << "unique poses " << std::endl;
 	Size count( 0 );
 	for ( utility::vector1< core::pose::PoseOP >::const_iterator pose_it = compare_poses.begin(); pose_it != compare_poses.end(); ++pose_it ) {
@@ -1862,7 +1861,6 @@ EnzdesFlexibleRegion::examine_new_loopconf(
 		//std::cout << "rmsd with prepose " << count << " is " << core::scoring::rmsd_no_super( **pose_it, template_pose, core::scoring::is_protein_CA ) << ", biggest CA/CB dist is " << core::scoring::biggest_residue_deviation_no_super( **pose_it, template_pose, core::scoring::is_protein_CA_or_CB ) << std::endl;
 
 		if ( core::scoring::biggest_residue_deviation_no_super( **pose_it, template_pose, core::scoring::is_protein_CA_or_CB ) < basic::options::option[basic::options::OptionKeys::enzdes::min_cacb_deviation] ) {
-			frag_unique = false;
 			return false;
 		}
 	}
@@ -1887,7 +1885,7 @@ EnzdesFlexibleRegion::examine_new_loopconf(
 
 
 	//if( compare_poses.size() == 1 ) { template_pose.dump_pdb("template_1.pdb"); std::cerr << " dumping " << std::endl; }
-	if ( frag_unique && frag_close_to_native && frag_close_to_another_fragment ) {
+	if ( frag_close_to_native && frag_close_to_another_fragment ) {
 		this->add_fragment( newfrag );
 		rmsd_to_native.push_back( core::scoring::rmsd_no_super( *compare_poses[1], template_pose, core::scoring::is_protein_backbone ) );
 		compare_poses.push_back( core::pose::PoseOP( new core::pose::Pose( template_pose ) ) );

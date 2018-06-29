@@ -156,7 +156,6 @@ void DockingLowResEnsemble::ensemble1_trial( core::pose::Pose & pose ){
 	ensemble1_trial_->apply( pose );
 	++ num_trials_ens1_;
 	if ( ensemble1_trial_->num_accepts() > current_num_accepted ) {
-		current_num_accepted = ensemble1_trial_->num_accepts();
 		TR << "Accepted Conformer Switch for Ensemble 1" << std::endl;
 		current_conformer_ensemble1_ = ensemble1_mover_->get_ensemble()->get_current_confnum();
 		//TR << "Current Conformer Ensemble 1: " << current_conformer_ensemble1_ <<std::endl;
@@ -182,7 +181,6 @@ void DockingLowResEnsemble::ensemble2_trial( core::pose::Pose & pose ){
 	ensemble2_trial_->apply( pose );
 	++ num_trials_ens2_;
 	if ( ensemble2_trial_->num_accepts() > current_num_accepted ) {
-		current_num_accepted = ensemble2_trial_->num_accepts();
 		TR << "Accepted Conformer Switch for Ensemble 2" << std::endl;
 		current_conformer_ensemble2_ = ensemble2_mover_->get_ensemble()->get_current_confnum();
 		//TR << "Current Conformer Ensemble 2: " << current_conformer_ensemble2_ <<std::endl;

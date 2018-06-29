@@ -914,7 +914,7 @@ make_lengths_str(
 			debug_assert( prev_start );
 			debug_assert( prev_stop );
 			// find a residue paired to the previous strand
-			core::Size prev_res = prev_start;
+			core::Size prev_res;
 			int offset = 0;
 			if ( ( orients[c-1] == UP ) && ( orients[c] == UP ) ) {
 				// find residue with pairing to this strand

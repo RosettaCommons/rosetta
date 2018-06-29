@@ -4121,13 +4121,13 @@ IterativeOptEDriver::collect_ddG_of_mutation_data()
 			}
 
 			/// Read names of mut pdbs
-			bool no_tag_yet_assigned( true );
 			utility::file::FileName muts(ddg_mut_wt_pairs_[ii].second);
 			file_extension = muts.ext();
 
 			if ( file_extension.compare("list") == 0 ) {
 				TR << "collect_ddG_of_mutation_data(): reading file '" << muts() << "' to get list of mutant pdb names." << std::endl;
 				std::ifstream mut_pdblist( muts().c_str() );
+				bool no_tag_yet_assigned( true );
 				while ( mut_pdblist ) {
 					std::string mut_pdb;
 					mut_pdblist >> mut_pdb;
@@ -4145,10 +4145,7 @@ IterativeOptEDriver::collect_ddG_of_mutation_data()
 					TR.Error << "did not read in silent file properly! " << muts() << std::endl;
 				}
 				mut_pdb_names = sfd_mut.tags();
-				if ( no_tag_yet_assigned ) {
-					ddg_data->tag(mut_pdb_names[1]);
-					no_tag_yet_assigned = false;
-				}
+				ddg_data->tag(mut_pdb_names[1]);
 			} else {
 				std::cerr << "ERROR! file " << muts() << " has un-recognized extension " << file_extension << std::endl;
 				utility_exit();

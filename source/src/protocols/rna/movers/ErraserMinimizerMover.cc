@@ -390,9 +390,9 @@ ErraserMinimizerMover::pyrimidine_flip_trial( pose::Pose & pose )
 {
 	Size const total_res = pose.size();
 	Pose screen_pose = pose;
-	Real orig_score, new_score;
+	Real orig_score;
 	orig_score = ( *scorefxn_ )( pose );
-	new_score = ( *scorefxn_ )( screen_pose );
+	( *scorefxn_ )( screen_pose ); // Introduce the pose to the scorefunction
 	TR << "Start pyrimidine_flip_trial. Flip residue :";
 	for ( Size i = 1; i <= total_res; ++i ) {
 		if ( fixed_res_list_.find( i ) != fixed_res_list_.end() ) continue;
@@ -403,7 +403,7 @@ ErraserMinimizerMover::pyrimidine_flip_trial( pose::Pose & pose )
 		Real const orig_chi = pose.torsion( TorsionID( i, id::CHI, 1 ) );
 		Real const new_chi = orig_chi + 180.0;
 		screen_pose.set_torsion( TorsionID( i, id::CHI, 1 ), new_chi );
-		new_score = ( *scorefxn_ )( screen_pose );
+		core::Real new_score = ( *scorefxn_ )( screen_pose );
 		if ( new_score < orig_score ) { //Flip the chi!
 			pose.set_torsion( TorsionID( i, id::CHI, 1 ), new_chi );
 			orig_score = new_score;

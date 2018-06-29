@@ -150,9 +150,9 @@ int main(int argc, char** argv)
 
 		std::string filename;
 		if ( option[input::pdb_list].user() ) {
-			filename = strdup( option[input::pdb_list]().c_str() );
+			filename = option[input::pdb_list]();
 		} else if ( option[in::file::l].user() ) {
-			filename = strdup( utility::to_string(option[in::file::l]()).c_str() );
+			filename = utility::to_string(option[in::file::l]());
 		} else {
 			utility_exit_with_message( "Missing -l or -pdb_list (please run with -help for usage)");
 		}

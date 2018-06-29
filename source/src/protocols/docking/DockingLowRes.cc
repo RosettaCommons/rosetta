@@ -333,7 +333,6 @@ void DockingLowRes::rigid_body_trial( core::pose::Pose & pose )
 	++ num_rb_trials_;
 	if ( rb_trial_->num_accepts() > current_num_accepted ) {
 		TR << "Rigid Body Perturbation Accepted" << std::endl;
-		current_num_accepted = rb_trial_->num_accepts();
 		++ num_rb_accepted_;
 		if ( view_in_pymol_ ) {
 			pymol_color_change( pose );

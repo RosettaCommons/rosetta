@@ -612,8 +612,6 @@ PoseFoundResiduesCombination::construct_and_dump_outpose(
 	// out if they are all compatible with each other and
 	// generate the new header line
 
-	bool all_residues_compatible = true;
-
 	core::Size num_resis_to_combine = combine_resis_.size();
 
 	if ( num_resis_to_combine != match_params.size() ) {
@@ -679,7 +677,6 @@ PoseFoundResiduesCombination::construct_and_dump_outpose(
 
 			//if( ! residues_compatible_without_checking( combine_resis_[i], combine_resis_[j] ) ){
 			if ( secmatch_prot->residues_compatible( combine_resis_[i], combine_resis_[j] ) == 0 ) {
-				all_residues_compatible = false;
 				return false;
 			}
 		}
@@ -695,16 +692,9 @@ PoseFoundResiduesCombination::construct_and_dump_outpose(
 	outtag = outtag + ".pdb";
 
 	//3. now we can output
-	//if all the residues are compatible, we just dump
-	//else we have to repack/minimize the pose, and only dump if
-	//the cst_score is still below the cutoff
 
-	//note: the all_residues_compatible check is not really necessary, but just to make sure...
-	if ( all_residues_compatible ) {
-		outpose.dump_pdb( outtag );
-		return true;
-	}
-	return false;
+	outpose.dump_pdb( outtag );
+	return true;
 
 } //construct and dump outpose
 

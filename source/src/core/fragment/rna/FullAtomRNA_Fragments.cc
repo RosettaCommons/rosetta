@@ -137,13 +137,13 @@ FullAtomRNA_Fragments::pick_fragment_library( FragmentLibraryPointerKey const & 
 	bool used_restriction = true;
 	for ( Size i = 1; i <= vall_size_ - size + 1; i++ ) {
 
-		bool match( true );
-
 		// Does it hit homologs?
 		if ( exclude_fragments.find( i ) != exclude_fragments.end() ) {
 			TR.Trace << "Excluding due to hitting a homolog for " << RNA_string << " " << RNA_secstruct_string << " at " << i << std::endl;
 			continue;
 		}
+
+		bool match( true );
 
 		for ( Size offset = 0; offset < size; offset++ ) {
 			vall_current_sequence [offset] = vall_sequence_ ( i + offset );
@@ -185,7 +185,6 @@ FullAtomRNA_Fragments::pick_fragment_library( FragmentLibraryPointerKey const & 
 					break;
 				}
 			}
-
 
 			if ( match ) {
 				fragment_library_p->add_torsion( *this, i, size );

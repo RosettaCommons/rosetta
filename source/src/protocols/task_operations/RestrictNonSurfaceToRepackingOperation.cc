@@ -108,7 +108,6 @@ void RestrictNonSurfaceToRepackingOperation::apply( core::pose::Pose const & pos
 	core::conformation::residue_point_graph_from_conformation( pose.conformation(), *pg ); // create vertices
 	core::conformation::find_neighbors<core::conformation::PointGraphVertexData,core::conformation::PointGraphEdgeData>( pg, 10.0 /* ten angstrom distance */ ); // create edges
 
-	core::Size num_neighbors_ = 0;
 	for ( core::Size ii=1; ii <= pose.size(); ++ii ) {
 
 		// a PointGraph is a typedef of UpperEdgeGraph< PointGraphVertexData, PointGraphEdgeData >
@@ -117,18 +116,14 @@ void RestrictNonSurfaceToRepackingOperation::apply( core::pose::Pose const & pos
 		// So something that before was really complicated (nb count calculation) is done in <10 lines of code.
 		// the assumption we're making here is that a pose residue position ii is the same index as the point graph vertex
 		// that is indeed the case if you look at what the function residue_point_graph_from_pose().
-		num_neighbors_ = pg->get_vertex(ii).num_neighbors_counting_self();
+		core::Size num_neighbors = pg->get_vertex(ii).num_neighbors_counting_self();
 
 		// what about non-canonicals?  as long as the point graph can handle them, they should work fine.
 
-		if ( num_neighbors_ > surface_exposed_nb_cutoff_ ) {
+		if ( num_neighbors > surface_exposed_nb_cutoff_ ) {
 			// it's not at or below our cutoff, so limit this position to repacking only
 			task.nonconst_residue_task( ii ).restrict_to_repacking();
 		}
-
-		// reset count for next position, just to be extra careful
-		num_neighbors_ = 0;
-
 	}
 
 }

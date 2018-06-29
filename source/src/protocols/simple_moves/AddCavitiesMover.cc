@@ -153,7 +153,6 @@ AddCavitiesMover::add_suckers( Pose & pose ) {
 	int count = 0;
 	for ( int i = 1; i <= std::min(Ncb,(int)cbs.size()); ++i ) {
 		if ( cbs[i].radius() < min_size_ ) {
-			Ncb = i-1;
 			break;
 		}
 		// std::cerr << "adding cb" << cbs[i].str() << std::endl;

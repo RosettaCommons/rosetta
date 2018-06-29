@@ -811,45 +811,44 @@ SingleResidueTorsionFragmentLibrary::~SingleResidueTorsionFragmentLibrary() = de
 ///////////////////////////////////////////////////////////////////////////////
 void
 insert_fragment(
-	int const begin,
-	int const end,
+	core::Size const begin,
+	core::Size const end,
 	pose::Pose & pose,
 	TorsionFragmentLibrary const & lib,
-	int const desired_insert_pos // = 0
+	core::Size const desired_insert_pos // = 0
 )
 {
 	bool const paranoid( false ); // should we require exact length match between pose and fraglib?
 
 	// number of single residue window in the fragment library
-	int const frag_nres = lib.size();
+	core::Size const frag_nres = lib.size();
 	// determine frag_size from lib, cant do THIS: "int const frag_size = int( lib[begin][1].size() );"
-	int frag_size(0);
-	for ( int i=begin; i<= end && i <= frag_nres; ++i ) {
+	core::Size frag_size(0);
+	for ( core::Size i=begin; i<= end && i <= frag_nres; ++i ) {
 		if ( lib[i].size() ) {
-			int const this_frag_size( lib[i][1].size() );
+			core::Size const this_frag_size( lib[i][1].size() );
 			runtime_assert( frag_size == 0 || frag_size == this_frag_size );
 			frag_size = this_frag_size;
 		}
 	}
 	if ( !frag_size ) utility_exit_with_message("no insertable windows in region!");
-	// number of total residue in pose
-	int const pose_nres = pose.size();
 	// ensure fragment library and pose matches each other
-	if ( paranoid && pose_nres != (frag_nres + frag_size - 1) ) {
-		std::cerr << pose_nres << "  " << frag_nres << "  " << frag_size << std::endl;
+	if ( paranoid && pose.size() != (frag_nres + frag_size - 1) ) {
+		std::cerr << pose.size() << "  " << frag_nres << "  " << frag_size << std::endl;
 		utility_exit_with_message( "Fragment files and input PDB file don't match in length!" );
 	}
 
 	// length of insertable region
-	int const region_size ( end - begin + 1);
+	debug_assert( end > begin );
+	core::Size const region_size ( end - begin + 1);
 	// in case it is smaller than the size of fragment
-	int const actual_frag_size
+	core::Size const actual_frag_size
 		( region_size < frag_size  ? region_size : frag_size );
-	int ntries( 0 ), insert_pos( 0 ), nfrags( 0 );
+	core::Size ntries( 0 ), insert_pos( 0 ), nfrags( 0 );
 	while ( ntries < 1000 && nfrags <= 0 ) {
 		++ntries;
 		// choose a window in the insertable region
-		auto const pos ( static_cast<int>( numeric::random::uniform() * ( region_size - actual_frag_size + 1) ) );
+		auto const pos ( static_cast<core::Size>( numeric::random::uniform() * ( region_size - actual_frag_size + 1) ) );
 		insert_pos = ( desired_insert_pos == 0 ? begin + pos : desired_insert_pos );
 		runtime_assert ( 1<= insert_pos && insert_pos <= frag_nres );
 		// choose a fragment from the library at that window position
@@ -859,7 +858,7 @@ insert_fragment(
 		TR.Warning << "insert_fragment: no fragments found between " << begin << " and " << end << endl;
 		return;
 	}
-	int const nn = static_cast< int > ( numeric::random::uniform() * nfrags) + 1;
+	core::Size const nn = static_cast< core::Size > ( numeric::random::uniform() * nfrags) + 1;
 	// insert fragment
 	lib[ insert_pos ][ nn ].insert( pose, insert_pos );
 }

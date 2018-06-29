@@ -502,7 +502,7 @@ bool  TMalign::Kabsch(
 
 	//initializtation
 	*rms=0;
-	rms1=0;
+	//rms1=0; //overwritten later
 	e0=0;
 	for ( i=0; i<3; i++ ) {
 		xc[i]=0.0;
@@ -1919,7 +1919,7 @@ void  TMalign::alignment2strings(
 	seqxA.resize(kk);
 	seqyA.resize(kk);
 	seqM.resize(kk);
-	seq_id=seq_id/( n_ali8_+0.00000001); //what did by TMalign, but not reasonable, it should be n_ali8
+	//seq_id=seq_id/( n_ali8_+0.00000001); //what did by TMalign, but not reasonable, it should be n_ali8
 }
 
 
@@ -2116,7 +2116,7 @@ int  TMalign::apply(core::pose::Pose const & pose1, core::pose::Pose const & pos
 	if ( TM > TMmax*ddcc ) {
 		TM=DP_iter(xa_, ya_, xlen_, ylen_, t_, u_, invmap, 1, 2, 2);
 		if ( TM>TMmax ) {
-			TMmax=TM;
+			//TMmax=TM; // TMmax isn't used again
 			for ( i=0; i<ylen_; i++ ) {
 				invmap0[i]=invmap[i];
 			}
@@ -2143,7 +2143,7 @@ int  TMalign::apply(core::pose::Pose const & pose1, core::pose::Pose const & pos
 	//     extract the best rotation matrix (t, u) for the best alginment
 	simplify_step=1;
 	score_sum_method=8;
-	TM=detailed_search(xa_, ya_, xlen_, ylen_, invmap0, t_, u_, simplify_step, score_sum_method);
+	/*TM=*/detailed_search(xa_, ya_, xlen_, ylen_, invmap0, t_, u_, simplify_step, score_sum_method);
 
 	//select pairs with dis<d8 for final TMscore computation and output alignment
 	n_ali8_=0;
@@ -2174,8 +2174,8 @@ int  TMalign::apply(core::pose::Pose const & pose1, core::pose::Pose const & pos
 	//double rmsd;  // unused ~Labonte
 	//double TM1, TM2;  // unused ~Labonte
 	d0_out_=5.0;
-	simplify_step=1;
-	score_sum_method=0;
+	//simplify_step=1;
+	//score_sum_method=0;
 
 	numeric::xyzVector <core::Real> t0;
 	numeric::xyzMatrix <core::Real> u0;

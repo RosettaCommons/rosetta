@@ -29,14 +29,13 @@ namespace metal_interface {
 std::string find_closest_atom( core::conformation::Residue const & res, core::Vector const & xyz ){
 	core::Size index(0);
 	core::Real dis(1000000000); //arbitrary large value
-	core::Real temp_dis(dis);
 
 	//atom ordering rules are in ResidueType.hh; briefly sidechain heavy atoms are between first_sidechain_heavyatom and nheavyatoms
 	for ( core::Size i(res.first_sidechain_atom()); i <= res.nheavyatoms(); ++i ) {
-		temp_dis = res.xyz(i).distance(xyz);
 		if ( res.is_virtual(i) ) {
 			continue;
 		}
+		core::Real temp_dis = res.xyz(i).distance(xyz);
 		if ( (temp_dis < dis) && (res.atom_type(i).element() != "C") ) { //Carbon is not a metal-coordinating atom
 			dis = temp_dis;
 			index = i; //accepting change

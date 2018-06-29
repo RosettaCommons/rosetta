@@ -304,7 +304,7 @@ public:
 		TS_ASSERT_EQUALS( msgs2.size(), 1 );
 		for ( auto const & msg : msgs2 ) {
 			if ( msg->deallocation_type() == input_pose_deallocation_msg ) {
-				deallocated_1abc_pose = true;
+				//deallocated_1abc_pose = true;
 			} else if ( msg->deallocation_type() == resource_deallocation_msg ) {
 				auto rdm = utility::pointer::dynamic_pointer_cast< ResourceDeallocationMessage >( msg );
 				TS_ASSERT_EQUALS( rdm->resource_name(), "2def" );

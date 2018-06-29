@@ -570,15 +570,13 @@ copy_pose_crd( core::pose::Pose const pose_frame,
 			for ( core::Size iatm = 1; iatm <= refres.natoms(); ++iatm ) {
 				std::string const &atomname = refres.atom_name( iatm );
 
-				core::Size iatm_work( iatm );
 				if ( !workres.has( atomname ) ) {
 					continue;
-				} else {
-					iatm_work = workres.atom_index( atomname );
 				}
 
-				core::Vector const &crd = refres.xyz( iatm );
+				core::Size iatm_work = workres.atom_index( atomname );
 				core::id::AtomID atomid( iatm_work, resno );
+				core::Vector const &crd = refres.xyz( iatm );
 				pose_work.set_xyz( atomid, crd );
 			}
 		}

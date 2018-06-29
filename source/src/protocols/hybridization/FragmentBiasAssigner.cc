@@ -451,19 +451,21 @@ density(
 	(*myscore)(pose);
 
 	perrsd_dens_.clear();
-	for ( Size i= 1; i <=nres_; ++i ) perrsd_dens_[i] = 0.0;
+	for ( Size i= 1; i <=nres_; ++i ) {
+		perrsd_dens_[i] = 0.0;
+	}
 
-	core::Real CCsum=0, CCsum2=0;
+	//core::Real CCsum=0, CCsum2=0;
 
 	// turn score_symm_complex flag on; otherwise it won't see symmetry, and will return 0
 	for ( int r=1; r<=(int)nres_; ++r ) {
 
 		perrsd_dens_[r] = core::scoring::electron_density::getDensityMap().matchRes( r, pose.residue(r), pose, symminfo_, false);
-		CCsum += perrsd_dens_[r];
-		CCsum2 += perrsd_dens_[r]*perrsd_dens_[r];
+		//CCsum += perrsd_dens_[r];
+		//CCsum2 += perrsd_dens_[r]*perrsd_dens_[r];
 	}
-	CCsum /= nres_;
-	CCsum2 = sqrt( CCsum2/nres_-CCsum*CCsum );
+	//CCsum /= nres_;
+	//CCsum2 = sqrt( CCsum2/nres_-CCsum*CCsum );
 
 	for ( auto r : perrsd_dens_ ) {
 		if ( r.second < 0.6 ) {

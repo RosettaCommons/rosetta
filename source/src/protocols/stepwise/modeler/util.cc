@@ -300,7 +300,6 @@ find_first_root_residue( kinematics::FoldTree const & f,
 	utility::vector1< Size > const & working_res_subset,
 	utility::vector1< Size > const & working_res ){
 	runtime_assert( f.nres() == working_res.size() );
-	bool found_root( false );
 	for ( Size n = 1; n <= f.nres(); n++ ) {
 		if ( working_res_subset.has_value( working_res[ n ] ) &&
 				f.possible_root( n ) ) {
@@ -308,7 +307,7 @@ find_first_root_residue( kinematics::FoldTree const & f,
 		}
 	}
 	// If control flow reaches here, just exit
-	runtime_assert( found_root );
+	utility_exit_with_message("Cannot find first root residue in the FoldTree.");
 	return 0;
 }
 

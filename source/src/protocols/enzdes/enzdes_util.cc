@@ -581,15 +581,13 @@ get_resnum_from_cstid( std::string const& cstid, core::pose::Pose const &pose)
 	protocols::toolbox::match_enzdes_util::EnzdesCstCacheCOP cst_cache( toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache() );
 	runtime_assert( cst_cache != nullptr );
 	runtime_assert( cstnum <= cst_cache->ncsts());
-	bool found (false);
 	for ( core::Size seqpos =1; seqpos <=pose.size(); ++seqpos ) {
 		if ( cst_cache->param_cache(cstnum)->template_res_cache( template_num )->contains_position( seqpos ) ) {
 			//   tr <<"Cstid "<<cstid<<" corresponds to "<< seqpos <<std::endl;
-			found = true;
 			return seqpos;
 		}
 	}
-	if ( !found ) utility_exit_with_message("Could not parse " + cstid + "to resnum");
+	utility_exit_with_message("Could not parse " + cstid + "to resnum");
 	return (0); // should not get here
 }
 

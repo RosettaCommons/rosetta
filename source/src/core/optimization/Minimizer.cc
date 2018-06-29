@@ -358,7 +358,7 @@ Minimizer::dfpmin_armijo(
 	//   HOPT = 1  resets HESSIN to a multiple of identity when XI is not a desc. direction.
 	//  HOPT = 2  leaves HESSIN unchanged if stepsize XMIN fails Wolfe's condition
 	//         for ensuring new HESSIN to be positive definite.
-	int const HOPT( 2 );
+	constexpr int HOPT( 2 );
 
 	// get function and its gradient
 	int NF = 1;    // number of func evaluations
@@ -499,7 +499,7 @@ Minimizer::dfpmin_armijo(
 		//   std::cout << " line_min->_last_accepted_step = 0.0! " << std::endl; //diagnostic
 		//  }
 
-		Real FAF( 0.0 );
+		Real FAF( 0.0 ); // Only needed if HOPT == 1
 
 		if ( HOPT == 1 || DRVNEW > 0.95*line_min->_deriv_sum ) { //needed if HOPT = 2
 			for ( int i = 1; i <= N; ++i ) {
@@ -512,9 +512,13 @@ Minimizer::dfpmin_armijo(
 			for ( int i = 1; i <= N; ++i ) {
 				FAC += DG[i]*XI[i];
 				FAE += DG[i]*HDG[i];
-				FAF += DG[i]*DG[i];
+				if ( HOPT == 1 ) { // FAF is only needed if HOPT == 1
+					FAF += DG[i]*DG[i];
+				}
 			}
-			FAF = FAC/FAF;
+			if ( HOPT == 1 ) { // FAF is only needed if HOPT == 1
+				FAF = FAC/FAF;
+			}
 			FAC = 1.0/FAC;
 			FAD = 1.0/FAE;
 			for ( int i = 1; i <= N; ++i ) {

@@ -268,7 +268,7 @@ bool ImplicitFastClashCheck::clash_check_test( numeric::xyzVector<core::Real> co
 	for ( i = points_.begin(); i != points_.end(); ++i ) {
 		Real const d_sq( pp.distance_squared( *i ) );
 		if ( d_sq <= neighbor_cutoff_sq_ ) {
-			bclash = false;
+			//bclash = false;
 			return true;
 		}
 	}

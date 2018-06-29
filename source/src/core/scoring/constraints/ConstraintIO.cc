@@ -363,7 +363,7 @@ get_section_name ( std::string line ) {
 	} else {
 		std::string::size_type start = tok.find("[");
 		if ( start != 0 ) return "NO_SECTION";
-		start = 1;
+		start = 1; // ClangSA: Value stored to 'start' is never read
 	}
 
 	std::string::size_type loc = tok.find("]");

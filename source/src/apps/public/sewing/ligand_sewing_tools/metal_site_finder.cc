@@ -124,10 +124,10 @@ void MetalSiteFinderMover::apply(core::pose::Pose & pose){
 	core::Size min_total_coord_atoms = basic::options::option[ local::min_total_coord_atoms ].value();
 	core::Size min_local_coord_atoms = basic::options::option[ local::min_local_coord_atoms ].value();
 	core::Size min_coord_res = basic::options::option[ local::min_coord_res ].value();
-	core::Size max_loop_size = basic::options::option[ local::max_loop_size ].value();
+	core::Size max_loop_size = basic::options::option[ local::max_loop_size ].value(); // ClangSA: Value stored to 'max_loop_size' during its initialization is never read
 	std::string allowed_elements = basic::options::option[ local::allowed_elements ].value();
 	utility::vector1< std::string > allowed_elements_list = utility::string_split_simple( allowed_elements, ',' );
-	bool strict = basic::options::option[ local::strict_ss_changes ].value();
+	bool strict = basic::options::option[ local::strict_ss_changes ].value(); // ClangSA: Value stored to 'strict' during its initialization is never read
 	core::Real distance_cutoff = basic::options::option[ local::metal_ligand_distance_cutoff ].value(); //All known calcium ligands are 1.5 to 3.5 angstroms from the ion
 	//Declare the AtomGraphOP pose_atom_graph
 

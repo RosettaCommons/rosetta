@@ -257,7 +257,7 @@ CoordinateCst::apply( pose::Pose & pose )
 	if ( use_jumps_ ) {
 		if ( pose.fold_tree().jump_edge( jump_ ).start()  == 0 ) {
 			TR<<"no jump detected, defaulting anchor to 1" << std::endl;
-			anchor_res = 1;
+			anchor_res = 1; // ClangSA: Value stored to 'anchor_res' is never read
 		}
 		if ( constrain_residues_set.empty() ) { //size() == 0 ) {
 			constrain_residues_set.insert( pose.fold_tree().jump_edge( jump_ ).stop() );

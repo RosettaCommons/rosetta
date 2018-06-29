@@ -540,9 +540,8 @@ get_home_dir() {
 #endif
 #endif
 
-	if ( strlen(homedir) == 0 ) {
+	if ( homedir == nullptr || strlen(homedir) == 0 ) {
 		return "";
-
 	} else {
 		return std::string(homedir);
 	}

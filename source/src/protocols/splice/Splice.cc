@@ -1407,7 +1407,6 @@ void Splice::apply(core::pose::Pose & pose) {
 			min_seg(pose, dofs,debug_,from_res(),"",cut_site,cut_vl_vh_after_llc,tail_dofs,scorefxn(),segment_type_);
 			add_sequence_constraints(pose);
 		}
-		core::Size tail_size = 0; //how many residues are in the tail segment;
 		std::string tail= ""; //will mark if the tail is n-terminal or c-terminal
 		core::Size tail_end = 0; //save the position of the last tail residue
 		core::Size tail_start = 0;
@@ -1430,7 +1429,6 @@ void Splice::apply(core::pose::Pose & pose) {
 			if ( boost::iequals(tail_segment_, "n") ) {
 				//Check if this is a VL or VH tail segment
 				disulfide_res < vl_vh_cut ? tail_start = 1: tail_start = vl_vh_cut + 1;
-				tail_size = disulfide_res - tail_start;
 				tail_end = disulfide_res - 1;
 			} else if ( boost::iequals(tail_segment_, "c") ) {
 				TR << "to res on pose after llc: " << to_res() + residue_diff << std::endl;
@@ -1440,7 +1438,6 @@ void Splice::apply(core::pose::Pose & pose) {
 					tail_end = pose.split_by_chain()[1]->total_residue();//in case we have a ligand I assume the designed protein will be chain 1.
 				}
 
-				tail_size = tail_end - disulfide_res;
 				tail_start = disulfide_res + 1;
 			}
 			//pose.dump_pdb("before_tail.pdb");
@@ -1492,7 +1489,7 @@ void Splice::apply(core::pose::Pose & pose) {
 				//scorefxn()->show(pose);
 			}
 			add_dihedral_constraints(pose, *source_pose_,boost::iequals(tail_segment_, "n")?tail_start+1: tail_start, boost::iequals(tail_segment_, "c")?tail_end-1: tail_end);
-			tail_size = dofs.size();
+			core::Size tail_size = dofs.size(); ////how many residues are in the tail segment;
 			tail_fold_tree(pose, cut_vl_vh_after_llc,0/*chain_break*/,segment_type_); // setting a new fold tree
 			TR << "Changing dofs, the size of the tail segment is: " << tail_size << std::endl;
 			//pose.dump_pdb("before_changedofs_tail_test.pdb");

@@ -177,7 +177,7 @@ bool PhiPsiRmsd::describe_score(FragmentCandidateOP f,
 	for ( core::Size i = 1; i <= f->get_length(); ++i ) {
 		stmp = std::abs(chunk_phi_(i + offset_v) - query_phi_(i + offset_q));
 		score += stmp * stmp;
-		if ( stmp > 180.0 ) stmp = std::abs(360.0 - stmp);
+		if ( stmp > 180.0 ) stmp = std::abs(360.0 - stmp); // ClangSA: Value stored to 'stmp' is never read
 		stmp = std::abs(chunk_psi_(i + offset_v) - query_psi_(i + offset_q));
 		if ( stmp > 180.0 ) stmp = std::abs(360.0 - stmp);
 		score += stmp * stmp;

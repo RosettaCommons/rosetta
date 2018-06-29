@@ -817,7 +817,7 @@ void LoopMover_Refine_KIC::apply(
 					if ( verbose ) tr() << "energy after repack: " << (*local_scorefxn)(pose) << std::endl;
 				}
 			}
-			if ( verbose || local_debug ) tr() << std::flush;
+			if ( local_debug || verbose ) tr() << std::flush;
 		} //inner_cycle
 	} //outer_cycle
 

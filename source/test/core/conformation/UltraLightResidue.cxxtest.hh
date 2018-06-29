@@ -74,7 +74,6 @@ public:
 
 		TS_ASSERT_LESS_THAN(deviation, 0.001);
 
-		deviation=0;
 		target_coords.clear();
 		copy_coords.clear();
 

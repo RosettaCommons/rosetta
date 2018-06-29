@@ -377,13 +377,12 @@ Size DecoySetEvaluation::wRMSD( Real sigma2, Real tolerance, ObjexxFCL::FArray1_
 void DecoySetEvaluation::compute_distance_matrix( ObjexxFCL::FArray2D_double& dist) const {
 	dist.dimension( n_decoys(), n_decoys(), 0.0 );
 	int count = 0;
-	Real invn( 1.0 / n_atoms() );
 
 	Real sum_w( 0.0 );
 	for ( Size n = 1; n <= n_atoms(); n++ ) {
 		sum_w+=weights_( n );
 	}
-	invn = 1.0 / sum_w;
+	Real invn = 1.0 / sum_w;
 
 	for ( Size i = 1; i <= n_decoys(); i++ ) {
 

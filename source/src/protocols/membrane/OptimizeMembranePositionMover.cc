@@ -336,9 +336,7 @@ void OptimizeMembranePositionMover::optimize_membrane_center( Pose & pose ) {
 	set_center->apply( pose );
 
 	// score the pose
-	core::Real score_old = sfxn_->score( pose );
-	core::Real score_new( score_old );
-	score_best_ = score_old;
+	score_best_ = sfxn_->score( pose );
 
 	// get iterations
 	core::Size iterations = nearest_size( abs_difference( starting_z_, 0.0 ) * 2 / stepsize_z_ );
@@ -357,7 +355,7 @@ void OptimizeMembranePositionMover::optimize_membrane_center( Pose & pose ) {
 		set_center1->apply( pose );
 
 		// rescore pose
-		score_new = sfxn_->score( pose );
+		core::Real score_new = sfxn_->score( pose );
 
 		// save best center
 		if ( score_new < score_best_ ) {
@@ -365,9 +363,6 @@ void OptimizeMembranePositionMover::optimize_membrane_center( Pose & pose ) {
 			best_z_ = new_z;
 			score_best_ = score_new;
 		}
-
-		// set old score to this one
-		score_old = score_new;
 	}
 
 	// Set center to best one that we found
@@ -402,9 +397,6 @@ void OptimizeMembranePositionMover::optimize_membrane_normal( Pose & pose ) {
 	core::Real angle( 0 );
 	core::Real new_x, new_y, new_z;
 	core::Vector new_normal;
-
-	// score the pose
-	core::Real score_new = score_best_;
 
 	// sample an arch over several different axes / directions
 	for ( core::Size j = 1; j <= 4; ++j ) {
@@ -453,7 +445,7 @@ void OptimizeMembranePositionMover::optimize_membrane_normal( Pose & pose ) {
 			set_normal->apply( pose );
 
 			// rescore pose
-			score_new = sfxn_->score( pose );
+			core::Real score_new = sfxn_->score( pose );
 
 			// save best normal
 			if ( score_new < score_best_ ) {
@@ -472,7 +464,7 @@ void OptimizeMembranePositionMover::optimize_membrane_normal( Pose & pose ) {
 	set_final->apply( pose );
 
 	// final score from center search
-	score_new = sfxn_->score( pose );
+	core::Real score_new = sfxn_->score( pose );
 	TR << "Final score from normal search: " << score_new << std::endl;
 
 	// final membrane info
