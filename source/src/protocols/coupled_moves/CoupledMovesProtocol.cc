@@ -161,8 +161,8 @@ CoupledMovesProtocol::CoupledMovesProtocol( CoupledMovesProtocol const & /*cmp*/
 
 core::Real CoupledMovesProtocol::compute_ligand_score_bonus(
 	core::pose::PoseOP pose,
-	utility::vector1<core::Size> ligand_resnums,
-	core::Real ligand_weight) {
+	utility::vector1<core::Size> ligand_resnums )
+{
 
 	core::scoring::EnergyMap weights = pose->energies().weights();
 	core::scoring::EnergyGraph const & energy_graph( pose->energies().energy_graph() );
@@ -184,9 +184,7 @@ core::Real CoupledMovesProtocol::compute_ligand_score_bonus(
 		}
 	}
 
-	core::Real ligand_score_bonus = ligand_two_body_energies.dot(weights) * (ligand_weight - 1.0);
-
-	return ligand_score_bonus;
+	return (ligand_two_body_energies.dot(weights) * (ligand_weight_ - 1.0));
 }
 
 void CoupledMovesProtocol::configure_score_fxn() {
@@ -205,8 +203,31 @@ void CoupledMovesProtocol::configure_score_fxn() {
 	return;
 }
 
+void CoupledMovesProtocol::initialize_from_options() {
+	TR << "CoupledMovesProtocol is examining the options system to set itself up.  If parse_my_tag and an active command line option disagree on a setting, the option is going to win." << std::endl;
 
-void CoupledMovesProtocol::apply( core::pose::Pose& pose ){
+	TR << "This applies only for ligand options at this time." << std::endl;
+	initialize_ligand_from_options();
+
+	return;
+}
+
+void CoupledMovesProtocol::initialize_ligand_from_options() {
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys::coupled_moves;
+
+	if ( option[ligand_mode].user() ) { set_ligand_mode( option[ligand_mode].value() ); }
+	if ( option[number_ligands].user() ) { set_number_ligands( option[number_ligands].value() ); }
+	if ( option[ligand_weight].user() ) { set_ligand_weight( option[ligand_weight].value() ); }
+	if ( option[ligand_prob].user() ) { set_ligand_prob( option[ligand_prob].value() ); }
+
+	return;
+}
+
+void CoupledMovesProtocol::apply( core::pose::Pose & pose ){
+
+	initialize_from_options();
+
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
@@ -266,17 +287,37 @@ void CoupledMovesProtocol::apply( core::pose::Pose& pose ){
 	runtime_assert_string_msg(have_vectors, "move_positions or design_positions empty in CoupledMovesProtocol. Probably you specified no design positions or set everything to unrepackable.");
 
 	// ASSUMPTION: the ligand(s) are the last residue(s) in the given PDB
-	for ( int i = 0 ; i < option[ OptionKeys::coupled_moves::number_ligands ] ; i++ ) {
-		ligand_resnums.push_back( pose_copy->size() - i );
+	bool any_ligand(false);
+	core::Size const nres(pose_copy->size());
+	for ( core::Size res(1); res <= nres; ++res ) {
+		if ( pose_copy->residue_type(res).is_ligand() ) {
+			any_ligand = true;
+			continue;
+		}
+		//if we've hit a ligand and later hit a nonligand:
+		if ( any_ligand && (!pose_copy->residue_type(res).is_ligand()) ) {
+			utility_exit_with_message("CoupledMovesProtocol requires that ligands all be at the end of the Pose.");
+		}
 	}
-	core::Real ligand_weight = option[ OptionKeys::coupled_moves::ligand_weight ];
+
 	protocols::simple_moves::CoupledMoverOP coupled_mover;
 
-	if ( option[ OptionKeys::coupled_moves::ligand_mode ] ) {
+	if ( ligand_mode_ ) {
+
+		runtime_assert_string_msg((number_ligands_ > 0), "in CoupledMovesProtocol, ligand_mode was requested but with 0 number_ligands - don't do that");
+
+		for ( core::Size i(0); i < number_ligands_ ; ++i ) {
+			core::Size const this_res(nres - i);
+			ligand_resnums.push_back( this_res );
+			runtime_assert_string_msg(pose_copy->residue_type(this_res).is_ligand(), "in CoupledMovesProtocol, more ligands were requested than were present at the end of the Pose.  Note all ligands must be at the end.");
+		}
+
+		runtime_assert_string_msg((ligand_resnums.size() > 0), "in CoupledMovesProtocol, ligand_resnums vector is empty - check that the number_ligands was set properly");
+
 		coupled_mover = protocols::simple_moves::CoupledMoverOP(new protocols::simple_moves::CoupledMover(pose_copy, score_fxn_, task, ligand_resnums[1]));
 		coupled_mover->set_ligand_resnum( ligand_resnums[1], pose_copy );
-		coupled_mover->set_ligand_weight( ligand_weight );
-		core::pack::task::IGEdgeReweighterOP reweight_ligand( new protocols::toolbox::IGLigandDesignEdgeUpweighter( ligand_weight ) );
+		coupled_mover->set_ligand_weight( ligand_weight_ );
+		core::pack::task::IGEdgeReweighterOP reweight_ligand( new protocols::toolbox::IGLigandDesignEdgeUpweighter( ligand_weight_ ) );
 		task->set_IGEdgeReweights()->add_reweighter( reweight_ligand );
 	} else {
 		coupled_mover = protocols::simple_moves::CoupledMoverOP( new protocols::simple_moves::CoupledMover( pose_copy, score_fxn_, task ) );
@@ -337,8 +378,8 @@ void CoupledMovesProtocol::apply( core::pose::Pose& pose ){
 	(*score_fxn_)(*pose_copy);
 	core::Real current_score = pose_copy->energies().total_energy();
 
-	if ( option[OptionKeys::coupled_moves::ligand_mode] ) {
-		core::Real ligand_score_bonus = compute_ligand_score_bonus(pose_copy, ligand_resnums, ligand_weight);
+	if ( ligand_mode_ ) {
+		core::Real const ligand_score_bonus = compute_ligand_score_bonus(pose_copy, ligand_resnums);
 		current_score += ligand_score_bonus;
 		mc.set_last_accepted_pose(*pose_copy, current_score);
 	}
@@ -347,10 +388,10 @@ void CoupledMovesProtocol::apply( core::pose::Pose& pose ){
 		core::Size const random = numeric::random::random_range(1, move_positions.size());
 		//This assumes move_positions is not empty.  We have checked above, but let's check again.
 		runtime_assert_string_msg(!move_positions.empty(), "move_positions empty in CoupledMovesProtocol. Probably you specified no design positions or set everything to unrepackable.");
-		core::Size resnum = move_positions[random];
+		core::Size resnum = move_positions[random]; //can't be const: might be reset by ligand mode
 		std::string move_type;
-		core::Real move_prob = numeric::random::uniform();
-		if ( option[OptionKeys::coupled_moves::ligand_mode] && move_prob < option[OptionKeys::coupled_moves::ligand_prob] ) {
+		core::Real const move_prob = numeric::random::uniform();
+		if ( ligand_mode_ && move_prob < ligand_prob_ ) {
 			resnum = ligand_resnums[numeric::random::random_range(1, ligand_resnums.size())];
 			coupled_mover->set_ligand_resnum( resnum, pose_copy );
 			move_type = "LIGAND";
@@ -365,8 +406,8 @@ void CoupledMovesProtocol::apply( core::pose::Pose& pose ){
 		current_score = pose_copy->energies().total_energy();
 		core::Real ligand_score_bonus = 0.0;
 
-		if ( option[OptionKeys::coupled_moves::ligand_mode] ) {
-			ligand_score_bonus = compute_ligand_score_bonus(pose_copy, ligand_resnums, ligand_weight);
+		if ( ligand_mode_ ) {
+			ligand_score_bonus = compute_ligand_score_bonus(pose_copy, ligand_resnums);
 		}
 
 		current_score += ligand_score_bonus;

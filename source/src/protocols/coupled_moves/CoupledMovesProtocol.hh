@@ -38,8 +38,7 @@ public:
 
 	core::Real compute_ligand_score_bonus(
 		core::pose::PoseOP pose,
-		utility::vector1<core::Size> ligand_resnums,
-		core::Real ligand_weight);
+		utility::vector1<core::Size> ligand_resnums);
 
 	void parse_my_tag(
 		TagCOP,
@@ -61,9 +60,36 @@ public:
 	///@brief adds terms for the backrub step to the scorefunction.  Used by ctor; also useful when using set_score_fxn
 	void configure_score_fxn();
 
+	bool get_ligand_mode() const { return ligand_mode_; }
+	core::Size get_number_ligands() const { return number_ligands_; }
+	core::Real get_ligand_weight() const { return ligand_weight_; }
+	core::Real get_ligand_prob() const { return ligand_prob_; }
+
+	void set_ligand_mode( bool const ligand_mode ) { ligand_mode_ = ligand_mode; }
+	void set_number_ligands( core::Size const number_ligands ) { number_ligands_ = number_ligands; }
+	void set_ligand_weight( core::Real const ligand_weight ) { ligand_weight_ = ligand_weight; }
+	void set_ligand_prob( core::Real const ligand_prob ) { ligand_prob_ = ligand_prob; }
+
+private:
+	///@brief sets up internal options based on options system
+	void initialize_from_options();
+
+	///@brief sets up internal options for ligand mode based on the options system
+	void initialize_ligand_from_options();
+
 private:
 	core::scoring::ScoreFunctionOP score_fxn_;
 	core::pack::task::TaskFactoryOP main_task_factory_;
+
+	//Ligand options.  These were once handled only by command line flag.
+	/// @brief if true, model protein ligand interaction
+	bool ligand_mode_ = false;
+	/// @brief number of ligands in the pose
+	core::Size number_ligands_ = 1; //I think this is a silly default but it maintains existing behavior; the value is irrelevant if ligand_mode is not active
+	/// @brief weight for residue - ligand interactions
+	core::Real ligand_weight_ = 1.0;
+	/// @brief probability of making a ligand move
+	core::Real ligand_prob_ = 0.1;
 
 }; //CoupledMovesProtocol
 

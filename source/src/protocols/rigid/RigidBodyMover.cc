@@ -251,6 +251,7 @@ RigidBodyPerturbMover::apply( core::pose::Pose & pose )
 {
 	// Want to update our center of rotation every time we take a step.
 	// baseclass jump is chosen at random from movable jumps every apply
+	runtime_assert_string_msg((movable_jumps_.size() > 0), "RigidBodyPerturbMover is being used without initializing its movable_jumps_ list - it does not know what it is supposed to move.");
 	rb_jump_ = ( movable_jumps_.size() > 1 ) ?
 		numeric::random::rg().random_element( movable_jumps_ )
 		: movable_jumps_[1];

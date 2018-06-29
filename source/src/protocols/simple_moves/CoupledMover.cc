@@ -218,6 +218,7 @@ CoupledMover::apply( core::pose::Pose & pose )
 			short_backrub_mover_->apply( pose );
 		}
 	} else {
+		runtime_assert_string_msg( (get_ligand_resnum() != 0), "In CoupledMover, ligand mode not active but a ligand is present: please make CoupledMoves aware of the ligands.");
 		rigid_body_mover_->apply( pose );
 	}
 
