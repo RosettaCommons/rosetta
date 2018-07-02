@@ -3,19 +3,14 @@
         <ScoreFunction name="ref" weights="ref2015"/>
     </SCOREFXNS>
     <RESIDUE_SELECTORS>
-        <Unsat name="Unsat" check_acceptors="false" scorefxn="ref" consider_mainchain_only="false"/>
-	<Not name="Sat" selector="Unsat"/>
+        <Unsat name="Unsat" check_acceptors="false" scorefxn="ref" consider_mainchain_only="false" legacy="false" hbond_energy_cutoff="-1.25"/>
     </RESIDUE_SELECTORS>
     <TASKOPERATIONS>
-	<ReadResfile name="resfile" filename="inputs/resfile.txt" selector="Unsat"/>
-	<OperateOnResidueSubset name="no_design_sat" selector="Sat">
-           <PreventRepackingRLT/>
-        </OperateOnResidueSubset>
     </TASKOPERATIONS>
     <FILTERS>
     </FILTERS>
     <MOVERS>
-        <FastDesign repeats="1" name="mutate" task_operations="resfile,no_design_sat"/>
+        <MutateResidue name="mutate" residue_selector="Unsat" new_res="CYS" preserve_atom_coords="true"/>
     </MOVERS>
     <APPLY_TO_POSE>
     </APPLY_TO_POSE>

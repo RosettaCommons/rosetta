@@ -13,8 +13,8 @@
 /// @author Parisa Hosseinzadeh (parisah@uw.edu)
 
 
-#ifndef INCLUDED_protocols_residue_selectors_UnsatSelector_fwd_hh
-#define INCLUDED_protocols_residue_selectors_UnsatSelector_fwd_hh
+#ifndef INCLUDED_protocols_hbnet_UnsatSelector_fwd_hh
+#define INCLUDED_protocols_hbnet_UnsatSelector_fwd_hh
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
@@ -23,18 +23,18 @@
 
 // Forward
 namespace protocols {
-namespace residue_selectors {
+namespace hbnet {
 
 class UnsatSelector;
 
 typedef utility::pointer::shared_ptr< UnsatSelector > UnsatSelectorOP;
 typedef utility::pointer::shared_ptr< UnsatSelector const > UnsatSelectorCOP;
 
+} //hbnet
 } //protocols
-} //residue_selectors
 
 
-#endif //INCLUDED_protocols_residue_selectors_UnsatSelector_fwd_hh
+#endif //INCLUDED_protocols_hbnet_UnsatSelector_fwd_hh
 
 
 

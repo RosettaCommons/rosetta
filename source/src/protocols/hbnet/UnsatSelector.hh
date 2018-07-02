@@ -11,13 +11,13 @@
 /// @brief  A ResidueSelector that selects hydrogen bond acceptors or selectors that are not satisfied with h-bond
 /// @author Parisa Hosseinzadeh (parisah@uw.edu)
 
-#ifndef INCLUDED_protocols_residue_selectors_UnsatSelector_HH
-#define INCLUDED_protocols_residue_selectors_UnsatSelector_HH
+#ifndef INCLUDED_protocols_hbnet_UnsatSelector_HH
+#define INCLUDED_protocols_hbnet_UnsatSelector_HH
 
 
 // Unit headers
 // Unit headers
-#include <protocols/residue_selectors/UnsatSelector.fwd.hh>
+#include <protocols/hbnet/UnsatSelector.fwd.hh>
 #include <core/select/residue_selector/ResidueSelectorCreator.hh>
 #include <core/select/residue_selector/util.hh>
 
@@ -28,6 +28,7 @@
 #include <basic/Tracer.hh>
 
 // Package headers
+#include <core/chemical/AtomType.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueType.hh>
@@ -43,8 +44,13 @@
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/pose/selection.hh>
+#include <core/pose/symmetry/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/select/residue_selector/ResidueSelectorFactory.hh>
+#include <core/scoring/hbonds/HBondSet.hh>
+#include <protocols/hbnet/HBNet_util.hh>
+#include <protocols/hbnet/HBNet.hh>
+#include <core/id/AtomID.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.hh>
@@ -61,7 +67,7 @@
 #endif // SERIALIZATION
 
 namespace protocols {
-namespace residue_selectors {
+namespace hbnet {
 
 /// @brief A ResidueSelector that selects alpha-amino acids that are either in the positive phi or negative phi region of Ramachandran space (depending on user preferences).
 class UnsatSelector : public core::select::residue_selector::ResidueSelector {
@@ -133,6 +139,12 @@ public:
 	/// donors and acceptors.
 	bool consider_mainchain_only() const ;
 
+	/// @brief Set whether legacy option should be used
+	void set_legacy( bool const input_setting );
+
+	/// @brief Get the legacy preference
+	bool legacy() const ;
+
 	/// @brief Set the scorefunction.
 	/// @details Clones the input.
 	void set_scorefxn( core::scoring::ScoreFunctionCOP sfxn_in) ;
@@ -144,7 +156,9 @@ public:
 private:
 
 	// ---------- PRIVATE FUNCTIONS -----------------
-
+	/// @brief This function checks if a hbond is in a vector---written by Scott Boyken
+	/* bool
+	hbond_exists_in_vector( utility::vector1<core::scoring::hbonds::HBondCOP> const &, core::scoring::hbonds::HBondCOP &);*/
 	/// @brief The function that actually calculates the value that this filter returns, called by the apply(),
 	/// report(), and report_sm() functions.
 	/// @details Returns the number of atoms receiving more than the allowed number of hydrogen bonds.
@@ -172,6 +186,10 @@ private:
 	/// @details If no scorefunction is provided, then the default scorefunction is used.
 	core::scoring::ScoreFunctionOP scorefxn_;
 
+	///@brief should I use legacy option or hbnet style hbond detection
+	/// @details if nothing selected, default is false
+	bool legacy_;
+
 #ifdef    SERIALIZATION
 public:
 	template< class Archive > void save( Archive & arc ) const;
@@ -181,11 +199,11 @@ public:
 };
 
 
+} //hbnet
 } //protocols
-} //residue_selectors
 
 #ifdef    SERIALIZATION
-CEREAL_FORCE_DYNAMIC_INIT( protocols_residue_selectors_UnsatSelector )
+CEREAL_FORCE_DYNAMIC_INIT( protocols_hbnet_UnsatSelector )
 #endif // SERIALIZATION
 
-#endif //INCLUDEDcore/select/residue_selector_UnsatSelector_hh
+#endif //INCLUDED_protocols_hbnet_UnsatSelector_HH

@@ -11,15 +11,15 @@
 /// @brief UnsatSelector selectos hbond donors or acceptors that are not satisfied.
 /// @author Parisa Hosseinzadeh (parisah@uw.edu)
 
-#ifndef INCLUDED_protocols_residue_selectors_UnsatSelectorCreator_HH
-#define INCLUDED_protocols_residue_selectors_UnsatSelectorCreator_HH
+#ifndef INCLUDED_protocols_hbnet_UnsatSelectorCreator_HH
+#define INCLUDED_protocols_hbnet_UnsatSelectorCreator_HH
 
 // Package headers
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/select/residue_selector/ResidueSelectorCreator.hh>
 
 namespace protocols {
-namespace residue_selectors {
+namespace hbnet {
 
 class UnsatSelectorCreator : public core::select::residue_selector::ResidueSelectorCreator {
 public:
@@ -28,7 +28,7 @@ public:
 	void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const override;
 };
 
-} //namespace residue_selectors
+} //namespace hbnet
 } //namespace protocols
 
 

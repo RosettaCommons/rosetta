@@ -315,8 +315,6 @@ sources = {
 		"StoredResidueSubsetSelector",
 		"StoreResidueSubsetMover",
 		"TaskSelector",
-		"UnsatSelector",
-
 	],
 	"protocols/rigid": [
 		"PoseMembraneRigidBodyMover",
