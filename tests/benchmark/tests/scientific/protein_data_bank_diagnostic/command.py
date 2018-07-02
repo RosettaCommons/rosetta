@@ -159,7 +159,7 @@ def protein_data_bank_diagnostic(mode, rosetta_dir, working_dir, platform, confi
 
 
     res, output, build_command_line = build_rosetta(rosetta_dir, platform, config)
-    with open(working_dir + '/build-log.txt', 'w') as f: f.write( to_bytes(output) )
+    with open(working_dir + '/build-log.txt', 'wb') as f: f.write( to_bytes(output) )
 
     if res: return { _StateKey_ : _S_build_failed_,  _ResultsKey_ : {},
                      _LogKey_ : 'Building rosetta failed!\n{}\n{}\n'.format(build_command_line, output) }
@@ -260,7 +260,7 @@ def protein_data_bank_diagnostic(mode, rosetta_dir, working_dir, platform, confi
 
                 if category:
                     state = _S_failed_
-                    explanations += f'PDB <a href="https://www.rcsb.org/structure/{pdb.upper()}">{pdb.upper()}</a> was passing test before but now faild with <a href="pdbs.{category}.html">「{category}」</a> error! Its run-log could be found in <a href="{log_path}">「{pdb.upper()}」</a>\n'
+                    explanations += f'PDB <a href="https://www.rcsb.org/structure/{pdb.upper()}">{pdb.upper()}</a> was passing test before but now failed with <a href="pdbs.{category}.html">「{category}」</a> error! Its run-log could be found in <a href="{log_path}">「{pdb.upper()}」</a>\n'
 
         explanation = '' if state == _S_passed_ else '<p>Test marked as <b>FAILED</b> due to following errors:</p>'
 
@@ -343,6 +343,21 @@ class PDB_Diagnostic_Codes(enum.Enum):
     assert_segfault       = enum.auto()
     misc_segfault         = enum.auto()
 
+    reroot_disconnected   = enum.auto()
+    atom_base_not_bonded  = enum.auto()
+    first_base_not_p      = enum.auto()
+    base_of_chi           = enum.auto()
+    atom_base_not_found   = enum.auto()
+    reset_icoor_root      = enum.auto()
+
+    res_map_range         = enum.auto()
+
+    unrecognized_stub_id  = enum.auto()
+
+    alias_missing_atom    = enum.auto()
+
+    missing_disulfide_partner    = enum.auto()
+
 
 def classify_pdb_diagnostic_log(log):
     ''' Classify given log PDB_diagnostic log and return one of PDB_Diagnostic_Codes
@@ -386,6 +401,21 @@ def classify_pdb_diagnostic_log(log):
         ( P(splited='packed_rotno_conversion_data_current_'), PDB_Diagnostic_Codes.rotno ),
 
         ( P(log=('Cannot normalize xyzVector of length() zero', 'src/numeric/xyzVector.hh') ), PDB_Diagnostic_Codes.zero_length_xyzVector ),
+
+        ( P(line='Cannot reroot a disconnected ResidueType'),                        PDB_Diagnostic_Codes.reroot_disconnected ),
+        ( P(line="Attempted to inappropriately reset ICOOR root atom"),              PDB_Diagnostic_Codes.reset_icoor_root ),
+        ( P(line='atoms must be bonded to set atom base'),                           PDB_Diagnostic_Codes.atom_base_not_bonded ),
+        ( P(next=('In chi','the base of the','rather than the', 'atom of the chi')), PDB_Diagnostic_Codes.base_of_chi ),
+        ( P(line="set_atom_base: atom names don't exist"),                           PDB_Diagnostic_Codes.atom_base_not_found ),
+        ( P(line='Assertion `first_base_atom != atom_vertex( "P" )` failed'),        PDB_Diagnostic_Codes.first_base_not_p ),
+
+        ( P(previous='Residue outside res_map range'),                               PDB_Diagnostic_Codes.res_map_range),
+
+        ( P(line="unrecognized stub atom id type"),                                  PDB_Diagnostic_Codes.unrecognized_stub_id ),
+
+        ( P(line="Unable to add atom alias for non-existent atom"),                  PDB_Diagnostic_Codes.alias_missing_atom ),
+
+        ( P(line="Can't find an atom to disulfide bond"),                            PDB_Diagnostic_Codes.missing_disulfide_partner ),
     ] )
 
 
@@ -401,7 +431,7 @@ def classify_pdb_diagnostic_log(log):
 
                 if pattern_in(pattern, previous_line, line, next_line, splited, log): return error_code
 
-            return PDB_Diagnostic_Codes.unknown
+    return PDB_Diagnostic_Codes.unknown
 
 
     #if '*****COMPLETED*****' in previous_line: return None
