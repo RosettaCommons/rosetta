@@ -80,6 +80,7 @@ sources = {
 		"MolarMassFilter",
 		"MolecularMassFilter",
 		"MoveMapBuilder",
+		"ProtLigEnsemble",
 		"RandomConformerMover",
 		"RandomConformers",
 		"ResidueTorsionRestraints",

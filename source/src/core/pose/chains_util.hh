@@ -377,6 +377,11 @@ get_sha1_hash_excluding_chain(char const & chain, core::pose::Pose const & pose,
 std::string
 get_sha1_hash_excluding_chains(utility::vector1< std::string > const & chains, core::pose::Pose const & pose, std::string const & extra_label="");
 
+/// @brief Get a value representing the position of all the atoms for residues which don't have the given chain letter
+///
+/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
+///
+std::string get_sha1_hash_excluding_chain(std::string const & chain, core::pose::Pose const & pose, std::string const & extra_label="");
 
 } // pose
 } // core

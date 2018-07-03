@@ -27,7 +27,6 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/minimization_packing/RotamerTrialsMover.hh>
-#include <protocols/rigid/RigidBodyMover.hh>
 
 //Options headers
 #include <basic/options/option.hh>
@@ -581,6 +580,16 @@ core::Real spearman(
 )
 {
 
+	// utility::vector1<std::pair<core::Size, core::Real> > vector_exp;
+	//
+	// if (create_subset){
+	//  //Create subset for a partial spearman
+	//  for(core::Size i=1; i<= vector_rosetta.size(); ++i)
+	//  {
+	//   vector_exp.push_back(vector_exp_whole[i]);
+	//
+	//  }
+	// }
 	//check two vectors have same size
 	if ( vector_exp.size() != vector_rosetta.size() ) {
 		std::cout << "\n exp vector:" << vector_exp.size();

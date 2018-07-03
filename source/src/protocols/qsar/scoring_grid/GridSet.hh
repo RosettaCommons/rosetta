@@ -100,13 +100,6 @@ public:
 	/// @brief return the number of grids
 	core::Size size() const;
 
-	///@brief return the ideal average score of multiple residues on the grid
-	/// @details Currently assumes an ideal score of -1/atom
-	core::Real ideal_score(utility::vector1<core::conformation::UltraLightResidue> & residues) const;
-	///@brief return the ideal score of a residue on the grid
-	/// @details Currently assumes an ideal score of -1/atom
-	core::Real ideal_score(core::conformation::UltraLightResidue const & residue) const;
-
 	///@brief return the average score of multiple residues on the grid
 	core::Real average_score(utility::vector1<core::conformation::UltraLightResidue> & residues) const;
 

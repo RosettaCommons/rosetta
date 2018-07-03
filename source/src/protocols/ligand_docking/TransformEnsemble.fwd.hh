@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   src/protocols/ligand_docking/Transform.fwd.hh
-/// @author Sam DeLuca
+/// @file   src/protocols/ligand_docking/TransformEnsemble.fwd.hh
+/// @author Darwin Fu
 
 #ifndef INCLUDED_protocols_ligand_docking_TransformEnsemble_fwd_hh
 #define INCLUDED_protocols_ligand_docking_TransformEnsemble_fwd_hh

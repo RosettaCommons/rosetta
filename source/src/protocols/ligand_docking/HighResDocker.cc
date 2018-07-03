@@ -272,7 +272,6 @@ HighResDocker::apply(core::pose::Pose & pose) {
 	for ( core::Size cycle = 1; cycle <= num_cycles_; ++cycle ) {
 		core::pack::task::PackerTaskOP packer_task = make_packer_task(pose);// has to be in the loop to be updated after each design cycle (w/resfiles)
 
-
 		protocols::moves::MoverOP pack_mover;
 
 		if ( cycle % repack_every_Nth_ == 1 ) {

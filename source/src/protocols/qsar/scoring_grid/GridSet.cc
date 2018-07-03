@@ -153,37 +153,6 @@ core::Size GridSet::size() const
 	return grids_.size();
 }
 
-
-
-core::Real
-GridSet::ideal_score(utility::vector1<core::conformation::UltraLightResidue> & residues) const
-{
-
-	core::Real score=0.0;
-
-	//Does not use weighted average because the maximum score of each residue already scales with atom size
-	//Hence, the contribution to total_score from larger ligands is already greater
-
-	for ( core::conformation::UltraLightResidue const & residue: residues ) {
-		score += ideal_score(residue);
-	}
-
-	score = (score)/(residues.size());
-	return score;
-
-}
-
-core::Real
-GridSet::ideal_score(core::conformation::UltraLightResidue const & residue) const
-{
-
-	core::Real score = 0;
-	score= -1.0 * residue.natoms();
-
-	return score;
-
-}
-
 core::Real
 GridSet::average_score(utility::vector1<core::conformation::UltraLightResidue> & residues) const
 {

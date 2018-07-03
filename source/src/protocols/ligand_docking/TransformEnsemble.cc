@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   src/protocols/ligand_docking/Transform.cc
+/// @file   src/protocols/ligand_docking/TransformEnsemble.cc
 /// @author Thomas Willcock and Darwin Fu
 /// Adapted from code by Sam Deluca
 
@@ -29,10 +29,13 @@
 #include <core/conformation/UltraLightResidue.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/PDBInfo.hh>
+#include <core/import_pose/import_pose.hh>
 #include <core/pose/chains_util.hh>
 #include <core/kinematics/Jump.hh>
 #include <protocols/ligand_docking/ligand_scores.hh>
 
+#include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
 
 #include <sstream>
@@ -46,6 +49,7 @@
 
 #include <utility/tag/Tag.hh>
 #include <utility/vector0.hh>
+#include <utility/io/util.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 #include <utility/map_util.hh>
@@ -106,22 +110,15 @@ protocols::moves::MoverOP TransformEnsemble::fresh_instance() const
 void TransformEnsemble::parse_my_tag
 (
 	utility::tag::TagCOP const tag,
-	basic::datacache::DataMap & data_map,
+	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const & /*filters*/,
 	protocols::moves::Movers_map const & /*movers*/,
-	core::pose::Pose const & pose/*pose*/
+	core::pose::Pose const & pose
 )
 {
 	if ( tag->getName() != "TransformEnsemble" ) {
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "This should be impossible");
 	}
-	if ( ! tag->hasOption("chains") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Transform' mover requires chains tag");
-	if ( ! tag->hasOption("move_distance") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Transform' mover requires move_distance tag");
-	if ( ! tag->hasOption("box_size") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Transform' mover requires box_size tag");
-	if ( ! tag->hasOption("angle") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Transform' mover requires angle tag");
-	if ( ! tag->hasOption("cycles") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Transform' mover requires cycles tag");
-	if ( !tag->hasOption("temperature") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Transform' mover requires temperature tag");
-
 	//Divides by root(3) so the center can only move a total equal to move_distance in each step
 	transform_info_.move_distance = (tag->getOption<core::Real>("move_distance")) /sqrt(3);
 	transform_info_.box_size = tag->getOption<core::Real>("box_size");
@@ -134,7 +131,8 @@ void TransformEnsemble::parse_my_tag
 	initial_perturb_ = (tag->getOption<core::Real>("initial_perturb",0.0));
 
 	use_conformers_ = tag->getOption<bool>("use_conformers",true);
-	optimize_until_ideal_ = tag->getOption<bool>("optimize_until_ideal",false);
+
+	use_main_model_ = tag->getOption<bool>("use_main_model",false);
 
 	std::string const all_chains_str = tag->getOption<std::string>("chains");
 	transform_info_.chains = utility::string_split(all_chains_str, ',');
@@ -145,31 +143,45 @@ void TransformEnsemble::parse_my_tag
 		transform_info_.jump_ids.push_back(core::pose::get_jump_id_from_chain_id(current_chain_id, pose));
 	}
 
+	if ( tag->hasOption("ensemble_proteins") ) {
+
+		ensemble_proteins_ = tag->getOption<std::string>("ensemble_proteins");
+		utility::vector1<std::string> lines = utility::io::get_lines_from_file_data(ensemble_proteins_);
+
+		for ( const auto & line : lines ) {
+
+			core::pose::PoseOP extra_pose = core::import_pose::pose_from_file(line,false, core::import_pose::PDB_file);
+			grid_set_poses_.insert(std::make_pair(line, *extra_pose));
+		}
+
+	}
+
+
 	if ( tag->hasOption("sampled_space_file") ) {
 		output_sampled_space_ = true;
 		sampled_space_file_ = tag->getOption<std::string>("sampled_space_file");
 	}
 
-	grid_set_prototype_ = protocols::qsar::scoring_grid::parse_grid_set_from_tag(tag, data_map);
+	grid_set_prototype_ = protocols::qsar::scoring_grid::parse_grid_set_from_tag(tag, data);
 }
 
 void TransformEnsemble::apply(core::pose::Pose & pose)
 {
+	//Setting up ligands and ligand center
+	grid_sets_.clear();
+	utility::vector1<core::conformation::ResidueOP> single_conformers;
+	core::Vector original_center(0,0,0);
+
 	debug_assert( grid_set_prototype_ != nullptr );
 
 	//Grid setup: Use centroid of all chains as center of grid
 	core::Vector const center(protocols::geometry::centroid_by_chains(pose, transform_info_.chain_ids));
 
-	// TODO: TransformEnsemble should be able to get the chains it's concerned about
-	// itself, rather than relying on the GridSet.
-	char chain = grid_set_prototype_->chain();
-	// We pass exclude=false, so that only the passed chain is the one used in grid caching calculations
-	qsar::scoring_grid::GridSetCOP grid_set( qsar::scoring_grid::GridManager::get_instance()->get_grids( *grid_set_prototype_, pose, center, chain, false ) );
-	debug_assert(grid_set != nullptr); //something has gone hopelessly wrong if this triggers
+	grid_sets_.push_back(std::make_pair("MAIN", qsar::scoring_grid::GridManager::get_instance()->get_grids( *grid_set_prototype_, pose, center, transform_info_.chains)));
 
-	//Setting up ligands and ligand center
-	utility::vector1<core::conformation::ResidueOP> single_conformers;
-	core::Vector original_center(0,0,0);
+	if ( ensemble_proteins_ != "" ) {
+		make_multi_pose_grids(center);
+	}
 
 	for ( core::Size i=1; i <= transform_info_.chains.size(); ++i ) {
 		core::Size const begin(pose.conformation().chain_begin(transform_info_.chain_ids[i]));
@@ -250,7 +262,7 @@ void TransformEnsemble::apply(core::pose::Pose & pose)
 				core::Real distance = new_center.distance(original_center);
 
 				//Not everything in grid, also checks center distance
-				if ( !check_grid(grid_set, ligand_residues_, distance) ) {
+				if ( !check_grid(ligand_residues_, distance) ) {
 					ligand_residues_ = last_accepted_ligand_residues_;
 					reference_residues_ = last_accepted_reference_residues_;
 					perturbed = false;
@@ -262,40 +274,26 @@ void TransformEnsemble::apply(core::pose::Pose & pose)
 		}
 
 
-		last_score = grid_set->average_score(ligand_residues_);
+		last_score = score_ligands(ligand_residues_);
 		//set post-perturb ligand as best model and score
 		best_ligands_ = ligand_residues_;
 		best_score = last_score;
 
-
-		//Optimize until within 5 percent of the theoretical maximum score
-		//Based on all atoms having an attractive score of 1
-		core::Real ideal_limit = grid_set->ideal_score(ligand_residues_);
-		ideal_limit = (core::Real)0.95 * ideal_limit;
-
-		//Limit to 4 * number of cycles to prevent infinite loop
-		core::Size max_cycles = (core::Size)4 * transform_info_.cycles;
-
 		while ( not_converged )
 				{
-			if ( cycle >= max_cycles-1 ) {
-				not_converged=false;
-			} else if ( optimize_until_ideal_ ) {
-				if ( cycle >= transform_info_.cycles-1 && last_score <= ideal_limit ) {
+			if ( optimize_until_score_is_negative_ ) {
+				if ( cycle >= transform_info_.cycles && last_score <= 0.0 ) {
 					not_converged= false;
+				} else if ( cycle % 2*transform_info_.cycles == 0 ) { // Print every time we're twice the requested cycles.
+					// Print a warning, so at least we can see if we're in an infinite loop.
+					transform_tracer.Warning << "optimized for " << cycle << " cycles and the score (" << last_score << ") is still not negative." << std::endl;
 				}
-			} else if ( optimize_until_score_is_negative_ ) {
-
-				if ( cycle >= transform_info_.cycles-1 && last_score <= 0.0 ) {
-					not_converged= false;
-				}
-
 			} else {
-				if ( cycle >= transform_info_.cycles-1 ) {
+				if ( cycle >= transform_info_.cycles ) {
 					not_converged= false;
 				}
-
 			}
+
 
 			//Incrementer
 			cycle++;
@@ -312,13 +310,13 @@ void TransformEnsemble::apply(core::pose::Pose & pose)
 					change_conformer(ligand_residues_[i], reference_residues_[i], i);
 
 					//Not everything in grid
-					if ( !check_grid(grid_set, ligand_residues_) ) {
+					if ( !check_grid(ligand_residues_) ) {
 						move_accepted = false;
 						ligand_residues_[i] = last_accepted_ligand_residues_[i];
 						continue;
 					}
 
-					current_score = grid_set->average_score(ligand_residues_);
+					current_score = score_ligands(ligand_residues_);
 
 					//If monte_carlo rejected
 					if ( !monte_carlo(current_score, last_score) ) {
@@ -332,7 +330,7 @@ void TransformEnsemble::apply(core::pose::Pose & pose)
 
 				}
 
-				current_score = grid_set->average_score(ligand_residues_);
+				current_score = score_ligands(ligand_residues_);
 				if ( current_score < best_score ) {
 					best_score = current_score;
 					best_ligands_ = ligand_residues_;
@@ -346,13 +344,13 @@ void TransformEnsemble::apply(core::pose::Pose & pose)
 				core::Real distance = new_center.distance(original_center);
 
 				//Not everything in grid, also checks center distance
-				if ( !check_grid(grid_set, ligand_residues_, distance) ) {
+				if ( !check_grid(ligand_residues_, distance) ) {
 					ligand_residues_ = last_accepted_ligand_residues_;
 					reference_residues_ = last_accepted_reference_residues_;
 					move_accepted = false;
 				} else {
 
-					current_score = grid_set->average_score(ligand_residues_);
+					current_score = score_ligands(ligand_residues_);
 
 					//If monte_carlo rejected
 					if ( !monte_carlo(current_score, last_score) ) {
@@ -396,34 +394,18 @@ void TransformEnsemble::apply(core::pose::Pose & pose)
 		protocols::jd2::add_string_real_pair_to_current_job("Transform_accept_ratio", accept_ratio);
 
 		std::string transform_ensemble = "TransformEnsemble";
-
-
-		//best ligands normally
-		for ( core::Size i=1; i <= best_ligands_.size(); ++i ) {
-			best_ligands_[i].update_conformation(best_pose.conformation());
-
-		}
-
+		std::string tag;
 
 		if ( output_sampled_space_ ) {
 			sampled_space.close();
 		}
 
-		//Output reference poses for comparison
-		core::pose::Pose reference_pose = starting_pose;
-		for ( core::Size i=1; i <= best_ligands_.size(); ++i ) {
-			reference_residues_[i].update_conformation(reference_pose.conformation());
-		}
-		std::string tag;
-		//  reference_pose.dump_pdb("reference_pose.pdb",tag);
-
-
-		//Reference poses for comparison above
-
-		pose = best_pose;
+		//Set pose to best scored model - report score of a single grid (the best one) if using multiple poses
+		//Tracks which model was the best using core::Size best_pose_count
+		core::Size best_pose_count;
+		best_score = convert_to_full_pose(pose, best_pose_count);
 
 		transform_tracer << "Accepted pose with grid score: " << best_score << std::endl;
-
 		protocols::jd2::add_string_real_pair_to_current_job("Grid_score", best_score);
 
 
@@ -431,8 +413,8 @@ void TransformEnsemble::apply(core::pose::Pose & pose)
 		for ( core::Size i=1; i<=transform_info_.jump_ids.size(); ++i ) {
 			core::Size jump = transform_info_.jump_ids[i];
 
-			//Add ligand grid scores, hopefully to overall pose output
-			utility::map_merge( grid_scores, get_ligand_grid_scores( *grid_set, jump, pose, "" ) );
+			//Score all ligands using the best pose and report score
+			utility::map_merge( grid_scores, get_ligand_grid_scores( *(grid_sets_[best_pose_count].second), jump, pose, "" ) );
 		}
 
 		for ( auto const & entry : grid_scores ) {
@@ -442,7 +424,7 @@ void TransformEnsemble::apply(core::pose::Pose & pose)
 	}
 }
 
-bool TransformEnsemble::check_grid(qsar::scoring_grid::GridSetCOP grid, utility::vector1<core::conformation::UltraLightResidue> & ligand_residues, core::Real distance) //distance=0 default
+bool TransformEnsemble::check_grid(utility::vector1<core::conformation::UltraLightResidue> & ligand_residues, core::Real distance) //distance=0 default
 {
 
 	if ( distance > transform_info_.box_size ) {
@@ -452,15 +434,100 @@ bool TransformEnsemble::check_grid(qsar::scoring_grid::GridSetCOP grid, utility:
 	}
 
 	//The score is meaningless if any atoms are outside of the grid
-	if ( !grid->is_in_grid(ligand_residues) ) { //Reject the pose
+	for ( const auto & grid_set : grid_sets_ ) {
+		if ( !grid_set.second->is_in_grid(ligand_residues) ) { //Reject the pose
 
-		transform_tracer << "Pose rejected because atoms are outside of the grid" << std::endl;
-		return false;
+			transform_tracer << "Pose rejected because atoms are outside of the grid" << std::endl;
+			return false;
+		}
 	}
-
 	//Everything is awesome!
 	return true;
 
+}
+
+core::Real TransformEnsemble::score_ligands(utility::vector1<core::conformation::UltraLightResidue> & ligand_residues)
+{
+	core::Real score_total = 0;
+
+	//Ligand residue level (00B, 00C, 00D...etc.) averaging taken care of in average_score function
+	//Grid level averaging taken care of here (Grid 1 average score of all ligands, Grid 2 average score of all ligands...etc.)
+
+	for ( const auto & grid_set : grid_sets_ ) {
+		core::Real score = grid_set.second->average_score(ligand_residues);
+		score_total = score_total + score;
+		transform_tracer << "Scored ligands for " << grid_set.first << " and got " << score << std::endl;
+	}
+	return score_total / grid_sets_.size();
+}
+
+core::Real TransformEnsemble::convert_to_full_pose(core::pose::Pose & pose, core::Size & best_pose_count)
+{
+
+	core::Real best_score = 10000;
+	best_pose_count = 1;
+	std::string best_pose_hash = "";
+
+	//Main model should be first grid set
+	if ( use_main_model_ ) {
+		best_pose_count = 1;
+
+		best_pose_hash = grid_sets_[1].first;
+		debug_assert( best_pose_hash == "MAIN" );
+
+		best_score = grid_sets_[1].second->average_score(best_ligands_);
+	} else {
+		for ( core::Size i = 1; i <= grid_sets_.size(); ++i ) {
+			core::Real current_score = grid_sets_[i].second->average_score(best_ligands_);
+
+			transform_tracer << "Looked for best protein-ligand at " << grid_sets_[i].first << " and got " << current_score << std::endl;
+
+			//This has a bias of order you put poses in if scores equal. Could shuffle but unlikely to two decimals
+			if ( current_score <= best_score ) {
+				best_pose_count = i;
+				best_score = current_score;
+				best_pose_hash = grid_sets_[i].first;
+			}
+		}
+
+	}
+	transform_tracer << "best hash is " << best_pose_hash << std::endl;
+
+	if ( best_pose_hash == "MAIN" ) {
+		for ( core::Size i=1; i <= best_ligands_.size(); ++i ) {
+			best_ligands_[i].update_conformation(pose.conformation());
+		}
+
+		return best_score;
+	} else {
+		for ( core::Size i=1; i <= transform_info_.chain_ids.size(); ++i ) {
+
+			core::conformation::Residue original_residue = pose.residue(pose.conformation().chain_begin(transform_info_.chain_ids[i]));
+			grid_set_poses_[best_pose_hash].append_residue_by_jump(original_residue, grid_set_poses_[best_pose_hash].size(),"","",true);
+			core::pose::PDBInfoOP pdb_info( grid_set_poses_[best_pose_hash].pdb_info() );
+			pdb_info->obsolete(false);
+			pdb_info->copy(*pose.pdb_info(),pose.conformation().chain_begin(transform_info_.chain_ids[i]),pose.conformation().chain_end(transform_info_.chain_ids[i]),grid_set_poses_[best_pose_hash].size());
+		}
+
+		for ( core::Size i=1; i <= best_ligands_.size(); ++i ) {
+			best_ligands_[i].update_conformation(pose.conformation());
+		}
+
+		pose = grid_set_poses_[best_pose_hash];
+		return best_score;
+	}
+
+}
+
+
+void TransformEnsemble::make_multi_pose_grids(core::Vector center)
+{
+
+	qsar::scoring_grid::GridManager* grid_manager = qsar::scoring_grid::GridManager::get_instance();
+	for ( const auto & grid_set_pose : grid_set_poses_ ) {
+
+		grid_sets_.push_back(std::make_pair(grid_set_pose.first, grid_manager->get_grids( *grid_set_prototype_, grid_set_pose.second, center, transform_info_.chains)));
+	}
 }
 
 bool TransformEnsemble::monte_carlo(core::Real & current, core::Real & last)
@@ -634,10 +701,12 @@ void TransformEnsemble::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 		"Total number of repeats of the monte carlo simulation to be performed.", "1")
 		+ XMLSchemaAttribute::attribute_w_default("optimize_until_score_is_negative", xsct_rosetta_bool,
 		"Continue sampling beyond \"cycles\" if score is positive", "false")
-		+ XMLSchemaAttribute::attribute_w_default("optimize_until_ideal", xsct_rosetta_bool,
-		"Continue sampling beyond \"cycles\" if score not close to minimum - all atoms has -1 score", "false")
+		+ XMLSchemaAttribute::attribute_w_default("use_main_model", xsct_rosetta_bool,
+		"Use the primary input protein model regardless of scores", "false")
 		+ XMLSchemaAttribute::attribute_w_default("use_conformers", xsct_rosetta_bool,
 		"Use ligand conformations while sampling", "true")
+		+ XMLSchemaAttribute::attribute_w_default("ensemble_proteins", xs_string,
+		"File to read protein ensemble options from", "")
 		+ XMLSchemaAttribute::attribute_w_default("initial_perturb", "non_negative_real" ,
 		"Make an initial, unscored translation and rotation "
 		"Translation will be selected uniformly in a sphere of the given radius (Angstrom)."

@@ -1,0 +1,2 @@
+inputs/girk_2.pdb
+inputs/girk_3.pdb

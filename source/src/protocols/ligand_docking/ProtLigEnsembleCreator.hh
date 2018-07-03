@@ -7,21 +7,19 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file protocols/ligand_docking/TransformEnsembleCreator.hh
-///@brief This class will create instances of Mover TransformEnsemble for the MoverFactory
-///@author Darwin Fu
+///@file protocols/ligand_docking/ProtLigEnsembleCreator.hh
+///@brief This class will create instances of Mover ProtLigEnsembleCreator for the MoverFactory
+///@author Andrew Leaver-Fay via code_writer.py (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_protocols_ligand_docking_TransformCreatorEnsemble_hh
-#define INCLUDED_protocols_ligand_docking_TransformCreatorEnsemble_hh
-
-#include <protocols/moves/Mover.fwd.hh>
+#ifndef INCLUDED_protocols_ligand_docking_ProtLigEnsembleCreator_hh
+#define INCLUDED_protocols_ligand_docking_ProtLigEnsembleCreator_hh
 
 #include <protocols/moves/MoverCreator.hh>
 
 namespace protocols {
 namespace ligand_docking {
 
-class TransformEnsembleCreator : public protocols::moves::MoverCreator {
+class ProtLigEnsembleCreator : public protocols::moves::MoverCreator {
 public:
 	moves::MoverOP create_mover() const override;
 	std::string keyname() const override;

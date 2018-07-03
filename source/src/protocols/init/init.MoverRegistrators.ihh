@@ -274,6 +274,7 @@ static MoverRegistrator< ligand_docking::HighResEnsembleCreator > reg_HighResEns
 static MoverRegistrator< ligand_docking::InterfaceScoreCalculatorCreator > reg_InterfaceScoreCalculatorCreator;
 static MoverRegistrator< ligand_docking::LigandDesignCreator > reg_LigandDesignCreator;
 static MoverRegistrator< ligand_docking::MinimizeBackboneCreator > reg_MinimizeBackboneCreator;
+static MoverRegistrator< ligand_docking::ProtLigEnsembleCreator > reg_ProtLigEnsembleCreator;
 static MoverRegistrator< ligand_docking::RandomConformersCreator > reg_RandomConformersCreator;
 static MoverRegistrator< ligand_docking::RotateCreator > reg_RotateCreator;
 static MoverRegistrator< ligand_docking::RotatesCreator > reg_RotatesCreator;

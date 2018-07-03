@@ -742,6 +742,14 @@ std::string get_sha1_hash_excluding_chain(char const & chain, core::pose::Pose c
 	return get_sha1_hash_excluding_chains(chains, pose, extra_label);
 }
 
+std::string get_sha1_hash_excluding_chain(std::string const & chain, core::pose::Pose const & pose, std::string const & extra_label)
+{
+	debug_assert(chain.length()==1);
+	utility::vector1< std::string > chains;
+	chains.push_back(chain);
+	return get_sha1_hash_excluding_chains(chains, pose, extra_label);
+}
+
 std::string
 get_sha1_hash_excluding_chains(utility::vector1< std::string > const & chains, core::pose::Pose const & pose, std::string const & extra_label)
 {
@@ -761,7 +769,7 @@ get_sha1_hash_excluding_chains(utility::vector1< std::string > const & chains, c
 		for ( core::Size atom_num = 1; atom_num <= natoms; ++atom_num ) {
 			id::AtomID atom_id(atom_num,res_num);
 			PointPosition current_xyz = pose.conformation().xyz(atom_id);
-			coord_stream << numeric::truncate_and_serialize_xyz_vector(current_xyz,5);
+			coord_stream << numeric::truncate_and_serialize_xyz_vector(current_xyz,3);
 		}
 	}
 	if ( ! extra_label.empty() ) {

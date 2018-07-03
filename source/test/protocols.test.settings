@@ -368,6 +368,7 @@ sources = {
 		"HighResEnsemble",
 		"ligand_scores",
 		"LigandDockingLoaders",
+		"ProtLigEnsemble",
 		"ResidueTorsionRestraints",
 		"StartFrom",
 		"Transform",

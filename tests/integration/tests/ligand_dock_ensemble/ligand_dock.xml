@@ -43,13 +43,12 @@ Final_Backbones
         <MoveMapBuilder name="final" sc_interface="side_chain_for_final" bb_interface="backbone" minimize_water="true"/>
     </MOVEMAP_BUILDERS>
  
-Grid will be formed using the included chain so set ligand_chain to A, the protein chain 
-    <SCORINGGRIDS ligand_chain="A" width="35">
+    <SCORINGGRIDS width="35">
         <ClassicGrid grid_name="classic" weight="1.0" atr="-1.0" rep="0.5" />
         </SCORINGGRIDS>
  
     <MOVERS>
-        <TransformEnsemble name="transform_ensemble" chains="B,C,D" box_size="5.0" move_distance="1.0" angle="50" cycles="500" repeats="1" temperature="5" initial_perturb="0.0" use_conformers="true" />
+        <TransformEnsemble name="transform_ensemble" chains="B,C,D" box_size="5.0" move_distance="1.0" angle="50" cycles="500" repeats="1" temperature="5" initial_perturb="0.0" use_conformers="true" ensemble_proteins="ensemble.txt" />
         <HighResEnsemble name="high_res_ensemble" chains="B,C,D" cycles="6" repack_every_Nth="3" scorefxn="ligand_soft_rep" movemap_builder="docking" rosetta="false" final_score="hard_rep" final_move="final"/>
      
  </MOVERS>

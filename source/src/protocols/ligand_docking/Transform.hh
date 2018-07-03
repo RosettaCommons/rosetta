@@ -69,7 +69,7 @@ public:
 		basic::datacache::DataMap & data_map,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
-		core::pose::Pose const &
+		core::pose::Pose const & pose
 	) override;
 
 	void apply(core::pose::Pose & pose) override;
@@ -98,7 +98,7 @@ public:
 
 	/// @brief Check that conformers are safely within the grids.
 	/// Returns true if good, false if bad.
-	bool check_conformers(qsar::scoring_grid::GridSet const & grid_set,core::conformation::UltraLightResidue & starting_residue) const;
+	bool check_conformers(core::conformation::UltraLightResidue & starting_residue) const;
 
 	/// @brief Return the recommended minimum size of the ligand grids for this particular setup.
 	/// @details - success_rate is the MC success rate. Will be bumped to a reasonable minimum
@@ -118,10 +118,19 @@ public:
 	bool check_rmsd(core::conformation::UltraLightResidue const & start, core::conformation::UltraLightResidue const& current) const;
 
 	/// @brief check ligand still inside the grid
-	bool check_grid(qsar::scoring_grid::GridSet const & grid, core::conformation::UltraLightResidue & ligand_residue, core::Real distance = 0);
+	bool check_grid(core::conformation::UltraLightResidue & ligand_residue, core::Real distance = 0);
+
+	/// @brief Calculate unconstrained score for given ligand
+	core::Real score_ligand(core::conformation::UltraLightResidue & ligand_residue);
 
 	/// @brief score constraints by updating pose and applying score_function_
 	core::Real score_constraints(core::pose::Pose & pose, core::conformation::UltraLightResidue & residue, core::scoring::ScoreFunctionOP & sfxn);
+
+	/// @brief Generate all extra grids
+	void make_multi_pose_grids(core::Vector center);
+
+	/// @brief copy the ligand into the desired receptor model and update conformation using the best model
+	core::Real convert_to_full_pose(core::pose::Pose & pose, core::conformation::UltraLightResidue & residue);
 
 private:
 	/// @brief Estimate how much the ligand will travel during the MC translation
@@ -130,6 +139,9 @@ private:
 
 private:
 	Transform_info transform_info_;
+	utility::vector1<std::pair<std::string, qsar::scoring_grid::GridSetCOP>> grid_sets_;
+	// std::map<std::string, core::Real> grid_set_weights_;
+	std::map<std::string, core::pose::Pose> grid_set_poses_;
 	utility::vector1< core::conformation::UltraLightResidueOP > ligand_conformers_;
 	protocols::qsar::scoring_grid::GridSetCOP grid_set_prototype_;
 	bool optimize_until_score_is_negative_ = false;
@@ -137,6 +149,8 @@ private:
 	bool check_rmsd_ = false;
 	bool use_conformers_ = true;
 	bool use_constraints_ = false;
+	bool use_main_model_ = false;
+	std::string ensemble_proteins_ = "";
 	std::string cst_fa_file_ = "";
 	core::Real cst_fa_weight_ = 1.0;
 	std::string sampled_space_file_;

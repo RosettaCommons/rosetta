@@ -32,7 +32,9 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/conformation/UltraLightResidue.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
+#include <core/import_pose/import_pose.hh>
 #include <core/pose/chains_util.hh>
 #include <core/kinematics/Jump.hh>
 
@@ -52,9 +54,11 @@
 #include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
-
+#include <utility/io/util.hh>
 #include <ObjexxFCL/format.hh>
+#include <ObjexxFCL/string.functions.hh>
 #include <utility/io/ozstream.hh>
+#include <utility/string_util.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
@@ -116,12 +120,6 @@ void Transform::parse_my_tag
 	if ( tag->getName() != "Transform" ) {
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "This should be impossible");
 	}
-	if ( ! tag->hasOption("chain") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Transform' mover requires chain tag");
-	if ( ! tag->hasOption("move_distance") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Transform' mover requires move_distance tag");
-	if ( ! tag->hasOption("box_size") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Transform' mover requires box_size tag");
-	if ( ! tag->hasOption("angle") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Transform' mover requires angle tag");
-	if ( ! tag->hasOption("cycles") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Transform' mover requires cycles tag");
-	if ( !tag->hasOption("temperature") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Transform' mover requires temperature tag");
 
 	transform_info_.chain = tag->getOption<std::string>("chain");
 
@@ -136,7 +134,6 @@ void Transform::parse_my_tag
 	optimize_until_score_is_negative_ = tag->getOption<bool>("optimize_until_score_is_negative",false);
 
 	use_conformers_ = tag->getOption<bool>("use_conformers",true);
-
 	use_constraints_ = tag->getOption<bool>("use_constraints",false);
 
 	if ( use_constraints_ ) {
@@ -156,6 +153,8 @@ void Transform::parse_my_tag
 	} else if ( basic::options::option[ basic::options::OptionKeys::constraints::cst_fa_weight].user() ) {
 		cst_fa_weight_ = basic::options::option[ basic::options::OptionKeys::constraints::cst_fa_weight]();
 	}
+
+	use_main_model_ = tag->getOption<bool>("use_main_model",false);
 
 	initial_perturb_ = tag->getOption<core::Real>("initial_perturb",0.0);
 	if ( initial_perturb_ < 0 ) {
@@ -179,16 +178,34 @@ void Transform::parse_my_tag
 	}
 
 	grid_set_prototype_ = protocols::qsar::scoring_grid::parse_grid_set_from_tag(tag, data);
+
+	if ( grid_set_prototype_ == nullptr ) {
+		utility_exit_with_message( "The Transform mover needs to have the GridSet prototype set in order to work." );
+	}
+
+	if ( tag->hasOption("ensemble_proteins") ) {
+
+		ensemble_proteins_ =  tag->getOption<std::string>("ensemble_proteins");
+		utility::vector1<std::string> lines = utility::io::get_lines_from_file_data(ensemble_proteins_);
+
+		for ( const auto & line : lines ) {
+			core::pose::PoseOP extra_pose = core::import_pose::pose_from_file(line,false, core::import_pose::PDB_file);
+			grid_set_poses_.insert(std::make_pair(line, *extra_pose));
+		}
+	}
+
 }
 
 void Transform::apply(core::pose::Pose & pose)
 {
+	grid_sets_.clear();
 
 	debug_assert(transform_info_.chain.size() == 1);
 	transform_info_.chain_id = core::pose::get_chain_id_from_chain(transform_info_.chain, pose);
 	transform_info_.jump_id = core::pose::get_jump_id_from_chain_id(transform_info_.chain_id, pose);
-	core::Size const begin(pose.conformation().chain_begin(transform_info_.chain_id));
 	core::Vector const center(protocols::geometry::downstream_centroid_by_jump(pose, transform_info_.jump_id));
+
+	core::Size const begin(pose.conformation().chain_begin(transform_info_.chain_id));
 
 	core::conformation::Residue original_residue = pose.residue(begin);
 	core::chemical::ResidueType residue_type = pose.residue_type(begin);
@@ -212,7 +229,12 @@ void Transform::apply(core::pose::Pose & pose)
 	if ( grid_set_prototype_ == nullptr ) {
 		utility_exit_with_message( "The Transform mover needs to have the GridSet prototype set in order to work." );
 	}
-	qsar::scoring_grid::GridSetCOP grid_set( qsar::scoring_grid::GridManager::get_instance()->get_grids( *grid_set_prototype_, pose, center, transform_info_.chain ) );
+
+	grid_sets_.push_back(std::make_pair("MAIN", qsar::scoring_grid::GridManager::get_instance()->get_grids( *grid_set_prototype_, pose, center, transform_info_.chain )));
+
+	if ( ensemble_proteins_ != "" ) {
+		make_multi_pose_grids(center);
+	}
 
 	core::Real last_score(10000.0);
 	core::Real best_score(10000.0);
@@ -220,7 +242,7 @@ void Transform::apply(core::pose::Pose & pose)
 	core::Size rejected_moves = 0;
 	core::Size outside_grid_moves = 0;
 
-	core::pose::Pose best_pose(pose);
+	// core::pose::Pose best_pose(pose);
 
 	//Setup UltraLight residues for docking movements
 	core::conformation::UltraLightResidue original_ligand(pose.residue(begin).get_self_ptr());
@@ -233,7 +255,7 @@ void Transform::apply(core::pose::Pose & pose)
 	setup_conformers(pose, begin);
 
 	// Check conformers, to make sure that they'll fit in the grid (at least in the initial position)
-	if ( !check_conformers( *grid_set, original_ligand ) ) {
+	if ( !check_conformers( original_ligand ) ) {
 		// Already printed error message
 		set_last_move_status( protocols::moves::FAIL_RETRY );
 		return;
@@ -276,7 +298,7 @@ void Transform::apply(core::pose::Pose & pose)
 				core::Real distance = new_center.distance(original_center);
 
 				//Not everything in grid, also checks center distance
-				if ( !check_grid(*grid_set, ligand_residue, distance) ) {
+				if ( !check_grid(ligand_residue, distance) ) {
 					TR.Debug << "In the initial perturbation, the ligand moved outside the grid - retrying." << std::endl;
 					ligand_residue = last_accepted_ligand_residue;
 					perturbed = false;
@@ -296,7 +318,7 @@ void Transform::apply(core::pose::Pose & pose)
 			last_accepted_ligand_residue = ligand_residue;
 		}
 
-		last_score = grid_set->total_score(ligand_residue);
+		last_score = score_ligand(ligand_residue);
 
 		if ( use_constraints_ ) {
 			last_score += score_constraints(*cst_pose, ligand_residue, cst_function);
@@ -343,14 +365,14 @@ void Transform::apply(core::pose::Pose & pose)
 			core::Real distance = new_center.distance(original_center);
 
 			//Not everything in grid - Check distance too
-			if ( !check_grid(*grid_set, ligand_residue, distance) ) {
+			if ( !check_grid(ligand_residue, distance) ) {
 				ligand_residue = last_accepted_ligand_residue;
 				rejected_moves++;
 				outside_grid_moves++;
 				continue;
 			}
 
-			core::Real current_score = grid_set->total_score(ligand_residue);
+			core::Real current_score = score_ligand(ligand_residue);
 
 			if ( use_constraints_ ) {
 				current_score += score_constraints(*cst_pose, ligand_residue, cst_function);
@@ -395,27 +417,29 @@ void Transform::apply(core::pose::Pose & pose)
 		}
 
 
-		core::Real accept_ratio =(core::Real)accepted_moves/((core::Real)accepted_moves+(core::Real)rejected_moves);
-		TR <<"percent acceptance: "<< accepted_moves << " " << accept_ratio <<" " << rejected_moves <<std::endl;
-		if ( outside_grid_moves > 0 ) {
-			core::Real outside_grid_ratio = (core::Real)outside_grid_moves/((core::Real)accepted_moves+(core::Real)rejected_moves);
-			TR << "Moves rejected for being outside of grid: " << outside_grid_moves << "  " << outside_grid_ratio << std::endl;
-			if ( outside_grid_ratio > 0.05 ) { // 5% is rather arbitrary here
-				TR.Warning << "A large number of moves were rejected for being outside the grid. You likely want to reexamine your settings." << std::endl;
-				TR.Warning << "    For the current settings, a grid size of at least " << utility::Real2string(recommended_grid_size( accept_ratio ),1);
-				TR.Warning << "    and a box size of at least " << utility::Real2string(recommended_box_size( accept_ratio ),1) << " are recommended." << std::endl;
-			}
-		}
-
-		protocols::jd2::add_string_real_pair_to_current_job("Transform_accept_ratio", accept_ratio);
-		best_ligand.update_conformation(best_pose.conformation());
 	}
 
 	if ( output_sampled_space_ ) {
 		sampled_space.close();
 	}
-	pose = best_pose;
 
+	//Accept ratio over all repeats
+	core::Real accept_ratio =(core::Real)accepted_moves/((core::Real)accepted_moves+(core::Real)rejected_moves);
+	TR <<"percent acceptance: "<< accepted_moves << " " << accept_ratio <<" " << rejected_moves <<std::endl;
+	if ( outside_grid_moves > 0 ) {
+		core::Real outside_grid_ratio = (core::Real)outside_grid_moves/((core::Real)accepted_moves+(core::Real)rejected_moves);
+		TR << "Moves rejected for being outside of grid: " << outside_grid_moves << "  " << outside_grid_ratio << std::endl;
+		if ( outside_grid_ratio > 0.05 ) { // 5% is rather arbitrary here
+			TR.Warning << "A large number of moves were rejected for being outside the grid. You likely want to reexamine your settings." << std::endl;
+			TR.Warning << "    For the current settings, a grid size of at least " << utility::Real2string(recommended_grid_size( accept_ratio ),1);
+			TR.Warning << "    and a box size of at least " << utility::Real2string(recommended_box_size( accept_ratio ),1) << " are recommended." << std::endl;
+		}
+	}
+
+	protocols::jd2::add_string_real_pair_to_current_job("Transform_accept_ratio", accept_ratio);
+
+	//Set pose to best scored model - report score of a single grid (the best one) if using multiple poses
+	best_score = convert_to_full_pose(pose, best_ligand);
 	TR << "Accepted pose with grid score: " << best_score << std::endl;
 	protocols::jd2::add_string_real_pair_to_current_job("Grid_score", best_score);
 }
@@ -463,7 +487,7 @@ void Transform::transform_ligand(core::conformation::UltraLightResidue & residue
 
 }
 
-bool Transform::check_grid(qsar::scoring_grid::GridSet const & grid, core::conformation::UltraLightResidue & ligand_residue, core::Real distance) //distance=0 default
+bool Transform::check_grid(core::conformation::UltraLightResidue & ligand_residue, core::Real distance) //distance=0 default
 {
 
 	if ( distance > transform_info_.box_size ) {
@@ -471,10 +495,11 @@ bool Transform::check_grid(qsar::scoring_grid::GridSet const & grid, core::confo
 	}
 
 	//The score is meaningless if any atoms are outside of the grid
-	if ( !grid.is_in_grid(ligand_residue) ) { //Reject the pose
-		return false;
+	for ( const auto & grid_set : grid_sets_ ) {
+		if ( !grid_set.second->is_in_grid(ligand_residue) ) { //Reject the pose
+			return false;
+		}
 	}
-
 	//Everything is awesome!
 	return true;
 
@@ -498,13 +523,18 @@ void Transform::setup_conformers(core::pose::Pose & pose, core::Size begin)
 	TR << "Considering " << ligand_conformers_.size() << " conformers during sampling" << std::endl;
 }
 
-bool Transform::check_conformers(qsar::scoring_grid::GridSet const & grid_set, core::conformation::UltraLightResidue & starting_residue ) const
+bool Transform::check_conformers(core::conformation::UltraLightResidue & starting_residue ) const
 {
 	core::Size n_outside( 0 );
 	for ( core::conformation::UltraLightResidueOP conf: ligand_conformers_ ) {
 		core::conformation::UltraLightResidue lig( *conf );
 		lig.align_to_residue(starting_residue);
-		if ( ! grid_set.is_in_grid( lig ) ) { ++n_outside; }
+		for ( const auto & grid_set : grid_sets_ ) {
+			if ( ! grid_set.second->is_in_grid( lig ) ) {
+				++n_outside;
+				break;
+			}
+		}
 	}
 	if ( n_outside == ligand_conformers_.size() ) {
 		TR.Error << "All conformers start with atoms outside the grid -- Docking will be impossible. Increase the size of the grid." << std::endl;
@@ -606,6 +636,77 @@ core::Real Transform::score_constraints(core::pose::Pose & pose, core::conformat
 	return (*sfxn)(pose);
 }
 
+core::Real Transform::score_ligand(core::conformation::UltraLightResidue & residue)
+{
+	core::Real score_total = 0;
+	for ( const auto & grid_set : grid_sets_ ) {
+		core::Real score = grid_set.second->total_score(residue);
+		score_total = score_total + score;
+		TR.Debug << "Scored ligand for " << grid_set.first << " and got " << score << std::endl;
+	}
+	return score_total / grid_sets_.size();
+}
+
+
+core::Real Transform::convert_to_full_pose(core::pose::Pose & pose, core::conformation::UltraLightResidue & residue)
+{
+
+	core::Real best_score = 10000;
+	std::string best_pose_hash = "";
+
+	//Main model should be first grid set
+	if ( use_main_model_ ) {
+		best_score = grid_sets_[1].second->total_score(residue);
+		TR.Debug << "Using main model with score " << best_score << std::endl;
+		best_pose_hash = "MAIN";
+	} else {
+		for ( const auto & grid_set : grid_sets_ ) {
+			core::Real current_score = grid_set.second->total_score(residue);
+
+			TR.Debug << "Looked for best ligand at " << grid_set.first << " and got " << current_score << std::endl;
+
+			//This has a bias of order you put poses in if scores equal. Could keep separate vector of keys to shuffle
+			if ( current_score <= best_score ) {
+				best_score = current_score;
+				best_pose_hash = grid_set.first;
+			}
+		}
+	}
+
+	TR.Debug << "best pose is " << best_pose_hash << std::endl;
+
+	if ( best_pose_hash == "MAIN" ) {
+		residue.update_conformation(pose.conformation());
+	} else {
+		core::pose::PDBInfoCOP pdb_info_original(pose.pdb_info());
+		core::conformation::Residue original_residue = pose.residue(pose.conformation().chain_begin(transform_info_.chain_id));
+		core::Size original_residue_begin = pose.conformation().chain_begin(transform_info_.chain_id);
+		core::Size original_residue_end = pose.conformation().chain_end(transform_info_.chain_id);
+
+		//Set pose to be the best pose and then add ligand
+
+		pose = grid_set_poses_[best_pose_hash];
+		pose.append_residue_by_jump(original_residue, grid_set_poses_[best_pose_hash].size(),"","",true);
+		pose.pdb_info()->obsolete(false);
+		pose.pdb_info()->copy(*pdb_info_original, original_residue_begin, original_residue_end,pose.size());
+
+		residue.update_conformation(pose.conformation());
+	}
+
+	return best_score;
+
+}
+
+void Transform::make_multi_pose_grids(core::Vector center)
+{
+
+	qsar::scoring_grid::GridManager* grid_manager = qsar::scoring_grid::GridManager::get_instance();
+	for ( const auto & grid_set_pose : grid_set_poses_ ) {
+
+		grid_sets_.push_back(std::make_pair(grid_set_pose.first, grid_manager->get_grids( *grid_set_prototype_, grid_set_pose.second, center, transform_info_.chain)));
+	}
+}
+
 std::string Transform::get_name() const {
 	return mover_name();
 }
@@ -646,8 +747,12 @@ void Transform::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 		"Continue sampling beyond \"cycles\" if score is positive", "false")
 		+ XMLSchemaAttribute::attribute_w_default("use_constraints", xsct_rosetta_bool,
 		"Adjust scores based on constraint file input", "false")
+		+ XMLSchemaAttribute::attribute_w_default("use_main_model", xsct_rosetta_bool,
+		"Use the primary input protein model regardless of scores", "false")
 		+ XMLSchemaAttribute::attribute_w_default("cst_fa_file", xs_string,
 		"Full atom constraint file to read constraints from", "")
+		+ XMLSchemaAttribute::attribute_w_default("ensemble_proteins", xs_string,
+		"File to read protein ensemble options from", "")
 		+ XMLSchemaAttribute::attribute_w_default("cst_fa_weight", "non_negative_real" ,
 		"Weight for full atom constraints. Default of 1.0", "1.0")
 		+ XMLSchemaAttribute::attribute_w_default("initial_perturb", "non_negative_real" ,
