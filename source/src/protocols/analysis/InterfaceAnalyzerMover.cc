@@ -475,7 +475,7 @@ InterfaceAnalyzerMover::setup_for_dock_chains( core::pose::Pose & pose, std::str
 		}
 		return;
 	} else {
-	
+
 		//Here, we find the chains that we want to ignore in the Mover.
 		std::set< int > temp_fixed_chains;
 		for ( core::Size i = 1; i <= pose.conformation().num_chains(); ++i ) {
