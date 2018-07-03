@@ -22,6 +22,7 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/moves/Mover.hh>
+#include <protocols/kinematic_closure/KicMover.hh>
 #include <protocols/simple_moves/ShortBackrubMover.hh>
 #include <protocols/minimization_packing/BoltzmannRotamerMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
@@ -38,7 +39,11 @@
 namespace protocols {
 namespace simple_moves {
 
-///@brief This mover is called by CoupledMovesProtocol to make a single coupled move.
+/// @brief This mover is called by CoupledMovesProtocol to make a single coupled move.
+/// @details The CoupledMover apply function makes a single coupled move as follows:
+/// (1) Backbone move -- As of March 2018, there are three options: backrub, kinematic closure with walking perturber, or kinematic closure with fragment perturber.
+/// (2) Side chain move -- The three residues at the center of the perturbed backbone are sampled by BoltzmannRotamerMover.
+/// (3) Repack -- 10A shell around the residues from step 2 is repacked.
 class CoupledMover : public protocols::moves::Mover {
 
 public:
@@ -93,9 +98,14 @@ public:
 	void set_rotation_magnitude( core::Real rotation_magnitude );
 	void set_translation_magnitude( core::Real translation_magnitude );
 	void set_short_backrub_mover( protocols::simple_moves::ShortBackrubMoverOP short_backrub_mover );
-	// void set_boltzmann_rotamer_mover( protocols::minimization_packing::BoltzmannRotamerMoverOP boltzmann_rotamer_mover );
+	void set_boltzmann_rotamer_mover( protocols::minimization_packing::BoltzmannRotamerMoverOP boltzmann_rotamer_mover );
 	void set_rigid_body_mover( protocols::rigid::RigidBodyPerturbMoverOP rigid_body_mover );
 	void set_score_fxn( core::scoring::ScoreFunctionOP score_fxn );
+	void set_packer_task( core::pack::task::PackerTaskOP packer_task );
+	void set_loop_size( core::Size loop_size );
+	void set_perturber( kinematic_closure::perturbers::PerturberOP perturber );
+	void set_backbone_mover( std::string const & backbone_mover );
+	void set_repack_neighborhood ( bool repack_neighborhood );
 
 	// getters
 	core::Size get_resnum() const;
@@ -112,17 +122,14 @@ public:
 	core::Real get_rotation_magnitude() const;
 	core::Real get_translation_magnitude() const;
 	protocols::simple_moves::ShortBackrubMoverOP get_short_backrub_mover() const;
-	//protocols::minimization_packing::BoltzmannRotamerMoverOP get_boltzmann_rotamer_mover() const;
+	protocols::minimization_packing::BoltzmannRotamerMoverOP get_boltzmann_rotamer_mover() const;
 	protocols::rigid::RigidBodyPerturbMoverOP get_rigid_body_mover() const;
 	core::scoring::ScoreFunctionOP get_score_fxn() const;
 	core::pack::task::PackerTaskOP get_packer_task() const;
-
-	void parse_my_tag(
-		TagCOP tag,
-		basic::datacache::DataMap & data,
-		Filters_map const &,
-		protocols::moves::Movers_map const &,
-		Pose const & ) override;
+	core::Size get_loop_size() const;
+	kinematic_closure::perturbers::PerturberOP get_perturber() const;
+	const std::string & get_backbone_mover() const;
+	const bool & get_repack_neighborhood() const;
 
 	std::string
 	get_name() const override;
@@ -177,11 +184,14 @@ private:
 	/// @brief the magnitude of ligand translation used by the RigidBodyMover (in angstroms)
 	core::Real translation_magnitude_;
 
-	/// @brief mover used for backbone moves
+	/// @brief mover used for backbone moves when option set to backrub
 	protocols::simple_moves::ShortBackrubMoverOP short_backrub_mover_;
 
+	/// @brief mover used for backbone moves when option set to kinematic closure
+	protocols::kinematic_closure::KicMoverOP fullatom_kic_mover;
+
 	/// @brief mover used for side-chain moves
-	//protocols::minimization_packing::BoltzmannRotamerMoverOP boltzmann_rotamer_mover_;
+	protocols::minimization_packing::BoltzmannRotamerMoverOP boltzmann_rotamer_mover_;
 
 	/// @brief mover used for rigid body rotation and translation
 	protocols::rigid::RigidBodyPerturbMoverOP rigid_body_mover_;
@@ -191,6 +201,18 @@ private:
 
 	/// @brief task factory needed to generate packer task
 	core::pack::task::PackerTaskOP packer_task_;
+
+	/// @brief the size of the loop for KIC move. Loop is center residue + and - this number.
+	core::Size loop_size_;
+
+	/// @brief Which perturber to use during kinematic closure (KIC). Currently the options are fragment or walking perturber. Walking perturber adjusts torsions by degrees, the magnitude of which can be set by walking_perturber_magnitude option in CoupledMovesProtocol.
+	kinematic_closure::perturbers::PerturberOP perturber_;
+
+	/// @brief type of backbone move, e.g. backrub or kic
+	std::string backbone_mover_;
+
+	/// @brief After the backbone move and rotamer move, repack sidechains within 5A of the design residue. Default false for legacy behavior.
+	bool repack_neighborhood_;
 
 };  // class CoupledMover
 

@@ -263,7 +263,7 @@ get_embedded_residue_selector( utility::tag::TagCOP tag, basic::datacache::DataM
 	if ( tag->size() > 1 ) {
 		utility::vector0< utility::tag::TagCOP > const & tags = tag->getTags();
 		if ( tags.size() > 1 ) {
-			throw CREATE_EXCEPTION(utility::excn::Exception,  "NeighborhoodResidueSelector takes at most one ResidueSelector to determine the focus!\n" );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  tag->getName() + " takes at most one ResidueSelector to determine the focus!\n" );
 		}
 		ResidueSelectorOP rs = ResidueSelectorFactory::get_instance()->new_residue_selector(
 			tags.front()->getName(),

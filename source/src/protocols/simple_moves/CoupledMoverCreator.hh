@@ -19,6 +19,7 @@
 namespace protocols {
 namespace simple_moves {
 
+///@brief This is used by CoupledMover.cc.
 class CoupledMoverCreator : public protocols::moves::MoverCreator {
 public:
 	protocols::moves::MoverOP create_mover() const override;

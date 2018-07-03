@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/pack/task/residue_selector/ClashBasedRepackShellSelector.fwd.hh
+/// @file   core/pack/task/residue_selector/ClashBasedShellSelector.fwd.hh
 /// @brief  Forward declaration of a class that identifies all residues that clash with at least one rotamer of a design position
 /// @author Noah Ollikainen (nollikai@gmail.com)
 /// @author Roland A. Pache, PhD
 
-#ifndef INCLUDED_core_pack_task_residue_selector_ClashBasedRepackShellSelector_FWD_HH
-#define INCLUDED_core_pack_task_residue_selector_ClashBasedRepackShellSelector_FWD_HH
+#ifndef INCLUDED_core_pack_task_residue_selector_ClashBasedShellSelector_FWD_HH
+#define INCLUDED_core_pack_task_residue_selector_ClashBasedShellSelector_FWD_HH
 
 // Utility Headers
 #include <utility/pointer/owning_ptr.hh>
@@ -23,10 +23,10 @@ namespace pack {
 namespace task {
 namespace residue_selector {
 
-class ClashBasedRepackShellSelector;
+class ClashBasedShellSelector;
 
-typedef utility::pointer::shared_ptr< ClashBasedRepackShellSelector > ClashBasedRepackShellSelectorOP;
-typedef utility::pointer::shared_ptr< ClashBasedRepackShellSelector const > ClashBasedRepackShellSelectorCOP;
+typedef utility::pointer::shared_ptr< ClashBasedShellSelector > ClashBasedShellSelectorOP;
+typedef utility::pointer::shared_ptr< ClashBasedShellSelector const > ClashBasedShellSelectorCOP;
 
 } //namespace residue_selector
 } //namespace task

@@ -48,6 +48,10 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelectorFactory.hh>
+#include <core/pack/task/operation/TaskOperation.hh>
+#include <core/pack/task/operation/TaskOperationFactory.hh>
 #include <core/types.hh>
 
 // Protocol headers
@@ -83,13 +87,40 @@ using protocols::filters::TrueFilter;
 using protocols::filters::FalseFilter;
 using protocols::moves::NullMover;
 
+
+/// @brief setup filters map with some of the the RosettaScript defaults
+inline void prime_Filters( Filters_map & filters ) {
+	filters["true_filter"] = protocols::filters::FilterOP( new protocols::filters::TrueFilter );
+	filters["false_filter"] = protocols::filters::FilterOP( new protocols::filters::FalseFilter );
+}
+
+/// @brief setup movers map with some of the the RosettaScript defaults
+inline void prime_Movers( Movers_map & movers ) {
+	movers["null"] = protocols::moves::MoverOP( new protocols::moves::NullMover );
+}
+
+/// @brief setup data map with *some* of the the RosettaScript defaults
+inline void prime_Data( basic::datacache::DataMap & data ) {
+	using namespace core::scoring;
+	core::scoring::ScoreFunctionOP commandline_sfxn = get_score_function();
+
+	// hpark, May 2017:
+	// adding ref2015/talaris2013 together is NOT compatible. Let's keep default only
+	//core::scoring::ScoreFunctionOP talaris2013 = ScoreFunctionFactory::create_score_function(TALARIS_2013);
+	//core::scoring::ScoreFunctionOP talaris2014 = ScoreFunctionFactory::create_score_function(TALARIS_2014);
+
+	data.add( "scorefxns", "commandline", commandline_sfxn );
+	//data.add( "scorefxns", "talaris2013", talaris2013 );
+	//data.add( "scorefxns", "talaris2014", talaris2014 );
+
+}
+
 /// @brief Generate a tagptr from a string
 /// For parse_my_tag tests, only do the relevant tag, not the full <ROSETTASCRIPTS> ... </ROSETTASCRIPTS> wrapped tag.
 inline TagCOP tagptr_from_string(std::string input) {
 	std::stringstream instream( input );
 	return utility::tag::Tag::create( instream );
 }
-
 
 /// @brief Construct a mover from an XML string.
 template <class MoverSubclass>
@@ -133,32 +164,56 @@ utility::pointer::shared_ptr<FilterSubclass> parse_filter_tag(std::string tag_st
 	return filter;
 }
 
-/// @brief setup filters map with some of the the RosettaScript defaults
-inline void prime_Filters( Filters_map & filters ) {
-	filters["true_filter"] = protocols::filters::FilterOP( new protocols::filters::TrueFilter );
-	filters["false_filter"] = protocols::filters::FilterOP( new protocols::filters::FalseFilter );
+/// @brief Construct a task operation from an XML string.
+template <class TaskOperationSubclass>
+utility::pointer::shared_ptr<TaskOperationSubclass> parse_taskop_tag(std::string tag_string, basic::datacache::DataMap & data) {
+
+	std::istringstream tag_stream(tag_string);
+	utility::tag::TagCOP tag = utility::tag::Tag::create(tag_stream);
+
+	prime_Data(data);
+
+	core::pack::task::operation::TaskOperationOP base_taskop(
+		core::pack::task::operation::TaskOperationFactory::get_instance()->newTaskOperation(tag->getName(), data, tag) );
+	utility::pointer::shared_ptr<TaskOperationSubclass> taskop =
+		utility::pointer::dynamic_pointer_cast<TaskOperationSubclass>(base_taskop);
+
+	TSM_ASSERT("Instantiated the wrong type of task operation", taskop.get());
+
+	return taskop;
 }
 
-/// @brief setup movers map with some of the the RosettaScript defaults
-inline void prime_Movers( Movers_map & movers ) {
-	movers["null"] = protocols::moves::MoverOP( new protocols::moves::NullMover );
+/// @brief Construct a task operation from an XML string.
+template <class TaskOperationSubclass>
+utility::pointer::shared_ptr<TaskOperationSubclass> parse_taskop_tag(std::string tag_string) {
+	basic::datacache::DataMap data;
+	return parse_taskop_tag<TaskOperationSubclass>(tag_string, data);
 }
 
-/// @brief setup data map with *some* of the the RosettaScript defaults
+/// @brief Construct a residue selector from an XML string.
+template <class ResidueSelectorSubclass>
+utility::pointer::shared_ptr<ResidueSelectorSubclass> parse_selector_tag(std::string tag_string, basic::datacache::DataMap & data) {
 
-inline void prime_Data( basic::datacache::DataMap & data ) {
-	using namespace core::scoring;
-	core::scoring::ScoreFunctionOP commandline_sfxn = get_score_function();
+	std::istringstream tag_stream(tag_string);
+	utility::tag::TagCOP tag = utility::tag::Tag::create(tag_stream);
 
-	// hpark, May 2017:
-	// adding ref2015/talaris2013 together is NOT compatible. Let's keep default only
-	//core::scoring::ScoreFunctionOP talaris2013 = ScoreFunctionFactory::create_score_function(TALARIS_2013);
-	//core::scoring::ScoreFunctionOP talaris2014 = ScoreFunctionFactory::create_score_function(TALARIS_2014);
+	prime_Data(data);
 
-	data.add( "scorefxns", "commandline", commandline_sfxn );
-	//data.add( "scorefxns", "talaris2013", talaris2013 );
-	//data.add( "scorefxns", "talaris2014", talaris2014 );
+	core::select::residue_selector::ResidueSelectorOP base_selector(
+		core::select::residue_selector::ResidueSelectorFactory::get_instance()->new_residue_selector(tag->getName(), tag, data) );
+	utility::pointer::shared_ptr<ResidueSelectorSubclass> selector =
+		utility::pointer::dynamic_pointer_cast<ResidueSelectorSubclass>(base_selector);
 
+	TSM_ASSERT("Instantiated the wrong type of residue selector", selector.get());
+
+	return selector;
+}
+
+/// @brief Construct a residue selector from an XML string.
+template <class ResidueSelectorSubclass>
+utility::pointer::shared_ptr<ResidueSelectorSubclass> parse_selector_tag(std::string tag_string) {
+	basic::datacache::DataMap data;
+	return parse_selector_tag<ResidueSelectorSubclass>(tag_string, data);
 }
 
 /// @brief A simple filter for helping to test nested classes

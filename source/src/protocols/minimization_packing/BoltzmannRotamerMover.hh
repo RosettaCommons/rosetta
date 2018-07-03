@@ -96,6 +96,8 @@ public:
 	void set_bias_sampling( bool bias_sampling );
 	void set_randomize_resnum( bool randomize_resnum );
 	void set_bump_check( bool bump_check );
+	void set_task( PackerTaskOP task );
+	void set_scorefxn( ScoreFunctionCOP scorefxn );
 
 	// getters
 	core::Size get_resnum() const;
@@ -105,6 +107,8 @@ public:
 	bool get_bias_sampling() const;
 	bool get_randomize_resnum() const;
 	bool get_bump_check() const;
+	PackerTaskOP get_task() const;
+	ScoreFunctionCOP get_scorefxn() const;
 
 public:
 

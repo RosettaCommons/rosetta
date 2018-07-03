@@ -119,8 +119,9 @@ Size ConstantLengthFragSet::overlapping_with_region(
 		return count;
 	}
 	//determine min and max start positions of frames, considering the given min region overlap and any global offset
-	const Size min_start_pos = start - frame_length + min_overlap - global_offset();
-	const Size max_start_pos = end + 1 - min_overlap - global_offset();
+	core::Size start1 = 1; // Prevents from accidentally choosing pos not found in frames_
+	const Size min_start_pos = std::max( start1, start - frame_length + min_overlap - global_offset());
+	const Size max_start_pos = std::min(frames_.size(), end + 1 - min_overlap - global_offset());
 	//tr << "sampling frames from " << min_start_pos << " to " << max_start_pos << endl;
 	//collect all frames that start between min_start_pos and max_start_pos
 	for ( Size pos=min_start_pos; pos<=frames_.size() && pos<=max_start_pos; pos++ ) {

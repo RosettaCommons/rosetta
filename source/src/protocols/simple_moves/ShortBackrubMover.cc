@@ -185,15 +185,18 @@ ShortBackrubMover::apply( core::pose::Pose & pose )
 			backrubmover_->set_next_angle(numeric::conversions::radians(rotation_angle));
 			backrubmover_->set_next_segment_id(1);
 			backrubmover_->apply(pose);
+
 		} else if ( backrubmover_->num_segments() == 3 ) {
 			// if we did not encounter prolines, there will be three backrub segments
 			// calculate a random rotation angle using a gaussian
 			// apply the rotation to the pose
 			// adjust the peptide bonds to minimize the movement of carbonyl oxygens
 			core::Real rotation_angle = rotation_std_dev_ * numeric::random::rg().gaussian();
+
 			if ( uniform_backrub_ ) {
 				rotation_angle = 20 - numeric::random::rg().uniform() * 40;
 			}
+
 			backrubmover_->set_next_angle(numeric::conversions::radians(rotation_angle));
 			backrubmover_->set_next_segment_id(2);
 			backrubmover_->apply(pose);

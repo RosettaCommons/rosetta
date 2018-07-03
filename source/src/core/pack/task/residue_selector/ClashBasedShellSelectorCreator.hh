@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/pack/task/residue_selector/ClashBasedRepackShellSelectorCreator.hh
-/// @brief  The ClashBasedRepackShellSelector identifies all residues that clash with at least one rotamer of a design position
+/// @file   core/pack/task/residue_selector/ClashBasedShellSelectorCreator.hh
+/// @brief  The ClashBasedShellSelector identifies all residues that clash with at least one rotamer of a design position
 /// @details Since this ResidueSelector is located in a different namespace, it needs a separate ResidueSelectorCreator.
 /// @author Noah Ollikainen (nollikai@gmail.com)
 /// @author Roland A. Pache, PhD
 /// @author Vikram K. Mulligan, PhD (vmullig@uw.edu)
 
-#ifndef INCLUDED_core_pack_task_residue_selector_ClashBasedRepackShellSelectorCreator_HH
-#define INCLUDED_core_pack_task_residue_selector_ClashBasedRepackShellSelectorCreator_HH
+#ifndef INCLUDED_core_pack_task_residue_selector_ClashBasedShellSelectorCreator_HH
+#define INCLUDED_core_pack_task_residue_selector_ClashBasedShellSelectorCreator_HH
 
 // Unit headers
 #include <core/select/residue_selector/ResidueSelectorCreator.hh>
@@ -28,7 +28,7 @@ namespace pack {
 namespace task {
 namespace residue_selector {
 
-class ClashBasedRepackShellSelectorCreator : public core::select::residue_selector::ResidueSelectorCreator {
+class ClashBasedShellSelectorCreator : public core::select::residue_selector::ResidueSelectorCreator {
 public:
 	virtual select::residue_selector::ResidueSelectorOP create_residue_selector() const;
 	virtual std::string keyname() const;

@@ -39,24 +39,24 @@ class UTracer : public basic::otstream
 {
 public:
 	UTracer(std::string const & file_name, bool ignore_extra_lines = false) :
-	  u_file_name_(file_name),
-	  file_original_(file_name.c_str(), std::fstream::in),
-	  file_new_((file_name+"._tmp_").c_str(), std::fstream::out),
-	  abs_tolerance_(1e-200), rel_tolerance_(1e-200),
-	  error_(false), //error_signal(false), ufile_line_(-1),
-	  ignore_extra_lines_(ignore_extra_lines)
+		u_file_name_(file_name),
+		file_original_(file_name.c_str(), std::fstream::in),
+		file_new_((file_name+"._tmp_").c_str(), std::fstream::out),
+		abs_tolerance_(1e-200), rel_tolerance_(1e-200),
+		error_(false), //error_signal(false), ufile_line_(-1),
+		ignore_extra_lines_(ignore_extra_lines)
 	{
 		static char const * nfi = "NoFileInfo";
 		line_ = 0;
 		file_ = nfi;
 
-		if( !file_original_.good() ) {
+		if ( !file_original_.good() ) {
 			std::string m( "Unable to open file: " + file_name + " for reading!\nPlease verify that it has been added to the 'testinputfiles' block in appropriate rosetta_source/test/<LIBRARY>.test.settings file\n" );
 			TS_FAIL( m );
 			error_ = true;
 		}
 
-		if( !file_new_.good() ) {
+		if ( !file_new_.good() ) {
 			std::string m("Unable to open file: " + file_name + ".new for writing!\n" );
 			TS_FAIL( m );
 			error_ = true;
@@ -69,29 +69,29 @@ public:
 		(*this) << std::endl;
 		file_new_.close();
 
-		if( ! error_ ) {
+		if ( ! error_ ) {
 
 			file_new_.open((u_file_name_+"._tmp_").c_str(), std::fstream::in);
 
 			int ufile_line = 1;  // keeping track of line number for generating error message.
 
 			std::string original_line, new_line;
-			for(; getline(file_new_, new_line); ufile_line++) {
-				if( !getline(file_original_, original_line) ) { ///< no lines remain in the buffer
+			for ( ; getline(file_new_, new_line); ufile_line++ ) {
+				if ( !getline(file_original_, original_line) ) { ///< no lines remain in the buffer
 					std::ostringstream buf;
 					buf << "(UTrace: " << u_file_name_ << ":" << ufile_line <<
-							 ") Not enough lines in the file to comapre with: " << new_line << std::endl;
+						") Not enough lines in the file to compare with: " << new_line << std::endl;
 					_TS_FAIL(file_, line_, buf.str() );
 					error_ = true;
 				}
 
 				std::string error_message;
-				if( !test::utools::isEq(new_line, original_line, abs_tolerance_, rel_tolerance_, error_message)
-				   && (!error_) ) {
+				if ( !test::utools::isEq(new_line, original_line, abs_tolerance_, rel_tolerance_, error_message)
+						&& (!error_) ) {
 					std::ostringstream msg;
 
 					std::cerr << "UTracer(" << u_file_name_ << ") line " << ufile_line << " not equal:" << std::endl
-					    << error_message << std::endl
+						<< error_message << std::endl
 						<< "old: " << original_line << std::endl
 						<< "new: " << new_line;
 
@@ -103,23 +103,23 @@ public:
 					error_ = true;
 				}
 				/*if( (new_line != original_line) && (!error_) ) {
-					std::ostringstream buf;  buf << ufile_line;
-					std::string err = "UTracer("+u_file_name_+") line " + buf.str() + " not equal:\n" +
-					"  " + original_line + "\n" +
-					"  " + new_line + "\n";
+				std::ostringstream buf;  buf << ufile_line;
+				std::string err = "UTracer("+u_file_name_+") line " + buf.str() + " not equal:\n" +
+				"  " + original_line + "\n" +
+				"  " + new_line + "\n";
 
-					_TS_FAIL(file_, line_, err.c_str() );
+				_TS_FAIL(file_, line_, err.c_str() );
 
-					//error_signal = false;
-					error_ = true;
+				//error_signal = false;
+				error_ = true;
 				}
 				*/
 			}
 		}
 
-		if( ! error_ ) {
+		if ( ! error_ ) {
 			std::string line;
-			if( ! ignore_extra_lines_ && getline(file_original_, line) ) { ///< Some lines remain in the buffer
+			if ( ! ignore_extra_lines_ && getline(file_original_, line) ) { ///< Some lines remain in the buffer
 
 				line = "(UTrace: "+ u_file_name_ + ") Extra line in the end of a file to compare with: " + line + "\n";
 				_TS_FAIL(file_, line_, line.c_str() );
@@ -138,19 +138,19 @@ public:
 	};
 
 	/// Set absolute delta for real types asserts
-	//UTracer & abs_tolerance(double d) {	abs_tolerance_ = d; return *this; };
-	UTracer & abs_tolerance(double d) {	(*this) << "set_abs_tolerance(" <<  d << ")"; return *this; };
+	//UTracer & abs_tolerance(double d) { abs_tolerance_ = d; return *this; };
+	UTracer & abs_tolerance(double d) { (*this) << "set_abs_tolerance(" <<  d << ")"; return *this; };
 
 	/// Set relative delta for real types asserts
 	//UTracer & rel_tolerance(double r) { rel_tolerance_ = r; return *this; };
-	UTracer & rel_tolerance(double r) {	(*this) << "set_rel_tolerance(" <<  r << ")"; return *this; };
+	UTracer & rel_tolerance(double r) { (*this) << "set_rel_tolerance(" <<  r << ")"; return *this; };
 
-	
-	///@brief Set boolean to ignore extra lines from a UTracer .u file (JAB). 
+
+	///@brief Set boolean to ignore extra lines from a UTracer .u file (JAB).
 	void set_ignore_extra_lines(bool ignore_extra_lines){
 		ignore_extra_lines_= ignore_extra_lines;
 	}
-	
+
 protected:
 	/// @brief overload member function.
 	virtual void t_flush(std::string const & s) {
@@ -178,7 +178,7 @@ private:
 
 	///@brief Ignore extra lines at the end of a .u file if set.  Drives me crazy (JAB).
 	bool ignore_extra_lines_;
-	
+
 	/// @brief flag indicating that error happened at current line.
 	//bool error_signal_;
 

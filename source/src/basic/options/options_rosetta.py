@@ -4687,6 +4687,32 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			default = '',
 			desc = 'prefix for output files'
 		),
+		Option('walking_perturber_magnitude', 'Real',
+			default = '2.0',
+			desc = 'Degree parameter for coupled moves kic walking perturber.'
+		),
+		Option('kic_loop_size', 'Real',
+			default = '4',
+			desc = 'Can be constant or random. CONSTANT - If you set loop_size to a positive whole number, the loop moved by coupled_moves::backbone_mover will be 1+2*loop_size. In other words, the loop is defined by first selecting resnum, then defining loopstart=resnum-loop_size and loopend=resnum+loop_size. RANDOM - If you set loop_size to 0, in each trial, loop_size will be random_range( 3, 7 ). [ NOTE: This option is for coupled_moves::backbone_mover=kic only. Backrub segment length is hardcoded in ShortBackrubMover as 3-residue (or 4-residue if it hits a Proline) ].'
+		),
+		Option('kic_perturber', 'String',
+			default = 'walking',
+			desc = 'Which perturber to use during kinematic closure (KIC). Current options are walking (default) or fragment. Walking perturber adjusts torsions by degrees, the magnitude of which can be set by -walking_perturber_magnitude. If you specify walking you MAY also specify -walking_perturber_magnitude. If you specify fragment you MUST also specify -loops::frag_files and -loops::frag_sizes.',
+			legal = [ 'walking', 'fragment' ]
+		),
+		Option('backbone_mover', 'String',
+			default = 'backrub',
+			desc = 'Which backbone mover to use. Current options are backrub (default) or kic. Backrub does not require additional flags, and uses ShortBackrubMover which is hardcoded for 3-residue segments (or 4-residue if it hits a Proline). Kic optionally takes extra flag -kic_perturber.',
+			legal = [ 'backrub', 'kic' ]
+		),
+		Option('repack_neighborhood', 'Boolean',
+			default = 'false',
+			desc = 'After the backbone move and rotamer move, repack sidechains within 5A of the design residue. Default false for legacy behavior.'
+		),
+		Option('legacy_task', 'Boolean',
+			default = 'true',
+			desc = 'Default true for legacy behavior (Ollikainen 2015). True = use Clash Based Shell Selector to define repack residues around design residues from resfile, and perform Coupled Moves on these repack/design residues. False = Perform Coupled Moves on design/repack residues as defined in resfile. '
+		),
 	), #-coupled_moves
 
 	##################################

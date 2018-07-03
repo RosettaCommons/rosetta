@@ -87,6 +87,7 @@ BoltzmannRotamerMover::BoltzmannRotamerMover() : protocols::moves::Mover()
 	bias_sampling_ = true;
 	randomize_resnum_ = false;
 	bump_check_ = true;
+	show_packer_task_ = false;
 }
 
 // constructor with arguments
@@ -176,16 +177,18 @@ BoltzmannRotamerMover::apply( core::pose::Pose & pose )
 	core::pack::rotamer_set::RotamerSetOP rotset = core::pack::rotamer_set::RotamerSetFactory::create_rotamer_set( pose );
 	rotset->set_resid( resnum_ );
 	utility::graph::GraphOP packer_graph = core::pack::create_packer_graph( pose, *scorefxn_, ptask );
-	rotset->build_rotamers( pose, *scorefxn_, *ptask, packer_graph );
+	rotset->build_rotamers( pose, *scorefxn_, *ptask, packer_graph ); // id_for_current_rotamer set here
 	utility::vector1< core::PackerEnergy > one_body_energies( rotset->num_rotamers() );
 	utility::vector1< utility::vector1< core::PackerEnergy > > two_body_energies( rotset->num_rotamers() );
 	utility::vector1< core::Size > packable_neighbors;
 	scorefxn_->prepare_rotamers_for_packing( pose, *rotset );
 
+	// void core::scoring::methods::EnergyMethod::prepare_rotamers_for_packing
+	// If an energy method needs to cache data in a packing::RotamerSet object before rotamer energies are calculated, it does so during this function. The packer must ensure this function is called. The default behavior is to do nothing.
+
 	if ( rotset->num_rotamers() <= 1 ) {
 		return;
 	}
-
 	rotset->compute_one_and_two_body_energies(
 		pose, *scorefxn_, *unedited_task, packer_graph,
 		one_body_energies, two_body_energies, packable_neighbors);
@@ -228,16 +231,13 @@ BoltzmannRotamerMover::apply( core::pose::Pose & pose )
 			}
 
 			core::Real boltzmann_factor = std::exp((init_score - move_score) / temperature_);
-
 			if ( boltzmann_factor > 0 ) {
 				rotamer_partition_funtions[aa_type] += boltzmann_factor;
 				boltzmann_factors[aa_type].push_back(std::make_pair(i, boltzmann_factor));
 			}
 		}
-
 		utility::vector1<std::pair<core::Size, core::Real> > selected_rotamers;
 		core::Real amino_acid_partition_function = 0.0;
-
 		// select rotamer for each amino acid
 		core::Size aa_count = 0;
 		for ( core::Size aa_type = 1; aa_type <= boltzmann_factors.size(); aa_type++ ) {
@@ -248,7 +248,6 @@ BoltzmannRotamerMover::apply( core::pose::Pose & pose )
 				amino_acid_partition_function += boltzmann_factors[aa_type][rot].second;
 			}
 		}
-
 		// select an amino acid and get the id of its selected rotamer
 		core::Real final_aa = select_rotamer(selected_rotamers, amino_acid_partition_function);
 		final_rot_id = selected_rotamers[final_aa].first;
@@ -312,7 +311,7 @@ BoltzmannRotamerMover::select_rotamer(
 		if ( bias_sampling_ ) {
 			boltzmann_probs.push_back(std::make_pair(rot, boltzmann_probability));
 		} else {
-			boltzmann_probs.push_back(std::make_pair(rot, core::Real(1.0) / core::Real(boltzmann_factors.size())));
+			boltzmann_probs.push_back(std::make_pair(rot, core::Real(1.0) / core::Real(boltzmann_factors.size()) ) );
 		}
 	}
 	std::sort(boltzmann_probs.begin(), boltzmann_probs.end(), compare_values);
@@ -321,7 +320,9 @@ BoltzmannRotamerMover::select_rotamer(
 	while ( random_prob > 0 ) {
 		rotnum++;
 		random_prob -= boltzmann_probs[rotnum].second;
-		if ( rotnum == boltzmann_probs.size() ) break;
+		if ( rotnum == boltzmann_probs.size() )  {
+			break;
+		}
 	}
 	return boltzmann_probs[rotnum].first;
 }
@@ -336,6 +337,8 @@ void BoltzmannRotamerMover::set_temperature( core::Real temperature ) { temperat
 void BoltzmannRotamerMover::set_bias_sampling( bool bias_sampling ) { bias_sampling_ = bias_sampling; }
 void BoltzmannRotamerMover::set_randomize_resnum( bool randomize_resnum ) { randomize_resnum_ = randomize_resnum; }
 void BoltzmannRotamerMover::set_bump_check( bool bump_check ) { bump_check_ = bump_check; }
+void BoltzmannRotamerMover::set_task( PackerTaskOP task) { task_ = task; }
+void BoltzmannRotamerMover::set_scorefxn( ScoreFunctionCOP scorefxn ) { scorefxn_ = scorefxn; }
 
 // getters
 core::Size
@@ -366,7 +369,14 @@ bool
 BoltzmannRotamerMover::get_bump_check() const {
 	return bump_check_;
 }
-
+core::pack::task::PackerTaskOP
+BoltzmannRotamerMover::get_task() const {
+	return task_;
+}
+core::scoring::ScoreFunctionCOP
+BoltzmannRotamerMover::get_scorefxn() const {
+	return scorefxn_;
+}
 
 /// @brief read access for derived classes
 BoltzmannRotamerMover::ScoreFunctionCOP
@@ -380,7 +390,9 @@ BoltzmannRotamerMover::PackerTaskCOP
 BoltzmannRotamerMover::task( core::pose::Pose const & pose ) const
 {
 	//if we have a factory, generate and return a new task
-	if ( factory_ ) return factory_->create_task_and_apply_taskoperations( pose );
+	if ( factory_ ) {
+		return factory_->create_task_and_apply_taskoperations( pose );
+	}
 	//else runtime_assert( task_is_valid( pose ) );
 
 	//else return the unsafe one

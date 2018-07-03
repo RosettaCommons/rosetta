@@ -13,6 +13,11 @@
 
 #include <protocols/coupled_moves/CoupledMovesProtocol.hh>
 
+//KIC
+#include <protocols/kinematic_closure/perturbers/FragmentPerturber.hh>
+#include <protocols/kinematic_closure/perturbers/WalkingPerturber.hh>
+#include <protocols/kinematic_closure/KicMover.hh>
+
 #include <devel/init.hh>
 
 #include <basic/Tracer.hh>
@@ -21,6 +26,7 @@
 #include <protocols/viewer/viewers.hh>
 
 // option key includes
+#include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -69,6 +75,7 @@ main( int argc, char * argv [] )
 		OPT(coupled_moves::bump_check);
 		OPT(coupled_moves::ligand_weight);
 		OPT(coupled_moves::output_prefix);
+		//OPT(coupled_moves::walking_perturber_magnitude);
 
 		// initialize Rosetta
 		devel::init(argc, argv);
@@ -88,7 +95,65 @@ void *
 my_main( void* )
 {
 
+	using basic::options::option;
+	using namespace basic::options::OptionKeys;
+
+	// Make coupled moves
 	protocols::coupled_moves::CoupledMovesProtocolOP coupled_moves( new protocols::coupled_moves::CoupledMovesProtocol );
+
+	// Set command line options for coupled moves
+
+	// Set backbone mover
+	if ( option[ basic::options::OptionKeys::coupled_moves::backbone_mover ].user() ) {
+		std::string backbone_mover = option[ basic::options::OptionKeys::coupled_moves::backbone_mover ];
+		if ( backbone_mover == "kic" ) {
+			coupled_moves->set_backbone_mover( backbone_mover );
+			std::string kic_perturber = option[ basic::options::OptionKeys::coupled_moves::kic_perturber ];
+			if ( kic_perturber == "fragment" ) {
+				if ( ( option[ basic::options::OptionKeys::loops::frag_files ].user() ) && ( option[ basic::options::OptionKeys::loops::frag_sizes ].user() ) ) {
+					utility::vector1<core::fragment::FragSetOP> frag_libs;
+					protocols::loops::read_loop_fragments(frag_libs); // this function uses OptionKeys::loops::frag_sizes and OptionKeys::loops::frag_files to fill the frag_libs object, which is then used as an argument for the FragmentPerturber constructor.
+					coupled_moves->set_perturber( protocols::kinematic_closure::perturbers::PerturberOP( new protocols::kinematic_closure::perturbers::FragmentPerturber(frag_libs) ) );
+				} else {
+					std::stringstream message;
+					message << "[ ERROR - fragments ] Must specify the -loops:frag_sizes and -loops:frag_files " << std::endl;
+					message << "[ ERROR - fragments ] options in order to use FragmentPerturber." << std::endl;
+					throw CREATE_EXCEPTION(utility::excn::Exception, message.str());
+				}
+			} else if ( kic_perturber == "walking" ) {
+				coupled_moves->set_perturber( protocols::kinematic_closure::perturbers::PerturberOP( new protocols::kinematic_closure::perturbers::WalkingPerturber( option[ basic::options::OptionKeys::coupled_moves::walking_perturber_magnitude ] ) ) );
+			}
+			// Set kic loop size
+			if ( !option[ basic::options::OptionKeys::coupled_moves::kic_loop_size ].user() ) {
+				TR << TR.Red << "[ WARNING - kic_loop_size ] You did not specify -coupled_moves::kic_loop_size option." << std::endl;
+				TR << TR.Red << "[ WARNING - kic_loop_size ] Using default, which is probably fine." << std::endl;
+				TR << TR.Red << "[ WARNING - kic_loop_size ] See CoupledMoves wiki or doxygen for more information on kic_loop_size." << TR.Reset << std::endl;
+			}
+			coupled_moves->set_loop_size( option[ basic::options::OptionKeys::coupled_moves::kic_loop_size ] );
+		} else if ( ( backbone_mover == "backrub" ) || ( backbone_mover == "" ) ) {
+			coupled_moves->set_backbone_mover( backbone_mover );
+		} else {
+			std::stringstream message;
+			message << "[ ERROR - backbone_mover ] Specified -backbone_mover '" << backbone_mover << "' is not recognized by Coupled Moves. Try 'kic' or 'backrub' instead." << std::endl;
+			throw CREATE_EXCEPTION(utility::excn::Exception, message.str());
+		}
+	} else if ( !option[ basic::options::OptionKeys::coupled_moves::backbone_mover ].user() ) {
+		// If no backbone mover is specified in command line
+		TR << TR.Red << "[ WARNING - backbone_mover ] You did not specify -coupled_moves::backbone_mover option." << std::endl;
+		TR << TR.Red << "[ WARNING - backbone_mover ] Defaulting to legacy behavior '-coupled_moves::backbone_mover backrub'." << std::endl;
+		TR << TR.Red << "[ WARNING - backbone_mover ] Example usages:" << std::endl;
+		TR << TR.Red << "[ WARNING - backbone_mover ]     '-coupled_moves::backbone_mover kic'" << std::endl;
+		TR << TR.Red << "[ WARNING - backbone_mover ]     '-coupled_moves::backbone_mover backrub'" << std::endl;
+		TR << TR.Red << "[ WARNING - backbone_mover ] See CoupledMoves wiki or doxygen for more information on available backbone movers." << TR.Reset << std::endl;
+		coupled_moves->set_backbone_mover( "backrub" );
+	}
+
+	// Set repack_neighborhood option
+	if ( option[ basic::options::OptionKeys::coupled_moves::repack_neighborhood ].user() ) {
+		bool repack_neighborhood = option[ basic::options::OptionKeys::coupled_moves::repack_neighborhood ];
+		coupled_moves->set_repack_neighborhood( repack_neighborhood );
+	}
+
 	protocols::jd2::JobDistributor::get_instance()->go( coupled_moves );
 
 	return nullptr;

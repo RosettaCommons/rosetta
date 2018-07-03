@@ -113,7 +113,6 @@ RotamerSet_::build_rotamers(
 			allowed_end = the_task.residue_task( resid() ).allowed_residue_types_end();
 			allowed_iter != allowed_end; ++allowed_iter ) {
 		build_rotamers_for_concrete_virt( pose, scorefxn, the_task, *allowed_iter, packer_neighbor_graph, use_neighbor_context );
-		//std::cout << "Built rotamers for concrete " << (*allowed_iter)->name() << " seqpos " << resid() << " " << n_residue_types_ << std::endl;
 	}
 
 	if ( num_rotamers() == 0 ) {
@@ -131,7 +130,6 @@ RotamerSet_::build_rotamers(
 			rotsetop_iter != rotsetop_end; ++rotsetop_iter ) {
 		(*rotsetop_iter)->alter_rotamer_set( pose, scorefxn, the_task, packer_neighbor_graph, *this );
 	}
-
 	tt.flush();
 	//tt << "Built " << num_rotamers() << " rotamers for residue " << resid() << " " << pose.residue(resid()).name() << " with " << get_n_residue_groups() << " groups." << std::endl;
 	//tt << *this << std::endl;
@@ -248,9 +246,7 @@ RotamerSet_::build_rotamers_for_concrete(
 {
 	using namespace conformation;
 	using namespace pack::task;
-
 	prepare_for_new_residue_type( *concrete_residue );
-
 	if ( task.residue_task( resid() ).optimize_h() ) {
 		build_optimize_H_rotamers( pose, task, concrete_residue, existing_residue, packer_neighbor_graph, scorefxn );
 		// The behavior depends on the residue type.  This should be refactored -- at least into several separate methods
@@ -342,7 +338,6 @@ RotamerSet_::build_rotamers_for_concrete(
 		build_virtualizable_rotatable_water_rotamers( pose, scorefxn, task, concrete_residue, existing_residue, packer_neighbor_graph );
 
 	} else { // All other residues ///////////////////////////////////////////////////////////////////////
-
 		utility::vector1< utility::vector1< Real > > extra_chi_steps( concrete_residue->nchi() );
 
 		Size nneighbs(999);

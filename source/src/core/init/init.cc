@@ -272,6 +272,7 @@
 #include <core/pack/task/operation/TaskOperationRegistrator.hh>
 #include <core/pack/task/operation/TaskOperationCreators.hh>
 #include <core/pack/task/operation/DesignRestrictionsCreator.hh>
+#include <core/pack/task/operation/ClashBasedRepackShellCreator.hh>
 #include <core/pack/task/operation/EnableMultiCoolAnnealerCreator.hh>
 #include <core/pack/task/operation/OperateOnCertainResiduesCreator.hh>
 #include <core/pack/task/operation/OperateOnResidueSubsetCreator.hh>
@@ -289,7 +290,7 @@
 #include <core/select/residue_selector/ResidueSelectorCreators.hh>
 #include <core/select/residue_selector/PrimarySequenceNeighborhoodSelectorCreator.hh>
 #include <core/select/residue_selector/SymmetricalResidueSelectorCreator.hh>
-#include <core/pack/task/residue_selector/ClashBasedRepackShellSelectorCreator.hh>
+#include <core/pack/task/residue_selector/ClashBasedShellSelectorCreator.hh>
 #include <core/select/residue_selector/CloseContactResidueSelectorCreator.hh>
 #include <core/select/residue_selector/ResidueSelectorRegistrator.hh>
 
@@ -701,6 +702,7 @@ static TaskOperationRegistrator< RestrictToRepackingCreator > RestrictToRepackin
 static TaskOperationRegistrator< OperateOnCertainResiduesCreator > OperateOnCertainResiduesCreator_registrator;
 static TaskOperationRegistrator< OperateOnResidueSubsetCreator > OperateOnResidueSubsetCreator_registrator;
 static TaskOperationRegistrator< NoRepackDisulfidesCreator > NoRepackDisulfidesCreator_registrator;
+static TaskOperationRegistrator< ClashBasedRepackShellCreator > ClashBasedRepackShellCreator_registrator;
 static TaskOperationRegistrator< OptCysHGCreator > OptCysHGCreator_registrator;
 static TaskOperationRegistrator< OptHCreator > OptHCreator_registrator;
 // register ResLvlTaskOperationCreators
@@ -737,7 +739,7 @@ static ResidueSelectorRegistrator< AndResidueSelectorCreator > reg_AndResidueSel
 static ResidueSelectorRegistrator< BinSelectorCreator > reg_BinSelectorCreator;
 static ResidueSelectorRegistrator< BondedResidueSelectorCreator > reg_BondedResidueSelectorCreator;
 static ResidueSelectorRegistrator< ChainSelectorCreator > reg_ChainSelectorCreator;
-static ResidueSelectorRegistrator< core::pack::task::residue_selector::ClashBasedRepackShellSelectorCreator > reg_ClashBasedRepackShellSelectorCreator;
+static ResidueSelectorRegistrator< core::pack::task::residue_selector::ClashBasedShellSelectorCreator > reg_ClashBasedShellSelectorCreator;
 static ResidueSelectorRegistrator< CloseContactResidueSelectorCreator > reg_CloseContactResidueSelectorCreator;
 static ResidueSelectorRegistrator< DensityFitResidueSelectorCreator > reg_DensityFitResidueSelectorCreator;
 static ResidueSelectorRegistrator< GlycanResidueSelectorCreator > reg_GlycanResidueSelectorCreator;

@@ -23,7 +23,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/types.hh>
-#include <core/pack/task/residue_selector/ClashBasedRepackShellSelector.hh>
+#include <core/pack/task/residue_selector/ClashBasedShellSelector.hh>
 #include <basic/Tracer.hh>
 
 // Option headers
@@ -70,8 +70,12 @@ main( int argc, char * argv [] )
 		// make a copy of the original pose
 		core::pose::PoseOP pose_copy( new core::pose::Pose(starting_pose) );
 
-		// using ClashBasedRepackShellSelector to define repack shell
-		core::pack::task::residue_selector::ClashBasedRepackShellSelectorOP cbrss( new core::pack::task::residue_selector::ClashBasedRepackShellSelector(task, score_fxn) );
+		// using ClashBasedShellSelector to define repack shell
+		// old implementation of ClashBasedShellSelector
+		// core::pack::task::residue_selector::ClashBasedShellSelectorOP cbrss( new core::pack::task::residue_selector::ClashBasedShellSelector(task, score_fxn) );
+		// new implementation of ClashBasedShellSelector
+		core::pack::task::residue_selector::ClashBasedShellSelectorOP cbrss( new core::pack::task::residue_selector::ClashBasedShellSelector(task) );
+		cbrss->set_include_focus(false);
 		utility::vector1< bool > to_repack = cbrss->apply( *pose_copy );
 
 		// print list of positions to repack

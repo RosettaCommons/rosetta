@@ -187,6 +187,7 @@ sources = {
 		"RNA_ResidueLevelTask",
 	],
 	"core/pack/task/operation": [
+		"ClashBasedRepackShell",
 		"DesignRestrictions",
 		"EnableMultiCoolAnnealer",
 		"FillAUTOTaskOperation",
@@ -207,7 +208,7 @@ sources = {
 		"task_op_schemas",
 	],
 	"core/pack/task/residue_selector" : [
-		"ClashBasedRepackShellSelector",
+		"ClashBasedShellSelector",
 	],
 	"core/util": [
 		"ChainbreakUtil",
