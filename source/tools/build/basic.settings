@@ -77,12 +77,12 @@ settings = {
             # Leading '#' means relative to the base directory, (i.e.,
             # main/external/boinc/api, etc.)
             "include_path" : [
-                "#external/boost_1_55_0",
-                "#external/libxml2/include",
-                "#external/",
-                "#external/dbio",
-                "/usr/include",
-                "/usr/local/include",
+
+	    	# now done with -isystem flag at "compiler" handles
+                # "#external/libxml2/include",
+                # "#external/boost_1_55_0",
+                # "#external/",
+                # "#external/dbio",
             ],
             "library_path" : [
                 "/usr/lib",
@@ -146,14 +146,18 @@ settings = {
                     "isystem external/",
                     "isystem external/include/",
                     "isystem external/dbio/",
+		    "isystem external/libxml2/include",
                 ],
                 "cxx" : [
                     "std=c++0x",
                     "ffor-scope",
+
                     "isystem external/boost_1_55_0/",
                     "isystem external/",
                     "isystem external/include/",
                     "isystem external/dbio/",
+		    "isystem external/libxml2/include",
+
                     #"fno-omit-frame-pointer", # -- useful for profiling on linux using RotateRight's Zoom profiler
                 ],
                 "compile" : [
@@ -1145,25 +1149,41 @@ settings = {
     # the android toolchain should be built into the external directory
     "gcc, android_arm" : {
         "appends" : {
-            "library_path"    : [ "#external/androidarm-tc/arm-linux-androideabi/lib",
-                                "#external/androidarm-tc/sysroot/usr/lib", ],
+            "library_path"    : [
+                "#external/androidarm-tc/arm-linux-androideabi/lib",
+                "#external/androidarm-tc/sysroot/usr/lib",
+            ],
 	    "defines"   : [ "ANDROID", ],
             "flags" : {
                 "cc"        : [
-                                "Wall", "O3", "Wno-error=array-bounds",
-                                "frtti", "fno-strict-aliasing",
-                                "fexceptions",
-                              ],
+                    "Wall",
+                    "O3",
+                    "Wno-error=array-bounds",
+                    "frtti",
+                    "fno-strict-aliasing",
+                    "fexceptions",
+                ],
                 "cxx"        : [
-                                  "Wall","O3", "Wno-error=array-bounds",
-                                  "frtti", "fno-strict-aliasing",
-                                  "fexceptions",
-                               ],
+                    "Wall",
+                    "O3",
+                    "Wno-error=array-bounds",
+                    "frtti",
+                    "fno-strict-aliasing",
+                    "fexceptions",
+                ],
                 "compile"    : [
-                               "fPIE", "pie", '-sysroot=' + os.path.join( os.getcwd(), '../../external/androidarm-tc/sysroot' ),
-                               "march=armv7-a", "mfloat-abi=softfp", "mfpu=vfpv3-d16",
-                               ],
-                "link"       : [ "fPIE", "pie", "march=armv7-a -Wl,--fix-cortex-a8", ],
+                    "fPIE",
+                    "pie",
+                    '-sysroot=' + os.path.join( os.getcwd(), '../../external/androidarm-tc/sysroot' ),
+                    "march=armv7-a",
+                    "mfloat-abi=softfp",
+                    "mfpu=vfpv3-d16",
+                ],
+                "link"       : [
+                    "fPIE",
+                    "pie",
+                    "march=armv7-a -Wl,--fix-cortex-a8",
+                ],
 
             },
             "libraries"  : [ "z", "stdc++", ],
@@ -1176,19 +1196,30 @@ settings = {
         "removes" : {
            "defines"  : [ "BOINC_GRAPHICS", ],
            "flags" : {
-                "warn" : [ "pedantic" ],
-                "compile" : [
-                    "march=core2",
-                    "mtune=generic",
-                    "malign-double",
-                    "march=pentium4",
-                    "march=athlon",
-                    "mtune=itanium2"
-                ],
-                "link" : [ "static" ],
+               "warn" : [ "pedantic" ],
+               "compile" : [
+                   "march=core2",
+                   "mtune=generic",
+                   "malign-double",
+                   "march=pentium4",
+                   "march=athlon",
+                   "mtune=itanium2"
+               ],
+               "link" : [ "static" ],
            },
-           "include_path" : [ "/usr/local/include", "/usr/include", "/usr/include/GL", "isystem external/include", "isystem external" ],
-           "library_path"  : [ "/lib", "/usr/lib", "/usr/local/lib","isystem external/lib", "isystem external", ],
+           "include_path" : [
+               "/usr/local/include",
+               "/usr/include",
+               "/usr/include/GL",
+               "isystem external/include", # ??? this is a flag, not an include_path variable
+               "isystem external",         # ??? ibid
+           ],
+           "library_path"  : [
+               "/lib",
+               "/usr/lib",
+               "/usr/local/lib",
+               "isystem external/lib",
+               "isystem external", ],
         },
     },
 
@@ -1213,6 +1244,24 @@ settings = {
     "icc, linux" : {
         "appends" : {
             "flags" : {
+                "cc" : [
+                    "std=c99",
+
+                    "isystem external/boost_1_55_0/",
+                    "isystem external/",
+                    "isystem external/include/",
+                    "isystem external/dbio/",
+		    "isystem external/libxml2/include",
+                ],
+                "cxx" : [
+                    "std=c++11",
+
+                    "isystem external/boost_1_55_0/",
+                    "isystem external/",
+                    "isystem external/include/",
+                    "isystem external/dbio/",
+		    "isystem external/libxml2/include",
+                ],
                 "warn" : [
                     "Wall",
                     # When we ICC on the test server, we should probably turn on warnings-as-errors
@@ -1780,17 +1829,21 @@ settings = {
                 # warnings found in these external headers.)
                 "cc" : [
                     "std=c99",
+
                     "isystem external/boost_1_55_0/",
                     "isystem external/",
                     "isystem external/include/",
-                    "isystem external/dbio/"
+                    "isystem external/dbio/",
+		    "isystem external/libxml2/include",
                 ],
                 "cxx" : [
                     "std=c++11",
+
                     "isystem external/boost_1_55_0/",
                     "isystem external/",
                     "isystem external/include/",
-                    "isystem external/dbio/"
+                    "isystem external/dbio/",
+		    "isystem external/libxml2/include",
                 ],
                 "compile" : [
 		    "march=core2",
@@ -1949,12 +2002,6 @@ settings = {
                 "shlink" : [ "$LINKFLAGS", "stdlib=libstdc++", ],
                 "link"   : [ "stdlib=libstdc++", ],
             },
-        },
-    },
-
-    "clang, macos, 15.0" : {
-        "removes" : {
-            "include_path" : [ "/usr/local/include" ],
         },
     },
 
