@@ -462,8 +462,8 @@ def generate_cmake_file(rosetta_source_path, extra_sources):
 
             set(PYROSETTA_EXTERNAL_LINK ON)
             """.format(
-            system_include = ' '.join(get_rosetta_system_include_directories()),
-            rosetta_include = ' '.join( get_rosetta_include_directories() + [Options.pybind11] ),
+            system_include  = ' '.join( get_rosetta_system_include_directories() + [Options.pybind11] ),
+            rosetta_include = ' '.join( get_rosetta_include_directories() ),
             defs = ' '.join([ '-D'+d for d in get_defines()])
         )
         cmake = cmake.replace('#%__Rosetta_cmake_instructions__%#', rosetta_cmake)
@@ -474,8 +474,8 @@ def generate_cmake_file(rosetta_source_path, extra_sources):
 
     else:
         rosetta_cmake =  ''.join( ['include({}.cmake)\n'.format(l) for l in libs] )
-        rosetta_cmake += '\ninclude_directories(SYSTEM {})\n\n'.format( ' '.join(get_rosetta_system_include_directories() ) )
-        rosetta_cmake += '\ninclude_directories({})\n\n'.format( ' '.join( get_rosetta_include_directories() + [Options.pybind11] ) )
+        rosetta_cmake += '\ninclude_directories(SYSTEM {})\n\n'.format( ' '.join(get_rosetta_system_include_directories() + [Options.pybind11] ) )
+        rosetta_cmake += '\ninclude_directories({})\n\n'.format( ' '.join( get_rosetta_include_directories() ) )
         rosetta_cmake += 'add_definitions({})\n'.format(' '.join([ '-D'+d for d in get_defines()] ) )
 
         cmake = cmake.replace('#%__Rosetta_cmake_instructions__%#', rosetta_cmake)
