@@ -137,6 +137,33 @@ mmCIFParser::get_molfile_molecule( Block & block ) {
 	if ( ! N_found ) is_peptide_linking = false;
 	if ( ! P_found ) is_nucleic_linking = false;
 
+	// It's not nucleic linking if we can't establish that the phosphate P is bonded to 
+	// O5'. There are some 'reversed' types -- that plausibly we might choose later to 
+	// read in (AMW TODO) as patched base types -- like T3P that we should USUALLY treat
+	// as ligands instead.
+	if ( is_nucleic_linking ) {
+		bool P_O5P_bond_found = false;
+		if ( block.IsTablePresent( "chem_comp_bond" ) ) {
+			ISTable& bond_comp = block.GetTable("chem_comp_bond");
+
+			//start bond block
+			for ( Size ii = 0; ii < bond_comp.GetNumRows(); ++ii ) {
+				sdf::MolFileIOBondOP bond( new sdf::MolFileIOBond() );
+
+				std::string source( bond_comp( ii, "atom_id_1" ) ); //atom 1
+				std::string target( bond_comp( ii, "atom_id_2" ) ); //atom 2 - I guess thats self explanatory
+
+				// Could imagine getting 'all Hs' by finding, instead, the
+				// names that match H[number] -- but why not wait, for now.
+				if ( ( source == "P" && target == "O5'" ) || ( source == "O5'" && target == "P" ) ) {
+					P_O5P_bond_found = true;
+				}
+			}
+		}
+		if ( !P_O5P_bond_found ) {
+			is_nucleic_linking = false;
+		}
+	}
 
 	// Get the chem_comp table first, because this will help us
 	// look out for extraneous atoms common in CIF entries -- extra nitrogen H
@@ -164,11 +191,26 @@ mmCIFParser::get_molfile_molecule( Block & block ) {
 			molecule->add_str_str_data( "Rosetta Properties", "RNA POLYMER L_RNA" );
 			is_peptide_linking = false;
 			is_nucleic_linking = true;
+		}  else if ( type == "DNA LINKING" && is_nucleic_linking ) {
+			TR.Debug << "Found D-DNA RT" << std::endl;//named " << molecule->name() << std::endl;
+			molecule->add_str_str_data( "Rosetta Properties", "DNA POLYMER" );
+			is_peptide_linking = false;
+			is_nucleic_linking = true;
+		} else if ( type == "L-DNA LINKING" && is_nucleic_linking ) {
+			TR.Debug << "Found L-DNA RT" << std::endl;//named " << molecule->name() << std::endl;
+			molecule->add_str_str_data( "Rosetta Properties", "DNA POLYMER" );
+			is_peptide_linking = false;
+			is_nucleic_linking = true;
 		} else {
 			is_peptide_linking = false;
 			is_nucleic_linking = false;
 		}
 	}
+
+	// Sometimes OP3/O3P is used for non-term-deletable phosphate oxygens. (THX)
+	//bool interesting_upper_behavior = false;
+
+	utility::vector1< std::string > O3P_connected;
 
 	// Before we actually LOOK at the atoms (or bonds) for real, we need to know
 	// what atoms are bonded to the polymeric termini or to to-be-deleted
@@ -206,6 +248,7 @@ mmCIFParser::get_molfile_molecule( Block & block ) {
 			}
 		}
 	} else if ( is_nucleic_linking ) {
+
 		if ( block.IsTablePresent( "chem_comp_bond" ) ) {
 			ISTable& bond_comp = block.GetTable("chem_comp_bond");
 
@@ -213,49 +256,77 @@ mmCIFParser::get_molfile_molecule( Block & block ) {
 			for ( Size ii = 0; ii < bond_comp.GetNumRows(); ++ii ) {
 				sdf::MolFileIOBondOP bond( new sdf::MolFileIOBond() );
 
-				std::string source( bond_comp( ii, "atom_id_1" ) ); //atom 1
-				std::string target( bond_comp( ii, "atom_id_2" ) ); //atom 2 - I guess thats self explanatory
+				std::string const & source( bond_comp( ii, "atom_id_1" ) ); //atom 1
+				std::string const & target( bond_comp( ii, "atom_id_2" ) ); //atom 2 - I guess thats self explanatory
 
-				// Could imagine getting 'all Hs' by finding, instead, the
-				// names that match H[number] -- but why not wait, for now.
 				if ( source == "P" ) {
-					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to N " << std::endl;
+					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to  P" << std::endl;
 					possible_atoms_to_skip.push_back( target );
 				}
 				if ( target == "P" ) {
-					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to N " << std::endl;
+					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to  P" << std::endl;
 					possible_atoms_to_skip.push_back( source );
 				}
+
 				if ( source == "O3'" ) {
-					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to N " << std::endl;
+					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to  O3'" << std::endl;
 					possible_atoms_to_skip.push_back( target );
 				}
 				if ( target == "O3'" ) {
-					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to N " << std::endl;
+					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to  O3'" << std::endl;
 					possible_atoms_to_skip.push_back( source );
 				}
+
 				if ( source == "OP3" ) {
-					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to N " << std::endl;
+					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to  OP3" << std::endl;
 					possible_atoms_to_skip.push_back( target );
+					O3P_connected.push_back( target );
 				}
 				if ( target == "OP3" ) {
-					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to N " << std::endl;
+					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to  OP3" << std::endl;
 					possible_atoms_to_skip.push_back( source );
+					O3P_connected.push_back( source );
+				}
+				if ( source == "O3P" ) {
+					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to  O3P" << std::endl;
+					possible_atoms_to_skip.push_back( target );
+					O3P_connected.push_back( target );
+				}
+				if ( target == "O3P" ) {
+					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to  O3P" << std::endl;
+					possible_atoms_to_skip.push_back( source );
+					O3P_connected.push_back( source );
 				}
 				if ( source == "OP2" ) {
-					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to N " << std::endl;
+					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to  OP2" << std::endl;
 					possible_atoms_to_skip.push_back( target );
 				}
 				if ( target == "OP2" ) {
-					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to N " << std::endl;
+					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to  OP2" << std::endl;
 					possible_atoms_to_skip.push_back( source );
 				}
+				if ( target == "O2P" ) {
+					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to  O2P" << std::endl;
+					possible_atoms_to_skip.push_back( source );
+				}
+				if ( source == "O2P" ) {
+					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to  O2P" << std::endl;
+					possible_atoms_to_skip.push_back( target );
+				}
 				if ( source == "OP1" ) {
-					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to N " << std::endl;
+					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to  OP1" << std::endl;
 					possible_atoms_to_skip.push_back( target );
 				}
 				if ( target == "OP1" ) {
-					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to N " << std::endl;
+					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to  OP1" << std::endl;
+					possible_atoms_to_skip.push_back( source );
+				}
+				if ( source == "O1P" ) {
+					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to  O1P" << std::endl;
+					possible_atoms_to_skip.push_back( target );
+				}
+				if ( target == "O1P" ) {
+					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to  O1P" << std::endl;
 					possible_atoms_to_skip.push_back( source );
 				}
 			}
@@ -287,6 +358,20 @@ mmCIFParser::get_molfile_molecule( Block & block ) {
 		utility_exit_with_message( "No usable coordinates for mmCIF file for " + block.GetName() );
 	}
 
+	// Loop over atom block and check to see if any heavyatoms are bound to OP3/O3P
+	bool interesting_pendant = false;
+	for ( Size ii = 1; ii < atom_comp.GetNumRows(); ++ii ) {
+		std::string const & atom_name = atom_comp( ii, atom_name_type );
+		std::string const & element = atom_comp( ii, "type_symbol" );
+		if ( O3P_connected.contains( atom_name ) ) {
+			if ( element != "H" && atom_name != "P" ) {
+				TR.Trace << "There is an OP3-bonded heavyatom: " << atom_name << std::endl;
+				interesting_pendant = true;
+				break;
+			}
+		}
+	}
+
 	utility::vector1< std::string > actual_atoms_to_skip;
 	//start atom block
 	Size index = 1;
@@ -300,15 +385,17 @@ mmCIFParser::get_molfile_molecule( Block & block ) {
 		atom->index( index );
 
 		//set atom name
-		std::string atom_name( atom_comp( ii, atom_name_type ) );
+		std::string const & atom_name( atom_comp( ii, atom_name_type ) );
 		TR.Trace << "Examining atom entry " << atom_name << std::endl;
 		if ( is_peptide_linking && atom_name == "OXT" ) continue;
-		if ( is_nucleic_linking && atom_name == "OP3" ) continue;
+		if ( is_nucleic_linking && !interesting_pendant && atom_name == "OP3" ) continue;
+		if ( is_nucleic_linking && !interesting_pendant && atom_name == "O3P" ) continue;
+		TR.Trace << "Keeping atom entry " << atom_name << std::endl;
 
 		atom->name( atom_name );
 
 		//set map to index
-		atom_name_to_id[ atom_name ] = index; //ii + 1; // indexing adjustment
+		atom_name_to_id[ atom_name ] = index;
 		//set element name
 		atom->element( atom_comp( ii, "type_symbol" ) );
 
@@ -337,6 +424,11 @@ mmCIFParser::get_molfile_molecule( Block & block ) {
 		// only increment if we actually get here.
 		index++;
 	}
+	
+	// pdb_BVP messes with this logic because it names H3' "H1" and HO3' H3'.
+	// So we need to place an additional requirement for H skipping.
+	// This is actually a very hard problem.
+				
 
 	if ( block.IsTablePresent( "chem_comp_bond" ) ) {
 		ISTable& bond_comp = block.GetTable("chem_comp_bond");
@@ -345,13 +437,13 @@ mmCIFParser::get_molfile_molecule( Block & block ) {
 		for ( Size ii = 0; ii < bond_comp.GetNumRows(); ++ii ) {
 			sdf::MolFileIOBondOP bond( new sdf::MolFileIOBond() );
 
-			std::string source( bond_comp( ii, "atom_id_1" ) ); //atom 1
-			std::string target( bond_comp( ii, "atom_id_2" ) ); //atom 2 - I guess thats self explanatory
+			std::string const & source( bond_comp( ii, "atom_id_1" ) ); //atom 1
+			std::string const & target( bond_comp( ii, "atom_id_2" ) ); //atom 2 - I guess thats self explanatory
 
 			if ( is_peptide_linking && source == "OXT" ) continue;
 			if ( is_peptide_linking && target == "OXT" ) continue;
-			if ( is_nucleic_linking && source == "OP3" ) continue;
-			if ( is_nucleic_linking && target == "OP3" ) continue;
+			if ( is_nucleic_linking && !interesting_pendant && ( source == "OP3" || source == "O3P" ) ) continue;
+			if ( is_nucleic_linking && !interesting_pendant && ( target == "OP3" || target == "O3P" ) ) continue;
 			if ( actual_atoms_to_skip.contains( source ) ) continue;
 			if ( actual_atoms_to_skip.contains( target ) ) continue;
 

@@ -421,6 +421,9 @@ fill_ideal_xyz_from_icoor(
 				}
 				torsion_xyz = torsion_stub.xyz( restype );
 			}
+			debug_assert( parent_stub.xyz( restype ) != angle_stub.xyz( restype ) );
+			debug_assert( angle_stub.xyz( restype ) != torsion_xyz );
+
 			kinematics::Stub const stub( parent_stub.xyz( restype ),
 				angle_stub.xyz( restype ),
 				torsion_xyz );

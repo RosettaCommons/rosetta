@@ -2,7 +2,7 @@
 # For hydroxyapatite surface
 # parameters are from Kosta Makrodimitris's Ca2p.params
 NAME CAL
-IO_STRING  CAL Z
+IO_STRING CAL Z
 TYPE LIGAND
 AA UNK
 ATOM Ca2p Ca2p  VIRT 2.00

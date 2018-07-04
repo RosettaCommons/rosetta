@@ -37,6 +37,7 @@
 //Auto Headers
 #include <core/scoring/etable/Etable.hh>
 #include <utility/vector1.hh>
+#include <basic/Tracer.hh>
 
 
 namespace core {
@@ -138,11 +139,20 @@ CountPairFactory::create_count_pair_function_and_invoke(
 			break;
 		case CP_ONE_BOND : {
 			// scope for res1connat, res2connat initializations
-			debug_assert( res1.connections_to_residue( res2 ).size() == 1 );
-			debug_assert( res2.connections_to_residue( res1 ).size() == 1 );
-
-			Size res1connat = res1.residue_connection( res1.connections_to_residue( res2 )[ 1 ] ).atomno();
-			Size res2connat = res2.residue_connection( res2.connections_to_residue( res1 )[ 1 ] ).atomno();
+			Size res1connat, res2connat;
+			try {
+				debug_assert( res1.connections_to_residue( res2 ).size() == 1 );
+				// Is it possible to be asymmetric -- could res2 have no connections to res1?
+				//std::cout << res1.seqpos() << " " << res2.seqpos() << std::endl;
+				//std::cout << res1.type().name() << " " << res2.type().name() << std::endl;
+				debug_assert( res2.connections_to_residue( res1 ).size() == 1 );
+				res1connat = res1.residue_connection( res1.connections_to_residue( res2 )[ 1 ] ).atomno();
+				res2connat = res2.residue_connection( res2.connections_to_residue( res1 )[ 1 ] ).atomno();
+			} catch ( utility::excn::Exception const & e ) {
+				// At Steven's behest I removed this tracer
+				//TR.Error << "CP_ONE_BOND logic; accessing connections of " << res1.seqpos() << " to " << res2.seqpos() << " or vice versa is problematic " << std::endl;
+				throw e;
+			}
 			switch ( crossover ) {
 			case CP_CROSSOVER_3 : {
 				CountPair1B< CountPairCrossover3 > cpfxn( res1, res1connat, res2, res2connat );
@@ -176,12 +186,19 @@ CountPairFactory::create_count_pair_function_and_invoke(
 		}
 	} else if ( crossover == CP_CROSSOVER_34 && ( res1.polymeric_sequence_distance( res2 ) == 2 ) ) {
 		Size midway( res1.seqpos() > res2.seqpos() ? res2.seqpos() + 1 : res1.seqpos() + 1 );
+		Size res1connat, res2connat;
 		// scope for res1connat, res2connat initializations
-		debug_assert( res1.connections_to_residue( midway ).size() == 1 );
-		debug_assert( res2.connections_to_residue( midway ).size() == 1 );
+		try {
+			debug_assert( res1.connections_to_residue( midway ).size() == 1 );
+			debug_assert( res2.connections_to_residue( midway ).size() == 1 );
 
-		Size res1connat = res1.residue_connection( res1.connections_to_residue( midway )[ 1 ] ).atomno();
-		Size res2connat = res2.residue_connection( res2.connections_to_residue( midway )[ 1 ] ).atomno();
+			res1connat = res1.residue_connection( res1.connections_to_residue( midway )[ 1 ] ).atomno();
+			res2connat = res2.residue_connection( res2.connections_to_residue( midway )[ 1 ] ).atomno();
+		} catch ( utility::excn::Exception const & e ) {
+			// At Steven's behest I removed this tracer
+			//TR.Error << "CP_CROSSOVER_34 logic; accessing connections of " << res1.seqpos() << " to " << res2.seqpos() << " or vice versa is problematic " << std::endl;
+			throw e;
+		}
 		CountPair2B< CountPairCrossover34 > cpfxn( res1, res1connat, res2, res2connat );
 		invoker.invoke( cpfxn );
 	} else {

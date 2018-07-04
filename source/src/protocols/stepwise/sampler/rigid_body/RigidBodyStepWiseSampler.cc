@@ -247,7 +247,7 @@ RigidBodyStepWiseSampler::calculate_jump( pose::Pose & pose, Size const seq_num,
 	// choice for ligands. We can always write a function here.
 
 	// What if this works without? SHouldn't finding the downstream atom off a jump just work?
-	//if ( !pose.residue_type( i ).is_polymer() ) downstream_atom_name = pose.residue_type( i ).atom_name( 1 );
+	if ( !pose.residue_type( i ).is_polymer() ) downstream_atom_name = pose.residue_type( i ).atom_name( 1 );
 
 	Size const j = pose.residue_type( i ).atom_index( downstream_atom_name );
 	kinematics::tree::AtomCOP current_atom ( pose.atom_tree().atom_dont_do_update( AtomID(j,i) ).get_self_ptr() );

@@ -222,8 +222,14 @@ my_main( void* )
 		std::cout << "Input tgt seq:  " << target_sequence_from_alignment << std::endl;
 
 		std::cout << "Clean pose seq: " << core::pose::rna::remove_bracketed(template_sequence_from_alignment) << std::endl;
-		std::cout << "Clean tgt seq:  " << core::pose::rna::remove_bracketed(target_sequence_from_alignment) << std::endl;
-		if ( core::pose::rna::remove_bracketed(target_sequence_from_alignment).size() != core::pose::rna::remove_bracketed(template_sequence_from_alignment).size() ) utility_exit_with_message( "Input sequence from -seq should match size of template pose specified by -s!" );
+		// Only clean here if it's not input_sequence_type == MODOMICS (because that uses bracket semantically)
+		if ( option[ input_sequence_type ]() != "MODOMICS" ) {
+			std::cout << "Clean tgt seq:  " << core::pose::rna::remove_bracketed(target_sequence_from_alignment) << std::endl;
+			if ( core::pose::rna::remove_bracketed(target_sequence_from_alignment).size() != core::pose::rna::remove_bracketed(template_sequence_from_alignment).size() ) utility_exit_with_message( "Input sequence from -seq should match size of template pose specified by -s!" );
+		} else {
+			std::cout << "Clean tgt seq:  " << target_sequence_from_alignment << std::endl;
+			if ( target_sequence_from_alignment.size() != core::pose::rna::remove_bracketed(template_sequence_from_alignment).size() ) utility_exit_with_message( "Input sequence from -seq should match size of template pose specified by -s!" );
+		}
 
 	} else if ( option[ mutation_list ].user() ) {
 

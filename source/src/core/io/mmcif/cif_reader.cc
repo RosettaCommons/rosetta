@@ -77,13 +77,14 @@ using CifFileOP = utility::pointer::shared_ptr<CifFile>;
 #include <algorithm>
 
 
-static basic::Tracer TR( "core.io.mmcif.cif_reader" );
 
 using basic::Error;
 using basic::Warning;
 namespace core {
 namespace io {
 namespace mmcif {
+
+static basic::Tracer TR( "core.io.mmcif.cif_reader" );
 
 
 StructFileRepOP create_sfr_from_cif_file_op( CifFileOP cifFile, StructFileReaderOptions const & options ) {
@@ -189,7 +190,9 @@ StructFileRepOP create_sfr_from_cif_file_op( CifFileOP cifFile, StructFileReader
 				ssbond.resSeq1 = atof( struct_conn( i, "ptnr1_label_seq_id" ).c_str() );
 				ssbond.iCode1 = struct_conn( i, "pdbx_ptnr1_PDB_ins_code" )[0] == '?' ? ' ' : struct_conn( i, "pdbx_ptnr1_PDB_ins_code" )[0];
 
-				ssbond.resID1 = ssbond.resSeq1 + ssbond.iCode1 + ssbond.chainID1;
+				std::stringstream strstr1;
+				strstr1 << std::setw( 4 ) << std::right << ssbond.resSeq1 << ssbond.iCode1 << ssbond.chainID1;
+				ssbond.resID1 = strstr1.str();
 
 				//ssbond.name2 = struct_conn( i, "ptnr2_label_atom_id" );
 				ssbond.resName2 = struct_conn( i, "ptnr2_label_comp_id" );
@@ -197,7 +200,9 @@ StructFileRepOP create_sfr_from_cif_file_op( CifFileOP cifFile, StructFileReader
 				ssbond.resSeq2 = atof( struct_conn( i, "ptnr2_label_seq_id" ).c_str() );
 				ssbond.iCode2 = struct_conn( i, "pdbx_ptnr2_PDB_ins_code" )[0] == '?' ? ' ' : struct_conn( i, "pdbx_ptnr2_PDB_ins_code" )[0];
 
-				ssbond.resID2 = ssbond.resSeq2 + ssbond.iCode2 + ssbond.chainID2;
+				std::stringstream strstr2;
+				strstr2 << std::setw( 4 ) << std::right << ssbond.resSeq2 << ssbond.iCode2 << ssbond.chainID2;
+				ssbond.resID2 = strstr2.str();
 
 				ssbond.length = atof( struct_conn( i, "pdbx_dist_value" ).c_str() ); // bond length
 
@@ -207,6 +212,13 @@ StructFileRepOP create_sfr_from_cif_file_op( CifFileOP cifFile, StructFileReader
 				}
 				ssbonds.push_back( ssbond );
 
+				if ( ssbonds.size() > 1 ) {
+					// The ssbonds need to be sorted such that higher-numbered residues come later.
+					auto sort_func = []( SSBondInformation const & lhs, SSBondInformation const & rhs ) {
+						return ( lhs.chainID2 < rhs.chainID2 ) || ( lhs.chainID2 == rhs.chainID2 && lhs.resSeq2 < rhs.resSeq2 );
+					};
+					sort( ssbonds.begin(), ssbonds.end(), sort_func );
+				}
 				sfr->ssbond_map()[ ssbond.resID1 ] = ssbonds;
 
 				if ( TR.Debug.visible() ) {
@@ -217,32 +229,78 @@ StructFileRepOP create_sfr_from_cif_file_op( CifFileOP cifFile, StructFileReader
 				LinkInformation link;
 				utility::vector1< LinkInformation > links;
 
-				// Others: conn_type_id  for "covale" etc--alert JWL!
+				// hydrogen bonds should never be represented as LINKs
+				if ( struct_conn( i, "conn_type_id" ) == "hydrog" ) continue;
+				if ( struct_conn( i, "conn_type_id" ) == "saltbr" ) continue;
+				// We treat metal coordination separately (thanks, -auto_setup_metals!)
+				if ( struct_conn( i, "conn_type_id" ) == "metalc" ) continue;
+				// Mismatched base pairs aren't treated in the input at all, but
+				// conceivably RNA code might be interested
+				if ( struct_conn( i, "conn_type_id" ) == "mismat" ) continue;
+				// Hmm... try skipping.
+				if ( struct_conn( i, "conn_type_id" ) == "modres" ) continue;
 
 				// Extract values from record fields.
 				link.name1 = struct_conn( i, "ptnr1_label_atom_id" );
-				link.resName1 = struct_conn( i, "ptnr1_label_comp_id" );
-				link.chainID1 = struct_conn( i, "ptnr1_label_asym_id" )[0];
-				link.resSeq1 = atof( struct_conn( i, "ptnr1_label_seq_id" ).c_str() );
+				
+				// Prefer 'author' annotations if available.
+				if ( struct_conn.IsColumnPresent( "ptnr1_auth_comp_id" ) ) {
+					link.resName1 = struct_conn( i, "ptnr1_auth_comp_id" );
+				} else {
+					link.resName1 = struct_conn( i, "ptnr1_label_comp_id" );
+				}
+
+				if ( struct_conn.IsColumnPresent( "ptnr1_auth_asym_id" ) ) {
+					link.chainID1 = struct_conn( i, "ptnr1_auth_asym_id" )[0];
+				} else {
+					link.chainID1 = struct_conn( i, "ptnr1_label_asym_id" )[0];
+				}
+
+				if ( struct_conn.IsColumnPresent( "ptnr1_auth_seq_id" ) ) {
+					link.resSeq1 = atof( struct_conn( i, "ptnr1_auth_seq_id" ).c_str() );
+				} else {
+					link.resSeq1 = atof( struct_conn( i, "ptnr1_label_seq_id" ).c_str() );
+				}
+				
 				link.iCode1 = struct_conn( i, "pdbx_ptnr1_PDB_ins_code" )[0] == '?' ? ' ' : struct_conn( i, "pdbx_ptnr1_PDB_ins_code" )[0];
 
-				link.resID1 = link.resSeq1 + link.iCode1 + link.chainID1;
+				//  LINK     type    1   6   name1           13  16   altLoc1       17  17   resName1      18  20   chainID1     22  22   resSeq1      23  26   iCode1      27  27   name2        43  46   altLoc2      47  47   resName2    48  50   chainID2    52  52   resSeq2     53  56   iCode2      57  57   sym1       60  65   sym2        67  72   length      74  78
+
+				std::stringstream strstr1;
+				strstr1 << std::setw( 4 ) << std::right << link.resSeq1 << link.iCode1 << link.chainID1;
+				link.resID1 = strstr1.str();
+				//struct_conn( i, "ptnr1_label_seq_id" )
+				//+ ( struct_conn( i, "pdbx_ptnr1_PDB_ins_code" ) == "?" ) ? " " : struct_conn( i, "pdbx_ptnr1_PDB_ins_code" )
+				//+ struct_conn( i, "ptnr1_label_asym_id" );
 
 				link.name2 = struct_conn( i, "ptnr2_label_atom_id" );
-				link.resName2 = struct_conn( i, "ptnr2_label_comp_id" );
-				link.chainID2 = struct_conn( i, "ptnr2_label_asym_id" )[0];
-				link.resSeq2 = atof( struct_conn( i, "ptnr2_label_seq_id" ).c_str() );
+				link.resName2 = struct_conn( i, "ptnr2_auth_comp_id" );
+				link.chainID2 = struct_conn( i, "ptnr2_auth_asym_id" )[0];
+				link.resSeq2 = atof( struct_conn( i, "ptnr2_auth_seq_id" ).c_str() );
 				link.iCode2 = struct_conn( i, "pdbx_ptnr2_PDB_ins_code" )[0] == '?' ? ' ' : struct_conn( i, "pdbx_ptnr2_PDB_ins_code" )[0];
 
-				link.resID2 = link.resSeq2 + link.iCode2 + link.chainID2;
+				std::stringstream strstr2;
+				strstr2 << std::setw(4) << std::right << link.resSeq2 << link.iCode2 << link.chainID2;
+				link.resID2 = strstr2.str();
+				//struct_conn( i, "ptnr2_label_seq_id" )
+				//+ ( struct_conn( i, "pdbx_ptnr2_PDB_ins_code" ) == "?" ) ? " " : struct_conn( i, "pdbx_ptnr2_PDB_ins_code" )
+				//+ struct_conn( i, "ptnr2_label_asym_id" );
 
-				link.length = atof( struct_conn( i, "pdbx_dist_value" ).c_str() );  // bond length
+				link.length = struct_conn( i, "pdbx_dist_value" )[0] == '?' ? 0 : atof( struct_conn( i, "pdbx_dist_value" ).c_str() );  // bond length
 
 				// If key is found in the links map, add this new linkage information to the links already keyed to this residue.
 				if ( sfr->link_map().count( link.resID1 ) ) {
 					links = sfr->link_map()[ link.resID1 ];
 				}
 				links.push_back( link );
+
+				if ( links.size() > 1 ) {
+					// The links need to be sorted such that higher-numbered residues come later.
+					auto sort_func = []( LinkInformation const & lhs, LinkInformation const & rhs ) {
+						return ( lhs.chainID2 < rhs.chainID2 ) || ( lhs.chainID2 == rhs.chainID2 && lhs.resSeq2 < rhs.resSeq2 );
+					};
+					sort( links.begin(), links.end(), sort_func );
+				}
 
 				sfr->link_map()[ link.resID1 ] = links;
 

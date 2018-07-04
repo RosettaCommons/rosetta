@@ -1393,7 +1393,12 @@ public:
 	utility::vector1< Size > const &
 	connections_to_residue( Size const other_resid ) const
 	{
+		// Historically we have debug_asserted here. But if we fail the debug assert
+		// the next line is guaranteed to segfault!
 		debug_assert( connections_to_residues_.find( other_resid ) != connections_to_residues_.end() );
+		//if ( connections_to_residues_.find( other_resid ) != connections_to_residues_.end() ) {
+		// throw CREATE_EXCEPTION(utility::excn::Exception, "crap" );
+		//}
 		return connections_to_residues_.find( other_resid )->second;
 	}
 

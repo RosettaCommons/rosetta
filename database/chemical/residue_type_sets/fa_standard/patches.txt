@@ -5,6 +5,11 @@ patches/NtermProteinFull.txt
 patches/protein_cutpoint_upper.txt
 patches/peptoid_cutpoint_upper.txt #Note that there is no peptoid_cutpoint_lower.txt because the protein patch works for peptoids.
 patches/protein_cutpoint_lower.txt
+
+
+patches/nucleic/dna/5prime_thioethanolamine_phosphate.txt
+
+
 patches/disulfide.txt
 patches/SidechainConjugation.txt    # SIDECHAIN_CONJUGATION
 
@@ -17,6 +22,10 @@ patches/nucleic/dna/UpperDNA.txt
 patches/nucleic/dna/dna_cutpoint_upper.txt
 patches/nucleic/dna/dna_cutpoint_lower.txt
 patches/nucleic/dna/VirtualDNAPhosphate.txt
+patches/nucleic/dna/5prime_phosphate.txt # TERMINAL_PHOSPHATE
+patches/nucleic/dna/three_prime_azide.txt
+patches/nucleic/dna/3prime_deoxy.txt
+patches/nucleic/dna/5prime_methylphosphate.txt # non-terminal
 
 ## RNA standard
 patches/nucleic/rna/L_RNA.txt

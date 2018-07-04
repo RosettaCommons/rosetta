@@ -389,7 +389,7 @@ StepWisePoseAligner::get_calc_rms_atom_id_map( std::map< id::AtomID, id::AtomID 
 		}
 
 	}
-	//  output_atom_id_map( calc_rms_atom_id_map, pose, *reference_pose_local_ );
+	// output_atom_id_map( calc_rms_atom_id_map, pose, *reference_pose_local_ );
 }
 
 
@@ -511,9 +511,7 @@ StepWisePoseAligner::get_rmsd_res_and_superimpose_res_in_pose( pose::Pose const 
 			if ( root_partition_res_.size() > 0 && !root_partition_res_.has_value( n ) ) continue;
 			if ( !pose.residue_type( n ).is_polymer() ) continue;
 			Size const d = domain_map[ n ];
-			//TR << "d         now " << d << std::endl;
 			if ( d > 0 && ( d_primary == 0 || d < d_primary ) ) d_primary = d;
-			//TR << "d_primary now " << d_primary << std::endl;
 		}
 	}
 
@@ -615,7 +613,6 @@ StepWisePoseAligner::create_coordinate_constraints( pose::Pose & pose,
 //     just backbone-atoms for proteins.
 bool
 StepWisePoseAligner::do_checks( std::string const & atom_name, Size const n, pose::Pose const & pose ) const {
-
 	if ( ! pose.residue_type( n ).has( atom_name ) ) return false;
 	Size const idx = pose.residue_type( n ).atom_index( atom_name );
 	if ( pose.residue_type( n ).is_virtual( idx ) ) return false;
@@ -663,7 +660,6 @@ StepWisePoseAligner::add_to_atom_id_map_after_checks( std::map< id::AtomID, id::
 	if ( pose1.residue_type( n1 ).aa() != pose2.residue_type( n2 ).aa() &&
 			!core::chemical::rna::rna_dna_match( pose1.residue_type( n1 ).aa(), pose2.residue_type( n2 ).aa() ) &&
 			pose1.residue_type( n1 ).na_analogue() != pose2.residue_type( n2 ).na_analogue() ) {
-		TR << "pose1 at n1 " << n1 << " has aa: " << pose1.residue_type( n1 ).aa() << "; vs pose2 at n2 " << n2 << " has aa: " <<  pose2.residue_type( n2 ).aa()  << std::endl;
 		runtime_assert( pose1.residue_type( n1 ).aa() == pose2.residue_type( n2 ).aa() );
 	}
 

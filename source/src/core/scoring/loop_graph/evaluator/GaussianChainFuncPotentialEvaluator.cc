@@ -63,8 +63,8 @@ GaussianChainFuncPotentialEvaluator::initialize( LoopCycle const & loop_cycle,
 		if ( get_residue( loop.takeoff_pos(), pose ).is_NA() ) {
 			runtime_assert( get_residue( loop.landing_pos(), pose ).is_NA() );
 			total_gaussian_variance += Real( loop_length ) * rna_gaussian_variance_per_residue_;
-		} else if ( get_residue( loop.takeoff_pos(), pose ).is_protein() ) {
-			runtime_assert( get_residue( loop.landing_pos(), pose ).is_protein() );
+		} else if ( get_residue( loop.takeoff_pos(), pose ).is_protein() || get_residue( loop.takeoff_pos(), pose ).is_peptoid() ) {
+			runtime_assert( get_residue( loop.landing_pos(), pose ).is_protein() || get_residue( loop.landing_pos(), pose ).is_peptoid() );
 			total_gaussian_variance += Real( loop_length ) * protein_gaussian_variance_per_residue_;
 		} else {
 			utility_exit_with_message( "loop_close GaussianChainFuncPotentialEvaluator cannot currently assign energies to loop-cycles with non-protein or non-nucleic acid parts" );

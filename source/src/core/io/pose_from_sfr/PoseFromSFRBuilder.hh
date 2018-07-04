@@ -116,7 +116,8 @@ private:
 	bool
 	is_residue_type_recognized(
 		Size const pdb_residue_index,
-		std::string const & rosetta_residue_name3
+		std::string const & rosetta_residue_name3,
+		bool & is_chemical_component_derived
 	);
 
 	chemical::ResidueTypeCOP

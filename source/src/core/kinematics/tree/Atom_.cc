@@ -459,12 +459,20 @@ Atom_::downstream( AtomCOP atom1 ) const
 Stub
 Atom_::get_stub() const
 {
-	return Stub(
-		position(),
-		stub_atom1()->position(),
-		stub_atom2()->position(),
-		stub_atom3()->position()
-	);
+	try {
+		return Stub(
+			position(),
+			stub_atom1()->position(),
+			stub_atom2()->position(),
+			stub_atom3()->position()
+		);
+	} catch ( utility::excn::Exception const & ) {
+		TR.Error << "Issue getting stub for atom " << atom_id() << " -- possibly due to degenerate/colinear atoms:" << std::endl;
+		TR.Error << "\t " << input_stub_atom1_id() << " -- " << input_stub_atom1()->position() << std::endl;
+		TR.Error << "\t " << input_stub_atom2_id() << " -- " << input_stub_atom2()->position() << std::endl;
+		TR.Error << "\t " << input_stub_atom3_id() << " -- " << input_stub_atom3()->position() << std::endl;
+		throw; // Make sure to re-throw error. This is not recoverable.
+	}
 }
 
 

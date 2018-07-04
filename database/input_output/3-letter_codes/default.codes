@@ -1,0 +1,21 @@
+# A list of custom 3-letter codes for residues and their Rosetta equivalents.
+# This file is for use as a template.
+
+# To add custom 3-letter codes, either modify this list and use the flag
+# -alternate_3_letter_codes custom.codes
+# or create your own *.codes file in database/input_output/3-letter_codes/
+
+# CODES ARE CASE-SENSITIVE!
+
+# Code  Rosetta Code
+  TP3   WAT
+  DCY   DCS
+  MED   DME
+  DSN   DSE
+  DGL   DGU
+  NVA   NVL
+# This one is a bit of a bummer. SMP and RMP have the same PDB atom names.
+# This means that we will only ever successfully match one even if we create
+# another residue type. Maybe we could detect it (correct per-stereocenter 
+# assignment feels a long way off though).
+  SMP   RMP

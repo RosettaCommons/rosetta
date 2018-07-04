@@ -677,6 +677,7 @@ void
 Residue::orient_onto_residue( Residue const & src )
 {
 	using kinematics::Stub;
+	using ObjexxFCL::stripped_whitespace;
 
 	Size center, nbr1, nbr2;
 	select_orient_atoms( center, nbr1, nbr2 );
@@ -704,12 +705,12 @@ Residue::orient_onto_residue( Residue const & src )
 	debug_assert( center && nbr1 && nbr2 );
 	orient_onto_residue(
 		src,
-		center,
-		nbr1,
-		nbr2,
-		src.atom_index( rsd_type_.atom_name( center )),
-		src.atom_index( rsd_type_.atom_name( nbr1 )),
-		src.atom_index( rsd_type_.atom_name( nbr2 )));
+		(center),
+		(nbr1),
+		(nbr2),
+		src.atom_index( stripped_whitespace(rsd_type_.atom_name( center) )),
+		src.atom_index( stripped_whitespace(rsd_type_.atom_name( nbr1) )),
+		src.atom_index( stripped_whitespace(rsd_type_.atom_name( nbr2) )));
 
 } // orient_onto_residue( Residue const & src)
 
@@ -721,6 +722,7 @@ Residue::orient_onto_residue(
 )
 {
 	using kinematics::Stub;
+	using ObjexxFCL::stripped_whitespace;
 
 	// Verify that three atom pairs have been provided
 	if ( atom_pairs.size() != 3 ) {
@@ -729,12 +731,12 @@ Residue::orient_onto_residue(
 
 	orient_onto_residue(
 		src,
-		atom_index( atom_pairs[1].second ),
-		atom_index( atom_pairs[2].second ),
-		atom_index( atom_pairs[3].second ),
-		src.atom_index( atom_pairs[1].first ),
-		src.atom_index( atom_pairs[2].first ),
-		src.atom_index( atom_pairs[3].first ));
+		atom_index( stripped_whitespace(atom_pairs[1].second) ),
+		atom_index( stripped_whitespace(atom_pairs[2].second) ),
+		atom_index( stripped_whitespace(atom_pairs[3].second) ),
+		src.atom_index( stripped_whitespace(atom_pairs[1].first) ),
+		src.atom_index( stripped_whitespace(atom_pairs[2].first) ),
+		src.atom_index( stripped_whitespace(atom_pairs[3].first) ));
 } //orient_onto_residue( Residue src, atom_pairs )
 
 void Residue::orient_onto_residue(

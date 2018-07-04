@@ -1293,7 +1293,7 @@ get_rna_base_coordinate_system( conformation::Residue const & rsd, Vector const 
 		// Hoogstein edge (e.g., major groove in a double helix).
 		std::string H_atom;
 		if ( res_type == na_rad || res_type == na_rgu || res_type == na_lra || res_type == na_lrg ) H_atom = "N7" ;
-		if ( !rsd.has( H_atom ) && ( rsd.name3() == "7DA" || rsd.name3() == "FA7" ) ) H_atom = "C7";
+		if ( !rsd.has( H_atom ) && ( rsd.name3() == "7DA" || rsd.name3() == "FA7" || rsd.name3() == "  Q" ) ) H_atom = "C7";
 		if ( res_type == na_rcy || res_type == na_ura || res_type == na_lrc || res_type == na_lur ) H_atom = "C5";
 		if ( res_type == na_ura && rsd.name3() == "PSU" ) H_atom = "N1"; // pseudoU is flipped
 		//std::cout << "WC_atom " << WC_atom << std::endl;

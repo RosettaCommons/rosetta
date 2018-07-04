@@ -670,8 +670,12 @@ VirtualSugarSampler::initialize_pose_variants_for_chain_closure( utility::vector
 	for ( auto & poseop : pose_list ) {
 		// in legacy mode this occurs above in 'setup'. but it really should be here.
 		if ( !legacy_mode_ ) setup_chain_break_variants( *poseop, sugar_modeling_.five_prime_chain_break );
-		pose::add_variant_type_to_pose_residue(  *poseop,
+		
+		// Only virtualize phosphate if the whole residue isn't already virtual
+		if ( !poseop->residue_type( sugar_modeling_.five_prime_chain_break + 1 ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ) {
+			core::pose::add_variant_type_to_pose_residue(  *poseop,
 			core::chemical::VIRTUAL_PHOSPHATE, sugar_modeling_.five_prime_chain_break + 1 );
+		}
 		core::pose::rna::remove_virtual_rna_residue_variant_type( *poseop, sugar_modeling_.bulge_res );
 
 		// this used to happen inside StepWiseModeler (and not get reverted) -- special for bulge cases, so moved out here.

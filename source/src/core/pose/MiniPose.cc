@@ -73,7 +73,11 @@ MiniPose::MiniPose( core::pose::Pose const & pose )
 	for ( Size i = 1; i <= pose.size(); i++ ) {
 		strstr << pose.sequence()[ i - 1 ];
 		if ( pose.aa( i ) == core::chemical::aa_unk || pose.aa( i ) == core::chemical::aa_unp ) {
-			strstr << '[' << pose.residue_type( i ).base_name() << ']';
+			if ( pose.residue_type( i ).name().find( "pdb_" ) != std::string::npos ) {
+				strstr << "[pdb_" << pose.residue_type( i ).base_name() << ']';
+			} else {
+				strstr << '[' << pose.residue_type( i ).base_name() << ']';
+			}
 		}
 	}
 	sequence_ = strstr.str();

@@ -30,11 +30,47 @@ VAL
 TRP
 TYR
 
+# Particular D amino acids. For now let's say all of them.
+DAL
+DCY
+DAS
+DGL
+DPH
+DHI
+DIL
+DLY
+DLE
+MED
+DAN
+DPR
+DGN
+DAR
+DSN
+DTH
+DVA
+DTR
+DTY
+
 # DNA
 DA
 DC
 DG
 DT
+DI
+# We have a patch that does a better job at this.
+AS
+SC
+DGP
+CMR
+RMP
+UFP
+2DT
+SMP
+# dideoxy
+DOC
+2DA
+2DT
+DDG
 
 # RNA
 A

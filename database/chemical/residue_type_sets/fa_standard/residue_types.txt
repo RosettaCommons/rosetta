@@ -41,10 +41,13 @@ residue_types/nucleic/dna/GUA.params
 #residue_types/nucleic/dna/GDP.params
 #residue_types/nucleic/dna/GTP.params
 
+residue_types/nucleic/dna_nonnatural/MCY.params
+
 residue_types/nucleic/tna/TRAD_n.params
 residue_types/nucleic/tna/TRCY_n.params
 residue_types/nucleic/tna/TRGU_n.params
 residue_types/nucleic/tna/TURA_n.params
+residue_types/nucleic/tna/TFT.params
 
 residue_types/nucleic/rna_phenix/RAD_n.params
 residue_types/nucleic/rna_phenix/RCY_n.params
@@ -131,6 +134,9 @@ residue_types/nucleic/rna_nonnatural/6MG.params
 residue_types/nucleic/rna_nonnatural/5FC.params
 residue_types/nucleic/rna_nonnatural/8OG.params
 residue_types/nucleic/rna_nonnatural/OMI.params
+
+# 2' methyl 5 formyl cytosine
+residue_types/nucleic/rna_nonnatural/CFM.params
 
 # Task 1. Check all our methylated params to ensure that the result
 # isn't positively charged when it should actually be hydrogenated
@@ -361,6 +367,7 @@ residue_types/nucleic/rna_nonnatural/52U.params
 residue_types/nucleic/rna_nonnatural/I6A.params
 residue_types/nucleic/rna_nonnatural/M1I.params
 residue_types/nucleic/rna_nonnatural/MPU.params
+# now named AET
 residue_types/nucleic/rna_nonnatural/MTA.params
 residue_types/nucleic/rna_nonnatural/T6A.params
 residue_types/nucleic/rna_nonnatural/S2C.params

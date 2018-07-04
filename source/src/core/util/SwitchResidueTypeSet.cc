@@ -17,6 +17,7 @@
 // Project Headers
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/PoseResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/util.hh>
@@ -127,22 +128,34 @@ switch_to_residue_type_set(
 
 		core::chemical::ResidueTypeCOP new_rsd_type( nullptr );
 
-		if ( ( rsd.aa() == aa_unk ) || ( rsd.name().substr(0,5) == "HIS_D" ) ) {
-			// ligand or metal ions are all defined as "UNK" AA, so check a rsdtype with same name
-			// for HIS_D tautomer, we want to keep its tautomer state
+		if ( rsd.aa() == aa_vrt ) {
 			if ( type_set.has_name( rsd.name() ) ) {
 				new_rsd_type = type_set.name_mapOP( rsd.name() );
+			} else {
+				new_rsd_type = ResidueTypeFinder( type_set ).aa( aa_vrt ).get_representative_type();
 			}
-		} else  {
-			// for a normal AA/DNA/RNA residue, now look for a rsdtype with same variants
-			new_rsd_type = type_set.get_representative_type_name3( rsd.name().substr(0,3), rsd.type().variant_types() );
-			if ( !new_rsd_type && allow_sloppy_match ) {
-				TR.Warning << "Did not find perfect match for residue: "  << rsd.name()
-					<< "at position " << i << ". Trying to find acceptable match. " << std::endl;
-				core::chemical::ResidueTypeCOP new_rsd_type2( type_set.get_representative_type_name3( rsd.name().substr(0,3) ) );
-				if ( new_rsd_type2 && rsd.type().name3()  == new_rsd_type2->name3() ) { // Would the name3's ever not match?
-					TR.Warning << "Found an acceptable match: " << rsd.type().name() << " --> " << new_rsd_type2->name() << std::endl;
-					new_rsd_type = new_rsd_type2;
+		}
+
+		if ( ! new_rsd_type ) {
+			if ( ( rsd.aa() == aa_unk ) || ( rsd.name().substr(0,5) == "HIS_D" ) ) {
+				// ligand or metal ions are all defined as "UNK" AA, so check a rsdtype with same name
+				// for HIS_D tautomer, we want to keep its tautomer state
+				if ( type_set.has_name( rsd.name() ) ) {
+					new_rsd_type = type_set.name_mapOP( rsd.name() );
+				}
+			} else  {
+				// for a normal AA/DNA/RNA residue, now look for a rsdtype with same variants
+				// For CYZ "first three characters of name" and "name3" are different...
+				//new_rsd_type = type_set.get_representative_type_name3( rsd.name().substr(0,3), rsd.type().variant_types() );
+				new_rsd_type = type_set.get_representative_type_name3( rsd.name3(), rsd.type().variant_types() );
+				if ( !new_rsd_type && allow_sloppy_match ) {
+					TR.Warning << "Did not find perfect match for residue: "  << rsd.name()
+						<< "at position " << i << ". Trying to find acceptable match. " << std::endl;
+					core::chemical::ResidueTypeCOP new_rsd_type2( type_set.get_representative_type_name3( rsd.name().substr(0,3) ) );
+					if ( new_rsd_type2 && rsd.type().name3()  == new_rsd_type2->name3() ) { // Would the name3's ever not match?
+						TR.Warning << "Found an acceptable match: " << rsd.type().name() << " --> " << new_rsd_type2->name() << std::endl;
+						new_rsd_type = new_rsd_type2;
+					}
 				}
 			}
 		}

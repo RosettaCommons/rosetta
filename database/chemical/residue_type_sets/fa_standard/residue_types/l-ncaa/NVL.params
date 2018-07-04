@@ -1,4 +1,5 @@
 #Norvaline prepared by P. Douglas Renfrew (renfrew@unc.edu)
+#AMW: this is NVA in the PDB.
 NAME NVL
 IO_STRING NVL X
 TYPE POLYMER

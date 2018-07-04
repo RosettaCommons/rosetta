@@ -12,7 +12,7 @@ U	u
 6	t6A	T6A	# N6-threonylcarbamoyladenosine
 E	m6t6A	MTA	# N6-methyl-N6-threonylcarbamoyladenosine
 [	ms2t6A	M26	# 2-methylthio-N6-threonylcarbamoyladenosine
-:	Am	OMA	# Remember to change this when we merge everyday847/additional_rna_params, changing OMA
+:	Am	A2M	# 2'-O-methyl adenosine
 I	I	INO	# note that this will be, unlike all else, I[INO]. But presumably the annotated seq parser will be ok with that because we no longer are special casing on X
 O	m1I	M1I	#1-methylinosine
 ^	Ar(p)	RIA	# ^2'-O-ribosyladenosine (phosphat)
@@ -37,11 +37,11 @@ R	m22G	M2G	# N2,N2-dimethylguanosine
 |	m22Gm	M3G	# N2,N2,2'O trimethylG
 7	m7G	7MG	# 7-methyl G
 (	fa7d7G	FA7	# archaeosine
-Q	Q	  Q	# queuosine
+Q	Q	QUO	# queuosine
 #// For these, we'll have to be able to add new patches or residues
 #//8	manQ	xxxmnQ # mannosylQ
 #//9	galQ	xxxglQ # galactosyl-Q
-Y	yW	 yW	# wybutosine
+Y	yW	YYG	# wybutosine TEMP -- YYG
 W	o2yW	O2W	# peroxywybutosine
 
 #//	N	unknown mod U

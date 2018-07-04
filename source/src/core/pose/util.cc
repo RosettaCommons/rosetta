@@ -696,10 +696,10 @@ named_atom_id_to_atom_id(
 			if ( rt.has( named_atom_id.atom() ) ) {
 				return AtomID( rt.atom_index( named_atom_id.atom() ), named_atom_id.rsd() );
 			} else {
-				// tr.Error << "can't find atom " << named_atom_id.atom() << " in residue "
-				//   << rt.name() << ", residue has " << rt.nheavyatoms() << " heavy atoms." << std::endl;
-				//  tr.Error << "atom names are: " << std::endl;
-				//rt.show_all_atom_names( tr.Error );
+				TR.Error << "can't find atom " << named_atom_id.atom() << " in residue "
+					<< rt.name() << ", residue has " << rt.nheavyatoms() << " heavy atoms." << std::endl;
+				TR.Error << "atom names are: " << std::endl;
+				rt.show_all_atom_names( TR.Error );
 				if ( raise_exception ) throw CREATE_EXCEPTION(id::EXCN_AtomNotFound, named_atom_id );
 				return id::GLOBAL_BOGUS_ATOM_ID;
 			}

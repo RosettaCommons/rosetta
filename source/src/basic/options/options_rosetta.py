@@ -276,7 +276,8 @@ Options = Option_Group( '',
 				"provided.  "
 				"Duplicate codes in successive files will overwrite previous "
 				"ones.",
-			short="Specify (a) *.codes file(s) of alternate 3-letter codes."),
+			short="Specify (a) *.codes file(s) of alternate 3-letter codes.",
+            default='utility::vector1<std::string>(1,"default.codes")'),
         Option("maintain_links", "Boolean",
                 desc="Maintains link records in the PDB when using auto_detect_glycans",
                 legal=["true","false"], default="false"),

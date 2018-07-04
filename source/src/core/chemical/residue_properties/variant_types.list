@@ -183,9 +183,13 @@ BULGE   # not in use, may deprecated along with old swa_rna_main in 2015
 VIRTUAL_O2PRIME_HYDROGEN # important for stepwise RNA code
 THREE_PRIME_END_OH         # alternative terminal variant in real RNAs, keep this.
 THREE_PRIME_PHOSPHATE      # alternative terminal variant in real RNAs, keep this.
+THREE_PRIME_AZIDE
+THREE_PRIME_DEOXY
 FIVE_PRIME_END_OH          # alternative terminal variant in real RNAs, keep this.
+FIVE_PRIME_THIOETHANOLAMINE_PHOSPHATE
 FIVE_PRIME_END_PHOSPHATE   # alternative terminal variant in real RNAs, keep this.
 FIVE_PRIME_PHOSPHATE       # alternative terminal variant in real RNAs, keep this.
+FIVE_PRIME_RME_PHOSPHATE   # alternative chemically modified variant (DNA 'CMR')
 FIVEPRIME_CAP              # alternative terminal variant in real RNAs, keep this.
 THREE_PRIME_TWO_PRIME_CYCLIC_PHOSPHATE
 DEOXY_O2PRIME # Make RNA into DNA

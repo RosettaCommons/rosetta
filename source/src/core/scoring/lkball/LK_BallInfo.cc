@@ -211,14 +211,27 @@ build_optimal_water_Os_on_acceptor(
 
 		// special case: hydration of the DNA phosphate group
 		b1_xyz = acc_rsd.xyz( "P" );
-		b2_xyz = ( ( acc_atm_name == " OP2" ) ? acc_rsd.xyz( "OP1" ) : acc_rsd.xyz( "OP2" ) );
-		kinematics::Stub stub( a_xyz, b1_xyz, b2_xyz );
+		// One DNA variant (methylated phosphate) lacks OP2.
+		if ( acc_rsd.has( "OP1") && acc_atm_name == " OP2" ) {
+			b2_xyz = ( ( acc_atm_name == " OP2" ) ? acc_rsd.xyz( "OP1" ) : acc_rsd.xyz( "OP2" ) );
+			kinematics::Stub stub( a_xyz, b1_xyz, b2_xyz );
 
-		// these numbers are taken from "Hydration of the Phosphate Group in Double-Helical DNA",
-		// Schneider, Patel, and Berman, Biophysical Journal Vol. 75 2422-2434
-		waters.push_back( stub.spherical( radians( 45.0 ), radians( 180.0 - 125.0 ), distance ) );
-		waters.push_back( stub.spherical( radians( 160.0 ), radians( 180.0 - 125.0 ), distance ) );
-		waters.push_back( stub.spherical( radians( 280.0 ), radians( 180.0 - 125.0 ), distance ) );
+			// these numbers are taken from "Hydration of the Phosphate Group in Double-Helical DNA",
+			// Schneider, Patel, and Berman, Biophysical Journal Vol. 75 2422-2434
+			waters.push_back( stub.spherical( radians( 45.0 ), radians( 180.0 - 125.0 ), distance ) );
+			waters.push_back( stub.spherical( radians( 160.0 ), radians( 180.0 - 125.0 ), distance ) );
+			waters.push_back( stub.spherical( radians( 280.0 ), radians( 180.0 - 125.0 ), distance ) );
+		} else if ( acc_rsd.has( "OP2") && acc_atm_name == " OP1" ) {
+			b2_xyz = ( ( acc_atm_name == " OP2" ) ? acc_rsd.xyz( "OP1" ) : acc_rsd.xyz( "OP2" ) );
+			kinematics::Stub stub( a_xyz, b1_xyz, b2_xyz );
+
+			// these numbers are taken from "Hydration of the Phosphate Group in Double-Helical DNA",
+			// Schneider, Patel, and Berman, Biophysical Journal Vol. 75 2422-2434
+			waters.push_back( stub.spherical( radians( 45.0 ), radians( 180.0 - 125.0 ), distance ) );
+			waters.push_back( stub.spherical( radians( 160.0 ), radians( 180.0 - 125.0 ), distance ) );
+			waters.push_back( stub.spherical( radians( 280.0 ), radians( 180.0 - 125.0 ), distance ) );
+		}
+		
 
 	} else {
 

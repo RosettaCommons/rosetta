@@ -55,7 +55,7 @@ get_loop_atom( Size const res,
 	} else if ( rsd.is_NA() ) {
 		atom_name = takeoff ? " O3'" : " C5'";
 	} else {
-		runtime_assert( rsd.is_protein() );
+		runtime_assert( rsd.is_protein() || rsd.is_peptoid() );
 		atom_name = takeoff ? " C  " : " N  ";
 	}
 	get_loop_atom( res, pose, atom_name, atom_id, xyz );

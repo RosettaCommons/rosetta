@@ -73,6 +73,22 @@ END_CASE
 
 BEGIN_CASE
 BEGIN_SELECTOR
+NAME3 5FU
+END_SELECTOR
+SET_IO_STRING UFP X
+SET_ATOM_TYPE HO2' VIRT
+SET_ATOM_TYPE O2' VIRT
+ADD_ATOM H2'' Hapo HN8  0.09 # from ADE.params
+ADD_BOND  C2' H2''
+# hack: H2' is set from H2'' in ADE.params -- 
+# now set H2'' from H2', reversing phi.
+SET_ICOOR    H2''  -120.077461   68.081963    1.100333   C2'   C1'  H2'
+
+END_CASE
+
+
+BEGIN_CASE
+BEGIN_SELECTOR
 NAME3 5MU
 END_SELECTOR
 SET_IO_STRING  DT t
@@ -92,9 +108,89 @@ END_CASE
 
 BEGIN_CASE
 BEGIN_SELECTOR
+#NAME3   I
+BASENAME INO
+END_SELECTOR
+SET_IO_STRING  DI X
+SET_ATOM_TYPE HO2' VIRT
+SET_ATOM_TYPE O2' VIRT
+ADD_ATOM H2'' Hapo HN8  0.09 # from ADE.params
+ADD_BOND  C2' H2''
+# hack: H2' is set from H2'' in ADE.params -- 
+# now set H2'' from H2', reversing phi.
+SET_ICOOR    H2''  -120.077461   68.081963    1.100333   C2'   C1'  H2'
+
+END_CASE
+
+
+BEGIN_CASE
+BEGIN_SELECTOR
+NAME3 5MC
+END_SELECTOR
+SET_IO_STRING 5CM c
+SET_ATOM_TYPE HO2' VIRT
+SET_ATOM_TYPE O2' VIRT
+ADD_ATOM H2'' Hapo HN8  0.09 # from ADE.params
+ADD_BOND  C2' H2''
+# hack: H2' is set from H2'' in ADE.params -- 
+# now set H2'' from H2', reversing phi.
+SET_ICOOR    H2''  -120.077461   68.081963    1.100333   C2'   C1'  H2'
+
+RENAME_ATOM  CM5  C5A 
+
+END_CASE
+
+
+BEGIN_CASE
+BEGIN_SELECTOR
 AA URA
 END_SELECTOR
 SET_IO_STRING  DU u
+SET_ATOM_TYPE HO2' VIRT
+SET_ATOM_TYPE O2' VIRT
+ADD_ATOM H2'' Hapo HN8  0.09 # from ADE.params
+ADD_BOND  C2' H2''
+# hack: H2' is set from H2'' in ADE.params -- 
+# now set H2'' from H2', reversing phi.
+SET_ICOOR    H2''  -120.077461   68.081963    1.100333   C2'   C1'  H2'
+END_CASE
+
+# Special case for SSA => AS (DNA with this same situation)
+BEGIN_CASE
+BEGIN_SELECTOR
+NAME3 SSA
+END_SELECTOR
+SET_IO_STRING  AS Z
+SET_ATOM_TYPE HO2' VIRT
+SET_ATOM_TYPE O2' VIRT
+ADD_ATOM H2'' Hapo HN8  0.09 # from ADE.params
+ADD_BOND  C2' H2''
+# hack: H2' is set from H2'' in ADE.params -- 
+# now set H2'' from H2', reversing phi.
+SET_ICOOR    H2''  -120.077461   68.081963    1.100333   C2'   C1'  H2'
+END_CASE
+
+# Special case for SSC => SC (DNA with this same situation)
+BEGIN_CASE
+BEGIN_SELECTOR
+NAME3 SSC
+END_SELECTOR
+SET_IO_STRING  SC Z
+SET_ATOM_TYPE HO2' VIRT
+SET_ATOM_TYPE O2' VIRT
+ADD_ATOM H2'' Hapo HN8  0.09 # from ADE.params
+ADD_BOND  C2' H2''
+# hack: H2' is set from H2'' in ADE.params -- 
+# now set H2'' from H2', reversing phi.
+SET_ICOOR    H2''  -120.077461   68.081963    1.100333   C2'   C1'  H2'
+END_CASE
+
+# Special case for SSG => SG (DNA with this same situation)
+BEGIN_CASE
+BEGIN_SELECTOR
+NAME3 SSG
+END_SELECTOR
+SET_IO_STRING  SG Z
 SET_ATOM_TYPE HO2' VIRT
 SET_ATOM_TYPE O2' VIRT
 ADD_ATOM H2'' Hapo HN8  0.09 # from ADE.params

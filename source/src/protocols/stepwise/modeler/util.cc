@@ -1426,8 +1426,10 @@ split_pose( pose::Pose & pose, Size const moving_res, Size const reference_res )
 		Size const moving_suite = ( moving_res < reference_res ) ? moving_res : reference_res;
 		runtime_assert( !pose.fold_tree().is_cutpoint( moving_suite ) );
 		jump_at_moving_suite = make_cut_at_moving_suite( pose, moving_suite );
-		if ( pose.residue_type( moving_suite + 1 ).is_RNA() ) add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_PHOSPHATE, moving_suite+1 );
-	}
+		if ( pose.residue_type( moving_suite + 1 ).is_RNA() && !pose.residue_type( moving_suite+1 ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ) {
+			add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_PHOSPHATE, moving_suite+1 );
+		}
+	} 
 
 	kinematics::Jump j = pose.jump( jump_at_moving_suite );
 	j.set_translation( Vector( 1.0e4, 0.0, 0.0 ) );

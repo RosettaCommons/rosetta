@@ -207,7 +207,7 @@ void MembraneTopologyClaimer::addVirtualResAsRootMembrane( core::pose::Pose & po
 
 	// create a virtual residue, of the appropriate type
 	core::chemical::ResidueTypeSetCOP residue_set( pose.residue_type_set_for_pose() );
-	core::chemical::ResidueTypeCOP rsd_type( residue_set->get_representative_type_name3("VRT") );
+	core::chemical::ResidueTypeCOP rsd_type( residue_set->name_mapOP("VRT") ); // not name3!
 	core::conformation::ResidueOP new_virt_res( core::conformation::ResidueFactory::create_residue( *rsd_type ) );
 
 	// move to membrane_center if it's defined

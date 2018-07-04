@@ -106,6 +106,18 @@ RamaPrePro::eval_rpp_rama_score(
 
 	core::chemical::ResidueTypeCOP ltype( is_d ? conf.residue_type_set_for_conf( res1->mode() )->get_mirrored_type( res1 )  : res1 );
 
+	if ( !ltype ) {
+		// AMW: this happened because the CCD has created the dtype. There may not be an ltype in the RTS!
+		if ( return_derivs ) {
+			gradient.resize( res1->mainchain_atoms().size() - 1 );
+			gradient[1] = 0.0;
+			gradient[2] = 0.0;
+		} else {
+			score_rama = 0.0;
+		}
+		return;
+	}
+
 	ScoringManager* manager( ScoringManager::get_instance() );
 
 	core::chemical::mainchain_potential::MainchainScoreTableCOP cur_table( manager->get_rama_prepro_mainchain_torsion_potential( ltype, true, res2 && is_N_substituted( res2 ) ) );

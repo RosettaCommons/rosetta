@@ -41,6 +41,15 @@ DnaDesignDef::DnaDesignDef( std::string const & strdef )
 	inum_stream >> pdbpos;
 	if ( part == parts.end() ) return;
 	name3 = *part;
+	// We have to catch this here rather than doing a aa_from_name call later in the taskop.
+	// Why? Because we sometimes feed the taskop true name3s, and aa_from_name can't handle
+	// that for obvious reasons. This is not fast, but it's outside of a tight loop and
+	// is in a function already doing string operations. Perhaps faster than doing the
+	// equivalent in the task.
+	if ( name3 == "ADE" ) { name3 = " DA"; }
+	else if ( name3 == "CYT" ) { name3 = " DC"; }
+	else if ( name3 == "GUA" ) { name3 = " DG"; }
+	else if ( name3 == "THY" ) { name3 = " DT"; }
 }
 
 std::ostream & operator << ( std::ostream & os, DnaDesignDef const & def )

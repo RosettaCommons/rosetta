@@ -54,19 +54,21 @@ NomenclatureManager::rosetta_names_from_pdb_code( std::string const & pdb_code )
 	using namespace std;
 	using namespace basic::options;
 
-	if ( option[ OptionKeys::in::alternate_3_letter_codes ].active() ) {  // Are alternate codes allowed?
-		AltCodeMap const & alt_codes( get_instance()->get_alternate_3_letter_code_map() );
-		auto alt_code_tuple( alt_codes.find( pdb_code ) );
-		if ( alt_code_tuple != alt_codes.end() ) {  // Is there an alternate for this code?
-			// Get the value of this key/value pair. This function now converts to a pair from the tuple in order to maintain backward compatability. BF.
-			std::string name3 = std::get<0>(alt_code_tuple->second);
-			std::string base_name = std::get<1>(alt_code_tuple->second);
-			pair< string, string > const & rosetta_names = std::make_pair( name3, base_name );
-			TR.Debug << "Accepting alternate code " << pdb_code << " for " << rosetta_names.first << '.' << endl;
-			return rosetta_names;
-		}
+	// We used to check for option use here -- but there is now a default use.
+	// This is because we need -- for ligand_water_docking -- to recognize
+	// both TP3 and WAT as waters.
+	AltCodeMap const & alt_codes( get_instance()->get_alternate_3_letter_code_map() );
+	auto alt_code_tuple( alt_codes.find( pdb_code ) );
+	if ( alt_code_tuple == alt_codes.end() ) {  // Is there an alternate for this code?
+		return std::make_pair( pdb_code, "" );
 	}
-	return std::make_pair( pdb_code, "" );
+
+	// Get the value of this key/value pair. This function now converts to a pair from the tuple in order to maintain backward compatability. BF.
+	std::string name3 = std::get<0>(alt_code_tuple->second);
+	std::string base_name = std::get<1>(alt_code_tuple->second);
+	pair< string, string > const & rosetta_names = std::make_pair( name3, base_name );
+	TR.Debug << "Accepting alternate code " << pdb_code << " for " << rosetta_names.first << '.' << endl;
+	return rosetta_names;
 }
 
 //This function returns the pdb code that corresponds to the residue name. It will fail if no match can be found. If this happens add the patches
@@ -251,14 +253,14 @@ NomenclatureManager::NomenclatureManager()
 	using namespace basic::options;
 	using namespace core;
 
-	if ( option[ OptionKeys::in::alternate_3_letter_codes ].user() ) {
-		utility::vector1< string > const & file_list( option[ OptionKeys::in::alternate_3_letter_codes ]() );
-		Size const n_files( file_list.size() );
-		for ( uint i( 1 ); i <= n_files; ++i ) {
-			string const & filename( find_alternate_codes_file( file_list[ i ] ) );
-			AltCodeMap alt_codes( read_alternative_3_letter_codes_from_database_file( filename ) );
-			alt_codes_.insert( alt_codes.begin(), alt_codes.end() );
-		}
+	// This option (-in:alternate_3_letter_codes) now has a default value.
+	// No need to check for .user()
+	utility::vector1< string > const & file_list( option[ OptionKeys::in::alternate_3_letter_codes ]() );
+	Size const n_files( file_list.size() );
+	for ( uint i( 1 ); i <= n_files; ++i ) {
+		string const & filename( find_alternate_codes_file( file_list[ i ] ) );
+		AltCodeMap alt_codes( read_alternative_3_letter_codes_from_database_file( filename ) );
+		alt_codes_.insert( alt_codes.begin(), alt_codes.end() );
 	}
 
 	utility::vector1< string > const & file_list2 = option[ OptionKeys::in::name3_property_codes ]();

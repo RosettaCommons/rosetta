@@ -247,7 +247,11 @@ PoseFromSFRBuilder::setup( StructFileRep const & sfr ) {
 			bool const link_has_sugar( NomenclatureManager::is_sugar( link.resName1 ) ||
 				NomenclatureManager::is_sugar( link.resName2 ) );
 
-			if ( link_has_metal ) {
+			if ( link.resName1 == "HOH" || link.resName2 == "HOH" ) {
+				TR.Debug << "Omitting LINK record that implies a covalent bond to a nearby ";
+				TR.Debug << "molecule of solvent. This is inappropriate even when solvent is ";
+				TR.Debug << "read in and doubly so when it isn't." << std::endl;
+			} else if ( link_has_metal ) {
 				TR.Debug << "Omitting LINK record that uses a metal. These will be processed ";
 				TR.Debug << "by -in:auto_setup_metals." << std::endl;
 			} else if ( options_.ignore_sugars() && link_has_sugar ) {
@@ -258,12 +262,17 @@ PoseFromSFRBuilder::setup( StructFileRep const & sfr ) {
 					! ResidueTypeFinder( *residue_type_set_ ).name3( link.resName2 ).get_representative_type() ) ) {
 				// One or more residues in this LINK is not recognized.  Move on!
 				TR.Debug << "Omitting LINK record that uses an unrecognized residue." << std::endl;
-			} else if ( ( link.resSeq1 == link.resSeq2 - 1 && link.name1 == " O3'" && link.name2 == " P  " )
-					||  ( link.resSeq1 == link.resSeq2 + 1 && link.name1 == " P  " && link.name2 == " O3'" ) ) {
+			} else if ( ( link.resSeq1 == link.resSeq2 - 1 
+					&& utility::strip(link.name1) == "O3'" && utility::strip(link.name2) == "P" )
+					||  ( link.resSeq1 == link.resSeq2 + 1 
+					&& utility::strip(link.name1) == "P" && utility::strip(link.name2) == "O3'" ) ) {
+				// Strip each string first to handle both PDB and CIF versions.
 				// We have a normal polymeric connection written as a LINK.
 				TR.Debug << "Omitting LINK record that represents the canonical polymeric connectivity of a NCNT." << std::endl;
-			} else if ( ( link.resSeq1 == link.resSeq2 - 1 && link.name1 == " C  " && link.name2 == " N  " )
-					||  ( link.resSeq1 == link.resSeq2 + 1 && link.name1 == " N  " && link.name2 == " C  " ) ) {
+			} else if ( ( link.resSeq1 == link.resSeq2 - 1 
+					&& utility::strip(link.name1) == "C" && utility::strip(link.name2) == "N" )
+					||  ( link.resSeq1 == link.resSeq2 + 1 
+					&& utility::strip(link.name1) == "N" && utility::strip(link.name2) == "C" ) ) {
 				// We have a normal polymeric connection written as a LINK.
 				TR.Debug << "Omitting LINK record that represents the canonical polymeric connectivity of a NCAA." << std::endl;
 			} else if ( link.resName1 == "CYS" && link.resName2 == "CYS" && utility::strip(link.name1) == "SG" && utility::strip(link.name2) == "SG" ) {
@@ -398,7 +407,7 @@ PoseFromSFRBuilder::pass_2_resolve_residue_types()
 
 		core::io::ResidueInformation const & rinfo = rinfos_[ ii ];
 		char chainID = rinfo.chainID();
-		std::string const name3 = rinfo.rosetta_resName();
+		std::string const & name3 = rinfo.rosetta_resName();
 		std::string const & resid = rinfo.resid();
 
 		utility::vector1< std::string > known_connect_atoms_on_this_residue;
@@ -426,10 +435,21 @@ PoseFromSFRBuilder::pass_2_resolve_residue_types()
 			chemical::detect_ld_chirality_from_polymer_residue( xyz, name3, is_d_aa, is_l_aa );
 		}
 
+		bool is_chemical_component_ligand = false;
+
 		// Get a list of ResidueTypes that could apply for this particular 3-letter PDB residue name.
-		if ( ! is_residue_type_recognized( ii, name3 ) ) {
+		if ( ! is_residue_type_recognized( ii, name3, is_chemical_component_ligand ) ) {
 			residue_was_recognized_[ ii ] = false;
 			continue;
+		}
+
+		if ( is_chemical_component_ligand ) {
+			// We cannot handle non-polymeric residues that are chemical component derived
+			// that nonetheless have LINKs. These will come up in a variety of circumstances.
+			// (The reason is because it confuses terminus assignment, sort of.)
+			is_lower_terminus = true;
+			is_upper_terminus = true;
+			known_connect_atoms_on_this_residue.clear();
 		}
 
 		TR.Trace << "Residue " << ii << "(PDB file numbering: " << resid << " )" << std::endl;
@@ -609,10 +629,17 @@ void PoseFromSFRBuilder::pass_4_redo_termini()
 			std::string lower_atom = residue_types_[ ii ]->atom_name( residue_types_[ ii ]->lower_connect_atom() );
 			// Check to see if we have an explicit connection to the lower atom, and only adjust if we don't
 			if ( ! ( known_links_.count( resid ) && known_links_[ resid ].count( lower_atom ) > 0 ) ) {
-				TR << "Adding undetected lower terminus type to residue " << ii << ", " << resid << std::endl;
-				residue_types_[ ii ] = residue_type_set_->get_residue_type_with_variant_added(
-					*residue_types_[ ii ], chemical::LOWER_TERMINUS_VARIANT ).get_self_ptr();
-				type_changed = true;
+				// Do not adjust if it's an upper cutpoint. That variant type would have been assigned
+				// for a good reason.
+				if ( ! residue_types_[ ii ]->has_variant_type( chemical::CUTPOINT_UPPER ) ) {
+					TR << "Adding undetected lower terminus type to residue " << ii << ", " << resid << std::endl;
+					residue_types_[ ii ] = residue_type_set_->get_residue_type_with_variant_added(
+						*residue_types_[ ii ], chemical::LOWER_TERMINUS_VARIANT ).get_self_ptr();
+					type_changed = true;
+				} else {
+					TR.Debug << "Would have added an undetected lower terminus variant but for the " << std::endl;
+					TR.Debug << "already-detected cutpoint-upper type!" << std::endl;
+				}
 			}
 		}
 		// AMW: new--don't add  an upper terminus type to protein residues following RNA
@@ -628,6 +655,10 @@ void PoseFromSFRBuilder::pass_4_redo_termini()
 				residue_types_[  ii_next ]->is_lower_terminus() ||
 				chainID != rinfos_[ ii_next ].chainID() /* ||
 				residue_types_[  ii_next ]->has_variant_type(BRANCH_LOWER_TERMINUS_VARIANT)*/ ) ) ) ) {
+
+			// AMW TODO: print the residue type pdb_SEE and see what's wrong with it:
+			// Why does it think that it can't make an upper terminus version of itself?
+			// It wants it but can't have it -- one of those is Bad.
 			std::string upper_atom = residue_types_[ ii ]->atom_name( residue_types_[ ii ]->upper_connect_atom() );
 			if ( ! ( known_links_.count( resid ) && known_links_[ resid ].count( upper_atom ) > 0 ) ) {
 				TR << "Adding undetected upper terminus type to residue " << ii << ", " << resid << std::endl;
@@ -719,6 +750,9 @@ void PoseFromSFRBuilder::build_initial_pose( pose::Pose & pose )
 		// this function for RNA. Eventually, we may implement more proteinaceous use
 		// cases, at which point you may want to move this condition into the
 		// check_and_correct function.
+		// AMW: This restriction means some odd behavior for automatically set up DNA residues
+		// with "wrong" chirality phosphates. But changing this means that we make a lot
+		// of swaps for DNA residues. We will have to see what's best, but not for now.
 		if ( ii_rsd->is_RNA() ) {
 			check_and_correct_sister_atoms( ii_rsd );
 		}
@@ -978,13 +1012,14 @@ void PoseFromSFRBuilder::refine_pose( pose::Pose & pose )
 		}
 	}
 
+	// AMW LOOK HERE: you may need this area for ligand LINKs.
 	// Add any links from the known link data (e.g. the link map)
 	// that isn't already in the pose.
 	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		core::Size rinfo_ii( pose_to_rinfo_[ ii ] );
 		std::string const & resid( rinfos_[ rinfo_ii ].resid() );
 		if ( known_links_.count( resid ) ) {
-			for ( auto const & link_pair: known_links_[resid] ) {
+			for ( auto const & link_pair : known_links_[resid] ) {
 				std::string const & my_atom( link_pair.first );
 				std::string const & partner_resid( link_pair.second.first );
 				core::Size partner_rinfo_ii( resid_to_index_[ partner_resid ] );
@@ -1339,7 +1374,8 @@ PoseFromSFRBuilder::is_residue_type_recognized(
 bool
 PoseFromSFRBuilder::is_residue_type_recognized(
 	Size const pdb_residue_index,
-	std::string const & rosetta_residue_name3
+	std::string const & rosetta_residue_name3,
+	bool & is_chemical_component_ligand
 ){
 	using namespace core::chemical;
 
@@ -1347,6 +1383,9 @@ PoseFromSFRBuilder::is_residue_type_recognized(
 	ResidueTypeCOPs rsd_type_list;
 	ResidueTypeCOP  rsd_type = ResidueTypeFinder( *residue_type_set_ ).name3( rosetta_residue_name3 ).get_representative_type();
 	if ( rsd_type != nullptr ) rsd_type_list.push_back( rsd_type );
+	if ( rsd_type && rsd_type->name().substr(0,4) == "pdb_"  && !rsd_type->is_polymer() ) {
+		is_chemical_component_ligand = true;
+	}
 	return is_residue_type_recognized( pdb_residue_index, rosetta_residue_name3, rsd_type_list );
 }
 
@@ -1381,11 +1420,8 @@ PoseFromSFRBuilder::get_rsd_type(
 	using utility::vector1;
 
 	vector1< ResidueProperty > preferred_properties, discouraged_properties;
-	vector1< VariantType > variants, disallow_variants;  // Are variants different from properties?
-	//VKM, 12 Jun 2017: Yes, they are, subtly.  Properties apply to a base type and MOST variants (e.g.
-	//methionine is generally hydrophobic; lysine is generally charged.  VariantTypes indicate some change
-	//on a base type (e.g. lysine + n-terminal modification).  It's a human differentiation, not really
-	//something that need be differentiated from the machine perspective.
+	vector1< VariantType > variants, disallow_variants;
+
 	std::string residue_base_name( "" );  // used when we have more information then just a 3-letter code
 	if ( sfr_.residue_type_base_names().count( resid ) ) {
 		residue_base_name = sfr_.residue_type_base_names()[ resid ].second;

@@ -822,6 +822,7 @@ ResidueTypeSet::get_residue_type_with_variant_added(
 
 	// Find all residues with the same base name as init_rsd.
 	std::string const base_name( residue_type_base_name( init_rsd ) );
+	//std::string const & base_name( init_rsd.base_name() );
 
 	// the desired set of variant types:
 	utility::vector1< std::string > target_variants( init_rsd.properties().get_list_of_variants() );
@@ -830,6 +831,25 @@ ResidueTypeSet::get_residue_type_with_variant_added(
 	}
 
 	ResidueTypeCOP rsd_type = ResidueTypeFinder( *this ).residue_base_name( base_name ).variants( target_variants ).get_representative_type();
+	if ( !rsd_type ) {
+		rsd_type = ResidueTypeFinder( *this ).base_type( init_rsd.get_self_ptr() ).variants( target_variants ).get_representative_type();
+	}
+	
+	// AMW JWL TODO: it's a terrifying sign that there's different behavior for doing this with a base_type
+	// than a base_name. This tells me there is a really odd order dependence needed to create the right 
+	// connectivity.
+
+	// For example: in the `carbohydrates` integration test, we have:
+	// LINK         O3  Man A   1                 C1  Man A   2                  1.50
+	// LINK         O4  Man A   1                 C1  Glc B   3                  1.50
+	// LINK         O6  Man A   1                 C1  Man C   4                  1.50
+	// with base_name but
+	// LINK         O3  Man A   1                 C1  Man A   2                  1.50
+	// LINK         O6  Man A   1                 C1  Glc B   3                  1.50
+	// LINK         O4  Man A   1                 C1  Man C   4                  1.50
+	// with base_type. 
+	// Temporary workaround is to only use the base_type strategy IF the base_name strategy fails.
+	// ResidueTypeCOP rsd_type = ResidueTypeFinder( *this ).base_type( init_rsd.get_self_ptr() ).variants( target_variants ).get_representative_type();
 
 	if ( rsd_type == nullptr ) {
 		utility_exit_with_message( "unable to find desired variant residue: " + init_rsd.name() + " " + base_name + " " +
@@ -857,7 +877,8 @@ ResidueTypeSet::get_residue_type_with_variant_removed(
 	if ( !init_rsd.has_variant_type( old_type ) ) return init_rsd;
 
 	// find all residues with the same base name as init_rsd
-	std::string const base_name( residue_type_base_name( init_rsd ) );
+	//std::string const base_name( residue_type_base_name( init_rsd ) );
+	std::string const & base_name( init_rsd.base_name() );
 
 	// the desired set of variant types:
 	utility::vector1< std::string > target_variants( init_rsd.properties().get_list_of_variants() );

@@ -293,6 +293,10 @@ ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 		// extra finalize call so I can grab atom vertex from P
 		restype->finalize();
 		restype->assign_internal_coordinates( restype->atom_vertex( "P" ) );
+	} else if ( restype->is_DNA() ) {
+		// extra finalize call so I can grab atom vertex from P
+		restype->finalize();
+		restype->assign_internal_coordinates( restype->atom_vertex( "P" ) );
 	} else {
 		restype->assign_internal_coordinates(); // Also sets atom base. Needs nbr atom assignment
 	}
@@ -337,27 +341,79 @@ ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 				restype->set_icoor( "UPPER", radians(-150.000000), radians(58.300003), 1.328685, "C", "CA", "N" );
 				restype->set_icoor( "H", radians(-180.000000), radians(60.849998), 1.010000, "N", "CA", "LOWER" );
 			}
-		} else if ( restype->is_RNA() ) {
+		} else if ( restype->is_RNA() || restype->is_DNA() ) {
+			
+			// Require that it HAS an O3'. Some RTs -- DOC is an example --
+			// is upper terminal and lacks upper.
 			restype->set_lower_connect_atom( "P" );
-			restype->set_upper_connect_atom( "O3'" );
+			if ( restype->has( "O3'" ) ) {
+				restype->set_upper_connect_atom( "O3'" );
+			}
+			// Try alternatives -- in particular, any atoms
+			// bonded to C3' that aren't hydrogens or C4' or C2'.else if ( restype->has( ""))
+			std::string upper_atom = "";
+			if ( restype->has( "C3'" ) ) {
+				for ( Size const possible_upper_idx : restype->bonded_neighbor( restype->atom_index( "C3'" ) ) ) {
+					if ( restype->atom_name( possible_upper_idx ) == "C2'" ) continue;
+					if ( restype->atom_name( possible_upper_idx ) == "C4'" ) continue;
+					// Can't use the below because we aren't finalized.
+					// Let's say that we probably don't need this yet. Maybe for
+					// the next run at this test we will need to support
+					// 3' deoxy RNA termination.
+					// Let's just make DOC a thing.
+					//if ( restype->atom_is_hydrogen( possible_upper_idx ) ) continue;
+					// Or... these are common, too.
+					if ( restype->atom_name( possible_upper_idx ) == "H3'" ) continue;
+					if ( restype->atom_name( possible_upper_idx ) == "H3''" ) continue;
+
+					restype->set_upper_connect_atom( restype->atom_name( possible_upper_idx ) );
+					upper_atom = restype->atom_name( possible_upper_idx );
+				}
+			}
 
 			// Taken -- hardcoded -- from RAD_n.
 			// Necessary?
-			std::string OP1_name = restype->has( "OP1" ) ? "OP1" : "O1P";
-			std::string OP2_name = restype->has( "OP2" ) ? "OP2" : "O2P";
+			std::string OP1_name = restype->has( "OP1" ) ? "OP1" : 
+				( restype->has( "O1P" ) ? "O1P" : 
+					( restype->has( "S1P" ) ? "S1P" : "N4'" ) );
+			std::string OP2_name = restype->has( "OP2" ) ? "OP2" : 
+				( restype->has( "O2P" ) ? "O2P" : 
+					( restype->has( "S2P" ) ? "S2P" : "N4'" ) );
 
 			restype->set_atom_base( OP1_name, "P" );
 			restype->set_atom_base( OP2_name, "P" );
 
 			using numeric::conversions::radians;
+			// These magic numbers are the standard upper and lower coordinates used across nucleic acid
+			// residue types. This is our best attempt to obtain reasonable polymeric-type behavior for
+			// residues where that information is not encoded by default.
+			// AMW TODO: in theory we could use the icoor that WOULD be learned from the CIF residue from
+			// i.e. the OP3 atom for LOWER, but nothing analogous could be done for UPPER so it may not 
+			// actually be worth it.
 			if ( restype->is_d_rna() ) {
 				restype->set_icoor( "LOWER", radians(-60.259000), radians(76.024713), 1.607355, "P", "O5'", "C5'" );
-				restype->set_icoor( "UPPER", radians(-139.954848), radians(59.821530), 1.607226, "O3'", "C3'", "C4'" );
+				if ( upper_atom != "" ) {
+					restype->set_icoor( "UPPER", radians(-139.954848), radians(59.821530), 1.607226, upper_atom, "C3'", "C4'" );
+				} else {
+					restype->add_property( "UPPER_TERMINUS" );
+				}
 				restype->set_icoor( OP2_name, radians(-114.600417), radians(72.020306), 1.484470, "P", "O5'", "LOWER" );
-			} else { // is L or achiral
+			} else if ( restype->is_l_rna() ) { // is L or achiral
 				restype->set_icoor( "LOWER", radians(60.259000), radians(76.024713), 1.607355, "P", "O5'", "C5'" );
-				restype->set_icoor( "UPPER", radians(139.954848), radians(59.821530), 1.607226, "O3'", "C3'", "C4'" );
+				if ( upper_atom != "" ) {
+					restype->set_icoor( "UPPER", radians(139.954848), radians(59.821530), 1.607226, upper_atom, "C3'", "C4'" );
+				} else {
+					restype->add_property( "UPPER_TERMINUS" );
+				}
 				restype->set_icoor( OP2_name, radians(114.600417), radians(72.020306), 1.484470, "P", "O5'", "LOWER" );
+			} else if ( restype->is_DNA() ) {
+				restype->set_icoor( "LOWER", radians(-60.259000), radians(76.024713), 1.607355, "P", "O5'", "C5'" );
+				if ( upper_atom != "" ) {
+					restype->set_icoor( "UPPER", radians(-139.954848), radians(59.821530), 1.607226, upper_atom, "C3'", "C4'" );
+				} else {
+					restype->add_property( "UPPER_TERMINUS" );
+				}
+				restype->set_icoor( OP2_name, radians(-114.600417), radians(72.020306), 1.484470, "P", "O5'", "LOWER" );
 			}
 		}
 		restype->set_mainchain_atoms( define_mainchain_atoms( restype ) );

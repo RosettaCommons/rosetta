@@ -1984,10 +1984,8 @@ ResidueType::autodetermine_chi_bonds( core::Size max_proton_chi_samples ) {
 			if ( atom_name( chi[ 1 ] ) == "C2'" && atom_name( chi[ 2 ] ) != "O2'" ) {
 				true_chis.push_back( chi );
 				first_base_atom = chi[3];
-				// Third atom of chi1 is first base atom.
-				for ( Size ii = 1; ii < atom_index( atom_name( chi[ 3 ] ) ); ++ii ) {
-					set_backbone_heavyatom( atom_name( ii ) );
-				}
+				// Third atom of chi1 is first base atom... but not first SC atom (formally)
+				// setting it that way is HELL for hbond types
 				break;
 			}
 		}
@@ -2004,9 +2002,27 @@ ResidueType::autodetermine_chi_bonds( core::Size max_proton_chi_samples ) {
 		if ( has( "HO2'" ) ) {
 			//chi = ;
 			true_chis.emplace_back( VDs{ atom_vertex("C3'"), atom_vertex("C2'"), atom_vertex("O2'"), atom_vertex("HO2'") } );
+
+			for ( Size ii = 1; ii < atom_index( "O2'" ); ++ii ) {
+				set_backbone_heavyatom( atom_name( ii ) );
+			}
 		} else {
-			// implement later
+			// actually essential for pdb_T38 for example.
+			// Oh: we also *must* figure out why atom ordering matters so much for the backbone
+			// sidechain distinction (rather than reordering after a Correct grouping) and how to
+			// do the latter. Right now I have to relabel...
+			for ( VDs const & chi : found_chis ) {
+				if ( atom_name( chi[ 3 ] ) == "O2'" && atom_name( chi[ 2 ] ) == "C2'" ) {
+					true_chis.emplace_back( chi );
+
+					for ( Size ii = 1; ii < atom_index( atom_name( chi[ 3 ] ) ); ++ii ) {
+						set_backbone_heavyatom( atom_name( ii ) );
+					}
+				}
+			}
 		}
+		if ( has( "C2'" ) ) set_backbone_heavyatom( "C2'" );
+		if ( has( "C1'" ) ) set_backbone_heavyatom( "C1'" );
 
 		// Theoretical final step (AMW TODO): add all chis that are children of the base
 		// or of O2', in a protein-y way, as chis 5+.

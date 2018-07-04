@@ -3,11 +3,15 @@
 NAME VirtualBaseRNA
 TYPES VIRTUAL_BASE
 
+# Ugh -- we have to define individual cases here, because we can't
+# just say 'all base atoms' in a coherent way. We'd need to write
+# a PatchOperation.
+
 BEGIN_SELECTOR
 PROPERTY RNA
 NOT VARIANT_TYPE VIRTUAL_RNA_RESIDUE
 # Just standard types:
-AA RAD RCY RGU URA
+#AA RAD RCY RGU URA
 END_SELECTOR
 
 ###############
@@ -114,4 +118,33 @@ SET_ATOM_TYPE  H5 VIRT
 SET_ATOM_TYPE  H6 VIRT
 
 END_CASE
+
+
+############
+## H2U    ##
+############
+
+BEGIN_CASE
+BEGIN_SELECTOR
+NAME3 H2U
+END_SELECTOR
+
+SET_ATOM_TYPE   N1 VIRT
+SET_ATOM_TYPE   C2 VIRT
+SET_ATOM_TYPE   O2 VIRT
+SET_ATOM_TYPE   N3 VIRT
+SET_ATOM_TYPE   C4 VIRT
+SET_ATOM_TYPE   O4 VIRT
+SET_ATOM_TYPE   C5 VIRT
+SET_ATOM_TYPE   C6 VIRT
+
+SET_ATOM_TYPE  H3 VIRT
+SET_ATOM_TYPE  H51 VIRT
+SET_ATOM_TYPE  H61 VIRT
+SET_ATOM_TYPE  H52 VIRT
+SET_ATOM_TYPE  H62 VIRT
+
+END_CASE
+
+
 

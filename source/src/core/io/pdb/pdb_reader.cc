@@ -36,6 +36,7 @@
 
 // External headers
 #include <ObjexxFCL/format.hh>
+#include <ObjexxFCL/string.functions.hh>
 
 // C++ header
 #include <algorithm>
@@ -532,6 +533,7 @@ store_ssbond_record_in_sfr( Record ssbond_record, StructFileRep & sfr )
 {
 	using namespace std;
 	using namespace utility;
+	using ObjexxFCL::stripped;
 
 	SSBondInformation ssbond;
 	vector1< SSBondInformation > ssbonds;
@@ -551,6 +553,7 @@ store_ssbond_record_in_sfr( Record ssbond_record, StructFileRep & sfr )
 	ssbond.resSeq1 = atof( ssbond_record[ "resSeq1" ].value.c_str() );
 	ssbond.iCode1 = ssbond_record[ "iCode1" ].value[ 0 ];
 
+	//ssbond.resID1 = stripped( ssbond_record[ "resSeq1" ].value + ssbond_record[ "iCode1" ].value + ssbond_record[ "chainID1" ].value );
 	ssbond.resID1 = ssbond_record[ "resSeq1" ].value + ssbond_record[ "iCode1" ].value + ssbond_record[ "chainID1" ].value;
 
 	ssbond.resName2 = ssbond_record[ "resName2" ].value;
@@ -558,6 +561,7 @@ store_ssbond_record_in_sfr( Record ssbond_record, StructFileRep & sfr )
 	ssbond.resSeq2 = atof( ssbond_record[ "resSeq2" ].value.c_str() );
 	ssbond.iCode2 = ssbond_record[ "iCode2" ].value[ 0 ];
 
+	//ssbond.resID2 = stripped( ssbond_record[ "resSeq2" ].value + ssbond_record[ "iCode2" ].value + ssbond_record[ "chainID2" ].value );
 	ssbond.resID2 = ssbond_record[ "resSeq2" ].value + ssbond_record[ "iCode2" ].value + ssbond_record[ "chainID2" ].value;
 
 	// An old PDB standard would put two symmetry operations here;
@@ -583,6 +587,7 @@ store_link_record_in_sfr( Record link_record, StructFileRep & sfr )
 {
 	using namespace std;
 	using namespace utility;
+	using ObjexxFCL::stripped;
 
 	LinkInformation link;
 	vector1< LinkInformation > links;
@@ -603,7 +608,8 @@ store_link_record_in_sfr( Record link_record, StructFileRep & sfr )
 	link.resSeq1 = atof( link_record[ "resSeq1" ].value.c_str() );
 	link.iCode1 = link_record[ "iCode1" ].value[ 0 ];
 
-	link.resID1 = link_record[ "resSeq1" ].value + link_record[ "iCode1" ].value + link_record[ "chainID1" ].value;
+	//link.resID1 = stripped( link_record[ "resSeq1" ].value + link_record[ "iCode1" ].value + link_record[ "chainID1" ].value );
+	link.resID1 = ( link_record[ "resSeq1" ].value + link_record[ "iCode1" ].value + link_record[ "chainID1" ].value );
 
 	link.name2 = link_record[ "name2" ].value;  // 2nd atom name
 	link.resName2 = link_record[ "resName2" ].value;
@@ -611,7 +617,8 @@ store_link_record_in_sfr( Record link_record, StructFileRep & sfr )
 	link.resSeq2 = atof( link_record[ "resSeq2" ].value.c_str() );
 	link.iCode2 = link_record[ "iCode2" ].value[ 0 ];
 
-	link.resID2 = link_record[ "resSeq2" ].value + link_record[ "iCode2" ].value + link_record[ "chainID2" ].value;
+	//link.resID2 = stripped( link_record[ "resSeq2" ].value + link_record[ "iCode2" ].value + link_record[ "chainID2" ].value );
+	link.resID2 = ( link_record[ "resSeq2" ].value + link_record[ "iCode2" ].value + link_record[ "chainID2" ].value );
 
 	link.length = atof( link_record[ "length" ].value.c_str() );  // bond length
 

@@ -114,6 +114,35 @@ SetBackboneHeavyatom::name() const {
 	return "SetBackboneHeavyatom";
 }
 
+
+SetDisulfideAtomName::SetDisulfideAtomName( std::string const & atom_name_in ) :
+	atom_name_( atom_name_in )
+{}
+
+bool
+SetDisulfideAtomName::apply( ResidueType & rsd ) const
+{
+	if ( !rsd.has( atom_name_ ) ) {
+		TR_PatchOperations.Debug << "SetDisulfideAtomName::apply failed: " <<
+			rsd.name() << " is missing atom " << atom_name_ <<
+			std::endl;
+		return true; // failure
+	} else {
+		if ( TR_PatchOperations.Trace.visible() ) {
+			TR_PatchOperations.Trace << "SetDisulfideAtomName::apply: " << atom_name_ << std::endl;
+		}
+		rsd.set_disulfide_atom_name( atom_name_ );
+	}
+	return false;
+}
+
+/// @brief Return the name of this PatchOperation ("SetDisulfideAtomName").
+/// @author Andy Watkins (amw579@stanford.edu).
+std::string
+SetDisulfideAtomName::name() const {
+	return "SetDisulfideAtomName";
+}
+
 /// @brief constructor the type of connection is "LOWER" or "UPPER"
 SetPolymerConnectAtom::SetPolymerConnectAtom( std::string const & atom_name_in, std::string const & upper_lower_in ) :
 	atom_name_( atom_name_in )
@@ -2618,6 +2647,14 @@ patch_operation_from_patch_file_line(
 		}
 		return PatchOperationOP( new SetBackboneHeavyatom( atom_name ) );
 
+	} else if ( tag == "SET_DISULFIDE_ATOM_NAME" ) {
+		l >> atom_name;
+		if ( l.fail() ) {
+			utility_exit_with_message( "Failed to parse SET_DISULFIDE_ATOM_NAME patch operation." );
+			return nullptr;
+		}
+		return PatchOperationOP( new SetDisulfideAtomName( atom_name ) );
+
 	} else if ( tag == "SET_AA" ) { // 13 character tag
 		std::string aa;
 		l >> aa;
@@ -3552,6 +3589,29 @@ core::chemical::SetBackboneHeavyatom::load( Archive & arc ) {
 
 SAVE_AND_LOAD_SERIALIZABLE( core::chemical::SetBackboneHeavyatom );
 CEREAL_REGISTER_TYPE( core::chemical::SetBackboneHeavyatom )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::SetDisulfideAtomName::SetDisulfideAtomName() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::SetDisulfideAtomName::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( CEREAL_NVP( atom_name_ ) ); // std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::SetDisulfideAtomName::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( atom_name_ ); // std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::SetDisulfideAtomName );
+CEREAL_REGISTER_TYPE( core::chemical::SetDisulfideAtomName )
 
 
 /// @brief Default constructor required by cereal to deserialize this class

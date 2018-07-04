@@ -136,6 +136,15 @@ std::map< std::string, AA > setup_name2aa() {
 	n2aa[ "GUA" ] = na_gua;
 	n2aa[ "THY" ] = na_thy;
 
+	// Support for name3 too for DNA -- important
+	// for some packertask/motif issues that have
+	// legacy support for EITHER name3 or aa spec
+	// in command line options
+	n2aa[ " DA" ] = na_ade;
+	n2aa[ " DC" ] = na_cyt;
+	n2aa[ " DG" ] = na_gua;
+	n2aa[ " DT" ] = na_thy;
+
 	n2aa[ "RAD" ] = na_rad;
 	n2aa[ "RCY" ] = na_rcy;
 	n2aa[ "RGU" ] = na_rgu;

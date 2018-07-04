@@ -329,7 +329,6 @@ main( int argc, char *argv[] )
 		cout << "(The minimized angles should be close to -60/90 for residue 3.)" << endl;
 		cout << "(The minimized angles should be close to 75/180/-60 for residue 4.)" << endl;
 
-
 		cout << endl << "-------------------------------------------------------------------------------" << endl;
 
 		cout << "Importing sample N-linked glycan (D-beta1->NAsn linkage):" << endl << endl;

@@ -1087,6 +1087,10 @@ get_root_residue_root_atomno(
 	// That's not necessarily true for all ligand residues, so we are keeping it
 	// this way.
 	if ( rsd.type().name() == "pdb_GAI" ) return 1;
+
+	if ( !rsd.type().is_polymer() ) return 1;
+
+
 	Size const seqpos( rsd.seqpos() );
 	debug_assert( seqpos == Size( fold_tree.root() ) ); // need to refactor foldtree to use Size instead of int
 
@@ -1741,16 +1745,20 @@ get_anchor_and_root_atoms(
 		debug_assert( anchor_pos == Size(edge.start()) && root_pos == Size(edge.stop()) );
 		if ( edge.has_atom_info() ) {
 			// JUMP OR CHEMICAL W/ ATOM INFO
-			if ( anchor_rsd.type().name() == "pdb_GAI" ) anchor_atomno = 1;
+			if ( anchor_rsd.type().name() == "pdb_GAI" ||
+					anchor_rsd.type().name() == "pdb_AX2" ) anchor_atomno = 1;
 			else anchor_atomno = anchor_rsd.atom_index( edge.upstream_atom() );
-			if ( root_rsd.type().name() == "pdb_GAI" ) root_atomno = 1;
+			if ( root_rsd.type().name() == "pdb_GAI" ||
+					anchor_rsd.type().name() == "pdb_AX2" ) root_atomno = 1;
 			else root_atomno   =   root_rsd.atom_index( edge.downstream_atom() );
 		} else {
 			if ( edge.is_jump() ) {
 				// JUMP EDGE
-				if ( anchor_rsd.type().name() == "pdb_GAI" ) anchor_atomno = 1;
+				if ( anchor_rsd.type().name() == "pdb_GAI" ||
+						anchor_rsd.type().name() == "pdb_AX2" ) anchor_atomno = 1;
 				else anchor_atomno = get_anchor_atomno( anchor_rsd, kinematics::dir_jump );
-				if ( root_rsd.type().name() == "pdb_GAI" ) root_atomno = 1;
+				if ( root_rsd.type().name() == "pdb_GAI" ||
+						anchor_rsd.type().name() == "pdb_AX2" ) root_atomno = 1;
 				else root_atomno   =   get_root_atomno(   root_rsd, kinematics::dir_jump );
 			} else if ( edge.is_chemical_bond() ) {
 				// CHEMICAL EDGE

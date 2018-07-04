@@ -83,6 +83,7 @@ ResidueTypeFinder::get_representative_type( bool const metapatches ) const
 {
 	ResidueTypeCOPs rsd_types;
 	rsd_types = get_possible_base_residue_types( false /* include_unpatchable */ );
+
 	rsd_types = apply_patches_recursively( rsd_types, 1 /*start with this patch*/, true /*get_first_residue_found*/ );
 	if ( metapatches ) rsd_types = apply_metapatches_recursively( rsd_types, 1 /*start with this patch*/, true );
 	// We need to apply metapatches again just in case there are some double variants.
@@ -92,6 +93,7 @@ ResidueTypeFinder::get_representative_type( bool const metapatches ) const
 	if ( rsd_types.size() == 0 ) rsd_types =  get_possible_unpatchable_residue_types();
 
 	rsd_types = apply_filters_after_patches( rsd_types, true /* allow_extra_variants */ );
+
 	if ( rsd_types.size() == 0 ) return nullptr;
 	return rsd_types[ 1 ];
 }
@@ -192,7 +194,7 @@ ResidueTypeFinder::append_relevant_pdb_components( ResidueTypeCOPs & rsd_types )
 		// if there's already a Rosetta type with the name3 probably don't need to dig into PDB components;
 		//   they will be screened out anyway later by prioritize_rosetta_types_over_pdb_components().
 		bool rosetta_type_has_name3( false );
-		for ( auto rsd_type: rsd_types ) {
+		for ( auto rsd_type : rsd_types ) {
 			if ( rsd_type->name3() == name3_ ||
 					residue_type_set_.generates_patched_residue_type_with_name3( residue_type_base_name( *rsd_type ), name3_ ) ) {
 				rosetta_type_has_name3 = true; break;
@@ -554,7 +556,6 @@ ResidueTypeFinder::filter_by_name3( ResidueTypeCOPs const & rsd_types, bool cons
 		// with their specialty string -- the first three letters of the residue name.
 		// E.g., CYD will appear in both lists for name3_map_[ "CYS" ] and name3_map_[ "CYD" ]
 		if ( rsd_type->name3() == name3_ ||
-				rsd_type->name().substr(0,3) == name3_ || // RM: Should be replaced by name3 alias within ResidueType
 				utility::strip( rsd_type->name3() ) == utility::strip( name3_ ) || // name3 may be whitespace padded
 				( keep_if_base_type_generates_name3 && residue_type_set_.generates_patched_residue_type_with_name3( rsd_type->name(), name3_ ) ) ) {
 			rsd_types_new.push_back( rsd_type );

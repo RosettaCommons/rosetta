@@ -393,6 +393,7 @@ StepWiseConnectionSampler::initialize_pose_level_screeners( pose::Pose & pose ) 
 	// AMW: why no PCS for carbohydrate? don't care.
 	// AMW: also disable for DNA. Not QUITE sure why.
 	// AMW: ditto TNA. There is something up here. Maybe not necessary
+	// AMW: also protein -- contacts are not common in (say) cyclic peptoids
 	// but just hard to get results in some integration tests, or something?
 	PartitionContactScreenerOP atr_rep_screener;
 	if ( options_->atr_rep_screen() && moving_res_list_.size() > 0 &&
@@ -400,6 +401,7 @@ StepWiseConnectionSampler::initialize_pose_level_screeners( pose::Pose & pose ) 
 			&& !pose.residue_type( moving_res_ ).is_carbohydrate()
 			&& !pose.residue_type( moving_res_ ).is_DNA()
 			&& !pose.residue_type( moving_res_ ).is_TNA()
+			&& !pose.residue_type( moving_res_ ).is_protein()
 			&& !pose.residue_type( moving_res_ ).has_variant_type( core::chemical::DEOXY_O2PRIME ) ) {
 		atr_rep_screener = PartitionContactScreenerOP( new PartitionContactScreener( *screening_pose_, working_parameters_, use_loose_rep_cutoff, scorefxn_->energy_method_options() ) );
 		screeners_.push_back( atr_rep_screener );

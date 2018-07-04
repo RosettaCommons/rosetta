@@ -2183,6 +2183,37 @@ public:
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief set an atom as this residue's disulfide forming atom
+class SetDisulfideAtomName : public PatchOperation {
+public:
+	/// @brief constructor
+	SetDisulfideAtomName( std::string const & atom_name_in );
+
+	/// @brief Return the name of this PatchOperation ("SetDisulfideAtomName").
+	/// @author Andy Watkins (amw579@stanford.edu)
+	std::string
+	name() const override;
+
+	/// set an atom in ResidueType rsd as backbone heavy atom
+	bool
+	apply( ResidueType & rsd ) const override;
+
+private:
+	// name of the atom to be set
+	std::string atom_name_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	SetDisulfideAtomName();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief  Virtual constructor, returns 0 if no match
 PatchOperationOP
 patch_operation_from_patch_file_line(

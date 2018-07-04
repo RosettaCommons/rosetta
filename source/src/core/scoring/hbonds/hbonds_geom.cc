@@ -355,10 +355,10 @@ get_hb_don_chem_type(
 		case aa_asn: case aa_gln: case aa_dan: case aa_dgn: case aa_b3n: case aa_b3q : case ou3_asn : case ou3_gln :
 			return hbdon_CXA;
 		case aa_his: case aa_dhi: case aa_b3h : case ou3_his :
-			if ( aname == " ND1" ) {
+			if ( aname == " ND1" || aname == "ND1" ) {
 				return hbdon_IMD;
 			} else {
-				debug_assert( aname == " NE2");
+				debug_assert( aname == " NE2" || aname == "NE2" );
 				return hbdon_IME;
 			}
 		case aa_trp: case aa_dtr: case aa_b3w : case ou3_trp :
@@ -366,10 +366,11 @@ get_hb_don_chem_type(
 		case aa_lys: case aa_dly: case aa_b3k : case ou3_lys :
 			return hbdon_AMO;
 		case aa_arg: case aa_dar: case aa_b3r : case ou3_arg :
-			if ( aname == " NE " ) {
+			if ( aname == " NE " || aname == "NE" ) {
 				return hbdon_GDE;
 			} else {
-				debug_assert(aname == " NH1" || aname == " NH2");
+				debug_assert( aname == " NH1" || aname == " NH2" ||
+					aname == "NH1" || aname == "NH2" );
 				return hbdon_GDH;
 			}
 		case aa_tyr: case aa_dty: case aa_b3y : case ou3_tyr :
@@ -388,7 +389,7 @@ get_hb_don_chem_type(
 		case aa_b3cisACPC: case aa_b3cisACHC: case aa_b3transACPC : //Common cyclic beta-3 amino acids
 			return hbdon_NONE;
 		case na_ade :
-			if ( aname == " N6 " ) {
+			if ( aname == " N6 " || aname == "N6" ) {
 				/// WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
 				/// it should actually be sidechain hbdon_CXA.
 				return hbdon_CXA;
@@ -397,7 +398,7 @@ get_hb_don_chem_type(
 			}
 			break; // Use is_RNA clause below
 		case na_cyt :
-			if ( aname == " N4 " ) {
+			if ( aname == " N4 " || aname == "N4" ) {
 				/// WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
 				/// it should actually be sidechain hbdon_CXA.
 				return hbdon_CXA;
@@ -408,11 +409,11 @@ get_hb_don_chem_type(
 			}
 			break; // Use is_RNA clause below
 		case na_gua :
-			if ( aname == " N1 " ) {
+			if ( aname == " N1 " || aname == "N1" ) {
 				/// WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
 				/// it should actually be sidechain hbdon_IND.
 				return hbdon_IND;
-			} else if ( aname == " N2 " ) {
+			} else if ( aname == " N2 " || aname == "N2" ) {
 				/// WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
 				/// it should actually be sidechain hbdon_CXA.
 				return hbdon_CXA;
@@ -421,7 +422,7 @@ get_hb_don_chem_type(
 			}
 			break; // Use is_RNA clause below
 		case na_thy :
-			if ( aname == " N3 " ) {
+			if ( aname == " N3 " || aname == "N3" ) {
 				/// WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
 				/// it should actually be sidechain hbdon_IND.
 				return hbdon_IND;
@@ -431,33 +432,33 @@ get_hb_don_chem_type(
 			break; // Use is_RNA clause below
 		case na_rad :
 		case na_lra :
-			if ( aname == " N6 " ) {
+			if ( aname == " N6 " || aname == "N6" ) {
 				/// WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
 				/// it should actually be sidechain hbdon_CXA.
 				return hbdon_GENERIC_SC;
 			} else if ( aname == "WN6" || aname == "WN7" ) {
 				return hbdon_H2O; // DNA_MAJOR_GROOVE_WATER ADDUCTS
-			} else if ( aname == " O2'" ) {
+			} else if ( aname == " O2'" || aname == "O2'" ) {
 				///. WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
 				/// it should actually be sidechain hbdon_HXL
 				return hbdon_GENERIC_SC;
-			} else if ( aname == " N1 " &&  don_rsd.has_variant_type( chemical::PROTONATED_N1 ) ) { //Parin Sripakdeevong May 03, 2011.
+			} else if ( ( aname == " N1 " || aname == "N1" ) &&  don_rsd.has_variant_type( chemical::PROTONATED_N1 ) ) { //Parin Sripakdeevong May 03, 2011.
 				return hbdon_GENERIC_SC;
-			} else if ( aname == " N3 " &&  don_rsd.has_variant_type( chemical::PROTONATED_N3 ) ) { //Parin Sripakdeevong May 03, 2011.
+			} else if ( ( aname == " N3 " || aname == "N3" ) &&  don_rsd.has_variant_type( chemical::PROTONATED_N3 ) ) { //Parin Sripakdeevong May 03, 2011.
 				return hbdon_GENERIC_SC;
 			}
 			break; // Use is_RNA clause below
 		case na_rgu :
 		case na_lrg :
-			if ( aname == " N1 " ) {
+			if ( aname == " N1 " || aname == "N1" ) {
 				/// WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
 				/// it should actually be sidechain hbdon_IND.
 				return hbdon_GENERIC_SC;
-			} else if ( aname == " N2 " ) {
+			} else if ( aname == " N2 " || aname == "N2" ) {
 				/// WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
 				/// it should actually be sidechain hbdon_CXA.
 				return hbdon_GENERIC_SC;
-			} else if ( aname == " O2'" ) {
+			} else if ( aname == " O2'" || aname == "O2'" ) {
 				///. WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
 				/// it should actually be sidechain hbdon_HXL
 				return hbdon_GENERIC_SC;
@@ -467,11 +468,11 @@ get_hb_don_chem_type(
 			break; // Use is_RNA clause below
 		case na_rcy :
 		case na_lrc :
-			if ( aname == " N4 " ) {
+			if ( aname == " N4 " || aname == "N4" ) {
 				/// WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
 				/// it should actually be sidechain hbdon_CXA.
 				return hbdon_GENERIC_SC;
-			} else if ( aname == " O2'" ) {
+			} else if ( aname == " O2'" || aname == "O2'" ) {
 				///. WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
 				/// it should actually be sidechain hbdon_HXL
 				return hbdon_GENERIC_SC;
@@ -481,11 +482,11 @@ get_hb_don_chem_type(
 			break; // Use is_RNA clause below
 		case na_ura :
 		case na_lur :
-			if ( aname == " N3 " ) {
+			if ( aname == " N3 " || aname == "N3" ) {
 				/// WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
 				/// it should actually be sidechain hbdon_IND.
 				return hbdon_GENERIC_SC;
-			} else if ( aname == " O2'" ) {
+			} else if ( aname == " O2'" || aname == "O2'" ) {
 				///. WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
 				/// it should actually be sidechain hbdon_HXL
 				return hbdon_GENERIC_SC;
@@ -531,12 +532,23 @@ get_hb_acc_chem_type(
 				return hbacc_PBA;
 			}
 		} else if ( acc_rsd.is_DNA() ) {
-			if ( aname == " OP2" || aname == " OP1" ) {
+			if ( aname == " OP2" || aname == " OP1" ||
+					aname == "OP2" || aname == "OP1" ) {
 				return hbacc_PCA_DNA;
-			} else if ( aname == " O5'" || aname == " O3'" ) {
+			} else if ( aname == " O5'" || aname == " O3'" ||
+					aname == "O5'" || aname == "O3'" ) {
 				return hbacc_PES_DNA;
-			} else if ( aname == " O4'" ) {
+			} else if ( aname == " O4'" || aname == "O4'" ) {
 				return hbacc_RRI_DNA;
+			} else if ( aname == " O3P" || aname == "O3P" ||
+					aname == "XOP2" || aname == "XOP1" ||
+					aname == "YOP2" || aname == "YOP1" ||
+					aname == "ZOP2" || aname == "ZOP1" ) {
+				// DNA types created from CCD might need this.
+				return hbacc_PCA_RNA;
+			} else if ( aname == "YO5'" || aname == "XO3'" || aname == "YO3'" || aname == "ZO3'" ) {
+				// One type -- DGP, a 5' phosphate DNA -- needs this.
+				return hbacc_PES_RNA;
 			}
 		} else if ( acc_rsd.is_RNA() ) {
 			chemical::rna::RNA_Info const & rna_type = acc_rsd.type().RNA_info();
@@ -549,13 +561,14 @@ get_hb_acc_chem_type(
 				return hbacc_PES_RNA;
 			} else if ( aatm == rna_type.o4prime_atom_index() ) {
 				return hbacc_RRI_RNA;
-			} else if ( aname == " O4 " || aname == " O2 " ) {
+			} else if ( aname == " O4 " || aname == " O2 " ||
+					aname == "O4" || aname == "O2" ) {
 				// AMW: output debugging
 				// tr.Warning << "Residue " << acc_rsd.name() << " atom " << acc_rsd.atom_name( aatm ) << " is RNA backbone but unknown significance!" << std::endl;
 				// AMW: only current trigger is O2/O4 on BRU (SP2, so...)
 				// These are actually SC atoms.
 				return hbacc_GENERIC_SP2SC;
-			} else if ( aname == " O3P" ||
+			} else if ( aname == " O3P" || aname == "O3P" ||
 					aname == "XOP2" || aname == "XOP1" ||
 					aname == "YOP2" || aname == "YOP1" ||
 					aname == "ZOP2" || aname == "ZOP1" ) {
@@ -593,7 +606,7 @@ get_hb_acc_chem_type(
 		case aa_asp: case aa_glu: case aa_das: case aa_dgu: case aa_b3d: case aa_b3e : case ou3_asp: case ou3_glu :
 			return hbacc_CXL;
 		case aa_his: case aa_dhi: case aa_b3h : case ou3_his :
-			if ( aname == " ND1" ) {
+			if ( aname == " ND1" || aname == "ND1" ) {
 				return hbacc_IMD;
 			} else {
 				return hbacc_IME;
@@ -614,7 +627,8 @@ get_hb_acc_chem_type(
 		case aa_b3cisACPC: case aa_b3cisACHC: case aa_b3transACPC : //Common cyclic beta-3 amino acids
 			return hbacc_NONE;
 		case na_ade :
-			if ( aname == " N1 " || aname == " N3 " || aname == " N7 " ) {
+			if ( aname == " N1 " || aname == " N3 " || aname == " N7 " ||
+					aname == "N1" || aname == "N3" || aname == "N7" ) {
 				/// WARNING this is set to hbacc_GENERIC_RINGSC for backwards compatibility only!!!
 				/// it should actually be sidechain hbacc_IME.
 				return hbacc_IME;
@@ -623,22 +637,23 @@ get_hb_acc_chem_type(
 			}
 			break; // Use is_RNA clause below
 		case na_gua :
-			if ( aname == " N3 " || aname == " N7 " ) {
+			if ( aname == " N3 " || aname == " N7 " ||
+					aname == "N3" || aname == "N7" ) {
 				/// WARNING this is set to hbacc_GENERIC_RINGSC for backwards compatibility only!!!
 				/// it should actually be sidechain hbacc_IME.
 				return hbacc_IME;
-			} else if ( aname == " O6 " ) {
+			} else if ( aname == " O6 " || aname == "O6" ) {
 				return hbacc_CXL;
 			} else if ( aname == "WO6" || aname == "WN7" || aname == "WN3" ) {
 				return hbacc_H2O; // DNA_MAJOR_GROOVE_WATER ADDUCTS
 			}
 			break; // Use is_RNA clause below
 		case na_cyt :
-			if ( aname == " O2 " ) {
+			if ( aname == " O2 " || aname == "O2" ) {
 				/// WARNING this is set to hbacc_GENERIC_SP2SC for backwards compatibility only!!!
 				/// it should actually be sidechain hbacc_CXA.
 				return hbacc_CXA;
-			} else if ( aname == " N3 " ) {
+			} else if ( aname == " N3 " || aname == "N3" ) {
 				/// WARNING this is set to hbacc_GENERIC_RINGSC for backwards compatibility only!!!
 				/// it should actually be sidechain hbacc_IME.
 				return hbacc_IME;
@@ -647,7 +662,8 @@ get_hb_acc_chem_type(
 			}
 			break; // Use is_RNA clause below
 		case na_thy :
-			if ( aname == " O2 " || aname == " O4 " ) {
+			if ( aname == " O2 " || aname == " O4 " ||
+					aname == "O2" || aname == "O4" ) {
 				/// WARNING this is set to hbacc_GENERIC_SP2SC for backwards compatibility only!!!
 				/// it should actually be sidechain hbacc_CXA.
 				return hbacc_CXA;
@@ -657,17 +673,19 @@ get_hb_acc_chem_type(
 			break; // Use is_RNA clause below
 		case na_rad :
 		case na_lra :
-			if ( aname == " N1 " || aname == " N3 " || aname == " N7 " ) {
-				if ( aname == " N1 " && acc_rsd.has_variant_type( chemical::PROTONATED_N1 ) ) {
+			if ( aname == " N1 " || aname == " N3 " || aname == " N7 " ||
+					aname == "N1" || aname == "N3" || aname == "N7" ) {
+				if ( ( aname == " N1 " || aname == "N1" ) && acc_rsd.has_variant_type( chemical::PROTONATED_N1 ) ) {
 					utility_exit_with_message( "acc_rsd.aa()==na_rad, aname == \" N1 \" and acc_rsd.has_variant_type(\"PROTONATED_N1_ADENOSINE\")!");
 				}
-				if ( aname == " N3 " && acc_rsd.has_variant_type( chemical::PROTONATED_N3 ) ) {
+				if ( ( aname == " N3 " || aname == "N3" ) && acc_rsd.has_variant_type( chemical::PROTONATED_N3 ) ) {
 					utility_exit_with_message( "acc_rsd.aa()==na_rad, aname == \" N3 \" and acc_rsd.has_variant_type(\"PROTONATED_N3_ADENOSINE\")!");
 				}
 				/// WARNING this is set to hbacc_GENERIC_RINGSC for backwards compatibility only!!!
 				/// it should actually be sidechain hbacc_IME.
 				return hbacc_GENERIC_RINGSC;
-			} else if ( aname == " O2'" ) {
+				//} else if ( aname == " O2'" || aname == "O2'" ) {
+			} else if ( aatm == acc_rsd.type().RNA_info().o2prime_index() ) {
 				/// WARNING this is set to hbacc_GENERIC_SP3BB for backwards compatibility only!!!
 				/// it should actually be backbone hbacc_HXL.
 				return hbacc_GENERIC_SP3SC;
@@ -675,15 +693,17 @@ get_hb_acc_chem_type(
 			break; // Use is_RNA clause below
 		case na_rgu :
 		case na_lrg :
-			if ( aname == " N3 " || aname == " N7 " ) {
+			if ( aname == " N3 " || aname == " N7 " ||
+					aname == "N3" || aname == "N7" ) {
 				/// WARNING this is set to hbacc_GENERIC_RINGSC for backwards compatibility only!!!
 				/// it should actually be sidechain hbacc_IME.
 				return hbacc_GENERIC_RINGSC;
-			} else if ( aname == " O6 " ) {
+			} else if ( aname == " O6 " || aname == "O6" ) {
 				/// WARNING this is set to hbacc_GENERIC_RINGSC for backwards compatibility only!!!
 				/// it should actually be sidechain hbacc_CXA.
 				return hbacc_GENERIC_SP2SC;
-			} else if ( aname == " O2'" ) {
+				//} else if ( aname == " O2'" || aname == "O2'" ) {
+			} else if ( aatm == acc_rsd.type().RNA_info().o2prime_index() ) {
 				/// WARNING this is set to hbacc_GENERIC_SP3BB for backwards compatibility only!!!
 				/// it should actually be backbone hbacc_HXL.
 				return hbacc_GENERIC_SP3SC;
@@ -691,15 +711,16 @@ get_hb_acc_chem_type(
 			break; // Use is_RNA clause below
 		case na_rcy :
 		case na_lrc :
-			if ( aname == " O2 " ) {
+			if ( aname == " O2 " || aname == "O2" ) {
 				/// WARNING this is set to hbacc_GENERIC_SP2SC for backwards compatibility only!!!
 				/// it should actually be sidechain hbacc_CXA.
 				return hbacc_GENERIC_SP2SC;
-			} else if ( aname == " N3 " ) {
+			} else if ( aname == " N3 " || aname == "N3" ) {
 				/// WARNING this is set to hbacc_GENERIC_RINGSC for backwards compatibility only!!!
 				/// it should actually be sidechain hbacc_IME.
 				return hbacc_GENERIC_RINGSC;
-			} else if ( aname == " O2'" ) {
+				//} else if ( aname == " O2'" || aname == "O2'" ) {
+			} else if ( aatm == acc_rsd.type().RNA_info().o2prime_index() ) {
 				/// WARNING this is set to hbacc_GENERIC_SP3BB for backwards compatibility only!!!
 				/// it should actually be backbone hbacc_HXL.
 				return hbacc_GENERIC_SP3SC;
@@ -707,11 +728,13 @@ get_hb_acc_chem_type(
 			break; // Use is_RNA clause below
 		case na_ura :
 		case na_lur :
-			if ( aname == " O2 " || aname == " O4 " ) {
+			if ( aname == " O2 " || aname == " O4 " ||
+					aname == "O2" || aname == "O4" ) {
 				/// WARNING this is set to hbacc_GENERIC_SP2SC for backwards compatibility only!!!
 				/// it should actually be sidechain hbacc_CXA.
 				return hbacc_GENERIC_SP2SC;
-			} else if ( aname == " O2'" ) {
+				//} else if ( aname == " O2'" || aname == "O2'" ) {
+			} else if ( aatm == acc_rsd.type().RNA_info().o2prime_index() ) {
 				/// WARNING this is set to hbacc_GENERIC_SP3BB for backwards compatibility only!!!
 				/// it should actually be backbone hbacc_HXL.
 				return hbacc_GENERIC_SP3SC;
@@ -739,6 +762,8 @@ get_hb_acc_chem_type(
 				return hbacc_PCA_RNA;
 			} else if ( aname == "XO5'" || aname == "XO3'" || aname == "YO5'" ) {
 				return hbacc_PES_RNA;
+			} else if ( aatm == acc_rsd.type().RNA_info().o2prime_index() ) {
+				return hbacc_GENERIC_SP3SC;
 			}
 			// AMW: There are a number of atoms where we do not have a precise acceptor
 			// type in chemically modified nucleotides. Rather than going one by one,
@@ -758,6 +783,7 @@ get_hb_acc_chem_type(
 			}
 		}
 	}
+	acc_rsd.type().show( tr.Error );
 	utility_exit_with_message( "unknown Hydrogen Bond acceptor type for: " + A(acc_rsd.name()) + I(3,acc_rsd.seqpos()) + " " + acc_rsd.atom_name( aatm) );
 	return hbacc_NONE;
 }

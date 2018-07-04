@@ -98,8 +98,8 @@ void
 check_and_correct_sister_atoms( core::conformation::ResidueOP & rsd ){
 
 	// in all nucleic acids
-	check_and_correct_sister_atom_based_on_chirality( rsd, " OP1", " OP2", " P  ", " O5'" );
-	check_and_correct_sister_atom_based_on_chirality( rsd, " H5'", "H5''", " C5'", " C4'" );
+	check_and_correct_sister_atom_based_on_chirality( rsd, "OP1", "OP2", "P", "O5'" );
+	check_and_correct_sister_atom_based_on_chirality( rsd, "H5'", "H5''", "C5'", "C4'" );
 	// in DNA
 	// AMW:
 	// REMOVED because we no longer blanket apply the same
