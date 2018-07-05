@@ -834,9 +834,9 @@ ResidueTypeSet::get_residue_type_with_variant_added(
 	if ( !rsd_type ) {
 		rsd_type = ResidueTypeFinder( *this ).base_type( init_rsd.get_self_ptr() ).variants( target_variants ).get_representative_type();
 	}
-	
+
 	// AMW JWL TODO: it's a terrifying sign that there's different behavior for doing this with a base_type
-	// than a base_name. This tells me there is a really odd order dependence needed to create the right 
+	// than a base_name. This tells me there is a really odd order dependence needed to create the right
 	// connectivity.
 
 	// For example: in the `carbohydrates` integration test, we have:
@@ -847,7 +847,7 @@ ResidueTypeSet::get_residue_type_with_variant_added(
 	// LINK         O3  Man A   1                 C1  Man A   2                  1.50
 	// LINK         O6  Man A   1                 C1  Glc B   3                  1.50
 	// LINK         O4  Man A   1                 C1  Man C   4                  1.50
-	// with base_type. 
+	// with base_type.
 	// Temporary workaround is to only use the base_type strategy IF the base_name strategy fails.
 	// ResidueTypeCOP rsd_type = ResidueTypeFinder( *this ).base_type( init_rsd.get_self_ptr() ).variants( target_variants ).get_representative_type();
 

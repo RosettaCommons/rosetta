@@ -342,7 +342,7 @@ ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 				restype->set_icoor( "H", radians(-180.000000), radians(60.849998), 1.010000, "N", "CA", "LOWER" );
 			}
 		} else if ( restype->is_RNA() || restype->is_DNA() ) {
-			
+
 			// Require that it HAS an O3'. Some RTs -- DOC is an example --
 			// is upper terminal and lacks upper.
 			restype->set_lower_connect_atom( "P" );
@@ -373,12 +373,12 @@ ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 
 			// Taken -- hardcoded -- from RAD_n.
 			// Necessary?
-			std::string OP1_name = restype->has( "OP1" ) ? "OP1" : 
-				( restype->has( "O1P" ) ? "O1P" : 
-					( restype->has( "S1P" ) ? "S1P" : "N4'" ) );
-			std::string OP2_name = restype->has( "OP2" ) ? "OP2" : 
-				( restype->has( "O2P" ) ? "O2P" : 
-					( restype->has( "S2P" ) ? "S2P" : "N4'" ) );
+			std::string OP1_name = restype->has( "OP1" ) ? "OP1" :
+				( restype->has( "O1P" ) ? "O1P" :
+				( restype->has( "S1P" ) ? "S1P" : "N4'" ) );
+			std::string OP2_name = restype->has( "OP2" ) ? "OP2" :
+				( restype->has( "O2P" ) ? "O2P" :
+				( restype->has( "S2P" ) ? "S2P" : "N4'" ) );
 
 			restype->set_atom_base( OP1_name, "P" );
 			restype->set_atom_base( OP2_name, "P" );
@@ -388,7 +388,7 @@ ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 			// residue types. This is our best attempt to obtain reasonable polymeric-type behavior for
 			// residues where that information is not encoded by default.
 			// AMW TODO: in theory we could use the icoor that WOULD be learned from the CIF residue from
-			// i.e. the OP3 atom for LOWER, but nothing analogous could be done for UPPER so it may not 
+			// i.e. the OP3 atom for LOWER, but nothing analogous could be done for UPPER so it may not
 			// actually be worth it.
 			if ( restype->is_d_rna() ) {
 				restype->set_icoor( "LOWER", radians(-60.259000), radians(76.024713), 1.607355, "P", "O5'", "C5'" );

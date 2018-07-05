@@ -231,7 +231,7 @@ build_optimal_water_Os_on_acceptor(
 			waters.push_back( stub.spherical( radians( 160.0 ), radians( 180.0 - 125.0 ), distance ) );
 			waters.push_back( stub.spherical( radians( 280.0 ), radians( 180.0 - 125.0 ), distance ) );
 		}
-		
+
 
 	} else {
 

@@ -262,16 +262,16 @@ PoseFromSFRBuilder::setup( StructFileRep const & sfr ) {
 					! ResidueTypeFinder( *residue_type_set_ ).name3( link.resName2 ).get_representative_type() ) ) {
 				// One or more residues in this LINK is not recognized.  Move on!
 				TR.Debug << "Omitting LINK record that uses an unrecognized residue." << std::endl;
-			} else if ( ( link.resSeq1 == link.resSeq2 - 1 
+			} else if ( ( link.resSeq1 == link.resSeq2 - 1
 					&& utility::strip(link.name1) == "O3'" && utility::strip(link.name2) == "P" )
-					||  ( link.resSeq1 == link.resSeq2 + 1 
+					||  ( link.resSeq1 == link.resSeq2 + 1
 					&& utility::strip(link.name1) == "P" && utility::strip(link.name2) == "O3'" ) ) {
 				// Strip each string first to handle both PDB and CIF versions.
 				// We have a normal polymeric connection written as a LINK.
 				TR.Debug << "Omitting LINK record that represents the canonical polymeric connectivity of a NCNT." << std::endl;
-			} else if ( ( link.resSeq1 == link.resSeq2 - 1 
+			} else if ( ( link.resSeq1 == link.resSeq2 - 1
 					&& utility::strip(link.name1) == "C" && utility::strip(link.name2) == "N" )
-					||  ( link.resSeq1 == link.resSeq2 + 1 
+					||  ( link.resSeq1 == link.resSeq2 + 1
 					&& utility::strip(link.name1) == "N" && utility::strip(link.name2) == "C" ) ) {
 				// We have a normal polymeric connection written as a LINK.
 				TR.Debug << "Omitting LINK record that represents the canonical polymeric connectivity of a NCAA." << std::endl;

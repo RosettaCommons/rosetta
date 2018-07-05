@@ -137,8 +137,8 @@ mmCIFParser::get_molfile_molecule( Block & block ) {
 	if ( ! N_found ) is_peptide_linking = false;
 	if ( ! P_found ) is_nucleic_linking = false;
 
-	// It's not nucleic linking if we can't establish that the phosphate P is bonded to 
-	// O5'. There are some 'reversed' types -- that plausibly we might choose later to 
+	// It's not nucleic linking if we can't establish that the phosphate P is bonded to
+	// O5'. There are some 'reversed' types -- that plausibly we might choose later to
 	// read in (AMW TODO) as patched base types -- like T3P that we should USUALLY treat
 	// as ligands instead.
 	if ( is_nucleic_linking ) {
@@ -424,11 +424,11 @@ mmCIFParser::get_molfile_molecule( Block & block ) {
 		// only increment if we actually get here.
 		index++;
 	}
-	
+
 	// pdb_BVP messes with this logic because it names H3' "H1" and HO3' H3'.
 	// So we need to place an additional requirement for H skipping.
 	// This is actually a very hard problem.
-				
+
 
 	if ( block.IsTablePresent( "chem_comp_bond" ) ) {
 		ISTable& bond_comp = block.GetTable("chem_comp_bond");

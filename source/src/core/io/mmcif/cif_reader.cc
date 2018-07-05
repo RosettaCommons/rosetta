@@ -242,7 +242,7 @@ StructFileRepOP create_sfr_from_cif_file_op( CifFileOP cifFile, StructFileReader
 
 				// Extract values from record fields.
 				link.name1 = struct_conn( i, "ptnr1_label_atom_id" );
-				
+
 				// Prefer 'author' annotations if available.
 				if ( struct_conn.IsColumnPresent( "ptnr1_auth_comp_id" ) ) {
 					link.resName1 = struct_conn( i, "ptnr1_auth_comp_id" );
@@ -261,7 +261,7 @@ StructFileRepOP create_sfr_from_cif_file_op( CifFileOP cifFile, StructFileReader
 				} else {
 					link.resSeq1 = atof( struct_conn( i, "ptnr1_label_seq_id" ).c_str() );
 				}
-				
+
 				link.iCode1 = struct_conn( i, "pdbx_ptnr1_PDB_ins_code" )[0] == '?' ? ' ' : struct_conn( i, "pdbx_ptnr1_PDB_ins_code" )[0];
 
 				//  LINK     type    1   6   name1           13  16   altLoc1       17  17   resName1      18  20   chainID1     22  22   resSeq1      23  26   iCode1      27  27   name2        43  46   altLoc2      47  47   resName2    48  50   chainID2    52  52   resSeq2     53  56   iCode2      57  57   sym1       60  65   sym2        67  72   length      74  78

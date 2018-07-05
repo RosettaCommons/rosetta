@@ -1429,7 +1429,7 @@ split_pose( pose::Pose & pose, Size const moving_res, Size const reference_res )
 		if ( pose.residue_type( moving_suite + 1 ).is_RNA() && !pose.residue_type( moving_suite+1 ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ) {
 			add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_PHOSPHATE, moving_suite+1 );
 		}
-	} 
+	}
 
 	kinematics::Jump j = pose.jump( jump_at_moving_suite );
 	j.set_translation( Vector( 1.0e4, 0.0, 0.0 ) );
