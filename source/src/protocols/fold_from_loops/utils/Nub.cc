@@ -514,8 +514,12 @@ Nub::add_binders()
 			}
 			bind->fold_tree( bind_tree );
 			TR.Trace <<"ADD BINDER TREE " << bind->fold_tree() << std::endl;
-			core::pose::add_lower_terminus_type_to_pose_residue ( *bind, 1 );
-			core::pose::add_upper_terminus_type_to_pose_residue ( *bind , bind->size() );
+			if ( bind->residue(1).is_protein() || bind->residue(1).is_DNA() || bind->residue(1).is_RNA() ) {
+				core::pose::add_lower_terminus_type_to_pose_residue ( *bind, 1 );
+			}
+			if ( bind->residue(bind->size()).is_protein() || bind->residue(bind->size()).is_DNA() || bind->residue(bind->size()).is_RNA() ) {
+				core::pose::add_upper_terminus_type_to_pose_residue ( *bind , bind->size() );
+			}
 			dssp.apply( *bind );
 			utils::append_pose_to_pose_keep_fold_tree( *unfolded_pose_, *bind, true );
 			unfolded_pose_->pdb_info()->copy(*(bind->pdb_info()), 1, bind->size(), current_length + 1);

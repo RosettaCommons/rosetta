@@ -458,7 +458,9 @@ NubInitioMover::post_process( core::pose::Pose & pose ) {
 	for ( core::Size i = 1; i < pose.size(); ++i ) { // Less than because cutpoints are between i and i+1
 		if ( working_tree.is_cutpoint( i ) ) {
 			if ( !pose.residue(i).has_variant_type( UPPER_TERMINUS_VARIANT ) ) {
-				core::pose::correctly_add_cutpoint_variants( pose, i, false );
+				if ( pose.residue(i).is_protein() || pose.residue(i).is_DNA() || pose.residue(i).is_RNA() ) {
+					core::pose::correctly_add_cutpoint_variants( pose, i, false );
+				}
 			}
 		}
 	}
