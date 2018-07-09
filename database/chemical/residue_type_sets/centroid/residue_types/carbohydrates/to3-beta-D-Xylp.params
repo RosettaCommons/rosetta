@@ -88,6 +88,7 @@ CHI_ROTAMERS 4 180 0
 CHI_ROTAMERS 4 300 0
 
 ADD_RING 1 C1 C2 C3 C4 C5 O5
+ANOMERIC_PSEUDOTORSION LOWER C1 C5 1H5
 
 NU 1  VO5  C1   C2   C3    # duplicates BB 1, but defined differently
 NU 2  C1   C2   C3   C4    # duplicates BB 2

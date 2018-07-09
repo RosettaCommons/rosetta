@@ -12,10 +12,15 @@
 # define the main-chain connectivity, and LINK records must be used.  Such
 # cases (the vast majority) are indicated by the "->?)-" prefix below.  Rosetta
 # will read the "?" and try to interpret the LINK records to assign
-# connectivity.
+# connectivity.  If it cannot successfully assign connectivity, it will use the
+# default value provided below.
 
 # Many of these codes are for modified sugars, which will only work if the
-# proper patch already exists within Rosetta.
+# proper patch already exists within Rosetta.  The patch information given
+# below is actually not required for input, as Rosetta will determine a valid
+# patch from the atom names; however, patch information is required for proper
+# output if one desires to also output using PDB codes instead of the IUPAC/
+# Rosetta 3-letter codes.
 
 # CODES ARE CASE-SENSITIVE!
 
@@ -24,191 +29,208 @@
 
 # Aldotrioses
 
-# Code  Rosetta Code  Default HETNAM  PATCHES
-  3GR   Gly           ->?)-D-Gly
-  G3H   Gly           ->2)-D-Gly
-  GXV   Gly           ->?)-L-Gly
+#       Rosetta                     Default       Patches/
+# Code  Code     Default HETNAM     Connectivity  Modifications
+  3GR   Gly      ->?)-D-Gly         3
+  G3H   Gly      ->?)-D-Gly         2             3-OPO32-
+  GXV   Gly      ->?)-L-Gly         3
 
 
 # Aldotetroses
 
-# Code  Rosetta Code  Default HETNAM  PATCHES
-  E4P   Ery           ->?)-D-Ery
+#       Rosetta                     Default       Patches/
+# Code  Code     Default HETNAM     Connectivity  Modifications
+  E4P   Ery      ->?)-D-Ery         3             4-OPO32-
 
 
 # Aldopentoses
 
-# Code  Rosetta Code  Default HETNAM  PATCHES
-  RIB   Rib           ->?)-alpha-D-Ribf
-  3DR   Rib           ->?)-D-Ribf
-  AAB   Rib           ->?)-beta-D-Ribf
-  ORP   Rib           ->?)-alpha-D-Ribf
-  RIP   Rib           ->?)-alpha-D-Ribp
-  R1X   Rib           ->?)-D-Ribp
-  R52   Rib           ->?)-D-Rib
-  R5P   Rib           ->?)-D-Rib
-  RB5   Rib           ->?)-D-Rib
+#       Rosetta                     Default       Patches/
+# Code  Code     Default HETNAM     Connectivity  Modifications
+  RIB   Rib      ->?)-alpha-D-Ribf  3
+  3DR   Rib      ->3)-D-Ribf        3             1-deoxy 2-deoxy 5-OPO32-
+  AAB   Rib      ->?)-beta-D-Ribf   3             2-deoxy 5-OPO32-
+  ORP   Rib      ->?)-alpha-D-Ribf  3             2-deoxy 5-OPO32-
+  RIP   Rib      ->?)-alpha-D-Ribp  3
+  R1X   Rib      ->?)-D-Ribp        3             1-deoxy
+  R52   Rib      ->?)-D-Rib         3             5-OPO32-       # duplicate entry
+  R5P   Rib      ->?)-D-Rib         3             5-OPO32-       # duplicate entry
+  RB5   Rib      ->?)-D-Rib         3
 
-  ARA   Ara           ->?)-alpha-L-Arap
-  A5P   Ara           ->?)-D-Ara
-  ARB   Ara           ->?)-beta-L-Arap
-  LAI   Ara           ->?)-L-Ara
-  PAN   Ara           ->?)-D-Ara
-  64K   Ara           ->?)-alpha-D-Arap
-  ABF   Ara           ->?)-beta-D-Araf
-  AHR   Ara           ->?)-alpha-L-Araf
-  ARW   Ara           ->?)-beta-D-Arap
+  ARA   Ara      ->?)-alpha-L-Arap  3
+  A5P   Ara      ->?)-D-Ara         3             5-OPO32-
+  ARB   Ara      ->?)-beta-L-Arap   3
+  LAI   Ara      ->?)-L-Ara         3
+  PAN   Ara      ->?)-D-Ara         3             5-OPO32- hydroxamic_acid
+  64K   Ara      ->?)-alpha-D-Arap  3
+  ABF   Ara      ->?)-beta-D-Araf   3             5-OPO32-
+  AHR   Ara      ->?)-alpha-L-Araf  3
+  ARW   Ara      ->?)-beta-D-Arap   3             OMe
 
-  XYP   Xyl           ->?)-beta-D-Xylp default
-  LXC   Xyl           ->?)-beta-L-Xylp
-  XLS   Xyl           ->?)-D-Xyl
+  XYP   Xyl      ->?)-beta-D-Xylp   3
+  LXC   Xyl      ->?)-beta-L-Xylp   3
+  XLS   Xyl      ->?)-D-Xyl         3
 
 
 # Aldohexoses
 
-# Code  Rosetta Code  Default HETNAM  PATCHES
-  ALL   All           ->?)-beta-D-Allp
-  DSR   All           ->?)-beta-D-Allp
 
-  GLC   Glc           ->?)-alpha-D-Glcp default
-  AGL   Glc           ->?)-alpha-D-Glcp
-  BG6   Glc           ->?)-beta-D-Glcp
-  BGC   Glc           ->?)-beta-D-Glcp
-  DDA   Glc           ->?)-beta-D-Glcp
-  DRI   Glc           ->?)-beta-D-Glcp
-  G16   Glc           ->?)-alpha-D-Glcp
-  G1P   Glc           ->?)-alpha-D-Glcp
-  G4D   Glc           ->?)-alpha-D-Glcp
-  G6P   Glc           ->?)-alpha-D-Glcp
-  G6Q   Glc           ->?)-D-Glc
-  GCS   Glc           ->?)-beta-D-Glcp
-  GDA   Glc           ->?)-alpha-D-Glcp
-  GFP   Glc           ->?)-alpha-D-Glcp
-  GLF   Glc           ->?)-alpha-D-Glcp
-  GLO   Glc           ->?)-alpha-D-Glc
-  GLT   Glc           ->?)-alpha-D-Glcp
-  GTM   Glc           ->?)-beta-D-Glcp
-  KBG   Glc           ->?)-beta-D-Glcp
-  MA3   Glc           ->?)-alpha-D-Glcp
-  MGL   Glc           ->?)-beta-D-Glcp
-  NDG   Glc           ->?)-alpha-D-Glcp 2-AcNH
-  TOA   Glc           ->?)-alpha-D-Glcp
-  TOC   Glc           ->?)-alpha-D-Glcp
-  NAG   Glc           ->?)-beta-D-Glcp  2-AcNH
-  MUR   Mur           ->?)-beta-D-Murp  # trivial name for ->?)-beta-D-GlcpNAc, lactic acid derivative
-  G6D   Qui           ->?)-alpha-D-Quip # trivial name for ->?)-alpha-D-Glcp, 6-deoxy-
+#       Rosetta                     Default       Patches/
+# Code  Code     Default HETNAM     Connectivity  Modifications
+  ALL   All      ->?)-beta-D-Allp   3
+  DSR   All      ->?)-beta-D-Allp   3             2-deoxy 4-SH 6-deoxy
 
-  MAN   Man           ->?)-alpha-D-Manp default
-  BMA   Man           ->?)-beta-D-Manp  default
-  M1P   Man           ->?)-alpha-D-Manp
-  M6D   Man           ->?)-beta-D-Manp
-  M6P   Man           ->?)-alpha-D-Manp
-  MAF   Man           ->?)-alpha-D-Manp
-  MBF   Man           ->?)-beta-D-Manp
-  MMA   Man           ->?)-alpha-D-Manp
-  OPM   Man           ->?)-alpha-D-Manp
-  RHA   Man           ->?)-alpha-L-Manp
-  RNS   Man           ->?)-L-Man
+  GLC   Glc      ->?)-alpha-D-Glcp  3
+  BDP   Glc      ->?)-beta-D-Glcp   3             uronic_acid
+  BG6   Glc      ->?)-beta-D-Glcp   3             6-OPO32-
+  BGC   Glc      ->?)-beta-D-Glcp   3
+  DDA   Glc      ->?)-beta-D-Glcp   3             2-deoxy 6-deoxy
+  DRI   Glc      ->?)-beta-D-Glcp   3             2-deoxy 4-OMe 6-deoxy
+  G16   Glc      ->?)-alpha-D-Glcp  3             1-OPO32- 6-OPO32-
+  G1P   Glc      ->?)-alpha-D-Glcp  3             1-OPO32-
+  G4D   Glc      ->?)-alpha-D-Glcp  3             4-deoxy
+  G6P   Glc      ->?)-alpha-D-Glcp  3             6-OPO32-
+  G6Q   Glc      ->?)-D-Glc         3             6-OPO32-
+  GCS   Glc      ->?)-beta-D-Glcp   3             2-NH3+
+  GDA   Glc      ->?)-alpha-D-Glcp  3             4-NH3+
+  GFP   Glc      ->?)-alpha-D-Glcp  3             1-OPO32- 2-F
+  GLF   Glc      ->?)-alpha-D-Glcp  3             1-F
+  GLO   Glc      ->?)-alpha-D-Glc   3
+  GLT   Glc      ->?)-alpha-D-Glcp  3             5-S
+  GTM   Glc      ->?)-beta-D-Glcp   3             OMe 4-SH
+  KBG   Glc      ->?)-beta-D-Glcp   3             2-keto
+  MA3   Glc      ->?)-alpha-D-Glcp  3             OMe 4-SH
+  MAG   Glc      ->?)-beta-D-Glcp   3             OMe 2-AcNH
+  MGL   Glc      ->?)-beta-D-Glcp   3             OMe
+  NDG   Glc      ->?)-alpha-D-Glcp  3             2-AcNH
+  TOA   Glc      ->?)-alpha-D-Glcp  4             3-NH3+
+  TOC   Glc      ->?)-alpha-D-Glcp  4             2-NH3+ 3-deoxy 6-NH3+
+  NAG   Glc      ->?)-beta-D-Glcp   3             2-AcNH
+  MUR   Mur      ->?)-beta-D-Murp   4                            # trivial name for ->?)-beta-D-GlcpNAc, lactic acid derivative
+  G6D   Qui      ->?)-alpha-D-Quip  3                            # trivial name for ->?)-alpha-D-Glcp, 6-deoxy-
+  AGL   Qui      ->?)-alpha-D-Quip  3             4-NH3+         # trivial name for ->?)-alpha-D-Glcp, 6-deoxy-
 
-  GAL   Gal           ->?)-beta-D-Galp default
-  GLA   Gal           ->?)-alpha-D-Galp
-  1GN   Gal           ->?)-beta-D-Galp
-  2DG   Gal           ->?)-beta-D-Galp
-  A2G   Gal           ->?)-alpha-D-Galp
-  AAL   Gal           ->?)-alpha-L-Galp
-  ASG   Gal           ->?)-beta-D-Galp
-  BGP   Gal           ->?)-beta-D-Galp
-  DDL   Gal           ->?)-beta-D-Galp
-  DGS   Gal           ->?)-alpha-D-Galp
-  DR4   Gal           ->?)-beta-D-Galp
-  G6S   Gal           ->?)-beta-D-Galp
-  GAF   Gal           ->?)-alpha-D-Galp
-  GL1   Gal           ->?)-alpha-D-Galp
-  KDP   Gal           ->?)-D-Gal
-  L6S   Gal           ->?)-alpha-L-Galp
-  MBG   Gal           ->?)-beta-D-Galp
-  SGA   Gal           ->?)-beta-D-Galp
-  FUC   Fuc           ->?)-alpha-L-Fucp  default # trivial name for ->?)-alpha-L-Galp, 6-deoxy-
-  FUL   Fuc           ->?)-beta-L-Fucp   default # trivial name for ->?)-beta-L-Galp, 6-deoxy-
-  ABE   Abe           ->?)-alpha-D-Abep  # trivial name for ->?)-alpha-D-Galp, 3,6-deoxy-
-  
+  MAN   Man      ->?)-alpha-D-Manp  3
+  BMA   Man      ->?)-beta-D-Manp   3
+  M1P   Man      ->?)-alpha-D-Manp  3             1-OPO32-
+  M6D   Man      ->?)-beta-D-Manp   3             6-OPO32-
+  M6P   Man      ->?)-alpha-D-Manp  3             6-OPO32-
+  MAF   Man      ->?)-alpha-D-Manp  3             2-F
+  MBF   Man      ->?)-beta-D-Manp   3             2-F
+  MMA   Man      ->?)-alpha-D-Manp  3             OMe
+  OPM   Man      ->?)-alpha-D-Manp  3             OPe            # maybe treat this as a glycolipid?
+  RHA   Rha      ->?)-alpha-L-Rhap  3             1-OPO32-       # trivial name for ->?)-alpha-L-Manp, 6-deoxy-
+  RNS   Rha      ->?)-L-Rha         3                            # trivial name for ->?)-L-Man, 6-deoxy-
+  RAM   Rha      ->?)-alpha-L-Rhap  3                            # trivial name for ->?)-alpha-L-Manp, 6-deoxy-
+  RAE   Rha      ->?)-alpha-L-Rhap  3             2-deoxy        # trivial name for ->?)-alpha-L-Manp, 6-deoxy-
+  RAO   Rha      ->?)-alpha-L-Rhap  3             OMe            # trivial name for ->?)-alpha-L-Manp, 6-deoxy-
+
+  GAL   Gal      ->?)-beta-D-Galp   3
+  GLA   Gal      ->?)-alpha-D-Galp  3
+  1GN   Gal      ->?)-beta-D-Galp   3             2-NH3+
+  2DG   Gal      ->?)-beta-D-Galp   3             2-deoxy
+  A2G   Gal      ->?)-alpha-D-Galp  3             2-AcNH
+# AAL   Gal      ->?)-alpha-L-Galp  4                            # a crazy bridging bicyclic molecule
+  ASG   Gal      ->?)-beta-D-Galp   3             2-AcNH 4-OSO3-
+  BGP   Gal      ->?)-beta-D-Galp   3             6-OPO32-
+  DDL   Gal      ->?)-beta-D-Galp   3             2-deoxy 6-deoxy
+# DGS   Gal      ->?)-alpha-D-Galp  4                            # a crazy bridging bicyclic molecule
+# DR4   Gal      ->?)-beta-D-Galp   3                            # should be treated as a glycolipid
+  G6S   Gal      ->?)-beta-D-Galp   3             6-OSO3-
+  GAF   Gal      ->?)-alpha-D-Galp  3             2-F
+  GL1   Gal      ->?)-alpha-D-Galp  3             1-OPO32-
+  KDP   Gal      ->?)-D-Gal         4             2-keto 3-deoxy 6-OPO32-
+  L6S   Gal      ->?)-alpha-L-Galp  3             6-OSO3-
+  MBG   Gal      ->?)-beta-D-Galp   3             OMe
+  NGA   Gal      ->?)-beta-D-Galp   3             2-AcNH
+  SGA   Gal      ->?)-beta-D-Galp   4             3-OSO3-
+  FUC   Fuc      ->?)-alpha-L-Fucp  3                            # trivial name for ->?)-alpha-L-Galp, 6-deoxy-
+  FUL   Fuc      ->?)-beta-L-Fucp   3                            # trivial name for ->?)-beta-L-Galp, 6-deoxy-
+  ABE   Abe      ->?)-alpha-D-Abep  4                            # trivial name for ->?)-alpha-D-Galp, 3,6-dideoxy-
+
 
 # KETOSES
 
 # Ketotrioses
 
-# Code  Rosetta Code  Default HETNAM  PATCHES
-  2HA   DHA           ->3)-DHA
-  13P   DHA           ->1)-DHA
+#       Rosetta                     Default       Patches/
+# Code  Code     Default HETNAM     Connectivity  Modifications
+  2HA   DHA      ->3)-DHA           3
+  13P   DHA      ->1)-DHA           1             3-OPO32-
 
 
 # Ketotetroses
 
-# Code  Rosetta Code  Default HETNAM  PATCHES
-  DE2   Eul           ->?)-L-Eul
+#       Rosetta                     Default       Patches/
+# Code  Code     Default HETNAM     Connectivity  Modifications
+  DE2   Eul      ->?)-L-Eul         3             1-deoxy
 
 
 # Ketopentoses
 
-# Code  Rosetta Code  Default HETNAM  PATCHES
-  0VR   Rul           ->?)-D-Rul
-  137   Rul           ->?)-D-Rul
-  5RP   Rul           ->?)-D-Rul
-  HMS   Rul           ->?)-L-Rul
-  MRU   Rul           ->?)-D-Rul
-  RUB   Rul           ->?)-D-Rul
+#       Rosetta                     Default       Patches/
+# Code  Code     Default HETNAM     Connectivity  Modifications
+# 0VR   Rul      ->?)-D-Rul         3                            # Something is wrong with this one in the PDB...
+# 137   Rul      ->?)-D-Rul         3                            # Something is wrong with this one in the PDB...
+  5RP   Rul      ->?)-D-Rul         3             5-OPO32-
+  HMS   Rul      ->?)-L-Rul         3             5-OPO32-
+  MRU   Rul      ->?)-D-Rul         3             1-OPO32- 5-SMe
+  RUB   Rul      ->?)-D-Rul         3             1-OPO32- 5-OPO32-
 
-  XUL   Xul           ->?)-D-Xul
-  5FX   Xul           ->?)-D-Xul
-  5SP   Xul           ->?)-D-Xul
-  DXP   Xul           ->?)-D-Xul
-  XBP   Xul           ->?)-D-Xul
-  XDP   Xul           ->?)-D-Xul
+  XUL   Xul      ->?)-D-Xul         3
+  5FX   Xul      ->?)-D-Xul         3             5-F
+  5SP   Xul      ->?)-D-Xul         3             5-OPO32-
+  DXP   Xul      ->?)-D-Xul         3             1-deoxy 5-OPO32-
+  XBP   Xul      ->?)-D-Xul         3             1-OPO32- 5-OPO32-
+  XDP   Xul      ->?)-D-Xul         3             1-OPO32- 2-hydrate 5-OPO32-
 
 
 # Ketohexoses
 
-# Code  Rosetta Code  Default HETNAM  PATCHES
-  PSJ   Psi           ->?)-D-Psi
-  LPK   Psi           ->?)-L-Psi
+#       Rosetta                     Default       Patches/
+# Code  Code     Default HETNAM     Connectivity  Modifications
+  PSJ   Psi      ->?)-D-Psi         3
+  LPK   Psi      ->?)-L-Psi         3
 
-  FRU   Fru           ->?)-beta-D-Fruf
-  AFP   Fru           ->?)-alpha-D-Fruf
-  DFR   Fru           ->?)-beta-D-Fruf
-  F1X   Fru           ->?)-beta-D-Fruf
-  F6P   Fru           ->?)-beta-D-Fruf
-  F6R   Fru           ->?)-D-Fru
-  FBP   Fru           ->?)-beta-D-Fruf
-  FDP   Fru           ->?)-beta-D-Fruf
-  FUD   Fru           ->?)-D-Fru
-  P6F   Fru           ->?)-D-Fru
-  P6P   Fru           ->?)-alpha-D-Fruf
+  FRU   Fru      ->?)-beta-D-Fruf   3
+  AFP   Fru      ->?)-alpha-D-Fruf  3             1-OPO32- 6-OPO32-
+  DFR   Fru      ->?)-beta-D-Fruf   4             3-Me
+  F1X   Fru      ->?)-beta-D-Fruf   3             1-OPO32-
+  F6P   Fru      ->?)-beta-D-Fruf   3             6-OPO32-
+  F6R   Fru      ->?)-D-Fru         3             6-OPO32-
+  FBP   Fru      ->?)-beta-D-Fruf   3             1-OPO32- 6-OPO32-
+  FDP   Fru      ->?)-beta-D-Fruf   3             2-OPO32- 6-OPO32-
+  FUD   Fru      ->?)-D-Fru         3
+  P6F   Fru      ->?)-D-Fru         3             1-OPO32- 6-OPO32-
+  P6P   Fru      ->?)-alpha-D-Fruf  3             6-OPO32-
 
-  2FP   Sor           ->?)-D-Sor
-  SDD   Sor           ->?)-D-Sor
-  SOE   Sor           ->?)-alpha-L-Sorp
-  SOL   Sor           ->?)-L-Sor
+  2FP   Sor      ->?)-D-Sor         3             1-OPO32- 6-OPO32-  # misnamed as fructose in the PDB
+  SDD   Sor      ->?)-D-Sor         3
+  SOE   Sor      ->?)-alpha-L-Sorp  3
+  SOL   Sor      ->?)-L-Sor         3
 
-  TAG   Tag           ->?)-D-alpha-Tag
+  TAG   Tag      ->?)-D-alpha-Tag   3
 
 
 # Ketooctose
 
-# Code  Rosetta Code  Default HETNAM  PATCHES
-  KDO   Kdo           ->?)-D-alpha-Kdop
+#       Rosetta                     Default       Patches/
+# Code  Code     Default HETNAM     Connectivity  Modifications
+  KDO   Kdo      ->?)-D-alpha-Kdop  4
 
 
 # Ketononoses (e.g., Sialic Acids)
 
-# Code  Rosetta Code  Default HETNAM  PATCHES
-  AMN   Neu           ->?)-alpha-Neup
-  ANA   Neu           ->?)-alpha-Neup
-  GNA   Neu           ->?)-alpha-Neup
-  MNA   Neu           ->?)-alpha-Neup
-  NGC   Neu           ->?)-alpha-Neup
-  NGE   Neu           ->?)-beta-Neup
-  NGF   Neu           ->?)-Neu
-  SI3   Neu           ->?)-Neu
-  SID   Neu           ->?)-alpha-Neup
-  SLB   Neu           ->?)-beta-Neup default
-  SIA   Neu           ->?)-alpha-Neup 5-Ac
+#       Rosetta                     Default       Patches/
+# Code  Code     Default HETNAM     Connectivity  Modifications
+  AMN   Neu      ->?)-alpha-Neup    8             OMe 5-Ac 9-NH3+
+  ANA   Neu      ->?)-alpha-Neup    8             Ome 4-Ac 5-Ac
+  GNA   Neu      ->?)-alpha-Neup    8             2-deoxy 4-Gua 5-Ac
+  MNA   Neu      ->?)-alpha-Neup    8             OMe 5-Ac
+  NGC   Neu      ->?)-alpha-Neup    8             5-HOAc
+  NGE   Neu      ->?)-beta-Neup     8             5-HOAc
+  NGF   Neu      ->?)-Neu           8             5-HOAc
+  SI3   Neu      ->?)-Neu           8             5-Ac
+  SID   Neu      ->?)-alpha-Neup    8             OMe 5-Ac 9-AcS
+  SLB   Neu      ->?)-beta-Neup     8             5-Ac
+  SIA   Neu      ->?)-alpha-Neup    8             5-Ac

@@ -49,11 +49,12 @@ write_vector( std::string filename, vector1< T > const & vec )
 }
 
 /// @brief  General method that opens a file and returns its data as a list of lines after checking for errors.
-utility::vector1< std::string >
-get_lines_from_file_data( std::string const & filename );
+utility::vector1< std::string > get_lines_from_file_data( std::string const & filename );
 
+/// @brief  General method for removing comments from a line read from a database file.
+void remove_inline_comments( std::string & line );
 
-}
-}
+}  // namespace io
+}  // namespace utility
 
-#endif
+#endif  // INCLUDED_utility_io_util_hh

@@ -414,9 +414,16 @@ PoseToStructFileRepConverter::append_atom_info_to_sfr(
 	if ( options_.write_glycan_pdb_codes() && rsd.type().canonical_atom_aliases().count(rsd.atom_name(atom_index) ) ) {
 		ai.name = rsd.type().canonical_atom_aliases()[ai.name];
 	}
-	ai.resName = rsd.name3();
 	if ( options_.write_glycan_pdb_codes() && rsd.is_carbohydrate() ) {
 		ai.resName = NomenclatureManager::get_instance()->pdb_code_from_rosetta_name( rsd.name() );
+		if ( ai.resName == "" ) {
+			TR.Warning << "Could not match " << rsd.name() << " to PDB code. ";
+			TR.Warning << "Please turn off the -write_glycan_pdb_code flag or ";
+			TR.Warning << "try adding a record to the pdb_sugar.codes database file." << std::endl;
+			ai.resName = rsd.name3();
+		}
+	} else {
+		ai.resName = rsd.name3();
 	}
 	ai.x = atom.xyz()(1);
 	ai.y = atom.xyz()(2);

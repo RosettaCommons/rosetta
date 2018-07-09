@@ -42,36 +42,40 @@ read_alternative_3_letter_codes_from_database_file( std::string const & filename
 {
 	using namespace std;
 	using namespace utility;
+	using namespace utility::io;
 
-	vector1< string > const lines( utility::io::get_lines_from_file_data( filename ) );
+	vector1< string > const lines( get_lines_from_file_data( filename ) );
 	AltCodeMap code_map;
 
-	Size const n_lines( lines.size() );
-	for ( uint i( 1 ); i <= n_lines; ++i ) {
-		istringstream line_word_by_word( lines[ i ] );
+	for ( auto line : lines ) {
+		remove_inline_comments( line );
+		istringstream line_word_by_word( line );
+
 		string key;  // The map key is an alternative 3-letter code.
 		string name3;  // This is the Rosetta 3-letter code.
 		string hetnam( "" );  // This is the (optional) default HETNAM information.
-		utility::vector1< std::string > patches;
+		char connectivity( '\0' );  // This is the (optional) default main-chain connectivity.
+		utility::vector1< std::string > patches;  // This is an (optional) list of patches for residue modifications.
 
 		// The first two columns must be present.
 		line_word_by_word >> key >> name3;
+		if ( line_word_by_word.fail() ) { continue; }
+
+		// The next columns are optional.
+		line_word_by_word >> hetnam;
 		if ( ! line_word_by_word.fail() ) {
-			line_word_by_word >> hetnam;
-		} else {
-			continue;
-		}
-		std::string patch;
-		while ( ! line_word_by_word.fail() ) {
-			line_word_by_word >> patch;
-			//break on # comments
-			if ( !patch.compare(0,1,"#") || !patch.compare(0,1,"\n") || !patch.compare(0,1,"") ) {
-				break;
+			line_word_by_word >> connectivity;
+			if ( ! line_word_by_word.fail() ) {
+				std::string patch;
+				line_word_by_word >> patch;
+				while ( ! line_word_by_word.fail() ) {
+					patches.push_back( patch );
+					line_word_by_word >> patch;
+				}
 			}
-			patches.push_back(patch);
 		}
 
-		code_map[ key ] = make_tuple( name3, hetnam, patches );
+		code_map[ key ] = make_tuple( name3, hetnam, connectivity, patches );
 	}
 
 

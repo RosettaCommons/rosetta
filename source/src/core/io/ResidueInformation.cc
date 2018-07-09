@@ -81,7 +81,9 @@ void ResidueInformation::resName(  std::string const & setting )
 	resName_ = setting;
 	rosetta_resName_ = core::io::NomenclatureManager::get_instance()->rosetta_names_from_pdb_code( setting ).first;
 
-	for ( Size ii = 1 ; ii <= atoms_.size(); ++ii ) atoms_[ ii ].resName = setting;
+	for ( Size ii = 1 ; ii <= atoms_.size(); ++ii ) {
+		atoms_[ ii ].resName = setting;
+	}
 }
 void ResidueInformation::chainID(  char setting ) { chainID_ = setting; }
 void ResidueInformation::resSeq(   int setting ) { resSeq_ = setting; }

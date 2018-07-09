@@ -61,5 +61,14 @@ get_lines_from_file_data( std::string const & filename )
 	return lines;
 }
 
+// General method for removing comments from a line read from a database file.
+/// @details  Inline comments (indicated with #) are trimmed from the end of a passed string.
+/// @author   Labonte <JWLabonte@jhu.edu>
+void
+remove_inline_comments( std::string & line )
+{
+	line = line.substr( 0, line.find_first_of( "#" ) );
+}
+
 }  // namespace io
 }  // namespace utility

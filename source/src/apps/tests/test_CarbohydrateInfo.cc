@@ -92,7 +92,7 @@ main( int argc, char *argv[] )
 		// Declare variables.
 		Pose maltotriose, isomaltose, lactose, amylopectin, glycopeptide, glucosamine, N_linked_14_mer, free_14_mer,
 			O_linked, psicose, neuraminate, bacillosamine, Lex, SLex, GalCer, UDP_D_Glc, target57, maltobiose,
-			Me_glycoside, C_linked, whacky_sugar, bad_pdb;
+			Me_glycoside, C_linked, whacky_sugar, pdb_code_pdb, bad_pdb;
 		ResidueTypeSetCOP residue_set( ChemicalManager::get_instance()->residue_type_set( "fa_standard" ) );
 
 
@@ -339,6 +339,15 @@ main( int argc, char *argv[] )
 			*residue_set );
 
 		test_sugar( whacky_sugar );
+
+
+		cout << "---------------------------------------------------------------------------------------------" << endl;
+		cout << "Importing a .pdb file using PDB 3-letter codes, "
+			"including one that cannot have position 3 as the default main-chain connection:" << endl;
+
+		pose_from_file( pdb_code_pdb, PATH + "pdb_w_pdb_3_letter_codes.pdb", PDB_file );
+
+		test_sugar( pdb_code_pdb );
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;

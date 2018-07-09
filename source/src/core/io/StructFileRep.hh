@@ -249,6 +249,12 @@ public:  // Accessors /////////////////////////////////////////////////////////
 	std::map< std::string, std::pair< std::string, std::string > > const & residue_type_base_names() const { return residue_type_base_names_; }
 	std::map< std::string, std::pair< std::string, std::string > >       & residue_type_base_names()       { return residue_type_base_names_; }
 
+	/// @brief   Access map for storing the default main-chain connectivity for this residue,
+	/// if provided by alternate 3-letter code files:
+	/// @details key is 6-character resID\n
+	/// value is a char of a single-digit integer
+	std::map< std::string, char > const & default_mainchain_connectivity() const { return default_mainchain_connectivity_; }
+	std::map< std::string, char >       & default_mainchain_connectivity()       { return default_mainchain_connectivity_; }
 
 	// PDB Secondary Structure Section ////////////////////////////////////////
 	/// @brief   Access map for storing HELIX records.
@@ -370,6 +376,7 @@ private:
 	std::map< std::string, utility::vector1< std::string > > heterogen_synonyms_;  // key is hetID
 	std::map< std::string, std::string > heterogen_formulae_;  // key is hetID
 	std::map< std::string, std::pair< std::string, std::string > > residue_type_base_names_;  // key is 6-char. resID
+	std::map< std::string, char > default_mainchain_connectivity_;  // key is 6-char. resID
 	utility::vector1< HELIXInformation > HELIXInformations_;
 	utility::vector1< SHEETInformation > SHEETInformations_;
 	std::map< std::string, utility::vector1< SSBondInformation > > ssbond_map_;  // key is 6-character resID

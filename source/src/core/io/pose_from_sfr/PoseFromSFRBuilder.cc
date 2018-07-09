@@ -373,8 +373,12 @@ PoseFromSFRBuilder::pass_2_resolve_residue_types()
 		std::pair< std::string, std::string > const & rosetta_names(
 			NomenclatureManager::get_instance()->rosetta_names_from_pdb_code( rinfo.resName() ) );
 		std::string const & name3( rosetta_names.first );
-		if ( rosetta_names.second != "" ) {
-			sfr_.residue_type_base_names()[ rinfo.resid() ] = std::make_pair( name3, rosetta_names.second );
+		std::string const & base_name( rosetta_names.second );
+
+		if ( base_name != "" ) {
+			sfr_.residue_type_base_names()[ rinfo.resid() ] = std::make_pair( name3, base_name );
+			sfr_.default_mainchain_connectivity()[ rinfo.resid() ] =
+				NomenclatureManager::get_instance()->default_mainchain_connectivity_from_pdb_code( rinfo.resName() );
 		}
 		if ( carbohydrates::CarbohydrateInfoManager::is_valid_sugar_code( name3 ) ) {
 			TR.Trace << "Identified glycan at position " << ii << std::endl;
@@ -1228,8 +1232,8 @@ void
 PoseFromSFRBuilder::determine_residue_branching_info(
 	Size const seqpos,
 	utility::vector1< std::string > & known_connect_atoms_on_this_residue,
-	std::map< std::string, std::map< std::string, std::pair< std::string, std::string > > > const & explicit_link_mapping
-) {
+	std::map< std::string, std::map< std::string, std::pair< std::string, std::string > > > const & explicit_link_mapping )
+{
 	using namespace std;
 	using namespace core::io::pdb;
 	using namespace core::chemical;
@@ -1305,9 +1309,14 @@ PoseFromSFRBuilder::determine_residue_branching_info(
 
 	// Fallback, if we're still not satisfied with mainchain connections
 	if ( unknown_main_chain_connectivity ) {
-		TR.Trace << "Assigning main-chain connectivity arbitrarily to position 3 of this terminal residue." << endl;
-		// TODO: In the future, we might want something else.
-		sfr_.residue_type_base_names()[ resid ].second[ CARB_MAINCHAIN_CONN_POS ] = '3';
+		char default_mainchain_connectivity( sfr_.default_mainchain_connectivity()[ resid ] );
+		if ( ! default_mainchain_connectivity ) {
+			default_mainchain_connectivity = '3';
+		}
+		TR.Trace << "Assigning main-chain connectivity arbitrarily to position "<< default_mainchain_connectivity;
+		TR.Trace << " of this terminal residue." << endl;
+
+		sfr_.residue_type_base_names()[ resid ].second[ CARB_MAINCHAIN_CONN_POS ] = default_mainchain_connectivity;
 		if ( next_residue_skipping_merges( seqpos ) != seqpos ) { // Don't update for last residue
 			same_chain_prev_[ next_residue_skipping_merges( seqpos ) ] = false; // Don't connect this residue with the next
 		}

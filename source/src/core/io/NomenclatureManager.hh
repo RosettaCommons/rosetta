@@ -41,13 +41,15 @@ public:  // Declare friends ///////////////////////////////////////////////////
 
 public:  // Static constant data access ///////////////////////////////////////
 
-	/// @brief  Return a pair of Rosetta names (3-letter code and base ResidueType name, if available) from the
-	/// given PDB 3-letter code.
-	static std::pair< std::string, std::string >
-	rosetta_names_from_pdb_code( std::string const & pdb_code );
+	/// @brief  Return a pair of Rosetta names (3-letter code and base ResidueType name, if available) from the given
+	/// pdb_code.
+	static std::pair< std::string, std::string > rosetta_names_from_pdb_code( std::string const & pdb_code );
 
-	std::string
-	pdb_code_from_rosetta_name(std::string const & rosetta_name );
+	/// @brief  Return the default main-chain connectivity (if available) from the given pdb_code.
+	static char default_mainchain_connectivity_from_pdb_code( std::string const & pdb_code );
+
+	/// @brief  This function returns the pdb code that corresponds to the residue name.
+	static std::string pdb_code_from_rosetta_name( std::string const & rosetta_name );
 
 	static bool is_NA( std::string const & name3 );
 	static bool is_old_RNA( std::string const & name3 );
@@ -61,7 +63,9 @@ public:  // Static constant data access ///////////////////////////////////////
 	static std::string annotated_sequence_from_modomics_oneletter_sequence( std::string const & seq );
 	static std::string annotated_sequence_from_IUPAC_sequence( std::string const & seq );
 
+
 private:  // Private methods //////////////////////////////////////////////////
+
 	// Empty constructor
 	NomenclatureManager();
 
@@ -85,6 +89,7 @@ private:  // Private methods //////////////////////////////////////////////////
 	// Try various combinations to locate the specific file being requested by the user.
 	// (inspired by core::scoring::ScoreFunction::find_weights_file())
 	std::string find_alternate_codes_file( std::string const & filename );
+
 
 private:  // Private data /////////////////////////////////////////////////////
 

@@ -37,8 +37,10 @@
 #include <string>
 #include <boost/algorithm/string.hpp>
 
+
 // Construct tracer.
 static basic::Tracer TR( "core.io.pdb.NomenclatureManager" );
+
 
 namespace core {
 namespace io {
@@ -46,8 +48,8 @@ namespace io {
 // Public methods /////////////////////////////////////////////////////////////
 // Static constant data access
 /// @return  If a file of alternative 3-letter codes has been provided at the command line, return a pair of Rosetta
-/// names (3-letter code and base ResidueType name, if available); if no file has been provided, or if there is no
-/// alternative for the given code, simply return the PDB code and an empty string.
+/// names (3-letter code and base ResidueType name, if available) from the given PDB 3-letter code.  If no file has
+/// been provided, or if there is no alternative for the given code, simply return the PDB code and an empty string.
 std::pair< std::string, std::string >
 NomenclatureManager::rosetta_names_from_pdb_code( std::string const & pdb_code )
 {
@@ -58,106 +60,137 @@ NomenclatureManager::rosetta_names_from_pdb_code( std::string const & pdb_code )
 	// This is because we need -- for ligand_water_docking -- to recognize
 	// both TP3 and WAT as waters.
 	AltCodeMap const & alt_codes( get_instance()->get_alternate_3_letter_code_map() );
-	auto alt_code_tuple( alt_codes.find( pdb_code ) );
-	if ( alt_code_tuple == alt_codes.end() ) {  // Is there an alternate for this code?
-		return std::make_pair( pdb_code, "" );
+	AltCodeMap::const_iterator alt_code_key_value_pair( alt_codes.find( pdb_code ) );
+	if ( alt_code_key_value_pair == alt_codes.end() ) {  // Is there an alternate for this code?
+		return make_pair( pdb_code, "" );  // If there is no alternate, simply return what was passed.
 	}
 
-	// Get the value of this key/value pair. This function now converts to a pair from the tuple in order to maintain backward compatability. BF.
-	std::string name3 = std::get<0>(alt_code_tuple->second);
-	std::string base_name = std::get<1>(alt_code_tuple->second);
-	pair< string, string > const & rosetta_names = std::make_pair( name3, base_name );
-	TR.Debug << "Accepting alternate code " << pdb_code << " for " << rosetta_names.first << '.' << endl;
-	return rosetta_names;
+	// Get the value (a tuple) of this key/value pair and tie it to temp. variables.
+	string const & name3( get< 0 >( alt_code_key_value_pair->second ) );
+	string const & base_name( get< 1 >( alt_code_key_value_pair->second ) );
+	// We use another function, default_mainchain_connectivity_from_pdb_code, to access the 3rd (index 2) value.
+	// We do not need the 4th (index 3) value for input purposes, only output.
+
+	TR.Debug << "Accepting alternate code " << pdb_code << " for " << name3 << '.' << endl;
+	return make_pair( name3, base_name );
 }
 
-//This function returns the pdb code that corresponds to the residue name. It will fail if no match can be found. If this happens add the patches
-//you want to match to the pdb_codes database.
-std::string
-NomenclatureManager::pdb_code_from_rosetta_name(std::string const & rosetta_name ){
-	utility::vector1<std::string> split_vect;
-	boost::split(split_vect, rosetta_name, [](char c){return c == ':';});
-	utility::vector1<std::string> patches;
-	//start at 2 since #1 is the base name
-	for ( core::Size i=2; i<=split_vect.size(); i++ ) {
-		patches.push_back(split_vect[i]);
-	}
-	std::string base_name;
-	utility::vector1<std::string> base_name_vect;
-	boost::split(base_name_vect, split_vect[1], [](char c){ return c == ')';});
-	base_name = base_name_vect[2];
-	//Add all patches that don't code for sugars here
-	utility::vector1<std::string> base_patches;
-	base_patches.push_back("non-reducing_end");
-	base_patches.push_back("reducing_end");
-	base_patches.push_back("cutpoint_lower");
-	base_patches.push_back("cutpoint_upper");
-	for ( core::Size i=1; i<=patches.size(); i++ ) {
-		if ( patches[i].find("branch") != std::string::npos ) {
-			base_patches.push_back(patches[i]);
-		}
-	}
+/// @return  If a file of alternative 3-letter codes has been provided at the command line, return the default main-
+/// chain connectivity (if available) from the given PDB 3-letter code.  If no file has been provided, or if there is
+/// no default value for the given code, simply return a null character.
+char
+NomenclatureManager::default_mainchain_connectivity_from_pdb_code( std::string const & pdb_code )
+{
+	using namespace basic::options;
 
-	//loop over the alt code map
 	AltCodeMap const & alt_codes( get_instance()->get_alternate_3_letter_code_map() );
-	core::Size max_patches_matched = 0;
-	std::string best_match = "";
-	utility::vector1<std::string> best_patch_match;
+	AltCodeMap::const_iterator alt_code_key_value_pair( alt_codes.find( pdb_code ) );
+	if ( alt_code_key_value_pair == alt_codes.end() ) {  // Is there an alternate for this code?
+		return '\0';    // If there is no alternate, simply return a null char.
+	}
+
+	// Get the value (a tuple) of this key/value pair and grab the connectivity (3rd value, index 2).
+	return std::get< 2 >( alt_code_key_value_pair->second );
+}
+
+// This function returns the pdb code that corresponds to the residue name.
+/// @return  The unique PDB 3-letter code that corresponds to the give ResidueType name or an empty string if no match
+/// is found.
+/// @author  Brandon Frenz
+/// @author  Labonte <JWLabonte@jhu.edu>
+std::string
+NomenclatureManager::pdb_code_from_rosetta_name( std::string const & rosetta_name )
+{
+	using namespace std;
+	using namespace utility;
+
+	debug_assert( rosetta_name != "" );
+
+	// TODO: We need a better way of getting these patch names, as hypothetically, other PTMs will have the same issue.
+	// The list below is exclusively for saccharide ResidueTypes, and this function should work with non-saccharides.
+	vector1< string > const non_modification_patches = {
+		"non-reducing_end",
+		"reducing_end",
+		"cutpoint_lower",
+		"cutpoint_upper",
+		"->1)-branch",
+		"->2)-branch",
+		"->3)-branch",
+		"->4)-branch",
+		"->5)-branch",
+		"->6)-branch",
+		"->7)-branch",
+		"->8)-branch",
+		"->9)-branch"
+		};
+
+	TR.Debug << "Looking for PDB code for " << rosetta_name << std::endl;
+
+	// Separate the base name from the patches and main-chain designation, if necessary.
+	vector1< string > base_name_and_patches;
+	vector1< string > patches;
+	if ( rosetta_name.find( ":" ) != string::npos ) {
+		boost::split( base_name_and_patches, rosetta_name, []( char c ) { return c == ':'; } );
+	} else {
+		base_name_and_patches.push_back( rosetta_name );
+	}
+
+	// Start at 2 since #1 is the base name.
+	for ( core::Size i = 2; i <= base_name_and_patches.size(); ++i ) {
+		if ( ! non_modification_patches.has_value( base_name_and_patches[ i ] ) ) {
+			patches.push_back( base_name_and_patches[ i ] );
+		}
+	}
+	string base_name( base_name_and_patches[ 1 ] );
+	if ( base_name.find( "->" ) != std::string::npos ) {
+		// Remove the main-chain designation, if present, from the base name.
+		vector1< string > base_name_vect;
+		boost::split( base_name_vect, base_name, []( char c ) { return c == ')'; } );
+		base_name = base_name_vect[ 2 ];  // e.g., -alpha-D-Glcp
+	}
+
+	// Loop over the alt code map.
+	AltCodeMap const & alt_codes( get_instance()->get_alternate_3_letter_code_map() );
 	for ( auto const & alt_code : alt_codes ) {
-		//determine whether the linkage number is related to the name
-		bool match_all = false;
-		if ( std::get<1>(alt_code.second).find("->?") != std::string::npos ) {
-			match_all = true;
-		}
-		utility::vector1<std::string> matching_patches = std::get<2>(alt_code.second);
-
-		//find the base name
-		std::string base_tag;
-		if ( match_all ) {
-			utility::vector1<std::string> base_tag_vect;
-			boost::split(base_tag_vect, std::get<1>(alt_code.second), [](char c){ return c == ')';});
-			base_tag = base_tag_vect[2];
-		} else {
-			base_tag = split_vect[1];
+		// Find the base name of this AltCodeMap record.
+		string alt_code_base_name( get< 1 >( alt_code.second ) );
+		if ( alt_code_base_name.find( "->" ) != std::string::npos ) {
+			vector1< string > alt_code_base_name_vect;
+			boost::split( alt_code_base_name_vect, alt_code_base_name, []( char c ) { return c == ')'; } );
+			alt_code_base_name = alt_code_base_name_vect[ 2 ];  // e.g., -alpha-D-Glcp
 		}
 
-		if ( base_name == base_tag ) {
-			bool has_all = true;
-			core::Size match_count = 0;
-			for ( core::Size i=1; i<=matching_patches.size(); i++ ) {
-				if ( matching_patches[i] == "default" ) continue;
-				if ( !patches.has_value(matching_patches[i]) ) {
-					has_all = false;
-				} else {
-					match_count+=1;
+		TR.Trace << " Base name for PDB code " << alt_code.first << ": " << alt_code_base_name << endl;
+
+		if ( base_name == alt_code_base_name ) {
+			TR.Debug << " Base names match!" << std::endl;
+
+			vector1< string > const & alt_code_patches( get< 3 >( alt_code.second ) );
+
+			if ( TR.Debug.visible() ) {
+				TR.Debug << "  Patches for PDB code " << alt_code.first << ": ";
+				for ( auto const & patch : alt_code_patches ) {
+					TR.Debug << patch << ' ';
+				}
+				TR.Debug << std::endl;
+			}
+
+			if ( patches.size() == alt_code_patches.size() ) {
+				bool has_all( true );
+				for ( auto const & patch : alt_code_patches ) {
+					if ( ! patches.has_value( patch ) ) {
+						has_all = false;
+						break;
+					}
+				}
+				if ( has_all ) {
+					TR.Debug << " Perfect match!" << endl;
+					return alt_code.first;
 				}
 			}
-			if ( has_all == false ) break;
-			if ( match_count > max_patches_matched ) {
-				max_patches_matched = match_count;
-				best_match = alt_code.first;
-				best_patch_match = matching_patches;
-			}
-			if ( best_match == "" && matching_patches.has_value("default") ) {
-				best_match = alt_code.first;
-			}
 		}
 	}
-	//kill the dump if any patches aren't recognized
-	bool no_match = false;
-	for ( core::Size i=1; i<=patches.size(); i++ ) {
-		if ( !best_patch_match.has_value(patches[i]) && !base_patches.has_value(patches[i]) ) {
-			no_match = true;
-		}
-	}
-	if ( best_match == "" ) {
-		no_match = true;
-	}
-	if ( no_match ) {
-		TR.Warning << "Could not match " << rosetta_name << " to pdb code. Please turn off the write_glycan_pdb_code flag. Developers should add the full patch name to the pdb codes database" << std::endl;
-		runtime_assert(no_match == false);
-	}
-	return best_match;
+	return "";  // If we get here, no match was found.
 }
 
 std::string
@@ -253,8 +286,6 @@ NomenclatureManager::NomenclatureManager()
 	using namespace basic::options;
 	using namespace core;
 
-	// This option (-in:alternate_3_letter_codes) now has a default value.
-	// No need to check for .user()
 	utility::vector1< string > const & file_list( option[ OptionKeys::in::alternate_3_letter_codes ]() );
 	Size const n_files( file_list.size() );
 	for ( uint i( 1 ); i <= n_files; ++i ) {

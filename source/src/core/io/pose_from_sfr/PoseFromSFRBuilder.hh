@@ -100,14 +100,12 @@ private:
 
 	/// @brief  This function uses linkage information to determine main-chain
 	/// and branch polymer connectivity.
-	void
-	determine_residue_branching_info(
+	void determine_residue_branching_info(
 		Size seqpos,
 		utility::vector1< std::string > & known_connect_atoms_on_this_residue,
 		std::map< std::string, std::map< std::string, std::pair< std::string, std::string > > > const & explicit_link_mapping );
 
-	bool
-	is_residue_type_recognized(
+	bool is_residue_type_recognized(
 		Size const pdb_residue_index,
 		std::string const & rosetta_residue_name3,
 		core::chemical::ResidueTypeCOPs const & rsd_type_list

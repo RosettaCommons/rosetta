@@ -409,7 +409,7 @@ residue_types_from_saccharide_sequence_recursive(
 
 				// Set defaults if missed.
 				if ( ! linkage_assigned ) {
-					residue_type_name << "->4)-";
+					residue_type_name << "->4)-";  // TODO: Get this default from the CIM instead.
 				}
 				if ( ! anomer_assigned ) {
 					residue_type_name << "alpha-";
@@ -475,7 +475,7 @@ residue_types_from_saccharide_sequence_recursive(
 				// Select a matching ResidueType and add to list (or exit without a match).
 				ResidueTypeCOP residue( residue_set.name_mapOP( residue_type_name.str() ) );
 				if ( residue == nullptr ) {
-					utility_exit_with_message("Unrecognized residue " + residue_type_name.str() + " when building saccharide sequence " + sequence );
+					utility_exit_with_message( "Unrecognized residue " + residue_type_name.str() + " when building saccharide sequence " + sequence );
 				}
 				Size const n_branches( branch_points.size() );
 				for ( uint i( 1 ); i <= n_branches; ++i ) {
