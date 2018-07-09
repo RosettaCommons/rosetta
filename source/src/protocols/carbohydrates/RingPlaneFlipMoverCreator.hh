@@ -7,34 +7,34 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file    protocols/simple_moves/RingConformationMoverCreator.hh
-/// @brief   Method declarations for RingConformationMoverCreator.
+/// @file    protocols/simple_moves/RingPlaneFlipMoverCreator.hh
+/// @brief   Method declarations for RingPlaneFlipMoverCreator.
 /// @author  Labonte <JWLabonte@jhu.edu>
 
 
-#ifndef INCLUDED_protocols_simple_moves_RingConformationMoverCreator_HH
-#define INCLUDED_protocols_simple_moves_RingConformationMoverCreator_HH
+#ifndef INCLUDED_protocols_carbohydrates_RingPlaneFlipMoverCreator_HH
+#define INCLUDED_protocols_carbohydrates_RingPlaneFlipMoverCreator_HH
 
 // Project headers
 #include <protocols/moves/MoverCreator.hh>
 
 
 namespace protocols {
-namespace simple_moves {
+namespace carbohydrates {
 
 /// @brief  MoverCreator allowing the MoverFactory to create a RingConformationMover
-class RingConformationMoverCreator: public protocols::moves::MoverCreator {
+class RingPlaneFlipMoverCreator: public protocols::moves::MoverCreator {
 public:
 	/// @brief  Return an up-casted owning pointer (MoverOP) to the mover.
 	protocols::moves::MoverOP create_mover() const override;
 
-	/// @brief  Return the key name for the associated Mover (RingConformationMover).
+	/// @brief  Return the key name for the associated Mover (RingPlaneFlipMoverCreator).
 	std::string keyname() const override;
 
 	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
-}  // namespace simple_moves
+}  // namespace carbohydrates
 }  // namespace protocols
 
-#endif  // INCLUDED_simple_moves_protocols_RingConformationMoverCreator_HH
+#endif  // INCLUDED_protocols_carbohydrates_RingPlaneFlipMoverCreator_HH

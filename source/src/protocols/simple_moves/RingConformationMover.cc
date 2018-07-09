@@ -26,10 +26,12 @@
 #include <core/conformation/Residue.hh>
 
 #include <protocols/rosetta_scripts/util.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 // Utility headers
 #include <utility>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 // Numeric headers
 #include <numeric/random/random.hh>
@@ -42,9 +44,6 @@
 // C++ headers
 #include <string>
 #include <iostream>
-// XSD XRW Includes
-#include <utility/tag/XMLSchemaGeneration.hh>
-#include <protocols/moves/mover_schemas.hh>
 
 
 // Construct tracers.
@@ -63,8 +62,6 @@ using namespace core;
 /// @details  By default, all rings within a given pose will be allowed to move.
 RingConformationMover::RingConformationMover(): Mover()
 {
-	using namespace kinematics;
-
 	init();
 }
 
@@ -79,7 +76,7 @@ RingConformationMover::RingConformationMover( RingConformationMover const & obje
 /// @remarks  Movable cyclic residues will generally be a subset of residues in the MoveMap whose nu
 /// torsions are set to true.
 RingConformationMover::RingConformationMover( core::kinematics::MoveMapOP input_movemap ):
-	movemap_(std::move( input_movemap ))
+	movemap_( std::move( input_movemap ) )
 {
 	init();
 }
@@ -89,12 +86,10 @@ RingConformationMover &
 RingConformationMover::operator=( RingConformationMover const & object_to_copy )
 {
 	// Abort self-assignment.
-	if ( this == &object_to_copy ) {
-		return *this;
+	if ( this != &object_to_copy ) {
+		Mover::operator=( object_to_copy );
+		copy_data( *this, object_to_copy );
 	}
-
-	Mover::operator=( object_to_copy );
-	copy_data( *this, object_to_copy );
 	return *this;
 }
 
@@ -104,18 +99,6 @@ RingConformationMover::~RingConformationMover() = default;
 
 // Standard Rosetta methods ///////////////////////////////////////////////////
 // General methods
-void
-RingConformationMover::register_options()
-{
-	using namespace basic::options;
-
-	option.add_relevant( OptionKeys::rings::lock_rings );
-	option.add_relevant( OptionKeys::rings::sample_high_energy_conformers );
-
-	// Call register_options() on all other Movers used by this class.
-	Mover::register_options();  // Mover's register_options() doesn't do anything; it's just here in principle.
-}
-
 void
 RingConformationMover::show(std::ostream & output) const
 {
@@ -137,6 +120,29 @@ RingConformationMover::show(std::ostream & output) const
 
 
 // Mover methods
+void
+RingConformationMover::register_options()
+{
+	using namespace basic::options;
+
+	option.add_relevant( OptionKeys::rings::lock_rings );
+	option.add_relevant( OptionKeys::rings::sample_high_energy_conformers );
+
+	// Call register_options() on all other Movers used by this class.
+	Mover::register_options();  // Mover's register_options() doesn't do anything; it's just here in principle.
+}
+
+// Return the string identifier for the associated Mover (RingConformationMover).
+std::string
+RingConformationMover::get_name() const {
+	return mover_name();
+}
+
+std::string
+RingConformationMover::mover_name() {
+	return "RingConformationMover";
+}
+
 protocols::moves::MoverOP
 RingConformationMover::clone() const
 {
@@ -168,6 +174,29 @@ RingConformationMover::parse_my_tag(
 	}
 }
 
+void
+RingConformationMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+
+	XMLSchemaSimpleSubelementList subelements;
+	subelements.complex_type_naming_func( []( std::string const & name ) {
+		return "RingConformationMover_subelement_" + name + "Type";
+	} );
+	rosetta_scripts::append_subelement_for_parse_movemap_factory_legacy( xsd, subelements );
+
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute(
+		"sample_high_energy_conformers", xsct_rosetta_bool,
+		"Set whether or not this Mover will sample all ring conformers, regardless of energy." );
+
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements(
+		xsd, mover_name(),
+		"Based on a given MoveMap, this mover selects movable cyclic residues and "
+		"flips their rings to an idealized ring conformer.",
+		attlist, subelements );
+}
+
 
 /// @details  The mover will create a list of movable residues based on the given MoveMap and select a residue from
 /// the list at random.  The torsion angles of a randomly selected ring conformer will be applied to the selected
@@ -195,6 +224,7 @@ RingConformationMover::apply( Pose & input_pose )
 
 	if ( residue_list_.empty() ) {
 		TR.Warning << "There are no movable cyclic residues available in the given pose." << endl;
+		set_last_move_status( moves::FAIL_DO_NOT_RETRY );
 		return;
 	}
 
@@ -230,17 +260,19 @@ RingConformationMover::apply( Pose & input_pose )
 
 // Accessors/Mutators
 kinematics::MoveMapCOP
-RingConformationMover::movemap( core::pose::Pose const & pose ) const
+RingConformationMover::movemap( core::pose::Pose const & pose )
 {
-	if ( movemap_ ) {
-		return movemap_;
-	} else if ( movemap_factory_ ) {
-		return movemap_factory_->create_movemap_from_pose( pose );
-	} else {
-		core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
-		movemap->set_nu( true );
-		return movemap;
+	using namespace core::kinematics;
+
+	if ( ! movemap_ ) {
+		if ( movemap_factory_ ) {
+			movemap_ = movemap_factory_->create_movemap_from_pose( pose );
+		} else {
+			movemap_ = MoveMapOP( new MoveMap );
+			movemap_->set_nu( true );
+		}
 	}
+	return movemap_;
 }
 
 void
@@ -295,7 +327,7 @@ RingConformationMover::copy_data(
 
 // Setup list of movable cyclic residues from MoveMap.
 void
-RingConformationMover::setup_residue_list( core::pose::Pose & pose )
+RingConformationMover::setup_residue_list( core::pose::Pose const & pose )
 {
 	using namespace conformation;
 
@@ -315,57 +347,24 @@ RingConformationMover::setup_residue_list( core::pose::Pose & pose )
 
 
 // Creator methods ////////////////////////////////////////////////////////////
-// Return an up-casted owning pointer (MoverOP) to the mover.
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP RingConformationMoverCreator::create_mover() const
-// XRW TEMP {
-// XRW TEMP  return moves::MoverOP( new RingConformationMover );
-// XRW TEMP }
-
-// Return the string identifier for the associated Mover (RingConformationMover).
-std::string RingConformationMover::get_name() const {
-	return mover_name();
-}
-
-std::string RingConformationMover::mover_name() {
-	return "RingConformationMover";
-}
-
-void RingConformationMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+std::string
+RingConformationMoverCreator::keyname() const
 {
-	using namespace utility::tag;
-	XMLSchemaSimpleSubelementList subelements;
-	subelements.complex_type_naming_func( [] (std::string const& name) {
-		return "RingConformationMover_subelement_" + name + "Type";
-	});
-	rosetta_scripts::append_subelement_for_parse_movemap_factory_legacy(xsd, subelements);
-
-	AttributeList attlist;
-	attlist + XMLSchemaAttribute(
-		"sample_high_energy_conformers", xsct_rosetta_bool,
-		"XRW TO DO");
-
-	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements(
-		xsd, mover_name(),
-		"Based on a given MoveMap, this mover selects movable cyclic residues and "
-		"flips their rings to an idealized ring conformer",
-		attlist, subelements );
-}
-
-std::string RingConformationMoverCreator::keyname() const {
 	return RingConformationMover::mover_name();
 }
 
+// Return an up-casted owning pointer (MoverOP) to the mover.
 protocols::moves::MoverOP
-RingConformationMoverCreator::create_mover() const {
+RingConformationMoverCreator::create_mover() const
+{
 	return protocols::moves::MoverOP( new RingConformationMover );
 }
 
-void RingConformationMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+void
+RingConformationMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
 	RingConformationMover::provide_xml_schema( xsd );
 }
-
 
 
 // Helper methods /////////////////////////////////////////////////////////////

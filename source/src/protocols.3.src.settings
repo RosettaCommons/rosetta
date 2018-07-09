@@ -681,9 +681,6 @@ sources = {
 		"InitializeByBins",
 		"PerturbByBins",
 	],
-	#"protocols/simple_moves/carbohydrates": [
-		# to be added later ~Labonte
-	#],
 	"protocols/simple_moves/chiral": [
 		"ChiralMover",
 	],

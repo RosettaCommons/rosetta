@@ -74,6 +74,7 @@
 #include <protocols/carbohydrates/GlycanTreeRelaxCreator.hh>
 #include <protocols/carbohydrates/LinkageConformerMoverCreator.hh>
 #include <protocols/carbohydrates/IdealizeAnomericHydrogensCreator.hh>
+#include <protocols/carbohydrates/RingPlaneFlipMoverCreator.hh>
 #include <protocols/carbohydrates/SimpleGlycosylateMoverCreator.hh>
 
 #include <protocols/comparative_modeling/LoopRelaxMoverCreator.hh>

@@ -8,7 +8,8 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file protocols/carbohydrates/LinkageConformerMover.fwd.hh
-/// @brief This code changes all of the dihedrals of a particular glycosidic linkage based on database info, esentially sampling carbohydrate dihedral conformers of two residues.
+/// @brief This code changes all of the dihedrals of a particular glycosidic linkage based on database info,
+/// essentially sampling carbohydrate dihedral conformers of two residues.
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 
@@ -17,7 +18,6 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-
 
 
 // Forward
@@ -29,15 +29,7 @@ class LinkageConformerMover;
 typedef utility::pointer::shared_ptr< LinkageConformerMover > LinkageConformerMoverOP;
 typedef utility::pointer::shared_ptr< LinkageConformerMover const > LinkageConformerMoverCOP;
 
-
-
-} //protocols
-} //carbohydrates
-
+} // namespace carbohydrates
+} // namespace protocols
 
 #endif //INCLUDED_protocols/carbohydrates_LinkageConformerMover_fwd_hh
-
-
-
-
-

@@ -25,7 +25,7 @@
 // C++ header
 #include <string>
 
-static basic::Tracer TR("core.chemical.rings.RingConformerSet.cxxtest");
+static basic::Tracer TR( "core.chemical.rings.RingConformerSet.cxxtest" );
 
 class RingConformerSetTests : public CxxTest::TestSuite {
 public:

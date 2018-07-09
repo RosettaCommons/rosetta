@@ -45,6 +45,7 @@ sources = {
 		"GlycanTreeRelax",
 		"LinkageConformerMover",
 		"IdealizeAnomericHydrogens",
+		"RingPlaneFlipMover",
 		"SimpleGlycosylateMover",
 		"util",
 	],

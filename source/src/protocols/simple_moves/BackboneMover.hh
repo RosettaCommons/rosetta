@@ -32,8 +32,7 @@
 
 #include <protocols/filters/Filter.fwd.hh>
 
-// Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+// Utility Header
 #include <utility/vector1.hh>
 
 // Basic Header

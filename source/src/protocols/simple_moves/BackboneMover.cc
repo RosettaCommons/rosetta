@@ -20,13 +20,14 @@
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/select/movemap/MoveMapFactory.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/util.hh>
 #include <core/conformation/util.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/carbohydrates/util.hh>
 #include <core/conformation/carbohydrates/GlycanTreeSet.hh>
-#include <core/select/residue_selector/ResidueSelector.hh>
-#include <core/select/residue_selector/util.hh>
+
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/pose/carbohydrates/util.hh>
@@ -37,7 +38,6 @@
 #include <core/id/AtomID.hh>
 #include <core/id/DOF_ID_Range.hh>
 #include <core/id/TorsionID_Range.hh>
-#include <core/select/residue_selector/ResidueSelector.hh>
 
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/moves/mover_schemas.hh>
@@ -52,7 +52,6 @@
 
 // Utility headers
 #include <utility/tag/Tag.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/options/IntegerVectorOption.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>

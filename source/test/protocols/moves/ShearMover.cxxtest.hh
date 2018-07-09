@@ -60,7 +60,7 @@ public:
 
 		the_sugar_pose = PoseOP( new Pose );
 		make_pose_from_saccharide_sequence( *the_sugar_pose,
-			"b-D-Glcp-(1->4)-b--D-Glcp-(1->4)-[b-D-Glcp-(1->4)-[b-D-Glcp-(1->6)]-b-D-Glcp-(1->6)]-"
+			"b-D-Glcp-(1->4)-b-D-Glcp-(1->4)-[b-D-Glcp-(1->4)-[b-D-Glcp-(1->6)]-b-D-Glcp-(1->6)]-"
 			"b-D-Glcp-(1->4)-b-D-Glcp-(1->4)-b-D-Glcp" );
 
 		core::init::init_random_generators(1000, "mt19937");

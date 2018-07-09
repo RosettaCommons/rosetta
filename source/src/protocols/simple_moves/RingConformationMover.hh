@@ -56,15 +56,19 @@ public:  // Standard methods //////////////////////////////////////////////////
 
 public: // Standard Rosetta methods ///////////////////////////////////////////
 	// General methods
-	/// @brief  Register options with the option system.
-	static void register_options();
-
 	/// @brief  Generate string representation of RingConformationMover for debugging purposes.
 	void show( std::ostream & output=std::cout ) const override;
 
 
 	// Mover methods
+	/// @brief  Register options with the option system.
+	static void register_options();
+
 	/// @brief  Return the name of the Mover.
+	std::string get_name() const override;
+
+	static std::string mover_name();
+
 
 	protocols::moves::MoverOP clone() const override;
 
@@ -77,37 +81,28 @@ public: // Standard Rosetta methods ///////////////////////////////////////////
 		moves::Movers_map const & /*movers*/,
 		Pose const & pose ) override;
 
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 	/// @brief  Apply the corresponding move to <input_pose>.
 	void apply( core::pose::Pose & input_pose ) override;
 
 
 public: // Accessors/Mutators /////////////////////////////////////////////////
-	/// @brief  Get the current MoveMap.
-	core::kinematics::MoveMapCOP movemap( core::pose::Pose const & pose ) const;
-
-	/// @brief  Set the MoveMapFactory.
-	void movemap_factory(core::select::movemap::MoveMapFactoryCOP new_movemap_factory);
+	/// @brief  Get the current MoveMap, creating it if needed.
+	core::kinematics::MoveMapCOP movemap( core::pose::Pose const & pose );
 
 	/// @brief  Set the MoveMap.
 	void movemap( core::kinematics::MoveMapOP new_movemap );
+
+	/// @brief  Set the MoveMapFactory.
+	void movemap_factory( core::select::movemap::MoveMapFactoryCOP new_movemap_factory );
+
 
 	/// @brief  Get whether or not this Mover will sample all ring conformers, regardless of energy.
 	bool sample_all_conformers() const { return sample_all_conformers_; }
 
 	/// @brief  Set whether or not this Mover will sample all ring conformers, regardless of energy.
 	void sample_all_conformers( bool setting ) { sample_all_conformers_ = setting; }
-
-	std::string
-	get_name() const override;
-
-	static
-	std::string
-	mover_name();
-
-	static
-	void
-	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
-
 
 
 private:  // Private methods //////////////////////////////////////////////////
@@ -121,13 +116,13 @@ private:  // Private methods //////////////////////////////////////////////////
 	void copy_data( RingConformationMover & object_to_copy_to, RingConformationMover const & object_to_copy_from);
 
 	// Setup list of movable cyclic residues from MoveMap.
-	void setup_residue_list( core::pose::Pose & pose );
+	void setup_residue_list( core::pose::Pose const & pose );
 
 
 private:  // Private data /////////////////////////////////////////////////////
 	core::select::movemap::MoveMapFactoryCOP movemap_factory_;
 	core::kinematics::MoveMapOP movemap_;
-	utility::vector1<core::Size> residue_list_;  // list of movable cyclic residues by residue number
+	utility::vector1< core::Size > residue_list_;  // list of movable cyclic residues by residue number
 	bool locked_;  // Is this mover locked from the command line?
 	bool sample_all_conformers_;  // Does this Mover sample both energy maxima and minima among ring conformers?
 
@@ -139,4 +134,4 @@ std::ostream & operator<<( std::ostream & output, RingConformationMover const & 
 }  // namespace simple_moves
 }  // namespace protocols
 
-#endif  // INCLUDED_simple_moves_protocols_RingConformationMover_HH
+#endif  // INCLUDED_protocols_simple_moves_RingConformationMover_HH

@@ -77,6 +77,10 @@ sources = {
 		"BranchAngleOptimizer",
 	],
 
+	"carbohydrates" : [
+		"RingPlaneFlipMover",
+	],
+
 	"cluster" : [
 		"APCluster",
 	],
