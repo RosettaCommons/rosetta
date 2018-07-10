@@ -666,6 +666,23 @@ make_symmetric_movemap(
 		}
 	}
 
+	///Switch any ON atoms that are not part of the master subunit to OFF for cartesian minimization
+	if ( movemap.get_atoms().size() != 0 ) {
+		std::map<id::AtomID, bool > const & atom_settings = movemap.get_atoms();
+		for ( Size i=1; i<= pose.conformation().size(); ++i ) {
+			if ( symm_info->bb_is_independent( i ) ) {
+				continue;
+			} else {
+				int const n_atoms( pose.residue(i).natoms() );
+				for ( int j=1; j<=n_atoms; ++j ) {
+					id::AtomID atm = id::AtomID(j,i);
+					if ( atom_settings.at(atm) ) {
+						movemap.set_atom( atm, false );
+					}
+				}
+			}
+		}
+	}
 
 	// First set all jump to false
 	movemap.set_jump(false);

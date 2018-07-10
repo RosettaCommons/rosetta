@@ -42,6 +42,7 @@
 #include <core/select/residue_selector/RandomGlycanFoliageSelector.hh>
 #include <core/select/residue_selector/ReturnResidueSubsetSelector.hh>
 #include <core/select/residue_selector/GlycanResidueSelector.hh>
+#include <core/select/residue_selector/SymmetricalResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
@@ -483,6 +484,11 @@ GlycanRelaxMover::setup_movers(
 		min_rings_,
 		cartmin_);
 
+	// Make sure we only allow symmetrical degrees of freedom to move and convert the local_movemap
+	// to a local movemap
+	if ( core::pose::symmetry::is_symmetric( pose )  )  {
+		core::pose::symmetry::make_symmetric_movemap( pose, *min_mover_movemap );
+	}
 
 	//Dihedral masks to tell out samplers which torsions each residue has.
 	std::map< core::Size, utility::vector1< core::Size >> dihedral_mask;
@@ -658,10 +664,16 @@ GlycanRelaxMover::init_objects(core::pose::Pose & pose ){
 
 	if ( ! selector_ ) selector_ = GlycanResidueSelectorOP( new GlycanResidueSelector());
 
-	// Our selector is now all setup.  Lets use it and check to make sure it only applies to glycan residues!
-	//Need to check here because if residue i is not attached to anything, then it doesn't make sense to sample on it!!!
+	// Make sure our selector is symmetrical.  We don't extra non-symmetric DOFs moving (BBSampler/SugarBBSampler/Conformer) machinery.
+	utility::vector1< bool > subset;
+	if ( core::pose::symmetry::is_symmetric( pose )  )  {
+		SymmetricalResidueSelector symm_selector = SymmetricalResidueSelector( selector_ );
+		subset = symm_selector.apply( pose );
+	} else {
+		subset = selector_->apply (pose );
 
-	utility::vector1< bool > subset = selector_->apply(pose);
+	}
+
 	utility::vector1< bool > dihedral_subset = subset; //Start of tree has no dihedrals to move.
 	utility::vector1< bool > sugar_bb_subset = subset; //SugarBB not for residues attached to protein.
 
