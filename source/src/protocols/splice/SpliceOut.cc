@@ -439,7 +439,7 @@ void SpliceOut::abstract_parse_tag(TagCOP const tag){
 }
 
 
-void SpliceOut::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &data, protocols::filters::Filters_map const & filters, protocols::moves::Movers_map const & movers, core::pose::Pose const & pose) {
+void SpliceOut::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &data, protocols::filters::Filters_map const & filters, protocols::moves::Movers_map const & movers, core::pose::Pose const & /*pose*/) {
 	utility::vector1<TagCOP> const sub_tags(tag->getTags());
 
 	parse_SpliceOut_tags(tag,movers,filters);
@@ -452,7 +452,6 @@ void SpliceOut::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &data, 
 		source_to_res(core::pose::parse_resnum(tag->getOption<std::string>("source_to_res", "0"), *source_pose_));
 		utility_exit_with_message("You have noted that structures are not aligned and have not given source_from_res and source_to_res, fix XML \n");
 	}
-	splice_filter()->parse_my_tag(tag,data,filters,movers,pose);
 
 }
 

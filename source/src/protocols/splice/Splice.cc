@@ -725,8 +725,7 @@ void Splice::apply(core::pose::Pose & pose) {
 			superimpose_source_on_pose( pose, *source_pose_ );
 			nearest_to_from = source_pdb_from_res();
 			nearest_to_to   = source_pdb_to_res();
-		}
-		if ( segment_type_=="H3"&& (tail_segment_=="c") ) {
+		} else if ( segment_type_=="H3"&& (tail_segment_=="c") ) {
 			nearest_to_from = find_nearest_res(*source_pose_, pose,from_res()/*should be the 2 vh cys on template*/, 0);//start res is nearest disulfide on source_pdb
 			nearest_to_to = source_pose_->total_residue();
 		} else if ( segment_type_=="L3"&& (tail_segment_=="c") ) {
