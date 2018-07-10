@@ -20,6 +20,8 @@
 #include <core/simple_metrics/StringMetric.hh>
 #include <core/simple_metrics/CompositeRealMetric.hh>
 #include <core/simple_metrics/CompositeStringMetric.hh>
+#include <core/simple_metrics/PerResidueRealMetric.hh>
+#include <core/simple_metrics/PerResidueStringMetric.hh>
 #include <core/simple_metrics/util.hh>
 #include <core/pose/Pose.hh>
 #include <protocols/moves/Mover.fwd.hh> //Movers_map
@@ -85,7 +87,7 @@ SimpleMetricFilter::fresh_instance() const
 core::Real
 SimpleMetricFilter::report_sm( core::pose::Pose const & pose ) const
 {
-	if ( metric_->type() != "RealMetric" ) {
+	if ( metric_->simple_metric_type() != "RealMetric" ) {
 		TR << "SimpleMetricFilter can only use report_sm for RealMetrics. Returning 0" << std::endl;
 		return 0;
 	}
@@ -198,7 +200,8 @@ void SimpleMetricFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 	AttributeList attlist;
 
 	attlist + XMLSchemaAttribute::attribute_w_default("epsilon", xsct_real , "Epsilon for numerical comparisons", ".0001");
-	attlist + XMLSchemaAttribute( "metric", xs_string, "The metric to run in this filter. ");
+	attlist + XMLSchemaAttribute( "metric", xs_string, "The metric to run in this filter.  ");
+
 
 	utility::vector1< std::string > types = get_string_comparison_type_strings();
 	utility::tag::add_schema_restrictions_for_strings( xsd, "comparison_types", types);
@@ -206,12 +209,13 @@ void SimpleMetricFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 
 	attlist + XMLSchemaAttribute("comparison_type", "comparison_types", "The comparison type.  IE not equal, equal, etc.  IF value [comparison_type] cutoff_ or match_ we return TRUE.  Example (RMSDMetric) cutoff=4.0, comparison_type=lt.  We return true if the RMSD is less than 4.0. Required. Choieces are: \n" + utility::to_string( types));
 
-	attlist + XMLSchemaAttribute("composite_action", xs_string, "If you have a composite metric this can be `any`, `all` or a specific composite value type.");
+	attlist + XMLSchemaAttribute("composite_action", xs_string, "If you have a composite metric or PerResidueMetric this can be `any`, `all` or a specific composite value type (Rosetta ResNum for per-residue metric.");
 
 	attlist + XMLSchemaAttribute("cutoff", xsct_real, "Number to use to determine if filter passes or not for any RealMetric or CompositeRealMetric.  Set the comparison_type to indicate the behavior of this filter.");
 
 	attlist + XMLSchemaAttribute("match", xs_string, "String to match on to determine if filter passes or not for any StringMetric or CompositeStringMetric.  Set the comparison type to indicate the behavior of this filter.");
 
+	attlist + XMLSchemaAttribute("use_sum_for_per_residue_real", xs_string, "If you are using a PerResidueRealMetric, set this to use the SUM of the values to act as a RealMetric instead of acting as a composite metric.  Default False.");
 	//here you should write code to describe the XML Schema for the class.  If it has only attributes, simply fill the probided AttributeList.
 
 	SimpleMetricFactory::get_instance()->define_simple_metric_xml_schema( xsd );
@@ -219,6 +223,15 @@ void SimpleMetricFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 	subelements.add_group_subelement( & SimpleMetricFactory::get_instance()->simple_metric_xml_schema_group_name );
 
 	protocols::filters::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, class_name(), "Run a SimpleMetric (Real) as a filter.  Set the cutoff and comparison_type to control the behavior of this filter. ", attlist, subelements );
+}
+
+///@brief Set the filter to use the SUM of values from a PerResidueRealMetric for filtering.
+///  This is instead of using the metric as a Composite Metric for each resnum.
+/// Default False.
+///
+void
+SimpleMetricFilter::set_use_sum_for_per_residue_real( bool use_sum_for_per_residue_real ){
+	sum_per_residue_real_metric_ = use_sum_for_per_residue_real;
 }
 
 bool
@@ -338,6 +351,50 @@ bool SimpleMetricFilter::compare_composites( std::map<std::string, T > const & v
 	return false;
 }
 
+template <class T>
+bool SimpleMetricFilter::compare_composites( std::map<core::Size, T > const & values) const {
+
+	//std::cout << "Comparing Composites: "<<":"<<composite_action_<<":" << std::endl;
+	if ( composite_action_ == "" ) {
+		throw CREATE_EXCEPTION(utility::excn::BadInput, "composite_action must be set in order to work with CompositeMetrics.");
+	}
+
+	if ( composite_action_ == "any" ) {
+		for ( auto const & v_pair : values ) {
+			if ( compare_metric( v_pair.second) ) {
+				TR << utility::to_string(v_pair.first) << " passes set cutoff " << cutoff_ << std::endl;
+				return true;
+			}
+		}
+		return false;
+	} else if ( composite_action_ == "all" ) {
+		for ( auto const & v_pair: values ) {
+			if ( !compare_metric( v_pair.second) ) {
+				TR << utility::to_string(v_pair.first) << " did not pass cutuff."<< cutoff_ <<  "Filtering. " << std::endl;
+				return false;
+			}
+		}
+		return true;
+	} else if ( values.count(composite_action_) ) {
+		for ( auto const & v_pair : values ) {
+			if ( v_pair.first == composite_action_ ) {
+				bool pass = compare_metric( v_pair.second );
+				TR << "metric type " << composite_action_ << " Pass? " << pass << std::endl;
+				return pass;
+			}
+		}
+	} else {
+		TR << "Composite Action not understood :" << composite_action_ << ":" << std::endl;
+		TR << "This can be `all`, `any`, or any of the following metric value types from the composite metric:" << std::endl;
+		for ( auto const & metric_pair : values ) {
+			TR << "  \t  " << utility::to_string(metric_pair.first) << " , ";
+		}
+		TR << std::endl;
+		throw CREATE_EXCEPTION(utility::excn::BadInput, " Bad input for composite_action in SimpleMetricFilter. :"+composite_action_+":");
+	}
+	return false;
+}
+
 bool
 SimpleMetricFilter::apply( core::pose::Pose const & pose) const
 {
@@ -348,35 +405,69 @@ SimpleMetricFilter::apply( core::pose::Pose const & pose) const
 	}
 
 	//This is just a triple check.  We should never ever be here.
-	if ( metric_->type() == "RealMetric" ) {
+	if ( metric_->simple_metric_type() == "RealMetric" ) {
 		RealMetric const & r_metric = dynamic_cast<RealMetric const & >( *metric_ );
-		core::Real value = r_metric.calculate(pose);
+		core::Real const value = r_metric.calculate(pose);
 		bool pass = compare_metric( value );
 		TR << "Filter passed: " << pass << std::endl;
 		return pass;
-	} else if ( metric_->type() == "StringMetric" ) {
+	} else if ( metric_->simple_metric_type() == "StringMetric" ) {
 		StringMetric const & r_metric = dynamic_cast<StringMetric const & >( *metric_ );
-		std::string value = r_metric.calculate(pose);
+		std::string const value = r_metric.calculate(pose);
 		bool pass = compare_metric( value );
 		TR << "Filter passed: " << pass << std::endl;
 		return pass;
 
-	} else if ( metric_ ->type() == "CompositeRealMetric" ) {
+	} else if ( metric_->simple_metric_type() == "CompositeRealMetric" ) {
 		CompositeRealMetric const & r_metric = dynamic_cast<CompositeRealMetric const & >( *metric_ );
-		std::map< std::string, core::Real > values = r_metric.calculate( pose );
+		std::map< std::string, core::Real > const values = r_metric.calculate( pose );
 		bool pass = compare_composites(values);
 		TR << "Filter passed: " << pass << std::endl;
 		return pass;
 
-	} else if ( metric_->type() == "CompositeStringMetric" ) {
+	} else if ( metric_->simple_metric_type() == "CompositeStringMetric" ) {
 		CompositeStringMetric const & r_metric = dynamic_cast<CompositeStringMetric const & >( *metric_ );
-		std::map< std::string, std::string > values = r_metric.calculate( pose );
-		std::cout << "Comparing String Metrics " <<std::endl;
+		std::map< std::string, std::string > const values = r_metric.calculate( pose );
 		bool pass = compare_composites(values);
+		TR << "Filter passed: " << pass << std::endl;
+		return pass;
+	} else if ( metric_ ->simple_metric_type() == "PerResidueRealMetric" ) {
+		PerResidueRealMetric const & r_metric = dynamic_cast<PerResidueRealMetric const & >( *metric_ );
+		std::map< core::Size, core::Real > const values = r_metric.calculate( pose );
+
+		///Increases utility of the PerResidueRealMetric type.
+		if ( sum_per_residue_real_metric_ ) {
+			core::Real sum = 0;
+			for ( auto const & p : values ) {
+				sum +=p.second;
+			}
+			bool pass = compare_metric( sum );
+			return pass;
+		} else {
+			//Turn the resnums into strings to do the comparisons
+			std::map< std::string, core::Real > values_s;
+			for ( auto const & p : values ) {
+				values_s[utility::to_string(p.first)] = p.second;
+			}
+			bool pass = compare_composites(values_s);
+			TR << "Filter passed: " << pass << std::endl;
+			return pass;
+		}
+
+	} else if ( metric_->simple_metric_type() == "PerResidueStringMetric" ) {
+		PerResidueStringMetric const & r_metric = dynamic_cast<PerResidueStringMetric const & >( *metric_ );
+		std::map< core::Size, std::string > values = r_metric.calculate( pose );
+		//Turn the resnums into strings to do the comparisons
+		std::map< std::string, std::string > values_s;
+
+		for ( auto const & p : values ) {
+			values_s[utility::to_string(p.first)] = p.second;
+		}
+		bool pass = compare_composites(values_s);
 		TR << "Filter passed: " << pass << std::endl;
 		return pass;
 	} else {
-		utility_exit_with_message("SimpleMetric type not compatible. "+metric_->type());
+		utility_exit_with_message("SimpleMetric type not compatible. "+metric_->simple_metric_type());
 	}
 }
 

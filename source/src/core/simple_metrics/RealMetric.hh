@@ -55,6 +55,10 @@ public: // constructors / destructors
 	apply( pose::Pose & pose, std::string prefix="", std::string suffix="" ) const override;
 
 	///@brief Calculate the metric.
+	///
+	///@details
+	/// Calculate and return the value.  This function can not store the value.
+	/// Use the apply function to store the value in the pose.
 	virtual core::Real
 	calculate( pose::Pose const & pose ) const = 0;
 

@@ -41,6 +41,25 @@
 namespace protocols {
 namespace features {
 
+struct MetricData {
+
+	core::Real  real_value;
+	std::string string_value;
+
+	std::string data_type;
+
+	MetricData(){}
+
+	MetricData(core::Real r_value):
+		real_value(r_value),
+		data_type("real"){}
+
+	MetricData(std::string r_value):
+		string_value(r_value),
+		data_type("string"){}
+
+};
+
 class SimpleMetricFeatures : public FeaturesReporter {
 public:
 
@@ -104,6 +123,8 @@ public:
 		utility::sql_database::sessionOP db_session
 	) override;
 
+
+
 	std::string
 	type_name() const override;
 
@@ -115,6 +136,42 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+
+private:
+
+	void
+	write_general_schema_to_db(
+		utility::sql_database::sessionOP db_session) const ;
+
+	void
+	write_per_residue_schema_to_db(
+		utility::sql_database::sessionOP db_session) const ;
+
+	/// @brief collect all the feature data for the pose
+	core::Size
+	report_general_features(
+		core::pose::Pose const & pose,
+		utility::vector1< bool > const & relevant_residues,
+		StructureID struct_id,
+		utility::sql_database::sessionOP db_session
+	) ;
+
+	core::Size
+	report_per_residue_features(
+		core::pose::Pose const & pose,
+		utility::vector1< bool > const & relevant_residues,
+		StructureID struct_id,
+		utility::sql_database::sessionOP db_session
+	) ;
+
+	void
+	write_per_residue_data_row(
+		StructureID struct_id,
+		core::Size resnum,
+		utility::vector1< std::string > const & data_names,
+		std::map< std::string, std::map< core::Size, std::string > > const & string_data,
+		std::map< std::string, std::map< core::Size, core::Real > > const & real_data,
+		utility::sql_database::sessionOP db_session );
 
 private:
 

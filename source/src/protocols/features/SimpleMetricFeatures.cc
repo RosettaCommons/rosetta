@@ -20,6 +20,8 @@
 #include <core/simple_metrics/StringMetric.hh>
 #include <core/simple_metrics/CompositeRealMetric.hh>
 #include <core/simple_metrics/CompositeStringMetric.hh>
+#include <core/simple_metrics/PerResidueRealMetric.hh>
+#include <core/simple_metrics/PerResidueStringMetric.hh>
 #include <core/simple_metrics/util.hh>
 
 // Project Headers
@@ -167,32 +169,54 @@ void
 SimpleMetricFeatures::write_schema_to_db(
 	sessionOP db_session
 ) const {
+
+	write_general_schema_to_db( db_session );
+	write_per_residue_schema_to_db( db_session );
+
+}
+
+void
+SimpleMetricFeatures::write_general_schema_to_db(
+	sessionOP db_session
+) const {
 	using namespace basic::database::schema_generator;
 
 	std::map< std::string, std::string > name_value_type;
+
+	core::Size n_metrics = 0;
 	for ( SimpleMetricCOP metric : metrics_ ) {
 		utility::vector1< std::string > names = metric->get_metric_names();
+		std::string  metric_class = metric->metric();
+
 		std::string metric_type="";
 
+		std::string metric_name = metric->simple_metric_type();
 		std::string custom_type = metric->get_custom_type();
-		if ( custom_type != "" ) custom_type=custom_type+"_";
+		if ( (metric_name == "PerResidueRealMetric" )|| ( metric_name == "PerResidueStringMetric") ) {
+			continue;
+		} else if ( (metric_name == "StringMetric" ) || ( metric_name == "CompositeStringMetric" ) ) {
 
-		if ( (metric->type() == "StringMetric" )|| (metric->type() == "CompositeStringMetric" ) ) {
 			metric_type = "string";
-		} else if ( ( metric->type() == "RealMetric") || (metric->type() =="CompositeRealMetric") ) {
+			n_metrics+=1;
+
+		} else if ( ( metric_name == "RealMetric") || ( metric_name =="CompositeRealMetric") ) {
+
 			metric_type = "real";
+			n_metrics+=1;
+
 		} else {
-			utility_exit_with_message("Unknown SimpleMetric Type "+metric->type());
+			utility_exit_with_message("Unknown SimpleMetric Type " + metric_name);
 		}
 
 		for ( std::string m_name : names ) {
-			if ( (metric->type() == "CompositeStringMetric" )|| (metric->type() == "CompositeRealMetric") ) {
-				name_value_type[m_name+"_"+custom_type+metric->metric()] = metric_type;
+			if ( (metric_name == "CompositeStringMetric" )|| (metric_name == "CompositeRealMetric") ) {
+				name_value_type[m_name+"_"+custom_type + metric_class] = metric_type;
 			} else {
 				name_value_type[custom_type  + m_name] = metric_type;
 			}
 		}
 	}
+	if ( n_metrics == 0 ) return;
 
 	//Create the table using the set SimpleMetrics
 	utility::vector1< Column > new_columns;
@@ -233,11 +257,108 @@ SimpleMetricFeatures::write_schema_to_db(
 		table.add_column( col );
 	}
 	table.write(db_session);
+}
 
+void
+SimpleMetricFeatures::write_per_residue_schema_to_db(utility::sql_database::sessionOP db_session) const {
+	using namespace basic::database::schema_generator;
+
+	//Make sure we have data to write.
+	std::map< std::string, std::string > name_value_type;
+	for ( SimpleMetricCOP metric : metrics_ ) {
+		utility::vector1< std::string > const names = metric->get_metric_names();
+		std::string metric_type="";
+		std::string specific_metric_name = ""; //Ex SASA, RMSD, etc.
+		std::string const metric_name = metric->simple_metric_type();
+
+		if ( metric_name == "PerResidueRealMetric" ) {
+			assert( names.size() == 1);
+			specific_metric_name = names[1];
+			metric_type = "real";
+		} else if ( metric_name == "PerResidueStringMetric" ) {
+			assert( names.size() == 1);
+			specific_metric_name = names[1];
+			metric_type = "string";
+		} else {
+			continue;
+		}
+		name_value_type[specific_metric_name] = metric_type;
+	}
+
+	if ( name_value_type.size() == 0 ) return; //No PerResidueMetrics.
+
+	//Create the table using the set SimpleMetrics
+	utility::vector1< Column > new_columns;
+
+	Column struct_id_column("struct_id", DbDataTypeOP( new DbBigInt() ));
+	Column res_id_column("resNum", DbDataTypeOP( new DbInteger() ) );
+	new_columns.push_back(struct_id_column);
+	new_columns.push_back(res_id_column);
+
+	//Primary Key
+	Columns primary_key_columns;
+	primary_key_columns.push_back(struct_id_column);
+	primary_key_columns.push_back(res_id_column);
+
+	PrimaryKey primary_key(primary_key_columns);
+
+	//Foreign Key
+	Columns foreign_key_columns;
+	foreign_key_columns.push_back(struct_id_column);
+	foreign_key_columns.push_back(res_id_column);
+
+	vector1< std::string > reference_columns;
+	reference_columns.push_back("struct_id");
+	reference_columns.push_back("resNum");
+	ForeignKey struct_foreign_key(struct_id_column, "structures", "struct_id", true);
+	ForeignKey res_foreign_key(foreign_key_columns, "residues", reference_columns, true);
+
+	std::string const table_name = "per_residue_"+table_name_;
+
+	Schema table(table_name, primary_key);
+	table.add_foreign_key(struct_foreign_key);
+	table.add_foreign_key(res_foreign_key);
+
+	//C++ 11 we have ordered maps.
+	for ( auto name_data : name_value_type ) {
+		if ( name_data.second == "real" ) {
+			Column new_column(name_data.first, DbDataTypeOP( new DbReal() ));
+			new_columns.push_back( new_column );
+		} else if ( name_data.second == "string" ) {
+			Column new_column(name_data.first, DbDataTypeOP( new DbText() ));
+			new_columns.push_back( new_column );
+		}
+	}
+
+	Column prefix("prefix", DbDataTypeOP( new DbText()));
+	Column suffix("suffix", DbDataTypeOP( new DbText()));
+	table.add_column(prefix);
+	table.add_column(suffix);
+	for ( auto col : new_columns ) {
+		table.add_column( col );
+	}
+	table.write(db_session);
 }
 
 core::Size
 SimpleMetricFeatures::report_features(
+	Pose const & pose,
+	vector1< bool > const & relevant_residues,
+	StructureID struct_id,
+	sessionOP db_session
+){
+	using namespace core::scoring;
+	using namespace basic::database::schema_generator;
+
+	report_general_features(      pose, relevant_residues, struct_id, db_session );
+	report_per_residue_features(  pose, relevant_residues, struct_id, db_session );
+
+	return 0;
+}
+
+
+core::Size
+SimpleMetricFeatures::report_general_features(
 	Pose const & pose,
 	vector1< bool > const & ,
 	StructureID struct_id,
@@ -248,24 +369,6 @@ SimpleMetricFeatures::report_features(
 
 	//Calculate the data, figure out the names of and types of the columns.
 	// We want to be able to work on any simple metric, but I don't know how to do this elegantly.
-	struct MetricData {
-
-		core::Real  real_value;
-		std::string string_value;
-
-		std::string data_type;
-
-		MetricData(){}
-
-		MetricData(core::Real r_value):
-			real_value(r_value),
-			data_type("real"){}
-
-		MetricData(std::string r_value):
-			string_value(r_value),
-			data_type("string"){}
-
-	};
 
 	std::map< std::string, MetricData > name_data_map;
 
@@ -280,7 +383,8 @@ SimpleMetricFeatures::report_features(
 		std::string custom_type = metric->get_custom_type();
 		if ( custom_type != "" ) custom_type=custom_type+"_";
 
-		std::string metric_type = metric->type();
+		std::string const metric_type = metric->simple_metric_type();
+
 
 		//Can't use a switch for strings for some reason.
 		if      ( metric_type == "RealMetric" ) {
@@ -309,11 +413,15 @@ SimpleMetricFeatures::report_features(
 				name_data_map[ result_pair.first+"_"+custom_type+r_metric.metric() ] = new_data;
 				string_data[ result_pair.first+"_"+custom_type+r_metric.metric() ] = result_pair.second;
 			}
+		} else if ( (metric_type == "PerResidueRealMetric") || (metric_type == "PerResidueStringMetric" ) ) {
+			continue;
 		} else {
 			utility_exit_with_message("Metric Type not understood! "+ metric_type);
 		}
 
 	}
+
+	if ( name_data_map.size() == 0 ) return 0; //No data.
 
 	//Make the statement string.
 	std::string statement_string = "INSERT INTO "+table_name_+"(struct_id,prefix,suffix,";
@@ -360,7 +468,7 @@ catch (cppdb_error const & error){
 			//TR << data_pair.second.real_value << std::endl;
 		} else if ( data_pair.second.data_type == "string" ) {
 			stmt.bind(n, string_data[data_pair.first]);
-			TR << data_pair.second.string_value << std::endl;
+			//TR << data_pair.second.string_value << std::endl;
 		}
 
 	}
@@ -368,6 +476,128 @@ catch (cppdb_error const & error){
 	basic::database::safely_write_to_database(stmt);
 	return 0;
 }
+
+core::Size
+SimpleMetricFeatures::report_per_residue_features(
+	Pose const & pose,
+	vector1< bool > const & ,
+	StructureID struct_id,
+	sessionOP db_session
+){
+	using namespace core::scoring;
+	using namespace basic::database::schema_generator;
+
+	utility::vector1< std::string > data_names;
+	std::map< std::string, std::map< core::Size, std::string > > string_data;
+	std::map< std::string, std::map< core::Size, core::Real > > real_data;
+
+	///Clone the metrics, wipeout their ResidueSelectors so that they are calculated on ALL residues.
+	/// This is so that data is valid instead of having a "NA" for a string, which could totally be something real.
+	for ( SimpleMetricCOP metric_original: metrics_ ) {
+
+		SimpleMetricOP metric = metric_original->clone();
+
+		std::string custom_type = metric->get_custom_type();
+		if ( custom_type != "" ) custom_type=custom_type+"_";
+
+		std::string const metric_type = metric->simple_metric_type();
+
+		if ( metric_type == "PerResidueStringMetric" ) {
+			PerResidueStringMetric & r_metric = dynamic_cast<PerResidueStringMetric & >( *metric );
+			r_metric.set_residue_selector( nullptr ); //reset residue selector.
+
+			//name_data_map[custom_type+r_metric.metric() ] = new_data;
+			//string_data[ ] = value;
+			std::map< core::Size, std::string > const data = r_metric.calculate(pose);
+			std::string data_name = custom_type+r_metric.metric();
+			data_names.push_back( data_name );
+			string_data[ data_name ] = data;
+		} else if ( metric_type == "PerResidueRealMetric" ) {
+			PerResidueRealMetric & r_metric = dynamic_cast<PerResidueRealMetric & >( *metric );
+			r_metric.set_residue_selector( nullptr );
+			//MetricData new_data = MetricData(r_metric.calculate(pose));
+			//name_data_map[custom_type+r_metric.metric() ] = new_data;
+
+			std::map< core::Size, core::Real > const data = r_metric.calculate(pose);
+			std::string const data_name = custom_type+r_metric.metric();
+			data_names.push_back( data_name );
+			real_data[ data_name ] = data;
+		} else {
+			continue;
+		}
+	}
+
+	if ( data_names.size() == 0 ) return 0; //No PerResidue Data
+
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
+		write_per_residue_data_row( struct_id, i, data_names, string_data, real_data, db_session );
+	}
+	return 0;
+
+}
+
+void
+SimpleMetricFeatures::write_per_residue_data_row(
+	StructureID struct_id,
+	core::Size resnum,
+	utility::vector1< std::string > const & data_names,
+	std::map< std::string, std::map< core::Size, std::string > > const & string_data,
+	std::map< std::string, std::map< core::Size, core::Real > > const & real_data,
+	sessionOP db_session )
+{
+
+	//Make the statement string.
+	std::string statement_string = "INSERT INTO "+table_name_+"(struct_id,resNum,prefix,suffix,";
+	core::Size current_row = 4;
+	for ( auto name : data_names ) {
+		current_row+=1;
+		statement_string = statement_string + name;
+		if ( current_row < data_names.size() + 4 ) {
+			statement_string = statement_string + ",";
+		}
+	}
+	statement_string = statement_string + ") VALUES "+get_question_mark_string( current_row );
+
+	///Better error handling - so that if someone tries to do something funky, we catch it.
+	statement stmt;
+	try {
+		stmt = basic::database::prepare_statement_no_catch(statement_string,db_session);
+	}
+catch (cppdb_error const & error){
+
+	TR << std::endl << std::endl;
+	TR.Error << "Input If you are calling ReportToDB on the same database, make sure either the table names are different, or the same exact simple metrics are being used for both calls!" << std::endl;
+	TR << std::endl << " Here is the full error message: " << std::endl ;
+
+	TR << "   Failed to safely prepare the following statement: " << std::endl;
+	TR << "    " << statement_string << std::endl;
+	TR << "    " << error.what() << std::endl;
+	TR << std::endl;
+	throw CREATE_EXCEPTION(utility::excn::BadInput, "Columns for successive ReportToDb must match.");
+}
+
+	//Add the data to the database.
+	stmt.bind(1,struct_id);
+	stmt.bind(2, resnum);
+	stmt.bind(3,prefix_);
+	stmt.bind(4,suffix_);
+
+	current_row=4;
+	for ( auto name : data_names ) {
+		current_row+=1;
+		if ( real_data.count(name) ) {
+			core::Real data = real_data.at(name).at(resnum);
+			stmt.bind(current_row, data );
+
+		} else if ( string_data.count(name) ) {
+			std::string data = string_data.at(name).at(resnum);
+			stmt.bind( current_row, data );
+		}
+	}
+	basic::database::safely_write_to_database(stmt);
+}
+
+
 
 std::string SimpleMetricFeatures::type_name() const {
 	return class_name();

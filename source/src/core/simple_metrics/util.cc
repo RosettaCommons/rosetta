@@ -18,9 +18,13 @@
 
 #include <core/pose/Pose.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/util.hh>
 #include <core/simple_metrics/SimpleMetric.hh>
 #include <core/simple_metrics/SimpleMetricFactory.hh>
+#include <core/simple_metrics/PerResidueRealMetric.hh>
+#include <core/simple_metrics/PerResidueStringMetric.hh>
 #include <core/select/util.hh>
+
 
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
@@ -53,6 +57,46 @@ xsd_simple_metric_type_definition_w_attributes(
 )
 {
 	utility::tag::XMLSchemaComplexTypeGeneratorOP ct_gen = SimpleMetric::complex_type_generator_for_simple_metric(xsd);
+
+	ct_gen->complex_type_naming_func( & complex_type_name_for_simple_metric )
+		.element_name( rs_type )
+		.description( description )
+		.add_attributes( attributes )
+		.add_optional_name_attribute()
+		.write_complex_type_to_schema( xsd );
+}
+
+void
+xsd_per_residue_real_metric_type_definition_w_attributes(
+	utility::tag::XMLSchemaDefinition & xsd,
+	std::string const & rs_type,
+	std::string const & description,
+	utility::tag::AttributeList const & attributes
+)
+{
+	utility::tag::XMLSchemaComplexTypeGeneratorOP ct_gen = SimpleMetric::complex_type_generator_for_simple_metric(xsd);
+
+	PerResidueRealMetric::add_schema( ct_gen );
+	ct_gen->complex_type_naming_func( & complex_type_name_for_simple_metric )
+		.element_name( rs_type )
+		.description( description )
+		.add_attributes( attributes )
+		.add_optional_name_attribute()
+		.write_complex_type_to_schema( xsd );
+}
+
+void
+xsd_per_residue_string_metric_type_definition_w_attributes(
+	utility::tag::XMLSchemaDefinition & xsd,
+	std::string const & rs_type,
+	std::string const & description,
+	utility::tag::AttributeList const & attributes
+)
+{
+	utility::tag::XMLSchemaComplexTypeGeneratorOP ct_gen = SimpleMetric::complex_type_generator_for_simple_metric(xsd);
+
+
+	PerResidueStringMetric::add_schema( ct_gen );
 
 	ct_gen->complex_type_naming_func( & complex_type_name_for_simple_metric )
 		.element_name( rs_type )
@@ -123,6 +167,26 @@ get_metric_from_datamap_and_subtags(
 	} else {
 		return metrics[1];
 	}
+}
+
+///@brief Add options to the schema from this base class.
+void
+add_per_residue_simple_metric_schema( utility::tag::XMLSchemaComplexTypeGeneratorOP ct_gen){
+
+	using namespace utility::tag;
+
+	AttributeList attlist;
+
+	attlist
+		+ XMLSchemaAttribute( "output_as_pdb_nums", xs_string, "If outputting to scorefile use PDB numbering instead of Rosetta (default)" );
+
+	core::select::residue_selector::attributes_for_parse_residue_selector( attlist, "residue_selector",
+		"If a residue selector is present, we only calculate and output metrics for the subset of residues selected." );
+
+	ct_gen->
+		add_attributes( attlist )
+		.complex_type_naming_func( & complex_type_name_for_simple_metric );
+
 }
 
 

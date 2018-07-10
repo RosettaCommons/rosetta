@@ -26,6 +26,9 @@
 #include <core/simple_metrics/CompositeStringMetric.hh>
 #include <core/simple_metrics/CompositeRealMetric.hh>
 
+#include <core/simple_metrics/PerResidueRealMetric.hh>
+#include <core/simple_metrics/PerResidueStringMetric.hh>
+
 #include <core/simple_metrics/test_classes.hh>
 
 #include <core/simple_metrics/metrics/SelectedResiduesMetric.hh>
@@ -34,6 +37,8 @@
 #include <core/simple_metrics/metrics/SequenceMetric.hh>
 #include <core/simple_metrics/metrics/SecondaryStructureMetric.hh>
 #include <core/simple_metrics/metrics/SasaMetric.hh>
+
+#include <core/select/residue_selector/GlycanResidueSelector.hh>
 
 // Core Headers
 #include <core/pose/Pose.hh>
@@ -77,7 +82,7 @@ public:
 		TestStringMetric tester = TestStringMetric();
 		TS_ASSERT( tester.calculate( pose ) == "TESTING");
 		TS_ASSERT( tester.metric() == "SomeString");
-		TS_ASSERT( tester.type() == "StringMetric");
+		TS_ASSERT( tester.simple_metric_type() == "StringMetric");
 		TS_ASSERT( tester.get_metric_names()[1] == "SomeString");
 
 		tester.apply( pose );
@@ -97,23 +102,25 @@ public:
 
 	void test_real_metric() {
 		TestRealMetric tester = TestRealMetric();
+		tester.set_custom_type("sometype");  //Test CustomType
+
 		TS_ASSERT( tester.calculate( pose ) == 1.0);
 		TS_ASSERT( tester.metric() == "SomeReal");
-		TS_ASSERT( tester.type() == "RealMetric");
+		TS_ASSERT( tester.simple_metric_type() == "RealMetric");
 		TS_ASSERT( tester.get_metric_names()[1] == "SomeReal");
 
 		tester.apply( pose );
-		TS_ASSERT ( hasPoseExtraScore( pose, "SomeReal" ) );
+		TS_ASSERT ( hasPoseExtraScore( pose, "sometype_SomeReal" ) );
 
 		core::Real value;
-		bool present = getPoseExtraScore( pose, "SomeReal", value );
+		bool present = getPoseExtraScore( pose, "sometype_SomeReal", value );
 		TS_ASSERT( present );
 
 		TS_ASSERT( value == 1.0 );
 
 		tester.apply( pose, "prefix_", "_suffix");
-		TS_ASSERT ( hasPoseExtraScore( pose, "prefix_SomeReal_suffix" ) );
-		present = getPoseExtraScore( pose, "prefix_SomeReal_suffix", value );
+		TS_ASSERT ( hasPoseExtraScore( pose, "prefix_sometype_SomeReal_suffix" ) );
+		present = getPoseExtraScore( pose, "prefix_sometype_SomeReal_suffix", value );
 		TS_ASSERT( present );
 		TS_ASSERT( value == 1.0 );
 
@@ -128,7 +135,7 @@ public:
 		TS_ASSERT( values["s_data2"] == "value2");
 
 		TS_ASSERT( tester.metric() == "SomeCompositeString");
-		TS_ASSERT( tester.type() == "CompositeStringMetric");
+		TS_ASSERT( tester.simple_metric_type() == "CompositeStringMetric");
 
 		tester.apply( pose );
 		tester.apply( pose, "prefix_", "_suffix");
@@ -160,7 +167,7 @@ public:
 		TS_ASSERT( values["r_data2"] == 2.0);
 
 		TS_ASSERT( tester.metric() == "SomeCompositeReal");
-		TS_ASSERT( tester.type() == "CompositeRealMetric");
+		TS_ASSERT( tester.simple_metric_type() == "CompositeRealMetric");
 
 		tester.apply( pose );
 		tester.apply( pose, "prefix_", "_suffix");
@@ -179,6 +186,87 @@ public:
 			present = getPoseExtraScore( pose, "prefix_"+name+"_SomeCompositeReal_suffix", value );
 			TS_ASSERT( present );
 			TS_ASSERT( value == values[name] );
+		}
+
+	}
+
+	void test_per_residue_real_metric() {
+		using namespace core::select::residue_selector;
+		GlycanResidueSelectorOP selector = GlycanResidueSelectorOP( new GlycanResidueSelector());
+
+		TestPerResidueRealMetric tester = TestPerResidueRealMetric();
+		tester.set_residue_selector(selector); //Test setting the residue selector.
+		std::map< core::Size, core::Real > const values = tester.calculate( pose );
+		utility::vector1< std::string > const names = tester.get_metric_names();
+		TS_ASSERT(names.size() == 1);
+		TS_ASSERT( values.at(1) == 1.0);
+		TS_ASSERT( values.at(2) == 2.0);
+
+		TS_ASSERT( tester.metric() == "SomePerResidueReal");
+		TS_ASSERT( tester.simple_metric_type() == "PerResidueRealMetric");
+
+		tester.apply( pose );
+		tester.apply( pose, "prefix_", "_suffix");
+
+		for ( core::Size resnum = 1; resnum <= 2; ++resnum ) {
+
+			//std::string const & name = names[1];
+			TS_ASSERT ( hasPoseExtraScore( pose, utility::to_string(resnum)+"_SomePerResidueReal" ) );
+
+
+			core::Real value;
+			bool present = getPoseExtraScore( pose, utility::to_string(resnum)+"_SomePerResidueReal", value );
+			TS_ASSERT( present );
+			TS_ASSERT( value ==  values.at(resnum) );
+
+
+			TS_ASSERT ( hasPoseExtraScore( pose, "prefix_"+utility::to_string(resnum)+"_SomePerResidueReal_suffix" ) );
+			present = getPoseExtraScore( pose, "prefix_"+utility::to_string(resnum)+"_SomePerResidueReal_suffix", value );
+			TS_ASSERT( present );
+			TS_ASSERT( value == values.at(resnum) );
+		}
+
+	}
+
+	void test_per_residue_string_metric() {
+		using namespace core::select::residue_selector;
+		GlycanResidueSelectorOP selector = GlycanResidueSelectorOP( new GlycanResidueSelector());
+
+		TestPerResidueStringMetric tester = TestPerResidueStringMetric();
+		tester.set_residue_selector(selector); //Test setting the residue selector.
+		std::map< core::Size, std::string > const values = tester.calculate( pose );
+		utility::vector1< std::string > const names = tester.get_metric_names();
+		TS_ASSERT(names.size() == 1);
+		TS_ASSERT( values.at(1) == "value1");
+		TS_ASSERT( values.at(2) == "value2");
+
+		TS_ASSERT( tester.metric() == "SomePerResidueString");
+		TS_ASSERT( tester.simple_metric_type() == "PerResidueStringMetric");
+
+		tester.apply( pose );
+		tester.apply( pose, "prefix_", "_suffix");
+
+		//1_SomePerResidueString
+		//2_SomePerResidueString
+		//prefix_1_SomePerResidueString_suffix
+		//prefix_2_SomePerResidueString_suffix
+
+		for ( core::Size resnum = 1; resnum <= 2; ++resnum ) {
+
+			//std::string const & name = names[1];
+			TS_ASSERT ( hasPoseExtraScore_str( pose, utility::to_string(resnum)+"_SomePerResidueString" ) );
+
+
+			std::string value;
+			bool present = getPoseExtraScore( pose, utility::to_string(resnum)+"_SomePerResidueString", value );
+			TS_ASSERT( present );
+			TS_ASSERT( value ==  values.at(resnum) );
+
+
+			TS_ASSERT ( hasPoseExtraScore_str( pose, "prefix_"+utility::to_string(resnum)+"_SomePerResidueString_suffix" ) );
+			present = getPoseExtraScore( pose, "prefix_"+utility::to_string(resnum)+"_SomePerResidueString_suffix", value );
+			TS_ASSERT( present );
+			TS_ASSERT( value == values.at(resnum) );
 		}
 
 	}

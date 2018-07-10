@@ -19,7 +19,8 @@
 #include <core/simple_metrics/StringMetric.hh>
 #include <core/simple_metrics/CompositeRealMetric.hh>
 #include <core/simple_metrics/CompositeStringMetric.hh>
-
+#include <core/simple_metrics/PerResidueRealMetric.hh>
+#include <core/simple_metrics/PerResidueStringMetric.hh>
 #include <core/simple_metrics/test_classes.fwd.hh>
 
 #include <core/pose/Pose.fwd.hh>
@@ -241,6 +242,101 @@ public:
 		basic::datacache::DataMap & data ) override;
 
 };
+
+class TestPerResidueRealMetric: public PerResidueRealMetric {
+
+public:
+	TestPerResidueRealMetric():
+		PerResidueRealMetric(){};
+
+	std::map< core::Size, core::Real>
+	calculate(pose::Pose const &  ) const override{
+		std::map< core::Size, core::Real > data;
+		data[1] = 1.0;
+		data[2] = 2.0;
+		return data;
+	};
+
+	std::string
+	metric() const override {
+		return "SomePerResidueReal";
+	};
+
+	std::string
+	name() const override{
+		return name_static();
+	};
+
+	static
+	std::string
+	name_static();
+
+	SimpleMetricOP
+	clone() const override;
+
+public:
+
+
+	TestPerResidueRealMetric(TestPerResidueRealMetric const & ) = default;
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+	void
+	parse_my_tag(
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap & data ) override;
+
+};
+
+class TestPerResidueStringMetric: public PerResidueStringMetric {
+
+public:
+	TestPerResidueStringMetric():
+		PerResidueStringMetric(){};
+
+	std::map< core::Size, std::string>
+	calculate(pose::Pose const &  ) const override{
+		std::map< core::Size, std::string > data;
+		data[1] = "value1";
+		data[2] = "value2";
+		return data;
+	};
+
+	std::string
+	metric() const override {
+		return "SomePerResidueString";
+	};
+
+	std::string
+	name() const override{
+		return name_static();
+	};
+
+	static
+	std::string
+	name_static();
+
+	SimpleMetricOP
+	clone() const override;
+
+public:
+
+
+	TestPerResidueStringMetric(TestPerResidueStringMetric const & ) = default;
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+	void
+	parse_my_tag(
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap & data ) override;
+
+};
+
 
 } //core
 } //simple_metrics

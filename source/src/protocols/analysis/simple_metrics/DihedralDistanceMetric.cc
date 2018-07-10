@@ -210,9 +210,8 @@ DihedralDistanceMetric::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 		"\n"
 		" Metric described in:\n"
 		"   North B, Lehmann A, Dunbrack RL. A new clustering of antibody CDR loop conformations. J Mol Biol 2011;406:228-256.\n";
-	///
-	core::simple_metrics::xsd_simple_metric_type_definition_w_attributes(xsd, name_static(),
-		description, attlist);
+
+	core::simple_metrics::xsd_simple_metric_type_definition_w_attributes(xsd, name_static(), description, attlist);
 }
 
 core::Real

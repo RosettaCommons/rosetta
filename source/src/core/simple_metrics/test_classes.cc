@@ -221,6 +221,97 @@ TestCompositeRealMetricCreator::create_simple_metric() const {
 
 }
 
+/////////////////////
+std::string
+TestPerResidueRealMetric::name_static(){
+	return "TestPerResidueRealMetric";
+}
+
+SimpleMetricOP
+TestPerResidueRealMetric::clone() const {
+	return SimpleMetricOP(new TestPerResidueRealMetric( *this ) );
+}
+
+void
+TestPerResidueRealMetric::parse_my_tag(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & )
+{
+	SimpleMetric::parse_base_tag( tag );
+}
+
+void
+TestPerResidueRealMetric::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	using namespace utility::tag;
+	using namespace core::select::residue_selector;
+
+	AttributeList attlist;
+	xsd_simple_metric_type_definition_w_attributes(xsd, name_static(),
+		"Test class for PerResidueRealMetrics", attlist);
+}
+
+void
+TestPerResidueRealMetricCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	TestPerResidueRealMetric::provide_xml_schema( xsd );
+}
+
+std::string
+TestPerResidueRealMetricCreator::keyname() const {
+	return TestCompositeRealMetric::name_static();
+}
+
+SimpleMetricOP
+TestPerResidueRealMetricCreator::create_simple_metric() const {
+	return SimpleMetricOP( new TestPerResidueRealMetric );
+
+}
+
+
+/////////////////////
+std::string
+TestPerResidueStringMetric::name_static(){
+	return "TestPerResidueStringMetric";
+}
+
+SimpleMetricOP
+TestPerResidueStringMetric::clone() const {
+	return SimpleMetricOP(new TestPerResidueStringMetric( *this ) );
+}
+
+void
+TestPerResidueStringMetric::parse_my_tag(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & )
+{
+	SimpleMetric::parse_base_tag( tag );
+}
+
+void
+TestPerResidueStringMetric::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	using namespace utility::tag;
+	using namespace core::select::residue_selector;
+
+	AttributeList attlist;
+	xsd_simple_metric_type_definition_w_attributes(xsd, name_static(),
+		"Test class for PerResidueStringMetrics", attlist);
+}
+
+void
+TestPerResidueStringMetricCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	TestPerResidueStringMetric::provide_xml_schema( xsd );
+}
+
+std::string
+TestPerResidueStringMetricCreator::keyname() const {
+	return TestPerResidueStringMetric::name_static();
+}
+
+SimpleMetricOP
+TestPerResidueStringMetricCreator::create_simple_metric() const {
+	return SimpleMetricOP( new TestPerResidueStringMetric );
+
+}
+
 } //core
 } //simple_metrics
 

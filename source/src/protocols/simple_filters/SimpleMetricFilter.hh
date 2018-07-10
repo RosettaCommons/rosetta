@@ -143,6 +143,12 @@ public:
 	void
 	set_composite_action( std::string const & composite_action );
 
+	///@brief Set the filter to use the SUM of values from a PerResidueRealMetric for filtering.
+	///  This is instead of using the metric as a Composite Metric for each resnum.
+	/// Default False.
+	///
+	void
+	set_use_sum_for_per_residue_real( bool use_sum_for_per_residue_real );
 
 public:
 
@@ -185,6 +191,10 @@ private:
 	template <class T>
 	bool compare_composites( std::map< std::string, T > const & values) const;
 
+	///Takes std::map of std::string - value and returns a boolean if it passes the filter.
+	template <class T>
+	bool compare_composites( std::map< core::Size, T > const & values) const;
+
 	bool
 	compare_metric( core::Real value ) const ;
 
@@ -200,6 +210,7 @@ private:
 
 	core::Real epsilon_ = .0001;
 	std::string composite_action_ = "";
+	bool sum_per_residue_real_metric_ = false;
 
 };
 

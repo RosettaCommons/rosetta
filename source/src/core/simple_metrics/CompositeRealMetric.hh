@@ -63,6 +63,11 @@ public: // constructors / destructors
 	apply( pose::Pose & pose, std::string prefix="", std::string suffix="" ) const override;
 
 	///@brief Calculate the metric.
+	///
+	///@details
+	/// Return by value as this function can not STORE the result, it only calculates.
+	/// Store the result in the pose by using the apply method, which calls this method and stores the result
+	/// in the pose as ExtraScoreValues.
 	virtual std::map< std::string, core::Real >
 	calculate( pose::Pose const & pose ) const = 0;
 

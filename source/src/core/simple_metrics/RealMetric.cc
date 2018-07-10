@@ -42,8 +42,11 @@ void
 RealMetric::apply( pose::Pose & pose, std::string prefix, std::string suffix ) const {
 
 	std::string custom_type = get_custom_type();
-	if ( custom_type != "" ) custom_type = custom_type+"_";
-	std::string out_tag = prefix + custom_type + metric()+suffix;
+
+	if ( custom_type != "" ) custom_type=custom_type+"_";
+
+	std::string out_tag = prefix + custom_type + metric() + suffix;
+
 	core::Real value = calculate( pose );
 	core::pose::setPoseExtraScore( pose, out_tag, value);
 }

@@ -35,8 +35,28 @@ namespace simple_metrics {
 std::string
 complex_type_name_for_simple_metric( std::string const & metric_name );
 
+///@brief Generate the ComplexTypeGenerator from the SimpleMetric base class.
+///  Add any additional schema options from sub-derived classes
 void
 xsd_simple_metric_type_definition_w_attributes(
+	utility::tag::XMLSchemaDefinition & xsd,
+	std::string const & simple_metric_name,
+	std::string const & description,
+	utility::tag::AttributeList const & attributes);
+
+///@brief Generate the ComplexTypeGenerator from the SimpleMetric and PerResidueRealMetric base classes.
+///  Add any additional schema options from sub-derived classes
+void
+xsd_per_residue_real_metric_type_definition_w_attributes(
+	utility::tag::XMLSchemaDefinition & xsd,
+	std::string const & simple_metric_name,
+	std::string const & description,
+	utility::tag::AttributeList const & attributes);
+
+///@brief Generate the ComplexTypeGenerator from the SimpleMetric and PerResidueStringMetric base classes.
+///  Add any additional schema options from sub-derived classes
+void
+xsd_per_residue_string_metric_type_definition_w_attributes(
 	utility::tag::XMLSchemaDefinition & xsd,
 	std::string const & simple_metric_name,
 	std::string const & description,
@@ -53,6 +73,10 @@ get_metric_from_datamap_and_subtags(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & datamap,
 	std::string tag_name="metric");
+
+///@brief Add the schema for per-residue simple metrics.  This is to reduce code dup.
+void
+add_per_residue_simple_metric_schema( utility::tag::XMLSchemaComplexTypeGeneratorOP complex_schema );
 
 } //core
 } //simple_metrics

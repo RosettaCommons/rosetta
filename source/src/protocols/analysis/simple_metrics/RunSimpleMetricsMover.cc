@@ -158,12 +158,12 @@ void RunSimpleMetricsMover::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 	AttributeList attlist;
 	attlist
 		+ XMLSchemaAttribute( "metrics", xs_string, "Comma-separated list of previously defined simple_metrics to be added." )
-		+ XMLSchemaAttribute( "prefix", xs_string, "Prefix tag for the values to be added to the output score file for these metrics. (prefix+metric_name+suffix)" )
-		+ XMLSchemaAttribute( "suffix", xs_string, "suffix tag for the values to be added to the output score file for these metrics. (prefix+metric_name+suffix)" );
+		+ XMLSchemaAttribute( "prefix", xs_string, "Prefix tag for the values to be added to the output score file for these metrics. (prefix + custom_type + _ + metric_name + suffix)" )
+		+ XMLSchemaAttribute( "suffix", xs_string, "suffix tag for the values to be added to the output score file for these metrics. (prefix + custom_type + _ + metric_name + suffix)" );
 	XMLSchemaSimpleSubelementList subelements;
 	subelements.add_group_subelement( & SimpleMetricFactory::get_instance()->simple_metric_xml_schema_group_name );
 
-	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "Run a set of SimpleMetrics on the pose, with a particular prefix and suffix. (prefix+metric_name+suffix) ", attlist, subelements );
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "Run a set of SimpleMetrics on the pose, with a particular prefix and suffix. (prefix + custom_type + _ + metric_name + suffix) ", attlist, subelements );
 }
 
 std::string RunSimpleMetricsMoverCreator::keyname() const {

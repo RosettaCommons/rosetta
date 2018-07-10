@@ -181,6 +181,8 @@ sources = {
   	"core/simple_metrics": [
 		"CompositeRealMetric",
 		"CompositeStringMetric",
+		"PerResidueRealMetric",
+		"PerResidueStringMetric",
 		"RealMetric",
 		"SimpleMetric",
 		"SimpleMetricFactory",

@@ -82,8 +82,6 @@ def project_callback(project, project_path, project_files):
 
     xcode_filename = 'Rosetta.xcodeproj/project.pbxproj'
 
-
-
     #- JAB - new libraries will fail
     if not os.path.exists( xcode_filename ):
         shutil.copyfile( xcode_filename + '.template', xcode_filename )

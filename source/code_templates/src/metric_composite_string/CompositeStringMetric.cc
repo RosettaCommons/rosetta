@@ -89,6 +89,7 @@ void
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &  )
 {
+    SimpleMetric::parse_base_tag( tag );
 
 	if (tag->hasOption("bogus_option")){
 		return;

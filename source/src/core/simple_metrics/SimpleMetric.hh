@@ -30,7 +30,7 @@
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
-#include <utility/tag/Tag.hh>
+#include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 #include <string>
@@ -47,7 +47,7 @@ class SimpleMetric : public utility::pointer::ReferenceCount {
 public:
 
 
-	SimpleMetric( std::string const & type );
+	SimpleMetric( std::string const & simple_metric_type );
 
 	virtual
 	~SimpleMetric();
@@ -58,7 +58,7 @@ public:
 	// Due to the use of a factory and owning pointers, this is not added to the abstract base class.  But please, be aware.
 	// Currently, this code here does nothing useful.
 	//template < typename T >
-	//T calculate( const pose::Pose & pose );
+	//T calculate( const pose::Pose & pose ) const;
 
 	///@brief Calculate the metric and add it to the Score, which is output into a scorefile - labeled as prefix+metric+suffix.
 	/// Must be implemented by derived classes
@@ -106,14 +106,14 @@ public:
 	complex_type_generator_for_simple_metric( utility::tag::XMLSchemaDefinition & );
 
 	std::string
-	type() const {
-		return type_;
+	simple_metric_type() const {
+		return simple_metric_type_;
 	};
 
 private:
 
 	///@brief Type of SimpleMetric.  AKA RealMetric, StringMetric, etc.
-	std::string type_;
+	std::string simple_metric_type_;
 
 	//Additional setting to prefix/suffix for RosettaScripts -
 	//  so that many different configured SMs can be called in one RunSimpleMetric run

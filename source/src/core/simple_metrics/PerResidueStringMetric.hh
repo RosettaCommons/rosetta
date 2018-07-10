@@ -7,17 +7,18 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/simple_metrics/CompositeStringMetric.hh
+/// @file   core/simple_metrics/PerResidueStringMetric.hh
 ///
-/// @brief  Base class for core::Real CompositeStringMetrics
+/// @brief  Base class for core::Real PerResidueStringMetrics
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
-#ifndef INCLUDED_core_simple_metrics_CompositeStringMetric_hh
-#define INCLUDED_core_simple_metrics_CompositeStringMetric_hh
+#ifndef INCLUDED_core_simple_metrics_PerResidueStringMetric_hh
+#define INCLUDED_core_simple_metrics_PerResidueStringMetric_hh
 
 // Unit headers
 #include <core/simple_metrics/SimpleMetric.hh>
-#include <core/simple_metrics/CompositeStringMetric.fwd.hh>
+#include <core/simple_metrics/PerResidueStringMetric.fwd.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 // Core headers
 
@@ -28,6 +29,7 @@
 // Basic/Utility headers
 #include <basic/datacache/DataMap.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // C++ includes
 #include <map>
@@ -42,13 +44,13 @@ namespace simple_metrics {
 ///  Calculate(pose) method calculates multiple string values and returns them as a map<string, string>
 ///   Name:Value
 ///
-class CompositeStringMetric : public core::simple_metrics::SimpleMetric {
+class PerResidueStringMetric : public core::simple_metrics::SimpleMetric {
 
 public: // constructors / destructors
-	CompositeStringMetric();
-	~CompositeStringMetric() override;
+	PerResidueStringMetric();
+	~PerResidueStringMetric() override;
 
-	CompositeStringMetric( CompositeStringMetric const & other );
+	PerResidueStringMetric( PerResidueStringMetric const & other );
 
 	/// @brief Calculate the metric and add it to the pose as a score.
 	///           labeled as prefix+calc_name+"_"+metric+suffix.
@@ -61,13 +63,24 @@ public: // constructors / destructors
 	apply( pose::Pose & pose, std::string prefix="", std::string suffix="" ) const override;
 
 	///@brief Calculate the metric.
+	/// This map is Rosetta Resnum->value and includes only those residues selected.
 	///
 	///@details
 	/// Return by value as this function can not STORE the result, it only calculates.
 	/// Store the result in the pose by using the apply method, which calls this method and stores the result
 	/// in the pose as ExtraScoreValues.
-	virtual std::map< std::string, std::string >
+	virtual std::map< core::Size, std::string >
 	calculate( pose::Pose const & pose ) const = 0;
+
+
+	///@brief Set a ResidueSelector for which we will calculate values over.
+	void
+	set_residue_selector( select::residue_selector::ResidueSelectorCOP selector );
+
+	///@brief Set to output in PDB numbering instead of Rosetta during the Apply function,
+	/// which adds the data to pose as extra scores.
+	void
+	set_output_as_pdb_nums( bool output_as_pdb_nums );
 
 public:
 
@@ -80,9 +93,8 @@ public:
 	metric() const override = 0;
 
 	///@brief Get the submetric names that this Metric will calculate
-	// Used for features reporter.
 	utility::vector1< std::string >
-	get_metric_names() const override = 0;
+	get_metric_names() const override;
 
 public:
 	/// @brief called by parse_my_tag -- should not be used directly
@@ -94,7 +106,27 @@ public:
 	virtual SimpleMetricOP
 	clone() const override = 0;
 
-}; //class CompositeStringMetrics
+	///@brief Add options to the schema from this base class.
+	static
+	void
+	add_schema( utility::tag::XMLSchemaComplexTypeGeneratorOP complex_schema);
+
+private:
+
+
+
+	///Parse the base class tag.  Keep required interface for parse_my_tag.
+	void
+	parse_per_residue_tag(
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap & data );
+
+private:
+
+	select::residue_selector::ResidueSelectorCOP selector_ = nullptr;
+	bool output_as_pdb_nums_ = false;
+
+}; //class PerResidueStringMetrics
 
 } //namespace simple_metrics
 } //namespace core

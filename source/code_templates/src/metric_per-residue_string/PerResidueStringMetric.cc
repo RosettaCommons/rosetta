@@ -16,7 +16,7 @@
 #include <--path--/--class--Creator.hh>
 
 // Core headers
-#include <core/simple_metrics/CompositeRealMetric.hh>
+#include <core/simple_metrics/PerResidueStringMetric.hh>
 #include <core/simple_metrics/util.hh>
 
 #include <core/select/residue_selector/ResidueSelector.hh>
@@ -43,7 +43,7 @@ static basic::Tracer TR( "--namespace_dot--.--class--" );
 
 /// @brief Default constructor
 --class--::--class--():
-	core::simple_metrics::CompositeRealMetric()
+	core::simple_metrics::PerResidueStringMetric()
 {}
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -53,7 +53,7 @@ static basic::Tracer TR( "--namespace_dot--.--class--" );
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Copy constructor
 --class--::--class--( --class-- const & src ):
-	core::simple_metrics::CompositeRealMetric( src )
+	core::simple_metrics::PerResidueStringMetric( src )
 { 
 
 }
@@ -87,13 +87,18 @@ utility::vector1< std::string >
 void
 --class--::parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap &  )
+		basic::datacache::DataMap & datamap )
 {
-    SimpleMetric::parse_base_tag( tag );
+
+
+	SimpleMetric::parse_base_tag( tag );
+	PerResidueRealMetric::parse_per_residue_tag( tag, datamap );
+
 	if (tag->hasOption("bogus_option")){
 		return;
 	}
 }
+
 
 void
 --class--::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
@@ -106,12 +111,13 @@ void
 	//attributes_for_parse_residue_selector( attlist, "residue_selector",
 	//	"Selector specifying residues." );
 
-	core::simple_metrics::xsd_simple_metric_type_definition_w_attributes(xsd, name_static(),
+	core::simple_metrics::xsd_per_residue_string_metric_type_definition_w_attributes(xsd, name_static(),
 		"A metric for measuring ... and adding it to the resulting score file.", attlist);
 }
 
-std::map< std::string, core::Real >
+std::map< std::string, std::string >
 --class--::calculate(const pose::Pose & ) const {
+
 
 }
 
