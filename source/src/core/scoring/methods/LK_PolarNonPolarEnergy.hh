@@ -167,6 +167,19 @@ public:
 		Vector & F2
 	) const;
 
+	virtual
+	void
+	eval_residue_pair_derivatives(
+		conformation::Residue const & ires,
+		conformation::Residue const & jres,
+		ResSingleMinimizationData const &,
+		ResSingleMinimizationData const &,
+		ResPairMinimizationData const & min_data,
+		pose::Pose const & pose, // provides context
+		EnergyMap const & weights,
+		utility::vector1< DerivVectorPair > & r1_atom_derivs,
+		utility::vector1< DerivVectorPair > & r2_atom_derivs
+	) const;
 
 	virtual
 	void

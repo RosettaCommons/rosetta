@@ -326,6 +326,9 @@ main( int argc, char * argv [] )
 		option.add_relevant( OptionKeys::rna::denovo::minimize::skip_o2prime_trials );
 		option.add_relevant( OptionKeys::rna::denovo::minimize::deriv_check );
 		option.add_relevant( OptionKeys::rna::denovo::minimize::min_type );
+		option.add_relevant( OptionKeys::rna::denovo::minimize::minimize_use_nblist );
+		option.add_relevant( OptionKeys::rna::denovo::minimize::minimize_nblist_auto_update );
+		option.add_relevant( OptionKeys::rna::denovo::minimize::minimize_max_iter );
 		option.add_relevant( OptionKeys::constraints::cst_fa_file );
 		option.add_relevant( in::file::minimize_res );
 		option.add_relevant( score::weights );

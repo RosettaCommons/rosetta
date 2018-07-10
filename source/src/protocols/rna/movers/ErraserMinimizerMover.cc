@@ -997,6 +997,7 @@ ErraserMinimizerMover::apply(
 		TR << "Minimize using dfpmin with use_nb_list=true .." << std::endl;
 		MinimizerOptions min_options_dfpmin( "lbfgs_armijo_nonmonotone" /*option[ run::min_type ]*/, dummy_tol, true, false, false );
 		min_options_dfpmin.max_iter( min_iter );
+		min_options_dfpmin.nblist_auto_update( true ); // added by rhiju, 2018
 		minimizer.run( pose, chunk_mm, *scorefxn_, min_options_dfpmin );
 
 		scorefxn_->show( TR, pose );
@@ -1018,6 +1019,7 @@ ErraserMinimizerMover::apply(
 			TR << "Cart-minimize using dfpmin with use_nb_list=true .." << std::endl;
 			MinimizerOptions cart_min_options_dfpmin( "lbfgs_armijo_nonmonotone" /*option[ run::min_type ]*/, cart_dummy_tol, true, false, false );
 			cart_min_options_dfpmin.max_iter( cart_min_iter );
+			cart_min_options_dfpmin.nblist_auto_update( true ); // added by rhiju, 2018
 			cart_minimizer.run( pose, chunk_mm, *scorefxn_, cart_min_options_dfpmin );
 
 			scorefxn_->show( TR, pose );

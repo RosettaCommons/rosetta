@@ -7425,6 +7425,9 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
           Option( 'protein_packing_distance', 'Real', desc= "Pack protein residues within this distance of RNA",default= '10.0' ),
           Option( 'extra_minimize_res', 'ResidueChainVector', desc= "Extra residues during minimize step",default=[]  ),
           Option( 'extra_minimize_chi_res', 'ResidueChainVector', desc= "Extra side-chain chis to move during minimize step",default=[]  ),
+          Option( 'minimize_use_nblist', 'Boolean', desc= "Use neighbor list during minimization)",default= 'true' ),
+          Option( 'minimize_nblist_auto_update', 'Boolean', desc= "Auto-update neighbor list during minimization)",default= 'true' ),
+          Option( 'minimize_max_iter', 'Integer', desc= "Maximum number of iterations in minimizer",default= '2000' ),
 		 	 ), # -rna:denovo:minimize
 		), # -rna:denovo
 		Option_Group('erraser',
@@ -7547,7 +7550,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 						##ExhaustiveAssemblyMover options
 						Option('max_ss_num','Integer', desc="max_ss_num so either 3 (smotif) or 5 (5-ss_models)", default='5'),
 						Option('dump_every_model','Boolean', desc="dump_every_model", default='false'),
-	), # -legacy_sewing 
+	), # -legacy_sewing
   Option_Group( 'sewing',
 						Option('edge_file_name', 'String', desc="Name of SEWING edge file (new format)"),
 						Option('model_file_name','File', desc="Filename for segment file (creation or reading) for new SEWING"),

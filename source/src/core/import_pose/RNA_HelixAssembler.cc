@@ -353,9 +353,9 @@ RNA_HelixAssembler::initialize_minimizer(){
 	minimizer_ = core::optimization::AtomTreeMinimizerOP( new AtomTreeMinimizer );
 
 	float const dummy_tol( 0.0000025);
-	bool const use_nblist( false );
+	bool const use_nblist( true );
 	minimizer_options_ = core::optimization::MinimizerOptionsOP( new MinimizerOptions( "lbfgs_armijo_nonmonotone", dummy_tol, use_nblist, false, false ) );
-	minimizer_options_->nblist_auto_update( true );
+	minimizer_options_->nblist_auto_update( true ); // added by rhiju, 2018
 }
 
 /////////////////////////////////////////////////////////////////////////////

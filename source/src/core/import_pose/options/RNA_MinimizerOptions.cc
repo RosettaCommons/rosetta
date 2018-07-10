@@ -45,7 +45,9 @@ RNA_MinimizerOptions::RNA_MinimizerOptions():
 	minimize_protein_sc_( false ),
 	protein_packing_( false ),
 	protein_pack_all_( false ),
-	protein_packing_distance_( 10.0 )
+	protein_packing_distance_( 10.0 ),
+	use_nblist_( true ),
+	nblist_auto_update_( true )
 {}
 
 //Destructor
@@ -97,6 +99,11 @@ RNA_MinimizerOptions::initialize_from_options( utility::options::OptionCollectio
 	set_protein_packing( opts[ OptionKeys::rna::denovo::minimize::protein_packing ]() );
 	set_protein_pack_all( opts[ OptionKeys::rna::denovo::minimize::protein_pack_all ]() );
 	set_protein_packing_distance( opts[ OptionKeys::rna::denovo::minimize::protein_packing_distance ]() );
+
+	set_use_nblist( opts[ OptionKeys::rna::denovo::minimize::minimize_use_nblist ]() );
+	set_nblist_auto_update( opts[ OptionKeys::rna::denovo::minimize::minimize_nblist_auto_update ]() );
+	set_max_iter( opts[ OptionKeys::rna::denovo::minimize::minimize_max_iter ]() );
+
 }
 
 void
@@ -117,7 +124,10 @@ RNA_MinimizerOptions::list_options_read( utility::options::OptionKeyList & opts 
 		+ OptionKeys::rna::denovo::minimize::minimize_protein_sc
 		+ OptionKeys::rna::denovo::minimize::protein_packing
 		+ OptionKeys::rna::denovo::minimize::protein_pack_all
-		+ OptionKeys::rna::denovo::minimize::protein_packing_distance;
+		+ OptionKeys::rna::denovo::minimize::protein_packing_distance
+		+ OptionKeys::rna::denovo::minimize::minimize_use_nblist
+		+ OptionKeys::rna::denovo::minimize::minimize_nblist_auto_update
+		+ OptionKeys::rna::denovo::minimize::minimize_max_iter;
 }
 
 } //options

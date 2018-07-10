@@ -17,15 +17,14 @@
 #include <core/scoring/rna/StackElecEnergyCreator.hh>
 
 // Package headers
-#include <core/scoring/EnergiesCacheableDataType.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
-#include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
-#include <basic/Tracer.hh>
+#include <core/scoring/Energies.hh>
+#include <core/scoring/EnergiesCacheableDataType.hh>
+#include <core/scoring/DerivVectorPair.hh>
 #include <core/scoring/NeighborList.tmpl.hh>
 #include <core/scoring/ResidueNeighborList.hh>
 #include <core/scoring/MinimizationData.hh>
-#include <core/kinematics/MinimizerMapBase.hh>
 #include <core/scoring/etable/count_pair/CountPairFunction.hh>
 #include <core/scoring/etable/count_pair/CountPairFactory.hh>
 #include <core/scoring/etable/count_pair/CountPairNone.hh>
@@ -33,6 +32,8 @@
 #include <core/scoring/etable/count_pair/types.hh>
 
 // Project headers
+#include <basic/Tracer.hh>
+#include <core/kinematics/MinimizerMapBase.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/AtomType.hh>
@@ -606,6 +607,108 @@ StackElecEnergy::eval_atom_derivative(
 			F2 += force_vector_j;
 		}
 	}
+}
+
+
+
+////////////////////////////////////////////////////
+void
+StackElecEnergy::eval_residue_pair_derivatives(
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	ResSingleMinimizationData const &,
+	ResSingleMinimizationData const &,
+	ResPairMinimizationData const & min_data,
+	pose::Pose const & pose, // provides context
+	EnergyMap const & weights,
+	utility::vector1< DerivVectorPair > & r1_atom_derivs,
+	utility::vector1< DerivVectorPair > & r2_atom_derivs
+) const
+{
+	if ( pose.energies().use_nblist_auto_update() ) return;
+
+	debug_assert( r1_atom_derivs.size() >= rsd1.natoms() );
+	debug_assert( r2_atom_derivs.size() >= rsd2.natoms() );
+
+	if ( rsd1.has_variant_type( REPLONLY ) ) return;
+	if ( rsd2.has_variant_type( REPLONLY ) ) return;
+
+	if ( !rsd1.is_RNA() || !rsd2.is_RNA() ) return;
+
+	auto const & nblist =
+		static_cast< ResiduePairNeighborList const & > (min_data.get_data_ref( elec_pair_nblist ) );
+
+	utility::vector1< SmallAtNb > const & neighbs( nblist.atom_neighbors() );
+
+	rna::RNA_ScoringInfo  const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
+	rna::RNA_CentroidInfo const & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
+	utility::vector1< kinematics::Stub > const & base_stubs( rna_centroid_info.base_stubs() );
+	Size const i( rsd1.seqpos() );
+	Size const j( rsd2.seqpos() );
+
+	kinematics::Stub stub_i = base_stubs[i];
+	kinematics::Stub stub_j = base_stubs[j];
+
+	Matrix const M_i ( stub_i.M );
+	Matrix const M_j ( stub_j.M );
+
+	for ( auto const & neighb : neighbs ) {
+		Size const m = neighb.atomno1();
+		if ( rsd1.is_virtual( m ) ) continue;
+		if ( rsd1.is_repulsive( m ) ) continue;
+		if ( base_base_only_ && !is_rna_base( rsd1, m ) ) continue;
+		Real const m_charge( rsd1.atomic_charge( m ) );
+		if ( m_charge == 0.0 ) continue;
+
+		Size const n = neighb.atomno2();
+		if ( rsd2.is_virtual( n ) ) continue;
+		if ( rsd2.is_repulsive( n ) ) continue;
+		if ( base_base_only_ && !is_rna_base( rsd2, n ) ) continue;
+		Real const n_charge( rsd2.atomic_charge( n ) );
+		if ( n_charge == 0.0 ) continue;
+
+		Vector const atom_m( rsd1.xyz( m ) );
+		Vector const atom_n( rsd2.xyz( n ) );
+
+		bool res1_is_base = is_rna_base( rsd1, m );
+		bool res2_is_base = is_rna_base( rsd2, n );
+
+		if ( res1_is_base ) {
+			Vector const & deriv_vector_i = get_stack_elec_deriv( atom_m, atom_n, m_charge, n_charge, M_i );
+			Vector force_vector_i = weights[ stack_elec ] * deriv_vector_i;
+
+			if ( weights[ stack_elec_base_base ] != 0.0 &&  res2_is_base ) force_vector_i += weights[ stack_elec_base_base ] * deriv_vector_i;
+			if ( weights[ stack_elec_base_bb   ] != 0.0 && !res2_is_base ) force_vector_i += weights[ stack_elec_base_bb   ] * deriv_vector_i;
+
+			//Force/torque with which occluding atom j acts on "dipole" i.
+			Vector const F1 = -1.0 * cross( force_vector_i, atom_n );
+			Vector const F2 = -1.0 * force_vector_i;
+
+			r1_atom_derivs[ m ].f1() += F1;
+			r1_atom_derivs[ m ].f2() += F2;
+
+			r2_atom_derivs[ n ].f1() -= F1;
+			r2_atom_derivs[ n ].f2() -= F2;
+
+		}
+		if ( res2_is_base ) {
+			Vector const & deriv_vector_j = get_stack_elec_deriv( atom_n, atom_m, n_charge, m_charge, M_j );
+			Vector force_vector_j = weights[ stack_elec ] * deriv_vector_j;
+
+			if ( weights[ stack_elec_base_base ] != 0.0  &&  res1_is_base )  force_vector_j += weights[ stack_elec_base_base ] * deriv_vector_j;
+			if ( weights[ stack_elec_base_bb   ] != 0.0  && !res1_is_base )  force_vector_j += weights[ stack_elec_base_bb   ] * deriv_vector_j;
+
+			Vector const F1 = cross( force_vector_j, atom_m );
+			Vector const F2 = force_vector_j;
+
+			r1_atom_derivs[ m ].f1() += F1;
+			r1_atom_derivs[ m ].f2() += F2;
+
+			r2_atom_derivs[ n ].f1() -= F1;
+			r2_atom_derivs[ n ].f2() -= F2;
+		}
+	}
+
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////

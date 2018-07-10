@@ -138,9 +138,10 @@ void RNA_Minimizer::apply( core::pose::Pose & pose )
 
 	AtomTreeMinimizer minimizer;
 	float dummy_tol = min_tol_;
-	bool const use_nblist( true );
+	bool const use_nblist( options_->use_nblist() );
 	MinimizerOptions minimizer_options( options_->min_type(), dummy_tol, use_nblist, options_->deriv_check(), options_->deriv_check() );
-	minimizer_options.nblist_auto_update( true );
+	minimizer_options.nblist_auto_update( options_->nblist_auto_update() );
+	minimizer_options.max_iter( options_->max_iter() );
 
 	/////////////////////////////////////////////////////
 	kinematics::MoveMap mm;

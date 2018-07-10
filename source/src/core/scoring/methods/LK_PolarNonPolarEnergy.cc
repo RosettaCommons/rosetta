@@ -601,7 +601,6 @@ LK_PolarNonPolarEnergy::residue_pair_energy_ext(
 	bool const compute_polar    =  scorefxn.has_nonzero_weight( lk_polar ) || scorefxn.has_nonzero_weight( lk_costheta );
 	bool const compute_nonpolar =  scorefxn.has_nonzero_weight( lk_nonpolar );
 
-
 	auto const & nblist( static_cast< ResiduePairNeighborList const & > ( min_data.get_data_ref( lk_PolarNonPolar_pair_nblist ) ) );
 	utility::vector1< SmallAtNb > const & neighbs( nblist.atom_neighbors() );
 
@@ -626,8 +625,9 @@ LK_PolarNonPolarEnergy::residue_pair_energy_ext(
 		bool const is_polar_n = ( rsd2.atom_type(n).is_acceptor() || rsd2.atom_type(n).is_donor());
 		if ( !compute_polar && is_polar_m && is_polar_n ) continue;
 		if ( !compute_nonpolar && !is_polar_m && !is_polar_n ) continue;
-		//Real const d2 = d_ij.length_squared();
-		//if ( ( d2 >= safe_max_dis2_) || ( d2 == Real(0.0) ) ) continue;
+
+		// Real const d2 = d_ij.length_squared();
+		// if ( ( d2 >= safe_max_dis2_) || ( d2 == Real(0.0) ) ) continue;
 
 		dummy_deriv = 0.0;
 		scores = eval_lk_efficient( rsd1.atom( m ), rsd2.atom( n ), dummy_deriv, false );
@@ -733,6 +733,8 @@ LK_PolarNonPolarEnergy::eval_atom_derivative_intra_RNA(
 	Size const m( atom_id.atomno() );
 
 	if ( m > rsd1.nheavyatoms() ) return;
+
+	TR << "lk_nonpolar_intra_RNA derivatives are likely wrong! " << std::endl;
 
 	if ( verbose_ ) {
 		std::cout << "Start LK_PolarNonPolarEnergy::eval_atom_derivative, intra_res case, res= " << i << " atomno= " << m << "[" << rsd1.atom_name(m) <<  "]" << std::endl;
@@ -863,7 +865,7 @@ LK_PolarNonPolarEnergy::eval_atom_derivative(
 ) const
 {
 	if ( ! pose.energies().use_nblist_auto_update() ) return;
-	//TR << "eval_atom_derivative() was called..." << std::endl;
+
 	if ( defines_intrares_energy( weights ) ) {
 		eval_atom_derivative_intra_RNA(atom_id, pose, domain_map, weights, F1, F2);
 	}
@@ -960,6 +962,139 @@ LK_PolarNonPolarEnergy::eval_atom_derivative(
 		}
 	}
 }
+
+
+
+////////////////////////////////////////////////////
+// NOTES.
+//   This function is needed for minimizes that forgo
+//   use nblist, or for minimizes that use nblist but do not
+//    also turn on auto_update_nblist.
+//
+//   When I tried implementing it, I am seeing mismatches
+//    in derivatives of lk_nonpolar, but not lk_polar or lk_costheta.
+//
+//   Also: no attempt to setup derivatives for lk_nonpolar_intra...
+//      those might be totally broken.
+//
+//         -- Rhiju, July 7, 2018
+void
+LK_PolarNonPolarEnergy::eval_residue_pair_derivatives(
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	ResSingleMinimizationData const &,
+	ResSingleMinimizationData const &,
+	ResPairMinimizationData const & min_data,
+	pose::Pose const & pose, // provides context
+	EnergyMap const & weights,
+	utility::vector1< DerivVectorPair > & r1_atom_derivs,
+	utility::vector1< DerivVectorPair > & r2_atom_derivs
+) const
+{
+	if ( pose.energies().use_nblist_auto_update() ) return;
+
+	// HEY! HEY! HEY! MAYBE NEED TO SET UP eval_intrares_derivatives (!!!!!)
+	// //TR << "eval_atom_derivative() was called..." << std::endl;
+	// if ( defines_intrares_energy( weights ) ) {
+	//  eval_atom_derivative_intra_RNA(atom_id, pose, domain_map, weights, F1, F2);
+	// }
+
+	TR << "lk_nonpolar eval_residue_pair_derivatives() appears off -- set your minimizer to use_nblist and *also* nblist_auto_update to use eval_atom_derivative instead." << std::endl;
+
+	using namespace etable::count_pair;
+	CountPairFunctionOP cpfxn =
+		CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
+
+	bool const compute_polar    =  weights[ lk_polar ] > 0.0 || weights[ lk_costheta ] > 0.0;
+	bool const compute_nonpolar =  weights[ lk_nonpolar ] > 0.0;
+
+	auto const & nblist( static_cast< ResiduePairNeighborList const & > ( min_data.get_data_ref( lk_PolarNonPolar_pair_nblist ) ) );
+	utility::vector1< SmallAtNb > const & neighbs( nblist.atom_neighbors() );
+
+	Size m;
+	Size n;
+	Real cp_weight;
+	Size path_dist;
+	Real dotprod;
+	Real deriv;
+	Real lk_score;
+	Vector f1, f2;
+
+	for ( Size ii = 1, iiend = neighbs.size(); ii <= iiend; ++ii ) {
+		m = neighbs[ ii ].atomno1();
+		if ( m > rsd1.nheavyatoms() ) continue;
+		n = neighbs[ ii ].atomno2();
+		if ( n > rsd2.nheavyatoms() ) continue;
+		cp_weight = 1.0;
+		path_dist = 0;
+		if ( !cpfxn->count( m, n, cp_weight, path_dist ) ) continue;
+		bool const is_polar_m = ( rsd1.atom_type(m).is_acceptor() || rsd1.atom_type(m).is_donor());
+		bool const is_polar_n = ( rsd2.atom_type(n).is_acceptor() || rsd2.atom_type(n).is_donor());
+		if ( !compute_polar && is_polar_m && is_polar_n ) continue;
+		if ( !compute_nonpolar && !is_polar_m && !is_polar_n ) continue;
+
+		Vector const & heavy_atom_m( rsd1.xyz( m ) );
+		Vector const & heavy_atom_n( rsd2.xyz( n ) );
+		Vector const d_ij = heavy_atom_n - heavy_atom_m;
+		Vector const d_ij_norm = d_ij.normalized();
+
+		Real const d2 = d_ij.length_squared();
+		if ( ( d2 >= safe_max_dis2_) || ( d2 == Real(0.0) ) ) continue;
+
+		lk_score = cp_weight * eval_lk( rsd1.atom( m ), rsd2.atom( n ), deriv, true);
+		f2 = -1.0 * cp_weight * deriv * d_ij_norm;
+		f1 = cross( f2, heavy_atom_n );
+		if ( compute_polar && is_polar_m ) {
+			Real const d = d_ij.length();
+			r1_atom_derivs[ m ].f1() += weights[ lk_polar ] * f1;
+			r1_atom_derivs[ m ].f2() += weights[ lk_polar ] * f2;
+			r2_atom_derivs[ n ].f1() -= weights[ lk_polar ] * f1;
+			r2_atom_derivs[ n ].f2() -= weights[ lk_polar ] * f2;
+			Vector const res1_base_vector_norm = get_base_vector( rsd1, m, pose );
+			dotprod = dot( res1_base_vector_norm, d_ij_norm );
+			f2 *= dotprod;
+			f2 -= lk_score * (1/d) * (res1_base_vector_norm  - dotprod * d_ij_norm );
+			f1 = cross( f2, heavy_atom_n );
+			r1_atom_derivs[ m ].f1() += weights[ lk_costheta ] * f1;
+			r1_atom_derivs[ m ].f2() += weights[ lk_costheta ] * f2;
+			r2_atom_derivs[ n ].f1() -= weights[ lk_costheta ] * f1;
+			r2_atom_derivs[ n ].f2() -= weights[ lk_costheta ] * f2;
+		} else if ( !is_polar_m && compute_nonpolar ) {
+			r1_atom_derivs[ m ].f1() += weights[ lk_nonpolar ] * f1;
+			r2_atom_derivs[ m ].f2() += weights[ lk_nonpolar ] * f2;
+			r2_atom_derivs[ n ].f1() -= weights[ lk_nonpolar ] * f1;
+			r2_atom_derivs[ n ].f2() -= weights[ lk_nonpolar ] * f2;
+		}
+
+
+		lk_score = cp_weight * eval_lk( rsd2.atom( n ), rsd1.atom( m ), deriv, true);
+		f2 = cp_weight * deriv * d_ij_norm;
+		f1 = cross( f2, heavy_atom_m );
+		if ( compute_polar && is_polar_n ) {
+			Real const d = d_ij.length();
+			r1_atom_derivs[ m ].f1() -= weights[ lk_polar ] * f1;
+			r1_atom_derivs[ m ].f2() -= weights[ lk_polar ] * f2;
+			r2_atom_derivs[ n ].f1() += weights[ lk_polar ] * f1;
+			r2_atom_derivs[ n ].f2() += weights[ lk_polar ] * f2;
+			Vector const res2_base_vector_norm = get_base_vector( rsd2, n, pose );
+			dotprod = dot( res2_base_vector_norm, -d_ij_norm );
+			f2 *= dotprod;
+			f2 -= lk_score * ( 1/d ) *  (res2_base_vector_norm  + dotprod * d_ij_norm );
+			f1 = cross( f2, heavy_atom_m );
+			r1_atom_derivs[ m ].f1() -= weights[ lk_costheta ] * f1;
+			r1_atom_derivs[ m ].f2() -= weights[ lk_costheta ] * f2;
+			r2_atom_derivs[ n ].f1() += weights[ lk_costheta ] * f1;
+			r2_atom_derivs[ n ].f2() += weights[ lk_costheta ] * f2;
+		} else if ( !is_polar_n && compute_nonpolar ) {
+			r1_atom_derivs[ m ].f1() -= weights[ lk_nonpolar ] * f1;
+			r1_atom_derivs[ m ].f2() -= weights[ lk_nonpolar ] * f2;
+			r2_atom_derivs[ n ].f1() += weights[ lk_nonpolar ] * f1;
+			r2_atom_derivs[ n ].f2() += weights[ lk_nonpolar ] * f2;
+		}
+	}
+
+}
+
 
 ////////////////////////////////////////////////
 void

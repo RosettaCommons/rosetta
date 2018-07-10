@@ -103,6 +103,15 @@ public:
 	void set_minimize_rounds( core::Size const & setting ){ minimize_rounds_ = setting; }
 	core::Size minimize_rounds() const { return minimize_rounds_; }
 
+	void set_use_nblist( bool const & setting ){ use_nblist_ = setting; }
+	bool use_nblist() const { return use_nblist_; }
+
+	void set_nblist_auto_update( bool const & setting ){ nblist_auto_update_ = setting; }
+	bool nblist_auto_update() const { return nblist_auto_update_; }
+
+	void set_max_iter( core::Size const & setting ){ max_iter_ = setting; }
+	core::Size max_iter() const { return max_iter_; }
+
 private:
 
 	core::Size minimize_rounds_;
@@ -121,6 +130,11 @@ private:
 	bool protein_packing_;
 	bool protein_pack_all_;
 	core::Real protein_packing_distance_;
+
+	bool use_nblist_;
+	bool nblist_auto_update_;
+	core::Size max_iter_;
+
 
 };
 
