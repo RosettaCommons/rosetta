@@ -355,7 +355,7 @@ def generate_rosetta_external_cmake_files(rosetta_source_path, prefix):
                    sqlite3 = 'SQLITE_DISABLE_LFS SQLITE_OMIT_LOAD_EXTENSION SQLITE_THREADSAFE=0')
 
     scons_file_extension = '.external.settings'
-    external_scons_files = [f for f in os.listdir(rosetta_source_path+'/external') if f.endswith(scons_file_extension)]
+    external_scons_files = [f for f in os.listdir(rosetta_source_path+'/external') if f.endswith(scons_file_extension)  and (Options.zmq  or  not f.startswith('libzmq.') ) ]
     for scons_file in external_scons_files:
         G = {}
         sources = []
@@ -729,9 +729,11 @@ def main(args):
     parser.add_argument('-s', '--skip-generation-phase', action="store_true", help="Assume that bindings code is already generaded and skipp the Binder call's")
     parser.add_argument('-d', '--skip-building-phase', action="store_true", help="Assume that bindings code is already generaded and skipp the Binder call's")
     parser.add_argument("--type", default='Release', choices=['Release', 'Debug', 'MinSizeRel', 'RelWithDebInfo'], help="Specify build type")
+
     parser.add_argument("--strip-module", dest="strip_module", action="store_true", help="Strip symbols from compiled modules to produce minimum file size in release mode. (default on)")
     parser.add_argument("--no-strip-module", dest="strip_module", action="store_false", help="Do not strip symbols from compiled modules to support tracebacks in release mode.")
     parser.set_defaults(strip_module = True)
+
     parser.add_argument('--compiler', default='clang', help='Compiler to use, defualt is clang')
     parser.add_argument('--binder', default='', help='Path to Binder tool. If none is given then download, build and install binder into main/source/build/prefix. Use "--binder-debug" to control which mode of binder (debug/release) is used.')
     parser.add_argument("--binder-debug", action="store_true", help="Run binder tool in debug mode (only relevant if no '--binder' option was specified)")
@@ -744,8 +746,7 @@ def main(args):
 
     parser.add_argument('-p', '--create-package', default='', help='Create PyRosetta Python package at specified path (default is to skip creating package)')
     parser.add_argument('--create-wheel', default='', help='Create python wheel in the specified directory. (default is to skip creating wheel)')
-    parser.add_argument('--external-link', default=None, choices=["debug", "release", "mac_graphics"],
-        help="Optional, link externally compiled rosetta libraries from the given cmake build directory rather than rebuilding in extension modoule.")
+    parser.add_argument('--external-link', default=None, choices=["debug", "release", "mac_graphics"], help="Optional, link externally compiled rosetta libraries from the given cmake build directory rather than rebuilding in extension modoule.")
 
     parser.add_argument('--python-include-dir', default=None, help='Path to python C headers. Use this if CMake fails to autodetect it')
     parser.add_argument('--python-lib', default=None, help='Path to python library. Use this if CMake fails to autodetect it')
@@ -757,6 +758,9 @@ def main(args):
     parser.add_argument('--binder-extra-options', default=None, help='Specify Binder extra (LLVM) options. Use this to point Binder to additional include dir or add/change LLVM flags. For example on Mac with no Xcode install set this to "-isystem /Library/Developer/CommandLineTools/usr/include/c++/v1" to point Binder to correct location of system includes.')
 
     parser.add_argument('--documentation', help='Generate PyRosetta documentation at specified path (default is to skip documentation creation). Note that Sphinx package need to be installed for this to work correctly.')
+
+    parser.set_defaults(zmq = True)
+    parser.add_argument('--no-zmq', dest='zmq', action="store_false", help='Disable building and linking of ZeroMQ library')
 
     parser.add_argument('--version', help='Supply JSON version file to be used for during package creation and documentation building. File must be in the same format as standard Rosetta .release.json used to mark release versions. If no file is supplied script will fallback to use main/.version.json.')
 
