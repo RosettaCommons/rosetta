@@ -2028,8 +2028,12 @@ private:
 
 #ifdef    SERIALIZATION
 public:
-	template< class Archive > void save( Archive & arc ) const;
-	template< class Archive > void load( Archive & arc );
+	template< class Archive > void save( Archive & arc) const;
+	template< class Archive > void load( Archive & arc);
+
+	/// Save and load pose and optionally omit observers. Note that if you omit saving observers the resulting archive will be INCOMPATIBLE with archive when observers was saved
+	template< class Archive > void save_with_options( Archive & arc, bool save_observers) const;
+	template< class Archive > void load_with_options( Archive & arc, bool load_observers);
 #endif // SERIALIZATION
 
 }; // class Pose

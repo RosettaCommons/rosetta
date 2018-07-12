@@ -15,7 +15,6 @@ SET(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 SET(EXTRAS zeromq)
 #SET(COMPILER gcc)
 
-
 ############ Build Rules
 INCLUDE(../build/compiler.cmake)
 INCLUDE(../build/build.pre.cmake)
@@ -39,3 +38,6 @@ INCLUDE(../build/build.test.cmake)
 
 ############ Installation rules
 INCLUDE(../build/install.cmake)
+
+
+#SET(COMPILE_FLAGS "${COMPILE_FLAGS} -Wno-unused-function")

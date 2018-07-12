@@ -64,7 +64,22 @@ void extract_nonempty_array_from_json( nlohmann::json const & json, std::string 
 /// @brief utility function - verifies that a particular json object is in the json exactly once, and is nonempty
 void extract_nonempty_object_from_json( nlohmann::json const & json, std::string const & object_name, nlohmann::json & return_object );
 
-} //utility
+
+
+
+/// @brief lookup for element `key` and if it's type is compatible extract it to `value, return `true` on success, no exception is raised if key is not found
+bool extract_value_if_present(json const &j, std::string const & key, bool &value);
+
+/// @brief lookup for element `key` and if it's type is compatible extract it to `value, return `true` on success, no exception is raised if key is not found
+bool extract_value_if_present(json const &j, std::string const & key, int &value);
+
+/// @brief lookup for element `key` and if it's type is compatible extract it to `value, return `true` on success, no exception is raised if key is not found
+bool extract_value_if_present(json const &j, std::string const & key, double &value);
+
+/// @brief lookup for element `key` and if it's type is compatible extract it to `value, return `true` on success, no exception is raised if key is not found
+bool extract_value_if_present(json const &j, std::string const & key, std::string &value);
+
+} // utility
 
 #endif // ifdef _NLOHMANN_JSON_ENABLED_
 

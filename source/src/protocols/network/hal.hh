@@ -24,13 +24,19 @@
 namespace protocols {
 namespace network {
 
+struct CommandLineArguments
+{
+	int argc;
+	char * * argv;
+};
+
 
 using SpecificationCallBack = std::function< std::string(void) >;
 using ExecutionerCallBack   = std::function< json(json const &) >;
 
 /// start HAL listener
 /// use main function `argc` and `argv` if you want auto-restart/abort functionality to work properly
-void hal(SpecificationCallBack const &, ExecutionerCallBack const &, int argc, char * argv []);
+void hal(SpecificationCallBack const &, ExecutionerCallBack const &, CommandLineArguments args);
 
 
 

@@ -1,6 +1,6 @@
 QT += core gui network widgets charts
 
-CONFIG += object_parallel_to_source c++11 no_keywords
+CONFIG += object_parallel_to_source c++11 no_keywords warn_on
 
 TARGET = ui
 TEMPLATE = lib
@@ -10,6 +10,7 @@ DEFINES += BOOST_ERROR_CODE_HEADER_ONLY BOOST_SYSTEM_NO_DEPRECATED BOOST_MATH_NO
 INCLUDEPATH = $$PWD/../../src $$PWD/../../src/platform/macos
 
 QMAKE_CXXFLAGS += \
+    -Wall -Wno-unused-function -W \
     -isystem$$PWD/../../external \
     -isystem$$PWD/../../external/include \
     -isystem$$PWD/../../external/boost_1_55_0 \
@@ -22,9 +23,12 @@ SOURCES += \
     ui_lib_test.cpp \
     config/config_dialog.cpp \
     config/util.cpp \
+    network/argument.cpp \
     network/bowman.cpp \
     network/bowman_model.cpp \
     network/bowman_thread.cpp \
+    network/bowman_view.cpp \
+    network/function_setup_dialog.cpp \
     task/job_submit.cpp \
     task/job_view.cpp \
     task/file.cpp \
@@ -51,9 +55,12 @@ HEADERS  += \
     ui_lib_test.h \
     config/config_dialog.h \
     config/util.h \
+    network/argument.h \
     network/bowman.h \
     network/bowman_model.h \
     network/bowman_thread.h \
+    network/bowman_view.h \
+    network/function_setup_dialog.h \
     task/job_submit.h \
     task/job_view.h \
     task/file.fwd.h \
@@ -88,6 +95,8 @@ HEADERS  += \
 
 FORMS    += \
     config/config_dialog.ui \
+    network/bowman_view.ui \
+    network/function_setup_dialog.ui \
     task/job_submit.ui \
     task/job_view.ui \
     task/task_submit.ui \

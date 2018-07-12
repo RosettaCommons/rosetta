@@ -103,7 +103,7 @@ def update_source_file(file_name, data):
 library_project_template = '''\
 QT -= core gui
 
-CONFIG += object_parallel_to_source no_keywords {config}
+CONFIG += object_parallel_to_source no_keywords warn_off {config}
 
 TARGET = {name}
 TEMPLATE = lib
@@ -118,7 +118,8 @@ CONFIG(release, debug|release) : DEFINES += NDEBUG  # message(Release build!)
 
 INCLUDEPATH = {includes}
 
-QMAKE_CXXFLAGS += {flags}
+# we used `warn_off` in CONFIG (above) to disable all warning and then re-enable some of warning in QMAKE_CXXFLAGS so our options does not get
+QMAKE_CXXFLAGS += -Wall -Wno-unused-function -W {flags}
 
 QMAKE_CFLAGS += {flags}
 

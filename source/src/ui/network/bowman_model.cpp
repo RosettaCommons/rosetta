@@ -1,12 +1,18 @@
 #include "bowman_model.h"
 
+#include <protocols/network/util.hh>
+
 #include <QDebug>
+
+using namespace protocols::network;
+
 
 namespace ui {
 namespace network {
 
 BowmanModel::BowmanModel(QObject *parent) : QAbstractTableModel(parent)
 {
+	connect(&Bowman::bowman(), &Bowman::back_ends_changed, this, &BowmanModel::on_bowman_back_ends_changed);
 }
 
 QVariant BowmanModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -46,9 +52,10 @@ QVariant BowmanModel::data(const QModelIndex &index, int role) const
 	if (role != Qt::DisplayRole ) return QVariant();
 
 
-	if( index.row() < static_cast<int>( functions_.size() ) ) {
-		if      ( index.column() == 0 ) return QString("zero-") + QString::number( index.row() );
-		else if ( index.column() == 1 ) return QString("one-") + QString::number( index.row() );
+	int row = index.row();
+	if( row < static_cast<int>( functions_.size() )  and  row >= 0 ) {
+		if      ( index.column() == 0 ) return QString::fromStdString(functions_[row].name);
+		else if ( index.column() == 1 ) return QString::fromStdString(functions_[row].hal_id);
 	}
 
     return QVariant();
@@ -61,16 +68,31 @@ BowmanModel::FunctionIdentifier * BowmanModel::get_identifier(QModelIndex const 
 	else return nullptr;
 }
 
-void BowmanModel::update_from_bowman(Bowman const &bowman)
+void BowmanModel::on_bowman_back_ends_changed(Bowman const *bowman)
 {
-	qDebug() << "BowmanModel::update_from_bowman():" << bowman.size();
+	qDebug() << "BowmanModel::on_bowman_back_ends_changed()";
+
 
 	beginResetModel();
 
 	functions_.resize(0);
 
-	for(auto it = bowman.begin(); it != bowman.end(); ++it ) {
-		functions_.emplace_back( FunctionIdentifier{"name", it->first} );
+	//int hal_unique_index_ = 0;
+	for(auto back_end_it = bowman->begin(); back_end_it != bowman->end(); ++back_end_it ) {
+
+		for(auto const & function : back_end_it->second ) {
+			functions_.emplace_back( FunctionIdentifier{ function.first, back_end_it->first } );
+		}
+
+		// json const & j = * back_end_it->second;
+		// if( j.count(_f_functions_) ) {
+		// 	for(auto const & it : j[_f_functions_] ) {
+		// 		if( it.count(_f_name_) ) {
+		// 			std::string name = it[_f_name_];
+		// 			functions_.emplace_back( FunctionIdentifier{ name, back_end_it->first } );
+		// 		}
+		// 	}
+		// }
 	}
 
 	endResetModel();

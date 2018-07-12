@@ -27,6 +27,7 @@ enum CacheableObserverType {
 	ENZDES_OBSERVER,
 	STRUCTUREDATA_OBSERVER,
 	PYMOL_OBSERVER,
+	UI_OBSERVER,
 	GLYCAN_TREE_OBSERVER,
 	// *** IMPORTANT ***
 	// The 'num_cacheable_data_types' below must be the last enum, and must

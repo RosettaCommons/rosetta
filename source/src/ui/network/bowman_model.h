@@ -32,7 +32,8 @@ public:
 	/// return FunctionIdentifier for given index, return nullptr if index is invalid
 	FunctionIdentifier * get_identifier(QModelIndex const &index);
 
-	void update_from_bowman(Bowman const &bowman);
+private Q_SLOTS:
+	void on_bowman_back_ends_changed(Bowman const *bowman);
 
 private:
 

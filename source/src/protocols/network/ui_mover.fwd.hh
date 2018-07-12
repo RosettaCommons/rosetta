@@ -28,5 +28,14 @@ using UIMoverCSP = utility::pointer::shared_ptr< UIMover const >;
 using UIMoverOP  = UIMoverSP;
 using UIMoverCOP = UIMoverCSP;
 
+
+class UIObserver;
+using UIObserverSP  = utility::pointer::shared_ptr< UIObserver >;
+using UIObserverCSP = utility::pointer::shared_ptr< UIObserver const >;
+
+// deprecated
+using UIObserverOP  = UIObserverSP;
+using UIObserverCOP = UIObserverCSP;
+
 } // namespace network
 } // namespace protocols

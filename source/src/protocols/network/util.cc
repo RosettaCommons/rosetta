@@ -68,7 +68,7 @@ PoseBinary pose_to_bytes(core::pose::Pose const &pose)
 {
 	std::ostringstream buffer;
 	auto arc = cereal::BinaryOutputArchive(buffer);
-	pose.save(arc);
+	pose.save_with_options(arc, /* save_observers = */ false);
 
 	auto uncompressed_pose = buffer.str();
 
@@ -89,55 +89,67 @@ PoseBinary pose_to_bytes(core::pose::Pose const &pose)
 	//qDebug() << "Pose serialized and compressed into " << compressed_pose.size() << " bytes";
 }
 
+
+// serialize and compress Pose UI way, if nullptr is given generate empty byte-string
+PoseBinary pose_to_bytes(core::pose::PoseCOP const &pose)
+{
+	if(pose) return pose_to_bytes(*pose);
+	else return PoseBinary();
+}
+
+
 // uncompress and deserialize aPose UI way
 core::pose::PoseOP bytes_to_pose(PoseBinary const &compressed_pose)
 {
-	auto pose = utility::pointer::make_shared<core::pose::Pose>();
+	if( compressed_pose.empty() ) return core::pose::PoseOP();
+	else {
+		auto pose = utility::pointer::make_shared<core::pose::Pose>();
 
-	/* // turn compressed_pose into decompressed pose
-	std::vector<char> uncompressed_pose2;
-	std::istringstream uncompressed_buffer2(compressed_pose);
-	zlib_stream::zip_istream zis(uncompressed_buffer2);
-	int c_size = 0;
-	zis.read(reinterpret_cast<char*>(&c_size), sizeof(c_size) );  //uncompressed_pose2;
-	uncompressed_pose2.resize(c_size);
-	zis.read(&uncompressed_pose2[0], uncompressed_pose2.size());
+		/* // turn compressed_pose into decompressed pose
+		   std::vector<char> uncompressed_pose2;
+		   std::istringstream uncompressed_buffer2(compressed_pose);
+		   zlib_stream::zip_istream zis(uncompressed_buffer2);
+		   int c_size = 0;
+		   zis.read(reinterpret_cast<char*>(&c_size), sizeof(c_size) );  //uncompressed_pose2;
+		   uncompressed_pose2.resize(c_size);
+		   zis.read(&uncompressed_pose2[0], uncompressed_pose2.size());
 
-	struct MemoryBuffer : std::streambuf
-	{
-		MemoryBuffer(std::vector<char> & source) { this->setg(source.data(), source.data(), source.data()+source.size() ); }
-	};
+		   struct MemoryBuffer : std::streambuf
+		   {
+		   MemoryBuffer(std::vector<char> & source) { this->setg(source.data(), source.data(), source.data()+source.size() ); }
+		   };
 
-	std::string uncompressed_pose2_str(uncompressed_pose2.begin(), uncompressed_pose2.end());
+		   std::string uncompressed_pose2_str(uncompressed_pose2.begin(), uncompressed_pose2.end());
 
-	MemoryBuffer ibuff(uncompressed_pose2);
-	std::istream in(&ibuff);
-	auto darc = cereal::BinaryInputArchive(in);
+		   MemoryBuffer ibuff(uncompressed_pose2);
+		   std::istream in(&ibuff);
+		   auto darc = cereal::BinaryInputArchive(in);
 
-	pose->load(darc);
-	*/
+		   pose->load(darc);
+		*/
 
-	// struct MemoryBuffer : std::streambuf
-	// {
-	// 	MemoryBuffer(std::string const & source) { this->setg(const_cast<char*>( source.c_str() ), const_cast<char*>( source.c_str() ) , const_cast<char*>( source.c_str()+source.size() ) ); }
-	// };
+		// struct MemoryBuffer : std::streambuf
+		// {
+		// 	MemoryBuffer(std::string const & source) { this->setg(const_cast<char*>( source.c_str() ), const_cast<char*>( source.c_str() ) , const_cast<char*>( source.c_str()+source.size() ) ); }
+		// };
 
-	std::vector<char> uncompressed_pose2(compressed_pose.begin(), compressed_pose.end());
-	struct MemoryBuffer : std::streambuf
-	{
-		MemoryBuffer(std::vector<char> & source) { this->setg(source.data(), source.data(), source.data()+source.size() ); }
-	};
-	MemoryBuffer ibuff(uncompressed_pose2);
-	std::istream in(&ibuff);
-	auto darc = cereal::BinaryInputArchive(in);
+		std::vector<char> uncompressed_pose2(compressed_pose.begin(), compressed_pose.end());
+		struct MemoryBuffer : std::streambuf
+		{
+			MemoryBuffer(std::vector<char> & source) { this->setg(source.data(), source.data(), source.data()+source.size() ); }
+		};
+		MemoryBuffer ibuff(uncompressed_pose2);
+		std::istream in(&ibuff);
+		auto darc = cereal::BinaryInputArchive(in);
 
-	pose->load(darc);
+		pose->load_with_options(darc, /* load_observers = */ false);
 
 
-	//qDebug() << "Pose decompressed into " << c_size << " bytes equal:" << (uncompressed_pose2_str == uncompressed_pose);
-	//qDebug() << "Pose decompressed into " << zis.get_out_size() << " _ " << zis.get_in_size() <<" bytes";
+		//qDebug() << "Pose decompressed into " << c_size << " bytes equal:" << (uncompressed_pose2_str == uncompressed_pose);
+		//qDebug() << "Pose decompressed into " << zis.get_out_size() << " _ " << zis.get_in_size() <<" bytes";
 
-	return pose;
+		return pose;
+	}
 }
 
 

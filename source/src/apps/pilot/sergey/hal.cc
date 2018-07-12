@@ -7,9 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file
-///
-/// @brief
+/// @file  apps/pilot/sergey/hal_demo.cc
+/// @brief HAL client for executing XML-constructible Movers
 /// @author Sergey Lyskov
 
 #include <utility/json_utilities.hh>
@@ -20,208 +19,437 @@
 #include <devel/init.hh>
 
 #include <basic/options/option.hh>
-#include <basic/Tracer.hh>
 
-#include <utility/CSI_Sequence.hh>
-
+#include <protocols/network/hal.hh>
 #include <protocols/network/util.hh>
+#include <protocols/network/ui_mover.hh>
+
+#include <core/pose/Pose.hh>
+#include <core/import_pose/import_pose.hh>
+
+#include <basic/datacache/DataMap.hh>
+
+#include <protocols/moves/MoverFactory.hh>
+
+
+#include <basic/Tracer.hh>
+#include <basic/options/option_macros.hh>
+
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/xsd_util/util.hh>
+#include <utility/tag/Tag.hh>
 
 #include <json.hpp>
 
-#include <thread>
-#include <chrono>
+#include <algorithm>
+
+static basic::Tracer TR("hal");
 
 using std::string;
-using namespace utility;
 using namespace protocols::network;
 
-static basic::Tracer TR( "HAL" );
+OPT_KEY( StringVector, filter)
 
-auto const _greetings_   = "READY PLAYER ONE";
-
-
-SocketUP create_ui_socket(zmq::context_t & context)
+struct MoverParameter
 {
-	//std::cout << "Connecting to UI server " << _server_address_ << "..." << std::endl;
+	string name, type, default_, description;
+};
 
-	SocketUP ui( new zmq::socket_t(context, ZMQ_DEALER) );
-	//socket.connect ("tcp://localhost:62055");
-	ui->connect(_server_address_);
+using MoverParameters = std::vector<MoverParameter>;
 
-	return ui;
-}
-
-
-// receive specification or terminate if thats not possible
-std::string receive_specification(zmq::socket_t & bus)
+/// adapted from file:utility/xsd_util/util.cc output_all_tag_options
+MoverParameters collect_tag_info(xmlNode* node)
 {
-	zmq::multipart_t message(bus);
+	using namespace utility::xsd_util;
 
-	if ( message.size() == 2 ) {
-		string type = message.popstr();
-		if ( type == _m_specification_ ) {
-			return message.popstr();
-		} else std::cerr << "ERROR: first message from Rosetta should be specification! Instead received: " << type << std::endl;
+	//options << (level > 1 ? "\n" : "" ) << "\"" << tagname << "\" ";
+	//for ( platform::Size i=1; i<level; ++i ) options << "sub-";
+	//options << "tag:";
 
-	}
-	std::cerr << "ERROR: first message from Rosetta should be specification! Terminating..." << std::endl;
-	std::exit(1);
-
-	return ""; // dummy, should never be reached
-}
-
-void hal_client(ContextSP context) // note: pass-by-value here is intentional
-{
-	zmq::socket_t bus(*context, ZMQ_PAIR);
-	bus.connect(_bus_address_);
-
-	SocketUP ui = create_ui_socket(*context);
-
-	send_message(bus, _greetings_);
-
-	std::string specification = receive_specification(bus);
-	std::cout << "Got specification from Rosetta: " << nlohmann::json::from_msgpack(specification) << std::endl;
-
-	auto create_pool = [&ui, &bus]() -> std::vector<zmq_pollitem_t> { return { {*ui, 0, ZMQ_POLLIN, 0 }, {bus, 0, ZMQ_POLLIN, 0 } }; };
-
-	std::vector<zmq_pollitem_t> items = create_pool();  //{ {*ui, 0, ZMQ_POLLIN, 0 }, {bus, 0, ZMQ_POLLIN, 0 } };
-
-	int const max_ping_count = 10; // maximum number of pings we sent before re-creating a socket
-	int ping_count = max_ping_count;
-
-	auto const timeout = std::chrono::milliseconds(2500);
-	auto const ping_interval = std::chrono::milliseconds(500);
-	std::chrono::steady_clock::time_point last_ping_time = std::chrono::steady_clock::now() - ping_interval;
-
-	bool alive = false;
-	std::chrono::steady_clock::time_point time_point_of_ui_last_message = std::chrono::steady_clock::now();
-
-	while ( true ) {
-		if ( zmq::poll( items, std::chrono::milliseconds(250) ) ) {
-			if ( items [0].revents & ZMQ_POLLIN ) { // messages from ui server
-				auto message = receive_message(*ui);
-				//std::cout << "got message from ui: " << message << std::endl;
-				time_point_of_ui_last_message = std::chrono::steady_clock::now();
-
-				if ( not alive ) {
-					std::cout << CSI_bgGreen() << CSI_Black() << "Connection to UI front-end established!" << CSI_Reset() << std::endl;
-					alive = true;
-
-					// sending our specification to UI
-					send_message(*ui, _m_specification_, ZMQ_SNDMORE);
-					send_message(*ui, specification);
-				}
-				ping_count = max_ping_count;
-			}
-
-			if ( items [1].revents & ZMQ_POLLIN ) { // messages from main Rosetta thread
-				zmq::multipart_t message(bus);
-
-				if ( message.size() == 2 ) {
-					string type = message.popstr();
-					std::cout << "got message from Rosetta:" << type << std::endl;
-				}
-
-			}
-		}
-
-		std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
-		//std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(now - time_point_of_ui_last_message).count()
-		//    << " _:" << (now - time_point_of_ui_last_message > timeout) <<  std::endl;
-
-		if ( alive  and  now - time_point_of_ui_last_message > timeout ) {
-			std::cout << CSI_bgRed() << CSI_Black() << "UI front-end disconnected due to timeout!" << CSI_Reset() << std::endl;
-			alive = false;
-			ping_count = 1; // force re-creation of socket
-		}
-
-		if ( --ping_count == 0 ) {
-			ui->setsockopt(ZMQ_LINGER, 0);
-			ui->close(); // ui.release();
-			ui = create_ui_socket(*context);
-
-			items = create_pool();
-
-			ping_count = max_ping_count;
-		}
-
-		if ( now - last_ping_time > ping_interval ) {
-			//std::cout << "sending ping..." << std::endl;
-			send_message(*ui, _m_ping_);
-			last_ping_time = now;
-		}
-	}
-
-	//  Do 10 requests, waiting each time for a response
-	// for (int request_nbr = 0; request_nbr != 10; request_nbr++) {
-	//     zmq::message_t request (5);
-	//     memcpy (request.data (), "Hello", 5);
-	//     std::cout << "Sending Hello " << request_nbr << "..." << std::endl;
-	//     ui->send(request);
-	//     //  Get the reply.
-	//     zmq::message_t reply;
-	//     ui->recv (&reply);
-	//     std::cout << "Received World " << request_nbr << std::endl;
+	// if ( level > 1 ) {
+	//  options << " ";
+	//  generate_human_readable_documentation(node, options);
+	//  options << "\n";
+	// } else {
+	//  options << "\n\n";
 	// }
+
+	MoverParameters params;
+
+	for ( xmlNode* subnode = node->children; subnode != nullptr; subnode = subnode->next ) { //Loop through sub-nodes.
+		if ( subnode->type == XML_ELEMENT_NODE && !strcmp(reinterpret_cast<const char*>(subnode->name),"attribute") ) {
+			std::string const name( get_node_option( subnode, "name" ) );
+			std::string const type( get_type_name( get_node_option( subnode, "type" ) ) );
+			std::string const default_( get_node_option(subnode, "default") );
+			//tags << " " << name << "=(" << type << (def.empty() ? "" : ",\"" + def + "\"" ) << ")";
+
+			//options << "\t" << name << " (" << type << (def.empty() ? "" : ",\"" + def + "\"" ) << "):  ";
+			std::stringstream description;
+			generate_human_readable_documentation( subnode, description);
+
+			//TR << "\ntag:\t" << name << "\ntype:\t" << type << "\ndefault:\t" << default_ << "\ndescription:\t" << description.str() << std::endl;
+
+			params.emplace_back( MoverParameter{name, type, default_, description.str() } );
+		}
+	}
+	return params;
 }
+
+/// adapted from file:utility/xsd_util/util.cc generate_human_readable_recursive
+MoverParameters get_element_info_from_xml_node(xmlNode* rootnode, platform::Size /* level */, std::string const &complextype, std::string const &tag_name_to_print)
+{
+	using namespace utility::xsd_util;
+
+	MoverParameters params;
+
+	for ( xmlNode* cplxtype_node = rootnode->children; cplxtype_node!=nullptr; cplxtype_node = cplxtype_node->next ) {
+		if ( cplxtype_node->type == XML_ELEMENT_NODE && !strcmp(reinterpret_cast<const char*>(cplxtype_node->name),"complexType") ) {
+
+			if ( complextype.empty() ||  get_node_option(cplxtype_node, "name") == complextype ) {
+				// for ( platform::Size i=1; i<level; ++i ) { tags << "\t"; }
+
+				// tags << "<";
+				std::string const tagname( tag_name_to_print.empty() ? get_tag_name(cplxtype_node) : tag_name_to_print );
+				// tags << tagname;
+				params = collect_tag_info(cplxtype_node);
+				// tags << ">\n";
+
+				// //If this is level 1, generate the documentation information.
+				// if ( level==1 ) {
+				//  for ( xmlNode* annotation_node = cplxtype_node->children; annotation_node!=nullptr; annotation_node = annotation_node->next ) {
+				//   if ( !strcmp(reinterpret_cast<const char*>(annotation_node->name),"annotation") ) {
+				//    generate_human_readable_documentation( annotation_node, description );
+				//   }
+				//  }
+				// }
+
+				// //Get sub-tags.
+				// for ( xmlNode* element_node = cplxtype_node->children; element_node != nullptr; element_node = element_node->next ) {
+				//  if ( element_node->type == XML_ELEMENT_NODE ) {
+				//   if ( !strcmp(reinterpret_cast<const char*>(element_node->name),"element") ) {
+				//    std::string type_name( get_node_option( element_node, "type" ) );
+				//    generate_human_readable_recursive( type_name.empty() ? element_node : rootnode, description, tags, options, level+1, type_name, type_name.empty() ? get_node_option( element_node, "name" ) : "" );
+				//   } else if ( !strcmp(reinterpret_cast<const char*>(element_node->name),"choice") ) {
+				//    for ( xmlNode* element_node2 = element_node->children; element_node2 != nullptr; element_node2 = element_node2->next ) {
+				//     if ( element_node2->type == XML_ELEMENT_NODE && !strcmp(reinterpret_cast<const char*>(element_node2->name),"element") ) {
+				//      std::string type_name( get_node_option( element_node2, "type" ) );
+				//      generate_human_readable_recursive( type_name.empty() ? element_node2 : rootnode, description, tags, options, level+1, type_name, type_name.empty() ? get_node_option( element_node2, "name" ) : "" );
+				//     }
+				//    }
+				//   }
+				//  }
+				// }
+
+				// for ( platform::Size i=1; i<level; ++i ) { tags << "\t"; }
+				// tags << "</" << tagname << ">\n";
+			}
+		}
+	}
+	return params;
+}
+
+
+/// adapted from file:utility/xsd_util/util.cc generate_human_readable_summary
+MoverParameters get_mover_info(std::string const &mover_name, std::string const &xsd)
+{
+	//bool const has_name_and_type( !component_name.empty() && !component_type.empty() );
+	//std::string const name_and_type( has_name_and_type ? component_type + "_" + component_name + "_type" : "" );
+	std::string const name_and_type( "mover_" + mover_name + "_type" );
+
+	// std::stringstream description(""), tags(""), options("");
+	// description << "DESCRIPTION:\n\n";
+	// tags << "USAGE:\n\n";
+	// options << "OPTIONS:\n\n";
+
+	xmlDoc* doc( xmlReadMemory( xsd.c_str(), xsd.length()+1, nullptr, nullptr, 0 ) );
+
+	MoverParameters params( get_element_info_from_xml_node( xmlDocGetRootElement(doc), 1, name_and_type, "" ) );
+
+	xmlFreeDoc(doc); doc=nullptr;
+	xmlCleanupParser();
+
+	return params;
+}
+
+
+// bool is_gui_constructable(MoverParameters const & params)
+// {
+//  //auto known_types = {"bool", "int", "real", "string"};
+//  for(auto const & p : params) {
+//   //auto it = std::find( known_types.begin(), known_types.end(), p.type);
+//   auto it = type_mapping.find(p.type);
+//   if( it == type_mapping.end() ) {
+//    TR << "Unknown parameter type: " << TR.Red << p.type << std::endl;
+//    TR << "           description: " << p.description << std::endl;
+//    return false;
+//   }
+//  }
+//  return true;
+// }
+
+
+// provide type mapping RosettaScripts -> UI specification
+std::map<string, json> const type_mapping = {
+{"bool",                  json( { {_f_type_, _t_boolean_}, } ) },  // {"default", true}, {"optional", true},
+
+{"int",                   json( { {_f_type_, _t_integer_}, } ) },
+{"port_range",            json( { {_f_type_, _t_integer_}, {"min", 1024}, {"max", 65535}, } ) },
+{"max_packet_size_range", json( { {_f_type_, _t_integer_}, {"min", 1},    {"max", 65535}, } ) },
+
+{"real",                  json( { {_f_type_, _t_float_}, } ) },
+
+{"string",                json( { {_f_type_, _t_string_}, } ) },
+// {"int_cslist", "string"},
+
+//{"minimizer_type",        json( { {_f_type_, _t_string_}, } ) },
+
+};
+
+
+/// return JSON representation for parameter specification, return `null` JSON object if type could not be adequately represented
+json convert_to_json(MoverParameter const &p)
+{
+	auto it = type_mapping.find(p.type);
+	if ( it == type_mapping.end() ) {
+		// TR << "Unknown parameter type: " << TR.Red << p.type << std::endl;
+		// TR << "           description: " << p.description << std::endl;
+		return nullptr;
+	} else return it->second;
+}
+
+
+
+///  generate specification for function with given argument list, return `null` JSON object if params contain incompatible types
+json generate_function_specification(MoverParameters const &params)
+{
+	std::map<string, std::function< json (string const&) > > const converters = {
+		{ _t_boolean_, [](std::string const &v) { return json( utility::is_true_string(v) ); } },
+		{_t_integer_,  [](std::string const &v) { return json( std::stoi(v) ); } },
+		{_t_float_,    [](std::string const &v) { return json( std::stod(v) ); } },
+		{_t_string_,   [](std::string const &v) { return json( v ); } },
+		};
+
+	json f = json::object();
+
+	for ( auto const & param : params ) {
+		json arg = convert_to_json(param);
+		if ( arg.is_null() ) {
+			if ( not param.default_.empty() ) continue;  // if parameter could not be represented in UI but have deault value we can still build function specification
+			f = nullptr;
+			break;
+		}
+
+		auto const banned_arguments = {_f_name_};
+		auto it = std::find( banned_arguments.begin(), banned_arguments.end(), param.name);
+
+		if ( it == banned_arguments.end() ) {
+			f[param.name] = arg;
+
+			if ( not param.default_.empty() ) f[param.name][_f_default_] = converters.at(arg[_f_type_])(param.default_);
+
+			f[param.name][_f_description_] = param.description;
+		}
+	}
+
+	f[_f_pose_] = { {_f_type_, _t_pose_}, };
+
+	return f;
+}
+
 
 
 /// Generate HAL specification
 string specification()
 {
-	nlohmann::json j;
-	j["functions"] = { {"name", "test"}, {"arguments", {"int", "float"} } };
+	std::map<string, MoverParameters> movers;
 
-	string r;
-	nlohmann::json::basic_json::to_msgpack(j, r);
-	return r;
-}
+	auto const banned_movers = {"MetropolisHastings", "MultipleOutputWrapper", "MultiplePoseMover", "ScriptCM"};
 
+	protocols::moves::MoverFactory* mover_factory( protocols::moves::MoverFactory::get_instance() );
+	auto const & mover_creators = mover_factory->mover_creator_map();
+	for ( auto const & mc : mover_creators ) {
+		string const & name = mc.first;
 
-void hal(int argc, char * argv [])
-{
-	ContextSP context = std::make_shared<zmq::context_t>(1); // zmq::context_t context(1);
+		//TR << name << std::endl;
 
-	zmq::socket_t bus(*context, ZMQ_PAIR);
-	bus.bind(_bus_address_);
+		auto it = std::find( banned_movers.begin(), banned_movers.end(), name);
+		if ( it == banned_movers.end() ) {
 
-	std::thread client(hal_client, context);
+			if ( basic::options::option[basic::options::OptionKeys::filter]().size() ) {
+				bool skip = true;
+				for ( auto & s : basic::options::option[basic::options::OptionKeys::filter]() ) {
+					if ( name.find(s) != std::string::npos ) { skip = false; break; }
+				}
+				if ( skip ) continue;
+			}
 
-	devel::init(argc, argv);
+			//if( name == "Small" or name == "MinMover"  or  name == "Docking"  or name == "PyMOLMover" ) {
+			//if( name == "TopologyBrokerMover" ) {
+			//TR << "Mover \"" << name << '"' << std::endl;;
+			utility::tag::XMLSchemaDefinition xsd;
+			mover_factory->provide_xml_schema( name, xsd );
 
-	auto greetings = receive_message(bus);
-	if ( greetings == _greetings_ ) {
-		std::cout << TR.bgRed << TR.Black << greetings << TR.Reset << std::endl;
+			MoverParameters params = get_mover_info(name, xsd.full_definition() );
 
-		{ // sending HAL specification
-			send_message(bus, _m_specification_, ZMQ_SNDMORE);
-			send_message(bus, specification() );
+			// if( is_gui_constructable(params) ) {
+			//  movers.emplace( std::make_pair(name, std::move(params) ) );
+			//  TR << TR.Green << "Adding mover: " << name << TR.Reset << std::endl;
+			// }
+			movers.emplace( std::make_pair(name, std::move(params) ) );
+
+			//TR << xsd.human_readable_summary( name, "mover" );
+			//TR << "full definition: " << xsd.full_definition() << std::endl;;
+			//TR << "_________" << std::endl;
 		}
-
-		{
-			// std::cout << "sizeof(long) = " << sizeof(long) << std::endl;
-			// std::vector<char> v;
-			// for(long i=0; i<1024*1024*1024*1L; ++i) v.push_back('a');
-
-			TR << "Sleeping then restating..." << std::endl;
-			std::this_thread::sleep_for(std::chrono::seconds(1*1024));
-			//std::this_thread::sleep_for(std::chrono::seconds(2));
-			//execvp(argv[0], argv);
-		}
-	} else {
-		utility_exit_with_message("Error: got unexpected greetings from server process, exiting...\nGreetings:" + greetings);
+		// if( name == "MinMover" ) {
+		//  utility::tag::XMLSchemaDefinition xsd;
+		//  mover_factory->provide_xml_schema( name, xsd );
+		//  TR << xsd.human_readable_summary( name, "mover" );
+		//  TR << "full definition: " << xsd.full_definition() << std::endl;;
+		//  TR << "_________" << std::endl;
+		// }
 	}
 
-	client.join();
+	json specification, functions;
+
+	for ( auto const & mover : movers ) {
+		json f = generate_function_specification(mover.second);
+		if ( f.is_object() ) {
+			//TR << TR.Green << "Adding mover: " << mover.first << TR.Reset << std::endl;
+			functions[mover.first] = f;
+		}
+	}
+
+	specification[_f_functions_] = functions;
+
+	string r;
+	nlohmann::json::basic_json::to_msgpack(specification, r);
+	return r;
+
+	// {
+	//  nlohmann::json j;
+	//  // j["functions"] = {
+	//  //  {{ "name", "my_mover" },
+	//  //  { "arguments",
+	//  //  {
+	//  //  {"param1", "int"},
+	//  //  {"param2", "float"},
+	//  //  },
+	//  //  }},
+	//  //  {{ "name", "test_mover2" },
+	//  //  { "arguments",
+	//  //  {
+	//  //  {"param1", "string"},
+	//  //  {"param2", "float"},
+	//  //  },
+	//  //  }},
+	//  //  };
+	//  json foo = json::object();
+	//  //foo["arguments"] = json::object();
+	//  //foo["arguments"]["argument_1"] = { {"type", "integer"}, {"optional", true}, {"default", 1}, };
+	//  foo["residue_n"] = { {"type", "integer"}, {"optional", true}, {"default", 1}, {"min", -10}, {"max", 10}, };
+	//  foo.emplace("delta angle", json::object( { {"type", "float"}, {"optional", true}, {"default", 1}, {"min", -1}, } ) );
+	//  foo.emplace("magnitude",   json::object( { {"type", "float"}, {"optional", true}, {"default", 1}, {"min", -10}, {"max", -2}, } ) );
+	//  json bar = json::object();
+	//  j["functions"] = { {"foo_mover", foo}, {"bar_mover", bar} };
+	//  string r;
+	//  nlohmann::json::basic_json::to_msgpack(j, r);
+	//  return r;
+	// }
 }
 
+
+protocols::moves::MoverOP construct_mover_from_command(json const &j)
+{
+	//TR << "construct_mover_from_command:" << j.dump(2).c_str();
+
+	string name = j.value(_f_name_, "");
+
+	auto tag = std::make_shared<utility::tag::Tag>();
+	tag->setName(name);
+
+	for ( auto arg = j[_f_arguments_].begin(); arg != j[_f_arguments_].end(); ++arg ) {
+		if ( arg.key() != _f_pose_ ) {
+			auto v = arg.value();
+			auto t = v.type();
+			if ( t == json::value_t::boolean ) tag->setOption(arg.key(), static_cast<int>(v) );
+			if ( t == json::value_t::number_integer  or  t == json::value_t::number_unsigned ) tag->setOption(arg.key(), static_cast<int>(v) );
+			if ( t == json::value_t::number_float ) tag->setOption(arg.key(), static_cast<double>(v) );
+		}
+	}
+
+	TR << "Tag:" << TR.Blue << *tag << TR.Reset << std::endl;
+
+	basic::datacache::DataMap data_map;
+
+	auto mover = protocols::moves::MoverFactory::get_instance()->newMover(tag, data_map, protocols::filters::Filters_map(), protocols::moves::Movers_map(), core::pose::Pose() );
+	TR << TR.Blue;  mover->show(TR);  TR << TR.Reset << std::endl;
+
+	return mover;
+
+	// {
+	//  string name = "Small";
+	//  auto tag = std::make_shared<utility::tag::Tag>();
+	//  tag->setName(name);
+	//  //tag->setOption("address", "123.456.789.0");
+	//  //tag->setOption("port", "1234");
+	//  tag->setOption("nmoves", 10);
+	//  //TR << "Tag:" << TR.Blue << *tag << TR.Reset << std::endl;
+	//  basic::datacache::DataMap data_map;
+	//  // protocols::filters::Filters_map filters_map;
+	//  // protocols::moves::Movers_map mover_map;
+	//  // core::pose::Pose pose;
+	//  auto mover = protocols::moves::MoverFactory::get_instance()->newMover(tag, data_map, protocols::filters::Filters_map(), protocols::moves::Movers_map(), core::pose::Pose() );
+	//  TR << TR.Blue;  mover->show(TR);  TR << TR.Reset << std::endl;
+	// }
+}
+
+json hal_executioner(json const &command)
+{
+	//std::cout << "Rosetta: executing command: " << command << std::endl;
+	std::cout << "Rosetta: executing command: " << command[_f_name_] << std::endl;
+
+	nlohmann::json result;
+
+	core::pose::PoseOP pose = protocols::network::bytes_to_pose(command[_f_arguments_].value(_f_pose_, "") );
+
+	if ( pose ) {
+		auto mover = construct_mover_from_command(command);
+		if ( mover ) {
+
+			//protocols::network::UIMover ui;
+			protocols::network::AddUIObserver(*pose);
+			mover->apply(*pose);
+		}
+
+		auto pose_binary = protocols::network::pose_to_bytes(*pose);
+
+		result[_f_pose_] = pose_binary;
+	}
+
+	return result;
+}
 
 int main(int argc, char * argv [])
 {
 
 	try {
-		hal(argc, argv);
-		//TR << "TTest ended. #@!  --------------------------------" << std::endl;
+		NEW_OPT( filter, "Specify list of strings to use as `filter` for Mover names", "");
+
+		devel::init(argc, argv);
+
+		{ // creating dummy pose object to trigger database load so later we can create Pose immeditaly
+			core::pose::Pose p;
+			core::import_pose::pose_from_pdbstring(p, "ATOM     17  N   ILE A   1      16.327  47.509  23.466  1.00  0.00\n");
+		}
+
+		if ( basic::options::option[basic::options::OptionKeys::filter]().size() ) {
+			TR << "Filtering Movers with: " << TR.Yellow;
+			for ( auto & s : basic::options::option[basic::options::OptionKeys::filter]() ) TR << s << " ";
+			TR << TR.Reset << std::endl;
+		}
+
+		protocols::network::hal(specification, hal_executioner, CommandLineArguments{argc, argv});
 		return 0;
 
 	} catch (utility::excn::Exception const & e ) {

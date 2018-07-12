@@ -6,67 +6,64 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1106</width>
-    <height>586</height>
+    <width>1170</width>
+    <height>865</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>PoseEditor</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QTabWidget" name="back_ends">
-    <property name="geometry">
-     <rect>
-      <x>789</x>
-      <y>10</y>
-      <width>301</width>
-      <height>471</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="ui::ui_core::pose_draw::SimplePoseDrawOpenGLWidget" name="pose">
-    <property name="geometry">
-     <rect>
-      <x>9</x>
-      <y>9</y>
-      <width>771</width>
-      <height>511</height>
-     </rect>
-    </property>
-    <widget class="QListView" name="movers">
-     <property name="geometry">
-      <rect>
-       <x>620</x>
-       <y>240</y>
-       <width>256</width>
-       <height>192</height>
-      </rect>
-     </property>
-    </widget>
-   </widget>
-   <widget class="QPushButton" name="apply">
-    <property name="geometry">
-     <rect>
-      <x>1022</x>
-      <y>490</y>
-      <width>71</width>
-      <height>32</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>apply</string>
-    </property>
-   </widget>
-   <zorder>pose</zorder>
-   <zorder>apply</zorder>
-   <zorder>back_ends</zorder>
+   <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,0">
+    <item>
+     <widget class="ui::ui_core::pose_draw::SimplePoseDrawOpenGLWidget" name="pose"/>
+    </item>
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout" stretch="1,0">
+      <item>
+       <widget class="ui::network::BowmanView" name="functions"/>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>170</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="abort">
+          <property name="text">
+           <string>abort</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="apply">
+          <property name="text">
+           <string>apply</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+   </layout>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1106</width>
+     <width>1170</width>
      <height>22</height>
     </rect>
    </property>
@@ -120,6 +117,12 @@
    <class>ui::ui_core::pose_draw::SimplePoseDrawOpenGLWidget</class>
    <extends>QGroupBox</extends>
    <header>ui/ui_core/pose_draw/SimplePoseDrawOpenGLWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ui::network::BowmanView</class>
+   <extends>QGroupBox</extends>
+   <header>ui/network/bowman_view.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

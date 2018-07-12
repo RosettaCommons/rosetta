@@ -25,6 +25,7 @@ public:
 
 	//static BowmanThread * get_instance();
 
+	void abort(std::string const & hal_id);
 	void execute(std::string const & hal_id, JSON_CSP const & command);
 
 public Q_SLOTS:
@@ -55,7 +56,7 @@ private:
 	SocketUP bus_;
 };
 
-std::string as_hexadecimal(std::string const &s, bool as_bytes = false);
+std::string as_hexadecimal(std::string const &s, bool as_bytes = true);
 
 
 } // namespace network

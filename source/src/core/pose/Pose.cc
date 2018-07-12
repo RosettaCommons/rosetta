@@ -2195,13 +2195,20 @@ std::ostream & operator << ( std::ostream & os, Pose const & pose)
 /// @brief Automatically generated serialization method
 template< class Archive >
 void
-core::pose::Pose::save( Archive & arc ) const {
+core::pose::Pose::save_with_options( Archive & arc, bool save_observers ) const {
 	arc( CEREAL_NVP( conformation_ ) ); // ConformationOP
 	arc( CEREAL_NVP( energies_ ) ); // scoring::EnergiesOP
 	arc( CEREAL_NVP( metrics_ ) ); // metrics::PoseMetricContainerOP
 	arc( CEREAL_NVP( data_cache_ ) ); // BasicDataCacheOP
 	arc( CEREAL_NVP( constant_cache_ ) ); // ConstDataMapOP
-	arc( CEREAL_NVP( observer_cache_ ) ); // ObserverCacheOP
+
+	if ( save_observers ) arc( CEREAL_NVP( observer_cache_ ) ); // ObserverCacheOP
+	// else {
+	//  Pose dummy_pose;
+	//  auto dummy_observer_cache = ObserverCacheOP( new ObserverCache( datacache::CacheableObserverType::num_cacheable_data_types, dummy_pose) );
+	//  arc( CEREAL_NVP( dummy_observer_cache ) );
+	// }
+
 	arc( CEREAL_NVP( pdb_info_ ) ); // PDBInfoOP
 	arc( CEREAL_NVP( constraint_set_ ) ); // ConstraintSetOP
 	arc( CEREAL_NVP( reference_pose_set_ ) ); // core::pose::reference_pose::ReferencePoseSetOP
@@ -2212,10 +2219,14 @@ core::pose::Pose::save( Archive & arc ) const {
 	// EXEMPT destruction_obs_hub_ general_obs_hub_ energy_obs_hub_ conformation_obs_hub_
 }
 
+template< class Archive >
+void core::pose::Pose::save( Archive & arc) const { save_with_options(arc, true); }
+
+
 /// @Brief Automatically generated deserialization method
 template< class Archive >
 void
-core::pose::Pose::load( Archive & arc ) {
+core::pose::Pose::load_with_options( Archive & arc, bool load_observers ) {
 	arc( conformation_ ); // ConformationOP
 	conformation_->attach_xyz_obs( &Pose::on_conf_xyz_change, this );
 
@@ -2226,8 +2237,15 @@ core::pose::Pose::load( Archive & arc ) {
 	arc( data_cache_ ); // BasicDataCacheOP
 	arc( constant_cache_ ); // ConstDataMapOP
 
-	arc( observer_cache_ ); // ObserverCacheOP
-	observer_cache_->attach_pose( *this );
+	if ( load_observers ) {
+		arc( observer_cache_ ); // ObserverCacheOP
+		observer_cache_->attach_pose( *this );
+	}
+	// else {
+	//  Pose dummy_pose;
+	//  auto dummy_observer_cache = ObserverCacheOP( new ObserverCache( datacache::CacheableObserverType::num_cacheable_data_types, dummy_pose) );
+	//  arc( dummy_observer_cache );
+	// }
 
 	arc( pdb_info_ ); // PDBInfoOP
 	if ( pdb_info_ ) {
@@ -2245,6 +2263,14 @@ core::pose::Pose::load( Archive & arc ) {
 	// EXEMPT destruction_obs_hub_ general_obs_hub_ energy_obs_hub_ conformation_obs_hub_
 
 }
+
+template< class Archive >
+void core::pose::Pose::load( Archive & arc) { load_with_options(arc, true); }
+
+
+template void core::pose::Pose::save_with_options( typename cereal::BinaryOutputArchive &, bool) const;
+template void core::pose::Pose::load_with_options( typename cereal::BinaryInputArchive &, bool);
+
 
 SAVE_AND_LOAD_SERIALIZABLE( core::pose::Pose );
 CEREAL_REGISTER_TYPE( core::pose::Pose )

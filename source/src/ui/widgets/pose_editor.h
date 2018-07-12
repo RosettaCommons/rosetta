@@ -1,13 +1,15 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+
+#include <core/pose/Pose.fwd.hh>
+
+#include <utility/json_utilities.hh>
+
+
 #include <QMainWindow>
 
 #include <QListWidget>
-
-#include <ui/network/bowman.h>
-#include <ui/network/bowman_model.h>
-
 
 namespace Ui {
 class PoseEditor;
@@ -25,9 +27,9 @@ public:
     ~PoseEditor();
 
 private Q_SLOTS:
-	void client_connected(std::string const &);
-	void client_disconnected(std::string const &);
-	void specification_received(std::string const &, JSON_CSP const &j);
+	//void client_connected(std::string const &);
+	//void client_disconnected(std::string const &);
+	//void specification_received(std::string const &, JSON_CSP const &j);
 
 	void result_received(core::pose::PoseOP const &, JSON_CSP const &);
 	void progress_data_received(core::pose::PoseOP const &, JSON_CSP const &);
@@ -37,19 +39,18 @@ private Q_SLOTS:
     void on_action_save_pose_as_triggered();
 
 	void on_apply_clicked();
+	void on_abort_clicked();
+
+	void on_functions_double_clicked(QString const &);
 
 
 private:
 	bool save_pose(bool always_ask_for_file_name);
 
-	ui::network::Bowman bowman_;
-	ui::network::BowmanModel bowman_model_;
-
 	QString file_name_;
 
-	std::map<std::string, QListWidget *> back_ends_;
-
-	int hal_unique_index_ = 1;
+	//std::map<std::string, QListWidget *> back_ends_;
+	//int hal_unique_index_ = 1;
 
     Ui::PoseEditor *ui;
 };

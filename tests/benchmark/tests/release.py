@@ -452,7 +452,7 @@ def ui_release(rosetta_dir, working_dir, platform, config, hpc_driver=None, verb
     else:
         does_not_require_database = ''.split()  # bundle_gui
 
-        apps = 'workbench parametric_design rna_denovo'.split()
+        apps = 'workbench parametric_design rna_denovo pose_viewer'.split()
         for a in apps:
             release_name = 'ui.{a}.{platform}'.format(a=a, platform='.'.join([platform['os']]) ) #, python_version=platform['python'][:3].replace('.', '') )
             package_dir = working_dir + '/' + release_name

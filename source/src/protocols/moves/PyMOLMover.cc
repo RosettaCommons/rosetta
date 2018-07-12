@@ -254,19 +254,19 @@ UDPSocketClient::show(std::ostream & output) const
 #ifndef  __native_client__
 	output << "max packet size: " << max_packet_size_ << std::endl;
 	output << "sent count: " << sentCount_ << std::endl;
-	output << "socket handel: " << socket_h_ << std::endl;
+	output << "socket handle: " << socket_h_ << std::endl;
 
-	output << "uuid short: ";
+	output << "uuid shorts: ";
 	for ( unsigned short i : uuid_.shorts_ ) {
 		output << i << " ";
 	}
 	output << std::endl;
 
-	output << "uuid byte: ";
-	for ( char byte : uuid_.bytes_ ) {
-		output << static_cast<int>(byte) << " ";
-	}
-	output << std::endl;
+	// output << "uuid byte: ";
+	// for ( char byte : uuid_.bytes_ ) {
+	//  output << static_cast<int>(byte) << " ";
+	// }
+	// output << std::endl;
 
 	output << "socket address family: " << socket_addr_.sin_family << std::endl;
 	output << "socket address address: " << socket_addr_.sin_addr.s_addr << std::endl;

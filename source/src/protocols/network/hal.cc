@@ -25,6 +25,7 @@
 #include <thread>
 #include <chrono>
 
+#include <unistd.h>
 
 namespace protocols {
 namespace network {
@@ -69,7 +70,7 @@ std::string receive_specification(zmq::socket_t & bus)
 	return ""; // dummy, should never be reached
 }
 
-void hal_client(zmq::context_t &context) // hal_client(ContextSP context) // note: pass-by-value here is intentional
+void hal_client(zmq::context_t &context, CommandLineArguments args) // hal_client(ContextSP context) // note: pass-by-value here is intentional
 {
 	zmq::socket_t bus(context, ZMQ_PAIR);
 	bus.connect(_bus_address_);
@@ -82,7 +83,8 @@ void hal_client(zmq::context_t &context) // hal_client(ContextSP context) // not
 	send_message(bus, _greetings_);
 
 	std::string specification = receive_specification(bus);
-	std::cout << "Got specification from Rosetta: " << nlohmann::json::from_msgpack(specification) << std::endl;
+	//std::cout << "Got specification from Rosetta: " << nlohmann::json::from_msgpack(specification) << std::endl;
+	std::cout << "Got specification from Rosetta, ready to connect to UI client!" << std::endl;
 
 	auto create_pool = [&ui, &bus, &progress]() -> std::vector<zmq_pollitem_t> { return { {*ui, 0, ZMQ_POLLIN, 0 }, {bus, 0, ZMQ_POLLIN, 0 }, {progress, 0, ZMQ_POLLIN, 0 } }; };
 
@@ -108,6 +110,11 @@ void hal_client(zmq::context_t &context) // hal_client(ContextSP context) // not
 					string type = message.popstr();
 
 					//if( type != _m_ping_ ) std::cout << "got message from ui:" << type << " extra-parts:" << message.size() << std::endl;
+
+					if( type == _m_abort_ ) {
+						std::cout << CSI_bgRed() << CSI_Black() << "got " << type << " from UI, restarting..." << CSI_Reset() << std::endl;
+						execvp(args.argv[0], args.argv);
+					}
 
 					if( type == _m_execute_  and  message.size() == 1  ) {
 						//std::cout << "___ _m_execute_ "  << std::endl;
@@ -139,7 +146,7 @@ void hal_client(zmq::context_t &context) // hal_client(ContextSP context) // not
 
 				if( message.size() >= 1 ) {
 					string type = message.popstr();
-					std::cout << "got message from Rosetta:" << type << " size:" << message.size() << std::endl;
+					//std::cout << "got message from Rosetta:" << type << " size:" << message.size() << std::endl;
 
 					if( type == _m_result_  and  message.size() == 1  ) {
 						string result = message.popstr();
@@ -221,7 +228,7 @@ void hal_client(zmq::context_t &context) // hal_client(ContextSP context) // not
 }
 
 
-void hal(SpecificationCallBack const &specification_callback, ExecutionerCallBack const & executioner_callback, int /* argc */, char * /* argv */ [])
+void hal(SpecificationCallBack const &specification_callback, ExecutionerCallBack const & executioner_callback, CommandLineArguments args)
 {
 	//ContextSP context = std::make_shared<zmq::context_t>(1); // zmq::context_t context(1);
 	zmq::context_t & context = zmq_context();
@@ -229,7 +236,7 @@ void hal(SpecificationCallBack const &specification_callback, ExecutionerCallBac
 	zmq::socket_t bus(context, ZMQ_PAIR);
 	bus.bind(_bus_address_);
 
-	std::thread client(hal_client, std::ref(context) );
+	std::thread client(hal_client, std::ref(context), args);
 
 	auto greetings = receive_message(bus);
 	if ( greetings == _greetings_ ) {

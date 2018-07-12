@@ -78,6 +78,7 @@ sources = {
 		#"diversify_conotoxin",
 		"erraser2",
 		#"get_dihedral_b3aa",
+		"hal_rna_denovo",
 		#"indel",
 		#"macrocycle_sampling",
 		#"make_a3b_bundle",
@@ -880,6 +881,7 @@ sources = {
 		#"antibody",
 		#"ColorsDemo",
 		#"PyMOLDemo",
+		'hal',
 		'hal-demo',
 	],
 	"pilot/sevya" : [

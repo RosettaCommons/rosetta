@@ -31,6 +31,7 @@ namespace network {
 // message types
 auto const _m_ping_          = "ping";
 auto const _m_quit_          = "quit";
+auto const _m_abort_         = "abort";
 auto const _m_specification_ = "specification";
 
 auto const _m_execute_  = "execute";
@@ -44,11 +45,28 @@ auto const _hal_address_    = "inproc://hal";
 auto const _server_address_ = "ipc:///tmp/rosetta-ui";
 
 
-// various fields
-auto const _f_arguments_ = "arguments";
-auto const _f_functions_ = "functions";
-auto const _f_name_      = "name";
-auto const _f_pose_      = "pose";
+// various message-pack fields
+auto const _f_name_        = "name";
+auto const _f_type_        = "type";
+auto const _f_pose_        = "pose";
+auto const _f_arguments_   = "arguments";
+auto const _f_functions_   = "functions";
+auto const _f_optional_    = "optional";
+auto const _f_default_     = "default";
+auto const _f_min_         = "min";
+auto const _f_max_         = "max";
+auto const _f_description_ = "description";
+
+
+// supported argument types
+auto const _t_boolean_   = "boolean";
+auto const _t_integer_   = "integer";
+auto const _t_float_     = "float";
+auto const _t_string_    = "string";
+auto const _t_pose_      = "pose";
+auto const _t_file_      = "file";
+auto const _t_directory_ = "directory";
+
 
 using ContextSP = std::shared_ptr<zmq::context_t>;
 using ContextUP = std::unique_ptr<zmq::context_t>;
@@ -72,10 +90,14 @@ bool send_message(zmq::socket_t & socket, std::string const & string_message, in
 
 using PoseBinary = std::string; /// might became vector<char> in the future
 
+
 // serialize and compress Pose UI way
 PoseBinary pose_to_bytes(core::pose::Pose const &);
 
-// uncompress and deserialize aPose UI way
+// serialize and compress Pose UI way, if nullptr is given generate empty byte-string
+PoseBinary pose_to_bytes(core::pose::PoseCOP const &);
+
+// uncompress and deserialize aPose UI way, if structure was serialized as an empty Pose return nullptr
 core::pose::PoseOP bytes_to_pose(PoseBinary const &);
 
 } // namespace network

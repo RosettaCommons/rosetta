@@ -22,7 +22,7 @@ string as_hexadecimal(string const &s, bool as_bytes)
 
 	if( as_bytes ) {
 		for(unsigned char c : s) { // cast to `unsigned char` is intentional here
-			o << std::hex << std::setw(2) << std::setfill('0') << static_cast<short>(c) << ' ';
+			o << std::hex << std::setw(2) << std::setfill('0') << static_cast<short>(c);// << ' ';
 		}
 	}
 	else {
@@ -95,7 +95,7 @@ void BowmanThread::run()
 					auto it = clients.find(hal_id);
 
 					if( it == clients.end() ) {
-						std::cout << "BowmanThread::run(): " << CSI_bgGreen() << CSI_Black() << "Client " << as_hexadecimal(hal_id) << " connected!" << CSI_Reset() << std::endl;
+						std::cout << "BowmanThread::run(): " << CSI_bgBlue() << CSI_Black() << "Client " << as_hexadecimal(hal_id) << " connected!" << CSI_Reset() << std::endl;
 						clients.emplace(hal_id, now);
 						Q_EMIT client_connected(hal_id);  // NOTE: cross-thread emit
 
@@ -107,7 +107,7 @@ void BowmanThread::run()
 					if( type == _m_specification_  and  message.size() == 1 ) {
 						string specification = message.popstr();
 						//std::cout << "BowmanThread::run(): " << CSI_bgBlue() << CSI_Black() << "Got specification from client " << as_hexadecimal(id) << ":" << CSI_Reset() << json::from_msgpack( Bytes(specification.begin(), specification.end() ) ) << std::endl;
-						std::cout << "BowmanThread::run(): " << CSI_bgBlue() << CSI_Black() << "Got specification from client " << as_hexadecimal(hal_id) << ":" << CSI_Reset() << std::endl;
+						std::cout << "BowmanThread::run(): " << CSI_bgGreen() << CSI_Black() << "Got specification from client " << as_hexadecimal(hal_id) << ":" << CSI_Reset() << std::endl;
 
 						JSON_SP j_up = std::make_shared<json>(json::from_msgpack(specification) );
 						Q_EMIT specification_received(hal_id, j_up);  // NOTE: cross-thread emit
@@ -115,7 +115,7 @@ void BowmanThread::run()
 					} else if( type == _m_result_  and  message.size() == 1 ) {
 						string binary_result = message.popstr();
 						JSON_SP result = std::make_shared<json>(json::from_msgpack(binary_result) );
-						std::cout << "BowmanThread::run(): Got " << type << " message from hal " <<  as_hexadecimal(hal_id) /*<< " result: " << *result */<< std::endl;
+						//std::cout << "BowmanThread::run(): Got " << type << " message from hal " <<  as_hexadecimal(hal_id) /*<< " result: " << *result */<< std::endl;
 
 						Q_EMIT result_received(result);  // NOTE: cross-thread emit
 
@@ -144,8 +144,14 @@ void BowmanThread::run()
 					if( type == _m_quit_ ) {
 						std::cout << "got message from main thread: `" << type << "`, exiting..."  << std::endl;
 						break;
-
-					} else if( type == _m_execute_  and  message.size() == 2 ) {
+					}
+					else if( type == _m_abort_  and  message.size() == 1 ) {
+						string hal_id = message.popstr();
+						std::cout << "got message from main thread: `" << type << "`, sending `abort` signal to " << as_hexadecimal(hal_id) << "..."  << std::endl;
+						send_message(hal, hal_id, ZMQ_SNDMORE);
+						send_message(hal, _m_abort_);
+					}
+					else if( type == _m_execute_  and  message.size() == 2 ) {
 						string hal_id = message.popstr();
 						string command = message.popstr();
 						//std::cout << "BowmanThread::run(): Got " << _m_execute_ << " message for hal " <<  as_hexadecimal(hal_id) << std::endl;
@@ -223,14 +229,22 @@ void BowmanThread::run()
 //
 // below is functions executed in main (GUI) thread
 //
+
+void BowmanThread::abort(std::string const & hal_id)
+{
+	//std::cout << "BowmanThread::abort()..." << std::endl;
+	send_message(*bus_, _m_abort_, ZMQ_SNDMORE);
+	send_message(*bus_, hal_id);
+}
+
 void BowmanThread::execute(std::string const & hal_id, JSON_CSP const & command)
 {
 	send_message(*bus_, _m_execute_, ZMQ_SNDMORE);
 	send_message(*bus_, hal_id, ZMQ_SNDMORE);
 
-	string bininary_command;
-	nlohmann::json::basic_json::to_msgpack(*command, bininary_command);
-	send_message(*bus_, bininary_command);
+	string binary_command;
+	nlohmann::json::basic_json::to_msgpack(*command, binary_command);
+	send_message(*bus_, binary_command);
 }
 
 //#include <QCoreApplication>

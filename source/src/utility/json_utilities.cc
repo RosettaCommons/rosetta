@@ -105,6 +105,62 @@ void extract_nonempty_object_from_json( nlohmann::json const & json, std::string
 	return;
 }
 
+
+/// @brief lookup for element `key` and if it's type is compatible extract it to `value, return `true` on success, no exception is raised if key is not found
+bool extract_value_if_present(json const &j, std::string const & key, bool &value)
+{
+	auto it = j.find(key);
+	if( it != j.end() ) {
+		if( it->is_boolean() ) {
+			value = *it;
+			return true;
+		}
+	}
+	return false;
+}
+
+
+/// @brief lookup for element `key` and if it's type is compatible extract it to `value, return `true` on success, no exception is raised if key is not found
+bool extract_value_if_present(json const &j, std::string const & key, int &value)
+{
+	auto it = j.find(key);
+	if( it != j.end() ) {
+		if( it->is_number() ) {
+			value = *it;
+			return true;
+		}
+	}
+	return false;
+}
+
+
+/// @brief lookup for element `key` and if it's type is compatible extract it to `value, return `true` on success, no exception is raised if key is not found
+bool extract_value_if_present(json const &j, std::string const & key, double &value)
+{
+	auto it = j.find(key);
+	if( it != j.end() ) {
+		if( it->is_number() ) {
+			value = *it;
+			return true;
+		}
+	}
+	return false;
+}
+
+/// @brief lookup for element `key` and if it's type is compatible extract it to `value, return `true` on success, no exception is raised if key is not found
+bool extract_value_if_present(json const &j, std::string const & key, std::string &value)
+{
+	auto it = j.find(key);
+	if( it != j.end() ) {
+		if( it->is_string() ) {
+			value = *it;
+			return true;
+		}
+	}
+	return false;
+}
+
+
 } //utility
 
 #endif // ifdef _NLOHMANN_JSON_ENABLED_

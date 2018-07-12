@@ -7,9 +7,10 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file  apps/pilot/sergey/hal_demo.cc
-/// @brief simple HAL protocol implementation demo, use this file as blueprint for your HAL-capable Rosetta application
-/// @author Sergey Lyskov
+/// @file  apps/pilot/awatkins/hal_rna_denovo.cc
+/// @brief A first pass at running RNA fragment assembly in a HAL-aware fashion. Can only do
+/// single PDB input for now.
+/// @author Andy Watkins
 
 #include <utility/json_utilities.hh>
 
@@ -29,8 +30,15 @@
 
 #include <basic/Tracer.hh>
 
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/rna.OptionKeys.gen.hh>
+#include <basic/options/option.hh>
+
 #include <protocols/network/ui_mover.hh>
 #include <core/import_pose/import_pose.hh>
+#include <protocols/rna/denovo/RNA_DeNovoProtocol.hh>
+#include <core/import_pose/RNA_DeNovoSetup.hh>
+#include <core/import_pose/options/RNA_DeNovoProtocolOptions.hh>
 
 static basic::Tracer TR("hal-demo");
 
@@ -40,8 +48,7 @@ using namespace protocols::network;
 using std::string;
 
 
-auto const _n_set_all_phi_and_psi_ = "set_all_phi_and_psi";
-auto const _n_change_phi_   = "change_phi";
+auto const _n_single_loop_modeling_ = "single_loop_modeling";
 
 
 /// Generate HAL specification
@@ -51,26 +58,10 @@ string specification()
 	j["functions"] = json::object();
 
 
-	json set_all_phi_and_psi = json::object();
-	set_all_phi_and_psi[_f_pose_] = { {_f_type_, _t_pose_}, };
-	set_all_phi_and_psi["phi"]    = { {_f_type_, _t_float_}, {_f_default_, 180}, {_f_description_, "value to which all phi angles will be set"}, };
-	set_all_phi_and_psi["psi"]    = { {_f_type_, _t_float_}, {_f_default_, 180}, {_f_description_, "value to which all psi angles will be set"}, };
-	j["functions"][_n_set_all_phi_and_psi_] = set_all_phi_and_psi;
-
-
-	json change_phi = json::object();
-	change_phi[_f_pose_]     = { {_f_type_, _t_pose_}, };
-	change_phi["residue_n"]  = { {_f_type_, _t_integer_}, {_f_default_, 10},   {_f_min_, 1},    {_f_max_, 100}, {_f_description_, "residue number of phi angle"}, };
-	change_phi["delta"]      = { {_f_type_, _t_float_},   {_f_default_, 1},    {_f_min_, -359}, {_f_max_, 359}, {_f_description_, "how much phi should be adjusted on each iteration"}, };
-	change_phi["repeat"]     = { {_f_type_, _t_integer_}, {_f_default_, 1000}, {_f_min_, 1},                    {_f_description_, "how many times to repeat"}, };
-
-	j["functions"][_n_change_phi_] = change_phi;
-
-
-	json file_and_dir = json::object();
-	file_and_dir["file"] = { {_f_type_, _t_file_}, };
-	file_and_dir["dir"]  = { {_f_type_, _t_directory_}, };
-	j["functions"]["file_and_dir"] = file_and_dir;
+	json single_loop_modeling = json::object();
+	single_loop_modeling["pdb_fname"] = { {"type", _t_string_},   {"default", "1ycr.pdb"}, };
+	single_loop_modeling["full_target_sequence"] = { {"type", _t_string_},   {"default", "gcaa"}, };
+	j["functions"][_n_single_loop_modeling_] = single_loop_modeling;
 
 	string r;
 	nlohmann::json::basic_json::to_msgpack(j, r);
@@ -84,61 +75,61 @@ string specification()
 
 
 
-void set_all_phi_and_psi(core::pose::Pose & pose, double phi, double psi)
+void single_loop_modeling(core::pose::Pose & pose, string const & pdb_fname, string const & full_target_sequence)
 {
-	protocols::network::UIMover ui;
+	//protocols::network::UIObserver ui;
 
-	for ( uint i=1; i <= pose.size(); ++i ) {
-		pose.set_phi(i, phi);
-		pose.set_psi(i, psi);
-		ui.apply(pose);
+	// Do an RNA_denovo run with the ui mover set up to this sequence...
+	{
+		using namespace protocols::rna::denovo;
+		utility::options::OptionKeyList opts;
+		core::import_pose::options::RNA_DeNovoProtocolOptions::list_options_read( opts );
+
+		using namespace basic::options::OptionKeys;
+		using namespace core::import_pose;
+		// TODO: enable provision of sequence and secstruct file paths.
+		utility::options::OptionCollection faux_cl_opts = basic::options::option;
+		faux_cl_opts[ in::file::s ].set_cl_value( pdb_fname );
+		faux_cl_opts[ rna::denovo::minimize_rna ].set_cl_value( "true" );
+		faux_cl_opts[ rna::denovo::sequence ].set_cl_value( full_target_sequence );
+		faux_cl_opts[ rna::denovo::secstruct ].set_cl_value( string( full_target_sequence.size(), '.' ) );
+		RNA_DeNovoSetup rna_de_novo_setup;
+		rna_de_novo_setup.initialize_from_options( faux_cl_opts );
+		pose = *rna_de_novo_setup.pose();
+
+		protocols::network::AddUIObserver( pose );
+		//ui.attach(pose);//rna_de_novo_setup.pose());
+		RNA_DeNovoProtocol protocol( rna_de_novo_setup.options(), rna_de_novo_setup.rna_params() );
+
+		protocol.apply( pose );
+
 	}
+
 }
-
-void change_phi(core::pose::Pose & pose, uint residue, double delta, int repeat)
-{
-	protocols::network::UIMover ui;
-
-	if ( residue >=1  and residue <= pose.size() ) {
-		for ( int i=0; i < repeat; ++i ) {
-
-			pose.set_phi(residue, pose.phi(residue) + delta);
-			ui.apply(pose);
-		}
-	}
-}
-
 
 json hal_executioner(json const &command)
 {
 	TR << "Rosetta: executing command: " << command[_f_name_] << std::endl;
 
-	core::pose::PoseOP pose = protocols::network::bytes_to_pose( command[_f_arguments_].value(_f_pose_, "") );
+	//core::pose::PoseOP pose = protocols::network::bytes_to_pose(command[_f_arguments_][_f_pose_]);
+	core::pose::PoseOP pose = core::pose::PoseOP( new core::pose::Pose );
 
-	if ( pose ) {
-		string name;
-		if ( extract_value_if_present(command, _f_name_, name) ) {
-			if ( name == _n_set_all_phi_and_psi_ ) {
-				double phi = command[_f_arguments_].value("phi", 180.0);
-				double psi = command[_f_arguments_].value("psi", 180.0);
-				set_all_phi_and_psi(*pose, phi, psi);
-			}
-
-			if ( name == _n_change_phi_ ) {
-				uint residue = command[_f_arguments_].value("residue_n", 1);
-				double delta = command[_f_arguments_].value("delta", 1.0);
-				int repeat   = command[_f_arguments_].value("repeat", 1);
-
-				change_phi(*pose, residue, delta, repeat);
-			}
+	string name;
+	if ( extract_value_if_present(command, _f_name_, name) ) {
+		if ( name == _n_single_loop_modeling_ ) {
+			// This isn't actually compatible with no-default.
+			string const & pdb_fname = command[_f_arguments_].value("pdb_fname", "1ycr.pdb");
+			string const & full_target_sequence = command[_f_arguments_].value("full_target_sequence", "gcaa");
+			// Still have to pass a pose to the function.
+			single_loop_modeling(*pose, pdb_fname, full_target_sequence);
 		}
 	}
 
-	auto pose_binary = protocols::network::pose_to_bytes(pose);
+	auto pose_binary = protocols::network::pose_to_bytes(*pose);
 
 	nlohmann::json result;
 
-	result[_f_pose_] = pose_binary;
+	result["pose"] = pose_binary;
 
 	return result;
 }
