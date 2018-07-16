@@ -104,9 +104,9 @@ EllipsoidalRandomizationMover::set_default()
 	b_axis_ = 1.0;
 	c_axis_ = 1.0;
 
-	c_alpha_centroid_.zero();
-	c_alpha_plane_centroid_.zero();
-	c_alpha_non_ellipsoid_centroid_.zero();
+	nbr_atom_centroid_.zero();
+	nbr_atom_plane_centroid_.zero();
+	nbr_atom_non_ellipsoid_centroid_.zero();
 
 	rb_jump_ = 1;
 	slide_axis_.zero();
@@ -142,9 +142,9 @@ EllipsoidalRandomizationMover::init_from_options()
 void
 EllipsoidalRandomizationMover::copy_data( EllipsoidalRandomizationMover object_to_copy_to, EllipsoidalRandomizationMover object_to_copy_from )
 {
-	object_to_copy_to.c_alpha_centroid_ = object_to_copy_from.c_alpha_centroid_;
-	object_to_copy_to.c_alpha_plane_centroid_ = object_to_copy_from.c_alpha_plane_centroid_;
-	object_to_copy_to.c_alpha_non_ellipsoid_centroid_ = object_to_copy_from.c_alpha_non_ellipsoid_centroid_;
+	object_to_copy_to.nbr_atom_centroid_ = object_to_copy_from.nbr_atom_centroid_;
+	object_to_copy_to.nbr_atom_plane_centroid_ = object_to_copy_from.nbr_atom_plane_centroid_;
+	object_to_copy_to.nbr_atom_non_ellipsoid_centroid_ = object_to_copy_from.nbr_atom_non_ellipsoid_centroid_;
 	object_to_copy_to.slide_axis_ = object_to_copy_from.slide_axis_;
 	object_to_copy_to.a_axis_ = object_to_copy_from.a_axis_;
 	object_to_copy_to.b_axis_ = object_to_copy_from.b_axis_;
@@ -178,7 +178,7 @@ EllipsoidalRandomizationMover::apply( core::pose::Pose & pose )
 
 	core::kinematics::Jump flexible_jump = pose.jump( rb_jump_ );
 	core::kinematics::Stub upstream_stub = pose.conformation().upstream_jump_stub( rb_jump_ );
-	flexible_jump.rotation_by_matrix( upstream_stub, c_alpha_plane_centroid_, rotation_matrix );
+	flexible_jump.rotation_by_matrix( upstream_stub, nbr_atom_plane_centroid_, rotation_matrix );
 	pose.set_jump( rb_jump_, flexible_jump );
 
 	TR << "Sliding partners away" << std::endl;
@@ -229,11 +229,11 @@ EllipsoidalRandomizationMover::calculate_geometry( core::pose::Pose & pose )
 	Vector rotated_normal_terminus = rotation_matrix * normal_terminus_from_origin;
 
 	//Reorients point to original ellipsoid
-	rotated_point_on_ellipsoid += c_alpha_centroid_;
-	rotated_normal_terminus += c_alpha_centroid_;
+	rotated_point_on_ellipsoid += nbr_atom_centroid_;
+	rotated_normal_terminus += nbr_atom_centroid_;
 
 	normal_to_plane_ = inward_normal_to_plane( plane_axes );
-	Vector normal_terminus_from_plane = normal_to_plane_ + c_alpha_plane_centroid_;
+	Vector normal_terminus_from_plane = normal_to_plane_ + nbr_atom_plane_centroid_;
 
 	Vector placeholder_vector = rotated_normal_terminus - rotated_point_on_ellipsoid;
 	Vector long_normal = rotated_point_on_ellipsoid + 2 * placeholder_vector;
@@ -250,14 +250,14 @@ EllipsoidalRandomizationMover::calculate_geometry( core::pose::Pose & pose )
 
 	if ( ellipsoid_is_first_partner_ ) {
 		//translate plane partner to ellipsoid partner
-		translation_vector = rotated_point_on_ellipsoid - c_alpha_plane_centroid_;
+		translation_vector = rotated_point_on_ellipsoid - nbr_atom_plane_centroid_;
 		slide_axis_ = rotated_normal_terminus - rotated_point_on_ellipsoid;
 		normal_terminus_from_plane += translation_vector;
-		c_alpha_plane_centroid_ += translation_vector;
+		nbr_atom_plane_centroid_ += translation_vector;
 	} else {
 		//translate ellipsoid partner to plane partner
-		translation_vector = c_alpha_plane_centroid_ - rotated_point_on_ellipsoid;
-		slide_axis_ = c_alpha_plane_centroid_ - normal_terminus_from_plane;
+		translation_vector = nbr_atom_plane_centroid_ - rotated_point_on_ellipsoid;
+		slide_axis_ = nbr_atom_plane_centroid_ - normal_terminus_from_plane;
 		rotated_normal_terminus += translation_vector;
 		rotated_point_on_ellipsoid += translation_vector;
 	}
@@ -267,12 +267,12 @@ EllipsoidalRandomizationMover::calculate_geometry( core::pose::Pose & pose )
 
 	if ( ellipsoid_is_first_partner_ ) {
 		//rotate plane partner onto ellipsoid normal
-		rotation_source_vector = normal_terminus_from_plane - c_alpha_plane_centroid_;
-		rotation_target_vector = rotated_normal_terminus - c_alpha_plane_centroid_;
+		rotation_source_vector = normal_terminus_from_plane - nbr_atom_plane_centroid_;
+		rotation_target_vector = rotated_normal_terminus - nbr_atom_plane_centroid_;
 	} else {
 		//rotate ellipsoid partner onto plane normal
-		rotation_source_vector = rotated_normal_terminus - c_alpha_plane_centroid_;
-		rotation_target_vector = normal_terminus_from_plane - c_alpha_plane_centroid_;
+		rotation_source_vector = rotated_normal_terminus - nbr_atom_plane_centroid_;
+		rotation_target_vector = normal_terminus_from_plane - nbr_atom_plane_centroid_;
 	}
 
 	numeric::xyzMatrix< Real > rotation_mover_matrix = get_rotation_matrix( rotation_target_vector, rotation_source_vector );
@@ -302,21 +302,21 @@ EllipsoidalRandomizationMover::calculate_axes( core::pose::Pose & pose_in )
 
 	utility::vector1< Size > partner_residue_start_stop = get_partner_residue_start_stop( pose_in, ellipsoid_is_first_partner_ );
 
-	utility::vector1< Vector > c_alpha_coords;
+	utility::vector1< Vector > nbr_atom_coords; //c_alpha_coords;
 	for ( Size i=partner_residue_start_stop[1]; i<=partner_residue_start_stop[2]; ++i ) {
-		c_alpha_coords.push_back( pose_in.residue( i ).xyz( "CA" ) );
+		nbr_atom_coords.push_back( pose_in.residue( i ).xyz( pose_in.residue( i ).nbr_atom() ) );
 	}
 
-	Size n_res = c_alpha_coords.size();
+	Size n_res = nbr_atom_coords.size();
 
 	for ( Size i = 1; i <= n_res; ++i ) {
-		c_alpha_centroid_ += c_alpha_coords[i];
+		nbr_atom_centroid_ += nbr_atom_coords[i];
 	}
-	c_alpha_centroid_ /= n_res;
+	nbr_atom_centroid_ /= n_res;
 
-	numeric::xyzMatrix< Real > eigenvectors = numeric::principal_components( c_alpha_coords );
+	numeric::xyzMatrix< Real > eigenvectors = numeric::principal_components( nbr_atom_coords );
 
-	Vector eigenvalues = numeric::principal_component_eigenvalues( c_alpha_coords );
+	Vector eigenvalues = numeric::principal_component_eigenvalues( nbr_atom_coords );
 
 	//2.0 works well for roughly ellipsoid proteins
 	//Should be increased for highly non-ellipsoidal proteins
@@ -512,8 +512,8 @@ EllipsoidalRandomizationMover::inward_normal_to_plane( utility::vector1< Vector 
 	Vector cross_forward = two_plane_vectors[1].cross( two_plane_vectors[2] );
 	Vector cross_reverse = two_plane_vectors[2].cross( two_plane_vectors[1] );
 
-	Vector distance_to_centroid_forward = c_alpha_plane_centroid_ + cross_forward.normalize_any() - c_alpha_non_ellipsoid_centroid_;
-	Vector distance_to_centroid_reverse = c_alpha_plane_centroid_ + cross_reverse.normalize_any() - c_alpha_non_ellipsoid_centroid_;
+	Vector distance_to_centroid_forward = nbr_atom_plane_centroid_ + cross_forward.normalize_any() - nbr_atom_non_ellipsoid_centroid_;
+	Vector distance_to_centroid_reverse = nbr_atom_plane_centroid_ + cross_reverse.normalize_any() - nbr_atom_non_ellipsoid_centroid_;
 
 	if ( distance_to_centroid_reverse.length() < distance_to_centroid_forward.length() ) {
 		return cross_reverse.normalize_any();
@@ -618,8 +618,8 @@ EllipsoidalRandomizationMover::calculate_plane_axes( core::pose::Pose & pose_in 
 
 	utility::vector1< Size > partner_residue_start_stop = get_partner_residue_start_stop( pose_in, non_ellipsoid_is_first_partner );
 
-	utility::vector1< Vector > c_alpha_plane_coords;
-	utility::vector1< Vector > c_alpha_non_ellipsoid_coords;
+	utility::vector1< Vector > nbr_atom_plane_coords;
+	utility::vector1< Vector > nbr_atom_non_ellipsoid_coords;
 
 	core::Real interface_distance_cutoff = 8.0;
 	Size n_res_plane = 0;
@@ -632,33 +632,30 @@ EllipsoidalRandomizationMover::calculate_plane_axes( core::pose::Pose & pose_in 
 		utility::vector1< bool > is_interface = get_interface_residues( pose_in, interface_distance_cutoff, autofoldtree_ );
 		TR << "Getting interface residues at " << interface_distance_cutoff << " Angstroms" << std::endl;
 		for ( Size i=partner_residue_start_stop[1]; i<=partner_residue_start_stop[2]; ++i ) {
-			// check for CAs first -- RNA for example would not have this
-			if ( pose_in.residue_type(i).has("CA") ) {
-				c_alpha_non_ellipsoid_coords.push_back( pose_in.residue( i ).xyz( "CA" ) );
-				if ( is_interface[i] ) {
-					c_alpha_plane_coords.push_back( pose_in.residue( i ).xyz( "CA" ) );
-				}
+			nbr_atom_non_ellipsoid_coords.push_back( pose_in.residue( i ).xyz( pose_in.residue( i ).nbr_atom() ) );
+			if ( is_interface[i] ) {
+				nbr_atom_plane_coords.push_back( pose_in.residue( i ).xyz( pose_in.residue( i ).nbr_atom() ) );
 			}
 		}
-		n_res_plane = c_alpha_plane_coords.size();
+		n_res_plane = nbr_atom_plane_coords.size();
 		interface_distance_cutoff += 1.0;
 	}
 
-	Size n_res_non_ellipsoid = c_alpha_non_ellipsoid_coords.size();
+	Size n_res_non_ellipsoid = nbr_atom_non_ellipsoid_coords.size();
 
 	for ( Size i = 1; i <= n_res_plane; ++i ) {
-		c_alpha_plane_centroid_ += c_alpha_plane_coords[i];
+		nbr_atom_plane_centroid_ += nbr_atom_plane_coords[i];
 	}
-	c_alpha_plane_centroid_ /= n_res_plane;
+	nbr_atom_plane_centroid_ /= n_res_plane;
 
 	for ( Size i = 1; i <= n_res_non_ellipsoid; ++i ) {
-		c_alpha_non_ellipsoid_centroid_ += c_alpha_non_ellipsoid_coords[i];
+		nbr_atom_non_ellipsoid_centroid_ += nbr_atom_non_ellipsoid_coords[i];
 	}
-	c_alpha_non_ellipsoid_centroid_ /= n_res_non_ellipsoid;
+	nbr_atom_non_ellipsoid_centroid_ /= n_res_non_ellipsoid;
 
-	numeric::xyzMatrix< Real > eigenvectors = numeric::principal_components( c_alpha_plane_coords );
+	numeric::xyzMatrix< Real > eigenvectors = numeric::principal_components( nbr_atom_plane_coords );
 
-	Vector eigenvalues = numeric::principal_component_eigenvalues( c_alpha_plane_coords );
+	Vector eigenvalues = numeric::principal_component_eigenvalues( nbr_atom_plane_coords );
 
 	utility::vector1< Vector > plane_axes;
 	plane_axes.push_back( eigenvectors.col_x() * std::sqrt( std::fabs( eigenvalues.x() ) ) );
@@ -676,19 +673,19 @@ EllipsoidalRandomizationMover::get_slide_axis() const
 Vector
 EllipsoidalRandomizationMover::get_spin_center() const
 {
-	return c_alpha_plane_centroid_;
+	return nbr_atom_plane_centroid_;
 }
 
 Vector
-EllipsoidalRandomizationMover::get_c_alpha_centroid() const
+EllipsoidalRandomizationMover::get_nbr_atom_centroid() const
 {
-	return c_alpha_centroid_;
+	return nbr_atom_centroid_;
 }
 
 Vector
-EllipsoidalRandomizationMover::get_c_alpha_non_ellipsoid_centroid() const
+EllipsoidalRandomizationMover::get_nbr_atom_non_ellipsoid_centroid() const
 {
-	return c_alpha_non_ellipsoid_centroid_;
+	return nbr_atom_non_ellipsoid_centroid_;
 }
 
 core::Real

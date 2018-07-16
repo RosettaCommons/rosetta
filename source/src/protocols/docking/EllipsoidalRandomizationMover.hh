@@ -115,8 +115,8 @@ public:
 	core::Vector get_spin_center() const;
 
 	//For unit tests
-	core::Vector get_c_alpha_centroid() const;
-	core::Vector get_c_alpha_non_ellipsoid_centroid() const;
+	core::Vector get_nbr_atom_centroid() const;
+	core::Vector get_nbr_atom_non_ellipsoid_centroid() const;
 	core::Real get_a_axis() const;
 	core::Real get_b_axis() const;
 	core::Real get_c_axis() const;
@@ -125,12 +125,12 @@ public:
 
 private:
 
-	//Centroid of all ellipsoid c-alpha coordinates
-	core::Vector c_alpha_centroid_;
-	//Centroid of non-ellipsoid interface residue c-alpha coordinates
-	core::Vector c_alpha_plane_centroid_;
-	//Centroid of all non-ellipsoid c-alpha coordinates
-	core::Vector c_alpha_non_ellipsoid_centroid_;
+	//Centroid of all ellipsoid nbr_atom coordinates (was c-alpha)
+	core::Vector nbr_atom_centroid_;
+	//Centroid of non-ellipsoid interface residue nbr_atom coordinates (was c-alpha)
+	core::Vector nbr_atom_plane_centroid_;
+	//Centroid of all non-ellipsoid nbr_atom coordinates (was c-alpha)
+	core::Vector nbr_atom_non_ellipsoid_centroid_;
 
 	core::Vector slide_axis_;
 
