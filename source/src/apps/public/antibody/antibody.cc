@@ -27,6 +27,8 @@
 
 #include <protocols/antibody/AntibodyNumberingConverterMover.hh>
 
+#include <protocols/antibody/grafting/json_based_cdr_detection.hh> //only active #ifdef _NLOHMANN_JSON_ENABLED_
+
 // Grafting util function related includes
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
@@ -241,7 +243,17 @@ int antibody_main()
 
 	AntibodySequence as(heavy_chain_sequence, light_chain_sequence);
 
-	RegEx_based_CDR_Detector(report).detect(as);
+	//check if user provides JSON CDR definition, else try to predict
+	// if user defines input json but this compiler does not support json, throw exception
+	if( basic::options::option[ basic::options::OptionKeys::antibody::json_cdr ].user() ) {
+#ifdef _NLOHMANN_JSON_ENABLED_
+		protocols::antibody::grafting::Json_based_CDR_Detector( report ).detect( as );
+#else
+		throw CREATE_EXCEPTION(_AE_json_cdr_detection_failed_, "This compiler version does not support nlohmann json! see https://github.com/nlohmann/json#supported-compilers");
+#endif // _NLOHMANN_JSON_ENABLED_
+	} else {
+		protocols::antibody::grafting::RegEx_based_CDR_Detector( report ).detect( as );
+	}
 	std::cout << std::endl;
 
 	AntibodyFramework heavy_fr = as.heavy_framework();

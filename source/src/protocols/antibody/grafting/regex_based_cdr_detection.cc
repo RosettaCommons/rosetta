@@ -35,39 +35,11 @@ using std::string;
 
 static basic::Tracer TR("protocols.antibody.grafting");
 
-void RegEx_based_CDR_Detector::detect(AntibodySequence &A)
-{
-	*this << "RegEx_based_CDR_Detector run with arguments:\n  heavy: " + A.heavy.sequence + "\n  light: " + A.light.sequence + "\n\n";
-	set("heavy", A.heavy.sequence);  set("light", A.light.sequence);
+RegEx_based_CDR_Detector::RegEx_based_CDR_Detector() : protocols::antibody::grafting::CDR_Detector() {}
 
-	detect_heavy_chain(A);
-	detect_light_chain(A);
+RegEx_based_CDR_Detector::RegEx_based_CDR_Detector( basic::ReportOP ) : protocols::antibody::grafting::CDR_Detector() {}
 
-	*this << "RegEx_based_CDR_Detector results:\n";
-
-	struct {
-		string name;
-		CDR_Bounds &cdr;
-		string sequence;
-	} J[] {
-		{"h1", A.heavy.cdr1, A.h1_sequence()}, {"h2", A.heavy.cdr2, A.h2_sequence()}, {"h3", A.heavy.cdr3, A.h3_sequence()},
-	    {"l1", A.light.cdr1, A.l1_sequence()}, {"l2", A.light.cdr2, A.l2_sequence()}, {"l3", A.light.cdr3, A.l3_sequence()},
-	};
-
-	for(auto &j : J) {
-		string line = j.name + ": " + j.sequence;
-		line += line.size() < 8 ? "\t\t\t" : (line.size() < 16 ? "\t\t" : "\t");
-		*this << "\t" + line << j.cdr << "\n";
-		utility::json_spirit::Object cdr;
-
-		cdr.push_back( utility::json_spirit::Pair("sequence", j.sequence) );
-		cdr.push_back( utility::json_spirit::Pair("begin",    int(j.cdr.begin) ) );
-		cdr.push_back( utility::json_spirit::Pair("end",      int(j.cdr.end)) );
-		set(j.name, cdr);
-	}
-	*this << "\n";
-}
-
+RegEx_based_CDR_Detector::~RegEx_based_CDR_Detector()= default;
 
 void RegEx_based_CDR_Detector::detect_heavy_chain(AntibodySequence &A)
 {

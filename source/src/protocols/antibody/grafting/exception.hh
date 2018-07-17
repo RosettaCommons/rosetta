@@ -44,6 +44,12 @@ public:
 	using Grafting_Base_Exception::Grafting_Base_Exception;
 };
 
+class _AE_json_cdr_detection_failed_ : public Grafting_Base_Exception
+{
+public:
+	using Grafting_Base_Exception::Grafting_Base_Exception;
+};
+
 
 class _AE_cdr_undefined_ : public Grafting_Base_Exception
 {

@@ -59,6 +59,8 @@ class Reporter
 public:
 	Reporter(ReportOP report=basic::ReportOP()) { report_ =  report; }
 
+	virtual ~Reporter() {};
+
 	template <typename T>
 	Reporter& operator<<(T const &v) { if ( report_ ) *report_ << v;
 		return *this; }

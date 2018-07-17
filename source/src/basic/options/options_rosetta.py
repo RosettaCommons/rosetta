@@ -3919,6 +3919,9 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
             desc = 'Number of multiple templates to use during grafting. Default is 10.',
             default = '10'
             ),
+        Option('json_cdr', 'String',
+            desc = 'define cdr begin/end points with input json'
+            ),
 
 		##############################################################################
 		# Rosetta AntibodyDesign Options -----------------------------------------------

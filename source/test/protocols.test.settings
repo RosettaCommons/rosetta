@@ -55,6 +55,7 @@ sources = {
 	],
 	"antibody/grafting":[
 		"regex_based_cdr_detection",
+		"json_based_cdr_detection",
 		"regex_manager",
 		"scs_functor_filtering",
 	],
@@ -794,6 +795,7 @@ testinputfiles = [
 	"antibody/design/AntibodySeqDesign_general_tf.u",
 	"antibody/design/AntibodySeqDesign_graft_tf.u",
 	"antibody/grafting/cdr-test-data.json",
+	"antibody/grafting/cdr_def_1emt.json",
 	"antibody/task_operations/RestrictCDRsOperation_UTracer1.u",
 	"antibody/task_operations/RestrictCDRsOperation_UTracer2.u",
 	"antibody/task_operations/RestrictCDRsOperation_UTracer3.u",
