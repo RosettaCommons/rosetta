@@ -520,13 +520,12 @@ cwd()
 
 std::string
 get_home_dir() {
-
+#ifndef BLUEGENECLANG
 	char const * homedir = getenv("XDG_CONFIG_HOME");
 	if ( ! homedir || strlen(homedir) == 0 ) {
 		homedir = getenv("HOME");
 	}
 #if defined(MAC) || defined(__APPLE__)  ||  defined(__OSX__) || defined(linux) || defined(__linux__) || defined(__linux)
-#ifndef BLUEGENECLANG
 	try {
 		if ( ! homedir || strlen(homedir) == 0 ) {
 			passwd const * unix_pwd( getpwuid(getuid()) );
@@ -538,13 +537,15 @@ get_home_dir() {
 		homedir = "";
 	}
 #endif
-#endif
 
 	if ( homedir == nullptr || strlen(homedir) == 0 ) {
 		return "";
 	} else {
 		return std::string(homedir);
 	}
+#else
+	return "";
+#endif //ifndef BLUEGENECLANG
 }
 
 } // namespace file

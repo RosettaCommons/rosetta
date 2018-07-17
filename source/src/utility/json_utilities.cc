@@ -153,7 +153,7 @@ bool extract_value_if_present(json const &j, std::string const & key, std::strin
 	auto it = j.find(key);
 	if( it != j.end() ) {
 		if( it->is_string() ) {
-			value = *it;
+			value = static_cast<std::string const &>(*it);
 			return true;
 		}
 	}
