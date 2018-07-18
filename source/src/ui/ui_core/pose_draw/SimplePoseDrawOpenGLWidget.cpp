@@ -200,6 +200,23 @@ SimplePoseDrawOpenGLWidget::paintGL() {
 	GLfloat colorvectO[] = { 0.75f, 0.15f, 0.15f, 1.0f};
 	GLfloat colorvectS[] = { 0.85f, 0.82f, 0.07f, 1.0f};
 	GLfloat colorvectH[] = { 0.75f, 0.75f, 0.75f, 1.0f};
+	// Colors for less-common elements (in proteins) that are 
+	// nonetheless quite common in nucleic acids. Editorial
+	// decision to echo PyMOL colors, which may or may not
+	// work out in the lighting environment available.
+	// Phosphorus
+	GLfloat colorvectP[] = { 1.00f, 0.502f, 0.00f, 1.0f};
+	// Halogens
+	GLfloat colorvectF[] = { 0.702f, 1.00f, 1.00f, 1.0f};
+	GLfloat colorvectCl[] = { 0.122f, 0.941f, 0.122f, 1.0f};
+	GLfloat colorvectBr[] = { 0.651f, 0.161f, 0.161f, 1.0f};
+	GLfloat colorvectI[] = { 0.580f, 0.00f, 0.580f, 1.0f};
+	
+	// Ca, Mg, Na
+	GLfloat colorvectCa[] = { 0.239f, 1.00f, 0.00f, 1.0f};
+	GLfloat colorvectMg[] = { 0.541f, 1.00f, 0.00f, 1.0f};
+	GLfloat colorvectNa[] = { 0.671f, 0.361f, 0.949f, 1.0f};
+	
 	GLfloat colorvectspec[] = { 0.2f, 0.2f, 0.2f, 1.0f};
 	GLfloat colorvectenergy_max[] = { 0.9f, 0.6f, 0.1f, 1.0f };
 	GLfloat colorvectenergy_min[] = { 0.01f, 0.4f, 0.8f, 1.0f };
@@ -221,6 +238,22 @@ SimplePoseDrawOpenGLWidget::paintGL() {
 							glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, colorvectS );
 					} else if( !elem.compare("O") ) {
 							glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, colorvectO );
+					} else if( !elem.compare("P") ) {
+							glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, colorvectO );
+					} else if( !elem.compare("F") ) {
+							glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, colorvectF );
+					} else if( !elem.compare("Cl") ) {
+							glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, colorvectCl );
+					} else if( !elem.compare("Br") ) {
+							glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, colorvectBr );
+					} else if( !elem.compare("I") ) {
+							glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, colorvectI );
+					} else if( !elem.compare("Ca") ) {
+							glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, colorvectCa );
+					} else if( !elem.compare("Mg") ) {
+							glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, colorvectMg );
+					} else if( !elem.compare("Na") ) {
+							glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, colorvectNa );
 					} else if( pose_->residue(ir).atom_type(ia).is_polar_hydrogen() ) {
 							glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, colorvectH );
 					} else {
