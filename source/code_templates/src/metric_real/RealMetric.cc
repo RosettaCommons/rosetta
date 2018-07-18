@@ -52,12 +52,7 @@ static basic::Tracer TR( "--namespace_dot--.--class--" );
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Copy constructor
---class--::--class--( --class-- const & src ):
-	core::simple_metrics::RealMetric( src )
-{ 
-
-}
-
+--class--::--class--( --class-- const & src ) = default;
 
 core::simple_metrics::SimpleMetricOP
 --class--::clone() const {

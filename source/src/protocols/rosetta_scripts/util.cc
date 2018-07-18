@@ -24,6 +24,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBPoseMap.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/pose/ref_pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
@@ -197,26 +198,13 @@ attributes_for_saved_reference_pose_w_description(
 	std::string const & description,
 	std::string const & attribute_name)
 {
-	attributes + utility::tag::XMLSchemaAttribute( attribute_name, utility::tag::xs_string,
-		( description == "" ? "Name of reference pose to use" : description ) );
+	core::pose::attributes_for_saved_reference_pose_w_description( attributes, description, attribute_name );
 }
 
 core::pose::PoseOP
 saved_reference_pose( utility::tag::TagCOP const in_tag, basic::datacache::DataMap & data_map, std::string const & tag_name ){
 
-	if ( in_tag->hasOption(tag_name) ) {
-		core::pose::PoseOP refpose(nullptr);
-		std::string refpose_name(in_tag->getOption<std::string>( tag_name) );
-		TR<<"Loading PDB: "<<refpose_name<<std::endl;
-
-		if ( !data_map.has("spm_ref_poses",refpose_name) ) {
-			refpose = core::pose::PoseOP( new core::pose::Pose() );
-			data_map.add("spm_ref_poses",refpose_name,refpose );
-		} else refpose = data_map.get_ptr<core::pose::Pose>("spm_ref_poses",refpose_name );
-
-		return refpose;
-	} else std::cerr << "WARNING: saved_reference_pose function called even though tag has no " + tag_name + " entry. something's unclean somewhere." << std::endl;
-	return nullptr;
+	return core::pose::saved_reference_pose( in_tag, data_map, tag_name );
 }
 
 

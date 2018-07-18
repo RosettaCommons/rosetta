@@ -64,7 +64,7 @@ public:
 	DensityFitResidueSelector();
 
 	/// @brief Copy Constructor.  Usually not necessary unless you need deep copying (e.g. OPs)
-	//DensityFitResidueSelector(DensityFitResidueSelector const & src);
+	DensityFitResidueSelector(DensityFitResidueSelector const & src);
 
 public:
 
@@ -118,9 +118,9 @@ public:
 	void
 	set_residue_mask( ResidueSelectorCOP selector);
 
-	///@brief Use the selector as true mask to calculate the Zscore.  Otherwise, use it just as a selection for computation.  Default true.
+	///@brief Use the selector as true mask to calculate the Zscore.  Otherwise, use it just as a selection for the result.  Default true.
 	void
-	set_use_selector_as_mask( bool selector_as_mask );
+	set_use_selector_as_zscore_mask( bool selector_as_mask );
 
 
 	///@brief Set the sliding window size.  Default is 3.  If you have anything other than protein, you probably want 1.
@@ -138,24 +138,6 @@ public:
 	void
 	set_invert( bool invert );
 
-
-
-
-
-private:
-
-	///@brief Compute All per-residue scores
-	void
-	compute_scores(
-		pose::Pose & pose,
-
-		std::map< Size, Real > & per_rsd_dens,
-		std::map< Size, Real > & per_rsd_nbrdens,
-		std::map< Size, Real > & per_rsd_rama,
-		std::map< Size, Real > & per_rsd_geometry
-	) const;
-
-
 private:
 
 	core::Real score_cut_ = -.5; //Number usually goes from -3 up.
@@ -166,7 +148,8 @@ private:
 	bool mixed_sliding_window_ = false;
 	ResidueSelectorCOP mask_ = nullptr;
 	bool match_res_ = false;
-	bool use_selector_as_mask_ = true;
+	bool use_selector_as_zscore_mask_ = true;
+	pose::PoseOP rs_native_ = nullptr; //Used only in RS
 
 #ifdef    SERIALIZATION
 public:

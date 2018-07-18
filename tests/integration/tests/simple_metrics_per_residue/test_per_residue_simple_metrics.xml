@@ -1,0 +1,36 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+	</SCOREFXNS>
+	<RESIDUE_SELECTORS>
+		<Glycan name="glycans" branch="575C" include_root="1"/>
+	</RESIDUE_SELECTORS>
+	<MOVE_MAP_FACTORIES>
+		<MoveMapFactory name="movemap_glycans" bb="0" chi="0">
+			<Backbone residue_selector="glycans" />
+			<Chi residue_selector="glycans" />
+		</MoveMapFactory>
+	</MOVE_MAP_FACTORIES>
+	<SIMPLE_METRICS>
+		
+		<PerResidueRMSDMetric name="rmsd" rmsd_type="rmsd_all_heavy" output_as_pdb_nums="1" residue_selector="glycans" use_native="1"/>
+		<PerResidueSasaMetric name="sasa" residue_selector="glycans" output_as_pdb_nums="1"/>
+		<PerResidueEnergyMetric name="total_energy" residue_selector="glycans" output_as_pdb_nums="1" />
+		<PerResidueEnergyMetric name="fa_sol" residue_selector="glycans" scoretype="fa_sol" output_as_pdb_nums="1" use_native="1" />
+		
+
+		<SelectedResiduesMetric name="rosetta_sele" residue_selector="glycans" rosetta_numbering="1" custom_type="ROSETTA"/>
+		<SelectedResiduesMetric name="pdb_sele" residue_selector="glycans" rosetta_numbering="0" custom_type="PDB"/>
+		<SelectedResiduesPyMOLMetric name="pymol_selection" residue_selector="glycans" />
+
+	</SIMPLE_METRICS>
+	<MOVERS>
+		<MinMover name="min_mover" movemap_factory="movemap_glycans" tolerance=".001"/> 
+		<RunSimpleMetrics name="run_metrics1" metrics="sasa,pymol_selection,total_energy,rosetta_sele,pdb_sele" prefix="m1_" />
+		<RunSimpleMetrics name="run_metrics2" metrics="sasa,rmsd,fa_sol" prefix="m2_" />
+	</MOVERS>
+	<PROTOCOLS>
+		<Add mover_name="run_metrics1"/>
+		<Add mover_name="min_mover" />
+		<Add mover_name="run_metrics2" />
+	</PROTOCOLS>
+</ROSETTASCRIPTS>

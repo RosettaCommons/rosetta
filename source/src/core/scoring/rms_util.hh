@@ -16,21 +16,6 @@
 #ifndef INCLUDED_core_scoring_rms_util_HH
 #define INCLUDED_core_scoring_rms_util_HH
 
-// C/C++ headers
-#include <list>
-#include <map>
-#include <string>
-
-// External headers
-#include <boost/unordered/unordered_map.hpp>
-
-// Utility headers
-#include <ObjexxFCL/FArray2D.fwd.hh>
-#include <utility>
-#include <utility/vector1_bool.hh>
-#include <utility/pointer/ReferenceCount.hh>
-#include <utility/pointer/owning_ptr.hh>
-
 // Project headers
 #include <core/types.hh>
 #include <core/conformation/Residue.fwd.hh>
@@ -38,8 +23,23 @@
 #include <core/id/AtomID_Map.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/MiniPose.fwd.hh>
+#include <core/scoring/rms_enum.hh>
 
+// Utility headers
+#include <ObjexxFCL/FArray2D.fwd.hh>
+#include <utility>
+#include <utility/vector1_bool.hh>
+#include <utility/pointer/ReferenceCount.hh>
+#include <utility/pointer/owning_ptr.hh>
 #include <utility/vector1.hh>
+
+// C/C++ headers
+#include <list>
+#include <map>
+#include <string>
+
+// External headers
+#include <boost/unordered/unordered_map.hpp>
 
 
 namespace core {
@@ -620,6 +620,18 @@ rms_at_corresponding_atoms_no_super(
 	utility::vector1< Size > const & calc_rms_res
 );
 
+///@brief Calculate RMS for each residue in mask, return a map of res to value.
+///
+///@details Mask and result corresponds to MOD POSE, not the reference pose!
+///
+std::map< core::Size, core::Real >
+per_res_rms_at_corresponding_atoms_no_super(
+	pose::Pose const & mod_pose,
+	pose::Pose const & ref_pose,
+	std::map< core::id::AtomID, core::id::AtomID > const & atom_id_map,
+	utility::vector1< bool > const & mask
+);
+
 void
 setup_matching_heavy_atoms( core::pose::Pose const & pose1, core::pose::Pose const & pose2,  std::map< core::id::AtomID, core::id::AtomID > & atom_id_map );
 
@@ -647,6 +659,22 @@ setup_matching_atoms_with_given_names( core::pose::Pose const & pose1, core::pos
 	utility::vector1< std::string > const & atom_names_to_find,
 	std::map< core::id::AtomID, core::id::AtomID > & atom_id_map );
 
+
+
+////////////////// Used by RMSD SimpleMetrics ///////////
+
+///@breif Returns a map of the rmsd_atom enum and a list of atom names for which this
+/// RMSD setting selects for the calculation
+std::map< rmsd_atoms, utility::vector1< std::string > >
+setup_rmsd_atom_names();
+
+///@brief Setup a name mapping for rmsd_atoms
+std::map< std::string, rmsd_atoms >
+get_rmsd_type_name_map();
+
+///@brief Setup a name mapping for rmsd_atoms
+utility::vector1< std::string >
+get_rmsd_type_names();
 
 } // end namespace scoring
 } // end namespace core

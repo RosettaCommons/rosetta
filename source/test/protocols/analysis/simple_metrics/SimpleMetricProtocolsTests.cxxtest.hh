@@ -22,10 +22,11 @@
 // Project Headers
 #include <core/simple_metrics/test_classes.hh>
 #include <protocols/simple_filters/SimpleMetricFilter.hh>
-#include <protocols/analysis/simple_metrics/RMSDMetric.hh>
-#include <protocols/analysis/simple_metrics/DihedralDistanceMetric.hh>
-#include <protocols/analysis/simple_metrics/TotalEnergyMetric.hh>
-#include <protocols/analysis/simple_metrics/CompositeEnergyMetric.hh>
+#include <core/simple_metrics/metrics/RMSDMetric.hh>
+#include <core/simple_metrics/metrics/DihedralDistanceMetric.hh>
+#include <core/simple_metrics/metrics/TotalEnergyMetric.hh>
+
+#include <core/simple_metrics/composite_metrics/CompositeEnergyMetric.hh>
 
 // Core Headers
 #include <core/pose/Pose.hh>
@@ -41,8 +42,10 @@
 #include <utility/string_util.hh>
 
 using namespace core::simple_metrics;
+using namespace core::simple_metrics::metrics;
+using namespace core::simple_metrics::composite_metrics;
+
 using namespace protocols::simple_filters;
-using namespace protocols::analysis::simple_metrics;
 using namespace core::pose;
 using namespace core::select::residue_selector;
 using namespace core::scoring;
@@ -212,35 +215,35 @@ public:
 	}
 
 	void test_rmsd_metric() {
-		core::pose::Pose trpcage = create_trpcage_ideal_pose();
+		core::pose::PoseOP trpcage = create_trpcage_ideal_poseop();
 		ResidueIndexSelectorOP selector1 = ResidueIndexSelectorOP( new ResidueIndexSelector( "1-10" ));
 		ResidueIndexSelectorOP selector2 = ResidueIndexSelectorOP( new ResidueIndexSelector( "11-20" ));
 
 		RMSDMetric rmsd_metric = RMSDMetric(trpcage);
 
-		TS_ASSERT_EQUALS( rmsd_metric.calculate(trpcage), 0.0 );
+		TS_ASSERT_EQUALS( rmsd_metric.calculate(*trpcage), 0.0 );
 
 		rmsd_metric.set_residue_selector( selector1 );
 		rmsd_metric.set_residue_selector_reference( selector2 );
 		rmsd_metric.set_rmsd_type( rmsd_protein_bb_ca );
 
-		TS_ASSERT_DELTA( rmsd_metric.calculate( trpcage ), 13.0370, 0.01 );
+		TS_ASSERT_DELTA( rmsd_metric.calculate( *trpcage ), 13.0370, 0.01 );
 	}
 
 	void test_dihedral_metric() {
-		core::pose::Pose trpcage = create_trpcage_ideal_pose();
+		core::pose::PoseOP trpcage = create_trpcage_ideal_poseop();
 		ResidueIndexSelectorOP selector1 = ResidueIndexSelectorOP( new ResidueIndexSelector( "1-10" ));
 		ResidueIndexSelectorOP selector2 = ResidueIndexSelectorOP( new ResidueIndexSelector( "11-20" ));
 
 		DihedralDistanceMetric dih_metric = DihedralDistanceMetric();
 		dih_metric.set_comparison_pose( trpcage );
 
-		TS_ASSERT_DELTA( dih_metric.calculate( trpcage ), 0.0, 0.1);
+		TS_ASSERT_DELTA( dih_metric.calculate( *trpcage ), 0.0, 0.1);
 
 		dih_metric.set_residue_selector( selector1 );
 		dih_metric.set_residue_selector_reference( selector2 );
 
-		TS_ASSERT_DELTA( dih_metric.calculate( trpcage ), 76.838, 1.0);
+		TS_ASSERT_DELTA( dih_metric.calculate( *trpcage ), 76.838, 1.0);
 
 	}
 

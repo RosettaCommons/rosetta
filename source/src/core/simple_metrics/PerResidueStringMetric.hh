@@ -111,15 +111,17 @@ public:
 	void
 	add_schema( utility::tag::XMLSchemaComplexTypeGeneratorOP complex_schema);
 
+	///Parse the base class tag.  Keep required interface for parse_my_tag.
+	virtual void
+	parse_per_residue_tag(
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap & data );
+
 private:
 
 
 
-	///Parse the base class tag.  Keep required interface for parse_my_tag.
-	void
-	parse_per_residue_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data );
+
 
 private:
 

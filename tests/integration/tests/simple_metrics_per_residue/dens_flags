@@ -1,0 +1,21 @@
+
+-parser::script_vars denswt=25 map=3gml_phenix.map
+-include_sugars 
+-ignore_unrecognized_res
+-edensity::mapreso 1.7
+-edensity::score_symm_complex false
+-overwrite
+
+-cryst::crystal_refine
+ 
+#Due to loading in a pre-glycosylated model for native
+-auto_detect_glycan_connections
+-alternate_3_letter_codes pdb_sugar
+
+#Speed up writing
+-output_pose_energies_table false
+
+#Protocol
+-s 3gml.pdb
+-in:file:native 3gml.pdb
+-parser:protocol test_per_residue_with_density.xml

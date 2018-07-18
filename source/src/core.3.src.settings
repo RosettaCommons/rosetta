@@ -104,6 +104,7 @@ sources = {
 		"PDBPoseMap",
 		"Pose",
 		"ResidueIndexDescription",
+		"ref_pose",
 		"selection",
 		"util",
 		"chains_util",
@@ -190,7 +191,16 @@ sources = {
 		"util",
 		"test_classes",
 	],
+	"core/simple_metrics/per_residue_metrics": [
+		"PerResidueDensityFitMetric",
+		"PerResidueEnergyMetric",
+		"PerResidueRMSDMetric",
+		"PerResidueSasaMetric",
+	],
 	"core/simple_metrics/metrics": [
+		
+		"DihedralDistanceMetric",
+		"RMSDMetric",
 		"SasaMetric",
 		"SecondaryStructureMetric",
 		"SelectedResidueCountMetric",
@@ -198,7 +208,12 @@ sources = {
 		"SelectedResiduesPyMOLMetric",
 		"SequenceMetric",
 		"TimingProfileMetric",
+		"TotalEnergyMetric",
 	],
+	"core/simple_metrics/composite_metrics": [
+		"CompositeEnergyMetric",
+	],
+
 	"core/pose/symmetry": [
 		"util",
 	],

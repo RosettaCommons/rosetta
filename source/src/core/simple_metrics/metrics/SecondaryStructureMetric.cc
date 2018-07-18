@@ -13,7 +13,7 @@
 
 // Unit headers
 #include <core/simple_metrics/metrics/SecondaryStructureMetric.hh>
-#include <core/simple_metrics/metrics/SecondaryStructureMetricCreator.hh>
+#include <core/simple_metrics/simple_metric_creators.hh>
 
 // Core headers
 #include <core/simple_metrics/StringMetric.hh>

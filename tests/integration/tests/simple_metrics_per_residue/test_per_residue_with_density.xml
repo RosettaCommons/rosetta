@@ -1,0 +1,44 @@
+<ROSETTASCRIPTS>
+    <SCOREFXNS>
+    	<ScoreFunction name="dens" weights="ref2015_cart" symmetric="0">
+    	    <Reweight scoretype="elec_dens_fast" weight="25"/>
+        </ScoreFunction>
+    </SCOREFXNS>
+    <RESIDUE_SELECTORS>
+        <Glycan name="glycans"/>
+        <Not name="protein" selector="glycans" />
+    </RESIDUE_SELECTORS>
+    <MOVE_MAP_FACTORIES>
+        <MoveMapFactory name="movemap_glycans" bb="0" chi="0" cartesian="1">
+            <Backbone residue_selector="glycans" />
+            <Chi residue_selector="glycans" />
+        </MoveMapFactory>
+    </MOVE_MAP_FACTORIES>
+    <SIMPLE_METRICS>
+        
+        <PerResidueDensityFitMetric name="fit" sliding_window_size="1" residue_selector="glycans" match_res="1" use_selector_as_zscore_mask="1" output_as_pdb_nums="1" />
+        <PerResidueRMSDMetric name="rmsd" rmsd_type="rmsd_all_heavy" output_as_pdb_nums="1" residue_selector="glycans" use_native="1"/>
+        <PerResidueSasaMetric name="sasa" residue_selector="glycans" output_as_pdb_nums="1"/>
+        <PerResidueEnergyMetric name="total_energy" residue_selector="glycans" output_as_pdb_nums="1" scorefxn="dens"/>
+        <PerResidueEnergyMetric name="fa_sol" residue_selector="glycans" scoretype="fa_sol" output_as_pdb_nums="1" use_native="1" scorefxn="dens"/>
+        <SelectedResiduesPyMOLMetric name="pymol" residue_selector="glycans"/>
+        <SelectedResiduesMetric name="rosetta_sele" residue_selector="glycans" rosetta_numbering="1" custom_type="ROSETTA"/>
+        <SelectedResiduesMetric name="pdb_sele" residue_selector="glycans" rosetta_numbering="0" custom_type="PDB"/>
+    </SIMPLE_METRICS>
+    <MOVERS>
+        <RunSimpleMetrics name="pre_metrics" metrics="pymol,fit,sasa,total_energy,rosetta_sele,pdb_sele" prefix="pre_"/>
+        <MinMover name="min_mover" movemap_factory="movemap_glycans" tolerance=".001" cartesian="1" scorefxn="dens"/> 
+        <RunSimpleMetrics name="post_metrics" metrics="rmsd,fit,fa_sol" prefix="post_"/>
+        <SetupForDensityScoring name="setupdens"/>
+        <LoadDensityMap name="loaddens" mapfile="%%map%%"/>
+    </MOVERS>
+    <PROTOCOLS>
+        <Add mover="setupdens"/> 
+        <Add mover="loaddens"/>
+        <Add mover="pre_metrics"/>
+        <Add mover="min_mover"/>
+        <Add mover="post_metrics" />
+    </PROTOCOLS>
+    <OUTPUT scorefxn="dens"/>
+</ROSETTASCRIPTS>
+

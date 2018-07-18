@@ -96,6 +96,10 @@ public:
 	utility::vector1< std::string >
 	get_metric_names() const override;
 
+	///@brief Get the set residue selector of this class.
+	select::residue_selector::ResidueSelectorCOP
+	get_selector() const;
+
 public:
 	/// @brief called by parse_my_tag -- should not be used directly
 	virtual void
@@ -111,19 +115,16 @@ public:
 	void
 	add_schema( utility::tag::XMLSchemaComplexTypeGeneratorOP complex_schema);
 
-private:
-
-
-
 	///Parse the base class tag.  Keep required interface for parse_my_tag.
-	void
+	virtual void
 	parse_per_residue_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data );
 
+
 private:
 
-	select::residue_selector::ResidueSelectorCOP selector_ = nullptr;
+	select::residue_selector::ResidueSelectorCOP selector_; //Set as a TrueResidueSelector.
 	bool output_as_pdb_nums_ = false;
 
 }; //class PerResidueRealMetrics

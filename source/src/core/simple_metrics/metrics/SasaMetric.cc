@@ -12,14 +12,14 @@
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #include <core/simple_metrics/metrics/SasaMetric.hh>
-#include <core/simple_metrics/metrics/SasaMetricCreator.hh>
+#include <core/simple_metrics/simple_metric_creators.hh>
 #include <core/simple_metrics/RealMetric.hh>
 #include <core/simple_metrics/util.hh>
+#include <core/simple_metrics/per_residue_metrics/PerResidueSasaMetric.hh>
 
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
 #include <core/select/util.hh>
-#include <core/scoring/sasa/SasaCalc.hh>
 
 #include <basic/Tracer.hh>
 
@@ -81,20 +81,22 @@ SasaMetric::set_residue_selector(core::select::residue_selector::ResidueSelector
 
 core::Real
 SasaMetric::calculate(const pose::Pose &pose) const {
-	SasaCalc calc = SasaCalc();
-	if ( selector_ ) {
-		calc.calculate( pose );
-		core::Real total = 0;
-		utility::vector1< core::Real > rsd_sasa = calc.get_residue_sasa();
-		for ( core::Size res : core::select::get_residues_from_subset( selector_->apply( pose )) ) {
-			total+= rsd_sasa[res];
-		}
-		return total;
-	} else {
-		return calc.calculate( pose );
-	}
+	using namespace core::simple_metrics::per_residue_metrics;
 
+	PerResidueSasaMetric core_metric = PerResidueSasaMetric();
+
+	if ( selector_ ) {
+		core_metric.set_residue_selector( selector_);
+
+	}
+	std::map< core::Size, core::Real > res_sasa = core_metric.calculate( pose );
+	core::Real total_sasa = 0;
+	for ( auto res_sasa_pair : res_sasa ) {
+		total_sasa+= res_sasa_pair.second;
+	}
+	return total_sasa;
 }
+
 void
 SasaMetric::parse_my_tag(
 	utility::tag::TagCOP tag,

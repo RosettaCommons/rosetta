@@ -13,7 +13,7 @@
 
 // Unit headers
 #include <core/simple_metrics/metrics/SelectedResidueCountMetric.hh>
-#include <core/simple_metrics/metrics/SelectedResidueCountMetricCreator.hh>
+#include <core/simple_metrics/simple_metric_creators.hh>
 
 // Core headers
 #include <core/simple_metrics/RealMetric.hh>

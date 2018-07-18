@@ -21,6 +21,7 @@
 // Unit headers
 #include <core/select/residue_selector/DensityFitResidueSelector.hh>
 #include <core/select/residue_selector/ResidueSelectorCreators.hh>
+#include <core/simple_metrics/per_residue_metrics/PerResidueDensityFitMetric.hh>
 
 // Basic Headers
 #include <basic/datacache/DataMap.hh>
@@ -32,9 +33,8 @@
 #include <core/scoring/electron_density/ElectronDensity.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/EnergyGraph.hh>
 #include <core/select/residue_selector/util.hh>
+#include <core/pose/ref_pose.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
@@ -44,8 +44,6 @@
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
-#include <core/scoring/electron_density/util.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.hh>
@@ -74,7 +72,7 @@ static basic::Tracer TR( "core.select.residue_selector.DensityFitResidueSelector
 namespace core {
 namespace select {
 namespace residue_selector {
-using namespace core::scoring::electron_density;
+using namespace core::simple_metrics::per_residue_metrics;
 
 /// @brief Constructor.
 ///
@@ -87,10 +85,7 @@ DensityFitResidueSelector::DensityFitResidueSelector():
 DensityFitResidueSelector::~DensityFitResidueSelector() {}
 
 /// @brief Copy Constructor.
-//DensityFitResidueSelector::DensityFitResidueSelector(DensityFitResidueSelector const & src):
-// core::select::residue_selector::ResidueSelector( src )
-//{
-//}
+DensityFitResidueSelector::DensityFitResidueSelector(DensityFitResidueSelector const & ) = default;
 
 /// @brief Clone function.
 /// @details Copy this object and return owning pointer to the copy (created on the heap).
@@ -113,11 +108,16 @@ DensityFitResidueSelector::parse_my_tag(
 	set_mixed_sliding_window( tag->getOption< bool >("mixed_sliding_window", mixed_sliding_window_) );
 	set_sliding_window_size( tag->getOption< Size >("sliding_window_size", sliding_window_size_) );
 	set_match_mode( tag->getOption< bool >("match_res", match_res_) );
-	set_use_selector_as_mask( tag->getOption< bool >("use_selector_as_mask", use_selector_as_mask_));
+	set_use_selector_as_zscore_mask( tag->getOption< bool >("use_selector_as_zscore_mask", use_selector_as_zscore_mask_));
 
 	if ( tag->hasOption("residue_selector") ) {
 		mask_ = parse_residue_selector( tag, datamap );
 	}
+
+	if ( tag->getOption<bool>("use_native", false) && datamap.has_resource("native_pose") ) {
+		rs_native_ = pose::saved_native_pose(datamap)->clone();
+	}
+
 }
 
 std::string DensityFitResidueSelector::get_name() const
@@ -141,10 +141,11 @@ void DensityFitResidueSelector::provide_xml_schema( utility::tag::XMLSchemaDefin
 		+ XMLSchemaAttribute::attribute_w_default( "sliding_window_size",  xsct_positive_integer, "Sliding window size for density calculation", "3")
 		+ XMLSchemaAttribute::attribute_w_default( "mixed_sliding_window",  xsct_rosetta_bool, "Use a window size of 3 for protein and 1 for glycans.  May skew results.", "false")
 		+ XMLSchemaAttribute::attribute_w_default( "match_res",  xsct_rosetta_bool, "Use density correlation instead of a zscore to fit to density", "false")
-		+ XMLSchemaAttribute::attribute_w_default( "use_selector_as_mask",  xsct_rosetta_bool, "Use the selector as true mask to calculate the Zscore.  Otherwise, use it just as a selection for computation.  Default true.", "true");
+		+ XMLSchemaAttribute::attribute_w_default( "use_native",  xsct_rosetta_bool, "Use a native set with in:file:native to do the selection for benchmarking purposes.", "false")
+		+ XMLSchemaAttribute::attribute_w_default( "use_selector_as_zscore_mask",  xsct_rosetta_bool, "Use the selector as true mask to calculate the Zscore.  Otherwise, use it just as a selection for result.  Default true.", "true");
 
 	core::select::residue_selector::attributes_for_parse_residue_selector_default_option_name(attributes, "A Residue selector mask.  Used to only compute Zscore among a set of residues.  Useful for protein vs glycan density.  Since match_res is NOT a zscore, the selector acts as an AND selector, so we only compute the correlations on this set. " );
-	std::string documentation = "Select residues that have a good electron density fit. (Or bad fit using the invert option)";
+	std::string documentation = "Select residues that have a good electron density fit. (Or bad fit using the invert option). Uses internal density tools to do so.  Numbers and cutoffs match well with Coot's density fit analysis tool. Zscore uses weighted sum of density, density-compared-to-neighbors, rama (where applicable) and cart_bonded to compute)  Correlation is same values used to calculate density scores.  Zscore reference is here: eLife 2016, Dimaio";
 
 	xsd_type_definition_w_attributes( xsd, class_name(), documentation, attributes );
 }
@@ -198,91 +199,18 @@ DensityFitResidueSelector::set_match_mode( bool match_mode ){
 }
 
 void
-DensityFitResidueSelector::set_use_selector_as_mask(bool selector_as_mask){
-	use_selector_as_mask_ = selector_as_mask;
-}
-
-void
-DensityFitResidueSelector::compute_scores(
-	pose::Pose & pose,
-
-	std::map< Size, Real > & per_rsd_dens,
-	std::map< Size, Real > & per_rsd_nbrdens,
-	std::map< Size, Real > & per_rsd_rama,
-	std::map< Size, Real > & per_rsd_geometry
-) const {
-
-	//Initialize
-	per_rsd_dens.clear(); per_rsd_rama.clear();
-	per_rsd_nbrdens.clear(); per_rsd_geometry.clear();
-
-	core::conformation::symmetry::SymmetryInfoCOP symminfo = nullptr;
-	core::Size n_symm_subunit = 1;
-
-	if ( core::pose::symmetry::is_symmetric( pose ) ) {
-		auto const & SymmConf (
-			dynamic_cast<core::conformation::symmetry::SymmetricConformation const &> ( pose.conformation()) );
-		symminfo = SymmConf.Symmetry_Info();
-		n_symm_subunit  = symminfo->score_multiply_factor();
-	}
-
-	utility::vector1< bool > rsd_mask( pose.size(), true);
-
-	if ( mask_ && use_selector_as_mask_ ) {
-		rsd_mask = mask_->apply( pose );
-	}
-
-	for ( core::Size i = 1; i <= pose.size(); ++i ) {
-		if ( pose.residue(i).aa() == core::chemical::aa_vrt || pose.residue_type(i).is_virtual_residue() ) continue;
-		if ( symminfo && !symminfo->bb_is_independent( i ) ) continue; // only the main chain gets selected
-
-		if ( mask_ && (! rsd_mask[i]) ) continue;
-
-		per_rsd_dens[i] = 0.0;
-		per_rsd_nbrdens[i] = 0.0;
-		per_rsd_rama[i] = 0.0;
-		per_rsd_geometry[i] = 0.0;
-	}
-
-
-	// to catch some outliers
-	calculate_density_nbr( pose, per_rsd_dens, per_rsd_nbrdens, symminfo, sliding_window_size_, mixed_sliding_window_ ); // per_rsd_dens_ and per_rsd_densnbr_
-
-	//TR << "DENSITY" << per_rsd_dens.size() << " " <<per_rsd_nbrdens.size() << std::endl;
-	for ( auto r : per_rsd_dens ) {
-		std::cout << pose.pdb_info()->pose2pdb( r.first ) << " " << per_rsd_dens[r.first] <<" " << per_rsd_nbrdens[r.first] << std::endl;
-	}
-
-
-	calculate_rama( pose, per_rsd_rama, n_symm_subunit ); // per_rsd_rama_
-	//std::cout << "RAMA" << per_rsd_rama.size() << std::endl;
-	for ( auto r :per_rsd_rama ) {
-		std::cout << pose.pdb_info()->pose2pdb( r.first ) << " " <<per_rsd_rama[ r.first ] << std::endl;
-	}
-
-	calculate_geometry( pose, per_rsd_geometry , n_symm_subunit); // per_rsd_geometry_
-	//std::cout << "GEOMETRY" << per_rsd_geometry.size() << std::endl;
-	for ( auto r: per_rsd_geometry ) {
-		std::cout << pose.pdb_info()->pose2pdb( r.first ) << " " << per_rsd_geometry[ r.first ] << std::endl;
-	}
-	//utility_exit_with_message("Stopping");
+DensityFitResidueSelector::set_use_selector_as_zscore_mask(bool selector_as_zscore_mask){
+	use_selector_as_zscore_mask_ = selector_as_zscore_mask;
 }
 
 /// @brief "Apply" function.
 /// @details Given the pose, generate a vector of bools with entries for every residue in the pose
 /// indicating whether each residue is selected ("true") or not ("false").
 DensityFitResidueSelector::ResidueSubset
-DensityFitResidueSelector::apply( core::pose::Pose const & input_pose ) const
+DensityFitResidueSelector::apply( core::pose::Pose const & pose ) const
 {
 	using namespace core::scoring;
 	using namespace numeric;
-
-	pose::Pose pose = input_pose;
-
-	std::map< Size, Real > per_rsd_dens, per_rsd_nbrdens, per_rsd_rama, per_rsd_geometry;
-	std::map< Size, Real > zscore_dens, zscore_nbrdens, zscore_rama, zscore_geometry;
-	std::map< Size, Real > scores;
-
 
 	//Get Zscore.  Make Cut.  Flip if need be.
 	core::conformation::symmetry::SymmetryInfoCOP symminfo = nullptr;
@@ -292,83 +220,46 @@ DensityFitResidueSelector::apply( core::pose::Pose const & input_pose ) const
 		symminfo = SymmConf.Symmetry_Info();
 	}
 
+	//This catches both code-level and RS interface.
+	if ( match_res_ && (( score_cut_ < 0 ) || ( score_cut_ > 1 ) ) ) {
+		utility_exit_with_message("Using match_res with a the default cutoff.  This mode gives a correlation score to density and should be between 0 and 1");
+	}
+
+	//Calculate the values using the PerResidue Metric
+	PerResidueDensityFitMetric core_metric = PerResidueDensityFitMetric();
+	core_metric.set_residue_selector(mask_);
+	core_metric.set_match_mode(match_res_);
+	core_metric.set_sliding_window_size(sliding_window_size_);
+	core_metric.set_use_selector_as_zscore_mask(use_selector_as_zscore_mask_);
+	core_metric.set_mixed_sliding_window(mixed_sliding_window_);
+
+	std::map < core::Size, core::Real > fit_values;
+	if ( rs_native_ ) {
+		fit_values = core_metric.calculate( *rs_native_ );
+	} else {
+		fit_values = core_metric.calculate( pose );
+	}
+
+	//Match the values to the cutoffs, create the subset
 	utility::vector1< Size > subset( pose.size(), false);
-	utility::vector1< Size > rsd_mask( pose.size(), false);
+	for ( Size i = 1; i <= pose.size(); ++i ) {
+		if ( ! fit_values.count(i) ) continue;
+		Real fit_value = fit_values[i];
 
-	if ( mask_ && use_selector_as_mask_ ) {
-		rsd_mask = mask_->apply(pose);
-	}
-	if ( match_res_ ) {
-		TR << "Using basic correlation to density instead of Zscore." << std::endl;
-
-		core::scoring::electron_density::ElectronDensity &edm = core::scoring::electron_density::getDensityMap();
-		edm.setScoreWindowContext( true );
-		edm.setWindow(1);  // smoother to use 3-res window
-
-		core::scoring::ScoreFunctionOP myscore( new core::scoring::ScoreFunction() );
-		myscore->set_weight( core::scoring::elec_dens_window, 1.0 );
-		myscore->score(pose);
-
-		//This catches both code-level and RS interface.
-		if ( score_cut_ == -.5 ) {
-			utility_exit_with_message("Using match_res with a the default cutoff.  This mode gives a correlation score to density and should be between 0 and 1");
+		TR << pose.pdb_info()->pose2pdb(i) << " " << fit_value << std::endl;
+		if ( (! invert_) && fit_value >= score_cut_ ) {
+			TR << "Good Fit" << std::endl;
+			subset[ i ] = true;
+		} else if ( invert_ && fit_value < score_cut_ ) {
+			TR <<"Bad Fit" << std::endl;
+			subset[i] = true;
 		}
-
-		for ( Size i = 1; i <= pose.size(); ++i ) {
-			if ( ! rsd_mask[i] ) continue;
-			Real dens_rscc = core::scoring::electron_density::getDensityMap().matchRes( i , pose.residue(i), pose, symminfo , false);
-
-			TR << pose.pdb_info()->pose2pdb(i) << " " << dens_rscc << std::endl;
-			if ( (! invert_) && dens_rscc >= score_cut_ ) {
-				TR << "Good Fit" << std::endl;
-				subset[ i ] = true;
-			} else if ( invert_ && dens_rscc < score_cut_ ) {
-				TR <<"Bad Fit" << std::endl;
-				subset[i] = true;
-			}
-		}
-		return subset;
-	}
-
-
-	//ZScore Computation
-	compute_scores(pose, per_rsd_dens, per_rsd_nbrdens, per_rsd_rama, per_rsd_geometry);
-
-	calc_zscore( per_rsd_dens,     zscore_dens           );
-
-	TR << "Calculating NBR dens " << std::endl;
-	calc_zscore( per_rsd_nbrdens,  zscore_nbrdens        );
-	calc_zscore( per_rsd_rama,     zscore_rama,     true );
-	calc_zscore( per_rsd_geometry, zscore_geometry, true );
-
-
-	if ( mask_ ) {
-		rsd_mask = mask_->apply( pose );
-	}
-	for ( auto r : per_rsd_dens ) {
-		if ( ! rsd_mask[ r.first ] ) continue;
-		TR << per_rsd_dens[r.first] <<" " << per_rsd_nbrdens[r.first] << " " << per_rsd_rama[r.first] << " " << per_rsd_geometry[ r.first] << std::endl;
-		TR << zscore_dens[r.first] << " " << zscore_nbrdens[r.first] << " "<< zscore_rama[r.first] << " " <<zscore_geometry[r.first] << std::endl;
-		Real score =  0.45*zscore_dens[r.first]
-			+ 0.05*zscore_nbrdens[r.first]
-			+ 0.15*zscore_rama[r.first]
-			+ 0.35*zscore_geometry[r.first];
-
-		TR <<" " << pose.pdb_info()->pose2pdb( r.first) << " " << score << std::endl;
-		if ( invert_ && (score <= score_cut_) ) {
-			TR << "Bad fit " << std::endl;
-			subset[ r.first ] = true;
-		} else if ( !invert_ && (score > score_cut_) ) {
-			TR << "Good fit " << std::endl;
-			subset[ r.first]  = true;
-		}
-
-		//fragbias_tr << "rsn: " << r << " fragProb: " << fragmentProbs_[r] << " score: " << score << std::endl;
 	}
 
 	//Correct for symmetry:
 	if ( core::pose::symmetry::is_symmetric( pose )  ) {
 		for ( Size i = 1; i <= pose.size(); ++i ) {
+
 			if ( symminfo->bb_is_independent(i) ) continue;
 			else {
 				subset[i] = subset[ symminfo->bb_follows(i)];
@@ -395,7 +286,9 @@ core::select::residue_selector::DensityFitResidueSelector::save( Archive & arc )
 	arc( CEREAL_NVP( mixed_sliding_window_) );
 	arc( CEREAL_NVP( mask_ ) );
 	arc( CEREAL_NVP( match_res_ ) );
-	arc( CEREAL_NVP( use_selector_as_mask_ ) );
+	arc( CEREAL_NVP( use_selector_as_zscore_mask_ ) );
+	arc( CEREAL_NVP( rs_native_));
+
 }
 
 template< class Archive >
@@ -408,7 +301,8 @@ core::select::residue_selector::DensityFitResidueSelector::load( Archive & arc )
 	arc( mixed_sliding_window_ );
 	arc( mask_ );
 	arc( match_res_ );
-	arc( use_selector_as_mask_ );
+	arc( use_selector_as_zscore_mask_ );
+	arc( rs_native_ );
 
 }
 

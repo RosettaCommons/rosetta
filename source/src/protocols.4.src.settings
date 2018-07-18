@@ -22,11 +22,7 @@ sources = {
 		"PolarGroupBurialPyMolStringMetric",
 	],
 	"protocols/analysis/simple_metrics": [
-		"CompositeEnergyMetric",
-		"DihedralDistanceMetric",
 		"RunSimpleMetricsMover",
-		"RMSDMetric",
-		"TotalEnergyMetric",
 	],
 
 	"protocols/monte_carlo" : [

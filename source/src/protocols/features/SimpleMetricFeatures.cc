@@ -192,7 +192,9 @@ SimpleMetricFeatures::write_general_schema_to_db(
 
 		std::string metric_name = metric->simple_metric_type();
 		std::string custom_type = metric->get_custom_type();
+
 		if ( (metric_name == "PerResidueRealMetric" )|| ( metric_name == "PerResidueStringMetric") ) {
+
 			continue;
 		} else if ( (metric_name == "StringMetric" ) || ( metric_name == "CompositeStringMetric" ) ) {
 
@@ -211,6 +213,7 @@ SimpleMetricFeatures::write_general_schema_to_db(
 		for ( std::string m_name : names ) {
 			if ( (metric_name == "CompositeStringMetric" )|| (metric_name == "CompositeRealMetric") ) {
 				name_value_type[m_name+"_"+custom_type + metric_class] = metric_type;
+
 			} else {
 				name_value_type[custom_type  + m_name] = metric_type;
 			}

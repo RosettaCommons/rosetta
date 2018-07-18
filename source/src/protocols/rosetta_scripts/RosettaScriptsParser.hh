@@ -407,6 +407,9 @@ private: //Methods
 		utility::vector1< std::string > const & script_vars,
 		std::string const & substituted_contents ) const;
 
+	/// @brief Load a native into this class, which will be placed into the datamap as a resource upon generating mover(s).
+	void
+	load_native( std::string const & fname );
 
 private: //Varaibles
 
@@ -417,6 +420,7 @@ private: //Varaibles
 	/// Defaults to 8.
 	core::Size recursion_limit_;
 
+	core::pose::PoseOP native_pose_ = nullptr; //Loaded from options and added to datamap if present
 }; // Parser
 
 } // namespace rosetta_scripts

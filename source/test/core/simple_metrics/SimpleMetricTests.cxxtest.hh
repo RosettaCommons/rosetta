@@ -211,17 +211,17 @@ public:
 		for ( core::Size resnum = 1; resnum <= 2; ++resnum ) {
 
 			//std::string const & name = names[1];
-			TS_ASSERT ( hasPoseExtraScore( pose, utility::to_string(resnum)+"_SomePerResidueReal" ) );
+			TS_ASSERT ( hasPoseExtraScore( pose, "SomePerResidueReal_"+utility::to_string(resnum) ) );
 
 
 			core::Real value;
-			bool present = getPoseExtraScore( pose, utility::to_string(resnum)+"_SomePerResidueReal", value );
+			bool present = getPoseExtraScore( pose, "SomePerResidueReal_"+utility::to_string(resnum), value );
 			TS_ASSERT( present );
 			TS_ASSERT( value ==  values.at(resnum) );
 
 
-			TS_ASSERT ( hasPoseExtraScore( pose, "prefix_"+utility::to_string(resnum)+"_SomePerResidueReal_suffix" ) );
-			present = getPoseExtraScore( pose, "prefix_"+utility::to_string(resnum)+"_SomePerResidueReal_suffix", value );
+			TS_ASSERT ( hasPoseExtraScore( pose, "prefix_SomePerResidueReal_"+utility::to_string(resnum)+"_suffix" ) );
+			present = getPoseExtraScore( pose, "prefix_SomePerResidueReal_"+utility::to_string(resnum)+"_suffix", value );
 			TS_ASSERT( present );
 			TS_ASSERT( value == values.at(resnum) );
 		}
@@ -254,17 +254,17 @@ public:
 		for ( core::Size resnum = 1; resnum <= 2; ++resnum ) {
 
 			//std::string const & name = names[1];
-			TS_ASSERT ( hasPoseExtraScore_str( pose, utility::to_string(resnum)+"_SomePerResidueString" ) );
+			TS_ASSERT ( hasPoseExtraScore_str( pose, "SomePerResidueString_"+utility::to_string(resnum) ) );
 
 
 			std::string value;
-			bool present = getPoseExtraScore( pose, utility::to_string(resnum)+"_SomePerResidueString", value );
+			bool present = getPoseExtraScore( pose, "SomePerResidueString_"+utility::to_string(resnum), value );
 			TS_ASSERT( present );
 			TS_ASSERT( value ==  values.at(resnum) );
 
 
-			TS_ASSERT ( hasPoseExtraScore_str( pose, "prefix_"+utility::to_string(resnum)+"_SomePerResidueString_suffix" ) );
-			present = getPoseExtraScore( pose, "prefix_"+utility::to_string(resnum)+"_SomePerResidueString_suffix", value );
+			TS_ASSERT ( hasPoseExtraScore_str( pose, "prefix_SomePerResidueString_"+utility::to_string(resnum)+"_suffix" ) );
+			present = getPoseExtraScore( pose, "prefix_SomePerResidueString_"+utility::to_string(resnum)+"_suffix", value );
 			TS_ASSERT( present );
 			TS_ASSERT( value == values.at(resnum) );
 		}

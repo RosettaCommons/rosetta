@@ -18,19 +18,42 @@ namespace protocols {
 
 using core::simple_metrics::SimpleMetricRegistrator;
 
+
+static SimpleMetricRegistrator< core::simple_metrics::metrics::DihedralDistanceMetricCreator > reg_DihedralDistanceMetricCreator;
+
+static SimpleMetricRegistrator< core::simple_metrics::metrics::RMSDMetricCreator             > reg_RMSDMetricCreator;
+
 static SimpleMetricRegistrator< core::simple_metrics::metrics::SasaMetricCreator                   > reg_SasaMetricCreator;
+
 static SimpleMetricRegistrator< core::simple_metrics::metrics::SecondaryStructureMetricCreator     > reg_SecondaryStructureMetricCreator;
+
 static SimpleMetricRegistrator< core::simple_metrics::metrics::SelectedResiduesPyMOLMetricCreator  > reg_SelectedResiduesPyMOLMetricCreator;
+
 static SimpleMetricRegistrator< core::simple_metrics::metrics::SelectedResidueCountMetricCreator   > reg_SelectedResidueCountMetricCreator;
+
 static SimpleMetricRegistrator< core::simple_metrics::metrics::SelectedResiduesMetricCreator       > reg_SelectedResiduesMetricCreator;
+
 static SimpleMetricRegistrator< core::simple_metrics::metrics::SequenceMetricCreator               > reg_SequenceMetricCreator;
+
 static SimpleMetricRegistrator< core::simple_metrics::metrics::TimingProfileMetricCreator          > reg_TimingProfileMetricCreator;
+static SimpleMetricRegistrator< core::simple_metrics::metrics::TotalEnergyMetricCreator      > reg_TotalEnergyMetricCreator;
+
+/////////// Composite   /////////////
+
+static SimpleMetricRegistrator< core::simple_metrics::composite_metrics::CompositeEnergyMetricCreator  > reg_CompositeEnergyMetricCreator;
 
 
-static SimpleMetricRegistrator< protocols::analysis::simple_metrics::CompositeEnergyMetricCreator  > reg_CompositeEnergyMetricCreator;
-static SimpleMetricRegistrator< protocols::analysis::simple_metrics::DihedralDistanceMetricCreator > reg_DihedralDistanceMetricCreator;
-static SimpleMetricRegistrator< protocols::analysis::simple_metrics::TotalEnergyMetricCreator      > reg_TotalEnergyMetricCreator;
-static SimpleMetricRegistrator< protocols::analysis::simple_metrics::RMSDMetricCreator             > reg_RMSDMetricCreator;
+/////////// Per Residue ////////////
+static SimpleMetricRegistrator< core::simple_metrics::per_residue_metrics::PerResidueDensityFitMetricCreator > reg_PerResidueDensityFitMetricCreator;
+
+static SimpleMetricRegistrator< core::simple_metrics::per_residue_metrics::PerResidueEnergyMetricCreator > reg_PerResidueEnergyMetricCreator;
+
+static SimpleMetricRegistrator< core::simple_metrics::per_residue_metrics::PerResidueRMSDMetricCreator > reg_PerResidueRMSDMetricCreator;
+
+static SimpleMetricRegistrator< core::simple_metrics::per_residue_metrics::PerResidueSasaMetricCreator > reg_PerResidueSasaMetricCreator;
+
+/////////////////////
+//Protocol-level SimpleMetrics should go into protocols/analysis/metrcs or protocols/analysis/yyy
 
 // Added by VKM, 22 Apr. 2018:
 static SimpleMetricRegistrator< protocols::analysis::burial_metrics::PolarGroupBurialPyMolStringMetricCreator > reg_PolarGroupBurialPyMolStringMetricCreator;

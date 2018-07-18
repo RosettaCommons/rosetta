@@ -1541,6 +1541,49 @@ rms_at_corresponding_atoms_no_super(
 	return std::sqrt( sum / natoms );
 }
 
+///@brief Calculate RMSD for each residue in mask, return a map of res to value.
+std::map< core::Size, core::Real >
+per_res_rms_at_corresponding_atoms_no_super(
+	pose::Pose const & mod_pose,
+	pose::Pose const & ref_pose,
+	std::map< core::id::AtomID, core::id::AtomID > const & atom_id_map,
+	utility::vector1< bool > const & mask
+){
+
+	std::map< core::Size, core::Real > rsd_rms;
+	for ( core::Size resnum = 1; resnum <= mod_pose.size(); ++resnum ) {
+
+		if ( ! mask[resnum] ) continue;
+
+		Size natoms( 0 );
+		Real sum( 0.0 );
+
+		for ( core::Size atom_num = 1; atom_num <= mod_pose.residue( resnum ).natoms(); ++atom_num ) {
+			// Unless this is THE VRT that has made it into the atom_id_map
+
+			core::id::AtomID atm_id = core::id::AtomID( atom_num, resnum);
+			if ( ! atom_id_map.count(atm_id) ) continue;
+
+			core::id::AtomID ref_id = atom_id_map.at(atm_id);
+
+			if ( ! mod_pose.residue(  resnum  ).is_virtual_residue() )  {
+				if (  mod_pose.residue( resnum ).is_virtual( atom_num ) ) continue;
+			}
+			if ( ! ref_pose.residue(  ref_id.rsd() ).is_virtual_residue()  ) {
+				if (  ref_pose.residue( ref_id.rsd() ).is_virtual( ref_id.atomno() ) ) continue;
+			}
+
+			Vector const & p1(  mod_pose.xyz( atm_id ));
+			Vector const & p2(  ref_pose.xyz( ref_id ));
+
+			sum += (p1 - p2).length_squared();
+			natoms++;
+		}
+		rsd_rms[ resnum ] = std::sqrt( sum / natoms );
+	}
+	return rsd_rms;
+}
+
 Real
 rms_at_corresponding_heavy_atoms(
 	pose::Pose const & mod_pose,
@@ -1551,6 +1594,7 @@ rms_at_corresponding_heavy_atoms(
 	setup_matching_heavy_atoms( mod_pose, ref_pose, atom_id_map );
 	return rms_at_corresponding_atoms( mod_pose, ref_pose, atom_id_map );
 }
+
 
 void
 setup_matching_heavy_atoms( core::pose::Pose const & pose1, core::pose::Pose const & pose2,  std::map< core::id::AtomID, core::id::AtomID > & atom_id_map ){
@@ -1763,6 +1807,63 @@ void compute_jump_rmsd(const core::pose::Pose& reference,
 
 		rmsds[i] = CA_rmsd(reference, model, i - 1, i + 1);
 	}
+}
+
+////////////  Used by SimpleMetrics for RMSD //////////////
+
+///@breif Returns a map of the rmsd_atom enum and a list of atom names for which this
+/// RMSD setting selects for the calculation
+std::map< rmsd_atoms, utility::vector1< std::string > >
+setup_rmsd_atom_names(){
+
+	std::map< rmsd_atoms, utility::vector1< std::string > > atom_names;
+	for ( core::Size i = 1; i <= core::Size(rmsd_all); ++i ) {
+		rmsd_atoms rmsd_type = static_cast<rmsd_atoms>(i);
+		utility::vector1< std::string > name_list;
+		atom_names[ rmsd_type ] = name_list;
+	}
+
+	//rmsd_bb_heavy
+	atom_names[ rmsd_protein_bb_heavy ].push_back( " N  ");
+	atom_names[ rmsd_protein_bb_heavy ].push_back( " CA ");
+	atom_names[ rmsd_protein_bb_heavy ].push_back( " C  ");
+
+	//rmsd_bb_heavy_including_0
+	atom_names[ rmsd_protein_bb_heavy_including_O] = atom_names[ rmsd_protein_bb_heavy];
+	atom_names[ rmsd_protein_bb_heavy_including_O].push_back( " O  ");
+
+	//NEED TO ADD GLYCAN BB HERE
+
+	//rmsd_bb_ca_only
+	atom_names[ rmsd_protein_bb_ca ].push_back( " CA ");
+
+	//OTHERS we will do as we go along and create the atom_id_map.
+
+	return atom_names;
+}
+
+std::map< std::string, rmsd_atoms >
+get_rmsd_type_name_map(){
+	std::map< std::string, rmsd_atoms > name_mapping;
+
+	name_mapping["rmsd_protein_bb_heavy"] = rmsd_protein_bb_heavy;
+	name_mapping["rmsd_protein_bb_heavy_including_O"] = rmsd_protein_bb_heavy_including_O;
+	name_mapping["rmsd_protein_bb_ca"] = rmsd_protein_bb_ca;
+	name_mapping["rmsd_sc_heavy"] = rmsd_sc_heavy;
+	name_mapping["rmsd_sc"] = rmsd_sc;
+	name_mapping["rmsd_all_heavy"] = rmsd_all_heavy;
+	name_mapping["rmsd_all"] = rmsd_all;
+	return name_mapping;
+}
+
+utility::vector1< std::string >
+get_rmsd_type_names(){
+	std::map< std::string, rmsd_atoms > name_mapping = get_rmsd_type_name_map();
+	utility::vector1< std::string > names;
+	for ( auto name_pair : name_mapping ) {
+		names.push_back(name_pair.first);
+	}
+	return names;
 }
 
 } // namespace core

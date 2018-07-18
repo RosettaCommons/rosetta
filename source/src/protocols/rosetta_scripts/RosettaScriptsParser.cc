@@ -34,6 +34,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
+#include <core/import_pose/import_pose.hh>
 #include <core/types.hh>
 
 // Basic headers
@@ -67,6 +68,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <basic/options/keys/mistakes.OptionKeys.gen.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <utility/options/keys/OptionKeyList.hh>
 
 #include <utility/io/izstream.hh>
@@ -119,7 +121,8 @@ RosettaScriptsParser::list_options_read( utility::options::OptionKeyList & read_
 		+ OptionKeys::parser::script_vars
 		+ OptionKeys::parser::inclusion_recursion_limit
 		+ OptionKeys::corrections::restore_talaris_behavior
-		+ OptionKeys::mistakes::restore_pre_talaris_2013_behavior;
+		+ OptionKeys::mistakes::restore_pre_talaris_2013_behavior
+		+ OptionKeys::in::file::native;
 
 	core::scoring::list_read_options_in_get_score_function( read_options );
 
@@ -202,6 +205,7 @@ RosettaScriptsParser::generate_mover_and_apply_to_pose(
 	basic::resource_manager::ResourceManagerOP resource_manager
 ){
 	debug_assert(options[ OptionKeys::parser::protocol ].user());
+
 	return generate_mover_and_apply_to_pose( pose, options, modified_pose, options[ OptionKeys::parser::protocol ](), current_input_name, current_output_name, nullptr, resource_manager );
 }
 
@@ -242,6 +246,7 @@ RosettaScriptsParser::generate_mover_and_apply_to_pose_xml_string(
 	std::string const & current_output_name,
 	XmlObjectsOP xml_objects /* = nullptr */
 ) {
+
 
 	modified_pose = false;
 	TagCOP tag = create_tag_from_xml_string( xml_text, options);
@@ -419,6 +424,10 @@ RosettaScriptsParser::generate_mover_for_protocol(
 	basic::resource_manager::ResourceManagerOP resource_manager
 )
 {
+	if ( options[ OptionKeys::in::file::native ].user() ) {
+		load_native( options[ OptionKeys::in::file::native ].value() );
+	}
+
 	protocols::rosetta_scripts::ParsedProtocolOP protocol( new protocols::rosetta_scripts::ParsedProtocol );
 
 	Movers_map movers;
@@ -473,6 +482,11 @@ RosettaScriptsParser::generate_mover_for_protocol(
 	data.add( "scorefxns", "score_docking_low", ScoreFunctionFactory::create_score_function( "interchain_cen" ) );
 	data.add( "scorefxns", "score4L", ScoreFunctionFactory::create_score_function( "cen_std", "score4L" ) );
 	//default scorefxns end
+
+	//If native is set, add it to the datamap as a resource instead of loading in each individual mover.  Works in JD3 as well to allow better benchmarking.
+	if ( native_pose_ ) {
+		data.add_resource("native_pose", native_pose_);
+	}
 
 	// Data Loaders -- each data loader handles one of the top-level blocks of a
 	// rosetta script.  These blocks are handled by the RosettaScriptsParser itself;
@@ -1108,6 +1122,11 @@ RosettaScriptsParser::has_double_percent_signs(
 
 }
 
+void
+RosettaScriptsParser::load_native( std::string const & native ){
+	TR << "Loading native resource as native_pose to the datamap " << std::endl;
+	native_pose_ = core::import_pose::pose_from_file( native , core::import_pose::PDB_file);
+}
 
 void
 RosettaScriptsParser::validate_input_script_against_xsd( std::string const & fname, std::stringstream const & input_xml ) const
