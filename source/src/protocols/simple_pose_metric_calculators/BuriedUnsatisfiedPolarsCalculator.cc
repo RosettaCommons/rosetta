@@ -324,6 +324,7 @@ BuriedUnsatisfiedPolarsCalculator::recompute( Pose const & this_pose )
 		if ( name_of_sasa_calc_ == "nondefault" ) { // if we need to update pore_radius, don't use default calculator with default radius
 			core::id::AtomID_Map< core::Real >temp_atom_sasa;
 			utility::vector1< core::Real > temp_residue_sasa;
+			core::scoring::calc_per_atom_sasa( this_pose, temp_atom_sasa, temp_residue_sasa, probe_radius_);
 			atom_sasa = temp_atom_sasa;
 			residue_sasa = temp_residue_sasa;
 		} else {
