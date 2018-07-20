@@ -1211,7 +1211,7 @@ MakeLatticeMover::add_monomers_to_lattice(
 			pose.prepend_polymer_residue_before_seqpos( monomer_pose.residue(j), old_nres_protein+1, false ); ++nres_protein;
 		}
 		for ( Size j=rootpos+1; j<= monomer_pose.size(); ++j ) {
-			if ( monomer_pose.residue(j).is_lower_terminus() ) {
+			if ( monomer_pose.residue(j).is_lower_terminus() || !monomer_pose.residue(j).is_polymer() ) {
 				pose.insert_residue_by_jump( monomer_pose.residue(j), nres_protein+1, nres_protein ); ++nres_protein;
 			} else {
 				pose.append_polymer_residue_after_seqpos( monomer_pose.residue(j), nres_protein, false ); ++nres_protein;
