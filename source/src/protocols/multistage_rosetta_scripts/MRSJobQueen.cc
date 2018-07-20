@@ -170,6 +170,14 @@ MRSJobQueen::determine_job_list(
 			std::pair< InnerLarvalJobOP, core::Size >( 0, num_jobs_per_input_for_stage_[ job_dag_node_index ] ) );
 
 		if ( job_dag_node_index > 1 ) {
+			auto const num_results_for_previous_stage = node_managers_[ job_dag_node_index - 1 ]->num_results_total();
+			auto const max_num_jobs_for_current_stage = num_jobs_per_input_for_stage_[ job_dag_node_index ] * num_results_for_previous_stage;
+			if ( max_num_jobs_for_current_stage < node_managers_[ job_dag_node_index ]->num_jobs() ) {
+				//It is possible that the node manager originally expected to be running more jobs but the previous stage did not fill its quota of results.
+				//In this case, we want to decrease the number of results expected by the node manager.
+				node_managers_[ job_dag_node_index ]->set_num_jobs( max_num_jobs_for_current_stage );
+			}
+
 			TR << "Total number of results for stage " << (job_dag_node_index - 1)
 				<< ": " << node_managers_[ job_dag_node_index - 1 ]->num_results_total() << std::endl;
 
@@ -306,10 +314,13 @@ void
 MRSJobQueen::completed_job_summary( core::Size job_id, core::Size result_index, JobSummaryOP summary ){
 	core::Size const stage = stage_for_global_job_id( job_id );
 
+	//TR << "completed_job_summary() for stage=" << stage << " and job_id=" << job_id << " and result_index=" << result_index << std::endl;
+
 	standard::EnergyJobSummary const & energy_summary =
 		static_cast< standard::EnergyJobSummary const & >( * summary );
 
 	if ( cluster_metric_tag_for_stage_[ stage ] ) {
+		//TR << "\tculster_metric_tag found" << std::endl;
 		MRSJobSummary const & mrs_summary =
 			static_cast< MRSJobSummary const & >( energy_summary );
 
@@ -317,6 +328,7 @@ MRSJobQueen::completed_job_summary( core::Size job_id, core::Size result_index, 
 	}
 
 	if ( max_num_results_to_keep_per_input_struct_for_stage_[ stage ] ) {
+		//TR << "\tmax_num_results_to_keep_per_input_struct_for_stage_[ stage ] found and equal to " << max_num_results_to_keep_per_input_struct_for_stage_[ stage ] << std::endl;
 
 		if ( stage == 1 ) {
 			node_managers_[ stage ]->register_result(
@@ -338,6 +350,7 @@ MRSJobQueen::completed_job_summary( core::Size job_id, core::Size result_index, 
 		node_managers_[ stage ]->register_result(
 			job_id, result_index, energy_summary.energy(), input_pose_id_for_jobid( job_id ) );
 	}
+
 	if ( stage == num_stages_ ) {
 		if ( node_managers_[ stage ]->all_results_are_in() ) {
 			TR << "Job Genealogy:" << std::endl;
@@ -349,9 +362,6 @@ MRSJobQueen::completed_job_summary( core::Size job_id, core::Size result_index, 
 std::list< jd3::JobResultID >
 MRSJobQueen::job_results_that_should_be_discarded(){
 	std::list< jd3::JobResultID > list_of_all_job_results_to_be_discarded;
-	/*list_of_all_job_results_to_be_discarded.splice(
-	list_of_all_job_results_to_be_discarded.end(),
-	results_to_be_discarded_ );*/
 
 	for ( core::Size stage = num_stages_; stage > 0; --stage ) {
 		//Add job results that are being discarded because they did not score well enough
@@ -417,13 +427,14 @@ MRSJobQueen::jobs_that_should_be_output() {
 
 		debug_assert( res_elem_os );
 
-		// unsigned int const prelim_lar_job_for_elem = job_genealogist_->input_source_for_job( num_stages_, res_elem.global_job_id );
 		JobOutputIndex index;
 		assign_output_index( res_elem.global_job_id, res_elem.local_result_id, index );
 		res_elem_os->output_index( index );
 
 		list_to_return.push_back( res_elem_os );
 	}
+
+	TR << "Preparing to output " << list_to_return.size() << " results!" << std::endl;
 
 	return list_to_return;
 }

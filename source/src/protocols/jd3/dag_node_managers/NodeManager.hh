@@ -101,13 +101,13 @@ public:
 
 	///@brief This class can be used to determine which job should be submitted next.
 	/// A value of 0 means that we are done submitting for this dag node
-	inline core::Size get_next_local_jobid() {
+	core::Size get_next_local_jobid() {
 		if ( done_submitting() ) return 0;
 		return ++num_jobs_submitted_;
 	}
 
 	///@brief This does not erase the list! We just add job result ids that have been eliminated from the results to keep
-	inline void append_job_results_that_should_be_discarded(
+	void append_job_results_that_should_be_discarded(
 		std::list< jd3::JobResultID > & list
 	){
 		list.splice( list.end(), job_results_that_should_be_discarded_ );
@@ -118,21 +118,21 @@ public:
 
 public://status checkers
 
-	inline bool done_submitting() const {
+	bool done_submitting() const {
 		return stopped_early_ || num_jobs_submitted_ == num_jobs_total_;
 	}
 
-	inline bool jobs_are_still_running(){
+	bool jobs_are_still_running(){
 		return num_jobs_completed_ < num_jobs_submitted_;
 	}
 
-	inline bool all_results_are_in() const {
+	bool all_results_are_in() const {
 		return done_submitting()
 			&& num_jobs_submitted_ == num_jobs_completed_
 			&& num_results_received_ == num_results_total_;
 	}
 
-	inline bool all_waste_is_discarded() const {
+	bool all_waste_is_discarded() const {
 		return all_results_are_in() && job_results_that_should_be_discarded_.empty();
 	}
 
@@ -141,33 +141,37 @@ public: //getters, setters
 	///@brief old way to access the results. get_nth_job_result_id() is prefered.
 	utility::vector1< ResultElements > results_to_keep();
 
-	inline core::Size num_jobs() const {
+	core::Size num_jobs() const {
 		return num_jobs_total_;
 	}
 
-	inline core::Size num_jobs_submitted() const {
+	void set_num_jobs( core::Size new_num_jobs ){
+		num_jobs_total_ = new_num_jobs;
+	}
+
+	core::Size num_jobs_submitted() const {
 		return num_jobs_submitted_;
 	}
 
-	inline core::Size num_jobs_completed() const {
+	core::Size num_jobs_completed() const {
 		return num_jobs_completed_;
 	}
 
-	inline core::Size num_results_to_keep() const {
+	core::Size num_results_to_keep() const {
 		return num_results_to_keep_;
 	}
 
-	inline core::Size job_offset() const {
+	core::Size job_offset() const {
 		return job_offset_;
 	}
 
-	inline core::Size num_results_total() const {
+	core::Size num_results_total() const {
 		return num_results_total_;
 	}
 
-	inline void stop_early(){ stopped_early_ = true; }
+	void stop_early(){ stopped_early_ = true; }
 
-	inline bool stopped_early() const { return stopped_early_; };
+	bool stopped_early() const { return stopped_early_; };
 
 	///@brief Perhaps you have a diversity requirement and do not want too many results with the same token
 	/// (token can represent anything you want - as long as it can be stored as a core::Size), this setting is for you.
@@ -182,11 +186,11 @@ public: //getters, setters
 	}
 
 protected:
-	inline core::Size num_results_received(){
+	core::Size num_results_received(){
 		return num_results_received_;
 	}
 
-	inline bool ready_to_finish_early() const {
+	bool ready_to_finish_early() const {
 		for ( core::Size ii = 1; ii <= num_partitions_; ++ii ) {
 			if ( num_results_received_for_part_[ ii ] < result_threshold_per_part_[ ii ] ) {
 				return false;
