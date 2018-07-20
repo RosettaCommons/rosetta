@@ -68,8 +68,9 @@ class PythonLoggingSink(rosetta.basic.PyTracer):
         self.set_ios_hook(None, '')
 
     def output_callback(self, logstring):
-        _logger.info(logstring.strip())
-
+        logstring = logstring.strip()
+        if logstring:
+            _logger.info(logstring)
 
 def set_logging_sink():
     """Redirect all rosetta trace output through the logging.Logger 'rosetta'."""

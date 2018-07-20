@@ -9,10 +9,28 @@
 
 import warnings
 
-from pyrosetta.rosetta.core.pose import Pose
+import itertools
+try:
+    from collections.abc import Sized, Iterable, MutableSet, MutableMapping, Mapping
+except ImportError:
+    # these types are in the collections module in python < 3.3
+    from collections import Sized, Iterable, MutableSet, MutableMapping, Mapping
+
+from ..rosetta.core.pose import Pose
+from pyrosetta.rosetta.core.pose import (
+    getPoseExtraFloatScores,
+    getPoseExtraStringScores,
+    setPoseExtraScore,
+    hasPoseExtraScore,
+    clearPoseExtraScore,
+    clearPoseExtraScores,
+)
 from pyrosetta.rosetta.core.pose import remove_upper_terminus_type_from_pose_residue
 from pyrosetta.rosetta.core.pose import add_upper_terminus_type_to_pose_residue
 from pyrosetta.rosetta.core.conformation import Residue
+from pyrosetta.rosetta.core.scoring import ScoreType
+from pyrosetta.bindings.utility import slice_1base_indicies, bind_method, bind_property
+from pyrosetta.distributed.utility.pickle import __cereal_getstate__, __cereal_setstate__
 
 from pyrosetta.rosetta.core.select import get_residues_from_subset
 from pyrosetta.rosetta.core.select.residue_selector import TrueResidueSelector, NeighborhoodResidueSelector
@@ -20,7 +38,26 @@ from pyrosetta.rosetta.core.select.residue_selector import ResidueIndexSelector,
 from pyrosetta.rosetta.core.select.residue_selector import PrimarySequenceNeighborhoodSelector
 from pyrosetta.rosetta.core.select.residue_selector import NotResidueSelector
 
-from pyrosetta.bindings.utility import slice_1base_indicies, bind_method, bind_property
+
+def __pose_getstate__(pose):
+    if pose.constraint_set().n_sequence_constraints() > 0:
+        warnings.warn(
+            "Pose pickling does not support sequence constraints.",
+            UserWarning,
+            stacklevel=2
+        )
+
+        work_pose = Pose()
+        work_pose.detached_copy(pose)
+        work_pose.constraint_set().clear_sequence_constraints()
+
+        return __pose_getstate__(work_pose)
+
+    return __cereal_getstate__(pose)
+
+
+Pose.__getstate__ = __pose_getstate__
+Pose.__setstate__ = __cereal_setstate__
 
 
 @bind_method(Pose)
@@ -75,7 +112,7 @@ def residue_pairs(self,
             yield tuple([self.residues[primary_residue_index], self.residues[secondary_residue_index]])
 
 
-class PoseResidueAccessor(object):
+class PoseResidueAccessor(Sized, Iterable):
     """Accessor wrapper for pose objects providing a collection-like interface."""
 
     def __init__(self, pose):
@@ -88,6 +125,15 @@ class PoseResidueAccessor(object):
     def __iter__(self):
         """Iterate over the residues within pose."""
         for i in range(1, len(self) + 1):
+            yield self.pose.residue(i)
+
+    def __reversed__(self):
+        """Iterate over the residues within pose in reverse order.
+        Must provide __reversed__ as accessor object does not support 0-based
+        indexing for the sequence protocol.
+        """
+
+        for i in range(len(self), 0, -1):
             yield self.pose.residue(i)
 
     def __getitem__(self, key):
@@ -170,6 +216,225 @@ def __residue_accessor(self, accessor):
 
 Pose.residues = __residue_accessor
 
+
+class ResidueLabelAccessor(MutableSet):
+    """Accessor wrapper for a single residue's labels providing a mutable-set interface."""
+    __slots__ = ("pdb_info", "res")
+
+    def __init__(self, pdb_info, res):
+        self.pdb_info = pdb_info
+        self.res = res
+
+    def __contains__(self, label):
+        return self.pdb_info.res_haslabel(self.res, label)
+
+    def __iter__(self):
+        return iter(self.pdb_info.get_reslabels(self.res))
+
+    def __len__(self):
+        return len(self.pdb_info.get_reslabels(self.res))
+
+    def add(self, label):
+        self.pdb_info.add_reslabel(self.res, label)
+
+    def clear(self):
+        self.pdb_info.clear_reslabel(self.res)
+
+    def discard(self, label):
+        labels = set(self)
+        if label not in labels:
+            return
+
+        self.clear()
+        labels.discard(label)
+        for l in labels:
+            self.add(l)
+
+    def __str__(self):
+        return str(set(self))
+
+    def _repr_pretty_(self, p, cycle):
+        """IPython-display representation."""
+        p.pretty(set(self))
+
+    def __repr__(self):
+        return "ResidueLabelAccessor(pdb_info=%r, res=%r)" % (self.pdb_info, self.res)
+
+
+class PoseResidueLabelMaskAccessor(Mapping):
+    """Accessor wrapper for residue label masks."""
+    __slots__ = ("label_accessor",)
+
+    def __init__(self, label_accessor):
+        self.label_accessor = label_accessor
+
+    def keys(self):
+        return frozenset(
+            itertools.chain.from_iterable(self.label_accessor))
+
+    def __getitem__(self, label):
+        return [label in r for r in self.label_accessor]
+
+    def __len__(self):
+        return len(self.keys())
+
+    def __iter__(self):
+        return iter(self.keys())
+
+class PoseResidueLabelAccessor(object):
+    """Accessor wrapper for a pose's residue labels as a 1-indexed-collection of sets."""
+    __slots__ = ("pose",)
+
+    @property
+    def mask(self):
+        return PoseResidueLabelMaskAccessor(self)
+
+    def __init__(self, pose):
+        self.pose = pose
+
+    def __len__(self):
+        return self.pose.pdb_info().nres()
+
+    def __iter__(self):
+        return (self[res] for res in range(1, len(self) + 1))
+
+    def __reversed__(self):
+        return (self[res] for res in range(len(self), 0, -1))
+
+    def __getitem__(self, key):
+        """1-based index and slice over residue labels."""
+        if isinstance(key, slice):
+            return (self[i] for i in range(*slice_1base_indicies(key, len(self))))
+        else:
+            if key == 0:
+                raise IndexError("1 base indexing does not support 0 index")
+            if key < 0:
+                key = len(self) + 1 + key
+            return ResidueLabelAccessor(self.pose.pdb_info(), key)
+
+    def __str__(self):
+        return list(map(set, self))
+
+    def _repr_pretty_(self, p, cycle):
+        """IPython-display representation."""
+        p.pretty(list(self))
+
+    def __repr__(self):
+        return "PoseResidueLabelAccessor(pose=%s)" % self.pose
+
+
+@bind_property(Pose)  # noqa: F811
+def __reslabels_accessor(self):
+    return PoseResidueLabelAccessor(self)
+
+
+@Pose.__reslabels_accessor.setter
+def __reslabels_accessor(self, accessor):
+    if not isinstance(accessor, PoseResidueLabelAccessor) or accessor.pose is not self:
+        raise AttributeError("Can't set reslabels accessor.")
+    pass
+
+
+Pose.reslabels = __reslabels_accessor
+
+class PoseScoreAccessor(MutableMapping):
+    """Accessor wrapper for pose energies and extra scores."""
+    __slots__ = ("pose",)
+
+    _reserved = {
+        k for k in ScoreType.__dict__.keys() if not k.startswith("_")
+    }
+
+    def __init__(self, pose):
+        self.pose = pose
+
+    @property
+    def extra(self):
+        import types
+        return types.MappingProxyType(dict(
+            list(getPoseExtraFloatScores(self.pose).items()) +
+            list(getPoseExtraStringScores(self.pose).items())
+        ))
+
+    @property
+    def energies(self):
+        import types
+        return types.MappingProxyType(
+            self.pose.energies().active_total_energies()
+        )
+
+    @property
+    def all(self):
+        import types
+        return types.MappingProxyType(dict(
+            list(getPoseExtraFloatScores(self.pose).items()) +
+            list(getPoseExtraStringScores(self.pose).items()) +
+            list(self.pose.energies().active_total_energies().items())
+        ))
+
+    def __len__(self):
+        return len(self.all)
+
+    def __iter__(self):
+        return iter(self.all)
+
+    def __getitem__(self, key):
+        return self.all[key]
+
+    def __setitem__(self, key, value):
+        if key in self._reserved:
+            raise ValueError(
+                "Can not set score key with reserved energy name: %r" % key)
+
+        # Bit of a two-step to deal with potential duplicate keys in the
+        # score maps. First check if a key, of either type, exists. If so
+        # *try* to set the extra score, triggering type conversion checking
+        # etc...
+        #
+        # If set is successful then clear the score cache and set again,
+        # eliminating any potential duplicate keys.
+        had_score = key in self
+
+        setPoseExtraScore(self.pose, key, value)
+        if had_score:
+            self.__delitem__(key)
+            setPoseExtraScore(self.pose, key, value)
+
+    def __delitem__(self, key):
+        if key in self._reserved:
+            raise ValueError(
+                "Can not delete score key with reserved energy name: %r "
+                "Consider 'pose.scores.clear()' or 'pose.energies().clear()'"
+                % key
+            )
+
+        if not hasPoseExtraScore(self.pose, key):
+            raise KeyError(key)
+
+        clearPoseExtraScore(self.pose, key)
+
+    def clear(self):
+        self.pose.energies().clear()
+        clearPoseExtraScores(self.pose)
+
+    def __str__(self):
+        return str(dict(self))
+
+    def _repr_pretty_(self, p, cycle):
+        """IPython-display representation."""
+        p.pretty(dict(self))
+
+@bind_property(Pose)  # noqa: F811
+def __scores_accessor(self):
+    return PoseScoreAccessor(self)
+
+@Pose.__scores_accessor.setter
+def __scores_accessor(self, accessor):
+    if not isinstance(accessor, PoseScoreAccessor) or accessor.pose is not self:
+        raise AttributeError("Can't set scores accessor.")
+    pass
+
+Pose.scores = __scores_accessor
 
 # Deprecated Bindings - 19/11/17
 @bind_method(Pose)

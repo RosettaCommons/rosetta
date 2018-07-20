@@ -19,7 +19,8 @@ import urllib
 
 import pyrosetta.rosetta as rosetta
 
-from pyrosetta import Pose, pose_from_file
+from pyrosetta import pose_from_file
+from pyrosetta.rosetta.core.pose import Pose
 
 # other tools
 from pyrosetta.toolbox.cleaning import cleanATOM, cleanCRYS

@@ -124,16 +124,15 @@ def sample_folding(sequence,
         Output structures are named  <job_output>_(job#).pdb
     """
     # 1. create a pose from the desired sequence (fullatom)
-    pose = Pose()
-    # the method make_pose_from_sequence produces a complete IDEALIZED
-    #    protein conformation of the input sequence, the ResidueTypeSet (third
+    # the method pose_from_sequence produces a complete IDEALIZED
+    #    protein conformation of the input sequence, the ResidueTypeSet (second
     #    argument below) may be varied, and this method supports non-proteogenic
     #    chemistry (though it is still a Rosetta Residue). however this syntax
     #    is more involved and not robust to user errors, and not presented here
     # small differences in bond lengths and bond angles WILL change the results,
     #### if you desire an alternate starting conformation, alter steps
     ####     1. and 2. as you please
-    make_pose_from_sequence(pose, sequence, 'fa_standard')
+    pose = pose_from_sequence(sequence, 'fa_standard')
 
     # 2. linearize the pose by setting backbone torsions to large values
     # the method make_pose_from_sequence does not create the new pose's

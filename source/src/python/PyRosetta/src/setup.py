@@ -68,6 +68,14 @@ def setup_package():
             },
             distclass = PyRosettaDistribution,
             zip_safe = False,
+            extras_require = {
+                "distributed" : [
+                    "numpy",
+                    "pandas",
+                    "blosc",
+                    "traitlets",
+                ]
+            }
         )
     finally:
         os.chdir(old_path)

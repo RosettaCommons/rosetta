@@ -32,10 +32,10 @@ from pyrosetta.rosetta.protocols.moves import PyMOLMover, SequenceMover, RepeatM
 from pyrosetta.rosetta.protocols.simple_moves import SwitchResidueTypeSetMover
 from pyrosetta.rosetta.protocols.loops import get_fa_scorefxn
 
-from pyrosetta.io import *
+from pyrosetta.io import pose_from_pdb, pose_from_file, pose_from_sequence, poses_from_silent, Pose
 
-get_score_function = rosetta.core.scoring.get_score_function
-create_score_function = rosetta.core.scoring.ScoreFunctionFactory.create_score_function
+from pyrosetta.rosetta.core.scoring import get_score_function
+create_score_function = pyrosetta.rosetta.core.scoring.ScoreFunctionFactory.create_score_function
 
 rosetta.utility.vector1_string = rosetta.utility.vector1_std_string
 

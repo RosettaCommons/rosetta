@@ -11,11 +11,13 @@ import pyrosetta.rosetta as rosetta
 
 from pyrosetta.rosetta.core.pose import make_pose_from_sequence, Pose
 from pyrosetta.rosetta.core.import_pose import pose_from_file
+from pyrosetta.io.silent_file_map import SilentFileMap
 
 # for backward-compatibility
 # This needs to be here because of all the people using the Workshops and
 # because otherwise, it wrecks a lot of people's scripts.  ~Labonte
-def pose_from_pdb(filename): return pose_from_file(filename)
+def pose_from_pdb(filename):
+    return pose_from_file(filename)
 
 
 def pose_from_sequence(seq, res_type="fa_standard", auto_termini=True):

@@ -77,6 +77,7 @@ def get_defines():
     if Platform == 'macos': defines += ' UNUSUAL_ALLOCATOR_DECLARATION'
     if Options.type in 'Release MinSizeRel': defines += ' NDEBUG'
     if Options.serialization: defines += ' SERIALIZATION'
+    if Options.multi_threaded: defines += ' MULTI_THREADED'
     return defines.split()
 
 
@@ -567,8 +568,11 @@ def generate_bindings(rosetta_source_path):
 
     for i in all_includes: signature_update(i); signature_update( str( os.path.getmtime(rosetta_source_path+'/src/'+i) ) )
     for s in serialization_instantiation: signature_update(s)
-
-    with open(Options.binder_config) as f: config = f.read()
+    
+    binder_config = list(Options.binder_config)
+    config = ''
+    for config_file in binder_config:
+        with open(config_file) as f: config += f.read()
     if 'clang' not in Options.compiler: config += open('rosetta.gcc.config').read()
     with open(prefix + 'rosetta.config', 'w') as f: f.write(config)
     signature_update(config)
@@ -737,7 +741,7 @@ def main(args):
     parser.add_argument('--compiler', default='clang', help='Compiler to use, defualt is clang')
     parser.add_argument('--binder', default='', help='Path to Binder tool. If none is given then download, build and install binder into main/source/build/prefix. Use "--binder-debug" to control which mode of binder (debug/release) is used.')
     parser.add_argument("--binder-debug", action="store_true", help="Run binder tool in debug mode (only relevant if no '--binder' option was specified)")
-    parser.add_argument("--binder-config", default="rosetta.config", help="Binder config file. [Default='rosetta.config']")
+    parser.add_argument("--binder-config", action="append", default=["rosetta.config"], help="Binder config file. [Default='rosetta.config']")
     parser.add_argument("--print-build-root", action="store_true", help="Print path to where PyRosetta binaries will be located with given options and exit. Use this option to automate package creation.")
     parser.add_argument('--cross-compile', action="store_true", help='Specify for cross-compile build')
     parser.add_argument('--pybind11', default='', help='Path to pybind11 source tree')
@@ -754,6 +758,7 @@ def main(args):
     parser.add_argument('--gcc-install-prefix', default=None, help='Path to GCC install prefix which will be used to determent location of libstdc++ for Binder build. Default is: auto-detected. Use this option if you would like to build Binder with compiler that was side-installed and which LLVM build system failed to identify. To see what path Binder uses for libstdc++ run `binder -- -xc++ -E -v`.')
 
     parser.add_argument('--serialization', action="store_true", help="Build PyRosetta with serialization enabled (off by default)")
+    parser.add_argument('--multi-threaded', action="store_true", help="Build PyRosetta with multi_threaded enabled (off by default)")
 
     parser.add_argument('--binder-extra-options', default=None, help='Specify Binder extra (LLVM) options. Use this to point Binder to additional include dir or add/change LLVM flags. For example on Mac with no Xcode install set this to "-isystem /Library/Developer/CommandLineTools/usr/include/c++/v1" to point Binder to correct location of system includes.')
 

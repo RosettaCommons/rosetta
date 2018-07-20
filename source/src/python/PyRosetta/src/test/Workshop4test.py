@@ -118,8 +118,7 @@ movemap = MoveMap()
 movemap.set_bb(True)
 mover_3mer = protocols.simple_moves.ClassicFragmentMover(fragset, movemap)
 
-pose = Pose()
-make_pose_from_sequence(pose, "RFPMMSTFKVLLCGAVLSRIDAG", "centroid")
+pose = pose_from_sequence("RFPMMSTFKVLLCGAVLSRIDAG", "centroid")
 for res in range(1, p.total_residue() + 1):
     pose.set_omega(res, 180)
 

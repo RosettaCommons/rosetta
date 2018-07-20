@@ -40,6 +40,7 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/carbohydrates/util.hh>
+#include <core/pose/selection.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/util.hh>
 
@@ -203,8 +204,11 @@ read_additional_pdb_data(
 			}
 			//Check that we have at least two elements left ([1]=index, [2-n]=PDBinfo-labels)
 			if ( remark_values.size() > 1 ) {
-				core::Size tmp_ndx=atoi(remark_values[1].c_str());
-				if ( tmp_ndx <= pose.size() ) {
+				core::Size tmp_ndx = parse_resnum(remark_values[1], pose);
+				TR.Debug << "pose_io:: PDBinfo-LABEL io: " << line << " parsed: " << tmp_ndx << std::endl;
+
+				//Parse resnum returns 0 on parse error
+				if ( (tmp_ndx != 0) && (tmp_ndx <= pose.size()) ) {
 					for ( Size j=2; j<= remark_values.size(); ++j ) {
 						pose.pdb_info()->add_reslabel(tmp_ndx,remark_values[j]);
 					}
@@ -636,12 +640,10 @@ pose_from_pdbstring(
 	std::string const & filename
 )
 {
-	io::StructFileRepOP sfr( io::pdb::create_sfr_from_pdb_file_contents( pdbcontents, options ).clone() );
-	sfr->filename() = filename;
 	chemical::ResidueTypeSetCOP residue_set
 		( pose.residue_type_set_for_pose( chemical::FULL_ATOM_t ) );
-	core::import_pose::build_pose( sfr, pose, *residue_set, options );
 
+	pose_from_pdbstring(pose, pdbcontents, *residue_set, options, filename );
 }
 
 void
@@ -678,6 +680,7 @@ pose_from_pdbstring(
 	io::StructFileRepOP sfr( io::pdb::create_sfr_from_pdb_file_contents( pdbcontents, options ).clone() );
 	sfr->filename() = filename;
 	core::import_pose::build_pose( sfr, pose, residue_set, options);
+	read_additional_pdb_data( pdbcontents, pose, options, options.read_fold_tree() );
 }
 
 void pose_from_pdb_stream(
@@ -691,7 +694,6 @@ void pose_from_pdb_stream(
 
 	chemical::ResidueTypeSetCOP residue_set( pose.residue_type_set_for_pose( options.residue_type_set_mode() ) );
 	pose_from_pdbstring( pose, pdb_file_contents, *residue_set, options, filename);
-	read_additional_pdb_data( pdb_file_contents, pose, options, options.read_fold_tree() );
 }
 
 void

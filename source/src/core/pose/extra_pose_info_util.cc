@@ -324,6 +324,43 @@ bool getPoseExtraScore(
 	return true;
 }
 
+
+std::map<std::string, float>
+getPoseExtraFloatScores( core::pose::Pose const & pose ){
+	using basic::datacache::CacheableStringFloatMap;
+	using basic::datacache::CacheableStringFloatMapCOP;
+
+	// make sure that the pose has one of these.
+	if ( !pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) ) {
+		return std::map<std::string, float>();
+	}
+
+	CacheableStringFloatMapCOP data
+		= utility::pointer::dynamic_pointer_cast< CacheableStringFloatMap const >
+		( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) );
+	debug_assert( data.get() != nullptr );
+
+	return data->map();
+}
+
+std::map<std::string, std::string>
+getPoseExtraStringScores( core::pose::Pose const & pose ){
+	using basic::datacache::CacheableStringMap;
+	using basic::datacache::CacheableStringMapCOP;
+
+	// make sure that the pose has one of these.
+	if ( !pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA ) ) {
+		return std::map<std::string, std::string>();
+	}
+
+	CacheableStringMapCOP data
+		= utility::pointer::dynamic_pointer_cast< CacheableStringMap const >
+		( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA ) );
+	debug_assert( data.get() != nullptr );
+
+	return data->map();
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void setPoseExtraScore(
 	core::pose::Pose & pose,

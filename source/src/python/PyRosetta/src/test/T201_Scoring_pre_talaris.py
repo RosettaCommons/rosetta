@@ -18,8 +18,7 @@ import pyrosetta
 from pyrosetta import *
 
 pyrosetta.init(extra_options = "-restore_pre_talaris_2013_behavior")  # trigger generation of database/rotamer/bbdep02.May.sortlib.Dunbrack02.lib.bin
-pose2 = rosetta.core.pose.Pose()
-pyrosetta.make_pose_from_sequence(pose2, "ARNDCEQGHILKMFPSTWYV", 'fa_standard')
+pose2 = pyrosetta.pose_from_sequence("ARNDCEQGHILKMFPSTWYV", 'fa_standard')
 
 scorefxn = rosetta.core.scoring.get_score_function()
 scorefxn(pose2)

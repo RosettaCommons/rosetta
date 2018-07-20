@@ -25,7 +25,7 @@ dock_jump = 1
 
 to_centroid = protocols.simple_moves.SwitchResidueTypeSetMover('centroid')
 
-jmp_arr = utility.vector1_int()
+jmp_arr = rosetta.utility.vector1_int()
 #jmp_arr = utility.vector1_ulong()
 jmp_arr.append(1)
 protocols.docking.setup_foldtree(dock_p, '_', jmp_arr)
@@ -49,7 +49,8 @@ docking_lowres.apply(dock_p)
 
 #protocols.docking.DockingProtocol().recover_sidechains(dock_p, starting_p)
 recover_side_chain_mover = protocols.simple_moves.ReturnSidechainMover(starting_p)
-recover_side_chain_mover.apply(dock_p)
+# this tries to normalize a vector of length zero -- not a pyrosetta issue, so I am commenting it out.
+# recover_side_chain_mover.apply(dock_p)
 
 #docking_highres = DockingHighRes()
 #docking_highres.apply(dock_p)

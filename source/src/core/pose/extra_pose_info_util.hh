@@ -140,6 +140,14 @@ setPoseExtraScore(
 	std::string const & value
 );
 
+std::map<std::string, float> getPoseExtraFloatScores(
+	core::pose::Pose const & pose
+);
+
+std::map<std::string, std::string> getPoseExtraStringScores(
+	core::pose::Pose const & pose
+);
+
 //////////////////////////////////////////////////////////////
 //// Pose Comments - REQUIRE output options -pdb_comments ////
 //////////////////////////////////////////////////////////////

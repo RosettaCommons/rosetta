@@ -30,15 +30,13 @@ scorefxn = rosetta.core.scoring.get_score_function()
 scorefxn(pose)
 
 
-pose2 = rosetta.core.pose.Pose()
-pyrosetta.make_pose_from_sequence(pose2, "ARNDCEQGHILKMFPSTWYV", 'fa_standard')
+pose2 = pyrosetta.pose_from_sequence("ARNDCEQGHILKMFPSTWYV", 'fa_standard')
 
 scorefxn = rosetta.core.scoring.get_score_function()
 scorefxn(pose2)
 
 
-pose3 = Pose()
-pyrosetta.make_pose_from_sequence(pose3, "DSEEKFLRRIGRFGYGYGPYE",'centroid')
+pose3 = pyrosetta.pose_from_sequence("DSEEKFLRRIGRFGYGYGPYE",'centroid')
 
 # Creating standard centroid score function and scoring
 scorefxn = rosetta.core.scoring.ScoreFunctionFactory.create_score_function('score3')

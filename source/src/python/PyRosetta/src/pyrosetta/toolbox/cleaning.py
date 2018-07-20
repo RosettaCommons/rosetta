@@ -16,7 +16,8 @@ from __future__ import print_function
 
 import os
 
-from pyrosetta import Pose, pose_from_file
+from pyrosetta import pose_from_file
+from pyrosetta.rosetta.core.pose import Pose
 
 # removes non ATOM lines from  <pdb_file>  and writes to  <out_file>
 def cleanATOM( pdb_file , out_file = '', edit = -4 ):

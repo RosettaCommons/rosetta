@@ -27,12 +27,10 @@ pose = pose_from_file("../test/data/test_in.pdb")
 # TODO: rename pose_from_file or make_pose_from_sequence to be parallel
 
 print('Building Pose from sequence...')
-pose3 = Pose()
-make_pose_from_sequence(pose3, "DSEEKFLRRIGRFGYGYGPYE",'centroid')
+pose3 = pose_from_sequence("DSEEKFLRRIGRFGYGYGPYE",'centroid')
 print(pose3)
 
-pose4 = Pose()
-make_pose_from_sequence(pose4, "ARNDCEQGHILKMFPSTWYV", 'fa_standard')
+pose4 = pose_from_sequence("ARNDCEQGHILKMFPSTWYV", 'fa_standard')
 
 
 print('Dump PDB...')
