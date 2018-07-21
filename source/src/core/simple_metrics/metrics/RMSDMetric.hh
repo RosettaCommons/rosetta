@@ -146,7 +146,7 @@ public:
 	clone() const override;
 
 private:
-	
+
 	///@brief Setup Str to rmsd_atom map
 	void
 	setup_name_mapping();

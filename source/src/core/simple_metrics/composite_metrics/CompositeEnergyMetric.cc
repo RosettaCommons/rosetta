@@ -163,7 +163,7 @@ CompositeEnergyMetric::parse_my_tag(
 	if ( tag->hasOption("reference_name") ) {
 		ref_pose_ = saved_reference_pose(tag, datamap, "reference_name");
 		TR<<"Loaded reference pose: "<<tag->getOption< std::string >( "reference_name" )<<" with "<<ref_pose_->size()<<" residues"<<std::endl;
-	} else if ( tag->getOption< bool > ("use_native", false) && datamap.has_resource("native_pose")){
+	} else if ( tag->getOption< bool > ("use_native", false) && datamap.has_resource("native_pose") ) {
 		ref_pose_ = saved_native_pose(datamap);
 	}
 }
@@ -196,7 +196,7 @@ CompositeEnergyMetric::calculate(const core::pose::Pose & ext_pose) const {
 
 	core::pose::Pose local_pose = ext_pose;
 	core::pose::PoseOP local_ref_pose;
-	if (ref_pose_){
+	if ( ref_pose_ ) {
 		local_ref_pose = core::pose::PoseOP( new core::pose::Pose( * ref_pose_));
 	}
 	ScoreFunctionOP local_scorefxn;

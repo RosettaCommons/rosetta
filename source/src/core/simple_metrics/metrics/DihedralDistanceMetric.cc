@@ -159,7 +159,7 @@ DihedralDistanceMetric::parse_my_tag(
 	if ( tag->hasOption("reference_name") ) {
 		ref_pose_ = saved_reference_pose(tag, datamap, "reference_name");
 		TR<<"Loaded reference pose: "<<tag->getOption< std::string >( "reference_name" )<<" with "<<ref_pose_->size()<<" residues"<<std::endl;
-	} else if ( tag->getOption< bool > ("use_native", false) && datamap.has_resource("native_pose")){
+	} else if ( tag->getOption< bool > ("use_native", false) && datamap.has_resource("native_pose") ) {
 		ref_pose_ = saved_native_pose(datamap);
 	} else {
 		std::string msg = "A reference pose must be set. Please use the SavePoseMover (embed the RMSDMetric in RunSimpleMetrics) or pass the native as in:file:native and set use_native to true.";

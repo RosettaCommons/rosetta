@@ -133,10 +133,10 @@ TotalEnergyMetric::metric() const {
 /*
 void
 TotalEnergyMetric::load_native_pose_as_reference(){
-	TR << "Loading native as reference pose " << std::endl;
-	if ( option[ OptionKeys::in::file::native ].user() ) {
-		ref_pose_ = core::import_pose::pose_from_file( option[ OptionKeys::in::file::native ].value() , core::import_pose::PDB_file);
-	}
+TR << "Loading native as reference pose " << std::endl;
+if ( option[ OptionKeys::in::file::native ].user() ) {
+ref_pose_ = core::import_pose::pose_from_file( option[ OptionKeys::in::file::native ].value() , core::import_pose::PDB_file);
+}
 }
 */
 
@@ -159,7 +159,7 @@ TotalEnergyMetric::parse_my_tag(
 	if ( tag->hasOption("reference_name") ) {
 		ref_pose_ = saved_reference_pose(tag, datamap, "reference_name");
 		TR<<"Loaded reference pose: "<<tag->getOption< std::string >( "reference_name" )<<" with "<<ref_pose_->size()<<" residues"<<std::endl;
-	} else if ( tag->getOption< bool > ("use_native", false) && datamap.has_resource("native_pose")){
+	} else if ( tag->getOption< bool > ("use_native", false) && datamap.has_resource("native_pose") ) {
 		ref_pose_ = saved_native_pose(datamap);
 	}
 
@@ -193,26 +193,26 @@ TotalEnergyMetric::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 core::Real
 TotalEnergyMetric::calculate(const core::pose::Pose & pose) const {
 	using namespace core::simple_metrics::per_residue_metrics;
-	
+
 
 
 	PerResidueEnergyMetric e_metric = PerResidueEnergyMetric();
-	
+
 	e_metric.set_scoretype(total_score);
-	
-	if (residue_selector_){
+
+	if ( residue_selector_ ) {
 		e_metric.set_residue_selector(residue_selector_);
 	}
-	
+
 	e_metric.set_scorefunction(scorefxn_);
 
-	if (ref_pose_ ){
+	if ( ref_pose_ ) {
 		e_metric.set_comparison_pose(ref_pose_);
 	}
-	
+
 	std::map< core::Size, core::Real > energies = e_metric.calculate( pose );
 	core::Real total_energy = 0;
-	for (auto res_e_pair : energies){
+	for ( auto res_e_pair : energies ) {
 		total_energy+= res_e_pair.second;
 	}
 	return total_energy;

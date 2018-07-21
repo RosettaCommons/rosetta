@@ -46,15 +46,15 @@ static basic::Tracer TR( "core.simple_metrics.per_residue_metrics.PerResidueRMSD
 namespace core {
 namespace simple_metrics {
 namespace per_residue_metrics {
-	
+
 using namespace core::scoring;
 using namespace core::pose;
 using namespace core::select::residue_selector;
 using namespace utility;
 
-	/////////////////////
-	/// Constructors  ///
-	/////////////////////
+/////////////////////
+/// Constructors  ///
+/////////////////////
 
 /// @brief Default constructor
 PerResidueRMSDMetric::PerResidueRMSDMetric():
@@ -134,8 +134,8 @@ PerResidueRMSDMetric::set_rmsd_type(scoring::rmsd_atoms rmsd_type){
 
 void
 PerResidueRMSDMetric::parse_my_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & datamap)
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & datamap)
 {
 
 	SimpleMetric::parse_base_tag( tag );
@@ -150,7 +150,7 @@ PerResidueRMSDMetric::parse_my_tag(
 	if ( tag->hasOption("reference_name") ) {
 		ref_pose_ = saved_reference_pose(tag, datamap, "reference_name");
 		TR<<"Loaded reference pose: "<<tag->getOption< std::string >( "reference_name" )<<" with "<<ref_pose_->size()<<" residues"<<std::endl;
-	} else if ( tag->getOption<bool>("use_native", false) && datamap.has_resource("native_pose") ){
+	} else if ( tag->getOption<bool>("use_native", false) && datamap.has_resource("native_pose") ) {
 		ref_pose_ = saved_native_pose(datamap);
 	} else {
 		std::string msg = "A reference pose must be set. Please use the SavePoseMover (embed the RMSDMetric in RunSimpleMetrics ) or pass the native as in:file:native and set use_native to true.";
@@ -199,7 +199,7 @@ PerResidueRMSDMetric::provide_xml_schema( utility::tag::XMLSchemaDefinition & xs
 
 	core::simple_metrics::xsd_per_residue_real_metric_type_definition_w_attributes(xsd, name_static(),
 		description, attlist);
-	
+
 }
 
 std::map< id::AtomID, id::AtomID >
@@ -290,7 +290,7 @@ PerResidueRMSDMetric::calculate(const pose::Pose & pose) const {
 	if ( ! ref_pose_ ) {
 		utility_exit_with_message( "Must pass in a reference pose for PerResidueRMSDMetric.  See RS XSD or use the set_comparison_pose function");
 	}
-	
+
 	std::map< id::AtomID, id::AtomID> atom_map = create_atom_id_map(pose);
 	utility::vector1< bool > mask = get_selector()->apply( pose );
 	return per_res_rms_at_corresponding_atoms_no_super( pose, *ref_pose_, atom_map, mask);
