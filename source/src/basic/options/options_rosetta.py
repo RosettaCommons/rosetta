@@ -78,10 +78,11 @@
 # . If you are adding pdb file input options, IT IS NOT SUFFICIENT TO ADD THE OPTION HERE.  You must also add the option
 #   to FileDataOptions or PDB_DReaderOptions.
 
+from __future__ import print_function
 
 from options_class import Option, Option_Group
 
-if __name__ == "__main__": print "Don't run this one, run options.py instead!"
+if __name__ == "__main__": print("Don't run this one, run options.py instead!")
 
 ##################################################################
 # Legal value sets

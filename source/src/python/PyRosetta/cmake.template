@@ -30,6 +30,14 @@ else()
     find_package(PythonLibs REQUIRED)
 endif()
 
+# Locate zlib
+find_package( ZLIB REQUIRED )
+if ( ZLIB_FOUND )
+    include_directories( ${ZLIB_INCLUDE_DIRS} )
+else()
+     MESSAGE( FATAL_ERROR "Could not find zlib. terminating...")
+endif()
+
 # Uncomment the following line if you will also require a matching Python interpreter
 # find_package(PythonInterp ${PYTHONLIBS_VERSION_STRING} EXACT REQUIRED)
 
@@ -104,7 +112,7 @@ add_library(rosetta SHARED
 #%__PyRosetta_sources__%#
 )
 
-target_link_libraries(rosetta #%__Rosetta_libraries__%# z)
+target_link_libraries(rosetta #%__Rosetta_libraries__%#  ${ZLIB_LIBRARIES} )
 
 # Don't add a 'lib' prefix to the shared library
 set_target_properties(rosetta PROPERTIES PREFIX "")

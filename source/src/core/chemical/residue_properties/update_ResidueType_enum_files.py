@@ -27,7 +27,7 @@ Author: Vikram K. Mulligan -- updated for thread-safety.
 """
 
 # Imports
-from __future__ import with_statement
+from __future__ import with_statement, print_function
 from os.path import isfile
 
 
@@ -101,8 +101,8 @@ def separate_definitions_from_comments(lines_to_parse):
 
         # Check for duplicated definitions.
         if definition in already_used_definitions:
-            print 'WARNING: The enum definition', definition, 'is found in',
-            print 'the list twice!  Ignoring...'
+            print('WARNING: The enum definition', definition, 'is found in',)
+            print('the list twice!  Ignoring...')
             continue
         already_used_definitions.append(definition)
 
@@ -130,7 +130,7 @@ def write_lines_to_file_if_necessary(lines, filename):
 
     with open('../' + filename, "w") as f:
         f.writelines(lines)
-    print 'Successfully generated ' + filename + "."
+    print('Successfully generated ' + filename + ".")
     return True
 
 
@@ -277,15 +277,15 @@ def generate_mappings_source_file(enum_info, enum_defs):
     lines.append('ResidueProperties::generate_string_to_' + enum_info.short_name + '_map() {\n' )
 
     lines.append('\t// A map of ' + enum_info.name +
-				' enum values keyed by corresponding string.\n')
+        ' enum values keyed by corresponding string.\n')
     lines.append('\tstd::map< std::string, ' + enum_info.name + ' > * output_map( new std::map< std::string, ' + enum_info.name + ' > );\n')
     if ( enum_info.short_name == "variant" ):
-	 # quick hack -- could probably do this for PROPERTY also -- rhiju
-	lines.append( '\toutput_map->insert( std::make_pair( "NO_VARIANT", NO_VARIANT ) );\n' )
+         # quick hack -- could probably do this for PROPERTY also -- rhiju
+        lines.append( '\toutput_map->insert( std::make_pair( "NO_VARIANT", NO_VARIANT ) );\n' )
     for enum_def in enum_defs:
-	line = '\toutput_map->insert( std::make_pair( "'
-	line += enum_def + '", ' + enum_def + ' ) );\n'
-	lines.append(line)
+        line = '\toutput_map->insert( std::make_pair( "'
+        line += enum_def + '", ' + enum_def + ' ) );\n'
+        lines.append(line)
     lines.append('\n')
     lines.append('\treturn output_map;\n')
     lines.append('}\n')
@@ -294,7 +294,7 @@ def generate_mappings_source_file(enum_info, enum_defs):
     # Add declaration of global map of string->enum.
     map_name = enum_info.short_name.upper() + '_MAP'
     lines.append('static const std::map< std::string, ' + enum_info.name + ' > * const ' +
-							map_name + '( ResidueProperties::generate_string_to_' + enum_info.short_name + '_map() );\n')
+                                                        map_name + '( ResidueProperties::generate_string_to_' + enum_info.short_name + '_map() );\n')
     lines.append('\n')
 
 
@@ -325,7 +325,7 @@ def generate_mappings_source_file(enum_info, enum_defs):
                                               enum_info.short_name + ' ) ) {\n')
     if ( enum_info.short_name == "variant" ):
          # quick hack -- could probably do this for PROPERTY also -- rhiju
-	lines.append('\t\treturn ( *VARIANT_MAP ).at( "NO_VARIANT" );\n')
+        lines.append('\t\treturn ( *VARIANT_MAP ).at( "NO_VARIANT" );\n')
     else:
         lines.append('\t\tthrow CREATE_EXCEPTION(Exception, "Rosetta does not recognize '
                      'the ' + enum_info.short_name + ': " + ' +
@@ -335,7 +335,7 @@ def generate_mappings_source_file(enum_info, enum_defs):
     lines.append('\t}\n')
     lines.append("\n")
     lines.append('\treturn ( *' + map_name + ' ).at( ' + enum_info.short_name +
-									' );\n')
+                                                                        ' );\n')
     lines.append('}\n')
     lines.append("\n")
 
@@ -346,16 +346,16 @@ def generate_mappings_source_file(enum_info, enum_defs):
     lines.append('ResidueProperties::generate_' + enum_info.short_name + '_to_string_vector() {\n' )
 
     lines.append('\t// A vector of strings keyed by ' + enum_info.name +
-				'.\n')
+                '.\n')
     lines.append('\tutility::vector1 < std::string > * output_vect( new utility::vector1< std::string > );\n')
     lines.append('\toutput_vect->resize( N_' +
-			      enum_info.short_name_plural.upper() + ', "" );\n')
+                  enum_info.short_name_plural.upper() + ', "" );\n')
     lines.append('\n')
 
     for enum_def in enum_defs:
-	line = '\t( *output_vect )[ '
-	line += enum_def + ' ] = "' + enum_def + '";\n'
-	lines.append(line)
+        line = '\t( *output_vect )[ '
+        line += enum_def + ' ] = "' + enum_def + '";\n'
+        lines.append(line)
     lines.append('\n')
     lines.append('\treturn output_vect;\n')
     lines.append('}\n')
@@ -398,9 +398,9 @@ def generate_files(enum_info):
     enum_updated = generate_enum_header_file(enum_info, enum_defs, comments)
     mappings_updated = generate_mappings_source_file(enum_info, enum_defs)
 
-    print 'Finished updating', enum_info.name, 'code',
+    print('Finished updating', enum_info.name, 'code',)
     if not enum_updated and not mappings_updated:
-        print '-- no changes needed'
+        print('-- no changes needed')
 
 
 # Main

@@ -11,6 +11,8 @@
 ## @author Sergey Lyskov (Sergey.Lyskov@jhu.edu)
 
 
+from __future__ import print_function
+
 import sys
 import time
 
@@ -38,11 +40,11 @@ class Option:
                  lower=None, upper=None, default=None, legal=None, n=None, n_lower=None, n_upper=None, restrict_access=False):
 
         if ctype not in KnownTypes:
-            print 'Unknown type:%s!!!' % ctype
+            print('Unknown type:%s!!!' % ctype)
             sys.exit()
         if default == 'none' or default == 'None':
-            print '*** Option %(name)s will default to the *string* "%(default)s"' % vars()
-            print '    If you want no default, write default=None (no quotes)'
+            print('*** Option %(name)s will default to the *string* "%(default)s"' % vars())
+            print('    If you want no default, write default=None (no quotes)')
 
         self.ctype = ctype;  self.name = name;    self.group = group
         self.desc = desc;    self.short = short;  self.oldName = oldName

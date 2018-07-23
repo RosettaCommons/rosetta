@@ -133,6 +133,12 @@ def get_compiler_family():
     if 'cl'    in Options.compiler: return 'cl'
     return 'unknown'
 
+def get_cmake_compiler_options():
+    ''' Get cmake compiler flags from Options.compiler '''
+    if Platform == "linux" and Options.compiler == 'clang': return ' -DCMAKE_C_COMPILER=`which clang` -DCMAKE_CXX_COMPILER=`which clang++`'
+    if Platform == "linux" and Options.compiler == 'gcc': return ' -DCMAKE_C_COMPILER=`which gcc` -DCMAKE_CXX_COMPILER=`which g++`'
+
+    return ''
 
 def install_llvm_tool(name, source_location, prefix_root, debug, clean=True):
     ''' Install and update (if needed) custom LLVM tool at given prefix (from config).
@@ -205,7 +211,7 @@ def install_llvm_tool(name, source_location, prefix_root, debug, clean=True):
             with open(cmake_lists, 'w') as f: f.write(tool_build_line + '\n')
 
         config = '-DCMAKE_BUILD_TYPE={build_type}'.format(build_type='Debug' if debug else 'Release')
-        if Platform == "linux": config += ' -DCMAKE_C_COMPILER=`which clang` -DCMAKE_CXX_COMPILER=`which clang++`'if Options.compiler == 'clang' else ' -DCMAKE_C_COMPILER=`which gcc` -DCMAKE_CXX_COMPILER=`which g++`'
+        config += get_cmake_compiler_options()
 
         if not os.path.isdir(build_dir): os.makedirs(build_dir)
         execute(
@@ -505,8 +511,7 @@ def run_cmake(rosetta_source_path):
 
     config = '-DCMAKE_BUILD_TYPE={}'.format(Options.type)
     config += ' -DPYROSETTA_STRIP_MODULE={build_type}'.format(build_type="TRUE" if Options.strip_module else "FALSE")
-
-    if Platform == "linux": config += ' -DCMAKE_C_COMPILER=`which clang` -DCMAKE_CXX_COMPILER=`which clang++`'if Options.compiler == 'clang' else ' -DCMAKE_C_COMPILER=`which gcc` -DCMAKE_CXX_COMPILER=`which g++`'
+    config += get_cmake_compiler_options()
 
     # if we ever go back to use static libs for intermediates: fix this on Mac: -DCMAKE_RANLIB=/usr/bin/ranlib -DCMAKE_AR=/usr/bin/ar
 

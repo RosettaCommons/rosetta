@@ -13,6 +13,8 @@
 # Script for generating option.gen.cc.hh, keys/OptionKeys.hh.gen.hh, keys/OptionKeys.cc.gen.hh files
 # Use 'python options.py -Wiki' to generate a Wiki table
 
+from __future__ import print_function
+
 import sys
 
 import options_class, options_rosetta
@@ -41,7 +43,7 @@ class KeepSameFile(object):
         except IOError :
             ischanged = True
         if ischanged:
-            print "file",self.fname,"being updated"
+            print("file",self.fname,"being updated")
             out = open(self.fname,self.opts)
             try:
                 out.write(self.body)
@@ -92,7 +94,7 @@ def main(args):
                 ns = str( opt.get_namespace(0) )
 
                 # create new lists if necessary
-                if not output[ 'keys/OptionKeys.gen.hh' ].has_key( ns ):
+                if ns not in output[ 'keys/OptionKeys.gen.hh' ]:
                     output[ 'keys/OptionKeys.gen.hh' ][ ns ] = []
 
                 output[ 'option.cc.gen.hh' ].append( opt.getOptionCC() )
@@ -107,7 +109,7 @@ def main(args):
                 if file_prefix == 'option.cc.gen.hh':
                     outfile = file_prefix
                     #print outfile
-                    f = KeepSameFile(outfile, 'wb')
+                    f = KeepSameFile(outfile, 'w')
                     f.write( header_gen_hh )
 
                     split_len = len( output[ file_prefix ] ) // 16 + 1  # for now we generate 16 functions instead of 1
@@ -128,7 +130,7 @@ def main(args):
                     for i,g in enumerate(groups):
                         outfile = file_prefix + '%s.hh' % i
                         #print outfile
-                        f = KeepSameFile(outfile, 'wb')
+                        f = KeepSameFile(outfile, 'w')
                         f.write( "".join(g) )
                         num_changed_files += f.close()
                 else:
@@ -146,11 +148,11 @@ def main(args):
                         output[ file_prefix ][ ns ] = header + output[ file_prefix ][ ns ]
                         lines = "".join( output[ file_prefix ][ ns ] )
                         #print outfile
-                        f = KeepSameFile(outfile, 'wb')
+                        f = KeepSameFile(outfile, 'w')
                         f.write( "".join(lines) )
                         num_changed_files += f.close()
 
-            f = KeepSameFile('option.cc.include.gen.hh', 'wb')
+            f = KeepSameFile('option.cc.include.gen.hh', 'w')
             for include_file in gen_hh_files:
                 f.write( '#include <basic/options/keys/' + include_file + '>\n' )
             num_changed_files += f.close()
@@ -162,20 +164,20 @@ def main(args):
 
         # Generating Doxygen docs
         #print "Generating Doxygen docs...",
-        f = KeepSameFile("./options.dox", 'wb')
+        f = KeepSameFile("./options.dox", 'w')
         f.write( options_class.getDoxygenPage(Options) )
         num_changed_files += f.close()
         #print " Done!"
         #print "Generating Markdown docs...",
-        f = KeepSameFile("./full-options-list.md", 'wb')
+        f = KeepSameFile("./full-options-list.md", 'w')
         f.write( options_class.getMarkdownPage(Options) )
         num_changed_files += f.close()
         #print " Done!"
-        print "Number of option files updated:",num_changed_files
-        print "Total %s options." % len(Options)
+        print("Number of option files updated:",num_changed_files)
+        print("Total %s options." % len(Options))
 
     elif args[1] == '-Wiki':
-        print options_class.printWikiTable(Options)
+        print(options_class.printWikiTable(Options))
 
 
 if __name__ == "__main__":  main(sys.argv)
