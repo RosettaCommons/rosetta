@@ -2,6 +2,7 @@
 import os
 import argparse
 import string
+import sys
 
 protein_one_letter = ['A', 'R', 'N', 'D', 'C', 
 	'E', 'Q', 'G', 'H', 'I', 'L', 'K', 'M', 
@@ -877,7 +878,7 @@ def write_flags_file( args, helix_chunks, use_init_structs, input_structs_for_da
 			f.write('-cycles %d\n' %(cycles))
 			f.write('-rnp_high_res_cycles 2\n')
 			f.write('-minimize_rounds 3\n')
-			f.write('-nstruct 500\n')
+			f.write('-nstruct %d\n' %(args.nstruct))
 		if args.dock_into_density:
 			f.write('-dock_into_density true\n')
 		else:
@@ -959,7 +960,7 @@ def estimate_error( args ):
 
 if __name__ == '__main__':
 
-	parser=argparse.ArgumentParser( description="DRRAFTER: De novo RNP modeling in Real-space through Assembly of Fragments Together with Electron density in Rosetta" )
+	parser=argparse.ArgumentParser( description="DRRAFTER: De novo RNP modeling in Real-space through Assembly of Fragments Together with Experimental density in Rosetta" )
 	parser.add_argument('-fasta', type=str, default="",
 		help='fasta file for the full structure')
 	parser.add_argument('-secstruct', type=str, default="",
@@ -1015,6 +1016,7 @@ if __name__ == '__main__':
 		type=str, default="", help='reference pdb for coordinate '
 		'constraints (must include at least one RNA and one protein residue)')
 	parser.add_argument('-cycles', type=int, help='Number of monte carlo cycles')
+	parser.add_argument('-nstruct', type=int, default=2000, help='Number of structures to build per DRRAFTER job')
 	parser.add_argument('-demo_settings', action='store_true', default=False, 
 		help='Settings to make the demo run quickly - do NOT use in actual runs')
 	parser.add_argument('-estimate_error', action='store_true', 
@@ -1022,6 +1024,10 @@ if __name__ == '__main__':
 	parser.add_argument('-final_structures', type=str, default="", 
 		nargs='+', help='Final DRRAFTER models (e.g. top 10 scoring), used for error estimation')
 	args = parser.parse_args()
+
+	if len( sys.argv ) == 1: 
+		parser.print_help()
+		exit( 1 )
 
 	if args.estimate_error:
 		estimate_error( args )
