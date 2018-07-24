@@ -1,0 +1,39 @@
+<ROSETTASCRIPTS>
+Keywords: integration test, EnzScore filter, ligand
+Author: Brahm Yachnin
+Email: brahm.yachnin@rutgers.edu
+
+This script simply applies enzdes-style constraints from a file, and then calculates the 
+constraint energy using the EnzScore filter using various options supported by the filter.
+
+	<SCOREFXNS>
+		<ScoreFunction name="ref_cst" weights="ref2015_cst.wts"/>
+	</SCOREFXNS>
+
+	<TASKOPERATIONS>
+	</TASKOPERATIONS>
+	
+	<FILTERS>
+		<EnzScore name="cstE_nooptions"  scorefxn="ref_cst" score_type="cstE" energy_cutoff="0.0" confidence="0"/>
+		<EnzScore name="cstE_wholepose"  scorefxn="ref_cst" score_type="cstE" energy_cutoff="0.0" confidence="0" whole_pose="1"/>
+		<EnzScore name="cstE_res_num"    scorefxn="ref_cst" score_type="cstE" energy_cutoff="0.0" confidence="0" res_num="26"/>
+		<EnzScore name="cstE_pdb_num"    scorefxn="ref_cst" score_type="cstE" energy_cutoff="0.0" confidence="0" pdb_num="12A"/>
+		<EnzScore name="cstE_cstid"      scorefxn="ref_cst" score_type="cstE" energy_cutoff="0.0" confidence="0" cstid="2A"/>
+	</FILTERS>
+	
+	<MOVERS>
+		Constraints
+		<AddOrRemoveMatchCsts name="enzdes_csts" cst_instruction="add_new" cstfile="inputs/mocktim.cst" accept_blocks_missing_header="1"/>
+	</MOVERS>
+	<PROTOCOLS>
+		Add constraints
+		<Add mover_name="enzdes_csts"/>
+		
+		Run filters
+		<Add filter_name="cstE_nooptions"/>
+		<Add filter_name="cstE_wholepose"/>
+		<Add filter_name="cstE_res_num"/>
+		<Add filter_name="cstE_pdb_num"/>
+		<Add filter_name="cstE_cstid"/>
+	</PROTOCOLS>
+</ROSETTASCRIPTS>

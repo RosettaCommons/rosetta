@@ -1,0 +1,3 @@
+SEQUENCE: 
+SCORE: total_score cstE_cstid cstE_nooptions cstE_pdb_num cstE_res_num cstE_wholepose dslf_fa13    fa_atr    fa_dun   fa_elec fa_intra_rep fa_intra_sol_xover4              fa_rep              fa_sol hbond_bb_sc hbond_lr_bb    hbond_sc hbond_sr_bb lk_ball_wtd       omega     p_aa_pp pro_close rama_prepro         ref yhh_planarity description 
+SCORE:     151.372    105.226        105.226       79.008      105.226        210.452     0.000   -79.909    59.762   -14.616        8.013               8.114               6.938              68.075      -4.179       0.000      -2.700      -2.242      -1.157      67.601      -2.983     0.055      24.165      16.434         0.000 1ney_invtree_unittest_0001

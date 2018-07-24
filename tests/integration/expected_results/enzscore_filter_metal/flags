@@ -1,0 +1,3 @@
+-parser:protocol inputs/enzfilter_test.xml
+-in:file:s inputs/1cg2_A_relax.pdb
+-run:preserve_header

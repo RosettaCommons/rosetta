@@ -1,0 +1,66 @@
+# cst constraint descriptor for DHAP - G3P isomerization
+# F. Richter, Baker lab, UW,   floric@u.washington.edu
+ 
+# NOTE
+
+
+#block 1 for glutamate proton abstracting residue
+
+CST::BEGIN
+  TEMPLATE::   ATOM_MAP: 1 atom_name: C3 C1 O6 
+  TEMPLATE::   ATOM_MAP: 1 residue3: 1n1
+
+  TEMPLATE::   ATOM_MAP: 2 atom_type: OOC ,
+  TEMPLATE::   ATOM_MAP: 2 residue1:  ED 
+ 
+  CONSTRAINT:: distanceAB:   3.06  0.2  100.  0    0
+  CONSTRAINT::    angle_A:   73.6 10.0  80.0  360. 0
+  CONSTRAINT::    angle_B:  120.0 15.0  80.0  360. 0
+  CONSTRAINT::  torsion_A: -101.2 15.0  60.0  360. 0
+  CONSTRAINT:: torsion_AB:  180.0 90.0  0.00  360. 0  
+  CONSTRAINT::  torsion_B:  180.0 15.0  0.00  360. 0
+CST::END
+
+
+#block 2 for histidine proton shuttle
+
+CST::BEGIN
+  TEMPLATE::   ATOM_MAP: 1 atom_name:  O6 C1 C3 
+  TEMPLATE::   ATOM_MAP: 1 residue3: 1n1
+
+  TEMPLATE::   ATOM_MAP: 2 atom_type: Ntrp,
+  TEMPLATE::   ATOM_MAP: 2 residue1:  H 
+ 
+  CONSTRAINT:: distanceAB:   3.0  0.20 100.  0    0
+  CONSTRAINT::    angle_A:  111.2 10.0  50.0  360. 0
+  CONSTRAINT::    angle_B:  120.3 15.0  50.0  360. 0
+  CONSTRAINT::  torsion_A:   0.0  10.0  50.0  360. 0
+  CONSTRAINT:: torsion_AB:   0.0  30.0  0.00  180. 0 
+  CONSTRAINT::  torsion_B:  180.0 15.0  0.00  360. 0
+CST::END
+
+
+# block 3 for lysine to polarize O2
+
+CST::BEGIN
+  TEMPLATE::   ATOM_MAP: 1 atom_name:  O6 C1 C3 
+  TEMPLATE::   ATOM_MAP: 1 residue3: 1n1
+
+  TEMPLATE::   ATOM_MAP: 2 atom_type: Nlys,
+  TEMPLATE::   ATOM_MAP: 2 residue1:  K 
+ 
+  CONSTRAINT:: distanceAB:   2.90  0.20   100.  0    0
+  CONSTRAINT::    angle_A:  109.3  20.0   50.0  360. 0
+  CONSTRAINT::    angle_B:  109.8  20.0   50.0  360. 0
+  CONSTRAINT::  torsion_A: -100.0  30.0   0.00  360. 0
+  CONSTRAINT:: torsion_AB:   61.1  30.0  0.00   360. 0
+  CONSTRAINT::  torsion_B:  161.1  15.0  0.00  360. 0
+
+
+  ALGORITHM_INFO:: match
+     SECONDARY_MATCH: DOWNSTREAM
+  ALGORITHM_INFO::END
+
+CST::END
+
+

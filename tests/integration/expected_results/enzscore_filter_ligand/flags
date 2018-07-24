@@ -1,0 +1,4 @@
+-parser:protocol inputs/enzfilter_test.xml
+-in:file:s inputs/1ney_invtree_unittest.pdb
+-run:preserve_header
+-extra_res_fa inputs/1n1.params

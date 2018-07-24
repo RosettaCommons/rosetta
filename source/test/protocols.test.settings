@@ -165,6 +165,7 @@ sources = {
 		"PredockRotCenter",
 		"ResfileAutoRemap",
             "EnzdesTaskOperations",
+		"EnzScoreFilter",
 	],
 
 	"enzymatic_movers" : [

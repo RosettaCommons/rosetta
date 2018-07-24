@@ -1,0 +1,3 @@
+SEQUENCE: 
+SCORE: total_score cstE_cstid cstE_nooptions cstE_pdb_num cstE_res_num cstE_wholepose dslf_fa13    fa_atr    fa_dun   fa_elec fa_intra_rep fa_intra_sol_xover4              fa_rep              fa_sol hbond_bb_sc hbond_lr_bb    hbond_sc hbond_sr_bb lk_ball_wtd       omega     p_aa_pp pro_close rama_prepro         ref yhh_planarity description 
+SCORE:   -1104.918      0.035          0.035        0.035        0.035          0.069     0.000 -2139.382   416.399  -711.616        3.886              69.230             221.315            1374.363     -54.416    -120.418     -55.282    -138.757     -45.170       9.135     -83.022     1.900       9.131     137.324         0.462 1cg2_A_relax_0001
