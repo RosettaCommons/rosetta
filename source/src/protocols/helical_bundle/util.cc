@@ -17,6 +17,7 @@
 // Unit Headers
 #include <protocols/helical_bundle/util.hh>
 
+#include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 
@@ -478,7 +479,7 @@ void place_atom_positions(
 
 	for ( core::Size ir=helix_start; ir<=helix_end; ++ir ) {
 		for ( core::Size ia=1, iamax=atom_positions[index].size(); ia<=iamax; ++ia ) {
-			pose.set_xyz( core::id::AtomID( ia, ir ), atom_positions[index][ia] );
+			pose.set_xyz( core::id::AtomID( pose.residue_type(ir).mainchain_atom(ia), ir ), atom_positions[index][ia] );
 		}
 		++index;
 	}
@@ -499,8 +500,8 @@ void copy_helix_bondlengths(
 	for ( core::Size ir=helix_start; ir<=helix_end; ++ir ) {
 		for ( core::Size ia=1, iamax=ref_pose.residue(ir).n_mainchain_atoms(); ia<=iamax; ++ia ) {
 			if ( ia==1 && ir==helix_start ) continue; //Skip the first atom.
-			core::id::AtomID const thisatom( ia, ir );
-			core::id::AtomID const prevatom( (ia==1 ? ref_pose.residue(ir-1).n_mainchain_atoms() : ia - 1), (ia==1 ? ir-1 : ir) ); //The previous atom is ia-1 in this residue, unless this atom is the first atom, in which case the previous atom is iamax in the previous residue.
+			core::id::AtomID const thisatom( ref_pose.residue_type(ir).mainchain_atom(ia), ir );
+			core::id::AtomID const prevatom( (ia==1 ? ref_pose.residue_type(ir - 1).mainchain_atom( ref_pose.residue_type(ir-1).mainchain_atoms().size() ) : ref_pose.residue_type(ir).mainchain_atom( ia - 1 ) ), (ia==1 ? ir-1 : ir) ); //The previous atom is ia-1 in this residue, unless this atom is the first atom, in which case the previous atom is iamax in the previous residue.
 			pose.conformation().set_bond_length( thisatom, prevatom, ref_pose.xyz(thisatom).distance( ref_pose.xyz(prevatom) ) );
 		}
 	}
@@ -524,9 +525,9 @@ void copy_helix_bondangles(
 		for ( core::Size ia=1, iamax=ref_pose.residue(ir).n_mainchain_atoms(); ia<=iamax; ++ia ) {
 			if ( ia==1 && ir==helix_start ) continue; //Skip the first atom.
 			if ( ia==iamax && ir==helix_end ) continue; //Skip the last atom.
-			core::id::AtomID const thisatom( ia, ir );
-			core::id::AtomID const prevatom( (ia==1 ? ref_pose.residue(ir-1).n_mainchain_atoms() : ia - 1), (ia==1 ? ir-1 : ir) ); //The previous atom is ia-1 in this residue, unless this atom is the first atom in this residue, in which case the previous atom is iamax in the previous residue.
-			core::id::AtomID const nextatom( (ia==iamax ? 1 : ia + 1), (ia==iamax ? ir+1 : ir) ); //The next atom is ia+1 in this residue, unless this atom is the last atom in this residue, in which case the next atom is the first atom in the next residue.
+			core::id::AtomID const thisatom( ref_pose.residue_type(ir).mainchain_atom(ia), ir );
+			core::id::AtomID const prevatom( (ia==1 ? ref_pose.residue_type(ir-1).mainchain_atom( ref_pose.residue_type(ir-1).mainchain_atoms().size() ) : ref_pose.residue_type(ir).mainchain_atom(ia - 1) ), (ia==1 ? ir-1 : ir) ); //The previous atom is ia-1 in this residue, unless this atom is the first atom in this residue, in which case the previous atom is iamax in the previous residue.
+			core::id::AtomID const nextatom( (ia==iamax ? ref_pose.residue_type(ir+1).mainchain_atom(1) : ref_pose.residue_type(ir).mainchain_atom(ia + 1) ), (ia==iamax ? ir+1 : ir) ); //The next atom is ia+1 in this residue, unless this atom is the last atom in this residue, in which case the next atom is the first atom in the next residue.
 			pose.conformation().set_bond_angle( prevatom, thisatom, nextatom, numeric::angle_radians<core::Real>( ref_pose.xyz(prevatom), ref_pose.xyz(thisatom), ref_pose.xyz(nextatom) ) );
 		}
 	}
@@ -572,7 +573,7 @@ void align_mainchain_atoms(
 
 	for ( core::Size ir=helix_start; ir<=helix_end; ++ir ) {
 		for ( core::Size ia=1, iamax=ref_pose.residue(ir).n_mainchain_atoms(); ia<=iamax; ++ia ) {
-			amap[core::id::AtomID(ia,ir)] = core::id::AtomID(ia,ir);
+			amap[core::id::AtomID(pose.residue_type(ir).mainchain_atom(ia),ir)] = core::id::AtomID(ref_pose.residue_type(ir).mainchain_atom(ia),ir);
 		}
 	}
 
@@ -596,7 +597,7 @@ void align_mainchain_atoms_of_residue_range(
 
 	for ( core::Size ir=helix_start; ir<=helix_end; ++ir ) {
 		for ( core::Size ia=1, iamax=ref_pose.residue(ir).n_mainchain_atoms(); ia<=iamax; ++ia ) {
-			amap[core::id::AtomID(ia,ir)] = core::id::AtomID(ia,ir);
+			amap[core::id::AtomID(pose.residue_type(ir).mainchain_atom(ia),ir)] = core::id::AtomID(ref_pose.residue_type(ir).mainchain_atom(ia),ir);
 		}
 	}
 

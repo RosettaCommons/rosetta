@@ -88,8 +88,8 @@ MainWindow::MainWindow(QWidget *parent) :
 	pose_draw_widget_->show();
 
 	ui->presets_comboBox->addItem(QString("Select preset"));
-	ui->presets_comboBox->addItem(QString("3-helix bundle"));
-	ui->presets_comboBox->addItem(QString("Antiparallel beta-barrel"));
+    ui->presets_comboBox->addItem(QString("3-helix bundle"));
+    ui->presets_comboBox->addItem(QString("Antiparallel beta-barrel"));
 
 	connect( pose_draw_widget_, SIGNAL(nonparametric_geometry_has_moved()), this, SLOT(on_nonparametric_geometry_moved()) );
 
@@ -195,12 +195,19 @@ MainWindow::rebuild_pose_from_scratch() {
 		protocols::helical_bundle::MakeBundleHelix &helix( *(mkbundle.helix(nhelices)) );
 
 		if( curwidget.custom_params_file_selected() ) {
-			if( curwidget.custom_params_file() == "14_helix" ) {
+			if( curwidget.custom_params_file() == "A_form_RNA_helix" ) {
+				utility::vector1< std::string> URAvec(1, "URA");
+				helix.set_residue_name(URAvec);
+			} else if( curwidget.custom_params_file() == "14_helix" ) {
 				utility::vector1< std::string> B3Avec(1, "B3A");
 				helix.set_residue_name(B3Avec);
 			} else if ( curwidget.custom_params_file() == "L_alpha_helix" ) {
-				utility::vector1< std::string> B3Avec(1, "DALA");
-				helix.set_residue_name(B3Avec);
+				utility::vector1< std::string> DALAvec(1, "DALA");
+				helix.set_residue_name(DALAvec);
+			} else if ( curwidget.custom_params_file() == "a3b" ) {
+				utility::vector1< std::string> a3bvec(3, "ALA");
+				a3bvec.emplace_back("B3A");
+				helix.set_residue_name(a3bvec);
 			} else {
 				utility::vector1<std::string> ALAvec(1, "ALA");
 				helix.set_residue_name(ALAvec);

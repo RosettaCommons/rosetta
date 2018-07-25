@@ -239,7 +239,7 @@ SimplePoseDrawOpenGLWidget::paintGL() {
 					} else if( !elem.compare("O") ) {
 							glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, colorvectO );
 					} else if( !elem.compare("P") ) {
-							glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, colorvectO );
+                                                        glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, colorvectP );
 					} else if( !elem.compare("F") ) {
 							glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, colorvectF );
 					} else if( !elem.compare("Cl") ) {

@@ -129,7 +129,8 @@ void FitSimpleHelix::apply (core::pose::Pose & pose)
 	offsetvect.z() = 7;
 	for ( core::Size ir=1, irmax=pose.size(); ir<=irmax; ++ir ) {
 		for ( core::Size ia=1, iamax=pose.residue(ir).natoms(); ia<=iamax; ++ia ) {
-			pose.set_xyz( core::id::AtomID(ia,ir), pose.xyz( core::id::AtomID(ia,ir) ) + offsetvect );
+			core::id::AtomID const curat( ia, ir );
+			pose.set_xyz( curat, pose.xyz( curat ) + offsetvect );
 		}
 	}
 
@@ -227,7 +228,7 @@ void FitSimpleHelix::apply (core::pose::Pose & pose)
 			continue; //Skip the reference atom -- we've already done it.
 		}
 
-		std::string const cur_atom_name = pose.residue(cur_res).atom_name( cur_atom );
+		std::string const cur_atom_name = pose.residue_type(cur_res).atom_name( pose.residue_type(cur_res).mainchain_atom( cur_atom  ) );
 		if ( TR.visible() ) TR << "Fitting " << cur_atom_name << " atom." << std::endl;
 
 		FitSimpleHelixMultiFunc multfunc(pose, cur_atom_name, cur_res, residues_per_repeat(), start_index_, end_index_, 1, rms_offset_); //Make the multifunc that will be used to fit the current atom.
@@ -262,7 +263,8 @@ void FitSimpleHelix::apply (core::pose::Pose & pose)
 	//Subtract the arbitrary offset from the pose to shift it back:
 	for ( core::Size ir=1, irmax=pose.size(); ir<=irmax; ++ir ) {
 		for ( core::Size ia=1, iamax=pose.residue(ir).natoms(); ia<=iamax; ++ia ) {
-			pose.set_xyz( core::id::AtomID(ia,ir), pose.xyz( core::id::AtomID(ia,ir) ) - offsetvect );
+			core::id::AtomID const curat(ia,ir);
+			pose.set_xyz( curat, pose.xyz( curat ) - offsetvect );
 		}
 	}
 
