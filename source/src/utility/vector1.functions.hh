@@ -23,6 +23,52 @@
 
 namespace utility {
 
+
+/// @brief Function invoked by nmers_of (and itself) to generate
+/// the power sets of a vector of size kk_orig.
+template< class T >
+void
+nmers_worker(
+	utility::vector1< T > const & vec,
+	utility::vector1< T > & combination,
+	utility::vector1< utility::vector1< T > > & power_sets,
+	int const offset,
+	int const kk,
+	int const kk_orig
+) {
+	if ( kk == 0 ) return;
+	for ( int ii = offset; ii <= int(vec.size()) - kk+1; ++ii ) {
+		//std::cout << "ii is " << ii << "/" <<  vec.size() - kk <<  std::endl;
+		combination.push_back( vec[ ii ] );
+		nmers_worker( vec, combination, power_sets, ii + 1, kk - 1, kk_orig );
+		if ( combination.size() == size_t( kk_orig ) ) power_sets.push_back( combination );
+		combination.pop_back();
+	}
+}
+
+
+/// @brief Returns all vector of kk-mer vectors made from combinations of
+/// the elements of vec. Returns a vector containing only the empty vector
+/// if 0-mers are requested (rather than a zero length vector).
+template< class T >
+utility::vector1< utility::vector1< T > >
+nmers_of(
+	utility::vector1< T > const & vec,
+	int const kk
+) {
+	utility::vector1< utility::vector1< T > > power_sets;
+
+	if ( kk == 0 ) {
+		power_sets.push_back( utility::vector1< T >() );
+		return power_sets;
+	}
+
+	utility::vector1< T > combination;
+	nmers_worker( vec, combination, power_sets, 1, kk, kk );
+	return power_sets;
+}
+
+
 /// @brief Find the largest value in a vector
 ///
 /// class T must provide an operator < ()  and operator = ().

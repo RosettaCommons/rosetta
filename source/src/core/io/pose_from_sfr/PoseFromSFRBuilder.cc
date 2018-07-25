@@ -83,6 +83,7 @@
 // Utility headers
 #include <utility>
 #include <utility/vector1.hh>
+#include <utility/vector1.functions.hh> // for nmers_of
 #include <utility/string_util.hh>
 #include <utility/tools/make_vector1.hh>
 #include <utility/io/ozstream.hh>
@@ -111,6 +112,7 @@ namespace pose_from_sfr {
 static basic::Tracer TR( "core.io.pose_from_sfr.PoseFromSFRBuilder" );
 
 using namespace ObjexxFCL;
+using utility::nmers_of;
 
 
 PoseFromSFRBuilder::PoseFromSFRBuilder( chemical::ResidueTypeSetCOP rts, StructFileRepOptions const & options ) :
@@ -453,7 +455,7 @@ PoseFromSFRBuilder::pass_2_resolve_residue_types()
 			// (The reason is because it confuses terminus assignment, sort of.)
 			is_lower_terminus = true;
 			is_upper_terminus = true;
-			known_connect_atoms_on_this_residue.clear();
+			//known_connect_atoms_on_this_residue.clear();
 		}
 
 		TR.Trace << "Residue " << ii << "(PDB file numbering: " << resid << " )" << std::endl;
@@ -468,8 +470,28 @@ PoseFromSFRBuilder::pass_2_resolve_residue_types()
 		TR.Trace << "...is_d_aa: " << is_d_aa << std::endl;
 		TR.Trace << "...is_l_aa: " << is_l_aa << std::endl;
 
+		// Try to get RT using all connect atoms.
 		ResidueTypeCOP rsd_type_cop = get_rsd_type( name3, ii, known_connect_atoms_on_this_residue,
 			resid, is_lower_terminus, is_upper_terminus, is_d_aa, is_l_aa );
+
+		int kk = known_connect_atoms_on_this_residue.size() - 1; // for easier wraparound logic
+		while ( !rsd_type_cop && kk >= 0 ) {
+			// Include just kk connect atoms and see if we work
+			// kk-membered combinations of connect atoms, vec<vec<string>>
+			auto power_sets = nmers_of( known_connect_atoms_on_this_residue, kk );
+			//TR << "power_sets: " << power_sets << std::endl;
+			for ( auto const & power_set : power_sets ) {
+				//rsd_type_cop = get_rsd_type( name3, ii, all_but( known_connect_atoms_on_this_residue, utility::vector1< Size >( jj ) ),
+				//TR << "power_set " << power_set << std::endl;
+				rsd_type_cop = get_rsd_type( name3, ii, power_set,
+					resid, is_lower_terminus, is_upper_terminus, is_d_aa, is_l_aa );
+				if ( rsd_type_cop ) break;
+			}
+
+			--kk;
+		}
+
+
 
 		if ( rsd_type_cop == nullptr ) {
 			std::string variant;
@@ -1024,16 +1046,21 @@ void PoseFromSFRBuilder::refine_pose( pose::Pose & pose )
 		std::string const & resid( rinfos_[ rinfo_ii ].resid() );
 		if ( known_links_.count( resid ) ) {
 			for ( auto const & link_pair : known_links_[resid] ) {
-				std::string const & my_atom( link_pair.first );
+				//std::string const & my_atom( link_pair.first );
 				std::string const & partner_resid( link_pair.second.first );
 				core::Size partner_rinfo_ii( resid_to_index_[ partner_resid ] );
 				core::Size partner( pose_to_rinfo_.index( partner_rinfo_ii ) );
-				std::string const & partner_atom( link_pair.second.second );
+				//std::string const & partner_atom( link_pair.second.second );
+
+				// Just strip my_atom and partner_atom (CIF defense)
+				std::string my_atom = stripped_whitespace( link_pair.first );
+				std::string partner_atom = stripped_whitespace( link_pair.second.second );
+
 				if ( partner == 0 ) {
 					TR.Warning << "Cannot find " << partner_resid << " in Pose -- skipping connection" << std::endl;
 					continue;
 				}
-				TR.Debug << "Dealing with link ii:" << ii << " resid:" << resid << " atom:" << my_atom << " partner:" << partner << " partner_resid:" << partner_resid << " partner_atom:" << partner_atom << std::endl;
+				TR.Debug << "Dealing with link ii:" << ii << " resid: " << resid << " (" << pose.residue_type( ii ).name() << ") atom: " << my_atom << " partner: " << partner << " (" << pose.residue_type( partner ).name() << ") partner_resid: " << partner_resid << " partner_atom: " << partner_atom << std::endl;
 				if ( ! pose.residue_type(ii).has( my_atom ) || ! pose.residue_type( partner ).has( partner_atom ) ) {
 					TR.Warning << "Cannot form link between " << resid << " " << my_atom
 						<< " and " << partner_resid << " " << partner_atom << " as atom(s) don't exist." << std::endl;
@@ -1042,16 +1069,36 @@ void PoseFromSFRBuilder::refine_pose( pose::Pose & pose )
 				if ( ! is_connected( pose.conformation(), ii, my_atom, partner, partner_atom ) ) {
 					if ( pose.residue( ii ).has_incomplete_connection( pose.residue( ii ).atom_index( my_atom ) ) &&
 							pose.residue( partner ).has_incomplete_connection( pose.residue( partner ).atom_index( partner_atom ) ) ) {
-						TR.Debug << "Making a chemical connnection between residue " << ii << " " << my_atom << " and residue " << partner << " " << partner_atom << std::endl;
+						TR.Debug << "Making a chemical connection between residue " << ii << " " << my_atom << " and residue " << partner << " " << partner_atom << std::endl;
 						pose.conformation().declare_chemical_bond( ii, my_atom, partner, partner_atom );
 					} else {
-						// The ResidueType selection code should find a connectable type if one is present.
-						TR.Warning << "Explicit link between " << rinfos_[ ii ].resid() << " " << my_atom
-							<<" and " << rinfos_[ partner ].resid() << " " << partner_atom
-							<< " requested, but no availible connections are present!" << std::endl;
-						TR.Warning << "Types are " << pose.residue_type(ii).name() << " and " << pose.residue_type(partner).name() << std::endl;
-						show_residue_connections( pose.conformation(), ii );
-						show_residue_connections( pose.conformation(), partner );
+						// Try to find connectable variants.
+
+
+						// the type of the desired variant residue
+						chemical::ResidueTypeSetCOP rsd_set( pose.residue_type_set_for_pose( pose.residue_type( ii ).mode() ) );
+						//chemical::ResidueType const & new_rsd_type(  );
+
+						core::pose::replace_pose_residue_copying_existing_coordinates( pose, ii,
+							rsd_set->name_map( pose.residue_type( ii ).name() + core::chemical::PATCH_LINKER + "MP-" + my_atom + "-connect" ) );
+
+						core::pose::replace_pose_residue_copying_existing_coordinates( pose, partner,
+							rsd_set->name_map( pose.residue_type( partner ).name() + core::chemical::PATCH_LINKER + "MP-" + partner_atom + "-connect" ) );
+
+						if ( pose.residue( ii ).has_incomplete_connection( pose.residue( ii ).atom_index( my_atom ) ) &&
+								pose.residue( partner ).has_incomplete_connection( pose.residue( partner ).atom_index( partner_atom ) ) ) {
+							TR.Debug << "Making a metapatched chemical connection between residue " << ii << " " << my_atom << " and residue " << partner << " " << partner_atom << std::endl;
+							pose.conformation().declare_chemical_bond( ii, my_atom, partner, partner_atom );
+						} else {
+
+							// The ResidueType selection code should find a connectable type if one is present.
+							TR.Warning << "Explicit link between " << rinfos_[ ii ].resid() << " " << my_atom
+								<<" and " << rinfos_[ partner ].resid() << " " << partner_atom
+								<< " requested, but no availible connections are present!" << std::endl;
+							TR.Warning << "Types are " << pose.residue_type(ii).name() << " and " << pose.residue_type(partner).name() << std::endl;
+							show_residue_connections( pose.conformation(), ii );
+							show_residue_connections( pose.conformation(), partner );
+						}
 					}
 				} // else we're already connected.
 			}

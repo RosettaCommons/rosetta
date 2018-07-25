@@ -190,6 +190,72 @@ add_variant_type_to_pose_residue(
 	}
 }
 
+void
+add_variant_type_to_pose_residue(
+	pose::Pose & pose,
+	std::string const & variant_type,
+	Size const seqpos )
+{
+	runtime_assert( seqpos != 0 );
+	//if ( pose.residue( seqpos ).has_variant_type( variant_type ) ) return;
+
+	conformation::Residue const & old_rsd( pose.residue( seqpos ) );
+
+	// the type of the desired variant residue
+	chemical::ResidueTypeSetCOP rsd_set( pose.residue_type_set_for_pose( pose.residue_type( seqpos ).mode() ) );
+	chemical::ResidueType const & new_rsd_type( rsd_set->get_residue_type_with_variant_added( old_rsd.type(), variant_type ) );
+
+	core::pose::replace_pose_residue_copying_existing_coordinates( pose, seqpos, new_rsd_type );
+
+	// update connections
+	for ( Size i_con=1; i_con<=pose.conformation().residue_type(seqpos).n_possible_residue_connections(); ++i_con ) {
+		// skip unfulfilled connections; no update necessary
+		if ( pose.conformation().residue(seqpos).connected_residue_at_resconn(i_con) == 0 ) continue;
+
+		Size connected_seqpos = pose.conformation().residue(seqpos).connected_residue_at_resconn(i_con);
+		Size connected_id = pose.residue(seqpos).connect_map(i_con).connid();
+		pose.conformation().update_noncanonical_connection(seqpos, i_con, connected_seqpos, connected_id);
+	}
+
+	if ( variant_type == "CUTPOINT_LOWER" || variant_type == "CUTPOINT_UPPER" ) {
+		update_cutpoint_virtual_atoms_if_connected( pose, seqpos, true );
+	}
+}
+
+void
+add_custom_variant_type_to_pose_residue(
+	pose::Pose & pose,
+	std::string const & variant_type,
+	Size const seqpos )
+{
+	runtime_assert( seqpos != 0 );
+	//if ( pose.residue( seqpos ).has_variant_type( variant_type ) ) return;
+
+	conformation::Residue const & old_rsd( pose.residue( seqpos ) );
+
+	// the type of the desired variant residue
+	chemical::ResidueTypeSetCOP rsd_set( pose.residue_type_set_for_pose( pose.residue_type( seqpos ).mode() ) );
+	chemical::ResidueType const & new_rsd_type( rsd_set->get_residue_type_with_custom_variant_added( old_rsd.type(), variant_type ) );
+
+	core::pose::replace_pose_residue_copying_existing_coordinates( pose, seqpos, new_rsd_type );
+
+	// update connections
+	for ( Size i_con=1; i_con<=pose.conformation().residue_type(seqpos).n_possible_residue_connections(); ++i_con ) {
+		// skip unfulfilled connections; no update necessary
+		if ( pose.conformation().residue(seqpos).connected_residue_at_resconn(i_con) == 0 ) continue;
+
+		Size connected_seqpos = pose.conformation().residue(seqpos).connected_residue_at_resconn(i_con);
+		Size connected_id = pose.residue(seqpos).connect_map(i_con).connid();
+		pose.conformation().update_noncanonical_connection(seqpos, i_con, connected_seqpos, connected_id);
+	}
+
+	/*
+	These aren't custom variants so this will never be a concern.
+	if ( variant_type == "CUTPOINT_LOWER" || variant_type == "CUTPOINT_UPPER" ) {
+	update_cutpoint_virtual_atoms_if_connected( pose, seqpos, true );
+	}
+	*/
+}
 
 /// @details E.g., remove a terminus variant, and replace the original in pose.
 /// @note This copies any atoms in common between old and new residues, rebuilding the others.

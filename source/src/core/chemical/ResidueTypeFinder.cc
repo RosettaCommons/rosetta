@@ -480,6 +480,8 @@ ResidueTypeFinder::apply_metapatches_recursively(
 		for ( Size i = 1; i <= atoms.size(); ++i ) {
 			PatchCOP patch = metapatch->get_one_patch( /**rsd_type,*/ atoms[ i ] );
 
+			//TR << "Considering " << rsd_type->name() << " for " << patch->name() << std::endl;
+
 			// absolute no-no's.
 			if ( !patch->applies_to( *rsd_type ) )             continue;
 			if ( has_disallowed_variant( patch ) )             continue;
@@ -487,6 +489,7 @@ ResidueTypeFinder::apply_metapatches_recursively(
 			if ( deletes_any_variant(    patch, rsd_type ) )   continue;
 			if ( changes_to_wrong_aa(    patch, rsd_type ) )   continue;
 			// could also add as a no-no: if patch *deletes* an atom in atom_names_.
+			//TR << "Passed continue " << rsd_type->name() << " for " << patch->name() << std::endl;
 
 			// note -- make sure to apply patch if it has a chance of satisfying any of
 			// the constraints on variants, branchpoints, or properties.
@@ -500,6 +503,8 @@ ResidueTypeFinder::apply_metapatches_recursively(
 			);
 
 			if ( apply_patch ) {
+				//TR << "Considering " << rsd_type->name() << " for " << patch->name() << std::endl;
+
 				// following just gets the right name of the patched residue
 				ResidueTypeCOP rsd_type_new_placeholder = patch->apply( *rsd_type, false /*instantiate*/ );
 				if ( rsd_type_new_placeholder ) {

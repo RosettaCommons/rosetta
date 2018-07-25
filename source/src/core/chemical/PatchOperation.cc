@@ -24,6 +24,7 @@
 #include <core/chemical/bond_support.hh>
 #include <core/chemical/rotamers/NCAARotamerLibrarySpecification.hh>
 #include <core/chemical/Bond.hh>
+#include <core/chemical/ResidueProperties.hh>
 
 // Numeric headers
 #include <numeric/conversions.hh>
@@ -2423,10 +2424,10 @@ AddConnectAndTrackingVirt::apply( ResidueType & rsd ) const {
 		}
 		++count;
 		if ( count == 1 ) {
-			if ( ! rsd.has_variant_type( res_varname ) ) break;
+			if ( !rsd.properties().has_custom_variant_types() || ! rsd.has_variant_type( res_varname ) ) break;
 		} else {
 			res_varname = atom_ + "-METAL_CONNECT" + utility::to_string( count );
-			if ( ! rsd.has_variant_type( res_varname ) ) break;
+			if ( !rsd.properties().has_custom_variant_types() || ! rsd.has_variant_type( res_varname ) ) break;
 		}
 	}
 	rsd.enable_custom_variant_types();

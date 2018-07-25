@@ -70,6 +70,16 @@ void add_variant_type_to_pose_residue(
 	chemical::VariantType const variant_type,
 	Size const seqpos );
 
+void add_variant_type_to_pose_residue(
+	pose::Pose & pose,
+	std::string const & variant_type,
+	Size const seqpos );
+
+void add_custom_variant_type_to_pose_residue(
+	pose::Pose & pose,
+	std::string const & variant_type,
+	Size const seqpos );
+
 /// @brief Construct a non-variant of an existing pose residue.
 void remove_variant_type_from_pose_residue(
 	pose::Pose & pose,

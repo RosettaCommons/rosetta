@@ -813,10 +813,22 @@ ResidueTypeSet::has_interchangeability_group( std::string const & interchangeabi
 /// @note    Currently, this will not work for variant types defined as alternate base residues (i.e., different .params
 ///          files).
 /// @remark  TODO: This should be refactored to make better use of the new ResidueProperties system. ~Labonte
+///          AMW refactored this to redirect to a string-using version because we only use VariantType strings within
+///          and I have need of direct invocation of a string version anyway.
+///          Actually, I'm going to keep this redirect but I NEED to refer to it as a 'custom variant' unfortunately.
+
 ResidueType const &
 ResidueTypeSet::get_residue_type_with_variant_added(
 	ResidueType const & init_rsd,
 	VariantType const new_type ) const
+{
+	return get_residue_type_with_variant_added( init_rsd, ResidueProperties::get_string_from_variant( new_type ) );
+}
+
+ResidueType const &
+ResidueTypeSet::get_residue_type_with_variant_added(
+	ResidueType const & init_rsd,
+	std::string const & new_type ) const
 {
 	if ( init_rsd.has_variant_type( new_type ) ) return init_rsd;
 
@@ -827,7 +839,7 @@ ResidueTypeSet::get_residue_type_with_variant_added(
 	// the desired set of variant types:
 	utility::vector1< std::string > target_variants( init_rsd.properties().get_list_of_variants() );
 	if ( !init_rsd.has_variant_type(new_type) ) {
-		target_variants.push_back( ResidueProperties::get_string_from_variant( new_type ) );
+		target_variants.push_back( new_type );
 	}
 
 	ResidueTypeCOP rsd_type = ResidueTypeFinder( *this ).residue_base_name( base_name ).variants( target_variants ).get_representative_type();
@@ -852,8 +864,53 @@ ResidueTypeSet::get_residue_type_with_variant_added(
 	// ResidueTypeCOP rsd_type = ResidueTypeFinder( *this ).base_type( init_rsd.get_self_ptr() ).variants( target_variants ).get_representative_type();
 
 	if ( rsd_type == nullptr ) {
-		utility_exit_with_message( "unable to find desired variant residue: " + init_rsd.name() + " " + base_name + " " +
-			ResidueProperties::get_string_from_variant( new_type ) );
+		utility_exit_with_message( "unable to find desired variant residue: " + init_rsd.name() + " " + base_name + " " + new_type );
+	}
+
+	return *rsd_type;
+}
+
+ResidueType const &
+ResidueTypeSet::get_residue_type_with_custom_variant_added(
+	ResidueType const & init_rsd,
+	std::string const & new_type ) const
+{
+	if ( init_rsd.properties().has_custom_variant_types() && init_rsd.has_variant_type( new_type ) ) return init_rsd;
+
+	// Find all residues with the same base name as init_rsd.
+	std::string const base_name( residue_type_base_name( init_rsd ) );
+	//std::string const & base_name( init_rsd.base_name() );
+
+	// the desired set of variant types:
+	utility::vector1< VariantType > target_variants( init_rsd.variant_type_enums() );
+	utility::vector1< std::string > target_custom_variants( init_rsd.properties().get_list_of_custom_variants() );
+	if ( !init_rsd.properties().has_custom_variant_types() || !init_rsd.has_variant_type(new_type) ) {
+		target_custom_variants.push_back( new_type );
+	}
+
+	ResidueTypeCOP rsd_type = ResidueTypeFinder( *this ).residue_base_name( base_name ).variants( target_variants, target_custom_variants ).get_representative_type();
+	if ( !rsd_type ) {
+		rsd_type = ResidueTypeFinder( *this ).base_type( init_rsd.get_self_ptr() ).variants( target_variants, target_custom_variants ).get_representative_type();
+	}
+
+	// AMW JWL TODO: it's a terrifying sign that there's different behavior for doing this with a base_type
+	// than a base_name. This tells me there is a really odd order dependence needed to create the right
+	// connectivity.
+
+	// For example: in the `carbohydrates` integration test, we have:
+	// LINK         O3  Man A   1                 C1  Man A   2                  1.50
+	// LINK         O4  Man A   1                 C1  Glc B   3                  1.50
+	// LINK         O6  Man A   1                 C1  Man C   4                  1.50
+	// with base_name but
+	// LINK         O3  Man A   1                 C1  Man A   2                  1.50
+	// LINK         O6  Man A   1                 C1  Glc B   3                  1.50
+	// LINK         O4  Man A   1                 C1  Man C   4                  1.50
+	// with base_type.
+	// Temporary workaround is to only use the base_type strategy IF the base_name strategy fails.
+	// ResidueTypeCOP rsd_type = ResidueTypeFinder( *this ).base_type( init_rsd.get_self_ptr() ).variants( target_variants ).get_representative_type();
+
+	if ( rsd_type == nullptr ) {
+		utility_exit_with_message( "unable to find desired variant residue: " + init_rsd.name() + " " + base_name + " " + new_type );
 	}
 
 	return *rsd_type;

@@ -279,6 +279,17 @@ public:
 		VariantType const new_type
 	) const;
 
+	ResidueType const &
+	get_residue_type_with_variant_added(
+		ResidueType const & init_rsd,
+		std::string const & new_type
+	) const;
+
+	ResidueType const &
+	get_residue_type_with_custom_variant_added(
+		ResidueType const & init_rsd,
+		std::string const & new_type ) const;
+
 	/// @brief return the residuetype we get from variant rsd type after removing the desired variant type
 	/// Note for derived classes: this method will obtain a read lock, and possibly
 	/// a write lock on the ResidueTypeSetCache.

@@ -792,6 +792,8 @@ void build_pose_as_is2(
 			if ( pose.residue_type( edge1.start() ).lower_connect_id() == 0 ) continue;
 			if ( pose.residue_type( edge2.stop()  ).upper_connect_id() == 0 ) continue;
 
+			// AMW: 2KTQ fails here for reasons unclear; it seems to find a cutpoint
+			// to be connected between two very distant residues.
 			id::AtomID lower( pose.residue_type( edge1.start() ).lower_connect_atom(), edge1.start() );
 			id::AtomID upper( pose.residue_type( edge2.stop()  ).upper_connect_atom(),  edge2.stop() );
 			if ( pose.conformation().atoms_are_bonded( upper, lower ) ) {

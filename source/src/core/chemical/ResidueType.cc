@@ -2853,6 +2853,7 @@ void
 ResidueType::delete_child_proton( std::string const & atom ) {
 	std::string res_varname( atom + "-PRUNEH" );
 	Size count = 0;
+	enable_custom_variant_types();
 	while ( true ) {
 		if ( count > 20 ) {
 			utility_exit_with_message( "Could not find a new VariantType for ResidueType: " + name() );
@@ -2865,7 +2866,6 @@ ResidueType::delete_child_proton( std::string const & atom ) {
 			if ( ! has_variant_type( res_varname ) ) break;
 		}
 	}
-	enable_custom_variant_types();
 	add_variant_type( res_varname );
 
 	// AMW: It seems like when we "delete" a proton, or fail to do so and virt
@@ -2942,7 +2942,11 @@ ResidueType::add_metapatch_connect( std::string const & atom ) {
 	debug_assert( has(atom) );
 
 	using namespace numeric::conversions;
-	std::string res_varname( atom + "-CONNECT" );
+	std::string res_varname( "MP-" + atom + "-CONNECT" );
+
+	// The below is needed just to ask has_variant_type on a custom variant.
+	enable_custom_variant_types();
+
 	Size count=0;
 	while ( true ) {
 		if ( count > 20 ) {
@@ -2952,11 +2956,10 @@ ResidueType::add_metapatch_connect( std::string const & atom ) {
 		if ( count == 1 ) {
 			if ( ! has_variant_type( res_varname ) ) break;
 		} else {
-			res_varname = atom + "-CONNECT" + utility::to_string( count );
+			res_varname = "MP-" + atom + "-CONNECT" + utility::to_string( count );
 			if ( ! has_variant_type( res_varname ) ) break;
 		}
 	}
-	enable_custom_variant_types();
 	add_variant_type( res_varname );
 
 	if ( number_bonded_hydrogens( atom_index( atom ) ) == 0 ) {
@@ -2983,6 +2986,7 @@ ResidueType::add_metapatch_connect( std::string const & atom ) {
 			aicoor.stub_atom1(), // Reuse the ICoorAtomID, as they might not be real atoms
 			aicoor.stub_atom2(),
 			aicoor.stub_atom3() );
+		//delete_atom( proton_index ); // separate pruneH patch
 	}
 
 	update_derived_data();

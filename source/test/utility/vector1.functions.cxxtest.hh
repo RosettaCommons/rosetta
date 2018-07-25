@@ -23,6 +23,7 @@
 #include <numeric/constants.hh>
 
 #include <utility/vector1.hh>
+#include <utility/vector1.functions.hh>
 
 class Vector1FunctionsTests : public CxxTest::TestSuite
 {
@@ -36,8 +37,26 @@ public:
 	void tearDown() {
 	}
 
+	void test_nmers_of_6_choose_3() { 
+		utility::vector1< int > ranges( 6 );
+		ranges[ 1  ] = 1;
+		ranges[ 2  ] = 20;
+		ranges[ 3  ] = 23;
+		ranges[ 4  ] = 54;
+		ranges[ 5  ] = 55;
+		ranges[ 6  ] = 70;
+		auto nmers = utility::nmers_of( ranges, 3 );
+
+		// Each one should be 3 long.
+		for ( auto const & elem : nmers ) {
+			TS_ASSERT_EQUALS( elem.size(), 3 );
+		}
+		// There should be 6 choose 3 of them, or 20
+		TS_ASSERT_EQUALS( nmers.size(), 20 );
+	}
+
 	void test_binary_search_ranges_even_n_elements() {
-		utility::vector1< int > ranges( 10 );
+		utility::vector1< platform::Size > ranges( 10 );
 		ranges[ 1  ] = 1;
 		ranges[ 2  ] = 20;
 		ranges[ 3  ] = 23;
@@ -66,7 +85,7 @@ public:
 	}
 
 	void test_binary_search_ranges_odd_n_elements() {
-		utility::vector1< int > ranges( 9 );
+		utility::vector1< platform::Size > ranges( 9 );
 		ranges[ 1  ] = 101;
 		ranges[ 2  ] = 120;
 		ranges[ 3  ] = 123;

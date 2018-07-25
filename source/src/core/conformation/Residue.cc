@@ -681,6 +681,8 @@ Residue::orient_onto_residue( Residue const & src )
 
 	Size center, nbr1, nbr2;
 	select_orient_atoms( center, nbr1, nbr2 );
+	//TR << "ARGH ok " << center << "  " << nbr1 << "  " << nbr2 << std::endl;
+	//TR << "ARGH ok " << src.atom_name( center ) << "  " << src.atom_name( nbr1 ) << "  " << src.atom_name( nbr2 ) << std::endl;
 
 	if (
 			! src.type().has( rsd_type_.atom_name( center ) ) ||

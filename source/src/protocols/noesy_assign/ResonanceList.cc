@@ -48,6 +48,8 @@
 // #include <basic/options/keys/run.OptionKeys.gen.hh>
 //#include <basic/options/keys/templates.OptionKeys.gen.hh>
 
+#include <ObjexxFCL/string.functions.hh>
+
 //// C++ headers
 #include <cstdlib>
 #include <string>
@@ -497,7 +499,7 @@ void ResonanceList::update_bond_connections() {
 		ResonanceOP proton( it->second );
 		Size resid( it->second->atom().rsd() );
 		try {
-			id::NamedAtomID atomID( label_atom_name( proton->atom().atom(), aa_from_resid( resid ) ), resid );
+			id::NamedAtomID atomID( label_atom_name( ObjexxFCL::stripped_whitespace(proton->atom().atom()), aa_from_resid( resid ) ), resid );
 			Resonance const& label_reso( (*this)[ atomID ] ); //use this operator to have full-checking
 			if ( tr_labels.Trace.visible() ) {
 				tr_labels.Trace << it->second->atom() << " has label " << atomID << std::endl;

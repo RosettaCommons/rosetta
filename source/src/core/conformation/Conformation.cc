@@ -1562,6 +1562,7 @@ Conformation::detect_pseudobonds()
 					Size const ur  = jj_conn_res < kk_conn_res ? kk_conn_res : jj_conn_res;
 					Size const uri = jj_conn_res < kk_conn_res ? kk_conn_id  : jj_conn_id ;
 					if ( ! (lr && lri && ur && uri) ) continue;
+
 					add_pseudobond( lr, lri, ur, uri, ii_res.path_distance( kk_atid, jj_atid ));
 
 					TR.Info << "Adding PseudoBond between residues " << lr << " " << ur << ", connecting atoms ";
@@ -1604,6 +1605,9 @@ Conformation::detect_pseudobonds()
 						Size const ll_conn_id(  ii_res.residue_connection_conn_id( ll == 1 ? kk : jj ));
 						Size const mm_conn_res( ll_res.residue_connection_partner( mm ));
 						Size const mm_conn_id(  ll_res.residue_connection_conn_id( mm ));
+
+						// This odd circumstance occurs with 1sqz; check back later if it's okay AMW TODO
+						if ( ll_conn_res == 0 || mm_conn_res == 0 ) continue;
 
 						Size const lr  = ll_conn_res < mm_conn_res ? ll_conn_res : mm_conn_res;
 						Size const lri = ll_conn_res < mm_conn_res ? ll_conn_id  : mm_conn_id ;

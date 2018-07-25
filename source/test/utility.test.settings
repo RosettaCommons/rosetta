@@ -30,6 +30,7 @@ sources = {
 		"UTools",
 		"vector0",
 		"vector1",
+		"vector1.functions",
 		"vector1_bool",
 		"vectorL",
 	],

@@ -393,7 +393,12 @@ ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 			if ( restype->is_d_rna() ) {
 				restype->set_icoor( "LOWER", radians(-60.259000), radians(76.024713), 1.607355, "P", "O5'", "C5'" );
 				if ( upper_atom != "" ) {
-					restype->set_icoor( "UPPER", radians(-139.954848), radians(59.821530), 1.607226, upper_atom, "C3'", "C4'" );
+					// If restype has C4', use; else skip to C4' (4JA)
+					if ( restype->has( "C4'" ) ) {
+						restype->set_icoor( "UPPER", radians(-139.954848), radians(59.821530), 1.607226, upper_atom, "C3'", "C4'" );
+					} else {
+						restype->set_icoor( "UPPER", radians(-139.954848), radians(59.821530), 1.607226, upper_atom, "C3'", "C5'" );
+					}
 				} else {
 					restype->add_property( "UPPER_TERMINUS" );
 				}
@@ -401,7 +406,12 @@ ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 			} else if ( restype->is_l_rna() ) { // is L or achiral
 				restype->set_icoor( "LOWER", radians(60.259000), radians(76.024713), 1.607355, "P", "O5'", "C5'" );
 				if ( upper_atom != "" ) {
-					restype->set_icoor( "UPPER", radians(139.954848), radians(59.821530), 1.607226, upper_atom, "C3'", "C4'" );
+					// If restype has C4', use; else skip to C4' (4JA)
+					if ( restype->has( "C4'" ) ) {
+						restype->set_icoor( "UPPER", radians(139.954848), radians(59.821530), 1.607226, upper_atom, "C3'", "C4'" );
+					} else {
+						restype->set_icoor( "UPPER", radians(139.954848), radians(59.821530), 1.607226, upper_atom, "C3'", "C5'" );
+					}
 				} else {
 					restype->add_property( "UPPER_TERMINUS" );
 				}
@@ -409,7 +419,11 @@ ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 			} else if ( restype->is_DNA() ) {
 				restype->set_icoor( "LOWER", radians(-60.259000), radians(76.024713), 1.607355, "P", "O5'", "C5'" );
 				if ( upper_atom != "" ) {
-					restype->set_icoor( "UPPER", radians(-139.954848), radians(59.821530), 1.607226, upper_atom, "C3'", "C4'" );
+					if ( restype->has( "C4'" ) ) {
+						restype->set_icoor( "UPPER", radians(-139.954848), radians(59.821530), 1.607226, upper_atom, "C3'", "C4'" );
+					} else {
+						restype->set_icoor( "UPPER", radians(-139.954848), radians(59.821530), 1.607226, upper_atom, "C3'", "C5'" );
+					}
 				} else {
 					restype->add_property( "UPPER_TERMINUS" );
 				}

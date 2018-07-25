@@ -175,8 +175,7 @@ StructFileRepOP create_sfr_from_cif_file_op( CifFileOP cifFile, StructFileReader
 	// LINK
 	if ( block.IsTablePresent( "struct_conn" ) && ! options.read_only_ATOM_entries() ) {
 		ISTable& struct_conn = block.GetTable("struct_conn");
-		for ( Size i = 0; i < struct_conn.GetLastRowIndex(); ++i ) {
-
+		for ( Size i = 0; i <= struct_conn.GetLastRowIndex(); ++i ) {
 			if ( struct_conn( i, "conn_type_id" ) == "disulf" ) {
 				SSBondInformation ssbond;
 				utility::vector1< SSBondInformation > ssbonds;
@@ -185,9 +184,22 @@ StructFileRepOP create_sfr_from_cif_file_op( CifFileOP cifFile, StructFileReader
 
 				// Extract values from record fields.
 				//ssbond.name1 = struct_conn( i, "ptnr1_label_atom_id" );
-				ssbond.resName1 = struct_conn( i, "ptnr1_label_comp_id" );
-				ssbond.chainID1 = struct_conn( i, "ptnr1_label_asym_id" )[0];
-				ssbond.resSeq1 = atof( struct_conn( i, "ptnr1_label_seq_id" ).c_str() );
+				// Prefer 'author' annotations if available.
+				if ( struct_conn.IsColumnPresent( "ptnr1_auth_comp_id" ) ) {
+					ssbond.resName1 = struct_conn( i, "ptnr1_auth_comp_id" );
+				} else {
+					ssbond.resName1 = struct_conn( i, "ptnr1_label_comp_id" );
+				}
+				if ( struct_conn.IsColumnPresent( "ptnr1_auth_asym_id" ) ) {
+					ssbond.chainID1 = struct_conn( i, "ptnr1_auth_asym_id" )[0];
+				} else {
+					ssbond.chainID1 = struct_conn( i, "ptnr1_label_asym_id" )[0];
+				}
+				if ( struct_conn.IsColumnPresent( "ptnr1_auth_seq_id" ) ) {
+					ssbond.resSeq1 = atof( struct_conn( i, "ptnr1_auth_seq_id" ).c_str() );
+				} else {
+					ssbond.resSeq1 = atof( struct_conn( i, "ptnr1_label_seq_id" ).c_str() );
+				}
 				ssbond.iCode1 = struct_conn( i, "pdbx_ptnr1_PDB_ins_code" )[0] == '?' ? ' ' : struct_conn( i, "pdbx_ptnr1_PDB_ins_code" )[0];
 
 				std::stringstream strstr1;
@@ -195,9 +207,21 @@ StructFileRepOP create_sfr_from_cif_file_op( CifFileOP cifFile, StructFileReader
 				ssbond.resID1 = strstr1.str();
 
 				//ssbond.name2 = struct_conn( i, "ptnr2_label_atom_id" );
-				ssbond.resName2 = struct_conn( i, "ptnr2_label_comp_id" );
-				ssbond.chainID2 = struct_conn( i, "ptnr2_label_asym_id" )[0];
-				ssbond.resSeq2 = atof( struct_conn( i, "ptnr2_label_seq_id" ).c_str() );
+				if ( struct_conn.IsColumnPresent( "ptnr2_auth_comp_id" ) ) {
+					ssbond.resName2 = struct_conn( i, "ptnr2_auth_comp_id" );
+				} else {
+					ssbond.resName2 = struct_conn( i, "ptnr2_label_comp_id" );
+				}
+				if ( struct_conn.IsColumnPresent( "ptnr2_auth_asym_id" ) ) {
+					ssbond.chainID2 = struct_conn( i, "ptnr2_auth_asym_id" )[0];
+				} else {
+					ssbond.chainID2 = struct_conn( i, "ptnr2_label_asym_id" )[0];
+				}
+				if ( struct_conn.IsColumnPresent( "ptnr2_auth_seq_id" ) ) {
+					ssbond.resSeq2 = atof( struct_conn( i, "ptnr2_auth_seq_id" ).c_str() );
+				} else {
+					ssbond.resSeq2 = atof( struct_conn( i, "ptnr2_label_seq_id" ).c_str() );
+				}
 				ssbond.iCode2 = struct_conn( i, "pdbx_ptnr2_PDB_ins_code" )[0] == '?' ? ' ' : struct_conn( i, "pdbx_ptnr2_PDB_ins_code" )[0];
 
 				std::stringstream strstr2;
