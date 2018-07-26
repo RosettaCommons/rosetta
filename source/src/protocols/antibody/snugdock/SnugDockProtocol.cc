@@ -334,6 +334,50 @@ core::pack::task::TaskFactoryOP SnugDockProtocol::repack_tf_from_residue_sets(Po
 	return tf;
 
 }
+// function returns a virtual residue positioned at COM with correct XY orientation for docking
+core::conformation::ResidueOP SnugDockProtocol::place_VRT_at_residue_COM( Pose const & pose, utility::vector1<bool> residues) {
+	using namespace core::conformation;
+	using namespace core::chemical;
+	// Create VRT
+	ResidueTypeCOP vrt_res_type = virtual_type_for_pose( pose );
+	ResidueOP      vrt_res      = ResidueFactory::create_residue( *vrt_res_type );
+
+	// compute residue nearest to COM that VRT will imitate
+	core::Size com_resnum = core::pose::residue_center_of_mass(pose, residues);
+
+	// set VRT coordinates to mirror residue coordinates
+	// ORIG = CA
+	// X = N
+	// Y = C (of res - 1)
+	vrt_res->set_xyz( "ORIG", pose.residue(com_resnum).xyz("CA") );
+	vrt_res->set_xyz( "X", pose.residue(com_resnum).xyz("N") );
+	vrt_res->set_xyz( "Y", pose.residue(com_resnum - 1).xyz("C"));
+
+	return vrt_res;
+}
+
+// function returns a virtual residue positioned at COM with correct XY orientation for docking
+core::conformation::ResidueOP SnugDockProtocol::place_VRT_at_residue_COM( Pose const & pose, core::Size start, core::Size stop) {
+	using namespace core::conformation;
+	using namespace core::chemical;
+	// Create VRT
+	ResidueTypeCOP vrt_res_type = virtual_type_for_pose( pose );
+	ResidueOP      vrt_res      = ResidueFactory::create_residue( *vrt_res_type );
+
+	// compute residue nearest to COM that VRT will imitate
+	core::Size com_resnum = core::pose::residue_center_of_mass(pose, start, stop);
+
+	// set VRT coordinates to mirror residue coordinates
+	// ORIG = CA
+	// X = N
+	// Y = C (of res - 1)
+	vrt_res->set_xyz( "ORIG", pose.residue(com_resnum).xyz("CA") );
+	vrt_res->set_xyz( "X", pose.residue(com_resnum).xyz("N") );
+	vrt_res->set_xyz( "Y", pose.residue(com_resnum - 1).xyz("C"));
+
+	return vrt_res;
+}
+
 
 void SnugDockProtocol::setup_ab_ag_foldtree( Pose & pose, AntibodyInfoOP antibody_info ) {
 	//
@@ -381,16 +425,16 @@ void SnugDockProtocol::setup_ab_ag_foldtree( Pose & pose, AntibodyInfoOP antibod
 
 	// set up pose with VRTs, we'll need 4+ for Ab-Ag docking: Ab COM, VH COM, (VL COM), Ag COM, A COM, (B COM), ...
 	pose_vrt->append_residue_by_jump(*vrt_res, 1); // append one VRT for Ab COM (always res1)
-	core::Size ab_com_resn = 1;
+	core::Size ab_com_resnum = 1;
 	n_vrts++;
 
 	pose_vrt->append_residue_by_jump(*vrt_res, 1); // append one VRT for Ag COM (always res2)
-	core::Size ag_com_resn = 2;
+	core::Size ag_com_resnum = 2;
 	n_vrts++;
 
-	// create a map to track COM residues
+	// create a map to track COM virtual residues
 	// DOES NOT STORE antibody or antigen COM, only for chains
-	std::map < char, core::Size > com_resn_from_chain;
+	std::map < char, core::Size > com_resnum_from_chain;
 
 	// check for number of Ab chains, append one COM VRT for each chain
 	// it will be important to restore these chains to the final pose
@@ -399,14 +443,14 @@ void SnugDockProtocol::setup_ab_ag_foldtree( Pose & pose, AntibodyInfoOP antibod
 	utility::vector1<char> antibody_chain_chars = antibody_info->get_antibody_chains();
 
 	// add H chain (always present) and maybe L chain
-	pose_vrt->append_residue_by_jump(*vrt_res, ab_com_resn + n_vrts - 2);
+	pose_vrt->append_residue_by_jump(*vrt_res, ab_com_resnum + n_vrts - 2);
 	n_vrts++;
-	com_resn_from_chain['H'] = n_vrts;
+	com_resnum_from_chain['H'] = n_vrts;
 	if ( antibody_chain_chars.index('L') != 0 ) {
 		ab_has_light_chain_ = true;
-		pose_vrt->append_residue_by_jump(*vrt_res, ab_com_resn + n_vrts - 2);
+		pose_vrt->append_residue_by_jump(*vrt_res, ab_com_resnum + n_vrts - 2);
 		n_vrts++;
-		com_resn_from_chain['L'] = n_vrts;
+		com_resnum_from_chain['L'] = n_vrts;
 	}
 
 	// do the same for the Ag
@@ -414,9 +458,9 @@ void SnugDockProtocol::setup_ab_ag_foldtree( Pose & pose, AntibodyInfoOP antibod
 
 	for ( auto chain : antigen_chain_chars ) {
 		// append to ag_vrt + n_vrts - 3/4 (one for each COM VRT, depending on # Ab chains)
-		pose_vrt->append_residue_by_jump(*vrt_res, ag_com_resn + n_vrts - antibody_chain_chars.size() - 2);
+		pose_vrt->append_residue_by_jump(*vrt_res, ag_com_resnum + n_vrts - antibody_chain_chars.size() - 2);
 		n_vrts++;
-		com_resn_from_chain[chain] = n_vrts;
+		com_resnum_from_chain[chain] = n_vrts;
 	}
 
 	// fold tree construction each VRT goes to another VRT + N-terminus
@@ -425,31 +469,31 @@ void SnugDockProtocol::setup_ab_ag_foldtree( Pose & pose, AntibodyInfoOP antibod
 
 	// connect VRTs
 	// 1->2 is always VRT_AB_COM -- VRT_AG_COM
-	//TR << "Adding edge from Ab_COM (" << ab_com_resn << ") to Ag_COM (" << ag_com_resn << "), #" << current_jump_num << std::endl;
-	ft->add_edge(ab_com_resn, ag_com_resn, current_jump_num);
+	//TR << "Adding edge from Ab_COM (" << ab_com_resnum << ") to Ag_COM (" << ag_com_resnum << "), #" << current_jump_num << std::endl;
+	ft->add_edge(ab_com_resnum, ag_com_resnum, current_jump_num);
 	++current_jump_num; // increment jump number (jump 1, initially)
 	// 2->3 will be Ab-VH
-	//TR << "Adding edge from Ab_COM (" << ab_com_resn << ") to H (" << com_resn_from_chain['H'] << "), #" << current_jump_num << std::endl;
-	ft->add_edge(ab_com_resn, com_resn_from_chain['H'], current_jump_num);
+	//TR << "Adding edge from Ab_COM (" << ab_com_resnum << ") to H (" << com_resnum_from_chain['H'] << "), #" << current_jump_num << std::endl;
+	ft->add_edge(ab_com_resnum, com_resnum_from_chain['H'], current_jump_num);
 	++current_jump_num;
 	// Vh-Vl is 3->4, if present
 	if ( ab_has_light_chain_ ) {
-		//TR << "Adding edge from H(" << com_resn_from_chain['H'] << ") to L(" << com_resn_from_chain['L'] << "), #" << current_jump_num << std::endl;
-		ft->add_edge(com_resn_from_chain['H'], com_resn_from_chain['L'], current_jump_num);
+		//TR << "Adding edge from H(" << com_resnum_from_chain['H'] << ") to L(" << com_resnum_from_chain['L'] << "), #" << current_jump_num << std::endl;
+		ft->add_edge(com_resnum_from_chain['H'], com_resnum_from_chain['L'], current_jump_num);
 		vh_vl_jump_ = current_jump_num;
 		++current_jump_num;
 	}
 
 	// add edge for first antigen chain (ALWAYS present, special case jumps from COM)
-	//TR << "Adding edge from Ag_COM (" << ag_com_resn << ") to Ag_X (" << com_resn_from_chain[antigen_chain_chars.front()] << "), #" << current_jump_num << std::endl;
-	ft->add_edge(ag_com_resn, com_resn_from_chain[antigen_chain_chars.front()], current_jump_num);
+	//TR << "Adding edge from Ag_COM (" << ag_com_resnum << ") to Ag_X (" << com_resnum_from_chain[antigen_chain_chars.front()] << "), #" << current_jump_num << std::endl;
+	ft->add_edge(ag_com_resnum, com_resnum_from_chain[antigen_chain_chars.front()], current_jump_num);
 	++current_jump_num;
 	// add edges for all other antigen chains, jump from each other
 	// hence int iteration rather than auto
 	if ( antigen_chain_chars.size() > 1 ) {
 		for ( core::Size i = 2; i <= antigen_chain_chars.size(); ++i ) {
-			//TR << "Adding edge from Ag_X (" << com_resn_from_chain[antigen_chain_chars[i-1]] << ") to Ag_Y (" << com_resn_from_chain[antigen_chain_chars[i]] << "), #" << current_jump_num << std::endl;
-			ft->add_edge(com_resn_from_chain[antigen_chain_chars[i-1]], com_resn_from_chain[antigen_chain_chars[i]], current_jump_num);
+			//TR << "Adding edge from Ag_X (" << com_resnum_from_chain[antigen_chain_chars[i-1]] << ") to Ag_Y (" << com_resnum_from_chain[antigen_chain_chars[i]] << "), #" << current_jump_num << std::endl;
+			ft->add_edge(com_resnum_from_chain[antigen_chain_chars[i-1]], com_resnum_from_chain[antigen_chain_chars[i]], current_jump_num);
 			++current_jump_num;
 		}
 	}
@@ -458,39 +502,41 @@ void SnugDockProtocol::setup_ab_ag_foldtree( Pose & pose, AntibodyInfoOP antibod
 	// we'll add these below jumps should be appended automatically (?)
 
 	// split the original pose by chain and append each chain to the correct VRT
-	// also, while splitting compute individual chain COMs (we'll later compute antigen/ab COMs)
-	std::map < char, numeric::xyzVector<core::Real> > com_xyz_from_chain;
+	// also, while splitting compute individual chain residues closest to COM
+	std::map < char, ResidueOP > com_VRT_from_chain;
 
 	// heavy chain should be append first to match CDR loop placement later on
 	// split particular chain
-	PoseOP single_chain = pose.split_by_chain( core::pose::get_chain_id_from_chain( 'H', pose ) );
-	// compute chain COM
-	com_xyz_from_chain['H'] = center_of_mass(*single_chain, 1, single_chain->size());
+	PoseOP single_chain = pose.split_by_chain( get_chain_id_from_chain( 'H', pose ) );
+	// compute residue nearest to COM that VRT will imitate
+	com_VRT_from_chain['H'] = place_VRT_at_residue_COM( *single_chain, 1, single_chain->size() );
+
 	// append chain to new pose
-	pose_vrt->append_pose_by_jump(*single_chain, com_resn_from_chain['H']);
+	pose_vrt->append_pose_by_jump(*single_chain, com_resnum_from_chain['H']);
 
 	// light chain is next, if present
 	if ( ab_has_light_chain_ ) {
 		// split particular chain
-		PoseOP single_chain = pose.split_by_chain( core::pose::get_chain_id_from_chain( 'L', pose ) );
-		// compute chain COM
-		com_xyz_from_chain['L'] = center_of_mass(*single_chain, 1, single_chain->size());
+		PoseOP single_chain = pose.split_by_chain( get_chain_id_from_chain( 'L', pose ) );
+		// store in order ORIG coords (equivalent to CA), X = N, Y = C (of -1 res)
+		com_VRT_from_chain['L'] = place_VRT_at_residue_COM( *single_chain, 1, single_chain->size() );
+
 		// append chain to new pose
-		pose_vrt->append_pose_by_jump(*single_chain, com_resn_from_chain['L']);
+		pose_vrt->append_pose_by_jump(*single_chain, com_resnum_from_chain['L']);
 	}
 
-
 	// since new pose only contains antibody residues, we can get antibody COM here!
-	TR << "Calculating Ab COM from residue " << n_vrts << "to " << pose_vrt->size() << std::endl;
-	numeric::xyzVector<core::Real> ab_com = center_of_mass(*pose_vrt, n_vrts + 1, pose_vrt->size());
+	TR << "Calculating Ab COM from residue " << n_vrts + 1 << " to " << pose_vrt->size() << std::endl;
+
+	ResidueOP ab_com_VRT = place_VRT_at_residue_COM( *pose_vrt, n_vrts + 1, pose_vrt->size() );
 
 	for ( auto chain : antigen_chain_chars ) {
 		// split particular chain
-		PoseOP single_chain = pose.split_by_chain( core::pose::get_chain_id_from_chain( chain, pose ) );
+		PoseOP single_chain = pose.split_by_chain( get_chain_id_from_chain( chain, pose ) );
 		// compute chain COM
-		com_xyz_from_chain[chain] = center_of_mass(*single_chain, 1, single_chain->size());
+		com_VRT_from_chain[chain] = place_VRT_at_residue_COM(*single_chain, 1, single_chain->size());
 		// append chain to new pose
-		pose_vrt->append_pose_by_jump(*single_chain, com_resn_from_chain[chain]);
+		pose_vrt->append_pose_by_jump(*single_chain, com_resnum_from_chain[chain]);
 	}
 
 	// now we have to do a little work to get the antigen center of mass
@@ -509,24 +555,45 @@ void SnugDockProtocol::setup_ab_ag_foldtree( Pose & pose, AntibodyInfoOP antibod
 		}
 	}
 
-	// get center of masses for VRT placement
-	numeric::xyzVector<core::Real> antigen_com = center_of_mass(pose, res_in_antigen);
+	// get residue nearest to center of mass for VRT placement
+	ResidueOP antigen_com_VRT = place_VRT_at_residue_COM( pose, res_in_antigen );
 
 	// print and set COMs
-	//TR << "COM for antibody is: " << numeric::truncate_and_serialize_xyz_vector(ab_com, 2) << std::endl;
-	pose_vrt->set_xyz( core::id::AtomID( 1, ab_com_resn ), ab_com);
+	//TR << "VRT residue nearest to antibody COM is " << ab_com_VRT << std::endl;
 
-	//TR << "COM for antigen is: " << numeric::truncate_and_serialize_xyz_vector(antigen_com, 2) << std::endl;
-	pose_vrt->set_xyz( core::id::AtomID( 1, ag_com_resn ), antigen_com);
+	// set ORIG to CA COM
+	pose_vrt->set_xyz( core::id::AtomID( 1, ab_com_resnum ), ab_com_VRT->xyz("ORIG") );
+	// set X to N COM (CA parent)
+	pose_vrt->set_xyz( core::id::AtomID( 2, ab_com_resnum ), ab_com_VRT->xyz("X"));
+	// set Y to C (of res - 1) COM (N parent)
+	pose_vrt->set_xyz( core::id::AtomID( 3, ab_com_resnum ), ab_com_VRT->xyz("Y"));
+
+	//TR << "VRT residue nearest to antigen COM is " << antigen_com_VRT << std::endl;
+	// set ORIG to CA COM
+	pose_vrt->set_xyz( core::id::AtomID( 1, ag_com_resnum ), antigen_com_VRT->xyz("ORIG"));
+	// set X to N COM
+	pose_vrt->set_xyz( core::id::AtomID( 2, ag_com_resnum ), antigen_com_VRT->xyz("X"));
+	// set Y to C COM
+	pose_vrt->set_xyz( core::id::AtomID( 3, ag_com_resnum ), antigen_com_VRT->xyz("Y"));
 
 	// COMs for individual chains
 	for ( auto chain : antibody_chain_chars ) {
-		//TR << "COM for antibody chain " << chain << " : " << numeric::truncate_and_serialize_xyz_vector(com_xyz_from_chain[chain],2 ) << std::endl;
-		pose_vrt->set_xyz( core::id::AtomID( 1, com_resn_from_chain[chain] ), com_xyz_from_chain[chain]);
+		//TR << "VRT residue nearest to chain " << chain << " is " << com_VRT_from_chain[chain] << std::endl;
+		// set ORIG to CA COM
+		pose_vrt->set_xyz( core::id::AtomID( 1, com_resnum_from_chain[chain] ), com_VRT_from_chain[chain]->xyz("ORIG"));
+		// set X to N COM
+		pose_vrt->set_xyz( core::id::AtomID( 2, com_resnum_from_chain[chain] ), com_VRT_from_chain[chain]->xyz("X"));
+		// set Y to C COM
+		pose_vrt->set_xyz( core::id::AtomID( 3, com_resnum_from_chain[chain] ), com_VRT_from_chain[chain]->xyz("Y"));
 	}
 	for ( auto chain : antigen_chain_chars ) {
-		//TR << "COM for antigen chain " << chain << " : " << numeric::truncate_and_serialize_xyz_vector(com_xyz_from_chain[chain], 2) << std::endl;
-		pose_vrt->set_xyz( core::id::AtomID( 1, com_resn_from_chain[chain] ), com_xyz_from_chain[chain]);
+		//TR << "VRT residue nearest to chain " << chain << " is " << com_VRT_from_chain[chain] << std::endl;
+		// set ORIG to CA COM
+		pose_vrt->set_xyz( core::id::AtomID( 1, com_resnum_from_chain[chain] ), com_VRT_from_chain[chain]->xyz("ORIG"));
+		// set X to N COM
+		pose_vrt->set_xyz( core::id::AtomID( 2, com_resnum_from_chain[chain] ), com_VRT_from_chain[chain]->xyz("X"));
+		// set Y to C COM
+		pose_vrt->set_xyz( core::id::AtomID( 3, com_resnum_from_chain[chain] ), com_VRT_from_chain[chain]->xyz("Y"));
 	}
 
 	// OK back to the FoldTree
@@ -572,8 +639,8 @@ void SnugDockProtocol::setup_ab_ag_foldtree( Pose & pose, AntibodyInfoOP antibod
 		core::Size cter_resn = all_chain_ends[i];
 
 		// get com_vert resnum by matching chains, assumes correctly assigned chains
-		TR << "Adding jump from COM VRT to N-term: " << com_resn_from_chain[pose_vrt->pdb_info()->chain(nter_resn)] << " " << nter_resn << "." << std::endl;
-		ft->add_edge(com_resn_from_chain[pose_vrt->pdb_info()->chain(nter_resn)], nter_resn, current_jump_num);
+		TR << "Adding jump from COM VRT to N-term: " << com_resnum_from_chain[pose_vrt->pdb_info()->chain(nter_resn)] << " " << nter_resn << "." << std::endl;
+		ft->add_edge(com_resnum_from_chain[pose_vrt->pdb_info()->chain(nter_resn)], nter_resn, current_jump_num);
 		++current_jump_num;
 
 		// peptide edge!

@@ -30,10 +30,14 @@
 #include <protocols/antibody/RefineOneCDRLoop.fwd.hh>
 
 // Project headers
+#include <core/conformation/Residue.fwd.hh>
 #include <core/pose/PDBInfo.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <protocols/docking/DockingProtocol.fwd.hh>
+
+// Utility headers
+#include <utility/vector1.fwd.hh>
 
 // C++ headers
 #include <iostream>
@@ -83,6 +87,8 @@ public:
 	// TODO: Move to AntibodyInfo() and generalize
 	core::pack::task::TaskFactoryOP repack_tf_from_residue_sets(Pose const & pose, std::set< core::Size > const & ab_residues, std::set< core::Size > const & ag_residues);
 	void setup_ab_ag_foldtree( Pose & pose, AntibodyInfoOP antibody_info );
+	core::conformation::ResidueOP place_VRT_at_residue_COM( Pose const & pose, utility::vector1<bool> residues);
+	core::conformation::ResidueOP place_VRT_at_residue_COM( Pose const & pose, core::Size start, core::Size stop);
 
 
 private: // methods

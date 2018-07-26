@@ -273,9 +273,9 @@ public:
 		core::Real b_axis = mover->get_b_axis();
 		core::Real c_axis = mover->get_c_axis();
 
-		core::Vector nbr_atom_centroid = mover->get_nbr_atom_centroid();
-		core::Vector nbr_atom_plane_centroid = mover->get_spin_center();
-		core::Vector nbr_atom_non_ellipsoid_centroid = mover->get_nbr_atom_non_ellipsoid_centroid();
+		core::Vector c_alpha_centroid = mover->get_nbr_atom_centroid();
+		core::Vector c_alpha_plane_centroid = mover->get_spin_center();
+		core::Vector c_alpha_non_ellipsoid_centroid = mover->get_nbr_atom_non_ellipsoid_centroid();
 
 		core::Vector random_point_on_ellipsoid = mover->get_random_point_on_ellipsoid();
 		core::Real should_be_one = ( random_point_on_ellipsoid.x() * random_point_on_ellipsoid.x() ) / ( a_axis * a_axis ) +
@@ -294,18 +294,18 @@ public:
 
 		core::Real tolerance = 0.001;
 
-		TS_ASSERT_DELTA( a_axis, 11.736, tolerance );
-		TS_ASSERT_DELTA( b_axis, 9.094, tolerance );
-		TS_ASSERT_DELTA( c_axis, 16.280, tolerance );
-		TS_ASSERT_DELTA( nbr_atom_centroid.x(), 43.951, tolerance );
-		TS_ASSERT_DELTA( nbr_atom_centroid.y(), 33.021, tolerance );
-		TS_ASSERT_DELTA( nbr_atom_centroid.z(), 32.809, tolerance );
-		TS_ASSERT_DELTA( nbr_atom_plane_centroid.x(), 31.304, tolerance );
-		TS_ASSERT_DELTA( nbr_atom_plane_centroid.y(), 29.873, tolerance );
-		TS_ASSERT_DELTA( nbr_atom_plane_centroid.z(), 29.314, tolerance );
-		TS_ASSERT_DELTA( nbr_atom_non_ellipsoid_centroid.x(), 23.385, tolerance );
-		TS_ASSERT_DELTA( nbr_atom_non_ellipsoid_centroid.y(), 26.452, tolerance );
-		TS_ASSERT_DELTA( nbr_atom_non_ellipsoid_centroid.z(), 22.816, tolerance );
+		TS_ASSERT_DELTA( a_axis, 11.586, tolerance );
+		TS_ASSERT_DELTA( b_axis, 8.331, tolerance );
+		TS_ASSERT_DELTA( c_axis, 15.997, tolerance );
+		TS_ASSERT_DELTA( c_alpha_centroid.x(), 44.094, tolerance );
+		TS_ASSERT_DELTA( c_alpha_centroid.y(), 33.088, tolerance );
+		TS_ASSERT_DELTA( c_alpha_centroid.z(), 33.046, tolerance );
+		TS_ASSERT_DELTA( c_alpha_plane_centroid.x(), 31.114, tolerance );
+		TS_ASSERT_DELTA( c_alpha_plane_centroid.y(), 29.683, tolerance );
+		TS_ASSERT_DELTA( c_alpha_plane_centroid.z(), 29.135, tolerance );
+		TS_ASSERT_DELTA( c_alpha_non_ellipsoid_centroid.x(), 23.415, tolerance );
+		TS_ASSERT_DELTA( c_alpha_non_ellipsoid_centroid.y(), 26.422, tolerance );
+		TS_ASSERT_DELTA( c_alpha_non_ellipsoid_centroid.z(), 22.750, tolerance );
 		TS_ASSERT_DELTA( should_be_one, 1.000, tolerance );
 		TS_ASSERT_DELTA( should_be_one_too, 1.000, tolerance );
 		TS_ASSERT_DELTA( normal_to_plane.x(), -1.0 * slide_axis.x(), tolerance );

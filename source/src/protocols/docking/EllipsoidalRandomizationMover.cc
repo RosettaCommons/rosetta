@@ -304,7 +304,10 @@ EllipsoidalRandomizationMover::calculate_axes( core::pose::Pose & pose_in )
 
 	utility::vector1< Vector > nbr_atom_coords; //c_alpha_coords;
 	for ( Size i=partner_residue_start_stop[1]; i<=partner_residue_start_stop[2]; ++i ) {
-		nbr_atom_coords.push_back( pose_in.residue( i ).xyz( pose_in.residue( i ).nbr_atom() ) );
+		core::conformation::Residue const & rsd = pose_in.residue( i );
+		numeric::xyzVector_double atom_coords = rsd.is_protein() ? rsd.atom( "CA" ).xyz() :
+			rsd.nbr_atom_xyz();
+		nbr_atom_coords.push_back( atom_coords );
 	}
 
 	Size n_res = nbr_atom_coords.size();
@@ -632,9 +635,15 @@ EllipsoidalRandomizationMover::calculate_plane_axes( core::pose::Pose & pose_in 
 		utility::vector1< bool > is_interface = get_interface_residues( pose_in, interface_distance_cutoff, autofoldtree_ );
 		TR << "Getting interface residues at " << interface_distance_cutoff << " Angstroms" << std::endl;
 		for ( Size i=partner_residue_start_stop[1]; i<=partner_residue_start_stop[2]; ++i ) {
-			nbr_atom_non_ellipsoid_coords.push_back( pose_in.residue( i ).xyz( pose_in.residue( i ).nbr_atom() ) );
+			core::conformation::Residue const & rsd = pose_in.residue( i );
+			numeric::xyzVector_double atom_coords = rsd.is_protein() ? rsd.atom( "CA" ).xyz() : rsd.nbr_atom_xyz();
+			nbr_atom_non_ellipsoid_coords.push_back( atom_coords );
+
 			if ( is_interface[i] ) {
-				nbr_atom_plane_coords.push_back( pose_in.residue( i ).xyz( pose_in.residue( i ).nbr_atom() ) );
+				core::conformation::Residue const & rsd = pose_in.residue( i );
+				numeric::xyzVector_double atom_coords = rsd.is_protein() ? rsd.atom( "CA" ).xyz() :
+					rsd.nbr_atom_xyz();
+				nbr_atom_plane_coords.push_back( atom_coords );
 			}
 		}
 		n_res_plane = nbr_atom_plane_coords.size();

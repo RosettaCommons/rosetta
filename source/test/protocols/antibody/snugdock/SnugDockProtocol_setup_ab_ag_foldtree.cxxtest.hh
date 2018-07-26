@@ -22,6 +22,8 @@
 #include <core/kinematics/Edge.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/annotated_sequence.hh>
+#include <core/pose/util.hh>
 #include <protocols/antibody/snugdock/SnugDockProtocol.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
 
@@ -31,11 +33,13 @@ static basic::Tracer TR("protocols.antibody.snugdock.SnugDockProtocol_setup_ab_a
 class SnugDockProtocol_setup_ab_ag_foldtree_tests : public CxxTest::TestSuite
 {
 public:
+	core::pose::Pose antibody_with_antigen;
 	void setUp() {
 		// shared initialization goes here
 		// do we set -s here? (example below)
 		// core_init_with_additional_options( "-antibody:exclude_homologs true -antibody:exclude_homologs_fr_cutoff 60 -out:level 500 -antibody:n_multi_templates 3 -antibody:ocd_cutoff 5" );
 		core_init_with_additional_options( "-input_ab_scheme AHO_Scheme" );
+		core::import_pose::pose_from_file(antibody_with_antigen, "protocols/antibody/aho_with_antigen.pdb", core::import_pose::PDB_file);
 	} //setUp
 
 	void tearDown() {
@@ -54,10 +58,22 @@ public:
 		TS_ASSERT_DELTA(abc.z(), xyz.z(), delta);
 	} //compareVectors
 
+	void test_place_VRT_at_residue_COM() {
+		core::Size com_resnum = core::pose::residue_center_of_mass( antibody_with_antigen, 1, antibody_with_antigen.size() );
+		TR << "COM residue is: " << com_resnum << std::endl;
+		// produce VRT with function and compare coordinates
+		protocols::antibody::snugdock::SnugDockProtocolOP snugdock( new protocols::antibody::snugdock::SnugDockProtocol() );
+		core::conformation::ResidueOP vrt_res = snugdock->place_VRT_at_residue_COM( antibody_with_antigen, 1, antibody_with_antigen.size() );
+		// compare relevant coordinates
+		compareVectors( antibody_with_antigen.residue(com_resnum).xyz("CA"), vrt_res->xyz("ORIG"), 0.001 );
+		compareVectors( antibody_with_antigen.residue(com_resnum).xyz("N"), vrt_res->xyz("X"), 0.001 );
+		compareVectors( antibody_with_antigen.residue(com_resnum-1).xyz("C"), vrt_res->xyz("Y"), 0.001 );
+	} //test_place_VRT_at_residue_COM()
+
 	void test_setup_ab_ag_foldtree() {
+		using namespace core;
+		using namespace numeric;
 		// load pose and setup foldtree -- first pose is just VH-VL-Ag, second is VH-Ag_C-Ag_D
-		core::pose::Pose antibody_with_antigen;
-		core::import_pose::pose_from_file(antibody_with_antigen, "protocols/antibody/aho_with_antigen.pdb", core::import_pose::PDB_file);
 		protocols::antibody::AntibodyInfoOP ab_info( new protocols::antibody::AntibodyInfo(antibody_with_antigen) );
 		protocols::antibody::snugdock::SnugDockProtocolOP snugdock( new protocols::antibody::snugdock::SnugDockProtocol() );
 		snugdock->setup_ab_ag_foldtree(antibody_with_antigen, ab_info);
@@ -72,30 +88,56 @@ public:
 		TS_ASSERT(!antibody_with_antigen.residue(6).is_virtual_residue());
 
 		// test COM position versus precalculated
-		// Ab_COM is 6.784177419354839 67.59274193548387 65.39931451612900
-		compareVectors( antibody_with_antigen.xyz( core::id::AtomID(1, 1) ),
-			numeric::xyzVector<core::Real>(6.78417, 67.59274, 65.39931),
-			0.0001 );
+		// Ab_COM ORIG is 4.887 71.464 66.427
+		// Ab_COM X is    5.550 71.370 67.721
+		// Ab_COM Y is    5.430 72.308 68.692
+		compareVectors( antibody_with_antigen.residue(1).xyz("ORIG"),
+			xyzVector<Real>(4.887, 71.464, 66.427), 0.001);
+		compareVectors( antibody_with_antigen.residue(1).xyz("X"),
+			xyzVector<Real>(5.550, 71.370, 67.721), 0.001);
+		compareVectors( antibody_with_antigen.residue(1).xyz("Y"),
+			xyzVector<Real>(5.430, 72.308, 68.692), 0.001);
 
-		// Ag_COM is 28.96556470588236 73.00931764705884 83.78094117647058
-		compareVectors( antibody_with_antigen.xyz( core::id::AtomID(1, 2) ),
-			numeric::xyzVector<core::Real>(28.96556, 73.00931, 83.78094),
-			0.0001 );
+		// Ag_COM ORIG is 31.365 73.436 85.610
+		// Ag_COM X is    30.535 74.606 85.384
+		// Ag_COM Y is    30.393 75.130 84.174
+		compareVectors( antibody_with_antigen.residue(2).xyz("ORIG"),
+			xyzVector<Real>(31.365, 73.436, 85.610), 0.001);
+		compareVectors( antibody_with_antigen.residue(2).xyz("X"),
+			xyzVector<Real>(30.535, 74.606, 85.384), 0.001);
+		compareVectors( antibody_with_antigen.residue(2).xyz("Y"),
+			xyzVector<Real>(30.393, 75.130, 84.174), 0.001);
 
-		// H_COM is 8.106810218978101 74.34232116788324 59.3131678832116
-		compareVectors( antibody_with_antigen.xyz( core::id::AtomID(1, 3) ),
-			numeric::xyzVector<core::Real>(8.10681, 74.34232, 59.31316),
-			0.0001 );
 
-		// L_COM is 5.151738738738739 59.26218018018018 72.91104504504503
-		compareVectors( antibody_with_antigen.xyz( core::id::AtomID(1, 4) ),
-			numeric::xyzVector<core::Real>(5.15173, 59.26218, 72.911104),
-			0.0001 );
+		// H_COM ORIG is 8.869 74.033 59.787
+		// H_COM X is    8.022 75.168 60.170
+		// H_COM Y is    8.448 76.419 60.318
+		compareVectors( antibody_with_antigen.residue(3).xyz("ORIG"),
+			xyzVector<Real>(8.869, 74.033, 59.787), 0.001);
+		compareVectors( antibody_with_antigen.residue(3).xyz("X"),
+			xyzVector<Real>(8.022, 75.168, 60.170), 0.001);
+		compareVectors( antibody_with_antigen.residue(3).xyz("Y"),
+			xyzVector<Real>(8.448, 76.419, 60.318), 0.001);
 
-		// S_COM is 28.96556470588236 73.00931764705884 83.78094117647058
-		compareVectors( antibody_with_antigen.xyz( core::id::AtomID(1, 5) ),
-			numeric::xyzVector<core::Real>(28.96556, 73.00931, 83.78094),
-			0.0001 );
+		// L_COM ORIG is 4.322 62.794 72.823
+		// L_COM X is    4.969 63.972 73.377
+		// L_COM Y is    6.288 64.144 73.222
+		compareVectors( antibody_with_antigen.residue(4).xyz("ORIG"),
+			xyzVector<Real>(4.322, 62.794, 72.823), 0.001);
+		compareVectors( antibody_with_antigen.residue(4).xyz("X"),
+			xyzVector<Real>(4.969, 63.972, 73.377), 0.001);
+		compareVectors( antibody_with_antigen.residue(4).xyz("Y"),
+			xyzVector<Real>(6.288, 64.144, 73.222), 0.001);
+
+		// S_COM ORIG is 31.365 73.436 85.610
+		// S_COM X is    30.535 74.606 85.384
+		// S_COM Y is    30.393 75.130 84.174
+		compareVectors( antibody_with_antigen.residue(5).xyz("ORIG"),
+			xyzVector<Real>(31.365, 73.436, 85.610), 0.001);
+		compareVectors( antibody_with_antigen.residue(5).xyz("X"),
+			xyzVector<Real>(30.535, 74.606, 85.384), 0.001);
+		compareVectors( antibody_with_antigen.residue(5).xyz("Y"),
+			xyzVector<Real>(30.393, 75.130, 84.174), 0.001);
 
 		// test for correct jump connectivity
 		utility::vector1< core::kinematics::Edge > jump_edges = antibody_with_antigen.fold_tree().get_jump_edges();
@@ -149,7 +191,6 @@ public:
 
 
 		// on to the next ab
-
 		core::import_pose::pose_from_file(antibody_with_antigen, "protocols/antibody/4dka.aho.pdb", core::import_pose::PDB_file);
 		protocols::antibody::AntibodyInfoOP ab_info_2 ( new protocols::antibody::AntibodyInfo(antibody_with_antigen) );
 		protocols::antibody::snugdock::SnugDockProtocolOP snugdock_2( new protocols::antibody::snugdock::SnugDockProtocol() );
@@ -165,30 +206,55 @@ public:
 		TS_ASSERT(!antibody_with_antigen.residue(6).is_virtual_residue());
 
 		// test COM position versus precalculated
-		// Ab_COM is 37.89114960629922 8.466818897637795 5.953889763779528
-		compareVectors( antibody_with_antigen.xyz( core::id::AtomID(1, 1) ),
-			numeric::xyzVector<core::Real>(37.89114, 8.46681, 5.95388),
-			0.0001 );
+		// Ab_COM ORIG is 36.943 6.785 6.589
+		// Ab_COM X is    35.696 7.099 5.896
+		// Ab_COM Y is    35.504 6.946 4.587
+		compareVectors( antibody_with_antigen.residue(1).xyz("ORIG"),
+			xyzVector<Real>(36.943, 6.785, 6.589), 0.001);
+		compareVectors( antibody_with_antigen.residue(1).xyz("X"),
+			xyzVector<Real>(35.696, 7.099, 5.896), 0.001);
+		compareVectors( antibody_with_antigen.residue(1).xyz("Y"),
+			xyzVector<Real>(35.504, 6.946, 4.587), 0.001);
 
-		// Ag_COM is 10.51437500000000 9.730505952380947 8.777624999999995
-		compareVectors( antibody_with_antigen.xyz( core::id::AtomID(1, 2) ),
-			numeric::xyzVector<core::Real>(10.51437, 9.73050, 8.77762),
-			0.0001 );
+		// Ag_COM ORIG is 14.920 12.734 6.892
+		// Ag_COM X is    14.650 13.842 7.799
+		// Ag_COM Y is    13.408 14.238 8.074
+		compareVectors( antibody_with_antigen.residue(2).xyz("ORIG"),
+			xyzVector<Real>(14.920, 12.734, 6.892), 0.001);
+		compareVectors( antibody_with_antigen.residue(2).xyz("X"),
+			xyzVector<Real>(14.650, 13.842, 7.799), 0.001);
+		compareVectors( antibody_with_antigen.residue(2).xyz("Y"),
+			xyzVector<Real>(13.408, 14.238, 8.074), 0.001);
 
-		// H_COM is 37.89114960629922 8.466818897637795 5.953889763779528
-		compareVectors( antibody_with_antigen.xyz( core::id::AtomID(1, 3) ),
-			numeric::xyzVector<core::Real>(37.89114, 8.46681, 5.95388),
-			0.0001 );
+		// H_COM ORIG is 36.943 6.785 6.589
+		// H_COM X is    35.696 7.099 5.896
+		// H_COM Y is    35.504 6.946 4.587
+		compareVectors( antibody_with_antigen.residue(3).xyz("ORIG"),
+			xyzVector<Real>(36.943, 6.785, 6.589), 0.001);
+		compareVectors( antibody_with_antigen.residue(3).xyz("X"),
+			xyzVector<Real>(35.696, 7.099, 5.896), 0.001);
+		compareVectors( antibody_with_antigen.residue(3).xyz("Y"),
+			xyzVector<Real>(35.504, 6.946, 4.587), 0.001);
 
-		// C_COM is 6.765279069767443 15.94729069767442 20.96729069767441
-		compareVectors( antibody_with_antigen.xyz( core::id::AtomID(1, 4) ),
-			numeric::xyzVector<core::Real>(6.76527, 15.94729, 20.96729),
-			0.0001 );
+		// C_COM ORIG is 5.678 15.698 19.833
+		// C_COM X is    6.550 16.583 20.603
+		// C_COM Y is    7.484 16.137 21.436
+		compareVectors( antibody_with_antigen.residue(4).xyz("ORIG"),
+			xyzVector<Real>(5.678, 15.698, 19.833), 0.001);
+		compareVectors( antibody_with_antigen.residue(4).xyz("X"),
+			xyzVector<Real>(6.550, 16.583, 20.603), 0.001);
+		compareVectors( antibody_with_antigen.residue(4).xyz("Y"),
+			xyzVector<Real>(7.484, 16.137, 21.436), 0.001);
 
-		// D_COM is 14.44635365853658 3.210463414634147 -4.006658536585367
-		compareVectors( antibody_with_antigen.xyz( core::id::AtomID(1, 5) ),
-			numeric::xyzVector<core::Real>(14.44635, 3.21046, -4.00665),
-			0.0001 );
+		// D_COM ORIG is 13.676 2.121 -3.343
+		// D_COM X is    14.803 2.287 -4.257
+		// D_COM Y is    14.827 3.217 -5.200
+		compareVectors( antibody_with_antigen.residue(5).xyz("ORIG"),
+			xyzVector<Real>(13.676, 2.121, -3.343), 0.001);
+		compareVectors( antibody_with_antigen.residue(5).xyz("X"),
+			xyzVector<Real>(14.803, 2.287, -4.257), 0.001);
+		compareVectors( antibody_with_antigen.residue(5).xyz("Y"),
+			xyzVector<Real>(14.827, 3.217, -5.200), 0.001);
 
 		// test for correct jump connectivity
 		jump_edges = antibody_with_antigen.fold_tree().get_jump_edges();
