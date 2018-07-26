@@ -434,6 +434,7 @@ def get_path_to_python_executable(platform, config):
 
         '3.5' : 'https://www.python.org/ftp/python/3.5.5/Python-3.5.5.tgz',
         '3.6' : 'https://www.python.org/ftp/python/3.6.5/Python-3.6.5.tgz',
+        '3.7' : 'https://www.python.org/ftp/python/3.7.0/Python-3.7.0.tgz',
     }
 
     # map of env -> ('shell-code-before ./configure', 'extra-arguments-for-configure')

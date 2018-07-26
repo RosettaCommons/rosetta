@@ -17,7 +17,7 @@
 
 from __future__ import print_function
 
-import os, sys, argparse, platform, subprocess, imp, shutil, codecs, distutils.dir_util, json, hashlib
+import os, sys, argparse, platform, subprocess, shutil, codecs, distutils.dir_util, json, hashlib
 
 from collections import OrderedDict
 
@@ -573,7 +573,7 @@ def generate_bindings(rosetta_source_path):
 
     for i in all_includes: signature_update(i); signature_update( str( os.path.getmtime(rosetta_source_path+'/src/'+i) ) )
     for s in serialization_instantiation: signature_update(s)
-    
+
     binder_config = list(Options.binder_config)
     config = ''
     for config_file in binder_config:
