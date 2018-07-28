@@ -1,0 +1,24 @@
+steps:
+  - label: Anvil Build - Rosetta + Pyrosetta
+    command: source/conda/full_build rosetta pyrosetta-binder pyrosetta -- ${CONDA_BUILD_ARGS?} --output-folder=../../channel
+    agents:
+      queue: ${ANVIL_BUILD_QUEUE?}
+    plugins:
+      buildkite/docker-compose#v2.5.1:
+        run: linux-anvil
+        config: source/conda/docker-compose.yml
+      uw-ipd/rsync#v0.1:
+        post: "-Rrv channel/./*/*.tar.bz2 ${CHANNEL_HOST?}:${CHANNEL_PATH?}"
+
+  - label: Local Build - Pyrosetta
+    command: source/conda/full_build pyrosetta-binder pyrosetta -- ${CONDA_BUILD_ARGS?} --output-folder=../../channel
+    agents:
+      queue: ${LOCAL_BUILD_QUEUE?}
+    plugins:
+      uw-ipd/rsync#v0.1:
+        post: "-Rrv channel/./*/*.tar.bz2 ${CHANNEL_HOST?}:${CHANNEL_PATH?}"
+
+  - wait
+
+  - label: Reindex
+    command: ssh ${CHANNEL_HOST?} conda index ${CHANNEL_PATH?}

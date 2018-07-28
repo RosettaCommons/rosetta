@@ -1,0 +1,49 @@
+#!/bin/bash -il
+set -e
+set -x
+
+if [ "$(uname -m)" = "x86_64" ]; then
+   export supkg="gosu"
+   export condapkg="Miniconda3-4.5.4-Linux-x86_64.sh"
+   export conda_chksum="a946ea1d0c4a642ddf0c3a26a18bb16d"
+else
+   export supkg="su-exec"
+   export condapkg="Miniconda3-4.5.4-Linux-ppc64le.sh"
+   export conda_chksum="05c1e073f262105179cf57920dfc4d43"
+fi
+
+# give sudo permission for conda user to run yum (user creation is postponed
+# to the entrypoint, so we can create a user with the same id as the host)
+echo 'conda ALL=NOPASSWD: /usr/bin/yum' >> /etc/sudoers
+
+# Install the latest Miniconda with Python 3 and update everything.
+curl -s -L https://repo.continuum.io/miniconda/$condapkg > miniconda.sh && \
+    openssl md5 miniconda.sh | tee /dev/stderr | grep $conda_chksum && \
+    bash miniconda.sh -b -p /opt/conda && \
+    rm miniconda.sh
+
+touch /opt/conda/conda-meta/pinned && \
+    export PATH=/opt/conda/bin:$PATH && \
+    conda config --set show_channel_urls True && \
+    conda update --all --yes && \
+    conda clean -tipy
+
+# Install conda build and deployment tools.
+export PATH="/opt/conda/bin:${PATH}" && \
+    conda install --yes --quiet conda-build conda-verify anaconda-client jinja2 setuptools && \
+    conda install --yes git && \
+    conda clean -tipsy
+
+# Install docker tools
+export PATH="/opt/conda/bin:${PATH}" && \
+    conda install --yes conda-forge::$supkg && \
+    export CONDA_SUEXEC_INFO=( `conda list $supkg | grep $supkg` ) && \
+    echo "$supkg ${CONDA_SUEXEC_INFO[1]}" >> /opt/conda/conda-meta/pinned && \
+    conda install --yes conda-forge::tini && \
+    export CONDA_TINI_INFO=( `conda list tini | grep tini` ) && \
+    echo "tini ${CONDA_TINI_INFO[1]}" >> /opt/conda/conda-meta/pinned && \
+    conda clean -tipsy
+
+# Lucky group gets permission to write in the conda dir
+groupadd -g 32766 lucky
+chgrp -R lucky /opt/conda && chmod -R g=u /opt/conda

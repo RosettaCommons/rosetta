@@ -1,0 +1,9 @@
+version: '2.3'
+services:
+  linux-anvil:
+    build:
+      context: linux-anvil
+      dockerfile: linux-anvil/Dockerfile
+    environment:
+      - HOST_USER_ID=${HOST_USER_ID:-0}
+    working_dir: ${BUILDKITE_BUILD_CHECKOUT_PATH:-/opt/conda}

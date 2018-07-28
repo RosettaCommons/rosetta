@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python
 from __future__ import print_function
 # make_project.py - modified from mini-interactive by tex.
 
@@ -12,7 +12,7 @@ PATH_TO_SOURCE_DIR = os.path.dirname( os.path.dirname( os.path.abspath(sys.argv[
 PATH_TO_SOURCE_DIR.replace('\\', '/')
 
 def update_version():
-    cmd = 'cd ..; python2.7 version.py'
+    cmd = 'cd ..; ./version.py'
     os.system(cmd)
 
 def update_options():

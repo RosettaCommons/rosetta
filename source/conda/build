@@ -1,0 +1,94 @@
+#!/usr/bin/env python
+
+from __future__ import print_function
+
+import logging
+import subprocess
+import os
+import json
+import argparse
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(message)s",
+    datefmt='%Y-%m-%dT%H:%M:%S'
+)
+
+def get_versions(main):
+    version_json = main + "/source/.version.json"
+    full_version = json.load(open(version_json, "r"))
+
+    return full_version
+
+def setup_conda_versions(main, versions):
+    logging.info('versions:\n%s', json.dumps(versions, indent=2))
+    binder_version = versions["source"]["binder"]
+    rosetta_version = versions["version"]
+
+    with open("recipes/pyrosetta-binder/meta.version.yaml", "w") as of:
+        of.write("""
+package:
+  version: {binder_version}
+
+source:
+  path: '{main}/source/src/python/PyRosetta/binder'
+""".format(**locals()))
+
+    with open("recipes/rosetta/meta.version.yaml", "w") as of:
+        of.write("""
+package:
+  version: {rosetta_version}
+
+source:
+  path: '{main}'
+""".format(**locals()))
+
+    with open("recipes/pyrosetta/meta.version.yaml", "w") as of:
+        of.write("""
+package:
+  version: {rosetta_version}
+
+source:
+  path: '{main}'
+
+requirements:
+  build:
+    - pyrosetta-binder {binder_version}
+""".format(**locals()))
+
+def format_command(target, conda_args):
+    def normarg(a):
+        if a.count(" ") != 0 and not a.startswith('"'):
+            return '"' + a + '"'
+        else:
+            return a
+
+    return (
+       "conda build --append-file recipes/{target}/meta.version.yaml recipes/{target} ".format(**locals()) +
+       " ".join(map(normarg, conda_args))
+   )
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Build rosetta conda packages.')
+    parser.add_argument(
+        '--main',
+        type=str, default='../..', help='Rosetta main source path.')
+    parser.add_argument(
+        '-n', '--dry-run',
+        default=False, action='store_true', help='Version and print build commands, do not build.')
+    parser.add_argument("target",
+        choices=["pyrosetta-binder", "pyrosetta", "rosetta"], nargs=1)
+    parser.add_argument("conda",
+        type=str, default=[], nargs=argparse.REMAINDER, help="Args to passthrough to conda build.")
+    args = parser.parse_args()
+
+    main = os.path.abspath(args.main)
+    versions = get_versions(args.main)
+
+    setup_conda_versions(main, versions)
+
+    cmd = format_command(args.target[0], args.conda)
+    logging.info("%s:\n  %s", args.target[0], cmd)
+    if not args.dry_run:
+        subprocess.check_call(cmd, shell=True)

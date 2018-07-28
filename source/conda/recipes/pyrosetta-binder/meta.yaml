@@ -1,0 +1,13 @@
+package:
+  name: pyrosetta-binder
+
+requirements:
+  build:
+    - python
+    - {{ compiler('c') }}
+    - {{ compiler('cxx') }}
+    - cmake
+    - ninja
+
+about:
+  home: https://github.com/rosettacommons/binder

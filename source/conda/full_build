@@ -1,0 +1,31 @@
+#!/bin/bash
+#http://redsymbol.net/articles/unofficial-bash-strict-mode/
+
+set -euo pipefail
+IFS=$'\n\t'
+
+set -x
+
+ROOT="$(dirname "${BASH_SOURCE[0]}")"
+pushd $ROOT
+
+targets=()
+
+while (($#)); do
+  if [[ "$1" == '--' ]]; then
+    shift
+    break
+  fi
+
+  targets+=($1)
+  shift
+done
+
+pushd ../..
+source/version.py
+popd
+
+
+for target in "${targets[@]}"; do
+  nice ./build $target "$@"
+done

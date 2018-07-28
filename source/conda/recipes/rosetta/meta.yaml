@@ -1,0 +1,23 @@
+package:
+  name: rosetta
+
+requirements:
+  build:
+    - python
+    - {{ compiler('c') }}
+    - {{ compiler('cxx') }}
+    - cmake
+    - ninja
+
+  host:
+    - zlib
+
+  run:
+    - zlib
+
+test:
+  commands:
+    - rosetta_scripts
+
+about:
+  home: http://rosettacommons.org

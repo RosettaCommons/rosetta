@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python
 
 """ Configure a new build with the given options.
 
@@ -43,6 +43,8 @@ Note that this script also provides a simple API for converting a list of
 options (as would be specified on the command line here) into the name of a 
 build directory.  Perhaps this will be of use in some other script.
 """
+
+from __future__ import print_function
 
 def build_from_options(options, use_branch=False):
     options = set(options)
@@ -93,7 +95,7 @@ if __name__ == '__main__':
         command += ['-D{}=ON'.format(option.upper())]
     
     if arguments.dry_run:
-        print path
+        print(path)
 
     else:
         if arguments.force:

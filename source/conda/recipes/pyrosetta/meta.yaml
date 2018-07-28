@@ -1,0 +1,30 @@
+package:
+  name: pyrosetta
+
+requirements:
+  build:
+    - python
+    - {{ compiler('c') }}
+    - {{ compiler('cxx') }}
+    - cmake
+    - ninja
+  host:
+    - python
+    - setuptools
+    - numpy
+    - zlib
+  run:
+    - python
+    - {{ pin_compatible('numpy') }}
+    - zlib
+    - pandas >=0.18
+    - scipy >=1.0
+    - traitlets
+    - python-blosc
+
+test:
+  commands:
+    - python -m unittest pyrosetta.tests.distributed.test_smoke
+
+about:
+  home: http://rosettacommons.org
