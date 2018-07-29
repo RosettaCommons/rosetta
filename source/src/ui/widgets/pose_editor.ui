@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1170</width>
-    <height>865</height>
+    <width>1248</width>
+    <height>942</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,15 +16,33 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,0">
     <item>
-     <widget class="ui::ui_core::pose_draw::SimplePoseDrawOpenGLWidget" name="pose"/>
+     <layout class="QVBoxLayout" name="pose_view_layout">
+      <item>
+       <widget class="ui::ui_core::pose_draw::SimplePoseDrawOpenGLWidget" name="pose"/>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="color">
+        <property name="text">
+         <string>color by input domain</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
     <item>
      <layout class="QVBoxLayout" name="verticalLayout" stretch="1,0">
       <item>
-       <widget class="ui::network::BowmanView" name="functions"/>
+       <widget class="ui::network::BowmanView" name="functions">
+        <property name="minimumSize">
+         <size>
+          <width>300</width>
+          <height>0</height>
+         </size>
+        </property>
+       </widget>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <layout class="QHBoxLayout" name="hal_view_layout">
         <item>
          <spacer name="horizontalSpacer">
           <property name="orientation">
@@ -32,7 +50,7 @@
           </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>170</width>
+            <width>40</width>
             <height>20</height>
            </size>
           </property>
@@ -42,6 +60,22 @@
          <widget class="QPushButton" name="abort">
           <property name="text">
            <string>abort</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pause">
+          <property name="minimumSize">
+           <size>
+            <width>96</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>pause</string>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -63,7 +97,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1170</width>
+     <width>1248</width>
      <height>22</height>
     </rect>
    </property>

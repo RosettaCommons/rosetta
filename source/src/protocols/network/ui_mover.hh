@@ -26,7 +26,11 @@
 #include <utility/signals/Link.hh>
 
 #ifdef ZEROMQ
+
+#include <utility/thread/shared_thread_local_data.hh>
 #include <libzmq/include/zmq.hpp>
+#include <thread>
+
 #endif // ZEROMQ
 
 // #ifdef    SERIALIZATION
@@ -62,7 +66,13 @@ public:
 #ifdef ZEROMQ
 
 private:
-	mutable zmq::socket_t hal;
+	struct HalSocket {
+		explicit HalSocket();
+		zmq::socket_t socket;
+	};
+
+	utility::thread::SharedThreadLocalData<HalSocket> hal_;
+
 
 #endif // ZEROMQ
 

@@ -1,22 +1,26 @@
 #pragma once
 
 #include <ui/network/bowman_thread.h>
+#include <ui/network/bowman.h>
 
 #include <ui/network/argument.fwd.h>
 
 
 #include <core/pose/Pose.fwd.hh>
 
-#include <json.hpp>
+#include <utility/json_utilities.hh>
 
 namespace ui {
 namespace network {
 
 class Bowman;
 
+struct FunctionID {
+	std::string name, hal_id;
+};
 
 /// lookup for function with given name and if found create Arguments for it, return nullptr if no function could be found
-ArgumentsSP get_function_arguments(Bowman const &, std::string const & function_name);
+ArgumentsSP get_function_arguments(Bowman const &, FunctionID const &);
 
 
 ///
@@ -30,13 +34,18 @@ class Bowman final : public QObject
 	Bowman(QObject *parent = nullptr);
 
 public:
-
 	using FunctionSignature = std::map<std::string, ArgumentCSP>;
 	//using FunctionSignatureSP  = std::shared_ptr< FunctionSignature >;
 	//using FunctionSignatureCSP = std::shared_ptr< FunctionSignature const >;
 
 	using Functions = std::map<std::string, FunctionSignature>;
-	using BackEnds  = std::map<std::string, Functions>;
+
+	struct BackEnd {
+		std::string name;
+		Functions functions;
+	};
+
+	using BackEnds  = std::map<std::string, BackEnd>;  // client_id --> back_end
 
     ~Bowman();
 
@@ -47,9 +56,9 @@ public:
 
 	/// Initiate execution of given command on `back_end`.
 	/// If given PoseOP is empty - do not add `pose` as an argument to command
-	/// If no command is specified, - execute `null` command
-	/// If no back_end specified, - execute of first avalible back_end
-	void execute(core::pose::PoseCOP const &, std::string const & command_name="", Arguments const &args = Arguments(), std::string back_end="");
+	/// If no command.name is specified, - execute `null` command
+	/// If no command.back_end specified, - execute of first avalible back_end
+	void execute(core::pose::PoseCOP const &, FunctionID const & command, Arguments const &args = Arguments());
 
 	/// Initiate execution of given command on `back_end`.
 	/// If no back_end specified, - execute of first avalible back_end
@@ -61,10 +70,14 @@ public:
 
 
 	/// BackEnds access
+	BackEnds const & back_ends() const { return back_ends_; }
 	int size() const { return back_ends_.size(); }
 	BackEnds::const_iterator begin() const { return back_ends_.begin(); }
 	BackEnds::const_iterator end() const   { return back_ends_.end(); }
 
+
+	/// access to various HAL options
+	void pause(bool);
 
 Q_SIGNALS:
 	void client_connected(std::string const &);
@@ -92,6 +105,7 @@ private Q_SLOTS:
 private:
 	BackEnds back_ends_;
 
+	protocols::network::HAL_Settings hal_settings_;
 	ui::network::BowmanThread bowman_thread_;
 };
 

@@ -35,6 +35,231 @@ string as_hexadecimal(string const &s, bool as_bytes)
 	return o.str();
 }
 
+///
+/// actual implementation of BowmanThread::run
+/// Think of this as not of data type but as way to implement single, a few-pages long function
+///
+class B
+{
+public:
+	B(BowmanThread &, zmq::context_t &);
+	void run();
+
+private:
+	void update_hal_settings();
+	void update_hal_settings(string const & client_id);
+
+private:
+	BowmanThread & bowman_thread;
+
+	zmq::socket_t bus;
+	zmq::socket_t hal;
+
+	std::vector<zmq_pollitem_t> poll_items;
+
+	std::chrono::milliseconds const timeout {2500};
+	std::chrono::milliseconds const ping_interval {500};
+
+	std::chrono::steady_clock::time_point last_ping_time;
+
+	HAL_Settings hal_settings;
+
+	std::map<string, std::chrono::steady_clock::time_point> clients; // client_id -> time of last message from that client
+};
+
+
+B::B(BowmanThread &_bowman_thread, zmq::context_t &context) :
+	bowman_thread(_bowman_thread),
+
+	bus(context, ZMQ_PAIR),
+	hal(context, ZMQ_ROUTER),
+
+	poll_items { {hal, 0, ZMQ_POLLIN, 0 }, {bus, 0, ZMQ_POLLIN, 0 } }
+
+{
+	bus.connect(_bus_address_);
+
+	hal.bind(_server_address_);
+
+	//std::vector<zmq_pollitem_t> items = { {hal, 0, ZMQ_POLLIN, 0 }, {bus, 0, ZMQ_POLLIN, 0 } };
+
+	//auto const timeout = std::chrono::milliseconds(2500);
+	//auto const ping_interval = std::chrono::milliseconds(500);
+	last_ping_time = std::chrono::steady_clock::now() - ping_interval;
+}
+
+
+
+
+void B::update_hal_settings(string const & client_id)
+{
+	//std::cout << "B::update_hal_settings()" << std::endl;
+	send_message(hal, client_id, ZMQ_SNDMORE);
+	send_message(hal, _m_settings_,  ZMQ_SNDMORE);
+	hal.send(&hal_settings, sizeof(HAL_Settings) );
+}
+
+
+void B::update_hal_settings()
+{
+	for(auto const & client : clients ) update_hal_settings(client.first);
+}
+
+
+void B::run()
+{
+	// zmq::socket_t bus(*context_, ZMQ_PAIR);
+	// bus.connect(_bus_address_);
+
+	// zmq::socket_t hal(*context_, ZMQ_ROUTER);
+	// hal.bind(_server_address_);
+
+	// std::vector<zmq_pollitem_t> items = { {hal, 0, ZMQ_POLLIN, 0 }, {bus, 0, ZMQ_POLLIN, 0 } };
+
+	// auto const timeout = std::chrono::milliseconds(2500);
+	// auto const ping_interval = std::chrono::milliseconds(500);
+	// std::chrono::steady_clock::time_point last_ping_time = std::chrono::steady_clock::now() - ping_interval;
+
+	// HAL_Options hal_options;
+	// std::map<string, std::chrono::steady_clock::time_point> clients; // client_id -> time of last message from that client
+
+	while (true) {
+		//zmq::message_t id;
+
+		if( zmq::poll( poll_items, std::chrono::milliseconds(500) ) > 0 ) {
+
+			if ( poll_items [0].revents & ZMQ_POLLIN ) { // messages from hal clients
+
+				std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
+
+				//std::cout << "got message from hal: " << receive_message(hal) << std::endl;
+				zmq::multipart_t message(hal);
+
+				if( message.size() >= 2 ) {
+					string hal_id = message.popstr();
+					string type = message.popstr();
+					//std::cout << "got message from hal with id:" << as_hexadecimal(id) << std::endl;
+
+					auto it = clients.find(hal_id);
+
+					if( it == clients.end() ) {
+						std::cout << "BowmanThread::run(): " << CSI_bgBlue() << CSI_Black() << "Client " << as_hexadecimal(hal_id) << " connected!" << CSI_Reset() << std::endl;
+						clients.emplace(hal_id, now);
+
+						update_hal_settings(hal_id);
+
+						Q_EMIT bowman_thread.client_connected(hal_id);  // NOTE: cross-thread emit
+					} else it->second = now;
+
+					//std::cout << "got message from hal: " << message.str() << std::endl;
+					//id = std::move(message[0]);
+
+					if( type == _m_specification_  and  message.size() == 1 ) {
+						string specification = message.popstr();
+						//std::cout << "BowmanThread::run(): " << CSI_bgBlue() << CSI_Black() << "Got specification from client " << as_hexadecimal(id) << ":" << CSI_Reset() << json::from_msgpack( Bytes(specification.begin(), specification.end() ) ) << std::endl;
+						std::cout << "BowmanThread::run(): " << CSI_bgGreen() << CSI_Black() << "Got specification from client " << as_hexadecimal(hal_id) << ":" << CSI_Reset() << std::endl;
+
+						JSON_SP j_up = std::make_shared<json>(json::from_msgpack(specification) );
+						Q_EMIT bowman_thread.specification_received(hal_id, j_up);  // NOTE: cross-thread emit
+
+					} else if( type == _m_result_  and  message.size() == 1 ) {
+						string binary_result = message.popstr();
+						JSON_SP result = std::make_shared<json>(json::from_msgpack(binary_result) );
+						//std::cout << "BowmanThread::run(): Got " << type << " message from hal " <<  as_hexadecimal(hal_id) /*<< " result: " << *result */<< std::endl;
+
+						Q_EMIT bowman_thread.result_received(result);  // NOTE: cross-thread emit
+
+					} else if( type == _m_progress_  and  message.size() == 1 ) {
+						string binary_result = message.popstr();
+						JSON_SP result = std::make_shared<json>(json::from_msgpack(binary_result) );
+						//std::cout << "BowmanThread::run(): Got " << type << " message from hal " <<  as_hexadecimal(hal_id) /*<< " result: " << *result */<< std::endl;
+
+						Q_EMIT bowman_thread.progress_data_received(result);  // NOTE: cross-thread emit
+
+					} else if( type != _m_ping_) {
+						std::cout << "BowmanThread::run(): Got '" << type << "' message from hal, type is unknown - discarding..." <<  std::endl;
+					}
+
+
+				} else std::cout << "BowmanThread::run(): ERROR Got unexpected number of parts in hal message:" << message.size() << "!" << std::endl;
+
+			}
+
+			if ( poll_items [1].revents & ZMQ_POLLIN ) { // messages from main UI thread
+				zmq::multipart_t message(bus);
+
+				if( message.size() >= 1 ) {
+					string type = message.popstr();
+
+					if( type == _m_quit_ ) {
+						std::cout << "got message from main thread: `" << type << "`, exiting..."  << std::endl;
+						break;
+					}
+					else if( type == _m_abort_  and  message.size() == 1 ) {
+						string hal_id = message.popstr();
+						std::cout << "got message from main thread: `" << type << "`, sending `abort` signal to " << as_hexadecimal(hal_id) << "..."  << std::endl;
+						send_message(hal, hal_id, ZMQ_SNDMORE);
+						send_message(hal, _m_abort_);
+					}
+					else if( type == _m_execute_  and  message.size() == 2 ) {
+						string hal_id = message.popstr();
+						string command = message.popstr();
+						//std::cout << "BowmanThread::run(): Got " << _m_execute_ << " message for hal " <<  as_hexadecimal(hal_id) << std::endl;
+
+						send_message(hal, hal_id, ZMQ_SNDMORE);
+						send_message(hal, _m_execute_, ZMQ_SNDMORE);
+						send_message(hal, command);
+					}
+					else if( type == _m_settings_  and  message.size() == 1 ) {
+						zmq::message_t m = message.pop();
+						if( m.size() == sizeof(HAL_Settings) ) {
+							memcpy( &hal_settings, m.data(), sizeof(HAL_Settings));
+							update_hal_settings();
+						}
+						else std::cout << "BowmanThread::run(): message `" << _m_settings_ << "` have wrong payload length - ignoring..." << std::endl;
+
+					} else {
+					}
+
+				} else std::cout << "BowmanThread::run(): ERROR Got unexpected number of parts in bus message:" << message.size() << "!" << std::endl;
+			}
+		}
+
+		// if ( --ping_count == 0 ) {
+		// 	std::cout << "UI server seems to be dead, re-connecting..." << std::endl;
+
+		// 	ui.release();
+		// 	ui = create_ui_socket(*context);
+		// 	ping_count = max_ping_count;
+		// }
+
+		std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
+		if( clients.size()  and  now - last_ping_time > ping_interval ) { // std::chrono::duration_cast<std::chrono::milliseconds>(now - last_ping_time) > ping_interval
+			last_ping_time = now;
+
+			for (auto it = clients.begin(); it != clients.end(); ) {
+				if( now - it->second > timeout ) { // std::chrono::duration_cast<std::chrono::milliseconds>(now - it->second) > timeout
+					std::cout << "BowmanThread::run(): " << CSI_bgRed() << CSI_Black() << "Client " << as_hexadecimal(it->first) << " has disconnected!" << CSI_Reset() << std::endl;
+
+					Q_EMIT bowman_thread.client_disconnected(it->first); // NOTE: this is cross-thread emit
+
+					it = clients.erase(it);
+				} else ++it;
+			}
+
+			for(auto & it : clients) {
+				//std::cout << "Sending ping to " << it.first << std::endl;
+				send_message(hal, it.first, ZMQ_SNDMORE);
+				send_message(hal, _m_ping_);
+			}
+		}
+
+		//std::cout << ping_count;
+	}
+}
+
+
+
 BowmanThread::BowmanThread(QObject *parent) : QThread(parent)
 {
 	//context();
@@ -61,143 +286,8 @@ void BowmanThread::run()
 {
 	std::cout << "BowmanThread::run() starting..." << std::endl;
 
-	zmq::socket_t bus(*context_, ZMQ_PAIR);
-	bus.connect(_bus_address_);
-
-	zmq::socket_t hal(*context_, ZMQ_ROUTER);
-	hal.bind(_server_address_);
-
-	std::vector<zmq_pollitem_t> items = { {hal, 0, ZMQ_POLLIN, 0 }, {bus, 0, ZMQ_POLLIN, 0 } };
-
-	auto const timeout = std::chrono::milliseconds(2500);
-	auto const ping_interval = std::chrono::milliseconds(500);
-	std::chrono::steady_clock::time_point last_ping_time = std::chrono::steady_clock::now() - ping_interval;
-
-	std::map<string, std::chrono::steady_clock::time_point> clients; // client_id -> time of last message from that client
-
-	while (true) {
-		//zmq::message_t id;
-
-		if( zmq::poll( items, std::chrono::milliseconds(500) ) > 0 ) {
-
-			if ( items [0].revents & ZMQ_POLLIN ) { // messages from hal clients
-
-				std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
-
-				//std::cout << "got message from hal: " << receive_message(hal) << std::endl;
-				zmq::multipart_t message(hal);
-
-				if( message.size() >= 2 ) {
-					string hal_id = message.popstr();
-					string type = message.popstr();
-					//std::cout << "got message from hal with id:" << as_hexadecimal(id) << std::endl;
-
-					auto it = clients.find(hal_id);
-
-					if( it == clients.end() ) {
-						std::cout << "BowmanThread::run(): " << CSI_bgBlue() << CSI_Black() << "Client " << as_hexadecimal(hal_id) << " connected!" << CSI_Reset() << std::endl;
-						clients.emplace(hal_id, now);
-						Q_EMIT client_connected(hal_id);  // NOTE: cross-thread emit
-
-					} else it->second = now;
-
-					//std::cout << "got message from hal: " << message.str() << std::endl;
-					//id = std::move(message[0]);
-
-					if( type == _m_specification_  and  message.size() == 1 ) {
-						string specification = message.popstr();
-						//std::cout << "BowmanThread::run(): " << CSI_bgBlue() << CSI_Black() << "Got specification from client " << as_hexadecimal(id) << ":" << CSI_Reset() << json::from_msgpack( Bytes(specification.begin(), specification.end() ) ) << std::endl;
-						std::cout << "BowmanThread::run(): " << CSI_bgGreen() << CSI_Black() << "Got specification from client " << as_hexadecimal(hal_id) << ":" << CSI_Reset() << std::endl;
-
-						JSON_SP j_up = std::make_shared<json>(json::from_msgpack(specification) );
-						Q_EMIT specification_received(hal_id, j_up);  // NOTE: cross-thread emit
-
-					} else if( type == _m_result_  and  message.size() == 1 ) {
-						string binary_result = message.popstr();
-						JSON_SP result = std::make_shared<json>(json::from_msgpack(binary_result) );
-						//std::cout << "BowmanThread::run(): Got " << type << " message from hal " <<  as_hexadecimal(hal_id) /*<< " result: " << *result */<< std::endl;
-
-						Q_EMIT result_received(result);  // NOTE: cross-thread emit
-
-					} else if( type == _m_progress_  and  message.size() == 1 ) {
-						string binary_result = message.popstr();
-						JSON_SP result = std::make_shared<json>(json::from_msgpack(binary_result) );
-						//std::cout << "BowmanThread::run(): Got " << type << " message from hal " <<  as_hexadecimal(hal_id) /*<< " result: " << *result */<< std::endl;
-
-						Q_EMIT progress_data_received(result);  // NOTE: cross-thread emit
-
-					} else if( type != _m_ping_) {
-						std::cout << "BowmanThread::run(): Got '" << type << "' message from hal, type is uknown - discarding..." <<  std::endl;
-					}
-
-
-				} else std::cout << "BowmanThread::run(): ERROR Got unexpected number of parts in hal message:" << message.size() << "!" << std::endl;
-
-			}
-
-			if ( items [1].revents & ZMQ_POLLIN ) { // messages from main UI thread
-				zmq::multipart_t message(bus);
-
-				if( message.size() >= 1 ) {
-					string type = message.popstr();
-
-					if( type == _m_quit_ ) {
-						std::cout << "got message from main thread: `" << type << "`, exiting..."  << std::endl;
-						break;
-					}
-					else if( type == _m_abort_  and  message.size() == 1 ) {
-						string hal_id = message.popstr();
-						std::cout << "got message from main thread: `" << type << "`, sending `abort` signal to " << as_hexadecimal(hal_id) << "..."  << std::endl;
-						send_message(hal, hal_id, ZMQ_SNDMORE);
-						send_message(hal, _m_abort_);
-					}
-					else if( type == _m_execute_  and  message.size() == 2 ) {
-						string hal_id = message.popstr();
-						string command = message.popstr();
-						//std::cout << "BowmanThread::run(): Got " << _m_execute_ << " message for hal " <<  as_hexadecimal(hal_id) << std::endl;
-
-						send_message(hal, hal_id, ZMQ_SNDMORE);
-						send_message(hal, _m_execute_, ZMQ_SNDMORE);
-						send_message(hal, command);
-
-					} else {
-					}
-
-				} else std::cout << "BowmanThread::run(): ERROR Got unexpected number of parts in bus message:" << message.size() << "!" << std::endl;
-			}
-		}
-
-		// if ( --ping_count == 0 ) {
-		// 	std::cout << "UI server seems to be dead, re-connecting..." << std::endl;
-
-		// 	ui.release();
-		// 	ui = create_ui_socket(*context);
-		// 	ping_count = max_ping_count;
-		// }
-
-		std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
-		if( clients.size()  and  now - last_ping_time > ping_interval ) { // std::chrono::duration_cast<std::chrono::milliseconds>(now - last_ping_time) > ping_interval
-			last_ping_time = now;
-
-			for (auto it = clients.begin(); it != clients.end(); ) {
-				if( now - it->second > timeout ) { // std::chrono::duration_cast<std::chrono::milliseconds>(now - it->second) > timeout
-					std::cout << "BowmanThread::run(): " << CSI_bgRed() << CSI_Black() << "Client " << as_hexadecimal(it->first) << " has disconnected!" << CSI_Reset() << std::endl;
-
-					Q_EMIT client_disconnected(it->first); // NOTE: this is cross-thread emit
-
-					it = clients.erase(it);
-				} else ++it;
-			}
-
-			for(auto & it : clients) {
-				//std::cout << "Sending ping to " << it.first << std::endl;
-				send_message(hal, it.first, ZMQ_SNDMORE);
-				send_message(hal, _m_ping_);
-			}
-		}
-
-		//std::cout << ping_count;
-	}
+	B b(*this, *context_);
+	b.run();
 
 	std::cout << "BowmanThread::run() exiting..." << std::endl;
 }
@@ -235,6 +325,13 @@ void BowmanThread::abort(std::string const & hal_id)
 	//std::cout << "BowmanThread::abort()..." << std::endl;
 	send_message(*bus_, _m_abort_, ZMQ_SNDMORE);
 	send_message(*bus_, hal_id);
+}
+
+
+void BowmanThread::set_hal_settings(protocols::network::HAL_Settings const &settings)
+{
+	send_message(*bus_, _m_settings_, ZMQ_SNDMORE);
+	bus_->send(&settings, sizeof(HAL_Settings) );
 }
 
 void BowmanThread::execute(std::string const & hal_id, JSON_CSP const & command)

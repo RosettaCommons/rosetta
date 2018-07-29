@@ -72,7 +72,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //doubleSpinBoxPsi_->setMaximum(range_max);
 	ui->verticalLayout_opengl->addWidget(pose_draw_widget_);
 	pose_draw_widget_->set_pose(pose_);
-	pose_draw_widget_->set_colour_mode( ui::ui_core::pose_draw::SPDOGLW_colour_by_selection );
+	pose_draw_widget_->set_color_mode( ui::ui_core::pose_draw::SimplePoseDrawOpenGLWidget::ColorMode::selection );
 	pose_draw_widget_->show();
 
 	timer_->start(50);
@@ -138,7 +138,6 @@ void MainWindow::on_radiobutton_colourby_totalscore_clicked()
 	//ui->radiobutton_colourby_selection->setChecked(false);
 	sfxn_ = core::scoring::get_score_function();
 	(*sfxn_)(*pose_); //Score the pose.
-	pose_draw_widget_->set_colour_mode( ui::ui_core::pose_draw::SPDOGLW_colour_by_total_energy );
+	pose_draw_widget_->set_color_mode( ui::ui_core::pose_draw::SimplePoseDrawOpenGLWidget::ColorMode::total_energy );
 	pose_draw_widget_->update_pose_draw();
 }
-

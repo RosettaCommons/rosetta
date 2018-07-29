@@ -38,25 +38,27 @@ namespace ui {
 namespace ui_core {
 namespace pose_draw {
 
-/// @brief Enum for the different ways that the pose could be coloured.
-enum SPDOGLW_colour_mode {
-	SPDOGLW_default_colours = 1, //Keep first
-	SPDOGLW_colour_by_selection,
-	SPDOGLW_colour_by_total_energy,
-	SPDOGLW_colour_by_score_term, //Keep second-to-last
-	SPDOGLW_end_of_list = SPDOGLW_colour_by_score_term //Keep last
-};
-
-enum SPDOGLW_drag_mode {
-	SPDOGLW_rotate_and_zoom_viewport = 1, //Keep first
-	SPDOGLW_end_of_drag_mode_list = SPDOGLW_rotate_and_zoom_viewport //Keep last.  TODO: if another is added, keep it second-to-last and set this to equal its value.
-};
-
 class SimplePoseDrawOpenGLWidget : public QOpenGLWidget
 {
 	Q_OBJECT
 
 public:
+
+	/// @brief Enum for the different ways that the pose could be coloured.
+	enum class ColorMode {
+						   none, //Keep first
+						   selection,
+						   input_domain,
+						   total_energy,
+						   score_term, //Keep second-to-last
+						   list = score_term //Keep last
+	};
+
+	enum class DragMode {
+						 rotate_and_zoom_viewport, // = 1, //Keep first
+						 list = rotate_and_zoom_viewport //Keep last.  TODO: if another is added, keep it second-to-last and set this to equal its value.
+	};
+
 
 	/// @brief Constructor
 	SimplePoseDrawOpenGLWidget( QWidget* parent=nullptr );
@@ -72,7 +74,7 @@ public:
 	void set_residue_selector( core::select::residue_selector::ResidueSelectorCOP selector_in );
 
 	/// @brief Set the colour mode that we'll use for colouring the pose.
-	void set_colour_mode( SPDOGLW_colour_mode const mode_in );
+	void set_color_mode( ColorMode mode);
 
 	/// @brief Set the lower and upper ends of the energy range in the gradient of colour values used.
 	/// @details There is no check that upper > lower.
@@ -80,13 +82,13 @@ public:
 
 	/// @brief Set the score term to use if we're colouring by a single score type.
 	/// @details Only used if colour_mode_ == SPDOGLW_colour_by_score_term.
-	void set_score_type( core::scoring::ScoreType const scoretype_in );
+	void set_score_type( core::scoring::ScoreType scoretype_in );
 
 	/// @brief The pose has changed; redraw it.
 	void update_pose_draw();
 
 	/// @brief Set what happens when the user drags in the viewport.
-	void set_drag_mode( SPDOGLW_drag_mode const mode_in );
+	void set_drag_mode( DragMode mode);
 
 protected:
 
@@ -147,7 +149,7 @@ private: //Private variables
 
 	/// @brief The way in which we're currently colouring the pose.
 	///
-	SPDOGLW_colour_mode colour_mode_;
+	ColorMode color_mode_ = ColorMode::none;
 
 	/// @brief The energy value at the far upper end of the energy colour gradient.
 	///
@@ -162,7 +164,7 @@ private: //Private variables
 	core::scoring::ScoreType score_type_;
 
 	/// @brief The behaviour of the viewport when the user clicks and drags.
-	SPDOGLW_drag_mode drag_mode_;
+	DragMode drag_mode_ = DragMode::rotate_and_zoom_viewport;
 
 };
 

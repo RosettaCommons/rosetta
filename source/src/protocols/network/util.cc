@@ -152,7 +152,6 @@ core::pose::PoseOP bytes_to_pose(PoseBinary const &compressed_pose)
 	}
 }
 
-
 } // namespace network
 } // namespace protocols
 

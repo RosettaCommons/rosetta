@@ -1335,7 +1335,7 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 	full_model_parameters->set_parameter_as_res_list( EXTRA_MINIMIZE, extra_minimize_res );
 
 	vector1< Size > dummy_domain_map( sequence.size(), 0 );
-	full_model_parameters->set_parameter( INPUT_DOMAIN, dummy_domain_map /* domain_map */ );
+	full_model_parameters->set_parameter( INPUT_DOMAIN, domain_map /* domain_map */ );
 	full_model_parameters->set_parameter( FIXED_DOMAIN, dummy_domain_map /*stepwise::setup::figure_out_fixed_domain_map( domain_map, extra_minimize_res ) */  );
 
 	// Set up FullModelInfo (so we can use info stored there like SYN_CHI_RES)

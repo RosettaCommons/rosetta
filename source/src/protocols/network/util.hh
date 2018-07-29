@@ -33,6 +33,7 @@ auto const _m_ping_          = "ping";
 auto const _m_quit_          = "quit";
 auto const _m_abort_         = "abort";
 auto const _m_specification_ = "specification";
+auto const _m_settings_      = "settings";
 
 auto const _m_execute_  = "execute";
 auto const _m_result_   = "result";
@@ -46,26 +47,26 @@ auto const _server_address_ = "ipc:///tmp/rosetta-ui";
 
 
 // various message-pack fields
-auto const _f_name_        = "name";
-auto const _f_type_        = "type";
-auto const _f_pose_        = "pose";
-auto const _f_arguments_   = "arguments";
-auto const _f_functions_   = "functions";
-auto const _f_optional_    = "optional";
-auto const _f_default_     = "default";
-auto const _f_min_         = "min";
-auto const _f_max_         = "max";
-auto const _f_description_ = "description";
+auto constexpr _f_name_        = "name";
+auto constexpr _f_type_        = "type";
+auto constexpr _f_pose_        = "pose";
+auto constexpr _f_arguments_   = "arguments";
+auto constexpr _f_functions_   = "functions";
+auto constexpr _f_optional_    = "optional";
+auto constexpr _f_default_     = "default";
+auto constexpr _f_min_         = "min";
+auto constexpr _f_max_         = "max";
+auto constexpr _f_description_ = "description";
 
 
 // supported argument types
-auto const _t_boolean_   = "boolean";
-auto const _t_integer_   = "integer";
-auto const _t_float_     = "float";
-auto const _t_string_    = "string";
-auto const _t_pose_      = "pose";
-auto const _t_file_      = "file";
-auto const _t_directory_ = "directory";
+auto constexpr _t_boolean_   = "boolean";
+auto constexpr _t_integer_   = "integer";
+auto constexpr _t_float_     = "float";
+auto constexpr _t_string_    = "string";
+auto constexpr _t_pose_      = "pose";
+auto constexpr _t_file_      = "file";
+auto constexpr _t_directory_ = "directory";
 
 
 using ContextSP = std::shared_ptr<zmq::context_t>;
@@ -99,6 +100,19 @@ PoseBinary pose_to_bytes(core::pose::PoseCOP const &);
 
 // uncompress and deserialize aPose UI way, if structure was serialized as an empty Pose return nullptr
 core::pose::PoseOP bytes_to_pose(PoseBinary const &);
+
+/// auxiliary function that will pause execution of current thread when HAL received `pause` signal from UI
+/// for technical reasons this function defined in protocols/network/hal.cc
+void sleep_if_paused();
+
+
+struct HAL_Settings
+{
+	bool pause = false;
+
+	bool operator== (HAL_Settings const &other) const { return pause == other.pause; }
+	bool operator!= (HAL_Settings const &other) const { return not (*this == other); }
+};
 
 } // namespace network
 } // namespace protocols

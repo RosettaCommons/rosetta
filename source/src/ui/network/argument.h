@@ -31,7 +31,7 @@ public:
 
 	//std::string name() const { return name_; }
 	//bool optional() const { return optional_; }
-	std::string const & description() const { return description_; }
+	std::string description() const { return description_; }
 
 
 	/// factory method: tries to analyze JSON object and build on of Argument's derived class from it.

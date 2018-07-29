@@ -29,7 +29,11 @@
     </layout>
    </item>
    <item>
-    <widget class="QListView" name="functions"/>
+    <widget class="QTreeView" name="functions">
+     <property name="headerHidden">
+      <bool>true</bool>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

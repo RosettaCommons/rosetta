@@ -48,25 +48,22 @@ using namespace protocols::network;
 using std::string;
 
 
-auto const _n_single_loop_modeling_ = "single_loop_modeling";
+//auto const _n_single_loop_modeling_ = "single_loop_modeling";
 
 
 /// Generate HAL specification
-string specification()
-{
-	nlohmann::json j;
-	j["functions"] = json::object();
+// json specification()
+// {
+//  nlohmann::json j;
+//  j["functions"] = json::object();
 
+//  json single_loop_modeling = json::object();
+//  single_loop_modeling["pdb_fname"] = { {"type", _t_file_}, }; // {"default", "1ycr.pdb"},
+//  single_loop_modeling["full_target_sequence"] = { {"type", _t_string_},   {"default", "ccgcaagg"}, };
+//  j["functions"][_n_single_loop_modeling_] = single_loop_modeling;
 
-	json single_loop_modeling = json::object();
-	single_loop_modeling["pdb_fname"] = { {"type", _t_string_},   {"default", "1ycr.pdb"}, };
-	single_loop_modeling["full_target_sequence"] = { {"type", _t_string_},   {"default", "gcaa"}, };
-	j["functions"][_n_single_loop_modeling_] = single_loop_modeling;
-
-	string r;
-	nlohmann::json::basic_json::to_msgpack(j, r);
-	return r;
-}
+//  return j;
+// }
 
 
 
@@ -75,7 +72,7 @@ string specification()
 
 
 
-void single_loop_modeling(core::pose::Pose & pose, string const & pdb_fname, string const & full_target_sequence)
+core::pose::Pose single_loop_modeling(string const & pdb_fname, string const & full_target_sequence)
 {
 	//protocols::network::UIObserver ui;
 
@@ -95,7 +92,7 @@ void single_loop_modeling(core::pose::Pose & pose, string const & pdb_fname, str
 		faux_cl_opts[ rna::denovo::secstruct ].set_cl_value( string( full_target_sequence.size(), '.' ) );
 		RNA_DeNovoSetup rna_de_novo_setup;
 		rna_de_novo_setup.initialize_from_options( faux_cl_opts );
-		pose = *rna_de_novo_setup.pose();
+		core::pose::Pose pose = *rna_de_novo_setup.pose();
 
 		protocols::network::AddUIObserver( pose );
 		//ui.attach(pose);//rna_de_novo_setup.pose());
@@ -103,36 +100,37 @@ void single_loop_modeling(core::pose::Pose & pose, string const & pdb_fname, str
 
 		protocol.apply( pose );
 
+		return pose;
 	}
 
 }
 
-json hal_executioner(json const &command)
-{
-	TR << "Rosetta: executing command: " << command[_f_name_] << std::endl;
+// json hal_executioner(json const &command)
+// {
+//  TR << "Rosetta: executing command: " << command[_f_name_] << std::endl;
 
-	//core::pose::PoseOP pose = protocols::network::bytes_to_pose(command[_f_arguments_][_f_pose_]);
-	core::pose::PoseOP pose = core::pose::PoseOP( new core::pose::Pose );
+//  //core::pose::PoseOP pose = protocols::network::bytes_to_pose(command[_f_arguments_][_f_pose_]);
+//  core::pose::PoseOP pose = core::pose::PoseOP( new core::pose::Pose );
 
-	string name;
-	if ( extract_value_if_present(command, _f_name_, name) ) {
-		if ( name == _n_single_loop_modeling_ ) {
-			// This isn't actually compatible with no-default.
-			string const & pdb_fname = command[_f_arguments_].value("pdb_fname", "1ycr.pdb");
-			string const & full_target_sequence = command[_f_arguments_].value("full_target_sequence", "gcaa");
-			// Still have to pass a pose to the function.
-			single_loop_modeling(*pose, pdb_fname, full_target_sequence);
-		}
-	}
+//  string name;
+//  if ( extract_value_if_present(command, _f_name_, name) ) {
+//   if ( name == _n_single_loop_modeling_ ) {
+//    // This isn't actually compatible with no-default.
+//    string const & pdb_fname = command[_f_arguments_].value("pdb_fname", "");
+//    string const & full_target_sequence = command[_f_arguments_].value("full_target_sequence", "ccgcaagg");
+//    // Still have to pass a pose to the function.
+//    if ( (not pdb_fname.empty() )  and  (not full_target_sequence.empty() ) ) *pose = single_loop_modeling(pdb_fname, full_target_sequence);
+//   }
+//  }
 
-	auto pose_binary = protocols::network::pose_to_bytes(*pose);
+//  auto pose_binary = protocols::network::pose_to_bytes(*pose);
 
-	nlohmann::json result;
+//  nlohmann::json result;
 
-	result["pose"] = pose_binary;
+//  result["pose"] = pose_binary;
 
-	return result;
-}
+//  return result;
+// }
 
 // protocols::network::UIMover ui;
 // for ( int i=0; i<10000; ++i ) {
@@ -152,7 +150,15 @@ int main(int argc, char * argv [])
 			core::import_pose::pose_from_pdbstring(p, "ATOM     17  N   ILE A   1      16.327  47.509  23.466  1.00  0.00\n");
 		}
 
-		protocols::network::hal(specification, hal_executioner, protocols::network::CommandLineArguments{argc, argv} );
+		//protocols::network::hal(specification, hal_executioner, protocols::network::CommandLineArguments{argc, argv} );
+
+		hal({
+			{"single loop modeling", {single_loop_modeling, {
+			{ {_f_name_, "pdb file"}, {_f_type_, _t_file_}, {_f_description_, "pdb input file"}, },
+			{ {_f_name_, "full target sequence"}, {_f_default_, "ccgcaagg"}, {_f_description_, "loop sequence"}, }
+			} } },
+			},
+			protocols::network::CommandLineArguments{argc, argv} );
 
 		return 0;
 

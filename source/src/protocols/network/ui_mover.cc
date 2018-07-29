@@ -19,6 +19,8 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/ObserverCache.hh>
 
+#include <utility/thread/shared_thread_local_data.impl.hh>
+
 #include <utility/json_utilities.hh>
 
 // #ifdef    SERIALIZATION
@@ -32,21 +34,47 @@ namespace network {
 
 using std::string;
 
+
 #if defined(ZEROMQ)
 
-UIMover::UIMover() : hal(zmq_context(), ZMQ_DEALER)
+auto const _hal_socket_high_water_mark_  = 4;
+
+
+UIMover::HalSocket::HalSocket() : socket(zmq_context(), ZMQ_DEALER)
 {
-	hal.connect(_hal_address_);
+	//std::cout << "UIMover::HalSocket()" << std::endl;
+
+	socket.setsockopt(ZMQ_LINGER, 100);  // 100 milliseconds
+
+	socket.connect(_hal_address_);
+
+	socket.setsockopt(ZMQ_SNDHWM, _hal_socket_high_water_mark_);
+	socket.setsockopt(ZMQ_RCVHWM, _hal_socket_high_water_mark_);
 }
 
-UIMover::UIMover(UIMover const &) : UIMover()
-{
-}
+
+
+UIMover::UIMover() = default;
+
+UIMover::UIMover(UIMover const &) = default;
 
 UIMover::~UIMover() = default;
 
+
+// UIMover::UIMover(UIMover const &other) : hal_(other.hal_)
+// {
+//  std::cout << "UIMover::UIMover(UIMover const &)" << std::endl;
+// }
+
+// UIMover::~UIMover()
+// {
+//  std::cout << "UIMover::~UIMover()" << std::endl;
+// }
+
+
 UIMover & UIMover::operator= (UIMover const &)
 {
+	//std::cout << "IMover & UIMover::operator= (UIMover const &)" << std::endl;
 	return *this;
 }
 
@@ -58,17 +86,23 @@ void UIMover::apply(Pose & pose)
 
 void UIMover::apply(Pose const & pose)
 {
+	sleep_if_paused();
+
+	zmq::socket_t & hal = hal_.get().socket;
+
 	auto pose_binary = protocols::network::pose_to_bytes(pose);
 
 	nlohmann::json result;
 
-	result["pose"] = pose_binary;
+	result[_f_pose_] = pose_binary;
 
 	string binary_result;
 	nlohmann::json::basic_json::to_msgpack(result, binary_result);
 
 	send_message(hal, _m_progress_, ZMQ_SNDMORE);
 	send_message(hal, binary_result);
+
+	sleep_if_paused();
 }
 
 
@@ -92,6 +126,7 @@ UIMover & UIMover::operator= (UIMover const &) = default;
 
 UIObserver::UIObserver(): CacheableObserver()
 {
+	//std::cout << "UIObserver::UIObserver()" << std::endl;
 }
 
 UIObserver::UIObserver(UIObserver const & rval) :
@@ -100,9 +135,12 @@ UIObserver::UIObserver(UIObserver const & rval) :
 	ui_(rval.ui_)
 	// Do NOT copy the *_event_link_s
 {
+	//std::cout << "UIObserver::UIObserver(UIObserver const &)" << std::endl;
 }
 
-UIObserver::~UIObserver() {
+UIObserver::~UIObserver()
+{
+	//std::cout << "UIObserver::~UIObserver()" << std::endl;
 	detach_from();
 }
 
@@ -200,6 +238,8 @@ UIObserverOP get_ui_observer(core::pose::Pose & pose)
 
 UIObserverOP AddUIObserver(core::pose::Pose &p) //, bool keep_history, core::Real update_interval)
 {
+	//std::cout << "UIObserverOP AddUIObserver(core::pose::Pose &)" << std::endl;
+
 	UIObserverOP o( get_ui_observer(p) );
 	//o->ui().keep_history(keep_history);
 	//o->ui().update_interval(update_interval);

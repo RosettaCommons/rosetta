@@ -2,6 +2,8 @@
 
 #include <QThread>
 
+#include <protocols/network/util.hh>
+
 #include <json.hpp>
 #include <libzmq/include/zmq_addon.hpp>
 
@@ -27,6 +29,8 @@ public:
 
 	void abort(std::string const & hal_id);
 	void execute(std::string const & hal_id, JSON_CSP const & command);
+
+	void set_hal_settings(protocols::network::HAL_Settings const &);
 
 public Q_SLOTS:
 

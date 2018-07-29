@@ -22,12 +22,14 @@ namespace ui {
 namespace network {
 
 /// lookup for function with given name and if found create Arguments for it, return nullptr if no function could be found
-ArgumentsSP get_function_arguments(Bowman const &bowman, std::string const & function_name)
+ArgumentsSP get_function_arguments(Bowman const &bowman, FunctionID const &fi)
 {
-	for(auto const & back_end_it : bowman ) {
-		Bowman::Functions const & functions(back_end_it.second);
+	auto back_end = bowman.back_ends().find(fi.hal_id);
+	if( back_end != bowman.back_ends().end() ) {
+		Bowman::Functions const & functions(back_end->second.functions);
 
-		auto it = functions.find(function_name);
+		auto it = functions.find(fi.name);
+
 		if( it != functions.end() ) {
 			ArgumentsSP r = std::make_shared<Arguments>();
 
@@ -39,6 +41,25 @@ ArgumentsSP get_function_arguments(Bowman const &bowman, std::string const & fun
 
 	return ArgumentsSP();
 }
+// ArgumentsSP get_function_arguments(Bowman const &bowman, std::string const & function_name)
+// {
+// 	for(auto const & back_end_it : bowman ) {
+// 		Bowman::Functions const & functions(back_end_it.second.functions);
+
+// 		auto it = functions.find(function_name);
+// 		if( it != functions.end() ) {
+// 			ArgumentsSP r = std::make_shared<Arguments>();
+
+// 			for(auto const & a : it->second) r->emplace( std::make_pair(a.first, a.second->clone()) );
+
+// 			return r;
+// 		}
+// 	}
+
+// 	return ArgumentsSP();
+// }
+
+
 
 
 /// ----------------
@@ -60,6 +81,8 @@ Bowman::~Bowman() = default;
 Bowman::Bowman(QObject *parent) : QObject(parent)
 {
 	bowman_thread_.start();
+	bowman_thread_.set_hal_settings(hal_settings_);
+
 	connect(&bowman_thread_, &BowmanThread::client_connected,       this, &Bowman::client_connected);
 
 	// ← we can't simply re-emit the signal because we want to update inner specification list first, so `specification_received` and `client_disconnected` will be emited manually from on_bowman_thread_<event> handlers
@@ -80,11 +103,15 @@ void Bowman::on_bowman_thread_specification_received(std::string const &client_i
 {
 	//qDebug() << "Bowman::on_bowman_thread_specification_received: id=" << client_id.c_str() << "\n" << specification->dump(2).c_str(); //QString::fromStdString(j->dump(2));
 
+	std::string name = "unknown";
+	utility::extract_value_if_present(*specification, _f_name_, name);
+
 	auto it_functions = specification->find(_f_functions_);
 
+
 	if( it_functions != specification->end()  and  it_functions->is_object() ) {
-		auto it_and_bool = back_ends_.emplace(client_id, Functions());
-		Functions & functions = it_and_bool.first->second;
+		auto it_and_bool = back_ends_.emplace(client_id, BackEnd{ name, Functions() } );
+		Functions & functions = it_and_bool.first->second.functions;
 
 		//qDebug() << "Bowman::on_bowman_thread_specification_received: it_functions:" << it_functions->dump(2).c_str(); //QString::fromStdString(j->dump(2));
 
@@ -146,10 +173,10 @@ void Bowman::on_bowman_thread_client_disconnected(std::string const &id)
 /// Initiate execution of given command on `back_end`.
 /// If no command is specified, - execute `null` command
 /// If no back_end specified, - execute of first avalible back_end
-void Bowman::execute(core::pose::PoseCOP const &pose, std::string const & function_name, Arguments const &args, std::string back_end)
+void Bowman::execute(core::pose::PoseCOP const &pose, FunctionID const & command, Arguments const &args)
 {
 	JSON_SP j = std::make_shared<nlohmann::json>();
-	(*j)[_f_name_] = function_name;
+	(*j)[_f_name_] = command.name;
 	// (*j)[_f_arguments_] = {
 	// 					   {_f_pose_, pose_binary},
 	// };
@@ -167,18 +194,20 @@ void Bowman::execute(core::pose::PoseCOP const &pose, std::string const & functi
 		(*j)[_f_arguments_][_f_pose_] = pose_binary;
 	}
 
-	if( back_end.empty() ) {
+	std::string hal_id = command.hal_id;
+
+	if( hal_id.empty() ) {
 		for( auto const & b : back_ends_) {
 			//qDebug() << "Bowman::execute: back-end: " << as_hexadecimal(b.first).c_str();
-			if( b.second.find(function_name) != b.second.end() ) {
+			if( b.second.functions.find(command.name) != b.second.functions.end() ) {
 				//if( b.second.count(function_name) ) {
-				back_end = b.first;
+				hal_id = b.first;
 				//qDebug() << "Bowman::execute: selecting back-end" << as_hexadecimal(back_end).c_str() << " for executing" << function_name.c_str();
 				break;
 			}
 		}
 	}
-	execute(j, back_end);
+	execute(j, hal_id);
 }
 
 /// Initiate execution of given command on `back_end`.
@@ -203,6 +232,13 @@ void Bowman::abort(std::string back_end)
 	for( auto const & b : back_ends_) {
 		if( back_end.empty()  or  b.first == back_end ) bowman_thread_.abort(b.first);
 	}
+}
+
+
+void Bowman::pause(bool state)
+{
+	hal_settings_.pause = state;
+	bowman_thread_.set_hal_settings(hal_settings_);
 }
 
 

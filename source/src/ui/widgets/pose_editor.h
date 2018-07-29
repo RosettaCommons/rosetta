@@ -2,7 +2,10 @@
 #define MAINWINDOW_H
 
 
+#include <ui/network/bowman.h>
+
 #include <core/pose/Pose.fwd.hh>
+
 
 #include <utility/json_utilities.hh>
 
@@ -38,10 +41,12 @@ private Q_SLOTS:
     void on_action_save_pose_triggered();
     void on_action_save_pose_as_triggered();
 
-	void on_apply_clicked();
-	void on_abort_clicked();
+    void on_apply_clicked();
+    void on_abort_clicked();
+    void on_color_toggled(bool);
+	void on_pause_toggled(bool);
 
-	void on_functions_double_clicked(QString const &);
+	void on_functions_double_clicked(ui::network::FunctionID const &);
 
 
 private:

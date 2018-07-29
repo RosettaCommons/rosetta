@@ -19,6 +19,7 @@
 
 // Rosetta core includes
 #include <core/pose/Pose.hh>
+#include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
@@ -51,11 +52,9 @@ SimplePoseDrawOpenGLWidget::SimplePoseDrawOpenGLWidget(QWidget* parent) :
 	rotz_(0.0),
 	forward_back_(-40.0),
 	lastpos_( 0, 0 ),
-	colour_mode_( SPDOGLW_default_colours ),
 	energy_range_max_(5.0),
 	energy_range_min_(-3.0),
-	score_type_( core::scoring::fa_rep ),
-	drag_mode_( SPDOGLW_rotate_and_zoom_viewport )
+	score_type_( core::scoring::fa_rep )
 {
 	QSurfaceFormat fmt;
 	fmt.setDepthBufferSize(24);
@@ -81,12 +80,10 @@ SimplePoseDrawOpenGLWidget::set_residue_selector(
 }
 
 /// @brief Set the colour mode that we'll use for colouring the pose.
-void
-SimplePoseDrawOpenGLWidget::set_colour_mode(
-	SPDOGLW_colour_mode const mode_in
-) {
-	runtime_assert_string_msg( mode_in >= SPDOGLW_default_colours && mode_in <= SPDOGLW_end_of_list, "Invalid colour mode selected!" );
-	colour_mode_ = mode_in;
+void SimplePoseDrawOpenGLWidget::set_color_mode(ColorMode mode)
+{
+	// since we have `enum class` there is no need for asserts // runtime_assert_string_msg( mode >= SPDOGLW_default_colours && mode_in <= SPDOGLW_end_of_list, "Invalid colour mode selected!" );
+	color_mode_ = mode;
 }
 
 /// @brief Set the lower and upper ends of the energy range in the gradient of colour values used.
@@ -103,9 +100,8 @@ SimplePoseDrawOpenGLWidget::set_energy_range(
 /// @brief Set the score term to use if we're colouring by a single score type.
 /// @details Only used if colour_mode_ == SPDOGLW_colour_by_score_term.
 void
-SimplePoseDrawOpenGLWidget::set_score_type(
-	core::scoring::ScoreType const scoretype_in
-) {
+SimplePoseDrawOpenGLWidget::set_score_type(core::scoring::ScoreType scoretype_in)
+{
 	score_type_ = scoretype_in;
 }
 
@@ -116,12 +112,10 @@ SimplePoseDrawOpenGLWidget::update_pose_draw() {
 }
 
 /// @brief Set what happens when the user drags in the viewport.
-void
-SimplePoseDrawOpenGLWidget::set_drag_mode(
-	SPDOGLW_drag_mode const mode_in
-) {
-	debug_assert( mode_in > 0 && mode_in <= SPDOGLW_end_of_drag_mode_list );
-	drag_mode_ = mode_in;
+void SimplePoseDrawOpenGLWidget::set_drag_mode(DragMode mode)
+{
+	// since we have `enum class` there is no need for asserts // 	debug_assert( mode_in > 0 && mode_in <= SPDOGLW_end_of_drag_mode_list );
+	drag_mode_ = mode;
 }
 
 
@@ -181,7 +175,7 @@ SimplePoseDrawOpenGLWidget::paintGL() {
 	}
 
 	core::select::residue_selector::ResidueSubset selection( pose_->total_residue(), false);
-	if( colour_mode_ == SPDOGLW_colour_by_selection  && residue_selector_ != nullptr ) {
+	if( color_mode_ == ColorMode::selection  && residue_selector_ != nullptr ) {
 		selection = residue_selector_->apply(*pose_);
 	}
 
@@ -198,9 +192,9 @@ SimplePoseDrawOpenGLWidget::paintGL() {
 	GLfloat colorvectselected[] = { 0.98f, 0.95f, 0.04f, 1.0f };
 	GLfloat colorvectN[] = { 0.15f, 0.15f, 0.75f, 1.0f};
 	GLfloat colorvectO[] = { 0.75f, 0.15f, 0.15f, 1.0f};
-	GLfloat colorvectS[] = { 0.85f, 0.82f, 0.07f, 1.0f};
+    GLfloat colorvectS[] = { 0.85f, 0.82f, 0.07f, 1.0f};
 	GLfloat colorvectH[] = { 0.75f, 0.75f, 0.75f, 1.0f};
-	// Colors for less-common elements (in proteins) that are 
+	// Colors for less-common elements (in proteins) that are
 	// nonetheless quite common in nucleic acids. Editorial
 	// decision to echo PyMOL colors, which may or may not
 	// work out in the lighting environment available.
@@ -211,12 +205,12 @@ SimplePoseDrawOpenGLWidget::paintGL() {
 	GLfloat colorvectCl[] = { 0.122f, 0.941f, 0.122f, 1.0f};
 	GLfloat colorvectBr[] = { 0.651f, 0.161f, 0.161f, 1.0f};
 	GLfloat colorvectI[] = { 0.580f, 0.00f, 0.580f, 1.0f};
-	
+
 	// Ca, Mg, Na
 	GLfloat colorvectCa[] = { 0.239f, 1.00f, 0.00f, 1.0f};
 	GLfloat colorvectMg[] = { 0.541f, 1.00f, 0.00f, 1.0f};
 	GLfloat colorvectNa[] = { 0.671f, 0.361f, 0.949f, 1.0f};
-	
+
 	GLfloat colorvectspec[] = { 0.2f, 0.2f, 0.2f, 1.0f};
 	GLfloat colorvectenergy_max[] = { 0.9f, 0.6f, 0.1f, 1.0f };
 	GLfloat colorvectenergy_min[] = { 0.01f, 0.4f, 0.8f, 1.0f };
@@ -226,40 +220,59 @@ SimplePoseDrawOpenGLWidget::paintGL() {
 
 	GLfloat const energyrange( static_cast<GLfloat>( energy_range_max_ - energy_range_min_ ) );
 
-	for(core::Size ir(1), irmax(pose_->total_residue()); ir<=irmax; ++ir) {
-			for(core::Size ia(1), iamax(pose_->residue(ir).natoms()); ia<=iamax; ++ia) {
+    // Our input domain coverage is just "input" (i.e. 1..998), "built" (0), "Rosetta special" (999)
+    //utility::vector1< core::Size > const & input_domain_map = core::pose::full_model_info::const_full_model_info( *pose_ ).input_domain_map();
+	//core::pose::full_model_info::const_full_model_info( *pose_ ).input_domain_map();
+	utility::vector1< core::Size > const & input_domain_map = core::pose::full_model_info::full_model_info_defined( *pose_ ) ? core::pose::full_model_info::const_full_model_info( *pose_ ).input_domain_map() : utility::vector1< core::Size >();
+    GLfloat colorvectinput[]   = { 0.92f, 0.0f, 0.15f, 1.0f };
+    GLfloat colorvectRosetta[] = { 0.78f, 1.0f, 0.78f, 1.0f };
+    // "built" gets CMYK coilorng.
+
+
+    for(core::Size ir(1), irmax(pose_->total_residue()); ir<=irmax; ++ir) {
+            for(core::Size ia(1), iamax(pose_->residue(ir).natoms()); ia<=iamax; ++ia) {
 					numeric::xyzVector< core::Real > xyz( pose_->xyz( core::id::AtomID(ia, ir) ) );
 
 					glTranslatef( xyz.x(), xyz.y(), xyz.z() );
 					std::string const elem( pose_->residue(ir).atom_type(ia).element() );
-					if( !elem.compare("N") ) {
+                    //if ( colour_mode_ == SPDOGLW_colour_by_input_domain && input_domain_map[ ir ] != 0 ) {
+                    //std::cout << "input_domain_map " << input_domain_map << std::endl;
+                    if ( color_mode_ == ColorMode::input_domain && ir <= input_domain_map.size() && input_domain_map.at( ir ) != 0 ) {
+                        //if ( input_domain_map[ ir ] == 999 ) {
+                        if ( input_domain_map.at( ir ) == 999 ) {
+                            glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, colorvectRosetta );
+                        } else {
+                            glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, colorvectinput );
+                        }
+                    } else {
+						if( !elem.compare("N") ) {
 							glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, colorvectN );
-					} else if( !elem.compare("S") ) {
+						} else if( !elem.compare("S") ) {
 							glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, colorvectS );
-					} else if( !elem.compare("O") ) {
+						} else if( !elem.compare("O") ) {
 							glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, colorvectO );
-					} else if( !elem.compare("P") ) {
-                                                        glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, colorvectP );
-					} else if( !elem.compare("F") ) {
+						} else if( !elem.compare("P") ) {
+							glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, colorvectP );
+						} else if( !elem.compare("F") ) {
 							glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, colorvectF );
-					} else if( !elem.compare("Cl") ) {
+						} else if( !elem.compare("Cl") ) {
 							glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, colorvectCl );
-					} else if( !elem.compare("Br") ) {
+						} else if( !elem.compare("Br") ) {
 							glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, colorvectBr );
-					} else if( !elem.compare("I") ) {
+						} else if( !elem.compare("I") ) {
 							glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, colorvectI );
-					} else if( !elem.compare("Ca") ) {
+						} else if( !elem.compare("Ca") ) {
 							glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, colorvectCa );
-					} else if( !elem.compare("Mg") ) {
+						} else if( !elem.compare("Mg") ) {
 							glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, colorvectMg );
-					} else if( !elem.compare("Na") ) {
+						} else if( !elem.compare("Na") ) {
 							glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, colorvectNa );
-					} else if( pose_->residue(ir).atom_type(ia).is_polar_hydrogen() ) {
+						} else if( pose_->residue(ir).atom_type(ia).is_polar_hydrogen() ) {
 							glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, colorvectH );
-					} else {
-							if( colour_mode_ == SPDOGLW_colour_by_total_energy || colour_mode_ == SPDOGLW_colour_by_score_term ) {
+						} else {
+							if( color_mode_ == ColorMode::total_energy || color_mode_ == ColorMode::score_term ) {
 								GLfloat const totalenergy(
-									colour_mode_ == SPDOGLW_colour_by_total_energy ?
+									color_mode_ == ColorMode::total_energy ?
 									static_cast<GLfloat>( pose_->energies().residue_total_energies(ir)[ core::scoring::total_score ] ) :
 									static_cast<GLfloat>( pose_->energies().residue_total_energies(ir)[ score_type_ ] )
 								);
@@ -269,11 +282,12 @@ SimplePoseDrawOpenGLWidget::paintGL() {
 								GLfloat const invenergyfract( 1.0f - energyfract );
 								GLfloat colorvectenergy[] = { energyfract * colorvectenergy_max[0] + invenergyfract * colorvectenergy_min[0], energyfract * colorvectenergy_max[1] + invenergyfract * colorvectenergy_min[1], energyfract * colorvectenergy_max[2] + invenergyfract * colorvectenergy_min[2], 1.0f  };
 								glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, colorvectenergy );
-							} else {
+                            } else {
 								glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE,
-									colour_mode_ == SPDOGLW_colour_by_selection && selection[ir] ? colorvectselected : colorvect
+									color_mode_ == ColorMode::selection && selection[ir] ? colorvectselected : colorvect
 								);
 							}
+                        }
 					}
 					//qDebug() << "About to draw sphere at " << xyz.x() << ", " << xyz.y() << ", " << xyz.z();
 					glutSolidSphere( 0.65*pose_->residue(ir).atom_type(ia).lj_radius(), 32, 16 );

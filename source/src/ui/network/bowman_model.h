@@ -4,14 +4,25 @@
 #include <ui/network/bowman.h>
 
 
-#include <QAbstractTableModel>
+#include <ui/util/tree_node.h>
+
+#include <QAbstractItemModel>
 
 namespace ui {
 namespace network {
 
-class BowmanModel : public QAbstractTableModel
+// struct BowmanModelNodeData {
+// 	QString label;
+// 	std::string hal_id;
+// };
+
+using BowmanModelNodeData = FunctionID;
+
+class BowmanModel : public util::TreeNodeModel<BowmanModelNodeData>
 {
     Q_OBJECT
+
+	using ModelBase = util::TreeNodeModel<BowmanModelNodeData>;
 
 public:
     explicit BowmanModel(QObject *parent = nullptr);
@@ -19,25 +30,37 @@ public:
     // Header:
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 
+
     // Basic functionality:
-    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+
+	//QModelIndex index(int row, int column, QModelIndex const & parent = QModelIndex()) const override;
+	//QModelIndex parent(const QModelIndex &index) const override;
+
+    //int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
-	struct FunctionIdentifier {
-		std::string name, hal_id;
-	};
+	/// return FunctionIdentifier for given index, return empty identifier if index is invalid
+	FunctionID function_id(QModelIndex const &index);
 
-	/// return FunctionIdentifier for given index, return nullptr if index is invalid
-	FunctionIdentifier * get_identifier(QModelIndex const &index);
+public Q_SLOTS:
+	void set_filter(QString const &);
 
 private Q_SLOTS:
 	void on_bowman_back_ends_changed(Bowman const *bowman);
 
 private:
 
-	std::vector<FunctionIdentifier> functions_;
+	//std::vector<FunctionIdentifier> functions_;
+
+
+private:
+	QString filter_;
+
+	//using Node = util::TreeNode<NodeData>;
+
+	//Node root_;
 };
 
 } // namespace network

@@ -187,7 +187,7 @@ void PoseEditor::result_received(core::pose::PoseOP const &pose, JSON_CSP const 
 	// }
 
 	if(pose) {
-		ui->pose->set_pose(pose);
+        ui->pose->set_pose(pose);
 		ui->pose->update_pose_draw();
 	}
 }
@@ -207,6 +207,8 @@ void PoseEditor::progress_data_received(core::pose::PoseOP const &pose, JSON_CSP
 
 	if(pose) {
 		ui->pose->set_pose(pose);
+        // First check if there's a FMI maybe
+        //ui->pose->set_colour_mode( ui::ui_core::pose_draw::SPDOGLW_colour_by_input_domain ) ;
 		ui->pose->update_pose_draw();
 	}
 }
@@ -217,25 +219,25 @@ void PoseEditor::on_apply_clicked()
 }
 
 
-void PoseEditor::on_functions_double_clicked(QString const &qfunction_name)
+void PoseEditor::on_functions_double_clicked(FunctionID const &fid)
 {
 	auto pose = ui->pose->pose();
 
 	//QString qfunction_name = ui->functions->get_select_item();
-	string function_name = qfunction_name.toStdString();
-	ArgumentsSP args = network::get_function_arguments(Bowman::bowman(), function_name);
+	//string function_name = qfunction_name.toStdString();
+	ArgumentsSP args = network::get_function_arguments(Bowman::bowman(), fid);
 
 	if(args) {
 		if( not pose ) {
 			if( args->find(_f_pose_) != args->end() ) {
-				QMessageBox box(QMessageBox::Warning, "Structure is Empty!", QString("Current structure is Empty!\n\nFunction `%1`\nrequire non-empty Pose object\n\nPlease load the Pose first!").arg(qfunction_name) );
+				QMessageBox box(QMessageBox::Warning, "Structure is Empty!", QString("Current structure is Empty!\n\nFunction `%1`\nrequire non-empty Pose object\n\nPlease load the Pose first!").arg(fid.name.c_str()) );
 				box.exec();
 				return;
 			}
 		}
 
-		FunctionSetupDialog setup(qfunction_name, args, this);
-		if( setup.exec() == QDialog::Accepted ) Bowman::bowman().execute( ui->pose->pose(), function_name, *args);
+		FunctionSetupDialog setup(fid.name.c_str(), args, this);
+		if( setup.exec() == QDialog::Accepted ) Bowman::bowman().execute( ui->pose->pose(), fid, *args);
 	}
 	else {
 		qDebug() << "PoseEditor::on_functions_double_clicked(...): supplied function_name is empty!";
@@ -248,6 +250,44 @@ void PoseEditor::on_abort_clicked()
 	QMessageBox box(QMessageBox::Critical, "Abort HAL Call?", "This will terminate Rosetta run.\nAre you sure you want to proceed?", QMessageBox::Yes | QMessageBox::No);
 	box.setDefaultButton(QMessageBox::No);
 	if( box.exec() == QMessageBox::Yes ) Bowman::bowman().abort();
+}
+
+void PoseEditor::on_color_toggled(bool state)
+{
+	//qDebug() << "PoseEditor::on_color_toggled(" << state << ")";
+    ui->pose->set_color_mode(state ? ui_core::pose_draw::SimplePoseDrawOpenGLWidget::ColorMode::input_domain : ui_core::pose_draw::SimplePoseDrawOpenGLWidget::ColorMode::none );
+	ui->pose->update_pose_draw();
+}
+
+
+void PoseEditor::on_pause_toggled(bool state)
+{
+	Bowman::bowman().pause(state);
+
+	QPalette pal = ui->pause->palette();
+
+	if(state) {
+		ui->pause->setText("paused");
+
+		pal.setColor(QPalette::ButtonText, QColor(Qt::red) );
+		//pal.setColor(QPalette::WindowText,  QColor(Qt::yellow) );
+		// ui->pause->setAutoFillBackground(true);
+		//ui->pause->update();
+
+		//
+		// pal.setColor(QPalette::Button, QColor(Qt::blue));
+		// ui->pause->setAutoFillBackground(true);
+		// ui->pause->setPalette(pal);
+		// ui->pause->update();
+		//ui->pause->setText("resume");
+	}
+	else {
+		pal.setColor(QPalette::ButtonText, QColor(Qt::black) );
+		ui->pause->setText("pause");
+		//ui->pause->setAutoFillBackground(false);
+	}
+	ui->pause->setPalette(pal);
+
 }
 
 } // namespace widgets

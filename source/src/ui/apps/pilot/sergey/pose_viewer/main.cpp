@@ -20,6 +20,9 @@ int main(int argc, char *argv[])
 
 	qRegisterMetaType<std::string>("std::string");
 
+	//qRegisterMetaType<ui::network::FunctionID>("ui::network::FunctionID");
+
+
     qDebug() << "test::main: Calling Rosetta init()...";
 
     glutInit(&argc, argv);

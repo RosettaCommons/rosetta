@@ -26,6 +26,7 @@ HEADERS  +=
 
 FORMS    +=
 
+ICON = pose_viewer.icns
 
 LIBS += \
         -L$$OUT_PWD/../ui                       -lui \

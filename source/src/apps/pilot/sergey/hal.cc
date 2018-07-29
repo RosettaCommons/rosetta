@@ -259,7 +259,7 @@ json generate_function_specification(MoverParameters const &params)
 
 
 /// Generate HAL specification
-string specification()
+json specification()
 {
 	std::map<string, MoverParameters> movers;
 
@@ -322,9 +322,11 @@ string specification()
 
 	specification[_f_functions_] = functions;
 
-	string r;
-	nlohmann::json::basic_json::to_msgpack(specification, r);
-	return r;
+	// string r;
+	// nlohmann::json::basic_json::to_msgpack(specification, r);
+	// return r;
+
+	return specification;
 
 	// {
 	//  nlohmann::json j;

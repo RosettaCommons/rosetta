@@ -83,7 +83,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	ui->verticalLayout_opengl->addWidget(pose_draw_widget_);
 	pose_draw_widget_->set_pose(pose_);
-	pose_draw_widget_->set_colour_mode( ui::ui_core::pose_draw::SPDOGLW_colour_by_selection );
+	pose_draw_widget_->set_color_mode( ui::ui_core::pose_draw::SimplePoseDrawOpenGLWidget::ColorMode::selection );
 	pose_draw_widget_->set_residue_selector(residue_selector_);
 	pose_draw_widget_->show();
 
@@ -506,7 +506,7 @@ void MainWindow::on_radiobutton_colourby_selection_clicked()
 {
 	//ui->radiobutton_colourby_totalscore->setChecked(false);
 	sfxn_ = nullptr;
-	pose_draw_widget_->set_colour_mode( ui::ui_core::pose_draw::SPDOGLW_colour_by_selection );
+	pose_draw_widget_->set_color_mode( ui::ui_core::pose_draw::SimplePoseDrawOpenGLWidget::ColorMode::selection );
 	pose_draw_widget_->update_pose_draw();
 }
 
@@ -516,7 +516,7 @@ void MainWindow::on_radiobutton_colourby_totalscore_clicked()
 	//ui->radiobutton_colourby_selection->setChecked(false);
 	sfxn_ = core::scoring::get_score_function();
 	(*sfxn_)(*pose_); //Score the pose.
-	pose_draw_widget_->set_colour_mode( ui::ui_core::pose_draw::SPDOGLW_colour_by_total_energy );
+	pose_draw_widget_->set_color_mode( ui::ui_core::pose_draw::SimplePoseDrawOpenGLWidget::ColorMode::total_energy );
 	pose_draw_widget_->update_pose_draw();
 }
 
@@ -572,7 +572,7 @@ void MainWindow::on_tool_drag_nonparametric_clicked()
 /// viewing direction around.
 void MainWindow::on_tool_rotate_zoom_view_clicked()
 {
-	pose_draw_widget_->set_drag_mode( ui::ui_core::pose_draw::SPDOGLW_rotate_and_zoom_viewport );
+	pose_draw_widget_->set_drag_mode( ui::ui_core::pose_draw::SimplePoseDrawOpenGLWidget::DragMode::rotate_and_zoom_viewport );
 	pose_draw_widget_->set_extended_drag_mode( ui::ui_protocols::helical_bundle::HBPDOGLW_base_class_mode );
 }
 
