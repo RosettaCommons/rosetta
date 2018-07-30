@@ -5,14 +5,16 @@ set -euo pipefail
 IFS=$'\n\t'
 
 # Update current HEAD to use branch pointer, if possible 
-# resolves issues when clone-by-sha leaves a working directory 
-# in detached head state.
+
+# Resolves issues when clone-by-sha leaves a working directory in detached head
+# state but an upstream branch pointer exists.  Resolves issues with
+# "version.py" marking the current branch as HEAD during development builds.
 
 set -x 
 
 git fetch
 
-if ((git describe --all --exact-match | grep -E 'heads|remotes') 2> /dev/null 1> /dev/null) ; then
+if ((git describe --all --exact-match --exclude=*/HEAD | grep -E 'heads|remotes') 2> /dev/null 1> /dev/null) ; then
   HEAD_BRANCH=`git describe --all --exact-match | grep -E 'heads|remotes'`
   if [[ $HEAD_BRANCH = "remotes"* ]]; then
     git checkout -t ${HEAD_BRANCH#remotes/} -B ${HEAD_BRANCH#remotes/*/}
