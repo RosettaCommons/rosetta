@@ -6,21 +6,14 @@ IFS=$'\n\t'
 
 # Update current HEAD to use branch pointer, if possible 
 
-# Resolves issues when clone-by-sha leaves a working directory in detached head
-# state but an upstream branch pointer exists.  Resolves issues with
-# "version.py" marking the current branch as HEAD during development builds.
+# clone-by-sha leaves working directory in detached head state, even though
+# we're building a "branch". Resolves issues with "version.py" marking the
+# current branch as HEAD during development builds by creating a local branch
+# pointer.
 
 set -x 
 
-git fetch
-
-if ((git describe --all --exact-match --exclude=*/HEAD | grep -E 'heads|remotes') 2> /dev/null 1> /dev/null) ; then
-  HEAD_BRANCH=`git describe --all --exact-match | grep -E 'heads|remotes'`
-  if [[ $HEAD_BRANCH = "remotes"* ]]; then
-    git checkout -t ${HEAD_BRANCH#remotes/} -B ${HEAD_BRANCH#remotes/*/}
-  elif [[ $HEAD_BRANCH = "heads"* ]]; then
-    git checkout ${HEAD_BRANCH#heads/}
-  else
-    exit 0
-  fi
+if [[ ! -z "${BUILDKITE_BRANCH:-}" ]]; then
+  # -B to force reset a local ref if it exists
+  git checkout -B "${BUILDKITE_BRANCH}"
 fi
