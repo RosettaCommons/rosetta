@@ -89,7 +89,7 @@ GlycanInfoMover::apply_const(const core::pose::Pose &pose){
 
 
 			std::cout << "Carbohydrate: "<< resnum  <<" "<< pose.pdb_info()->pose2pdb(resnum) << " Parent: " << parent_res << " BP: "<<bp <<" "<< pose.pdb_info()->pose2pdb(resnum) << " " << " CON: " << utility::pad_right( attachment_points, 10) << " DIS: " << pose.glycan_tree_set()->get_distance_to_start( resnum )
-				<< " ShortName: "<< pose.residue( resnum ).carbohydrate_info()->short_name() << std::endl;
+				<< " ShortName: "<< pose.residue( resnum ).carbohydrate_info()->short_name_w_linkage_notation() << std::endl;
 
 			carbohydrate_residues += 1;
 

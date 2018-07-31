@@ -81,8 +81,27 @@ public: // Accessors/Mutators /////////////////////////////////////////////////
 		return short_name_;
 	}
 
+	/// @brief  Return the main-chain IUPAC linkage notation for this monosaccharide
+	/// (for use in polysaccharide sequences).
+	std::string
+	linkage_notation() const
+	{
+		return linkage_notation_;
+	}
+
+	/// @brief  Return the abbreviated IUPAC name of the monosaccharide, including main-chain linkage notation
+	/// (for use in polysaccharide sequences).
+	std::string
+	short_name_w_linkage_notation() const
+	{
+		if ( ! linkage_notation_.empty() ) {
+			return linkage_notation_ + "-" + short_name_;
+		}
+		return short_name_;
+	}
+
 	/// @brief  Return the standard/common, non-residue, short name of the monosaccharide.
-	std::string base_name() const;
+	std::string basic_name() const;
 
 
 	// Oxidation type
@@ -492,6 +511,7 @@ private: // Private data //////////////////////////////////////////////////////
 	core::chemical::ResidueTypeCAP residue_type_;
 	std::string full_name_;
 	std::string short_name_;
+	std::string linkage_notation_;  // "->n)"
 	core::uint anomeric_carbon_;  // also indicative of location of aldehyde/ketone oxidation
 	std::string anomeric_carbon_name_;  // string for quick reference
 	core::uint anomeric_carbon_index_;  // atom index of anomeric carbon within ResidueType

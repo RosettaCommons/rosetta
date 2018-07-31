@@ -1093,10 +1093,12 @@ set_glycosidic_torsion(
 }
 
 
+// GlycanTree Helper Functions ////////////////////////////////////////////////
+
 /// @brief  Recursive function to get branches of a set of residues, etc.
 ///  list_of_residues and tips are arrays are non-const references and modified by this function.
 ///
-///  Children Residues:  Residue nums of parent residue connected that we are interested in finding connected branchs.
+///  Children Residues:  Residue nums of parent residue connected that we are interested in finding connected branches.
 ///  List Of  Residues:  All the residue nums of the branching from children residues
 ///  Tips:  All 'ends' of all the branches found using this function.
 ///
@@ -1105,7 +1107,7 @@ set_glycosidic_torsion(
 void
 get_branching_residues( conformation::Conformation const & conf,
 	Size parent_residue,
-	utility::vector1< Size > & children_residues,
+	utility::vector1< Size > const & children_residues,
 	utility::vector1< Size > & list_of_residues,
 	utility::vector1< Size > & tips,
 	std::set< Size > const & ancestors )
@@ -1117,7 +1119,7 @@ get_branching_residues( conformation::Conformation const & conf,
 			continue;
 		}
 		utility::vector1< Size > children;
-		fill_upstream_children_res_and_tips( conf, res, parent_residue, children, list_of_residues, tips );
+		fill_downstream_children_res_and_tips( conf, res, parent_residue, children, list_of_residues, tips );
 
 		if ( children.size() != 0 ) {
 			std::set< Size > childs_ancestors( ancestors );
@@ -1136,7 +1138,7 @@ get_branching_residues( conformation::Conformation const & conf,
 ///  See Also: get_carbohydrate_residues_and_tips_of_branch
 ///            trim_carbohydrate_branch_from_X
 void
-fill_upstream_children_res_and_tips( conformation::Conformation const & conf,
+fill_downstream_children_res_and_tips( conformation::Conformation const & conf,
 	Size res,
 	Size parent_residue,
 	utility::vector1< Size > & children_residues,
@@ -1148,7 +1150,8 @@ fill_upstream_children_res_and_tips( conformation::Conformation const & conf,
 
 		Size connecting_res = conf.residue( res ).connected_residue_at_resconn( connection );
 
-		if ( connecting_res != 0 && connecting_res != parent_residue && conf.residue( connecting_res ).is_carbohydrate() ) {
+		if ( connecting_res != 0 && connecting_res != parent_residue &&
+				conf.residue( connecting_res ).is_carbohydrate() ) {
 			list_of_residues.push_back( connecting_res );
 			if ( conf.residue( connecting_res ).n_current_residue_connections() == 1 ) {
 				tips.push_back( connecting_res );
@@ -1235,7 +1238,7 @@ std::pair< utility::vector1< core::Size >, utility::vector1< core::Size > >
 get_carbohydrate_residues_and_tips_of_branch(
 	conformation::Conformation const & conf,
 	uint const starting_position,
-	bool include_starting_position /*false*/)
+	bool include_starting_position /*false*/ )
 {
 	using namespace core::chemical::carbohydrates;
 
@@ -1244,12 +1247,13 @@ get_carbohydrate_residues_and_tips_of_branch(
 	utility::vector1< Size > children_residues;
 
 	if ( include_starting_position ) {
-		list_of_residues.push_back(starting_position);
+		list_of_residues.push_back( starting_position );
 	}
 
 
-	if ( ! conf.residue( starting_position ).is_carbohydrate() && ! conf.residue( starting_position ).is_branch_point() ) {
-		TR << "Delete to residue is not carbohydrate and not a branch point.  Nothing to be done." << std::endl;
+	if ( ! conf.residue( starting_position ).is_carbohydrate() &&
+			! conf.residue( starting_position ).is_branch_point() ) {
+		TR << "Starting position is not a carbohydrate and not a branch point.  Nothing to be done." << std::endl;
 		return std::make_pair( list_of_residues, tips);
 	}
 
@@ -1261,7 +1265,8 @@ get_carbohydrate_residues_and_tips_of_branch(
 		parent_residue = starting_position - 1;
 	}
 
-	fill_upstream_children_res_and_tips( conf, starting_position, parent_residue, children_residues, list_of_residues, tips );
+	fill_downstream_children_res_and_tips(
+		conf, starting_position, parent_residue, children_residues, list_of_residues, tips );
 
 	//TR << "Children: " << utility::to_string( children_residues) << std::endl;
 	get_branching_residues( conf, starting_position, children_residues, list_of_residues, tips );
@@ -1290,7 +1295,7 @@ get_glycan_connecting_protein_branch_point(
 	return 0;
 }
 
-///@brief Get the particular resnum from a glycan position, givin the protein branch point.
+///@brief Get the particular resnum from a glycan position, given the protein branch point.
 /// The glycan_position is numbered 1 -> length of glycan. This is useful for easily identifying a particular glycan position.
 core::Size
 get_resnum_from_glycan_position(conformation::Conformation const & conf, core::Size const glycan_one, core::Size const glycan_position){

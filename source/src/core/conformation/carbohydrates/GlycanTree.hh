@@ -39,7 +39,7 @@
 
 /////////////////
 // This class gathers and stores information on entire glycan trees. Typical glycan trees
-// contain multiple chains but with consective residue numbers. Gathering all the information about
+// contain multiple chains but with consecutive residue numbers. Gathering all the information about
 // connectivity of multiple chains invokes quite a number of functions that do funky things to find out which
 // residue belongs to which glycan tree and where are they connected to the protein. This container is meant for
 // storing this information instead of running all those functions (see carbohydrates/util.cc) repeatedly.

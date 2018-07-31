@@ -169,7 +169,7 @@ private:
 	/// (Downstream = this->end of glycan
 	utility::vector1< connection > downstream_connections_;
 
-	///@brief Position representation of the glycan residue.  From 1 to N, N being the size of the glyan tree.
+	///@brief Position representation of the glycan residue.  From 1 to N, N being the size of the glycan tree.
 	Size glycan_position_;
 
 	///@brief Residue distance to the glycan root.  Used for Layer-Based Tree sampling.

@@ -40,6 +40,9 @@
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
+#include <core/conformation/carbohydrates/GlycanNode.hh>
+#include <core/conformation/carbohydrates/GlycanTree.hh>
+#include <core/conformation/carbohydrates/GlycanTreeSet.hh>
 #include <core/conformation/signals/XYZEvent.hh>
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -795,7 +798,7 @@ Pose::chain_sequence(core::Size const chain_in) const
 	} else /*is carbohydrate*/ {
 		// Carbohydrate sequences are listed in the opposite direction as they are numbered.
 		for ( Size i = end; i >= begin; --i ) {
-			seq << residue_type(i).carbohydrate_info()->short_name();
+			seq << residue_type(i).carbohydrate_info()->short_name_w_linkage_notation();
 			if ( i != begin ) {
 				seq << "(";
 				seq << residue_type(i).carbohydrate_info()->anomeric_carbon();
@@ -803,6 +806,80 @@ Pose::chain_sequence(core::Size const chain_in) const
 		}
 	}
 	return seq.str();
+}
+
+/// @brief    Return the IUPAC sequence of a single branch of a glycan tree,
+/// Beginning with residue number <start_residue>.
+/// @details  This function is called recursively to generate the sequence of all side-branches.
+/// @return   Return an empty string if <start_residue> does not correspond to a saccharide residue.
+/// @author   Labonte <JWLabonte@jhu.edu>
+std::string
+Pose::glycan_tree_branch_sequence( core::uint const start_residue ) const
+{
+	using namespace std;
+	using namespace utility;
+	using namespace core::conformation::carbohydrates;
+	using namespace core::chemical::carbohydrates;
+
+	if ( ! glycan_tree_set()->is_residue_in_tree( start_residue ) ) { return ""; }
+
+	GlycanTreeCOP tree( glycan_tree_set()->get_tree_containing_residue( start_residue ) );
+	GlycanNodeCOP current_branch_node( tree->get_node( start_residue ) );
+
+	vector1< string > residue_names;
+
+	// The first residue is special, because it may or may not be the base of the tree.
+	CarbohydrateInfoCOP start_residue_info( residue( start_residue ).carbohydrate_info() );
+	string start_residue_name( start_residue_info->short_name() );
+	core::uint const starting_linkage_position( current_branch_node->get_linkage_position() );
+	if ( starting_linkage_position ) {
+		start_residue_name +=
+			"(" + to_string( start_residue_info->anomeric_carbon() ) +
+			"->" + to_string( starting_linkage_position ) + ")";
+	}
+
+	residue_names.push_back( start_residue_name );
+
+	core::uint next_main_chain_residue_num( current_branch_node->get_mainchain_child() );
+	while ( next_main_chain_residue_num ) {  // If this is 0, then we are at a "tip" and have nothing more to do.
+		vector1< core::uint > branch_starts( current_branch_node->get_children() );
+		for ( core::uint branch_start : branch_starts ) {
+			// Recursively progress along each side-branch off this branch in turn,
+			// skipping the main chain of this branch.
+			if ( branch_start == next_main_chain_residue_num ) { continue; }
+			residue_names.push_back( "[" + glycan_tree_branch_sequence( branch_start ) + "]-" );
+		}
+
+		// Now, having dealt with each side-branch, progress along the main chain of this branch.
+		current_branch_node = tree->get_node( next_main_chain_residue_num );
+		CarbohydrateInfoCOP current_node_info( residue( next_main_chain_residue_num ).carbohydrate_info() );
+		residue_names.push_back( current_node_info->short_name() +
+			"(" + to_string( current_node_info->anomeric_carbon() ) +
+			"->" + to_string( current_branch_node->get_linkage_position() ) + ")-" );
+
+		next_main_chain_residue_num = current_branch_node->get_mainchain_child();
+	}
+
+	// Glycan sequences are given from tips to base.
+	string sequence;
+	for ( core::uint i( residue_names.size() ); i > 0; --i ) {
+		sequence += residue_names[ i ];
+	}
+	return sequence;
+}
+
+/// @brief   Return the IUPAC sequence of the entire glycan tree encompassing residue number <residue_in_tree>.
+/// @return  Return an empty string if <residue_in_tree> does not correspond to a saccharide residue.
+/// @author  Labonte <JWLabonte@jhu.edu>
+std::string
+Pose::glycan_tree_sequence( core::uint const residue_in_tree ) const
+{
+	if ( glycan_tree_set()->is_residue_in_tree( residue_in_tree ) ) {
+		conformation::carbohydrates::GlycanTreeCOP tree(
+			glycan_tree_set()->get_tree_containing_residue( residue_in_tree ) );
+		return glycan_tree_branch_sequence( tree->get_start() );
+	}
+	return "";
 }
 
 

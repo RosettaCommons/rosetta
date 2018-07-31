@@ -73,6 +73,9 @@ public:
 	bool
 	has_tree( core::Size const glycan_start_position ) const;
 
+	/// @brief  Is this residue a part of a glycan tree?
+	bool is_residue_in_tree( const core::uint glycan_residue ) const;
+
 	///@brief Get a glycan tree corresponding to a particular starting residue.
 	GlycanTreeCOP
 	get_tree( core::Size const glycan_start_position ) const;
@@ -82,7 +85,7 @@ public:
 	get_tree_containing_residue( core::Size const glycan_residue) const;
 
 
-	///@brief Get a map of the tree start to the glyan tree.
+	///@brief Get a map of the tree start to the glycan tree.
 	std::map< Size, GlycanTreeOP> const &
 	get_tree_map() const;
 

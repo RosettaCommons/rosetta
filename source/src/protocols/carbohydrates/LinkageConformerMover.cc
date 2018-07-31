@@ -9,7 +9,7 @@
 
 /// @file protocols/carbohydrates/LinkageConformerMover.cc
 /// @brief This code changes all of the dihedrals of a particular glycosidic linkage based on database info,
-///   esentially sampling carbohydrate dihedral conformers of two residues.
+///   essentially sampling carbohydrate dihedral conformers of two residues.
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 /// @author Labonte <JWLabonte@jhu.edu>
 
@@ -37,11 +37,11 @@
 #include <core/select/residue_selector/util.hh>
 #include <core/conformation/carbohydrates/GlycanTreeSet.hh>
 
+#include <protocols/moves/mover_schemas.hh>
 #include <protocols/moves/MoverStatus.hh>
 #include <protocols/simple_moves/BBDihedralSamplerMover.hh>
 #include <protocols/simple_moves/bb_sampler/SugarBBSampler.hh>
 #include <protocols/rosetta_scripts/util.hh>
-
 
 // Numeric headers
 #include <numeric/random/random.hh>
@@ -53,15 +53,15 @@
 
 // Utility header
 #include <utility/tag/Tag.hh>
-// XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <protocols/moves/mover_schemas.hh>
+
 
 static basic::Tracer TR( "protocols.carbohydrates.LinkageConformerMover" );
 
 
 namespace protocols {
 namespace carbohydrates {
+
 using namespace core::kinematics;
 using namespace protocols::simple_moves;
 using namespace protocols::simple_moves::bb_sampler;
@@ -169,23 +169,12 @@ LinkageConformerMover::clone() const{
 	return protocols::moves::MoverOP( new LinkageConformerMover( *this ) );
 }
 
-/*
-LinkageConformerMover & LinkageConformerMoveroperator=( LinkageConformerMover const & src){
-return LinkageConformerMover( src );
-}
-*/
-
 
 moves::MoverOP
 LinkageConformerMover::fresh_instance() const
 {
 	return protocols::moves::MoverOP( new LinkageConformerMover );
 }
-
-// XRW TEMP std::string
-// XRW TEMP LinkageConformerMover::get_name() const {
-// XRW TEMP  return "LinkageConformerMover";
-// XRW TEMP }
 
 void
 LinkageConformerMover::show(std::ostream & output) const
@@ -253,7 +242,6 @@ LinkageConformerMover::apply( core::pose::Pose & pose )
 	core::Size upper_resnum = movemap_residues[ index ];
 
 
-
 	core::chemical::ResidueType const & res = pose.residue_type( upper_resnum );
 	if ( ! res.is_carbohydrate() ) {
 		TR << "Selected residue does not have a glycosidic linkage to its parent!  Skipping..." << std::endl;
@@ -270,11 +258,10 @@ LinkageConformerMover::apply( core::pose::Pose & pose )
 	core::chemical::ResidueType const & parent_res = pose.residue_type(  lower_resnum );
 
 
-
-	std::string res_name = res.carbohydrate_info()->short_name();
+	std::string const & res_name( res.carbohydrate_info()->short_name_w_linkage_notation() );
 	std::string parent_res_name;
 	if ( parent_res.is_carbohydrate() ) {
-		parent_res_name = parent_res.carbohydrate_info()->short_name();  // 3-letter code not enough
+		parent_res_name = parent_res.carbohydrate_info()->short_name_w_linkage_notation();  // 3-letter code not enough
 
 		//This is due to multiple connecting points possible. This gets the position of linking to the previous residue!
 		core::Size const link_pos = pose.glycan_tree_set()->get_linkage_position( upper_resnum );
@@ -290,7 +277,6 @@ LinkageConformerMover::apply( core::pose::Pose & pose )
 	}
 
 	set_last_move_status(protocols::moves::MS_FAIL); //Fail unless we say we are ok.
-
 
 
 	//TR << "Upper resnum: " << upper_resnum << "  Lower resnum: " << lower_resnum << std::endl;
@@ -338,31 +324,11 @@ LinkageConformerMover::apply( core::pose::Pose & pose )
 		psi_sampler_mover_->apply(pose);
 		omega_sampler_mover_->apply(pose);
 
-
-
 	} else {
 		TR << "No conformer data found and use_sugar_bb_data FALSE.  Doing nothing. " << std::endl;
 		set_last_move_status(protocols::moves::MS_FAIL);
 	}
 }
-
-
-/////////////// Creator ///////////////
-
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP LinkageConformerMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new LinkageConformerMover );
-// XRW TEMP }
-
-// XRW TEMP std::string
-// XRW TEMP LinkageConformerMoverCreator::keyname() const {
-// XRW TEMP  return LinkageConformerMover::mover_name();
-// XRW TEMP }
-
-// XRW TEMP std::string
-// XRW TEMP LinkageConformerMover::mover_name(){
-// XRW TEMP  return "LinkageConformerMover";
-// XRW TEMP }
 
 std::string LinkageConformerMover::get_name() const {
 	return mover_name();
@@ -388,6 +354,9 @@ void LinkageConformerMover::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Mover to sample glycan linkages", attlist );
 }
 
+
+/////////////// Creator ///////////////
+
 std::string LinkageConformerMoverCreator::keyname() const {
 	return LinkageConformerMover::mover_name();
 }
@@ -401,7 +370,6 @@ void LinkageConformerMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDe
 {
 	LinkageConformerMover::provide_xml_schema( xsd );
 }
-
 
 } //carbohydrates
 } //protocols

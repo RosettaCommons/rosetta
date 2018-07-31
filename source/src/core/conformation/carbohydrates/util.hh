@@ -153,12 +153,12 @@ void set_glycosidic_torsion(
 	core::Angle const setting );
 
 
-////////////////////////    Branch Information    ///////////////////////////////////
+// GlycanTree Helper Functions ////////////////////////////////////////////////
 
 /// @brief  Recursive function to get branches of a set of residues, etc.
 ///  list_of_residues and tips are arrays are non-const references and modified by this function.
 ///
-///  Children Residues:  Residue nums of parent residue connected that we are interested in finding connected branchs.
+///  Children Residues:  Residue nums of parent residue connected that we are interested in finding connected branches.
 ///  List Of  Residues:  All the residue nums of the branching from children residues
 ///  Tips:  All 'ends' of all the branches found using this function.
 ///
@@ -168,7 +168,7 @@ void
 get_branching_residues(
 	conformation::Conformation const & conf,
 	Size parent_residue,
-	utility::vector1< Size > & children_residues,
+	utility::vector1< Size > const & children_residues,
 	utility::vector1< Size > & list_of_residues,
 	utility::vector1< Size > & tips,
 	std::set< Size > const & ancestors = {} );
@@ -183,7 +183,7 @@ get_branching_residues(
 ///  See Also: get_carbohydrate_residues_and_tips_of_branch
 ///            trim_carbohydrate_branch_from_X
 void
-fill_upstream_children_res_and_tips(
+fill_downstream_children_res_and_tips(
 	conformation::Conformation const & conf,
 	Size res,
 	Size parent_residue,
@@ -243,7 +243,7 @@ get_glycan_connecting_protein_branch_point(
 	conformation::Conformation const & conf,
 	core::Size const protein_branch_point_resnum);
 
-///@brief Get the particular resnum from a glycan position, givin the protein branch point.
+///@brief Get the particular resnum from a glycan position, given the protein branch point.
 /// The glycan_position is numbered 1 -> length of glycan. This is useful for easily identifying a particular glycan position.
 /// Returns 0 if that glycan_position is not part of the glycan we are interested in or not in pose.
 ///
@@ -253,7 +253,7 @@ get_resnum_from_glycan_position(
 	core::Size const first_glycan_resnum,
 	core::Size const glycan_position);
 
-///@brief Get the particular resnum from a glycan position, givin the protein branch point.
+///@brief Get the particular resnum from a glycan position, given the protein branch point.
 /// The glycan_position is numbered 1 -> length of glycan. This is useful for easily identifying a particular glycan position.
 /// Returns 0 if that glycan_position is not part of the glycan we are interested in or not in pose.
 ///

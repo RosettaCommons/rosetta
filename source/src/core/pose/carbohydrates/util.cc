@@ -830,10 +830,10 @@ idealize_last_n_glycans_in_pose( Pose & pose, Size const n_glycans_added )
 		uint parent_seqpos( pose.glycan_tree_set()->get_parent( i ) );
 		if ( parent_seqpos == 0 ) { continue; }
 		Residue const & red_end_res( pose.residue( parent_seqpos ) );
-		string const & non_red_end_short_name( non_red_end_res.carbohydrate_info()->short_name() );
+		string const & non_red_end_short_name( non_red_end_res.carbohydrate_info()->short_name_w_linkage_notation() );
 		string red_end_short_name;
 		if ( red_end_res.is_carbohydrate() ) {
-			red_end_short_name = red_end_res.carbohydrate_info()->short_name();  // 3-letter code not enough
+			red_end_short_name = red_end_res.carbohydrate_info()->short_name_w_linkage_notation();  // 3-letter code not enough
 			uint const link_pos( pose.glycan_tree_set()->get_linkage_position( i ) );
 			red_end_short_name[ 2 ] = '0' + link_pos;  // Set the correct connectivity.
 		} else {
@@ -1247,14 +1247,14 @@ get_branching_residues( Pose const & pose,
 ///  See Also: get_carbohydrate_residues_and_tips_of_branch
 ///            trim_carbohydrate_branch_from_X
 void
-fill_upstream_children_res_and_tips( Pose const & pose,
+fill_downstream_children_res_and_tips( Pose const & pose,
 	Size res,
 	Size parent_residue,
 	utility::vector1< Size > & children_residues,
 	utility::vector1< Size > & list_of_residues,
 	utility::vector1< Size > & tips )
 {
-	return conformation::carbohydrates::fill_upstream_children_res_and_tips(pose.conformation(), res, parent_residue, children_residues, list_of_residues, tips);
+	return conformation::carbohydrates::fill_downstream_children_res_and_tips(pose.conformation(), res, parent_residue, children_residues, list_of_residues, tips);
 }
 
 

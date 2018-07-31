@@ -112,26 +112,26 @@ GlycanTree::setup_glycan_nodes( conformation::Conformation const & conf, Size co
 
 
 	// Find all residues belonging to the tree starting at start_pos
-	std::pair< utility::vector1< Size >, utility::vector1< Size> > branch_and_tips =
+	std::pair< utility::vector1< Size >, utility::vector1< Size > > branch_and_tips =
 		get_carbohydrate_residues_and_tips_of_branch( conf, start_pos, true /*include_start_position*/ );
 
 	utility::vector1< Size > branch_residues = branch_and_tips.first;
 
 	branch_tips_ = branch_and_tips.second;
 
-	if ( *(branch_residues.begin()) != start_pos ) {
-		std::string curr_pos = utility::Real2string(start_pos,0);
-		std::string msg = "ERROR: Finding tree residues for start position " + curr_pos + " failed!";
-		std::string msg2 = utility::to_string(branch_residues);
+	if ( *( branch_residues.begin() ) != start_pos ) {
+		std::string const curr_pos = utility::Real2string( start_pos, 0 );
+		std::string const msg = "ERROR: Finding tree residues for start position " + curr_pos + " failed!";
+		std::string const msg2 = utility::to_string( branch_residues );
 
-		utility_exit_with_message(msg+" "+msg2);
+		utility_exit_with_message( msg + " " + msg2 );
 	}
 
 	for ( Size pos : branch_residues ) {
 		// Create a new GlycanNode instance for this residue
 		// The node will contain info about all direct downstream connections
 		// Add the node to the tree
-		tree_[pos] = GlycanNodeOP( new GlycanNode(conf, start_pos, pos));
+		tree_[ pos ] = GlycanNodeOP( new GlycanNode( conf, start_pos, pos ) );
 	}
 
 	root_ = find_seqpos_of_saccharides_parent_residue( conf.residue( start_pos ) );

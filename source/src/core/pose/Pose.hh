@@ -832,6 +832,16 @@ public:
 	std::string
 	chain_sequence( core::Size const chain_in ) const;
 
+	/// @brief  Return the IUPAC sequence of a single branch of a glycan tree,
+	/// Beginning with residue number <start_residue>.
+	std::string
+	glycan_tree_branch_sequence( core::uint const start_residue ) const;
+
+	/// @brief  Return the IUPAC sequence of the entire glycan tree encompassing residue number <residue_in_tree>.
+	std::string
+	glycan_tree_sequence( core::uint const residue_in_tree ) const;
+
+
 	/// @brief Returns the Residue at position  <seqpos>  (read access)
 	/// Note: this method will trigger a refold if either the
 	/// torsions or the coordinates are out-of-date

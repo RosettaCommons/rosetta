@@ -117,9 +117,9 @@ CarbohydrateInfo::show( std::ostream & output ) const
 
 	// Produce output.
 	output << "Carbohydrate Properties for this Residue:" << endl;
-	output << " Basic Name: " << base_name() << endl;
+	output << " Basic Name: " << basic_name() << endl;
 	output << " IUPAC Name: " << full_name_ << endl;
-	output << " Abbreviation: " << short_name_ << endl;
+	output << " Abbreviation: " << short_name_w_linkage_notation() << endl;
 	output << " Classification: " << prefix << suffix << endl;
 	output << " Stereochemistry: " << stereochem_ << endl;
 	if ( ring_size_ != 0 ) {
@@ -138,7 +138,7 @@ CarbohydrateInfo::show( std::ostream & output ) const
 		output << "none" << endl;
 	} else {
 		for ( uint i = 1; i <= n_branches(); ++i ) {
-			output << "(_->" << branch_points_[i] << ')';
+			output << "(_->" << branch_points_[ i ] << ')';
 			if ( i != n_branches() ) { output << "; "; }
 		}
 		output << endl;
@@ -149,7 +149,7 @@ CarbohydrateInfo::show( std::ostream & output ) const
 // Accessors/Mutators
 // Return the standard/common, non-residue, short name of the monosaccharide.
 std::string
-CarbohydrateInfo::base_name() const
+CarbohydrateInfo::basic_name() const
 {
 	using namespace std;
 
@@ -275,6 +275,7 @@ CarbohydrateInfo::copy_data(
 {
 	object_to_copy_to.full_name_ = object_to_copy_from.full_name_;
 	object_to_copy_to.short_name_ = object_to_copy_from.short_name_;
+	object_to_copy_to.linkage_notation_ = object_to_copy_from.linkage_notation_;
 	object_to_copy_to.anomeric_carbon_ = object_to_copy_from.anomeric_carbon_;
 	object_to_copy_to.anomeric_carbon_name_ = object_to_copy_from.anomeric_carbon_;
 	object_to_copy_to.anomeric_carbon_index_ = object_to_copy_from.anomeric_carbon_index_;
@@ -503,16 +504,15 @@ CarbohydrateInfo::determine_IUPAC_names()
 	bool const is_Neu( code == "Neu" );
 
 	// Determine prefixes.
+	stringstream linkage_notation( stringstream::out );
 	stringstream long_prefixes( stringstream::out );
 	stringstream short_prefixes( stringstream::out );
 
 	// Connectivity
 	if ( ! residue_type->is_upper_terminus() ) {
-		long_prefixes << "->" << mainchain_glycosidic_bond_acceptor_ << ")-";
+		linkage_notation << "->" << mainchain_glycosidic_bond_acceptor_ << ')';
 	}
-	if ( ! residue_type->is_lower_terminus() ) {
-		long_prefixes << anomer_ << '-';
-	}
+	long_prefixes << anomer_ << '-';
 	short_prefixes << long_prefixes.str();
 
 	// Substitutions
@@ -561,6 +561,9 @@ CarbohydrateInfo::determine_IUPAC_names()
 				if ( is_amino_sugar() ) {
 					short_suffix << "N";
 				}
+				if ( is_acetylated() ) {
+					short_suffix << "Ac";
+				}
 			}
 		} else /* is not a glycoside */ {
 			if ( is_uronic_acid() ) {
@@ -576,6 +579,9 @@ CarbohydrateInfo::determine_IUPAC_names()
 					if ( ! is_Neu ) {  // (Neu is by definition an amino sugar.)
 						short_suffix << "N";
 					}
+				}
+				if ( is_acetylated() ) {
+					short_suffix << "Ac";
 				}
 			}
 		}
@@ -601,7 +607,12 @@ CarbohydrateInfo::determine_IUPAC_names()
 		short_suffix << '-';
 	}
 
-	full_name_ = long_prefixes.str() + root + long_suffix.str();
+	linkage_notation_ = linkage_notation.str();
+	if ( ! linkage_notation_.empty() ) {
+		full_name_ = linkage_notation_ + "-" + long_prefixes.str() + root + long_suffix.str();
+	} else {
+		full_name_ = long_prefixes.str() + root + long_suffix.str();
+	}
 	short_name_ = short_prefixes.str() + code + short_suffix.str();
 }
 

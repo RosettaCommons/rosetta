@@ -169,6 +169,13 @@ GlycanTreeSet::has_tree(const core::Size glycan_start_position) const {
 	return result;
 }
 
+/// @author Labonte <JWLabonte@jhu.edu>
+bool
+GlycanTreeSet::is_residue_in_tree( const core::uint glycan_residue ) const
+{
+	return glycan_res_to_tree_.count( glycan_residue ) != 0;
+}
+
 GlycanTreeCOP
 GlycanTreeSet::get_tree(const core::Size glycan_start_position) const {
 	if ( has_tree( glycan_start_position) ) {

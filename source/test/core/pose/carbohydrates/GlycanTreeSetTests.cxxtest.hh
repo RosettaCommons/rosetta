@@ -29,7 +29,8 @@
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
-
+#include <core/pose/annotated_sequence.hh>
+#include <core/pose/carbohydrates/util.hh>
 
 // Core Headers
 #include <core/pose/Pose.hh>
@@ -51,12 +52,7 @@ using namespace core::chemical;
 
 class GlycanTreeSetTests : public CxxTest::TestSuite {
 
-
-
-	//Define Variables
-
 public:
-
 	void setUp(){
 		core_init_with_additional_options("-include_sugars");
 		pose_from_file(pose_, "core/chemical/carbohydrates/gp120_2glycans_man5.pdb", PDB_file);
@@ -366,15 +362,35 @@ public:
 #endif
 	}
 
+	// Confirm that Pose::glycan_tree_sequence() returns the correct sequence.
+	void test_glycan_tree_sequence()
+	{
+		using namespace std;
+		using namespace core::pose;
 
+		// This is the standard N-linked core of a hybrid, bisected, fucosylated glycan.
+		// It adequately tests residues with multiple branches as well as branches off of branches.
+		// It also includes modified sugars.
+		string const input_sequence(
+			"alpha-D-Manp-(1->3)-[alpha-D-Manp-(1->3)-[alpha-D-Manp-(1->6)]-alpha-D-Manp-(1->6)]-"
+			"[beta-D-GlcpNAc-(1->4)]-beta-D-Manp-(1->4)-beta-D-GlcpNAc-(1->4)-[alpha-L-Fucp-(1->6)]-beta-D-GlcpNAc" );
+
+		Pose pose;
+
+		make_pose_from_saccharide_sequence( pose, input_sequence );
+		TS_ASSERT_EQUALS( pose.glycan_tree_sequence( 1 ), input_sequence );
+		TS_ASSERT_EQUALS( pose.glycan_tree_sequence( 2 ), input_sequence );
+
+		make_pose_from_sequence( pose, "ANASA", "fa_standard" );
+		core::pose::carbohydrates::glycosylate_pose( pose, 2, input_sequence );
+		TS_ASSERT_EQUALS( pose.glycan_tree_sequence( 1 ), "" );
+		TS_ASSERT_EQUALS( pose.glycan_tree_sequence( 2 ), "" );
+		TS_ASSERT_EQUALS( pose.glycan_tree_sequence( 6 ), input_sequence + "-" );
+	}
 
 private:
-
-
 	core::pose::Pose pose_;
 	core::pose::Pose glycan_free_pose_;
 
 };
-
-
 

@@ -32,7 +32,7 @@
 // Numeric header
 #include <numeric/angle.functions.hh>
 
-static basic::Tracer TR("core.chemical.carbohydrates.CarbohydrateInfo.cxxtest");
+static basic::Tracer TR( "core.chemical.carbohydrates.CarbohydrateInfo.cxxtest" );
 
 class CarbohydrateInfoTests : public CxxTest::TestSuite {
 public:  // Standard methods //////////////////////////////////////////////////
@@ -62,7 +62,7 @@ public:  // Standard methods //////////////////////////////////////////////////
 		pose_from_file( Lex_, "core/chemical/carbohydrates/Lex.pdb" , core::import_pose::PDB_file);
 
 		// Test that oligosaccharides can be created from a given sequence.
-		//make_pose_from_saccharide_sequence( lactose_, "beta-D-Galp-(1->4)-Glcp" );
+		make_pose_from_saccharide_sequence( lactose_, "beta-D-Galp-(1->4)-Glcp" );
 	}
 
 	// Destruction
@@ -75,10 +75,10 @@ public:  // Tests /////////////////////////////////////////////////////////////
 	void test_Pose_chain_sequence_w_polysaccharide()
 	{
 		TR << "Testing chain_sequence() method of Pose with polysaccharide chains."  << std::endl;
-		TS_ASSERT_EQUALS( maltotriose_.chain_sequence( 1 ), "alpha-D-Glcp-(1->4)-alpha-D-Glcp-(1->4)-D-Glcp" );
-		TS_ASSERT_EQUALS( isomaltose_.chain_sequence( 1 ), "alpha-D-Glcp-(1->6)-D-Glcp" );
-		//TS_ASSERT_EQUALS( lactose_.chain_sequence( 1 ), "beta-D-Galp-(1->4)-D-Glcp" );
-		TS_ASSERT_EQUALS( glucosamine_.chain_sequence( 1 ), "D-GlcpN" );
+		TS_ASSERT_EQUALS( maltotriose_.chain_sequence( 1 ), "alpha-D-Glcp-(1->4)-alpha-D-Glcp-(1->4)-alpha-D-Glcp" );
+		TS_ASSERT_EQUALS( isomaltose_.chain_sequence( 1 ), "alpha-D-Glcp-(1->6)-alpha-D-Glcp" );
+		TS_ASSERT_EQUALS( lactose_.chain_sequence( 1 ), "beta-D-Galp-(1->4)-alpha-D-Glcp" );
+		TS_ASSERT_EQUALS( glucosamine_.chain_sequence( 1 ), "alpha-D-GlcpN" );
 	}
 
 	// Confirm that backbone torsion angles are assigned correctly.
