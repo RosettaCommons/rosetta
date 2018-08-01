@@ -334,7 +334,6 @@ get_branching_residues(
 	utility::vector1< Size > & list_of_residues,
 	utility::vector1< Size > & tips );
 
-
 /// @brief  Find all children residues, list of residues, and any found tips from a given residue not including parent
 ///
 ///  Children Residues:  Filled in list of children residues found if not tips.
@@ -344,14 +343,13 @@ get_branching_residues(
 ///  See Also: get_carbohydrate_residues_and_tips_of_branch
 ///            trim_carbohydrate_branch_from_X
 void
-fill_upstream_children_res_and_tips(
+fill_downstream_children_res_and_tips(
 	Pose const & pose,
 	Size res,
 	Size parent_residue,
 	utility::vector1< Size > & children_residues,
 	utility::vector1< Size > & list_of_residues,
 	utility::vector1< Size > & tips );
-
 
 /// @brief Get all residue numbers in order from the tip to (and not including) stop_at_residue or a branch point.
 ///  All residue numbers are the tip or a linear polymer of glycans.
