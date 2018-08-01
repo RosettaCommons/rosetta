@@ -339,43 +339,9 @@ FastDesign::create_default_task_factory() const
 void
 FastDesign::modify_scripts_for_alternative_scorefunctions()
 {
-	using namespace basic::options;
-
-
-	// will attempt to modify the relax script for -beta only
-	// options for any other score functions could be also added below
-	std::vector< std::string > filelines;
-
-	// Now beta_nov15 as default... this is pretty dangerous for talaris
-	if ( !(FastRelax::script_file_specified_) ) {
-		/* // no more support for beta_nov15_patch
-		if ( option[ OptionKeys::corrections::beta_nov15_patch ]() ) {
-		filelines.push_back( "reference  2.01692 3.95229 -1.84895 -2.44909 1.54388 1.43603 0.25816 2.70992 -0.38208 2.00235 2.31398 -0.91852 -0.67964 -0.97481 -0.11701 -1.53805 -1.70469 2.85306 2.72731 -0.99943" ); // using "minimized context"
-		filelines.push_back( "ramp_repack_min 1     0.00001  0.0"      );
-		filelines.push_back( "accept_to_best"                  );
-		filelines.push_back( "endrepeat "                      );
-		} else
-		*/
-		if ( option[ OptionKeys::corrections::beta_nov16 ]() || option[ OptionKeys::corrections::beta_nov16_cart ] ) {
-			TR << "Calling correction for beta_nov16, " << FastRelax::default_repeats() << " repeats..." << std::endl;
-			filelines.push_back( "repeat "+ObjexxFCL::string_of(FastRelax::default_repeats()));
-
-			filelines.emplace_back("reference 0.3     3.1     -2.6     -2.55    4.8     -0.5    0.7      4.5     -1.6     4.0     3.9     -1.7     -2.0     -1.5     -1.0     -2.0    -2.0     4.0     9.0     3.7" );
-			filelines.emplace_back("ramp_repack_min 0.02  0.01     1.0"      );
-			filelines.emplace_back("reference 2.2619  4.8148  -1.6204  -1.6058  2.7602  1.0350  1.3406   2.5006  -0.6895  1.9223  2.3633  -0.3009  -4.2787   0.1077   0.0423  -0.4390 -0.7333  3.2371  4.7077  2.3379" );
-			filelines.emplace_back("ramp_repack_min 0.250 0.01     0.5"      );
-			filelines.emplace_back("reference 2.2619  4.5648  -1.6204  -1.6158  2.5602  1.1350  1.2406   2.3006  -0.7895  1.7223  2.1633  -0.3009  -4.3787   0.1077   0.0423  -0.4390 -0.7333  3.1371  4.4077  2.1379" );
-			filelines.emplace_back("ramp_repack_min 0.550 0.01     0.0"      );
-			filelines.emplace_back("reference 2.2619  4.3148  -1.6204  -1.6358  1.9602  1.4350  0.8406   1.8006  -0.8895  1.3223  1.4633  -0.3009  -4.6787  -0.1077  -0.1423  -0.5390 -0.9333  2.7371  3.7077  1.7379" );
-			filelines.emplace_back("ramp_repack_min 1     0.00001  0.0"      );
-			filelines.emplace_back("accept_to_best"                  );
-			filelines.emplace_back("endrepeat "                      );
-		}
-	}
-
-	if ( filelines.size() > 0 ) {
-		FastRelax::set_script_from_lines( filelines );
-	}
+	//This function used to add "reference" lines between ramp_repack_min lines.
+	//Unfortunately, this appears to force the use of the default relaxscript.
+	//This feature still exists but in the form of relaxscript files in the main/database/sampling/relax_scripts/ directory.
 }
 
 std::string FastDesign::get_name() const {

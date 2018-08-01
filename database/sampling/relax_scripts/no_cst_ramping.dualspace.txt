@@ -1,0 +1,17 @@
+switch:torsion
+repeat %%nrepeats%%
+ramp_repack_min 0.02  0.01     1.0
+ramp_repack_min 0.250 0.01     1.0
+ramp_repack_min 0.550 0.01     1.0
+ramp_repack_min 1     0.00001  1.0
+accept_to_best
+endrepeat
+
+switch:cartesian
+repeat 1
+ramp_repack_min 0.02  0.01     1.0
+ramp_repack_min 0.250 0.01     1.0
+ramp_repack_min 0.550 0.01     1.0
+ramp_repack_min 1     0.00001  1.0
+accept_to_best
+endrepeat

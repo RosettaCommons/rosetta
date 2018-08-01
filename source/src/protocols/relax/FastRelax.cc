@@ -122,7 +122,7 @@ exit
 will quit with immediate effect
 
 
-A typical FastRelax command_script is: (thi sin fact is the default command script)
+A typical FastRelax command_script is: (this in fact is the default command script)
 
 repeat 5
 ramp_repack_min 0.02  0.01     1.0
@@ -167,17 +167,18 @@ endrepeat
 #include <core/util/SwitchResidueTypeSet.hh>
 
 //Protocol Headers
-#include <basic/datacache/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <utility/excn/Exceptions.hh>
 #include <protocols/task_operations/LimitAromaChi2Operation.hh>
 #include <protocols/md/CartesianMD.hh>
 #include <protocols/hydrate/Hydrate.hh>
 
 //Basic Headers
+#include <basic/database/open.hh>
+#include <basic/datacache/DataMap.hh>
+#include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/keys/evaluation.OptionKeys.gen.hh>
@@ -191,6 +192,9 @@ endrepeat
 #include <utility/string_util.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+#include <utility/excn/Exceptions.hh>
+#include <utility/file/file_sys_util.hh>
+
 #include <numeric/random/random.fwd.hh>
 
 // ObjexxFCL Headers
@@ -198,10 +202,14 @@ endrepeat
 
 //C++ Headers
 #include <fstream>
+#include <algorithm>
+
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
+//Boost Headers
+#include <boost/algorithm/string/case_conv.hpp>
 
 #ifdef GL_GRAPHICS
 #include <protocols/viewer/viewers.hh>
@@ -421,10 +429,8 @@ FastRelax::parse_my_tag(
 
 	if ( batch ) {
 		set_script_to_batchrelax_default( default_repeats_ );
-	} else if ( script_file == "" ) {
-		read_script_file( "", default_repeats_ );
 	} else {
-		read_script_file( script_file );
+		read_script_file( script_file, default_repeats_ );
 	}
 
 	delete_virtual_residues_after_FastRelax_ = tag->getOption<bool>("delete_virtual_residues_after_FastRelax", false);
@@ -806,24 +812,23 @@ void FastRelax::apply( core::pose::Pose & pose ){
 			// added for design applications
 			if ( cmd.nparams < 20 ) {
 				utility_exit_with_message( "ERROR: Syntax " + cmd.command + " <20 reference weights in ACDEF order>" );
-			} else {
-				//local_scorefxn->energy_method_options().set_method_weights(
-				// scoring::ScoreTypeManager::score_type_from_name( "ref" ), cmd.params_vec );
-				methods::EnergyMethodOptions eopts( local_scorefxn->energy_method_options() );
-
-				eopts.set_method_weights(
-					scoring::ScoreTypeManager::score_type_from_name( "ref" ), cmd.params_vec );
-
-				local_scorefxn->set_energy_method_options( eopts );
-
-				/*
-				utility::vector1< Real > refw =
-				local_scorefxn->energy_method_options().method_weights(
-				scoring::ScoreTypeManager::score_type_from_name( "ref" ) );
-				TR << "Check, Refweight: " << refw[1] << " " << refw[2] << " " << refw[3]
-				<< std::endl;
-				*/
 			}
+			//local_scorefxn->energy_method_options().set_method_weights(
+			// scoring::ScoreTypeManager::score_type_from_name( "ref" ), cmd.params_vec );
+			methods::EnergyMethodOptions eopts( local_scorefxn->energy_method_options() );
+
+			eopts.set_method_weights(
+				scoring::ScoreTypeManager::score_type_from_name( "ref" ), cmd.params_vec );
+
+			local_scorefxn->set_energy_method_options( eopts );
+
+			/*
+			utility::vector1< Real > refw =
+			local_scorefxn->energy_method_options().method_weights(
+			scoring::ScoreTypeManager::score_type_from_name( "ref" ) );
+			TR << "Check, Refweight: " << refw[1] << " " << refw[2] << " " << refw[3]
+			<< std::endl;
+			*/
 
 		}   else if ( cmd.command.substr(0,6) == "switch" ) {
 			// no input validation as of now, relax will just die
@@ -846,8 +851,9 @@ void FastRelax::apply( core::pose::Pose & pose ){
 		}   else if ( cmd.command == "ramp_repack_min" ) {
 			if ( cmd.nparams < 2 ) { utility_exit_with_message( "More parameters expected after : " + cmd.command  ); }
 
-			// The first parameter is the relate repulsive weight
-			local_scorefxn->set_weight( scoring::fa_rep, full_weights[ scoring::fa_rep ] * cmd.param1 );
+			// The first parameter is the relative repulsive weight
+			core::Real const relative_repulsive_weight = cmd.param1;//unnecessary duplication, but easier to read that "param1"
+			local_scorefxn->set_weight( scoring::fa_rep, full_weights[ scoring::fa_rep ] * relative_repulsive_weight );
 
 			// The third paramter is the coordinate constraint weight
 			if ( ( constrain_coords() || ramp_down_constraints() ) && (cmd.nparams >= 3) ) {
@@ -864,7 +870,7 @@ void FastRelax::apply( core::pose::Pose & pose ){
 
 			// decide when to call ramady repair code
 			if ( total_repeat_count > 1 && repeat_count > 2 ) {
-				if ( cmd.param1 < 0.2 ) {
+				if ( relative_repulsive_weight < 0.2 ) {
 					if ( do_rama_repair ) {
 						fix_worst_bad_ramas( pose, ramady_num_rebuild_, 0.0, ramady_cutoff_, ramady_rms_limit_);
 					}
@@ -1066,101 +1072,126 @@ void FastRelax::set_script_from_lines( std::vector< std::string > const & fileli
 	}
 }
 
-void FastRelax::read_script_file( const std::string &script_file, core::Size standard_repeats ){
+void fill_in_filelines(
+	std::ifstream & infile,
+	VariableSubstitutionPair const & repeat_variable,
+	std::vector< std::string > & filelines
+){
+	if ( !infile.good() ) {
+		//This was already checked but let's be safe
+		utility_exit_with_message( "[ERROR] Error opening script file" );
+	}
+
+	std::string line;
+	while ( getline( infile, line ) ) {
+		//perform variable substitution
+		//Taken from https://stackoverflow.com/questions/1494399/how-do-i-search-find-and-replace-in-a-standard-string
+		std::string::size_type position = line.find( repeat_variable.string_being_replaced );
+		while ( position != std::string::npos ) {
+			line.replace( position, repeat_variable.string_being_replaced.length(), repeat_variable.string_being_added );
+			position += repeat_variable.string_being_added.length();
+			position = line.find( repeat_variable.string_being_replaced, position );
+		}
+
+		//store line
+		filelines.push_back( line );
+	}
+	infile.close();
+}
+
+bool string_has_suffix( std::string const & target, std::string const & suffix ){
+	//Taken from https://stackoverflow.com/questions/874134/find-if-string-ends-with-another-string-in-c
+	if ( target.length() < suffix.length() ) return false;
+
+	auto const position_of_suffix = target.length() - suffix.length();
+	return target.compare( position_of_suffix, suffix.length(), suffix ) == 0;
+}
+
+void FastRelax::add_extension_to_script_file_prefix( std::string & prefix ) const {
+	using namespace basic::options;
+
+	utility::vector1< std::string > extension_tags;
+	if ( option[ OptionKeys::corrections::beta_nov16 ]() || option[ OptionKeys::corrections::beta_nov16_cart ]() ) {
+		extension_tags.emplace_back( "beta_nov16" );
+	}
+	if ( dualspace_ ) {
+		extension_tags.emplace_back( "dualspace" );
+	}
+
+	//sort extensions by convention
+	std::sort( extension_tags.begin(), extension_tags.end() );
+
+	for ( std::string const & ext : extension_tags ) {
+		prefix += "." + ext;
+	}
+	prefix += ".txt";
+}
+
+void FastRelax::read_script_file( std::string const & script_file, core::Size standard_repeats ){
 	using namespace ObjexxFCL;
+	using namespace basic::database;
+	using namespace basic::options;
+
 	script_.clear();
 	std::vector< std::string > filelines;
-	std::string line;
 
+	std::string script_file_path;
 	runtime_assert( standard_repeats > 0 );
-	if ( script_file == "" && dualspace_ ) {
-		TR << "================== Using dualspace script ==================" << std::endl;
-		filelines.emplace_back("switch:torsion"           );
-		filelines.push_back( "repeat " + string_of( standard_repeats - 1 ) );
-		filelines.emplace_back("ramp_repack_min 0.02  0.01     1.0"      );
-		filelines.emplace_back("ramp_repack_min 0.250 0.01     0.5"      );
-		filelines.emplace_back("ramp_repack_min 0.550 0.01     0.0"      );
-		filelines.emplace_back("ramp_repack_min 1     0.00001  0.0"      );
-		filelines.emplace_back("accept_to_best"                  );
-		filelines.emplace_back("endrepeat "                      );
 
-		filelines.emplace_back("switch:cartesian"           );
-		filelines.emplace_back("repeat 1"                  );
-		filelines.emplace_back("ramp_repack_min 0.02  0.01     1.0"      );
-		filelines.emplace_back("ramp_repack_min 0.250 0.01     0.5"      );
-		filelines.emplace_back("ramp_repack_min 0.550 0.01     0.0"      );
-		filelines.emplace_back("ramp_repack_min 1     0.00001  0.0"      );
-		filelines.emplace_back("accept_to_best"                  );
-		filelines.emplace_back("endrepeat "                      );
-	} else if ( script_file == "" ) {
-		TR << "================== Using default script ==================" << std::endl;
-		filelines.push_back( "repeat " + string_of( standard_repeats )  );
-		filelines.emplace_back("ramp_repack_min 0.02  0.01     1.0"      );
-		filelines.emplace_back("ramp_repack_min 0.250 0.01     0.5"      );
-		filelines.emplace_back("ramp_repack_min 0.550 0.01     0.0"      );
-		filelines.emplace_back("ramp_repack_min 1     0.00001  0.0"      );
-		filelines.emplace_back("accept_to_best"                  );
-		filelines.emplace_back("endrepeat "                      );
-	} else if ( script_file == "NO CST RAMPING" && dualspace_ ) {
-		TR << "================== Using dualspace script - no constraint ramping ==================" << std::endl;
-		filelines.emplace_back("switch:torsion"                  );
-		filelines.push_back( "repeat " + string_of( standard_repeats - 1 ) );
-		filelines.emplace_back("ramp_repack_min 0.02  0.01     1.0"      );
-		filelines.emplace_back("ramp_repack_min 0.250 0.01     1.0"      );
-		filelines.emplace_back("ramp_repack_min 0.550 0.01     1.0"      );
-		filelines.emplace_back("ramp_repack_min 1     0.00001  1.0"      );
-		filelines.emplace_back("accept_to_best"                  );
-		filelines.emplace_back("endrepeat "                      );
-
-		filelines.emplace_back("switch:cartesian"                  );
-		filelines.emplace_back("repeat 1"                                );
-		filelines.emplace_back("ramp_repack_min 0.02  0.01     1.0"      );
-		filelines.emplace_back("ramp_repack_min 0.250 0.01     1.0"      );
-		filelines.emplace_back("ramp_repack_min 0.550 0.01     1.0"      );
-		filelines.emplace_back("ramp_repack_min 1     0.00001  1.0"      );
-		filelines.emplace_back("accept_to_best"                  );
-		filelines.emplace_back("endrepeat "                      );
-		/*
-		}else if (script_file == "NO CST RAMPING" && basic::options::option[ basic::options::OptionKeys::relax::dualfaster ]() ){
-		TR << "================== Using faster dualspace script ==================" << std::endl;
-		filelines.push_back( "switch:torsion"                  );
-		filelines.push_back( "repeat 3"                                );
-		filelines.push_back( "ramp_repack_min 0.02  0.01     1.0  50"  );
-		filelines.push_back( "ramp_repack_min 0.250 0.01     1.0  50"  );
-		filelines.push_back( "ramp_repack_min 0.550 0.01     1.0 100"  );
-		filelines.push_back( "ramp_repack_min 1     0.00001  1.0 200"  );
-		filelines.push_back( "accept_to_best"                  );
-		filelines.push_back( "endrepeat "                      );
-
-		filelines.push_back( "switch:cartesian"                  );
-		filelines.push_back( "repeat 2"                                );
-		filelines.push_back( "ramp_repack_min 0.02  0.01     1.0  50"  );
-		filelines.push_back( "ramp_repack_min 0.250 0.01     1.0  50"  );
-		filelines.push_back( "ramp_repack_min 0.550 0.01     1.0 100"  );
-		filelines.push_back( "ramp_repack_min 1     0.00001  1.0 200"  );
-		filelines.push_back( "accept_to_best"                  );
-		filelines.push_back( "endrepeat "                      );
-		*/
+	if ( script_file == "" ) {
+		//Special Case #1: No value given, just use default
+		std::string filename = "default";
+		add_extension_to_script_file_prefix( filename );
+		script_file_path = find_database_path( "sampling/relax_scripts/", filename );
 	} else if ( script_file == "NO CST RAMPING" ) {
-		TR << "================== Using default script - no constraint ramping ==================" << std::endl;
-		filelines.push_back( "repeat " + string_of( standard_repeats )  );
-		filelines.emplace_back("ramp_repack_min 0.02  0.01     1.0"      );
-		filelines.emplace_back("ramp_repack_min 0.250 0.01     1.0"      );
-		filelines.emplace_back("ramp_repack_min 0.550 0.01     1.0"      );
-		filelines.emplace_back("ramp_repack_min 1     0.00001  1.0"      );
-		filelines.emplace_back("accept_to_best"                  );
-		filelines.emplace_back("endrepeat "                      );
+		//Special Case #2: NO CST RAMPING -> no_cst_ramping
+		std::string filename = "no_cst_ramping";
+		add_extension_to_script_file_prefix( filename );
+		script_file_path = find_database_path( "sampling/relax_scripts/", filename );
 	} else {
-		std::ifstream infile( script_file.c_str() );
-		TR.Debug << "================== Reading script file: ==================" << std::endl;
-		if ( !infile.good() ) {
-			utility_exit_with_message( "[ERROR] Error opening script file '" + script_file + "'" );
+		//General Case: First check if file exists locally, then check database. Add dualspace extension if necessary
+		if ( utility::file::file_exists( script_file ) ) {
+			//the user is providing their own script
+			script_file_path = script_file;
+		} else { //let's look in the database
+
+			//1. Make sure the name has no extension (because we will provide the correct extension here)
+			auto const position_of_first_period = script_file.find( '.' );
+			if ( script_file.find( '.' ) != std::string::npos ) {
+				//In order to make a more helpful error message, check to see if basename exists in the database
+				std::string const basename = script_file.substr( 0, position_of_first_period );
+				std::string const basename_with_default_extension = basename + ".txt";
+
+				bool const file_exists = utility::file::file_exists( basic::database::full_name( "sampling/relax_scripts/" ) + basename_with_default_extension );
+				if ( file_exists ) {
+					utility_exit_with_message( "[ERROR] relaxscript argument should not have extensions. Did you mean " + basename + " instead of " + script_file + "?" );
+				} else {
+					utility_exit_with_message( "[ERROR] relaxscript argument " + script_file + " should not have extensions. Additionally, " + basename + " does not appear to be a valid script name. Please look at main/database/sampling/relax_scripts/ or the wiki for valid names." );
+				}
+			}
+
+			//2. Process the string name to be all lowercase and have correct extension
+			std::string filename = script_file;
+			boost::algorithm::to_lower( filename );
+			add_extension_to_script_file_prefix( filename );
+
+			//Now let's look for the filename in the database
+			script_file_path = find_database_path( "sampling/relax_scripts/", filename );
 		}
-		while ( getline(infile,line) ) {
-			filelines.push_back( line );
-		}
-		infile.close();
 	}
+
+	auto const num_repeats_for_substitution = ( dualspace_ ? standard_repeats - 1 : standard_repeats );
+	VariableSubstitutionPair const repeat_subst = { "%%nrepeats%%", string_of( num_repeats_for_substitution ) };
+	std::ifstream infile( script_file_path.c_str() );
+	if ( !infile.good() ) {
+		utility_exit_with_message( "[ERROR] Error opening relaxscript file '" + script_file_path + "'\nParsed Script Name: " + script_file );
+	}
+	TR << "================== Reading script file: " << script_file_path << " ==================" << std::endl;
+	fill_in_filelines( infile, repeat_subst, filelines );
+	for ( auto const & line : filelines ) {
+		TR << line << std::endl;
+	}
+	infile.close();
 
 	set_script_from_lines( filelines );
 }

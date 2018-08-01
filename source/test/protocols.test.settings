@@ -524,6 +524,7 @@ sources = {
 
 	"relax" : [
 		"AtomCoordinateCstMover",
+		"FastRelax",
 	],
 
 	"relax/membrane" : [
@@ -1073,6 +1074,7 @@ testinputfiles = [
 	"relax/AtomCoordinateCstMover_input_harmonic_sidechain.cst",
 	"relax/AtomCoordinateCstMover_native_harmonic_sidechain.cst",
 	"relax/AtomCoordinateCstMover_integration_native.cst",
+	"relax/fast_relax_test_script.dat",
 	"relax/membrane/2mpn_tr.span",
 	"relax/membrane/2mpn_tr_native.pdb",
 	"rigid/RigidBodyMover.pdb",

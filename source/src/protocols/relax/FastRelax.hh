@@ -38,6 +38,7 @@
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.fwd.hh>
 
+class FastRelaxTests;
 
 namespace protocols {
 namespace relax {
@@ -59,6 +60,12 @@ struct RelaxScriptCommand {
 	core::Real  param4;
 	core::Size  nparams;
 	utility::vector1< core::Real > params_vec;
+};
+
+
+struct VariableSubstitutionPair {
+	std::string string_being_replaced;
+	std::string string_being_added;
 };
 
 class FastRelax : public RelaxProtocolBase {
@@ -129,8 +136,6 @@ public:
 	/// @brief Initializes class using option system. This is called by the constructors
 	void set_to_default();
 
-	/// @brief Return the name of this mover.
-
 	/// @brief return a fresh instance of this class in an owning pointer
 	protocols::moves::MoverOP clone() const override;
 
@@ -148,9 +153,11 @@ public:
 	///
 	inline void set_enable_design( bool const val ) { enable_design_ = val; }
 
+	/// @brief Return the name of this mover.
 	std::string
 	get_name() const override;
 
+	/// @brief Return the name of this mover.
 	static
 	std::string
 	mover_name();
@@ -196,10 +203,18 @@ protected:
 		core::scoring::ScoreFunctionOP local_scorefxn
 	);
 
-protected:
-	bool script_file_specified_; // whether user specified script file
+protected: //getters and setters
+	bool script_file_specified() const {
+		return script_file_specified_;
+	}
+
+	void set_script_file_specified( bool setting ){
+		script_file_specified_ = setting;
+	}
 
 private:
+
+	void add_extension_to_script_file_prefix( std::string & prefix ) const;
 
 	void read_script_file( const std::string &script_file, core::Size standard_repeats = 5  );
 
@@ -256,10 +271,15 @@ private:   // options
 	/// @brief Do a symmetric RMSD calculation rather then a monomeric one.
 	bool symmetric_rmsd_;
 
+	/// @brief whether user specified script file
+	bool script_file_specified_;
+
 private:   // other data
 	protocols::checkpoint::CheckPointer checkpoints_;
 
-	std::vector <RelaxScriptCommand> script_;
+	std::vector< RelaxScriptCommand > script_;
+
+	friend class ::FastRelaxTests;
 };
 
 
