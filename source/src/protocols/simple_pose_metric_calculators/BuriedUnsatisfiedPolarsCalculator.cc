@@ -54,6 +54,7 @@
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/LayerSelector.hh>
 #include <core/scoring/sasa.hh>
+#include <core/scoring/packing/surf_vol.hh>
 #include <core/pose/util.tmpl.hh>
 #include <core/chemical/AtomType.hh>
 
@@ -68,6 +69,7 @@
 #include <basic/MetricValue.hh>
 #include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
 #include <basic/options/keys/bunsat_calc2.OptionKeys.gen.hh>
+#include <basic/options/keys/holes.OptionKeys.gen.hh>
 
 using namespace core;
 using namespace core::pose;
@@ -210,7 +212,11 @@ BuriedUnsatisfiedPolarsCalculator::assert_calculators()
 			CalculatorFactory::Instance().register_calculator( name_of_hbond_calc_, PoseMetricCalculatorOP( new NumberHBondsCalculator( generous_hbonds_ ) ) );
 		}
 	}
-	if ( name_of_sasa_calc_ != "nondefault" && !CalculatorFactory::Instance().check_calculator_exists( name_of_sasa_calc_ ) ) {
+	if ( name_of_sasa_calc_ == "dalphaball" ) {
+		if ( basic::options::option[ basic::options::OptionKeys::holes::dalphaball ]() == std::string("") ) {
+			utility_exit_with_message( "Error! You must set -holes:dalphaball to use dalphaball_sasa!!" );
+		}
+	} else if ( name_of_sasa_calc_ != "nondefault" && !CalculatorFactory::Instance().check_calculator_exists( name_of_sasa_calc_ ) ) {
 		name_of_sasa_calc_ = ( vsasa_ ) ? "bur_unsat_calc_vsasa_calc" : "bur_unsat_calc_legacy_sasa_calc";
 		if ( !CalculatorFactory::Instance().check_calculator_exists( name_of_sasa_calc_ ) ) {
 			if ( vsasa_ ) { // new default 17/09/03
@@ -305,8 +311,8 @@ BuriedUnsatisfiedPolarsCalculator::recompute( Pose const & this_pose )
 	basic::MetricValue< core::id::AtomID_Map< core::Size > > atom_hbonds;
 	this_pose.metric( name_of_hbond_calc_, "atom_Hbonds", atom_hbonds );
 
-	basic::MetricValue< core::id::AtomID_Map< core::Real > > atom_sasa;
-	basic::MetricValue< utility::vector1< core::Real > > residue_sasa;
+	core::id::AtomID_Map< core::Real > atom_sasa;
+	utility::vector1< core::Real > residue_sasa;
 	core::select::residue_selector::ResidueSubset buried_residues( this_pose.size(), false );
 
 	// set up burial // VSASA now added by assert_calculators()
@@ -321,22 +327,13 @@ BuriedUnsatisfiedPolarsCalculator::recompute( Pose const & this_pose )
 		core_layer->set_cutoffs( burial_cutoff_ /* core */, residue_surface_cutoff_ /* surface */ );
 		buried_residues = core_layer->apply( this_pose );
 	} else { // use SASA
-		if ( name_of_sasa_calc_ == "nondefault" ) { // if we need to update pore_radius, don't use default calculator with default radius
-			core::id::AtomID_Map< core::Real >temp_atom_sasa;
-			utility::vector1< core::Real > temp_residue_sasa;
-			core::scoring::calc_per_atom_sasa( this_pose, temp_atom_sasa, temp_residue_sasa, probe_radius_);
-			atom_sasa = temp_atom_sasa;
-			residue_sasa = temp_residue_sasa;
-		} else {
-			this_pose.metric( name_of_sasa_calc_, "atom_sasa", atom_sasa);
-			this_pose.metric( name_of_sasa_calc_, "residue_sasa", residue_sasa);
-		}
+		calculate_sasa( this_pose, atom_sasa, residue_sasa );
 	}
 
 	for ( core::Size resnum = 1; resnum <= this_pose.size(); ++resnum ) {
 
 		if ( use_sc_neighbors_ && !(buried_residues[ resnum ]) ) continue;
-		if ( !use_sc_neighbors_ && skip_surface_res_ && residue_sasa.value()[ resnum ] > residue_surface_cutoff_ ) continue;
+		if ( !use_sc_neighbors_ && skip_surface_res_ && residue_sasa[ resnum ] > residue_surface_cutoff_ ) continue;
 		if ( !special_region_.empty() && special_region_.find( resnum ) == special_region_.end() ) continue;
 
 		residue_bur_unsat_polars_[resnum] = 0;
@@ -353,11 +350,11 @@ BuriedUnsatisfiedPolarsCalculator::recompute( Pose const & this_pose )
 				if ( this_pose.residue( resnum ).name1() == 'P' && this_pose.residue(resnum).atom_type( at ).atom_type_name() == "Npro" ) continue;
 
 				if ( !use_sc_neighbors_ ) {
-					Real cursasa =  atom_sasa.value()[ atid ];
+					Real cursasa =  atom_sasa[ atid ];
 
 					//we also have to add up the sasas for the H attached to this atom if there are any
 					for ( core::Size hindex = this_pose.residue( resnum ).attached_H_begin( at ); hindex<= this_pose.residue( resnum ).attached_H_end( at ); hindex++ ) {
-						cursasa = cursasa + atom_sasa.value()[ core::id::AtomID ( hindex, resnum ) ];
+						cursasa = cursasa + atom_sasa[ core::id::AtomID ( hindex, resnum ) ];
 					}
 					is_buried = ( cursasa < burial_cutoff_ );
 				}
@@ -418,6 +415,45 @@ BuriedUnsatisfiedPolarsCalculator::recompute( Pose const & this_pose )
 		} // for all heavy atoms
 	}
 } //recompute
+
+void
+BuriedUnsatisfiedPolarsCalculator::calculate_sasa(
+	core::pose::Pose const & pose,
+	core::id::AtomID_Map< core::Real > & atom_sasa,
+	utility::vector1< core::Real > & residue_sasa
+) const {
+
+	atom_sasa.clear();
+	residue_sasa.clear();
+
+	if ( name_of_sasa_calc_ == "dalphaball" ) {
+
+		core::id::AtomID_Mask atoms;
+		core::pose::initialize_atomid_map( atoms, pose, true );
+		core::scoring::packing::SurfVol surf_vol = core::scoring::packing::get_surf_vol( pose, atoms, probe_radius_ );
+
+		atom_sasa = surf_vol.surf;
+		residue_sasa.resize( atom_sasa.size() );
+		for ( core::Size seqpos = 1; seqpos <= atom_sasa.size(); seqpos++ ) {
+			for ( core::Size atno = 1; atno < atom_sasa.n_atom( seqpos ); atno++ ) {
+				residue_sasa[ seqpos ] += atom_sasa( seqpos, atno );
+			}
+		}
+
+	} else if ( name_of_sasa_calc_ == "nondefault" ) { // if we need to update pore_radius, don't use default calculator with default radius
+		core::scoring::calc_per_atom_sasa( pose, atom_sasa, residue_sasa, probe_radius_);
+	} else {
+		basic::MetricValue< core::id::AtomID_Map< core::Real > > temp_atom_sasa;
+		basic::MetricValue< utility::vector1< core::Real > > temp_residue_sasa;
+		pose.metric( name_of_sasa_calc_, "atom_sasa", temp_atom_sasa);
+		pose.metric( name_of_sasa_calc_, "residue_sasa", temp_residue_sasa);
+		atom_sasa = temp_atom_sasa.value();
+		residue_sasa = temp_residue_sasa.value();
+	}
+
+}
+
+
 
 ///@brief ONLY USED FOR LEGACY BEHAVIOR (legacy=true)
 core::Size

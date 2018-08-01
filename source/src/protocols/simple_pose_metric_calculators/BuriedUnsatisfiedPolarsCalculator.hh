@@ -29,6 +29,8 @@
 
 #include <basic/options/option.hh>
 
+#include <numeric/random/random_xyz.hh>
+
 #include <utility/vector1.hh>
 
 #include <set>
@@ -108,6 +110,8 @@ protected:
 
 
 private:
+
+	void calculate_sasa( core::pose::Pose const & pose, core::id::AtomID_Map< core::Real > & atom_sasa, utility::vector1< core::Real > & residue_sasa ) const;
 
 	void assert_calculators();
 

@@ -103,6 +103,7 @@ public:
 	void set_residue_surface_cutoff( core::Real residue_surface_cutoff ){ residue_surface_cutoff_ = residue_surface_cutoff; };
 	void set_upper_threshold( core::Size upper_threshold ){ upper_threshold_ = upper_threshold; };
 	void set_jump_num( core::Size jump_num ){ jump_num_ = jump_num; };
+	void set_dalphaball_sasa( ){ name_of_sasa_calc_ = "dalphaball"; };
 
 	void sym_dof_names( std::string const & sym_dofs ) { sym_dof_names_ = sym_dofs; };
 	std::string sym_dof_names() const { return sym_dof_names_; };

@@ -199,12 +199,17 @@ BuriedUnsatHbondFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache
 	only_interface_ = tag->getOption<bool>( "only_interface", false );
 
 	if ( tag->hasOption( "probe_radius" ) ) name_of_sasa_calc_="nondefault"; // ensure that probe radius gets updated in Unsat Calc and SASA Calc
+	if ( tag->getOption<bool>( "dalphaball_sasa", false ) ) {
+		name_of_sasa_calc_ = "dalphaball";
+	}
+
 
 	probe_radius_ = tag->getOption<core::Real>( "probe_radius", basic::options::option[basic::options::OptionKeys::pose_metrics::sasa_calculator_probe_radius] ); // default is 1.4
 	burial_cutoff_ = tag->getOption<core::Real>( "burial_cutoff", basic::options::option[basic::options::OptionKeys::pose_metrics::atomic_burial_cutoff] ); // default is 0.3
 	residue_surface_cutoff_ = tag->getOption<core::Real>( "residue_surface_cutoff", 45.0 );
 	jump_num_ = tag->getOption<core::Size>( "jump_number", 1 );
 	upper_threshold_ = tag->getOption<core::Size>( "cutoff", 20 );
+
 
 	// if user does not specificy and vsasa=true, set vsasa default for burial cutoff
 	if ( use_vsasa_ ) {
@@ -455,30 +460,24 @@ BuriedUnsatHbondFilter::compute( core::pose::Pose const & pose ) const {
 
 		bool unbound_ignore_surface_res = ignore_surface_res_;
 		if ( ddG_style_dont_recalc_surface_ ) {
-			std::cout << "Not using ignore_surface_res for unbound state" << std::endl;
+			buried_unsat_hbond_filter_tracer << "Not using ignore_surface_res for unbound state" << std::endl;
 			unbound_ignore_surface_res = false;
 		}
 
 		BuriedUnsatisfiedPolarsCalculator calc_unbound( name_of_sasa_calc_, name_of_hbond_calc, region_to_calculate, burial_cutoff_, probe_radius_, residue_surface_cutoff_, generous_hbonds_, legacy_counting_, use_vsasa_, use_sc_neighbors_, unbound_ignore_surface_res );
-		basic::MetricValue< core::Size > mv_all_heavy_unbound, mv_bb_heavy_unbound, mv_countable_nonheavy_unbound, mv_all_unsat_unbound;
-		calc_unbound.get("all_heavy_unsats", mv_all_heavy_unbound, unbound);
-		calc_unbound.get("bb_heavy_unsats", mv_bb_heavy_unbound, unbound);
-		calc_unbound.get("countable_nonheavy_unsats", mv_countable_nonheavy_unbound, unbound);
+		// basic::MetricValue< core::Size > mv_all_heavy_unbound, mv_bb_heavy_unbound, mv_countable_nonheavy_unbound, mv_all_unsat_unbound;
+		// calc_unbound.get("all_heavy_unsats", mv_all_heavy_unbound, unbound);
+		// calc_unbound.get("bb_heavy_unsats", mv_bb_heavy_unbound, unbound);
+		// calc_unbound.get("countable_nonheavy_unsats", mv_countable_nonheavy_unbound, unbound);
 		calc_unbound.get("atom_bur_unsat", mv_unbound_unsat_map, unbound);
-		calc_unbound.get("all_bur_unsat_polars", mv_all_unsat_unbound, unbound);
+		// calc_unbound.get("all_bur_unsat_polars", mv_all_unsat_unbound, unbound);
 
-		all_heavy_atom_unsats = all_heavy_atom_unsats - mv_all_heavy_unbound.value();
-		bb_heavy_atom_unsats = bb_heavy_atom_unsats - mv_bb_heavy_unbound.value();
-		sc_heavy_atom_unsats = sc_heavy_atom_unsats - ( mv_all_heavy_unbound.value() - mv_bb_heavy_unbound.value() );
-		countable_nonheavy_unsats = countable_nonheavy_unsats - mv_countable_nonheavy_unbound.value();
-		all_unsats = all_unsats - mv_all_unsat_unbound.value();
+		// all_heavy_atom_unsats = all_heavy_atom_unsats - mv_all_heavy_unbound.value();
+		// bb_heavy_atom_unsats = bb_heavy_atom_unsats - mv_bb_heavy_unbound.value();
+		// sc_heavy_atom_unsats = sc_heavy_atom_unsats - ( mv_all_heavy_unbound.value() - mv_bb_heavy_unbound.value() );
+		// countable_nonheavy_unsats = countable_nonheavy_unsats - mv_countable_nonheavy_unbound.value();
+		// all_unsats = all_unsats - mv_all_unsat_unbound.value();
 
-		buried_unsat_hbond_filter_tracer << "  AFTER SUBTRACTING UNBOUND STATE: " << std::endl;
-		if ( legacy_counting_ ) {
-			buried_unsat_hbond_filter_tracer << "  all_unsats = " << all_unsats << std::endl;
-		} else {
-			buried_unsat_hbond_filter_tracer << "  all_heavy_atom_unsats = " << all_heavy_atom_unsats << std::endl << "  bb_heavy_atom_unsats = " << bb_heavy_atom_unsats << std::endl << "  sc_heavy_atom_unsats = " << sc_heavy_atom_unsats << std::endl << "  countable_nonheavy_unsats = " << countable_nonheavy_unsats << std::endl;
-		}
 		ddG_was_computed = true;
 	}
 
@@ -489,7 +488,10 @@ BuriedUnsatHbondFilter::compute( core::pose::Pose const & pose ) const {
 		oss << std::endl << filter_name << " " << user_name + ": " << std::endl;
 	}
 
-	if ( ddG_was_computed && ddG_style_dont_recalc_surface_ ) {  // we need to recalculate these because they could potentially be negative
+	// Sometimes in ddG style, new buns will appear in the apo state (buried things that were satisfied in the complex).
+	// This can lead to negative buns (or a real bun getting cancelled by a new bun).
+	// Recalculating unsats right here guarentees that we get this correct.
+	if ( ddG_was_computed ) {
 		all_heavy_atom_unsats = 0;
 		bb_heavy_atom_unsats = 0;
 		sc_heavy_atom_unsats = 0;
@@ -497,6 +499,7 @@ BuriedUnsatHbondFilter::compute( core::pose::Pose const & pose ) const {
 		all_unsats = 0;
 	}
 
+	utility::vector1< std::string > unsat_atom_messages;
 	for ( core::Size r = 1; r <= mv_unsat_map.value().size(); ++r ) {
 		for ( core::Size a = 1; a <= mv_unsat_map.value().n_atom(r); ++a ) {
 			if ( ignore_bb_heavy_unsats_ && pose.residue(r).atom_is_backbone(a) && a <= pose.residue(r).nheavyatoms() /* don't want backbone H's */ ) continue;
@@ -504,12 +507,13 @@ BuriedUnsatHbondFilter::compute( core::pose::Pose const & pose ) const {
 				if ( ddG_was_computed && mv_unbound_unsat_map.value()(r,a) ) continue; // for ddG, if it's also Unsat in the Unbound case, we don't care
 				std::string unsat_type = ( pose.residue(r).atom_is_polar_hydrogen(a) ) ? "Hpol" : "HEAVY";
 				std::string temp_str = "      Unsatisfied " + unsat_type + " polar atom at residue " + utility::to_string( r ) + ": " + pose.residue( r ).name3() + " " + pose.residue(r).atom_name(a);
-				buried_unsat_hbond_filter_tracer << temp_str << std::endl;
+				unsat_atom_messages.push_back( temp_str );
 				if ( print_out_info_to_pdb_ ) oss << temp_str << std::endl;
 
-				if ( ddG_was_computed && ddG_style_dont_recalc_surface_ ) {
+				if ( ddG_was_computed ) {
 					if ( a <= pose.residue(r).nheavyatoms() ) {
 						all_heavy_atom_unsats += 1;
+						all_unsats += 1;
 						if ( pose.residue(r).atom_is_backbone(a) ) {
 							bb_heavy_atom_unsats += 1;
 						} else {
@@ -518,11 +522,21 @@ BuriedUnsatHbondFilter::compute( core::pose::Pose const & pose ) const {
 					} else {
 						countable_nonheavy_unsats += 1;
 					}
-					all_unsats += 1;
 				}
 			}
 		}
 	}
+	if ( ddG_was_computed ) {
+		buried_unsat_hbond_filter_tracer << "  AFTER SUBTRACTING UNBOUND STATE: " << std::endl;
+		if ( legacy_counting_ ) {
+			buried_unsat_hbond_filter_tracer << "  all_unsats = " << all_unsats << std::endl;
+		} else {
+			buried_unsat_hbond_filter_tracer << "  all_heavy_atom_unsats = " << all_heavy_atom_unsats << std::endl << "  bb_heavy_atom_unsats = " << bb_heavy_atom_unsats << std::endl << "  sc_heavy_atom_unsats = " << sc_heavy_atom_unsats << std::endl << "  countable_nonheavy_unsats = " << countable_nonheavy_unsats << std::endl;
+		}
+	}
+
+	for ( std::string const & str : unsat_atom_messages ) buried_unsat_hbond_filter_tracer << str << std::endl;
+
 	if ( print_out_info_to_pdb_ ) {
 		protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
 		oss << "  all_heavy_atom_unsats = " << all_heavy_atom_unsats << std::endl << "  bb_heavy_atom_unsats = " << bb_heavy_atom_unsats << std::endl << "  sc_heavy_atom_unsats = " << sc_heavy_atom_unsats << std::endl << "  countable_nonheavy_unsats = " << countable_nonheavy_unsats << std::endl;
@@ -597,6 +611,7 @@ void BuriedUnsatHbondFilter::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 		+ XMLSchemaAttribute::attribute_w_default( "only_interface", xsct_rosetta_bool, "restrict unsat search only to interface residues; if true and more than one chain it's ignored", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "print_out_info_to_pdb", xsct_rosetta_bool, "print all info to pdb file into addition to tracer", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "jump_number", xsct_non_negative_integer, "The jump over which to evaluate the filter; only applies to use_ddG_style", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "dalphaball_sasa", xsct_rosetta_bool, "Use DAlphaBall to calculate SASA.", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "cutoff", xsct_non_negative_integer, "The upper threshold for counted buried unsat H-bonds, above which the filter fails", "20" )
 		+ XMLSchemaAttribute::attribute_w_default( "probe_radius", xsct_real, "probe radius to use for SASA buriedness calculations; default is grabbed from sasa_calculator_probe_radius in options code, which defaults to 1.4", "1.4" )
 		+ XMLSchemaAttribute::attribute_w_default( "burial_cutoff", xsct_real, "used to determine burial; deafault legacy SASA atomic_burial_cutoff is 0.3; default VSASA cutoff is 0.1; if use_sc_neighbors=true, default becomes 4.4 or can be user-specified to sc_neighbor cutoff that is desired", "0.3" )
