@@ -1,0 +1,5 @@
+-in:file:s	1dwr_A.pdb	
+-centroid_version
+-cone_method
+-dist_midpoint	9.0
+-dist_steepness	1.0
