@@ -266,6 +266,36 @@ public:
 		intvect_arg1_expected[ 5 ] = 5;
 	}
 
+	// Test that having two subelements of the SecondaryOutput tag in a Job definition
+	// is ok.
+	static
+	void
+	callback_complete_larval_job_maturation2(
+		protocols::jd3::LarvalJobCOP larval_job,
+		utility::options::OptionCollectionCOP
+	)
+	{
+		using namespace basic::options::OptionKeys;
+		TS_ASSERT_EQUALS( larval_job->inner_job()->n_input_sources(), 1 );
+		TS_ASSERT_EQUALS( larval_job->inner_job()->input_source().origin(), pose_inputters::PDBPoseInputter::keyname() );
+		TS_ASSERT_EQUALS( larval_job->inner_job()->input_source().input_tag(), "1ubq" );
+		TS_ASSERT_EQUALS( larval_job->inner_job()->job_tag(), "1ubq" );
+
+		TS_ASSERT( larval_job->inner_job()->jobdef_tag() );
+		if ( ! larval_job->inner_job()->jobdef_tag() ) return;
+
+		utility::tag::TagCOP job_tag = larval_job->inner_job()->jobdef_tag();
+		TS_ASSERT( job_tag->hasTag( "SecondaryOutput" ) );
+		if ( ! job_tag->hasTag( "SecondaryOutput" ) ) return;
+
+		utility::tag::TagCOP secondary_output_tag = job_tag->getTag( "SecondaryOutput" );
+		TS_ASSERT_EQUALS( secondary_output_tag->getTags().size(), 2 );
+		if ( secondary_output_tag->getTags().size() != 2 ) return;
+		for ( core::Size ii = 0; ii < 2; ++ii ) {
+			TS_ASSERT_EQUALS( secondary_output_tag->getTags()[ii]->getName(), "ScoreFile" );
+		}
+	}
+
 	bool tag_has_subtag_w_name( TagCOP tag, std::string const & tag_name, std::string const & name_attribute ) {
 		for ( auto const & subtag : tag->getTags() ) {
 			if ( subtag->getName() != tag_name ) continue;
@@ -368,6 +398,42 @@ public:
 		utility::vector1< JobResultOP > empty_vector;
 		djq.complete_job_maturation_ = boost::bind( StandardJobQueenTests::callback_complete_larval_job_maturation1, _1, _2 );
 		djq.mature_larval_job( jobs.front(), empty_vector ); // invokes callback_complete_larval_job_maturation1
+
+	}
+
+	// Ensure that a job may use multiple SecondaryOutputters
+	void test_read_jobs_from_xml_file2()
+	{
+
+		std::string jobdef_file =
+			"<JobDefinitionFile>\n"
+			" <Job>\n"
+			"  <Input>\n"
+			"   <PDB filename=\"1ubq.pdb\"/>\n"
+			"  </Input>\n"
+			"  <SecondaryOutput>\n"
+			"   <ScoreFile filename=\"score1.sc\"/>\n"
+			"   <ScoreFile filename=\"score2.sc\"/>\n"
+			"  </SecondaryOutput>\n"
+			" </Job>\n"
+			"</JobDefinitionFile>\n";
+
+		core_init(); // all options passed through job-definition file
+
+		DummyJobQueen djq;
+		try {
+			djq.determine_preliminary_job_list_from_xml_file( jobdef_file );
+		} catch (utility::excn::Exception & e ) {
+			std::cout << e.msg() << std::endl;
+			TS_ASSERT( false );
+		}
+		djq.initial_job_dag(); // no need to hold the DAG returned by this func, but it must be called
+
+		LarvalJobs jobs = djq.determine_job_list( 1, 1000 );
+
+		utility::vector1< JobResultOP > empty_vector;
+		djq.complete_job_maturation_ = boost::bind( StandardJobQueenTests::callback_complete_larval_job_maturation2, _1, _2 );
+		djq.mature_larval_job( jobs.front(), empty_vector ); // invokes callback_complete_larval_job_maturation2
 
 	}
 

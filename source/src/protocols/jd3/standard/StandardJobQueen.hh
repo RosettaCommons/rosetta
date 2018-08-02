@@ -626,7 +626,8 @@ private:
 	secondary_outputter_for_job(
 		StandardInnerLarvalJob const & inner_job,
 		utility::options::OptionCollection const & job_options,
-		std::string const & secondary_outputter_type
+		std::string const & secondary_outputter_type,
+		utility::tag::TagCOP outputter_tag
 	);
 
 	pose_outputters::SecondaryPoseOutputterOP

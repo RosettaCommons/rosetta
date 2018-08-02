@@ -79,24 +79,21 @@ ScoreFileOutputter::create_output_specification(
 	LarvalJob const & job,
 	JobOutputIndex const & output_index,
 	utility::options::OptionCollection const & options,
-	utility::tag::TagCOP // possibly null-pointing tag pointer
+	utility::tag::TagCOP my_outputter_tag
 )
 {
 	ScoreFileOutputSpecificationOP spec( new ScoreFileOutputSpecification );
 
-	utility::tag::TagCOP job_output_tag;
-	if ( job.inner_job()->jobdef_tag() ) {
-		utility::tag::TagCOP job_tags = job.inner_job()->jobdef_tag();
-		if ( job_tags->hasTag( "SecondaryOutput" ) ) {
-			job_output_tag = job_tags->getTag( "SecondaryOutput" );
-		}
-	}
-	spec->out_fname( filename_for_job( job_output_tag, options, *job.inner_job() ) );
+	spec->out_fname( filename_for_job( my_outputter_tag, options, *job.inner_job() ) );
 	spec->pose_tag( job.status_prefix() + job.job_tag_with_index_suffix( output_index ) + job.status_suffix() );
 	return spec;
 }
 
 /// @brief Write a pose out to permanent storage (whatever that may be).
+///
+/// @details currently the score file outputter writes scoress immediately for every
+/// output; when it starts to buffer the scoress inside of itself instead,
+// then the flush() method must be changed.
 void
 ScoreFileOutputter::write_output(
 	output::OutputSpecification const & spec,
@@ -124,15 +121,14 @@ ScoreFileOutputter::write_output(
 	// in "flush," which is called only sporadically
 
 	sfd.write_pose( pose, score_map, sfspec.pose_tag(), string_map );
-
 }
 
 void
 ScoreFileOutputter::flush()
 {
-	// TO DO: once silent-file data is being buffered in this class,
-	// then the stored lines should be written out to disk.
-	// currently, a noop.
+	// currently noop; when/if the score file outputter starts to buffer the
+	// scoress inside of itself instead of writing immediately for every output,
+	// then this method must be changed.
 }
 
 std::string
@@ -186,7 +182,7 @@ void ScoreFileOutputter::list_options_read( utility::options::OptionKeyList & re
 
 utility::file::FileName
 ScoreFileOutputter::filename_for_job(
-	utility::tag::TagCOP output_tag,
+	utility::tag::TagCOP my_output_tag,
 	utility::options::OptionCollection const & job_options,
 	InnerLarvalJob const & /*job*/
 ) const
@@ -196,28 +192,37 @@ ScoreFileOutputter::filename_for_job(
 	bool scorefile_path_in_tag = false;
 	utility::file::FileName scorefile_name;
 
-	if ( output_tag && output_tag->hasTag( keyname() ) ) {
-		utility::tag::TagCOP score_tag = output_tag->getTag( keyname() );
-		if ( score_tag->hasOption( "filename" ) ) {
-			scorefile_name = score_tag->getOption< std::string >( "filename" );
-		} else {
-			scorefile_name = "score.sc";
+	if ( my_output_tag ) {
+		if ( my_output_tag->hasOption( "filename" ) ) {
+			std::string option_val = my_output_tag->getOption< std::string >( "filename" );
+			scorefile_name = option_val;
+			if ( option_val.find( "/" ) != std::string::npos ) {
+				scorefile_path_in_tag = true;
+			}
 		}
-		if ( score_tag->hasOption( "path" ) ) {
-			utility::file::FileName scorefile_path( score_tag->getOption< std::string >( "path" ));
-			scorefile_name.path( scorefile_path.path() );
+		if ( my_output_tag->hasOption( "path" ) ) {
+			scorefile_name.path( my_output_tag->getOption< std::string >( "path" ) );
 			scorefile_path_in_tag = true;
 		}
 	}
 
-	if ( job_options[ run::no_scorefile ] ) {
+	if ( job_options[ run::no_scorefile ] && ! my_output_tag ) {
 		scorefile_name = "(none)";
 		return scorefile_name;
 	}
 
-	if ( job_options[ out::file::scorefile ].user() ) {
-		scorefile_name = job_options[ out::file::scorefile ]();
-	} else {
+	if ( scorefile_name.bare_name() == "" && job_options[ out::file::scorefile ].user() ) {
+		std::string existing_path = scorefile_name.path();
+		scorefile_name = job_options[ out::file::scorefile ];
+		if ( existing_path != "" ) {
+			// Concatentate the path from the  the Tag wth the path from the options system
+			if ( scorefile_name.path() != "" ) {
+				scorefile_name.path( existing_path + "/" + scorefile_name.path() );
+			} else {
+				scorefile_name.path( existing_path );
+			}
+		}
+	} else if ( scorefile_name.bare_name() == "" ) {
 
 		// Deviation from JD2's score file naming scheme:
 		// Do not put .fasc at the end of a score file if the out::file::fullatom flag
@@ -225,11 +230,12 @@ ScoreFileOutputter::filename_for_job(
 		// say that their score file should should be named with the .fasc extension
 		// then they can give a name for the file explicitly.
 
-		scorefile_name = "score"; // default name "score.sc"
+
 		std::ostringstream oss;
 
 		//prefix, suffix
-		oss << job_options[ out::prefix ]() << scorefile_name.base()
+		// default base name "score.sc"
+		oss << job_options[ out::prefix ]() << "score"
 			<< job_options[ out::suffix ]();
 		scorefile_name.base( oss.str() );
 		scorefile_name.ext(".sc");
@@ -250,7 +256,6 @@ ScoreFileOutputter::filename_for_job(
 			( scorefile_name.path().empty() ? "" : ( "/" + scorefile_name.path()  ) ));
 		scorefile_name.vol( job_options[ out::path::path ]().vol() );
 	}
-
 
 	return scorefile_name;
 }

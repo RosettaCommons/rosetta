@@ -232,7 +232,9 @@ StandardJobQueen::job_definition_xsd() const
 	XMLSchemaComplexTypeGenerator output_ct;
 	output_ct
 		.element_name( "Output" )
-		.description( "XRW TO DO" )
+		.description( "Give the (primary) outputter for this job. The primary outputter is responsible"
+		"for giving a job its name and for writing the coordinates of the Pose to disk. Only a "
+	 	"single (primary) outputter may be given for a job.")
 		.complex_type_naming_func( & job_def_complex_type_name )
 		.set_subelements_pick_one( output_subelements )
 		.write_complex_type_to_schema( xsd );
@@ -242,9 +244,9 @@ StandardJobQueen::job_definition_xsd() const
 	XMLSchemaComplexTypeGenerator secondary_output_ct;
 	secondary_output_ct
 		.element_name( "SecondaryOutput" )
-		.description( "XRW TO DO" )
+		.description( "List the secondary outputters that should be used for this job; as many secondary outputters as desired may be given for a job, and a particular secondary outputter may be given multiple times." )
 		.complex_type_naming_func( & job_def_complex_type_name )
-		.set_subelements_single_appearance_optional( secondary_output_subelements )
+		.set_subelements_repeatable( secondary_output_subelements )
 		.write_complex_type_to_schema( xsd );
 
 	// write out option set -- this should be method-extracted into a place accessible to other job queens
@@ -300,6 +302,11 @@ StandardJobQueen::job_definition_xsd() const
 	XMLSchemaSimpleSubelementList job_output_subelement;
 	job_output_subelement.add_already_defined_subelement( "Output", & job_def_complex_type_name );
 	job_ct.add_ordered_subelement_set_as_optional( job_output_subelement );
+
+	// Job <SecondaryOutput> element is optional
+	XMLSchemaSimpleSubelementList job_secondary_output_subelement;
+	job_secondary_output_subelement.add_already_defined_subelement( "SecondaryOutput", & job_def_complex_type_name );
+	job_ct.add_ordered_subelement_set_as_optional( job_secondary_output_subelement );
 
 	// Job <Options> element is optional
 	XMLSchemaSimpleSubelementList job_options_subelement;
@@ -1081,13 +1088,13 @@ StandardJobQueen::create_output_specification_for_job_result(
 	for ( core::Size ii = 1; ii <= secondary_outputters.size(); ++ii ) {
 		utility::tag::TagCOP secondary_outputter_tag;
 		if ( secondary_output_tag ) {
-			if ( secondary_output_tag->getTags().size() <= ii ) {
-				secondary_outputter_tag = secondary_output_tag->getTags()[ ii ];
+			if ( secondary_output_tag->getTags().size() >= ii ) {
+				secondary_outputter_tag = secondary_output_tag->getTags()[ ii-1 ];
 			}
 		}
 		pose_outputters::PoseOutputSpecificationOP spec =
 			secondary_outputters[ ii ]->create_output_specification(
-			*job, output_index, job_options, secondary_output_tag );
+			*job, output_index, job_options, secondary_outputter_tag );
 		specs->append_specification( spec );
 	}
 	specs->output_index( output_index );
@@ -1342,12 +1349,10 @@ StandardJobQueen::secondary_outputters_for_job(
 			utility::vector0< utility::tag::TagCOP > const & subtags = secondary_output_tags->getTags();
 			for ( core::Size ii = 0; ii < subtags.size(); ++ii ) {
 				utility::tag::TagCOP iitag = subtags[ ii ];
-				// allow repeats! Why not?
-				// if ( secondary_outputters_added.count( iitag->getName() ) ) continue;
 				secondary_outputters_added.insert( iitag->getName() );
 
 				// returns 0 if the secondary outputter is repressed for a particular job
-				pose_outputters::SecondaryPoseOutputterOP outputter = secondary_outputter_for_job( inner_job, job_options, iitag->getName() );
+				pose_outputters::SecondaryPoseOutputterOP outputter = secondary_outputter_for_job( inner_job, job_options, iitag->getName(), iitag );
 				if ( outputter ) {
 					secondary_outputters.push_back( outputter );
 				}
@@ -1371,7 +1376,7 @@ StandardJobQueen::secondary_outputters_for_job(
 
 		// returns 0 if the secondary outputter is repressed for a particular job
 		pose_outputters::SecondaryPoseOutputterOP outputter = secondary_outputter_for_job(
-			inner_job, job_options, (*iter)->class_key() );
+			inner_job, job_options, (*iter)->class_key(), nullptr );
 		if ( outputter ) {
 			secondary_outputters.push_back( outputter );
 		}
@@ -1734,28 +1739,32 @@ StandardJobQueen::next_batch_of_larval_jobs_from_prelim( core::Size job_node_ind
 	}
 }
 
-/// @details helper function that should only be called by the above secondary_outputter_for_job function
-/// because of its assumption that the representative_secondary_outputter_map_ map contains an entry for
-/// the requested secondary_outputter_type
+/// @details Retrieve a particular secondary outputter for a job, pointing to the
+/// possibly (likely) shared outputter that several jobs will write their output to.
+/// If a representative outputter has not been created for this job (as is sometimes
+/// the case), then this function will update the representative_secondary_outputter_map_
+/// member variable.
 pose_outputters::SecondaryPoseOutputterOP
 StandardJobQueen::secondary_outputter_for_job(
 	StandardInnerLarvalJob const & inner_job,
 	utility::options::OptionCollection const & job_options,
-	std::string const & secondary_outputter_type
+	std::string const & secondary_outputter_type,
+	utility::tag::TagCOP outputter_tag
 )
 {
 	pose_outputters::SecondaryPoseOutputterOP representative_outputter;
-	representative_outputter = representative_secondary_outputter_map_[ secondary_outputter_type ];
+	auto rep_iter = representative_secondary_outputter_map_.find( secondary_outputter_type );
+	if ( rep_iter == representative_secondary_outputter_map_.end() ) {
+		representative_outputter = pose_outputters::PoseOutputterFactory::get_instance()->
+			new_secondary_outputter( secondary_outputter_type );
+		representative_secondary_outputter_map_[ secondary_outputter_type ] =
+			representative_outputter;
+	} else {
+		representative_outputter = rep_iter->second;
+	}
 	debug_assert( representative_outputter );
 
-	utility::tag::TagCOP output_tag;
-	if ( inner_job.jobdef_tag() ) {
-		utility::tag::TagCOP job_tag = inner_job.jobdef_tag();
-		if ( job_tag->hasTag( "SecondaryOutput" ) ) {
-			output_tag = job_tag->getTag( "SecondaryOutput" );
-		}
-	}
-	std::string which_outputter = representative_outputter->outputter_for_job( output_tag, job_options, inner_job );
+	std::string which_outputter = representative_outputter->outputter_for_job( outputter_tag, job_options, inner_job );
 
 
 	if ( which_outputter == "" ) {
