@@ -94,7 +94,7 @@ private:
 	std::list< ResLvlTaskOperationCOP > ops_;
 	core::select::residue_selector::ResidueSelectorCOP residue_selector_;
 	utility::vector1< bool > user_provided_subset_;
-	bool flip_subset_;
+	bool flip_subset_ = false;
 
 };
 

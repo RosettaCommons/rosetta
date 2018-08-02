@@ -66,12 +66,8 @@ using namespace::protocols;
 // XRW TEMP  return "RBOut";
 // XRW TEMP }
 
-RBOutMover::RBOutMover(): moves::Mover("RBOut"),
-	template_pdb_fname_(""),
-	jump_dbase_fname_(""),
-	jump_from_foldtree_( false )
-{
-}
+RBOutMover::RBOutMover(): moves::Mover("RBOut")
+{}
 
 RBOutMover::~RBOutMover() = default;
 

@@ -143,30 +143,44 @@ protected:
 	//void chainbreak_check( core::pose::Pose const & pose , core::Real const tolerance , bool fail_retry_if_found , bool crash_if_found );
 	void check_pose_pssm_match(core::pose::PoseOP pose, utility::vector1<core::sequence::SequenceProfileOP> profile_vector);
 
+protected: // Should be private!
+
 	// is done by user defined order
 	protocols::moves::MoverOP submover_;
-	core::Size saved_from_res_, saved_to_res_;
-	std::string source_pdb_;
-	core::Real dihedral_const_; //dflt 1; gideonla
-	core::Real coor_const_; //dflt 1; gideonla
-	core::Real design_shell_; //dflt 6.0 gideonla
-	core::Real repack_shell_; //dflt 8.0 gideonla
+	core::Real design_shell_ = 6.0;
+	core::Real repack_shell_ = 8.0;
 	core::scoring::ScoreFunctionOP scorefxn_; //dflt score12 with reweighted sheet weight
-	// dflt 99999; after splicing, checks the average displacement of Ca atoms in the source and target segments.
-	// Failure leads to mover failure and no output
-	core::Real rms_cutoff_;
-	core::Real rms_cutoff_loop_;
-	// dflt false; true: place cut in a randomly chosen loop residue, if available. false: place cut at loop's end
-	bool randomize_cut_;
-	bool cut_secondarystruc_; //dflt false; true: allows placing the cut within secondary structures
-	core::Size set_cut_res_; //dftl 0, mainly for debugging. Allows the user to set which residue will be used as the cut site.
-	core::pack::task::TaskFactoryOP task_factory_;
 	// start - the starting pose for replacing the torsions at the start
 	core::pose::PoseOP source_pose_;
+	std::map < std::string, std::string> protein_family_to_database_;
+	std::map< std::string/*1AHW*/, std::string/*L1.1*/ > pdb_to_H3_seq_map_; /* This object stores the H3 seqeunces of all PDBs in the database. The logic for this is that the H3, we build pssm from sequnce and blosum on the fly*/
+	bool ignore_chain_break_ = false; // if we want to ignore the checking if the source PDB has a chainbreak
+	core::Real tolerance_ = 0.23;
+	std::vector < std::string> mover_type_ = {"MinMover","LoopMover_Refine_CCD","TailSegmentMover"};
+	utility::vector1<std::array<int, 3>> fold_tree_nodes_;
+	bool write_to_database_ = true;
+
+	SpliceManager splicemanager;
+
+	void (SpliceOut::*call_mover)(core::pose::Pose & pose,core::kinematics::MoveMapOP mm);
+	void (SpliceOut::*call_mover_tail_)(core::pose::Pose & pose,core::kinematics::MoveMapOP mm);
+
+private:
+
+	core::Size saved_from_res_ = 0, saved_to_res_ = 0;
+	std::string source_pdb_ = "";
+	// after splicing, checks the average displacement of Ca atoms in the source and target segments.
+	// Failure leads to mover failure and no output
+	core::Real rms_cutoff_ = 999999;
+	core::Real rms_cutoff_loop_;
+	/// true: place cut in a randomly chosen loop residue, if available. false: place cut at loop's end
+	bool randomize_cut_ = false;
+	bool cut_secondarystruc_ = false; /// true: allows placing the cut within secondary structures
+	core::pack::task::TaskFactoryOP task_factory_;
 	core::kinematics::FoldTreeOP saved_fold_tree_;
-	bool thread_original_sequence_;//To force the original segment seqeunce on the pose segment (Gideon Lapdioth, 170814)
-	bool rtmin_;//whether or not to let splice do rtmin following design (Ask assaf alon)
-	std::string dbase_file_name_; //dflt ""; a file name into which the loop database is dumped
+	bool thread_original_sequence_ = false;//To force the original segment seqeunce on the pose segment (Gideon Lapdioth, 170814)
+	bool rtmin_ = true;//whether or not to let splice do rtmin following design (Ask assaf alon)
+	std::string dbase_file_name_ = ""; // a file name into which the loop database is dumped
 	// dflt NULL; to communicate the current Splice mover's loop origin to the GenericMC
 	utility::pointer::shared_ptr< basic::datacache::DataMapObj< std::string > > mover_tag_;
 	protocols::filters::FilterOP splice_filter_;
@@ -174,25 +188,13 @@ protected:
 	std::map< std::string, utility::vector1< std::string > > order_segments_;
 	// dflt false; should we impose the RB dof of the current pose on the template before finding aligned residues.
 	// (Ask Christoffer)
-	bool rb_sensitive_;
-	std::map < std::string, std::string> protein_family_to_database_;
+	bool rb_sensitive_ = false;
 	std::map < std::string, std::string> database_segment_map_;//map between antibody segment and database file, e.g. <L1_L2,"l1_l2.db">
-	bool CG_const_;//dflt false. if set to true then We aplly CG constraints from source pose onto pose according to PSSM rules,Gideon Aug14
-	bool debug_;//dflt false if set to true then the all sorts of dump pdb options are activated
-	std::string mover_name_;//for debugging puposes, gets the mover name to add to dumped pdb during debugging.
-	std::map< std::string/*1AHW*/, std::string/*L1.1*/ > pdb_to_H3_seq_map_; /* This object stores the H3 seqeunces of all PDBs in the database. The logic for this is that the H3, we build pssm from sequnce and blosum on the fly*/
-	bool ignore_chain_break_;//dflt false, if we want to ignore the checking if the source PDB has a chainbreak
-	core::Real tolerance_; //dflt 0.23
-	bool delete_hairpin_; // dflt false; if true cut out the top of the hairpin leaving two stumps
-	core::Size delete_hairpin_n_, delete_hairpin_c_; // the n and c points for cutting; n_ is counted from the cysteine and c_ is counted from the next cutsite
-	SpliceManager splicemanager;
-	core::Size source_from_res_, source_to_res_;//the stem positions on the source pdb
-	bool superimposed_; //Is the source protein aligned to the template?,Gideon 20Nov16
-	std::vector < std::string> mover_type_;
-	void (SpliceOut::*call_mover)(core::pose::Pose & pose,core::kinematics::MoveMapOP mm);
-	utility::vector1<std::array<int, 3>> fold_tree_nodes_;
-	bool write_to_database_;//dflt true
-	void (SpliceOut::*call_mover_tail_)(core::pose::Pose & pose,core::kinematics::MoveMapOP mm);
+	bool CG_const_ = false;// if set to true then We aplly CG constraints from source pose onto pose according to PSSM rules,Gideon Aug14
+	bool delete_hairpin_ = false; // if true cut out the top of the hairpin leaving two stumps
+	core::Size delete_hairpin_n_ = 0, delete_hairpin_c_ = 0; // the n and c points for cutting; n_ is counted from the cysteine and c_ is counted from the next cutsite
+	core::Size source_from_res_ = 0, source_to_res_ = 0;//the stem positions on the source pdb
+	bool superimposed_ = false; //Is the source protein aligned to the template?,Gideon 20Nov16
 
 };
 

@@ -74,11 +74,11 @@ public:
 
 
 private:
-	std::string template_pdb_fname_;
-	std::string jump_dbase_fname_;
-	bool jump_from_foldtree_; //dflt false ; if true, extract the jump defined by the fold tree rather than imposing a new jump
+	std::string template_pdb_fname_ = "";
+	std::string jump_dbase_fname_ = "";
+	bool jump_from_foldtree_ = false; /// if true, extract the jump defined by the fold tree rather than imposing a new jump
 	// core::Real min_value_,max_value_; // dflt -1, 5
-	bool debug_;
+	bool debug_ = false;
 };
 
 /// utility function for finding disulfide bonded pairs

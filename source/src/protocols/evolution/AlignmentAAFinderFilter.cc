@@ -242,7 +242,8 @@ AlignmentAAFinder::apply( core::pose::Pose const & p ) const {
 			// If the indel motif is matching and aln_resi is
 			// in a loop we also filter according to
 			// sequence identity
-			bool const is_aln_resi_loop = ( pose_ss[aln_resi] == 'L' );
+			runtime_assert( pose_ss_aln.size() > aln_resi );
+			bool const is_aln_resi_loop = ( pose_ss_aln[aln_resi] == 'L' );
 			if ( is_aln_resi_loop ) {
 				core::Real seqid = AlignmentCleanerTools::indel_motif_seq_id(aa_indel_motif_target, aa_indel_motif_aln_seq);
 				if ( seqid < loop_seqid_threshold() ) {

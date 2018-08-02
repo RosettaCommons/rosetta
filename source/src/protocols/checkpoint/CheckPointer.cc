@@ -422,9 +422,13 @@ bool CheckPointer::recover_checkpoint(
 	return true;
 }
 
-void CheckPointer::clear_checkpoints() {
+void CheckPointer::clear_checkpoints( bool no_tracer /*=false*/) {
+	// This function is called in the destructor. If the destructor is invoked by the final cleanup.,
+	// the underlying tracer data might no longer exist.
+	if ( ! no_tracer ) {
+		TR.Info << "Deleting checkpoints of " << type() << std::endl;
+	}
 
-	TR.Info << "Deleting checkpoints of " << type() << std::endl;
 	if ( disabled_ ) return;
 	using namespace basic::options;
 	if ( delete_checkpoints_ ) {
@@ -436,7 +440,9 @@ void CheckPointer::clear_checkpoints() {
 			utility::file::file_delete( checkpoint_id + ".rng.state.gz" );
 		}
 	} else {
-		TR.Debug << "Checkpoint deletion disabled!" << std::endl;
+		if ( ! no_tracer ) {
+			TR.Debug << "Checkpoint deletion disabled!" << std::endl;
+		}
 	}
 
 	file_buffer.clear(); // also make sure no more structures get written out accidentally.

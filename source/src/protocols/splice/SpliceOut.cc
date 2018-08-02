@@ -133,20 +133,11 @@ std::string SpliceOutCreator::mover_name() {
 
 
 SpliceOut::SpliceOut() :
-	Mover(SpliceOutCreator::mover_name()), saved_from_res_(0), saved_to_res_(0), source_pdb_(""), scorefxn_(
-	/* NULL */), rms_cutoff_(999999), randomize_cut_(false), cut_secondarystruc_(false), task_factory_( /* NULL */),
-	source_pose_(nullptr),saved_fold_tree_( /* NULL */),thread_original_sequence_(false),rtmin_(true), dbase_file_name_(""), splice_filter_( NULL),source_from_res_(0), source_to_res_(0),write_to_database_(true)
+	Mover(SpliceOutCreator::mover_name())
 {
 	splicemanager.profile_weight_away_from_interface(1.0);
-	design_shell_ = 6.0;
-	repack_shell_ = 8.0;
 	basic::options::option[basic::options::OptionKeys::out::file::pdb_comments].value(true);
 	splicemanager.rb_sensitive(false);
-	tolerance_=0.23;
-	delete_hairpin( false );
-	delete_hairpin_c( 0 );
-	delete_hairpin_n( 0 );
-	mover_type_={"MinMover","LoopMover_Refine_CCD","TailSegmentMover"};
 	call_mover=nullptr;
 	splicemanager.template_file("");
 	splicemanager.adjust_stem_positions_by_template_=true;

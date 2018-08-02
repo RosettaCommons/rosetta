@@ -77,10 +77,10 @@ public:
 	CheckPointer( std::string const & type );
 
 	~CheckPointer() override {
-		clear_checkpoints();
+		clear_checkpoints(/*no_tracer*/ true);
 	}
 
-	void clear_checkpoints();
+	void clear_checkpoints(bool no_tracer = false);
 
 	void flush_checkpoints();
 
@@ -172,7 +172,6 @@ private:
 	core::Size file_buffer_size();
 
 	std::vector < FileBuffer > file_buffer;
-
 
 };
 

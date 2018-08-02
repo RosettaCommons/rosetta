@@ -49,11 +49,7 @@ using basic::t_info;
 using basic::t_debug;
 static basic::Tracer TR( "core.pack.task.operation.OperateOnResidueSubset", t_info );
 
-OperateOnResidueSubset::OperateOnResidueSubset()
-: parent(),
-	residue_selector_(/* 0 */),
-	flip_subset_(false)
-{}
+OperateOnResidueSubset::OperateOnResidueSubset() = default;
 
 OperateOnResidueSubset::OperateOnResidueSubset(
 	ResLvlTaskOperationCOP rlto,
@@ -75,7 +71,6 @@ OperateOnResidueSubset::OperateOnResidueSubset(
 	user_provided_subset_( subset )
 {
 	ops_.push_back( std::move(rlto) );
-
 }
 
 OperateOnResidueSubset::OperateOnResidueSubset( OperateOnResidueSubset const & src )
@@ -85,16 +80,7 @@ OperateOnResidueSubset::OperateOnResidueSubset( OperateOnResidueSubset const & s
 }
 
 OperateOnResidueSubset &
-OperateOnResidueSubset::operator = ( OperateOnResidueSubset const & src )
-{
-	if ( this != & src ) {
-		ops_ = src.ops_;
-		residue_selector_ = src.residue_selector_;
-		user_provided_subset_ = src.user_provided_subset_;
-		flip_subset_ = src.flip_subset_;
-	}
-	return *this;
-}
+OperateOnResidueSubset::operator = ( OperateOnResidueSubset const & ) = default;
 
 OperateOnResidueSubset::~OperateOnResidueSubset() = default;
 

@@ -130,7 +130,7 @@ NomenclatureManager::pdb_code_from_rosetta_name( std::string const & rosetta_nam
 	vector1< string > base_name_and_patches;
 	vector1< string > patches;
 	if ( rosetta_name.find( ":" ) != string::npos ) {
-		boost::split( base_name_and_patches, rosetta_name, []( char c ) { return c == ':'; } );
+		base_name_and_patches = utility::string_split( rosetta_name, ':' );
 	} else {
 		base_name_and_patches.push_back( rosetta_name );
 	}
@@ -144,8 +144,7 @@ NomenclatureManager::pdb_code_from_rosetta_name( std::string const & rosetta_nam
 	string base_name( base_name_and_patches[ 1 ] );
 	if ( base_name.find( "->" ) != std::string::npos ) {
 		// Remove the main-chain designation, if present, from the base name.
-		vector1< string > base_name_vect;
-		boost::split( base_name_vect, base_name, []( char c ) { return c == ')'; } );
+		vector1< string > base_name_vect = utility::string_split( base_name, ')' );
 		base_name = base_name_vect[ 2 ];  // e.g., -alpha-D-Glcp
 	}
 
@@ -155,8 +154,7 @@ NomenclatureManager::pdb_code_from_rosetta_name( std::string const & rosetta_nam
 		// Find the base name of this AltCodeMap record.
 		string alt_code_base_name( get< 1 >( alt_code.second ) );
 		if ( alt_code_base_name.find( "->" ) != std::string::npos ) {
-			vector1< string > alt_code_base_name_vect;
-			boost::split( alt_code_base_name_vect, alt_code_base_name, []( char c ) { return c == ')'; } );
+			vector1< string > alt_code_base_name_vect = utility::string_split( alt_code_base_name, ')' );
 			alt_code_base_name = alt_code_base_name_vect[ 2 ];  // e.g., -alpha-D-Glcp
 		}
 
