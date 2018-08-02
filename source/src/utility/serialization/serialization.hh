@@ -20,57 +20,43 @@
 
 // Archives
 #include <cereal/archives/binary.hpp>
-#include <cereal/archives/xml.hpp>
-#include <cereal/archives/json.hpp>
+//#include <cereal/archives/xml.hpp>
+//#include <cereal/archives/json.hpp>
 
 /////// Macros (*sigh*) for working with serialization.  A necessary evil /////////
+
+/// Note: serialization for XML (XMLOutputArchive/XMLInputArchive) and JSON(JSONOutputArchive/JSONInputArchive)
+/// is now disabled to reduce binary size and compilation time and because we have no use for it (at least now)
+/// see 1ce334d44e78eec9b440086935f0e0b0bf4d76e8 if you need to restore it
 
 // This macro should be used in the .srlz.cc file for classes that implement
 // the serialize method
 #define SERIALIZABLE(T) \
 template void T::serialize(cereal::BinaryOutputArchive&); \
-template void T::serialize(cereal::BinaryInputArchive&); \
-template void T::serialize(cereal::XMLOutputArchive&); \
-template void T::serialize(cereal::XMLInputArchive&); \
-template void T::serialize(cereal::JSONOutputArchive&); \
-template void T::serialize(cereal::JSONInputArchive&)
+template void T::serialize(cereal::BinaryInputArchive&)
 
 // This macro should be used in the .srlz.cc file for classes that implement
 // the split save and load methods.
 #define SAVE_AND_LOAD_SERIALIZABLE(T) \
 template void T::save( typename cereal::BinaryOutputArchive &) const; \
-template void T::save( typename cereal::XMLOutputArchive &) const; \
-template void T::save( typename cereal::JSONOutputArchive &) const; \
-template void T::load( typename cereal::BinaryInputArchive &); \
-template void T::load( typename cereal::XMLInputArchive &); \
-template void T::load( typename cereal::JSONInputArchive &)
+template void T::load( typename cereal::BinaryInputArchive &)
 
 
 // PyRosetta macro to forward declare template instantiation for the split save and load methods.
 #define EXTERN_SAVE_AND_LOAD_SERIALIZABLE(T) \
 extern template void T::save( typename cereal::BinaryOutputArchive &) const; \
-extern template void T::save( typename cereal::XMLOutputArchive &) const; \
-extern template void T::save( typename cereal::JSONOutputArchive &) const; \
-extern template void T::load( typename cereal::BinaryInputArchive &); \
-extern template void T::load( typename cereal::XMLInputArchive &); \
-extern template void T::load( typename cereal::JSONInputArchive &)
+extern template void T::load( typename cereal::BinaryInputArchive &)
 
 
 #define EXTERNAL_SAVE_AND_LOAD_SERIALIZABLE( T )      \
 template void save( typename cereal::BinaryOutputArchive &, T const & ); \
-template void save( typename cereal::XMLOutputArchive &, T const & ); \
-template void save( typename cereal::JSONOutputArchive &, T const & ); \
-template void load( typename cereal::BinaryInputArchive &, T & ); \
-template void load( typename cereal::XMLInputArchive &, T & ); \
-template void load( typename cereal::JSONInputArchive &, T & )
+template void load( typename cereal::BinaryInputArchive &, T & )
+
 
 #define SAVE_AND_LOAD_AND_CONSTRUCT_SERIALIZABLE( T ) \
 template void T::save( typename cereal::BinaryOutputArchive &) const; \
-template void T::save( typename cereal::XMLOutputArchive &) const; \
-template void T::save( typename cereal::JSONOutputArchive &) const; \
-template void T::load_and_construct( typename cereal::BinaryInputArchive &, cereal::construct< T > & construct ); \
-template void T::load_and_construct( typename cereal::XMLInputArchive &, cereal::construct< T > & construct ); \
-template void T::load_and_construct( typename cereal::JSONInputArchive &, cereal::construct< T > & construct )
+template void T::load_and_construct( typename cereal::BinaryInputArchive &, cereal::construct< T > & construct )
+
 
 // This macro is to force the instantiation of a templated funtion for each
 // of the active output archive types -- in the future, different compiler
@@ -81,9 +67,8 @@ template void T::load_and_construct( typename cereal::JSONInputArchive &, cereal
 // The idea would be for the given function to somehow serialize the second
 // parameter into the archive.
 #define INSTANTIATE_FOR_OUTPUT_ARCHIVES( return_type, func, param ) \
-template return_type func( typename cereal::BinaryOutputArchive &, param ); \
-template return_type func( typename cereal::XMLOutputArchive &, param ); \
-template return_type func( typename cereal::JSONOutputArchive &, param )
+template return_type func( typename cereal::BinaryOutputArchive &, param )
+
 
 // This macro is to force the instantiation of a templated funtion for each
 // of the active output archive types -- in the future, different compiler
@@ -94,9 +79,8 @@ template return_type func( typename cereal::JSONOutputArchive &, param )
 // The idea would be for the given function to somehow deserialize an object into
 // the second parameter from the archive.
 #define INSTANTIATE_FOR_INPUT_ARCHIVES( return_type, func, param ) \
-template return_type func( typename cereal::BinaryInputArchive &, param ); \
-template return_type func( typename cereal::XMLInputArchive &, param ); \
-template return_type func( typename cereal::JSONInputArchive &, param  )
+template return_type func( typename cereal::BinaryInputArchive &, param )
+
 
 // This macro is for specializing handling of COPs
 // for example, when you want to point some to a Global (non-serialized) resource.

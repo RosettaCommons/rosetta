@@ -2297,7 +2297,15 @@ core::pose::Pose::save_with_options( Archive & arc, bool save_observers ) const 
 }
 
 template< class Archive >
-void core::pose::Pose::save( Archive & arc) const { save_with_options(arc, true); }
+void core::pose::Pose::save( Archive & arc) const
+{
+	save_with_options(arc, true);
+
+	// EXEMPT destruction_obs_hub_ general_obs_hub_ energy_obs_hub_ conformation_obs_hub_
+
+	// saved inside save_with_options:
+	// EXEMPT conformation_ energies_ metrics_ data_cache_ constant_cache_ observer_cache_ pdb_info_ constraint_set_ reference_pose_set_
+}
 
 
 /// @Brief Automatically generated deserialization method
@@ -2342,7 +2350,15 @@ core::pose::Pose::load_with_options( Archive & arc, bool load_observers ) {
 }
 
 template< class Archive >
-void core::pose::Pose::load( Archive & arc) { load_with_options(arc, true); }
+void core::pose::Pose::load( Archive & arc)
+{
+	load_with_options(arc, true);
+
+	// EXEMPT destruction_obs_hub_ general_obs_hub_ energy_obs_hub_ conformation_obs_hub_
+
+	// loaded inside load_with_options:
+	// EXEMPT conformation_ energies_ metrics_ data_cache_ constant_cache_ observer_cache_ pdb_info_ constraint_set_ reference_pose_set_
+}
 
 
 template void core::pose::Pose::save_with_options( typename cereal::BinaryOutputArchive &, bool) const;

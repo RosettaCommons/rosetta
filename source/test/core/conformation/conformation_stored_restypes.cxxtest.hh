@@ -57,7 +57,8 @@
 
 #ifdef SERIALIZATION
 // Cereal headers
-#include <cereal/archives/json.hpp>
+//#include <cereal/archives/json.hpp>
+#include <cereal/archives/binary.hpp>
 #include <cereal/types/polymorphic.hpp>
 #endif // SERIALIZATION
 
@@ -243,17 +244,21 @@ public:
 		ResidueTypeSetCOP original( pose.conformation().residue_type_set_for_conf( core::chemical::FULL_ATOM_t ) );
 		std::ostringstream oss;
 		{
-			cereal::JSONOutputArchive arch( oss );
+			//cereal::JSONOutputArchive arch( oss );
+			cereal::BinaryOutputArchive arch( oss ); // serialization to JSON is now disabled in default build so we switching to use Binary Archive
+
 			arch( original );
 		}
 
-		TR.Debug << "Serialized Form: \n";
-		TR.Debug << oss.str() << std::endl;
+		//TR.Debug << "Serialized Form: \n";
+		//TR.Debug << oss.str() << std::endl;
 
 		ResidueTypeSetCOP reconstituted;
 		std::istringstream iss( oss.str() );
 		{
-			cereal::JSONInputArchive arch( iss );
+			//cereal::JSONInputArchive arch( iss );
+			cereal::BinaryInputArchive arch( iss ); // serialization to JSON is not disabled in default build so we switching to use Binary Archive
+
 			arch( reconstituted );
 		}
 		TR << std::endl;
@@ -278,4 +283,3 @@ public:
 	}
 
 };
-
