@@ -338,20 +338,7 @@ public:
 			rm.get_resource( "1abc" );
 			TS_ASSERT( false );
 		} catch ( utility::excn::Exception & e ) {
-			//std::cout << "Error message:\n" << e.msg() << std::endl;
-			std::string new_msg = e.msg();
-			std::string target = "File: src/basic/resource_manager/ResourceManager.cc:";
-			platform::Size start = new_msg.find(target) + target.size();
-			for ( platform::Size ii = start; ii < new_msg.size(); ++ii ) {
-				if ( new_msg[ ii ] >= '0' && new_msg[ ii ] <= '9' ) {
-					new_msg[ ii ] = 'X';
-				} else {
-					break;
-				}
-			}
-
 			std::string gold_standard_err_msg =
-				"\n\nFile: src/basic/resource_manager/ResourceManager.cc:XXX\n"
 				"Critical error: a resource may not depend on another resource that in turn depends on the first one. Infinite recursion is not allowed.\n"
 				"Resources that were being created were:\n"
 				"   1abc\n"
@@ -360,7 +347,10 @@ public:
 				"    ultimately requesting resource 1abc\n"
 				"Cannot proceed from here.\n";
 
-			TS_ASSERT_EQUALS( new_msg, gold_standard_err_msg );
+			// Check that the error message contains the desired error message.
+			// (We can't do a direct comparison, due to the addition of file and line numbers.)
+			// (And the CMake build contains the full path ...)
+			TS_ASSERT( e.msg().find(gold_standard_err_msg) != std::string::npos );
 		}
 
 	}
