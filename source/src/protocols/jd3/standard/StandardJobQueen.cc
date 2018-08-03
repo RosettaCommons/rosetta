@@ -234,7 +234,7 @@ StandardJobQueen::job_definition_xsd() const
 		.element_name( "Output" )
 		.description( "Give the (primary) outputter for this job. The primary outputter is responsible"
 		"for giving a job its name and for writing the coordinates of the Pose to disk. Only a "
-	 	"single (primary) outputter may be given for a job.")
+		"single (primary) outputter may be given for a job.")
 		.complex_type_naming_func( & job_def_complex_type_name )
 		.set_subelements_pick_one( output_subelements )
 		.write_complex_type_to_schema( xsd );
