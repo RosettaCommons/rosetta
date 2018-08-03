@@ -70,6 +70,8 @@ static MoverRegistrator< canonical_sampling::SilentTrajectoryRecorderCreator > r
 static MoverRegistrator< canonical_sampling::SimulatedTemperingCreator > reg_SimulatedTemperingCreator;
 static MoverRegistrator< canonical_sampling::TrialCounterObserverCreator > reg_TrialCountObserverCreator;
 
+static MoverRegistrator< chemically_conjugated_docking::UBQ_GTPaseMoverCreator > reg_UBQ_GTPaseMoverCreator;
+
 static MoverRegistrator< constraint_generator::AddConstraintsCreator > reg_AddConstraintsCreator;
 static MoverRegistrator< constraint_generator::RemoveConstraintsCreator > reg_RemoveConstraintsCreator;
 

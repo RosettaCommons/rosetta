@@ -107,6 +107,11 @@ sources = {
 		"DisableCDRsOperation",
 		"RestrictToCDRsAndNeighbors",
 	],
+	"protocols/chemically_conjugated_docking": [
+                "Gp_extra_bodies",
+		"Gp_quantification_metrics",
+	        "UBQ_GTPaseMover",
+        ],
 	"protocols/cyclic_peptide_predict" : [
 		"SimpleCycpepPredictApplication",
 		"SimpleCycpepPredictApplication_MPI",
@@ -389,7 +394,6 @@ sources = {
 	"protocols/residue_optimization": [
 		"MetapatchEnumeration",
 	],
-
 }
 include_path = [
 ]

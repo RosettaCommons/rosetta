@@ -1,0 +1,69 @@
+#you will define your own database path of course
+#-database /scratch/smlewis/minirosetta_database/
+
+#extra_res_fa for LYX residue critical, or else LYX residue type will not be present and linkage is impossible.  The LYX residue is needed for UBQ_Gp_LYX-Cterm.  Of course the actual paths here will vary based on where your database is...  
+#-extra_res_fa /scratch/smlewis/minirosetta_database/chemical/residue_type_sets/fa_standard/residue_types/sidechain_conjugation/LYX.params
+
+#this is the structure whose C-terminus (or C-terminal cysteine) will be attached to the other structure; this is the one that moves
+-chemically_conjugated_docking:UBQpdb ../UBQ_Gp_CYD-CYD/1UBQ.pdb.gz
+#this is the structure which will have the other structure attached to it mid-chain via a sidechain
+-s ../UBQ_Gp_CYD-CYD/5P21_repacked.pdb.gz
+#this is the resid (rosetta numbering from 1, not PDB numbering) of the position which gets altered to accept a bond from the added second protein
+-chemically_conjugated_docking:GTPase_residue 147
+
+-nstruct 1
+
+#in production runs, set GOOD values.  Here, it is set to bad values, because it won't find a good conformation in a reasonable amount of time for the integration test.
+-scorefilter 50000
+-SASAfilter 0
+
+#plausible good values.  Ideally run a test of 100 structures and set these equal to the best of those 100
+#-scorefilter 0
+#-SASAfilter 1000
+
+#used in production runs
+#-AnchoredDesign::refine_repack_cycles 100
+#-AnchoredDesign::refine_cycles 20000
+
+#short cycles for the test
+-AnchoredDesign::refine_repack_cycles 50
+-AnchoredDesign::refine_cycles 100
+
+#minimizer type.  I don't know which is best
+-run::min_type dfpmin_armijo
+#improves minimizer behavior (?)
+-nblist_autoupdate
+
+#don't design (unless you want it....)
+-packing::repack_only
+
+#used in production runs; off for test
+#-ex1
+#-ex2
+#-extrachi_cutoff 10
+
+#name output pdbs something useful
+#-generic_job_name UBQ_Gp
+
+#used in production-scale runs
+#-nstruct 9999
+#-run::max_retry_job 99999999
+
+#useful for tracking runs later
+#-run::version
+#-options::user
+
+#gzipped pdb output if desired
+#-pdb_gz
+
+#muted tracers - ignore if you please
+-mute core.pack.task protocols.toolbox.PoseMetricCalculators.NeighborsByDistanceCalculator core.util.prof
+
+#used to turn on system-specific calculations used in the original publication - turn off if not running the integration test
+-chemically_conjugated_docking:publication true
+
+#number of moving C-terminal tail residues on attached protein (ubiquitin)
+-chemically_conjugated_docking:n_tail_res 3
+
+#exclude the new patches that prevent use of LYX:
+-chemical:exclude_patches SidechainConjugation

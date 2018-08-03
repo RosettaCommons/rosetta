@@ -77,6 +77,8 @@
 #include <protocols/carbohydrates/RingPlaneFlipMoverCreator.hh>
 #include <protocols/carbohydrates/SimpleGlycosylateMoverCreator.hh>
 
+#include <protocols/chemically_conjugated_docking/UBQ_GTPaseMoverCreator.hh>
+
 #include <protocols/comparative_modeling/LoopRelaxMoverCreator.hh>
 
 #include <protocols/constraint_generator/AddConstraintsCreator.hh>

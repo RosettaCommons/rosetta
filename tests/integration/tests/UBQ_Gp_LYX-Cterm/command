@@ -30,9 +30,8 @@
 cd %(workdir)s
 [ -x %(bin)s/UBQ_Gp_LYX-Cterm.%(binext)s ] || exit 1
 
-#note the options file (and its contents) are dependent on a different UBQ_Gp_ integration test (to reduce copies of identical files)
 #note -extra_res_fa is here due to dependence on $database
-%(bin)s/UBQ_Gp_LYX-Cterm.%(binext)s %(additional_flags)s @../UBQ_Gp_CYD-CYD/options -database %(database)s -extra_res_fa %(database)s/chemical/residue_type_sets/fa_standard/residue_types/sidechain_conjugation/LYX.params -testing:INTEGRATION_TEST  2>&1 \
+%(bin)s/UBQ_Gp_LYX-Cterm.%(binext)s %(additional_flags)s @options -database %(database)s -extra_res_fa %(database)s/chemical/residue_type_sets/fa_standard/residue_types/sidechain_conjugation/LYX.params -testing:INTEGRATION_TEST  2>&1 \
     | egrep -vf ../../ignore_list \
     > log_LYX
 
