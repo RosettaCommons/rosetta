@@ -10,8 +10,8 @@ steps:
       uw-ipd/rsync#v0.1:
         post: "-Rrv channel/./*/*.tar.bz2 ${CHANNEL_HOST?}:${CHANNEL_PATH?}"
 
-  - label: Local Build - Pyrosetta
-    command: source/conda/full_build pyrosetta-binder pyrosetta -- ${CONDA_BUILD_ARGS?} --output-folder=../../channel
+  - label: Local Build - Rosetta + Pyrosetta
+    command: source/conda/full_build rosetta pyrosetta-binder pyrosetta -- ${CONDA_BUILD_ARGS?} --output-folder=../../channel
     agents:
       queue: ${LOCAL_BUILD_QUEUE?}
     plugins:

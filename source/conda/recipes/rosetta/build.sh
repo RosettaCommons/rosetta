@@ -26,6 +26,10 @@ if [[ ! -z "${CLANG:-}" ]]; then
   export CLANGXX=/usr/bin/clang++
   export CXX=${CLANGXX}
   build_args+=(--compiler ${CLANG})
+
+  # Override flags to just include prefix
+  export CFLAGS="-I${PREFIX}/include"
+  export CXXFLAGS="-I${PREFIX}/include"
 fi
 
 cat source/.version.json
