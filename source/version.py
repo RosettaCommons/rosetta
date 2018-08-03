@@ -120,7 +120,7 @@ def generate_version_information(rosetta_dir, url=None, branch=None, package=Non
         else: versions[repository] = None
 
     #versions['binder'] = execute('Getting Binder submodule SHA1...', "cd {rosetta_dir} && git ls-tree HEAD source/src/python/PyRosetta/binder | awk '{{print $3}}'".format(**vars()), return_='output')
-    for s, p in [('binder', 'source/src/python/PyRosetta/binder'), ('rosetta_scripts_scripts', 'rosetta_scripts_scripts'), ('pyrosetta_scripts', 'pyrosetta_scripts')]:
+    for s, p in [('binder', 'source/src/python/PyRosetta/binder'), ('rosetta_scripts_scripts', 'rosetta_scripts_scripts'), ('pyrosetta_scripts', 'pyrosetta_scripts'), ('pybind11', 'source/external/pybind11')]:
         versions[s] = execute('Getting {s} submodule SHA1...'.format(**vars()), "cd {rosetta_dir} && git ls-tree HEAD {p} | awk '{{print $3}}'".format(**vars()), return_='output', silent=True)[:-1]  # remove \n at the end
 
     if date is None:

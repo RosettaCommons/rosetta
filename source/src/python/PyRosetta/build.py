@@ -37,7 +37,7 @@ else: _machine_name_ = os.getenv('HOSTNAME') or platform.node()
 _python_version_ = '{}.{}'.format(sys.version_info.major, sys.version_info.minor)  # should be formatted: 2.7 or 3.5
 #_python_version_ = '{}.{}.{}'.format(sys.version_info.major, sys.version_info.minor, sys.version_info.micro)  # should be formatted: 2.7.6 or 3.5.0
 
-_pybind11_version_ = 'fa6a4241326a361fc23915f6a82c1e48667de668'
+#_pybind11_version_ = 'fa6a4241326a361fc23915f6a82c1e48667de668'
 
 _banned_dirs_ = 'src/utility/pointer src/protocols/jd3'.split()  # src/utility/keys src/utility/options src/basic/options
 _banned_headers_ = 'utility/py/PyHelper.hh utility/keys/KeyCount.hh utility/keys/KeyLookup.functors.hh'
@@ -234,23 +234,23 @@ def install_llvm_tool(name, source_location, prefix_root, debug, clean=True):
     return executable
 
 
-def install_pybind11(prefix, clean=True):
-    ''' Download and install PyBind11 library at given prefix. Install version specified by _pybind11_version_ sha1
-    '''
-    #git_checkout = '( git fetch && git checkout {0} && git reset --hard {0} && git pull )'.format(_pybind11_version_) if clean else 'git checkout {}'.format(_pybind11_version_)
-    git_checkout = '( git fetch && git reset --hard {0} )'.format(_pybind11_version_) if clean else 'git checkout {}'.format(_pybind11_version_)
+# def install_pybind11(prefix, clean=True):
+#     ''' Download and install PyBind11 library at given prefix. Install version specified by _pybind11_version_ sha1
+#     '''
+#     #git_checkout = '( git fetch && git checkout {0} && git reset --hard {0} && git pull )'.format(_pybind11_version_) if clean else 'git checkout {}'.format(_pybind11_version_)
+#     git_checkout = '( git fetch && git reset --hard {0} )'.format(_pybind11_version_) if clean else 'git checkout {}'.format(_pybind11_version_)
 
-    if not os.path.isdir(prefix): os.makedirs(prefix)
-    package_dir = prefix + '/pybind11'
+#     if not os.path.isdir(prefix): os.makedirs(prefix)
+#     package_dir = prefix + '/pybind11'
 
-    if not os.path.isdir(package_dir): execute('Clonning pybind11...', 'cd {} && git clone git@github.com:RosettaCommons/pybind11.git'.format(prefix) )
-    execute('Checking out PyBind11 revision: {}...'.format(_pybind11_version_), 'cd {package_dir} && ( {git_checkout} )'.format(package_dir=package_dir, git_checkout=git_checkout), silent=True)
-    print()
+#     if not os.path.isdir(package_dir): execute('Clonning pybind11...', 'cd {} && git clone git@github.com:RosettaCommons/pybind11.git'.format(prefix) )
+#     execute('Checking out PyBind11 revision: {}...'.format(_pybind11_version_), 'cd {package_dir} && ( {git_checkout} )'.format(package_dir=package_dir, git_checkout=git_checkout), silent=True)
+#     print()
 
-    include = package_dir + '/include/pybind11/pybind11.h'
-    if not os.path.isfile(include): print("\nEncounter error while running install_pybind11: Install is complete but include file {} is not there!!!".format(include) ); sys.exit(1)
+#     include = package_dir + '/include/pybind11/pybind11.h'
+#     if not os.path.isfile(include): print("\nEncounter error while running install_pybind11: Install is complete but include file {} is not there!!!".format(include) ); sys.exit(1)
 
-    return package_dir + '/include'
+#     return package_dir + '/include'
 
 
 def get_binding_build_root(rosetta_source_path, source=False, build=False, documentation=False):
@@ -791,19 +791,19 @@ def main(args):
         print('Option --skip-generation-phase is supplied, skipping generation phase...')
 
     else:
-        if not Options.pybind11: Options.pybind11 = install_pybind11(rosetta_source_path + '/build/prefix')
-        if not Options.binder:
+        if (not Options.pybind11) or (not Options.binder):
             res, output = execute('Getting main repository root...', 'cd {rosetta_source_path} && git rev-parse --show-toplevel'.format(**vars()), return_='tuple')
             main_repository_root = output.split()[0] # removing \n at the end
 
             if res == 0:
-                execute('Updating Binder and other Git submodules...', 'cd {}/.. && git submodule update --init --recursive -- source/src/python/PyRosetta/binder'.format(rosetta_source_path) )
+                execute('Updating Binder and Pybind11 Git submodules...', 'cd {}/.. && git submodule update --init --recursive -- source/src/python/PyRosetta/binder source/external/pybind11'.format(rosetta_source_path) )
 
                 if main_repository_root == os.path.abspath(rosetta_source_path + '/../'):
                     output = execute('Checking if Binder submodule present...',  'cd {}/.. && git submodule status'.format(rosetta_source_path), return_='output', silent=True)
                     if 'source/src/python/PyRosetta/binder' not in output: print('ERROR: Binder submodule is not found... terminating...'); sys.exit(1)
 
-            Options.binder = install_llvm_tool('binder', rosetta_source_path+'/src/python/PyRosetta/binder/source', rosetta_source_path + '/build/prefix', Options.binder_debug)
+        if not Options.pybind11: Options.pybind11 = os.path.abspath(rosetta_source_path + '/external/pybind11/include')  # install_pybind11(rosetta_source_path + '/build/prefix')
+        if not Options.binder: Options.binder = install_llvm_tool('binder', rosetta_source_path+'/src/python/PyRosetta/binder/source', rosetta_source_path + '/build/prefix', Options.binder_debug)
 
         generate_bindings(rosetta_source_path)
 

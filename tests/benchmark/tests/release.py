@@ -119,6 +119,7 @@ def convert_to_release(rosetta_dir, working_dir, config, git_repository_name, re
     execute('Convertion sources to release form...', 'cd {working_dir}/{git_repository_name} && ./tools/release/convert_to_release.bash'.format(**vars()))
 
     execute('Clonning Binder...', 'cd {working_dir}/{git_repository_name}/main/source/src/python/PyRosetta && git clone https://github.com/RosettaCommons/binder.git && cd binder && git checkout {} && rm -rf .git'.format(info['source']['binder'], **vars()))
+    execute('Clonning Pybind11...', 'cd {working_dir}/{git_repository_name}/main/source/external/ && git clone https://github.com/RosettaCommons/pybind11.git && cd pybind11 && git checkout {} && rm -rf .git'.format(info['source']['pybind11'], **vars()))
 
 
 

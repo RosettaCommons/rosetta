@@ -16,3 +16,6 @@
 [submodule "database/additional_protocol_data"]
 	path = database/additional_protocol_data
 	url = git@github.com:RosettaCommons/additional_protocol_data.git
+[submodule "source/external/pybind11"]
+	path = source/external/pybind11
+	url = git@github.com:RosettaCommons/pybind11.git
