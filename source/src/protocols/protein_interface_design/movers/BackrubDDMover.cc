@@ -421,6 +421,7 @@ void BackrubDDMover::parse_my_tag(
 	sidechain_move_prob_ = tag->getOption<core::Real>( "sc_move_probability", 0.25 );
 	small_move_prob_ = tag->getOption< core::Real >( "small_move_probability", 0.0 );
 	bbg_move_prob_ = tag->getOption< core::Real >( "bbg_move_probability", 0.25 );
+	mc_kt_ = tag->getOption< core::Real >( "temperature", 0.6 );
 	runtime_assert( sidechain_move_prob_ + small_move_prob_ + bbg_move_prob_ <= 1.0 );
 	scorefxn_repack_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
 	scorefxn_repack_->set_weight( mm_bend, 1.0 );
@@ -469,14 +470,15 @@ void BackrubDDMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 		+ XMLSchemaAttribute::attribute_w_default( "moves", xsct_non_negative_integer, "Number of total moves to execute", "1000" )
 		+ XMLSchemaAttribute::attribute_w_default( "sc_move_probability", xsct_real, "Probability of making sidechain moves", "0.25" )
 		+ XMLSchemaAttribute::attribute_w_default( "small_move_probability", xsct_real, "Probability of making small moves", "0.0" )
-		+ XMLSchemaAttribute::attribute_w_default( "bbg_move_probability", xsct_real, "Probability of making big moves", "0.25" );
+		+ XMLSchemaAttribute::attribute_w_default( "bbg_move_probability", xsct_real, "Probability of making big moves", "0.25" )
+		+ XMLSchemaAttribute::attribute_w_default( "temperature", xsct_real, "Controls the monte-carlo accept temperature", "0.6" );
 	rosetta_scripts::attributes_for_parse_score_function(attlist);
+	rosetta_scripts::attributes_for_parse_task_operations( attlist );
 
 	AttributeList residue_attributes;
 	AttributeList span_attributes;
 
-	residue_attributes + XMLSchemaAttribute( "pdb_num", xsct_refpose_enabled_residue_number, "Residue number specified in PDB-or-refpose-or-seqpos notation" )
-		+ XMLSchemaAttribute( "resnum", xsct_non_negative_integer, "Residue number specified in seqpos (Rosetta) notation" );
+	core::pose::attributes_for_get_resnum_string( residue_attributes );
 
 	span_attributes + XMLSchemaAttribute( "begin", xsct_refpose_enabled_residue_number, "Beginning of residue range in PDB-or-refpose-or-seqpos notation" )
 		+ XMLSchemaAttribute( "end", xsct_refpose_enabled_residue_number, "End of residue range in PDB-or-refpose-or-seqpos notation" );
