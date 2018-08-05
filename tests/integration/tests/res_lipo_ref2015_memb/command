@@ -55,7 +55,7 @@ date > start-time.ignore
 ##     | egrep -vf ../../ignore_list \
 ##     > log
 %(bin)s/rosetta_scripts.%(binext)s @flags 2>&1 \
-      | egrep -vf ../../ignore_list
+      | egrep -vf ../../ignore_list > run_log
 cat filter.txt > log
 #
  test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so

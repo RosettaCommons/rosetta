@@ -55,7 +55,7 @@ date > start-time.ignore
 ##     | egrep -vf ../../ignore_list \
 ##     > log
 %(bin)s/rosetta_scripts.%(binext)s @flags 2>&1 \
-      | egrep -vf ../../ignore_list
+      | egrep -vf ../../ignore_list > run_log
 cat filter_ang_1.txt  > log
 cat filter_sc_1.txt  >> log
 cat filter_ang_2.txt >> log
