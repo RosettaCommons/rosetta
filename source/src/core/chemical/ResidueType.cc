@@ -1989,12 +1989,15 @@ ResidueType::autodetermine_chi_bonds( core::Size max_proton_chi_samples ) {
 				break;
 			}
 		}
-		runtime_assert( first_base_atom != atom_vertex( "P" ) );
+		runtime_assert( true_chis.size() == 0 || first_base_atom != atom_vertex( "P" ) );
 
 		// Step 2. Hard-fix three chis: two rings, and proton chi for HO2'.
 		VDs chi{atom_vertex("C4'"), atom_vertex("C3'"), atom_vertex("C2'"), atom_vertex("C1'")};
 		true_chis.emplace_back( chi );
-		chi = VDs{ atom_vertex("C3'"), atom_vertex("C2'"), atom_vertex("C1'"), first_base_atom };
+		// Skip this chi for N
+		if ( first_base_atom != atom_vertex( "P" ) ) {
+			chi = VDs{ atom_vertex("C3'"), atom_vertex("C2'"), atom_vertex("C1'"), first_base_atom };
+		}
 		//true_chis.emplace_back( { atom_vertex("C4'"), atom_vertex("C3'"), atom_vertex("C2'"), atom_vertex("C1'") } );
 		true_chis.emplace_back( chi );
 		// What to do absent HO2'?

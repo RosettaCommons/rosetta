@@ -615,6 +615,8 @@ CT2  CT1  CT2   53.350    111.00    8.00   2.56100 ! ALLOW ALI
                 ! AMW: shamelessly cribbed for disubstituted aas.
 CA   CT1  CT2   53.350    111.00    8.00   2.56100 ! ALLOW ALI
                 ! AMW: shamelessly cribbed for disubstituted aas.
+P    CT1  CT2   53.350    111.00    8.00   2.56100 ! ALLOW ALI
+                ! AMW: shamelessly cribbed (from AMW!) for MPH
 CT1  CT1  NR2   53.350    111.00    8.00   2.56100 ! ALLOW   ALI
                 ! AMW: for ILE/THR cys triazolamer alkane update, adm jr., 3/2/92
 CT1  CT1  CPH1   52.000   108.0000 ! ALLOW   ALI PEP POL ARO
@@ -657,6 +659,8 @@ CT2  NR2  NZ2   120.000   126.0000 ! ALLOW   ALI PEP POL ARO
                 ! AMW for GLY triazolamer CA-NT1-NT2... (360 - 108)/2
 CT2  CC   OH1    61.632   122.3000 ! ALLOW   ALI PEP POL ARO
                 ! AMW for protonated state
+CT1  P    O      61.632   122.3000 ! ALLOW   ALI PEP POL ARO
+                ! AMW for MPH
 CT1  CA   CA     45.800   122.3000 ! ALLOW   ALI ARO
                 ! Copied from CT2-CA-CA, VKM, 27 Aug. 2015 
 CT2  CA   CA     45.800   122.3000 ! ALLOW   ALI ARO
@@ -1065,6 +1069,8 @@ NH1  C    CT3    80.000   116.5000 ! ALLOW   ALI PEP POL ARO
                 ! NMA Vib Modes (LK)
 NH1  CT1  C      50.000   107.0000 ! ALLOW   PEP POL ARO ALI
                 ! Alanine Dipeptide ab initio calc's (LK)
+NH1  CT1  P      50.000   111.3000 ! ALLOW   PEP POL ARO ALI
+                ! Phosphonate C-term AMW opt
 NH1  CT1  CC     50.000   107.0000 ! ALLOW   PEP POL ARO ALI
                 ! adm jr. 4/05/91, for asn,asp,gln,glu and cters
 NH1  CT1  CD     50.000   107.0000 ! ALLOW   PEP POL ARO ALI
@@ -1171,6 +1177,8 @@ NP   CT1  CT3    70.000   108.5000 ! ALLOW PEP PRO
                 ! AMW: for OOP pre from 6-31g* AcProNH2, ProNH2, 6-31g*//3-21g AcProNHCH3 RLD 4/23/93
 NP   CT1  HB     51.500   107.5000 ! ALLOW ALI POL PEP PRO
                 ! AMW: for OOP pre from 6-31g* AcProNH2, ProNH2, 6-31g*//3-21g AcProNHCH3 RLD 4/23/93
+P    CT1  HB     51.500   107.5000 ! ALLOW ALI POL PEP PRO
+                ! AMW: cribbed from AMW for MPH
 NP   CT2  HA     51.500   109.1500 ! ALLOW PEP PRO
                 ! AMW: for OOP pre from 6-31g* AcProNH2, ProNH2, 6-31g*//3-21g AcProNHCH3 RLD 4/23/93
 NP   CT2  C      50.000   106.0000 ! ALLOW PEP PRO
@@ -1617,6 +1625,7 @@ HN4  ON4  P3      30.0     120.0  40.0  2.35 !PPI2, from MP_1, adm jr., 7/01
 HN5  ON5  CN8     57.5     106.0  !RIBOSE, Adm Jr. MeOH
 HN5  ON5  CN9     57.5     106.0  !RIBOSE, Adm Jr. MeOH
 ON2  P    ON2     80.0     104.3  !DMP, ADM Jr.
+O    P    O       80.0     104.3  !AMW
 ON2  P    ON4     48.1     108.0  !MP_1, ADM Jr.
 ON2  P3   ON4     48.1     100.0  !PPI2, from MP_1, adm jr., 7/01
 ON3  P    ON4     98.9     108.23 !MP_1, ADM Jr.

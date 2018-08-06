@@ -510,7 +510,7 @@ public:
 	/// @brief Sets disulfide atom name
 	/// @author Andrew M. Watkins (amw579@nyu.edu).
 	void
-	set_disulfide_atom_name( std::string n ) {
+	set_disulfide_atom_name( std::string const & n ) {
 		disulfide_atom_name_ = n;
 	}
 

@@ -1074,6 +1074,9 @@ void PoseFromSFRBuilder::refine_pose( pose::Pose & pose )
 					} else {
 						// Try to find connectable variants.
 
+						// First: if either atom is a hydrogen, GTFO.
+						if ( pose.residue_type( ii ).atom_is_hydrogen( pose.residue_type( ii ).atom_index( my_atom ) ) ) continue;
+						if ( pose.residue_type( partner ).atom_is_hydrogen( pose.residue_type( partner ).atom_index( partner_atom ) ) ) continue;
 
 						// the type of the desired variant residue
 						chemical::ResidueTypeSetCOP rsd_set( pose.residue_type_set_for_pose( pose.residue_type( ii ).mode() ) );
@@ -1434,6 +1437,11 @@ PoseFromSFRBuilder::is_residue_type_recognized(
 	bool & is_chemical_component_ligand
 ){
 	using namespace core::chemical;
+
+	// UNL cannot be recognized -- as an "unknown ligand" it has zero atoms.
+	// AMW TODO: if at some point a Rosetta type is developed that is supposed to
+	// represent an unknown ligand -- some kind of repulsive ball, who knows! -- undo this.
+	if ( rosetta_residue_name3 == "UNL" ) return false;
 
 	// this residue list is only used to see if there are any residue_types with name3 at all:
 	ResidueTypeCOPs rsd_type_list;

@@ -164,11 +164,21 @@ private:
 	pdb_components_filenames() const { return pdb_components_filenames_; }
 
 	void
+	pdb_components_directory( std::string const & setting ) { pdb_components_directory_ = setting; }
+
+	std::string const &
+	pdb_components_directory() const { return pdb_components_directory_; }
+
+	void
 	generate_all_residue_types();
 
 	/// @brief From a file, read which IDs shouldn't be loaded from the components.
 	void
 	load_exclude_pdb_component_ids( std::string const & directory, std::string const & file = "exclude_pdb_component_list.txt" );
+
+	/// @brief Worker that actually takes care of file access for load_pdb_component
+	void
+	attempt_readin( std::string const & db_filename, std::string const & pdb_id, ResidueTypeOP & new_rsd_type, bool & found_file ) const;
 
 	/// @brief Load a residue type from the components dictionary.
 	ResidueTypeOP
@@ -189,6 +199,9 @@ private:
 
 	/// @brief data for lazy loading of PDB components
 	utility::vector1< std::string > pdb_components_filenames_;
+
+	/// @brief data for lazy loading of PDB components
+	std::string pdb_components_directory_;
 
 private:
 	// uncopyable

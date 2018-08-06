@@ -138,6 +138,8 @@ residue_types/nucleic/rna_nonnatural/OMI.params
 # 2' methyl 5 formyl cytosine
 residue_types/nucleic/rna_nonnatural/CFM.params
 
+residue_types/nucleic/rna_nonnatural/PPU.params
+
 # Task 1. Check all our methylated params to ensure that the result
 # isn't positively charged when it should actually be hydrogenated
 # and neutral.
@@ -641,6 +643,7 @@ residue_types/cyclosporin/LMA.params
 residue_types/achiral_ncaa/AIB.params
 
 ## L-NCAA Types
+residue_types/l-ncaa/MPH.params
 residue_types/l-ncaa/V01.params
 residue_types/l-ncaa/V02.params
 residue_types/l-ncaa/V03.params

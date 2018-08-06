@@ -1,7 +1,10 @@
 ## fullatom protein c-terminus patch
 
+# This should be the generic UPPER_TERMINUS_VARIANT, just for phosphonate
+# residues, because that's essentially what its actual context is.
+
 NAME PtermProteinFull
-TYPES PHOSPHONATE_UPPER_VARIANT
+TYPES UPPER_TERMINUS_VARIANT
 
 ## general requirements for this patch
 
@@ -14,6 +17,22 @@ END_SELECTOR
 
 ## now we search for a case that matches the residue, take the first one
 ## so put generic case last
+
+BEGIN_CASE ### THE GENERAL CASE ##########################################
+BEGIN_SELECTOR
+NAME3 NLP
+END_SELECTOR
+
+## these are the operations involved
+
+SET_POLYMER_CONNECT UPPER NONE
+ADD_PROPERTY UPPER_TERMINUS ## implies terminus
+ADD_PROPERTY PHOSPHONATE_UPPER
+
+DELETE_PROPERTY CANONICAL_AA
+DELETE_PROPERTY CANONICAL_NUCLEIC
+
+END_CASE
 
 BEGIN_CASE ### THE GENERAL CASE ##########################################
 
@@ -41,4 +60,5 @@ DELETE_PROPERTY CANONICAL_AA
 DELETE_PROPERTY CANONICAL_NUCLEIC
 
 END_CASE
+
 

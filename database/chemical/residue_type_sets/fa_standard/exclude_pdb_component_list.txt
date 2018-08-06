@@ -29,6 +29,8 @@ THR
 VAL
 TRP
 TYR
+# P-term patched MET
+MPH
 
 # Particular D amino acids. For now let's say all of them.
 DAL
@@ -77,6 +79,8 @@ A
 C
 G
 U
+# RNA terminal, kind of
+PPU
 
 # Sugars
 Glc

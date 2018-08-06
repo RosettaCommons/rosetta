@@ -118,7 +118,14 @@ RNA_Info::update_derived_rna_data( ResidueTypeCAP residue_type_in ){
 	} else {
 		o5prime_index_ = 0; // TNA
 	}
-	o3prime_index_  = residue_type->atom_index( "O3'" );
+
+	if ( residue_type->has( "O3'" ) ) {
+		o3prime_index_  = residue_type->atom_index( "O3'" );
+	} else if ( residue_type->has( "N3'" ) ) {
+		o3prime_index_ = residue_type->atom_index( "N3'" ); // TNA
+	} else {
+		o3prime_index_ = 0; // erp
+	}
 
 	if ( residue_type->has( "O4'" ) ) {
 		o4prime_index_ = residue_type->atom_index( "O4'" );

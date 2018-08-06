@@ -5,7 +5,7 @@ TYPE POLYMER #residue type
 AA UNK
 ATOM  N   Nbb  NH1  -0.47
 ATOM  CA  CAbb CT1  0.07
-ATOM  Pbb Phos X    0.51
+ATOM  Pbb Phos P   0.51
 ATOM  O1P OOC	O	-0.79
 #ATOM  O2P OH  X    -0.69
 ATOM  O3P OOC  O    -0.79

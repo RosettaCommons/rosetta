@@ -324,7 +324,13 @@ ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 	if ( restype->is_polymer() ) {
 		if ( restype->is_protein() ) {
 			restype->set_lower_connect_atom( "N" );
-			restype->set_upper_connect_atom( "C" );
+			if ( restype->has( "C" ) ) {
+				restype->set_upper_connect_atom( "C" );
+			} else { // hope it has P (phosphonate)
+				debug_assert( restype->has( "P" ) );
+				restype->set_upper_connect_atom( "P" );
+				restype->add_property( "PHOSPHONATE" );
+			}
 
 			// Taken -- hardcoded -- from alanine.
 			//restype->set_atom_base( "LOWER", "N" );
@@ -332,14 +338,34 @@ ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 			restype->set_atom_base( "H", "N" );
 
 			using numeric::conversions::radians;
+			auto temp_vec = define_mainchain_atoms( restype );
 			if ( restype->is_d_aa() ) {
-				restype->set_icoor( "LOWER", radians(-149.999985), radians(63.800007), 1.328685, "N", "CA", "C" );
-				restype->set_icoor( "UPPER", radians(150.000000), radians(58.300003), 1.328685, "C", "CA", "N" );
-				restype->set_icoor( "H", radians(180.000000), radians(60.849998), 1.010000, "N", "CA", "LOWER" );
+				// TODO: correct internal coordinates, if possible? For H at least.
+				restype->set_icoor( "LOWER", radians(-149.999985), radians(63.800007), 1.328685, 
+					restype->atom_name( temp_vec[1] ), // the lower atom itself
+					restype->atom_name( temp_vec[2] ),
+					restype->atom_name( temp_vec[3] ) );
+				restype->set_icoor( "UPPER", radians(150.000000), radians(58.300003), 1.328685, 
+					restype->atom_name( temp_vec[temp_vec.size()] ), // the upper atom itself
+					restype->atom_name( temp_vec[temp_vec.size() - 1] ),
+					restype->atom_name( temp_vec[temp_vec.size() - 2] ) );
+				restype->set_icoor( "H", radians(180.000000), radians(60.849998), 1.010000, 
+					restype->atom_name( temp_vec[1] ), // the lower atom itself
+					restype->atom_name( temp_vec[2] ),
+					"LOWER" );
 			} else { // is L or achiral
-				restype->set_icoor( "LOWER", radians(149.999985), radians(63.800007), 1.328685, "N", "CA", "C" );
-				restype->set_icoor( "UPPER", radians(-150.000000), radians(58.300003), 1.328685, "C", "CA", "N" );
-				restype->set_icoor( "H", radians(-180.000000), radians(60.849998), 1.010000, "N", "CA", "LOWER" );
+				restype->set_icoor( "LOWER", radians(149.999985), radians(63.800007), 1.328685,
+					restype->atom_name( temp_vec[1] ), // the lower atom itself
+					restype->atom_name( temp_vec[2] ),
+					restype->atom_name( temp_vec[3] ) );
+				restype->set_icoor( "UPPER", radians(-150.000000), radians(58.300003), 1.328685, 
+					restype->atom_name( temp_vec[temp_vec.size()] ), // the upper atom itself
+					restype->atom_name( temp_vec[temp_vec.size() - 1] ),
+					restype->atom_name( temp_vec[temp_vec.size() - 2] ) );
+				restype->set_icoor( "H", radians(-180.000000), radians(60.849998), 1.010000, 
+					restype->atom_name( temp_vec[1] ), // the lower atom itself
+					restype->atom_name( temp_vec[2] ), 
+					"LOWER" );
 			}
 		} else if ( restype->is_RNA() || restype->is_DNA() ) {
 
@@ -431,6 +457,20 @@ ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 			}
 		}
 		restype->set_mainchain_atoms( define_mainchain_atoms( restype ) );
+	}
+
+	// Find possible disulfide atoms.
+	for ( Size ii = 1; ii <= restype->natoms(); ++ii ) {
+		if ( restype->atom( ii ).element_type()->element() == core::chemical::element::S ) {
+			// OK, this is an S. Does it have a bonded H?
+			auto nbrs = restype->bonded_neighbor( ii );
+			for ( auto const nbr : nbrs ) {
+				if ( restype->atom( nbr ).element_type()->element() == core::chemical::element::H ) {
+					restype->add_property( "SIDECHAIN_THIOL" );
+					restype->set_disulfide_atom_name( restype->atom_name( ii ) );
+				}
+			}
+		}
 	}
 
 	restype->finalize();
