@@ -41,9 +41,11 @@
 #include <core/pack/make_symmetric_task.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
+#include <core/conformation/parametric/RealValuedParameter.hh>
 
 // Protocols Headers -- for convenience in setting up test case.
 #include <protocols/helical_bundle/MakeBundle.hh>
+#include <protocols/helical_bundle/BundleParametrizationCalculator.hh>
 #include <protocols/symmetry/SetupForSymmetryMover.hh>
 
 // Utility, etc Headers
@@ -72,10 +74,10 @@ public:
 		core::pose::Pose pose;
 		protocols::helical_bundle::MakeBundle makebundle;
 		makebundle.set_default_helix_length(25);
-		makebundle.set_default_r0( 7.25 );
-		makebundle.set_default_omega0( -0.03490659 );
-		makebundle.set_default_delta_omega1_all(0.78539816);
-		makebundle.set_default_delta_omega0(0.7853981635);
+		makebundle.default_calculator_nonconst()->real_parameter( protocols::helical_bundle::BPC_r0 )->set_value( 7.25 );
+		makebundle.default_calculator_nonconst()->real_parameter( protocols::helical_bundle::BPC_omega0 )->set_value( -0.03490659 );
+		makebundle.default_calculator_nonconst()->real_parameter( protocols::helical_bundle::BPC_delta_omega1 )->set_value( 0.7853981635 );
+		makebundle.default_calculator_nonconst()->real_parameter( protocols::helical_bundle::BPC_delta_omega0 )->set_value( 0.7853981635 );
 		makebundle.add_helix();
 		makebundle.apply(pose);
 

@@ -39,60 +39,41 @@ HelicalBundleDialogueWidget::HelicalBundleDialogueWidget(QWidget *parent) :
 	QWidget(parent),
 	ui(new Ui::HelicalBundleDialogueWidget),
 	helix_index_(0),
-	r0_widget_( new HelixOptionWidget(this) ),
-	omega0_widget_( new HelixOptionWidget(this) ),
-	delta_omega0_widget_( new HelixOptionWidget(this) ),
-	delta_omega1_widget_( new HelixOptionWidget(this) ),
-	delta_t_widget_( new HelixOptionWidget(this) ),
-	z0_offset_widget_( new HelixOptionWidget(this) ),
-	z1_offset_widget_( new HelixOptionWidget(this) ),
-	epsilon_widget_( new HelixOptionWidget(this) ),
+	subwidgets_(), //Initialized below
 	custom_params_file_( "14_helix" )
 {
+	using namespace protocols::helical_bundle;
+
+	for( core::Size i(1); i<=static_cast<core::Size>(BPC_last_parameter_to_be_sampled); ++i ) {
+		subwidgets_[i] = new HelixOptionWidget(this);
+	}
+
 	ui->setupUi(this);
 
-	ui->verticalLayout_3->addWidget(r0_widget_);
-	ui->verticalLayout_3->addWidget(omega0_widget_);
-	ui->verticalLayout_3->addWidget(delta_omega0_widget_);
-	ui->verticalLayout_3->addWidget(delta_omega1_widget_);
-	ui->verticalLayout_3->addWidget(delta_t_widget_);
-	ui->verticalLayout_3->addWidget(z0_offset_widget_);
-	ui->verticalLayout_3->addWidget(z1_offset_widget_);
-	ui->verticalLayout_3->addWidget(epsilon_widget_);
+	for( core::Size i(1); i<=static_cast<core::Size>(BPC_last_parameter_to_be_sampled); ++i ) {
+		ui->verticalLayout_3->addWidget(subwidgets_[i]);
+	}
 
-	r0_widget_->configure( "Radius from z-axis (r0)", 0, 30, false );
-	r0_widget_->show();
-	r0_widget_->set_value(5.0);
-	omega0_widget_->configure( "Twist per residue about z-axis (omega0)", -25.0, 25.0, true );
-	omega0_widget_->show();
-	omega0_widget_->set_value(0.0);
-	delta_omega0_widget_->configure( "Rotation about z-axis (delta_omega0)", 0, 360, false );
-	delta_omega0_widget_->show();
-	delta_omega0_widget_->set_value(0.0);
-	delta_omega1_widget_->configure( "Rotation about helix axis (delta_omega1)", 0, 360, false );
-	delta_omega1_widget_->show();
-	delta_omega1_widget_->set_value(0.0);
-	delta_t_widget_->configure( "Offset along peptide backbone (delta_t)", -10, 10, false );
-	delta_t_widget_->show();
-	delta_t_widget_->set_value(0.0);
-	z0_offset_widget_->configure( "Offset along z-axis (z0_offset)", -10, 10, false );
-	z0_offset_widget_->show();
-	z0_offset_widget_->set_value(0.0);
-	z1_offset_widget_->configure( "Offset along helix axis (z1_offset)", -10, 10, false );
-	z1_offset_widget_->show();
-	z1_offset_widget_->set_value(0.0);
-	epsilon_widget_->configure( "Bundle eccentricity (epsilon)", 0, 2, false );
-	epsilon_widget_->show();
-	epsilon_widget_->set_value(1.0);
+	subwidgets_[BPC_r0]->configure( "Radius from z-axis (r0)", 0, 30, false );
+	subwidgets_[BPC_omega0]->configure( "Twist per residue about z-axis (omega0)", -25.0, 25.0, true );
+	subwidgets_[BPC_delta_omega0]->configure( "Rotation about z-axis (delta_omega0)", 0, 360, false );
+	subwidgets_[BPC_delta_omega1]->configure( "Rotation about helix axis (delta_omega1)", 0, 360, false );
+	subwidgets_[BPC_delta_t]->configure( "Offset along peptide backbone (delta_t)", -10, 10, false );
+	subwidgets_[BPC_z0_offset]->configure( "Offset along z-axis (z0_offset)", -10, 10, false );
+	subwidgets_[BPC_z1_offset]->configure( "Offset along helix axis (z1_offset)", -10, 10, false );
+	subwidgets_[BPC_epsilon]->configure( "Bundle eccentricity (epsilon)", 0, 2, false );
 
-	connect( r0_widget_, SIGNAL(control_has_changed()), this, SLOT(on_control_changed()) );
-	connect( omega0_widget_, SIGNAL(control_has_changed()), this, SLOT(on_control_changed()) );
-	connect( delta_omega0_widget_, SIGNAL(control_has_changed()), this, SLOT(on_control_changed()) );
-	connect( delta_omega1_widget_, SIGNAL(control_has_changed()), this, SLOT(on_control_changed()) );
-	connect( delta_t_widget_, SIGNAL(control_has_changed()), this, SLOT(on_control_changed()) );
-	connect( z0_offset_widget_, SIGNAL(control_has_changed()), this, SLOT(on_control_changed()) );
-	connect( z1_offset_widget_, SIGNAL(control_has_changed()), this, SLOT(on_control_changed()) );
-	connect( epsilon_widget_, SIGNAL(control_has_changed()), this, SLOT(on_control_changed()) );
+	for( core::Size i(1); i<=static_cast<core::Size>(BPC_last_parameter_to_be_sampled); ++i ) {
+		subwidgets_[i]->show();
+		if( i == static_cast< core::Size >( BPC_r0 ) ) {
+			subwidgets_[i]->set_value(5.0);
+		} else if( i == static_cast< core::Size >( BPC_epsilon ) ) {
+			subwidgets_[i]->set_value(1.0);
+		} else {
+			subwidgets_[i]->set_value(0.0);
+		}
+		connect( subwidgets_[i], SIGNAL(control_has_changed()), this, SLOT(on_control_changed()) );
+	}
 
 	update();
 	Q_EMIT control_has_changed();
@@ -103,84 +84,24 @@ HelicalBundleDialogueWidget::~HelicalBundleDialogueWidget()
 	delete ui;
 }
 
-/// @brief Get r0
-core::Real HelicalBundleDialogueWidget::r0( utility::vector1< HelicalBundleDialogueWidget* > prev_widgets ) const {
-	if ( r0_widget_->widget_mode() == HOW_copy_value ) {
-		core::Size const helix_to_copy( r0_widget_->helix_to_copy() );
-		debug_assert( helix_to_copy > 0 && helix_to_copy < helix_index_ );
-		return prev_widgets[ helix_to_copy ]->r0( prev_widgets );
-	}
-	return r0_widget_->value();
+/// @brief Get a subwidget corresponding to a parameter.  (Const access).
+HelixOptionWidget *
+HelicalBundleDialogueWidget::get_subwidget_nonconst(
+	core::Size const subwidget_index
+) {
+	debug_assert( subwidget_index > 0 );
+	debug_assert( subwidget_index <= subwidgets_.size() );
+	return subwidgets_[subwidget_index];
 }
 
-/// @brief Get omega0
-core::Real HelicalBundleDialogueWidget::omega0( utility::vector1< HelicalBundleDialogueWidget* > prev_widgets ) const {
-	if ( omega0_widget_->widget_mode() == HOW_copy_value ) {
-		core::Size const helix_to_copy( omega0_widget_->helix_to_copy() );
-		debug_assert( helix_to_copy > 0 && helix_to_copy < helix_index_ );
-		return prev_widgets[ helix_to_copy ]->omega0( prev_widgets );
-	}
-	return omega0_widget_->value();
-}
-
-/// @brief Get delta_omega0
-core::Real HelicalBundleDialogueWidget::delta_omega0( utility::vector1< HelicalBundleDialogueWidget* > prev_widgets ) const {
-	if ( delta_omega0_widget_->widget_mode() == HOW_copy_value ) {
-		core::Size const helix_to_copy( delta_omega0_widget_->helix_to_copy() );
-		debug_assert( helix_to_copy > 0 && helix_to_copy < helix_index_ );
-		return prev_widgets[ helix_to_copy ]->delta_omega0( prev_widgets );
-	}
-	return delta_omega0_widget_->value();
-}
-
-/// @brief Get delta_omega1
-core::Real HelicalBundleDialogueWidget::delta_omega1( utility::vector1< HelicalBundleDialogueWidget* > prev_widgets ) const {
-	if ( delta_omega1_widget_->widget_mode() == HOW_copy_value ) {
-		core::Size const helix_to_copy( delta_omega1_widget_->helix_to_copy() );
-		debug_assert( helix_to_copy > 0 && helix_to_copy < helix_index_ );
-		return prev_widgets[ helix_to_copy ]->delta_omega1( prev_widgets );
-	}
-	return delta_omega1_widget_->value();
-}
-
-/// @brief Get delta_t
-core::Real HelicalBundleDialogueWidget::delta_t( utility::vector1< HelicalBundleDialogueWidget* > prev_widgets ) const {
-	if ( delta_t_widget_->widget_mode() == HOW_copy_value ) {
-		core::Size const helix_to_copy( delta_t_widget_->helix_to_copy() );
-		debug_assert( helix_to_copy > 0 && helix_to_copy < helix_index_ );
-		return prev_widgets[ helix_to_copy ]->delta_t( prev_widgets );
-	}
-	return delta_t_widget_->value();
-}
-
-/// @brief Get z0_offset
-core::Real HelicalBundleDialogueWidget::z0_offset( utility::vector1< HelicalBundleDialogueWidget* > prev_widgets ) const {
-	if ( z0_offset_widget_->widget_mode() == HOW_copy_value ) {
-		core::Size const helix_to_copy( z0_offset_widget_->helix_to_copy() );
-		debug_assert( helix_to_copy > 0 && helix_to_copy < helix_index_ );
-		return prev_widgets[ helix_to_copy ]->z0_offset( prev_widgets );
-	}
-	return z0_offset_widget_->value();
-}
-
-/// @brief Get z1_offset
-core::Real HelicalBundleDialogueWidget::z1_offset( utility::vector1< HelicalBundleDialogueWidget* > prev_widgets ) const {
-	if ( z1_offset_widget_->widget_mode() == HOW_copy_value ) {
-		core::Size const helix_to_copy( z1_offset_widget_->helix_to_copy() );
-		debug_assert( helix_to_copy > 0 && helix_to_copy < helix_index_ );
-		return prev_widgets[ helix_to_copy ]->z1_offset( prev_widgets );
-	}
-	return z1_offset_widget_->value();
-}
-
-/// @brief Get epsilon
-core::Real HelicalBundleDialogueWidget::epsilon( utility::vector1< HelicalBundleDialogueWidget* > prev_widgets ) const {
-	if ( epsilon_widget_->widget_mode() == HOW_copy_value ) {
-		core::Size const helix_to_copy( epsilon_widget_->helix_to_copy() );
-		debug_assert( helix_to_copy > 0 && helix_to_copy < helix_index_ );
-		return prev_widgets[ helix_to_copy ]->epsilon( prev_widgets );
-	}
-	return epsilon_widget_->value();
+/// @brief Get a subwidget corresponding to a parameter.  (Const access).
+HelixOptionWidget const *
+HelicalBundleDialogueWidget::get_subwidget(
+	core::Size const subwidget_index
+) const {
+	debug_assert( subwidget_index > 0 );
+	debug_assert( subwidget_index <= subwidgets_.size() );
+	return subwidgets_[subwidget_index];
 }
 
 /// @brief Get helix length (residues).
@@ -212,14 +133,9 @@ HelicalBundleDialogueWidget::set_helix_index(
 	ui->label->update();
 
 	bool const copying_allowed( new_index > 1 );
-	r0_widget_->set_copying_enabled(copying_allowed, new_index - 1);
-	omega0_widget_->set_copying_enabled(copying_allowed, new_index - 1);
-	delta_omega0_widget_->set_copying_enabled(copying_allowed, new_index - 1);
-	delta_omega1_widget_->set_copying_enabled(copying_allowed, new_index - 1);
-	delta_t_widget_->set_copying_enabled(copying_allowed, new_index - 1);
-	z1_offset_widget_->set_copying_enabled(copying_allowed, new_index - 1);
-	z0_offset_widget_->set_copying_enabled(copying_allowed, new_index - 1);
-	epsilon_widget_->set_copying_enabled(copying_allowed, new_index - 1);
+	for( core::Size i(1); i<=static_cast<core::Size>(protocols::helical_bundle::BPC_last_parameter_to_be_sampled); ++i ) {
+		subwidgets_[i]->set_copying_enabled( copying_allowed, new_index - 1 );
+	}
 }
 
 /// @brief Get the index of the helix that this control controls.
@@ -231,8 +147,8 @@ core::Size HelicalBundleDialogueWidget::helix_index() const { return helix_index
 /// directly from another helix).
 core::Size
 HelicalBundleDialogueWidget::omega0_pitchcopy_helix() const {
-	if(omega0_widget_->widget_mode() != HOW_copy_pitch) return 0;
-	return omega0_widget_->helix_to_copy();
+	if(subwidgets_[protocols::helical_bundle::BPC_omega0]->widget_mode() != HOW_copy_pitch) return 0;
+	return subwidgets_[protocols::helical_bundle::BPC_omega0]->helix_to_copy();
 }
 
 /// @brief If any controls are set to track another helix with helix index other_index,
@@ -241,29 +157,16 @@ void
 HelicalBundleDialogueWidget::reset_controls_dependent_on_other_helix(
 	core::Size const other_index
 ) {
-	if(r0_widget_->widget_mode() == HOW_copy_value && r0_widget_->helix_to_copy() == other_index) {
-		r0_widget_->set_value(5.0, true);
-	}
-	if( (omega0_widget_->widget_mode() == HOW_copy_value || omega0_widget_->widget_mode() == HOW_copy_pitch) && omega0_widget_->helix_to_copy() == other_index) {
-		omega0_widget_->set_value(0.0, true);
-	}
-	if( delta_omega0_widget_->widget_mode() == HOW_copy_value && delta_omega0_widget_->helix_to_copy() == other_index) {
-		delta_omega0_widget_->set_value(0.0, true);
-	}
-	if( delta_omega1_widget_->widget_mode() == HOW_copy_value && delta_omega1_widget_->helix_to_copy() == other_index) {
-		delta_omega1_widget_->set_value(0.0, true);
-	}
-	if( delta_t_widget_->widget_mode() == HOW_copy_value && delta_t_widget_->helix_to_copy() == other_index) {
-		delta_t_widget_->set_value(0.0, true);
-	}
-	if( z1_offset_widget_->widget_mode() == HOW_copy_value && z1_offset_widget_->helix_to_copy() == other_index) {
-		z1_offset_widget_->set_value(0.0, true);
-	}
-	if( z0_offset_widget_->widget_mode() == HOW_copy_value && z0_offset_widget_->helix_to_copy() == other_index) {
-		z0_offset_widget_->set_value(0.0, true);
-	}
-	if( epsilon_widget_->widget_mode() == HOW_copy_value && epsilon_widget_->helix_to_copy() == other_index) {
-		epsilon_widget_->set_value(1.0, true);
+	for( core::Size i(1); i<=static_cast<core::Size>(protocols::helical_bundle::BPC_last_parameter_to_be_sampled); ++i ) {
+		if(subwidgets_[i]->widget_mode() == HOW_copy_value && subwidgets_[i]->helix_to_copy() == other_index) {
+			if( i == static_cast<core::Size>(protocols::helical_bundle::BPC_r0 ) ) {
+				subwidgets_[i]->set_value(5.0, true);
+			} else if ( i == static_cast<core::Size>(protocols::helical_bundle::BPC_epsilon ) ) {
+				subwidgets_[i]->set_value(1.0, true);
+			} else {
+				subwidgets_[i]->set_value(0.0, true);
+			}
+		}
 	}
 }
 
@@ -279,76 +182,15 @@ HelicalBundleDialogueWidget::custom_params_file() const {
 	return custom_params_file_;
 }
 
-/// @brief Set r0.
+/// @brief Set the value of a subwidget.
 void
-HelicalBundleDialogueWidget::set_r0(
-	core::Real const &setting
+HelicalBundleDialogueWidget::set_real_subwidget(
+	core::Size const subwidget_index,
+	core::Real const & value
 ) {
-	r0_widget_->set_value( setting );
-	Q_EMIT control_has_changed();
-}
-
-/// @brief Set omega0.
-void
-HelicalBundleDialogueWidget::set_omega0(
-	core::Real const &setting
-) {
-	omega0_widget_->set_value( setting );
-	Q_EMIT control_has_changed();
-}
-
-/// @brief Set delta_omega0.
-void
-HelicalBundleDialogueWidget::set_delta_omega0(
-	core::Real const &setting
-) {
-	delta_omega0_widget_->set_value( setting );
-	Q_EMIT control_has_changed();
-}
-
-/// @brief Set delta_omega1.
-void
-HelicalBundleDialogueWidget::set_delta_omega1(
-	core::Real const &setting
-) {
-	delta_omega1_widget_->set_value( setting );
-	Q_EMIT control_has_changed();
-}
-
-/// @brief Set delta_t.
-void
-HelicalBundleDialogueWidget::set_delta_t(
-	core::Real const &setting
-) {
-	delta_t_widget_->set_value( setting );
-	Q_EMIT control_has_changed();
-}
-
-/// @brief Set z1_offset.
-void
-HelicalBundleDialogueWidget::set_z1_offset(
-	core::Real const &setting
-) {
-	z1_offset_widget_->set_value( setting );
-	Q_EMIT control_has_changed();
-}
-
-/// @brief Set z0_offset.
-void
-HelicalBundleDialogueWidget::set_z0_offset(
-	core::Real const &setting
-) {
-	z0_offset_widget_->set_value( setting );
-	Q_EMIT control_has_changed();
-}
-
-/// @brief Set epsilon.
-void
-HelicalBundleDialogueWidget::set_epsilon(
-	core::Real const &setting
-) {
-	epsilon_widget_->set_value( setting );
-	Q_EMIT control_has_changed();
+	debug_assert( subwidget_index > 0 );
+	debug_assert( subwidget_index <= static_cast< core::Size >( protocols::helical_bundle::BPC_last_parameter_to_be_sampled ) );
+	subwidgets_[subwidget_index]->set_value( value, true );
 }
 
 /// @brief Set everything except delta_omega0 to copy helix 1.
@@ -356,13 +198,16 @@ HelicalBundleDialogueWidget::set_epsilon(
 void
 HelicalBundleDialogueWidget::set_everything_except_delta_omega0_copies_helix1() {
 	if( helix_index_ == 1 ) return;
-	r0_widget_->set_copies_helix1();
-	omega0_widget_->set_copies_helix1_pitch();
-	delta_omega1_widget_->set_copies_helix1();
-	delta_t_widget_->set_copies_helix1();
-	z1_offset_widget_->set_copies_helix1();
-	z0_offset_widget_->set_copies_helix1();
-	epsilon_widget_->set_copies_helix1();
+
+	for( core::Size i(1); i<=static_cast<core::Size>(protocols::helical_bundle::BPC_last_parameter_to_be_sampled); ++i ) {
+		if( i == static_cast<core::Size>(protocols::helical_bundle::BPC_delta_omega0) ) {
+			continue;
+		} else if( i == static_cast<core::Size>(protocols::helical_bundle::BPC_omega0) ) {
+			subwidgets_[i]->set_copies_helix1_pitch();
+		} else {
+			subwidgets_[i]->set_copies_helix1();
+		}
+	}
 	Q_EMIT control_has_changed();
 }
 
@@ -400,29 +245,10 @@ void
 HelicalBundleDialogueWidget::update_control_dependencies_given_helix_to_be_removed(
 	core::Size const helix_to_remove
 ) {
-	if(r0_widget_->widget_mode() == HOW_copy_value && r0_widget_->helix_to_copy() > helix_to_remove) {
-		r0_widget_->decrement_copy_from_helix();
-	}
-	if( (omega0_widget_->widget_mode() == HOW_copy_value || omega0_widget_->widget_mode() == HOW_copy_pitch) && omega0_widget_->helix_to_copy() > helix_to_remove) {
-		omega0_widget_->decrement_copy_from_helix();
-	}
-	if(delta_omega0_widget_->widget_mode() == HOW_copy_value && delta_omega0_widget_->helix_to_copy() > helix_to_remove) {
-		delta_omega0_widget_->decrement_copy_from_helix();
-	}
-	if(delta_omega1_widget_->widget_mode() == HOW_copy_value && delta_omega1_widget_->helix_to_copy() > helix_to_remove) {
-		delta_omega1_widget_->decrement_copy_from_helix();
-	}
-	if(delta_t_widget_->widget_mode() == HOW_copy_value && delta_t_widget_->helix_to_copy() > helix_to_remove) {
-		delta_t_widget_->decrement_copy_from_helix();
-	}
-	if(z1_offset_widget_->widget_mode() == HOW_copy_value && z1_offset_widget_->helix_to_copy() > helix_to_remove) {
-		z1_offset_widget_->decrement_copy_from_helix();
-	}
-	if(z0_offset_widget_->widget_mode() == HOW_copy_value && z0_offset_widget_->helix_to_copy() > helix_to_remove) {
-		z0_offset_widget_->decrement_copy_from_helix();
-	}
-	if(epsilon_widget_->widget_mode() == HOW_copy_value && epsilon_widget_->helix_to_copy() > helix_to_remove) {
-		epsilon_widget_->decrement_copy_from_helix();
+	for( core::Size i(1); i<=static_cast<core::Size>(protocols::helical_bundle::BPC_last_parameter_to_be_sampled); ++i ) {
+		if(subwidgets_[i]->widget_mode() == HOW_copy_value && subwidgets_[i]->helix_to_copy() > helix_to_remove) {
+			subwidgets_[i]->decrement_copy_from_helix();
+		}
 	}
 }
 

@@ -188,6 +188,7 @@ sources = {
 		"BackboneGridSamplerHelper",
 		"BundleGridSampler",
 		"BundleGridSamplerHelper",
+		"BundleParametrizationCalculator",
 		"BundleReporterFilter",
 		"FitSimpleHelix",
 		"FitSimpleHelixMultiFunc",
@@ -195,12 +196,12 @@ sources = {
 		"MakeBundleHelix",
 		"PerturbBundle",
 		"PerturbBundleHelix",
-		"PerturbBundleOptions",
 		"util",
 	],
 	"protocols/helical_bundle/parameters": [
 		"BundleParameters",
 		"BundleParametersSet",
+		"OmegaBundleParameter",
 	],
     "protocols/pose_length_moves": [
 		#"DeleteResMover",

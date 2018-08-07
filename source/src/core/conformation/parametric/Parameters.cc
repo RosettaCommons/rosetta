@@ -13,6 +13,7 @@
 
 // Unit header
 #include <core/conformation/parametric/Parameters.hh>
+#include <core/conformation/parametric/Parameter.hh>
 
 // Package headers
 
@@ -47,20 +48,32 @@ static basic::Tracer TR( "core.conformation.parametric.Parameters" );
 /// @brief Constructor.
 ///
 Parameters::Parameters() :
-	residue_list_()
+	residue_list_(),
+	parameter_list_()
 {
 }
 
+/// @brief Copy constructor.
+/// @details Deep-copies the residue list and the parameters list.
 Parameters::Parameters( Parameters const & src ) :
 	utility::pointer::ReferenceCount(),
 	utility::pointer::enable_shared_from_this< Parameters >()
 {
 	residue_list_.clear();
 	if ( src.residue_list_.size()>0 ) {
-		for ( core::Size i=1, imax=src.residue_list_.size(); i<=imax; ++i ) {
+		residue_list_.reserve(src.residue_list_.size());
+		for ( core::Size i(1), imax(src.residue_list_.size()); i<=imax; ++i ) {
 			residue_list_.push_back( src.residue_list_[i]->clone() ); //This copies the residue that was being pointed at.
 			//Note that when copying a Conformation, I need to add logic that will ensure that the Parameters objects that result have owning pointers to the residues in the Conformation,
 			//rather than to residues that only exist in the Parameters object.
+		}
+	}
+
+	parameter_list_.clear();
+	if ( src.parameter_list_.size() > 0 ) {
+		parameter_list_.reserve(src.parameter_list_.size());
+		for ( core::Size i(1), imax(src.parameter_list_.size()); i<=imax; ++i ) {
+			parameter_list_.push_back( src.parameter_list_[i]->clone() );
 		}
 	}
 }
@@ -76,18 +89,76 @@ Parameters::clone() const
 	return ParametersOP( new Parameters( *this ) );
 }
 
+/// @brief Clears the sampling and perturbing information in the individual parameters.
+void
+Parameters::reset_sampling_and_perturbing_info() const {
+	for ( core::Size i(1), imax(parameter_list_.size()); i<=imax; ++i ) {
+		parameter_list_[i]->reset_sampling_and_perturbation_settings();
+	}
+}
+
+/// @brief Add a parameter.
+/// @details Does NOT clone the parameter, but stores the OP directly.
+void
+Parameters::add_parameter(
+	ParameterOP parameter
+) {
+	debug_assert( parameter != nullptr );
+	parameter_list_.push_back( parameter );
+}
+
+/// @brief Access a parameter, by index.
+/// @details Non-const access.
+ParameterOP
+Parameters::parameter_op(
+	core::Size const index
+) const {
+	debug_assert( index > 0 );
+	debug_assert( index <= parameter_list_.size() );
+	return parameter_list_[index];
+}
+
+/// @brief Access a parameter, by index.
+/// @details Const access.
+ParameterCOP
+Parameters::parameter_cop(
+	core::Size const index
+) const {
+	debug_assert( index > 0 );
+	debug_assert( index <= parameter_list_.size() );
+	return ParameterCOP(parameter_list_[index]);
+}
+
+/// @brief Replace one of the contained parameter objects with
+/// a copy of an input parameter object.
+void
+Parameters::replace_parameter_via_clone(
+	core::Size const param_index,
+	ParameterCOP new_parameter,
+	bool const reset_sampling_copying_perturbing/*=true*/
+) {
+	debug_assert( param_index > 0 );
+	debug_assert( param_index <= parameter_list_.size() );
+	parameter_list_[param_index] = new_parameter->clone();
+	if ( reset_sampling_copying_perturbing ) {
+		parameter_list_[param_index]->reset_copying_settings();
+		parameter_list_[param_index]->reset_sampling_and_perturbation_settings();
+	}
+}
+
 } // namespace parametric
 } // namespace conformation
 } // namespace core
 
 
-#ifdef    SERIALIZATION
+#ifdef SERIALIZATION
 
 /// @brief Automatically generated serialization method
 template< class Archive >
 void
 core::conformation::parametric::Parameters::save( Archive & arc ) const {
 	arc( CEREAL_NVP( residue_list_ ) ); // utility::vector1<core::conformation::ResidueCOP>
+	arc( CEREAL_NVP( parameter_list_ ) ); // utility::vector1<core::conformation::ResidueCOP>
 }
 
 /// @brief Automatically generated deserialization method
@@ -97,6 +168,7 @@ core::conformation::parametric::Parameters::load( Archive & arc ) {
 	utility::vector1< std::shared_ptr< core::conformation::Residue > > local_residue_list;
 	arc( local_residue_list ); // utility::vector1<core::conformation::ResidueCOP>
 	residue_list_ = local_residue_list; // copy the non-const pointer(s) into the const pointer(s)
+	arc( parameter_list_ );
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::conformation::parametric::Parameters );

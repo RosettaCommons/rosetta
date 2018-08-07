@@ -166,8 +166,15 @@ sources = {
 		"OrbitalXYZCoords",
 	],
 	"core/conformation/parametric": [
+		"BooleanValuedParameter",
+		"Parameter",
+		"ParametrizationCalculator",
 		"Parameters",
 		"ParametersSet",
+		"RealValuedParameter",
+		"RealVectorValuedParameter",
+		"SizeValuedParameter",
+		"SizeVectorValuedParameter",
 	],
 	"core/conformation/signals": [
 		"LengthEvent",

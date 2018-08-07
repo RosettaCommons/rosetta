@@ -84,7 +84,10 @@ void BundleParametersSet::get_pdb_remark(std::stringstream &remark) const {
 	remark << "Number of helices per copy: " << n_helices()               << std::endl;
 	if ( n_helices() > 0 ) {
 		for ( core::Size i=1, imax=n_helices(); i<=imax; ++i ) {
-			BundleParametersCOP cur_helix( utility::pointer::dynamic_pointer_cast<BundleParameters const>( parameters(i) ) );
+#ifndef NDEBUG
+			debug_assert( utility::pointer::static_pointer_cast<BundleParameters const>( parameters(i) ) != nullptr );
+#endif
+			BundleParametersCOP cur_helix( utility::pointer::static_pointer_cast<BundleParameters const>( parameters(i) ) );
 			remark << "---HELIX " << i << " PARAMETERS:---" << std::endl;
 			cur_helix->get_pdb_remark(remark);
 		}

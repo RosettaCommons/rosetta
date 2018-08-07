@@ -20,6 +20,7 @@
 #include <protocols/helical_bundle/PerturbBundleHelix.hh>
 #include <protocols/helical_bundle/PerturbBundleHelixCreator.hh>
 #include <protocols/cyclic_peptide/PeptideStubMover.hh>
+#include <protocols/helical_bundle/BundleParametrizationCalculator.hh>
 #include <numeric/crick_equations/BundleParams.hh>
 #include <core/optimization/Minimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
@@ -119,68 +120,15 @@ void PerturbBundleHelix::apply (core::pose::Pose & pose)
 	BundleParametersOP params = utility::pointer::dynamic_pointer_cast<BundleParameters>( paramset->parameters( parameters_index() ) );
 	runtime_assert_string_msg( params, "In protocols::helical_bundle::PerturbBundleHelix::apply() : The Parameters object is not a BundleParameters object." );
 
-	utility::vector1 < utility::vector1 < numeric::xyzVector< core::Real > > > atom_positions;
+	BundleParametrizationCalculator temp_calculator( false, params );
 
-	//Generate the atom positions (function defined in util.cc).
-	generate_atom_positions(
-		atom_positions, //output
-		pose, //for reference only
-		params->first_residue()->seqpos(),
-		params->last_residue()->seqpos(),
-		params->r0(),
-		params->omega0(),
-		params->delta_omega0(),
-		params->delta_t(),
-		params->z1_offset(),
-		params->z0_offset(),
-		params->epsilon(),
-		params->invert_helix(),
-		params->r1_vect(),
-		params->omega1(),
-		params->z1(),
-		params->delta_omega1_vect(),
-		params->delta_omega1_all(),
-		params->delta_z1_vect(),
-		params->residues_per_repeat(),
-		params->atoms_per_residue(),
-		params->repeating_unit_offset(),
-		failed
-	);
+	failed = temp_calculator.build_helix( pose, params->first_residue()->seqpos(), params->last_residue()->seqpos() );
 
 	set_last_apply_failed(failed);
 	if ( failed ) {
 		if ( TR.visible() ) TR << "Mover failed.  The Crick parameters do not generate a sensible helix.  Returning input pose." << std::endl;
 		return; //At this point, the input pose has not been modified.
 	}
-
-	// Make a temporary pose copy and place the atoms using the Crick equations.
-	if ( TR.Debug.visible() ) TR.Debug << "Placing atoms." << std::endl;
-	core::pose::Pose pose_copy(pose);
-	place_atom_positions(pose_copy, atom_positions, params->first_residue()->seqpos(), params->last_residue()->seqpos());
-
-	//Copy the bond length values from the pose in which we set the x,y,z coordinates of mainchain atoms based on the Crick equations
-	//to the ideal pose.
-	if ( params->allow_bondlengths() ) {
-		if ( TR.Debug.visible() ) TR.Debug << "Copying bond length values." << std::endl;
-		copy_helix_bondlengths(pose, pose_copy, params->first_residue()->seqpos(), params->last_residue()->seqpos());
-	}
-
-	//Copy the bond angle values from the pose in which we set the x,y,z coordinates of mainchain atoms based on the Crick equations
-	//to the ideal pose.
-	if ( params->allow_bondangles() ) {
-		if ( TR.Debug.visible() ) TR.Debug << "Copying bond angle values." << std::endl;
-		copy_helix_bondangles(pose, pose_copy, params->first_residue()->seqpos(), params->last_residue()->seqpos());
-	}
-
-	//Copy the dihedral values from the pose in which we set the x,y,z coordinates of mainchain atoms based on the Crick equations
-	//to the ideal pose.
-	if ( params->allow_dihedrals() ) {
-		if ( TR.Debug.visible() ) TR.Debug << "Copying dihedral values." << std::endl;
-		copy_helix_dihedrals(pose, pose_copy, params->first_residue()->seqpos(), params->last_residue()->seqpos());
-	}
-
-	//TODO align perturbed helix to ideal helix position.
-	align_mainchain_atoms_of_residue_range( pose, pose_copy, params->first_residue()->seqpos(), params->last_residue()->seqpos());
 
 	if ( TR.Debug.visible() ) TR.Debug << "Finished apply function." << std::endl;
 
@@ -191,10 +139,6 @@ void PerturbBundleHelix::apply (core::pose::Pose & pose)
 
 
 /// @brief Returns the name of this mover ("PerturbBundleHelix").
-// XRW TEMP std::string PerturbBundleHelix::get_name() const{
-// XRW TEMP  return "PerturbBundleHelix";
-// XRW TEMP }
-
 std::string PerturbBundleHelix::get_name() const {
 	return mover_name();
 }
@@ -203,12 +147,12 @@ std::string PerturbBundleHelix::mover_name() {
 	return "PerturbBundleHelix";
 }
 
-void PerturbBundleHelix::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+void
+PerturbBundleHelix::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
-	// AMW: this is actually never tag-parsed.
 	using namespace utility::tag;
 	AttributeList attlist;
-	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "This is a helper mover called by the PerturbBundle mover.  It is NOT intended to be invoked directly from RosettaScripts.  As such, it has no configurable settings.", attlist );
 }
 
 std::string PerturbBundleHelixCreator::keyname() const {
@@ -228,9 +172,10 @@ void PerturbBundleHelixCreator::provide_xml_schema( utility::tag::XMLSchemaDefin
 
 ////////////////////////////////////////////////////////////////////////////////
 //          PARSE MY TAG FUNCTION                                            ///
+//          (DELETED)
 ////////////////////////////////////////////////////////////////////////////////
-/// @brief parse XML (specifically in the context of the parser/Rosetta_scripting scheme)
-///
+// @brief parse XML (specifically in the context of the parser/Rosetta_scripting scheme)
+//
 /*void
 PerturbBundleHelix::parse_my_tag(
 utility::tag::TagCOP tag,

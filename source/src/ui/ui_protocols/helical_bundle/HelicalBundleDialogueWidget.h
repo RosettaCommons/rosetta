@@ -21,9 +21,13 @@
 
 //Rosetta utility includes
 #include <utility/vector1.fwd.hh>
+#include <utility/fixedsizearray1.hh>
 
 //Rosetta core includes
 #include <core/types.hh>
+
+//Rosetta protocols includes
+#include <protocols/helical_bundle/BundleParametrizationCalculator.hh>
 
 namespace Ui {
 class HelicalBundleDialogueWidget; //Forward declaration of class used for UI.
@@ -41,29 +45,11 @@ public:
 	explicit HelicalBundleDialogueWidget(QWidget *parent = 0);
 	~HelicalBundleDialogueWidget();
 
-	/// @brief Get r0
-	core::Real r0( utility::vector1< HelicalBundleDialogueWidget* > prev_widgets ) const;
+	/// @brief Get a subwidget corresponding to a parameter.  (Const access).
+	HelixOptionWidget * get_subwidget_nonconst( core::Size const subwidget_index );
 
-	/// @brief Get omega0
-	core::Real omega0( utility::vector1< HelicalBundleDialogueWidget* > prev_widgets ) const;
-
-	/// @brief Get delta_omega0
-	core::Real delta_omega0( utility::vector1< HelicalBundleDialogueWidget* > prev_widgets ) const;
-
-	/// @brief Get delta_omega1
-	core::Real delta_omega1( utility::vector1< HelicalBundleDialogueWidget* > prev_widgets ) const;
-
-	/// @brief Get delta_t
-	core::Real delta_t( utility::vector1< HelicalBundleDialogueWidget* > prev_widgets ) const;
-
-	/// @brief Get z0_offset
-	core::Real z0_offset( utility::vector1< HelicalBundleDialogueWidget* > prev_widgets ) const;
-
-	/// @brief Get z1_offset
-	core::Real z1_offset( utility::vector1< HelicalBundleDialogueWidget* > prev_widgets ) const;
-
-	/// @brief Get epsilon
-	core::Real epsilon( utility::vector1< HelicalBundleDialogueWidget* > prev_widgets ) const;
+	/// @brief Get a subwidget corresponding to a parameter.  (Const access).
+	HelixOptionWidget const * get_subwidget( core::Size const subwidget_index ) const;
 
 	/// @brief Get helix length (residues).
 	core::Size helix_length() const;
@@ -101,29 +87,8 @@ public:
 	/// @brief Get the custom params file.
 	std::string const & custom_params_file() const;
 
-	/// @brief Set r0.
-	void set_r0( core::Real const &setting );
-
-	/// @brief Set omega0.
-	void set_omega0( core::Real const &setting );
-
-	/// @brief Set delta_omega0.
-	void set_delta_omega0( core::Real const &setting );
-
-	/// @brief Set delta_omega1.
-	void set_delta_omega1( core::Real const &setting );
-
-	/// @brief Set delta_t.
-	void set_delta_t( core::Real const &setting );
-
-	/// @brief Set z1_offset.
-	void set_z1_offset( core::Real const &setting );
-
-	/// @brief Set z0_offset.
-	void set_z0_offset( core::Real const &setting );
-
-	/// @brief Set epsilon.
-	void set_epsilon( core::Real const &setting );
+	/// @brief Set the value of a subwidget.
+	void set_real_subwidget( core::Size const subwidget_index, core::Real const & value );
 
 	/// @brief Set everything except delta_omega0 to copy helix 1.
 	/// @details Does nothing if this is helix 1.
@@ -180,29 +145,8 @@ private:
 	/// @brief What's the index of this helix?
 	core::Size helix_index_;
 
-	/// @brief Controls for setting r0.
-	HelixOptionWidget* r0_widget_;
-
-	/// @brief Controls for setting omega0.
-	HelixOptionWidget* omega0_widget_;
-
-	/// @brief Controls for setting delta_omega0.
-	HelixOptionWidget* delta_omega0_widget_;
-
-	/// @brief Controls for setting delta_omega1.
-	HelixOptionWidget* delta_omega1_widget_;
-
-	/// @brief Controls for setting delta_t.
-	HelixOptionWidget* delta_t_widget_;
-
-	/// @brief Controls for setting z0_offset.
-	HelixOptionWidget* z0_offset_widget_;
-
-	/// @brief Controls for setting z1_offset.
-	HelixOptionWidget* z1_offset_widget_;
-
-	/// @brief Controls for setting epsilon.
-	HelixOptionWidget* epsilon_widget_;
+	/// @brief Controls for setting individual parameters.
+	utility::fixedsizearray1< HelixOptionWidget *, protocols::helical_bundle::BPC_last_parameter_to_be_sampled > subwidgets_;
 
 	/// @brief Name of a custom params file to use.
 	std::string custom_params_file_;

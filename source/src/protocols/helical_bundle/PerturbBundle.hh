@@ -29,7 +29,7 @@
 #include <core/conformation/parametric/Parameters.hh>
 #include <core/conformation/parametric/ParametersSet.fwd.hh>
 #include <core/conformation/parametric/ParametersSet.hh>
-#include <protocols/helical_bundle/PerturbBundleOptions.fwd.hh>
+#include <protocols/helical_bundle/BundleParametrizationCalculator.fwd.hh>
 
 // Scripter Headers
 #include <utility/tag/Tag.fwd.hh>
@@ -98,13 +98,6 @@ public:
 	//          PUBLIC FUNCTIONS                                                  //
 	////////////////////////////////////////////////////////////////////////////////
 
-	/// @brief Ensure that an angle value is in radians.
-	/// @details  Checks the use_degrees_ boolean.  If true, converts degrees to radians; if false, returns input value.
-	core::Real convert_angle( core::Real const &val ) const {
-		if ( use_degrees_ ) return (val / 180.0 * numeric::constants::d::pi);
-		return val; //Default case -- don't alter the value.
-	}
-
 	/// @brief Set which bundle parameters set will be used, if more than one is defined in the pose's Conformation object.
 	/// @details  A value of n indicates that the nth bundle paramets set encountered will be perturbed.
 	void set_bundleparametersset_index(core::Size const val) { bundleparametersset_index_=val; return; }
@@ -113,197 +106,30 @@ public:
 	/// @details  A value of n indicates that the nth bundle paramets set encountered will be perturbed.
 	core::Size bundleparametersset_index() const { return bundleparametersset_index_; }
 
-	/// @brief Access the r0_ BundleOptions object, by index.
-	/// @details This is the index in order of helices added, NOT necessarily the index of the helix.
-	PerturbBundleOptionsOP r0( core::Size const index ) {
-		runtime_assert_string_msg(index>0 && index<=r0_.size(), "Index passed to protocols::helical_bundle::PerturbBundle::r0() out of range.");
-		return r0_[index];
-	}
+	/// @brief Clear the list of helices.
+	/// @details Clears the individual_helix_calculators_ list.
+	void reset_helices();
 
-	/// @brief Access the r0_ BundleOptions object, by index.  This provides const access.
-	/// @details This is the index in order of helices added, NOT necessarily the index of the helix.
-	PerturbBundleOptionsCOP r0( core::Size const index ) const {
-		runtime_assert_string_msg(index>0 && index<=r0_.size(), "Index passed to protocols::helical_bundle::PerturbBundle::r0() out of range.");
-		return r0_[index];
-	}
+	/// @brief Add options for a new helix.
+	/// @details Return value is a smart pointer to the BundleParametrizationCalculator for the new
+	/// helix, cloned from the default_calculator_.
+	BundleParametrizationCalculatorOP add_helix( core::Size const helix_index );
 
-	/// @brief Access the omega0_ BundleOptions object, by index.
-	/// @details This is the index in order of helices added, NOT necessarily the index of the helix.
-	PerturbBundleOptionsOP omega0( core::Size const index ) {
-		runtime_assert_string_msg(index>0 && index<=omega0_.size(), "Index passed to protocols::helical_bundle::PerturbBundle::omega0() out of range.");
-		return omega0_[index];
-	}
+	/// @brief Access the default calculator (const access).
+	inline BundleParametrizationCalculatorCOP default_calculator_cop() const { return default_calculator_; }
 
-	/// @brief Access the omega0_ BundleOptions object, by index.  This provides const access.
-	/// @details This is the index in order of helices added, NOT necessarily the index of the helix.
-	PerturbBundleOptionsCOP omega0( core::Size const index ) const {
-		runtime_assert_string_msg(index>0 && index<=omega0_.size(), "Index passed to protocols::helical_bundle::PerturbBundle::omega0() out of range.");
-		return omega0_[index];
-	}
+	/// @brief Access the default calculator (nonconst access).
+	inline BundleParametrizationCalculatorOP default_calculator() { return default_calculator_; }
 
-	/// @brief Access the delta_omega0_ BundleOptions object, by index.
-	/// @details This is the index in order of helices added, NOT necessarily the index of the helix.
-	PerturbBundleOptionsOP delta_omega0( core::Size const index ) {
-		runtime_assert_string_msg(index>0 && index<=delta_omega0_.size(), "Index passed to protocols::helical_bundle::PerturbBundle::delta_omega0() out of range.");
-		return delta_omega0_[index];
-	}
+	/// @brief Access the calculator for a given helix (const access).
+	BundleParametrizationCalculatorCOP individual_helix_calculator_cop( core::Size const helix_calculator_index ) const;
 
-	/// @brief Access the delta_omega0_ BundleOptions object, by index.  This provides const access.
-	/// @details This is the index in order of helices added, NOT necessarily the index of the helix.
-	PerturbBundleOptionsCOP delta_omega0( core::Size const index ) const {
-		runtime_assert_string_msg(index>0 && index<=delta_omega0_.size(), "Index passed to protocols::helical_bundle::PerturbBundle::delta_omega0() out of range.");
-		return delta_omega0_[index];
-	}
+	/// @brief Access the calculator for a given helix (nonconst access).
+	BundleParametrizationCalculatorOP individual_helix_calculator( core::Size const helix_calculator_index );
 
-	/// @brief Access the delta_omega1_ BundleOptions object, by index.
-	/// @details This is the index in order of helices added, NOT necessarily the index of the helix.
-	PerturbBundleOptionsOP delta_omega1( core::Size const index ) {
-		runtime_assert_string_msg(index>0 && index<=delta_omega1_.size(), "Index passed to protocols::helical_bundle::PerturbBundle::delta_omega1() out of range.");
-		return delta_omega1_[index];
-	}
-
-	/// @brief Access the delta_omega1_ BundleOptions object, by index.  This provides const access.
-	/// @details This is the index in order of helices added, NOT necessarily the index of the helix.
-	PerturbBundleOptionsCOP delta_omega1( core::Size const index ) const {
-		runtime_assert_string_msg(index>0 && index<=delta_omega1_.size(), "Index passed to protocols::helical_bundle::PerturbBundle::delta_omega1() out of range.");
-		return delta_omega1_[index];
-	}
-
-	/// @brief Access the delta_t_ BundleOptions object, by index.
-	/// @details This is the index in order of helices added, NOT necessarily the index of the helix.
-	PerturbBundleOptionsOP delta_t( core::Size const index ) {
-		runtime_assert_string_msg(index>0 && index<=delta_t_.size(), "Index passed to protocols::helical_bundle::PerturbBundle::delta_t() out of range.");
-		return delta_t_[index];
-	}
-
-	/// @brief Access the delta_t_ BundleOptions object, by index.  This provides const access.
-	/// @details This is the index in order of helices added, NOT necessarily the index of the helix.
-	PerturbBundleOptionsCOP delta_t( core::Size const index ) const {
-		runtime_assert_string_msg(index>0 && index<=delta_t_.size(), "Index passed to protocols::helical_bundle::PerturbBundle::delta_t() out of range.");
-		return delta_t_[index];
-	}
-
-	/// @brief Access the z1_offset_ BundleOptions object, by index.
-	/// @details This is the index in order of helices added, NOT necessarily the index of the helix.
-	PerturbBundleOptionsOP z1_offset( core::Size const index ) {
-		runtime_assert_string_msg(index>0 && index<=z1_offset_.size(), "Index passed to protocols::helical_bundle::PerturbBundle::z1_offset() out of range.");
-		return z1_offset_[index];
-	}
-
-	/// @brief Access the z1_offset_ BundleOptions object, by index.  This provides const access.
-	/// @details This is the index in order of helices added, NOT necessarily the index of the helix.
-	PerturbBundleOptionsCOP z1_offset( core::Size const index ) const {
-		runtime_assert_string_msg(index>0 && index<=z1_offset_.size(), "Index passed to protocols::helical_bundle::PerturbBundle::z1_offset() out of range.");
-		return z1_offset_[index];
-	}
-
-	/// @brief Access the z0_offset_ BundleOptions object, by index.
-	/// @details This is the index in order of helices added, NOT necessarily the index of the helix.
-	PerturbBundleOptionsOP z0_offset( core::Size const index ) {
-		runtime_assert_string_msg(index>0 && index<=z0_offset_.size(), "Index passed to protocols::helical_bundle::PerturbBundle::z0_offset() out of range.");
-		return z0_offset_[index];
-	}
-
-	/// @brief Access the z0_offset_ BundleOptions object, by index.  This provides const access.
-	/// @details This is the index in order of helices added, NOT necessarily the index of the helix.
-	PerturbBundleOptionsCOP z0_offset( core::Size const index ) const {
-		runtime_assert_string_msg(index>0 && index<=z0_offset_.size(), "Index passed to protocols::helical_bundle::PerturbBundle::z0_offset() out of range.");
-		return z0_offset_[index];
-	}
-
-	/// @brief Access the epsilon_ BundleOptions object, by index.
-	/// @details This is the index in order of helices added, NOT necessarily the index of the helix.
-	PerturbBundleOptionsOP epsilon( core::Size const index ) {
-		runtime_assert_string_msg(index>0 && index<=epsilon_.size(), "Index passed to protocols::helical_bundle::PerturbBundle::epsilon() out of range.");
-		return epsilon_[index];
-	}
-
-	/// @brief Access the epsilon_ BundleOptions object, by index.  This provides const access.
-	/// @details This is the index in order of helices added, NOT necessarily the index of the helix.
-	PerturbBundleOptionsCOP epsilon( core::Size const index ) const {
-		runtime_assert_string_msg(index>0 && index<=epsilon_.size(), "Index passed to protocols::helical_bundle::PerturbBundle::epsilon() out of range.");
-		return epsilon_[index];
-	}
-
-	/// @brief Access the default_r0_ BundleOptions object.
-	///
-	PerturbBundleOptionsOP default_r0() { return default_r0_; }
-
-	/// @brief Access the default_r0_ BundleOptions object (const-access).
-	///
-	PerturbBundleOptionsCOP default_r0() const { return default_r0_; }
-
-	/// @brief Access the default_omega0_ BundleOptions object.
-	///
-	PerturbBundleOptionsOP default_omega0() { return default_omega0_; }
-
-	/// @brief Access the default_omega0_ BundleOptions object (const-access).
-	///
-	PerturbBundleOptionsCOP default_omega0() const { return default_omega0_; }
-
-	/// @brief Access the default_delta_omega0_ BundleOptions object.
-	///
-	PerturbBundleOptionsOP default_delta_omega0() { return default_delta_omega0_; }
-
-	/// @brief Access the default_delta_omega0_ BundleOptions object (const-access).
-	///
-	PerturbBundleOptionsCOP default_delta_omega0() const { return default_delta_omega0_; }
-
-	/// @brief Access the default_delta_omega1_ BundleOptions object.
-	///
-	PerturbBundleOptionsOP default_delta_omega1() { return default_delta_omega1_; }
-
-	/// @brief Access the default_delta_omega1_ BundleOptions object (const-access).
-	///
-	PerturbBundleOptionsCOP default_delta_omega1() const { return default_delta_omega1_; }
-
-	/// @brief Access the default_delta_t_ BundleOptions object.
-	///
-	PerturbBundleOptionsOP default_delta_t() { return default_delta_t_; }
-
-	/// @brief Access the default_delta_t_ BundleOptions object (const-access).
-	///
-	PerturbBundleOptionsCOP default_delta_t() const { return default_delta_t_; }
-
-	/// @brief Access the default_z1_offset_ BundleOptions object.
-	///
-	PerturbBundleOptionsOP default_z1_offset() { return default_z1_offset_; }
-
-	/// @brief Access the default_z1_offset_ BundleOptions object (const-access).
-	///
-	PerturbBundleOptionsCOP default_z1_offset() const { return default_z1_offset_; }
-
-	/// @brief Access the default_z0_offset_ BundleOptions object.
-	///
-	PerturbBundleOptionsOP default_z0_offset() { return default_z0_offset_; }
-
-	/// @brief Access the default_z0_offset_ BundleOptions object (const-access).
-	///
-	PerturbBundleOptionsCOP default_z0_offset() const { return default_z0_offset_; }
-
-	/// @brief Access the default_epsilon_ BundleOptions object.
-	///
-	PerturbBundleOptionsOP default_epsilon() { return default_epsilon_; }
-
-	/// @brief Access the default_epsilon_ BundleOptions object (const-access).
-	///
-	PerturbBundleOptionsCOP default_epsilon() const { return default_epsilon_; }
-
-	/// @brief Add options for a new helix
-	/// @details Return value is the current total number of helices after the addition.
-	core::Size add_helix( core::Size const helix_index );
-
-	/// @brief Set whether user input is in degrees (true) or radians (false).
-	/// @details Only affects values parsed by parse_my_tag().  When configuring this mover from
-	/// code, use radians, or use the convert_angle() public method to convert the angle to radians
-	/// or degrees depending on the use_degrees_ setting.
-	void set_use_degrees( bool const val ) { use_degrees_=val; return; }
-
-	/// @brief Get whether user input is in degrees (true) or radians (false).
-	/// @details Only affects values parsed by parse_my_tag().  When configuring this mover from
-	/// code, use radians, or use the convert_angle() public method to convert the angle to radians
-	/// or degrees depending on the use_degrees_ setting.
-	bool use_degrees() const { return use_degrees_; }
+	/// @brief Get the number of individual helices that have been configured (which is *not* necessarily the number
+	/// of helices in the pose, since we might only be perturbing a subset).
+	inline core::Size n_helices() const { return individual_helix_calculators_.size(); }
 
 	std::string
 	get_name() const override;
@@ -317,98 +143,34 @@ public:
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 
-
 private:
 	////////////////////////////////////////////////////////////////////////////////
 	//          PRIVATE DATA                                                      //
 	////////////////////////////////////////////////////////////////////////////////
 
-	/// @brief Default options for perturbing r0.
-	/// @details May be overridden on a helix-by-helix basis.
-	PerturbBundleOptionsOP default_r0_;
+	/// @brief The BundleParametrizationCalculator object that will be used for setting up default parameters.
+	BundleParametrizationCalculatorOP default_calculator_;
 
-	/// @brief Helix-by-helix options for perturbing r0.
-	///
-	PerturbBundleOptionsOPs r0_;
-
-	/// @brief Default options for perturbing omega0.
-	/// @details May be overridden on a helix-by-helix basis.
-	PerturbBundleOptionsOP default_omega0_;
-
-	/// @brief Helix-by-helix options for perturbing omega0.
-	///
-	PerturbBundleOptionsOPs omega0_;
-
-	/// @brief Default options for perturbing delta_omega0.
-	/// @details May be overridden on a helix-by-helix basis.
-	PerturbBundleOptionsOP default_delta_omega0_;
-
-	/// @brief Helix-by-helix options for perturbing delta_omega0.
-	///
-	PerturbBundleOptionsOPs delta_omega0_;
-
-	/// @brief Default options for perturbing delta_omega1.
-	/// @details May be overridden on a helix-by-helix basis.
-	PerturbBundleOptionsOP default_delta_omega1_;
-
-	/// @brief Helix-by-helix options for perturbing delta_omega1.
-	///
-	PerturbBundleOptionsOPs delta_omega1_;
-
-	/// @brief Default options for perturbing delta_t.
-	/// @details May be overridden on a helix-by-helix basis.
-	PerturbBundleOptionsOP default_delta_t_;
-
-	/// @brief Helix-by-helix options for perturbing delta_t.
-	///
-	PerturbBundleOptionsOPs delta_t_;
-
-	/// @brief Default options for perturbing z1_offset.
-	/// @details May be overridden on a helix-by-helix basis.
-	PerturbBundleOptionsOP default_z1_offset_;
-
-	/// @brief Helix-by-helix options for perturbing z1_offset.
-	///
-	PerturbBundleOptionsOPs z1_offset_;
-
-	/// @brief Default options for perturbing z0_offset.
-	/// @details May be overridden on a helix-by-helix basis.
-	PerturbBundleOptionsOP default_z0_offset_;
-
-	/// @brief Helix-by-helix options for perturbing z0_offset.
-	///
-	PerturbBundleOptionsOPs z0_offset_;
-
-	/// @brief Default options for perturbing epsilon.
-	/// @details May be overridden on a helix-by-helix basis.
-	PerturbBundleOptionsOP default_epsilon_;
-
-	/// @brief Helix-by-helix options for perturbing epsilon.
-	///
-	PerturbBundleOptionsOPs epsilon_;
+	/// @brief The BundleParametrizationCalculator objects for individual helices.  Cloned from the default calculator.
+	utility::vector1< std::pair< core::Size, BundleParametrizationCalculatorOP > > individual_helix_calculators_;
 
 	/// @brief Which set of bundle parameters (if there exists more than one) should the mover alter?
 	/// @details Defaults to 1.  Higher values indicate the nth set encountered in the ParametersSet list.
 	core::Size bundleparametersset_index_;
 
-	/// @brief Should user input be interpreted as being in radians (false) or degrees (true)?
-	/// @details Default radians (false).  Only affects values parsed by parse_my_tag().  When configuring this mover from
-	/// code, use radians, or use the convert_angle() public method to convert the angle to radians
-	/// or degrees depending on the use_degrees_ setting.
-	bool use_degrees_;
 
 private:
 	////////////////////////////////////////////////////////////////////////////////
 	//          PRIVATE FUNCTIONS                                                 //
 	////////////////////////////////////////////////////////////////////////////////
 
-	/// @brief Is a value in a list?
-	///
-	bool is_in_list( core::Size const val, utility::vector1 < core::Size> const &list ) const;
-
 	/// @brief Confirms that a helix has not yet been defined.  Returns "true" if the helix
 	/// has NOT been defined, false otherwise.
-	bool helix_not_defined( core::Size const helix_index) const;
+	bool helix_not_defined( core::Size const helix_index ) const;
+
+	/// @brief Get a calculator for a particular helix.
+	/// @details Returns nullptr if no calculator for this helix has been defined.
+	BundleParametrizationCalculatorCOP get_calculator_for_helix( core::Size const helix_index ) const;
 
 	/// @brief Perturb the helical bundle parameter values in the pose, subject to the options already set.
 	/// @details Called by the apply() function.  Returns true for success, false for failure.

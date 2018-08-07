@@ -23,7 +23,7 @@
 
 --namespace--
 
-///@brief --brief--
+/// @brief --brief--
 class --class-- : public utility::pointer::ReferenceCount {
 
 public:

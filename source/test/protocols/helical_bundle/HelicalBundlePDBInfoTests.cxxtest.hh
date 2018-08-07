@@ -25,9 +25,11 @@
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/io/Remarks.hh>
+#include <core/conformation/parametric/RealValuedParameter.hh>
 
 // Protocol Headers
 #include <protocols/helical_bundle/MakeBundle.hh>
+#include <protocols/helical_bundle/BundleParametrizationCalculator.hh>
 
 #include <basic/Tracer.hh>
 
@@ -60,13 +62,13 @@ public:
 		resnames[1] = "ALA";
 		mkbundle.set_default_residue_name(resnames);
 		mkbundle.set_reset_pose(false);
+		mkbundle.default_calculator_nonconst()->real_parameter( protocols::helical_bundle::BPC_delta_omega0 )->set_value(3.141592654);
 		mkbundle.add_helix();
-		mkbundle.helix(1)->set_r0(5.0);
-		mkbundle.helix(1)->set_omega0(0.01);
+		mkbundle.helix(1)->calculator_op()->real_parameter( protocols::helical_bundle::BPC_r0 )->set_value(5.0);
+		mkbundle.helix(1)->calculator_op()->real_parameter( protocols::helical_bundle::BPC_omega0 )->set_value(0.01);
 		mkbundle.add_helix();
-		mkbundle.helix(2)->set_r0(7.0);
-		mkbundle.helix(2)->set_omega0(-0.01);
-		mkbundle.set_default_delta_omega0(3.141592654);
+		mkbundle.helix(2)->calculator_op()->real_parameter( protocols::helical_bundle::BPC_r0 )->set_value(7.0);
+		mkbundle.helix(2)->calculator_op()->real_parameter( protocols::helical_bundle::BPC_omega0 )->set_value(-0.01);
 		mkbundle.apply(*pose);
 
 		pose->pdb_info()->show( TR );

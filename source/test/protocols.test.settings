@@ -308,6 +308,7 @@ sources = {
 	"helical_bundle" : [
 		"HelicalBundlePDBInfoTests",
 		"params_data_storage",
+		"PerturbBundleTests",
 	],
 
 	"hotspot_hashing" : [

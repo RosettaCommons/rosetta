@@ -43,7 +43,6 @@
 //Rosetta protocols headers
 #include <protocols/helical_bundle/MakeBundle.hh>
 #include <protocols/helical_bundle/PerturbBundle.hh>
-#include <protocols/helical_bundle/PerturbBundleOptions.hh>
 #include <protocols/helical_bundle/MakeBundleHelix.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>

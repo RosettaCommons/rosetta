@@ -18,6 +18,7 @@
 
 // Unit headers
 #include <protocols/helical_bundle/BundleGridSamplerHelper.fwd.hh>
+#include <protocols/helical_bundle/BundleParametrizationCalculator.hh>
 
 // Package headers
 #include <core/conformation/Residue.hh>
@@ -38,20 +39,6 @@
 
 namespace protocols {
 namespace helical_bundle {
-
-/// @brief The type of bundle parameter that will be sampled by the
-/// BundleGridSampler mover.
-enum DoFType {
-	bgsh_r0 = 1,
-	bgsh_omega0,
-	bgsh_delta_omega0,
-	bgsh_delta_omega1,
-	bgsh_delta_t,
-	bgsh_z1_offset,
-	bgsh_z0_offset,
-	bgsh_epsilon,
-	bgsh_undefined_dof //keep this last
-};
 
 /// @brief  BundleGridSamplerHelper class, which stores options for the PerturbBundle mover.
 ///
@@ -104,7 +91,7 @@ public: //Getters
 
 	/// @brief Returns the DoF type of the specified DoF.
 	///
-	DoFType DoF_type( core::Size const &index ) const {
+	BPC_Parameters DoF_type( core::Size const &index ) const {
 		runtime_assert_string_msg( index <= allowed_dof_types_.size(),
 			"In BundleGridSamplerHelper::DoF_type(): index out of range!" );
 		return allowed_dof_types_[index];
@@ -127,7 +114,7 @@ public: //Setters
 	/// @details Must specify the DoF type, the helix index, the number of samples,
 	/// and the lower and upper bounds of the range to be sampled.
 	void add_DoF(
-		DoFType const doftype,
+		BPC_Parameters const doftype,
 		core::Size const helix_index,
 		core::Size const n_samples,
 		core::Real const &lower_val,
@@ -153,7 +140,13 @@ public: //Setters
 
 	/// @brief Return the name of a DoF type given its enum.
 	///
-	std::string DoF_name( DoFType const &type ) const;
+	inline
+	std::string const &
+	DoF_name(
+		BPC_Parameters const &type
+	) const {
+		return BundleParametrizationCalculator::parameter_name_from_enum( type );
+	}
 
 private:
 
@@ -175,7 +168,7 @@ private:
 	/// @brief Allowed DoF types.
 	/// @details This class stores a list of allowed DoFs that will be sampled by the BundleGridSampler
 	/// mover.  It does this in several vectors.  This one lists the DoF type (r0, omega0, etc.).
-	utility::vector1 < DoFType  > allowed_dof_types_;
+	utility::vector1 < BPC_Parameters  > allowed_dof_types_;
 
 	/// @brief Allowed DoF helix indices.
 	/// @details This class stores a list of allowed DoFs that will be sampled by the BundleGridSampler

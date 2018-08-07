@@ -48,24 +48,6 @@ namespace helical_bundle {
 
 static basic::Tracer TR("protocols.helical_bundle.FitSimpleHelix");
 
-// XRW TEMP std::string
-// XRW TEMP FitSimpleHelixCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return FitSimpleHelix::mover_name();
-// XRW TEMP }
-
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP FitSimpleHelixCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new FitSimpleHelix );
-// XRW TEMP }
-
-// XRW TEMP std::string
-// XRW TEMP FitSimpleHelix::mover_name()
-// XRW TEMP {
-// XRW TEMP  return "FitSimpleHelix";
-// XRW TEMP }
-
-
 /// @brief Creator for FitSimpleHelix mover.
 FitSimpleHelix::FitSimpleHelix():
 	//utility::pointer::ReferenceCount(),
@@ -367,7 +349,6 @@ void FitSimpleHelixCreator::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 {
 	FitSimpleHelix::provide_xml_schema( xsd );
 }
-
 
 
 ////////////////////////////////////////////////////////////////////////////////

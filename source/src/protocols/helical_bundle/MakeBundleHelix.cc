@@ -17,9 +17,14 @@
 #include <protocols/helical_bundle/MakeBundleHelix.hh>
 #include <protocols/helical_bundle/MakeBundleHelixCreator.hh>
 #include <protocols/cyclic_peptide/PeptideStubMover.hh>
+#include <protocols/helical_bundle/BundleParametrizationCalculator.hh>
 #include <numeric/crick_equations/BundleParams.hh>
 #include <core/optimization/Minimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
+#include <core/conformation/parametric/RealVectorValuedParameter.hh>
+#include <core/conformation/parametric/RealValuedParameter.hh>
+#include <core/conformation/parametric/SizeVectorValuedParameter.hh>
+#include <core/conformation/parametric/SizeValuedParameter.hh>
 
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
@@ -33,6 +38,7 @@
 #include <core/id/NamedAtomID.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/pose/util.tmpl.hh>
+#include <utility/pointer/memory.hh>
 
 //Auto Headers
 #include <utility/excn/Exceptions.hh>
@@ -55,11 +61,10 @@ static basic::Tracer TR("protocols.helical_bundle.MakeBundleHelix");
 MakeBundleHelix::MakeBundleHelix():
 	Mover("MakeBundleHelix"),
 	reset_pose_(true),
-	bundle_parameters_( BundleParametersOP( new BundleParameters ) ),
 	helix_length_(10),
 	residue_name_(),
-	tail_residue_name_(""),
-	last_apply_failed_(false)
+	last_apply_failed_(false),
+	calculator_( new BundleParametrizationCalculator )
 {
 	set_minor_helix_params_from_file("alpha_helix"); //By default, set the minor helix parameters to those of an alpha helix (read in from the database).
 	residue_name_.push_back("ALA");
@@ -70,17 +75,27 @@ MakeBundleHelix::MakeBundleHelix():
 MakeBundleHelix::MakeBundleHelix( MakeBundleHelix const &src ):
 	protocols::moves::Mover( src ),
 	reset_pose_(src.reset_pose_),
-	bundle_parameters_(  utility::pointer::dynamic_pointer_cast< BundleParameters >( src.bundle_parameters()->clone() ) ),
 	helix_length_(src.helix_length_),
 	residue_name_(src.residue_name_),
-	tail_residue_name_(src.tail_residue_name_),
-	last_apply_failed_(src.last_apply_failed_)
+	last_apply_failed_(src.last_apply_failed_),
+	calculator_( utility::pointer::static_pointer_cast< BundleParametrizationCalculator >( src.calculator_->clone() ) )
 {
 }
 
+/// @brief Initialization constructor: initializes this MakeBundleHelix mover with a BundleParametrizationCalculator.
+/// @details Input calculator is cloned.
+MakeBundleHelix::MakeBundleHelix( BundleParametrizationCalculatorCOP input_calculator ) :
+	Mover("MakeBundleHelix"),
+	reset_pose_(true),
+	helix_length_(10),
+	residue_name_(),
+	last_apply_failed_(false),
+	calculator_( utility::pointer::static_pointer_cast< BundleParametrizationCalculator >( input_calculator->clone() ) )
+{
+}
 
 /// @brief Destructor for MakeBundleHelix mover.
-MakeBundleHelix::~MakeBundleHelix() = default;
+MakeBundleHelix::~MakeBundleHelix() {}
 
 
 /// @brief Clone operator to create a pointer to a fresh MakeBundleHelix object that copies this one.
@@ -94,24 +109,44 @@ protocols::moves::MoverOP MakeBundleHelix::fresh_instance() const {
 	return protocols::moves::MoverOP( new MakeBundleHelix );
 }
 
+/// @brief Copy the parameter values for parameters that have not been set from the global parameters.
+/// @details This function should be called before apply().
+void
+MakeBundleHelix::copy_unset_params_from_globals(
+	BundleParametrizationCalculatorCOP global_calculator
+) {
+	calculator_->copy_unset_params_from_globals( global_calculator );
+}
+
+/// @brief Copy the parameter values for parameters that copy values from previous helices, from the previous helices.
+/// @details This function should be called before apply().
+/// @returns Returns true for failure, false for success.
+bool
+MakeBundleHelix::copy_params_from_previous_helices(
+	core::pose::Pose const & prev_helices_pose
+) {
+	return calculator_->copy_params_from_previous_helices_makebundlehelix_style(prev_helices_pose);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 //          APPLY FUNCTION                                                    //
 ////////////////////////////////////////////////////////////////////////////////
 
 
 /// @brief Actually apply the mover to the pose.
-void MakeBundleHelix::apply (core::pose::Pose & pose)
-{
+void
+MakeBundleHelix::apply (
+	core::pose::Pose & pose
+) {
 	if ( TR.visible() ) TR << "Building a helix in a helical bundle using the Crick equations." << std::endl;
 
 	//Initial checks:
 	runtime_assert_string_msg(
-		residues_per_repeat() == residue_name_.size(),
+		calculator_->size_parameter_cop( BPC_residues_per_repeat )->value() == residue_name_.size(),
 		"In protocols::helical_bundle::MakeBundleHelix::apply(): The number of residues per repeat does not match the size of the list of residue types."
 	);
 
-	//Should tail residues be added:
-	bool const tail_residues_exist = ( tail_residue_name()!="" );
+	//
 
 	//Create the pose object:
 	core::pose::Pose helixpose;
@@ -121,72 +156,21 @@ void MakeBundleHelix::apply (core::pose::Pose & pose)
 	protocols::cyclic_peptide::PeptideStubMover stubmover;
 	stubmover.set_reset_mode( true );
 	stubmover.reset_mover_data();
-	if ( tail_residues_exist ) stubmover.add_residue ("Append", tail_residue_name(), 0, true, "", 1, 0, "");
-	core::Size repeat_index( repeating_unit_offset() ); //Index in the repeating unit making up the minor helix
+	core::Size repeat_index( calculator_->size_parameter_cop( BPC_repeating_unit_offset )->value() ); //Index in the repeating unit making up the minor helix
+	core::Size const residues_per_repeat( calculator_->size_parameter_cop( BPC_residues_per_repeat )->value() );
 	for ( core::Size i=1, imax=helix_length(); i<=imax; ++i ) {
 		++repeat_index;
-		if ( repeat_index > residues_per_repeat() ) repeat_index=1;
-		stubmover.add_residue ("Append", residue_name(repeat_index), 0, (i==1 && !tail_residues_exist ? true : false), "", 1, 0, "");
+		if ( repeat_index > residues_per_repeat ) repeat_index=1;
+		stubmover.add_residue ("Append", residue_name(repeat_index), 0, (i==1 ? true : false), "", 1, 0, "");
 	}
-	//stubmover.add_residue ("Append", residue_name(), 0, (tail_residues_exist ? false : true), "", helix_length(), 0, "");
-	if ( tail_residues_exist ) stubmover.add_residue ("Append", tail_residue_name(), 0, false, "", 1, 0, "");
 	stubmover.apply(helixpose);
 
-	//If there are tail residues, set their backbone dihedral values to something reasonable:
-	if ( tail_residues_exist ) {
-		if ( TR.Debug.visible() ) TR.Debug << "Setting tail dihedrals." << std::endl;
-		set_tail_dihedrals(helixpose);
-	}
+	set_last_apply_failed( calculator_->build_helix( helixpose ) );
 
-	//Variables for the start residue and end residue of the helix in helixpose:
-	core::Size const helix_start = (tail_residues_exist ? 2 : 1);
-	core::Size const helix_end = helix_length() + (tail_residues_exist ? 1 : 0 );
-
-	//Generate a vector of vectors of x,y,z coordinates of mainchain atoms.
-	//Note that this vector extends one extra residue in each direction.
-	utility::vector1 < utility::vector1 < numeric::xyzVector< core::Real > > > atom_positions;
-	if ( TR.Debug.visible() ) TR.Debug << "Generating atom positions." << std::endl;
-	bool failed=false;
-	generate_atom_positions(atom_positions, helixpose, helix_start, helix_end, r0(),
-		omega0(), delta_omega0(), delta_t(), z1_offset(), z0_offset(), epsilon(), invert_helix(), r1_vect(), omega1(), z1(),
-		delta_omega1_vect(), delta_omega1_all(), delta_z1_vect(), residues_per_repeat(), atoms_per_residue(), repeating_unit_offset(),
-		failed );
-
-	set_last_apply_failed(failed);
-	if ( failed ) {
+	if ( last_apply_failed() ) {
 		if ( TR.visible() ) TR << "Mover failed.  The Crick parameters do not generate a sensible helix.  Returning input pose." << std::endl;
 		return; //At this point, the input pose has not been modified.
 	}
-
-	// Make a temporary pose copy and place the atoms using the Crick equations.
-	if ( TR.Debug.visible() ) TR.Debug << "Placing atoms." << std::endl;
-	core::pose::Pose helixpose_copy = helixpose;
-	place_atom_positions(helixpose_copy, atom_positions, helix_start, helix_end);
-
-	//Copy the bond length values from the pose in which we set the x,y,z coordinates of mainchain atoms based on the Crick equations
-	//to the ideal pose.
-	if ( allow_bondlengths() ) {
-		if ( TR.Debug.visible() ) TR.Debug << "Copying bond length values." << std::endl;
-		copy_helix_bondlengths(helixpose, helixpose_copy, helix_start, helix_end);
-	}
-
-	//Copy the bond angle values from the pose in which we set the x,y,z coordinates of mainchain atoms based on the Crick equations
-	//to the ideal pose.
-	if ( allow_bondangles() ) {
-		if ( TR.Debug.visible() ) TR.Debug << "Copying bond angle values." << std::endl;
-		copy_helix_bondangles(helixpose, helixpose_copy, helix_start, helix_end);
-	}
-
-	//Copy the dihedral values from the pose in which we set the x,y,z coordinates of mainchain atoms based on the Crick equations
-	//to the ideal pose.
-	if ( allow_dihedrals() ) {
-		if ( TR.Debug.visible() ) TR.Debug << "Copying dihedral values." << std::endl;
-		copy_helix_dihedrals(helixpose, helixpose_copy, helix_start, helix_end);
-	}
-
-	//Align the ideal pose to the pose in which we set the x,y,z coordinates of mainchain atoms.
-	if ( TR.Debug.visible() ) TR.Debug << "Aligning to ideal helix." << std::endl;
-	align_mainchain_atoms(helixpose, helixpose_copy, helix_start, helix_end);
 
 	//Either reset the pose and replace it with the helix pose, or append the helix pose to the current pose, depending on the reset mode:
 	if ( reset_pose() ) {
@@ -231,52 +215,44 @@ return;
 //          PRIVATE FUNCTIONS                                                 //
 ////////////////////////////////////////////////////////////////////////////////
 
-/// @brief If there are tail residues, set their backbone dihedral angles
-/// to something reasonable (a helical conformation).
-void MakeBundleHelix::set_tail_dihedrals( core::pose::Pose &helixpose ) const
-{
-	if ( helixpose.residue(1).type().is_alpha_aa() ) {
-		helixpose.set_psi( 1, -47.0 );
-		helixpose.set_omega(1, 180.0);
-		helixpose.set_phi(helixpose.size(), -57.8);
-	} else if ( helixpose.residue(1).type().is_beta_aa() ) {
-		helixpose.set_theta( 1, 55.6 );
-		helixpose.set_psi( 1, -126.4 );
-		helixpose.set_omega(1, 180.0);
-		helixpose.set_phi(helixpose.size(), -135.5);
-		helixpose.set_theta( helixpose.size(), 55.6 );
-	}
-	if ( helixpose.residue(helixpose.size()-1).type().is_alpha_aa() || helixpose.residue(helixpose.size()-1).type().is_beta_aa() ) {
-		helixpose.set_omega(helixpose.size()-1, 180.0);
-	}
-	return;
-}
-
 /// @brief Add Crick parameter information to the Conformation object within the pose.
-/// @details This function updates the bundle_parameters_ object's links to residues within the pose,
-/// and then copies the owning pointer into the pose's Conformation object.  The bundle_parameters_
+/// @details This function updates the calculator's Parameters object's links to residues within the pose,
+/// and then clones the Parameters object into the pose's Conformation object.  The new Parameters
 /// object will be added to a new ParameterSet object in the Conformation object.
 void MakeBundleHelix::add_parameter_info_to_pose( core::pose::Pose &pose )
 {
-	bool const has_tails( tail_residue_name()!="" );
-	core::Size const first_res( pose.size() - helix_length() - ( has_tails ? 2 : 0 ) + 1 );
-	core::Size const last_res( pose.size() - ( has_tails ? 1 : 0 ));
+	core::Size const first_res( pose.size() - helix_length() + 1 );
+	core::Size const last_res( pose.size() );
 
-	BundleParametersOP output_parameters( utility::pointer::dynamic_pointer_cast<BundleParameters>( bundle_parameters_->clone() ) );
+#ifdef NDEBUG
+	parameters::BundleParametersOP output_parameters( utility::pointer::static_pointer_cast< parameters::BundleParameters >( calculator_->parameters_cop()->clone() ) );
+#else
+	parameters::BundleParametersOP output_parameters( utility::pointer::dynamic_pointer_cast< parameters::BundleParameters >( calculator_->parameters_cop()->clone() ) );
+	debug_assert( output_parameters != nullptr );
+#endif
 
 	output_parameters->reset_residue_list();
+	output_parameters->reset_sampling_and_perturbing_info();
 
 	for ( core::Size ir=first_res; ir<=last_res; ++ir ) { //Loop through all of the helix residues.
 		output_parameters->add_residue( pose.conformation().residue_cop( ir ) ); //Add owning pointers to the residue objects.
 	}
 
+	//Create a new ParametersSet object:
+	parameters::BundleParametersSetOP output_parameters_set( utility::pointer::make_shared< BundleParametersSet >() );
+	output_parameters_set->add_parameters( output_parameters );
+
 	//Create a new ParametersSet in the Conformation object:
-	pose.conformation().create_new_parameters_set();
+	pose.conformation().add_parameters_set( output_parameters_set );
+}
 
-	//Add the output_parameters ParametersSet to the new ParametersSet
-	pose.conformation().parameters_set( pose.conformation().n_parameters_sets() )->add_parameters( utility::pointer::dynamic_pointer_cast<Parameters>(output_parameters) );
-
-	return;
+/// @brief Set the minor helix parameters by reading them in from a file.
+///
+void
+MakeBundleHelix::set_minor_helix_params_from_file (
+	std::string const &filename
+) {
+	calculator_->init_from_file(filename);
 }
 
 std::string MakeBundleHelix::get_name() const {

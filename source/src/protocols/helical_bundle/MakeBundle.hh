@@ -25,6 +25,7 @@
 #include <protocols/helical_bundle/parameters/BundleParameters.hh>
 #include <protocols/helical_bundle/parameters/BundleParametersSet.fwd.hh>
 #include <protocols/helical_bundle/parameters/BundleParametersSet.hh>
+#include <protocols/helical_bundle/BundleParametrizationCalculator.fwd.hh>
 #include <core/conformation/parametric/Parameters.fwd.hh>
 #include <core/conformation/parametric/Parameters.hh>
 #include <core/conformation/parametric/ParametersSet.fwd.hh>
@@ -43,7 +44,6 @@
 #include <numeric/xyzVector.hh>
 #include <core/id/AtomID.hh>
 #include <core/conformation/Residue.hh>
-#include <numeric/constants.hh>
 
 #include <set>
 
@@ -92,40 +92,18 @@ public:
 		core::pose::Pose const &
 	) override;
 
-	/// @brief Ensure that an angle value is in radians.
-	/// @details  Checks the use_degrees_ boolean.  If true, converts degrees to radians; if false, returns input value.
-	core::Real convert_angle( core::Real const &val ) const {
-		if ( use_degrees_ ) return (val / 180.0 * numeric::constants::d::pi);
-		return val; //Default case -- don't alter the value.
-	}
+	/// @brief Access the default calculator directly.
+	/// @details Nonconst access is potentially dangerous!  Use with caution!
+	/// @note Used by BundleGridSampler to access the contained MakeBundle mover's calculator directly.
+	inline BundleParametrizationCalculatorOP default_calculator_nonconst() { return default_calculator_; }
 
-	/// @brief Set crick_params_file, set_bondlengths, set_bondangles, and set_dihedrals options for a single helix, based on an input tag.
-	///
-	void set_helix_params_from_tag ( core::Size const helix_index, utility::tag::TagCOP tag );
-
-	/// @brief Set omega1, z1, and delta_omega1 for a single helix, based on an input tag.
-	///
-	void set_minor_helix_params_from_tag( core::Size const helix_index, utility::tag::TagCOP tag );
-
-	/// @brief Set residue_name, invert, and helix_length for a single helix, based on an input tag.
-	///
-	void set_other_helix_params_from_tag( core::Size const helix_index, utility::tag::TagCOP tag );
+	/// @brief Access the default calculator directly.
+	/// @details Const access.
+	inline BundleParametrizationCalculatorCOP default_calculator() const { return utility::pointer::static_pointer_cast< BundleParametrizationCalculator const >( default_calculator_ ); }
 
 	/// @brief Set symmetry and symmetry_copies options based on an input tag.
 	///
 	void set_symmetry_options_from_tag( utility::tag::TagCOP tag );
-
-	/// @brief Set defaults for whether the mover can set bond lengths, bond angles, and dihedrals.
-	///
-	void set_dofs_from_tag( utility::tag::TagCOP tag );
-
-	/// @brief Set the crick_params_file, omega1, and z1 default values from a tag.
-	///
-	void set_minorhelix_defaults_from_tag( utility::tag::TagCOP tag );
-
-	/// @brief Set the residue_name, invert, and helix_length default values based on an input tag.
-	///
-	void set_other_defaults_from_tag( utility::tag::TagCOP tag );
 
 	/// @brief Set whether the input pose should be reset prior to building a helix.
 	///
@@ -136,8 +114,8 @@ public:
 	bool reset_pose() const { return reset_pose_; }
 
 	/// @brief Function to add a helix.
-	/// @details This creates a MakeBundleHelix mover that will be called at apply time.
-	/// The new mover is only initialized if default values are provided by THIS mover.
+	/// @details This creates a MakeBundleHelix mover that will be called at apply time.  Note that this function assumes that default parameter values have been set already.  They
+	/// cannot be set after calling this function.
 	void add_helix();
 
 	/// @brief Non-const access to helix in the bundle.
@@ -176,233 +154,51 @@ public:
 	/// @details See bundle_symmetry_copies_ member variable for details.
 	core::Size symmetry_copies() const { return bundle_symmetry_copies_; }
 
-
-	/// @brief Set the default r0 value (major helix radius)
-	///
-	void set_default_r0(core::Real const &val) { default_r0_=val; default_r0_set_=true; }
-
-	/// @brief Returns true if and only if the default r0 value (major helix radius) has been set
-	///
-	bool default_r0_set() const { return default_r0_set_; }
-
-	/// @brief Returns the default r0 value (major helix radius).
-	///
-	core::Real default_r0() const;
-
-	/// @brief Set the default omega0 value (major helix rise per residue)
-	///
-	void set_default_omega0(core::Real const &val) { default_omega0_=convert_angle(val); default_omega0_set_=true; }
-
-	/// @brief Returns true if and only if the default omega0 value (major helix rise per residue) has been set
-	///
-	bool default_omega0_set() const { return default_omega0_set_; }
-
-	/// @brief Returns the default omega0 value (major helix rise per residue).
-	///
-	core::Real default_omega0() const;
-
-	/// @brief Set the default delta_omega0 value (major helix turn)
-	///
-	void set_default_delta_omega0(core::Real const &val) { default_delta_omega0_=convert_angle(val); default_delta_omega0_set_=true; }
-
-	/// @brief Returns true if and only if the default delta_omega0 value (major helix turn) has been set
-	///
-	bool default_delta_omega0_set() const { return default_delta_omega0_set_; }
-
-	/// @brief Returns the default delta_omega0 value (major helix turn).
-	///
-	core::Real default_delta_omega0() const;
-
 	/// @brief Set the default Crick params file name.
-	///
-	void set_default_crick_params_file(std::string const &input_string) { default_crick_params_file_=input_string; default_crick_params_file_set_=true; }
+	/// @details Triggers a read from disk!
+	void set_default_crick_params_file(std::string const &input_string);
 
-	/// @brief Returns true if and only if the default Crick params file name has been set.
-	///
-	bool default_crick_params_file_set() const { return default_crick_params_file_set_; }
+	/// @brief Initialize the default calculator from the deafult Crick params file.
+	/// @details Triggers a read from disk!
+	void initialize_default_calculator_from_default_crick_params_file();
+
+	/// @brief Set the Crick params file for a particular helix.
+	/// @details Triggers a read from disk!
+	void set_crick_params_file_for_helix( std::string const &filename, core::Size const helix_index );
 
 	/// @brief Returns the default Crick params file name.
 	///
-	std::string default_crick_params_file() const;
-
-	/// @brief Set the default omega1 value (minor helix turn per residue)
-	///
-	void set_default_omega1(core::Real const &val) { default_omega1_=convert_angle(val); default_omega1_set_=true; }
-
-	/// @brief Returns true if and only if the default omega1 value (minor helix turn per residue) has been set
-	///
-	bool default_omega1_set() const { return default_omega1_set_; }
-
-	/// @brief Returns the default omega1 value (minor helix turn per residue).
-	///
-	core::Real default_omega1() const;
-
-	/// @brief Set the default z1 value (minor helix rise per residue)
-	///
-	void set_default_z1(core::Real const &val) { default_z1_=val; default_z1_set_=true; }
-
-	/// @brief Returns true if and only if the default z1 value (minor helix rise per residue) has been set
-	///
-	bool default_z1_set() const { return default_z1_set_; }
-
-	/// @brief Returns the default z1 value (minor helix rise per residue).
-	///
-	core::Real default_z1() const;
-
-	/// @brief Set the default delta_omega1_all value (minor helix rotation)
-	///
-	void set_default_delta_omega1_all(core::Real const &val) { default_delta_omega1_all_=convert_angle(val); default_delta_omega1_all_set_=true; }
-
-	/// @brief Returns true if and only if the default delta_omega1_all value (minor helix rotation) has been set
-	///
-	bool default_delta_omega1_all_set() const { return default_delta_omega1_all_set_; }
-
-	/// @brief Returns the default delta_omega1_all value (minor helix rotation).
-	///
-	core::Real default_delta_omega1_all() const;
+	std::string const & default_crick_params_file() const;
 
 	/// @brief Set the default residue name
 	///
-	void set_default_residue_name(utility::vector1< std::string > const &names) { default_residue_name_=names; default_residue_name_set_=true; }
-
-	/// @brief Returns true if and only if the default residue name has been set
-	///
-	bool default_residue_name_set() const { return default_residue_name_set_; }
+	void set_default_residue_name(utility::vector1< std::string > const &names);
 
 	/// @brief Returns the default residue name for a particular position in the repeating unit.
 	///
-	std::string default_residue_name( core::Size const index_in_repeating_unit ) const;
-
-	/// @brief Set the default repeating unit offset
-	/// @details An offset of 0 means that the first residue of the helix is the first residue of the repeating unit.  An offset
-	/// of 1 means that the first residue of the helix is the second residue of the repeating unit, etc.
-	void set_default_repeating_unit_offset( core::Size const offset ) { default_repeating_unit_offset_=offset; default_repeating_unit_offset_set_=true; }
-
-	/// @brief Returns true if and only if the default repeating unit offset has been set.
-	/// @details An offset of 0 means that the first residue of the helix is the first residue of the repeating unit.  An offset
-	/// of 1 means that the first residue of the helix is the second residue of the repeating unit, etc.
-	bool default_repeating_unit_offset_set() const { return default_repeating_unit_offset_set_; }
-
-	/// @brief Returns the default repeating unit offset value.
-	/// @details An offset of 0 means that the first residue of the helix is the first residue of the repeating unit.  An offset
-	/// of 1 means that the first residue of the helix is the second residue of the repeating unit, etc.
-	core::Size default_repeating_unit_offset() const;
+	std::string const & default_residue_name( core::Size const index_in_repeating_unit ) const;
 
 	/// @brief Returns the default residue name vector.
 	///
-	utility::vector1 < std::string > default_residue_name() const;
+	utility::vector1 < std::string > const & default_residue_name() const;
 
-	/// @brief Set the default delta_t value (residue offset).
-	///
-	void set_default_delta_t(core::Real const &val) { default_delta_t_=val; default_delta_t_set_=true; }
-
-	/// @brief Returns true if and only if the default delta_t value (residue offset) has been set.
-	///
-	bool default_delta_t_set() const { return default_delta_t_set_; }
-
-	/// @brief Returns the default delta_t value (residue offset).
-	///
-	core::Real default_delta_t() const;
-
-	/// @brief Set the default z1_offset value (helix offset along the minor helix axis).
-	///
-	void set_default_z1_offset(core::Real const &val) { default_z1_offset_=val; default_z1_offset_set_=true; }
-
-	/// @brief Returns true if and only if the default z1_offset value (helix offset along the minor helix axis) has been set.
-	///
-	bool default_z1_offset_set() const { return default_z1_offset_set_; }
-
-	/// @brief Returns the default z1_offset value (helix offset along the minor helix axis).
-	///
-	core::Real default_z1_offset() const;
-
-	/// @brief Set the default z0_offset value (helix offset along the major helix axis).
-	///
-	void set_default_z0_offset(core::Real const &val) { default_z0_offset_=val; default_z0_offset_set_=true; }
-
-	/// @brief Returns true if and only if the default z0_offset value (helix offset along the major helix axis) has been set.
-	///
-	bool default_z0_offset_set() const { return default_z0_offset_set_; }
-
-	/// @brief Returns the default z0_offset value (helix offset along the major helix axis).
-	///
-	core::Real default_z0_offset() const;
-
-	/// @brief Set the default epsilon value (bundle lateral squash).
-	///
-	void set_default_epsilon(core::Real const &val) { default_epsilon_=val; default_epsilon_set_=true; }
-
-	/// @brief Returns true if and only if the default epsilon value (bundle lateral squash) has been set.
-	///
-	bool default_epsilon_set() const { return default_epsilon_set_; }
-
-	/// @brief Returns the default epsilon value (bundle lateral squash).
-	///
-	core::Real default_epsilon() const;
-
-	/// @brief Set the default invert value (should the helix be flipped?)
-	///
-	void set_default_invert(bool const &val) { default_invert_=val; default_invert_set_=true; }
-
-	/// @brief Returns true if and only if the default invert value (should the helix be flipped?) has been set
-	///
-	bool default_invert_set() const { return default_invert_set_; }
-
-	/// @brief Returns the default invert value (should the helix be flipped?)
-	///
-	bool default_invert() const;
+	/// @brief Set the residue names for a given helix.
+	void set_residue_name_for_helix( utility::vector1< std::string > const & names, core::Size const helix_index );
 
 	/// @brief Set the default number of residues per helix
 	///
-	void set_default_helix_length(core::Size const &val) { default_helix_length_=val; default_helix_length_set_=true; }
-
-	/// @brief Returns true if and only if the default number of residues per helix has been set
-	///
-	bool default_helix_length_set() const { return default_helix_length_set_; }
+	void set_default_helix_length(core::Size const &val);
 
 	/// @brief Returns the default number of residues per helix.
 	///
 	core::Size default_helix_length() const;
 
-	/// @brief Set the default for whether bond lengths should be set by the mover
-	///
-	void set_default_allow_bondlengths(bool const &val) { default_allow_bondlengths_=val; default_allow_bondlengths_set_=true; }
-
-	/// @brief Returns true if and only if the default for whether bond lengths should be set by the mover has been set
-	///
-	bool default_allow_bondlengths_set() const { return default_allow_bondlengths_set_; }
-
-	/// @brief Returns the default for whether bond lengths should be set by the mover
-	///
-	bool default_allow_bondlengths() const;
-
-	/// @brief Set the default for whether bond lengths should be set by the mover
-	///
-	void set_default_allow_bondangles(bool const &val) { default_allow_bondangles_=val; default_allow_bondangles_set_=true; }
-
-	/// @brief Returns true if and only if the default for whether bond lengths should be set by the mover has been set
-	///
-	bool default_allow_bondangles_set() const { return default_allow_bondangles_set_; }
-
-	/// @brief Returns the default for whether bond lengths should be set by the mover
-	///
-	bool default_allow_bondangles() const;
-
-	/// @brief Set the default for whether bond lengths should be set by the mover
-	///
-	void set_default_allow_dihedrals(bool const &val) { default_allow_dihedrals_=val; default_allow_dihedrals_set_=true; }
-
-	/// @brief Returns true if and only if the default for whether bond lengths should be set by the mover has been set
-	///
-	bool default_allow_dihedrals_set() const { return default_allow_dihedrals_set_; }
-
-	/// @brief Returns the default for whether bond lengths should be set by the mover
-	///
-	bool default_allow_dihedrals() const;
+	/// @brief Set the helix length, in residues, for the Nth helix.
+	void set_helix_length_for_helix( core::Size const helix_length, core::Size const helix_index );
 
 	/// @brief Set whether we're using degrees (true) or radians (false).
 	///
-	void set_use_degrees( bool const val=true ) { use_degrees_=val; return; }
+	void set_use_degrees( bool const val=true );
 
 	/// @brief Get whether we're using degrees (true) or radians (false).
 	///
@@ -436,6 +232,11 @@ private:
 	/// @details Default true.
 	bool reset_pose_;
 
+	/// @brief The BundleParameterizationCalculator object that will be used for setting up default parameters.
+	/// @details This object gets cloned by each of the make_bundle_helix_movers_, and they use it as the intial (default) state before
+	/// setting up their own parameters.
+	BundleParametrizationCalculatorOP default_calculator_;
+
 	/// @brief A vector of owning pointers to the individual MakeBundleHelix movers that will make each of
 	/// the helices in the bundle
 	utility::vector1 < protocols::helical_bundle::MakeBundleHelixOP > make_bundle_helix_movers_;
@@ -452,122 +253,15 @@ private:
 	/// first 4 symmetry repeats would be generated.
 	core::Size bundle_symmetry_copies_;
 
-
 	/// DEFAULTS: Default values for helix parameters if no other values are set:
-
-	/// @brief Default r0 value (major helix radius)
-	///
-	core::Real default_r0_;
-
-	/// @brief Has the default r0 value (major helix radius) been specified?
-	///
-	bool default_r0_set_;
-
-	/// @brief Default omega0 value (turn per residue of major helix)
-	///
-	core::Real default_omega0_;
-
-	/// @brief Has the default omega0 value (turn per residue of major helix) been specified?
-	///
-	bool default_omega0_set_;
-
-	/// @brief Default delta_omega0 value (rotation of major helix)
-	///
-	core::Real default_delta_omega0_;
-
-	/// @brief Has the default delta_omega0 value (rotation of major helix) been specified?
-	///
-	bool default_delta_omega0_set_;
 
 	/// @brief Default Crick params file name
 	///
 	std::string default_crick_params_file_;
 
-	/// @brief Has the default Crick params file name been set?
-	///
-	bool default_crick_params_file_set_;
-
-	/// @brief Default omega1 value (minor helix turn per residue)
-	///
-	core::Real default_omega1_;
-
-	/// @brief Has the default omega1 value (minor helix turn per residue) been specified?
-	///
-	bool default_omega1_set_;
-
-	/// @brief Default z1 value (minor helix rise per residue)
-	///
-	core::Real default_z1_;
-
-	/// @brief Has the default z1 value (minor helix rise per residue) been specified?
-	///
-	bool default_z1_set_;
-
-	/// @brief Default delta_omega1_all value (minor helix rotation)
-	///
-	core::Real default_delta_omega1_all_;
-
-	/// @brief Has the default z1 value (minor helix rotation) been specified?
-	///
-	bool default_delta_omega1_all_set_;
-
 	/// @brief Default residue name
 	///
 	utility::vector1< std::string > default_residue_name_;
-
-	/// @brief Has the default residue name been specified?
-	///
-	bool default_residue_name_set_;
-
-	/// @brief Default repeating unit offset
-	/// @details An offset of 0 means that the first residue of the helix is the first residue of the repeating unit.  An offset
-	/// of 1 means that the first residue of the helix is the second residue of the repeating unit, etc.
-	core::Size default_repeating_unit_offset_;
-
-	/// @brief Has the default repeating unit offset been specified?
-	/// @details An offset of 0 means that the first residue of the helix is the first residue of the repeating unit.  An offset
-	/// of 1 means that the first residue of the helix is the second residue of the repeating unit, etc.
-	bool default_repeating_unit_offset_set_;
-
-	/// @brief Default delta_t value (residue offset)
-	///
-	core::Real default_delta_t_;
-
-	/// @brief Has the default delta_t value (residue offset) been specified?
-	///
-	bool default_delta_t_set_;
-
-	/// @brief Default z1_offset value (helix offset along the minor helix axis)
-	///
-	core::Real default_z1_offset_;
-
-	/// @brief Has the default z1_offset value (helix offset along the minor helix axis) been specified?
-	///
-	core::Real default_z1_offset_set_;
-
-	/// @brief Default z0_offset value (helix offset along the major helix axis)
-	///
-	core::Real default_z0_offset_;
-
-	/// @brief Has the default z0_offset value (helix offset along the major helix axis) been specified?
-	///
-	core::Real default_z0_offset_set_;
-
-	/// @brief Default epsilon value (bundle lateral squish).
-	///
-	core::Real default_epsilon_;
-
-	/// @brief Has the default epsilon value (bundle lateral squish) been specified?
-	///
-	core::Real default_epsilon_set_;
-
-	/// @brief Default invert value (should the helix be flipped?)
-	///
-	bool default_invert_;
-
-	/// @brief Has the default invert value been specified?
-	///
-	bool default_invert_set_;
 
 	/// @brief Default number of residues in the helix.
 	///
@@ -577,30 +271,6 @@ private:
 	///
 	bool default_helix_length_set_;
 
-	/// @brief Default allow_bondlengths value (should the mover be allowed to set bond lengths?)
-	///
-	bool default_allow_bondlengths_;
-
-	/// @brief Has the allow_bondlengths value been specified?
-	///
-	bool default_allow_bondlengths_set_;
-
-	/// @brief Default allow_bondangles value (should the mover be allowed to set bond lengths?)
-	///
-	bool default_allow_bondangles_;
-
-	/// @brief Has the allow_bondangles value been specified?
-	///
-	bool default_allow_bondangles_set_;
-
-	/// @brief Default allow_dihedrals value (should the mover be allowed to set bond lengths?)
-	///
-	bool default_allow_dihedrals_;
-
-	/// @brief Has the allow_dihedrals value been specified?
-	///
-	bool default_allow_dihedrals_set_;
-
 	/// @brief Are we using degrees (true) or radians (false)?  Default radians (false).
 	///
 	bool use_degrees_;
@@ -608,6 +278,12 @@ private:
 	/// @brief Did the last apply fail?
 	///
 	bool last_apply_failed_;
+
+	/// @brief Have the default parameter values been set?
+	/// @details If true, they cannot be set again.  Note that once a helix is added, defaults_set_ becomes true.  This ensures a sensible order of
+	/// operations when calling the MakeBundle mover from code, where configuration is not necessarily happening in the order specified in the
+	/// parse_my_tag() function.
+	bool defaults_set_;
 
 	////////////////////////////////////////////////////////////////////////////////
 	//          PRIVATE FUNCTIONS                                                 //

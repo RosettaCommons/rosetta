@@ -176,22 +176,6 @@ void BundleGridSamplerHelper::increment_cur_indices( core::Size const index_to_i
 	return;
 }
 
-/// @brief Return the name of a DoF type given its enum.
-///
-std::string BundleGridSamplerHelper::DoF_name( DoFType const &type ) const
-{
-	if ( type == bgsh_r0 ) return "r0";
-	else if ( type == bgsh_omega0 ) return "omega0";
-	else if ( type == bgsh_delta_omega0 ) return "delta_omega0";
-	else if ( type == bgsh_delta_omega1 ) return "delta_omega1";
-	else if ( type == bgsh_delta_t ) return "delta_t";
-	else if ( type == bgsh_z1_offset ) return "z1_offset";
-	else if ( type == bgsh_z0_offset ) return "z0_offset";
-	else if ( type == bgsh_epsilon ) return "epsilon";
-
-	return "UNKNOWN";
-}
-
 } // namespace helical_bundle
 } // namespace protocols
 

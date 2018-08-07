@@ -18,16 +18,21 @@
 
 // helical_bundle headers:
 #include <protocols/helical_bundle/MakeBundle.hh>
+#include <protocols/helical_bundle/MakeBundleHelix.hh>
 #include <protocols/helical_bundle/parameters/BundleParameters.fwd.hh>
 #include <protocols/helical_bundle/parameters/BundleParametersSet.fwd.hh>
 #include <protocols/helical_bundle/parameters/BundleParameters.hh>
 #include <protocols/helical_bundle/parameters/BundleParametersSet.hh>
+#include <protocols/helical_bundle/BundleParametrizationCalculator.hh>
+#include <core/conformation/parametric/RealValuedParameter.hh>
+#include <core/conformation/parametric/BooleanValuedParameter.hh>
 
 // Other Rosetta libraries:
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
+#include <numeric/angle.functions.hh>
 
 #include <basic/Tracer.hh>
 
@@ -77,14 +82,14 @@ public:
 		//Set parameters for the two helices:
 		TR <<  "Defining two helices.  (There will be four total, with two-fold symmetry)." << std::endl;
 		TR << "Helix1 r0=5.0 omega0=0.05 delta_omega0=0.1 invert=false(default)"  << std::endl;
-		makebundle->helix(1)->set_r0(5.0);
-		makebundle->helix(1)->set_omega0(0.05);
-		makebundle->helix(1)->set_delta_omega0(0.1);
+		makebundle->helix(1)->calculator_op()->real_parameter( protocols::helical_bundle::BPC_r0 )->set_value( 5.0 );
+		makebundle->helix(1)->calculator_op()->real_parameter( protocols::helical_bundle::BPC_omega0 )->set_value( 0.05 );
+		makebundle->helix(1)->calculator_op()->real_parameter( protocols::helical_bundle::BPC_delta_omega0 )->set_value( 0.1 );
 		TR << "Helix2 r0=6.5 omega0=0.03 delta_omega0=1.5 invert=true" << std::endl;
-		makebundle->helix(2)->set_r0(6.5);
-		makebundle->helix(2)->set_omega0(0.03);
-		makebundle->helix(2)->set_delta_omega0(1.5);
-		makebundle->helix(2)->set_invert_helix(true);
+		makebundle->helix(2)->calculator_op()->real_parameter( protocols::helical_bundle::BPC_r0 )->set_value( 6.5);
+		makebundle->helix(2)->calculator_op()->real_parameter( protocols::helical_bundle::BPC_omega0 )->set_value( 0.03 );
+		makebundle->helix(2)->calculator_op()->real_parameter( protocols::helical_bundle::BPC_delta_omega0 )->set_value( 1.5 );
+		makebundle->helix(2)->calculator_op()->boolean_parameter( protocols::helical_bundle::BPC_invert_helix )->set_value( true );
 
 		//Apply the mover:
 		makebundle->apply(*testpose_);
@@ -96,22 +101,22 @@ public:
 		for ( core::Size i=1; i<=4; ++i ) {
 			BundleParametersOP h1params( utility::pointer::dynamic_pointer_cast<BundleParameters>( testpose_->conformation().parameters_set(1)->parameters(i) ) );
 			TS_ASSERT(h1params);
-			core::Real r0_1(h1params->r0());
-			core::Real omega0_1(h1params->omega0());
-			core::Real delta_omega0_1(h1params->delta_omega0());
-			bool invert_1(h1params->invert_helix());
+			core::Real r0_1( utility::pointer::dynamic_pointer_cast< core::conformation::parametric::RealValuedParameter const>( h1params->parameter_cop( BPC_r0 ) )->value() );
+			core::Real omega0_1( utility::pointer::dynamic_pointer_cast< core::conformation::parametric::RealValuedParameter const>( h1params->parameter_cop( BPC_omega0 ) )->value() );
+			core::Real delta_omega0_1( utility::pointer::dynamic_pointer_cast< core::conformation::parametric::RealValuedParameter const>( h1params->parameter_cop( BPC_delta_omega0 ) )->value() );
+			bool invert_1( utility::pointer::dynamic_pointer_cast< core::conformation::parametric::BooleanValuedParameter const>( h1params->parameter_cop( BPC_invert_helix ) )->value() );
 			sprintf(outbuffer, "helix %lu: r0=%.4f omega0=%.4f delta_omega0=%.4f invert=%s", i, r0_1, omega0_1, delta_omega0_1, (std::string( invert_1 ? "true" : "false" )).c_str() );
 			TR << outbuffer << std::endl;
 
 			if ( i==1 || i==3 ) {
 				TS_ASSERT_DELTA( r0_1, 5.0, 1e-5  );
 				TS_ASSERT_DELTA( omega0_1, 0.05, 1e-5  );
-				TS_ASSERT_DELTA( delta_omega0_1, 0.1 + (i==3 ? 3.141592654 : 0), 1e-5  );
+				TS_ASSERT_DELTA( delta_omega0_1, numeric::principal_angle_radians( 0.1 + (i==3 ? 3.141592654 : 0) ), 1e-5  );
 				TS_ASSERT( invert_1 == false );
 			} else {
 				TS_ASSERT_DELTA( r0_1, 6.5, 1e-5  );
 				TS_ASSERT_DELTA( omega0_1, 0.03, 1e-5  );
-				TS_ASSERT_DELTA( delta_omega0_1, 1.5 + (i==4 ? 3.141592654 : 0), 1e-5  );
+				TS_ASSERT_DELTA( delta_omega0_1, numeric::principal_angle_radians( 1.5 + (i==4 ? 3.141592654 : 0) ), 1e-5  );
 				TS_ASSERT( invert_1 == true );
 			}
 
@@ -150,14 +155,14 @@ public:
 		//Set parameters for the two helices:
 		TR << "Defining two helices.  (There will be four total, with two-fold symmetry)." << std::endl;
 		TR << "Helix1 r0=5.0 omega0=0.05 delta_omega0=0.1 invert=false(default)" << std::endl;
-		makebundle->helix(1)->set_r0(5.0);
-		makebundle->helix(1)->set_omega0(0.05);
-		makebundle->helix(1)->set_delta_omega0(0.1);
+		makebundle->helix(1)->calculator_op()->real_parameter( protocols::helical_bundle::BPC_r0 )->set_value( 5.0 );
+		makebundle->helix(1)->calculator_op()->real_parameter( protocols::helical_bundle::BPC_omega0 )->set_value( 0.05 );
+		makebundle->helix(1)->calculator_op()->real_parameter( protocols::helical_bundle::BPC_delta_omega0 )->set_value( 0.1 );
 		TR << "Helix2 r0=6.5 omega0=0.03 delta_omega0=1.5 invert=true" << std::endl;
-		makebundle->helix(2)->set_r0(6.5);
-		makebundle->helix(2)->set_omega0(0.03);
-		makebundle->helix(2)->set_delta_omega0(1.5);
-		makebundle->helix(2)->set_invert_helix(true);
+		makebundle->helix(2)->calculator_op()->real_parameter( protocols::helical_bundle::BPC_r0 )->set_value( 6.5 );
+		makebundle->helix(2)->calculator_op()->real_parameter( protocols::helical_bundle::BPC_omega0 )->set_value( 0.03 );
+		makebundle->helix(2)->calculator_op()->real_parameter( protocols::helical_bundle::BPC_delta_omega0 )->set_value( 1.5 );
+		makebundle->helix(2)->calculator_op()->boolean_parameter( protocols::helical_bundle::BPC_invert_helix )->set_value( true );
 		makebundle->helix(2)->set_helix_length(12);
 
 		//Apply the mover:
@@ -229,16 +234,16 @@ public:
 		TR << "Defining two helices.  (There will be four total, with two-fold symmetry)." << std::endl;
 		TR << "Helix1 r0=5.0 omega0=0.05 delta_omega0=0.1 z1_offset=0.2 invert=false(default)" << std::endl;
 
-		makebundle->helix(1)->set_r0(5.0);
-		makebundle->helix(1)->set_omega0(0.05);
-		makebundle->helix(1)->set_delta_omega0(0.1);
-		makebundle->helix(1)->set_z1_offset(0.2);
+		makebundle->helix(1)->calculator_op()->real_parameter( protocols::helical_bundle::BPC_r0 )->set_value( 5.0 );
+		makebundle->helix(1)->calculator_op()->real_parameter( protocols::helical_bundle::BPC_omega0 )->set_value( 0.05 );
+		makebundle->helix(1)->calculator_op()->real_parameter( protocols::helical_bundle::BPC_delta_omega0 )->set_value( 0.1 );
+		makebundle->helix(1)->calculator_op()->real_parameter( protocols::helical_bundle::BPC_z1_offset )->set_value( 0.2 );
 		TR << "Helix2 r0=6.5 omega0=0.03 delta_omega0=1.5 z0_offset=-0.2 invert=true" << std::endl;
-		makebundle->helix(2)->set_r0(6.5);
-		makebundle->helix(2)->set_omega0(0.03);
-		makebundle->helix(2)->set_delta_omega0(1.5);
-		makebundle->helix(2)->set_invert_helix(true);
-		makebundle->helix(2)->set_z0_offset(-0.2);
+		makebundle->helix(2)->calculator_op()->real_parameter( protocols::helical_bundle::BPC_r0 )->set_value( 6.5 );
+		makebundle->helix(2)->calculator_op()->real_parameter( protocols::helical_bundle::BPC_omega0 )->set_value( 0.03 );
+		makebundle->helix(2)->calculator_op()->real_parameter( protocols::helical_bundle::BPC_delta_omega0 )->set_value( 1.5 );
+		makebundle->helix(2)->calculator_op()->boolean_parameter( protocols::helical_bundle::BPC_invert_helix )->set_value( true );
+		makebundle->helix(2)->calculator_op()->real_parameter( protocols::helical_bundle::BPC_z0_offset )->set_value( -0.2 );
 
 		//Apply the mover:
 		makebundle->apply(*testpose_);
@@ -254,27 +259,27 @@ public:
 
 		for ( core::Size i=1; i<=4; ++i ) {
 			BundleParametersOP h1params( utility::pointer::dynamic_pointer_cast<BundleParameters>( poseclone->conformation().parameters_set(1)->parameters(i) ) );
-			TS_ASSERT(h1params);
-			core::Real r0_1(h1params->r0());
-			core::Real omega0_1(h1params->omega0());
-			core::Real delta_omega0_1(h1params->delta_omega0());
-			core::Real z1_off( h1params->z1_offset() );
-			core::Real z0_off( h1params->z0_offset() );
-			bool invert_1(h1params->invert_helix());
+			TS_ASSERT( h1params!=nullptr );
+			core::Real r0_1( utility::pointer::dynamic_pointer_cast< core::conformation::parametric::RealValuedParameter const>( h1params->parameter_cop( BPC_r0 ) )->value() );
+			core::Real omega0_1( utility::pointer::dynamic_pointer_cast< core::conformation::parametric::RealValuedParameter const>( h1params->parameter_cop( BPC_omega0 ) )->value() );
+			core::Real delta_omega0_1( utility::pointer::dynamic_pointer_cast< core::conformation::parametric::RealValuedParameter const>( h1params->parameter_cop( BPC_delta_omega0 ) )->value() );
+			core::Real z1_off( utility::pointer::dynamic_pointer_cast< core::conformation::parametric::RealValuedParameter const>( h1params->parameter_cop( BPC_z1_offset ) )->value() );
+			core::Real z0_off( utility::pointer::dynamic_pointer_cast< core::conformation::parametric::RealValuedParameter const>( h1params->parameter_cop( BPC_z0_offset ) )->value() );
+			bool invert_1( utility::pointer::dynamic_pointer_cast< core::conformation::parametric::BooleanValuedParameter const>( h1params->parameter_cop( BPC_invert_helix ) )->value() );
 			sprintf(outbuffer, "helix %lu: r0=%.4f omega0=%.4f delta_omega0=%.4f invert=%s z1_offset=%.4f z0_offset=%.4f", i, r0_1, omega0_1, delta_omega0_1, (std::string( invert_1 ? "true" : "false" )).c_str(), z1_off, z0_off );
 			TR << outbuffer << std::endl;
 
 			if ( i==1 || i==3 ) {
 				TS_ASSERT_DELTA( r0_1, 5.0, 1e-5  );
 				TS_ASSERT_DELTA( omega0_1, 0.05, 1e-5  );
-				TS_ASSERT_DELTA( delta_omega0_1, 0.1 + (i==3 ? 3.141592654 : 0), 1e-5  );
+				TS_ASSERT_DELTA( delta_omega0_1, numeric::principal_angle_radians( 0.1 + (i==3 ? 3.141592654 : 0) ), 1e-5  );
 				TS_ASSERT( invert_1 == false );
 				TS_ASSERT_DELTA( z1_off, 0.2, 1e-5 );
 				TS_ASSERT_DELTA( z0_off, 0, 1e-5 );
 			} else {
 				TS_ASSERT_DELTA( r0_1, 6.5, 1e-5  );
 				TS_ASSERT_DELTA( omega0_1, 0.03, 1e-5  );
-				TS_ASSERT_DELTA( delta_omega0_1, 1.5 + (i==4 ? 3.141592654 : 0), 1e-5  );
+				TS_ASSERT_DELTA( delta_omega0_1, numeric::principal_angle_radians( 1.5 + (i==4 ? 3.141592654 : 0) ), 1e-5  );
 				TS_ASSERT( invert_1 == true );
 				TS_ASSERT_DELTA( z1_off, 0, 1e-5 );
 				TS_ASSERT_DELTA( z0_off, -0.2, 1e-5 );
@@ -294,13 +299,13 @@ public:
 
 		for ( core::Size i=1; i<=4; ++i ) {
 			BundleParametersOP h1params( utility::pointer::dynamic_pointer_cast<BundleParameters>( posecopy.conformation().parameters_set(1)->parameters(i) ) );
-			TS_ASSERT(h1params);
-			core::Real r0_1(h1params->r0());
-			core::Real omega0_1(h1params->omega0());
-			core::Real delta_omega0_1(h1params->delta_omega0());
-			core::Real z1_off( h1params->z1_offset() );
-			core::Real z0_off( h1params->z0_offset() );
-			bool invert_1(h1params->invert_helix());
+			TS_ASSERT( h1params!=nullptr );
+			core::Real r0_1( utility::pointer::dynamic_pointer_cast< core::conformation::parametric::RealValuedParameter const>( h1params->parameter_cop( BPC_r0 ) )->value() );
+			core::Real omega0_1( utility::pointer::dynamic_pointer_cast< core::conformation::parametric::RealValuedParameter const>( h1params->parameter_cop( BPC_omega0 ) )->value() );
+			core::Real delta_omega0_1( utility::pointer::dynamic_pointer_cast< core::conformation::parametric::RealValuedParameter const>( h1params->parameter_cop( BPC_delta_omega0 ) )->value() );
+			core::Real z1_off( utility::pointer::dynamic_pointer_cast< core::conformation::parametric::RealValuedParameter const>( h1params->parameter_cop( BPC_z1_offset ) )->value() );
+			core::Real z0_off( utility::pointer::dynamic_pointer_cast< core::conformation::parametric::RealValuedParameter const>( h1params->parameter_cop( BPC_z0_offset ) )->value() );
+			bool invert_1( utility::pointer::dynamic_pointer_cast< core::conformation::parametric::BooleanValuedParameter const>( h1params->parameter_cop( BPC_invert_helix ) )->value() );
 			sprintf(outbuffer, "helix %lu: r0=%.4f omega0=%.4f delta_omega0=%.4f invert=%s z1_offset=%.4f z0_offset=%.4f", i, r0_1, omega0_1, delta_omega0_1, (std::string( invert_1 ? "true" : "false" )).c_str(), z1_off, z0_off );
 			TR << outbuffer << std::endl;
 
@@ -308,14 +313,14 @@ public:
 			if ( i==1 || i==3 ) {
 				TS_ASSERT_DELTA( r0_1, 5.0, 1e-5  );
 				TS_ASSERT_DELTA( omega0_1, 0.05, 1e-5  );
-				TS_ASSERT_DELTA( delta_omega0_1, 0.1 + (i==3 ? 3.141592654 : 0), 1e-5  );
+				TS_ASSERT_DELTA( delta_omega0_1, numeric::principal_angle_radians( 0.1 + (i==3 ? 3.141592654 : 0) ), 1e-5  );
 				TS_ASSERT( invert_1 == false );
 				TS_ASSERT_DELTA( z1_off, 0.2, 1e-5 );
 				TS_ASSERT_DELTA( z0_off, 0, 1e-5 );
 			} else {
 				TS_ASSERT_DELTA( r0_1, 6.5, 1e-5  );
 				TS_ASSERT_DELTA( omega0_1, 0.03, 1e-5  );
-				TS_ASSERT_DELTA( delta_omega0_1, 1.5 + (i==4 ? 3.141592654 : 0), 1e-5  );
+				TS_ASSERT_DELTA( delta_omega0_1, numeric::principal_angle_radians( 1.5 + (i==4 ? 3.141592654 : 0) ), 1e-5  );
 				TS_ASSERT( invert_1 == true );
 				TS_ASSERT_DELTA( z1_off, 0, 1e-5 );
 				TS_ASSERT_DELTA( z0_off, -0.2, 1e-5 );
@@ -336,27 +341,27 @@ public:
 
 		for ( core::Size i=1; i<=4; ++i ) {
 			BundleParametersOP h1params( utility::pointer::dynamic_pointer_cast<BundleParameters>( posecopy2.conformation().parameters_set(1)->parameters(i) ) );
-			TS_ASSERT(h1params);
-			core::Real r0_1(h1params->r0());
-			core::Real omega0_1(h1params->omega0());
-			core::Real delta_omega0_1(h1params->delta_omega0());
-			bool invert_1(h1params->invert_helix());
-			core::Real z1_off( h1params->z1_offset() );
-			core::Real z0_off( h1params->z0_offset() );
+			TS_ASSERT(h1params!=nullptr);
+			core::Real r0_1( utility::pointer::dynamic_pointer_cast< core::conformation::parametric::RealValuedParameter const>( h1params->parameter_cop( BPC_r0 ) )->value() );
+			core::Real omega0_1( utility::pointer::dynamic_pointer_cast< core::conformation::parametric::RealValuedParameter const>( h1params->parameter_cop( BPC_omega0 ) )->value() );
+			core::Real delta_omega0_1( utility::pointer::dynamic_pointer_cast< core::conformation::parametric::RealValuedParameter const>( h1params->parameter_cop( BPC_delta_omega0 ) )->value() );
+			core::Real z1_off( utility::pointer::dynamic_pointer_cast< core::conformation::parametric::RealValuedParameter const>( h1params->parameter_cop( BPC_z1_offset ) )->value() );
+			core::Real z0_off( utility::pointer::dynamic_pointer_cast< core::conformation::parametric::RealValuedParameter const>( h1params->parameter_cop( BPC_z0_offset ) )->value() );
+			bool invert_1( utility::pointer::dynamic_pointer_cast< core::conformation::parametric::BooleanValuedParameter const>( h1params->parameter_cop( BPC_invert_helix ) )->value() );
 			sprintf(outbuffer, "helix %lu: r0=%.4f omega0=%.4f delta_omega0=%.4f invert=%s z1_offset=%.4f z0_offset=%.4f", i, r0_1, omega0_1, delta_omega0_1, (std::string( invert_1 ? "true" : "false" )).c_str(), z1_off, z0_off );
 			TR << outbuffer << std::endl;
 
 			if ( i==1 || i==3 ) {
 				TS_ASSERT_DELTA( r0_1, 5.0, 1e-5  );
 				TS_ASSERT_DELTA( omega0_1, 0.05, 1e-5  );
-				TS_ASSERT_DELTA( delta_omega0_1, 0.1 + (i==3 ? 3.141592654 : 0), 1e-5  );
+				TS_ASSERT_DELTA( delta_omega0_1, numeric::principal_angle_radians( 0.1 + (i==3 ? 3.141592654 : 0) ), 1e-5  );
 				TS_ASSERT( invert_1 == false );
 				TS_ASSERT_DELTA( z1_off, 0.2, 1e-5 );
 				TS_ASSERT_DELTA( z0_off, 0, 1e-5 );
 			} else {
 				TS_ASSERT_DELTA( r0_1, 6.5, 1e-5  );
 				TS_ASSERT_DELTA( omega0_1, 0.03, 1e-5  );
-				TS_ASSERT_DELTA( delta_omega0_1, 1.5 + (i==4 ? 3.141592654 : 0), 1e-5  );
+				TS_ASSERT_DELTA( delta_omega0_1, numeric::principal_angle_radians( 1.5 + (i==4 ? 3.141592654 : 0) ), 1e-5  );
 				TS_ASSERT( invert_1 == true );
 				TS_ASSERT_DELTA( z1_off, 0, 1e-5 );
 				TS_ASSERT_DELTA( z0_off, -0.2, 1e-5 );

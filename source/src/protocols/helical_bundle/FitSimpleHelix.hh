@@ -23,8 +23,6 @@
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
-#include <protocols/filters/ContingentFilter.fwd.hh>
-#include <protocols/filters/ContingentFilter.hh>
 
 // Project Headers
 #include <utility/vector1.hh>

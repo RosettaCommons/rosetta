@@ -28,6 +28,9 @@
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/select/residue_selector/LayerSelector.fwd.hh>
 
+//Rosetta protocols headers
+#include <protocols/helical_bundle/PerturbBundle.fwd.hh>
+
 //Rosetta ui headres
 #include <ui/ui_protocols/helical_bundle/HelicalBundlePoseDrawOpenGLWidget.fwd.h>
 
@@ -173,6 +176,9 @@ private: //DATA:
 
 	/// @brief A widget to draw the pose.
 	ui::ui_protocols::helical_bundle::HelicalBundlePoseDrawOpenGLWidget* pose_draw_widget_;
+
+	/// @brief A PerturbBundle mover, which we'll recycle.
+	protocols::helical_bundle::PerturbBundleOP perturb_bundle_;
 
 };
 

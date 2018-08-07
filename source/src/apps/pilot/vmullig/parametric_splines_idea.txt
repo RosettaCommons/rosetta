@@ -1,0 +1,17 @@
+Some notes on the idea of generalizing the Crick parametrization to use arbitrary cubic or Catmull-Rom splines:
+
+-- The spline, by default, is a function f(t)->(x, y, z).  A tangent function g(t)->(x_tan, y_tan, z_tan) is also easily calculated.
+-- The spline is *not*, by default, parametrized such that the chord length is constant.  That is, as t changes at a regular rate, the position along the spline can change at any rate.  However, d(arclength)/dt can be calculated.
+-- We will need a way to avoid the two "telephone cord" effects:
+	-- First, when points move apart, the spacing of the helix should not widen; instead, the helix should "slide" to preserve a constant rise per turn.  This can be accomplished by building the helix as follows:
+		-- Place the first residue with the central atom at t0=0.
+		-- Compute dt/d(arclength).  We'll make the approximation that from t=0 to t=1, this is approximately constant.
+		-- For z-offset atoms, use f( t'=t+(zoffset*dt/d(arclength)) ).  This is slightly more accurate than the current status quo, which is to offset by zoffset along the tanget vector.
+		-- For residue i+1, use t_i+1 =  t_i + dt/d(arclength).
+	-- Second, when the path has a superhelical twist, we want to avoid overtwisting or undertwisting of the helix.  I THINK that this can be accomplished most simply as follows:
+		-- For each residue, we need a reference vector that points in an arbitrary direction perpendicular to the tangent of the path, such that each subsequent residue's reference vector deviates minimally from the previous one.  This is used to construct a second vector that spirals around the path to make the minor helix (which we'll call the helix vector).
+		-- I *think* that minimum deviation is best accomplished by (a) picking an arbitrary reference vector perpendicular to the major path for residue 1, (b) constructing reference vector i+1 as the projection of reference vector i onto the plane perpendicular to tangent i+1, and (c) interpolating between these (linearly or by Catmull-Rom interpolation).
+		-- For omega1-offest atoms, the omega1 offset (if i is the residue index) is (i*twist_per_residue + omega1_offset), and is measured from the reference vector.
+		-- So given f(t)=(x,y,z), the position of atom j of residue i is f( t' = t+(zoffset_j*dt/d(arclength)_i ) + radius_j*rot_about_normal( interpolated_reference_vector_i,j, i*twist_per_residue + omega1_offset_j ).
+
+-- I'll want a class for the major path that provides functions that map t->(x,y,z), t->(x_tan, y_tan, z_tan), and t->(dt/d(arclength)).

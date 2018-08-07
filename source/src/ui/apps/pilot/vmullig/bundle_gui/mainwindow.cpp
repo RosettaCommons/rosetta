@@ -36,6 +36,8 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/operation/OperateOnResidueSubset.hh>
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>
+#include <core/conformation/parametric/RealValuedParameter.hh>
+#include <core/conformation/parametric/BooleanValuedParameter.hh>
 #include <core/chemical/AA.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/import_pose/import_pose.hh>
@@ -43,14 +45,19 @@
 //Rosetta protocols headers
 #include <protocols/helical_bundle/MakeBundle.hh>
 #include <protocols/helical_bundle/PerturbBundle.hh>
-#include <protocols/helical_bundle/PerturbBundleOptions.hh>
 #include <protocols/helical_bundle/MakeBundleHelix.hh>
+#include <protocols/helical_bundle/parameters/OmegaBundleParameter.hh>
+#include <protocols/helical_bundle/BundleParametrizationCalculator.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>
+
+//Rosetta utility headers
+#include <utility/pointer/memory.hh>
 
 //Rosetta ui headers
 #include <ui/ui_protocols/helical_bundle/HelicalBundleDialogueWidget.h>
 #include <ui/ui_protocols/helical_bundle/HelicalBundlePoseDrawOpenGLWidget.h>
+#include <ui/ui_protocols/helical_bundle/HelixOptionWidget.h>
 
 //C++ headers
 #include <sstream>
@@ -68,7 +75,8 @@ MainWindow::MainWindow(QWidget *parent) :
 	need_to_update_pose_(false),
 	need_to_rebuild_pose_(false),
 	timer_(new QTimer),
-	pose_draw_widget_( new ui::ui_protocols::helical_bundle::HelicalBundlePoseDrawOpenGLWidget(this) )
+	pose_draw_widget_( new ui::ui_protocols::helical_bundle::HelicalBundlePoseDrawOpenGLWidget(this) ),
+	perturb_bundle_( utility::pointer::make_shared< protocols::helical_bundle::PerturbBundle >() )
 {
 
     ui->setupUi(this);
@@ -108,11 +116,19 @@ MainWindow::~MainWindow()
 /// @brief Use the BundleGridSampler to update the pose.
 void
 MainWindow::update_pose() {
-	protocols::helical_bundle::PerturbBundle pertbundle;
-	pertbundle.set_use_degrees(true);
+	using namespace protocols::helical_bundle;
+
+	PerturbBundle & pertbundle( *perturb_bundle_ );
+	BundleParametrizationCalculatorOP pertbundle_calculator( pertbundle.default_calculator() );
+
+	bool const helix_count_changed( pertbundle.n_helices() != static_cast<core::Size>(ui->tabWidget->count()) );
+
+	if( helix_count_changed ) {
+		pertbundle_calculator->set_use_degrees(true);
+		pertbundle.reset_helices();
+	}
 
 	core::Size nhelices(0);
-	utility::vector1< ui::ui_protocols::helical_bundle::HelicalBundleDialogueWidget* > previous_widgets;
 
 	for(core::Size i(0), imax(ui->tabWidget->count()); i<imax; ++i) {
 		QScrollArea* curscrollarea(  dynamic_cast< QScrollArea* >( ui->tabWidget->widget(i) ) );
@@ -124,36 +140,32 @@ MainWindow::update_pose() {
 		++nhelices;
 		debug_assert(curwidget.helix_index() == nhelices); //Should be true
 
-		pertbundle.add_helix(nhelices);
+		protocols::helical_bundle::BundleParametrizationCalculator & curhelix_calculator( *(helix_count_changed ? pertbundle.add_helix(nhelices) : pertbundle.individual_helix_calculator( i+1 )) );
+		for( core::Size iparam(1); iparam<=static_cast<core::Size>( BPC_last_parameter_to_be_sampled ); ++iparam ) {
+			core::conformation::parametric::RealValuedParameterOP curparam_op( curhelix_calculator.real_parameter( iparam ) );
+			if( curparam_op == nullptr ) continue;
+			core::conformation::parametric::RealValuedParameter & curparam( *curparam_op );
+			if( iparam == static_cast< core::Size >( BPC_omega0 ) && curwidget.omega0_pitchcopy_helix() != 0  ) {
+#ifdef NDEBUG
+				protocols::helical_bundle::parameters::OmegaBundleParameterOP curparam_omega_op( utility::pointer::static_pointer_cast< protocols::helical_bundle::parameters::OmegaBundleParameter >( curparam_op ) );
+#else
+				protocols::helical_bundle::parameters::OmegaBundleParameterOP curparam_omega_op( utility::pointer::dynamic_pointer_cast< protocols::helical_bundle::parameters::OmegaBundleParameter >( curparam_op ) );
+				debug_assert( curparam_omega_op != nullptr );
+#endif
+				protocols::helical_bundle::parameters::OmegaBundleParameter & curparam_omega( *curparam_omega_op );
+				curparam_omega.set_copies_pitch(true);
+				curparam_omega.set_copy_from_parameters_index( curwidget.omega0_pitchcopy_helix() );
+				continue;
+			}
 
-		pertbundle.r0(nhelices)->set_being_set(true);
-		pertbundle.r0(nhelices)->set_default_value( curwidget.r0(previous_widgets) );
-
-		// Special-case logic for omega0 copying pitch instead of value:
-		core::Size const omega0_pitchcopy_helix( curwidget.omega0_pitchcopy_helix() );
-		if(omega0_pitchcopy_helix > 0) {
-			pertbundle.omega0(nhelices)->set_use_defaults(false);
-			pertbundle.omega0(nhelices)->set_helix_to_copy(omega0_pitchcopy_helix);
-			pertbundle.omega0(nhelices)->set_omega0_copies_pitch_instead(true);
-		} else {
-			pertbundle.omega0(nhelices)->set_being_set(true);
-			pertbundle.omega0(nhelices)->set_default_value( numeric::conversions::radians( curwidget.omega0(previous_widgets) ) );
+			ui::ui_protocols::helical_bundle::HelixOptionWidget & widget( *(curwidget.get_subwidget_nonconst(iparam) ) );
+			if( widget.widget_mode() == ui::ui_protocols::helical_bundle::HOW_set_value ) {
+				curparam.reset_copying_settings();
+				curparam.set_value( widget.value() );
+			} else {
+				curparam.set_copy_from_parameters_index( widget.helix_to_copy() );
+			}
 		}
-
-		pertbundle.delta_omega0(nhelices)->set_being_set(true);
-		pertbundle.delta_omega0(nhelices)->set_default_value( numeric::conversions::radians( curwidget.delta_omega0(previous_widgets) ) );
-		pertbundle.delta_omega1(nhelices)->set_being_set(true);
-		pertbundle.delta_omega1(nhelices)->set_default_value( numeric::conversions::radians( curwidget.delta_omega1(previous_widgets) ) );
-		pertbundle.delta_t(nhelices)->set_being_set(true);
-		pertbundle.delta_t(nhelices)->set_default_value( curwidget.delta_t(previous_widgets) );
-		pertbundle.z0_offset(nhelices)->set_being_set(true);
-		pertbundle.z0_offset(nhelices)->set_default_value( curwidget.z0_offset(previous_widgets) );
-		pertbundle.z1_offset(nhelices)->set_being_set(true);
-		pertbundle.z1_offset(nhelices)->set_default_value( curwidget.z1_offset(previous_widgets) );
-		pertbundle.epsilon(nhelices)->set_being_set(true);
-		pertbundle.epsilon(nhelices)->set_default_value( curwidget.epsilon(previous_widgets) );
-
-		previous_widgets.push_back(curwidget_ptr);
 	}
 	if(nhelices > 0) {
 		pertbundle.apply(*pose_);
@@ -179,7 +191,6 @@ MainWindow::rebuild_pose_from_scratch() {
 	mkbundle.set_reset_pose(pose_->total_residue() == 0);
 
 	core::Size nhelices(0);
-	utility::vector1< ui::ui_protocols::helical_bundle::HelicalBundleDialogueWidget* > previous_widgets;
 
 	for(core::Size i(0), imax(ui->tabWidget->count()); i<=imax; ++i) {
 		QScrollArea* curscrollarea(  dynamic_cast< QScrollArea* >( ui->tabWidget->widget(i) ) );
@@ -218,19 +229,39 @@ MainWindow::rebuild_pose_from_scratch() {
 		}
 
 		helix.set_helix_length(curwidget.helix_length());
-		helix.set_minor_helix_params_from_file(curwidget.params_file()); //NEED TO SET UP CACHING FOR THIS!
+		helix.set_minor_helix_params_from_file(curwidget.params_file()); //NEED TO SET UP CACHING FOR THIS!  CURRENTLY READS FROM DISK WHENEVER THE POSE IS REBUILT FROM SCRATCH!
 
-		helix.set_r0( curwidget.r0( previous_widgets ) );
-		helix.set_omega0( numeric::conversions::radians( curwidget.omega0( previous_widgets ) ) );
-		helix.set_delta_omega0( numeric::conversions::radians( curwidget.delta_omega0( previous_widgets ) ) );
-		helix.set_delta_omega1_all( numeric::conversions::radians( curwidget.delta_omega1( previous_widgets ) ) );
-		helix.set_delta_t( curwidget.delta_t( previous_widgets ) );
-		helix.set_z0_offset( curwidget.z0_offset( previous_widgets ) );
-		helix.set_z1_offset( curwidget.z1_offset( previous_widgets ) );
-		helix.set_epsilon( curwidget.epsilon( previous_widgets ) );
-		helix.set_invert_helix( curwidget.invert_helix() );
+		protocols::helical_bundle::BundleParametrizationCalculatorOP calculator_op( helix.calculator_op() );
+		debug_assert( calculator_op != nullptr );
+		protocols::helical_bundle::BundleParametrizationCalculator calculator( *calculator_op );
 
-		previous_widgets.push_back( curwidget_ptr );
+		for( core::Size iparam(1); iparam<=static_cast< core::Size >(protocols::helical_bundle::BPC_last_parameter_to_be_sampled); ++iparam ) {
+			core::conformation::parametric::RealValuedParameterOP curparam_op( calculator.real_parameter(iparam) );
+			debug_assert(curparam_op != nullptr);
+			core::conformation::parametric::RealValuedParameter curparam( *curparam_op );
+
+			if( iparam == static_cast<core::Size>( protocols::helical_bundle::BPC_omega0 ) && curwidget.omega0_pitchcopy_helix() != 0 ) {
+#ifdef NDEBUG
+				protocols::helical_bundle::parameters::OmegaBundleParameterOP curparam_omega_op( utility::pointer::static_pointer_cast< protocols::helical_bundle::parameters::OmegaBundleParameter >( curparam_op ) );
+#else
+				protocols::helical_bundle::parameters::OmegaBundleParameterOP curparam_omega_op( utility::pointer::dynamic_pointer_cast< protocols::helical_bundle::parameters::OmegaBundleParameter >( curparam_op ) );
+				debug_assert( curparam_omega_op != nullptr );
+#endif
+				protocols::helical_bundle::parameters::OmegaBundleParameter & curparam_omega( *curparam_omega_op );
+				curparam_omega.set_copies_pitch(true);
+				curparam_omega.set_copy_from_parameters_index( curwidget.omega0_pitchcopy_helix() );
+				continue;
+			}
+
+			ui::ui_protocols::helical_bundle::HelixOptionWidget & widget( *(curwidget.get_subwidget_nonconst(iparam) ) );
+			if( widget.widget_mode() == ui::ui_protocols::helical_bundle::HOW_set_value ) {
+				curparam.set_value( widget.value() );
+			} else {
+				curparam.set_copy_from_parameters_index( widget.helix_to_copy() );
+			}
+		}
+		debug_assert(helix.calculator_op()->boolean_parameter( protocols::helical_bundle::BPC_invert_helix ) != nullptr );
+		helix.calculator_op()->boolean_parameter( protocols::helical_bundle::BPC_invert_helix )->set_value( curwidget.invert_helix() );
 	}
 	if(nhelices > 0) {
 			mkbundle.apply(*pose_);
@@ -637,11 +668,11 @@ void MainWindow::on_presets_comboBox_currentIndexChanged(const QString &arg1)
 			on_add_helix_button_clicked();
 			QScrollArea* curscrollarea( dynamic_cast< QScrollArea*>( ui->tabWidget->widget(i) ) );
 			ui::ui_protocols::helical_bundle::HelicalBundleDialogueWidget* curwidget_ptr(  dynamic_cast< ui::ui_protocols::helical_bundle::HelicalBundleDialogueWidget* >( curscrollarea->widget() ) );
-			curwidget_ptr->set_delta_omega0( static_cast<core::Real>( i * 120 ) );
+			curwidget_ptr->set_real_subwidget( protocols::helical_bundle::BPC_delta_omega0, static_cast< core::Real >(i * 120) );
 			if(i > 0) { curwidget_ptr->set_everything_except_delta_omega0_copies_helix1(); }
 			else {
-				curwidget_ptr->set_r0(6.5);
-				curwidget_ptr->set_omega0(3.0);
+				curwidget_ptr->set_real_subwidget( protocols::helical_bundle::BPC_r0, 6.5 );
+				curwidget_ptr->set_real_subwidget( protocols::helical_bundle::BPC_omega0, 3.0 );
 			}
 			curwidget_ptr->set_invert( i % 2 == 1 );
 		}
@@ -652,14 +683,14 @@ void MainWindow::on_presets_comboBox_currentIndexChanged(const QString &arg1)
 			on_add_helix_button_clicked();
 			QScrollArea* curscrollarea( dynamic_cast< QScrollArea*>( ui->tabWidget->widget(i) ) );
 			ui::ui_protocols::helical_bundle::HelicalBundleDialogueWidget* curwidget_ptr(  dynamic_cast< ui::ui_protocols::helical_bundle::HelicalBundleDialogueWidget* >( curscrollarea->widget() ) );
-			curwidget_ptr->set_delta_omega0( static_cast<core::Real>( i * 45 ) );
+			curwidget_ptr->set_real_subwidget( protocols::helical_bundle::BPC_delta_omega0, static_cast<core::Real>( i * 45 ) );
 			curwidget_ptr->set_helix_length(7);
 			curwidget_ptr->set_to_beta_strand();
 			if(i > 0) { curwidget_ptr->set_everything_except_delta_omega0_copies_helix1(); }
 			else {
-				curwidget_ptr->set_r0(6.5);
-				curwidget_ptr->set_omega0(16.0);
-				curwidget_ptr->set_delta_omega1(81.0);
+				curwidget_ptr->set_real_subwidget( protocols::helical_bundle::BPC_r0, 6.5 );
+				curwidget_ptr->set_real_subwidget( protocols::helical_bundle::BPC_omega0, 16.0 );
+				curwidget_ptr->set_real_subwidget( protocols::helical_bundle::BPC_delta_omega1, 81.0 );
 			}
 			curwidget_ptr->set_invert( i % 2 == 1 );
 		}

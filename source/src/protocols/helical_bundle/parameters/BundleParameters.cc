@@ -19,6 +19,12 @@
 #include <core/conformation/parametric/ParametersSet.hh>
 
 // Project headers
+#include <protocols/helical_bundle/BundleParametrizationCalculator.hh>
+#include <core/conformation/parametric/BooleanValuedParameter.hh>
+#include <core/conformation/parametric/RealValuedParameter.hh>
+#include <core/conformation/parametric/SizeValuedParameter.hh>
+#include <core/conformation/parametric/RealVectorValuedParameter.hh>
+#include <core/conformation/parametric/SizeVectorValuedParameter.hh>
 
 // Basic headers
 #include <basic/basic.hh>
@@ -53,53 +59,12 @@ static basic::Tracer TR( "protocols.helical_bundle.parameters.BundleParameters" 
 /// @brief Constructor.
 ///
 BundleParameters::BundleParameters() :
-	r0_(0.0),
-	omega0_(0.0),
-	delta_omega0_(0.0),
-	residues_per_repeat_(1),
-	repeating_unit_offset_(0),
-	atoms_per_residue_(),
-	r1_(),
-	omega1_(0.0),
-	delta_omega1_all_(0.0),
-	z1_(0.0),
-	delta_omega1_(),
-	delta_z1_(),
-	z1_offset_(0.0),
-	z0_offset_(0.0),
-	epsilon_(1.0),
-	invert_helix_(false),
-	delta_t_(0.0),
-	allow_dihedrals_(true),
-	allow_bondangles_(true),
-	allow_bondlengths_(true)
-{
-}
+	core::conformation::parametric::Parameters()
+{}
 
 BundleParameters::BundleParameters( BundleParameters const & src ) :
-	core::conformation::parametric::Parameters( src ),
-	r0_(src.r0()),
-	omega0_(src.omega0()),
-	delta_omega0_(src.delta_omega0()),
-	residues_per_repeat_(src.residues_per_repeat()),
-	repeating_unit_offset_( src.repeating_unit_offset() ),
-	atoms_per_residue_(src.atoms_per_residue_),
-	r1_(src.r1_),
-	omega1_(src.omega1()),
-	delta_omega1_all_(src.delta_omega1_all()),
-	z1_(src.z1()),
-	delta_omega1_(src.delta_omega1_),
-	delta_z1_(src.delta_z1_),
-	z1_offset_(src.z1_offset_),
-	z0_offset_(src.z0_offset_),
-	epsilon_(src.epsilon_),
-	invert_helix_(src.invert_helix()),
-	delta_t_(src.delta_t()),
-	allow_dihedrals_(src.allow_dihedrals()),
-	allow_bondangles_(src.allow_bondangles()),
-	allow_bondlengths_(src.allow_bondlengths())
-{
-}
+	core::conformation::parametric::Parameters( src )
+{}
 
 BundleParameters::~BundleParameters() = default;
 
@@ -115,35 +80,57 @@ BundleParameters::clone() const
 /// @brief Get a summary of this ParametersSet object, for output to remark lines of a PDB file.
 ///
 void BundleParameters::get_pdb_remark(std::stringstream &remark) const {
+	using namespace core::conformation::parametric;
+	using namespace protocols::helical_bundle;
+
 	remark.setf( std::ios::fixed, std::ios::floatfield );
 	remark.precision(8);
-	remark << " MAJOR HELIX PARAMETERS:" << std::endl;
-	remark << "   Radius (r0,Angstroms): " << r0() << std::endl;
-	remark << "   Twist (omega0,radians/residue): " << omega0() << std::endl;
-	remark << "   Rotational offset (delta_omega0,radians): " << delta_omega0() << std::endl;
-	remark << "   Axial offset (z0_offset,Angstroms): " << z0_offset() << std::endl;
-	remark << "   Lateral squash factor (epsilon,dimensionless): " << epsilon() << std::endl;
-	remark << "   Invert helix: " << (invert_helix() ? "true" : "false") << std::endl;
-	remark << "   Dihedrals set by generator: " << (allow_dihedrals() ? "true" : "false") << std::endl;
-	remark << "   Bond angles set by generator: " << (allow_bondangles() ? "true" : "false") << std::endl;
-	remark << "   Bond lengths set by generator: " << (allow_bondlengths() ? "true" : "false") << std::endl;
-	remark << " MINOR HELIX PARAMETERS (that are typically sampled):" << std::endl;
-	remark << "   Roll about axis (delta_omega1,radians): " << delta_omega1_all() << std::endl;
-	remark << "   Axial offset (z1_offset,vert. Angstroms): " << z1_offset() << std::endl;
-	remark << "   Registry shift (delta_t,residues): " << delta_t() << std::endl;
+	remark << " PARAMETERS THAT ARE TYPICALLY SAMPLED:" << std::endl;
+	for ( core::Size i(1); i < static_cast<core::Size>( BPC_end_of_list ); ++i ) {
+		ParameterCOP curparam( parameter_cop(i) );
+		remark << "   " << curparam->short_parameter_description() << " (" << curparam->parameter_name() << "," << curparam->parameter_units() << "): ";
+		//Determine type:
+		ParameterType const paramtype( curparam->parameter_type() );
+		RealValuedParameterCOP realparam( utility::pointer::static_pointer_cast< RealValuedParameter const>( curparam ) );
+		BooleanValuedParameterCOP boolparam( utility::pointer::static_pointer_cast< BooleanValuedParameter const>( curparam ) );
+		SizeValuedParameterCOP sizeparam( utility::pointer::static_pointer_cast< SizeValuedParameter const>( curparam ) );
+		SizeVectorValuedParameterCOP sizevectparam( utility::pointer::static_pointer_cast< SizeVectorValuedParameter const>( curparam ) );
+		RealVectorValuedParameterCOP realvectparam( utility::pointer::static_pointer_cast< RealVectorValuedParameter const>( curparam ) );
+		switch( paramtype ) {
+		case PT_generic_real:
+		case PT_generic_nonnegative_valued_real:
+		case PT_generic_positive_valued_real:
+		case PT_angle :
+			remark << realparam->value();
+			break;
+		case PT_boolean :
+			remark << ( boolparam->value() ? "TRUE" : "FALSE" );
+			break;
+		case PT_generic_integer:
+		case PT_generic_whole_number:
+		case PT_generic_natural_number :
+			remark << sizeparam->value();
+			break;
+		case PT_generic_integer_vector:
+		case PT_generic_whole_number_vector:
+		case PT_generic_natural_number_vector :
+			remark << std::endl << "     " << sizevectparam->value();
+			break;
+		case PT_generic_real_vector:
+		case PT_generic_nonnegative_valued_real_vector:
+		case PT_generic_positive_valued_real_vector:
+		case PT_angle_vector :
+			remark << std::endl << "     " << realvectparam->value();
+			break;
+		case PT_invalid_type :
+			remark << std::endl;
+			utility_exit_with_message( "Error in BundleParameters::get_pdb_remark(): Could not determine type of parameter " + curparam->parameter_name() + "!" );
+		}
 
-	remark << " OTHER MINOR HELIX PARAMETERS (fixed):" << std::endl;
-	remark << "   Residues/repeat: " << residues_per_repeat() << std::endl;
-	for ( core::Size i=1, imax=residues_per_repeat(); i<=imax; ++i ) {
-		remark << "   Atoms/residue" << i << ": " << atoms_per_residue(i) << std::endl;
-	}
-	remark << "   Repeat unit offset: " << repeating_unit_offset() << std::endl;
-	remark << "   Twist (omega1,radians/residue): " << omega1() << std::endl;
-	remark << "   Rise (z1,Angstroms/residue): " << z1() << std::endl;
-	for ( core::Size i=1, imax=r1_.size(); i<=imax; ++i ) {
-		remark << "   MAINCHAIN ATOM #" << i << ":" << std::endl;
-		remark << "   Radius (r1,Angstroms): " << r1(i) << std::endl;
-		remark << "   Axial offset (delta_z1,Angstroms): " << delta_z1(i) << std::endl;
+		remark << std::endl;
+		if ( i == static_cast<core::Size>( BPC_last_parameter_to_be_sampled ) ) {
+			remark << " PARAMETERS THAT ARE NOT TYPICALLY SAMPLED:" << std::endl;
+		}
 	}
 }
 
@@ -159,26 +146,6 @@ template< class Archive >
 void
 protocols::helical_bundle::parameters::BundleParameters::save( Archive & arc ) const {
 	arc( cereal::base_class< core::conformation::parametric::Parameters >( this ) );
-	arc( CEREAL_NVP( r0_ ) ); // core::Real
-	arc( CEREAL_NVP( omega0_ ) ); // core::Real
-	arc( CEREAL_NVP( delta_omega0_ ) ); // core::Real
-	arc( CEREAL_NVP( residues_per_repeat_ ) ); // core::Size
-	arc( CEREAL_NVP( repeating_unit_offset_ ) ); // core::Size
-	arc( CEREAL_NVP( atoms_per_residue_ ) ); // utility::vector1<core::Size>
-	arc( CEREAL_NVP( r1_ ) ); // utility::vector1<core::Real>
-	arc( CEREAL_NVP( omega1_ ) ); // core::Real
-	arc( CEREAL_NVP( delta_omega1_all_ ) ); // core::Real
-	arc( CEREAL_NVP( z1_ ) ); // core::Real
-	arc( CEREAL_NVP( delta_omega1_ ) ); // utility::vector1<core::Real>
-	arc( CEREAL_NVP( delta_z1_ ) ); // utility::vector1<core::Real>
-	arc( CEREAL_NVP( z1_offset_ ) ); // core::Real
-	arc( CEREAL_NVP( z0_offset_ ) ); // core::Real
-	arc( CEREAL_NVP( epsilon_ ) ); // core::Real
-	arc( CEREAL_NVP( invert_helix_ ) ); // _Bool
-	arc( CEREAL_NVP( delta_t_ ) ); // core::Real
-	arc( CEREAL_NVP( allow_dihedrals_ ) ); // _Bool
-	arc( CEREAL_NVP( allow_bondangles_ ) ); // _Bool
-	arc( CEREAL_NVP( allow_bondlengths_ ) ); // _Bool
 }
 
 /// @brief Automatically generated deserialization method
@@ -186,26 +153,6 @@ template< class Archive >
 void
 protocols::helical_bundle::parameters::BundleParameters::load( Archive & arc ) {
 	arc( cereal::base_class< core::conformation::parametric::Parameters >( this ) );
-	arc( r0_ ); // core::Real
-	arc( omega0_ ); // core::Real
-	arc( delta_omega0_ ); // core::Real
-	arc( residues_per_repeat_ ); // core::Size
-	arc( repeating_unit_offset_ ); // core::Size
-	arc( atoms_per_residue_ ); // utility::vector1<core::Size>
-	arc( r1_ ); // utility::vector1<core::Real>
-	arc( omega1_ ); // core::Real
-	arc( delta_omega1_all_ ); // core::Real
-	arc( z1_ ); // core::Real
-	arc( delta_omega1_ ); // utility::vector1<core::Real>
-	arc( delta_z1_ ); // utility::vector1<core::Real>
-	arc( z1_offset_ ); // core::Real
-	arc( z0_offset_ ); // core::Real
-	arc( epsilon_ ); // core::Real
-	arc( invert_helix_ ); // _Bool
-	arc( delta_t_ ); // core::Real
-	arc( allow_dihedrals_ ); // _Bool
-	arc( allow_bondangles_ ); // _Bool
-	arc( allow_bondlengths_ ); // _Bool
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( protocols::helical_bundle::parameters::BundleParameters );

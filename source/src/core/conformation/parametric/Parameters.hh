@@ -18,6 +18,7 @@
 
 // Unit headers
 #include <core/conformation/parametric/Parameters.fwd.hh>
+#include <core/conformation/parametric/Parameter.fwd.hh>
 
 // Package headers
 #include <core/conformation/Residue.hh>
@@ -56,6 +57,8 @@ public:
 	///
 	Parameters();
 
+	/// @brief Copy constructor.
+	/// @details Deep-copies the residue list and the parameters list.
 	Parameters( Parameters const & src );
 
 	~Parameters();
@@ -140,6 +143,9 @@ public:
 	virtual
 	inline void reset_residue_list() { residue_list_.clear(); return; }
 
+	/// @brief Clears the sampling and perturbing information in the individual parameters.
+	void reset_sampling_and_perturbing_info() const;
+
 	/// @brief Assign an element in the residue list to be an owning pointer to an existing residue.
 	///
 	virtual
@@ -149,6 +155,31 @@ public:
 		residue_list_[index] = existing_residue;
 		return;
 	}
+
+	/// @brief Get the number of parameters stored in this Parameters obejct.
+	inline core::Size num_parameters() const { return parameter_list_.size(); }
+
+	/// @brief Add a parameter.
+	/// @details Does NOT clone the parameter, but stores the OP directly.
+	virtual
+	void add_parameter( ParameterOP parameter );
+
+	/// @brief Access a parameter, by index.
+	/// @details Non-const access.
+	virtual
+	ParameterOP parameter_op( core::Size const index ) const;
+
+	/// @brief Access a parameter, by index.
+	/// @details Const access.
+	virtual
+	ParameterCOP parameter_cop( core::Size const index ) const;
+
+	/// @brief Replace one of the contained parameter objects with
+	/// a copy of an input parameter object.
+	/// @details If reset_sampling_copying_perturbing is true, then
+	/// the sampling, copying, and perturbing information of the
+	/// copied parameter object are all reset.  True by default.
+	void replace_parameter_via_clone( core::Size const param_index, ParameterCOP new_parameter, bool const reset_sampling_copying_perturbing=true );
 
 private:
 
@@ -160,6 +191,9 @@ private:
 	/// @details This is a list of owning pointers so that the residue indices don't mess things up.  (That is, as residue
 	/// indices change, these should still point to the proper residues).
 	utility::vector1 < core::conformation::ResidueCOP > residue_list_;
+
+	/// @brief A list of the parameters that describe these residues.
+	utility::vector1< ParameterOP > parameter_list_;
 
 #ifdef    SERIALIZATION
 public:
@@ -176,6 +210,5 @@ public:
 #ifdef    SERIALIZATION
 CEREAL_FORCE_DYNAMIC_INIT( core_conformation_parametric_Parameters )
 #endif // SERIALIZATION
-
 
 #endif

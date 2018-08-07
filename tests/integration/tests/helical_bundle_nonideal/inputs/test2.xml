@@ -8,7 +8,7 @@
 	<MOVERS>
 		<MakeBundle name="bundle1" set_bondlengths="true" set_bondangles="true" residue_name="ALA" crick_params_file="beta_strand" symmetry="16" symmetry_copies="3" r0="29" omega0="4.29718356" helix_length="20" use_degrees="true" >
 			<Helix />
-			<Helix delta_omega0="11.25" invert="1" delta_t="0.25" delta_omega1="90" />
+			<Helix delta_omega0="11.25" invert="1" delta_t="0.25" delta_omega1="180" />
 			<Helix r0="21" omega0="2.8647891" crick_params_file="alpha_helix" helix_length="40" />
 		</MakeBundle>
 

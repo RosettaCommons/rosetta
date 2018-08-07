@@ -28,6 +28,7 @@
 #include <core/conformation/parametric/Parameters.hh>
 #include <core/conformation/parametric/ParametersSet.fwd.hh>
 #include <core/conformation/parametric/ParametersSet.hh>
+#include <protocols/helical_bundle/BundleParametrizationCalculator.fwd.hh>
 
 // Scripter Headers
 #include <utility/tag/Tag.fwd.hh>
@@ -71,13 +72,31 @@ public:
 	typedef protocols::helical_bundle::parameters::BundleParametersSetCOP BundleParametersSetCOP;
 
 public:
+
+	/// @brief Default constructor.
 	MakeBundleHelix();
+
+	/// @brief Copy constructor.
 	MakeBundleHelix( MakeBundleHelix const &src );
+
+	/// @brief Initialization constructor: initializes this MakeBundleHelix mover with a BundleParametrizationCalculator.
+	/// @details Input calculator is cloned.
+	MakeBundleHelix( BundleParametrizationCalculatorCOP input_calculator );
+
+	///@brief Destructor.
 	~MakeBundleHelix() override;
 
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override;
 
+	/// @brief Copy the parameter values for parameters that have not been set from the global parameters.
+	/// @details This function should be called before apply().
+	void copy_unset_params_from_globals( BundleParametrizationCalculatorCOP global_calculator );
+
+	/// @brief Copy the parameter values for parameters that copy values from previous helices, from the previous helices.
+	/// @details This function should be called before apply().
+	/// @returns Returns true for failure, false for success.
+	bool copy_params_from_previous_helices( core::pose::Pose const & prev_helices_pose );
 
 	/// @brief Actually apply the mover to the pose.
 	void apply(core::pose::Pose & pose) override;
@@ -101,14 +120,6 @@ public:
 	/// building a helix.
 	inline bool reset_pose() const { return reset_pose_; }
 
-	/// @brief Set whether the helix direction should be inverted.
-	///
-	void set_invert_helix(bool const invert_in ) { bundle_parameters_->set_invert_helix(invert_in); return; }
-
-	/// @brief Return whether the helix direction will be inverted.
-	///
-	inline bool invert_helix() const { return bundle_parameters_->invert_helix(); }
-
 	/// @brief Set the length of the helix, in residues.
 	///
 	void set_helix_length( core::Size const helix_length_in ) {
@@ -129,7 +140,7 @@ public:
 
 	/// @brief Get the name (full name, not 3-letter code) of one of the residue types in the repeating
 	/// unit that will make up the helix.
-	std::string residue_name( core::Size const repeat_index ) const {
+	std::string const & residue_name( core::Size const repeat_index ) const {
 		runtime_assert_string_msg(
 			repeat_index > 0 && repeat_index <= residue_name_.size(),
 			"Error in protocols::helical_bundle::MakeBundleHelix::residue_name(): The index is out of range."
@@ -137,228 +148,19 @@ public:
 		return residue_name_[repeat_index];
 	}
 
-	/// @brief Set the residue type (full name, not 3-letter code) that will cap the helix.
-	/// @details Set this to "" for no cap.
-	void set_tail_residue_name(std::string const &name) { tail_residue_name_=name; }
-
-	/// @brief Get the name of the residue type (full name, not 3-letter code) that will cap the helix.
-	/// @details Returns "" for no cap.
-	std::string tail_residue_name() const { return tail_residue_name_; }
-
-	/// @brief Set the r0 value.
-	///
-	void set_r0(core::Real const &val) {
-		runtime_assert_string_msg( val>=0.0,  "In protocols::helical_bundle::MakeBundleHelix::set_r0(): the value of r0 must be greater than or equal to 0." );
-		bundle_parameters_->set_r0(val);
-		return;
-	}
-
-	/// @brief Get the r0 value.
-	///
-	core::Real r0() const { return bundle_parameters_->r0(); }
-
-	/// @brief Set the omega0 value.
-	///
-	void set_omega0(core::Real const &val) { bundle_parameters_->set_omega0(val); return; }
-
-	/// @brief Get the omega0 value.
-	///
-	core::Real omega0() const { return bundle_parameters_->omega0(); }
-
-	/// @brief Set the delta_omega0 value.
-	///
-	void set_delta_omega0( core::Real const &delta_omega0_in ) { bundle_parameters_->set_delta_omega0(delta_omega0_in); return; }
-
-	/// @brief Get the delta_omega0 value.
-	///
-	core::Real delta_omega0() const { return bundle_parameters_->delta_omega0(); }
-
-	/// @brief Get the r1 value for a given mainchain atom.
-	///
-	core::Real r1( core::Size const index ) const { return bundle_parameters_->r1(index); }
-
-	/// @brief Const-access to the whole r1 vector.
-	utility::vector1 < core::Real > const & r1_vect() const { return bundle_parameters_->r1_vect(); }
-
-	/// @brief Set the omega1 value.
-	///
-	void set_omega1(core::Real const &val) { bundle_parameters_->set_omega1(val); return; }
-
-	/// @brief Get the omega1 value.
-	///
-	core::Real omega1() const { return bundle_parameters_->omega1(); }
-
-	/// @brief Set the z1 value.
-	///
-	void set_z1(core::Real const &val) { bundle_parameters_->set_z1(val); return; }
-
-	/// @brief Get the z1 value.
-	///
-	core::Real z1() const { return bundle_parameters_->z1(); }
-
-	/// @brief Get the delta_omega1 value for a given mainchain atom.
-	///
-	core::Real delta_omega1( core::Size const index ) const { return bundle_parameters_->delta_omega1(index); }
-
-	/// @brief Const-access to the whole delta_omega1 vector.
-	utility::vector1 < core::Real > const & delta_omega1_vect() const { return bundle_parameters_->delta_omega1_vect(); }
-
-	/// @brief Get the delta_z1 value for a given mainchain atom.
-	///
-	core::Real delta_z1( core::Size const index ) const { return bundle_parameters_->delta_z1(index); }
-
-	/// @brief Const-access to the whole delta_z1 vector.
-	utility::vector1 < core::Real > const & delta_z1_vect() const { return bundle_parameters_->delta_z1_vect(); }
-
-	/// @brief Get the z1_offset value (the offset of the helix along the minor helix axis).
-	///
-	core::Real z1_offset() const { return bundle_parameters_->z1_offset(); }
-
-	/// @brief Get the z0_offset value (the offset of the helix along the major helix axis).
-	///
-	core::Real z0_offset() const { return bundle_parameters_->z0_offset(); }
-
-	/// @brief Get the epsilon parameter value (the lateral squash of the bundle).
-	///
-	core::Real epsilon() const { return bundle_parameters_->epsilon(); }
-
-	/// @brief Get the delta_t value.
-	core::Real delta_t() const { return bundle_parameters_->delta_t(); }
-
-	/// @brief Set the major helix parameters
-	void set_major_helix_params (
-		core::Real const &r0_in,
-		core::Real const &omega0_in,
-		core::Real const &delta_omega0_in
-	) {
-		runtime_assert_string_msg( r0_in>=0.0,  "In protocols::helical_bundle::MakeBundleHelix::set_major_helix_params(): the value of r0 must be greater than or equal to 0." );
-		bundle_parameters_->set_r0(r0_in);
-		bundle_parameters_->set_omega0(omega0_in);
-		bundle_parameters_->set_delta_omega0(delta_omega0_in);
-		return;
-	}
-
-	/// @brief Set the minor helix parameters
-	///
-	void set_minor_helix_params (
-		utility::vector1 < core::Real > const &r1_in,
-		core::Real const &omega1_in,
-		core::Real const &z1_in,
-		utility::vector1 < core::Real > const &delta_omega1_in,
-		utility::vector1 < core::Real > const &delta_z1_in
-	) {
-		bundle_parameters_->set_r1(r1_in);
-		bundle_parameters_->set_omega1(omega1_in);
-		bundle_parameters_->set_z1(z1_in);
-		bundle_parameters_->set_delta_omega1(delta_omega1_in);
-		bundle_parameters_->set_delta_z1(delta_z1_in);
-		return;
-	}
-
-	/// @brief Set z1_offset, the offset along the minor helix axis for the whole helix.
-	///
-	void set_z1_offset ( core::Real const &val ) { bundle_parameters_->set_z1_offset(val); return; }
-
-	/// @brief Set z0_offset, the offset along the major helix axis for the whole helix.
-	///
-	void set_z0_offset ( core::Real const &val ) { bundle_parameters_->set_z0_offset(val); return; }
-
-	/// @brief Set epsilon, the lateral squish of the bundle.
-	///
-	void set_epsilon ( core::Real const &val ) { bundle_parameters_->set_epsilon(val); return; }
-
-	/// @brief Set delta_t
-	///
-	void set_delta_t ( core::Real const &delta_t_in) { bundle_parameters_->set_delta_t(delta_t_in); return; }
-
-	/// @brief Set global omega1 offset
-	/// @detail The overall omega1 offset is the sum of this global value and the per-atom
-	/// delta_omega1 values.
-	void set_delta_omega1_all ( core::Real const &delta_omega1_all_in ) { bundle_parameters_->set_delta_omega1_all(delta_omega1_all_in); return; }
-
-	/// @brief Get global omega1 offset
-	/// @detail The overall omega1 offset is the sum of this global value and the per-atom
-	/// delta_omega1 values.
-	inline core::Real delta_omega1_all () const { return bundle_parameters_->delta_omega1_all(); }
-
-	/// @brief Get the residues per repeat.
-	///
-	inline core::Size residues_per_repeat() const { return bundle_parameters_->residues_per_repeat(); }
-
-	/// @brief Get the atoms per residue vector (const-access).
-	///
-	inline utility::vector1 < core::Size > const & atoms_per_residue() const { return bundle_parameters_->atoms_per_residue(); }
-
-	/// @brief Set the repeating unit offset.
-	/// @details An offset of 0 means that the first residue of the helix is the first residue of the repeating unit.  An offset
-	/// of 1 means that the first residue of the helix is the SECOND residue of the repeating unit, etc.
-	void set_repeating_unit_offset( core::Size const val ) { bundle_parameters_->set_repeating_unit_offset(val); return; }
-
-	/// @brief Get the repeating unit offset.
-	/// @details An offset of 0 means that the first residue in the helix is the first
-	/// residue of the repeating unit.  An offset of 1 means that the first residue in
-	/// the helix is the second residue in the repeating unit, etc.
-	inline core::Size repeating_unit_offset() const { return bundle_parameters_->repeating_unit_offset(); }
-
 	/// @brief Set the minor helix parameters by reading them in from a file.
 	///
-	void set_minor_helix_params_from_file ( std::string const &filename )
-	{
-		utility::vector1 <core::Real> r1;
-		core::Real omega1(0.0);
-		core::Real z1(0.0);
-		utility::vector1 <core::Real> delta_omega1;
-		utility::vector1 <core::Real> delta_z1;
-		core::Size residues_per_repeat(1);
-		utility::vector1 <core::Size> atoms_per_residue;
-		read_minor_helix_params ( filename, r1, omega1, z1, delta_omega1, delta_z1, residues_per_repeat, atoms_per_residue );
-		bundle_parameters_->set_r1(r1);
-		bundle_parameters_->set_omega1(omega1);
-		bundle_parameters_->set_z1(z1);
-		bundle_parameters_->set_delta_omega1(delta_omega1);
-		bundle_parameters_->set_delta_z1(delta_z1);
-		bundle_parameters_->set_residues_per_repeat( residues_per_repeat );
-		bundle_parameters_->set_atoms_per_residue( atoms_per_residue );
-		return;
-	}
+	void set_minor_helix_params_from_file ( std::string const &filename );
 
 	/// @brief Returns "true" if the last call to the apply function failed, false otherwise.
 	///
-	bool last_apply_failed() const { return last_apply_failed_; }
+	inline bool last_apply_failed() const { return last_apply_failed_; }
 
+	/// @brief Non-const access to the calculator.
+	BundleParametrizationCalculatorOP calculator_op() { return calculator_; }
 
-	/// @brief Sets whether this mover is allowed to set mainchain dihedrals.
-	///
-	void set_allow_dihedrals( bool const val ) { bundle_parameters_->set_allow_dihedrals(val); return; }
-
-	/// @brief Sets whether this mover is allowed to set mainchain bond angles.
-	///
-	void set_allow_bondangles( bool const val ) { bundle_parameters_->set_allow_bondangles(val); return; }
-
-	/// @brief Sets whether this mover is allowed to set mainchain bond lengths.
-	///
-	void set_allow_bondlengths( bool const val ) { bundle_parameters_->set_allow_bondlengths(val); return; }
-
-
-	/// @brief Returns "true" if and only if this mover is allowed to set mainchain dihedrals.
-	///
-	bool allow_dihedrals() const { return bundle_parameters_->allow_dihedrals(); }
-
-	/// @brief Returns "true" if and only if this mover is allowed to set mainchain bond angles.
-	///
-	bool allow_bondangles() const { return bundle_parameters_->allow_bondangles(); }
-
-	/// @brief Returns "true" if and only if this mover is allowed to set mainchain bond lengths.
-	///
-	bool allow_bondlengths() const { return bundle_parameters_->allow_bondlengths(); }
-
-	/// @brief Const-access to bundle parameters.
-	///
-	BundleParametersCOP bundle_parameters() const { return bundle_parameters_; }
-
-	/// @brief Set a new set of bundle parameters.
-	///
-	void set_bundle_parameters( BundleParametersOP newparams ) {  bundle_parameters_ = newparams; return; }
+	/// @brief Const access to the calculator.
+	BundleParametrizationCalculatorCOP calculator_cop() const { return calculator_; }
 
 	std::string
 	get_name() const override;
@@ -371,7 +173,6 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
-
 private:
 	////////////////////////////////////////////////////////////////////////////////
 	//          PRIVATE DATA                                                      //
@@ -381,13 +182,6 @@ private:
 	/// @details Default true.
 	bool reset_pose_;
 
-	/// @brief An owning pointer for the BundleParameters object.
-	/// @details The BundleParameters object holds all of the Crick parameters for creating
-	/// a helical bundle.  This gets passed to the pose that is created or modified, and
-	/// stored in the Conformation object, so that other movers can modify or perturb the
-	/// object created (or just read its parameters).
-	BundleParametersOP bundle_parameters_;
-
 	/// @brief Length of the helix, in residues.  Defaults to 10.
 	///
 	core::Size helix_length_;
@@ -396,21 +190,17 @@ private:
 	/// @details Defaults to "ALA".  One residue must be specified for each in the repeating unit.
 	utility::vector1< std::string > residue_name_;
 
-	/// @brief Name (full-length, not 3-letter code) of the residue type that will cap the helix.
-	/// @details If blank, there will be no cap.  Defaults to blank.
-	std::string tail_residue_name_;
-
 	/// @brief Did the last apply fail?
 	/// @details Initialized to "false"; "true" if the last apply failed.
 	bool last_apply_failed_;
 
+	/// @brief The BundleParametrizationCalculator object, which keeps track of parameter values and
+	/// does the actual parametric math.
+	BundleParametrizationCalculatorOP calculator_;
+
 	////////////////////////////////////////////////////////////////////////////////
 	//          PRIVATE FUNCTIONS                                                 //
 	////////////////////////////////////////////////////////////////////////////////
-
-	/// @brief If there are tail residues, set their backbone dihedral angles
-	/// to something reasonable (a helical conformation).
-	void set_tail_dihedrals( core::pose::Pose &helixpose ) const;
 
 	/// @brief Set whether the last call to the apply() function failed or not.
 	/// @details Should only be called by the apply() function.
