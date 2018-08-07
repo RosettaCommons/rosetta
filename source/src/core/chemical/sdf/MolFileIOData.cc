@@ -341,15 +341,15 @@ ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 			auto temp_vec = define_mainchain_atoms( restype );
 			if ( restype->is_d_aa() ) {
 				// TODO: correct internal coordinates, if possible? For H at least.
-				restype->set_icoor( "LOWER", radians(-149.999985), radians(63.800007), 1.328685, 
+				restype->set_icoor( "LOWER", radians(-149.999985), radians(63.800007), 1.328685,
 					restype->atom_name( temp_vec[1] ), // the lower atom itself
 					restype->atom_name( temp_vec[2] ),
 					restype->atom_name( temp_vec[3] ) );
-				restype->set_icoor( "UPPER", radians(150.000000), radians(58.300003), 1.328685, 
+				restype->set_icoor( "UPPER", radians(150.000000), radians(58.300003), 1.328685,
 					restype->atom_name( temp_vec[temp_vec.size()] ), // the upper atom itself
 					restype->atom_name( temp_vec[temp_vec.size() - 1] ),
 					restype->atom_name( temp_vec[temp_vec.size() - 2] ) );
-				restype->set_icoor( "H", radians(180.000000), radians(60.849998), 1.010000, 
+				restype->set_icoor( "H", radians(180.000000), radians(60.849998), 1.010000,
 					restype->atom_name( temp_vec[1] ), // the lower atom itself
 					restype->atom_name( temp_vec[2] ),
 					"LOWER" );
@@ -358,13 +358,13 @@ ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 					restype->atom_name( temp_vec[1] ), // the lower atom itself
 					restype->atom_name( temp_vec[2] ),
 					restype->atom_name( temp_vec[3] ) );
-				restype->set_icoor( "UPPER", radians(-150.000000), radians(58.300003), 1.328685, 
+				restype->set_icoor( "UPPER", radians(-150.000000), radians(58.300003), 1.328685,
 					restype->atom_name( temp_vec[temp_vec.size()] ), // the upper atom itself
 					restype->atom_name( temp_vec[temp_vec.size() - 1] ),
 					restype->atom_name( temp_vec[temp_vec.size() - 2] ) );
-				restype->set_icoor( "H", radians(-180.000000), radians(60.849998), 1.010000, 
+				restype->set_icoor( "H", radians(-180.000000), radians(60.849998), 1.010000,
 					restype->atom_name( temp_vec[1] ), // the lower atom itself
-					restype->atom_name( temp_vec[2] ), 
+					restype->atom_name( temp_vec[2] ),
 					"LOWER" );
 			}
 		} else if ( restype->is_RNA() || restype->is_DNA() ) {
