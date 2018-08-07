@@ -1666,6 +1666,8 @@ GenericBondedPotential::modify_tors_params(
 	core::Real k1_in, core::Real k2_in, core::Real k3_in,
 	core::Real f1_in, core::Real f2_in, core::Real f3_in
 ) {
+
+	int n_tor_changed(0);
 	utility::vector1< core::Size > wildcard_vec(1, 0);
 
 	utility::vector1< core::Size > const & indices1 = name_index_map[atm1];
@@ -1696,18 +1698,21 @@ GenericBondedPotential::modify_tors_params(
 							f2_in = tors_pot_[ it->second ].get_params("f2");
 							f3_in = tors_pot_[ it->second ].get_params("f3");
 						}
-
 						tors_pot_[ it->second ] = GenTorsionParams( k1_in, k2_in, k3_in, f1_in, f2_in, f3_in, multiplicity );
 						it = tors_lookup_.find( get_parameter_hash( i4, i3, i2, i1 ) );
 						tors_pot_[ it->second ] = GenTorsionParams( k1_in, k2_in, k3_in, -f1_in, -f2_in, -f3_in, multiplicity );
-					} else {
-						TR << "Error: No matching multiplicity torsion type doesn't exist in database!" << std::endl;
+						++n_tor_changed;
 					}
 				}
 			}
 		}
 	}
 
+	if ( n_tor_changed==0 ) {
+		TR << "Warning: No params changed for torsion:" << atm1 << "-" << atm2 << "-" << atm3 << "-" << atm4 << std::endl;
+	} else {
+		TR << n_tor_changed << " torsion types changed for " << atm1 << "-" << atm2 << "-" << atm3 << "-" << atm4 << std::endl;
+	}
 }
 
 void
@@ -1719,6 +1724,7 @@ GenericBondedPotential::modify_special_tors_params(
 	core::Real f1_in, core::Real f2_in, core::Real f3_in,
 	core::Real f4_in, core::Real f8_in
 ) {
+	int n_tor_changed(0);
 	utility::vector1< core::Size > wildcard_vec(1, 0);
 
 	utility::vector1< core::Size > const & indices1 = name_index_map[atm1];
@@ -1755,14 +1761,19 @@ GenericBondedPotential::modify_special_tors_params(
 						special_tors_pot_[ it->second ] = SpecialGenTorsionParams( k1_in, k2_in, k3_in, k4_in, k8_in, f1_in, f2_in, f3_in, f4_in, f8_in, multiplicity );
 						it = special_tors_lookup_.find( get_parameter_hash( i4, i3, i2, i1 ) );
 						special_tors_pot_[ it->second ] = SpecialGenTorsionParams( k1_in, k2_in, k3_in, k4_in, k8_in, -f1_in, -f2_in, -f3_in, -f4_in, -f8_in, multiplicity );
-					} else {
-						TR << "Error: No matching multiplicity torsion type doesn't exist in database!" << std::endl;
+						++n_tor_changed;
 					}
 				}
 			}
 		}
 	}
+	if ( n_tor_changed==0 ) {
+		TR << "Warning: No params changed for special torsion:" << atm1 << "-" << atm2 << "-" << atm3 << "-" << atm4 << std::endl;
+	} else {
+		TR << n_tor_changed << " special torsion types changed for " << atm1 << "-" << atm2 << "-" << atm3 << "-" << atm4 << std::endl;
+	}
 }
+
 
 } // scoring
 } // core

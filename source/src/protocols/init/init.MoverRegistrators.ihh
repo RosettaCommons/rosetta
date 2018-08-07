@@ -103,6 +103,7 @@ static MoverRegistrator< cryst::UpdateSolventMoverCreator > reg_UpdateSolventMov
 static MoverRegistrator< cryst::TagPoseWithRefinementStatsMoverCreator > reg_TagPoseWithRefinementStatsMoverCreator;
 static MoverRegistrator< cryst::SetRefinementOptionsMoverCreator > reg_SetRefinementOptionsMoverCreator;
 static MoverRegistrator< cryst::UpdateCrystInfoCreator > reg_UpdateCrystInfoCreator;
+static MoverRegistrator< cryst::CrystRMSCreator > reg_CrystRMSCreator;
 static MoverRegistrator< cryst::DockLatticeMoverCreator > reg_DockLatticeMoverCreator;
 static MoverRegistrator< cryst::MakeLatticeMoverCreator > reg_MakeLatticeMoverCreator;
 static MoverRegistrator< cryst::MakeLayerMoverCreator > reg_MakeLayerMoverCreator;

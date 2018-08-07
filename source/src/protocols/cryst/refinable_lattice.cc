@@ -72,6 +72,10 @@
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/types.hh>
 
+#include <basic/datacache/CacheableString.hh>
+#include <basic/datacache/CacheableStringMap.hh>
+
+
 #include <numeric/model_quality/rms.hh>
 #include <numeric/random/random_xyz.hh>
 #include <numeric/random/random.hh>
@@ -122,6 +126,7 @@ using namespace scoring::symmetry;
 using namespace conformation;
 using namespace conformation::symmetry;
 
+// helper function: get MW of pose
 core::Real
 getMW(core::pose::Pose const & pose) {
 	static std::map<std::string,core::Real> MWLOOKUP;
@@ -153,6 +158,16 @@ getMW(core::pose::Pose const & pose) {
 	return mw;
 }
 
+// helper function: get volume of crystal
+core::Real
+getVolume(
+	core::Real A, core::Real B, core::Real C,
+	core::Real alpha, core::Real beta, core::Real gamma
+) {
+	core::Real ca = cos(alpha*DEG2RAD), cb = cos(beta*DEG2RAD), cg = cos(gamma*DEG2RAD);
+	core::Real volume = A*B*C * std::sqrt( 1-ca*ca-cb*cb-cg*cg+2*ca*cb*cg );
+	return (volume);
+}
 
 ////////////////////////////////////////////////////
 
@@ -282,6 +297,103 @@ void UpdateCrystInfoCreator::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 
 ////////////////////////////////////////////////////
 
+CrystRMS::CrystRMS() {
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
+	if ( option[ in::file::native ].user() ) {
+		native_ = core::pose::PoseOP( new core::pose::Pose );
+		core::import_pose::pose_from_file( *native_, option[ in::file::native ]() , core::import_pose::PDB_file);
+		MakeLatticeMover make_lattice;
+		make_lattice.set_refinable_lattice( true );
+		make_lattice.contact_dist( 30 );
+		make_lattice.apply( *native_ );
+	}
+}
+
+void
+CrystRMS::apply( core::pose::Pose & pose ) {
+	core::Real RMS=-1.0;
+	core::Real score = (*sf_)(pose);
+	core::pose::setPoseExtraScore( pose, "crystScore", score);
+
+	if ( native_ ) {
+		io::CrystInfo ci_native = (*native_).pdb_info()->crystinfo();
+		TR << "Native pdb A,B,C, alpha,beta,gamma:" << ci_native.A()<<","<<ci_native.B()<<","<<ci_native.C() <<" , "<< ci_native.alpha()<<","<<ci_native.beta()<<","<<ci_native.gamma()<< std::endl;
+
+		RMS = crystRMS( *native_, pose,  true);
+		TR << "crystRMS: "<< RMS <<std::endl;
+		core::pose::setPoseExtraScore( pose, "crystRMS", RMS);
+	}
+
+	// look in datamap, then pdb_info
+	std::string sgname;
+	if ( pose.data().has( core::pose::datacache::CacheableDataType::SCORE_LINE_STRINGS ) ) {
+		using namespace basic::datacache;
+		CacheableStringMapCOP data = utility::pointer::dynamic_pointer_cast< CacheableStringMap const >
+			( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::SCORE_LINE_STRINGS ) );
+
+		auto it = data->map().find("Spacegrp");
+		if ( it != data->map().end() ) {
+			sgname = it->second;
+		}
+	}
+
+	if ( sgname == "" ) {
+		io::CrystInfo ci = pose.pdb_info()->crystinfo();
+		sgname= ci.spacegroup();
+	}
+	core::pose::add_score_line_string( pose, "Spacegrp", utility::replace_spaces(sgname,"") );
+}
+
+// parse_my_tag
+void
+CrystRMS::parse_my_tag(
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap & data,
+	filters::Filters_map const & ,
+	moves::Movers_map const & ,
+	core::pose::Pose const & /*pose*/ ) {
+
+	if ( tag->hasOption( "scorefxn" ) ) {
+		sf_ = protocols::rosetta_scripts::parse_score_function( tag, data );
+	}
+}
+
+std::string CrystRMS::get_name() const {
+	return mover_name();
+}
+
+std::string CrystRMS::mover_name() {
+	return "CrystRMS";
+}
+
+void CrystRMS::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	protocols::rosetta_scripts::attributes_for_parse_score_function ( attlist ) ;
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Calculate RMS taking crystal symmetry into account.", attlist );
+}
+
+std::string CrystRMSCreator::keyname() const {
+	return CrystRMS::mover_name();
+}
+
+protocols::moves::MoverOP
+CrystRMSCreator::create_mover() const {
+	return protocols::moves::MoverOP( new CrystRMS );
+}
+
+void CrystRMSCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	CrystRMS::provide_xml_schema( xsd );
+}
+
+
+////////////////////////////////////////////////////
+
 DockLatticeMover::DockLatticeMover(core::scoring::ScoreFunctionOP sf_in) {
 	sf_ = sf_in->clone();
 }
@@ -329,7 +441,8 @@ DockLatticeMover::initialize(core::pose::Pose & pose, core::Real scale_contact_d
 	// resolve spacegroup
 	io::CrystInfo ci = pose.pdb_info()->crystinfo();
 
-	// if a spacegroup is specified, override it
+	// set the spacegroup from the mover.
+	// if 'input' was given, use the input PDB spacegroup instead
 	Spacegroup sg;
 	std::string sgname;
 
@@ -338,10 +451,9 @@ DockLatticeMover::initialize(core::pose::Pose & pose, core::Real scale_contact_d
 			utility::vector1< std::string > sg_picked( 5 );
 			sg_picked[1] = "P212121"; sg_picked[2] = "P1211"; sg_picked[3] = "C121"; sg_picked[4] = "P21212";
 			sg_picked[5] = ci.spacegroup();
-			Size irand = Size(5.0*numeric::random::uniform())+1;
+			Size irand = numeric::random::rg().random_range(1, 5);
 			sgname = sg_picked[irand];
 			sg.set_spacegroup( sgname );
-			//core::pose::add_score_line_string( pose, "Spacegrp", sgname );
 			TR << "Assigning random_chiral space group of: " << sgname << std::endl;
 
 		} else if ( spacegroup_ == "random_achiral" ) {
@@ -351,12 +463,11 @@ DockLatticeMover::initialize(core::pose::Pose & pose, core::Real scale_contact_d
 			sg_picked[7] = "Pbcn"; sg_picked[8] = "Pca21"; sg_picked[8] = "Pccn";
 			sg_picked[9] ="231"; sg_picked[10] = ci.spacegroup();
 
-			Size irand = Size(10.0*numeric::random::uniform())+1;
+			Size irand = numeric::random::rg().random_range(1, 10);
 			sgname = sg_picked[irand];
 
 			sg.set_spacegroup( sgname );
 			TR << "Assigning random_achiral space group of: " << sg_picked[irand] << std::endl;
-			//core::pose::add_score_line_string( pose, "Spacegrp", sgname );
 
 		} else {
 			sgname = spacegroup_;
@@ -371,8 +482,13 @@ DockLatticeMover::initialize(core::pose::Pose & pose, core::Real scale_contact_d
 		sg.set_spacegroup(ci.spacegroup());
 		sgname = ci.spacegroup();
 	}
-
 	// tgt: 50% solvent
+
+	mult_ = sg.nsymmops();
+	if ( mult_ == 0 ) {
+		TR.Error << "mult_ is 0 and sg name is " << sg.name() << std::endl;
+		utility_exit();
+	}
 
 	// make a copy of sf_ to tweak with vdw rep
 	core::scoring::ScoreFunctionOP scorevdw (new core::scoring::symmetry::SymmetricScoreFunction());
@@ -383,6 +499,7 @@ DockLatticeMover::initialize(core::pose::Pose & pose, core::Real scale_contact_d
 	MakeLatticeMover make_lattice;
 	make_lattice.set_refinable_lattice( true );
 	make_lattice.contact_dist( scale_contact_dist*contact_dist_ );
+	make_lattice.set_validate_lattice(randomize_);  // only validate if we are randomizing input
 
 
 	bool good = false;
@@ -394,58 +511,71 @@ DockLatticeMover::initialize(core::pose::Pose & pose, core::Real scale_contact_d
 	while ( !good ) {
 		good = true;
 		if ( randomize_ ) {
-			// randomize volume
-			sg.set_parameters(1.0,1.0,1.0,90.0,90.0,90.0);
+			// generate a random unit cell with "reasonable" volume
 			core::Real mw = getMW( pose );
-			core::Real tgtVol = 1.23/(0.65) * mw * sg.nsymmops();
-			core::Real volscale = sg.volume();
+			core::Real tgtVol = 1.23/(1.0 - 0.35) * mw * sg.nsymmops(); // tgt 35% occ. TODO: make selectable!
+
+			// randomly choose relative unit cell dimensions
+			//    with largest ratio 5:1 between dims
 			core::Real A = 0.2+0.8*numeric::random::rg().uniform();
 			core::Real B = 0.2+0.8*numeric::random::rg().uniform();
 			core::Real C = 0.2+0.8*numeric::random::rg().uniform();
+
+			// randomly choose angles.  Keep close to 90
 			core::Real alpha = 60+60*numeric::random::rg().uniform();
 			core::Real beta  = 60+60*numeric::random::rg().uniform();
 			core::Real gamma = 60+60*numeric::random::rg().uniform();
-			core::Real scale = std::pow( volscale*tgtVol/(A*B*C), 1.0/3.0);
-			ci.A(scale*A);
-			ci.B(scale*B);
-			ci.C(scale*C);
-			ci.alpha(alpha);
-			ci.beta(beta);
-			ci.gamma(gamma);
+
+			// now apply parameter restrictions from the spacegroup by passing into sg object
+			sg.set_parameters(A,B,C,alpha,beta,gamma);
+			core::Real volscale = sg.volume();
+			core::Real scale = std::pow( tgtVol/volscale, 1.0/3.0);
+			TR << "Initial A,B,C,alpha,beta,gamma: " << A<<","<<B <<","<<C<<","<< alpha<<","<<beta<<","<<gamma<<std::endl;
+			TR << "tgtVol: " << tgtVol << " volscale: " << volscale << " scale: " << scale << std::endl;
+
+			ci.A(scale*sg.A());
+			ci.B(scale*sg.B());
+			ci.C(scale*sg.C());
+			ci.alpha(sg.alpha());
+			ci.beta(sg.beta());
+			ci.gamma(sg.gamma());
 			pose.pdb_info()->set_crystinfo(ci);
 
-			// randomize position
+			// randomize position of ASU within lattice
 			numeric::xyzVector< core::Real > x( numeric::random::random_normal() );
 			numeric::xyzVector< core::Real > ytmp;
-			do {
-				ytmp = numeric::random::random_normal();
-			} while ( x.cross( ytmp ).length_squared() < 0.1 );
+			do { ytmp = numeric::random::random_normal(); } while ( x.cross( ytmp ).length_squared() < 0.1 );
 			numeric::xyzVector< core::Real > z( x.cross( ytmp ).normalized() ), y( z.cross(x) );
 			numeric::xyzMatrix< core::Real > const R( numeric::xyzMatrix< core::Real >::cols( x, y, z ) );
 			numeric::xyzVector< core::Real > const v(
 				scale*A*numeric::random::uniform(), scale*B*numeric::random::uniform(), scale*C*numeric::random::uniform());
 			pose.apply_transform_Rx_plus_v( R,v);
 
-			// chis?
+			// randomize internal torsions
 			if ( perturb_chi_ ) randomize_chis(pose);
 		}
-
 
 		make_lattice.apply( pose );
 
 		if ( randomize_ ) {
-			slide_lattice( pose );
+			// odds are we have a badly clashing lattice
+			// try to resolve clashes while minimally perturbing the lattice
+			slide_lattice( pose ); //
 			core::Real vdwscore = 999;
+
+			// now try to regenerate lattice
+			// if we are still clashing or have dramatically changed volume, fail and monomerize pose
 			if ( regenerate_lattice( pose ) ) {
-				//vdwscore = (*sf_)(pose);
 				vdwscore = (*scorevdw)(pose);
 				good = (vdwscore < init_score_cut_loc); //????
 				if ( !good ) {
+					// clash check failed
 					protocols::cryst::UpdateCrystInfo update_cryst1;
 					update_cryst1.apply( pose );
 				}
 			} else {
-				good = false; //????
+				// regen failed: volume is very different than expected
+				good = false;
 			}
 
 			TR << "Attempt " << iter++ << " score = " << vdwscore << std::endl;
@@ -461,7 +591,7 @@ DockLatticeMover::initialize(core::pose::Pose & pose, core::Real scale_contact_d
 	numeric::xyzVector<core::Size> nsub = make_lattice.sg().get_nsubdivisions();
 	lattice_mag_ = scale * numeric::xyzVector<core::Real>(  1.0/nsub[0],1.0/nsub[1],1.0/nsub[2] );
 
-	// finally, some stuff we will need later
+	// finally, stash some stuff we will need later
 	auto & SymmConf ( dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
 	symdofs_ = SymmConf.Symmetry_Info()->get_dofs();
 
@@ -475,11 +605,14 @@ DockLatticeMover::initialize(core::pose::Pose & pose, core::Real scale_contact_d
 	runtime_assert( SUBjump_ != 0 );
 
 	// make sure put info of randomly selected SG
-	core::pose::add_score_line_string( pose, "Spacegrp", sgname );
+	core::pose::add_score_line_string( pose, "Spacegrp", utility::replace_spaces(sgname,"") );
 }
 
 void
 DockLatticeMover::slide_lattice( core::pose::Pose & pose ) {
+	// slide the lattice via lattice + RB minimization
+	// TO DO: ensure starting lattice is compact!
+	// see old version at https://github.com/RosettaCommons/main/blob/dimaio/lat_refine/source/src/protocols/cryst/refineable_lattice.cc
 	core::kinematics::MoveMapOP mm(new core::kinematics::MoveMap);
 	mm->set_jump(true); mm->set_chi(false); mm->set_bb(false);
 	core::pose::symmetry::make_symmetric_movemap( pose, *mm );
@@ -571,43 +704,37 @@ DockLatticeMover::perturb_rb( core::pose::Pose & pose ) {
 bool
 DockLatticeMover::regenerate_lattice( core::pose::Pose & pose ) {
 	protocols::cryst::UpdateCrystInfo update_cryst1;
-	protocols::cryst::MakeLatticeMover setup;
-	setup.contact_dist( contact_dist_ );
-	setup.set_refinable_lattice( true );
 
 	update_cryst1.apply( pose );
 	io::CrystInfo ci = pose.pdb_info()->crystinfo();
 
-	// check if regeneration will mess things up
-	//if ( ci.A()<0.5 || ci.B()<0.5 || ci.C()<0.5 ) return false;
-	//if ( ci.alpha()<10 || ci.beta()<10 || ci.gamma()<10 ) return false;
-	//if ( ci.alpha()>170 || ci.beta()>170 || ci.gamma()>170 ) return false;
-	//if ( ci.A()>50.0 || ci.B()>50.0 || ci.C()>50.0 ) return false;
-	//if ( ci.A()*ci.B()*ci.C() > 20000.0 ) return false;
-
-	// fd unfortunately above checks are not general
-	// instead make sure that at least 10% of volume is occupied and no more than 200%
-	core::Real const deg2rad( 57.29577951308232 );
-	core::Real ca = cos(deg2rad*ci.alpha()), cb = cos(deg2rad*ci.beta()), cg = cos(deg2rad*ci.gamma());
-	core::Real volume = ci.A()*ci.B()*ci.C() * std::sqrt( 1-ca*ca-cb*cb-cg*cg+2*ca*cb*cg );
-
+	// check 1: make sure that at least 10% of volume is occupied and no more than 200%
 	// monomeric structure at this point
 	core::Real MW = getMW( pose );
-	core::Real occ = 1.23*MW / volume;
+	TR << "A,B,C, alpha,beta,gamma:" << ci.A()<<","<<ci.B()<<","<<ci.C() <<" , "<< ci.alpha()<<","<<ci.beta()<<","<<ci.gamma()<< std::endl;
+	core::Real volume = getVolume( ci.A(),ci.B(),ci.C(),ci.alpha(),ci.beta(),ci.gamma() );
+	core::Real occ = 1.23*MW*mult_ / volume; //looks like mult_ is always zero.
+	TR << "mult:" << mult_ << std::endl;
+	TR << "MW: " << MW << std::endl;
+	TR << "volume: " << volume << std::endl;
+	TR << "occ: " << occ << std::endl;
 	if ( occ < 0.1 || occ > 2.0 ) {
-		TR << "Regenerated lattice fails occupancy check [occ=" << occ << "]: ";
-		TR << ci.A()<<","<<ci.B()<<","<<ci.C() <<" , "<< ci.alpha()<<","<<ci.beta()<<","<<ci.gamma()<< std::endl;
+		TR << "Regenerated lattice fails occupancy check with occupancy of " << occ << " [a,b,c alpha,beta,gamma =";
+		TR << ci.A()<<","<<ci.B()<<","<<ci.C() <<"  "<< ci.alpha()<<","<<ci.beta()<<","<<ci.gamma() << " ]" << std::endl;
 		return false;
 	}
 
-	// check valid
-	core::pose::Pose pose_tmp( pose );
-	//if ( !setup.check_valid( pose_tmp ) ) {
-	// return false;
-	//}
+	protocols::cryst::MakeLatticeMover setup;
+	setup.contact_dist( contact_dist_ );
+	setup.set_refinable_lattice( true );
 	setup.apply( pose );
 
+	// check 2: ensure that setup succeeded
+	if ( !core::pose::symmetry::is_symmetric( pose ) ) {
+		return false;
+	}
 
+	// we're good!
 	SymmetricConformation & SymmConf ( dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
 	symdofs_ = SymmConf.Symmetry_Info()->get_dofs();
 
@@ -731,7 +858,7 @@ DockLatticeMover::apply( core::pose::Pose & pose ) {
 		core::Real score_pre = (*sf_)(pose);
 
 		if ( !regenerate_lattice(pose) ) {
-			contact_dist_scale += 1.1;
+			contact_dist_scale *= 1.1;
 			TR << "Error regenerating lattice.  Increase contact dist by factor of " << contact_dist_scale << std::endl;
 			nfail++;
 			if ( nfail > 10 ) { // don't try more than 10 times
@@ -775,11 +902,12 @@ DockLatticeMover::apply( core::pose::Pose & pose ) {
 		min_all->apply(pose);
 	}
 
+	core::Real score = (*sf_)(pose);
+	core::pose::setPoseExtraScore( pose, "crystScore", score);
+
 	core::Real RMS=-1.0;
 	if ( native_ ) {
 		RMS = crystRMS( pose, *native_, true);
-		core::Real score = (*sf_)(pose);
-		core::pose::setPoseExtraScore( pose, "crystScore", score);
 		core::pose::setPoseExtraScore( pose, "crystRMS", RMS);
 	}
 
@@ -900,44 +1028,6 @@ void DockLatticeMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinit
 
 ////////////////////////////////////////////////////
 
-// bool
-// MakeLatticeMover::check_valid( core::pose::Pose & pose ) {
-//  // initialize sg_ from pose CRYST1 line
-//  //bool valid = true;
-//  io::CrystInfo ci = pose.pdb_info()->crystinfo();
-//  runtime_assert(ci.A()*ci.B()*ci.C() != 0);  // TODO: allow these to be randomized
-//
-//  sg_.set_spacegroup(ci.spacegroup());
-//  sg_.set_parameters(ci.A(),ci.B(),ci.C(), ci.alpha(), ci.beta(), ci.gamma());
-//
-//  // get principal axes
-//  numeric::xyzVector< core::Real > Ax, Bx, Cx;
-//  Ax = sg_.f2c()*numeric::xyzVector< core::Real >(1,0,0); Ax.normalize();
-//  Bx = sg_.f2c()*numeric::xyzVector< core::Real >(0,1,0); Bx.normalize();
-//  Cx = sg_.f2c()*numeric::xyzVector< core::Real >(0,0,1); Cx.normalize();
-//
-//  //Size rootres = place_near_origin( pose );
-//  place_near_origin( pose );
-//
-//  core::pose::Pose posebase;
-//  utility::vector1<Size> Ajumps, Bjumps, Cjumps, monomer_jumps, monomer_anchors;
-//  //Size base_monomer;
-//
-//  numeric::xyzVector< core::Real > max_extent(0,0,0);
-//  for ( Size i=1; i<= pose.size(); ++i ) {
-//   if ( !pose.residue(i).is_protein() ) continue;
-//   for ( Size j=1; j<=pose.residue(i).natoms(); ++j ) {
-//    numeric::xyzVector< core::Real > f_ij = sg_.c2f()*pose.residue(i).xyz(j);
-//    for ( int k=0; k<3; ++k ) max_extent[k] = std::max( std::fabs(f_ij[k]) , max_extent[k] );
-//   }
-//  }
-//  max_extent += sg_.c2f()*numeric::xyzVector< core::Real >(6,6,6);
-//
-//  if ( max_extent[0] > 1 || max_extent[1] > 1 || max_extent[2] > 1 ||
-//    max_extent[0] < 0 || max_extent[1] < 0 || max_extent[2] < 0 ) return false;
-//  return true;
-// }
-
 void
 MakeLatticeMover::apply( core::pose::Pose & pose ) {
 	// initialize sg_ from pose CRYST1 line
@@ -961,13 +1051,19 @@ MakeLatticeMover::apply( core::pose::Pose & pose ) {
 
 	numeric::xyzVector< core::Real > max_extent(0,0,0);
 	for ( Size i=1; i<= pose.size(); ++i ) {
-		if ( !pose.residue(i).is_protein() ) continue;
 		for ( Size j=1; j<=pose.residue(i).natoms(); ++j ) {
 			numeric::xyzVector< core::Real > f_ij = sg_.c2f()*pose.residue(i).xyz(j);
 			for ( int k=0; k<3; ++k ) max_extent[k] = std::max( std::fabs(f_ij[k]) , max_extent[k] );
 		}
 	}
-	max_extent += sg_.c2f()*numeric::xyzVector< core::Real >(6,6,6);
+
+	// early exit! if this lattice is unreasonable, exit early _without_ symmetrizing!
+	if ( validate_lattice_ ) {
+		if ( max_extent[0] > 2 || max_extent[1] > 2 || max_extent[2] > 2 ) {
+			TR << "Failed extent check!" << std::endl;
+			return;
+		}
+	}
 
 	// in each direction, find closest symmcenter we are not considering
 	numeric::xyzVector< Size > grid = sg_.get_nsubdivisions();
@@ -978,19 +1074,21 @@ MakeLatticeMover::apply( core::pose::Pose & pose ) {
 		std::max( 1, (int)std::ceil( 2*max_extent[1]-closest_nongen_symmcenter[1] )),
 		std::max( 1, (int)std::ceil( 2*max_extent[2]-closest_nongen_symmcenter[2] )) );
 
-	TR.Debug << "using extent " << EXTEND[0] << "," << EXTEND[1] << "," << EXTEND[2] << std::endl;
-	TR.Debug << "with max_extent = " << max_extent[0] << "," << max_extent[1] << "," << max_extent[2] << std::endl;
-	TR.Debug << "with closest_nongen_symmcenter = " << closest_nongen_symmcenter[0] << "," << closest_nongen_symmcenter[1] << "," << closest_nongen_symmcenter[2] << std::endl;
+	TR.Debug << "using extent = " << EXTEND[0] << "," << EXTEND[1] << "," << EXTEND[2] << std::endl;
+	TR.Debug << "  max_extent = " << max_extent[0] << "," << max_extent[1] << "," << max_extent[2] << std::endl;
 
 	build_lattice_of_virtuals( posebase, EXTEND, Ajumps, Bjumps, Cjumps, monomer_anchors, base_monomer);
 
 	Size nvrt = posebase.size();
 	Size nres_monomer = pose.size();
+	TR.Debug << "Number of virtuals:" << nvrt << std::endl;
 
 	// only connecting ones!
 	// updates monomer_anchors
 	detect_connecting_subunits( pose, posebase, monomer_anchors, base_monomer );
+	TR.Debug << "Number of connected subunits:" << monomer_anchors.size() << std::endl;
 	add_monomers_to_lattice( pose, posebase, monomer_anchors, monomer_jumps, rootres );
+	TR.Debug << "Final pose size (including symm & VRT):" << posebase.total_residue() << std::endl;
 
 	Size nsubunits = monomer_anchors.size();
 
@@ -1271,6 +1369,7 @@ MakeLatticeMover::build_lattice_of_virtuals(
 	vrtZ.dimension(nvrts_dim[0]*grid[0]+1,nvrts_dim[1]*grid[1]+1,nvrts_dim[2]*grid[2]+1); vrtZ=0;
 
 	// 1 expand A (j==k==1)
+	//TR.Debug << "Expanding A" << std::endl;
 	for ( int i=1; i<=(int)(nvrts_dim[0]*grid[0]+1); ++i ) {
 		numeric::xyzVector< core::Real > fX( (Real)(i-1-(Real)(EXTEND[0]*grid[0]))/(Real)grid[0], -EXTEND[1], -EXTEND[2] );
 		O = sg_.f2c()*fX;
@@ -1293,6 +1392,7 @@ MakeLatticeMover::build_lattice_of_virtuals(
 	}
 
 	// expand B (k==1)
+	//TR.Debug << "Expanding B" << std::endl;
 	for ( int i=1; i<=(int)(nvrts_dim[0]*grid[0]+1); ++i ) {
 		for ( int j=2; j<=(int)(nvrts_dim[1]*grid[1]+1); ++j ) {
 			numeric::xyzVector< core::Real > fX( (i-1-(Real)(EXTEND[0]*grid[0]))/(Real)grid[0], (j-1-(Real)(EXTEND[1]*grid[1]))/(Real)grid[1], -EXTEND[2] );
@@ -1309,6 +1409,7 @@ MakeLatticeMover::build_lattice_of_virtuals(
 	}
 
 	// expand C
+	//TR.Debug << "Expanding C" << std::endl;
 	for ( int i=1; i<=(int)(nvrts_dim[0]*grid[0]+1); ++i ) {
 		for ( int j=1; j<=(int)(nvrts_dim[1]*grid[1]+1); ++j ) {
 			for ( int k=2; k<=(int)(nvrts_dim[2]*grid[2]+1); ++k ) {
@@ -1325,6 +1426,7 @@ MakeLatticeMover::build_lattice_of_virtuals(
 	}
 
 	// add "hanging" virtuals
+	//TR.Debug << "add hanging virtuals" << std::endl;
 	for ( int s=1; s<=(int)sg_.nsymmops(); ++s ) {
 		numeric::xyzMatrix<Real> R_i = sg_.symmop(s).get_rotation(), R_i_cart;
 		numeric::xyzVector<Real> T_i = sg_.symmop(s).get_translation();
@@ -1471,6 +1573,7 @@ MakeLatticeMover::setup_xtal_symminfo(
 	symminfo.set_nres_subunit( nres_monomer );
 
 	Size const nres_protein( num_monomers * nres_monomer );
+	TR.Debug << "nres_protein " << nres_protein << std::endl;
 	for ( Size i=1; i<= nres_protein; ++i ) {
 		if ( symminfo.bb_is_independent( i ) ) symminfo.set_score_multiply( i, 2 );
 		else symminfo.set_score_multiply( i, 1 );

@@ -104,9 +104,43 @@ public:
 	static
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
-
-
 };
+
+
+// calculate
+class CrystRMS : public protocols::moves::Mover {
+private:
+	core::pose::PoseOP native_;
+	core::scoring::ScoreFunctionOP sf_;
+
+public:
+	CrystRMS();
+
+	void apply( core::pose::Pose & pose ) override;
+
+	protocols::moves::MoverOP clone() const override { return protocols::moves::MoverOP(new CrystRMS(*this)); }
+	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP(new CrystRMS()); }
+
+	void parse_my_tag(
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap & data,
+		filters::Filters_map const & ,
+		moves::Movers_map const & ,
+		core::pose::Pose const & pose ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+};
+
+
 
 
 class DockLatticeMover : public protocols::moves::Mover {
@@ -122,6 +156,7 @@ private:
 	core::Size ncycles_;
 
 	std::string spacegroup_;
+	core::Size mult_; // # copies in ASU
 	bool randomize_;
 	bool min_, min_lattice_, final_min_, pack_, perturb_chi_;
 
@@ -161,6 +196,7 @@ public:
 	slide_lattice( core::pose::Pose & pose );
 
 	// regenerate symmetry
+	// returns false if volume check failed
 	bool
 	regenerate_lattice( core::pose::Pose & pose );
 
@@ -202,7 +238,7 @@ class MakeLatticeMover : public protocols::moves::Mover {
 private:
 	Spacegroup sg_;
 	core::Real contact_dist_;
-	bool refinable_lattice_;
+	bool refinable_lattice_, validate_lattice_;
 
 	utility::vector1< numeric::xyzMatrix<core::Real> > allRs_;
 	utility::vector1< numeric::xyzVector<core::Real> > allTs_;
@@ -212,11 +248,17 @@ public:
 		using namespace basic::options;
 		refinable_lattice_ = option[ OptionKeys::cryst::refinable_lattice]();
 		contact_dist_ = option[ OptionKeys::cryst::interaction_shell]();
+		validate_lattice_ = false;
 	}
 
 	void
 	set_refinable_lattice( bool val ) {
 		refinable_lattice_ = val;
+	}
+
+	void
+	set_validate_lattice( bool val ) {
+		validate_lattice_ = val;
 	}
 
 	// get R and T from subunit index

@@ -340,11 +340,14 @@ sources = {
 	],
 	"pilot/guffysl" : [
 	       # "heme_binding",
-	#	"heme_replace",
 	#	"metal_site_finder",
 	#        "zinc_statistic_generator",
 	#        "generate_starting_zinc_sites",
-  	#        "backside_hbond_finder",
+	#        "backside_hbond_finder",
+	],
+	
+	"pilot/guangfeng" : [
+		"cryst_hbonds", # small molecule xtal dock hbonds reporter
 	],
 	# H ######################################################################
 		"pilot/habib" : [

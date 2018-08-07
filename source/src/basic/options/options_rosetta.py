@@ -2410,7 +2410,9 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'use_bicubic_interpolation', 'Boolean', desc="Instead of using bilinear interpolation to evaluate the Ramachandran, P_AA_pp and Dunbrack potentials, use bicubic interpolation.  Avoids pile-ups at the grid boundaries where discontinuities in the derivatives frustrate the minimizer", default="true" ),
 			Option( 'dun_normsd', 'Boolean', desc="Use height-normalized guassian distributions to model p(chi|phi,psi) instead of height-unnormalized gaussians", default="false" ),
 			Option( 'dun_entropy_correction', 'Boolean', desc="Add Shannon entropy correction to rotamer energy: E = -logP + S", default="false" ),
+			Option( 'no_autogen_cart_improper', 'Boolean', desc="Ignore the auto parameter generation of improper torsions (undefined torsions) in CartesianBondedEnergy, generate_impropers_map_res."),
 		), #-corrections:score
+		
 		Option_Group( 'chemical',
 			Option( 'icoor_05_2009', 'Boolean', desc="New set of idealized coordinates for full atom, 05-2009" ),
 			Option( 'parse_charge', 'Boolean', desc="Use PARSE charge set." ),
@@ -2419,8 +2421,8 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		), #-corrections:chemical
 
 		Option_Group( 'genpotential',
-			Option( 'set_torsion_params', 'StringVector', desc="Modify generic_bonded_potential torsion parameters (the ones in generic_bonded.round6p.txt) from the command line. Happens at time of AtomTypeSet creation inside ChemicalManager.cc. Format is: -corrections:genpotential:set_torsion_params <atom-set1>:<atom_name1>:<atom_name2>:<atom_name3>:<atom_name4><param1>:<setting1>:<param2>:<setting2> ... For example: '-corrections:genpotential:set_torsion_params fa_standard:C*:CS:CS:C*:k1:0.0:k2:0.0:k3:0.077 fa_standard:CD:CS:CS:CD:k1:0.435:k2:0.039:k3:0.070' "),
-			Option( 'set_special_torsion_params', 'StringVector', desc="Modify generic_bonded_potential special torsion parameters (the ones in generic_bonded.round6p.txt) from the command line. Happens at time of scorefunction creation inside ChemicalManager.cc. Format is: -corrections:genpotential:set_special_torsion_params <atom-set1>:<atom_name1>:<atom_name2>:<atom_name3>:<atom_name4><param1>:<setting1>:<param2>:<setting2> ... For example: '-corrections:genpotential:set_special_torsion_params fa_standard:X:CRb:CRb:X:k1:0.000:k2:-0.226:k3:0.000:k4:0.093:k8:0.000 ' "),
+			Option( 'set_torsion_params', 'StringVector', desc="Modify generic_bonded_potential torsion parameters (the ones in generic_bonded.round6p.txt) from the command line. Format is: -corrections:genpotential:set_torsion_params <atom-set1>:<atom_name1>:<atom_name2>:<atom_name3>:<atom_name4><param1>:<setting1>:<param2>:<setting2> ... For example: '-corrections:genpotential:set_torsion_params fa_standard:C*:CS:CS:C*:k1:0.0:k2:0.0:k3:0.077 fa_standard:CD:CS:CS:CD:k1:0.435:k2:0.039:k3:0.070' "),
+			Option( 'set_special_torsion_params', 'StringVector', desc="Modify generic_bonded_potential special torsion parameters (the ones in generic_bonded.round6p.txt) from the command line. Format is: -corrections:genpotential:set_special_torsion_params <atom-set1>:<atom_name1>:<atom_name2>:<atom_name3>:<atom_name4><param1>:<setting1>:<param2>:<setting2> ... For example: '-corrections:genpotential:set_special_torsion_params fa_standard:X:CRb:CRb:X:k1:0.000:k2:-0.226:k3:0.000:k4:0.093:k8:0.000 ' "),
 			#Option( 'set_improper_torsion_params', 'StringVector', desc = "Modify atom properties (the ones in <atom-set>/atom_properties.txt) from the command line. Happens at time of AtomTypeSet creation inside ChemicalManager.cc. Format is: -chemical:set_atom_properties <atom-set1>:<atom_name1>:<param1>:<setting1> <atom-set2>:<atom2>:<param2>:<setting2> ... For example: '-chemical:set_atom_properties fa_standard:OOC:LK_DGFREE:-5 fa_standard:ONH2:LJ_RADIUS:0.5' "),
 		), #-corrections:genpotential
 

@@ -415,28 +415,6 @@ public:
 
 
 ///////////////////////////////////////////////////////////////////////////////
-class CrystRMS : public protocols::moves::Mover {
-public:
-	CrystRMS() = default;
-
-	std::string get_name() const override { return "CrystRMS"; }
-
-	void apply( Pose & pose) override {
-		if ( !native ) {
-			native = core::pose::PoseOP( new core::pose::Pose() );
-			core::import_pose::pose_from_file( *native, option[in::file::native]() , core::import_pose::PDB_file);
-		}
-
-		core::Real rms = protocols::cryst::crystRMS( *native, pose ); // will symmetrize once
-		setPoseExtraScore( pose, "cryst_rms", rms );
-		TR << "RMS = " << rms << std::endl;
-	}
-
-	core::pose::PoseOP native;
-};
-
-
-///////////////////////////////////////////////////////////////////////////////
 class CrystDesign : public protocols::moves::Mover {
 public:
 	CrystDesign(bool revertonly) {

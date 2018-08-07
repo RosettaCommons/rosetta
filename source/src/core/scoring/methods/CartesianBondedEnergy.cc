@@ -1524,7 +1524,7 @@ IdealParametersDatabase::create_parameters_for_restype(
 		restype_params->add_improper_parameter( ids, tor_params );
 	}
 
-	if ( ! imp_found_in_database ) {
+	if ( ! imp_found_in_database && ! basic::options::option[ basic::options::OptionKeys::corrections::score::no_autogen_cart_improper ]() ) {
 		// See if we need to generate a new one.
 		TorsionsIndepSubmap const & resdata( generate_impropers_map_res( rsd_type ) );
 		for ( const auto & b_it : resdata ) {

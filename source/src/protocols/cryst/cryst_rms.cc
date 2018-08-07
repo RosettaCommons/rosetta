@@ -194,7 +194,8 @@ crystRMSfast (core::pose::Pose &pose_native, core::pose::Pose &pose_decoy) {
 }
 
 core::Real
-crystRMS (core::pose::Pose &pose_native, core::pose::Pose &pose_decoy, bool allatom) {
+crystRMS (core::pose::Pose &pose_native, core::pose::Pose &pose_decoy,
+	bool allatom, int native_cdist, int decoy_cdist) {
 	using namespace core;
 	using namespace core::scoring;
 	using namespace core::conformation::symmetry;
@@ -204,11 +205,11 @@ crystRMS (core::pose::Pose &pose_native, core::pose::Pose &pose_decoy, bool alla
 	///
 	///
 	if ( !core::pose::symmetry::is_symmetric( pose_native ) ) {
-		setup_native.contact_dist(16);
+		setup_native.contact_dist(native_cdist);
 		setup_native.apply( pose_native );
 	}
 	if ( !core::pose::symmetry::is_symmetric( pose_decoy ) ) {
-		setup_decoy.contact_dist(10);
+		setup_decoy.contact_dist(decoy_cdist);
 		setup_decoy.apply( pose_decoy );
 	}
 
@@ -287,20 +288,20 @@ crystRMS (core::pose::Pose &pose_native, core::pose::Pose &pose_decoy, bool alla
 		core::Size idx=1;
 		for ( core::Size i=1; i<=nres_asu; ++i ) {
 			if ( allatom ) {
-				if ( pose_decoy.residue(i).is_protein() ) {
-					Vector const &x_decoy = pose_decoy.residue(i).atom(2).xyz();
-					Vector const &x_native = pose_native.residue(i).atom(2).xyz();
-					init_coords(1,idx) = x_decoy[0]; init_coords(2,idx) = x_decoy[1]; init_coords(3,idx) = x_decoy[2];
-					final_coords(1,idx) = x_native[0]; final_coords(2,idx) = x_native[1]; final_coords(3,idx) = x_native[2];
-					idx++;
-				}
-			} else {
 				core::conformation::Residue const &rsd_n = pose_native.residue(i);
 				core::conformation::Residue const &rsd_d = pose_decoy.residue(i);
 				runtime_assert( rsd_n.nheavyatoms() == rsd_d.nheavyatoms() );
 				for ( core::Size k=1; k<=rsd_n.nheavyatoms(); ++k ) {
 					Vector const &x_decoy = rsd_d.atom(k).xyz();
 					Vector const &x_native = rsd_n.atom(k).xyz();
+					init_coords(1,idx) = x_decoy[0]; init_coords(2,idx) = x_decoy[1]; init_coords(3,idx) = x_decoy[2];
+					final_coords(1,idx) = x_native[0]; final_coords(2,idx) = x_native[1]; final_coords(3,idx) = x_native[2];
+					idx++;
+				}
+			} else {
+				if ( pose_decoy.residue(i).is_protein() ) {
+					Vector const &x_decoy = pose_decoy.residue(i).atom(2).xyz();
+					Vector const &x_native = pose_native.residue(i).atom(2).xyz();
 					init_coords(1,idx) = x_decoy[0]; init_coords(2,idx) = x_decoy[1]; init_coords(3,idx) = x_decoy[2];
 					final_coords(1,idx) = x_native[0]; final_coords(2,idx) = x_native[1]; final_coords(3,idx) = x_native[2];
 					idx++;
