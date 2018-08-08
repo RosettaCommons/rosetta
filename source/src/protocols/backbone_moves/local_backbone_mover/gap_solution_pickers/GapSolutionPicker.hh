@@ -40,8 +40,8 @@ class GapSolutionPicker :
 
 public:
 
-	virtual Size pick(core::pose::Pose &pose, FreePeptide &free_peptide,
-		vector1<vector1<Real> > pivot_torsions, Size pivot) = 0;
+	virtual Size pick(core::pose::Pose const & pose, FreePeptide const & free_peptide,
+		vector1<vector1<Real> > const & pivot_torsions, Size const pivot) const = 0;
 
 private:
 

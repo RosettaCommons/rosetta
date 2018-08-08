@@ -13,6 +13,7 @@
 
 #include <protocols/backbone_moves/local_backbone_mover/gap_solution_pickers/RandomGapSolutionPicker.hh>
 #include <basic/Tracer.hh>
+#include <numeric/random/random.hh>
 
 // STD
 #include <cstdlib>
@@ -34,10 +35,11 @@ RandomGapSolutionPicker::RandomGapSolutionPicker():
 RandomGapSolutionPicker::~RandomGapSolutionPicker()= default;
 
 Size
-RandomGapSolutionPicker::pick(core::pose::Pose &, FreePeptide &,
-	vector1<vector1<Real> > pivot_torsions, Size){
+RandomGapSolutionPicker::pick(core::pose::Pose const &, FreePeptide const &,
+	vector1<vector1<Real> > const & pivot_torsions, Size const
+) const {
 	if ( 0 == pivot_torsions.size() ) { return 0; }
-	return std::rand() % pivot_torsions.size() + 1;
+	return numeric::random::random_range( 1, pivot_torsions.size() );
 }
 
 
