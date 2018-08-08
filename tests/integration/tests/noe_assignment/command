@@ -30,15 +30,16 @@ cd %(workdir)s
 
 [ -x %(bin)s/r_noe_assign.%(binext)s ] || exit 1
 
-
 %(bin)s/r_noe_assign.%(binext)s %(additional_flags)s @flags @flags_cycle1 -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
     | egrep -vf ../../ignore_list \
     > log_cycle_1
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so (i.e. Tell testing system if Rosetta died.)
 
+#note the regex is a sniper's tool to fix an integration test instability where memory addresses are getting printed; this should only smush memory addresses adjacent to atom names (marked by their trailing ')
 %(bin)s/r_noe_assign.%(binext)s %(additional_flags)s @flags @flags_cycle2 -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
     | egrep -vf ../../ignore_list \
+    | egrep -v ": \[ ERROR \] '[A-Z 1-9]{4}' 0x" \
     > log_cycle_2
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so (i.e. Tell testing system if Rosetta died.)
