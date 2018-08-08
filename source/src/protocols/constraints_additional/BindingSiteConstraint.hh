@@ -79,7 +79,7 @@ public:
 	);
 
 	core::scoring::constraints::ConstraintOP clone() const override {
-		return core::scoring::constraints::ConstraintOP( new BindingSiteConstraint( atms_, tgt_pos_, tgt_pos_centroid_ ) );
+		return core::scoring::constraints::ConstraintOP( new BindingSiteConstraint( atms_, tgt_pos_, tgt_pos_centroid_, score_type() ) );
 	}
 
 	bool operator == ( core::scoring::constraints::Constraint const & other ) const override;

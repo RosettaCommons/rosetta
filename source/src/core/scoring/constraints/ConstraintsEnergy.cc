@@ -74,6 +74,7 @@ ConstraintsEnergyCreator::score_types_for_method() const {
 	sts.push_back( membrane_span_term_z_constraint );
 	sts.push_back( metalhash_constraint );
 	sts.push_back( metalbinding_constraint );
+	sts.push_back( site_constraint );
 	return sts;
 }
 
@@ -594,4 +595,3 @@ ConstraintsEnergy::version() const
 } // constraints
 } // scoring
 } // core
-
