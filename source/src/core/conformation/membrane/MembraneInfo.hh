@@ -35,7 +35,6 @@
 // Package Headers
 #include <core/conformation/Conformation.fwd.hh>
 #include <core/conformation/membrane/SpanningTopology.fwd.hh>
-#include <core/conformation/membrane/LipidAccInfo.fwd.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -73,21 +72,6 @@ public: // Constructors & Setup
 		core::Size membrane_core,
 		core::Real thickness,
 		core::Real steepness,
-		SpanningTopologyOP topology
-	);
-
-	/// @brief Create MembraneInfo from initialized data with lipophilicity
-	/// @details Creates a MembraneInfo object by linking the conformation
-	/// to the pose, specify the  membrane residue number, membrane jump number,
-	/// spanning topology object and optional lipophilicity data. Thickness and
-	/// steepness are currently constants
-	MembraneInfo(
-		core::Size membrane_pos,
-		core::SSize membrane_jump,
-		core::Size membrane_core,
-		core::Real thickness,
-		core::Real steepness,
-		LipidAccInfoOP lips,
 		SpanningTopologyOP topology
 	);
 
@@ -179,16 +163,6 @@ public: // topology of TM spans and lipophilicity
 	/// positions of each transmembrane span
 	SpanningTopologyOP spanning_topology() const;
 
-	/// @brief Does this MembraneInfo includes lipophilicity information?
-	bool
-	include_lips() const;
-
-	/// @brief Per-residue lipophilicity (probability of exposure to lipid)
-	/// @details Returns a LipidAccInfo describing per residue probability
-	/// of exposure to lipid. Data calcualted via the run_lips.pl script
-	/// and provided by the user on the commandline if applicable
-	LipidAccInfoOP lipid_acc_data() const;
-
 private: // default constructor
 
 	/// @brief Create a default version of MembraneInfo (DONT USE)
@@ -210,8 +184,7 @@ private: // data
 	// membrane jump position
 	core::SSize membrane_jump_;
 
-	// Lipit Accessibility and Topology Info
-	LipidAccInfoOP lipid_acc_data_;
+	// Topology Info
 	SpanningTopologyOP spanning_topology_;
 
 #ifdef    SERIALIZATION

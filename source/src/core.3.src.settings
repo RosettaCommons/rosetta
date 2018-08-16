@@ -609,7 +609,6 @@ sources = {
 		"MPEnvEnergy",
 		"MPPairEnergy",
 		"MPCBetaEnergy",
-		"MPLipoEnergy",
 		"MPTerminiPenalty",
 		"MPNonHelixPenalty",
 		"MPTMProjPenalty",

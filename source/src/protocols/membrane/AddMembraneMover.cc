@@ -49,7 +49,6 @@
 #include <core/conformation/membrane/MembraneInfo.hh>
 #include <core/conformation/membrane/SpanningTopology.hh>
 #include <core/conformation/membrane/Span.hh>
-#include <core/conformation/membrane/LipidAccInfo.hh>
 
 #include <protocols/membrane/SetMembranePositionMover.hh>
 
@@ -117,7 +116,6 @@ AddMembraneMover::AddMembraneMover() :
 	include_lips_( false ),
 	spanfile_(),
 	topology_( new core::conformation::membrane::SpanningTopology() ),
-	lipsfile_(),
 	anchor_rsd_( 1 ),
 	membrane_rsd_( 0 ),
 	center_( 0, 0, 0 ),
@@ -540,13 +538,8 @@ AddMembraneMover::apply( Pose & pose ) {
 	// Options: Will initialize with or without a lipid acc object
 	core::Size numjumps = pose.fold_tree().num_jump();
 	MembraneInfoOP mem_info;
-	if ( !include_lips_ ) {
-		mem_info = MembraneInfoOP(
-			new MembraneInfo( static_cast< core::Size >( membrane_pos ), numjumps, membrane_core_, thickness_, steepness_, topology_ ) );
-	} else {
-		LipidAccInfoOP lips( new LipidAccInfo( lipsfile_ ) );
-		mem_info = MembraneInfoOP( new MembraneInfo( static_cast< core::Size >( membrane_pos ), numjumps, membrane_core_, thickness_, steepness_, lips, topology_ ) );
-	}
+	mem_info = MembraneInfoOP(
+		new MembraneInfo( static_cast< core::Size >( membrane_pos ), numjumps, membrane_core_, thickness_, steepness_, topology_ ) );
 
 	// Step 4: Add membrane info object to the pose conformation
 	pose.conformation().set_membrane_info( mem_info );

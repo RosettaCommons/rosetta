@@ -38,7 +38,6 @@
 #include <core/conformation/membrane/MembraneInfo.hh>
 #include <core/conformation/membrane/SpanningTopology.hh>
 #include <core/conformation/membrane/Span.hh>
-#include <core/conformation/membrane/LipidAccInfo.hh>
 
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
@@ -133,22 +132,6 @@ SymmetricAddMembraneMover::SymmetricAddMembraneMover(
 	core::conformation::membrane::SpanningTopologyOP topology
 ) :
 	protocols::membrane::AddMembraneMover( topology )
-{
-	register_options();
-	init_from_cmd();
-}
-
-/// @brief Custom Constructor for SymmetricAddMembraneMover
-/// @details Creates a membrane pose, setting the membrane center
-/// at center=(0, 0, 0), normal=(0, 0, 1). Uses the user provided
-/// spanfile and lipsfile paths to load in SpanningTopology
-/// objects and LipidAccInfo objects to MembraneInfo. Calls the analagous
-/// parent constructor in AddMembraneMover
-SymmetricAddMembraneMover::SymmetricAddMembraneMover(
-	std::string spanfile,
-	std::string lips_acc
-) :
-	protocols::membrane::AddMembraneMover( spanfile, lips_acc, 0 )
 {
 	register_options();
 	init_from_cmd();

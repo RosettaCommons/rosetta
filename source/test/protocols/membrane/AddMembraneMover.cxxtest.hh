@@ -204,10 +204,6 @@ public: // test functions
 		} else {
 			TS_FAIL( "Spanning topology not initialized. Abort!" );
 		}
-
-		// Check that I did not include a lipsfile quite yet
-		TR <<  "Check that I have not yet initialized a lipophilicity object yet"  << std::endl;
-		TS_ASSERT( !pose_->conformation().membrane_info()->include_lips() );
 	}
 
 	/// @brief Test that the membrane jump number is at the expected position

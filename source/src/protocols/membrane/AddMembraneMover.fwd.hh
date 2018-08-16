@@ -17,7 +17,7 @@
 ///      (b) Update PDB info to acknowledge the membrane residue
 ///      (c) Set the MEM residue at the root of the foldtree
 ///     (2) Initialize transmembrane spanning topology (Object: SpanningTopology)
-///     (3) Initialize the MembraneInfo object either with or without the LipidAccInfo object.
+///     (3) Initialize the MembraneInfo object.
 ///     (4) Set the membrane starting position (either default or based on user input)
 ///
 ///    This object does a massive amount of reading from CMD, RosettaScripts or Constructor. If you add

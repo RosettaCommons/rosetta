@@ -79,14 +79,6 @@ public:
 		core::conformation::membrane::SpanningTopologyOP topology
 	);
 
-	/// @brief Custom Constructor for SymmetricAddMembraneMover
-	/// @details Creates a membrane pose, setting the membrane center
-	/// at center=(0, 0, 0), normal=(0, 0, 1). Uses the user provided
-	/// spanfile and lipsfile paths to load in SpanningTopology
-	/// objects and LipidAccInfo objects to MembraneInfo. Calls the analagous
-	/// parent constructor in AddMembraneMover
-	SymmetricAddMembraneMover( std::string spanfile, std::string lips_acc );
-
 	/// @brief Copy Constructor for SymmetricAddMembraneMover
 	/// @details Create a deep copy of SymmetricAddMembraneMover
 	SymmetricAddMembraneMover( SymmetricAddMembraneMover const & src );

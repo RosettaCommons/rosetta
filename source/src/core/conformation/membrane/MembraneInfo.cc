@@ -31,7 +31,6 @@
 
 // Project Headers
 #include <core/conformation/membrane/SpanningTopology.hh>
-#include <core/conformation/membrane/LipidAccInfo.hh>
 #include <core/conformation/membrane/MembraneParams.hh>
 
 // Package Headers
@@ -79,7 +78,6 @@ MembraneInfo::MembraneInfo() :
 	membrane_core_( 0 ),
 	membrane_rsd_num_( 0 ),
 	membrane_jump_( 0 ),
-	lipid_acc_data_( nullptr ),
 	spanning_topology_( nullptr )
 {}
 
@@ -101,30 +99,6 @@ MembraneInfo::MembraneInfo(
 	membrane_core_( membrane_core ),
 	membrane_rsd_num_( membrane_pos ),
 	membrane_jump_( membrane_jump ),
-	lipid_acc_data_( nullptr ),
-	spanning_topology_(std::move( topology ))
-{}
-
-/// @brief Create MembraneInfo from initialized data with lipophilicity
-/// @details Creates a MembraneInfo object by linking the conformation
-/// to the pose, specify the  membrane residue number, membrane jump number,
-/// spanning topology object and optional lipophilicity data. Thickness and
-/// steepness are currently constants
-MembraneInfo::MembraneInfo(
-	core::Size membrane_pos,
-	core::SSize membrane_jump,
-	core::Size membrane_core,
-	core::Real thickness,
-	core::Real steepness,
-	LipidAccInfoOP lips,
-	SpanningTopologyOP topology
-) :
-	thickness_( thickness ),
-	steepness_( steepness ),
-	membrane_core_( membrane_core ),
-	membrane_rsd_num_( membrane_pos ),
-	membrane_jump_( membrane_jump ),
-	lipid_acc_data_(std::move( lips )),
 	spanning_topology_(std::move( topology ))
 {}
 
@@ -136,7 +110,6 @@ MembraneInfo::MembraneInfo( MembraneInfo const & src ) :
 	membrane_core_( src.membrane_core_ ),
 	membrane_rsd_num_( src.membrane_rsd_num_ ),
 	membrane_jump_( src.membrane_jump_ ),
-	lipid_acc_data_( src.lipid_acc_data_ ),
 	spanning_topology_( src.spanning_topology_ )
 {}
 
@@ -155,7 +128,6 @@ MembraneInfo::operator=( MembraneInfo const & src ) {
 	this->membrane_core_ = src.membrane_core_;
 	this->membrane_rsd_num_ = src.membrane_rsd_num_;
 	this->membrane_jump_ = src.membrane_jump_;
-	this->lipid_acc_data_ = src.lipid_acc_data_;
 	this->spanning_topology_ = src.spanning_topology_;
 
 	return *this;
@@ -335,28 +307,6 @@ MembraneInfo::spanning_topology() const {
 	return spanning_topology_;
 }
 
-/// @brief Does this MembraneInfo includes lipophilicity information?
-bool
-MembraneInfo::include_lips() const {
-
-	// If lips initialized, return true
-	if ( lipid_acc_data_ != nullptr ) {
-		return true;
-	}
-
-	return false;
-}
-
-/// @brief Per-residue lipophilicity (probability of exposure to lipid)
-/// @details Returns a LipidAccInfo describing per residue probability
-/// of exposure to lipid. Data calcualted via the run_lips.pl script
-/// and provided by the user on the commandline if applicable
-LipidAccInfoOP
-MembraneInfo::lipid_acc_data() const {
-	return lipid_acc_data_;
-}
-
-
 /// @brief Show MembraneInfo method for pyrosetta
 std::ostream & operator << ( std::ostream & os, MembraneInfo const & mem_info )
 {
@@ -384,7 +334,6 @@ core::conformation::membrane::MembraneInfo::save( Archive & arc ) const {
 	arc( CEREAL_NVP( membrane_core_ ) ); // core::Real
 	arc( CEREAL_NVP( membrane_rsd_num_ ) ); // core::Size
 	arc( CEREAL_NVP( membrane_jump_ ) ); // core::SSize
-	arc( CEREAL_NVP( lipid_acc_data_ ) ); // LipidAccInfoOP
 	arc( CEREAL_NVP( spanning_topology_ ) ); // SpanningTopologyOP
 }
 
@@ -397,7 +346,6 @@ core::conformation::membrane::MembraneInfo::load( Archive & arc ) {
 	arc( membrane_core_ ); // core::Real
 	arc( membrane_rsd_num_ ); // core::Size
 	arc( membrane_jump_ ); // core::SSize
-	arc( lipid_acc_data_ ); // LipidAccInfoOP
 	arc( spanning_topology_ ); // SpanningTopologyOP
 }
 SAVE_AND_LOAD_SERIALIZABLE( core::conformation::membrane::MembraneInfo );

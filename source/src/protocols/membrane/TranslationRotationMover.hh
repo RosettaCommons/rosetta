@@ -28,7 +28,6 @@
 #include <core/conformation/membrane/MembraneInfo.fwd.hh>
 #include <core/conformation/membrane/SpanningTopology.fwd.hh>
 #include <core/conformation/membrane/Span.fwd.hh>
-#include <core/conformation/membrane/LipidAccInfo.hh>
 #include <protocols/membrane/geometry/EmbeddingDef.fwd.hh>
 #include <protocols/membrane/util.hh>
 

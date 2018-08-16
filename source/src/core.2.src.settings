@@ -158,7 +158,6 @@ sources = {
 	"core/conformation/membrane": [
 		"Span",
 		"SpanningTopology",
-		"LipidAccInfo",
 		"MembraneInfo",
 		"util",
 	],
