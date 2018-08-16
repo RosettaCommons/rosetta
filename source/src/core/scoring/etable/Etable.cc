@@ -41,6 +41,7 @@
 #include <utility/vector1.hh>
 #include <numeric/interpolation/spline/SplineGenerator.hh>
 #include <numeric/interpolation/spline/SimpleInterpolator.hh>
+#include <numeric/cubic_polynomial.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
@@ -290,20 +291,6 @@ Etable::initialize_carbontypes_to_linearize_fasol()
 	carbon_types_.push_back( atom_set->atom_type_index("CH3") );
 	carbon_types_.push_back( atom_set->atom_type_index("aroC") );
 }
-
-CubicPolynomial
-Etable::cubic_polynomial_from_spline( Real xlo, Real xhi, SplineParameters const & sp )
-{
-	Real a( xlo ), b( xhi ), c( sp.yhi ), d( sp.ylo ), e( sp.y2hi ), f( sp.y2lo );
-	CubicPolynomial cp;
-
-	cp.c0 = ( (b*b*b*f - a*a*a*e)/(b-a) + (a*e - b*f) * (b-a) )  / 6 + (  b*d - a*c ) / ( b-a );
-	cp.c1 = ( 3*a*a*e/(b-a) - e*(b-a) + f*(b-a) - 3*b*b*f / (b-a) ) / 6 + ( c - d ) / (b-a);
-	cp.c2 = ( 3*b*f - 3*a*e ) / ( 6 * (b-a) );
-	cp.c3 = ( e-f ) / ( 6 * (b-a) );
-	return cp;
-}
-
 
 ////////////////////////////////////////////////////////////////////////////////
 ///
@@ -951,7 +938,7 @@ Etable::smooth_etables_one_pair(
 		utility_exit_with_message( "Etable created non-simple-interpolator in smooth_etables()" );
 	}
 	{
-		SplineParameters sparams;
+		numeric::SplineParameters sparams;
 		sparams.ylo  = sinterp->y()[ 1 ];
 		sparams.yhi  = sinterp->y()[ 2 ];
 		sparams.y2lo = sinterp->ddy()[ 1 ];
@@ -988,7 +975,7 @@ Etable::smooth_etables_one_pair(
 		// treat the range [0,famaxdis] as a constant (of zero) -- everything below
 		// the distance fasol_spline_close_start_end(at1,at2).first is evaluated as
 		// the constant fasol_spline_close(at1,at2).ylo.
-		SplineParameters sp; sp.ylo=0; sp.yhi=0; sp.y2lo = 0; sp.y2hi = 0;
+		numeric::SplineParameters sp; sp.ylo=0; sp.yhi=0; sp.y2lo = 0; sp.y2hi = 0;
 		EtableParamsOnePair & p = analytic_params_for_pair( atype1, atype2 );
 		p.fasol_cubic_poly_close_start = fasol_cubic_poly_far_xhi_;
 		p.fasol_cubic_poly_close_end   = fasol_cubic_poly_far_xhi_ + 1.0;
@@ -1042,7 +1029,7 @@ Etable::smooth_etables_one_pair(
 		if ( ! sinterp_close ) {
 			utility_exit_with_message( "Etable created non-simple-interpolator in smooth_etables()" );
 		}
-		SplineParameters sparams;
+		numeric::SplineParameters sparams;
 		sparams.ylo  = sinterp_close->y()[ 1 ];
 		sparams.yhi  = sinterp_close->y()[ 2 ];
 		sparams.y2lo = sinterp_close->ddy()[ 1 ];
@@ -1071,7 +1058,7 @@ Etable::smooth_etables_one_pair(
 			if ( ! sinterp_close ) {
 				utility_exit_with_message( "Etable created non-simple-interpolator in smooth_etables()" );
 			}
-			SplineParameters sparams;
+			numeric::SplineParameters sparams;
 			sparams.ylo  = sinterp_close->y()[ 1 ];
 			sparams.yhi  = sinterp_close->y()[ 2 ];
 			sparams.y2lo = sinterp_close->ddy()[ 1 ];
@@ -1092,7 +1079,7 @@ Etable::smooth_etables_one_pair(
 			if ( ! sinterp_close ) {
 				utility_exit_with_message( "Etable created non-simple-interpolator in smooth_etables()" );
 			}
-			SplineParameters sparams;
+			numeric::SplineParameters sparams;
 			sparams.ylo  = sinterp_close->y()[ 1 ];
 			sparams.yhi  = sinterp_close->y()[ 2 ];
 			sparams.y2lo = sinterp_close->ddy()[ 1 ];
@@ -1114,7 +1101,7 @@ Etable::smooth_etables_one_pair(
 		if ( ! sinterp_far ) {
 			utility_exit_with_message( "Etable created non-simple-interpolator in smooth_etables()" );
 		}
-		SplineParameters sparams;
+		numeric::SplineParameters sparams;
 		sparams.ylo  = sinterp_far->y()[ 1 ];
 		sparams.yhi  = sinterp_far->y()[ 2 ];
 		sparams.y2lo = sinterp_far->ddy()[ 1 ];
@@ -1137,7 +1124,7 @@ Etable::smooth_etables_one_pair(
 			if ( ! sinterp_far ) {
 				utility_exit_with_message( "Etable created non-simple-interpolator in smooth_etables()" );
 			}
-			SplineParameters sparams;
+			numeric::SplineParameters sparams;
 			sparams.ylo  = sinterp_far->y()[ 1 ];
 			sparams.yhi  = sinterp_far->y()[ 2 ];
 			sparams.y2lo = sinterp_far->ddy()[ 1 ];
@@ -1155,7 +1142,7 @@ Etable::smooth_etables_one_pair(
 			if ( ! sinterp_far ) {
 				utility_exit_with_message( "Etable created non-simple-interpolator in smooth_etables()" );
 			}
-			SplineParameters sparams;
+			numeric::SplineParameters sparams;
 			sparams.ylo  = sinterp_far->y()[ 1 ];
 			sparams.yhi  = sinterp_far->y()[ 2 ];
 			sparams.y2lo = sinterp_far->ddy()[ 1 ];

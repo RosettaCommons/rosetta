@@ -16,6 +16,7 @@ sources = {
 		"ClusteringTreeNode",
 		"color_util",
 		"constants",
+		"cubic_polynomial",
 		"cyclic_coordinate_descent",
 		"HomogeneousTransform.srlz",
 		"MathMatrix.srlz",

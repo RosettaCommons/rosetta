@@ -21,6 +21,7 @@
 // numeric headers
 #include <numeric/interpolation/spline/SplineGenerator.hh>
 #include <numeric/interpolation/spline/SimpleInterpolator.hh>
+#include <numeric/cubic_polynomial.hh>
 
 namespace core {
 namespace scoring {
@@ -124,12 +125,12 @@ Coulomb::initialize() {
 			if ( ! sinterp_low ) {
 				utility_exit_with_message( "Hack Elec created non-simple-interpolator in initialize()" );
 			}
-			SplineParameters low_sp;
+			numeric::SplineParameters low_sp;
 			low_sp.ylo  = sinterp_low->y()[ 1 ];
 			low_sp.yhi  = sinterp_low->y()[ 2 ];
 			low_sp.y2lo = sinterp_low->ddy()[ 1 ];
 			low_sp.y2hi = sinterp_low->ddy()[ 2 ];
-			low_poly_ = Etable::cubic_polynomial_from_spline( low_poly_start_, low_poly_end_, low_sp );
+			low_poly_ = numeric::cubic_polynomial_from_spline( low_poly_start_, low_poly_end_, low_sp );
 		}
 
 		hi_poly_start_    = max_dis_ - 1.0;
@@ -163,12 +164,12 @@ Coulomb::initialize() {
 			if ( ! sinterp_hi ) {
 				utility_exit_with_message( "Hack Elec created non-simple-interpolator in initialize()" );
 			}
-			SplineParameters hi_sp;
+			numeric::SplineParameters hi_sp;
 			hi_sp.ylo  = sinterp_hi->y()[ 1 ];
 			hi_sp.yhi  = sinterp_hi->y()[ 2 ];
 			hi_sp.y2lo = sinterp_hi->ddy()[ 1 ];
 			hi_sp.y2hi = sinterp_hi->ddy()[ 2 ];
-			hi_poly_ = Etable::cubic_polynomial_from_spline( hi_poly_start_, hi_poly_end_, hi_sp );
+			hi_poly_ = numeric::cubic_polynomial_from_spline( hi_poly_start_, hi_poly_end_, hi_sp );
 		}
 	} else {
 		low_poly_start_ = min_dis_;     low_poly_start2_ = std::pow( low_poly_start_, 2 );

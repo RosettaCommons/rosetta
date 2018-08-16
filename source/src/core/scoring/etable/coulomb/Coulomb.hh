@@ -19,6 +19,7 @@
 #include <core/scoring/etable/coulomb/Coulomb.fwd.hh>
 #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 #include <core/scoring/etable/Etable.hh>
+#include <numeric/cubic_polynomial.hh>
 
 // Platform headers
 #include <core/types.hh>
@@ -119,13 +120,13 @@ private:
 	Real low_poly_start2_;
 	Real low_poly_end_;
 	Real low_poly_end2_;
-	CubicPolynomial low_poly_;
+	numeric::CubicPolynomial low_poly_;
 
 	Real hi_poly_start_;
 	Real hi_poly_start2_;
 	Real hi_poly_end_;
 	Real hi_poly_end2_;
-	CubicPolynomial hi_poly_;
+	numeric::CubicPolynomial hi_poly_;
 
 	Real die_;
 	bool no_dis_dep_die_;
@@ -181,9 +182,9 @@ Coulomb::eval_atom_atom_fa_elecE(
 	} else if ( d2 < low_poly_start2_ ) {
 		return i_charge * j_charge * min_dis_score_;
 	} else if ( d2 < low_poly_end2_ ) {
-		return i_charge * j_charge * Etable::eval_cubic_polynomial( std::sqrt( d2 ), low_poly_ );
+		return i_charge * j_charge * numeric::eval_cubic_polynomial( std::sqrt( d2 ), low_poly_ );
 	} else if ( d2 > hi_poly_start2_ ) {
-		return i_charge * j_charge * Etable::eval_cubic_polynomial( std::sqrt( d2 ), hi_poly_ );
+		return i_charge * j_charge * numeric::eval_cubic_polynomial( std::sqrt( d2 ), hi_poly_ );
 	} else if ( sigmoidal_die_ ) {
 		core::Real d = std::sqrt(d2);
 		return i_charge * j_charge * ( C1_ / (d*sigmoid_eps(d)) - C2_ );
@@ -222,10 +223,10 @@ Coulomb::eval_dfa_elecE_dr_over_r(
 		}
 	} else if ( dis2 < low_poly_end2_ ) {
 		Real d = std::sqrt( dis2 );
-		return Etable::cubic_polynomial_deriv( d, low_poly_ ) * q1q2 / d;
+		return numeric::cubic_polynomial_deriv( d, low_poly_ ) * q1q2 / d;
 	} else {
 		Real d = std::sqrt( dis2 );
-		return Etable::cubic_polynomial_deriv( d, hi_poly_ ) * q1q2 / d;
+		return numeric::cubic_polynomial_deriv( d, hi_poly_ ) * q1q2 / d;
 	}
 }
 

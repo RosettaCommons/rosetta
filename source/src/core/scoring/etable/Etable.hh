@@ -46,6 +46,8 @@
 #include <core/conformation/Atom.hh>
 #include <utility/pointer/access_ptr.hh>
 
+#include <numeric/cubic_polynomial.hh>
+
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray1A.hh>
@@ -64,30 +66,6 @@
 namespace core {
 namespace scoring {
 namespace etable {
-
-/// @brief %SplineParameters is a simple struct for holding the cubic spline polynomials used in
-/// the etable to interpolate the lennard-jones attractive and
-/// LK-solvation terms to zero smoothly.  These splines have
-/// exactly two knots to represent them, and the same x values
-/// are used for all the knots: thus the only parameters needed
-/// are the y values at the knots, and the second-derivatives
-/// for the polynomials at knots.
-struct SplineParameters
-{
-	Real ylo,  yhi;
-	Real y2lo, y2hi;
-	SplineParameters() :
-		ylo(0.0),
-		yhi(0.0),
-		y2lo(0.0),
-		y2hi(0.0)
-	{}
-};
-
-struct CubicPolynomial {
-	Real c0, c1, c2, c3;
-	CubicPolynomial() : c0(0), c1(0), c2(0), c3(0) {}
-};
 
 /// @brief the ExtraQuadraticRepulsion class is used to
 /// add in extra repulsion for particular atom pairs, if needed,
@@ -129,7 +107,7 @@ struct EtableParamsOnePair
 	Real lj_val_at_minimum;
 	Real ljatr_cubic_poly_xlo;
 	Real ljatr_cubic_poly_xhi;
-	CubicPolynomial ljatr_cubic_poly_parameters;
+	numeric::CubicPolynomial ljatr_cubic_poly_parameters;
 	ExtraQuadraticRepulsion ljrep_extra_repulsion;
 	bool ljrep_from_negcrossing;
 
@@ -139,18 +117,18 @@ struct EtableParamsOnePair
 	Real fasol_cubic_poly_close_start;
 	Real fasol_cubic_poly_close_end;
 
-	CubicPolynomial fasol_cubic_poly_close;  // mututal desolvation of atoms 1 and 2
+	numeric::CubicPolynomial fasol_cubic_poly_close;  // mututal desolvation of atoms 1 and 2
 	Real fasol_cubic_poly_close_flat; // the fixed value used for distances beneath fasol_cubic_poly_close_start
 
-	CubicPolynomial fasol_cubic_poly_far;    // mututal desolvation of atoms 1 and 2
+	numeric::CubicPolynomial fasol_cubic_poly_far;    // mututal desolvation of atoms 1 and 2
 
-	CubicPolynomial fasol_cubic_poly1_close; // desolvation of atom 1 by atom 2
+	numeric::CubicPolynomial fasol_cubic_poly1_close; // desolvation of atom 1 by atom 2
 	Real fasol_cubic_poly1_close_flat;       // the fixed value used for distances beneath fasol_cubic_poly_close_start
-	CubicPolynomial fasol_cubic_poly1_far;   // desolvation of atom 1 by atom 2
+	numeric::CubicPolynomial fasol_cubic_poly1_far;   // desolvation of atom 1 by atom 2
 
-	CubicPolynomial fasol_cubic_poly2_close; // desolvation of atom 2 by atom 1
+	numeric::CubicPolynomial fasol_cubic_poly2_close; // desolvation of atom 2 by atom 1
 	Real fasol_cubic_poly2_close_flat;       // the fixed value used for distances beneath fasol_cubic_poly_close_start
-	CubicPolynomial fasol_cubic_poly2_far;   // desolvation of atom 2 by atom 1
+	numeric::CubicPolynomial fasol_cubic_poly2_far;   // desolvation of atom 2 by atom 1
 	Real ljatr_final_weight;
 	Real fasol_final_weight;
 
@@ -637,26 +615,6 @@ private:
 
 
 public:
-
-	static
-	CubicPolynomial
-	cubic_polynomial_from_spline( Real xlo, Real xhi, SplineParameters const & sp );
-
-	static
-	inline
-	Real
-	eval_cubic_polynomial(
-		Real const x,
-		CubicPolynomial const & sp
-	);
-
-	static
-	inline
-	Real
-	cubic_polynomial_deriv(
-		Real const x,
-		CubicPolynomial const & cp
-	);
 
 	inline
 	EtableParamsOnePair const &
@@ -1232,26 +1190,6 @@ Etable::analytic_lj_generic_form(
 	//Real const inv_dis12 = inv_dis6 * inv_dis6;
 
 	return ( p.lj_r12_coeff * inv_dis6 + p.lj_r6_coeff ) * inv_dis6;
-}
-
-inline
-Real
-Etable::eval_cubic_polynomial(
-	Real const x,
-	CubicPolynomial const & cp
-)
-{
-	return ((cp.c3*x+cp.c2)*x+cp.c1)*x + cp.c0;
-}
-
-inline
-Real
-Etable::cubic_polynomial_deriv(
-	Real const x,
-	CubicPolynomial const & cp
-)
-{
-	return (3*cp.c3*x + 2*cp.c2)*x + cp.c1;
 }
 
 /// @details: evaluate the attractive component of the LJ term as it

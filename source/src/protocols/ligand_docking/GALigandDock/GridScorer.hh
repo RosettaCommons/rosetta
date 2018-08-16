@@ -38,6 +38,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <ObjexxFCL/FArray3D.hh>
 #include <numeric/xyzVector.hh>
+#include <numeric/cubic_polynomial.hh>
 #include <utility/vector1.hh>
 
 #include <core/scoring/electron_density/SplineInterp.hh>
@@ -353,7 +354,7 @@ GridScorer::fast_eval_etable_split_fasol(
 		core::Real const inv_dis6  = inv_dis2 * inv_dis2 * inv_dis2;
 		ljE = ( p.lj_r12_coeff * inv_dis6 + p.lj_r6_coeff ) * inv_dis6;
 	} else if ( dis < p.ljatr_cubic_poly_xhi ) {
-		ljE = etable.eval_cubic_polynomial( dis, p.ljatr_cubic_poly_parameters );
+		ljE = numeric::eval_cubic_polynomial( dis, p.ljatr_cubic_poly_parameters );
 	}
 
 	if ( dis < p.lj_minimum ) {
@@ -373,8 +374,8 @@ GridScorer::fast_eval_etable_split_fasol(
 		fa_solE1sort = p.fasol_cubic_poly1_close_flat * p.fasol_final_weight;
 		fa_solE2sort = p.fasol_cubic_poly2_close_flat * p.fasol_final_weight;
 	} else if ( dis < p.fasol_cubic_poly_close_end ) {
-		fa_solE1sort = p.fasol_final_weight * etable.eval_cubic_polynomial( dis, p.fasol_cubic_poly1_close );
-		fa_solE2sort = p.fasol_final_weight * etable.eval_cubic_polynomial( dis, p.fasol_cubic_poly2_close );
+		fa_solE1sort = p.fasol_final_weight * numeric::eval_cubic_polynomial( dis, p.fasol_cubic_poly1_close );
+		fa_solE2sort = p.fasol_final_weight * numeric::eval_cubic_polynomial( dis, p.fasol_cubic_poly2_close );
 	} else if ( dis < etable.fasol_cubic_poly_far_xlo() ) {
 		/// exponential evaluation
 		core::Real dis_rad1 = dis - etable.lj_radius(atype1);
@@ -386,8 +387,8 @@ GridScorer::fast_eval_etable_split_fasol(
 		fa_solE2sort = p.fasol_final_weight * inv_dis2 * std::exp(-x2) * p.lk_coeff2;
 
 	} else if ( dis < etable.fasol_cubic_poly_far_xhi() ) {
-		fa_solE1sort = p.fasol_final_weight * etable.eval_cubic_polynomial( dis, p.fasol_cubic_poly1_far );
-		fa_solE2sort = p.fasol_final_weight * etable.eval_cubic_polynomial( dis, p.fasol_cubic_poly2_far );
+		fa_solE1sort = p.fasol_final_weight * numeric::eval_cubic_polynomial( dis, p.fasol_cubic_poly1_far );
+		fa_solE2sort = p.fasol_final_weight * numeric::eval_cubic_polynomial( dis, p.fasol_cubic_poly2_far );
 	}
 }
 
