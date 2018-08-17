@@ -227,7 +227,11 @@ InteractionGraphFactory::create_and_initialize_two_body_interaction_graph(
 	PROF_START( basic::GET_ENERGIES );
 	rotsets.compute_energies( pose, scfxn, packer_neighbor_graph, ig );
 	PROF_STOP( basic::GET_ENERGIES );
-	T << "IG: " << ig->getTotalMemoryUsage() << " bytes" << std::endl;
+	unsigned int mem_usage( ig->getTotalMemoryUsage() );
+	T.Debug << "IG: " << mem_usage << " bytes" << std::endl;
+	if ( mem_usage > 25*1024*1024 ) { // 25 MB - threshold picked somewhat arbitrarily
+		T << "High IG memory usage (>25 MB). If this becomes an issue, consider using a different interaction graph type." << std::endl;
+	}
 
 	setup_IG_res_res_weights(pose, packer_task, rotsets, *ig);
 
