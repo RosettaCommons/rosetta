@@ -115,6 +115,11 @@ public:
 	/// @brief get tm_alpha
 	bool get_tm_alpha() const;
 
+	/// @brief Return a vector1 of vector1 matching the pose and atom counts with
+	/// the structure-based per-atom lipid accessibility
+	utility::vector1< utility::vector1< core::Real > >
+	get_per_atom_lipid_accessibility() const;
+
 private: // methods
 
 	/// @brief set defaults
@@ -157,6 +162,9 @@ private: // data
 	// Tell the compiler that we are not hiding the base
 	// function with the parse_my_tag written above
 	using protocols::moves::Mover::parse_my_tag;
+
+	// Add a vector to store per atom lipid accessibility information
+	utility::vector1< utility::vector1< core::Real > > per_atom_lipid_accessibility_;
 
 };
 

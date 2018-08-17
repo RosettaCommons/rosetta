@@ -10,6 +10,7 @@
 /// @file protocols/membrane/MPLipidAccessibility.cc
 /// @brief Mover that computes which residues are lipid accessible and puts that information into the B-factors: 50 is lipid accessible, 0 is lipid INaccessible
 /// @author Julia Koehler Leman (julia.koehler1982@gmail.com)
+/// @author Rebecca Alford (rfalford12@gmail.com) for minor refactoring
 
 #ifndef INCLUDED_protocols_membrane_MPLipidAccessibility_cc
 #define INCLUDED_protocols_membrane_MPLipidAccessibility_cc
@@ -66,14 +67,6 @@ MPLipidAccessibility::MPLipidAccessibility() : protocols::moves::Mover() {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @brief Copy constructor
-//MPLipidAccessibility::MPLipidAccessibility( MPLipidAccessibility const & src ):
-// protocols::moves::Mover( src )
-//{
-//
-//}
-
-////////////////////////////////////////////////////////////////////////////////
 /// @brief Destructor (important for properly forward-declaring smart-pointer members)
 MPLipidAccessibility::~MPLipidAccessibility()= default;
 
@@ -84,12 +77,6 @@ MPLipidAccessibility::show(std::ostream & output) const
 {
 	protocols::moves::Mover::show(output);
 }
-
-/// @brief Get the name of the Mover
-// XRW TEMP std::string
-// XRW TEMP MPLipidAccessibility::get_name() const {
-// XRW TEMP  return "MPLipidAccessibility";
-// XRW TEMP }
 
 ////////////////////////////////////////////////////////////////////////////////
 /// Rosetta Scripts Support ///
@@ -165,6 +152,14 @@ bool MPLipidAccessibility::get_tm_alpha() const {
 	return tm_alpha_;
 }
 
+
+/// @brief Return a vector1 of vector1 matching the pose and atom counts with
+/// the structure-based per-atom lipid accessibility
+utility::vector1< utility::vector1< core::Real > >
+MPLipidAccessibility::get_per_atom_lipid_accessibility() const {
+	return per_atom_lipid_accessibility_;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 /// MOVER METHODS ///
 /////////////////////
@@ -176,26 +171,27 @@ void MPLipidAccessibility::apply( core::pose::Pose & pose ){
 	// finalize setup
 	finalize_setup( pose );
 
-	////////////////// SET B-FACTOR TO ZERO FOR ALL ATOMS //////////////////
-
-	for ( core::Size r = 1; r <= nres_protein( pose ); ++r ) {
-		for ( core::Size a = 1; a <= pose.residue( r ).natoms(); ++a ) {
-			pose.pdb_info()->bfactor( r, a, 0 );
-		}
+	////////////////// FILL ACCESSIBILITY VECTOR ///////////////////////////
+	per_atom_lipid_accessibility_.resize( nres_protein( pose ) );
+	for ( core::Size ii = 1; ii <= nres_protein( pose ); ++ii ) {
+		per_atom_lipid_accessibility_[ ii ].resize( pose.residue( ii ).natoms() );
 	}
 
-	//////////////////////// COMPUTE SASA //////////////////////////////////
-
-	// compute relative SASA for the protein,
-	// be aware: the SASA vector goes over all residues
-	// utility::vector1< core::Real > rel_res_sasa = core::scoring::sasa::rel_per_res_sc_sasa( pose );
-
+	////////////////// SET B-FACTOR TO ZERO FOR ALL ATOMS //////////////////
+	for ( core::Size r = 1; r <= nres_protein( pose ); ++r ) {
+		for ( core::Size a = 1; a <= pose.residue( r ).natoms(); ++a ) {
+			per_atom_lipid_accessibility_[r][a] = 0.0;
+		}
+	}
 
 	//////////////////////// COMPUTE HULL///// /////////////////////////////
 
 	// compute concave hull with membrane boundary
-	core::Real minz = - pose.membrane_info()->membrane_thickness();
-	core::Real maxz =   pose.membrane_info()->membrane_thickness();
+	// current solution until implicit lipid PR is merged
+	core::Real minz(0);
+	core::Real maxz(0);
+	minz = -pose.membrane_info()->membrane_thickness();
+	maxz = pose.membrane_info()->membrane_thickness();
 
 	// compute the outer shell
 	// default parameters are a little different for smaller proteins, like GPCRs
@@ -242,17 +238,24 @@ void MPLipidAccessibility::apply( core::pose::Pose & pose ){
 
 				// is this a 2TM protein? if yes, all residues are lipid exposed
 				if ( pose.membrane_info()->spanning_topology()->nspans() <= 2 ) {
-					pose.pdb_info()->bfactor( resi_[ s ][ r ], a, 50.0 );
+					per_atom_lipid_accessibility_[ resi_[s][r] ][ a ] = 50.0;
 				}
 
 				// if lipid exposed and COM-CA-CB larger than cutoff, i.e. facing outwards
 				if ( ( lipid_exposed == true && tm_alpha_ == true )
 						|| ( lipid_exposed == true && tm_alpha_ == false && angle > angle_cutoff_ ) ) {
-					pose.pdb_info()->bfactor( resi_[ s ][ r ], a, 50.0 );
+					per_atom_lipid_accessibility_[ resi_[s][r] ][ a ] = 50.0;
 				}
 			} // atoms
 		} // residues
 	} // slices
+
+	// Transfering information from per_atom lipid accessibility to b_factor data at the end
+	for ( core::Size ii = 1; ii <= nres_protein( pose ); ++ii ) {
+		for ( core::Size jj = 1; jj <= pose.residue( ii ).natoms(); ++jj ) {
+			pose.pdb_info()->bfactor( ii, jj, per_atom_lipid_accessibility_[ii][jj] );
+		}
+	}
 
 	TR << "tm alpha? " << tm_alpha_ << " (helical proteins with <= 7 TMs will show up as 'not helical')" << std::endl;
 
@@ -351,7 +354,6 @@ void MPLipidAccessibility::finalize_setup( core::pose::Pose & pose ){
 	for ( core::Size i = 1; i <= nres_protein( pose ); ++i ) {
 		if ( pose.membrane_info()->in_membrane( pose.conformation(), i ) ) {
 			nmem++;
-
 			if ( secstruct[ i ] == 'E' ) {
 				nbeta++;
 			}
@@ -427,10 +429,14 @@ void MPLipidAccessibility::fill_up_slices( core::pose::Pose & pose ) {
 		utility_exit_with_message( "Something went wrong, the AddMembraneMover still didn't make it a membrane protein. Quitting..." );
 	}
 
-	core::Real iter = - pose.membrane_info()->membrane_thickness();
+	// Currently: use the default thickness in membrane info
+	core::Real iter(0);
+	core::Real thickness(0);
+	iter = -pose.membrane_info()->membrane_thickness();
+	thickness = pose.membrane_info()->membrane_thickness();
 
 	// go through protein in the membrane and get slices and arrays for them
-	while ( iter <= pose.membrane_info()->membrane_thickness() ) {
+	while ( iter <= thickness ) {
 
 		slice_zmin_.push_back( iter );
 
