@@ -521,10 +521,12 @@ void SCS_BlastFilter_by_outlier::apply(AntibodySequence const& /* A */,
     { results->frh, "FRH" },
     { results->h1, "H1" },
     { results->h2, "H2" },
+    { results->h3, "H3" },
     { results->frl, "FRL" },
     { results->l1, "L1" },
     { results->l2, "L2" },
     { results->l3, "L3" },
+    { results->orientation, "orientation" },
   };
 
   for(auto &region : frh_h1_h2_frl_l1_l2_l3) {
