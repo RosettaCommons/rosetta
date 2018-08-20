@@ -88,7 +88,6 @@ public:
 	void set_ignore_surface_res( bool ignore_surface_res ){ ignore_surface_res_ = ignore_surface_res; };
 	void set_ignore_bb_heavy_unsats( bool ignore_bb_heavy_unsats ){ ignore_bb_heavy_unsats_ = ignore_bb_heavy_unsats; };
 	void set_use_ddG_style( bool use_ddG_style ){ use_ddG_style_ = use_ddG_style; };
-	void set_ddG_style_dont_recalc_surface( bool ddG_style_dont_recalc_surface ) { ddG_style_dont_recalc_surface_ = ddG_style_dont_recalc_surface; }
 	void set_print_out_info_to_pdb( bool print_out_info_to_pdb ){ print_out_info_to_pdb_ = print_out_info_to_pdb; };
 	void set_use_reporter_behavior( bool use_reporter_behavior ){ use_reporter_behavior_ = use_reporter_behavior; };
 	void set_use_hbnet_behavior( bool use_hbnet_behavior ){ use_hbnet_behavior_ = use_hbnet_behavior; };
@@ -97,10 +96,15 @@ public:
 	void set_report_sc_heavy_atom_unsats( bool report_sc_heavy_atom_unsats ){ report_sc_heavy_atom_unsats_ = report_sc_heavy_atom_unsats; };
 	void set_report_bb_heavy_atom_unsats( bool report_bb_heavy_atom_unsats ){ report_bb_heavy_atom_unsats_ = report_bb_heavy_atom_unsats; };
 	void set_report_nonheavy_unsats( bool report_nonheavy_unsats ){ report_nonheavy_unsats_ = report_nonheavy_unsats; };
+	void set_atomic_depth_deeper_than( bool atomic_depth_deeper_than ) { atomic_depth_deeper_than_ = atomic_depth_deeper_than; };
 
 	void set_probe_radius( core::Real probe_radius ){ probe_radius_ = probe_radius; };
 	void set_burial_cutoff( core::Real burial_cutoff ){ burial_cutoff_ = burial_cutoff; };
+	void set_probe_radius_apo( core::Real probe_radius_apo ){ probe_radius_apo_ = probe_radius_apo; };
+	void set_burial_cutoff_apo( core::Real burial_cutoff_apo ){ burial_cutoff_apo_ = burial_cutoff_apo; };
 	void set_residue_surface_cutoff( core::Real residue_surface_cutoff ){ residue_surface_cutoff_ = residue_surface_cutoff; };
+	void set_atomic_depth_selection( core::Real atomic_depth_selection ) { atomic_depth_selection_ = atomic_depth_selection; };
+	void set_atomic_depth_probe_radius( core::Real atomic_depth_probe_radius ) { atomic_depth_probe_radius_ = atomic_depth_probe_radius; };
 	void set_upper_threshold( core::Size upper_threshold ){ upper_threshold_ = upper_threshold; };
 	void set_jump_num( core::Size jump_num ){ jump_num_ = jump_num; };
 	void set_dalphaball_sasa( ){ name_of_sasa_calc_ = "dalphaball"; };
@@ -161,7 +165,6 @@ private:
 	bool use_sc_neighbors_;
 	bool only_interface_;
 	bool use_ddG_style_;
-	bool ddG_style_dont_recalc_surface_;
 	bool print_out_info_to_pdb_;
 	bool use_reporter_behavior_;
 	bool use_hbnet_behavior_;
@@ -170,9 +173,14 @@ private:
 	bool report_sc_heavy_atom_unsats_;
 	bool report_bb_heavy_atom_unsats_;
 	bool report_nonheavy_unsats_;
+	bool atomic_depth_deeper_than_;
 	core::Real probe_radius_;
 	core::Real burial_cutoff_;
+	core::Real probe_radius_apo_;
+	core::Real burial_cutoff_apo_;
 	core::Real residue_surface_cutoff_;
+	core::Real atomic_depth_selection_;
+	core::Real atomic_depth_probe_radius_;
 	core::Size upper_threshold_;
 	core::Size jump_num_;
 	core::select::residue_selector::ResidueSelectorOP residue_selector_;

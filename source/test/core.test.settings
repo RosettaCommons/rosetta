@@ -338,6 +338,9 @@ sources = {
 		"AACompositionEnergy_quadratail",
 		"AACompositionEnergy_quadratic_interpolation",
 	],
+	"scoring/atomic_depth" : [
+		"AtomicDepth"
+	],
 	"scoring/bin_transitions" : [
 		"BinTransitionCalculator",
 	],

@@ -126,6 +126,8 @@ sources = {
 		#"fold_from_loops", # /* Correia,Documentation Location,Demo Location */
 		#"fold_from_loops_devel", # /* Correia,Documentation Location,Demo Location */
 	],
+	"pilot/bcov" : [
+	],
 	"pilot/bder" : [
 		#"supercharge",          #integration test: supercharge.  Application moved to public/design
 		#"Zinc2_HomodimerSetup",  #integration test: zinc_homodimer_setup.  Application moved to public/design

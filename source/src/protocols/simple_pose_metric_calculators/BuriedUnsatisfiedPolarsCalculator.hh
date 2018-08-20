@@ -77,7 +77,7 @@ public:
 	BuriedUnsatisfiedPolarsCalculator(
 		std::string const & sasa_calc,
 		std::string const & hbond_calc,
-		std::set< core::Size > const & special_region,
+		core::id::AtomID_Map< bool > const & special_region,
 		core::Real const burial_cutoff,
 		core::Real const probe_r,
 		core::Real const residue_surface_cutoff,
@@ -97,6 +97,17 @@ public:
 	std::string const & name_of_sasa_calc() const { return name_of_sasa_calc_; }
 
 	void set_special_region( std::set< core::Size > const & special_region ) {
+		special_region_entire_residue_ = true;
+		special_region_.clear( false );
+		for ( core::Size seqpos : special_region ) {
+			core::id::AtomID id( 1, seqpos );
+			special_region_.set( id, true );
+		}
+		this->notify_energy_change();
+	}
+
+	void set_special_region( core::id::AtomID_Map< bool > const & special_region ) {
+		special_region_entire_residue_ = false;
 		special_region_ = special_region;
 		this->notify_energy_change();
 	}
@@ -126,7 +137,8 @@ private:
 	utility::vector1< core::Size > residue_bur_unsat_polars_;
 	//holds the sasa and atom hbonds calculators necessary for this calculator
 	std::string name_of_hbond_calc_, name_of_sasa_calc_;
-	std::set< core::Size > special_region_;
+	core::id::AtomID_Map< bool > special_region_;
+	bool special_region_entire_residue_;
 	core::Real burial_cutoff_;
 	core::Real probe_radius_;
 	core::Real residue_surface_cutoff_;

@@ -301,6 +301,10 @@ sources = {
 	"core/scoring/annealing/" : [
 		"ResidueArrayAnnealableEnergy",
 	],
+	"core/scoring/atomic_depth": [
+		"AtomicDepth",
+		"util",
+	],
 	"core/scoring/bin_transitions": [ #Moved from core.2 because this needs to use Rama fxns.
 		"BinTransitionCalculator",
 		"BinTransitionData",

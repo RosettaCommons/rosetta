@@ -110,6 +110,7 @@ BuriedUnsatisfiedPolarsCalculator::BuriedUnsatisfiedPolarsCalculator(
 	name_of_hbond_calc_( hbond_calc ),
 	name_of_sasa_calc_( sasa_calc ),
 	special_region_( /* NULL */ ),
+	special_region_entire_residue_( true ),
 	burial_cutoff_( burial_cutoff ),
 	probe_radius_( basic::options::option[basic::options::OptionKeys::pose_metrics::sasa_calculator_probe_radius] ),
 	residue_surface_cutoff_( 45.0 ),
@@ -146,7 +147,8 @@ BuriedUnsatisfiedPolarsCalculator::BuriedUnsatisfiedPolarsCalculator(
 	countable_nonheavy_unsats_(0),
 	name_of_hbond_calc_( hbond_calc ),
 	name_of_sasa_calc_( sasa_calc ),
-	special_region_( special_region ),
+	// special_region_( special_region ),
+	special_region_entire_residue_( true ),
 	burial_cutoff_( burial_cutoff ),
 	probe_radius_( basic::options::option[basic::options::OptionKeys::pose_metrics::sasa_calculator_probe_radius] ),
 	residue_surface_cutoff_( 45.0 ),
@@ -156,6 +158,7 @@ BuriedUnsatisfiedPolarsCalculator::BuriedUnsatisfiedPolarsCalculator(
 	use_sc_neighbors_( false ),
 	skip_surface_res_( false )
 {
+	set_special_region( special_region );
 	if ( burial_cutoff < 0.0 ) {
 		burial_cutoff_ = ( vsasa_ ) ? basic::options::option[basic::options::OptionKeys::bunsat_calc2::sasa_burial_cutoff] : basic::options::option[basic::options::OptionKeys::pose_metrics::atomic_burial_cutoff];
 	}
@@ -168,7 +171,7 @@ BuriedUnsatisfiedPolarsCalculator::BuriedUnsatisfiedPolarsCalculator(
 BuriedUnsatisfiedPolarsCalculator::BuriedUnsatisfiedPolarsCalculator(
 	std::string const & sasa_calc,
 	std::string const & hbond_calc,
-	std::set< core::Size > const & special_region,
+	core::id::AtomID_Map< bool > const & special_region,
 	core::Real const burial_cutoff,
 	core::Real const probe_r,
 	core::Real const residue_surface_cutoff,
@@ -185,6 +188,7 @@ BuriedUnsatisfiedPolarsCalculator::BuriedUnsatisfiedPolarsCalculator(
 	name_of_hbond_calc_( hbond_calc ),
 	name_of_sasa_calc_( sasa_calc ),
 	special_region_( special_region ),
+	special_region_entire_residue_( false ),
 	burial_cutoff_( burial_cutoff ),
 	probe_radius_( probe_r ),
 	residue_surface_cutoff_( residue_surface_cutoff ),
@@ -334,11 +338,16 @@ BuriedUnsatisfiedPolarsCalculator::recompute( Pose const & this_pose )
 
 		if ( use_sc_neighbors_ && !(buried_residues[ resnum ]) ) continue;
 		if ( !use_sc_neighbors_ && skip_surface_res_ && residue_sasa[ resnum ] > residue_surface_cutoff_ ) continue;
-		if ( !special_region_.empty() && special_region_.find( resnum ) == special_region_.end() ) continue;
 
 		residue_bur_unsat_polars_[resnum] = 0;
 
 		for ( core::Size at = 1; at <= this_pose.residue( resnum ).nheavyatoms(); ++at ) {
+
+			if ( ! special_region_.empty() ) {
+				core::Size lookup_atom = at;
+				if ( special_region_entire_residue_ ) lookup_atom = 1;
+				if ( ! special_region_( resnum, lookup_atom ) ) continue;
+			}
 
 			core::id::AtomID atid( at, resnum );
 			bool is_buried( use_sc_neighbors_ ); // if sc_neighbors and we made it this far, it's buried; else, set false and determine SASA below
@@ -496,7 +505,8 @@ protocols::simple_pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator::sa
 	arc( CEREAL_NVP( burial_cutoff_ ) ); // core::Real
 	arc( CEREAL_NVP( probe_radius_ ) ); // core::Real
 	arc( CEREAL_NVP( residue_surface_cutoff_ ) ); // core::Real
-	arc( CEREAL_NVP( special_region_ ) ); // std::set<core::Size>
+	arc( CEREAL_NVP( special_region_ ) ); // core::id::AtomID_Map<_Bool>
+	arc( CEREAL_NVP( special_region_entire_residue_ ) ); // bool
 	arc( CEREAL_NVP( generous_hbonds_ ) ); // bool
 	arc( CEREAL_NVP( legacy_counting_ ) ); // bool
 	arc( CEREAL_NVP( vsasa_ ) ); // bool
@@ -520,7 +530,8 @@ protocols::simple_pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator::lo
 	arc( burial_cutoff_ ); // core::Real
 	arc( probe_radius_ ); // core::Real
 	arc( residue_surface_cutoff_ ); // core::Real
-	arc( special_region_ ); // std::set<core::Size>
+	arc( special_region_ ); // core::id::AtomID_Map<_Bool>
+	arc( special_region_entire_residue_ ); // bool
 	arc( generous_hbonds_ ); // bool
 	arc( legacy_counting_ ); // bool
 	arc( vsasa_ ); // bool
