@@ -17,6 +17,7 @@
 
 // Package Headers
 #include <core/io/pdb/pdb_writer.hh>
+#include <core/io/StructFileRepOptions.fwd.hh>
 #include <core/import_pose/import_pose.hh>
 
 // Project Headers
@@ -28,6 +29,7 @@
 #include <core/pose/Pose.hh>
 
 #include <basic/Tracer.hh>
+#include <fstream>
 
 static basic::Tracer TR("core.io.PDB_IO.cxxtest");
 
@@ -105,6 +107,41 @@ public:
 			}
 			if ( should_exit ) break;
 		}
+	}
+
+	// make sure that SEQRES records are written when the write_seqres_records option is specified
+	void test_pdb_io_seqres() {
+		pose::Pose pose;
+		const std::string original_file_name("core/io/test_in.pdb");
+		import_pose::pose_from_file(pose, original_file_name, core::import_pose::PDB_file);
+
+		core::io::StructFileRepOptionsOP options( new core::io::StructFileRepOptions );
+		options->set_write_seqres_records(true);
+
+		std::stringstream output_data;
+		io::pdb::dump_pdb(pose, output_data, core::io::StructFileRepOptionsCOP(options));
+
+		utility::vector1<std::string> expected_seqres {
+			"SEQRES   1 A  116  ASP ALA ILE THR ILE HIS SER ILE LEU ASP TRP ILE GLU          ",
+			"SEQRES   2 A  116  ASP ASN LEU GLU SER PRO LEU SER LEU GLU LYS VAL SER          ",
+			"SEQRES   3 A  116  GLU ARG SER GLY TYR SER LYS TRP HIS LEU GLN ARG MET          ",
+			"SEQRES   4 A  116  PHE LYS LYS GLU THR GLY HIS SER LEU GLY GLN TYR ILE          ",
+			"SEQRES   5 A  116  ARG SER ARG LYS MET THR GLU ILE ALA GLN LYS LEU LYS          ",
+			"SEQRES   6 A  116  GLU SER ASN GLU PRO ILE LEU TYR LEU ALA GLU ARG TYR          ",
+			"SEQRES   7 A  116  GLY PHE GLU SER GLN GLN THR LEU THR ARG THR PHE LYS          ",
+			"SEQRES   8 A  116  ASN TYR PHE ASP VAL PRO PRO HIS LYS TYR ARG MET THR          ",
+			"SEQRES   9 A  116  ASN MET GLN GLY GLU SER ARG PHE LEU HIS PRO LEU              "};
+
+		// std::ifstream infile(tmp_file_name);
+		std::string file_line;
+		utility::vector1<std::string> actual_seqres;
+		while ( std::getline(output_data, file_line) ) {
+			if ( file_line.substr(0,6) == "SEQRES" ) {
+				actual_seqres.push_back(file_line);
+			}
+		}
+
+		TS_ASSERT_EQUALS(actual_seqres, expected_seqres);
 	}
 
 	void test_pdb_read_partial_residues() {

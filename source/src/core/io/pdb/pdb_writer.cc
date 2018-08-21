@@ -428,6 +428,7 @@ create_records_from_sfr(
 	}
 
 
+
 	// Heterogen Section //////////////////////////////////////////////////////
 	R = RecordCollection::record_from_record_type( HETNAM );
 	if ( options->use_pdb_format_HETNAM_records() ) {
@@ -515,7 +516,13 @@ create_records_from_sfr(
 	std::map < core::Size, core::Size > serial_to_serial_with_ter; //Reused later during CONECT record dumping.
 	R = RecordCollection::record_from_record_type( "ATOM  " );
 	Record T = RecordCollection::record_from_record_type( "TER   " );
+
+	// A map of chain=>[name3] which will be used to assemble the SEQRES section
+	std::map< std::string, utility::vector1<std::string> > seq_res_map;
 	T["type"].value = "TER   ";
+
+	int last_resseq(0);
+
 	for ( Size i=0; i<sfr.chains().size(); ++i ) {
 		for ( Size j=0; j<sfr.chains()[i].size(); ++j ) {
 			AtomInformation const & ai( sfr.chains()[i][j] );
@@ -540,6 +547,13 @@ create_records_from_sfr(
 			R["tempFactor"].value = fmt_real( ai.temperature, 3, 2 ); //("%6.2f", ai.temperature);
 			R["segmentID"].value = ai.segmentID;
 			VR.push_back(R);
+
+			if ( ai.resSeq != last_resseq ) {
+				seq_res_map[cid].push_back(ai.resName);
+			}
+
+			last_resseq = ai.resSeq;
+
 		}
 		if ( ! no_chainend_ter && i > 0 ) {
 			VR.push_back( T );
@@ -547,6 +561,35 @@ create_records_from_sfr(
 	}
 	if ( no_chainend_ter ) {
 		VR.push_back( T );  //Put a TER record at the end of the ATOM lines if we're using the no_chainend_ter option.
+	}
+
+	// Sequence section
+	if ( options->write_seqres_records() ) {
+
+		core::Size seqres_serial(1);
+		for ( auto & chain_sequence : seq_res_map ) {
+			std::string const & chain(chain_sequence.first);
+			utility::vector1<std::string> const & sequence(chain_sequence.second);
+			core::Size const & chain_length(sequence.size());
+			core::Size chain_index(1);
+
+			while ( chain_index <= chain_length ) {
+				R = RecordCollection::record_from_record_type( SEQRES );
+				R["type"].value = "SEQRES";
+				R["serNum"].value = pad_left(seqres_serial, 3);
+				R["chainID"].value = chain;
+				R["numRes"].value = pad_left(chain_length, 4);
+				for ( core::Size seqres_slot = 1; seqres_slot <= 13; ++ seqres_slot ) {
+					R["resName"+utility::to_string(seqres_slot)].value = sequence[chain_index];
+					chain_index += 1;
+					if ( chain_index > chain_length ) {
+						break;
+					}
+				}
+				seqres_serial++;
+				VR.push_back(R);
+			}
+		}
 	}
 
 	// Connectivity Section ///////////////////////////////////////////////////

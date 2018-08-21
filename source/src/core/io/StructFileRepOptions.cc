@@ -109,7 +109,7 @@ void StructFileRepOptions::parse_my_tag( utility::tag::TagCOP tag )
 	set_write_pdb_link_records( tag->getOption <bool >( "write_pdb_link_records", false ) );
 	set_write_pdb_parametric_info( tag->getOption< bool >("write_pdb_parametric_info", true) );
 	set_write_all_connect_info( tag->getOption< bool >("write_all_connect_info", false) );
-
+	set_write_seqres_records( tag->getOption< bool >("write_seqres_records", 0) );
 	set_chains_whose_residues_are_separate_chemical_entities(
 		tag->getOption< std::string >( "treat_residues_in_these_chains_as_separate_chemical_entities", " " ) );
 
@@ -168,6 +168,7 @@ bool StructFileRepOptions::use_pdb_format_HETNAM_records() const { return use_pd
 bool StructFileRepOptions::write_pdb_link_records() const { return write_pdb_link_records_; }
 bool StructFileRepOptions::write_pdb_parametric_info() const { return write_pdb_parametric_info_; }
 bool StructFileRepOptions::write_all_connect_info() const { return write_all_connect_info_; }
+bool StructFileRepOptions::write_seqres_records() const { return write_seqres_records_; }
 std::string const & StructFileRepOptions::chains_whose_residues_are_separate_chemical_entities() const { return chains_whose_residues_are_separate_chemical_entities_; }
 utility::vector1<std::string> const & StructFileRepOptions::residues_for_atom_name_remapping() const { return residues_for_atom_name_remapping_; }
 bool StructFileRepOptions::pdb_comments() const { return pdb_comments_; }
@@ -313,6 +314,9 @@ void StructFileRepOptions::set_write_pdb_parametric_info( bool const setting )
 void StructFileRepOptions::set_write_all_connect_info( bool const setting )
 { write_all_connect_info_ = setting; }
 
+void StructFileRepOptions::set_write_seqres_records(bool const setting )
+{ write_seqres_records_ = setting; }
+
 void StructFileRepOptions::set_chains_whose_residues_are_separate_chemical_entities( std::string const & chains_whose_residues_are_separate_chemical_entities )
 { chains_whose_residues_are_separate_chemical_entities_ = chains_whose_residues_are_separate_chemical_entities; }
 
@@ -386,7 +390,8 @@ StructFileRepOptions::list_options_read( utility::options::OptionKeyList & read_
 		+ in::auto_detect_glycan_connections
 		+ in::max_bond_length
 		+ in::min_bond_length
-		+ in::read_only_ATOM_entries;
+		+ in::read_only_ATOM_entries
+		+ out::file::write_seqres_records;
 
 }
 
@@ -512,6 +517,7 @@ void StructFileRepOptions::init_from_options( utility::options::OptionCollection
 	set_read_only_ATOM_entries( options[ in::read_only_ATOM_entries ]() );
 	set_use_pdb_format_HETNAM_records( options[ OptionKeys::out::file::use_pdb_format_HETNAM_records ]() );
 	set_write_pdb_link_records( options[ out::file::write_pdb_link_records ]() );
+	set_write_seqres_records( options[out::file::write_seqres_records ]() );
 	set_chains_whose_residues_are_separate_chemical_entities( options[ in::file::treat_residues_in_these_chains_as_separate_chemical_entities].user_or(""));
 	if ( options[ in::file::remap_pdb_atom_names_for ].active() ) {
 		set_residues_for_atom_name_remapping( options[ in::file::remap_pdb_atom_names_for ] );
@@ -561,6 +567,7 @@ StructFileRepOptions::operator == ( StructFileRepOptions const & other ) const
 	if ( suppress_zero_occ_pdb_output_                          != other.suppress_zero_occ_pdb_output_                         ) return false;
 	if ( use_pdb_format_HETNAM_records_                         != other.use_pdb_format_HETNAM_records_                        ) return false;
 	if ( write_pdb_link_records_                                != other.write_pdb_link_records_                               ) return false;
+	if ( write_seqres_records_                                  != other.write_seqres_records_                                 ) return false;
 	if ( write_pdb_parametric_info_                             != other.write_pdb_parametric_info_                            ) return false;
 	if ( write_all_connect_info_                                != other.write_all_connect_info_                               ) return false;
 	if ( chains_whose_residues_are_separate_chemical_entities_  != other.chains_whose_residues_are_separate_chemical_entities_ ) return false;
@@ -647,6 +654,8 @@ StructFileRepOptions::operator < ( StructFileRepOptions const & other ) const
 	if ( use_pdb_format_HETNAM_records_                         != other.use_pdb_format_HETNAM_records_                        ) return false;
 	if ( write_pdb_link_records_                                <  other.write_pdb_link_records_                               ) return true;
 	if ( write_pdb_link_records_                                != other.write_pdb_link_records_                               ) return false;
+	if ( write_seqres_records_                                  <  other.write_seqres_records_                                 ) return true;
+	if ( write_seqres_records_                                  != other.write_seqres_records_                                 ) return false;
 	if ( write_pdb_parametric_info_                             <  other.write_pdb_parametric_info_                            ) return true;
 	if ( write_pdb_parametric_info_                             != other.write_pdb_parametric_info_                            ) return false;
 	if ( write_all_connect_info_                                <  other.write_all_connect_info_                               ) return true;
@@ -731,6 +740,7 @@ core::io::StructFileRepOptions::save( Archive & arc ) const {
 	arc( CEREAL_NVP( write_pdb_link_records_ ) ); // _Bool
 	arc( CEREAL_NVP( write_pdb_parametric_info_ ) ); // _Bool
 	arc( CEREAL_NVP( write_all_connect_info_ ) ); // _Bool
+	arc( CEREAL_NVP( write_seqres_records_ ) ); // _Bool
 	arc( CEREAL_NVP( chains_whose_residues_are_separate_chemical_entities_ ) ); // std::string
 	arc( CEREAL_NVP( residues_for_atom_name_remapping_ ) ); // utility::vector1<std::string>
 	arc( CEREAL_NVP( pdb_comments_ ) ); // _Bool
@@ -787,6 +797,7 @@ core::io::StructFileRepOptions::load( Archive & arc ) {
 	arc( write_pdb_link_records_ ); // _Bool
 	arc( write_pdb_parametric_info_ ); // _Bool
 	arc( write_all_connect_info_ ); // _Bool
+	arc( write_seqres_records_ ); // _Bool
 	arc( chains_whose_residues_are_separate_chemical_entities_ ); // std::string
 	arc( residues_for_atom_name_remapping_ ); // utility::vector1<std::string>
 	arc( pdb_comments_ ); // _Bool

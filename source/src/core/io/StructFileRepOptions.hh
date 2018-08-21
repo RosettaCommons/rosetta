@@ -103,6 +103,7 @@ public:
 	bool write_pdb_link_records() const;
 	bool write_pdb_parametric_info() const;
 	bool write_all_connect_info() const;
+	bool write_seqres_records() const;
 	std::string const & chains_whose_residues_are_separate_chemical_entities() const;
 	utility::vector1<std::string> const & residues_for_atom_name_remapping() const;
 	bool pdb_comments() const;
@@ -156,6 +157,7 @@ public:
 	void set_write_pdb_link_records( bool const setting );
 	void set_write_pdb_parametric_info( bool const setting );
 	void set_write_all_connect_info( bool const setting );
+	void set_write_seqres_records(bool const setting);
 	void set_chains_whose_residues_are_separate_chemical_entities( std::string const & setting );
 	void set_residues_for_atom_name_remapping( utility::vector1<std::string> const & setting );
 	void set_pdb_comments( bool const pdb_comments );
@@ -231,6 +233,7 @@ private:
 	bool write_pdb_link_records_;
 	bool write_pdb_parametric_info_;
 	bool write_all_connect_info_;
+	bool write_seqres_records_;
 
 	std::string chains_whose_residues_are_separate_chemical_entities_; //treat_residues_in_these_chains_as_separate_chemical_entities
 	/// @brief Three letter codes of residues for which to allow atom renaming.

@@ -804,7 +804,11 @@ Options = Option_Group( '',
 					short='Use PDB codes for glycan residues',
 					legal=['true', 'false'],
 					default='false'),
-
+			Option( 'write_seqres_records', 'Boolean',
+					desc='Sets whether or not the SEQRES records in PDB files are written. The default value is false.',
+					short='Write SEQRES records?',
+					legal=['true', 'false'],
+					default='false'),
 			# General oputput options
 			Option( 'output_pose_energies_table', 'Boolean', default = 'true', desc='Output the pose energies table.  This can be overridden'),
 			Option( 'output_pose_cache_data', 'Boolean', default = 'true', desc='Output the pose cache.'),
