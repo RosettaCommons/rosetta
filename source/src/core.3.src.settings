@@ -212,6 +212,7 @@ sources = {
 	],
 	"core/simple_metrics/composite_metrics": [
 		"CompositeEnergyMetric",
+		"ProtocolSettingsMetric",
 	],
 
 	"core/pose/symmetry": [

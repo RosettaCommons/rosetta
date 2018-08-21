@@ -27,6 +27,7 @@
 #include <core/simple_metrics/metrics/TotalEnergyMetric.hh>
 
 #include <core/simple_metrics/composite_metrics/CompositeEnergyMetric.hh>
+#include <core/simple_metrics/composite_metrics/ProtocolSettingsMetric.hh>
 
 // Core Headers
 #include <core/pose/Pose.hh>
@@ -39,7 +40,8 @@
 
 // Utility, etc Headers
 #include <basic/Tracer.hh>
-#include <utility/string_util.hh>
+#include <utility/options/OptionCollection.hh>
+#include <basic/options/option.hh>
 
 using namespace core::simple_metrics;
 using namespace core::simple_metrics::metrics;
@@ -62,7 +64,7 @@ public:
 	Pose pose;
 
 	void setUp(){
-		core_init();
+		core_init_with_additional_options("-script_vars test1=value1 test2=value2");
 
 		core::import_pose::pose_from_file(pose, "protocols/antibody/2r0l_1_1.pdb", core::import_pose::PDB_file);
 		//ab_info =  protocols::antibody::AntibodyInfoOP( new protocols::antibody::AntibodyInfo(ab_pose, AHO_Scheme, North));
@@ -72,6 +74,75 @@ public:
 	}
 
 	void tearDown(){
+
+	}
+
+	void test_protocol_settings_metric(){
+		ProtocolSettingsMetric protocol_metric = ProtocolSettingsMetric();
+		std::map< std::string, std::string > settings = protocol_metric.calculate(pose);
+
+
+		TS_ASSERT(settings.count("script_vars") != 0);
+		TS_ASSERT_EQUALS(settings["script_vars"], "test1=value1 test2=value2" );
+		TS_ASSERT_EQUALS(settings["test1"], "value1");
+		TS_ASSERT_EQUALS(settings["test2"], "value2");
+
+		//Test only script_vars
+		protocol_metric.parse_options(basic::options::option, \
+			true /*base_name_only*/, \
+			true /*include_script_vars*/, \
+			false /*include_user_vars*/, \
+			true /*skip_corrections*/);
+		settings = protocol_metric.calculate(pose);
+
+		TS_ASSERT_EQUALS( settings.count("script_vars"), 0);
+		TS_ASSERT_EQUALS(settings["test1"], "value1");
+		TS_ASSERT_EQUALS(settings["test2"], "value2");
+
+
+		//Test only user vars
+		protocol_metric.parse_options(basic::options::option, \
+			true /*base_name_only*/, \
+			false /*include_script_vars*/, \
+			true /*include_user_vars*/, \
+			true /*skip_corrections*/);
+		settings = protocol_metric.calculate(pose);
+
+		TS_ASSERT( settings.count("script_vars") != 0);
+		TS_ASSERT_EQUALS( settings["script_vars"], "test1=value1 test2=value2" );
+		TS_ASSERT_EQUALS(settings.count("test1"), 0);
+		TS_ASSERT_EQUALS(settings.count("test2"), 0);
+
+		//Test including full namespacing to user options
+		protocol_metric.parse_options(basic::options::option, \
+			false /*base_name_only*/, \
+			false /*include_script_vars*/, \
+			true /*include_user_vars*/, \
+			true /*skip_corrections*/);
+
+		settings = protocol_metric.calculate(pose);
+		TS_ASSERT( settings.count("parser:script_vars") != 0);
+		TS_ASSERT_EQUALS( settings["parser:script_vars"], "test1=value1 test2=value2" );
+		TS_ASSERT_EQUALS( settings.count("script_vars"), 0);
+		TS_ASSERT_EQUALS(settings.count("test1"), 0);
+		TS_ASSERT_EQUALS(settings.count("test2"), 0);
+
+		//Test limiting to only select options you wish to use for benchmarking.
+		utility::vector1< std::string > limit_to;
+		limit_to.push_back("test1");
+		protocol_metric.set_only_report_these_options(limit_to);
+
+		protocol_metric.parse_options(basic::options::option, \
+			true /*base_name_only*/, \
+			true /*include_script_vars*/, \
+			false /*include_user_vars*/, \
+			true /*skip_corrections*/);
+
+		settings = protocol_metric.calculate(pose);
+		TS_ASSERT_EQUALS( settings.count("script_vars"), 0);
+		TS_ASSERT(settings.count("test1") != 0);
+		TS_ASSERT_EQUALS(settings.count("test2"), 0);
+		TS_ASSERT_EQUALS(settings["test1"], "value1");
 
 	}
 

@@ -42,7 +42,7 @@ void
 CompositeStringMetric::apply( pose::Pose & pose, std::string prefix, std::string suffix ) const {
 
 	std::string custom_type = get_custom_type();
-	if ( custom_type != "" ) custom_type = custom_type+"_";
+	if ( ( custom_type != "") && ( metric() != "") ) custom_type = custom_type+"_";
 
 	std::map< std::string, std::string > values = calculate( pose );
 	for ( auto value_pair : values ) {

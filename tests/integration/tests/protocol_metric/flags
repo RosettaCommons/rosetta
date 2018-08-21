@@ -1,0 +1,24 @@
+#Input
+-ignore_unrecognized_res
+-ignore_zero_occupancy false
+-load_PDB_components false
+
+#Output
+-pdb_comments
+-scorefile_format json
+
+#Minimization
+-nblist_autoupdate
+
+#Common
+-jd2:delete_old_poses
+-other_pose_to_scorefile
+
+#Antibody
+-input_ab_scheme AHo_Scheme
+-output_ab_scheme AHo_Scheme
+
+-s 2r0l_1_1.pdb
+-in:file:native 2r0l_1_1.pdb
+
+-parser:script_vars tolerance=.1 cdrs=L1

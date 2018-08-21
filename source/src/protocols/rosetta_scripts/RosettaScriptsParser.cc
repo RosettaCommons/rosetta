@@ -70,6 +70,7 @@
 #include <basic/options/keys/mistakes.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <utility/options/keys/OptionKeyList.hh>
+#include <utility/options/OptionCollection.hh>
 
 #include <utility/io/izstream.hh>
 #include <utility/vector0.hh>
@@ -189,7 +190,58 @@ RosettaScriptsParser::generate_mover_and_apply_to_pose(
 	return in_mover;
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+ParsedProtocolOP
+RosettaScriptsParser::generate_mover_and_apply_to_pose(
+	core::pose::Pose & pose,
+	utility::options::OptionCollectionCOP options,
+	bool & modified_pose,
+	std::string const & current_input_name,
+	std::string const & current_output_name,
+	basic::resource_manager::ResourceManagerOP resource_manager
+){
+	local_options_ = options;
+	return generate_mover_and_apply_to_pose(pose, *options, modified_pose, \
+		current_input_name, current_output_name, resource_manager);
+}
+
+ParsedProtocolOP
+RosettaScriptsParser::generate_mover_and_apply_to_pose(
+	core::pose::Pose & pose,
+	utility::options::OptionCollectionCOP options,
+	bool & modified_pose,
+	std::string const & xml_fname,
+	std::string const & current_input_name,
+	std::string const & current_output_name,
+	XmlObjectsOP xml_objects,
+	basic::resource_manager::ResourceManagerOP resource_manager
+) {
+	local_options_ = options;
+	return generate_mover_and_apply_to_pose(pose, *options, modified_pose, \
+		xml_fname,current_input_name, current_output_name, xml_objects, resource_manager);
+}
+
+ParsedProtocolOP
+RosettaScriptsParser::generate_mover_and_apply_to_pose_xml_string(
+	core::pose::Pose & pose,
+	utility::options::OptionCollectionCOP options,
+	bool & modified_pose,
+	std::string const & xml_text,
+	std::string const & current_input_name,
+	std::string const & current_output_name,
+	XmlObjectsOP xml_objects /* = nullptr */
+) {
+	local_options_ = options;
+	return generate_mover_and_apply_to_pose(pose, *options, modified_pose,\
+		xml_text, current_input_name, current_output_name, xml_objects);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /// @brief Convenience function to construct a ParsedProtocol from a file
 /// @details Reads in an RosettaScript from file, replaces script_vars if present, applies operations
@@ -486,6 +538,11 @@ RosettaScriptsParser::generate_mover_for_protocol(
 	//If native is set, add it to the datamap as a resource instead of loading in each individual mover.  Works in JD3 as well to allow better benchmarking.
 	if ( native_pose_ ) {
 		data.add_resource("native_pose", native_pose_);
+	}
+
+	//Give a COP of the OptionCollection to the datamap to begin using local options with RosettaScripts.
+	if ( local_options_ ) {
+		data.add_resource("options", local_options_);
 	}
 
 	// Data Loaders -- each data loader handles one of the top-level blocks of a

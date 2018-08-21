@@ -77,6 +77,10 @@ public:
 	void
 	set_calc_in_hours( bool calc_in_hours );
 
+	///@brief Core calculation that does not require pose.
+	core::Real
+	calc_time() const;
+
 public:
 
 	///@brief Name of the class

@@ -56,7 +56,7 @@ using namespace core::select::residue_selector;
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Copy constructor
---class--::--class--( --class-- const & src ) = default;
+--class--::--class--( --class-- const &  ) = default;
 
 core::simple_metrics::SimpleMetricOP
 --class--::clone() const {

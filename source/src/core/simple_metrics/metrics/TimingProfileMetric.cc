@@ -79,7 +79,7 @@ TimingProfileMetric::clone() const {
 }
 
 core::Real
-TimingProfileMetric::calculate(const pose::Pose & ) const {
+TimingProfileMetric::calc_time() const {
 	high_resolution_clock::time_point t2 = high_resolution_clock::now();
 
 	if ( calc_in_hours_ ) {
@@ -87,6 +87,10 @@ TimingProfileMetric::calculate(const pose::Pose & ) const {
 	} else {
 		return duration_cast< minutes_timing >( t2 - construction_time_ ).count();
 	}
+}
+core::Real
+TimingProfileMetric::calculate(const pose::Pose & ) const {
+	return calc_time();
 }
 
 std::string
