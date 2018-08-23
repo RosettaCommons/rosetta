@@ -85,7 +85,7 @@ public:
 		core::scoring::ScoreFunctionOP sfxn( core::scoring::get_score_function() ); //Get whatever the current scorefunction is.
 		core::scoring::symmetry::SymmetricScoreFunctionOP sfxn_symm( core::scoring::symmetry::symmetrize_scorefunction( *sfxn ) ); //Set up a symmetric version
 		core::Real const asymm_energy_1( (*sfxn)(*pose) );
-		core::Real const asymm_energy_2( (*sfxn)(*pose) );
+		core::Real const asymm_energy_2( (*sfxn)(*pose2) );
 		TR << "E1=" << asymm_energy_1 << std::endl;
 		TR << "E2=" << asymm_energy_2 << std::endl;
 		TS_ASSERT_DELTA( asymm_energy_1, asymm_energy_2, 0.00001 ); //Make sure that the asymmetric pose and its mirror image score identically
