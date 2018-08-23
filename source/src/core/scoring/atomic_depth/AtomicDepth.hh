@@ -82,6 +82,7 @@ public:
 	AtomicDepth( pose::Pose const & pose, Real probe_radius=1.4, bool poly_leu_depth=false, Real resolution_scale=4.00);
 
 	utility::vector1<Real> calcdepth( utility::vector1<conformation::Atom> const & atoms, chemical::AtomTypeSet const & type_set ) const;
+	Real calcdepth( conformation::Atom const & atom, chemical::AtomTypeSet const & type_set ) const;
 
 	void visualize_at_depth( Real depth, std::string const & fname, Real fraction=1.0 ) const;
 

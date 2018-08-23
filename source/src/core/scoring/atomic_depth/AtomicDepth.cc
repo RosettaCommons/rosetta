@@ -95,35 +95,44 @@ AtomicDepth::AtomicDepth( pose::Pose const & pose, Real probe_radius /*=1.4*/, b
 
 utility::vector1<Real> AtomicDepth::calcdepth( utility::vector1<conformation::Atom> const & atoms, chemical::AtomTypeSet const & type_set ) const
 {
-	int ox,oy,oz;
-	point3d cp;
-	Real radius;
 	utility::vector1<Real> depval( atoms.size() );
 
 	for ( Size i = 1; i <= atoms.size(); i++ ) {
-		conformation::Atom const & atom = atoms[i];
-		cp.x=atom.xyz().x()+ptran_.x;
-		cp.y=atom.xyz().y()+ptran_.y;
-		cp.z=atom.xyz().z()+ptran_.z;
-		cp.x*=scalefactor_;
-		cp.y*=scalefactor_;
-		cp.z*=scalefactor_;
-		ox=int(cp.x+0.5);
-		oy=int(cp.y+0.5);
-		oz=int(cp.z+0.5);
-		if ( ox >= 0 && oy >= 0 && oz >= 0 && ox < plength_ && oy < pwidth_ && oz < pheight_ ) {
-			depval[i]=vp_[ox][oy][oz].distance/scalefactor_-proberadius_;
-			radius = type_set[atom.type()].lj_radius();
-			if ( depval[i] < radius ) depval[i]=radius;
-			// depval[i]+=proberadius_;                 // criticial change for Rosetta
-			//                                          //  removing final proberadius addition so that atomic depth does not include
-			//                                          //   radius of sphere
-		} else {
-			depval[i] = type_set[atom.type()].lj_radius();
-		}
+		depval[i] = calcdepth( atoms[i], type_set);
 	}
 
 	return depval;
+}
+
+Real AtomicDepth::calcdepth( conformation::Atom const & atom, chemical::AtomTypeSet const & type_set ) const
+{
+	int ox,oy,oz;
+	point3d cp;
+	Real radius;
+	Real depth;
+
+	cp.x=atom.xyz().x()+ptran_.x;
+	cp.y=atom.xyz().y()+ptran_.y;
+	cp.z=atom.xyz().z()+ptran_.z;
+	cp.x*=scalefactor_;
+	cp.y*=scalefactor_;
+	cp.z*=scalefactor_;
+	ox=int(cp.x+0.5);
+	oy=int(cp.y+0.5);
+	oz=int(cp.z+0.5);
+
+	if ( ox >= 0 && oy >= 0 && oz >= 0 && ox < plength_ && oy < pwidth_ && oz < pheight_ ) {
+		depth = vp_[ox][oy][oz].distance/scalefactor_-proberadius_;
+		radius = type_set[atom.type()].lj_radius();
+		if ( depth < radius ) depth=radius;
+		// depval[i]+=proberadius_;                 // criticial change for Rosetta
+		//                                          //  removing final proberadius addition so that atomic depth does not include
+		//                                          //   radius of sphere
+	} else {
+		depth = type_set[atom.type()].lj_radius();
+	}
+
+	return depth;
 }
 
 void AtomicDepth::visualize_at_depth( Real depth, std::string const & fname, Real fraction/*=1.0*/ ) const {

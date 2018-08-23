@@ -53,6 +53,22 @@ IGLigandDesignEdgeUpweighter::get_edge_reweight(
 
 }
 
+core::Real
+IGInterfaceEdgeUpweighter::get_edge_reweight(
+	pose::Pose const & pose,
+	pack::task::PackerTask const &,
+	Size res1,
+	Size res2
+) const
+{
+
+	if ( pose.chain(res1) != pose.chain(res2) ) {
+		return weight_factor_;
+	} else return default_weight_;
+
+}
+
+
 /*
 template <class T>
 core::Real
@@ -126,6 +142,29 @@ protocols::toolbox::ResidueGroupIGEdgeUpweighter::load( Archive & arc ) {
 
 SAVE_AND_LOAD_SERIALIZABLE( protocols::toolbox::ResidueGroupIGEdgeUpweighter );
 CEREAL_REGISTER_TYPE( protocols::toolbox::ResidueGroupIGEdgeUpweighter )
+
+/// @brief Default constructor required by cereal to deserialize this class
+protocols::toolbox::IGInterfaceEdgeUpweighter::IGInterfaceEdgeUpweighter() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::toolbox::IGInterfaceEdgeUpweighter::save( Archive & arc ) const {
+	arc( cereal::base_class< core::pack::task::IGEdgeReweighter >( this ) );
+	arc( CEREAL_NVP( weight_factor_ ) ); // core::Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::toolbox::IGInterfaceEdgeUpweighter::load( Archive & arc ) {
+	arc( cereal::base_class< core::pack::task::IGEdgeReweighter >( this ) );
+	arc( weight_factor_ ); // core::Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::toolbox::IGInterfaceEdgeUpweighter );
+CEREAL_REGISTER_TYPE( protocols::toolbox::IGInterfaceEdgeUpweighter )
+
 
 CEREAL_REGISTER_DYNAMIC_INIT( protocols_toolbox_IGEdgeReweighters )
 #endif // SERIALIZATION

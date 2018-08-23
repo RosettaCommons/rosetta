@@ -42,6 +42,8 @@
 
 #include <protocols/matdes/BuildingBlockInterfaceOperationCreator.hh>
 
+#include <protocols/pack_interface/ProteinProteinInterfaceUpweighterTaskOperationCreator.hh>
+
 #include <protocols/denovo_design/task_operations/ConsensusLoopDesignOperationCreator.hh>
 
 

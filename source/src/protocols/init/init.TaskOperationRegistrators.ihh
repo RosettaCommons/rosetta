@@ -41,6 +41,8 @@ static TaskOperationRegistrator< protocols::hbnet::ConstrainHBondNetworkCreator 
 
 static TaskOperationRegistrator< protocols::matdes::BuildingBlockInterfaceOperationCreator > BuildingBlockInterfaceOperationCreator_registrator;
 
+static TaskOperationRegistrator< protocols::pack_interface::ProteinProteinInterfaceUpweighterTaskOperationCreator > ProteinProteinInterfaceUpweighterOperationCreator_registrator;
+
 static TaskOperationRegistrator< protocols::legacy_sewing::LegacyReadNativeRotamersFileCreator > reg_LegacyReadNativeRotamersFileCreator;
 static TaskOperationRegistrator< protocols::legacy_sewing::LegacyReadRepeatNativeRotamersFileCreator > reg_LegacyReadRepeatNativeRotamersFileCreator;
 

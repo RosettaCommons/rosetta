@@ -120,6 +120,33 @@ public:
 
 };
 
+class IGInterfaceEdgeUpweighter : public core::pack::task::IGEdgeReweighter{
+
+public:
+	IGInterfaceEdgeUpweighter( core::Real weight_factor ){ weight_factor_ = weight_factor; }
+
+	core::Real get_edge_reweight(
+		core::pose::Pose const & pose,
+		core::pack::task::PackerTask const & task,
+		Size res1,
+		Size res2
+	) const override;
+
+private:
+	core::Real weight_factor_;
+
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	IGInterfaceEdgeUpweighter();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
+};
+
 } //namespace toolbox
 } //namespace protocols
 
