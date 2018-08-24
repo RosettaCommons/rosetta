@@ -19,6 +19,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
+#include <core/simple_metrics/SimpleMetricData.fwd.hh>
 
 // Basic headers
 #include <basic/datacache/DataMap.fwd.hh>
@@ -31,6 +32,27 @@
 
 namespace core {
 namespace simple_metrics {
+
+//////////////////////////////////////////////////////////////////////////////
+
+///@brief Get a modifiable SM data.  Use with caution.
+/// Create it in the pose if it does not exist yet.  Not for general use.
+///
+SimpleMetricDataOP
+get_sm_data(pose::Pose & pose);
+
+///@brief Get a SM Data cache if present.
+///  Otherwise, returns a nullptr.
+///
+SimpleMetricDataCOP
+get_sm_data(pose::Pose const & pose);
+
+///@brief Does the pose have a SMCache?
+bool
+has_sm_data(pose::Pose const & pose);
+
+
+//////////////////////////////////////////////////////////////////////////////
 
 std::string
 complex_type_name_for_simple_metric( std::string const & metric_name );
@@ -77,6 +99,8 @@ get_metric_from_datamap_and_subtags(
 ///@brief Add the schema for per-residue simple metrics.  This is to reduce code dup.
 void
 add_per_residue_simple_metric_schema( utility::tag::XMLSchemaComplexTypeGeneratorOP complex_schema );
+
+
 
 } //core
 } //simple_metrics

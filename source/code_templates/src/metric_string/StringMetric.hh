@@ -23,6 +23,11 @@
 // Utility headers
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 --namespace--
 
 ///@brief --brief--
@@ -91,10 +96,21 @@ public:
 
 	core::simple_metrics::SimpleMetricOP
 	clone() const override;
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
+
 };
 
 --end_namespace--
 
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( --namespace_underscore--_--class-- )
+#endif // SERIALIZATION
 
 
 #endif //--path_underscore--_--class--_HH

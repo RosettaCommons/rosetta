@@ -20,6 +20,8 @@
 #include <test/core/init_util.hh>
 
 // Project Headers
+#include <core/simple_metrics/util.hh>
+#include <core/simple_metrics/SimpleMetricData.hh>
 #include <core/simple_metrics/StringMetric.hh>
 #include <core/simple_metrics/RealMetric.hh>
 
@@ -86,18 +88,24 @@ public:
 		TS_ASSERT( tester.get_metric_names()[1] == "SomeString");
 
 		tester.apply( pose );
-		TS_ASSERT ( hasPoseExtraScore_str( pose, "SomeString" ) );
+
+		TS_ASSERT ( has_sm_data( pose ));
 
 		std::string value;
-		bool present = getPoseExtraScore( pose, "SomeString", value );
+		bool present = get_sm_data(pose)->get_value( "SomeString", value );
 		TS_ASSERT( present );
 		TS_ASSERT( value == "TESTING");
 
 		tester.apply( pose, "prefix_", "_suffix");
-		TS_ASSERT ( hasPoseExtraScore_str( pose, "prefix_SomeString_suffix" ) );
-		present = getPoseExtraScore( pose, "prefix_SomeString_suffix", value );
+		present = get_sm_data( pose)->get_value("prefix_SomeString_suffix", value );
 		TS_ASSERT( present );
 		TS_ASSERT( value == "TESTING");
+
+		//Test Cached Calculate function.
+		TS_ASSERT_THROWS_NOTHING(tester.cached_calculate(pose, true, "prefix_", "_suffix", true /*fail_on_no_cache*/));
+		value = tester.cached_calculate(pose, true, "prefix_", "_suffix", true);
+		TS_ASSERT( value == "TESTING");
+
 	}
 
 	void test_real_metric() {
@@ -110,18 +118,21 @@ public:
 		TS_ASSERT( tester.get_metric_names()[1] == "SomeReal");
 
 		tester.apply( pose );
-		TS_ASSERT ( hasPoseExtraScore( pose, "sometype_SomeReal" ) );
+		TS_ASSERT ( has_sm_data( pose ) );
 
 		core::Real value;
-		bool present = getPoseExtraScore( pose, "sometype_SomeReal", value );
+		bool present = get_sm_data(pose)->get_value( "sometype_SomeReal", value );
 		TS_ASSERT( present );
 
 		TS_ASSERT( value == 1.0 );
 
 		tester.apply( pose, "prefix_", "_suffix");
-		TS_ASSERT ( hasPoseExtraScore( pose, "prefix_sometype_SomeReal_suffix" ) );
-		present = getPoseExtraScore( pose, "prefix_sometype_SomeReal_suffix", value );
+		present = get_sm_data( pose )->get_value("prefix_sometype_SomeReal_suffix", value );
 		TS_ASSERT( present );
+		TS_ASSERT( value == 1.0 );
+
+		TS_ASSERT_THROWS_NOTHING(tester.cached_calculate(pose, true /*use_cache*/, "prefix_", "_suffix", true /*fail_on_no_cache*/));
+		value = tester.cached_calculate(pose, true /*use_cache*/, "prefix_", "_suffix", true /*fail_on_no_cache*/);
 		TS_ASSERT( value == 1.0 );
 
 	}
@@ -139,22 +150,17 @@ public:
 
 		tester.apply( pose );
 		tester.apply( pose, "prefix_", "_suffix");
+		TS_ASSERT( has_sm_data(pose));
 
-		for ( auto & name : names ) {
+		bool present = get_sm_data(pose)->get_value("prefix_SomeCompositeString_suffix", values );
+		TS_ASSERT( present );
+		TS_ASSERT( values["s_data1"] == "value1");
+		TS_ASSERT( values["s_data2"] == "value2");
 
-			TS_ASSERT ( hasPoseExtraScore_str( pose, name+"_SomeCompositeString" ) );
-
-			std::string value;
-			bool present = getPoseExtraScore( pose, name+"_SomeCompositeString", value );
-			TS_ASSERT( present );
-			TS_ASSERT( value ==  values[name] );
-
-
-			TS_ASSERT ( hasPoseExtraScore_str( pose, "prefix_"+name+"_SomeCompositeString_suffix" ) );
-			present = getPoseExtraScore( pose, "prefix_"+name+"_SomeCompositeString_suffix", value );
-			TS_ASSERT( present );
-			TS_ASSERT( value == values[name] );
-		}
+		TS_ASSERT_THROWS_NOTHING(tester.cached_calculate(pose, true /*use_cache*/, "prefix_", "_suffix", true /*fail_on_no_cache*/));
+		values = tester.cached_calculate(pose, true /*use_cache*/, "prefix_", "_suffix", true /*fail_on_no_cache*/);
+		TS_ASSERT( values["s_data1"] == "value1");
+		TS_ASSERT( values["s_data2"] == "value2");
 
 	}
 
@@ -171,22 +177,17 @@ public:
 
 		tester.apply( pose );
 		tester.apply( pose, "prefix_", "_suffix");
+		TS_ASSERT(has_sm_data(pose));
 
-		for ( auto & name : names ) {
+		bool present = get_sm_data( pose )->get_value( "prefix_SomeCompositeReal_suffix", values );
+		TS_ASSERT( present );
+		TS_ASSERT( values["r_data1"] == 1.0);
+		TS_ASSERT( values["r_data2"] == 2.0);
 
-			TS_ASSERT ( hasPoseExtraScore( pose, name+"_SomeCompositeReal" ) );
-
-			core::Real value;
-			bool present = getPoseExtraScore( pose, name+"_SomeCompositeReal", value );
-			TS_ASSERT( present );
-			TS_ASSERT( value ==  values[name] );
-
-
-			TS_ASSERT ( hasPoseExtraScore( pose, "prefix_"+name+"_SomeCompositeReal_suffix" ) );
-			present = getPoseExtraScore( pose, "prefix_"+name+"_SomeCompositeReal_suffix", value );
-			TS_ASSERT( present );
-			TS_ASSERT( value == values[name] );
-		}
+		TS_ASSERT_THROWS_NOTHING(tester.cached_calculate(pose, true /*use_cache*/, "prefix_", "_suffix", true /*fail_on_no_cache*/));
+		values = tester.cached_calculate(pose, true /*use_cache*/, "prefix_", "_suffix", true /*fail_on_no_cache*/);
+		TS_ASSERT( values["r_data1"] == 1.0);
+		TS_ASSERT( values["r_data2"] == 2.0);
 
 	}
 
@@ -196,7 +197,7 @@ public:
 
 		TestPerResidueRealMetric tester = TestPerResidueRealMetric();
 		tester.set_residue_selector(selector); //Test setting the residue selector.
-		std::map< core::Size, core::Real > const values = tester.calculate( pose );
+		std::map< core::Size, core::Real > values = tester.calculate( pose );
 		utility::vector1< std::string > const names = tester.get_metric_names();
 		TS_ASSERT(names.size() == 1);
 		TS_ASSERT( values.at(1) == 1.0);
@@ -207,24 +208,18 @@ public:
 
 		tester.apply( pose );
 		tester.apply( pose, "prefix_", "_suffix");
+		TS_ASSERT( has_sm_data(pose));
 
-		for ( core::Size resnum = 1; resnum <= 2; ++resnum ) {
+		bool present = get_sm_data(pose)->get_value( "prefix_SomePerResidueReal_suffix", values);
+		TS_ASSERT(present);
+		TS_ASSERT( values.at(1) == 1.0);
+		TS_ASSERT( values.at(2) == 2.0);
 
-			//std::string const & name = names[1];
-			TS_ASSERT ( hasPoseExtraScore( pose, "SomePerResidueReal_"+utility::to_string(resnum) ) );
+		TS_ASSERT_THROWS_NOTHING(tester.cached_calculate(pose, true /*use_cache*/, "prefix_", "_suffix", true /*fail on missing cache*/, false /* use ref pose */));
 
-
-			core::Real value;
-			bool present = getPoseExtraScore( pose, "SomePerResidueReal_"+utility::to_string(resnum), value );
-			TS_ASSERT( present );
-			TS_ASSERT( value ==  values.at(resnum) );
-
-
-			TS_ASSERT ( hasPoseExtraScore( pose, "prefix_SomePerResidueReal_"+utility::to_string(resnum)+"_suffix" ) );
-			present = getPoseExtraScore( pose, "prefix_SomePerResidueReal_"+utility::to_string(resnum)+"_suffix", value );
-			TS_ASSERT( present );
-			TS_ASSERT( value == values.at(resnum) );
-		}
+		values = tester.cached_calculate(pose, true /*use_cache*/, "prefix_", "_suffix", true /*fail_on_no_cache*/, false /*refpose*/);
+		TS_ASSERT( values.at(1) == 1.0);
+		TS_ASSERT( values.at(2) == 2.0);
 
 	}
 
@@ -234,7 +229,7 @@ public:
 
 		TestPerResidueStringMetric tester = TestPerResidueStringMetric();
 		tester.set_residue_selector(selector); //Test setting the residue selector.
-		std::map< core::Size, std::string > const values = tester.calculate( pose );
+		std::map< core::Size, std::string > values = tester.calculate( pose );
 		utility::vector1< std::string > const names = tester.get_metric_names();
 		TS_ASSERT(names.size() == 1);
 		TS_ASSERT( values.at(1) == "value1");
@@ -243,31 +238,21 @@ public:
 		TS_ASSERT( tester.metric() == "SomePerResidueString");
 		TS_ASSERT( tester.simple_metric_type() == "PerResidueStringMetric");
 
+		bool use_ref_pose = false;
+
 		tester.apply( pose );
 		tester.apply( pose, "prefix_", "_suffix");
+		TS_ASSERT( has_sm_data(pose));
 
-		//1_SomePerResidueString
-		//2_SomePerResidueString
-		//prefix_1_SomePerResidueString_suffix
-		//prefix_2_SomePerResidueString_suffix
+		bool present = get_sm_data(pose)->get_value( "prefix_SomePerResidueString_suffix", values);
+		TS_ASSERT(present);
+		TS_ASSERT( values.at(1) == "value1");
+		TS_ASSERT( values.at(2) == "value2");
 
-		for ( core::Size resnum = 1; resnum <= 2; ++resnum ) {
-
-			//std::string const & name = names[1];
-			TS_ASSERT ( hasPoseExtraScore_str( pose, "SomePerResidueString_"+utility::to_string(resnum) ) );
-
-
-			std::string value;
-			bool present = getPoseExtraScore( pose, "SomePerResidueString_"+utility::to_string(resnum), value );
-			TS_ASSERT( present );
-			TS_ASSERT( value ==  values.at(resnum) );
-
-
-			TS_ASSERT ( hasPoseExtraScore_str( pose, "prefix_SomePerResidueString_"+utility::to_string(resnum)+"_suffix" ) );
-			present = getPoseExtraScore( pose, "prefix_SomePerResidueString_"+utility::to_string(resnum)+"_suffix", value );
-			TS_ASSERT( present );
-			TS_ASSERT( value == values.at(resnum) );
-		}
+		TS_ASSERT_THROWS_NOTHING(tester.cached_calculate(pose, true /*use_cache*/, "prefix_", "_suffix", true /*fail_on_no_cache*/, use_ref_pose ));
+		values = tester.cached_calculate(pose, true /*use_cache*/, "prefix_", "_suffix", true, use_ref_pose);
+		TS_ASSERT( values.at(1) == "value1");
+		TS_ASSERT( values.at(2) == "value2");
 
 	}
 

@@ -19,9 +19,10 @@
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
-
+#include <core/simple_metrics/SimpleMetricData.hh>
 
 // utility
+#include <utility/string_util.hh>
 
 // ObjexxFCL headers
 #include <ObjexxFCL/format.hh>
@@ -32,6 +33,7 @@
 #include <basic/datacache/CacheableStringFloatMap.hh>
 #include <basic/datacache/CacheableStringIntegerMap.hh>
 #include <basic/datacache/CacheableStringMap.hh>
+
 
 
 using namespace core;
@@ -140,6 +142,41 @@ ScoreMap::add_arbitrary_string_data_from_pose(
 			string_map[it.first] = it.second;
 		}
 	}
+
+	//Simple Metric Data
+	if ( pose.data().has( core::pose::datacache::CacheableDataType::SIMPLE_METRIC_DATA) ) {
+		simple_metrics::SimpleMetricDataCOP sm_cache
+			= utility::pointer::dynamic_pointer_cast< simple_metrics::SimpleMetricData const >
+			( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::SIMPLE_METRIC_DATA ) );
+		debug_assert( sm_cache.get() != nullptr );
+
+		//String Metric
+		for ( auto const & pair : sm_cache->get_string_metric_data() ) {
+			string_map[pair.first] = pair.second;
+		}
+
+		//Composite String Metric
+		for ( auto const & name_map_pair : sm_cache->get_composite_string_metric_data() ) {
+			std::string const & name( name_map_pair.first );
+
+			for ( auto const & composite_value_pair : name_map_pair.second ) {
+				std::string final_name = name+"_"+composite_value_pair.first;
+				string_map[final_name] = composite_value_pair.second;
+			}
+		}
+
+		//Per Residue String Metric
+		for ( auto const & name_map_pair : sm_cache->get_per_residue_string_metric_output() ) {
+			std::string name = name_map_pair.first;
+
+			for ( auto const & res_value : name_map_pair.second ) {
+				std::string res_output = res_value.first;
+				string_map[name+"_"+res_output] = res_value.second;
+			}
+		}
+
+	} // End SimpleMetric extraction
+
 }
 
 void
@@ -158,8 +195,44 @@ ScoreMap::add_arbitrary_score_data_from_pose(
 			score_map[it.first] = it.second;
 		}
 	}
+	if ( pose.data().has( core::pose::datacache::CacheableDataType::SIMPLE_METRIC_DATA) ) {}
+
+	//Simple Metric Data
+	if ( pose.data().has( core::pose::datacache::CacheableDataType::SIMPLE_METRIC_DATA) ) {
+		simple_metrics::SimpleMetricDataCOP sm_cache
+			= utility::pointer::dynamic_pointer_cast< simple_metrics::SimpleMetricData const >
+			( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::SIMPLE_METRIC_DATA ) );
+		debug_assert( sm_cache.get() != nullptr );
+
+		//String Metric
+		for ( auto const & pair : sm_cache->get_real_metric_data() ) {
+			score_map[pair.first] = pair.second;
+		}
+
+		//Composite String Metric
+		for ( auto const & name_map_pair : sm_cache->get_composite_real_metric_data() ) {
+			std::string const & name( name_map_pair.first );
+
+			for ( auto const & composite_value_pair : name_map_pair.second ) {
+				std::string final_name = name+"_"+composite_value_pair.first;
+				score_map[final_name] = composite_value_pair.second;
+			}
+		}
+
+		//Per Residue String Metric
+		for ( auto const & name_map_pair : sm_cache->get_per_residue_real_metric_output() ) {
+			std::string const & name( name_map_pair.first );
+
+			for ( auto const & res_value : name_map_pair.second ) {
+				std::string const & res_output( res_value.first);
+				score_map[name+"_"+res_output] = res_value.second;
+			}
+		}
+
+	} // End SimpleMetric extraction
 
 }
+
 
 
 } // raw_data

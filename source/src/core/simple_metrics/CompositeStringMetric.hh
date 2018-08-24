@@ -32,6 +32,11 @@
 // C++ includes
 #include <map>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace simple_metrics {
 
@@ -50,12 +55,11 @@ public: // constructors / destructors
 
 	CompositeStringMetric( CompositeStringMetric const & other );
 
-	/// @brief Calculate the metric and add it to the pose as a score.
-	///           labeled as prefix+calc_name+"_"+metric+suffix.
-	///           calc_name is the individual component of the composite values calculated here
+	/// @brief Calculate the metric and add it to the pose within the SimpleMetricData cache.
+	///           labeled as prefix+metric+suffix.
 	///
-	/// @details Score is added through setPoseExtraScore and is output
-	///            into the score table/ score file at pose output.
+	///
+	/// @details  Data is output into the final score file, but can be accessed if needed through the cache.
 	///
 	void
 	apply( pose::Pose & pose, std::string prefix="", std::string suffix="" ) const override;
@@ -68,6 +72,23 @@ public: // constructors / destructors
 	/// in the pose as ExtraScoreValues.
 	virtual std::map< std::string, std::string >
 	calculate( pose::Pose const & pose ) const = 0;
+
+	///@brief Grab the data from the pose if it exists or calculate the metric
+	///
+	///@details If use_cache is true, we will attempt to pull the data from the pose.
+	/// If fail_on_missing_cache is true, we will fail, otherwise, we will calculate the metric.
+	///
+	/// This function is meant to support caching metrics, so values do not need to be calculated twice,
+	///  for example in SimpleMetricFilter/Features
+	///  or code-wise where data takes a while to calculate and can be reused.
+	///
+	std::map< std::string, std::string >
+	cached_calculate(
+		pose::Pose const & pose,
+		bool use_cache,
+		std::string prefix="",
+		std::string suffix="",
+		bool fail_on_missing_cache=true) const;
 
 public:
 
@@ -94,10 +115,19 @@ public:
 	virtual SimpleMetricOP
 	clone() const override = 0;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; //class CompositeStringMetrics
 
 } //namespace simple_metrics
 } //namespace core
 
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_simple_metrics_CompositeStringMetric )
+#endif // SERIALIZATION
 
 #endif

@@ -24,7 +24,8 @@
 #include <core/simple_metrics/PerResidueRealMetric.hh>
 #include <core/simple_metrics/PerResidueStringMetric.hh>
 #include <core/select/util.hh>
-
+#include <core/simple_metrics/SimpleMetricData.hh>
+#include <core/pose/datacache/CacheableDataType.hh>
 
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
@@ -33,6 +34,8 @@
 #include <utility/tag/util.hh>
 #include <utility/string_util.hh>
 #include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataCache.hh>
+#include <basic/datacache/BasicDataCache.hh>
 
 static basic::Tracer TR( "core.simple_metrics.util" );
 
@@ -43,9 +46,56 @@ namespace simple_metrics {
 using namespace core::select;
 using namespace core::select::residue_selector;
 
+SimpleMetricDataOP
+get_sm_data( core::pose::Pose & pose ){
+	using namespace basic::datacache;
+
+	// make sure that the pose has one of these.
+	if ( !pose.data().has( core::pose::datacache::CacheableDataType::SIMPLE_METRIC_DATA ) ) {
+		pose.data().set(
+			core::pose::datacache::CacheableDataType::SIMPLE_METRIC_DATA,
+			DataCache_CacheableData::DataOP( new SimpleMetricData() )
+		);
+	}
+
+	SimpleMetricDataOP data
+		=  utility::pointer::dynamic_pointer_cast< SimpleMetricData >
+		( pose.data().get_ptr(core::pose::datacache::CacheableDataType::SIMPLE_METRIC_DATA) );
+
+	runtime_assert( data.get() != nullptr );
+	return data;
+}
+
+SimpleMetricDataCOP
+get_sm_data( core::pose::Pose const & pose ){
+	using namespace basic::datacache;
+
+	// make sure that the pose has one of these.
+	if ( !pose.data().has( core::pose::datacache::CacheableDataType::SIMPLE_METRIC_DATA ) ) {
+		return nullptr;
+	}
+
+	SimpleMetricDataCOP data
+		=  utility::pointer::dynamic_pointer_cast< SimpleMetricData const >
+		( pose.data().get_const_ptr(core::pose::datacache::CacheableDataType::SIMPLE_METRIC_DATA) );
+
+	runtime_assert( data.get() != nullptr );
+	return data;
+}
+
 std::string
 complex_type_name_for_simple_metric( std::string const & simple_metric_name){
 	return "simple_metric_" + simple_metric_name + "_complex_type";
+}
+
+bool
+has_sm_data( core::pose::Pose const & pose ){
+	using namespace basic::datacache;
+	if ( pose.data().has( core::pose::datacache::CacheableDataType::SIMPLE_METRIC_DATA ) ) {
+		return true;
+	} else {
+		return false;
+	}
 }
 
 void

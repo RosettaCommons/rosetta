@@ -94,7 +94,7 @@ SimpleMetricFilter::report_sm( core::pose::Pose const & pose ) const
 
 	RealMetric const & r_metric = dynamic_cast<RealMetric const & >( *metric_ );
 
-	return r_metric.calculate(pose);
+	return r_metric.cached_calculate(pose, use_cache_, cache_prefix_, cache_suffix_, fail_on_missing_cache_);
 }
 
 ///@brief Sets the cutoff type - aka eq, ne, etc. Options are:
@@ -167,6 +167,21 @@ get_string_comparison_type_strings(){
 }
 
 void
+SimpleMetricFilter::set_use_cached_data(bool use_cache, std::string prefix, std::string suffix){
+	use_cache_ = use_cache;
+	cache_prefix_ = prefix;
+	cache_suffix_ = suffix;
+	if ( use_cache_ ) {
+		TR << "Attempting to use cached data with set prefix/suffix:" <<prefix <<" "<<suffix << std::endl;
+	}
+}
+
+void
+SimpleMetricFilter::set_fail_on_missing_cache(bool fail){
+	fail_on_missing_cache_ = fail;
+}
+
+void
 SimpleMetricFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
@@ -191,6 +206,20 @@ SimpleMetricFilter::parse_my_tag(
 	if ( tag->hasOption("match") ) {
 		set_match_string( tag->getOption< std::string >("match"));
 	}
+
+	bool use_cache = tag->getOption<bool>("use_cached_data", false);
+	std::string prefix= "";
+	std::string suffix="";
+
+	if ( tag->hasOption("cache_prefix") ) {
+		prefix = tag->getOption< std::string >("cache_prefix");
+	}
+	if ( tag->hasOption("cache_suffix") ) {
+		suffix = tag->getOption< std::string >("cache_suffix");
+	}
+
+	set_use_cached_data(use_cache, prefix, suffix);
+	set_fail_on_missing_cache(tag->getOption< bool>("fail_on_missing_cache", fail_on_missing_cache_));
 
 }
 
@@ -217,6 +246,12 @@ void SimpleMetricFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 
 	attlist + XMLSchemaAttribute("use_sum_for_per_residue_real", xs_string, "If you are using a PerResidueRealMetric, set this to use the SUM of the values to act as a RealMetric instead of acting as a composite metric.  Default False.");
 	//here you should write code to describe the XML Schema for the class.  If it has only attributes, simply fill the probided AttributeList.
+
+	//Data Cache
+	attlist + XMLSchemaAttribute::attribute_w_default( "use_cached_data",  xsct_rosetta_bool, "Use any data stored in the datacache that matches the set metrics name (and any prefix/suffix.)  Data is stored during a SimpleMetric's apply function, which is called during RunSimpleMetrics", "false");
+	attlist + XMLSchemaAttribute("cache_prefix", xs_string, "Any prefix used during apply (RunSimpleMetrics), that we will match on if use_cache is true");
+	attlist + XMLSchemaAttribute("cache_suffix", xs_string, "Any suffix used during apply (RunSimpleMetrics), that we will match on if use_cache is true");
+	attlist + XMLSchemaAttribute::attribute_w_default("fail_on_missing_cache", xsct_rosetta_bool, "If use_cached_data is True and cache is not found, should we fail?", "true");
 
 	SimpleMetricFactory::get_instance()->define_simple_metric_xml_schema( xsd );
 	XMLSchemaSimpleSubelementList subelements;
@@ -404,36 +439,35 @@ SimpleMetricFilter::apply( core::pose::Pose const & pose) const
 		throw CREATE_EXCEPTION(utility::excn::BadInput, "SimpleMetricFilter requires a metric to be set.");
 	}
 
-	//This is just a triple check.  We should never ever be here.
 	if ( metric_->simple_metric_type() == "RealMetric" ) {
 		RealMetric const & r_metric = dynamic_cast<RealMetric const & >( *metric_ );
-		core::Real const value = r_metric.calculate(pose);
+		core::Real const value = r_metric.cached_calculate(pose, use_cache_, cache_prefix_, cache_suffix_, fail_on_missing_cache_);
 		bool pass = compare_metric( value );
 		TR << "Filter passed: " << pass << std::endl;
 		return pass;
 	} else if ( metric_->simple_metric_type() == "StringMetric" ) {
 		StringMetric const & r_metric = dynamic_cast<StringMetric const & >( *metric_ );
-		std::string const value = r_metric.calculate(pose);
+		std::string const value = r_metric.cached_calculate(pose, use_cache_, cache_prefix_, cache_suffix_, fail_on_missing_cache_);
 		bool pass = compare_metric( value );
 		TR << "Filter passed: " << pass << std::endl;
 		return pass;
 
 	} else if ( metric_->simple_metric_type() == "CompositeRealMetric" ) {
 		CompositeRealMetric const & r_metric = dynamic_cast<CompositeRealMetric const & >( *metric_ );
-		std::map< std::string, core::Real > const values = r_metric.calculate( pose );
+		std::map< std::string, core::Real > const values = r_metric.cached_calculate( pose, use_cache_, cache_prefix_, cache_suffix_, fail_on_missing_cache_);
 		bool pass = compare_composites(values);
 		TR << "Filter passed: " << pass << std::endl;
 		return pass;
 
 	} else if ( metric_->simple_metric_type() == "CompositeStringMetric" ) {
 		CompositeStringMetric const & r_metric = dynamic_cast<CompositeStringMetric const & >( *metric_ );
-		std::map< std::string, std::string > const values = r_metric.calculate( pose );
+		std::map< std::string, std::string > const values = r_metric.cached_calculate( pose, use_cache_, cache_prefix_, cache_suffix_, fail_on_missing_cache_ );
 		bool pass = compare_composites(values);
 		TR << "Filter passed: " << pass << std::endl;
 		return pass;
 	} else if ( metric_ ->simple_metric_type() == "PerResidueRealMetric" ) {
 		PerResidueRealMetric const & r_metric = dynamic_cast<PerResidueRealMetric const & >( *metric_ );
-		std::map< core::Size, core::Real > const values = r_metric.calculate( pose );
+		std::map< core::Size, core::Real > const values = r_metric.cached_calculate( pose, use_cache_, cache_prefix_, cache_suffix_, fail_on_missing_cache_ );
 
 		///Increases utility of the PerResidueRealMetric type.
 		if ( sum_per_residue_real_metric_ ) {
@@ -456,7 +490,7 @@ SimpleMetricFilter::apply( core::pose::Pose const & pose) const
 
 	} else if ( metric_->simple_metric_type() == "PerResidueStringMetric" ) {
 		PerResidueStringMetric const & r_metric = dynamic_cast<PerResidueStringMetric const & >( *metric_ );
-		std::map< core::Size, std::string > values = r_metric.calculate( pose );
+		std::map< core::Size, std::string > values = r_metric.cached_calculate( pose, use_cache_, cache_prefix_, cache_suffix_, fail_on_missing_cache_ );
 		//Turn the resnums into strings to do the comparisons
 		std::map< std::string, std::string > values_s;
 

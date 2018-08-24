@@ -30,6 +30,7 @@
 
 #include <core/io/HeaderInformation.hh>
 #include <core/io/ResidueInformation.hh>
+#include <core/io/raw_data/ScoreMap.hh>
 
 // Core headers
 #include <core/id/AtomID.hh>
@@ -1169,35 +1170,18 @@ void
 PoseToStructFileRepConverter::grab_pose_cache_data(const core::pose::Pose &pose){
 
 	std::map< std::string, std::string > string_data;
-	std::map< std::string, float >  float_data;
-	// ARBITRARY_STRING_DATA
-	if ( pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA ) ) {
-		basic::datacache::CacheableStringMapCOP data
-			= utility::pointer::dynamic_pointer_cast< basic::datacache::CacheableStringMap const >
-			( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA ) );
-		debug_assert( data.get() != nullptr );
+	std::map< std::string, Real >  float_data;
 
-		for ( auto const & it : data->map() ) {
-			//TR << it->first << " " << it->second << std::endl;
-			string_data[ it.first ] = it.second;
-		}
-	}
+	//JAB - replaced calls to cache with calls to ScoreMap to reduce code duplication
 
-	// ARBITRARY_FLOAT_DATA
-	if ( pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) ) {
-		basic::datacache::CacheableStringFloatMapCOP data
-			= utility::pointer::dynamic_pointer_cast< basic::datacache::CacheableStringFloatMap const >
-			( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) );
-		debug_assert( data.get() != nullptr );
+	//FLOAT DATA and SimpleMetric Data
+	core::io::raw_data::ScoreMap::add_arbitrary_score_data_from_pose( pose, float_data );
 
-		for ( auto const & it : data->map() ) {
-			//TR << it->first << " " << it->second << std::endl;
-			float_data [ it.first ] = it.second;
-		}
-	}
+	//STRING DATA and SimpleMetric Data
+	core::io::raw_data::ScoreMap::add_arbitrary_string_data_from_pose( pose, string_data );
 
 	sfr_->pose_cache_string_data() = string_data;
-	sfr_->pose_cache_float_data() =  float_data;
+	sfr_->pose_cache_real_data() =  float_data;
 
 }
 

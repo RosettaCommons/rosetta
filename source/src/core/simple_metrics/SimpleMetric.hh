@@ -35,6 +35,11 @@
 
 #include <string>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace simple_metrics {
 
@@ -110,6 +115,11 @@ public:
 		return simple_metric_type_;
 	};
 
+	///@brief Get the final name of this metric including its simple_metric_type_ name and any set custom type.
+	///
+	std::string
+	get_final_sm_type() const;
+
 private:
 
 	///@brief Type of SimpleMetric.  AKA RealMetric, StringMetric, etc.
@@ -119,11 +129,21 @@ private:
 	//  so that many different configured SMs can be called in one RunSimpleMetric run
 	std::string custom_type_ = "";
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; // SimpleMetric
 
 
 } //core
 } //simple_metrics
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_simple_metrics_SimpleMetric )
+#endif // SERIALIZATION
 
 
 #endif //INCLUDED_core_metrics_AbstractMetric_hh

@@ -1,6 +1,9 @@
 <ROSETTASCRIPTS>
 	<SCOREFXNS>
 	</SCOREFXNS>
+	<SIMPLE_METRICS>
+		<TotalEnergyMetric name="total_energy_pre" custom_type="testing"/>
+	</SIMPLE_METRICS>
 	<RESIDUE_SELECTORS>
 		<CDR name="L1" cdrs="L1"/>
 	</RESIDUE_SELECTORS>

@@ -22,6 +22,7 @@
 #include <core/select/residue_selector/DensityFitResidueSelector.hh>
 #include <core/select/residue_selector/ResidueSelectorCreators.hh>
 #include <core/simple_metrics/per_residue_metrics/PerResidueDensityFitMetric.hh>
+#include <core/simple_metrics/util.hh>
 
 // Basic Headers
 #include <basic/datacache/DataMap.hh>
@@ -50,6 +51,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <basic/Tracer.hh>
 #include <numeric/zscores.hh>
+#include <utility/pointer/memory.hh>
 
 // C++ headers
 #include <utility/assert.hh>
@@ -72,20 +74,35 @@ static basic::Tracer TR( "core.select.residue_selector.DensityFitResidueSelector
 namespace core {
 namespace select {
 namespace residue_selector {
+
+using namespace core::simple_metrics;
 using namespace core::simple_metrics::per_residue_metrics;
 
 /// @brief Constructor.
 ///
 DensityFitResidueSelector::DensityFitResidueSelector():
 	core::select::residue_selector::ResidueSelector()
-{}
+{
+	den_fit_metric_ = utility::pointer::make_shared< PerResidueDensityFitMetric >();
+}
+
+DensityFitResidueSelector::DensityFitResidueSelector( PerResidueDensityFitMetricCOP den_fit_metric ):
+	core::select::residue_selector::ResidueSelector()
+{
+	den_fit_metric_ = utility::pointer::make_shared< PerResidueDensityFitMetric >(*den_fit_metric);
+}
 
 /// @brief Destructor.
 ///
 DensityFitResidueSelector::~DensityFitResidueSelector() {}
 
 /// @brief Copy Constructor.
-DensityFitResidueSelector::DensityFitResidueSelector(DensityFitResidueSelector const & ) = default;
+DensityFitResidueSelector::DensityFitResidueSelector(DensityFitResidueSelector const & src):
+	score_cut_(src.score_cut_),
+	invert_(src.invert_)
+{
+	den_fit_metric_ = utility::pointer::make_shared< PerResidueDensityFitMetric >( *src.den_fit_metric_);
+}
 
 /// @brief Clone function.
 /// @details Copy this object and return owning pointer to the copy (created on the heap).
@@ -94,7 +111,25 @@ DensityFitResidueSelector::clone() const {
 	return core::select::residue_selector::ResidueSelectorOP( new DensityFitResidueSelector(*this) );
 }
 
+void
+DensityFitResidueSelector::set_den_fit_metric(simple_metrics::per_residue_metrics::PerResidueDensityFitMetricCOP den_fit_metric){
+	den_fit_metric_ = utility::pointer::make_shared< PerResidueDensityFitMetric >( *den_fit_metric );
+}
 
+PerResidueDensityFitMetricOP
+DensityFitResidueSelector::get_den_fit_metric(){
+	return den_fit_metric_;
+}
+
+///@brief Set up options to use any data already stored in the SM cache through its apply method.
+void
+DensityFitResidueSelector::set_cache_options( bool use_sm_cache, std::string const & prefix, std::string const & suffix, bool fail_on_missing_cache)
+{
+	use_cache_ = use_sm_cache;
+	prefix_ = prefix;
+	suffix_ = suffix;
+	fail_on_missing_cache_ = fail_on_missing_cache;
+}
 
 /// @brief XML parse.
 /// @details Parse RosettaScripts tags and set up this mover.
@@ -105,18 +140,42 @@ DensityFitResidueSelector::parse_my_tag(
 {
 	set_score_cut( tag->getOption< core::Real >("cutoff", score_cut_) );
 	set_invert( tag->getOption< bool >("invert", invert_) );
-	set_mixed_sliding_window( tag->getOption< bool >("mixed_sliding_window", mixed_sliding_window_) );
-	set_sliding_window_size( tag->getOption< Size >("sliding_window_size", sliding_window_size_) );
-	set_match_mode( tag->getOption< bool >("match_res", match_res_) );
-	set_use_selector_as_zscore_mask( tag->getOption< bool >("use_selector_as_zscore_mask", use_selector_as_zscore_mask_));
 
-	if ( tag->hasOption("residue_selector") ) {
-		mask_ = parse_residue_selector( tag, datamap );
+	// Setup Cache Options
+	bool use_cache = tag->getOption< bool >("use_cache", use_cache_);
+	std::string prefix = tag->getOption< std::string >("prefix", prefix_);
+	std::string suffix = tag->getOption< std::string >("suffix", suffix_);
+	bool fail_on_missing_cache = tag->getOption< bool >("fail_on_missing_cache", fail_on_missing_cache_);
+
+	set_cache_options(use_cache, prefix, suffix, fail_on_missing_cache);
+
+	if ( tag->hasOption("den_fit_metric") ) {
+		SimpleMetricCOP metric = get_metric_from_datamap_and_subtags(tag, datamap, "den_fit_metric");
+		PerResidueDensityFitMetric const & den_fit = dynamic_cast<PerResidueDensityFitMetric  const & >( *metric );
+		den_fit_metric_ = PerResidueDensityFitMetricOP ( new PerResidueDensityFitMetric(den_fit));
+
+		if ( den_fit_metric_->name_static() != "PerResidueDensityFitMetric" ) {
+			utility_exit_with_status("DensityFitResidueSelector requires metric type of PerResidueDensityFitMetric");
+		}
+	} else {
+		if ( tag->hasOption("mixed_sliding_window") ) {
+			den_fit_metric_->set_mixed_sliding_window( tag->getOption< bool >("mixed_sliding_window") );
+		}
+		if ( tag->hasOption("sliding_window_size") ) {
+			den_fit_metric_->set_sliding_window_size( tag->getOption< Size >("sliding_window_size") );
+		}
+		if ( tag->hasOption("match_res") ) {
+			den_fit_metric_->set_match_mode( tag->getOption< bool >("match_res") );
+		}
+		if ( tag->hasOption("use_selector_as_zscore_mask") ) {
+			den_fit_metric_->set_use_selector_as_zscore_mask( tag->getOption< bool >("use_selector_as_zscore_mask"));
+		}
+
+		if ( tag->hasOption("residue_selector") ) {
+			den_fit_metric_->set_residue_selector(parse_residue_selector( tag, datamap ));
+		}
 	}
 
-	if ( tag->getOption<bool>("use_native", false) && datamap.has_resource("native_pose") ) {
-		rs_native_ = pose::saved_native_pose(datamap)->clone();
-	}
 
 }
 
@@ -138,11 +197,25 @@ void DensityFitResidueSelector::provide_xml_schema( utility::tag::XMLSchemaDefin
 	attributes
 		+ XMLSchemaAttribute::attribute_w_default( "invert",  xsct_rosetta_bool, "Select residues that have a bad density fit instead of those with good density fit.", "false")
 		+ XMLSchemaAttribute::attribute_w_default( "cutoff",  xsct_real, "Cutoff of bad match to density", "-.5")
+
+
+
+
 		+ XMLSchemaAttribute::attribute_w_default( "sliding_window_size",  xsct_positive_integer, "Sliding window size for density calculation", "3")
 		+ XMLSchemaAttribute::attribute_w_default( "mixed_sliding_window",  xsct_rosetta_bool, "Use a window size of 3 for protein and 1 for glycans.  May skew results.", "false")
 		+ XMLSchemaAttribute::attribute_w_default( "match_res",  xsct_rosetta_bool, "Use density correlation instead of a zscore to fit to density", "false")
-		+ XMLSchemaAttribute::attribute_w_default( "use_native",  xsct_rosetta_bool, "Use a native set with in:file:native to do the selection for benchmarking purposes.", "false")
-		+ XMLSchemaAttribute::attribute_w_default( "use_selector_as_zscore_mask",  xsct_rosetta_bool, "Use the selector as true mask to calculate the Zscore.  Otherwise, use it just as a selection for result.  Default true.", "true");
+		+ XMLSchemaAttribute::attribute_w_default( "use_selector_as_zscore_mask",  xsct_rosetta_bool, "Use the selector as true mask to calculate the Zscore.  Otherwise, use it just as a selection for result.  Default true.", "true")
+
+
+		///Cache
+		+ XMLSchemaAttribute("den_fit_metric", xs_string, "Use a previously defined Per-Residue Density Fit Metric (use for caching data")
+
+		+ XMLSchemaAttribute::attribute_w_default("use_cache", xsct_rosetta_bool, "Use any cached SM data instead of recaclulating. Data can be cached by calling RunSimpleMetrics on the metric before using this residue selector. The metric will need to be defined before this selector, perhaps in another section of SIMPLE_METRICS.", "false")
+
+		+ XMLSchemaAttribute("prefix", xs_string, "Prefix for the cached data.")
+
+		+ XMLSchemaAttribute("suffix", xs_string, "Suffix for the cached data.")
+		+ XMLSchemaAttribute::attribute_w_default("fail_on_missing_cache", xsct_rosetta_bool, "If we are using cached data, should we fail on no cache?", "false");
 
 	core::select::residue_selector::attributes_for_parse_residue_selector_default_option_name(attributes, "A Residue selector mask.  Used to only compute Zscore among a set of residues.  Useful for protein vs glycan density.  Since match_res is NOT a zscore, the selector acts as an AND selector, so we only compute the correlations on this set. " );
 	std::string documentation = "Select residues that have a good electron density fit. (Or bad fit using the invert option). Uses internal density tools to do so.  Numbers and cutoffs match well with Coot's density fit analysis tool. Zscore uses weighted sum of density, density-compared-to-neighbors, rama (where applicable) and cart_bonded to compute)  Correlation is same values used to calculate density scores.  Zscore reference is here: eLife 2016, Dimaio";
@@ -169,21 +242,6 @@ DensityFitResidueSelectorCreator::provide_xml_schema(
 }
 
 void
-DensityFitResidueSelector::set_residue_mask( ResidueSelectorCOP selector ){
-	mask_ = selector;
-}
-
-void
-DensityFitResidueSelector::set_sliding_window_size(core::Size window_size){
-	sliding_window_size_ = window_size;
-}
-
-void
-DensityFitResidueSelector::set_mixed_sliding_window(bool mixed_sliding_window){
-	mixed_sliding_window_ = mixed_sliding_window;
-}
-
-void
 DensityFitResidueSelector::set_invert( bool invert ){
 	invert_ = invert;
 }
@@ -191,16 +249,6 @@ DensityFitResidueSelector::set_invert( bool invert ){
 void
 DensityFitResidueSelector::set_score_cut(Real score_cut){
 	score_cut_ = score_cut;
-}
-
-void
-DensityFitResidueSelector::set_match_mode( bool match_mode ){
-	match_res_ = match_mode;
-}
-
-void
-DensityFitResidueSelector::set_use_selector_as_zscore_mask(bool selector_as_zscore_mask){
-	use_selector_as_zscore_mask_ = selector_as_zscore_mask;
 }
 
 /// @brief "Apply" function.
@@ -221,24 +269,14 @@ DensityFitResidueSelector::apply( core::pose::Pose const & pose ) const
 	}
 
 	//This catches both code-level and RS interface.
-	if ( match_res_ && (( score_cut_ < 0 ) || ( score_cut_ > 1 ) ) ) {
+	if ( den_fit_metric_->match_res_mode() && (( score_cut_ < 0 ) || ( score_cut_ > 1 ) ) ) {
 		utility_exit_with_message("Using match_res with a the default cutoff.  This mode gives a correlation score to density and should be between 0 and 1");
 	}
 
-	//Calculate the values using the PerResidue Metric
-	PerResidueDensityFitMetric core_metric = PerResidueDensityFitMetric();
-	core_metric.set_residue_selector(mask_);
-	core_metric.set_match_mode(match_res_);
-	core_metric.set_sliding_window_size(sliding_window_size_);
-	core_metric.set_use_selector_as_zscore_mask(use_selector_as_zscore_mask_);
-	core_metric.set_mixed_sliding_window(mixed_sliding_window_);
+	//Calculate the values using the PerResidue Metric (optionally using the set cache)
+	std::map < core::Size, core::Real > fit_values = den_fit_metric_->cached_calculate( pose, use_cache_, prefix_, suffix_, fail_on_missing_cache_ );
 
-	std::map < core::Size, core::Real > fit_values;
-	if ( rs_native_ ) {
-		fit_values = core_metric.calculate( *rs_native_ );
-	} else {
-		fit_values = core_metric.calculate( pose );
-	}
+	//std::map < core::Size, core::Real > fit_values = den_fit_metric_->calculate( pose );
 
 	//Match the values to the cutoffs, create the subset
 	utility::vector1< Size > subset( pose.size(), false);
@@ -276,18 +314,19 @@ DensityFitResidueSelector::apply( core::pose::Pose const & pose ) const
 
 #ifdef    SERIALIZATION
 
+
+
 template< class Archive >
 void
 core::select::residue_selector::DensityFitResidueSelector::save( Archive & arc ) const {
 	arc( cereal::base_class< core::select::residue_selector::ResidueSelector >( this ) );
 	arc( CEREAL_NVP( score_cut_ ) );
 	arc( CEREAL_NVP( invert_));
-	arc( CEREAL_NVP( sliding_window_size_ ) );
-	arc( CEREAL_NVP( mixed_sliding_window_) );
-	arc( CEREAL_NVP( mask_ ) );
-	arc( CEREAL_NVP( match_res_ ) );
-	arc( CEREAL_NVP( use_selector_as_zscore_mask_ ) );
-	arc( CEREAL_NVP( rs_native_));
+	arc( CEREAL_NVP( den_fit_metric_));
+	arc( CEREAL_NVP( use_cache_));
+	arc( CEREAL_NVP( prefix_));
+	arc( CEREAL_NVP( suffix_));
+	arc( CEREAL_NVP( fail_on_missing_cache_));
 
 }
 
@@ -297,12 +336,12 @@ core::select::residue_selector::DensityFitResidueSelector::load( Archive & arc )
 	arc( cereal::base_class< core::select::residue_selector::ResidueSelector >( this ) );
 	arc( score_cut_ );
 	arc( invert_ );
-	arc( sliding_window_size_ );
-	arc( mixed_sliding_window_ );
-	arc( mask_ );
-	arc( match_res_ );
-	arc( use_selector_as_zscore_mask_ );
-	arc( rs_native_ );
+	arc( den_fit_metric_);
+	arc( use_cache_);
+	arc( prefix_ );
+	arc( suffix_ );
+	arc( fail_on_missing_cache_);
+
 
 }
 
@@ -311,3 +350,5 @@ CEREAL_REGISTER_TYPE( core::select::residue_selector::DensityFitResidueSelector 
 
 CEREAL_REGISTER_DYNAMIC_INIT( core_select_residue_selector_DensityFitResidueSelector )
 #endif // SERIALIZATION
+
+

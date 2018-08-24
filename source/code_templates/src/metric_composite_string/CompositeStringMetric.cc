@@ -31,6 +31,13 @@
 // XSD Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
 
 static basic::Tracer TR( "--namespace_dot--.--class--" );
 
@@ -132,7 +139,32 @@ core::simple_metrics::SimpleMetricOP
 
 --end_namespace--
 
+#ifdef    SERIALIZATION
 
+
+
+template< class Archive >
+void
+--namespace_2colon--::--class--::save( Archive & arc ) const {
+	arc( cereal::base_class< core::simple_metrics::CompositeStringMetric>( this ) );
+	//arc( CEREAL_NVP( output_as_pdb_nums_ ) );
+
+}
+
+template< class Archive >
+void
+--namespace_2colon--::--class--::load( Archive & arc ) {
+	arc( cereal::base_class< core::simple_metrics::CompositeStringMetric >( this ) );
+	//arc( output_as_pdb_nums_ );
+
+
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( --namespace_2colon--::--class-- );
+CEREAL_REGISTER_TYPE( --namespace_2colon--::--class-- )
+
+CEREAL_REGISTER_DYNAMIC_INIT( --path_underscore--_--class-- )
+#endif // SERIALIZATION
 
 
 

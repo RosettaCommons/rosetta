@@ -353,8 +353,8 @@ public:  // Accessors /////////////////////////////////////////////////////////
 
 	/// @brief Pose Cache - Float Data
 	/// @details Each file outputter must figure out how to write this out in its output format.
-	std::map< std::string, float > const & pose_cache_float_data() const        { return pose_cache_float_data_; };
-	std::map< std::string, float >       & pose_cache_float_data()              { return pose_cache_float_data_; };
+	std::map< std::string, Real > const & pose_cache_real_data() const        { return pose_cache_real_data_; };
+	std::map< std::string, Real>       & pose_cache_real_data()              { return pose_cache_real_data_; };
 
 	/// @brief A catch-all place to store additional data for output.
 	/// @details Each file outputter must figure out how to write this out in its output format.
@@ -393,7 +393,7 @@ private:
 	std::string score_table_filename_; //This is to preserve original PDB behavior.
 
 	std::map< std::string, std::string > pose_cache_string_data_;
-	std::map< std::string, float > pose_cache_float_data_; //JAB - was originally a float, keeping it a float.
+	std::map< std::string, Real > pose_cache_real_data_;
 
 	std::string additional_string_output_;
 };  // class StructFileRep

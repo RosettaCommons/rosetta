@@ -160,7 +160,7 @@ void pose_data_cache_from_sfr(
 
 	//If either of these are empty, will not do anything.
 	std::map< std::string, std::string > const & string_data = sfr.pose_cache_string_data();
-	std::map< std::string,     float   > const & float_data =  sfr.pose_cache_float_data();
+	std::map< std::string,     Real   > const & float_data =  sfr.pose_cache_real_data();
 
 	// ARBITRARY_STRING_DATA
 	for ( auto const & it : string_data ) {

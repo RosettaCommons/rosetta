@@ -139,6 +139,11 @@ SimpleMetricFeatures::set_prefix_suffix( std::string prefix, std::string suffix)
 	suffix_ = suffix;
 }
 
+void
+SimpleMetricFeatures::set_fail_on_missing_cache( bool fail_on_missing ){
+	fail_on_missing_cache_ = fail_on_missing;
+}
+
 utility::vector1<std::string>
 SimpleMetricFeatures::features_reporter_dependencies() const {
 	utility::vector1<std::string> dependencies;
@@ -163,6 +168,10 @@ SimpleMetricFeatures::parse_my_tag(
 	set_prefix_suffix(
 		tag->getOption< std::string >("prefix", prefix_),
 		tag->getOption< std::string >("suffix", suffix_));
+
+	set_use_cached_data(tag->getOption<bool>("use_cached_data", use_cache_));
+	set_fail_on_missing_cache(tag->getOption<bool>("fail_on_missing_cache", fail_on_missing_cache_));
+
 }
 
 void
@@ -392,25 +401,25 @@ SimpleMetricFeatures::report_general_features(
 		//Can't use a switch for strings for some reason.
 		if      ( metric_type == "RealMetric" ) {
 			RealMetric const & r_metric = dynamic_cast<RealMetric const & >( *metric );
-			MetricData new_data = MetricData(r_metric.calculate(pose));
+			MetricData new_data = MetricData(r_metric.cached_calculate(pose, use_cache_, prefix_, suffix_, fail_on_missing_cache_));
 			name_data_map[custom_type+r_metric.metric() ] = new_data;
 
 		} else if ( metric_type == "StringMetric" ) {
 			StringMetric const & r_metric = dynamic_cast<StringMetric const & >( *metric );
-			std::string value = r_metric.calculate(pose);
+			std::string value = r_metric.cached_calculate(pose, use_cache_, prefix_, suffix_, fail_on_missing_cache_);
 			MetricData new_data( value );
 			name_data_map[custom_type+r_metric.metric() ] = new_data;
 			string_data[custom_type+r_metric.metric() ] = value;
 		} else if ( metric_type == "CompositeRealMetric" ) {
 			CompositeRealMetric const & r_metric = dynamic_cast<CompositeRealMetric const & >( *metric );
-			std::map< std::string, core::Real > result = r_metric.calculate(pose);
+			std::map< std::string, core::Real > result = r_metric.cached_calculate(pose, use_cache_, prefix_, suffix_, fail_on_missing_cache_);
 			for ( auto result_pair : result ) {
 				MetricData new_data( result_pair.second);
 				name_data_map[ result_pair.first+"_"+custom_type+r_metric.metric() ] = new_data;
 			}
 		} else if ( metric_type == "CompositeStringMetric" ) {
 			CompositeStringMetric const & r_metric = dynamic_cast<CompositeStringMetric const & >( *metric );
-			std::map< std::string, std::string > result = r_metric.calculate(pose);
+			std::map< std::string, std::string > result = r_metric.cached_calculate(pose, use_cache_, prefix_, suffix_, fail_on_missing_cache_);
 			for ( auto result_pair : result ) {
 				MetricData new_data( result_pair.second);
 				name_data_map[ result_pair.first+"_"+custom_type+r_metric.metric() ] = new_data;
@@ -511,7 +520,7 @@ SimpleMetricFeatures::report_per_residue_features(
 
 			//name_data_map[custom_type+r_metric.metric() ] = new_data;
 			//string_data[ ] = value;
-			std::map< core::Size, std::string > const data = r_metric.calculate(pose);
+			std::map< core::Size, std::string > const data = r_metric.cached_calculate(pose, use_cache_, prefix_, suffix_, fail_on_missing_cache_);
 			std::string data_name = custom_type+r_metric.metric();
 			data_names.push_back( data_name );
 			string_data[ data_name ] = data;
@@ -521,7 +530,7 @@ SimpleMetricFeatures::report_per_residue_features(
 			//MetricData new_data = MetricData(r_metric.calculate(pose));
 			//name_data_map[custom_type+r_metric.metric() ] = new_data;
 
-			std::map< core::Size, core::Real > const data = r_metric.calculate(pose);
+			std::map< core::Size, core::Real > const data = r_metric.cached_calculate(pose, use_cache_, prefix_, suffix_, fail_on_missing_cache_);
 			std::string const data_name = custom_type+r_metric.metric();
 			data_names.push_back( data_name );
 			real_data[ data_name ] = data;
@@ -610,6 +619,10 @@ std::string SimpleMetricFeatures::class_name() {
 	return "SimpleMetricFeatures";
 }
 
+void SimpleMetricFeatures::set_use_cached_data(bool use_cache){
+	use_cache_ = use_cache;
+}
+
 void SimpleMetricFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	using namespace utility::tag;
@@ -619,10 +632,11 @@ void SimpleMetricFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition
 
 	attlist
 		+ XMLSchemaAttribute( "metrics", xs_string, "Comma-separated list of previously defined simple_metrics to be added." )
-		+ XMLSchemaAttribute( "prefix", xs_string, "Prefix tag for the data.  Added as an extra column in the data. " )
-		+ XMLSchemaAttribute( "suffix", xs_string, "suffix tag for the data.  Added as an extra column in the data. " )
+		+ XMLSchemaAttribute( "prefix", xs_string, "Prefix tag for the data.  Added as an extra column in the data. Also used to grab cache data" )
+		+ XMLSchemaAttribute( "suffix", xs_string, "suffix tag for the data.  Added as an extra column in the data. Also used to grab cahce data" )
 		+ XMLSchemaAttribute::attribute_w_default( "table_name", xs_string, "The table to add metrics to.  Should match the same exact data that you had before if the table has already been created!", "simple_metrics" );
-
+	attlist + XMLSchemaAttribute::attribute_w_default( "use_cached_data",  xsct_rosetta_bool, "Use any data stored in the datacache that matches the set metrics name (and any prefix/suffix.)  Data is stored during a SimpleMetric's apply function, which is called during RunSimpleMetrics", "false");
+	attlist + XMLSchemaAttribute::attribute_w_default( "fail_on_missing_cache",  xsct_rosetta_bool, "If use_cached_data is true, and no data is found, do we fail?", "true");
 
 	XMLSchemaSimpleSubelementList subelements;
 	subelements.add_group_subelement( & SimpleMetricFactory::get_instance()->simple_metric_xml_schema_group_name );

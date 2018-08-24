@@ -670,7 +670,7 @@ create_records_from_sfr(
 	}
 
 	// Pose Arbitrary String and Float Data.
-	if ( ( sfr.pose_cache_float_data().size() > 0 || sfr.pose_cache_string_data().size() > 0 ) && options->output_pose_cache() ) {
+	if ( ( sfr.pose_cache_real_data().size() > 0 || sfr.pose_cache_string_data().size() > 0 ) && options->output_pose_cache() ) {
 		R["info"].value = core::io::pose_data_cache_from_sfr(sfr);
 		VR.push_back(R);
 	}

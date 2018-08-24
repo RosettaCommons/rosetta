@@ -55,6 +55,7 @@ public:
 		std::ostream & out
 	);
 
+	///@brief Add data set as PoseExtraScores (ARBITRARY_STRING_DATA) and SimpleMetrics (SIMPLE_METRIC_DATA).
 	static
 	void
 	add_arbitrary_string_data_from_pose(
@@ -62,6 +63,7 @@ public:
 		std::map < std::string, std::string > & string_map
 	);
 
+	///@brief Add data set as PoseExtraScores (ARBITRARY_STRING_DATA) and SimpleMetrics (SIMPLE_METRIC_DATA).
 	static
 	void
 	add_arbitrary_score_data_from_pose(

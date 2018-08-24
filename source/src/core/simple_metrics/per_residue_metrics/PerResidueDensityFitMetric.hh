@@ -26,6 +26,12 @@
 // C++ headers
 #include <map>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace simple_metrics {
 namespace per_residue_metrics {
@@ -126,6 +132,12 @@ public:
 	void
 	set_mixed_sliding_window( bool mixed_sliding_window );
 
+	///@brief Is this match res mode?
+	bool
+	match_res_mode() const{
+		return match_res_;
+	};
+
 private:
 
 	///@brief Compute All per-residue scores
@@ -146,14 +158,23 @@ private:
 	bool mixed_sliding_window_ = false;
 	bool match_res_ = false;
 	bool use_selector_as_zscore_mask_ = true;
-	pose::PoseCOP rs_native_ = nullptr; //Only used in RS.
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
+
 };
 
 } //core
 } //simple_metrics
 } //per_residue_metrics
 
-
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_simple_metrics_per_residue_metrics_PerResidueDensityFitMetric )
+#endif // SERIALIZATION
 
 #endif //core_simple_metrics_per_residue_metrics_PerResidueDensityFitMetric_HH
 

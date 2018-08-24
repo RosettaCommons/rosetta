@@ -59,7 +59,6 @@ class SimpleMetricProtocolsTests : public CxxTest::TestSuite {
 
 public:
 
-	SimpleMetricFilter filter;
 	//protocols::antibody::AntibodyInfoOP ab_info;
 	Pose pose;
 
@@ -147,12 +146,19 @@ public:
 	}
 
 	void test_string_metric(){
+		SimpleMetricFilter filter;
 		TestStringMetricOP tester = TestStringMetricOP( new TestStringMetric());
+
 		filter.set_simple_metric( tester );
 		filter.set_match_string( "TESTING");
 		filter.set_comparison_type( eq );
 
 		TS_ASSERT( filter.apply(pose));
+
+		filter.set_use_cached_data(true);
+		filter.set_fail_on_missing_cache(true);
+
+		tester->apply(pose);
 
 		filter.set_comparison_type( ne );
 		TS_ASSERT( ! filter.apply( pose ));
@@ -160,10 +166,15 @@ public:
 	}
 
 	void test_real_metric() {
+		SimpleMetricFilter filter;
 		TestRealMetricOP tester = TestRealMetricOP( new TestRealMetric());
-		filter.set_simple_metric( tester );
 
+		tester->apply(pose, "real_test_");
+
+		filter.set_simple_metric( tester );
 		filter.set_cutoff(0);
+		filter.set_use_cached_data(true, "real_test_");
+		filter.set_fail_on_missing_cache(true);
 
 		filter.set_comparison_type( eq );
 		TS_ASSERT( ! filter.apply( pose ));
@@ -196,9 +207,14 @@ public:
 	}
 
 	void test_composite_string_metric() {
+		SimpleMetricFilter filter;
 		TestCompositeStringMetricOP tester = TestCompositeStringMetricOP( new TestCompositeStringMetric());
+
+		tester->apply(pose, "test_composite_string_");
+
 		filter.set_simple_metric( tester );
 		filter.set_comparison_type(eq);
+
 
 		filter.set_composite_action("any");
 		filter.set_match_string( "TESTING");
@@ -206,6 +222,10 @@ public:
 
 		filter.set_match_string( "value1");
 		TS_ASSERT( filter.apply( pose ));
+
+		filter.set_use_cached_data(true, "test_composite_string_");
+		filter.set_fail_on_missing_cache(true);
+
 
 		filter.set_match_string( "value2");
 		TS_ASSERT( filter.apply( pose ) );
@@ -225,8 +245,10 @@ public:
 	}
 
 	void test_composite_real_metric() {
-
+		SimpleMetricFilter filter;
 		TestCompositeRealMetricOP tester = TestCompositeRealMetricOP( new TestCompositeRealMetric());
+
+		tester->apply(pose, "test_composite_real_");
 		filter.set_simple_metric( tester );
 		filter.set_comparison_type( eq );
 
@@ -238,7 +260,10 @@ public:
 		filter.set_comparison_type( lt );
 		TS_ASSERT( ! filter.apply( pose ))
 
-			filter.set_comparison_type( gt );
+			filter.set_use_cached_data(true, "test_composite_real_");
+		filter.set_fail_on_missing_cache(true);
+
+		filter.set_comparison_type( gt );
 		TS_ASSERT( filter.apply( pose ));
 
 		filter.set_composite_action("all");

@@ -133,6 +133,8 @@ public:
 	/// @brief Grab all the data that is in pose datacache as string/value pairs
 	///  Arbitrary Float data
 	///  Arbitrary String data
+	///
+	///  Simple Metric data
 	void grab_pose_cache_data( core::pose::Pose const & pose);
 
 

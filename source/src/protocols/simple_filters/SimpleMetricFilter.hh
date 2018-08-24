@@ -105,6 +105,19 @@ public:
 	void
 	set_simple_metric( core::simple_metrics::SimpleMetricCOP metric );
 
+	///@brief Set a boolean to attempt to find cached data matching the name/custom_type of the passed in simple_metric.
+	/// Optionally pass any set prefix/suffix.
+	///
+	/// This will allow the filter to re-use previously calculated data.
+	///
+	void
+	set_use_cached_data( bool use_cache, std::string prefix="", std::string suffix="");
+
+	///@brief If use_cache is set to false, do we fail if no data is found in the pose?
+	/// Default True
+	void
+	set_fail_on_missing_cache(bool fail);
+
 public:
 
 	///@brief Set the cutoff value for any RealMetric or CompositeRealMetric.
@@ -211,6 +224,12 @@ private:
 	core::Real epsilon_ = .0001;
 	std::string composite_action_ = "";
 	bool sum_per_residue_real_metric_ = false;
+
+	//Accessing cached data from the pose
+	bool use_cache_ = false;
+	std::string cache_prefix_ = "";
+	std::string cache_suffix_ = "";
+	bool fail_on_missing_cache_ = true;
 
 };
 

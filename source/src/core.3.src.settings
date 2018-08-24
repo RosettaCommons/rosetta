@@ -186,6 +186,7 @@ sources = {
 		"PerResidueStringMetric",
 		"RealMetric",
 		"SimpleMetric",
+		"SimpleMetricData",
 		"SimpleMetricFactory",
 		"StringMetric",
 		"util",

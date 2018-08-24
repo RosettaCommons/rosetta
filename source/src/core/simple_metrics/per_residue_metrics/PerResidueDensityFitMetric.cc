@@ -55,6 +55,14 @@
 // XSD Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 
 static basic::Tracer TR( "core.simple_metrics.per_residue_metrics.PerResidueDensityFitMetric" );
 
@@ -117,9 +125,6 @@ PerResidueDensityFitMetric::parse_my_tag(
 	set_use_selector_as_zscore_mask( tag->getOption< bool >("use_selector_as_zscore_mask", use_selector_as_zscore_mask_));
 	set_mixed_sliding_window( tag->getOption< bool >("mixed_sliding_window", mixed_sliding_window_) );
 	set_sliding_window_size( tag->getOption< Size >("sliding_window_size", sliding_window_size_) );
-	if ( tag->getOption<bool>("use_native", false) && datamap.has_resource("native_pose") ) {
-		rs_native_ = pose::saved_native_pose(datamap);
-	}
 }
 
 void
@@ -132,8 +137,8 @@ PerResidueDensityFitMetric::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 		+ XMLSchemaAttribute::attribute_w_default( "sliding_window_size",  xsct_positive_integer, "Sliding window size for density calculation", "3")
 		+ XMLSchemaAttribute::attribute_w_default( "match_res",  xsct_rosetta_bool, "Use density correlation instead of a zscore to fit to density", "false")
 		+ XMLSchemaAttribute::attribute_w_default( "mixed_sliding_window",  xsct_rosetta_bool, "Use a window size of 3 for protein and 1 for glycans.  May skew results.", "false")
-		+ XMLSchemaAttribute::attribute_w_default( "use_native",  xsct_rosetta_bool, "Use a native set with in:file:native to do the selection for benchmarking purposes.", "false")
 		+ XMLSchemaAttribute::attribute_w_default( "use_selector_as_zscore_mask",  xsct_rosetta_bool, "Use the selector as true mask to calculate the Zscore.  Otherwise, use it just as a selection for computation.  Default true.", "true");
+
 
 	//core::select::residue_selector::attributes_for_parse_residue_selector_default_option_name(attlist, "A Residue selector mask.  Used to only compute Zscore among a set of residues.  Useful for protein vs glycan density.  Since match_res is NOT a zscore, the selector acts as an AND selector, so we only compute the correlations on this set. " );
 
@@ -237,12 +242,9 @@ PerResidueDensityFitMetric::calculate(const pose::Pose & input_pose) const {
 	using namespace numeric;
 
 	std::map< core::Size, core::Real > result;
-	pose::Pose pose;
-	if ( rs_native_ ) {
-		pose = *rs_native_;
-	} else {
-		pose = input_pose;
-	}
+
+	pose::Pose pose = input_pose; //Needs to be scored
+
 
 	std::map< Size, Real > per_rsd_dens, per_rsd_nbrdens, per_rsd_rama, per_rsd_geometry;
 	std::map< Size, Real > zscore_dens, zscore_nbrdens, zscore_rama, zscore_geometry;
@@ -334,12 +336,45 @@ PerResidueDensityFitMetricCreator::create_simple_metric() const {
 
 }
 
+
+
 } //core
 } //simple_metrics
 } //per_residue_metrics
 
 
+#ifdef    SERIALIZATION
 
+
+
+template< class Archive >
+void
+core::simple_metrics::per_residue_metrics::PerResidueDensityFitMetric::save( Archive & arc ) const {
+	arc( cereal::base_class< core::simple_metrics::PerResidueRealMetric>( this ) );
+	arc( CEREAL_NVP( sliding_window_size_ ) );
+	arc( CEREAL_NVP( mixed_sliding_window_));
+	arc( CEREAL_NVP( match_res_));
+	arc( CEREAL_NVP( use_selector_as_zscore_mask_));
+
+}
+
+template< class Archive >
+void
+core::simple_metrics::per_residue_metrics::PerResidueDensityFitMetric::load( Archive & arc ) {
+	arc( cereal::base_class< core::simple_metrics::PerResidueRealMetric >( this ) );
+	arc( sliding_window_size_ );
+	arc( mixed_sliding_window_ );
+	arc( match_res_);
+	arc( use_selector_as_zscore_mask_);
+
+
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::simple_metrics::per_residue_metrics::PerResidueDensityFitMetric );
+CEREAL_REGISTER_TYPE( core::simple_metrics::per_residue_metrics::PerResidueDensityFitMetric )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_simple_metrics_per_residue_metrics_PerResidueDensityFitMetric )
+#endif // SERIALIZATION
 
 
 

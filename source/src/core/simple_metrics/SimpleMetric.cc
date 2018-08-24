@@ -21,6 +21,14 @@
 
 // NOTE: This file should have NO dependencies other than its header.
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 
 namespace core {
 namespace simple_metrics {
@@ -59,6 +67,14 @@ SimpleMetric::parse_base_tag(utility::tag::TagCOP tag ){
 	set_custom_type(tag->getOption< std::string >("custom_type", custom_type_));
 }
 
+std::string
+SimpleMetric::get_final_sm_type() const{
+	std::string custom_type = get_custom_type();
+
+	if ( custom_type != "" ) custom_type=custom_type+"_";
+	return custom_type + metric();
+}
+
 utility::tag::XMLSchemaComplexTypeGeneratorOP
 SimpleMetric::complex_type_generator_for_simple_metric( utility::tag::XMLSchemaDefinition &  ) {
 
@@ -84,7 +100,33 @@ SimpleMetric::complex_type_generator_for_simple_metric( utility::tag::XMLSchemaD
 
 }
 
+
+
+
 } //core
 } //metrics
 
+#ifdef    SERIALIZATION
 
+
+
+template< class Archive >
+void
+core::simple_metrics::SimpleMetric::save( Archive & arc ) const {
+	arc( CEREAL_NVP( simple_metric_type_));
+	arc( CEREAL_NVP( custom_type_ ) );
+
+}
+
+template< class Archive >
+void
+core::simple_metrics::SimpleMetric::load( Archive & arc ) {
+	arc( simple_metric_type_ );
+	arc( CEREAL_NVP( custom_type_ ));
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::simple_metrics::SimpleMetric );
+CEREAL_REGISTER_TYPE( core::simple_metrics::SimpleMetric )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_simple_metrics_SimpleMetric )
+#endif // SERIALIZATION

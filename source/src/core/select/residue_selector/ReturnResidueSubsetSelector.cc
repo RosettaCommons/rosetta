@@ -130,9 +130,8 @@ ReturnResidueSubsetSelector::subset(){
 	return subset_;
 }
 
+
 } //core
 } //select
 } //residue_selector
-
-
 

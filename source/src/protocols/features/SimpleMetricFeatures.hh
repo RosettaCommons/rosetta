@@ -93,11 +93,25 @@ public:
 	void
 	add_simple_metric( core::simple_metrics::SimpleMetricCOP metric );
 
+	///@brief Set this FeaturesReporter to use cached data from the pose matching the metric if possible.
+	/// Default false.
+	///
+	/// See Also:  set_prefix_suffix() for matching on prefix/suffix set for the metric.
+	///
+	void
+	set_use_cached_data( bool use_cache );
+
+	///@brief If use_cache is set to false, do we fail if no data is found in the pose?
+	/// Default True
+	void
+	set_fail_on_missing_cache( bool fail_on_missing );
+
 	///@brief Set the simple metrics we will run.
 	void
 	set_simple_metrics( utility::vector1< core::simple_metrics::SimpleMetricCOP > metrics );
 
 	///@brief Set extra columns, prefix and suffix, for each data added to the database.  Used for multiple runs of the features.
+	/// Also used for matching cached data from the pose.
 	void
 	set_prefix_suffix( std::string prefix="", std::string suffix="");
 
@@ -179,6 +193,10 @@ private:
 	std::string prefix_="";
 	std::string suffix_="";
 	std::string table_name_="simple_metrics";
+
+	bool use_cache_ = false;
+	bool fail_on_missing_cache_ = true;
+
 
 };
 

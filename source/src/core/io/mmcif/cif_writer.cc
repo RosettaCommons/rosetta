@@ -477,7 +477,7 @@ dump_cif(
 	}
 
 	// Pose Arbitrary String and Float Data.
-	if ( (sfr->pose_cache_string_data().size() > 0 || sfr->pose_cache_float_data().size() > 0) && options.output_pose_cache() ) {
+	if ( (sfr->pose_cache_string_data().size() > 0 || sfr->pose_cache_real_data().size() > 0) && options.output_pose_cache() ) {
 		ISTable* pose_cache = new ISTable( "pose_cache_data" );
 
 		if ( sfr->pose_cache_string_data().size() > 0 ) {
@@ -489,8 +489,8 @@ dump_cif(
 			}
 		}
 
-		if ( sfr->pose_cache_float_data().size() > 0 ) {
-			for ( auto & it : sfr->pose_cache_float_data() ) {
+		if ( sfr->pose_cache_real_data().size() > 0 ) {
+			for ( auto & it : sfr->pose_cache_real_data() ) {
 				std::vector< std::string> row(2, "");
 				row[0] = it.first;
 				row[1] = utility::to_string( it.second ); //PDB Writing of this data had no rounding of decimal places, so I'm not doing it here either (JAB).

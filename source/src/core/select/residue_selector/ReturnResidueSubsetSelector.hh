@@ -30,11 +30,6 @@
 // C++ headers
 #include <set>
 
-#ifdef    SERIALIZATION
-// Cereal headers
-#include <cereal/types/polymorphic.fwd.hpp>
-#endif // SERIALIZATION
-
 namespace core {
 namespace select {
 namespace residue_selector {
