@@ -35,6 +35,20 @@ def bind_property(class_):
     return _bind_property
 
 
+def bind_classmethod(class_):
+    """
+    bind_classmethod is to be used as a decorator for binding class methods
+    onto classes which are defined in C++. This functionality is
+    necessary because C++ objects are not explicitly defined in the python code.
+    Therefore, monkey patching is the only option.  Binding class methods
+    should be limited to python specific challenges.
+    """
+    def _bind_classmethod(method):
+        setattr(class_, method.__name__, classmethod(method))
+        return method
+    return _bind_classmethod
+
+
 def slice_1base_indicies(slice_, size):
     """Convert a slice to 1-based indicies.
     takes an instance of the built-in slice object and a length of a slice-able
