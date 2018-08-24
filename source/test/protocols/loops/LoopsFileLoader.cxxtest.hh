@@ -58,24 +58,57 @@ public:
 		TS_ASSERT( lfdptr2 ); // make sure we're actually returned the correct type
 
 		{
+			using namespace core::pose;
+
 			LoopsFileData const & lfd( *lfdptr1 );
 			TS_ASSERT( lfd.size() == 2 );
-			TS_ASSERT( lfd[ 1 ].start_res().pose_index() == 1 );
-			TS_ASSERT( lfd[ 1 ].end_res().pose_index() == 4 );
+
+			auto start_rid = utility::pointer::dynamic_pointer_cast< ResidueIndexDescriptionPoseNum const >( lfd[ 1 ].start_res() );
+			TS_ASSERT( start_rid != nullptr );
+			TS_ASSERT_EQUALS( start_rid->pose_index(), 1 );
+
+			auto end_rid = utility::pointer::dynamic_pointer_cast< ResidueIndexDescriptionPoseNum const >( lfd[ 1 ].end_res() );
+			TS_ASSERT( end_rid != nullptr );
+			TS_ASSERT_EQUALS( end_rid->pose_index(), 4 );
+
 			TS_ASSERT( lfd[ 1 ].prohibit_single_residue_loops() );
-			TS_ASSERT( lfd[ 2 ].start_res().pose_index() == 5 );
-			TS_ASSERT( lfd[ 2 ].end_res().pose_index() == 7 );
+
+			auto start2_rid = utility::pointer::dynamic_pointer_cast< ResidueIndexDescriptionPoseNum const >( lfd[ 2 ].start_res() );
+			TS_ASSERT( start2_rid != nullptr );
+			TS_ASSERT_EQUALS( start2_rid->pose_index(), 5 );
+
+			auto end2_rid = utility::pointer::dynamic_pointer_cast< ResidueIndexDescriptionPoseNum const >( lfd[ 2 ].end_res() );
+			TS_ASSERT( end2_rid != nullptr );
+			TS_ASSERT_EQUALS( end2_rid->pose_index(), 7 );
+
 			TS_ASSERT( lfd[ 2 ].prohibit_single_residue_loops() );
 		}
 
 		{
+			using namespace core::pose;
+
 			LoopsFileData const & lfd( *lfdptr2 );
+
 			TS_ASSERT( lfd.size() == 2 );
-			TS_ASSERT( lfd[ 1 ].start_res().pose_index() == 1 );
-			TS_ASSERT( lfd[ 1 ].end_res().pose_index() == 4 );
+
+			auto start_rid = utility::pointer::dynamic_pointer_cast< ResidueIndexDescriptionPoseNum const >( lfd[ 1 ].start_res() );
+			TS_ASSERT( start_rid != nullptr );
+			TS_ASSERT_EQUALS( start_rid->pose_index(), 1 );
+
+			auto end_rid = utility::pointer::dynamic_pointer_cast< ResidueIndexDescriptionPoseNum const >( lfd[ 1 ].end_res() );
+			TS_ASSERT( end_rid != nullptr );
+			TS_ASSERT_EQUALS( end_rid->pose_index(), 4 );
+
 			TS_ASSERT( ! lfd[ 1 ].prohibit_single_residue_loops() );
-			TS_ASSERT( lfd[ 2 ].start_res().pose_index() == 5 );
-			TS_ASSERT( lfd[ 2 ].end_res().pose_index() == 7 );
+
+			auto start2_rid = utility::pointer::dynamic_pointer_cast< ResidueIndexDescriptionPoseNum const >( lfd[ 2 ].start_res() );
+			TS_ASSERT( start2_rid != nullptr );
+			TS_ASSERT_EQUALS( start2_rid->pose_index(), 5 );
+
+			auto end2_rid = utility::pointer::dynamic_pointer_cast< ResidueIndexDescriptionPoseNum const >( lfd[ 2 ].end_res() );
+			TS_ASSERT( end2_rid != nullptr );
+			TS_ASSERT_EQUALS( end2_rid->pose_index(), 7 );
+
 			TS_ASSERT( ! lfd[ 2 ].prohibit_single_residue_loops() );
 		}
 

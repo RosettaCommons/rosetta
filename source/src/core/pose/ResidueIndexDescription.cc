@@ -8,12 +8,13 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file   src/core/pose/ResidueIndexDescription.cc
-/// @brief  Two classes designed to hold data neceassary to describe a residue in a Pose,
+/// @brief  Classes designed to hold data neceassary to describe a residue in a Pose,
 ///         which may come from a text file, e.g., and to resolve that data into an actual
 ///         residue index when a Pose becomes available (which is likely not at the time
 ///         that the file is read) and to throw an exception if the index cannot be resolved.
 /// @author Brian D. Weitzner
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
+/// @author Rocco Moretti (rmorettiase@gmail.com)
 
 // Unit headers
 #include <core/pose/ResidueIndexDescription.hh>
@@ -32,124 +33,54 @@
 namespace core {
 namespace pose {
 
-ResidueIndexDescription::ResidueIndexDescription() :
-	unassigned_( true ),
-	pose_numbered_( false ),
-	pose_index_( 0 ),
-	chain_( ' ' ),
-	resindex_( 0 ),
-	insertion_code_( ' ' )
-{}
+std::string RID_Source::source_string() const {
+	return "";
+}
 
-ResidueIndexDescription::ResidueIndexDescription(
-	core::Size pose_index
-) :
-	unassigned_( false ),
-	pose_numbered_( true ),
-	pose_index_( pose_index ),
-	chain_( ' ' ),
-	resindex_( 0 ),
-	insertion_code_( ' ' )
-{}
-
-ResidueIndexDescription::ResidueIndexDescription(
-	char chain,
-	int  resindex,
-	char insertion_code
-) :
-	unassigned_( false ),
-	pose_numbered_( false ),
-	pose_index_ ( 0 ),
-	chain_( chain ),
-	resindex_( resindex ),
-	insertion_code_( insertion_code )
-{}
+std::string
+RID_FileSource::source_string() const {
+	return  "line " + utility::to_string( linenum_ ) + " of the file named " + fname_;
+}
 
 ResidueIndexDescription::~ResidueIndexDescription() = default;
 
-core::Size
-ResidueIndexDescription::resolve_index(
-	core::pose::Pose const & pose
-) const
-{
-	// return bogus index, but do not trip an error.
-	if ( unassigned_ ) { return 0; }
-	if ( pose_numbered_ ) {
-		if ( pose_index_ > pose.size() ) {
-			throw CREATE_EXCEPTION(utility::excn::Exception,  "Residue index description exceeds the number of residues in the Pose: pose_index_ = " +
-				utility::to_string( pose_index_ ) + " vs pose.size() " + utility::to_string( pose.size() ));
-		}
-		return pose_index_;
+std::string
+ResidueIndexDescription::source_string() const {
+	if ( source_ == nullptr ) {
+		return "";
 	} else {
-		// THIS HAS NOT BEEN TESTED OR CAREFULLY CONSIDERED
-		// ONLY A SKETCH OF CODE THAT COULD BE PUT HERE
-		core::Size resid = pose.pdb_info()->pdb2pose().find( chain_, resindex_, insertion_code_ );
-		if ( resid == 0 ) {
-			// Dealing with the inability to return a null char constant by having two error messages.  LAAAAAAME.
-			if ( insertion_code() != ' ' ) {
-				throw CREATE_EXCEPTION(utility::excn::Exception,  "Unable to find PDB residue " + utility::to_string( resindex_ ) + insertion_code_ + ' ' + "on chain " + chain_ + " in input Pose" );
-			}
-			throw CREATE_EXCEPTION(utility::excn::Exception,  "Unable to find PDB residue " + utility::to_string( resindex_ ) + insertion_code_ + "on chain " + chain_ + " in input Pose" );
-		}
-		return resid;
+		return "from " + source_->source_string() + " ";
 	}
 }
 
-ResidueIndexDescriptionFromFile::ResidueIndexDescriptionFromFile() :
-	ResidueIndexDescription(),
-	linenum_( 0 )
-{}
-
-ResidueIndexDescriptionFromFile::ResidueIndexDescriptionFromFile(
-	std::string const & fname,
-	core::Size linenum,
-	core::Size pose_index
-) :
-	ResidueIndexDescription( pose_index ),
-	fname_( fname ),
-	linenum_( linenum )
-{}
-
-ResidueIndexDescriptionFromFile::ResidueIndexDescriptionFromFile(
-	std::string const & fname,
-	core::Size linenum,
-	char chain,
-	int  resindex,
-	char insertion_code
-) :
-	ResidueIndexDescription( chain, resindex, insertion_code ),
-	fname_( fname ),
-	linenum_( linenum )
-{}
+ResidueIndexDescriptionPoseNum::~ResidueIndexDescriptionPoseNum() = default;
 
 core::Size
-ResidueIndexDescriptionFromFile::resolve_index(
+ResidueIndexDescriptionPoseNum::resolve_index(
 	core::pose::Pose const & pose
 ) const
 {
-	// return bogus index, but do not trip an error.
-	if ( unassigned() ) { return 0; }
-
-	if ( pose_numbered() ) {
-		if ( pose_index() > pose.size() ) {
-			throw CREATE_EXCEPTION(utility::excn::Exception,  "Residue index description given on line " + utility::to_string( linenum_ ) +
-				" of the file named " + fname_ + " exceeds the number of residues in the Pose: pose_index_ = " +
-				utility::to_string( pose_index() ) + " vs pose.size() " + utility::to_string( pose.size() ));
-		}
-		return pose_index();
-	} else {
-		// THIS HAS NOT BEEN TESTED OR CAREFULLY CONSIDERED
-		// ONLY A SKETCH OF CODE THAT COULD BE PUT HERE
-		core::Size resid = pose.pdb_info()->pdb2pose().find( chain(), resindex(), insertion_code() );
-		if ( resid == 0 ) {
-			// Dealing with the inability to return a null char constant by having two error messages.  LAAAAAAME.
-			if ( insertion_code() != ' ' ) {
-				throw CREATE_EXCEPTION(utility::excn::Exception,  "Unable to find PDB residue " + utility::to_string( resindex() ) + insertion_code() + ' ' + "on chain " + chain() + " in input Pose" );
-			}
-			throw CREATE_EXCEPTION(utility::excn::Exception,  "Unable to find PDB residue " + utility::to_string( resindex() ) + insertion_code() + "on chain " + chain() + " in input Pose" );
-		}
-		return resid;
+	if ( pose_index_ > pose.size() ) {
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "Residue index description " + source_string() + "exceeds the number of residues in the Pose: pose_index_ = " +
+			utility::to_string( pose_index_ ) + " vs pose.size() " + utility::to_string( pose.size() ));
 	}
+	return pose_index_;
+}
+
+ResidueIndexDescriptionPDB::~ResidueIndexDescriptionPDB() = default;
+
+core::Size
+ResidueIndexDescriptionPDB::resolve_index(
+	core::pose::Pose const & pose
+) const
+{
+	// THIS HAS NOT BEEN TESTED OR CAREFULLY CONSIDERED
+	// ONLY A SKETCH OF CODE THAT COULD BE PUT HERE
+	core::Size resid = pose.pdb_info()->pdb2pose().find( chain_, resindex_, insertion_code_ );
+	if ( resid == 0 ) {
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "PDB residue " + source_string() + utility::to_string( resindex_ ) + insertion_code_ + ' ' + "on chain " + chain_ + " " + source_string() + "is not present in the input Pose." );
+	}
+	return resid;
 }
 
 // stupid visual studio has a different definition of std::isalpha than the C++ standard

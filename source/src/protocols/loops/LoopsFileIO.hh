@@ -55,9 +55,9 @@ public:
 	LoopFromFileData();
 
 	LoopFromFileData(
-		core::pose::ResidueIndexDescriptionFromFile const & start_res,
-		core::pose::ResidueIndexDescriptionFromFile const & cutpoint_res,
-		core::pose::ResidueIndexDescriptionFromFile const & end_res,
+		core::pose::ResidueIndexDescriptionCOP start_res,
+		core::pose::ResidueIndexDescriptionCOP cutpoint_res,
+		core::pose::ResidueIndexDescriptionCOP end_res,
 		core::Real skip_rate,
 		bool extended,
 		bool prohibit_single_residue_loops = true
@@ -76,14 +76,14 @@ public:
 	SerializedLoop
 	resolve_as_serialized_loop_from_pose( core::pose::Pose const & pose ) const;
 
-	core::pose::ResidueIndexDescriptionFromFile const & start_res() const { return start_res_; }
-	void start_res( core::pose::ResidueIndexDescriptionFromFile const & setting ) { start_res_ = setting; }
+	core::pose::ResidueIndexDescriptionCOP start_res() const { return start_res_; }
+	void start_res( core::pose::ResidueIndexDescriptionCOP setting ) { start_res_ = setting; }
 
-	core::pose::ResidueIndexDescriptionFromFile const & cutpoint_res() const { return cutpoint_res_; }
-	void cutpoint_res( core::pose::ResidueIndexDescriptionFromFile const & setting ) { cutpoint_res_ = setting; }
+	core::pose::ResidueIndexDescriptionCOP cutpoint_res() const { return cutpoint_res_; }
+	void cutpoint_res( core::pose::ResidueIndexDescriptionCOP setting ) { cutpoint_res_ = setting; }
 
-	core::pose::ResidueIndexDescriptionFromFile const & end_res() const { return end_res_; }
-	void end_res( core::pose::ResidueIndexDescriptionFromFile const & setting ) { end_res_ = setting; }
+	core::pose::ResidueIndexDescriptionCOP end_res() const { return end_res_; }
+	void end_res( core::pose::ResidueIndexDescriptionCOP setting ) { end_res_ = setting; }
 
 	core::Real skip_rate() const { return skip_rate_; }
 	void skip_rate( core::Real setting ) { skip_rate_ = setting; }
@@ -95,9 +95,9 @@ public:
 	void prohibit_single_residue_loops( bool setting ) { prohibit_single_residue_loops_ = setting; }
 
 private:
-	core::pose::ResidueIndexDescriptionFromFile start_res_;
-	core::pose::ResidueIndexDescriptionFromFile cutpoint_res_;
-	core::pose::ResidueIndexDescriptionFromFile end_res_;
+	core::pose::ResidueIndexDescriptionCOP start_res_;
+	core::pose::ResidueIndexDescriptionCOP cutpoint_res_;
+	core::pose::ResidueIndexDescriptionCOP end_res_;
 	core::Real skip_rate_;
 	bool extended_;
 	bool prohibit_single_residue_loops_;
@@ -306,7 +306,7 @@ private: // methods
 	void
 	ensure_all_fields_are_valid( utility::json_spirit::mValue & json_data, std::string const & filename );
 
-	core::pose::ResidueIndexDescriptionFromFile
+	core::pose::ResidueIndexDescriptionCOP
 	parse_json_residue_info(
 		utility::json_spirit::mValue & json_loop_data,
 		ResidueIdentifier residue_identifier,

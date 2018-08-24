@@ -138,7 +138,7 @@ private:
 };
 
 struct input_mutation {
-	core::pose::ResidueIndexDescriptionFromFileOP resind;
+	core::pose::ResidueIndexDescriptionCOP resind;
 	core::chemical::AA mutaa;
 };
 
@@ -194,7 +194,7 @@ public:
 	void input_pdb( utility::file::FileName const & pdb_name );
 
 	void complex( bool setting );
-	void residue_index_description( core::pose::ResidueIndexDescriptionOP setting );
+	void residue_index_description( core::pose::ResidueIndexDescriptionCOP setting );
 	void new_aa( core::chemical::AA setting );
 
 	//core::pose::ResidueIndexDescription & residue_index_description();
@@ -210,7 +210,7 @@ private:
 	InterfaceDDGBindInnerJobOP reference_job_;
 	// InterfaceDDGMutationTask mutation_;
 
-	core::pose::ResidueIndexDescriptionOP res_ind_desc_;
+	core::pose::ResidueIndexDescriptionCOP res_ind_desc_;
 	bool wt_;
 	bool complex_;
 	core::chemical::AA new_aa_;
@@ -361,7 +361,7 @@ void InterfaceDDGBindInnerJob::complex( bool setting ) {
 	complex_ = setting;
 }
 
-void InterfaceDDGBindInnerJob::residue_index_description( core::pose::ResidueIndexDescriptionOP setting )
+void InterfaceDDGBindInnerJob::residue_index_description( core::pose::ResidueIndexDescriptionCOP setting )
 {
 	res_ind_desc_ = setting;
 }
@@ -545,8 +545,9 @@ InterfaceDDGBindJobInputter::fill_jobs( protocols::jd2::JobsContainer & jobs )
 					throw CREATE_EXCEPTION(utility::excn::Exception,  "Could not interpret the string '" + resstring + "' as a residue identifier\n" + e.msg() );
 				}
 				input_mutation mutation;
-				mutation.resind = core::pose::ResidueIndexDescriptionFromFileOP(
-					new core::pose::ResidueIndexDescriptionFromFile( jobfname, count_line, chain[0], resid, insertion_code ));
+				core::pose::RID_SourceCOP rid_source( new core::pose::RID_FileSource( jobfname, count_line ) );
+				mutation.resind = core::pose::ResidueIndexDescriptionOP(
+					new core::pose::ResidueIndexDescriptionPDB( rid_source, chain[0], resid, insertion_code ));
 				mutation.mutaa  = core::chemical::aa_from_oneletter_code( newaa );
 
 				mutations_for_pdb[ pdb_pos_string ].push_back( mutation );

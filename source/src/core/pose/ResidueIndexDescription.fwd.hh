@@ -8,12 +8,13 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file   src/core/pose/ResidueIndexDescription.fwd.hh
-/// @brief  Two classes designed to hold data neceassary to describe a residue in a Pose,
+/// @brief  Classes designed to hold data neceassary to describe a residue in a Pose,
 ///         which may come from a text file, e.g., and to resolve that data into an actual
 ///         residue index when a Pose becomes available (which is likely not at the time
 ///         that the file is read) and to throw an exception if the index cannot be resolved.
 /// @author Brian D. Weitzner
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
+/// @author Rocco Moretti (rmorettiase@gmail.com)
 
 
 #ifndef INCLUDED_core_pose_ResidueIndexDescription_FWD_HH
@@ -25,14 +26,14 @@
 namespace core {
 namespace pose {
 
+class RID_Source;
 class ResidueIndexDescription;
-class ResidueIndexDescriptionFromFile;
+
+typedef utility::pointer::shared_ptr< RID_Source > RID_SourceOP;
+typedef utility::pointer::shared_ptr< RID_Source const > RID_SourceCOP;
 
 typedef utility::pointer::shared_ptr< ResidueIndexDescription > ResidueIndexDescriptionOP;
 typedef utility::pointer::shared_ptr< ResidueIndexDescription const > ResidueIndexDescriptionCOP;
-
-typedef utility::pointer::shared_ptr< ResidueIndexDescriptionFromFile > ResidueIndexDescriptionFromFileOP;
-typedef utility::pointer::shared_ptr< ResidueIndexDescriptionFromFile const > ResidueIndexDescriptionFromFileCOP;
 
 }
 }

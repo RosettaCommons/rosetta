@@ -33,8 +33,7 @@
 namespace protocols {
 namespace loops {
 
-using core::pose::ResidueIndexDescription;
-using core::pose::ResidueIndexDescriptionFromFile;
+using core::pose::ResidueIndexDescriptionCOP;
 
 /// @details Auto-generated virtual destructor
 LoopsFileData::~LoopsFileData() = default;
@@ -69,9 +68,9 @@ LoopFromFileData::LoopFromFileData() :
 {}
 
 LoopFromFileData::LoopFromFileData(
-	ResidueIndexDescriptionFromFile const & start_res,
-	ResidueIndexDescriptionFromFile const & cutpoint_res,
-	ResidueIndexDescriptionFromFile const & end_res,
+	ResidueIndexDescriptionCOP start_res,
+	ResidueIndexDescriptionCOP cutpoint_res,
+	ResidueIndexDescriptionCOP end_res,
 	core::Real skip_rate,
 	bool extended,
 	bool prohibit_single_residue_loops
@@ -84,15 +83,23 @@ LoopFromFileData::LoopFromFileData(
 	prohibit_single_residue_loops_( prohibit_single_residue_loops )
 {}
 
+core::pose::ResidueIndexDescriptionCOP
+make_RIDliteral( std::string const & fname, core::Size lineno, core::Size resnum ) {
+	using namespace core::pose;
+	RID_SourceCOP source( new RID_FileSource( fname, lineno ) );
+	ResidueIndexDescriptionCOP rid( new ResidueIndexDescriptionPoseNum( source, resnum ) );
+	return rid;
+}
+
 /// constructed the other way around (for the the PoseNumberedLoopReader)
 LoopFromFileData::LoopFromFileData(
 	SerializedLoop const & loop,
 	std::string const & fname,
 	bool prohibit_single_residue_loops
 ) :
-	start_res_( fname, 0, loop.start ),
-	cutpoint_res_( fname, 0, loop.cut ),
-	end_res_( fname, 0, loop.stop ),
+	start_res_( make_RIDliteral( fname, 0, loop.start ) ),
+	cutpoint_res_( make_RIDliteral( fname, 0, loop.cut ) ),
+	end_res_( make_RIDliteral( fname, 0, loop.stop ) ),
 	skip_rate_( loop.skip_rate ),
 	extended_( loop.extended ),
 	prohibit_single_residue_loops_( prohibit_single_residue_loops )
@@ -106,12 +113,25 @@ SerializedLoop
 LoopFromFileData::resolve_as_serialized_loop_from_pose( core::pose::Pose const & pose ) const
 {
 
-	core::Size const start_res_index    = start_res_.resolve_index(    pose );
-	core::Size const cutpoint_res_index = cutpoint_res_.resolve_index( pose );
-	core::Size const end_res_index      = end_res_.resolve_index(      pose );
+	debug_assert( start_res_ );
+	debug_assert( cutpoint_res_ );
+	debug_assert( end_res_ );
+
+	core::Size const start_res_index    = start_res_->resolve_index(    pose );
+	core::Size const cutpoint_res_index = cutpoint_res_->resolve_index( pose );
+	core::Size const end_res_index      = end_res_->resolve_index(      pose );
+
+	std::string fname("");
+	core::Size lineno(0);
+	auto rid_source( utility::pointer::dynamic_pointer_cast< core::pose::RID_FileSource const >( start_res_->get_source() ) );
+	if ( rid_source != nullptr ) {
+		fname = rid_source->fname();
+		lineno = rid_source->linenum();
+	}
+
 	validate_loop_start_stop(
 		prohibit_single_residue_loops_, start_res_index, end_res_index,
-		start_res_.fname(), start_res_.linenum() );
+		fname, lineno );
 
 	SerializedLoop loop;
 	loop.start = start_res_index;
@@ -599,7 +619,7 @@ void JSONFormattedLoopsFileReader::set_linecount_offset( core::Size setting )
 }
 
 
-ResidueIndexDescriptionFromFile
+ResidueIndexDescriptionCOP
 JSONFormattedLoopsFileReader::parse_json_residue_info(
 	utility::json_spirit::mValue & json_loop_data,
 	ResidueIdentifier residue_identifier,
@@ -662,9 +682,12 @@ JSONFormattedLoopsFileReader::parse_json_residue_info(
 		utility_exit_with_message( "The \"" + res_identity + "\" residue must be specified.  Please check your input file '" + filename + "'." );
 	}
 
-	return usesPDBNumbering ?
-		ResidueIndexDescriptionFromFile( filename, approximate_linenumber, chain_id, resNo, insert_code ) :
-		ResidueIndexDescriptionFromFile( filename, approximate_linenumber, resNo );
+	core::pose::RID_SourceCOP rid_source( new core::pose::RID_FileSource( filename, approximate_linenumber ) );
+	if ( usesPDBNumbering ) {
+		return ResidueIndexDescriptionCOP( new core::pose::ResidueIndexDescriptionPDB( rid_source, chain_id, resNo, insert_code ) );
+	} else {
+		return ResidueIndexDescriptionCOP( new core::pose::ResidueIndexDescriptionPoseNum( rid_source, resNo ) );
+	}
 }
 
 void

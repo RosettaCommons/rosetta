@@ -24,6 +24,7 @@
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/LoopsFileIO.hh>
+#include <core/pose/ResidueIndexDescription.hh>
 
 #include <string>
 
@@ -133,38 +134,41 @@ public:
 	}
 
 	void test_LoopsFileIO_read_loopstream_from_pose_numbered_file() {
+		using namespace core::pose;
+
 		std::string loopfile( "LOOP 2 10\nLOOP 12 18\n" );
 		std::istringstream loopfstream( loopfile );
 		protocols::loops::LoopsFileIO reader;
 		protocols::loops::LoopsFileData lfd = *reader.read_loop_file_stream( loopfstream, "bogus" );
 
 		TS_ASSERT( lfd.size() == 2 );
-		TS_ASSERT( lfd[ 1 ].start_res().unassigned() == false );
-		TS_ASSERT( lfd[ 1 ].start_res().pose_numbered() == true );
-		TS_ASSERT( lfd[ 1 ].start_res().pose_index() == 2 );
 
-		TS_ASSERT( lfd[ 1 ].end_res().unassigned() == false );
-		TS_ASSERT( lfd[ 1 ].end_res().pose_numbered() == true );
-		TS_ASSERT( lfd[ 1 ].end_res().pose_index() == 10 );
+		auto start_rid = utility::pointer::dynamic_pointer_cast< ResidueIndexDescriptionPoseNum const >( lfd[ 1 ].start_res() );
+		TS_ASSERT( start_rid != nullptr );
+		TS_ASSERT_EQUALS( start_rid->pose_index(), 2 );
 
-		TS_ASSERT( lfd[ 1 ].cutpoint_res().unassigned() == false );
-		TS_ASSERT( lfd[ 1 ].cutpoint_res().pose_numbered() == true );
-		TS_ASSERT( lfd[ 1 ].cutpoint_res().pose_index() == 0 );
+		auto end_rid = utility::pointer::dynamic_pointer_cast< ResidueIndexDescriptionPoseNum const >( lfd[ 1 ].end_res() );
+		TS_ASSERT( end_rid != nullptr );
+		TS_ASSERT_EQUALS( end_rid->pose_index(), 10 );
+
+		auto cutpoint_rid = utility::pointer::dynamic_pointer_cast< ResidueIndexDescriptionPoseNum const >( lfd[ 1 ].cutpoint_res() );
+		TS_ASSERT( cutpoint_rid != nullptr );
+		TS_ASSERT_EQUALS( cutpoint_rid->pose_index(), 0 );
 
 		TS_ASSERT( lfd[ 1 ].skip_rate() == 0.0 );
 		TS_ASSERT( lfd[ 1 ].extended() == false );
 
-		TS_ASSERT( lfd[ 2 ].start_res().unassigned() == false );
-		TS_ASSERT( lfd[ 2 ].start_res().pose_numbered() == true );
-		TS_ASSERT( lfd[ 2 ].start_res().pose_index() == 12 );
+		auto start2_rid = utility::pointer::dynamic_pointer_cast< ResidueIndexDescriptionPoseNum const >( lfd[ 2 ].start_res() );
+		TS_ASSERT( start2_rid != nullptr );
+		TS_ASSERT_EQUALS( start2_rid->pose_index(), 12 );
 
-		TS_ASSERT( lfd[ 2 ].end_res().unassigned() == false );
-		TS_ASSERT( lfd[ 2 ].end_res().pose_numbered() == true );
-		TS_ASSERT( lfd[ 2 ].end_res().pose_index() == 18 );
+		auto end2_rid = utility::pointer::dynamic_pointer_cast< ResidueIndexDescriptionPoseNum const >( lfd[ 2 ].end_res() );
+		TS_ASSERT( end2_rid != nullptr );
+		TS_ASSERT_EQUALS( end2_rid->pose_index(), 18 );
 
-		TS_ASSERT( lfd[ 2 ].cutpoint_res().unassigned() == false );
-		TS_ASSERT( lfd[ 2 ].cutpoint_res().pose_numbered() == true );
-		TS_ASSERT( lfd[ 2 ].cutpoint_res().pose_index() == 0 );
+		auto cutpoint2_rid = utility::pointer::dynamic_pointer_cast< ResidueIndexDescriptionPoseNum const >( lfd[ 2 ].cutpoint_res() );
+		TS_ASSERT( cutpoint2_rid != nullptr );
+		TS_ASSERT_EQUALS( cutpoint2_rid->pose_index(), 0 );
 
 		TS_ASSERT( lfd[ 2 ].skip_rate() == 0.0 );
 		TS_ASSERT( lfd[ 2 ].extended() == false );
@@ -186,38 +190,41 @@ public:
 	}
 
 	void test_LoopsFileIO_read_loopstream_from_pose_numbered_file_w_cutpoint() {
+		using namespace core::pose;
+
 		std::string loopfile( "LOOP 2 10 8\nLOOP 12 18\n" );
 		std::istringstream loopfstream( loopfile );
 		protocols::loops::LoopsFileIO reader;
 		protocols::loops::LoopsFileData lfd = *reader.read_loop_file_stream( loopfstream, "bogus" );
 
 		TS_ASSERT( lfd.size() == 2 );
-		TS_ASSERT( lfd[ 1 ].start_res().unassigned() == false );
-		TS_ASSERT( lfd[ 1 ].start_res().pose_numbered() == true );
-		TS_ASSERT( lfd[ 1 ].start_res().pose_index() == 2 );
 
-		TS_ASSERT( lfd[ 1 ].end_res().unassigned() == false );
-		TS_ASSERT( lfd[ 1 ].end_res().pose_numbered() == true );
-		TS_ASSERT( lfd[ 1 ].end_res().pose_index() == 10 );
+		auto start_rid = utility::pointer::dynamic_pointer_cast< ResidueIndexDescriptionPoseNum const >( lfd[ 1 ].start_res() );
+		TS_ASSERT( start_rid != nullptr );
+		TS_ASSERT_EQUALS( start_rid->pose_index(), 2 );
 
-		TS_ASSERT( lfd[ 1 ].cutpoint_res().unassigned() == false );
-		TS_ASSERT( lfd[ 1 ].cutpoint_res().pose_numbered() == true );
-		TS_ASSERT( lfd[ 1 ].cutpoint_res().pose_index() == 8 );
+		auto end_rid = utility::pointer::dynamic_pointer_cast< ResidueIndexDescriptionPoseNum const >( lfd[ 1 ].end_res() );
+		TS_ASSERT( end_rid != nullptr );
+		TS_ASSERT_EQUALS( end_rid->pose_index(), 10 );
+
+		auto cutpoint_rid = utility::pointer::dynamic_pointer_cast< ResidueIndexDescriptionPoseNum const >( lfd[ 1 ].cutpoint_res() );
+		TS_ASSERT( cutpoint_rid != nullptr );
+		TS_ASSERT_EQUALS( cutpoint_rid->pose_index(), 8 );
 
 		TS_ASSERT( lfd[ 1 ].skip_rate() == 0.0 );
 		TS_ASSERT( lfd[ 1 ].extended() == false );
 
-		TS_ASSERT( lfd[ 2 ].start_res().unassigned() == false );
-		TS_ASSERT( lfd[ 2 ].start_res().pose_numbered() == true );
-		TS_ASSERT( lfd[ 2 ].start_res().pose_index() == 12 );
+		auto start2_rid = utility::pointer::dynamic_pointer_cast< ResidueIndexDescriptionPoseNum const >( lfd[ 2 ].start_res() );
+		TS_ASSERT( start2_rid != nullptr );
+		TS_ASSERT_EQUALS( start2_rid->pose_index(), 12 );
 
-		TS_ASSERT( lfd[ 2 ].end_res().unassigned() == false );
-		TS_ASSERT( lfd[ 2 ].end_res().pose_numbered() == true );
-		TS_ASSERT( lfd[ 2 ].end_res().pose_index() == 18 );
+		auto end2_rid = utility::pointer::dynamic_pointer_cast< ResidueIndexDescriptionPoseNum const >( lfd[ 2 ].end_res() );
+		TS_ASSERT( end2_rid != nullptr );
+		TS_ASSERT_EQUALS( end2_rid->pose_index(), 18 );
 
-		TS_ASSERT( lfd[ 2 ].cutpoint_res().unassigned() == false );
-		TS_ASSERT( lfd[ 2 ].cutpoint_res().pose_numbered() == true );
-		TS_ASSERT( lfd[ 2 ].cutpoint_res().pose_index() == 0 );
+		auto cutpoint2_rid = utility::pointer::dynamic_pointer_cast< ResidueIndexDescriptionPoseNum const >( lfd[ 2 ].cutpoint_res() );
+		TS_ASSERT( cutpoint2_rid != nullptr );
+		TS_ASSERT_EQUALS( cutpoint2_rid->pose_index(), 0 );
 
 		TS_ASSERT( lfd[ 2 ].skip_rate() == 0.0 );
 		TS_ASSERT( lfd[ 2 ].extended() == false );
@@ -239,38 +246,41 @@ public:
 	}
 
 	void test_LoopsFileIO_read_loopstream_from_pose_numbered_file_w_skiprate() {
+		using namespace core::pose;
+
 		std::string loopfile( "LOOP 2 10 8 0.3\nLOOP 12 18\n" );
 		std::istringstream loopfstream( loopfile );
 		protocols::loops::LoopsFileIO reader;
 		protocols::loops::LoopsFileData lfd = *reader.read_loop_file_stream( loopfstream, "bogus" );
 
 		TS_ASSERT( lfd.size() == 2 );
-		TS_ASSERT( lfd[ 1 ].start_res().unassigned() == false );
-		TS_ASSERT( lfd[ 1 ].start_res().pose_numbered() == true );
-		TS_ASSERT( lfd[ 1 ].start_res().pose_index() == 2 );
 
-		TS_ASSERT( lfd[ 1 ].end_res().unassigned() == false );
-		TS_ASSERT( lfd[ 1 ].end_res().pose_numbered() == true );
-		TS_ASSERT( lfd[ 1 ].end_res().pose_index() == 10 );
+		auto start_rid = utility::pointer::dynamic_pointer_cast< ResidueIndexDescriptionPoseNum const >( lfd[ 1 ].start_res() );
+		TS_ASSERT( start_rid != nullptr );
+		TS_ASSERT_EQUALS( start_rid->pose_index(), 2 );
 
-		TS_ASSERT( lfd[ 1 ].cutpoint_res().unassigned() == false );
-		TS_ASSERT( lfd[ 1 ].cutpoint_res().pose_numbered() == true );
-		TS_ASSERT( lfd[ 1 ].cutpoint_res().pose_index() == 8 );
+		auto end_rid = utility::pointer::dynamic_pointer_cast< ResidueIndexDescriptionPoseNum const >( lfd[ 1 ].end_res() );
+		TS_ASSERT( end_rid != nullptr );
+		TS_ASSERT_EQUALS( end_rid->pose_index(), 10 );
+
+		auto cutpoint_rid = utility::pointer::dynamic_pointer_cast< ResidueIndexDescriptionPoseNum const >( lfd[ 1 ].cutpoint_res() );
+		TS_ASSERT( cutpoint_rid != nullptr );
+		TS_ASSERT_EQUALS( cutpoint_rid->pose_index(), 8 );
 
 		TS_ASSERT( lfd[ 1 ].skip_rate() == 0.3 );
 		TS_ASSERT( lfd[ 1 ].extended() == false );
 
-		TS_ASSERT( lfd[ 2 ].start_res().unassigned() == false );
-		TS_ASSERT( lfd[ 2 ].start_res().pose_numbered() == true );
-		TS_ASSERT( lfd[ 2 ].start_res().pose_index() == 12 );
+		auto start2_rid = utility::pointer::dynamic_pointer_cast< ResidueIndexDescriptionPoseNum const >( lfd[ 2 ].start_res() );
+		TS_ASSERT( start2_rid != nullptr );
+		TS_ASSERT_EQUALS( start2_rid->pose_index(), 12 );
 
-		TS_ASSERT( lfd[ 2 ].end_res().unassigned() == false );
-		TS_ASSERT( lfd[ 2 ].end_res().pose_numbered() == true );
-		TS_ASSERT( lfd[ 2 ].end_res().pose_index() == 18 );
+		auto end2_rid = utility::pointer::dynamic_pointer_cast< ResidueIndexDescriptionPoseNum const >( lfd[ 2 ].end_res() );
+		TS_ASSERT( end2_rid != nullptr );
+		TS_ASSERT_EQUALS( end2_rid->pose_index(), 18 );
 
-		TS_ASSERT( lfd[ 2 ].cutpoint_res().unassigned() == false );
-		TS_ASSERT( lfd[ 2 ].cutpoint_res().pose_numbered() == true );
-		TS_ASSERT( lfd[ 2 ].cutpoint_res().pose_index() == 0 );
+		auto cutpoint2_rid = utility::pointer::dynamic_pointer_cast< ResidueIndexDescriptionPoseNum const >( lfd[ 2 ].cutpoint_res() );
+		TS_ASSERT( cutpoint2_rid != nullptr );
+		TS_ASSERT_EQUALS( cutpoint2_rid->pose_index(), 0 );
 
 		TS_ASSERT( lfd[ 2 ].skip_rate() == 0.0 );
 		TS_ASSERT( lfd[ 2 ].extended() == false );
@@ -291,38 +301,41 @@ public:
 		TS_ASSERT( sloops[ 2 ].extended == false );
 	}
 	void test_LoopsFileIO_read_loopstream_from_pose_numbered_file_w_extended() {
+		using namespace core::pose;
+
 		std::string loopfile( "LOOP 2 10 8 0.3 1\nLOOP 12 18\n" );
 		std::istringstream loopfstream( loopfile );
 		protocols::loops::LoopsFileIO reader;
 		protocols::loops::LoopsFileData lfd = *reader.read_loop_file_stream( loopfstream, "bogus" );
 
 		TS_ASSERT( lfd.size() == 2 );
-		TS_ASSERT( lfd[ 1 ].start_res().unassigned() == false );
-		TS_ASSERT( lfd[ 1 ].start_res().pose_numbered() == true );
-		TS_ASSERT( lfd[ 1 ].start_res().pose_index() == 2 );
 
-		TS_ASSERT( lfd[ 1 ].end_res().unassigned() == false );
-		TS_ASSERT( lfd[ 1 ].end_res().pose_numbered() == true );
-		TS_ASSERT( lfd[ 1 ].end_res().pose_index() == 10 );
+		auto start_rid = utility::pointer::dynamic_pointer_cast< ResidueIndexDescriptionPoseNum const >( lfd[ 1 ].start_res() );
+		TS_ASSERT( start_rid != nullptr );
+		TS_ASSERT_EQUALS( start_rid->pose_index(), 2 );
 
-		TS_ASSERT( lfd[ 1 ].cutpoint_res().unassigned() == false );
-		TS_ASSERT( lfd[ 1 ].cutpoint_res().pose_numbered() == true );
-		TS_ASSERT( lfd[ 1 ].cutpoint_res().pose_index() == 8 );
+		auto end_rid = utility::pointer::dynamic_pointer_cast< ResidueIndexDescriptionPoseNum const >( lfd[ 1 ].end_res() );
+		TS_ASSERT( end_rid != nullptr );
+		TS_ASSERT_EQUALS( end_rid->pose_index(), 10 );
+
+		auto cutpoint_rid = utility::pointer::dynamic_pointer_cast< ResidueIndexDescriptionPoseNum const >( lfd[ 1 ].cutpoint_res() );
+		TS_ASSERT( cutpoint_rid != nullptr );
+		TS_ASSERT_EQUALS( cutpoint_rid->pose_index(), 8 );
 
 		TS_ASSERT( lfd[ 1 ].skip_rate() == 0.3 );
 		TS_ASSERT( lfd[ 1 ].extended() == true );
 
-		TS_ASSERT( lfd[ 2 ].start_res().unassigned() == false );
-		TS_ASSERT( lfd[ 2 ].start_res().pose_numbered() == true );
-		TS_ASSERT( lfd[ 2 ].start_res().pose_index() == 12 );
+		auto start2_rid = utility::pointer::dynamic_pointer_cast< ResidueIndexDescriptionPoseNum const >( lfd[ 2 ].start_res() );
+		TS_ASSERT( start2_rid != nullptr );
+		TS_ASSERT_EQUALS( start2_rid->pose_index(), 12 );
 
-		TS_ASSERT( lfd[ 2 ].end_res().unassigned() == false );
-		TS_ASSERT( lfd[ 2 ].end_res().pose_numbered() == true );
-		TS_ASSERT( lfd[ 2 ].end_res().pose_index() == 18 );
+		auto end2_rid = utility::pointer::dynamic_pointer_cast< ResidueIndexDescriptionPoseNum const >( lfd[ 2 ].end_res() );
+		TS_ASSERT( end2_rid != nullptr );
+		TS_ASSERT_EQUALS( end2_rid->pose_index(), 18 );
 
-		TS_ASSERT( lfd[ 2 ].cutpoint_res().unassigned() == false );
-		TS_ASSERT( lfd[ 2 ].cutpoint_res().pose_numbered() == true );
-		TS_ASSERT( lfd[ 2 ].cutpoint_res().pose_index() == 0 );
+		auto cutpoint2_rid = utility::pointer::dynamic_pointer_cast< ResidueIndexDescriptionPoseNum const >( lfd[ 2 ].cutpoint_res() );
+		TS_ASSERT( cutpoint2_rid != nullptr );
+		TS_ASSERT_EQUALS( cutpoint2_rid->pose_index(), 0 );
 
 		TS_ASSERT( lfd[ 2 ].skip_rate() == 0.0 );
 		TS_ASSERT( lfd[ 2 ].extended() == false );
@@ -346,6 +359,8 @@ public:
 	}
 
 	void test_LoopsFileIO_read_JSON_loops_file() {
+		using namespace core::pose;
+
 		std::string json_loopfile =
 			"# FORMAT JSON\n"
 			"{\"LoopSet\" : [{\n"
@@ -359,23 +374,24 @@ public:
 		protocols::loops::LoopsFileIO reader;
 		protocols::loops::LoopsFileData lfd = *reader.read_loop_file_stream( loopfstream, "bogus" );
 		TS_ASSERT( lfd.size() == 1 );
-		TS_ASSERT( lfd[ 1 ].start_res().unassigned() == false );
-		TS_ASSERT( lfd[ 1 ].start_res().pose_numbered() == false );
-		TS_ASSERT( lfd[ 1 ].start_res().chain() == 'A' );
-		TS_ASSERT( lfd[ 1 ].start_res().resindex() == 2 );
-		TS_ASSERT( lfd[ 1 ].start_res().insertion_code() == ' ' );
 
-		TS_ASSERT( lfd[ 1 ].end_res().unassigned() == false );
-		TS_ASSERT( lfd[ 1 ].end_res().pose_numbered() == false );
-		TS_ASSERT( lfd[ 1 ].end_res().chain() == 'A' );
-		TS_ASSERT( lfd[ 1 ].end_res().resindex() == 10 );
-		TS_ASSERT( lfd[ 1 ].end_res().insertion_code() == ' ' );
+		auto start_rid = utility::pointer::dynamic_pointer_cast< ResidueIndexDescriptionPDB const >( lfd[ 1 ].start_res() );
+		TS_ASSERT( start_rid != nullptr );
+		TS_ASSERT_EQUALS( start_rid->chain(), 'A' );
+		TS_ASSERT_EQUALS( start_rid->resindex(), 2 );
+		TS_ASSERT_EQUALS( start_rid->insertion_code(), ' ' );
 
-		TS_ASSERT( lfd[ 1 ].cutpoint_res().unassigned() == false );
-		TS_ASSERT( lfd[ 1 ].cutpoint_res().pose_numbered() == false );
-		TS_ASSERT( lfd[ 1 ].cutpoint_res().chain() == 'A' );
-		TS_ASSERT( lfd[ 1 ].cutpoint_res().resindex() == 8 );
-		TS_ASSERT( lfd[ 1 ].cutpoint_res().insertion_code() == ' ' );
+		auto end_rid = utility::pointer::dynamic_pointer_cast< ResidueIndexDescriptionPDB const >( lfd[ 1 ].end_res() );
+		TS_ASSERT( end_rid != nullptr );
+		TS_ASSERT_EQUALS( end_rid->chain(), 'A' );
+		TS_ASSERT_EQUALS( end_rid->resindex(), 10 );
+		TS_ASSERT_EQUALS( end_rid->insertion_code(), ' ' );
+
+		auto cutpoint_rid = utility::pointer::dynamic_pointer_cast< ResidueIndexDescriptionPDB const >( lfd[ 1 ].cutpoint_res() );
+		TS_ASSERT( cutpoint_rid != nullptr );
+		TS_ASSERT_EQUALS( cutpoint_rid->chain(), 'A' );
+		TS_ASSERT_EQUALS( cutpoint_rid->resindex(), 8 );
+		TS_ASSERT_EQUALS( cutpoint_rid->insertion_code(), ' ' );
 
 		TS_ASSERT( lfd[ 1 ].skip_rate() == 0.5 );
 		TS_ASSERT( lfd[ 1 ].extended() == true );
