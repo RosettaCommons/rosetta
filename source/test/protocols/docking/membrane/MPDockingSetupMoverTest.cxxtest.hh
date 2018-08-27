@@ -36,6 +36,7 @@
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
+#include <basic/datacache/DataMap.hh>
 
 // C++ Headers
 #include <cstdlib>
@@ -89,8 +90,13 @@ public: // test functions
 		std::stringstream tag_ss("<MPDockingSetupMover optimize1=true optimize2=false pose1=\"protocols/membrane/1AFO_AB.pdb\" pose2=\"protocols/membrane/1AFO_AB.pdb\" span1=\"s1.span\" span2=\"s2.span\" />");
 		utility::tag::TagCOP tag = utility::tag::Tag::create( tag_ss );
 
+		basic::datacache::DataMap dm;
+		protocols::filters::Filters_map fm;
+		protocols::moves::Movers_map mm;
+		core::pose::Pose pose;
+
 		protocols::docking::membrane::MPDockingSetupMoverOP xmpd(new protocols::docking::membrane::MPDockingSetupMover());
-		xmpd->parse_my_tag( tag );
+		xmpd->parse_my_tag( tag, dm, fm, mm, pose );
 
 		TS_ASSERT_EQUALS(xmpd->get_optimize1(), true);
 		TS_ASSERT_EQUALS(xmpd->get_optimize2(), false);

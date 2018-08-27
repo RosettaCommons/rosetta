@@ -85,7 +85,11 @@ MPLipidAccessibility::show(std::ostream & output) const
 /// @brief parse XML tag (to use this Mover in Rosetta Scripts)
 void
 MPLipidAccessibility::parse_my_tag(
-	utility::tag::TagCOP tag
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap &,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const &
 ) {
 	if ( tag->hasOption( "angle_cutoff" ) ) {
 		angle_cutoff_ = tag->getOption< core::Real >("angle_cutoff", 65.0);

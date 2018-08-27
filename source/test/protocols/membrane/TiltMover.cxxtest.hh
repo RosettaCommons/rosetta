@@ -35,6 +35,7 @@
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
+#include <basic/datacache/DataMap.hh>
 
 // C++ Headers
 #include <cstdlib>
@@ -134,10 +135,16 @@ public: // test functions
 		std::string tag_string = "<TiltMover jump_num=3 random_angle=true angle=-5/>";
 		std::stringstream ss( tag_string );
 		utility::tag::TagOP tag( new utility::tag::Tag() );
+
+		basic::datacache::DataMap dm;
+		protocols::filters::Filters_map fm;
+		protocols::moves::Movers_map mm;
+		core::pose::Pose pose;
+
 		tag->read( ss );
 
 		TiltMoverOP xtilt( new TiltMover() );
-		xtilt->parse_my_tag( tag );
+		xtilt->parse_my_tag( tag, dm, fm, mm, pose );
 
 		TS_ASSERT(xtilt->get_jump_num() == 3);
 		TS_ASSERT(xtilt->get_random_angle() == true);

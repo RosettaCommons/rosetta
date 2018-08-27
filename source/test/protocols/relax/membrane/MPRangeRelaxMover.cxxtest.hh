@@ -37,6 +37,7 @@
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
+#include <basic/datacache/DataMap.hh>
 
 // C++ Headers
 #include <cstdlib>
@@ -87,7 +88,12 @@ public:
 		utility::tag::TagCOP tag = utility::tag::Tag::create( tag_ss );
 		protocols::relax::membrane::MPRangeRelaxMoverOP xmprr(new protocols::relax::membrane::MPRangeRelaxMover());
 
-		xmprr->parse_my_tag( tag );
+		basic::datacache::DataMap dm;
+		protocols::filters::Filters_map fm;
+		protocols::moves::Movers_map mm;
+		core::pose::Pose pose;
+
+		xmprr->parse_my_tag( tag, dm, fm, mm, pose );
 
 		TS_ASSERT(xmprr->get_native() != nullptr);
 		TS_ASSERT(xmprr->get_sfxn() != nullptr);

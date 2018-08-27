@@ -28,6 +28,7 @@
 // Utility Headers
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
+#include <basic/datacache/DataMap.hh>
 
 // C++ Headers
 #include <cstdlib>
@@ -149,8 +150,13 @@ public: // test functions
 		std::stringstream tag_ss("<MPLipidAccessibility angle_cutoff=64.0 slice_width=9.0 shell_radius=5.0 dist_cutoff=9.0 tm_alpha=false />");
 		utility::tag::TagCOP tag = utility::tag::Tag::create( tag_ss );
 
+		basic::datacache::DataMap dm;
+		protocols::filters::Filters_map fm;
+		protocols::moves::Movers_map mm;
+		core::pose::Pose pose;
+
 		MPLipidAccessibilityOP xlip( new MPLipidAccessibility() );
-		xlip->parse_my_tag( tag );
+		xlip->parse_my_tag( tag, dm, fm, mm, pose );
 
 		TS_ASSERT_EQUALS(xlip->get_angle_cutoff(), 64.0);
 		TS_ASSERT_EQUALS(xlip->get_slice_width(), 9.0);

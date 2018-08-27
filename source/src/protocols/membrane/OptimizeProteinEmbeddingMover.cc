@@ -93,7 +93,11 @@ OptimizeProteinEmbeddingMover::fresh_instance() const {
 /// @brief Parse Rosetta Scripts Options for this Mover
 void
 OptimizeProteinEmbeddingMover::parse_my_tag(
-	utility::tag::TagCOP tag
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap &,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const &
 ) {
 	//TODO: Implement this for options that may be added in the future
 	if ( tag->hasOption( "option" ) ) {

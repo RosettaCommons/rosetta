@@ -36,6 +36,7 @@
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
+#include <basic/datacache/DataMap.hh>
 
 // C++ Headers
 #include <cstdlib>
@@ -328,8 +329,13 @@ public: // test functions
 		std::stringstream tag_ss("<FlipMover jump_num=3 axisx=1 axisy=0 axisz=1 angle=45.5 random_angle=true max_angle_dev=12.0/>");
 		utility::tag::TagCOP tag = utility::tag::Tag::create( tag_ss );
 
+		basic::datacache::DataMap dm;
+		protocols::filters::Filters_map fm;
+		protocols::moves::Movers_map mm;
+		core::pose::Pose pose;
+
 		FlipMoverOP xflip( new FlipMover() );
-		xflip->parse_my_tag( tag );
+		xflip->parse_my_tag( tag, dm, fm, mm, pose );
 
 		TS_ASSERT(xflip->get_jump_num() == 3);
 

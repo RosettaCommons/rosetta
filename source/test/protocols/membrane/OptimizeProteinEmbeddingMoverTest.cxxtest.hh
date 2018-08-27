@@ -38,6 +38,7 @@
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
+#include <basic/datacache/DataMap.hh>
 
 // C++ Headers
 #include <cstdlib>
@@ -86,8 +87,13 @@ public:
 		std::stringstream tag_ss("<OptimizeProteinEmbeddingMover option=option_value/>");
 		utility::tag::TagCOP tag = utility::tag::Tag::create( tag_ss );
 
+		basic::datacache::DataMap dm;
+		protocols::filters::Filters_map fm;
+		protocols::moves::Movers_map mm;
+		core::pose::Pose pose;
+
 		OptimizeProteinEmbeddingMoverOP xpro( new OptimizeProteinEmbeddingMover() );
-		xpro->parse_my_tag( tag );
+		xpro->parse_my_tag( tag, dm, fm, mm, pose );
 
 		TS_ASSERT(true);
 	}

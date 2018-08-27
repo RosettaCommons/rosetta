@@ -37,6 +37,7 @@
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
+#include <basic/datacache/DataMap.hh>
 
 // C++ Headers
 #include <cstdlib>
@@ -133,8 +134,13 @@ public: // test functions
 		std::stringstream tag_ss( "<SpinAroundPartnerMover jump=3 rand_range=true range=75 x=30.3 y=35.6/>" );
 		utility::tag::TagCOP tag = utility::tag::Tag::create( tag_ss );
 
+		basic::datacache::DataMap dm;
+		protocols::filters::Filters_map fm;
+		protocols::moves::Movers_map mm;
+		core::pose::Pose pose;
+
 		SpinAroundPartnerMoverOP xspin( new SpinAroundPartnerMover() );
-		xspin->parse_my_tag( tag );
+		xspin->parse_my_tag( tag, dm, fm, mm, pose );
 
 		TS_ASSERT_EQUALS(xspin->get_jump(), 3);
 		TS_ASSERT_EQUALS(xspin->get_rand_range(), true);

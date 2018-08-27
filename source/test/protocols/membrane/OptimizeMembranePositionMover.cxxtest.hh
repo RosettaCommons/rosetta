@@ -36,6 +36,7 @@
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
+#include <basic/datacache/DataMap.hh>
 
 // C++ Headers
 #include <cstdlib>
@@ -122,8 +123,13 @@ public: // test functions
 		std::stringstream tag_ss("<OptimizeMembranePositionMover sfxn=\"mpframework_smooth_fa_2012.wts\" score_best=999001 starting_z=-5.3 stepsize_z=0.2 stepsize_angle=0.7/>");
 		utility::tag::TagCOP tag = utility::tag::Tag::create( tag_ss );
 
+		basic::datacache::DataMap dm;
+		protocols::filters::Filters_map fm;
+		protocols::moves::Movers_map mm;
+		core::pose::Pose pose;
+
 		OptimizeMembranePositionMoverOP xomp( new OptimizeMembranePositionMover() );
-		xomp->parse_my_tag( tag );
+		xomp->parse_my_tag( tag, dm, fm, mm, pose );
 
 		TS_ASSERT(xomp->get_sfxn() != nullptr);
 		TS_ASSERT_EQUALS(xomp->get_score_best(), 999001);

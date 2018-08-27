@@ -108,7 +108,11 @@ MPDockingSetupMover::fresh_instance() const {
 /// @brief Parse Rosetta Scripts Options for this Mover
 void
 MPDockingSetupMover::parse_my_tag(
-	utility::tag::TagCOP tag
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap &,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const &
 ) {
 	if ( tag->hasOption( "optimize1" ) ) {
 		optimize1_ = tag->getOption< bool >("optimize1", false);
