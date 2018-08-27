@@ -91,37 +91,47 @@ void BundleParameters::get_pdb_remark(std::stringstream &remark) const {
 		remark << "   " << curparam->short_parameter_description() << " (" << curparam->parameter_name() << "," << curparam->parameter_units() << "): ";
 		//Determine type:
 		ParameterType const paramtype( curparam->parameter_type() );
-		RealValuedParameterCOP realparam( utility::pointer::static_pointer_cast< RealValuedParameter const>( curparam ) );
-		BooleanValuedParameterCOP boolparam( utility::pointer::static_pointer_cast< BooleanValuedParameter const>( curparam ) );
-		SizeValuedParameterCOP sizeparam( utility::pointer::static_pointer_cast< SizeValuedParameter const>( curparam ) );
-		SizeVectorValuedParameterCOP sizevectparam( utility::pointer::static_pointer_cast< SizeVectorValuedParameter const>( curparam ) );
-		RealVectorValuedParameterCOP realvectparam( utility::pointer::static_pointer_cast< RealVectorValuedParameter const>( curparam ) );
 		switch( paramtype ) {
 		case PT_generic_real:
 		case PT_generic_nonnegative_valued_real:
 		case PT_generic_positive_valued_real:
 		case PT_angle :
+			{
+			RealValuedParameterCOP realparam( utility::pointer::static_pointer_cast< RealValuedParameter const>( curparam ) );
 			remark << realparam->value();
 			break;
+		}
 		case PT_boolean :
+			{
+			BooleanValuedParameterCOP boolparam( utility::pointer::static_pointer_cast< BooleanValuedParameter const>( curparam ) );
 			remark << ( boolparam->value() ? "TRUE" : "FALSE" );
 			break;
+		}
 		case PT_generic_integer:
 		case PT_generic_whole_number:
 		case PT_generic_natural_number :
+			{
+			SizeValuedParameterCOP sizeparam( utility::pointer::static_pointer_cast< SizeValuedParameter const>( curparam ) );
 			remark << sizeparam->value();
 			break;
+		}
 		case PT_generic_integer_vector:
 		case PT_generic_whole_number_vector:
 		case PT_generic_natural_number_vector :
+			{
+			SizeVectorValuedParameterCOP sizevectparam( utility::pointer::static_pointer_cast< SizeVectorValuedParameter const>( curparam ) );
 			remark << std::endl << "     " << sizevectparam->value();
 			break;
+		}
 		case PT_generic_real_vector:
 		case PT_generic_nonnegative_valued_real_vector:
 		case PT_generic_positive_valued_real_vector:
 		case PT_angle_vector :
+			{
+			RealVectorValuedParameterCOP realvectparam( utility::pointer::static_pointer_cast< RealVectorValuedParameter const>( curparam ) );
 			remark << std::endl << "     " << realvectparam->value();
 			break;
+		}
 		case PT_invalid_type :
 			remark << std::endl;
 			utility_exit_with_message( "Error in BundleParameters::get_pdb_remark(): Could not determine type of parameter " + curparam->parameter_name() + "!" );
