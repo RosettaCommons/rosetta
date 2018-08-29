@@ -1407,6 +1407,42 @@ public:
 	core::Size
 	chain( Size const seqpos ) const;
 
+	/// @brief Returns the sequence position of the beginning of chain <chain_num>.
+	///
+	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
+	/// This is a pass-through function which returns conformation_->chain_begin( chain_num )
+	///
+	/// example(s):
+	///     pose.chain_begin(1)
+	/// see also:
+	///     pose
+	///     pose.num_chains
+	///     pose.annotated_sequence
+	/// pose.chain_sequence
+	///     pose.fold_tree
+	///     pose.sequence
+	///     foldtree
+	core::Size
+	chain_begin( Size const chain_num ) const;
+
+	/// @brief Returns the sequence position of the end of chain <chain_num>.
+	///
+	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
+	/// This is a pass-through function which returns conformation_->chain_end( chain_num )
+	///
+	/// example(s):
+	///     pose.chain_end(1)
+	/// see also:
+	///     pose
+	///     pose.num_chains
+	///     pose.annotated_sequence
+	/// pose.chain_sequence
+	///     pose.fold_tree
+	///     pose.sequence
+	///     foldtree
+	core::Size
+	chain_end( Size const chain_num ) const;
+
 	/// @brief Returns a vector of poses with one element per (chain number) chain of the original pose
 	///
 	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.

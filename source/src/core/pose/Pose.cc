@@ -1444,6 +1444,22 @@ Pose::chain( Size const seqpos ) const
 	return residue( seqpos ).chain();
 }
 
+core::Size
+Pose::chain_begin( Size const chain_num ) const
+{
+	PyAssert( ( chain_num <= num_chains() && chain_num != 0 ),
+		"Pose::chain_begin( Size const chain_num ): variable chain_num is out of range!" );
+	return conformation_->chain_begin( chain_num );
+}
+
+core::Size
+Pose::chain_end( Size const chain_num ) const
+{
+	PyAssert( ( chain_num <= num_chains() && chain_num != 0 ),
+		"Pose::chain_end( Size const chain_num ): variable chain_num is out of range!" );
+	return conformation_->chain_end( chain_num );
+}
+
 /// @details splits the current pose into several poses containing only a single chain each.
 utility::vector1<PoseOP>
 Pose::split_by_chain() const
