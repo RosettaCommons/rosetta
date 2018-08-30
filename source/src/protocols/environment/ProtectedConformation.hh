@@ -76,91 +76,121 @@ public:
 	//Security overloads:
 	Conformation& operator=( Conformation const& src ) override;
 
-	void set_torsion( TorsionID const & id, core::Real setting ) override;
+	void set_torsion( TorsionID const & id, core::Real const setting ) override;
 
 	void set_jump( AtomID const&, core::kinematics::Jump const& ) override;
 
-	void set_jump( int, core::kinematics::Jump const& ) override;
+	void set_jump( int const , core::kinematics::Jump const& ) override;
 
-	void set_secstruct( Size seqpos, char setting ) override;
+	void set_secstruct( Size const seqpos, char const setting ) override;
 
-	void replace_residue( Size seqpos, core::conformation::Residue const & new_rsd,
-		utility::vector1< std::pair< std::string, std::string > > const& atom_pairs ) override;
+	void replace_residue(
+		Size const seqpos,
+		core::conformation::Residue const & new_rsd,
+		utility::vector1< std::pair< std::string, std::string > > const& atom_pairs
+	) override;
 
-	void replace_residue( Size seqpos, core::conformation::Residue const& new_rsd, bool orient_backbone ) override;
+	void replace_residue(
+		Size const seqpos,
+		core::conformation::Residue const& new_rsd,
+		bool const orient_backbone
+	) override;
 
-	virtual void set_stub_transform( core::id::StubID const & stub_id1,
+	void set_stub_transform( core::id::StubID const & stub_id1,
 		core::id::StubID const & stub_id2,
-		core::kinematics::RT const & target_rt );
+		core::kinematics::RT const & target_rt ) override;
 
-	void set_dof( DOF_ID const& id, core::Real setting ) override;
+	void set_dof( DOF_ID const& id, core::Real const setting ) override;
 
 	void set_torsion_angle( AtomID const & atom1,
 		AtomID const & atom2,
 		AtomID const & atom3,
 		AtomID const & atom4,
-		core::Real setting,
-		bool quiet=false) override;
+		core::Real const setting,
+		bool const quiet=false) override;
 
 	void set_bond_angle( AtomID const & atom1, AtomID const & atom2, AtomID const & atom3,
-		core::Real setting ) override;
+		core::Real const setting ) override;
 
-	void set_bond_length( AtomID const & atom1, AtomID const & atom2, core::Real setting ) override;
+	void set_bond_length( AtomID const & atom1, AtomID const & atom2, core::Real const setting ) override;
 
-	virtual void insert_fragment( core::id::StubID const& instub_id, FragRT const& outstub_transforms,
-		FragXYZ const& frag_xyz );
+	void insert_fragment( core::id::StubID const& instub_id, FragRT const& outstub_transforms,
+		FragXYZ const& frag_xyz ) override;
 
 	// Always-failing Security Overloads
 	// The parameters aren't named on purpose. You're not supposed to use these functions.
 	void fold_tree( FoldTree const& ) override;
 
-	virtual void chain_endings( utility::vector1< Size > const& );
+	void chain_endings( utility::vector1< Size > const& ) override;
 
-	virtual void insert_chain_ending( Size );
+	void insert_chain_ending( Size const ) override;
 
-	virtual void delete_chain_ending( Size );
+	void delete_chain_ending( Size const ) override;
 
-	virtual void reset_chain_endings();
+	void reset_chain_endings() override;
 
-	virtual void chains_from_termini();
+	void chains_from_termini() override;
 
-	void append_residue_by_jump( core::conformation::Residue const &, Size ,
-		std::string const& = "", std::string const& = "",
-		bool _= false ) override;
+	void append_residue_by_jump(
+		core::conformation::Residue const &,
+		Size const,
+		std::string const& = "",
+		std::string const& = "",
+		bool const _= false ) override;
 
-	virtual void append_polymer_residue_after_seqpos( core::conformation::Residue const&, Size ,
-		bool );
+	void append_polymer_residue_after_seqpos(
+		core::conformation::Residue const&,
+		Size const,
+		bool const) override;
 
-	virtual void safely_append_polymer_residue_after_seqpos( core::conformation::Residue const&, Size ,
-		bool);
+	void safely_append_polymer_residue_after_seqpos(
+		core::conformation::Residue const&,
+		Size const,
+		bool const) override;
 
-	virtual void prepend_polymer_residue_before_seqpos( core::conformation::Residue const&, Size ,
-		bool);
+	void prepend_polymer_residue_before_seqpos(
+		core::conformation::Residue const&,
+		Size const,
+		bool const) override;
 
-	virtual void safely_prepend_polymer_residue_before_seqpos( core::conformation::Residue const&,
-		Size , bool);
+	void safely_prepend_polymer_residue_before_seqpos(
+		core::conformation::Residue const&,
+		Size const,
+		bool const) override;
 
-	virtual void delete_polymer_residue( Size );
+	void delete_polymer_residue( Size const ) override;
 
-	virtual void delete_residue_slow( Size );
+	void delete_residue_slow( Size const ) override;
 
-	virtual void delete_residue_range_slow( Size range_begin, Size range_end );
+	void delete_residue_range_slow( Size const range_begin, Size const range_end ) override;
 
-	void declare_chemical_bond( Size, std::string const&, Size, std::string const& ) override;
+	void declare_chemical_bond(
+		Size const,
+		std::string const&,
+		Size const,
+		std::string const&
+	) override;
 
-	void insert_conformation_by_jump( Conformation const&, Size , Size, Size,
-		Size, std::string const& = "",  std::string const& = "" ) override;
+	void insert_conformation_by_jump(
+		Conformation const&,
+		Size const,
+		Size const,
+		Size const,
+		Size const,
+		std::string const& = "",
+		std::string const& = ""
+	) override;
 
-	virtual void rebuild_polymer_bond_dependent_atoms( Size );
+	void rebuild_polymer_bond_dependent_atoms( Size const ) override;
 
-	virtual void insert_ideal_geometry_at_polymer_bond( Size seqpos );
+	void insert_ideal_geometry_at_polymer_bond( Size const seqpos ) override;
 
-	virtual void insert_ideal_geometry_at_residue_connection( Size pos1, Size connid1 );
+	void insert_ideal_geometry_at_residue_connection( Size const pos1, Size const connid1 ) override;
 
-	virtual void set_polymeric_connection( Size, Size );
+	void set_polymeric_connection( Size, Size ) override;
 
 	// TODO: decide what to do with disulfides
-	virtual void fix_disulfides( utility::vector1< std::pair<Size, Size> > );
+	void fix_disulfides( utility::vector1< std::pair<Size, Size> > const & ) override;
 
 	// TODO: this method can fail in fullatom
 	// This just uses the parent method anyway, and we need a default argument.
@@ -172,11 +202,14 @@ public:
 		utility::vector1< core::PointPosition > const & position ) override;
 
 
-	virtual void reset_move_data();
+	void reset_move_data() override;
 
-	virtual void clear();
+	// WARNING: this looks like it should be 'override' but unit tests fail when it is.
+	// Someone who understands this code better than myself should look at it if this code
+	// is important to them. @danpf github PR #3415
+	void clear();
 
-	virtual void fill_missing_atoms( core::id::AtomID_Mask missing );
+	void fill_missing_atoms( core::id::AtomID_Mask missing ) override;
 
 	// I decided not to overload the following functions because they seem safe for anyone to call.
 	// If that's wrong, uncomment, implement an always-fail (or something smarter!), and make them
@@ -191,7 +224,7 @@ public:
 	// virtual void detect_pseudobonds();
 
 	//Misc overloads:
-	bool same_type_as_me( Conformation const & other, bool recurse /* = true */ ) const override;
+	bool same_type_as_me( Conformation const & other, bool const recurse /* = true */ ) const override;
 
 	// Verification Helpers:
 private:

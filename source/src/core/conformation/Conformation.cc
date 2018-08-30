@@ -428,7 +428,7 @@ Conformation::show_residue_connections(std::ostream &os) const
 
 // determine the type of the ConformationOP
 bool
-Conformation::same_type_as_me( Conformation const & other, bool recurse /* = true */ ) const
+Conformation::same_type_as_me( Conformation const & other, bool const recurse /* = true */ ) const
 {
 	if ( recurse ) {
 		return other.same_type_as_me( *this, false );
@@ -844,7 +844,7 @@ Conformation::const_residues() const
 }
 
 /// @brief Force updating of residue torsions.
-/// @details Needed by derived classes (particularly MirrorSymmetricConformation).
+/// @details Needed by derived classes
 void
 Conformation::force_update_residue_torsions() const {
 	residue_torsions_need_updating_ = true;
@@ -852,7 +852,7 @@ Conformation::force_update_residue_torsions() const {
 }
 
 /// @brief Force updating of residue coordinates.
-/// @details Needed by derived classes (particularly MirrorSymmetricConformation).
+/// @details Needed by derived classes
 void
 Conformation::force_update_residue_coordinates() const {
 	residue_coordinates_need_updating_ = true;
@@ -1205,7 +1205,6 @@ Conformation::prepend_polymer_residue_before_seqpos(
 
 	ResidueOP ideal_geometry_rsd;
 	if ( build_ideal_geometry ) {
-		if ( residue_coordinates_need_updating_ ) update_residue_coordinates( seqpos );
 		Residue const & anchor_rsd( residue_( seqpos ) ); // not residue(seqpos)
 		debug_assert( !anchor_rsd.is_lower_terminus() );
 		// this is a little wasteful, creating a new copy, but we need non-const access
@@ -1218,7 +1217,7 @@ Conformation::prepend_polymer_residue_before_seqpos(
 	bool const join_lower( !fold_tree_->is_cutpoint( seqpos-1 ) );
 
 	if ( build_ideal_geometry ) insert_polymer_residue( *ideal_geometry_rsd, seqpos, join_lower, join_upper );
-	else      insert_polymer_residue(    new_rsd, seqpos, join_lower, join_upper );
+	else                        insert_polymer_residue(    new_rsd, seqpos, join_lower, join_upper );
 
 	if ( build_ideal_geometry ) {
 		rebuild_polymer_bond_dependent_atoms( seqpos );

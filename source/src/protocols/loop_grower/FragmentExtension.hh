@@ -99,7 +99,7 @@ private:
 	core::Size beamwidth_, fragtrials_, pack_min_cycles_, direction_, maxloopsize_, master_beam_width_, rmswindow_, steps_, parallelcount_, montecarlorounds_, sheetcriteria_;
 	bool debug_, dumpbeam_, dumpfinalbeam_, dumpfragments_, dumprms_, dumperrors_, minimize_, nativegrow_,
 		greedy_, read_from_file_, assign_incomplete_, parametercheck_, cenrot_, writebeams_, readbeams_, clustercheck_, rescorebeams_, writelps_, fafilter_, samplesheets_,
-		trackfragments_, filterprevious_, famin_, rephasemap_, checksymm_, continuous_sheets_, auto_stop_;
+		trackfragments_, filterprevious_, famin_, rephasemap_, checksymm_, asymmdump_, continuous_sheets_, auto_stop_;
 	core::Real chainbreak_, continuous_weight_, rmscutoff_, fragcluster_, beamscorecutoff_, fa_bonus_, window_dens_weight_, master_beam_cutoff_, sheetbonus_, sheet_tolerance_, sc_scale_;
 	core::scoring::ScoreFunctionOP sf_, cen_sf_, cenrot_sf_;
 	int looporder_;

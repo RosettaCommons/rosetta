@@ -201,7 +201,7 @@ public:  // Comparisons
 	/// @brief determine the type of the ConformationOP
 	virtual
 	bool
-	same_type_as_me( Conformation const & other, bool recurse = true ) const;
+	same_type_as_me( Conformation const & other, bool const recurse = true ) const;
 
 	/// @brief do the names of all residues in this and src match?
 	bool
@@ -326,6 +326,7 @@ public:  // Chains
 	///
 	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
 	///
+	virtual
 	void
 	chain_endings( utility::vector1< Size > const & endings );
 
@@ -333,20 +334,23 @@ public:  // Chains
 	///
 	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
 	///
+	virtual
 	void
-	insert_chain_ending( Size seqpos );
+	insert_chain_ending( Size const seqpos );
 
 	/// @brief Deletes  <seqpos>  from the list of (chain number) chain endings
 	///
 	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
 	///
+	virtual
 	void
-	delete_chain_ending( Size seqpos );
+	delete_chain_ending( Size const seqpos );
 
 	/// @brief Resets chain data so that the Conformation is marked as a single (chain number) chain
 	///
 	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
 	///
+	virtual
 	void
 	reset_chain_endings();
 
@@ -354,6 +358,7 @@ public:  // Chains
 	///
 	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
 	///
+	virtual
 	void
 	chains_from_termini();
 
@@ -374,8 +379,9 @@ public:  // Secondary Structure
 	/// @details Sets secondary structure character of a sequence position.
 	/// Will resize the secondary structure array if the requested sequence
 	/// position is larger than the length of the array.
-	virtual void
-	set_secstruct( Size seqpos, char setting )
+	virtual
+	void
+	set_secstruct( Size const seqpos, char const setting )
 	{
 		if ( secstruct_.size() < Size(seqpos) ) secstruct_.resize( seqpos, 'L' );
 		secstruct_[seqpos] = setting;
@@ -453,14 +459,16 @@ public: // carbohydrate
 public:  // Trees
 
 	/// @brief Returns the conformation's FoldTree
-	virtual FoldTree const &
+	virtual
+	FoldTree const &
 	fold_tree() const
 	{
 		return *fold_tree_;
 	}
 
 	/// @brief Sets the FoldTree to  <fold_tree_in>
-	virtual void
+	virtual
+	void
 	fold_tree( FoldTree const & fold_tree_in );
 
 	/// @brief Returns the conformation's AtomTree
@@ -582,10 +590,10 @@ public:  // Residues
 	void
 	append_residue_by_jump(
 		conformation::Residue const & new_rsd,
-		Size anchor_residue,
+		Size const anchor_residue,
 		std::string const& anchor_atom = "", // the atom in the anchor_residue
 		std::string const& root_atom = "", // the atom in the new residue
-		bool start_new_chain = false
+		bool const start_new_chain = false
 	);
 
 
@@ -606,94 +614,105 @@ public:  // Residues
 	void
 	insert_residue_by_bond(
 		Residue const & new_rsd_in,
-		Size seqpos, // desired seqpos of new_rsd
+		Size const seqpos, // desired seqpos of new_rsd
 		Size anchor_pos, // in the current sequence numbering, ie before insertion of seqpos
-		bool build_ideal_geometry = false,
+		bool const build_ideal_geometry = false,
 		std::string const& anchor_atom = "",
 		std::string const& root_atom = "",
 		bool new_chain = false, // insert this residue as a new chain, displacing all downstream chains
-		bool lookup_bond_length = false
+		bool const lookup_bond_length = false
 	);
 
 	/// @brief Append a new residue by a bond.
 	void
 	append_residue_by_bond(
 		conformation::Residue const & new_rsd,
-		bool build_ideal_geometry = false,
+		bool const build_ideal_geometry = false,
 		int connection_index = 0,
 		Size anchor_residue = 0,
 		int anchor_connection_index = 0,
-		bool start_new_chain = false,
-		bool lookup_bond_length = false
+		bool const start_new_chain = false,
+		bool const lookup_bond_length = false
 	);
 
 	/// @brief glues to seqpos and perhaps also seqpos+1
+	virtual
 	void
 	append_polymer_residue_after_seqpos(
 		Residue const & new_rsd,
-		Size seqpos,
-		bool build_ideal_geometry
+		Size const seqpos,
+		bool const build_ideal_geometry
 	);
 
 	/// @brief glues to seqpos and perhaps also seqpos+1, removes termini variants if necessary
+	virtual
 	void
 	safely_append_polymer_residue_after_seqpos(
 		Residue const & new_rsd,
-		Size seqpos,
-		bool build_ideal_geometry
+		Size const seqpos,
+		bool const build_ideal_geometry
 	);
 
 	/// @brief glues to seqpos and perhaps also seqpos-1
+	virtual
 	void
 	prepend_polymer_residue_before_seqpos(
 		Residue const & new_rsd,
-		Size seqpos,
-		bool build_ideal_geometry
+		Size const seqpos,
+		bool const build_ideal_geometry
 	);
 
 	/// @brief glues to seqpos and perhaps also seqpos-1, removes termini variants if necessary
+	virtual
 	void
 	safely_prepend_polymer_residue_before_seqpos(
 		Residue const & new_rsd,
-		Size seqpos,
-		bool build_ideal_geometry
+		Size const seqpos,
+		bool const build_ideal_geometry
 	);
 
 	/// @brief replace residue
-	virtual void
+	virtual
+	void
 	replace_residue(
-		Size seqpos,
+		Size const seqpos,
 		Residue const & new_rsd,
-		bool orient_backbone
+		bool const orient_backbone
 	);
 
 	/// @brief function to replace a residue based on superposition on the specified input atom pairs
-	virtual void
+	virtual
+	void
 	replace_residue(
-		Size seqpos,
+		Size const seqpos,
 		Residue const & new_rsd,
 		utility::vector1< std::pair< std::string, std::string > > const & atom_pairs
 	);
 
 	/// @brief Delete polymer residue at the given sequence position
+	virtual
 	void
-	delete_polymer_residue( Size seqpos );
+	delete_polymer_residue( Size const seqpos );
 
 	/// @brief Slow method that relies on FoldTree::delete_seqpos, rebuilds atomtree, can handle jumps/root residue
+	virtual
 	void
-	delete_residue_slow( Size seqpos );
+	delete_residue_slow( Size const seqpos );
 
 	/// @brief Slow method that relies on FoldTree::delete_seqpos, rebuilds atomtree, can handle jumps/root residue
+	virtual
 	void
-	delete_residue_range_slow( Size range_begin, Size range_end );
+	delete_residue_range_slow( Size const range_begin, Size const range_end );
 
 
 	/// @brief returns a mask of residues to be used in scoring
-	virtual utility::vector1<bool>
+	virtual
+	utility::vector1<bool>
 	get_residue_mask() const;
 
 	/// @brief returns a residue-pair weight
-	virtual Real
+	virtual
+	Real
 	get_residue_weight(core::Size, core::Size) const;
 
 
@@ -722,20 +741,22 @@ public:  // Bonds, Connections, Atoms, & Stubs
 	virtual
 	void
 	declare_chemical_bond(
-		Size seqpos1,
+		Size const seqpos1,
 		std::string const & atom_name1,
-		Size seqpos2,
+		Size const seqpos2,
 		std::string const & atom_name2
 	);
 
 
 	/// @brief Rebuilds the atoms that are dependent on polymer bonds for the specified residue only.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	void rebuild_polymer_bond_dependent_atoms_this_residue_only ( Size seqpos );
+	void
+	rebuild_polymer_bond_dependent_atoms_this_residue_only ( Size const seqpos );
 
 	/// @brief Rebuild the atoms ( like HN(seqpos), OC(seqpos+1) ) that are dependent on the polymer bond between seqpos and seqpos+1
+	virtual
 	void
-	rebuild_polymer_bond_dependent_atoms( Size seqpos );
+	rebuild_polymer_bond_dependent_atoms( Size const seqpos );
 
 	void
 	rebuild_residue_connection_dependent_atoms( Size seqpos, Size connid );
@@ -757,6 +778,7 @@ public:  // Bonds, Connections, Atoms, & Stubs
 		bool skip_canonical_and_solvent = false
 	) const;
 
+	virtual
 	void
 	fill_missing_atoms(
 		id::AtomID_Mask missing
@@ -768,6 +790,7 @@ public:  // Bonds, Connections, Atoms, & Stubs
 
 
 	/// @brief  Set the transform between two stubs -- only works if there's a jump between the two sets of stubatoms
+	virtual
 	void
 	set_stub_transform(
 		id::StubID const & stub_id1,
@@ -800,6 +823,7 @@ public:  // Bonds, Connections, Atoms, & Stubs
 
 
 	/// @brief identify polymeric connections
+	virtual
 	void
 	set_polymeric_connection(
 		Size res_id_lower,
@@ -834,10 +858,13 @@ public:  // Bonds, Connections, Atoms, & Stubs
 	/// using suggestions from the FileData (or not!)
 	virtual
 	void
-	//detect_disulfides( utility::vector1< std::pair< Size, Size > > const & disulfs = utility::vector1< std::pair< Size, Size > >() );
-	detect_disulfides( utility::vector1< Size > const & disulf_one = utility::vector1< core::Size >(), utility::vector1< Size > const & disulf_two = utility::vector1< core::Size >() );
+	detect_disulfides(
+		utility::vector1< Size > const & disulf_one = utility::vector1< core::Size >(),
+		utility::vector1< Size > const & disulf_two = utility::vector1< core::Size >()
+	);
 
 	/// @brief Assigns disulfide bonds based on a pre-determined list
+	virtual
 	void
 	fix_disulfides(utility::vector1< std::pair<Size, Size> > const & disulf_bonds);
 
@@ -906,10 +933,10 @@ public:  // Conformation Cutting/Pasting
 	void
 	insert_conformation_by_jump(
 		Conformation const & conf,             // the conformation to be inserted
-		Size insert_seqpos,              // rsd 1 in conf goes here
-		Size insert_jumppos,             // jump#1 in conf goes here, see insert_fold_tree_by_jump
-		Size anchor_pos,                 // in the current sequence numbering, ie before insertion of conf
-		Size anchor_jump_number = 0,     // the desired jump number of the anchoring jump, default=0
+		Size const insert_seqpos,              // rsd 1 in conf goes here
+		Size const insert_jumppos,             // jump#1 in conf goes here, see insert_fold_tree_by_jump
+		Size const anchor_pos,                 // in the current sequence numbering, ie before insertion of conf
+		Size const anchor_jump_number = 0,     // the desired jump number of the anchoring jump, default=0
 		std::string const & anchor_atom = "",  // "" means take default anchor atom
 		std::string const & root_atom   = ""   // "" means take default root   atom
 	);
@@ -923,6 +950,7 @@ public:  // Conformation Cutting/Pasting
 		Size src_begin
 	);
 
+	virtual
 	void
 	insert_fragment(
 		id::StubID const & instub_id,
@@ -940,7 +968,7 @@ public:  // DoFs/xyzs
 	/// @brief Sets the AtomTree degree of freedom (DOF)  <id>  to  <setting>
 	virtual
 	void
-	set_dof( DOF_ID const & id, Real setting );
+	set_dof( DOF_ID const & id, Real const setting );
 
 
 	/// @brief Return the torsion angle OR rigid-body offset for  <id>
@@ -950,7 +978,7 @@ public:  // DoFs/xyzs
 	/// @brief Sets the AtomTree DOF and the torsion OR rigid-body offset in the corresponding Residue or Jump
 	virtual
 	void
-	set_torsion( TorsionID const & id, Real setting );
+	set_torsion( TorsionID const & id, Real const setting );
 
 
 	/// @brief Returns the torsion angle defined by  <atom[1-4]> in Radians
@@ -970,8 +998,8 @@ public:  // DoFs/xyzs
 		AtomID const & atom2,
 		AtomID const & atom3,
 		AtomID const & atom4,
-		Real setting,
-		bool quiet=false
+		Real const setting,
+		bool const quiet=false
 	);
 
 
@@ -990,7 +1018,7 @@ public:  // DoFs/xyzs
 		AtomID const & atom1,
 		AtomID const & atom2,
 		AtomID const & atom3,
-		Real setting
+		Real const setting
 	);
 
 
@@ -1007,7 +1035,7 @@ public:  // DoFs/xyzs
 	set_bond_length(
 		AtomID const & atom1,
 		AtomID const & atom2,
-		Real setting
+		Real const setting
 	);
 
 	/// @brief    Return the normalized vector of the bond between these two atoms.
@@ -1028,7 +1056,7 @@ public:  // DoFs/xyzs
 	virtual
 	void
 	set_jump(
-		int jump_number,
+		int const jump_number,
 		Jump const & new_jump
 	);
 
@@ -1063,12 +1091,13 @@ public:  // DoFs/xyzs
 		Vector const & v
 	);
 
+	virtual
 	void
-	insert_ideal_geometry_at_polymer_bond( Size seqpos );
+	insert_ideal_geometry_at_polymer_bond( Size const seqpos );
 
+	virtual
 	void
-	insert_ideal_geometry_at_residue_connection( Size pos1, Size connid1 );
-
+	insert_ideal_geometry_at_residue_connection( Size const pos1, Size const connid1 );
 
 	void
 	update_actcoords();
@@ -1154,7 +1183,7 @@ public:  // for tracking changes to the structure
 	}
 
 	/// @brief forget all the structure modifications
-	void reset_move_data();
+	virtual void reset_move_data();
 
 	/// @brief  Set coordinates of virtual atoms (used as angle reference points) within a saccharide residue of this
 	/// conformation.
@@ -1346,15 +1375,11 @@ public: // signal management
 	bool
 	blocking_signals() const;
 
-
 	/////////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////
-	// private methods
+	// protected methods
 	/////////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////
-
-private:
-
 protected:
 
 	/// @brief Returns a constant residue reference without triggering coordinate/torsion update
@@ -1378,7 +1403,11 @@ protected:
 	/// @details Needed by derived classes (particularly MirrorSymmetricConformation).
 	void force_update_residue_coordinates() const;
 
-
+	/////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////
+	// private methods
+	/////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////
 private:
 
 	/// @brief Returns a non-constant residue reference without triggering coordinate/torsion update
@@ -1404,15 +1433,14 @@ private:
 
 	/// @brief rebuild atoms in residue seqpos dependent on either the lower (-1) or upper(1) polymer residue
 	void
-	rebuild_polymer_bond_dependent_atoms( Size seqpos, int upper_lower );
-
+	rebuild_polymer_bond_dependent_atoms( Size const seqpos, int const upper_lower );
 
 	void
 	insert_polymer_residue(
 		Residue const & new_rsd_in,
-		Size seqpos, // desired seqpos of new_rsd
-		bool join_lower,
-		bool join_upper
+		Size const seqpos, // desired seqpos of new_rsd
+		bool const join_lower,
+		bool const join_upper
 	);
 
 	/// @brief  Now a private method
@@ -1421,10 +1449,10 @@ private:
 	void
 	append_residue(
 		Residue const & new_rsd_in,
-		bool attach_by_jump,
+		bool const attach_by_jump,
 		std::string const& root_atom,
 		id::NamedAtomID anchor_id,
-		bool start_new_chain
+		bool const start_new_chain
 	);
 
 
@@ -1588,7 +1616,6 @@ private:  // setting the moved data
 	/// changing the number of residues.
 	void
 	pre_nresidue_change();
-
 
 private: // observer notifications
 

@@ -544,6 +544,7 @@ public:
 	void set_filterprevious( bool filterprevious ) { filterprevious_ = filterprevious; }
 	void set_rephasemap( bool rephasemap ) { rephasemap_ = rephasemap; }
 	void set_checksymm( bool checksymm ) { checksymm_ = checksymm; }
+	void set_asymmdump( bool asymmdump ) { asymmdump_ = asymmdump; }
 	void set_continuous_sheets( bool continuous_sheets ) { continuous_sheets_ = continuous_sheets; }
 	void set_auto_stop( bool auto_stop ) { auto_stop_ = auto_stop; }
 	void set_storedbeams( std::string storedbeams ) { storedbeams_ = storedbeams; }

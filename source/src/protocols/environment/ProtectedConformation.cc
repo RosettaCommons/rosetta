@@ -750,7 +750,7 @@ void ProtectedConformation::set_polymeric_connection( Size seqpos, Size ){
 	fail_verification( __FUNCTION__, seqpos );
 }
 
-void ProtectedConformation::fix_disulfides( utility::vector1< std::pair<Size, Size> > vect ){
+void ProtectedConformation::fix_disulfides( utility::vector1< std::pair<Size, Size> > const & vect ){
 	fail_verification( __FUNCTION__, vect.empty() ? vect.front().first : 0 );
 }
 

@@ -118,7 +118,7 @@ SymmetricConformation::clone() const
 }
 
 bool
-SymmetricConformation::same_type_as_me( Conformation const & other, bool recurse  /* = true */ ) const
+SymmetricConformation::same_type_as_me( Conformation const & other, bool const recurse  /* = true */ ) const
 {
 	if ( ! dynamic_cast< SymmetricConformation const * > ( &other) ) {
 		return false;
@@ -921,29 +921,29 @@ SymmetricConformation::append_residue_by_jump(
 void
 SymmetricConformation::append_polymer_residue_after_seqpos(
 	conformation::Residue const & new_rsd,
-	Size const seq_pos,
-	bool const ideal_geometry // default false
+	Size const seqpos,
+	bool const build_ideal_geometry // default false
 )
 {
 	//core::Size nmonomer_jumps = symm_info_->get_njumps_subunit();
 	core::Size nres_monomer = symm_info_->get_nres_subunit();
 	core::Size nsubunits = symm_info_->subunits();
-	core::Size asymm_anchor = ((seq_pos-1)%nres_monomer) + 1;
+	core::Size asymm_anchor = ((seqpos-1)%nres_monomer) + 1;
 
 	// add to the end of each subunit
 	// transform to the coordinate frame of the scoring subunit
 	// go from last->first so we don't have to worry about offsets
 	for ( int i=nsubunits; i>=1; --i ) {
-		core::Size seqpos = i*nres_monomer;
-		core::Size seq_pos = (i-1)*nres_monomer+asymm_anchor;
+		core::Size final_residue_in_current_monomer = i*nres_monomer;
+		core::Size symmetric_seqpos = (i-1)*nres_monomer+asymm_anchor;
 		Residue new_new_rsd = new_rsd;
-		if ( !symm_info_->bb_is_independent( seqpos ) ) {
+		if ( !symm_info_->bb_is_independent( final_residue_in_current_monomer ) ) {
 			// transform coords
 			for ( int j=1; j<=(int)new_new_rsd.natoms(); ++j ) {
-				new_new_rsd.set_xyz(j , apply_transformation( new_rsd.xyz(j), nres_monomer, seqpos ) );
+				new_new_rsd.set_xyz(j , apply_transformation( new_rsd.xyz(j), nres_monomer, final_residue_in_current_monomer ) );
 			}
 		}
-		Conformation::append_polymer_residue_after_seqpos( new_new_rsd, seq_pos, ideal_geometry );
+		Conformation::append_polymer_residue_after_seqpos( new_new_rsd, symmetric_seqpos, build_ideal_geometry );
 	}
 	// update symminfo
 	symm_info_->resize_asu( nres_monomer + 1 );
@@ -957,81 +957,95 @@ SymmetricConformation::append_polymer_residue_after_seqpos(
 void
 SymmetricConformation::safely_append_polymer_residue_after_seqpos(
 	conformation::Residue const & new_rsd,
-	Size const seq_pos,
-	bool const ideal_geometry // default false
+	Size const seqpos,
+	bool const build_ideal_geometry // default false
 )
 {
 	//core::Size nmonomer_jumps = symm_info_->get_njumps_subunit();
 	core::Size nres_monomer = symm_info_->get_nres_subunit();
 	core::Size nsubunits = symm_info_->subunits();
-	core::Size asymm_anchor = ((seq_pos-1)%nres_monomer) + 1;
+	core::Size asymm_anchor = ((seqpos-1)%nres_monomer) + 1;
 
 	// Remove N-terminal types of all the subunits
 	for ( int i=nsubunits; i>=1; --i ) {
-		core::Size seq_pos = (i-1)*nres_monomer+asymm_anchor;
-		core::conformation::remove_upper_terminus_type_from_conformation_residue( *this, seq_pos );
+		core::Size symmetric_seqpos = (i-1)*nres_monomer+asymm_anchor;
+		core::conformation::remove_upper_terminus_type_from_conformation_residue( *this, symmetric_seqpos );
 	}
 
-	append_polymer_residue_after_seqpos( new_rsd, seq_pos, ideal_geometry );
+	append_polymer_residue_after_seqpos( new_rsd, seqpos, build_ideal_geometry );
 
 }
 
 void
 SymmetricConformation::prepend_polymer_residue_before_seqpos(
 	conformation::Residue const & new_rsd,
-	Size const seq_pos,
-	bool const ideal_geometry // default false
+	Size const seqpos,
+	bool const build_ideal_geometry // default false
 )
 {
-	// core::Size nmonomer_jumps = symm_info_->get_njumps_subunit();
 	core::Size nres_monomer = symm_info_->get_nres_subunit();
 	core::Size nsubunits = symm_info_->subunits();
-	core::Size asymm_anchor = ((seq_pos-1)%nres_monomer) + 1;
+	core::Size asymm_anchor = ((seqpos-1)%nres_monomer) + 1;
 
 	// add to the end of each subunit
 	// transform to the coordinate frame of the scoring subunit
 	// go from last->first so we don't have to worry about offsets
 	for ( int i=nsubunits; i>=1; --i ) {
-		core::Size seqpos = i*nres_monomer;
-		core::Size seq_pos = (i-1)*nres_monomer+asymm_anchor;
-		Residue new_new_rsd = new_rsd;
-		if ( !symm_info_->bb_is_independent( seqpos ) ) {
+		core::Size final_residue_in_current_monomer = i*nres_monomer;
+		core::Size symmetric_seqpos = (i-1)*nres_monomer+asymm_anchor;
+
+		ResidueOP new_new_rsd = new_rsd.clone();
+		if ( !symm_info_->bb_is_independent( final_residue_in_current_monomer ) ) {
 			// transform coords
-			for ( int j=1; j<=(int)new_new_rsd.natoms(); ++j ) {
-				new_new_rsd.set_xyz(j , apply_transformation( new_rsd.xyz(j), nres_monomer, seqpos ) );
+			for ( int j=1; j<=(int)new_new_rsd->natoms(); ++j ) {
+				new_new_rsd->set_xyz(j , apply_transformation( new_rsd.xyz(j), nres_monomer, final_residue_in_current_monomer ) );
 			}
 		}
-		Conformation::prepend_polymer_residue_before_seqpos( new_new_rsd, seq_pos, ideal_geometry );
+		if ( build_ideal_geometry ) {
+			Residue const & anchor_rsd( const_residue_( symmetric_seqpos ) );
+			debug_assert( !anchor_rsd.is_lower_terminus() );
+			orient_residue_for_ideal_bond(*new_new_rsd, new_new_rsd->upper_connect(), anchor_rsd, anchor_rsd.lower_connect(), *this );
+		}
+		// build_ideal_geometry always set to false because we handle it in this function
+		Conformation::prepend_polymer_residue_before_seqpos( *new_new_rsd, symmetric_seqpos, false );
 	}
 
 	// update symminfo
 	symm_info_->resize_asu( nres_monomer + 1 );
 	// update ft
-
 	FoldTree f_in = core::conformation::symmetry::get_asymm_unit_fold_tree( *this );
 	core::conformation::symmetry::symmetrize_fold_tree( *this, f_in );
 	fold_tree( f_in );
+
+	if ( build_ideal_geometry ) {
+		for ( int i=nsubunits; i>=1; --i ) {
+			core::Size symmetric_seqpos = (i-1)*nres_monomer+asymm_anchor;
+			rebuild_polymer_bond_dependent_atoms( symmetric_seqpos );
+		}
+	}
+
+
 }
 
 void
 SymmetricConformation::safely_prepend_polymer_residue_before_seqpos(
 	conformation::Residue const & new_rsd,
-	Size const seq_pos,
-	bool const ideal_geometry // default false
+	Size const seqpos,
+	bool const build_ideal_geometry // default false
 )
 {
 	//core::Size nmonomer_jumps = symm_info_->get_njumps_subunit();
 	core::Size nres_monomer = symm_info_->get_nres_subunit();
 	core::Size nsubunits = symm_info_->subunits();
-	core::Size asymm_anchor = ((seq_pos-1)%nres_monomer) + 1;
+	core::Size asymm_anchor = ((seqpos-1)%nres_monomer) + 1;
 
 	// Remove N-terminal types of all the subunits
 	for ( int i=nsubunits; i>=1; --i ) {
-		core::Size seq_pos = (i-1)*nres_monomer+asymm_anchor;
-		core::conformation::remove_lower_terminus_type_from_conformation_residue( *this, seq_pos );
+		core::Size symmetric_seqpos = (i-1)*nres_monomer+asymm_anchor;
+		core::conformation::remove_lower_terminus_type_from_conformation_residue( *this, symmetric_seqpos );
 	}
 
-	prepend_polymer_residue_before_seqpos( new_rsd, seq_pos, ideal_geometry );
+	prepend_polymer_residue_before_seqpos( new_rsd, seqpos, build_ideal_geometry );
 
 }
 
@@ -1390,9 +1404,9 @@ SymmetricConformation::detect_disulfides( utility::vector1< Size > const & disul
 /// @author Rewritten by Vikram K. Mulligan (vmullig@uw.edu).
 void
 SymmetricConformation::declare_chemical_bond(
-	Size seqpos1,
+	Size const seqpos1,
 	std::string const & atom_name1,
-	Size seqpos2,
+	Size const seqpos2,
 	std::string const & atom_name2
 )
 {

@@ -59,88 +59,80 @@ public:
 		MirrorSymmetricConformation const & conf);
 
 	/// @brief virtual assignment operator
-	virtual
 	Conformation &
-	operator=( Conformation const & src );
+	operator=( Conformation const & src ) override;
 
-	virtual
 	void
-	detached_copy( Conformation const & src );
+	detached_copy( Conformation const & src ) override;
 
 	ConformationOP
-	clone() const;
+	clone() const override;
 
-	virtual
 	bool
-	same_type_as_me( Conformation const & other, bool recurse  /* = true */ ) const;
+	same_type_as_me( Conformation const & other, bool const recurse = true ) const override;
 
 	/////////////////////////////////////////
 	//// Setters
 	/////////////////////////////////////////
 
 	/// DOF
-	virtual
 	void
-	set_dof( DOF_ID const & id, Real setting );
+	set_dof( DOF_ID const & id, Real const setting ) override;
 
 	/// BONDS/TORSIONS
-	virtual
 	void
-	set_torsion( TorsionID const & id, Real setting );
+	set_torsion( TorsionID const & id, Real const setting ) override;
 
 	/// JUMPS
 	/// @brief set a jump
-	virtual
 	void
 	set_jump(
-		int jump_number,
+		int const jump_number,
 		Jump const & new_jump
-	);
+	) override;
 
 	/// @brief set a jump
-	virtual
 	void
 	set_jump(
 		AtomID const & id,
 		Jump const & new_jump
-	);
+	) override;
 
-	virtual
 	void
 	set_torsion_angle(
 		AtomID const & atom1,
 		AtomID const & atom2,
 		AtomID const & atom3,
 		AtomID const & atom4,
-		Real setting,
-		bool quiet=false
-	);
+		Real const setting,
+		bool const quiet=false
+	) override;
 
-	virtual Real
-	get_residue_weight(core::Size resid1, core::Size resid2) const;
+	Real
+	get_residue_weight(core::Size resid1, core::Size resid2) const override;
 
 	/// @brief replace residue
-	virtual void
+	void
 	replace_residue(
-		Size seqpos,
+		Size const seqpos,
 		Residue const & new_rsd,
-		bool orient_backbone
-	);
+		bool const orient_backbone
+	) override;
 
-	virtual void
+	void
 	replace_residue(
-		Size seqpos,
+		Size const seqpos,
 		Residue const & new_rsd,
 		utility::vector1< std::pair< std::string, std::string > > const & atom_pairs
-	);
+	) override;
 
 	/// @brief set the fold_tree
-	virtual void
-	fold_tree( FoldTree const & fold_tree_in );
+	void
+	fold_tree( FoldTree const & fold_tree_in ) override;
 
 	// @brief force recomputation of Tsymm_'s from the current conformation
-	virtual void
-	recalculate_transforms( );
+	void
+	recalculate_transforms( ) override;
 
 	virtual
 	~MirrorSymmetricConformation();
@@ -149,27 +141,29 @@ public:
 	void
 	append_residue_by_jump(
 		conformation::Residue const & new_rsd,
-		Size anchor_residue,
+		Size const anchor_residue,
 		std::string const& anchor_atom = "", // the atom in the anchor_residue
 		std::string const& root_atom = "", // the atom in the new residue
-		bool start_new_chain = false
-	);
+		bool const start_new_chain = false
+	) override;
 
 	/// @brief Append a new conformation by a jump; clones this append to all copies
 	void
 	insert_conformation_by_jump(
 		Conformation const & conf,             // the conformation to be inserted
-		Size insert_seqpos,              // rsd 1 in conf goes here
-		Size insert_jumppos,             // jump#1 in conf goes here, see insert_fold_tree_by_jump
-		Size anchor_pos,                 // in the current sequence numbering, ie before insertion of conf
-		Size anchor_jump_number = 0,     // the desired jump number of the anchoring jump, default=0
+		Size const insert_seqpos,              // rsd 1 in conf goes here
+		Size const insert_jumppos,             // jump#1 in conf goes here, see insert_fold_tree_by_jump
+		Size const anchor_pos,                 // in the current sequence numbering, ie before insertion of conf
+		Size const anchor_jump_number = 0,     // the desired jump number of the anchoring jump, default=0
 		std::string const & anchor_atom = "",  // "" means take default anchor atom
 		std::string const & root_atom   = ""   // "" means take default root   atom
-	);
+	) override;
 
-	virtual
 	void
-	detect_disulfides( utility::vector1< Size > const & disulf_one = utility::vector1< core::Size >(), utility::vector1< Size > const & disulf_two = utility::vector1< core::Size >() );
+	detect_disulfides(
+		utility::vector1< Size > const & disulf_one = utility::vector1< core::Size >(),
+		utility::vector1< Size > const & disulf_two = utility::vector1< core::Size >()
+	) override;
 
 	/// @brief Updates residue identities in symmetric subunits, ensuring that they are mirrored relative to the ASU in mirrored subunits
 	/// and identical to the ASU in non-mirrored subunits.

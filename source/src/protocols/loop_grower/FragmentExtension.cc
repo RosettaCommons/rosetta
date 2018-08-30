@@ -229,6 +229,7 @@ FragmentExtension::FragmentExtension( ) {
 	filterprevious_ = false;
 	rephasemap_ = false;
 	checksymm_ = false;
+	asymmdump_ = true;
 	continuous_sheets_ = true;
 	auto_stop_ = false;
 	clustercheck_ = false;
@@ -476,6 +477,7 @@ FragmentExtension::apply( core::pose::Pose & pose ) {
 		loopgrow.set_filterprevious( filterprevious_ );
 		loopgrow.set_rephasemap( rephasemap_ );
 		loopgrow.set_checksymm( checksymm_ );
+		loopgrow.set_asymmdump( asymmdump_ );
 		loopgrow.set_continuous_sheets( continuous_sheets_ );
 		loopgrow.set_auto_stop( auto_stop_ );
 		loopgrow.set_rmscutoff ( rmscutoff_ );
@@ -759,6 +761,9 @@ FragmentExtension::parse_my_tag(
 	if ( tag->hasOption( "samplesheets" ) ) {
 		samplesheets_ = tag->getOption<bool>( "samplesheets" );
 	}
+	if ( tag->hasOption( "trackfragments" ) ) {
+		trackfragments_ = tag->getOption<bool>( "trackfragments" );
+	}
 	if ( tag->hasOption( "filterprevious" ) ) {
 		filterprevious_ = tag->getOption<bool>( "filterprevious" );
 	}
@@ -767,6 +772,9 @@ FragmentExtension::parse_my_tag(
 	}
 	if ( tag->hasOption( "checksymm" ) ) {
 		checksymm_ = tag->getOption<bool>( "checksymm" );
+	}
+	if ( tag->hasOption( "asymmdump" ) ) {
+		asymmdump_ = tag->getOption<bool>( "asymmdump" );
 	}
 	if ( tag->hasOption( "continuous_sheets" ) ) {
 		continuous_sheets_ = tag->getOption<bool>( "continuous_sheets" );
@@ -876,9 +884,11 @@ void FragmentExtension::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 		+ XMLSchemaAttribute::attribute_w_default( "fafilter", xsct_rosetta_bool, "Rescores the top 2N structures with the full atom representation before filtering down to N.", "true" )
 		+ XMLSchemaAttribute::attribute_w_default( "famin", xsct_rosetta_bool, "Toggles minimization in full atom", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "samplesheets", xsct_rosetta_bool, "Toggles the sheet sampler", "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "trackfragments", xsct_rosetta_bool, "Keep order of fragments instead of shuffling (useful only for debugging)", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "filterprevious", xsct_rosetta_bool, "Filter against the beams in the filterbeams file. Used in taboo search", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "rephasemap", xsct_rosetta_bool, "Triggers rephasing of the map when working with xray data, currently distabled", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "checksymm", xsct_rosetta_bool, "Checks all the symmetric versions of the connecting segments to see if an alternative is a better match", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "asymmdump", xsct_rosetta_bool, "If pose is symmetric, when filtering results dump only the asymmetric unit", "true" )
 		+ XMLSchemaAttribute::attribute_w_default( "continuous_sheets", xsct_rosetta_bool, "Toggles a one time vs maintained bonus for the sheets", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "auto_stop", xsct_rosetta_bool, "Toggles autostoping when running out of density. Currently unfinished", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "greedy", xsct_rosetta_bool, "Only runs on the loop specificed by the loop order variable", "true" )

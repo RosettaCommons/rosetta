@@ -62,20 +62,17 @@ public:
 	//SymmetricConformation( SymmetricConformation const & src );
 
 	/// @brief virtual assignment operator
-	virtual
 	Conformation &
-	operator=( Conformation const & src );
+	operator=( Conformation const & src ) override;
 
-	virtual
 	void
-	detached_copy( Conformation const & src );
+	detached_copy( Conformation const & src ) override;
 
 	ConformationOP
-	clone() const;
+	clone() const override;
 
-	virtual
 	bool
-	same_type_as_me( Conformation const & other, bool recurse  /* = true */ ) const;
+	same_type_as_me( Conformation const & other, bool const recurse = true ) const override;
 
 	virtual
 	SymmetryInfoCOP Symmetry_Info() const;
@@ -88,95 +85,87 @@ public:
 	/////////////////////////////////////////
 
 	/// DOF
-	virtual
 	void
-	set_dof( DOF_ID const & id, Real setting );
+	set_dof( DOF_ID const & id, Real const setting ) override;
 
 	void
-	set_secstruct( Size seqpos, char setting );
+	set_secstruct( Size const seqpos, char const setting ) override;
 
 	/// BONDS/TORSIONS
-	virtual
 	void
-	set_torsion( TorsionID const & id, Real setting );
+	set_torsion( TorsionID const & id, Real const setting ) override;
 
 	/// JUMPS
 	/// @brief set a jump
-	virtual
 	void
 	set_jump(
-		int jump_number,
+		int const jump_number,
 		Jump const & new_jump
-	);
+	) override;
 
 	/// @brief set a jump
-	virtual
 	void
 	set_jump(
 		AtomID const & id,
 		Jump const & new_jump
-	);
+	) override;
 
 
-	virtual
 	void
 	set_bond_angle(
 		AtomID const & atom1,
 		AtomID const & atom2,
 		AtomID const & atom3,
-		Real setting
-	);
+		Real const setting
+	) override;
 
 
-	virtual
 	void
 	set_bond_length(
 		AtomID const & atom1,
 		AtomID const & atom2,
-		Real setting
-	);
+		Real const setting
+	) override;
 
 
-	virtual
 	void
 	set_torsion_angle(
 		AtomID const & atom1,
 		AtomID const & atom2,
 		AtomID const & atom3,
 		AtomID const & atom4,
-		Real setting,
-		bool quiet=false
-	);
+		Real const setting,
+		bool const quiet=false
+	) override;
 
-	virtual
 	utility::vector1<bool>
-	get_residue_mask() const;
+	get_residue_mask() const override;
 
-	virtual Real
-	get_residue_weight(core::Size resid1, core::Size resid2) const;
+	Real
+	get_residue_weight(core::Size resid1, core::Size resid2) const override;
 
 	/// @brief replace residue
-	virtual void
+	void
 	replace_residue(
-		Size seqpos,
+		Size const seqpos,
 		Residue const & new_rsd,
-		bool orient_backbone
-	);
+		bool const orient_backbone
+	) override;
 
-	virtual void
+	void
 	replace_residue(
-		Size seqpos,
+		Size const seqpos,
 		Residue const & new_rsd,
 		utility::vector1< std::pair< std::string, std::string > > const & atom_pairs
-	);
+	) override;
 
 	/// @brief set the fold_tree .. update symminfo if jump numbering changed
-	virtual void
-	fold_tree( FoldTree const & fold_tree_in );
+	void
+	fold_tree( FoldTree const & fold_tree_in ) override;
 
 	/// @brief FoldTree access
-	virtual FoldTree const &
-	fold_tree() const
+	FoldTree const &
+	fold_tree() const override
 	{
 		return Conformation::fold_tree();
 	}
@@ -202,22 +191,21 @@ public:
 	recalculate_transforms( );
 
 	/// @brief Symmetric set_xyz
-	virtual void
-	set_xyz( AtomID const & id, PointPosition const & position );
+	void
+	set_xyz( AtomID const & id, PointPosition const & position ) override;
 
 	/// @brief Symmetric batch_set_xyz
-	virtual void
+	void
 	batch_set_xyz(
 		utility::vector1<AtomID> const & ids,
 		utility::vector1<PointPosition> const & positions
-	);
+	) override;
 
-	virtual
 	void
 	apply_transform_Rx_plus_v(
 		numeric::xyzMatrix< Real > const & R,
 		Vector const & v
-	);
+	) override;
 
 	virtual
 	~SymmetricConformation();
@@ -226,73 +214,75 @@ public:
 	void
 	append_residue_by_jump(
 		conformation::Residue const & new_rsd,
-		Size anchor_residue,
+		Size const anchor_residue,
 		std::string const& anchor_atom = "", // the atom in the anchor_residue
 		std::string const& root_atom = "", // the atom in the new residue
-		bool start_new_chain = false
-	);
+		bool const start_new_chain = false
+	) override;
 
 	/// Apped a new residue after a given position in the pose
 	void
 	append_polymer_residue_after_seqpos(
 		conformation::Residue const & new_rsd,
-		Size const seq_pos,
-		bool ideal_geometry = true
-	);
+		Size const seqpos,
+		bool const build_ideal_geometry = true
+	) override;
 
 	void
 	safely_append_polymer_residue_after_seqpos(
 		conformation::Residue const & new_rsd,
-		Size const seq_pos,
-		bool ideal_geometry = true
-	);
+		Size const seqpos,
+		bool const build_ideal_geometry = true
+	) override;
 
 	/// Prepend a new residue after a given position in the pose
 	void
 	prepend_polymer_residue_before_seqpos(
 		conformation::Residue const & new_rsd,
-		Size const seq_pos,
-		bool ideal_geometry = true
-	);
+		Size const seqpos,
+		bool const build_ideal_geometry = true
+	) override;
 
 	void
 	safely_prepend_polymer_residue_before_seqpos(
 		conformation::Residue const & new_rsd,
-		Size const seq_pos,
-		bool ideal_geometry = true
-	);
+		Size const seqpos,
+		bool const build_ideal_geometry = true
+	) override;
 
 	/// @brief Append a new conformation by a jump; clones this append to all copies
 	void
 	insert_conformation_by_jump(
 		Conformation const & conf,             // the conformation to be inserted
-		Size insert_seqpos,              // rsd 1 in conf goes here
-		Size insert_jumppos,             // jump#1 in conf goes here, see insert_fold_tree_by_jump
-		Size anchor_pos,                 // in the current sequence numbering, ie before insertion of conf
-		Size anchor_jump_number = 0,     // the desired jump number of the anchoring jump, default=0
+		Size const insert_seqpos,              // rsd 1 in conf goes here
+		Size const insert_jumppos,             // jump#1 in conf goes here, see insert_fold_tree_by_jump
+		Size const anchor_pos,                 // in the current sequence numbering, ie before insertion of conf
+		Size const anchor_jump_number = 0,     // the desired jump number of the anchoring jump, default=0
 		std::string const & anchor_atom = "",  // "" means take default anchor atom
 		std::string const & root_atom   = ""   // "" means take default root   atom
-	);
+	) override;
+
 
 	//fpd eventually we should have symmetric implementations of all the insert/append/delete residue functions
-
-	virtual
 	void
-	detect_disulfides( utility::vector1< Size > const & disulf_one = utility::vector1< core::Size >(), utility::vector1< Size > const & disulf_two = utility::vector1< core::Size >() );
+	detect_disulfides(
+		utility::vector1< Size > const & disulf_one = utility::vector1< core::Size >(),
+		utility::vector1< Size > const & disulf_two = utility::vector1< core::Size >()
+	) override;
+
 
 	/// @brief Declare that a chemical bond exists between two residues
 	/// @details This updates all symmetry copies, so that each one has a chemical
 	/// bond between the residues in question.
 	/// @author Frank DiMaio.
 	/// @author Rewritten by Vikram K. Mulligan (vmullig@uw.edu).
-	virtual
 	void
 	declare_chemical_bond(
-		Size seqpos1,
+		Size const seqpos1,
 		std::string const & atom_name1,
-		Size seqpos2,
+		Size const seqpos2,
 		std::string const & atom_name2
-	);
+	) override;
 
 protected:
 

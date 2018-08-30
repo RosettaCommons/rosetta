@@ -127,7 +127,7 @@ MirrorSymmetricConformation::clone() const
 }
 
 bool
-MirrorSymmetricConformation::same_type_as_me( Conformation const & other, bool recurse  /* = true */ ) const
+MirrorSymmetricConformation::same_type_as_me( Conformation const & other, bool const recurse  /* = true */ ) const
 {
 	if ( ! dynamic_cast< MirrorSymmetricConformation const * > ( &other) ) {
 		return false;
