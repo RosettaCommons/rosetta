@@ -373,6 +373,7 @@ void xyzVector_add_on_binder(pybind11::class_<numeric::xyzVector<T>, std::shared
 template< typename T >
 void xyzMatrix_add_on_binder(pybind11::class_<numeric::xyzMatrix<T>, std::shared_ptr< numeric::xyzMatrix<T> > > &cl) {
 	using Matrix = numeric::xyzMatrix<T>;
+	using Vector = numeric::xyzVector<T>;
 	cl.def_property("xx", (T const & (Matrix::*)() const) &Matrix::xx, (void (numeric::xyzMatrix<T>::*)(const T &)) &Matrix::xx);
 	cl.def_property("xy", (T const & (Matrix::*)() const) &Matrix::xy, (void (numeric::xyzMatrix<T>::*)(const T &)) &Matrix::xy);
 	cl.def_property("xz", (T const & (Matrix::*)() const) &Matrix::xz, (void (numeric::xyzMatrix<T>::*)(const T &)) &Matrix::xz);
@@ -384,6 +385,15 @@ void xyzMatrix_add_on_binder(pybind11::class_<numeric::xyzMatrix<T>, std::shared
 	cl.def_property("zx", (T const & (Matrix::*)() const) &Matrix::zx, (void (numeric::xyzMatrix<T>::*)(const T &)) &Matrix::zx);
 	cl.def_property("zy", (T const & (Matrix::*)() const) &Matrix::zy, (void (numeric::xyzMatrix<T>::*)(const T &)) &Matrix::zy);
 	cl.def_property("zz", (T const & (Matrix::*)() const) &Matrix::zz, (void (numeric::xyzMatrix<T>::*)(const T &)) &Matrix::zz);
+
+	cl.def("__len__", [](Matrix const &) { return 3; } );
+
+	cl.def("__getitem__", [](Matrix const &m, int i) -> Vector {
+			if (i > 2) { throw pybind11::index_error(); }
+			if (i == 0) { return m.row_x(); }
+			if (i == 1) { return m.row_y(); }
+			if (i == 2) { return m.row_z(); }
+		});
 }
 
 

@@ -465,3 +465,37 @@ def __len__(self):
         stacklevel=2
     )
     return len(self.residues)
+
+
+@bind_method(Pose)
+def pdb_rsd(self, chain_and_resNo):
+    """Look up a specific PDB-numbered residue and return it.
+
+    Args:
+        chain_and_resNo (tuple): a tuple representing the PDB description of the residue
+            in the format (chainID, resNo). For example, residue 1 on chain A would be
+            ("A", 1).
+
+    Returns:
+        pyrosetta.core.conformation.Residue or None: the Residue instance in the Pose.
+        returns `None` if the PDB residue identifier is invalid.
+    """
+    try:
+        return self.residues[self.pdb_info().pdb2pose(*chain_and_resNo)]
+    except IndexError:
+        return
+
+
+@bind_method(Pose)
+def apply_transform(self, xform):
+    """Apply a homogeneous transform to the current pose.
+
+    Args:
+        xform (np.ndarray): A homogeneous transform.
+    """
+    from pyrosetta.bindings.homogeneous_transform import is_homog_xform
+    from pyrosetta.rosetta.numeric import HomogeneousTransform_Double as HomogeneousTransform
+    assert(is_homog_xform(xform))
+
+    ht = HomogeneousTransform.from_array(xform)
+    self.apply_transform_Rx_plus_v(ht.rotation_matrix(), ht.point())
