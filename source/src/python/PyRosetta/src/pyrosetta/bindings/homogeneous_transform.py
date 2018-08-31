@@ -29,7 +29,6 @@ def from_array(cls, xform):
 
     cols = [xyzVector(*rot[:, i]) for i in range(3)]
     cols.append(xyzVector(*trans))
-
     return cls(*cols)
 
 
@@ -47,4 +46,3 @@ def as_array(self):
     ht[:3, 3] = list(self.point())
     assert(is_homog_xform(ht))
     return ht
-
