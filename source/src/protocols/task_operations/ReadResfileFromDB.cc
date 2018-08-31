@@ -181,7 +181,7 @@ ReadResfileFromDB::parse_tag( TagCOP tag , DataMap & datamap )
 		database_table_ = tag->getOption<string>("table");
 	}
 
-	if ( ! tag->hasOption( "selection_tag" ) ) {
+	if ( tag->getOption< std::string >( "selection_tag", "NO_SELECTION_TAG_SET" ) == "NO_SELECTION_TAG_SET" ) {
 		std::ostringstream oss;
 		oss << "ERROR: The ReadResfileFromDB task operation requires a selection_tag attribute to identify which row of the table to pull results from\n";
 		throw CREATE_EXCEPTION( utility::excn::Exception, oss.str() );
