@@ -66,7 +66,7 @@ public:
 		using namespace core::chemical;
 		using namespace core::conformation;
 
-		core_init();
+		core_init_with_additional_options( "-run::preserve_header true" );
 		core::import_pose::pose_from_file( pose, "core/pose/pdbinfo_test_in.pdb" , core::import_pose::PDB_file);
 
 		ResidueTypeSetCOP residue_set
@@ -333,6 +333,19 @@ public:
 		conf = NULL;
 
 		TS_ASSERT( !info.is_observing().lock() );
+	}
+
+	/// @brief test chain_sequences
+	void test_PDBInfo_chain_sequences() {
+
+		utility::vector1< std::string > seq_chain_L{ "GLU" };
+		utility::vector1< std::string > seq_chain_H{ "LEU", "GLY" };
+		utility::vector1< std::string > seq_chain_P{ "ASN" };
+
+		TS_ASSERT_EQUALS( pose.pdb_info()->chain_sequences( 'L' ), seq_chain_L );
+		TS_ASSERT_EQUALS( pose.pdb_info()->chain_sequences( 'H' ), seq_chain_H );
+		TS_ASSERT_EQUALS( pose.pdb_info()->chain_sequences( 'P' ), seq_chain_P );
+
 	}
 
 };

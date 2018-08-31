@@ -1190,6 +1190,7 @@ PoseFromSFRBuilder::build_pdb_info_1_everything_but_temps( pose::Pose & pose ) {
 	if ( options_.preserve_header() ) {
 		pdb_info->remarks( *( sfr_.remarks() ) );
 		pdb_info->header_information( sfr_.header() );
+		pdb_info->chain_sequences( sfr_.chain_sequences() );
 	}
 
 	// Step 3b. Collect residue level data.

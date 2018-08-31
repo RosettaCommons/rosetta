@@ -580,6 +580,33 @@ public: // pdb-wide accessors/mutators
 		return header_information_;
 	}
 
+	/// @brief For structures deposited into the protein databank, the
+	/// chain sequences stores the SEQRES records. A listing of the
+	/// consecutive chemical components covalently linked in a linear
+	/// fashion to form a polymer. In short, the sequence (as a vector of
+	/// three letter codes) that the researcher performed the experiment on.
+
+	/// Note: The chain sequences information is only initialized if it is needed.
+	/// Generally this requires using the -run:preserve_header options flag.
+
+	inline
+	void
+	chain_sequences( std::map< char, utility::vector1< std::string > > chain_sequences ) {
+		chain_sequences_ = chain_sequences;
+	}
+
+	inline
+	utility::vector1< std::string >
+	chain_sequences( char chain ) {
+		return chain_sequences_[ chain ];
+	}
+
+
+	inline
+	std::map< char, utility::vector1< std::string > >
+	chain_sequences() {
+		return chain_sequences_;
+	}
 
 public: // single residue accessors
 
@@ -1366,6 +1393,9 @@ private: // data
 
 	/// @brief header information
 	io::HeaderInformationOP header_information_;
+
+	/// @brief chain sequences
+	std::map< char, utility::vector1< std::string > > chain_sequences_;
 
 	/// @brief pdb remarks
 	Remarks remarks_;

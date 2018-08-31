@@ -141,6 +141,7 @@ PDBInfo::PDBInfo( PDBInfo const & info ) :
 	name_( info.name_ ),
 	modeltag_( info.modeltag_ ),
 	header_information_( info.header_information_ ),
+	chain_sequences_( info.chain_sequences_ ),
 	remarks_( info.remarks_ ),
 	residue_rec_( info.residue_rec_ ),
 	pdb2pose_( info.pdb2pose_ ),
@@ -178,6 +179,8 @@ PDBInfo::operator =( PDBInfo const & info )
 		if ( info.header_information_ ) {
 			header_information_ = io::HeaderInformationOP( new io::HeaderInformation(*info.header_information_) );
 		}
+
+		chain_sequences_ = info.chain_sequences_;
 
 		residue_rec_ = info.residue_rec_;
 
@@ -1019,6 +1022,7 @@ core::pose::PDBInfo::save( Archive & arc ) const {
 	arc( CEREAL_NVP( name_ ) ); // String
 	arc( CEREAL_NVP( modeltag_ ) ); // String
 	arc( CEREAL_NVP( header_information_ ) ); // io::HeaderInformationOP
+	arc( CEREAL_NVP( chain_sequences_ ) );
 	arc( CEREAL_NVP( remarks_ ) ); // Remarks
 	arc( CEREAL_NVP( residue_rec_ ) ); // ResidueRecords
 	arc( CEREAL_NVP( pdb2pose_ ) ); // class core::pose::PDBPoseMap
@@ -1039,6 +1043,7 @@ core::pose::PDBInfo::load( Archive & arc ) {
 	arc( name_ ); // String
 	arc( modeltag_ ); // String
 	arc( header_information_ ); // io::HeaderInformationOP
+	arc( chain_sequences_ );
 	arc( remarks_ ); // Remarks
 	arc( residue_rec_ ); // ResidueRecords
 	arc( pdb2pose_ ); // class core::pose::PDBPoseMap

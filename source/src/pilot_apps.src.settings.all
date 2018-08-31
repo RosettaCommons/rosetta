@@ -297,7 +297,8 @@ sources = {
 		#"UnfoldedStateEnergyCalculator",
 		#"rotamer_prediction_benchmark", # /* Doug Renfrew,Documentation Location,Demo Location */
 		#"simple_relax", # /* Doug Renfrew,Documentation Location,Demo Location */
-	        #"score_min_rtmin_test",
+		#"score_min_rtmin_test",
+		"test_chain_sequence",
 	],
 	"pilot/dwkulp" : [
 		#"flexibleLoopDesign",
