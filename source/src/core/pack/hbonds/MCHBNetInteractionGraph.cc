@@ -100,11 +100,9 @@ MCHBNetInteractionGraph::find_symmetric_hbonds(
 		for ( Size rot = 1; rot <= rotamer_sets_->nrotamers_for_moltenres( mres ); ++rot ) {
 			Real const one_body_1 = get_one_body_energy_for_node_state( mres, rot ) / scmult_1b;
 			if ( one_body_1 < hb_threshold ) {
-				utility::graph::Edge * new_edge =
+				scoring::hbonds::graph::AtomLevelHBondEdge * new_edge =
 					hbond_graph_->add_edge( offset_for_mres + rot, offset_for_mres + rot );
-				scoring::hbonds::graph::AtomLevelHBondEdge & new_hbond_edge =
-					static_cast< scoring::hbonds::graph::AtomLevelHBondEdge & >( * new_edge );
-				new_hbond_edge.set_energy( one_body_1 );
+				new_edge->set_energy( one_body_1 );
 			}
 		}//rot
 	}//mres
@@ -152,18 +150,46 @@ void MCHBNetInteractionGraph::eval_rot_pair(
 		return;
 	}
 	if ( two_body_energy <= hbond_threshold_ ) {
-		utility::graph::Edge * const existing_edge = hbond_graph_->find_edge( global_rot1, global_rot2 );
-		if ( existing_edge ) {
-			//if edge exists, add energy to existing edge
-			AtomLevelHBondEdge & existing_hbond_edge =
-				static_cast< AtomLevelHBondEdge & >( * existing_edge );
-			existing_hbond_edge.set_energy( existing_hbond_edge.energy() + two_body_energy );
+		// utility::graph::Edge * const existing_edge = hbond_graph_->find_edge( global_rot1, global_rot2 );
+		// if ( existing_edge ) {
+		//  //if edge exists, add energy to existing edge
+		//  AtomLevelHBondEdge & existing_hbond_edge =
+		//   static_cast< AtomLevelHBondEdge & >( * existing_edge );
+		//  existing_hbond_edge.set_energy( existing_hbond_edge.energy() + two_body_energy );
+		// } else {
+		//  AtomLevelHBondEdge & new_edge =
+		//   static_cast< AtomLevelHBondEdge & >( * hbond_graph_->add_edge( global_rot1, global_rot2 ) );
+		//  new_edge.set_energy( two_body_energy );
+		// }
+		bool swap = global_rot1 > global_rot2;
+		Size rot1 = swap ? global_rot2 : global_rot1;
+		Size rot2 = swap ? global_rot1 : global_rot2;
+		std::pair< Size, Size > rot_pair( rot1, rot2 );
+		if ( future_edges_.count(rot_pair) == 0 ) {
+			future_edges_[rot_pair] = two_body_energy;
 		} else {
-			AtomLevelHBondEdge & new_edge =
-				static_cast< AtomLevelHBondEdge & >( * hbond_graph_->add_edge( global_rot1, global_rot2 ) );
-			new_edge.set_energy( two_body_energy );
+			future_edges_[rot_pair] += two_body_energy;
 		}
 	}
+}
+
+void MCHBNetInteractionGraph::finalize_hbond_graph() {
+
+	using namespace scoring::hbonds::graph;
+
+	for ( std::pair< std::pair< Size, Size>, float > const & pair_val : future_edges_ ) {
+
+		std::pair< Size, Size > rot_pair = pair_val.first;
+		float val = pair_val.second;
+
+		AtomLevelHBondEdge & new_edge =
+			static_cast< AtomLevelHBondEdge & >( * hbond_graph_->add_edge( rot_pair.first, rot_pair.second ) );
+		new_edge.set_energy( val );
+
+	}
+
+	future_edges_.clear();
+
 }
 
 

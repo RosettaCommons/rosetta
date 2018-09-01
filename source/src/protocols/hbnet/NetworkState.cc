@@ -33,12 +33,12 @@ NetworkState::NetworkState(
 	edges_.push_back( monte_carlo_seed_ );
 
 	core::scoring::hbonds::graph::AtomLevelHBondNode const * const first_node =
-		hbond_graph->get_hbondnode( monte_carlo_seed_->get_first_node_ind() );
+		hbond_graph->get_node( monte_carlo_seed_->get_first_node_ind() );
 	nodes_.push_back( first_node );
 	add_polar_atoms( first_node );
 
 	core::scoring::hbonds::graph::AtomLevelHBondNode const * const second_node =
-		hbond_graph->get_hbondnode( monte_carlo_seed_->get_second_node_ind() );
+		hbond_graph->get_node( monte_carlo_seed_->get_second_node_ind() );
 	//in the case of symmetry, this might evaluate to false:
 	if ( monte_carlo_seed_->get_first_node_ind() != monte_carlo_seed_->get_second_node_ind() ) {
 		nodes_.push_back( second_node );

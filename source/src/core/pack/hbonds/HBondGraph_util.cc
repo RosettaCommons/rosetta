@@ -50,7 +50,9 @@ scoring::hbonds::graph::AtomLevelHBondGraphOP create_init_and_create_edges_for_a
 	scoring::ScoreFunction const & sfxn,
 	pose::Pose const & pose,
 	Real hydrogen_bond_threshold,
-	Real clash_threshold
+	Real clash_threshold,
+	Real hbond_energy_threshold_for_satisfaction /*= -0.25f */,
+	bool include_backbone_at_atom_level /*= false*/
 ){
 	scoring::hbonds::graph::AtomLevelHBondGraphOP hbond_graph = create_and_init_atom_level_hbond_graph( * rotamer_sets );
 
@@ -58,7 +60,10 @@ scoring::hbonds::graph::AtomLevelHBondGraphOP create_init_and_create_edges_for_a
 	ig->initialize( *rotamer_sets );
 
 	utility::graph::GraphOP packer_neighbor_graph = create_packer_graph( pose, sfxn, rotamer_sets->task() );
+
 	rotamer_sets->precompute_two_body_energies( pose, sfxn, packer_neighbor_graph, ig, true );
+	ig->finalize_hbond_graph();
+
 
 	//If you are running with symmetry, you still need to score one-body interactions
 
@@ -67,7 +72,9 @@ scoring::hbonds::graph::AtomLevelHBondGraphOP create_init_and_create_edges_for_a
 		* rotamer_sets,
 		* scoring::hbonds::HBondDatabase::get_database(),
 		pose.energies().tenA_neighbor_graph(),
-		pose
+		pose,
+		false,
+		hbond_energy_threshold_for_satisfaction
 	);
 
 	utility::vector1< bool > include_all_resids( pose.size(), true );
@@ -75,7 +82,8 @@ scoring::hbonds::graph::AtomLevelHBondGraphOP create_init_and_create_edges_for_a
 		* hbond_graph,
 		* rotamer_sets,
 		include_all_resids,
-		false
+		false,
+		include_backbone_at_atom_level
 	);
 
 	return hbond_graph;
@@ -86,7 +94,7 @@ void init_node_info( AtomLevelHBondGraph & graph, rotamer_set::RotamerSets const
 	Size const nrot = rotamer_sets.nrotamers();
 
 	for ( Size rot = 1; rot <= nrot; ++rot ) {
-		AtomLevelHBondNode * node = graph.get_hbondnode( rot );
+		AtomLevelHBondNode * node = graph.get_node( rot );
 		Size const mres = rotamer_sets.moltenres_for_rotamer( rot );
 		debug_assert( mres );
 		node->set_moltenres( mres );
@@ -154,7 +162,7 @@ void determine_atom_level_edge_info_for_all_edges(
 	Real hbond_energy_threshold_for_satisfaction,
 	conformation::symmetry::SymmetryInfoCOP symm_info
 ){
-	for ( utility::graph::EdgeListIterator it = hb_graph.edge_list_begin();
+	for ( utility::graph::LowMemEdgeListIter it = hb_graph.edge_list_begin();
 			it != hb_graph.edge_list_end(); ++it ) {
 		AtomLevelHBondEdge & edge = static_cast< AtomLevelHBondEdge & >( * ( * it ) );
 
@@ -291,7 +299,8 @@ void determine_atom_level_node_info_for_all_nodes(
 	scoring::hbonds::graph::AtomLevelHBondGraph & hb_graph,
 	rotamer_set::RotamerSets const & rotamer_sets,
 	utility::vector1< bool > const & include_these_resids,
-	bool skip_nodes_with_no_edges
+	bool skip_nodes_with_no_edges,
+	bool include_backbone /*= false*/
 ){
 	Size const num_nodes = hb_graph.num_nodes();
 	for ( unsigned int ii=1; ii <= num_nodes; ++ii ) {
@@ -300,14 +309,15 @@ void determine_atom_level_node_info_for_all_nodes(
 			continue;
 		}
 
-		determine_atom_level_node_info( * al_node, rotamer_sets, include_these_resids );
+		determine_atom_level_node_info( * al_node, rotamer_sets, include_these_resids, include_backbone );
 	}
 }
 
 void determine_atom_level_node_info(
 	AtomLevelHBondNode & al_node,
 	rotamer_set::RotamerSets const & rotamer_sets,
-	utility::vector1< bool > const & include_these_resids
+	utility::vector1< bool > const & include_these_resids,
+	bool include_backbone /*= false*/
 ){
 	Size const rot = al_node.global_rotamer_id();
 	Size const mres = rotamer_sets.moltenres_for_rotamer( rot );
@@ -319,7 +329,10 @@ void determine_atom_level_node_info(
 	////////
 	//HEAVY
 	unsigned short int const nheavyatoms = rotamer->nheavyatoms();
-	for ( unsigned short int ii = rotamer->first_sidechain_atom(); ii <= nheavyatoms; ++ii ) {
+	unsigned short int const first_sidechain_atom = rotamer->first_sidechain_atom();
+	for ( unsigned short int ii = ( include_backbone ? 1 : first_sidechain_atom );
+			ii <= nheavyatoms;
+			++ii ) {
 
 		bool const is_don = rotamer->heavyatom_is_an_acceptor( ii );
 		bool const is_acc = rotamer->heavyatom_has_polar_hydrogens( ii );
@@ -330,7 +343,8 @@ void determine_atom_level_node_info(
 				false, //is_hydrogen
 				is_don,
 				is_acc,
-				rotamer->atom_type( ii ).name() == "OH" //is_hydroxyl
+				rotamer->atom_type( ii ).name() == "OH", //is_hydroxyl
+				ii < first_sidechain_atom // is_backbone
 			);
 		}
 	}//for heavy atoms
@@ -346,7 +360,8 @@ void determine_atom_level_node_info(
 				true, //is_hydrogen
 				false,
 				false,
-				rotamer->atom_type( rotamer->atom_base( jj ) ).name() == "OH" //is_hydroxyl
+				rotamer->atom_type( rotamer->atom_base( jj ) ).name() == "OH", //is_hydroxyl
+				rotamer->atom_is_backbone( jj )
 			);
 		}
 	}
@@ -414,19 +429,19 @@ void find_satisfying_interactions_with_background(
 }
 
 void delete_edges_with_degree_zero( scoring::hbonds::graph::AtomLevelHBondGraph & hb_graph ){
-	std::list< utility::graph::Edge * > edges_to_delete;
+	std::list< utility::graph::LowMemEdge * > edges_to_delete;
 
-	for ( utility::graph::EdgeListIterator it = hb_graph.edge_list_begin(), end = hb_graph.edge_list_end();
+	for ( utility::graph::LowMemEdgeListIter it = hb_graph.edge_list_begin(), end = hb_graph.edge_list_end();
 			it != end; ++it ) {
 
-		utility::graph::Edge * const edge = * it;
+		utility::graph::LowMemEdge * const edge = * it;
 		if ( hb_graph.get_node( edge->get_first_node_ind() )->num_edges() == 1 &&
 				hb_graph.get_node( edge->get_second_node_ind() )->num_edges() == 1 ) {
 			edges_to_delete.push_back( edge );
 		}
 	}
 
-	for ( utility::graph::Edge * doomed_edge : edges_to_delete ) {
+	for ( utility::graph::LowMemEdge * doomed_edge : edges_to_delete ) {
 		hb_graph.delete_edge( doomed_edge );
 	}
 }

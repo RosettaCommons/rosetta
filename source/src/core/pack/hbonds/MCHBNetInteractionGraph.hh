@@ -94,8 +94,11 @@ public:
 		return rotamer_sets_;
 	}
 
+	void finalize_hbond_graph();
+
 private:
 
+	std::map< std::pair< int, int >, float> future_edges_;
 	scoring::hbonds::graph::AtomLevelHBondGraphOP hbond_graph_;
 	rotamer_set::RotamerSetsCOP rotamer_sets_;
 

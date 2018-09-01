@@ -28,7 +28,7 @@
 #include <numeric/xyzVector.hh>
 
 #include <utility/graph/unordered_object_pool.hpp>
-#include <utility/graph/Graph.hh>
+#include <utility/graph/LowMemGraph.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <core/types.hh>
@@ -44,7 +44,7 @@ namespace graph {
 
 
 ///@brief Each AtomLevelHBondNode represents a rotamer from the RotamerSets object
-class AtomLevelHBondNode : public utility::graph::Node {
+class AtomLevelHBondNode : public utility::graph::LowMemNode {
 
 public:
 
@@ -54,21 +54,21 @@ public:
 	/////////////////////////////////
 
 	//constructor
-	AtomLevelHBondNode( utility::graph::Graph*, Size node_id );
+	AtomLevelHBondNode( Size node_id );
 
-	AtomLevelHBondNode( utility::graph::Graph*, Size node_id, Size mres_id, Size rotamer_id );
+	AtomLevelHBondNode( Size node_id, Size mres_id, Size rotamer_id );
 
 	//destructor
-	~AtomLevelHBondNode() override;
+	~AtomLevelHBondNode();
 
 public:
 
-	void copy_from( utility::graph::Node const * source ) override;
+	// void copy_from( utility::graph::Node const * source ) override;
 
-	void print() const override;
+	void print() const /* override */;
 
-	Size count_static_memory() const override;
-	Size count_dynamic_memory() const override;
+	Size count_static_memory() const /*override*/;
+	Size count_dynamic_memory() const /*override*/;
 
 public://getters, setters, accessors
 
@@ -126,9 +126,10 @@ public://getters, setters, accessors
 		bool is_hydrogen,
 		bool is_donor,
 		bool is_acceptor,
-		bool is_hydroxyl
+		bool is_hydroxyl,
+		bool is_backbone
 	){
-		polar_sc_atoms_not_satisfied_by_background_.emplace_back( local_atom_id, atom_position, is_hydrogen, is_donor, is_acceptor, is_hydroxyl );
+		polar_sc_atoms_not_satisfied_by_background_.emplace_back( local_atom_id, atom_position, is_hydrogen, is_donor, is_acceptor, is_hydroxyl, is_backbone );
 	}
 
 	//Unstable means that the order is not preserved. I think this should not be used because it is handy to have all of the hydrogens at the end.
@@ -164,10 +165,6 @@ public://getters, setters, accessors
 		remove_atom_info_from_vec_stable( polar_sc_atoms_not_satisfied_by_background_, local_atom_id );
 	}
 
-	/*virtual void remove_atom_info_unstable( unsigned short int local_atom_id ){
-	remove_atom_info_unstable( polar_sc_atoms_not_satisfied_by_background_, local_atom_id );
-	}*/
-
 private:
 	unsigned int mres_id_;
 	unsigned int rotamer_id_;
@@ -190,24 +187,24 @@ public://please do not use this. It is required for pyrosetta compilation
 
 
 ///@brief Each AtomLevelHBondEdge represents a hydrogen bond
-class AtomLevelHBondEdge : public utility::graph::Edge {
+class AtomLevelHBondEdge : public utility::graph::LowMemEdge {
 
 public:
 
 	//constructor
-	AtomLevelHBondEdge( utility::graph::Graph* owner, Size first_node_ind, Size second_node_ind );
+	AtomLevelHBondEdge( Size first_node_ind, Size second_node_ind );
 
-	AtomLevelHBondEdge( utility::graph::Graph* owner, Size first_node_ind, Size second_node_ind, Real energy );
+	AtomLevelHBondEdge( Size first_node_ind, Size second_node_ind, Real energy );
 
 	//destructor
 	~AtomLevelHBondEdge();
 
 public:
 
-	void copy_from( utility::graph::Edge const * source ) override;
+	// void copy_from( utility::graph::Edge const * source ) override;
 
-	Size count_static_memory() const override;
-	Size count_dynamic_memory() const override;
+	Size count_static_memory() const /*override*/;
+	Size count_dynamic_memory() const /*override*/;
 
 	void register_hbond(
 		bool first_node_is_donor,
@@ -238,17 +235,18 @@ public:
 
 public://getters and setters
 
-	utility::vector1< HBondInfo > & hbonds() {
+	std::vector< HBondInfo > & hbonds() {
 		return hbonds_;
 	}
 
-	utility::vector1< HBondInfo > const & hbonds() const {
+	std::vector< HBondInfo > const & hbonds() const {
 		return hbonds_;
 	}
 
 private:
 	float energy_;
-	utility::vector1< HBondInfo > hbonds_;
+	std::vector< HBondInfo > hbonds_; // sizeof(std::vector) == 24 ; sizeof(utility::vector1) == 32
+	//  If memory is a bottleneck, it's because there are too many edges
 
 public://please do not use this. It is required for pyrosetta compilation
 	AtomLevelHBondEdge & operator = ( AtomLevelHBondEdge const & src ) {
@@ -260,9 +258,10 @@ public://please do not use this. It is required for pyrosetta compilation
 
 };
 
-class AtomLevelHBondGraph : public utility::graph::Graph {
+class AtomLevelHBondGraph : public utility::graph::LowMemGraph<AtomLevelHBondNode,AtomLevelHBondEdge> {
 
 public:
+	typedef utility::graph::LowMemGraph<AtomLevelHBondNode,AtomLevelHBondEdge> PARENT;
 
 	//constructor
 	AtomLevelHBondGraph();
@@ -271,44 +270,12 @@ public:
 	//destructor
 	~AtomLevelHBondGraph() override;
 
-protected:
-
-	utility::graph::Node * create_new_node( platform::Size node_index ) override;
-
-	utility::graph::Edge * create_new_edge( Size index1, Size index2 ) override;
-	utility::graph::Edge * create_new_edge( utility::graph::Edge const * example_edge ) override;
-
-public:
-	void delete_node( utility::graph::Node * ) override;
-	void delete_edge( utility::graph::Edge * edge ) override;
-
 	Size count_static_memory() const override;
 	Size count_dynamic_memory() const override;
 
-public: //access methods
-	AtomLevelHBondNode * get_hbondnode( platform::Size index ) {
-		return static_cast< AtomLevelHBondNode * >( get_node( index ) );
-	}
-
-	AtomLevelHBondNode const * get_hbondnode( platform::Size index ) const {
-		return static_cast< AtomLevelHBondNode const * >( get_node( index ) );
-	}
-
-	AtomLevelHBondEdge * find_hbondedge( platform::Size node1, platform::Size node2 ) {
-		return static_cast< AtomLevelHBondEdge * >( find_edge( node1, node2 ) );
-	}
-
-	AtomLevelHBondEdge const * find_hbondedge( platform::Size node1, platform::Size node2 ) const {
-		return static_cast< AtomLevelHBondEdge const * >( find_edge( node1, node2 ) );
-	}
 
 public://old methods & methods used for unit tests
 	AtomLevelHBondEdge * register_hbond( Size rotamerA, Size rotamerB, Real score );
-
-private:
-
-	boost::unordered_object_pool< AtomLevelHBondEdge > * hbond_edge_pool_;
-	boost::unordered_object_pool< AtomLevelHBondNode > * hbond_node_pool_;
 
 };
 

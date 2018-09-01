@@ -79,7 +79,7 @@ public:
 		TS_ASSERT_EQUALS( alhbg.num_nodes(), nrot );
 
 		for ( core::Size rot = 1; rot <= nrot; ++rot ) {
-			core::scoring::hbonds::graph::AtomLevelHBondNode const * alhbg_node = dynamic_cast< core::scoring::hbonds::graph::AtomLevelHBondNode const * > ( alhbg.get_node( rot ) );
+			core::scoring::hbonds::graph::AtomLevelHBondNode const * alhbg_node = alhbg.get_node( rot );
 			TS_ASSERT( alhbg_node );
 			TS_ASSERT_EQUALS( alhbg_node->global_rotamer_id(), rot );
 			TS_ASSERT_EQUALS( alhbg_node->moltenres(), rotsets.moltenres_for_rotamer( rot ) );
@@ -95,25 +95,26 @@ public:
 		alhbg.register_hbond( 4, offset, -0.5 );
 		alhbg.register_hbond( 5, offset + 1, -0.5 );
 
-		TS_ASSERT( alhbg.find_hbondedge( 1, offset ) );
-		TS_ASSERT( alhbg.find_hbondedge( 2, offset ) );
-		TS_ASSERT( alhbg.find_hbondedge( 3, offset ) );
-		TS_ASSERT( alhbg.find_hbondedge( 4, offset ) );
-		TS_ASSERT( alhbg.find_hbondedge( 5, offset + 1 ) );
+		TS_ASSERT( alhbg.find_edge( 1, offset ) );
+		TS_ASSERT( alhbg.find_edge( 2, offset ) );
+		TS_ASSERT( alhbg.find_edge( 3, offset ) );
+		TS_ASSERT( alhbg.find_edge( 4, offset ) );
+		TS_ASSERT( alhbg.find_edge( 5, offset + 1 ) );
 
 		core::pack::hbonds::delete_edges_with_degree_zero( alhbg );
 
-		TS_ASSERT( alhbg.find_hbondedge( 1, offset ) );
-		TS_ASSERT( alhbg.find_hbondedge( 2, offset ) );
-		TS_ASSERT( alhbg.find_hbondedge( 3, offset ) );
-		TS_ASSERT( alhbg.find_hbondedge( 4, offset ) );
-		TS_ASSERT( ! alhbg.find_hbondedge( 5, offset + 1 ) );
+		TS_ASSERT( alhbg.find_edge( 1, offset ) );
+		TS_ASSERT( alhbg.find_edge( 2, offset ) );
+		TS_ASSERT( alhbg.find_edge( 3, offset ) );
+		TS_ASSERT( alhbg.find_edge( 4, offset ) );
+		TS_ASSERT( ! alhbg.find_edge( 5, offset + 1 ) );
 
 		utility::vector1< bool > buried( testPose.size(), true );
 		core::pack::hbonds::determine_atom_level_node_info_for_all_nodes( alhbg, rotsets, buried );
 
 		core::pack::hbonds::determine_atom_level_edge_info_for_all_edges( alhbg, rotsets, *core::scoring::hbonds::HBondDatabase::get_database(), testPose.energies().tenA_neighbor_graph(), testPose );
 	}
+
 
 	void test_AtomInfo(){
 		numeric::xyzVector< float > xyz( 1, 2, 3 );
@@ -123,7 +124,8 @@ public:
 			true,
 			false,
 			true,
-			false
+			false,
+			true
 		);
 
 		TS_ASSERT_EQUALS( ai.local_atom_id(), 17 );
@@ -131,6 +133,7 @@ public:
 		TS_ASSERT( ! ai.is_donor() );
 		TS_ASSERT( ai.is_acceptor() );
 		TS_ASSERT( ! ai.is_hydroxyl() );
+		TS_ASSERT( ai.is_backbone() );
 
 		ai.is_hydrogen( false );
 		TS_ASSERT( ! ai.is_hydrogen() );
@@ -143,6 +146,9 @@ public:
 
 		ai.is_hydroxyl( true );
 		TS_ASSERT( ai.is_hydroxyl() );
+
+		ai.is_backbone( false );
+		TS_ASSERT( ! ai.is_backbone() );
 	}
 
 };

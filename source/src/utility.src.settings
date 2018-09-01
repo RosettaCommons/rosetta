@@ -48,6 +48,7 @@ sources = {
 		"Digraph",
 		"Graph",
 		"graph_util",
+		"LowMemGraph",
 	],
 	"utility/io": [
 		"icstream",

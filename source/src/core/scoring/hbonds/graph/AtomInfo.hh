@@ -38,7 +38,8 @@ public:
 		bool is_hydrogen_setting,
 		bool is_donor_setting,
 		bool is_acceptor_setting,
-		bool is_hydroxyl_setting
+		bool is_hydroxyl_setting,
+		bool is_backbone_setting
 	) :
 		local_atom_id_( atomid ),
 		xyz_( atom_position ),
@@ -48,6 +49,7 @@ public:
 		is_donor(    is_donor_setting );
 		is_acceptor( is_acceptor_setting );
 		is_hydroxyl( is_hydroxyl_setting );
+		is_backbone( is_backbone_setting );
 	}
 
 	AtomInfo(
@@ -57,7 +59,8 @@ public:
 		bool is_hydrogen_setting,
 		bool is_donor_setting,
 		bool is_acceptor_setting,
-		bool is_hydroxyl_setting
+		bool is_hydroxyl_setting,
+		bool is_backbone_setting
 	) :
 		local_atom_id_( atomid ),
 		xyz_( atom_position ),
@@ -67,6 +70,7 @@ public:
 		is_donor(    is_donor_setting );
 		is_acceptor( is_acceptor_setting );
 		is_hydroxyl( is_hydroxyl_setting );
+		is_backbone( is_backbone_setting );
 	}
 
 
@@ -79,10 +83,11 @@ private:
 		IS_DONOR,   //1
 		IS_ACCEPTOR,//2
 		IS_HYDROXYL,//3
+		IS_BACKBONE,//4
 		count, //do not use for anything other than properties_ definition!
 	};
 
-	static_assert( Settings::count - Settings::IS_HYDROGEN == 4,
+	static_assert( Settings::count - Settings::IS_HYDROGEN == 5,
 		"AtomInfo's enum is not a continuous range!" );
 
 public://setters
@@ -104,6 +109,10 @@ public://setters
 
 	inline void is_hydroxyl( bool setting ){
 		properties_.set< IS_HYDROXYL > ( setting );
+	}
+
+	inline void is_backbone( bool setting ){
+		properties_.set< IS_BACKBONE > ( setting );
 	}
 
 	inline void lk_info( LKAtomInfoCOP setting ){
@@ -133,6 +142,10 @@ public://getters
 
 	inline bool is_hydroxyl() const {
 		return properties_.get< IS_HYDROXYL >();
+	}
+
+	inline bool is_backbone() const {
+		return properties_.get< IS_BACKBONE >();
 	}
 
 	inline LKAtomInfoCOP lk_info() const {

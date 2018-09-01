@@ -207,6 +207,9 @@ sources = {
 		"VoidsPenaltyVoxelGridTests_rotamer_setup",
 		"VoidsPenaltyVoxelGridTests_rotamer_setup_2",
 	],
+	"pack/hbonds" : [
+		"HBondGraph_util",
+	],
 	"pack/interaction_graph" : [
 		"InteractionGraphFactory",
 		"FASTERInteractionGraph",

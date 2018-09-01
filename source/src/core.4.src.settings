@@ -78,6 +78,9 @@ sources = {
 		"SingleResidueCenrotLibraryCreator",
 		"CenRotDunEnergy",
 	],
+	"core/pack/guidance_scoreterms/approximate_buried_unsat_penalty" : [
+		"util",
+	],
 	"core/pack/guidance_scoreterms/buried_unsat_penalty/" : [
 		"BuriedUnsatPenalty",
 	],

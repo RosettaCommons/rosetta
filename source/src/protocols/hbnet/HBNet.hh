@@ -764,10 +764,10 @@ protected://Monte Carlo Protocol Protected Methods
 	) const;
 
 	///@brief returns false if there is a clash between the node_being_added and any node currently in the current_state
-	static bool node_is_compatible( NetworkState const & current_state, core::scoring::hbonds::graph::AtomLevelHBondNode const * node_being_added );
+	bool node_is_compatible( NetworkState const & current_state, core::scoring::hbonds::graph::AtomLevelHBondNode const * node_being_added );
 
 	///@brief This is only being used for debug purposes right now. Makes sure that there are no possible nodes that can be added to current_state
-	static bool network_state_is_done_growing( NetworkState const & current_state, core::scoring::hbonds::graph::AtomLevelHBondGraphCOP hbond_graph );
+	bool network_state_is_done_growing( NetworkState const & current_state, core::scoring::hbonds::graph::AtomLevelHBondGraphCOP hbond_graph );
 
 	///@brief TODO
 	core::Real estimate_saturation( NetworkState const & ) const;
@@ -879,8 +879,8 @@ inline void HBNet::set_monte_carlo_data_to_default(){
 }
 
 inline void HBNet::register_clash( core::Size rotamerA, core::Size rotamerB ){
-	hbond_graph_->get_hbondnode( rotamerA )->register_clash( rotamerB );
-	hbond_graph_->get_hbondnode( rotamerB )->register_clash( rotamerA );
+	hbond_graph_->get_node( rotamerA )->register_clash( rotamerB );
+	hbond_graph_->get_node( rotamerB )->register_clash( rotamerA );
 }
 
 

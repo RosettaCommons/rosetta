@@ -54,7 +54,9 @@ create_init_and_create_edges_for_atom_level_hbond_graph(
 	scoring::ScoreFunction const & sfxn,
 	pose::Pose const & pose,
 	Real hydrogen_bond_threshold,
-	Real clash_threshold
+	Real clash_threshold,
+	Real hbond_energy_threshold_for_satisfaction = -0.25f, // should this be the same as hydrogen_bond_threshold?
+	bool include_backbone_at_atom_level = false
 );
 
 ///@brief Utility function used by other functions in this file. Given that an edge exists between two nodes, find all of the hbonds between those two residues. It does not matter which order resA and resB are. Output hbonds are put in the HBondSet provided. This should not be called before the graph is populated with edges (see MCHBNetInteractionGraph) - nothing will crash if this is called with no edges but it just does not make sense.
@@ -94,14 +96,16 @@ void determine_atom_level_node_info_for_all_nodes(
 	scoring::hbonds::graph::AtomLevelHBondGraph & hb_graph,
 	rotamer_set::RotamerSets const & rotamer_sets,
 	utility::vector1< bool > const & include_these_resids,
-	bool skip_nodes_with_no_edges = false//do not waste time on nodes that can not form hbonds
+	bool skip_nodes_with_no_edges = false,//do not waste time on nodes that can not form hbonds
+	bool include_backbone = false // original use-case (HBNet) didn't include backbone
 );
 
 ///@brief Store atom information for every node with a corresponding resid set to true in include_these_resids. include_these_resids was originally meant to protray "resid_is_buried" so that we only store atom info for buried residues. I don't care what you use this for so I gave it a more generalized name.
 void determine_atom_level_node_info(
 	scoring::hbonds::graph::AtomLevelHBondNode & node,
 	rotamer_set::RotamerSets const & rotamer_sets,
-	utility::vector1< bool > const & include_these_resids
+	utility::vector1< bool > const & include_these_resids,
+	bool include_backbone = false // original use-case (HBNet) didn't include backbone
 );
 
 ///@brief CALL determine_atom_level_node_info() OR determine_atom_level_node_info_for_all_nodes() BEFORE CALLING THIS! After adding atom info to nodes, calling this function will result in removing atom info for atoms that hydrogen bond with the backbone or fixed sidechains.
