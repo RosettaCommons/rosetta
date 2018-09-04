@@ -376,7 +376,7 @@ Residue::atom_type_index( Size const atomno ) const
 }
 
 Real
-Residue::atomic_charge( int const atomno ) const
+Residue::atomic_charge( Size const atomno ) const
 {
 	return rsd_type_.atom( atomno ).charge();
 }

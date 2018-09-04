@@ -181,7 +181,7 @@ public:
 	///     AtomType
 	///     Pose
 	AtomType const &
-	atom_type( int const atomno ) const
+	atom_type( Size const atomno ) const
 	{
 		return rsd_type_.atom_type( atomno );
 	}
@@ -224,7 +224,7 @@ public:
 	///     Residue.atom_index
 	///     Pose
 	Real
-	atomic_charge( int const atomno ) const;
+	atomic_charge( Size const atomno ) const;
 
 	/// @brief  Check if atom is virtual.
 	bool
@@ -695,7 +695,7 @@ public:
 	///     Residue.attached_H_end
 	///     Pose
 	Size
-	attached_H_begin( int const atom ) const
+	attached_H_begin( Size const atom ) const
 	{
 		return rsd_type_.attached_H_begin( atom );
 	}
@@ -712,7 +712,7 @@ public:
 	///     Residue.attached_H_begin
 	///     Pose
 	Size
-	attached_H_end( int const atom ) const
+	attached_H_end( Size const atom ) const
 	{
 		return rsd_type_.attached_H_end( atom );
 	}
@@ -838,7 +838,7 @@ public:
 	///     Residue.atoms
 	///     Pose
 	utility::vector1< int > const &
-	path_distance( int atom ) const
+	path_distance( Size atom ) const
 	{
 		return rsd_type_.path_distance( atom );
 	}
@@ -870,7 +870,7 @@ public:
 	///     Residue.path_distance
 	///     Pose
 	int
-	path_distance( int at1, int at2 ) const
+	path_distance( Size at1, Size at2 ) const
 	{
 		return rsd_type_.path_distance( at1, at2 );
 	}
@@ -886,7 +886,7 @@ public:
 	///     Residue.atoms
 	///     Pose
 	bool
-	atom_is_backbone( int const atomno ) const
+	atom_is_backbone( Size const atomno ) const
 	{
 		return rsd_type_.atom_is_backbone( atomno );
 	}
@@ -910,7 +910,7 @@ public:
 
 	/// @brief Returns the atom index of the  <atomno>  atom's base atom
 	Size
-	atom_base( int const atomno ) const
+	atom_base( Size const atomno ) const
 	{
 		return rsd_type_.atom_base( atomno );
 	}
@@ -919,14 +919,14 @@ public:
 	/// note: abase2 is this atom's first bonded neighbor other than
 	/// this atom's base atom (unless it has only one neighbor)
 	Size
-	abase2( int const atomno ) const
+	abase2( Size const atomno ) const
 	{
 		return rsd_type_.abase2( atomno );
 	}
 
 	/// @brief Returns the AtomIndices for all bonded neighbor atoms of  <atm>
 	AtomIndices const &
-	bonded_neighbor( int const atm ) const
+	bonded_neighbor( Size const atm ) const
 	{
 		return rsd_type_.bonded_neighbor( atm );
 	}
@@ -1059,20 +1059,20 @@ public:
 	}
 
 
-	utility::vector1<core::Size> const &
-	bonded_orbitals(int const atm) const{
+	utility::vector1< Size > const &
+	bonded_orbitals( Size const atm ) const {
 		return rsd_type_.bonded_orbitals(atm);
 	}
 
 
 	std::string const &
-	orbital_name(int const orbital_index) const{
-		return rsd_type_.orbital(orbital_index).name();
+	orbital_name( Size const orbital_index ) const {
+		return rsd_type_.orbital( orbital_index ).name();
 	}
 
 	chemical::orbitals::OrbitalType const &
-	orbital_type(int const orbital_index) const{
-		return rsd_type_.orbital_type(orbital_index);
+	orbital_type( Size const orbital_index ) const{
+		return rsd_type_.orbital_type( orbital_index );
 	}
 
 	Size
@@ -1213,7 +1213,7 @@ public:
 	/// on how to build the atom in a different residue which
 	/// connects to this residue
 	chemical::ResidueConnection const &
-	residue_connection( int const resconn_index ) const
+	residue_connection( Size const resconn_index ) const
 	{
 		return rsd_type_.residue_connection( resconn_index );
 	}
@@ -1425,7 +1425,7 @@ public:
 
 	/// @brief atom indices for bonded neighbors to which atom-tree connections are disallowed.
 	AtomIndices const &
-	cut_bond_neighbor( int const atm ) const
+	cut_bond_neighbor( Size const atm ) const
 	{
 		return rsd_type_.cut_bond_neighbor( atm );
 	}
@@ -1441,7 +1441,7 @@ public:
 
 	/// @brief Convenience synonym for bonded_neighbor
 	AtomIndices const &
-	nbrs( int const atm ) const
+	nbrs( Size const atm ) const
 	{
 		return rsd_type_.bonded_neighbor( atm );
 	}
@@ -1581,7 +1581,7 @@ public:
 
 	/// @brief Returns the AtomIndices of the four atoms defining this residue's  <chino>  chi angle
 	AtomIndices const &
-	chi_atoms( int const chino ) const
+	chi_atoms( Size const chino ) const
 	{
 		return rsd_type_.chi_atoms( chino );
 	}
@@ -2009,14 +2009,14 @@ public:
 	/////////////////////////////
 	/// @brief Returns the name of this residue's atom with index number  <atm>
 	std::string const &
-	atom_name( int const atm ) const
+	atom_name( Size const atm ) const
 	{
 		return rsd_type_.atom_name( atm );
 	}
 
 	/// @brief Returns the mm_atom_name of this residue's atom with index number  <atom>
 	std::string const &
-	mm_atom_name(int const atom) const
+	mm_atom_name( Size const atom ) const
 	{
 		return rsd_type_.atom(atom).mm_name();
 	}
@@ -2077,7 +2077,7 @@ public:
 
 	/// @brief Returns the internal coordinates of this residue's atom with index number  <atm>
 	chemical::AtomICoor const &
-	icoor( int const atm ) const
+	icoor( Size const atm ) const
 	{
 		return rsd_type_.icoor( atm );
 	}
