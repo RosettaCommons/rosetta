@@ -17,80 +17,80 @@ from __future__ import print_function
 import os, sys
 import urllib
 
-import pyrosetta.rosetta as rosetta
+from contextlib import contextmanager
 
-from pyrosetta import pose_from_file
-from pyrosetta.rosetta.core.pose import Pose
-
-# other tools
-from pyrosetta.toolbox.cleaning import cleanATOM, cleanCRYS
-
-
-if sys.version_info >= (3, 0):
+if sys.version_info.major > 2:
     import urllib.request
-    urllib_urlretrieve = urllib.request.urlretrieve
 
+    urllib_urlretrieve = urllib.request.urlretrieve
 else:
     urllib_urlretrieve = urllib.urlretrieve
 
 
-# retreives pdbData from rcsb for  <pdb_code>
-# ADD NAMING OPTION
-def load_from_rcsb(pdb_code, pdb_filename = None):
+@contextmanager
+def download_from_web(url):
+    """Get content from the web and make it available within a
+    context manager.
     """
-    Writes PDB data for RCSB data for <pdb_code> into <pdb_filename>. If not
-    specified, outputs file to <pdb_code>.pdb.
-
-    Example:
-        load_from_rcsb("1YY8")
-    See also:
-        Pose
-        pose_from_file
-        pose_from_rcsb
-        pose_from_sequence
-        cleanATOM
-        cleanCRYS
-    """
-    pdb_code = pdb_code.upper()
     try:
-        temp = urllib_urlretrieve("http://www.rcsb.org/pdb/files/" + pdb_code + ".pdb")[0]
+        temp = urllib_urlretrieve(url)[0]
     except:
-        raise IOError("Cannot access the PDB database, please check your Internet access.")
+        raise IOError(
+            "Cannot access network resource, please check your Internet access."
+        )
     else:
-        if (os.path.getsize(temp) > 1500):
-            # Arbitrarily 1500... else pdb_code was invalid.
+        if os.path.getsize(temp) > 150:
+            # Arbitrarily 150... else url was invalid.
             with open(temp) as f:
-                pdb_data = f.readlines()
-
-            if not pdb_filename: pdb_filename = pdb_code + ".pdb"
-
-            if os.path.exists(os.getcwd() + '/' + pdb_filename): print( "The file", pdb_filename, "already exists; this file will be overwritten." )
-
-            with open(pdb_filename, 'w') as f: f.writelines(pdb_data)
-
-            print( "PDB", pdb_code, "successfully loaded from the RCSB into", pdb_filename + '.' )
-            #if auto_clean:
-            #    cleanATOM(pdb_filename)
+                file_data = f.readlines()
         else:
-            raise IOError("Invalid PDB code")
+            raise IOError("Invalid URL")
+
+        yield file_data
         os.remove(temp)  # Remove temp file.
 
 
-def pose_from_rcsb(pdb_code, ATOM = True, CRYS = False):
-    """
-    Returns a pose for RCSB PDB <pdb_code>, also writes this data to
-    <pdb_code>.pdb, and optionally calls cleanATOM and/or cleanCRYS
+def load_from_rcsb(pdb_code, pdb_filename=None):
+    """Downlaod a PDB file from RCSB and write it to disk.
 
-    example:
-        pose = pose_from_rcsb("1YY8")
-    See also:
-        Pose
-        pose_from_file
-        pose_from_sequence
-        load_from_rcsb
-        cleanATOM
-        cleanCRYS
+    Args:
+        pdb_code (str): The four-letter accession code of the desired PDB file
+        pdb_filename (str): Optional argument for output filename.
+            Defaults to <pdb_code>.pdb.
+
+    Examples:
+        >>> load_from_rcsb("1YY8")
     """
+    pdb_code = pdb_code.upper()
+    pdb_url = "http://www.rcsb.org/pdb/files/" + pdb_code + ".pdb"
+
+    if not pdb_filename:
+        pdb_filename = pdb_code + ".pdb"
+
+    with download_from_web(pdb_url) as pdb_data:
+        with open(pdb_filename, "w") as f:
+            f.writelines(pdb_data)
+
+
+def pose_from_rcsb(pdb_code, ATOM=True, CRYS=False):
+    """Downlaod a PDB file from RCSB, write to disk as <pdb_code>.pdb and return
+    it as a pose. Optionally calls cleanATOM and/or cleanCRYS.
+
+    Notes:
+        Automatic monomer extraction assumes the PDB contains a homodimer.
+
+    Args:
+        pdb_code (str): The four-letter accession code of the desired PDB file
+        ATOM (bool): Only write ATOM records to disk. Defaults to True.
+        CRYS (bool): Attempt to extract a monomer from the target PDB.
+            Defaults to False.
+
+    Examples:
+        >>> pose = pose_from_rcsb("1YY8")
+    """
+    from pyrosetta import pose_from_file
+    from pyrosetta.toolbox.cleaning import cleanATOM, cleanCRYS
+
     pdb_code = pdb_code.upper()
     load_from_rcsb(pdb_code)
     if ATOM:
@@ -99,35 +99,31 @@ def pose_from_rcsb(pdb_code, ATOM = True, CRYS = False):
     if CRYS:
         cleanCRYS(pdb_code + ".pdb")
         pdb_code = pdb_code + ".mono"
-    pose = rosetta.core.import_pose.pose_from_file(pdb_code + ".pdb")
+    pose = pose_from_file(pdb_code + ".pdb")
     return pose
 
 
-# retreives pdbData from rcsb for  <pdb_code>
-# ADD NAMING OPTION
-def load_fasta_from_rcsb( pdb_code , fasta_outfile ):
-    if pdb_code:    # if something input...
-        pdb_code = pdb_code.upper()
-        try:
-            filename = urllib_urlretrieve('http://www.rcsb.org/pdb/files/fasta.txt?structureIdList=' + pdb_code)[0]
-        except:
-            raise IOError('Cannot access the PDB database, please check your Internet access')
-        else:
-            if (os.path.getsize(filename)):    # arbitrary 1500...then pdb_code was invalid
-                pdb_file = open(filename)
-                pdb_data = pdb_file.readlines()
-                pdb_file.close()
+def load_fasta_from_rcsb(pdb_code, fasta_outfile=None):
+    """Downlaod a FASTA file from RCSB and write it to disk.
 
-#                pdb_code = pdb_code + '.fa'
-                if not fasta_outfile:
-                    fasta_outfile = pdb_code + '.fa'
-                if os.path.exists( os.getcwd() + '/' + fasta_outfile ): print( 'the file {} already exists, this file will be overwritten'.format(fasta_outfile) )
-                #if input('Do you want to overwrite ' + pdbCode + '.pdb')
-                pdb_file = open(fasta_outfile,'w')
-                pdb_file.writelines(pdb_data)
-                pdb_file.close()
+    Args:
+        pdb_code (str): The four-letter accession code of the desired PDB file
+        fasta_outfile (str): Optional argument for output filename. Defaults to
+        <pdb_code>.fasta.
 
-                print( 'PDB {} sequence successfully loaded from rcsb into {}'.format(pdb_code, fasta_outfile) )
-            else:
-                raise IOError('Invalid PDB code')
-        os.remove(filename)    # remove temp file
+    Examples:
+        >>> load_fasta_from_rcsb("1YY8")
+    """
+    pdb_code = pdb_code.upper()
+    fasta_url = (
+        "https://www.rcsb.org/pdb/download/downloadFastaFiles.do?structureIdList="
+        + pdb_code
+        + "&compressionType=uncompressed"
+    )
+
+    if fasta_outfile is None:
+        fasta_outfile = pdb_code + ".fasta"
+
+    with download_from_web(fasta_url) as pdb_data:
+        with open(fasta_outfile, "w") as f:
+            f.writelines(pdb_data)

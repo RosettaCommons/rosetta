@@ -44,7 +44,7 @@ ras.update_residue_neighbors()
 hbonds.fill_hbond_set(ras, False, hbond_set)
 hbond_set.show(ras)
 
-hset = get_hbonds(ras)
+hset = ras.get_hbonds()
 hset.show(ras)
 hset.show(ras, 24)
 

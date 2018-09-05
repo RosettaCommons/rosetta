@@ -19,160 +19,84 @@
 from __future__ import print_function
 
 import random
-from pyrosetta import Pose, make_pose_from_sequence, create_score_function
 
-from rosetta.utility import vector1_bool
-from rosetta.core.pack.task import TaskFactory
-from rosetta.core.chemical import aa_from_oneletter_code
-from rosetta.protocols.minimization_packing import PackRotamersMover
 
-from rosetta.core.pose import PDBInfo
+def restrict_non_nbrs_from_repacking(pose, res, task, pack_radius):
+    """Configure a `PackerTask` to only repack neighboring residues and
+    return the task.
 
-# a different version of mutate_residue is provided in PyRosetta v2.0 and
-#    earlier that does not optionally repack nearby residues
+    Args:
+        pose (pyrosetta.Pose): The `Pose` to opertate on.
+        res (int): Pose-numbered residue position to exclude.
+        task (pyrosetta.rosetta.core.pack.task.PackerTask): `PackerTask` to modify.
+        pack_radius (float): Radius used to define neighboring residues.
 
-# returns a pose made from seq, all phi/psi/omega set to 180
-def pose_from_sequence( seq , res_type = 'fa_standard' , name = '' , chain_id = 'A' ):
+    Returns:
+        pyrosetta.rosetta.core.pack.task.PackerTask: Configured `PackerTask`.
     """
-    Returns a pose generated from amino acid single letters in  <seq>  using
-    the  <res_type>  ResidueType, the new pose's PDBInfo is named  <name>
-    and all residues have chain ID  <chain_id>
 
-    example:
-        pose=pose_from_sequence('LIGAND')
-    See also:
-        Pose
-        make_pose_from_sequence
-        pose_from_file
-        pose_from_rcsb
+    def representative_coordinate(resNo):
+        return pose.residue(resNo).xyz(pose.residue(resNo).nbr_atom())
+
+    center = representative_coordinate(res)
+    for i in range(1, len(pose.residues) + 1):
+        # only pack the mutating residue and any within the pack_radius
+        if i == res:
+            continue
+
+        if center.distance(representative_coordinate(i)) > pack_radius:
+            task.nonconst_residue_task(i).prevent_repacking()
+        else:
+            task.nonconst_residue_task(i).restrict_to_repacking()
+    return task
+
+
+def mutate_residue(
+    pack_or_pose, mutant_position, mutant_aa, pack_radius=0., pack_scorefxn=None
+):
+    """Replace the residue at a single position in a Pose with a new amino acid
+        and repack any residues within user-defined radius of selected residue's
+        center using.
+
+    Args:
+        pack_or_pose (pyrosetta.rosetta.core.pose.Pose OR pyrosetta.distributed.packed_pose.PackedPose):
+                    the `Pose` instance to use.
+        mutant_position (int): Pose-numbered position of the residue to mutate.
+        mutant_aa (str): The single letter name for the desired amino acid.
+        pack_radius (float): Radius used to define neighboring residues.
+        pack_scorefxn (pyrosetta.ScoreFunction): `ScoreFunction` to use when repacking the `Pose`.
+            Defaults to the standard `ScoreFunction`.
     """
-    pose=Pose()
-    make_pose_from_sequence(pose,seq,res_type)
-    #pdb_info = rosetta.core.pose.PDBInfo(pose.total_residue())    # actual, for other code
-    pdb_info = PDBInfo(pose.total_residue())    # create a PDBInfo object
-    for i in range(0,pose.total_residue()):
-        if pose.residue(i+1).is_protein():
-            # set to a more reasonable default
-            pose.set_phi(i+1,-150)
-            pose.set_psi(i+1,150)
-            pose.set_omega(i+1,180)
-            # set PDBInfo info for chain and number
-        #pdb_info.chain(i+1,chain_id)
-        #pdb_info.number(i+1,i+1)
-    #### you can alternatively use the deprecated method set_extended_torsions
-    ####    which requires a Pose and a Loop object...so make a large loop
-    #set_extended_torsions( pose , Loop ( 1 , pose.total_residue() ) )
-    # set the PDBInfo
-    pose.pdb_info(pdb_info)
-    # default name to first 3 letters
-    if not name:
-        name = seq[:4]
-    pose.pdb_info().name(name)
-#	print pose
-    return pose
+    import pyrosetta
+    if type(pack_or_pose) == pyrosetta.Pose:
+        wpose = pack_or_pose
+    else:
+        import pyrosetta.distributed.packed_pose as packed_pose
+        wpose = packed_pose.to_pose(pack_or_pose)
 
-# for use with random_sequence
-protein_letters = 'ACDEFGHIKLMNPQRSTVWY'
-nucleic_letters = ['A[ADE]','G[GUA]','C[CYT]','T[THY]']
+    if not wpose.is_fullatom():
+        raise IOError("mutate_residue only works with fullatom poses")
 
-# returns a sequence of random protein letters
-def random_sequence( length = 1 , letters = protein_letters ):
-    return ''.join( [letters[random.randint(0,len(letters)-1)] for i in range( length ) ] )
+    # create a standard scorefxn by default
+    if not pack_scorefxn:
+        pack_scorefxn = pyrosetta.get_score_function()
 
-# the following method may not be useulf to many...but whatever
+    # the numbers 1-20 correspond individually to the 20 proteogenic amino acids
+    from pyrosetta.rosetta.core.chemical import aa_from_oneletter_code
 
-# display sequence differences
-def compare_mutants__( pose1 , pose2 ):
-    seq1 = pose1.sequence()
-    seq2 = pose2.sequence()
-    for i in range(pose1.total_residue()):
-        if not seq1[i]==seq2[i]:
-            print('mutation '+seq1[i]+str(i+1)+seq2[i])
+    mutant_aa = int(aa_from_oneletter_code(mutant_aa))
+    aa_bool = pyrosetta.Vector1([aa == mutant_aa for aa in range(1, 21)])
 
-# use to compare sequences and sec_struct
-def compare_sequences( seq1 , seq2 ):
-    for i in range(len(seq1)):
-        if not seq1[i]==seq2[i]:
-            print( 'discrepency at '+seq1[i]+str(i+1)+seq2[i] )
+    # mutation is performed by using a PackerTask with only the mutant
+    # amino acid available during design
+    task = pyrosetta.standard_packer_task(wpose)
+    task.nonconst_residue_task(mutant_position).restrict_absent_canonical_aas(aa_bool)
 
-# UNFINISHED BELOW HERE!
+    # prevent residues from packing by setting the per-residue "options" of the PackerTask
+    task = restrict_non_nbrs_from_repacking(wpose, mutant_position, task, pack_radius)
 
-# look for unmatched hbonds
-def compare_hbonds( pose1 , pose2 , Ethresh = .5 , display = False ):
-    hblist1 = hbond_list(pose1)
-    hbset1 = get_hbonds(pose1)
-    hblist2 = hbond_list(pose2)
-    hbset2 = get_hbonds(pose2)
-    if display:
-        pymol = PyMOL_Mover()
-    delEn = []
-    for i in range(len(hblist1)):
-        for j in range(len(hblist2)):
-            if hblist1[i][1]==hblist2[j][1] and hblist1[i][2]==hblist2[j][2]:
-                # if the energy changes by ~25% or more...
-                if abs((hblist2[j][3]-hblist1[i][3])/hblist1[i][3])>Ethresh:
-                    # compare bb sc ?
-                    delEn.append(hblist1[i])
-                    delEn[len(delEn)-1].append(hblist2[j][3])
-                    delEn[len(delEn)-1].append(hblist2[j][3]>hblist1[i][3])
-                    if display:
-                        delEn[len(delEn)-1].append(hbset1.hbond(i))
-                hblist1[i] = (0,0,0)
-                hblist2[j] = (0,0,0)
-                break
+    # apply the mutation and pack nearby residues
+    from pyrosetta.rosetta.protocols.minimization_packing import PackRotamersMover
 
-    # remove all the matches now
-    for i in range(hblist1.count((0,0,0))):
-        hblist1.remove((0,0,0))
-    for j in range(hblist2.count((0,0,0))):
-        hblist2.remove((0,0,0))
-
-    # print the explicit data
-    names = [pose1.pdb_info().name(),pose2.pdb_info().name()]
-   # is display:    #set this up to avoid lots of ifs
-
-    if len(hblist2)>0:
-        print( 'hbonds not in {}'.format(names[0]) )
-    for j in range(len(hblist2)):
-        # these hbonds are in pose2 but NOT in pose1
-        print( '{}\t{}'.format( hblist2[j][1], hblist2[j][2]) )
-        if display:
-            # send hbonds gained, green
-            # align them first!!!!
-            hbond = hbset2.hbond(hblist2[j][0])
-            donor = pose2.residue(hbond.don_res()).xyz(hbond.don_hatm())
-            acptr = pose2.residue(hbond.acc_res()).xyz(hbond.acc_atm())
-            pymol.send_point(names[0]+'_gains'+str(j),'green',donor[0],donor[1],donor[2],False,False,'')
-            pymol.send_point(names[0]+'_gains'+str(j),'green',acptr[0],acptr[1],acptr[2],False,False,'')
-
-    if len(hblist1)>0:
-        print( 'hbonds not in {}'.format(names[1]) )
-    for i in range(len(hblist1)):
-        # these hbonds are in pose1 but NOT in pose2
-        print( '{}\t{}'.format(hblist1[i][1], hblist1[i][2]) )
-        if display:
-            # send hbonds lost, red
-            hbond = hbset1.hbond(hblist1[i][0])
-            donor = pose1.residue(hbond.don_res()).xyz(hbond.don_hatm())
-            acptr = pose1.residue(hbond.acc_res()).xyz(hbond.acc_atm())
-            pymol.send_point(names[0]+'_loses'+str(i),'red',donor[0],donor[1],donor[2],False,False,'')
-            pymol.send_point(names[0]+'_loses'+str(i),'red',acptr[0],acptr[1],acptr[2],False,False,'')
-
-    if len(delEn)>0:
-        print( 'Energy change from {} to {}'.format(names[0], names[1] ) )
-    for k in range(len(delEn)):
-        sign = '-'
-        color = 'blue'
-        group = '_decreases'
-        if delEn[k][5]:
-            sign = '+'
-            color = 'yellow'
-            group = '_increases'
-        print('{} in {} {} from {:.4f} to {:.4f}'.format(sign, str(delEn[k][1]).ljust(20), str(delEn[k][2]).ljust(20), delEn[k][3],delEn[k][4]) )
-        if display:
-            # send energy change, if sign=='+' clr yellow, if sign=='-' clr blue
-            hbond = delEn[k][6]
-            donor = pose1.residue(hbond.don_res()).xyz(hbond.don_hatm())
-            acptr = pose1.residue(hbond.acc_res()).xyz(hbond.acc_atm())
-            pymol.send_point(names[0]+group+str(k),color,donor[0],donor[1],donor[2],False,False,'')
-            pymol.send_point(names[0]+group+str(k),color,acptr[0],acptr[1],acptr[2],False,False,'')
+    packer = PackRotamersMover(pack_scorefxn, task)
+    packer.apply(wpose)

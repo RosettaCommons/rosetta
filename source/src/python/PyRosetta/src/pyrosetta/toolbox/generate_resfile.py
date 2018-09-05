@@ -16,106 +16,106 @@
 
 from __future__ import print_function
 
-from pyrosetta import Pose, pose_from_file
 
-# writes a specified resfile for the user, defaults to packing w/ input SC
-def generate_resfile_from_pose( pose , resfilename ,
-        pack = True , design = False , input_sc = True ,
-        freeze = [] , specific = {} ):
-    """
-    Writes a resfile for  <pose>  named  <resfilename>
-       <pack> = True allows packing by default
-       <design> = True allows design using all amino acids by default
-       <input_sc> = True allows usage of the original side chain conformation
-       <freeze> is an optional list of (pose) residue numbers to exclude
-            (preserve the side chain conformations of these residues)
-       <specific> is an optional dictionary with (pose) residue numbers as keys
-            and resfile keywords as corresponding values
-            (for setting individual residue options, it may be easier to add
-            these numbers to freeze and edit the resfile manually)
+def generate_resfile_from_pose(
+    pack_or_pose,
+    resfilename,
+    pack=True,
+    design=False,
+    input_sc=True,
+    freeze=list(),
+    specific=dict(),
+):
+    """Generate a resfile from a pose and write it to a file.
 
-    example:
-        generate_resfile_from_pose(pose,'1YY8.resfile')
-    See also:
-        Pose
-        PackRotamersMover
-        TaskFactory
+    Args:
+        pack_or_pose (pyrosetta.rosetta.core.pose.Pose OR pyrosetta.distributed.packed_pose.PackedPose):
+            the `Pose` instance to use to for resfile creation.
+
+        pack (bool): True allows packing, False disallows. Defaults to True.
+
+        design (bool): True allows design using all amino acids, False disables design.
+            Defaults to False.
+
+        input_sc (bool): Toggles the inclusion of the original side-chain conformations.
+            Defaults to True.
+
+        freeze (list): An optional list of residue numbers to exclude from packing and/or
+            design.
+
+        specific (dict): An optional dictionary with residue numbers and resfile keywords
+            as key-value pairs.
     """
     # determine the header, default settings
-    header = ''
-    if pack:
-        if not design:
-            header += 'NATAA\n'
-        else:
-            header += 'ALLAA\n# ALLAA will NOT work on bridged Cysteines\n'
+    to_write = (
+        (
+            "NATAA\n"
+            if not design
+            else "ALLAA\n# ALLAA will NOT work on bridged Cysteines\n"
+        )
+        if pack
+        else "NATRO\n"
+    )
+    to_write += ("USE_INPUT_SC\n" if input_sc else "") + "start\n"
+
+    # use frozen list to update dict
+    specific.update({resNo: "NATRO" for resNo in freeze})
+
+    # use PDB numbering if possible
+    from pyrosetta import Pose
+    if type(pack_or_pose) == Pose:
+        wpose = pack_or_pose
     else:
-        header += 'NATRO\n'
-    if input_sc:
-        header += 'USE_INPUT_SC\n'
-    to_write = header + 'start\n'
-    # add  <freeze>  list to  <specific>  dict
-    for i in freeze:
-        specific[i] = 'NATRO'
-    #  <specific>  is a dictionary with keys() as pose resi numbers
-    #    and values as resfile keywords (PIKAA
-    # use PDBInfo object to write the resfile
-    info = pose.pdb_info()
-    # pose_from_sequence returns empty PDBInfo, Pose() makes NULL
+        import pyrosetta.distributed.packed_pose as packed_pose
+        wpose = packed_pose.to_pose(pack_or_pose)
+    info = wpose.pdb_info()
     if info and info.nres():
-        for i in specific.keys():
-            num = pose.pdb_info().number(i)
-            chain = pose.pdb_info().chain(i)
-            to_write += str(num).rjust(4) + str(chain).rjust(3) + '  ' + specific[i] + '  \n'
+        res = [
+            (info.number(resNo), info.chain(resNo), keyword)
+            for resNo, keyword in specific.items()
+        ]
     else:
-        for i in specific.keys():
-            num = i
-            chain = ' '
-            to_write += str(num).rjust(4) + str(chain).rjust(3) + '  ' + specific[i] + '  \n'
-    f = open(resfilename,'w')
-    f.write(to_write)
-    f.close()
+        res = [(resNo, " ", keyword) for resNo, keyword in specific.items()]
+    to_write += "\n".join(
+        [
+            str(num).rjust(4) + str(chain).rjust(3) + "  " + keyword + "  "
+            for num, chain, keyword in res
+        ]
+    )
 
-# this is silly, as with cleanCRYS, later implement a Biopy PDBParser method
-def generate_resfile_from_pdb( pdbfilename , resfilename ,
-        pack = True , design = False , input_sc = True ,
-        freeze = [] , specific = {} ):
-	"""
-    Writes a resfile for the PDB file <pdbfilename>  named  <resfilename>
-       <pack> = True allows packing by default
-       <design> = True allows design using all amino acids by default
-       <input_sc> = True allows usage of the original side chain conformation
-       <freeze> is an optional list of (pose) residue numbers to exclude
-            (preserve the side chain conformations of these residues)
-       <specific> is an optional dictionary with (pose) residue numbers as keys
-            and resfile keywords as corresponding values
-            (for setting individual residue options, it may be easier to add
-            these numbers to freeze and edit the resfile manually)
+    with open(resfilename, "w") as f:
+        f.write(to_write)
 
-	example:
-	    generate_resfile_from_pdb('1YY8.pdb','1YY8.resfile')
-	See also:
-	    generate_resfile_from_pose
-	    Pose
-	    PackRotamersMover
-	    TaskFactory
-	"""
-	p = pose_from_file(pdbfilename)
-	generate_resfile_from_pose(p,resfilename,pack,design,input_sc,freeze,specific)
 
-# this class currently supports NOTHING more than the options above...but that will change! soon?
-class ResfileWriter():
-    def __init__( self , pose , resfilename , pack = True , design = False , input_sc = True , freeze = [] , specific = {} ):
-        self.pose = pose
-        self.resfilename = resfilename
-        self.pack = pack
-        self.design = design
-        self.input_sc = input_sc
-        self.freeze = freeze
-        self.specific = specific
+def generate_resfile_from_pdb(
+    pdbfilename,
+    resfilename,
+    pack=True,
+    design=False,
+    input_sc=True,
+    freeze=list(),
+    specific=dict(),
+):
+    """Generate a resfile from a PDB file and write it to a file.
 
-    def write_resfile( self , resfilename = '' ):
-        if not resfilename:
-            resfilename = self.resfilename
-        generate_resfile_from_pose( self.pose , resfilename , self.pack , self.design , self.input_sc , self.freeze , self.specific )
+     Args:
+         pdbfilename (str): the PDB filename to use to for resfile creation.
 
-# make it actually perform from PDB, use Bio.PDBParser
+         pack (bool): True allows packing, False disallows. Defaults to True.
+
+         design (bool): True allows design using all amino acids, False disables design.
+            Defaults to False.
+
+         input_sc (bool): Toggles the inclusion of the original side-chain conformations.
+            Defaults to True.
+
+        freeze (list): An optional list of residue numbers to exclude from packing and/or
+            design.
+
+        specific (dict): An optional dictionary with residue numbers and resfile keywords
+            as key-value pairs.
+    """
+    from pyrosetta import pose_from_file
+
+    p = pose_from_file(pdbfilename)
+    generate_resfile_from_pose(p, resfilename, pack, design, input_sc, freeze, specific)

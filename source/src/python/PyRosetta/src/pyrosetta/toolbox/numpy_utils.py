@@ -15,26 +15,6 @@
 from __future__ import print_function
 
 
-import numpy as np
-from math import acos, degrees
-
-
-def get_coordinates_from_pose(p, resNo=1):
-    """Pack atomic coordinates in a single residue into a numpy matrix.
-
-    Args:
-        p (Pose): Pose from coordinates will be extracted
-        resNo (int): the pose-numbered residue of interest
-
-    Returns:
-        np.ndarray: Set of coordinates for the atoms in the specified residue in the Pose
-
-    """
-    assert(resNo > 0 and resNo <= p.size())
-    res = p.residues[resNo]
-    return np.array(res.xyz(i) for i in range(1, res.natoms() + 1)])
-
-
 # the following is taken from http://nghiaho.com/?page_id=671
 def rigid_transform_3D(A, B):
     """Compute the translation and rotation to optimally superpose two sets
@@ -49,7 +29,9 @@ def rigid_transform_3D(A, B):
         tuple: Rotation matrix (np.ndarray) and translation vector (np.array) to
             optimally superpose A onto B
     """
-    assert(A.shape == B.shape)
+    import numpy as np
+
+    assert A.shape == B.shape
 
     N = A.shape[0]  # total points
 
@@ -69,7 +51,7 @@ def rigid_transform_3D(A, B):
 
     # special reflection case
     if np.linalg.det(R) < 0:
-        print('Reflection detected')
+        print("Reflection detected")
         Vt[2, :] *= -1
         R = Vt.T * U.T
 
@@ -86,9 +68,12 @@ def calc_dihedral(c):
     Returns:
         float: The dihedral angle
     """
+    import numpy as np
     from numpy.linalg import norm
+    from math import acos, degrees
+
     # make sure there are 4 coordinates in three-space
-    assert(np.shape(c) == (4, 3))
+    assert np.shape(c) == (4, 3)
 
     # make vectors pointing from each atom to the next bonded atom
     v_12 = c[1] - c[0]
@@ -100,8 +85,7 @@ def calc_dihedral(c):
     p_234 = np.cross(v_23, v_34)
 
     # find the angle between the planes
-    chi = degrees(acos(np.dot(p_123, p_234.T) / (norm(p_123) *
-                  norm(p_234))))
+    chi = degrees(acos(np.dot(p_123, p_234.T) / (norm(p_123) * norm(p_234))))
 
     # the sign of torsion angles is determined by whether the vector formed
     # by the last two points is above (positive) or below (negative) the
@@ -109,29 +93,3 @@ def calc_dihedral(c):
     sign = 1. if np.dot(v_34, p_123.T) > 0. else -1.
 
     return sign * chi
-
-
-def translate_pose(p, t):
-    """Apply a translation to all of the coordinates in a Pose.
-
-    Args:
-        p (Pose): The Pose instance to manipulate
-        t (np.array): A vector to add to the Pose coordinates
-    """
-    assert(t.shape in ((3,), (4,)))
-    xform = np.identity(4)
-    xform[:t.shape[0], 3] = t
-    p.apply_transform(xform)
-
-
-def rotate_pose(p, R):
-    """Apply a rotation matrix to all of the coordinates in a Pose.
-
-    Args:
-        p (Pose): The Pose instance to manipulate
-        R (np.mat): A rotation matrix to apply to the Pose coordinates
-    """
-    assert(R.shape in ((3,3), (4,3)))
-    xform = np.identity(4)
-    xform[:R.shape[0], :3] = R
-    p.apply_transform(xform)

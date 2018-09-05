@@ -16,104 +16,63 @@ from __future__ import print_function
 
 import os
 
-from pyrosetta import pose_from_file
-from pyrosetta.rosetta.core.pose import Pose
 
-# removes non ATOM lines from  <pdb_file>  and writes to  <out_file>
-def cleanATOM( pdb_file , out_file = '', edit = -4 ):
-    """
-    Writes all lines in the PDB file  <pdb_file>  beginning with "ATOM" or
-    "TER" into  <out_file>  (defaults to  <pdb_file>.clean.pdb)
-    note: the third argument, <edit>, if for PDB files not ending in .pdb
+def cleanATOM(pdb_file, out_file=None, ext=".clean.pdb"):
+    """Extract all ATOM and TER records in a PDB file and write them to a new file.
 
-    example:
-        cleanATOM('1YY9.pdb')
-    See also:
-        Pose
-        Pose.dump_pdb
-        pose_from_file
-        pose_from_rcsb
-        cleanCRYS
+    Args:
+        pdb_file (str): Path of the PDB file from which ATOM and TER records
+            will be extracted
+        out_file (str): Optional argument to specify a particular output filename.
+            Defaults to <pdb_file>.clean.pdb.
+        ext (str): File extension to use for output file. Defaults to ".clean.pdb"
     """
-    # an optional argument for PDB files not ending in .pdb
-    if not edit:
-        edit = 255
-    # if the file exists
-    if os.path.exists( os.getcwd() + '/' + pdb_file ):
-        # find all ATOM and TER lines
-        fid = open(pdb_file,'r')
-        data = fid.readlines()
-        fid.close()
-        good = []
-        for i in data:
-            if i[:5] == 'ATOM ' or i[:4] == 'TER ':
-                # add your preference rules for ligands, DNA, water, etc.
-                good.append(i)
-        # default output file to  <pdb_file>.clean.pdb
-        if not out_file:
-            out_file = pdb_file[:edit]+'.clean.pdb'
-        # write the found lines
-        print('if the file {} already exists, it will be overwritten'.format(out_file) )
-        fid = open(out_file,'w')
+    # find all ATOM and TER lines
+    with open(pdb_file, "r") as fid:
+        good = [l for l in fid if l.startswith(("ATOM", "TER"))]
+
+    # default output file to <pdb_file>.clean.pdb
+    if out_file is None:
+        out_file = os.path.splitext(pdb_file)[0] + ext
+
+    # write the selected records to a new file
+    with open(out_file, "w") as fid:
         fid.writelines(good)
-        fid.close()
-        print('PDB {} successfully cleaned, non-ATOM lines removed\nclean data written to {}'.format(pdb_file, out_file))
-        return True
-    else:
-        print('cleanATOM: No such file or directory named ' + pdb_file)
-        return False
 
-# if you would prefer a simpler call using grep, it looks something like this
-#    os.system("grep \"ATOM\" %s.pdb > %s.clean.pdb"%(pdb_file[:edit],pdb_file[:edit]))
 
-# removes redundant crystal contacts, isolate monomer
-def cleanCRYS( pdb_file , olig = 2 , out_file = '' ):
+def cleanCRYS(pdb_file, olig=2, out_file=None):
+    """Extract a monomer from an oligomeric PDB file and write it to a new file.
+
+    Notes:
+        This is a simple sequence comparison.
+
+    Args:
+        pdb_file (str): Path of the PDB file from which ATOM and TER records
+            will be extracted.
+        olig (int): Number of subunits in the input complex.
+        out_file (str): Optional argument to specify a particular output filename.
+            Defaults to <pdb_file>.mono.pdb.
     """
-    Writes a PDB file for a monomer of  <pdb_file>  if it is a  <olig>-mer
-    to  <out_file>  (defaults to  <pdb_file>.mono.pdb)
-    note: this is a simple sequence comparison
+    # load in the PDB as a pose to get the sequence
+    from pyrosetta import pose_from_file
 
-    example:
-        cleanCRYS('1YY8.pdb',2)
-    See also:
-        Pose
-        Pose.dump_pdb
-        pose_from_file
-        pose_from_rcsb
-        cleanATOM
-    """
-    # if the file exists
-    if os.path.exists( os.getcwd() + '/' + pdb_file ):
-        # load in the PDB...this is really just to get the sequence
-        pose = pose_from_file(pdb_file)
-        tot = pose.total_residue()
-        seq = pose.sequence()
-        # generate sequence fragments until
-        frags = ['']*olig
-        match = [False]*(olig-1)
-        olig = float(olig)
-        frac = int(round(tot/olig))
-        for f in range(int(olig)):
-            frags[f] = seq[:frac]
-            seq = seq[frac:]
-        # determine if sequence fragments are identical
-        for f in range(int(olig-1)):
-            match[f] = (frags[0]==frags[f+1])
-        # if the protein has repeats, delete all other residues
-        if sum(match)==(olig-1):
-            for i in range(frac*int(olig-1)):
-                pose.delete_polymer_residue(frac+1)    # I hope this works!
-            # write the new pdb file
-            if not out_file:
-                out_file = pdb_file[:-4]+'.mono.pdb'
-            print('if the file {} already exists, it will be overwritten'.format(out_file) )
+    pose = pose_from_file(pdb_file)
+    seq = pose.sequence()
 
-            pose.dump_pdb(out_file)
-            print('PDB {} successfully cleaned, redundant monomers removed\nmonomer data written to {}'.format(pdb_file, out_file))
-            return True
-        else:
-            print( pdb_file,'is not a '+str(int(olig))+'-mer' )
-            return False
-    else:
-        print( 'No such file or directory named '+pdb_file )
-        return False
+    # split sequence into N evenly-sized fragments
+    frac = int(round(pose.total_residue() / olig))
+    frags = [seq[i : i + frac] for i in range(0, len(seq), frac)]
+
+    # check that there are N identical sequence fragments
+    try:
+        assert len(frags) == olig and len(set(frags)) == 1
+    except AssertionError:
+        raise ValueError('"' + pdb_file + '" is not a ' + str(olig) + "-mer")
+
+    [pose.delete_polymer_residue(frac + 1) for _ in range(frac * (olig - 1))]
+
+    # write the new pdb file
+    if out_file is None:
+        out_file = os.path.splitext(pdb_file)[0] + ".mono.pdb"
+
+    pose.dump_pdb(out_file)

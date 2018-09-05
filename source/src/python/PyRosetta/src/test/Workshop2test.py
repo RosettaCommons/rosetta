@@ -32,7 +32,7 @@ print( pose.pdb_info().pdb2pose("A", 100) )
 
 print( pose.pdb_info().pose2pdb(25) )
 
-get_secstruct(pose)
+pose.display_secstruct()
 
 # Protein Geometry
 print( pose.phi(5) )

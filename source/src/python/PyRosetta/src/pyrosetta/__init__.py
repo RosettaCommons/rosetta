@@ -17,9 +17,15 @@ import pyrosetta.bindings
 
 import warnings
 import logging
-logger = logging.getLogger("rosetta")
+logger = logging.getLogger("pyrosetta.rosetta")
 
 import pyrosetta.logging_support as logging_support
+# this try/except black should be removed after the decorator module
+# is installed on the test server.
+try:
+    from pyrosetta.distributed.utility.log import LoggingContext
+except:
+    pass
 
 # PyRosetta-3 comapatability
 # WARNING WARNING WARNING: do not add anything extra imports/names here! If you feel strongly that something needs to be added please contact author first!
@@ -44,7 +50,15 @@ rosetta.utility.vector1_string = rosetta.utility.vector1_std_string
 # Constants and globals
 
 # FIXME: create 'version' struct in utility instead
-rosetta_version =  rosetta.utility.Version.package() + ' ' + rosetta.utility.Version.version() + rosetta.utility.Version.commit()
+def _version_string():
+    version, commit = rosetta.utility.Version.version(), rosetta.utility.Version.commit()
+    version = version.split(".")
+    if commit.startswith(version[-1]):
+        version.pop()
+    version.append(commit)
+    return rosetta.utility.Version.package() + " " + ".".join(version)
+
+rosetta_version = _version_string()
 
 # Create global '_PLATFORM' that will hold info of current system.
 if sys.platform.startswith("linux"):
@@ -130,12 +144,6 @@ def _rosetta_database_from_env():
     # No database found.
     return None
 
-
-# this variable and function are deprecated becuase they are not used -- JRJ 2017.17.01
-# use instead rosetta.basic.database.full_name("path/to/db/file")
-#_ROSETTA_DATABASE_PATH_ = None
-#def get_rosetta_database_path(): return _ROSETTA_DATABASE_PATH_
-
 def _is_interactive():
     """Determine if in an interactive context.
 
@@ -191,10 +199,6 @@ def init(options='-ex1 -ex2aro', extra_options='', set_logging_handler=None, not
         database = _rosetta_database_from_env()
         if database is not None: args.extend(["-database", database])
 
-    # this variable is deprecated becuase it is not used -- JRJ 2017.17.01
-    # use instead rosetta.basic.database.full_name("path/to/db/file")
-    #_ROSETTA_DATABASE_PATH_ = database
-
     v = rosetta.utility.vector1_string()
     v.extend(args)
 
@@ -209,45 +213,11 @@ def version():
            "\nCreated in JHU by Sergey Lyskov and PyRosetta Team.\n"
 
 
-# if config['core']:
-#     Pose.__iter__ = _Pose_residue_iterator
-#     '''
-#     # Add get() method to Pose (for compatibility with Rosetta Mover containers).
-#     def _get(self):
-#         """
-#         Returns the Pose itself.
-#         The entire purpose of this method is so that custom Movers in PyRosetta do
-#         not crash when apply(pose) is called from within Mover containers (such as
-#         TrialMover, RepeatMover, etc.)  When these C++ Movers call the apply()
-#         method of the custom PyRosetta Mover, they send a PoseAP, which Python can-
-#         not handle without converting to a raw pointer with get().  The addition of
-#         this get() method to Pose allows for one to always use get() in the apply()
-#         method of the custom Mover without concern for whether the apply() was
-#         called from within Python code or C++ code.
-#         """
-#         return self
-#     '''
-#     Pose.get = lambda x: x
-
 # Vector compatibility: Adding 'extend' to all utility.vector* functions
 def _vector_extend_func(vec, othervec):
     for i in othervec: vec.append(i)
 for k, vectype in rosetta.utility.__dict__.items():
     if k.startswith("vector1_") or k.startswith("vector0_") or k.startswith("vectorL_"): vectype.extend = _vector_extend_func
-
-
-# def new_vector1_init(self, arg1=None, arg2=False):
-#     self.__old_init()
-#     if hasattr(arg1, "__iter__"):
-#         self.extend(arg1)
-#     elif isinstance(arg1, type(1)):
-#         for i in xrange(arg1):
-#             self.append(arg2)
-
-
-# def replace_init(cls, init):
-#   cls.__old_init = cls.__init__
-#   cls.__init__ = init
 
 
 def Vector1(list_in):
@@ -331,18 +301,12 @@ def standard_packer_task(pose):
         return task
 
 
-# def add_extra_options():
-#     rosetta.protocols.abinitio.AbrelaxApplication.register_options()
-#     rosetta.protocols.abinitio.IterativeAbrelax.register_options()
-#     rosetta.protocols.abinitio.register_options_broker()
-
-
 # By Michael Pacella
 def etable_atom_pair_energies(res1, atom_index_1, res2, atom_index_2, sfxn):
     """
     Usage: lj_atr, lj_rep, solv=etable_atom_pair_energies(res1, atom_index_1, res2, atom_index_2, sfxn)
-        Description: given a pair of atoms (specified using a pair of residue objects and 
-        atom indices) and scorefunction, use the precomputed 'etable' to return 
+        Description: given a pair of atoms (specified using a pair of residue objects and
+        atom indices) and scorefunction, use the precomputed 'etable' to return
         LJ attractive, LJ repulsive, and LK solvation energies
     """
     score_manager = rosetta.core.scoring.ScoringManager.get_instance()
@@ -383,7 +347,7 @@ def dump_atom_pair_energy_table(sfxn, score_type, residue_1, residue_2, output_f
     """
     Usage: dump_atom_pair_energy_table(sfxn, score_type, residue_1, residue_2, output_filename)
         Description: dumps a csv formatted table (saved as "output_filename")
-        of all pairwise atom pair energies for the complete list of atoms contained 
+        of all pairwise atom pair energies for the complete list of atoms contained
         by residue_1 and residue_2 using a specified score_type in the provided sfxn.
     """
 
@@ -426,10 +390,10 @@ def dump_atom_pair_energy_table(sfxn, score_type, residue_1, residue_2, output_f
 def print_atom_pair_energy_table(sfxn, score_type, residue_1, residue_2, threshold):
     """
     Usage: print_atom_pair_energy_table(sfxn, score_type, residue_1, residue_2, threshold)
-        Description: outputs a formatted table to the commandline of all pairwise atom 
-        pair energies for the complete list of atoms contained by residue_1 and residue_2 
+        Description: outputs a formatted table to the commandline of all pairwise atom
+        pair energies for the complete list of atoms contained by residue_1 and residue_2
         using a specified score_type in the provided sfxn. Only interactions with
-        an absolute value energy above the threshold are printed 
+        an absolute value energy above the threshold are printed
     """
     atr_total, rep_total, solv_total, fa_elec_total = 0.0, 0.0, 0.0, 0.0
 
@@ -492,11 +456,11 @@ def dump_residue_pair_energies(res, pose, sfxn, score_type, output_filename):
 def print_residue_pair_energies(res, pose, sfxn, score_type, threshold):
     """
     Usage: print_residue_pair_energies(res, pose, sfxn, score_type, threshold)
-        Description: outputs a formatted table to the commandline 
+        Description: outputs a formatted table to the commandline
         of the interactions of a single residue (res) with all other residues in the
-        specified pose using a specified score_type in the provided sfxn. 
-        Only interactions with an absolute value energy above the threshold are 
-        printed 
+        specified pose using a specified score_type in the provided sfxn.
+        Only interactions with an absolute value energy above the threshold are
+        printed
     """
     list_of_scores = []
     sfxn.score(pose)
@@ -586,10 +550,6 @@ class PyJobDistributor:
                 z.write(s.str(), len(s.str() ) )
                 del z
 
-                #s = pyrosetta.rosetta.std.ostringstream()
-                #pose.dump_pdb(s)
-                #with gzip.open(self.current_name, 'wb') as f: f.write( s.str() )
-
             else:
                 dump_pdb(pose, self.current_name)
 
@@ -663,7 +623,6 @@ def defineEnergyMethodCreator(class_, scoreType):
     new_class = type(class_name, (Abstract_EnergyMethodCreator,),
                      {'EnergyMethodClass': class_,
                       'scoreType': rosetta.core.scoring.ScoreType(scoreType)})
-    #globals()[class_name ] = new_class
 
     return new_class
 
@@ -694,7 +653,6 @@ class EnergyMethod:
         def _clone(self):
             _mem_EnergyMethods_.append( self.__class__() )
             return _mem_EnergyMethods_[-1]
-            #return type(self)()
 
         def _f_version(self):
             return self.version
@@ -718,9 +676,3 @@ class EnergyMethod:
         rosetta.core.scoring.methods.PyEnergyMethodRegistrator(_mem_EnergyCreators_[-1])
 
         return original_class
-
-def rrange(n):
-    """Return an iterator from 1 to n inclusive"""
-    # think of this as "Rosetta range"
-    assert(type(n) == int)
-    return range(1, n + 1)
