@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/residue_selectors/HBondSelectorCreator.hh
-/// @brief  Creator for HBondSelector class
-/// @author Sharon Guffy (guffy@email.unc.edu)
+/// @file   protocols/residue_selectors/NativeSelectorCreator.hh
+/// @brief  Creator for NativeSelector class
+/// @author Jack Maguire, jackmaguire1444@gmail.com
 
-#ifndef INCLUDED_protocols_residue_selectors_HBondSelectorCreator_HH
-#define INCLUDED_protocols_residue_selectors_HBondSelectorCreator_HH
+#ifndef INCLUDED_protocols_residue_selectors_NativeSelectorCreator_HH
+#define INCLUDED_protocols_residue_selectors_NativeSelectorCreator_HH
 
 // Package headers
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
@@ -21,7 +21,7 @@
 namespace protocols {
 namespace residue_selectors {
 
-class HBondSelectorCreator : public core::select::residue_selector::ResidueSelectorCreator {
+class NativeSelectorCreator : public core::select::residue_selector::ResidueSelectorCreator {
 public:
 	core::select::residue_selector::ResidueSelectorOP create_residue_selector() const override;
 	std::string keyname() const override;

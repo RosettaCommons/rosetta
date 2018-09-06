@@ -312,6 +312,7 @@ sources = {
 	"protocols/residue_selectors": [
 		"HBondSelector",
 		"LigandMetalContactSelector",
+		"NativeSelector",
 		"StoredResidueSubsetSelector",
 		"StoreResidueSubsetMover",
 		"TaskSelector",

@@ -61,16 +61,21 @@ ResidueNameSelector::ResidueNameSelector( ResidueNameSelector const &src) :
 	res_name3_str_( src.res_name3_str_ )
 {}
 
+ResidueNameSelector::ResidueNameSelector( std::string const & res_name_str ):
+	res_name_str_( res_name_str ),
+	res_name3_str_()
+{}
+
+
+ResidueNameSelector::ResidueNameSelector( std::string const & res_name3_str, bool ):
+	res_name_str_(),
+	res_name3_str_( res_name3_str )
+{}
+
+
 /// @brief Clone operator.
 /// @details Copy this object and return an owning pointer to the new object.
 ResidueSelectorOP ResidueNameSelector::clone() const { return ResidueSelectorOP( new ResidueNameSelector(*this) ); }
-
-ResidueNameSelector::ResidueNameSelector( std::string const & res_name_str ):
-	res_name3_str_()
-{
-	res_name_str_ = res_name_str;
-}
-
 
 ResidueNameSelector::~ResidueNameSelector() = default;
 

@@ -30,5 +30,6 @@
 
 #include <protocols/residue_selectors/HBondSelectorCreator.hh>
 #include <protocols/residue_selectors/LigandMetalContactSelectorCreator.hh>
+#include <protocols/residue_selectors/NativeSelectorCreator.hh>
 #include <protocols/residue_selectors/StoredResidueSubsetSelectorCreator.hh>
 #include <protocols/residue_selectors/TaskSelectorCreator.hh>

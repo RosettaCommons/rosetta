@@ -33,6 +33,7 @@ static ResidueSelectorRegistrator< protocols::hbnet::UnsatSelectorCreator > reg_
 
 static ResidueSelectorRegistrator< protocols::residue_selectors::HBondSelectorCreator > reg_HBondSelectorCreator;
 static ResidueSelectorRegistrator< protocols::residue_selectors::LigandMetalContactSelectorCreator > reg_LigandMetalContactSelectorCreator;
+static ResidueSelectorRegistrator< protocols::residue_selectors::NativeSelectorCreator > reg_NativeSelectorCreator;
 static ResidueSelectorRegistrator< protocols::residue_selectors::StoredResidueSubsetSelectorCreator > reg_StoredResidueSubsetSelectorCreator;
 static ResidueSelectorRegistrator< protocols::residue_selectors::TaskSelectorCreator > reg_TaskSelectorCreator;
 

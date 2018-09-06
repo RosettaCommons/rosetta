@@ -9,7 +9,7 @@
 
 /// @file   utility/DenseBoolMap.hh
 /// @brief Provides a memory efficient way to store a large number of boolean values.
-/// @author Jack Maguire, jack@med.unc.edu
+/// @author Jack Maguire, jackmaguire1444@gmail.com
 
 
 #ifndef INCLUDED_utility_dense_bool_map_hh

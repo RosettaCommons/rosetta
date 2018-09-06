@@ -47,12 +47,14 @@ class ResidueNameSelector : public ResidueSelector {
 public:
 	// derived from base class
 	ResidueNameSelector();
-	ResidueNameSelector( std::string const & res_name_str );
-	virtual ~ResidueNameSelector();
 
 	/// @brief Copy constructor
-	///
 	ResidueNameSelector( ResidueNameSelector const &src);
+
+	ResidueNameSelector( std::string const & res_name_str );
+	ResidueNameSelector( std::string const & res_name3_str, bool dummy );
+	virtual ~ResidueNameSelector();
+
 
 	/// @brief Clone operator.
 	/// @details Copy this object and return an owning pointer to the new object.

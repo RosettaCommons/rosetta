@@ -541,6 +541,7 @@ sources = {
 		"TaskSelector",
                 "HBondSelector",
                 "LigandMetalContactSelector",
+                "NativeSelector",
 	],
 
 	"rigid" : [
@@ -1082,6 +1083,9 @@ testinputfiles = [
 	"relax/fast_relax_test_script.dat",
 	"relax/membrane/2mpn_tr.span",
 	"relax/membrane/2mpn_tr_native.pdb",
+	"residue_selectors/one_serine.pdb",
+	"residue_selectors/two_alanines.pdb",
+	"residue_selectors/two_serines.pdb",
 	"rigid/RigidBodyMover.pdb",
 	"rigid/RigidBodyPerturbMover_no_int.pdb",
 	"rigid/RigidBodyPerturbMover_int.pdb",

@@ -8,13 +8,12 @@
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
-/// @file   core/pack/task/residue_selector/HBondSelector.fwd.hh
-/// @brief  A ResidueSelector that selects residues forming hydrogen bonds with specified residues. By default it ignores backbone-backbone hydrogen bonds.
-/// @author Sharon Guffy (guffy@email.unc.edu)
+/// @file   core/pack/task/residue_selector/NativeSelector.fwd.hh
+/// @brief  A ResidueSelector that applies a given residue selector to the native pose.
+/// @author Jack Maguire, jackmaguire1444@gmail.com
 
-
-#ifndef INCLUDED_protocols_residue_selectors_HBondSelector_fwd_hh
-#define INCLUDED_protocols_residue_selectors_HBondSelector_fwd_hh
+#ifndef INCLUDED_protocols_residue_selectors_NativeSelector_fwd_hh
+#define INCLUDED_protocols_residue_selectors_NativeSelector_fwd_hh
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
@@ -23,16 +22,16 @@
 namespace protocols {
 namespace residue_selectors {
 
-class HBondSelector;
+class NativeSelector;
 
-typedef utility::pointer::shared_ptr< HBondSelector > HBondSelectorOP;
-typedef utility::pointer::shared_ptr< HBondSelector const > HBondSelectorCOP;
+typedef utility::pointer::shared_ptr< NativeSelector > NativeSelectorOP;
+typedef utility::pointer::shared_ptr< NativeSelector const > NativeSelectorCOP;
 
 } //protocols
 } //residue_selectors
 
 
-#endif //INCLUDED_protocols_residue_selectors_HBondSelector_fwd_hh
+#endif //INCLUDED_protocols_residue_selectors_NativeSelector_fwd_hh
 
 
 
