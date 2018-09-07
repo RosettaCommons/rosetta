@@ -26,6 +26,7 @@ Author:  Evan Baugh
 Edits:   Labonte
 
 """
+from pyrosetta.toolbox.atom_pair_energy import etable_atom_pair_energies
 from pyrosetta.toolbox.cleaning import cleanATOM, cleanCRYS
 from pyrosetta.toolbox.generate_resfile import (
     generate_resfile_from_pose,
@@ -33,4 +34,5 @@ from pyrosetta.toolbox.generate_resfile import (
 )
 from pyrosetta.toolbox.mutants import mutate_residue
 from pyrosetta.toolbox.numpy_utils import rigid_transform_3D, calc_dihedral
+from pyrosetta.toolbox.py_jobdistributor import PyJobDistributor
 from pyrosetta.toolbox.rcsb import load_from_rcsb, pose_from_rcsb, load_fasta_from_rcsb

@@ -23,5 +23,5 @@ print('Init...')
 pyrosetta.init()
 
 
-print( pyrosetta.rosetta_version )
+print( pyrosetta._version_string() )
 print( version() )
