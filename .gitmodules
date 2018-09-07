@@ -19,3 +19,6 @@
 [submodule "source/external/pybind11"]
 	path = source/external/pybind11
 	url = git@github.com:RosettaCommons/pybind11.git
+[submodule "tests/scientific/data"]
+	path = tests/scientific/data
+	url = git@github.com:RosettaCommons/scientific_benchmark_data.git

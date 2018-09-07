@@ -33,7 +33,7 @@ class MultiCore_HPC_Driver(HPC_Driver):
                         self.trace('Some of the HPC jobs terminated abnormally!')
                         sys.exit(1)
 
-                if len(_jobs_) >= jobs: time.sleep(.5)
+                if len(_jobs_) >= self.cpu_count: time_module.sleep(.5)
 
             sys.stdout.flush()
             pid = os.fork()

@@ -1,0 +1,21 @@
+<ROSETTASCRIPTS>
+  <SCOREFXNS>
+    <ScoreFunction name="ref2015" weights="ref2015" />
+  </SCOREFXNS>
+  <RESIDUE_SELECTORS>
+    <Chain name="chA" chains="A"/>
+  </RESIDUE_SELECTORS>
+  <SIMPLE_METRICS>
+    <RMSDMetric name="rmsd" rmsd_type="rmsd_protein_bb_heavy" residue_selector="chA" use_native="1"/>
+  </SIMPLE_METRICS>
+  <MOVERS>
+    <FastRelax name="fast_relax" scorefxn="ref2015" repeats="5"/>
+    <Superimpose name="superimpose" CA_only="0"/>
+    <RunSimpleMetrics name="run_metrics" metrics="rmsd"/>
+  </MOVERS>
+  <PROTOCOLS>
+    <Add mover="fast_relax"/>
+    <Add mover="superimpose"/>
+    <Add mover="run_metrics" />
+  </PROTOCOLS>
+</ROSETTASCRIPTS>

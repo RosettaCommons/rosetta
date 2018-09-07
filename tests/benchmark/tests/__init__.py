@@ -20,7 +20,9 @@ import platform as  platform_module
 
 __all__ = ['execute',
            '_S_Values_', '_S_draft_', '_S_queued_', '_S_running_', '_S_passed_', '_S_failed_', '_S_build_failed_', '_S_script_failed_',
-           '_StateKey_', '_ResultsKey_', '_LogKey_'
+           '_StateKey_', '_ResultsKey_', '_LogKey_',
+           '_multi_step_config_', '_multi_step_error_', '_multi_step_result_',
+           'to_bytes',
 ]
 
 _S_draft_                 = 'draft'
@@ -45,6 +47,11 @@ _TotalKey_       = 'total'
 _PlotsKey_       = 'plots'
 _FailedTestsKey_ = 'failed_tests'
 _HtmlKey_        = 'html'
+
+# file names for multi-step test files
+_multi_step_config_ = 'config.json'
+_multi_step_error_  = 'error.json'
+_multi_step_result_ = 'result.json'
 
 PyRosetta_unix_memory_requirement_per_cpu = 2.5  # Memory per sub-process in Gb's
 PyRosetta_unix_unit_test_memory_requirement_per_cpu = 3.0  # Memory per sub-process in Gb's for running PyRosetta unit tests
@@ -249,7 +256,7 @@ def execute(message, command_line, return_='status', until_successes=False, term
 
     if add_message_and_command_line_to_output: output = message + '\nCommand line: ' + command_line + '\n' + output
 
-    if return_ == 'tuple': return(exit_code, output)
+    if return_ == 'tuple'  or  return_ == tuple: return(exit_code, output)
 
     if exit_code and terminate_on_failure:
         print("\nEncounter error while executing: " + command_line)

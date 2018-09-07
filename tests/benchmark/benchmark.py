@@ -136,21 +136,40 @@ def main(args):
     for test in Options.args:
         if test.startswith('tests/'): test = test.partition('tests/')[2][:-3]  # removing dir prefix and .py suffix
 
-        suite_name = ''
-        while test:
-            suite_name_add_on, _, test_name = test.partition('.')
-            #print 'suite_name: {suite_name}, suite_name_add_on: {suite_name_add_on}'.format(**vars())
-            suite_name += '/' + suite_name_add_on
+        #suite_name = ''
+        # while test:
+        #     suite_name_add_on, _, test_name = test.partition('.')
+        #     #print( f'suite_name: {suite_name}, suite_name_add_on: {suite_name_add_on}, test_name: {test_name}' )
+        #     suite_name += '/' + suite_name_add_on
 
-            file_name = 'tests' + suite_name + '.py'
+        #     # file_name = 'tests' + suite_name + '/' + test_name + '.py'
+        #     # if os.path.isfile(file_name): test_name = ''; break
+
+        #     file_name = 'tests' + suite_name + '.py'
+        #     if os.path.isfile(file_name): break
+
+        #     file_name = 'tests' + suite_name + '/command.py'
+        #     if os.path.isfile(file_name): break
+
+        #     test = test_name
+
+        suite, rest = test.split('.'), []
+        while suite:
+            #print( f'suite: {suite}, test: {rest}' )
+
+            file_name = '/'.join( ['tests'] + suite ) + '.py'
             if os.path.isfile(file_name): break
 
-            file_name = 'tests' + suite_name + '/command.py'
+            file_name = '/'.join( ['tests'] + suite ) + '/command.py'
             if os.path.isfile(file_name): break
 
-            test = test_name
+            rest.insert(0, suite.pop())
 
-        print( f'Loading test from: {file_name}' )
+
+        test = '.'.join( suite + rest )
+        test_name = '.'.join(rest)
+
+        print( f'Loading test from: {file_name}, suite+test: {test!r}, test: {test_name!r}' )
         test_suite = imp.load_source('test_suite', file_name)
 
         if Options.compare:

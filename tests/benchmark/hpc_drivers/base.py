@@ -69,7 +69,7 @@ class HPC_Driver:
         self.tracer     = tracer
         self.set_daemon_message = set_daemon_message
 
-        self.cpu_count = self.config.getint('DEFAULT', 'cpu_count')
+        self.cpu_count = self.config['cpu_count'] if type(config) == dict else self.config.getint('DEFAULT', 'cpu_count')
 
         self.jobs = []  # list of all jobs currently running by this driver, Job class is driver depended, could be just int or something more complex
 
@@ -96,7 +96,7 @@ class HPC_Driver:
         must_be_implemented_in_inherited_classes
 
 
-    def wait_until_complete(self, jobs=None):
+    def wait_until_complete(self, jobs=None, silent=False):
         ''' Helper function, wait until given jobs list is finished, if no argument is given waits until all jobs known by driver is finished '''
         jobs = list( jobs if jobs else self.jobs )
 
@@ -117,6 +117,8 @@ class HPC_Driver:
                 self.set_daemon_message("Waiting for HPC {} job(s) to finish...".format( len(jobs) ) )
                 #self.tracer("Waiting for HPC {} job(s) to finish...".format( len(jobs) ) )
 
-                sys.stdout.flush()
-                Sleep(64, '"Waiting for HPC {n_jobs} job(s) to finish, sleeping {time_left}s    \r', dict(n_jobs=len(jobs)))
-                #time_module.sleep(64*1)
+                if silent: time.sleep(64)
+                else:
+                    sys.stdout.flush()
+                    Sleep(64, '"Waiting for HPC {n_jobs} job(s) to finish, sleeping {time_left}s    \r', dict(n_jobs=len(jobs)))
+                    #time_module.sleep(64*1)
