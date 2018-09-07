@@ -7,11 +7,12 @@ IFS=$'\n\t'
 set -x
 
 # Delete the local branch pointer created by post-checkout
+CURRENT_HEAD=$(git symbolic-ref --short HEAD)
 
-if [[ ! -z "${BUILDKITE_BRANCH:-}" ]]; then
+if [[ ! -z "${CURRENT_HEAD:-}" ]]; then
   # Move back to the a headless checkout
   git checkout `git rev-parse HEAD`
 
   # and delete the local branch pointer we made
-  git branch -D "${BUILDKITE_BRANCH}"
+  git branch -D "${CURRENT_HEAD#heads/}"
 fi
