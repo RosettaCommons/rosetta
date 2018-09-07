@@ -241,10 +241,15 @@ std::priority_queue<MotifMatch> MotifGraftMover::generate_scaffold_matches(
 		target_motif_->pdb_info()->add_reslabel(i,"MOTIF");
 	}
 	//Add PDBinfo labels to the Motifs
+	core::Size hotspot_counter(0);
 	for ( core::Size i=1; i <= gp_vvr_hotspots_.size(); ++i ) {
 		for ( core::Size j=1; j <= gp_vvr_hotspots_[i].size(); ++j ) {
+			++hotspot_counter;
 			core::Size hotspotPosition = target_motif_->conformation().chain_begin(i) + gp_vvr_hotspots_[i][j] - 1;
 			target_motif_->pdb_info()->add_reslabel(hotspotPosition,"HOTSPOT");
+			std::ostringstream oss;
+			oss << "HOTIN:" << hotspot_counter;
+			target_motif_->pdb_info()->add_reslabel(hotspotPosition, oss.str());
 		}
 	}
 
