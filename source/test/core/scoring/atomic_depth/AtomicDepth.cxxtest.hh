@@ -65,7 +65,7 @@ public:
 
 		core::pose::Pose pose = pose_;
 
-		AtomicDepth depth( pose_, 1.4, false, 4.0 );
+		AtomicDepth depth( pose_, 1.4, false, 0.25 );
 
 
 		chemical::AtomTypeSet const & type_set = pose.residue(1).type().atom_type_set();
@@ -86,7 +86,7 @@ public:
 
 		core::pose::Pose pose = pose_;
 
-		AtomicDepth depth( pose_, 4.0, false, 4.0 );
+		AtomicDepth depth( pose_, 4.0, false, 0.25 );
 
 
 		chemical::AtomTypeSet const & type_set = pose.residue(1).type().atom_type_set();
@@ -107,7 +107,7 @@ public:
 
 		core::pose::Pose pose = pose_;
 
-		AtomicDepth depth( pose_, 4.0, true, 4.0 );
+		AtomicDepth depth( pose_, 4.0, true, 0.25 );
 
 
 		chemical::AtomTypeSet const & type_set = pose.residue(1).type().atom_type_set();
@@ -128,7 +128,7 @@ public:
 
 		core::pose::Pose pose = pose_;
 
-		AtomicDepth depth( pose_, 4.0, false, 4.0 );
+		AtomicDepth depth( pose_, 4.0, false, 0.25 );
 
 
 		chemical::AtomTypeSet const & type_set = pose.residue(1).type().atom_type_set();

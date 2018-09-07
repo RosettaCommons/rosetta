@@ -55,7 +55,7 @@ namespace atomic_depth {
 /// @brief Constructor for AtomicDepth object
 /// @detail If poly_leu_depth is true, mutate pose to poly_leu before depth calculations.
 /// @detail   The intent is to make this aa independent to avoid surface lysines from adding noise.
-AtomicDepth::AtomicDepth( pose::Pose const & pose, Real probe_radius /*=1.4*/, bool poly_leu_depth /*=false*/, Real resolution_scale/*=4.00*/ )
+AtomicDepth::AtomicDepth( pose::Pose const & pose, Real probe_radius /*=1.4*/, bool poly_leu_depth /*=false*/, Real resolution /*=0.25*/ )
 {
 	if ( pose.size() == 0 ) {
 		utility_exit_with_message("core.scoring.atomic_depth.AtomicDepth passed empty pose!");
@@ -73,7 +73,10 @@ AtomicDepth::AtomicDepth( pose::Pose const & pose, Real probe_radius /*=1.4*/, b
 	pwidth_=0;
 	plength_=0;
 
-	fixsf_=resolution_scale;
+	// This code originally specified a scale factor instead of a resolution.
+	// After backtracing the calculation, the scale factor for a given resolution
+	// can be determined from the formula below.
+	fixsf_=Real(1.0)/resolution * Real(127.0f)/Real(128.0f);
 
 	pose::Pose poly_leu_pose;
 	if ( poly_leu_depth ) {
@@ -86,8 +89,8 @@ AtomicDepth::AtomicDepth( pose::Pose const & pose, Real probe_radius /*=1.4*/, b
 	pose::Pose const & use_pose = poly_leu_depth ? poly_leu_pose : pose;
 
 	initpara( use_pose );
-	TR << boost::str(boost::format("actual boxlength %3d, box[%3d*%3d*%3d], scale factor %6.3f\n")%
-		boxlength_%plength_%pwidth_%pheight_%scalefactor_) << std::endl;
+	TR << boost::str(boost::format("actual boxlength %3d, box[%3d*%3d*%3d], resolution %6.3f\n")%
+		boxlength_%plength_%pwidth_%pheight_%(1.0f/scalefactor_)) << std::endl;
 	fillvoxels( use_pose );
 	buildboundary();
 	fastdistancemap(1);

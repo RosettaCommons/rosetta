@@ -27,10 +27,11 @@ core::id::AtomID_Map< core::Real >
 atomic_depth(
 	pose::Pose const & pose,
 	Real probe_radius, /*= 1.4*/
-	bool poly_leu_depth /*= false*/
+	bool poly_leu_depth, /*= false*/
+	Real resolution /*= 0.25f*/
 ) {
 	AtomicDepthOP depth = nullptr;
-	return atomic_depth( pose, depth, probe_radius, poly_leu_depth );
+	return atomic_depth( pose, depth, probe_radius, poly_leu_depth, resolution );
 }
 
 /// @brief Calculate depth of all atoms from edge of Sasa surface.
@@ -41,12 +42,13 @@ atomic_depth(
 	pose::Pose const & pose,
 	AtomicDepthOP & depth,
 	Real probe_radius, /*= 1.4*/
-	bool poly_leu_depth /*= false*/
+	bool poly_leu_depth, /*= false*/
+	Real resolution /*= 0.25f*/
 ) {
 	core::id::AtomID_Map< bool > depth_atoms;
 	pose::initialize_atomid_map( depth_atoms, pose.conformation(), true );
 
-	return atomic_depth( pose, depth_atoms, depth, probe_radius, poly_leu_depth );
+	return atomic_depth( pose, depth_atoms, depth, probe_radius, poly_leu_depth, resolution );
 }
 
 /// @brief Calculate depth of certain atoms from edge of Sasa surface.
@@ -55,10 +57,11 @@ atomic_depth(
 	pose::Pose const & pose,
 	core::id::AtomID_Map< bool > depth_atoms,
 	Real probe_radius, /*= 1.4*/
-	bool poly_leu_depth /*= false*/
+	bool poly_leu_depth, /*= false*/
+	Real resolution /*= 0.25f*/
 ) {
 	AtomicDepthOP depth = nullptr;
-	return atomic_depth( pose, depth_atoms, depth, probe_radius, poly_leu_depth );
+	return atomic_depth( pose, depth_atoms, depth, probe_radius, poly_leu_depth, resolution );
 }
 
 /// @brief Calculate depth of certain atoms from edge of Sasa surface.
@@ -70,7 +73,8 @@ atomic_depth(
 	core::id::AtomID_Map< bool > depth_atoms,
 	AtomicDepthOP & depth,
 	Real probe_radius, /*= 1.4*/
-	bool poly_leu_depth /*= false*/
+	bool poly_leu_depth, /*= false*/
+	Real resolution /*= 0.25f*/
 ) {
 	core::id::AtomID_Map< core::Real > final_depths;
 	pose::initialize_atomid_map( final_depths, pose.conformation(), -1.0 );
@@ -78,7 +82,7 @@ atomic_depth(
 	if ( pose.size() == 0 ) return final_depths;
 
 	if ( ! depth ) {
-		depth = AtomicDepthOP( new AtomicDepth( pose, probe_radius, poly_leu_depth ) );
+		depth = AtomicDepthOP( new AtomicDepth( pose, probe_radius, poly_leu_depth, resolution ) );
 	}
 	utility::vector1< conformation::Atom > atoms;
 
@@ -113,11 +117,12 @@ core::id::AtomID_Map< bool >
 atoms_deeper_than(
 	pose::Pose const & pose,
 	Real threshold,
-	bool invert /*= false*/,
-	Real probe_radius /*= 1.4*/,
-	bool poly_leu_depth /*= false*/
+	bool invert, /*= false*/
+	Real probe_radius, /*= 1.4*/
+	bool poly_leu_depth, /*= false*/
+	Real resolution /*= 0.25f*/
 ) {
-	core::id::AtomID_Map< core::Real > depths = atomic_depth( pose, probe_radius, poly_leu_depth );
+	core::id::AtomID_Map< core::Real > depths = atomic_depth( pose, probe_radius, poly_leu_depth, resolution );
 
 	core::id::AtomID_Map< bool > is_deep;
 	pose::initialize_atomid_map( is_deep, pose.conformation(), false );

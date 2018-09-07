@@ -30,7 +30,8 @@ core::id::AtomID_Map< core::Real >
 atomic_depth(
 	pose::Pose const & pose,
 	Real probe_radius = 1.4,
-	bool poly_leu_depth = false
+	bool poly_leu_depth = false,
+	Real resolution = 0.25f
 );
 
 /// @brief Calculate depth of all atoms from edge of Sasa surface.
@@ -41,7 +42,8 @@ atomic_depth(
 	pose::Pose const & pose,
 	AtomicDepthOP & depth,
 	Real probe_radius = 1.4,
-	bool poly_leu_depth = false
+	bool poly_leu_depth = false,
+	Real resolution = 0.25f
 );
 
 /// @brief Calculate depth of all atoms from edge of Sasa surface.
@@ -50,7 +52,8 @@ atomic_depth(
 	pose::Pose const & pose,
 	core::id::AtomID_Map< bool > depth_atoms,
 	Real probe_radius = 1.4,
-	bool poly_leu_depth = false
+	bool poly_leu_depth = false,
+	Real resolution = 0.25f
 );
 
 /// @brief Calculate depth of all atoms from edge of Sasa surface.
@@ -62,7 +65,8 @@ atomic_depth(
 	core::id::AtomID_Map< bool > depth_atoms,
 	AtomicDepthOP & depth,
 	Real probe_radius = 1.4,
-	bool poly_leu_depth = false
+	bool poly_leu_depth = false,
+	Real resolution = 0.25f
 );
 
 /// @brief Find all atoms deeper than threshold from the edge of the sasa surface.
@@ -72,7 +76,8 @@ atoms_deeper_than(
 	Real threshold,
 	bool invert = false,
 	Real probe_radius = 1.4,
-	bool poly_leu_depth = false
+	bool poly_leu_depth = false,
+	Real resolution = 0.25f
 );
 
 

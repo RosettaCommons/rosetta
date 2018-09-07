@@ -79,7 +79,7 @@ typedef struct voxel2
 class AtomicDepth : public utility::pointer::ReferenceCount
 {
 public:
-	AtomicDepth( pose::Pose const & pose, Real probe_radius=1.4, bool poly_leu_depth=false, Real resolution_scale=4.00);
+	AtomicDepth( pose::Pose const & pose, Real probe_radius=1.4, bool poly_leu_depth=false, Real resolution=0.25);
 
 	utility::vector1<Real> calcdepth( utility::vector1<conformation::Atom> const & atoms, chemical::AtomTypeSet const & type_set ) const;
 	Real calcdepth( conformation::Atom const & atom, chemical::AtomTypeSet const & type_set ) const;
