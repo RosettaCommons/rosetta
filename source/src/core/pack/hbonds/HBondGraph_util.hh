@@ -120,6 +120,23 @@ void find_satisfying_interactions_with_background(
 /// @brief If you only care about hbond networks, then you might not care about edges that have no incident edges. This function deletes those edges.
 void delete_edges_with_degree_zero( scoring::hbonds::graph::AtomLevelHBondGraph & hb_graph );
 
+/// @brief Construct an AtomLevelHBondGraph from a partial rotsets (like you might see during packing)
+/// @detail BB-BB hbonds are only included for the first residue. This means that prolines are not
+///         handled correctly. If proline is the first resdiue at a position and other residues
+///         are being packed at that position, any hbonds to the other Ns will not be reported.
+///   If one wishes to have BB-BB hbonds for all pairs, enable all 4 hbond terms for
+///   scorefxn_sc and leave scorefxn_bb as a nullptr (or a blank scorefxn)
+scoring::hbonds::graph::AtomLevelHBondGraphOP
+hbond_graph_from_partial_rotsets(
+	pose::Pose const & pose_in,
+	pack::rotamer_set::RotamerSetsOP const & original_rotsets,
+	scoring::ScoreFunctionOP const & scorefxn_sc, // Only hbond_sc_bb and hbond_sc
+	scoring::ScoreFunctionOP const & scorefxn_bb, // Only hbond_lr_bb and hbond_sr_bb
+	pack::rotamer_set::RotamerSetsOP & complete_rotsets_out,
+	utility::vector1<bool> & position_had_rotset,
+	float minimum_hb_cut = 0
+);
+
 } //hbonds
 } //pack
 } //core

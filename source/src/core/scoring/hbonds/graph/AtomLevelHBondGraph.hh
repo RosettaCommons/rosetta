@@ -83,7 +83,7 @@ public://getters, setters, accessors
 	}
 
 	///@brief get local rotamer id (local to the residue position)
-	///@details this is equivalent to pack::rotamer_set::RotamerSetsBase::rotid_on_moltenresidue( this->get_node_index() )
+	///@details this is equivalent to pose::RotamerSetsBase::rotid_on_moltenresidue( this->get_node_index() )
 	unsigned int local_rotamer_id() const{
 		return rotamer_id_;
 	}
@@ -94,7 +94,7 @@ public://getters, setters, accessors
 	}
 
 	///@brief duplicate interface for getting the global rotamer id. Identical to this->get_node_index()
-	///details this is equivalent to pack::rotamer_set::RotamerSetsBase::nrotamer_offset_for_moltenres( this->moltenres() ) + this->local_rotamer_id()
+	///details this is equivalent to pose::RotamerSetsBase::nrotamer_offset_for_moltenres( this->moltenres() ) + this->local_rotamer_id()
 	Size global_rotamer_id() const{
 		return get_node_index();
 	}
@@ -132,6 +132,14 @@ public://getters, setters, accessors
 		polar_sc_atoms_not_satisfied_by_background_.emplace_back( local_atom_id, atom_position, is_hydrogen, is_donor, is_acceptor, is_hydroxyl, is_backbone );
 	}
 
+	/// @brief The polar atoms are sorted, so we have to cleverly insert and maintain the order
+	/// @details Used by merge
+	void add_polar_atom_if_doesnt_exist( AtomInfo const & info ) {
+		auto iter = std::lower_bound( polar_sc_atoms_not_satisfied_by_background_.begin(), polar_sc_atoms_not_satisfied_by_background_.end(), info );
+		if ( iter->local_atom_id() == info.local_atom_id() ) return;
+		polar_sc_atoms_not_satisfied_by_background_.insert( iter, info );
+	}
+
 	//Unstable means that the order is not preserved. I think this should not be used because it is handy to have all of the hydrogens at the end.
 	//for example, seeing if there are any unsatisfied heavy atoms is an O(1) lookup of ( ! atom_vec.size() || atom_vec.front().is_hydrogen() )
 	//These vectors are so short that I imagine we can pay the cost of down-shifting the higher elements on every removal
@@ -164,6 +172,20 @@ public://getters, setters, accessors
 	void remove_atom_info_stable( unsigned short int local_atom_id ){
 		remove_atom_info_from_vec_stable( polar_sc_atoms_not_satisfied_by_background_, local_atom_id );
 	}
+
+	/// @brief Only merges new data added by this class. Does not merge edges!!!
+	/// @detail There are two ways to merge the atoms.
+	///         OR_logic - Take the union of the atoms at each node
+	///         AND_logic - Take the intersection of the atoms at each node
+	///
+	///   other_node_to_my_node is a map of node indices from the other graph
+	///         to node indices in this graph.
+	///   other_node_to_my_node.size() == other_graph.num_nodes()
+	void merge_data(
+		AtomLevelHBondNode const & other,
+		utility::vector1< Size > const & other_node_to_my_node,
+		bool merge_with_OR_logic
+	);
 
 private:
 	unsigned int mres_id_;
@@ -243,6 +265,12 @@ public://getters and setters
 		return hbonds_;
 	}
 
+	/// @brief Only merges new data added by this class. Flips first_node_is_donor if necessary
+	/// @detail other_node_to_my_node is a map of node indices from the other graph
+	///         to node indices in this graph.
+	///   other_node_to_my_node.size() == other_graph.num_nodes()
+	void merge_data( AtomLevelHBondEdge const & other, utility::vector1< Size > const & other_node_to_my_node );
+
 private:
 	float energy_;
 	std::vector< HBondInfo > hbonds_; // sizeof(std::vector) == 24 ; sizeof(utility::vector1) == 32
@@ -273,6 +301,13 @@ public:
 	Size count_static_memory() const override;
 	Size count_dynamic_memory() const override;
 
+
+	/// @brief Merges all info from other into this graph. All nodes from other must
+	///        be present in this graph (by rotamer_id and mres_id).
+	/// @detail There are two ways to merge the atoms of a node.
+	///         OR_logic - Take the union of the atoms at each node
+	///         AND_logic - Take the intersection of the atoms at each node
+	void merge( AtomLevelHBondGraph const & other, bool merge_nodes_with_OR_logic );
 
 public://old methods & methods used for unit tests
 	AtomLevelHBondEdge * register_hbond( Size rotamerA, Size rotamerB, Real score );

@@ -25,6 +25,9 @@
 
 #include <utility/pointer/ReferenceCount.hh>
 
+#include <boost/functional/hash.hpp>
+
+#include <unordered_map>
 
 namespace core {
 namespace pack {
@@ -98,7 +101,7 @@ public:
 
 private:
 
-	std::map< std::pair< int, int >, float> future_edges_;
+	std::unordered_map< std::pair<uint32_t, uint32_t>, float, boost::hash< std::pair<uint32_t, uint32_t>>> future_edges_;
 	scoring::hbonds::graph::AtomLevelHBondGraphOP hbond_graph_;
 	rotamer_set::RotamerSetsCOP rotamer_sets_;
 

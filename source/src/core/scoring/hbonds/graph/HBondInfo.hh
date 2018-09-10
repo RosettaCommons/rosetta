@@ -24,7 +24,20 @@ namespace scoring {
 namespace hbonds {
 namespace graph {
 
-class LKHBondInfo;
+
+class LKHBondInfo {
+public:
+	LKHBondInfo( LKHBondInfo const & ){}
+
+	virtual ~LKHBondInfo(){}
+
+public:
+
+	bool operator==( LKHBondInfo const & ) const { return true; }
+
+private:
+};
+
 
 class HBondInfo {
 public:
@@ -111,6 +124,15 @@ public:
 		lk_info_ = lk_info_setting;
 	}
 
+	bool operator==( HBondInfo const & ot ) const {
+		if ( lk_info_ && ot.lk_info_ ) {
+			if ( !( *lk_info_ == *(ot.lk_info_) ) ) return false;
+		}
+		return  ( first_node_is_donor_ == ot.first_node_is_donor_ ) &&
+			( local_atom_id_A_ == ot.local_atom_id_A_ ) &&
+			( local_atom_id_D_ == ot.local_atom_id_D_ ) &&
+			( local_atom_id_H_ == ot.local_atom_id_H_ );
+	}
 
 private:
 	bool first_node_is_donor_;
@@ -120,17 +142,6 @@ private:
 	LKHBondInfo * lk_info_;//Does not own!
 };
 
-
-class LKHBondInfo {
-public:
-	LKHBondInfo( LKHBondInfo const & ){}
-
-	virtual ~LKHBondInfo(){}
-
-public:
-
-private:
-};
 
 
 } //graph

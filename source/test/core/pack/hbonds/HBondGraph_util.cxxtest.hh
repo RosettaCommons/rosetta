@@ -34,7 +34,6 @@
 
 #include <core/scoring/hbonds/graph/AtomLevelHBondGraph.hh>
 #include <core/pack/hbonds/HBondGraph_util.hh>
-#include <core/pack/guidance_scoreterms/approximate_buried_unsat_penalty/util.hh>
 
 
 #include <core/types.hh>
@@ -85,16 +84,18 @@ public:
 
 		// We only need hbonds for this test
 
-		scoring::ScoreFunctionOP sfxn ( new scoring::ScoreFunction() );
-		sfxn->set_weight( scoring::hbond_bb_sc, 1.0 );
-		sfxn->set_weight( scoring::hbond_sr_bb, 1.0 );
-		sfxn->set_weight( scoring::hbond_lr_bb, 1.0 );
-		sfxn->set_weight( scoring::hbond_sc, 1.0 );
-		sfxn->score( pose );
+		scoring::ScoreFunctionOP sfxn_sc ( new scoring::ScoreFunction() );
+		sfxn_sc->set_weight( scoring::hbond_bb_sc, 1.0 );
+		sfxn_sc->set_weight( scoring::hbond_sc, 1.0 );
+		sfxn_sc->score( pose );
 
-		// We're going to use another util file to setup the AtomLevelHBondGraphOP
-		// This will call HBondGraph_util internally and uses a rotsets that has
-		// exactly one rotamer at each backbone position
+		scoring::ScoreFunctionOP sfxn_bb ( new scoring::ScoreFunction() );
+		sfxn_bb->set_weight( scoring::hbond_sr_bb, 1.0 );
+		sfxn_bb->set_weight( scoring::hbond_lr_bb, 1.0 );
+		sfxn_bb->score( pose );
+
+
+		// Use hbond_graph_from_partial_rotsets to fill the hb_graph
 
 		pack::rotamer_set::RotamerSetsOP blank_rotsets( new pack::rotamer_set::RotamerSets() );
 		pack::task::PackerTaskOP task = pack::task::TaskFactory::create_packer_task( pose );
@@ -105,8 +106,8 @@ public:
 		utility::vector1<bool> not_used;
 
 		scoring::hbonds::graph::AtomLevelHBondGraphOP hb_graph;
-		hb_graph = core::pack::guidance_scoreterms::approximate_buried_unsat_penalty::hbond_graph_from_partial_rotsets(
-			pose, blank_rotsets, sfxn, rotsets, not_used, -0.001f );
+		hb_graph = core::pack::hbonds::hbond_graph_from_partial_rotsets(
+			pose, blank_rotsets, sfxn_sc, sfxn_bb, rotsets, not_used, -0.001f );
 
 
 		// The hb_graph should contain all polar atoms and all hbonds. Lets check

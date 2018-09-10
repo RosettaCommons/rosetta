@@ -18,11 +18,16 @@
 #include <core/pack/interaction_graph/AminoAcidNeighborSparseMatrix.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pose/Pose.hh>
+
+#include <basic/Tracer.hh>
+
 #include <utility>
 
 namespace core {
 namespace pack {
 namespace hbonds {
+
+static basic::Tracer TR( "core.pack.hbonds.MCHBNetInteractionGraph" );
 
 BareMinimumPDEdge::BareMinimumPDEdge( interaction_graph::InteractionGraphBase* owner, int first_node_ind, int second_node_ind ) :
 	interaction_graph::PDEdge( owner, first_node_ind, second_node_ind )
@@ -132,6 +137,7 @@ MCHBNetInteractionGraph::get_ind_res(
 	return resi_ind;
 }
 
+
 void MCHBNetInteractionGraph::eval_rot_pair(
 	unsigned int const global_rot1,
 	unsigned int const global_rot2,
@@ -150,26 +156,14 @@ void MCHBNetInteractionGraph::eval_rot_pair(
 		return;
 	}
 	if ( two_body_energy <= hbond_threshold_ ) {
-		// utility::graph::Edge * const existing_edge = hbond_graph_->find_edge( global_rot1, global_rot2 );
-		// if ( existing_edge ) {
-		//  //if edge exists, add energy to existing edge
-		//  AtomLevelHBondEdge & existing_hbond_edge =
-		//   static_cast< AtomLevelHBondEdge & >( * existing_edge );
-		//  existing_hbond_edge.set_energy( existing_hbond_edge.energy() + two_body_energy );
-		// } else {
-		//  AtomLevelHBondEdge & new_edge =
-		//   static_cast< AtomLevelHBondEdge & >( * hbond_graph_->add_edge( global_rot1, global_rot2 ) );
-		//  new_edge.set_energy( two_body_energy );
-		// }
+
 		bool swap = global_rot1 > global_rot2;
-		Size rot1 = swap ? global_rot2 : global_rot1;
-		Size rot2 = swap ? global_rot1 : global_rot2;
-		std::pair< Size, Size > rot_pair( rot1, rot2 );
-		if ( future_edges_.count(rot_pair) == 0 ) {
-			future_edges_[rot_pair] = two_body_energy;
-		} else {
-			future_edges_[rot_pair] += two_body_energy;
-		}
+		uint32_t rot1 = swap ? global_rot2 : global_rot1;
+		uint32_t rot2 = swap ? global_rot1 : global_rot2;
+
+		std::pair<uint32_t, uint32_t> key( rot1, rot2 );
+
+		future_edges_[ key ] += two_body_energy;
 	}
 }
 
@@ -177,20 +171,21 @@ void MCHBNetInteractionGraph::finalize_hbond_graph() {
 
 	using namespace scoring::hbonds::graph;
 
-	for ( std::pair< std::pair< Size, Size>, float > const & pair_val : future_edges_ ) {
+	for ( std::pair< std::pair<uint32_t, uint32_t>, float > const & key_val : future_edges_ ) {
 
-		std::pair< Size, Size > rot_pair = pair_val.first;
-		float val = pair_val.second;
+		uint32_t rot1 = key_val.first.first;
+		uint32_t rot2 = key_val.first.second;
+
+		float val = key_val.second;
 
 		AtomLevelHBondEdge & new_edge =
-			static_cast< AtomLevelHBondEdge & >( * hbond_graph_->add_edge( rot_pair.first, rot_pair.second ) );
+			static_cast< AtomLevelHBondEdge & >( * hbond_graph_->add_edge( rot1, rot2 ) );
 		new_edge.set_energy( val );
-
 	}
 
 	future_edges_.clear();
-
 }
+
 
 
 } //hbonds

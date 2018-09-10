@@ -156,6 +156,10 @@ public://getters
 		return xyz_;
 	}
 
+	bool operator<( AtomInfo const & ot ) const {
+		return local_atom_id_ < ot.local_atom_id_;
+	}
+
 private://DATA
 	unsigned short int local_atom_id_;
 	numeric::xyzVector< float > xyz_;

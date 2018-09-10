@@ -23,6 +23,7 @@
 #include <core/pack/packer_neighbors.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/rotamer_set/symmetry/SymmetricRotamerSet_.hh>
+#include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.hh>
 
 #include <core/scoring/Energies.hh>
@@ -33,6 +34,7 @@
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/graph/AtomLevelHBondGraph.hh>
 #include <core/scoring/hbonds/hbonds.hh>
+#include <core/scoring/ScoreFunction.hh>
 
 #include <list>
 
@@ -63,7 +65,6 @@ scoring::hbonds::graph::AtomLevelHBondGraphOP create_init_and_create_edges_for_a
 
 	rotamer_sets->precompute_two_body_energies( pose, sfxn, packer_neighbor_graph, ig, true );
 	ig->finalize_hbond_graph();
-
 
 	//If you are running with symmetry, you still need to score one-body interactions
 
@@ -445,6 +446,123 @@ void delete_edges_with_degree_zero( scoring::hbonds::graph::AtomLevelHBondGraph 
 		hb_graph.delete_edge( doomed_edge );
 	}
 }
+
+
+/// @brief Construct an AtomLevelHBondGraph from a partial rotsets (like you might see during packing)
+/// @detail BB-BB hbonds are only included for the first residue. This means that prolines are not
+///         handled correctly. If proline is the first resdiue at a position and other residues
+///         are being packed at that position, any hbonds to the other Ns will not be reported.
+///   If one wishes to have BB-BB hbonds for all pairs, enable all 4 hbond terms for
+///   scorefxn_sc and leave scorefxn_bb as a nullptr (or a blank scorefxn)
+scoring::hbonds::graph::AtomLevelHBondGraphOP
+hbond_graph_from_partial_rotsets(
+	pose::Pose const & pose_in,
+	pack::rotamer_set::RotamerSetsOP const & original_rotsets,
+	scoring::ScoreFunctionOP const & scorefxn_sc, // Only hbond_sc_bb and hbond_sc
+	scoring::ScoreFunctionOP const & scorefxn_bb, // Only hbond_lr_bb and hbond_sr_bb
+	pack::rotamer_set::RotamerSetsOP & complete_rotsets_out,
+	utility::vector1<bool> & position_had_rotset,
+	float minimum_hb_cut /* =0 */
+) {
+	bool separate_bb = bool(scorefxn_bb) && scorefxn_bb->get_nonzero_weighted_scoretypes().size() > 0;
+	// OK, so first we need to make a RotamerSets that has an entry for every single seqpos.
+	//     We'll reuse whatever we can from original_rotsets and then start adding the current rotamers.
+
+	// We need to score the pose. So we should probably make a copy so that we don't confuse the packer.
+
+	pose::Pose pose_sc = pose_in;
+	pose::Pose pose_bb = pose_in;
+
+	scorefxn_sc->score( pose_sc );
+	if ( separate_bb ) scorefxn_bb->score( pose_bb );
+
+	// Pretend like we're going to design every position
+	utility::vector1<bool> true_vect( pose_sc.size(), true );
+	scorefxn_sc->setup_for_packing( pose_sc, true_vect, true_vect );
+	if ( separate_bb ) scorefxn_bb->setup_for_packing( pose_bb, true_vect, true_vect );
+
+	// Blank packer task that says we're going to pack every position
+	pack::task::PackerTaskOP task = pack::task::TaskFactory::create_packer_task( pose_sc );
+
+	// Our internal rotsets that the AtomLevelHBondGraph needs
+	pack::rotamer_set::RotamerSetsOP rotsets( new pack::rotamer_set::RotamerSets() );
+	rotsets->set_task( task );
+
+	// Our rotsets for bb interactions
+	pack::rotamer_set::RotamerSetsOP bb_rotsets( new pack::rotamer_set::RotamerSets() );
+	bb_rotsets->set_task( task );
+
+	position_had_rotset.clear();
+	position_had_rotset.resize( pose_sc.size() );
+
+	// Fill in the rotsets with either the RotamerSet from original_rotsets or make a new one from the current res
+	for ( Size resnum = 1; resnum <= pose_sc.size(); resnum++ ) {
+
+		// We need to make a new rotset in either case
+		//  Either because there was no rotset for this position
+		//  Or because we'll confuse the scorefunction machinery if we don't make a new one
+		pack::rotamer_set::RotamerSetOP rotset( new pack::rotamer_set::RotamerSet_() );
+		rotset->set_resid( resnum );
+
+		// The bb rotset
+		pack::rotamer_set::RotamerSetOP bb_rotset( new pack::rotamer_set::RotamerSet_() );
+		bb_rotset->set_resid( resnum );
+
+		if ( original_rotsets->has_rotamer_set_for_residue( resnum ) ) {
+			pack::rotamer_set::RotamerSetCOP original_rotset = original_rotsets->rotamer_set_for_residue( resnum );
+			for ( Size irot = 1; irot <= original_rotset->num_rotamers(); irot++ ) {
+				rotset->add_rotamer( *original_rotset->rotamer( irot ) );
+			}
+			bb_rotset->add_rotamer( *original_rotset->rotamer( 1 ) );
+			position_had_rotset[resnum] = true;
+		} else {
+			rotset->add_rotamer( *pose_sc.residue(resnum).create_rotamer() );
+			bb_rotset->add_rotamer( *pose_bb.residue(resnum).create_rotamer() );
+			position_had_rotset[resnum] = false;
+		}
+
+		scorefxn_sc->prepare_rotamers_for_packing( pose_sc, *rotset );
+		if ( separate_bb ) scorefxn_bb->prepare_rotamers_for_packing( pose_bb, *bb_rotset );
+		rotsets->set_explicit_rotamers( rotsets->resid_2_moltenres( resnum ), rotset );
+		bb_rotsets->set_explicit_rotamers( bb_rotsets->resid_2_moltenres( resnum ), bb_rotset );
+	}
+	rotsets->update_offset_data();
+	bb_rotsets->update_offset_data();
+
+	// Use some of the HBNet machinery to load the AtomLevelHBondGraph for interactions involving sc
+	scoring::hbonds::graph::AtomLevelHBondGraphOP hb_graph;
+	hb_graph = pack::hbonds::create_init_and_create_edges_for_atom_level_hbond_graph(
+		rotsets,    // our temporary rotsets
+		* scorefxn_sc, pose_sc,
+		minimum_hb_cut, // allow all hbonds during interation graph generation
+		1e6,            // allow all clashes
+		minimum_hb_cut, // only allow good hbonds to make it into the final graph
+		true            // include backbone atoms ( we want bb_sc too )
+	);
+
+	if ( separate_bb ) {
+
+		// Use some of the HBNet machinery to load the AtomLevelHBondGraph for bb_bb only
+		scoring::hbonds::graph::AtomLevelHBondGraphOP bb_hb_graph;
+		bb_hb_graph = pack::hbonds::create_init_and_create_edges_for_atom_level_hbond_graph(
+			bb_rotsets,    // our temporary rotsets
+			* scorefxn_bb, pose_bb,
+			minimum_hb_cut, // allow all hbonds during interation graph generation
+			1e6,            // allow all clashes
+			minimum_hb_cut, // only allow good hbonds to make it into the final graph
+			true            // include backbone atoms
+		);
+
+		hb_graph->merge( *bb_hb_graph, true );
+	}
+
+	complete_rotsets_out = rotsets;
+
+	return hb_graph;
+}
+
+
+
 
 
 } //hbonds
