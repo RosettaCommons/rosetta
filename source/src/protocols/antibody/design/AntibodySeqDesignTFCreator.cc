@@ -97,7 +97,8 @@ AntibodySeqDesignTFCreator::AntibodySeqDesignTFCreator( AntibodySeqDesignTFCreat
 	design_h3_stem_(src.design_h3_stem_ ),
 	force_north_paper_db_(src.force_north_paper_db_ ),
 	no_data_cdrs_( src.no_data_cdrs_ ),
-	use_outliers_( src.use_outliers_ )
+	use_outliers_( src.use_outliers_ ),
+	no_probability_(src.no_probability_)
 
 
 {
@@ -155,6 +156,7 @@ AntibodySeqDesignTFCreator::read_command_line_options(){
 	design_h3_stem_ = option[ OptionKeys::antibody::design::design_H3_stem ]();
 	profile_picking_rounds_ = option[ OptionKeys::antibody::design::seq_design_profile_samples]();
 	use_outliers_ = option[OptionKeys::antibody::design::use_outliers]();
+	no_probability_ = option[OptionKeys::antibody::design::no_profile_probabilities]();
 
 }
 
@@ -200,6 +202,12 @@ AntibodySeqDesignTFCreator::set_probability_data_cutoff( core::Size const cutoff
 void
 AntibodySeqDesignTFCreator::set_design_H3_stem(bool design_H3_stem) {
 	design_h3_stem_ = design_H3_stem;
+}
+
+///@brief Set to sample all available AAs per position at a weight of 1.0 instead of sampling based on weights
+void
+AntibodySeqDesignTFCreator::set_no_probability( bool no_probability){
+	no_probability_ = no_probability;
 }
 
 void
@@ -250,6 +258,7 @@ AntibodySeqDesignTFCreator::generate_tf_seq_design( const core::pose::Pose & pos
 	add_extra_restrict_operations(tf, pose);
 
 	AddCDRProfilesOperationOP profile_strategy_task = this->generate_task_op_cdr_profiles(pose);
+
 	tf->push_back( profile_strategy_task );
 
 	if ( design_framework_conservative_ ) {
@@ -326,6 +335,7 @@ AntibodySeqDesignTFCreator::generate_tf_seq_design_graft_design(
 
 	//Now that we have the residues we are designing, we now control what we design:
 	AddCDRProfilesOperationOP profile_strategy_task = this->generate_task_op_cdr_profiles(pose);
+
 	tf->push_back( profile_strategy_task );
 
 	if ( design_framework_conservative_ && design_framework_ ) {
@@ -359,6 +369,7 @@ AntibodySeqDesignTFCreator::generate_task_op_cdr_profiles(core::pose::Pose const
 	profile_op->set_force_north_paper_db(force_north_paper_db_);
 	profile_op->set_sample_zero_probs_at(zero_prob_weight_);
 	profile_op->set_design_options(cdr_design_options_);
+	profile_op->set_no_probability(no_probability_);
 	profile_op->pre_load_data(pose);
 
 	return profile_op;

@@ -91,6 +91,10 @@ public:
 	void
 	set_overall_aa_probabilities( AAProbabilities aa_probs );
 
+	///@brief Set to sample all available AAs per position instead of sampling based on weights
+	/// Used to increase diversity and for testing purposes.
+	void
+	set_no_probability( bool no_probability );
 
 public:
 
@@ -189,6 +193,7 @@ private:
 	bool keep_task_allowed_aa_;
 	core::Real zero_probs_overwrite_;
 	core::Size picking_rounds_;
+	bool no_probability_ = false;
 
 };
 

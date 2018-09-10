@@ -86,7 +86,7 @@ public:
 		score->score(pose_chothia_);
 
 		inpath_ = "protocols/antibody/task_operations";
-		first_run_outpath_ = "/home/jadolfbr/Documents/modeling/rosetta/Rosetta/main/source/test/ut_files";
+		first_run_outpath_ = "/Users/jadolfbr/Documents/Rosetta/main/source/test/ut_files";
 		first_run_ = false;
 		ab_info_ = AntibodyInfoOP( new AntibodyInfo(pose_, AHO_Scheme, North) );
 		ab_info_chothia_ = AntibodyInfoOP( new AntibodyInfo(pose_chothia_));
@@ -259,6 +259,7 @@ public:
 		AddCDRProfilesOperationOP default_op = AddCDRProfilesOperationOP(new AddCDRProfilesOperation());
 		default_op->set_force_north_paper_db(true);
 		default_op->set_ignore_light_chain(true);
+		default_op->set_no_probability(true);
 
 		TaskFactoryOP task = TaskFactoryOP( new TaskFactory());
 		task->push_back(default_op);
@@ -267,12 +268,14 @@ public:
 		AddCDRProfilesOperationOP default_ab_info = AddCDRProfilesOperationOP(new AddCDRProfilesOperation(ab_info_));
 		default_ab_info->set_force_north_paper_db(true);
 		default_ab_info->set_ignore_light_chain(true);
+		default_ab_info->set_no_probability(true);
 
 		default_ab_info->set_cdrs(cdrs);
 
 		AddCDRProfilesOperationOP default_cdrs = AddCDRProfilesOperationOP( new AddCDRProfilesOperation(ab_info_, cdrs));
 		default_cdrs->set_force_north_paper_db(true);
 		default_cdrs->set_ignore_light_chain(true);
+		default_cdrs->set_no_probability(true);
 
 		task->clear();
 		task->push_back(default_ab_info);
@@ -282,6 +285,7 @@ public:
 		AddCDRProfilesOperationOP no_fallback = AddCDRProfilesOperationOP( new AddCDRProfilesOperation(ab_info_));
 		no_fallback->set_force_north_paper_db(true);
 		no_fallback->set_ignore_light_chain(true);
+		no_fallback->set_no_probability(true);
 
 		no_fallback->set_fallback_strategy(design::seq_design_none);
 
@@ -293,6 +297,8 @@ public:
 		AddCDRProfilesOperationOP forced_fallback = AddCDRProfilesOperationOP( new AddCDRProfilesOperation(ab_info_));
 		forced_fallback->set_force_north_paper_db(true);
 		forced_fallback->set_ignore_light_chain(true);
+		forced_fallback->set_no_probability(true);
+
 		forced_fallback->set_primary_strategy(seq_design_conservative);
 
 		task->clear();
@@ -303,7 +309,9 @@ public:
 		AddCDRProfilesOperationOP pre_loaded_data = AddCDRProfilesOperationOP( new AddCDRProfilesOperation(ab_info_, cdrs));
 		pre_loaded_data->set_force_north_paper_db(true);
 		pre_loaded_data->set_ignore_light_chain(true);
+		pre_loaded_data->set_no_probability(true);
 		pre_loaded_data->pre_load_data(pose_);
+
 		task->clear();
 		task->push_back(pre_loaded_data);
 		output_or_test(task, pose_, first_run_, "AddCDRProfilesOperation_UTracer5",  inpath_, first_run_outpath_);
@@ -312,21 +320,24 @@ public:
 		AddCDRProfilesOperationOP pre_loaded_sets = AddCDRProfilesOperationOP( new AddCDRProfilesOperation(ab_info_));
 		pre_loaded_sets->set_force_north_paper_db(true);
 		pre_loaded_sets->set_ignore_light_chain( true );
+		pre_loaded_sets->set_no_probability(true);
+
 		pre_loaded_sets->set_primary_strategy(seq_design_profile_sets);
 		pre_loaded_sets->pre_load_data(pose_);
 		task->clear();
 		task->push_back(pre_loaded_sets);
-		output_or_test(task, pose_, first_run_, "AddCDRProfilesOperation_UTracer6",  inpath_, first_run_outpath_);
+		TS_ASSERT_THROWS_NOTHING(task->create_task_and_apply_taskoperations(pose_));
 
 		// Test Pre-load with profile sets and profiles.
 		AddCDRProfilesOperationOP pre_loaded_combined = AddCDRProfilesOperationOP( new AddCDRProfilesOperation(ab_info_));
 		pre_loaded_combined->set_force_north_paper_db(true);
 		pre_loaded_combined->set_ignore_light_chain( true );
+		pre_loaded_combined->set_no_probability(true);
 		pre_loaded_combined->set_primary_strategy(seq_design_profile_sets_combined);
 		pre_loaded_combined->pre_load_data(pose_);
 		task->clear();
 		task->push_back(pre_loaded_combined);
-		output_or_test(task, pose_, first_run_, "AddCDRProfilesOperation_UTracer7",  inpath_, first_run_outpath_);
+		TS_ASSERT_THROWS_NOTHING(task->create_task_and_apply_taskoperations(pose_));
 	}
 	void test_AddCDRProfileSetsOperation() {
 		utility::vector1< bool > cdrs(8, false);
@@ -345,7 +356,7 @@ public:
 
 		task->clear();
 		task->push_back(default_ab_info);
-		output_or_test(task, pose_, first_run_, "AddCDRProfileSetsOperation_UTracer2",  inpath_, first_run_outpath_);
+		TS_ASSERT_THROWS_NOTHING(task->create_task_and_apply_taskoperations(pose_));
 
 		AddCDRProfileSetsOperationOP default_op = AddCDRProfileSetsOperationOP( new AddCDRProfileSetsOperation());
 		default_op->set_picking_rounds(5); //Should then sample multiple CDRs
@@ -354,7 +365,7 @@ public:
 
 		task->clear();
 		task->push_back(default_op);
-		output_or_test(task, pose_chothia_, first_run_, "AddCDRProfileSetsOperation_UTracer1",  inpath_, first_run_outpath_);
+		TS_ASSERT_THROWS_NOTHING(task->create_task_and_apply_taskoperations(pose_chothia_));
 
 		AddCDRProfileSetsOperationOP pick_op = AddCDRProfileSetsOperationOP( new AddCDRProfileSetsOperation(ab_info_, cdrs));
 		pick_op->set_force_north_paper_db( true );
@@ -364,7 +375,7 @@ public:
 
 		task->clear();
 		task->push_back(pick_op);
-		output_or_test(task, pose_, first_run_, "AddCDRProfileSetsOperation_UTracer3",  inpath_, first_run_outpath_);
+		TS_ASSERT_THROWS_NOTHING(task->create_task_and_apply_taskoperations(pose_));
 
 		AddCDRProfileSetsOperationOP length_op = AddCDRProfileSetsOperationOP( new AddCDRProfileSetsOperation(ab_info_, cdrs, true));
 		length_op->set_force_north_paper_db( true );
@@ -375,7 +386,7 @@ public:
 
 		task->clear();
 		task->push_back(length_op);
-		output_or_test(task, pose_, first_run_, "AddCDRProfileSetsOperation_UTracer4",  inpath_, first_run_outpath_);
+		TS_ASSERT_THROWS_NOTHING(task->create_task_and_apply_taskoperations(pose_));
 
 	}
 

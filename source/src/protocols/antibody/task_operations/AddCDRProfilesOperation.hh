@@ -192,6 +192,10 @@ public:
 		ignore_light_chain_ = ignore_light_chain;
 	};
 
+	///@brief Set to sample all available AAs per position instead of sampling based on weights
+	void
+	set_no_probability( bool testing_mode );
+
 private:
 
 	utility::vector1<bool>
@@ -229,6 +233,8 @@ private:
 	///Needed for default and RS constructor.
 	AntibodyNumberingSchemeEnum numbering_scheme_;
 	bool ignore_light_chain_ = false;
+	bool no_probability_ = false;
+
 
 };
 

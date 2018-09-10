@@ -132,7 +132,8 @@ AddCDRProfilesOperation::AddCDRProfilesOperation(AddCDRProfilesOperation const &
 	no_profile_data_cdrs_(src.no_profile_data_cdrs_),
 	no_profile_sets_data_cdrs_(src.no_profile_sets_data_cdrs_),
 	numbering_scheme_(src.numbering_scheme_),
-	ignore_light_chain_(src.ignore_light_chain_)
+	ignore_light_chain_(src.ignore_light_chain_),
+	no_probability_(src.no_probability_)
 
 
 {
@@ -167,6 +168,7 @@ AddCDRProfilesOperation::parse_tag(utility::tag::TagCOP tag, basic::datacache::D
 	stats_cutoff_ = tag->getOption< core::Size >("stats_cutoff", stats_cutoff_);
 	zero_prob_sample_ = tag->getOption< core::Real >("sample_zero_probs_at", zero_prob_sample_);
 	set_cons_design_data_source( tag->getOption< std::string >("cons_design_data_source", cons_design_data_source_) );
+	set_no_probability(tag->getOption< bool >("no_probabilities", no_probability_));
 
 	if ( tag->hasOption("input_ab_scheme") ) {
 
@@ -190,20 +192,44 @@ void AddCDRProfilesOperation::provide_xml_schema( utility::tag::XMLSchemaDefinit
 	// Check if this is the real default with Jared: all I know is that the functional default is "six trues"
 	// for cdrs_.
 	attributes
-		+ XMLSchemaAttribute( "cdrs", xs_string , "XRW TO DO" )
-		+ XMLSchemaAttribute::attribute_w_default( "fallback_strategy", xs_string, "XRW TO DO", "seq_design_conservative" )
-		+ XMLSchemaAttribute::attribute_w_default( "add_to_current", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "include_native_restype", xsct_rosetta_bool, "XRW TO DO", "true" )
-		+ XMLSchemaAttribute::attribute_w_default( "picking_rounds", xsct_non_negative_integer, "XRW TO DO", "1" )
-		+ XMLSchemaAttribute::attribute_w_default( "force_north_paper_db", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "use_outliers", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "stats_cutoff", xsct_non_negative_integer, "XRW TO DO", "10" )
-		+ XMLSchemaAttribute::attribute_w_default( "sample_zero_probs_at", xsct_real, "XRW TO DO", "0.0" )
-		+ XMLSchemaAttribute::attribute_w_default( "cons_design_data_source", xs_string, "XRW TO DO", "blosum62" )
-		+ XMLSchemaAttribute( "input_ab_scheme", xs_string , "XRW TO DO" )
-		+ XMLSchemaAttribute( "cdr_definition", xs_string , "XRW TO DO" );
+		+ XMLSchemaAttribute( "cdrs", xs_string , "Which CDRs " )
+		+ XMLSchemaAttribute::attribute_w_default( "fallback_strategy", xs_string, "Strategy to use when there is not enough data to use profiles for a particular CDR cluster", "seq_design_conservative" )
+		+ XMLSchemaAttribute::attribute_w_default( "add_to_current", xsct_rosetta_bool, "Should we add to the current design set of the TaskFactory, or replace it?", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "include_native_restype", xsct_rosetta_bool, "Should we include the native AA at the position, or not?", "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "picking_rounds", xsct_non_negative_integer, "How many times should we choose an AA from the probabilities?", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "force_north_paper_db", xsct_rosetta_bool, "Should we only use the North Paper database, or use newer data if present?", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "use_outliers", xsct_rosetta_bool, "Should we use data for probabilities that includes outliers?", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "stats_cutoff", xsct_non_negative_integer, "If the number of data points for a particular cluster is below this value, we use the fallback strategy instead of cluster sequence profiles", "10" )
+		+ XMLSchemaAttribute::attribute_w_default( "sample_zero_probs_at", xsct_real, "If a particular AA has 0 as a probility, whould we keep it at zero or sample it at some probability?  Used to increase variability of designs", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "cons_design_data_source", xs_string, "For conservative design, which blosum matrix should we use?", "blosum62" )
+		+ XMLSchemaAttribute::attribute_w_default( "no_probabilities", xsct_rosetta_bool, "Should we sample ALL AA that does not have prob of 0 at 1.0 instead?  This basically works to add ALL AA seen at a given position in a particular cluster to the set of design residues.  Used to increase variability of designs or for testing purposes", "false")
+		+ XMLSchemaAttribute( "input_ab_scheme", xs_string , "Input Antibody Numbering Scheme.  If not set, uses the cmd-line default." )
+		+ XMLSchemaAttribute( "cdr_definition", xs_string , "Input CDR Definition - only works with North currently" );
 
-	task_op_schema_w_attributes( xsd, keyname(), attributes );
+	std::string description =
+		"@brief Add Cluster-based CDR Profiles as the task operation for the set of CDRs by default.\n"
+		" See ResidueProbTaskOperation for more.\n"
+		"\n"
+		" CDR definitions used are North/Dunbrack as the clusters are defined using it.\n"
+		"\n"
+		" @details If Cluster-based profiles cannot be used, will use the fallback strategy.\n"
+		" This can happen if the the CDR is of an unknown cluster or there is too little data\n"
+		" about the cluster to use profiles.\n"
+		"\n"
+		"\n"
+		" FALLBACK STRATEGIES:\n"
+		"    seq_design_conservative adds a conservative mutation set to the possible residue types (blosum62 default),\n"
+		"    seq_design_basic will do nothing (as the default for design is to allow all residue positions);\n"
+		"    seq_design_none will disable design for that CDR (essentially your saying that if it doesn't have profiles, don't design it)\n"
+		"\n"
+		"\n"
+		" This TaskOperation is not currently recommended for H3 as it does not cluster well.\n"
+		"\n"
+		" Optionally sample whole CDR sequences via the primary strategy of:\n"
+		" seq_design_profile_sets (use sets instead of profile probability)\n"
+		"     seq_design_profile_sets_combined (use profile sets and profile probability)";
+
+	task_op_schema_w_attributes( xsd, keyname(), attributes, description );
 }
 
 void
@@ -301,6 +327,12 @@ AddCDRProfilesOperation::set_cons_design_data_source(std::string data_source){
 		cons_task_->set_data_source(data_source);
 	}
 	cons_design_data_source_ = data_source;
+}
+
+///@brief Set to sample all available AAs per position at a weight of 1.0 instead of sampling based on weights
+void
+AddCDRProfilesOperation::set_no_probability( bool no_probability ){
+	no_probability_ = no_probability;
 }
 
 utility::vector1<bool>
@@ -451,6 +483,7 @@ AddCDRProfilesOperation::apply(const core::pose::Pose& pose, core::pack::task::P
 
 		prob_task.set_picking_rounds(picking_rounds_);
 		prob_task.set_aa_probability_set( prob_set );
+		prob_task.set_no_probability(no_probability_);
 
 		if ( n_profile_set_cdrs > 0 ) {
 			prob_task.set_keep_task_allowed_aas(true);

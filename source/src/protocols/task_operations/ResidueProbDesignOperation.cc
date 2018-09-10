@@ -109,6 +109,7 @@ ResidueProbDesignOperation::init_for_equal_operator_and_copy_constructor(Residue
 	lhs.picking_rounds_ = rhs.picking_rounds_;
 	lhs.prob_set_ = rhs.prob_set_;
 	lhs.zero_probs_overwrite_ = rhs.zero_probs_overwrite_;
+	lhs.no_probability_ = rhs.no_probability_;
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -208,6 +209,12 @@ bool
 ResidueProbDesignOperation::keep_task_allowed_aas() const {
 	return keep_task_allowed_aa_;
 }
+
+void
+ResidueProbDesignOperation::set_no_probability(bool no_probability){
+	no_probability_ = no_probability;
+}
+
 Size
 ResidueProbDesignOperation::picking_rounds() const {
 	return picking_rounds_;
@@ -261,11 +268,11 @@ ResidueProbDesignOperation::apply(core::pose::Pose const & pose, core::pack::tas
 
 
 	numeric::random::WeightedSampler sampler;
-
+	vector1<Real> aa_weights;
 	//Setup the distribution once if we have a single distribution to choose aa from.
 	if ( ! overall_prob_set_.empty() ) {
 		TR << "Overall AA Probability set found.  Using." << std::endl;
-		vector1<Real> aa_weights = get_weights(overall_prob_set);
+		aa_weights = get_weights(overall_prob_set);
 		sampler.weights(aa_weights);
 	} else {
 		// Fill potentially missing weights
@@ -293,7 +300,7 @@ ResidueProbDesignOperation::apply(core::pose::Pose const & pose, core::pack::tas
 		}
 
 		if ( overall_prob_set.empty() ) {
-			vector1< Real > aa_weights = get_weights( prob_set[i] );
+			aa_weights = get_weights( prob_set[i] );
 			sampler.weights(aa_weights);
 		}
 		vector1<bool> allowed_aminos(20, false);
@@ -304,23 +311,34 @@ ResidueProbDesignOperation::apply(core::pose::Pose const & pose, core::pack::tas
 			allowed_aminos[task.nonconst_residue_task(i).get_original_residue()] = true;
 		}
 
-		for ( Size picks = 1; picks <= picking_rounds_; ++picks ) {
-
-			core::Size aa_num = sampler.random_sample(numeric::random::rg());
-			allowed_aminos[aa_num] = true;
-		}
-
-		//Add to already allowed aminos
-		if ( keep_task_allowed_aa_ ) {
-			for ( core::Size aa_num = 1; aa_num <= 20; ++aa_num ) {
-				auto amino = static_cast<core::chemical::AA>(aa_num);
-				if ( allowed_aminos[aa_num] ) {
-					task.nonconst_residue_task(i).allow_aa(amino);
+		///Add all residues with non-zero probability for the position
+		if ( no_probability_ ) {
+			for ( core::Size x = 1; x <= allowed_aminos.size(); ++x ) {
+				if ( aa_weights[x] > 0 ) {
+					allowed_aminos[x] = true;
 				}
 			}
-		} else {
-			//Replace the current aminos
+
 			task.nonconst_residue_task(i).restrict_absent_canonical_aas(allowed_aminos);
+		} else {
+			for ( Size picks = 1; picks <= picking_rounds_; ++picks ) {
+
+				core::Size aa_num = sampler.random_sample(numeric::random::rg());
+				allowed_aminos[aa_num] = true;
+			}
+
+			//Add to already allowed aminos
+			if ( keep_task_allowed_aa_ ) {
+				for ( core::Size aa_num = 1; aa_num <= 20; ++aa_num ) {
+					auto amino = static_cast<core::chemical::AA>(aa_num);
+					if ( allowed_aminos[aa_num] ) {
+						task.nonconst_residue_task(i).allow_aa(amino);
+					}
+				}
+			} else {
+				//Replace the current aminos
+				task.nonconst_residue_task(i).restrict_absent_canonical_aas(allowed_aminos);
+			}
 		}
 	}
 }
@@ -332,9 +350,10 @@ ResidueProbDesignOperation::parse_tag( TagCOP tag , DataMap & ) {
 	set_include_native_restype(tag->getOption<bool>("include_native_restype"));
 	set_sample_zero_probs_at(tag->getOption<core::Real>("sample_zero_probs"));
 	set_picking_rounds(tag->getOption<core::Size>("picking_rounds"));
+	set_no_probability(tag->getOption<bool>("no_probabilities", no_probability_));
+
 }
 
-// AMW: No parse_tag...
 void
 ResidueProbDesignOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
@@ -353,6 +372,7 @@ ResidueProbDesignOperation::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 		+ XMLSchemaAttribute::attribute_w_default(
 		"sample_zero_probs", xsct_real,
 		"Overwrite the sampling probability for all residue types with a weight of zero with the given weight. For example, if you have a probability of zero, you can sample this instead at like .3 or .5 or whatever you want. The idea is that you don't need to go and change your input data to add some variability in the data - useful if you have a very low sampling rate of the input data.", "0.0")
+		+ XMLSchemaAttribute::attribute_w_default( "no_probabilities", xsct_rosetta_bool, "Should we sample ALL AA that does not have prob of 0 at 1.0 instead?  This basically works to add ALL AA seen at a given position in a particular cluster to the set of design residues.  Used to increase variability of designs or for testing purposes", "false")
 		+ XMLSchemaAttribute::attribute_w_default(
 		"picking_rounds", xsct_positive_integer,
 		"Allowed residue types can be sampled multiple times. Especially of interest in combination with the option 'keep_task_allowed_aas'.",

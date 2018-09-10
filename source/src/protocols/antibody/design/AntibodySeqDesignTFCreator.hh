@@ -216,6 +216,10 @@ public:
 	void
 	set_design_H3_stem(bool design_H3_stem);
 
+	///@brief Set to sample all available AAs per position instead of sampling based on weights
+	void
+	set_no_probability( bool no_probability);
+
 private:
 
 	void
@@ -274,6 +278,7 @@ private:
 
 	utility::vector1<bool> no_data_cdrs_; //CDRs that were unable to load profile-based data.
 	bool use_outliers_;
+	bool no_probability_ = false;
 
 };
 

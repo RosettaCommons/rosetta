@@ -4123,7 +4123,10 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
                 		default = 'true',
                 		desc = "Force framework mutations that maintain certain clusters. Currently L1-11-1 vs L1-11-2.  See North cluster paper for these dependencies, or checkout rosetta/database/sampling/antibodies/design/cluster_framework_mutations.txt",
                 	),
-
+                	Option('no_profile_probabilities', 'Boolean',
+                		default = 'false',
+                		desc="Set to sample all available AAs per position instead of sampling based on weights.  Used to increase diversity and testing purposes.",
+                	),
 			## Profile Stats
 			Option('seq_design_stats_cutoff', 'Integer',
 				default='10',
