@@ -94,8 +94,8 @@ KeepRegionMover::parse_my_tag(
 	const protocols::moves::Movers_map&,
 	const Pose& )
 {
-	start_ = core::pose::get_resnum_string(tag, "start_");
-	end_ = core::pose::get_resnum_string(tag, "end_");
+	start_ = tag->getOption<std::string>("start");
+	end_ = tag->getOption<std::string>("end");
 
 	nter_overhang_ = tag->getOption<core::Size>("nter_overhang", 0);
 	cter_overhang_ = tag->getOption<core::Size>("cter_overhang", 0);
@@ -176,13 +176,11 @@ void KeepRegionMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xs
 	using namespace utility::tag;
 	AttributeList attlist;
 	attlist
-		//+ XMLSchemaAttribute::required_attribute( "start_", xsct_non_negative_integer, "First residue of region" )
-		//+ XMLSchemaAttribute::required_attribute( "end_", xsct_non_negative_integer, "Last residue of region" )
 		+ XMLSchemaAttribute::attribute_w_default( "nter_overhang", xsct_non_negative_integer, "Number of residues N terminal to start to include", "0" )
-		+ XMLSchemaAttribute::attribute_w_default( "cter_overhang", xsct_non_negative_integer, "Number of residues C terminal to end to include", "0");
+		+ XMLSchemaAttribute::attribute_w_default( "cter_overhang", xsct_non_negative_integer, "Number of residues C terminal to end to include", "0")
 
-	core::pose::attributes_for_get_resnum_string( attlist, "start_" );
-	core::pose::attributes_for_get_resnum_string( attlist, "end_" );
+		+ XMLSchemaAttribute::required_attribute( "start", xs_string, "First residue to keep" )
+		+ XMLSchemaAttribute::required_attribute( "end", xs_string, "Last residue to keep" );
 
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Keeps a specified region of the current pose and deletes the rest", attlist );
 }

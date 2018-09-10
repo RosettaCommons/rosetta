@@ -86,7 +86,7 @@ private:
 	std::string start_;
 	std::string end_;
 	bool copy_pdbinfo_;
-	core::pose::PoseOP src_pose_;
+	core::pose::PoseCOP src_pose_;
 };
 
 

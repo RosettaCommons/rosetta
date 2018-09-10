@@ -50,18 +50,12 @@ InsertPoseIntoPoseMover::InsertPoseIntoPoseMover(
 	end_(res_end),
 	copy_pdbinfo_(copy_pdbinfo)
 {
-	src_pose_ = core::pose::PoseOP( new core::pose::Pose(src_pose) );
+	src_pose_ = core::pose::PoseCOP( new core::pose::Pose(src_pose) );
 }
 
 
-InsertPoseIntoPoseMover::InsertPoseIntoPoseMover(const InsertPoseIntoPoseMover& src) :
-	protocols::moves::Mover(src),
-	start_(src.start_),
-	end_(src.end_),
-	copy_pdbinfo_(src.copy_pdbinfo_)
-{
-	if ( src.src_pose_ ) src_pose_ = src_pose_->clone();
-}
+InsertPoseIntoPoseMover::InsertPoseIntoPoseMover(const InsertPoseIntoPoseMover& )  = default;
+
 
 InsertPoseIntoPoseMover::~InsertPoseIntoPoseMover()= default;
 
@@ -108,8 +102,8 @@ InsertPoseIntoPoseMover::parse_my_tag(
 	const moves::Movers_map& ,
 	const Pose& )
 {
-	start_ = core::pose::get_resnum_string(tag, "start_");
-	end_ = core::pose::get_resnum_string(tag, "end_");
+	start_ = tag->getOption<std::string>("start");
+	end_ = tag->getOption<std::string>("end");
 
 	src_pose_ = protocols::rosetta_scripts::saved_reference_pose(tag, data_map, "spm_reference_name");
 	copy_pdbinfo_ = tag->getOption<bool>("copy_pdbinfo", false);
@@ -159,11 +153,11 @@ void InsertPoseIntoPoseMover::provide_xml_schema( utility::tag::XMLSchemaDefinit
 	using namespace utility::tag;
 	AttributeList attlist;
 	attlist
-		+ XMLSchemaAttribute::required_attribute( "start_", xsct_non_negative_integer, "First residue to insert" )
-		+ XMLSchemaAttribute::required_attribute( "end_", xsct_non_negative_integer, "Last residue to insert" )
+		+ XMLSchemaAttribute::required_attribute( "start", xs_string, "Insert AFTER this residue" )
+		+ XMLSchemaAttribute::required_attribute( "end", xs_string, "Insert BEFORE this residue" )
 		+ XMLSchemaAttribute::attribute_w_default( "copy_pdbinfo", xsct_rosetta_bool, "Copy PDB info to new pose?", "false");
 
-	rosetta_scripts::attributes_for_saved_reference_pose( attlist );
+	rosetta_scripts::attributes_for_saved_reference_pose( attlist, "spm_reference_name" );
 
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Inserts a pose between the specified residues of a second pose", attlist );
 }

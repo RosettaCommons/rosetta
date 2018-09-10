@@ -92,7 +92,7 @@ private:
 	std::string target_pose_start_;
 	core::Size span_;
 	bool copy_pdbinfo_;
-	core::pose::PoseOP src_pose_;
+	core::pose::PoseCOP src_pose_ = nullptr;
 };
 
 

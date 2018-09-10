@@ -14,8 +14,8 @@
 		<!-- restore saved input pose, "current" -->
         <SavePoseMover name="restore_current" restore_pose="1" reference_name="current"/>
         <SavePoseMover name="restore_source" restore_pose="1" reference_name="source" pdb_file="%%source%%"/>
-        <KeepRegionMover name="extract_loop" start_pdb_num="%%loop_start%%" end_pdb_num="%%loop_end%%" nter_overhang="2" cter_overhang="2"/>
-        <CCDEndsGraftMover name="graft_loop" start_="%%insert_start%%" end_="%%insert_end%%" spm_reference_name="loop" copy_pdbinfo="1" scaffold_flex_Nter="2" scaffold_flex_Cter="2" insert_flex_Nter="2" insert_flex_Cter="2" Nter_overhang="2" Cter_overhang="2" stop_at_closure="0"/>
+        <KeepRegionMover name="extract_loop" start="%%loop_start%%" end="%%loop_end%%" nter_overhang="2" cter_overhang="2"/>
+        <CCDEndsGraftMover name="graft_loop" start="%%insert_start%%" end="%%insert_end%%" spm_reference_name="loop" copy_pdbinfo="1" scaffold_flex_Nter="2" scaffold_flex_Cter="2" insert_flex_Nter="2" insert_flex_Cter="2" Nter_overhang="2" Cter_overhang="2" stop_at_closure="0"/>
     </MOVERS>
     <PROTOCOLS>
         <Add mover_name="save_current" />

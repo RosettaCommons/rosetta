@@ -59,15 +59,8 @@ ReplaceRegionMover::ReplaceRegionMover(
 }
 
 
-ReplaceRegionMover::ReplaceRegionMover(const ReplaceRegionMover& src) :
-	protocols::moves::Mover(src),
-	src_pose_start_(src.src_pose_start_),
-	target_pose_start_(src.target_pose_start_),
-	span_(src.span_),
-	copy_pdbinfo_(src.copy_pdbinfo_)
-{
-	if ( src.src_pose_ ) src_pose_ = src.src_pose_->clone();
-}
+ReplaceRegionMover::ReplaceRegionMover(const ReplaceRegionMover& ) = default;
+
 
 ReplaceRegionMover::~ReplaceRegionMover()= default;
 
@@ -90,8 +83,8 @@ ReplaceRegionMover::parse_my_tag(
 	span_ = tag->getOption<core::Size>("span");
 	copy_pdbinfo_ = tag->getOption<bool>("copy_pdbinfo", false);
 
-	src_pose_start_ = core::pose::get_resnum_string(tag, "src_pose_start_");
-	target_pose_start_= core::pose::get_resnum_string(tag, "target_pose_start_");
+	src_pose_start_ = tag->getOption<std::string>("src_pose_start");
+	target_pose_start_= tag->getOption<std::string>("target_pose_start");
 }
 
 // XRW TEMP protocols::moves::MoverOP
@@ -117,7 +110,7 @@ std::string const &  ReplaceRegionMover::target_pose_start() const { return targ
 
 void
 ReplaceRegionMover::src_pose(const core::pose::Pose& src_pose){
-	src_pose_ = core::pose::PoseOP( new core::pose::Pose(src_pose) );
+	src_pose_ = core::pose::PoseCOP( new core::pose::Pose(src_pose) );
 }
 
 protocols::moves::MoverOP
@@ -136,6 +129,8 @@ ReplaceRegionMover::apply(core::pose::Pose& pose) {
 	core::Size src_pose_start = core::pose::parse_resnum(src_pose_start_, *src_pose_);
 	core::Size target_pose_start = core::pose::parse_resnum(target_pose_start_, pose);
 
+	//std::cout << src_pose_start << std::endl;
+	//std::cout << target_pose_start << std::endl;
 	PyAssert(src_pose_start != 0, "Cannot copy from a region starting with 0 - make sure region is set for ReplaceRegionMover");
 	PyAssert(target_pose_start != 0, "Cannot copy to a region starting with 0 - make sure region is set for ReplaceRegionMover");
 	PyAssert(span_ <= src_pose_->size(), "Cannot delete region ending with 0 - make sure region is set for ReplaceRegionMover");
@@ -161,9 +156,9 @@ void ReplaceRegionMover::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 	attlist
 		+ XMLSchemaAttribute::required_attribute( "span", xsct_non_negative_integer, "Length of the region to replace" )
 		+ XMLSchemaAttribute::attribute_w_default( "copy_pdbinfo", xsct_rosetta_bool, "Copy PDBInfo to the new pose?", "false" )
-		+ XMLSchemaAttribute::required_attribute( "src_pose_start_", xsct_non_negative_integer, "First residue to copy from the source pose" )
-		+ XMLSchemaAttribute::required_attribute( "target_pose_start_", xsct_non_negative_integer, "First residue to replace in the target pose" );
-	rosetta_scripts::attributes_for_saved_reference_pose( attlist );
+		+ XMLSchemaAttribute::required_attribute( "src_pose_start", xs_string, "First residue to copy from the source pose" )
+		+ XMLSchemaAttribute::required_attribute( "target_pose_start", xs_string, "First residue to replace in the target pose" );
+	rosetta_scripts::attributes_for_saved_reference_pose( attlist, "spm_reference_name" );
 
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Replaces a region of length span in the target pose with a specified region of length span in the source pose.", attlist );
 }

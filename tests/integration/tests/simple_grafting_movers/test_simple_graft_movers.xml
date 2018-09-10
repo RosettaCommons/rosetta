@@ -1,0 +1,40 @@
+<ROSETTASCRIPTS>
+    <SCOREFXNS>
+        <ScoreFunction name = "scorefunction" weights = "ref2015.wts"/>
+    </SCOREFXNS>
+    <MOVERS>
+        <!--PDB dumps for validation-->
+        <DumpPdb name="dump" fname="dump.pdb" scorefxn="scorefunction"/>
+        <DumpPdb name="dump2" fname="dump2.pdb" scorefxn="scorefunction"/>
+        <DumpPdb name="dump3" fname="dump3.pdb" scorefxn="scorefunction"/>
+        <!--Docking stuff-->
+        <RigidBodyTransMover name="translate_100" jump="2" distance="1.5" x="1" y="0" z="0" />
+        <!--Saving pose with name "Pose".-->
+        <SavePoseMover name="Pose_Save" restore_pose="0" reference_name="Pose"/>
+        <SavePoseMover name="Insert_Save" restore_pose="0" reference_name="insert" />
+        <SavePoseMover name="Insert_Recover" restore_pose="1" reference_name="insert" />
+        <!--Recovering pose with name "Pose".-->
+        <SavePoseMover name="Pose_Recover" restore_pose="1" reference_name="Pose"/>
+        <!--Setting current pose as the pose with name "Pose".-->
+        <ReplaceRegionMover name="Pose_Replace" span="270" copy_pdbinfo="false" src_pose_start="1" target_pose_start="1" spm_reference_name="Pose"/>
+        <DeleteRegionMover name="delete" start="20" end="30"/>
+        <KeepRegionMover name="keep" start="20" end="30"/>
+        <InsertPoseIntoPoseMover name="insert_piece"  spm_reference_name="insert" start="19" end="20"/>
+    </MOVERS>
+    <PROTOCOLS>
+        <!--Saves the initial pose as pose named "Pose".-->
+        <Add mover_name="Pose_Save"/>
+        <!--Translates Gly269 by 1.5 angstroms in the x direction.-->
+        <Add mover_name="translate_100"/>
+        <!--Overwites the pose previously saved as the name "Pose" with the current pose.-->
+        <Add mover_name="Pose_Replace"/>
+        <Add mover_name="Pose_Recover" />
+        <Add mover_name="keep" />
+        <Add mover_name="dump" />
+        <Add mover_name="Insert_Save"/>
+        <Add mover_name="Pose_Recover"/>
+        <Add mover_name="delete"/>
+        <Add mover_name="dump2" />
+        <Add mover_name="insert_piece"/>
+    </PROTOCOLS>
+</ROSETTASCRIPTS>

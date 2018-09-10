@@ -216,8 +216,8 @@ AnchoredGraftMover::parse_my_tag(
 	Nter_overhang_length(tag->getOption<core::Size>("Nter_overhang", Nter_overhang_length()));
 	Cter_overhang_length(tag->getOption<core::Size>("Cter_overhang", Cter_overhang_length()));
 
-	scaffold_start_ = tag->getOption<std::string>("start_");
-	scaffold_end_ = tag->getOption<std::string>("end_");
+	scaffold_start_ = tag->getOption<std::string>("start");
+	scaffold_end_ = tag->getOption<std::string>("end");
 
 	piece(protocols::rosetta_scripts::saved_reference_pose(tag, data, "spm_reference_name"));
 
@@ -756,8 +756,8 @@ AnchoredGraftMover::complex_type_generator_for_anchored_graft_mover( utility::ta
 		+ XMLSchemaAttribute( "insert_flex_Cter", xsct_non_negative_integer, "How many residues in the C terminus of the graft should be flexible?" )
 		+ XMLSchemaAttribute( "Nter_overhang", xsct_non_negative_integer, "Desired size of N terminal overhang" )
 		+ XMLSchemaAttribute( "Cter_overhang", xsct_non_negative_integer, "Desired size of C terminal overhang" )
-		+ XMLSchemaAttribute::required_attribute( "start_", xsct_refpose_enabled_residue_number, "XRW_TODO" )
-		+ XMLSchemaAttribute::required_attribute( "end_", xsct_refpose_enabled_residue_number, "XRW_TODO" )
+		+ XMLSchemaAttribute::required_attribute( "start", xsct_refpose_enabled_residue_number, "Graft begins after this residue in the scaffold.  Will delete residues between start and end in the scaffold. " )
+		+ XMLSchemaAttribute::required_attribute( "end", xsct_refpose_enabled_residue_number, "Graft ends before this residue in the scaffold.  Will delete residues between start and end in the scaffold.  " )
 		+ XMLSchemaAttribute( "cen_scorefxn", xs_string, "Centroid score function to use" )
 		+ XMLSchemaAttribute( "fa_scorefxn", xs_string, "Full atom score function to use" );
 

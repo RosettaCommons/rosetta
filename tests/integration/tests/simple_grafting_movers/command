@@ -1,0 +1,10 @@
+cd %(workdir)s
+
+# Do the tests actually exist?
+[ -x %(bin)s/rosetta_scripts.%(binext)s ] || exit 1
+
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -s Start.pdb -use_input_sc -ex1 -ex2 -parser:protocol test_simple_graft_movers.xml \
+    -database %(database)s \
+    -testing:INTEGRATION_TEST 2>&1 | egrep -vf ../../ignore_list > log
+
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true
