@@ -23,7 +23,6 @@
 
 #include <core/pack/rotamer_set/RotamerSet.fwd.hh>
 #include <core/pack/rotamer_set/FixbbRotamerSets.hh>
-//#include <core/pack/rotamer_set/RotamerSetsBase.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/interaction_graph/InteractionGraphBase.fwd.hh>
 #include <core/pack/interaction_graph/PrecomputedPairEnergiesInteractionGraph.fwd.hh>

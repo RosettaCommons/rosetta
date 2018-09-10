@@ -218,7 +218,7 @@ public:
 	virtual ~MinimalistFlexbbInteractionGraph();
 
 	/// Virtual functions from InteractionGraphBase
-	virtual void initialize( core::pack::rotamer_set::RotamerSetsBase const & rot_sets );
+	virtual void initialize( core::pack_basic::RotamerSetsBase const & rot_sets );
 	virtual PackerEnergy get_one_body_energy_for_node_state( int node, int state);
 	virtual void  blanket_assign_state_0();
 	virtual PackerEnergy set_state_for_node(int node_ind, int new_state);

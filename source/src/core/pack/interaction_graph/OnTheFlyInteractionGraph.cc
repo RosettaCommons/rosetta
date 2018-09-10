@@ -452,7 +452,7 @@ OnTheFlyInteractionGraph::distinguish_backbone_and_sidechain_for_node( int node_
 
 void
 OnTheFlyInteractionGraph::initialize(
-	rotamer_set::RotamerSetsBase const & rot_sets_base
+	pack_basic::RotamerSetsBase const & rot_sets_base
 )
 {
 	auto const & rot_sets( static_cast< rotamer_set::RotamerSets const & > (rot_sets_base) );

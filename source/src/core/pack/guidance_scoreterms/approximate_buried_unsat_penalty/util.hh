@@ -21,7 +21,7 @@
 #include <core/scoring/hbonds/graph/AtomLevelHBondGraph.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pose/Pose.hh>
-#include <core/pack/rotamer_set/RotamerSetsBase.hh>
+#include <core/pack_basic/RotamerSetsBase.hh>
 
 
 // #include <basic/datacache/CacheableStringFloatMathMatrixMap.hh>

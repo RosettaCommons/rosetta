@@ -1,0 +1,9 @@
+The namespace core::pack_basic is reserved for classes that meet the following requirements:
+
+1. The class should properly be in core::pack, but...
+2. It is needed by something in core.3.
+
+Presumably though, many classes that meet 1. and 2. should be put in core::conformation. Which
+  is  where requirement 3. appears.
+
+3. The class needs to include something from core.3

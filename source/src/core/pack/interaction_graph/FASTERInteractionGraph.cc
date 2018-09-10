@@ -1128,7 +1128,7 @@ FASTERInteractionGraph::FASTERInteractionGraph(int num_nodes) :
 /// @brief The FASTERIG only needs to know how many states each node has.
 /// This function causes the downstream instantiation of the FASTERNodes.
 void
-FASTERInteractionGraph::initialize( rotamer_set::RotamerSetsBase const & rot_sets_base )
+FASTERInteractionGraph::initialize( pack_basic::RotamerSetsBase const & rot_sets_base )
 {
 	auto const & rot_sets( static_cast< rotamer_set::RotamerSets const & > (rot_sets_base) );
 	for ( uint ii = 1; ii <= rot_sets.nmoltenres(); ++ii ) {

@@ -97,6 +97,9 @@ sources = {
 	"core/membrane": [
 		"hull",
 	],
+	"core/pack_basic": [
+		"RotamerSetsBase",
+	],
 	"core/pose": [
 		"annotated_sequence",
 		"MiniPose",
@@ -574,7 +577,7 @@ sources = {
 		"HBCPData",
 	],
 	"core/scoring/hbonds/graph": [
-                "AtomLevelHBondGraph",
+		"AtomLevelHBondGraph",
 	],
 	"core/scoring/interface_": [
 		"DDPlookup",

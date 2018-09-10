@@ -562,7 +562,7 @@ public:
 
 	// void set_score_weight( Real weight ) { npd_hbond_score_weight_ = weight; }
 
-	void initialize( rotamer_set::RotamerSetsBase const & rot_sets );
+	void initialize( pack_basic::RotamerSetsBase const & rot_sets );
 
 	void set_num_residues_in_protein( Size num_res );
 	void set_num_background_residues( Size num_background_residues );
@@ -1916,7 +1916,7 @@ NPDHBondInteractionGraph<V, E, G>::set_rotamer_sets( rotamer_set::RotamerSets co
 /// method that the RS object calls.
 ///
 template < typename V, typename E, typename G >
-void NPDHBondInteractionGraph< V, E, G >::initialize( rotamer_set::RotamerSetsBase const & rot_sets_base ) {
+void NPDHBondInteractionGraph< V, E, G >::initialize( pack_basic::RotamerSetsBase const & rot_sets_base ) {
 
 	/// TEMP!!!!
 	// APL wants to create a parent/base class for RotamerSets called RotamerSetsBase which will hold variables and functions

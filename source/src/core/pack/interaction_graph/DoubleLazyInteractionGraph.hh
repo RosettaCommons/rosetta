@@ -20,7 +20,7 @@
 // Package Headers
 #include <core/pack/interaction_graph/OnTheFlyInteractionGraph.hh>
 
-#include <core/pack/rotamer_set/RotamerSetsBase.fwd.hh>
+#include <core/pack_basic/RotamerSetsBase.fwd.hh>
 
 // Utility headers
 #include <utility/in_place_list.fwd.hh>
@@ -414,7 +414,7 @@ public:
 public:
 	DoubleLazyInteractionGraph( int numNodes );
 	virtual ~DoubleLazyInteractionGraph();
-	virtual void initialize( rotamer_set::RotamerSetsBase const & rot_sets );
+	virtual void initialize( pack_basic::RotamerSetsBase const & rot_sets );
 
 	//virtual methods inherited from InteractionGraphBase
 	virtual void prepare_for_simulated_annealing();

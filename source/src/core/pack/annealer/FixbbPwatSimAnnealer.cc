@@ -17,7 +17,7 @@
 // Package Headers
 #include <core/conformation/Residue.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
-#include <core/pack/rotamer_set/RotamerSetsBase.hh>
+#include <core/pack_basic/RotamerSetsBase.hh>
 #include <core/pack/interaction_graph/AnnealableGraphBase.hh>
 #include <basic/Tracer.hh>
 

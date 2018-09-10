@@ -331,7 +331,7 @@ public:
 	OnTheFlyInteractionGraph( int num_nodes );
 	~OnTheFlyInteractionGraph();
 
-	virtual void initialize( rotamer_set::RotamerSetsBase const & rot_sets );
+	virtual void initialize( pack_basic::RotamerSetsBase const & rot_sets );
 
 	inline
 	int get_num_aatypes() const

@@ -375,7 +375,7 @@ class PDInteractionGraph : public PrecomputedPairEnergiesInteractionGraph
 {
 public:
 	PDInteractionGraph(int num_nodes);
-	virtual void initialize( rotamer_set::RotamerSetsBase const & rot_sets );
+	virtual void initialize( pack_basic::RotamerSetsBase const & rot_sets );
 
 	virtual core::PackerEnergy get_one_body_energy_for_node_state( int node, int state);
 

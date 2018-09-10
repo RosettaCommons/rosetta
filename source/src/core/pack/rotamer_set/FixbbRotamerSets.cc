@@ -44,14 +44,14 @@ FixbbRotamerSets::~FixbbRotamerSets() = default;
 template< class Archive >
 void
 core::pack::rotamer_set::FixbbRotamerSets::save( Archive & arc ) const {
-	arc( cereal::base_class< core::pack::rotamer_set::RotamerSetsBase >( this ) );
+	arc( cereal::base_class< core::pack_basic::RotamerSetsBase >( this ) );
 }
 
 /// @brief Automatically generated deserialization method
 template< class Archive >
 void
 core::pack::rotamer_set::FixbbRotamerSets::load( Archive & arc ) {
-	arc( cereal::base_class< core::pack::rotamer_set::RotamerSetsBase >( this ) );
+	arc( cereal::base_class< core::pack_basic::RotamerSetsBase >( this ) );
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::pack::rotamer_set::FixbbRotamerSets );

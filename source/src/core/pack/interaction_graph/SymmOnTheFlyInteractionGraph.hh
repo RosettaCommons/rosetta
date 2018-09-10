@@ -412,7 +412,7 @@ public:
 	SymmOnTheFlyInteractionGraph( int num_nodes );
 	~SymmOnTheFlyInteractionGraph();
 
-	virtual void initialize( rotamer_set::RotamerSetsBase const & rot_sets );
+	virtual void initialize( pack_basic::RotamerSetsBase const & rot_sets );
 
 	virtual int get_num_aatypes() const { return num_restype_groups_; }
 

@@ -255,7 +255,7 @@ public:
 	OTFFlexbbInteractionGraph( int num_nodes );
 	virtual ~OTFFlexbbInteractionGraph();
 
-	virtual void initialize( core::pack::rotamer_set::RotamerSetsBase const & );
+	virtual void initialize( core::pack_basic::RotamerSetsBase const & );
 
 	void
 	set_ProCorrection_values_for_edge(

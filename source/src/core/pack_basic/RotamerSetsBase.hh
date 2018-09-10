@@ -7,16 +7,16 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/pack/RotamerSet/RotamerSets.hh
+/// @file   core/pack_basic/RotamerSets.hh
 /// @brief  RotamerSets base class declaration
 /// @author Andrew Leaver-Fay (leaverfa@email.unc.edu)
 
 
-#ifndef INCLUDED_core_pack_rotamer_set_RotamerSetsBase_hh
-#define INCLUDED_core_pack_rotamer_set_RotamerSetsBase_hh
+#ifndef INCLUDED_core_pack_basic_RotamerSetsBase_hh
+#define INCLUDED_core_pack_basic_RotamerSetsBase_hh
 
 // Unit Headers
-#include <core/pack/rotamer_set/RotamerSetsBase.fwd.hh>
+#include <core/pack_basic/RotamerSetsBase.fwd.hh>
 
 // Package Headers
 #include <core/conformation/Residue.fwd.hh>
@@ -34,8 +34,7 @@
 #endif // SERIALIZATION
 
 namespace core {
-namespace pack {
-namespace rotamer_set {
+namespace pack_basic {
 
 class RotamerSetsBase : public utility::pointer::ReferenceCount
 {
@@ -115,14 +114,13 @@ operator<<( std::ostream & out, RotamerSetsBase const & rs) {
 	return out;
 }
 
-} // namespace rotamer_set
-} // namespace pack
+} // namespace pack_basic
 } // namespace core
 
 
 #ifdef    SERIALIZATION
-CEREAL_FORCE_DYNAMIC_INIT( core_pack_rotamer_set_RotamerSetsBase )
+CEREAL_FORCE_DYNAMIC_INIT( core_pack_basic_RotamerSetsBase )
 #endif // SERIALIZATION
 
 
-#endif // INCLUDED_core_pack_RotamerSet_RotamerSetsBase_HH
+#endif // INCLUDED_core_pack_basic_RotamerSetsBase_HH

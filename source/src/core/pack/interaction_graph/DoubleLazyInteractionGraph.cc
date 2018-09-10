@@ -1278,7 +1278,7 @@ DoubleLazyInteractionGraph::~DoubleLazyInteractionGraph()
 
 void
 DoubleLazyInteractionGraph::initialize(
-	rotamer_set::RotamerSetsBase const & rot_sets_base
+	pack_basic::RotamerSetsBase const & rot_sets_base
 )
 {
 	parent::initialize( rot_sets_base );

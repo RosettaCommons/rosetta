@@ -28,7 +28,7 @@
 
 // STL Headers
 
-#include <core/pack/rotamer_set/RotamerSetsBase.fwd.hh>
+#include <core/pack_basic/RotamerSetsBase.fwd.hh>
 #include <ObjexxFCL/FArray1.fwd.hh>
 #include <ObjexxFCL/FArray1D.fwd.hh>
 
@@ -42,7 +42,7 @@ namespace annealer {
 class SimAnnealerBase : public utility::pointer::ReferenceCount
 {
 public:
-	typedef rotamer_set::RotamerSetsBaseCOP RotamerSetsBaseCOP;
+	typedef pack_basic::RotamerSetsBaseCOP RotamerSetsBaseCOP;
 
 public:
 

@@ -597,7 +597,7 @@ FlexbbInteractionGraph::FlexbbInteractionGraph(int num_nodes) :
 {}
 
 void
-FlexbbInteractionGraph::initialize( core::pack::rotamer_set::RotamerSetsBase const & rot_sets )
+FlexbbInteractionGraph::initialize( core::pack_basic::RotamerSetsBase const & rot_sets )
 {
 	using namespace rotamer_set;
 	using namespace core::conformation;

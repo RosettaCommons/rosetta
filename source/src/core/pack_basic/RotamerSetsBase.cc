@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/pack/rotamer_set/RotamerSets.fwd.hh
+/// @file   core/pack_basic/RotamerSets.fwd.hh
 /// @brief  Residue Sets Base class implementation
 /// @author Andrew Leaver-Fay (leaverfa@email.unc.edu)
 
 // Unit Headers
-#include <core/pack/rotamer_set/RotamerSetsBase.hh>
+#include <core/pack_basic/RotamerSetsBase.hh>
 
 #ifdef    SERIALIZATION
 // Utility serialization headers
@@ -23,15 +23,13 @@
 #endif // SERIALIZATION
 
 namespace core {
-namespace pack {
-namespace rotamer_set {
+namespace pack_basic {
 
 RotamerSetsBase::RotamerSetsBase() = default;
 RotamerSetsBase::~RotamerSetsBase() = default;
 
 
-} // namespace rotamer_set
-} // namespace pack
+} // namespace pack_basic
 } // namespace core
 
 #ifdef    SERIALIZATION
@@ -39,15 +37,15 @@ RotamerSetsBase::~RotamerSetsBase() = default;
 /// @brief Automatically generated serialization method
 template< class Archive >
 void
-core::pack::rotamer_set::RotamerSetsBase::save( Archive & ) const {}
+core::pack_basic::RotamerSetsBase::save( Archive & ) const {}
 
 /// @brief Automatically generated deserialization method
 template< class Archive >
 void
-core::pack::rotamer_set::RotamerSetsBase::load( Archive & ) {}
+core::pack_basic::RotamerSetsBase::load( Archive & ) {}
 
-SAVE_AND_LOAD_SERIALIZABLE( core::pack::rotamer_set::RotamerSetsBase );
-CEREAL_REGISTER_TYPE( core::pack::rotamer_set::RotamerSetsBase )
+SAVE_AND_LOAD_SERIALIZABLE( core::pack_basic::RotamerSetsBase );
+CEREAL_REGISTER_TYPE( core::pack_basic::RotamerSetsBase )
 
-CEREAL_REGISTER_DYNAMIC_INIT( core_pack_rotamer_set_RotamerSetsBase )
+CEREAL_REGISTER_DYNAMIC_INIT( core_pack_basic_RotamerSetsBase )
 #endif // SERIALIZATION

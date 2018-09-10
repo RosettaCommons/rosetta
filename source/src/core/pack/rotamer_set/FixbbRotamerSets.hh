@@ -21,7 +21,7 @@
 // Package Headers
 
 #include <core/pack/rotamer_set/RotamerSet.fwd.hh>
-#include <core/pack/rotamer_set/RotamerSetsBase.hh>
+#include <core/pack_basic/RotamerSetsBase.hh>
 
 
 // Project Headers
@@ -45,10 +45,10 @@ namespace pack {
 namespace rotamer_set {
 
 
-class FixbbRotamerSets : public RotamerSetsBase
+class FixbbRotamerSets : public pack_basic::RotamerSetsBase
 {
 public:
-	typedef RotamerSetsBase parent;
+	typedef pack_basic::RotamerSetsBase parent;
 	typedef utility::vector1< RotamerSetOP > RotamerSetVector;
 
 public:

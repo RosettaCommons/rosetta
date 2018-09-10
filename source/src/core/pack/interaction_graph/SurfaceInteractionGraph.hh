@@ -482,7 +482,7 @@ public:
 	SurfaceInteractionGraph( int num_nodes );
 	virtual ~SurfaceInteractionGraph();
 
-	void initialize( rotamer_set::RotamerSetsBase const & rot_sets );
+	void initialize( pack_basic::RotamerSetsBase const & rot_sets );
 
 	// Virtual public methods from InteractionGraphBase
 	virtual void prepare_for_simulated_annealing();
@@ -3004,7 +3004,7 @@ SurfaceInteractionGraph< V, E, G >::~SurfaceInteractionGraph() {}
 /// initialize() method.  Just set residues which are not packable nor designable to BG nodes.
 ///
 template < typename V, typename E, typename G >
-void SurfaceInteractionGraph< V, E, G >::initialize( rotamer_set::RotamerSetsBase const & rot_sets_base ) {
+void SurfaceInteractionGraph< V, E, G >::initialize( pack_basic::RotamerSetsBase const & rot_sets_base ) {
 
 	/// TEMP!!!!
 	// APL wants to create a parent/base class for RotamerSets called RotamerSetsBase which will hold variables and functions

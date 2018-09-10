@@ -1442,7 +1442,7 @@ PDInteractionGraph::PDInteractionGraph(int num_nodes) :
 {}
 
 void
-PDInteractionGraph::initialize( rotamer_set::RotamerSetsBase const & rot_sets_base )
+PDInteractionGraph::initialize( pack_basic::RotamerSetsBase const & rot_sets_base )
 {
 	auto const & rot_sets( static_cast< rotamer_set::RotamerSets const & > (rot_sets_base) );
 

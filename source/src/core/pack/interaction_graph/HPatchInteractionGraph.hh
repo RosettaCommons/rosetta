@@ -574,7 +574,7 @@ public:
 
 	void set_score_weight( Real weight ) { hpatch_score_weight_ = weight; }
 
-	void initialize( rotamer_set::RotamerSetsBase const & rot_sets );
+	void initialize( pack_basic::RotamerSetsBase const & rot_sets );
 
 	void set_num_residues_in_protein( Size num_res );
 	void set_num_background_residues( Size num_background_residues );
@@ -2784,7 +2784,7 @@ HPatchInteractionGraph<V, E, G>::set_rotamer_sets( rotamer_set::RotamerSets cons
 /// and designable positions to be FC Nodes. So there's no inefficiency here, as was the case for the SurfaceIG.
 ///
 template < typename V, typename E, typename G >
-void HPatchInteractionGraph< V, E, G >::initialize( rotamer_set::RotamerSetsBase const & rot_sets_base ) {
+void HPatchInteractionGraph< V, E, G >::initialize( pack_basic::RotamerSetsBase const & rot_sets_base ) {
 
 	/// TEMP!!!!
 	// APL wants to create a parent/base class for RotamerSets called RotamerSetsBase which will hold variables and functions

@@ -577,7 +577,7 @@ MinimalistFlexbbInteractionGraph::MinimalistFlexbbInteractionGraph( int num_node
 MinimalistFlexbbInteractionGraph::~MinimalistFlexbbInteractionGraph() = default;
 
 void
-MinimalistFlexbbInteractionGraph::initialize( core::pack::rotamer_set::RotamerSetsBase const & rot_sets )
+MinimalistFlexbbInteractionGraph::initialize( core::pack_basic::RotamerSetsBase const & rot_sets )
 {
 	parent::initialize( rot_sets );
 }

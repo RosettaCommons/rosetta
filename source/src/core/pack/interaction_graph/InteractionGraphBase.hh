@@ -20,7 +20,7 @@
 
 // Package Headers
 
-#include <core/pack/rotamer_set/RotamerSetsBase.fwd.hh>
+#include <core/pack_basic/RotamerSetsBase.fwd.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -315,7 +315,7 @@ public:
 		return num_ig_nodes_;
 	}
 
-	virtual void initialize( rotamer_set::RotamerSetsBase const & rot_sets ) = 0;
+	virtual void initialize( pack_basic::RotamerSetsBase const & rot_sets ) = 0;
 
 	void set_num_states_for_node(int node, int num_states);
 	virtual int get_num_states_for_node(int node) const;

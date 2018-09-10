@@ -88,8 +88,8 @@
 #include <core/pack/rotamer_set/RotamerSet.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSetOperation.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSets.fwd.hh>
-#include <core/pack/rotamer_set/RotamerSetsBase.fwd.hh>
-#include <core/pack/rotamer_set/RotamerSetsBase.hh>
+#include <core/pack_basic/RotamerSetsBase.fwd.hh>
+#include <core/pack_basic/RotamerSetsBase.hh>
 #include <core/pack/task/IGEdgeReweightContainer.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/RotamerSampleOptions.hh>

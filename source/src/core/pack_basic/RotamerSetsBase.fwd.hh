@@ -7,28 +7,26 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/pack/rotamer_set/RotamerSets.fwd.hh
+/// @file   core/pack_basic/RotamerSets.fwd.hh
 /// @brief  Residue Sets Base class foward declarations
 /// @author Andrew Leaver-Fay (leaverfa@email.unc.edu)
 
 
-#ifndef INCLUDED_core_pack_rotamer_set_RotamerSetsBase_fwd_hh
-#define INCLUDED_core_pack_rotamer_set_RotamerSetsBase_fwd_hh
+#ifndef INCLUDED_core_pack_basic_RotamerSetsBase_fwd_hh
+#define INCLUDED_core_pack_basic_RotamerSetsBase_fwd_hh
 
 // Utility Headers
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
-namespace pack {
-namespace rotamer_set {
+namespace pack_basic {
 
 class RotamerSetsBase;
 
 typedef utility::pointer::shared_ptr< RotamerSetsBase > RotamerSetsBaseOP;
 typedef utility::pointer::shared_ptr< RotamerSetsBase const > RotamerSetsBaseCOP;
 
-} // namespace rotamer_set
-} // namespace pack
+} // namespace pack_basic
 } // namespace core
 
 

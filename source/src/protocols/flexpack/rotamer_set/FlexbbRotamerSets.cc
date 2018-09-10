@@ -1016,7 +1016,7 @@ protocols::flexpack::rotamer_set::FlexbbRotamerSets::FlexbbRotamerSets() {}
 template< class Archive >
 void
 protocols::flexpack::rotamer_set::FlexbbRotamerSets::save( Archive & arc ) const {
-	arc( cereal::base_class< core::pack::rotamer_set::RotamerSetsBase >( this ) );
+	arc( cereal::base_class< core::pack_basic::RotamerSetsBase >( this ) );
 	arc( CEREAL_NVP( nmoltenres_ ) ); // Size
 	arc( CEREAL_NVP( total_residue_ ) ); // Size
 	arc( CEREAL_NVP( nbbconfs_ ) ); // Size
@@ -1041,7 +1041,7 @@ protocols::flexpack::rotamer_set::FlexbbRotamerSets::save( Archive & arc ) const
 template< class Archive >
 void
 protocols::flexpack::rotamer_set::FlexbbRotamerSets::load( Archive & arc ) {
-	arc( cereal::base_class< core::pack::rotamer_set::RotamerSetsBase >( this ) );
+	arc( cereal::base_class< core::pack_basic::RotamerSetsBase >( this ) );
 	arc( nmoltenres_ ); // Size
 	arc( total_residue_ ); // Size
 	arc( nbbconfs_ ); // Size

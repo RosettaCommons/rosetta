@@ -31,7 +31,7 @@
 #include <core/fragment/Frame.fwd.hh>
 #include <utility/graph/Graph.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
-#include <core/pack/rotamer_set/RotamerSetsBase.hh>
+#include <core/pack_basic/RotamerSetsBase.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/methods/LongRangeTwoBodyEnergy.fwd.hh>
@@ -54,7 +54,7 @@ namespace protocols {
 namespace flexpack {
 namespace rotamer_set {
 
-class FlexbbRotamerSets : public core::pack::rotamer_set::RotamerSetsBase, public utility::pointer::enable_shared_from_this< FlexbbRotamerSets >
+class FlexbbRotamerSets : public core::pack_basic::RotamerSetsBase, public utility::pointer::enable_shared_from_this< FlexbbRotamerSets >
 {
 public:
 	typedef core::Size Size;

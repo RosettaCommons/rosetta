@@ -440,7 +440,7 @@ public:
 	virtual ~FlexbbInteractionGraph();
 	FlexbbInteractionGraph(int num_nodes);
 
-	virtual void initialize(core::pack::rotamer_set::RotamerSetsBase const & rot_sets );
+	virtual void initialize(core::pack_basic::RotamerSetsBase const & rot_sets );
 
 private:
 	/// Private functions called during initialize()

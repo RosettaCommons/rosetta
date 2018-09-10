@@ -97,8 +97,8 @@ sources = {
 		"VoidsPenaltyVoxelGrid",
 	],
 	"core/pack/hbonds": [
-                "HBondGraph_util",
-                "MCHBNetInteractionGraph",
+		"HBondGraph_util",
+		"MCHBNetInteractionGraph",
 	],
 	"core/pack/interaction_graph": [
 		"AnnealableGraphBase",
@@ -143,7 +143,6 @@ sources = {
 		"RotamerSetFactory",
 		"RotamerSetOperation",
 		"RotamerSets",
-		"RotamerSetsBase",
 		"RotamerSetsFactory",
 		"RotamerSubset",
 		"RotamerSubsets",

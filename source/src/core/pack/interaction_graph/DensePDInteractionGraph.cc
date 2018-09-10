@@ -667,7 +667,7 @@ DensePDInteractionGraph::DensePDInteractionGraph(int num_nodes) :
 /// @brief The DensePDIG only needs to know how many states each node has.
 /// This function causes the downstream instantiation of the DensePDNodes.
 void
-DensePDInteractionGraph::initialize( rotamer_set::RotamerSetsBase const & rot_sets_base )
+DensePDInteractionGraph::initialize( pack_basic::RotamerSetsBase const & rot_sets_base )
 {
 	// We'll get a std::bad_cast exception if this reference conversion doesn't work
 	auto const & rot_sets( dynamic_cast< rotamer_set::FixbbRotamerSets const & > ( rot_sets_base) );

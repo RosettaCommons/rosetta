@@ -666,7 +666,7 @@ OTFFlexbbInteractionGraph::~OTFFlexbbInteractionGraph() = default;
 
 void
 OTFFlexbbInteractionGraph::initialize(
-	core::pack::rotamer_set::RotamerSetsBase const & rot_sets
+	core::pack_basic::RotamerSetsBase const & rot_sets
 )
 {
 	parent::initialize( rot_sets );
