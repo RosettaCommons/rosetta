@@ -285,7 +285,12 @@ Options = Option_Group( '',
 		Option( 'fix_disulf', 'File',
 				desc="Specify disulfide connectivity via a file.  Disulfides are specified as two whitespace-separated "
 						"residue indices per line.  This option replaces the old '-run:fix_disulf' option.", ),
-
+		#Why does this default to false?  We are pretty sure it should be true, but also pretty sure it will break a lot of protocols.
+		#A FoldTree that has a jump separating protein chunks with not-in-the-model covalent bonds is better than one that has a PEPTIDE
+		#edge across two not-actually-connected residues (which gives garbage scores).  However, the "wrong" FoldTree performs kinematically
+		#more like the "simple, straight-through" FoldTree of a totally resolved protein, which is what most protocols expect.
+		#You should have this option on wherever possible, but be aware that many protocols are not smart enough to handle the resulting
+		#complex FoldTree gracefully.
 		Option( 'missing_density_to_jump', 'Boolean',
 				desc='If missing density is found in input pdbs, replace with a jump',
 				default = 'false'),
@@ -517,6 +522,12 @@ Options = Option_Group( '',
 					default='scoring/spline_energy_functions/sucker.params'),
 			Option( 'fold_tree', 'File',
 					desc="User defined fold tree to be imposed on the pose after reading from disk" ),
+			#Why does obey_ENDMDL default to false?  It's unknown why it started that way.  It hasn't changed because of
+			#inertia and some resistance to fixing it.  It should ALWAYS ALWAYS be true for reading multimodel NMR PDBs, which
+			#account for most multimodel PDBs in the wild.  It should NOT be true for reading biological unit PDBs, which
+			#use multiple models to assemble the biounit.  We have no firm plan to fix this arguably wrong default.
+			#https://github.com/RosettaCommons/main/pull/1178
+			#https://github.com/RosettaCommons/main/issues/3126
 			Option( 'obey_ENDMDL', 'Boolean',
 					desc='Stop reading a PDB after ENDMDL card; '
 							'effectively read only first model in multimodel NMR PDBs',
@@ -1202,6 +1213,9 @@ Options = Option_Group( '',
       legal=legal_minimization_types,
 			),
 		Option( 'min_tolerance', 'Real', default='0.000001', desc='minimizer tolerance' ),
+		#Why is this defaulted to false?  There is a good argument it should be true - certainly it should be true
+		#if you expect your minimizations to perform large motion.  Broadly, we are afraid to change minimizer defaults.
+		#You should definitely try setting it true for your problem.
 		Option( 'nblist_autoupdate', 'Boolean',
 			default='false', desc="Turn on neighborlist auto-updates for all minimizations"
 			),
@@ -1317,7 +1331,9 @@ Options = Option_Group( '',
 		Option( 'enzdes_out', 'Boolean', desc='causes an enzdes-style scorefile (with information about catalytic res and some pose metric stuff ) to be written instead of the regular scorefile', default='false'),
 		Option( 'buffer_silent_output', 'Integer', default = '1', desc = 'write structures to silent-files in blocks of N structures to', ),
 		Option( 'buffer_flush_frequency', 'Real', default = '1.0', desc = 'when N structures (buffer_silent_output) are collected dump to file with probability X' ),
-		Option( 'delete_old_poses', 'Boolean', default = 'false', desc = 'Delete poses after they have been processed.  For jobs that process a large number of structures, the memory consumed by old poses is wasteful.', ),# NOTE: This option should probably be used by default, however it may have issues with special uses of the job distributor.  Once these issues are resolved, either enable it by default, or just do it with out asking.
+		#why is this default false?  It should definitely be true - a better name for this used to be "jd2:dont_leak_memory".  However, at the time this was implemented there were untested, against-the-design hacks of JD2 that would cause crashes when this flag was true.
+		#Now it's radioactive and nobody would touch it.  You should ALWAYS set this flag true when using JD2; if your code crashes it is a sign you are misusing JD2 anyway, and you can just turn the flag back off to perform your evil.     
+		Option( 'delete_old_poses', 'Boolean', default = 'false', desc = 'Delete poses after they have been processed.  For jobs that process a large number of structures, the memory consumed by old poses is wasteful.', ),
 		Option( 'checkpoint_file', 'File', desc='write/read nstruct-based checkpoint files to the desired filename.' ),
 		#Option( 'nthreads', 'Integer', desc='The maximum number of threads to run at once using the MultiThreadedJobDistributor' ),
 		Option( 'failed_job_exception', 'Boolean', default = 'true', desc = 'If JD2 encounters an error during job execution, raise an exception at the end of the run', ),
