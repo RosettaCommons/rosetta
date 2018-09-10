@@ -1059,10 +1059,10 @@ class MoleculeClass:
             atype = gentype
             if report_as_atype:
                 atype = gentype
-            out.write('ATOM %-4s %-4s %-4s %6.3f\n'%(atom.name,
-                                                     atype,
-                                                     mmtype,
-                                                     atom.charge))
+            out.write('ATOM  %-4s %-4s %-4s %6.3f\n'%(atom.name,  #residue_io.cc, line 701 "atom_name(line.substr(5,4))"
+                                                      atype,
+                                                      mmtype,
+                                                      atom.charge))
         for bond in self.bonds:
             if bond.order in [8,9]:
                 border = 2

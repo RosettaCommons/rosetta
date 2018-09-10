@@ -127,20 +127,22 @@ TORSION
  1   CS  CS  CD Oad  164 -0.070 -0.307 -0.173 1 2 3 #OPLS, aldehyde
  1   CS  CS  CD OG2  453 -0.070 -0.307 -0.173 1 2 3 #OPLS, aldehyde
  1   CS  CS  CD OG3  221 -0.089  0.041  0.123 1 2 3 #OPLS, alcohol #fit
+ 1   CR  CS  CD Oad   -- -2.000 -1.000  0.000 1 2   #ADHOC; cis-preference of amide-ring
  1    F  CS  CD   X   wc  0.000  0.000 -0.150 3     #GUESS 
  1   HC  CS  CD  CD  678  0.000  0.000 -0.093 3     #OPLS, alkene #fit
  1   HC  CS  CD  CS  194  0.000  0.000  0.091 1 2 3 #OPLS, alkane #fit
  1   HC  CS  CD  HC   17  0.000  0.000  0.080 3     #OPLS, alkane #fit
  1   HC  CS  CD NG2  348  0.000  0.000  0.116 3     #OPLS, amide #fit
- 1   HC  CS  CD OG2  409  0.000  0.000  0.150 1 2 3 #GUESS
+ 1   HC  CS  CD OG2  409  0.000  0.000  0.116 1 2 3 #FOLLOW BELOW
  1   HC  CS  CD OG3  128  0.000  0.000  0.117 3     #OPLS, alcohol
- 1   HC  CS  CD  O*   wc  0.000  0.000  0.200 3     #GUESS 
+ 1   HC  CS  CD  O*   wc  0.000  0.000 -0.200 3     #ADHOC
  1   HC  CS  CD   X   wc  0.000  0.000  0.100 3     #GUESS 
  1  NG2  CS  CD NG2   ??  0.000 -0.250  0.000 1 2 3 #GUESS
- 1    X  CS  CD  CD   wc  0.000  0.000 -0.500 1 2 3 #GUESS 
- 1    X  CS  CD  HC   wc  0.000  0.000  0.500 3     #GUESS 
- 1    X  CS  CD NG2   wc  0.000  0.000 -0.500 3     #OPLS, peptide? missing?? let's put Ha-Ca-C-N for now
- 1    X  CS  CD OG3   wc  0.000  0.000  0.500 3     #GUESS 
+ 1    X  CS  CD  CD   wc  0.000  0.000  0.100 1 2 3 #GUESS 
+ 1    X  CS  CD  HC   wc  0.000  0.000  0.100 3     #GUESS 
+# 1    X  CS  CD NG2   wc  0.000  0.000 -0.500 3     #OPLS, peptide? missing?? let's put Ha-Ca-C-N for now
+ 1    X  CS  CD NG2   wc  0.000  0.000  0.100 3     #GUESS
+ 1    X  CS  CD OG3   wc  0.000  0.000  0.100 3     #GUESS
  1    X  CS  CD   X   wc  0.000 -0.100  0.000 1 2 3 #GUESS 
  2   CD  CS  CR  CR  201  0.000  0.000  0.000 3     #OPLS, ethylbenzene
  2   CR  CS  CR  CR  173  0.000 -0.100  0.000 2     #GUESS
@@ -228,6 +230,7 @@ TORSION
 16  OG2  CD OG3  C*   wc -1.775 -1.629  0.000 1 2   #GUESS #Ester; preference to cis over trans #fit
 #16  Oal  CD OG3  C*   wc -2.000 -1.000  0.000 1 2   #GUESS #Ester #nostat
 16    X  CD OG3  C*   wc  0.000  0.000  1.416 3     #GUESS #Ester; #fit
+16   C*  CD OG2   X   wc  0.000 -3.000  0.000 2     #ad hoc
 17    X  CD SG3   X   wc  0.000 -1.000  0.000 2     #GUESS
 22   C*  CR  CR  C*   wc  0.000 -6.200  0.000 2     #CHARMM
 22   CD  CR  CR  CR  664 -0.005 -1.474  0.000 1 2   #CHARMM #fit
@@ -271,6 +274,7 @@ TORSION
 25    X NG2  CR  HR   wc  0.000 -4.000  0.000 1 2   #GUESS #fit
 25    X NG2  CR   X   wc  0.000 -2.000  0.000 1 2   #GUESS #fit
 26   CR  CR OG3  HO   wc  0.000 -1.000  0.000 2     #GUESS 
+26   C*  CR OG2   X   wc  0.000 -3.000  0.000 2     #ad hoc
 27   CR  CR SG5 OG2  n/a  0.000 -1.679  0.000 2     #GUESS #ring-sulfate; 0,60,120,180 #fit
 27   CR  CR SG5  N*   wc  0.000  4.470  0.000 2     #GUESS #ring-sulfate; 90 degree #fit
 27    X  CR  S*   X   wc  0.000 -0.910  0.000 2     #GUESS #fit
