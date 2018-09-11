@@ -26,23 +26,6 @@ pose_from_sequence = requires_init(pack_result(
     pyrosetta.io.pose_from_sequence))
 
 
-@requires_init
-@pack_result
-def poses_from_dir(dirname, loglevel=logging.WARN):
-    """Construct and return PackedPoses for every PDB file in a directory.
-
-    Args:
-        dirname (str): name of the directory that holds the PDB files to use.
-
-    Yields:
-       pyrosetta.distributed.packed_pose.PackedPose: PackedPose instance for each PDB file in the directory.
-    """
-    from os import listdir, path
-    import pyrosetta.distributed.utility.log
-    with pyrosetta.distributed.utility.log.LoggingContext(logging.getLogger("rosetta"), level=loglevel):
-        yield from (pose_from_file(path.join(dirname, fn)) for fn in listdir(dirname) if fn.endswith(".pdb"))
-
-
 @functools.wraps(import_pose.pose_from_pdbstring)
 @requires_init
 @pack_result
