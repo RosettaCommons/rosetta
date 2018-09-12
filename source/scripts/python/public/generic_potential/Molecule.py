@@ -164,9 +164,22 @@ class MoleculeClass:
         newindex = [comp[1] for comp in newindex]
         self.atms = []
         self.xyz = []
+        atomnames_read = {}
         for inew,iprv in enumerate(newindex):
+               
             if verbose:
                 print('Sorted atom index: %s %d -> %d'%(atms[iprv].name,iprv,inew))
+
+            aname = atms[iprv].name
+            if aname in atomnames_read:
+                atomnames_read[aname].append(inew)
+                newname = aname + '%d'%len(atomnames_read[aname])
+                if verbose:
+                    print('Renaming duplicate atom name %d %s -> %s'%(inew,aname,newname))
+                atms[iprv].name = newname
+            else:
+                atomnames_read[aname] = [inew]
+                
             self.atms.append(atms[iprv])
             self.xyz.append(xyzs[iprv])
             if not self.atms[inew].is_H: self.nheavyatm = inew+1
@@ -265,8 +278,6 @@ class MoleculeClass:
         if atms_unconnected != []:
             sys.exit('ERROR: Atom found not connected to any other atom:'+' '.join(atms_unconnected))
             
-
-
     def assign_angles(self):
         for i,bond1 in enumerate(self.bonds[:-1]):
             for bond2 in self.bonds[i+1:]:
@@ -586,10 +597,16 @@ class MoleculeClass:
                               self.atms[i0].name,self.atms[i1].name,self.atms[i2].name) # 2nd
             #tup = (i1,i0,i1,i2)
         elif FT == 2:
-            d = distance(xyz0,xyz1)
-            a = 180.0-angle(xyz0,xyz1,xyz2)
-            icoordstr = form%(self.atms[i0].name,  0.0,    a,    d, 
-                              self.atms[i1].name,self.atms[i2].name,self.atms[i0].name) #3rd
+            # hpark: logic changed Sep 2018 fixing segfault with DMSO
+            d = distance(xyz0,xyz2)
+            a = 180.0-angle(xyz2,xyz0,xyz1)
+            icoordstr = form%(self.atms[i2].name,  0.0,    a,    d, 
+                              self.atms[i0].name,self.atms[i1].name,self.atms[i2].name) #3rd
+            #tup = (i0,i1,i2,i0)
+            
+            #a = 180.0-angle(xyz0,xyz1,xyz2)
+            #icoordstr = form%(self.atms[i0].name,  0.0,    a,    d, 
+            #                  self.atms[i1].name,self.atms[i2].name,self.atms[i0].name) #3rd
             #tup = (i0,i1,i2,i0)
         else:
             d = distance(xyz0,xyz1)
@@ -717,7 +734,8 @@ class MoleculeClass:
         icoord_defined = copy.deepcopy(FT_triple) # is this different from root_defined?
         icoord_defs.append([FT_triple[0],FT_triple[1],FT_triple[2],FT_triple[0]])
         icoord_defs.append([FT_triple[0],FT_triple[1],FT_triple[2],FT_triple[0]])
-        icoord_defs.append([FT_triple[2],FT_triple[1],FT_triple[0],FT_triple[2]])
+        icoord_defs.append([FT_triple[0],FT_triple[1],FT_triple[2],FT_triple[0]])
+        #icoord_defs.append([FT_triple[2],FT_triple[1],FT_triple[0],FT_triple[2]]) #hpark 9/11/2018
 
         # first define for heavy atms
         while True:
@@ -1059,10 +1077,10 @@ class MoleculeClass:
             atype = gentype
             if report_as_atype:
                 atype = gentype
-            out.write('ATOM  %-4s %-4s %-4s %6.3f\n'%(atom.name,  #residue_io.cc, line 701 "atom_name(line.substr(5,4))"
-                                                      atype,
-                                                      mmtype,
-                                                      atom.charge))
+            out.write('ATOM %-4s %-4s %-4s %6.3f\n'%(atom.name,
+                                                     atype,
+                                                     mmtype,
+                                                     atom.charge))
         for bond in self.bonds:
             if bond.order in [8,9]:
                 border = 2
@@ -1084,7 +1102,7 @@ class MoleculeClass:
 
         #ICOOR_INTERNAL    C4     0.000000    0.000000    0.000000   C4    C2    N1 
         #ICOOR_INTERNAL    C2     0.000000  180.000000    1.349077   C4    C2    N1 
-        #ICOOR_INTERNAL    N1    -0.000001   52.329407    1.416959   C2    C4    N1
+        #ICOOR_INTERNAL    N1    -0.000001   52.329407    1.416959   C4    C2    N1
         for i,icoord_def in enumerate(icoords):
             out.write(self.icoord(icoord_def,i))
 
