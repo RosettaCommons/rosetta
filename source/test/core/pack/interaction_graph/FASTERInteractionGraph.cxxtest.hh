@@ -119,7 +119,7 @@ public:
 		//}
 		//std::cout << "score for bmec" << (*sfxn)( *trpcage );
 
-		TS_ASSERT_DELTA( faster_ig->get_energy_current_state_assignment(), -3.1775541, 1e-5 );
+		TS_ASSERT_DELTA( faster_ig->get_energy_current_state_assignment(), -3.1775985, 1e-5 );
 
 		faster_ig->relax_in_current_context();
 		faster_ig->commit_relaxation();
@@ -136,7 +136,9 @@ public:
 		TS_ASSERT( netstate( 2 ) ==  1 );
 		TS_ASSERT( netstate( 3 ) ==  1 );
 
-		TS_ASSERT_DELTA( faster_ig->get_energy_current_state_assignment(), -2.8373156, 1e-5 );
+		//std::cout << faster_ig->get_energy_current_state_assignment() << std::endl;
+
+		TS_ASSERT_DELTA( faster_ig->get_energy_current_state_assignment(), -2.8373599, 1e-5 );
 
 		faster_ig->perturb_sBR_and_relax( 2, 6 );
 		faster_ig->commit_relaxation();
@@ -153,14 +155,16 @@ public:
 		TS_ASSERT( netstate( 2 ) ==  6 );
 		TS_ASSERT( netstate( 3 ) ==  4 );
 
-		TS_ASSERT_DELTA( faster_ig->get_energy_current_state_assignment(), -3.1775541, 1e-5 );
+		TS_ASSERT_DELTA( faster_ig->get_energy_current_state_assignment(), -3.1775985, 1e-5 );
 
 		core::PackerEnergy delta1 = faster_ig->perturb_sBR_and_relax( 3, 5 );
 		faster_ig->commit_relaxation();
 		faster_ig->get_current_network_state( netstate );
 
-		TS_ASSERT_DELTA( faster_ig->get_energy_current_state_assignment(), -2.8532233, 1e-5 );
-		TS_ASSERT_DELTA( delta1, -2.8532233 - -3.1775541, 1e-5 );
+		//std::cout << faster_ig->get_energy_current_state_assignment() << std::endl;
+
+		TS_ASSERT_DELTA( faster_ig->get_energy_current_state_assignment(), -2.8532677, 1e-5 );
+		TS_ASSERT_DELTA( delta1, -2.8532677 - -3.1775985, 1e-5 );
 
 		/*std::cout << "sPBR (3,5) relaxed state:";
 		for ( Size ii = 1; ii <= 3; ++ii ) {
@@ -184,11 +188,11 @@ public:
 		TS_ASSERT( netstate( 2 ) ==  35 );
 		TS_ASSERT( netstate( 3 ) ==  4 );
 
-		TS_ASSERT_DELTA( faster_ig->get_energy_current_state_assignment(), -1.3659014, 1e-5 );
+		TS_ASSERT_DELTA( faster_ig->get_energy_current_state_assignment(), -1.3659456, 1e-5 );
 
 		core::PackerEnergy delta3, dummy;
 		faster_ig->consider_substitution( 2, 6, delta3, dummy );
-		TS_ASSERT_DELTA( delta3, -3.1775541 - -1.3659014, 1e-5 );
+		TS_ASSERT_DELTA( delta3, -3.1775985 - -1.3659456, 1e-5 );
 
 		core::PackerEnergy delta4 = faster_ig->perturb_sBR_and_relax( 3, 20 );
 		faster_ig->commit_relaxation();
@@ -205,8 +209,8 @@ public:
 		TS_ASSERT( netstate( 2 ) ==  6 );
 		TS_ASSERT( netstate( 3 ) ==  20 );
 
-		TS_ASSERT_DELTA( delta4, -1.4442203 - -1.3659014, 1e-5 );
-		TS_ASSERT_DELTA( faster_ig->get_energy_current_state_assignment(), -1.4442203, 1e-5 );
+		TS_ASSERT_DELTA( delta4, -1.4442647 - -1.3659456, 1e-5 );
+		TS_ASSERT_DELTA( faster_ig->get_energy_current_state_assignment(), -1.4442647, 1e-5 );
 
 
 	}

@@ -163,7 +163,7 @@ public:
 		std::cout << "MINE: " << score << std::endl;
 		std::cout.precision( before_precision );*/
 
-		adv.validate_start_func_matches_start_score( -7.626293913977268, false );
+		adv.validate_start_func_matches_start_score( -7.70049544775657, false );
 	}
 
 	void test_lkball_numeric_deriv_check()
@@ -210,7 +210,7 @@ public:
 		std::cout << "MINE: " << score << std::endl;
 		std::cout.precision( before_precision );*/
 
-		adv.validate_start_func_matches_start_score( -7.626293913977268, false );
+		adv.validate_start_func_matches_start_score( -7.70049544775657, false );
 
 		adv.simple_deriv_check( true, 5e-3 );
 	}
@@ -232,7 +232,7 @@ public:
 		adv.set_score_function( sfxn );
 		adv.set_movemap( movemap );
 		adv.set_nblist_auto_update( true );
-		adv.validate_start_func_matches_start_score( -7.626293913977268, false );
+		adv.validate_start_func_matches_start_score( -7.70049544775657, false );
 
 		adv.simple_deriv_check( true, 5e-3 );
 	}
@@ -254,7 +254,7 @@ public:
 		adv.set_score_function( sfxn );
 		adv.set_movemap( movemap );
 		adv.set_nblist_auto_update( true );
-		adv.validate_start_func_matches_start_score( -7.626293913977268, false );
+		adv.validate_start_func_matches_start_score( -7.70049544775657, false );
 
 		adv.simple_deriv_check( true, 5e-3 );
 	}

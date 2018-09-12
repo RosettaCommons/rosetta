@@ -355,7 +355,7 @@ public:
 		TR << "MINE w_full_bbflex " << score << std::endl;
 		TR.precision( old_precision );*/
 
-		adv.validate_start_func_matches_start_score( -28.52951683437025 );
+		adv.validate_start_func_matches_start_score( -28.60371516489792 );
 		//adv.validate_start_func_matches_start_score( -26.03949788109572 );
 	}
 
@@ -375,7 +375,7 @@ public:
 		adv.set_pose( pose );
 		adv.set_score_function( sfxn );
 		adv.set_movemap( movemap );
-		adv.validate_start_func_matches_start_score( -28.52951683437025 );
+		adv.validate_start_func_matches_start_score( -28.60371516489792 );
 		//adv.validate_start_func_matches_start_score( -26.03949788109572 );
 	}
 
@@ -430,7 +430,7 @@ public:
 		adv.set_pose( pose );
 		adv.set_score_function( sfxn );
 		adv.set_movemap( movemap );
-		adv.validate_start_func_matches_start_score( -28.52951683437025 );
+		adv.validate_start_func_matches_start_score( -28.60371516489792 );
 		//adv.validate_start_func_matches_start_score( -26.03949788109572 );
 	}
 
@@ -462,7 +462,7 @@ public:
 		TR.precision( old_precision );*/
 
 		//adv.validate_start_func_matches_start_score( -26.04170800071507 );
-		adv.validate_start_func_matches_start_score( -28.53244316787823 );
+		adv.validate_start_func_matches_start_score( -28.60664470165753 );
 	}
 
 
@@ -605,7 +605,7 @@ public:
 		TR << "MINE w_full_bbflex_and_intraresidue" << score << std::endl;
 		TR.precision( old_precision );*/
 
-		adv.validate_start_func_matches_start_score( -27.68721495001052 );
+		adv.validate_start_func_matches_start_score( -27.69173373969223 );
 		//adv.validate_start_func_matches_start_score( -22.39185655926555 );
 
 	}
@@ -632,7 +632,7 @@ public:
 		adv.set_pose( pose );
 		adv.set_score_function( sfxn );
 		adv.set_movemap( movemap );
-		adv.validate_start_func_matches_start_score( -27.69352060731158 );
+		adv.validate_start_func_matches_start_score( -27.69805871655478 );
 	}
 
 	/// @brief Make sure that the domain map logic inside the ScoreFunction
@@ -656,7 +656,7 @@ public:
 		adv.set_pose( pose );
 		adv.set_score_function( sfxn );
 		adv.set_movemap( movemap );
-		adv.validate_start_func_matches_start_score( -27.68721495001052 );
+		adv.validate_start_func_matches_start_score( -27.69173373969223 );
 
 		//adv.validate_start_func_matches_start_score( -22.39185655926555 );
 	}
@@ -682,7 +682,7 @@ public:
 		adv.set_pose( pose );
 		adv.set_score_function( sfxn );
 		adv.set_movemap( movemap );
-		adv.validate_start_func_matches_start_score( -27.69352060731158 );
+		adv.validate_start_func_matches_start_score( -27.69805871655478 );
 		//adv.validate_start_func_matches_start_score( -22.39669996258689 );
 	}
 
@@ -706,7 +706,7 @@ public:
 		adv.set_score_function( sfxn );
 		adv.set_movemap( movemap );
 		adv.set_nblist_auto_update( true );
-		adv.validate_start_func_matches_start_score( -27.68721495001052 );
+		adv.validate_start_func_matches_start_score( -27.69173373969223 );
 		//adv.validate_start_func_matches_start_score( -22.39185655926555 );
 	}
 
@@ -736,7 +736,7 @@ public:
 		TR << "MINE w_full_bbflex_autoupdate_analytic" << score << std::endl;
 		TR.precision( old_precision );*/
 
-		adv.validate_start_func_matches_start_score( -27.69352060731158 );
+		adv.validate_start_func_matches_start_score( -27.69805871655478 );
 		//adv.validate_start_func_matches_start_score( -22.39669996258689 );
 	}
 
@@ -759,7 +759,7 @@ public:
 		adv.set_score_function( sfxn );
 		adv.set_movemap( movemap );
 		adv.set_nblist_auto_update( true );
-		adv.validate_start_func_matches_start_score( -27.68721495001052 );
+		adv.validate_start_func_matches_start_score( -27.69173373969223 );
 		//adv.validate_start_func_matches_start_score( -22.39185655926555 );
 
 		/*using namespace core;
@@ -825,7 +825,7 @@ public:
 		adv.set_score_function( sfxn );
 		adv.set_movemap( movemap );
 		adv.set_nblist_auto_update( true );
-		adv.validate_start_func_matches_start_score( -27.69352060731158 );
+		adv.validate_start_func_matches_start_score( -27.69805871655478 );
 		//adv.validate_start_func_matches_start_score( -22.39669996258689 );
 	}
 
@@ -998,7 +998,7 @@ public:
 		//std::cout.precision( 16 );
 		//std::cout << "start score: " << sfxn(pose) << std::endl;
 		Real start_score = sfxn(pose);
-		TS_ASSERT_DELTA( -27.68721495001052, start_score, 1e-12 );
+		TS_ASSERT_DELTA( -27.69173373969223, start_score, 1e-12 );
 		//TS_ASSERT_DELTA( -22.39185655926555, start_score, 1e-12 );
 
 
@@ -1018,7 +1018,7 @@ public:
 
 		Real start_func = sfxn(pose);
 		std::cout << "start_func: " << start_func << std::endl;
-		TS_ASSERT_DELTA( -27.68721495001052, start_score, 1e-12 );
+		TS_ASSERT_DELTA( -27.69173373969223, start_score, 1e-12 );
 		//TS_ASSERT_DELTA( -22.39185655926555, start_func, 1e-12 );
 	}
 
@@ -1048,7 +1048,7 @@ public:
 		//std::cout.precision( 16 );
 		//std::cout << "start score: " << sfxn(pose) << std::endl;
 		Real start_score = sfxn(pose);
-		TS_ASSERT_DELTA( -27.69352060731158, start_score, 1e-12 );
+		TS_ASSERT_DELTA( -27.69805871655478, start_score, 1e-12 );
 
 		kinematics::MoveMap movemap;
 		movemap.set_bb( 10, true );
@@ -1069,7 +1069,7 @@ public:
 		std::cout.precision( 16 );
 		std::cout << "start_func: " << start_func << std::endl;
 		std::cout.precision( old_precision );*/
-		TS_ASSERT_DELTA( -27.69352060731158, start_func, 1e-12 );
+		TS_ASSERT_DELTA( -27.69805871655478, start_func, 1e-12 );
 		//TS_ASSERT_DELTA( -22.39669996258687, start_func, 1e-12 );
 	}
 

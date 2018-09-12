@@ -1,5 +1,5 @@
-set_abs_tolerance(0.01)score_orig = 54.4145
-score_rt = -135.703
+set_abs_tolerance(0.01)score_orig = 54.3092
+score_rt = -135.796
 residue = 1 sin (chi) = -0.238231525235183 cos(chi) = 0.971208391841894
 residue = 1 sin (chi) = -0.894224104230319 cos(chi) = 0.447619538686017
 residue = 3 sin (chi) = 0.158223642864392 cos(chi) = -0.987403301006595
