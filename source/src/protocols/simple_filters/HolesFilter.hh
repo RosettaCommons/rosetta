@@ -137,6 +137,27 @@ public:// virtual main operation
 		residue_selector_ = residue_selector;
 	}
 
+	void
+	set_threshold( Real threshold ) {
+		filtered_value_ = threshold;
+	}
+
+	void
+	set_exclude_bb_atoms( bool exclude_bb_atoms ) {
+		exclude_bb_atoms_ = exclude_bb_atoms;
+	}
+
+	void
+	set_normalize_per_atom( bool normalize_per_atom ) {
+		normalize_per_atom_ = normalize_per_atom;
+	}
+
+	void
+	set_normalize_per_residue( bool normalize_per_residue ) {
+		normalize_per_residue_ = normalize_per_residue;
+	}
+
+
 private:
 
 
