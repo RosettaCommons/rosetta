@@ -12,7 +12,7 @@
 ## @brief  Benchmark script for testing how Rosetta can load PBD's from www.rcsb.org
 ## @author Sergey Lyskov
 
-import os, json, enum, imp, time
+import os, json, enum, imp, time, shutil
 from collections import namedtuple, OrderedDict
 
 script_name = os.path.abspath(__file__)  # keep this line above imp.load_source(...) line below, beacuse later change value of __file__ variable
@@ -305,6 +305,9 @@ def protein_data_bank_diagnostic(mode, rosetta_dir, working_dir, platform, confi
 
 
 def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
+    observers_file_name = f'{rosetta_dir}/tests/benchmark/tests/scientific/protein_data_bank_diagnostic/observers.' + test
+    if os.path.isfile(observers_file_name): shutil.copy(observers_file_name, f'{working_dir}/observers')
+
     if test in ['', 'fast']: return protein_data_bank_diagnostic(TestMode.fast, rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     elif test == "full":     return protein_data_bank_diagnostic(TestMode.full, rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
 
