@@ -15,7 +15,7 @@
 		<PerResidueRMSDMetric name="rmsd" rmsd_type="rmsd_all_heavy" output_as_pdb_nums="1" residue_selector="glycans" use_native="1"/>
 		<PerResidueSasaMetric name="sasa" residue_selector="glycans" output_as_pdb_nums="1"/>
 		<PerResidueEnergyMetric name="total_energy" residue_selector="glycans" output_as_pdb_nums="1" />
-		<PerResidueEnergyMetric name="fa_sol" residue_selector="glycans" scoretype="fa_sol" output_as_pdb_nums="1" use_native="1" />
+		<PerResidueEnergyMetric name="fa_sol" residue_selector="glycans" scoretype="fa_sol" output_as_pdb_nums="1" use_native="1" scoretype="fa_atr"/>
 		
 
 		<SelectedResiduesMetric name="rosetta_sele" residue_selector="glycans" rosetta_numbering="1" custom_type="ROSETTA"/>

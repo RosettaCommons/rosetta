@@ -1,0 +1,24 @@
+<ROSETTASCRIPTS>
+  <SCOREFXNS>
+    <ScoreFunction name="ref2015" weights="ref2015.wts"/>
+  </SCOREFXNS>
+  <RESIDUE_SELECTORS>
+  </RESIDUE_SELECTORS>
+  <MOVE_MAP_FACTORIES>
+  </MOVE_MAP_FACTORIES>
+
+  <FILTERS>
+  </FILTERS>
+  <MOVERS>
+    <DockingProtocol name="dock" docking_local_refine="true" docking_score_high="ref2015"/>
+    <InterfaceAnalyzerMover name="intana" scorefxn="ref2015" pack_separated="true"
+        interface_sc="false" use_jobname="false" interface="A_B" tracer="false" />
+
+  </MOVERS>
+  <APPLY_TO_POSE>
+  </APPLY_TO_POSE>
+  <PROTOCOLS>
+    <Add mover="intana"/>
+  </PROTOCOLS>
+  <OUTPUT scorefxn="ref2015"/>
+</ROSETTASCRIPTS>

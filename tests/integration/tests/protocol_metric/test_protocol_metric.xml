@@ -11,7 +11,7 @@
 		</MoveMapFactory>
 	</MOVE_MAP_FACTORIES>
 	<SIMPLE_METRICS>
-		<ProtocolSettingsMetric name="protocol_user1" custom_type="user1" get_user_options="1" />
+		<ProtocolSettingsMetric name="protocol_user1" custom_type="user1" get_user_options="1" job_tag="testing"/>
 		<ProtocolSettingsMetric name="protocol_user2" custom_type="user2" get_user_options="1" base_name_only="0" />
 		<ProtocolSettingsMetric name="xml_options1" custom_type="xml" get_user_options="0" /> 
 		<ProtocolSettingsMetric name="xml_options2" custom_type="limit" get_user_options="0" limit_to_options="tolerance"/> 

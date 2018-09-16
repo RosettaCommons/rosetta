@@ -121,13 +121,21 @@ ProtocolSettingsMetric::get_metric_names() const {
 }
 
 void
+ProtocolSettingsMetric::set_job_tag(const std::string & job_tag){
+	job_tag_ = job_tag;
+}
+
+void
 ProtocolSettingsMetric::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & datamap )
 {
 	SimpleMetric::parse_base_tag( tag );
 
-	TR << tag->to_string() << std::endl;
+	//TR << tag->to_string() << std::endl;
+
+	set_job_tag( tag->getOption< std::string >("job_tag", job_tag_));
+
 	bool base_name_only = tag->getOption< bool >("base_name_only", true);
 	bool get_user_options = tag->getOption< bool >("get_user_options", true);
 	bool get_script_vars = tag->getOption< bool >("get_script_vars", true);
@@ -159,6 +167,7 @@ ProtocolSettingsMetric::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 	attlist + XMLSchemaAttribute::attribute_w_default("get_script_vars", xsct_rosetta_bool, "Split script_vars and report", "true");
 	attlist + XMLSchemaAttribute("limit_to_options", xsct_string_cslist, "Limit reporting to these options (comma-separated list).  Can be user-set or script_vars, but works with the get_user_options and get_script_vars options.");
 	attlist + XMLSchemaAttribute::attribute_w_default("skip_corrections", xsct_rosetta_bool, "Skip ScoreFunction Corrections, which are set in-code at the beginning of a run. " ,"true");
+	attlist + XMLSchemaAttribute("job_tag", xs_string, "Add a tag for this particular job.  Will be output as opt_job_tag. Used for benchmarking.");
 
 	//attributes_for_parse_residue_selector( attlist, "residue_selector",
 	// "Selector specifying residues." );
@@ -244,10 +253,14 @@ ProtocolSettingsMetric::calculate(const pose::Pose & ) const {
 				final_options[pair.first] = pair.second;
 			}
 		}
-		return final_options;
 	} else {
-		return options_values_;
+		return final_options = options_values_;
 	}
+
+	if ( ! job_tag_.empty() ) {
+		final_options["job_tag"] = job_tag_;
+	}
+	return final_options;
 }
 
 void

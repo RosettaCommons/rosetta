@@ -82,9 +82,9 @@ SimpleMetric::complex_type_generator_for_simple_metric( utility::tag::XMLSchemaD
 
 	AttributeList attlist;
 
-	std::string custom_type_descrition = "Additional setting to prefix/suffix "
-		"so that many different configured SMs can be called in one RunSimpleMetric run\n"
-		"  Output data name will be prefix+custom_type+type+suffix";
+	std::string custom_type_descrition =
+		"Allows multiple configured SimpleMetrics of a single type to be called in a single RunSimpleMetrics and SimpleMetricFeatures."
+		" \n The custom_type name will be added to the data tag in the scorefile or features database.";
 
 	attlist
 		+ XMLSchemaAttribute( "custom_type", xs_string, custom_type_descrition );

@@ -614,8 +614,8 @@ private:
 	utility::file::FileName posename_;
 	std::string posename_base_;
 
-	core::Size chain1_;
-	core::Size chain2_;
+	core::Size chain1_ = 1;
+	core::Size chain2_ = 2;
 	std::string dock_chains_;
 	std::set<core::Size> upstream_chains_; //fixed chains
 	std::set<core::Size> downstream_chains_; //other chains

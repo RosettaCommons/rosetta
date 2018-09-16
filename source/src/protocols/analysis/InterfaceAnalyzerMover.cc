@@ -455,8 +455,10 @@ void InterfaceAnalyzerMover::set_pose_info( core::pose::Pose const & pose ) {
 		posename_base_ = posename_.base();
 	}
 	//Used only for two chain constructor.
-	chain1_ = pose.residue(pose.fold_tree().upstream_jump_residue(interface_jump_)).chain();
-	chain2_ = pose.residue(pose.fold_tree().downstream_jump_residue(interface_jump_)).chain();
+	if ( ! explicit_constructor_ ) {
+		chain1_ = pose.residue(pose.fold_tree().upstream_jump_residue(interface_jump_)).chain();
+		chain2_ = pose.residue(pose.fold_tree().downstream_jump_residue(interface_jump_)).chain();
+	}
 }
 
 void

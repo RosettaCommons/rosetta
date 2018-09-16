@@ -224,13 +224,12 @@ RMSDMetric::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 
 	attlist + XMLSchemaAttribute("rmsd_type", "rmsd_types", "Type of calculation.  Current choices are: \n" + utility::to_string(rmsd_type_names) );
 
-	std::string description = "\tThis is the RMSD between the input and the set comparison pose.\n"
-		"  If native is set on the cmd-line, we will use that.\n"
-		"  Default is to calculate all_heavy atoms - but this can be set\n."
+	std::string description = "\tThis metric calculates the RMSD between the input and the set comparison pose.\n"
+		"  You may use the cmd-line native if the option use_native is true.\n"
+		"  Default is to calculate all_heavy atoms - but this can be set using the option rmsd_types.\n"
 		"\n"
-		"  Make sure that reference pose and set pose are the same length ."
 		"   We match all corresponding atoms for each residue to match."
-		"   By default we do not fail and are robust - only matching what we can for each residue.";
+		"   By default we do not fail and are robust to length mismatches - only matching what we can for each residue.";
 
 	core::simple_metrics::xsd_simple_metric_type_definition_w_attributes(xsd, name_static(),
 		description, attlist);

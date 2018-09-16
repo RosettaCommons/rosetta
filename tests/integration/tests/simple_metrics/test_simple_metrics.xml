@@ -23,7 +23,7 @@
 		<SelectedResiduesPyMOLMetric name="pymol_selection" residue_selector="L1" />
 		<SequenceMetric name="sequence" residue_selector="L1" />
 		<SecondaryStructureMetric name="ss" residue_selector="L1" />
-		<TotalEnergyMetric name="total_energy" residue_selector="L1" />
+		<TotalEnergyMetric name="total_energy" residue_selector="L1" scoretype="fa_atr"/>
 		<CompositeEnergyMetric name="composite_energy" residue_selector="L1" use_native="1"/>
 	</SIMPLE_METRICS>
 	<MOVERS>

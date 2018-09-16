@@ -36,6 +36,12 @@ cd %(workdir)s
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 
+#Test XML interface and specific, previously failing pdb
+[ -x %(bin)s/rosetta_scripts.%(binext)s ] || exit 1
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -s 1KX5_chAB.pdb -parser:protocol iam.xml -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
+    | egrep -vf ../../ignore_list \
+    > log.rs
+
 #
 # After that, do whatever you want.
 # It's nice to test that the executable exists first, to ensure the test actually runs:

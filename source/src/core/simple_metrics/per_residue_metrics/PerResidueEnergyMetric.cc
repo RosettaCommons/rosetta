@@ -114,7 +114,7 @@ PerResidueEnergyMetric::parse_my_tag(
 	SimpleMetric::parse_base_tag( tag );
 	PerResidueRealMetric::parse_per_residue_tag( tag, datamap );
 
-	core::scoring::score_type_from_name( tag->getOption<std::string>("scoretype", "total_score"));
+	set_scoretype(core::scoring::score_type_from_name( tag->getOption<std::string>("scoretype", "total_score")));
 
 	if ( tag->hasOption("scorefxn") ) {
 		set_scorefunction(parse_score_function( tag, datamap ));
@@ -155,7 +155,7 @@ PerResidueEnergyMetric::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 
 	utility::tag::add_schema_restrictions_for_strings( xsd, "scoretypes", score_names);
 
-	attlist + XMLSchemaAttribute("scoretype", "scoretypes", "ScoreType to calculate.  Default is total_score");
+	attlist + XMLSchemaAttribute::attribute_w_default("scoretype", "scoretypes", "ScoreType to calculate.", "total_score");
 
 	attributes_for_get_score_function_name( attlist );
 

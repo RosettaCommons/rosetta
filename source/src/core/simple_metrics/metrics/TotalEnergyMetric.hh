@@ -21,6 +21,7 @@
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
+#include <core/scoring/ScoreType.hh>
 
 // Utility headers
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
@@ -95,6 +96,11 @@ public:
 	void
 	set_comparison_pose( core::pose::PoseCOP pose );
 
+	///@brief Set a specific scoretype to report
+	/// Default is total_score
+	void
+	set_scoretype( scoring::ScoreType scoretype );
+
 public:
 
 	///@brief Name of the class
@@ -130,6 +136,7 @@ private:
 	core::scoring::ScoreFunctionCOP scorefxn_ = nullptr;
 	core::select::residue_selector::ResidueSelectorCOP residue_selector_ = nullptr;
 	core::pose::PoseCOP ref_pose_ = nullptr;
+	scoring::ScoreType scoretype_ = scoring::total_score;
 
 };
 

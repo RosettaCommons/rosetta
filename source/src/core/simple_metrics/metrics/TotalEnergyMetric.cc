@@ -85,13 +85,8 @@ TotalEnergyMetric::~TotalEnergyMetric(){}
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Copy constructor
-TotalEnergyMetric::TotalEnergyMetric( TotalEnergyMetric const & src ):
-	RealMetric( src )
-{
-	scorefxn_ = src.scorefxn_;
-	residue_selector_ = src.residue_selector_;
-	ref_pose_ = src.ref_pose_;
-}
+TotalEnergyMetric::TotalEnergyMetric( TotalEnergyMetric const & ) = default;
+
 
 core::simple_metrics::SimpleMetricOP
 TotalEnergyMetric::clone() const {
@@ -130,6 +125,11 @@ TotalEnergyMetric::metric() const {
 	return "total_energy";
 }
 
+void
+TotalEnergyMetric::set_scoretype( scoring::ScoreType scoretype ){
+	scoretype_ = scoretype;
+}
+
 /*
 void
 TotalEnergyMetric::load_native_pose_as_reference(){
@@ -154,6 +154,7 @@ TotalEnergyMetric::parse_my_tag(
 	if ( tag->hasOption("scorefxn") ) {
 		set_scorefunction(parse_score_function( tag, datamap ));
 	}
+	set_scoretype(core::scoring::score_type_from_name( tag->getOption<std::string>("scoretype", "total_score")));
 
 	//Comparison pose.
 	if ( tag->hasOption("reference_name") ) {
@@ -178,6 +179,7 @@ TotalEnergyMetric::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	attlist + XMLSchemaAttribute::attribute_w_default(
 		"use_native", xsct_rosetta_bool, "Use the native as reference for DELTA score if present on the cmd-line.", "false"
 	);
+	attlist + XMLSchemaAttribute::attribute_w_default("scoretype", "scoretypes", "ScoreType to calculate.", "total_score");
 
 	core::select::residue_selector::attributes_for_parse_residue_selector( attlist, "residue_selector",
 		"If a residue selector is present, we calculate the total energy of only these residues." );
@@ -198,7 +200,7 @@ TotalEnergyMetric::calculate(const core::pose::Pose & pose) const {
 
 	PerResidueEnergyMetric e_metric = PerResidueEnergyMetric();
 
-	e_metric.set_scoretype(total_score);
+	e_metric.set_scoretype(scoretype_);
 
 	if ( residue_selector_ ) {
 		e_metric.set_residue_selector(residue_selector_);

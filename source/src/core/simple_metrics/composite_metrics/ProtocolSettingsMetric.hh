@@ -106,6 +106,11 @@ public:
 	utility::vector1< std::string >
 	get_metric_names() const override;
 
+	///@brief Set a specific job tag that will be output as job_tag for this particular run.
+	/// Used for benchmarking.
+	void
+	set_job_tag( std::string const & job_tag);
+
 public:
 
 	/// @brief called by parse_my_tag -- should not be used directly
@@ -140,6 +145,7 @@ private:
 	std::map< std::string, std::string > options_values_;
 
 	utility::vector1< std::string > limit_reporting_to_these_options_;
+	std::string job_tag_ = "";
 };
 
 
