@@ -445,11 +445,6 @@ void SCS_BlastFilter_by_sequence_identity::apply(AntibodySequence const& A,
 	string query_frh = query_fr.frh1 + query_fr.frh2 + query_fr.frh3 + query_fr.frh4;
 	string query_frl = query_fr.frl1 + query_fr.frl2 + query_fr.frl3 + query_fr.frl4;
 
-	//string query_heavy_orientation = query_fr.frh1 + A.h1_sequence() + query_fr.frh2 + A.h2_sequence() + query_fr.frh3 + A.h3_sequence() + query_fr.frh4;
-	//string query_light_orientation = query_fr.frl1 + A.l1_sequence() + query_fr.frl2 + A.l2_sequence() + query_fr.frl3 + A.l3_sequence() + query_fr.frl4;
-
-	//string query_orientation = query_light_orientation + query_heavy_orientation; // Note: must be in this order
-
 	// Filter heavy framework region by sequence identity
   for(auto p = results->frh.rbegin(); p != results->frh.rend(); ) {
     auto const *br = dynamic_cast< SCS_BlastResult const *>( p->get() );
@@ -476,7 +471,19 @@ void SCS_BlastFilter_by_sequence_identity::apply(AntibodySequence const& A,
 	else ++p;
   }
 
-	// Filter orientation by sequence identity?
+ // Orientation check is a bit special: comparison is done to BLAST reported %-identity
+  for(auto p = results->orientation.rbegin(); p != results->orientation.rend(); ) {
+    auto const *br = dynamic_cast< SCS_BlastResult const *>( p->get() );
+    if( !br ) throw CREATE_EXCEPTION(_AE_scs_failed_, "SCS_BlastFilter_by_sequence_identiy::apply: Error! Could not cast SCS_Results to SCS_BlastResult!");
+
+    // -5 is inherited from antibody.py
+    if ( br->identity > get_sid_cutoff_fr() - 5 ) {
+      TR.Trace << CSI_Red() << "SCS_BlastFilter_by_sequence_identity: Filtering " << br->pdb << "... with SID ratio of " << sid_ratio << CSI_Reset() << std::endl;
+      results->orientation.erase( std::next(p++).base() );
+    }
+    else ++p;
+  }
+
 	// How? Cannot reassemble orientation sequence from result.
   TR.Debug << "SCS_BlastFilter_by_sequence_identity: Results count after filtering   " << CSI_Red() << result_sizes(results) << CSI_Reset() << std::endl;
 
