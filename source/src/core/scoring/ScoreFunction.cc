@@ -2035,6 +2035,27 @@ ScoreFunction::setup_for_packing(
 	}
 }
 
+/// @brief Lets the scoring functions cache anything they need to calculate
+/// energies in a packing step (pack_rotamers) in the context of all available rotamers
+/// @details The exact order of events when setting up for packing are as follows:
+///          1. setup_for_packing() is called for all energy methods
+///          2. rotamers are built
+///          3. setup_for_packing_with_rotsets() is called for all energy methods
+///          4. prepare_rotamers_for_packing() is called for all energy methods
+///          5. The energy methods are asked to score all rotamers and rotamer pairs
+///          6. Annealing
+/// @remarks The pose is specifically non-const here so that energy methods can store data in it
+/// @note: Used in ApproximateBuriedUnsatPenalty to pre-compute compatible rotamers
+void
+ScoreFunction::setup_for_packing_with_rotsets(
+	pose::Pose & pose,
+	pack_basic::RotamerSetsBaseOP const & rotsets
+) const {
+	for ( auto const & all_method : all_methods_ ) {
+		all_method->setup_for_packing_with_rotsets( pose, rotsets, *this );
+	}
+}
+
 
 void
 ScoreFunction::prepare_rotamers_for_packing(

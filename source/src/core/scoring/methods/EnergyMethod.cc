@@ -57,6 +57,24 @@ EnergyMethod::defines_high_order_terms( pose::Pose const & ) const
 void
 EnergyMethod::setup_for_packing( pose::Pose &, utility::vector1< bool > const &, utility::vector1< bool > const & ) const {}
 
+/// @brief if an energy method needs to cache data in the Energies object,
+/// before packing begins and requires access to the RotamerSets object, then
+/// it does so during this function. The default behavior is to do nothing.
+/// @details The exact order of events when setting up for packing are as follows:
+///          1. setup_for_packing() is called for all energy methods
+///          2. rotamers are built
+///          3. setup_for_packing_with_rotsets() is called for all energy methods
+///          4. prepare_rotamers_for_packing() is called for all energy methods
+///          5. The energy methods are asked to score all rotamers and rotamer pairs
+///          6. Annealing
+/// @remarks The pose is specifically non-const here so that energy methods can store data in it
+/// @note: Used in ApproximateBuriedUnsatPenalty to pre-compute compatible rotamers
+void
+EnergyMethod::setup_for_packing_with_rotsets(
+	pose::Pose &,
+	pack_basic::RotamerSetsBaseOP const &,
+	ScoreFunction const &
+) const {}
 
 /// @details default implementation noop
 void

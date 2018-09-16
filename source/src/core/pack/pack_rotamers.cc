@@ -202,6 +202,7 @@ pack_rotamers_setup(
 	rotsets->set_task( task );
 	rotsets->initialize_pose_for_rotsets_creation(pose);
 	rotsets->build_rotamers( pose, scfxn, packer_neighbor_graph );
+	scfxn.setup_for_packing_with_rotsets( pose, rotsets );
 	rotsets->prepare_sets_for_packing( pose, scfxn );
 
 	if ( basic::options::option[ basic::options::OptionKeys::packing::dump_rotamer_sets ] ) { // hacking

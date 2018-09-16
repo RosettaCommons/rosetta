@@ -31,6 +31,7 @@
 #include <core/kinematics/MinimizerMapBase.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/RotamerSetBase.fwd.hh>
+#include <core/pack_basic/RotamerSetsBase.fwd.hh>
 
 // Package headers
 #include <core/scoring/EnergyMap.hh>
@@ -563,6 +564,20 @@ public:
 	void
 	setup_for_packing( pose::Pose & pose, utility::vector1< bool > const & residues_repacking, utility::vector1< bool > const & residues_designing ) const;
 
+	/// @brief Lets the scoring functions cache anything they need to calculate
+	/// energies in a packing step (pack_rotamers) in the context of all available rotamers
+	/// @details The exact order of events when setting up for packing are as follows:
+	///          1. setup_for_packing() is called for all energy methods
+	///          2. rotamers are built
+	///          3. setup_for_packing_with_rotsets() is called for all energy methods
+	///          4. prepare_rotamers_for_packing() is called for all energy methods
+	///          5. The energy methods are asked to score all rotamers and rotamer pairs
+	///          6. Annealing begins
+	/// @remarks The pose is specifically non-const here so that energy methods can store data in it
+	/// @note: Used in ApproximateBuriedUnsatPenalty to pre-compute compatible rotamers
+	void
+	setup_for_packing_with_rotsets( pose::Pose & pose, pack_basic::RotamerSetsBaseOP const & rotsets ) const;
+
 	/// @brief Lets the scoring functions cache anything they need to rapidly
 	/// calculate rotamer pair energies used in packing (like a trie, e.g.)
 	void
@@ -574,7 +589,6 @@ public:
 	/// rotamer trials.
 	void
 	update_residue_for_packing( pose::Pose & pose, Size resid ) const;
-
 
 	//void
 	//setup_for_scoring( pose::Pose & pose ) const;
