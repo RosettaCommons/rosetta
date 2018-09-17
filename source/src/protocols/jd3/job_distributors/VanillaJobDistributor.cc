@@ -139,7 +139,7 @@ VanillaJobDistributor::construct_job_result_input_list( LarvalJobCOP larval_job 
 	// construct the (possibly empty) list of job results needed to mature this larval job
 	utility::vector1< JobResultCOP > input_job_results;
 	input_job_results.reserve( larval_job->input_job_result_indices().size() );
-	for ( auto const result_id : larval_job->input_job_result_indices() ) {
+	for ( auto const &result_id : larval_job->input_job_result_indices() ) {
 		auto result_iter = job_results_.find( result_id );
 		if ( result_iter == job_results_.end() ) {
 			throw CREATE_EXCEPTION(utility::excn::Exception,  "Failed to retrieve job result (" +
@@ -181,7 +181,7 @@ VanillaJobDistributor::potentially_output_some_job_results()
 	// ask the job queen if she wants to output any results
 	std::list< output::OutputSpecificationOP > jobs_to_output =
 		job_queen_->jobs_that_should_be_output();
-	for ( auto const output_spec : jobs_to_output ) {
+	for ( auto const &output_spec : jobs_to_output ) {
 		JobResultID result_id = output_spec->result_id();
 		auto result_iter = job_results_.find( result_id );
 		if ( result_iter == job_results_.end() ) {
@@ -204,7 +204,7 @@ VanillaJobDistributor::potentially_discard_some_job_results()
 {
 	// ask the job queen if she wants to discard any results
 	JobResultIDList jobs_to_discard = job_queen_->job_results_that_should_be_discarded();
-	for ( auto const result_id : jobs_to_discard ) {
+	for ( auto const &result_id : jobs_to_discard ) {
 		auto result_iter = job_results_.find( result_id );
 
 		if ( result_iter == job_results_.end() ) {

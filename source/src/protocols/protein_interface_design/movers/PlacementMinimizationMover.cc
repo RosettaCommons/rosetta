@@ -218,7 +218,7 @@ PlacementMinimizationMover::parse_my_tag( TagCOP const tag,
 	utility::vector0< TagCOP > const & branch_tags( tag->getTags() );
 	/// PlaceSim calls this parse_my_tag with its own tag, and there, cb_force is
 	/// set within a child tag
-	for ( TagCOP const btag : branch_tags ) {
+	for ( TagCOP btag : branch_tags ) {
 		if ( btag->hasOption( "cb_force" ) ) {
 			cb_force( btag->getOption< core::Real >( "cb_force" ) );
 		}

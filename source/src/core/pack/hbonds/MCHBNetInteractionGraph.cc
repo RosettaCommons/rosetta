@@ -171,7 +171,7 @@ void MCHBNetInteractionGraph::finalize_hbond_graph() {
 
 	using namespace scoring::hbonds::graph;
 
-	for ( std::pair< std::pair<uint32_t, uint32_t>, float > const & key_val : future_edges_ ) {
+	for ( auto const & key_val : future_edges_ ) {
 
 		uint32_t rot1 = key_val.first.first;
 		uint32_t rot2 = key_val.first.second;

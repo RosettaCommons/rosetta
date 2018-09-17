@@ -115,9 +115,9 @@ RandomMutation::apply( core::pose::Pose & pose )
 	ResidueTypeCOPList const & allowed( task->residue_task( random_entry ).allowed_residue_types() );
 	utility::vector1< AA > allow_temp;
 	allow_temp.clear();
-	for ( ResidueTypeCOP const t : allowed ) {
-		if ( t->aa() != pose.residue( random_entry ).aa() ) {
-			allow_temp.push_back( t->aa() );
+	for ( ResidueTypeCOP restype : allowed ) {
+		if ( restype->aa() != pose.residue( random_entry ).aa() ) {
+			allow_temp.push_back( restype->aa() );
 		}
 	}
 

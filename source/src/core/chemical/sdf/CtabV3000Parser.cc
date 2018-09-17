@@ -145,9 +145,9 @@ bool CtabV3000Parser::parse_bond_line( std::string line, MolFileIOBond & bond) {
 void
 CtabV3000Parser::getline(std::istream & istream, std::string line) const {
 	std::getline(istream,line);
-	char lastchar;
 	while ( istream ) {
-		while ( lastchar = line[ line.size()-1 ], lastchar == '\n' || lastchar == '\r' || lastchar == ' ' ) {
+		char lastchar;
+		while ( static_cast<void>( lastchar = line[ line.size()-1 ] ) /*static_casting to keep xcode happy*/, lastchar == '\n' || lastchar == '\r' || lastchar == ' ' ) {
 			line.erase(line.size()-1); //Erase last character to end of string.
 		}
 		lastchar = line[ line.size()-1 ];

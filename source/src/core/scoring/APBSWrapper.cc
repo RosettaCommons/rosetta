@@ -305,9 +305,9 @@ APBSConfig::APBSConfig(core::pose::Pose const & pose, int natomsIn, int dbgIn, b
 	ofrac(0.),
 	calcenergy(calcenergyIn)
 {
-	ionq[0] = 1; ionq[1] = -1, ionq[2] = 2; ionq[3] = -2;
-	ionc[0] = .15; ionc[1] = .15, ionc[2] = 0; ionc[3] = 0;
-	ionr[0] = 2; ionr[1] = 2, ionr[2] = 2; ionr[3] = 2;
+	ionq[0] = 1; ionq[1] = -1; ionq[2] = 2; ionq[3] = -2;
+	ionc[0] = .15; ionc[1] = .15; ionc[2] = 0; ionc[3] = 0;
+	ionr[0] = 2; ionr[1] = 2; ionr[2] = 2; ionr[3] = 2;
 	dime[0] = dime[1] = dime[2] = 1;
 
 	double min_r[] = {10e8,10e8,10e8};

@@ -89,7 +89,7 @@ PSSM2BfactorMover::apply( Pose & pose )
 
 	core::pose::add_comment(pose,"PSSMSTYLE residueNo", " A C D E F G H I K L M N P Q R S T V W Y");
 
-	for ( ConstraintCOP const c : constraints ) {
+	for ( ConstraintCOP c : constraints ) {
 		if ( c->type() != "SequenceProfile" ) continue;
 
 		SequenceProfileConstraintCOP seqprof_cst( utility::pointer::dynamic_pointer_cast< core::scoring::constraints::SequenceProfileConstraint const > ( c ) );

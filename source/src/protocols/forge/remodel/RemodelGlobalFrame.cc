@@ -441,8 +441,7 @@ void RemodelGlobalFrame::align_segment( core::pose::Pose & pose ) {
 	//////////////////////////////////
 	//3x1
 	Vector3f cA2axis= R0 + hN*(hN.dot(c_A-R0));
-	double u,v,w;
-	u=hN(0),v=hN(1),w=hN(2);
+	double u(hN(0)),v(hN(1)),w(hN(2));
 	// check! u,v,w should not be parallel to Z-axis (0,0,1)
 
 	//translation
@@ -478,9 +477,8 @@ void RemodelGlobalFrame::align_segment( core::pose::Pose & pose ) {
 
 
 	//figure out the new axis with the CA set of coordinates
-	double a,b;
-	//double c;
-	a=A.row(0).mean(),b=A.row(1).mean(); //,c=A.row(2).mean();
+	double a(A.row(0).mean()), b(A.row(1).mean());
+	//double c(A.row(2).mean());
 
 	Matrix3f Tx;
 	Tx<< a/sqrt(a*a+b*b), b/sqrt(a*a+b*b),0,

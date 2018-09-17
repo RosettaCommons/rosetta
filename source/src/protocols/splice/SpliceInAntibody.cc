@@ -239,7 +239,7 @@ void SpliceInAntibody::parse_my_tag(TagCOP const tag, basic::datacache::DataMap 
 		delta = tag->getOption<std::string>("delta_lengths");
 		//check in put is valid, either : "1,2,3,..." or "1:10", Gideon 19may15
 		StringVec const lengths_keys(utility::string_split(delta, ','));
-		for ( std::string const delta: lengths_keys ) {
+		for ( std::string const & delta: lengths_keys ) {
 			if ( delta == "" ) continue;
 			int const delta_i( 1 * atoi( delta.c_str() ) );
 			delta_lengths_.push_back( delta_i );
@@ -263,7 +263,7 @@ void SpliceInAntibody::parse_my_tag(TagCOP const tag, basic::datacache::DataMap 
 			TR.Error << "ERROR !! segment '"<<splicemanager.segment_type()<<"is not a recognized antibody segmetn \n" << std::endl;
 			runtime_assert( find_segment != splicemanager.segment_names_ordered().end() );
 		}
-		for ( auto const segment_type : splicemanager.segment_names_ordered() ) {
+		for ( auto const & segment_type : splicemanager.segment_names_ordered() ) {
 			SpliceSegmentOP splice_segment( new SpliceSegment );
 			TR<<segment_type<<std::endl;
 			if ( data.has("pssms", segment_type) ) { //If I already read pssms from disk, no need to read them again, GDL nov17

@@ -85,14 +85,14 @@ MultipleSigmoids::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::Data
 	utility::vector1< std::string > const pdb_names( utility::string_split( tag->getOption< std::string >( "file_names" ), ',' ) ); //split file names
 	operatorF_ = OperatorOP( new protocols::calc_taskop_filters::Operator );
 	utility::vector1< utility::tag::TagCOP > const sub_tags( tag->getTags() ); //tags
-	for ( utility::tag::TagCOP const sub_tag : sub_tags ) {
+	for ( utility::tag::TagCOP sub_tag : sub_tags ) {
 		if ( sub_tag->getName() == "Operator" ) {
 			operatorF_->parse_my_tag( sub_tag, data, filters, movers, pose ) ;
 		}
 	}
 
 	for ( std::string const & fname : pdb_names ) {
-		for ( utility::tag::TagCOP const sub_tag : sub_tags ) {
+		for ( utility::tag::TagCOP sub_tag : sub_tags ) {
 			if ( sub_tag->getName() == "RelativePose" ) {
 				r_pose_ = RelativePoseFilterOP( new RelativePoseFilter );
 				TR<<"I'm now reading from RelativePose filter"<<std::endl;

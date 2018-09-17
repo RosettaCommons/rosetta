@@ -570,7 +570,7 @@ void SampleRotamersFromPDB::parse_tag(TagCOP tag, DataMap &) {
 	std::string const SampleAtAlignedpositions(tag->getOption < std::string > ("aligned_positions", ""));
 	//parse SampleAtAlignedpositions
 	utility::vector1<std::string> const split_reslist(utility::string_split(SampleAtAlignedpositions, ','));
-	for ( std::string const res_str: split_reslist ) {
+	for ( std::string const &res_str: split_reslist ) {
 		if ( res_str=="" ) break; //with this no residue numbers given an empty string causes an error here. Gideon,11Mar15
 		using namespace std;
 		TR<<"res_str:"<<res_str<<std::endl;
@@ -584,13 +584,13 @@ void SampleRotamersFromPDB::parse_tag(TagCOP tag, DataMap &) {
 
 	utility::vector1<TagCOP> const sub_tags(tag->getTags());
 	core::pose::PoseCOP pose(protocols::jd2::get_current_jobs_starting_pose());
-	for ( TagCOP const sub_tag: sub_tags ) {
+	for ( TagCOP sub_tag: sub_tags ) {
 		if ( sub_tag->getName() == "Segments" ) {
 			if ( db_fname_!="" ) {
 				utility_exit_with_message( "Cannot use \"db_file_name\" with sub tags \"Segments\"");
 			}
 			utility::vector1< TagCOP > const segment_tags( sub_tag->getTags() );
-			for ( TagCOP const segment_tag: segment_tags ) {
+			for ( TagCOP segment_tag: segment_tags ) {
 				RotLibdbOP RotLib_segment( new RotLibdb );
 				std::string const segment_name( segment_tag->getOption< std::string >( "name" )  ); //get name of segment from xml
 				std::string const pdb_profile_match( segment_tag->getOption< std::string >( "pdb_profile_match" ) );// get name of pdb profile match, this file contains all the matching between pdb name and sub segment name, i.e L1.1,L1.2 etc
@@ -599,7 +599,7 @@ void SampleRotamersFromPDB::parse_tag(TagCOP tag, DataMap &) {
 				StringVec const profile_name_pairs( utility::string_split( profiles_str, ',' ) );
 
 				// TR<<"Now working on segment:"<<segment_name<<std::endl;
-				for ( std::string const s: profile_name_pairs ) {
+				for ( std::string const & s: profile_name_pairs ) {
 					StringVec const profile_name_file_name( utility::string_split( s, ':' ) );
 					if ( debug_ ) TR<<"Rotamer DB file: "<<profile_name_file_name[ 2 ]<<",segment name: "<<profile_name_file_name[ 1 ]<<std::endl;
 
@@ -645,7 +645,7 @@ rot_matrix SampleRotamersFromPDB::combine_rot_dbs(core::pose::Pose const & pose)
 	}
 
 	runtime_assert(pdb_segments_.size()); //This assert is in place to make sure that the pdb file has the correct comments, otherwise this function will fail
-	for ( std::string const segment_type: segment_names_ordered_ ) { //<- Start of PDB segment iterator
+	for ( std::string const & segment_type: segment_names_ordered_ ) { //<- Start of PDB segment iterator
 		TR<<"segment_type: "<<segment_type<<std::endl;
 		if ( ROTdb_segments_.find(segment_type )-> second->get_segment_fname(pdb_segments_[segment_type]).empty() ) {
 			utility_exit_with_message(" could not find the source pdb name: "+ pdb_segments_[segment_type]+ ", in the pdb_profile_match \n");
@@ -667,7 +667,7 @@ rot_matrix SampleRotamersFromPDB::combine_rot_dbs(core::pose::Pose const & pose)
 }
 void SampleRotamersFromPDB::concatenate_rot_matrix(rot_matrix & a, rot_matrix const & b) const{
 	//for(std::vector<utility::vector1< core::conformation::ResidueOP > >::iterator it = b.begin(); it != b.end(); ++it) {
-	for ( utility::vector1< ROT > const i: b ) {
+	for ( utility::vector1< ROT > const & i: b ) {
 		TR<<i[1].AA<<i[1].chi_vec<<std::endl;;
 
 		a.push_back(i);

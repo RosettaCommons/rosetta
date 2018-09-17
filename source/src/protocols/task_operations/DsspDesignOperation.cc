@@ -257,7 +257,7 @@ DsspDesignOperation::parse_tag( TagCOP tag , DataMap & )
 		pose_secstruct_ = tag->getOption< std::string >( "pose_secstruct" ) ;
 	}
 
-	for ( utility::tag::TagCOP const sse_tag : tag->getTags() ) {
+	for ( utility::tag::TagCOP sse_tag : tag->getTags() ) {
 		const std::string sse = sse_tag->getName(); // Helix, Strand, Loop, HelixCapping, HelixStart, Nterm, Cterm
 
 		// check that SSE is valid

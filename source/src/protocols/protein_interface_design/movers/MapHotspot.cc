@@ -293,7 +293,7 @@ MapHotspot::parse_my_tag( utility::tag::TagCOP tag,
 	file_name_prefix_ = tag->getOption< std::string >( "file_name_prefix", "map_hs" );
 
 	utility::vector0< TagCOP > const & branch_tags( tag->getTags() );
-	for ( TagCOP const btag : branch_tags ) {
+	for ( TagCOP btag : branch_tags ) {
 		std::string const btag_name( btag->getName() );
 		if ( btag_name == "Jumps" ) {
 			utility::vector0< TagCOP > const & jump_tags( btag->getTags() );

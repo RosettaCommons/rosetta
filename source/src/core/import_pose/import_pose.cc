@@ -189,7 +189,7 @@ read_additional_pdb_data(
 
 	//Added by Daniel-Adriano Silva, used to read PDBinfo-LABEL
 	//TR.Debug << "Setting PDBinfo-labels from PDB file." << std::endl;
-	for ( std::string const line : lines ) {
+	for ( std::string const &line : lines ) {
 		if ( line.size() > 21 && line.substr(0,21) == "REMARK PDBinfo-LABEL:" ) {
 			//Parse and split string
 			utility::vector1 < std::string > remark_values;
@@ -782,8 +782,8 @@ void build_pose_as_is2(
 	// gonna be eligible. The reason we check any starts and stops is because it's possible that
 	// you have a slightly messed up chain with a chain-break in the middle, but it's cyclized
 	// overall -- despite having been chopped into two Edges.
-	for ( auto const edge1 : pose.fold_tree() ) {
-		for ( auto const edge2 : pose.fold_tree() ) {
+	for ( auto const &edge1 : pose.fold_tree() ) {
+		for ( auto const &edge2 : pose.fold_tree() ) {
 			if ( !edge1.is_polymer() || !edge2.is_polymer() ) continue;
 
 			if ( !pose.residue_type( edge1.start() ).is_polymer() ) continue;

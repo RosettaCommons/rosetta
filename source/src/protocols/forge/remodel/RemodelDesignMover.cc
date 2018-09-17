@@ -646,20 +646,17 @@ bool RemodelDesignMover::find_disulfides_in_the_neighborhood(Pose & pose, utilit
 
 	// manual overwrite of the disulfide mobile range
 	if ( remodel_data_.disulfMobileRange.size() != 0 ) {
-		Size i = 1;
-		for ( auto && modeled_cluster : modeled_clusters ) {
-
-			modeled_cluster = false;
-			if ( i == remodel_data_.disulfMobileRange[0] ) {
-				modeled_cluster = true;
-				TR << "Use disulf mobile range start: " << i << std::endl;
-			} else if ( i > remodel_data_.disulfMobileRange[0] && i < remodel_data_.disulfMobileRange[1] ) {
-				modeled_cluster = true;
-			} else if ( i == remodel_data_.disulfMobileRange[1] ) {
-				modeled_cluster = true;
-				TR << "Use disulf mobile range stop: " << i << std::endl;
+		for ( core::Size ii(1), iimax(modeled_clusters.size()); ii<=iimax; ++ii ) {
+			modeled_clusters[ii] = false;
+			if ( ii == remodel_data_.disulfMobileRange[0] ) {
+				modeled_clusters[ii] = true;
+				TR << "Use disulf mobile range start: " << ii << std::endl;
+			} else if ( ii > remodel_data_.disulfMobileRange[0] && ii < remodel_data_.disulfMobileRange[1] ) {
+				modeled_clusters[ii] = true;
+			} else if ( ii == remodel_data_.disulfMobileRange[1] ) {
+				modeled_clusters[ii] = true;
+				TR << "Use disulf mobile range stop: " << ii << std::endl;
 			}
-			i++;
 		}
 	} else {
 		TR << "RemodelData disulfMobileRange not overwritten because it was not initialized previously." << std::endl;

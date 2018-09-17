@@ -575,7 +575,8 @@ struct TreeVizBuilder {
 	void
 	get_ft_node_bounds( Size res, Size & out_lb, Size & out_ub ) {
 		if ( lb_[ res ] == 0 ) {
-			lb_[ res ] = 1, ub_[ res ] = ft.nres();
+			lb_[ res ] = 1;
+			ub_[ res ] = ft.nres();
 			for ( Size i = 1; i <= ft.num_cutpoint(); ++i ) {
 				auto c = ( Size ) ft.cutpoint( i );
 				if ( c <  res ) lb_[ res ] = std::max( lb_[ res ], c + 1 );

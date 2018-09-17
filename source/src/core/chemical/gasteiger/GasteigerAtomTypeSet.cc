@@ -73,10 +73,10 @@ GasteigerAtomTypeSet::read_file( std::string const & filename )
 	{
 		using namespace basic;
 
-		char next;
 		std::string line;
 		while ( data.good() ) {
-			while ( next=data.peek(), next == ' ' || next == '\n' || next == '\t' ) { data.get(); } // Discard leading whitespace
+			char next;
+			while ( static_cast<void>( next = data.peek() ) /*The static_cast keeps xcode happy*/, next == ' ' || next == '\n' || next == '\t' ) { data.get(); } // Discard leading whitespace
 			if ( ! data.good() ) {
 				break;
 			}
@@ -125,10 +125,10 @@ GasteigerAtomTypeSet::read_bond_file( std::string const & filename ){
 	{
 		using namespace basic;
 
-		char next;
 		std::string line;
 		while ( data.good() ) {
-			while ( next=data.peek(), next == ' ' || next == '\n' || next == '\t' ) { data.get(); } // Discard leading whitespace
+			char next;
+			while ( static_cast<void>( next = data.peek() ) /*The static_cast keeps xcode happy*/, next == ' ' || next == '\n' || next == '\t' ) { data.get(); } // Discard leading whitespace
 			if ( ! data.good() ) {
 				break;
 			}

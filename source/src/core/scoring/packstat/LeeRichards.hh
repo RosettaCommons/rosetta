@@ -415,7 +415,7 @@ struct Array2D {
 
 struct Octree2D {
 	Octree2D( Circles & items ) {
-		mnx_=9e9,mny_=9e9,mxx_=-9e9,mxy_=-9e9,mxr_=1.0;
+		mnx_=9e9; mny_=9e9; mxx_=-9e9; mxy_=-9e9; mxr_=1.0;
 		for ( CircleIter i = items.begin(); i != items.end(); ++i ) {
 			Circle* item(*i);
 			if ( item->r > mxr_ ) mxr_ = item->r;

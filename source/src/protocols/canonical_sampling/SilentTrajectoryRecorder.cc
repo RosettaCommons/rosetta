@@ -236,7 +236,7 @@ SilentTrajectoryRecorder::observe_after_metropolis(
 	if ( step_count() % std::max(stride(),(core::Size)500) == 0 ) {
 		tr.Info << step_count() << " E=" << pose.energies().total_energy();
 		//output what is in job-object (e.g. temperature )
-		for ( auto const srpair: protocols::jd2::get_string_real_pairs_from_current_job() ) {
+		for ( auto const &srpair: protocols::jd2::get_string_real_pairs_from_current_job() ) {
 			tr.Info << " " << srpair.first << "=" << srpair.second;
 		}
 		mc.show_counters();

@@ -13,6 +13,8 @@ script_dir = os.getcwd()
 import os, string, sys, shutil
 import build_util, xcode_util
 
+xcode_filename = 'Rosetta.xcodeproj/project.pbxproj'
+
 KNOWN_PROJECTS = [
     'basic',
     'utility',
@@ -43,6 +45,8 @@ else:
     'protocols_d.5',
     'protocols_e.5',
     'protocols_f.5',
+    'protocols_g.5',
+    'protocols_h.5',
     'protocols_a.6',
     'protocols_b.6',
     'protocols_c.6',
@@ -50,13 +54,8 @@ else:
     'protocols_e.6',
     'protocols.7',
     'protocols.8',
+    'devel',
         ]
-
-#Needed by scons, but have no source files:
-"""
-    'protocols_g.5',
-    'protocols_h.5',
-"""
 
 
 KNOWN_TESTS = [
@@ -79,10 +78,7 @@ def project_callback(project, project_path, project_files):
     sources_key = xcode_util.PROJECT_KEYS[project][1]
 
     # read file
-
-    xcode_filename = 'Rosetta.xcodeproj/project.pbxproj'
-
-    #- JAB - new libraries will fail
+    
     if not os.path.exists( xcode_filename ):
         shutil.copyfile( xcode_filename + '.template', xcode_filename )
 
@@ -157,7 +153,11 @@ def project_main(path_to_mini, argv, project_callback, known_projects):
             sys.exit(-1)
 
         project_path, project_files = build_util.list_project_files(path_to_mini, project)
-        project_callback(project, project_path, project_files)
+        try:
+            project_callback(project, project_path, project_files)
+        except RuntimeError:
+            os.system('rm -r '+xcode_filename)
+            sys.exit("Deleted Current project as new libraries were added.  Please re-run this script. ")
 
 
 if __name__ == "__main__":

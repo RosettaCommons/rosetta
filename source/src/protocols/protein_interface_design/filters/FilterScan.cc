@@ -314,7 +314,7 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 		core::pose::Pose const pose_ref( pose ); // 10Jul14 Adi debugging: save pose after two substitutions to self but compute baseline relative to 3 substitutions
 		single_substitution( pose, resi, pose.residue( resi ).aa() );
 		//  pose.dump_scored_pdb( "at_baseline.pdb", *scorefxn() );
-		for ( protocols::simple_filters::DeltaFilterOP const delta_filter : delta_filters_ ) {
+		for ( protocols::simple_filters::DeltaFilterOP delta_filter : delta_filters_ ) {
 			std::string const fname( delta_filter->get_user_defined_name() );
 			core::Real const fbaseline( delta_filter->filter()->report_sm( pose ) );
 			delta_filter->baseline( fbaseline );
@@ -324,8 +324,8 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 		ResidueTypeCOPList const & allowed( task->residue_task( resi ).allowed_residue_types() );
 		utility::vector1< AA > allow_temp;
 		allow_temp.clear();
-		for ( ResidueTypeCOP const t : allowed ) {
-			allow_temp.push_back( t->aa() );
+		for ( ResidueTypeCOP restype : allowed ) {
+			allow_temp.push_back( restype->aa() );
 		}
 		//  core::pose::Pose const pose_ref( pose ); //10Jul14 Adi debugging: original line for pose_ref
 		for ( AA const target_aa : allow_temp ) {

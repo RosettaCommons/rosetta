@@ -1241,11 +1241,11 @@ string MotifHits::get_resfile(bool restrict, std::set<Size> & resi_in_resfile) c
 			tmp[aa2] += score;
 		}
 	}
-	typedef std::pair<char,float> PCF;
+
 	for ( Size ir = 1; ir <= nres1; ++ir ) {
 		char const chain1 = utility::UPPERCASE_ALPHANUMERICS[(pose1.chain(ir)-1)%36];
 		string aas;
-		for ( PCF const & p : resdat1[ir] ) {
+		for ( auto const & p : resdat1[ir] ) {
 			if ( p.second >= option[mh::dump::resfile_min_tot_score]() ) {
 				aas += string_of(p.first);
 			}
@@ -1260,7 +1260,7 @@ string MotifHits::get_resfile(bool restrict, std::set<Size> & resi_in_resfile) c
 		for ( Size jr = 1; jr <= nres2; ++jr ) {
 			char const chain2 = utility::UPPERCASE_ALPHANUMERICS[(pose1.conformation().num_chains()+pose2.chain(jr)-1)%36];
 			string aas;
-			for ( PCF const & p : resdat2[jr] ) {
+			for ( auto const & p : resdat2[jr] ) {
 				if ( p.second >= option[mh::dump::resfile_min_tot_score]() ) {
 					aas += string_of(p.first);
 				}

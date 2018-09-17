@@ -269,7 +269,7 @@ SwapSegment::parse_my_tag(
 
 	//parsing branch tags
 	utility::vector0< TagCOP > const & branch_tags( tag->getTags() );
-	for ( TagCOP const btag : branch_tags ) {
+	for ( TagCOP btag : branch_tags ) {
 
 		//there is a problem with the parsing of the seeds if the pose was previously grown. This is due to
 		//the difference between parse time and computing time. Since the seeds are parsed before the pose has been

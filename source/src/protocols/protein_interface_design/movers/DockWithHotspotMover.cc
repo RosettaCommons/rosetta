@@ -185,13 +185,13 @@ void DockWithHotspotMover::parse_my_tag( utility::tag::TagCOP tag,
 		" from:" << std::endl;
 	// Set target to the residue specified by "target_pdb_num" or "target_res_num"
 	utility::vector1< TagCOP > const branch_tags( tag->getTags() );
-	for ( TagCOP const curr_tag : branch_tags ) {
+	for ( TagCOP curr_tag : branch_tags ) {
 		if ( curr_tag->getName() != "HotspotFiles" ) {
 			TR.Error << "No 'HotspotFiles' specified." << std::endl;
 			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "");
 		} else {
 			utility::vector1< TagCOP > const branch_tags2( curr_tag->getTags() );
-			for ( TagCOP const curr_tag2 : branch_tags2 ) {
+			for ( TagCOP curr_tag2 : branch_tags2 ) {
 				std::string const file_name( curr_tag2->getOption< std::string >( "file_name" ) );
 				hotspot_filenames_.push_back(file_name);
 				auto cb_force( curr_tag2->getOption< core::Real >( "cb_force", 1.0 ) );

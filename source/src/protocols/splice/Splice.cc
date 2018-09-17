@@ -1878,7 +1878,7 @@ void Splice::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &data, pro
 
 		segment_type_ = tag->getOption<std::string>("segment");
 		protein_family(tag->getOption<std::string>("protein_family")); ///Declare which protein family to use in-order to invoke the correct PSSM files
-		for ( std::string const segment_type: order_segments_[protein_family_] ) {
+		for ( std::string const & segment_type: order_segments_[protein_family_] ) {
 
 			SpliceSegmentOP splice_segment( new SpliceSegment );
 			splice_segment->read_pdb_profile_file( protein_family_to_database_.find(protein_family_)->second, segment_type );
@@ -1919,7 +1919,7 @@ void Splice::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &data, pro
 	typedef utility::vector1<std::string> StringVec;
 	//that the sequence profile is built according to the user (eg. vl, L3, vh, H3)
 	if ( !sub_tags.empty() ) { //subtags are used to assign CDR PSSMs and to
-		for ( TagCOP const sub_tag: sub_tags ) {
+		for ( TagCOP sub_tag: sub_tags ) {
 
 			if ( sub_tag->getName() == "Segments" ) {
 				//if this sub_tag is present this means that the user is inputing their own PSSM files
@@ -1937,7 +1937,7 @@ void Splice::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &data, pro
 				//TR<<"reading segments in splice "<<tag->getName()<<std::endl;
 
 				utility::vector1< TagCOP > const segment_tags( sub_tag->getTags() );
-				for ( TagCOP const segment_tag: segment_tags ) {
+				for ( TagCOP segment_tag: segment_tags ) {
 					SpliceSegmentOP splice_segment( new SpliceSegment );
 					std::string const segment_name( segment_tag->getOption< std::string >( "name" )  ); //get name of segment from xml
 					std::string const pdb_profile_match( segment_tag->getOption< std::string >( "pdb_profile_match" ) );// get name of pdb profile match, this file contains all the matching between pdb name and sub segment name, i.e L1.1,L1.2 etc
@@ -1953,7 +1953,7 @@ void Splice::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &data, pro
 						continue;
 					}
 					// TR<<"Now working on segment:"<<segment_name<<std::endl;
-					for ( std::string const s: profile_name_pairs ) {
+					for ( std::string const & s: profile_name_pairs ) {
 						std::size_t found=s.find(':');
 						if ( found==std::string::npos ) {
 							continue; //if no : seperator found in string this is an error and we skip this entry
@@ -1977,7 +1977,7 @@ void Splice::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &data, pro
 			if ( sub_tag->getName() == "DB" ) {
 				check_segment=true; //See above for why I do this
 				utility::vector1< TagCOP > const segment_tags( sub_tag->getTags() );
-				for ( TagCOP const segment_tag: segment_tags ) {
+				for ( TagCOP segment_tag: segment_tags ) {
 					std::string const segment_name( segment_tag->getOption< std::string >( "name" ) );
 					std::string const db_file( segment_tag->getOption< std::string >( "torsion_db_file" ) );
 					database_segment_map_[segment_name]=db_file;
@@ -1990,13 +1990,13 @@ void Splice::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &data, pro
 				//bb choices during splice in
 				check_segment=1; //so not to fail following sanity check
 				utility::vector1< TagCOP > const segment_tags( sub_tag->getTags() );
-				for ( TagCOP const segment_tag: segment_tags ) {
+				for ( TagCOP segment_tag: segment_tags ) {
 					BBMatchingOP bb_comp( new BBMatching );
 					std::string const segment_name( segment_tag->getOption< std::string >( "name" ) ); //get name of segment from xml
 					std::string const pdb_to_partners( segment_tag->getOption< std::string >( "pdb_to_partners" ) );//
 					StringVec const profile_name_pairs( utility::string_split( pdb_to_partners, ',' ) );
 					std::string pdb_name;
-					for ( std::string const s: profile_name_pairs ) {
+					for ( std::string const & s: profile_name_pairs ) {
 						StringVec const pdb_to_file_name( utility::string_split( s, ':' ) );
 						//TR<<"pssm file:"<<profile_name_file_name[ 2 ]<<",segment name:"<<profile_name_file_name[ 1 ]<<std::endl;
 
@@ -2127,7 +2127,7 @@ void Splice::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &data, pro
 		std::size_t found = delta.find(",");
 		if ( found!=std::string::npos ) {
 			StringVec const lengths_keys(utility::string_split(delta, ','));
-			for ( std::string const delta: lengths_keys ) {
+			for ( std::string const & delta: lengths_keys ) {
 				if ( delta == "" ) continue;
 				int const delta_i( 1 * atoi( delta.c_str() ) );
 				delta_lengths_.push_back( delta_i );
@@ -2325,7 +2325,7 @@ void Splice::set_fold_tree(core::pose::Pose & pose, core::Size const vl_vh_cut) 
 	//"comments" gives us the association between the segment name and the source pdb
 	std::map<std::string, std::string> comments = core::pose::get_all_comments(pose);
 
-	for ( std::string const segment_type: segment_names_ordered_ ) {
+	for ( std::string const & segment_type: segment_names_ordered_ ) {
 		protocols::protein_interface_design::movers::AddChainBreak acb;
 		TR<<"segment:" <<segment_type<<std::endl;
 		torsion_database_fname_=database_segment_map_[segment_type];
@@ -2742,7 +2742,7 @@ core::sequence::SequenceProfileOP Splice::generate_sequence_profile(core::pose::
 
 	profile_vector.clear(); //this vector holds all the pdb segment profiless
 
-	for ( std::string const segment_type: segment_names_ordered_ ) { //<- Start of PDB segment iterator
+	for ( std::string const & segment_type: segment_names_ordered_ ) { //<- Start of PDB segment iterator
 		TR<<"segment_type: "<<segment_type<<std::endl;
 		if ( splice_segments_[ segment_type ]->pdb_profile(pdb_segments_[segment_type])==nullptr ) {
 			utility_exit_with_message(" could not find the source pdb name: "+ pdb_segments_[segment_type]+ ", in pdb_profile_match file."+segment_type+" or PSSM file is missing\n");
@@ -2844,7 +2844,7 @@ void Splice::add_sequence_constraints(core::pose::Pose & pose) {
 		ConstraintCOPs constraints(pose.constraint_set()->get_all_constraints());
 		TR << "Total number of constraints at start: " << constraints.size() << std::endl;
 		core::Size cst_num(0);
-		for ( ConstraintCOP const c: constraints ) {
+		for ( ConstraintCOP c: constraints ) {
 			if ( ( c->type() == "SequenceProfile" ) and (c->residues()[1]>=pose.conformation().chain_begin(chain_num_)) and (c->residues()[1]<=pose.conformation().chain_end(chain_num_)) ) { //only remove profile sequence constraints of pose that is being splice out
 				pose.remove_constraint( c );
 				cst_num++;

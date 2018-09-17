@@ -283,7 +283,7 @@ RNA_DMS_LowResolutionPotential::get_rna_base_pairing_status( core::pose::Pose & 
 		// to not compute that information -- and may contribute to smoother landscape at low-resolution stage.
 		pose::rna::classify_base_pairs( pose, base_pair_list, is_bulged ); // could also get 'energies' for each base pair...
 
-		for ( pose::rna::BasePair const base_pair : base_pair_list ) {
+		for ( pose::rna::BasePair const &base_pair : base_pair_list ) {
 			update_edge_paired(  base_pair.res1(), base_pair.edge1(), wc_edge_paired, hoogsteen_edge_paired, sugar_edge_paired );
 			update_edge_paired(  base_pair.res2(), base_pair.edge2(), wc_edge_paired, hoogsteen_edge_paired, sugar_edge_paired );
 		}

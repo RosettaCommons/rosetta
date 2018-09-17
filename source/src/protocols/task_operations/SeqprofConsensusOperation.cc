@@ -157,7 +157,7 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 		}
 
 		core::Size cst_num( 0 );
-		for ( ConstraintCOP const c : constraints ) {
+		for ( ConstraintCOP c : constraints ) {
 			if ( c->type() == "SequenceProfile" ) {
 				SequenceProfileConstraintCOP seqprof_cst( utility::pointer::dynamic_pointer_cast< core::scoring::constraints::SequenceProfileConstraint const > ( c ) );
 				runtime_assert( seqprof_cst != nullptr );
@@ -364,7 +364,7 @@ SeqprofConsensusOperation::parse_tag( TagCOP tag , DataMap & datamap )
 	if ( tag->hasOption("ignore_pose_profile_length_mismatch") ) ignore_pose_profile_length_mismatch_ = tag->getOption< bool >("ignore_pose_profile_length_mismatch");
 
 	utility::vector1< TagCOP > const sub_tags( tag->getTags() );
-	for ( TagCOP const sub_tag : sub_tags ) {
+	for ( TagCOP sub_tag : sub_tags ) {
 		if ( sub_tag->getName() == "RestrictToAlignedSegments" ) {
 			restrict_to_aligned_segments_ = RestrictToAlignedSegmentsOperationOP( new RestrictToAlignedSegmentsOperation );
 			tr<<"Within SeqprofConsensus I'm now reading a RestrictToAlignedSegments operation..."<<std::endl;

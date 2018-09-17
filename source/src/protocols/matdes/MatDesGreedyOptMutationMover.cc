@@ -906,7 +906,7 @@ MatDesGreedyOptMutationMover::add_filter( protocols::filters::FilterOP filter, s
 void
 MatDesGreedyOptMutationMover::reset_delta_filter_baselines( core::pose::Pose & pose )
 {
-	for ( protocols::simple_filters::DeltaFilterOP const delta_filter : reset_delta_filters_ ) {
+	for ( protocols::simple_filters::DeltaFilterOP delta_filter : reset_delta_filters_ ) {
 		std::string const fname( delta_filter->get_user_defined_name() );
 		core::Real const fbaseline( delta_filter->filter()->report_sm( pose ) );
 		delta_filter->baseline( fbaseline );
@@ -914,12 +914,12 @@ MatDesGreedyOptMutationMover::reset_delta_filter_baselines( core::pose::Pose & p
 		TR<<"Reset baseline for DeltaFilter "<<fname<<" to "<<fbaseline<<std::endl;
 	}
 	//Note: CompoundStatement and CombinedStatement filters create a filterOP clones at parsetime for each filter and thus these clones need to be reset when the delta filter baselines are updated.
-	for ( protocols::filters::CompoundFilterOP const compound_filter : compound_filters_ ) {
+	for ( protocols::filters::CompoundFilterOP compound_filter : compound_filters_ ) {
 		compound_filter->set_reset_filters( reset_delta_filters_ );
 		compound_filter->reset_filters();
 		compound_filter->clear_reset_filters();
 	}
-	for ( protocols::filters::CombinedFilterOP const combined_filter : combined_filters_ ) {
+	for ( protocols::filters::CombinedFilterOP combined_filter : combined_filters_ ) {
 		combined_filter->set_reset_filters( reset_delta_filters_ );
 		combined_filter->reset_filters();
 		combined_filter->clear_reset_filters();
@@ -960,10 +960,10 @@ MatDesGreedyOptMutationMover::parse_my_tag( utility::tag::TagCOP tag,
 
 	//load multiple filters from branch tags
 	utility::vector1< utility::tag::TagCOP > const branch_tags( tag->getTags() );
-	for ( utility::tag::TagCOP const btag : branch_tags ) {
+	for ( utility::tag::TagCOP btag : branch_tags ) {
 		if ( btag->getName() == "Filters" ) {
 			utility::vector1< utility::tag::TagCOP > const filters_tags( btag->getTags() );
-			for ( utility::tag::TagCOP const ftag : filters_tags ) {
+			for ( utility::tag::TagCOP ftag : filters_tags ) {
 				std::string const filter_name( ftag->getOption< std::string >( "filter_name" ) );
 				auto find_filt( filters.find( filter_name ));
 				if ( find_filt == filters.end() ) {

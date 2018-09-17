@@ -161,8 +161,9 @@ OTFFlexbbEdge::OTFFlexbbEdge( OTFFlexbbInteractionGraph * owner, int node1, int 
 			get_otfflexbbig_owner()->get_num_aa_types(),
 			num_bb( 0 ),
 			num_bb( 1 ),
-			(unsigned char) 0 ),
-			all_vs_bb_energies_[ 0 ].dimension( get_num_states_for_node( 0 ), num_bb( 1 ) );
+			(unsigned char) 0
+		);
+		all_vs_bb_energies_[ 0 ].dimension( get_num_states_for_node( 0 ), num_bb( 1 ) );
 		all_vs_bb_energies_[ 1 ].dimension( get_num_states_for_node( 1 ), num_bb( 0 ) );
 		procorr_energies_[ 0 ].dimension( get_num_states_for_node( 0 ), num_bb( 1 ) );
 		procorr_energies_[ 1 ].dimension( get_num_states_for_node( 1 ), num_bb( 0 ) );

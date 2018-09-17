@@ -1229,7 +1229,9 @@ TRIO_ARGS5((type, format, parameters, arglist, argarray),
    */
   memset(usedEntries, 0, sizeof(usedEntries));
 
+#if defined( HAVE_ERRNO_H ) || defined( __VMS )
   save_errno = errno;
+#endif
   index = 0;
   parameterPosition = 0;
 #if defined(TRIO_COMPILER_SUPPORTS_MULTIBYTE)

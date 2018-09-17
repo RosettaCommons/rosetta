@@ -128,7 +128,7 @@ core::Size report_coordinate_constraints(core::pose::Pose const & pose){
 	constraints = pose.constraint_set()->get_all_constraints();
 	// TR<<" Total number of constraints in the pose is: "<<constraints.size()<<std::endl;
 	core::Size cst_num( 0 );
-	for ( ConstraintCOP const c: constraints ) {
+	for ( ConstraintCOP c: constraints ) {
 		if ( c->type() == "CoordinateConstraint" ) {
 			//core::Size const seqpos( c->residues()[1]  );
 			//TR<<"Residue "<<seqpos<<" has coordinate constraint"<<std::endl;

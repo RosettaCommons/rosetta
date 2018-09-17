@@ -563,7 +563,7 @@ SegmentHybridizer::parse_my_tag( TagCOP const tag,
 
 	/// read areas that are supposed to be remodeled
 	utility::vector0< TagCOP > const & branch_tags( tag->getTags() );
-	for ( TagCOP const btag : branch_tags ) {
+	for ( TagCOP btag : branch_tags ) {
 
 		//need an assertion for the presence of these or at least for the option file
 		if ( btag->getName() != "Span" ) continue;

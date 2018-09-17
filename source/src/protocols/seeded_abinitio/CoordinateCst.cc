@@ -325,7 +325,7 @@ CoordinateCst::parse_my_tag(
 	//parsing branch tags
 	utility::vector0< TagCOP > const & branch_tags( tag->getTags() );
 
-	for ( TagCOP const btag : branch_tags ) {
+	for ( TagCOP btag : branch_tags ) {
 
 		if ( btag->getName() == "Span" || btag->getName() == "span" ||  btag->getName() == "Seeds" ) {
 			std::string const beginS( btag->getOption<std::string>( "begin" ) );

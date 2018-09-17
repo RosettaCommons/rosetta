@@ -168,10 +168,10 @@ SetupHotspotConstraintsMover::parse_my_tag( TagCOP const tag, basic::datacache::
 		hotspot_stub_set_->read_data( hotspot_fname );
 	}
 	utility::vector1< TagCOP > const branch_tags( tag->getTags() );
-	for ( TagCOP const curr_tag : branch_tags ) {
+	for ( TagCOP curr_tag : branch_tags ) {
 		if ( curr_tag->getName() == "HotspotFiles" ) {
 			utility::vector1< TagCOP > const branch_tags2( curr_tag->getTags() );
-			for ( TagCOP const curr_tag2 : branch_tags2 ) {
+			for ( TagCOP curr_tag2 : branch_tags2 ) {
 				std::string const file_name( curr_tag2->getOption< std::string >( "file_name" ) );
 				std::string const nickname( curr_tag2->getOption< std::string >( "nickname" ) );
 				auto const stub_num( curr_tag2->getOption< core::Size >( "stub_num", 100000 ) );

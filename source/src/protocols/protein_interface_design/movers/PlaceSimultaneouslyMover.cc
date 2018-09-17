@@ -791,7 +791,7 @@ PlaceSimultaneouslyMover::parse_my_tag( TagCOP const tag,
 	//parsing stub minimize movers and design movers for place stub
 	utility::vector0< TagCOP > const & branch_tags( tag->getTags() );
 
-	for ( TagCOP const btag : branch_tags ) {
+	for ( TagCOP btag : branch_tags ) {
 		if ( btag->getName() == "StubMinimize" ) {
 			minimization_repeats_before_placement_ = btag->getOption< core::Size >( "min_repeats_before_placement", 0 );
 			minimization_repeats_after_placement_ = btag->getOption< core::Size >( "min_repeats_after_placement", 1 );
@@ -813,7 +813,7 @@ PlaceSimultaneouslyMover::parse_my_tag( TagCOP const tag,
 			}
 		} else if ( btag->getName() == "DesignMovers" ) {
 			utility::vector0< TagCOP > const & design_tags( btag->getTags() );
-			for ( TagCOP const m_tag_ptr : design_tags ) {
+			for ( TagCOP m_tag_ptr : design_tags ) {
 				std::string const mover_name( m_tag_ptr->getOption< std::string >( "mover_name" ) );
 				bool const apply_coord_constraints( m_tag_ptr->getOption< bool >( "use_constraints", true ) );
 				auto const coord_cst_std( m_tag_ptr->getOption< core::Real >( "coord_cst_std", 0.5 ) );
@@ -845,7 +845,7 @@ PlaceSimultaneouslyMover::parse_my_tag( TagCOP const tag,
 			max_cb_cb_dist_ = btag->getOption< core::Real >( "max_cb_dist", 3.0 );
 
 			utility::vector0< TagCOP > const & stubset_tags( btag->getTags() );
-			for ( TagCOP const stubset_tag : stubset_tags ) {
+			for ( TagCOP stubset_tag : stubset_tags ) {
 				std::string const stub_fname = stubset_tag->getOption< std::string >( "stubfile" );
 				HotspotStubSetOP stubset( new HotspotStubSet );
 				if ( data.has( "hotspot_library", stub_fname ) ) {

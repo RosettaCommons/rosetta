@@ -135,8 +135,8 @@ create_sfr_from_pdb_records( utility::vector1< Record > & records, StructFileRea
 			// Record contains a remark from the Title Section of the PDB file.
 		} else if ( record_type == "REMARK" && ! options.read_only_ATOM_entries() )  {
 			RemarkInfo ri;
-			ri.num = atoi( records[ i ][ "remarkNum" ].value.c_str() ),
-				ri.value = records[ i ][ "value" ].value;
+			ri.num = atoi( records[ i ][ "remarkNum" ].value.c_str() );
+			ri.value = records[ i ][ "value" ].value;
 
 			//Added by DANIEL to skip reading the PDBinfo-LABEL, which comes "nfo-LABEL:"
 			//Those are read in a different way, using: core.import_pose().read_additional_pdb_data()

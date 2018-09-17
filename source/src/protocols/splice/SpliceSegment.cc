@@ -159,7 +159,7 @@ concatenate_profiles( utility::vector1< SequenceProfileOP > const & profiles, ut
 	}
 
 
-	for ( SequenceProfileOP const prof : profiles ) {
+	for ( SequenceProfileCOP prof : profiles ) {
 		TR<<"now adding profile of segment "<< segment_names_ordered[ current_segment_name]<<std::endl;
 		//find H3 seq and constract a new PSSM from given seqeunce
 		bool first_pass=true;

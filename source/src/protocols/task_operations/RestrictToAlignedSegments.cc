@@ -180,7 +180,7 @@ RestrictToAlignedSegmentsOperation::parse_tag( TagCOP tag , DataMap & )
 	}
 
 	utility::vector0< TagCOP > const & btags( tag->getTags() );
-	for ( TagCOP const btag : btags ) {
+	for ( TagCOP btag : btags ) {
 		if ( btag->getName()!="AlignedSegment" ) {
 			utility_exit_with_message( "RestrictToAlignedSegments subtag not recognized: " + btag->getName() );
 		}

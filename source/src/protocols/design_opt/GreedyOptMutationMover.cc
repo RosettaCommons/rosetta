@@ -763,7 +763,7 @@ GreedyOptMutationMover::apply( core::pose::Pose & pose )
 			if ( stop ) break;
 
 			//Optionally reset baseline for Delta Filters (useful so that the mutations are still evaluated on an individual basis, in the context of the current best pose).
-			for ( protocols::simple_filters::DeltaFilterOP const delta_filter : reset_delta_filters_ ) {
+			for ( protocols::simple_filters::DeltaFilterOP delta_filter : reset_delta_filters_ ) {
 				std::string const fname( delta_filter->get_user_defined_name() );
 				core::Real const fbaseline( delta_filter->filter()->report_sm( pose ) );
 				delta_filter->baseline( fbaseline );
@@ -844,10 +844,10 @@ GreedyOptMutationMover::parse_my_tag( utility::tag::TagCOP tag,
 
 	//load multiple filters from branch tags
 	utility::vector1< utility::tag::TagCOP > const branch_tags( tag->getTags() );
-	for ( utility::tag::TagCOP const btag : branch_tags ) {
+	for ( utility::tag::TagCOP btag : branch_tags ) {
 		if ( btag->getName() == "Filters" ) {
 			utility::vector1< utility::tag::TagCOP > const filters_tags( btag->getTags() );
-			for ( utility::tag::TagCOP const ftag : filters_tags ) {
+			for ( utility::tag::TagCOP ftag : filters_tags ) {
 				std::string const filter_name( ftag->getOption< std::string >( "filter_name" ) );
 				auto find_filt( filters.find( filter_name ));
 				if ( find_filt == filters.end() ) {

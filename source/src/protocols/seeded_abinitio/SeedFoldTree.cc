@@ -733,7 +733,7 @@ SeedFoldTree::parse_my_tag( TagCOP const tag,
 	//parsing branch tags
 	utility::vector0< TagCOP > const & branch_tags( tag->getTags() );
 
-	for ( TagCOP const btag : branch_tags ) {
+	for ( TagCOP btag : branch_tags ) {
 		/* this parsing option works, it is just not hooked in yet
 		//in case anybody ever wanted to set them manually
 		if( btag->getName() == "cut_points" ) {

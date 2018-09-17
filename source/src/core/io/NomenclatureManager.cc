@@ -334,7 +334,7 @@ NomenclatureManager::NomenclatureManager()
 	//   NOTE: Moving to a single file for both of these purposes because we don't
 	//   want to have to update two places with annotated sequence entries
 	utility::vector1< string > const iupac_lines( utility::io::get_lines_from_file_data( basic::database::full_name( "input_output/modomics_and_iupac_to_ann.txt" ) ) );
-	for ( auto const line : iupac_lines ) {
+	for ( auto const &line : iupac_lines ) {
 		if ( line.size() == 0 || ( line[ 0 ] == '#' && line[ 1 ] == '/' ) ) continue;
 		istringstream word_by_word( line );
 		std::string modomics, iupac, ann;

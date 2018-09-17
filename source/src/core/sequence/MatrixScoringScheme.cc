@@ -52,7 +52,7 @@ void MatrixScoringScheme::read_data( utility::io::izstream & input ) {
 		std::istringstream line_stream( line );
 		if ( line.substr(0,1) == " " ) { // header line
 			char aa;
-			while ( line_stream >> aa, !line_stream.fail() ) {
+			while ( static_cast<void>(line_stream >> aa) /*static_cast to let xcode know that this comma is okay*/, !line_stream.fail() ) {
 				if ( oneletter_code_specifies_aa( aa ) ) {
 					order.push_back( aa_from_oneletter_code(aa) );
 				} else {

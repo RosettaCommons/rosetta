@@ -164,7 +164,7 @@ DetectSymmetry::apply(Pose & pose) {
 		for ( core::Size res = 1; res <= pose.total_residue(); ++res ) {
 			utility::vector1 < std::string > reslabels_for_res = pose.pdb_info()->get_reslabels(res);
 			runtime_assert( res <= new_pose.total_residue() && pose.residue(res).name1() == new_pose.residue(res).name1() );
-			for ( auto const reslabel : reslabels_for_res ) {
+			for ( auto const &reslabel : reslabels_for_res ) {
 				new_pose.pdb_info()->add_reslabel( res, reslabel );
 			}
 		}

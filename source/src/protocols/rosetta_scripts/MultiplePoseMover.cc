@@ -378,7 +378,7 @@ void MultiplePoseMover::parse_my_tag(
 		if ( tag->hasTag("SELECT") ) {
 			selectors_.clear();
 			TagCOP select_tag( tag->getTag("SELECT") );
-			for ( TagCOP const curr_tag : select_tag->getTags() ) {
+			for ( TagCOP curr_tag : select_tag->getTags() ) {
 				PoseSelectorOP new_selector(
 					PoseSelectorFactory::get_instance()->
 					newPoseSelector( curr_tag, data, selector_filters_, movers, pose )

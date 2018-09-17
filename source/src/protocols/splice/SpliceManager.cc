@@ -159,7 +159,7 @@ SpliceManager::generate_sequence_profile(core::pose::Pose & pose) {
 
 	profile_vector.clear(); //this vector holds all the pdb segment profiless
 
-	for ( std::string const segment_type: segment_names_ordered_ ) { //<- Start of PDB segment iterator
+	for ( std::string const &segment_type: segment_names_ordered_ ) { //<- Start of PDB segment iterator
 		TR<<"segment_type: "<<segment_type<<std::endl;
 		TR<<"Map size: "<<splice_segments_[ segment_type ]->pdb_to_profile_map().size()<<std::endl;
 		if ( splice_segments_[ segment_type ]->pdb_profile(pdb_segments_[segment_type])==0 ) {
@@ -202,7 +202,7 @@ SpliceManager::add_sequence_constraints(core::pose::Pose & pose) {
 	ConstraintCOPs constraints(pose.constraint_set()->get_all_constraints());
 	TR << "Total number of constraints at start: " << constraints.size() << std::endl;
 	core::Size cst_num(0);
-	for ( ConstraintCOP const c: constraints ) {
+	for ( ConstraintCOP c: constraints ) {
 		if ( ( c->type() == "SequenceProfile" ) and (c->residues()[1]>=pose.conformation().chain_begin(chain_num())) and (c->residues()[1]<=pose.conformation().chain_end(chain_num())) ) { //only remove profile sequence constraints of pose that is being splice out
 			pose.remove_constraint( c );
 			cst_num++;
@@ -640,7 +640,7 @@ void SpliceManager::parse_segments(utility::vector1<TagCOP> const & sub_tags,Tag
 	if ( sub_tags.empty() ) {
 		return;
 	}
-	for ( TagCOP const sub_tag: sub_tags ) {
+	for ( TagCOP sub_tag: sub_tags ) {
 		TR<<sub_tag->getName()<<std::endl;
 		if ( sub_tag->getName() == "Segments" ) {
 
@@ -653,7 +653,7 @@ void SpliceManager::parse_segments(utility::vector1<TagCOP> const & sub_tags,Tag
 			TR<<"reading segments in "<<tag->getName()<<std::endl;
 
 			utility::vector1< TagCOP > const segment_tags( sub_tag->getTags() );
-			for ( TagCOP const segment_tag: segment_tags ) {
+			for ( TagCOP segment_tag: segment_tags ) {
 				SpliceSegmentOP splice_segment( new SpliceSegment );
 				std::string const segment_name( segment_tag->getOption< std::string >( "name" )); //get name of segment from xml
 				std::string const pdb_profile_match( segment_tag->getOption< std::string >( "pdb_profile_match" ) );// get name of pdb profile match, this file contains all the matching between pdb name and sub segment name, i.e L1.1,L1.2 etc
@@ -669,7 +669,7 @@ void SpliceManager::parse_segments(utility::vector1<TagCOP> const & sub_tags,Tag
 					continue;
 				}
 				// TR<<"Now working on segment:"<<segment_name<<std::endl;
-				for ( std::string const s: profile_name_pairs ) {
+				for ( std::string const & s: profile_name_pairs ) {
 					std::size_t found=s.find(':');
 					if ( found==std::string::npos ) {
 						continue; //if no : seperator found in string this is an error and we skip this entry

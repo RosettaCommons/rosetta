@@ -221,7 +221,7 @@ foreach_movemap_tag(
 	using namespace core::select;
 	using namespace core::select::movemap;
 
-	for ( TagCOP const tag : in_tag->getTags() ) {
+	for ( TagCOP tag : in_tag->getTags() ) {
 		std::string const name( tag->getName() );
 		runtime_assert( name == "Jump" || name == "Chain" || name == "Span" );
 		if ( name == "Jump" ) {

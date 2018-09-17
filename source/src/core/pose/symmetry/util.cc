@@ -536,7 +536,7 @@ make_symmetric_pdb_info(
 		// keep info labels if desired
 		if ( keep_pdb_info_labels ) {
 			utility::vector1 < std::string > reslabels_for_res = pdb_info_src->get_reslabels(res);
-			for ( auto const reslabel : reslabels_for_res ) {
+			for ( auto const &reslabel : reslabels_for_res ) {
 				pdb_info_target->add_reslabel( src_res, reslabel );
 			}
 		}

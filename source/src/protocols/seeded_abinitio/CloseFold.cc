@@ -518,7 +518,7 @@ CloseFold::parse_my_tag(
 
 	/// read input seeds
 	utility::vector0< TagCOP > const & branch_tags( tag->getTags() );
-	for ( TagCOP const btag : branch_tags ) {
+	for ( TagCOP btag : branch_tags ) {
 
 		if ( btag->getName() == "Seeds" ) { //need an assertion for the presence of these or at least for the option file
 

@@ -300,7 +300,7 @@ void SpliceOutAntibody::parse_my_tag(TagCOP const tag, basic::datacache::DataMap
 			TR.Error << "ERROR !! segment '"<<splicemanager.segment_type()<<"is not a recognized antibody segmetn \n" << std::endl;
 			runtime_assert( find_segment != splicemanager.segment_names_ordered().end() );
 		}
-		for ( auto const segment_type : splicemanager.segment_names_ordered() ) {
+		for ( auto const & segment_type : splicemanager.segment_names_ordered() ) {
 			TR<<segment_type<<std::endl;
 			SpliceSegmentOP splice_segment( new SpliceSegment );
 			splice_segment->read_pdb_profile_file( antibody_DB(), segment_type );

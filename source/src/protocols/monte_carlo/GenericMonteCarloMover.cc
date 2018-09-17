@@ -1023,10 +1023,10 @@ GenericMonteCarloMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMa
 	boltz_rank_ = tag->getOption< bool >( "bolz_rank", false );
 
 	utility::vector1< TagCOP > const branch_tags( tag->getTags() );
-	for ( TagCOP const btag : branch_tags ) {
+	for ( TagCOP btag : branch_tags ) {
 		if ( btag->getName() == "Filters" ) {
 			utility::vector1< TagCOP > const filters_tags( btag->getTags() );
-			for ( TagCOP const ftag : filters_tags ) {
+			for ( TagCOP ftag : filters_tags ) {
 				String const filter_name( ftag->getOption< String >( "filter_name" ) );
 				auto find_filt( filters.find( filter_name ));
 				if ( find_filt == filters.end() ) {

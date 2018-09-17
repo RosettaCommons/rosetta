@@ -169,7 +169,8 @@ void dump_foldtree_kinemage(
 	}
 
 	out << "@arrowlist {res-by-res} color= lime radius= 0.6\n";
-	i = fold_tree.begin(), i_end = fold_tree.end();
+	i = fold_tree.begin();
+	i_end = fold_tree.end();
 	for ( ; i != i_end; ++i ) {
 		if ( i->is_jump() ) {
 			print_node(out, i->start(), i->start_atom(), conf, "P");

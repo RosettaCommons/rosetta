@@ -506,7 +506,7 @@ RotamerBoltzmannWeight::parse_my_tag( utility::tag::TagCOP tag,
 	repack( tag->getOption< bool >( "repack", true ) );
 	skip_report_ = tag->getOption< bool >( "skip_report", skip_report_ );
 	utility::vector0< TagCOP > const & branch( tag->getTags() );
-	for ( TagCOP const tag : branch ) {
+	for ( TagCOP tag : branch ) {
 		using namespace core::chemical;
 
 		std::string const residue_type( tag->getName() );

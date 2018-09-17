@@ -92,7 +92,7 @@ void LogicalSelector::parse_my_tag(
 )
 {
 	// Children of tag are selectors
-	for ( utility::tag::TagCOP const curr_tag : tag->getTags() ) {
+	for ( utility::tag::TagCOP curr_tag : tag->getTags() ) {
 		protocols::rosetta_scripts::PoseSelectorOP new_selector(
 			protocols::rosetta_scripts::PoseSelectorFactory::get_instance()->
 			newPoseSelector( curr_tag, data, filters, movers, pose )
@@ -271,7 +271,7 @@ void TopNByProperty::parse_my_tag(
 	}
 
 	// Children of tag are reporters
-	for ( utility::tag::TagCOP const curr_tag : tag->getTags() ) {
+	for ( utility::tag::TagCOP curr_tag : tag->getTags() ) {
 		protocols::rosetta_scripts::PosePropertyReporterOP new_reporter(
 			protocols::rosetta_scripts::PosePropertyReporterFactory::get_instance()->
 			newPosePropertyReporter( curr_tag, data, filters, movers, pose )

@@ -110,7 +110,7 @@ Operator::modify_relative_filters_pdb_names(){
 		if ( sigmoid_filter->filter()->get_type() != "RelativePose" ) continue;
 
 		TR<<"Replicating and changing RelativePose's filter pdb fname. File names: ";
-		for ( std::string const fname : relative_pose_names_ ) {
+		for ( std::string const &fname : relative_pose_names_ ) {
 			SigmoidOP new_sigmoid( sigmoid_filter );
 			RelativePoseFilterOP relative_pose( utility::pointer::dynamic_pointer_cast< protocols::calc_taskop_filters::RelativePoseFilter > ( new_sigmoid->filter() ) );
 			runtime_assert( relative_pose != nullptr );

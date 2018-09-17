@@ -51,7 +51,7 @@ MultiConstraint::MultiConstraint( ConstraintCOPs const & cst_in, ScoreType const
 	Constraint( t ),  //this is temporary, multi constraint shouldn't have a score type
 	report_this_as_effective_sequence_separation_( 0 )
 {
-	for ( auto const elem : cst_in ) {
+	for ( auto const &elem : cst_in ) {
 		add_individual_constraint( elem );
 	} //loop over all input csts that make up this multi constraint
 }// constructor

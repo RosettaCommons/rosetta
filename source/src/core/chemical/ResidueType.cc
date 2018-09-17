@@ -1096,7 +1096,7 @@ ResidueType::delete_atom( Size const index )
 	// Delete any atom aliases mentioning this atom.
 	// Do this first so we don't attempt to use any deleted atom information
 	utility::vector1< std::string > aliases_to_delete;
-	for ( auto const elem : atom_aliases_ ) {
+	for ( auto const &elem : atom_aliases_ ) {
 		std::string const & rosetta_atom = strip_whitespace( elem.second );
 		std::string const & alias        = elem.first;
 		if ( elem.second == atom_name( index ) || rosetta_atom == atom_name( index ) ) {

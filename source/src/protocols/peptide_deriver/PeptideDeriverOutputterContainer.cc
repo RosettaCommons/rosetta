@@ -51,13 +51,13 @@ void PeptideDeriverOutputterContainer::clear() {
 }
 
 void PeptideDeriverOutputterContainer::begin_structure(core::pose::Pose const & pose, std::string const &name) {
-	for ( PeptideDeriverOutputterOP const outputter : list_ ) {
+	for ( PeptideDeriverOutputterOP outputter : list_ ) {
 		outputter->begin_structure(pose, name);
 	}
 }
 
 void PeptideDeriverOutputterContainer::chain_pair_pose_prepared(core::pose::Pose const & pose) {
-	for ( PeptideDeriverOutputterOP const outputter : list_ ) {
+	for ( PeptideDeriverOutputterOP outputter : list_ ) {
 		outputter->chain_pair_pose_prepared(pose);
 	}
 }
@@ -65,32 +65,32 @@ void PeptideDeriverOutputterContainer::chain_pair_pose_prepared(core::pose::Pose
 void PeptideDeriverOutputterContainer::begin_receptor_partner_pair(char const receptor_chain_letter,
 	char const partner_chain_letter, core::Real const total_isc,
 	std::string const & options_string) {
-	for ( PeptideDeriverOutputterOP const outputter : list_ ) {
+	for ( PeptideDeriverOutputterOP outputter : list_ ) {
 		outputter->begin_receptor_partner_pair(receptor_chain_letter, partner_chain_letter, total_isc, options_string);
 	}
 }
 
 void PeptideDeriverOutputterContainer::peptide_length(core::Size const pep_length) {
-	for ( PeptideDeriverOutputterOP const outputter : list_ ) {
+	for ( PeptideDeriverOutputterOP outputter : list_ ) {
 		outputter->peptide_length(pep_length);
 	}
 }
 
 void PeptideDeriverOutputterContainer::peptide_entry(PeptideDeriverEntryType const entry_type, core::Real const total_isc,
 	DerivedPeptideEntryCOP entry) {
-	for ( PeptideDeriverOutputterOP const outputter : list_ ) {
+	for ( PeptideDeriverOutputterOP outputter : list_ ) {
 		outputter->peptide_entry(entry_type, total_isc, entry);
 	}
 }
 
 void PeptideDeriverOutputterContainer::end_receptor_partner_pair() {
-	for ( PeptideDeriverOutputterOP const outputter : list_ ) {
+	for ( PeptideDeriverOutputterOP outputter : list_ ) {
 		outputter->end_receptor_partner_pair();
 	}
 }
 
 void PeptideDeriverOutputterContainer::end_structure() {
-	for ( PeptideDeriverOutputterOP const outputter : list_ ) {
+	for ( PeptideDeriverOutputterOP outputter : list_ ) {
 		outputter->end_structure();
 	}
 }

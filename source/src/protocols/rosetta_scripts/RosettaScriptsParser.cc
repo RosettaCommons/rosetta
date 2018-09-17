@@ -577,7 +577,7 @@ RosettaScriptsParser::generate_mover_for_protocol(
 	// Round 1: Import previously defined filters and movers, and add Resources to the DataMap from the
 	// ResourceManager
 	std::ostringstream resource_error_oss;
-	for ( TagCOP const curr_tag : all_tags ) {
+	for ( TagCOP curr_tag : all_tags ) {
 
 		////// IMPORT
 		if ( curr_tag->getName() != "IMPORT" && curr_tag->getName() != "RESOURCES" ) {
@@ -651,7 +651,7 @@ RosettaScriptsParser::generate_mover_for_protocol(
 	}
 
 	// Round 2: Process definitions in this ROSETTASCRIPTS block
-	for ( TagCOP const curr_tag : all_tags ) {
+	for ( TagCOP curr_tag : all_tags ) {
 
 		///// APPLY TO POSE
 		if ( curr_tag->getName() == "APPLY_TO_POSE" ) {
@@ -678,7 +678,7 @@ RosettaScriptsParser::generate_mover_for_protocol(
 
 		////// FILTERS
 		if ( curr_tag->getName() == "FILTERS" ) {
-			for ( TagCOP const tag_ptr : curr_tag->getTags() ) {
+			for ( TagCOP tag_ptr : curr_tag->getTags() ) {
 				instantiate_filter(tag_ptr, data, filters, movers, pose);
 			}
 		}
@@ -686,7 +686,7 @@ RosettaScriptsParser::generate_mover_for_protocol(
 
 		////// MOVERS
 		if ( curr_tag->getName() == "MOVERS" ) {
-			for ( TagCOP const tag_ptr : curr_tag->getTags() ) {
+			for ( TagCOP tag_ptr : curr_tag->getTags() ) {
 				instantiate_mover(tag_ptr, data, filters, movers, pose);
 			}
 		}
@@ -937,7 +937,7 @@ RosettaScriptsParser::find_rosettascript_tag(
 		if ( !option_name.length() ) {
 			return section_tag;
 		}
-		for ( TagCOP const child_tag : section_tag->getTags() ) {
+		for ( TagCOP child_tag : section_tag->getTags() ) {
 			if ( child_tag->getOption<std::string>(option_name) == option_value ) {
 				return child_tag;
 			}

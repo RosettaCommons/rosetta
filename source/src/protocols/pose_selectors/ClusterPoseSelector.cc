@@ -139,7 +139,7 @@ void ClusterPoseSelector::parse_my_tag(
 	}
 
 	// Children of tag are reporters
-	for ( utility::tag::TagCOP const curr_tag : tag->getTags() ) {
+	for ( utility::tag::TagCOP curr_tag : tag->getTags() ) {
 		protocols::rosetta_scripts::PosePropertyReporterOP new_reporter(
 			protocols::rosetta_scripts::PosePropertyReporterFactory::get_instance()->
 			newPosePropertyReporter( curr_tag, data, filters, movers, pose )

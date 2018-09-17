@@ -1271,7 +1271,7 @@ LayerDesignOperation::parse_layer_tag( utility::tag::TagCOP layer_tag, DataMap &
 	std::string layer = layer_tag->getName(); // core, residue, boundary or taskoperation
 	if ( layer == "core" || layer =="boundary" || layer == "surface" ||  layer == "Nterm" ||  layer == "Cterm" ) {
 		TR << "redefining default layer " << layer << std::endl;
-		for ( utility::tag::TagCOP const secstruct_tag : layer_tag->getTags() ) {
+		for ( utility::tag::TagCOP secstruct_tag : layer_tag->getTags() ) {
 			parse_layer_secstruct_tag( secstruct_tag, datamap, layer );
 		}
 	} else if ( layer == "CombinedTasks" ) {
@@ -1296,7 +1296,7 @@ LayerDesignOperation::parse_layer_tag( utility::tag::TagCOP layer_tag, DataMap &
 		add_layer( comb_name, comb, DESIGN, DESIGNABLE );
 
 		// 2nd pass over subtags: read all the other acceptible subtags.
-		for ( utility::tag::TagCOP const secstruct_tag : layer_tag->getTags() ) {
+		for ( utility::tag::TagCOP secstruct_tag : layer_tag->getTags() ) {
 			std::string secstruct_type = secstruct_tag->getName();
 			if ( secstruct_type == "all" || secstruct_type == "Helix" || secstruct_type == "Strand" || secstruct_type == "Loop" ) {
 				parse_layer_secstruct_tag( secstruct_tag, datamap, layer );
@@ -1306,7 +1306,7 @@ LayerDesignOperation::parse_layer_tag( utility::tag::TagCOP layer_tag, DataMap &
 		bool first_tag = true;
 		std::string const task_op_type = layer;
 		std::string task_name;
-		for ( utility::tag::TagCOP const task_layer_subtag : layer_tag->getTags() ) {
+		for ( utility::tag::TagCOP task_layer_subtag : layer_tag->getTags() ) {
 			std::string const task_op_type = task_layer_subtag->getName();
 			if ( first_tag ) {
 				first_tag = false;

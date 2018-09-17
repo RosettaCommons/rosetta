@@ -310,7 +310,7 @@ void
 StepWiseProteinCCD_Closer::save_phi_psi_omega_over_loop_residues( pose::Pose const & pose ){
 	main_chain_torsion_set_save_.clear();
 	//  TR << ccd_close_res_ << " ";
-	for ( auto const torsion : which_torsions_ )  {
+	for ( auto const &torsion : which_torsions_ )  {
 		main_chain_torsion_set_save_.push_back(  pose.torsion( torsion ) );
 		//   TR << "   " << which_torsions_[n] << " " << pose.torsion( torsion );
 	}

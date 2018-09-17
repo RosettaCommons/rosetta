@@ -97,7 +97,7 @@ LigandScorer::score(
 				++num_ignored_glycines;
 				continue;
 			}
-			for ( std::pair< const core::Size, data_storage::LigandResidueOP > const active_ligand : assembly->get_local_ligands() ) {
+			for ( std::pair< const core::Size, data_storage::LigandResidueOP > const &active_ligand : assembly->get_local_ligands() ) {
 				//    TR << "*";
 				core::Real current_ligand_score = 0.0;
 				core::Size num_scored_atoms = 0.0;

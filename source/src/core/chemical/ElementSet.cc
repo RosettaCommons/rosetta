@@ -60,10 +60,10 @@ ElementSet::read_file( std::string const & filename )
 	{
 		using namespace basic;
 
-		char next;
 		std::string line;
 		while ( data.good() ) {
-			while ( next=data.peek(), next == ' ' || next == '\n' || next == '\t' ) { data.get(); } // Discard leading whitespace
+			char next;
+			while ( static_cast<void>( next = data.peek() ) /*This static cast is necessary to silence a warning in the xcode compilation*/, next == ' ' || next == '\n' || next == '\t' ) { data.get(); } // Discard leading whitespace
 			if ( data.peek() == '#' ) {
 				getline( data,line ); // Discard the comment line
 				continue;

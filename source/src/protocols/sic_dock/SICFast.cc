@@ -143,7 +143,7 @@ get_bounds_intersection(
 ){
 	// get bounds for plane hashess
 	double xmx1=-9e9,xmn1=9e9,ymx1=-9e9,ymn1=9e9;
-	xmx=-9e9,xmn=9e9,ymx=-9e9,ymn=9e9;
+	xmx=-9e9; xmn=9e9; ymx=-9e9; ymn=9e9;
 	for ( auto const & ia : pb ) {
 		xmx1 = max(xmx1,ia.x()); xmn1 = min(xmn1,ia.x());
 		ymx1 = max(ymx1,ia.y()); ymn1 = min(ymn1,ia.y());

@@ -344,7 +344,7 @@ CAcstGenerator::parse_my_tag( TagCOP const tag,
 	//parsing branch tags
 	utility::vector0< TagCOP > const & branch_tags( tag->getTags() );
 
-	for ( TagCOP const btag : branch_tags ) {
+	for ( TagCOP btag : branch_tags ) {
 		//parse the pdb of interest, which is either the template or the input pdb depending on the users specificiation
 		if ( template_presence_ ) {
 			curr_pose_ = template_pdb_;

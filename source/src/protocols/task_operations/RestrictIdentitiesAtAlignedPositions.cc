@@ -150,7 +150,7 @@ RestrictIdentitiesAtAlignedPositionsOperation::parse_tag( TagCOP tag , DataMap &
 	utility::vector1< std::string > const split_reslist( utility::string_split( res_list,',' ) );
 	chain( tag->getOption< core::Size >( "chain", 1 ) );
 	TR<<"source_pdb: "<<tag->getOption< std::string >( "source_pdb" )<<" restricting residues: ";
-	for ( auto const res_str: split_reslist ) {
+	for ( auto const &res_str: split_reslist ) {
 		res_ids_.push_back( core::pose::parse_resnum( res_str, *source_pose_ ) );
 		TR<<res_str<<",";
 	}//foreach

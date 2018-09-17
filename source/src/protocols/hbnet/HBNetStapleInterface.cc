@@ -920,8 +920,8 @@ HBNetStapleInterface::num_helices_w_hbond( utility::vector1< HBondResStructCOP >
 			helix_has_hbond_residue[ helix_id ] = true;
 		}
 	}
-	for ( auto && hel : helix_has_hbond_residue ) {
-		if ( hel ) {
+	for ( core::Size i(1), imax(helix_has_hbond_residue.size()); i<=imax; ++i ) {
+		if ( helix_has_hbond_residue[i] ) {
 			num_helices++;
 		}
 	}

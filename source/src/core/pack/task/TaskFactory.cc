@@ -53,7 +53,7 @@ void
 TaskFactory::modify_task( core::pose::Pose const & pose, PackerTaskOP task ) const
 {
 	runtime_assert( task != nullptr );
-	for ( TaskOperationOP const taskop : *this ) {
+	for ( TaskOperationCOP taskop : *this ) {
 		taskop->apply( pose, *task );
 	}
 }

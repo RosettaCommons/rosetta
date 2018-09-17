@@ -164,7 +164,7 @@ void AdditionalOutputWrapper::parse_my_tag(
 	try {
 
 		// Children of tag are movers
-		for ( utility::tag::TagCOP const curr_tag : tag->getTags() ) {
+		for ( utility::tag::TagCOP curr_tag : tag->getTags() ) {
 			// Try instantiating first mover from tag to test parsing
 			if ( curr_tag->getName() == "ROSETTASCRIPTS" ) {
 				// Treat subtag as a ROSETTASCRIPTS protocol

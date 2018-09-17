@@ -323,7 +323,7 @@ void SpliceIn::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &data,pr
 		delta = tag->getOption<std::string>("delta_lengths");
 		//check in put is valid, either : "1,2,3,..." or "1:10", Gideon 19may15
 		StringVec const lengths_keys(utility::string_split(delta, ','));
-		for ( std::string const delta: lengths_keys ) {
+		for ( std::string const & delta: lengths_keys ) {
 			if ( delta == "" ) continue;
 			int const delta_i( 1 * atoi( delta.c_str() ) );
 			delta_lengths_.push_back( delta_i );
