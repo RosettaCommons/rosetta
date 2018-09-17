@@ -15,8 +15,12 @@
 #ifndef INCLUDED_protocols_jd3_pose_inputters_PoseInputter_FWD_HH
 #define INCLUDED_protocols_jd3_pose_inputters_PoseInputter_FWD_HH
 
+// Package headers
+#include <protocols/jd3/pose_inputters/PoseInputSource.fwd.hh>
+
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
+#include <utility/vector1.fwd.hh>
 
 namespace protocols {
 namespace jd3 {
@@ -26,6 +30,8 @@ class PoseInputter;
 
 typedef utility::pointer::shared_ptr< PoseInputter > PoseInputterOP;
 typedef utility::pointer::shared_ptr< PoseInputter const > PoseInputterCOP;
+
+typedef utility::vector1< std::pair< PoseInputSourceOP, PoseInputterOP > > PoseInputSourcesAndInputters;
 
 } // namespace pose_inputters
 } // namespace jd3

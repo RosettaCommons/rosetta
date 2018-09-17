@@ -59,6 +59,7 @@
 #include <basic/options/util.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/jd3.OptionKeys.gen.hh>
 #include <basic/options/option.cc.gen.hh>
 #include <basic/datacache/ConstDataMap.hh>
 #include <basic/Tracer.hh>
@@ -105,12 +106,17 @@ StandardJobQueen::StandardJobQueen() :
 	preliminary_larval_jobs_determined_( false ),
 	curr_inner_larval_job_index_( 0 ),
 	njobs_made_for_curr_inner_larval_job_( 0 ),
-	input_pose_counter_( 0 )
+	input_pose_counter_( 0 ),
+	load_starting_poses_only_once_( false )
 {
 	// begin to populate the per-job options object
 	pose_inputters::PoseInputterFactory::get_instance()->list_options_read( inputter_options_ );
 	pose_outputters::PoseOutputterFactory::get_instance()->list_outputter_options_read( outputter_options_ );
 	pose_outputters::PoseOutputterFactory::get_instance()->list_secondary_outputter_options_read( secondary_outputter_options_ );
+
+	if ( basic::options::option[ basic::options::OptionKeys::jd3::load_input_poses_only_once ] ) {
+		load_starting_poses_only_once_ = true;
+	}
 }
 
 StandardJobQueen::~StandardJobQueen() = default;
@@ -296,7 +302,7 @@ StandardJobQueen::job_definition_xsd() const
 	// Job <Input> element is required
 	XMLSchemaSimpleSubelementList job_input_subelement;
 	job_input_subelement.add_already_defined_subelement( "Input", & job_def_complex_type_name );
-	job_ct.add_ordered_subelement_set_as_required( job_input_subelement );
+	job_ct.add_ordered_subelement_set_as_optional( job_input_subelement );
 
 	// Job <Output> element is optional
 	XMLSchemaSimpleSubelementList job_output_subelement;
@@ -331,7 +337,8 @@ StandardJobQueen::job_definition_xsd() const
 		.element_name( "Job" )
 		.description( "XRW TO DO" )
 		.complex_type_naming_func( & job_def_complex_type_name )
-		.add_attribute( XMLSchemaAttribute::attribute_w_default(  "nstruct", xsct_non_negative_integer, "XRW TO DO",  "1"  ))
+		.add_attribute( XMLSchemaAttribute(  "nstruct", xsct_non_negative_integer, "The number of times to repeat this job -- i.e. the"
+		" number of output structures to generate from this job. If not provided, then the command-line flag -nstruct will be read from." ))
 		.write_complex_type_to_schema( xsd );
 
 	XMLSchemaComplexTypeGenerator common_block_ct_gen;
@@ -521,6 +528,9 @@ bool StandardJobQueen::larval_job_needed_for_note_job_completed() const { return
 
 /// @details Prepare this job for output by building an OutputSpecification for it and
 /// storing this specification in the list of recent successes.
+/// Note that tracking of completion of jobs from preliminary job nodes can only occur if
+/// the DerivedJobQueen invoked the SJQ's version of next_batch_of_larval_jobs_from_prelim
+/// in its determine_job_list method.
 void StandardJobQueen::note_job_completed( LarvalJobCOP job, JobStatus status, Size nresults )
 {
 	Size const job_id( job->job_index() );
@@ -531,6 +541,13 @@ void StandardJobQueen::note_job_completed( LarvalJobCOP job, JobStatus status, S
 		if ( outstanding_job_count_for_prelim_[ pjn_index ] == 0 ) {
 			// Let the derived JobQueen know that all of the jobs for a PJN have completed
 			note_preliminary_job_node_is_complete( pjn_index );
+
+			// Now we need to note that this PJN is no longer blocking the deallocation of
+			// any of the input poses that we might still be holding on to
+			for ( core::Size ii = 1; ii <= job->inner_job()->n_input_sources(); ++ii ) {
+				InputSource const & ii_source = job->inner_job()->input_source( ii );
+				incomplete_pjns_using_input_pose_[ ii_source.pose_id() ].erase( pjn_index );
+			}
 		}
 	}
 
@@ -674,18 +691,13 @@ StandardJobQueen::flush()
 std::list< deallocation::DeallocationMessageOP >
 StandardJobQueen::deallocation_messages()
 {
-	// We will operate under the assumption that all of the times a Pose will
-	// be used will be for sequential jobs, and that it is safe when this function
-	// is called to deallocate all of the Poses whose last job index is less than
-	// the number of jobs we have handed out so far - but that it would not be
-	// safe to deallocate the Pose whose last job index is equal to the number of
-	// jobs we've handed out so far because we will perhaps hand out more jobs
-	// that use that Pose in just a moment.
 
 	std::list< deallocation::DeallocationMessageOP > messages;
+	// It will be safe to deallocate an input pose if all of the preliminary job nodes
+	// that relied on that input pose have completed.
 	for ( auto it = last_job_for_input_pose_.begin(); it != last_job_for_input_pose_.end(); /*no inc*/ ) {
 
-		if ( it->second < larval_job_counter_ ) {
+		if ( it->second < larval_job_counter_ && incomplete_pjns_using_input_pose_[ it->first ].empty() ) {
 			deallocation::DeallocationMessageOP msg( new deallocation::InputPoseDeallocationMessage( it->first ));
 			messages.push_back( msg );
 
@@ -893,6 +905,10 @@ StandardJobQueen::preliminary_larval_jobs() const
 	return preliminary_larval_jobs_;
 }
 
+/// @details The SJQ can only return the correct index here if the derived JobQueen invoked
+/// the SJQs version of next_batch_of_larval_jobs_from_prelim in its determine_job_list
+/// method. If it instead invoked its own handling of the creation of jobs for preliminary
+/// nodes, then this method will not have the data it needs to read from.
 core::Size
 StandardJobQueen::preliminary_job_node_for_job_index( core::Size job_id ) const
 {
@@ -1389,7 +1405,8 @@ StandardJobQueen::secondary_outputters_for_job(
 
 /// @details the nstruct count is taken from either the Job tag, or the
 /// command line. "nstruct" is not a valid option to be provided
-/// in the <Options> element.
+/// in the <Options> element and so we do not have to worry about passing
+/// in as a parameter a local OptionCollection object for this job.
 core::Size
 StandardJobQueen::nstruct_for_job( utility::tag::TagCOP job_tag ) const
 {
@@ -1484,6 +1501,9 @@ StandardJobQueen::determine_preliminary_job_list_from_xml_file(
 	Tag::tags_t const & subtags = job_definition_file_tags_->getTags();
 	preliminary_larval_jobs_.reserve( subtags.size() );
 	core::Size count_prelim_nodes( 0 );
+
+	bool read_from_command_line = false;
+	pose_inputters::PoseInputSourcesAndInputters cl_input_poses_and_inputters;
 	for ( auto subtag : subtags ) {
 		if ( subtag->getName() != "Job" ) {
 			debug_assert( subtag->getName() == "Common" );
@@ -1497,24 +1517,36 @@ StandardJobQueen::determine_preliminary_job_list_from_xml_file(
 		utility::options::OptionCollectionCOP job_options = options_from_tag( job_options_tag );
 
 		// ok -- look at input tag
-		TagCOP input_tag = subtag->getTag( "Input" );
-		debug_assert( input_tag ); // XML schema validation should ensure that there is an "Input" subelement
-		debug_assert( input_tag->getTags().size() == 1 ); // schema validation should ensure there is exactly one subelement
-		TagCOP input_tag_child = input_tag->getTags()[ 0 ];
+		pose_inputters::PoseInputSourcesAndInputters input_poses_and_inputters;
+		if ( subtag->hasTag( "Input" ) ) {
+			TagCOP input_tag = subtag->getTag( "Input" );
+			debug_assert( input_tag ); // XML schema validation should ensure that there is an "Input" subelement
+			debug_assert( input_tag->getTags().size() == 1 ); // schema validation should ensure there is exactly one subelement
+			TagCOP input_tag_child = input_tag->getTags()[ 0 ];
 
-		// Get the right inputter for this Job.
-		pose_inputters::PoseInputterOP inputter;
-		if ( use_factory_provided_pose_inputters_ ) {
-			inputter = pose_inputters::PoseInputterFactory::get_instance()->new_pose_inputter( input_tag_child->getName() );
+			// Get the right inputter for this Job.
+			pose_inputters::PoseInputterOP inputter;
+			if ( use_factory_provided_pose_inputters_ ) {
+				inputter = pose_inputters::PoseInputterFactory::get_instance()->new_pose_inputter( input_tag_child->getName() );
+			} else {
+				runtime_assert( inputter_creators_.count( input_tag_child->getName() ) != 0 );
+				inputter = inputter_creators_[ input_tag_child->getName() ]->create_inputter();
+			}
+
+			PoseInputSources input_poses = inputter->pose_input_sources_from_tag( *job_options, input_tag_child );
+			input_poses_and_inputters.reserve( input_poses.size() );
+			for ( auto input_source : input_poses ) {
+				input_source->pose_id( ++input_pose_counter_ );
+				TR << "Assigning input_source " << input_source->input_tag() << " pose_id " << input_pose_counter_ << " and stored as " << input_source->pose_id() << std::endl;
+				input_poses_and_inputters.push_back( { input_source, inputter } );
+			}
+		} else if ( ! read_from_command_line || ! load_starting_poses_only_once_ ) {
+			// We don't have an input tag -- instead, take the input Poses from the command line.
+			input_poses_and_inputters = read_input_poses_from_command_line( );
+			cl_input_poses_and_inputters = input_poses_and_inputters;
+			read_from_command_line = true;
 		} else {
-			runtime_assert( inputter_creators_.count( input_tag_child->getName() ) != 0 );
-			inputter = inputter_creators_[ input_tag_child->getName() ]->create_inputter();
-		}
-
-		PoseInputSources input_poses = inputter->pose_input_sources_from_tag( *job_options, input_tag_child );
-		for ( auto input_source : input_poses ) {
-			input_source->pose_id( ++input_pose_counter_ );
-			TR << "Assigning input_source " << input_source->input_tag() << " pose_id " << input_pose_counter_ << " and stored as " << input_source->pose_id() << std::endl;
+			input_poses_and_inputters = cl_input_poses_and_inputters;
 		}
 
 		// Get the right outputter for this job.
@@ -1527,20 +1559,22 @@ StandardJobQueen::determine_preliminary_job_list_from_xml_file(
 		// now iterate across the input sources for this job and create
 		// a preliminary job for each
 		core::Size nstruct = nstruct_for_job( subtag );
-		for ( PoseInputSources::const_iterator iter = input_poses.begin(); iter != input_poses.end(); ++iter ) {
+		for ( auto pose_source_and_inputter : input_poses_and_inputters ) {
 			PreliminaryLarvalJob prelim_job;
 			StandardInnerLarvalJobOP inner_job( create_inner_larval_job( nstruct, ++count_prelim_nodes ) );
-			inner_job->input_source( *iter );
+			inner_job->input_source( pose_source_and_inputter.first );
 			inner_job->jobdef_tag( subtag );
 			inner_job->outputter( outputter->class_key() );
 
 			prelim_job.inner_job = inner_job;
 			prelim_job.job_tag = subtag;
 			prelim_job.job_options = job_options;
-			prelim_job.pose_inputter = inputter;
+			prelim_job.pose_inputter = pose_source_and_inputter.second;
 
 			preliminary_larval_jobs_.push_back( prelim_job );
 			outstanding_job_count_for_prelim_.push_back( nstruct );
+			incomplete_pjns_using_input_pose_[ pose_source_and_inputter.first->pose_id() ].insert(
+				preliminary_larval_jobs_.size() );
 		}
 	}
 }
@@ -1612,7 +1646,51 @@ StandardJobQueen::determine_preliminary_job_list_from_command_line()
 	using namespace pose_inputters;
 
 	// read from the command line a list of all of the input jobs
-	PoseInputterFactory::PoseInputSourcesAndInputters input_poses;
+	PoseInputSourcesAndInputters input_poses_and_inputters =
+		read_input_poses_from_command_line();
+
+	pose_outputters::PoseOutputterOP outputter = get_outputter_from_job_tag( utility::tag::TagCOP() );
+
+	if ( representative_pose_outputter_map_.count( outputter->class_key() ) == 0 ) {
+		representative_pose_outputter_map_[ outputter->class_key() ] = outputter;
+	}
+
+	// pass in a null-pointing TagCOP and construct the job options object from the command line.
+	utility::options::OptionCollectionCOP job_options = options_from_tag( utility::tag::TagCOP() );
+
+	// now iterate across the input sources for this job and create
+	// a preliminary job for each
+	preliminary_larval_jobs_.reserve( input_poses_and_inputters.size() );
+	core::Size count_prelim_nodes( 0 );
+	for ( auto const & pose_source_and_inputter : input_poses_and_inputters ) {
+		PreliminaryLarvalJob prelim_job;
+		Size nstruct = nstruct_for_job( nullptr );
+		StandardInnerLarvalJobOP inner_job( create_inner_larval_job( nstruct, ++count_prelim_nodes ) );
+		inner_job->input_source( pose_source_and_inputter.first );
+		inner_job->outputter( outputter->class_key() );
+
+		prelim_job.inner_job = inner_job;
+		prelim_job.job_tag = TagCOP(); // null ptr
+		prelim_job.job_options = job_options;
+		prelim_job.pose_inputter = pose_source_and_inputter.second;
+		preliminary_larval_jobs_.push_back( prelim_job );
+		outstanding_job_count_for_prelim_.push_back( nstruct );
+		incomplete_pjns_using_input_pose_[ pose_source_and_inputter.first->pose_id() ].insert(
+			preliminary_larval_jobs_.size() );
+	}
+}
+
+/// @details Requests that set of input structures that have been indicated on the command
+/// line from the set of allowed PoseInputters (either all inputters registered with the
+/// PoseInputterFactory, or a subset as indicated by the derived JobQueen). Then each pose is
+/// givn a separate pose_id. Note that if this is called multiple times, then each structure
+/// that is listed on the command line will be given multiple pose_ids. As a consequence,
+/// each structure may be loaded multiple times.
+pose_inputters::PoseInputSourcesAndInputters
+StandardJobQueen::read_input_poses_from_command_line()
+{
+	using namespace pose_inputters;
+	PoseInputSourcesAndInputters input_poses;
 	if ( use_factory_provided_pose_inputters_ ) {
 		input_poses = PoseInputterFactory::get_instance()->pose_inputs_from_command_line();
 	} else {
@@ -1631,34 +1709,7 @@ StandardJobQueen::determine_preliminary_job_list_from_command_line()
 		input_source.first->pose_id( ++input_pose_counter_ );
 		TR << "Assigning input_source " << input_source.first->input_tag() << " pose_id " << input_pose_counter_ << std::endl;
 	}
-
-	pose_outputters::PoseOutputterOP outputter = get_outputter_from_job_tag( utility::tag::TagCOP() );
-
-	if ( representative_pose_outputter_map_.count( outputter->class_key() ) == 0 ) {
-		representative_pose_outputter_map_[ outputter->class_key() ] = outputter;
-	}
-
-	// pass in a null-pointing TagCOP and construct the job options object from the command line.
-	utility::options::OptionCollectionCOP job_options = options_from_tag( utility::tag::TagCOP() );
-
-	// now iterate across the input sources for this job and create
-	// a preliminary job for each
-	preliminary_larval_jobs_.reserve( input_poses.size() );
-	core::Size count_prelim_nodes( 0 );
-	for ( auto const & input_pose : input_poses ) {
-		PreliminaryLarvalJob prelim_job;
-		Size nstruct = nstruct_for_job( nullptr );
-		StandardInnerLarvalJobOP inner_job( create_inner_larval_job( nstruct, ++count_prelim_nodes ) );
-		inner_job->input_source( input_pose.first );
-		inner_job->outputter( outputter->class_key() );
-
-		prelim_job.inner_job = inner_job;
-		prelim_job.job_tag = TagCOP(); // null ptr
-		prelim_job.job_options = job_options;
-		prelim_job.pose_inputter = input_pose.second;
-		preliminary_larval_jobs_.push_back( prelim_job );
-		outstanding_job_count_for_prelim_.push_back( nstruct );
-	}
+	return input_poses;
 }
 
 LarvalJobs

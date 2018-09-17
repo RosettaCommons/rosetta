@@ -30,6 +30,7 @@ typedef utility::pointer::shared_ptr< PoseInputSource const > PoseInputSourceCOP
 
 typedef utility::vector1< PoseInputSourceOP > PoseInputSources;
 
+
 } // namespace pose_inputters
 } // namespace jd3
 } // namespace protocols

@@ -66,6 +66,7 @@
 //c++ headers
 #include <string>
 #include <map>
+#include <set>
 
 namespace protocols {
 namespace jd3 {
@@ -121,7 +122,10 @@ public:
 	/// @brief The %StandardJobQueen manages the process of creating the list of LarvalJobs that
 	/// will be later matured into actual jobs and run by the JobDistributor.  Classes derived
 	/// from the %StandardJobQueen need answer a few virtual functions that the %StandardJobQueen
-	/// will invoke during this process.
+	/// will invoke during this process. It is not recommended that derived job queens override
+	/// this method; doing so will mean that some of the data the SJQ relies on will not
+	/// be initialized -- see comments on the SJQs data members below to understand the consequences
+	/// of overriding this method.
 	LarvalJobs determine_job_list( Size job_dag_node_index, Size max_njobs ) override;
 
 	bool has_job_completed( protocols::jd3::LarvalJobCOP job ) override;
@@ -294,8 +298,9 @@ protected:
 	///////////////////////////////////////////////////////////////////////////////////////////////
 
 	/// @brief Allow the derived JobQueen to tell the %StandardJobQueen to initialize the preliminary
-	/// job list; this is perhaps necessary in the context of multi-round protocols when job-definition
-	/// file specifies the JobDAG. parse_job_definition_tags() is called at the end of this method.
+	/// job list; this is perhaps necessary in the context of multi-round protocols when the
+	/// job-definition file specifies the JobDAG. parse_job_definition_tags() is called at the
+	/// end of this method.
 	virtual
 	void
 	determine_preliminary_job_list();
@@ -310,7 +315,7 @@ protected:
 	parse_job_definition_tags(
 		utility::tag::TagCOP, //common_block_tags,
 		utility::vector1< PreliminaryLarvalJob > const &
-	){};
+	){}
 
 	/// @brief Allow the derived job queen the opportunity to update the StandardJobQueen's
 	/// job_graph_ data member by adding nodes as well as edges that land on the new nodes.
@@ -620,6 +625,10 @@ private:
 	void
 	determine_preliminary_job_list_from_command_line();
 
+	pose_inputters::PoseInputSourcesAndInputters
+	read_input_poses_from_command_line();
+
+
 	LarvalJobs next_batch_of_larval_jobs_from_prelim( core::Size job_node_index, core::Size max_njobs );
 
 	pose_outputters::SecondaryPoseOutputterOP
@@ -669,10 +678,18 @@ private:
 	bool override_default_outputter_;
 	pose_outputters::PoseOutputterCreatorOP default_outputter_creator_;
 
-	// Often, you want to use the same pose outputter for multiple jobs.
+	// Often, you want to use the same pose outputter for multiple jobs, E.g.
+	// if you are writing multiple Poses to a single silent file and are buffering
+	// the output in the Outputter to reduce the number of times you push data to disk
 	std::map< std::string, pose_outputters::PoseOutputterOP > pose_outputters_;
 
+	// By default, the <Common> block goes first in the job definition file, but derived
+	// job queens may request that the jobs are listed first and the <Common> block loast.
 	bool common_block_precedes_job_blocks_;
+
+	// All job queens, even those that spawn on the remote nodes, must perform some degree of
+	// initialization. In particular, they need to read the job definition file to obtain
+	// the <Common> block data
 	bool required_initialization_performed_;
 	utility::tag::TagCOP job_definition_file_tags_;
 	utility::tag::TagCOP common_block_tags_;
@@ -680,7 +697,11 @@ private:
 	JobDigraphOP job_graph_;
 
 	// The index of the last larval job that we have created. Incremented within
-	// expand_job_list()
+	// expand_job_list(). Job numbering is a complex process and it is possible that
+	// classes derived from the SJQ may want to handle job numbering themselves.
+	// The SJQ will assume / should assume responsibility for numbering jobs for the
+	// preliminary nodes in the JobDAG. Dang; I have been away from this code too long
+	// to document it properly. I need to review the assumptions in the code and come back.
 	Size larval_job_counter_;
 
 	// For the first node in the JobDAG, the %StandardJobQueen will spool out LarvalJobs
@@ -695,8 +716,17 @@ private:
 	Size curr_inner_larval_job_index_;
 	Size njobs_made_for_curr_inner_larval_job_;
 	utility::vector1< core::Size > preliminary_job_node_inds_;
+
+	// If the DJQ uses the SJQ's version of next_batch_of_larval_jobs_from_prelim in its
+	// determine_job_list method when handling those jobs from prelimary job nodes (e.g.
+	// as would happen automatically if the DJQ does not override determine_job_list, but
+	// rather only overrides the next_batch_of_larval_jobs_for_job_node method -- this is
+	// recommended!), then the SJQ will keep track of the starting and ending job indices
+	// for each preliminary job node, and will thus be able to decide when to deallocate
+	// the input Poses that will no longer be needed.
 	utility::vector1< core::Size > pjn_job_ind_begin_;
 	utility::vector1< core::Size > pjn_job_ind_end_;
+
 	utility::vector1< char > preliminary_job_nodes_complete_; // complete == all jobs assigned
 	utility::vector1< core::Size > outstanding_job_count_for_prelim_; // how many jobs have not completed?
 
@@ -746,9 +776,13 @@ private:
 	std::map< core::Size, core::pose::PoseOP > input_pose_index_map_;
 
 	// For each pose that's still in memory, what is the index of the last job
-	// that will use it as the starting structure?
+	// that will use it as the starting structure? In the case that the input pose
+	// is used for multiple jobs (which can only happen when a JobDefinition file is provided
+	// with multiple jobs, but where the input structures are not listed in the file, and
+	// are instead provided on the command line)
 	std::map< core::Size, core::Size > last_job_for_input_pose_;
-
+	std::map< core::Size, std::set< core::Size > > incomplete_pjns_using_input_pose_;
+	bool load_starting_poses_only_once_;
 };
 
 

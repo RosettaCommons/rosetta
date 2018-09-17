@@ -1302,6 +1302,7 @@ Options = Option_Group( '',
 		Option( 'compress_job_results', 'Boolean', desc='Sometimes job results use a ton of memory. This option tells Rosetta to compress all job results so they use less memory.', default='true' ),
 		Option( 'resource_definition_files', 'FileVector', desc = 'Specify all the resources to available for the jobs running.', ),
 		Option( 'resource_definition_schema', 'File', desc='If provided on the command line, the job distributor will write the XML Schema for the applciation\'s resource definition file out to disk and then exit' ),
+		Option( 'load_input_poses_only_once', 'Boolean', desc='If the same Pose is used as input to multiple jobs (which can only happen when a job definition file is provided, but the input poses come from the command line), then preserve those input poses in memory until they will not be used in any future jobs. This necessarily comes with an increased memory footprint and is likely undesireable if the number of jobs is large!' ),
 	), # -jd3
 
 	# jd2 Options ---------------------------------------------------------

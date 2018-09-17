@@ -88,7 +88,7 @@ PoseInputterFactory::new_pose_inputter( std::string const & pose_inputter_type )
 	}
 }
 
-PoseInputterFactory::PoseInputSourcesAndInputters
+PoseInputSourcesAndInputters
 PoseInputterFactory::pose_inputs_from_command_line() const
 {
 	PoseInputSourcesAndInputters input_sources;

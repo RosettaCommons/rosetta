@@ -606,15 +606,27 @@ public:
 		std::list< deallocation::DeallocationMessageOP > msgs1 = djq.deallocation_messages();
 		TS_ASSERT( msgs1.empty() );
 
+		for ( LarvalJobOP node1_job : jobs ) {
+			djq.note_job_completed( node1_job, jd3_job_status_success, 1 );
+		}
+
 		LarvalJobs jobs2 = djq.determine_job_list( 1, 2 );
 		for ( LarvalJobOP node1_job : jobs2 ) {
 			TS_ASSERT_EQUALS( node1_job->inner_job()->input_source().pose_id(), 1 );
 		}
 		std::list< deallocation::DeallocationMessageOP > msgs2 = djq.deallocation_messages();
-		TS_ASSERT( msgs2.empty() )
+		TS_ASSERT( msgs2.empty() );
 
-			LarvalJobs jobs3 = djq.determine_job_list( 2, 10 );
+		for ( LarvalJobOP node1_job : jobs2 ) {
+			djq.note_job_completed( node1_job, jd3_job_status_success, 1 );
+		}
+
+		LarvalJobs jobs3 = djq.determine_job_list( 2, 10 );
 		TS_ASSERT_EQUALS( jobs3.size(), 10 );
+
+		// After we tell the DJQ that all the jobs for node two have finished and
+		// she has started assigning jobs for node2, then she will tell us that
+		// it's ok to deallocate the input pose for node 1
 		std::list< deallocation::DeallocationMessageOP > msgs3 = djq.deallocation_messages();
 		TS_ASSERT_EQUALS( msgs3.size(), 1 );
 		typedef deallocation::InputPoseDeallocationMessage   PoseDealloc;
@@ -624,6 +636,10 @@ public:
 		TS_ASSERT_EQUALS( msg3->pose_id(), 1 );
 		std::list< deallocation::DeallocationMessageOP > msgs4 = djq.deallocation_messages();
 		TS_ASSERT( msgs4.empty() );
+
+		for ( LarvalJobOP node2_job : jobs3 ) {
+			djq.note_job_completed( node2_job, jd3_job_status_success, 1 );
+		}
 
 		LarvalJobs jobs4 = djq.determine_job_list( 2, 10 );
 		TS_ASSERT_EQUALS( jobs4.size(), 1 );
@@ -635,6 +651,11 @@ public:
 		std::list< deallocation::DeallocationMessageOP > msgs6 = djq.deallocation_messages();
 		TS_ASSERT( msgs6.empty() );
 
+		// ok, let's mark all of the jobs from node 2 complete
+		for ( LarvalJobOP node2_job : jobs4 ) {
+			djq.note_job_completed( node2_job, jd3_job_status_success, 1 );
+		}
+
 		LarvalJobs jobs6 = djq.determine_job_list( 3, 10 );
 		TS_ASSERT_EQUALS( jobs6.size(), 3 );
 		std::list< deallocation::DeallocationMessageOP > msgs7 = djq.deallocation_messages();
@@ -642,6 +663,203 @@ public:
 		PoseDeallocOP msg7 = utility::pointer::dynamic_pointer_cast< PoseDealloc > ( msgs7.front() );
 		TS_ASSERT( msg7 );
 		TS_ASSERT_EQUALS( msg7->pose_id(), 2 );
+
+	}
+
+	void test_standard_job_queen_pose_deallocation_messages_no_preserve_poses()
+	{
+		core_init_with_additional_options( "-in:file:s 1ubq.pdb" );
+		std::string jobdef_file =
+			"<JobDefinitionFile>\n"
+			" <Job nstruct=\"5\">\n"
+			" </Job>\n"
+			" <Job nstruct=\"11\">\n"
+			" </Job>\n"
+			" <Job nstruct=\"3\">\n"
+			" </Job>\n"
+			"</JobDefinitionFile>\n";
+
+		DummyJobQueen djq;
+		try {
+			djq.determine_preliminary_job_list_from_xml_file( jobdef_file );
+		} catch (utility::excn::Exception & e ) {
+			std::cout << e.msg() << std::endl;
+			TS_ASSERT( false );
+		}
+		JobDigraphOP dag = djq.initial_job_dag();
+		TS_ASSERT_EQUALS( dag->num_nodes(), 3 );
+		TS_ASSERT_EQUALS( dag->num_edges(), 0 );
+
+		utility::vector1< core::Size > prelim_nodes( 3 );
+		for ( core::Size ii = 1; ii <= 3; ++ii ) prelim_nodes[ ii ] = ii;
+		TS_ASSERT_EQUALS( djq.preliminary_job_nodes(), prelim_nodes );
+
+		LarvalJobs jobs = djq.determine_job_list( 1, 4 );
+		for ( LarvalJobOP node1_job : jobs ) {
+			TS_ASSERT_EQUALS( node1_job->inner_job()->input_source().pose_id(), 1 );
+		}
+		std::list< deallocation::DeallocationMessageOP > msgs1 = djq.deallocation_messages();
+		TS_ASSERT( msgs1.empty() );
+
+		for ( LarvalJobOP node1_job : jobs ) {
+			djq.note_job_completed( node1_job, jd3_job_status_success, 1 );
+		}
+
+		LarvalJobs jobs2 = djq.determine_job_list( 1, 2 );
+		for ( LarvalJobOP node1_job : jobs2 ) {
+			TS_ASSERT_EQUALS( node1_job->inner_job()->input_source().pose_id(), 1 );
+		}
+		std::list< deallocation::DeallocationMessageOP > msgs2 = djq.deallocation_messages();
+		TS_ASSERT( msgs2.empty() );
+
+		for ( LarvalJobOP node1_job : jobs2 ) {
+			djq.note_job_completed( node1_job, jd3_job_status_success, 1 );
+		}
+
+		LarvalJobs jobs3 = djq.determine_job_list( 2, 10 );
+		TS_ASSERT_EQUALS( jobs3.size(), 10 );
+
+		// After we tell the DJQ that all the jobs for node two have finished and
+		// she has started assigning jobs for node2, then she will tell us that
+		// it's ok to deallocate the input pose for node 1
+		std::list< deallocation::DeallocationMessageOP > msgs3 = djq.deallocation_messages();
+		TS_ASSERT_EQUALS( msgs3.size(), 1 );
+		typedef deallocation::InputPoseDeallocationMessage   PoseDealloc;
+		typedef deallocation::InputPoseDeallocationMessageOP PoseDeallocOP;
+		PoseDeallocOP msg3 = utility::pointer::dynamic_pointer_cast< PoseDealloc > ( msgs3.front() );
+		TS_ASSERT( msg3 );
+		TS_ASSERT_EQUALS( msg3->pose_id(), 1 );
+		std::list< deallocation::DeallocationMessageOP > msgs4 = djq.deallocation_messages();
+		TS_ASSERT( msgs4.empty() );
+
+		for ( LarvalJobOP node2_job : jobs3 ) {
+			djq.note_job_completed( node2_job, jd3_job_status_success, 1 );
+		}
+
+		LarvalJobs jobs4 = djq.determine_job_list( 2, 10 );
+		TS_ASSERT_EQUALS( jobs4.size(), 1 );
+		std::list< deallocation::DeallocationMessageOP > msgs5 = djq.deallocation_messages();
+		TS_ASSERT( msgs5.empty() );
+
+		LarvalJobs jobs5 = djq.determine_job_list( 2, 10 );
+		TS_ASSERT( jobs5.empty() );
+		std::list< deallocation::DeallocationMessageOP > msgs6 = djq.deallocation_messages();
+		TS_ASSERT( msgs6.empty() );
+
+		// ok, let's mark all of the jobs from node 2 complete
+		for ( LarvalJobOP node2_job : jobs4 ) {
+			djq.note_job_completed( node2_job, jd3_job_status_success, 1 );
+		}
+
+		LarvalJobs jobs6 = djq.determine_job_list( 3, 10 );
+		TS_ASSERT_EQUALS( jobs6.size(), 3 );
+		std::list< deallocation::DeallocationMessageOP > msgs7 = djq.deallocation_messages();
+		TS_ASSERT_EQUALS( msgs7.size(), 1 );
+		PoseDeallocOP msg7 = utility::pointer::dynamic_pointer_cast< PoseDealloc > ( msgs7.front() );
+		TS_ASSERT( msg7 );
+		TS_ASSERT_EQUALS( msg7->pose_id(), 2 );
+
+	}
+
+	void test_standard_job_queen_pose_deallocation_messages_and_preserve_input_poses()
+	{
+		core_init_with_additional_options( "-in:file:s 1ubq.pdb -jd3:load_input_poses_only_once" );
+
+		// The first two Jobs will read from the command line, and the last one will read from
+		// the Input tag; so the first two preliminary job nodes will both use the same
+		// pose_id. After the jobs finish for node 2, then the DJQ should report that it's now time
+		// to deallocate pose #1.
+		std::string jobdef_file =
+			"<JobDefinitionFile>\n"
+			" <Job nstruct=\"5\">\n"
+			" </Job>\n"
+			" <Job nstruct=\"11\">\n"
+			" </Job>\n"
+			" <Job nstruct=\"3\">\n"
+			"  <Input>\n"
+			"   <PDB filename=\"1ubq.pdb\"/>\n"
+			"  </Input>\n"
+			" </Job>\n"
+			"</JobDefinitionFile>\n";
+
+		DummyJobQueen djq;
+		try {
+			djq.determine_preliminary_job_list_from_xml_file( jobdef_file );
+		} catch (utility::excn::Exception & e ) {
+			std::cout << e.msg() << std::endl;
+			TS_ASSERT( false );
+		}
+		JobDigraphOP dag = djq.initial_job_dag();
+		TS_ASSERT_EQUALS( dag->num_nodes(), 3 );
+		TS_ASSERT_EQUALS( dag->num_edges(), 0 );
+
+		utility::vector1< core::Size > prelim_nodes( 3 );
+		for ( core::Size ii = 1; ii <= 3; ++ii ) prelim_nodes[ ii ] = ii;
+		TS_ASSERT_EQUALS( djq.preliminary_job_nodes(), prelim_nodes );
+
+		LarvalJobs jobs = djq.determine_job_list( 1, 4 );
+		for ( LarvalJobOP node1_job : jobs ) {
+			TS_ASSERT_EQUALS( node1_job->inner_job()->input_source().pose_id(), 1 );
+		}
+		std::list< deallocation::DeallocationMessageOP > msgs1 = djq.deallocation_messages();
+		TS_ASSERT( msgs1.empty() );
+
+		for ( LarvalJobOP node1_job : jobs ) {
+			djq.note_job_completed( node1_job, jd3_job_status_success, 1 );
+		}
+
+		LarvalJobs jobs2 = djq.determine_job_list( 1, 2 );
+		for ( LarvalJobOP node1_job : jobs2 ) {
+			TS_ASSERT_EQUALS( node1_job->inner_job()->input_source().pose_id(), 1 );
+		}
+		std::list< deallocation::DeallocationMessageOP > msgs2 = djq.deallocation_messages();
+		TS_ASSERT( msgs2.empty() );
+
+		for ( LarvalJobOP node1_job : jobs2 ) {
+			djq.note_job_completed( node1_job, jd3_job_status_success, 1 );
+		}
+
+		LarvalJobs jobs3 = djq.determine_job_list( 2, 10 );
+		TS_ASSERT_EQUALS( jobs3.size(), 10 );
+
+		// After we tell the DJQ that all the jobs for node two have finished and
+		// she has started assigning jobs for node2, then she would tell us that
+		// it's ok to deallocate the input pose for node 1 IF the load_input_poses_only_once flag
+		// weren't on the command line, but it is, so she'll not tell us to deallocate anything
+		std::list< deallocation::DeallocationMessageOP > msgs3 = djq.deallocation_messages();
+		TS_ASSERT( msgs3.empty() );
+
+		for ( LarvalJobOP node2_job : jobs3 ) {
+			djq.note_job_completed( node2_job, jd3_job_status_success, 1 );
+		}
+
+		LarvalJobs jobs4 = djq.determine_job_list( 2, 10 );
+		TS_ASSERT_EQUALS( jobs4.size(), 1 );
+		std::list< deallocation::DeallocationMessageOP > msgs5 = djq.deallocation_messages();
+		TS_ASSERT( msgs5.empty() );
+
+		LarvalJobs jobs5 = djq.determine_job_list( 2, 10 );
+		TS_ASSERT( jobs5.empty() );
+		std::list< deallocation::DeallocationMessageOP > msgs6 = djq.deallocation_messages();
+		TS_ASSERT( msgs6.empty() );
+
+		// ok, let's mark all of the jobs from node 2 complete
+		for ( LarvalJobOP node2_job : jobs4 ) {
+			djq.note_job_completed( node2_job, jd3_job_status_success, 1 );
+		}
+
+		LarvalJobs jobs6 = djq.determine_job_list( 3, 10 );
+		TS_ASSERT_EQUALS( jobs6.size(), 3 );
+
+		// OK! Now the DJQ should say to deallocate the first input pose.
+		std::list< deallocation::DeallocationMessageOP > msgs7 = djq.deallocation_messages();
+		TS_ASSERT_EQUALS( msgs7.size(), 1 );
+		typedef deallocation::InputPoseDeallocationMessage   PoseDealloc;
+		typedef deallocation::InputPoseDeallocationMessageOP PoseDeallocOP;
+		PoseDeallocOP msg7 = utility::pointer::dynamic_pointer_cast< PoseDealloc > ( msgs7.front() );
+		TS_ASSERT( msg7 );
+		TS_ASSERT_EQUALS( msg7->pose_id(), 1 );
+
 
 	}
 
