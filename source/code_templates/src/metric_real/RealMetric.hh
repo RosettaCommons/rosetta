@@ -61,26 +61,26 @@ public:
 	///            into the score tables/file at pose output.
 	//void
 	//apply( core::pose::Pose & pose, prefix="", suffix="" ) override;
-	
+
 	///@brief Calculate the metric.
 	core::Real
 	calculate( core::pose::Pose const & pose ) const override;
-	
+
 public:
-	
+
 	///@brief Name of the class
 	std::string
 	name() const override;
-	
+
 	///@brief Name of the class for creator.
-	static 
-	std::string 
+	static
+	std::string
 	name_static();
 
 	///@brief Name of the metric
 	std::string
 	metric() const override;
-	
+
 public:
 
 	/// @brief called by parse_my_tag -- should not be used directly
@@ -88,7 +88,7 @@ public:
 	parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data ) override;
-	
+
 	static
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );

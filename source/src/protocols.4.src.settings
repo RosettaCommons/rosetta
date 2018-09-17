@@ -23,6 +23,7 @@ sources = {
 	],
 	"protocols/analysis/simple_metrics": [
 		"RunSimpleMetricsMover",
+		"SequenceRecoveryMetric",
 	],
 
 	"protocols/monte_carlo" : [

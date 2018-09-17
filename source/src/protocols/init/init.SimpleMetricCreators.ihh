@@ -16,7 +16,10 @@
 
 #include <core/simple_metrics/simple_metric_creators.hh>
 
+
 //Simple Metrics in Protocols should go into:
 // protocols/analysis/simple_metrics
+
+#include <protocols/analysis/simple_metrics/SequenceRecoveryMetricCreator.hh>
 
 #include <protocols/analysis/burial_metrics/PolarGroupBurialPyMolStringMetricCreator.hh> //Added by VKM, 22 April 2018.

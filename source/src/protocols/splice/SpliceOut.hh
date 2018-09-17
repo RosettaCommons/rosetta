@@ -179,7 +179,7 @@ private:
 	core::pack::task::TaskFactoryOP task_factory_;
 	core::kinematics::FoldTreeOP saved_fold_tree_;
 	bool thread_original_sequence_ = false;//To force the original segment seqeunce on the pose segment (Gideon Lapdioth, 170814)
-	bool rtmin_ = true;//whether or not to let splice do rtmin following design (Ask assaf alon)
+	//bool rtmin_ = true;//whether or not to let splice do rtmin following design (Ask assaf alon)
 	std::string dbase_file_name_ = ""; // a file name into which the loop database is dumped
 	// dflt NULL; to communicate the current Splice mover's loop origin to the GenericMC
 	utility::pointer::shared_ptr< basic::datacache::DataMapObj< std::string > > mover_tag_;

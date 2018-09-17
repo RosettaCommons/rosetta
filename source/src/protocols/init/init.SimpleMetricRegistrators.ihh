@@ -58,7 +58,10 @@ static SimpleMetricRegistrator< core::simple_metrics::per_residue_metrics::PerRe
 /////////////////////
 //Protocol-level SimpleMetrics should go into protocols/analysis/metrcs or protocols/analysis/yyy
 
+static SimpleMetricRegistrator< protocols::analysis::simple_metrics::SequenceRecoveryMetricCreator > reg_SequenceRecoveryCreator;
+
 // Added by VKM, 22 Apr. 2018:
 static SimpleMetricRegistrator< protocols::analysis::burial_metrics::PolarGroupBurialPyMolStringMetricCreator > reg_PolarGroupBurialPyMolStringMetricCreator;
+
 
 } // namespace protocols

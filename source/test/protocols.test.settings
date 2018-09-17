@@ -29,6 +29,7 @@ sources = {
 
 	],
 	"analysis/simple_metrics":[
+		"SequenceRecoveryMetricTests",
 		"SimpleMetricProtocolsTests",
 	],
 	"antibody": [
@@ -788,6 +789,7 @@ testinputfiles = [
 	"abinitio/score3_pcs_only.wts_patch",
 	"abinitio/abscript/one_frag3_per_pos",
 	"abinitio/abscript/ubq_frag.pdb",
+	"analysis/simple_metrics/trp_cage.pssm",
 	"antibody/2j88.pdb",
 	"antibody/1bln_AB_chothia.pdb",
 	"antibody/1bln_AB_aho.pdb",
