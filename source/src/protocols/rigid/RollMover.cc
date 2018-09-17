@@ -22,6 +22,8 @@
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/selection.hh>
+#include <core/pose/ResidueIndexDescription.hh>
 #include <core/id/AtomID.hh>
 #include <numeric/xyz.functions.hh>
 #include <protocols/rosetta_scripts/util.hh>
@@ -56,6 +58,11 @@ void RollMover::apply( core::pose::Pose & pose ) {
 
 	utility::vector1< utility::vector1< numeric::xyzVector< core::Real> > >  coords; // some of these will change for sure
 
+	runtime_assert( start_res_ );
+	core::Size const start_res = start_res_->resolve_index( pose );
+	runtime_assert( stop_res_ );
+	core::Size const stop_res = stop_res_->resolve_index( pose );
+
 	// now we have a vector1 of vector1s with a numeric::xyzVector
 	// access will look like coords[residue][atom] to get xyz
 
@@ -73,8 +80,12 @@ void RollMover::apply( core::pose::Pose & pose ) {
 		}
 	}
 
+	if ( use_com_ ) {
+		translate_ = protocols::geometry::center_of_mass(pose, start_res, stop_res);
+	}
+
 	if ( random_roll_ ) {
-		translate_ = protocols::geometry::center_of_mass(pose, start_res_, stop_res_);
+		translate_ = protocols::geometry::center_of_mass(pose, start_res, stop_res);
 		translate_.x() += numeric::random::rg().gaussian() * random_roll_trans_;
 		translate_.y() += numeric::random::rg().gaussian() * random_roll_trans_;
 		translate_.z() += numeric::random::rg().gaussian() * random_roll_trans_;
@@ -86,7 +97,7 @@ void RollMover::apply( core::pose::Pose & pose ) {
 
 	numeric::xyzMatrix< core::Real > rotation_matrix( numeric::rotation_matrix_degrees(axis_, angle_ ) );
 	//move to origin
-	for ( core::Size i =start_res_; i <= stop_res_; ++i ) {
+	for ( core::Size i =start_res; i <= stop_res; ++i ) {
 		for ( core::Size j = 1; j <= coords[i].size(); ++j ) {
 
 			// this may look strange but in a global coordinate system
@@ -101,7 +112,7 @@ void RollMover::apply( core::pose::Pose & pose ) {
 	}
 
 	// now update pose with new coordinates
-	for ( core::Size i =start_res_; i <= stop_res_; ++i ) {
+	for ( core::Size i =start_res; i <= stop_res; ++i ) {
 		for ( core::Size j = 1; j <= coords[i].size(); ++j ) {
 			id::AtomID id( j, i );
 			pose.set_xyz( id, coords[i][j]);
@@ -130,18 +141,25 @@ RollMover::parse_my_tag(
 	basic::datacache::DataMap & /*datamap*/,
 	Filters_map const & /*filters*/,
 	moves::Movers_map const & /*movers*/,
-	Pose const & pose )
+	Pose const & )
 {
 
-	start_res_ = ( tag->hasOption("start_res") ) ?  tag->getOption<core::Size>("start_res") : 1;
-	stop_res_ = ( tag->hasOption("stop_res") ) ?  tag->getOption<core::Size>("stop_res") : pose.size();
+	if ( tag->hasOption("start_res") ) {
+		start_res_ = core::pose::parse_resnum( tag->getOption<std::string>("start_res") );
+	} else {
+		start_res_ = core::pose::make_rid_posenum( 1 );
+	}
+	if ( tag->hasOption("stop_res") ) {
+		stop_res_ = core::pose::parse_resnum( tag->getOption<std::string>("stop_res") );
+	} else {
+		stop_res_ = core::pose::ResidueIndexDescriptionCOP( new core::pose::ResidueIndexDescriptionLastResidue );
+	}
 
 	if ( tag->hasOption("chain") ) {
 		if ( tag->hasOption("start_res") || tag->hasOption("stop_res") ) utility_exit_with_message("cannot specify start/stop res AND chain!");
 		auto const chain = tag->getOption<core::Size>("chain");
-		runtime_assert_msg(chain > 0 && chain <= pose.conformation().num_chains(),"RollMover bad chain");
-		start_res_ = pose.conformation().chain_begin(chain);
-		stop_res_ = pose.conformation().chain_end(chain);
+		start_res_ = core::pose::ResidueIndexDescriptionCOP( new core::pose::ResidueIndexDescriptionChainEnd( chain, /*chain_start=*/ true ) );
+		stop_res_ = core::pose::ResidueIndexDescriptionCOP( new core::pose::ResidueIndexDescriptionChainEnd( chain, /*chain_start=*/ false ) );
 	}
 
 	random_roll_       = tag->getOption<bool>("random_roll",false);
@@ -200,9 +218,8 @@ RollMover::parse_my_tag(
 			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "RollMover requires axis option");
 		}
 		if ( !translate_option_parsed ) {
-			//throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "RollMover requires translate option");
+			use_com_ = true;
 			TR << "No translation given, using the pose's center of mass" << std::endl;
-			translate_ = protocols::geometry::center_of_mass(pose, start_res_, stop_res_);
 		}
 
 	}
@@ -256,8 +273,8 @@ RollMover::RollMover(
 	numeric::xyzVector< core::Real > translate
 ):
 	Mover(),
-	start_res_(start_res),
-	stop_res_(stop_res),
+	start_res_(core::pose::make_rid_posenum(start_res)),
+	stop_res_(core::pose::make_rid_posenum(stop_res)),
 	min_angle_(min_angle),
 	max_angle_(max_angle),
 	axis_(axis),
@@ -288,15 +305,16 @@ void RollMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	xsd.add_top_level_element( axis );
 	AttributeList attlist;
 	attlist
-		+ XMLSchemaAttribute::attribute_w_default("start_res", xsct_non_negative_integer, "First residue id of object to roll", "1")
-		+ XMLSchemaAttribute("stop_res", xsct_non_negative_integer, "Last residue ID of object to roll" )
 		+ XMLSchemaAttribute("chain", xsct_positive_integer, "Chain ID of object to roll")
 		+ XMLSchemaAttribute::attribute_w_default("random_roll", xsct_rosetta_bool, "Rotate and/or translate pose over random axis/direction", "false")
 		+ XMLSchemaAttribute::attribute_w_default("random_roll_angle_mag", xsct_real, "Standard deviation for a gaussium magnitude rotation about a random axis", "3.0")
 		+ XMLSchemaAttribute::attribute_w_default("random_roll_trans_mag", xsct_real, "Standard deviation for a 3D gaussian random translation", "1.0")
-		+ XMLSchemaAttribute("min_angle", xsct_real, "Minimum angle to roll about axis, requierd if random_roll is not set to true" )
+		+ XMLSchemaAttribute("min_angle", xsct_real, "Minimum angle to roll about axis, required if random_roll is not set to true" )
 		+ XMLSchemaAttribute("max_angle", xsct_real, "Maximum angle to roll about axis, required if random_roll is not set to true" )
 		+ XMLSchemaAttribute("axis", xsct_char, "Which axis (x, y, or z) to roll around");
+
+	core::pose::attributes_for_parse_resnum(attlist, "start_res", "First residue ID of object to roll");
+	core::pose::attributes_for_parse_resnum(attlist, "stop_res", "Last residue ID of object to roll");
 
 	AttributeList subelement_attributes;
 	rosetta_scripts::attributes_for_parse_xyz_vector( subelement_attributes );

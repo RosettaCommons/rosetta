@@ -14,6 +14,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/ResidueIndexDescription.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/filters/Filter.hh>
 #include <basic/Tracer.hh>
@@ -41,7 +42,7 @@ Torsion::Torsion() :
 	parent( "Torsion" ),
 	lower_( false ),
 	upper_( true ),
-	resnum_( 0 ),
+	resnum_( nullptr ),
 	torsion_( "" ),
 	task_factory_( /* NULL */ ),
 	task_factory_set_( false )
@@ -60,7 +61,7 @@ Torsion::apply(core::pose::Pose const & pose ) const
 		}
 		TR_database<<std::endl;
 		return true;
-	} else if ( resnum() == 0 ) { // just print all torsions
+	} else if ( resnum_ == nullptr ) { // just print all torsions
 		std::stringstream s("");
 		for ( core::Size i = 1; i <= pose.size(); ++i ) {
 			if ( i % 5 == 0 ) s << pose.residue( i ).name1()<<pose.pdb_info()->number( i )<<pose.pdb_info()->chain( i )<<'\t';
@@ -81,17 +82,18 @@ Torsion::apply(core::pose::Pose const & pose ) const
 		TR<<s.str()<<std::endl;
 		return true;
 	} else {
-		TR<<"Residue "<<pose.residue( resnum() ).name1()<<pose.pdb_info()->number( resnum() )<<pose.pdb_info()->chain( resnum() )<<'\t';
+		core::Size const resnum = resnum_->resolve_index( pose );
+		TR<<"Residue "<<pose.residue( resnum ).name1()<<pose.pdb_info()->number( resnum )<<pose.pdb_info()->chain( resnum )<<'\t';
 		if ( torsion() == "phi" || torsion() == "" ) {
-			core::Real const phi( pose.phi( resnum() ) );
+			core::Real const phi( pose.phi( resnum ) );
 			TR<<" phi "<<phi<<std::endl;
 			if ( torsion() == "phi" ) {
 				return( phi>=lower() && phi<=upper() );
 			}
 		}
 		if ( torsion() == "psi" || torsion() == "" ) {
-			core::Real const psi( pose.psi( resnum() ) );
-			TR<<" psi "<<pose.psi( resnum() )<<std::endl;
+			core::Real const psi( pose.psi( resnum ) );
+			TR<<" psi "<<pose.psi( resnum )<<std::endl;
 			if ( torsion() == "psi" ) {
 				return( psi>=lower() && psi<=upper() );
 			}
@@ -103,10 +105,11 @@ Torsion::apply(core::pose::Pose const & pose ) const
 
 core::Real
 Torsion::compute( core::pose::Pose const & p ) const{
-	if ( resnum() > 0 ) {
-		if ( torsion() == "phi" ) return p.phi( resnum() );
-		if ( torsion() == "psi" ) return p.psi( resnum() );
-		if ( torsion() == "omega" ) return p.omega( resnum() );
+	if ( resnum_ != nullptr ) {
+		core::Size resnum = resnum_->resolve_index( p );
+		if ( torsion() == "phi" ) return p.phi( resnum );
+		if ( torsion() == "psi" ) return p.psi( resnum );
+		if ( torsion() == "omega" ) return p.omega( resnum );
 	}
 	return 0.; // You gotta return something!
 }
@@ -128,7 +131,7 @@ Torsion::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
-	core::pose::Pose const & pose )
+	core::pose::Pose const & )
 {
 	task_factory_set( false );
 	if ( tag->hasOption( "task_operations" ) ) {
@@ -140,9 +143,9 @@ Torsion::parse_my_tag( utility::tag::TagCOP tag,
 	upper( tag->getOption< core::Real >( "upper", 0 ) );
 	torsion( tag->getOption< std::string >( "torsion", "" ) );
 	if ( tag->hasOption( "resnum" ) ) {
-		resnum( core::pose::parse_resnum( tag->getOption< std::string >( "resnum" ), pose ) );
-	} else resnum( 0 );
-	TR<<"resnum: "<<resnum()<<" lower "<<lower()<<" upper: "<<upper()<<std::endl;
+		resnum( core::pose::parse_resnum( tag->getOption< std::string >( "resnum" ) ) );
+	}
+	TR<<"resnum: "<<*resnum_<<" lower "<<lower()<<" upper: "<<upper()<<std::endl;
 }
 
 protocols::filters::FilterOP
@@ -170,6 +173,27 @@ void
 Torsion::task_factory( core::pack::task::TaskFactoryOP tf ){
 	task_factory_ = tf;
 }
+
+core::Size
+Torsion::resnum( core::pose::Pose const & p ) const {
+	if ( resnum_ == nullptr ) {
+		return 0;
+	} else {
+		return resnum_->resolve_index( p );
+	}
+}
+
+
+void
+Torsion::resnum( core::pose::ResidueIndexDescriptionCOP r ) {
+	resnum_ = r;
+}
+
+void
+Torsion::resnum( core::Size const r ) {
+	resnum_ = core::pose::make_rid_posenum( r );
+}
+
 
 std::string Torsion::name() const {
 	return class_name();

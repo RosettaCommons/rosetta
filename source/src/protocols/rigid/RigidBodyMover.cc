@@ -26,6 +26,7 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/selection.hh>
+#include <core/pose/ResidueIndexDescription.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/Stub.hh>
@@ -768,8 +769,8 @@ RigidBodyTiltMover::RigidBodyTiltMover():
 	RigidBodyMover(),
 	tilt1_mag_( 0.0 ),
 	tilt2_mag_( 0.0 ),
-	tilt1_center_( 0 ),
-	tilt2_center_( 0 ),
+	tilt1_center_( nullptr ),
+	tilt2_center_( nullptr ),
 	spin_axis_( 0.0 )
 {
 	moves::Mover::type( "RigidBodyTilt" );
@@ -787,8 +788,8 @@ RigidBodyTiltMover::RigidBodyTiltMover(
 	RigidBodyMover( rb_jump_in ),
 	tilt1_mag_(tilt1_mag_in),
 	tilt2_mag_(tilt2_mag_in),
-	tilt1_center_(tilt1_center_in),
-	tilt2_center_(tilt2_center_in),
+	tilt1_center_( core::pose::make_rid_posenum( tilt1_center_in ) ),
+	tilt2_center_( core::pose::make_rid_posenum( tilt2_center_in ) ),
 	spin_axis_( 0.0 )
 {
 	moves::Mover::type( "RigidBodyTilt" );
@@ -802,6 +803,16 @@ void
 RigidBodyTiltMover::spin_axis ( core::Vector const & spin_axis_in )
 {
 	spin_axis_ = spin_axis_in;
+}
+
+void
+RigidBodyTiltMover::tilt1_center(core::Size const tilt1_center_in ) {
+	tilt1_center_ = core::pose::make_rid_posenum( tilt1_center_in );
+}
+
+void
+RigidBodyTiltMover::tilt2_center(core::Size const tilt2_center_in ) {
+	tilt2_center_ = core::pose::make_rid_posenum( tilt2_center_in );
 }
 
 void
@@ -824,13 +835,17 @@ RigidBodyTiltMover::apply( core::pose::Pose & pose )
 
 	// tilt partner 1
 	if ( tilt1_mag_ > 0 ) {
-		core::Vector tilt_center( find_tilt_center(pose, tilt1_center_, partner1_center ) );
+		if ( tilt1_center_ == nullptr ) { utility_exit_with_message("Center for tilt1 not set in RigidBodyTiltMover"); }
+		core::Size const tilt1_center = tilt1_center_->resolve_index( pose );
+		core::Vector const tilt_center( find_tilt_center(pose, tilt1_center, partner1_center ) );
 		tilt( pose, "1", tilt1_mag_, tilt_center, spin_axis, partner1_center, c2n, upstream_stub, downstream_stub);
 	}
 
 	// tilt partner 2
 	if ( tilt2_mag_ > 0 ) {
-		core::Vector tilt_center( find_tilt_center(pose, tilt2_center_, partner2_center ) );
+		if ( tilt2_center_ == nullptr ) { utility_exit_with_message("Center for tilt2 not set in RigidBodyTiltMover"); }
+		core::Size const tilt2_center = tilt2_center_->resolve_index( pose );
+		core::Vector const tilt_center( find_tilt_center(pose, tilt2_center, partner2_center ) );
 		tilt( pose, "2", tilt2_mag_, tilt_center, spin_axis, partner2_center, dir_, upstream_stub, downstream_stub);
 	}
 }
@@ -888,7 +903,7 @@ RigidBodyTiltMover::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap &,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
-	core::pose::Pose const & pose )
+	core::pose::Pose const & )
 {
 	rb_jump( tag->getOption< int >( "jump", 1 ) );
 	core::Vector axis( tag->getOption< core::Real >( "x", 0.0 ), tag->getOption< core::Real >( "y", 0.0 ), tag->getOption< core::Real >( "z", 0.0 ));
@@ -896,17 +911,17 @@ RigidBodyTiltMover::parse_my_tag( utility::tag::TagCOP tag,
 	tilt1_mag( tag->getOption< core::Real >( "tilt1_mag", 0.0 )  );
 	tilt2_mag( tag->getOption< core::Real >( "tilt2_mag", 0.0 )  );
 	if ( tag->hasOption( "tilt1_center" ) ) {
-		core::Size tilt1_cent( core::pose::parse_resnum( tag->getOption< std::string >( "tilt1_center" ), pose ) );
+		core::pose::ResidueIndexDescriptionCOP tilt1_cent( core::pose::parse_resnum( tag->getOption< std::string >( "tilt1_center" ) ) );
 		TRBM.Debug << "Tilt 1 center " << tilt1_cent << std::endl;
-		if ( tilt1_cent == 0 ) {
+		if ( tilt1_cent == nullptr ) {
 			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "In RigidBodyTiltMover: can't understand value passed to tilt1_center.");
 		}
 		tilt1_center( tilt1_cent );
 	}
 	if ( tag->hasOption( "tilt2_center" ) ) {
-		core::Size tilt2_cent( core::pose::parse_resnum( tag->getOption< std::string >( "tilt2_center" ), pose ) );
+		core::pose::ResidueIndexDescriptionCOP tilt2_cent( core::pose::parse_resnum( tag->getOption< std::string >( "tilt2_center" ) ) );
 		TRBM.Debug << "Tilt 2 center " << tilt2_cent << std::endl;
-		if ( tilt2_cent == 0 ) {
+		if ( tilt2_cent == nullptr ) {
 			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "In RigidBodyTiltMover: can't understand value passed to tilt2_center.");
 		}
 		tilt2_center( tilt2_cent );

@@ -18,6 +18,7 @@
 // Project Headers
 #include <protocols/filters/Filter.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/pose/ResidueIndexDescription.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/protein_interface_design/filters/TorsionFilter.fwd.hh>
@@ -55,8 +56,9 @@ public:
 	void lower( core::Real const l ) { lower_ = l; }
 	core::Real upper() const{ return upper_; }
 	void upper( core::Real const u ) { upper_ = u; }
-	core::Size resnum() const{ return resnum_; }
-	void resnum( core::Size const r ) { resnum_ = r; }
+	core::Size resnum( core::pose::Pose const & ) const;
+	void resnum( core::pose::ResidueIndexDescriptionCOP r );
+	void resnum( core::Size const r );
 	void torsion( std::string const & t ) { torsion_ = t; }
 	std::string torsion() const { return torsion_; }
 	core::pack::task::TaskFactoryOP task_factory() const;
@@ -78,7 +80,7 @@ public:
 private:
 
 	core::Real lower_, upper_;
-	core::Size resnum_;
+	core::pose::ResidueIndexDescriptionCOP resnum_;
 	std::string torsion_;
 	core::pack::task::TaskFactoryOP task_factory_;
 	bool task_factory_set_;/// if you call this filter from within another routine, rather than through rosetta_scripts, and you want to use a task_factory, set this parameter to true before apply

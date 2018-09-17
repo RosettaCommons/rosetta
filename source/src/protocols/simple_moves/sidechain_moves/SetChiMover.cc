@@ -27,6 +27,7 @@
 #include <protocols/filters/Filter.fwd.hh> //Filters_map
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
+#include <core/pose/ResidueIndexDescription.hh>
 #include <basic/Tracer.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -68,17 +69,37 @@ SetChiMover::~SetChiMover() = default;
 SetChiMover::SetChiMover() :
 	parent(),
 	angle_( 0 ),
-	resnum_( 0 ),
+	resnum_( nullptr ),
 	chinum_( 0 )
 {}
 
-void SetChiMover::apply( Pose & pose ) {
-	runtime_assert( resnum() > 0 );
-	runtime_assert( resnum() <= pose.size() );
+core::Size
+SetChiMover::resnum( core::pose::Pose const & pose ) const {
+	if ( resnum_ == nullptr ) {
+		return 0;
+	} else {
+		return resnum_->resolve_index( pose );
+	}
+}
 
-	if ( chinum() <= pose.residue(resnum()).nchi() ) {
-		pose.set_chi(chinum(), resnum(), angle());
-		TR<<"Set chi"<<chinum()<<" of residue "<<resnum()<<" to "<<angle()<<std::endl;
+void
+SetChiMover::resnum( core::pose::ResidueIndexDescriptionCOP r ) {
+	resnum_ = r;
+}
+
+void
+SetChiMover::resnum( core::Size const r ) {
+	resnum_ = core::pose::make_rid_posenum( r );
+}
+
+void SetChiMover::apply( Pose & pose ) {
+	runtime_assert( resnum_ != nullptr );
+
+	core::Size const resnum = resnum_->resolve_index( pose );
+
+	if ( chinum() <= pose.residue(resnum).nchi() ) {
+		pose.set_chi(chinum(), resnum, angle());
+		TR<<"Set chi"<<chinum()<<" of residue "<<resnum<<" to "<<angle()<<std::endl;
 	}
 
 	pose.update_residue_neighbors();
@@ -93,10 +114,10 @@ void SetChiMover::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap &,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
-	Pose const & pose)
+	Pose const & )
 {
 	angle( tag->getOption< core::Real >( "angle" ) );
-	resnum( core::pose::parse_resnum( tag->getOption< std::string >( "resnum" ), pose ) );
+	resnum( core::pose::parse_resnum( tag->getOption< std::string >( "resnum" ) ) );
 	chinum( tag->getOption< core::Size >( "chinum" ) );
 
 }
@@ -116,9 +137,12 @@ void SetChiMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	AttributeList attlist;
 
 	attlist + XMLSchemaAttribute("angle", xsct_real, "Angle to which to set the chi." )
-		+ XMLSchemaAttribute("resnum", xsct_refpose_enabled_residue_number, "Residue with the chi in question." )
 		+ XMLSchemaAttribute("chinum", xsct_non_negative_integer, "Which chi is to be set." );
+
+	core::pose::attributes_for_parse_resnum( attlist, "resnum", "Residue with the chi in question." );
+
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "A mover to change one chi angle.", attlist );
+
 }
 
 std::string SetChiMoverCreator::keyname() const {

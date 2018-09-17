@@ -23,6 +23,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/selection.hh>
+#include <core/pose/ResidueIndexDescription.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/PDBInfo.hh>
@@ -130,8 +131,12 @@ void IdealizeHelicesMover::apply( core::pose::Pose & pose ) {
 
 	// prolines
 	utility::vector1< std::pair<int,int> > corrected_helices;
-	for ( core::uint i = 1; i <= helices_.size(); ++i ) {
-		core::uint start_i = helices_[i].first, stop_i = helices_[i].second;
+	for ( auto helix: helices_ ) {
+		debug_assert( helix.first != nullptr );
+		debug_assert( helix.second != nullptr );
+
+		core::uint start_i = helix.first->resolve_index(pose);
+		core::uint stop_i = helix.second->resolve_index(pose);
 
 		for ( core::uint j = start_i+2; j <= stop_i - 2; ++j ) {
 			if ( pose.residue(j).aa() == core::chemical::aa_pro ) {
@@ -330,7 +335,7 @@ void IdealizeHelicesMover::parse_my_tag(
 	basic::datacache::DataMap & data,
 	filters::Filters_map const & /*filters*/,
 	moves::Movers_map const & /*movers*/,
-	core::pose::Pose const & pose )
+	core::pose::Pose const & )
 {
 	if ( tag->hasOption( "scorefxn" ) ) {
 		std::string const scorefxn_name( tag->getOption<std::string>( "scorefxn" ) );
@@ -351,8 +356,8 @@ void IdealizeHelicesMover::parse_my_tag(
 			using namespace core::fragment;
 			std::string start_i = (*tag_it)->getOption<std::string>( "start" );
 			std::string end_i = (*tag_it)->getOption<std::string>( "end" );
-			auto startres = (int)core::pose::parse_resnum( start_i, pose );
-			auto stopres = (int)core::pose::parse_resnum( end_i, pose );
+			auto startres = core::pose::parse_resnum( start_i );
+			auto stopres = core::pose::parse_resnum( end_i );
 			helices_.push_back( std::make_pair( startres, stopres ) );
 		}
 	}

@@ -21,6 +21,7 @@
 
 // Core headers
 #include <core/pose/Pose.fwd.hh>
+#include <core/pose/ResidueIndexDescription.fwd.hh>
 
 // Basic/Utility headers
 #include <basic/datacache/DataMap.fwd.hh>
@@ -106,9 +107,9 @@ private:
 	std::string score_type_;
 
 	/// @brief Start evaluating fragments at this residue
-	core::Size start_res_;
+	core::pose::ResidueIndexDescriptionCOP start_res_;
 	/// @brief Stop evaluating fragments after this residue
-	core::Size end_res_;
+	core::pose::ResidueIndexDescriptionCOP end_res_;
 
 	/// @brief Size of fragments to evaluate
 	core::Size fragment_size_ = 9;

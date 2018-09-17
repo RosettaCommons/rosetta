@@ -589,8 +589,8 @@ SpliceInAntibody::adjust_n_ter_tail_length(core::pose::Pose & pose){
 		residue_diff =splicemanager.dofs().size()-(pose_cys_pos_[3]-(vl_vh_cut_+1));
 		llc.loop_start(vl_vh_cut_+1);
 		llc.loop_end(pose_cys_pos_[3]-1);
-		TR<<"loop_start:"<<llc.loop_start()<<std::endl;
-		TR<<"loop_end:"<<llc.loop_end()<<std::endl;
+		TR<<"loop_start:"<<llc.loop_start(pose)<<std::endl;
+		TR<<"loop_end:"<<llc.loop_end(pose)<<std::endl;
 	}
 	TR<<"Tail residue diff: "<<residue_diff<<std::endl;
 	tail_diff_=residue_diff;

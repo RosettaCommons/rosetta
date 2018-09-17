@@ -31,6 +31,13 @@
 
 // C++ headers
 #include <string>
+#include <iosfwd>
+
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
 
 namespace core {
 namespace pose {
@@ -41,6 +48,13 @@ class RID_Source : public utility::pointer::ReferenceCount
 {
 public:
 	virtual std::string source_string() const;
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -65,6 +79,17 @@ public:
 private:
 	std::string fname_;
 	Size linenum_ = 0;
+
+#ifdef    SERIALIZATION
+protected:
+	RID_FileSource() = default;
+	friend class cereal::access;
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 /// @brief a class which can represent one of many ways in which to describe a
@@ -80,8 +105,13 @@ public:
 	~ResidueIndexDescription() override;
 
 	/// @brief Turn the internal data into a pose index (in the range from 1 to total residue)
-	/// or throw an exception if the index cannot be resolved.
-	virtual Size resolve_index( core::pose::Pose const & p ) const = 0;
+	/// If it can't be converted, throw an exception, unless no_error is true.
+	/// If no_error is true, return 0 or a residue number outside the pose range.
+	virtual Size resolve_index( core::pose::Pose const & p, bool no_error = false ) const = 0;
+
+	/// @brief Output a description of the residue.
+	/// @details In general will give a form which can be added "in-line" (no line ending)
+	virtual void show( std::ostream & ) const = 0;
 
 	RID_SourceCOP get_source() const { return source_; }
 
@@ -90,9 +120,21 @@ protected:
 	/// @brief Provide a formatted string representing the source of the information (if any)
 	std::string source_string() const;
 
+	/// @brief Convenience function for triggering error conditions
+	core::Size do_error( bool no_error, std::string const & msg ) const;
+
 private:
 	RID_SourceCOP source_;
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
+
+std::ostream & operator<<( std::ostream & out, ResidueIndexDescription const & rid );
 
 /// @brief a class which represents a residue index as a literal, Rosetta/Pose numbered integer
 class ResidueIndexDescriptionPoseNum : public ResidueIndexDescription
@@ -110,11 +152,27 @@ public:
 
 	Size pose_index() const { return pose_index_; }
 
-	Size resolve_index( core::pose::Pose const & p ) const override;
+	Size resolve_index( core::pose::Pose const & p, bool no_error = false ) const override;
+
+	void show( std::ostream & ) const override;
 
 private:
 	Size  pose_index_;
+
+#ifdef    SERIALIZATION
+protected:
+	ResidueIndexDescriptionPoseNum() = default;
+	friend class cereal::access;
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
+
+/// @brief Convenience function for converting a Size (Pose numbered) into a ResidueIndexDescription
+ResidueIndexDescriptionCOP
+make_rid_posenum( core::Size resnum );
 
 /// @brief a class which represents a residue index as a PDB information (chain, resindex, insertion code)
 class ResidueIndexDescriptionPDB : public ResidueIndexDescription
@@ -147,12 +205,166 @@ public:
 	int resindex() const { return resindex_; }
 	char insertion_code() const { return insertion_code_; }
 
-	Size resolve_index( core::pose::Pose const & p ) const override;
+	Size resolve_index( core::pose::Pose const & p, bool no_error = false ) const override;
+
+	void show( std::ostream & ) const override;
 
 private:
 	char chain_;   // chain character
 	int resindex_;
 	char insertion_code_;
+
+#ifdef    SERIALIZATION
+protected:
+	ResidueIndexDescriptionPDB() = default;
+	friend class cereal::access;
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
+};
+
+/// @brief a class which represents a residue index as a reference-pose enabled information.
+class ResidueIndexDescriptionRefPose : public ResidueIndexDescription
+{
+public:
+	ResidueIndexDescriptionRefPose(
+		std::string const & refpose_name,
+		core::Size refpose_number,
+		signed long refpose_offset
+	):
+		refpose_name_(refpose_name),
+		refpose_number_(refpose_number),
+		refpose_offset_(refpose_offset)
+	{}
+
+	ResidueIndexDescriptionRefPose(
+		RID_SourceCOP source,
+		std::string const & refpose_name,
+		core::Size refpose_number,
+		signed long refpose_offset
+	):
+		ResidueIndexDescription(source),
+		refpose_name_(refpose_name),
+		refpose_number_(refpose_number),
+		refpose_offset_(refpose_offset)
+	{}
+
+	~ResidueIndexDescriptionRefPose() override;
+
+	std::string const & refpose_name() const { return refpose_name_; }
+	core::Size refpose_number() const { return refpose_number_; }
+	signed long refpose_offset() const { return refpose_offset_; }
+
+	Size resolve_index( core::pose::Pose const & p, bool no_error = false ) const override;
+
+	void show( std::ostream & ) const override;
+
+private:
+	std::string refpose_name_;
+	core::Size refpose_number_;
+	signed long refpose_offset_; //Must be signed!
+
+#ifdef    SERIALIZATION
+protected:
+	ResidueIndexDescriptionRefPose() = default;
+	friend class cereal::access;
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
+};
+
+/// @brief a class which represents the last residue in the Pose
+class ResidueIndexDescriptionLastResidue : public ResidueIndexDescription
+{
+public:
+	ResidueIndexDescriptionLastResidue()
+	{}
+
+	ResidueIndexDescriptionLastResidue(
+		RID_SourceCOP source
+	):
+		ResidueIndexDescription(source)
+	{}
+
+	~ResidueIndexDescriptionLastResidue() override;
+
+	Size resolve_index( core::pose::Pose const & p, bool no_error = false ) const override;
+
+	void show( std::ostream & ) const override;
+
+private:
+	// No data needed currently
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
+};
+
+/// @brief a class which represents the last residue in the Pose
+class ResidueIndexDescriptionChainEnd : public ResidueIndexDescription
+{
+public:
+	ResidueIndexDescriptionChainEnd(char chain, bool chain_start = false):
+		chain_start_( chain_start ),
+		chain_letter_( chain )
+	{}
+
+	ResidueIndexDescriptionChainEnd(
+		RID_SourceCOP source,
+		char chain,
+		bool chain_start = false
+	):
+		ResidueIndexDescription(source),
+		chain_start_( chain_start ),
+		chain_letter_( chain )
+	{}
+
+	ResidueIndexDescriptionChainEnd(core::Size chain, bool chain_start = false):
+		chain_start_( chain_start ),
+		chain_no_( chain )
+	{}
+
+	ResidueIndexDescriptionChainEnd(
+		RID_SourceCOP source,
+		core::Size chain,
+		bool chain_start = false
+	):
+		ResidueIndexDescription(source),
+		chain_start_( chain_start ),
+		chain_no_( chain )
+	{}
+
+	~ResidueIndexDescriptionChainEnd() override;
+
+	Size resolve_index( core::pose::Pose const & p, bool no_error = false ) const override;
+
+	void show( std::ostream & ) const override;
+
+private:
+	/// @brief Should it be the front end of the chain we return?
+	bool chain_start_ = false;
+	/// @brief The chain number to use.
+	/// If equal to -1, use chain letter instead.
+	core::Size chain_no_ = -1;
+	/// @brief If valid (non-null), identify chain by letter
+	char chain_letter_ = 0x00; // This is NUL, not the character '0'
+
+#ifdef    SERIALIZATION
+protected:
+	ResidueIndexDescriptionChainEnd() = default;
+	friend class cereal::access;
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 /// @brief Take the string "token" and try to interpret it as a PDB identifier in the form of an
@@ -168,8 +380,11 @@ parse_PDBnum_icode(
 	char & icode
 );
 
+}
+}
 
-}
-}
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_pose_ResidueIndexDescription )
+#endif // SERIALIZATION
 
 #endif

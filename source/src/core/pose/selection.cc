@@ -24,6 +24,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBPoseMap.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/pose/ResidueIndexDescription.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
 
@@ -47,23 +48,9 @@ using namespace core;
 using namespace std;
 using utility::vector1;
 
-
-
-/// @brief Extracts a residue number from a string.
-/// @detail Recognizes three forms of numbering:
-///   - Rosetta residue numbers (numbered sequentially from 1 to the last residue
-///     in the pose). These have the form [0-9]+
-///   - PDB numbers. These have the form [0-9]+[A-Z], where the trailing letter
-///     is the chain ID.
-///  - Reference pose numbers.  These have the form refpose([refpose name],[refpose number]).
-/// In addition, relative numbers are permitted (of the form +[number] or -[number]) in conjunction
-/// with reference pose numbering.  For example, one might say "refpose(state1,17)+3", which means
-/// three residues past the residue corresponding to residue 17 in the reference pose called "state1".
-/// @return the rosetta residue number for the string, or 0 upon an error
-core::Size
+ResidueIndexDescriptionCOP
 parse_resnum(
-	std::string const& resnum,
-	core::pose::Pose const& pose,
+	std::string const & resnum,
 	bool const check_for_refpose
 ) {
 	// Scope 1: Check whether this string is of the form
@@ -74,7 +61,7 @@ parse_resnum(
 		core::Size refpose_number(0);
 		signed long refpose_offset(0); //Must be signed!
 		if ( is_referencepose_number(resnum, refpose_name, refpose_number, refpose_offset) ) {
-			return get_resnumber_from_reference_pose(refpose_name, refpose_number, refpose_offset, pose);
+			return ResidueIndexDescriptionCOP( new ResidueIndexDescriptionRefPose(refpose_name, refpose_number, refpose_offset));
 		}
 	}
 	// Otherwise, this is NOT of that form, and we should parse it as a Rosetta
@@ -104,7 +91,7 @@ parse_resnum(
 	//Require that the whole string match, and that the chain be a single char
 	if ( chain_end != input_end || chain.size() > 1 || number.size() < 1 ) {
 		TR.Error << "Could not parse '" << resnum << "' into a residue number." << std::endl;
-		return Size(0);
+		return nullptr;
 	}
 
 	Size n(0);
@@ -112,12 +99,20 @@ parse_resnum(
 	ss >> n;
 	if ( chain.size() == 1 ) { // PDB Number
 		TR.Trace << "Interpreting " << n << chain << " as a pdb number." << std::endl;
-		pose::PDBInfoCOP info = pose.pdb_info();
-		runtime_assert(info != nullptr);
-		return info->pdb2pose( chain[0], n );
+		return ResidueIndexDescriptionCOP( new ResidueIndexDescriptionPDB( chain[0], n ) );
 	} else { // Rosetta Number
 		TR.Trace << "Interpreting " << n << " as a Rosetta residue number." << std::endl;
-		return n;
+		return core::pose::make_rid_posenum( n );
+	}
+}
+
+core::Size
+parse_resnum(std::string const & resnum, core::pose::Pose const & pose, bool const check_for_refpose) {
+	ResidueIndexDescriptionCOP rid( parse_resnum( resnum, check_for_refpose ) );
+	if ( rid == nullptr ) {
+		return 0;
+	} else {
+		return rid->resolve_index(pose,true);
 	}
 }
 
@@ -131,8 +126,8 @@ parse_resnum(
 /// @return the rosetta residue numbers for the string, or 0 upon an error
 utility::vector1<core::Size>
 parse_selection_block(
-	std::string const& sele,
-	core::pose::Pose const& pose
+	std::string const & sele,
+	core::pose::Pose const & pose
 ){
 	utility::vector1<Size> res;
 	if ( sele.size()==9&&sele.substr(0,6)=="name3=" ) {
@@ -143,7 +138,7 @@ parse_selection_block(
 			}
 		}
 	} else {
-		res.push_back(parse_resnum(sele,pose));
+		res.push_back(parse_resnum(sele)->resolve_index(pose,true));
 	}
 	return res;
 }
@@ -165,8 +160,8 @@ get_resnum_list(
 			// Handle residue range
 			vector1< string> const str_limits( utility::string_split( res , '-' ) );
 			if ( str_limits.size() == 2 ) {
-				core::Size const start ( parse_resnum( str_limits[1], pose ) );
-				core::Size const end ( parse_resnum( str_limits[2], pose ) );
+				core::Size const start ( parse_resnum( str_limits[1] )->resolve_index(pose,true) );
+				core::Size const end ( parse_resnum( str_limits[2] )->resolve_index(pose,true) );
 				if ( start == 0 || end == 0 ) {
 					utility_exit_with_message("Invalid residue range: " + res);
 				}
@@ -207,8 +202,8 @@ get_resnum_list_ordered(
 			// Handle residue range
 			vector1< string> const str_limits( utility::string_split( res , '-' ) );
 			if ( str_limits.size() == 2 ) {
-				core::Size const start ( parse_resnum( str_limits[1], pose ) );
-				core::Size const end ( parse_resnum( str_limits[2], pose ) );
+				core::Size const start ( parse_resnum( str_limits[1] )->resolve_index(pose,true) );
+				core::Size const end ( parse_resnum( str_limits[2] )->resolve_index(pose,true) );
 				if ( start == 0 || end == 0 ) {
 					utility_exit_with_message("Invalid residue range: " + res);
 				}

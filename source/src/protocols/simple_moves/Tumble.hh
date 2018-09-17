@@ -25,7 +25,7 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperation.fwd.hh>
 #include <protocols/simple_task_operations/InterfaceTaskOperation.fwd.hh>
-
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 #include <core/scoring/ScoreFunction.hh>
@@ -89,8 +89,9 @@ public:
 
 
 private:
-	utility::vector1< core::Size > residue_list_;
+	core::select::residue_selector::ResidueSelectorCOP residue_list_;
 };
+
 } // simple_moves
 } // protocols
 

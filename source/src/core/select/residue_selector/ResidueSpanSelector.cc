@@ -17,6 +17,7 @@
 
 // Package headers
 #include <core/select/residue_selector/util.hh>
+#include <core/pose/ResidueIndexDescription.hh>
 
 // Basic Headers
 #include <basic/datacache/DataMap.hh>
@@ -56,14 +57,22 @@ ResidueSpanSelector::ResidueSpanSelector( ResidueSpanSelector const & ) = defaul
 ResidueSelectorOP ResidueSpanSelector::clone() const { return ResidueSelectorOP( new ResidueSpanSelector(*this) ); }
 
 
+ResidueSpanSelector::ResidueSpanSelector(
+	core::pose::ResidueIndexDescriptionCOP start,
+	core::pose::ResidueIndexDescriptionCOP end
+):
+	start_( start ),
+	end_( end)
+{}
+
 ResidueSpanSelector::ResidueSpanSelector( std::string const & start_str, std::string const & end_str ):
-	start_str_( start_str ),
-	end_str_( end_str )
+	start_( core::pose::parse_resnum( start_str ) ),
+	end_( core::pose::parse_resnum( end_str ) )
 {}
 
 ResidueSpanSelector::ResidueSpanSelector( core::Size start, core::Size end ) :
-	start_str_( utility::to_string(start) ),
-	end_str_( utility::to_string(end) )
+	start_( core::pose::make_rid_posenum(start) ),
+	end_( core::pose::make_rid_posenum(end) )
 {}
 
 ResidueSpanSelector::~ResidueSpanSelector() = default;
@@ -71,33 +80,36 @@ ResidueSpanSelector::~ResidueSpanSelector() = default;
 ResidueSubset
 ResidueSpanSelector::apply( core::pose::Pose const & pose ) const
 {
-	debug_assert( !start_str_.empty() );
-	debug_assert( !end_str_.empty() );
+	debug_assert( start_ != nullptr );
+	debug_assert( end_ != nullptr );
 
-	ResidueSubset subset( pose.size(), false );
-
-	core::Size start( core::pose::parse_resnum( start_str_, pose ) );
-	core::Size end( core::pose::parse_resnum( end_str_, pose ) );
-
-	// The iteration here (iterating over pose residues and checking,
-	// rather than iterating from start to end) is deliberate.
 	// For backward-compatability reasons in parse_movemap_factory_legacy,
 	// we need to be robust for start/end ranges which are outside the normal pose size.
 
+	core::Size start = start_->resolve_index( pose, true ); // Don't error out for bad designations
+	core::Size end = end_->resolve_index( pose, true );
+
+	if ( start >= pose.size() ) {
+		TR.Warning << "Residue span start designation '" << *start_ << "' is outside the Pose!" << std::endl;
+		start = pose.size();
+	}
+	if ( end >= pose.size() ) {
+		TR.Warning << "Residue span end designation '" << *end_ << "' is outside the Pose!" << std::endl;
+		end = pose.size();
+	}
+
 	if ( start == 0 ) {
 		// Hard error so we don't inadvertantly expand the range.
+		TR.Error << "Residue span start designation '" << *start_ << "' can't be interpreted!" << std::endl;
 		utility_exit_with_message("Error reading start designation in Residue span.");
-	}
-	if ( start > pose.size() ) {
-		TR.Warning << "Residue span start designation '" << start_str_ << "' is outside the Pose!" << std::endl;
 	}
 	if ( end == 0 ) {
 		// Hard error so we don't inadvertantly expand the range.
+		TR.Error << "Residue span start designation '" << *end_ << "' can't be interpreted!" << std::endl;
 		utility_exit_with_message("Error reading end designation in Residue span.");
 	}
-	if ( end > pose.size() ) {
-		TR.Warning << "Residue span end designation '" << end_str_ << "' is outside the Pose!" << std::endl;
-	}
+
+	ResidueSubset subset( pose.size(), false );
 
 	for ( core::Size res(1); res <= subset.size(); ++res ) {
 		if ( (start <= res && res <= end ) ||
@@ -119,8 +131,8 @@ ResidueSpanSelector::parse_my_tag(
 
 void
 ResidueSpanSelector::set_span( std::string const & start, std::string const & end) {
-	start_str_ = start;
-	end_str_ = end;
+	start_ = core::pose::parse_resnum( start );
+	end_ = core::pose::parse_resnum( end );
 }
 
 std::string ResidueSpanSelector::get_name() const {
@@ -171,8 +183,8 @@ template< class Archive >
 void
 core::select::residue_selector::ResidueSpanSelector::save( Archive & arc ) const {
 	arc( cereal::base_class< core::select::residue_selector::ResidueSelector >( this ) );
-	arc( CEREAL_NVP( start_str_ ) ); // std::string
-	arc( CEREAL_NVP( end_str_ ) ); // std::string
+	arc( CEREAL_NVP( start_ ) ); // core::pose::ResidueIndexDescriptionCOP
+	arc( CEREAL_NVP( end_ ) ); // core::pose::ResidueIndexDescriptionCOP
 }
 
 /// @brief Automatically generated deserialization method
@@ -180,8 +192,11 @@ template< class Archive >
 void
 core::select::residue_selector::ResidueSpanSelector::load( Archive & arc ) {
 	arc( cereal::base_class< core::select::residue_selector::ResidueSelector >( this ) );
-	arc( start_str_ ); // std::string
-	arc( end_str_ ); // std::string
+	core::pose::ResidueIndexDescriptionOP start, end;
+	arc( start ); // core::pose::ResidueIndexDescriptionCOP
+	start_ = start;
+	arc( end ); // core::pose::ResidueIndexDescriptionCOP
+	end_ = end;
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::select::residue_selector::ResidueSpanSelector );

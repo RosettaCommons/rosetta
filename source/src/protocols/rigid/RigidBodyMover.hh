@@ -27,6 +27,7 @@
 // Project headers
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/pose/ResidueIndexDescription.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/kinematics/Stub.fwd.hh>
 #include <core/conformation/symmetry/SymDof.hh>
@@ -422,8 +423,10 @@ public:
 	void spin_axis( core::Vector const & spin_axis_in );
 	void tilt1_mag(core::Real const tilt1_mag_in ){tilt1_mag_ =tilt1_mag_in;}
 	void tilt2_mag(core::Real const tilt2_mag_in ){tilt2_mag_ =tilt2_mag_in;}
-	void tilt1_center(core::Size const tilt1_center_in ){tilt1_center_ =tilt1_center_in;}
-	void tilt2_center(core::Size const tilt2_center_in ){tilt2_center_ =tilt2_center_in;}
+	void tilt1_center(core::Size const tilt1_center_in );
+	void tilt2_center(core::Size const tilt2_center_in );
+	void tilt1_center(core::pose::ResidueIndexDescriptionCOP tilt1_center_in ){tilt1_center_ =tilt1_center_in;}
+	void tilt2_center(core::pose::ResidueIndexDescriptionCOP tilt2_center_in ){tilt2_center_ =tilt2_center_in;}
 
 	void apply( core::pose::Pose & pose ) override;
 
@@ -471,8 +474,8 @@ private:
 protected:
 	core::Real tilt1_mag_;
 	core::Real tilt2_mag_;
-	core::Size tilt1_center_;
-	core::Size tilt2_center_;
+	core::pose::ResidueIndexDescriptionCOP tilt1_center_;
+	core::pose::ResidueIndexDescriptionCOP tilt2_center_;
 	core::Vector spin_axis_;
 
 };  // class RigidBodyTiltMover

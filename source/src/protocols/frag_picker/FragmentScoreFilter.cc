@@ -23,6 +23,8 @@
 #include <core/sequence/util.hh>
 
 #include <core/pose/Pose.hh>
+#include <core/pose/ResidueIndexDescription.hh>
+#include <core/pose/selection.hh>
 #include <core/conformation/Residue.hh>
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
@@ -76,13 +78,17 @@ FragmentScoreFilter::parse_my_tag(
 	basic::datacache::DataMap & ,
 	protocols::filters::Filters_map const & ,
 	protocols::moves::Movers_map const & ,
-	core::pose::Pose const & pose )
+	core::pose::Pose const & )
 {
 	threshold_ = tag->getOption< core::Real >("threshold",1);
 	direction_ = tag->getOption< std::string >("direction","-");
 	score_type_ = tag->getOption< std::string >("scoretype","FragmentCrmsd");
-	start_res_ = tag->getOption< core::Size >("start_res",1);
-	end_res_ = tag->getOption< core::Size >("end_res",pose.size());
+	if ( tag->hasOption( "start_res" ) ) {
+		start_res_ = core::pose::parse_resnum( tag->getOption< std::string >("start_res") );
+	}
+	if ( tag->hasOption( "end_res" ) ) {
+		end_res_ = core::pose::parse_resnum( tag->getOption< std::string >("end_res") );
+	}
 	compute_ = tag->getOption< std::string >("compute","maximum");
 	fragment_size_ = tag->getOption< core::Size >("fragment_size",9);
 	sort_by_ = tag->getOption< std::string >("sort_by", "FragmentCrmsd" );
@@ -391,19 +397,28 @@ void FragmentScoreFilter::setup_fragment_picker( core::pose::PoseOP const pose_c
 /// @brief Compute filter value
 core::Real FragmentScoreFilter::compute( core::pose::Pose const pose ) const
 {
+	core::Size start_res_orig = 1;
+	if ( start_res_ != nullptr ) {
+		start_res_orig = start_res_->resolve_index( pose );
+	}
+	core::Size end_res_orig = pose.size();
+	if ( end_res_ != nullptr ) {
+		end_res_orig = end_res_->resolve_index( pose );
+	}
+
 	// Set up pose for chain of interest only
-	if ( pose.chain(start_res_) != pose.chain(end_res_) ) {
+	if ( pose.chain(start_res_orig) != pose.chain(end_res_orig) ) {
 		utility_exit_with_message( "Start and end residues must be on the same chain. To score a whole pose, use a separate filter for each chain." );
 	}
-	core::pose::PoseOP pose_chain_OP = pose.split_by_chain( pose.chain( start_res_ ) );
+	core::pose::PoseOP pose_chain_OP = pose.split_by_chain( pose.chain( start_res_orig ) );
 	core::Size residue_adjust = 0;
-	for ( core::Size i = 1; i < pose.chain( start_res_ ); i++ ) {
+	for ( core::Size i = 1; i < pose.chain( start_res_orig ); i++ ) {
 		TR.Debug << "The size of chain " << i << " is " << pose.chain_sequence( i ).size() << std::endl;
 		residue_adjust += pose.chain_sequence( i ).size();
 	}
-	TR.Debug << "Adjusting start and end residues by " << residue_adjust << ", with initial start and end residues of " << start_res_ << " and " << end_res_ << std::endl;
-	core::Size start_res = start_res_ - residue_adjust;
-	core::Size end_res = end_res_ - residue_adjust;
+	TR.Debug << "Adjusting start and end residues by " << residue_adjust << ", with initial start and end residues of " << start_res_orig << " and " << end_res_orig << std::endl;
+	core::Size start_res = start_res_orig - residue_adjust;
+	core::Size end_res = end_res_orig - residue_adjust;
 	TR.Debug << "Start residue is now " << start_res << " and end residue is " << end_res << std::endl;
 
 	// Get secondary structure from pose
@@ -534,7 +549,7 @@ core::Real FragmentScoreFilter::compute( core::pose::Pose const pose ) const
 		for ( core::Real score : scores ) {
 			core::conformation::Residue residue = pose_chain_OP->residue(index);
 			std::string restype = residue.name3();
-			std::string resnum = utility::to_string(index - start_res + start_res_);
+			std::string resnum = utility::to_string(index - start_res + start_res_orig);
 			std::string temp_str = "FragmentScoreFilter_metric " + restype + " " + resnum + " " + score_type_ + ": " + utility::to_string(score);
 			TR.Info << temp_str << std::endl;
 			oss << temp_str << std::endl;
@@ -543,10 +558,10 @@ core::Real FragmentScoreFilter::compute( core::pose::Pose const pose ) const
 		runtime_assert( index == end_res );
 
 		core::Real min_score = *std::min_element( scores.begin(), scores.end() );
-		core::Size min_residue = std::distance( scores.begin(), std::min_element( scores.begin(), scores.end() ) ) + start_res_;
+		core::Size min_residue = std::distance( scores.begin(), std::min_element( scores.begin(), scores.end() ) ) + start_res_orig;
 
 		core::Real max_score = *std::max_element( scores.begin(), scores.end() );
-		core::Size max_residue = std::distance( scores.begin(), std::max_element( scores.begin(), scores.end() ) ) + start_res_;
+		core::Size max_residue = std::distance( scores.begin(), std::max_element( scores.begin(), scores.end() ) ) + start_res_orig;
 
 		core::Real average_score = std::accumulate( scores.begin(), scores.end(), 0.0 ) / scores.size();
 
@@ -638,8 +653,6 @@ void FragmentScoreFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 	attlist + XMLSchemaAttribute::attribute_w_default( "scoretype", xs_string, "Which attribute to filter on. See FragmentScoreManager::register_score_maker for options.", "FragmentCrmsd" )
 		+ XMLSchemaAttribute::attribute_w_default( "threshold", xsct_real, "Filter threshold.", "6" )
 		+ XMLSchemaAttribute::attribute_w_default( "direction", xs_string, "Choose whether you want outputs to be greater or less than the threshold. Right now the only options are greater than ('+') or less than ('-'); if you put anything else, all will pass.", "-" )
-		+ XMLSchemaAttribute("start_res",xsct_non_negative_integer, "The N-terminal residue of the piece of backbone to be analyzed. ")
-		+ XMLSchemaAttribute("end_res",xsct_non_negative_integer, "The C-terminal residue of the piece of backbone to be analyzed. ")
 		+ XMLSchemaAttribute::attribute_w_default("compute",xs_string,"How to calculate filter value. Right now the options are average, maximum, or minimum of the scores collected.","average")
 		+ XMLSchemaAttribute::attribute_w_default("fragment_size",xsct_non_negative_integer, "Size of fragments to be computed (default 3)", "3")
 		+ XMLSchemaAttribute::attribute_w_default("sort_by", xs_string, "Choose how to pick the best fragment from the final list of candidates at each position. Default is by FragmentCrmsd, and RamaScore, SecondarySimilarity, and TotalScore are enabled by default. You can use any other fragment score if you include it via a weights file by using the command line option \"-frags::scoring::config\"", "FragmentCrmsd")
@@ -656,6 +669,9 @@ void FragmentScoreFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 		+ XMLSchemaAttribute::attribute_w_default("n_frags",xsct_non_negative_integer, "Number of fragments to be picked (default 200)", "200")
 		+ XMLSchemaAttribute::attribute_w_default("n_candidates", xsct_non_negative_integer, "Number of candidates per position (default 1000)","1000")
 		+ XMLSchemaAttribute::attribute_w_default("print_to_pdb", xs_boolean, "Prints scores for all residues analyzed to the pdb.", "false");
+
+	core::pose::attributes_for_parse_resnum( attlist, "start_res", "The N-terminal residue of the piece of backbone to be analyzed.");
+	core::pose::attributes_for_parse_resnum( attlist, "end_res", "The C-terminal residue of the piece of backbone to be analyzed. ");
 
 	rosetta_scripts::attributes_for_parse_task_operations( attlist );
 

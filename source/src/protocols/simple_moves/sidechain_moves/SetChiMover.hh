@@ -20,6 +20,7 @@
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
+#include <core/pose/ResidueIndexDescription.fwd.hh>
 
 //parsing
 #include <utility/tag/Tag.fwd.hh>
@@ -55,10 +56,11 @@ public:
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & ) override;
 	core::Real angle() const { return angle_; }
-	core::Size resnum() const { return resnum_; }
+	core::Size resnum( core::pose::Pose const & pose ) const;
 	core::Size chinum() const { return chinum_; }
 	void angle( core::Real const a ){ angle_ = a; }
-	void resnum( core::Size const r ){ resnum_ = r; }
+	void resnum( core::pose::ResidueIndexDescriptionCOP r );
+	void resnum( core::Size const r );
 	void chinum( core::Size const c ){ chinum_ = c; }
 
 	std::string
@@ -75,7 +77,7 @@ public:
 
 private:
 	core::Real angle_;
-	core::Size resnum_;
+	core::pose::ResidueIndexDescriptionCOP resnum_;
 	core::Size chinum_;
 };
 

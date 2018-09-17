@@ -84,7 +84,7 @@ LoopFromFileData::LoopFromFileData(
 {}
 
 core::pose::ResidueIndexDescriptionCOP
-make_RIDliteral( std::string const & fname, core::Size lineno, core::Size resnum ) {
+make_rid_posenum( std::string const & fname, core::Size lineno, core::Size resnum ) {
 	using namespace core::pose;
 	RID_SourceCOP source( new RID_FileSource( fname, lineno ) );
 	ResidueIndexDescriptionCOP rid( new ResidueIndexDescriptionPoseNum( source, resnum ) );
@@ -97,9 +97,9 @@ LoopFromFileData::LoopFromFileData(
 	std::string const & fname,
 	bool prohibit_single_residue_loops
 ) :
-	start_res_( make_RIDliteral( fname, 0, loop.start ) ),
-	cutpoint_res_( make_RIDliteral( fname, 0, loop.cut ) ),
-	end_res_( make_RIDliteral( fname, 0, loop.stop ) ),
+	start_res_( make_rid_posenum( fname, 0, loop.start ) ),
+	cutpoint_res_( make_rid_posenum( fname, 0, loop.cut ) ),
+	end_res_( make_rid_posenum( fname, 0, loop.stop ) ),
 	skip_rate_( loop.skip_rate ),
 	extended_( loop.extended ),
 	prohibit_single_residue_loops_( prohibit_single_residue_loops )
@@ -117,9 +117,9 @@ LoopFromFileData::resolve_as_serialized_loop_from_pose( core::pose::Pose const &
 	debug_assert( cutpoint_res_ );
 	debug_assert( end_res_ );
 
-	core::Size const start_res_index    = start_res_->resolve_index(    pose );
-	core::Size const cutpoint_res_index = cutpoint_res_->resolve_index( pose );
-	core::Size const end_res_index      = end_res_->resolve_index(      pose );
+	core::Size const start_res_index    = start_res_->resolve_index(    pose, true );
+	core::Size const cutpoint_res_index = cutpoint_res_->resolve_index( pose, true );
+	core::Size const end_res_index      = end_res_->resolve_index(      pose, true );
 
 	std::string fname("");
 	core::Size lineno(0);

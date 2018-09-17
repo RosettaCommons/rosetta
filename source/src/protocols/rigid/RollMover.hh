@@ -17,6 +17,7 @@
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/moves/Mover.hh>
+#include <core/pose/ResidueIndexDescription.hh>
 
 // Utility Headers
 #include <core/types.hh>
@@ -80,12 +81,14 @@ public:
 
 private:
 
-	core::Size start_res_;
-	core::Size stop_res_;
+	core::pose::ResidueIndexDescriptionCOP start_res_;
+	core::pose::ResidueIndexDescriptionCOP stop_res_;
 	core::Real angle_;
 	core::Real min_angle_;
 	core::Real max_angle_;
 	numeric::xyzVector< core::Real > axis_;
+	/// @brief If true, overwrite the translate_ vector with the apply() Pose's center of mass.
+	bool use_com_ = false;
 	numeric::xyzVector< core::Real > translate_;
 	bool random_roll_;
 	core::Real random_roll_angle_;

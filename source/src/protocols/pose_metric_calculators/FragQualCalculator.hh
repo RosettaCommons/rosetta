@@ -21,6 +21,7 @@
 #include <basic/MetricValue.fwd.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/pose/ResidueIndexDescription.fwd.hh>
 #include <core/fragment/FragSet.fwd.hh>
 
 // Utility headers
@@ -100,10 +101,10 @@ public:// mutator
 	void set_region( Size const val1, Size const val2 );
 
 	/// @brief
-	void begin( Size const begin ) { begin_ = begin; }
+	void begin( Size const begin );
 
 	/// @brief
-	void end( Size const end ) { end_ = end; }
+	void end( Size const end );
 
 
 public:
@@ -144,10 +145,10 @@ private:
 	FragSetOP frag_;
 
 	/// @brief
-	Size begin_;
+	core::pose::ResidueIndexDescriptionCOP begin_;
 
 	/// @brief
-	Size end_;
+	core::pose::ResidueIndexDescriptionCOP end_;
 
 	/// @brief
 	bool verbose_;

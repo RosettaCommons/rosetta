@@ -18,6 +18,7 @@
 #include <protocols/calc_taskop_movers/ForceDisulfidesMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/pose/ResidueIndexDescription.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <utility/vector1.hh>
@@ -42,7 +43,7 @@ public:
 	protocols::moves::MoverOP fresh_instance() const override;
 
 	void disulfides( utility::vector1< std::pair< core::Size, core::Size > > );
-	utility::vector1< std::pair< core::Size, core::Size > > disulfides() const;
+	utility::vector1< std::pair< core::Size, core::Size > > disulfides( core::pose::Pose const & pose ) const;
 	core::scoring::ScoreFunctionOP scorefxn() const;
 	void scorefxn( core::scoring::ScoreFunctionOP s );
 
@@ -58,7 +59,8 @@ public:
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
-	utility::vector1< std::pair< core::Size, core::Size > > disulfides_;
+
+	utility::vector1< std::pair< core::pose::ResidueIndexDescriptionCOP, core::pose::ResidueIndexDescriptionCOP > > disulfides_;
 	core::scoring::ScoreFunctionOP scorefxn_;// for repacking
 };
 

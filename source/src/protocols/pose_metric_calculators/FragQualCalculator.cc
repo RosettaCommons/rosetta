@@ -40,6 +40,8 @@
 #include <ObjexxFCL/format.hh>
 
 #include <core/chemical/ResidueType.hh>
+#include <core/pose/ResidueIndexDescription.hh>
+#include <core/pose/selection.hh>
 #include <core/id/types.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
@@ -72,8 +74,8 @@ FragQualCalculator::FragQualCalculator():
 	total_goodfrags_( 0 ),
 	coverage_( 0 ),
 	frag_( /* NULL */ ),
-	begin_( 0 ),
-	end_( 0 ),
+	begin_( nullptr ),
+	end_( nullptr ),
 	verbose_( false )
 {
 	goodfrags_.clear();
@@ -89,26 +91,15 @@ FragQualCalculator::FragQualCalculator(
 	total_goodfrags_( 0 ),
 	coverage_( 0 ),
 	frag_(std::move( frag )),
-	begin_( 0 ),
-	end_( 0 ),
+	begin_( nullptr ),
+	end_( nullptr ),
 	verbose_( false )
 {
 	goodfrags_.clear();
 }
 
 /// @brief copy constructor
-FragQualCalculator::FragQualCalculator( FragQualCalculator const & rval ):
-	Super(),
-	rmsd_cutoff_goodfrag_( rval.rmsd_cutoff_goodfrag_ ),
-	ratio_cutoff_goodfrag_( rval.ratio_cutoff_goodfrag_ ),
-	total_goodfrags_( rval.total_goodfrags_ ),
-	coverage_( rval.coverage_ ),
-	goodfrags_( rval.goodfrags_ ),
-	frag_( rval.frag_ ),
-	begin_( rval.begin_ ),
-	end_( rval.end_ ),
-	verbose_( rval.verbose_ )
-{}
+FragQualCalculator::FragQualCalculator( FragQualCalculator const & ) = default;
 
 /// @brief destructor
 FragQualCalculator::~FragQualCalculator()= default;
@@ -139,8 +130,20 @@ FragQualCalculator::ratio_cutoff( Real const & val )
 void
 FragQualCalculator::set_region( Size const val1, Size const val2 )
 {
-	begin_ = val1;
-	end_ = val2;
+	begin_ = core::pose::make_rid_posenum( val1 );
+	end_ = core::pose::make_rid_posenum( val2 );
+}
+
+void
+FragQualCalculator::begin( Size const begin )
+{
+	begin_ = core::pose::make_rid_posenum( begin );
+}
+
+void
+FragQualCalculator::end( Size const end )
+{
+	end_ = core::pose::make_rid_posenum( end );
 }
 
 /// @brief
@@ -191,8 +194,9 @@ FragQualCalculator::recompute( Pose const & pose )
 	using core::fragment::ConstFrameIterator;
 
 	// initialization
-	if ( begin_ == 0 ) begin_ = 1;
-	if ( end_ == 0 ) end_ = pose.size();
+	core::Size begin( 1 ), end( pose.size() );
+	if ( begin_ != nullptr ) begin = begin_->resolve_index( pose );
+	if ( end_ != nullptr ) end = end_->resolve_index( pose );
 	total_goodfrags_ = 0;
 	coverage_ = 0;
 
@@ -212,7 +216,7 @@ FragQualCalculator::recompute( Pose const & pose )
 		Size const start ( frame->start() );
 		runtime_assert( start <= pose.size() );
 
-		if ( begin_ > start || end_ < start ) continue;
+		if ( begin > start || end < start ) continue;
 		frag_region[ start ] = true;
 
 		for ( Size i=1; i<=frame->nr_frags(); i++ ) {
@@ -258,13 +262,17 @@ FragQualCalculator::parse_my_tag(
 	basic::datacache::DataMap & data,
 	Filters_map const &,
 	Movers_map const &,
-	Pose const & pose )
+	Pose const & )
 {
 	rmsd_cutoff_goodfrag_ = tag->getOption<Real>( "rmsd_cutoff", 1.0 );
 	ratio_cutoff_goodfrag_ = tag->getOption<Real>( "ratio_cutoff", 0.3 );
 
-	begin_ = tag->getOption<Size>( "begin", 1 );
-	end_ = tag->getOption<Size>( "end", pose.size() );
+	begin_ = core::pose::parse_resnum( tag->getOption<std::string>( "begin", "1" ) );
+	if ( tag->hasOption( "end" ) ) {
+		end_ = core::pose::parse_resnum( tag->getOption<std::string>( "end" ) );
+	} else {
+		end_ = core::pose::ResidueIndexDescriptionCOP( new core::pose::ResidueIndexDescriptionLastResidue );
+	}
 
 	String const fset_string ( tag->getOption<String>( "frag", "" ) );
 	runtime_assert( ! fset_string.empty() );
@@ -295,8 +303,8 @@ protocols::pose_metric_calculators::FragQualCalculator::save( Archive & arc ) co
 	arc( CEREAL_NVP( coverage_ ) ); // Real
 	arc( CEREAL_NVP( goodfrags_ ) ); // utility::vector1<Size>
 	arc( CEREAL_NVP( frag_ ) ); // FragSetOP
-	arc( CEREAL_NVP( begin_ ) ); // Size
-	arc( CEREAL_NVP( end_ ) ); // Size
+	arc( CEREAL_NVP( begin_ ) ); // ResidueIndexDescriptionCOP
+	arc( CEREAL_NVP( end_ ) ); // ResidueIndexDescriptionCOP
 	arc( CEREAL_NVP( verbose_ ) ); // _Bool
 }
 
@@ -311,8 +319,11 @@ protocols::pose_metric_calculators::FragQualCalculator::load( Archive & arc ) {
 	arc( coverage_ ); // Real
 	arc( goodfrags_ ); // utility::vector1<Size>
 	arc( frag_ ); // FragSetOP
-	arc( begin_ ); // Size
-	arc( end_ ); // Size
+	core::pose::ResidueIndexDescriptionOP begin, end;
+	arc( begin ); // Size
+	begin_ = begin;
+	arc( end ); // Size
+	end_ = end;
 	arc( verbose_ ); // _Bool
 }
 

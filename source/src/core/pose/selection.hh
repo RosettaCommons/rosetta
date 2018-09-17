@@ -18,6 +18,7 @@
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
+#include <core/pose/ResidueIndexDescription.fwd.hh>
 #include <core/types.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 // Utility Headers
@@ -34,12 +35,29 @@
 namespace core {
 namespace pose {
 
+/// @brief Creates a ResidueIndexDescription from a string
+/// @detail Recognizes three forms of numbering:
+///   - Rosetta residue numbers (numbered sequentially from 1 to the last residue
+///     in the pose). These have the form [0-9]+
+///   - PDB numbers. These have the form [0-9]+[A-Z], where the trailing letter
+///     is the chain ID.
+///     IMPORTANT: This does not currently handle insertion codes.
+///  - Reference pose numbers.  These have the form refpose([refpose name], [refpose number]).
+/// In addition, relative numbers are permitted (of the form +[number] or -[number]) in conjunction
+/// with reference pose numbering.  For example, one might say "refpose(state1,17)+3", which means
+/// three residues past the residue correpsonding to residue 17 in the reference pose called "state1".
+/// @return a ResidueIndexDescription that will yield a residue number when applied to pose.
+///  Returns a nullptr if there's an error with parsing the string
+ResidueIndexDescriptionCOP
+parse_resnum(std::string const& resnum, bool const check_for_refpose=false);
+
 /// @brief Extracts a residue number from a string.
 /// @detail Recognizes three forms of numbering:
 ///   - Rosetta residue numbers (numbered sequentially from 1 to the last residue
 ///     in the pose). These have the form [0-9]+
 ///   - PDB numbers. These have the form [0-9]+[A-Z], where the trailing letter
 ///     is the chain ID.
+///     IMPORTANT: This does not currently handle insertion codes.
 ///  - Reference pose numbers.  These have the form refpose([refpose name], [refpose number]).
 /// In addition, relative numbers are permitted (of the form +[number] or -[number]) in conjunction
 /// with reference pose numbering.  For example, one might say "refpose(state1,17)+3", which means

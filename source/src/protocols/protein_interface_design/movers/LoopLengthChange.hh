@@ -15,6 +15,7 @@
 #include <protocols/protein_interface_design/movers/LoopLengthChange.fwd.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/pose/ResidueIndexDescription.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>
@@ -39,13 +40,16 @@ public:
 	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new LoopLengthChange ); }
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 	virtual ~LoopLengthChange();
+	void loop_start( core::pose::ResidueIndexDescriptionCOP loop_start );
+	void loop_end( core::pose::ResidueIndexDescriptionCOP loop_end );
+	void loop_cut( core::pose::ResidueIndexDescriptionCOP loop_cut );
 	void loop_start( core::Size const loop_start );
 	void loop_end( core::Size const loop_end );
 	void loop_cut( core::Size const loop_cut );
 	void restype_char( char const restype_char );
-	core::Size loop_start() const;
-	core::Size loop_end() const;
-	core::Size loop_cut() const;
+	core::Size loop_start( core::pose::Pose const & ) const;
+	core::Size loop_end(core::pose::Pose const & ) const;
+	core::Size loop_cut(core::pose::Pose const & ) const;
 	char restype_char() const;
 	void delta( int const d );
 	void tail( bool b );
@@ -65,7 +69,7 @@ public:
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
-	core::Size loop_start_, loop_end_, loop_cut_;
+	core::pose::ResidueIndexDescriptionCOP loop_start_, loop_end_, loop_cut_;
 	int delta_; // delta_: by how much to change
 	bool tail_segment_; //if the tail
 	char restype_char_ = 'A'; //What residue type should be inserted if delta is positive?  Assuming canonical 20.

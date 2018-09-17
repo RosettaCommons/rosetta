@@ -34,6 +34,7 @@
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/ResidueIndexDescription.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <protocols/task_operations/DesignAroundOperation.hh>
@@ -71,7 +72,9 @@ ForceDisulfidesMover::fresh_instance() const
 void
 ForceDisulfidesMover::apply( Pose & pose ) {
 	TR<<"Fixing disulfides"<<std::endl;
-	pose.conformation().fix_disulfides( disulfides_ );
+	utility::vector1< std::pair< core::Size, core::Size > > parsed_disulfides( disulfides(pose) );
+
+	pose.conformation().fix_disulfides( parsed_disulfides );
 
 	using namespace core::pack::task;
 	using namespace protocols::task_operations;
@@ -81,9 +84,9 @@ ForceDisulfidesMover::apply( Pose & pose ) {
 	DesignAroundOperationOP dao( new DesignAroundOperation );
 	dao->design_shell( 0.0 );
 	dao->repack_shell( 6.0 );
-	for ( utility::vector1< std::pair< core::Size, core::Size > > ::const_iterator pair = disulfides_.begin(); pair != disulfides_.end(); ++pair ) {
-		dao->include_residue( pair->first );
-		dao->include_residue( pair->second );
+	for ( auto disulfide_pair: parsed_disulfides ) {
+		dao->include_residue( disulfide_pair.first );
+		dao->include_residue( disulfide_pair.second );
 	}
 	TaskFactoryOP tf( new TaskFactory );
 	tf->push_back( dao );
@@ -116,7 +119,7 @@ ForceDisulfidesMover::parse_my_tag(
 	basic::datacache::DataMap &data,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
-	core::pose::Pose const & pose
+	core::pose::Pose const &
 )
 {
 	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
@@ -125,16 +128,23 @@ ForceDisulfidesMover::parse_my_tag(
 	for ( std::string const & residue_pair : residue_pairs ) {
 		utility::vector1< std::string > const residues( utility::string_split( residue_pair, ':' ));
 		runtime_assert( residues.size() == 2);
-		core::Size const res1( core::pose::parse_resnum( residues[ 1 ], pose ) );
-		core::Size const res2( core::pose::parse_resnum( residues[ 2 ], pose ) );
-		disulfides_.push_back( std::pair< core::Size, core::Size >( res1, res2 ) );
+		core::pose::ResidueIndexDescriptionCOP res1( core::pose::parse_resnum( residues[ 1 ] ) );
+		core::pose::ResidueIndexDescriptionCOP res2( core::pose::parse_resnum( residues[ 2 ] ) );
+		disulfides_.push_back( std::make_pair( res1, res2 ) );
 		TR<<res1<<':'<<res2<<',';
 	}
 	TR<<std::endl;
 }
 
 void
-ForceDisulfidesMover::disulfides( utility::vector1< std::pair < core::Size, core::Size >  > d ){ disulfides_ = d; }
+ForceDisulfidesMover::disulfides( utility::vector1< std::pair < core::Size, core::Size >  > d ){
+	disulfides_.clear();
+	for ( auto size_pair: d ) {
+		core::pose::ResidueIndexDescriptionCOP first( core::pose::make_rid_posenum( size_pair.first ) );
+		core::pose::ResidueIndexDescriptionCOP second( core::pose::make_rid_posenum( size_pair.first ) );
+		disulfides_.push_back( std::make_pair( first, second ) );
+	}
+}
 
 std::string ForceDisulfidesMover::get_name() const {
 	return mover_name();
@@ -179,7 +189,17 @@ void ForceDisulfidesMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDef
 
 
 utility::vector1< std::pair< core::Size, core::Size > >
-ForceDisulfidesMover::disulfides() const { return disulfides_; }
+ForceDisulfidesMover::disulfides( core::pose::Pose const & pose ) const {
+	utility::vector1< std::pair< core::Size, core::Size > > disulfides;
+	for ( auto d: disulfides_ ) {
+		debug_assert( d.first != nullptr );
+		debug_assert( d.second != nullptr );
+		core::Size first( d.first->resolve_index( pose ) );
+		core::Size second( d.second->resolve_index( pose ) );
+		disulfides.push_back( std::make_pair( first, second ) );
+	}
+	return disulfides;
+}
 
 } // moves
 } // protocols

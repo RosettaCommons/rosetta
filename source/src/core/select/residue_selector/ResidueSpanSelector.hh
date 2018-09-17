@@ -21,6 +21,7 @@
 #include <core/types.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/ResidueIndexDescription.fwd.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
@@ -58,6 +59,10 @@ public:
 	/// @details Copy this object and return an owning pointer to the new object.
 	virtual ResidueSelectorOP clone() const;
 
+	ResidueSpanSelector(
+		core::pose::ResidueIndexDescriptionCOP start,
+		core::pose::ResidueIndexDescriptionCOP end);
+
 	ResidueSpanSelector( std::string const & start_str, std::string const & end_str );
 	ResidueSpanSelector( core::Size start, core::Size end );
 	virtual ~ResidueSpanSelector();
@@ -78,8 +83,8 @@ public:
 	void set_span( std::string const & start, std::string const & end);
 
 private: // data members
-	std::string start_str_;
-	std::string end_str_;
+	core::pose::ResidueIndexDescriptionCOP start_;
+	core::pose::ResidueIndexDescriptionCOP end_;
 #ifdef    SERIALIZATION
 public:
 	template< class Archive > void save( Archive & arc ) const;

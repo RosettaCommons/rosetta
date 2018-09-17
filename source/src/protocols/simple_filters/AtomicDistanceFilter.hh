@@ -18,6 +18,7 @@
 // Project Headers
 #include <protocols/filters/Filter.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/pose/ResidueIndexDescription.fwd.hh>
 #include <core/types.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
@@ -68,7 +69,7 @@ public:
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
-	core::Size residue1_, residue2_;
+	core::pose::ResidueIndexDescriptionCOP residue1_, residue2_;
 	std::string atomdesg1_, atomdesg2_;
 	bool astype1_, astype2_; // if desg should be interpreted as an atomtype
 	core::Real distance_;

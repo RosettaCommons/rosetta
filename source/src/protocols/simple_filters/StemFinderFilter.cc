@@ -19,6 +19,8 @@
 //Project Headers
 #include <basic/Tracer.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/ResidueIndexDescription.hh>
+#include <core/pose/selection.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <protocols/rosetta_scripts/util.hh>
@@ -27,6 +29,7 @@
 #include <utility/vector1.hh>
 #include <string>
 #include <utility/string_util.hh>
+#include <utility/pointer/memory.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
@@ -45,8 +48,8 @@ static basic::Tracer TR( "protocols.simple_filters.StemFinder" );
 //default ctor
 StemFinder::StemFinder() :
 	protocols::filters::Filter( "StemFinder" ),
-	from_res_( 0 ),
-	to_res_( 0 ),
+	from_res_( nullptr ),
+	to_res_( nullptr ),
 	rmsd_( 0.7 ),
 	stems_on_sse_( false ),
 	stems_are_neighbors_( true ),
@@ -59,10 +62,14 @@ StemFinder::StemFinder() :
 StemFinder::~StemFinder() = default;
 
 void
-StemFinder::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & pose )
+StemFinder::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
 {
-	from_res( tag->getOption< core::Size >( "from_res", 1 ) );
-	to_res( tag->getOption< core::Size >( "to_res", pose.size() ) );
+	from_res( core::pose::parse_resnum( tag->getOption< std::string >( "from_res", "1" ) ) );
+	if ( tag->hasOption( "to_res" ) ) {
+		to_res( core::pose::parse_resnum( tag->getOption< std::string >( "to_res" ) ) );
+	} else {
+		to_res( utility::pointer::make_shared< core::pose::ResidueIndexDescriptionLastResidue >() );
+	}
 	rmsd( tag->getOption< core::Real >( "rmsd", 0.7 ) );
 	stems_on_sse( tag->getOption< bool >( "stems_on_sse", false ) );
 	stems_are_neighbors( tag->getOption< bool >( "stems_are_neighbors", true ) );
@@ -72,11 +79,50 @@ StemFinder::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &,
 	}
 	filenames_ = utility::string_split( tag->getOption< std::string > ( "filenames" ), ',' );
 
-	TR<<"StemFinder with options: from_res: "<<from_res()<<" to_res: "<<to_res()<<" rmsd: "<<rmsd()<<" stems_on_sse: "<<stems_on_sse();
+	TR<<"StemFinder with options: from_res: "<<*from_res_<<" to_res: "<<*to_res_<<" rmsd: "<<rmsd()<<" stems_on_sse: "<<stems_on_sse();
 	for ( std::string const & f : filenames_ ) {
 		TR<<f<<' ';
 	}
 	TR<<std::endl;
+}
+
+
+core::Real
+StemFinder::from_res( core::pose::Pose const & pose ) const {
+	if ( from_res_ == nullptr ) {
+		return 1;
+	} else {
+		return from_res_->resolve_index( pose );
+	}
+}
+
+void
+StemFinder::from_res( core::Real const r ) {
+	from_res_ = core::pose::make_rid_posenum( r );
+}
+
+void
+StemFinder::from_res( core::pose::ResidueIndexDescriptionCOP r ) {
+	from_res_ = r;
+}
+
+core::Real
+StemFinder::to_res( core::pose::Pose const & pose ) const {
+	if ( to_res_ == nullptr ) {
+		return pose.size();
+	} else {
+		return to_res_->resolve_index( pose );
+	}
+}
+
+void
+StemFinder::to_res( core::Real const r ) {
+	to_res_ = core::pose::make_rid_posenum( r );
+}
+
+void
+StemFinder::to_res( core::pose::ResidueIndexDescriptionCOP r ) {
+	to_res_ = r;
 }
 
 std::string
@@ -162,9 +208,15 @@ StemFinder::apply( core::pose::Pose const & pose ) const {
 			poses_dssp.push_back( dssp( *p ) );
 		}
 	}
+
+	core::Size start_res = from_res( pose );
+	core::Size stop_res = to_res( pose );
+
+
+
 	vector1< Real > distances( pose.size(), 0.0 );
 	for ( Size pos = 1; pos <= pose.size(); ++pos ) {
-		if ( pos <= from_res() || pos >= to_res() || template_dssp[ pos - 1 ] == 'L' ) { // position is not in secondary structure element
+		if ( pos <= start_res || pos >= stop_res || template_dssp[ pos - 1 ] == 'L' ) { // position is not in secondary structure element
 			distances[ pos ] = 99999999999.9;
 			continue;
 		}
@@ -285,14 +337,16 @@ void StemFinder::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	using namespace utility::tag;
 	AttributeList attlist;
-	attlist + XMLSchemaAttribute::attribute_w_default("from_res", xsct_non_negative_integer, "starting template position (in rosetta numbering) in which to search for stems", "1")
-		+ XMLSchemaAttribute("to_res", xsct_non_negative_integer, "ending template positions (in rosetta numbering) in which to search for stems")
+	attlist
 		+ XMLSchemaAttribute::attribute_w_default("rmsd", xsct_real, "cutoff for the average rmsd between a given position in the template and all of the closest positions in the homologs.", "0.7")
 		+ XMLSchemaAttribute::attribute_w_default("stems_on_sse", xsct_rosetta_bool, "demand that in each of the homologs the candidate stems are on 2ary structural elements", "false")
 		+ XMLSchemaAttribute::attribute_w_default("stems_are_neighbors", xsct_rosetta_bool, "should we eliminate stems that are farther than neighbor_distance from one another?", "true")
 		+ XMLSchemaAttribute::attribute_w_default("neighbor_distance", xsct_real, "minimal atomic distance between any pair of atoms on each of the residues", "4.0")
 		+ XMLSchemaAttribute::attribute_w_default("neighbor_seperation", xsct_non_negative_integer, "minimal aa separation between candidate stem sites", "10")
 		+ XMLSchemaAttribute::required_attribute("filenames", xs_string, "PDB structures that are well aligned to the template");
+
+	core::pose::attributes_for_parse_resnum( attlist, "from_res", "starting template position in which to search for stems" );
+	core::pose::attributes_for_parse_resnum( attlist, "to_res", "ending template position in which to search for stems" );
 
 	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Compare a set of homologous but structurally heterogeneous PDBs to a template PDB and find structurally highly conserved sites that can serve as stems for splicing segments", attlist );
 }

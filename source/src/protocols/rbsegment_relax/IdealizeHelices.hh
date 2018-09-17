@@ -20,6 +20,7 @@
 #include <basic/datacache/DataMap.fwd.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/pose/ResidueIndexDescription.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -65,7 +66,7 @@ public:
 private:
 	core::scoring::ScoreFunctionOP scorefxn_;
 	core::Real cst_weight_,cst_width_;
-	utility::vector1< std::pair<int,int> > helices_;
+	utility::vector1< std::pair< core::pose::ResidueIndexDescriptionCOP, core::pose::ResidueIndexDescriptionCOP > > helices_;
 };
 
 

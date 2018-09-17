@@ -19,6 +19,7 @@
 #include <core/types.hh>
 #include <protocols/filters/Filter.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/pose/ResidueIndexDescription.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <string>
@@ -44,10 +45,12 @@ public:
 	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &filters, moves::Movers_map const &, core::pose::Pose const & ) override;
 
-	core::Real from_res() const{ return from_res_; }
-	void from_res( core::Real const r ){ from_res_ = r; }
-	core::Real to_res() const{ return to_res_; }
-	void to_res( core::Real const r ){ to_res_ = r; }
+	core::Real from_res( core::pose::Pose const & pose ) const;
+	void from_res( core::Real const r );
+	void from_res( core::pose::ResidueIndexDescriptionCOP r );
+	core::Real to_res( core::pose::Pose const & pose ) const;
+	void to_res( core::Real const r );
+	void to_res( core::pose::ResidueIndexDescriptionCOP r );
 	core::Real rmsd() const{ return rmsd_; }
 	void rmsd( core::Real const c ){ rmsd_ = c ;}
 
@@ -75,7 +78,7 @@ public:
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
-	core::Size from_res_, to_res_; // dflt 0,0; If not specified goes across the entire range of the -s pdb
+	core::pose::ResidueIndexDescriptionCOP from_res_, to_res_; // If not specified goes across the entire range of the pdb
 	core::Real rmsd_; //dflt 0.7; the maximal RMSd. If no positions fall under this, the filter fails
 	utility::vector1< std::string > filenames_; //dflt empty; the PDB file names to search
 	bool stems_on_sse_; //dflt false; if false look for stems on any bb

@@ -23,7 +23,11 @@
 
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Residue.hh>
-
+#include <core/select/util.hh>
+#include <core/select/residue_selector/ResidueSpanSelector.hh>
+#include <core/select/residue_selector/ChainSelector.hh>
+#include <core/pose/selection.hh>
+#include <core/pose/ResidueIndexDescription.hh>
 #include <core/kinematics/FoldTree.hh>
 
 // task operation
@@ -55,8 +59,12 @@ Tumble::center_of_mass(core::pose::Pose const & pose) {
 	int nAtms = 0;
 	numeric::xyzVector<core::Real> massSum(0.,0.,0.), CoM;
 
-	for ( core::Size i =1; i <= residue_list_.size(); ++i ) {
-		core::Size ires = residue_list_[i];
+	utility::vector1< core::Size > residue_list;
+	if ( residue_list_ != nullptr ) {
+		residue_list = core::select::get_residues_from_subset( residue_list_->apply( pose ) );
+	}
+
+	for ( core::Size ires: residue_list ) {
 		if ( pose.residue_type(ires).aa() == core::chemical::aa_vrt ) continue;
 
 		for ( core::Size iatom = 1; iatom <= pose.residue_type(ires).nheavyatoms(); ++iatom ) {
@@ -84,8 +92,12 @@ void Tumble::apply( core::pose::Pose & pose ) {
 	core::Real angle2 = 180. * numeric::random::rg().uniform();
 	numeric::xyzMatrix< core::Real > rotation_matrix2( numeric::rotation_matrix_degrees(axis2, angle2 ) );
 
-	for ( core::Size i =1; i <= residue_list_.size(); ++i ) {
-		core::Size ires = residue_list_[i];
+	utility::vector1< core::Size > residue_list;
+	if ( residue_list_ != nullptr ) {
+		residue_list = core::select::get_residues_from_subset( residue_list_->apply( pose ) );
+	}
+
+	for ( core::Size ires: residue_list ) {
 		for ( core::Size iatom = 1; iatom <= pose.residue_type(ires).natoms(); ++iatom ) {
 
 			numeric::xyzVector< core::Real > translated2origin = pose.residue(ires).atom(iatom).xyz() - CoM;
@@ -107,31 +119,28 @@ Tumble::parse_my_tag(
 	basic::datacache::DataMap & ,
 	Filters_map const & ,
 	moves::Movers_map const & ,
-	Pose const & pose
+	Pose const &
 ) {
 	if ( tag->hasOption( "chain_number" ) ) {
-		auto chain = tag->getOption< core::Size >( "chain_number" );
-		for ( core::Size ires=1; ires<=pose.size(); ++ires ) {
-			if ( pose.residue(ires).chain() == chain ) {
-				TR.Debug << "Adding residue " << ires << std::endl;
-				residue_list_.push_back(ires);
-			}
-		}
+		auto chain = tag->getOption< std::string >( "chain_number" );
+		residue_list_ = core::select::residue_selector::ResidueSelectorCOP( new core::select::residue_selector::ChainSelector( chain ) );
 	} else {
-		core::Size start_res = 1;
-		core::Size stop_res = pose.size();
+		core::pose::ResidueIndexDescriptionCOP start_res;
+		core::pose::ResidueIndexDescriptionCOP stop_res;
 
 		if ( tag->hasOption( "start_res" ) ) {
-			start_res = tag->getOption< core::Size >( "start_res" );
+			start_res = core::pose::parse_resnum( tag->getOption< std::string >( "start_res" ) );
+		} else {
+			start_res = core::pose::make_rid_posenum( 1 );
 		}
+
 		if ( tag->hasOption( "stop_res" ) ) {
-			stop_res = tag->getOption< core::Size >( "stop_res" );
+			stop_res = core::pose::parse_resnum( tag->getOption< std::string >( "stop_res" ) );
+		} else {
+			stop_res = core::pose::ResidueIndexDescriptionCOP( new core::pose::ResidueIndexDescriptionLastResidue );
 		}
 
-		for ( core::Size ires=start_res; ires<=stop_res; ++ires ) {
-			residue_list_.push_back(ires);
-		}
-
+		residue_list_ = core::select::residue_selector::ResidueSelectorCOP( new core::select::residue_selector::ResidueSpanSelector( stop_res, start_res ) );
 	}
 }
 
@@ -156,19 +165,14 @@ void Tumble::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	AttributeList attlist;
 	attlist + XMLSchemaAttribute(
 		"chain_number", xsct_non_negative_integer,
-		"XSD XRW: TO DO");
+		"The chain to tumble - not compatible with start_res/stop_res.");
 
-	attlist + XMLSchemaAttribute(
-		"start_res", xsct_non_negative_integer,
-		"XSD XRW: TO DO");
-
-	attlist + XMLSchemaAttribute(
-		"stop_res", xsct_non_negative_integer,
-		"XSD XRW: TO DO");
+	core::pose::attributes_for_parse_resnum( attlist, "start_res", "The first residue of the residue span to tumble - not compatible with chain_number." );
+	core::pose::attributes_for_parse_resnum( attlist, "stop_res", "The last residue of the residue span to tumble - not compatible with chain_number." );
 
 	protocols::moves::xsd_type_definition_w_attributes(
 		xsd, mover_name(),
-		"XSD XRW: TO DO",
+		"Tumble (randomly rotate around the center of mass) a given subsection of the protein.",
 		attlist );
 }
 
