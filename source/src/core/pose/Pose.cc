@@ -1840,6 +1840,7 @@ Pose::real_to_virtual( core::Size seqpos ){
 			this->conformation().update_noncanonical_connection(seqpos, i_con, connected_seqpos, connected_id);
 		}
 	}
+
 }
 
 
@@ -1859,6 +1860,16 @@ Pose::virtual_to_real( core::Size seqpos ){
 	core::chemical::ResidueTypeCOP RT = core::chemical::ResidueTypeFinder(*base_RTset).residue_base_name( base_name ).variants( variants ).get_representative_type();
 	// swap in new (old) residue type
 	core::pose::replace_pose_residue_copying_existing_coordinates(*this,seqpos,*RT);
+
+	// update connections
+	for ( Size i_con=1; i_con<=this->residue_type(seqpos).n_possible_residue_connections(); ++i_con ) {
+		if ( this->conformation().residue(seqpos).connected_residue_at_resconn(i_con) != 0 ) {
+			Size connected_seqpos = this->conformation().residue(seqpos).connected_residue_at_resconn(i_con);
+			Size connected_id = this->residue(seqpos).connect_map(i_con).connid();
+			this->conformation().update_noncanonical_connection(seqpos, i_con, connected_seqpos, connected_id);
+		}
+	}
+
 }
 
 conformation::carbohydrates::GlycanTreeSetCOP

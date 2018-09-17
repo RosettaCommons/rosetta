@@ -36,12 +36,18 @@ namespace residue_selector {
 
 ///@brief Determine the residue mapping by residue selector and the reference selector.
 /// If both are null, will get a map of all residues.
+/// De-symmetrizes both residue selectors
+///
+///@details By default, we only get a mapping of the master subunit.
+/// IE - ALL residues NOT in the asymmetric unit will be false
+///
 std::map< core::Size, core::Size >
 get_residue_mapping_from_selectors(
 	select::residue_selector::ResidueSelectorCOP selector,
 	select::residue_selector::ResidueSelectorCOP selector_ref,
 	core::pose::Pose const & pose,
-	core::pose::Pose const & ref_pose
+	core::pose::Pose const & ref_pose,
+	bool desymmetrize_selectors = true
 );
 
 /// @brief Used to name the xs:complexType for a residue selector that is

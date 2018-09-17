@@ -84,6 +84,7 @@ public:
 	bool output_torsions() const;
 	bool output_virtual() const;
 	bool output_virtual_zero_occ() const;
+	bool output_only_asymmetric_unit() const;
 	bool pdb_parents() const;
 	bool per_chain_renumbering() const;
 	bool randomize_missing_coords() const;
@@ -138,6 +139,7 @@ public:
 	void set_output_torsions( bool const output_torsions );
 	void set_output_virtual( bool const output_virtual );
 	void set_output_virtual_zero_occ( bool const output_virtual_zero_occ );
+	void set_output_only_asymmetric_unit( bool const output_only_asymmetric_unit );
 	void set_pdb_parents( bool const pdb_parents );
 	void set_per_chain_renumbering( bool const per_chain_renumbering );
 	void set_randomize_missing_coords( bool const randomize_missing_coords );
@@ -214,6 +216,7 @@ private:
 	bool output_torsions_;
 	bool output_virtual_;
 	bool output_virtual_zero_occ_;
+	bool output_only_asymmetric_unit_;
 	bool pdb_parents_;
 	bool per_chain_renumbering_;
 	bool randomize_missing_coords_;

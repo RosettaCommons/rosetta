@@ -11,7 +11,8 @@
 /// @brief  The MoveMapFactory class builds a MoveMap given a Pose using instructions
 ///         from ResidueSelectors, and JumpSelectors (and eventually, TorsionIDSelectors)
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
-/// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com) - Carbohydrate compatibility
+/// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com) - Carbohydrate/symmetry compatibility
+
 // Unit headers
 #include <core/select/movemap/MoveMapFactory.hh>
 
@@ -22,6 +23,7 @@
 #include <core/select/jump_selector/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/carbohydrates/util.hh>
+#include <core/pose/symmetry/util.hh>
 #include <core/chemical/ResidueType.hh>
 
 // Project headers
@@ -29,6 +31,7 @@
 #include <core/id/types.hh>
 
 // Basic headers
+#include <basic/Tracer.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 
 // Utility Headers
@@ -37,6 +40,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/vector1.hh>
 
+static basic::Tracer TR( "core.select.movemap.MoveMapFactory" );
 
 namespace core {
 namespace select {
@@ -349,6 +353,11 @@ MoveMapFactory::edit_movemap_given_pose(
 				}
 			}
 		}
+	}
+
+	//Deal with Symmetry.  If we have a symmetric Pose - make the Symmetric Movemap.
+	if ( core::pose::symmetry::is_symmetric( pose ) ) {
+		core::pose::symmetry::make_symmetric_movemap(pose, mm);
 	}
 
 	///////// TO DO: Individual Torsions ////////////

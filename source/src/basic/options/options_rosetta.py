@@ -824,7 +824,8 @@ Options = Option_Group( '',
 			Option( 'output_pose_energies_table', 'Boolean', default = 'true', desc='Output the pose energies table.  This can be overridden'),
 			Option( 'output_pose_cache_data', 'Boolean', default = 'true', desc='Output the pose cache.'),
 			Option( 'output_pose_fold_tree', 'Boolean', default = 'false', desc = "Output the foldtree of the pose. Will go in rosetta_additional column for cif files."),
-
+			Option( 'output_only_asymmetric_unit', 'Boolean', default= 'false', desc = "For symmetrical poses, de-symmetrize the pose before output in order to output only the master subunit.  Energies will still be output as symmetrical. Does not work with Silent files."),
+			
 			# mmCIF options
 			Option( 'cif_extra_data_separate_file', 'Boolean', default='false', desc="When outputting mmCIF, write extra data and energies to separate files (JOBNAME.extradata and JOBNAME.eneriges)"),
 

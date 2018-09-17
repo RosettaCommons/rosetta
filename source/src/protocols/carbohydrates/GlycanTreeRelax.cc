@@ -30,22 +30,27 @@
 #include <core/select/residue_selector/GlycanLayerSelector.hh>
 #include <core/select/residue_selector/ReturnResidueSubsetSelector.hh>
 #include <core/select/residue_selector/AndResidueSelector.hh>
-
+#include <core/select/util.hh>
+#include <core/pose/symmetry/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/carbohydrates/util.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/conformation/carbohydrates/GlycanTreeSet.hh>
 #include <core/conformation/carbohydrates/GlycanTree.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/kinematics/MoveMap.hh>
+#include <core/optimization/MinimizerOptions.hh>
 
 // Protocl headers
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 
+#include <basic/options/option.hh>
+#include <basic/options/keys/run.OptionKeys.gen.hh>
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
@@ -64,6 +69,7 @@ static basic::Tracer TR( "protocols.carbohydrates.GlycanTreeRelax" );
 namespace protocols {
 namespace carbohydrates {
 
+using namespace basic::options;
 using namespace protocols::simple_moves;
 using namespace protocols::minimization_packing;
 using namespace core::scoring;
@@ -94,7 +100,8 @@ GlycanTreeRelax::GlycanTreeRelax( GlycanTreeRelax const & src ):
 	quench_mode_(src.quench_mode_),
 	final_min_pack_min_(src.final_min_pack_min_),
 	cartmin_(src.cartmin_),
-	min_rings_(src.min_rings_)
+	min_rings_(src.min_rings_),
+	idealize_(src.idealize_)
 
 {
 	if ( src.scorefxn_ ) scorefxn_ = src.scorefxn_->clone();
@@ -150,6 +157,7 @@ GlycanTreeRelax::parse_my_tag(
 
 	min_rings_ = tag->getOption< core::Real >("min_rings", min_rings_);
 	cartmin_ = tag->getOption< bool >("cartmin", cartmin_);
+	idealize_ = tag->getOption< bool >("idealize", idealize_);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -204,6 +212,8 @@ void GlycanTreeRelax::provide_xml_schema( utility::tag::XMLSchemaDefinition & xs
 		+ XMLSchemaAttribute("rounds", xsct_non_negative_integer, "Set the number of rounds.  We start with the forward direction, from the "
 		"root/start out to the glycan tips.  Next round we go backward, then forward.  The number of rounds corresponds to how many back "
 		"and forth directions we go")
+
+		+ XMLSchemaAttribute::attribute_w_default("idealize", xsct_rosetta_bool, "Attempt to idealize the bond lengths/angles of glycan residues being modeled", "false")
 
 		+ XMLSchemaAttribute::attribute_w_default("refine", xsct_rosetta_bool, "Do a refinement instead of a denovo model", "false")
 		+ XMLSchemaAttribute::attribute_w_default("quench_mode", xsct_rosetta_bool, "Do quench mode for each glycan tree?", "false")
@@ -326,6 +336,37 @@ GlycanTreeRelax::is_quenched() const {
 
 }
 
+void
+GlycanTreeRelax::setup_score_function(core::pose::Pose const & tree_pose) {
+
+	//Create Scorefunction if needed.
+	if ( ! scorefxn_ ) {
+		scorefxn_ = core::scoring::get_score_function();
+	}
+
+	//If Cartmin is enabled, and scorefxn_ needs the terms, enable them!
+	if ( cartmin_ ) {
+		core::scoring::ScoreFunctionOP local= scorefxn_->clone();
+		setup_cartmin(local);
+		scorefxn_ = local;
+	}
+
+	if ( core::pose::symmetry::is_symmetric(tree_pose) ) {
+		TR <<"Ensuring ScoreFunction is symmetric" << std::endl;
+		core::scoring::ScoreFunctionOP local_scorefxn = scorefxn_->clone();
+		core::pose::symmetry::make_score_function_consistent_with_symmetric_state_of_pose(tree_pose, local_scorefxn);
+		scorefxn_ = local_scorefxn;
+	}
+}
+
+void
+GlycanTreeRelax::setup_cartmin(core::scoring::ScoreFunctionOP scorefxn) const {
+
+	scorefxn->set_weight_if_zero(core::scoring::cart_bonded, .5);
+	scorefxn->set_weight(core::scoring::pro_close, 0);
+
+}
+
 /// @brief Apply the mover
 void
 GlycanTreeRelax::apply( core::pose::Pose & pose){
@@ -333,6 +374,7 @@ GlycanTreeRelax::apply( core::pose::Pose & pose){
 	using namespace core::kinematics;
 	using namespace core::pack::task;
 	using namespace protocols::moves;
+	using namespace protocols::minimization_packing;
 
 	debug_assert( layer_size_ != window_size_ );
 
@@ -351,7 +393,6 @@ GlycanTreeRelax::apply( core::pose::Pose & pose){
 
 	Pose starting_pose = pose;
 
-
 	ResidueSubset starting_subset;
 	//ResidueSubset current_subset;
 
@@ -362,11 +403,14 @@ GlycanTreeRelax::apply( core::pose::Pose & pose){
 		starting_subset = glycan_selector->apply( pose );
 	}
 
+	if ( core::pose::symmetry::is_symmetric( pose )  )  {
+		TR << "De-Symmetrizing selector" << std::endl;
+		starting_subset = core::select::get_master_subunit_selection(pose, starting_subset);
+	}
+
 	ResidueSubset min_subset = starting_subset;
 
-	if ( ! scorefxn_ ) {
-		scorefxn_ = get_score_function();
-	}
+	setup_score_function( pose );
 	scorefxn_->score( pose );
 
 
@@ -452,7 +496,13 @@ GlycanTreeRelax::apply( core::pose::Pose & pose){
 
 	trees_to_model_ = tree_subset.size();
 
+
 	TR << "Ntrees to model " << utility::to_string(trees_to_model_) << std::endl;
+
+	if ( idealize_ ) {
+		TR << "Idealizing full glycan trees " << std::endl;
+		glycan_relax.idealize_glycan_residues(pose, tree_subset);
+	}
 
 	core::Real starting_score = scorefxn_->score( pose );
 	TR << "Starting Score: " << starting_score << std::endl;
@@ -662,16 +712,21 @@ GlycanTreeRelax::apply( core::pose::Pose & pose){
 	if ( final_min_pack_min_ ) {
 
 		PackRotamersMover packer = PackRotamersMover();
-		MinMover min_mover = MinMover();
+
 
 		//For now, we create a movemap from a selector manually.  Refactor this to Andrew's new code!
 		ReturnResidueSubsetSelectorOP return_subset_min = ReturnResidueSubsetSelectorOP( new ReturnResidueSubsetSelector(min_subset));
 
 		MoveMapOP mm = core::pose::carbohydrates::create_glycan_movemap_from_residue_selector(pose,return_subset_min,true /*chi*/,min_rings_,true /*bb*/, cartmin_);
 
+		MinMover min_mover = MinMover(mm, scorefxn_, "dfpmin_armijo_nonmonotone", 0.01, true);
+
+		if ( (! option [OptionKeys::run::nblist_autoupdate].user()) && (! option [OptionKeys::run::nblist_autoupdate]() ) ) {
+			min_mover.min_options()->nblist_auto_update( true );
+		}
+
 		//Configure the scorefunction:
 		packer.score_function( scorefxn_ );
-		min_mover.score_function( scorefxn_ );
 
 		//Configure the TaskFactory.
 		TaskFactoryOP tf = get_all_glycans_and_neighbor_res_task_factory( min_subset );
@@ -680,11 +735,11 @@ GlycanTreeRelax::apply( core::pose::Pose & pose){
 		TR << "Running final min-pack." << std::endl;
 		core::Real prefinal = scorefxn_->score( pose );
 		///Run min/pack/min/pack/min round.
-		min_mover.apply( pose );
+		min_mover.apply(pose);
 		packer.apply( pose );
-		min_mover.apply( pose );
+		min_mover.apply(pose);
 		packer.apply( pose);
-		min_mover.apply( pose );
+		min_mover.apply(pose);
 
 		TR << "Start- : " << starting_score << std::endl;
 		TR << "Pre  - : " << prefinal << std::endl;

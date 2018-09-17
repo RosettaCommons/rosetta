@@ -15,6 +15,7 @@
 #include <core/select/residue_selector/GlycanLayerSelector.hh>
 #include <core/select/residue_selector/GlycanLayerSelectorCreator.hh>
 #include <core/conformation/carbohydrates/GlycanTreeSet.hh>
+#include <core/pose/symmetry/util.hh>
 
 // Basic Headers
 #include <basic/datacache/DataMap.hh>

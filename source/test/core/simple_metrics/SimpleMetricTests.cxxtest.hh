@@ -39,8 +39,9 @@
 #include <core/simple_metrics/metrics/SequenceMetric.hh>
 #include <core/simple_metrics/metrics/SecondaryStructureMetric.hh>
 #include <core/simple_metrics/metrics/SasaMetric.hh>
-
+#include <core/simple_metrics/per_residue_metrics/PerResidueGlycanLayerMetric.hh>
 #include <core/select/residue_selector/GlycanResidueSelector.hh>
+#include <core/conformation/carbohydrates/GlycanTreeSet.hh>
 
 // Core Headers
 #include <core/pose/Pose.hh>
@@ -63,6 +64,7 @@ static basic::Tracer TR("SimpleMetricTests");
 
 using namespace core::simple_metrics;
 using namespace core::simple_metrics::metrics;
+using namespace core::simple_metrics::per_residue_metrics;
 using namespace core::pose;
 using namespace protocols::antibody::residue_selector;
 using namespace protocols::antibody;
@@ -74,10 +76,12 @@ class SimpleMetricTests : public CxxTest::TestSuite {
 public:
 	Pose pose; //Empty pose
 	Pose ab_pose;
+	Pose glycan_pose;
 
 	void setUp(){
 		core_init();
-
+		core_init_with_additional_options( "-include_sugars" );
+		pose_from_file( glycan_pose, "core/chemical/carbohydrates/gp120_2glycans_man5.pdb" , core::import_pose::PDB_file);
 	}
 
 	void test_string_metric() {
@@ -327,6 +331,15 @@ public:
 
 	}
 
+	void test_glycan_layer_metric() {
+		PerResidueGlycanLayerMetric layer_metric = PerResidueGlycanLayerMetric();
+		std::map< core::Size, core::Real > result = layer_metric.calculate(glycan_pose);
+
+		for ( auto & pair : result ) {
+			core::Size layer = static_cast<core::Size>(pair.second);
+			TS_ASSERT(layer == glycan_pose.glycan_tree_set()->get_distance_to_start(pair.first));
+		}
+	}
 
 	void tearDown(){
 

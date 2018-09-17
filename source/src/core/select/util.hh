@@ -111,6 +111,10 @@ fill_tenA_neighbor_residues(
 std::string
 get_pymol_selection_for_atoms(pose::Pose const & pose, utility::vector1< id::AtomID > const & atoms,std::string const & sele_name, bool skip_virts=true );
 
+///@brief Turns off all residues that are not part of the master subunit.
+utility::vector1< bool >
+get_master_subunit_selection(pose::Pose const & pose, utility::vector1<bool> const & full_subset);
+
 } //core
 } //select
 

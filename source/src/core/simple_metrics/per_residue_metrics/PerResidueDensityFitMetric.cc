@@ -37,6 +37,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/ref_pose.hh>
+#include <core/pose/util.hh>
 
 // symmetry
 #include <core/pose/symmetry/util.hh>
@@ -259,10 +260,9 @@ PerResidueDensityFitMetric::calculate(const pose::Pose & input_pose) const {
 		symminfo = SymmConf.Symmetry_Info();
 	}
 
-	utility::vector1< Size > rsd_mask = get_selector()->apply(pose);
+	utility::vector1< bool > rsd_mask = get_selector()->apply(pose);
 
 	if ( match_res_ ) {
-		TR << "Using basic correlation to density instead of Zscore." << std::endl;
 
 		core::scoring::electron_density::ElectronDensity &edm = core::scoring::electron_density::getDensityMap();
 		edm.setScoreWindowContext( true );
@@ -272,7 +272,7 @@ PerResidueDensityFitMetric::calculate(const pose::Pose & input_pose) const {
 		myscore->set_weight( core::scoring::elec_dens_window, 1.0 );
 		myscore->score(pose);
 
-		for ( Size i = 1; i <= pose.size(); ++i ) {
+		for ( Size i = 1; i <= rsd_mask.size(); ++i ) {
 			if ( ! rsd_mask[i] ) continue;
 			Real dens_rscc = core::scoring::electron_density::getDensityMap().matchRes( i , pose.residue(i), pose, symminfo , false);
 

@@ -1675,7 +1675,8 @@ SymmetryInfo::torsion_is_independent( TorsionID const & id ) const
 {
 	return ( ( id.type() == id::BB   &&   bb_is_independent( id.rsd() ) ) ||
 		( id.type() == id::CHI  &&  chi_is_independent( id.rsd() ) ) ||
-		( id.type() == id::JUMP && jump_is_independent( id.rsd() ) ) );
+		( id.type() == id::JUMP && jump_is_independent( id.rsd() ) ) ||
+		( id.type() == id::BRANCH && bb_is_independent( id.rsd() ) ) );
 }
 
 bool

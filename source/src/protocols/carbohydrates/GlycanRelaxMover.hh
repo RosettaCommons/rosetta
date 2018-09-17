@@ -177,6 +177,10 @@ public:
 	void
 	randomize_glycan_torsions( core::pose::Pose & pose, utility::vector1< bool > const & subset ) const;
 
+	///@brief Attempt to idealize all residues in of a set of trees. Experimental!
+	void
+	idealize_glycan_residues( core::pose::Pose & pose, utility::vector1< core::Size > const & tree_subset ) const;
+
 private:
 
 	void
@@ -197,12 +201,10 @@ private:
 	setup_default_task_factory(utility::vector1< bool > const & glycan_residues, core::pose::Pose const & pose );
 
 	void
-	setup_score_function();
+	setup_score_function(core::pose::Pose const & pose );
 
 	void
 	setup_cartmin(core::scoring::ScoreFunctionOP scorefxn) const;
-
-
 
 
 	//Setup the final WeightedMover from our subsets and movemap.

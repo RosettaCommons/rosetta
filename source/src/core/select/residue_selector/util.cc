@@ -21,6 +21,7 @@
 #include <core/select/residue_selector/AndResidueSelector.hh>
 #include <core/select/residue_selector/SelectorLogicParser.hh>
 #include <core/select/util.hh>
+#include <core/pose/symmetry/util.hh>
 #include <core/pose/Pose.hh>
 
 // Basic headers
@@ -61,7 +62,8 @@ get_residue_mapping_from_selectors(
 	select::residue_selector::ResidueSelectorCOP residue_selector,
 	select::residue_selector::ResidueSelectorCOP residue_selector_ref,
 	core::pose::Pose const & pose,
-	core::pose::Pose const & ref_pose
+	core::pose::Pose const & ref_pose,
+	bool desymmetrize_selectors
 ){
 
 	using namespace utility;
@@ -70,10 +72,18 @@ get_residue_mapping_from_selectors(
 	vector1< core::Size > reference_res;
 
 	if ( residue_selector ) {
-		selector_res = get_residues_from_subset(residue_selector->apply( pose ));
+		vector1< bool > mask = residue_selector->apply( pose );
+		if ( core::pose::symmetry::is_symmetric( pose ) && desymmetrize_selectors )  {
+			mask = core::select::get_master_subunit_selection(pose, mask);
+		}
+		selector_res = get_residues_from_subset( mask );
 	}
 	if ( residue_selector_ref ) {
-		reference_res = get_residues_from_subset(residue_selector_ref->apply( ref_pose ));
+		vector1< bool > mask = residue_selector_ref->apply( ref_pose );
+		if ( core::pose::symmetry::is_symmetric( ref_pose ) && desymmetrize_selectors )  {
+			mask = core::select::get_master_subunit_selection(pose, mask);
+		}
+		reference_res = get_residues_from_subset( mask );
 	}
 
 	//Fail if residue selector selections do not match.

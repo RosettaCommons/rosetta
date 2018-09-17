@@ -284,6 +284,14 @@ public:
 		std::string const & atom_name2
 	) override;
 
+	/// @brief Update the connection status between the lower_seqpos residue's lr_conn_id connection ID and
+	/// the upper_seqpos residue's ur_conn_id connection ID, in addition to ALL clones
+	void
+	update_noncanonical_connection(Size lower_seqpos,
+		Size lr_conn_id,
+		Size upper_seqpos,
+		Size ur_conn_id) override;
+
 protected:
 
 	// @brief invalidate current Tsymm settings

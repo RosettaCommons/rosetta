@@ -97,6 +97,10 @@ public:
 	set_residue_mapping( std::map< core::Size, core::Size> const & rmsd_map );
 
 
+	///@brief Run a superimpose on the residues selected in the residue selector (or all)
+	/// default False.
+	void
+	set_run_superimpose( bool super );
 
 	///@brief Set what we will be calculating the RMSD on.
 	void
@@ -110,11 +114,17 @@ public:
 	void
 	set_corresponding_atoms_robust( bool robust );
 
+	///@brief Should we de-symmetrize the residue selector(s) where we only consider the master subunit?
+	/// Default True.
+	void
+	set_desymmetrize_residue_selector( bool desym);
+
 public:
 
 	///@brief Create an AtomID map according to options set in this class.
+	/// If desymmetrize_res_selector is true, we only consider the master subunit.
 	std::map< core::id::AtomID, core::id::AtomID >
-	create_atom_id_map(core::pose::Pose const & pose) const;
+	create_atom_id_map(core::pose::Pose const & pose, bool desymmetrize_res_selector = true) const;
 
 public:
 
@@ -164,6 +174,8 @@ private:
 	bool robust_ = true;
 
 	std::map< std::string, scoring::rmsd_atoms > name_mapping_;
+	bool superimpose_ = false;
+	bool desymmetrize_res_selector_ = true;
 
 };
 

@@ -49,6 +49,8 @@ static SimpleMetricRegistrator< core::simple_metrics::per_residue_metrics::PerRe
 
 static SimpleMetricRegistrator< core::simple_metrics::per_residue_metrics::PerResidueEnergyMetricCreator > reg_PerResidueEnergyMetricCreator;
 
+static SimpleMetricRegistrator< core::simple_metrics::per_residue_metrics::PerResidueGlycanLayerMetricCreator > reg_PerResidueGlycanLayerCreator;
+
 static SimpleMetricRegistrator< core::simple_metrics::per_residue_metrics::PerResidueRMSDMetricCreator > reg_PerResidueRMSDMetricCreator;
 
 static SimpleMetricRegistrator< core::simple_metrics::per_residue_metrics::PerResidueSasaMetricCreator > reg_PerResidueSasaMetricCreator;

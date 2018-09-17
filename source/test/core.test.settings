@@ -567,6 +567,7 @@ sources = {
 		"SecondaryStructureSelector",
 		"ResidueInSequenceMotifSelectorTest",
 		"SelectorLogicParser",
+		"TestAsymmetricUnitSelector",
 	],
 	"sequence" : [
 		"ABEGOManager",

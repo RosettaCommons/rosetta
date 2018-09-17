@@ -22,6 +22,7 @@
 // Core headers
 #include <core/pose/Pose.hh>
 #include <core/pose/carbohydrates/util.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/kinematics/util.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/AndResidueSelector.hh>
@@ -30,10 +31,16 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/symmetry/util.hh>
+#include <core/io/pdb/pdb_writer.hh>
+#include <core/io/StructFileRepOptions.hh>
+#include <core/optimization/MinimizerOptions.hh>
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
+
+#include <basic/options/option.hh>
+#include <basic/options/keys/run.OptionKeys.gen.hh>
 
 #include <numeric/random/random.hh>
 
@@ -42,11 +49,16 @@
 #include <protocols/moves/mover_schemas.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
+#include <iostream>
+#include <sstream>
+#include <fstream>
+
 static basic::Tracer TR( "protocols.carbohydrates.GlycanTreeMinMover" );
 
 namespace protocols {
 namespace carbohydrates {
 
+using namespace basic::options;
 using namespace core::kinematics;
 using namespace core::scoring;
 using namespace protocols::minimization_packing;
@@ -207,9 +219,6 @@ GlycanTreeMinMover::apply( core::pose::Pose& pose){
 
 	//We need to set reasonable defaults here!
 
-
-
-
 	//Randomly select a residue from the movemap.
 	core::Size index = numeric::random::rg().random_range( 1, mm_residues.size() );
 	core::Size resnum = mm_residues[ index ];
@@ -235,6 +244,11 @@ GlycanTreeMinMover::apply( core::pose::Pose& pose){
 		min_bb_
 	);
 
+	if ( core::pose::symmetry::is_symmetric( pose ) ) {
+		//TR << "Making symmetric movemap" << std::endl;
+		core::pose::symmetry::make_symmetric_movemap(pose, *mm);
+	}
+
 	if ( ! min_mover_ ) {
 		//Make Symmetric or Non-symmetric versions of the MinMover.
 		ScoreFunctionCOP scorefxn = core::scoring::get_score_function();
@@ -247,6 +261,10 @@ GlycanTreeMinMover::apply( core::pose::Pose& pose){
 
 	//Minimize
 	TR << "Minimizing " << min_residue_n << " residues " << std::endl;
+	if ( (! option [OptionKeys::run::nblist_autoupdate].user()) && (! option [OptionKeys::run::nblist_autoupdate]() ) ) {
+		min_mover_->min_options()->nblist_auto_update( true );
+	}
+
 	min_mover_->apply(pose);
 }
 

@@ -34,6 +34,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/util.hh>
 #include <core/conformation/carbohydrates/GlycanTreeSet.hh>
 #include <core/id/types.hh>
 #include <core/pack/task/operation/OperateOnResidueSubset.hh>
@@ -44,6 +45,7 @@
 #include <core/select/residue_selector/GlycanResidueSelector.hh>
 #include <core/select/residue_selector/SymmetricalResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
+#include <core/select/util.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 
@@ -65,6 +67,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/carbohydrates.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
+#include <basic/options/keys/run.OptionKeys.gen.hh>
 
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -418,7 +421,7 @@ GlycanRelaxMover::set_uniform_sd_sampling(bool uniform_sd_sampling){
 }
 
 void
-GlycanRelaxMover::setup_score_function() {
+GlycanRelaxMover::setup_score_function(core::pose::Pose const & pose) {
 
 	//Create Scorefunction if needed.
 	if ( ! scorefxn_ ) {
@@ -429,6 +432,13 @@ GlycanRelaxMover::setup_score_function() {
 	if ( cartmin_ ) {
 		core::scoring::ScoreFunctionOP local_scorefxn = scorefxn_->clone();
 		setup_cartmin(local_scorefxn);
+		scorefxn_ = local_scorefxn;
+	}
+
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
+		TR <<"Ensuring ScoreFunction is symmetric" << std::endl;
+		core::scoring::ScoreFunctionOP local_scorefxn = scorefxn_->clone();
+		core::pose::symmetry::make_score_function_consistent_with_symmetric_state_of_pose(pose, local_scorefxn);
 		scorefxn_ = local_scorefxn;
 	}
 }
@@ -464,6 +474,12 @@ GlycanRelaxMover::randomize_glycan_torsions(core::pose::Pose &pose, utility::vec
 	}
 	//pose.dump_pdb("randomized.pdb");
 	//TR << "Done Randomizing " << std::endl;
+
+}
+
+void
+GlycanRelaxMover::idealize_glycan_residues(core::pose::Pose & , utility::vector1< core::Size > const & ) const {
+	TR << "Idealizing doing nothing.  Not currently implemented. " << std::endl;
 
 }
 
@@ -593,6 +609,11 @@ GlycanRelaxMover::setup_movers(
 	//////    //////
 	min_mover_ = MinMoverOP( new MinMover( min_mover_movemap->clone(), scorefxn_, "dfpmin_armijo_nonmonotone", 0.01, true /* use_nblist*/ ) );
 
+	if ( (! option [OptionKeys::run::nblist_autoupdate].user()) && (! option [OptionKeys::run::nblist_autoupdate]() ) ) {
+		min_mover_->min_options()->nblist_auto_update( true );
+	}
+
+
 	if ( cartmin_ ) {
 		min_mover_->min_type("lbfgs_armijo_nonmonotone");
 		min_mover_->cartesian(true);
@@ -659,24 +680,19 @@ GlycanRelaxMover::init_objects(core::pose::Pose & pose ){
 
 	TR << "initializing objects " << std::endl;
 
-	setup_score_function();
+	setup_score_function(pose);
 	scorefxn_->score(pose);
 
 	if ( ! selector_ ) selector_ = GlycanResidueSelectorOP( new GlycanResidueSelector());
 
 	// Make sure our selector is symmetrical.  We don't extra non-symmetric DOFs moving (BBSampler/SugarBBSampler/Conformer) machinery.
-	utility::vector1< bool > subset;
+	utility::vector1< bool > subset = selector_->apply(pose );
 	if ( core::pose::symmetry::is_symmetric( pose )  )  {
-		SymmetricalResidueSelector symm_selector = SymmetricalResidueSelector( selector_ );
-		subset = symm_selector.apply( pose );
-	} else {
-		subset = selector_->apply (pose );
-
+		subset = core::select::get_master_subunit_selection(pose, subset);
 	}
 
 	utility::vector1< bool > dihedral_subset = subset; //Start of tree has no dihedrals to move.
 	utility::vector1< bool > sugar_bb_subset = subset; //SugarBB not for residues attached to protein.
-
 
 
 	//Setup SugarBB subset and filter the subset.
@@ -718,6 +734,7 @@ GlycanRelaxMover::apply( core::pose::Pose& pose ){
 	using namespace core::chemical::carbohydrates;
 	using namespace core::scoring;
 	using namespace protocols::moves;
+	using namespace protocols::minimization_packing;
 	using utility::to_string;
 
 	accept_log_.clear();
@@ -760,6 +777,9 @@ GlycanRelaxMover::apply( core::pose::Pose& pose ){
 				TR.Debug << "energy pre- move  "<< energy_pre_move << std::endl;
 				TR.Debug << "energy post move: "<< energy << std::endl;
 			}
+			//TR << "energy pre- move  "<< energy_pre_move << std::endl;
+			//TR << "energy post move: "<< energy << std::endl;
+
 			if ( pymol_movie_ ) {
 				pmm_trials.apply( pose );
 			}

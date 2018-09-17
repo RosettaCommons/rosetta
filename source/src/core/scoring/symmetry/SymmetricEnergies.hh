@@ -32,6 +32,11 @@
 #include <utility/vector1.hh>
 #include <numeric/xyzMatrix.fwd.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 
 namespace core {
 namespace scoring {
@@ -82,11 +87,20 @@ private:
 private:
 	MinimizationGraphOP derivative_graph_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // namespace symmetry
 } // namespace scoring
 } // namespace core
 
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_symmetry_SymmetricEnergies )
+#endif // SERIALIZATION
 
 #endif // INCLUDED_core_scoring_symmetry_SymmetricEnergies_HH

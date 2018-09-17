@@ -230,6 +230,7 @@ public:
 	// The above was added so that this could be called in SymMinMover
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+
 protected:
 
 	/// @brief for use with RosettaScripts current method of using
@@ -242,13 +243,13 @@ protected:
 	/// @brief run the minimizer (cartesian or torsion) based on set options, with the final movemap setup. Will call inner_run_minimizer multiple times if
 	/// abs_score_convergence_threshold is set
 	void
-	minimize( core::pose::Pose & pose, core::kinematics::MoveMap & active_movemap );
+	minimize( core::pose::Pose & pose, core::kinematics::MoveMap const & active_movemap );
 
 private:
 	/// @brief actual call to the minimizer, in helper function so it can be
 	/// run multiple times by minimize()
 	void
-	inner_run_minimizer( core::pose::Pose & pose, core::kinematics::MoveMap & active_movemap );
+	inner_run_minimizer( core::pose::Pose & pose, core::kinematics::MoveMap const & active_movemap );
 
 	// data
 

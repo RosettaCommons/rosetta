@@ -47,6 +47,20 @@
 //Auto Headers
 #include <core/scoring/EnergyGraph.hh>
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+#include <utility/serialization/ObjexxFCL/FArray1D.srlz.hh>
+
+// Cereal headers
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/map.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/utility.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace symmetry {
@@ -281,3 +295,30 @@ SymmetricEnergies::require_context_graph_( scoring::ContextGraphType type, bool 
 } // namespace symmetry
 } // namespace scoring
 } // namespace core
+
+
+#ifdef    SERIALIZATION
+
+/// @brief Serialization method - JAB
+template< class Archive >
+void
+core::scoring::symmetry::SymmetricEnergies::save( Archive & arc ) const {
+	arc( cereal::base_class< core::scoring::Energies >( this ) );
+	arc( CEREAL_NVP( derivative_graph_ )); //MinimizationGraphOP
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::symmetry::SymmetricEnergies::load( Archive & arc ) {
+	arc( cereal::base_class< core::scoring::Energies >( this ) );
+	arc( derivative_graph_ ); //MinimizationGraphOP
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::symmetry::SymmetricEnergies );
+CEREAL_REGISTER_TYPE( core::scoring::symmetry::SymmetricEnergies )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_symmetry_SymmetricEnergies )
+#endif // SERIALIZATION
+
+

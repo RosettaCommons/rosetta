@@ -233,6 +233,12 @@ make_symmetric_pose(
 	if ( option[ OptionKeys::symmetry::detect_bonds ] ) {
 		pose.conformation().detect_bonds();
 	}
+
+	///Make GlycanTreeSet have symmetric info.
+	if ( pose.conformation().contains_carbohydrate_residues() ) {
+		pose.conformation().clear_glycan_trees();
+		pose.conformation().setup_glycan_trees();
+	}
 }
 
 /// @details constructs a symmetric pose with a symmetric conformation and energies object from a monomeric pose
@@ -265,6 +271,12 @@ make_asymmetric_pose(
 
 	energies->clear_energies();
 	pose.set_new_energies_object( energies );
+
+	///Make GlycanTreeSet have non-symmetric info
+	if ( pose.conformation().contains_carbohydrate_residues() ) {
+		pose.conformation().clear_glycan_trees();
+		pose.conformation().setup_glycan_trees();
+	}
 
 	debug_assert( !is_symmetric( pose ) );
 }
@@ -361,6 +373,11 @@ void extract_asymmetric_unit(
 		pose_out.set_secstruct( resid, pose_in.secstruct( resid ) );
 	}
 
+	if ( pose_out.conformation().contains_carbohydrate_residues() ) {
+		pose_out.conformation().clear_glycan_trees();
+		pose_out.conformation().setup_glycan_trees();
+	}
+
 	runtime_assert( !core::pose::symmetry::is_symmetric( pose_out ) );
 }
 
@@ -406,6 +423,11 @@ get_asymmetric_pose_copy_from_symmetric_pose(
 			//fpd Don't let this happen; always jump in these cases
 			if ( residue.type().is_upper_terminus(  ) ) jump_to_next = true;
 		}
+	}
+
+	if ( new_pose.conformation().contains_carbohydrate_residues() ) {
+		new_pose.conformation().clear_glycan_trees();
+		new_pose.conformation().setup_glycan_trees();
 	}
 
 	return new_pose;
@@ -617,6 +639,7 @@ make_symmetric_movemap(
 		if ( !symm_info->bb_is_independent( i ) ) {
 			movemap.set_bb ( i,false );
 			movemap.set_chi( i, false );
+			movemap.set_branches(i, false );
 		}
 	}
 
@@ -676,7 +699,7 @@ make_symmetric_movemap(
 				int const n_atoms( pose.residue(i).natoms() );
 				for ( int j=1; j<=n_atoms; ++j ) {
 					id::AtomID atm = id::AtomID(j,i);
-					if ( atom_settings.at(atm) ) {
+					if ( atom_settings.count(atm) ) {
 						movemap.set_atom( atm, false );
 					}
 				}

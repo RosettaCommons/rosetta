@@ -1444,6 +1444,34 @@ SymmetricConformation::declare_chemical_bond(
 
 }
 
+void
+SymmetricConformation::update_noncanonical_connection(
+	Size const lower_seqpos,
+	Size const lr_conn_id,
+	Size const upper_seqpos,
+	Size const ur_conn_id)
+{
+	if ( lower_seqpos < 1 || lower_seqpos > size() ) return;
+	if ( upper_seqpos < 1 || upper_seqpos > size() ) return;
+
+	//We need to find all pairs (seqpos1', seqpos2') of residues that have the same transform when transformed into the old pair's coordinate frame.
+
+	if ( ur_conn_id == 0 || ur_conn_id > residue(upper_seqpos).connect_map_size() ) {
+		TR.Error << "Trying to update a noncanonical connection from " << lower_seqpos << " conn " << lr_conn_id
+			<< " to " << upper_seqpos << " conn " << ur_conn_id << std::endl;
+		TR.Error << "but the latter residue doesn't have that many connections... Something is out of date." << std::endl;
+		return;
+	}
+
+	std::vector < std::pair < Size, Size > > res_pairs = symm_info_->map_symmetric_res_pairs( lower_seqpos, upper_seqpos);
+	res_pairs.push_back(std::make_pair(lower_seqpos, upper_seqpos));
+	for ( auto res_pair : res_pairs ) {
+		core::Size lower = res_pair.first;
+		core::Size upper = res_pair.second;
+		set_noncanonical_connection( lower, lr_conn_id, upper, ur_conn_id );
+	}
+}
+
 
 }
 } // conformation

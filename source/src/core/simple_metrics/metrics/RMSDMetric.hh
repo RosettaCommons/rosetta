@@ -101,7 +101,10 @@ public:
 	void
 	set_residue_mapping( std::map< core::Size, core::Size> const & rmsd_map );
 
-
+	///@brief Run a superimpose on the residues selected in the residue selector (or all)
+	/// default False.
+	void
+	set_run_superimpose( bool super );
 
 	///@brief Set what we will be calculating the RMSD on.
 	void
@@ -163,6 +166,7 @@ private:
 	bool robust_ = true;
 
 	std::map< std::string, scoring::rmsd_atoms > name_mapping_;
+	bool superimpose_=false;
 
 };
 

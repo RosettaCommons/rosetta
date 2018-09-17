@@ -848,6 +848,7 @@ public:  // Bonds, Connections, Atoms, & Stubs
 
 	/// @brief Update the connection status between the lower_seqpos residue's lr_conn_id connection ID and
 	/// the upper_seqpos residue's ur_conn_id connection ID.
+	virtual
 	void
 	update_noncanonical_connection(Size lower_seqpos,
 		Size lr_conn_id,

@@ -28,6 +28,7 @@
 #include <core/pose/ref_pose.hh>
 #include <core/id/AtomID.hh>
 #include <core/scoring/rms_util.hh>
+#include <core/pose/symmetry/util.hh>
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
@@ -133,6 +134,16 @@ PerResidueRMSDMetric::set_rmsd_type(scoring::rmsd_atoms rmsd_type){
 }
 
 void
+PerResidueRMSDMetric::set_run_superimpose(bool super){
+	superimpose_ = super;
+}
+
+void
+PerResidueRMSDMetric::set_desymmetrize_residue_selector( bool desym){
+	desymmetrize_res_selector_ = desym;
+}
+
+void
 PerResidueRMSDMetric::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & datamap)
@@ -145,6 +156,7 @@ PerResidueRMSDMetric::parse_my_tag(
 		set_residue_selector_reference(parse_residue_selector( tag, datamap, "residue_selector_ref" ));
 	}
 
+	set_run_superimpose(tag->getOption< bool >("super", superimpose_));
 
 	//Comparison pose.
 	if ( tag->hasOption("reference_name") ) {
@@ -160,6 +172,8 @@ PerResidueRMSDMetric::parse_my_tag(
 	if ( tag->hasOption("rmsd_type") ) {
 		set_rmsd_type( name_mapping_[ tag->getOption<std::string>("rmsd_type")]);
 	}
+
+	set_desymmetrize_residue_selector( tag->getOption< bool >("desymmetrize_selector", true));
 
 	set_corresponding_atoms_robust(tag->getOption< bool >("robust", robust_));
 }
@@ -184,10 +198,15 @@ PerResidueRMSDMetric::provide_xml_schema( utility::tag::XMLSchemaDefinition & xs
 		"use_native", xsct_rosetta_bool, "Use the native if present on the cmd-line.", "false"
 	);
 
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"super", xsct_rosetta_bool, "Run a superposition on the residues in the residue_selector (or all) before RMSD calculation and the atoms slected for RMSD", "false"
+	);
+
 	utility::vector1< std::string > rmsd_type_names = get_rmsd_type_names();
 	utility::tag::add_schema_restrictions_for_strings( xsd, "rmsd_types", rmsd_type_names);
 
 	attlist + XMLSchemaAttribute("rmsd_type", "rmsd_types", "Type of calculation.  Current choices are: \n" + utility::to_string(rmsd_type_names) );
+	attlist + XMLSchemaAttribute::attribute_w_default("desymmetrize_selector", xsct_rosetta_bool, "Should we desymmetrize the residue selector if we have a symmetric pose?", "true");
 
 	std::string description = "\tThis is the RMSD for each residue between the input and the set comparison pose.\n"
 		"  If native is set on the cmd-line and use_native is true, we will use that.\n"
@@ -203,11 +222,11 @@ PerResidueRMSDMetric::provide_xml_schema( utility::tag::XMLSchemaDefinition & xs
 }
 
 std::map< id::AtomID, id::AtomID >
-PerResidueRMSDMetric::create_atom_id_map( core::pose::Pose const & pose) const {
+PerResidueRMSDMetric::create_atom_id_map( core::pose::Pose const & pose, bool desymmetrize_res_selector) const {
 	//Setup the main residue mapping we will use depending on what is set.
 	std::map< core::Size, core::Size > residue_map;
 	if ( rmsd_map_.empty() ) {
-		residue_map = get_residue_mapping_from_selectors( get_selector(), residue_selector_ref_, pose, *ref_pose_);
+		residue_map = get_residue_mapping_from_selectors( get_selector(), residue_selector_ref_, pose, *ref_pose_, desymmetrize_res_selector);
 	} else {
 		residue_map = rmsd_map_;
 	}
@@ -293,7 +312,19 @@ PerResidueRMSDMetric::calculate(const pose::Pose & pose) const {
 
 	std::map< id::AtomID, id::AtomID> atom_map = create_atom_id_map(pose);
 	utility::vector1< bool > mask = get_selector()->apply( pose );
-	return per_res_rms_at_corresponding_atoms_no_super( pose, *ref_pose_, atom_map, mask);
+
+	if ( core::pose::symmetry::is_symmetric( pose )  && desymmetrize_res_selector_ )  {
+		TR << "De-Symmetrizing selector" << std::endl;
+		mask = core::select::get_master_subunit_selection(pose, mask);
+	}
+
+	if ( superimpose_ ) {
+		core::pose::Pose local_pose = pose;
+		superimpose_pose(local_pose, *ref_pose_, atom_map);
+		return per_res_rms_at_corresponding_atoms_no_super( local_pose, *ref_pose_, atom_map, mask);
+	} else {
+		return per_res_rms_at_corresponding_atoms_no_super( pose, *ref_pose_, atom_map, mask);
+	}
 }
 
 void

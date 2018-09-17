@@ -209,9 +209,15 @@ public:
 
 private: // methods
 
-	///@brief Setup classes, selectors, etc.
 	void
-	setup( core::pose::Pose & pose );
+	setup_score_function(core::pose::Pose const & pose );
+
+	void
+	setup_cartmin(core::scoring::ScoreFunctionOP scorefxn) const;
+
+	///@brief Setup classes, selectors, etc.
+	//void
+	//setup( core::pose::Pose & pose );
 
 	bool
 	is_quenched() const;
@@ -231,6 +237,7 @@ private: // data
 
 	bool cartmin_ = false;
 	bool min_rings_ = false;
+	bool idealize_ = false;
 
 	core::scoring::ScoreFunctionOP scorefxn_ = nullptr;
 	core::select::residue_selector::ResidueSelectorCOP selector_ = nullptr;

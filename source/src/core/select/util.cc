@@ -20,14 +20,24 @@
 #include <basic/Tracer.hh>
 
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
+#include <core/select/residue_selector/SymmetricalResidueSelector.hh>
 #include <core/scoring/TenANeighborGraph.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/Conformation.hh>
+#include <core/conformation/symmetry/SymmetricConformation.hh>
+#include <core/conformation/symmetry/MirrorSymmetricConformation.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/scoring/Energies.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/pose/symmetry/util.hh>
 #include <core/id/AtomID.hh>
 #include <core/chemical/AtomType.hh>
+
+
+
 #include <numeric/xyzVector.hh>
+
 #include <utility/string_util.hh>
 
 static basic::Tracer TR( "core.select.util" );
@@ -295,6 +305,34 @@ get_pymol_selection_for_atoms(pose::Pose const & pose, utility::vector1< id::Ato
 	}
 
 	return selection;
+}
+
+///@brief This is for a 'symmetrical' selection (iE Normal selection for symmetrical poses!).
+///  Turns off all residues that are not part of the master subunit.
+utility::vector1< bool >
+get_master_subunit_selection(pose::Pose const & pose, utility::vector1<bool> const & full_subset){
+	using namespace core::conformation::symmetry;
+
+	utility::vector1< bool > result = full_subset;
+	if ( ! core::pose::symmetry::is_symmetric( pose) ) {
+		return result;
+	}
+
+	auto const & symm_conf (
+		dynamic_cast<SymmetricConformation const & > ( pose.conformation()) );
+	SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
+
+
+	for ( core::Size i = 1; i <= full_subset.size(); ++i ) {
+		if ( ! full_subset[i] ) continue;
+
+		if ( symm_info->bb_is_independent( i ) ) {
+			continue;
+		} else {
+			result[i] = false;
+		}
+	}
+	return result;
 }
 
 

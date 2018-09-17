@@ -161,6 +161,11 @@ RMSDMetric::clone() const {
 }
 
 void
+RMSDMetric::set_run_superimpose(bool super){
+	superimpose_ = super;
+}
+
+void
 RMSDMetric::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap &  datamap)
@@ -174,6 +179,7 @@ RMSDMetric::parse_my_tag(
 		set_residue_selector_reference(parse_residue_selector( tag, datamap, "residue_selector_ref" ));
 	}
 
+	set_run_superimpose(tag->getOption< bool >("super", superimpose_));
 
 	//Comparison pose.
 	if ( tag->hasOption("reference_name") ) {
@@ -219,6 +225,10 @@ RMSDMetric::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 		"use_native", xsct_rosetta_bool, "Use the native if present on the cmd-line.", "false"
 	);
 
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"super", xsct_rosetta_bool, "Run a superposition on the residues in the residue_selector (or all) before RMSD calculation and the atoms selected for RMSD", "false"
+	);
+
 	utility::vector1< std::string > rmsd_type_names = get_rmsd_type_names();
 	utility::tag::add_schema_restrictions_for_strings( xsd, "rmsd_types", rmsd_type_names);
 
@@ -252,7 +262,16 @@ RMSDMetric::calculate(const core::pose::Pose & pose) const {
 	core_metric.set_residue_selector( residue_selector_);
 
 	std::map< id::AtomID, id::AtomID > atom_map = core_metric.create_atom_id_map( pose );
-	return scoring::rms_at_corresponding_atoms_no_super( pose, *ref_pose_, atom_map);
+	core::Real rms = 0.0;
+	if ( superimpose_ ) {
+		core::pose::Pose local_pose = pose;
+		scoring::superimpose_pose(local_pose, *ref_pose_, atom_map);
+		rms =  scoring::rms_at_corresponding_atoms_no_super( local_pose, *ref_pose_, atom_map);
+
+	} else {
+		rms =  scoring::rms_at_corresponding_atoms_no_super( pose, *ref_pose_, atom_map);
+	}
+	return rms;
 }
 
 

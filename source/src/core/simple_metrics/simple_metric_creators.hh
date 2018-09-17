@@ -247,6 +247,22 @@ public:
 	provide_xml_schema( utility::tag::XMLSchemaDefinition &) const override;
 };
 
+class PerResidueGlycanLayerMetricCreator : public core::simple_metrics::SimpleMetricCreator {
+public:
+
+
+	/// @brief Instantiate a particular SimpleMetric
+	virtual core::simple_metrics::SimpleMetricOP
+	create_simple_metric() const override;
+
+	/// @brief Return a string that will be used to instantiate the particular SimpleMetric
+	virtual std::string
+	keyname() const override;
+
+	virtual void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition &) const override;
+};
+
 class PerResidueSasaMetricCreator : public core::simple_metrics::SimpleMetricCreator {
 public:
 

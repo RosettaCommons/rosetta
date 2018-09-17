@@ -274,13 +274,22 @@ MinMover::apply_dof_tasks_to_movemap(
 			}
 		}
 	}
+
+	if ( !omega_ ) {
+		TR << "shutting off omega dihedral angle minimization" << std::endl;
+		for ( core::Size i = 1; i <= pose.size(); ++i ) {
+			if ( !pose.residue( i ).is_protein() ) continue;
+			movemap.set( core::id::TorsionID( core::id::omega_torsion, BB, i), false );
+		}
+	}
+
 }
 
 void
 MinMover::max_iter( Size max_iter_in ) { min_options_->max_iter( max_iter_in ); }
 
 void
-MinMover::minimize(pose::Pose & pose, core::kinematics::MoveMap & active_movemap){
+MinMover::minimize(pose::Pose & pose, core::kinematics::MoveMap const & active_movemap){
 	PROF_START( basic::MINMOVER_APPLY );
 	inner_run_minimizer( pose, active_movemap );
 	if ( abs_score_convergence_threshold() > 0.0 ) {
@@ -293,12 +302,14 @@ MinMover::minimize(pose::Pose & pose, core::kinematics::MoveMap & active_movemap
 	PROF_STOP( basic::MINMOVER_APPLY );
 
 	// emit statistics
-	scorefxn_->show( TR.Debug, pose );
-	TR.Debug << std::endl;
+	if ( TR.Debug.visible() ) {
+		scorefxn_->show( TR.Debug, pose );
+		TR.Debug << std::endl;
+	}
 }
 
 void
-MinMover::inner_run_minimizer( core::pose::Pose & pose, core::kinematics::MoveMap & active_movemap ) {
+MinMover::inner_run_minimizer( core::pose::Pose & pose, core::kinematics::MoveMap const & active_movemap ) {
 	if ( !cartesian( ) ) {
 		AtomTreeMinimizerOP minimizer;
 		if ( core::pose::symmetry::is_symmetric( pose ) ) {
@@ -306,13 +317,7 @@ MinMover::inner_run_minimizer( core::pose::Pose & pose, core::kinematics::MoveMa
 		} else {
 			minimizer = AtomTreeMinimizerOP( new AtomTreeMinimizer() );
 		}
-		if ( !omega_ ) {
-			TR<<"shutting off omega dihedral angle minimization"<<std::endl;
-			for ( core::Size i = 1; i <= pose.size(); ++i ) {
-				if ( !pose.residue( i ).is_protein() ) continue;
-				active_movemap.set( core::id::TorsionID( core::id::omega_torsion, BB, i), false );
-			}
-		}
+
 		score_before_minimization_ = (*scorefxn_)(pose);
 		score_after_minimization_ = minimizer->run( pose, active_movemap, *scorefxn_, *min_options_ );
 	} else {
@@ -331,11 +336,12 @@ MinMover::apply( pose::Pose & pose )
 
 	apply_dof_tasks_to_movemap(pose, *active_movemap);
 
-	if ( ! scorefxn_ ) scorefxn_ = get_score_function(); // get a default (INITIALIZED!) ScoreFunction
-
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		core::pose::symmetry::make_symmetric_movemap( pose, *active_movemap );
 	}
+
+	if ( ! scorefxn_ ) scorefxn_ = get_score_function(pose); // get a default (INITIALIZED!) ScoreFunction
+
 	minimize( pose, *active_movemap );
 }
 
@@ -367,6 +373,7 @@ void MinMover::parse_my_tag(
 	parse_opts( tag, data, filters, movers );
 	parse_movemap_factory( tag, data );
 	parse_dof_tasks( tag, data );
+
 }
 
 void MinMover::parse_opts(
@@ -375,7 +382,9 @@ void MinMover::parse_opts(
 	Filters_map const &,
 	protocols::moves::Movers_map const & )
 {
-	score_function( protocols::rosetta_scripts::parse_score_function( tag, data ) );
+	if ( tag->hasOption("scorefxn") ) {
+		score_function( protocols::rosetta_scripts::parse_score_function( tag, data ) );
+	}
 
 	max_iter( tag->getOption< int >( "max_iter", 200 ) );
 	min_type( tag->getOption< std::string >( "type", "lbfgs_armijo_nonmonotone" ) );
@@ -391,6 +400,8 @@ void MinMover::parse_opts(
 			&& !tag->hasOption("type") ) {
 		min_type( "lbfgs_armijo_nonmonotone" );
 	}
+
+
 }
 
 void MinMover::parse_movemap_factory( TagCOP const tag, basic::datacache::DataMap & data )
@@ -601,5 +612,8 @@ Real MinMover::abs_score_diff_after_minimization() const {
 	return std::abs( score_diff_after_minimization() );
 }
 
+
 }  // minimization_packing
 }  // protocols
+
+

@@ -198,6 +198,7 @@ sources = {
 	"core/simple_metrics/per_residue_metrics": [
 		"PerResidueDensityFitMetric",
 		"PerResidueEnergyMetric",
+		"PerResidueGlycanLayerMetric",
 		"PerResidueRMSDMetric",
 		"PerResidueSasaMetric",
 	],
@@ -930,6 +931,7 @@ sources = {
 	],
 	"core/select/residue_selector": [
 		"AndResidueSelector",
+		"AsymmetricUnitSelector",
 		"BinSelector",
 	    	"BondedResidueSelector",
 		"CachedResidueSubset",

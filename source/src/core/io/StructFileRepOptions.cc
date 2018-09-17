@@ -90,6 +90,7 @@ void StructFileRepOptions::parse_my_tag( utility::tag::TagCOP tag )
 	set_output_torsions( tag->getOption< bool >( "output_torsions", false ) );
 	set_output_virtual( tag->getOption< bool >( "output_virtual", false ) );
 	set_output_virtual_zero_occ( tag->getOption< bool >( "output_virtual_zero_occ", false ) );
+	set_output_only_asymmetric_unit( tag->getOption< bool >( "output_only_asymmetric_unit", false) );
 	set_pdb_comments( tag->getOption< bool >( "pdb_comments", false ) );
 	set_pdb_parents( tag->getOption< bool >( "pdb_parents", false ) );
 	set_per_chain_renumbering( tag->getOption< bool >( "per_chain_renumbering", false ) );
@@ -176,7 +177,7 @@ bool StructFileRepOptions::show_all_fixes() const { return show_all_fixes_; }
 bool StructFileRepOptions::constraints_from_link_records() const { return constraints_from_link_records_; }
 bool StructFileRepOptions::output_pose_cache() const { return output_pose_cache_data_; }
 bool StructFileRepOptions::output_pose_energies_table() const { return output_pose_energies_table_; }
-
+bool StructFileRepOptions::output_only_asymmetric_unit() const { return output_only_asymmetric_unit_; }
 // mutators
 
 void StructFileRepOptions::set_check_if_residues_are_Ntermini( std::string const & check_if_residues_are_Ntermini )
@@ -253,6 +254,9 @@ void StructFileRepOptions::set_output_virtual( bool const output_virtual )
 
 void StructFileRepOptions::set_output_virtual_zero_occ( bool const output_virtual_zero_occ )
 { output_virtual_zero_occ_ = output_virtual_zero_occ; }
+
+void StructFileRepOptions::set_output_only_asymmetric_unit( bool const output_only_asymmetric_unit )
+{ output_only_asymmetric_unit_ = output_only_asymmetric_unit; }
 
 void StructFileRepOptions::set_pdb_comments( bool const pdb_comments )
 { pdb_comments_ = pdb_comments; }
@@ -363,6 +367,7 @@ StructFileRepOptions::list_options_read( utility::options::OptionKeyList & read_
 		+ out::file::output_torsions
 		+ out::file::output_virtual
 		+ out::file::output_virtual_zero_occ
+		+ out::file::output_only_asymmetric_unit
 		+ out::file::pdb_comments
 		+ out::file::pdb_parents
 		+ out::file::per_chain_renumbering
@@ -429,6 +434,7 @@ StructFileRepOptions::append_schema_attributes( utility::tag::AttributeList & at
 		+ Attr::attribute_w_default( "output_torsions", xsct_rosetta_bool, "TO DO",  "0" )
 		+ Attr::attribute_w_default( "output_virtual", xsct_rosetta_bool, "TO DO",  "0" )
 		+ Attr::attribute_w_default( "output_virtual_zero_occ", xsct_rosetta_bool, "TO DO",  "0" )
+		+ Attr::attribute_w_default( "output_only_asymmetric_unit", xsct_rosetta_bool, "If symmetrical pose, only output PDB coord of master subunit.", "false")
 		+ Attr::attribute_w_default( "pdb_comments", xsct_rosetta_bool, "TO DO",  "0" )
 		+ Attr::attribute_w_default( "pdb_parents", xsct_rosetta_bool, "TO DO",  "0" )
 		+ Attr::attribute_w_default( "per_chain_renumbering", xsct_rosetta_bool, "TO DO",  "0" )
@@ -499,6 +505,7 @@ void StructFileRepOptions::init_from_options( utility::options::OptionCollection
 	set_output_torsions( options[ OptionKeys::out::file::output_torsions ]() );
 	set_output_virtual( options[ OptionKeys::out::file::output_virtual ]() );
 	set_output_virtual_zero_occ( options[ OptionKeys::out::file::output_virtual_zero_occ ]() );
+	set_output_only_asymmetric_unit( options[ OptionKeys::out::file::output_only_asymmetric_unit]() );
 	set_pdb_comments( options[ OptionKeys::out::file::pdb_comments ].value() );
 	set_pdb_parents( options[ OptionKeys::out::file::pdb_parents ].value() );
 	set_per_chain_renumbering( options[ OptionKeys::out::file::per_chain_renumbering ].value() );
@@ -558,6 +565,7 @@ StructFileRepOptions::operator == ( StructFileRepOptions const & other ) const
 	if ( output_torsions_                                       != other.output_torsions_                                      ) return false;
 	if ( output_virtual_                                        != other.output_virtual_                                       ) return false;
 	if ( output_virtual_zero_occ_                               != other.output_virtual_zero_occ_                              ) return false;
+	if ( output_only_asymmetric_unit_                            != other.output_only_asymmetric_unit_                              ) return false;
 	if ( pdb_parents_                                           != other.pdb_parents_                                          ) return false;
 	if ( per_chain_renumbering_                                 != other.per_chain_renumbering_                                ) return false;
 	if ( randomize_missing_coords_                              != other.randomize_missing_coords_                             ) return false;
@@ -636,6 +644,8 @@ StructFileRepOptions::operator < ( StructFileRepOptions const & other ) const
 	if ( output_virtual_                                        != other.output_virtual_                                       ) return false;
 	if ( output_virtual_zero_occ_                               <  other.output_virtual_zero_occ_                              ) return true;
 	if ( output_virtual_zero_occ_                               != other.output_virtual_zero_occ_                              ) return false;
+	if ( output_only_asymmetric_unit_                               <  other.output_only_asymmetric_unit_                              ) return true;
+	if ( output_only_asymmetric_unit_                               != other.output_only_asymmetric_unit_                              ) return false;
 	if ( pdb_parents_                                           <  other.pdb_parents_                                          ) return true;
 	if ( pdb_parents_                                           != other.pdb_parents_                                          ) return false;
 	if ( per_chain_renumbering_                                 <  other.per_chain_renumbering_                                ) return true;
@@ -721,6 +731,7 @@ core::io::StructFileRepOptions::save( Archive & arc ) const {
 	arc( CEREAL_NVP( output_torsions_ ) ); // _Bool
 	arc( CEREAL_NVP( output_virtual_ ) ); // _Bool
 	arc( CEREAL_NVP( output_virtual_zero_occ_ ) ); // _Bool
+	arc( CEREAL_NVP( output_only_asymmetric_unit_ ) ); // _Bool
 	arc( CEREAL_NVP( pdb_parents_ ) ); // _Bool
 	arc( CEREAL_NVP( per_chain_renumbering_ ) ); // _Bool
 	arc( CEREAL_NVP( randomize_missing_coords_ ) ); // _Bool
@@ -778,6 +789,7 @@ core::io::StructFileRepOptions::load( Archive & arc ) {
 	arc( output_torsions_ ); // _Bool
 	arc( output_virtual_ ); // _Bool
 	arc( output_virtual_zero_occ_ ); // _Bool
+	arc( output_only_asymmetric_unit_ ); // _Bool
 	arc( pdb_parents_ ); // _Bool
 	arc( per_chain_renumbering_ ); // _Bool
 	arc( randomize_missing_coords_ ); // _Bool

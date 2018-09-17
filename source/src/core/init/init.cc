@@ -286,12 +286,14 @@
 // (end for registering TaskOperations, ResLvlTaskOperations, and ResFilters)
 
 // ResidueSelectors
+#include <core/select/residue_selector/AsymmetricUnitSelectorCreator.hh>
 #include <core/select/residue_selector/GlycanLayerSelectorCreator.hh>
 #include <core/select/residue_selector/ResidueSelectorCreators.hh>
 #include <core/select/residue_selector/PrimarySequenceNeighborhoodSelectorCreator.hh>
 #include <core/select/residue_selector/SymmetricalResidueSelectorCreator.hh>
 #include <core/pack/task/residue_selector/ClashBasedShellSelectorCreator.hh>
 #include <core/select/residue_selector/CloseContactResidueSelectorCreator.hh>
+
 #include <core/select/residue_selector/ResidueSelectorRegistrator.hh>
 
 #include <core/select/jump_selector/JumpSelectorRegistrator.hh>
@@ -749,6 +751,7 @@ static ResidueSelectorRegistrator< GlycanSequonsSelectorCreator > reg_GlycanSequ
 static ResidueSelectorRegistrator< InterGroupInterfaceByVectorSelectorCreator > reg_InterGroupInterfaceByVectorSelectorCreator;
 static ResidueSelectorRegistrator< JumpDownstreamSelectorCreator > reg_JumpDownstreamSelectorCreator;
 static ResidueSelectorRegistrator< JumpUpstreamSelectorCreator > reg_JumpUpstreamSelectorCreator;
+static ResidueSelectorRegistrator< AsymmetricUnitSelectorCreator > reg_AsymmetricUnitSelectorCreator;
 static ResidueSelectorRegistrator< NeighborhoodResidueSelectorCreator > reg_NeighborhoodResidueSelectorCreator;
 static ResidueSelectorRegistrator< NotResidueSelectorCreator > reg_NotResidueSelectorCreator;
 static ResidueSelectorRegistrator< NumNeighborsSelectorCreator > reg_NumNeighborsSelectorCreator;

@@ -18,7 +18,8 @@
 #include <core/scoring/DockingScoreFunction.hh>
 #include <core/scoring/MinScoreScoreFunction.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-
+#include <core/pose/Pose.hh>
+#include <core/pose/symmetry/util.hh>
 #include <core/chemical/AA.hh>
 
 // Basic headers
@@ -383,6 +384,23 @@ core::scoring::ScoreFunctionOP
 get_score_function( bool const is_fullatom /* default true */ )
 {
 	return get_score_function( basic::options::option, is_fullatom );
+}
+
+core::scoring::ScoreFunctionOP
+get_score_function( pose::Pose const & pose, bool const is_fullatom )
+{
+	return get_score_function(pose, basic::options::option, is_fullatom );
+
+}
+
+core::scoring::ScoreFunctionOP
+get_score_function( pose::Pose const & pose, utility::options::OptionCollection const & options, bool const is_fullatom )
+{
+	core::scoring::ScoreFunctionOP scorefxn =  get_score_function( options, is_fullatom );
+	if ( core::pose::symmetry::is_symmetric( pose ) ) {
+		core::pose::symmetry::make_score_function_consistent_with_symmetric_state_of_pose(pose, scorefxn);
+	}
+	return scorefxn;
 }
 
 

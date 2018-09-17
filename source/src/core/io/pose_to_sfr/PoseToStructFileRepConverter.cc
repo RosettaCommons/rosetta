@@ -47,6 +47,7 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
+#include <core/pose/symmetry/util.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
@@ -195,12 +196,13 @@ PoseToStructFileRepConverter::init_from_pose( core::pose::Pose const & pose, id:
 // Main Init Function /////////////////////////////////////////////////////////
 void
 PoseToStructFileRepConverter::init_from_pose(
-	core::pose::Pose const & pose,
+	core::pose::Pose const & input_pose,
 	id::AtomID_Mask const & mask,
 	StructFileRepOptions const & options )
 {
 	using namespace core;
 	using core::pose::PDBInfo;
+
 
 	new_sfr();
 	if ( &options_ != &options ) { // Yes, address-of comparison
@@ -209,11 +211,11 @@ PoseToStructFileRepConverter::init_from_pose(
 	}
 
 	// Get Title Section information.
-	if ( ( options.preserve_header() == true || options.preserve_crystinfo() == true ) && pose.pdb_info() ) {
-		*(sfr_->remarks()) = pose.pdb_info()->remarks();  // Get OP to PDBInfo object for remarks.
-		if ( pose.pdb_info()->header_information() ) {
+	if ( ( options.preserve_header() == true || options.preserve_crystinfo() == true ) && input_pose.pdb_info() ) {
+		*(sfr_->remarks()) = input_pose.pdb_info()->remarks();  // Get OP to PDBInfo object for remarks.
+		if ( input_pose.pdb_info()->header_information() ) {
 			sfr_->header() =
-				io::HeaderInformationOP( new io::HeaderInformation( *( pose.pdb_info()->header_information() ) ) );
+				io::HeaderInformationOP( new io::HeaderInformation( *( input_pose.pdb_info()->header_information() ) ) );
 		} else {
 			sfr_->header() = io::HeaderInformationOP( new io::HeaderInformation() );
 		}
@@ -223,7 +225,24 @@ PoseToStructFileRepConverter::init_from_pose(
 
 	// Get parametric information
 	if ( options.write_pdb_parametric_info() ) {
-		get_parametric_info( sfr_->remarks(), pose );
+		get_parametric_info( sfr_->remarks(), input_pose );
+	}
+
+	//If packstat errors - its because this is moved before grab additional_pose_data
+	if ( options_.output_pose_energies_table() ) {
+		grab_pose_energies_table( input_pose);
+	}
+	if ( options_.output_pose_cache() ) {
+		grab_pose_cache_data( input_pose);
+	}
+
+	//JAB - here to be able to de-symmetrize pose to output master subunit data.
+	// for everything besides energies.
+	core::pose::Pose pose;
+	if ( options_.output_only_asymmetric_unit() && core::pose::symmetry::is_symmetric( input_pose ) ) {
+		core::pose::symmetry::extract_asymmetric_unit(input_pose, pose, false, true);
+	} else {
+		pose = input_pose;
 	}
 
 	// Get Crystallographic and Coordinate Transformation Section information.
@@ -828,13 +847,6 @@ PoseToStructFileRepConverter::grab_additional_pose_data( core::pose::Pose const 
 	grab_torsion_records( pose, options_.output_torsions() );
 	grab_pdbinfo_labels( pose );
 
-	//Here due to packstat.
-	if ( options_.output_pose_energies_table() ) {
-		grab_pose_energies_table( pose);
-	}
-	if ( options_.output_pose_cache() ) {
-		grab_pose_cache_data( pose);
-	}
 }
 
 

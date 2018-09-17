@@ -36,6 +36,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/select/residue_selector/util.hh>
 #include <core/pose/ref_pose.hh>
+#include <core/pose/util.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
@@ -280,7 +281,7 @@ DensityFitResidueSelector::apply( core::pose::Pose const & pose ) const
 
 	//Match the values to the cutoffs, create the subset
 	utility::vector1< Size > subset( pose.size(), false);
-	for ( Size i = 1; i <= pose.size(); ++i ) {
+	for ( Size i = 1; i <= subset.size(); ++i ) {
 		if ( ! fit_values.count(i) ) continue;
 		Real fit_value = fit_values[i];
 
@@ -296,7 +297,7 @@ DensityFitResidueSelector::apply( core::pose::Pose const & pose ) const
 
 	//Correct for symmetry:
 	if ( core::pose::symmetry::is_symmetric( pose )  ) {
-		for ( Size i = 1; i <= pose.size(); ++i ) {
+		for ( Size i = 1; i <= subset.size(); ++i ) {
 
 			if ( symminfo->bb_is_independent(i) ) continue;
 			else {

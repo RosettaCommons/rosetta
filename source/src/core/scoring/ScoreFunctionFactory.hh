@@ -17,6 +17,7 @@
 
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <utility/vector1.hh>
 #include <utility/options/OptionCollection.fwd.hh>
 #include <utility/options/keys/OptionKeyList.fwd.hh>
@@ -154,6 +155,14 @@ extern std::string const BETA_JULY15;
 /// By default it returns weights=talaris2013 for fullatom,
 /// and weights=cen_std and patch="" for centroid
 core::scoring::ScoreFunctionOP get_score_function( bool const is_fullatom = true );
+
+///@brief Get a ScoreFunction from cmd-line settings and dependant on the symmetrical state of the pose.
+core::scoring::ScoreFunctionOP get_score_function( core::pose::Pose const & pose, bool const is_fullatom = true );
+
+///@brief Get a ScoreFunction from cmd-line settings and dependant on the symmetrical state of the pose.
+/// Local Options collection.
+core::scoring::ScoreFunctionOP get_score_function( core::pose::Pose const & pose, utility::options::OptionCollection const & options, bool const is_fullatom = true );
+
 
 /// @brief A helper function which creates a scoring function held in an owning pointer reading
 /// from the input OptionCollection
