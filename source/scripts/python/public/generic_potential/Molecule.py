@@ -587,7 +587,6 @@ class MoleculeClass:
         xyz2 = self.xyz[i2]
         xyz3 = self.xyz[i3]
         if FT == 0:
-            
             icoordstr =  form%(self.atms[i0].name,  0.0,  0.0,  0.0, 
                                self.atms[i0].name,self.atms[i1].name,self.atms[i2].name) # 1st
             #tup = (i0,i0,i1,i2)
@@ -692,12 +691,16 @@ class MoleculeClass:
             if self.nheavyatm >= 3 and \
                (self.atms[atms[0]].is_H or self.atms[atms[2]].is_H): continue
             if len(self.atms[atms[0]].bonds) == 1 and len(self.atms[atms[2]].bonds) == 1: continue
-            if atms[0] == self.nbratom:
-                FT_triple = list(atms)
+            #hpark, 09/11/2018
+            if atms[1] == self.nbratom:
+                FT_triple = [atms[1],atms[0],atms[2]]
                 break
-            elif atms[2] == self.nbratom:
-                FT_triple = [atms[2],atms[1],atms[0]]
-                break
+            #if atms[0] == self.nbratom:
+            #    FT_triple = list(atms)
+            #    break
+            #elif atms[2] == self.nbratom:
+            #    FT_triple = [atms[2],atms[1],atms[0]]
+            #    break
 
         if FT_triple == []:
             for i,atms in enumerate(self.angles):
@@ -1100,6 +1103,7 @@ class MoleculeClass:
                                       report_nbonded_chi,
                                       report_puckering_chi)
 
+        #C4: center of angle
         #ICOOR_INTERNAL    C4     0.000000    0.000000    0.000000   C4    C2    N1 
         #ICOOR_INTERNAL    C2     0.000000  180.000000    1.349077   C4    C2    N1 
         #ICOOR_INTERNAL    N1    -0.000001   52.329407    1.416959   C4    C2    N1
