@@ -67,55 +67,50 @@ class Condor_HPC_Driver(HPC_Driver):
 
 
 
+    # def complete(self, condor_job_id):
+    #     ''' Return job completion status. Note that single hpc_job may contatin inner list of individual HPC jobs, True should be return if they all run in to completion.
+    #     '''
+
+    #     execute('Releasing condor jobs...', 'condor_release $USER', return_='tuple')
+
+    #     s = execute('', 'condor_q $USER | grep $USER | grep {}'.format(condor_job_id), return_='output', terminate_on_failure=False).replace(' ', '').replace('\n', '')
+    #     if s: return False
+
+    #         # #setDaemonStatusAndPing('[Job #%s] Running... %s condor job(s) in queue...' % (self.id, len(s.split('\n') ) ) )
+    #         # n_jobs = len(s.split('\n'))
+    #         # s, o = execute('', 'condor_userprio -all | grep $USER@', return_='tuple')
+    #         # if s == 0:
+    #         #     jobs_running = o.split()
+    #         #     jobs_running = 'XX' if len(jobs_running) < 4 else jobs_running[4]
+    #         #     self.set_daemon_message("Waiting for condor to finish HPC jobs... [{} jobs in HPC-Queue, {} CPU's used]".format(n_jobs, jobs_running) )
+    #         #     print "{} condor jobs in queue... Sleeping 32s...    \r".format(n_jobs),
+    #         # sys.stdout.flush()
+    #         # time.sleep(32)
+    #     else:
+
+    #         #self.tracer('Waiting for condor to finish the jobs... DONE')
+    #         self.jobs.remove(condor_job_id)
+    #         self.cpu_usage += self.get_condor_accumulated_usage()
+    #         return True  # jobs already finished, we return empty list to prevent double counting of cpu_usage
+
+
     def complete(self, condor_job_id):
-        ''' Return job completion status. Note that single hpc_job may contatin inner list of individual HPC jobs, True should be return if they all run in to completion.
+        ''' Return True if job with given id is complete
         '''
+        execute('Releasing condor jobs...', 'condor_release $USER', return_='tuple', silent=True)
 
-        execute('Releasing condor jobs...', 'condor_release $USER', return_='tuple')
-
-        s = execute('', 'condor_q $USER | grep $USER | grep {}'.format(condor_job_id), return_='output', terminate_on_failure=False).replace(' ', '').replace('\n', '')
+        s = execute('', f'condor_q $USER | grep $USER | grep {condor_job_id}', return_='output', terminate_on_failure=False, silent=True)
         if s: return False
-
-            # #setDaemonStatusAndPing('[Job #%s] Running... %s condor job(s) in queue...' % (self.id, len(s.split('\n') ) ) )
-            # n_jobs = len(s.split('\n'))
-            # s, o = execute('', 'condor_userprio -all | grep $USER@', return_='tuple')
-            # if s == 0:
-            #     jobs_running = o.split()
-            #     jobs_running = 'XX' if len(jobs_running) < 4 else jobs_running[4]
-            #     self.set_daemon_message("Waiting for condor to finish HPC jobs... [{} jobs in HPC-Queue, {} CPU's used]".format(n_jobs, jobs_running) )
-            #     print "{} condor jobs in queue... Sleeping 32s...    \r".format(n_jobs),
-            # sys.stdout.flush()
-            # time.sleep(32)
         else:
-
             #self.tracer('Waiting for condor to finish the jobs... DONE')
             self.jobs.remove(condor_job_id)
             self.cpu_usage += self.get_condor_accumulated_usage()
             return True  # jobs already finished, we return empty list to prevent double counting of cpu_usage
 
-        # if True:  # if block:
-        #     self.tracer('Waiting for condor to finish the jobs...')
-        #     while True:
-        #         execute('Releasing condor jobs...', 'condor_release $USER', return_='tuple')
-        #         s = ''
-        #         for j_id in jobs: s += execute('', 'condor_q $USER | grep $USER | grep {}'.format(j_id), return_='output', terminate_on_failure=False)
-        #         if s:
-        #             #setDaemonStatusAndPing('[Job #%s] Running... %s condor job(s) in queue...' % (self.id, len(s.split('\n') ) ) )
-        #             n_jobs = len(s.split('\n'))
-        #             s, o = execute('', 'condor_userprio -all | grep $USER@', return_='tuple')
-        #             if s == 0:
-        #                 jobs_running = o.split()
-        #                 jobs_running = 'XX' if len(jobs_running) < 4 else jobs_running[4]
-        #                 self.set_daemon_message("Waiting for condor to finish HPC jobs... [{} jobs in HPC-Queue, {} CPU's used]".format(n_jobs, jobs_running) )
-        #                 print "{} condor jobs in queue... Sleeping 32s...    \r".format(n_jobs),
-        #             sys.stdout.flush()
-        #             time.sleep(32)
-        #         else: break
-        #     self.tracer('Waiting for condor to finish the jobs... DONE')
-        #     self.cpu_usage += self.get_condor_accumulated_usage()
-        #     return []  # jobs already finished, we return empty list to prevent double counting of cpu_usage
-        # #self.jobs.append(condor_job_ids)
-        # #return condor_job_ids
+
+    def cancel_job(self, condor_job_id):
+        execute(f'Condor_HPC_Driver.canceling job {condor_job_id}...', f'condor_rm {condor_job_id}', terminate_on_failure=False)
+
 
 
 

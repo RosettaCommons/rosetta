@@ -3,7 +3,7 @@
 
 import os, subprocess, stat
 import time as time_module
-
+import signal as signal_module
 
 class NT:  # named tuple
     def __init__(self, **entries): self.__dict__.update(entries)
@@ -21,26 +21,35 @@ class HPC_Exception(Exception):
 
 
 
-def execute(message, commandline, return_=False, until_successes=False, tracer=lambda x:None, terminate_on_failure=True):
-    tracer(message);  tracer(commandline)
+def execute(message, command_line, return_='status', until_successes=False, terminate_on_failure=True, silent=False, silence_output=False, tracer=print):
+    if not silent: tracer(message);  tracer(command_line); sys.stdout.flush();
     while True:
-        #(res, output) = commands.getstatusoutput(commandline)
-        (res, output) = subprocess.getstatusoutput(commandline)
-        tracer(output)
 
-        if res and until_successes: pass  # Thats right - redability COUNT!
+        p = subprocess.Popen(command_line, bufsize=0, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        output, errors = p.communicate()
+
+        output = output + errors
+
+        output = output.decode(encoding="utf-8", errors="replace")
+
+        exit_code = p.returncode
+
+        if exit_code  and  not (silent or silence_output): tracer(output); sys.stdout.flush();
+
+        if exit_code and until_successes: pass  # Thats right - redability COUNT!
         else: break
 
-        print( "Error while executing %s: %s\n" % (message, output) )
-        print( "Sleeping 60s... then I will retry..." )
+        tracer( "Error while executing {}: {}\n".format(message, output) )
+        tracer("Sleeping 60s... then I will retry...")
+        sys.stdout.flush();
         time.sleep(60)
 
-    if return_ == 'tuple': return(res, output)
+    if return_ == 'tuple': return(exit_code, output)
 
-    if res and terminate_on_failure:
-        tracer("\nEncounter error while executing: " + commandline)
+    if exit_code and terminate_on_failure:
+        tracer("\nEncounter error while executing: " + command_line)
         if return_==True: return True
-        else: raise HPC_Exception("\nEncounter error while executing: " + commandline + '\n' + output)
+        else: print("\nEncounter error while executing: " + command_line + '\n' + output); sys.exit(1)
 
     if return_ == 'output': return output
     else: return False
@@ -73,6 +82,12 @@ class HPC_Driver:
 
         self.jobs = []  # list of all jobs currently running by this driver, Job class is driver depended, could be just int or something more complex
 
+        self.install_signal_handler()
+
+
+    def __del__(self):
+        self.remove_signal_handler()
+
 
     def execute(self, executable, arguments, working_dir, log_dir=None, name='_no_name_', memory=256, time=24, shell_wrapper=False, block=True):
         ''' Execute given command line on HPC cluster, must accumulate cpu hours in self.cpu_usage '''
@@ -90,22 +105,18 @@ class HPC_Driver:
         must_be_implemented_in_inherited_classes
 
 
-    def complete(self, job):
-        ''' Return job completion status. Note that single hpc_job may contatin inner list of individual HPC jobs, True should be return if they all run in to completion.
-        '''
-        must_be_implemented_in_inherited_classes
+    def cancel_all_jobs(self):
+        ''' Cancel all HPC jobs known to this driver, use this as signal handler for script termination '''
+        for j in self.jobs: self.cancel_job(j)
 
 
-    def wait_until_complete(self, jobs=None, silent=False):
+    def wait_until_complete(self, jobs=None, callback=None, silent=False):
         ''' Helper function, wait until given jobs list is finished, if no argument is given waits until all jobs known by driver is finished '''
-        jobs = list( jobs if jobs else self.jobs )
-
-        print(f'Waiting for Condor to finish {jobs} jobs...')
+        jobs = jobs if jobs else self.jobs
 
         while jobs:
-            for j in jobs:
+            for j in jobs[:]:
                 if self.complete(j): jobs.remove(j)
-                else: break
 
             if jobs:
                 #total_cpu_queued  = sum( [j.jobs_queued  for j in jobs] )
@@ -117,8 +128,45 @@ class HPC_Driver:
                 self.set_daemon_message("Waiting for HPC {} job(s) to finish...".format( len(jobs) ) )
                 #self.tracer("Waiting for HPC {} job(s) to finish...".format( len(jobs) ) )
 
-                if silent: time.sleep(64)
-                else:
-                    sys.stdout.flush()
-                    Sleep(64, '"Waiting for HPC {n_jobs} job(s) to finish, sleeping {time_left}s    \r', dict(n_jobs=len(jobs)))
-                    #time_module.sleep(64*1)
+                sys.stdout.flush()
+
+                if callback: callback()
+
+                if silent: time_module.sleep(64*1)
+                else: Sleep(64, '"Waiting for HPC {n_jobs} job(s) to finish, sleeping {time_left}s    \r', dict(n_jobs=len(jobs)))
+
+
+
+    _signals_ = [signal_module.SIGINT, signal_module.SIGTERM, signal_module.SIGABRT]
+    def install_signal_handler(self):
+        def signal_handler(signal_, frame):
+            self.tracer('Recieved signal:{}... Canceling HPC jobs...'.format(signal_) )
+            self.cancel_all_jobs()
+            self.set_daemon_message( 'Remote daemon got terminated with signal:{}'.format(signal_) )
+            sys.exit(1)
+
+        for s in self._signals_: signal_module.signal(s, signal_handler)
+
+
+    def remove_signal_handler(self):  # do we really need this???
+        try:
+            for s in self._signals_: signal_module.signal(s, signal_module.SIG_DFL)
+            #print('remove_signal_handler: done!')
+
+        except TypeError:
+            #print('remove_signal_handler: interpreted terminating, skipping remove_signal_handler...')
+            pass
+
+
+    def cancel_job(self, job_id):
+        must_be_implemented_in_inherited_classes
+
+
+    def submit_hpc_job(self, name, executable, arguments, working_dir, jobs_to_queue, memory=512, time=12, block=True):
+        must_be_implemented_in_inherited_classes
+
+
+    def complete(self, job_id):
+        ''' Return job completion status. Return True if job complered and False otherwise
+        '''
+        must_be_implemented_in_inherited_classes
