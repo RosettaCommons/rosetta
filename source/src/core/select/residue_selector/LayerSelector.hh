@@ -58,28 +58,27 @@ public:
 
 	/// @brief Destructor
 	///
-	virtual ~LayerSelector();
+	~LayerSelector() override;
 
 	/// @brief Clone operator.
 	/// @details Copy this object and return an owning pointer to the new object.
-	virtual ResidueSelectorOP clone() const;
+	ResidueSelectorOP clone() const override;
 
 	/// @brief Apply function: generate a ResidueSubset given a Pose.
 	///
-	virtual ResidueSubset apply( core::pose::Pose const & pose ) const;
+	ResidueSubset apply( core::pose::Pose const & pose ) const override;
 
 	/// @brief Parse xml tag setting up this selector.
 	///
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &
-	);
+	) override;
 
 	/// @brief Get the class name.
 	/// @details Calls class_name().
-	virtual
 	std::string
-	get_name() const;
+	get_name() const override;
 
 	/// @brief Get the class name.
 	///
@@ -88,15 +87,15 @@ public:
 
 	/// @brief Set the layers that this selector will choose.
 	///
-	void set_layers( bool const pick_core, bool const pick_boundary, bool const pick_surface );
+	void set_layers( bool pick_core, bool pick_boundary, bool pick_surface );
 
 	/// @brief Set the radius for the rolling ball algorithm used to determine burial.
 	///
-	void set_ball_radius( core::Real const &radius );
+	void set_ball_radius( core::Real radius );
 
 	/// @brief Set whether the sidechain neighbors algorithm is used to determine burial (as
 	/// opposed to the rolling ball algorithm).
-	void set_use_sc_neighbors( bool const val );
+	void set_use_sc_neighbors( bool val );
 
 	/// @brief Get whether the sidechain neighbors algorithm is used to determine burial (as
 	/// opposed to the rolling ball algorithm).
@@ -107,28 +106,28 @@ public:
 
 	/// @brief Set the midpoint of the distance falloff if the sidechain neighbors method is used
 	/// to define layers.
-	void set_sc_neighbor_dist_midpoint( core::Real const &val );
+	void set_sc_neighbor_dist_midpoint( core::Real val );
 
 	/// @brief Set the factor by which sidechain neighbor counts are divided if the sidechain
 	/// neighbors method is used to define layers.
-	void set_sc_neighbor_denominator( core::Real const &val );
+	void set_sc_neighbor_denominator( core::Real val );
 
 	/// @brief Set the cutoffs for core and surface layers.
 	/// @details Boundary is defined implicitly.  This can be a SASA cutoff or a neighbour count, depending
 	/// on the algorithm.
-	void set_cutoffs (core::Real const &core, core::Real const &surf);
+	void set_cutoffs (core::Real core, core::Real surf);
 
 	/// @brief Set the sidechain neighbor angle shift value.
 	/// @details See the core::select::util::SelectResiduesByLayer class for details of the math.
-	void set_angle_shift_factor( core::Real const &val );
+	void set_angle_shift_factor( core::Real val );
 
 	/// @brief Set the sidechain neighbor angle exponent.
 	/// @details See the core::select::util::SelectResiduesByLayer class for details of the math.
-	void set_angle_exponent( core::Real const &val );
+	void set_angle_exponent( core::Real val );
 
 	/// @brief Set the sidechain neighbor distance exponent.
 	/// @details See the core::select::util::SelectResiduesByLayer class for details of the math.
-	void set_dist_exponent( core::Real const &val );
+	void set_dist_exponent( core::Real val );
 
 private: // data members
 

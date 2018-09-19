@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file  protocols/analysis/simple_metrics/SelectedResidueCountMetricTests.cxxtest.hh
+/// @file  test/core/simple_metrics/metrics/SelectedResidueCountMetricTests.cxxtest.hh
 /// @brief  Unit tests for the SelectedResidueCountMetric.
 /// @author Vikram K. Mulligan (vmullig@u.washington.edu)
 

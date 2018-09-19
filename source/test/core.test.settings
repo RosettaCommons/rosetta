@@ -582,6 +582,7 @@ sources = {
 	],
 	"simple_metrics/metrics" : [
 		"SelectedResidueCountMetricTests",
+		"SequenceSimilarityMetricTests",
 	],
 	"util" : [
 		#"ChainbreakUtil",

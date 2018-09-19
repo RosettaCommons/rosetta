@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/antibody_design/ConservativeDesignOperationCreator.hh
+/// @file protocols/task_operations/ConservativeDesignOperationCreator.hh
 /// @brief
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
@@ -16,6 +16,8 @@
 #define INCLUDED_protocols_task_operations_ConservativeDesignOperationCreator_hh
 
 #include <core/pack/task/operation/TaskOperationCreator.hh>
+//#include <protocols/task_operations/ConservativeDesignOperation.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 #include <string>
 
@@ -23,14 +25,17 @@
 namespace protocols {
 namespace task_operations {
 
-// Undefined, commenting out to fix PyRosetta build
-/*
 class ConservativeDesignOperationCreator : public core::pack::task::operation::TaskOperationCreator {
 public:
-virtual core::pack::task::operation::TaskOperationOP create_task_operation() const;
-virtual std::string keyname() const { return "ConservativeDesignOperation"; }
+	ConservativeDesignOperationCreator();
+	~ConservativeDesignOperationCreator() override;
+
+	core::pack::task::operation::TaskOperationOP create_task_operation() const override;
+	std::string keyname() const override;// { return ConservativeDesignOperation::keyname(); }
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
+
 };
-*/
+
 
 } //namespace protocols
 } //namespace task_operations

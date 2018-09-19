@@ -30,7 +30,7 @@ namespace core {
 namespace simple_metrics {
 namespace metrics {
 /// @brief A Metric to cacluate overall sasa of a pose.
-/// @bdetails Use the Apply method to calculate and add the metric to the pose score to be written
+/// @details Use the Apply method to calculate and add the metric to the pose score to be written
 class SasaMetric : public core::simple_metrics::RealMetric{
 
 public:

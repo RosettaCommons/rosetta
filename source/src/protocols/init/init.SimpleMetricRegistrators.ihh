@@ -35,6 +35,8 @@ static SimpleMetricRegistrator< core::simple_metrics::metrics::SelectedResiduesM
 
 static SimpleMetricRegistrator< core::simple_metrics::metrics::SequenceMetricCreator               > reg_SequenceMetricCreator;
 
+static SimpleMetricRegistrator< core::simple_metrics::metrics::SequenceSimilarityMetricCreator     > reg_SequenceSimilarityMetricCreator;
+
 static SimpleMetricRegistrator< core::simple_metrics::metrics::TimingProfileMetricCreator          > reg_TimingProfileMetricCreator;
 static SimpleMetricRegistrator< core::simple_metrics::metrics::TotalEnergyMetricCreator      > reg_TotalEnergyMetricCreator;
 

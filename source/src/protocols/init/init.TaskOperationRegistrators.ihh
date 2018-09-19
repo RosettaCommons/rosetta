@@ -46,6 +46,7 @@ static TaskOperationRegistrator< protocols::pack_interface::ProteinProteinInterf
 static TaskOperationRegistrator< protocols::legacy_sewing::LegacyReadNativeRotamersFileCreator > reg_LegacyReadNativeRotamersFileCreator;
 static TaskOperationRegistrator< protocols::legacy_sewing::LegacyReadRepeatNativeRotamersFileCreator > reg_LegacyReadRepeatNativeRotamersFileCreator;
 
+static TaskOperationRegistrator< protocols::task_operations::ConservativeDesignOperationCreator > ConservativeDesignOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::task_operations::CrystalContactsOperationCreator > CrystalContactsOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::task_operations::DatabaseThreadCreator > DatabaseThreadCreator_registrator;
 static TaskOperationRegistrator< protocols::task_operations::DesignAroundOperationCreator > DesignAroundOperationCreator_registrator;

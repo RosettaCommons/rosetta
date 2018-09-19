@@ -203,7 +203,6 @@ sources = {
 		"PerResidueSasaMetric",
 	],
 	"core/simple_metrics/metrics": [
-		
 		"DihedralDistanceMetric",
 		"RMSDMetric",
 		"SasaMetric",
@@ -211,6 +210,7 @@ sources = {
 		"SelectedResidueCountMetric",
 		"SelectedResiduesMetric",
 		"SelectedResiduesPyMOLMetric",
+		"SequenceSimilarityMetric",
 		"SequenceMetric",
 		"TimingProfileMetric",
 		"TotalEnergyMetric",

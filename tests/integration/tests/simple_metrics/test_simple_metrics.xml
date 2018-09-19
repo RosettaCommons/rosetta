@@ -22,6 +22,7 @@
 		<SelectedResiduesMetric name="rosetta_sele" residue_selector="L1" rosetta_numbering="1" custom_type="ROSETTA"/>
 		<SelectedResiduesPyMOLMetric name="pymol_selection" residue_selector="L1" />
 		<SequenceMetric name="sequence" residue_selector="L1" />
+		<SequenceSimilarityMetric name="sequenceSim" residue_selector="L1" normalize="true"/>
 		<SecondaryStructureMetric name="ss" residue_selector="L1" />
 		<SequenceRecoveryMetric name="seqrec" residue_selector="L1" use_native="true" />
 		<TotalEnergyMetric name="total_energy" residue_selector="L1" scoretype="fa_atr"/>
@@ -30,7 +31,7 @@
 	<MOVERS>
 		<MinMover name="min_mover" movemap_factory="movemap_L1" tolerance=".1" /> 
 		<RunSimpleMetrics name="run_metrics1" metrics="sasa,pymol_selection,sequence,ss,total_energy,rosetta_sele,selection" prefix="m1_" />
-		<RunSimpleMetrics name="run_metrics2" metrics="sasa,sequence,ss,total_energy,rmsd,dihedral,composite_energy,seqrec" prefix="m2_" />
+		<RunSimpleMetrics name="run_metrics2" metrics="sasa,sequenceSim,ss,total_energy,rmsd,dihedral,composite_energy,seqrec" prefix="m2_" />
 	</MOVERS>
 	<PROTOCOLS>
 		<Add mover_name="run_metrics1"/>

@@ -50,6 +50,7 @@
 #include <protocols/legacy_sewing/sampling/LegacyReadRepeatNativeRotamersFileCreator.hh>
 #include <protocols/legacy_sewing/sampling/LegacyReadNativeRotamersFileCreator.hh>
 
+#include <protocols/task_operations/ConservativeDesignOperationCreator.hh>
 #include <protocols/task_operations/CrystalContactsOperationCreator.hh>
 #include <protocols/task_operations/DatabaseThreadCreator.hh>
 #include <protocols/task_operations/DesignAroundOperationCreator.hh>

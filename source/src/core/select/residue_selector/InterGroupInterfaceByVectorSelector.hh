@@ -55,6 +55,12 @@ public:
 	///
 	InterGroupInterfaceByVectorSelector( InterGroupInterfaceByVectorSelector const &src);
 
+	// set group selectors
+	InterGroupInterfaceByVectorSelector(
+		ResidueSelectorCOP group1,
+		ResidueSelectorCOP group2
+	);
+
 	/// @brief Clone operator.
 	/// @details Copy this object and return an owning pointer to the new object.
 	virtual ResidueSelectorOP clone() const;

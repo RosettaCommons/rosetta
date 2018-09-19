@@ -28,6 +28,7 @@
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/exit.hh>
+#include <utility/pointer/memory.hh>
 
 // C++ headers
 #include <utility/assert.hh>
@@ -52,7 +53,7 @@ namespace residue_selector {
 ///
 LayerSelector::LayerSelector() :
 	cache_selection_( false ),
-	srbl_( new core::select::util::SelectResiduesByLayer )
+	srbl_( utility::pointer::make_shared< core::select::util::SelectResiduesByLayer >() )
 	//TODO -- initialize here
 {
 	set_use_sc_neighbors(true);
@@ -72,7 +73,10 @@ LayerSelector::~LayerSelector() = default;
 
 /// @brief Clone operator.
 /// @details Copy this object and return an owning pointer to the new object.
-ResidueSelectorOP LayerSelector::clone() const { return ResidueSelectorOP( new LayerSelector(*this) ); }
+ResidueSelectorOP LayerSelector::clone() const {
+	return utility::pointer::make_shared< LayerSelector >( *this );
+	//return ResidueSelectorOP( new LayerSelector(*this) );
+}
 
 /// @brief Apply function: generate a ResidueSubset given a Pose.
 ///
@@ -208,7 +212,7 @@ LayerSelector::set_layers(
 ///
 void
 LayerSelector::set_ball_radius(
-	core::Real const &radius
+	core::Real const radius
 ) {
 	srbl_->pore_radius(radius);
 	if ( TR.visible() ) {
@@ -240,7 +244,7 @@ bool LayerSelector::use_sc_neighbors() const { return srbl_->use_sidechain_neigh
 
 /// @brief Set the midpoint of the distance falloff if the sidechain neighbors method is used
 /// to define layers.
-void LayerSelector::set_sc_neighbor_dist_midpoint( core::Real const &val )
+void LayerSelector::set_sc_neighbor_dist_midpoint( core::Real const val )
 {
 	srbl_->set_dist_midpoint(val);
 	if ( TR.visible() ) {
@@ -252,7 +256,7 @@ void LayerSelector::set_sc_neighbor_dist_midpoint( core::Real const &val )
 
 /// @brief Set the factor by which sidechain neighbor counts are divided if the sidechain
 /// neighbors method is used to define layers.
-void LayerSelector::set_sc_neighbor_denominator( core::Real const &val )
+void LayerSelector::set_sc_neighbor_denominator( core::Real const val )
 {
 	srbl_->set_rsd_neighbor_denominator(val);
 	if ( TR.visible() ) {
@@ -265,7 +269,7 @@ void LayerSelector::set_sc_neighbor_denominator( core::Real const &val )
 /// @brief Set the cutoffs for core and surface layers.
 /// @details Boundary is defined implicitly.  This can be a SASA cutoff or a neighbour count, depending
 /// on the algorithm.
-void LayerSelector::set_cutoffs (core::Real const &core, core::Real const &surf)
+void LayerSelector::set_cutoffs (core::Real const core, core::Real const surf)
 {
 	srbl_->sasa_core(core);
 	srbl_->sasa_surface(surf);
@@ -279,7 +283,7 @@ void LayerSelector::set_cutoffs (core::Real const &core, core::Real const &surf)
 /// @brief Set the sidechain neighbor angle shift value.
 /// @details See the core::select::util::SelectResiduesByLayer class for details of the math.
 void
-LayerSelector::set_angle_shift_factor( core::Real const &val )
+LayerSelector::set_angle_shift_factor( core::Real const val )
 {
 	srbl_->set_angle_shift_factor(val);
 	if ( TR.visible() ) {
@@ -292,7 +296,7 @@ LayerSelector::set_angle_shift_factor( core::Real const &val )
 /// @brief Set the sidechain neighbor angle exponent.
 /// @details See the core::select::util::SelectResiduesByLayer class for details of the math.
 void
-LayerSelector::set_angle_exponent( core::Real const &val )
+LayerSelector::set_angle_exponent( core::Real const val )
 {
 	srbl_->set_angle_exponent(val);
 	if ( TR.visible() ) {
@@ -305,7 +309,7 @@ LayerSelector::set_angle_exponent( core::Real const &val )
 /// @brief Set the sidechain neighbor distance exponent.
 /// @details See the core::select::util::SelectResiduesByLayer class for details of the math.
 void
-LayerSelector::set_dist_exponent( core::Real const &val )
+LayerSelector::set_dist_exponent( core::Real const val )
 {
 	srbl_->set_dist_exponent(val);
 	if ( TR.visible() ) {
@@ -319,7 +323,8 @@ LayerSelector::set_dist_exponent( core::Real const &val )
 ///
 ResidueSelectorOP
 LayerSelectorCreator::create_residue_selector() const {
-	return ResidueSelectorOP( new LayerSelector );
+	return utility::pointer::make_shared< LayerSelector >();
+	//return ResidueSelectorOP( new LayerSelector );
 }
 
 /// @brief Get the class name.

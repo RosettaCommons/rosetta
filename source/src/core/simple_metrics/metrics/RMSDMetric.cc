@@ -59,8 +59,6 @@ using namespace core::scoring;
 /////////////////////
 
 
-
-
 /// @brief Default constructor
 RMSDMetric::RMSDMetric():
 	core::simple_metrics::RealMetric()

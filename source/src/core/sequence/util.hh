@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file src/core/sequence/sequtil.hh
+/// @file src/core/sequence/util.hh
 /// @brief small bundle of utilities for dealing with sequences
 /// @author James Thompson
 /// @author Sergey Lyskov

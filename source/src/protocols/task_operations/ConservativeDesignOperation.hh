@@ -18,11 +18,14 @@
 #include <protocols/task_operations/ConservativeDesignOperationCreator.hh>
 #include <protocols/task_operations/ConservativeDesignOperation.fwd.hh>
 
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/chemical/AA.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
+#include <utility/tag/Tag.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 
 namespace protocols {
@@ -44,13 +47,15 @@ public:
 	/// @brief Constructor with setting of data source.
 	ConservativeDesignOperation(std::string data_source);
 
-	virtual ~ConservativeDesignOperation();
+	~ConservativeDesignOperation() override;
 
 	ConservativeDesignOperation(ConservativeDesignOperation const & src);
 
-	virtual
 	void
-	apply(core::pose::Pose const & pose, core::pack::task::PackerTask & task) const;
+	apply(core::pose::Pose const & pose, core::pack::task::PackerTask & task) const override;
+
+	/// @brief Used to parse an xml-like tag to load parameters and properties.
+	void parse_tag( utility::tag::TagCOP, basic::datacache::DataMap & ) override;
 
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string keyname() { return "ConservativeDesignOperation"; }
@@ -62,14 +67,12 @@ public:
 	//
 	//
 
-
-
 	/// @brief Limit to a subset of residue positions, already set to designable.
 	void
-	limit_to_positions(utility::vector1< Size > const positions);
+	limit_to_positions( utility::vector1< Size > const & positions );
 
 	void
-	include_residue(core::Size resnum);
+	include_residue( core::Size resnum );
 
 	/// @brief Clear any set positions.
 	void
@@ -77,29 +80,39 @@ public:
 
 	/// @brief Add to the allowed amino acids list instead of replacing it.  Default false.
 	void
-	add_to_allowed_aas(bool const & setting);
+	add_to_allowed_aas( bool setting ){
+		add_to_allowed_aas_ = setting;
+	}
 
 	/// @brief Include native amino acid in the allowed_aas list.  Default true.
 	void
-	include_native_aa(bool const & setting);
+	include_native_aa( bool setting ){
+		include_native_aa_ = setting;
+	}
 
 	/// @brief Will use native residues from the this pose to determine conserved aa.
 	void
-	use_pose_sequence_as_native(core::pose::Pose const & pose);
+	use_pose_sequence_as_native( core::pose::Pose const & pose );
 
 	void
-	set_native_sequence( std::string seq);
+	set_native_sequence( std::string const & seq ){
+		pose_sequence_ = seq;
+	}
 
 	/// @brief Set the source of the data used to define what is conservative.
-	/// Options are: chothia_76, and the Blosum matrices from 30 to 100; designated as blosum30, 62, etc.
+	/// Options are: chothia_76 and the Blosum matrices from 30 to 100; designated as blosum30, 62, etc.
 	/// Default is blosum62.  The higher the number, the more conservative the set of mutations (numbers are sequence identity cutoffs)
 	void
-	set_data_source(std::string const data_source);
+	set_data_source( std::string const & data_source );
 
 public:
 	ConservativeDesignOperation & operator =( ConservativeDesignOperation const & rhs);
 
-	virtual core::pack::task::operation::TaskOperationOP clone() const;
+	core::pack::task::operation::TaskOperationOP clone() const override;
+
+protected:
+	bool
+	skip_resid( core::Size resid, core::pack::task::PackerTask const & task, std::string const & seq ) const;
 
 private:
 
@@ -118,7 +131,10 @@ private:
 
 	utility::vector1< utility::vector1<bool> > conserved_mutations_; //AA index in alphabetical order -> conservative mutations.
 
+	//An AND operation will be performed between these two, unless positions_ is empty.
 	utility::vector1< core::Size > positions_;
+	core::select::residue_selector::ResidueSelectorCOP residue_selector_;
+
 	bool add_to_allowed_aas_;
 	bool include_native_aa_;
 
@@ -126,11 +142,6 @@ private:
 	std::string data_source_;
 
 };
-
-
-
-
-
 
 } //task_operations
 } //protocols
