@@ -452,7 +452,7 @@ void SCS_BlastFilter_by_sequence_identity::apply(AntibodySequence const& A,
 
 		sid_ratio = sid_checker( query_frh, br->frh);
     if( sid_ratio > get_sid_cutoff_fr() ) {
-        TR.Trace << CSI_Red() << "SCS_BlastFilter_by_sequence_identity: Filtering " << br->pdb << "... with SID ratio of " << sid_ratio << CSI_Reset() << std::endl;
+        TR.Trace << CSI_Red() << "SCS_BlastFilter_by_sequence_identity: Filtering FRH " << br->pdb << "... with SID ratio of " << sid_ratio << CSI_Reset() << std::endl;
       results->frh.erase( std::next(p++).base() );
     }
 	else ++p;
@@ -465,7 +465,7 @@ void SCS_BlastFilter_by_sequence_identity::apply(AntibodySequence const& A,
 
 		sid_ratio = sid_checker( query_frl, br->frl);
     if( sid_ratio > get_sid_cutoff_fr() ) {
-        TR.Trace << CSI_Red() << "SCS_BlastFilter_by_sequence_identity: Filtering " << br->pdb << "... with SID ratio of " << sid_ratio << CSI_Reset() << std::endl;
+        TR.Trace << CSI_Red() << "SCS_BlastFilter_by_sequence_identity: Filtering FRL " << br->pdb << "... with SID ratio of " << sid_ratio << CSI_Reset() << std::endl;
       results->frl.erase( std::next(p++).base() );
     }
 	else ++p;
@@ -478,7 +478,7 @@ void SCS_BlastFilter_by_sequence_identity::apply(AntibodySequence const& A,
 
     // -5 is inherited from antibody.py
     if ( br->identity > get_sid_cutoff_fr() - 5 ) {
-      TR.Trace << CSI_Red() << "SCS_BlastFilter_by_sequence_identity: Filtering " << br->pdb << "... with SID ratio of " << sid_ratio << CSI_Reset() << std::endl;
+      TR.Trace << CSI_Red() << "SCS_BlastFilter_by_sequence_identity: Filtering orientation " << br->pdb << "... with identity of " << br->identity << CSI_Reset() << std::endl;
       results->orientation.erase( std::next(p++).base() );
     }
     else ++p;

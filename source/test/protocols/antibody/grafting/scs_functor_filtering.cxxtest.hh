@@ -336,6 +336,7 @@ public:
 		dummy_br->l3 = "QQYSGYPYT";
 		dummy_br->frl = "IMSASPGEKVTMTCWYQQKLWIYGVPARFSGSGYSLTISSVEAEDAATYYCFGGGTKL";
 		dummy_br->pdb = "dummy";
+		dummy_br->identity = 58.0; // filtered on 55% (-5 is hard coded from old days)
 		dummy_br->alignment_length = 92;
 		dummy_br->bit_score = 0.3;
 		dummy_br->bio_type = "human";
@@ -351,6 +352,7 @@ public:
 		good_br->l3 = "WINRARIIT"; // filtered on id
 		good_br->frl = "IMTVCDFRDWAAPTFFNNRMFLIVGPARFSGSGYSLTISCLRAEDAATYYCFGGGTKL";
 		good_br->pdb = "good";
+		good_br->identity = 50.0; // filtered on 55% (-5 is hard coded from old days)
 		good_br->alignment_length = 96;
 		good_br->bit_score = 0.001;
 		good_br->bio_type = "human";
@@ -389,14 +391,17 @@ public:
 		TS_ASSERT_EQUALS(r->l2.size(),1)
 		TS_ASSERT_EQUALS(r->l3.size(),1)
 		TS_ASSERT_EQUALS(r->frl.size(),1)
-		TS_ASSERT_EQUALS(r->orientation.size(),2)
+		TS_ASSERT_EQUALS(r->orientation.size(),1)
 
 		TS_ASSERT_EQUALS(good_br->pdb.compare(r->h1[0]->pdb),0);
 		TS_ASSERT_EQUALS(good_br->pdb.compare(r->h2[0]->pdb),0);
 		TS_ASSERT_EQUALS(good_br->pdb.compare(r->h3[0]->pdb),0);
+		TS_ASSERT_EQUALS(good_br->pdb.compare(r->frh[0]->pdb),0);
 		TS_ASSERT_EQUALS(good_br->pdb.compare(r->l1[0]->pdb),0);
 		TS_ASSERT_EQUALS(good_br->pdb.compare(r->l2[0]->pdb),0);
 		TS_ASSERT_EQUALS(good_br->pdb.compare(r->l3[0]->pdb),0);
+		TS_ASSERT_EQUALS(good_br->pdb.compare(r->frl[0]->pdb),0);
+		TS_ASSERT_EQUALS(good_br->pdb.compare(r->orientation[0]->pdb),0);
 #endif //__ANTIBODY_GRAFTING__
 	}
 
