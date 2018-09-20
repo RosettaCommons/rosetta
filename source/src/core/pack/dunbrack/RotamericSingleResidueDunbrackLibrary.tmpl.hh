@@ -893,7 +893,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::interpolate_rotamers(
 		}
 		utility::fixedsizearray1< Real, N > binw( BB_BINRANGE );
 
-		interpolate_polylinear_by_value( chi_mean, bb_alpha, binw, N <= 2 /*Note that angle interpolation is broken for N > 2, so value interpolation is necessary.*/, scratch.chimean()[ ii ], scratch_dchi_mean );
+		interpolate_polylinear_by_value( chi_mean, bb_alpha, binw, true, scratch.chimean()[ ii ], scratch_dchi_mean );
 		interpolated_rotamer.chi_mean( ii ) = scratch.chimean()[ ii ];
 		//std::cout << "********** After interpolate_polylinear_by_value, scratch.chimean()[" << ii << "]=" << scratch.chimean()[ii] << std::endl;
 		interpolate_polylinear_by_value( chi_sd, bb_alpha, binw, false, scratch.chisd()[ ii ], scratch_dchi_sd );

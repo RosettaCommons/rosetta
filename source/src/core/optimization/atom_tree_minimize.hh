@@ -69,7 +69,8 @@ simple_numeric_deriv_check(
 	Multivec const & dE_dvars,
 	bool send_to_stdout,
 	bool verbose,
-	Size nsteps = 5
+	Size nsteps = 5,
+	Real const increment = 0.0005
 );
 
 void

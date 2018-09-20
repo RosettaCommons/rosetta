@@ -27,6 +27,7 @@
 
 // Numeric headers
 #include <numeric/random/random.fwd.hh>
+#include <numeric/angle.functions.hh>
 
 #include <basic/interpolate.hh>
 #include <basic/basic.hh>
@@ -549,7 +550,152 @@ polycubic_interpolation(
 	}
 }
 
-template < Size N >//, class P >
+/// @brief Interpolate polylinearly in N dimensions for values that AREN'T angles.
+/// @details This doesn't handle wraparound.
+/// @author Original author unknown.
+/// @author Pulled into a new function by Vikram K. Mulligan (vmulligan@flatironinstitute.org), 12 Sept. 2018.
+/// @param[in] vals The values at the corners of the gridpoints.  This vector should have N^2 points.
+/// @param[in] bbd Coordinate within the grid square/cube/hypercube, with each dimension ranging from 0 to 1.
+/// @param[in] binrange Size of each bin.  For example, 10 degrees by 10 degrees by 10 degrees...
+/// @param[out] val The interpolated value.
+/// @param[out] dval_dbb The derivatives of the interpolated value, with respect to the degrees of freedom over which the grid is defined.
+template <Size N>
+void
+interpolate_polylinear_by_value_noangles(
+	utility::fixedsizearray1< double, ( 1 << N ) > const & vals,
+	utility::fixedsizearray1< double, N > const & bbd,
+	utility::fixedsizearray1< double, N > const & binrange,
+	double & val,
+	utility::fixedsizearray1< double, N > & dval_dbb
+) {
+	val = 0;
+
+	for ( Size ii = 1; ii <= vals.size(); ++ii ) {
+		double valterm = vals[ ii ];
+		for ( Size jj = 1; jj <= N; ++jj ) {
+			valterm *= bit_is_set( ii, N, jj ) ? bbd[ jj ] : (1.0f - bbd[ jj ]);
+		}
+		val += valterm;
+	}
+
+	for ( Size ii = 1; ii <= N; ++ii ) {
+		dval_dbb[ ii ] = 0.0f;
+		for ( Size jj = 1; jj <= vals.size(); ++jj ) {
+			double valterm = 1;
+
+			for ( Size kk = 1; kk <= N; ++kk ) {
+				if ( kk == ii ) {
+					valterm *= vals[ jj ];
+					valterm *= bit_is_set( jj, N, kk ) ?      1.0f : -1.0f;
+				} else {
+					valterm *= bit_is_set( jj, N, kk ) ? bbd[ kk ] :  (1.0f - bbd[ kk ]);
+				}
+			}
+			dval_dbb[ ii ] += valterm;
+		}
+		dval_dbb[ ii ] /= binrange[ii];
+	}
+}
+
+/// @brief Interpolate polylinearly in N dimensions, for outputs that are angles (and have to handle wraparound properly).
+/// @author Original author unknown.
+/// @author Angle interpolation rewritten by Vikram K. Mulligan (vmulligan@flatironinstitute.org) and Andy Watkins, 12 Sept. 2018.
+/// @note We assume that angles are in DEGREES.
+/// @param[in] vals The values at the corners of the gridpoints.  This vector should have N^2 points.
+/// @param[in] bbd Coordinate within the grid square/cube/hypercube, with each dimension ranging from 0 to 1.
+/// @param[in] binrange Size of each bin.  For example, 10 degrees by 10 degrees by 10 degrees...
+/// @param[out] val The interpolated value.
+/// @param[out] dval_dbb The derivatives of the interpolated value, with respect to the degrees of freedom over which the grid is defined.
+template < core::Size N > inline
+void
+interpolate_polylinear_by_value_angles_degrees (
+	utility::fixedsizearray1< double, ( 1 << N ) > const & vals,
+	utility::fixedsizearray1< double, N > const & bbd,
+	utility::fixedsizearray1< double, N > const & binrange,
+	double & val,
+	utility::fixedsizearray1< double, N > &dval_dbb
+) {
+	utility::fixedsizearray1< double, (1 << (N-1) ) > subvals, curderivvals;
+	utility::fixedsizearray1< double, (N-1) > sub_bbd, sub_binrange;
+
+	// First, interpolate the points along the current dimension:
+	for ( core::Size i(1), imax( 1 << (N-1) ); i<=imax; ++i ) {
+		utility::fixedsizearray1< double, 2 > const curvals{ vals[i], vals[i+imax] };
+		utility::fixedsizearray1< double, 1 > const curbbds{ bbd[1] }, curbinrange{ binrange[1] };
+		utility::fixedsizearray1< double, 1 > curderiv;
+		interpolate_polylinear_by_value_angles_degrees( curvals, curbbds, curbinrange, subvals[i], curderiv); //Calls the N=1 specialization.
+		curderivvals[i] = curderiv[1];
+	}
+
+	// Set up subarrays for the next lower dimension:
+	for ( core::Size i(2); i<=N; ++i ) {
+		sub_bbd[i-1] = bbd[i];
+		sub_binrange[i-1] = binrange[i];
+	}
+
+	// Interpolate (non-angles) the (N-1)^2 derivative points to get derivative in current dimension:
+	utility::fixedsizearray1< double, (N-1) > dummy; //Not used
+	interpolate_polylinear_by_value_noangles( curderivvals, sub_bbd, sub_binrange, dval_dbb[1], dummy );
+
+	// Call this function recursively for the next lower dimension:
+	utility::fixedsizearray1< double, (N-1) > sub_derivs;
+	interpolate_polylinear_by_value_angles_degrees( subvals, sub_bbd, sub_binrange, val, sub_derivs );
+
+	// Update derivatives for lower dimensions:
+	for ( core::Size i(2); i<=N; ++i ) {
+		dval_dbb[i] = sub_derivs[i-1];
+	}
+}
+
+/// @brief Interpolate polylinearly in N dimensions, for outputs that are angles (and have to handle wraparound properly).
+/// @details This version is for the special N=1 case.  It is ultimately the end of the recusive call chain for the version below.
+/// @author Original author unknown.
+/// @author Angle interpolation rewritten by Vikram K. Mulligan (vmulligan@flatironinstitute.org) and Andy Watkins, 12 Sept. 2018.
+/// @note We assume that angles are in DEGREES.
+/// @param[in] vals The values at the corners of the gridpoints.  This vector should have N^2 points.
+/// @param[in] bbd Coordinate within the grid square/cube/hypercube, with each dimension ranging from 0 to 1.
+/// @param[in] binrange Size of each bin.  For example, 10 degrees by 10 degrees by 10 degrees...
+/// @param[out] val The interpolated value.
+/// @param[out] dval_dbb The derivatives of the interpolated value, with respect to the degrees of freedom over which the grid is defined.
+template <> inline
+void
+interpolate_polylinear_by_value_angles_degrees <1> (
+	utility::fixedsizearray1< double, 2 > const & vals,
+	utility::fixedsizearray1< double, 1 > const & bbd,
+	utility::fixedsizearray1< double, 1 > const & binrange,
+	double & val,
+	utility::fixedsizearray1< double, 1 > & dval_dbb
+) {
+	debug_assert(vals.size() == 2);
+	debug_assert(bbd.size() == 1);
+	debug_assert(binrange.size() == 1);
+	utility::fixedsizearray1< double, 2 > rangedvals_0, rangedvals_180;
+
+	for ( core::Size i(1); i<=2; ++i ) {
+		rangedvals_180[i] = numeric::principal_angle_degrees(vals[i]);
+		rangedvals_0[i] = numeric::nonnegative_principal_angle_degrees(vals[i]);
+	}
+	if ( std::abs( rangedvals_0[1] - rangedvals_0[2] ) < std::abs( rangedvals_180[1] - rangedvals_180[2] ) ) {
+		//Discontinuity is at 0
+		val = numeric::principal_angle_degrees( bbd[1] * rangedvals_0[2] + (1.0-bbd[1]) * rangedvals_0[1] );
+		dval_dbb[1] = (rangedvals_0[2] - rangedvals_0[1]) / binrange[1];
+	} else {
+		//Discontinuity is at 180
+		val = numeric::principal_angle_degrees( bbd[1] * rangedvals_180[2] + (1.0-bbd[1]) * rangedvals_180[1] );
+		dval_dbb[1] = (rangedvals_180[2] - rangedvals_180[1]) / binrange[1];
+	}
+}
+
+/// @brief Interpolate polylinearly in N dimensions.
+/// @author Original author unknown.
+/// @author Angle interpolation rewritten by Vikram K. Mulligan (vmulligan@flatironinstitute.org) and Andy Watkins, 12 Sept. 2018.
+/// @param[in] vals The values at the corners of the gridpoints.  This vector should have N^2 points.
+/// @param[in] bbd Coordinate within the grid square/cube/hypercube, with each dimension ranging from 0 to 1.
+/// @param[in] binrange Size of each bin.  For example, 10 degrees by 10 degrees by 10 degrees...
+/// @param[in] angles Are we interpolating angles, or just some value?  Note that, if angles, we assume angles are in DEGREES.
+/// @param[out] val The interpolated value.
+/// @param[out] dval_dbb The derivatives of the interpolated value, with respect to the degrees of freedom over which the grid is defined.
+template < Size N >
 void
 interpolate_polylinear_by_value(
 	utility::fixedsizearray1< double, ( 1 << N ) > const & vals,
@@ -562,84 +708,11 @@ interpolate_polylinear_by_value(
 	debug_assert( N != 0 );
 
 	if ( angles ) {
-		val = 0;
-
-		utility::vector1< double > w;
-		utility::vector1< double > a;
-
-		Size total = vals.size();
-
-		for ( Size ii = 1; ii <= total; ++ii ) {
-			double w_val = 1;
-			for ( Size jj = 1; jj <= N; ++jj ) {
-				w_val *= bit_is_set( ii, N, jj ) ? bbd[ jj ] : 1.0f - bbd[ jj ];
-			}
-			w.push_back( w_val );
-		}
-
-		for ( Size total = vals.size(); total >= 4; total /= 2 ) {
-			for ( Size ii = 1; ii <= total/2; ++ii ) {
-				double a_val = 0;
-				if ( w[ ii ] + w[ ii + total/2 ] != 0.0 ) {
-					a_val = ( w[ ii ] * vals[ ii ] + w[ ii + total/2 ] * ( basic::subtract_degree_angles(vals[ ii + total/2 ], vals[ ii ] ) + vals[ ii ] ) ) / ( w[ ii ] + w[ ii + total/2 ] );
-				}
-				a.push_back( a_val );
-			}
-			if ( total > 4 ) {
-				w = a;
-				a = utility::vector1< double >();
-			}
-		}
-
-		val = ( w[ 1 ] + w[ 3 ] ) * a[ 1 ] + ( w[ 2 ] + w[ 4 ] ) * ( basic::subtract_degree_angles( a[ 2 ], a[ 1 ] ) + a[ 1 ] );
-		basic::angle_in_range(val);
-
-		for ( Size ii = 1; ii <= N; ++ii ) {
-			dval_dbb[ ii ] = 0.0f;
-
-			for ( Size kk = 1; kk <= N; ++kk ) {
-				if ( kk != ii ) {
-					Size ind1 = 1;
-					Size ind2 = ind1 + (1<<N>>ii);
-					dval_dbb[ ii ] += ( 1.0f - bbd[ kk ] ) * basic::subtract_degree_angles( vals[ ind2 ], vals[ ind1 ] );
-					ind1 += (1<<N>>kk); ind2 += (1<<N>>kk);
-					dval_dbb[ ii ] +=          bbd[ kk ]   * basic::subtract_degree_angles( vals[ ind2 ], vals[ ind1 ] );
-				}
-			}
-			dval_dbb[ ii ] /= binrange[ii];
-		}
-
+		interpolate_polylinear_by_value_angles_degrees( vals, bbd, binrange, val, dval_dbb );
 	} else {
-		val = 0;
-
-		for ( Size ii = 1; ii <= vals.size(); ++ii ) {
-			double valterm = vals[ ii ];
-			for ( Size jj = 1; jj <= N; ++jj ) {
-				valterm *= bit_is_set( ii, N, jj ) ? bbd[ jj ] : (1.0f - bbd[ jj ]);
-			}
-			val += valterm;
-		}
-
-		for ( Size ii = 1; ii <= N; ++ii ) {
-			dval_dbb[ ii ] = 0.0f;
-			for ( Size jj = 1; jj <= vals.size(); ++jj ) {
-				double valterm = 1;
-
-				for ( Size kk = 1; kk <= N; ++kk ) {
-					if ( kk == ii ) {
-						valterm *= vals[ jj ];
-						valterm *= bit_is_set( jj, N, kk ) ?      1.0f : -1.0f;
-					} else {
-						valterm *= bit_is_set( jj, N, kk ) ? bbd[ kk ] :  (1.0f - bbd[ kk ]);
-					}
-				}
-				dval_dbb[ ii ] += valterm;
-			}
-			dval_dbb[ ii ] /= binrange[ii];
-		}
+		interpolate_polylinear_by_value_noangles( vals, bbd, binrange, val, dval_dbb );
 	}
 }
-
 
 template < Size S, Size N/*, class P*/ >
 DunbrackRotamer< S, N, Real >

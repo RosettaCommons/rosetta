@@ -290,7 +290,8 @@ simple_numeric_deriv_check(
 	Multivec const & dE_dvars,
 	bool send_to_stdout,
 	bool verbose,
-	Size nsteps /* = 5 */
+	Size nsteps /* = 5 */,
+	Real const increment /* = 0.0005 */
 )
 {
 
@@ -314,7 +315,6 @@ simple_numeric_deriv_check(
 	Size const nangles( start_vars.size() );
 
 
-	Real const increment = 0.0005; // PB -- 3/02
 	Size const n_increment = nsteps;
 	utility::vector1< Multivec > dE_dvars_numeric( n_increment );
 

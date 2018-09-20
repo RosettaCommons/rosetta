@@ -186,6 +186,7 @@ sources = {
 		"DunbrackEnergyTests_peptoid",
 		"NCAA_dunbrack",
 		"NCAA_dunbrack_betanov15",
+		"PolylinearInterpolation",
 		"RotamerConstraintDun2002",
 		"ValidateDunbrackBinaries",
 	],
