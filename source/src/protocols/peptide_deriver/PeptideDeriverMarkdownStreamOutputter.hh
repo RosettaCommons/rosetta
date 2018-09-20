@@ -45,7 +45,7 @@ public:
 
 	PeptideDeriverMarkdownStreamOutputter(PeptideDeriverMarkdownStreamOutputter const & src);
 
-	virtual ~PeptideDeriverMarkdownStreamOutputter();
+	~PeptideDeriverMarkdownStreamOutputter() override;
 
 	PeptideDeriverMarkdownStreamOutputterOP
 	clone() const;
@@ -115,8 +115,3 @@ private:
 
 
 #endif //INCLUDED_protocols_peptide_deriver_PeptideDeriverMarkdownStreamOutputter_hh
-
-
-
-
-

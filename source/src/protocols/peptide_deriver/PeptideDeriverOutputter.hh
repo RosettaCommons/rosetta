@@ -45,7 +45,7 @@ public:
 	PeptideDeriverOutputter();
 
 	/// @brief destructor
-	~PeptideDeriverOutputter();
+	virtual ~PeptideDeriverOutputter();
 
 	/// @brief called by PeptideDeriverFilter when processing of a strucuture (possibly multi-chain) starts
 	virtual void begin_structure(core::pose::Pose const &, std::string const &) = 0;
@@ -90,8 +90,3 @@ public:
 
 
 #endif //INCLUDED_protocols_peptide_deriver_PeptideDeriverOutputter_hh
-
-
-
-
-

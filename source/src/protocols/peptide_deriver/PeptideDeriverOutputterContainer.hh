@@ -36,7 +36,7 @@ public:
 	PeptideDeriverOutputterContainer();
 	PeptideDeriverOutputterContainer(PeptideDeriverOutputterContainer const & src);
 
-	virtual ~PeptideDeriverOutputterContainer();
+	~PeptideDeriverOutputterContainer() override;
 
 	PeptideDeriverOutputterContainerOP
 	clone() const;
@@ -75,4 +75,3 @@ private:
 
 
 #endif //INCLUDED_protocols_peptide_deriver_PeptideDeriverOutputterContainer_hh
-

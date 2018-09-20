@@ -42,7 +42,7 @@ public:
 
 	PeptideDeriverBasicStreamOutputter(PeptideDeriverBasicStreamOutputter const & src);
 
-	virtual ~PeptideDeriverBasicStreamOutputter();
+	~PeptideDeriverBasicStreamOutputter() override;
 
 	PeptideDeriverBasicStreamOutputterOP clone() const;
 
@@ -78,8 +78,3 @@ private:
 
 
 #endif //INCLUDED_protocols_peptide_deriver_PeptideDeriverBasicStreamOutputter_hh
-
-
-
-
-

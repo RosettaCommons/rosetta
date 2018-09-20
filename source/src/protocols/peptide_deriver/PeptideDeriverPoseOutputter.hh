@@ -48,7 +48,7 @@ public:
 
 	PeptideDeriverPoseOutputter(PeptideDeriverPoseOutputter const & src);
 
-	virtual ~PeptideDeriverPoseOutputter();
+	~PeptideDeriverPoseOutputter() override;
 
 	PeptideDeriverPoseOutputterOP
 	clone() const;
@@ -98,8 +98,3 @@ private:
 
 
 #endif //INCLUDED_protocols_peptide_deriver_PeptideDeriverPoseOutputter_hh
-
-
-
-
-
