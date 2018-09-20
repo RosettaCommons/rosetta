@@ -83,5 +83,6 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
     if test == "cartesian_relax": return run_multi_step_test(test, rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     if test == "fast_relax": return run_multi_step_test(test, rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     if test == "fast_relax_5iter": return run_multi_step_test(test, rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    if test == "enzyme_design": return run_multi_step_test(test, rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
 
     else: raise BenchmarkError(f'Unknown scripts test: {test}!')
