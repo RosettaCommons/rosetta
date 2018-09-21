@@ -107,7 +107,7 @@ public:
 
 		scoring::hbonds::graph::AtomLevelHBondGraphOP hb_graph;
 		hb_graph = core::pack::hbonds::hbond_graph_from_partial_rotsets(
-			pose, blank_rotsets, sfxn_sc, sfxn_bb, rotsets, not_used, -0.001f );
+			pose, *blank_rotsets, sfxn_sc, sfxn_bb, rotsets, not_used, -0.001f );
 
 
 		// The hb_graph should contain all polar atoms and all hbonds. Lets check

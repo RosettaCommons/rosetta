@@ -129,7 +129,7 @@ void delete_edges_with_degree_zero( scoring::hbonds::graph::AtomLevelHBondGraph 
 scoring::hbonds::graph::AtomLevelHBondGraphOP
 hbond_graph_from_partial_rotsets(
 	pose::Pose const & pose_in,
-	pack::rotamer_set::RotamerSetsOP const & original_rotsets,
+	pack::rotamer_set::RotamerSets const & original_rotsets,
 	scoring::ScoreFunctionOP const & scorefxn_sc, // Only hbond_sc_bb and hbond_sc
 	scoring::ScoreFunctionOP const & scorefxn_bb, // Only hbond_lr_bb and hbond_sr_bb
 	pack::rotamer_set::RotamerSetsOP & complete_rotsets_out,

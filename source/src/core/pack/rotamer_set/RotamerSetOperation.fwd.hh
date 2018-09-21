@@ -10,6 +10,7 @@
 /// @file   core/pack/rotamer_set/RotamerSetOperation.fwd.hh
 /// @brief  rotamer set operation forward declaration
 /// @author Andrew Leaver-Fay (leaverfa@email.unc.edu)
+/// @author Brian Coventry (bcov@uw.edu) -- rotamer sets operations
 
 
 #ifndef INCLUDED_core_pack_rotamer_set_RotamerSetOperation_fwd_hh
@@ -27,6 +28,7 @@ namespace rotamer_set {
 
 class RotamerOperation;
 class RotamerSetOperation;
+class RotamerSetsOperation;
 
 typedef utility::pointer::shared_ptr< RotamerOperation > RotamerOperationOP;
 typedef utility::pointer::shared_ptr< RotamerOperation const > RotamerOperationCOP;
@@ -38,6 +40,12 @@ typedef utility::pointer::shared_ptr< RotamerSetOperation const > RotamerSetOper
 
 typedef std::list< RotamerSetOperationOP > RotSetOperationList;
 typedef std::list< RotamerSetOperationOP >::const_iterator RotSetOperationListIterator;
+
+typedef utility::pointer::shared_ptr< RotamerSetsOperation > RotamerSetsOperationOP;
+typedef utility::pointer::shared_ptr< RotamerSetsOperation const > RotamerSetsOperationCOP;
+
+typedef std::list< RotamerSetsOperationOP > RotSetsOperationList;
+typedef std::list< RotamerSetsOperationOP >::const_iterator RotSetsOperationListIterator;
 
 }
 }

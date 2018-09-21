@@ -10,6 +10,7 @@
 /// @file   core/pack/rotamer_set/RotamerSetOperation.hh
 /// @brief  rotamer set operation class
 /// @author Andrew Leaver-Fay (leaverfa@email.unc.edu)
+/// @author Brian Coventry (bcov@uw.edu) -- rotamer sets operations
 
 
 #ifndef INCLUDED_core_pack_rotamer_set_RotamerSetOperation_hh
@@ -20,6 +21,7 @@
 
 // Package Headers
 #include <core/pack/rotamer_set/RotamerSet.fwd.hh>
+#include <core/pack/rotamer_set/RotamerSets.fwd.hh>
 #include <utility/graph/Graph.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -53,7 +55,7 @@ namespace rotamer_set {
 /// @li RotamerSetOperations are unable to correlate changes to rotamer sets across
 ///     multiple rotamer sets -- they have access to only a single RotamerSet object
 ///     in their alter_rotamer_set operations.  For correlated alterations to rotamer
-///     sets, the (as of yet undefined) RotamerSetsOperation class should be used.
+///     sets, the RotamerSetsOperation class should be used.
 
 class RotamerOperation : public utility::pointer::ReferenceCount
 {
@@ -103,6 +105,41 @@ public:
 	) const;
 
 };
+
+/// @brief RotamerSetsOperations are able to modify the RotamerSets object
+///        such that changes can be correlated accros multiple rotamer sets.
+///
+/// @li They are handed into the packer through a packer task; the PackerTask
+///     keeps a list of rotamer sets operations.
+///
+/// @li The RotamerSets, within the build_rotamers() method will iterate across
+///     the RotamerSetsOperation objects, and call alter_rotamer_sets on itself.
+///
+/// @li RotamerSetsOperations are visited in the order in which they are appended
+///     to the PackerTask's operation list.
+///
+
+class RotamerSetsOperation : public utility::pointer::ReferenceCount
+{
+public:
+	RotamerSetsOperation();
+	virtual ~RotamerSetsOperation();
+
+	virtual
+	RotamerSetsOperationOP
+	clone() const = 0;
+
+	virtual
+	void
+	alter_rotamer_sets(
+		pose::Pose const & pose,
+		scoring::ScoreFunction const & sfxn,
+		task::PackerTask const & ptask,
+		utility::graph::GraphCOP packer_neighbor_graph,
+		RotamerSets & rotamer_sets
+	) = 0;
+};
+
 
 }
 }

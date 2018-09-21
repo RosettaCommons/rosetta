@@ -301,6 +301,20 @@ public:
 		rotamer_set::RotamerSetOperationOP rotsetop
 	);
 
+	virtual
+	rotamer_set::RotSetsOperationListIterator
+	rotamer_sets_operation_begin() const;
+
+	virtual
+	rotamer_set::RotSetsOperationListIterator
+	rotamer_sets_operation_end() const;
+
+	virtual
+	void
+	append_rotamersets_operation(
+		rotamer_set::RotamerSetsOperationOP rotsetsop
+	);
+
 	//@brief return a resfile string that can recreate the packer task
 	virtual
 	std::string
@@ -455,6 +469,8 @@ private:
 
 	/// @details holds specific residue residue weights to be used in packing
 	IGEdgeReweightContainerOP IG_edge_reweights_;
+
+	rotamer_set::RotSetsOperationList rotsetsops_;
 
 	// sheffler
 	PackerTaskSymmetryStatus symmetry_status_;

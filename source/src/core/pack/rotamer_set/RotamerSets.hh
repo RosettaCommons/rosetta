@@ -175,6 +175,11 @@ public:
 	///    the reason?  we now can update rotamersets interactively from code, so this should be exposed
 	void update_offset_data();
 
+	/// @brief Used as a debug assert to ensure that RotamerSetsOperations call update_offset_data()
+	/// @details Without this check, rotamer sets operations could potentially introduce very-hard-to-debug
+	///          glitches if they don't call update_offset_data().
+	bool offset_data_up_to_date();
+
 private:
 	void copy_residue_conenctions_and_variants(pose::Pose const & pose, conformation::ResidueOP cloneRes, Size seqpos, Size asym_length);
 

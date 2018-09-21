@@ -238,6 +238,19 @@ public:
 		rotamer_set::RotamerSetOperationOP rotsetop
 	) = 0;
 
+	virtual rotamer_set::RotSetsOperationListIterator
+	rotamer_sets_operation_begin() const = 0;
+
+	virtual rotamer_set::RotSetsOperationListIterator
+	rotamer_sets_operation_end() const = 0;
+
+	virtual
+	void
+	append_rotamersets_operation(
+		rotamer_set::RotamerSetsOperationOP rotsetsop
+	) = 0;
+
+
 	//some get-set functions for annealer options
 	virtual
 	void

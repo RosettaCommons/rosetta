@@ -18,6 +18,7 @@
 // Package Headers
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/rotamer_set/RotamerSet_.hh>
+#include <core/pack/rotamer_set/RotamerSetOperation.hh>
 #include <core/pack/rotamer_set/symmetry/SymmetricRotamerSet_.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
@@ -348,6 +349,16 @@ RotamerSets::build_rotamers(
 		TR << "expected rotamer count is " << expected_rot_count << std::endl;
 	} //end RotamerLinks detected
 	update_offset_data();
+
+	// Allow the RotamerSetsOperations to modify this object
+	for ( auto
+			rotsetsop_iter = task_->rotamer_sets_operation_begin(),
+			rotsetsop_end = task_->rotamer_sets_operation_end();
+			rotsetsop_iter != rotsetsop_end; ++rotsetsop_iter ) {
+
+		(*rotsetsop_iter)->alter_rotamer_sets( pose, sfxn, *task_, packer_neighbor_graph, *this );
+		debug_assert( offset_data_up_to_date() );
+	}
 }
 
 //fd add explicit rotamers at a position.  Deletes current rotamers at this position!
@@ -405,6 +416,20 @@ RotamerSets::update_offset_data()
 			++count_rots_for_moltenres;
 		}
 	}
+}
+
+/// @brief Used as a debug assert to ensure that RotamerSetsOperations call update_offset_data()
+/// @details Without this check, rotamer sets operations could potentially introduce very-hard-to-debug
+///          glitches if they don't call update_offset_data().
+bool
+RotamerSets::offset_data_up_to_date() {
+
+	// Everything else is derived from this. Checking this alone should be enough to verify that
+	//  nothing has changed.
+	utility::vector1< uint > old_nrotamers_for_moltenres = nrotamers_for_moltenres_;
+	update_offset_data();
+
+	return old_nrotamers_for_moltenres == nrotamers_for_moltenres_;
 }
 
 // @details For now, this function knows that all RPEs are computed before annealing begins

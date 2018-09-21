@@ -62,6 +62,7 @@ using namespace ObjexxFCL::format;
 #include <utility/serialization/serialization.hh>
 
 // Cereal headers
+#include <cereal/types/list.hpp>
 #include <cereal/types/polymorphic.hpp>
 #endif // SERIALIZATION
 
@@ -885,6 +886,23 @@ PackerTask_::append_rotamerset_operation(
 	}
 }
 
+rotamer_set::RotSetsOperationListIterator
+PackerTask_::rotamer_sets_operation_begin() const {
+	return rotsetsops_.begin();
+}
+
+rotamer_set::RotSetsOperationListIterator
+PackerTask_::rotamer_sets_operation_end() const {
+	return rotsetsops_.end();
+}
+
+void
+PackerTask_::append_rotamersets_operation(
+	rotamer_set::RotamerSetsOperationOP rotsetsop
+) {
+	rotsetsops_.push_back( rotsetsop );
+}
+
 void
 PackerTask_::update_n_to_be_packed() const
 {
@@ -1100,6 +1118,7 @@ core::pack::task::PackerTask_::save( Archive & arc ) const {
 	arc( CEREAL_NVP( high_temp_ ) ); // Real
 	arc( CEREAL_NVP( disallow_quench_ ) ); // _Bool
 	arc( CEREAL_NVP( IG_edge_reweights_ ) ); // IGEdgeReweightContainerOP
+	arc( CEREAL_NVP( rotsetsops_ ) ); // rotamer_set::RotSetsOperationList
 	arc( CEREAL_NVP( symmetry_status_ ) ); // enum core::pack::task::PackerTaskSymmetryStatus
 }
 
@@ -1134,6 +1153,7 @@ core::pack::task::PackerTask_::load( Archive & arc ) {
 	arc( high_temp_ ); // Real
 	arc( disallow_quench_ ); // _Bool
 	arc( IG_edge_reweights_ ); // IGEdgeReweightContainerOP
+	arc( rotsetsops_ ); // rotamer_set::RotSetsOperationList
 	arc( symmetry_status_ ); // enum core::pack::task::PackerTaskSymmetryStatus
 }
 

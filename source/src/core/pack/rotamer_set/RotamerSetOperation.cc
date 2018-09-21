@@ -10,6 +10,7 @@
 /// @file   core/pack/rotamer_set/RotamerSetOperation.cc
 /// @brief  rotamer set operation implementation
 /// @author Andrew Leaver-Fay (leaverfa@email.unc.edu)
+/// @author Brian Coventry (bcov@uw.edu) -- rotamer sets operations
 
 
 // Unit Headers
@@ -48,6 +49,13 @@ RotamerSetOperation::increase_packer_residue_radius(
 {
 	return 0.0;
 }
+
+RotamerSetsOperation::RotamerSetsOperation() :
+	utility::pointer::ReferenceCount()
+{}
+
+RotamerSetsOperation::~RotamerSetsOperation() = default;
+
 
 }
 }
