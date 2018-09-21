@@ -65,7 +65,7 @@ public:// constructor/destructor
 
 	// @brief constructor with arguments
 	ShapeComplementarityFilter( Real const & filtered_sc, Real const & filtered_area,
-		Size const & jump_id, Size const & quick, Size const & verbose);
+		Size const & jump_id, Size const & quick, Size const & verbose, Real const & filtered_median_distance = 1000.0f);
 
 	~ShapeComplementarityFilter() override= default;
 
@@ -82,6 +82,7 @@ public:// accessor
 public:// mutator
 	void filtered_sc( Real const & filtered_sc );
 	void filtered_area( Real const & filtered_area );
+	void filtered_median_distance( Real const & filtered_d_median );
 	void jump_id( Size const & jump_id );
 	void quick( Size const & quick );
 	void verbose( Size const & verbose );
@@ -91,6 +92,8 @@ public:// mutator
 	std::string sym_dof_name() const;
 	void write_int_area( bool write_int_area );
 	bool write_int_area( ) const;
+	void write_median_distance( bool write_median_distance );
+	bool write_median_distance( ) const;
 	void multicomp( bool multicomp );
 	bool multicomp( ) const;
 
@@ -174,15 +177,23 @@ private:
 	void
 	write_area( Pose const & pose, core::Real const area_val ) const;
 
+	/// @brief writes median distance value to current jd2 job
+	/// @param[in] pose     Pose being analyzed
+	/// @param[in] d_median Median distance to be reported
+	void
+	write_median_distance( Pose const & pose, core::Real const d_median ) const;
+
 private:
 	Real filtered_sc_;
 	Real filtered_area_;
+	Real filtered_d_median_;
 	Size jump_id_;
 	Size quick_;
 	Size verbose_;
 	core::select::residue_selector::ResidueSelectorCOP selector1_;
 	core::select::residue_selector::ResidueSelectorCOP selector2_;
 	bool write_int_area_;
+	bool write_d_median_;
 
 	// symmetry-specific
 	bool multicomp_;

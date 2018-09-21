@@ -60,6 +60,7 @@ ShapeComplementarityFilter::ShapeComplementarityFilter():
 	Filter( "ShapeComplementarity" ),
 	filtered_sc_( 0.50 ),
 	filtered_area_( 250 ),
+	filtered_d_median_( 1000.0f ),  // off by default
 	jump_id_( 1 ),
 	quick_( false ),
 	verbose_( false ),
@@ -73,10 +74,11 @@ ShapeComplementarityFilter::ShapeComplementarityFilter():
 
 // @brief constructor with arguments
 ShapeComplementarityFilter::ShapeComplementarityFilter( Real const & filtered_sc, Real const & filtered_area,
-	Size const & jump_id, Size const & quick, Size const & verbose):
+	Size const & jump_id, Size const & quick, Size const & verbose, Real const & filtered_median_distance /*= 1000.0f*/):
 	Filter( "ShapeComplementarity" ),
 	filtered_sc_( filtered_sc ),
 	filtered_area_( filtered_area ),
+	filtered_d_median_( filtered_median_distance ),
 	jump_id_( jump_id ),
 	quick_( quick ),
 	verbose_( verbose ),
@@ -87,6 +89,7 @@ ShapeComplementarityFilter::ShapeComplementarityFilter( Real const & filtered_sc
 
 void ShapeComplementarityFilter::filtered_sc( Real const & filtered_sc ) { filtered_sc_ = filtered_sc; }
 void ShapeComplementarityFilter::filtered_area( Real const & filtered_area ) { filtered_area_ = filtered_area; }
+void ShapeComplementarityFilter::filtered_median_distance( Real const & filtered_median_distance ) { filtered_d_median_ = filtered_median_distance; }
 void ShapeComplementarityFilter::jump_id( Size const & jump_id ) { jump_id_ = jump_id; }
 void ShapeComplementarityFilter::quick( Size const & quick ) { quick_ = quick; }
 void ShapeComplementarityFilter::verbose( Size const & verbose ) { verbose_ = verbose; }
@@ -110,6 +113,8 @@ void ShapeComplementarityFilter::sym_dof_name( std::string const & sym_dof_name 
 std::string ShapeComplementarityFilter::sym_dof_name() const { return sym_dof_name_; }
 void ShapeComplementarityFilter::write_int_area( bool write_int_area ) { write_int_area_ = write_int_area; }
 bool ShapeComplementarityFilter::write_int_area() const { return write_int_area_; }
+void ShapeComplementarityFilter::write_median_distance( bool write_median_distance ) { write_d_median_ = write_median_distance; }
+bool ShapeComplementarityFilter::write_median_distance() const { return write_d_median_; }
 void ShapeComplementarityFilter::multicomp( bool multicomp ) { multicomp_ = multicomp; }
 bool ShapeComplementarityFilter::multicomp() const { return multicomp_; }
 
@@ -205,6 +210,17 @@ ShapeComplementarityFilter::write_area( Pose const & pose, core::Real const area
 	protocols::jd2::add_string_real_pair_to_current_job( column_header, int_area );
 }
 
+/// @brief writes median distance value to current jd2 job
+/// @param[in] pose     Pose being analyzed
+/// @param[in] d_median Median distance to be reported
+void
+ShapeComplementarityFilter::write_median_distance( Pose const &, core::Real const d_median ) const
+{
+	std::string column_header = this->get_user_defined_name() + "_median_dist";
+	protocols::jd2::add_string_real_pair_to_current_job( column_header, d_median );
+}
+
+
 /// @brief
 core::Real
 ShapeComplementarityFilter::report_sm( Pose const & pose ) const
@@ -215,14 +231,17 @@ ShapeComplementarityFilter::report_sm( Pose const & pose ) const
 	} catch( EXCN_InitFailed const & ) {
 		tr.Error << "Issue initializing shape complementarity calculator - returning -2 instead." << std::endl;
 		if ( write_int_area_ ) write_area( pose, -2 );
+		if ( write_d_median_ ) write_median_distance( pose, -2 );
 		return -2;
 	} catch( EXCN_CalcFailed const & ) {
 		tr.Error << "Issue running shape complementarity calculator - returning -1 instead." << std::endl;
 		if ( write_int_area_ ) write_area( pose, -1 );
+		if ( write_d_median_ ) write_median_distance( pose, -1 );
 		return -1;
 	}
 
 	if ( write_int_area_ ) write_area( pose, r.area );
+	if ( write_d_median_ ) write_median_distance( pose, r.distance );
 	return r.sc;
 }
 
@@ -244,6 +263,7 @@ bool ShapeComplementarityFilter::apply( Pose const & pose ) const
 
 	Real const sc = r.sc;
 	Real const area = r.area;
+	Real const d_median = r.distance;
 
 	if ( sc < filtered_sc_ ) {
 		tr << "Filter failed current < threshold sc: " << sc << " < " << filtered_sc_ << std::endl;
@@ -252,6 +272,11 @@ bool ShapeComplementarityFilter::apply( Pose const & pose ) const
 
 	if ( area < filtered_area_ ) {
 		tr << "Filter failed current < threshold interface area: " << area << " < " << filtered_area_ << std::endl;
+		return false;
+	}
+
+	if ( d_median < filtered_d_median_ ) {
+		tr << "Filter failed current > threshold median distance: " << d_median << " < " << filtered_d_median_ << std::endl;
 		return false;
 	}
 
@@ -270,10 +295,12 @@ ShapeComplementarityFilter::parse_my_tag(
 {
 	filtered_sc_ = tag->getOption<Real>( "min_sc", 0.50 );
 	filtered_area_ = tag->getOption<Real>( "min_interface", 0 );
+	filtered_d_median_ = tag->getOption<Real>( "max_median_dist", 0 );
 	verbose_ = tag->getOption<Size>( "verbose", false );
 	quick_ = tag->getOption<Size>( "quick", false );
 	jump_id_ = tag->getOption<Size>( "jump", 1 );
 	write_int_area_ = tag->getOption<bool>( "write_int_area", false );
+	write_d_median_ = tag->getOption<bool>( "write_median_dist", false );
 	sym_dof_name(tag->getOption<std::string>( "sym_dof_name", "" ));
 	multicomp( tag->getOption< bool >("multicomp", false) );
 
@@ -298,7 +325,7 @@ ShapeComplementarityFilter::parse_my_tag(
 	if ( !selector2name.empty() ) selector2_ = core::select::residue_selector::get_residue_selector( selector2name, data );
 
 	tr.Info << "Structures with shape complementarity < " << filtered_sc_ << ", interface area < " <<
-		filtered_area_ << " A^2 will be filtered." << std::endl;
+		filtered_area_ << " A^2, median distance > " << filtered_d_median_ << " will be filtered." << std::endl;
 
 	if ( quick_ ) {
 		tr.Info << "Calculating shape complementarity in quick mode with less accuracy." << std::endl;
@@ -499,11 +526,13 @@ void ShapeComplementarityFilter::provide_xml_schema( utility::tag::XMLSchemaDefi
 	AttributeList attlist;
 	attlist + XMLSchemaAttribute::attribute_w_default( "min_sc" , xsct_real , "The filter fails if the calculated sc is less than the given value." , "0.5" )
 		+ XMLSchemaAttribute::attribute_w_default( "min_interface" , xsct_real , "The filter fails is the calculated interface area is less than the given value." , "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "max_median_dist" , xsct_real , "The filter fails is the calculated median distance between the molecular surfaces is greater than the given value." , "1000" )
 		// The default value for min_interface is strange. I feel like it should be '9999' so that things do not automatically fail if the user does not specificy the filter.
 		+ XMLSchemaAttribute::attribute_w_default( "verbose" , xsct_rosetta_bool , "If true, print extra calculation details to the tracer." , "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "quick" , xsct_rosetta_bool , "If true, do a quicker, less accurate calculation by reducing the density." , "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "jump" , xs_integer , "For non-symmetric poses, which jump over which to calculate the interface." , "1" )
 		+ XMLSchemaAttribute::attribute_w_default( "write_int_area" , xsct_rosetta_bool , "If true, write interface area to scorefile." , "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "write_median_dist" , xsct_rosetta_bool , "If true, write interface median distance to scorefile." , "false" )
 		+ XMLSchemaAttribute( "sym_dof_name" , xs_string , "For symmetric poses, which dof over which to calculate the interface." )
 		+ XMLSchemaAttribute::attribute_w_default( "multicomp" , xsct_rosetta_bool , "If true, multiple component system. If false, single component system." , "false" )
 		+ XMLSchemaAttribute( "residues1" , xs_string , "Explicitly set which residues are on each side of the interface (both symmetric and non-symmetric poses.)" )
