@@ -135,6 +135,25 @@ void ScoreFunctionLoader::load_data(
 					}
 				}
 
+				if ( mod_tag->hasOption( "approximate_buried_unsat_penalty_hbond_energy_threshold" ) ) {
+					emoptions.approximate_buried_unsat_penalty_hbond_energy_threshold( mod_tag->getOption<core::Real>("approximate_buried_unsat_penalty_hbond_energy_threshold") );
+				}
+				if ( mod_tag->hasOption( "approximate_buried_unsat_penalty_burial_atomic_depth" ) ) {
+					emoptions.approximate_buried_unsat_penalty_burial_atomic_depth( mod_tag->getOption<core::Real>("approximate_buried_unsat_penalty_burial_atomic_depth") );
+				}
+				if ( mod_tag->hasOption( "approximate_buried_unsat_penalty_burial_probe_radius" ) ) {
+					emoptions.approximate_buried_unsat_penalty_burial_probe_radius( mod_tag->getOption<core::Real>("approximate_buried_unsat_penalty_burial_probe_radius") );
+				}
+				if ( mod_tag->hasOption( "approximate_buried_unsat_penalty_burial_resolution" ) ) {
+					emoptions.approximate_buried_unsat_penalty_burial_resolution( mod_tag->getOption<core::Real>("approximate_buried_unsat_penalty_burial_resolution") );
+				}
+				if ( mod_tag->hasOption( "approximate_buried_unsat_penalty_oversat_penalty" ) ) {
+					emoptions.approximate_buried_unsat_penalty_oversat_penalty( mod_tag->getOption<core::Real>("approximate_buried_unsat_penalty_oversat_penalty") );
+				}
+				if ( mod_tag->hasOption( "approximate_buried_unsat_penalty_assume_const_backbone" ) ) {
+					emoptions.approximate_buried_unsat_penalty_assume_const_backbone( mod_tag->getOption<bool>("approximate_buried_unsat_penalty_assume_const_backbone") );
+				}
+
 				//Options for buried_unsatisfied_penalty energy:
 				if ( mod_tag->hasOption( "buried_unsatisfied_penalty_cone_angle_exponent" ) ) {
 					emoptions.buried_unsatisfied_penalty_cone_angle_exponent( mod_tag->getOption<core::Real>("buried_unsatisfied_penalty_cone_angle_exponent") );
@@ -345,6 +364,13 @@ ScoreFunctionLoader::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 		+ XMLSchemaAttribute( "pb_unbound_tag", xs_string , "XRW TO DO" )
 		+ XMLSchemaAttribute( "scale_sc_dens", xsct_real , "XRW TO DO" )
 		+ XMLSchemaAttribute( "scale_sc_dens_byres", xs_string , "XRW TO DO" )
+
+		+ XMLSchemaAttribute( "approximate_buried_unsat_penalty_hbond_energy_threshold", xsct_real, "Energy threshold for a h-bond to be considered satisfying a buried polar. Should be a negative number. (Setting to -0.001 will be much faster than 0 at runtime)" )
+		+ XMLSchemaAttribute( "approximate_buried_unsat_penalty_burial_atomic_depth", xsct_real, "The atomic depth cutoff to determine whether or not a polar atom is buried. Measured from the Sasa surface." )
+		+ XMLSchemaAttribute( "approximate_buried_unsat_penalty_burial_probe_radius", xsct_real, "The probe radius for the atomic depth calculation." )
+		+ XMLSchemaAttribute( "approximate_buried_unsat_penalty_burial_resolution", xsct_real, "The resolution for the atomic depth calculation." )
+		+ XMLSchemaAttribute( "approximate_buried_unsat_penalty_oversat_penalty", xsct_real, "The penalty between atoms that both satisfy the same atom. If we let X = weight_of_approximate_buried_unsat_penalty. Then in general, a buried unsat is worth X, a satisfied unsat is worth 0, a doubly satisfied unsat is worth X * ( setting-1.0 ), a triply satisfied unsat is worth X * ( -2 + 3 * setting ), a N-ly satisfied unsat is worth X * ( 1 - N + 0.5 * N * (N - 1) ).")
+		+ XMLSchemaAttribute( "approximate_buried_unsat_penalty_assume_const_backbone", xsct_rosetta_bool, "Should we assume that the backbone atoms will not change during a packing trajectory? (i.e. no positions that include normal aa and proline or n-methyl) If set to false, this energy method takes longer to compute. (~ 2X as long)")
 
 		+ XMLSchemaAttribute( "buried_unsatisfied_penalty_cone_angle_exponent", xsct_real, "The angle exponent for calculating burial by the method of sidechain neighbor cones, used by the BuriedUnsatPenalty energy." )
 		+ XMLSchemaAttribute( "buried_unsatisfied_penalty_cone_angle_shift_factor", xsct_real, "The angle shift factor for calculating burial by the method of sidechain neighbor cones, used by the BuriedUnsatPenalty energy." )

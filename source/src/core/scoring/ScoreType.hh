@@ -331,6 +331,9 @@ enum ScoreType {
 	goap_dist,
 	goap_angle,
 
+	// guidance terms
+	approximate_buried_unsat_penalty, // A method to make buried unsats pairwise decomposable given a three-body pre-calculation
+
 	// centroid interchain 1b (docking) scores
 	interchain_pair,
 	interchain_vdw,

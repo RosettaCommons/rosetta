@@ -581,6 +581,8 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "netcharge" ] = netcharge; //A penalty for deviating from a desired net charge in a pose or region selected by a ResidueSelector.
 	name2score_type_[ "voids_penalty" ] = voids_penalty; //A packer-centric penalty for solutions in which the sum of the buried rotamer volumes differs greatly from the total buried volume to fill.
 
+	name2score_type_[ "approximate_buried_unsat_penalty" ] = approximate_buried_unsat_penalty;
+
 	name2score_type_[ "dump_trajectory" ] = dump_trajectory; //ScoreType to dump trajectories. Uses dump_trajectory::* flags to control behavior.
 
 	name2score_type_[ "sidechain_neighbors" ] = sidechain_neighbors;

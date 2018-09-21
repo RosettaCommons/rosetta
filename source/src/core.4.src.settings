@@ -79,6 +79,7 @@ sources = {
 		"CenRotDunEnergy",
 	],
 	"core/pack/guidance_scoreterms/approximate_buried_unsat_penalty" : [
+		"ApproximateBuriedUnsatPenalty",
 		"util",
 	],
 	"core/pack/guidance_scoreterms/buried_unsat_penalty/" : [

@@ -95,6 +95,7 @@ public:
 		PB_LIFETIME_CACHE, // a core::scoring::methods::PBLifetimeCache; Poisson-boltzmann energy state dependent data (see PoissonBoltzmannEnergy)
 		FAELEC_CONTEXT_DATA, // a core::scoring::elec::FAElecContextData; used by FA_GrpElecEnergy
 		POSE_SEQUENCE, // a core::scoring::electron_density_atomwise::PoseSeqeunce
+		APPROXIMATE_UNSAT_POSE_INFO, // a basic::datacache::CacheableUint64MathMatrixFloatMap used by ApproximateBuriedUnsatPenalty
 
 		// Old, unused terms
 		//  MEMBRANE_POTENTIAL,

@@ -149,6 +149,12 @@ EnergyMethodOptions::EnergyMethodOptions( utility::options::OptionCollection con
 
 	hbnet_bonus_ramping_function_("quadratic"),
 	hbnet_max_network_size_(0),
+	approximate_buried_unsat_penalty_hbond_energy_threshold_(-0.25f),
+	approximate_buried_unsat_penalty_burial_atomic_depth_(4.5f),
+	approximate_buried_unsat_penalty_burial_probe_radius_(2.3f),
+	approximate_buried_unsat_penalty_burial_resolution_(0.5f),
+	approximate_buried_unsat_penalty_oversat_penalty_(1.0f),
+	approximate_buried_unsat_penalty_assume_const_backbone_(true),
 
 	bond_angle_residue_type_param_set_(/* NULL */)
 {
@@ -245,6 +251,12 @@ EnergyMethodOptions::operator = (EnergyMethodOptions const & src) {
 		voids_penalty_energy_disabled_except_during_packing_ = src.voids_penalty_energy_disabled_except_during_packing_;
 		hbnet_bonus_ramping_function_ = src.hbnet_bonus_ramping_function_;
 		hbnet_max_network_size_ = src.hbnet_max_network_size_;
+		approximate_buried_unsat_penalty_hbond_energy_threshold_ = src.approximate_buried_unsat_penalty_hbond_energy_threshold_;
+		approximate_buried_unsat_penalty_burial_atomic_depth_ = src.approximate_buried_unsat_penalty_burial_atomic_depth_;
+		approximate_buried_unsat_penalty_burial_probe_radius_ = src.approximate_buried_unsat_penalty_burial_probe_radius_;
+		approximate_buried_unsat_penalty_burial_resolution_ = src.approximate_buried_unsat_penalty_burial_resolution_;
+		approximate_buried_unsat_penalty_oversat_penalty_ = src.approximate_buried_unsat_penalty_oversat_penalty_;
+		approximate_buried_unsat_penalty_assume_const_backbone_ = src.approximate_buried_unsat_penalty_assume_const_backbone_;
 	}
 	return *this;
 }
@@ -315,6 +327,13 @@ void EnergyMethodOptions::initialize_from_options( utility::options::OptionColle
 	hbnet_bonus_ramping_function_ = options[ basic::options::OptionKeys::score::hbnet_bonus_function_ramping ]();
 	runtime_assert_string_msg( options[ basic::options::OptionKeys::score::hbnet_max_network_size ]() >= 0, "Error in EnergyMethodOptions::initialize_from_options(): the -score:hbnet_max_network_size flag must be set to a non-negative integer, if specified." );
 	hbnet_max_network_size_ = options[ basic::options::OptionKeys::score::hbnet_max_network_size ]();
+
+	approximate_buried_unsat_penalty_hbond_energy_threshold_ = options[ basic::options::OptionKeys::score::approximate_buried_unsat_penalty_hbond_energy_threshold ]();
+	approximate_buried_unsat_penalty_burial_atomic_depth_ = options[ basic::options::OptionKeys::score::approximate_buried_unsat_penalty_burial_atomic_depth ]();
+	approximate_buried_unsat_penalty_burial_probe_radius_ = options[ basic::options::OptionKeys::score::approximate_buried_unsat_penalty_burial_probe_radius ]();
+	approximate_buried_unsat_penalty_burial_resolution_ = options[ basic::options::OptionKeys::score::approximate_buried_unsat_penalty_burial_resolution ]();
+	approximate_buried_unsat_penalty_oversat_penalty_ = options[ basic::options::OptionKeys::score::approximate_buried_unsat_penalty_oversat_penalty ]();
+	approximate_buried_unsat_penalty_assume_const_backbone_ = options[ basic::options::OptionKeys::score::approximate_buried_unsat_penalty_assume_const_backbone ]();
 
 	// check to see if the unfolded state command line options are set by the user
 	if ( options[ basic::options::OptionKeys::unfolded_state::unfolded_energies_file].user() ) {
@@ -394,6 +413,12 @@ EnergyMethodOptions::list_options_read( utility::options::OptionKeyList & read_o
 		+ basic::options::OptionKeys::unfolded_state::unfolded_energies_file
 		+ basic::options::OptionKeys::score::hbnet_bonus_function_ramping
 		+ basic::options::OptionKeys::score::hbnet_max_network_size
+		+ basic::options::OptionKeys::score::approximate_buried_unsat_penalty_hbond_energy_threshold
+		+ basic::options::OptionKeys::score::approximate_buried_unsat_penalty_burial_atomic_depth
+		+ basic::options::OptionKeys::score::approximate_buried_unsat_penalty_burial_probe_radius
+		+ basic::options::OptionKeys::score::approximate_buried_unsat_penalty_burial_resolution
+		+ basic::options::OptionKeys::score::approximate_buried_unsat_penalty_oversat_penalty
+		+ basic::options::OptionKeys::score::approximate_buried_unsat_penalty_assume_const_backbone
 		+ basic::options::OptionKeys::corrections::water::ordered_wat_penalty
 		+ basic::options::OptionKeys::corrections::water::ordered_pt_wat_penalty;
 }
@@ -1067,6 +1092,90 @@ EnergyMethodOptions::buried_unsatisfied_penalty_hbond_energy_threshold() const {
 	return  buried_unsatisfied_penalty_hbond_energy_threshold_;
 }
 
+/// @brief Set the energy threshold above which a hydrogen bond is not counted.
+/// @details Used by the ApproximateBuriedUnsatPenalty energy.
+void
+EnergyMethodOptions::approximate_buried_unsat_penalty_hbond_energy_threshold( core::Real const setting ) {
+	approximate_buried_unsat_penalty_hbond_energy_threshold_ = setting;
+}
+
+/// @brief Set the atomic depth above which an atom is considered buried.
+/// @details Used by the ApproximateBuriedUnsatPenalty energy.
+void
+EnergyMethodOptions::approximate_buried_unsat_penalty_burial_atomic_depth( core::Real const setting ) {
+	approximate_buried_unsat_penalty_burial_atomic_depth_ = setting;
+}
+
+/// @brief Set the probe radius for the atomic depth calculation.
+/// @details Used by the ApproximateBuriedUnsatPenalty energy.
+void
+EnergyMethodOptions::approximate_buried_unsat_penalty_burial_probe_radius( core::Real const setting ) {
+	approximate_buried_unsat_penalty_burial_probe_radius_ = setting;
+}
+
+/// @brief Set the resolution for the atomic depth calculation.
+/// @details Used by the ApproximateBuriedUnsatPenalty energy.
+void
+EnergyMethodOptions::approximate_buried_unsat_penalty_burial_resolution( core::Real const setting ) {
+	approximate_buried_unsat_penalty_burial_resolution_ = setting;
+}
+
+/// @brief Set the oversat penalty for approximate_buried_unsat_penalty.
+/// @details Used by the ApproximateBuriedUnsatPenalty energy.
+void
+EnergyMethodOptions::approximate_buried_unsat_penalty_oversat_penalty( core::Real const setting ) {
+	approximate_buried_unsat_penalty_oversat_penalty_ = setting;
+}
+
+/// @brief Set the assume const backbone for approximate_buried_unsat_penalty.
+/// @details Used by the ApproximateBuriedUnsatPenalty energy.
+void
+EnergyMethodOptions::approximate_buried_unsat_penalty_assume_const_backbone( bool const setting ) {
+	approximate_buried_unsat_penalty_assume_const_backbone_ = setting;
+}
+
+/// @brief Get the energy threshold above which a hydrogen bond is not counted.
+/// @details Used by the ApproximateBuriedUnsatPenalty energy.
+core::Real
+EnergyMethodOptions::approximate_buried_unsat_penalty_hbond_energy_threshold() const {
+	return approximate_buried_unsat_penalty_hbond_energy_threshold_;
+}
+
+/// @brief Get the atomic depth above which an atom is considered buried.
+/// @details Used by the ApproximateBuriedUnsatPenalty energy.
+core::Real
+EnergyMethodOptions::approximate_buried_unsat_penalty_burial_atomic_depth() const {
+	return approximate_buried_unsat_penalty_burial_atomic_depth_;
+}
+
+/// @brief Get the probe radius for the atomic depth calculation.
+/// @details Used by the ApproximateBuriedUnsatPenalty energy.
+core::Real
+EnergyMethodOptions::approximate_buried_unsat_penalty_burial_probe_radius() const {
+	return approximate_buried_unsat_penalty_burial_probe_radius_;
+}
+
+/// @brief Get the resolution for the atomic depth calculation.
+/// @details Used by the ApproximateBuriedUnsatPenalty energy.
+core::Real
+EnergyMethodOptions::approximate_buried_unsat_penalty_burial_resolution() const {
+	return approximate_buried_unsat_penalty_burial_resolution_;
+}
+
+/// @brief Get the oversat penalty for approximate_buried_unsat_penalty.
+/// @details Used by the ApproximateBuriedUnsatPenalty energy.
+core::Real
+EnergyMethodOptions::approximate_buried_unsat_penalty_oversat_penalty() const {
+	return approximate_buried_unsat_penalty_oversat_penalty_;
+}
+
+/// @brief Get the assume const backbone for approximate_buried_unsat_penalty.
+/// @details Used by the ApproximateBuriedUnsatPenalty energy.
+bool
+EnergyMethodOptions::approximate_buried_unsat_penalty_assume_const_backbone() const {
+	return approximate_buried_unsat_penalty_assume_const_backbone_;
+}
+
 utility::vector1< core::Real > const &
 EnergyMethodOptions::get_density_sc_scale_byres() const {
 	return fastdens_perres_weights_;
@@ -1263,7 +1372,14 @@ operator==( EnergyMethodOptions const & a, EnergyMethodOptions const & b ) {
 		( a.voids_penalty_energy_disabled_except_during_packing_ == b.voids_penalty_energy_disabled_except_during_packing_ ) &&
 		( a.fastdens_perres_weights_ == b.fastdens_perres_weights_ ) &&
 		( a.hbnet_bonus_ramping_function_ == b.hbnet_bonus_ramping_function_ ) &&
-		( a.hbnet_max_network_size_ == b.hbnet_max_network_size_ ) );
+		( a.hbnet_max_network_size_ == b.hbnet_max_network_size_ ) &&
+		( a.approximate_buried_unsat_penalty_hbond_energy_threshold_ == b.approximate_buried_unsat_penalty_hbond_energy_threshold_ ) &&
+		( a.approximate_buried_unsat_penalty_burial_atomic_depth_ == b.approximate_buried_unsat_penalty_burial_atomic_depth_ ) &&
+		( a.approximate_buried_unsat_penalty_burial_probe_radius_ == b.approximate_buried_unsat_penalty_burial_probe_radius_ ) &&
+		( a.approximate_buried_unsat_penalty_burial_resolution_ == b.approximate_buried_unsat_penalty_burial_resolution_ ) &&
+		( a.approximate_buried_unsat_penalty_oversat_penalty_ == b.approximate_buried_unsat_penalty_oversat_penalty_ ) &&
+		( a.approximate_buried_unsat_penalty_assume_const_backbone_ == b.approximate_buried_unsat_penalty_assume_const_backbone_ )
+	);
 }
 
 /// used inside ScoreFunctionInfo::operator==
@@ -1370,6 +1486,13 @@ EnergyMethodOptions::show( std::ostream & out ) const {
 
 	out << "EnergyMethodOptions::show: hbnet_bonus_ramping_function_: \"" << hbnet_bonus_ramping_function_ << "\"" << std::endl;
 	out << "EnergyMethodOptions::show: hbnet_max_network_size_: " << hbnet_max_network_size_ << std::endl;
+
+	out << "EnergyMethodOptions::show: approximate_buried_unsat_penalty_hbond_energy_threshold_: " << approximate_buried_unsat_penalty_hbond_energy_threshold_ << std::endl;
+	out << "EnergyMethodOptions::show: approximate_buried_unsat_penalty_burial_atomic_depth_: " << approximate_buried_unsat_penalty_burial_atomic_depth_ << std::endl;
+	out << "EnergyMethodOptions::show: approximate_buried_unsat_penalty_burial_probe_radius_: " << approximate_buried_unsat_penalty_burial_probe_radius_ << std::endl;
+	out << "EnergyMethodOptions::show: approximate_buried_unsat_penalty_burial_resolution_: " << approximate_buried_unsat_penalty_burial_resolution_ << std::endl;
+	out << "EnergyMethodOptions::show: approximate_buried_unsat_penalty_oversat_penalty_: " << approximate_buried_unsat_penalty_oversat_penalty_ << std::endl;
+	out << "EnergyMethodOptions::show: approximate_buried_unsat_penalty_assume_const_backbone_:" << approximate_buried_unsat_penalty_assume_const_backbone_ << std::endl;
 
 	out << "EnergyMethodOptions::show: bond_angle_central_atoms_to_score:";
 	if ( bond_angle_residue_type_param_set_ ) {
@@ -1675,6 +1798,12 @@ core::scoring::methods::EnergyMethodOptions::save( Archive & arc ) const {
 	arc( CEREAL_NVP( bond_angle_residue_type_param_set_ ) ); // core::scoring::mm::MMBondAngleResidueTypeParamSetOP
 	arc( CEREAL_NVP( hbnet_bonus_ramping_function_ ) ); // std::string
 	arc( CEREAL_NVP( hbnet_max_network_size_ ) ); //core::Size
+	arc( CEREAL_NVP( approximate_buried_unsat_penalty_hbond_energy_threshold_ ) ); // core::Real
+	arc( CEREAL_NVP( approximate_buried_unsat_penalty_burial_atomic_depth_ ) ); // core::Real
+	arc( CEREAL_NVP( approximate_buried_unsat_penalty_burial_probe_radius_ ) ); // core::Real
+	arc( CEREAL_NVP( approximate_buried_unsat_penalty_burial_resolution_ ) ); // core::Real
+	arc( CEREAL_NVP( approximate_buried_unsat_penalty_oversat_penalty_ ) ); // core::Real
+	arc( CEREAL_NVP( approximate_buried_unsat_penalty_assume_const_backbone_ ) ); // bool
 	arc( CEREAL_NVP( ordered_pt_wat_penalty_ ) );
 	arc( CEREAL_NVP( ordered_wat_penalty_ ) );
 }
@@ -1759,6 +1888,12 @@ core::scoring::methods::EnergyMethodOptions::load( Archive & arc ) {
 	arc( bond_angle_residue_type_param_set_ ); // core::scoring::mm::MMBondAngleResidueTypeParamSetOP
 	arc( hbnet_bonus_ramping_function_ ); //std::string
 	arc( hbnet_max_network_size_ ); //core::Size
+	arc( approximate_buried_unsat_penalty_hbond_energy_threshold_ ); // core::Real
+	arc( approximate_buried_unsat_penalty_burial_atomic_depth_ ); // core::Real
+	arc( approximate_buried_unsat_penalty_burial_probe_radius_ ); // core::Real
+	arc( approximate_buried_unsat_penalty_burial_resolution_ ); // core::Real
+	arc( approximate_buried_unsat_penalty_oversat_penalty_ ); // core::Real
+	arc( approximate_buried_unsat_penalty_assume_const_backbone_ ); // bool
 	arc( ordered_pt_wat_penalty_ );
 	arc( ordered_wat_penalty_ );
 }

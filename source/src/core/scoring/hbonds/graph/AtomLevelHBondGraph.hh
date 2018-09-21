@@ -83,7 +83,7 @@ public://getters, setters, accessors
 	}
 
 	///@brief get local rotamer id (local to the residue position)
-	///@details this is equivalent to pose::RotamerSetsBase::rotid_on_moltenresidue( this->get_node_index() )
+	///@details this is equivalent to pack_basic::RotamerSetsBase::rotid_on_moltenresidue( this->get_node_index() )
 	unsigned int local_rotamer_id() const{
 		return rotamer_id_;
 	}
@@ -94,7 +94,7 @@ public://getters, setters, accessors
 	}
 
 	///@brief duplicate interface for getting the global rotamer id. Identical to this->get_node_index()
-	///details this is equivalent to pose::RotamerSetsBase::nrotamer_offset_for_moltenres( this->moltenres() ) + this->local_rotamer_id()
+	///details this is equivalent to pack_basic::RotamerSetsBase::nrotamer_offset_for_moltenres( this->moltenres() ) + this->local_rotamer_id()
 	Size global_rotamer_id() const{
 		return get_node_index();
 	}

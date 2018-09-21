@@ -50,6 +50,7 @@ sources = {
 		"CacheableStringIntegerMap",
 		"CacheableString",
 		"CacheableStringMap",
+		"CacheableUint64MathMatrixFloatMap",
 		"DiagnosticData",
 		"ConstDataMap",
 		"DataMap",

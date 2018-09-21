@@ -34,6 +34,7 @@
 #include <core/init/score_function_corrections.hh>
 #include <core/scoring/aa_composition_energy/AACompositionEnergyCreator.hh>
 #include <core/scoring/aa_repeat_energy/AARepeatEnergyCreator.hh>
+#include <core/pack/guidance_scoreterms/approximate_buried_unsat_penalty/ApproximateBuriedUnsatPenaltyCreator.hh>
 #include <core/pack/guidance_scoreterms/buried_unsat_penalty/BuriedUnsatPenaltyCreator.hh>
 #include <core/scoring/constraints/ConstraintsEnergyCreator.hh>
 #include <core/scoring/disulfides/CentroidDisulfideEnergyCreator.hh>
@@ -404,6 +405,7 @@ using namespace scoring::rna;
 
 static EnergyMethodRegistrator< scoring::aa_repeat_energy::AARepeatEnergyCreator > AARepeatEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::aa_composition_energy::AACompositionEnergyCreator > AACompositionEnergyCreator_registrator;
+static EnergyMethodRegistrator< pack::guidance_scoreterms::approximate_buried_unsat_penalty::ApproximateBuriedUnsatPenaltyCreator > ApproximateBuriedUnsatPenaltyCreator_registrator;
 static EnergyMethodRegistrator< scoring::constraints::ConstraintsEnergyCreator > ConstraintsEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::disulfides::CentroidDisulfideEnergyCreator > CentroidDisulfideEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::disulfides::DisulfideMatchingEnergyCreator > DisulfideMatchingEnergyCreator_registrator;

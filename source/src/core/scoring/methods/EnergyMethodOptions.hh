@@ -593,6 +593,57 @@ public:
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	core::Real buried_unsatisfied_penalty_hbond_energy_threshold() const;
 
+
+	/// @brief Set the energy threshold above which a hydrogen bond is not counted.
+	/// @details Used by the ApproximateBuriedUnsatPenalty energy.
+	void approximate_buried_unsat_penalty_hbond_energy_threshold( core::Real const setting );
+
+	/// @brief Set the atomic depth above which an atom is considered buried.
+	/// @details Used by the ApproximateBuriedUnsatPenalty energy.
+	void approximate_buried_unsat_penalty_burial_atomic_depth( core::Real const setting );
+
+	/// @brief Set the probe radius for the atomic depth calculation.
+	/// @details Used by the ApproximateBuriedUnsatPenalty energy.
+	void approximate_buried_unsat_penalty_burial_probe_radius( core::Real const setting );
+
+	/// @brief Set the resolution for the atomic depth calculation.
+	/// @details Used by the ApproximateBuriedUnsatPenalty energy.
+	void approximate_buried_unsat_penalty_burial_resolution( core::Real const setting );
+
+	/// @brief Set the oversat penalty for approximate_buried_unsat_penalty.
+	/// @details Used by the ApproximateBuriedUnsatPenalty energy.
+	void approximate_buried_unsat_penalty_oversat_penalty( core::Real const setting );
+
+	/// @brief Set the assume const backbone for approximate_buried_unsat_penalty.
+	/// @details Used by the ApproximateBuriedUnsatPenalty energy.
+	void approximate_buried_unsat_penalty_assume_const_backbone( bool const setting );
+
+
+	/// @brief Get the energy threshold above which a hydrogen bond is not counted.
+	/// @details Used by the ApproximateBuriedUnsatPenalty energy.
+	core::Real approximate_buried_unsat_penalty_hbond_energy_threshold() const;
+
+	/// @brief Get the atomic depth above which an atom is considered buried.
+	/// @details Used by the ApproximateBuriedUnsatPenalty energy.
+	core::Real approximate_buried_unsat_penalty_burial_atomic_depth() const;
+
+	/// @brief Get the probe radius for the atomic depth calculation.
+	/// @details Used by the ApproximateBuriedUnsatPenalty energy.
+	core::Real approximate_buried_unsat_penalty_burial_probe_radius() const;
+
+	/// @brief Get the resolution for the atomic depth calculation.
+	/// @details Used by the ApproximateBuriedUnsatPenalty energy.
+	core::Real approximate_buried_unsat_penalty_burial_resolution() const;
+
+	/// @brief Get the oversat penalty for approximate_buried_unsat_penalty.
+	/// @details Used by the ApproximateBuriedUnsatPenalty energy.
+	core::Real approximate_buried_unsat_penalty_oversat_penalty() const;
+
+	/// @brief Get the assume const backbone for approximate_buried_unsat_penalty.
+	/// @details Used by the ApproximateBuriedUnsatPenalty energy.
+	bool approximate_buried_unsat_penalty_assume_const_backbone() const;
+
+
 	utility::vector1< core::Real > const & get_density_sc_scale_byres() const;
 	void set_density_sc_scale_byres(core::Real newscscale);
 	void set_density_sc_scale_byres(core::chemical::AA aa, core::Real newscscale);
@@ -804,6 +855,14 @@ private:
 	//Options for the HBNetEnergy:
 	std::string hbnet_bonus_ramping_function_;
 	core::Size hbnet_max_network_size_;
+
+	//Options for the ApproximateBuriedUnsatPenalty energy:
+	core::Real approximate_buried_unsat_penalty_hbond_energy_threshold_;
+	core::Real approximate_buried_unsat_penalty_burial_atomic_depth_;
+	core::Real approximate_buried_unsat_penalty_burial_probe_radius_;
+	core::Real approximate_buried_unsat_penalty_burial_resolution_;
+	core::Real approximate_buried_unsat_penalty_oversat_penalty_;
+	bool approximate_buried_unsat_penalty_assume_const_backbone_;
 
 	/// deprecated
 	utility::vector1<std::string> bond_angle_central_atoms_to_score_;

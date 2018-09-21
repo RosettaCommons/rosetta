@@ -190,6 +190,9 @@ sources = {
 		"RotamerConstraintDun2002",
 		"ValidateDunbrackBinaries",
 	],
+	"pack/guidance_scoreterms/approximate_buried_unsat_penalty" : [
+		"ApproximateBuriedUnsatPenalty",
+	],
 	"pack/guidance_scoreterms/buried_unsat_penalty/" : [
 		"BuriedUnsatPenaltySymmetricTests",
 		"BuriedUnsatPenaltyTests",
@@ -939,6 +942,12 @@ testinputfiles = [
 	"pack/SymmetricRotamerTrials.u",
 	"pack/dunbrack/dummy_type.params",
 	"pack/dunbrack/1UBQ_repack.pdb",
+        "pack/guidance_scoreterms/approximate_buried_unsat_penalty/1ARG_bbMET_buriedASP.pdb.gz",
+        "pack/guidance_scoreterms/approximate_buried_unsat_penalty/1ARG_bbMET_buriedO.pdb.gz",
+	"pack/guidance_scoreterms/approximate_buried_unsat_penalty/1ARG_buriedASP.pdb.gz",
+	"pack/guidance_scoreterms/approximate_buried_unsat_penalty/4SER_buriedASP.pdb.gz",
+	"pack/guidance_scoreterms/approximate_buried_unsat_penalty/APA.pdb.gz",
+	"pack/guidance_scoreterms/approximate_buried_unsat_penalty/proline_nh_test.pdb.gz",
 	"pack/guidance_scoreterms/buried_unsat_penalty/C3.symm",
 	"pack/guidance_scoreterms/buried_unsat_penalty/graph/hbnet_testcase1.pdb",
 	"pack/guidance_scoreterms/buried_unsat_penalty/graph/hbnet_testcase1_symm.pdb",
