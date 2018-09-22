@@ -356,7 +356,7 @@ three_body_approximate_buried_unsat_calculation(
 	TR << "Building hbond graph" << std::endl;
 
 	scoring::hbonds::graph::AtomLevelHBondGraphOP hb_graph;
-	hb_graph = hbonds::hbond_graph_from_partial_rotsets( pose, rotsets, scorefxn_sc, scorefxn_bb,
+	hb_graph = hbonds::hbond_graph_from_partial_rotsets( pose, *rotsets, scorefxn_sc, scorefxn_bb,
 		complete_rotsets_out, position_had_rotset, minimum_hb_cut );
 
 	TR << "Hbond graph has: " << hb_graph->num_edges() << " edges requiring: " << hb_graph->getTotalMemoryUsage() << " bytes" << std::endl;
