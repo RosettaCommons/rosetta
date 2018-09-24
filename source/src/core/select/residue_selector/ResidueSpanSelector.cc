@@ -89,11 +89,11 @@ ResidueSpanSelector::apply( core::pose::Pose const & pose ) const
 	core::Size start = start_->resolve_index( pose, true ); // Don't error out for bad designations
 	core::Size end = end_->resolve_index( pose, true );
 
-	if ( start >= pose.size() ) {
+	if ( start > pose.size() ) {
 		TR.Warning << "Residue span start designation '" << *start_ << "' is outside the Pose!" << std::endl;
 		start = pose.size();
 	}
-	if ( end >= pose.size() ) {
+	if ( end > pose.size() ) {
 		TR.Warning << "Residue span end designation '" << *end_ << "' is outside the Pose!" << std::endl;
 		end = pose.size();
 	}
