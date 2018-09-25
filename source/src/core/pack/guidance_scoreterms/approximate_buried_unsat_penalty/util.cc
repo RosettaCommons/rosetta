@@ -687,7 +687,7 @@ accumulate_oversats(
 
 	// Loop over all oversat pairs that were identified
 	// Each edge should be listed here at most once
-	for ( std::pair< OversatToSidechain, ScratchVectorLimits > const & pair : oversat_map ) {
+	for ( auto const & pair : oversat_map ) {
 
 		OversatToSidechain const & oversat = pair.first;
 		ScratchVectorLimits const & limits = pair.second;
