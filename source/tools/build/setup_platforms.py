@@ -22,6 +22,7 @@ operating_systems - OSes and their supported version numbers/names.
   XXX: Do we need to support OS bit-widths?
 architectures - Processors and their supported bit-widths.
 """
+from __future__ import print_function
 
 import sys, os
 if sys.version_info >= (2, 3):
@@ -131,31 +132,8 @@ def select_os_version(supported, os, requested):
     """
 """
     actual, actual_full = _get_os_version()
-
-    if os == "macos":
-        if actual.startswith("8."):
-            actual = "10.4"
-        elif actual.startswith("9."):
-            actual = "10.5"
-        elif actual.startswith("10."):
-            actual = "10.6"
-        elif actual.startswith("11."):
-            actual = "10.7"
-        elif actual.startswith("12."):
-            actual = "10.8"
-        elif actual.startswith("13."):
-            actual = "10.9"
-        elif actual.startswith("14."):
-            actual = "10.10"
-        elif actual.startswith("15."):
-            actual = "10.11"
-        elif actual.startswith("16."):
-            actual = "10.12"
-        elif actual.startswith("17."):
-            actual = "10.13"
     if requested != "*" and requested != actual:
         raise ValueError, "Actual operating system version '%s' does not match requested version '%s'" % (actual, requested)
-
 
     return actual
 
@@ -291,7 +269,7 @@ def _get_compiler_type(default_compiler, compiler_command):
     if ( 'ICC' in version_output or 'Intel' in version_output ) :
         return 'icc'
     #Add more here?
-    print "\nCannot autodetermine compiler type for '"+str(compiler_command)+"' returning default of '"+default_compiler+"' instead.\n"
+    print("\nCannot autodetermine compiler type for '"+str(compiler_command)+"' returning default of '"+default_compiler+"' instead.\n")
     return default_compiler
 
 def _get_compiler_version(compiler, compiler_command = None):
@@ -342,6 +320,15 @@ def _get_os():
 def _get_os_version():
     """Ask Python what the operating system version is.
     """
+    try:
+        full_version = platform.mac_ver()[0]
+    except NameError:
+        print("Update your version of python to a version newer than 2.3")
+    else:
+        if full_version != "":
+            version = ".".join(full_version.split(".")[:2])
+            return version, full_version
+
     full_version = ".".join(_uname()[2].split(".")[0:3])
     version = ".".join(full_version.split(".")[0:2])
     return version, full_version
