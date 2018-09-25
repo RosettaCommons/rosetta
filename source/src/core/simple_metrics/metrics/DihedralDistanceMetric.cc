@@ -89,7 +89,7 @@ DihedralDistanceMetric::DihedralDistanceMetric( DihedralDistanceMetric const & s
 {
 	residue_selector_ = src.residue_selector_;
 	residue_selector_ref_ = src.residue_selector_ref_;
-	ref_pose_ = ref_pose_;
+	ref_pose_ = src.ref_pose_;
 }
 
 
