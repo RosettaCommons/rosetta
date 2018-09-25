@@ -68,11 +68,9 @@ def mutate_residue(
             Defaults to the standard `ScoreFunction`.
     """
     import pyrosetta
-    if type(pack_or_pose) == pyrosetta.Pose:
-        wpose = pack_or_pose
-    else:
-        import pyrosetta.distributed.packed_pose as packed_pose
-        wpose = packed_pose.to_pose(pack_or_pose)
+    import pyrosetta.distributed.packed_pose as packed_pose
+
+    wpose = packed_pose.to_pose(pack_or_pose)
 
     if not wpose.is_fullatom():
         raise IOError("mutate_residue only works with fullatom poses")

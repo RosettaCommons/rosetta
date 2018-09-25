@@ -62,12 +62,9 @@ def generate_resfile_from_pose(
     specific.update({resNo: "NATRO" for resNo in freeze})
 
     # use PDB numbering if possible
-    from pyrosetta import Pose
-    if type(pack_or_pose) == Pose:
-        wpose = pack_or_pose
-    else:
-        import pyrosetta.distributed.packed_pose as packed_pose
-        wpose = packed_pose.to_pose(pack_or_pose)
+    import pyrosetta.distributed.packed_pose as packed_pose
+
+    wpose = packed_pose.to_pose(pack_or_pose)
     info = wpose.pdb_info()
     if info and info.nres():
         res = [

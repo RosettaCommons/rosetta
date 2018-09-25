@@ -1,20 +1,18 @@
-import functools
-import collections
+import sys
+
+if sys.version_info.major >= 3:
+    from functools import singledispatch
+    import collections.abc
+else:
+    from pkgutil import simplegeneric as singledispatch
+
 import pickle
 import base64
-
-import pandas
-import numpy
 
 import pyrosetta.rosetta.core.pose as pose
 import pyrosetta.distributed
 
-__all__ = [
-    "pack_result", 
-    "to_packed", "to_pose", "to_dict",
-    "register_container_traversal",
-    "PackedPose",
-]
+__all__ = ["pack_result", "to_packed", "to_pose", "to_dict", "PackedPose"]
 
 
 class PackedPose:
@@ -67,56 +65,7 @@ def pack_result(func):
     return wrap
 
 
-def _is_dataframe_index_boring(index):
-    if not isinstance(index, pandas.Int64Index):
-        return False
-
-    if pandas.Index(numpy.arange(0, len(index))).equals(index):
-        return True
-    elif pandas.Index(numpy.repeat(0, len(index))).equals(index):
-        return True
-    else:
-        return False
-
-
-def register_container_traversal(generic_func, dict_func):
-    @generic_func.register(dict)
-    def dict_traversal(maybe_packed_dict):
-        if "pickled_pose" in maybe_packed_dict:
-            return dict_func(maybe_packed_dict)
-        else:
-            return {k: generic_func(v) for k, v in maybe_packed_dict.items()}
-
-    @generic_func.register(list)
-    @generic_func.register(tuple)
-    @generic_func.register(set)
-    def container_traveral(container):
-        return container.__class__(map(generic_func, container))
-
-    @generic_func.register(collections.abc.Generator)
-    def generator_traversal(generator):
-        return (generic_func(v) for v in generator)
-
-    @generic_func.register(pandas.DataFrame)
-    def dataframe_traveral(dataframe):
-        if _is_dataframe_index_boring(dataframe.index):
-            return generic_func(
-                dataframe.to_dict("records"))
-        else:
-            if dataframe.index.has_duplicates:
-                raise ValueError(
-                    "Unable to coerce duplicate-indexed dataframe for traversal."
-                    " Consider '.reset_index'.")
-            return {i: generic_func(v) for i, v in dataframe.to_dict("index").items()}
-
-    @generic_func.register(pandas.Series)
-    def series_traversal(series):
-        return generic_func(dict(series))
-
-    return generic_func
-
-
-@functools.singledispatch
+@singledispatch
 def to_packed(pose_or_pack):
     return PackedPose(pose_or_pack)
 
@@ -140,10 +89,7 @@ def dict_to_packed(packed_dict):
     return pack
 
 
-register_container_traversal(to_packed, dict_to_packed  )
-
-
-@functools.singledispatch
+@singledispatch
 def to_pose(pack):
     return PackedPose(pack).pose
 
@@ -167,10 +113,7 @@ def dict_to_pose(packed_dict):
     return to_pose(packed_dict["pickled_pose"])
 
 
-register_container_traversal(to_pose, dict_to_pose)
-
-
-@functools.singledispatch
+@singledispatch
 def to_dict(pose_or_pack):
     pack = PackedPose(pose_or_pack)
 
@@ -186,4 +129,23 @@ def none_to_dict(none):
     return None
 
 
-register_container_traversal(to_dict, dict)
+def register_builtin_container_traversal(generic_func, dict_func):
+    @generic_func.register(dict)
+    def dict_traversal(maybe_packed_dict):
+        if "pickled_pose" in maybe_packed_dict:
+            return dict_func(maybe_packed_dict)
+        else:
+            return {k: generic_func(v) for k, v in maybe_packed_dict.items()}
+
+    @generic_func.register(list)
+    @generic_func.register(tuple)
+    @generic_func.register(set)
+    def container_traveral(container):
+        return container.__class__(map(generic_func, container))
+        
+    if sys.version_info.major >= 3:
+        @generic_func.register(collections.abc.Generator)
+        def generator_traversal(generator):
+            return (generic_func(v) for v in generator)
+
+    return generic_func
