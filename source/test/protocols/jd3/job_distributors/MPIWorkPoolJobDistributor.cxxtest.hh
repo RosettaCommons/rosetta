@@ -107,72 +107,6 @@ public:
 typedef utility::pointer::shared_ptr< PoolMnPJob > PoolMnPJobOP;
 
 
-//class DummyOutputter : public PoseOutputter
-//{
-//public:
-// DummyOutputter( std::map< JobResultID, JobResultOP > & results ) :
-//  ResultOutputter(),
-//  results_( results )
-// {}
-//
-// virtual
-// void determine_job_tag(
-//  utility::tag::TagCOP,
-//  utility::options::OptionCollection const &,
-//  InnerLarvalJob & job
-// ) const {
-//  job->job_tag( job->input_tag() );
-// }
-//
-// std::string class_key() const override { return keyname(); }
-// static std::string keyname() { return "Dummy"; }
-//
-// std::string
-// outputter_for_job(
-//  utility::tag::TagCOP,
-//  utility::options::OptionCollection const &,
-//  InnerLarvalJob const &
-// ) const override {
-//  return "dummy";
-// }
-//
-// std::string
-// outputter_for_job(
-//  PoseOutputSpecification const & spec
-// ) const = 0;
-//
-// virtual
-// bool job_has_already_completed( LarvalJob const & job, utility::options::OptionCollection const & options ) const = 0;
-//
-// virtual
-// void mark_job_as_having_started( LarvalJob const & job, utility::options::OptionCollection const & options ) const = 0;
-//
-// PoseOutputSpecificationOP
-// create_output_specification(
-//  LarvalJob const & job,
-//  JobOutputIndex const & output_index,
-//  utility::options::OptionCollection const & options,
-//  utility::tag::TagCOP tag // possibly null-pointing tag pointer
-// )
-// {
-// }
-//
-// void write_output(
-//  OutputSpecification const & specification,
-//  JobResult const & result
-// ) override {
-//  results_[ specification.result_id() ] = JobResultOP( new PoseJobResult(
-//    static_cast< PoseJobResult const & > (result) ));
-// }
-//
-// void flush() override {}
-//
-//private:
-// std::map< JobResultID, JobResultOP > & results_;
-//};
-//
-//typedef utility::pointer::shared_ptr< DummyOutputter > DummyOutputterOP;
-
 // Dummy JobQueen //
 class PoolJQ1 : public protocols::jd3::standard::StandardJobQueen
 {
@@ -2819,6 +2753,430 @@ public:
 		TS_ASSERT_EQUALS( os6->result_id().first, 6 );
 		TS_ASSERT_EQUALS( os6->result_id().second, 1 );
 
+		ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 1 that it wants its attention F", 0 );
+		ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 1 to spin down", mpi_work_pool_jd_spin_down );
+
+
+		// OK -- let's check the state of the JQ
+
+		TS_ASSERT_EQUALS( jq3->status_.count( 1 ), 1 );
+		TS_ASSERT_EQUALS( jq3->status_.count( 2 ), 1 );
+		TS_ASSERT_EQUALS( jq3->status_.count( 3 ), 1 );
+		TS_ASSERT_EQUALS( jq3->status_.count( 4 ), 1 );
+		TS_ASSERT_EQUALS( jq3->status_.count( 5 ), 1 );
+		TS_ASSERT_EQUALS( jq3->status_.count( 6 ), 1 );
+		TS_ASSERT_EQUALS( jq3->status_[ 1 ], jd3_job_status_success );
+		TS_ASSERT_EQUALS( jq3->status_[ 2 ], jd3_job_status_success );
+		TS_ASSERT_EQUALS( jq3->status_[ 3 ], jd3_job_status_success );
+		TS_ASSERT_EQUALS( jq3->status_[ 4 ], jd3_job_status_success );
+		TS_ASSERT_EQUALS( jq3->status_[ 5 ], jd3_job_status_success );
+		TS_ASSERT_EQUALS( jq3->status_[ 6 ], jd3_job_status_success );
+
+		TS_ASSERT_EQUALS( jq3->summaries_.count( sp1( 1 ) ), 1 );
+		TS_ASSERT_EQUALS( jq3->summaries_.count( sp1( 2 ) ), 1 );
+		TS_ASSERT_EQUALS( jq3->summaries_.count( sp1( 3 ) ), 1 );
+		TS_ASSERT_EQUALS( jq3->summaries_.count( sp1( 4 ) ), 1 );
+		TS_ASSERT_EQUALS( jq3->summaries_.count( sp1( 5 ) ), 1 );
+		TS_ASSERT_EQUALS( jq3->summaries_.count( sp1( 6 ) ), 1 );
+		TS_ASSERT_EQUALS( utility::pointer::dynamic_pointer_cast< EnergyJobSummary > ( jq3->summaries_[ sp1( 1 ) ])->energy(), 1234 );
+		TS_ASSERT_EQUALS( utility::pointer::dynamic_pointer_cast< EnergyJobSummary > ( jq3->summaries_[ sp1( 2 ) ])->energy(), 1234 );
+		TS_ASSERT_EQUALS( utility::pointer::dynamic_pointer_cast< EnergyJobSummary > ( jq3->summaries_[ sp1( 3 ) ])->energy(), 1234 );
+		TS_ASSERT_EQUALS( utility::pointer::dynamic_pointer_cast< EnergyJobSummary > ( jq3->summaries_[ sp1( 4 ) ])->energy(), 1234 );
+		TS_ASSERT_EQUALS( utility::pointer::dynamic_pointer_cast< EnergyJobSummary > ( jq3->summaries_[ sp1( 5 ) ])->energy(), 1234 );
+		TS_ASSERT_EQUALS( utility::pointer::dynamic_pointer_cast< EnergyJobSummary > ( jq3->summaries_[ sp1( 6 ) ])->energy(), 1234 );
+
+		TS_ASSERT_EQUALS( jq3->results_->count( sp1( 1 ) ), 0 );
+		TS_ASSERT_EQUALS( jq3->results_->count( sp1( 2 ) ), 0 );
+		TS_ASSERT_EQUALS( jq3->results_->count( sp1( 3 ) ), 0 );
+		TS_ASSERT_EQUALS( jq3->results_->count( sp1( 4 ) ), 0 );
+		TS_ASSERT_EQUALS( jq3->results_->count( sp1( 5 ) ), 0 );
+		TS_ASSERT_EQUALS( jq3->results_->count( sp1( 6 ) ), 0 );
+
+
+		SimulateMPI::set_mpi_rank( 0 );
+
+		TS_ASSERT( SimulateMPI::incoming_message_queue_is_empty() );
+		TS_ASSERT( SimulateMPI::outgoing_message_queue_is_empty() );
+		SimulateMPI::print_unprocessed_incoming_messages( std::cerr );
+		SimulateMPI::print_unprocessed_outgoing_messages( std::cerr );
+
+		//std::cout << "Finished Thirteenth Unit Test" << std::endl;
+
+#endif
+	}
+
+	void test_jd3_workpool_manager_two_rounds_one_archive_one_outputter_no_archiving_on_node_0() {
+		TS_ASSERT( true );
+
+#ifdef SERIALIZATION
+		core_init_with_additional_options( "-jd3::n_archive_nodes 1 -jd3::do_not_archive_on_node0 -jd3::compress_job_results 0 -jd3::mpi_fraction_outputters 0.4" );
+
+		EnergyJobSummaryOP trpcage_job_summary( new EnergyJobSummary );
+		trpcage_job_summary->energy( 1234 );
+		utility::vector1< JobSummaryOP > summaries( 1, trpcage_job_summary );
+		std::string serialized_trpcage_job_summaries = serialized_job_summaries( summaries );
+
+
+		PoseJobResultOP trpcage_pose_result( new PoseJobResult );
+		trpcage_pose_result->pose(  create_trpcage_ideal_poseop() );
+
+		SimulateMPI::initialize_simulation( 5 );
+
+		// ok, all the nodes at once start requesting jobs from node 0
+		SimulateMPI::set_mpi_rank( 2 );
+		send_integer_to_node( 0, 2 );
+		SimulateMPI::set_mpi_rank( 3 );
+		send_integer_to_node( 0, 3 );
+		send_integer_to_node( 0, mpi_work_pool_jd_new_job_request );
+		SimulateMPI::set_mpi_rank( 4 );
+		send_integer_to_node( 0, 4 );
+
+		// let's start the job at node 2
+		SimulateMPI::set_mpi_rank( 2 );
+		send_integer_to_node( 0, mpi_work_pool_jd_new_job_request );
+
+		// and now the job at node 4
+		SimulateMPI::set_mpi_rank( 4 );
+		send_integer_to_node( 0, mpi_work_pool_jd_new_job_request );
+
+		// ok -- now let's pretend that node 3 has finished its job
+		SimulateMPI::set_mpi_rank( 3 );
+		send_integer_to_node( 0, 3 );
+
+		// ok -- before node 3 can finish its two part job-completion process,
+		// node 2 will butt in and start its two part job-completion process,
+		SimulateMPI::set_mpi_rank( 2 );
+		send_integer_to_node( 0, 2 );
+
+		SimulateMPI::set_mpi_rank( 3 );
+		send_integer_to_node( 0, mpi_work_pool_jd_job_success );
+		send_size_to_node( 0, 2 ); // job_id
+		send_size_to_node( 0, 1 ); // num results
+		// sent to archive instead -- send_string_to_node( 0, serialized_larval_job_and_job_result( 3, 2, 2, trpcage_pose_result ));
+
+		SimulateMPI::set_mpi_rank( 2 );
+		send_integer_to_node( 0, mpi_work_pool_jd_job_success );
+		send_size_to_node( 0, 1 ); // job id
+		send_size_to_node( 0, 1 ); // num results
+		// sent to archive instead -- send_string_to_node( 0, serialized_larval_job_and_job_result( 3, 1, 1, trpcage_pose_result ));
+
+		SimulateMPI::set_mpi_rank( 3 );
+		send_integer_to_node( 0, 3 );
+		send_integer_to_node( 0, mpi_work_pool_jd_job_success_and_archival_complete );
+		send_size_to_node( 0, 2 ); // job id
+		send_integer_to_node( 0, jd3_job_status_success );
+		send_string_to_node( 0, serialized_trpcage_job_summaries );
+
+		SimulateMPI::set_mpi_rank( 4 );
+		send_integer_to_node( 0, 4 );
+		send_integer_to_node( 0, mpi_work_pool_jd_job_success );
+		send_size_to_node( 0, 3 ); // job id
+		send_size_to_node( 0, 1 ); // num results
+		// sent to archive instead -- send_string_to_node( 0, serialized_larval_job_and_job_result( 3, 3, 3, trpcage_pose_result ));
+
+		SimulateMPI::set_mpi_rank( 2 );
+		send_integer_to_node( 0, 2 );
+		send_integer_to_node( 0, mpi_work_pool_jd_job_success_and_archival_complete );
+		send_size_to_node( 0, 1 ); // job id
+		send_integer_to_node( 0, jd3_job_status_success ); // job id
+		send_string_to_node( 0, serialized_trpcage_job_summaries );
+
+		// Now node 2 asks for a new job
+		send_integer_to_node( 0, 2 );
+		send_integer_to_node( 0, mpi_work_pool_jd_new_job_request );
+
+		SimulateMPI::set_mpi_rank( 3 );
+		// Now node 3 asks for a new job
+		send_integer_to_node( 0, 3 );
+		send_integer_to_node( 0, mpi_work_pool_jd_new_job_request );
+
+
+		SimulateMPI::set_mpi_rank( 4 );
+		send_integer_to_node( 0, 4 );
+		send_integer_to_node( 0, mpi_work_pool_jd_job_success_and_archival_complete );
+		send_size_to_node( 0, 3 ); // job id
+		send_integer_to_node( 0, jd3_job_status_success );
+		send_string_to_node( 0, serialized_trpcage_job_summaries );
+
+		// Now node 4 asks for a new job
+		send_integer_to_node( 0, 4 );
+		send_integer_to_node( 0, mpi_work_pool_jd_new_job_request );
+
+		SimulateMPI::set_mpi_rank( 2 );
+
+		// now retrieve the job result for job 1
+		// send_integer_to_node( 0, 2 );
+		// send_integer_to_node( 0, mpi_work_pool_jd_retrieve_job_result );
+		// send_size_to_node( 0, 1 ); // retrieve the result from job #1
+
+		SimulateMPI::set_mpi_rank( 3 );
+
+		// now retrieve the job result for job 1
+		// send_integer_to_node( 0, 3 );
+		// send_integer_to_node( 0, mpi_work_pool_jd_retrieve_job_result );
+		// send_size_to_node( 0, 1 ); // retrieve the result from job #1
+
+		SimulateMPI::set_mpi_rank( 4 );
+
+		// now retrieve the job result for job 1
+		// send_integer_to_node( 0, 4 );
+		// send_integer_to_node( 0, mpi_work_pool_jd_retrieve_job_result );
+		// send_size_to_node( 0, 1 ); // retrieve the result from job #1
+
+		// Now the second round of job results start trickling in
+
+		SimulateMPI::set_mpi_rank( 2 );
+
+		send_integer_to_node( 0, 2 );
+		send_integer_to_node( 0, mpi_work_pool_jd_job_success );
+		send_size_to_node( 0, 4 ); // job id
+		send_size_to_node( 0, 1 ); // num results
+		// sent to archive instead -- send_string_to_node( 0, serialized_larval_job_and_job_result( 3, 1, 4, trpcage_pose_result ));
+
+		send_integer_to_node( 0, 2 );
+		send_integer_to_node( 0, mpi_work_pool_jd_job_success_and_archival_complete );
+		send_size_to_node( 0, 4 ); // job id
+		send_integer_to_node( 0, jd3_job_status_success );
+		send_string_to_node( 0, serialized_trpcage_job_summaries );
+
+		send_integer_to_node( 0, 2 );
+		send_integer_to_node( 0, mpi_work_pool_jd_new_job_request );
+
+		SimulateMPI::set_mpi_rank( 4 );
+		send_integer_to_node( 0, 4 );
+		send_integer_to_node( 0, mpi_work_pool_jd_job_success );
+		send_size_to_node( 0, 6 ); // job id
+		send_size_to_node( 0, 1 ); // num results
+		// sent to archive instead -- send_string_to_node( 0, serialized_larval_job_and_job_result( 3, 3, 6, trpcage_pose_result ));
+
+		send_integer_to_node( 0, 4 );
+		send_integer_to_node( 0, mpi_work_pool_jd_job_success_and_archival_complete );
+		send_size_to_node( 0, 6 ); // job id
+		send_integer_to_node( 0, jd3_job_status_success );
+		send_string_to_node( 0, serialized_trpcage_job_summaries );
+
+		send_integer_to_node( 0, 4 );
+		send_integer_to_node( 0, mpi_work_pool_jd_new_job_request );
+
+		SimulateMPI::set_mpi_rank( 3 );
+		send_integer_to_node( 0, 3 );
+		send_integer_to_node( 0, mpi_work_pool_jd_job_success );
+		send_size_to_node( 0, 5 ); // job id
+		send_size_to_node( 0, 1 ); // num results
+		// sent to archive instead -- send_string_to_node( 0, serialized_larval_job_and_job_result( 3, 2, 5, trpcage_pose_result ));
+
+		send_integer_to_node( 0, 3 );
+		send_integer_to_node( 0, mpi_work_pool_jd_job_success_and_archival_complete );
+		send_size_to_node( 0, 5 ); // job id
+		send_integer_to_node( 0, jd3_job_status_success );
+		send_string_to_node( 0, serialized_trpcage_job_summaries );
+
+		send_integer_to_node( 0, 3 );
+		send_integer_to_node( 0, mpi_work_pool_jd_new_job_request );
+
+		// OK -- output time.
+		// Have node 2 output two of the jobs and node 1 output one of them
+		// to test a race condition.
+		// Node 0 will hand both node 1 and node 2 a job to output.
+		// Node 2 will report it has finished its output first,
+		// Node 0 will assign node 2 a second job to output,
+		// and then node 1 will say it has finished.
+		// Node 0 should not spin down node 1 until after node 2 has said
+		// that it has completed output of the 2nd job.
+
+		SimulateMPI::set_mpi_rank(2);
+		send_integer_to_node( 0, 2 );
+		send_integer_to_node( 0, mpi_work_pool_jd_output_completed );
+		send_integer_to_node( 0, 2 );
+		send_integer_to_node( 0, mpi_work_pool_jd_new_job_request );
+
+
+		SimulateMPI::set_mpi_rank( 1 );
+		send_integer_to_node( 0, 1 );
+		send_integer_to_node( 0, mpi_work_pool_jd_output_completed );
+
+		SimulateMPI::set_mpi_rank(2);
+		send_integer_to_node( 0, 2 );
+		send_integer_to_node( 0, mpi_work_pool_jd_output_completed );
+		send_integer_to_node( 0, 2 );
+		send_integer_to_node( 0, mpi_work_pool_jd_new_job_request );
+
+
+		//OK! Now create a PoolJQ3 and let 'er rip
+		SimulateMPI::set_mpi_rank( 0 );
+		PoolJQ3OP jq3( new PoolJQ3 );
+		MPIWorkPoolJobDistributor jd;
+		try {
+			jd.go( jq3 );
+		} catch ( ... ) {
+			TS_ASSERT( false /*no exception should be thrown*/ );
+		}
+
+		// OK!
+		// Now we read the mail we got from node 0
+
+		SimulateMPI::set_mpi_rank( 2 );
+		ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 2 that it has a job for it to run", mpi_work_pool_jd_new_job_available );
+		std::string ser_larv1 = ts_assert_mpi_buffer_has_string( 0, "node 0 sends node 2 the serialized LarvalJob" );
+		LarvalJobOP larval_job1 = deserialize_larval_job( ser_larv1 );
+		TS_ASSERT_EQUALS( larval_job1->job_index(), 1 );
+		TS_ASSERT_EQUALS( larval_job1->nstruct_index(), 1 );
+		TS_ASSERT_EQUALS( larval_job1->nstruct_max(), 3 );
+		ts_assert_mpi_buffer_has_sizes( 0, "node 0 sends node 2 an empty list of job result indices", utility::vector1< Size >() );
+
+		ts_assert_mpi_buffer_has_integers( 0, "node 0 tells node 2 to archive its results on node 1", utility::vector1< int >( 1, 1 ) );
+		// ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 2 that archival completed", mpi_work_pool_jd_archival_completed );
+
+		ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 2 that it has another job for it to run", mpi_work_pool_jd_new_job_available );
+		std::string ser_larv4 = ts_assert_mpi_buffer_has_string( 0, "node 0 sends node 2 the serialized LarvalJob" );
+		LarvalJobOP larval_job4 = deserialize_larval_job( ser_larv4 );
+		TS_ASSERT_EQUALS( larval_job4->job_index(), 4 );
+		TS_ASSERT_EQUALS( larval_job4->nstruct_index(), 1 );
+		TS_ASSERT_EQUALS( larval_job4->nstruct_max(), 3 );
+		TS_ASSERT_EQUALS( larval_job4->input_job_result_indices().size(), 1 );
+		TS_ASSERT_EQUALS( larval_job4->input_job_result_indices()[ 1 ].first, 1 );
+		TS_ASSERT_EQUALS( larval_job4->input_job_result_indices()[ 1 ].second, 1 );
+		ts_assert_mpi_buffer_has_sizes( 0, "node 0 sends node 2 a vector1 of job result indices with one element whose value is 1", utility::vector1< Size >( 1, 1 ) );
+
+		//ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 2 that it has the job result it was expecting", mpi_work_pool_jd_job_result_retrieved );
+		// std::string ser_job_res1a = ts_assert_mpi_buffer_has_string( 0, "node 0 sends the serialized larval-job and job-result from job 1" );
+		// MPIWorkPoolJobDistributor::LarvalJobAndResult job_res1a = deserialized_larval_job_and_job_result( ser_job_res1a );
+		// TS_ASSERT( job_res1a.first );
+		// TS_ASSERT( job_res1a.second );
+		// TS_ASSERT_EQUALS( job_res1a.first->job_index(), 1 );
+		// TS_ASSERT_EQUALS( job_res1a.first->nstruct_index(), 1 );
+		// TS_ASSERT_EQUALS( job_res1a.first->nstruct_max(), 3 );
+		// TS_ASSERT_EQUALS( utility::pointer::dynamic_pointer_cast< PoseJobResult > ( job_res1a.second )->pose()->total_residue(), 20 );
+
+		ts_assert_mpi_buffer_has_integers( 0, "node 0 tells node 2 to archive its results on node 1", utility::vector1< int >( 1, 1 ) );
+		// ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 2 that archival completed", mpi_work_pool_jd_archival_completed );
+
+		ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 2 that there is a job that it needs to output", mpi_work_pool_jd_output_job_result_on_archive );
+		ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 2 that the job result is archived on node 1", 1);
+		std::string ser_os5 = ts_assert_mpi_buffer_has_string( 0, "node 0 then sends node 2 the serialized job output specification for job result (5,1)" );
+		OutputSpecificationOP os5 = deserialized_output_specification( ser_os5 );
+		TS_ASSERT_EQUALS( os5->result_id().first, 5 );
+		TS_ASSERT_EQUALS( os5->result_id().second, 1 );
+
+		ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 2 that there is another job that it needs to output", mpi_work_pool_jd_output_job_result_on_archive );
+		ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 2 that the job result is archived on node 1", 1);
+		std::string ser_os6 = ts_assert_mpi_buffer_has_string( 0, "node 0 then sends node 2 the serialized job output specification for job result (6,1)" );
+		OutputSpecificationOP os6 = deserialized_output_specification( ser_os6 );
+		TS_ASSERT_EQUALS( os6->result_id().first, 6 );
+		TS_ASSERT_EQUALS( os6->result_id().second, 1 );
+
+		// Finally, spin down
+		Size spin_down_node2_message_ind = utility::SimulateMPI::index_of_next_message();
+		ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 2 that there are no jobs left to run", mpi_work_pool_jd_spin_down );
+
+		SimulateMPI::set_mpi_rank( 3 );
+		ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 3 that it has a job for it to run", mpi_work_pool_jd_new_job_available );
+		std::string ser_larv2 = ts_assert_mpi_buffer_has_string( 0, "node 0 sends node 3 the serialized LarvalJob" );
+		LarvalJobOP larval_job2 = deserialize_larval_job( ser_larv2 );
+		TS_ASSERT_EQUALS( larval_job2->job_index(), 2 );
+		TS_ASSERT_EQUALS( larval_job2->nstruct_index(), 2 );
+		TS_ASSERT_EQUALS( larval_job2->nstruct_max(), 3 );
+		ts_assert_mpi_buffer_has_sizes( 0, "node 0 sends node 3 an empty list of job result indices", utility::vector1< Size >() );
+
+		ts_assert_mpi_buffer_has_integers( 0, "node 0 tells node 3 to archive its results on node 1", utility::vector1< int >( 1, 1 ) );
+		//ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 3 that archival completed", mpi_work_pool_jd_archival_completed );
+
+		ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 3 that it has another job for it to run", mpi_work_pool_jd_new_job_available );
+		std::string ser_larv5 = ts_assert_mpi_buffer_has_string( 0, "node 0 sends node 3 the serialized LarvalJob" );
+		LarvalJobOP larval_job5 = deserialize_larval_job( ser_larv5 );
+		TS_ASSERT_EQUALS( larval_job5->job_index(), 5 );
+		TS_ASSERT_EQUALS( larval_job5->nstruct_index(), 2 );
+		TS_ASSERT_EQUALS( larval_job5->nstruct_max(), 3 );
+		TS_ASSERT_EQUALS( larval_job5->input_job_result_indices().size(), 1 );
+		TS_ASSERT_EQUALS( larval_job5->input_job_result_indices()[ 1 ].first, 1 );
+		TS_ASSERT_EQUALS( larval_job5->input_job_result_indices()[ 1 ].second, 1 );
+		ts_assert_mpi_buffer_has_sizes( 0, "node 0 sends node 3 a vector1 of job result indices with one element whose value is 1", utility::vector1< Size >( 1, 1 ) );
+
+		// ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 3 that it has the job result it was expecting", mpi_work_pool_jd_job_result_retrieved );
+		// std::string ser_job_res1b = ts_assert_mpi_buffer_has_string( 0, "node 0 sends the serialized larval-job and job-result from job 1" );
+		// MPIWorkPoolJobDistributor::LarvalJobAndResult job_res1b = deserialized_larval_job_and_job_result( ser_job_res1b );
+		// TS_ASSERT( job_res1b.first );
+		// TS_ASSERT( job_res1b.second );
+		// TS_ASSERT_EQUALS( job_res1b.first->job_index(), 1 );
+		// TS_ASSERT_EQUALS( job_res1b.first->nstruct_index(), 1 );
+		// TS_ASSERT_EQUALS( job_res1b.first->nstruct_max(), 3 );
+		// TS_ASSERT_EQUALS( utility::pointer::dynamic_pointer_cast< PoseJobResult > ( job_res1b.second )->pose()->total_residue(), 20 );
+
+		ts_assert_mpi_buffer_has_integers( 0, "node 0 tells node 3 to archive its results on node 1", utility::vector1< int >( 1, 1 ) );
+		// ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 3 that archival completed", mpi_work_pool_jd_archival_completed );
+
+		ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 3 that there are no jobs left to run", mpi_work_pool_jd_spin_down );
+
+		SimulateMPI::set_mpi_rank( 4 );
+		ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 4 that it has a job for it to run", mpi_work_pool_jd_new_job_available );
+		std::string ser_larv3 = ts_assert_mpi_buffer_has_string( 0, "node 0 sends node 4 the serialized LarvalJob" );
+		LarvalJobOP larval_job3 = deserialize_larval_job( ser_larv3 );
+		TS_ASSERT_EQUALS( larval_job3->job_index(), 3 );
+		TS_ASSERT_EQUALS( larval_job3->nstruct_index(), 3 );
+		TS_ASSERT_EQUALS( larval_job3->nstruct_max(), 3 );
+		ts_assert_mpi_buffer_has_sizes( 0, "node 0 sends node 4 an empty list of job result indices", utility::vector1< Size >() );
+
+		ts_assert_mpi_buffer_has_integers( 0, "node 0 tells node 4 to archive its results on node 1", utility::vector1< int >( 1, 1 ) );
+		// ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 4 that archival completed", mpi_work_pool_jd_archival_completed );
+
+		ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 4 that it has another job for it to run", mpi_work_pool_jd_new_job_available );
+		std::string ser_larv6 = ts_assert_mpi_buffer_has_string( 0, "node 0 sends node 4 the serialized LarvalJob" );
+		LarvalJobOP larval_job6 = deserialize_larval_job( ser_larv6 );
+		TS_ASSERT_EQUALS( larval_job6->job_index(), 6 );
+		TS_ASSERT_EQUALS( larval_job6->nstruct_index(), 3 );
+		TS_ASSERT_EQUALS( larval_job6->nstruct_max(), 3 );
+		TS_ASSERT_EQUALS( larval_job6->input_job_result_indices().size(), 1 );
+		TS_ASSERT_EQUALS( larval_job6->input_job_result_indices()[ 1 ].first, 1 );
+		TS_ASSERT_EQUALS( larval_job6->input_job_result_indices()[ 1 ].second, 1 );
+		ts_assert_mpi_buffer_has_sizes( 0, "node 0 sends node 4 a vector1 of job result indices with one element whose value is 1", utility::vector1< Size >( 1, 1 ) );
+
+		// ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 4 that it has the job result it was expecting", mpi_work_pool_jd_job_result_retrieved );
+		// std::string ser_job_res1c = ts_assert_mpi_buffer_has_string( 0, "node 0 sends the serialized larval-job and job-result from job 1" );
+		// MPIWorkPoolJobDistributor::LarvalJobAndResult job_res1c = deserialized_larval_job_and_job_result( ser_job_res1b );
+		// TS_ASSERT( job_res1c.first );
+		// TS_ASSERT( job_res1c.second );
+		// TS_ASSERT_EQUALS( job_res1c.first->job_index(), 1 );
+		// TS_ASSERT_EQUALS( job_res1c.first->nstruct_index(), 1 );
+		// TS_ASSERT_EQUALS( job_res1c.first->nstruct_max(), 3 );
+		// TS_ASSERT_EQUALS( utility::pointer::dynamic_pointer_cast< PoseJobResult > ( job_res1c.second )->pose()->total_residue(), 20 );
+
+		ts_assert_mpi_buffer_has_integers( 0, "node 0 tells node 4 to archive its results on node 1", utility::vector1< int >( 1, 1 ) );
+		// ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 4 that archival completed", mpi_work_pool_jd_archival_completed );
+
+		ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 4 that there are no jobs left to run", mpi_work_pool_jd_spin_down );
+
+		SimulateMPI::set_mpi_rank( 1 ); // the archive node
+		// first messages from node 0 are to discard the results from jobs 2 and 3
+		ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 1 that it wants its attention A", 0 );
+		ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 1 that it needs to discard a job A", mpi_work_pool_jd_discard_job_result );
+		ts_assert_mpi_buffer_has_size( 0, "node 0 tells node 1 to discard job 2", 2 );
+		ts_assert_mpi_buffer_has_size( 0, "node 0 tells node 1 to discard job 2 result 1", 1 );
+
+		ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 1 that it wants its attention B", 0 );
+		ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 1 that it needs to discard a job B", mpi_work_pool_jd_discard_job_result );
+		ts_assert_mpi_buffer_has_size( 0, "node 0 tells node 1 to discard job 3", 3 );
+		ts_assert_mpi_buffer_has_size( 0, "node 0 tells node 1 to discard job 3 result 1", 1 );
+
+		ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 1 that it wants its attention C", 0 );
+		ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 1 that it needs to output a job A", mpi_work_pool_jd_output_job_result_already_available );
+		std::string ser_os4 = ts_assert_mpi_buffer_has_string( 0,
+			"node 0 sends node 1 the OutputSpecification for job result (4,1)" );
+		OutputSpecificationOP os4 = deserialized_output_specification( ser_os4 );
+		TS_ASSERT_EQUALS( os4->result_id().first, 4 );
+		TS_ASSERT_EQUALS( os4->result_id().second, 1 );
+
+		ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 1 that it wants its attention D", 0 );
+		Size spin_down_node1_message_ind = SimulateMPI::index_of_next_message();
+		ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 1 that there are no jobs left to run", mpi_work_pool_jd_spin_down );
+
+		// CRITICAL! The job distributor must not spin down node 1 until
+		// node 2 has said that it has completed outputting everything
+		// or you get a node 2 waiting forever for node 1 to reply to
+		// a request for the result that node 2 is tasked with outputting
+		// (which node 1 won't do because it has left its listener loop)
+		// std::cout << "Spin down messages: spin_down_node2_message_ind " << spin_down_node2_message_ind << " spin_down_node1_message_ind " << spin_down_node1_message_ind << std::endl;
+		TS_ASSERT( spin_down_node2_message_ind < spin_down_node1_message_ind );
+
 		TS_ASSERT_EQUALS( jq3->status_.count( 1 ), 1 );
 		TS_ASSERT_EQUALS( jq3->status_.count( 2 ), 1 );
 		TS_ASSERT_EQUALS( jq3->status_.count( 3 ), 1 );
@@ -2858,10 +3216,14 @@ public:
 		TS_ASSERT( SimulateMPI::incoming_message_queue_is_empty() );
 		TS_ASSERT( SimulateMPI::outgoing_message_queue_is_empty() );
 
+		SimulateMPI::print_unprocessed_incoming_messages( std::cerr );
+		SimulateMPI::print_unprocessed_outgoing_messages( std::cerr );
+
 		//std::cout << "Finished Thirteenth Unit Test" << std::endl;
 
 #endif
 	}
+
 
 	void test_jd3_workpool_archive_two_rounds_one_archive_no_archiving_on_node_0() {
 		TS_ASSERT( true );
@@ -4863,7 +5225,7 @@ public:
 		TS_ASSERT( SimulateMPI::incoming_message_queue_is_empty() );
 		TS_ASSERT( SimulateMPI::outgoing_message_queue_is_empty() );
 
-		std::cout << "Finished XXth Unit Test" << std::endl;
+		//std::cout << "Finished XXth Unit Test" << std::endl;
 
 
 #endif

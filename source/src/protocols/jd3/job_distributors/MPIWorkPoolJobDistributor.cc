@@ -189,20 +189,16 @@ MPIWorkPoolJobDistributor::go_master()
 		}
 	}
 
+	TR << "Completed go_master main listening loop!" << std::endl;
+
 	// spin-down-signal sending
 	for ( SizeList::const_iterator iter = worker_nodes_waiting_for_jobs_.begin();
 			iter != worker_nodes_waiting_for_jobs_.end(); ++iter ) {
 		send_spin_down_signal_to_node( *iter );
 	}
 
-	for ( int ii = 1; ii <= n_archives_; ++ii ) {
-		if ( node_outputter_is_outputting_for_[ ii ] != -1 ) continue;
-		utility::send_integer_to_node( ii, 0 ); // archive is expecting a node ID
-		send_spin_down_signal_to_node( ii );
-	}
-
 	// Other nodes that have not yet sent their final job-request message to node 0.
-	while ( any_nodes_not_yet_spun_down() ) {
+	while ( any_worker_nodes_not_yet_spun_down() ) {
 		int worker_node = utility::receive_integer_from_anyone();
 		int message = utility::receive_integer_from_node( worker_node );
 		switch ( message ) {
@@ -211,19 +207,46 @@ MPIWorkPoolJobDistributor::go_master()
 			break;
 		case mpi_work_pool_jd_output_completed :
 			process_output_complete_message( worker_node );
-			if ( worker_node <= n_archives_ ) {
-				// Now it's time to spin down the archive, now that it is done outputting
-				utility::send_integer_to_node( worker_node, 0 ); // archive is expecting a node ID
-				send_spin_down_signal_to_node( worker_node );
-			}
+			// there are no more jobs for the archive to output, so don't ask the
+			// archive to output anything else, BUT, there are possibly some
+			// output nodes that have not yet requested the job results from
+			// the archives. Therefore, we will wait until all of the workers have
+			// spun down before spinning down the archives.
 			break;
 		default :
 			// error -- we should not have gotten here
-			throw CREATE_EXCEPTION(utility::excn::Exception,  "received inappropriate signal "
+			throw CREATE_EXCEPTION(utility::excn::Exception, "received inappropriate signal "
 				"on node 0 from node " + utility::to_string( worker_node )
-				+ ": " + utility::to_string( message ) + " in final spin-down loop" );
+				+ ": " + utility::to_string( message ) + " in worker/outputter spin-down loop" );
 		}
 	}
+
+	for ( int ii = 1; ii <= n_archives_; ++ii ) {
+		if ( ! archive_currently_outputting_[ii] ) {
+			utility::send_integer_to_node( ii, 0 ); // archive is expecting a node ID
+			send_spin_down_signal_to_node( ii );
+		}
+	}
+
+	// Finally, wait until all archives have completed their final output operations
+	// and then tell each of them to spin down.
+	while ( any_archive_nodes_not_yet_spun_down() ) {
+		int archive_node = utility::receive_integer_from_anyone();
+		int message = utility::receive_integer_from_node( archive_node );
+		switch ( message ) {
+		case mpi_work_pool_jd_output_completed :
+			process_output_complete_message( archive_node );
+			utility::send_integer_to_node( archive_node, 0 ); // archive is expecting a node ID
+			send_spin_down_signal_to_node( archive_node );
+			break;
+		default :
+			// error -- we should not have gotten here
+			throw CREATE_EXCEPTION(utility::excn::Exception, "received inappropriate signal "
+				"on node 0 from node " + utility::to_string( archive_node )
+				+ ": " + utility::to_string( message ) + " in archive spin-down loop" );
+		}
+	}
+
 
 	job_queen_->flush();
 
@@ -762,6 +785,8 @@ MPIWorkPoolJobDistributor::process_retrieve_result_from_archive_and_output_reque
 
 	}
 
+	//TR << "Requesting output result from archive " << archive_node << " on node " << mpi_rank_ << std::endl;
+
 	// Now request the job and result string from the archive.
 	utility::send_integer_to_node( archive_node, mpi_rank_ ); // say I need to talk
 	utility::send_integer_to_node( archive_node, mpi_work_pool_jd_retrieve_and_discard_job_result );
@@ -917,6 +942,7 @@ MPIWorkPoolJobDistributor::send_output_instruction_to_node( int output_node )
 
 	// figure out what output to tell the remote to perform:
 	if ( ! jobs_to_output_with_results_stored_on_node0_.empty() ) {
+		//TR << "Sending spec stored on master node to " << output_node << std::endl;
 		output::OutputSpecificationOP spec = jobs_to_output_with_results_stored_on_node0_.front();
 		jobs_to_output_with_results_stored_on_node0_.pop_front();
 		send_output_spec_and_job_result_to_remote( output_node, spec );
@@ -929,11 +955,12 @@ MPIWorkPoolJobDistributor::send_output_instruction_to_node( int output_node )
 
 	// Grab the next spec to output off the heap
 	int archive_w_most_work = n_outstanding_output_tasks_for_archives_.head_item();
+	//TR << "Archive w/ most work? " << archive_w_most_work << " w " << n_outstanding_output_tasks_for_archives_.heap_head() << " work remaining (negative); vs " << jobs_to_output_for_archives_[ archive_w_most_work ].size() << std::endl;
 	if ( jobs_to_output_for_archives_[ archive_w_most_work ].empty() ) return false;
 
 	output::OutputSpecificationOP spec = jobs_to_output_for_archives_[ archive_w_most_work ].front();
 	jobs_to_output_for_archives_[ archive_w_most_work ].pop_front();
-	float remaining = n_outstanding_output_tasks_for_archives_.heap_head() + 1;
+	float remaining = n_outstanding_output_tasks_for_archives_.heap_head() + 1; // negative, so increment instead of decrement
 	debug_assert( -1 * remaining == jobs_to_output_for_archives_[ archive_w_most_work ].size() );
 	n_outstanding_output_tasks_for_archives_.reset_coval( archive_w_most_work, remaining );
 
@@ -1263,6 +1290,7 @@ MPIWorkPoolJobDistributor::send_output_spec_and_retrieval_instruction_to_remote(
 	output::OutputSpecificationOP spec
 )
 {
+	//TR << "Sending spec to " << node_id << " for result on archive " << archive_node << std::endl;
 	node_outputter_is_outputting_for_[ node_id ] = archive_node;
 
 	// record the fact that there will be one fewer results held on the archive
@@ -1351,9 +1379,24 @@ MPIWorkPoolJobDistributor::not_done()
 }
 
 bool
-MPIWorkPoolJobDistributor::any_nodes_not_yet_spun_down()
+MPIWorkPoolJobDistributor::any_worker_nodes_not_yet_spun_down()
 {
-	for ( int ii = 1; ii < mpi_nprocs_; ++ii ) {
+	//TR << "Any worker nodes not yet spun down?" << std::endl;
+	//for ( int ii = n_archives_ + 1; ii < mpi_nprocs_; ++ii ) {
+	// if ( ! nodes_spun_down_[ ii ] ) {
+	//  TR << "   Node " << ii << " has not spun down" << std::endl;
+	// }
+	//}
+	for ( int ii = n_archives_ + 1; ii < mpi_nprocs_; ++ii ) {
+		if ( ! nodes_spun_down_[ ii ] ) return true;
+	}
+	return false;
+}
+
+bool
+MPIWorkPoolJobDistributor::any_archive_nodes_not_yet_spun_down()
+{
+	for ( int ii = 1; ii <= n_archives_; ++ii ) {
 		if ( ! nodes_spun_down_[ ii ] ) return true;
 	}
 	return false;
@@ -1398,6 +1441,7 @@ MPIWorkPoolJobDistributor::note_node_wants_a_job( int worker_node )
 void
 MPIWorkPoolJobDistributor::send_spin_down_signal_to_node( int worker_node )
 {
+	TR << "Spinning down node " << worker_node << std::endl;
 	utility::send_integer_to_node( worker_node, mpi_work_pool_jd_spin_down );
 	nodes_spun_down_[ worker_node ] = true;
 }
@@ -1490,6 +1534,7 @@ MPIWorkPoolJobDistributor::throw_after_failed_to_retrieve_job_result(
 int
 MPIWorkPoolJobDistributor::request_job_from_master()
 {
+	//TR << "Requesting job from master!" << std::endl;
 	utility::send_integer_to_node( 0, mpi_rank_ );
 	utility::send_integer_to_node( 0, mpi_work_pool_jd_new_job_request );
 	return utility::receive_integer_from_node( 0 );

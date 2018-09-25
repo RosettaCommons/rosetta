@@ -163,6 +163,24 @@ SimulateMPIData::pop_next_message_of_type(
 	return msg;
 }
 
+/// @details Retrieve the next message from the queue without marking it as having been
+/// processed.
+SimulateMPIMessageCOP
+SimulateMPIData::retrieve_next_message(
+	platform::Size dst
+)
+{
+	clear_processed_msgs( messages_for_node_[ dst ] );
+	SimulateMPIMessageOP msg;
+	if ( messages_for_node_[ dst ].empty() ) {
+		throw CREATE_EXCEPTION(utility::excn::Exception, "Could not retrieve any message to " + to_string( dst ) + "; message queue is empty" );
+	}
+
+	msg = messages_for_node_[ dst ].front();
+	return msg;
+}
+
+
 SimulateMPIData::MsgQueue const &
 SimulateMPIData::messages_from_node( platform::Size src ) const
 {
@@ -475,11 +493,80 @@ SimulateMPI::incoming_message_queue_is_empty()
 bool
 SimulateMPI::outgoing_message_queue_is_empty()
 {
-	for ( auto msg : simulation_->messages_for_node( rank_ ) ) {
+	for ( auto msg : simulation_->messages_from_node( rank_ ) ) {
 		if ( ! msg->processed() ) return false;
 	}
 	return true;
 }
+
+
+platform::Size
+SimulateMPI::index_of_next_message()
+{
+	debug_assert(simulation_);
+
+	SimulateMPIMessageCOP next_message = simulation_->retrieve_next_message( rank_ );
+	return next_message->index();
+}
+
+void print_message( SimulateMPIMessageCOP msg, std::ostream & os )
+{
+	switch (msg->msg_type()) {
+	case smpi_char : os << msg->char_msg(); break;
+	case smpi_integer : os << msg->integer_msg(); break;
+	case smpi_size : os << msg->size_msg(); break;
+	case smpi_string : os << msg->string_msg(); break;
+	case smpi_double : os << msg->double_msg(); break;
+	case smpi_integers : os << msg->integers_msg(); break;
+	case smpi_sizes : os << msg->sizes_msg(); break;
+	case smpi_doubles : os << msg->doubles_msg(); break;
+	}
+}
+
+void
+SimulateMPI::print_unprocessed_incoming_messages( std::ostream & os )
+{
+	bool any_unprocessed( false );
+	for ( auto msg : simulation_->messages_for_node( rank_ ) ) {
+		if ( ! msg->processed() ) {
+			any_unprocessed = true;
+			os << "Unprocessed incoming message #";
+			os << msg->index() << " to ";
+			os << msg->dst() << " from ";
+			os << msg->src() << " of type ";
+			os << msg_name(msg->msg_type());
+			os << ": \"";
+			print_message( msg, os );
+			os << "\"\n";
+		}
+	}
+	if ( any_unprocessed ) {
+		os.flush();
+	}
+}
+
+void
+SimulateMPI::print_unprocessed_outgoing_messages( std::ostream & os )
+{
+	bool any_unprocessed( false );
+	for ( auto msg : simulation_->messages_from_node( rank_ ) ) {
+		if ( ! msg->processed() ) {
+			any_unprocessed = true;
+			os << "Unprocessed outgoing message #";
+			os << msg->index() << " to ";
+			os << msg->dst() << " from ";
+			os << msg->src() << " of type ";
+			os << msg_name(msg->msg_type());
+			os << ": \"";
+			print_message( msg, os );
+			os << "\"\n";
+		}
+	}
+	if ( any_unprocessed ) {
+		os.flush();
+	}
+}
+
 
 
 } // utility

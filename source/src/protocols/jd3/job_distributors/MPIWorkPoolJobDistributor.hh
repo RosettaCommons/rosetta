@@ -83,6 +83,7 @@ enum mpi_tags {
 	mpi_work_pool_jd_error
 };
 
+
 /// @details This job distributor is meant for running jobs where the machine you are using has a large number of
 /// processors, the number of jobs is much greater than the number of processors, or the runtimes of the individual jobs
 /// could vary greatly. It dedicates the head node (whichever processor gets processor rank #0) to handling job requests
@@ -244,7 +245,10 @@ private:
 	not_done();
 
 	bool
-	any_nodes_not_yet_spun_down();
+	any_worker_nodes_not_yet_spun_down();
+
+	bool
+	any_archive_nodes_not_yet_spun_down();
 
 	bool
 	jobs_ready_to_go();

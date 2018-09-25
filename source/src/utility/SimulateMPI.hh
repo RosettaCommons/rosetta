@@ -115,6 +115,7 @@ public:
 
 	SimulateMPIMessageOP pop_next_message_for_node_of_type( platform::Size dst, simulate_mpi_message_type msg_type );
 	SimulateMPIMessageOP pop_next_message_of_type( platform::Size dst, platform::Size src, simulate_mpi_message_type msg_type );
+	SimulateMPIMessageCOP retrieve_next_message( platform::Size dst );
 
 	MsgQueue const & messages_from_node( platform::Size src ) const;
 	MsgQueue const & messages_for_node( platform::Size dst ) const;
@@ -249,6 +250,8 @@ public:
 		int destination,
 		vector1< double > const & message);
 
+	///// Functions that do not mimic MPI but are useful for testing
+
 	static
 	bool
 	incoming_message_queue_is_empty();
@@ -256,6 +259,21 @@ public:
 	static
 	bool
 	outgoing_message_queue_is_empty();
+
+	/// @brief Ask for the global index of when the next message to be
+	/// processed by a node was sent by another node; useful if you want
+	/// to ask "was message A sent before or after message B?"
+	static
+	platform::Size
+	index_of_next_message();
+
+	static
+	void
+	print_unprocessed_incoming_messages( std::ostream & );
+
+	static
+	void
+	print_unprocessed_outgoing_messages( std::ostream & );
 
 private:
 
