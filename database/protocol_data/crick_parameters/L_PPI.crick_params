@@ -1,0 +1,14 @@
+# Crick paramters for a left-handed polyproline 1 helix.
+# Modified from PPI.crick_params 
+# Added by Vikram K. Mulligan, Flatiron Institute (vmulligan@flatironinsitute.org) on 27 September 2018.
+r1	1.847584902829
+r1	1.195365332655
+r1	1.488173352409
+omega1	-2.046052641685
+z1	1.794910105739
+delta_omega1	0.344655824079
+delta_omega1	-0.000000000000
+delta_omega1	-1.151897731260
+delta_z1	-1.212420898083
+delta_z1	0.000000000000
+delta_z1	-0.300466203767

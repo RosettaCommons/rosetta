@@ -1,0 +1,14 @@
+# Crick paramters for polyproline 1 helix.
+# Commandline used: fit_helixparams.default.linuxgccrelease -write_all_connect_info -residue_type PRO -repeats 21 -mainchain_torsions \-74.6 160.0 0.0 -r1_guess 1.7 -omega1_guess 1.9 -dz1_guess 1.5 -rms_offset 1e-6
+# Added by Vikram K. Mulligan, Flatiron Institute (vmulligan@flatironinsitute.org) on 27 September 2018.
+r1	1.847584902829
+r1	1.195365332655
+r1	1.488173352409
+omega1	2.046052641685
+z1	1.794910105739
+delta_omega1	-0.344655824079
+delta_omega1	0.000000000000
+delta_omega1	1.151897731260
+delta_z1	-1.212420898083
+delta_z1	0.000000000000
+delta_z1	-0.300466203767
