@@ -48,8 +48,10 @@ public:
 	ScratchVectors( Size initial_size, T default_value ) :
 		default_value_( default_value ),
 		next_free_( 0 ),
-		data_( initial_size, default_value )
-	{}
+		data_( initial_size + 1, default_value )
+	{
+		runtime_assert( data_.size() > 0 );
+	}
 
 	ScratchVectorLimits new_vector( Size size ) {
 		while ( next_free_ + size > data_.size() ) data_.resize( data_.size() * 10, default_value_ );
