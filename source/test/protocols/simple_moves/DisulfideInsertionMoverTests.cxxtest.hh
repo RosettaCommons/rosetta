@@ -42,8 +42,7 @@ public:
 
 
 	void setUp() {
-		protocols_init();
-
+		protocols_init_with_additional_options("-max_dslf_energy 0");
 		test_edge_pose_ = core::pose::PoseOP( new core::pose::Pose() );
 		core::import_pose::pose_from_file( *test_edge_pose_, "protocols/simple_moves/1A2A_A.pdb" , core::import_pose::PDB_file);
 
