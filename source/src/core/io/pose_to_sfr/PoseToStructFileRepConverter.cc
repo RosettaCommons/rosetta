@@ -548,20 +548,30 @@ PoseToStructFileRepConverter::get_new_chainIDs( pose::Pose const & pose )
 	for ( uint i( 2 ); i <= n_chains; ++i ) {
 		// Check if chain i is connected to anything.
 		conformation::Residue const & chain_begin_res( pose.residue( conf.chain_begin( i ) ) );
-		if ( ( ! chain_begin_res.is_protein() ) && ( ! chain_begin_res.connected_residue_at_lower() ) &&
-				( ! pose.residue( conf.chain_end( i ) ).connected_residue_at_upper() ) ) {
-			// Chain i is not a peptide and is not connected and thus should have a unique ID, if that option is set.
-			// First, check if it already does.
-			for ( uint j( 1 ); j <= n_chains; ++j ) {
-				if ( i == j ) { continue; }
-				if ( chainIDs[ i ] == chainIDs[ j ] ) {
-					// It is not currently unique.  Give it a new potential ID.
-					char new_chainID( chemical::chr_chains[ ( i - 1 ) % chemical::chr_chains.size() ] );
-					while ( chainIDs.contains( new_chainID ) ) {
-						++new_chainID;
+		// Continue only if residue is not protein
+		// This inherently won't work for free-peptide ligands
+		if ( ! chain_begin_res.is_protein() ) {
+			// Continue if the residue has no lower connections
+			// Also continue if the residue is lower connected to a non-protein residue
+			// This gives branched sugars their own chain, but not sugars covalently attached to protein
+			if ( ( ! chain_begin_res.connected_residue_at_lower() ) || ( ! pose.residue( chain_begin_res.connected_residue_at_lower() ).is_protein() ) ) {
+				// Continue if the residue at the end of the chain is not further connected to something else
+				if ( ! pose.residue( conf.chain_end( i ) ).connected_residue_at_upper() ) {
+					// Chain i is not a peptide and is not connected and thus should have a unique ID
+					// If that option is set.
+					// First, check if it already does.
+					for ( uint j( 1 ); j <= n_chains; ++j ) {
+						if ( i == j ) { continue; }
+						if ( chainIDs[ i ] == chainIDs[ j ] ) {
+							// It is not currently unique.  Give it a new potential ID.
+							char new_chainID( chemical::chr_chains[ ( i - 1 ) % chemical::chr_chains.size() ] );
+							while ( chainIDs.contains( new_chainID ) ) {
+								++new_chainID;
+							}
+							chainIDs[ i ] = new_chainID;
+							break;
+						}
 					}
-					chainIDs[ i ] = new_chainID;
-					break;
 				}
 			}
 		}
