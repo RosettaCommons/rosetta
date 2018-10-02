@@ -67,11 +67,18 @@ CompositeRealMetric::cached_calculate(pose::Pose const & pose, bool use_cache, s
 }
 
 void
-CompositeRealMetric::apply( pose::Pose & pose, std::string prefix, std::string suffix ) const {
+CompositeRealMetric::apply( pose::Pose & pose, std::string prefix, std::string suffix, bool override_existing ) const {
 
+	std::string out_tag = prefix + get_final_sm_type() + suffix;
 	std::map< std::string, core::Real > value = calculate( pose );
 	MetricKey mk;
-	get_sm_data(pose)->set_value(mk, prefix + get_final_sm_type() + suffix, value);
+
+	std::map< std::string, core::Real > stored_value;
+	if ( ( ! override_existing ) && get_sm_data(pose)->get_value(out_tag, stored_value) ) {
+		throw_sm_override_error(out_tag, name());
+	}
+
+	get_sm_data(pose)->set_value(mk, out_tag, value);
 
 	/*
 	std::map< std::string, core::Real > final_named_values;

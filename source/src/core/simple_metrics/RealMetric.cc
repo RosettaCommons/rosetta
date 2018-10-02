@@ -48,13 +48,18 @@ RealMetric::RealMetric( RealMetric const & src ):
 }
 
 void
-RealMetric::apply( pose::Pose & pose, std::string prefix, std::string suffix ) const {
+RealMetric::apply( pose::Pose & pose, std::string prefix, std::string suffix, bool override_existing ) const {
 
 
 	std::string out_tag = prefix + get_final_sm_type() + suffix;
 
 	core::Real value = calculate( pose );
 	MetricKey mk;
+	core::Real stored_value;
+
+	if ( ( ! override_existing ) && get_sm_data(pose)->get_value(out_tag, stored_value) ) {
+		throw_sm_override_error(out_tag, name());
+	}
 	get_sm_data(pose)->set_value(mk, out_tag, value);
 }
 

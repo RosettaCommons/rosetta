@@ -55,7 +55,8 @@ RunSimpleMetricsMover::RunSimpleMetricsMover( utility::vector1< SimpleMetricCOP>
 RunSimpleMetricsMover::RunSimpleMetricsMover( RunSimpleMetricsMover const & src ):
 	protocols::moves::Mover( src ),
 	prefix_(src.prefix_),
-	suffix_(src.suffix_)
+	suffix_(src.suffix_),
+	override_existing_data_(src.override_existing_data_)
 {
 	metrics_.clear();
 	for ( auto metric: src.metrics_ ) {
@@ -64,6 +65,11 @@ RunSimpleMetricsMover::RunSimpleMetricsMover( RunSimpleMetricsMover const & src 
 }
 
 RunSimpleMetricsMover::~RunSimpleMetricsMover()= default;
+
+void
+RunSimpleMetricsMover::set_override(bool override_existing_data){
+	override_existing_data_ = override_existing_data;
+}
 
 void
 RunSimpleMetricsMover::parse_my_tag(
@@ -77,6 +83,7 @@ RunSimpleMetricsMover::parse_my_tag(
 	// Full name of simple_metrics as this is exactly what they are.
 	utility::vector1< SimpleMetricCOP > metrics = get_metrics_from_datamap_and_subtags(tag, data);
 	set_simple_metrics(metrics);
+	set_override(tag->getOption< bool >("override", override_existing_data_));
 
 	prefix_ = tag->getOption< std::string >("prefix", prefix_);
 	suffix_ = tag->getOption< std::string >("suffix", suffix_);
@@ -114,7 +121,7 @@ RunSimpleMetricsMover::apply( core::pose::Pose & pose )
 	for ( SimpleMetricCOP metric : metrics_ ) {
 		debug_assert( metric != nullptr );
 		TR << "Running: " << metric->name()<< " - " << "calculating " << metric->metric() << std::endl;
-		metric->apply(pose, prefix_, suffix_);
+		metric->apply(pose, prefix_, suffix_, override_existing_data_);
 
 	}
 }
@@ -159,7 +166,9 @@ void RunSimpleMetricsMover::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 	attlist
 		+ XMLSchemaAttribute( "metrics", xs_string, "Comma-separated list of previously defined simple_metrics to be added." )
 		+ XMLSchemaAttribute( "prefix", xs_string, "Prefix tag for the values to be added to the output score file for these metrics. (prefix + custom_type + _ + metric_name + suffix)" )
-		+ XMLSchemaAttribute( "suffix", xs_string, "suffix tag for the values to be added to the output score file for these metrics. (prefix + custom_type + _ + metric_name + suffix)" );
+		+ XMLSchemaAttribute( "suffix", xs_string, "suffix tag for the values to be added to the output score file for these metrics. (prefix + custom_type + _ + metric_name + suffix)" )
+		+ XMLSchemaAttribute::attribute_w_default( "override", xsct_rosetta_bool, "Should we override any existing data?", "false");
+
 	XMLSchemaSimpleSubelementList subelements;
 	subelements.add_group_subelement( & SimpleMetricFactory::get_instance()->simple_metric_xml_schema_group_name );
 

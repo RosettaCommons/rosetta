@@ -33,6 +33,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/tag/util.hh>
 #include <utility/string_util.hh>
+#include <utility/excn/Exceptions.hh>
 #include <basic/datacache/DataMap.hh>
 #include <basic/datacache/DataCache.hh>
 #include <basic/datacache/BasicDataCache.hh>
@@ -239,6 +240,15 @@ add_per_residue_simple_metric_schema( utility::tag::XMLSchemaComplexTypeGenerato
 
 }
 
+void
+throw_sm_override_error( std::string const & out_tag, std::string const & metric_name){
+	std::string const msg = "\n\nSimpleMetric error! Data of type "+ metric_name+ " with data output tag " + out_tag + " already exists! \n"
+		"Please use the prefix/suffix settings or set a custom_type for the metric.  See the documentation for more:\n"
+		"https://www.rosettacommons.org/docs/latest/scripting_documentation/RosettaScripts/SimpleMetrics/SimpleMetrics#effective-use-of-simplemetrics\n"
+		"You may also set the override option to true in RunSimpleMetrics mover if this was intentional.\n\n";
+
+	throw CREATE_EXCEPTION(utility::excn::Exception,  msg);
+}
 
 } //core
 } //simple_metrics

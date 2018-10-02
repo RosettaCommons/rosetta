@@ -100,7 +100,10 @@ get_metric_from_datamap_and_subtags(
 void
 add_per_residue_simple_metric_schema( utility::tag::XMLSchemaComplexTypeGeneratorOP complex_schema );
 
-
+///@brief Get an informative error message if the SM data already exists and is not overriden.
+/// Throws
+void
+throw_sm_override_error( std::string const & out_tag, std::string const & metric_name);
 
 } //core
 } //simple_metrics

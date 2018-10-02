@@ -31,10 +31,12 @@
 	<MOVERS>
 		<MinMover name="min_mover" movemap_factory="movemap_L1" tolerance=".1" /> 
 		<RunSimpleMetrics name="run_metrics1" metrics="sasa,pymol_selection,sequence,ss,total_energy,rosetta_sele,selection" prefix="m1_" />
+		<RunSimpleMetrics name="run_metrics1.1" metrics="sasa,pymol_selection,sequence,ss,total_energy,rosetta_sele,selection" prefix="m1_" override="1"/>
 		<RunSimpleMetrics name="run_metrics2" metrics="sasa,sequenceSim,ss,total_energy,rmsd,dihedral,composite_energy,seqrec" prefix="m2_" />
 	</MOVERS>
 	<PROTOCOLS>
 		<Add mover_name="run_metrics1"/>
+		<Add mover_name="run_metrics1.1"/>
 		<Add mover_name="min_mover" />
 		<Add mover_name="run_metrics2" />
 	</PROTOCOLS>

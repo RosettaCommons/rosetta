@@ -71,6 +71,14 @@ public:
 	void
 	set_suffix( std::string const & suffix );
 
+	///@brief Should we override existing data?
+	/// Default False.
+	///
+	///@details
+	///    If existing data is found and this option is false, we will throw an exception.
+	///
+	void
+	set_override( bool override_existing_data);
 
 public:
 
@@ -109,6 +117,7 @@ private:
 	utility::vector1< core::simple_metrics::SimpleMetricCOP > metrics_; //They do not accumulate state.
 	std::string prefix_="";
 	std::string suffix_="";
+	bool override_existing_data_ = false;
 
 };
 

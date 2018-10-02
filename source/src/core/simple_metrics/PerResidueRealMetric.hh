@@ -68,7 +68,11 @@ public: // constructors / destructors
 	///            A ReferencePose is created with prefix+final_sm_type+suffix as a name for further access.
 	///            Data is output to the final scorefile.
 	void
-	apply( pose::Pose & pose, std::string prefix="", std::string suffix="" ) const override;
+	apply(
+		pose::Pose & pose,
+		std::string prefix="",
+		std::string suffix="",
+		bool override_existing_data = false) const override;
 
 	///@brief Set a ResidueSelector for which we will calculate values over.
 	void

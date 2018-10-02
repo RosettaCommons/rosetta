@@ -66,7 +66,11 @@ public: // constructors / destructors
 	///            Data is added to the final score file.
 	///
 	void
-	apply( pose::Pose & pose, std::string prefix="", std::string suffix="" ) const override;
+	apply(
+		pose::Pose & pose,
+		std::string prefix="",
+		std::string suffix="",
+		bool override_existing_data=false) const override;
 
 	///@brief Calculate the metric.
 	/// This map is Rosetta Resnum->value and includes only those residues selected.

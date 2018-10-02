@@ -56,7 +56,11 @@ public: // constructors / destructors
 	/// @details Score is added to the SimpleMetricData cache in the pose.
 	///           Data is output into the final score file, but can be accessed if needed through the cache.
 	void
-	apply( pose::Pose & pose, std::string prefix="", std::string suffix="" ) const override;
+	apply(
+		pose::Pose & pose,
+		std::string prefix="",
+		std::string suffix="",
+		bool override_existing_data=false) const override;
 
 	///@brief Calculate the metric.
 	///

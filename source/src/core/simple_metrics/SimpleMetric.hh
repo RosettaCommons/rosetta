@@ -68,7 +68,11 @@ public:
 	///@brief Calculate the metric and add it to the Score, which is output into a scorefile - labeled as prefix+metric+suffix.
 	/// Must be implemented by derived classes
 	virtual void
-	apply( pose::Pose & pose, std::string prefix="", std::string suffix="" ) const = 0;
+	apply(
+		pose::Pose & pose,
+		std::string prefix="",
+		std::string suffix="",
+		bool override_existing_data=false) const = 0;
 
 	///@brief Get the name of SimpleMetric class
 	virtual std::string

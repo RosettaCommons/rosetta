@@ -107,11 +107,17 @@ PerResidueStringMetric::cached_calculate(pose::Pose const & pose, bool use_cache
 }
 
 void
-PerResidueStringMetric::apply( pose::Pose & pose, std::string prefix, std::string suffix ) const {
+PerResidueStringMetric::apply( pose::Pose & pose, std::string prefix, std::string suffix, bool override_existing ) const {
 	std::map< core::Size, std::string > const value = calculate( pose );
 
 	std::string out_tag = prefix  + get_final_sm_type() + suffix;
 	MetricKey mk;
+
+	std::map< core::Size, std::string> stored_value;
+	if ( ( ! override_existing ) && get_sm_data(pose)->get_value(out_tag, stored_value) ) {
+		throw_sm_override_error(out_tag, name());
+	}
+
 	get_sm_data(pose)->set_value(mk, pose, out_tag, value, output_as_pdb_nums_);
 
 	/*
