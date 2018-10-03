@@ -53,6 +53,12 @@ sources = {
 		"StagePreparer",
 		"StructPerturberCM",
 	],
+	"protocols/ddg": [
+		"ddG_main",
+		"ddGData",
+		"ddGMover",
+        "CartesianddG",
+	],
 	"protocols/hybridization" : [
         "BackboneTorsionSampler",
         "BackboneTorsionPerturbation",

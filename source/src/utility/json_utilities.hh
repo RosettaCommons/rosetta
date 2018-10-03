@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file utility/json/json_utilities.hh
+/// @file utility/json_utilities.hh
 /// @brief bag of utility functions for nlohmann::json (the one at external/include/json.hpp)
 /// @details These utility functions offer "safe access" to json - it checks that the element is present exactly once and returns-by-reference the contents.  This uses Rosetta-type exceptions/exits to do so.
 /// @author Steven Lewis (smlewi@gmail.com)
 
-#ifndef INCLUDED_utility_json_json_utilities_HH
-#define INCLUDED_utility_json_json_utilities_HH
+#ifndef INCLUDED_utility_json_utilities_HH
+#define INCLUDED_utility_json_utilities_HH
 
 #if defined(__clang__)
 #if (__clang_major__ * 10000 + __clang_minor__ * 100 + __clang_patchlevel__) < 30400
@@ -83,4 +83,4 @@ bool extract_value_if_present(json const &j, std::string const & key, std::strin
 
 #endif // ifdef _NLOHMANN_JSON_ENABLED_
 
-#endif //INCLUDED_utility_json_json_utilities_HH
+#endif //INCLUDED_utility_json_utilities_HH

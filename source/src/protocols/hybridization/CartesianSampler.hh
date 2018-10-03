@@ -108,12 +108,10 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
-
-
-protected:
 	// apply a sequence fragment
 	bool apply_frame( core::pose::Pose & pose, core::fragment::Frame &frame );
 
+protected:
 
 	void compute_fragment_bias( core::pose::Pose & pose );
 

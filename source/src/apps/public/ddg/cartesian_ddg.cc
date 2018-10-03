@@ -49,6 +49,7 @@
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
+#include <protocols/ddg/CartesianddG.hh>
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
@@ -62,14 +63,10 @@
 #include <utility/io/ozstream.hh>
 #include <basic/Tracer.hh>
 
-OPT_1GRP_KEY(Integer, ddg, bbnbr)
-OPT_1GRP_KEY(Boolean, ddg, cartesian)
-OPT_1GRP_KEY(Boolean, ddg, fd_mode)
-
 //Auto Headers
 using basic::Error;
 using basic::Warning;
-static basic::Tracer TR("apps.pilot.wendao.ddg");
+static basic::Tracer TR("apps.public.cartesian_ddg");
 
 using namespace core;
 using namespace pose;
@@ -278,228 +275,238 @@ main( int argc, char * argv [] )
 	using namespace protocols::moves;
 
 	try {
-		NEW_OPT(ddg::bbnbr, "bb neighbor", 0);
-		NEW_OPT(ddg::cartesian, "cartesian", true);
-		NEW_OPT(ddg::fd_mode, "mode", false);
 
 		//init
 		devel::init(argc, argv);
-		Size num_iterations = option[ OptionKeys::ddg::iterations ]();
-		bool fd_mode = option[ OptionKeys::ddg::fd_mode ]();
-		double cutoff = fd_mode? 8.0 : 6.0;
-		if ( basic::options::option[ OptionKeys::ddg::opt_radius].user() ) {
-			cutoff = basic::options::option[ OptionKeys::ddg::opt_radius ]();
-		}
-		Size bbnbr = basic::options::option[ OptionKeys::ddg::bbnbr ]();
-
-		// read the pose
-		Pose pose;
-		core::import_pose::pose_from_file( pose, basic::options::start_file(),
-			core::import_pose::PDB_file );
-
-		core::scoring::ScoreFunctionOP score_fxn;
-		score_fxn = core::scoring::get_score_function();
-		//TR << (*score_fxn)(pose) << std::endl;
-
-		//interface mode? setting = jump number to use for interface
-		Size interface_ddg = option[ OptionKeys::ddg::interface_ddg ]();
-
-		//fd try to be smart .. look for interchain jump
-		if ( interface_ddg > pose.num_jump() ) {
-			for ( int i=1; i<=(int)pose.fold_tree().num_jump(); ++i ) {
-				kinematics::Edge jump_i = pose.fold_tree().jump_edge( i ) ;
-				if ( pose.pdb_info()->chain(jump_i.start()) != pose.pdb_info()->chain(jump_i.stop()) ) {
-					runtime_assert( interface_ddg > pose.num_jump() );
-					interface_ddg = i;
-				}
-			}
-			TR << "Autosetting interface jump to " << interface_ddg << std::endl;
-		}
-		runtime_assert ( interface_ddg <= pose.num_jump() );
-
-		bools is_mutated( pose.size(), false );   //mutated position
-		bools is_flexible( pose.size(), false );  //repackable
-
-		if ( !option[ OptionKeys::ddg::mut_file ].user() ) {
-			utility_exit_with_message("Option -ddg::mut_file must be set.");
-		}
-		TR.Debug << "reading in mutfile" << std::endl;
-		std::string filename = option[OptionKeys::ddg::mut_file]();
-		utility::vector1< mutations > res_to_mut;
-		read_in_mutations( res_to_mut, is_mutated, filename, pose);
-		TR.Debug << "mutations:" << res_to_mut.size() << std::endl;
-		//the logic here is:
-		//to be comparable, all the mutations should have the save dof!
-		//so take the union set
-		if ( fd_mode ) {
-			find_neighbors_directional( is_mutated, pose, is_flexible, cutoff );
+		bool legacy = option[ OptionKeys::ddg::legacy ].user(); //Default false
+		if ( !legacy ) {
+#ifdef _NLOHMANN_JSON_ENABLED_ //Json is required to run this ddg protocol
+			// read the pose
+			core::pose::Pose pose;
+			core::import_pose::pose_from_file( pose, basic::options::start_file(),
+				core::import_pose::PDB_file );
+			protocols::ddg::CartesianddG::run(pose);
+#else
+			utility_exit_with_message("A JSON capable compiler is required to use this app");
+#endif
 		} else {
-			find_neighbors( is_mutated, pose, is_flexible, cutoff );
-		}
 
-		//output file, mark if rerun
-		std::map< std::string, Size > before_jump_done_list;
-		std::map< std::string, Size > after_jump_done_list;
-		utility::io::ozstream ofp;
-		utility::file::FileName parsefn(filename);
-		std::string ofn = parsefn.base()+".ddg";
-		if ( utility::file::file_exists(ofn) ) {
-			TR << "This is a restart run!" << std::endl;
-			utility::io::izstream ifp;
-			ifp.open(ofn);
-			if ( !ifp.good() ) utility_exit_with_message( "can't open cluster file " + ofn );
-			while ( !ifp.eof() ) {
-				std::string line;
-				utility::io::getline( ifp, line );
-				//parse the line
-				std::istringstream istr(line);
-				std::string cat, rd, mut;
-				istr >> cat >> rd >> mut;
-				mut = mut.substr(0, mut.size()-1);
 
-				//skip if no keyword
-				const size_t pos1 = rd.find("Round");
-				const size_t pos2 = rd.find(':');
-				if ( std::string::npos == pos1 || std::string::npos == pos2 ) continue;
-				std::string nrdstr = rd.substr(pos1+5, pos2-5);
-				Size nrd = std::atoi(nrdstr.c_str());
+			Size num_iterations = option[ OptionKeys::ddg::iterations ].value();
+			bool fd_mode = option[ OptionKeys::ddg::fd_mode ]();
+			double cutoff = fd_mode? 8.0 : 6.0;
+			if ( basic::options::option[ OptionKeys::ddg::opt_radius].user() ) {
+				cutoff = basic::options::option[ OptionKeys::ddg::opt_radius ].value();
+			}
+			Size bbnbr = basic::options::option[ OptionKeys::ddg::bbnbrs ].value();
 
-				if ( cat=="COMPLEX:" ) {
-					if ( before_jump_done_list.count(mut)>0 ) {
-						if ( before_jump_done_list[mut]<nrd ) before_jump_done_list[mut]=nrd;
-					} else {
-						before_jump_done_list[mut]=nrd;
-					}
-				} else if ( cat=="OPT_APART:" ) {
-					if ( after_jump_done_list.count(mut) > 0 ) {
-						if ( after_jump_done_list[mut] < nrd ) after_jump_done_list[mut]=nrd;
-					} else {
-						after_jump_done_list[mut]=nrd;
+			// read the pose
+			Pose pose;
+			core::import_pose::pose_from_file( pose, basic::options::start_file(),
+				core::import_pose::PDB_file );
+
+			core::scoring::ScoreFunctionOP score_fxn;
+			score_fxn = core::scoring::get_score_function();
+			//TR << (*score_fxn)(pose) << std::endl;
+
+			//interface mode? setting = jump number to use for interface
+			Size interface_ddg = option[ OptionKeys::ddg::interface_ddg ].value();
+
+			//fd try to be smart .. look for interchain jump
+			if ( interface_ddg > pose.num_jump() ) {
+				for ( int i=1; i<=(int)pose.fold_tree().num_jump(); ++i ) {
+					kinematics::Edge jump_i = pose.fold_tree().jump_edge( i ) ;
+					if ( pose.pdb_info()->chain(jump_i.start()) != pose.pdb_info()->chain(jump_i.stop()) ) {
+						runtime_assert( interface_ddg > pose.num_jump() );
+						interface_ddg = i;
 					}
 				}
+				TR << "Autosetting interface jump to " << interface_ddg << std::endl;
 			}
-			ifp.close();
+			runtime_assert ( interface_ddg <= pose.num_jump() );
 
-			//append in previous file
-			ofp.open_append(ofn);
-		} else {
-			//create new file
-			ofp.open(ofn);
-		}
+			bools is_mutated( pose.size(), false );   //mutated position
+			bools is_flexible( pose.size(), false );  //repackable
 
-		//start from 0(WT), unless "mut_only" is specifyied
-		Size mstart=0;
-		if ( option[OptionKeys::ddg::mut_only].user() ) {
-			if ( option[OptionKeys::ddg::mut_only]() ) mstart=1;
-		}
-		Size mend=res_to_mut.size();
-		if ( option[OptionKeys::ddg::wt_only].user() ) {
-			if ( option[OptionKeys::ddg::wt_only]() ) mend=0;
-		}
-		for ( Size mi(mstart); mi<=mend; mi++ ) {
-			Pose work_pose(pose);
-
-			//generate tag
-			std::ostringstream tag;
-			if ( mi==0 ) {
-				//WT, keep the pose as is
-				tag << "WT";
+			if ( !option[ OptionKeys::ddg::mut_file ].user() ) {
+				utility_exit_with_message("Option -ddg::mut_file must be set.");
+			}
+			TR.Debug << "reading in mutfile" << std::endl;
+			std::string filename = option[OptionKeys::ddg::mut_file].value();
+			utility::vector1< mutations > res_to_mut;
+			read_in_mutations( res_to_mut, is_mutated, filename, pose);
+			TR.Debug << "mutations:" << res_to_mut.size() << std::endl;
+			//the logic here is:
+			//to be comparable, all the mutations should have the save dof!
+			//so take the union set
+			if ( fd_mode ) {
+				find_neighbors_directional( is_mutated, pose, is_flexible, cutoff );
 			} else {
-				tag << "MUT";
-				for ( Size j=1; j <= is_mutated.size(); j++ ) {
-					if ( res_to_mut[mi][j] != core::chemical::aa_unk ) {
-						tag << "_" << j << res_to_mut[mi][j];
+				find_neighbors( is_mutated, pose, is_flexible, cutoff );
+			}
+
+			//output file, mark if rerun
+			std::map< std::string, Size > before_jump_done_list;
+			std::map< std::string, Size > after_jump_done_list;
+			utility::io::ozstream ofp;
+			utility::file::FileName parsefn(filename);
+			std::string ofn = parsefn.base()+".ddg";
+			if ( utility::file::file_exists(ofn) ) {
+				TR << "This is a restart run!" << std::endl;
+				utility::io::izstream ifp;
+				ifp.open(ofn);
+				if ( !ifp.good() ) utility_exit_with_message( "can't open cluster file " + ofn );
+				while ( !ifp.eof() ) {
+					std::string line;
+					utility::io::getline( ifp, line );
+					//parse the line
+					std::istringstream istr(line);
+					std::string cat, rd, mut;
+					istr >> cat >> rd >> mut;
+					mut = mut.substr(0, mut.size()-1);
+
+					//skip if no keyword
+					const size_t pos1 = rd.find("Round");
+					const size_t pos2 = rd.find(':');
+					if ( std::string::npos == pos1 || std::string::npos == pos2 ) continue;
+					std::string nrdstr = rd.substr(pos1+5, pos2-5);
+					Size nrd = std::atoi(nrdstr.c_str());
+
+					if ( cat=="COMPLEX:" ) {
+						if ( before_jump_done_list.count(mut)>0 ) {
+							if ( before_jump_done_list[mut]<nrd ) before_jump_done_list[mut]=nrd;
+						} else {
+							before_jump_done_list[mut]=nrd;
+						}
+					} else if ( cat=="OPT_APART:" ) {
+						if ( after_jump_done_list.count(mut) > 0 ) {
+							if ( after_jump_done_list[mut] < nrd ) after_jump_done_list[mut]=nrd;
+						} else {
+							after_jump_done_list[mut]=nrd;
+						}
 					}
 				}
+				ifp.close();
+
+				//append in previous file
+				ofp.open_append(ofn);
+			} else {
+				//create new file
+				ofp.open(ofn);
 			}
 
-			//figure out where to start, if restart
-			Size bfj_rd_start(1);
-			Size afj_rd_start(1);
-			if ( before_jump_done_list.count(tag.str())>0 ) bfj_rd_start = before_jump_done_list[tag.str()]+1;
-			if ( after_jump_done_list.count(tag.str())>0 ) afj_rd_start = after_jump_done_list[tag.str()]+1;
-
-			//debug
-			//std::cout << tag.str() << " bfj: " << bfj_rd_start << std::endl;
-			//std::cout << tag.str() << " afj: " << afj_rd_start << std::endl;
-			if ( bfj_rd_start>num_iterations ) {
-				if ( interface_ddg==0 || afj_rd_start>num_iterations ) {
-					TR << "Job has been done for " << tag.str() << std::endl;
-					continue;
-				}
+			//start from 0(WT), unless "mut_only" is specifyied
+			Size mstart=0;
+			if ( option[OptionKeys::ddg::mut_only].user() ) {
+				if ( option[OptionKeys::ddg::mut_only].value() ) mstart=1;
 			}
+			Size mend=res_to_mut.size();
+			if ( option[OptionKeys::ddg::wt_only].value() ) mend=0;
+			for ( Size mutation_iter(mstart); mutation_iter<=mend; ++mutation_iter ) {
+				Pose work_pose(pose);
 
-			TR << "Job is running for: " << tag.str() << std::endl;
-
-			//MUT, point(s) mutation, mute_file
-			if ( mi>0 ) {
-				pack::task::PackerTaskOP packer_task(pack::task::TaskFactory::create_packer_task(work_pose));
-				for ( Size j=1; j <= is_mutated.size(); j++ ) {
-					if ( res_to_mut[mi][j] != core::chemical::aa_unk ) {
-						bools restrict_to_aa( 20, false );
-						restrict_to_aa[res_to_mut[mi][j]] = true;
-						packer_task->nonconst_residue_task(j).restrict_absent_canonical_aas(restrict_to_aa);
-					} else {
-						packer_task->nonconst_residue_task(j).prevent_repacking();
+				//generate tag
+				std::ostringstream tag;
+				if ( mutation_iter==0 ) {
+					//WT, keep the pose as is
+					tag << "WT";
+				} else {
+					tag << "MUT";
+					for ( Size j=1; j <= is_mutated.size(); j++ ) {
+						if ( res_to_mut[mutation_iter][j] != core::chemical::aa_unk ) {
+							tag << "_" << j << res_to_mut[mutation_iter][j];
+						}
 					}
 				}
-				protocols::minimization_packing::PackRotamersMoverOP packer(new protocols::minimization_packing::PackRotamersMover( score_fxn, packer_task ));
-				packer->apply(work_pose);
-			}
 
-			//monomer folding energy
-			for ( Size r=bfj_rd_start; r<=num_iterations; r++ ) {
-				Pose local_pose(work_pose);
-				compute_folding_energies( score_fxn, local_pose, is_flexible, is_mutated, bbnbr );
+				//figure out where to start, if restart
+				Size bfj_rd_start(1);
+				Size afj_rd_start(1);
+				if ( before_jump_done_list.count(tag.str())>0 ) bfj_rd_start = before_jump_done_list[tag.str()]+1;
+				if ( after_jump_done_list.count(tag.str())>0 ) afj_rd_start = after_jump_done_list[tag.str()]+1;
 
-				//output
-				Real final_score( (*score_fxn)( local_pose ) );
-				if ( option[OptionKeys::ddg::dump_pdbs]() ) {
-					std::ostringstream dump_fn;
-					dump_fn << tag.str() << "_bj" << r << ".pdb";
-					local_pose.dump_pdb(dump_fn.str());
+				//debug
+				//std::cout << tag.str() << " bfj: " << bfj_rd_start << std::endl;
+				//std::cout << tag.str() << " afj: " << afj_rd_start << std::endl;
+				if ( bfj_rd_start>num_iterations ) {
+					if ( interface_ddg==0 || afj_rd_start>num_iterations ) {
+						TR << "Job has been done for " << tag.str() << std::endl;
+						continue;
+					}
 				}
-				ofp << "COMPLEX:   Round" << r << ": " << tag.str() << ": " << F(9,3,final_score) << " "
-					<< local_pose.energies().total_energies().weighted_string_of( score_fxn->weights() ) << std::endl;
 
-				if ( interface_ddg > 0 ) {
-					Size rb_jump(interface_ddg);
-					protocols::rigid::RigidBodyTransMoverOP separate_partners( new protocols::rigid::RigidBodyTransMover( local_pose, rb_jump ) );
-					separate_partners->step_size(1000.0);
-					separate_partners->apply(local_pose);
-					final_score = (*score_fxn)( local_pose );
-					ofp << "APART:     Round" << r << ": " << tag.str() << ": " << F(9,3,final_score) << " "
-						<< local_pose.energies().total_energies().weighted_string_of( score_fxn->weights() ) << std::endl;
+				TR << "Job is running for: " << tag.str() << std::endl;
+
+				//MUT, point(s) mutation, mute_file
+				if ( mutation_iter>0 ) {
+					pack::task::PackerTaskOP packer_task(pack::task::TaskFactory::create_packer_task(work_pose));
+					for ( Size j=1; j <= is_mutated.size(); j++ ) {
+						if ( res_to_mut[mutation_iter][j] != core::chemical::aa_unk ) {
+							bools restrict_to_aa( 20, false );
+							restrict_to_aa[res_to_mut[mutation_iter][j]] = true;
+							packer_task->nonconst_residue_task(j).restrict_absent_canonical_aas(restrict_to_aa);
+						} else {
+							packer_task->nonconst_residue_task(j).prevent_repacking();
+						}
+					}
+					protocols::minimization_packing::PackRotamersMoverOP packer(new protocols::minimization_packing::PackRotamersMover( score_fxn, packer_task ));
+					packer->apply(work_pose);
 				}
-			}
 
-			//interface mode, seperate and score
-			if ( interface_ddg > 0 ) {
-				Size rb_jump(interface_ddg);
-				protocols::rigid::RigidBodyTransMoverOP separate_partners( new protocols::rigid::RigidBodyTransMover( work_pose, rb_jump ) );
-				separate_partners->step_size(1000.0);
-				separate_partners->apply(work_pose);
-
-				//repack or not?
-				//seperate partners energy
-				for ( Size r=afj_rd_start; r<=num_iterations; r++ ) {
+				//monomer folding energy
+				for ( Size r=bfj_rd_start; r<=num_iterations; r++ ) {
 					Pose local_pose(work_pose);
 					compute_folding_energies( score_fxn, local_pose, is_flexible, is_mutated, bbnbr );
 
 					//output
-					Real const final_score( (*score_fxn)( local_pose ) );
-					if ( option[OptionKeys::ddg::dump_pdbs]() ) {
+					Real final_score = (*score_fxn)( local_pose );
+					if ( option[OptionKeys::ddg::dump_pdbs].value() ) {
 						std::ostringstream dump_fn;
-						dump_fn << tag.str() << "_aj" << r << ".pdb";
+						dump_fn << tag.str() << "_bj" << r << ".pdb";
 						local_pose.dump_pdb(dump_fn.str());
 					}
-					ofp << "OPT_APART: Round" << r << ": " << tag.str() << ": " << F(9,3,final_score) << " "
+					ofp << "COMPLEX:   Round" << r << ": " << tag.str() << ": " << F(9,3,final_score) << " "
 						<< local_pose.energies().total_energies().weighted_string_of( score_fxn->weights() ) << std::endl;
+
+					if ( interface_ddg > 0 ) {
+						Size rb_jump(interface_ddg);
+						protocols::rigid::RigidBodyTransMoverOP separate_partners( new protocols::rigid::RigidBodyTransMover( local_pose, rb_jump ) );
+						separate_partners->step_size(1000.0);
+						separate_partners->apply(local_pose);
+						final_score = (*score_fxn)( local_pose );
+						ofp << "APART:     Round" << r << ": " << tag.str() << ": " << F(9,3,final_score) << " "
+							<< local_pose.energies().total_energies().weighted_string_of( score_fxn->weights() ) << std::endl;
+					}
+				}
+
+				//interface mode, seperate and score
+				if ( interface_ddg > 0 ) {
+					Size rb_jump(interface_ddg);
+					protocols::rigid::RigidBodyTransMoverOP separate_partners( new protocols::rigid::RigidBodyTransMover( work_pose, rb_jump ) );
+					separate_partners->step_size(1000.0);
+					separate_partners->apply(work_pose);
+
+					//repack or not?
+					//seperate partners energy
+					for ( Size r=afj_rd_start; r<=num_iterations; r++ ) {
+						Pose local_pose(work_pose);
+						compute_folding_energies( score_fxn, local_pose, is_flexible, is_mutated, bbnbr );
+
+						//output
+						Real const final_score( (*score_fxn)( local_pose ) );
+						if ( option[OptionKeys::ddg::dump_pdbs].value() ) {
+							std::ostringstream dump_fn;
+							dump_fn << tag.str() << "_aj" << r << ".pdb";
+							local_pose.dump_pdb(dump_fn.str());
+						}
+						ofp << "OPT_APART: Round" << r << ": " << tag.str() << ": " << F(9,3,final_score) << " "
+							<< local_pose.energies().total_energies().weighted_string_of( score_fxn->weights() ) << std::endl;
+					}
 				}
 			}
-		}
 
-		ofp.close();
+			ofp.close();
+		}
 
 	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

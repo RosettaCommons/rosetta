@@ -14,7 +14,7 @@
 #ifndef INCLUDED_protocols_ddg_ddGMover_hh
 #define INCLUDED_protocols_ddg_ddGMover_hh
 
-/// Where is the ddGMover.fwd.hh include?
+#include <protocols/ddg/ddGMover.fwd.hh>
 
 // Package headers
 #include <protocols/moves/Mover.hh>
@@ -269,4 +269,3 @@ private:
 } //protocols
 
 #endif
-
