@@ -1,5 +1,5 @@
-core.init: command: ROSETTA/main/source/bin/rosetta_scripts.default.linuxgccrelease @flags -database ROSETTA/main/database -testing:INTEGRATION_TEST
-core.init: Constant seed mode, seed=1111111 seed_offset=0 real_seed=1111111
+core.init: command: ROSETTA/main/source/bin/rosetta_scripts.default.macosclangrelease @flags -database ROSETTA/main/database -testing:INTEGRATION_TEST -jran 11111112
+core.init: Constant seed mode, seed=11111112 seed_offset=0 real_seed=11111112
 protocols.jd2.PDBJobInputter: Instantiate PDBJobInputter
 protocols.jd2.PDBJobInputter: PDBJobInputter::fill_jobs
 protocols.jd2.PDBJobInputter: pushed inputs/S_4207.pdb nstruct index 1
@@ -46,7 +46,7 @@ protocols.rosetta_scripts.RosettaScriptsParser: Parsed script:
 			<Reweight scoretype="voids_penalty" weight="1.0"/>
 			<Reweight scoretype="hbnet" weight="0.2"/>
 			<Set hbnet_bonus_function_ramping="logarithmic"/>
-			<Reweight scoretype="buried_unsatisfied_penalty" weight="0.5"/>
+			<Reweight scoretype="buried_unsatisfied_penalty" weight="1.0"/>
 			<Set buried_unsatisfied_penalty_burial_threshold="3"/>
 		</ScoreFunction>
 	</SCOREFXNS>
@@ -54,6 +54,9 @@ protocols.rosetta_scripts.RosettaScriptsParser: Parsed script:
 		<Layer name="select_surf" select_boundary="false" select_core="false" select_surface="true"/>
 		<Not name="select_not_surf" selector="select_surf"/>
 	</RESIDUE_SELECTORS>
+	<SIMPLE_METRICS>
+		<PolarGroupBurialPyMolStringMetric name="pymol_string" scorefxn="r15_mod" verbose="true"/>
+	</SIMPLE_METRICS>
 	<TASKOPERATIONS>
 		<IncludeCurrent name="include_current"/>
 		<OperateOnResidueSubset name="no_repack_surf" selector="select_surf">
@@ -71,7 +74,7 @@ protocols.rosetta_scripts.RosettaScriptsParser: Parsed script:
 		<SetupForSymmetry definition="inputs/C3.symm" name="symm_c3"/>
 		<AddConstraintsToCurrentConformationMover CA_only="false" bb_only="true" coord_dev="0.5" name="add_csts"/>
 		<AddCompositionConstraintMover filename="inputs/design.comp" name="add_comp_csts" selector="select_not_surf"/>
-		<FastDesign name="design" repeats="1" scorefxn="r15_mod" task_operations="no_repack_surf,allowed_for_design,include_current,limit_aro,extra_rots">
+		<FastDesign name="design" repeats="2" scorefxn="r15_mod" task_operations="no_repack_surf,allowed_for_design,include_current,limit_aro,extra_rots">
 			<MoveMap name="design_mm">
 				<Span bb="false" begin="1" chi="true" end="72"/>
 				<Jump number="1" setting="false"/>
@@ -85,20 +88,7 @@ protocols.rosetta_scripts.RosettaScriptsParser: Parsed script:
 				<Jump number="9" setting="false"/>
 			</MoveMap>
 		</FastDesign>
-		<FastDesign name="design2" repeats="1" scorefxn="r15_mod" task_operations="no_repack_surf,allowed_for_design,include_current,limit_aro,extra_rots">
-			<MoveMap name="design_mm">
-				<Span bb="false" begin="1" chi="true" end="72"/>
-				<Jump number="1" setting="true"/>
-				<Jump number="2" setting="true"/>
-				<Jump number="3" setting="true"/>
-				<Jump number="4" setting="true"/>
-				<Jump number="5" setting="true"/>
-				<Jump number="6" setting="true"/>
-				<Jump number="7" setting="true"/>
-				<Jump number="8" setting="true"/>
-				<Jump number="9" setting="true"/>
-			</MoveMap>
-		</FastDesign>
+		<RunSimpleMetrics metrics="pymol_string" name="add_pymol_string"/>
 	</MOVERS>
 	<APPLY_TO_POSE/>
 	<PROTOCOLS>
@@ -107,8 +97,8 @@ protocols.rosetta_scripts.RosettaScriptsParser: Parsed script:
 		<Add mover="add_csts"/>
 		<Add mover="add_comp_csts"/>
 		<Add mover="design"/>
-		<Add mover="design2"/>
 		<Add filter="cavity_volume"/>
+		<Add mover="add_pymol_string"/>
 	</PROTOCOLS>
 	<OUTPUT scorefxn="r15_mod"/>
 </ROSETTASCRIPTS>
@@ -153,7 +143,7 @@ protocols.jd2.parser.ScoreFunctionLoader: defined score function "r15_mod" with 
 protocols.jd2.parser.ScoreFunctionLoader:  setting r15_mod weight aa_composition to 1
 protocols.jd2.parser.ScoreFunctionLoader:  setting r15_mod weight voids_penalty to 1
 protocols.jd2.parser.ScoreFunctionLoader:  setting r15_mod weight hbnet to 0.2
-protocols.jd2.parser.ScoreFunctionLoader:  setting r15_mod weight buried_unsatisfied_penalty to 0.5
+protocols.jd2.parser.ScoreFunctionLoader:  setting r15_mod weight buried_unsatisfied_penalty to 1
 protocols.jd2.parser.ScoreFunctionLoader: symmetrizing r15_mod
 core.select.residue_selector.LayerSelector: Setting LayerSelector to use sidechain neighbors to determine burial.
 core.select.residue_selector.LayerSelector: Set cutoffs for core and surface to 5.2 and 2, respectively, in LayerSelector.
@@ -213,27 +203,35 @@ protocols.aa_composition.AddCompositionConstraintMover: Set filename to inputs/d
 protocols.aa_composition.AddCompositionConstraintMover: Initialized AACompositionConstraint object from file inputs/design.comp.
 protocols.aa_composition.AddCompositionConstraintMover: Set selector name to select_not_surf.
 protocols.rosetta_scripts.RosettaScriptsParser: Defined mover named "add_comp_csts" of type AddCompositionConstraintMover
-protocols.relax.FastRelax: ================== Using default script ==================
+protocols.relax.FastRelax: ================== Reading script file: ROSETTA/main/database/sampling/relax_scripts/default.txt ==================
+protocols.relax.FastRelax: repeat 5
+protocols.relax.FastRelax: ramp_repack_min 0.02  0.01     1.0
+protocols.relax.FastRelax: ramp_repack_min 0.250 0.01     0.5
+protocols.relax.FastRelax: ramp_repack_min 0.550 0.01     0.0
+protocols.relax.FastRelax: ramp_repack_min 1     0.00001  0.0
+protocols.relax.FastRelax: accept_to_best
+protocols.relax.FastRelax: endrepeat
 core.pack.task.xml_util: Object design reading the following task_operations: Adding the following task operations
 no_repack_surf allowed_for_design include_current limit_aro extra_rots 
-protocols.relax.FastRelax: ================== Using default script ==================
+protocols.relax.FastRelax: ================== Reading script file: ROSETTA/main/database/sampling/relax_scripts/default.txt ==================
+protocols.relax.FastRelax: repeat 2
+protocols.relax.FastRelax: ramp_repack_min 0.02  0.01     1.0
+protocols.relax.FastRelax: ramp_repack_min 0.250 0.01     0.5
+protocols.relax.FastRelax: ramp_repack_min 0.550 0.01     0.0
+protocols.relax.FastRelax: ramp_repack_min 1     0.00001  0.0
+protocols.relax.FastRelax: accept_to_best
+protocols.relax.FastRelax: endrepeat
 protocols.rosetta_scripts.RosettaScriptsParser: Defined mover named "design" of type FastDesign
-protocols.relax.FastRelax: ================== Using default script ==================
-core.pack.task.xml_util: Object design2 reading the following task_operations: Adding the following task operations
-no_repack_surf allowed_for_design include_current limit_aro extra_rots 
-core.select.movemap.util: Found MoveMapFactory design_mm
-protocols.relax.FastRelax: ================== Using default script ==================
-protocols.rosetta_scripts.RosettaScriptsParser: Defined mover named "design2" of type FastDesign
+core.simple_metrics.util: Added simple metric PolarGroupBurialPyMolStringMetric.
+protocols.rosetta_scripts.RosettaScriptsParser: Defined mover named "add_pymol_string" of type RunSimpleMetrics
 protocols.rosetta_scripts.ParsedProtocol: ParsedProtocol mover with the following movers and filters
 protocols.rosetta_scripts.ParsedProtocol: added mover "foldtree1" with filter "true_filter"
 protocols.rosetta_scripts.ParsedProtocol: added mover "symm_c3" with filter "true_filter"
 protocols.rosetta_scripts.ParsedProtocol: added mover "add_csts" with filter "true_filter"
 protocols.rosetta_scripts.ParsedProtocol: added mover "add_comp_csts" with filter "true_filter"
 protocols.rosetta_scripts.ParsedProtocol: added mover "design" with filter "true_filter"
-protocols.rosetta_scripts.ParsedProtocol: added mover "design2" with filter "true_filter"
 protocols.rosetta_scripts.ParsedProtocol: added mover "NULL_MOVER" with filter "cavity_volume"
-protocols::checkpoint: Deleting checkpoints of FastRelax
-protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols.rosetta_scripts.ParsedProtocol: added mover "add_pymol_string" with filter "true_filter"
 protocols.jd2.PDBJobInputter: PDBJobInputter::pose_from_job
 protocols.jd2.PDBJobInputter: filling pose from saved copy inputs/S_4207.pdb
 protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER AtomTree - foldtree1=======================
@@ -254,77 +252,77 @@ protocols.denovo_design.movers.FastDesign: #Packer_Task
 protocols.denovo_design.movers.FastDesign: 
 protocols.denovo_design.movers.FastDesign: resid	pack?	design?	allowed_aas
 protocols.denovo_design.movers.FastDesign: 1	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 2	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
+protocols.denovo_design.movers.FastDesign: 2	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP,TYR
 protocols.denovo_design.movers.FastDesign: 3	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 4	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
-protocols.denovo_design.movers.FastDesign: 5	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
-protocols.denovo_design.movers.FastDesign: 6	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
+protocols.denovo_design.movers.FastDesign: 4	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP,TYR
+protocols.denovo_design.movers.FastDesign: 5	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP,TYR
+protocols.denovo_design.movers.FastDesign: 6	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP,TYR
 protocols.denovo_design.movers.FastDesign: 7	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 8	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
-protocols.denovo_design.movers.FastDesign: 9	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
-protocols.denovo_design.movers.FastDesign: 10	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
+protocols.denovo_design.movers.FastDesign: 8	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP,TYR
+protocols.denovo_design.movers.FastDesign: 9	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP,TYR
+protocols.denovo_design.movers.FastDesign: 10	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP,TYR
 protocols.denovo_design.movers.FastDesign: 11	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 12	TRUE	TRUE	ASP:CtermProteinFull,GLU:CtermProteinFull,PHE:CtermProteinFull,ASN:CtermProteinFull,GLN:CtermProteinFull,TRP:CtermProteinFull
+protocols.denovo_design.movers.FastDesign: 12	TRUE	TRUE	ASP:CtermProteinFull,GLU:CtermProteinFull,PHE:CtermProteinFull,ASN:CtermProteinFull,GLN:CtermProteinFull,TRP:CtermProteinFull,TYR:CtermProteinFull
 protocols.denovo_design.movers.FastDesign: 13	FALSE	FALSE	
 protocols.denovo_design.movers.FastDesign: 14	FALSE	FALSE	
 protocols.denovo_design.movers.FastDesign: 15	FALSE	FALSE	
 protocols.denovo_design.movers.FastDesign: 16	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 17	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
+protocols.denovo_design.movers.FastDesign: 17	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP,TYR
 protocols.denovo_design.movers.FastDesign: 18	FALSE	FALSE	
 protocols.denovo_design.movers.FastDesign: 19	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 20	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
-protocols.denovo_design.movers.FastDesign: 21	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
+protocols.denovo_design.movers.FastDesign: 20	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP,TYR
+protocols.denovo_design.movers.FastDesign: 21	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP,TYR
 protocols.denovo_design.movers.FastDesign: 22	FALSE	FALSE	
 protocols.denovo_design.movers.FastDesign: 23	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 24	TRUE	TRUE	ASP:CtermProteinFull,GLU:CtermProteinFull,PHE:CtermProteinFull,ASN:CtermProteinFull,GLN:CtermProteinFull,TRP:CtermProteinFull
+protocols.denovo_design.movers.FastDesign: 24	TRUE	TRUE	ASP:CtermProteinFull,GLU:CtermProteinFull,PHE:CtermProteinFull,ASN:CtermProteinFull,GLN:CtermProteinFull,TRP:CtermProteinFull,TYR:CtermProteinFull
 protocols.denovo_design.movers.FastDesign: 25	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 26	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
+protocols.denovo_design.movers.FastDesign: 26	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP,TYR
 protocols.denovo_design.movers.FastDesign: 27	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 28	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
-protocols.denovo_design.movers.FastDesign: 29	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
-protocols.denovo_design.movers.FastDesign: 30	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
+protocols.denovo_design.movers.FastDesign: 28	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP,TYR
+protocols.denovo_design.movers.FastDesign: 29	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP,TYR
+protocols.denovo_design.movers.FastDesign: 30	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP,TYR
 protocols.denovo_design.movers.FastDesign: 31	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 32	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
-protocols.denovo_design.movers.FastDesign: 33	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
-protocols.denovo_design.movers.FastDesign: 34	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
+protocols.denovo_design.movers.FastDesign: 32	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP,TYR
+protocols.denovo_design.movers.FastDesign: 33	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP,TYR
+protocols.denovo_design.movers.FastDesign: 34	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP,TYR
 protocols.denovo_design.movers.FastDesign: 35	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 36	TRUE	TRUE	ASP:CtermProteinFull,GLU:CtermProteinFull,PHE:CtermProteinFull,ASN:CtermProteinFull,GLN:CtermProteinFull,TRP:CtermProteinFull
+protocols.denovo_design.movers.FastDesign: 36	TRUE	TRUE	ASP:CtermProteinFull,GLU:CtermProteinFull,PHE:CtermProteinFull,ASN:CtermProteinFull,GLN:CtermProteinFull,TRP:CtermProteinFull,TYR:CtermProteinFull
 protocols.denovo_design.movers.FastDesign: 37	FALSE	FALSE	
 protocols.denovo_design.movers.FastDesign: 38	FALSE	FALSE	
 protocols.denovo_design.movers.FastDesign: 39	FALSE	FALSE	
 protocols.denovo_design.movers.FastDesign: 40	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 41	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
+protocols.denovo_design.movers.FastDesign: 41	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP,TYR
 protocols.denovo_design.movers.FastDesign: 42	FALSE	FALSE	
 protocols.denovo_design.movers.FastDesign: 43	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 44	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
-protocols.denovo_design.movers.FastDesign: 45	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
+protocols.denovo_design.movers.FastDesign: 44	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP,TYR
+protocols.denovo_design.movers.FastDesign: 45	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP,TYR
 protocols.denovo_design.movers.FastDesign: 46	FALSE	FALSE	
 protocols.denovo_design.movers.FastDesign: 47	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 48	TRUE	TRUE	ASP:CtermProteinFull,GLU:CtermProteinFull,PHE:CtermProteinFull,ASN:CtermProteinFull,GLN:CtermProteinFull,TRP:CtermProteinFull
+protocols.denovo_design.movers.FastDesign: 48	TRUE	TRUE	ASP:CtermProteinFull,GLU:CtermProteinFull,PHE:CtermProteinFull,ASN:CtermProteinFull,GLN:CtermProteinFull,TRP:CtermProteinFull,TYR:CtermProteinFull
 protocols.denovo_design.movers.FastDesign: 49	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 50	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
+protocols.denovo_design.movers.FastDesign: 50	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP,TYR
 protocols.denovo_design.movers.FastDesign: 51	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 52	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
-protocols.denovo_design.movers.FastDesign: 53	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
-protocols.denovo_design.movers.FastDesign: 54	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
+protocols.denovo_design.movers.FastDesign: 52	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP,TYR
+protocols.denovo_design.movers.FastDesign: 53	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP,TYR
+protocols.denovo_design.movers.FastDesign: 54	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP,TYR
 protocols.denovo_design.movers.FastDesign: 55	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 56	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
-protocols.denovo_design.movers.FastDesign: 57	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
-protocols.denovo_design.movers.FastDesign: 58	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
+protocols.denovo_design.movers.FastDesign: 56	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP,TYR
+protocols.denovo_design.movers.FastDesign: 57	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP,TYR
+protocols.denovo_design.movers.FastDesign: 58	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP,TYR
 protocols.denovo_design.movers.FastDesign: 59	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 60	TRUE	TRUE	ASP:CtermProteinFull,GLU:CtermProteinFull,PHE:CtermProteinFull,ASN:CtermProteinFull,GLN:CtermProteinFull,TRP:CtermProteinFull
+protocols.denovo_design.movers.FastDesign: 60	TRUE	TRUE	ASP:CtermProteinFull,GLU:CtermProteinFull,PHE:CtermProteinFull,ASN:CtermProteinFull,GLN:CtermProteinFull,TRP:CtermProteinFull,TYR:CtermProteinFull
 protocols.denovo_design.movers.FastDesign: 61	FALSE	FALSE	
 protocols.denovo_design.movers.FastDesign: 62	FALSE	FALSE	
 protocols.denovo_design.movers.FastDesign: 63	FALSE	FALSE	
 protocols.denovo_design.movers.FastDesign: 64	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 65	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
+protocols.denovo_design.movers.FastDesign: 65	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP,TYR
 protocols.denovo_design.movers.FastDesign: 66	FALSE	FALSE	
 protocols.denovo_design.movers.FastDesign: 67	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 68	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
-protocols.denovo_design.movers.FastDesign: 69	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
+protocols.denovo_design.movers.FastDesign: 68	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP,TYR
+protocols.denovo_design.movers.FastDesign: 69	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP,TYR
 protocols.denovo_design.movers.FastDesign: 70	FALSE	FALSE	
 protocols.denovo_design.movers.FastDesign: 71	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 72	TRUE	TRUE	ASP:CtermProteinFull,GLU:CtermProteinFull,PHE:CtermProteinFull,ASN:CtermProteinFull,GLN:CtermProteinFull,TRP:CtermProteinFull
+protocols.denovo_design.movers.FastDesign: 72	TRUE	TRUE	ASP:CtermProteinFull,GLU:CtermProteinFull,PHE:CtermProteinFull,ASN:CtermProteinFull,GLN:CtermProteinFull,TRP:CtermProteinFull,TYR:CtermProteinFull
 protocols.denovo_design.movers.FastDesign: 73	FALSE	FALSE	
 protocols.denovo_design.movers.FastDesign: 74	FALSE	FALSE	
 protocols.denovo_design.movers.FastDesign: 75	FALSE	FALSE	
@@ -333,10 +331,9 @@ basic.io.database: Database file opened: scoring/score_functions/elec_cp_reps.da
 core.scoring.elec.util: Read 40 countpair representative atoms
 core.pack.dunbrack.RotamerLibrary: shapovalov_lib_fixes_enable option is true.
 core.pack.dunbrack.RotamerLibrary: shapovalov_lib::shap_dun10_smooth_level of 1( aka lowest_smooth ) got activated.
-protocols.relax.FastRelax: CMD: repeat  37987.3  0  0  0.55
-core.pack.pack_rotamers: built 1672 rotamers at 12 positions.
+protocols.relax.FastRelax: CMD: repeat  38099.8  0  0  0.55
+core.pack.pack_rotamers: built 1874 rotamers at 12 positions.
 core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
-core.pack.interaction_graph.interaction_graph_factory: IG: 4908240 bytes
 core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Setting up BuriedUnsatPenalty energy method for packing.
 core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Creating new BuriedUnsatPenaltyGraph and caching it in the pose.
 core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Successfully set up BuriedUnsatPenalty energy method for packing.
@@ -348,6 +345,9 @@ core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Updated upper-right coordi
 core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Set up a 59x64x47 voxel grid.  (177472 voxels total).Computing voxel burial by method of sidechain neighbours...
 core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Pruning voxels for non-packable residues.  Total volume before pruning: 13554 cubic Angstroms.
 core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Total volume after pruning: 13409 cubic Angstroms.
+core.scoring.aa_composition_energy.AACompositionEnergy: Cleaning up cached AACompositionEnergy data after packing.
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Clearing cached data from the pose after packing.
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Clearing cached data from the BuriedUnsatPenalty EnergyMethod after packing.
 core.scoring.aa_composition_energy.AACompositionEnergy: Disabling AACompositionEnergy during minimization.
 core.pack.guidance_scoreterms.hbnet_energy.HBNetEnergy: Disabling HBNetEnergy during minimization.
 core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Disabling BuriedUnsatPenalty scoreterm during minimization trajectory.
@@ -356,22 +356,24 @@ core.scoring.aa_composition_energy.AACompositionEnergy: Re-enabling AACompositio
 core.pack.guidance_scoreterms.hbnet_energy.HBNetEnergy: Re-enabling HBNetEnergy following minimization.
 core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Re-enabling BuriedUnsatPenalty scoreterm after minimization trajectory.
 core.pack.voids_penalty_energy.VoidsPenaltyEnergy: Re-enabling VoidsPenaltyEnergy after minimization.
-protocols.relax.FastRelax: CMD: ramp_repack_min  5414.29  0  0  0.011
-core.pack.pack_rotamers: built 845 rotamers at 12 positions.
+protocols.relax.FastRelax: CMD: ramp_repack_min  22428.3  0  0  0.011
+core.pack.pack_rotamers: built 972 rotamers at 12 positions.
 core.pack.interaction_graph.interaction_graph_factory: Clearing cached buried unsaturated hbond graph from the pose.
 core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
-core.pack.interaction_graph.interaction_graph_factory: IG: 1100480 bytes
 core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Setting up BuriedUnsatPenalty energy method for packing.
 core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Creating new BuriedUnsatPenaltyGraph and caching it in the pose.
 core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Successfully set up BuriedUnsatPenalty energy method for packing.
 core.pack.voids_penalty_energy.VoidsPenaltyEnergy: Setting up the VoidsPenaltyEnergy for packing.
 core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Computing pose bounding box with padding of 1 Angstroms...
-core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Done.  Bounding box is from [-16.7376, -15.7099, -12.0486] to [13.4297, 15.6769, 10.502].
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Done.  Bounding box is from [-16.7376, -15.7099, -12.0486] to [13.4717, 15.6769, 10.502].
 core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Setting up voxel grid...
 core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Updated upper-right coordinates.  Bounding box is now [-16.7376, -15.7099, -12.0486] to [13.7624, 15.7901, 10.9514].
 core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Set up a 62x64x47 voxel grid.  (186496 voxels total).Computing voxel burial by method of sidechain neighbours...
-core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Pruning voxels for non-packable residues.  Total volume before pruning: 14033 cubic Angstroms.
-core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Total volume after pruning: 13839 cubic Angstroms.
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Pruning voxels for non-packable residues.  Total volume before pruning: 14127 cubic Angstroms.
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Total volume after pruning: 13933 cubic Angstroms.
+core.scoring.aa_composition_energy.AACompositionEnergy: Cleaning up cached AACompositionEnergy data after packing.
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Clearing cached data from the pose after packing.
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Clearing cached data from the BuriedUnsatPenalty EnergyMethod after packing.
 core.scoring.aa_composition_energy.AACompositionEnergy: Disabling AACompositionEnergy during minimization.
 core.pack.guidance_scoreterms.hbnet_energy.HBNetEnergy: Disabling HBNetEnergy during minimization.
 core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Disabling BuriedUnsatPenalty scoreterm during minimization trajectory.
@@ -380,22 +382,105 @@ core.scoring.aa_composition_energy.AACompositionEnergy: Re-enabling AACompositio
 core.pack.guidance_scoreterms.hbnet_energy.HBNetEnergy: Re-enabling HBNetEnergy following minimization.
 core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Re-enabling BuriedUnsatPenalty scoreterm after minimization trajectory.
 core.pack.voids_penalty_energy.VoidsPenaltyEnergy: Re-enabling VoidsPenaltyEnergy after minimization.
-protocols.relax.FastRelax: CMD: ramp_repack_min  4165.13  0  0  0.1375
-core.pack.pack_rotamers: built 701 rotamers at 12 positions.
+protocols.relax.FastRelax: CMD: ramp_repack_min  18241.9  0  0  0.1375
+core.pack.pack_rotamers: built 911 rotamers at 12 positions.
 core.pack.interaction_graph.interaction_graph_factory: Clearing cached buried unsaturated hbond graph from the pose.
 core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
-core.pack.interaction_graph.interaction_graph_factory: IG: 776264 bytes
 core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Setting up BuriedUnsatPenalty energy method for packing.
 core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Creating new BuriedUnsatPenaltyGraph and caching it in the pose.
 core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Successfully set up BuriedUnsatPenalty energy method for packing.
 core.pack.voids_penalty_energy.VoidsPenaltyEnergy: Setting up the VoidsPenaltyEnergy for packing.
 core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Computing pose bounding box with padding of 1 Angstroms...
-core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Done.  Bounding box is from [-16.7376, -15.7099, -12.0486] to [12.3715, 15.6769, 10.502].
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Done.  Bounding box is from [-16.7376, -15.7099, -12.59] to [12.4529, 15.6769, 10.502].
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Setting up voxel grid...
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Updated upper-right coordinates.  Bounding box is now [-16.7376, -15.7099, -12.59] to [12.7624, 15.7901, 10.91].
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Set up a 60x64x48 voxel grid.  (184320 voxels total).Computing voxel burial by method of sidechain neighbours...
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Pruning voxels for non-packable residues.  Total volume before pruning: 13993 cubic Angstroms.
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Total volume after pruning: 13797 cubic Angstroms.
+core.scoring.aa_composition_energy.AACompositionEnergy: Cleaning up cached AACompositionEnergy data after packing.
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Clearing cached data from the pose after packing.
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Clearing cached data from the BuriedUnsatPenalty EnergyMethod after packing.
+core.scoring.aa_composition_energy.AACompositionEnergy: Disabling AACompositionEnergy during minimization.
+core.pack.guidance_scoreterms.hbnet_energy.HBNetEnergy: Disabling HBNetEnergy during minimization.
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Disabling BuriedUnsatPenalty scoreterm during minimization trajectory.
+core.pack.voids_penalty_energy.VoidsPenaltyEnergy: Disabling VoidsPenaltyEnergy during minimization.
+core.scoring.aa_composition_energy.AACompositionEnergy: Re-enabling AACompositionEnergy following minimization.
+core.pack.guidance_scoreterms.hbnet_energy.HBNetEnergy: Re-enabling HBNetEnergy following minimization.
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Re-enabling BuriedUnsatPenalty scoreterm after minimization trajectory.
+core.pack.voids_penalty_energy.VoidsPenaltyEnergy: Re-enabling VoidsPenaltyEnergy after minimization.
+protocols.relax.FastRelax: CMD: ramp_repack_min  22520.1  0  0  0.3025
+core.pack.pack_rotamers: built 772 rotamers at 12 positions.
+core.pack.interaction_graph.interaction_graph_factory: Clearing cached buried unsaturated hbond graph from the pose.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Setting up BuriedUnsatPenalty energy method for packing.
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Creating new BuriedUnsatPenaltyGraph and caching it in the pose.
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Successfully set up BuriedUnsatPenalty energy method for packing.
+core.pack.voids_penalty_energy.VoidsPenaltyEnergy: Setting up the VoidsPenaltyEnergy for packing.
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Computing pose bounding box with padding of 1 Angstroms...
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Done.  Bounding box is from [-16.7376, -15.9296, -12.0868] to [14.0095, 15.6769, 10.502].
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Setting up voxel grid...
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Updated upper-right coordinates.  Bounding box is now [-16.7376, -15.9296, -12.0868] to [14.2624, 16.0704, 10.9132].
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Set up a 63x65x47 voxel grid.  (192465 voxels total).Computing voxel burial by method of sidechain neighbours...
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Pruning voxels for non-packable residues.  Total volume before pruning: 14055 cubic Angstroms.
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Total volume after pruning: 13859 cubic Angstroms.
+core.scoring.aa_composition_energy.AACompositionEnergy: Cleaning up cached AACompositionEnergy data after packing.
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Clearing cached data from the pose after packing.
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Clearing cached data from the BuriedUnsatPenalty EnergyMethod after packing.
+core.scoring.aa_composition_energy.AACompositionEnergy: Disabling AACompositionEnergy during minimization.
+core.pack.guidance_scoreterms.hbnet_energy.HBNetEnergy: Disabling HBNetEnergy during minimization.
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Disabling BuriedUnsatPenalty scoreterm during minimization trajectory.
+core.pack.voids_penalty_energy.VoidsPenaltyEnergy: Disabling VoidsPenaltyEnergy during minimization.
+core.scoring.aa_composition_energy.AACompositionEnergy: Re-enabling AACompositionEnergy following minimization.
+core.pack.guidance_scoreterms.hbnet_energy.HBNetEnergy: Re-enabling HBNetEnergy following minimization.
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Re-enabling BuriedUnsatPenalty scoreterm after minimization trajectory.
+core.pack.voids_penalty_energy.VoidsPenaltyEnergy: Re-enabling VoidsPenaltyEnergy after minimization.
+protocols.relax.FastRelax: CMD: ramp_repack_min  27332.8  0  0  0.55
+protocols.relax.FastRelax: MRP: 0  27332.8  27332.8  0  0  
+protocols.relax.FastRelax: CMD: accept_to_best  27332.8  0  0  0.55
+protocols.relax.FastRelax: CMD: endrepeat  27332.8  0  0  0.55
+core.pack.pack_rotamers: built 1722 rotamers at 12 positions.
+core.pack.interaction_graph.interaction_graph_factory: Clearing cached buried unsaturated hbond graph from the pose.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Setting up BuriedUnsatPenalty energy method for packing.
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Creating new BuriedUnsatPenaltyGraph and caching it in the pose.
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Successfully set up BuriedUnsatPenalty energy method for packing.
+core.pack.voids_penalty_energy.VoidsPenaltyEnergy: Setting up the VoidsPenaltyEnergy for packing.
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Computing pose bounding box with padding of 1 Angstroms...
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Done.  Bounding box is from [-16.7376, -16.4041, -12.3367] to [16.522, 15.6769, 10.502].
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Setting up voxel grid...
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Updated upper-right coordinates.  Bounding box is now [-16.7376, -16.4041, -12.3367] to [16.7624, 16.0959, 10.6633].
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Set up a 68x66x47 voxel grid.  (210936 voxels total).Computing voxel burial by method of sidechain neighbours...
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Pruning voxels for non-packable residues.  Total volume before pruning: 14111 cubic Angstroms.
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Total volume after pruning: 13910 cubic Angstroms.
+core.scoring.aa_composition_energy.AACompositionEnergy: Cleaning up cached AACompositionEnergy data after packing.
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Clearing cached data from the pose after packing.
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Clearing cached data from the BuriedUnsatPenalty EnergyMethod after packing.
+core.scoring.aa_composition_energy.AACompositionEnergy: Disabling AACompositionEnergy during minimization.
+core.pack.guidance_scoreterms.hbnet_energy.HBNetEnergy: Disabling HBNetEnergy during minimization.
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Disabling BuriedUnsatPenalty scoreterm during minimization trajectory.
+core.pack.voids_penalty_energy.VoidsPenaltyEnergy: Disabling VoidsPenaltyEnergy during minimization.
+core.scoring.aa_composition_energy.AACompositionEnergy: Re-enabling AACompositionEnergy following minimization.
+core.pack.guidance_scoreterms.hbnet_energy.HBNetEnergy: Re-enabling HBNetEnergy following minimization.
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Re-enabling BuriedUnsatPenalty scoreterm after minimization trajectory.
+core.pack.voids_penalty_energy.VoidsPenaltyEnergy: Re-enabling VoidsPenaltyEnergy after minimization.
+protocols.relax.FastRelax: CMD: ramp_repack_min  5635.73  0  0  0.011
+core.pack.pack_rotamers: built 880 rotamers at 12 positions.
+core.pack.interaction_graph.interaction_graph_factory: Clearing cached buried unsaturated hbond graph from the pose.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Setting up BuriedUnsatPenalty energy method for packing.
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Creating new BuriedUnsatPenaltyGraph and caching it in the pose.
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Successfully set up BuriedUnsatPenalty energy method for packing.
+core.pack.voids_penalty_energy.VoidsPenaltyEnergy: Setting up the VoidsPenaltyEnergy for packing.
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Computing pose bounding box with padding of 1 Angstroms...
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Done.  Bounding box is from [-16.7376, -15.7099, -12.0486] to [12.28, 15.6769, 10.502].
 core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Setting up voxel grid...
 core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Updated upper-right coordinates.  Bounding box is now [-16.7376, -15.7099, -12.0486] to [12.7624, 15.7901, 10.9514].
 core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Set up a 60x64x47 voxel grid.  (180480 voxels total).Computing voxel burial by method of sidechain neighbours...
-core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Pruning voxels for non-packable residues.  Total volume before pruning: 14046 cubic Angstroms.
-core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Total volume after pruning: 13853 cubic Angstroms.
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Pruning voxels for non-packable residues.  Total volume before pruning: 14026 cubic Angstroms.
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Total volume after pruning: 13834 cubic Angstroms.
+core.scoring.aa_composition_energy.AACompositionEnergy: Cleaning up cached AACompositionEnergy data after packing.
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Clearing cached data from the pose after packing.
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Clearing cached data from the BuriedUnsatPenalty EnergyMethod after packing.
 core.scoring.aa_composition_energy.AACompositionEnergy: Disabling AACompositionEnergy during minimization.
 core.pack.guidance_scoreterms.hbnet_energy.HBNetEnergy: Disabling HBNetEnergy during minimization.
 core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Disabling BuriedUnsatPenalty scoreterm during minimization trajectory.
@@ -404,22 +489,24 @@ core.scoring.aa_composition_energy.AACompositionEnergy: Re-enabling AACompositio
 core.pack.guidance_scoreterms.hbnet_energy.HBNetEnergy: Re-enabling HBNetEnergy following minimization.
 core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Re-enabling BuriedUnsatPenalty scoreterm after minimization trajectory.
 core.pack.voids_penalty_energy.VoidsPenaltyEnergy: Re-enabling VoidsPenaltyEnergy after minimization.
-protocols.relax.FastRelax: CMD: ramp_repack_min  5573.99  0  0  0.3025
-core.pack.pack_rotamers: built 641 rotamers at 12 positions.
+protocols.relax.FastRelax: CMD: ramp_repack_min  8167.23  0  0  0.1375
+core.pack.pack_rotamers: built 728 rotamers at 12 positions.
 core.pack.interaction_graph.interaction_graph_factory: Clearing cached buried unsaturated hbond graph from the pose.
 core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
-core.pack.interaction_graph.interaction_graph_factory: IG: 650428 bytes
 core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Setting up BuriedUnsatPenalty energy method for packing.
 core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Creating new BuriedUnsatPenaltyGraph and caching it in the pose.
 core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Successfully set up BuriedUnsatPenalty energy method for packing.
 core.pack.voids_penalty_energy.VoidsPenaltyEnergy: Setting up the VoidsPenaltyEnergy for packing.
 core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Computing pose bounding box with padding of 1 Angstroms...
-core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Done.  Bounding box is from [-16.7376, -15.7099, -12.0486] to [12.9177, 15.6769, 10.502].
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Done.  Bounding box is from [-16.7376, -15.7099, -12.056] to [12.5163, 15.6769, 10.502].
 core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Setting up voxel grid...
-core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Updated upper-right coordinates.  Bounding box is now [-16.7376, -15.7099, -12.0486] to [13.2624, 15.7901, 10.9514].
-core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Set up a 61x64x47 voxel grid.  (183488 voxels total).Computing voxel burial by method of sidechain neighbours...
-core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Pruning voxels for non-packable residues.  Total volume before pruning: 14096 cubic Angstroms.
-core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Total volume after pruning: 13903 cubic Angstroms.
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Updated upper-right coordinates.  Bounding box is now [-16.7376, -15.7099, -12.056] to [12.7624, 15.7901, 10.944].
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Set up a 60x64x47 voxel grid.  (180480 voxels total).Computing voxel burial by method of sidechain neighbours...
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Pruning voxels for non-packable residues.  Total volume before pruning: 14057 cubic Angstroms.
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Total volume after pruning: 13862 cubic Angstroms.
+core.scoring.aa_composition_energy.AACompositionEnergy: Cleaning up cached AACompositionEnergy data after packing.
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Clearing cached data from the pose after packing.
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Clearing cached data from the BuriedUnsatPenalty EnergyMethod after packing.
 core.scoring.aa_composition_energy.AACompositionEnergy: Disabling AACompositionEnergy during minimization.
 core.pack.guidance_scoreterms.hbnet_energy.HBNetEnergy: Disabling HBNetEnergy during minimization.
 core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Disabling BuriedUnsatPenalty scoreterm during minimization trajectory.
@@ -428,27 +515,53 @@ core.scoring.aa_composition_energy.AACompositionEnergy: Re-enabling AACompositio
 core.pack.guidance_scoreterms.hbnet_energy.HBNetEnergy: Re-enabling HBNetEnergy following minimization.
 core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Re-enabling BuriedUnsatPenalty scoreterm after minimization trajectory.
 core.pack.voids_penalty_energy.VoidsPenaltyEnergy: Re-enabling VoidsPenaltyEnergy after minimization.
-protocols.relax.FastRelax: CMD: ramp_repack_min  11258  0  0  0.55
-protocols.relax.FastRelax: MRP: 0  11258  11258  0  0  
-protocols.relax.FastRelax: CMD: accept_to_best  11258  0  0  0.55
-protocols.relax.FastRelax: CMD: endrepeat  11258  0  0  0.55
+protocols.relax.FastRelax: CMD: ramp_repack_min  11029.5  0  0  0.3025
+core.pack.pack_rotamers: built 693 rotamers at 12 positions.
+core.pack.interaction_graph.interaction_graph_factory: Clearing cached buried unsaturated hbond graph from the pose.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Setting up BuriedUnsatPenalty energy method for packing.
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Creating new BuriedUnsatPenaltyGraph and caching it in the pose.
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Successfully set up BuriedUnsatPenalty energy method for packing.
+core.pack.voids_penalty_energy.VoidsPenaltyEnergy: Setting up the VoidsPenaltyEnergy for packing.
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Computing pose bounding box with padding of 1 Angstroms...
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Done.  Bounding box is from [-16.7376, -15.7099, -12.1058] to [12.8994, 15.6769, 10.502].
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Setting up voxel grid...
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Updated upper-right coordinates.  Bounding box is now [-16.7376, -15.7099, -12.1058] to [13.2624, 15.7901, 10.8942].
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Set up a 61x64x47 voxel grid.  (183488 voxels total).Computing voxel burial by method of sidechain neighbours...
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Pruning voxels for non-packable residues.  Total volume before pruning: 14028 cubic Angstroms.
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Total volume after pruning: 13834 cubic Angstroms.
+core.scoring.aa_composition_energy.AACompositionEnergy: Cleaning up cached AACompositionEnergy data after packing.
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Clearing cached data from the pose after packing.
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Clearing cached data from the BuriedUnsatPenalty EnergyMethod after packing.
+core.scoring.aa_composition_energy.AACompositionEnergy: Disabling AACompositionEnergy during minimization.
+core.pack.guidance_scoreterms.hbnet_energy.HBNetEnergy: Disabling HBNetEnergy during minimization.
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Disabling BuriedUnsatPenalty scoreterm during minimization trajectory.
+core.pack.voids_penalty_energy.VoidsPenaltyEnergy: Disabling VoidsPenaltyEnergy during minimization.
+core.scoring.aa_composition_energy.AACompositionEnergy: Re-enabling AACompositionEnergy following minimization.
+core.pack.guidance_scoreterms.hbnet_energy.HBNetEnergy: Re-enabling HBNetEnergy following minimization.
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Re-enabling BuriedUnsatPenalty scoreterm after minimization trajectory.
+core.pack.voids_penalty_energy.VoidsPenaltyEnergy: Re-enabling VoidsPenaltyEnergy after minimization.
+protocols.relax.FastRelax: CMD: ramp_repack_min  14412.5  0  0  0.55
+protocols.relax.FastRelax: MRP: 1  14412.5  14412.5  0  0  
+protocols.relax.FastRelax: CMD: accept_to_best  14412.5  0  0  0.55
+protocols.relax.FastRelax: CMD: endrepeat  14412.5  0  0  0.55
 protocols::checkpoint: Deleting checkpoints of FastRelax
 protocols.denovo_design.movers.FastDesign: 
 ------------------------------------------------------------
  Scores                       Weight   Raw Score Wghtd.Score
 ------------------------------------------------------------
- fa_atr                       1.000    -329.256    -329.256
- fa_rep                       0.550      45.040      24.772
- fa_sol                       1.000     278.031     278.031
- fa_intra_rep                 0.005     123.033       0.615
- fa_intra_sol_xover4          1.000      19.050      19.050
- lk_ball_wtd                  1.000     -14.529     -14.529
- fa_elec                      1.000     -60.827     -60.827
+ fa_atr                       1.000    -334.511    -334.511
+ fa_rep                       0.550      76.972      42.335
+ fa_sol                       1.000     310.591     310.591
+ fa_intra_rep                 0.005      98.499       0.492
+ fa_intra_sol_xover4          1.000      17.397      17.397
+ lk_ball_wtd                  1.000      -8.369      -8.369
+ fa_elec                      1.000     -83.438     -83.438
  pro_close                    1.250       0.000       0.000
  hbond_sr_bb                  1.000     -49.308     -49.308
  hbond_lr_bb                  1.000       0.000       0.000
- hbond_bb_sc                  1.000       0.000       0.000
- hbond_sc                     1.000     -16.070     -16.070
+ hbond_bb_sc                  1.000      -3.338      -3.338
+ hbond_sc                     1.000     -15.955     -15.955
  dslf_fa13                    1.250       0.000       0.000
  atom_pair_constraint         1.000       0.000       0.000
  coordinate_constraint        1.000       0.000       0.000
@@ -456,254 +569,110 @@ protocols.denovo_design.movers.FastDesign:
  dihedral_constraint          1.000       0.000       0.000
  metalbinding_constraint      1.000       0.000       0.000
  omega                        0.400       0.419       0.168
- fa_dun                       0.700     158.689     111.082
- p_aa_pp                      0.600      28.044      16.827
+ fa_dun                       0.700     160.412     112.288
+ p_aa_pp                      0.600      27.236      16.342
  yhh_planarity                0.625       0.000       0.000
- ref                          1.000      18.613      18.613
+ ref                          1.000       0.528       0.528
  chainbreak                   1.000       0.000       0.000
- rama_prepro                  0.450      22.218       9.998
+ rama_prepro                  0.450      20.831       9.374
  res_type_constraint          1.000       0.000       0.000
  aa_composition               1.000       0.000       0.000
- hbnet                        0.200      -6.068      -1.214
- buried_unsatisfied_penalty     0.500   22500.000   11250.000
+ hbnet                        0.200     -10.373      -2.075
+ buried_unsatisfied_penalty     1.000   14400.000   14400.000
  voids_penalty                1.000       0.000       0.000
 ---------------------------------------------------
- Total weighted score:                    11257.952
-protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER FastDesign - design2=======================
-protocols.denovo_design.movers.FastDesign: #Packer_Task
-protocols.denovo_design.movers.FastDesign: 
-protocols.denovo_design.movers.FastDesign: resid	pack?	design?	allowed_aas
-protocols.denovo_design.movers.FastDesign: 1	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 2	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
-protocols.denovo_design.movers.FastDesign: 3	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 4	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
-protocols.denovo_design.movers.FastDesign: 5	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
-protocols.denovo_design.movers.FastDesign: 6	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
-protocols.denovo_design.movers.FastDesign: 7	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 8	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
-protocols.denovo_design.movers.FastDesign: 9	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
-protocols.denovo_design.movers.FastDesign: 10	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
-protocols.denovo_design.movers.FastDesign: 11	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 12	TRUE	TRUE	ASP:CtermProteinFull,GLU:CtermProteinFull,PHE:CtermProteinFull,ASN:CtermProteinFull,GLN:CtermProteinFull,TRP:CtermProteinFull
-protocols.denovo_design.movers.FastDesign: 13	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 14	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 15	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 16	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 17	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
-protocols.denovo_design.movers.FastDesign: 18	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 19	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 20	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
-protocols.denovo_design.movers.FastDesign: 21	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
-protocols.denovo_design.movers.FastDesign: 22	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 23	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 24	TRUE	TRUE	ASP:CtermProteinFull,GLU:CtermProteinFull,PHE:CtermProteinFull,ASN:CtermProteinFull,GLN:CtermProteinFull,TRP:CtermProteinFull
-protocols.denovo_design.movers.FastDesign: 25	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 26	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
-protocols.denovo_design.movers.FastDesign: 27	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 28	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
-protocols.denovo_design.movers.FastDesign: 29	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
-protocols.denovo_design.movers.FastDesign: 30	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
-protocols.denovo_design.movers.FastDesign: 31	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 32	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
-protocols.denovo_design.movers.FastDesign: 33	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
-protocols.denovo_design.movers.FastDesign: 34	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
-protocols.denovo_design.movers.FastDesign: 35	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 36	TRUE	TRUE	ASP:CtermProteinFull,GLU:CtermProteinFull,PHE:CtermProteinFull,ASN:CtermProteinFull,GLN:CtermProteinFull,TRP:CtermProteinFull
-protocols.denovo_design.movers.FastDesign: 37	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 38	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 39	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 40	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 41	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
-protocols.denovo_design.movers.FastDesign: 42	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 43	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 44	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
-protocols.denovo_design.movers.FastDesign: 45	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
-protocols.denovo_design.movers.FastDesign: 46	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 47	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 48	TRUE	TRUE	ASP:CtermProteinFull,GLU:CtermProteinFull,PHE:CtermProteinFull,ASN:CtermProteinFull,GLN:CtermProteinFull,TRP:CtermProteinFull
-protocols.denovo_design.movers.FastDesign: 49	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 50	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
-protocols.denovo_design.movers.FastDesign: 51	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 52	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
-protocols.denovo_design.movers.FastDesign: 53	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
-protocols.denovo_design.movers.FastDesign: 54	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
-protocols.denovo_design.movers.FastDesign: 55	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 56	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
-protocols.denovo_design.movers.FastDesign: 57	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
-protocols.denovo_design.movers.FastDesign: 58	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
-protocols.denovo_design.movers.FastDesign: 59	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 60	TRUE	TRUE	ASP:CtermProteinFull,GLU:CtermProteinFull,PHE:CtermProteinFull,ASN:CtermProteinFull,GLN:CtermProteinFull,TRP:CtermProteinFull
-protocols.denovo_design.movers.FastDesign: 61	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 62	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 63	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 64	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 65	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
-protocols.denovo_design.movers.FastDesign: 66	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 67	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 68	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
-protocols.denovo_design.movers.FastDesign: 69	TRUE	TRUE	ASP,GLU,PHE,ASN,GLN,TRP
-protocols.denovo_design.movers.FastDesign: 70	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 71	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 72	TRUE	TRUE	ASP:CtermProteinFull,GLU:CtermProteinFull,PHE:CtermProteinFull,ASN:CtermProteinFull,GLN:CtermProteinFull,TRP:CtermProteinFull
-protocols.denovo_design.movers.FastDesign: 73	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 74	FALSE	FALSE	
-protocols.denovo_design.movers.FastDesign: 75	FALSE	FALSE	
-core.select.jump_selector.JumpIndexSelector: [ WARNING ] Pose does not contain a jump number of 9
-core.select.jump_selector.JumpIndexSelector: [ WARNING ] Pose does not contain a jump number of 9
-protocols.relax.FastRelax: CMD: repeat  11258  0  0  0.55
-core.pack.pack_rotamers: built 1532 rotamers at 12 positions.
-core.pack.interaction_graph.interaction_graph_factory: Clearing cached buried unsaturated hbond graph from the pose.
-core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
-core.pack.interaction_graph.interaction_graph_factory: IG: 4067892 bytes
-core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Setting up BuriedUnsatPenalty energy method for packing.
-core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Creating new BuriedUnsatPenaltyGraph and caching it in the pose.
-core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Successfully set up BuriedUnsatPenalty energy method for packing.
-core.pack.voids_penalty_energy.VoidsPenaltyEnergy: Setting up the VoidsPenaltyEnergy for packing.
-core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Computing pose bounding box with padding of 1 Angstroms...
-core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Done.  Bounding box is from [-16.7376, -15.7099, -12.1262] to [12.9626, 15.6769, 10.502].
-core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Setting up voxel grid...
-core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Updated upper-right coordinates.  Bounding box is now [-16.7376, -15.7099, -12.1262] to [13.2624, 15.7901, 10.8738].
-core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Set up a 61x64x47 voxel grid.  (183488 voxels total).Computing voxel burial by method of sidechain neighbours...
-core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Pruning voxels for non-packable residues.  Total volume before pruning: 14061 cubic Angstroms.
-core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Total volume after pruning: 13867 cubic Angstroms.
-core.scoring.aa_composition_energy.AACompositionEnergy: Disabling AACompositionEnergy during minimization.
-core.pack.guidance_scoreterms.hbnet_energy.HBNetEnergy: Disabling HBNetEnergy during minimization.
-core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Disabling BuriedUnsatPenalty scoreterm during minimization trajectory.
-core.pack.voids_penalty_energy.VoidsPenaltyEnergy: Disabling VoidsPenaltyEnergy during minimization.
-core.scoring.aa_composition_energy.AACompositionEnergy: Re-enabling AACompositionEnergy following minimization.
-core.pack.guidance_scoreterms.hbnet_energy.HBNetEnergy: Re-enabling HBNetEnergy following minimization.
-core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Re-enabling BuriedUnsatPenalty scoreterm after minimization trajectory.
-core.pack.voids_penalty_energy.VoidsPenaltyEnergy: Re-enabling VoidsPenaltyEnergy after minimization.
-protocols.relax.FastRelax: CMD: ramp_repack_min  2768.57  0.066449  0.066449  0.011
-core.pack.pack_rotamers: built 790 rotamers at 12 positions.
-core.pack.interaction_graph.interaction_graph_factory: Clearing cached buried unsaturated hbond graph from the pose.
-core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
-core.pack.interaction_graph.interaction_graph_factory: IG: 966248 bytes
-core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Setting up BuriedUnsatPenalty energy method for packing.
-core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Creating new BuriedUnsatPenaltyGraph and caching it in the pose.
-core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Successfully set up BuriedUnsatPenalty energy method for packing.
-core.pack.voids_penalty_energy.VoidsPenaltyEnergy: Setting up the VoidsPenaltyEnergy for packing.
-core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Computing pose bounding box with padding of 1 Angstroms...
-core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Done.  Bounding box is from [-16.7542, -15.7261, -12.0481] to [12.3798, 15.6829, 10.5168].
-core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Setting up voxel grid...
-core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Updated upper-right coordinates.  Bounding box is now [-16.7542, -15.7261, -12.0481] to [12.7458, 15.7739, 10.9519].
-core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Set up a 60x64x47 voxel grid.  (180480 voxels total).Computing voxel burial by method of sidechain neighbours...
-core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Pruning voxels for non-packable residues.  Total volume before pruning: 14031 cubic Angstroms.
-core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Total volume after pruning: 13844 cubic Angstroms.
-core.scoring.aa_composition_energy.AACompositionEnergy: Disabling AACompositionEnergy during minimization.
-core.pack.guidance_scoreterms.hbnet_energy.HBNetEnergy: Disabling HBNetEnergy during minimization.
-core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Disabling BuriedUnsatPenalty scoreterm during minimization trajectory.
-core.pack.voids_penalty_energy.VoidsPenaltyEnergy: Disabling VoidsPenaltyEnergy during minimization.
-core.scoring.aa_composition_energy.AACompositionEnergy: Re-enabling AACompositionEnergy following minimization.
-core.pack.guidance_scoreterms.hbnet_energy.HBNetEnergy: Re-enabling HBNetEnergy following minimization.
-core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Re-enabling BuriedUnsatPenalty scoreterm after minimization trajectory.
-core.pack.voids_penalty_energy.VoidsPenaltyEnergy: Re-enabling VoidsPenaltyEnergy after minimization.
-protocols.relax.FastRelax: CMD: ramp_repack_min  2939.3  0.179147  0.179147  0.1375
-core.pack.pack_rotamers: built 789 rotamers at 12 positions.
-core.pack.interaction_graph.interaction_graph_factory: Clearing cached buried unsaturated hbond graph from the pose.
-core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
-core.pack.interaction_graph.interaction_graph_factory: IG: 955076 bytes
-core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Setting up BuriedUnsatPenalty energy method for packing.
-core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Creating new BuriedUnsatPenaltyGraph and caching it in the pose.
-core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Successfully set up BuriedUnsatPenalty energy method for packing.
-core.pack.voids_penalty_energy.VoidsPenaltyEnergy: Setting up the VoidsPenaltyEnergy for packing.
-core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Computing pose bounding box with padding of 1 Angstroms...
-core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Done.  Bounding box is from [-16.8737, -15.7693, -12.0291] to [12.6636, 15.858, 10.5278].
-core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Setting up voxel grid...
-core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Updated upper-right coordinates.  Bounding box is now [-16.8737, -15.7693, -12.0291] to [13.1263, 16.2307, 10.9709].
-core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Set up a 61x65x47 voxel grid.  (186355 voxels total).Computing voxel burial by method of sidechain neighbours...
-core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Pruning voxels for non-packable residues.  Total volume before pruning: 13487 cubic Angstroms.
-core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Total volume after pruning: 13309 cubic Angstroms.
-core.scoring.aa_composition_energy.AACompositionEnergy: Disabling AACompositionEnergy during minimization.
-core.pack.guidance_scoreterms.hbnet_energy.HBNetEnergy: Disabling HBNetEnergy during minimization.
-core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Disabling BuriedUnsatPenalty scoreterm during minimization trajectory.
-core.pack.voids_penalty_energy.VoidsPenaltyEnergy: Disabling VoidsPenaltyEnergy during minimization.
-core.scoring.aa_composition_energy.AACompositionEnergy: Re-enabling AACompositionEnergy following minimization.
-core.pack.guidance_scoreterms.hbnet_energy.HBNetEnergy: Re-enabling HBNetEnergy following minimization.
-core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Re-enabling BuriedUnsatPenalty scoreterm after minimization trajectory.
-core.pack.voids_penalty_energy.VoidsPenaltyEnergy: Re-enabling VoidsPenaltyEnergy after minimization.
-protocols.relax.FastRelax: CMD: ramp_repack_min  2878.57  0.114905  0.114905  0.3025
-core.pack.pack_rotamers: built 723 rotamers at 12 positions.
-core.pack.interaction_graph.interaction_graph_factory: Clearing cached buried unsaturated hbond graph from the pose.
-core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
-core.pack.interaction_graph.interaction_graph_factory: IG: 794036 bytes
-core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Setting up BuriedUnsatPenalty energy method for packing.
-core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Creating new BuriedUnsatPenaltyGraph and caching it in the pose.
-core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Successfully set up BuriedUnsatPenalty energy method for packing.
-core.pack.voids_penalty_energy.VoidsPenaltyEnergy: Setting up the VoidsPenaltyEnergy for packing.
-core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Computing pose bounding box with padding of 1 Angstroms...
-core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Done.  Bounding box is from [-16.7721, -15.7563, -12.0244] to [12.8708, 15.6711, 10.5136].
-core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Setting up voxel grid...
-core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Updated upper-right coordinates.  Bounding box is now [-16.7721, -15.7563, -12.0244] to [13.2279, 15.7437, 10.9756].
-core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Set up a 61x64x47 voxel grid.  (183488 voxels total).Computing voxel burial by method of sidechain neighbours...
-core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Pruning voxels for non-packable residues.  Total volume before pruning: 13719 cubic Angstroms.
-core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Total volume after pruning: 13555 cubic Angstroms.
-core.scoring.aa_composition_energy.AACompositionEnergy: Disabling AACompositionEnergy during minimization.
-core.pack.guidance_scoreterms.hbnet_energy.HBNetEnergy: Disabling HBNetEnergy during minimization.
-core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Disabling BuriedUnsatPenalty scoreterm during minimization trajectory.
-core.pack.voids_penalty_energy.VoidsPenaltyEnergy: Disabling VoidsPenaltyEnergy during minimization.
-core.scoring.aa_composition_energy.AACompositionEnergy: Re-enabling AACompositionEnergy following minimization.
-core.pack.guidance_scoreterms.hbnet_energy.HBNetEnergy: Re-enabling HBNetEnergy following minimization.
-core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Re-enabling BuriedUnsatPenalty scoreterm after minimization trajectory.
-core.pack.voids_penalty_energy.VoidsPenaltyEnergy: Re-enabling VoidsPenaltyEnergy after minimization.
-protocols.relax.FastRelax: CMD: ramp_repack_min  4112.35  0.123584  0.123584  0.55
-protocols.relax.FastRelax: MRP: 0  4112.35  4112.35  0.123584  0.123584  
-protocols.relax.FastRelax: CMD: accept_to_best  4112.35  0.123584  0.123584  0.55
-protocols.relax.FastRelax: CMD: endrepeat  4112.35  0.123584  0.123584  0.55
-protocols::checkpoint: Deleting checkpoints of FastRelax
-protocols.denovo_design.movers.FastDesign: 
-------------------------------------------------------------
- Scores                       Weight   Raw Score Wghtd.Score
-------------------------------------------------------------
- fa_atr                       1.000    -352.586    -352.586
- fa_rep                       0.550     137.672      75.719
- fa_sol                       1.000     270.501     270.501
- fa_intra_rep                 0.005     160.027       0.800
- fa_intra_sol_xover4          1.000      20.312      20.312
- lk_ball_wtd                  1.000      -9.353      -9.353
- fa_elec                      1.000     -73.560     -73.560
- pro_close                    1.250       0.000       0.000
- hbond_sr_bb                  1.000     -49.308     -49.308
- hbond_lr_bb                  1.000       0.000       0.000
- hbond_bb_sc                  1.000      -0.435      -0.435
- hbond_sc                     1.000     -15.088     -15.088
- dslf_fa13                    1.250       0.000       0.000
- atom_pair_constraint         1.000       0.000       0.000
- coordinate_constraint        1.000      14.703      14.703
- angle_constraint             1.000       0.000       0.000
- dihedral_constraint          1.000       0.000       0.000
- metalbinding_constraint      1.000       0.000       0.000
- omega                        0.400       0.419       0.168
- fa_dun                       0.700     183.483     128.438
- p_aa_pp                      0.600      28.273      16.964
- yhh_planarity                0.625       0.000       0.000
- ref                          1.000      27.664      27.664
- chainbreak                   1.000       0.000       0.000
- rama_prepro                  0.450      21.546       9.696
- res_type_constraint          1.000       0.000       0.000
- aa_composition               1.000       0.000       0.000
- hbnet                        0.200     -11.420      -2.284
- buried_unsatisfied_penalty     0.500    8100.000    4050.000
- voids_penalty                1.000       0.000       0.000
----------------------------------------------------
- Total weighted score:                     4112.352
+ Total weighted score:                    14412.521
 protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN FILTER cavity_volume=======================
 protocols.packstat.SimplePDB: ignoring unknown atom types:
 protocols.packstat.SimplePDB: (X,XXX), 
-protocols.packstat: prune radius 1.6 978 386 207 128 78 
-devel.denovo_design.calculators.CavityCalculator: HETATM   60  V   CAV Z  76       9.234   6.459  -0.906  0.00  1.40
-devel.denovo_design.calculators.CavityCalculator: Cluster 1: volume=12.7423, surface_area=24.6301, surface_accessibility=0, center=9.23363,6.45899,-0.905767
-devel.denovo_design.filters.CavityVolumeFilter: CavityCalculator returned 12.7423
+protocols.packstat: prune radius 1.6 972 427 250 153 106 
+devel.denovo_design.calculators.CavityCalculator: HETATM    7  V   CAV Z  76      -6.032  -0.018   4.322  0.00  1.30
+devel.denovo_design.calculators.CavityCalculator: Cluster 1: volume=10.2793, surface_area=21.2372, surface_accessibility=0, center=-6.03237,-0.0175044,4.32177
+devel.denovo_design.filters.CavityVolumeFilter: CavityCalculator returned 10.2793
 protocols.rosetta_scripts.ParsedProtocol: =======================END FILTER cavity_volume=======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER RunSimpleMetrics - add_pymol_string=======================
+protocols.analysis.simple_metrics.RunSimpleMetricsMover: Running: PolarGroupBurialPyMolStringMetric - calculating polar_group_burial_pymol
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Setting up BuriedUnsatPenalty energy method for packing.
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Creating new BuriedUnsatPenaltyGraph and caching it in the pose.
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Successfully set up BuriedUnsatPenalty energy method for packing.
+protocols.analysis.burial_metrics.PolarGroupBurialPyMolStringMetric: 
+Pymol commands to colour the pose:
+color grey
+color orange, resi 1 AND name O
+color cyan, resi 1 AND name N+1H+2H+3H
+color orange, resi 2 AND name O
+color orange, resi 2 AND name N+H
+color orange, resi 3 AND name O
+color orange, resi 3 AND name N+H
+color orange, resi 4 AND name O
+color cyan, resi 4 AND name OE1
+color cyan, resi 4 AND name OE2
+color orange, resi 4 AND name N+H
+color orange, resi 5 AND name O
+color orange, resi 5 AND name OE1
+color orange, resi 5 AND name N+H
+color orange, resi 5 AND name NE2+1HE2+2HE2
+color orange, resi 6 AND name O
+color orange, resi 6 AND name N+H
+color orange, resi 6 AND name NE1+HE1
+color cyan, resi 7 AND name O
+color orange, resi 7 AND name N+H
+color cyan, resi 8 AND name O
+color orange, resi 8 AND name OE1
+color orange, resi 8 AND name N+H
+color orange, resi 8 AND name NE2+1HE2+2HE2
+color orange, resi 9 AND name O
+color orange, resi 9 AND name N+H
+color cyan, resi 10 AND name O
+color cyan, resi 10 AND name OE1
+color cyan, resi 10 AND name OE2
+color orange, resi 10 AND name N+H
+color cyan, resi 11 AND name O
+color cyan, resi 11 AND name N+H
+color cyan, resi 12 AND name O
+color cyan, resi 12 AND name OXT
+color cyan, resi 12 AND name N+H
+color orange, resi 13 AND name O
+color cyan, resi 13 AND name N+1H+2H+3H
+color orange, resi 14 AND name O
+color orange, resi 14 AND name N+H
+color cyan, resi 15 AND name O
+color cyan, resi 15 AND name N+H
+color orange, resi 16 AND name O
+color cyan, resi 16 AND name N+H
+color orange, resi 17 AND name O
+color orange, resi 17 AND name OE1
+color orange, resi 17 AND name OE2
+color orange, resi 17 AND name N+H
+color cyan, resi 18 AND name O
+color orange, resi 18 AND name N+H
+color cyan, resi 19 AND name O
+color cyan, resi 19 AND name N+H
+color cyan, resi 20 AND name O
+color orange, resi 20 AND name OE1
+color cyan, resi 20 AND name N+H
+color orange, resi 20 AND name NE2+1HE2+2HE2
+color cyan, resi 21 AND name O
+color orange, resi 21 AND name OD1
+color orange, resi 21 AND name N+H
+color orange, resi 21 AND name ND2+1HD2+2HD2
+color cyan, resi 22 AND name O
+color cyan, resi 22 AND name N+H
+color cyan, resi 23 AND name O
+color cyan, resi 23 AND name N+H
+color cyan, resi 24 AND name O
+color cyan, resi 24 AND name OXT
+color orange, resi 24 AND name OE1
+color cyan, resi 24 AND name N+H
+color cyan, resi 24 AND name NE2+1HE2+2HE2
+
 protocols.rosetta_scripts.ParsedProtocol: setting status to success
-devel.denovo_design.filters.CavityVolumeFilter: CavityCalculator returned 12.7423
+devel.denovo_design.filters.CavityVolumeFilter: CavityCalculator returned 10.2793
 protocols.rosetta_scripts.ParsedProtocol.REPORT: ============Begin report for cavity_volume==================
-devel.denovo_design.filters.CavityVolumeFilter: CavityCalculator returned 12.7423
-protocols.rosetta_scripts.ParsedProtocol.REPORT: Total Cavity Volume is:12.7423
+devel.denovo_design.filters.CavityVolumeFilter: CavityCalculator returned 10.2793
+protocols.rosetta_scripts.ParsedProtocol.REPORT: Total Cavity Volume is:10.2793
 protocols.rosetta_scripts.ParsedProtocol.REPORT: ============End report for cavity_volume==================
 protocols.jd2.JobDistributor: no more batches to process... 
 protocols.jd2.JobDistributor: [ WARNING ] The following options have been set, but have not yet been used:
 	-packing:linmem_ig 10
 
-protocols::checkpoint: Deleting checkpoints of FastRelax
-protocols::checkpoint: Deleting checkpoints of FastRelax

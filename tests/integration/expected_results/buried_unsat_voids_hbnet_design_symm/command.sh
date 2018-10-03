@@ -27,10 +27,10 @@
 # All command files should start with this line:
 #
 
-cd /local/vmullig/rosetta_git_devcopy2/Rosetta/main/tests/integration/new/buried_unsat_voids_hbnet_design_symm
+cd /Users/vmulligan/rosetta_devcopy/Rosetta/main/tests/integration/new/buried_unsat_voids_hbnet_design_symm
 
-[ -x /local/vmullig/rosetta_git_devcopy2/Rosetta/main/source/bin/rosetta_scripts.default.linuxgccrelease ] || exit 1
-/local/vmullig/rosetta_git_devcopy2/Rosetta/main/source/bin/rosetta_scripts.default.linuxgccrelease  @flags -database /local/vmullig/rosetta_git_devcopy2/Rosetta/main/database -testing:INTEGRATION_TEST  2>&1 \
+[ -x /Users/vmulligan/rosetta_devcopy/Rosetta/main/source/bin/rosetta_scripts.default.macosclangrelease ] || exit 1
+/Users/vmulligan/rosetta_devcopy/Rosetta/main/source/bin/rosetta_scripts.default.macosclangrelease  @flags -database /Users/vmulligan/rosetta_devcopy/Rosetta/main/database -testing:INTEGRATION_TEST -jran 11111112 2>&1 \
     | egrep -vf ../../ignore_list \
     > log
 
@@ -45,13 +45,13 @@ test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executabl
 # Here's a typical test for a Mini binary, assuming there's a "flags" file
 # in this directory too:
 #
-## /local/vmullig/rosetta_git_devcopy2/Rosetta/main/source/bin/MY_MINI_PROGRAM.default.linuxgccrelease  @flags -database /local/vmullig/rosetta_git_devcopy2/Rosetta/main/database -testing:INTEGRATION_TEST  2>&1 \
+## /Users/vmulligan/rosetta_devcopy/Rosetta/main/source/bin/MY_MINI_PROGRAM.default.macosclangrelease  @flags -database /Users/vmulligan/rosetta_devcopy/Rosetta/main/database -testing:INTEGRATION_TEST  2>&1 \
 ##     | egrep -v 'Finished.+in [0-9]+ seconds.' \
 ##     | egrep -v 'Dunbrack library took .+ seconds to load' \
 ##     > log
 #
 # Or if you don't care whether the logging output changes:
 #
-## /local/vmullig/rosetta_git_devcopy2/Rosetta/main/source/bin/MY_MINI_PROGRAM.default.linuxgccrelease  @flags -database /local/vmullig/rosetta_git_devcopy2/Rosetta/main/database -testing:INTEGRATION_TEST  2>&1 \
+## /Users/vmulligan/rosetta_devcopy/Rosetta/main/source/bin/MY_MINI_PROGRAM.default.macosclangrelease  @flags -database /Users/vmulligan/rosetta_devcopy/Rosetta/main/database -testing:INTEGRATION_TEST  2>&1 \
 ##     > /dev/null
 #

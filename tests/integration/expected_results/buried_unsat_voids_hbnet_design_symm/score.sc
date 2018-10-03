@@ -1,3 +1,72 @@
 SEQUENCE: 
-SCORE: total_score aa_composition angle_constraint atom_pair_constraint buried_unsatisfied_penalty cavity_volume chainbreak coordinate_constraint dihedral_constraint dslf_fa13    fa_atr    fa_dun   fa_elec fa_intra_rep fa_intra_sol_xover4              fa_rep              fa_sol               hbnet hbond_bb_sc hbond_lr_bb    hbond_sc hbond_sr_bb lk_ball_wtd metalbinding_constraint                   omega                 p_aa_pp pro_close rama_prepro         ref res_type_constraint voids_penalty yhh_planarity description 
-SCORE:    4112.352          0.000            0.000                0.000                   4050.000        12.742      0.000                14.703               0.000     0.000  -352.586   128.438   -73.560        0.800              20.312              75.719             270.501              -2.284      -0.435       0.000     -15.088     -49.308      -9.353                   0.000                   0.168                  16.964     0.000       9.696      27.664               0.000         0.000         0.000 S_4207_0001
+SCORE: total_score aa_composition angle_constraint atom_pair_constraint buried_unsatisfied_penalty cavity_volume chainbreak coordinate_constraint dihedral_constraint dslf_fa13    fa_atr    fa_dun   fa_elec fa_intra_rep fa_intra_sol_xover4              fa_rep              fa_sol               hbnet hbond_bb_sc hbond_lr_bb    hbond_sc hbond_sr_bb lk_ball_wtd metalbinding_constraint                   omega                 p_aa_pp pro_close rama_prepro         ref res_type_constraint voids_penalty yhh_planarity                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             polar_group_burial_pymol description 
+SCORE:   14412.521          0.000            0.000                0.000                  14400.000        10.279      0.000                 0.000               0.000     0.000  -334.511   112.288   -83.438        0.492              17.397              42.335             310.591              -2.075      -3.338       0.000     -15.955     -49.308      -8.369                   0.000                   0.168                  16.342     0.000       9.374       0.528               0.000         0.000         0.000 Pymol commands to colour the pose:
+color grey
+color orange, resi 1 AND name O
+color cyan, resi 1 AND name N+1H+2H+3H
+color orange, resi 2 AND name O
+color orange, resi 2 AND name N+H
+color orange, resi 3 AND name O
+color orange, resi 3 AND name N+H
+color orange, resi 4 AND name O
+color cyan, resi 4 AND name OE1
+color cyan, resi 4 AND name OE2
+color orange, resi 4 AND name N+H
+color orange, resi 5 AND name O
+color orange, resi 5 AND name OE1
+color orange, resi 5 AND name N+H
+color orange, resi 5 AND name NE2+1HE2+2HE2
+color orange, resi 6 AND name O
+color orange, resi 6 AND name N+H
+color orange, resi 6 AND name NE1+HE1
+color cyan, resi 7 AND name O
+color orange, resi 7 AND name N+H
+color cyan, resi 8 AND name O
+color orange, resi 8 AND name OE1
+color orange, resi 8 AND name N+H
+color orange, resi 8 AND name NE2+1HE2+2HE2
+color orange, resi 9 AND name O
+color orange, resi 9 AND name N+H
+color cyan, resi 10 AND name O
+color cyan, resi 10 AND name OE1
+color cyan, resi 10 AND name OE2
+color orange, resi 10 AND name N+H
+color cyan, resi 11 AND name O
+color cyan, resi 11 AND name N+H
+color cyan, resi 12 AND name O
+color cyan, resi 12 AND name OXT
+color cyan, resi 12 AND name N+H
+color orange, resi 13 AND name O
+color cyan, resi 13 AND name N+1H+2H+3H
+color orange, resi 14 AND name O
+color orange, resi 14 AND name N+H
+color cyan, resi 15 AND name O
+color cyan, resi 15 AND name N+H
+color orange, resi 16 AND name O
+color cyan, resi 16 AND name N+H
+color orange, resi 17 AND name O
+color orange, resi 17 AND name OE1
+color orange, resi 17 AND name OE2
+color orange, resi 17 AND name N+H
+color cyan, resi 18 AND name O
+color orange, resi 18 AND name N+H
+color cyan, resi 19 AND name O
+color cyan, resi 19 AND name N+H
+color cyan, resi 20 AND name O
+color orange, resi 20 AND name OE1
+color cyan, resi 20 AND name N+H
+color orange, resi 20 AND name NE2+1HE2+2HE2
+color cyan, resi 21 AND name O
+color orange, resi 21 AND name OD1
+color orange, resi 21 AND name N+H
+color orange, resi 21 AND name ND2+1HD2+2HD2
+color cyan, resi 22 AND name O
+color cyan, resi 22 AND name N+H
+color cyan, resi 23 AND name O
+color cyan, resi 23 AND name N+H
+color cyan, resi 24 AND name O
+color cyan, resi 24 AND name OXT
+color orange, resi 24 AND name OE1
+color cyan, resi 24 AND name N+H
+color cyan, resi 24 AND name NE2+1HE2+2HE2
+ S_4207_0001

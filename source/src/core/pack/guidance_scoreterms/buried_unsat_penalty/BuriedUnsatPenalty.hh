@@ -12,6 +12,10 @@
 /// @details This energy method is inherently not pairwise decomposible.  However, it is intended for very rapid calculation,
 /// and has been designed to plug into Alex Ford's modifications to the packer that permit it to work with non-pairwise scoring
 /// terms.
+/// @note This was updated on 21 September 2018 to ensure that, during a packing trajectorym, only buried unsatisfied groups that are (a) on packable
+/// rotamers, or (b) that are on non-packable rotamers, but which can hydrogen-bond to at least one packable rotamer are the only ones that count towards
+/// the penalty.  Without this, "native" buried unsats that are unreachable in a packing problem contribute unreasonably to the total score.  (Thanks to
+/// Kale Kundert for identifying the problem.)
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
 
 #ifndef INCLUDED_core_pack_guidance_scoreterms_buried_unsat_penalty_BuriedUnsatPenalty_hh
@@ -146,6 +150,10 @@ public:
 	/// set_up_residuearrayannealableenergy_for_packing.
 	void provide_pymol_commands_to_show_groups( std::ostream &out, core::pose::Pose const &pose ) const;
 
+	/// @brief Should the graph setup-for-packing skip the step in which groups that are not packable and not able to hydrogen bond to
+	/// a packable residue are pruned?  Default false; this function allows this to be set, though.
+	inline void set_prevent_pruning( bool const setting ) { prevent_pruning_ = setting; }
+
 private:
 
 	/******************
@@ -216,6 +224,10 @@ private:
 
 	/// @brief The number of symmetry copies.  Used for packing only.
 	core::Size num_symmetric_copies_;
+
+	/// @brief Should the graph setup-for-packing skip the step in which groups that are not packable and not able to hydrogen bond to
+	/// a packable residue are pruned?  Default false.
+	bool prevent_pruning_;
 
 	/******************
 	Private variables used in packing:

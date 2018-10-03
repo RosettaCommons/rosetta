@@ -180,6 +180,7 @@ PolarGroupBurialPyMolStringMetric::calculate(
 	utility::graph::GraphOP packer_neighbor_graph( core::pack::create_packer_graph( pose, *sfxn, possibly_symmetric_task ) );
 	rotsets->build_rotamers(pose, *sfxn, packer_neighbor_graph);
 	rotsets->prepare_sets_for_packing(pose, *sfxn);
+	scoreterm.set_prevent_pruning(true);
 	scoreterm.set_up_residuearrayannealableenergy_for_packing( pose, *rotsets, *sfxn );
 
 	std::stringstream outstream;

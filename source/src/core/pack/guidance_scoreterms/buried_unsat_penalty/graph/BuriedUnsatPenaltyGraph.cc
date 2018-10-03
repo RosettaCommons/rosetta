@@ -501,6 +501,51 @@ BuriedUnsatPenaltyNode::decrement_counts(
 	} //Loop through all donor/acceptor groups
 }
 
+/// @brief Iterate through each donor and acceptor group in this node, and set to "do not count" if the group forms no hydrogen bonds to any packable
+/// residue's groups.
+/// @details This should only be called for nodes corresponding to non-packable positions.
+void
+BuriedUnsatPenaltyNode::prune_donor_acceptor_groups_lacking_hbonds_to_packable(
+	core::pack::rotamer_set::RotamerSets const & rotsets
+) {
+	utility::vector1< bool > has_hbond_to_packable( this->num_donor_acceptor_groups(), false );
+
+	for ( utility::graph::EdgeListConstIterator it( const_edge_list_begin() ); it != const_edge_list_end(); ++it ) {
+		BuriedUnsatPenaltyEdge const & curedge( *( static_cast< BuriedUnsatPenaltyEdge const * >( *it ) ) );
+		if ( !rotsets.has_rotamer_set_for_residue( static_cast< BuriedUnsatPenaltyNode const * >( curedge.get_other_node( get_node_index() ) )->residue_position() ) ) {
+			continue; //Don't consider hbonds to residues that aren't packable.
+		}
+
+		//In the current edge, is the current node the first node (or the second)?:
+		bool const this_is_first_node( curedge.get_first_node_ind() == this->get_node_index() );
+		debug_assert( this_is_first_node || curedge.get_second_node_ind() == this->get_node_index() );
+
+		//Determine which groups have a hydrogen bond in the current edge:
+		for ( core::Size ihbond(1), ihbondmax(curedge.n_hbonds()); ihbond<=ihbondmax; ++ihbond ) {
+			BuriedUnsatPenaltyGraphHbond const & curhbond( curedge.hbond(ihbond) );
+			bool const this_is_acceptor( ( this_is_first_node && curhbond.first_node_is_the_acceptor() ) || ((!this_is_first_node) && (!curhbond.first_node_is_the_acceptor())) );
+			if ( this_is_acceptor ) {
+				has_hbond_to_packable[ curhbond.acceptor_group() ] = true;
+			} else {
+				has_hbond_to_packable[ curhbond.donor_group() ] = true;
+			}
+		}
+	}
+
+	//TR << "Node " << this->get_node_index() << " (seqpos " << this->residue_position() << ", rotamer " << this->rotamer_index() << "):" << std::endl;
+	//for( core::Size i(1), imax(has_hbond_to_packable.size()); i<=imax; ++i ) {
+	// TR << "\t" << has_hbond_to_packable[i] << std::endl;
+	//}
+
+	//At this point, I know which donor/acceptor groups have a hydrogen bond to a packable residue.  I can now
+	//update the count settings.
+	for ( core::Size i(1), imax(this->num_donor_acceptor_groups()); i<=imax; ++i ) {
+		if ( !has_hbond_to_packable[i] ) {
+			stored_data_->donor_acceptor_groups()[i].set_counted(false);
+		}
+	}
+}
+
 //////////////////////
 // Private functions
 //////////////////////
@@ -878,11 +923,14 @@ BuriedUnsatPenaltyGraph::initialize_graph_for_scoring(
 }
 
 /// @brief Initialize a BuriedUnsatPenaltyGraph from a pose and a residue set, for packing.
+/// @details If prevent_pruning is true, then we DISABLE pruning of groups that are not packable and not
+/// able to hydrogen bond to packable residues.
 void
 BuriedUnsatPenaltyGraph::initialize_graph_for_packing(
 	core::pose::Pose const &pose,
 	core::pack::rotamer_set::RotamerSets const &rotamersets,
-	bool const only_scoring /*=false*/
+	bool const only_scoring /*=false*/,
+	bool const prevent_pruning /*=false*/
 ) {
 
 	bool const is_symmetric( core::pose::symmetry::is_symmetric(pose) );
@@ -1038,6 +1086,19 @@ BuriedUnsatPenaltyGraph::initialize_graph_for_packing(
 			} //Inner loop through all residues in pose
 		} //Outer loop through all residues in pose
 	} //Scope for inter-residue hydrogen bonds
+
+	// Fourth, if we are packing, go back through and deactivate those acceptors and donors that are (a) not packable, AND (b) not hydrogen-bonding to any
+	// packable residue.
+	if ( !only_scoring && !prevent_pruning ) {
+		for ( core::Size node_index(1), node_max(num_nodes()); node_index<=node_max; ++node_index ) { //Loop over all nodes
+			BuriedUnsatPenaltyNode & curnode( *( static_cast< BuriedUnsatPenaltyNode * >( get_node( node_index ) ) ) );
+
+			//TR << "RESPOS=" << curnode.residue_position() << " ROTSET_HAS=" << rotamersets.has_rotamer_set_for_residue(curnode.residue_position()) << std::endl; //DELETE ME.  FOR DEBUGGING ONLY.
+
+			if ( rotamersets.has_rotamer_set_for_residue( curnode.residue_position() ) ) continue; //Don't prune anything for packable residues.
+			curnode.prune_donor_acceptor_groups_lacking_hbonds_to_packable( rotamersets );
+		} //Loop over all nodes
+	}
 }
 
 

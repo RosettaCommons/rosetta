@@ -12,6 +12,10 @@
 /// @details This energy method is inherently not pairwise decomposible.  However, it is intended for very rapid calculation,
 /// and has been designed to plug into Alex Ford's modifications to the packer that permit it to work with non-pairwise scoring
 /// terms.
+/// @note This was updated on 21 September 2018 to ensure that, during a packing trajectorym, only buried unsatisfied groups that are (a) on packable
+/// rotamers, or (b) that are on non-packable rotamers, but which can hydrogen-bond to at least one packable rotamer are the only ones that count towards
+/// the penalty.  Without this, "native" buried unsats that are unreachable in a packing problem contribute unreasonably to the total score.  (Thanks to
+/// Kale Kundert for identifying the problem.)
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
 
 // Unit headers
@@ -110,6 +114,7 @@ BuriedUnsatPenalty::BuriedUnsatPenalty ( core::scoring::methods::EnergyMethodOpt
 	symmetric_(false),
 	nres_(0),
 	num_symmetric_copies_(0),
+	prevent_pruning_(false),
 	curstate_graph_(nullptr),
 	unsat_acceptor_count_lastaccepted_(0),
 	unsat_donor_count_lastaccepted_(0),
@@ -305,7 +310,7 @@ BuriedUnsatPenalty::set_up_residuearrayannealableenergy_for_packing (
 	if ( !pose.energies().data().has( core::scoring::EnergiesCacheableDataType::BURIED_UNSAT_HBOND_GRAPH ) ) {
 		TR << "Creating new BuriedUnsatPenaltyGraph and caching it in the pose." << std::endl;
 		graph::BuriedUnsatPenaltyGraphOP unsat_graph( utility::pointer::make_shared< graph::BuriedUnsatPenaltyGraph >( graph_options_, hbond_options_ ) );
-		unsat_graph->initialize_graph_for_packing( pose, rotamersets );
+		unsat_graph->initialize_graph_for_packing( pose, rotamersets, false, prevent_pruning_ );
 		graph::BuriedUnsatPenaltyGraphContainerOP unsat_graph_container( utility::pointer::make_shared< graph::BuriedUnsatPenaltyGraphContainer >( unsat_graph ) );
 		pose.energies().data().set( core::scoring::EnergiesCacheableDataType::BURIED_UNSAT_HBOND_GRAPH, unsat_graph_container );
 		unsat_graph_ = unsat_graph;

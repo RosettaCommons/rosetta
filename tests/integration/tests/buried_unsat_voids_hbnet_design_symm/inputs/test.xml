@@ -8,7 +8,7 @@
 			<Reweight scoretype="voids_penalty" weight="1.0" />
 			<Reweight scoretype="hbnet" weight="0.2" />
 			<Set hbnet_bonus_function_ramping="logarithmic" />
-			<Reweight scoretype="buried_unsatisfied_penalty" weight="0.5" />
+			<Reweight scoretype="buried_unsatisfied_penalty" weight="1.0" />
 			<Set buried_unsatisfied_penalty_burial_threshold="3" />
 		</ScoreFunction>
 	</SCOREFXNS>
@@ -41,7 +41,7 @@
 
 		<AddCompositionConstraintMover name="add_comp_csts" filename="inputs/design.comp" selector="select_not_surf" />
 
-		<FastDesign name="design" scorefxn="r15_mod" repeats="1" task_operations="no_repack_surf,allowed_for_design,include_current,limit_aro,extra_rots" >
+		<FastDesign name="design" scorefxn="r15_mod" repeats="2" task_operations="no_repack_surf,allowed_for_design,include_current,limit_aro,extra_rots" >
 			<MoveMap name="design_mm" >
 				<Span begin="1" end="72" bb="false" chi="true" />
 				<Jump number="1" setting="false" />
@@ -55,20 +55,6 @@
 				<Jump number="9" setting="false" />
 			</MoveMap>
 		</FastDesign>
-		<FastDesign name="design2" scorefxn="r15_mod" repeats="1" task_operations="no_repack_surf,allowed_for_design,include_current,limit_aro,extra_rots" >
-			<MoveMap name="design_mm" >
-				<Span begin="1" end="72" bb="false" chi="true" />
-				<Jump number="1" setting="true" />
-				<Jump number="2" setting="true" />
-				<Jump number="3" setting="true" />
-				<Jump number="4" setting="true" />
-				<Jump number="5" setting="true" />
-				<Jump number="6" setting="true" />
-				<Jump number="7" setting="true" />
-				<Jump number="8" setting="true" />
-				<Jump number="9" setting="true" />
-			</MoveMap>
-		</FastDesign>
 		<RunSimpleMetrics name="add_pymol_string" metrics="pymol_string" />
 	</MOVERS>
 	<APPLY_TO_POSE>
@@ -79,7 +65,6 @@
 		<Add mover="add_csts" />
 		<Add mover="add_comp_csts" />
 		<Add mover="design" />
-		<Add mover="design2" />
 		<Add filter="cavity_volume" />
 		<Add mover="add_pymol_string" />
 	</PROTOCOLS>

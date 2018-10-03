@@ -162,6 +162,9 @@ public: //Accessor functions
 	/// @brief Is this group a group to count (e.g. a buried group)?
 	inline bool is_counted() const { return is_counted_; }
 
+	/// @brief Set whether this is a group to count.
+	inline void set_counted( bool const setting ) { is_counted_ = setting; }
+
 	/// @brief Get the atom index in the relevant residue of the heavyatom for this group.
 	inline core::Size heavyatom_index() const { return heavyatom_index_; }
 
@@ -411,6 +414,10 @@ public: //These functions are public, but are only intended to be called by Buri
 	/// @param[in] data The BuriedUnsatPenaltyNodeData to use.  Since this has often been replaced by the time this function is called, we need to pass it in separately.
 	void decrement_counts(core::Size &unsat_acceptor_count, core::Size &unsat_donor_count, core::Size &unsat_acceptor_and_donor_count, core::Size &oversat_acceptor_count, core::Size &oversat_donor_count, core::Size &oversat_acceptor_and_donor_count, graph::BuriedUnsatPenaltyNodeDataCOP data ) const;
 
+	/// @brief Iterate through each donor and acceptor group in this node, and set to "do not count" if the group forms no hydrogen bonds to any packable
+	/// residue's groups.
+	void prune_donor_acceptor_groups_lacking_hbonds_to_packable( core::pack::rotamer_set::RotamerSets const & rotsets );
+
 	/// @brief Get the residue index (position in the pose) for this node.
 	inline core::Size residue_position() const { return stored_data_->residue_position(); }
 
@@ -445,7 +452,7 @@ private: //Private functions
 private:
 
 	/// @brief Owning pointer to the data object.
-	BuriedUnsatPenaltyNodeDataCOP stored_data_;
+	BuriedUnsatPenaltyNodeDataOP stored_data_;
 
 	/// @brief The number of hbonds that each group is donating.
 	utility::vector1< core::Size > donated_hbond_count_;
@@ -602,7 +609,9 @@ public: //Public member functions
 	void initialize_graph_for_scoring( core::pose::Pose const &pose );
 
 	/// @brief Initialize a BuriedUnsatPenaltyGraph from a pose and a residue set, for packing.
-	void initialize_graph_for_packing( core::pose::Pose const &pose, core::pack::rotamer_set::RotamerSets const &rotamersets, bool const only_scoring=false );
+	/// @details If prevent_pruning is true, then we DISABLE pruning of groups that are not packable and not
+	/// able to hydrogen bond to packable residues.
+	void initialize_graph_for_packing( core::pose::Pose const &pose, core::pack::rotamer_set::RotamerSets const &rotamersets, bool const only_scoring=false, bool const prevent_pruning=false );
 
 	/// @brief Given this BuriedUnsatPenaltyGraph with some number of nodes, iterate through each node and update the
 	/// internally-stored counts for unsats and oversats based on the edges connected to that node.

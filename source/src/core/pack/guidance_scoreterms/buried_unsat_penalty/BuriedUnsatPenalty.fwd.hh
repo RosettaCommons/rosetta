@@ -12,6 +12,10 @@
 /// @details This energy method is inherently not pairwise decomposible.  However, it is intended for very rapid calculation,
 /// and has been designed to plug into Alex Ford's modifications to the packer that permit it to work with non-pairwise scoring
 /// terms.
+/// @note This was updated on 21 September 2018 to ensure that, during a packing trajectorym, only buried unsatisfied groups that are (a) on packable
+/// rotamers, or (b) that are on non-packable rotamers, but which can hydrogen-bond to at least one packable rotamer are the only ones that count towards
+/// the penalty.  Without this, "native" buried unsats that are unreachable in a packing problem contribute unreasonably to the total score.  (Thanks to
+/// Kale Kundert for identifying the problem.)
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
 
 
