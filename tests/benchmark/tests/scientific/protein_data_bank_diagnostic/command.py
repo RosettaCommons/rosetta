@@ -103,7 +103,7 @@ _index_html_template_ = '''\
 
 <p><i>"Hunting down these bugs is the most fun thing you can do on a Thursday morning"</i> - Andy Watkins, probably.</p>
 
-<p>An individual PDB passes or fails this test based on whether it errors out or completes the diagnostic.  The test as a whole passes or fails based on a "reference results" system, like an expected result in a unit test.  About 16,000 PDBs fail at the time of this writing; the purpose of the test is to document the failures and watch for new ones, so PDBs failing in an expected manner does not constitute an overall test failure.  The test will fail if PDBs pass or fail <b>UNEXPECTEDLY</b>, where the expectation is defined by the reference results (see below).</p>
+<p>An individual PDB passes or fails this test based on whether it errors out or completes the diagnostic.  The test as a whole passes or fails based on a "reference results" system, like an expected result in a unit test.  About 700 PDBs and 1200 CIFs fail at the time of this writing; the purpose of the test is to document the failures and watch for new ones, so PDBs failing in an expected manner does not constitute an overall test failure.  The test will fail if PDBs pass or fail <b>UNEXPECTEDLY</b>, where the expectation is defined by the reference results (see below).</p>
 
 <p>If you find that this page is telling you the test failed because there are <b>FEWER</b> errors: <b>GREAT</b>!  You fixed some bugs!  You can update the reference results following the instructions at the bottom of the page.</p>
 
@@ -127,8 +127,8 @@ _index_html_template_ = '''\
 <br/>
 <p>
  To update reference results please copy the files below into the main repository:<br/>
- &nbsp;&nbsp;&nbsp;&nbsp;<a href="reference-results.{mode}.new.json">reference-results.{mode}.new.json</a> → <a href="https://github.com/RosettaCommons/main">「main repository」</a> as <a href="https://github.com/RosettaCommons/main/tree/master/tests/benchmark/tests/scientific/protein_data_bank_diagnostic/reference-results.{mode}.json">tests/scientific/protein_data_bank_diagnostic/reference-results.{mode}.json</a><br/>
- &nbsp;&nbsp;&nbsp;&nbsp;<a href="blacklist.{mode}.new.json">blacklist.{mode}.new.json</a> → <a href="https://github.com/RosettaCommons/main">「main repository」</a> as <a href="https://github.com/RosettaCommons/main/tree/master/tests/benchmark/tests/scientific/protein_data_bank_diagnostic/reference-results.{mode}.json">tests/scientific/protein_data_bank_diagnostic/blacklist.{mode}.json</a><br/>
+ &nbsp;&nbsp;&nbsp;&nbsp;<a href="reference-results.{mode}.new.json">reference-results.{mode}.new.json</a> → <a href="https://github.com/RosettaCommons/main">「main repository」</a> as <a href="https://github.com/RosettaCommons/main/tree/master/tests/benchmark/tests/scientific/protein_data_bank_diagnostic/reference-results.{mode}.json">tests/benchmark/tests/scientific/protein_data_bank_diagnostic/reference-results.{mode}.json</a><br/>
+ &nbsp;&nbsp;&nbsp;&nbsp;<a href="blacklist.{mode}.new.json">blacklist.{mode}.new.json</a> → <a href="https://github.com/RosettaCommons/main">「main repository」</a> as <a href="https://github.com/RosettaCommons/main/tree/master/tests/benchmark/tests/scientific/protein_data_bank_diagnostic/reference-results.{mode}.json">tests/benchmark/tests/scientific/protein_data_bank_diagnostic/blacklist.{mode}.json</a><br/>
 </p>
 </body></html>
 '''
@@ -343,8 +343,8 @@ class PDB_Diagnostic_Codes(enum.Enum):
 
     exceed_timeout        = enum.auto()
 
-    assert_segfault       = enum.auto()
-    misc_segfault         = enum.auto()
+    # assert_segfault       = enum.auto()  # we are lumping these in with unknown
+    # misc_segfault         = enum.auto()
 
     reroot_disconnected   = enum.auto()
     atom_base_not_bonded  = enum.auto()
@@ -429,21 +429,16 @@ def classify_pdb_diagnostic_log(log):
         splited = line.replace(':', '').split()
 
         if 'ERROR' in splited:
-
             for pattern, error_code in error_map.items():
-
-                if pattern_in(pattern, previous_line, line, next_line, splited, log): return error_code
-
-    return PDB_Diagnostic_Codes.unknown
-
+                if pattern_in(pattern, previous_line, line, next_line, splited, log):
+                    return error_code
 
     #if '*****COMPLETED*****' in previous_line: return None
-    #else:
-    if 'assertion' in log  and  'failed.' in log: return PDB_Diagnostic_Codes.assert_segfault
-    elif 'exceeded the timeout and will be killed!' in log: return PDB_Diagnostic_Codes.exceed_timeout
+    # if 'assertion' in log  and  'failed.' in log: return PDB_Diagnostic_Codes.assert_segfault
+    if 'exceeded the timeout and will be killed!' in log:
+        return PDB_Diagnostic_Codes.exceed_timeout
 
-    return PDB_Diagnostic_Codes.misc_segfault
-
+    return PDB_Diagnostic_Codes.unknown
 
 
 def main(args):
@@ -462,7 +457,8 @@ def main(args):
 
         if res:
             code = classify_pdb_diagnostic_log(output)
-            log_path = os.path.abspath( f'{pdb}.log' if code in (PDB_Diagnostic_Codes.unknown, PDB_Diagnostic_Codes.misc_segfault, None) else f'{error_logs}/{pdb}.log' )
+            special_handled_errors = (PDB_Diagnostic_Codes.unknown, None)  # PDB_Diagnostic_Codes.misc_segfault removed from this list
+            log_path = os.path.abspath(f'{pdb}.log' if code in special_handled_errors else f'{error_logs}/{pdb}.log')
             with open(log_path, 'w') as f: f.write( f'{pdb.upper()} process exit code: {code}\n\n{output}')
 
             results['failed'].setdefault(str(code), {})
