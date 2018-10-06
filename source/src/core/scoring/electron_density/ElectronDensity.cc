@@ -3347,6 +3347,7 @@ void ElectronDensity::density_change_trigger() {
 	Fdensity.clear();
 	coeffs_density_.clear();
 
+	computeStats(); 
 	computeGradients();  // visualization only
 }
 
@@ -3459,8 +3460,15 @@ void ElectronDensity::computeStats() {
 			}
 		}
 	}
-	dens_mean = sum/N;
-	dens_stdev = sqrt( sum2/N-dens_mean*dens_mean );
+	dens_mean = 0.0;
+	dens_stdev = 1.0;
+
+	if (N>0) {
+		dens_mean = sum/N;
+	}
+	if (sum2/N-dens_mean*dens_mean > 0) {
+		dens_stdev = sqrt( sum2/N-dens_mean*dens_mean );
+	}
 }
 
 /////////////////////////////////////

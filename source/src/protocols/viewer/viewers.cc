@@ -112,7 +112,7 @@ namespace graphics {
 int window_size = 30;
 int specialKey = 0;
 bool click;
-bool clicked_button;
+int clicked_button;
 int click_x;
 int click_y;
 
@@ -120,10 +120,10 @@ int click_y;
 std::map< int , GraphicsState* > gs_map_;
 
 // Vector bg_color( 1.0f, 1.0f, 1.0f ); // white
-//Vector bg_color( 0.01f, 0.01f, 0.01f ); // dark gray
-//Vector bg_color2( 0.0f, 0.0f, 0.0f ); // black
-Vector bg_color( 0.01f, 0.03f, 0.4f ); // dark blue
-Vector bg_color2( 0.0f, 0.0f, 0.2f ); // darker blue
+Vector bg_color( 0.01f, 0.01f, 0.01f ); // dark gray
+Vector bg_color2( 0.0f, 0.0f, 0.0f ); // black
+//Vector bg_color( 0.01f, 0.03f, 0.4f ); // dark blue
+//Vector bg_color2( 0.0f, 0.0f, 0.2f ); // darker blue
 Vector border_color( 0.02f, 0.08f, 0.75f ); // lighter blue
 Vector border_color_gray( 0.5f, 0.5f, 0.5f ); // original gray
 Vector ghost_color_vect( 0.95f, 0.85f, 0.7f); //Orange-grey
@@ -171,10 +171,9 @@ core::Real const BOND_LENGTH_CUTOFF2 = 6.0*6.0;
 void processMouse(int button, int state, int x, int y) {
 	using namespace graphics;
 
-	//std::cout << "processMouse: " << glutGetWindow() << ' ' << button << ' ' << state << ' ' << x << ' ' << y << ' ' <<
-	// " graphicsvars: " << click << ' ' << clicked_button << ' ' << click_x << ' ' << click_y << std::endl;
-
 	specialKey = glutGetModifiers();
+	//std::cout << "processMouse: " << glutGetWindow() << ' ' << button << ' ' << specialKey << ' ' << state << ' ' << x << ' ' << y << ' ' <<
+	// " graphicsvars: " << click << ' ' << clicked_button << ' ' << click_x << ' ' << click_y << std::endl;
 
 	click_x = x;
 	click_y = y;
@@ -182,7 +181,7 @@ void processMouse(int button, int state, int x, int y) {
 		clicked_button = button;
 		if ( !click ) {
 			click = true;
-			//      std::cout << "click button: " << button << std::endl;
+			      //std::cout << "click button: " << button << std::endl;
 		}
 	}
 	if ( state == GLUT_UP ) {
@@ -212,18 +211,18 @@ void processMouseActiveMotion(int x, int y) {
 	float delta_x = old_x - x;
 	float delta_y = old_y - y;
 
-	// std::cout << "clicked_button " << clicked_button << "    specialKey " << specialKey << std::endl;
+	//std::cout << "clicked_button " << clicked_button << "    specialKey " << specialKey << std::endl;
 
 	if ( ((specialKey == GLUT_ACTIVE_SHIFT) & (clicked_button == 0)) || clicked_button == 1 ) { // Zoom in/out
 		double s = exp( -1.0* (double) delta_y*0.01);
 		glScalef(s,s,s);
-	} else if ( (specialKey == GLUT_ACTIVE_CTRL) & (clicked_button == 0) ) { // Recontour
+	} else if ( specialKey == GLUT_ACTIVE_CTRL ) { // Recontour
 		GraphicsState* current_gs = gs_map_[ glutGetWindow() ];
 		if ( !current_gs ) {
 			std::cerr << "ignoring processKeyPress for window id " << glutGetWindow() << std::endl;
 			return;
 		}
-		current_gs->density_sigma += delta_y*0.02;
+		current_gs->density_sigma += delta_y*0.01;
 		current_gs->density_redraw = true;
 	} else if ( (specialKey == GLUT_ACTIVE_SHIFT) & (clicked_button > 0) ) { //Rotate around z-axis
 		// See below for explanation of premultiplication.
@@ -232,7 +231,7 @@ void processMouseActiveMotion(int x, int y) {
 		glLoadIdentity();
 		glRotatef(delta_x,0,0,1);
 		glMultMatrixf(currentrotation);
-	} else if ( specialKey == GLUT_ACTIVE_ALT && clicked_button == 0 ) { //Pan
+	} else if ( (specialKey == GLUT_ACTIVE_ALT && clicked_button == 0) || clicked_button == 2 ) { //Pan
 		GLint viewport[4];
 		glGetIntegerv(GL_VIEWPORT,viewport);
 		//glTranslatef( -1.0*delta_x * (_right-_left)/(viewport[2]),
@@ -1845,7 +1844,8 @@ void render_density(
 	triangles.clear();
 
 	const core::scoring::electron_density::ElectronDensity& edm = core::scoring::electron_density::getDensityMap();
-	const float thresh = edm.getMean() + gs.density_sigma*edm.getStdev();
+	//const float thresh = edm.getMean() + gs.density_sigma*edm.getStdev();
+	const float thresh = edm.getMin() + gs.density_sigma*( edm.getMax() - edm.getMin() );
 	triangleIterator tri_it( edm.get_data(), thresh );
 
 	numeric::xyzVector_float vertex[3], normal[3];

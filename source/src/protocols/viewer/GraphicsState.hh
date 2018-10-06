@@ -70,7 +70,7 @@ public:
 		Trajectory_state (graphics_states_param::SHOW_ALL_TRIALS),//default
 		show_H_state (graphics_states_param::SHOW_NO_H), //default
 		previous_vertex1( 0.0 ), previous_vertex2( 0.0 ), previous_width_vector( 0.0 ),
-		density_sigma( 2.0 ), density_redraw(true),  //default
+		density_sigma( 0.67 ), density_redraw(true),  //default
 		nres_for_graphics( 0 )
 	{}
 
