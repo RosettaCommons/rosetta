@@ -1,11 +1,11 @@
 ///////////////////////////////////////////////////////////////////////////////
-//                                                                             
-//  Copyright (C) 2010-2011  Artyom Beilis (Tonkikh) <artyomtnk@yahoo.com>     
-//                                                                             
+//
+//  Copyright (C) 2010-2011  Artyom Beilis (Tonkikh) <artyomtnk@yahoo.com>
+//
 //  Distributed under:
 //
 //                   the Boost Software License, Version 1.0.
-//              (See accompanying file LICENSE_1_0.txt or copy at 
+//              (See accompanying file LICENSE_1_0.txt or copy at
 //                     http://www.boost.org/LICENSE_1_0.txt)
 //
 //  or (at your opinion) under:
@@ -23,6 +23,10 @@
 
 // Borland errors about unknown pool-type without this include.
 #ifdef __BORLANDC__
+#include <cppdb/backend.h>
+#endif
+
+#ifdef PYROSETTA
 #include <cppdb/backend.h>
 #endif
 
@@ -48,17 +52,17 @@ namespace cppdb {
 
 	///
 	/// Get CppDB Version String. It consists of "A.B.C", where A
-	/// is a major version number, B is a minor version number and 
+	/// is a major version number, B is a minor version number and
 	/// C is patch version
 	///
 	CPPDB_API char const *version_string();
 	///
 	/// Return CppDB version as a number as a sum A * 10000 + B * 100 + C
-	/// where A is a major version number, B is a minor version number and 
+	/// where A is a major version number, B is a minor version number and
 	/// C is patch version
 	///
 	CPPDB_API int version_number();
-	
+
 // Borland needs pool.h, but not this forward declaration.
 #ifndef __BORLANDC__
 	namespace backend {
@@ -67,7 +71,7 @@ namespace cppdb {
 		class connection;
 	}
 #endif
-	
+
 	///
 	/// Null value marker
 	///
@@ -125,7 +129,7 @@ namespace cppdb {
 	{
 		return tags::use_tag<char const *>(v,tag);
 	}
-	
+
 	///
 	/// \brief Create a pair of value and tag for storing it to DB
 	///
@@ -140,12 +144,12 @@ namespace cppdb {
 		template<typename Object>
 		class functor {
 		public:
-			functor(functor const &other)  : 
+			functor(functor const &other)  :
 				functor_(other.functor_),
 				wrapper_(other.wrapper_)
 			{
 			}
-			functor const &operator=(functor const &other) 
+			functor const &operator=(functor const &other)
 			{
 				functor_ = other.functor_;
 				wrapper_ = other.wrapper_;
@@ -155,7 +159,7 @@ namespace cppdb {
 			{
 				functor_ = reinterpret_cast<void *>(reinterpret_cast<size_t>(func));
 				wrapper_ = &functor::call_func;
-				
+
 			}
 			template<typename RealFunctor>
 			functor(RealFunctor const &f)
@@ -213,17 +217,17 @@ namespace cppdb {
 		///
 		result();
 		///
-		/// Destroys the result, note, if the result of statement is not destroyed, it would 
+		/// Destroys the result, note, if the result of statement is not destroyed, it would
 		/// not be returned to statements cache.
 		///
 		~result();
 		///
-		/// Copy result, note it only keeps the reference to actual object so copy is just 
+		/// Copy result, note it only keeps the reference to actual object so copy is just
 		/// copy of the reference
 		///
 		result(result const &);
 		///
-		/// Assign result, note it only keeps the reference to actual object so assignment is just 
+		/// Assign result, note it only keeps the reference to actual object so assignment is just
 		/// copy of the reference
 		///
 		result const &operator=(result const &);
@@ -241,7 +245,7 @@ namespace cppdb {
 		/// - You must not call fetch() functions if next() returned false, it would cause empty_row_access exception.
 		///
 		bool next();
-		
+
 		///
 		/// Convert column name \a n to its index, throws invalid_column if the name is not valid.
 		///
@@ -284,7 +288,7 @@ namespace cppdb {
 		///
 		bool empty();
 
-		
+
 		///
 		/// Fetch a value from column \a col (starting from 0) into \a v. Returns false
 		/// if the value in NULL and \a v is not updated, otherwise returns true.
@@ -498,8 +502,8 @@ namespace cppdb {
 		/// Get a value of type \a T from column named \a name. If the column
 		/// is null throws null_value_fetch(), if the column \a name is invalid throws invalid_column,
 		/// if the column value cannot be converted to type T (see fetch functions) it throws bad_value_cast.
-		///	
-		
+		///
+
 		template<typename T>
 		T get(std::string const &name)
 		{
@@ -513,7 +517,7 @@ namespace cppdb {
 		/// Get a value of type \a T from column named \a name. If the column
 		/// is null returns \a def, if the column \a name is invalid throws invalid_column,
 		/// if the column value cannot be converted to type T (see fetch functions) it throws bad_value_cast.
-		///	
+		///
 		template<typename T>
 		T get(std::string const &name, T const &def)
 		{
@@ -527,7 +531,7 @@ namespace cppdb {
 		/// Get a value of type \a T from column \a col (starting from 0). If the column
 		/// is null throws null_value_fetch(), if the column index is invalid throws invalid_column,
 		/// if the column value cannot be converted to type T (see fetch functions) it throws bad_value_cast.
-		///	
+		///
 		template<typename T>
 		T get(int col)
 		{
@@ -541,7 +545,7 @@ namespace cppdb {
 		/// Get a value of type \a T from column \a col (starting from 0). If the column
 		/// is null returns \a def, if the column index is invalid throws invalid_column,
 		/// if the column value cannot be converted to type T (see fetch functions) it throws bad_value_cast.
-		///	
+		///
 		template<typename T>
 		T get(int col, T const &def)
 		{
@@ -554,10 +558,10 @@ namespace cppdb {
 		///
 		/// Syntactic sugar, used together with into() function.
 		///
-		/// res << into(x,y) is same as 
+		/// res << into(x,y) is same as
 		///
 		/// \code
-		/// y = res.fetch(x) ? not_null_value : null_value 
+		/// y = res.fetch(x) ? not_null_value : null_value
 		/// \endcode
 		///
 		template<typename T>
@@ -580,14 +584,14 @@ namespace cppdb {
 			return *this;
 		}
 
-		
+
 	private:
 		result(	ref_ptr<backend::result> res,
 			ref_ptr<backend::statement> stat,
 			ref_ptr<backend::connection> conn);
 
 		void check();
-		
+
 		friend class statement;
 
 		struct data;
@@ -611,7 +615,7 @@ namespace cppdb {
 	public:
 		///
 		/// Default constructor, provided for convenience, access to any member function
-		/// of empty statement will cause an exception being thrown. 
+		/// of empty statement will cause an exception being thrown.
 		///
 		statement();
 		///
@@ -655,15 +659,15 @@ namespace cppdb {
 		/// Clear the statement, removes it, any access to statement object would throw an exception till it would
 		/// be assigned once again
 		///
-		
+
 		void clear();
 
 		///
-		/// Check if the statement is empty, it is empty when created with default constructor or when cleared 
+		/// Check if the statement is empty, it is empty when created with default constructor or when cleared
 		/// with clear() member function.
 		///
 		bool empty() const;
-		
+
 		///
 		/// Bind a value \a v to the next placeholder (starting from the first) marked with '?' marker in the query.
 		///
@@ -841,7 +845,7 @@ namespace cppdb {
 
 		///
 		/// Get last insert id from the last executed statement, note, it is the same as sequence_last("").
-		/// 
+		///
 		/// Some backends requires explicit sequence name so you should use sequence_last("sequence_name") in such
 		/// case.
 		///
@@ -853,13 +857,13 @@ namespace cppdb {
 		///
 		/// If the backend does not support named sequences but rather supports "auto increment" columns (like MySQL, Sqlite3),
 		/// the \a seq parameter is ignored.
-		/// 
+		///
 		///
 		/// If the statement is actually query, the behavior is undefined and may vary between backends.
 		///
 		long long sequence_last(std::string const &seq);
 		///
-		/// Get the number of affected rows by the last statement, 
+		/// Get the number of affected rows by the last statement,
 		///
 		///
 		/// If the statement is actually query, the behavior is undefined and may vary between backends.
@@ -920,7 +924,7 @@ namespace cppdb {
 		result operator<<(result (*manipulator)(statement &st));
 
 		///
-		/// Used together with use() function. 
+		/// Used together with use() function.
 		///
 		/// The call st<<use(x,tag) is same as
 		///
@@ -933,19 +937,19 @@ namespace cppdb {
 		{
 			if(val.tag == null_value)
 				return bind_null();
-			else 
+			else
 				return bind(val.value);
 		}
-	
+
 		///
 		/// Same as bind(v);
-		///	
+		///
 		template<typename T>
 		statement &operator<<(T v)
 		{
 			return bind(v);
 		}
-		
+
 	private:
 		statement(ref_ptr<backend::statement> stat,ref_ptr<backend::connection> conn);
 
@@ -969,7 +973,7 @@ namespace cppdb {
 	{
 		st.exec();
 	}
-	
+
 	///
 	/// \brief Manipulator that binds null value. Used as:
 	///
@@ -1009,7 +1013,7 @@ namespace cppdb {
 	/// \brief SQL session object that represents a single connection and is the gateway to SQL database
 	///
 	/// It is the main class that is used for access to the DB, it uses various singleton classes to
-	/// load drivers open connections and cache them. 
+	/// load drivers open connections and cache them.
 	///
 	class CPPDB_API session {
 	public:
@@ -1037,7 +1041,7 @@ namespace cppdb {
 		~session();
 
 		///
-		/// Create a session using a parsed connection string \a ci 
+		/// Create a session using a parsed connection string \a ci
 		///
 		/// \copydetails cppdb::parse_connection_string(std::string const&,std::string&,std::map<std::string,std::string>&);
 		///
@@ -1062,7 +1066,7 @@ namespace cppdb {
 		///
 		session(connection_info const &ci,once_functor const &f);
 		///
-		/// Create a session using a connection string \a cs and call \a f if 
+		/// Create a session using a connection string \a cs and call \a f if
 		/// a \ref once() was not called yet.
 		///
 		/// It is useful for setting session specific options for new
@@ -1075,7 +1079,7 @@ namespace cppdb {
 		///
 		session(std::string const &cs,once_functor const &f);
 		///
-		/// Create a session using a pointer to backend::connection and call \a f if 
+		/// Create a session using a pointer to backend::connection and call \a f if
 		/// a \ref once() was not called yet.
 		///
 		/// It is useful for setting session specific options for new
@@ -1090,7 +1094,7 @@ namespace cppdb {
 		/// Create a session using a pointer to backend::connection.
 		///
 		session(ref_ptr<backend::connection> conn);
-		
+
 		///
 		/// Open a session using a connection_info object - parsed connection string \a ci.
 		///
@@ -1134,7 +1138,7 @@ namespace cppdb {
 		///
 		statement create_statement(std::string const &q);
 		///
-		/// Create prepared statement that will be cached for next calls.		
+		/// Create prepared statement that will be cached for next calls.
 		///
 		statement create_prepared_statement(std::string const &q);
 		///
@@ -1151,7 +1155,7 @@ namespace cppdb {
 		///
 		/// Clear connections pool associated with this session's connection.
 		///
-		/// Automatically calls clear_cache(); 
+		/// Automatically calls clear_cache();
 		///
 		void clear_pool();
 
@@ -1191,7 +1195,7 @@ namespace cppdb {
 		std::string escape(std::string const &s);
 		///
 		/// Get the driver name, as mysql, postgresql, odbc, sqlite3.
-		/// 
+		///
 		std::string driver();
 		///
 		/// Get an SQL engine name, it may be not the same as driver name for multiple engine drivers like odbc.
@@ -1203,14 +1207,14 @@ namespace cppdb {
 		/// If an exception is thrown during operation on DB this flag is reset
 		/// to false by the front-end classes result, statement, session.
 		///
-		/// Default is true 
-		/// 
+		/// Default is true
+		///
 		bool recyclable();
-		
+
 		///
 		/// Set recyclable state of the session. If some problem occurs on connection
 		/// that prevents its reuse it should be called with false parameter.
-		/// 
+		///
 		void recyclable(bool value);
 
 		///
@@ -1223,15 +1227,15 @@ namespace cppdb {
 		void once_called(bool state);
 		///
 		/// Call the functional \a f on the connection only once. If the connection
-		/// created first time then f would be called. If the connection is created 
+		/// created first time then f would be called. If the connection is created
 		/// from connection pool and thus setup functor was called, f would not be called.
 		///
 		/// Requirements: \ref once_functor is an object that can be created from generic
 		/// function like object func, such that func(*this) is valid expression
 		///
 		void once(once_functor const &f);
-		
-		
+
+
 		///
 		/// Get connection specific object by its type \a t, returns 0 if not installed yet
 		///
@@ -1244,7 +1248,7 @@ namespace cppdb {
 		/// Deletes connection specific object of type \a t, and sets a new one \a p (if not NULL)
 		///
 		void reset_specific(std::type_info const &t,connection_specific_data *p=0);
-		
+
 		///
 		/// Get connection specific object by its type \a T, returns 0 if not installed yet
 		///
@@ -1303,7 +1307,7 @@ namespace cppdb {
 		///
 		void rollback();
 	private:
-		
+
 		struct data;
 		session *s_;
 		bool commited_;

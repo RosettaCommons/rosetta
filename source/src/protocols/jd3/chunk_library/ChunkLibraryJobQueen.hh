@@ -52,6 +52,14 @@
 #include <string>
 #include <map>
 
+#ifdef PYROSETTA
+#include <protocols/jd3/chunk_library_inputters/ChunkLibraryInputter.hh>
+#include <protocols/jd3/chunk_library/ChunkLibraryInnerLarvalJob.hh>
+#include <utility/tag/Tag.hh>
+#include <utility/options/OptionCollection.hh>
+#endif
+
+
 namespace protocols {
 namespace jd3 {
 namespace chunk_library {

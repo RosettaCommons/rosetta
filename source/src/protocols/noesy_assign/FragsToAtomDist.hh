@@ -54,7 +54,7 @@ public:
 		core::Real average_dist6() const { return std::pow( cum_dist6_ / count_, -1.0/6.0 ); }
 		core::Real average_dist() const { return cum_dist_ / count_; }
 		core::Real min_dist() const { return min_dist_; }
-		core::Real popular_bin() const ;
+		//core::Real popular_bin() const ;
 		utility::vector1< core::Real > dist_track() const { return dist_track_ ; }
 		//  std::map< core::Real, core::Size > hist_dist() const { return hist_dist_ };
 

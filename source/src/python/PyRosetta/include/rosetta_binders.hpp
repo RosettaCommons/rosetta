@@ -21,6 +21,8 @@
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzVector.io.hh>
 
+#include <numeric/xyzMatrix.io.hh>
+
 #include <utility/vectorL.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -389,10 +391,10 @@ void xyzMatrix_add_on_binder(pybind11::class_<numeric::xyzMatrix<T>, std::shared
 	cl.def("__len__", [](Matrix const &) { return 3; } );
 
 	cl.def("__getitem__", [](Matrix const &m, int i) -> Vector {
-			if (i > 2) { throw pybind11::index_error(); }
-			if (i == 0) { return m.row_x(); }
-			if (i == 1) { return m.row_y(); }
-			if (i == 2) { return m.row_z(); }
+			if (i == 0) return m.row_x();
+			if (i == 1) return m.row_y();
+			if (i == 2) return m.row_z();
+		    throw pybind11::index_error();
 		});
 }
 

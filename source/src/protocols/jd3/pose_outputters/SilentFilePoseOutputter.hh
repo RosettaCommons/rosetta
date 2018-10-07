@@ -101,8 +101,8 @@ public:
 	std::string
 	class_key() const override;
 
-	std::string
-	output_silent_name( LarvalJob const & job ) const;
+	//std::string
+	//output_silent_name( LarvalJob const & job ) const;
 
 	static
 	std::string

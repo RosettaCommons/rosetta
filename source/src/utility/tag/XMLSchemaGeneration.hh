@@ -567,9 +567,11 @@ public:
 	typedef boost::function< std::string () >                      NameFunction;
 
 	struct ElementSummary {
+		enum ElementType { ct_simple, ct_ref, ct_group };
+
 		ElementSummary();
 
-		enum { ct_simple, ct_ref, ct_group } element_type;
+		ElementType element_type;
 		std::string element_name;
 		std::string ct_name;
 		std::string description;

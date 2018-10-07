@@ -59,7 +59,7 @@ public:
 	void all_jobs_completed( bool setting );
 	void all_jobs_started( bool setting );
 	/// @brief decrement the n-incomplete-predecessors count by one
-	void note_predecessor_completed();
+	//void note_predecessor_completed();
 
 	/// @brief invoked during graph assignment operators to copy any
 	/// node data from one graph to another graph.  The source node must

@@ -1,11 +1,11 @@
 ///////////////////////////////////////////////////////////////////////////////
-//                                                                             
-//  Copyright (C) 2010-2011  Artyom Beilis (Tonkikh) <artyomtnk@yahoo.com>     
-//                                                                             
+//
+//  Copyright (C) 2010-2011  Artyom Beilis (Tonkikh) <artyomtnk@yahoo.com>
+//
 //  Distributed under:
 //
 //                   the Boost Software License, Version 1.0.
-//              (See accompanying file LICENSE_1_0.txt or copy at 
+//              (See accompanying file LICENSE_1_0.txt or copy at
 //                     http://www.boost.org/LICENSE_1_0.txt)
 //
 //  or (at your opinion) under:
@@ -33,6 +33,10 @@
 #include <cppdb/pool.h>
 #endif
 
+#ifdef PYROSETTA
+#include <cppdb/pool.h>
+#endif
+
 #include <boost/uuid/uuid.hpp>
 
 namespace cppdb {
@@ -45,7 +49,7 @@ namespace cppdb {
 	///
 	/// \brief This namepace includes all classes required to implement a cppdb SQL backend.
 	///
-	namespace backend {	
+	namespace backend {
 
 		///
 		/// \brief This class represents query result.
@@ -56,15 +60,15 @@ namespace cppdb {
 		///
 		class CPPDB_API result : public ref_counted {
 		public:
-			
+
 			///
 			/// The flag that defines the information about availability of the next row in result
 			///
-			typedef enum {
+		    enum next_row {
 				last_row_reached, ///< No more rows exits, next() would return false
 				next_row_exists,  ///< There are more rows, next() would return true
 				next_row_unknown  ///< It is unknown, next() may return either true or false
-			} next_row;
+			};
 
 			///
 			/// Check if the next row in the result exists. If the DB engine can't perform
@@ -237,7 +241,7 @@ namespace cppdb {
 			virtual void reset() = 0;
 			///
 			/// Get the query the statement works with. Return it as is, used as key for statement
-			/// caching 
+			/// caching
 			///
 			virtual std::string const &sql_query() = 0;
 
@@ -308,7 +312,7 @@ namespace cppdb {
 			/// ignore if it is impossible to know whether the placeholder exists without special
 			/// support from back-end.
 			///
-			/// May throw bad_value_cast() if the value out of supported range by the DB. 
+			/// May throw bad_value_cast() if the value out of supported range by the DB.
 			///
 			virtual void bind(int col,unsigned v) = 0;
 			///
@@ -318,7 +322,7 @@ namespace cppdb {
 			/// ignore if it is impossible to know whether the placeholder exists without special
 			/// support from back-end.
 			///
-			/// May throw bad_value_cast() if the value out of supported range by the DB. 
+			/// May throw bad_value_cast() if the value out of supported range by the DB.
 			///
 			virtual void bind(int col,long v) = 0;
 			///
@@ -328,7 +332,7 @@ namespace cppdb {
 			/// ignore if it is impossible to know whether the placeholder exists without special
 			/// support from back-end.
 			///
-			/// May throw bad_value_cast() if the value out of supported range by the DB. 
+			/// May throw bad_value_cast() if the value out of supported range by the DB.
 			///
 			virtual void bind(int col,unsigned long v) = 0;
 			///
@@ -338,7 +342,7 @@ namespace cppdb {
 			/// ignore if it is impossible to know whether the placeholder exists without special
 			/// support from back-end.
 			///
-			/// May throw bad_value_cast() if the value out of supported range by the DB. 
+			/// May throw bad_value_cast() if the value out of supported range by the DB.
 			///
 			virtual void bind(int col,long long v) = 0;
 			///
@@ -348,7 +352,7 @@ namespace cppdb {
 			/// ignore if it is impossible to know whether the placeholder exists without special
 			/// support from back-end.
 			///
-			/// May throw bad_value_cast() if the value out of supported range by the DB. 
+			/// May throw bad_value_cast() if the value out of supported range by the DB.
 			///
 			virtual void bind(int col,unsigned long long v) = 0;
 			///
@@ -400,10 +404,10 @@ namespace cppdb {
 			///
 			virtual void exec() = 0;
 
-			/// \cond INTERNAL 
+			/// \cond INTERNAL
 			// Caching support
 			static void dispose(statement *selfp);
-			
+
 			void cache(statements_cache *c);
 			statement();
 			virtual ~statement() ;
@@ -413,8 +417,8 @@ namespace cppdb {
 			std::unique_ptr<data> d;
 			statements_cache *cache_;
 		};
-	
-		/// \cond INTERNAL	
+
+		/// \cond INTERNAL
 		class CPPDB_API statements_cache {
 			statements_cache(statements_cache const &);
 			void operator=(statements_cache const &);
@@ -436,7 +440,7 @@ namespace cppdb {
 		class connection;
 
 		///
-		/// \brief This class represents a driver that creates connections for 
+		/// \brief This class represents a driver that creates connections for
 		/// given connection string, custom drivers can be are installed using this
 		/// class
 		///
@@ -461,10 +465,10 @@ namespace cppdb {
 			///
 			virtual connection *connect(connection_info const &cs);
 		};
-	
+
 		///
 		/// \brief This class represents a driver that can be unloaded from the driver_manager.
-		///	
+		///
 		class CPPDB_API loadable_driver : public driver {
 			loadable_driver(loadable_driver const &);
 			void operator=(loadable_driver const &);
@@ -530,16 +534,16 @@ namespace cppdb {
 			virtual ~connection();
 			/// \cond INTERNAL
 			void set_pool(ref_ptr<pool> p);
-			ref_ptr<pool> get_pool(); 
+			ref_ptr<pool> get_pool();
 			void set_driver(ref_ptr<loadable_driver> drv);
 			static void dispose(connection *c);
 			ref_ptr<statement> prepare(std::string const &q);
 			ref_ptr<statement> get_prepared_statement(std::string const &q);
 			ref_ptr<statement> get_prepared_uncached_statement(std::string const &q);
 			ref_ptr<statement> get_statement(std::string const &q);
-			/// \endcond 
+			/// \endcond
 
-			// API 
+			// API
 
 			///
 			/// Start new isolated transaction. Would not be called
@@ -598,10 +602,10 @@ namespace cppdb {
 			/// For new connections always false
 			///
 			bool once_called() const;
-			
+
 			///
-			/// Set once status - true if called flase 
-			/// 
+			/// Set once status - true if called flase
+			///
 			void once_called(bool v);
 
 			///
@@ -626,14 +630,14 @@ namespace cppdb {
 			/// If an exception is thrown during operation on DB this flag is reset
 			/// to false by the front-end classes result, statement, session.
 			///
-			/// Default is true 
-			/// 
+			/// Default is true
+			///
 			bool recyclable();
-			
+
 			///
 			/// Set recyclable state of the session. If some problem occurs on connection
 			/// that prevents its reuse it should be called with false parameter.
-			/// 
+			///
 			void recyclable(bool value);
 
 		private:

@@ -51,6 +51,13 @@
 #include <string>
 #include <map>
 
+#ifdef PYROSETTA
+#include <protocols/jd3/full_model_inputters/FullModelInputter.hh>
+#include <protocols/jd3/full_model/FullModelInnerLarvalJob.hh>
+#include <utility/tag/Tag.hh>
+#include <utility/options/OptionCollection.hh>
+#endif
+
 namespace protocols {
 namespace jd3 {
 namespace full_model {

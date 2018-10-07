@@ -39,12 +39,15 @@ _python_version_ = '{}.{}'.format(sys.version_info.major, sys.version_info.minor
 
 #_pybind11_version_ = 'fa6a4241326a361fc23915f6a82c1e48667de668'
 
-_banned_dirs_ = 'src/utility/pointer src/protocols/jd3'.split()  # src/utility/keys src/utility/options src/basic/options
+_banned_dirs_ = 'src/utility/pointer'.split()  # src/utility/keys src/utility/options src/basic/options src/protocols/jd3
 _banned_headers_ = 'utility/py/PyHelper.hh utility/keys/KeyCount.hh utility/keys/KeyLookup.functors.hh'
 _banned_headers_ +=' core/scoring/fiber_diffraction/FiberDiffractionKernelGpu.hh' # GPU code
 _banned_headers_ +=' basic/database/DatabaseSessionLoader.hh' # TEMP deprecated code from the old ResourceManager ...
 _banned_headers_ +=' basic/database/DatabaseSessionLoaderCreator.hh' # TEMP ... that could still be useful if slightly edited...
 _banned_headers_ +=' basic/database/DatabaseSessionOptions.hh' # TEMP ... and turned into a protocols::parser::DataLoader
+
+_banned_headers_ +=' protocols/jd3/JobOutputWritter.hh protocols/jd3/standard/PDBPoseOutputSpecification.hh protocols/jd3/standard/StandardResultOutputter.hh'  # protocols/jd3/job_distributors/MPIWorkPartitionJobDistributor.hh
+
 #_banned_headers_ +=' json.hpp'
 
 # Setting output to be printed in unicode regardless of terminal settings

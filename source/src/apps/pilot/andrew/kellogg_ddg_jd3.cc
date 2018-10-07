@@ -47,7 +47,7 @@
 
 #include <protocols/jd3/InnerLarvalJob.hh>
 #include <protocols/jd3/Job.hh>
-#include <protocols/jd3/job_distributors/MPIWorkPartitionJobDistributor.hh>
+//#include <protocols/jd3/job_distributors/MPIWorkPartitionJobDistributor.hh>
 #include <protocols/jd3/JobDistributor.hh>
 #include <protocols/jd3/JobDistributorFactory.hh>
 #include <protocols/jd3/LarvalJob.hh>

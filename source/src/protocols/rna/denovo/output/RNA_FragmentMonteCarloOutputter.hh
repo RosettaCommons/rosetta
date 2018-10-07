@@ -26,6 +26,10 @@
 #include <numeric/MathNTensor.fwd.hh>
 #include <utility/io/ozstream.hh>
 
+#ifdef PYROSETTA
+#include <numeric/MathNTensor.hh>
+#endif
+
 namespace protocols {
 namespace rna {
 namespace denovo {

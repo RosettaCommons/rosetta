@@ -1,11 +1,11 @@
 ///////////////////////////////////////////////////////////////////////////////
-//                                                                             
-//  Copyright (C) 2010-2011  Artyom Beilis (Tonkikh) <artyomtnk@yahoo.com>     
-//                                                                             
+//
+//  Copyright (C) 2010-2011  Artyom Beilis (Tonkikh) <artyomtnk@yahoo.com>
+//
 //  Distributed under:
 //
 //                   the Boost Software License, Version 1.0.
-//              (See accompanying file LICENSE_1_0.txt or copy at 
+//              (See accompanying file LICENSE_1_0.txt or copy at
 //                     http://www.boost.org/LICENSE_1_0.txt)
 //
 //  or (at your opinion) under:
@@ -135,11 +135,11 @@ namespace cppdb {
 		///
 		/// Create an object with 0 reference count
 		///
-		ref_counted() : count_(0) 
+		ref_counted() : count_(0)
 		{
 		}
 		///
-		/// Virtual destructor - for convenience 
+		/// Virtual destructor - for convenience
 		///
 		virtual ~ref_counted()
 		{

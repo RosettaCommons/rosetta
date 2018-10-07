@@ -51,15 +51,15 @@ public:
 
 	void mover( moves::MoverOP setting );
 	void pose( core::pose::PoseOP setting );
-	void lores_pose( core::pose::PoseOP setting );
+	//void lores_pose( core::pose::PoseOP setting );
 
 	moves::MoverOP mover();
 	core::pose::PoseOP pose();
 	core::pose::PoseCOP pose() const;
 	//core::pose::PoseOP native_pose();
 	//core::pose::PoseCOP native_pose() const;
-	core::pose::PoseOP lores_pose();
-	core::pose::PoseCOP lores_pose() const;
+	//core::pose::PoseOP lores_pose();
+	//core::pose::PoseCOP lores_pose() const;
 
 protected:
 	/// @brief Factory method so derived classes can return their own result classes,
