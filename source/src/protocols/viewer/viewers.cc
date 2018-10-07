@@ -181,7 +181,7 @@ void processMouse(int button, int state, int x, int y) {
 		clicked_button = button;
 		if ( !click ) {
 			click = true;
-			      //std::cout << "click button: " << button << std::endl;
+			//std::cout << "click button: " << button << std::endl;
 		}
 	}
 	if ( state == GLUT_UP ) {
