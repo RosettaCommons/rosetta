@@ -718,7 +718,7 @@ RNA_DMS_Potential::get_logL_values( pose::Pose const & pose, Size const i /*, ut
 		//get_bool_idx( ade_n1_bonded, is_bonded_values_ );
 		Size const occ_idx = get_idx( occupancy_density, occ_values_ );
 		Size const binding_energy_idx = get_idx( binding_energy, binding_energy_values_ );
-		for ( Size k = 1; k <= DMS_values_.size(); k++ ) {
+		for ( Size k = 0; k < DMS_values_.size(); k++ ) {
 			logL_values.push_back( log( DMS_stats_( n1_bond_idx, occ_idx, binding_energy_idx, k ) /
 				p_model_( n1_bond_idx, occ_idx, binding_energy_idx ) ) /*for normalization*/ );
 		}
