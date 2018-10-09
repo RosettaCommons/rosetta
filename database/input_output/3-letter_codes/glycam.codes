@@ -4010,3 +4010,105 @@
   Job   Gal           ->3)-beta-L-Galf  # 3,5,6
   Pob   Gal           ->2)-beta-L-Galf  # 2,3,4,6
   Iob   Gal           ->2)-beta-L-Galf  # 2,4,5,6
+  
+  0YA   Glc           ->4)-alpha-D-Glcp  # terminal; NAc-
+  1YA   Glc           ->1)-alpha-D-Glcp  # NAc-
+  2YA   Glc           ->2)-alpha-D-Glcp  # NAc-  
+  3YA   Glc           ->3)-alpha-D-Glcp  # NAc-
+  4YA   Glc           ->4)-alpha-D-Glcp  # NAc-
+  5YA   Glc           ->5)-alpha-D-Glcp  # NAc-
+  6YA   Glc           ->6)-alpha-D-Glcp  # NAc-
+  ZYA   Glc           ->2)-alpha-D-Glcp  # 2,3; NAc-
+  YYA   Glc           ->2)-alpha-D-Glcp  # 2,4; NAc-
+  OYA   Glc           ->2)-alpha-D-Glcp  # 2,5; NAc-
+  XYA   Glc           ->2)-alpha-D-Glcp  # 2,6; NAc-
+  WYA   Glc           ->3)-alpha-D-Glcp  # 3,4; NAc-
+  NYA   Glc           ->3)-alpha-D-Glcp  # 3,5; NAc-
+  VYA   Glc           ->3)-alpha-D-Glcp  # 3,6; NAc-
+  UYA   Glc           ->4)-alpha-D-Glcp  # 4,6; NAc-
+  MYA   Glc           ->5)-alpha-D-Glcp  # 5,6; NAc-
+  TYA   Glc           ->2)-alpha-D-Glcp  # 2,3,4; NAc-
+  LYA   Glc           ->2)-alpha-D-Glcp  # 2,3,5; NAc-
+  SYA   Glc           ->2)-alpha-D-Glcp  # 2,3,6; NAc-
+  RYA   Glc           ->2)-alpha-D-Glcp  # 2,4,6; NAc-
+  KYA   Glc           ->2)-alpha-D-Glcp  # 2,5,6; NAc-
+  QYA   Glc           ->3)-alpha-D-Glcp  # 3,4,6; NAc-
+  JYA   Glc           ->3)-alpha-D-Glcp  # 3,5,6; NAc-
+  PYA   Glc           ->2)-alpha-D-Glcp  # 2,3,4,6; NAc-
+  IYA   Glc           ->2)-alpha-D-Glcp  # 2,4,5,6; NAc-
+  0YB   Glc           ->4)-beta-D-Glcp  # terminal; NAc-
+  1YB   Glc           ->1)-beta-D-Glcp  # NAc-
+  2YB   Glc           ->2)-beta-D-Glcp  # NAc-  
+  3YB   Glc           ->3)-beta-D-Glcp  # NAc-
+  4YB   Glc           ->4)-beta-D-Glcp  # NAc-
+  5YB   Glc           ->5)-beta-D-Glcp  # NAc-
+  6YB   Glc           ->6)-beta-D-Glcp  # NAc-
+  ZYB   Glc           ->2)-beta-D-Glcp  # 2,3; NAc-
+  YYB   Glc           ->2)-beta-D-Glcp  # 2,4; NAc-
+  OYB   Glc           ->2)-beta-D-Glcp  # 2,5; NAc-
+  XYB   Glc           ->2)-beta-D-Glcp  # 2,6; NAc-
+  WYB   Glc           ->3)-beta-D-Glcp  # 3,4; NAc-
+  NYB   Glc           ->3)-beta-D-Glcp  # 3,5; NAc-
+  VYB   Glc           ->3)-beta-D-Glcp  # 3,6; NAc-
+  UYB   Glc           ->4)-beta-D-Glcp  # 4,6; NAc-
+  MYB   Glc           ->5)-beta-D-Glcp  # 5,6; NAc-
+  TYB   Glc           ->2)-beta-D-Glcp  # 2,3,4; NAc-
+  LYB   Glc           ->2)-beta-D-Glcp  # 2,3,5; NAc-
+  SYB   Glc           ->2)-beta-D-Glcp  # 2,3,6; NAc-
+  RYB   Glc           ->2)-beta-D-Glcp  # 2,4,6; NAc-
+  KYB   Glc           ->2)-beta-D-Glcp  # 2,5,6; NAc-
+  QYB   Glc           ->3)-beta-D-Glcp  # 3,4,6; NAc-
+  JYB   Glc           ->3)-beta-D-Glcp  # 3,5,6; NAc-
+  PYB   Glc           ->2)-beta-D-Glcp  # 2,3,4,6; NAc-
+  IYB   Glc           ->2)-beta-D-Glcp  # 2,4,5,6; NAc-
+  
+  0VA   Gal           ->4)-alpha-D-Galp  # terminal; NAc-
+  1VA   Gal           ->1)-alpha-D-Galp  # NAc-
+  2VA   Gal           ->2)-alpha-D-Galp  # NAc-  
+  3VA   Gal           ->3)-alpha-D-Galp  # NAc-
+  4VA   Gal           ->4)-alpha-D-Galp  # NAc-
+  5VA   Gal           ->5)-alpha-D-Galp  # NAc-
+  6VA   Gal           ->6)-alpha-D-Galp  # NAc-
+  ZVA   Gal           ->2)-alpha-D-Galp  # 2,3; NAc-
+  YVA   Gal           ->2)-alpha-D-Galp  # 2,4; NAc-
+  OVA   Gal           ->2)-alpha-D-Galp  # 2,5; NAc-
+  XVA   Gal           ->2)-alpha-D-Galp  # 2,6; NAc-
+  WVA   Gal           ->3)-alpha-D-Galp  # 3,4; NAc-
+  NVA   Gal           ->3)-alpha-D-Galp  # 3,5; NAc-
+  VVA   Gal           ->3)-alpha-D-Galp  # 3,6; NAc-
+  UVA   Gal           ->4)-alpha-D-Galp  # 4,6; NAc-
+  MVA   Gal           ->5)-alpha-D-Galp  # 5,6; NAc-
+  TVA   Gal           ->2)-alpha-D-Galp  # 2,3,4; NAc-
+  LVA   Gal           ->2)-alpha-D-Galp  # 2,3,5; NAc-
+  SVA   Gal           ->2)-alpha-D-Galp  # 2,3,6; NAc-
+  RVA   Gal           ->2)-alpha-D-Galp  # 2,4,6; NAc-
+  KVA   Gal           ->2)-alpha-D-Galp  # 2,5,6; NAc-
+  QVA   Gal           ->3)-alpha-D-Galp  # 3,4,6; NAc-
+  JVA   Gal           ->3)-alpha-D-Galp  # 3,5,6; NAc-
+  PVA   Gal           ->2)-alpha-D-Galp  # 2,3,4,6; NAc-
+  IVA   Gal           ->2)-alpha-D-Galp  # 2,4,5,6; NAc-
+  0VB   Gal           ->4)-beta-D-Galp  # terminal; NAc-
+  1VB   Gal           ->1)-beta-D-Galp  # NAc-
+  2VB   Gal           ->2)-beta-D-Galp  # NAc-  
+  3VB   Gal           ->3)-beta-D-Galp  # NAc-
+  4VB   Gal           ->4)-beta-D-Galp  # NAc-
+  5VB   Gal           ->5)-beta-D-Galp  # NAc-
+  6VB   Gal           ->6)-beta-D-Galp  # NAc-
+  ZVB   Gal           ->2)-beta-D-Galp  # 2,3; NAc-
+  YVB   Gal           ->2)-beta-D-Galp  # 2,4; NAc-
+  OVB   Gal           ->2)-beta-D-Galp  # 2,5; NAc-
+  XVB   Gal           ->2)-beta-D-Galp  # 2,6; NAc-
+  WVB   Gal           ->3)-beta-D-Galp  # 3,4; NAc-
+  NVB   Gal           ->3)-beta-D-Galp  # 3,5; NAc-
+  VVB   Gal           ->3)-beta-D-Galp  # 3,6; NAc-
+  UVB   Gal           ->4)-beta-D-Galp  # 4,6; NAc-
+  MVB   Gal           ->5)-beta-D-Galp  # 5,6; NAc-
+  TVB   Gal           ->2)-beta-D-Galp  # 2,3,4; NAc-
+  LVB   Gal           ->2)-beta-D-Galp  # 2,3,5; NAc-
+  SVB   Gal           ->2)-beta-D-Galp  # 2,3,6; NAc-
+  RVB   Gal           ->2)-beta-D-Galp  # 2,4,6; NAc-
+  KVB   Gal           ->2)-beta-D-Galp  # 2,5,6; NAc-
+  QVB   Gal           ->3)-beta-D-Galp  # 3,4,6; NAc-
+  JVB   Gal           ->3)-beta-D-Galp  # 3,5,6; NAc-
+  PVB   Gal           ->2)-beta-D-Galp  # 2,3,4,6; NAc-
+  IVB   Gal           ->2)-beta-D-Galp  # 2,4,5,6; NAc-
