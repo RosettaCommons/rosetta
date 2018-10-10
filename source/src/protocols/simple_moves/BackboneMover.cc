@@ -228,6 +228,7 @@ BackboneMover::apply( core::pose::Pose & pose )
 
 	if ( move_pos_list_.empty() ) {
 		TR.Warning << "no movable positions in " << type() << "!" << endl;
+		set_last_move_status( moves::FAIL_DO_NOT_RETRY );
 		return;
 	}
 
