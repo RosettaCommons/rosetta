@@ -12,6 +12,9 @@
 /// @author Frank DiMaio
 /// @author Hahnbeom Park
 
+#ifndef _INCLUDED_protocols_ddg_CartesianddG_hh_
+#define _INCLUDED_protocols_ddg_CartesianddG_hh_
+
 
 #include <core/chemical/AA.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -258,3 +261,5 @@ run(core::pose::Pose & pose);
 }// CartesianDDG
 }//ddg
 }//protocols
+
+#endif // _INCLUDED_protocols_ddg_CartesianddG_hh_
