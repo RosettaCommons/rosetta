@@ -40,6 +40,7 @@ sources = {
 		"CarbohydrateInfo",
 		"CarbohydrateInfoManager",
 		"database_io",
+		"stereochem",
 	],
 	"chemical/gasteiger" :[
 		"BondLengths",
@@ -653,6 +654,7 @@ testinputfiles = [
 	"chemical/carbohydrates/nomenclature.table",
 	"chemical/carbohydrates/ring_size_to_morphemes.bad_map",
 	"chemical/carbohydrates/ring_size_to_morphemes.map",
+	"chemical/carbohydrates/stereochem_test.key",
 	"chemical/gasteiger/AZO.params",
 	"chemical/gasteiger/GST.params",
 	"chemical/gasteiger/NXX.params",

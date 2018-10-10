@@ -2485,21 +2485,21 @@ is_atom_axial_or_equatorial_to_ring(
 // Is the query atom in this residue axial or equatorial or neither?
 /// @details This function calculates an average plane and determines whether the coordinates of a given atom are
 /// axial or equatorial to it (or neither).  The ring is requested from the Residue.
-/// @param   <residue>:    The Residue containing the atoms in question.
+/// @param   <residue>:    The Residue containing the atoms in question, which must have exactly one ring.
 /// @param   <query_atom>: The index of the atom in question.
 /// @return  An AxEqDesignation enum type value: AXIAL, EQUATORIAL, or NEITHER
 /// @author  Labonte <JWLabonte@jhu.edu>
-/*chemical::rings::AxEqDesignation
+chemical::rings::AxEqDesignation
 is_atom_axial_or_equatorial( Residue const & residue, uint query_atom )
 {
-chemical::ResidueType const & rsd_type( residue.type() );
-if ( ! rsd_type.is_cyclic() ) {
-TR.Warning << "Queried atom must be on a cyclic residue." << std::endl;
-return chemical::rings::NEITHER;
-}
+	chemical::ResidueType const & rsd_type( residue.type() );
+	if ( rsd_type.n_rings() != 1 ) {
+		TR.Warning << "Queried atom must be on a cyclic residue with exactly one ring." << std::endl;
+		return chemical::rings::NEITHER;
+	}
 
-return is_atom_axial_or_equatorial_to_ring( residue, query_atom, rsd_type.ring_atoms() );
-}*/
+	return is_atom_axial_or_equatorial_to_ring( residue, query_atom, rsd_type.ring_atoms( 1 ) );
+}
 
 chemical::ResidueTypeCOP
 virtual_type_for_conf( core::conformation::Conformation const & conformation ) {

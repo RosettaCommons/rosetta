@@ -41,6 +41,19 @@ namespace core {
 namespace chemical {
 namespace rings {
 
+// Return the opposite axial/equatorial designation.
+AxEqDesignation
+opposite_designation( core::chemical::rings::AxEqDesignation designation )
+{
+	if ( designation == EQUATORIAL ) {
+		return AXIAL;
+	} else if ( designation == AXIAL ) {
+		return EQUATORIAL;
+	} else {
+		return NEITHER;
+	}
+}
+
 // Is the query atom axial or equatorial to the given ring or neither?
 /// @details This function calculates an average plane and determines whether the coordinates of a given atom are
 /// axial or equatorial to it (or neither).
@@ -59,7 +72,7 @@ is_atom_axial_or_equatorial_to_ring(
 	using namespace numeric;
 	using namespace numeric::constants::r;
 
-	//JAB - Making the warnings in debug mode as we use this funciton a lot for linkage optimization.
+	//JAB - Making the warnings in debug mode as we use this function a lot for linkage optimization.
 	if ( ring_atoms.size() < 3 ) {
 		TR.Debug << "A ring cannot contain fewer than 3 atoms; ";
 		TR.Debug << "an axial/equatorial designation is meaningless." << std::endl;
@@ -92,7 +105,7 @@ is_atom_axial_or_equatorial_to_ring(
 
 	// A "perfectly" AXIAL substituent would have a theta of 0 degrees.
 	// A "perfectly" EQUATORIAL substituent would have a theta of 90 degrees, being parallel to the plane.
-	// A "perfectly" NEITHER substituent would have a theta of 45 degrees.
+	// A "perfectly" NEITHER (i.e., isoclinal) substituent would have a theta of 45 degrees.
 	// An ideal chair's axial substituent would have a theta of 0 degrees,
 	// and its equatorial substituent would have a theta of 180 degrees - ~110 degrees = ~70 degrees.
 	// An ideal 1,4B's axial substituents on 1 and 4 would have thetas of
@@ -107,14 +120,15 @@ is_atom_axial_or_equatorial_to_ring(
 	// AXIAL: 0 +/- 30
 	// EQUATORIAL: 90 +/- 30
 	// NEITHER: 45 +/- 15
+	// NEITHER is a tighter range, so we'll make the other two bins a bit bigger.
 
-	if ( theta < 30 * pi_over_180 ) {
+	if ( theta < 35 * pi_over_180 ) {
 		return AXIAL;
-	} else if ( theta > 60 * pi_over_180 ) {
+	} else if ( theta > 55 * pi_over_180 ) {
 		// This atom could be in the middle of the ring, but that's not our problem.
 		return EQUATORIAL;
 	} else {
-		//TR << "Neither: Theta = " << theta << " : " << (theta / pi_over_180) << std::endl;
+		TR.Trace << "Neither: Theta = " << theta << " : " << (theta / pi_over_180) << std::endl;
 		return NEITHER;
 	}
 }

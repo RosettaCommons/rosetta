@@ -1017,7 +1017,7 @@ read_topology_file(
 			rsd->set_rama_prepro_mainchain_torsion_potential_name(tag, true);
 		}  else if ( tag == "NAME" ) {
 			l >> tag;
-			rsd->name( tag ); //The name will have variant types appended to it; it will be the unique identifer for a ResidueType.
+			rsd->name( tag ); //The name will have variant types appended to it; it will be the unique identifier for a ResidueType.
 			rsd->base_name( tag ); //The base name stays the same once set.  It's common to all ResidueTypes that share a base type but differ in their VariantTypes.
 		} else if ( tag == "CHI_ROTAMERS" ) {
 			Size chino;

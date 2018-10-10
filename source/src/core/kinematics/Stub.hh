@@ -93,7 +93,7 @@ public: // Creation
 	/// @brief constructor by three points
 	///
 	/// @details first point is the center (V) and all the three are used to
-	/// construct the coord frame (M). see member functon from_four_points(...)
+	/// construct the coord frame (M). see member function from_four_points(...)
 	/// construct a stub as would come from building
 	/// c then b then a
 	inline

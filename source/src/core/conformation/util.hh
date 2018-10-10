@@ -448,7 +448,7 @@ chemical::rings::AxEqDesignation is_atom_axial_or_equatorial_to_ring(
 	utility::vector1< core::uint > const & ring_atoms );
 
 /// @brief  Is the query atom in this residue axial or equatorial or neither?
-//chemical::rings::AxEqDesignation is_atom_axial_or_equatorial( Residue const & residue, core::uint query_atom );
+chemical::rings::AxEqDesignation is_atom_axial_or_equatorial( Residue const & residue, core::uint query_atom );
 
 /// @brief Return the appropritate ResidueType for the virtual residue for the
 /// "mode" (fullatom, centroid ...) the conformation is in.

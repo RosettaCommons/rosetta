@@ -279,6 +279,7 @@ CarbohydrateInfo::copy_data(
 	object_to_copy_to.anomeric_carbon_ = object_to_copy_from.anomeric_carbon_;
 	object_to_copy_to.anomeric_carbon_name_ = object_to_copy_from.anomeric_carbon_;
 	object_to_copy_to.anomeric_carbon_index_ = object_to_copy_from.anomeric_carbon_index_;
+	object_to_copy_to.virtual_anomeric_carbon_index_ = object_to_copy_from.virtual_anomeric_carbon_index_;
 	object_to_copy_to.cyclic_oxygen_ = object_to_copy_from.cyclic_oxygen_;
 	object_to_copy_to.cyclic_oxygen_name_ = object_to_copy_from.cyclic_oxygen_name_;
 	object_to_copy_to.cyclic_oxygen_index_ = object_to_copy_from.cyclic_oxygen_index_;
@@ -437,12 +438,14 @@ CarbohydrateInfo::read_and_set_properties()
 	anomeric_carbon_index_ = residue_type->atom_index( anomeric_carbon_name_ );
 
 	// Determine cyclic oxygen from "cut bond" neighbor to the anomeric carbon, if applicable.
+	// Also, store virtual atom indices.
 	if ( ring_size_ != 0 ) {
 		cyclic_oxygen_index_ = residue_type->cut_bond_neighbor( anomeric_carbon_index_ )[ 1 ];
 		cyclic_oxygen_name_ = residue_type->atom_name( cyclic_oxygen_index_ );
 		string const cyclic_oxygen_position = cyclic_oxygen_name_.substr( 2, 1 );  // 3rd col. (index 2) is the atom #
 		cyclic_oxygen_ = atoi( &cyclic_oxygen_position[ 0 ] );
 		// TODO: There will likely be a better way to do this once Andrew finishes the virtual shadowing code.
+		virtual_anomeric_carbon_index_ = residue_type->atom_index( "V" + anomeric_carbon_name_ );
 		virtual_cyclic_oxygen_index_ = residue_type->atom_index( "VO" + cyclic_oxygen_position );
 	}
 }

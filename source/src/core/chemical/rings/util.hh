@@ -35,6 +35,9 @@ namespace rings {
 // Type definition
 typedef numeric::xyzVector< Distance > Coords;
 
+/// @brief  Return the opposite axial/equatorial designation.
+AxEqDesignation opposite_designation( AxEqDesignation designation );
+
 /// @brief  Are the query atom coordinates axial or equatorial to the given ring or neither?
 AxEqDesignation is_atom_axial_or_equatorial_to_ring(
 	Coords const & query_atom,

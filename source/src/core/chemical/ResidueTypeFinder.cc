@@ -440,7 +440,9 @@ ResidueTypeFinder::apply_patches_recursively(
 			fixes_connects( patch, rsd_type ) );
 
 		if ( apply_patch ) {
-			ResidueTypeCOP rsd_type_new( residue_type_set_.name_mapOP( patch->patched_name( *rsd_type ) ) );
+			std::string const & patched_name( patch->patched_name( *rsd_type ) );
+			TR.Debug << "Creating patched residue: " << patched_name << std::endl;
+			ResidueTypeCOP rsd_type_new( residue_type_set_.name_mapOP( patched_name ) );
 			if ( rsd_type_new ) {
 				rsd_types_new.push_back( rsd_type_new );
 			}

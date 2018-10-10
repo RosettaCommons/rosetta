@@ -24,6 +24,7 @@
 
 // Project headers
 #include <core/types.hh>
+#include <core/conformation/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/util.hh>
@@ -237,10 +238,11 @@ public:  // Test //////////////////////////////////////////////////////////////
 	void test_is_atom_axial_or_equatorial()
 	{
 		using namespace core::chemical::rings;
+		using namespace core::conformation;
 		using namespace core::pose;
 
 		// This function is not implemented at the moment?
-		/*
+
 		core_init_with_additional_options( "-include_sugars" );
 
 		TR << "Testing that is_atom_axial_or_equatorial() properly designates a ring substituent as axial, equatorial, or neither, including its ability to find the ring atoms and attachment point." << std::endl;
@@ -249,19 +251,22 @@ public:  // Test //////////////////////////////////////////////////////////////
 		make_pose_from_saccharide_sequence( glucose, "alpha-D-Glcp", "fa_standard" );
 		make_pose_from_sequence( serine, "S", "fa_standard" );
 
-		uint const O1_index( glucose.residue( 1 ).atom_index( " O1 " ) );
-		uint const O6_index( glucose.residue( 1 ).atom_index( " O6 " ) );
-		uint const OG_index( serine.residue( 1 ).atom_index( " OG " ) );
+		Residue const & Glc( glucose.residue( 1 ) );
+		Residue const & Ser( serine.residue( 1 ) );
 
-		// An alpha D-sugar has an axial attachement of its O1.
-		TS_ASSERT_EQUALS( is_atom_axial_or_equatorial( glucose, 1, O1_index ), AXIAL );
+		uint const O1_index( Glc.atom_index( " O1 " ) );
+		uint const O6_index( Glc.atom_index( " O6 " ) );
+		uint const OG_index( Ser.atom_index( " OG " ) );
+
+		// An alpha D-sugar has an axial attachment of its O1.
+		TS_ASSERT_EQUALS( is_atom_axial_or_equatorial( Glc, O1_index ), AXIAL );
 
 		// The O6 oxygen is exocyclic.
-		TS_ASSERT( ! is_atom_axial_or_equatorial( glucose, 1, O6_index ) );
+		TS_ASSERT( ! is_atom_axial_or_equatorial( Glc, O6_index ) );
 
 		// A linear residue cannot have any axial or equatorial atoms.
-		TS_ASSERT( ! is_atom_axial_or_equatorial( serine, 1, OG_index ) );
-		*/
+		TS_ASSERT( ! is_atom_axial_or_equatorial( Ser, OG_index ) );
+
 		TS_ASSERT( true );
 	}
 };  // class RingUtilityFunctionTests

@@ -196,6 +196,17 @@ public: // Accessors/Mutators /////////////////////////////////////////////////
 		return anomeric_carbon_index_;
 	}
 
+	/// @brief    Return the atom index of the virtual atom that superimposes with the anomeric carbon in this
+	/// ResidueType or 0, if linear.
+	/// @details  This atom is used as a reference atom for certain torsion angles.\n
+	/// See also:\n
+	///  CarbohydrateInfo.anomeric_carbon_index()\n
+	core::uint
+	virtual_anomeric_carbon_index() const
+	{
+		return virtual_anomeric_carbon_index_;
+	}
+
 
 	/// @brief    Return the cyclic oxygen number or 0, if linear.
 	/// @details  This atom is used as a reference atom for certain torsion angles.\n
@@ -515,6 +526,7 @@ private: // Private data //////////////////////////////////////////////////////
 	core::uint anomeric_carbon_;  // also indicative of location of aldehyde/ketone oxidation
 	std::string anomeric_carbon_name_;  // string for quick reference
 	core::uint anomeric_carbon_index_;  // atom index of anomeric carbon within ResidueType
+	core::uint virtual_anomeric_carbon_index_;
 	core::uint cyclic_oxygen_;  // 0 if linear
 	std::string cyclic_oxygen_name_;  // string for quick reference
 	core::uint cyclic_oxygen_index_;  // atom index of anomeric carbon within ResidueType; 0 if linear

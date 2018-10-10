@@ -1604,13 +1604,15 @@ Residue::connect_atom( Residue const & other ) const
 /// @return The atom indices of all heavy atoms bonded to the given atom (by index)
 /// @details This method does not count virtual atoms as heavy atoms.
 /// @author Labonte <JWLabonte@jhu.edu>
-utility::vector1< uint >
+core::chemical::AtomIndices
 Residue::get_adjacent_heavy_atoms( uint const atom_index ) const
 {
-	utility::vector1< uint > bonded_heavy_atom_indices;
+	using namespace chemical;
+
+	AtomIndices bonded_heavy_atom_indices;
 
 	// Get list of indices of all atoms connected to given connect atom.
-	utility::vector1< uint > const bonded_atom_indices( bonded_neighbor( atom_index ) );
+	AtomIndices const bonded_atom_indices( bonded_neighbor( atom_index ) );
 
 	// Search for heavy atoms.  (A residue connection is not an atom.)
 	Size const n_indices( bonded_atom_indices.size() );
@@ -1632,13 +1634,87 @@ Residue::get_adjacent_heavy_atoms( uint const atom_index ) const
 uint
 Residue::first_adjacent_heavy_atom( uint const atom_index ) const
 {
-	utility::vector1< uint > const atom_indices( get_adjacent_heavy_atoms( atom_index ) );
+	chemical::AtomIndices const atom_indices( get_adjacent_heavy_atoms( atom_index ) );
 
 	if ( atom_indices.empty() ) {
 		TR.Warning << "There are no adjacent heavy atoms to atom index " << atom_index << '!' << std::endl;
 		return 0;
 	}
 	return atom_indices[ 1 ];
+}
+
+/// @brief    Get a list of exocyclic atoms connected to a given ring atom.
+/// @return   The atom indices of all atoms bonded to the given atom (by index) that are not a part of the ring.
+/// @details  This method does not count virtual atoms as atoms.
+/// @author   Labonte <JWLabonte@jhu.edu>
+core::chemical::AtomIndices
+Residue::get_atoms_exocyclic_to_ring_atom( uint const atom_index ) const
+{
+	using namespace chemical;
+
+	AtomIndices combined_ring_atoms, exocyclic_atoms;
+
+	// A residue can have multiple rings; pool all of the rings' atoms into one list.
+	for ( AtomIndices single_ring_atoms : type().ring_atoms() ) {
+		combined_ring_atoms.append( single_ring_atoms );
+	}
+	if ( combined_ring_atoms.contains( atom_index ) ) {
+		AtomIndices const & potential_exocyclic_atoms( bonded_neighbor( atom_index ) );
+		for ( uint potential_exocyclic_atom : potential_exocyclic_atoms ) {
+			if ( ( ! combined_ring_atoms.contains( potential_exocyclic_atom ) ) &&
+					( ! is_virtual( potential_exocyclic_atom ) ) ) {
+				// This atom must be exocyclic; add it to the list.
+				exocyclic_atoms.push_back( potential_exocyclic_atom );
+			}
+		}
+	} else {
+		utility_exit_with_message( "Residue::get_atoms_exocyclic_to_ring_atom( uint const atom_index ): "
+			"<atom_index> does not correspond to a ring atom." );
+	}
+
+	return exocyclic_atoms;
+}
+
+/// @brief    Get a list of substituent atoms connected to a given ring atom.
+/// @return   The atom indices of all heavy atoms bonded to the given atom (by index) that are not a part of the ring.
+/// @details  This method does not count virtual atoms as atoms.
+/// @author   Labonte <JWLabonte@jhu.edu>
+core::chemical::AtomIndices
+Residue::get_substituents_to_ring_atom( uint const atom_index ) const
+{
+	using namespace chemical;
+
+	AtomIndices substituents;
+	AtomIndices const & exocylic_atoms( get_atoms_exocyclic_to_ring_atom( atom_index ) );
+
+	for ( uint exocyclic_atom : exocylic_atoms ) {
+		if ( ! atom_is_hydrogen( exocyclic_atom ) ) {
+			substituents.push_back( exocyclic_atom );
+		}
+	}
+
+	return substituents;
+}
+
+/// @brief    Get a list of hydrogen atoms connected to a given ring atom.
+/// @return   The atom indices of hydrogens bonded to the given ring atom (by index).
+/// @details  This method does not count virtual atoms as atoms.
+/// @author   Labonte <JWLabonte@jhu.edu>
+core::chemical::AtomIndices
+Residue::get_hydrogens_bonded_to_ring_atom( uint const atom_index ) const
+{
+	using namespace chemical;
+
+	AtomIndices hydrogens;
+	AtomIndices const & exocylic_atoms( get_atoms_exocyclic_to_ring_atom( atom_index ) );
+
+	for ( uint exocyclic_atom : exocylic_atoms ) {
+		if ( atom_is_hydrogen( exocyclic_atom ) ) {
+			hydrogens.push_back( exocyclic_atom );
+		}
+	}
+
+	return hydrogens;
 }
 
 PseudoBondCollectionCOP
