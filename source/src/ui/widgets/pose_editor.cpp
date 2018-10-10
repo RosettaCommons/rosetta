@@ -229,7 +229,7 @@ void PoseEditor::on_functions_double_clicked(FunctionID const &fid)
 
 	if(args) {
 		if( not pose ) {
-			if( args->find(_f_pose_) != args->end() ) {
+            if( args->find(_f_pose_) != args->end() ) {
 				QMessageBox box(QMessageBox::Warning, "Structure is Empty!", QString("Current structure is Empty!\n\nFunction `%1`\nrequire non-empty Pose object\n\nPlease load the Pose first!").arg(fid.name.c_str()) );
 				box.exec();
 				return;

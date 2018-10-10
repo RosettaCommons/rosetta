@@ -11,6 +11,16 @@
 /// @author Rhiju Das (rhiju@stanford.edu)
 /// @author Andrew Watkins (amw579@stanford.edu)
 
+#include <utility/json_utilities.hh>
+
+#if defined(ZEROMQ)  and  defined(_NLOHMANN_JSON_ENABLED_)
+#include <protocols/network/hal.hh>
+#include <protocols/network/util.hh>
+#include <json.hpp>
+#include <protocols/network/ui_mover.hh>
+#include <core/import_pose/import_pose.hh>
+#endif
+
 // libRosetta headers
 #include <core/types.hh>
 #include <core/chemical/util.hh>
@@ -86,6 +96,11 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace basic::options::OptionKeys::stepwise::monte_carlo;
 using utility::vector1;
+
+#if defined(ZEROMQ)  and  defined(_NLOHMANN_JSON_ENABLED_)
+using namespace utility;
+using namespace protocols::network;
+#endif
 
 static basic::Tracer TR( "apps.public.stepwise.stepwise" );
 
@@ -186,6 +201,11 @@ public:
 		Vector center_vector = ( align_pose != nullptr ) ? get_center_of_mass( *align_pose ) : Vector( 0.0 );
 		protocols::viewer::add_conformation_viewer ( pose->conformation(), "current", 500, 500, false, ( align_pose != nullptr ), center_vector );
 
+#if defined(ZEROMQ)  and  defined(_NLOHMANN_JSON_ENABLED_)
+		pose->center();
+		protocols::network::AddUIObserver( *pose );
+#endif
+
 		StepWiseMonteCarloOP stepwise_monte_carlo( new StepWiseMonteCarlo( scorefxn ) );
 		stepwise_monte_carlo->set_align_pose( align_pose ); //allows for alignment to be to non-native
 		stepwise_monte_carlo->set_move( test_move );
@@ -217,7 +237,11 @@ public:
 };
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#if defined(ZEROMQ)  and  defined(_NLOHMANN_JSON_ENABLED_)
+core::pose::Pose
+#else
 void
+#endif
 stepwise_monte_carlo()
 {
 	// AMW: THIS will determine whether it's MPI vs serial etc.
@@ -225,10 +249,17 @@ stepwise_monte_carlo()
 	protocols::jd3::JobDistributorOP jd = protocols::jd3::JobDistributorFactory::create_job_distributor();
 	protocols::jd3::JobQueenOP queen( new StepWiseJobQueen );
 	jd->go( queen );
+#if defined(ZEROMQ)  and  defined(_NLOHMANN_JSON_ENABLED_)
+	return Pose();
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#if defined(ZEROMQ)  and  defined(_NLOHMANN_JSON_ENABLED_)
+core::pose::Pose
+#else
 void
+#endif
 stepwise_monte_carlo_legacy()
 {
 	using namespace core::pose;
@@ -258,6 +289,9 @@ stepwise_monte_carlo_legacy()
 	// isn't super-useful unless we have a BIG starting pose where residue 1 is
 	// likely far from the COM.
 #ifdef GL_GRAPHICS
+	pose.center();
+#endif
+#if defined(ZEROMQ)  and  defined(_NLOHMANN_JSON_ENABLED_)
 	pose.center();
 #endif
 
@@ -313,8 +347,32 @@ stepwise_monte_carlo_legacy()
 	while ( stepwise_job_distributor->has_another_job() ) {
 		stepwise_job_distributor->apply( pose );
 	}
+#if defined(ZEROMQ)  and  defined(_NLOHMANN_JSON_ENABLED_)
+	return pose;
+#endif
 }
 
+#if defined(ZEROMQ)  and  defined(_NLOHMANN_JSON_ENABLED_)
+///////////////////////////////////////////////////////////////
+core::pose::Pose
+my_main()
+{
+	clock_t const my_main_time_start( clock() );
+	if ( option[ OptionKeys::stepwise::use_legacy_stepwise_job_distributor ].value() ) {
+		stepwise_monte_carlo_legacy();
+	} else {
+		// Check that the user is not supplying an -out:file:silent with a path
+		std::string out_file_silent = option[ out::file::silent ].value();
+		if ( out_file_silent.find( '/' ) != std::string::npos ) {
+			utility_exit_with_message( "Error: you are trying to specify -out:file:silent in a way that specifies a path, which is not compatible with the new job distributor. Either use -out:file:path as well as -out:file:silent, or pass -use_legacy_stepwise_job_distributor." );
+		}
+		stepwise_monte_carlo();
+	}
+	protocols::viewer::clear_conformation_viewers();
+	std::cout << "Total time to run " << static_cast<Real>( clock() - my_main_time_start ) / CLOCKS_PER_SEC << " seconds." << std::endl;
+	exit( 0 );
+}
+#else
 ///////////////////////////////////////////////////////////////
 void*
 my_main( void* )
@@ -334,6 +392,7 @@ my_main( void* )
 	std::cout << "Total time to run " << static_cast<Real>( clock() - my_main_time_start ) / CLOCKS_PER_SEC << " seconds." << std::endl;
 	exit( 0 );
 }
+#endif
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -415,7 +474,26 @@ main( int argc, char * argv [] )
 			std::cout << "The use of -superimpose_over_all is deprecated. The behavior in question now defaults to TRUE and is turned off by providing a particular residue that is part of an anchoring input domain as -alignment_anchor_res." << std::endl;
 		}
 
+#if defined(ZEROMQ)  and  defined(_NLOHMANN_JSON_ENABLED_)
+		{ // creating dummy pose object to trigger database load so later we can create Pose immeditaly
+			core::pose::Pose p;
+			core::import_pose::pose_from_pdbstring(p, "ATOM     17  N   ILE A   1      16.327  47.509  23.466  1.00  0.00\n");
+		}
+
+		//protocols::network::hal(specification, hal_executioner, protocols::network::CommandLineArguments{argc, argv} );
+
+		hal({
+			{"main", {my_main, {
+			}
+			} } },
+			protocols::network::CommandLineArguments{argc, argv} );
+
+		return 0;
+
+
+#else
 		protocols::viewer::viewer_main( my_main );
+#endif
 
 	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

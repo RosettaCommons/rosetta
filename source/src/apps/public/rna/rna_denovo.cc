@@ -11,6 +11,16 @@
 /// @brief
 /// @author Rhiju Das
 
+#include <utility/json_utilities.hh>
+
+#if defined(ZEROMQ)  and  defined(_NLOHMANN_JSON_ENABLED_)
+#include <protocols/network/hal.hh>
+#include <protocols/network/util.hh>
+#include <json.hpp>
+#include <protocols/network/ui_mover.hh>
+#include <core/import_pose/import_pose.hh>
+#endif
+
 // libRosetta headers
 #include <core/types.hh>
 #include <basic/options/option.hh>
@@ -119,6 +129,10 @@ using namespace protocols::jd3;
 using namespace protocols::jd3::chunk_library;
 using utility::vector1;
 
+#if defined(ZEROMQ)  and  defined(_NLOHMANN_JSON_ENABLED_)
+using namespace utility;
+using namespace protocols::network;
+#endif
 
 static basic::Tracer TR( "apps.public.rna.denovo" );
 
@@ -189,6 +203,9 @@ public:
 		native_pose_ = rna_de_novo_setup->native_pose();
 		refine_pose_list_ = rna_de_novo_setup->refine_pose_list();
 
+#if defined(ZEROMQ)  and  defined(_NLOHMANN_JSON_ENABLED_)
+		protocols::network::AddUIObserver( pose );
+#endif
 		protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 600, 600 );
 		// protocols::moves::AddPyMOLObserver( pose, false, 0.01);
 
@@ -266,36 +283,7 @@ public:
 			rna_fragment_monte_carlo_->set_user_input_chunk_initialization_library( user_input_chunk_initialization_library );
 		}
 
-		/*
-		protocols::rna::setup::RNA_JobDistributorOP denovo_job_distributor;
-		if ( option[ csa::csa_bank_size ].user() ) {
-		denovo_job_distributor = protocols::rna::setup::RNA_JobDistributorOP( new protocols::rna::setup::RNA_CSA_JobDistributor(
-		rna_fragment_monte_carlo_,
-		silent_file,
-		option[ out::nstruct ](),
-		option[ csa::csa_bank_size ](),
-		option[ csa::csa_rmsd ](),
-		option[ csa::csa_output_rounds ](),
-		option[ csa::annealing ]() ) );
-		} else {
-		denovo_job_distributor = protocols::rna::setup::RNA_JobDistributorOP( new protocols::rna::setup::RNA_MonteCarloJobDistributor(
-		rna_fragment_monte_carlo_,
-		silent_file,
-		options_->nstruct() ) );
-		}
-		denovo_job_distributor->set_native_pose( get_native_pose() );
-		denovo_job_distributor->set_superimpose_over_all( option[ OptionKeys::stepwise::superimpose_over_all ]() );
-		denovo_job_distributor->initialize( pose ); // start_pose_ gets saved.
-		*/
-
 		protocols::rna::denovo::output::RNA_FragmentMonteCarloOutputterOP outputter;
-		//Size n = 1;
-		//while ( denovo_job_distributor->has_another_job() ) {
-
-		//std::string const out_file_tag = "S_"+lead_zero_string_of( n++, 6 );
-		//if ( tag_is_done_[ out_file_tag ] ) continue;
-
-		//std::clock_t start_time = clock();
 
 		if ( refine_pose_list_.size() > 0 ) {
 			pose = *refine_pose_list_[ refine_pose_id ];
@@ -304,7 +292,6 @@ public:
 			pose = start_pose;
 		}
 
-		//rna_fragment_monte_carlo_->set_out_file_tag( out_file_tag );
 		rna_fragment_monte_carlo_->set_native_pose( get_native_pose() );
 		rna_fragment_monte_carlo_->set_denovo_scorefxn( denovo_scorefxn_ );
 		rna_fragment_monte_carlo_->set_hires_scorefxn( hires_scorefxn_ );
@@ -312,39 +299,10 @@ public:
 		rna_fragment_monte_carlo_->set_is_rna_and_protein( rna_params_->is_rna_and_protein() ); // need to know this for the high resolution stuff
 		if ( options_->filter_vdw() ) rna_fragment_monte_carlo_->set_vdw_grid( vdw_grid_ );
 		if ( !refine_pose ) rna_fragment_monte_carlo_->set_rna_de_novo_pose_initializer( rna_de_novo_pose_initializer ); // only used for resetting fold-tree & cutpoints on each try.
-		//rna_fragment_monte_carlo_->set_all_lores_score_final( all_lores_score_final_ );  // used for filtering.
 		if ( outputter != 0 ) rna_fragment_monte_carlo_->set_outputter( outputter); // accumulate stats in histogram.
-
-		// This calls apply on the rna_fragment_monte_carlo_ object, to which it
-		// has a shared_ptr
-
-		//denovo_job_distributor->apply( pose );
-
-		//}
 
 		mature_job->mover( rna_fragment_monte_carlo_ );
 
-		//rna_fragment_monte_carlo_->align_pose( pose, true /*verbose*/ );
-
-		// [aaaaa]
-		/*
-
-		outputter shit!
-
-		all_lores_score_final = rna_fragment_monte_carlo_->all_lores_score_final(); // might have been updated, used for filtering.
-		if ( options_->output_lores_silent_file() ) align_and_output_to_silent_file( *(rna_fragment_monte_carlo_->lores_pose()), lores_silent_file_, out_file_tag );
-		outputter = rna_fragment_monte_carlo_->outputter();
-
-		std::string const out_file_name = out_file_tag + ".pdb";
-		if ( options_->dump_pdb() ) pose.dump_pdb( out_file_name );
-
-		if ( options_->save_times() ) setPoseExtraScore( pose, "time", static_cast< Real >( clock() - start_time ) / CLOCKS_PER_SEC );
-
-		align_and_output_to_silent_file( pose, options_->silent_file(), out_file_tag );
-		*/
-
-
-		//AAA
 		return mature_job;
 	}
 
@@ -560,7 +518,11 @@ private:
 
 
 ///////////////////////////////////////////////////////////////////////////////
+#if defined(ZEROMQ)  and  defined(_NLOHMANN_JSON_ENABLED_)
+core::pose::Pose
+#else
 void
+#endif
 rna_denovo()
 {
 	using namespace basic::options;
@@ -575,10 +537,17 @@ rna_denovo()
 	protocols::jd3::JobDistributorOP jd = protocols::jd3::JobDistributorFactory::create_job_distributor();
 	protocols::jd3::JobQueenOP queen( new RNA_DeNovoJobQueen );
 	jd->go( queen );
+#if defined(ZEROMQ)  and  defined(_NLOHMANN_JSON_ENABLED_)
+	return Pose();
+#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+#if defined(ZEROMQ)  and  defined(_NLOHMANN_JSON_ENABLED_)
+core::pose::Pose
+#else
 void
+#endif
 rna_denovo_legacy()
 {
 	using namespace basic::options;
@@ -599,12 +568,36 @@ rna_denovo_legacy()
 	rna_de_novo_protocol.set_native_pose( rna_de_novo_setup->native_pose() );
 	rna_de_novo_protocol.set_refine_pose_list( rna_de_novo_setup->refine_pose_list() );
 
+#if defined(ZEROMQ)  and  defined(_NLOHMANN_JSON_ENABLED_)
+	protocols::network::AddUIObserver( pose );
+#endif
+
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 600, 600 );
 	// protocols::moves::AddPyMOLObserver( pose, false, 0.01);
 
 	rna_de_novo_protocol.apply( pose );
+#if defined(ZEROMQ)  and  defined(_NLOHMANN_JSON_ENABLED_)
+	return pose;
+#endif
 }
 
+#if defined(ZEROMQ)  and  defined(_NLOHMANN_JSON_ENABLED_)
+///////////////////////////////////////////////////////////////
+core::pose::Pose
+my_main()
+{
+	using namespace basic::options;
+
+	if ( option[ OptionKeys::denovo::use_legacy_job_distributor ].value() ) {
+		return rna_denovo_legacy();
+	} else {
+		return rna_denovo();
+	}
+	protocols::viewer::clear_conformation_viewers();
+	exit( 0 );
+}
+
+#else
 ///////////////////////////////////////////////////////////////
 void*
 my_main( void* )
@@ -619,6 +612,7 @@ my_main( void* )
 	protocols::viewer::clear_conformation_viewers();
 	exit( 0 );
 }
+#endif
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -718,8 +712,27 @@ main( int argc, char * argv [] )
 		////////////////////////////////////////////////////////////////////////////
 		// end of setup
 		////////////////////////////////////////////////////////////////////////////
+#if defined(ZEROMQ)  and  defined(_NLOHMANN_JSON_ENABLED_)
+		{ // creating dummy pose object to trigger database load so later we can create Pose immeditaly
+			core::pose::Pose p;
+			core::import_pose::pose_from_pdbstring(p, "ATOM     17  N   ILE A   1      16.327  47.509  23.466  1.00  0.00\n");
+		}
 
+		//protocols::network::hal(specification, hal_executioner, protocols::network::CommandLineArguments{argc, argv} );
+
+		hal({
+			{"main", {my_main, {
+			}
+			} } },
+			protocols::network::CommandLineArguments{argc, argv} );
+
+		return 0;
+
+
+#else
 		protocols::viewer::viewer_main( my_main );
+#endif
+
 	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

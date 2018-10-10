@@ -527,8 +527,12 @@ if( EXTRAS )
     		-Wno-unused-function
 	    )
 
+	    list( APPEND link
+			-lpthread
+	    )
+
 	    list( APPEND shlink
-		-lpthread
+			-lpthread
 	    )
 
 	endif()
