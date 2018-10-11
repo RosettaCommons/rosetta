@@ -82,7 +82,7 @@ SwitchChainOrderMover::apply( Pose & pose )
 	core::Size chain_count( 1 );
 	utility::vector1< core::Size > new_residue_numbers;
 	new_residue_numbers.clear();
-	utility::vector1< core::Size > positions_in_new_pose;
+	utility::vector1< core::Size > positions_in_new_pose; // positions_in_new_pose[ new_pose_seqpos ] = old_pose_seqpos
 	positions_in_new_pose.clear();
 	for ( char const chaini : chain_order() ) {
 		core::Size const chain( chaini - '0' );
@@ -113,6 +113,14 @@ SwitchChainOrderMover::apply( Pose & pose )
 	core::pose::create_subpose( pose, positions_in_new_pose, new_ft, new_pose );
 	new_pose.update_residue_neighbors();
 	new_pose.pdb_info( core::pose::PDBInfoOP( new core::pose::PDBInfo( new_pose, true ) ) ); //reinitialize the PDBInfo
+
+	// Salvage old PDBInfo information. Feel free to add anything else you need here.
+	for ( Size new_seqpos = 1; new_seqpos <= new_pose.size(); new_seqpos++ ) {
+		Size old_seqpos = positions_in_new_pose.at( new_seqpos );
+		for ( auto reslabel : pose.pdb_info()->get_reslabels( old_seqpos ) ) {
+			new_pose.pdb_info()->add_reslabel( new_seqpos, reslabel );
+		}
+	}
 
 	//When applying switch then comments are erased from the pose. adding condition that if -pdb comments true flag is turned on then copy comments to new pose. gideonla 1/5/13
 	if ( basic::options::option[ basic::options::OptionKeys::out::file::pdb_comments ].value() ) {
