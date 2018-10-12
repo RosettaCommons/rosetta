@@ -48,6 +48,7 @@
 #include <utility/vector1.srlz.hh>
 #include <utility/io/zipstream.hpp>
 #include <utility/pointer/memory.hh>
+#include <utility/file/file_sys_util.hh>
 
 // Cereal headers
 #include <cereal/archives/binary.hpp>
@@ -336,6 +337,13 @@ MPIWorkPoolJobDistributor::master_setup()
 		n_outstanding_output_tasks_for_archives_.heap_insert( ii, 0, err );
 	}
 	node_outputter_is_outputting_for_.resize( max_n_outputters_, -1 );
+
+	if ( archive_on_disk_ && ! utility::file::is_directory( archive_dir_name_ ) ) {
+		bool const successfully_made_directory = utility::file::create_directory( archive_dir_name_ );
+		if ( ! successfully_made_directory ) {
+			utility_exit_with_message( "Unable to find or create directory: " + archive_dir_name_ );
+		}
+	}
 }
 
 void
