@@ -1,0 +1,66 @@
+# -*- mode:python;indent-tabs-mode:nil;show-trailing-whitespace:t; -*-
+#
+# To use, copy this file into site.settings:
+#
+#   cp site.settings.gordon site.settings
+#
+# DO NOT make changes to this template
+# DO NOT try and check in site.settings
+# (c) Copyright Rosetta Commons Member Institutions.
+# (c) This file is part of the Rosetta software suite and is made available under license.
+# (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+# (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+# (c) addressed to University of Washington CoMotion, email: license@uw.edu.
+
+# Settings here are added to the combined build settings, after all basic
+# settings, to allow you to override anything you need to.  They can in turn
+# be overriden by user settings and project settings respectively.
+#
+# Typically you want to prepend to one of the settings listed to expand your
+# paths, but you can also append, override, or remove settings.
+
+# These settings are for the UCSF Gordon cluster used by the Simons Foundation / Flatiron Institute.
+# They were added on 13 October 2018 by Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+
+# Allow querying the operating system:
+import os
+settings = {
+    "user" : {
+        "prepends" : {
+        },
+        "appends" : {
+	    # Use the environment's program path:
+            "program_path"  : os.environ["PATH"].split(":"),
+
+	    # Optimize aggressively for the hardware.  (Note that the
+	    # default settings of march=core2, mtune=generic are removed
+	    # below.
+	    "flags" : {
+		"compile" : [
+		    "march=native",
+		    "mtune=native",
+		],
+	    },
+        },
+        "overrides" : {
+	    # Import the full operating system environment.  Useful for
+	    # compiling with scons on different systems:
+	    "ENV" : os.environ,
+
+	    # When building for MPI, ensure that the following two lines are
+	    # uncommented.  They must be commented for non-MPI builds:
+	    "cxx": "mpicxx",
+	    "cc": "mpicc",
+        },
+        "removes" : {
+	    # Remove the default optimization settings.  The march=native,
+	    # mtune=native settings are added above instead,
+	    "flags" : {
+                "compile" : [
+		    "march=core2",
+		    "mtune=generic",
+	        ],
+	    },
+        },
+    }
+}
