@@ -91,6 +91,7 @@ std::string JobOutputter::affixed_numbered_name( JobCOP job ){
 	// caused by path/ext removal.
 	std::string base_name = job->input_tag();
 	switch ( JobDistributor::get_instance()->job_inputter_input_source() ) {
+	case JobInputterInputSource::SERIALIZED_POSE_FILE:
 	case JobInputterInputSource::PDB_FILE : { // remove paths and ext.
 
 		// Treat tags as file names so that we put the number before the extension.

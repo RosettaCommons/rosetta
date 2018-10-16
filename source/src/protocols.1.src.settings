@@ -115,6 +115,8 @@ sources = {
 		"PoseInputStreamJobInputter",
 		"ScreeningJobInputter",
 		"ScoreOnlyJobOutputter",
+		"SerializedPoseJobInputter",
+		"SerializedPoseJobOutputter",
 		"ShuffleJobDistributor",
 		"SilentFileJobInputter",
 		"SilentFileJobOutputter",

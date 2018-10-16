@@ -12,12 +12,13 @@
 /// @author Steven Lewis smlewi@gmail.com
 
 //JobOutputterCreator #includes
-#include <protocols/jd2/JobOutputterFactory.hh>
-#include <protocols/jd2/PDBJobOutputterCreator.hh>
-#include <protocols/jd2/mmCIFJobOutputterCreator.hh>
-#include <protocols/jd2/SilentFileJobOutputterCreator.hh>
 #include <protocols/jd2/AtomTreeDiffJobOutputterCreator.hh>
+#include <protocols/jd2/JobOutputterFactory.hh>
 #include <protocols/jd2/NoOutputJobOutputterCreator.hh>
+#include <protocols/jd2/PDBJobOutputterCreator.hh>
 #include <protocols/jd2/ScoreOnlyJobOutputterCreator.hh>
+#include <protocols/jd2/SerializedPoseJobOutputterCreator.hh>
+#include <protocols/jd2/SilentFileJobOutputterCreator.hh>
+#include <protocols/jd2/mmCIFJobOutputterCreator.hh>
 #include <protocols/enzdes/EnzdesJobOutputterCreator.hh>
 #include <protocols/features/DatabaseJobOutputterCreator.hh>

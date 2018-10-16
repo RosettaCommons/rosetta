@@ -92,6 +92,8 @@ JobOutputterFactory::get_new_JobOutputter( JobOutputterOP default_jobout ) {
 		return get_JobOutputter_from_string( "SilentFileJobOutputter" );
 	} else if ( basic::options::option[basic::options::OptionKeys::out::pdb].user() ) {
 		return get_JobOutputter_from_string( "PDBJobOutputter" );
+	} else if ( basic::options::option[basic::options::OptionKeys::out::file::srlz].user() ) {
+		return get_JobOutputter_from_string( "SerializedPoseJobOutputter" );
 	} else if ( basic::options::option[basic::options::OptionKeys::out::file::atom_tree_diff].user() ) {
 		return get_JobOutputter_from_string( "AtomTreeDiffJobOutputter" );
 	} else if ( basic::options::option[basic::options::OptionKeys::out::file::score_only].user() ) {

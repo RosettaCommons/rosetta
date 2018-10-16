@@ -53,6 +53,7 @@ namespace import_pose {
 enum FileType{
 	PDB_file,
 	CIF_file,
+	SRLZ_file,
 	Unknown_file
 };
 

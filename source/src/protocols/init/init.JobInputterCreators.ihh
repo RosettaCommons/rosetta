@@ -12,18 +12,19 @@
 /// @author Steven Lewis smlewi@gmail.com
 
 //JobInputterCreator #includes
+#include <protocols/comparative_modeling/GenericJobInputterCreator.hh>
+#include <protocols/comparative_modeling/ThreadingJobInputterCreator.hh>
+#include <protocols/enzdes/EnzdesJobInputterCreator.hh>
+#include <protocols/features/DatabaseJobInputterCreator.hh>
+#include <protocols/jd2/AtomTreeDiffJobInputterCreator.hh>
+#include <protocols/jd2/EnsembleJobInputterCreator.hh>
 #include <protocols/jd2/JobInputterFactory.hh>
+#include <protocols/jd2/LargeNstructJobInputterCreator.hh>
+#include <protocols/jd2/LazySilentFileJobInputterCreator.hh>
 #include <protocols/jd2/PDBJobInputterCreator.hh>
 #include <protocols/jd2/PoseInputStreamJobInputterCreator.hh>
-#include <protocols/features/DatabaseJobInputterCreator.hh>
-#include <protocols/jd2/EnsembleJobInputterCreator.hh>
-#include <protocols/enzdes/EnzdesJobInputterCreator.hh>
-#include <protocols/protein_interface_design/ParserJobInputterCreator.hh>
-#include <protocols/comparative_modeling/GenericJobInputterCreator.hh>
-#include <protocols/jd2/LazySilentFileJobInputterCreator.hh>
-#include <protocols/jd2/SilentFileJobInputterCreator.hh>
-#include <protocols/comparative_modeling/ThreadingJobInputterCreator.hh>
-#include <protocols/jd2/AtomTreeDiffJobInputterCreator.hh>
-#include <protocols/make_rot_lib/MakeRotLibJobInputterCreator.hh>
 #include <protocols/jd2/ScreeningJobInputterCreator.hh>
-#include <protocols/jd2/LargeNstructJobInputterCreator.hh>
+#include <protocols/jd2/SerializedPoseJobInputterCreator.hh>
+#include <protocols/jd2/SilentFileJobInputterCreator.hh>
+#include <protocols/make_rot_lib/MakeRotLibJobInputterCreator.hh>
+#include <protocols/protein_interface_design/ParserJobInputterCreator.hh>

@@ -17,12 +17,13 @@
 namespace protocols {
 
 using namespace protocols::jd2;
-static JobOutputterRegistrator< PDBJobOutputterCreator > reg_PDBJobOutputterCreator;
-static JobOutputterRegistrator< mmCIFJobOutputterCreator > reg_mmCIFJobOutputterCreator;
-static JobOutputterRegistrator< SilentFileJobOutputterCreator > reg_SilentFileJobOutputterCreator;
 static JobOutputterRegistrator< AtomTreeDiffJobOutputterCreator > reg_AtomTreeDiffJobOutputterCreator;
 static JobOutputterRegistrator< NoOutputJobOutputterCreator > reg_NoOutputJobOutputterCreator;
+static JobOutputterRegistrator< PDBJobOutputterCreator > reg_PDBJobOutputterCreator;
 static JobOutputterRegistrator< ScoreOnlyJobOutputterCreator > reg_ScoreOnlyJobOutputterCreator;
+static JobOutputterRegistrator< SerializedPoseJobOutputterCreator > reg_SerializedPoseJobOutputterCreator;
+static JobOutputterRegistrator< SilentFileJobOutputterCreator > reg_SilentFileJobOutputterCreator;
+static JobOutputterRegistrator< mmCIFJobOutputterCreator > reg_mmCIFJobOutputterCreator;
 static JobOutputterRegistrator< enzdes::EnzdesJobOutputterCreator > reg_EnzdesJobOutputterCreator;
 static JobOutputterRegistrator< features::DatabaseJobOutputterCreator > reg_DatabaseJobOutputterCreator;
 

@@ -84,6 +84,7 @@
 #include <utility/io/izstream.hh>
 #include <utility/vector1.hh>
 #include <utility/vector1.functions.hh>
+#include <utility/string_util.hh>
 
 #include <ObjexxFCL/FArray2D.hh>
 // External headers
@@ -92,6 +93,16 @@
 #include <cifparse/CifParserBase.h>
 
 #include <tuple>
+#include <boost/algorithm/string/predicate.hpp>
+
+#ifdef SERIALIZATION
+// Cereal headers
+#include <cereal/archives/binary.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/list.hpp>
+#include <cereal/types/utility.hpp>
+#include <cereal/details/helpers.hpp>
+#endif
 
 using CifFileOP = utility::pointer::shared_ptr<CifFile>;
 using CifParserOP = utility::pointer::shared_ptr<CifParser>;
@@ -125,6 +136,9 @@ std::ostream & operator<<( std::ostream & stream, FileType type ) {
 		break;
 	case CIF_file :
 		stream << "mmCIF";
+		break;
+	case SRLZ_file :
+		stream << "SRLZ";
 		break;
 	default :
 		stream << "UNKNOWN";
@@ -338,15 +352,18 @@ pose_from_file(
 			TR.Debug << "read file: " << filename << std::endl;
 		}
 		utility::slurp( file, contents_of_file );
+		if ( file_type == Unknown_file && boost::algorithm::ends_with( filename, ".srlz" ) ) {
+			file_type = SRLZ_file;
+		}
 	}
 
 	if ( file_type == Unknown_file ) {
-		file_type = determine_file_type( contents_of_file);
+		file_type = determine_file_type( contents_of_file );
 		TR << "File '" << filenames_string << "' automatically determined to be of type " << file_type << std::endl;
 	}
 
 	if ( file_type == Unknown_file ) {
-		utility_exit_with_message( "Cannot determine file type. Current supported types are: PDB, CIF");
+		utility_exit_with_message( "Cannot determine file type. Current supported types are: PDB, CIF, SRLZ");
 	} else if ( file_type == PDB_file ) {
 		//fpd If the conformation is not of type core::Conformation, reset it
 		conformation::ConformationOP conformation_op( new conformation::Conformation() );
@@ -380,6 +397,14 @@ pose_from_file(
 		// file.
 		cifParser.reset();
 		build_pose( sfr, pose, residue_set, options );
+	} else if ( file_type == SRLZ_file ) {
+#ifdef SERIALIZATION
+		std::istringstream iss( contents_of_file );
+		cereal::BinaryInputArchive arc( iss );
+		arc( pose );
+#else
+		utility_exit_with_message( "Cannot deserialize pose with non-serialization builds. Please compile with extras=serialization.");
+#endif
 	}
 }
 

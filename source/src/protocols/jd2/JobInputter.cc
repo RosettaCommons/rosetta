@@ -80,6 +80,7 @@ JobInputter::job_inputter_input_source_to_string(
 	case JobInputterInputSource::MAKE_ROT_LIB : return "MakeRotLib";
 	case JobInputterInputSource::RESOURCE_MANAGED_JOB : return "ResourceManagerJob";
 	case JobInputterInputSource::SCREENING_FILE : return "ScreeningJobInputter";
+	case JobInputterInputSource::SERIALIZED_POSE_FILE : return "SerializedPoseJobInputter";
 	default :
 		utility_exit_with_message("Unrecognized JobInputterInputSource");
 	}

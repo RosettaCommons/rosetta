@@ -89,9 +89,10 @@ JobInputterFactory::get_new_JobInputter()
 		return get_JobInputter_from_string( "PoseInputStreamJobInputter" );
 	}
 
-	//if ( basic::options::option[ basic::options::OptionKeys::jd2::resource_definition_files ].user() ) {
-	// return get_JobInputter_from_string("JD2ResourceManagerJobInputter" );
-	//}
+	if ( basic::options::option[ basic::options::OptionKeys::in::file::srlz ].value()
+			|| basic::options::option[ basic::options::OptionKeys::in::file::srlz_override ].value() ) {
+		return get_JobInputter_from_string("SerializedPoseJobInputter" );
+	}
 
 	if ( basic::options::option[ basic::options::OptionKeys::in::file::screening_job_file].user() ) {
 		return get_JobInputter_from_string("ScreeningJobInputter");

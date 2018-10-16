@@ -17,18 +17,19 @@
 namespace protocols {
 
 using namespace protocols::jd2;
-static JobInputterRegistrator< enzdes::EnzdesJobInputterCreator > reg_EnzdesJobInputterCreator;
-static JobInputterRegistrator< protein_interface_design::ParserJobInputterCreator > reg_ParserJobInputterCreator;
-static JobInputterRegistrator< PDBJobInputterCreator > reg_PDBJobInputterCreator;
-static JobInputterRegistrator< LazySilentFileJobInputterCreator > reg_LazySilentFileJobInputterCreator;
-static JobInputterRegistrator< SilentFileJobInputterCreator > reg_SilentFileJobInputterCreator;
 static JobInputterRegistrator< AtomTreeDiffJobInputterCreator > reg_AtomTreeDiffJobInputterCreator;
-static JobInputterRegistrator< comparative_modeling::ThreadingJobInputterCreator > reg_ThreadingJobInputterCreator;
-static JobInputterRegistrator< features::DatabaseJobInputterCreator > reg_DatabaseJobInputterCreator;
-static JobInputterRegistrator< comparative_modeling::GenericJobInputterCreator > reg_GenericJobInputterCreator;
-static JobInputterRegistrator< make_rot_lib::MakeRotLibJobInputterCreator > reg_MakeRotLibJobInputterCreator;
-static JobInputterRegistrator< ScreeningJobInputterCreator > reg_ScreeningJobInputterCreator;
-static JobInputterRegistrator< LargeNstructJobInputterCreator > reg_LargeNstructJobInputterCreator;
 static JobInputterRegistrator< EnsembleJobInputterCreator > reg_EnsembleJobInputterCreator;
+static JobInputterRegistrator< LargeNstructJobInputterCreator > reg_LargeNstructJobInputterCreator;
+static JobInputterRegistrator< LazySilentFileJobInputterCreator > reg_LazySilentFileJobInputterCreator;
+static JobInputterRegistrator< PDBJobInputterCreator > reg_PDBJobInputterCreator;
+static JobInputterRegistrator< ScreeningJobInputterCreator > reg_ScreeningJobInputterCreator;
+static JobInputterRegistrator< SerializedPoseJobInputterCreator > reg_SerializedPoseJobInputterCreator;
+static JobInputterRegistrator< SilentFileJobInputterCreator > reg_SilentFileJobInputterCreator;
+static JobInputterRegistrator< comparative_modeling::GenericJobInputterCreator > reg_GenericJobInputterCreator;
+static JobInputterRegistrator< comparative_modeling::ThreadingJobInputterCreator > reg_ThreadingJobInputterCreator;
+static JobInputterRegistrator< enzdes::EnzdesJobInputterCreator > reg_EnzdesJobInputterCreator;
+static JobInputterRegistrator< features::DatabaseJobInputterCreator > reg_DatabaseJobInputterCreator;
+static JobInputterRegistrator< make_rot_lib::MakeRotLibJobInputterCreator > reg_MakeRotLibJobInputterCreator;
+static JobInputterRegistrator< protein_interface_design::ParserJobInputterCreator > reg_ParserJobInputterCreator;
 
 } //namespace protocols
