@@ -172,11 +172,11 @@ ResidueIndexDescriptionChainEnd::resolve_index(
 	bool no_error /*=false */
 ) const
 {
-	if ( chain_no_ != core::Size(-1) ) { // Chain of -1 means to use chain letter instead.
+	if ( chain_no_ >= 0 ) { // Chain of -1 means to use chain letter instead.
 		if ( chain_no_ == 0 ) {
 			return do_error( no_error, "Attempted to access non-existent chain 0 in residue index description " + source_string() );
 		}
-		if ( chain_no_ > pose.num_chains() ) {
+		if ( chain_no_ > static_cast<signed int>( pose.num_chains() ) ) {
 			return do_error( no_error, "Attempted to access chain " + std::to_string( chain_no_ ) + " in residue index description " + source_string() + ": Pose only has " + std::to_string( pose.num_chains() ) + " chains." );
 		}
 		if ( chain_start_ ) {
@@ -203,7 +203,7 @@ ResidueIndexDescriptionChainEnd::resolve_index(
 void
 ResidueIndexDescriptionChainEnd::show( std::ostream & out ) const {
 	out << ( chain_start_ ? "Starting":"Ending" ) << " residue of chain ";
-	if ( chain_no_ != core::Size(-1) ) {
+	if ( chain_no_ >= 0 ) { //Negative chain number means do not use chain number.
 		out << chain_no_;
 	} else if ( chain_letter_ ) {
 		out << chain_letter_;
@@ -389,7 +389,7 @@ void
 core::pose::ResidueIndexDescriptionChainEnd::save( Archive & arc ) const {
 	arc( cereal::base_class< core::pose::ResidueIndexDescription >( this ) );
 	arc( CEREAL_NVP( chain_start_ ) ); // bool
-	arc( CEREAL_NVP( chain_no_ ) ); // core::Size
+	arc( CEREAL_NVP( chain_no_ ) ); // signed int
 	arc( CEREAL_NVP( chain_letter_ ) ); // char
 }
 
@@ -398,7 +398,7 @@ void
 core::pose::ResidueIndexDescriptionChainEnd::load( Archive & arc ) {
 	arc( cereal::base_class< core::pose::ResidueIndexDescription >( this ) );
 	arc( chain_start_ ); // bool
-	arc( chain_no_ ); // core::Size
+	arc( chain_no_ ); // signed int
 	arc( chain_letter_ ); // char
 }
 

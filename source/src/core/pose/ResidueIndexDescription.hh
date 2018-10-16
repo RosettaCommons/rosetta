@@ -352,7 +352,7 @@ private:
 	bool chain_start_ = false;
 	/// @brief The chain number to use.
 	/// If equal to -1, use chain letter instead.
-	core::Size chain_no_ = -1;
+	signed int chain_no_ = -1;
 	/// @brief If valid (non-null), identify chain by letter
 	char chain_letter_ = 0x00; // This is NUL, not the character '0'
 
