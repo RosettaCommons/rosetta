@@ -28,6 +28,7 @@
 #
 # For more information, please refer to <http://unlicense.org/>
 
+import itertools
 import glob
 import logging
 import logging.handlers
@@ -84,17 +85,21 @@ flags = [
 #
 # Most projects will NOT need to set this to anything; you can just change the
 # 'flags' list of compilation flags. Notice that YCM itself uses that approach.
-compilation_db_glob = os.path.join(DirectoryOfThisScript(), "cmake/*/compile_commands.json")
-logger.debug("compilation_db_glob: %s" % compilation_db_glob)
+compilation_db_globs = [os.path.join(DirectoryOfThisScript(), p) for p in (
+    "build/PyRosetta/*/*/*/*/build/compile_commands.json",
+    "cmake/*/compile_commands.json")
+]
+
+logger.debug("compilation_db_globs: %s" % compilation_db_globs)
 
 compilation_dbs = sorted(
-    glob.glob(compilation_db_glob),
+    itertools.chain.from_iterable(glob.glob(g) for g in compilation_db_globs),
     key=lambda f: -os.path.getmtime(f)
 )
 logger.debug("compilation_dbs: %s" % compilation_dbs)
 
 if compilation_dbs:
-    logger.debug("loading_dbs: %s" % compilation_dbs[0])
+    logger.debug("loading compilation db: %s" % compilation_dbs[0])
     database = ycm_core.CompilationDatabase(os.path.dirname(compilation_dbs[0]))
 else:
   database = None

@@ -1,6 +1,9 @@
 #cmake_minimum_required(VERSION 2.8)
 cmake_minimum_required(VERSION 3.0)
 
+# Export compilation database for use in IDEs
+SET(CMAKE_EXPORT_COMPILE_COMMANDS 1)
+
 project(rosetta)
 
 # Add a CMake parameter for choosing a desired Python version
