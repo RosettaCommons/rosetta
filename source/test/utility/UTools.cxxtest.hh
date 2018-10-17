@@ -116,6 +116,16 @@ public:
 		TS_ASSERT_EQUALS(num, -12.345678e10);
 		TS_ASSERT_EQUALS(end_pos, 15);
 
+		res = test::utools::isFloatNumber("\t+12.345678e-10", 0, num, end_pos);
+		TS_ASSERT_EQUALS(res, true);
+		TS_ASSERT_EQUALS(num, +12.345678e-10);
+		TS_ASSERT_EQUALS(end_pos, 15);
+
+		res = test::utools::isFloatNumber("\t-12.345678E+10\t___", 0, num, end_pos);
+		TS_ASSERT_EQUALS(res, true);
+		TS_ASSERT_EQUALS(num, -12.345678e10);
+		TS_ASSERT_EQUALS(end_pos, 15);
+
 		//TS_ASSERT_DELTA(x,y,delta).
 	}
 

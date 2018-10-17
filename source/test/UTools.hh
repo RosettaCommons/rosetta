@@ -65,12 +65,12 @@ inline bool isFloatNumber(std::string const &s, unsigned int start_pos, double &
 	if( start_pos >= s.size() ) return false; // if( s.size() == 0 ) return false;
 
 	if( isMarkup ) {
-		if( s[start_pos] == ' ' ) return false; // we don't want it to skip spaces
+		if( s[start_pos] == ' ' || s[start_pos] == '\t' ) return false; // we don't want it to skip whitespaces
 	}
 	else {
-		if( s[start_pos] != ' ' ) return false; // we always want at least one space before number
+		if( s[start_pos] != ' ' && s[start_pos] != '\t' ) return false; // we always want at least one whitespace before number
 		if( start_pos + 1 < s.size() ) {
-			if( s[start_pos+1] == ' ' ) return false; // only one space before number is allowed
+			if( s[start_pos+1] == ' ' || s[start_pos+1] == '\t' ) return false; // only one space before number is allowed
 		}
 	}
 
@@ -81,7 +81,7 @@ inline bool isFloatNumber(std::string const &s, unsigned int start_pos, double &
 
 	if( !isMarkup ) {
 		if( end_pos < s.size() ) {  // check if number end up with space (only if its not the end of a line)
-			if( s[end_pos] != ' ' ) return false;
+			if( s[end_pos] != ' ' && s[end_pos] != '\t' ) return false;
 		}
 	}
 

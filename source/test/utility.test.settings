@@ -28,6 +28,7 @@ sources = {
 		'type_traits',
 		#"TopScoreSelector",
 		"UTools",
+		"UTracer",
 		"vector0",
 		"vector1",
 		"vector1.functions",
@@ -114,4 +115,5 @@ testinputfiles = [
     "io/no_final_newline.txt",
     "io/simple_input_file.txt",
     "io/zipped_file.txt.gz",
+    "UTracer_test.u",
 ]
