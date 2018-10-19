@@ -6,6 +6,7 @@ pdb12e8_chothia.pdb L2 false
 pdb12e8_chothia.pdb L3 false
 pdb12e8_chothia.pdb H1 false
 pdb12e8_chothia.pdb H2 false
+pdb12e8_chothia.pdb orientation false
 pdb15c8_chothia.pdb FRL false
 pdb15c8_chothia.pdb FRH false
 pdb15c8_chothia.pdb L1 false
@@ -13,6 +14,7 @@ pdb15c8_chothia.pdb L2 false
 pdb15c8_chothia.pdb L3 false
 pdb15c8_chothia.pdb H1 false
 pdb15c8_chothia.pdb H2 false
+pdb15c8_chothia.pdb orientation false
 pdb1a0q_chothia.pdb FRL false
 pdb1a0q_chothia.pdb FRH false
 pdb1a0q_chothia.pdb L1 false
@@ -20,6 +22,7 @@ pdb1a0q_chothia.pdb L2 false
 pdb1a0q_chothia.pdb L3 false
 pdb1a0q_chothia.pdb H1 false
 pdb1a0q_chothia.pdb H2 false
+pdb1a0q_chothia.pdb orientation false
 pdb1a14_chothia.pdb FRL false
 pdb1a14_chothia.pdb FRH false
 pdb1a14_chothia.pdb L1 false
@@ -27,6 +30,7 @@ pdb1a14_chothia.pdb L2 false
 pdb1a14_chothia.pdb L3 false
 pdb1a14_chothia.pdb H1 false
 pdb1a14_chothia.pdb H2 false
+pdb1a14_chothia.pdb orientation false
 pdb1a2y_chothia.pdb FRL false
 pdb1a2y_chothia.pdb FRH false
 pdb1a2y_chothia.pdb L1 false
@@ -34,6 +38,7 @@ pdb1a2y_chothia.pdb L2 false
 pdb1a2y_chothia.pdb L3 false
 pdb1a2y_chothia.pdb H1 false
 pdb1a2y_chothia.pdb H2 false
+pdb1a2y_chothia.pdb orientation false
 pdb1a3l_chothia.pdb FRL false
 pdb1a3l_chothia.pdb FRH false
 pdb1a3l_chothia.pdb L1 false
@@ -41,6 +46,7 @@ pdb1a3l_chothia.pdb L2 false
 pdb1a3l_chothia.pdb L3 false
 pdb1a3l_chothia.pdb H1 false
 pdb1a3l_chothia.pdb H2 false
+pdb1a3l_chothia.pdb orientation false
 pdb1a3r_chothia.pdb FRL false
 pdb1a3r_chothia.pdb FRH false
 pdb1a3r_chothia.pdb L1 false
@@ -48,6 +54,7 @@ pdb1a3r_chothia.pdb L2 false
 pdb1a3r_chothia.pdb L3 false
 pdb1a3r_chothia.pdb H1 false
 pdb1a3r_chothia.pdb H2 false
+pdb1a3r_chothia.pdb orientation false
 pdb1a4j_chothia.pdb FRL false
 pdb1a4j_chothia.pdb FRH false
 pdb1a4j_chothia.pdb L1 false
@@ -55,6 +62,7 @@ pdb1a4j_chothia.pdb L2 false
 pdb1a4j_chothia.pdb L3 false
 pdb1a4j_chothia.pdb H1 true
 pdb1a4j_chothia.pdb H2 false
+pdb1a4j_chothia.pdb orientation false
 pdb1a4k_chothia.pdb FRL false
 pdb1a4k_chothia.pdb FRH false
 pdb1a4k_chothia.pdb L1 false
@@ -62,6 +70,7 @@ pdb1a4k_chothia.pdb L2 false
 pdb1a4k_chothia.pdb L3 false
 pdb1a4k_chothia.pdb H1 true
 pdb1a4k_chothia.pdb H2 false
+pdb1a4k_chothia.pdb orientation false
 pdb1a5f_chothia.pdb FRL false
 pdb1a5f_chothia.pdb FRH false
 pdb1a5f_chothia.pdb L1 false
@@ -69,6 +78,7 @@ pdb1a5f_chothia.pdb L2 false
 pdb1a5f_chothia.pdb L3 false
 pdb1a5f_chothia.pdb H1 false
 pdb1a5f_chothia.pdb H2 false
+pdb1a5f_chothia.pdb orientation false
 pdb1a6t_chothia.pdb FRL false
 pdb1a6t_chothia.pdb FRH false
 pdb1a6t_chothia.pdb L1 false
@@ -76,6 +86,7 @@ pdb1a6t_chothia.pdb L2 false
 pdb1a6t_chothia.pdb L3 false
 pdb1a6t_chothia.pdb H1 false
 pdb1a6t_chothia.pdb H2 false
+pdb1a6t_chothia.pdb orientation false
 pdb1a6u_chothia.pdb FRL false
 pdb1a6u_chothia.pdb FRH false
 pdb1a6u_chothia.pdb L1 false
@@ -83,6 +94,7 @@ pdb1a6u_chothia.pdb L2 false
 pdb1a6u_chothia.pdb L3 false
 pdb1a6u_chothia.pdb H1 false
 pdb1a6u_chothia.pdb H2 false
+pdb1a6u_chothia.pdb orientation false
 pdb1a6v_chothia.pdb FRL false
 pdb1a6v_chothia.pdb FRH false
 pdb1a6v_chothia.pdb L1 false
@@ -90,6 +102,7 @@ pdb1a6v_chothia.pdb L2 false
 pdb1a6v_chothia.pdb L3 true
 pdb1a6v_chothia.pdb H1 false
 pdb1a6v_chothia.pdb H2 false
+pdb1a6v_chothia.pdb orientation false
 pdb1a6w_chothia.pdb FRL false
 pdb1a6w_chothia.pdb FRH false
 pdb1a6w_chothia.pdb L1 false
@@ -97,6 +110,7 @@ pdb1a6w_chothia.pdb L2 false
 pdb1a6w_chothia.pdb L3 false
 pdb1a6w_chothia.pdb H1 false
 pdb1a6w_chothia.pdb H2 false
+pdb1a6w_chothia.pdb orientation false
 pdb1a7n_chothia.pdb FRL false
 pdb1a7n_chothia.pdb FRH false
 pdb1a7n_chothia.pdb L1 false
@@ -104,6 +118,7 @@ pdb1a7n_chothia.pdb L2 false
 pdb1a7n_chothia.pdb L3 false
 pdb1a7n_chothia.pdb H1 false
 pdb1a7n_chothia.pdb H2 false
+pdb1a7n_chothia.pdb orientation false
 pdb1a7o_chothia.pdb FRL false
 pdb1a7o_chothia.pdb FRH false
 pdb1a7o_chothia.pdb L1 false
@@ -111,6 +126,7 @@ pdb1a7o_chothia.pdb L2 false
 pdb1a7o_chothia.pdb L3 false
 pdb1a7o_chothia.pdb H1 false
 pdb1a7o_chothia.pdb H2 false
+pdb1a7o_chothia.pdb orientation false
 pdb1a7p_chothia.pdb FRL false
 pdb1a7p_chothia.pdb FRH false
 pdb1a7p_chothia.pdb L1 false
@@ -118,6 +134,7 @@ pdb1a7p_chothia.pdb L2 false
 pdb1a7p_chothia.pdb L3 false
 pdb1a7p_chothia.pdb H1 false
 pdb1a7p_chothia.pdb H2 false
+pdb1a7p_chothia.pdb orientation false
 pdb1a7q_chothia.pdb FRL false
 pdb1a7q_chothia.pdb FRH false
 pdb1a7q_chothia.pdb L1 false
@@ -125,6 +142,7 @@ pdb1a7q_chothia.pdb L2 false
 pdb1a7q_chothia.pdb L3 false
 pdb1a7q_chothia.pdb H1 false
 pdb1a7q_chothia.pdb H2 false
+pdb1a7q_chothia.pdb orientation false
 pdb1a7r_chothia.pdb FRL false
 pdb1a7r_chothia.pdb FRH false
 pdb1a7r_chothia.pdb L1 false
@@ -132,6 +150,7 @@ pdb1a7r_chothia.pdb L2 false
 pdb1a7r_chothia.pdb L3 false
 pdb1a7r_chothia.pdb H1 false
 pdb1a7r_chothia.pdb H2 false
+pdb1a7r_chothia.pdb orientation false
 pdb1a8j_chothia.pdb FRL false
 pdb1a8j_chothia.pdb FRH false
 pdb1a8j_chothia.pdb L1 false
@@ -139,6 +158,7 @@ pdb1a8j_chothia.pdb L2 false
 pdb1a8j_chothia.pdb L3 false
 pdb1a8j_chothia.pdb H1 false
 pdb1a8j_chothia.pdb H2 false
+pdb1a8j_chothia.pdb orientation false
 pdb1acy_chothia.pdb FRL false
 pdb1acy_chothia.pdb FRH false
 pdb1acy_chothia.pdb L1 false
@@ -146,6 +166,7 @@ pdb1acy_chothia.pdb L2 false
 pdb1acy_chothia.pdb L3 false
 pdb1acy_chothia.pdb H1 false
 pdb1acy_chothia.pdb H2 false
+pdb1acy_chothia.pdb orientation false
 pdb1ad0_chothia.pdb FRL false
 pdb1ad0_chothia.pdb FRH false
 pdb1ad0_chothia.pdb L1 false
@@ -153,6 +174,7 @@ pdb1ad0_chothia.pdb L2 false
 pdb1ad0_chothia.pdb L3 false
 pdb1ad0_chothia.pdb H1 false
 pdb1ad0_chothia.pdb H2 false
+pdb1ad0_chothia.pdb orientation false
 pdb1ad9_chothia.pdb FRL false
 pdb1ad9_chothia.pdb FRH false
 pdb1ad9_chothia.pdb L1 false
@@ -160,6 +182,7 @@ pdb1ad9_chothia.pdb L2 false
 pdb1ad9_chothia.pdb L3 false
 pdb1ad9_chothia.pdb H1 false
 pdb1ad9_chothia.pdb H2 false
+pdb1ad9_chothia.pdb orientation false
 pdb1adq_chothia.pdb FRL false
 pdb1adq_chothia.pdb FRH false
 pdb1adq_chothia.pdb L1 false
@@ -167,6 +190,7 @@ pdb1adq_chothia.pdb L2 false
 pdb1adq_chothia.pdb L3 false
 pdb1adq_chothia.pdb H1 false
 pdb1adq_chothia.pdb H2 false
+pdb1adq_chothia.pdb orientation false
 pdb1ae6_chothia.pdb FRL false
 pdb1ae6_chothia.pdb FRH false
 pdb1ae6_chothia.pdb L1 false
@@ -174,6 +198,7 @@ pdb1ae6_chothia.pdb L2 false
 pdb1ae6_chothia.pdb L3 false
 pdb1ae6_chothia.pdb H1 false
 pdb1ae6_chothia.pdb H2 false
+pdb1ae6_chothia.pdb orientation false
 pdb1afv_chothia.pdb FRL false
 pdb1afv_chothia.pdb FRH false
 pdb1afv_chothia.pdb L1 false
@@ -181,6 +206,7 @@ pdb1afv_chothia.pdb L2 false
 pdb1afv_chothia.pdb L3 false
 pdb1afv_chothia.pdb H1 false
 pdb1afv_chothia.pdb H2 false
+pdb1afv_chothia.pdb orientation false
 pdb1ahw_chothia.pdb FRL false
 pdb1ahw_chothia.pdb FRH false
 pdb1ahw_chothia.pdb L1 false
@@ -188,6 +214,7 @@ pdb1ahw_chothia.pdb L2 false
 pdb1ahw_chothia.pdb L3 false
 pdb1ahw_chothia.pdb H1 false
 pdb1ahw_chothia.pdb H2 false
+pdb1ahw_chothia.pdb orientation false
 pdb1ai1_chothia.pdb FRL false
 pdb1ai1_chothia.pdb FRH false
 pdb1ai1_chothia.pdb L1 false
@@ -195,6 +222,7 @@ pdb1ai1_chothia.pdb L2 false
 pdb1ai1_chothia.pdb L3 false
 pdb1ai1_chothia.pdb H1 false
 pdb1ai1_chothia.pdb H2 false
+pdb1ai1_chothia.pdb orientation false
 pdb1aif_chothia.pdb FRL false
 pdb1aif_chothia.pdb FRH false
 pdb1aif_chothia.pdb L1 false
@@ -202,6 +230,7 @@ pdb1aif_chothia.pdb L2 false
 pdb1aif_chothia.pdb L3 false
 pdb1aif_chothia.pdb H1 false
 pdb1aif_chothia.pdb H2 false
+pdb1aif_chothia.pdb orientation false
 pdb1aj7_chothia.pdb FRL false
 pdb1aj7_chothia.pdb FRH false
 pdb1aj7_chothia.pdb L1 false
@@ -209,6 +238,7 @@ pdb1aj7_chothia.pdb L2 false
 pdb1aj7_chothia.pdb L3 false
 pdb1aj7_chothia.pdb H1 true
 pdb1aj7_chothia.pdb H2 false
+pdb1aj7_chothia.pdb orientation false
 pdb1ap2_chothia.pdb FRL false
 pdb1ap2_chothia.pdb FRH false
 pdb1ap2_chothia.pdb L1 false
@@ -216,6 +246,7 @@ pdb1ap2_chothia.pdb L2 false
 pdb1ap2_chothia.pdb L3 false
 pdb1ap2_chothia.pdb H1 false
 pdb1ap2_chothia.pdb H2 false
+pdb1ap2_chothia.pdb orientation false
 pdb1aqk_chothia.pdb FRL false
 pdb1aqk_chothia.pdb FRH false
 pdb1aqk_chothia.pdb L1 false
@@ -223,6 +254,7 @@ pdb1aqk_chothia.pdb L2 false
 pdb1aqk_chothia.pdb L3 false
 pdb1aqk_chothia.pdb H1 false
 pdb1aqk_chothia.pdb H2 false
+pdb1aqk_chothia.pdb orientation false
 pdb1ar1_chothia.pdb FRL false
 pdb1ar1_chothia.pdb FRH false
 pdb1ar1_chothia.pdb L1 false
@@ -230,6 +262,7 @@ pdb1ar1_chothia.pdb L2 false
 pdb1ar1_chothia.pdb L3 false
 pdb1ar1_chothia.pdb H1 false
 pdb1ar1_chothia.pdb H2 false
+pdb1ar1_chothia.pdb orientation false
 pdb1axs_chothia.pdb FRL false
 pdb1axs_chothia.pdb FRH false
 pdb1axs_chothia.pdb L1 false
@@ -237,6 +270,7 @@ pdb1axs_chothia.pdb L2 false
 pdb1axs_chothia.pdb L3 false
 pdb1axs_chothia.pdb H1 false
 pdb1axs_chothia.pdb H2 false
+pdb1axs_chothia.pdb orientation false
 pdb1axt_chothia.pdb FRL false
 pdb1axt_chothia.pdb FRH false
 pdb1axt_chothia.pdb L1 false
@@ -244,6 +278,7 @@ pdb1axt_chothia.pdb L2 false
 pdb1axt_chothia.pdb L3 false
 pdb1axt_chothia.pdb H1 false
 pdb1axt_chothia.pdb H2 false
+pdb1axt_chothia.pdb orientation false
 pdb1ay1_chothia.pdb FRL false
 pdb1ay1_chothia.pdb FRH false
 pdb1ay1_chothia.pdb L1 false
@@ -251,6 +286,7 @@ pdb1ay1_chothia.pdb L2 false
 pdb1ay1_chothia.pdb L3 false
 pdb1ay1_chothia.pdb H1 false
 pdb1ay1_chothia.pdb H2 false
+pdb1ay1_chothia.pdb orientation false
 pdb1b0w_chothia.pdb FRL false
 pdb1b0w_chothia.pdb FRH false
 pdb1b0w_chothia.pdb L1 false
@@ -258,6 +294,7 @@ pdb1b0w_chothia.pdb L2 false
 pdb1b0w_chothia.pdb L3 false
 pdb1b0w_chothia.pdb H1 false
 pdb1b0w_chothia.pdb H2 false
+pdb1b0w_chothia.pdb orientation false
 pdb1b2w_chothia.pdb FRL true
 pdb1b2w_chothia.pdb FRH true
 pdb1b2w_chothia.pdb L1 false
@@ -265,6 +302,7 @@ pdb1b2w_chothia.pdb L2 false
 pdb1b2w_chothia.pdb L3 false
 pdb1b2w_chothia.pdb H1 true
 pdb1b2w_chothia.pdb H2 true
+pdb1b2w_chothia.pdb orientation false
 pdb1b4j_chothia.pdb FRL false
 pdb1b4j_chothia.pdb FRH false
 pdb1b4j_chothia.pdb L1 false
@@ -272,6 +310,7 @@ pdb1b4j_chothia.pdb L2 false
 pdb1b4j_chothia.pdb L3 false
 pdb1b4j_chothia.pdb H1 false
 pdb1b4j_chothia.pdb H2 false
+pdb1b4j_chothia.pdb orientation false
 pdb1b6d_chothia.pdb FRL false
 pdb1b6d_chothia.pdb FRH false
 pdb1b6d_chothia.pdb L1 false
@@ -279,6 +318,7 @@ pdb1b6d_chothia.pdb L2 false
 pdb1b6d_chothia.pdb L3 false
 pdb1b6d_chothia.pdb H1 false
 pdb1b6d_chothia.pdb H2 false
+pdb1b6d_chothia.pdb orientation false
 pdb1baf_chothia.pdb FRL false
 pdb1baf_chothia.pdb FRH false
 pdb1baf_chothia.pdb L1 false
@@ -286,6 +326,7 @@ pdb1baf_chothia.pdb L2 false
 pdb1baf_chothia.pdb L3 false
 pdb1baf_chothia.pdb H1 false
 pdb1baf_chothia.pdb H2 false
+pdb1baf_chothia.pdb orientation false
 pdb1bbd_chothia.pdb FRL false
 pdb1bbd_chothia.pdb FRH false
 pdb1bbd_chothia.pdb L1 false
@@ -293,6 +334,7 @@ pdb1bbd_chothia.pdb L2 false
 pdb1bbd_chothia.pdb L3 false
 pdb1bbd_chothia.pdb H1 false
 pdb1bbd_chothia.pdb H2 false
+pdb1bbd_chothia.pdb orientation false
 pdb1bbj_chothia.pdb FRL false
 pdb1bbj_chothia.pdb FRH false
 pdb1bbj_chothia.pdb L1 false
@@ -300,6 +342,7 @@ pdb1bbj_chothia.pdb L2 false
 pdb1bbj_chothia.pdb L3 false
 pdb1bbj_chothia.pdb H1 false
 pdb1bbj_chothia.pdb H2 false
+pdb1bbj_chothia.pdb orientation false
 pdb1bey_chothia.pdb FRL false
 pdb1bey_chothia.pdb FRH false
 pdb1bey_chothia.pdb L1 false
@@ -307,6 +350,7 @@ pdb1bey_chothia.pdb L2 false
 pdb1bey_chothia.pdb L3 false
 pdb1bey_chothia.pdb H1 false
 pdb1bey_chothia.pdb H2 false
+pdb1bey_chothia.pdb orientation false
 pdb1bfo_chothia.pdb FRL false
 pdb1bfo_chothia.pdb FRH false
 pdb1bfo_chothia.pdb L1 false
@@ -314,6 +358,7 @@ pdb1bfo_chothia.pdb L2 false
 pdb1bfo_chothia.pdb L3 false
 pdb1bfo_chothia.pdb H1 false
 pdb1bfo_chothia.pdb H2 false
+pdb1bfo_chothia.pdb orientation false
 pdb1bfv_chothia.pdb FRL false
 pdb1bfv_chothia.pdb FRH false
 pdb1bfv_chothia.pdb L1 false
@@ -321,6 +366,7 @@ pdb1bfv_chothia.pdb L2 false
 pdb1bfv_chothia.pdb L3 false
 pdb1bfv_chothia.pdb H1 false
 pdb1bfv_chothia.pdb H2 false
+pdb1bfv_chothia.pdb orientation false
 pdb1bgx_chothia.pdb FRL false
 pdb1bgx_chothia.pdb FRH false
 pdb1bgx_chothia.pdb L1 true
@@ -328,6 +374,7 @@ pdb1bgx_chothia.pdb L2 true
 pdb1bgx_chothia.pdb L3 false
 pdb1bgx_chothia.pdb H1 true
 pdb1bgx_chothia.pdb H2 false
+pdb1bgx_chothia.pdb orientation false
 pdb1bj1_chothia.pdb FRL false
 pdb1bj1_chothia.pdb FRH false
 pdb1bj1_chothia.pdb L1 false
@@ -335,6 +382,7 @@ pdb1bj1_chothia.pdb L2 false
 pdb1bj1_chothia.pdb L3 false
 pdb1bj1_chothia.pdb H1 false
 pdb1bj1_chothia.pdb H2 false
+pdb1bj1_chothia.pdb orientation false
 pdb1bjm_chothia.pdb FRL false
 pdb1bjm_chothia.pdb FRH false
 pdb1bjm_chothia.pdb L1 false
@@ -342,6 +390,7 @@ pdb1bjm_chothia.pdb L2 false
 pdb1bjm_chothia.pdb L3 false
 pdb1bjm_chothia.pdb H1 false
 pdb1bjm_chothia.pdb H2 false
+pdb1bjm_chothia.pdb orientation false
 pdb1bln_chothia.pdb FRL false
 pdb1bln_chothia.pdb FRH false
 pdb1bln_chothia.pdb L1 false
@@ -349,6 +398,7 @@ pdb1bln_chothia.pdb L2 false
 pdb1bln_chothia.pdb L3 false
 pdb1bln_chothia.pdb H1 false
 pdb1bln_chothia.pdb H2 false
+pdb1bln_chothia.pdb orientation false
 pdb1bm3_chothia.pdb FRL false
 pdb1bm3_chothia.pdb FRH false
 pdb1bm3_chothia.pdb L1 false
@@ -356,6 +406,7 @@ pdb1bm3_chothia.pdb L2 false
 pdb1bm3_chothia.pdb L3 false
 pdb1bm3_chothia.pdb H1 false
 pdb1bm3_chothia.pdb H2 false
+pdb1bm3_chothia.pdb orientation false
 pdb1bog_chothia.pdb FRL false
 pdb1bog_chothia.pdb FRH false
 pdb1bog_chothia.pdb L1 false
@@ -363,6 +414,7 @@ pdb1bog_chothia.pdb L2 false
 pdb1bog_chothia.pdb L3 false
 pdb1bog_chothia.pdb H1 false
 pdb1bog_chothia.pdb H2 false
+pdb1bog_chothia.pdb orientation false
 pdb1bql_chothia.pdb FRL false
 pdb1bql_chothia.pdb FRH false
 pdb1bql_chothia.pdb L1 false
@@ -370,6 +422,7 @@ pdb1bql_chothia.pdb L2 false
 pdb1bql_chothia.pdb L3 false
 pdb1bql_chothia.pdb H1 false
 pdb1bql_chothia.pdb H2 false
+pdb1bql_chothia.pdb orientation false
 pdb1bre_chothia.pdb FRL false
 pdb1bre_chothia.pdb FRH false
 pdb1bre_chothia.pdb L1 false
@@ -377,6 +430,7 @@ pdb1bre_chothia.pdb L2 false
 pdb1bre_chothia.pdb L3 false
 pdb1bre_chothia.pdb H1 false
 pdb1bre_chothia.pdb H2 false
+pdb1bre_chothia.pdb orientation false
 pdb1bvk_chothia.pdb FRL false
 pdb1bvk_chothia.pdb FRH false
 pdb1bvk_chothia.pdb L1 false
@@ -384,6 +438,7 @@ pdb1bvk_chothia.pdb L2 false
 pdb1bvk_chothia.pdb L3 false
 pdb1bvk_chothia.pdb H1 false
 pdb1bvk_chothia.pdb H2 false
+pdb1bvk_chothia.pdb orientation false
 pdb1bvl_chothia.pdb FRL false
 pdb1bvl_chothia.pdb FRH false
 pdb1bvl_chothia.pdb L1 false
@@ -391,6 +446,7 @@ pdb1bvl_chothia.pdb L2 false
 pdb1bvl_chothia.pdb L3 false
 pdb1bvl_chothia.pdb H1 false
 pdb1bvl_chothia.pdb H2 false
+pdb1bvl_chothia.pdb orientation false
 pdb1bww_chothia.pdb FRL false
 pdb1bww_chothia.pdb FRH false
 pdb1bww_chothia.pdb L1 false
@@ -398,6 +454,7 @@ pdb1bww_chothia.pdb L2 false
 pdb1bww_chothia.pdb L3 false
 pdb1bww_chothia.pdb H1 false
 pdb1bww_chothia.pdb H2 false
+pdb1bww_chothia.pdb orientation false
 pdb1bz7_chothia.pdb FRL false
 pdb1bz7_chothia.pdb FRH false
 pdb1bz7_chothia.pdb L1 false
@@ -405,6 +462,7 @@ pdb1bz7_chothia.pdb L2 false
 pdb1bz7_chothia.pdb L3 false
 pdb1bz7_chothia.pdb H1 false
 pdb1bz7_chothia.pdb H2 false
+pdb1bz7_chothia.pdb orientation false
 pdb1bzq_chothia.pdb FRL false
 pdb1bzq_chothia.pdb FRH false
 pdb1bzq_chothia.pdb L1 false
@@ -412,6 +470,7 @@ pdb1bzq_chothia.pdb L2 false
 pdb1bzq_chothia.pdb L3 false
 pdb1bzq_chothia.pdb H1 false
 pdb1bzq_chothia.pdb H2 false
+pdb1bzq_chothia.pdb orientation false
 pdb1c08_chothia.pdb FRL false
 pdb1c08_chothia.pdb FRH false
 pdb1c08_chothia.pdb L1 false
@@ -419,6 +478,7 @@ pdb1c08_chothia.pdb L2 false
 pdb1c08_chothia.pdb L3 false
 pdb1c08_chothia.pdb H1 false
 pdb1c08_chothia.pdb H2 false
+pdb1c08_chothia.pdb orientation false
 pdb1c12_chothia.pdb FRL false
 pdb1c12_chothia.pdb FRH false
 pdb1c12_chothia.pdb L1 false
@@ -426,6 +486,7 @@ pdb1c12_chothia.pdb L2 false
 pdb1c12_chothia.pdb L3 false
 pdb1c12_chothia.pdb H1 false
 pdb1c12_chothia.pdb H2 false
+pdb1c12_chothia.pdb orientation false
 pdb1c1e_chothia.pdb FRL false
 pdb1c1e_chothia.pdb FRH false
 pdb1c1e_chothia.pdb L1 false
@@ -433,6 +494,7 @@ pdb1c1e_chothia.pdb L2 false
 pdb1c1e_chothia.pdb L3 false
 pdb1c1e_chothia.pdb H1 false
 pdb1c1e_chothia.pdb H2 false
+pdb1c1e_chothia.pdb orientation false
 pdb1c5b_chothia.pdb FRL false
 pdb1c5b_chothia.pdb FRH false
 pdb1c5b_chothia.pdb L1 false
@@ -440,6 +502,7 @@ pdb1c5b_chothia.pdb L2 false
 pdb1c5b_chothia.pdb L3 false
 pdb1c5b_chothia.pdb H1 false
 pdb1c5b_chothia.pdb H2 false
+pdb1c5b_chothia.pdb orientation false
 pdb1c5c_chothia.pdb FRL false
 pdb1c5c_chothia.pdb FRH false
 pdb1c5c_chothia.pdb L1 false
@@ -447,6 +510,7 @@ pdb1c5c_chothia.pdb L2 false
 pdb1c5c_chothia.pdb L3 false
 pdb1c5c_chothia.pdb H1 false
 pdb1c5c_chothia.pdb H2 false
+pdb1c5c_chothia.pdb orientation false
 pdb1c5d_chothia.pdb FRL false
 pdb1c5d_chothia.pdb FRH false
 pdb1c5d_chothia.pdb L1 false
@@ -454,6 +518,7 @@ pdb1c5d_chothia.pdb L2 false
 pdb1c5d_chothia.pdb L3 false
 pdb1c5d_chothia.pdb H1 false
 pdb1c5d_chothia.pdb H2 false
+pdb1c5d_chothia.pdb orientation false
 pdb1cbv_chothia.pdb FRL false
 pdb1cbv_chothia.pdb FRH false
 pdb1cbv_chothia.pdb L1 true
@@ -461,6 +526,7 @@ pdb1cbv_chothia.pdb L2 false
 pdb1cbv_chothia.pdb L3 false
 pdb1cbv_chothia.pdb H1 false
 pdb1cbv_chothia.pdb H2 false
+pdb1cbv_chothia.pdb orientation false
 pdb1ce1_chothia.pdb FRL false
 pdb1ce1_chothia.pdb FRH false
 pdb1ce1_chothia.pdb L1 false
@@ -468,6 +534,7 @@ pdb1ce1_chothia.pdb L2 false
 pdb1ce1_chothia.pdb L3 false
 pdb1ce1_chothia.pdb H1 false
 pdb1ce1_chothia.pdb H2 false
+pdb1ce1_chothia.pdb orientation false
 pdb1cf8_chothia.pdb FRL false
 pdb1cf8_chothia.pdb FRH false
 pdb1cf8_chothia.pdb L1 false
@@ -475,6 +542,7 @@ pdb1cf8_chothia.pdb L2 false
 pdb1cf8_chothia.pdb L3 false
 pdb1cf8_chothia.pdb H1 false
 pdb1cf8_chothia.pdb H2 false
+pdb1cf8_chothia.pdb orientation false
 pdb1cfn_chothia.pdb FRL false
 pdb1cfn_chothia.pdb FRH false
 pdb1cfn_chothia.pdb L1 false
@@ -482,6 +550,7 @@ pdb1cfn_chothia.pdb L2 false
 pdb1cfn_chothia.pdb L3 false
 pdb1cfn_chothia.pdb H1 false
 pdb1cfn_chothia.pdb H2 false
+pdb1cfn_chothia.pdb orientation false
 pdb1cfq_chothia.pdb FRL false
 pdb1cfq_chothia.pdb FRH false
 pdb1cfq_chothia.pdb L1 false
@@ -489,6 +558,7 @@ pdb1cfq_chothia.pdb L2 false
 pdb1cfq_chothia.pdb L3 false
 pdb1cfq_chothia.pdb H1 false
 pdb1cfq_chothia.pdb H2 false
+pdb1cfq_chothia.pdb orientation false
 pdb1cfs_chothia.pdb FRL false
 pdb1cfs_chothia.pdb FRH false
 pdb1cfs_chothia.pdb L1 false
@@ -496,6 +566,7 @@ pdb1cfs_chothia.pdb L2 false
 pdb1cfs_chothia.pdb L3 false
 pdb1cfs_chothia.pdb H1 false
 pdb1cfs_chothia.pdb H2 false
+pdb1cfs_chothia.pdb orientation false
 pdb1cft_chothia.pdb FRL false
 pdb1cft_chothia.pdb FRH false
 pdb1cft_chothia.pdb L1 false
@@ -503,6 +574,7 @@ pdb1cft_chothia.pdb L2 false
 pdb1cft_chothia.pdb L3 false
 pdb1cft_chothia.pdb H1 false
 pdb1cft_chothia.pdb H2 false
+pdb1cft_chothia.pdb orientation false
 pdb1cfv_chothia.pdb FRL false
 pdb1cfv_chothia.pdb FRH false
 pdb1cfv_chothia.pdb L1 false
@@ -510,6 +582,7 @@ pdb1cfv_chothia.pdb L2 false
 pdb1cfv_chothia.pdb L3 false
 pdb1cfv_chothia.pdb H1 false
 pdb1cfv_chothia.pdb H2 false
+pdb1cfv_chothia.pdb orientation false
 pdb1cgs_chothia.pdb FRL false
 pdb1cgs_chothia.pdb FRH false
 pdb1cgs_chothia.pdb L1 false
@@ -517,6 +590,7 @@ pdb1cgs_chothia.pdb L2 false
 pdb1cgs_chothia.pdb L3 false
 pdb1cgs_chothia.pdb H1 false
 pdb1cgs_chothia.pdb H2 false
+pdb1cgs_chothia.pdb orientation false
 pdb1cic_chothia.pdb FRL false
 pdb1cic_chothia.pdb FRH false
 pdb1cic_chothia.pdb L1 false
@@ -524,6 +598,7 @@ pdb1cic_chothia.pdb L2 false
 pdb1cic_chothia.pdb L3 false
 pdb1cic_chothia.pdb H1 false
 pdb1cic_chothia.pdb H2 false
+pdb1cic_chothia.pdb orientation false
 pdb1ck0_chothia.pdb FRL false
 pdb1ck0_chothia.pdb FRH false
 pdb1ck0_chothia.pdb L1 false
@@ -531,6 +606,7 @@ pdb1ck0_chothia.pdb L2 false
 pdb1ck0_chothia.pdb L3 false
 pdb1ck0_chothia.pdb H1 false
 pdb1ck0_chothia.pdb H2 false
+pdb1ck0_chothia.pdb orientation false
 pdb1cl7_chothia.pdb FRL false
 pdb1cl7_chothia.pdb FRH false
 pdb1cl7_chothia.pdb L1 false
@@ -538,6 +614,7 @@ pdb1cl7_chothia.pdb L2 false
 pdb1cl7_chothia.pdb L3 false
 pdb1cl7_chothia.pdb H1 false
 pdb1cl7_chothia.pdb H2 false
+pdb1cl7_chothia.pdb orientation false
 pdb1clo_chothia.pdb FRL false
 pdb1clo_chothia.pdb FRH false
 pdb1clo_chothia.pdb L1 false
@@ -545,6 +622,7 @@ pdb1clo_chothia.pdb L2 false
 pdb1clo_chothia.pdb L3 false
 pdb1clo_chothia.pdb H1 false
 pdb1clo_chothia.pdb H2 false
+pdb1clo_chothia.pdb orientation false
 pdb1cly_chothia.pdb FRL false
 pdb1cly_chothia.pdb FRH false
 pdb1cly_chothia.pdb L1 false
@@ -552,6 +630,7 @@ pdb1cly_chothia.pdb L2 false
 pdb1cly_chothia.pdb L3 false
 pdb1cly_chothia.pdb H1 false
 pdb1cly_chothia.pdb H2 false
+pdb1cly_chothia.pdb orientation false
 pdb1clz_chothia.pdb FRL false
 pdb1clz_chothia.pdb FRH false
 pdb1clz_chothia.pdb L1 false
@@ -559,6 +638,7 @@ pdb1clz_chothia.pdb L2 false
 pdb1clz_chothia.pdb L3 false
 pdb1clz_chothia.pdb H1 false
 pdb1clz_chothia.pdb H2 false
+pdb1clz_chothia.pdb orientation false
 pdb1cr9_chothia.pdb FRL false
 pdb1cr9_chothia.pdb FRH false
 pdb1cr9_chothia.pdb L1 false
@@ -566,6 +646,7 @@ pdb1cr9_chothia.pdb L2 false
 pdb1cr9_chothia.pdb L3 false
 pdb1cr9_chothia.pdb H1 false
 pdb1cr9_chothia.pdb H2 false
+pdb1cr9_chothia.pdb orientation false
 pdb1ct8_chothia.pdb FRL false
 pdb1ct8_chothia.pdb FRH false
 pdb1ct8_chothia.pdb L1 false
@@ -573,6 +654,7 @@ pdb1ct8_chothia.pdb L2 false
 pdb1ct8_chothia.pdb L3 false
 pdb1ct8_chothia.pdb H1 false
 pdb1ct8_chothia.pdb H2 false
+pdb1ct8_chothia.pdb orientation false
 pdb1cu4_chothia.pdb FRL false
 pdb1cu4_chothia.pdb FRH false
 pdb1cu4_chothia.pdb L1 false
@@ -580,6 +662,7 @@ pdb1cu4_chothia.pdb L2 false
 pdb1cu4_chothia.pdb L3 false
 pdb1cu4_chothia.pdb H1 false
 pdb1cu4_chothia.pdb H2 false
+pdb1cu4_chothia.pdb orientation false
 pdb1cz8_chothia.pdb FRL false
 pdb1cz8_chothia.pdb FRH false
 pdb1cz8_chothia.pdb L1 false
@@ -587,6 +670,7 @@ pdb1cz8_chothia.pdb L2 false
 pdb1cz8_chothia.pdb L3 false
 pdb1cz8_chothia.pdb H1 false
 pdb1cz8_chothia.pdb H2 false
+pdb1cz8_chothia.pdb orientation false
 pdb1d5b_chothia.pdb FRL false
 pdb1d5b_chothia.pdb FRH false
 pdb1d5b_chothia.pdb L1 false
@@ -594,6 +678,7 @@ pdb1d5b_chothia.pdb L2 false
 pdb1d5b_chothia.pdb L3 false
 pdb1d5b_chothia.pdb H1 false
 pdb1d5b_chothia.pdb H2 false
+pdb1d5b_chothia.pdb orientation false
 pdb1d5i_chothia.pdb FRL false
 pdb1d5i_chothia.pdb FRH false
 pdb1d5i_chothia.pdb L1 false
@@ -601,6 +686,7 @@ pdb1d5i_chothia.pdb L2 false
 pdb1d5i_chothia.pdb L3 false
 pdb1d5i_chothia.pdb H1 false
 pdb1d5i_chothia.pdb H2 false
+pdb1d5i_chothia.pdb orientation false
 pdb1d6v_chothia.pdb FRL false
 pdb1d6v_chothia.pdb FRH false
 pdb1d6v_chothia.pdb L1 false
@@ -608,6 +694,7 @@ pdb1d6v_chothia.pdb L2 false
 pdb1d6v_chothia.pdb L3 false
 pdb1d6v_chothia.pdb H1 false
 pdb1d6v_chothia.pdb H2 false
+pdb1d6v_chothia.pdb orientation false
 pdb1dba_chothia.pdb FRL false
 pdb1dba_chothia.pdb FRH false
 pdb1dba_chothia.pdb L1 false
@@ -615,6 +702,7 @@ pdb1dba_chothia.pdb L2 false
 pdb1dba_chothia.pdb L3 false
 pdb1dba_chothia.pdb H1 false
 pdb1dba_chothia.pdb H2 false
+pdb1dba_chothia.pdb orientation false
 pdb1dbb_chothia.pdb FRL false
 pdb1dbb_chothia.pdb FRH false
 pdb1dbb_chothia.pdb L1 false
@@ -622,6 +710,7 @@ pdb1dbb_chothia.pdb L2 false
 pdb1dbb_chothia.pdb L3 false
 pdb1dbb_chothia.pdb H1 false
 pdb1dbb_chothia.pdb H2 false
+pdb1dbb_chothia.pdb orientation false
 pdb1dbj_chothia.pdb FRL false
 pdb1dbj_chothia.pdb FRH false
 pdb1dbj_chothia.pdb L1 false
@@ -629,6 +718,7 @@ pdb1dbj_chothia.pdb L2 false
 pdb1dbj_chothia.pdb L3 false
 pdb1dbj_chothia.pdb H1 false
 pdb1dbj_chothia.pdb H2 false
+pdb1dbj_chothia.pdb orientation false
 pdb1dbk_chothia.pdb FRL false
 pdb1dbk_chothia.pdb FRH false
 pdb1dbk_chothia.pdb L1 false
@@ -636,6 +726,7 @@ pdb1dbk_chothia.pdb L2 false
 pdb1dbk_chothia.pdb L3 false
 pdb1dbk_chothia.pdb H1 false
 pdb1dbk_chothia.pdb H2 false
+pdb1dbk_chothia.pdb orientation false
 pdb1dbm_chothia.pdb FRL false
 pdb1dbm_chothia.pdb FRH false
 pdb1dbm_chothia.pdb L1 false
@@ -643,6 +734,7 @@ pdb1dbm_chothia.pdb L2 false
 pdb1dbm_chothia.pdb L3 false
 pdb1dbm_chothia.pdb H1 false
 pdb1dbm_chothia.pdb H2 false
+pdb1dbm_chothia.pdb orientation false
 pdb1dcl_chothia.pdb FRL false
 pdb1dcl_chothia.pdb FRH false
 pdb1dcl_chothia.pdb L1 false
@@ -650,6 +742,7 @@ pdb1dcl_chothia.pdb L2 false
 pdb1dcl_chothia.pdb L3 false
 pdb1dcl_chothia.pdb H1 false
 pdb1dcl_chothia.pdb H2 false
+pdb1dcl_chothia.pdb orientation false
 pdb1dee_chothia.pdb FRL false
 pdb1dee_chothia.pdb FRH false
 pdb1dee_chothia.pdb L1 false
@@ -657,6 +750,7 @@ pdb1dee_chothia.pdb L2 false
 pdb1dee_chothia.pdb L3 false
 pdb1dee_chothia.pdb H1 false
 pdb1dee_chothia.pdb H2 false
+pdb1dee_chothia.pdb orientation false
 pdb1dfb_chothia.pdb FRL false
 pdb1dfb_chothia.pdb FRH false
 pdb1dfb_chothia.pdb L1 false
@@ -664,6 +758,7 @@ pdb1dfb_chothia.pdb L2 false
 pdb1dfb_chothia.pdb L3 false
 pdb1dfb_chothia.pdb H1 false
 pdb1dfb_chothia.pdb H2 false
+pdb1dfb_chothia.pdb orientation false
 pdb1dl7_chothia.pdb FRL true
 pdb1dl7_chothia.pdb FRH true
 pdb1dl7_chothia.pdb L1 false
@@ -671,6 +766,7 @@ pdb1dl7_chothia.pdb L2 false
 pdb1dl7_chothia.pdb L3 false
 pdb1dl7_chothia.pdb H1 false
 pdb1dl7_chothia.pdb H2 true
+pdb1dl7_chothia.pdb orientation false
 pdb1dlf_chothia.pdb FRL false
 pdb1dlf_chothia.pdb FRH false
 pdb1dlf_chothia.pdb L1 false
@@ -678,6 +774,7 @@ pdb1dlf_chothia.pdb L2 true
 pdb1dlf_chothia.pdb L3 false
 pdb1dlf_chothia.pdb H1 false
 pdb1dlf_chothia.pdb H2 false
+pdb1dlf_chothia.pdb orientation false
 pdb1dn0_chothia.pdb FRL false
 pdb1dn0_chothia.pdb FRH false
 pdb1dn0_chothia.pdb L1 false
@@ -685,6 +782,7 @@ pdb1dn0_chothia.pdb L2 false
 pdb1dn0_chothia.pdb L3 false
 pdb1dn0_chothia.pdb H1 false
 pdb1dn0_chothia.pdb H2 false
+pdb1dn0_chothia.pdb orientation false
 pdb1dqd_chothia.pdb FRL false
 pdb1dqd_chothia.pdb FRH false
 pdb1dqd_chothia.pdb L1 false
@@ -692,6 +790,7 @@ pdb1dqd_chothia.pdb L2 false
 pdb1dqd_chothia.pdb L3 false
 pdb1dqd_chothia.pdb H1 false
 pdb1dqd_chothia.pdb H2 false
+pdb1dqd_chothia.pdb orientation false
 pdb1dqj_chothia.pdb FRL false
 pdb1dqj_chothia.pdb FRH false
 pdb1dqj_chothia.pdb L1 false
@@ -699,6 +798,7 @@ pdb1dqj_chothia.pdb L2 false
 pdb1dqj_chothia.pdb L3 false
 pdb1dqj_chothia.pdb H1 false
 pdb1dqj_chothia.pdb H2 false
+pdb1dqj_chothia.pdb orientation false
 pdb1dql_chothia.pdb FRL false
 pdb1dql_chothia.pdb FRH false
 pdb1dql_chothia.pdb L1 false
@@ -706,6 +806,7 @@ pdb1dql_chothia.pdb L2 false
 pdb1dql_chothia.pdb L3 false
 pdb1dql_chothia.pdb H1 false
 pdb1dql_chothia.pdb H2 false
+pdb1dql_chothia.pdb orientation false
 pdb1dqm_chothia.pdb FRL false
 pdb1dqm_chothia.pdb FRH false
 pdb1dqm_chothia.pdb L1 false
@@ -713,6 +814,7 @@ pdb1dqm_chothia.pdb L2 false
 pdb1dqm_chothia.pdb L3 false
 pdb1dqm_chothia.pdb H1 false
 pdb1dqm_chothia.pdb H2 false
+pdb1dqm_chothia.pdb orientation false
 pdb1dqq_chothia.pdb FRL false
 pdb1dqq_chothia.pdb FRH false
 pdb1dqq_chothia.pdb L1 false
@@ -720,6 +822,7 @@ pdb1dqq_chothia.pdb L2 false
 pdb1dqq_chothia.pdb L3 false
 pdb1dqq_chothia.pdb H1 false
 pdb1dqq_chothia.pdb H2 false
+pdb1dqq_chothia.pdb orientation false
 pdb1dsf_chothia.pdb FRL false
 pdb1dsf_chothia.pdb FRH false
 pdb1dsf_chothia.pdb L1 false
@@ -727,6 +830,7 @@ pdb1dsf_chothia.pdb L2 false
 pdb1dsf_chothia.pdb L3 false
 pdb1dsf_chothia.pdb H1 false
 pdb1dsf_chothia.pdb H2 false
+pdb1dsf_chothia.pdb orientation false
 pdb1dvf_chothia.pdb FRL false
 pdb1dvf_chothia.pdb FRH false
 pdb1dvf_chothia.pdb L1 false
@@ -734,6 +838,7 @@ pdb1dvf_chothia.pdb L2 false
 pdb1dvf_chothia.pdb L3 false
 pdb1dvf_chothia.pdb H1 false
 pdb1dvf_chothia.pdb H2 false
+pdb1dvf_chothia.pdb orientation false
 pdb1e4w_chothia.pdb FRL false
 pdb1e4w_chothia.pdb FRH false
 pdb1e4w_chothia.pdb L1 false
@@ -741,6 +846,7 @@ pdb1e4w_chothia.pdb L2 false
 pdb1e4w_chothia.pdb L3 false
 pdb1e4w_chothia.pdb H1 false
 pdb1e4w_chothia.pdb H2 false
+pdb1e4w_chothia.pdb orientation false
 pdb1e4x_chothia.pdb FRL false
 pdb1e4x_chothia.pdb FRH false
 pdb1e4x_chothia.pdb L1 false
@@ -748,6 +854,7 @@ pdb1e4x_chothia.pdb L2 false
 pdb1e4x_chothia.pdb L3 false
 pdb1e4x_chothia.pdb H1 false
 pdb1e4x_chothia.pdb H2 false
+pdb1e4x_chothia.pdb orientation false
 pdb1e6j_chothia.pdb FRL false
 pdb1e6j_chothia.pdb FRH false
 pdb1e6j_chothia.pdb L1 false
@@ -755,6 +862,7 @@ pdb1e6j_chothia.pdb L2 false
 pdb1e6j_chothia.pdb L3 false
 pdb1e6j_chothia.pdb H1 false
 pdb1e6j_chothia.pdb H2 false
+pdb1e6j_chothia.pdb orientation false
 pdb1e6o_chothia.pdb FRL false
 pdb1e6o_chothia.pdb FRH false
 pdb1e6o_chothia.pdb L1 false
@@ -762,6 +870,7 @@ pdb1e6o_chothia.pdb L2 false
 pdb1e6o_chothia.pdb L3 false
 pdb1e6o_chothia.pdb H1 false
 pdb1e6o_chothia.pdb H2 false
+pdb1e6o_chothia.pdb orientation false
 pdb1eap_chothia.pdb FRL false
 pdb1eap_chothia.pdb FRH false
 pdb1eap_chothia.pdb L1 false
@@ -769,6 +878,7 @@ pdb1eap_chothia.pdb L2 false
 pdb1eap_chothia.pdb L3 false
 pdb1eap_chothia.pdb H1 false
 pdb1eap_chothia.pdb H2 false
+pdb1eap_chothia.pdb orientation false
 pdb1eeq_chothia.pdb FRL false
 pdb1eeq_chothia.pdb FRH false
 pdb1eeq_chothia.pdb L1 false
@@ -776,6 +886,7 @@ pdb1eeq_chothia.pdb L2 false
 pdb1eeq_chothia.pdb L3 false
 pdb1eeq_chothia.pdb H1 false
 pdb1eeq_chothia.pdb H2 false
+pdb1eeq_chothia.pdb orientation false
 pdb1eeu_chothia.pdb FRL false
 pdb1eeu_chothia.pdb FRH false
 pdb1eeu_chothia.pdb L1 false
@@ -783,6 +894,7 @@ pdb1eeu_chothia.pdb L2 false
 pdb1eeu_chothia.pdb L3 false
 pdb1eeu_chothia.pdb H1 false
 pdb1eeu_chothia.pdb H2 false
+pdb1eeu_chothia.pdb orientation false
 pdb1efq_chothia.pdb FRL false
 pdb1efq_chothia.pdb FRH false
 pdb1efq_chothia.pdb L1 false
@@ -790,6 +902,7 @@ pdb1efq_chothia.pdb L2 false
 pdb1efq_chothia.pdb L3 false
 pdb1efq_chothia.pdb H1 false
 pdb1efq_chothia.pdb H2 false
+pdb1efq_chothia.pdb orientation false
 pdb1egj_chothia.pdb FRL false
 pdb1egj_chothia.pdb FRH false
 pdb1egj_chothia.pdb L1 false
@@ -797,6 +910,7 @@ pdb1egj_chothia.pdb L2 false
 pdb1egj_chothia.pdb L3 false
 pdb1egj_chothia.pdb H1 false
 pdb1egj_chothia.pdb H2 false
+pdb1egj_chothia.pdb orientation false
 pdb1ehl_chothia.pdb FRL false
 pdb1ehl_chothia.pdb FRH false
 pdb1ehl_chothia.pdb L1 false
@@ -804,6 +918,7 @@ pdb1ehl_chothia.pdb L2 false
 pdb1ehl_chothia.pdb L3 false
 pdb1ehl_chothia.pdb H1 false
 pdb1ehl_chothia.pdb H2 false
+pdb1ehl_chothia.pdb orientation false
 pdb1ejo_chothia.pdb FRL false
 pdb1ejo_chothia.pdb FRH false
 pdb1ejo_chothia.pdb L1 false
@@ -811,6 +926,7 @@ pdb1ejo_chothia.pdb L2 false
 pdb1ejo_chothia.pdb L3 false
 pdb1ejo_chothia.pdb H1 false
 pdb1ejo_chothia.pdb H2 false
+pdb1ejo_chothia.pdb orientation false
 pdb1ek3_chothia.pdb FRL false
 pdb1ek3_chothia.pdb FRH false
 pdb1ek3_chothia.pdb L1 false
@@ -818,6 +934,7 @@ pdb1ek3_chothia.pdb L2 false
 pdb1ek3_chothia.pdb L3 false
 pdb1ek3_chothia.pdb H1 false
 pdb1ek3_chothia.pdb H2 false
+pdb1ek3_chothia.pdb orientation false
 pdb1emt_chothia.pdb FRL false
 pdb1emt_chothia.pdb FRH false
 pdb1emt_chothia.pdb L1 false
@@ -825,6 +942,7 @@ pdb1emt_chothia.pdb L2 false
 pdb1emt_chothia.pdb L3 false
 pdb1emt_chothia.pdb H1 false
 pdb1emt_chothia.pdb H2 false
+pdb1emt_chothia.pdb orientation false
 pdb1eo8_chothia.pdb FRL false
 pdb1eo8_chothia.pdb FRH false
 pdb1eo8_chothia.pdb L1 false
@@ -832,6 +950,7 @@ pdb1eo8_chothia.pdb L2 false
 pdb1eo8_chothia.pdb L3 false
 pdb1eo8_chothia.pdb H1 false
 pdb1eo8_chothia.pdb H2 false
+pdb1eo8_chothia.pdb orientation false
 pdb1etz_chothia.pdb FRL false
 pdb1etz_chothia.pdb FRH false
 pdb1etz_chothia.pdb L1 false
@@ -839,6 +958,7 @@ pdb1etz_chothia.pdb L2 false
 pdb1etz_chothia.pdb L3 false
 pdb1etz_chothia.pdb H1 false
 pdb1etz_chothia.pdb H2 false
+pdb1etz_chothia.pdb orientation false
 pdb1ezv_chothia.pdb FRL false
 pdb1ezv_chothia.pdb FRH false
 pdb1ezv_chothia.pdb L1 false
@@ -846,6 +966,7 @@ pdb1ezv_chothia.pdb L2 false
 pdb1ezv_chothia.pdb L3 false
 pdb1ezv_chothia.pdb H1 false
 pdb1ezv_chothia.pdb H2 false
+pdb1ezv_chothia.pdb orientation false
 pdb1f11_chothia.pdb FRL false
 pdb1f11_chothia.pdb FRH false
 pdb1f11_chothia.pdb L1 false
@@ -853,6 +974,7 @@ pdb1f11_chothia.pdb L2 false
 pdb1f11_chothia.pdb L3 false
 pdb1f11_chothia.pdb H1 false
 pdb1f11_chothia.pdb H2 false
+pdb1f11_chothia.pdb orientation false
 pdb1f4w_chothia.pdb FRL false
 pdb1f4w_chothia.pdb FRH false
 pdb1f4w_chothia.pdb L1 false
@@ -860,6 +982,7 @@ pdb1f4w_chothia.pdb L2 false
 pdb1f4w_chothia.pdb L3 false
 pdb1f4w_chothia.pdb H1 false
 pdb1f4w_chothia.pdb H2 false
+pdb1f4w_chothia.pdb orientation false
 pdb1f4x_chothia.pdb FRL false
 pdb1f4x_chothia.pdb FRH false
 pdb1f4x_chothia.pdb L1 false
@@ -867,6 +990,7 @@ pdb1f4x_chothia.pdb L2 false
 pdb1f4x_chothia.pdb L3 false
 pdb1f4x_chothia.pdb H1 false
 pdb1f4x_chothia.pdb H2 false
+pdb1f4x_chothia.pdb orientation false
 pdb1f4y_chothia.pdb FRL false
 pdb1f4y_chothia.pdb FRH false
 pdb1f4y_chothia.pdb L1 false
@@ -874,6 +998,7 @@ pdb1f4y_chothia.pdb L2 false
 pdb1f4y_chothia.pdb L3 false
 pdb1f4y_chothia.pdb H1 false
 pdb1f4y_chothia.pdb H2 false
+pdb1f4y_chothia.pdb orientation false
 pdb1f58_chothia.pdb FRL false
 pdb1f58_chothia.pdb FRH false
 pdb1f58_chothia.pdb L1 false
@@ -881,6 +1006,7 @@ pdb1f58_chothia.pdb L2 false
 pdb1f58_chothia.pdb L3 false
 pdb1f58_chothia.pdb H1 false
 pdb1f58_chothia.pdb H2 false
+pdb1f58_chothia.pdb orientation false
 pdb1f6l_chothia.pdb FRL false
 pdb1f6l_chothia.pdb FRH false
 pdb1f6l_chothia.pdb L1 false
@@ -888,6 +1014,7 @@ pdb1f6l_chothia.pdb L2 false
 pdb1f6l_chothia.pdb L3 false
 pdb1f6l_chothia.pdb H1 false
 pdb1f6l_chothia.pdb H2 false
+pdb1f6l_chothia.pdb orientation false
 pdb1f8t_chothia.pdb FRL false
 pdb1f8t_chothia.pdb FRH false
 pdb1f8t_chothia.pdb L1 false
@@ -895,6 +1022,7 @@ pdb1f8t_chothia.pdb L2 false
 pdb1f8t_chothia.pdb L3 false
 pdb1f8t_chothia.pdb H1 false
 pdb1f8t_chothia.pdb H2 false
+pdb1f8t_chothia.pdb orientation false
 pdb1f90_chothia.pdb FRL false
 pdb1f90_chothia.pdb FRH false
 pdb1f90_chothia.pdb L1 false
@@ -902,6 +1030,7 @@ pdb1f90_chothia.pdb L2 false
 pdb1f90_chothia.pdb L3 false
 pdb1f90_chothia.pdb H1 false
 pdb1f90_chothia.pdb H2 false
+pdb1f90_chothia.pdb orientation false
 pdb1fai_chothia.pdb FRL false
 pdb1fai_chothia.pdb FRH false
 pdb1fai_chothia.pdb L1 false
@@ -909,6 +1038,7 @@ pdb1fai_chothia.pdb L2 false
 pdb1fai_chothia.pdb L3 false
 pdb1fai_chothia.pdb H1 false
 pdb1fai_chothia.pdb H2 false
+pdb1fai_chothia.pdb orientation false
 pdb1fbi_chothia.pdb FRL false
 pdb1fbi_chothia.pdb FRH false
 pdb1fbi_chothia.pdb L1 false
@@ -916,6 +1046,7 @@ pdb1fbi_chothia.pdb L2 false
 pdb1fbi_chothia.pdb L3 false
 pdb1fbi_chothia.pdb H1 false
 pdb1fbi_chothia.pdb H2 false
+pdb1fbi_chothia.pdb orientation false
 pdb1fdl_chothia.pdb FRL false
 pdb1fdl_chothia.pdb FRH false
 pdb1fdl_chothia.pdb L1 false
@@ -923,6 +1054,7 @@ pdb1fdl_chothia.pdb L2 false
 pdb1fdl_chothia.pdb L3 false
 pdb1fdl_chothia.pdb H1 false
 pdb1fdl_chothia.pdb H2 false
+pdb1fdl_chothia.pdb orientation false
 pdb1fe8_chothia.pdb FRL false
 pdb1fe8_chothia.pdb FRH false
 pdb1fe8_chothia.pdb L1 false
@@ -930,6 +1062,7 @@ pdb1fe8_chothia.pdb L2 false
 pdb1fe8_chothia.pdb L3 false
 pdb1fe8_chothia.pdb H1 false
 pdb1fe8_chothia.pdb H2 false
+pdb1fe8_chothia.pdb orientation false
 pdb1fgn_chothia.pdb FRL false
 pdb1fgn_chothia.pdb FRH false
 pdb1fgn_chothia.pdb L1 false
@@ -937,6 +1070,7 @@ pdb1fgn_chothia.pdb L2 false
 pdb1fgn_chothia.pdb L3 false
 pdb1fgn_chothia.pdb H1 false
 pdb1fgn_chothia.pdb H2 false
+pdb1fgn_chothia.pdb orientation false
 pdb1fgv_chothia.pdb FRL false
 pdb1fgv_chothia.pdb FRH false
 pdb1fgv_chothia.pdb L1 false
@@ -944,6 +1078,7 @@ pdb1fgv_chothia.pdb L2 false
 pdb1fgv_chothia.pdb L3 false
 pdb1fgv_chothia.pdb H1 false
 pdb1fgv_chothia.pdb H2 false
+pdb1fgv_chothia.pdb orientation false
 pdb1fig_chothia.pdb FRL false
 pdb1fig_chothia.pdb FRH false
 pdb1fig_chothia.pdb L1 false
@@ -951,6 +1086,7 @@ pdb1fig_chothia.pdb L2 false
 pdb1fig_chothia.pdb L3 false
 pdb1fig_chothia.pdb H1 false
 pdb1fig_chothia.pdb H2 false
+pdb1fig_chothia.pdb orientation false
 pdb1fj1_chothia.pdb FRL false
 pdb1fj1_chothia.pdb FRH false
 pdb1fj1_chothia.pdb L1 false
@@ -958,6 +1094,7 @@ pdb1fj1_chothia.pdb L2 false
 pdb1fj1_chothia.pdb L3 false
 pdb1fj1_chothia.pdb H1 false
 pdb1fj1_chothia.pdb H2 false
+pdb1fj1_chothia.pdb orientation false
 pdb1fl3_chothia.pdb FRL false
 pdb1fl3_chothia.pdb FRH false
 pdb1fl3_chothia.pdb L1 false
@@ -965,6 +1102,7 @@ pdb1fl3_chothia.pdb L2 false
 pdb1fl3_chothia.pdb L3 false
 pdb1fl3_chothia.pdb H1 false
 pdb1fl3_chothia.pdb H2 false
+pdb1fl3_chothia.pdb orientation false
 pdb1fl5_chothia.pdb FRL false
 pdb1fl5_chothia.pdb FRH false
 pdb1fl5_chothia.pdb L1 true
@@ -972,6 +1110,7 @@ pdb1fl5_chothia.pdb L2 false
 pdb1fl5_chothia.pdb L3 false
 pdb1fl5_chothia.pdb H1 false
 pdb1fl5_chothia.pdb H2 false
+pdb1fl5_chothia.pdb orientation false
 pdb1fl6_chothia.pdb FRL false
 pdb1fl6_chothia.pdb FRH false
 pdb1fl6_chothia.pdb L1 false
@@ -979,6 +1118,7 @@ pdb1fl6_chothia.pdb L2 false
 pdb1fl6_chothia.pdb L3 false
 pdb1fl6_chothia.pdb H1 false
 pdb1fl6_chothia.pdb H2 false
+pdb1fl6_chothia.pdb orientation false
 pdb1fn4_chothia.pdb FRL false
 pdb1fn4_chothia.pdb FRH false
 pdb1fn4_chothia.pdb L1 false
@@ -986,6 +1126,7 @@ pdb1fn4_chothia.pdb L2 false
 pdb1fn4_chothia.pdb L3 false
 pdb1fn4_chothia.pdb H1 false
 pdb1fn4_chothia.pdb H2 false
+pdb1fn4_chothia.pdb orientation false
 pdb1fns_chothia.pdb FRL false
 pdb1fns_chothia.pdb FRH false
 pdb1fns_chothia.pdb L1 false
@@ -993,6 +1134,7 @@ pdb1fns_chothia.pdb L2 false
 pdb1fns_chothia.pdb L3 false
 pdb1fns_chothia.pdb H1 false
 pdb1fns_chothia.pdb H2 false
+pdb1fns_chothia.pdb orientation false
 pdb1for_chothia.pdb FRL false
 pdb1for_chothia.pdb FRH false
 pdb1for_chothia.pdb L1 false
@@ -1000,6 +1142,7 @@ pdb1for_chothia.pdb L2 false
 pdb1for_chothia.pdb L3 false
 pdb1for_chothia.pdb H1 false
 pdb1for_chothia.pdb H2 false
+pdb1for_chothia.pdb orientation false
 pdb1fpt_chothia.pdb FRL false
 pdb1fpt_chothia.pdb FRH false
 pdb1fpt_chothia.pdb L1 false
@@ -1007,6 +1150,7 @@ pdb1fpt_chothia.pdb L2 false
 pdb1fpt_chothia.pdb L3 false
 pdb1fpt_chothia.pdb H1 false
 pdb1fpt_chothia.pdb H2 false
+pdb1fpt_chothia.pdb orientation false
 pdb1frg_chothia.pdb FRL false
 pdb1frg_chothia.pdb FRH false
 pdb1frg_chothia.pdb L1 false
@@ -1014,6 +1158,7 @@ pdb1frg_chothia.pdb L2 false
 pdb1frg_chothia.pdb L3 false
 pdb1frg_chothia.pdb H1 false
 pdb1frg_chothia.pdb H2 false
+pdb1frg_chothia.pdb orientation false
 pdb1fsk_chothia.pdb FRL false
 pdb1fsk_chothia.pdb FRH false
 pdb1fsk_chothia.pdb L1 false
@@ -1021,6 +1166,7 @@ pdb1fsk_chothia.pdb L2 false
 pdb1fsk_chothia.pdb L3 false
 pdb1fsk_chothia.pdb H1 false
 pdb1fsk_chothia.pdb H2 false
+pdb1fsk_chothia.pdb orientation false
 pdb1fvc_chothia.pdb FRL false
 pdb1fvc_chothia.pdb FRH false
 pdb1fvc_chothia.pdb L1 false
@@ -1028,6 +1174,7 @@ pdb1fvc_chothia.pdb L2 false
 pdb1fvc_chothia.pdb L3 false
 pdb1fvc_chothia.pdb H1 false
 pdb1fvc_chothia.pdb H2 false
+pdb1fvc_chothia.pdb orientation false
 pdb1fvd_chothia.pdb FRL false
 pdb1fvd_chothia.pdb FRH false
 pdb1fvd_chothia.pdb L1 false
@@ -1035,6 +1182,7 @@ pdb1fvd_chothia.pdb L2 false
 pdb1fvd_chothia.pdb L3 false
 pdb1fvd_chothia.pdb H1 false
 pdb1fvd_chothia.pdb H2 false
+pdb1fvd_chothia.pdb orientation false
 pdb1fve_chothia.pdb FRL false
 pdb1fve_chothia.pdb FRH false
 pdb1fve_chothia.pdb L1 false
@@ -1042,6 +1190,7 @@ pdb1fve_chothia.pdb L2 false
 pdb1fve_chothia.pdb L3 false
 pdb1fve_chothia.pdb H1 false
 pdb1fve_chothia.pdb H2 false
+pdb1fve_chothia.pdb orientation false
 pdb1g7h_chothia.pdb FRL false
 pdb1g7h_chothia.pdb FRH false
 pdb1g7h_chothia.pdb L1 false
@@ -1049,6 +1198,7 @@ pdb1g7h_chothia.pdb L2 false
 pdb1g7h_chothia.pdb L3 false
 pdb1g7h_chothia.pdb H1 false
 pdb1g7h_chothia.pdb H2 false
+pdb1g7h_chothia.pdb orientation false
 pdb1g7i_chothia.pdb FRL false
 pdb1g7i_chothia.pdb FRH false
 pdb1g7i_chothia.pdb L1 false
@@ -1056,6 +1206,7 @@ pdb1g7i_chothia.pdb L2 false
 pdb1g7i_chothia.pdb L3 false
 pdb1g7i_chothia.pdb H1 false
 pdb1g7i_chothia.pdb H2 false
+pdb1g7i_chothia.pdb orientation false
 pdb1g7m_chothia.pdb FRL false
 pdb1g7m_chothia.pdb FRH false
 pdb1g7m_chothia.pdb L1 false
@@ -1063,6 +1214,7 @@ pdb1g7m_chothia.pdb L2 false
 pdb1g7m_chothia.pdb L3 false
 pdb1g7m_chothia.pdb H1 false
 pdb1g7m_chothia.pdb H2 false
+pdb1g7m_chothia.pdb orientation false
 pdb1g9m_chothia.pdb FRL false
 pdb1g9m_chothia.pdb FRH false
 pdb1g9m_chothia.pdb L1 false
@@ -1070,6 +1222,7 @@ pdb1g9m_chothia.pdb L2 false
 pdb1g9m_chothia.pdb L3 false
 pdb1g9m_chothia.pdb H1 false
 pdb1g9m_chothia.pdb H2 false
+pdb1g9m_chothia.pdb orientation false
 pdb1g9n_chothia.pdb FRL false
 pdb1g9n_chothia.pdb FRH false
 pdb1g9n_chothia.pdb L1 false
@@ -1077,6 +1230,7 @@ pdb1g9n_chothia.pdb L2 false
 pdb1g9n_chothia.pdb L3 false
 pdb1g9n_chothia.pdb H1 false
 pdb1g9n_chothia.pdb H2 false
+pdb1g9n_chothia.pdb orientation false
 pdb1gaf_chothia.pdb FRL false
 pdb1gaf_chothia.pdb FRH false
 pdb1gaf_chothia.pdb L1 false
@@ -1084,6 +1238,7 @@ pdb1gaf_chothia.pdb L2 false
 pdb1gaf_chothia.pdb L3 false
 pdb1gaf_chothia.pdb H1 true
 pdb1gaf_chothia.pdb H2 false
+pdb1gaf_chothia.pdb orientation false
 pdb1gc1_chothia.pdb FRL false
 pdb1gc1_chothia.pdb FRH false
 pdb1gc1_chothia.pdb L1 false
@@ -1091,6 +1246,7 @@ pdb1gc1_chothia.pdb L2 false
 pdb1gc1_chothia.pdb L3 false
 pdb1gc1_chothia.pdb H1 false
 pdb1gc1_chothia.pdb H2 false
+pdb1gc1_chothia.pdb orientation false
 pdb1ggb_chothia.pdb FRL false
 pdb1ggb_chothia.pdb FRH false
 pdb1ggb_chothia.pdb L1 false
@@ -1098,6 +1254,7 @@ pdb1ggb_chothia.pdb L2 false
 pdb1ggb_chothia.pdb L3 false
 pdb1ggb_chothia.pdb H1 false
 pdb1ggb_chothia.pdb H2 false
+pdb1ggb_chothia.pdb orientation false
 pdb1ggc_chothia.pdb FRL false
 pdb1ggc_chothia.pdb FRH false
 pdb1ggc_chothia.pdb L1 false
@@ -1105,6 +1262,7 @@ pdb1ggc_chothia.pdb L2 false
 pdb1ggc_chothia.pdb L3 false
 pdb1ggc_chothia.pdb H1 false
 pdb1ggc_chothia.pdb H2 false
+pdb1ggc_chothia.pdb orientation false
 pdb1ggi_chothia.pdb FRL false
 pdb1ggi_chothia.pdb FRH false
 pdb1ggi_chothia.pdb L1 false
@@ -1112,6 +1270,7 @@ pdb1ggi_chothia.pdb L2 false
 pdb1ggi_chothia.pdb L3 false
 pdb1ggi_chothia.pdb H1 false
 pdb1ggi_chothia.pdb H2 false
+pdb1ggi_chothia.pdb orientation false
 pdb1gig_chothia.pdb FRL false
 pdb1gig_chothia.pdb FRH false
 pdb1gig_chothia.pdb L1 false
@@ -1119,6 +1278,7 @@ pdb1gig_chothia.pdb L2 true
 pdb1gig_chothia.pdb L3 false
 pdb1gig_chothia.pdb H1 false
 pdb1gig_chothia.pdb H2 false
+pdb1gig_chothia.pdb orientation false
 pdb1gpo_chothia.pdb FRL false
 pdb1gpo_chothia.pdb FRH false
 pdb1gpo_chothia.pdb L1 false
@@ -1126,6 +1286,7 @@ pdb1gpo_chothia.pdb L2 false
 pdb1gpo_chothia.pdb L3 false
 pdb1gpo_chothia.pdb H1 false
 pdb1gpo_chothia.pdb H2 false
+pdb1gpo_chothia.pdb orientation false
 pdb1h0d_chothia.pdb FRL false
 pdb1h0d_chothia.pdb FRH false
 pdb1h0d_chothia.pdb L1 false
@@ -1133,6 +1294,7 @@ pdb1h0d_chothia.pdb L2 false
 pdb1h0d_chothia.pdb L3 false
 pdb1h0d_chothia.pdb H1 false
 pdb1h0d_chothia.pdb H2 false
+pdb1h0d_chothia.pdb orientation false
 pdb1h3p_chothia.pdb FRL false
 pdb1h3p_chothia.pdb FRH false
 pdb1h3p_chothia.pdb L1 false
@@ -1140,6 +1302,7 @@ pdb1h3p_chothia.pdb L2 false
 pdb1h3p_chothia.pdb L3 false
 pdb1h3p_chothia.pdb H1 false
 pdb1h3p_chothia.pdb H2 false
+pdb1h3p_chothia.pdb orientation false
 pdb1h8n_chothia.pdb FRL false
 pdb1h8n_chothia.pdb FRH false
 pdb1h8n_chothia.pdb L1 false
@@ -1147,6 +1310,7 @@ pdb1h8n_chothia.pdb L2 false
 pdb1h8n_chothia.pdb L3 false
 pdb1h8n_chothia.pdb H1 false
 pdb1h8n_chothia.pdb H2 false
+pdb1h8n_chothia.pdb orientation false
 pdb1h8o_chothia.pdb FRL false
 pdb1h8o_chothia.pdb FRH false
 pdb1h8o_chothia.pdb L1 false
@@ -1154,6 +1318,7 @@ pdb1h8o_chothia.pdb L2 false
 pdb1h8o_chothia.pdb L3 false
 pdb1h8o_chothia.pdb H1 false
 pdb1h8o_chothia.pdb H2 false
+pdb1h8o_chothia.pdb orientation false
 pdb1h8s_chothia.pdb FRL false
 pdb1h8s_chothia.pdb FRH false
 pdb1h8s_chothia.pdb L1 false
@@ -1161,6 +1326,7 @@ pdb1h8s_chothia.pdb L2 false
 pdb1h8s_chothia.pdb L3 false
 pdb1h8s_chothia.pdb H1 false
 pdb1h8s_chothia.pdb H2 false
+pdb1h8s_chothia.pdb orientation false
 pdb1hez_chothia.pdb FRL false
 pdb1hez_chothia.pdb FRH false
 pdb1hez_chothia.pdb L1 false
@@ -1168,6 +1334,7 @@ pdb1hez_chothia.pdb L2 false
 pdb1hez_chothia.pdb L3 false
 pdb1hez_chothia.pdb H1 false
 pdb1hez_chothia.pdb H2 false
+pdb1hez_chothia.pdb orientation false
 pdb1hh6_chothia.pdb FRL false
 pdb1hh6_chothia.pdb FRH false
 pdb1hh6_chothia.pdb L1 false
@@ -1175,6 +1342,7 @@ pdb1hh6_chothia.pdb L2 false
 pdb1hh6_chothia.pdb L3 false
 pdb1hh6_chothia.pdb H1 false
 pdb1hh6_chothia.pdb H2 false
+pdb1hh6_chothia.pdb orientation false
 pdb1hh9_chothia.pdb FRL false
 pdb1hh9_chothia.pdb FRH false
 pdb1hh9_chothia.pdb L1 false
@@ -1182,6 +1350,7 @@ pdb1hh9_chothia.pdb L2 false
 pdb1hh9_chothia.pdb L3 false
 pdb1hh9_chothia.pdb H1 false
 pdb1hh9_chothia.pdb H2 false
+pdb1hh9_chothia.pdb orientation false
 pdb1hi6_chothia.pdb FRL false
 pdb1hi6_chothia.pdb FRH false
 pdb1hi6_chothia.pdb L1 false
@@ -1189,6 +1358,7 @@ pdb1hi6_chothia.pdb L2 false
 pdb1hi6_chothia.pdb L3 false
 pdb1hi6_chothia.pdb H1 false
 pdb1hi6_chothia.pdb H2 false
+pdb1hi6_chothia.pdb orientation false
 pdb1hil_chothia.pdb FRL false
 pdb1hil_chothia.pdb FRH false
 pdb1hil_chothia.pdb L1 false
@@ -1196,6 +1366,7 @@ pdb1hil_chothia.pdb L2 false
 pdb1hil_chothia.pdb L3 false
 pdb1hil_chothia.pdb H1 false
 pdb1hil_chothia.pdb H2 false
+pdb1hil_chothia.pdb orientation false
 pdb1him_chothia.pdb FRL false
 pdb1him_chothia.pdb FRH false
 pdb1him_chothia.pdb L1 false
@@ -1203,6 +1374,7 @@ pdb1him_chothia.pdb L2 false
 pdb1him_chothia.pdb L3 false
 pdb1him_chothia.pdb H1 false
 pdb1him_chothia.pdb H2 false
+pdb1him_chothia.pdb orientation false
 pdb1hin_chothia.pdb FRL false
 pdb1hin_chothia.pdb FRH false
 pdb1hin_chothia.pdb L1 false
@@ -1210,6 +1382,7 @@ pdb1hin_chothia.pdb L2 false
 pdb1hin_chothia.pdb L3 false
 pdb1hin_chothia.pdb H1 false
 pdb1hin_chothia.pdb H2 false
+pdb1hin_chothia.pdb orientation false
 pdb1hkl_chothia.pdb FRL false
 pdb1hkl_chothia.pdb FRH false
 pdb1hkl_chothia.pdb L1 false
@@ -1217,6 +1390,7 @@ pdb1hkl_chothia.pdb L2 false
 pdb1hkl_chothia.pdb L3 false
 pdb1hkl_chothia.pdb H1 true
 pdb1hkl_chothia.pdb H2 false
+pdb1hkl_chothia.pdb orientation false
 pdb1hq4_chothia.pdb FRL false
 pdb1hq4_chothia.pdb FRH false
 pdb1hq4_chothia.pdb L1 false
@@ -1224,6 +1398,7 @@ pdb1hq4_chothia.pdb L2 false
 pdb1hq4_chothia.pdb L3 false
 pdb1hq4_chothia.pdb H1 false
 pdb1hq4_chothia.pdb H2 false
+pdb1hq4_chothia.pdb orientation false
 pdb1hys_chothia.pdb FRL false
 pdb1hys_chothia.pdb FRH false
 pdb1hys_chothia.pdb L1 false
@@ -1231,6 +1406,7 @@ pdb1hys_chothia.pdb L2 false
 pdb1hys_chothia.pdb L3 false
 pdb1hys_chothia.pdb H1 false
 pdb1hys_chothia.pdb H2 false
+pdb1hys_chothia.pdb orientation false
 pdb1hzh_chothia.pdb FRL false
 pdb1hzh_chothia.pdb FRH false
 pdb1hzh_chothia.pdb L1 false
@@ -1238,6 +1414,7 @@ pdb1hzh_chothia.pdb L2 false
 pdb1hzh_chothia.pdb L3 false
 pdb1hzh_chothia.pdb H1 false
 pdb1hzh_chothia.pdb H2 false
+pdb1hzh_chothia.pdb orientation false
 pdb1i3g_chothia.pdb FRL false
 pdb1i3g_chothia.pdb FRH false
 pdb1i3g_chothia.pdb L1 false
@@ -1245,6 +1422,7 @@ pdb1i3g_chothia.pdb L2 false
 pdb1i3g_chothia.pdb L3 false
 pdb1i3g_chothia.pdb H1 false
 pdb1i3g_chothia.pdb H2 false
+pdb1i3g_chothia.pdb orientation false
 pdb1i3u_chothia.pdb FRL false
 pdb1i3u_chothia.pdb FRH false
 pdb1i3u_chothia.pdb L1 false
@@ -1252,6 +1430,7 @@ pdb1i3u_chothia.pdb L2 false
 pdb1i3u_chothia.pdb L3 false
 pdb1i3u_chothia.pdb H1 false
 pdb1i3u_chothia.pdb H2 false
+pdb1i3u_chothia.pdb orientation false
 pdb1i3v_chothia.pdb FRL false
 pdb1i3v_chothia.pdb FRH false
 pdb1i3v_chothia.pdb L1 false
@@ -1259,6 +1438,7 @@ pdb1i3v_chothia.pdb L2 false
 pdb1i3v_chothia.pdb L3 false
 pdb1i3v_chothia.pdb H1 false
 pdb1i3v_chothia.pdb H2 false
+pdb1i3v_chothia.pdb orientation false
 pdb1i7z_chothia.pdb FRL false
 pdb1i7z_chothia.pdb FRH false
 pdb1i7z_chothia.pdb L1 false
@@ -1266,6 +1446,7 @@ pdb1i7z_chothia.pdb L2 false
 pdb1i7z_chothia.pdb L3 false
 pdb1i7z_chothia.pdb H1 false
 pdb1i7z_chothia.pdb H2 false
+pdb1i7z_chothia.pdb orientation false
 pdb1i8i_chothia.pdb FRL false
 pdb1i8i_chothia.pdb FRH false
 pdb1i8i_chothia.pdb L1 false
@@ -1273,6 +1454,7 @@ pdb1i8i_chothia.pdb L2 false
 pdb1i8i_chothia.pdb L3 false
 pdb1i8i_chothia.pdb H1 false
 pdb1i8i_chothia.pdb H2 false
+pdb1i8i_chothia.pdb orientation false
 pdb1i8k_chothia.pdb FRL false
 pdb1i8k_chothia.pdb FRH false
 pdb1i8k_chothia.pdb L1 false
@@ -1280,6 +1462,7 @@ pdb1i8k_chothia.pdb L2 false
 pdb1i8k_chothia.pdb L3 false
 pdb1i8k_chothia.pdb H1 false
 pdb1i8k_chothia.pdb H2 false
+pdb1i8k_chothia.pdb orientation false
 pdb1i8m_chothia.pdb FRL false
 pdb1i8m_chothia.pdb FRH false
 pdb1i8m_chothia.pdb L1 false
@@ -1287,6 +1470,7 @@ pdb1i8m_chothia.pdb L2 false
 pdb1i8m_chothia.pdb L3 false
 pdb1i8m_chothia.pdb H1 false
 pdb1i8m_chothia.pdb H2 false
+pdb1i8m_chothia.pdb orientation false
 pdb1i9i_chothia.pdb FRL false
 pdb1i9i_chothia.pdb FRH false
 pdb1i9i_chothia.pdb L1 false
@@ -1294,6 +1478,7 @@ pdb1i9i_chothia.pdb L2 false
 pdb1i9i_chothia.pdb L3 false
 pdb1i9i_chothia.pdb H1 false
 pdb1i9i_chothia.pdb H2 false
+pdb1i9i_chothia.pdb orientation false
 pdb1i9j_chothia.pdb FRL false
 pdb1i9j_chothia.pdb FRH false
 pdb1i9j_chothia.pdb L1 false
@@ -1301,6 +1486,7 @@ pdb1i9j_chothia.pdb L2 false
 pdb1i9j_chothia.pdb L3 false
 pdb1i9j_chothia.pdb H1 false
 pdb1i9j_chothia.pdb H2 false
+pdb1i9j_chothia.pdb orientation false
 pdb1i9r_chothia.pdb FRL false
 pdb1i9r_chothia.pdb FRH false
 pdb1i9r_chothia.pdb L1 false
@@ -1308,6 +1494,7 @@ pdb1i9r_chothia.pdb L2 false
 pdb1i9r_chothia.pdb L3 false
 pdb1i9r_chothia.pdb H1 false
 pdb1i9r_chothia.pdb H2 false
+pdb1i9r_chothia.pdb orientation false
 pdb1iai_chothia.pdb FRL false
 pdb1iai_chothia.pdb FRH false
 pdb1iai_chothia.pdb L1 false
@@ -1315,6 +1502,7 @@ pdb1iai_chothia.pdb L2 false
 pdb1iai_chothia.pdb L3 false
 pdb1iai_chothia.pdb H1 true
 pdb1iai_chothia.pdb H2 false
+pdb1iai_chothia.pdb orientation false
 pdb1ibg_chothia.pdb FRL false
 pdb1ibg_chothia.pdb FRH false
 pdb1ibg_chothia.pdb L1 false
@@ -1322,6 +1510,7 @@ pdb1ibg_chothia.pdb L2 false
 pdb1ibg_chothia.pdb L3 false
 pdb1ibg_chothia.pdb H1 false
 pdb1ibg_chothia.pdb H2 false
+pdb1ibg_chothia.pdb orientation false
 pdb1ic4_chothia.pdb FRL false
 pdb1ic4_chothia.pdb FRH false
 pdb1ic4_chothia.pdb L1 false
@@ -1329,6 +1518,7 @@ pdb1ic4_chothia.pdb L2 false
 pdb1ic4_chothia.pdb L3 false
 pdb1ic4_chothia.pdb H1 false
 pdb1ic4_chothia.pdb H2 false
+pdb1ic4_chothia.pdb orientation false
 pdb1ic5_chothia.pdb FRL false
 pdb1ic5_chothia.pdb FRH false
 pdb1ic5_chothia.pdb L1 false
@@ -1336,6 +1526,7 @@ pdb1ic5_chothia.pdb L2 false
 pdb1ic5_chothia.pdb L3 false
 pdb1ic5_chothia.pdb H1 false
 pdb1ic5_chothia.pdb H2 false
+pdb1ic5_chothia.pdb orientation false
 pdb1ic7_chothia.pdb FRL false
 pdb1ic7_chothia.pdb FRH false
 pdb1ic7_chothia.pdb L1 false
@@ -1343,6 +1534,7 @@ pdb1ic7_chothia.pdb L2 false
 pdb1ic7_chothia.pdb L3 false
 pdb1ic7_chothia.pdb H1 false
 pdb1ic7_chothia.pdb H2 false
+pdb1ic7_chothia.pdb orientation false
 pdb1ifh_chothia.pdb FRL false
 pdb1ifh_chothia.pdb FRH false
 pdb1ifh_chothia.pdb L1 false
@@ -1350,6 +1542,7 @@ pdb1ifh_chothia.pdb L2 false
 pdb1ifh_chothia.pdb L3 false
 pdb1ifh_chothia.pdb H1 false
 pdb1ifh_chothia.pdb H2 false
+pdb1ifh_chothia.pdb orientation false
 pdb1iga_chothia.pdb FRL false
 pdb1iga_chothia.pdb FRH false
 pdb1iga_chothia.pdb L1 false
@@ -1357,6 +1550,7 @@ pdb1iga_chothia.pdb L2 false
 pdb1iga_chothia.pdb L3 false
 pdb1iga_chothia.pdb H1 false
 pdb1iga_chothia.pdb H2 false
+pdb1iga_chothia.pdb orientation false
 pdb1igc_chothia.pdb FRL false
 pdb1igc_chothia.pdb FRH false
 pdb1igc_chothia.pdb L1 false
@@ -1364,6 +1558,7 @@ pdb1igc_chothia.pdb L2 false
 pdb1igc_chothia.pdb L3 false
 pdb1igc_chothia.pdb H1 false
 pdb1igc_chothia.pdb H2 false
+pdb1igc_chothia.pdb orientation false
 pdb1igf_chothia.pdb FRL false
 pdb1igf_chothia.pdb FRH false
 pdb1igf_chothia.pdb L1 false
@@ -1371,6 +1566,7 @@ pdb1igf_chothia.pdb L2 false
 pdb1igf_chothia.pdb L3 false
 pdb1igf_chothia.pdb H1 false
 pdb1igf_chothia.pdb H2 false
+pdb1igf_chothia.pdb orientation false
 pdb1igi_chothia.pdb FRL false
 pdb1igi_chothia.pdb FRH false
 pdb1igi_chothia.pdb L1 false
@@ -1378,6 +1574,7 @@ pdb1igi_chothia.pdb L2 false
 pdb1igi_chothia.pdb L3 false
 pdb1igi_chothia.pdb H1 true
 pdb1igi_chothia.pdb H2 false
+pdb1igi_chothia.pdb orientation false
 pdb1igj_chothia.pdb FRL false
 pdb1igj_chothia.pdb FRH false
 pdb1igj_chothia.pdb L1 false
@@ -1385,6 +1582,7 @@ pdb1igj_chothia.pdb L2 false
 pdb1igj_chothia.pdb L3 false
 pdb1igj_chothia.pdb H1 false
 pdb1igj_chothia.pdb H2 false
+pdb1igj_chothia.pdb orientation false
 pdb1igm_chothia.pdb FRL false
 pdb1igm_chothia.pdb FRH false
 pdb1igm_chothia.pdb L1 false
@@ -1392,6 +1590,7 @@ pdb1igm_chothia.pdb L2 false
 pdb1igm_chothia.pdb L3 false
 pdb1igm_chothia.pdb H1 false
 pdb1igm_chothia.pdb H2 false
+pdb1igm_chothia.pdb orientation false
 pdb1igt_chothia.pdb FRL false
 pdb1igt_chothia.pdb FRH false
 pdb1igt_chothia.pdb L1 false
@@ -1399,6 +1598,7 @@ pdb1igt_chothia.pdb L2 false
 pdb1igt_chothia.pdb L3 false
 pdb1igt_chothia.pdb H1 false
 pdb1igt_chothia.pdb H2 false
+pdb1igt_chothia.pdb orientation false
 pdb1igy_chothia.pdb FRL false
 pdb1igy_chothia.pdb FRH false
 pdb1igy_chothia.pdb L1 false
@@ -1406,6 +1606,7 @@ pdb1igy_chothia.pdb L2 false
 pdb1igy_chothia.pdb L3 false
 pdb1igy_chothia.pdb H1 false
 pdb1igy_chothia.pdb H2 false
+pdb1igy_chothia.pdb orientation false
 pdb1ikf_chothia.pdb FRL false
 pdb1ikf_chothia.pdb FRH false
 pdb1ikf_chothia.pdb L1 false
@@ -1413,6 +1614,7 @@ pdb1ikf_chothia.pdb L2 false
 pdb1ikf_chothia.pdb L3 false
 pdb1ikf_chothia.pdb H1 false
 pdb1ikf_chothia.pdb H2 false
+pdb1ikf_chothia.pdb orientation false
 pdb1il1_chothia.pdb FRL false
 pdb1il1_chothia.pdb FRH false
 pdb1il1_chothia.pdb L1 false
@@ -1420,6 +1622,7 @@ pdb1il1_chothia.pdb L2 false
 pdb1il1_chothia.pdb L3 false
 pdb1il1_chothia.pdb H1 false
 pdb1il1_chothia.pdb H2 false
+pdb1il1_chothia.pdb orientation false
 pdb1ind_chothia.pdb FRL false
 pdb1ind_chothia.pdb FRH false
 pdb1ind_chothia.pdb L1 false
@@ -1427,6 +1630,7 @@ pdb1ind_chothia.pdb L2 false
 pdb1ind_chothia.pdb L3 false
 pdb1ind_chothia.pdb H1 false
 pdb1ind_chothia.pdb H2 false
+pdb1ind_chothia.pdb orientation false
 pdb1ine_chothia.pdb FRL false
 pdb1ine_chothia.pdb FRH false
 pdb1ine_chothia.pdb L1 false
@@ -1434,6 +1638,7 @@ pdb1ine_chothia.pdb L2 false
 pdb1ine_chothia.pdb L3 false
 pdb1ine_chothia.pdb H1 false
 pdb1ine_chothia.pdb H2 false
+pdb1ine_chothia.pdb orientation false
 pdb1iqd_chothia.pdb FRL false
 pdb1iqd_chothia.pdb FRH false
 pdb1iqd_chothia.pdb L1 false
@@ -1441,6 +1646,7 @@ pdb1iqd_chothia.pdb L2 false
 pdb1iqd_chothia.pdb L3 false
 pdb1iqd_chothia.pdb H1 false
 pdb1iqd_chothia.pdb H2 false
+pdb1iqd_chothia.pdb orientation false
 pdb1iqw_chothia.pdb FRL false
 pdb1iqw_chothia.pdb FRH false
 pdb1iqw_chothia.pdb L1 false
@@ -1448,6 +1654,7 @@ pdb1iqw_chothia.pdb L2 false
 pdb1iqw_chothia.pdb L3 false
 pdb1iqw_chothia.pdb H1 false
 pdb1iqw_chothia.pdb H2 false
+pdb1iqw_chothia.pdb orientation false
 pdb1it9_chothia.pdb FRL false
 pdb1it9_chothia.pdb FRH false
 pdb1it9_chothia.pdb L1 true
@@ -1455,6 +1662,7 @@ pdb1it9_chothia.pdb L2 false
 pdb1it9_chothia.pdb L3 false
 pdb1it9_chothia.pdb H1 false
 pdb1it9_chothia.pdb H2 false
+pdb1it9_chothia.pdb orientation false
 pdb1ivl_chothia.pdb FRL false
 pdb1ivl_chothia.pdb FRH false
 pdb1ivl_chothia.pdb L1 false
@@ -1462,6 +1670,7 @@ pdb1ivl_chothia.pdb L2 false
 pdb1ivl_chothia.pdb L3 false
 pdb1ivl_chothia.pdb H1 false
 pdb1ivl_chothia.pdb H2 false
+pdb1ivl_chothia.pdb orientation false
 pdb1j05_chothia.pdb FRL false
 pdb1j05_chothia.pdb FRH false
 pdb1j05_chothia.pdb L1 false
@@ -1469,6 +1678,7 @@ pdb1j05_chothia.pdb L2 false
 pdb1j05_chothia.pdb L3 false
 pdb1j05_chothia.pdb H1 false
 pdb1j05_chothia.pdb H2 false
+pdb1j05_chothia.pdb orientation false
 pdb1j1o_chothia.pdb FRL false
 pdb1j1o_chothia.pdb FRH false
 pdb1j1o_chothia.pdb L1 false
@@ -1476,6 +1686,7 @@ pdb1j1o_chothia.pdb L2 false
 pdb1j1o_chothia.pdb L3 false
 pdb1j1o_chothia.pdb H1 false
 pdb1j1o_chothia.pdb H2 false
+pdb1j1o_chothia.pdb orientation false
 pdb1j1p_chothia.pdb FRL false
 pdb1j1p_chothia.pdb FRH false
 pdb1j1p_chothia.pdb L1 false
@@ -1483,6 +1694,7 @@ pdb1j1p_chothia.pdb L2 false
 pdb1j1p_chothia.pdb L3 false
 pdb1j1p_chothia.pdb H1 false
 pdb1j1p_chothia.pdb H2 false
+pdb1j1p_chothia.pdb orientation false
 pdb1j1x_chothia.pdb FRL false
 pdb1j1x_chothia.pdb FRH false
 pdb1j1x_chothia.pdb L1 false
@@ -1490,6 +1702,7 @@ pdb1j1x_chothia.pdb L2 false
 pdb1j1x_chothia.pdb L3 false
 pdb1j1x_chothia.pdb H1 false
 pdb1j1x_chothia.pdb H2 false
+pdb1j1x_chothia.pdb orientation false
 pdb1j5o_chothia.pdb FRL false
 pdb1j5o_chothia.pdb FRH false
 pdb1j5o_chothia.pdb L1 false
@@ -1497,6 +1710,7 @@ pdb1j5o_chothia.pdb L2 false
 pdb1j5o_chothia.pdb L3 false
 pdb1j5o_chothia.pdb H1 false
 pdb1j5o_chothia.pdb H2 false
+pdb1j5o_chothia.pdb orientation false
 pdb1jfq_chothia.pdb FRL false
 pdb1jfq_chothia.pdb FRH false
 pdb1jfq_chothia.pdb L1 false
@@ -1504,6 +1718,7 @@ pdb1jfq_chothia.pdb L2 false
 pdb1jfq_chothia.pdb L3 false
 pdb1jfq_chothia.pdb H1 false
 pdb1jfq_chothia.pdb H2 false
+pdb1jfq_chothia.pdb orientation false
 pdb1jgu_chothia.pdb FRL false
 pdb1jgu_chothia.pdb FRH false
 pdb1jgu_chothia.pdb L1 false
@@ -1511,6 +1726,7 @@ pdb1jgu_chothia.pdb L2 false
 pdb1jgu_chothia.pdb L3 false
 pdb1jgu_chothia.pdb H1 false
 pdb1jgu_chothia.pdb H2 false
+pdb1jgu_chothia.pdb orientation false
 pdb1jgv_chothia.pdb FRL false
 pdb1jgv_chothia.pdb FRH false
 pdb1jgv_chothia.pdb L1 false
@@ -1518,6 +1734,7 @@ pdb1jgv_chothia.pdb L2 false
 pdb1jgv_chothia.pdb L3 false
 pdb1jgv_chothia.pdb H1 false
 pdb1jgv_chothia.pdb H2 false
+pdb1jgv_chothia.pdb orientation false
 pdb1jhl_chothia.pdb FRL false
 pdb1jhl_chothia.pdb FRH false
 pdb1jhl_chothia.pdb L1 false
@@ -1525,6 +1742,7 @@ pdb1jhl_chothia.pdb L2 false
 pdb1jhl_chothia.pdb L3 false
 pdb1jhl_chothia.pdb H1 false
 pdb1jhl_chothia.pdb H2 false
+pdb1jhl_chothia.pdb orientation false
 pdb1jn6_chothia.pdb FRL false
 pdb1jn6_chothia.pdb FRH false
 pdb1jn6_chothia.pdb L1 false
@@ -1532,6 +1750,7 @@ pdb1jn6_chothia.pdb L2 false
 pdb1jn6_chothia.pdb L3 false
 pdb1jn6_chothia.pdb H1 false
 pdb1jn6_chothia.pdb H2 false
+pdb1jn6_chothia.pdb orientation false
 pdb1jnh_chothia.pdb FRL false
 pdb1jnh_chothia.pdb FRH false
 pdb1jnh_chothia.pdb L1 false
@@ -1539,6 +1758,7 @@ pdb1jnh_chothia.pdb L2 false
 pdb1jnh_chothia.pdb L3 false
 pdb1jnh_chothia.pdb H1 false
 pdb1jnh_chothia.pdb H2 false
+pdb1jnh_chothia.pdb orientation false
 pdb1jnl_chothia.pdb FRL false
 pdb1jnl_chothia.pdb FRH false
 pdb1jnl_chothia.pdb L1 false
@@ -1546,6 +1766,7 @@ pdb1jnl_chothia.pdb L2 false
 pdb1jnl_chothia.pdb L3 false
 pdb1jnl_chothia.pdb H1 false
 pdb1jnl_chothia.pdb H2 false
+pdb1jnl_chothia.pdb orientation false
 pdb1jnn_chothia.pdb FRL false
 pdb1jnn_chothia.pdb FRH false
 pdb1jnn_chothia.pdb L1 false
@@ -1553,6 +1774,7 @@ pdb1jnn_chothia.pdb L2 false
 pdb1jnn_chothia.pdb L3 false
 pdb1jnn_chothia.pdb H1 false
 pdb1jnn_chothia.pdb H2 false
+pdb1jnn_chothia.pdb orientation false
 pdb1jps_chothia.pdb FRL false
 pdb1jps_chothia.pdb FRH false
 pdb1jps_chothia.pdb L1 false
@@ -1560,6 +1782,7 @@ pdb1jps_chothia.pdb L2 false
 pdb1jps_chothia.pdb L3 false
 pdb1jps_chothia.pdb H1 false
 pdb1jps_chothia.pdb H2 false
+pdb1jps_chothia.pdb orientation false
 pdb1jpt_chothia.pdb FRL false
 pdb1jpt_chothia.pdb FRH false
 pdb1jpt_chothia.pdb L1 false
@@ -1567,6 +1790,7 @@ pdb1jpt_chothia.pdb L2 false
 pdb1jpt_chothia.pdb L3 false
 pdb1jpt_chothia.pdb H1 false
 pdb1jpt_chothia.pdb H2 false
+pdb1jpt_chothia.pdb orientation false
 pdb1jrh_chothia.pdb FRL false
 pdb1jrh_chothia.pdb FRH false
 pdb1jrh_chothia.pdb L1 false
@@ -1574,6 +1798,7 @@ pdb1jrh_chothia.pdb L2 false
 pdb1jrh_chothia.pdb L3 false
 pdb1jrh_chothia.pdb H1 false
 pdb1jrh_chothia.pdb H2 false
+pdb1jrh_chothia.pdb orientation false
 pdb1jto_chothia.pdb FRL false
 pdb1jto_chothia.pdb FRH false
 pdb1jto_chothia.pdb L1 false
@@ -1581,6 +1806,7 @@ pdb1jto_chothia.pdb L2 false
 pdb1jto_chothia.pdb L3 false
 pdb1jto_chothia.pdb H1 false
 pdb1jto_chothia.pdb H2 false
+pdb1jto_chothia.pdb orientation false
 pdb1jtp_chothia.pdb FRL false
 pdb1jtp_chothia.pdb FRH false
 pdb1jtp_chothia.pdb L1 false
@@ -1588,6 +1814,7 @@ pdb1jtp_chothia.pdb L2 false
 pdb1jtp_chothia.pdb L3 false
 pdb1jtp_chothia.pdb H1 false
 pdb1jtp_chothia.pdb H2 false
+pdb1jtp_chothia.pdb orientation false
 pdb1jtt_chothia.pdb FRL false
 pdb1jtt_chothia.pdb FRH false
 pdb1jtt_chothia.pdb L1 false
@@ -1595,6 +1822,7 @@ pdb1jtt_chothia.pdb L2 false
 pdb1jtt_chothia.pdb L3 false
 pdb1jtt_chothia.pdb H1 false
 pdb1jtt_chothia.pdb H2 false
+pdb1jtt_chothia.pdb orientation false
 pdb1jvk_chothia.pdb FRL false
 pdb1jvk_chothia.pdb FRH false
 pdb1jvk_chothia.pdb L1 false
@@ -1602,6 +1830,7 @@ pdb1jvk_chothia.pdb L2 false
 pdb1jvk_chothia.pdb L3 false
 pdb1jvk_chothia.pdb H1 false
 pdb1jvk_chothia.pdb H2 false
+pdb1jvk_chothia.pdb orientation false
 pdb1k4c_chothia.pdb FRL false
 pdb1k4c_chothia.pdb FRH false
 pdb1k4c_chothia.pdb L1 false
@@ -1609,6 +1838,7 @@ pdb1k4c_chothia.pdb L2 false
 pdb1k4c_chothia.pdb L3 false
 pdb1k4c_chothia.pdb H1 false
 pdb1k4c_chothia.pdb H2 false
+pdb1k4c_chothia.pdb orientation false
 pdb1k4d_chothia.pdb FRL false
 pdb1k4d_chothia.pdb FRH false
 pdb1k4d_chothia.pdb L1 false
@@ -1616,6 +1846,7 @@ pdb1k4d_chothia.pdb L2 false
 pdb1k4d_chothia.pdb L3 false
 pdb1k4d_chothia.pdb H1 false
 pdb1k4d_chothia.pdb H2 false
+pdb1k4d_chothia.pdb orientation false
 pdb1k6q_chothia.pdb FRL false
 pdb1k6q_chothia.pdb FRH false
 pdb1k6q_chothia.pdb L1 false
@@ -1623,6 +1854,7 @@ pdb1k6q_chothia.pdb L2 false
 pdb1k6q_chothia.pdb L3 false
 pdb1k6q_chothia.pdb H1 false
 pdb1k6q_chothia.pdb H2 false
+pdb1k6q_chothia.pdb orientation false
 pdb1kb5_chothia.pdb FRL false
 pdb1kb5_chothia.pdb FRH false
 pdb1kb5_chothia.pdb L1 false
@@ -1630,6 +1862,7 @@ pdb1kb5_chothia.pdb L2 false
 pdb1kb5_chothia.pdb L3 false
 pdb1kb5_chothia.pdb H1 false
 pdb1kb5_chothia.pdb H2 false
+pdb1kb5_chothia.pdb orientation false
 pdb1kc5_chothia.pdb FRL false
 pdb1kc5_chothia.pdb FRH false
 pdb1kc5_chothia.pdb L1 false
@@ -1637,6 +1870,7 @@ pdb1kc5_chothia.pdb L2 false
 pdb1kc5_chothia.pdb L3 false
 pdb1kc5_chothia.pdb H1 false
 pdb1kc5_chothia.pdb H2 false
+pdb1kc5_chothia.pdb orientation false
 pdb1kcr_chothia.pdb FRL false
 pdb1kcr_chothia.pdb FRH false
 pdb1kcr_chothia.pdb L1 false
@@ -1644,6 +1878,7 @@ pdb1kcr_chothia.pdb L2 false
 pdb1kcr_chothia.pdb L3 false
 pdb1kcr_chothia.pdb H1 false
 pdb1kcr_chothia.pdb H2 false
+pdb1kcr_chothia.pdb orientation false
 pdb1kcs_chothia.pdb FRL false
 pdb1kcs_chothia.pdb FRH false
 pdb1kcs_chothia.pdb L1 false
@@ -1651,6 +1886,7 @@ pdb1kcs_chothia.pdb L2 false
 pdb1kcs_chothia.pdb L3 false
 pdb1kcs_chothia.pdb H1 false
 pdb1kcs_chothia.pdb H2 false
+pdb1kcs_chothia.pdb orientation false
 pdb1kcu_chothia.pdb FRL false
 pdb1kcu_chothia.pdb FRH false
 pdb1kcu_chothia.pdb L1 false
@@ -1658,6 +1894,7 @@ pdb1kcu_chothia.pdb L2 false
 pdb1kcu_chothia.pdb L3 false
 pdb1kcu_chothia.pdb H1 false
 pdb1kcu_chothia.pdb H2 false
+pdb1kcu_chothia.pdb orientation false
 pdb1kcv_chothia.pdb FRL false
 pdb1kcv_chothia.pdb FRH false
 pdb1kcv_chothia.pdb L1 false
@@ -1665,6 +1902,7 @@ pdb1kcv_chothia.pdb L2 false
 pdb1kcv_chothia.pdb L3 false
 pdb1kcv_chothia.pdb H1 false
 pdb1kcv_chothia.pdb H2 false
+pdb1kcv_chothia.pdb orientation false
 pdb1keg_chothia.pdb FRL false
 pdb1keg_chothia.pdb FRH false
 pdb1keg_chothia.pdb L1 false
@@ -1672,6 +1910,7 @@ pdb1keg_chothia.pdb L2 false
 pdb1keg_chothia.pdb L3 false
 pdb1keg_chothia.pdb H1 false
 pdb1keg_chothia.pdb H2 false
+pdb1keg_chothia.pdb orientation false
 pdb1kel_chothia.pdb FRL false
 pdb1kel_chothia.pdb FRH false
 pdb1kel_chothia.pdb L1 false
@@ -1679,6 +1918,7 @@ pdb1kel_chothia.pdb L2 false
 pdb1kel_chothia.pdb L3 false
 pdb1kel_chothia.pdb H1 false
 pdb1kel_chothia.pdb H2 false
+pdb1kel_chothia.pdb orientation false
 pdb1kem_chothia.pdb FRL false
 pdb1kem_chothia.pdb FRH false
 pdb1kem_chothia.pdb L1 false
@@ -1686,6 +1926,7 @@ pdb1kem_chothia.pdb L2 false
 pdb1kem_chothia.pdb L3 false
 pdb1kem_chothia.pdb H1 false
 pdb1kem_chothia.pdb H2 false
+pdb1kem_chothia.pdb orientation false
 pdb1ken_chothia.pdb FRL false
 pdb1ken_chothia.pdb FRH false
 pdb1ken_chothia.pdb L1 false
@@ -1693,6 +1934,7 @@ pdb1ken_chothia.pdb L2 false
 pdb1ken_chothia.pdb L3 false
 pdb1ken_chothia.pdb H1 false
 pdb1ken_chothia.pdb H2 false
+pdb1ken_chothia.pdb orientation false
 pdb1kfa_chothia.pdb FRL false
 pdb1kfa_chothia.pdb FRH false
 pdb1kfa_chothia.pdb L1 false
@@ -1700,6 +1942,7 @@ pdb1kfa_chothia.pdb L2 false
 pdb1kfa_chothia.pdb L3 false
 pdb1kfa_chothia.pdb H1 false
 pdb1kfa_chothia.pdb H2 false
+pdb1kfa_chothia.pdb orientation false
 pdb1kip_chothia.pdb FRL false
 pdb1kip_chothia.pdb FRH false
 pdb1kip_chothia.pdb L1 false
@@ -1707,6 +1950,7 @@ pdb1kip_chothia.pdb L2 false
 pdb1kip_chothia.pdb L3 false
 pdb1kip_chothia.pdb H1 false
 pdb1kip_chothia.pdb H2 false
+pdb1kip_chothia.pdb orientation false
 pdb1kiq_chothia.pdb FRL false
 pdb1kiq_chothia.pdb FRH false
 pdb1kiq_chothia.pdb L1 false
@@ -1714,6 +1958,7 @@ pdb1kiq_chothia.pdb L2 false
 pdb1kiq_chothia.pdb L3 false
 pdb1kiq_chothia.pdb H1 false
 pdb1kiq_chothia.pdb H2 false
+pdb1kiq_chothia.pdb orientation false
 pdb1kir_chothia.pdb FRL false
 pdb1kir_chothia.pdb FRH false
 pdb1kir_chothia.pdb L1 false
@@ -1721,6 +1966,7 @@ pdb1kir_chothia.pdb L2 false
 pdb1kir_chothia.pdb L3 false
 pdb1kir_chothia.pdb H1 false
 pdb1kir_chothia.pdb H2 false
+pdb1kir_chothia.pdb orientation false
 pdb1kn2_chothia.pdb FRL false
 pdb1kn2_chothia.pdb FRH false
 pdb1kn2_chothia.pdb L1 false
@@ -1728,6 +1974,7 @@ pdb1kn2_chothia.pdb L2 false
 pdb1kn2_chothia.pdb L3 false
 pdb1kn2_chothia.pdb H1 false
 pdb1kn2_chothia.pdb H2 false
+pdb1kn2_chothia.pdb orientation false
 pdb1kn4_chothia.pdb FRL false
 pdb1kn4_chothia.pdb FRH false
 pdb1kn4_chothia.pdb L1 false
@@ -1735,6 +1982,7 @@ pdb1kn4_chothia.pdb L2 false
 pdb1kn4_chothia.pdb L3 false
 pdb1kn4_chothia.pdb H1 false
 pdb1kn4_chothia.pdb H2 false
+pdb1kn4_chothia.pdb orientation false
 pdb1kno_chothia.pdb FRL false
 pdb1kno_chothia.pdb FRH false
 pdb1kno_chothia.pdb L1 false
@@ -1742,6 +1990,7 @@ pdb1kno_chothia.pdb L2 false
 pdb1kno_chothia.pdb L3 false
 pdb1kno_chothia.pdb H1 false
 pdb1kno_chothia.pdb H2 false
+pdb1kno_chothia.pdb orientation false
 pdb1ktr_chothia.pdb FRL false
 pdb1ktr_chothia.pdb FRH false
 pdb1ktr_chothia.pdb L1 false
@@ -1749,6 +1998,7 @@ pdb1ktr_chothia.pdb L2 false
 pdb1ktr_chothia.pdb L3 false
 pdb1ktr_chothia.pdb H1 false
 pdb1ktr_chothia.pdb H2 false
+pdb1ktr_chothia.pdb orientation false
 pdb1l7i_chothia.pdb FRL false
 pdb1l7i_chothia.pdb FRH false
 pdb1l7i_chothia.pdb L1 false
@@ -1756,6 +2006,7 @@ pdb1l7i_chothia.pdb L2 false
 pdb1l7i_chothia.pdb L3 false
 pdb1l7i_chothia.pdb H1 false
 pdb1l7i_chothia.pdb H2 false
+pdb1l7i_chothia.pdb orientation false
 pdb1l7t_chothia.pdb FRL false
 pdb1l7t_chothia.pdb FRH false
 pdb1l7t_chothia.pdb L1 false
@@ -1763,6 +2014,7 @@ pdb1l7t_chothia.pdb L2 false
 pdb1l7t_chothia.pdb L3 false
 pdb1l7t_chothia.pdb H1 false
 pdb1l7t_chothia.pdb H2 false
+pdb1l7t_chothia.pdb orientation false
 pdb1lgv_chothia.pdb FRL false
 pdb1lgv_chothia.pdb FRH false
 pdb1lgv_chothia.pdb L1 false
@@ -1770,6 +2022,7 @@ pdb1lgv_chothia.pdb L2 false
 pdb1lgv_chothia.pdb L3 false
 pdb1lgv_chothia.pdb H1 false
 pdb1lgv_chothia.pdb H2 false
+pdb1lgv_chothia.pdb orientation false
 pdb1lhz_chothia.pdb FRL false
 pdb1lhz_chothia.pdb FRH false
 pdb1lhz_chothia.pdb L1 false
@@ -1777,6 +2030,7 @@ pdb1lhz_chothia.pdb L2 false
 pdb1lhz_chothia.pdb L3 false
 pdb1lhz_chothia.pdb H1 false
 pdb1lhz_chothia.pdb H2 false
+pdb1lhz_chothia.pdb orientation false
 pdb1lil_chothia.pdb FRL false
 pdb1lil_chothia.pdb FRH false
 pdb1lil_chothia.pdb L1 false
@@ -1784,6 +2038,7 @@ pdb1lil_chothia.pdb L2 false
 pdb1lil_chothia.pdb L3 false
 pdb1lil_chothia.pdb H1 false
 pdb1lil_chothia.pdb H2 false
+pdb1lil_chothia.pdb orientation false
 pdb1lk3_chothia.pdb FRL false
 pdb1lk3_chothia.pdb FRH false
 pdb1lk3_chothia.pdb L1 false
@@ -1791,6 +2046,7 @@ pdb1lk3_chothia.pdb L2 false
 pdb1lk3_chothia.pdb L3 false
 pdb1lk3_chothia.pdb H1 false
 pdb1lk3_chothia.pdb H2 false
+pdb1lk3_chothia.pdb orientation false
 pdb1lo0_chothia.pdb FRL false
 pdb1lo0_chothia.pdb FRH false
 pdb1lo0_chothia.pdb L1 false
@@ -1798,6 +2054,7 @@ pdb1lo0_chothia.pdb L2 false
 pdb1lo0_chothia.pdb L3 false
 pdb1lo0_chothia.pdb H1 false
 pdb1lo0_chothia.pdb H2 false
+pdb1lo0_chothia.pdb orientation false
 pdb1lo2_chothia.pdb FRL false
 pdb1lo2_chothia.pdb FRH false
 pdb1lo2_chothia.pdb L1 false
@@ -1805,6 +2062,7 @@ pdb1lo2_chothia.pdb L2 false
 pdb1lo2_chothia.pdb L3 false
 pdb1lo2_chothia.pdb H1 false
 pdb1lo2_chothia.pdb H2 false
+pdb1lo2_chothia.pdb orientation false
 pdb1lo3_chothia.pdb FRL false
 pdb1lo3_chothia.pdb FRH false
 pdb1lo3_chothia.pdb L1 false
@@ -1812,6 +2070,7 @@ pdb1lo3_chothia.pdb L2 false
 pdb1lo3_chothia.pdb L3 false
 pdb1lo3_chothia.pdb H1 false
 pdb1lo3_chothia.pdb H2 false
+pdb1lo3_chothia.pdb orientation false
 pdb1lo4_chothia.pdb FRL false
 pdb1lo4_chothia.pdb FRH false
 pdb1lo4_chothia.pdb L1 false
@@ -1819,6 +2078,7 @@ pdb1lo4_chothia.pdb L2 false
 pdb1lo4_chothia.pdb L3 false
 pdb1lo4_chothia.pdb H1 false
 pdb1lo4_chothia.pdb H2 false
+pdb1lo4_chothia.pdb orientation false
 pdb1lve_chothia.pdb FRL false
 pdb1lve_chothia.pdb FRH false
 pdb1lve_chothia.pdb L1 false
@@ -1826,6 +2086,7 @@ pdb1lve_chothia.pdb L2 false
 pdb1lve_chothia.pdb L3 false
 pdb1lve_chothia.pdb H1 false
 pdb1lve_chothia.pdb H2 false
+pdb1lve_chothia.pdb orientation false
 pdb1m71_chothia.pdb FRL false
 pdb1m71_chothia.pdb FRH false
 pdb1m71_chothia.pdb L1 false
@@ -1833,6 +2094,7 @@ pdb1m71_chothia.pdb L2 false
 pdb1m71_chothia.pdb L3 false
 pdb1m71_chothia.pdb H1 false
 pdb1m71_chothia.pdb H2 false
+pdb1m71_chothia.pdb orientation false
 pdb1m7d_chothia.pdb FRL false
 pdb1m7d_chothia.pdb FRH false
 pdb1m7d_chothia.pdb L1 false
@@ -1840,6 +2102,7 @@ pdb1m7d_chothia.pdb L2 false
 pdb1m7d_chothia.pdb L3 false
 pdb1m7d_chothia.pdb H1 false
 pdb1m7d_chothia.pdb H2 false
+pdb1m7d_chothia.pdb orientation false
 pdb1m7i_chothia.pdb FRL false
 pdb1m7i_chothia.pdb FRH false
 pdb1m7i_chothia.pdb L1 false
@@ -1847,6 +2110,7 @@ pdb1m7i_chothia.pdb L2 false
 pdb1m7i_chothia.pdb L3 false
 pdb1m7i_chothia.pdb H1 false
 pdb1m7i_chothia.pdb H2 false
+pdb1m7i_chothia.pdb orientation false
 pdb1mam_chothia.pdb FRL false
 pdb1mam_chothia.pdb FRH false
 pdb1mam_chothia.pdb L1 false
@@ -1854,6 +2118,7 @@ pdb1mam_chothia.pdb L2 false
 pdb1mam_chothia.pdb L3 false
 pdb1mam_chothia.pdb H1 false
 pdb1mam_chothia.pdb H2 false
+pdb1mam_chothia.pdb orientation false
 pdb1mcb_chothia.pdb FRL false
 pdb1mcb_chothia.pdb FRH false
 pdb1mcb_chothia.pdb L1 false
@@ -1861,6 +2126,7 @@ pdb1mcb_chothia.pdb L2 false
 pdb1mcb_chothia.pdb L3 false
 pdb1mcb_chothia.pdb H1 false
 pdb1mcb_chothia.pdb H2 false
+pdb1mcb_chothia.pdb orientation false
 pdb1mcc_chothia.pdb FRL false
 pdb1mcc_chothia.pdb FRH false
 pdb1mcc_chothia.pdb L1 false
@@ -1868,6 +2134,7 @@ pdb1mcc_chothia.pdb L2 false
 pdb1mcc_chothia.pdb L3 false
 pdb1mcc_chothia.pdb H1 false
 pdb1mcc_chothia.pdb H2 false
+pdb1mcc_chothia.pdb orientation false
 pdb1mcd_chothia.pdb FRL false
 pdb1mcd_chothia.pdb FRH false
 pdb1mcd_chothia.pdb L1 false
@@ -1875,6 +2142,7 @@ pdb1mcd_chothia.pdb L2 false
 pdb1mcd_chothia.pdb L3 false
 pdb1mcd_chothia.pdb H1 false
 pdb1mcd_chothia.pdb H2 false
+pdb1mcd_chothia.pdb orientation false
 pdb1mce_chothia.pdb FRL false
 pdb1mce_chothia.pdb FRH false
 pdb1mce_chothia.pdb L1 false
@@ -1882,6 +2150,7 @@ pdb1mce_chothia.pdb L2 false
 pdb1mce_chothia.pdb L3 false
 pdb1mce_chothia.pdb H1 false
 pdb1mce_chothia.pdb H2 false
+pdb1mce_chothia.pdb orientation false
 pdb1mcf_chothia.pdb FRL false
 pdb1mcf_chothia.pdb FRH false
 pdb1mcf_chothia.pdb L1 false
@@ -1889,6 +2158,7 @@ pdb1mcf_chothia.pdb L2 false
 pdb1mcf_chothia.pdb L3 false
 pdb1mcf_chothia.pdb H1 false
 pdb1mcf_chothia.pdb H2 false
+pdb1mcf_chothia.pdb orientation false
 pdb1mch_chothia.pdb FRL false
 pdb1mch_chothia.pdb FRH false
 pdb1mch_chothia.pdb L1 false
@@ -1896,6 +2166,7 @@ pdb1mch_chothia.pdb L2 false
 pdb1mch_chothia.pdb L3 false
 pdb1mch_chothia.pdb H1 false
 pdb1mch_chothia.pdb H2 false
+pdb1mch_chothia.pdb orientation false
 pdb1mci_chothia.pdb FRL false
 pdb1mci_chothia.pdb FRH false
 pdb1mci_chothia.pdb L1 false
@@ -1903,6 +2174,7 @@ pdb1mci_chothia.pdb L2 false
 pdb1mci_chothia.pdb L3 false
 pdb1mci_chothia.pdb H1 false
 pdb1mci_chothia.pdb H2 false
+pdb1mci_chothia.pdb orientation false
 pdb1mcj_chothia.pdb FRL false
 pdb1mcj_chothia.pdb FRH false
 pdb1mcj_chothia.pdb L1 false
@@ -1910,6 +2182,7 @@ pdb1mcj_chothia.pdb L2 false
 pdb1mcj_chothia.pdb L3 false
 pdb1mcj_chothia.pdb H1 false
 pdb1mcj_chothia.pdb H2 false
+pdb1mcj_chothia.pdb orientation false
 pdb1mck_chothia.pdb FRL false
 pdb1mck_chothia.pdb FRH false
 pdb1mck_chothia.pdb L1 false
@@ -1917,6 +2190,7 @@ pdb1mck_chothia.pdb L2 false
 pdb1mck_chothia.pdb L3 false
 pdb1mck_chothia.pdb H1 false
 pdb1mck_chothia.pdb H2 false
+pdb1mck_chothia.pdb orientation false
 pdb1mcl_chothia.pdb FRL false
 pdb1mcl_chothia.pdb FRH false
 pdb1mcl_chothia.pdb L1 false
@@ -1924,6 +2198,7 @@ pdb1mcl_chothia.pdb L2 false
 pdb1mcl_chothia.pdb L3 false
 pdb1mcl_chothia.pdb H1 false
 pdb1mcl_chothia.pdb H2 false
+pdb1mcl_chothia.pdb orientation false
 pdb1mcn_chothia.pdb FRL false
 pdb1mcn_chothia.pdb FRH false
 pdb1mcn_chothia.pdb L1 false
@@ -1931,6 +2206,7 @@ pdb1mcn_chothia.pdb L2 false
 pdb1mcn_chothia.pdb L3 false
 pdb1mcn_chothia.pdb H1 false
 pdb1mcn_chothia.pdb H2 false
+pdb1mcn_chothia.pdb orientation false
 pdb1mco_chothia.pdb FRL false
 pdb1mco_chothia.pdb FRH false
 pdb1mco_chothia.pdb L1 false
@@ -1938,6 +2214,7 @@ pdb1mco_chothia.pdb L2 false
 pdb1mco_chothia.pdb L3 false
 pdb1mco_chothia.pdb H1 false
 pdb1mco_chothia.pdb H2 false
+pdb1mco_chothia.pdb orientation false
 pdb1mcp_chothia.pdb FRL false
 pdb1mcp_chothia.pdb FRH false
 pdb1mcp_chothia.pdb L1 false
@@ -1945,6 +2222,7 @@ pdb1mcp_chothia.pdb L2 false
 pdb1mcp_chothia.pdb L3 false
 pdb1mcp_chothia.pdb H1 false
 pdb1mcp_chothia.pdb H2 false
+pdb1mcp_chothia.pdb orientation false
 pdb1mcq_chothia.pdb FRL false
 pdb1mcq_chothia.pdb FRH false
 pdb1mcq_chothia.pdb L1 false
@@ -1952,6 +2230,7 @@ pdb1mcq_chothia.pdb L2 false
 pdb1mcq_chothia.pdb L3 false
 pdb1mcq_chothia.pdb H1 false
 pdb1mcq_chothia.pdb H2 false
+pdb1mcq_chothia.pdb orientation false
 pdb1mcr_chothia.pdb FRL false
 pdb1mcr_chothia.pdb FRH false
 pdb1mcr_chothia.pdb L1 false
@@ -1959,6 +2238,7 @@ pdb1mcr_chothia.pdb L2 false
 pdb1mcr_chothia.pdb L3 false
 pdb1mcr_chothia.pdb H1 false
 pdb1mcr_chothia.pdb H2 false
+pdb1mcr_chothia.pdb orientation false
 pdb1mcs_chothia.pdb FRL false
 pdb1mcs_chothia.pdb FRH false
 pdb1mcs_chothia.pdb L1 false
@@ -1966,6 +2246,7 @@ pdb1mcs_chothia.pdb L2 false
 pdb1mcs_chothia.pdb L3 false
 pdb1mcs_chothia.pdb H1 false
 pdb1mcs_chothia.pdb H2 false
+pdb1mcs_chothia.pdb orientation false
 pdb1mcw_chothia.pdb FRL false
 pdb1mcw_chothia.pdb FRH false
 pdb1mcw_chothia.pdb L1 false
@@ -1973,6 +2254,7 @@ pdb1mcw_chothia.pdb L2 false
 pdb1mcw_chothia.pdb L3 false
 pdb1mcw_chothia.pdb H1 false
 pdb1mcw_chothia.pdb H2 false
+pdb1mcw_chothia.pdb orientation false
 pdb1mel_chothia.pdb FRL false
 pdb1mel_chothia.pdb FRH false
 pdb1mel_chothia.pdb L1 false
@@ -1980,6 +2262,7 @@ pdb1mel_chothia.pdb L2 false
 pdb1mel_chothia.pdb L3 false
 pdb1mel_chothia.pdb H1 false
 pdb1mel_chothia.pdb H2 false
+pdb1mel_chothia.pdb orientation false
 pdb1mf2_chothia.pdb FRL false
 pdb1mf2_chothia.pdb FRH false
 pdb1mf2_chothia.pdb L1 false
@@ -1987,6 +2270,7 @@ pdb1mf2_chothia.pdb L2 false
 pdb1mf2_chothia.pdb L3 false
 pdb1mf2_chothia.pdb H1 false
 pdb1mf2_chothia.pdb H2 false
+pdb1mf2_chothia.pdb orientation false
 pdb1mfb_chothia.pdb FRL false
 pdb1mfb_chothia.pdb FRH false
 pdb1mfb_chothia.pdb L1 false
@@ -1994,6 +2278,7 @@ pdb1mfb_chothia.pdb L2 false
 pdb1mfb_chothia.pdb L3 false
 pdb1mfb_chothia.pdb H1 false
 pdb1mfb_chothia.pdb H2 false
+pdb1mfb_chothia.pdb orientation false
 pdb1mfc_chothia.pdb FRL false
 pdb1mfc_chothia.pdb FRH false
 pdb1mfc_chothia.pdb L1 false
@@ -2001,6 +2286,7 @@ pdb1mfc_chothia.pdb L2 false
 pdb1mfc_chothia.pdb L3 false
 pdb1mfc_chothia.pdb H1 false
 pdb1mfc_chothia.pdb H2 false
+pdb1mfc_chothia.pdb orientation false
 pdb1mfd_chothia.pdb FRL false
 pdb1mfd_chothia.pdb FRH false
 pdb1mfd_chothia.pdb L1 false
@@ -2008,6 +2294,7 @@ pdb1mfd_chothia.pdb L2 false
 pdb1mfd_chothia.pdb L3 false
 pdb1mfd_chothia.pdb H1 false
 pdb1mfd_chothia.pdb H2 false
+pdb1mfd_chothia.pdb orientation false
 pdb1mfe_chothia.pdb FRL false
 pdb1mfe_chothia.pdb FRH false
 pdb1mfe_chothia.pdb L1 false
@@ -2015,6 +2302,7 @@ pdb1mfe_chothia.pdb L2 false
 pdb1mfe_chothia.pdb L3 false
 pdb1mfe_chothia.pdb H1 false
 pdb1mfe_chothia.pdb H2 false
+pdb1mfe_chothia.pdb orientation false
 pdb1mh5_chothia.pdb FRL false
 pdb1mh5_chothia.pdb FRH false
 pdb1mh5_chothia.pdb L1 false
@@ -2022,6 +2310,7 @@ pdb1mh5_chothia.pdb L2 false
 pdb1mh5_chothia.pdb L3 false
 pdb1mh5_chothia.pdb H1 true
 pdb1mh5_chothia.pdb H2 false
+pdb1mh5_chothia.pdb orientation false
 pdb1mhh_chothia.pdb FRL false
 pdb1mhh_chothia.pdb FRH false
 pdb1mhh_chothia.pdb L1 false
@@ -2029,6 +2318,7 @@ pdb1mhh_chothia.pdb L2 false
 pdb1mhh_chothia.pdb L3 false
 pdb1mhh_chothia.pdb H1 false
 pdb1mhh_chothia.pdb H2 false
+pdb1mhh_chothia.pdb orientation false
 pdb1mhp_chothia.pdb FRL false
 pdb1mhp_chothia.pdb FRH false
 pdb1mhp_chothia.pdb L1 false
@@ -2036,6 +2326,7 @@ pdb1mhp_chothia.pdb L2 false
 pdb1mhp_chothia.pdb L3 false
 pdb1mhp_chothia.pdb H1 false
 pdb1mhp_chothia.pdb H2 false
+pdb1mhp_chothia.pdb orientation false
 pdb1mie_chothia.pdb FRL false
 pdb1mie_chothia.pdb FRH false
 pdb1mie_chothia.pdb L1 false
@@ -2043,6 +2334,7 @@ pdb1mie_chothia.pdb L2 false
 pdb1mie_chothia.pdb L3 false
 pdb1mie_chothia.pdb H1 false
 pdb1mie_chothia.pdb H2 false
+pdb1mie_chothia.pdb orientation false
 pdb1mim_chothia.pdb FRL false
 pdb1mim_chothia.pdb FRH false
 pdb1mim_chothia.pdb L1 false
@@ -2050,6 +2342,7 @@ pdb1mim_chothia.pdb L2 false
 pdb1mim_chothia.pdb L3 false
 pdb1mim_chothia.pdb H1 false
 pdb1mim_chothia.pdb H2 false
+pdb1mim_chothia.pdb orientation false
 pdb1mj7_chothia.pdb FRL false
 pdb1mj7_chothia.pdb FRH false
 pdb1mj7_chothia.pdb L1 false
@@ -2057,6 +2350,7 @@ pdb1mj7_chothia.pdb L2 false
 pdb1mj7_chothia.pdb L3 false
 pdb1mj7_chothia.pdb H1 false
 pdb1mj7_chothia.pdb H2 false
+pdb1mj7_chothia.pdb orientation false
 pdb1mj8_chothia.pdb FRL false
 pdb1mj8_chothia.pdb FRH false
 pdb1mj8_chothia.pdb L1 true
@@ -2064,6 +2358,7 @@ pdb1mj8_chothia.pdb L2 false
 pdb1mj8_chothia.pdb L3 false
 pdb1mj8_chothia.pdb H1 false
 pdb1mj8_chothia.pdb H2 false
+pdb1mj8_chothia.pdb orientation false
 pdb1mjj_chothia.pdb FRL false
 pdb1mjj_chothia.pdb FRH false
 pdb1mjj_chothia.pdb L1 false
@@ -2071,6 +2366,7 @@ pdb1mjj_chothia.pdb L2 false
 pdb1mjj_chothia.pdb L3 false
 pdb1mjj_chothia.pdb H1 false
 pdb1mjj_chothia.pdb H2 false
+pdb1mjj_chothia.pdb orientation false
 pdb1mju_chothia.pdb FRL false
 pdb1mju_chothia.pdb FRH false
 pdb1mju_chothia.pdb L1 false
@@ -2078,6 +2374,7 @@ pdb1mju_chothia.pdb L2 false
 pdb1mju_chothia.pdb L3 false
 pdb1mju_chothia.pdb H1 false
 pdb1mju_chothia.pdb H2 false
+pdb1mju_chothia.pdb orientation false
 pdb1mlb_chothia.pdb FRL false
 pdb1mlb_chothia.pdb FRH false
 pdb1mlb_chothia.pdb L1 false
@@ -2085,6 +2382,7 @@ pdb1mlb_chothia.pdb L2 false
 pdb1mlb_chothia.pdb L3 false
 pdb1mlb_chothia.pdb H1 false
 pdb1mlb_chothia.pdb H2 false
+pdb1mlb_chothia.pdb orientation false
 pdb1mlc_chothia.pdb FRL false
 pdb1mlc_chothia.pdb FRH false
 pdb1mlc_chothia.pdb L1 false
@@ -2092,6 +2390,7 @@ pdb1mlc_chothia.pdb L2 false
 pdb1mlc_chothia.pdb L3 false
 pdb1mlc_chothia.pdb H1 false
 pdb1mlc_chothia.pdb H2 false
+pdb1mlc_chothia.pdb orientation false
 pdb1mnu_chothia.pdb FRL false
 pdb1mnu_chothia.pdb FRH false
 pdb1mnu_chothia.pdb L1 false
@@ -2099,6 +2398,7 @@ pdb1mnu_chothia.pdb L2 false
 pdb1mnu_chothia.pdb L3 false
 pdb1mnu_chothia.pdb H1 false
 pdb1mnu_chothia.pdb H2 false
+pdb1mnu_chothia.pdb orientation false
 pdb1mpa_chothia.pdb FRL false
 pdb1mpa_chothia.pdb FRH false
 pdb1mpa_chothia.pdb L1 false
@@ -2106,6 +2406,7 @@ pdb1mpa_chothia.pdb L2 false
 pdb1mpa_chothia.pdb L3 false
 pdb1mpa_chothia.pdb H1 false
 pdb1mpa_chothia.pdb H2 false
+pdb1mpa_chothia.pdb orientation false
 pdb1mqk_chothia.pdb FRL false
 pdb1mqk_chothia.pdb FRH false
 pdb1mqk_chothia.pdb L1 false
@@ -2113,6 +2414,7 @@ pdb1mqk_chothia.pdb L2 false
 pdb1mqk_chothia.pdb L3 false
 pdb1mqk_chothia.pdb H1 false
 pdb1mqk_chothia.pdb H2 false
+pdb1mqk_chothia.pdb orientation false
 pdb1mvf_chothia.pdb FRL false
 pdb1mvf_chothia.pdb FRH false
 pdb1mvf_chothia.pdb L1 false
@@ -2120,6 +2422,7 @@ pdb1mvf_chothia.pdb L2 false
 pdb1mvf_chothia.pdb L3 false
 pdb1mvf_chothia.pdb H1 false
 pdb1mvf_chothia.pdb H2 false
+pdb1mvf_chothia.pdb orientation false
 pdb1mvu_chothia.pdb FRL false
 pdb1mvu_chothia.pdb FRH false
 pdb1mvu_chothia.pdb L1 false
@@ -2127,6 +2430,7 @@ pdb1mvu_chothia.pdb L2 false
 pdb1mvu_chothia.pdb L3 false
 pdb1mvu_chothia.pdb H1 false
 pdb1mvu_chothia.pdb H2 false
+pdb1mvu_chothia.pdb orientation false
 pdb1n0x_chothia.pdb FRL false
 pdb1n0x_chothia.pdb FRH false
 pdb1n0x_chothia.pdb L1 false
@@ -2134,6 +2438,7 @@ pdb1n0x_chothia.pdb L2 false
 pdb1n0x_chothia.pdb L3 false
 pdb1n0x_chothia.pdb H1 false
 pdb1n0x_chothia.pdb H2 false
+pdb1n0x_chothia.pdb orientation false
 pdb1n4x_chothia.pdb FRL false
 pdb1n4x_chothia.pdb FRH false
 pdb1n4x_chothia.pdb L1 false
@@ -2141,6 +2446,7 @@ pdb1n4x_chothia.pdb L2 false
 pdb1n4x_chothia.pdb L3 false
 pdb1n4x_chothia.pdb H1 false
 pdb1n4x_chothia.pdb H2 false
+pdb1n4x_chothia.pdb orientation false
 pdb1n5y_chothia.pdb FRL false
 pdb1n5y_chothia.pdb FRH false
 pdb1n5y_chothia.pdb L1 false
@@ -2148,6 +2454,7 @@ pdb1n5y_chothia.pdb L2 false
 pdb1n5y_chothia.pdb L3 false
 pdb1n5y_chothia.pdb H1 false
 pdb1n5y_chothia.pdb H2 false
+pdb1n5y_chothia.pdb orientation false
 pdb1n64_chothia.pdb FRL false
 pdb1n64_chothia.pdb FRH false
 pdb1n64_chothia.pdb L1 false
@@ -2155,6 +2462,7 @@ pdb1n64_chothia.pdb L2 false
 pdb1n64_chothia.pdb L3 false
 pdb1n64_chothia.pdb H1 false
 pdb1n64_chothia.pdb H2 false
+pdb1n64_chothia.pdb orientation false
 pdb1n6q_chothia.pdb FRL false
 pdb1n6q_chothia.pdb FRH false
 pdb1n6q_chothia.pdb L1 false
@@ -2162,6 +2470,7 @@ pdb1n6q_chothia.pdb L2 false
 pdb1n6q_chothia.pdb L3 false
 pdb1n6q_chothia.pdb H1 false
 pdb1n6q_chothia.pdb H2 false
+pdb1n6q_chothia.pdb orientation false
 pdb1n7m_chothia.pdb FRL false
 pdb1n7m_chothia.pdb FRH false
 pdb1n7m_chothia.pdb L1 false
@@ -2169,6 +2478,7 @@ pdb1n7m_chothia.pdb L2 false
 pdb1n7m_chothia.pdb L3 false
 pdb1n7m_chothia.pdb H1 false
 pdb1n7m_chothia.pdb H2 false
+pdb1n7m_chothia.pdb orientation false
 pdb1n8z_chothia.pdb FRL false
 pdb1n8z_chothia.pdb FRH false
 pdb1n8z_chothia.pdb L1 false
@@ -2176,6 +2486,7 @@ pdb1n8z_chothia.pdb L2 false
 pdb1n8z_chothia.pdb L3 false
 pdb1n8z_chothia.pdb H1 false
 pdb1n8z_chothia.pdb H2 false
+pdb1n8z_chothia.pdb orientation false
 pdb1nbv_chothia.pdb FRL false
 pdb1nbv_chothia.pdb FRH false
 pdb1nbv_chothia.pdb L1 true
@@ -2183,6 +2494,7 @@ pdb1nbv_chothia.pdb L2 false
 pdb1nbv_chothia.pdb L3 false
 pdb1nbv_chothia.pdb H1 false
 pdb1nbv_chothia.pdb H2 false
+pdb1nbv_chothia.pdb orientation false
 pdb1nby_chothia.pdb FRL false
 pdb1nby_chothia.pdb FRH false
 pdb1nby_chothia.pdb L1 false
@@ -2190,6 +2502,7 @@ pdb1nby_chothia.pdb L2 false
 pdb1nby_chothia.pdb L3 false
 pdb1nby_chothia.pdb H1 false
 pdb1nby_chothia.pdb H2 false
+pdb1nby_chothia.pdb orientation false
 pdb1nbz_chothia.pdb FRL false
 pdb1nbz_chothia.pdb FRH false
 pdb1nbz_chothia.pdb L1 false
@@ -2197,6 +2510,7 @@ pdb1nbz_chothia.pdb L2 false
 pdb1nbz_chothia.pdb L3 false
 pdb1nbz_chothia.pdb H1 false
 pdb1nbz_chothia.pdb H2 false
+pdb1nbz_chothia.pdb orientation false
 pdb1nc2_chothia.pdb FRL false
 pdb1nc2_chothia.pdb FRH false
 pdb1nc2_chothia.pdb L1 false
@@ -2204,6 +2518,7 @@ pdb1nc2_chothia.pdb L2 false
 pdb1nc2_chothia.pdb L3 false
 pdb1nc2_chothia.pdb H1 false
 pdb1nc2_chothia.pdb H2 false
+pdb1nc2_chothia.pdb orientation false
 pdb1nc4_chothia.pdb FRL false
 pdb1nc4_chothia.pdb FRH false
 pdb1nc4_chothia.pdb L1 false
@@ -2211,6 +2526,7 @@ pdb1nc4_chothia.pdb L2 false
 pdb1nc4_chothia.pdb L3 false
 pdb1nc4_chothia.pdb H1 false
 pdb1nc4_chothia.pdb H2 false
+pdb1nc4_chothia.pdb orientation false
 pdb1nca_chothia.pdb FRL false
 pdb1nca_chothia.pdb FRH false
 pdb1nca_chothia.pdb L1 false
@@ -2218,6 +2534,7 @@ pdb1nca_chothia.pdb L2 false
 pdb1nca_chothia.pdb L3 false
 pdb1nca_chothia.pdb H1 false
 pdb1nca_chothia.pdb H2 false
+pdb1nca_chothia.pdb orientation false
 pdb1ncb_chothia.pdb FRL false
 pdb1ncb_chothia.pdb FRH false
 pdb1ncb_chothia.pdb L1 false
@@ -2225,6 +2542,7 @@ pdb1ncb_chothia.pdb L2 false
 pdb1ncb_chothia.pdb L3 false
 pdb1ncb_chothia.pdb H1 false
 pdb1ncb_chothia.pdb H2 false
+pdb1ncb_chothia.pdb orientation false
 pdb1ncc_chothia.pdb FRL false
 pdb1ncc_chothia.pdb FRH false
 pdb1ncc_chothia.pdb L1 false
@@ -2232,6 +2550,7 @@ pdb1ncc_chothia.pdb L2 false
 pdb1ncc_chothia.pdb L3 false
 pdb1ncc_chothia.pdb H1 false
 pdb1ncc_chothia.pdb H2 false
+pdb1ncc_chothia.pdb orientation false
 pdb1ncd_chothia.pdb FRL false
 pdb1ncd_chothia.pdb FRH false
 pdb1ncd_chothia.pdb L1 false
@@ -2239,6 +2558,7 @@ pdb1ncd_chothia.pdb L2 false
 pdb1ncd_chothia.pdb L3 false
 pdb1ncd_chothia.pdb H1 false
 pdb1ncd_chothia.pdb H2 false
+pdb1ncd_chothia.pdb orientation false
 pdb1ncw_chothia.pdb FRL false
 pdb1ncw_chothia.pdb FRH false
 pdb1ncw_chothia.pdb L1 false
@@ -2246,6 +2566,7 @@ pdb1ncw_chothia.pdb L2 false
 pdb1ncw_chothia.pdb L3 false
 pdb1ncw_chothia.pdb H1 false
 pdb1ncw_chothia.pdb H2 false
+pdb1ncw_chothia.pdb orientation false
 pdb1nd0_chothia.pdb FRL false
 pdb1nd0_chothia.pdb FRH false
 pdb1nd0_chothia.pdb L1 false
@@ -2253,6 +2574,7 @@ pdb1nd0_chothia.pdb L2 false
 pdb1nd0_chothia.pdb L3 false
 pdb1nd0_chothia.pdb H1 false
 pdb1nd0_chothia.pdb H2 false
+pdb1nd0_chothia.pdb orientation false
 pdb1ndg_chothia.pdb FRL false
 pdb1ndg_chothia.pdb FRH false
 pdb1ndg_chothia.pdb L1 false
@@ -2260,6 +2582,7 @@ pdb1ndg_chothia.pdb L2 false
 pdb1ndg_chothia.pdb L3 false
 pdb1ndg_chothia.pdb H1 false
 pdb1ndg_chothia.pdb H2 false
+pdb1ndg_chothia.pdb orientation false
 pdb1ndm_chothia.pdb FRL false
 pdb1ndm_chothia.pdb FRH false
 pdb1ndm_chothia.pdb L1 false
@@ -2267,6 +2590,7 @@ pdb1ndm_chothia.pdb L2 false
 pdb1ndm_chothia.pdb L3 false
 pdb1ndm_chothia.pdb H1 true
 pdb1ndm_chothia.pdb H2 false
+pdb1ndm_chothia.pdb orientation false
 pdb1nfd_chothia.pdb FRL false
 pdb1nfd_chothia.pdb FRH false
 pdb1nfd_chothia.pdb L1 false
@@ -2274,6 +2598,7 @@ pdb1nfd_chothia.pdb L2 false
 pdb1nfd_chothia.pdb L3 false
 pdb1nfd_chothia.pdb H1 false
 pdb1nfd_chothia.pdb H2 false
+pdb1nfd_chothia.pdb orientation false
 pdb1ngp_chothia.pdb FRL false
 pdb1ngp_chothia.pdb FRH false
 pdb1ngp_chothia.pdb L1 false
@@ -2281,6 +2606,7 @@ pdb1ngp_chothia.pdb L2 false
 pdb1ngp_chothia.pdb L3 false
 pdb1ngp_chothia.pdb H1 false
 pdb1ngp_chothia.pdb H2 false
+pdb1ngp_chothia.pdb orientation false
 pdb1ngq_chothia.pdb FRL false
 pdb1ngq_chothia.pdb FRH false
 pdb1ngq_chothia.pdb L1 false
@@ -2288,6 +2614,7 @@ pdb1ngq_chothia.pdb L2 false
 pdb1ngq_chothia.pdb L3 false
 pdb1ngq_chothia.pdb H1 false
 pdb1ngq_chothia.pdb H2 false
+pdb1ngq_chothia.pdb orientation false
 pdb1ngw_chothia.pdb FRL false
 pdb1ngw_chothia.pdb FRH false
 pdb1ngw_chothia.pdb L1 false
@@ -2295,6 +2622,7 @@ pdb1ngw_chothia.pdb L2 false
 pdb1ngw_chothia.pdb L3 false
 pdb1ngw_chothia.pdb H1 false
 pdb1ngw_chothia.pdb H2 false
+pdb1ngw_chothia.pdb orientation false
 pdb1ngx_chothia.pdb FRL true
 pdb1ngx_chothia.pdb FRH true
 pdb1ngx_chothia.pdb L1 false
@@ -2302,6 +2630,7 @@ pdb1ngx_chothia.pdb L2 false
 pdb1ngx_chothia.pdb L3 false
 pdb1ngx_chothia.pdb H1 true
 pdb1ngx_chothia.pdb H2 true
+pdb1ngx_chothia.pdb orientation false
 pdb1ngy_chothia.pdb FRL false
 pdb1ngy_chothia.pdb FRH false
 pdb1ngy_chothia.pdb L1 false
@@ -2309,6 +2638,7 @@ pdb1ngy_chothia.pdb L2 false
 pdb1ngy_chothia.pdb L3 false
 pdb1ngy_chothia.pdb H1 false
 pdb1ngy_chothia.pdb H2 false
+pdb1ngy_chothia.pdb orientation false
 pdb1ngz_chothia.pdb FRL false
 pdb1ngz_chothia.pdb FRH false
 pdb1ngz_chothia.pdb L1 false
@@ -2316,6 +2646,7 @@ pdb1ngz_chothia.pdb L2 false
 pdb1ngz_chothia.pdb L3 false
 pdb1ngz_chothia.pdb H1 false
 pdb1ngz_chothia.pdb H2 false
+pdb1ngz_chothia.pdb orientation false
 pdb1nj9_chothia.pdb FRL false
 pdb1nj9_chothia.pdb FRH false
 pdb1nj9_chothia.pdb L1 false
@@ -2323,6 +2654,7 @@ pdb1nj9_chothia.pdb L2 false
 pdb1nj9_chothia.pdb L3 true
 pdb1nj9_chothia.pdb H1 false
 pdb1nj9_chothia.pdb H2 false
+pdb1nj9_chothia.pdb orientation false
 pdb1nl0_chothia.pdb FRL false
 pdb1nl0_chothia.pdb FRH false
 pdb1nl0_chothia.pdb L1 false
@@ -2330,6 +2662,7 @@ pdb1nl0_chothia.pdb L2 false
 pdb1nl0_chothia.pdb L3 false
 pdb1nl0_chothia.pdb H1 false
 pdb1nl0_chothia.pdb H2 false
+pdb1nl0_chothia.pdb orientation false
 pdb1nlb_chothia.pdb FRL false
 pdb1nlb_chothia.pdb FRH false
 pdb1nlb_chothia.pdb L1 false
@@ -2337,6 +2670,7 @@ pdb1nlb_chothia.pdb L2 false
 pdb1nlb_chothia.pdb L3 false
 pdb1nlb_chothia.pdb H1 false
 pdb1nlb_chothia.pdb H2 false
+pdb1nlb_chothia.pdb orientation false
 pdb1nld_chothia.pdb FRL false
 pdb1nld_chothia.pdb FRH false
 pdb1nld_chothia.pdb L1 false
@@ -2344,6 +2678,7 @@ pdb1nld_chothia.pdb L2 false
 pdb1nld_chothia.pdb L3 false
 pdb1nld_chothia.pdb H1 false
 pdb1nld_chothia.pdb H2 false
+pdb1nld_chothia.pdb orientation false
 pdb1nma_chothia.pdb FRL false
 pdb1nma_chothia.pdb FRH false
 pdb1nma_chothia.pdb L1 false
@@ -2351,6 +2686,7 @@ pdb1nma_chothia.pdb L2 false
 pdb1nma_chothia.pdb L3 false
 pdb1nma_chothia.pdb H1 false
 pdb1nma_chothia.pdb H2 false
+pdb1nma_chothia.pdb orientation false
 pdb1nmb_chothia.pdb FRL false
 pdb1nmb_chothia.pdb FRH false
 pdb1nmb_chothia.pdb L1 false
@@ -2358,6 +2694,7 @@ pdb1nmb_chothia.pdb L2 false
 pdb1nmb_chothia.pdb L3 false
 pdb1nmb_chothia.pdb H1 false
 pdb1nmb_chothia.pdb H2 false
+pdb1nmb_chothia.pdb orientation false
 pdb1nmc_chothia.pdb FRL false
 pdb1nmc_chothia.pdb FRH false
 pdb1nmc_chothia.pdb L1 false
@@ -2365,6 +2702,7 @@ pdb1nmc_chothia.pdb L2 false
 pdb1nmc_chothia.pdb L3 false
 pdb1nmc_chothia.pdb H1 false
 pdb1nmc_chothia.pdb H2 false
+pdb1nmc_chothia.pdb orientation false
 pdb1nsn_chothia.pdb FRL false
 pdb1nsn_chothia.pdb FRH false
 pdb1nsn_chothia.pdb L1 false
@@ -2372,6 +2710,7 @@ pdb1nsn_chothia.pdb L2 false
 pdb1nsn_chothia.pdb L3 false
 pdb1nsn_chothia.pdb H1 true
 pdb1nsn_chothia.pdb H2 false
+pdb1nsn_chothia.pdb orientation false
 pdb1oak_chothia.pdb FRL false
 pdb1oak_chothia.pdb FRH false
 pdb1oak_chothia.pdb L1 false
@@ -2379,6 +2718,7 @@ pdb1oak_chothia.pdb L2 false
 pdb1oak_chothia.pdb L3 false
 pdb1oak_chothia.pdb H1 false
 pdb1oak_chothia.pdb H2 false
+pdb1oak_chothia.pdb orientation false
 pdb1oaq_chothia.pdb FRL false
 pdb1oaq_chothia.pdb FRH false
 pdb1oaq_chothia.pdb L1 false
@@ -2386,6 +2726,7 @@ pdb1oaq_chothia.pdb L2 false
 pdb1oaq_chothia.pdb L3 false
 pdb1oaq_chothia.pdb H1 false
 pdb1oaq_chothia.pdb H2 false
+pdb1oaq_chothia.pdb orientation false
 pdb1oar_chothia.pdb FRL false
 pdb1oar_chothia.pdb FRH false
 pdb1oar_chothia.pdb L1 false
@@ -2393,6 +2734,7 @@ pdb1oar_chothia.pdb L2 false
 pdb1oar_chothia.pdb L3 false
 pdb1oar_chothia.pdb H1 false
 pdb1oar_chothia.pdb H2 false
+pdb1oar_chothia.pdb orientation false
 pdb1oau_chothia.pdb FRL false
 pdb1oau_chothia.pdb FRH false
 pdb1oau_chothia.pdb L1 false
@@ -2400,6 +2742,7 @@ pdb1oau_chothia.pdb L2 false
 pdb1oau_chothia.pdb L3 false
 pdb1oau_chothia.pdb H1 false
 pdb1oau_chothia.pdb H2 false
+pdb1oau_chothia.pdb orientation false
 pdb1oax_chothia.pdb FRL false
 pdb1oax_chothia.pdb FRH false
 pdb1oax_chothia.pdb L1 false
@@ -2407,6 +2750,7 @@ pdb1oax_chothia.pdb L2 false
 pdb1oax_chothia.pdb L3 false
 pdb1oax_chothia.pdb H1 false
 pdb1oax_chothia.pdb H2 false
+pdb1oax_chothia.pdb orientation false
 pdb1oay_chothia.pdb FRL false
 pdb1oay_chothia.pdb FRH false
 pdb1oay_chothia.pdb L1 false
@@ -2414,6 +2758,7 @@ pdb1oay_chothia.pdb L2 false
 pdb1oay_chothia.pdb L3 false
 pdb1oay_chothia.pdb H1 false
 pdb1oay_chothia.pdb H2 false
+pdb1oay_chothia.pdb orientation false
 pdb1oaz_chothia.pdb FRL false
 pdb1oaz_chothia.pdb FRH false
 pdb1oaz_chothia.pdb L1 false
@@ -2421,6 +2766,7 @@ pdb1oaz_chothia.pdb L2 false
 pdb1oaz_chothia.pdb L3 false
 pdb1oaz_chothia.pdb H1 false
 pdb1oaz_chothia.pdb H2 false
+pdb1oaz_chothia.pdb orientation false
 pdb1ob1_chothia.pdb FRL false
 pdb1ob1_chothia.pdb FRH false
 pdb1ob1_chothia.pdb L1 false
@@ -2428,6 +2774,7 @@ pdb1ob1_chothia.pdb L2 false
 pdb1ob1_chothia.pdb L3 false
 pdb1ob1_chothia.pdb H1 false
 pdb1ob1_chothia.pdb H2 false
+pdb1ob1_chothia.pdb orientation false
 pdb1ocw_chothia.pdb FRL true
 pdb1ocw_chothia.pdb FRH true
 pdb1ocw_chothia.pdb L1 true
@@ -2435,6 +2782,7 @@ pdb1ocw_chothia.pdb L2 false
 pdb1ocw_chothia.pdb L3 true
 pdb1ocw_chothia.pdb H1 true
 pdb1ocw_chothia.pdb H2 true
+pdb1ocw_chothia.pdb orientation false
 pdb1ohq_chothia.pdb FRL false
 pdb1ohq_chothia.pdb FRH false
 pdb1ohq_chothia.pdb L1 false
@@ -2442,6 +2790,7 @@ pdb1ohq_chothia.pdb L2 false
 pdb1ohq_chothia.pdb L3 false
 pdb1ohq_chothia.pdb H1 false
 pdb1ohq_chothia.pdb H2 false
+pdb1ohq_chothia.pdb orientation false
 pdb1ol0_chothia.pdb FRL false
 pdb1ol0_chothia.pdb FRH false
 pdb1ol0_chothia.pdb L1 false
@@ -2449,6 +2798,7 @@ pdb1ol0_chothia.pdb L2 false
 pdb1ol0_chothia.pdb L3 false
 pdb1ol0_chothia.pdb H1 false
 pdb1ol0_chothia.pdb H2 false
+pdb1ol0_chothia.pdb orientation false
 pdb1om3_chothia.pdb FRL false
 pdb1om3_chothia.pdb FRH false
 pdb1om3_chothia.pdb L1 false
@@ -2456,6 +2806,7 @@ pdb1om3_chothia.pdb L2 false
 pdb1om3_chothia.pdb L3 false
 pdb1om3_chothia.pdb H1 false
 pdb1om3_chothia.pdb H2 false
+pdb1om3_chothia.pdb orientation false
 pdb1op3_chothia.pdb FRL false
 pdb1op3_chothia.pdb FRH false
 pdb1op3_chothia.pdb L1 false
@@ -2463,6 +2814,7 @@ pdb1op3_chothia.pdb L2 false
 pdb1op3_chothia.pdb L3 false
 pdb1op3_chothia.pdb H1 false
 pdb1op3_chothia.pdb H2 false
+pdb1op3_chothia.pdb orientation false
 pdb1op5_chothia.pdb FRL false
 pdb1op5_chothia.pdb FRH false
 pdb1op5_chothia.pdb L1 false
@@ -2470,6 +2822,7 @@ pdb1op5_chothia.pdb L2 false
 pdb1op5_chothia.pdb L3 true
 pdb1op5_chothia.pdb H1 false
 pdb1op5_chothia.pdb H2 false
+pdb1op5_chothia.pdb orientation false
 pdb1op9_chothia.pdb FRL false
 pdb1op9_chothia.pdb FRH false
 pdb1op9_chothia.pdb L1 false
@@ -2477,6 +2830,7 @@ pdb1op9_chothia.pdb L2 false
 pdb1op9_chothia.pdb L3 false
 pdb1op9_chothia.pdb H1 false
 pdb1op9_chothia.pdb H2 false
+pdb1op9_chothia.pdb orientation false
 pdb1opg_chothia.pdb FRL false
 pdb1opg_chothia.pdb FRH false
 pdb1opg_chothia.pdb L1 false
@@ -2484,6 +2838,7 @@ pdb1opg_chothia.pdb L2 false
 pdb1opg_chothia.pdb L3 false
 pdb1opg_chothia.pdb H1 false
 pdb1opg_chothia.pdb H2 false
+pdb1opg_chothia.pdb orientation false
 pdb1orq_chothia.pdb FRL false
 pdb1orq_chothia.pdb FRH false
 pdb1orq_chothia.pdb L1 false
@@ -2491,6 +2846,7 @@ pdb1orq_chothia.pdb L2 false
 pdb1orq_chothia.pdb L3 false
 pdb1orq_chothia.pdb H1 false
 pdb1orq_chothia.pdb H2 false
+pdb1orq_chothia.pdb orientation false
 pdb1ors_chothia.pdb FRL false
 pdb1ors_chothia.pdb FRH false
 pdb1ors_chothia.pdb L1 false
@@ -2498,6 +2854,7 @@ pdb1ors_chothia.pdb L2 false
 pdb1ors_chothia.pdb L3 false
 pdb1ors_chothia.pdb H1 false
 pdb1ors_chothia.pdb H2 false
+pdb1ors_chothia.pdb orientation false
 pdb1osp_chothia.pdb FRL false
 pdb1osp_chothia.pdb FRH false
 pdb1osp_chothia.pdb L1 false
@@ -2505,6 +2862,7 @@ pdb1osp_chothia.pdb L2 false
 pdb1osp_chothia.pdb L3 false
 pdb1osp_chothia.pdb H1 false
 pdb1osp_chothia.pdb H2 false
+pdb1osp_chothia.pdb orientation false
 pdb1ots_chothia.pdb FRL false
 pdb1ots_chothia.pdb FRH false
 pdb1ots_chothia.pdb L1 false
@@ -2512,6 +2870,7 @@ pdb1ots_chothia.pdb L2 false
 pdb1ots_chothia.pdb L3 false
 pdb1ots_chothia.pdb H1 false
 pdb1ots_chothia.pdb H2 false
+pdb1ots_chothia.pdb orientation false
 pdb1ott_chothia.pdb FRL false
 pdb1ott_chothia.pdb FRH false
 pdb1ott_chothia.pdb L1 false
@@ -2519,6 +2878,7 @@ pdb1ott_chothia.pdb L2 false
 pdb1ott_chothia.pdb L3 false
 pdb1ott_chothia.pdb H1 false
 pdb1ott_chothia.pdb H2 false
+pdb1ott_chothia.pdb orientation false
 pdb1otu_chothia.pdb FRL false
 pdb1otu_chothia.pdb FRH false
 pdb1otu_chothia.pdb L1 false
@@ -2526,6 +2886,7 @@ pdb1otu_chothia.pdb L2 false
 pdb1otu_chothia.pdb L3 false
 pdb1otu_chothia.pdb H1 false
 pdb1otu_chothia.pdb H2 false
+pdb1otu_chothia.pdb orientation false
 pdb1p2c_chothia.pdb FRL false
 pdb1p2c_chothia.pdb FRH false
 pdb1p2c_chothia.pdb L1 false
@@ -2533,6 +2894,7 @@ pdb1p2c_chothia.pdb L2 false
 pdb1p2c_chothia.pdb L3 false
 pdb1p2c_chothia.pdb H1 false
 pdb1p2c_chothia.pdb H2 false
+pdb1p2c_chothia.pdb orientation false
 pdb1p4b_chothia.pdb FRL false
 pdb1p4b_chothia.pdb FRH false
 pdb1p4b_chothia.pdb L1 false
@@ -2540,6 +2902,7 @@ pdb1p4b_chothia.pdb L2 false
 pdb1p4b_chothia.pdb L3 false
 pdb1p4b_chothia.pdb H1 false
 pdb1p4b_chothia.pdb H2 false
+pdb1p4b_chothia.pdb orientation false
 pdb1p4i_chothia.pdb FRL false
 pdb1p4i_chothia.pdb FRH false
 pdb1p4i_chothia.pdb L1 false
@@ -2547,6 +2910,7 @@ pdb1p4i_chothia.pdb L2 false
 pdb1p4i_chothia.pdb L3 false
 pdb1p4i_chothia.pdb H1 false
 pdb1p4i_chothia.pdb H2 false
+pdb1p4i_chothia.pdb orientation false
 pdb1p7k_chothia.pdb FRL false
 pdb1p7k_chothia.pdb FRH false
 pdb1p7k_chothia.pdb L1 false
@@ -2554,6 +2918,7 @@ pdb1p7k_chothia.pdb L2 false
 pdb1p7k_chothia.pdb L3 false
 pdb1p7k_chothia.pdb H1 false
 pdb1p7k_chothia.pdb H2 false
+pdb1p7k_chothia.pdb orientation false
 pdb1pg7_chothia.pdb FRL true
 pdb1pg7_chothia.pdb FRH true
 pdb1pg7_chothia.pdb L1 false
@@ -2561,6 +2926,7 @@ pdb1pg7_chothia.pdb L2 false
 pdb1pg7_chothia.pdb L3 false
 pdb1pg7_chothia.pdb H1 false
 pdb1pg7_chothia.pdb H2 true
+pdb1pg7_chothia.pdb orientation false
 pdb1plg_chothia.pdb FRL false
 pdb1plg_chothia.pdb FRH false
 pdb1plg_chothia.pdb L1 false
@@ -2568,6 +2934,7 @@ pdb1plg_chothia.pdb L2 false
 pdb1plg_chothia.pdb L3 false
 pdb1plg_chothia.pdb H1 false
 pdb1plg_chothia.pdb H2 false
+pdb1plg_chothia.pdb orientation false
 pdb1psk_chothia.pdb FRL false
 pdb1psk_chothia.pdb FRH false
 pdb1psk_chothia.pdb L1 false
@@ -2575,6 +2942,7 @@ pdb1psk_chothia.pdb L2 false
 pdb1psk_chothia.pdb L3 false
 pdb1psk_chothia.pdb H1 false
 pdb1psk_chothia.pdb H2 false
+pdb1psk_chothia.pdb orientation false
 pdb1pz5_chothia.pdb FRL false
 pdb1pz5_chothia.pdb FRH false
 pdb1pz5_chothia.pdb L1 false
@@ -2582,6 +2950,7 @@ pdb1pz5_chothia.pdb L2 false
 pdb1pz5_chothia.pdb L3 false
 pdb1pz5_chothia.pdb H1 false
 pdb1pz5_chothia.pdb H2 false
+pdb1pz5_chothia.pdb orientation false
 pdb1q0x_chothia.pdb FRL false
 pdb1q0x_chothia.pdb FRH false
 pdb1q0x_chothia.pdb L1 false
@@ -2589,6 +2958,7 @@ pdb1q0x_chothia.pdb L2 false
 pdb1q0x_chothia.pdb L3 false
 pdb1q0x_chothia.pdb H1 false
 pdb1q0x_chothia.pdb H2 false
+pdb1q0x_chothia.pdb orientation false
 pdb1q0y_chothia.pdb FRL false
 pdb1q0y_chothia.pdb FRH false
 pdb1q0y_chothia.pdb L1 false
@@ -2596,6 +2966,7 @@ pdb1q0y_chothia.pdb L2 false
 pdb1q0y_chothia.pdb L3 false
 pdb1q0y_chothia.pdb H1 false
 pdb1q0y_chothia.pdb H2 false
+pdb1q0y_chothia.pdb orientation false
 pdb1q1j_chothia.pdb FRL false
 pdb1q1j_chothia.pdb FRH false
 pdb1q1j_chothia.pdb L1 false
@@ -2603,6 +2974,7 @@ pdb1q1j_chothia.pdb L2 false
 pdb1q1j_chothia.pdb L3 false
 pdb1q1j_chothia.pdb H1 false
 pdb1q1j_chothia.pdb H2 false
+pdb1q1j_chothia.pdb orientation false
 pdb1q72_chothia.pdb FRL false
 pdb1q72_chothia.pdb FRH false
 pdb1q72_chothia.pdb L1 false
@@ -2610,6 +2982,7 @@ pdb1q72_chothia.pdb L2 false
 pdb1q72_chothia.pdb L3 false
 pdb1q72_chothia.pdb H1 false
 pdb1q72_chothia.pdb H2 false
+pdb1q72_chothia.pdb orientation false
 pdb1q9k_chothia.pdb FRL false
 pdb1q9k_chothia.pdb FRH false
 pdb1q9k_chothia.pdb L1 false
@@ -2617,6 +2990,7 @@ pdb1q9k_chothia.pdb L2 false
 pdb1q9k_chothia.pdb L3 false
 pdb1q9k_chothia.pdb H1 false
 pdb1q9k_chothia.pdb H2 false
+pdb1q9k_chothia.pdb orientation false
 pdb1q9l_chothia.pdb FRL false
 pdb1q9l_chothia.pdb FRH false
 pdb1q9l_chothia.pdb L1 false
@@ -2624,6 +2998,7 @@ pdb1q9l_chothia.pdb L2 false
 pdb1q9l_chothia.pdb L3 false
 pdb1q9l_chothia.pdb H1 false
 pdb1q9l_chothia.pdb H2 false
+pdb1q9l_chothia.pdb orientation false
 pdb1q9o_chothia.pdb FRL false
 pdb1q9o_chothia.pdb FRH false
 pdb1q9o_chothia.pdb L1 false
@@ -2631,6 +3006,7 @@ pdb1q9o_chothia.pdb L2 false
 pdb1q9o_chothia.pdb L3 false
 pdb1q9o_chothia.pdb H1 false
 pdb1q9o_chothia.pdb H2 false
+pdb1q9o_chothia.pdb orientation false
 pdb1q9q_chothia.pdb FRL false
 pdb1q9q_chothia.pdb FRH false
 pdb1q9q_chothia.pdb L1 false
@@ -2638,6 +3014,7 @@ pdb1q9q_chothia.pdb L2 false
 pdb1q9q_chothia.pdb L3 false
 pdb1q9q_chothia.pdb H1 false
 pdb1q9q_chothia.pdb H2 false
+pdb1q9q_chothia.pdb orientation false
 pdb1q9r_chothia.pdb FRL false
 pdb1q9r_chothia.pdb FRH false
 pdb1q9r_chothia.pdb L1 false
@@ -2645,6 +3022,7 @@ pdb1q9r_chothia.pdb L2 false
 pdb1q9r_chothia.pdb L3 false
 pdb1q9r_chothia.pdb H1 false
 pdb1q9r_chothia.pdb H2 false
+pdb1q9r_chothia.pdb orientation false
 pdb1q9t_chothia.pdb FRL false
 pdb1q9t_chothia.pdb FRH false
 pdb1q9t_chothia.pdb L1 false
@@ -2652,6 +3030,7 @@ pdb1q9t_chothia.pdb L2 false
 pdb1q9t_chothia.pdb L3 false
 pdb1q9t_chothia.pdb H1 false
 pdb1q9t_chothia.pdb H2 false
+pdb1q9t_chothia.pdb orientation false
 pdb1q9v_chothia.pdb FRL false
 pdb1q9v_chothia.pdb FRH false
 pdb1q9v_chothia.pdb L1 false
@@ -2659,6 +3038,7 @@ pdb1q9v_chothia.pdb L2 false
 pdb1q9v_chothia.pdb L3 false
 pdb1q9v_chothia.pdb H1 false
 pdb1q9v_chothia.pdb H2 false
+pdb1q9v_chothia.pdb orientation false
 pdb1q9w_chothia.pdb FRL false
 pdb1q9w_chothia.pdb FRH false
 pdb1q9w_chothia.pdb L1 false
@@ -2666,6 +3046,7 @@ pdb1q9w_chothia.pdb L2 false
 pdb1q9w_chothia.pdb L3 false
 pdb1q9w_chothia.pdb H1 false
 pdb1q9w_chothia.pdb H2 false
+pdb1q9w_chothia.pdb orientation false
 pdb1qac_chothia.pdb FRL false
 pdb1qac_chothia.pdb FRH false
 pdb1qac_chothia.pdb L1 false
@@ -2673,6 +3054,7 @@ pdb1qac_chothia.pdb L2 false
 pdb1qac_chothia.pdb L3 false
 pdb1qac_chothia.pdb H1 false
 pdb1qac_chothia.pdb H2 false
+pdb1qac_chothia.pdb orientation false
 pdb1qbl_chothia.pdb FRL false
 pdb1qbl_chothia.pdb FRH false
 pdb1qbl_chothia.pdb L1 false
@@ -2680,6 +3062,7 @@ pdb1qbl_chothia.pdb L2 false
 pdb1qbl_chothia.pdb L3 false
 pdb1qbl_chothia.pdb H1 false
 pdb1qbl_chothia.pdb H2 false
+pdb1qbl_chothia.pdb orientation false
 pdb1qbm_chothia.pdb FRL false
 pdb1qbm_chothia.pdb FRH false
 pdb1qbm_chothia.pdb L1 false
@@ -2687,6 +3070,7 @@ pdb1qbm_chothia.pdb L2 false
 pdb1qbm_chothia.pdb L3 false
 pdb1qbm_chothia.pdb H1 false
 pdb1qbm_chothia.pdb H2 false
+pdb1qbm_chothia.pdb orientation false
 pdb1qd0_chothia.pdb FRL false
 pdb1qd0_chothia.pdb FRH false
 pdb1qd0_chothia.pdb L1 false
@@ -2694,6 +3078,7 @@ pdb1qd0_chothia.pdb L2 false
 pdb1qd0_chothia.pdb L3 false
 pdb1qd0_chothia.pdb H1 false
 pdb1qd0_chothia.pdb H2 false
+pdb1qd0_chothia.pdb orientation false
 pdb1qfu_chothia.pdb FRL false
 pdb1qfu_chothia.pdb FRH false
 pdb1qfu_chothia.pdb L1 false
@@ -2701,6 +3086,7 @@ pdb1qfu_chothia.pdb L2 false
 pdb1qfu_chothia.pdb L3 false
 pdb1qfu_chothia.pdb H1 false
 pdb1qfu_chothia.pdb H2 false
+pdb1qfu_chothia.pdb orientation false
 pdb1qkz_chothia.pdb FRL false
 pdb1qkz_chothia.pdb FRH false
 pdb1qkz_chothia.pdb L1 false
@@ -2708,6 +3094,7 @@ pdb1qkz_chothia.pdb L2 false
 pdb1qkz_chothia.pdb L3 false
 pdb1qkz_chothia.pdb H1 false
 pdb1qkz_chothia.pdb H2 false
+pdb1qkz_chothia.pdb orientation false
 pdb1qle_chothia.pdb FRL false
 pdb1qle_chothia.pdb FRH false
 pdb1qle_chothia.pdb L1 false
@@ -2715,6 +3102,7 @@ pdb1qle_chothia.pdb L2 false
 pdb1qle_chothia.pdb L3 false
 pdb1qle_chothia.pdb H1 false
 pdb1qle_chothia.pdb H2 false
+pdb1qle_chothia.pdb orientation false
 pdb1qlr_chothia.pdb FRL false
 pdb1qlr_chothia.pdb FRH false
 pdb1qlr_chothia.pdb L1 false
@@ -2722,6 +3110,7 @@ pdb1qlr_chothia.pdb L2 false
 pdb1qlr_chothia.pdb L3 false
 pdb1qlr_chothia.pdb H1 false
 pdb1qlr_chothia.pdb H2 false
+pdb1qlr_chothia.pdb orientation false
 pdb1qnz_chothia.pdb FRL false
 pdb1qnz_chothia.pdb FRH false
 pdb1qnz_chothia.pdb L1 true
@@ -2729,6 +3118,7 @@ pdb1qnz_chothia.pdb L2 false
 pdb1qnz_chothia.pdb L3 false
 pdb1qnz_chothia.pdb H1 false
 pdb1qnz_chothia.pdb H2 false
+pdb1qnz_chothia.pdb orientation false
 pdb1qp1_chothia.pdb FRL false
 pdb1qp1_chothia.pdb FRH false
 pdb1qp1_chothia.pdb L1 false
@@ -2736,6 +3126,7 @@ pdb1qp1_chothia.pdb L2 false
 pdb1qp1_chothia.pdb L3 false
 pdb1qp1_chothia.pdb H1 false
 pdb1qp1_chothia.pdb H2 false
+pdb1qp1_chothia.pdb orientation false
 pdb1qyg_chothia.pdb FRL false
 pdb1qyg_chothia.pdb FRH false
 pdb1qyg_chothia.pdb L1 false
@@ -2743,6 +3134,7 @@ pdb1qyg_chothia.pdb L2 false
 pdb1qyg_chothia.pdb L3 false
 pdb1qyg_chothia.pdb H1 false
 pdb1qyg_chothia.pdb H2 false
+pdb1qyg_chothia.pdb orientation false
 pdb1r0a_chothia.pdb FRL false
 pdb1r0a_chothia.pdb FRH false
 pdb1r0a_chothia.pdb L1 false
@@ -2750,6 +3142,7 @@ pdb1r0a_chothia.pdb L2 false
 pdb1r0a_chothia.pdb L3 false
 pdb1r0a_chothia.pdb H1 false
 pdb1r0a_chothia.pdb H2 false
+pdb1r0a_chothia.pdb orientation false
 pdb1r24_chothia.pdb FRL false
 pdb1r24_chothia.pdb FRH false
 pdb1r24_chothia.pdb L1 false
@@ -2757,6 +3150,7 @@ pdb1r24_chothia.pdb L2 false
 pdb1r24_chothia.pdb L3 false
 pdb1r24_chothia.pdb H1 false
 pdb1r24_chothia.pdb H2 false
+pdb1r24_chothia.pdb orientation false
 pdb1r3i_chothia.pdb FRL false
 pdb1r3i_chothia.pdb FRH false
 pdb1r3i_chothia.pdb L1 false
@@ -2764,6 +3158,7 @@ pdb1r3i_chothia.pdb L2 false
 pdb1r3i_chothia.pdb L3 false
 pdb1r3i_chothia.pdb H1 false
 pdb1r3i_chothia.pdb H2 false
+pdb1r3i_chothia.pdb orientation false
 pdb1r3j_chothia.pdb FRL false
 pdb1r3j_chothia.pdb FRH false
 pdb1r3j_chothia.pdb L1 false
@@ -2771,6 +3166,7 @@ pdb1r3j_chothia.pdb L2 false
 pdb1r3j_chothia.pdb L3 false
 pdb1r3j_chothia.pdb H1 false
 pdb1r3j_chothia.pdb H2 false
+pdb1r3j_chothia.pdb orientation false
 pdb1r3k_chothia.pdb FRL false
 pdb1r3k_chothia.pdb FRH false
 pdb1r3k_chothia.pdb L1 false
@@ -2778,6 +3174,7 @@ pdb1r3k_chothia.pdb L2 false
 pdb1r3k_chothia.pdb L3 false
 pdb1r3k_chothia.pdb H1 false
 pdb1r3k_chothia.pdb H2 false
+pdb1r3k_chothia.pdb orientation false
 pdb1r3l_chothia.pdb FRL false
 pdb1r3l_chothia.pdb FRH false
 pdb1r3l_chothia.pdb L1 false
@@ -2785,6 +3182,7 @@ pdb1r3l_chothia.pdb L2 false
 pdb1r3l_chothia.pdb L3 false
 pdb1r3l_chothia.pdb H1 false
 pdb1r3l_chothia.pdb H2 false
+pdb1r3l_chothia.pdb orientation false
 pdb1rei_chothia.pdb FRL false
 pdb1rei_chothia.pdb FRH false
 pdb1rei_chothia.pdb L1 false
@@ -2792,6 +3190,7 @@ pdb1rei_chothia.pdb L2 false
 pdb1rei_chothia.pdb L3 false
 pdb1rei_chothia.pdb H1 false
 pdb1rei_chothia.pdb H2 false
+pdb1rei_chothia.pdb orientation false
 pdb1rfd_chothia.pdb FRL false
 pdb1rfd_chothia.pdb FRH false
 pdb1rfd_chothia.pdb L1 false
@@ -2799,6 +3198,7 @@ pdb1rfd_chothia.pdb L2 false
 pdb1rfd_chothia.pdb L3 false
 pdb1rfd_chothia.pdb H1 false
 pdb1rfd_chothia.pdb H2 false
+pdb1rfd_chothia.pdb orientation false
 pdb1rhh_chothia.pdb FRL false
 pdb1rhh_chothia.pdb FRH false
 pdb1rhh_chothia.pdb L1 false
@@ -2806,6 +3206,7 @@ pdb1rhh_chothia.pdb L2 false
 pdb1rhh_chothia.pdb L3 false
 pdb1rhh_chothia.pdb H1 false
 pdb1rhh_chothia.pdb H2 false
+pdb1rhh_chothia.pdb orientation false
 pdb1rih_chothia.pdb FRL false
 pdb1rih_chothia.pdb FRH false
 pdb1rih_chothia.pdb L1 false
@@ -2813,6 +3214,7 @@ pdb1rih_chothia.pdb L2 false
 pdb1rih_chothia.pdb L3 false
 pdb1rih_chothia.pdb H1 false
 pdb1rih_chothia.pdb H2 false
+pdb1rih_chothia.pdb orientation false
 pdb1riu_chothia.pdb FRL false
 pdb1riu_chothia.pdb FRH false
 pdb1riu_chothia.pdb L1 false
@@ -2820,6 +3222,7 @@ pdb1riu_chothia.pdb L2 false
 pdb1riu_chothia.pdb L3 false
 pdb1riu_chothia.pdb H1 false
 pdb1riu_chothia.pdb H2 false
+pdb1riu_chothia.pdb orientation false
 pdb1riv_chothia.pdb FRL false
 pdb1riv_chothia.pdb FRH false
 pdb1riv_chothia.pdb L1 false
@@ -2827,6 +3230,7 @@ pdb1riv_chothia.pdb L2 false
 pdb1riv_chothia.pdb L3 false
 pdb1riv_chothia.pdb H1 false
 pdb1riv_chothia.pdb H2 false
+pdb1riv_chothia.pdb orientation false
 pdb1rjl_chothia.pdb FRL false
 pdb1rjl_chothia.pdb FRH false
 pdb1rjl_chothia.pdb L1 false
@@ -2834,6 +3238,7 @@ pdb1rjl_chothia.pdb L2 false
 pdb1rjl_chothia.pdb L3 false
 pdb1rjl_chothia.pdb H1 false
 pdb1rjl_chothia.pdb H2 false
+pdb1rjl_chothia.pdb orientation false
 pdb1rmf_chothia.pdb FRL true
 pdb1rmf_chothia.pdb FRH true
 pdb1rmf_chothia.pdb L1 false
@@ -2841,6 +3246,7 @@ pdb1rmf_chothia.pdb L2 false
 pdb1rmf_chothia.pdb L3 false
 pdb1rmf_chothia.pdb H1 false
 pdb1rmf_chothia.pdb H2 true
+pdb1rmf_chothia.pdb orientation false
 pdb1ruk_chothia.pdb FRL false
 pdb1ruk_chothia.pdb FRH false
 pdb1ruk_chothia.pdb L1 false
@@ -2848,6 +3254,7 @@ pdb1ruk_chothia.pdb L2 false
 pdb1ruk_chothia.pdb L3 false
 pdb1ruk_chothia.pdb H1 false
 pdb1ruk_chothia.pdb H2 false
+pdb1ruk_chothia.pdb orientation false
 pdb1rum_chothia.pdb FRL false
 pdb1rum_chothia.pdb FRH false
 pdb1rum_chothia.pdb L1 false
@@ -2855,6 +3262,7 @@ pdb1rum_chothia.pdb L2 false
 pdb1rum_chothia.pdb L3 false
 pdb1rum_chothia.pdb H1 false
 pdb1rum_chothia.pdb H2 false
+pdb1rum_chothia.pdb orientation false
 pdb1rup_chothia.pdb FRL false
 pdb1rup_chothia.pdb FRH false
 pdb1rup_chothia.pdb L1 false
@@ -2862,6 +3270,7 @@ pdb1rup_chothia.pdb L2 false
 pdb1rup_chothia.pdb L3 false
 pdb1rup_chothia.pdb H1 false
 pdb1rup_chothia.pdb H2 false
+pdb1rup_chothia.pdb orientation false
 pdb1ruq_chothia.pdb FRL false
 pdb1ruq_chothia.pdb FRH false
 pdb1ruq_chothia.pdb L1 false
@@ -2869,6 +3278,7 @@ pdb1ruq_chothia.pdb L2 false
 pdb1ruq_chothia.pdb L3 false
 pdb1ruq_chothia.pdb H1 false
 pdb1ruq_chothia.pdb H2 false
+pdb1ruq_chothia.pdb orientation false
 pdb1rur_chothia.pdb FRL false
 pdb1rur_chothia.pdb FRH false
 pdb1rur_chothia.pdb L1 false
@@ -2876,6 +3286,7 @@ pdb1rur_chothia.pdb L2 false
 pdb1rur_chothia.pdb L3 false
 pdb1rur_chothia.pdb H1 false
 pdb1rur_chothia.pdb H2 false
+pdb1rur_chothia.pdb orientation false
 pdb1rvf_chothia.pdb FRL false
 pdb1rvf_chothia.pdb FRH false
 pdb1rvf_chothia.pdb L1 false
@@ -2883,6 +3294,7 @@ pdb1rvf_chothia.pdb L2 false
 pdb1rvf_chothia.pdb L3 false
 pdb1rvf_chothia.pdb H1 false
 pdb1rvf_chothia.pdb H2 false
+pdb1rvf_chothia.pdb orientation false
 pdb1rz7_chothia.pdb FRL false
 pdb1rz7_chothia.pdb FRH false
 pdb1rz7_chothia.pdb L1 false
@@ -2890,6 +3302,7 @@ pdb1rz7_chothia.pdb L2 false
 pdb1rz7_chothia.pdb L3 false
 pdb1rz7_chothia.pdb H1 false
 pdb1rz7_chothia.pdb H2 false
+pdb1rz7_chothia.pdb orientation false
 pdb1rz8_chothia.pdb FRL false
 pdb1rz8_chothia.pdb FRH false
 pdb1rz8_chothia.pdb L1 false
@@ -2897,6 +3310,7 @@ pdb1rz8_chothia.pdb L2 false
 pdb1rz8_chothia.pdb L3 false
 pdb1rz8_chothia.pdb H1 false
 pdb1rz8_chothia.pdb H2 false
+pdb1rz8_chothia.pdb orientation false
 pdb1rzf_chothia.pdb FRL false
 pdb1rzf_chothia.pdb FRH false
 pdb1rzf_chothia.pdb L1 false
@@ -2904,6 +3318,7 @@ pdb1rzf_chothia.pdb L2 false
 pdb1rzf_chothia.pdb L3 false
 pdb1rzf_chothia.pdb H1 false
 pdb1rzf_chothia.pdb H2 false
+pdb1rzf_chothia.pdb orientation false
 pdb1rzg_chothia.pdb FRL false
 pdb1rzg_chothia.pdb FRH false
 pdb1rzg_chothia.pdb L1 false
@@ -2911,6 +3326,7 @@ pdb1rzg_chothia.pdb L2 false
 pdb1rzg_chothia.pdb L3 false
 pdb1rzg_chothia.pdb H1 false
 pdb1rzg_chothia.pdb H2 false
+pdb1rzg_chothia.pdb orientation false
 pdb1rzi_chothia.pdb FRL false
 pdb1rzi_chothia.pdb FRH false
 pdb1rzi_chothia.pdb L1 false
@@ -2918,6 +3334,7 @@ pdb1rzi_chothia.pdb L2 false
 pdb1rzi_chothia.pdb L3 false
 pdb1rzi_chothia.pdb H1 false
 pdb1rzi_chothia.pdb H2 false
+pdb1rzi_chothia.pdb orientation false
 pdb1rzj_chothia.pdb FRL false
 pdb1rzj_chothia.pdb FRH false
 pdb1rzj_chothia.pdb L1 false
@@ -2925,6 +3342,7 @@ pdb1rzj_chothia.pdb L2 false
 pdb1rzj_chothia.pdb L3 false
 pdb1rzj_chothia.pdb H1 false
 pdb1rzj_chothia.pdb H2 false
+pdb1rzj_chothia.pdb orientation false
 pdb1rzk_chothia.pdb FRL false
 pdb1rzk_chothia.pdb FRH false
 pdb1rzk_chothia.pdb L1 false
@@ -2932,6 +3350,7 @@ pdb1rzk_chothia.pdb L2 false
 pdb1rzk_chothia.pdb L3 false
 pdb1rzk_chothia.pdb H1 false
 pdb1rzk_chothia.pdb H2 false
+pdb1rzk_chothia.pdb orientation false
 pdb1s3k_chothia.pdb FRL false
 pdb1s3k_chothia.pdb FRH false
 pdb1s3k_chothia.pdb L1 false
@@ -2939,6 +3358,7 @@ pdb1s3k_chothia.pdb L2 false
 pdb1s3k_chothia.pdb L3 false
 pdb1s3k_chothia.pdb H1 false
 pdb1s3k_chothia.pdb H2 false
+pdb1s3k_chothia.pdb orientation false
 pdb1s5h_chothia.pdb FRL false
 pdb1s5h_chothia.pdb FRH false
 pdb1s5h_chothia.pdb L1 false
@@ -2946,6 +3366,7 @@ pdb1s5h_chothia.pdb L2 false
 pdb1s5h_chothia.pdb L3 false
 pdb1s5h_chothia.pdb H1 false
 pdb1s5h_chothia.pdb H2 false
+pdb1s5h_chothia.pdb orientation false
 pdb1s5i_chothia.pdb FRL false
 pdb1s5i_chothia.pdb FRH false
 pdb1s5i_chothia.pdb L1 false
@@ -2953,6 +3374,7 @@ pdb1s5i_chothia.pdb L2 false
 pdb1s5i_chothia.pdb L3 false
 pdb1s5i_chothia.pdb H1 false
 pdb1s5i_chothia.pdb H2 false
+pdb1s5i_chothia.pdb orientation false
 pdb1s78_chothia.pdb FRL false
 pdb1s78_chothia.pdb FRH false
 pdb1s78_chothia.pdb L1 false
@@ -2960,6 +3382,7 @@ pdb1s78_chothia.pdb L2 false
 pdb1s78_chothia.pdb L3 false
 pdb1s78_chothia.pdb H1 false
 pdb1s78_chothia.pdb H2 false
+pdb1s78_chothia.pdb orientation false
 pdb1sbs_chothia.pdb FRL false
 pdb1sbs_chothia.pdb FRH false
 pdb1sbs_chothia.pdb L1 false
@@ -2967,6 +3390,7 @@ pdb1sbs_chothia.pdb L2 false
 pdb1sbs_chothia.pdb L3 false
 pdb1sbs_chothia.pdb H1 false
 pdb1sbs_chothia.pdb H2 false
+pdb1sbs_chothia.pdb orientation false
 pdb1seq_chothia.pdb FRL false
 pdb1seq_chothia.pdb FRH false
 pdb1seq_chothia.pdb L1 false
@@ -2974,6 +3398,7 @@ pdb1seq_chothia.pdb L2 false
 pdb1seq_chothia.pdb L3 false
 pdb1seq_chothia.pdb H1 false
 pdb1seq_chothia.pdb H2 false
+pdb1seq_chothia.pdb orientation false
 pdb1shm_chothia.pdb FRL false
 pdb1shm_chothia.pdb FRH false
 pdb1shm_chothia.pdb L1 false
@@ -2981,6 +3406,7 @@ pdb1shm_chothia.pdb L2 false
 pdb1shm_chothia.pdb L3 false
 pdb1shm_chothia.pdb H1 false
 pdb1shm_chothia.pdb H2 false
+pdb1shm_chothia.pdb orientation false
 pdb1sjx_chothia.pdb FRL false
 pdb1sjx_chothia.pdb FRH false
 pdb1sjx_chothia.pdb L1 false
@@ -2988,6 +3414,7 @@ pdb1sjx_chothia.pdb L2 false
 pdb1sjx_chothia.pdb L3 false
 pdb1sjx_chothia.pdb H1 false
 pdb1sjx_chothia.pdb H2 false
+pdb1sjx_chothia.pdb orientation false
 pdb1sm3_chothia.pdb FRL false
 pdb1sm3_chothia.pdb FRH false
 pdb1sm3_chothia.pdb L1 false
@@ -2995,6 +3422,7 @@ pdb1sm3_chothia.pdb L2 false
 pdb1sm3_chothia.pdb L3 true
 pdb1sm3_chothia.pdb H1 false
 pdb1sm3_chothia.pdb H2 false
+pdb1sm3_chothia.pdb orientation false
 pdb1sy6_chothia.pdb FRL false
 pdb1sy6_chothia.pdb FRH false
 pdb1sy6_chothia.pdb L1 false
@@ -3002,6 +3430,7 @@ pdb1sy6_chothia.pdb L2 false
 pdb1sy6_chothia.pdb L3 false
 pdb1sy6_chothia.pdb H1 false
 pdb1sy6_chothia.pdb H2 false
+pdb1sy6_chothia.pdb orientation false
 pdb1t03_chothia.pdb FRL false
 pdb1t03_chothia.pdb FRH false
 pdb1t03_chothia.pdb L1 false
@@ -3009,6 +3438,7 @@ pdb1t03_chothia.pdb L2 false
 pdb1t03_chothia.pdb L3 false
 pdb1t03_chothia.pdb H1 false
 pdb1t03_chothia.pdb H2 false
+pdb1t03_chothia.pdb orientation false
 pdb1t04_chothia.pdb FRL false
 pdb1t04_chothia.pdb FRH false
 pdb1t04_chothia.pdb L1 false
@@ -3016,6 +3446,7 @@ pdb1t04_chothia.pdb L2 false
 pdb1t04_chothia.pdb L3 false
 pdb1t04_chothia.pdb H1 false
 pdb1t04_chothia.pdb H2 false
+pdb1t04_chothia.pdb orientation false
 pdb1t2q_chothia.pdb FRL false
 pdb1t2q_chothia.pdb FRH false
 pdb1t2q_chothia.pdb L1 false
@@ -3023,6 +3454,7 @@ pdb1t2q_chothia.pdb L2 false
 pdb1t2q_chothia.pdb L3 false
 pdb1t2q_chothia.pdb H1 false
 pdb1t2q_chothia.pdb H2 false
+pdb1t2q_chothia.pdb orientation false
 pdb1t3f_chothia.pdb FRL false
 pdb1t3f_chothia.pdb FRH false
 pdb1t3f_chothia.pdb L1 false
@@ -3030,6 +3462,7 @@ pdb1t3f_chothia.pdb L2 false
 pdb1t3f_chothia.pdb L3 false
 pdb1t3f_chothia.pdb H1 false
 pdb1t3f_chothia.pdb H2 false
+pdb1t3f_chothia.pdb orientation false
 pdb1t4k_chothia.pdb FRL false
 pdb1t4k_chothia.pdb FRH false
 pdb1t4k_chothia.pdb L1 false
@@ -3037,6 +3470,7 @@ pdb1t4k_chothia.pdb L2 false
 pdb1t4k_chothia.pdb L3 false
 pdb1t4k_chothia.pdb H1 false
 pdb1t4k_chothia.pdb H2 false
+pdb1t4k_chothia.pdb orientation false
 pdb1t66_chothia.pdb FRL false
 pdb1t66_chothia.pdb FRH false
 pdb1t66_chothia.pdb L1 false
@@ -3044,6 +3478,7 @@ pdb1t66_chothia.pdb L2 false
 pdb1t66_chothia.pdb L3 false
 pdb1t66_chothia.pdb H1 true
 pdb1t66_chothia.pdb H2 false
+pdb1t66_chothia.pdb orientation false
 pdb1tet_chothia.pdb FRL false
 pdb1tet_chothia.pdb FRH false
 pdb1tet_chothia.pdb L1 false
@@ -3051,6 +3486,7 @@ pdb1tet_chothia.pdb L2 false
 pdb1tet_chothia.pdb L3 false
 pdb1tet_chothia.pdb H1 false
 pdb1tet_chothia.pdb H2 false
+pdb1tet_chothia.pdb orientation false
 pdb1tjg_chothia.pdb FRL false
 pdb1tjg_chothia.pdb FRH false
 pdb1tjg_chothia.pdb L1 false
@@ -3058,6 +3494,7 @@ pdb1tjg_chothia.pdb L2 false
 pdb1tjg_chothia.pdb L3 false
 pdb1tjg_chothia.pdb H1 false
 pdb1tjg_chothia.pdb H2 false
+pdb1tjg_chothia.pdb orientation false
 pdb1tjh_chothia.pdb FRL false
 pdb1tjh_chothia.pdb FRH false
 pdb1tjh_chothia.pdb L1 false
@@ -3065,6 +3502,7 @@ pdb1tjh_chothia.pdb L2 false
 pdb1tjh_chothia.pdb L3 false
 pdb1tjh_chothia.pdb H1 false
 pdb1tjh_chothia.pdb H2 false
+pdb1tjh_chothia.pdb orientation false
 pdb1tji_chothia.pdb FRL false
 pdb1tji_chothia.pdb FRH false
 pdb1tji_chothia.pdb L1 false
@@ -3072,6 +3510,7 @@ pdb1tji_chothia.pdb L2 false
 pdb1tji_chothia.pdb L3 false
 pdb1tji_chothia.pdb H1 false
 pdb1tji_chothia.pdb H2 false
+pdb1tji_chothia.pdb orientation false
 pdb1txv_chothia.pdb FRL false
 pdb1txv_chothia.pdb FRH false
 pdb1txv_chothia.pdb L1 false
@@ -3079,6 +3518,7 @@ pdb1txv_chothia.pdb L2 false
 pdb1txv_chothia.pdb L3 false
 pdb1txv_chothia.pdb H1 false
 pdb1txv_chothia.pdb H2 false
+pdb1txv_chothia.pdb orientation false
 pdb1ty3_chothia.pdb FRL false
 pdb1ty3_chothia.pdb FRH false
 pdb1ty3_chothia.pdb L1 false
@@ -3086,6 +3526,7 @@ pdb1ty3_chothia.pdb L2 false
 pdb1ty3_chothia.pdb L3 false
 pdb1ty3_chothia.pdb H1 false
 pdb1ty3_chothia.pdb H2 false
+pdb1ty3_chothia.pdb orientation false
 pdb1ty5_chothia.pdb FRL false
 pdb1ty5_chothia.pdb FRH false
 pdb1ty5_chothia.pdb L1 false
@@ -3093,6 +3534,7 @@ pdb1ty5_chothia.pdb L2 false
 pdb1ty5_chothia.pdb L3 false
 pdb1ty5_chothia.pdb H1 false
 pdb1ty5_chothia.pdb H2 false
+pdb1ty5_chothia.pdb orientation false
 pdb1ty6_chothia.pdb FRL false
 pdb1ty6_chothia.pdb FRH false
 pdb1ty6_chothia.pdb L1 false
@@ -3100,6 +3542,7 @@ pdb1ty6_chothia.pdb L2 false
 pdb1ty6_chothia.pdb L3 false
 pdb1ty6_chothia.pdb H1 false
 pdb1ty6_chothia.pdb H2 false
+pdb1ty6_chothia.pdb orientation false
 pdb1ty7_chothia.pdb FRL false
 pdb1ty7_chothia.pdb FRH false
 pdb1ty7_chothia.pdb L1 false
@@ -3107,6 +3550,7 @@ pdb1ty7_chothia.pdb L2 false
 pdb1ty7_chothia.pdb L3 false
 pdb1ty7_chothia.pdb H1 false
 pdb1ty7_chothia.pdb H2 false
+pdb1ty7_chothia.pdb orientation false
 pdb1tzg_chothia.pdb FRL false
 pdb1tzg_chothia.pdb FRH false
 pdb1tzg_chothia.pdb L1 false
@@ -3114,6 +3558,7 @@ pdb1tzg_chothia.pdb L2 false
 pdb1tzg_chothia.pdb L3 false
 pdb1tzg_chothia.pdb H1 false
 pdb1tzg_chothia.pdb H2 false
+pdb1tzg_chothia.pdb orientation false
 pdb1tzh_chothia.pdb FRL false
 pdb1tzh_chothia.pdb FRH false
 pdb1tzh_chothia.pdb L1 false
@@ -3121,6 +3566,7 @@ pdb1tzh_chothia.pdb L2 false
 pdb1tzh_chothia.pdb L3 false
 pdb1tzh_chothia.pdb H1 false
 pdb1tzh_chothia.pdb H2 false
+pdb1tzh_chothia.pdb orientation false
 pdb1tzi_chothia.pdb FRL false
 pdb1tzi_chothia.pdb FRH false
 pdb1tzi_chothia.pdb L1 false
@@ -3128,6 +3574,7 @@ pdb1tzi_chothia.pdb L2 false
 pdb1tzi_chothia.pdb L3 false
 pdb1tzi_chothia.pdb H1 false
 pdb1tzi_chothia.pdb H2 false
+pdb1tzi_chothia.pdb orientation false
 pdb1u0q_chothia.pdb FRL false
 pdb1u0q_chothia.pdb FRH false
 pdb1u0q_chothia.pdb L1 false
@@ -3135,6 +3582,7 @@ pdb1u0q_chothia.pdb L2 false
 pdb1u0q_chothia.pdb L3 false
 pdb1u0q_chothia.pdb H1 false
 pdb1u0q_chothia.pdb H2 false
+pdb1u0q_chothia.pdb orientation false
 pdb1u8h_chothia.pdb FRL false
 pdb1u8h_chothia.pdb FRH false
 pdb1u8h_chothia.pdb L1 false
@@ -3142,6 +3590,7 @@ pdb1u8h_chothia.pdb L2 false
 pdb1u8h_chothia.pdb L3 false
 pdb1u8h_chothia.pdb H1 false
 pdb1u8h_chothia.pdb H2 false
+pdb1u8h_chothia.pdb orientation false
 pdb1u8i_chothia.pdb FRL false
 pdb1u8i_chothia.pdb FRH false
 pdb1u8i_chothia.pdb L1 false
@@ -3149,6 +3598,7 @@ pdb1u8i_chothia.pdb L2 false
 pdb1u8i_chothia.pdb L3 false
 pdb1u8i_chothia.pdb H1 false
 pdb1u8i_chothia.pdb H2 false
+pdb1u8i_chothia.pdb orientation false
 pdb1u8j_chothia.pdb FRL false
 pdb1u8j_chothia.pdb FRH false
 pdb1u8j_chothia.pdb L1 false
@@ -3156,6 +3606,7 @@ pdb1u8j_chothia.pdb L2 false
 pdb1u8j_chothia.pdb L3 false
 pdb1u8j_chothia.pdb H1 false
 pdb1u8j_chothia.pdb H2 false
+pdb1u8j_chothia.pdb orientation false
 pdb1u8k_chothia.pdb FRL false
 pdb1u8k_chothia.pdb FRH false
 pdb1u8k_chothia.pdb L1 false
@@ -3163,6 +3614,7 @@ pdb1u8k_chothia.pdb L2 false
 pdb1u8k_chothia.pdb L3 false
 pdb1u8k_chothia.pdb H1 false
 pdb1u8k_chothia.pdb H2 false
+pdb1u8k_chothia.pdb orientation false
 pdb1u8l_chothia.pdb FRL false
 pdb1u8l_chothia.pdb FRH false
 pdb1u8l_chothia.pdb L1 false
@@ -3170,6 +3622,7 @@ pdb1u8l_chothia.pdb L2 false
 pdb1u8l_chothia.pdb L3 false
 pdb1u8l_chothia.pdb H1 false
 pdb1u8l_chothia.pdb H2 false
+pdb1u8l_chothia.pdb orientation false
 pdb1u8m_chothia.pdb FRL false
 pdb1u8m_chothia.pdb FRH false
 pdb1u8m_chothia.pdb L1 false
@@ -3177,6 +3630,7 @@ pdb1u8m_chothia.pdb L2 false
 pdb1u8m_chothia.pdb L3 false
 pdb1u8m_chothia.pdb H1 false
 pdb1u8m_chothia.pdb H2 false
+pdb1u8m_chothia.pdb orientation false
 pdb1u8n_chothia.pdb FRL false
 pdb1u8n_chothia.pdb FRH false
 pdb1u8n_chothia.pdb L1 false
@@ -3184,6 +3638,7 @@ pdb1u8n_chothia.pdb L2 false
 pdb1u8n_chothia.pdb L3 false
 pdb1u8n_chothia.pdb H1 false
 pdb1u8n_chothia.pdb H2 false
+pdb1u8n_chothia.pdb orientation false
 pdb1u8o_chothia.pdb FRL false
 pdb1u8o_chothia.pdb FRH false
 pdb1u8o_chothia.pdb L1 false
@@ -3191,6 +3646,7 @@ pdb1u8o_chothia.pdb L2 false
 pdb1u8o_chothia.pdb L3 false
 pdb1u8o_chothia.pdb H1 false
 pdb1u8o_chothia.pdb H2 false
+pdb1u8o_chothia.pdb orientation false
 pdb1u8p_chothia.pdb FRL false
 pdb1u8p_chothia.pdb FRH false
 pdb1u8p_chothia.pdb L1 false
@@ -3198,6 +3654,7 @@ pdb1u8p_chothia.pdb L2 false
 pdb1u8p_chothia.pdb L3 false
 pdb1u8p_chothia.pdb H1 false
 pdb1u8p_chothia.pdb H2 false
+pdb1u8p_chothia.pdb orientation false
 pdb1u8q_chothia.pdb FRL false
 pdb1u8q_chothia.pdb FRH false
 pdb1u8q_chothia.pdb L1 false
@@ -3205,6 +3662,7 @@ pdb1u8q_chothia.pdb L2 false
 pdb1u8q_chothia.pdb L3 false
 pdb1u8q_chothia.pdb H1 false
 pdb1u8q_chothia.pdb H2 false
+pdb1u8q_chothia.pdb orientation false
 pdb1u91_chothia.pdb FRL false
 pdb1u91_chothia.pdb FRH false
 pdb1u91_chothia.pdb L1 false
@@ -3212,6 +3670,7 @@ pdb1u91_chothia.pdb L2 false
 pdb1u91_chothia.pdb L3 false
 pdb1u91_chothia.pdb H1 false
 pdb1u91_chothia.pdb H2 false
+pdb1u91_chothia.pdb orientation false
 pdb1u92_chothia.pdb FRL false
 pdb1u92_chothia.pdb FRH false
 pdb1u92_chothia.pdb L1 false
@@ -3219,6 +3678,7 @@ pdb1u92_chothia.pdb L2 false
 pdb1u92_chothia.pdb L3 false
 pdb1u92_chothia.pdb H1 false
 pdb1u92_chothia.pdb H2 false
+pdb1u92_chothia.pdb orientation false
 pdb1u93_chothia.pdb FRL false
 pdb1u93_chothia.pdb FRH false
 pdb1u93_chothia.pdb L1 false
@@ -3226,6 +3686,7 @@ pdb1u93_chothia.pdb L2 false
 pdb1u93_chothia.pdb L3 false
 pdb1u93_chothia.pdb H1 false
 pdb1u93_chothia.pdb H2 false
+pdb1u93_chothia.pdb orientation false
 pdb1u95_chothia.pdb FRL false
 pdb1u95_chothia.pdb FRH false
 pdb1u95_chothia.pdb L1 false
@@ -3233,6 +3694,7 @@ pdb1u95_chothia.pdb L2 false
 pdb1u95_chothia.pdb L3 false
 pdb1u95_chothia.pdb H1 false
 pdb1u95_chothia.pdb H2 false
+pdb1u95_chothia.pdb orientation false
 pdb1ua6_chothia.pdb FRL false
 pdb1ua6_chothia.pdb FRH false
 pdb1ua6_chothia.pdb L1 false
@@ -3240,6 +3702,7 @@ pdb1ua6_chothia.pdb L2 false
 pdb1ua6_chothia.pdb L3 false
 pdb1ua6_chothia.pdb H1 false
 pdb1ua6_chothia.pdb H2 false
+pdb1ua6_chothia.pdb orientation false
 pdb1uac_chothia.pdb FRL false
 pdb1uac_chothia.pdb FRH false
 pdb1uac_chothia.pdb L1 false
@@ -3247,6 +3710,7 @@ pdb1uac_chothia.pdb L2 false
 pdb1uac_chothia.pdb L3 false
 pdb1uac_chothia.pdb H1 false
 pdb1uac_chothia.pdb H2 false
+pdb1uac_chothia.pdb orientation false
 pdb1ub5_chothia.pdb FRL false
 pdb1ub5_chothia.pdb FRH false
 pdb1ub5_chothia.pdb L1 false
@@ -3254,6 +3718,7 @@ pdb1ub5_chothia.pdb L2 false
 pdb1ub5_chothia.pdb L3 false
 pdb1ub5_chothia.pdb H1 false
 pdb1ub5_chothia.pdb H2 false
+pdb1ub5_chothia.pdb orientation false
 pdb1ub6_chothia.pdb FRL false
 pdb1ub6_chothia.pdb FRH false
 pdb1ub6_chothia.pdb L1 false
@@ -3261,6 +3726,7 @@ pdb1ub6_chothia.pdb L2 false
 pdb1ub6_chothia.pdb L3 false
 pdb1ub6_chothia.pdb H1 false
 pdb1ub6_chothia.pdb H2 false
+pdb1ub6_chothia.pdb orientation false
 pdb1ucb_chothia.pdb FRL false
 pdb1ucb_chothia.pdb FRH false
 pdb1ucb_chothia.pdb L1 true
@@ -3268,6 +3734,7 @@ pdb1ucb_chothia.pdb L2 false
 pdb1ucb_chothia.pdb L3 true
 pdb1ucb_chothia.pdb H1 false
 pdb1ucb_chothia.pdb H2 false
+pdb1ucb_chothia.pdb orientation false
 pdb1uj3_chothia.pdb FRL false
 pdb1uj3_chothia.pdb FRH false
 pdb1uj3_chothia.pdb L1 false
@@ -3275,6 +3742,7 @@ pdb1uj3_chothia.pdb L2 false
 pdb1uj3_chothia.pdb L3 false
 pdb1uj3_chothia.pdb H1 false
 pdb1uj3_chothia.pdb H2 false
+pdb1uj3_chothia.pdb orientation false
 pdb1um4_chothia.pdb FRL false
 pdb1um4_chothia.pdb FRH false
 pdb1um4_chothia.pdb L1 false
@@ -3282,6 +3750,7 @@ pdb1um4_chothia.pdb L2 false
 pdb1um4_chothia.pdb L3 false
 pdb1um4_chothia.pdb H1 false
 pdb1um4_chothia.pdb H2 false
+pdb1um4_chothia.pdb orientation false
 pdb1um5_chothia.pdb FRL false
 pdb1um5_chothia.pdb FRH false
 pdb1um5_chothia.pdb L1 false
@@ -3289,6 +3758,7 @@ pdb1um5_chothia.pdb L2 false
 pdb1um5_chothia.pdb L3 false
 pdb1um5_chothia.pdb H1 false
 pdb1um5_chothia.pdb H2 false
+pdb1um5_chothia.pdb orientation false
 pdb1um6_chothia.pdb FRL false
 pdb1um6_chothia.pdb FRH false
 pdb1um6_chothia.pdb L1 false
@@ -3296,6 +3766,7 @@ pdb1um6_chothia.pdb L2 false
 pdb1um6_chothia.pdb L3 false
 pdb1um6_chothia.pdb H1 false
 pdb1um6_chothia.pdb H2 false
+pdb1um6_chothia.pdb orientation false
 pdb1uwe_chothia.pdb FRL false
 pdb1uwe_chothia.pdb FRH false
 pdb1uwe_chothia.pdb L1 false
@@ -3303,6 +3774,7 @@ pdb1uwe_chothia.pdb L2 false
 pdb1uwe_chothia.pdb L3 false
 pdb1uwe_chothia.pdb H1 false
 pdb1uwe_chothia.pdb H2 false
+pdb1uwe_chothia.pdb orientation false
 pdb1uwg_chothia.pdb FRL false
 pdb1uwg_chothia.pdb FRH false
 pdb1uwg_chothia.pdb L1 false
@@ -3310,6 +3782,7 @@ pdb1uwg_chothia.pdb L2 false
 pdb1uwg_chothia.pdb L3 false
 pdb1uwg_chothia.pdb H1 false
 pdb1uwg_chothia.pdb H2 false
+pdb1uwg_chothia.pdb orientation false
 pdb1uwx_chothia.pdb FRL false
 pdb1uwx_chothia.pdb FRH false
 pdb1uwx_chothia.pdb L1 false
@@ -3317,6 +3790,7 @@ pdb1uwx_chothia.pdb L2 false
 pdb1uwx_chothia.pdb L3 false
 pdb1uwx_chothia.pdb H1 false
 pdb1uwx_chothia.pdb H2 false
+pdb1uwx_chothia.pdb orientation false
 pdb1uyw_chothia.pdb FRL false
 pdb1uyw_chothia.pdb FRH false
 pdb1uyw_chothia.pdb L1 false
@@ -3324,6 +3798,7 @@ pdb1uyw_chothia.pdb L2 false
 pdb1uyw_chothia.pdb L3 false
 pdb1uyw_chothia.pdb H1 false
 pdb1uyw_chothia.pdb H2 false
+pdb1uyw_chothia.pdb orientation false
 pdb1uz6_chothia.pdb FRL false
 pdb1uz6_chothia.pdb FRH false
 pdb1uz6_chothia.pdb L1 false
@@ -3331,6 +3806,7 @@ pdb1uz6_chothia.pdb L2 false
 pdb1uz6_chothia.pdb L3 false
 pdb1uz6_chothia.pdb H1 false
 pdb1uz6_chothia.pdb H2 false
+pdb1uz6_chothia.pdb orientation false
 pdb1uz8_chothia.pdb FRL false
 pdb1uz8_chothia.pdb FRH false
 pdb1uz8_chothia.pdb L1 false
@@ -3338,6 +3814,7 @@ pdb1uz8_chothia.pdb L2 false
 pdb1uz8_chothia.pdb L3 false
 pdb1uz8_chothia.pdb H1 false
 pdb1uz8_chothia.pdb H2 false
+pdb1uz8_chothia.pdb orientation false
 pdb1v7m_chothia.pdb FRL false
 pdb1v7m_chothia.pdb FRH false
 pdb1v7m_chothia.pdb L1 false
@@ -3345,6 +3822,7 @@ pdb1v7m_chothia.pdb L2 false
 pdb1v7m_chothia.pdb L3 false
 pdb1v7m_chothia.pdb H1 false
 pdb1v7m_chothia.pdb H2 false
+pdb1v7m_chothia.pdb orientation false
 pdb1v7n_chothia.pdb FRL false
 pdb1v7n_chothia.pdb FRH false
 pdb1v7n_chothia.pdb L1 false
@@ -3352,6 +3830,7 @@ pdb1v7n_chothia.pdb L2 false
 pdb1v7n_chothia.pdb L3 false
 pdb1v7n_chothia.pdb H1 false
 pdb1v7n_chothia.pdb H2 false
+pdb1v7n_chothia.pdb orientation false
 pdb1vfa_chothia.pdb FRL false
 pdb1vfa_chothia.pdb FRH false
 pdb1vfa_chothia.pdb L1 false
@@ -3359,6 +3838,7 @@ pdb1vfa_chothia.pdb L2 false
 pdb1vfa_chothia.pdb L3 false
 pdb1vfa_chothia.pdb H1 false
 pdb1vfa_chothia.pdb H2 false
+pdb1vfa_chothia.pdb orientation false
 pdb1vfb_chothia.pdb FRL false
 pdb1vfb_chothia.pdb FRH false
 pdb1vfb_chothia.pdb L1 false
@@ -3366,6 +3846,7 @@ pdb1vfb_chothia.pdb L2 false
 pdb1vfb_chothia.pdb L3 false
 pdb1vfb_chothia.pdb H1 false
 pdb1vfb_chothia.pdb H2 false
+pdb1vfb_chothia.pdb orientation false
 pdb1vge_chothia.pdb FRL false
 pdb1vge_chothia.pdb FRH false
 pdb1vge_chothia.pdb L1 false
@@ -3373,6 +3854,7 @@ pdb1vge_chothia.pdb L2 false
 pdb1vge_chothia.pdb L3 false
 pdb1vge_chothia.pdb H1 false
 pdb1vge_chothia.pdb H2 false
+pdb1vge_chothia.pdb orientation false
 pdb1w72_chothia.pdb FRL false
 pdb1w72_chothia.pdb FRH false
 pdb1w72_chothia.pdb L1 false
@@ -3380,6 +3862,7 @@ pdb1w72_chothia.pdb L2 false
 pdb1w72_chothia.pdb L3 false
 pdb1w72_chothia.pdb H1 false
 pdb1w72_chothia.pdb H2 false
+pdb1w72_chothia.pdb orientation false
 pdb1wej_chothia.pdb FRL false
 pdb1wej_chothia.pdb FRH false
 pdb1wej_chothia.pdb L1 false
@@ -3387,6 +3870,7 @@ pdb1wej_chothia.pdb L2 false
 pdb1wej_chothia.pdb L3 false
 pdb1wej_chothia.pdb H1 false
 pdb1wej_chothia.pdb H2 false
+pdb1wej_chothia.pdb orientation false
 pdb1wt5_chothia.pdb FRL false
 pdb1wt5_chothia.pdb FRH false
 pdb1wt5_chothia.pdb L1 false
@@ -3394,6 +3878,7 @@ pdb1wt5_chothia.pdb L2 false
 pdb1wt5_chothia.pdb L3 false
 pdb1wt5_chothia.pdb H1 false
 pdb1wt5_chothia.pdb H2 false
+pdb1wt5_chothia.pdb orientation false
 pdb1wtl_chothia.pdb FRL false
 pdb1wtl_chothia.pdb FRH false
 pdb1wtl_chothia.pdb L1 false
@@ -3401,6 +3886,7 @@ pdb1wtl_chothia.pdb L2 false
 pdb1wtl_chothia.pdb L3 false
 pdb1wtl_chothia.pdb H1 false
 pdb1wtl_chothia.pdb H2 false
+pdb1wtl_chothia.pdb orientation false
 pdb1xcq_chothia.pdb FRL false
 pdb1xcq_chothia.pdb FRH false
 pdb1xcq_chothia.pdb L1 true
@@ -3408,6 +3894,7 @@ pdb1xcq_chothia.pdb L2 false
 pdb1xcq_chothia.pdb L3 false
 pdb1xcq_chothia.pdb H1 false
 pdb1xcq_chothia.pdb H2 false
+pdb1xcq_chothia.pdb orientation false
 pdb1xct_chothia.pdb FRL false
 pdb1xct_chothia.pdb FRH false
 pdb1xct_chothia.pdb L1 true
@@ -3415,6 +3902,7 @@ pdb1xct_chothia.pdb L2 false
 pdb1xct_chothia.pdb L3 true
 pdb1xct_chothia.pdb H1 false
 pdb1xct_chothia.pdb H2 false
+pdb1xct_chothia.pdb orientation false
 pdb1xf2_chothia.pdb FRL false
 pdb1xf2_chothia.pdb FRH false
 pdb1xf2_chothia.pdb L1 false
@@ -3422,6 +3910,7 @@ pdb1xf2_chothia.pdb L2 false
 pdb1xf2_chothia.pdb L3 false
 pdb1xf2_chothia.pdb H1 false
 pdb1xf2_chothia.pdb H2 false
+pdb1xf2_chothia.pdb orientation false
 pdb1xf3_chothia.pdb FRL false
 pdb1xf3_chothia.pdb FRH false
 pdb1xf3_chothia.pdb L1 false
@@ -3429,6 +3918,7 @@ pdb1xf3_chothia.pdb L2 false
 pdb1xf3_chothia.pdb L3 false
 pdb1xf3_chothia.pdb H1 false
 pdb1xf3_chothia.pdb H2 false
+pdb1xf3_chothia.pdb orientation false
 pdb1xf4_chothia.pdb FRL false
 pdb1xf4_chothia.pdb FRH false
 pdb1xf4_chothia.pdb L1 false
@@ -3436,6 +3926,7 @@ pdb1xf4_chothia.pdb L2 false
 pdb1xf4_chothia.pdb L3 true
 pdb1xf4_chothia.pdb H1 false
 pdb1xf4_chothia.pdb H2 false
+pdb1xf4_chothia.pdb orientation false
 pdb1xf5_chothia.pdb FRL false
 pdb1xf5_chothia.pdb FRH false
 pdb1xf5_chothia.pdb L1 true
@@ -3443,6 +3934,7 @@ pdb1xf5_chothia.pdb L2 false
 pdb1xf5_chothia.pdb L3 false
 pdb1xf5_chothia.pdb H1 false
 pdb1xf5_chothia.pdb H2 false
+pdb1xf5_chothia.pdb orientation false
 pdb1y0l_chothia.pdb FRL false
 pdb1y0l_chothia.pdb FRH false
 pdb1y0l_chothia.pdb L1 false
@@ -3450,6 +3942,7 @@ pdb1y0l_chothia.pdb L2 false
 pdb1y0l_chothia.pdb L3 false
 pdb1y0l_chothia.pdb H1 false
 pdb1y0l_chothia.pdb H2 false
+pdb1y0l_chothia.pdb orientation false
 pdb1y18_chothia.pdb FRL false
 pdb1y18_chothia.pdb FRH false
 pdb1y18_chothia.pdb L1 false
@@ -3457,6 +3950,7 @@ pdb1y18_chothia.pdb L2 false
 pdb1y18_chothia.pdb L3 false
 pdb1y18_chothia.pdb H1 false
 pdb1y18_chothia.pdb H2 false
+pdb1y18_chothia.pdb orientation false
 pdb1yc7_chothia.pdb FRL false
 pdb1yc7_chothia.pdb FRH false
 pdb1yc7_chothia.pdb L1 false
@@ -3464,6 +3958,7 @@ pdb1yc7_chothia.pdb L2 false
 pdb1yc7_chothia.pdb L3 false
 pdb1yc7_chothia.pdb H1 false
 pdb1yc7_chothia.pdb H2 false
+pdb1yc7_chothia.pdb orientation false
 pdb1yec_chothia.pdb FRL false
 pdb1yec_chothia.pdb FRH false
 pdb1yec_chothia.pdb L1 false
@@ -3471,6 +3966,7 @@ pdb1yec_chothia.pdb L2 false
 pdb1yec_chothia.pdb L3 false
 pdb1yec_chothia.pdb H1 false
 pdb1yec_chothia.pdb H2 false
+pdb1yec_chothia.pdb orientation false
 pdb1yed_chothia.pdb FRL false
 pdb1yed_chothia.pdb FRH false
 pdb1yed_chothia.pdb L1 false
@@ -3478,6 +3974,7 @@ pdb1yed_chothia.pdb L2 false
 pdb1yed_chothia.pdb L3 false
 pdb1yed_chothia.pdb H1 false
 pdb1yed_chothia.pdb H2 false
+pdb1yed_chothia.pdb orientation false
 pdb1yee_chothia.pdb FRL false
 pdb1yee_chothia.pdb FRH false
 pdb1yee_chothia.pdb L1 false
@@ -3485,6 +3982,7 @@ pdb1yee_chothia.pdb L2 false
 pdb1yee_chothia.pdb L3 false
 pdb1yee_chothia.pdb H1 false
 pdb1yee_chothia.pdb H2 false
+pdb1yee_chothia.pdb orientation false
 pdb1yef_chothia.pdb FRL false
 pdb1yef_chothia.pdb FRH false
 pdb1yef_chothia.pdb L1 false
@@ -3492,6 +3990,7 @@ pdb1yef_chothia.pdb L2 false
 pdb1yef_chothia.pdb L3 false
 pdb1yef_chothia.pdb H1 false
 pdb1yef_chothia.pdb H2 false
+pdb1yef_chothia.pdb orientation false
 pdb1yeg_chothia.pdb FRL false
 pdb1yeg_chothia.pdb FRH false
 pdb1yeg_chothia.pdb L1 false
@@ -3499,6 +3998,7 @@ pdb1yeg_chothia.pdb L2 false
 pdb1yeg_chothia.pdb L3 false
 pdb1yeg_chothia.pdb H1 false
 pdb1yeg_chothia.pdb H2 false
+pdb1yeg_chothia.pdb orientation false
 pdb1yeh_chothia.pdb FRL false
 pdb1yeh_chothia.pdb FRH false
 pdb1yeh_chothia.pdb L1 false
@@ -3506,6 +4006,7 @@ pdb1yeh_chothia.pdb L2 false
 pdb1yeh_chothia.pdb L3 false
 pdb1yeh_chothia.pdb H1 false
 pdb1yeh_chothia.pdb H2 false
+pdb1yeh_chothia.pdb orientation false
 pdb1yei_chothia.pdb FRL false
 pdb1yei_chothia.pdb FRH false
 pdb1yei_chothia.pdb L1 false
@@ -3513,6 +4014,7 @@ pdb1yei_chothia.pdb L2 false
 pdb1yei_chothia.pdb L3 false
 pdb1yei_chothia.pdb H1 false
 pdb1yei_chothia.pdb H2 false
+pdb1yei_chothia.pdb orientation false
 pdb1yej_chothia.pdb FRL false
 pdb1yej_chothia.pdb FRH false
 pdb1yej_chothia.pdb L1 false
@@ -3520,6 +4022,7 @@ pdb1yej_chothia.pdb L2 false
 pdb1yej_chothia.pdb L3 false
 pdb1yej_chothia.pdb H1 false
 pdb1yej_chothia.pdb H2 false
+pdb1yej_chothia.pdb orientation false
 pdb1yek_chothia.pdb FRL false
 pdb1yek_chothia.pdb FRH false
 pdb1yek_chothia.pdb L1 false
@@ -3527,6 +4030,7 @@ pdb1yek_chothia.pdb L2 false
 pdb1yek_chothia.pdb L3 false
 pdb1yek_chothia.pdb H1 false
 pdb1yek_chothia.pdb H2 false
+pdb1yek_chothia.pdb orientation false
 pdb1yjd_chothia.pdb FRL false
 pdb1yjd_chothia.pdb FRH false
 pdb1yjd_chothia.pdb L1 false
@@ -3534,6 +4038,7 @@ pdb1yjd_chothia.pdb L2 false
 pdb1yjd_chothia.pdb L3 false
 pdb1yjd_chothia.pdb H1 false
 pdb1yjd_chothia.pdb H2 false
+pdb1yjd_chothia.pdb orientation false
 pdb1ymh_chothia.pdb FRL false
 pdb1ymh_chothia.pdb FRH false
 pdb1ymh_chothia.pdb L1 false
@@ -3541,6 +4046,7 @@ pdb1ymh_chothia.pdb L2 false
 pdb1ymh_chothia.pdb L3 false
 pdb1ymh_chothia.pdb H1 false
 pdb1ymh_chothia.pdb H2 false
+pdb1ymh_chothia.pdb orientation false
 pdb1yqv_chothia.pdb FRL false
 pdb1yqv_chothia.pdb FRH false
 pdb1yqv_chothia.pdb L1 false
@@ -3548,6 +4054,7 @@ pdb1yqv_chothia.pdb L2 false
 pdb1yqv_chothia.pdb L3 false
 pdb1yqv_chothia.pdb H1 false
 pdb1yqv_chothia.pdb H2 false
+pdb1yqv_chothia.pdb orientation false
 pdb1yuh_chothia.pdb FRL false
 pdb1yuh_chothia.pdb FRH false
 pdb1yuh_chothia.pdb L1 false
@@ -3555,6 +4062,7 @@ pdb1yuh_chothia.pdb L2 false
 pdb1yuh_chothia.pdb L3 false
 pdb1yuh_chothia.pdb H1 false
 pdb1yuh_chothia.pdb H2 false
+pdb1yuh_chothia.pdb orientation false
 pdb1yy8_chothia.pdb FRL false
 pdb1yy8_chothia.pdb FRH false
 pdb1yy8_chothia.pdb L1 false
@@ -3562,6 +4070,7 @@ pdb1yy8_chothia.pdb L2 false
 pdb1yy8_chothia.pdb L3 false
 pdb1yy8_chothia.pdb H1 false
 pdb1yy8_chothia.pdb H2 false
+pdb1yy8_chothia.pdb orientation false
 pdb1yy9_chothia.pdb FRL false
 pdb1yy9_chothia.pdb FRH false
 pdb1yy9_chothia.pdb L1 false
@@ -3569,6 +4078,7 @@ pdb1yy9_chothia.pdb L2 false
 pdb1yy9_chothia.pdb L3 false
 pdb1yy9_chothia.pdb H1 false
 pdb1yy9_chothia.pdb H2 false
+pdb1yy9_chothia.pdb orientation false
 pdb1yyl_chothia.pdb FRL false
 pdb1yyl_chothia.pdb FRH false
 pdb1yyl_chothia.pdb L1 false
@@ -3576,6 +4086,7 @@ pdb1yyl_chothia.pdb L2 false
 pdb1yyl_chothia.pdb L3 false
 pdb1yyl_chothia.pdb H1 false
 pdb1yyl_chothia.pdb H2 false
+pdb1yyl_chothia.pdb orientation false
 pdb1yym_chothia.pdb FRL false
 pdb1yym_chothia.pdb FRH false
 pdb1yym_chothia.pdb L1 false
@@ -3583,6 +4094,7 @@ pdb1yym_chothia.pdb L2 false
 pdb1yym_chothia.pdb L3 false
 pdb1yym_chothia.pdb H1 false
 pdb1yym_chothia.pdb H2 false
+pdb1yym_chothia.pdb orientation false
 pdb1yzz_chothia.pdb FRL false
 pdb1yzz_chothia.pdb FRH false
 pdb1yzz_chothia.pdb L1 false
@@ -3590,6 +4102,7 @@ pdb1yzz_chothia.pdb L2 false
 pdb1yzz_chothia.pdb L3 false
 pdb1yzz_chothia.pdb H1 false
 pdb1yzz_chothia.pdb H2 false
+pdb1yzz_chothia.pdb orientation false
 pdb1za3_chothia.pdb FRL false
 pdb1za3_chothia.pdb FRH false
 pdb1za3_chothia.pdb L1 false
@@ -3597,6 +4110,7 @@ pdb1za3_chothia.pdb L2 false
 pdb1za3_chothia.pdb L3 false
 pdb1za3_chothia.pdb H1 false
 pdb1za3_chothia.pdb H2 false
+pdb1za3_chothia.pdb orientation false
 pdb25c8_chothia.pdb FRL false
 pdb25c8_chothia.pdb FRH false
 pdb25c8_chothia.pdb L1 false
@@ -3604,6 +4118,7 @@ pdb25c8_chothia.pdb L2 false
 pdb25c8_chothia.pdb L3 false
 pdb25c8_chothia.pdb H1 false
 pdb25c8_chothia.pdb H2 false
+pdb25c8_chothia.pdb orientation false
 pdb2a1w_chothia.pdb FRL false
 pdb2a1w_chothia.pdb FRH false
 pdb2a1w_chothia.pdb L1 false
@@ -3611,6 +4126,7 @@ pdb2a1w_chothia.pdb L2 false
 pdb2a1w_chothia.pdb L3 false
 pdb2a1w_chothia.pdb H1 false
 pdb2a1w_chothia.pdb H2 false
+pdb2a1w_chothia.pdb orientation false
 pdb2a77_chothia.pdb FRL false
 pdb2a77_chothia.pdb FRH false
 pdb2a77_chothia.pdb L1 false
@@ -3618,6 +4134,7 @@ pdb2a77_chothia.pdb L2 false
 pdb2a77_chothia.pdb L3 false
 pdb2a77_chothia.pdb H1 false
 pdb2a77_chothia.pdb H2 false
+pdb2a77_chothia.pdb orientation false
 pdb2ap2_chothia.pdb FRL false
 pdb2ap2_chothia.pdb FRH false
 pdb2ap2_chothia.pdb L1 false
@@ -3625,6 +4142,7 @@ pdb2ap2_chothia.pdb L2 false
 pdb2ap2_chothia.pdb L3 false
 pdb2ap2_chothia.pdb H1 false
 pdb2ap2_chothia.pdb H2 false
+pdb2ap2_chothia.pdb orientation false
 pdb2bfv_chothia.pdb FRL false
 pdb2bfv_chothia.pdb FRH false
 pdb2bfv_chothia.pdb L1 false
@@ -3632,6 +4150,7 @@ pdb2bfv_chothia.pdb L2 false
 pdb2bfv_chothia.pdb L3 false
 pdb2bfv_chothia.pdb H1 false
 pdb2bfv_chothia.pdb H2 false
+pdb2bfv_chothia.pdb orientation false
 pdb2bob_chothia.pdb FRL false
 pdb2bob_chothia.pdb FRH false
 pdb2bob_chothia.pdb L1 false
@@ -3639,6 +4158,7 @@ pdb2bob_chothia.pdb L2 false
 pdb2bob_chothia.pdb L3 false
 pdb2bob_chothia.pdb H1 false
 pdb2bob_chothia.pdb H2 false
+pdb2bob_chothia.pdb orientation false
 pdb2boc_chothia.pdb FRL false
 pdb2boc_chothia.pdb FRH false
 pdb2boc_chothia.pdb L1 false
@@ -3646,6 +4166,7 @@ pdb2boc_chothia.pdb L2 false
 pdb2boc_chothia.pdb L3 false
 pdb2boc_chothia.pdb H1 false
 pdb2boc_chothia.pdb H2 false
+pdb2boc_chothia.pdb orientation false
 pdb2cgr_chothia.pdb FRL false
 pdb2cgr_chothia.pdb FRH false
 pdb2cgr_chothia.pdb L1 false
@@ -3653,6 +4174,7 @@ pdb2cgr_chothia.pdb L2 false
 pdb2cgr_chothia.pdb L3 false
 pdb2cgr_chothia.pdb H1 false
 pdb2cgr_chothia.pdb H2 false
+pdb2cgr_chothia.pdb orientation false
 pdb2ck0_chothia.pdb FRL false
 pdb2ck0_chothia.pdb FRH false
 pdb2ck0_chothia.pdb L1 false
@@ -3660,6 +4182,7 @@ pdb2ck0_chothia.pdb L2 false
 pdb2ck0_chothia.pdb L3 false
 pdb2ck0_chothia.pdb H1 false
 pdb2ck0_chothia.pdb H2 false
+pdb2ck0_chothia.pdb orientation false
 pdb2dbl_chothia.pdb FRL false
 pdb2dbl_chothia.pdb FRH false
 pdb2dbl_chothia.pdb L1 false
@@ -3667,6 +4190,7 @@ pdb2dbl_chothia.pdb L2 false
 pdb2dbl_chothia.pdb L3 false
 pdb2dbl_chothia.pdb H1 false
 pdb2dbl_chothia.pdb H2 false
+pdb2dbl_chothia.pdb orientation false
 pdb2dlf_chothia.pdb FRL false
 pdb2dlf_chothia.pdb FRH false
 pdb2dlf_chothia.pdb L1 false
@@ -3674,6 +4198,7 @@ pdb2dlf_chothia.pdb L2 true
 pdb2dlf_chothia.pdb L3 false
 pdb2dlf_chothia.pdb H1 false
 pdb2dlf_chothia.pdb H2 false
+pdb2dlf_chothia.pdb orientation false
 pdb2f19_chothia.pdb FRL false
 pdb2f19_chothia.pdb FRH false
 pdb2f19_chothia.pdb L1 false
@@ -3681,6 +4206,7 @@ pdb2f19_chothia.pdb L2 false
 pdb2f19_chothia.pdb L3 false
 pdb2f19_chothia.pdb H1 false
 pdb2f19_chothia.pdb H2 false
+pdb2f19_chothia.pdb orientation false
 pdb2f58_chothia.pdb FRL false
 pdb2f58_chothia.pdb FRH false
 pdb2f58_chothia.pdb L1 false
@@ -3688,6 +4214,7 @@ pdb2f58_chothia.pdb L2 false
 pdb2f58_chothia.pdb L3 false
 pdb2f58_chothia.pdb H1 false
 pdb2f58_chothia.pdb H2 false
+pdb2f58_chothia.pdb orientation false
 pdb2f5a_chothia.pdb FRL false
 pdb2f5a_chothia.pdb FRH false
 pdb2f5a_chothia.pdb L1 false
@@ -3695,6 +4222,7 @@ pdb2f5a_chothia.pdb L2 false
 pdb2f5a_chothia.pdb L3 false
 pdb2f5a_chothia.pdb H1 false
 pdb2f5a_chothia.pdb H2 false
+pdb2f5a_chothia.pdb orientation false
 pdb2f5b_chothia.pdb FRL false
 pdb2f5b_chothia.pdb FRH false
 pdb2f5b_chothia.pdb L1 false
@@ -3702,6 +4230,7 @@ pdb2f5b_chothia.pdb L2 false
 pdb2f5b_chothia.pdb L3 false
 pdb2f5b_chothia.pdb H1 false
 pdb2f5b_chothia.pdb H2 false
+pdb2f5b_chothia.pdb orientation false
 pdb2fb4_chothia.pdb FRL false
 pdb2fb4_chothia.pdb FRH false
 pdb2fb4_chothia.pdb L1 false
@@ -3709,6 +4238,7 @@ pdb2fb4_chothia.pdb L2 false
 pdb2fb4_chothia.pdb L3 false
 pdb2fb4_chothia.pdb H1 false
 pdb2fb4_chothia.pdb H2 false
+pdb2fb4_chothia.pdb orientation false
 pdb2fbj_chothia.pdb FRL false
 pdb2fbj_chothia.pdb FRH false
 pdb2fbj_chothia.pdb L1 false
@@ -3716,6 +4246,7 @@ pdb2fbj_chothia.pdb L2 false
 pdb2fbj_chothia.pdb L3 false
 pdb2fbj_chothia.pdb H1 false
 pdb2fbj_chothia.pdb H2 false
+pdb2fbj_chothia.pdb orientation false
 pdb2fgw_chothia.pdb FRL false
 pdb2fgw_chothia.pdb FRH false
 pdb2fgw_chothia.pdb L1 false
@@ -3723,6 +4254,7 @@ pdb2fgw_chothia.pdb L2 false
 pdb2fgw_chothia.pdb L3 false
 pdb2fgw_chothia.pdb H1 false
 pdb2fgw_chothia.pdb H2 false
+pdb2fgw_chothia.pdb orientation false
 pdb2gfb_chothia.pdb FRL false
 pdb2gfb_chothia.pdb FRH false
 pdb2gfb_chothia.pdb L1 false
@@ -3730,6 +4262,7 @@ pdb2gfb_chothia.pdb L2 false
 pdb2gfb_chothia.pdb L3 false
 pdb2gfb_chothia.pdb H1 false
 pdb2gfb_chothia.pdb H2 false
+pdb2gfb_chothia.pdb orientation false
 pdb2h1p_chothia.pdb FRL false
 pdb2h1p_chothia.pdb FRH false
 pdb2h1p_chothia.pdb L1 false
@@ -3737,6 +4270,7 @@ pdb2h1p_chothia.pdb L2 false
 pdb2h1p_chothia.pdb L3 false
 pdb2h1p_chothia.pdb H1 false
 pdb2h1p_chothia.pdb H2 false
+pdb2h1p_chothia.pdb orientation false
 pdb2hmi_chothia.pdb FRL false
 pdb2hmi_chothia.pdb FRH false
 pdb2hmi_chothia.pdb L1 false
@@ -3744,6 +4278,7 @@ pdb2hmi_chothia.pdb L2 false
 pdb2hmi_chothia.pdb L3 false
 pdb2hmi_chothia.pdb H1 false
 pdb2hmi_chothia.pdb H2 false
+pdb2hmi_chothia.pdb orientation false
 pdb2hrp_chothia.pdb FRL false
 pdb2hrp_chothia.pdb FRH false
 pdb2hrp_chothia.pdb L1 false
@@ -3751,6 +4286,7 @@ pdb2hrp_chothia.pdb L2 false
 pdb2hrp_chothia.pdb L3 false
 pdb2hrp_chothia.pdb H1 false
 pdb2hrp_chothia.pdb H2 false
+pdb2hrp_chothia.pdb orientation false
 pdb2iff_chothia.pdb FRL false
 pdb2iff_chothia.pdb FRH false
 pdb2iff_chothia.pdb L1 false
@@ -3758,6 +4294,7 @@ pdb2iff_chothia.pdb L2 false
 pdb2iff_chothia.pdb L3 false
 pdb2iff_chothia.pdb H1 false
 pdb2iff_chothia.pdb H2 false
+pdb2iff_chothia.pdb orientation false
 pdb2ig2_chothia.pdb FRL false
 pdb2ig2_chothia.pdb FRH false
 pdb2ig2_chothia.pdb L1 false
@@ -3765,6 +4302,7 @@ pdb2ig2_chothia.pdb L2 false
 pdb2ig2_chothia.pdb L3 false
 pdb2ig2_chothia.pdb H1 false
 pdb2ig2_chothia.pdb H2 false
+pdb2ig2_chothia.pdb orientation false
 pdb2igf_chothia.pdb FRL false
 pdb2igf_chothia.pdb FRH false
 pdb2igf_chothia.pdb L1 false
@@ -3772,6 +4310,7 @@ pdb2igf_chothia.pdb L2 false
 pdb2igf_chothia.pdb L3 false
 pdb2igf_chothia.pdb H1 false
 pdb2igf_chothia.pdb H2 false
+pdb2igf_chothia.pdb orientation false
 pdb2imm_chothia.pdb FRL false
 pdb2imm_chothia.pdb FRH false
 pdb2imm_chothia.pdb L1 false
@@ -3779,6 +4318,7 @@ pdb2imm_chothia.pdb L2 false
 pdb2imm_chothia.pdb L3 false
 pdb2imm_chothia.pdb H1 false
 pdb2imm_chothia.pdb H2 false
+pdb2imm_chothia.pdb orientation false
 pdb2imn_chothia.pdb FRL false
 pdb2imn_chothia.pdb FRH false
 pdb2imn_chothia.pdb L1 false
@@ -3786,6 +4326,7 @@ pdb2imn_chothia.pdb L2 false
 pdb2imn_chothia.pdb L3 false
 pdb2imn_chothia.pdb H1 false
 pdb2imn_chothia.pdb H2 false
+pdb2imn_chothia.pdb orientation false
 pdb2jel_chothia.pdb FRL false
 pdb2jel_chothia.pdb FRH false
 pdb2jel_chothia.pdb L1 false
@@ -3793,6 +4334,7 @@ pdb2jel_chothia.pdb L2 false
 pdb2jel_chothia.pdb L3 false
 pdb2jel_chothia.pdb H1 false
 pdb2jel_chothia.pdb H2 false
+pdb2jel_chothia.pdb orientation false
 pdb2lve_chothia.pdb FRL false
 pdb2lve_chothia.pdb FRH false
 pdb2lve_chothia.pdb L1 false
@@ -3800,6 +4342,7 @@ pdb2lve_chothia.pdb L2 false
 pdb2lve_chothia.pdb L3 false
 pdb2lve_chothia.pdb H1 false
 pdb2lve_chothia.pdb H2 false
+pdb2lve_chothia.pdb orientation false
 pdb2mcg_chothia.pdb FRL false
 pdb2mcg_chothia.pdb FRH false
 pdb2mcg_chothia.pdb L1 false
@@ -3807,6 +4350,7 @@ pdb2mcg_chothia.pdb L2 false
 pdb2mcg_chothia.pdb L3 false
 pdb2mcg_chothia.pdb H1 false
 pdb2mcg_chothia.pdb H2 false
+pdb2mcg_chothia.pdb orientation false
 pdb2mcp_chothia.pdb FRL false
 pdb2mcp_chothia.pdb FRH false
 pdb2mcp_chothia.pdb L1 false
@@ -3814,6 +4358,7 @@ pdb2mcp_chothia.pdb L2 false
 pdb2mcp_chothia.pdb L3 false
 pdb2mcp_chothia.pdb H1 false
 pdb2mcp_chothia.pdb H2 false
+pdb2mcp_chothia.pdb orientation false
 pdb2mpa_chothia.pdb FRL false
 pdb2mpa_chothia.pdb FRH false
 pdb2mpa_chothia.pdb L1 false
@@ -3821,6 +4366,7 @@ pdb2mpa_chothia.pdb L2 false
 pdb2mpa_chothia.pdb L3 false
 pdb2mpa_chothia.pdb H1 false
 pdb2mpa_chothia.pdb H2 false
+pdb2mpa_chothia.pdb orientation false
 pdb2pcp_chothia.pdb FRL false
 pdb2pcp_chothia.pdb FRH false
 pdb2pcp_chothia.pdb L1 false
@@ -3828,6 +4374,7 @@ pdb2pcp_chothia.pdb L2 false
 pdb2pcp_chothia.pdb L3 false
 pdb2pcp_chothia.pdb H1 false
 pdb2pcp_chothia.pdb H2 false
+pdb2pcp_chothia.pdb orientation false
 pdb2rcs_chothia.pdb FRL false
 pdb2rcs_chothia.pdb FRH false
 pdb2rcs_chothia.pdb L1 false
@@ -3835,6 +4382,7 @@ pdb2rcs_chothia.pdb L2 false
 pdb2rcs_chothia.pdb L3 false
 pdb2rcs_chothia.pdb H1 false
 pdb2rcs_chothia.pdb H2 false
+pdb2rcs_chothia.pdb orientation false
 pdb2rhe_chothia.pdb FRL false
 pdb2rhe_chothia.pdb FRH false
 pdb2rhe_chothia.pdb L1 false
@@ -3842,6 +4390,7 @@ pdb2rhe_chothia.pdb L2 false
 pdb2rhe_chothia.pdb L3 false
 pdb2rhe_chothia.pdb H1 false
 pdb2rhe_chothia.pdb H2 false
+pdb2rhe_chothia.pdb orientation false
 pdb2vir_chothia.pdb FRL false
 pdb2vir_chothia.pdb FRH false
 pdb2vir_chothia.pdb L1 false
@@ -3849,6 +4398,7 @@ pdb2vir_chothia.pdb L2 false
 pdb2vir_chothia.pdb L3 true
 pdb2vir_chothia.pdb H1 false
 pdb2vir_chothia.pdb H2 false
+pdb2vir_chothia.pdb orientation false
 pdb2vis_chothia.pdb FRL false
 pdb2vis_chothia.pdb FRH false
 pdb2vis_chothia.pdb L1 false
@@ -3856,6 +4406,7 @@ pdb2vis_chothia.pdb L2 false
 pdb2vis_chothia.pdb L3 true
 pdb2vis_chothia.pdb H1 false
 pdb2vis_chothia.pdb H2 false
+pdb2vis_chothia.pdb orientation false
 pdb2vit_chothia.pdb FRL false
 pdb2vit_chothia.pdb FRH false
 pdb2vit_chothia.pdb L1 false
@@ -3863,6 +4414,7 @@ pdb2vit_chothia.pdb L2 false
 pdb2vit_chothia.pdb L3 true
 pdb2vit_chothia.pdb H1 false
 pdb2vit_chothia.pdb H2 false
+pdb2vit_chothia.pdb orientation false
 pdb32c2_chothia.pdb FRL false
 pdb32c2_chothia.pdb FRH false
 pdb32c2_chothia.pdb L1 false
@@ -3870,6 +4422,7 @@ pdb32c2_chothia.pdb L2 false
 pdb32c2_chothia.pdb L3 false
 pdb32c2_chothia.pdb H1 false
 pdb32c2_chothia.pdb H2 false
+pdb32c2_chothia.pdb orientation false
 pdb35c8_chothia.pdb FRL false
 pdb35c8_chothia.pdb FRH false
 pdb35c8_chothia.pdb L1 false
@@ -3877,6 +4430,7 @@ pdb35c8_chothia.pdb L2 false
 pdb35c8_chothia.pdb L3 false
 pdb35c8_chothia.pdb H1 false
 pdb35c8_chothia.pdb H2 false
+pdb35c8_chothia.pdb orientation false
 pdb3bjl_chothia.pdb FRL false
 pdb3bjl_chothia.pdb FRH false
 pdb3bjl_chothia.pdb L1 false
@@ -3884,6 +4438,7 @@ pdb3bjl_chothia.pdb L2 false
 pdb3bjl_chothia.pdb L3 false
 pdb3bjl_chothia.pdb H1 false
 pdb3bjl_chothia.pdb H2 false
+pdb3bjl_chothia.pdb orientation false
 pdb3ck0_chothia.pdb FRL false
 pdb3ck0_chothia.pdb FRH false
 pdb3ck0_chothia.pdb L1 false
@@ -3891,6 +4446,7 @@ pdb3ck0_chothia.pdb L2 false
 pdb3ck0_chothia.pdb L3 false
 pdb3ck0_chothia.pdb H1 false
 pdb3ck0_chothia.pdb H2 false
+pdb3ck0_chothia.pdb orientation false
 pdb3f58_chothia.pdb FRL false
 pdb3f58_chothia.pdb FRH false
 pdb3f58_chothia.pdb L1 false
@@ -3898,6 +4454,7 @@ pdb3f58_chothia.pdb L2 false
 pdb3f58_chothia.pdb L3 false
 pdb3f58_chothia.pdb H1 false
 pdb3f58_chothia.pdb H2 false
+pdb3f58_chothia.pdb orientation false
 pdb3fct_chothia.pdb FRL false
 pdb3fct_chothia.pdb FRH false
 pdb3fct_chothia.pdb L1 false
@@ -3905,6 +4462,7 @@ pdb3fct_chothia.pdb L2 false
 pdb3fct_chothia.pdb L3 false
 pdb3fct_chothia.pdb H1 false
 pdb3fct_chothia.pdb H2 false
+pdb3fct_chothia.pdb orientation false
 pdb3hfm_chothia.pdb FRL false
 pdb3hfm_chothia.pdb FRH false
 pdb3hfm_chothia.pdb L1 false
@@ -3912,6 +4470,7 @@ pdb3hfm_chothia.pdb L2 false
 pdb3hfm_chothia.pdb L3 false
 pdb3hfm_chothia.pdb H1 true
 pdb3hfm_chothia.pdb H2 false
+pdb3hfm_chothia.pdb orientation false
 pdb3lve_chothia.pdb FRL false
 pdb3lve_chothia.pdb FRH false
 pdb3lve_chothia.pdb L1 false
@@ -3919,6 +4478,7 @@ pdb3lve_chothia.pdb L2 false
 pdb3lve_chothia.pdb L3 false
 pdb3lve_chothia.pdb H1 false
 pdb3lve_chothia.pdb H2 false
+pdb3lve_chothia.pdb orientation false
 pdb3mcg_chothia.pdb FRL false
 pdb3mcg_chothia.pdb FRH false
 pdb3mcg_chothia.pdb L1 false
@@ -3926,6 +4486,7 @@ pdb3mcg_chothia.pdb L2 false
 pdb3mcg_chothia.pdb L3 false
 pdb3mcg_chothia.pdb H1 false
 pdb3mcg_chothia.pdb H2 false
+pdb3mcg_chothia.pdb orientation false
 pdb43c9_chothia.pdb FRL false
 pdb43c9_chothia.pdb FRH false
 pdb43c9_chothia.pdb L1 false
@@ -3933,6 +4494,7 @@ pdb43c9_chothia.pdb L2 false
 pdb43c9_chothia.pdb L3 false
 pdb43c9_chothia.pdb H1 false
 pdb43c9_chothia.pdb H2 false
+pdb43c9_chothia.pdb orientation false
 pdb43ca_chothia.pdb FRL false
 pdb43ca_chothia.pdb FRH false
 pdb43ca_chothia.pdb L1 false
@@ -3940,6 +4502,7 @@ pdb43ca_chothia.pdb L2 false
 pdb43ca_chothia.pdb L3 false
 pdb43ca_chothia.pdb H1 false
 pdb43ca_chothia.pdb H2 false
+pdb43ca_chothia.pdb orientation false
 pdb4bjl_chothia.pdb FRL false
 pdb4bjl_chothia.pdb FRH false
 pdb4bjl_chothia.pdb L1 false
@@ -3947,6 +4510,7 @@ pdb4bjl_chothia.pdb L2 false
 pdb4bjl_chothia.pdb L3 false
 pdb4bjl_chothia.pdb H1 false
 pdb4bjl_chothia.pdb H2 false
+pdb4bjl_chothia.pdb orientation false
 pdb4fab_chothia.pdb FRL false
 pdb4fab_chothia.pdb FRH false
 pdb4fab_chothia.pdb L1 false
@@ -3954,6 +4518,7 @@ pdb4fab_chothia.pdb L2 false
 pdb4fab_chothia.pdb L3 false
 pdb4fab_chothia.pdb H1 false
 pdb4fab_chothia.pdb H2 false
+pdb4fab_chothia.pdb orientation false
 pdb4lve_chothia.pdb FRL false
 pdb4lve_chothia.pdb FRH false
 pdb4lve_chothia.pdb L1 false
@@ -3961,6 +4526,7 @@ pdb4lve_chothia.pdb L2 false
 pdb4lve_chothia.pdb L3 false
 pdb4lve_chothia.pdb H1 false
 pdb4lve_chothia.pdb H2 false
+pdb4lve_chothia.pdb orientation false
 pdb4w6w_chothia.pdb FRL false
 pdb4w6w_chothia.pdb FRH false
 pdb4w6w_chothia.pdb L1 false
@@ -3968,6 +4534,7 @@ pdb4w6w_chothia.pdb L2 false
 pdb4w6w_chothia.pdb L3 false
 pdb4w6w_chothia.pdb H1 false
 pdb4w6w_chothia.pdb H2 true
+pdb4w6w_chothia.pdb orientation false
 pdb5lve_chothia.pdb FRL false
 pdb5lve_chothia.pdb FRH false
 pdb5lve_chothia.pdb L1 false
@@ -3975,6 +4542,7 @@ pdb5lve_chothia.pdb L2 false
 pdb5lve_chothia.pdb L3 false
 pdb5lve_chothia.pdb H1 false
 pdb5lve_chothia.pdb H2 false
+pdb5lve_chothia.pdb orientation false
 pdb6fab_chothia.pdb FRL false
 pdb6fab_chothia.pdb FRH false
 pdb6fab_chothia.pdb L1 false
@@ -3982,6 +4550,7 @@ pdb6fab_chothia.pdb L2 false
 pdb6fab_chothia.pdb L3 false
 pdb6fab_chothia.pdb H1 false
 pdb6fab_chothia.pdb H2 false
+pdb6fab_chothia.pdb orientation false
 pdb8fab_chothia.pdb FRL false
 pdb8fab_chothia.pdb FRH false
 pdb8fab_chothia.pdb L1 false
@@ -3989,3 +4558,4 @@ pdb8fab_chothia.pdb L2 false
 pdb8fab_chothia.pdb L3 false
 pdb8fab_chothia.pdb H1 false
 pdb8fab_chothia.pdb H2 false
+pdb8fab_chothia.pdb orientation false
