@@ -71,7 +71,7 @@ private:
 
 template< class Input_t >
 void
-output_residue(std::ostream & output_stream, Input_t residue ) {
+output_residue(std::ostream & output_stream, Input_t & residue ) {
 	MolWriter writer;
 	writer.output_residue( output_stream, residue );
 }

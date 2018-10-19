@@ -118,9 +118,9 @@ public:
 		}
 
 		// * Actual bonds before pseudobonds - TODO better pseudobond testing
-		if ( bond1.bond_name() == core::chemical::UnknownBond && bond2.bond_name() != core::chemical::UnknownBond ) {
+		if ( bond1.is_fake() && ! bond2.is_fake() ) {
 			return false;
-		} else if ( bond1.bond_name() != core::chemical::UnknownBond && bond2.bond_name() == core::chemical::UnknownBond ) {
+		} else if ( ! bond1.is_fake() && bond2.is_fake() ) {
 			return true;
 		}
 		debug_assert( boost::source(edge1,graph_) == boost::source(edge2,graph_) );

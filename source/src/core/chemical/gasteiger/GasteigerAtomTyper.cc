@@ -227,8 +227,23 @@ PossibleAtomTypesForAtom::FindPossibleAtomTypesForAtom
 	TR.Error << "Search string '" << primary_search_string << "' not found in "
 		<< (IN_AROMATIC_RING?"aromatic":"non-aromatic") << " database having "
 		<< (IN_AROMATIC_RING?s_element_bonds_in_arom_ring_to_types_map.size():s_atomic_env_outside_arom_ring_to_types_map.size()) << " entries." << std::endl;
+	// Print out info about what types *are* recognized - debug level, as we don't need it if we're permitting unknown types.
+	TR.Debug << "Known search strings for element: " << std::endl;
+	TR.Debug << "AROMATIC:" << std::endl;
+	for ( auto & type_pair: s_element_bonds_in_arom_ring_to_types_map ) {
+		if ( utility::startswith( type_pair.first, ELEMENT.get_chemical_symbol() ) ) {
+			TR.Debug << type_pair.first << " -- " << type_pair.second.GetNumberPossibleTypes() << " types, most stable: " << type_pair.second.GetMostStableType()->get_name() << std::endl;
+		}
+	}
+	TR.Debug << "NONAROMATIC:" << std::endl;
+	for ( auto & type_pair: s_atomic_env_outside_arom_ring_to_types_map ) {
+		if ( utility::startswith( type_pair.first, ELEMENT.get_chemical_symbol() ) ) {
+			TR.Debug << type_pair.first << " -- " << type_pair.second.GetNumberPossibleTypes() << " types, most stable: " << type_pair.second.GetMostStableType()->get_name() << std::endl;
+		}
+	}
+	TR.Debug << "--------------------------" << std::endl;
 	//utility_exit_with_message("No gasgteiger atom types exist for atom.");
-	return PossibleAtomTypesForAtom(); // To silence warnings
+	return PossibleAtomTypesForAtom();
 }
 
 ///////////////////

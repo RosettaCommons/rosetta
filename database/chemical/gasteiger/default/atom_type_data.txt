@@ -193,11 +193,20 @@ K_ K 0 0 0 pi nb 8.682 4.341 nan nan nan nan nan
 # type all fa_standard residue types
 FAKE X 0 0 0 pi nb nan nan nan nan nan nan nan
 Ca_ Ca 0 0 0 pi nb nan nan nan nan nan nan nan
+# Calcium states taken from Mg above
+Ca_SP Ca 0 0 0 pi01 nb nan nan nan nan nan nan nan
+Ca_PP Ca 0 0 0 pi12 nb nan nan nan nan nan nan nan
+Ca_DiDi Ca 1 2 0 pi nb nan nan nan nan nan nan nan
+Ca_DiPi Ca 1 1 0 pi3 nb nan nan nan nan nan nan nan
+Ca_TrTr Ca 2 2 0 pi nb nan nan nan nan nan nan nan
+Ca_TrPi Ca 2 1 0 pi3 nb nan nan nan nan nan nan nan
+Ca_TeTe Ca 3 2 0 pi nb nan nan nan nan nan nan nan
 Fe_ Fe 0 0 0 pi nb nan nan nan nan nan nan nan
 Mg_ Mg 0 0 0 pi nb nan nan nan nan nan nan nan
 Zn_ Zn 0 0 0 pi nb nan nan nan nan nan nan nan
 Co_ Co 0 0 0 pi nb nan nan nan nan nan nan nan
 Cu_ Cu 0 0 0 pi nb nan nan nan nan nan nan nan
+La_ La 0 0 0 pi nb nan nan nan nan nan nan nan
 # The following were added by Rocco Moretti to be able to 
 # type some of the odder structure representation
 S_TeTeTeTePi S 3 4 0 pi3 nb nan nan nan nan nan nan nan 

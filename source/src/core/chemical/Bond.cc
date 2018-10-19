@@ -76,7 +76,7 @@ BondName convert_to_BondName( std::string const & id ) {
 		return AromaticBond; // Aromatic bond doubles for general delocalized bond
 	}
 	if ( utility::startswith(converted, "pseu") ) {
-		return UnknownBond; // PseudoBond
+		return PseudoBond;
 	}
 	if ( utility::startswith(converted, "orb") ) {
 		return OrbitalBond;
@@ -125,6 +125,7 @@ Bond::Bond(Real d, BondOrder order, BondConjugability conj,  BondAromaticity aro
 	else if ( order == SingleBondOrder ) { bond_name_ = SingleBond; }
 	else if ( order == DoubleBondOrder ) { bond_name_ = DoubleBond; }
 	else if ( order == TripleBondOrder ) { bond_name_ = TripleBond; }
+	else if ( order == PseudoBondOrder ) { bond_name_ = PseudoBond; }
 	else { bond_name_ = UnknownBond; }
 
 	if ( aroma == IsAromaticBond && ring == UnknownRingness ) {
@@ -145,6 +146,7 @@ Bond::bond_name(BondName name){
 	else if ( name == DoubleBond ) { order_ = DoubleBondOrder; }
 	else if ( name == TripleBond ) { order_ = TripleBondOrder; }
 	else if ( name == OrbitalBond ) { order_ = OrbitalBondOrder; }
+	else if ( name == PseudoBond ) { order_ = PseudoBondOrder; }
 
 	if ( name == DoubleBond || name == TripleBond || name == AromaticBond ) { conjug_ = ConjugableBond; }
 
@@ -157,7 +159,7 @@ void
 Bond::order(BondOrder order){
 	order_ = order;
 	if ( order == OrbitalBondOrder ) { bond_name_ = OrbitalBond; }
-	else if ( order == PseudoBondOrder ) { bond_name_ = UnknownBond; }
+	else if ( order == PseudoBondOrder ) { bond_name_ = PseudoBond; }
 	else if ( aroma_ == NonaromaticBond ) {
 		if ( order == SingleBondOrder ) { bond_name_ = SingleBond; }
 		if ( order == DoubleBondOrder ) { bond_name_ = DoubleBond; }

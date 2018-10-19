@@ -27,7 +27,8 @@ enum BondName
 	DoubleBond=2,
 	TripleBond=3,
 	AromaticBond=4,
-	OrbitalBond=5
+	OrbitalBond=5,
+	PseudoBond=99 // Not a true bond - just there for connectivity representation.
 };
 
 enum BondOrder
