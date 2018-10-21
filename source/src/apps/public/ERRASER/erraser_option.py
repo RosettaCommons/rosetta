@@ -20,7 +20,7 @@ class erraser_option :
         self.map_file = ''
         self.out_pdb = ''
         self.out_prefix = ''
-        self.map_reso = 2.5
+        self.map_reso = '2.5'
         self.rosetta_folder = ''
         self.debug = False
         self.verbose = False
@@ -90,7 +90,7 @@ class erraser_option :
         self.map_file = parse_options( argv, 'map', '' )
         self.out_pdb = parse_options( argv, 'out_pdb', '' )
         self.out_prefix = parse_options( argv, 'out_prefix', '' )
-        self.map_reso = parse_options( argv, 'map_reso', 2.5 )
+        self.map_reso = parse_options( argv, 'map_reso', '2.5' )
         self.debug = parse_options( argv, "debug", "False" )
         self.verbose = parse_options( argv, "verbose", "False" )
         self.kept_temp_folder = parse_options( argv, "kept_temp_folder", "False" )

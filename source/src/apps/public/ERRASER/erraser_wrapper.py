@@ -464,7 +464,8 @@ def erraser_minimize( option ) :
     elif option.new_torsional_potential :
         command.extend(["-score:rna_torsion_potential", "RNA11_based_new"])
 
-    command.extend(["-rna::corrected_geo", str(option.corrected_geo).lower(),
+    command.extend(["-missing_density_to_jump", #fixes cart_bonded
+               "-rna::corrected_geo", str(option.corrected_geo).lower(),
                "-rna::erraser::rna_prot_erraser", str(option.rna_prot_erraser).lower(),
                "-rna::vary_geometry", str(option.vary_geometry).lower(),
                "-constrain_P", str(option.constrain_phosphate).lower(),
@@ -491,13 +492,15 @@ def erraser_minimize( option ) :
 
     if option.map_file != '' :
          command.extend(["-edensity:mapfile", option.map_file,
-                   "-edensity:mapreso", option.map_reso,
+                   "-edensity:mapreso", str(option.map_reso),
                    "-edensity:realign", "no"])
 
     command.extend(['-graphics', 'false'])
     # unless you want to spend 99% of your time writing 100M lines to file.
     command.extend(['-skip_connect_info', 'true'])
     
+    print "command:", command
+    print
     print "cmdline: %s" % " ".join(command)
     print "#######Submit the Rosetta Command Line###############"
     subprocess_call(command, sys.stdout, sys.stderr)

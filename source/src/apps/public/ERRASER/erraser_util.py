@@ -1377,7 +1377,9 @@ def res_wise_rmsd(pdb1, pdb2) :
     res_rmsd_list = []
     for res, coords in coord_pdb1.iteritems():
         if len(coord_pdb1[res]) != len(coord_pdb2[res]) :
-            error_exit("Residue %s have different # of atoms in the two pdbs!!!" % (i+1) )
+            print(coord_pdb1[res])
+            print(coord_pdb2[res])
+            error_exit("Residue %s have different # of atoms in the two pdbs!!!" % res )
         res_rmsd = 0.0
         for j in range(0, len(coord_pdb1[res])) :
             res_rmsd += compute_squared_dist(coord_pdb1[res][j], coord_pdb2[res][j])
