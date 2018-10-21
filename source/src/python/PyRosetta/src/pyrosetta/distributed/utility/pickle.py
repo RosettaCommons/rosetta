@@ -1,14 +1,24 @@
 import logging
+logger = logging.getLogger(__name__)
 
 try:
     import blosc
+
+    # Activate blosc GIL-release mode, allowing fork-space multitheaded decompression
+    # https://github.com/Blosc/bloscpack/issues/58
+    # https://github.com/Blosc/c-blosc/pull/241
+    logger.debug("blosc.set_releasegil(True)")
+    blosc.set_releasegil(True)
 except ImportError:
+    logger.debug("ImportError loading blosc, falling back to uncompressed pickle archives.")
     blosc = None
     pass
 
 try:
     import pyrosetta.rosetta.cereal as cereal
 except ImportError:
+    logger.debug("ImportError loading pyrosetta.rosetta.cereal, " 
+                 "non-serialization build will not support pickling.")
     cereal = None
     pass
 
@@ -16,8 +26,6 @@ import pyrosetta.rosetta as rosetta
 import pyrosetta.rosetta.utility as utility
 
 from pyrosetta.distributed import with_lock
-
-logger = logging.getLogger(__name__)
 
 @with_lock
 def __cereal_getstate__(self):
