@@ -817,6 +817,9 @@ void DockingProtocol::initForEqualOperatorAndCopyConstructor(DockingProtocol & l
 void DockingProtocol::set_lowres_scorefxn( core::scoring::ScoreFunctionOP docking_scorefxn_low )
 {
 	docking_scorefxn_low_ = docking_scorefxn_low;
+	if ( docking_lowres_mover_ ) {
+		docking_lowres_mover_->set_scorefxn( docking_scorefxn_low_ );
+	}
 
 }
 
@@ -825,6 +828,10 @@ void DockingProtocol::set_highres_scorefxn( core::scoring::ScoreFunctionOP docki
 	docking_scorefxn_high_ = docking_scorefxn_high;
 	docking_scorefxn_pack_ = docking_scorefxn_high;
 	docking_scorefxn_output_ = docking_scorefxn_high;
+	if ( docking_highres_mover_ ) {
+		docking_highres_mover_->set_scorefxn( docking_scorefxn_high_ );
+		docking_highres_mover_->set_scorefxn_pack( docking_scorefxn_high_ );
+	}
 }
 
 void DockingProtocol::set_highres_scorefxn( // delete
@@ -834,6 +841,10 @@ void DockingProtocol::set_highres_scorefxn( // delete
 	docking_scorefxn_high_ = docking_scorefxn_high;
 	docking_scorefxn_pack_ = docking_scorefxn_pack;
 	docking_scorefxn_output_ = docking_scorefxn_high;
+	if ( docking_highres_mover_ ) {
+		docking_highres_mover_->set_scorefxn( docking_scorefxn_high_ );
+		docking_highres_mover_->set_scorefxn_pack( docking_scorefxn_pack_ );
+	}
 }
 
 void DockingProtocol::set_highres_scorefxn(
@@ -844,6 +855,10 @@ void DockingProtocol::set_highres_scorefxn(
 	docking_scorefxn_high_ = docking_scorefxn_high;
 	docking_scorefxn_pack_ = docking_scorefxn_pack;
 	docking_scorefxn_output_ = docking_scorefxn_output;
+	if ( docking_highres_mover_ ) {
+		docking_highres_mover_->set_scorefxn( docking_scorefxn_high_ );
+		docking_highres_mover_->set_scorefxn_pack( docking_scorefxn_pack_ );
+	}
 }
 
 void DockingProtocol::set_sc_min( bool sc_min )
