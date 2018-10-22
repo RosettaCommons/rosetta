@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.5
+#!/usr/bin/env python3
 # was !/usr/bin/env python
 # :noTabs=true:
 # (c) Copyright Rosetta Commons Member Institutions.
