@@ -25,7 +25,7 @@ config = benchmark.config()
 # => it figures out the column numbers from there
 x_label = "rmsd"
 y_label = "total_score"
-outfile = "score_vs_rmsd.png"
+outfile = "plot_results.png"
 
 # get column numbers from labels, 1-indexed
 x_index = str( subprocess.getoutput( "grep " + x_label + " " + scorefiles[0] ).split().index( x_label ) + 1 )
@@ -35,9 +35,9 @@ y_index = str( subprocess.getoutput( "grep " + y_label + " " + scorefiles[0] ).s
 ncols = 4
 nrows = 1
 if len( targets ) < 4:
-    ncols = len( targets )
+	ncols = len( targets )
 else:
-    nrows = math.ceil( len( targets ) / 4 )
+	nrows = math.ceil( len( targets ) / 4 )
 
 # figure size
 width = 7.5 * ncols
@@ -53,7 +53,7 @@ for i in range( 0, len( scorefiles ) ):
 	x = subprocess.getoutput( "grep -v SEQUENCE " + scorefiles[i] + " | grep -v " + y_label + " | awk '{print $" + x_index + "}'" ).splitlines()
 	y = subprocess.getoutput( "grep -v SEQUENCE " + scorefiles[i] + " | grep -v " + y_label + " | awk '{print $" + y_index + "}'" ).splitlines()
 	
-    # map all values to floats
+	# map all values to floats
 	x = list( map( float, x ) )
 	y = list( map( float, y ) )
 	
@@ -70,13 +70,18 @@ for i in range( 0, len( scorefiles ) ):
 	# scatterplot of the data
 	plt.plot(x, y, 'ko')
 	
+	# add horizontal and vertical lines for cutoff
+	plt.axvline(x=float(cutoffs_rmsd_dict[targets[i]]), color='b', linestyle='-')
+	plt.axhline(y=float(cutoffs_score_dict[targets[i]]), color='b', linestyle='-')
+	
 	# x axis limits
-	plt.xlim( 0, 10 )
+	if targets[i] in failures:
+		plt.xlim( left=0 )
+	else:
+		plt.xlim( 0, 10 )
 	
 #save figure
 plt.tight_layout()
 plt.savefig( outfile )
 
-benchmark.save_variables('targets nstruct working_dir testname results outfile')  # Python black magic: save all listed variable to json file for next script use (save all variables if called without argument)
-	
-	
+benchmark.save_variables('targets nstruct working_dir testname results outfile cutoffs_rmsd_dict cutoffs_score_dict failures')  # Python black magic: save all listed variable to json file for next script use (save all variables if called without argument)

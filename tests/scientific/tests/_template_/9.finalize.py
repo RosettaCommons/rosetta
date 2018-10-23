@@ -29,6 +29,7 @@ _index_html_template_ = "<html>\n"
 _index_html_template_ += "<H2>Scientific test: " + testname + "</H2>\n"
 _index_html_template_ += "<h3>FAILURES</h3>\n<p>\n"
 
+# add failures to html
 if len( failures ) > 0:
     for failure in failures:
         _index_html_template_ += str(failure) + "<br>\n"
@@ -52,7 +53,9 @@ for l in readme:
     else:
         _index_html_template_ += "<p>" + l + "</p>\n"
 
+# html closing tag
 _index_html_template_ += "</body></html>\n"
+
 
 # write the html
 def write_html( failures ) :

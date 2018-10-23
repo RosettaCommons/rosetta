@@ -15,6 +15,7 @@
 import os, sys, subprocess, math
 import numpy as np
 import benchmark
+from benchmark import quality_measures as qm
 
 benchmark.load_variables()  # Python black magic: load all variables saved by previous script into 	s
 config = benchmark.config()
@@ -22,12 +23,17 @@ config = benchmark.config()
 results = {}
 scorefiles = []
 #logfiles = []
+cutoffs_rmsd_dict = {}
+cutoffs_score_dict = {}
+failures = []
 
 def main(args):
 	# inputs are header labels from the scorefile, for instance "total_score" and "rmsd"
 	# => it figures out the column numbers from there
 	x_label = "rmsd"
 	y_label = "total_score"
+	outfile = "result.txt"
+	cutoffs = "cutoffs"
 
 	# scorefiles and logfiles
 	scorefiles.extend( [ f'{working_dir}/output/{t}/{t}.score' for t in targets ] )
@@ -36,6 +42,18 @@ def main(args):
 	# get column numbers from labels, 1-indexed
 	x_index = str( subprocess.getoutput( "grep " + x_label + " " + scorefiles[0] ).split().index( x_label ) + 1 )
 	y_index = str( subprocess.getoutput( "grep " + y_label + " " + scorefiles[0] ).split().index( y_label ) + 1 )
+
+	# read cutoffs
+	protein = subprocess.getoutput( "grep -v '#' " + cutoffs + " | awk '{print $1}'" ).splitlines()
+	cutoffs_rmsd = subprocess.getoutput( "grep -v '#' " + cutoffs + " | awk '{print $2}'" ).splitlines()
+	cutoffs_score = subprocess.getoutput( "grep -v '#' " + cutoffs + " | awk '{print $3}'" ).splitlines()
+	cutoffs_rmsd = map( float, cutoffs_rmsd )
+	cutoffs_score = map( float, cutoffs_score )
+	cutoffs_rmsd_dict.update( dict( zip ( protein, cutoffs_rmsd )))
+	cutoffs_score_dict.update( dict( zip ( protein, cutoffs_score )))
+
+	# open results output file
+	f = open( outfile, "w" )
 
 	# go through scorefiles of targets
 	for i in range( 0, len( scorefiles ) ):
@@ -51,23 +69,36 @@ def main(args):
 		y = list( map( float, y ))
 
 		# check for RMSDs below cutoff
-		print (targets[i], "\t", end=""),
-		val_cutoff = check_all_values_below_cutoff( x, 5, "rmsd" )
+		f.write( targets[i] + "\t" )
+		val_cutoff = qm.check_all_values_below_cutoff( x, cutoffs_rmsd_dict[targets[i]], "rmsd", f )
 		target_results.update( val_cutoff )
 
+        # add to failues
+		if val_cutoff['All rmsds < cutoff'] == False:
+			failures.append( targets[i] )
+
+		# check for scores below cutoff
+		f.write( targets[i] + "\t" )
+		val_cutoff = qm.check_all_values_below_cutoff( y, cutoffs_score_dict[targets[i]], "score", f )
+		target_results.update( val_cutoff )
+
+        # add to failures
+		if val_cutoff['All scores < cutoff'] == False:
+			failures.append( targets[i] )
+
 		# check lowest scoring model has low RMSD
-		print (targets[i], "\t", end=""),
-		val_topscoring = check_rmsd_of_topscoring( x, 5 )
-		target_results.update( val_topscoring )
+#		f.write( targets[i] + "\t" )
+#		val_topscoring = check_rmsd_of_topscoring( x, cutoffs_rmsd_dict[targets[i]], f )
+#		target_results.update( val_topscoring )
 
 		# check for RMSD range
-		print (targets[i], "\t", end=""),
-		val_rms = check_range( x, "rmsd" )
+		f.write( targets[i] + "\t" )
+		val_rms = qm.check_range( x, "rmsd", f )
 		target_results.update( val_rms )
 
 		# check for score range
-		print (targets[i], "\t", end=""),
-		val_score = check_range( y, "score" )
+		f.write( targets[i] + "\t" )
+		val_score = qm.check_range( y, "score", f )
 		target_results.update( val_score )
 
 		# check runtime
@@ -88,43 +119,10 @@ def main(args):
 		# => requires lots of dependent scripts, even more complicated
 
 		results.update( {targets[i] : target_results} )
-		print ("\n")
+		f.write( "\n" )
 
-	benchmark.save_variables('targets nstruct working_dir testname results scorefiles')  # Python black magic: save all listed variable to json file for next script use (save all variables if called without argument)
+	f.close()
 
-#=======================================
-def check_all_values_below_cutoff( rmsd_col, cutoff, tag ):
-
-	out = "All " + tag + "s < " + str( cutoff )
-	print (out, end=""),
-
-	if all( i <= cutoff for i in rmsd_col ):
-		value = "TRUE"
-	else:
-		value = "FALSE"
-
-	print (value)
-	return {out : value}
-
-#=======================================
-def check_rmsd_of_topscoring( rmsd_col_sorted, cutoff ):
-
-	out = "rmsd of topscoring model below " + str( cutoff )
-	print (out, "\t", end="")
-
-	if rmsd_col_sorted[0] <= cutoff:
-		value = "TRUE"
-	else:
-		value = "FALSE"
-
-	print (value)
-	return {out : value}
-
-#=======================================
-def check_range( col, tag ):
-
-	print (tag, "\tmin, max, avg, std:", '% 12.3f % 12.3f % 12.3f % 12.3f' % (min( col ), max( col ), np.mean( col ), np.std( col )))
-	value = { "min" : round(min( col ), 4), "max" : round(max( col ), 4), "avg" : round(np.mean( col ), 4), "std" : round(np.std( col ), 4) }
-	return {tag : value}
+	benchmark.save_variables('targets nstruct working_dir testname results scorefiles cutoffs_rmsd_dict cutoffs_score_dict failures')  # Python black magic: save all listed variable to json file for next script use (save all variables if called without argument)
 
 if __name__ == "__main__": main(sys.argv)
