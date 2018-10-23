@@ -15,7 +15,7 @@
 from __future__ import print_function
 
 import pyrosetta
-from pyrosetta import *
+from pyrosetta import rosetta
 
 pyrosetta.init(extra_options = "-restore_pre_talaris_2013_behavior")  # trigger generation of database/rotamer/bbdep02.May.sortlib.Dunbrack02.lib.bin
 pose2 = pyrosetta.pose_from_sequence("ARNDCEQGHILKMFPSTWYV", 'fa_standard')

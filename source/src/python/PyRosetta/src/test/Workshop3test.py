@@ -3,12 +3,14 @@
 
 from __future__ import print_function
 
-from math import *
+import math
 
-from rosetta import *
-from pyrosetta import *
-from pyrosetta.toolbox import *
-from pyrosetta.teaching import *
+import pyrosetta
+import pyrosetta.rosetta as rosetta
+
+from pyrosetta import init, pose_from_file, create_score_function, ScoreFunction, etable_atom_pair_energies, PyMOLMover
+from pyrosetta.rosetta import core, protocols
+from pyrosetta.teaching import fa_atr, fa_rep, fa_sol, hbonds, EMapVector
 
 init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
 import os; os.chdir('.test.output')

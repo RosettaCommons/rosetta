@@ -8,10 +8,13 @@
 
 from __future__ import print_function
 
-from pyrosetta import *
-from pyrosetta.rosetta import *
+import pyrosetta
+import pyrosetta.rosetta as rosetta
 
-from pyrosetta.rosetta.protocols.loops.loop_closure.kinematic_closure import *
+from pyrosetta import init, Pose, PyMOLMover, MoveMap, MonteCarlo
+from pyrosetta.rosetta import core, protocols
+
+from pyrosetta.rosetta.protocols.loops.loop_closure.kinematic_closure import KinematicMover
 import pyrosetta.rosetta.protocols.loops.loop_mover.refine
 
 from sys import exit

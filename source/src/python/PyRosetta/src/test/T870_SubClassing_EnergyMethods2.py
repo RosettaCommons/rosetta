@@ -13,9 +13,12 @@ from __future__ import print_function
 
 # RosettaCon 2011 demo
 import pyrosetta
-from rosetta import *
-from pyrosetta import *
-from rosetta.core.scoring.methods import *
+import pyrosetta.rosetta as rosetta
+
+from pyrosetta import init, pose_from_file, ScoreFunction
+from pyrosetta.rosetta import core, protocols
+
+from rosetta.core.scoring.methods import ContextIndependentOneBodyEnergy, ContextIndependentTwoBodyEnergy, ContextDependentTwoBodyEnergy
 
 init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
 import os; os.chdir('.test.output')

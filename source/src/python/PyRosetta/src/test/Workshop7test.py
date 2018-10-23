@@ -5,9 +5,12 @@ from __future__ import print_function
 
 import sys
 
-from pyrosetta import *
-from pyrosetta.rosetta import *
-from pyrosetta.teaching import *
+import pyrosetta
+import pyrosetta.rosetta as rosetta
+
+from pyrosetta import init, pose_from_file, Pose, Vector1, MoveMap, create_score_function, PyJobDistributor
+from pyrosetta.rosetta import core, protocols
+from pyrosetta.teaching import SwitchResidueTypeSetMover, CA_rmsd, calc_Lrmsd
 
 import pyrosetta.rosetta.protocols.rigid as rigid_moves
 

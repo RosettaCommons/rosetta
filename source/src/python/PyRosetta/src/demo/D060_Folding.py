@@ -92,8 +92,14 @@ cysteine residues which are close to each other in the decoy structure.
 
 import optparse    # for sorting options
 
-from rosetta import *
-from pyrosetta import *
+import pyrosetta
+import pyrosetta.rosetta as rosetta
+
+from pyrosetta import (
+    init, pose_from_sequence, pose_from_file, Pose, MoveMap, create_score_function, get_fa_scorefxn,
+    MonteCarlo, TrialMover, SwitchResidueTypeSetMover, PyJobDistributor,
+)
+from pyrosetta.rosetta import core, protocols
 
 init(extra_options = "-constant_seed")
 # normally, init() works fine

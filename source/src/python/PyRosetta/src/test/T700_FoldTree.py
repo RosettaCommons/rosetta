@@ -9,8 +9,11 @@
 
 from __future__ import print_function
 
-from rosetta import *
-from pyrosetta import *
+import pyrosetta
+import pyrosetta.rosetta as rosetta
+
+from pyrosetta import init, FoldTree
+from pyrosetta.rosetta import core, protocols
 
 init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
 import os; os.chdir('.test.output')

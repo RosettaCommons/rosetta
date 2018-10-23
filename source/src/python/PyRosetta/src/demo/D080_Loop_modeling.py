@@ -118,10 +118,17 @@ The method sample_single_loop_modeling:
 import optparse    # for option sorting
 
 from math import pow    # for decrementing kT during simulated annealing
-from rosetta.protocols.loops.loop_closure.ccd import *
-from rosetta.protocols.loops.loop_mover.refine import *
-from rosetta import *
-from pyrosetta import *
+
+import pyrosetta
+import pyrosetta.rosetta as rosetta
+
+from pyrosetta import (
+    init, Pose, pose_from_file, MoveMap, get_fa_scorefxn, create_score_function,
+    SwitchResidueTypeSetMover, MonteCarlo, PyMOLMover, PyJobDistributor
+)
+from pyrosetta.rosetta import core, protocols
+
+from rosetta.protocols.loops.loop_mover.refine import LoopMover_Refine_CCD
 init(extra_options = "-constant_seed -run:jran 1111125")
 # normally, init() works fine
 # for this sample script, we want to ease comparison by making sure all random

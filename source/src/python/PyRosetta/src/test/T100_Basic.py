@@ -10,7 +10,8 @@
 from __future__ import print_function
 
 import pyrosetta
-from pyrosetta import *
+import pyrosetta.rosetta as rosetta
+from pyrosetta import Pose, pose_from_file, pose_from_sequence, dump_pdb, AtomID
 
 pyrosetta.init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
 import os; os.chdir('.test.output')

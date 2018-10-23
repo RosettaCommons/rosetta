@@ -3,12 +3,14 @@
 
 from __future__ import print_function
 
-from math import *
+import math
 
 # Basic PyRosetta
-from rosetta import *
-from pyrosetta import *
-from pyrosetta.toolbox import *
+import pyrosetta
+import pyrosetta.rosetta as rosetta
+
+from pyrosetta import init, AtomID, pose_from_file
+from pyrosetta.rosetta import core, protocols
 
 init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
 import os; os.chdir('.test.output')

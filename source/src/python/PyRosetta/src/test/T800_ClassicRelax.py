@@ -12,8 +12,11 @@ from __future__ import print_function
 import sys
 #if sys.platform == "darwin": sys.exit(0)  # skipping this test on Mac OS due to memory error
 
-from rosetta import *
-from pyrosetta import *
+import pyrosetta
+import pyrosetta.rosetta as rosetta
+
+from pyrosetta import init, Pose, get_fa_scorefxn
+from pyrosetta.rosetta import core, protocols
 
 init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
 import os; os.chdir('.test.output')

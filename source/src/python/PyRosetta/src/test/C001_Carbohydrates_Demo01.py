@@ -4,8 +4,11 @@
 
 from __future__ import print_function
 
-from rosetta import *
-from pyrosetta import *
+import pyrosetta
+import pyrosetta.rosetta as rosetta
+
+from pyrosetta import init, PyMOLMover, pose_from_file, pose_from_sequence
+from pyrosetta.rosetta import core, protocols
 
 init('-constant_seed -include_sugars')
 import os; os.chdir('.test.output')

@@ -86,8 +86,15 @@ The method sample_refinement:
 
 import optparse    # for sorting options
 
-from rosetta import *
-from pyrosetta import *
+import pyrosetta
+import pyrosetta.rosetta as rosetta
+
+from pyrosetta import (
+    init, Pose, pose_from_file, get_fa_scorefxn, standard_packer_task,
+    SequenceMover, MonteCarlo, TrialMover, RepeatMover, MoveMap,
+    PyMOLMover, PyJobDistributor
+)
+from pyrosetta.rosetta import core, protocols
 
 init(extra_options = "-constant_seed")
 # normally, init() works fine

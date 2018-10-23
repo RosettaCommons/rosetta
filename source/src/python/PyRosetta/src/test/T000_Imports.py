@@ -10,7 +10,7 @@
 from __future__ import print_function
 
 import pyrosetta
-from pyrosetta import *
+from pyrosetta import Vector1, version
 
 
 print( Vector1([1, 2, 3, 4]) )

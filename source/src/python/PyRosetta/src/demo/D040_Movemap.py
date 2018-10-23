@@ -61,8 +61,11 @@ The method movemap:
 
 import optparse    # for option sorting
 
-from rosetta import *
-from pyrosetta import *
+import pyrosetta
+import pyrosetta.rosetta as rosetta
+
+from pyrosetta import init, MoveMap, get_fa_scorefxn, Pose, PyMOLMover, pose_from_file
+from pyrosetta.rosetta import core, protocols
 
 init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
 import os; os.chdir('.test.output')

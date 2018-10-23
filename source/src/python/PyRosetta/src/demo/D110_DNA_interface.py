@@ -70,8 +70,11 @@ The method sample_dna_interface:
 
 import optparse    # for sorting options
 
-from rosetta import *
-from pyrosetta import *
+import pyrosetta
+import pyrosetta.rosetta as rosetta
+
+from pyrosetta import init, Pose, pose_from_file, Vector1, create_score_function, PyJobDistributor
+from pyrosetta.rosetta import core, protocols
 
 init(extra_options = "-constant_seed")
 # normally, init() works fine

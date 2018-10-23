@@ -9,9 +9,11 @@
 
 from __future__ import print_function
 
-from pyrosetta import *
-from pyrosetta.rosetta import *
+import pyrosetta
 import pyrosetta.rosetta as rosetta
+
+from pyrosetta import init, get_fa_scorefxn
+from pyrosetta.rosetta import core, protocols
 
 import pyrosetta.rosetta.protocols.loops.loop_mover.refine
 

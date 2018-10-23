@@ -3,14 +3,16 @@
 
 from __future__ import print_function
 
-from rosetta import *
-from pyrosetta import *
-from pyrosetta.teaching import *
+import pyrosetta
+import pyrosetta.rosetta as rosetta
 
-from rosetta.protocols.loops.loop_closure.ccd import *
-from rosetta.protocols.loops.loop_mover.refine import *
-from rosetta.protocols.loops.loop_mover.perturb import *
-from rosetta.protocols.loops.loop_closure.kinematic_closure import *
+from pyrosetta import init, pose_from_file, get_score_function, MoveMap, FoldTree, PyMOLMover, PyJobDistributor
+from pyrosetta.rosetta import core, protocols
+from pyrosetta.teaching import SwitchResidueTypeSetMover, add_single_cutpoint_variant
+
+from pyrosetta.rosetta.protocols.loops import loop_rmsd, set_single_loop_fold_tree
+from pyrosetta.rosetta.protocols.loops.loop_mover.refine import LoopMover_Refine_CCD
+from pyrosetta.rosetta.protocols.loops.loop_closure.kinematic_closure import KinematicMover
 
 init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
 import os; os.chdir('.test.output')

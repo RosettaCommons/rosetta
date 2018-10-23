@@ -76,8 +76,11 @@ The method sample_ligand_interface:
 
 import optparse    # for sorting options
 
-from rosetta import *
-from pyrosetta import *
+import pyrosetta
+import pyrosetta.rosetta as rosetta
+
+from pyrosetta import init, Pose, Vector1, pose_from_file, create_score_function, PyJobDistributor
+from pyrosetta.rosetta import core, protocols
 
 init(extra_options = "-constant_seed")
 # normally, init() works fine

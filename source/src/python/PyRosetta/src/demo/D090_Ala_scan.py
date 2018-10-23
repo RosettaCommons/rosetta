@@ -82,8 +82,12 @@ import optparse    # for sorting options
 
 # the Interface object is required by this script
 from rosetta.protocols.scoring import Interface
-from rosetta import *
-from pyrosetta import *
+import pyrosetta
+import pyrosetta.rosetta as rosetta
+
+from pyrosetta import init, Pose, pose_from_file, Vector1, get_fa_scorefxn, ScoreFunction, standard_packer_task, standard_task_factory, PyMOLMover
+from pyrosetta.rosetta import core, protocols
+from pyrosetta.teaching import fa_atr, fa_rep, fa_sol, hbond_bb_sc, hbond_sc
 
 init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
 import os; os.chdir('.test.output')

@@ -3,10 +3,14 @@
 
 from __future__ import print_function
 
-from rosetta import *
-from pyrosetta import *
-from pyrosetta.toolbox import *
-from pyrosetta.teaching import *
+import pyrosetta
+import pyrosetta.rosetta as rosetta
+
+from pyrosetta import init, pose_from_file, create_score_function, standard_packer_task
+from pyrosetta.rosetta import core, protocols
+from pyrosetta.teaching import PackRotamersMover
+from pyrosetta.toolbox import generate_resfile_from_pdb, generate_resfile_from_pose, mutate_residue
+
 
 init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
 import os; os.chdir('.test.output')
@@ -31,7 +35,7 @@ pack_mover = PackRotamersMover(scorefxn, task_pack)
 
 pack_mover.apply(pose)
 
-import os, tempfile
+import tempfile
 
 # Design
 

@@ -16,7 +16,9 @@ from __future__ import print_function
 
 import pyrosetta
 import pyrosetta.rosetta as rosetta
-from pyrosetta import *
+
+from pyrosetta import init
+from pyrosetta.rosetta import core, protocols
 
 pyrosetta.init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
 import os; os.chdir('.test.output')

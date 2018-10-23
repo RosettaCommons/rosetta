@@ -12,9 +12,12 @@ import sys
 # import modules
 import random, math
 
-from rosetta import *
-from pyrosetta import *
-from pyrosetta.teaching import *
+import pyrosetta
+import pyrosetta.rosetta as rosetta
+
+from pyrosetta import init, Pose, pose_from_sequence, pose_from_file, get_score_function, create_score_function, PyMOLMover, ScoreFunction, MoveMap
+from pyrosetta.rosetta import core, protocols
+from pyrosetta.teaching import fa_atr, fa_rep, hbond_sr_bb, SwitchResidueTypeSetMover
 
 init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
 import os; os.chdir('.test.output')

@@ -87,9 +87,15 @@ The method sample_docking:
 
 import optparse    # for sorting options
 
-from rosetta import *
-from pyrosetta import *
-from rosetta.protocols.rigid import *
+import pyrosetta
+import pyrosetta.rosetta as rosetta
+
+from pyrosetta import init, Pose, pose_from_file, Vector1, create_score_function, PyJobDistributor, MoveMap, SwitchResidueTypeSetMover
+from pyrosetta.rosetta import core, protocols
+from rosetta.protocols.rigid import (
+    RigidBodyRandomizeMover, RigidBodyPerturbMover, RigidBodySpinMover,
+    partner_upstream, partner_downstream
+)
 
 
 init(extra_options = "-constant_seed")

@@ -9,10 +9,12 @@
 
 from __future__ import print_function
 
-from rosetta import *
-from pyrosetta import *
+import pyrosetta
+import pyrosetta.rosetta as rosetta
 
-from rosetta.protocols.rigid import *
+from pyrosetta import init, Pose
+from pyrosetta.rosetta import core, protocols
+from pyrosetta.rosetta.protocols.rigid import RigidBodyPerturbMover, RigidBodySpinMover
 
 init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
 import os; os.chdir('.test.output')
