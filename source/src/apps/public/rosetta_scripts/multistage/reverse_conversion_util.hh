@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   apps/pilot/jackmaguire/reverse_conversion_util.hh
+/// @file   apps/public/rosetta_scripts/multistage/reverse_conversion_util.hh
 /// @brief
 /// @author Jack Maguire, jackmaguire1444@gmail.com
 

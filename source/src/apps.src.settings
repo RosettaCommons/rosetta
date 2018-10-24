@@ -315,6 +315,7 @@ sources = {
 		"revert_design_to_native",
 		"rosetta_scripts",
 		"validate_rosetta_script",
+		"multistage/multistage_rosetta_scripts",
 	],
 	"public/rosettaDNA": [
 		"rosettaDNA",

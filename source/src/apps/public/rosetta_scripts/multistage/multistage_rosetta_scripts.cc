@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   apps/pilot/jackmaguire/multistge_rosetta_scripts.cc
+/// @file   apps/public/rosetta_scripts/multistage/multistge_rosetta_scripts.cc
 /// @brief
 /// @author Jack Maguire, jackmaguire1444@gmail.com
 
@@ -38,7 +38,7 @@
 #include <core/pose/Pose.hh>
 #endif
 
-#include <apps/pilot/jackmaguire/reverse_conversion_util.hh>
+#include <apps/public/rosetta_scripts/multistage/reverse_conversion_util.hh>
 
 OPT_1GRP_KEY( Boolean, mrs, convert )
 OPT_1GRP_KEY( Boolean, mrs, revert )
@@ -47,7 +47,7 @@ OPT_1GRP_KEY( Boolean, mrs, xml_template )
 OPT_1GRP_KEY( Boolean, mrs, estimate_memory )
 OPT_1GRP_KEY( StringVector, mrs, unarchive )
 
-static basic::Tracer TR( "apps.pilot.jackmaguire.MultistageRosettaScripts" );
+static basic::Tracer TR( "apps.public.rosetta_scripts.multistage.MultistageRosettaScripts" );
 
 #ifdef SERIALIZATION
 //We want to access the protected deserialize_larval_job_and_result method
