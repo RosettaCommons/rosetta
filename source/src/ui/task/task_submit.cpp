@@ -11,6 +11,7 @@
 #include <QKeyEvent>
 #include <QDebug>
 #include <QJsonArray>
+#include <QJsonObject>
 
 #include <set>
 
@@ -149,7 +150,7 @@ void TaskSubmit::on_add_input_structure_clicked()
 
 	QString file_name = QFileDialog::getOpenFileName(this, tr("Open PDB file"), "", tr("PDB (*.pdb)"), Q_NULLPTR/*, QFileDialog::DontUseNativeDialog*/);
 	if( not file_name.isEmpty() ) {
-		task_->add_file( "input.pdb", std::make_shared<File>(file_name) );
+		task_->add_file( "input.pdb", File::init_from_local_file(file_name) );
 	}
 }
 
@@ -159,7 +160,7 @@ void TaskSubmit::on_add_native_structure_clicked()
 
 	QString file_name = QFileDialog::getOpenFileName(this, tr("Open PDB file"), "", tr("PDB (*.pdb)"), Q_NULLPTR/*, QFileDialog::DontUseNativeDialog*/);
 	if( not file_name.isEmpty() ) {
-		task_->add_file( "native.pdb", std::make_shared<File>(file_name) );
+		task_->add_file( "native.pdb", File::init_from_local_file(file_name) );
 	}
 }
 
@@ -209,7 +210,7 @@ void TaskSubmit::on_add_files_clicked()
 			// }
 			// else task_->add_file(name, std::make_shared<File>(*it) );
 
-			task_->add_file(name, std::make_shared<File>(*it) );
+			task_->add_file(name, File::init_from_local_file(*it) );
 
 			// // File f(file_name);
 			// // task_->input( std::move(f) );
@@ -276,18 +277,19 @@ void TaskSubmit::on_files_clicked(const QModelIndex &index)
 	}
 }
 
-	void TaskSubmit::s_on_queues_finished()
+void TaskSubmit::s_on_queues_finished()
 {
 	qDebug() << "TaskSubmit::on_queues_finished data:" << queues.result();
 	QJsonDocument jd = queues.result_as_json();
-	QJsonArray root = jd.array();
+	QJsonObject root = jd.object();
 
-    for (QJsonArray::const_iterator it = root.constBegin(); it != root.constEnd(); ++it) {
+	auto queues = root["queues"].toObject()["submit"].toArray();
+	for (QJsonArray::const_iterator it = queues.constBegin(); it != queues.constEnd(); ++it) {
 		//qDebug() << "TaskView::on_queues_finished: " << *it;
 		ui->queue->addItem( it->toString() );
-    }
+	}
 
-	if( not root.isEmpty() ) ui->submit->setEnabled(true);
+	if( not queues.isEmpty() ) ui->submit->setEnabled(true);
 }
 
 void TaskSubmit::on_submit_clicked()
@@ -298,11 +300,10 @@ void TaskSubmit::on_submit_clicked()
 
 	ui->submit->setEnabled(false);
 
-	auto const & files = task_->files();
-
-	std::vector<QString> names;
-	for(auto const & it : files) names.push_back(it.first);
-	for(auto const & n : names) task_->rename_file(n, "input/" + n);
+	//auto const & files = task_->files();
+	// std::vector<QString> names;
+	// for(auto const & it : files) names.push_back(it.first);
+	// for(auto const & n : names) task_->rename_file(n, "input/" + n);
 
 	task_->submit( ui->queue->currentText() );
 

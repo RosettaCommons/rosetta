@@ -23,7 +23,7 @@ TaskSyncer_NodeStrategy::TaskSyncer_NodeStrategy(Task * task) : task_(task)
 void TaskSyncer_NodeStrategy::submit(QString const &queue)
 {
 	task_->queue_ = queue;
-	task_->state_ = Task::State::_draft_;
+	task_->state_ = Task::State::draft;
 
 	create_sync_tree();
 	qDebug() << "TaskSyncer_NodeStrategy[" << task_->task_id() << "]: Task::submit() Name:" << task_->name_ << " queue:" << task_->queue_;
@@ -42,7 +42,7 @@ void TaskSyncer_NodeStrategy::draft_to_queued(void)
 		qDebug() << "TaskSyncer_NodeStrategy[" << task_->task_id() << "]: draft_to_queued()...";
 		disconnect(root_.get(), SIGNAL(tree_synced()), this, SLOT(draft_to_queued()) );
 
-		task_->state_ = Task::State::_queued_;
+		task_->state_ = Task::State::queued;
 
 		connect(root_.get(), SIGNAL(synced()), this, SLOT(post_submit()));
 		root_->data_is_fresh(false);
@@ -106,7 +106,7 @@ void TaskSyncer_NodeStrategy::connect_task_and_nodes()
 		files_node_ = root_->leaf("files");
 		if(auto files_node = files_node_.lock() ) {
 
-			if(task_->state_ == Task::State::_draft_) {
+			if(task_->state_ == Task::State::draft) {
 				for(auto & file : task_->files_) {
 					auto fnode = std::make_shared<Node>(Node::Flags::data_out | Node::Flags::topology_out);
 					files_node->add(file.first, fnode);
@@ -163,7 +163,7 @@ void TaskSyncer_NodeStrategy::files_topology_updated(Node const *, std::vector<Q
 		for(auto const &k : new_keys) {
 			if(NodeSP leaf = files_node->leaf(k) ) {
 				FileSP file_sp = std::make_shared<File>();
-				file_sp->file_name(k);
+				file_sp->name(k);
 				task_->files_[k] = file_sp;
 
 				qDebug() << "TaskSyncer_NodeStrategy::output_topology_updated: setting set-data-callback for node: " << leaf->node_id();
@@ -171,7 +171,7 @@ void TaskSyncer_NodeStrategy::files_topology_updated(Node const *, std::vector<Q
 						//qDebug() << "Data update for output key(jv):" << jv;
 						auto ba = QByteArray::fromBase64( jv.toVariant().toByteArray() );
 
-						qDebug() << "Data update for output key:" << file_sp->file_name() << "  data: " << ba.left(64) << ( ba.size() > 64 ? "..." : "");
+						qDebug() << "Data update for output key:" << file_sp->name() << "  data: " << ba.left(64) << ( ba.size() > 64 ? "..." : "");
 						if(qsyncer) {
 							file_sp->data(ba);
 							Q_EMIT qsyncer->task_->changed();
@@ -239,13 +239,13 @@ QDataStream &operator>>(QDataStream &in, TaskSyncer_NodeStrategy &t)
 
 		t.connect_task_and_nodes();
 
-		if( t.task_->state() == Task::State::_draft_ ) { // task was submitted but not yet synced, - trying to continue...
+		if( t.task_->state() == Task::State::draft ) { // task was submitted but not yet synced, - trying to continue...
 			qDebug() << "QDataStream &operator>>(QDataStream &in, TaskSyncer_NodeStrategy &t): task was submitted but not yet synced, - trying to continue...";
 			//QObject::connect(t.root_.get(), SIGNAL(tree_synced()), &t, SLOT(draft_to_queued()));
 			//t.root_->data_is_fresh(true);
 			t.submit( t.task_->queue() );
 		}
-		else if( t.task_->state() != Task::State::_none_ ) t.subscribe();
+		else if( t.task_->state() != Task::State::none ) t.subscribe();
 	}
 
 	return in;
@@ -271,7 +271,7 @@ TaskSyncer_TaskStrategy::TaskSyncer_TaskStrategy(Task * task) : task_(task)
 void TaskSyncer_TaskStrategy::submit(QString const &queue)
 {
 	task_->queue_ = queue;
-	task_->state_ = Task::State::_draft_;
+	task_->state_ = Task::State::draft;
 
 	qDebug() << "TaskSyncer_TaskStrategy[" << task_->task_id() << "]: Task::submit() Name:" << task_->name_ << " queue:" << task_->queue_;
 
@@ -345,28 +345,30 @@ void TaskSyncer_TaskStrategy::task_files_upload()
 		QString file_name = fl.first;
 		FileSP file = fl.second;
 
-		auto u = std::make_shared<FunctorNetworkCall>("File uploader for '" + task_->name() + "' task_id=" + task_id + " file:" + file_name);
-		QPointer<FunctorNetworkCall> qu = u.get();
+		if( file->kind() == File::Kind::input ) {
+			auto u = std::make_shared<FunctorNetworkCall>("File uploader for '" + task_->name() + "' task_id=" + task_id + " file:" + file_name);
+			QPointer<FunctorNetworkCall> qu = u.get();
 
-		u->callback(
-			[task_id, file_name, file](NetworkCall &nc) {
-				nc.call(task_api_url() + "/file/" + task_id + "/" + file_name, QNetworkAccessManager::Operation::PostOperation, file->data());
-			});
-		f->add_functor(u);
-
-		connect(u.get(), &Functor::finished,
-				[qtask, qu, file]() {
-					if(qu) {
-						QJsonDocument jd = qu->result_as_json();
-						QJsonObject o = jd.object();
-
-						auto ho = o["hash"];
-						if( ho.isString() ) {
-							file->hash( ho.toString() );
-						}
-						qtask->syncing_progress_advance(1);
-					}
+			u->callback(
+				[task_id, file_name, file](NetworkCall &nc) {
+					nc.call(task_api_url() + "/file/" + task_id + "/input/" + file_name, QNetworkAccessManager::Operation::PostOperation, file->data());
 				});
+			f->add_functor(u);
+
+			connect(u.get(), &Functor::finished,
+					[qtask, qu, file]() {
+						if(qu) {
+							QJsonDocument jd = qu->result_as_json();
+							QJsonObject o = jd.object();
+
+							auto ho = o["hash"];
+							if( ho.isString() ) {
+								file->hash( ho.toString() );
+							}
+							qtask->syncing_progress_advance(1);
+						}
+					});
+		}
 	}
 
 	//connect(f.get(), &Functor::tick,  task_, &Task::syncing);
@@ -382,7 +384,7 @@ void TaskSyncer_TaskStrategy::task_files_upload()
 
 void TaskSyncer_TaskStrategy::task_queuing()
 {
-	task_->state_ = Task::State::_queued_;
+	task_->state_ = Task::State::queued;
 
 	QString task_id = task_->task_id();
 	auto f = std::make_shared<FunctorNetworkCall>("TaskQueueing for '" + task_->name() + "' task_id=" + task_id);
@@ -463,7 +465,7 @@ void TaskSyncer_TaskStrategy::subscribe()
 				payload = qCompress(payload).mid(4); // removing extra 32bit int (size of uncrompressed data from beginning of the data to make result compatible with raw zlib encoding
 
 				//nc.call(task_api_url() + "/task_diff/" + task_id, QNetworkAccessManager::Operation::PostOperation, payload, "application/json; charset=utf-8", { {"Content-Encoding", "deflate"} });
-				nc.call(task_api_url() + "/task_diff/" + task_id, QNetworkAccessManager::Operation::PostOperation, payload, "application/x-zlib-json");
+				nc.call(task_api_url() + "/task_diff/" + task_id + "/output", QNetworkAccessManager::Operation::PostOperation, payload, "application/x-zlib-json");
 			}
 		});
 
@@ -478,7 +480,7 @@ void TaskSyncer_TaskStrategy::subscribe()
 					QJsonArray deleted = files["deleted"].toArray();
 					for(int i=0; i < deleted.size(); ++i) {
 						QString file_name = deleted.at(i).toString();
-						if( qtask->delete_file(file_name) ) file_list_changed = true;
+						if( qtask->delete_file(File::Kind::output, file_name) ) file_list_changed = true;
 					}
 
 					QJsonObject updated = files["updated"].toObject();
@@ -523,7 +525,7 @@ void TaskSyncer_TaskStrategy::subscribe()
 						d->callback(
 							[task_id, file_name](NetworkCall &nc) {
 								nc.set_termination_codes( {404} );
-								nc.call(task_api_url() + "/file/" + task_id + "/" + file_name, QNetworkAccessManager::Operation::GetOperation);
+								nc.call(task_api_url() + "/file/" + task_id + "/output/" + file_name, QNetworkAccessManager::Operation::GetOperation);
 							});
 						file_downloader_functor_qp->add_functor(d);
 
@@ -540,7 +542,12 @@ void TaskSyncer_TaskStrategy::subscribe()
 
 											// should we re-calculate hash locally instead? //QByteArray hash = QCryptographicHash::hash(data, QCryptographicHash::Md5);
 
-											auto fl = std::make_shared<File>(data); fl->hash(file_hash);
+											auto fl = std::make_shared<File>();
+											fl->kind(File::Kind::output);
+											fl->name(file_name);
+											fl->data(data);
+											fl->hash(file_hash);
+
 											qtask->add_file(file_name, fl);
 
 											if(file_list_changed) { Q_EMIT qtask->file_list_changed(); }
@@ -566,7 +573,7 @@ void TaskSyncer_TaskStrategy::subscribe()
 					qtask->syncing_progress(0, 0);
 
 					qtask->task_data(diff->root);
-					if( qtask->state() == Task::State::_finished_) {
+					if( qtask->state() == Task::State::finished) {
 						// if(qsyncer) {
 						// 	qsyncer->timer_->stop();
 						// 	Q_EMIT qsyncer->update();
@@ -575,7 +582,7 @@ void TaskSyncer_TaskStrategy::subscribe()
 						Q_EMIT qtask->final();
 					}
 					else {
-						if( qtask->state() == Task::State::_running_) QTimer::singleShot(1000*60*1, qtask, &Task::subscribe );
+						if( qtask->state() == Task::State::running) QTimer::singleShot(1000*60*1, qtask, &Task::subscribe );
 						else  QTimer::singleShot(1000*60*1, qtask, &Task::subscribe );
 					}
 					//Q_EMIT qtask->syncing();
@@ -620,19 +627,19 @@ std::pair<int, int> TaskSyncer_TaskStrategy::syncing_progress() const
 
 void TaskSyncer_TaskStrategy::resume()
 {
-	if     ( task_->state() == Task::State::_none_ ) { // do nothing, Task was not yet submitted
+	if     ( task_->state() == Task::State::none ) { // do nothing, Task was not yet submitted
 	}
-	else if( task_->state() == Task::State::_draft_ ) {
+	else if( task_->state() == Task::State::draft ) {
 		if( task_->task_id().isEmpty() ) task_data_upload();
 		else task_files_upload();
 	}
-	else if( task_->state() == Task::State::_queued_ ) {
+	else if( task_->state() == Task::State::queued ) {
 		task_queuing(); // re-queueing in case state was changed only locally. The front-end handle will prevent Task from going back to `queue` state if it is already running
 	}
-	else if( task_->state() == Task::State::_running_ ) {
+	else if( task_->state() == Task::State::running ) {
 		subscribe();
 	}
-	else if( task_->state() == Task::State::_finished_ ) { // do nothing if Task could became finished only if it is already fully synced
+	else if( task_->state() == Task::State::finished ) { // do nothing if Task could became finished only if it is already fully synced
 	}
 }
 
@@ -741,7 +748,7 @@ void TaskUpdateFunctor::run()
 							[qtask, update_root]() {
 								if(qtask) {
 									qtask->task_data(update_root);
-									if( qtask->state() == Task::State::_finished_) {
+									if( qtask->state() == Task::State::finished) {
 										Q_EMIT qtask->final();
 									}
 									else QTimer::singleShot(1000*60, qtask, &Task::subscribe );

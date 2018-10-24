@@ -36,7 +36,7 @@ class Task : public QObject
 	Q_OBJECT
 
 public:
-	enum class State {_none_, _draft_, _queued_, _running_, _finished_, _unknown_};
+	enum class State {none, draft, queued, running, finished, canceled, unknown};
 
 	struct Job {
 		QString name, app, nstruct, flags;
@@ -87,7 +87,7 @@ public:
 	std::map<QString, FileSP> const & files() const { return files_; }
 
 	/// delete file from task, return true if file was in task files
-	bool delete_file(QString const &name);
+	bool delete_file(File::Kind kind, QString const &name);
 
 	// should not be needed, add/remove Tasks should be done on Project level
 	// void project(Project *p)  { project_ = p; }
@@ -182,9 +182,10 @@ private:
 
 	friend class TaskSyncer_NodeStrategy;
 	friend class TaskSyncer_TaskStrategy;
+	friend class TaskCancelDialog;
 	//friend class TaskUpdateFunctor;
 
-	State state_ = State::_none_;
+	State state_ = State::none;
 
 	QString queue_;
 

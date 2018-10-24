@@ -61,8 +61,8 @@
      <bool>false</bool>
     </property>
     <property name="placeholderText">
-      <string>-in:file:s input/input.pdb
--in:file:native input/native.pdb </string>
+      <string>-in:file:s input.pdb
+-in:file:native native.pdb </string>
     </property>
    </widget>
   </widget>

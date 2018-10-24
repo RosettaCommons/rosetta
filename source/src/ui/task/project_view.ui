@@ -57,6 +57,13 @@
        </widget>
       </item>
       <item>
+       <widget class="QPushButton" name="cancel_task">
+        <property name="text">
+         <string>cancel task</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="delete_task">
         <property name="text">
          <string>delete task</string>

@@ -38,6 +38,7 @@ SOURCES += \
     task/project_model.cpp \
     task/project_view.cpp \
     task/task.cpp \
+    task/task_cancel_dialog.cpp \
     task/task_syncer.cpp \
     task/task_submit.cpp \
     task/task_view.cpp \
@@ -71,11 +72,12 @@ HEADERS  += \
     task/project.fwd.h \
     task/project.h \
     task/project_model.h \
+    task/task.h \
+    task/task_cancel_dialog.h \
     task/task_syncer.h \
     task/task_submit.h \
     task/project_view.h \
     task/task.fwd.h \
-    task/task.h \
     task/util.h \
     task/task_view.h \
     ui_protocols/helical_bundle/HelicalBundleDialogueWidget.h \
@@ -99,6 +101,7 @@ FORMS    += \
     network/function_setup_dialog.ui \
     task/job_submit.ui \
     task/job_view.ui \
+    task/task_cancel_dialog.ui \
     task/task_submit.ui \
     task/project_view.ui \
     task/task_view.ui \

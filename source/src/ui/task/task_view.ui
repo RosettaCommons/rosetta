@@ -367,6 +367,19 @@
     <bool>false</bool>
    </property>
   </widget>
+  <widget class="QPushButton" name="cancel_task">
+   <property name="geometry">
+    <rect>
+     <x>1010</x>
+     <y>720</y>
+     <width>111</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>cancel task</string>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>

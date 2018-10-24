@@ -41,6 +41,7 @@ public  Q_SLOTS:
 private Q_SLOTS:
 	void on_new_task_clicked();
 	void on_clone_task_clicked();
+    void on_cancel_task_clicked();
     void on_delete_task_clicked();
 
     void on_action_new_project_triggered();
@@ -53,6 +54,7 @@ private Q_SLOTS:
     void on_tasks_doubleClicked(const QModelIndex &index);
 
 private:
+	std::vector<TaskSP> get_selection();
 
     Ui::ProjectView *ui;
 

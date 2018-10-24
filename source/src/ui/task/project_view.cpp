@@ -17,6 +17,8 @@
 #include <ui/task/task.h>
 #include <ui/task/task_view.h>
 #include <ui/task/task_submit.h>
+#include <ui/task/task_cancel_dialog.h>
+
 #include <ui/config/config_dialog.h>
 
 #include <QFileDialog>
@@ -110,52 +112,57 @@ void ProjectView::on_clone_task_clicked()
 	}
 }
 
-void ProjectView::on_delete_task_clicked()
+std::vector<TaskSP> ProjectView::get_selection()
 {
-    qDebug() << "ProjectView::on_delete_task_clicked()";
+	std::vector<TaskSP> r;
 
 	QItemSelectionModel *select = ui->tasks->selectionModel();
-
 	if( select->hasSelection() ) {
 		auto rows = select->selectedIndexes();
 
 		std::set<int> selection;
 		for(auto const & index : rows) selection.insert( index.row() );
 
-		std::vector<TaskSP> tasks_to_delete;
-		for(auto r : selection) {
-			qDebug() << "row:" << r;
-			tasks_to_delete.push_back( project_->task(r) );
-		}
-		for(auto const & t : tasks_to_delete) project_->erase(t);
+		for(auto row : selection) r.push_back( project_->task(row) );
 	}
 
+	return r;
+}
 
-	// if( auto * model = ui->project->model() ) {
-	// 	bool valid = false;
 
-    //     QModelIndex index = ui->project->currentIndex();
+void ProjectView::on_cancel_task_clicked()
+{
+    qDebug() << "ProjectView::on_cancel_task_clicked()";
 
-	// 	// check if selection is actually highlighted to avoid accidents
-	// 	QModelIndexList list = ui->project->selectionModel()->selectedIndexes();
-	// 	for(QModelIndex const &i : list) {
-	// 		//qDebug() << "row:" << i.row() << " column:" << i.column();
-	// 		if( index.row() == i.row() ) valid = true;
+	for(auto const & task : get_selection()) {
+		TaskCancelDialog tcd;
+		tcd.run(task);
+	}
+}
 
-	// 		//if( index.row() == i.row() and index.column() == i.column()  and  i.column() == 0 ) valid = true;
+
+void ProjectView::on_delete_task_clicked()
+{
+    qDebug() << "ProjectView::on_delete_task_clicked()";
+
+	auto tasks_to_delete = get_selection();
+	for(auto const & t : tasks_to_delete) project_->erase(t);
+
+
+	// QItemSelectionModel *select = ui->tasks->selectionModel();
+
+	// if( select->hasSelection() ) {
+	// 	auto rows = select->selectedIndexes();
+
+	// 	std::set<int> selection;
+	// 	for(auto const & index : rows) selection.insert( index.row() );
+
+	// 	std::vector<TaskSP> tasks_to_delete;
+	// 	for(auto r : selection) {
+	// 		qDebug() << "row:" << r;
+	// 		tasks_to_delete.push_back( project_->task(r) );
 	// 	}
-
-	// 	//qDebug() << "currentIndex: " << index;
-
-	// 	if( valid and index.isValid() ) {
-	// 		project_->erase(task);
-
-	// 		if( auto task = model->task(index) ) {
-	// 			project_->erase(task);
-	// 			project_model_->set(project_);
-	// 		}
-
-	// 	}
+	// 	for(auto const & t : tasks_to_delete) project_->erase(t);
 	// }
 }
 
@@ -222,7 +229,7 @@ void ProjectView::on_tasks_doubleClicked(const QModelIndex &index)
 		TaskSP task = project_->task( index.row() );
 
 		if(task) {
-			if( task->state() == Task::State::_none_ ) {
+			if( task->state() == Task::State::none ) {
 				auto ts = new TaskSubmit(task);
 				ts->show();
 			} else {

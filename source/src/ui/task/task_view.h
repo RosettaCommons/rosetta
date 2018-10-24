@@ -45,6 +45,9 @@ private Q_SLOTS:
     void on_output_clicked(const QModelIndex &index);
 	void on_output_doubleClicked(const QModelIndex &index);
 
+	void on_cancel_task_clicked();
+
+
 	void create_output_context_menu(const QPoint &pos);
 
 	void action_output_open();

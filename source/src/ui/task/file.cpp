@@ -16,7 +16,7 @@ namespace task {
 
 QWidget * create_viewer_for_file(QWidget *parent, FileSP const &f)
 {
-	QStringList list = f->file_name().split('.');
+	QStringList list = f->name().split('.');
 
 	if( not list.isEmpty() ) {
 		QString ext = list.last();
@@ -27,7 +27,7 @@ QWidget * create_viewer_for_file(QWidget *parent, FileSP const &f)
 			core::pose::PoseOP pose = std::make_shared<core::pose::Pose>();
 
 			qDebug() << "pose_from_pdbstring...";
-			core::import_pose::pose_from_pdbstring(*pose, std::string( f->data().constData(), f->data().length() ), f->file_name().toUtf8().constData() );
+			core::import_pose::pose_from_pdbstring(*pose, std::string( f->data().constData(), f->data().length() ), f->name().toUtf8().constData() );
 			qDebug() << "pose_from_pdbstring... OK";
 
 			pv->set_pose(pose);
@@ -64,45 +64,53 @@ Node::Key const _output_key_{"output"};
 
 Node::Key const _script_key_ {"script"};
 
-File::File()
-{
-	data( QByteArray() );
-}
+// File::File()
+// {
+// 	data( QByteArray() );
+// }
 
-File::File(QString const &file_name)
-{
-	init_from_file(file_name);
-}
+// File::File(QString const &file_name)
+// {
+// 	init_from_file(file_name);
+// }
 
-File::File(QByteArray const & file_data)
+// File::File(QByteArray const & file_data)
+// {
+// 	data(file_data);
+// }
+
+
+File::File(Kind kind, QString const & name, QByteArray const & file_data) : kind_(kind), name_(name)
 {
 	data(file_data);
 }
 
-
-File::File(QString const & file_name, QByteArray const & file_data) : file_name_(file_name)
+FileSP File::init_from_local_file(QString const & file_name)
 {
-	data(file_data);
+	auto fsp = std::make_shared<File>(Kind::input);
+
+	fsp->local_file_name_  = file_name;
+	fsp->name_ = QFileInfo( fsp->local_file_name_ ).fileName();
+
+	QFile file( fsp->local_file_name_ );
+    if( file.open(QIODevice::ReadOnly) ) {
+		fsp->data( file.readAll() );
+	}
+
+	return fsp;
 }
 
 
 File& File::operator=(File&& other) noexcept
 {
     if(this != &other) { // no-op on self-move-assignment
-		file_name_.swap(other.file_name_);
+		kind_ = other.kind_;
+		hash_.swap(other.hash_);
+		name_.swap(other.name_);
 		file_data_.swap(other.file_data_);
+		local_file_name_.swap(other.local_file_name_);
     }
     return *this;
-}
-
-
-void File::init_from_file(QString const & file_name)
-{
-	file_name_ = file_name;
-	QFile file(file_name_);
-    if( file.open(QIODevice::ReadOnly) ) {
-		data( file.readAll() );
-	}
 }
 
 QByteArray File::data() const
@@ -118,12 +126,29 @@ void File::data(QByteArray const &file_data)
 
 bool File::operator ==(File const &rhs) const
 {
-	return (file_name_ == rhs.file_name_) and (file_data_ == rhs.file_data_);
+	return (kind_ == rhs.kind_) and (name_ == rhs.name_) and (file_data_ == rhs.file_data_);
 }
+
+QDataStream &operator<<(QDataStream &out, File::Kind k)
+{
+	qint8 byte = static_cast<qint8>(k);
+	out << byte;
+	return out;
+}
+
+QDataStream &operator>>(QDataStream &in, File::Kind &k)
+{
+	qint8 byte;
+	in >> byte;
+	k = static_cast<File::Kind>(byte);
+	return in;
+}
+
 
 QDataStream &operator<<(QDataStream &out, File const&f)
 {
-	out << f.file_name_;
+	out << f.kind_;
+	out << f.name_;
 	out << f.hash_;
 	out << f.file_data_;
 	return out;
@@ -131,7 +156,8 @@ QDataStream &operator<<(QDataStream &out, File const&f)
 
 QDataStream &operator>>(QDataStream &in, File &f)
 {
-	in >> f.file_name_;
+	in >> f.kind_;
+	in >> f.name_;
 	in >> f.hash_;
 	in >> f.file_data_;
 	return in;
@@ -150,7 +176,7 @@ NodeTaskSyncer::NodeTaskSyncer(Task *task) : task_(task)
 void NodeTaskSyncer::submit(QString const & queue)
 {
 	queue_ = queue;
-	state_ = State::_draft_;
+	state_ = State::draft;
 
 	create_sync_tree();
 	qDebug() << "Task[" << task_id() << "]: Task::submit() Name:" << (project_ ? *project_->find(this) : "''") << " queue:" << queue_;
@@ -202,6 +228,7 @@ QVariant FileTableModel::headerData(int section, Qt::Orientation orientation, in
 			switch (section) {
 				case 0: return QString("name");
 				case 1: return QString("local path");
+				case 2: return QString("kind");
 			}
 		} else if (orientation == Qt::Vertical) {
 			return QString::number(section+1);
@@ -218,7 +245,7 @@ int FileTableModel::rowCount(const QModelIndex &/*parent*/) const
 
 int	FileTableModel::columnCount(const QModelIndex &/*parent*/) const
 {
-	return 2;
+	return 3;
 }
 
 Qt::ItemFlags FileTableModel::flags(const QModelIndex &index) const
@@ -242,6 +269,7 @@ QVariant FileTableModel::data(const QModelIndex &index, int role) const
 
 		if( index.column() == 0 ) return rows_[index.row()].name;
 		else if ( index.column() == 1 ) return rows_[index.row()].path;
+		else if ( index.column() == 2 ) return rows_[index.row()].kind;
 	}
 	return QVariant();
 }
@@ -265,7 +293,7 @@ void FileTableModel::update_from_task(Task const &task)
 {
 	beginResetModel();
 
-	editable_ = task.state() == Task::State::_none_;
+	editable_ = task.state() == Task::State::none;
 
 	QDir project_path;
 	if( auto project = task.project() ) project_path = QDir( QFileInfo( project->file_name() ).dir() );
@@ -274,7 +302,7 @@ void FileTableModel::update_from_task(Task const &task)
 
 	rows_.clear();
 	rows_.reserve( files.size() );
-	for(auto const & it : files) rows_.push_back( Row{it.first, project_path.relativeFilePath( it.second->file_name() ) } );
+	for(auto const & it : files) rows_.push_back( Row{it.first, project_path.relativeFilePath( it.second->name() ), it.second->kind() == File::Kind::input ? "input" : "output" } );
 
 	endResetModel();
 }

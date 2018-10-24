@@ -147,7 +147,7 @@ void FunctorTest::test_task_upload()
 	auto task = std::make_shared<Task>();
 
 	for(int i=0; i<4; i++) {
-		task->add_file( QString("file-%1").arg(i), std::make_shared<File>( QByteArray("abc") + QByteArray( std::to_string(i).c_str() ) ) );
+		task->add_file( QString("file-%1").arg(i), std::make_shared<File>(File::Kind::input, "abc file", QByteArray("abc") + QByteArray( std::to_string(i).c_str() ) ) );
 	}
 
 	for(auto const & it : task->files() ) {
@@ -172,10 +172,10 @@ void FunctorTest::test_task_upload()
 	}
 
 	// post new files
-	auto r = download_url( task_api_url() + "/file/" + task->task_id() + "/extra_file_1", QNetworkAccessManager::Operation::PostOperation, "qwerty", "application/octet-stream");
+	auto r = download_url( task_api_url() + "/file/" + task->task_id() + "/input/extra_file_1", QNetworkAccessManager::Operation::PostOperation, "qwerty", "application/octet-stream");
 	QCOMPARE( r.second, 200 );
 
-	r = download_url( task_api_url() + "/file/" + task->task_id() + "/extra_file_2", QNetworkAccessManager::Operation::PostOperation, "asdfgh", "application/octet-stream");
+	r = download_url( task_api_url() + "/file/" + task->task_id() + "/input/extra_file_2", QNetworkAccessManager::Operation::PostOperation, "asdfgh", "application/octet-stream");
 	QCOMPARE( r.second, 200 );
 
 	char const * task_json1 = "{\"state\":\"running\",\"app\":\"docking_protocol\",\"name\":\"\",\"queue\":\"test\",\"version\":\"\"}";

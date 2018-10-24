@@ -5,6 +5,7 @@
 #include <ui/task/job_view.h>
 #include <ui/task/task.h>
 #include <ui/task/file.h>
+#include <ui/task/task_cancel_dialog.h>
 
 #include <ui/config/util.h>
 #include <ui/config/config_dialog.h>
@@ -276,7 +277,7 @@ void TaskView::action_output_save_as()
 					QString file_name;
 
 					if( indexes.size() > 1 ) {
-						QFileInfo fi( it->second->file_name() );
+						QFileInfo fi( it->second->name() );
 						file_name = dir + '/' + fi.fileName();
 					}
 					else {
@@ -428,6 +429,14 @@ void TaskView::preview_file(std::pair<QString const, FileSP> const & name_and_fi
 	}
 }
 
+
+void TaskView::on_cancel_task_clicked()
+{
+	TaskCancelDialog tcd;
+	tcd.run(task_);
+}
+
+
 void open_file_viewer(std::pair<QString const, FileSP> const & name_and_file, TaskSP const &task, QWidget *parent)
 {
 	QFileInfo fi( name_and_file.first );
@@ -493,7 +502,6 @@ void open_file_viewer(std::pair<QString const, FileSP> const & name_and_file, Ta
 		// sfv->show();
 	}
 }
-
 
 
 } // namespace task

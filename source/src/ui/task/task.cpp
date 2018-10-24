@@ -31,12 +31,13 @@ namespace ui {
 namespace task {
 
 static std::map<QString, Task::State> const _String_to_Task_State_ = {
-	{"none",     Task::State::_none_},
-	{"draft",    Task::State::_draft_},
-	{"queued",   Task::State::_queued_},
-	{"running",  Task::State::_running_},
-	{"finished", Task::State::_finished_},
-	{"unknown",  Task::State::_unknown_},
+	{"none",     Task::State::none},
+	{"draft",    Task::State::draft},
+	{"queued",   Task::State::queued},
+	{"running",  Task::State::running},
+	{"finished", Task::State::finished},
+	{"canceled", Task::State::canceled},
+	{"unknown",  Task::State::unknown},
 };
 
 QString Task::to_string(Task::State state)
@@ -52,7 +53,7 @@ Task::State Task::from_string(QString const &s)
 {
 	auto it = _String_to_Task_State_.find(s);
 	if( it != _String_to_Task_State_.end() ) return it->second;
-	return Task::State::_unknown_;
+	return Task::State::unknown;
 	//return _String_to_Task_State_.at(s);
 }
 
@@ -87,12 +88,15 @@ TaskSP Task::clone() const
 
 	for(auto const & j : jobs_) task->jobs_.push_back( std::make_shared<Job>(*j) );
 
-	QString const input_prefix = "input/";
+	// QString const input_prefix = "input/";
+	// for(auto const & f : files_) {
+	// 	auto get_data = [&]() { return std::make_shared<File>( f.second->kind(), f.second->file_name(), f.second->data() ); };
+	// 	if( state_ == State::_none_ ) task->add_file(f.first, get_data() );
+	// 	else if( f.first.startsWith(input_prefix) ) task->add_file( f.first.mid( input_prefix.size() ), get_data() );
+	// }
 
 	for(auto const & f : files_) {
-		auto get_data = [&]() { return std::make_shared<File>( f.second->file_name(), f.second->data() ); };
-		if( state_ == State::_none_ ) task->add_file(f.first, get_data() );
-		else if( f.first.startsWith(input_prefix) ) task->add_file( f.first.mid( input_prefix.size() ), get_data() );
+		if( f.second->kind() == File::Kind::input ) task->add_file(f.first, std::make_shared<File>( f.second->kind(), f.second->name(), f.second->data() ) );
 	}
 
 	return task;
@@ -157,11 +161,13 @@ void Task::add_file(QString const &name, FileSP const &file)
 }
 
 /// delete file from task, return true if file was in task files
-bool Task::delete_file(QString const &name)
+bool Task::delete_file(File::Kind kind, QString const &name)
 {
 	auto it = files_.find(name);
 
 	if( it == files_.end() ) return false;
+
+	if( it->second->kind() != kind ) return false;
 
 	files_.erase(it);
 	files_model_.update_from_task(*this);
@@ -321,7 +327,7 @@ void Task::task_data(QJsonValue const &jv)
 	if( st.isString() ) {
 		State state = from_string( st.toString() );
 
-		if( state != State::_unknown_  and  state != state_) {
+		if( state != State::unknown  and  state != state_) {
 			state_ = state;
 			state_changed = changed = true;
 		}
@@ -455,7 +461,7 @@ QDataStream &operator>>(QDataStream &in, Task::Job &j)
 	return in;
 }
 
-quint32 const _Task_stream_version_ = 0x00000001;
+quint32 const _Task_stream_version_ = 0x00000002;
 
 QDataStream &operator<<(QDataStream &out, Task const&t)
 {
@@ -494,7 +500,7 @@ QDataStream &operator>>(QDataStream &in, Task &t)
 
 	quint32 version;
 	in >> version;
-	if( version != _Task_stream_version_ ) throw ui::util::BadFileFormatException( QString("Invalid _Task_stream_version_: read %1, was expecting %2...").arg(magic).arg(_Task_stream_version_) );
+	if( version != _Task_stream_version_ ) throw ui::util::BadFileFormatException( QString("Invalid _Task_stream_version_: %1, was expecting %2...").arg(version).arg(_Task_stream_version_) );
 
 	qint32 state;
 	in >> state;
