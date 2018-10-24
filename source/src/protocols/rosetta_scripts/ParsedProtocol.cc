@@ -447,7 +447,13 @@ ParsedProtocol::get_additional_output( )
 		for ( rmover_it=movers_.rbegin() ; rmover_it != movers_crend; ++rmover_it ) {
 			protocols::moves::MoverOP mover = (*rmover_it).first.first;
 			if ( mover && mover->get_name() != "NullMover" ) {
-				return mover->get_additional_output();
+				core::pose::PoseOP additional_pose = mover->get_additional_output();
+
+				if ( additional_pose ) {
+					final_score(*additional_pose);
+				}
+
+				return additional_pose;
 			}
 		}
 		return nullptr;
@@ -494,6 +500,9 @@ ParsedProtocol::get_additional_output( )
 
 	// report filter values to tracer output
 	report_all( *pose );
+
+	final_score( *pose );
+
 
 	return pose;
 }
