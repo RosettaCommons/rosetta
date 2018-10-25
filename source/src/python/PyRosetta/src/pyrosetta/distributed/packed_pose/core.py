@@ -1,6 +1,7 @@
 import sys
 
 if sys.version_info.major >= 3:
+    import functools
     from functools import singledispatch
     import collections.abc
 else:
@@ -142,7 +143,7 @@ def register_builtin_container_traversal(generic_func, dict_func):
     @generic_func.register(set)
     def container_traveral(container):
         return container.__class__(map(generic_func, container))
-        
+
     if sys.version_info.major >= 3:
         @generic_func.register(collections.abc.Generator)
         def generator_traversal(generator):

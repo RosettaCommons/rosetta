@@ -9,16 +9,19 @@ from .core import (
     PackedPose,
 )
 
-register_builtin_container_traversal(to_pose, dict_to_pose)
-register_builtin_container_traversal(to_packed, dict_to_packed)
-register_builtin_container_traversal(to_dict, dict)
-
 try:
     from .pandas import register_pandas_container_traversal
 
-    register_pandas_container_traversal(to_pose, dict_to_pose)
-    register_pandas_container_traversal(to_packed, dict_to_packed)
-    register_pandas_container_traversal(to_dict, dict)
-
 except ImportError:
-    pass
+    register_pandas_container_traversal = None
+
+
+def register_container_traversal(generic_func, dict_func):
+    register_builtin_container_traversal(generic_func, dict_func)
+    if register_pandas_container_traversal:
+        register_pandas_container_traversal(generic_func, dict_func)
+
+
+register_container_traversal(to_pose, dict_to_pose)
+register_container_traversal(to_packed, dict_to_packed)
+register_container_traversal(to_dict, dict)

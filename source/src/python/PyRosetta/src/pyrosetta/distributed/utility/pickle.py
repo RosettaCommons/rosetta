@@ -1,3 +1,5 @@
+import warnings
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -33,16 +35,25 @@ def __cereal_getstate__(self):
     if not cereal:
         raise NotImplementedError(
             "__cereal_getstate__ requires pyrosetta '--serialization' build.")
-    if not blosc:
-        raise NotImplementedError(
-            "__cereal_getstate__ requires 'blosc' installation.")
 
     oss = rosetta.std.ostringstream()
     self.save(cereal.BinaryOutputArchive(oss))
-    return {
-        "blosc_cereal_binary_archive": blosc.compress(oss.bytes()),
+
+    result = {
         "cereal_archive_version": utility.Version.version()
     }
+
+    if blosc:
+        result["blosc_cereal_binary_archive"] = blosc.compress(oss.bytes())
+    else:
+        warnings.warn(
+            "__cereal_getstate__ without 'blosc' installation. "
+            "Archive size will be prohibitively large. "
+            "Install (pip) `blosc` and/or (conda) `python-blosc`."
+        )
+        result["cereal_binary_archive"] = oss.bytes()
+
+    return result
 
 @with_lock
 def __cereal_setstate__(self, state):
