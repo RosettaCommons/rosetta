@@ -76,7 +76,6 @@ sources = {
 		#"cov_peptidomimetic_creator",
 		#"cov_test",
 		#"diversify_conotoxin",
-		"erraser2",
 		#"get_dihedral_b3aa",
 		"hal_rna_denovo",
 		#"indel",

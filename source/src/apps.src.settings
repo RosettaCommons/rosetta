@@ -171,6 +171,7 @@ sources = {
 	],
 	"public/rna/erraser": [
 		"erraser_minimizer",
+		"erraser2",
 	],
 	"public/rna/thread": [
 		"rna_thread",

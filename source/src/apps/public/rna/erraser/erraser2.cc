@@ -7,10 +7,22 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file apps/pilot/awatkins/erraser2.cc
+/// @file apps/public/rna/erraser/erraser2.cc
 /// @brief a single erraser app. no python!
 /// @author Andy Watkins, amw579@stanford.edu
 
+// A good invocation:
+//
+// erraser2 -s my_pdb.pdb -edensity:mapfile map.ccp4 -edensity::mapreso 3.6 -score:weights stepwise/rna/rna_res_level_energy7beta.wts -set_weights elec_dens_fast 10.0 cart_bonded 5.0 linear_chainbreak 10.0 chainbreak 10.0 fa_rep 1.5 fa_intra_rep 0.5 rna_torsion 10 suiteness_bonus 5 rna_sugar_close 10 -rmsd_screen 3.0 -mute core.scoring.CartesianBondedEnergy core.scoring.electron_density.xray_scattering -fasta fasta_of_pdb.fasta
+//
+// Obtain the above fasta by running
+//
+// pdb2fasta.py my_pdb.pdb
+//
+// using the pdb2fasta.py script found in tools/rna_tools/bin
+//
+// You may need to edit the above fasta file if your PDB contains any non-RNA, non-protein residues
+//
 
 // protocols
 #include <protocols/viewer/viewers.hh>

@@ -990,27 +990,27 @@ ErraserMinimizerMover::apply(
 
 		// Start Minimizing the Full Structure
 		Pose const start_pose = pose;
-		AtomTreeMinimizer minimizer;
-		float const dummy_tol( 0.0001 );
-		Size const min_iter = std::min( 5000, std::max( 2000, int( nres_moving * 24 ) ) );
+		if ( !vary_bond_geometry_ ) {
+			AtomTreeMinimizer minimizer;
+			float const dummy_tol( 0.0001 );
+			Size const min_iter = std::min( 5000, std::max( 2000, int( nres_moving * 24 ) ) );
 
-		TR << "Minimize using dfpmin with use_nb_list=true .." << std::endl;
-		MinimizerOptions min_options_dfpmin( "lbfgs_armijo_nonmonotone" /*option[ run::min_type ]*/, dummy_tol, true, false, false );
-		min_options_dfpmin.max_iter( min_iter );
-		min_options_dfpmin.nblist_auto_update( true ); // added by rhiju, 2018
-		minimizer.run( pose, chunk_mm, *scorefxn_, min_options_dfpmin );
+			TR << "Minimize using dfpmin with use_nb_list=true .." << std::endl;
+			MinimizerOptions min_options_dfpmin( "lbfgs_armijo_nonmonotone" /*option[ run::min_type ]*/, dummy_tol, true, false, false );
+			min_options_dfpmin.max_iter( min_iter );
+			min_options_dfpmin.nblist_auto_update( true ); // added by rhiju, 2018
+			minimizer.run( pose, chunk_mm, *scorefxn_, min_options_dfpmin );
 
-		scorefxn_->show( TR, pose );
-		Real const score = ( ( *scorefxn_ )( pose ) );
-		Real const edens_score = ( ( *edens_scorefxn_ )( pose ) );
-		TR << "current_score = " << score << ", start_score = " << score_before << std::endl;
-		TR << "current_edens_score = " << edens_score << ", start_edens_score = " << edens_score_before << std::endl;
-		if ( score > score_before + 10 || edens_score > edens_score_before + 10 ) {
-			TR.Warning << "Minimization went wild! Restoring start pose." << std::endl;
-			pose = start_pose;
-		}
-
-		if ( vary_bond_geometry_ ) {
+			scorefxn_->show( TR, pose );
+			Real const score = ( ( *scorefxn_ )( pose ) );
+			Real const edens_score = ( ( *edens_scorefxn_ )( pose ) );
+			TR << "current_score = " << score << ", start_score = " << score_before << std::endl;
+			TR << "current_edens_score = " << edens_score << ", start_edens_score = " << edens_score_before << std::endl;
+			if ( score > score_before + 10 || edens_score > edens_score_before + 10 ) {
+				TR.Warning << "Minimization went wild! Restoring start pose." << std::endl;
+				pose = start_pose;
+			}
+		} else {
 			Pose const start_pose = pose;
 			CartesianMinimizer cart_minimizer;
 			float const cart_dummy_tol( 0.0001 );
