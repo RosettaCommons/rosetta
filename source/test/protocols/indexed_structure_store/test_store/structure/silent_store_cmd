@@ -1,0 +1,1 @@
+score -in:file:s pdb_dir/*.pdb -out:output -out:file:silent silent_store.silent -out:file:silent_struct_type binary 

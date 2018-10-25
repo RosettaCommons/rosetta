@@ -1,0 +1,57 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington CoMotion, email: license@uw.edu.
+
+/// @file ./src/protocols/indexed_structure_store/DirectSegmentLookup.hh
+/// @brief Support class for direct rmsd-based segment lookup.
+/// @details
+/// @author Alex Ford (fordas@uw.edu)
+
+#pragma once
+
+#include <ndarray.h>
+#include <core/pose/Pose.fwd.hh>
+#include <protocols/indexed_structure_store/StructureStore.fwd.hh>
+#include <protocols/indexed_structure_store/search/QueryDatabase.hh>
+
+namespace protocols { namespace indexed_structure_store {
+
+
+using namespace protocols::indexed_structure_store;
+using namespace protocols::indexed_structure_store::search;
+
+struct DirectSegmentLookupConfig {
+	Real rmsd_tolerance;
+	Real segment_cluster_tolerance;
+	Index max_insertion_length;
+};
+
+struct DirectSegmentLookupResult {
+	std::vector<ResidueEntry> result_residues;
+	std::vector<StructurePairQueryResult> query_results;
+};
+
+class DirectSegmentLookup {
+public:
+
+	typedef DirectSegmentLookupConfig Config;
+
+	DirectSegmentLookup(Config config) : config(config) { }
+
+	std::vector<DirectSegmentLookupResult> segment_lookup(
+		ndarray::Array<ResidueEntry, 1> source_residues,
+		StructureDatabase & structure_db,
+		core::pose::Pose & context,
+		platform::Size n_start_res, platform::Size n_end_res,
+		platform::Size c_start_res, platform::Size c_end_res
+	);
+
+	PairQuerySummaryStatistics query_stats;
+	DirectSegmentLookupConfig config;
+};
+} }

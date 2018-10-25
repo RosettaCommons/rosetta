@@ -22,6 +22,8 @@
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
 
+#include <core/pose/Pose.hh>
+
 #ifdef    SERIALIZATION
 // Utility serialization headers
 #include <utility/serialization/serialization.hh>
@@ -36,6 +38,22 @@ namespace select {
 namespace residue_selector {
 
 static basic::Tracer TR( "core.select.residue_selector.CachedResidueSubset" );
+
+CachedResidueSubset & CachedResidueSubset::from_pose_datacache(core::pose::Pose & pose) {
+
+	using namespace core::pose::datacache;
+
+	// If the pose doesn't have cached subset data, add blank data
+	if ( !pose.data().has( CacheableDataType::STORED_RESIDUE_SUBSET ) ) {
+		CachedResidueSubsetOP blank_stored_subsets( new CachedResidueSubset );
+		pose.data().set( CacheableDataType::STORED_RESIDUE_SUBSET, blank_stored_subsets );
+	}
+
+	// Grab a reference to the data
+	debug_assert( utility::pointer::dynamic_pointer_cast< CachedResidueSubset >( pose.data().get_ptr( CacheableDataType::STORED_RESIDUE_SUBSET ) ) );
+	return
+		*( utility::pointer::static_pointer_cast< CachedResidueSubset >( pose.data().get_ptr( CacheableDataType::STORED_RESIDUE_SUBSET ) ) );
+}
 
 // @brief default constructor
 CachedResidueSubset::CachedResidueSubset():

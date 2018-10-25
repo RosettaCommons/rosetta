@@ -10,14 +10,6 @@
 ########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
 
 sources = {
-	"core/indexed_structure_store": [
-		"FragmentStore",
-		"FragmentLookup",
-		"H5FragmentStoreBackend",
-		"BinaryFragmentStoreBackend",
-		"SSHashedFragmentStore",
-		"StructureStoreManager",
-	],
 	"core/io": [
 		"alt_codes_io",
 		"CrystInfo",

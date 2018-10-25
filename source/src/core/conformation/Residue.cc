@@ -746,6 +746,24 @@ void Residue::orient_onto_residue(
 	Size center, Size nbr1, Size nbr2,
 	Size src_center, Size src_nbr1, Size src_nbr2)
 {
+	orient_onto_location(
+		center, nbr1, nbr2,
+		src.atom( src_center ).xyz(), src.atom( src_nbr1 ).xyz(), src.atom( src_nbr2 ).xyz());
+}
+
+void Residue::orient_onto_location(
+	Vector src_center, Vector src_nbr1, Vector src_nbr2)
+{
+	Size center, nbr1, nbr2;
+	select_orient_atoms(center, nbr1, nbr2);
+
+	orient_onto_location(center, nbr1, nbr2, src_center, src_nbr1, src_nbr2);
+}
+
+void Residue::orient_onto_location(
+	Size center, Size nbr1, Size nbr2,
+	Vector src_center, Vector src_nbr1, Vector src_nbr2)
+{
 	using kinematics::Stub;
 
 	//NOTE: the implementation of this function might change in the future
@@ -754,16 +772,16 @@ void Residue::orient_onto_residue(
 
 	// explanation for taking the midpoint...?
 	Vector const
-		rot_midpoint ( 0.5 * (     atom(     nbr1 ).xyz() +     atom(     nbr2 ).xyz() ) ),
-		src_midpoint ( 0.5 * ( src.atom( src_nbr1 ).xyz() + src.atom( src_nbr2 ).xyz() ) );
+		rot_midpoint ( 0.5 * ( atom( nbr1 ).xyz() + atom( nbr2 ).xyz() ) ),
+		src_midpoint ( 0.5 * (   src_nbr1         +   src_nbr2 ) ) ;
 
 	Stub rot_stub( atom( center ).xyz(),
 		rot_midpoint,
 		atom( nbr1 ).xyz() );
 
-	Stub src_stub( src.atom( src_center ).xyz(),
+	Stub src_stub( src_center,
 		src_midpoint,
-		src.atom( src_nbr1 ).xyz() );
+		src_nbr1 );
 
 	// this could be made faster by getting the composite rotation and translation
 

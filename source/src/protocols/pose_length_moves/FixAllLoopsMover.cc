@@ -25,8 +25,8 @@
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/Loop.hh>
 
-#include <core/indexed_structure_store/SSHashedFragmentStore.hh>
-#include <core/indexed_structure_store/FragmentStore.hh>
+#include <protocols/indexed_structure_store/SSHashedFragmentStore.hh>
+#include <protocols/indexed_structure_store/FragmentStore.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
@@ -220,7 +220,7 @@ FixAllLoopsMover::parse_my_tag(
 		firstResidue_ = atoi(residueRange_split[1].c_str());
 		lastResidue_ = atoi(residueRange_split[2].c_str());
 	}
-	SSHashedFragmentStore_ = core::indexed_structure_store::SSHashedFragmentStore::get_instance();
+	SSHashedFragmentStore_ = protocols::indexed_structure_store::SSHashedFragmentStore::get_instance();
 	SSHashedFragmentStore_->set_threshold_distance(rmsThreshold_);
 	SSHashedFragmentStore_->init_SS_stub_HashedFragmentStore();
 	TR << "database loaded!!" << std::endl;

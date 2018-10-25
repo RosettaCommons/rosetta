@@ -17,8 +17,11 @@
 #include <core/select/residue_selector/CachedResidueSubset.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <basic/datacache/CacheableData.hh>
+
 #include <map>
 #include <vector>
+
+#include <core/pose/Pose.fwd.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers
@@ -34,6 +37,9 @@ public:
 	typedef std::vector< bool > BoolVector;
 	typedef utility::pointer::shared_ptr< BoolVector > BoolVectorOP;
 	typedef std::map< std::string, BoolVectorOP > ResidueSubsetMap;
+
+public:
+	static CachedResidueSubset & from_pose_datacache(core::pose::Pose & pose);
 
 public:
 	// constructors

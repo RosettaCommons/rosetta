@@ -34,8 +34,8 @@
 #include <core/id/TorsionID.hh>
 #include <core/id/types.hh>
 
-#include <core/indexed_structure_store/SSHashedFragmentStore.hh>
-#include <core/indexed_structure_store/FragmentStore.hh>
+#include <protocols/indexed_structure_store/SSHashedFragmentStore.hh>
+#include <protocols/indexed_structure_store/FragmentStore.hh>
 
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -92,11 +92,13 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <numeric/conversions.hh>
-#include <numeric/alignment/QCP_Kernel.hh>
+#include <numeric/alignment/QCPKernel.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzTransform.hh>
 #include <numeric/xyz.functions.hh>
+
+#include <Eigen/Core>
 
 #include <vector>
 #include <iostream>
@@ -219,7 +221,7 @@ void PossibleLoop::evaluate_distance_closure(){
 
 
 void PossibleLoop::generate_stub_rmsd(){
-	SSHashedFragmentStore_ = core::indexed_structure_store::SSHashedFragmentStore::get_instance();
+	SSHashedFragmentStore_ = protocols::indexed_structure_store::SSHashedFragmentStore::get_instance();
 	Size tmpResidueBeforeLoop = resBeforeLoop_+resAdjustmentBeforeLoop_;
 	Size tmpResidueAfterLoop = resBeforeLoop_+insertedBeforeLoopRes_+insertedAfterLoopRes_-resAdjustmentAfterLoop_+1;
 	std::vector< numeric::xyzVector<numeric::Real> > coordinates;
@@ -241,7 +243,7 @@ void PossibleLoop::generate_stub_rmsd(){
 
 
 void PossibleLoop::generate_uncached_stub_rmsd(){
-	SSHashedFragmentStore_ = core::indexed_structure_store::SSHashedFragmentStore::get_instance();
+	SSHashedFragmentStore_ = protocols::indexed_structure_store::SSHashedFragmentStore::get_instance();
 	uncached_stub_rmsd_= 9999;
 	uncached_stub_index_= 9999;
 	Size tmpResidueBeforeLoop = resBeforeLoop_+resAdjustmentBeforeLoop_;
@@ -312,7 +314,7 @@ void PossibleLoop::generate_output_pose(bool output_closed,bool ideal_loop, Real
 	if ( !output_closed ) {
 		finalPoseOP_=working_poseOP;
 	} else {
-		SSHashedFragmentStore_ = core::indexed_structure_store::SSHashedFragmentStore::get_instance();
+		SSHashedFragmentStore_ = protocols::indexed_structure_store::SSHashedFragmentStore::get_instance();
 		Size fragment_length = SSHashedFragmentStore_->get_fragment_length();
 		if ( closure_type == "kic" ) {
 			core::scoring::ScoreFunctionOP scorefxn_tmp( core::scoring::ScoreFunctionFactory::create_score_function("score3"));
@@ -478,35 +480,29 @@ void PossibleLoop::add_coordinate_csts_from_lookback(Size stub_ss_index_match, S
 	using namespace core::scoring::constraints;
 	using namespace chemical;
 	using namespace protocols::generalized_kinematic_closure;
-	using Matrix = numeric::xyzMatrix<Real>;
+
+	typedef numeric::alignment::QCPKernel< numeric::Real > QCPKernel;
+
 	std::vector< numeric::xyzVector<numeric::Real> > fragCoordinates = SSHashedFragmentStore_->get_fragment_coordinates(stub_ss_index_match,fragment_index);
 	std::vector< numeric::xyzVector<numeric::Real> > fragCoordinates_rot;
+
 	if ( !match_stub_alone ) {
 		//full length fragment
-		numeric::alignment::QCP_Kernel<core::Real>::remove_center_of_mass( &fragCoordinates.front().x() , fragCoordinates.size());
 		std::vector< numeric::xyzVector<numeric::Real> > coordinates;
-		std::vector< numeric::xyzVector<numeric::Real> > coordinates_removed_com;
 		for ( Size ii = 0;  ii < 9; ++ii ) {
 			coordinates.push_back(poseOP->residue(pose_residue+ii).xyz("CA"));
-			coordinates_removed_com.push_back(poseOP->residue(pose_residue+ii).xyz("CA"));
 		}
-		numeric::alignment::QCP_Kernel<core::Real>::remove_center_of_mass( &coordinates_removed_com.front().x() , coordinates_removed_com.size());
-		vector1<Real> rot_vector;
-		for ( Size ii = 0;  ii < 9; ++ii ) {
-			rot_vector.push_back(0);
-		}
-		numeric::alignment::QCP_Kernel<core::Real> qcp;
-		Real rmsd = qcp.calc_centered_coordinate_rmsd( &coordinates_removed_com.front().x(), &fragCoordinates.front().x(), fragCoordinates.size(), &rot_vector[1]);
+
+		Eigen::Transform<numeric::Real, 3, Eigen::Affine> superposition_transform;
+
+		QCPKernel::CoordMap frag_cmap(&fragCoordinates.front().x(), 3, fragCoordinates.size());
+		QCPKernel::CoordMap frag_rot_cmap(&fragCoordinates_rot.front().x(), 3, fragCoordinates_rot.size());
+		QCPKernel::CoordMap coor_cmap(&coordinates.front().x(), 3, coordinates.size());
+
+		Real rmsd = QCPKernel::calc_coordinate_superposition(frag_cmap, coor_cmap, superposition_transform);
 		TR.Debug << "full fragment rmsd" << rmsd << std::endl;
-		Matrix rot_matrix = numeric::xyzMatrix<Real>::rows(rot_vector[1],rot_vector[2],rot_vector[3],rot_vector[4],rot_vector[5],rot_vector[6],rot_vector[7],rot_vector[8],rot_vector[9]);
-		for ( Size ii = 0;  ii < 9; ++ii ) {
-			//fragCoordinates_rot.push_back(rot_matrix.transpose()*fragCoordinates[ii]);
-			fragCoordinates_rot.push_back(numeric::product(rot_matrix,fragCoordinates[ii]));
-			fragCoordinates_rot[ii].x()=coordinates[ii].x()-coordinates_removed_com[ii].x()+fragCoordinates_rot[ii].x();
-			fragCoordinates_rot[ii].y()=coordinates[ii].y()-coordinates_removed_com[ii].y()+fragCoordinates_rot[ii].y();
-			fragCoordinates_rot[ii].z()=coordinates[ii].z()-coordinates_removed_com[ii].z()+fragCoordinates_rot[ii].z();
-		}
-		qcp.calc_centered_coordinate_rmsd( &coordinates.front().x(), &fragCoordinates_rot.front().x(), fragCoordinates_rot.size(), &rot_vector[1]);
+
+		frag_rot_cmap = superposition_transform * frag_cmap;
 	} else { //------Prepare stub match-----------------------------------------------------
 		//1. Get coordinates coordintes
 		// coordinates
@@ -523,75 +519,36 @@ void PossibleLoop::add_coordinate_csts_from_lookback(Size stub_ss_index_match, S
 		std::vector< numeric::xyzVector<numeric::Real> > coordinates;
 		std::vector< numeric::xyzVector<numeric::Real> > coordinates_stub;
 		std::vector< numeric::xyzVector<numeric::Real> > fragCoordinates_stub;
-		std::vector< numeric::xyzVector<numeric::Real> > coordinates_removed_com_stub;
-		std::vector< numeric::xyzVector<numeric::Real> > fragCoordinates_removed_com_stub;
+		Size res_ct = 0;
+
 		for ( Size ii = 0;  ii < 9; ++ii ) {
 			coordinates.push_back(poseOP->residue(pose_residue+ii).xyz("CA"));
-		}
-		Size res_ct = 0;
-		for ( Size ii = 0;  ii < 9; ++ii ) {
-			//if((ii<=1 || ii>1+loopLength_)&&(res_ct<4)){
+
 			if ( ii<=1 || ii>1+loopLength_ ) {
 				res_ct++;
 				coordinates_stub.push_back(poseOP->residue(pose_residue+ii).xyz("CA"));
-				coordinates_removed_com_stub.push_back(poseOP->residue(pose_residue+ii).xyz("CA"));
-				fragCoordinates_removed_com_stub.push_back(fragCoordinates[ii]);
 				fragCoordinates_stub.push_back(fragCoordinates[ii]);
 			}
 		}
-		//2.Remove COM from coordinates_removed_com_stub,coordinates_removed_com_stub
-		numeric::alignment::QCP_Kernel<core::Real>::remove_center_of_mass( &coordinates_removed_com_stub.front().x() , coordinates_removed_com_stub.size());
-		numeric::alignment::QCP_Kernel<core::Real>::remove_center_of_mass( &fragCoordinates_removed_com_stub.front().x() , fragCoordinates_removed_com_stub.size());
-		//3. Generate rotMatrix between coordinates_removed_com_stub, coordinates_removed_com_stub
-		vector1<Real> rot_vector;
-		for ( Size ii = 0;  ii < 9; ++ii ) {
-			rot_vector.push_back(0);
-		}
-		numeric::alignment::QCP_Kernel<core::Real> qcp;
-		Real starting_rmsd = qcp.calc_centered_coordinate_rmsd( &coordinates_removed_com_stub.front().x(), &fragCoordinates_removed_com_stub.front().x(), fragCoordinates_removed_com_stub.size(), &rot_vector[1]);
+
+		Eigen::Transform<numeric::Real, 3, Eigen::Affine> superposition_transform;
+		Real starting_rmsd = QCPKernel::calc_coordinate_superposition(
+			QCPKernel::CoordMap(&fragCoordinates_stub.front().x(), 3, res_ct),
+			QCPKernel::CoordMap(&coordinates_stub.front().x(), 3, res_ct),
+			superposition_transform
+		);
 		TR.Debug << "stub fragment rmsd" << starting_rmsd << std::endl;
-		//the rotation matrix in the order of xx, xy, xz, yx, yy, yz, zx, zy, zz
-		Matrix rot_matrix = numeric::xyzMatrix<Real>::rows(rot_vector[1],rot_vector[2],rot_vector[3],rot_vector[4],rot_vector[5],rot_vector[6],rot_vector[7],rot_vector[8],rot_vector[9]);
-		//4. Generate centers of mass for coordinates_stub call this coordinates_stub_com
-		vector<Real> coordinates_stub_com = get_center_of_mass(&coordinates_stub.front().x(),res_ct);
-		vector<Real> fragCoordinates_stub_com = get_center_of_mass(&fragCoordinates_stub.front().x(),res_ct);
 
-		//5. Generate removed_com_vectors using the cooridinates_stub_com called coordinates_removed_stub_com
-		std::vector< numeric::xyzVector<numeric::Real> > coordinates_removed_stub_com;
-		for ( auto & coordinate : coordinates ) {
-			numeric::xyzVector<numeric::Real> tmp_coord;
-			tmp_coord.x()=coordinate.x()-coordinates_stub_com[0];
-			tmp_coord.y()=coordinate.y()-coordinates_stub_com[1];
-			tmp_coord.z()=coordinate.z()-coordinates_stub_com[2];
-			coordinates_removed_stub_com.push_back(tmp_coord);
-			//coordinates_removed_stub_com[ii].x()=coordinates[ii].x()-coordinates_stub_com[0];
-			//coordinates_removed_stub_com[ii].y()=coordinates[ii].y()-coordinates_stub_com[1];
-			//coordinates_removed_stub_com[ii].z()=coordinates[ii].z()-coordinates_stub_com[2];
-		}
-		std::vector< numeric::xyzVector<numeric::Real> > fragCoordinates_removed_stub_com;
-		for ( auto & fragCoordinate : fragCoordinates ) {
-			numeric::xyzVector<numeric::Real> tmp_coord;
-			tmp_coord.x() = fragCoordinate.x()-fragCoordinates_stub_com[0];
-			tmp_coord.y() = fragCoordinate.y()-fragCoordinates_stub_com[1];
-			tmp_coord.z() = fragCoordinate.z()-fragCoordinates_stub_com[2];
-			fragCoordinates_removed_stub_com.push_back(tmp_coord);
-			//fragCoordinates_removed_stub_com[ii].x()=fragCoordinates[ii].x()-fragCoordinates_stub_com[0];
-			//fragCoordinates_removed_stub_com[ii].y()=fragCoordinates[ii].y()-fragCoordinates_stub_com[1];
-			//fragCoordinates_removed_stub_com[ii].z()=fragCoordinates[ii].z()-fragCoordinates_stub_com[2];
-		}
-		//6. apply rotMatrix to fragCoordinates store in fragCoordinates_rot
+		QCPKernel::CoordMap frag_cmap(&fragCoordinates.front().x(), 3, fragCoordinates.size());
+		QCPKernel::CoordMap frag_rot_cmap(&fragCoordinates_rot.front().x(), 3, fragCoordinates.size());
 
-		for ( Size ii = 0;  ii < 9; ++ii ) {
-			fragCoordinates_rot.push_back(rot_matrix*fragCoordinates_removed_stub_com[ii]);
-			fragCoordinates_rot[ii].x()=fragCoordinates_rot[ii].x()+coordinates_stub_com[0];
-			fragCoordinates_rot[ii].y()=fragCoordinates_rot[ii].y()+coordinates_stub_com[1];
-			fragCoordinates_rot[ii].z()=fragCoordinates_rot[ii].z()+coordinates_stub_com[2];
+		frag_rot_cmap = superposition_transform * frag_cmap;
 
-		}
 		//output_fragment_debug(fragCoordinates_rot,"X3_fragCoords_rotate.pdb");
 		//In test simulations rmsd_v3 was 8.02771 and rmsd_v4 was 8.27703. The only difference is the removing of the COM of the coordintes. But I don't see any errors
 		//I'm ignoring this bug for now.  Maybe forever.
 	}
+
 	ConstraintCOPs csts;
 	core::id::AtomID const anchor_atom( core::id::AtomID( poseOP->residue(1).atom_index("CA"), 1) );
 	//core::scoring::func::HarmonicFuncOP coord_cst_func = core::scoring::func::HarmonicFuncOP( new core::scoring::func::HarmonicFunc( 0.1, 1.0 ) );
@@ -688,12 +645,11 @@ std::vector< numeric::xyzVector<numeric::Real> > PossibleLoop::get_coordinates_f
 
 
 Real PossibleLoop::rmsd_between_coordinates(std::vector< numeric::xyzVector<numeric::Real> > fragCoordinates,std::vector< numeric::xyzVector<numeric::Real> > coordinates){
-	numeric::alignment::QCP_Kernel<core::Real>::remove_center_of_mass( &fragCoordinates.front().x() , fragCoordinates.size());
-	numeric::alignment::QCP_Kernel<core::Real>::remove_center_of_mass( &coordinates.front().x() , coordinates.size());
-	numeric::alignment::QCP_Kernel<core::Real> qcp;
-	vector1<Real> rot_vector;
-	Real rmsd = qcp.calc_centered_coordinate_rmsd( &coordinates.front().x(), &fragCoordinates.front().x(), fragCoordinates.size(), &rot_vector[1]);
-	return(rmsd);
+	typedef numeric::alignment::QCPKernel< numeric::Real > QCPKernel;
+
+	return QCPKernel::calc_coordinate_rmsd(
+		QCPKernel::CoordMap(&fragCoordinates.front().x(), 3, fragCoordinates.size()),
+		QCPKernel::CoordMap(&coordinates.front().x(), 3, coordinates.size()));
 }
 
 //closes the loop robustly. However, the phi/psi omega fall into the wrong abego types.
@@ -828,7 +784,7 @@ NearNativeLoopCloser::NearNativeLoopCloser(int resAdjustmentStartLow,int resAdju
 	max_vdw_change_ = max_vdw_change;
 	closure_type_ = closure_type;
 	TR << "native loop closer init"<< resAdjustmentStartLow_ << "," << resAdjustmentStartHigh_ <<"," << resAdjustmentStopLow_ <<"," << resAdjustmentStopHigh_ << "," << loopLengthRangeLow_ << "," << loopLengthRangeHigh_ << std::endl;
-	SSHashedFragmentStore_ = core::indexed_structure_store::SSHashedFragmentStore::get_instance();
+	SSHashedFragmentStore_ = protocols::indexed_structure_store::SSHashedFragmentStore::get_instance();
 	SSHashedFragmentStore_->set_threshold_distance(rmsThreshold_);
 	SSHashedFragmentStore_->init_SS_stub_HashedFragmentStore();
 }
@@ -1153,7 +1109,7 @@ NearNativeLoopCloser::parse_my_tag(
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const & ){
-	using namespace core::indexed_structure_store;
+	using namespace protocols::indexed_structure_store;
 	std::string loopLengthRange( tag->getOption< std::string >( "loopLengthRange", "1,5") );
 	rmsThreshold_ = tag->getOption< core::Real >( "RMSthreshold", 0.4 );
 	if ( rmsThreshold_>0.6 ) {
@@ -1178,7 +1134,7 @@ NearNativeLoopCloser::parse_my_tag(
 	output_closed_ = tag->getOption<bool>("close",true);
 	closure_type_ = tag->getOption<std::string>("closure_type","lookback");
 	if ( output_closed_ ) {
-		SSHashedFragmentStore_ = core::indexed_structure_store::SSHashedFragmentStore::get_instance();
+		SSHashedFragmentStore_ = protocols::indexed_structure_store::SSHashedFragmentStore::get_instance();
 		SSHashedFragmentStore_->set_threshold_distance(rmsThreshold_);
 		SSHashedFragmentStore_->init_SS_stub_HashedFragmentStore();
 		TR << "database loaded!!" << std::endl;

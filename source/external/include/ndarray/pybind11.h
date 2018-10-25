@@ -15,6 +15,14 @@ NAMESPACE_BEGIN(detail)
 template <typename Element, int N, int C>
 class type_caster< ndarray::Array<Element,N,C> > {
 public:
+    typedef ndarray::Array<Element,N,C> array_type;
+    static constexpr auto array_name = _("ndarray::Array[") +
+      make_caster<Element>::name + _(", ") +
+      _("ndim=") + _<N>() + _(", ") +
+      _("contiguous=") + _<C>() + _("]");
+
+    PYBIND11_TYPE_CASTER(array_type, array_name);
+
     bool load(handle src, bool) {
 
         auto buf = array_t<Element>::ensure(src);
@@ -64,12 +72,12 @@ public:
           strides[i] = buf.strides(i) / sizeof(Element);
         }
 
-        ndarray::PyPtr src_ptr;
-        src_ptr.reset(src.ptr());
+        ndarray::PyPtr buf_ptr;
+        buf_ptr.reset(buf.ptr());
 
         value = external(
           const_cast<Element*>(buf.data()),
-          shape, strides, src_ptr
+          shape, strides, buf_ptr
         );
 
         return true;
@@ -105,19 +113,7 @@ public:
 
         return result.release();
     }
-/* This part is normally created by the PYBIND11_TYPE_CASTER macro, which
- * can't be used here due to the partial specialization
- */
-protected:
-    ndarray::Array<Element,N,C> value;
-public:
-    static PYBIND11_DESCR name() { return type_descr(_<ndarray::Array<Element,N,C>>()); }
-    static handle cast(const ndarray::Array<Element,N,C> *src, return_value_policy policy, handle parent) {
-        return cast(*src, policy, parent);
-    }
-    operator ndarray::Array<Element,N,C> * () { return &value; }
-    operator ndarray::Array<Element,N,C> & () { return value; }
-    template <typename _T> using cast_op_type = pybind11::detail::cast_op_type<_T>;
+
 };
 
 NAMESPACE_END(detail)

@@ -239,6 +239,8 @@
 
 // I //////////////////////////////////////////////////////////////////////////
 #include <protocols/idealize/IdealizeMoverCreator.hh>
+#include <protocols/indexed_structure_store/movers/DirectSegmentLookupMoverCreator.hh>
+#include <protocols/indexed_structure_store/movers/SegmentSequenceProfileMoverCreator.hh>
 
 // K //////////////////////////////////////////////////////////////////////////
 #include <protocols/kinematic_closure/KicMoverCreator.hh>

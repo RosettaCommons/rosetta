@@ -4772,6 +4772,15 @@ ResidueType::select_orient_atoms(
 	}
 }
 
+std::tuple<Size, Size, Size>
+ResidueType::select_orient_atoms() const
+{
+	Size center, nbr1, nbr2;
+	select_orient_atoms(center, nbr1, nbr2);
+
+	return std::tuple<Size, Size, Size>(center, nbr1, nbr2);
+}
+
 // A graph-based function to determine the size of the smallest ring that involves a given atom.
 core::Size
 ResidueType::smallest_ring_size( VD const & atom, core::Size const & max_size /*= 999999*/ ) const

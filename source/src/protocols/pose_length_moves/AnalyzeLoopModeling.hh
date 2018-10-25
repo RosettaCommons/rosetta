@@ -27,7 +27,7 @@
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
-#include <core/indexed_structure_store/SSHashedFragmentStore.hh>
+#include <protocols/indexed_structure_store/SSHashedFragmentStore.hh>
 // C++ Headers
 #include <string>
 #include <map>
@@ -74,7 +74,7 @@ private:
 	core::Size loopLengthRangeLow_;
 	core::Size loopLengthRangeHigh_;
 
-	core::indexed_structure_store::SSHashedFragmentStore * SSHashedFragmentStore_;
+	protocols::indexed_structure_store::SSHashedFragmentStore * SSHashedFragmentStore_;
 };
 
 

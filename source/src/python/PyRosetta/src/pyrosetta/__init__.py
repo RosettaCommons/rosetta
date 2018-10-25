@@ -14,6 +14,7 @@ import os, sys
 
 import pyrosetta.rosetta as rosetta
 import pyrosetta.bindings
+import pyrosetta.protocols
 
 import warnings
 import logging

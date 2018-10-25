@@ -17,7 +17,8 @@
 
 // Numeric headers
 #include <numeric/conversions.hh>
-#include <numeric/alignment/QCP_Kernel.hh>
+#include <Eigen/Core>
+#include <numeric/alignment/QCPKernel.hh>
 
 // Core headers
 #include <core/conformation/Residue.hh>
@@ -219,35 +220,28 @@ FreePeptide::rotate(xyzMatrix <Real> M){
 
 void
 FreePeptide::align(){
-	numeric::alignment::QCP_Kernel<Real> kernel;
-	Real old_stubs[12];
-	Real current_stubs[12];
-	vector1 < xyzVector<Real> > current_stubs_vec;
-	Real rot_matrix[9];
+	vector1 < xyzVector<Real> > current_stubs;
 
 	// Initialize the coordinates for alignment
+	current_stubs.push_back( ca_xyz(pivot1() + 1) );
+	current_stubs.push_back( c_xyz(pivot1() + 1) );
+	current_stubs.push_back( n_xyz(pivot2() - 1) );
+	current_stubs.push_back( ca_xyz(pivot2() - 1) );
 
-	current_stubs_vec.push_back( ca_xyz(pivot1() + 1) );
-	current_stubs_vec.push_back( c_xyz(pivot1() + 1) );
-	current_stubs_vec.push_back( n_xyz(pivot2() - 1) );
-	current_stubs_vec.push_back( ca_xyz(pivot2() - 1) );
+	numeric::alignment::QCPKernel<Real> kernel;
 
-	for ( Size i=1; i<=4; ++i ) {
-		for ( Size j=1; j<=3; ++j ) {
-			old_stubs[3 * (i-1) + j - 1] = old_stubs_[i](j);
-			current_stubs[3 * (i-1) + j - 1] = current_stubs_vec[i](j);
-		}
-	}
+	Eigen::Transform<Real, 3, Eigen::Affine> superposition_transform;
 
 	// Align stubs
-
-	kernel.calc_coordinate_rmsd(old_stubs, current_stubs, 4, rot_matrix);
+	kernel.calc_coordinate_superposition(
+		numeric::alignment::QCPKernel<Real>::CoordMap( &old_stubs_.front().x(), 3, 4),
+		numeric::alignment::QCPKernel<Real>::CoordMap( &current_stubs.front().x(), 3, 4),
+		superposition_transform);
 
 	// Translate the free peptide to overlap the centers of mass
-
 	xyzVector <Real> current_stub_center_of_mass(0, 0, 0);
 	for ( Size i=1; i<=4; ++i ) {
-		current_stub_center_of_mass += current_stubs_vec[i];
+		current_stub_center_of_mass += current_stubs[i];
 	}
 	current_stub_center_of_mass *= 0.25;
 
@@ -256,12 +250,11 @@ FreePeptide::align(){
 	}
 
 	// Rotate the free peptide
-
-	xyzMatrix <Real> rot_M( xyzMatrix <Real>::rows( rot_matrix ) );
+	xyzMatrix <Real> rot_S( xyzMatrix <Real>::rows( &superposition_transform.rotation()(0, 0)) );
 
 	for ( Size i=1; i<=3; ++i ) {
 		reference_coordinates_[i] = old_stub_centor_of_mass_ \
-			+ rot_M * (reference_coordinates_[i] - old_stub_centor_of_mass_);
+			+ rot_S * (reference_coordinates_[i] - old_stub_centor_of_mass_);
 	}
 
 	xyz_updated_ = false;

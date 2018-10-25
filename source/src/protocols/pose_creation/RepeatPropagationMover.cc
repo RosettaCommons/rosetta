@@ -86,7 +86,7 @@
 #include <utility/vector1.hh>
 
 #include <numeric/conversions.hh>
-#include <numeric/alignment/QCP_Kernel.hh>
+#include <numeric/alignment/QCPKernel.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzTransform.hh>
@@ -305,7 +305,6 @@ vector<Real> RepeatPropagationMover::get_center_of_mass(Real* coordinates, int n
 
 void RepeatPropagationMover::repeat_ligand(Pose & pose, Pose & repeat_pose){
 	using namespace chemical;
-	typedef numeric::xyzMatrix< Real >  Matrix;
 	Size ligand_residue = 0;
 	for ( core::Size i = 1; i <= pose.total_residue(); i++ ) {
 		if ( ! pose.residue( i ).is_protein() ) {
@@ -313,69 +312,51 @@ void RepeatPropagationMover::repeat_ligand(Pose & pose, Pose & repeat_pose){
 			TR << "Residue " << i << " (type=" << pose.residue(i).name3() << ") is probably chosen ligand" << std::endl;
 		}
 	}
-	core::conformation::ResidueOP new_ligand = pose.residue(ligand_residue).clone();
-	repeat_pose.append_residue_by_jump(*new_ligand,1,"","",true);
+	core::conformation::ResidueOP ligand1= pose.residue(ligand_residue).clone();
+	repeat_pose.append_residue_by_jump(*ligand1,1,"","",true);
 
 	if ( ligand_residue == 0 ) {
 		utility_exit_with_message("ligand not found in pdb");
 	}
 	Size repeat_length = last_res_ - first_res_+1;
 	std::vector< numeric::xyzVector<numeric::Real> > ligand1_coordinates;
-	std::vector< numeric::xyzVector<numeric::Real> > ligand1_com_coordinates;
 	std::vector< numeric::xyzVector<numeric::Real> > repeat1_coordinates;
-	std::vector< numeric::xyzVector<numeric::Real> > repeat1_com_coordinates;
-	numeric::alignment::QCP_Kernel<core::Real> qcp;
+
+	typedef numeric::alignment::QCPKernel<core::Real> QCPKernel;
+
 	for ( Size ii = first_res_;  ii <=last_res_; ++ii ) {
 		repeat1_coordinates.push_back(repeat_pose.residue(ii).xyz("CA"));
-		repeat1_com_coordinates.push_back(repeat_pose.residue(ii).xyz("CA"));
 	}
-	Size n_atoms = new_ligand->natoms();
-	for ( Size atom_id = 1; atom_id <= n_atoms; ++atom_id ) {
-		ligand1_coordinates.push_back(new_ligand->xyz(atom_id));
-		ligand1_com_coordinates.push_back(new_ligand->xyz(atom_id));
+
+	for ( Size atom_id = 1; atom_id <= ligand1->natoms(); ++atom_id ) {
+		ligand1_coordinates.push_back(ligand1->xyz(atom_id));
 	}
-	numeric::alignment::QCP_Kernel<core::Real>::remove_center_of_mass( &ligand1_com_coordinates.front().x() , ligand1_com_coordinates.size());
-	numeric::alignment::QCP_Kernel<core::Real>::remove_center_of_mass( &repeat1_com_coordinates.front().x() , repeat1_com_coordinates.size());
+
 	for ( Size repeat_id = 2; repeat_id <= numb_repeats_-1; ++repeat_id ) { //switched to 2
 		//generate new ligand------------
 		core::conformation::ResidueOP new_ligand = pose.residue(ligand_residue).clone();
 		//get xyz for ligand-----------
-		vector1<Real> rot_vector;
-		for ( Size ii = 0;  ii < 9; ++ii ) {
-			rot_vector.push_back(0);
-		}
 		std::vector< numeric::xyzVector<numeric::Real> > repeat2_coordinates;
-		std::vector< numeric::xyzVector<numeric::Real> > repeat2_com_coordinates;
 		for ( Size ii = first_res_+repeat_length*(repeat_id-1);  ii <=first_res_+repeat_length*repeat_id-1; ++ii ) {
 			repeat2_coordinates.push_back(repeat_pose.residue(ii).xyz("CA"));
-			repeat2_com_coordinates.push_back(repeat_pose.residue(ii).xyz("CA"));
 		}
-		numeric::alignment::QCP_Kernel<core::Real>::remove_center_of_mass( &repeat2_com_coordinates.front().x() , repeat2_com_coordinates.size());
-		qcp.calc_centered_coordinate_rmsd( &repeat2_com_coordinates.front().x(), &repeat1_com_coordinates.front().x(), repeat1_com_coordinates.size(), &rot_vector[1]);
-		//TR << "tmp_rmsd" << tmp_rmsd << std::endl;
-		Matrix rot_matrix = numeric::xyzMatrix<Real>::rows(rot_vector[1],rot_vector[2],rot_vector[3],rot_vector[4],rot_vector[5],rot_vector[6],rot_vector[7],rot_vector[8],rot_vector[9]);
-		Size n_atoms = new_ligand->natoms();
-		std::vector<Real> repeat1_com_xyz = get_center_of_mass(&repeat1_coordinates.front().x(),repeat1_coordinates.size());
-		std::vector<Real> repeat2_com_xyz = get_center_of_mass(&repeat2_coordinates.front().x(),repeat2_coordinates.size());
-		std::vector<Real> ligand1_com_xyz = get_center_of_mass(&ligand1_coordinates.front().x(),ligand1_coordinates.size());
-		numeric::xyzVector<numeric::Real> ligand2_com_xyz;
-		numeric::xyzVector<numeric::Real> ligand2_tmp_vector;
-		ligand2_tmp_vector.x(ligand1_com_xyz[0]-repeat1_com_xyz[0]);
-		ligand2_tmp_vector.y(ligand1_com_xyz[1]-repeat1_com_xyz[1]);
-		ligand2_tmp_vector.z(ligand1_com_xyz[2]-repeat1_com_xyz[2]);
-		//get the distance then apply the rotation.
-		numeric::xyzVector<numeric::Real> ligand_tmp_vector_rot = rot_matrix*ligand2_tmp_vector;
-		ligand2_com_xyz.x(repeat2_com_xyz[0] +ligand_tmp_vector_rot[0]);
-		ligand2_com_xyz.y(repeat2_com_xyz[1] +ligand_tmp_vector_rot[1]);
-		ligand2_com_xyz.z(repeat2_com_xyz[2] +ligand_tmp_vector_rot[2]);
-		//note numeric xyz runs from 0 and ligand atom count starts at 1
-		for ( Size atom_id = 0; atom_id < n_atoms; ++atom_id ) {
-			numeric::xyzVector<numeric::Real> ligand_rot = rot_matrix*ligand1_com_coordinates[atom_id];
-			numeric::xyzVector<numeric::Real> tmp_xyz;
-			tmp_xyz.x(ligand_rot.x()+ligand2_com_xyz[0]);
-			tmp_xyz.y(ligand_rot.y()+ligand2_com_xyz[1]);
-			tmp_xyz.z(ligand_rot.z()+ligand2_com_xyz[2]);
-			new_ligand->atom(atom_id+1).xyz(tmp_xyz);
+
+		Eigen::Transform<Real, 3, Eigen::Affine> transform_1_to_2;
+
+		QCPKernel::calc_coordinate_superposition(
+			QCPKernel::CoordMap( &repeat1_coordinates.front().x(), 3, repeat1_coordinates.size()),
+			QCPKernel::CoordMap( &repeat2_coordinates.front().x(), 3, repeat2_coordinates.size()),
+			transform_1_to_2
+		);
+
+		std::vector< numeric::xyzVector<numeric::Real> > ligand2_coordinates(ligand1_coordinates);
+
+		QCPKernel::CoordMap ligand1_cmap(&ligand1_coordinates.front().x(), 3, ligand1_coordinates.size() );
+		QCPKernel::CoordMap ligand2_cmap(&ligand2_coordinates.front().x(), 3, ligand2_coordinates.size() );
+		ligand2_cmap = transform_1_to_2 * ligand1_cmap;
+
+		for ( Size a = 0; a < new_ligand->natoms(); ++a ) {
+			new_ligand->atom(a+1).xyz(ligand2_coordinates[a]);
 		}
 		//append ligand
 		repeat_pose.append_residue_by_jump(*new_ligand,1,"","",true);

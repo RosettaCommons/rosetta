@@ -138,6 +138,13 @@ public:
 	///
 	void clear_output();
 
+	// Allows non-const access to the current output containers in order to support manipulation
+	// of output data in cases where MultiplePoseMover framework is used.
+	Strings & get_strings() { return long_strings_; }
+
+	StringStringPairs &  get_string_string_pairs() { return string_string_pairs_; };
+
+	StringRealPairs & get_string_real_pairs() { return string_real_pairs_; };
 
 	////////////////////THIS SECTION OF FUNCTIONS IS FORBIDDEN FOR USE BY MOVERS//////////////////////////////////
 	// If Movers try to use these functions, those Movers become tied to JD2 and may fail if JD2 is not
@@ -156,8 +163,6 @@ public:
 	StringRealPairs::const_iterator output_string_real_pairs_end() const;
 
 	////////////////////////END SECTION//////////////////////////////////////////////////////////////////
-
-	//there are no functions for deleting output info.  This is on purpose - use copy_without_output instead
 
 	Strings get_strings() const { return long_strings_; }
 

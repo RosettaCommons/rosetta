@@ -76,6 +76,8 @@ StoreResidueSubsetMover::~StoreResidueSubsetMover() = default;
 void
 StoreResidueSubsetMover::apply( core::pose::Pose & pose )
 {
+	using namespace core::select::residue_selector;
+
 	runtime_assert( selector_ || subset_ );
 	if ( subset_name_.empty() ) {
 		utility_exit_with_message( "No subset_name specified to StoreResidueSubset mover.  You must specify one." );
@@ -89,16 +91,8 @@ StoreResidueSubsetMover::apply( core::pose::Pose & pose )
 	core::pack::make_symmetric_PackerTask_by_truncation(pose, task); // Does this need to be fixed or omitted?
 	}
 	*/
-	// If the pose doesn't have cached subset data, add blank data
-	if ( !pose.data().has( core::pose::datacache::CacheableDataType::STORED_RESIDUE_SUBSET ) ) {
-		core::select::residue_selector::CachedResidueSubsetOP blank_stored_subsets( new core::select::residue_selector::CachedResidueSubset );
-		pose.data().set( core::pose::datacache::CacheableDataType::STORED_RESIDUE_SUBSET, blank_stored_subsets );
-	}
 
-	// Grab a reference to the data
-	debug_assert( utility::pointer::dynamic_pointer_cast< core::select::residue_selector::CachedResidueSubset >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::STORED_RESIDUE_SUBSET ) ) );
-	core::select::residue_selector::CachedResidueSubset & stored_subsets =
-		*( utility::pointer::static_pointer_cast< core::select::residue_selector::CachedResidueSubset >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::STORED_RESIDUE_SUBSET ) ) );
+	CachedResidueSubset & stored_subsets = CachedResidueSubset::from_pose_datacache(pose);
 
 	if ( !overwrite_ && stored_subsets.has_subset( subset_name_ ) ) {
 		utility_exit_with_message( "A stored residue subset with the name " + subset_name_ + " already exists; you must set overwrite flag to true to overwrite." );

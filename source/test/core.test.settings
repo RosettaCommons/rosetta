@@ -105,9 +105,6 @@ sources = {
 		"PoseResourceLoader",
 		#"PoseFromFile", # this seems to be a complete duplication of PoseResourceLoader (previously PoseFromPDBResourceLoader)
 	],
-	"indexed_structure_store" : [
-		"FragmentLookup",
-	],
 	"id" : [
 		"SequenceMapping",
 	],
@@ -868,14 +865,6 @@ testinputfiles = [
 	"fragment/picking/vall/vall_test.dat",
 	"grid/1dwc_3.gridbb.gz",
 	"import_pose/3KBA.pdb",
-	"indexed_structure_store/test_structure.pdb",
-	"indexed_structure_store/test_store.h5",
-	"indexed_structure_store/test_store/fragments/partial_test_fragments/metadata.json",
-	"indexed_structure_store/test_store/fragments/partial_test_fragments/coordinates.dat",
-	"indexed_structure_store/test_store/fragments/partial_test_fragments/threshold_distance.dat",
-	"indexed_structure_store/test_store/fragments/full_test_fragments/metadata.json",
-	"indexed_structure_store/test_store/fragments/full_test_fragments/coordinates.dat",
-	"indexed_structure_store/test_store/fragments/full_test_fragments/threshold_distance.dat",
 	"io/1ten.pdb",
 	"io/1L8C.cif",
 	"io/1QYS.cif",

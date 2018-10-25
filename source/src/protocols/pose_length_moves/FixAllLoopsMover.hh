@@ -27,7 +27,7 @@
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
-#include <core/indexed_structure_store/SSHashedFragmentStore.hh>
+#include <protocols/indexed_structure_store/SSHashedFragmentStore.hh>
 // C++ Headers
 #include <string>
 #include <map>
@@ -79,7 +79,7 @@ private:
 	core::Size lastResidue_;
 	//time_t start_time_;
 
-	core::indexed_structure_store::SSHashedFragmentStore * SSHashedFragmentStore_;
+	protocols::indexed_structure_store::SSHashedFragmentStore * SSHashedFragmentStore_;
 };
 
 

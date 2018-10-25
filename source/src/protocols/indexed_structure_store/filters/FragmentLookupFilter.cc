@@ -21,8 +21,8 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
 
-#include <core/indexed_structure_store/FragmentLookup.hh>
-#include <core/indexed_structure_store/StructureStoreManager.hh>
+#include <protocols/indexed_structure_store/FragmentLookup.hh>
+#include <protocols/indexed_structure_store/FragmentStoreManager.hh>
 
 #include <protocols/indexed_structure_store/filters/FragmentLookupFilter.hh>
 #include <protocols/indexed_structure_store/filters/FragmentLookupFilterCreator.hh>
@@ -47,7 +47,7 @@ namespace filters {
 
 static basic::Tracer TR( "protocols.indexed_structure_store.filters.FragmentLookupFilter" );
 
-using namespace core::indexed_structure_store;
+using namespace protocols::indexed_structure_store;
 
 FragmentLookupFilter::FragmentLookupFilter() :
 	target_lookup_(/* NULL */),
@@ -61,7 +61,7 @@ FragmentLookupFilter::FragmentLookupFilter() :
 FragmentLookupFilter::FragmentLookupFilter(
 	std::string lookup_name,
 	LookupMode mode) :
-	target_lookup_(StructureStoreManager::get_instance()->load_fragment_lookup(lookup_name)),
+	target_lookup_(FragmentStoreManager::get_instance()->load_fragment_lookup(lookup_name)),
 	lookup_mode_(mode),
 	target_chain_(0),
 	threshold_(0),
@@ -76,7 +76,7 @@ FragmentLookupFilter::FragmentLookupFilter(
 	core::Size target_chain,
 	core::Size threshold,
 	bool b_target_chain) :
-	target_lookup_(StructureStoreManager::get_instance()->load_fragment_lookup(lookup_name, store_path)),
+	target_lookup_(FragmentStoreManager::get_instance()->load_fragment_lookup(lookup_name, store_path)),
 	lookup_mode_(mode),
 	target_chain_(target_chain),
 	threshold_(threshold),
@@ -92,7 +92,7 @@ FragmentLookupFilter::FragmentLookupFilter( FragmentLookupFilter const & rval ) 
 
 core::Size FragmentLookupFilter::compute( Pose const & pose ) const
 {
-	using namespace core::indexed_structure_store;
+	using namespace protocols::indexed_structure_store;
 
 
 	clock_t start_t = clock();
@@ -149,7 +149,7 @@ core::Size FragmentLookupFilter::compute( Pose const & pose ) const
 
 void FragmentLookupFilter::report( std::ostream & os, core::pose::Pose const & ) const
 {
-	using namespace core::indexed_structure_store;
+	using namespace protocols::indexed_structure_store;
 	typedef std::map<core::Size, FragmentLookupResult> result_t;
 	using utility::json_spirit::Value;
 	using utility::json_spirit::Object;
@@ -183,7 +183,7 @@ void FragmentLookupFilter::report( std::ostream & os, core::pose::Pose const & )
 core::Real FragmentLookupFilter::report_sm( core::pose::Pose const & pose ) const {
 	//Get pose size just to avoid warning regarding pose
 	pose.size();
-	using namespace core::indexed_structure_store;
+	using namespace protocols::indexed_structure_store;
 	typedef std::map<core::Size, FragmentLookupResult> result_t;
 	using utility::json_spirit::Value;
 	using utility::json_spirit::Object;
@@ -244,9 +244,9 @@ void FragmentLookupFilter::parse_my_tag( utility::tag::TagCOP tag,
 
 
 	if ( store_path != "" ) {
-		target_lookup_ = StructureStoreManager::get_instance()->load_fragment_lookup(lookup_name, store_path);
+		target_lookup_ = FragmentStoreManager::get_instance()->load_fragment_lookup(lookup_name, store_path);
 	} else {
-		target_lookup_ = StructureStoreManager::get_instance()->load_fragment_lookup(lookup_name);
+		target_lookup_ = FragmentStoreManager::get_instance()->load_fragment_lookup(lookup_name);
 	}
 
 
@@ -300,7 +300,7 @@ void FragmentLookupFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition
 
 	attlist + XMLSchemaAttribute(
 		"store_path", xs_string,
-		"Target store path. Default defined by StructureStoreManager.");
+		"Target store path. Default defined by FragmentStoreManager.");
 
 	XMLSchemaRestriction lookup_mode_enum;
 	lookup_mode_enum.name("lookup_mode_types");
@@ -337,7 +337,7 @@ void FragmentLookupFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition
 		"confidence score for successful lookups cached within the filter after each "
 		"apply call and exposed via the FragmentLookupFilter::lookup_result member. "
 		"Fragment stores are identified by a lookup name and a target store path. The "
-		"default store defined in the StructureStoreManager class via the options "
+		"default store defined in the FragmentStoreManager class via the options "
 		"system.",
 		attlist );
 }

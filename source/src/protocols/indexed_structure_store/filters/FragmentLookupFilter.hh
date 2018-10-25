@@ -22,9 +22,9 @@
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
-//#include <core/indexed_structure_store/FragmentLookup.fwd.hh>
-#include <core/indexed_structure_store/FragmentLookup.hh>
-#include <core/indexed_structure_store/FragmentStore.hh>
+//#include <protocols/indexed_structure_store/FragmentLookup.fwd.hh>
+#include <protocols/indexed_structure_store/FragmentLookup.hh>
+#include <protocols/indexed_structure_store/FragmentStore.hh>
 
 // Parser headers
 #include <basic/datacache/DataMap.fwd.hh>
@@ -66,9 +66,9 @@ enum LookupMode {First, Closest};
 class FragmentLookupFilter : public protocols::filters::Filter {
 
 public:
-	typedef core::indexed_structure_store::FragmentLookupOP FragmentLookupOP;
-	typedef core::indexed_structure_store::FragmentLookupResult FragmentLookupResult;
-	typedef core::indexed_structure_store::FragmentSpecification FragmentSpecification;
+	typedef protocols::indexed_structure_store::FragmentLookupOP FragmentLookupOP;
+	typedef protocols::indexed_structure_store::FragmentLookupResult FragmentLookupResult;
+	typedef protocols::indexed_structure_store::FragmentSpecification FragmentSpecification;
 	typedef core::Real Real;
 	typedef core::Size Size;
 

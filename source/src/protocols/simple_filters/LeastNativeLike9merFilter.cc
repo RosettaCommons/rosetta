@@ -29,8 +29,8 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/id/NamedAtomID.hh>
-#include <core/indexed_structure_store/SSHashedFragmentStore.hh>
-#include <core/indexed_structure_store/FragmentStore.hh>
+#include <protocols/indexed_structure_store/SSHashedFragmentStore.hh>
+#include <protocols/indexed_structure_store/FragmentStore.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoringManager.hh>
@@ -83,7 +83,7 @@ LeastNativeLike9merFilter::report( std::ostream & out, Pose const & pose ) const
 LeastNativeLike9merFilter::Real
 LeastNativeLike9merFilter::compute( const Pose & pose ) const
 {
-	using namespace core::indexed_structure_store;
+	using namespace protocols::indexed_structure_store;
 	core::scoring::dssp::Dssp dssp( pose );
 	dssp.dssp_reduced();
 	std::string dssp_string = dssp.get_dssp_secstruct();
@@ -151,7 +151,7 @@ LeastNativeLike9merFilter::parse_my_tag(
 	Movers_map const &,
 	Pose const & )
 {
-	using namespace core::indexed_structure_store;
+	using namespace protocols::indexed_structure_store;
 	// set threshold
 	filtered_value_ = tag->getOption<Real>( "threshold", 99.0 );
 	if ( filtered_value_!=99.0 ) {

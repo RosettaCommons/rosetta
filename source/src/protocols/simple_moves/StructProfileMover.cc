@@ -26,9 +26,9 @@
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/pose/symmetry/util.hh>
 //
-#include <core/indexed_structure_store/SSHashedFragmentStore.hh>
-#include <core/indexed_structure_store/FragmentLookup.hh>
-#include <core/indexed_structure_store/FragmentStore.hh>
+#include <protocols/indexed_structure_store/SSHashedFragmentStore.hh>
+#include <protocols/indexed_structure_store/FragmentLookup.hh>
+#include <protocols/indexed_structure_store/FragmentStore.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
@@ -77,7 +77,7 @@ using namespace ObjexxFCL::format;
 using namespace core;
 using namespace std;
 using utility::vector1;
-using namespace core::indexed_structure_store;
+using namespace protocols::indexed_structure_store;
 using core::pose::Pose;
 
 StructProfileMover::StructProfileMover():moves::Mover("StructProfileMover"){
@@ -86,7 +86,7 @@ StructProfileMover::StructProfileMover():moves::Mover("StructProfileMover"){
 }
 
 StructProfileMover::StructProfileMover(Real rmsThreshold,Size consider_topN_frags, Real burialWt, bool only_loops , Real allowed_deviation, Real allowed_deviation_loops, bool eliminate_background, bool outputProfile, bool add_csts_to_pose, bool ignore_terminal_res):moves::Mover("StructProfileMover"){
-	using namespace core::indexed_structure_store;
+	using namespace protocols::indexed_structure_store;
 	aa_order_="ACDEFGHIKLMNPQRSTVWY";
 	read_P_AA_SS_cen6();
 	rmsThreshold_ = rmsThreshold;
@@ -485,7 +485,7 @@ StructProfileMover::parse_my_tag(
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const & ){
-	using namespace core::indexed_structure_store;
+	using namespace protocols::indexed_structure_store;
 	rmsThreshold_ = tag->getOption< core::Real >( "RMSthreshold", 0.40 );
 	burialWt_ =tag->getOption< Real > ("burialWt", 0.8); //other weight is toward RMSD
 	consider_topN_frags_ =tag->getOption< Size > ("consider_topN_frags", 50);

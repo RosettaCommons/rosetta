@@ -17,10 +17,29 @@
 
 #include <utility/tools/make_vector.hh>
 #include <utility/json_spirit/json_spirit_value.h>
+#include <json.hpp>
 
 
 namespace numeric {
 
+
+template<typename T>
+void to_json(nlohmann::json& j, const xyzVector<T>& v) {
+	j.push_back(v.x());
+	j.push_back(v.y());
+	j.push_back(v.z());
+}
+
+template<typename T>
+void from_json(const nlohmann::json& j, xyzVector<T>& v) {
+	if ( !j.is_array() || j.size() != 3 ) {
+		throw std::invalid_argument("Input json object of incorrect size/type.");
+	}
+
+	v.x() = j.at(0).get<T>();
+	v.y() = j.at(1).get<T>();
+	v.z() = j.at(2).get<T>();
+}
 
 /// @brief Convert vector to a json_spirit Value
 /// @note Format is a list in the form [x,y,z]

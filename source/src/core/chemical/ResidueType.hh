@@ -2246,6 +2246,11 @@ public:
 		Size & nbr2
 	) const;
 
+	/// @brief Selects three atoms for orienting this residue type
+	/// @note Returns tuple of form [center, nbr1, nbr2]
+	std::tuple<Size, Size, Size> select_orient_atoms() const;
+
+
 	/// @brief A graph-based function to determine the size of the smallest ring that involves a given atom.
 	core::Size
 	smallest_ring_size( VD const & atom, core::Size const & max_size = 999999) const;

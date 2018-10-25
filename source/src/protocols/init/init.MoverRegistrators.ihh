@@ -254,6 +254,8 @@ static MoverRegistrator< hybridization::BackboneTorsionPerturbationCreator > reg
 
 // I //////////////////////////////////////////////////////////////////////////
 static MoverRegistrator< idealize::IdealizeMoverCreator > reg_IdealizeMoverCreator;
+static MoverRegistrator< indexed_structure_store::movers::DirectSegmentLookupMoverCreator > reg_DirectSegmentLookupMoverCreator;
+static MoverRegistrator< indexed_structure_store::movers::SegmentSequenceProfileMoverCreator > reg_SegmentSequenceProfileMoverCreator;
 
 // K //////////////////////////////////////////////////////////////////////////
 static MoverRegistrator< kinematic_closure::KicMoverCreator > reg_KicMoverCreator;

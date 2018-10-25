@@ -20,7 +20,7 @@
 
 #include <protocols/pose_length_moves/NearNativeLoopCloser.fwd.hh>
 
-#include <core/indexed_structure_store/SSHashedFragmentStore.hh>
+#include <protocols/indexed_structure_store/SSHashedFragmentStore.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
 
@@ -94,7 +94,7 @@ private:
 	core::pose::PoseOP original_atom_type_fullLengthPoseOP_;
 	core::pose::PoseOP fullLengthPoseOP_;
 	core::pose::PoseOP finalPoseOP_;
-	core::indexed_structure_store::SSHashedFragmentStore * SSHashedFragmentStore_;
+	protocols::indexed_structure_store::SSHashedFragmentStore * SSHashedFragmentStore_;
 	core::Real final_rmsd_;
 };
 
@@ -161,7 +161,7 @@ private:
 	bool ideal_;
 	std::string closure_type_;
 	std::string pose_name_;
-	core::indexed_structure_store::SSHashedFragmentStore * SSHashedFragmentStore_;
+	protocols::indexed_structure_store::SSHashedFragmentStore * SSHashedFragmentStore_;
 	utility::vector1<PossibleLoopOP> possibleLoops_;
 };
 

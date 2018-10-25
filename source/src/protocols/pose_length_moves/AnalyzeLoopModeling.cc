@@ -27,8 +27,8 @@
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/Loop.hh>
 
-#include <core/indexed_structure_store/SSHashedFragmentStore.hh>
-#include <core/indexed_structure_store/FragmentStore.hh>
+#include <protocols/indexed_structure_store/SSHashedFragmentStore.hh>
+#include <protocols/indexed_structure_store/FragmentStore.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
@@ -42,7 +42,7 @@
 #include <utility/tag/Tag.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
-#include <numeric/alignment/QCP_Kernel.hh>
+#include <numeric/alignment/QCPKernel.hh>
 #include <numeric/xyzVector.hh>
 
 #include <iostream>
@@ -142,12 +142,11 @@ protocols::loops::Loops AnalyzeLoopModeling::get_loops(core::pose::Pose const & 
 }
 
 Real AnalyzeLoopModeling::rmsd_between_coordinates(std::vector< numeric::xyzVector<numeric::Real> > fragCoordinates,std::vector< numeric::xyzVector<numeric::Real> > coordinates){
-	numeric::alignment::QCP_Kernel<core::Real>::remove_center_of_mass( &fragCoordinates.front().x() , fragCoordinates.size());
-	numeric::alignment::QCP_Kernel<core::Real>::remove_center_of_mass( &coordinates.front().x() , coordinates.size());
-	numeric::alignment::QCP_Kernel<core::Real> qcp;
-	vector1<Real> rot_vector;
-	Real rmsd = qcp.calc_centered_coordinate_rmsd( &coordinates.front().x(), &fragCoordinates.front().x(), fragCoordinates.size(), &rot_vector[1]);
-	return(rmsd);
+	typedef numeric::alignment::QCPKernel< numeric::Real > QCPKernel;
+
+	return QCPKernel::calc_coordinate_rmsd(
+		QCPKernel::CoordMap(&fragCoordinates.front().x(), 3, fragCoordinates.size()),
+		QCPKernel::CoordMap(&coordinates.front().x(), 3, coordinates.size()));
 }
 
 Real AnalyzeLoopModeling::get_loop_rmsd(core::pose::Pose native_pose,core::pose::Pose test_pose, Size loopStart, Size loopEnd){
@@ -256,7 +255,7 @@ AnalyzeLoopModeling::parse_my_tag(
 		loopLengthRangeLow_ = atoi(loopLengthRange_split[1].c_str());
 		loopLengthRangeHigh_ = atoi(loopLengthRange_split[2].c_str());
 	}
-	SSHashedFragmentStore_ = core::indexed_structure_store::SSHashedFragmentStore::get_instance();
+	SSHashedFragmentStore_ = protocols::indexed_structure_store::SSHashedFragmentStore::get_instance();
 	SSHashedFragmentStore_->set_threshold_distance(.1);
 	SSHashedFragmentStore_->init_SS_stub_HashedFragmentStore();
 	TR << "database loaded!!" << std::endl;

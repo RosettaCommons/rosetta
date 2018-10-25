@@ -2187,6 +2187,17 @@ public:
 	void
 	orient_onto_residue_peptoid( Residue const & src, Conformation const & conformation );
 
+	/// @brief Orients residue object onto atom locations
+	/// @note Orients onto the atom numbers center, nbr1, nbr2.
+	void orient_onto_location(
+		Size center, Size nbr1, Size nbr2,
+		Vector center_locaton, Vector nbr1_locaton, Vector nbr2_locaton);
+
+	/// @brief Orients residue object onto atom locations
+	/// @note Orients using default orient atoms taken from select_orient_atoms
+	void orient_onto_location(
+		Vector center_locaton, Vector nbr1_locaton, Vector nbr2_locaton);
+
 	/// @brief Place this rotamer at the sequence position occupied by  <src>
 	/// by reorienting the ideal side chain coordinates to match
 	void

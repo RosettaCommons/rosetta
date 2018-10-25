@@ -38,10 +38,10 @@ for package, modules in requested.sources.items():
 # Include paths.  Gives priority to user defined paths.
 actual.include_path = \
     requested.include_path + \
-    [ "#test" ] + \
     [ "#src" ] + \
     [ "#external/include" ] + \
-    [ "#src/platform/" + "/".join(build.platform_includes) ]
+    [ "#src/platform/" + "/".join(build.platform_includes) ] + \
+    [ "#test" ]
 
 # Crawl up the platform paths looking for headers
 # This makes more specific platforms take priority.
