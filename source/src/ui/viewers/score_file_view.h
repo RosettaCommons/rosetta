@@ -25,7 +25,7 @@ class ScoreFileView : public QWidget
 	using Decoys = std::map<QPointF, ScorePoint, std::function< bool(QPointF const &lhs, QPointF const &rhs) > >;
 
 public:
-    explicit ScoreFileView(std::pair<QString const, task::FileSP> const & score_file, task::TaskSP const &task, QWidget *parent = 0);
+    explicit ScoreFileView(task::FileSP const & score_file, task::TaskSP const &task, QWidget *parent = 0);
     ~ScoreFileView();
 
 private Q_SLOTS:
@@ -43,7 +43,7 @@ private Q_SLOTS:
 private:
 	task::TaskSP task_;
 
-	std::pair<QString const, task::FileSP> score_file_;
+	task::FileSP score_file_;
 
 	Decoys decoys_;
 	QString decoys_path_;

@@ -150,7 +150,9 @@ void TaskSubmit::on_add_input_structure_clicked()
 
 	QString file_name = QFileDialog::getOpenFileName(this, tr("Open PDB file"), "", tr("PDB (*.pdb)"), Q_NULLPTR/*, QFileDialog::DontUseNativeDialog*/);
 	if( not file_name.isEmpty() ) {
-		task_->add_file( "input.pdb", File::init_from_local_file(file_name) );
+		auto file_sp = File::init_from_local_file(file_name);
+		file_sp->name("input.pdb");
+		task_->add_file(file_sp);
 	}
 }
 
@@ -160,7 +162,9 @@ void TaskSubmit::on_add_native_structure_clicked()
 
 	QString file_name = QFileDialog::getOpenFileName(this, tr("Open PDB file"), "", tr("PDB (*.pdb)"), Q_NULLPTR/*, QFileDialog::DontUseNativeDialog*/);
 	if( not file_name.isEmpty() ) {
-		task_->add_file( "native.pdb", File::init_from_local_file(file_name) );
+		auto file_sp = File::init_from_local_file(file_name);
+		file_sp->name("native.pdb");
+		task_->add_file(file_sp);
 	}
 }
 
@@ -200,7 +204,7 @@ void TaskSubmit::on_add_files_clicked()
 	if( not file_names.isEmpty() ) {
 		for(auto it = file_names.constBegin(); it != file_names.constEnd(); ++ it) {
 			qDebug() << "file: " << *it;
-			QString name = QFileInfo(*it).fileName();
+			//QString name = QFileInfo(*it).fileName();
 
 			// if( name == "flags" ) {
 			// 	QFile file(*it);
@@ -210,7 +214,7 @@ void TaskSubmit::on_add_files_clicked()
 			// }
 			// else task_->add_file(name, std::make_shared<File>(*it) );
 
-			task_->add_file(name, File::init_from_local_file(*it) );
+			task_->add_file( File::init_from_local_file(*it) );
 
 			// // File f(file_name);
 			// // task_->input( std::move(f) );
@@ -261,13 +265,13 @@ void TaskSubmit::on_files_clicked(const QModelIndex &index)
 		// 		}
 		// 	}
 		// }
-		std::map<QString, FileSP> const & files = task_->files();
+		Files const & files = task_->files();
 		if( index.isValid()  and  index.row() >=0  and  index.row() < static_cast<int>( files.size() ) ) {
 			auto it = files.begin();
 			std::advance(it, index.row() );
 
 			if(viewer_) viewer_->deleteLater();
-			viewer_ = create_viewer_for_file(ui->preview, it->second);
+			viewer_ = create_viewer_for_file(ui->preview, *it);
 			if(viewer_) {
 				viewer_->resize( this->ui->preview->size() );
 				viewer_->show();

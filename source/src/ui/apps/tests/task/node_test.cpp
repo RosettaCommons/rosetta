@@ -124,7 +124,7 @@ void NodeTest::test_task_serialization()
     TaskSP task = std::make_shared<Task>();
 	TaskSP n_task = std::make_shared<Task>();
 
-	task->add_file("input", std::make_shared<File>(File::Kind::input, "input test file name", "some test input data") );
+	task->add_file(std::make_shared<File>(File::Kind::input, "input", "some test input data") );
 
     //QVERIFY( *task != *n_task );
 

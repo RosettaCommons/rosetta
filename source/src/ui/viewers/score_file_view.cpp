@@ -50,7 +50,7 @@ auto static QPointF_Less = [](QPointF const &lhs, QPointF const &rhs) -> bool {
 };
 
 
-ScoreFileView::ScoreFileView(std::pair<QString const, task::FileSP> const & score_file, task::TaskSP const &task,  QWidget *parent) :
+ScoreFileView::ScoreFileView(task::FileSP const & score_file, task::TaskSP const &task,  QWidget *parent) :
     QWidget(parent),
 	task_(task),
 	score_file_(score_file),
@@ -59,7 +59,7 @@ ScoreFileView::ScoreFileView(std::pair<QString const, task::FileSP> const & scor
 {
     ui->setupUi(this);
 
-	QFileInfo fi(score_file_.first);
+	QFileInfo fi(score_file_->name());
 	decoys_path_ = fi.dir().path();
 
 	update_ui_from_file_data();
@@ -72,14 +72,14 @@ void ScoreFileView::update_ui_from_file_data()
 	chart->removeAllSeries();
 	decoys_.clear();
 
-	/* std::pair<std::vector<QString>,  std::vector<ScorePoint> > */ auto keys_sf = parse_score_file( score_file_.second->data() );
+	/* std::pair<std::vector<QString>,  std::vector<ScorePoint> > */ auto keys_sf = parse_score_file( score_file_->data() );
 
 	score_terms_ = keys_sf.first;
 	auto & sf = keys_sf.second;
 
     QScatterSeries *plot = new QScatterSeries();
 
-    ui->chart_view->chart()->setTitle( QString("Score Plot for %1").arg(score_file_.first) );
+    ui->chart_view->chart()->setTitle( QString("Score Plot for %1").arg(score_file_->name()) );
 
     plot->setName(x_axis_ + " / " + y_axis_);
 	plot->setMarkerSize(8.0);
@@ -143,7 +143,9 @@ void ScoreFileView::point_clicked(QPointF const & point)
 
 			auto & files = task_->files();
 
-			auto it = files.find(file_name);
+			auto it = task_->files_find( task::FileID( task::FileID::Kind::output, file_name) );
+			if( it == files.end() ) it = task_->files_find( task::FileID( task::FileID::Kind::input, file_name) );
+
 			if( it == files.end() ) {
 				qDebug() << "ChartView::point_clicked: could not find file:" << file_name;
 			} else {

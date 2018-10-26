@@ -7,6 +7,8 @@
 #include <ui/ui_lib_test.h>
 #include <ui/task/project_view.h>
 
+#include <ui/task/file.h>
+
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
 
@@ -16,8 +18,9 @@
 
 int main(int argc, char *argv[])
 {
-    //qDebug() << "ui::main: Calling Rosetta init()...";
+	//qRegisterMetaType<ui::task::FileID> ("ui::task::FileID");
 
+    //qDebug() << "ui::main: Calling Rosetta init()...";
     protocols::init::init(argc, argv);
 
 	// { // creating dummy pose object so later we can create Pose in async mode

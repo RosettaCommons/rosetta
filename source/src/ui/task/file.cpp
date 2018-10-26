@@ -80,7 +80,7 @@ Node::Key const _script_key_ {"script"};
 // }
 
 
-File::File(Kind kind, QString const & name, QByteArray const & file_data) : kind_(kind), name_(name)
+File::File(Kind kind, QString const & name, QByteArray const & file_data) : FileID(kind, name)
 {
 	data(file_data);
 }
@@ -302,7 +302,7 @@ void FileTableModel::update_from_task(Task const &task)
 
 	rows_.clear();
 	rows_.reserve( files.size() );
-	for(auto const & it : files) rows_.push_back( Row{it.first, project_path.relativeFilePath( it.second->name() ), it.second->kind() == File::Kind::input ? "input" : "output" } );
+	for(auto const & it : files) rows_.push_back( Row{it->name(), project_path.relativeFilePath( it->local_file_name() ), it->kind() == File::Kind::input ? "input" : "output" } );
 
 	endResetModel();
 }

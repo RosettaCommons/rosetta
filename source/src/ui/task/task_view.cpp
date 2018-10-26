@@ -26,7 +26,8 @@ namespace task {
 TaskView::TaskView(TaskSP const &task,QWidget *parent) :
 	QWidget(parent),
 	ui(new Ui::TaskView),
-	task_(task)
+	task_(task),
+	previewed_file_(FileID::Kind::none, "")
 {
     ui->setupUi(this);
 
@@ -107,10 +108,10 @@ void TaskView::update_ui_file_list_from_task()
 {
 	if( auto model = qobject_cast<QStringListModel*>( ui->output->model() ) ) {
 		QStringList output_files;
-		for(auto const &k_fsp : task_->files() ) {
+		for(auto const &file_sp : task_->files() ) {
 			//qDebug() << "TaskView::update_ui_from_task adding output file: " << k_fsp.first;
 			//if( not k_fsp.second->data().isEmpty() ) output_files << k_fsp.first;
-			output_files << k_fsp.first;
+			output_files << file_sp->name();
 		}
 		model->setStringList(output_files);
 	} else {
@@ -233,19 +234,28 @@ void TaskView::action_output_open()
 		//QString dir;
 		//if( indexes.size() > 1 ) dir = QFileDialog::getExistingDirectory(this, tr("Save Output file to dir...") );
 
+		auto const & files = task_->files();
+
 		for (int i = 0; i <indexes.size(); ++i) {
 			QModelIndex index = indexes[i];
 
 			QVariant qv = model->data(index, Qt::DisplayRole);
 			if( qv.isValid() ) {
-				QString line = qv.toString();
+				auto r = index.row();
 
-				auto const & files = task_->files();
-
-				auto it = files.find(line);
-				if( it != files.end() ) {
+				if( r < static_cast<int>(files.size()) ) {
+					auto it = std::next(files.begin(), r);
 					open_file_viewer(*it, task_, this);
 				}
+
+				// {
+				// 	QString line = qv.toString();
+				// 	auto const & files = task_->files();
+				// 	auto it = task_->files_find(line);
+				// 	if( it != files.end() ) {
+				// 		open_file_viewer(*it, task_, this);
+				// 	}
+				// }
 			}
 		}
 	}
@@ -262,38 +272,61 @@ void TaskView::action_output_save_as()
 		QString dir;
 		if( indexes.size() > 1 ) dir = QFileDialog::getExistingDirectory(this, tr("Save Output file to dir...") );
 
+		auto const & files = task_->files();
+
 		for (int i = 0; i <indexes.size(); ++i) {
 			QModelIndex index = indexes[i];
 
 			QVariant qv = model->data(index, Qt::DisplayRole);
 			if( qv.isValid() ) {
-				QString line = qv.toString();
+				auto r = index.row();
 
-				std::map<QString, FileSP> const & output = task_->files();
-
-				auto it = output.find(line);
-				if( it != output.end() ) {
+				if( r < static_cast<int>(files.size()) ) {
+					FileSP file_sp = * std::next(files.begin(), r);
 
 					QString file_name;
-
 					if( indexes.size() > 1 ) {
-						QFileInfo fi( it->second->name() );
+						QFileInfo fi( file_sp->name() );
 						file_name = dir + '/' + fi.fileName();
 					}
 					else {
 						QDir qd(".");
-						QString suggested_name = qd.absolutePath() + "/" + QFileInfo(it->first).fileName();
+						QString suggested_name = qd.absolutePath() + "/" + file_sp->name();
 						//qDebug() << "dir: " << suggested_name;
 						file_name = QFileDialog::getSaveFileName(this, tr("Save Output file as..."), suggested_name);
 					}
-
 					QFile file(file_name);
 					if( file.open(QIODevice::WriteOnly) ) {
 						qDebug() << "TaskView::action_output_save_as: file:" << file_name;
-						file.write( it->second->data() );
+						file.write( file_sp->data() );
 						file.close();
 					}
 				}
+
+				// {
+				// 	QString line = qv.toString();
+				// 	Files const & output = task_->files();
+				// 	auto it = output.find(line);
+				// 	if( it != output.end() ) {
+				// 		QString file_name;
+				// 		if( indexes.size() > 1 ) {
+				// 			QFileInfo fi( it->second->name() );
+				// 			file_name = dir + '/' + fi.fileName();
+				// 		}
+				// 		else {
+				// 			QDir qd(".");
+				// 			QString suggested_name = qd.absolutePath() + "/" + QFileInfo(it->first).fileName();
+				// 			//qDebug() << "dir: " << suggested_name;
+				// 			file_name = QFileDialog::getSaveFileName(this, tr("Save Output file as..."), suggested_name);
+				// 		}
+				// 		QFile file(file_name);
+				// 		if( file.open(QIODevice::WriteOnly) ) {
+				// 			qDebug() << "TaskView::action_output_save_as: file:" << file_name;
+				// 			file.write( it->second->data() );
+				// 			file.close();
+				// 		}
+				// 	}
+				// }
 			}
 		}
 	}
@@ -308,7 +341,7 @@ void TaskView::on_export_all_files_clicked()
 	dir = QFileDialog::getExistingDirectory(this, tr("Save Output file to dir...") );
 
 	for(auto const & it : task_->files() ) {
-		auto file_info = QFileInfo( dir + '/' + it.first );
+		auto file_info = QFileInfo( dir + '/' + it->name() );
 		auto dir = file_info.dir();
 		if( not dir.exists() ) dir.mkpath(".");
 
@@ -316,7 +349,7 @@ void TaskView::on_export_all_files_clicked()
 		QFile file(file_name);
 		if( file.open(QIODevice::WriteOnly) ) {
 			qDebug() << "TaskView::on_export_all_files_clicked: saving file:" << file_name;
-			file.write( it.second->data() );
+			file.write( it->data() );
 			file.close();
 		}
 	}
@@ -364,69 +397,66 @@ QWidget * TaskView::create_viewer_for_file(FileSP const &f)
 	return nullptr;
 }
 */
-void TaskView::on_output_clicked(const QModelIndex &index)
+void TaskView::on_output_clicked(QModelIndex const &index)
 {
-	if( QStringListModel *model = qobject_cast<QStringListModel*>( ui->output->model() ) ) {
-		QVariant qv = model->data(index, Qt::DisplayRole);
-		if( qv.isValid() ) {
-			QString line = qv.toString();
-
-			std::map<QString, FileSP> const & output = task_->files();
-
-			auto it = output.find(line);
-			if( it != output.end() ) {
-				qDebug() << "TaskView::on_output_clicked: file:" << it->first;
-
-				preview_file(*it);
-			}
-		}
+	if(auto file = index_to_file(index) ) {
+		qDebug() << "TaskView::on_output_clicked: file:" << file->name();
+		preview_file(file);
 	}
 }
 
 
 void TaskView::on_output_doubleClicked(const QModelIndex &index)
 {
-	if( QStringListModel *model = qobject_cast<QStringListModel*>( ui->output->model() ) ) {
-		QVariant qv = model->data(index, Qt::DisplayRole);
-		if( qv.isValid() ) {
-			QString line = qv.toString();
-
-			std::map<QString, FileSP> const & output = task_->files();
-
-			auto it = output.find(line);
-			if( it != output.end() ) {
-				qDebug() << "TaskView::on_output_doubleClicked: file:" << it->first;
-
-				//preview_file(*it);
-				open_file_viewer(*it, task_, this);
-			}
-		}
+	if(auto file = index_to_file(index) ) {
+		qDebug() << "TaskView::on_output_doubleClicked: file:" << file->name();
+		open_file_viewer(file, task_, this);
 	}
 }
 
 
-void TaskView::file_changed(QString const &file_name)
+void TaskView::file_changed(FileID const &file_id)
 {
-	if(file_name == previewed_file_name_) {
-		std::map<QString, FileSP> const & output = task_->files();
+	if(file_id == previewed_file_) {
+		Files const & files = task_->files();
 
-		auto it = output.find(file_name);
-		if( it != output.end() ) preview_file(*it);
+		auto it = task_->files_find(file_id);
+		if( it != files.end() ) preview_file(*it);
 	}
 }
 
 
-void TaskView::preview_file(std::pair<QString const, FileSP> const & name_and_file)
+void TaskView::preview_file(FileSP const & file)
 {
-	previewed_file_name_ = name_and_file.first;
+	previewed_file_ = file->file_id();
 
 	if(viewer_) viewer_->deleteLater();
-	viewer_ = create_viewer_for_file(ui->preview, name_and_file.second);
+	viewer_ = create_viewer_for_file(ui->preview, file);
 
 	if(viewer_) {
 		viewer_->resize( this->ui->preview->size() );
 		viewer_->show();
 	}
+}
+
+
+/// return file object that correspond to given model index, return null if index could not be mapped to file
+FileSP TaskView::index_to_file(QModelIndex const &index)
+{
+	if( QStringListModel *model = qobject_cast<QStringListModel*>( ui->output->model() ) ) {
+		QVariant qv = model->data(index, Qt::DisplayRole);
+		if( qv.isValid() ) {
+			auto r = index.row();
+
+			auto const & files = task_->files();
+
+			if( r < static_cast<int>(files.size()) ) {
+				FileSP file = * std::next(files.begin(), r);
+				return file;
+			}
+		}
+	}
+	return FileSP();
 }
 
 
@@ -437,22 +467,23 @@ void TaskView::on_cancel_task_clicked()
 }
 
 
-void open_file_viewer(std::pair<QString const, FileSP> const & name_and_file, TaskSP const &task, QWidget *parent)
+void open_file_viewer(FileSP const &file, TaskSP const &task, QWidget *parent)
 {
-	QFileInfo fi( name_and_file.first );
-	QString file_name = fi.fileName();
+	//QFileInfo fi( name_and_file.first );
+	//QString file_name = fi.fileName();
+	QString name = file->name();
 
-	if( name_and_file.second->data().isEmpty() ) return;
+	if( file->data().isEmpty() ) return;
 
 	//qDebug() << "temp: " << it->first << file_name;
 
-	if( file_name.endsWith(".pdb") ) {
-		QTemporaryFile * file = new QTemporaryFile("XXXXXX." + file_name, parent);
-		if( file->open() ) {
-			QString file_system_name = file->fileName();
+	if( name.endsWith(".pdb") ) {
+		QTemporaryFile * tmp_file = new QTemporaryFile("XXXXXX." + name, parent);
+		if( tmp_file->open() ) {
+			QString file_system_name = tmp_file->fileName();
 			qDebug() << "file_system_name:" << file_system_name;
-			file->write( name_and_file.second->data() );
-			file->close();
+			tmp_file->write( file->data() );
+			tmp_file->close();
 
 			QString program = config::get_pdb_viewer_path();
 
@@ -483,15 +514,15 @@ void open_file_viewer(std::pair<QString const, FileSP> const & name_and_file, Ta
 		}
 	} else {
 		for(auto const & ending : {"score", ".sc", ".out", ".silent"} ) {
-			if( file_name.endsWith(ending) ) {
-				auto sfv = new viewers::ScoreFileView(name_and_file, task, nullptr);
+			if( name.endsWith(ending) ) {
+				auto sfv = new viewers::ScoreFileView(file, task, nullptr);
 				sfv->show();
 				break;
 			}
 		}
 		for(auto const & contain : {".out."} ) {
-			if( file_name.contains(contain) ) {
-				auto sfv = new viewers::ScoreFileView(name_and_file, task, nullptr);
+			if( name.contains(contain) ) {
+				auto sfv = new viewers::ScoreFileView(file, task, nullptr);
 				sfv->show();
 				break;
 			}

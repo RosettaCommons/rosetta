@@ -48,7 +48,7 @@ public:
 	//explicit Task(QString const &description);
 	~Task();
 
-	/// create clone of Task
+	/// create clone of Task containing only `input` files
 	TaskSP clone() const;
 
 	// return current Task State
@@ -83,8 +83,11 @@ public:
 	void swap_jobs(int i, int j);
 
 	/// add file to Task files collection
-	void add_file(QString const &name, FileSP const &file);
-	std::map<QString, FileSP> const & files() const { return files_; }
+	void add_file(FileSP const &file);
+	Files const & files() const { return files_; }
+
+	/// temporary until C++14
+	Files::const_iterator files_find(FileID const &f);
 
 	/// delete file from task, return true if file was in task files
 	bool delete_file(File::Kind kind, QString const &name);
@@ -129,7 +132,7 @@ public:
 	static Task::State from_string(QString const &s);
 
 public Q_SLOTS:
-	void rename_file(QString const &previous_value, QString const &new_value);
+	void rename_input_file(QString const &previous_value, QString const &new_value);
 
 Q_SIGNALS:
 	void submitted();
@@ -139,7 +142,7 @@ Q_SIGNALS:
     void state_changed();
 
 	void file_list_changed();
-	void file_changed(QString const &);
+	void file_changed(FileID const &);
 
 	/// Emitted when node or sub-node syncing state changed
 	void syncing();
@@ -200,7 +203,8 @@ private:
 
 	std::vector<JobSP> jobs_;
 
-	std::map<QString, FileSP> files_;
+	//std::map<QString, FileSP> files_;
+	Files files_;
 
 	FileTableModel files_model_;
 

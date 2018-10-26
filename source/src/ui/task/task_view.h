@@ -2,7 +2,7 @@
 #define TASK_VIEW_H
 
 #include <ui/task/task.fwd.h>
-#include <ui/task/file.fwd.h>
+#include <ui/task/file.h>
 
 #include <ui/task/util.h>
 
@@ -15,7 +15,7 @@ class TaskView;
 namespace ui {
 namespace task {
 
-void open_file_viewer( std::pair<QString const, FileSP> const & file, TaskSP const &, QWidget *parent=nullptr);
+void open_file_viewer(FileSP const & file, TaskSP const &, QWidget *parent=nullptr);
 
 
 class TaskView : public QWidget
@@ -57,10 +57,13 @@ private Q_SLOTS:
 
 	void update_syncing_progress();
 
-	void file_changed(QString const &file_name);
+	void file_changed(FileID const &file_id);
 
 private:
-	void preview_file(std::pair<QString const, FileSP> const & name_and_file);
+	void preview_file(FileSP const & file);
+
+	/// return file object that correspond to given model index, return null if index could not be mapped to file
+	FileSP index_to_file(QModelIndex const &);
 
 private:
 	//QWidget * create_viewer_for_file(FileSP const &);
@@ -71,7 +74,7 @@ private:
 
 	QWidget *viewer_ = nullptr;
 
-	QString previewed_file_name_;
+	FileID previewed_file_;
 };
 
 } // namespace task

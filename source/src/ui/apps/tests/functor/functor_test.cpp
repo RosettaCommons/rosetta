@@ -147,11 +147,11 @@ void FunctorTest::test_task_upload()
 	auto task = std::make_shared<Task>();
 
 	for(int i=0; i<4; i++) {
-		task->add_file( QString("file-%1").arg(i), std::make_shared<File>(File::Kind::input, "abc file", QByteArray("abc") + QByteArray( std::to_string(i).c_str() ) ) );
+		task->add_file(std::make_shared<File>(File::Kind::input, QString("file-%1").arg(i), QByteArray("abc") + QByteArray( std::to_string(i).c_str() ) ) );
 	}
 
 	for(auto const & it : task->files() ) {
-		QVERIFY( it.second->hash() == "" );
+		QVERIFY( it->hash() == "" );
 	}
 
 	QSignalSpy spy_task(task.get(), SIGNAL( submitted() ) );
@@ -168,7 +168,7 @@ void FunctorTest::test_task_upload()
 	QVERIFY( not task->task_id().isEmpty() );
 
 	for(auto const & it : task->files() ) {
-		QVERIFY( it.second->hash() != "" );
+		QVERIFY( it->hash() != "" );
 	}
 
 	// post new files

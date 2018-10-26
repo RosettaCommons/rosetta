@@ -107,10 +107,9 @@ void TaskSyncer_NodeStrategy::connect_task_and_nodes()
 		if(auto files_node = files_node_.lock() ) {
 
 			if(task_->state_ == Task::State::draft) {
-				for(auto & file : task_->files_) {
+				for(auto & file_sp : task_->files_) {
 					auto fnode = std::make_shared<Node>(Node::Flags::data_out | Node::Flags::topology_out);
-					files_node->add(file.first, fnode);
-					auto file_sp = file.second;
+					files_node->add(file_sp->name(), fnode);
 					fnode->get_data_callback( [file_sp]() -> QJsonValue { return QJsonValue( QLatin1String( file_sp->data().toBase64() ) ); } );
 				}
 			}
@@ -158,13 +157,14 @@ void TaskSyncer_NodeStrategy::files_topology_updated(Node const *, std::vector<Q
 	if(auto files_node = files_node_.lock() ) {
 		TaskSyncer_NodeStrategyQP qsyncer(this);
 
-		for(auto const &k : errased_keys) task_->files_.erase(k);
+		//for(auto const &k : errased_keys) task_->files_.erase(k);
+		for(auto const &k : errased_keys) task_->delete_file(File::Kind::output, k);
 
 		for(auto const &k : new_keys) {
 			if(NodeSP leaf = files_node->leaf(k) ) {
 				FileSP file_sp = std::make_shared<File>();
 				file_sp->name(k);
-				task_->files_[k] = file_sp;
+				task_->files_.emplace(file_sp);
 
 				qDebug() << "TaskSyncer_NodeStrategy::output_topology_updated: setting set-data-callback for node: " << leaf->node_id();
 				leaf->set_data_callback( [qsyncer, file_sp](QJsonValue const &jv) {
@@ -341,9 +341,8 @@ void TaskSyncer_TaskStrategy::task_files_upload()
 
 	QPointer<Task> qtask = task_;
 
-	for(auto const & fl : task_->files() ) {
-		QString file_name = fl.first;
-		FileSP file = fl.second;
+	for(auto const & file : task_->files() ) {
+		QString file_name = file->name();
 
 		if( file->kind() == File::Kind::input ) {
 			auto u = std::make_shared<FunctorNetworkCall>("File uploader for '" + task_->name() + "' task_id=" + task_id + " file:" + file_name);
@@ -455,7 +454,7 @@ void TaskSyncer_TaskStrategy::subscribe()
 
 				QJsonObject o, files;
 
-				for(auto const & f : qtask->files() ) files[f.first] = f.second->hash();
+				for(auto const & f : qtask->files() ) files[f->name()] = f->hash();
 
 				o["files"] = files;
 
@@ -489,10 +488,9 @@ void TaskSyncer_TaskStrategy::subscribe()
 						QString file_name = file_names.at(i);
 
 						auto & files = qtask->files();
-						auto it = files.find(file_name);
+						auto it = qtask->files_find( FileID(File::Kind::output, file_name) );
 						if( it == files.end() ) {
-							auto fl = std::make_shared<File>();
-							qtask->add_file(file_name, fl);
+							qtask->add_file( std::make_shared<File>(File::Kind::output, file_name) );
 
 							file_list_changed = true;
 						}
@@ -534,24 +532,21 @@ void TaskSyncer_TaskStrategy::subscribe()
 									if(qd and qtask) {
 										if( qd->status_code() == 200 ) {
 
-											auto & files = qtask->files();
-											auto it = files.find(file_name);
-											bool file_list_changed = it == files.end();
+											//auto & files = qtask->files();
+											auto it = qtask->files_find( FileID(File::Kind::output, file_name) );
+											bool file_list_changed = it == qtask->files_.end();
 
 											QByteArray data = qd->result();
 
 											// should we re-calculate hash locally instead? //QByteArray hash = QCryptographicHash::hash(data, QCryptographicHash::Md5);
 
-											auto fl = std::make_shared<File>();
-											fl->kind(File::Kind::output);
-											fl->name(file_name);
-											fl->data(data);
+											auto fl = std::make_shared<File>(File::Kind::output, file_name, data);
 											fl->hash(file_hash);
 
-											qtask->add_file(file_name, fl);
+											qtask->add_file(fl);
 
 											if(file_list_changed) { Q_EMIT qtask->file_list_changed(); }
-											Q_EMIT qtask->file_changed(file_name);
+											Q_EMIT qtask->file_changed(fl->file_id());
 											//Q_EMIT qtask->syncing();
 
 											qDebug() << QString("Adding file %1 to task:%2").arg(file_name).arg( qtask->task_id() );

@@ -62,7 +62,7 @@ Task::Task() : syncer_(this)
 {
 	//app_ = "docking_protocol";
 	version_ = "master";
-	connect(&files_model_, SIGNAL( rename_file(QString const &, QString const &) ), this, SLOT( rename_file(QString const &, QString const &) ) );
+	connect(&files_model_, SIGNAL( rename_file(QString const &, QString const &) ), this, SLOT( rename_input_file(QString const &, QString const &) ) );
 }
 
 //Task::Task(QUuid _node_id) : Node(_node_id)
@@ -77,7 +77,7 @@ Task::~Task()
 	//qDebug() << "Task::~Task()";
 }
 
-/// create clone of Task
+/// create clone of Task containing only `input` files
 TaskSP Task::clone() const
 {
 	auto task = std::make_shared<Task>();
@@ -96,7 +96,7 @@ TaskSP Task::clone() const
 	// }
 
 	for(auto const & f : files_) {
-		if( f.second->kind() == File::Kind::input ) task->add_file(f.first, std::make_shared<File>( f.second->kind(), f.second->name(), f.second->data() ) );
+		if( f->kind() == File::Kind::input ) task->add_file( std::make_shared<File>( f->kind(), f->name(), f->data() ) );
 	}
 
 	return task;
@@ -154,26 +154,42 @@ void Task::swap_jobs(int i, int j)
 }
 
 
-void Task::add_file(QString const &name, FileSP const &file)
+void Task::add_file(FileSP const &file)
 {
-	files_[name] = file;
+	auto it_flag = files_.emplace(file);
+	if( !it_flag.second ) {
+		files_.erase(it_flag.first);
+		++it_flag.first;
+		files_.insert(it_flag.first, file);
+	}
 	files_model_.update_from_task(*this);
 }
+
+/// temporary until C++14
+Files::const_iterator Task::files_find(FileID const &f)
+{
+	auto const less = File::LessFileSP();
+	auto it = std::lower_bound(files_.begin(), files_.end(), f, less);
+	if( less(f, *it) ) return files_.end();
+	else return it;
+}
+
 
 /// delete file from task, return true if file was in task files
 bool Task::delete_file(File::Kind kind, QString const &name)
 {
-	auto it = files_.find(name);
+
+	auto it = files_find( FileID(kind, name) );
 
 	if( it == files_.end() ) return false;
-
-	if( it->second->kind() != kind ) return false;
 
 	files_.erase(it);
 	files_model_.update_from_task(*this);
 
 	return true;
 }
+
+
 
 
 void Task::name(QString const &n)
@@ -262,15 +278,17 @@ void Task::submit(QString const & queue)
 }
 
 
-void Task::rename_file(QString const &previous_value, QString const &new_value)
+void Task::rename_input_file(QString const &previous_value, QString const &new_value)
 {
 	{ qDebug() << "Task::rename_file: " << previous_value << " -> " << new_value; }
-
-	auto it = files_.find(previous_value);
+	auto it = files_find( FileID(File::Kind::input, previous_value) );
 	if( it != files_.end()  and  (not new_value.isEmpty() ) ) {
-		auto file = it->second;
+		auto file = *it;
 		files_.erase(it);
-		files_.emplace(new_value, file);
+
+		file->name(new_value);
+
+		files_.emplace(file);
 		files_model_.update_from_task(*this);
 	}
 }
