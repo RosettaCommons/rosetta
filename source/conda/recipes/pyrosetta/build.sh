@@ -1,4 +1,4 @@
-#!/bin/bash
+#Configure!/bin/bash
 #http://redsymbol.net/articles/unofficial-bash-strict-mode/
 
 set -euo pipefail
@@ -6,6 +6,7 @@ IFS=$'\n\t'
 
 set -x
 
+echo "--- Env"
 build_args=(
 --create-package `pwd`/pyrosetta
 --version `pwd`/source/.version.json
@@ -41,6 +42,7 @@ if [[ ! -z "${CLANG:-}" ]]; then
   build_args+=(--compiler ${CLANG})
 fi
 
+echo "--- Build"
 cat source/.version.json
 
 pushd source/src/python/PyRosetta
@@ -49,6 +51,7 @@ python build.py ${build_args[@]} -j
 
 popd
 
+echo "--- Setup"
 pushd pyrosetta
 # Run initial test to prebuild databases
 python -c 'import pyrosetta; pyrosetta.init(); pyrosetta.get_score_function()(pyrosetta.pose_from_sequence("TEST"))'

@@ -14,11 +14,13 @@ IFS=$'\n\t'
 set -x 
 
 if [[ ! -z "${BUILDKITE_BRANCH:-}" ]]; then
+  set +e
   CURRENT_TAG=$( git describe --tags --exact)
+  set -e
 
   if [ "${BUILDKITE_BRANCH:-}" = "${CURRENT_TAG}" ]; then
-    # Currently detached on the target tag
-    exit 0
+      # Currently detached on the target tag
+      exit 0
   fi
 
   # Convert the current detached-HEAD to a branch ref with the given buildkite branch name

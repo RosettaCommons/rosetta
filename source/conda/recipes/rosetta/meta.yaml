@@ -8,12 +8,14 @@ requirements:
     - {{ compiler('cxx') }}
     - cmake
     - ninja
+    - hdf5
 
   host:
     - zlib
 
   run:
     - zlib
+    - hdf5
 
 test:
   commands:

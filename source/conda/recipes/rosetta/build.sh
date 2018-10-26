@@ -3,6 +3,7 @@
 set -x
 set -e
 
+echo "--- Env"
 unset MACOSX_DEPLOYMENT_TARGET
 
 TARGET_APPS="rosetta_scripts score relax AbinitioRelax"
@@ -32,18 +33,21 @@ if [[ ! -z "${CLANG:-}" ]]; then
   export CXXFLAGS="-I${PREFIX}/include"
 fi
 
+echo "--- Configure"
 cat source/.version.json
 
 pushd source/cmake
-echo "--- Build"
 ./make_project.py all
 
 pushd build_release
-cmake -G Ninja -DCMAKE_INSTALL_PREFIX=${PREFIX}
+cmake -G Ninja -DHDF5=ON -DCMAKE_INSTALL_PREFIX=${PREFIX}
 
+echo "--- Build"
 ninja ${TARGET_APPS}
 
 echo "--- Install"
 ninja install | grep -v Installing: | grep -v Up-to-date:
+
+echo "--- Done"
 popd
 popd
