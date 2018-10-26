@@ -595,7 +595,8 @@ sources = {
 	"simple_filters" : [
 		"DdgFilter",
 		"DdGScan",
-                "InterfaceHydrophobicResidueContactsFilter",
+		"InterfaceHydrophobicResidueContactsFilter",
+		"InterfaceHbondsFilter",
 		"LongestContinuousApolarSegmentFilterTests",
 		"LongestContinuousPolarSegmentFilterTests",
 		"ReadPoseExtraScoreFilter",
@@ -1145,6 +1146,7 @@ testinputfiles = [
         "sewing/inputs/test.segments",
         "sewing/inputs/single_helix.pdb",
         "sewing/inputs/zinc_site_10_12.pdb",
+	"simple_filters/interface_hbonds_input.pdb",
 	"simple_moves/1bl0_auto.fasta.pssm",
 	"simple_moves/design.resfile",
 	"simple_moves/design2.resfile",

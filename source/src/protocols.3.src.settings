@@ -557,6 +557,7 @@ sources = {
 		"ResidueChiralityFilter",
 		"TMsAACompFilter",
 		"InterfaceHydrophobicResidueContactsFilter",
+		"InterfaceHbondsFilter",
 	],
 	"protocols/minimization_packing": [
 		"BoltzmannRotamerMover",
