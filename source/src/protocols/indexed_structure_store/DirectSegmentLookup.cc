@@ -18,6 +18,7 @@
 #include <boost/range/combine.hpp>
 #include <boost/range/algorithm.hpp>
 #include <boost/range.hpp>
+#include <boost/format.hpp>
 
 // Project headers
 #include <basic/Tracer.hh>

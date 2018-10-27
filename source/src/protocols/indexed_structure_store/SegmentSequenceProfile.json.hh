@@ -18,23 +18,21 @@
 #include <protocols/indexed_structure_store/SegmentSequenceProfile.hh>
 
 
-using nlohmann::json;
-
 namespace protocols
 {
 namespace indexed_structure_store
 {
 
-inline void to_json(json& j, const SegmentSequenceProfileConfig& c) {
-	j = json{
+inline void to_json(nlohmann::json& j, const SegmentSequenceProfileConfig& c) {
+	j = nlohmann::json{
 		{"rmsd_tolerance" , c.rmsd_tolerance},
 		{"pseudocount" , c.pseudocount},
 		};
 }
 
-inline void from_json(const json& j, SegmentSequenceProfileConfig& c) {
-	c.rmsd_tolerance = j["rmsd_tolerance"].get<Real>();
-	c.pseudocount = j["pseudocount"].get<Real>();
+inline void from_json(const nlohmann::json& j, SegmentSequenceProfileConfig& c) {
+	c.rmsd_tolerance = j["rmsd_tolerance"].get<search::SearchReal>();
+	c.pseudocount = j["pseudocount"].get<search::SearchReal>();
 }
 
 }

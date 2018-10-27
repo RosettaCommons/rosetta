@@ -76,10 +76,10 @@ public:
 	core::Real weight() { return weight_; }
 	void weight(core::Real new_weight) { weight_ = new_weight; }
 
-	StructureStoreOP
+	indexed_structure_store::StructureStoreOP
 	structure_store();
 
-	StructureDatabaseOP
+	search::StructureDatabaseOP
 	structure_database();
 
 	moves::MoverOP
@@ -122,7 +122,7 @@ private:
 	core::Real weight_ = 1;
 
 	StructureStoreOP structure_store_;
-	StructureDatabaseOP structure_database_;
+	search::StructureDatabaseOP structure_database_;
 };
 
 

@@ -12,6 +12,7 @@
 #include <algorithm>
 
 #include "boost/format.hpp"
+#include "boost/range/algorithm/copy.hpp"
 
 #include <utility/io/ozstream.hh>
 
@@ -229,7 +230,7 @@ StructureStoreOP SegmentSequenceProfileMover::structure_store() {
 	return structure_store_;
 }
 
-StructureDatabaseOP SegmentSequenceProfileMover::structure_database() {
+search::StructureDatabaseOP SegmentSequenceProfileMover::structure_database() {
 	init_structure_store();
 	return structure_database_;
 }
@@ -240,7 +241,7 @@ SegmentSequenceProfileMover::init_structure_store() {
 	if ( !structure_store_ ) {
 		runtime_assert(!structure_database_);
 		structure_store_ = StructureStoreManager::get_instance()->load_structure_store(structure_store_path());
-		structure_database_ = StructureDatabaseOP(new StructureDatabase());
+		structure_database_ = search::StructureDatabaseOP(new search::StructureDatabase());
 		structure_database_->initialize(structure_store_->residue_entries);
 	}
 }

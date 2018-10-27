@@ -26,19 +26,16 @@
 namespace protocols { namespace indexed_structure_store {
 
 
-using namespace protocols::indexed_structure_store;
-using namespace protocols::indexed_structure_store::search;
-
 struct SegmentSequenceProfileConfig {
-	Real rmsd_tolerance = .5;
-	Real pseudocount = 1;
+	search::SearchReal rmsd_tolerance = .5;
+	search::SearchReal pseudocount = 1;
 };
 
 struct SegmentSequenceProfileResult {
 	typedef Eigen::Array<core::Real, Eigen::Dynamic, core::chemical::num_canonical_aas> ArrayXaa;
 	typedef Eigen::Array<core::Real, 1, core::chemical::num_canonical_aas> Array1aa;
 
-	std::vector<StructureSingleQueryResult> query_results;
+	std::vector<search::StructureSingleQueryResult> query_results;
 	ArrayXaa counts;
 	ArrayXaa frequencies;
 	ArrayXaa log_odds;
@@ -56,12 +53,12 @@ public:
 
 	SegmentSequenceProfileResult segment_profile(
 		StructureStore & structure_store,
-		StructureDatabase & structure_db,
+		search::StructureDatabase & structure_db,
 		core::pose::Pose & context,
 		core::Size segment_start, core::Size segment_end
 	);
 
-	PairQuerySummaryStatistics query_stats;
+	search::PairQuerySummaryStatistics query_stats;
 	SegmentSequenceProfileConfig config;
 };
 } }

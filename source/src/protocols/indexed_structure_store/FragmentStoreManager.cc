@@ -102,7 +102,7 @@ FragmentStoreOP FragmentStoreManager::load_fragment_store(std::string lookup_nam
 	if ( utility::file::file_extension(resolved_path) == "h5" ) {
 		H5FragmentStoreBackend backend(resolved_path);
 		target_store = backend.get_fragment_store(lookup_name);
-		for(Size ii=1; ii<=fields_to_load.size(); ++ii)
+		for(numeric::Size ii=1; ii<=fields_to_load.size(); ++ii)
 			backend.append_to_fragment_store(target_store,lookup_name,fields_to_load[ii],fields_to_load_types[ii]);
 	}
 	else
@@ -229,17 +229,17 @@ std::map<numeric::Size, FragmentStoreOP> FragmentStoreManager::load_grouped_frag
 			if ( tmp_group_name != group_field ) {
 				for ( Size ii =0; ii<fragsGroupIds.size(); ++ii ) {
 					if ( typed_frags[fragsGroupIds[ii]]->int64_groups[tmp_group_name].size() == 0 ) {
-						std::vector<Size> int64_vector;
-						typed_frags[fragsGroupIds[ii]]->int64_groups.insert(std::pair<std::string,std::vector< Size > > (tmp_group_name,int64_vector));
+						std::vector<numeric::Size> int64_vector;
+						typed_frags[fragsGroupIds[ii]]->int64_groups.insert(std::pair<std::string,std::vector< numeric::Size > > (tmp_group_name,int64_vector));
 					}
 					typed_frags[fragsGroupIds[ii]]->int64_groups[tmp_group_name].push_back(fullStore->int64_groups[tmp_group_name][ii]);
 				}
 			}
 		}
 		fullStore->int64_groups.clear();
-		std::map<std::string, std::vector<Size> >().swap(fullStore->int64_groups);
+		std::map<std::string, std::vector<numeric::Size> >().swap(fullStore->int64_groups);
 		fullStore->fragment_threshold_distances.clear();
-		std::vector<Real>().swap(fullStore->fragment_threshold_distances);
+		std::vector<numeric::Real>().swap(fullStore->fragment_threshold_distances);
 		grouped_fragment_map_[if_cached_name]=typed_frags;
 		return(typed_frags);
 	}

@@ -17,25 +17,23 @@
 #include <protocols/indexed_structure_store/search/QueryDatabase.hh>
 
 
-using nlohmann::json;
-
 namespace protocols { namespace indexed_structure_store { namespace search {
-inline void to_json(json& j, const SingleQuerySummaryStatistics& s) {
-	j = json{
+inline void to_json(nlohmann::json& j, const SingleQuerySummaryStatistics& s) {
+	j = nlohmann::json{
 		{"structures_considered", s.structures_considered},
 		{"fragments_considered", s.fragments_considered},
 		{"result_count", s.result_count}
 		};
 }
 
-inline void from_json(const json& j, SingleQuerySummaryStatistics& s) {
+inline void from_json(const nlohmann::json& j, SingleQuerySummaryStatistics& s) {
 	s.structures_considered = j["structures_considered"].get<Index>();
 	s.fragments_considered = j["fragments_considered"].get<Index>();
 	s.result_count = j["result_count"].get<Index>();
 }
 
-inline void to_json(json& j, const StructureSingleQueryResult& s) {
-	j = json{
+inline void to_json(nlohmann::json& j, const StructureSingleQueryResult& s) {
+	j = nlohmann::json{
 		{"fragment_start", s.fragment_start},
 		{"structure_index", s.structure_index},
 		{"fragment_structure_start", s.fragment_structure_start},
@@ -43,15 +41,15 @@ inline void to_json(json& j, const StructureSingleQueryResult& s) {
 		};
 }
 
-inline void from_json(const json& j, StructureSingleQueryResult& s) {
+inline void from_json(const nlohmann::json& j, StructureSingleQueryResult& s) {
 	s.fragment_start = j["fragment_start"].get<Index>();
 	s.structure_index = j["structure_index"].get<Index>();
 	s.fragment_structure_start = j["fragment_structure_start"].get<Index>();
-	s.result_rmsd = j["result_rmsd"].get<Real>();
+	s.result_rmsd = j["result_rmsd"].get<SearchReal>();
 }
 
-inline void to_json(json& j, const PairQuerySummaryStatistics& s) {
-	j = json{
+inline void to_json(nlohmann::json& j, const PairQuerySummaryStatistics& s) {
+	j = nlohmann::json{
 		{"structures_considered", s.structures_considered},
 		{"fragments_considered", s.fragments_considered},
 		{"fragments_expanded", s.fragments_expanded},
@@ -61,7 +59,7 @@ inline void to_json(json& j, const PairQuerySummaryStatistics& s) {
 		};
 }
 
-inline void from_json(const json& j, PairQuerySummaryStatistics& s) {
+inline void from_json(const nlohmann::json& j, PairQuerySummaryStatistics& s) {
 	s.structures_considered = j["structures_considered"].get<Index>();
 	s.fragments_considered = j["fragments_considered"].get<Index>();
 	s.fragments_expanded = j["fragments_expanded"].get<Index>();
@@ -70,8 +68,8 @@ inline void from_json(const json& j, PairQuerySummaryStatistics& s) {
 	s.result_count = j["result_count"].get<Index>();
 }
 
-inline void to_json(json& j, const StructurePairQueryResult& s) {
-	j = json{
+inline void to_json(nlohmann::json& j, const StructurePairQueryResult& s) {
+	j = nlohmann::json{
 		{"fragment_a_start", s.fragment_a_start},
 		{"fragment_b_start", s.fragment_b_start},
 		{"structure_index", s.structure_index},
@@ -81,13 +79,13 @@ inline void to_json(json& j, const StructurePairQueryResult& s) {
 		};
 }
 
-inline void from_json(const json& j, StructurePairQueryResult& s) {
+inline void from_json(const nlohmann::json& j, StructurePairQueryResult& s) {
 	s.fragment_a_start = j["fragment_a_start"].get<Index>();
 	s.fragment_b_start = j["fragment_b_start"].get<Index>();
 	s.structure_index = j["structure_index"].get<Index>();
 	s.fragment_a_structure_start = j["fragment_a_structure_start"].get<Index>();
 	s.fragment_b_structure_start = j["fragment_b_structure_start"].get<Index>();
-	s.result_rmsd = j["result_rmsd"].get<Real>();
+	s.result_rmsd = j["result_rmsd"].get<SearchReal>();
 }
 
 } } }

@@ -73,7 +73,7 @@ public:
 	StructureStoreOP
 	structure_store();
 
-	StructureDatabaseOP
+	search::StructureDatabaseOP
 	structure_database();
 
 	moves::MoverOP
@@ -119,7 +119,7 @@ private:
 	Size to_chain_ = 2;
 
 	StructureStoreOP structure_store_;
-	StructureDatabaseOP structure_database_;
+	search::StructureDatabaseOP structure_database_;
 
 	core::pose::PoseOP source_pose_;
 	std::vector<DirectSegmentLookupResult> lookup_results_;

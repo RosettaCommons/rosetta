@@ -63,7 +63,7 @@ public:
 		search_database.initialize(test_residues);
 		TR.Trace << json(test_residues).dump(2) << std::endl;
 
-		ndarray::Array<Real, 3, 3> test_query_coordinates(5, 4, 3);
+		ndarray::Array<SearchReal, 3, 3> test_query_coordinates(5, 4, 3);
 		test_query_coordinates.deep() = orient_array(test_residues)[ndarray::view(3,8)()()];
 
 		SingleQueryExecutor query_executor(StructureSingleQuery(test_query_coordinates, .01));
@@ -87,8 +87,8 @@ public:
 		search_database.initialize(test_residues);
 		TR.Trace << json(a_to_v(test_residues)).dump(2) << std::endl;
 
-		ndarray::Array<Real, 3, 3> test_query_coordinates_a(2, 4, 3);
-		ndarray::Array<Real, 3, 3> test_query_coordinates_b(2, 4, 3);
+		ndarray::Array<SearchReal, 3, 3> test_query_coordinates_a(2, 4, 3);
+		ndarray::Array<SearchReal, 3, 3> test_query_coordinates_b(2, 4, 3);
 
 		test_query_coordinates_a.deep() = orient_array(test_residues)[ndarray::view(3,5)()()];
 		test_query_coordinates_b.deep() = orient_array(test_residues)[ndarray::view(8,10)()()];

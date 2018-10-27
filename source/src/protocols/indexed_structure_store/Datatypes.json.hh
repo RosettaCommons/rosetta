@@ -19,29 +19,27 @@
 #include <protocols/indexed_structure_store/Datatypes.hh>
 
 
-using nlohmann::json;
-
 namespace protocols
 {
 namespace indexed_structure_store
 {
 
-inline void to_json(json& j, const ResidueBackboneEntry& i) {
-	j = json{
+inline void to_json(nlohmann::json& j, const ResidueBackboneEntry& i) {
+	j = nlohmann::json{
 		{"phi" , i.phi},
 		{"psi" , i.psi},
 		{"omega" , i.omega},
 		};
 }
 
-inline void from_json(const json& j, ResidueBackboneEntry& i) {
+inline void from_json(const nlohmann::json& j, ResidueBackboneEntry& i) {
 	i.phi = j["phi"].get<float>();
 	i.psi = j["psi"].get<float>();
 	i.omega = j["omega"].get<float>();
 }
 
-inline void to_json(json& j, const ResidueSidechainEntry& i) {
-	j = json{
+inline void to_json(nlohmann::json& j, const ResidueSidechainEntry& i) {
+	j = nlohmann::json{
 		{"chi1" , i.chi1},
 		{"chi2" , i.chi2},
 		{"chi3" , i.chi3},
@@ -50,7 +48,7 @@ inline void to_json(json& j, const ResidueSidechainEntry& i) {
 		};
 }
 
-inline void from_json(const json& j, ResidueSidechainEntry& i) {
+inline void from_json(const nlohmann::json& j, ResidueSidechainEntry& i) {
 	i.chi1 = j["chi1"].get<float>();
 	i.chi2 = j["chi2"].get<float>();
 	i.chi3 = j["chi3"].get<float>();
@@ -58,8 +56,8 @@ inline void from_json(const json& j, ResidueSidechainEntry& i) {
 	i.aa = j["aa"].get<std::string>()[0];
 }
 
-inline void to_json(json& j, const ResidueOrientEntry& i) {
-	j = json{
+inline void to_json(nlohmann::json& j, const ResidueOrientEntry& i) {
+	j = nlohmann::json{
 		{"N" , i.N},
 		{"C" , i.C},
 		{"CA" , i.CA},
@@ -67,7 +65,7 @@ inline void to_json(json& j, const ResidueOrientEntry& i) {
 		};
 }
 
-inline void from_json(const json& j, ResidueOrientEntry& i) {
+inline void from_json(const nlohmann::json& j, ResidueOrientEntry& i) {
 	//TODO alexford add array accessors
 	i.N[0] = j["N"][0].get<float>();
 	i.N[1] = j["N"][1].get<float>();
@@ -83,8 +81,8 @@ inline void from_json(const json& j, ResidueOrientEntry& i) {
 	i.O[2] = j["O"][2].get<float>();
 }
 
-inline void to_json(json& j, const ResidueEntry& i) {
-	j = json{
+inline void to_json(nlohmann::json& j, const ResidueEntry& i) {
+	j = nlohmann::json{
 		{"structure_id" , i.structure_id},
 		{"residue_id" , i.residue_id},
 		{"bb" , i.bb},
@@ -94,7 +92,7 @@ inline void to_json(json& j, const ResidueEntry& i) {
 		};
 }
 
-inline void from_json(const json& j, ResidueEntry& i) {
+inline void from_json(const nlohmann::json& j, ResidueEntry& i) {
 	i.structure_id = j["structure_id"].get<uint32_t>();
 	i.residue_id = j["residue_id"].get<uint32_t>();
 	i.bb = j["bb"].get<ResidueBackboneEntry>();
@@ -103,17 +101,17 @@ inline void from_json(const json& j, ResidueEntry& i) {
 	i.chain_ending = j["chain_ending"].get<bool>();
 }
 
-inline void to_json(json& j, const StructureEntry& i) {
+inline void to_json(nlohmann::json& j, const StructureEntry& i) {
 	std::string name(i.name, 32);
 	name.erase(name.find_first_of('\0'));
 
-	j = json{
+	j = nlohmann::json{
 		{"name" , name},
 		{"id" , i.id}
 		};
 }
 
-inline void from_json(const json& j, StructureEntry& i) {
+inline void from_json(const nlohmann::json& j, StructureEntry& i) {
 	i.id = j["id"].get<uint32_t>();
 	std::string name = j["name"].get<std::string>();
 	name.resize(32);

@@ -43,7 +43,7 @@ using namespace protocols::indexed_structure_store;
 
 void StructureData::initialize(
 	Index src_structure_offset,
-	ndarray::Array<Real, 3, 3> src_coordinates,
+	ndarray::Array<SearchReal, 3, 3> src_coordinates,
 	IndexArray src_chain_endpoints
 )
 {
@@ -125,7 +125,7 @@ void StructureData::prepare_for_query(Index fragment_length)
 //};
 
 void StructureDatabase::initialize(ndarray::Array<ResidueEntry, 1> residue_entries) {
-	ndarray::Array<Real, 3, 3> coordinates(residue_entries.getSize<0>(), 4, 3);
+	ndarray::Array<SearchReal, 3, 3> coordinates(residue_entries.getSize<0>(), 4, 3);
 	coordinates.deep() = orient_array(residue_entries);
 
 	std::vector<Index> structure_endpoints;
@@ -144,7 +144,7 @@ void StructureDatabase::initialize(ndarray::Array<ResidueEntry, 1> residue_entri
 }
 
 void StructureDatabase::initialize(
-	ndarray::Array<Real, 3, 3> coordinate_buffer,
+	ndarray::Array<SearchReal, 3, 3> coordinate_buffer,
 	ndarray::Array<Index, 1> structure_endpoints,
 	ndarray::Array<Index, 1> chain_endpoints
 )
@@ -193,7 +193,7 @@ void StructureDatabase::initialize(
 
 void StructureDatabase::initialize_structure_data_from_buffer(
 	StructureData & structure_data,
-	ndarray::Array<Real, 3, 3> coordinate_buffer,
+	ndarray::Array<SearchReal, 3, 3> coordinate_buffer,
 	ndarray::Array<Index, 1> structure_endpoints,
 	ndarray::Array<Index, 1> chain_endpoints,
 	Index & structure_endpoint_index,
@@ -232,9 +232,9 @@ void StructureDatabase::initialize_structure_data_from_buffer(
 }
 
 StructurePairQuery::StructurePairQuery(
-	ndarray::Array<Real, 3, 3> query_coordinates_a,
-	ndarray::Array<Real, 3, 3> query_coordinates_b,
-	Real rmsd_tolerance_
+	ndarray::Array<SearchReal, 3, 3> query_coordinates_a,
+	ndarray::Array<SearchReal, 3, 3> query_coordinates_b,
+	SearchReal rmsd_tolerance_
 ) :
 	n_entry_a(),
 	n_entry_b(),
@@ -249,9 +249,9 @@ StructurePairQuery::StructurePairQuery(
 }
 
 StructurePairQuery::StructurePairQuery(
-	ndarray::Array<Real, 3, 3> query_coordinates_a,
-	ndarray::Array<Real, 3, 3> query_coordinates_b,
-	Real rmsd_tolerance_,
+	ndarray::Array<SearchReal, 3, 3> query_coordinates_a,
+	ndarray::Array<SearchReal, 3, 3> query_coordinates_b,
+	SearchReal rmsd_tolerance_,
 	Index min_primary_distance_,
 	Index max_primary_distance_
 ) :
@@ -268,8 +268,8 @@ StructurePairQuery::StructurePairQuery(
 }
 
 void StructurePairQuery::init(
-	ndarray::Array<Real, 3, 3> query_coordinates_a,
-	ndarray::Array<Real, 3, 3> query_coordinates_b
+	ndarray::Array<SearchReal, 3, 3> query_coordinates_a,
+	ndarray::Array<SearchReal, 3, 3> query_coordinates_b
 ) {
 	// Validate query shapes
 	if ( query_coordinates_a.template getSize<2>() != 3 ) {
@@ -304,8 +304,8 @@ void StructurePairQuery::init(
 }
 
 StructureSingleQuery::StructureSingleQuery(
-	ndarray::Array<Real, 3, 3> query_coordinates,
-	Real rmsd_tolerance_
+	ndarray::Array<SearchReal, 3, 3> query_coordinates,
+	SearchReal rmsd_tolerance_
 ) :
 	n_entry(),
 	c_per_entry(),
@@ -380,7 +380,7 @@ void PairQueryExecutor::execute_structure(Index structure_index, StructureData &
 
 			query_stats.pairs_considered++;
 
-			Real result_rmsd = this->perform_structure_rmsd(
+			SearchReal result_rmsd = this->perform_structure_rmsd(
 				target_structure,
 				fragment_indicies_a,
 				fragment_indicies_b,
@@ -402,7 +402,7 @@ void PairQueryExecutor::execute_structure(Index structure_index, StructureData &
 	}
 }
 
-Real PairQueryExecutor::perform_structure_rmsd(
+SearchReal PairQueryExecutor::perform_structure_rmsd(
 	StructureData & target_structure,
 	StructureData::IndexArray & fragment_indicies_a,
 	StructureData::IndexArray & fragment_indicies_b,
@@ -425,7 +425,7 @@ Real PairQueryExecutor::perform_structure_rmsd(
 		(fragment_centers_of_mass_b.col(fragment_index_b) * query.q_buffer_b.cols()))
 		/ (query.q_buffer_a.cols() + query.q_buffer_b.cols());
 
-	return numeric::alignment::QCPKernel<Real>::calc_coordinate_rmsd( query_coordinate_buffer, query_coordinate_com, structure_coordinate_buffer, structure_coordinate_com);
+	return numeric::alignment::QCPKernel<SearchReal>::calc_coordinate_rmsd( query_coordinate_buffer, query_coordinate_com, structure_coordinate_buffer, structure_coordinate_com);
 }
 
 SingleQueryExecutor::SingleQueryExecutor(Query const & query) : query(query)
@@ -455,7 +455,7 @@ void SingleQueryExecutor::execute_structure(Index structure_index, StructureData
 	for ( Index fragment_index = 0; fragment_index < fragment_indicies.size(); fragment_index++ ) {
 		query_stats.fragments_considered++;
 		Index a = fragment_indicies[fragment_index];
-		Real result_rmsd = this->perform_structure_rmsd(
+		SearchReal result_rmsd = this->perform_structure_rmsd(
 			target_structure,
 			fragment_indicies,
 			fragment_centers_of_mass,
@@ -472,7 +472,7 @@ void SingleQueryExecutor::execute_structure(Index structure_index, StructureData
 	}
 }
 
-Real SingleQueryExecutor::perform_structure_rmsd(
+SearchReal SingleQueryExecutor::perform_structure_rmsd(
 	StructureData & target_structure,
 	StructureData::IndexArray & fragment_indicies,
 	StructureData::CoordinateMatrix & fragment_centers_of_mass,
@@ -483,7 +483,7 @@ Real SingleQueryExecutor::perform_structure_rmsd(
 	structure_coordinate_buffer = target_structure.coordinate_buffer.block(0, a * query.c_per_entry, 3, query.q_buffer.cols());
 	structure_coordinate_com = fragment_centers_of_mass.col(fragment_index);
 
-	return numeric::alignment::QCPKernel<Real>::calc_coordinate_rmsd(
+	return numeric::alignment::QCPKernel<SearchReal>::calc_coordinate_rmsd(
 		query_coordinate_buffer,
 		query_coordinate_com,
 		structure_coordinate_buffer,

@@ -17,25 +17,23 @@
 #include <protocols/indexed_structure_store/DirectSegmentLookup.hh>
 
 
-using nlohmann::json;
-
 namespace protocols
 {
 namespace indexed_structure_store
 {
 
-inline void to_json(json& j, const DirectSegmentLookupConfig& c) {
-	j = json{
+inline void to_json(nlohmann::json& j, const DirectSegmentLookupConfig& c) {
+	j = nlohmann::json{
 		{"rmsd_tolerance" , c.rmsd_tolerance},
 		{"segment_cluster_tolerance" , c.segment_cluster_tolerance},
 		{"max_insertion_length" , c.max_insertion_length}
 		};
 }
 
-inline void from_json(const json& j, DirectSegmentLookupConfig& c) {
-	c.rmsd_tolerance = j["rmsd_tolerance"].get<Real>();
-	c.segment_cluster_tolerance = j["segment_cluster_tolerance"].get<Real>();
-	c.max_insertion_length = j["max_insertion_length"].get<Index>();
+inline void from_json(const nlohmann::json& j, DirectSegmentLookupConfig& c) {
+	c.rmsd_tolerance = j["rmsd_tolerance"].get<search::SearchReal>();
+	c.segment_cluster_tolerance = j["segment_cluster_tolerance"].get<search::SearchReal>();
+	c.max_insertion_length = j["max_insertion_length"].get<search::Index>();
 }
 
 }

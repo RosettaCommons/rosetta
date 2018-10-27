@@ -20,9 +20,6 @@
 #include <vector>
 #include <map>
 
-#include <boost/geometry.hpp>
-#include <boost/geometry/index/rtree.hpp>
-
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
@@ -33,21 +30,16 @@
 
 namespace protocols { namespace indexed_structure_store { namespace search {
 
-using namespace protocols::indexed_structure_store;
-
 typedef int64_t Index;
-typedef float Real;
+typedef float SearchReal;
 
 class StructureData
 {
 public:
 
-	typedef Eigen::Matrix<Real, 3, 1> Coordinate;
-	typedef Eigen::Matrix<Real, 3, Eigen::Dynamic> CoordinateMatrix;
+	typedef Eigen::Matrix<SearchReal, 3, 1> Coordinate;
+	typedef Eigen::Matrix<SearchReal, 3, Eigen::Dynamic> CoordinateMatrix;
 	typedef Eigen::Array<Index, Eigen::Dynamic, 1> IndexArray;
-
-	//typedef std::pair< Coordinate, Index > SpatialIndexEntry;
-	//typedef boost::geometry::index::rtree< SpatialIndexEntry, boost::geometry::index::rstar<16> > SpatialIndex;
 
 	Index structure_offset;
 	CoordinateMatrix coordinate_buffer;
@@ -62,7 +54,7 @@ public:
 
 	void initialize(
 		Index src_structure_offset,
-		ndarray::Array<Real, 3, 3> src_coordinates,
+		ndarray::Array<SearchReal, 3, 3> src_coordinates,
 		IndexArray src_chain_endpoints
 	);
 
@@ -110,7 +102,7 @@ public:
 	void initialize(ndarray::Array<ResidueEntry, 1> residue_entries);
 
 	void initialize(
-		ndarray::Array<Real, 3, 3> coordinate_buffer,
+		ndarray::Array<SearchReal, 3, 3> coordinate_buffer,
 		ndarray::Array<Index, 1> structure_endpoints,
 		ndarray::Array<Index, 1> chain_endpoints
 	);
@@ -124,7 +116,7 @@ public:
 private:
 	void initialize_structure_data_from_buffer(
 		StructureData & structure_data,
-		ndarray::Array<Real, 3, 3> coordinate_buffer,
+		ndarray::Array<SearchReal, 3, 3> coordinate_buffer,
 		ndarray::Array<Index, 1> structure_endpoints,
 		ndarray::Array<Index, 1> chain_endpoints,
 		Index & structure_endpoint_index,
@@ -135,28 +127,28 @@ private:
 
 class StructurePairQuery
 {
-	typedef Eigen::Matrix<Real, 3, 1> Coordinate;
-	typedef Eigen::Matrix<Real, 3, Eigen::Dynamic> CoordinateMatrix;
+	typedef Eigen::Matrix<SearchReal, 3, 1> Coordinate;
+	typedef Eigen::Matrix<SearchReal, 3, Eigen::Dynamic> CoordinateMatrix;
 
 public:
 
 	StructurePairQuery(
-		ndarray::Array<Real, 3, 3> query_coordinates_a,
-		ndarray::Array<Real, 3, 3> query_coordinates_b,
-		Real rmsd_tolerance_
+		ndarray::Array<SearchReal, 3, 3> query_coordinates_a,
+		ndarray::Array<SearchReal, 3, 3> query_coordinates_b,
+		SearchReal rmsd_tolerance_
 	);
 
 	StructurePairQuery(
-		ndarray::Array<Real, 3, 3> query_coordinates_a,
-		ndarray::Array<Real, 3, 3> query_coordinates_b,
-		Real rmsd_tolerance_,
+		ndarray::Array<SearchReal, 3, 3> query_coordinates_a,
+		ndarray::Array<SearchReal, 3, 3> query_coordinates_b,
+		SearchReal rmsd_tolerance_,
 		Index min_primary_distance_,
 		Index max_primary_distance_
 	);
 
 	void init(
-		ndarray::Array<Real, 3, 3> query_coordinates_a,
-		ndarray::Array<Real, 3, 3> query_coordinates_b
+		ndarray::Array<SearchReal, 3, 3> query_coordinates_a,
+		ndarray::Array<SearchReal, 3, 3> query_coordinates_b
 	);
 
 	Index n_entry_a;
@@ -167,7 +159,7 @@ public:
 
 	Index c_per_entry;
 
-	Real rmsd_tolerance;
+	SearchReal rmsd_tolerance;
 
 	bool limit_primary_distance;
 	Index min_primary_distance;
@@ -176,14 +168,14 @@ public:
 
 class StructureSingleQuery
 {
-	typedef Eigen::Matrix<Real, 3, 1> Coordinate;
-	typedef Eigen::Matrix<Real, 3, Eigen::Dynamic> CoordinateMatrix;
+	typedef Eigen::Matrix<SearchReal, 3, 1> Coordinate;
+	typedef Eigen::Matrix<SearchReal, 3, Eigen::Dynamic> CoordinateMatrix;
 
 public:
 
 	StructureSingleQuery(
-		ndarray::Array<Real, 3, 3> query_coordinates,
-		Real rmsd_tolerance_
+		ndarray::Array<SearchReal, 3, 3> query_coordinates,
+		SearchReal rmsd_tolerance_
 	);
 
 	Index n_entry;
@@ -191,7 +183,7 @@ public:
 
 	CoordinateMatrix q_buffer;
 
-	Real rmsd_tolerance;
+	SearchReal rmsd_tolerance;
 };
 
 struct StructurePairQueryResult
@@ -201,7 +193,7 @@ struct StructurePairQueryResult
 	Index structure_index;
 	Index fragment_a_structure_start;
 	Index fragment_b_structure_start;
-	Real result_rmsd;
+	SearchReal result_rmsd;
 };
 
 struct StructureSingleQueryResult
@@ -209,7 +201,7 @@ struct StructureSingleQueryResult
 	Index fragment_start;
 	Index structure_index;
 	Index fragment_structure_start;
-	Real result_rmsd;
+	SearchReal result_rmsd;
 };
 
 struct PairQuerySummaryStatistics
@@ -241,7 +233,7 @@ public:
 	void execute(StructureDatabase & database);
 	void execute_structure( Index structure_index, StructureData & target_structure );
 
-	Real perform_structure_rmsd(
+	SearchReal perform_structure_rmsd(
 		StructureData & target_structure,
 		StructureData::IndexArray & fragment_indicies_a,
 		StructureData::IndexArray & fragment_indicies_b,
@@ -253,11 +245,11 @@ public:
 
 	Query query;
 
-	Eigen::Matrix<Real, 3, Eigen::Dynamic> query_coordinate_buffer;
-	Eigen::Matrix<Real, 3, Eigen::Dynamic> structure_coordinate_buffer;
+	Eigen::Matrix<SearchReal, 3, Eigen::Dynamic> query_coordinate_buffer;
+	Eigen::Matrix<SearchReal, 3, Eigen::Dynamic> structure_coordinate_buffer;
 
-	Eigen::Matrix<Real, 3, 1> query_coordinate_com;
-	Eigen::Matrix<Real, 3, 1> structure_coordinate_com;
+	Eigen::Matrix<SearchReal, 3, 1> query_coordinate_com;
+	Eigen::Matrix<SearchReal, 3, 1> structure_coordinate_com;
 
 	std::vector<QueryResult> query_results;
 
@@ -277,7 +269,7 @@ public:
 
 	void execute_structure( Index structure_index, StructureData & target_structure );
 
-	Real perform_structure_rmsd(
+	SearchReal perform_structure_rmsd(
 		StructureData & target_structure,
 		StructureData::IndexArray & fragment_indicies,
 		StructureData::CoordinateMatrix & fragment_centers_of_mass,
@@ -286,11 +278,11 @@ public:
 
 	Query query;
 
-	Eigen::Matrix<Real, 3, Eigen::Dynamic> query_coordinate_buffer;
-	Eigen::Matrix<Real, 3, Eigen::Dynamic> structure_coordinate_buffer;
+	Eigen::Matrix<SearchReal, 3, Eigen::Dynamic> query_coordinate_buffer;
+	Eigen::Matrix<SearchReal, 3, Eigen::Dynamic> structure_coordinate_buffer;
 
-	Eigen::Matrix<Real, 3, 1> query_coordinate_com;
-	Eigen::Matrix<Real, 3, 1> structure_coordinate_com;
+	Eigen::Matrix<SearchReal, 3, 1> query_coordinate_com;
+	Eigen::Matrix<SearchReal, 3, 1> structure_coordinate_com;
 
 	std::vector<QueryResult> query_results;
 

@@ -9,6 +9,8 @@
 
 /// @file src/protocols/indexed_structure_store/movers/DirectSegmentLookupMover.cc
 
+#include <boost/format.hpp>
+
 #include <core/kinematics/FoldTree.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
@@ -201,7 +203,7 @@ StructureStoreOP DirectSegmentLookupMover::structure_store() {
 	return structure_store_;
 }
 
-StructureDatabaseOP DirectSegmentLookupMover::structure_database() {
+search::StructureDatabaseOP DirectSegmentLookupMover::structure_database() {
 	init_structure_store();
 	return structure_database_;
 }
@@ -211,7 +213,7 @@ DirectSegmentLookupMover::init_structure_store() {
 	if ( !structure_store_ ) {
 		runtime_assert(!structure_database_);
 		structure_store_ = StructureStoreManager::get_instance()->load_structure_store(structure_store_path());
-		structure_database_ = StructureDatabaseOP(new StructureDatabase());
+		structure_database_ = search::StructureDatabaseOP(new search::StructureDatabase());
 		structure_database_->initialize(structure_store_->residue_entries);
 	}
 }
@@ -227,13 +229,13 @@ DirectSegmentLookupMover::parse_my_tag(
 	structure_store_path( tag->getOption< std::string >( "structure_store" ) );
 
 	DirectSegmentLookupConfig config;
-	config.rmsd_tolerance = tag->getOption<Real>( "rmsd_tolerance", .5 );
-	config.segment_cluster_tolerance = tag->getOption<Real>( "segment_cluster_tolerance", 1.5 );
-	config.max_insertion_length = tag->getOption<Index>( "max_insertion_length", 5 );
-	config.max_insertion_length = tag->getOption<Index>( "max_insertion_length", 5 );
+	config.rmsd_tolerance = tag->getOption<numeric::Real>( "rmsd_tolerance", .5 );
+	config.segment_cluster_tolerance = tag->getOption<numeric::Real>( "segment_cluster_tolerance", 1.5 );
+	config.max_insertion_length = tag->getOption<search::Index>( "max_insertion_length", 5 );
+	config.max_insertion_length = tag->getOption<search::Index>( "max_insertion_length", 5 );
 	lookup_config(config);
 
-	max_num_results_ = tag->getOption<Index>( "max_num_results", 0 );
+	max_num_results_ = tag->getOption<search::Index>( "max_num_results", 0 );
 
 	from_chain(tag->getOption<Size>("from_chain", 1));
 	to_chain(tag->getOption<Size>("to_chain", 2));

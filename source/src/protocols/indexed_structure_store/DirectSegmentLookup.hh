@@ -15,25 +15,22 @@
 #pragma once
 
 #include <ndarray.h>
+#include <numeric/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/indexed_structure_store/StructureStore.fwd.hh>
 #include <protocols/indexed_structure_store/search/QueryDatabase.hh>
 
 namespace protocols { namespace indexed_structure_store {
 
-
-using namespace protocols::indexed_structure_store;
-using namespace protocols::indexed_structure_store::search;
-
 struct DirectSegmentLookupConfig {
-	Real rmsd_tolerance;
-	Real segment_cluster_tolerance;
-	Index max_insertion_length;
+	search::SearchReal rmsd_tolerance;
+	search::SearchReal segment_cluster_tolerance;
+	search::Index max_insertion_length;
 };
 
 struct DirectSegmentLookupResult {
 	std::vector<ResidueEntry> result_residues;
-	std::vector<StructurePairQueryResult> query_results;
+	std::vector<search::StructurePairQueryResult> query_results;
 };
 
 class DirectSegmentLookup {
@@ -45,13 +42,13 @@ public:
 
 	std::vector<DirectSegmentLookupResult> segment_lookup(
 		ndarray::Array<ResidueEntry, 1> source_residues,
-		StructureDatabase & structure_db,
+		search::StructureDatabase & structure_db,
 		core::pose::Pose & context,
 		platform::Size n_start_res, platform::Size n_end_res,
 		platform::Size c_start_res, platform::Size c_end_res
 	);
 
-	PairQuerySummaryStatistics query_stats;
+	search::PairQuerySummaryStatistics query_stats;
 	DirectSegmentLookupConfig config;
 };
 } }

@@ -44,7 +44,7 @@ catch (...) { return; }
 		.def(py::init<>())
 		.def("initialize",
 		(void (StructureDatabase::*)(
-		ndarray::Array<Real, 3, 3> coordinate_buffer,
+		ndarray::Array<SearchReal, 3, 3> coordinate_buffer,
 		ndarray::Array<Index, 1> structure_endpoints,
 		ndarray::Array<Index, 1> chain_endpoints))
 		&StructureDatabase::initialize )
@@ -63,9 +63,9 @@ catch (...) { return; }
 
 	py::class_< StructurePairQuery >(m, "StructurePairQuery")
 		.def(
-		py::init< ndarray::Array<Real, 3, 3>, ndarray::Array<Real, 3, 3>, Real>())
+		py::init< ndarray::Array<SearchReal, 3, 3>, ndarray::Array<SearchReal, 3, 3>, SearchReal>())
 		.def(
-		py::init< ndarray::Array<Real, 3, 3>, ndarray::Array<Real, 3, 3>, Real, int, int >())
+		py::init< ndarray::Array<SearchReal, 3, 3>, ndarray::Array<SearchReal, 3, 3>, SearchReal, int, int >())
 		.def_readonly("n_entry_a",  &StructurePairQuery::n_entry_a)
 		.def_readonly("n_entry_b",  &StructurePairQuery::n_entry_b)
 		.def_readonly("q_buffer_a",  &StructurePairQuery::q_buffer_a )
@@ -92,7 +92,7 @@ catch (...) { return; }
 		.def_readonly("result_count", &PairQuerySummaryStatistics::result_count);
 
 	py::class_< StructureSingleQuery >(m, "StructureSingleQuery")
-		.def(py::init< ndarray::Array<Real, 3, 3>, Real >())
+		.def(py::init< ndarray::Array<SearchReal, 3, 3>, SearchReal >())
 		.def_readonly("n_entry",  &StructureSingleQuery::n_entry)
 		.def_readonly("q_buffer",  &StructureSingleQuery::q_buffer)
 		.def_readonly("c_per_entry",  &StructureSingleQuery::c_per_entry)
