@@ -6,5 +6,5 @@
 -overwrite
 
 #Short for integration test.  Typically, you will want 10-25 (25 being the default).  25 takes about 1 minute/ per (man5) glycan/ per structure.
--glycan_relax_rounds 3
+-glycan_sampler_rounds 3
 -final_min_glycans false 

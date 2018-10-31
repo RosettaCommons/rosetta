@@ -397,7 +397,7 @@ AntibodySeqDesignTFCreator::get_framework_conservative_op(const core::pose::Pose
 
 	if ( has_native_sequence( pose ) ) {
 		TR <<"Using original bb sequence for conservative design" << std::endl;
-		std::string native_seq = get_native_sequence( pose );
+		std::string native_seq = get_native_sequence( pose, *ab_info_ );
 		cons_task->set_native_sequence( native_seq );
 	}
 

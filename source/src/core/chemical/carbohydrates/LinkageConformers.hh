@@ -22,7 +22,7 @@ namespace core {
 namespace chemical {
 namespace carbohydrates {
 
-/// @brief Holds original conformer data from GlycanRelax
+/// @brief Holds conformer data for glycan torsional sampling used by the LinkageConformerMover.
 struct LinkageConformerData{
 	Real population;
 

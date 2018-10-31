@@ -100,8 +100,7 @@ public:
 	}
 
 	void test_native_seq() {
-		NativeAntibodySeq native_record = NativeAntibodySeq(pose, ab_info);
-		TS_ASSERT_THROWS_NOTHING(native_record.set_sequence(pose) ); //Does nothing.  Just a test.
+		NativeAntibodySeq native_record = NativeAntibodySeq(pose, *ab_info);
 		TS_ASSERT_THROWS_NOTHING( native_record.set_to_pose( pose ) );
 		TS_ASSERT_EQUALS( protocols::antibody::design::has_native_sequence( pose ), true);
 
@@ -110,13 +109,13 @@ public:
 
 		for ( core::Size i = 1; i <= 6; ++i ) {
 			CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
-			TS_ASSERT_THROWS_NOTHING(native_record.set_from_cdr(pose, cdr) ); //Does nothing. Just a test.
+			TS_ASSERT_THROWS_NOTHING(native_record.set_from_cdr(pose, *ab_info, cdr) ); //Does nothing. Just a test.
 			TS_ASSERT_THROWS_NOTHING( set_native_cdr_sequence( ab_info, cdr, pose));
 		}
-		std::string record_seq = native_record.get_sequence(pose);
+		std::string record_seq = native_record.get_native_sequence_matching_current_length(pose, *ab_info);
 		TS_ASSERT_EQUALS( pose_seq, record_seq);
 
-		std::string seq_from_pose_cache = protocols::antibody::design::get_native_sequence(pose);
+		std::string seq_from_pose_cache = protocols::antibody::design::get_native_sequence(pose, *ab_info);
 		TS_ASSERT_EQUALS( pose_seq, seq_from_pose_cache);
 
 

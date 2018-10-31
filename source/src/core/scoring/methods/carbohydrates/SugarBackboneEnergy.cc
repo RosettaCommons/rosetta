@@ -94,6 +94,9 @@ SugarBackboneEnergy::residue_energy(
 	// Ignore REPLONLY variants.
 	if ( rsd.has_variant_type( chemical::REPLONLY ) ) { return; }
 
+	// Ignore VIRTUAL residues.
+	if ( rsd.is_virtual_residue() ) { return; }
+
 	// Get parent residue, CarbohydrateInfo, and exocyclic state for convenience.
 	CarbohydrateInfoCOP info( rsd.carbohydrate_info() );
 
@@ -192,6 +195,9 @@ SugarBackboneEnergy::eval_residue_dof_derivative(
 
 	// Ignore REPLONLY variants.
 	if ( rsd.has_variant_type( chemical::REPLONLY ) ) { return deriv; }
+
+	// Ignore VIRTUAL residues.
+	if ( rsd.is_virtual_residue() ) { return deriv; }
 
 	// This scoring method only considers glycosidic torsions, which may have either BB, CHI, or BRANCH TorsionIDs.
 	if ( ! torsion_id.valid() ) {

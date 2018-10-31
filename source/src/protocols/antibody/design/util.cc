@@ -880,15 +880,15 @@ set_native_cdr_sequence( AntibodyInfoCOP ab_info, CDRNameEnum cdr, core::pose::P
 		}
 
 		TR << "Setting CDR sequence in NativeAntibodySeq" << std::endl;
-		data->set_from_cdr(pose, cdr );
+		data->set_from_cdr(pose, *ab_info, cdr );
 
 	} else {
-		pose.data().set(core::pose::datacache::CacheableDataType::NATIVE_ANTIBODY_SEQ, DataCache_CacheableData::DataOP( new NativeAntibodySeq( pose, ab_info) ));
+		pose.data().set(core::pose::datacache::CacheableDataType::NATIVE_ANTIBODY_SEQ, DataCache_CacheableData::DataOP( new NativeAntibodySeq( pose, *ab_info) ));
 	}
 }
 
 std::string
-get_native_sequence( core::pose::Pose const & pose){
+get_native_sequence( core::pose::Pose const & pose, AntibodyInfo const & ab_info){
 
 	if ( ! pose.data().has(CacheableDataType::NATIVE_ANTIBODY_SEQ) ) {
 		utility_exit_with_message("Pose does not have a valid NativeAntibodySeq set!");
@@ -902,7 +902,8 @@ get_native_sequence( core::pose::Pose const & pose){
 		utility_exit_with_message("Pose does not have a valid NativeAntibodySeq!");
 	}
 
-	std::string seq = data->get_sequence(pose);
+
+	std::string seq = data->get_native_sequence_matching_current_length(pose, ab_info);
 	//TR << "Getting sequence: " << seq << std::endl;
 	return seq;
 }

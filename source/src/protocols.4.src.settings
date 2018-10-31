@@ -37,9 +37,9 @@ sources = {
 	],
 	"protocols/carbohydrates" : [
 		"CreateGlycanSequonMover",
-		"GlycanRelaxMover",
+		"GlycanTreeSampler",
 		"GlycanTreeMinMover",
-		"GlycanTreeRelax",
+		"GlycanTreeModeler",
 		"LinkageConformerMover",
 		"IdealizeAnomericHydrogens",
 		"RingPlaneFlipMover",

@@ -8,10 +8,9 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file protocols/carbohydrates/IdealizeAnomericHydrogens.cc
-/// @brief This code changes all of the dihedrals of a particular glycosidic linkage based on database info,
-///   esentially sampling carbohydrate dihedral conformers of two residues.
-/// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
-/// @author Labonte <JWLabonte@jhu.edu>
+/// @brief Mover to idealize carbohydrate anomeric hydrogens
+/// @author Brandon Frenz
+
 
 // Unit headers
 #include <protocols/carbohydrates/IdealizeAnomericHydrogens.hh>

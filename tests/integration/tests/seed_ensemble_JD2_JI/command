@@ -1,9 +1,9 @@
 cd %(workdir)s
 
 # Do the tests actually exist?
-[ -x %(bin)s/glycan_relax.%(binext)s ] || exit 1
+[ -x %(bin)s/basic_glycan_sampler.%(binext)s ] || exit 1
 
-%(bin)s/glycan_relax.%(binext)s %(additional_flags)s @flags -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
+%(bin)s/basic_glycan_sampler.%(binext)s %(additional_flags)s @flags -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
     | egrep -vf ../../ignore_list \
     > log
 

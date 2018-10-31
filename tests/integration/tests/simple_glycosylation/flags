@@ -4,5 +4,5 @@
 -parser:script_vars positions=463G,460G glycosylation=man5
 -include_sugars
 -write_pdb_link_records
--glycan_relax_rounds 25
+-glycan_sampler_rounds 25
 -overwrite

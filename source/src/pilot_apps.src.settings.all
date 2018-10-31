@@ -179,9 +179,9 @@ sources = {
 	"pilot/calebgeniesse" : [
     	],
     	"pilot/carbohydrates" : [
+    		"basic_glycan_sampler",
     		"glycan_clash_check",
     		"glycan_info",
-    		"glycan_relax",
     		"test_glycan_trees",
     	],
 	"pilot/chen" : [

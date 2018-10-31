@@ -7,26 +7,35 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/carbohydrates/GlycanTreeRelaxCreator.hh
-/// @brief A protocol for optimizing glycan trees using GlycanRelax from the base of the tree out to the leaves.
+/// @file protocols/carbohydrates/GlycanTreeSamplerCreator.hh
+/// @brief Main mover for Glycan Relax, which optimizes glycans in a pose.
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
-#ifndef INCLUDED_protocols_carbohydrates_GlycanTreeRelaxCreator_HH
-#define INCLUDED_protocols_carbohydrates_GlycanTreeRelaxCreator_HH
+#ifndef INCLUDED_protocols_carbohydrates_GlycanTreeSamplerCreator_hh
+#define INCLUDED_protocols_carbohydrates_GlycanTreeSamplerCreator_hh
 
 #include <protocols/moves/MoverCreator.hh>
+
 
 namespace protocols {
 namespace carbohydrates {
 
-class GlycanTreeRelaxCreator : public protocols::moves::MoverCreator {
+class GlycanTreeSamplerCreator : public protocols::moves::MoverCreator {
+
 public:
+
 	protocols::moves::MoverOP create_mover() const override;
 	std::string keyname() const override;
 	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
+
+
+
 };
 
 } //protocols
 } //carbohydrates
 
-#endif //INCLUDED_protocols_carbohydrates_GlycanTreeRelaxCreator_HH
+#endif //INCLUDED_protocols/carbohydrates_GlycanTreeSampler_fwd_hh
+
+
+

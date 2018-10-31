@@ -28,6 +28,10 @@
 #include <basic/datacache/CacheableData.hh>
 #include <map>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
 
 
 namespace protocols {
@@ -41,7 +45,9 @@ class NativeAntibodySeq : public basic::datacache::CacheableData {
 
 public:
 
-	NativeAntibodySeq(core::pose::Pose const & pose, AntibodyInfoCOP ab_info);
+
+
+	NativeAntibodySeq(core::pose::Pose const & pose, AntibodyInfo const & ab_info);
 
 	NativeAntibodySeq( NativeAntibodySeq const & src);
 
@@ -49,7 +55,7 @@ public:
 
 	/// @brief Sets the sequence from the PDB into this class and into the pose.
 	void
-	set_sequence(core::pose::Pose const & pose);
+	set_sequence(core::pose::Pose const & pose, AntibodyInfo const & ab_info );
 
 	/// @brief Set this class to the pose datacache.
 	void
@@ -57,27 +63,48 @@ public:
 
 	/// @brief Sets the sequence from the CDR of the PDB into this class and into the pose.
 	void
-	set_from_cdr(core::pose::Pose const & pose, CDRNameEnum cdr);
+	set_from_cdr(core::pose::Pose const & pose, AntibodyInfo const & ab_info, CDRNameEnum cdr);
 
-	/// @brief Get the full pose sequence.
+public:
+
+	///@brief Get a map of PDBInfo residues to AA residues as the sequence
+	std::map< std::string, core::chemical::AA> const &
+	get_full_sequence() const ;
+
+	///@brief Get a map of each native CDR sequence
+	std::map< CDRNameEnum, utility::vector1< core::chemical::AA>> const &
+	get_cdr_sequence() const ;
+
+	/// @brief Get the full pose sequence, accounting for length changes to the pose.
 	std::string
-	get_sequence(core::pose::Pose const & pose) const;
+	get_native_sequence_matching_current_length(core::pose::Pose const & pose, AntibodyInfo const & ab_info ) const;
 
 	virtual basic::datacache::CacheableDataOP
 	clone() const;
 
+
 private:
 
-	NativeAntibodySeq(); // Default constructor is private: Need ab_info to initialize
-
-	AntibodyInfoCOP ab_info_;
 	std::map< std::string , core::chemical::AA> seq_;
 	std::map< CDRNameEnum, utility::vector1< core::chemical::AA > > cdr_seq_;
 
+#ifdef    SERIALIZATION
+public:
+	///@brief Purely for Serialization.
+	NativeAntibodySeq();
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
+
 
 } //design
 } //antibody
 } //protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_antibody_design_NativeAntibodySeq )
+#endif // SERIALIZATION
 
 #endif // INCLUDED_protocols_antibody_design_NativeAntibodySeq_hh

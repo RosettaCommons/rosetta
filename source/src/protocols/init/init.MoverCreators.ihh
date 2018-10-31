@@ -69,9 +69,9 @@
 #include <protocols/canonical_sampling/TrialCounterObserverCreator.hh>
 
 #include <protocols/carbohydrates/CreateGlycanSequonMoverCreator.hh>
-#include <protocols/carbohydrates/GlycanRelaxMoverCreator.hh>
+#include <protocols/carbohydrates/GlycanTreeSamplerCreator.hh>
 #include <protocols/carbohydrates/GlycanTreeMinMoverCreator.hh>
-#include <protocols/carbohydrates/GlycanTreeRelaxCreator.hh>
+#include <protocols/carbohydrates/GlycanTreeModelerCreator.hh>
 #include <protocols/carbohydrates/LinkageConformerMoverCreator.hh>
 #include <protocols/carbohydrates/IdealizeAnomericHydrogensCreator.hh>
 #include <protocols/carbohydrates/RingPlaneFlipMoverCreator.hh>

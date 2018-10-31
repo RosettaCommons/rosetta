@@ -7,16 +7,16 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/carbohydrates/GlycanRelaxMover.hh
+/// @file protocols/carbohydrates/GlycanTreeSampler.hh
 /// @brief Main mover for Glycan Relax, which optimizes glycans in a pose.
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com) and Jason W. Labonte (JWLabonte@jhu.edu)
 
 
-#ifndef INCLUDED_protocols_carbohydrates_GlycanRelaxMover_hh
-#define INCLUDED_protocols_carbohydrates_GlycanRelaxMover_hh
+#ifndef INCLUDED_protocols_carbohydrates_GlycanTreeSampler_hh
+#define INCLUDED_protocols_carbohydrates_GlycanTreeSampler_hh
 
 // Unit headers
-#include <protocols/carbohydrates/GlycanRelaxMover.fwd.hh>
+#include <protocols/carbohydrates/GlycanTreeSampler.fwd.hh>
 #include <protocols/carbohydrates/LinkageConformerMover.hh>
 #include <protocols/moves/Mover.hh>
 
@@ -50,27 +50,27 @@ namespace carbohydrates {
 ///    -> .17 +/- 15 degrees
 ///    -> .086 +/- 45 degrees
 ///    -> .044 +/- 90 degrees
-///  .05 MinMover
+///  .05 GlycanTreeMinMover
 ///  .05 PackRotamersMover
 ///
 /// Supports Symmetry
 ///
-class GlycanRelaxMover : public protocols::moves::Mover {
+class GlycanTreeSampler : public protocols::moves::Mover {
 
 public:
 
-	GlycanRelaxMover();
+	GlycanTreeSampler();
 
 	//@brief constructor with arguments
-	GlycanRelaxMover( core::select::residue_selector::ResidueSelectorCOP selector,
+	GlycanTreeSampler( core::select::residue_selector::ResidueSelectorCOP selector,
 		core::scoring::ScoreFunctionCOP scorefxn,
 		core::Size rounds = 75);
 
 	// copy constructor
-	GlycanRelaxMover( GlycanRelaxMover const & src );
+	GlycanTreeSampler( GlycanTreeSampler const & src );
 
 	// destructor (important for properly forward-declaring smart-pointer members)
-	~GlycanRelaxMover() override;
+	~GlycanTreeSampler() override;
 
 	void
 	apply( core::pose::Pose & pose ) override;
@@ -147,7 +147,7 @@ public:
 
 
 
-	//GlycanRelaxMover & operator=( GlycanRelaxMover const & src );
+	//GlycanTreeSampler & operator=( GlycanTreeSampler const & src );
 
 	/// @brief required in the context of the parser/scripting scheme
 	moves::MoverOP
@@ -258,14 +258,14 @@ private:
 
 };
 
-std::ostream &operator<< (std::ostream &os, GlycanRelaxMover const &mover);
+std::ostream &operator<< (std::ostream &os, GlycanTreeSampler const &mover);
 
 
 } //protocols
 } //carbohydrates
 
 
-#endif //protocols/carbohydrates_GlycanRelaxMover_hh
+#endif //protocols/carbohydrates_GlycanTreeSampler_hh
 
 
 

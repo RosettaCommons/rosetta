@@ -8,7 +8,7 @@
 	<FILTERS>
 	</FILTERS>
 	<MOVERS>
-		<GlycanRelaxMover name="glycan_relax" rounds="3" cartmin="%%cartmin%%"/>
+		<GlycanTreeSampler name="glycan_relax" rounds="3" cartmin="%%cartmin%%"/>
 		<Dssp name="dssp" />
 	</MOVERS>
 	<APPLY_TO_POSE>

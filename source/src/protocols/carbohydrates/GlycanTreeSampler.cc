@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/carbohydrates/GlycanRelaxMover.cc
+/// @file protocols/carbohydrates/GlycanTreeSampler.cc
 /// @brief Main mover for Glycan Relax, which optimizes glycans in a pose.
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com) and Jason W. Labonte (JWLabonte@jhu.edu)
 
-#include <protocols/carbohydrates/GlycanRelaxMover.hh>
-#include <protocols/carbohydrates/GlycanRelaxMoverCreator.hh>
+#include <protocols/carbohydrates/GlycanTreeSampler.hh>
+#include <protocols/carbohydrates/GlycanTreeSamplerCreator.hh>
 #include <protocols/carbohydrates/LinkageConformerMover.hh>
 #include <protocols/carbohydrates/GlycanTreeMinMover.hh>
 #include <protocols/carbohydrates/util.hh>
@@ -74,7 +74,7 @@
 #include <protocols/moves/mover_schemas.hh>
 
 
-static basic::Tracer TR( "protocols.carbohydrates.GlycanRelaxMover" );
+static basic::Tracer TR( "protocols.carbohydrates.GlycanTreeSampler" );
 
 
 namespace protocols {
@@ -91,8 +91,8 @@ using namespace core::select::residue_selector;
 using namespace core::kinematics;
 using namespace core::pose::carbohydrates;
 
-GlycanRelaxMover::GlycanRelaxMover():
-	protocols::moves::Mover( "GlycanRelaxMover" ),
+GlycanTreeSampler::GlycanTreeSampler():
+	protocols::moves::Mover( "GlycanTreeSampler" ),
 	tf_(/*NULL*/),
 	mc_(/*NULL*/),
 	scorefxn_(/* NULL */),
@@ -102,11 +102,11 @@ GlycanRelaxMover::GlycanRelaxMover():
 	set_defaults();
 }
 
-GlycanRelaxMover::GlycanRelaxMover(
+GlycanTreeSampler::GlycanTreeSampler(
 	core::select::residue_selector::ResidueSelectorCOP selector,
 	core::scoring::ScoreFunctionCOP scorefxn,
 	core::Size rounds):
-	protocols::moves::Mover("GlycanRelaxMover"),
+	protocols::moves::Mover("GlycanTreeSampler"),
 	tf_(/*NULL*/),
 	mc_(/* NULL */),
 	linkage_mover_(/*NULL*/)
@@ -118,11 +118,11 @@ GlycanRelaxMover::GlycanRelaxMover(
 	set_rounds(rounds);
 }
 
-GlycanRelaxMover::~GlycanRelaxMover()= default;
+GlycanTreeSampler::~GlycanTreeSampler()= default;
 
 
 void
-GlycanRelaxMover::parse_my_tag(
+GlycanTreeSampler::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap& datamap,
 	protocols::filters::Filters_map const & ,
@@ -165,7 +165,7 @@ GlycanRelaxMover::parse_my_tag(
 
 }
 
-void GlycanRelaxMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+void GlycanTreeSampler::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 
 	using namespace utility::tag;
@@ -201,7 +201,7 @@ void GlycanRelaxMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & x
 }
 
 void
-GlycanRelaxMover::set_defaults(){
+GlycanTreeSampler::set_defaults(){
 	rounds_ = 75; //Means absolutely nothing right now - Actually set from cmd line.
 	test_ = false;
 
@@ -217,24 +217,24 @@ GlycanRelaxMover::set_defaults(){
 
 
 void
-GlycanRelaxMover::set_cmd_line_defaults(){
+GlycanTreeSampler::set_cmd_line_defaults(){
 
-	rounds_ = option [OptionKeys::carbohydrates::glycan_relax::glycan_relax_rounds]();
-	test_ = option [OptionKeys::carbohydrates::glycan_relax::glycan_relax_test]();
-	final_min_ = option[ OptionKeys::carbohydrates::glycan_relax::final_min_glycans]();
-	pymol_movie_ = option[ OptionKeys::carbohydrates::glycan_relax::glycan_relax_movie]();
-	kt_ = option[ OptionKeys::carbohydrates::glycan_relax::glycan_relax_kt]();
-	cartmin_ = option[ OptionKeys::carbohydrates::glycan_relax::cartmin]();
-	refine_ = option[ OptionKeys::carbohydrates::glycan_relax::glycan_relax_refine]();
-	tree_based_min_pack_ = option[ OptionKeys::carbohydrates::glycan_relax::tree_based_min_pack]();
-	population_based_conformer_sampling_ = option[ OptionKeys::carbohydrates::glycan_relax::population_based_conformer_sampling]();
-	conformer_sd_ = option[ OptionKeys::carbohydrates::glycan_relax::conformer_sampling_sd]();
-	uniform_conformer_sd_sampling_ = option[ OptionKeys::carbohydrates::glycan_relax::uniform_sd_sampling]();
-	min_rings_ = option[ OptionKeys::carbohydrates::glycan_relax::min_rings]();
+	rounds_ = option [OptionKeys::carbohydrates::glycan_sampler::glycan_sampler_rounds]();
+	test_ = option [OptionKeys::carbohydrates::glycan_sampler::glycan_sampler_test]();
+	final_min_ = option[ OptionKeys::carbohydrates::glycan_sampler::final_min_glycans]();
+	pymol_movie_ = option[ OptionKeys::carbohydrates::glycan_sampler::glycan_sampler_movie]();
+	kt_ = option[ OptionKeys::carbohydrates::glycan_sampler::glycan_sampler_kt]();
+	cartmin_ = option[ OptionKeys::carbohydrates::glycan_sampler::cartmin]();
+	refine_ = option[ OptionKeys::carbohydrates::glycan_sampler::glycan_sampler_refine]();
+	tree_based_min_pack_ = option[ OptionKeys::carbohydrates::glycan_sampler::tree_based_min_pack]();
+	population_based_conformer_sampling_ = option[ OptionKeys::carbohydrates::glycan_sampler::population_based_conformer_sampling]();
+	conformer_sd_ = option[ OptionKeys::carbohydrates::glycan_sampler::conformer_sampling_sd]();
+	uniform_conformer_sd_sampling_ = option[ OptionKeys::carbohydrates::glycan_sampler::uniform_sd_sampling]();
+	min_rings_ = option[ OptionKeys::carbohydrates::glycan_sampler::min_rings]();
 
 }
 
-GlycanRelaxMover::GlycanRelaxMover( GlycanRelaxMover const & src ):
+GlycanTreeSampler::GlycanTreeSampler( GlycanTreeSampler const & src ):
 	protocols::moves::Mover(src),
 	rounds_( src.rounds_ ),
 	kt_( src.kt_ ),
@@ -275,8 +275,8 @@ GlycanRelaxMover::GlycanRelaxMover( GlycanRelaxMover const & src ):
 
 
 protocols::moves::MoverOP
-GlycanRelaxMover::clone() const{
-	return protocols::moves::MoverOP( new GlycanRelaxMover( *this ) );
+GlycanTreeSampler::clone() const{
+	return protocols::moves::MoverOP( new GlycanTreeSampler( *this ) );
 }
 
 
@@ -284,48 +284,48 @@ GlycanRelaxMover::clone() const{
 
 
 moves::MoverOP
-GlycanRelaxMover::fresh_instance() const
+GlycanTreeSampler::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new GlycanRelaxMover );
+	return protocols::moves::MoverOP( new GlycanTreeSampler );
 }
 
 // XRW TEMP std::string
-// XRW TEMP GlycanRelaxMover::get_name() const {
-// XRW TEMP  return "GlycanRelaxMover";
+// XRW TEMP GlycanTreeSampler::get_name() const {
+// XRW TEMP  return "GlycanTreeSampler";
 // XRW TEMP }
 
 void
-GlycanRelaxMover::show(std::ostream & output) const
+GlycanTreeSampler::show(std::ostream & output) const
 {
 	protocols::moves::Mover::show(output);
 }
 
 
-std::ostream &operator<< (std::ostream &os, GlycanRelaxMover const &mover)
+std::ostream &operator<< (std::ostream &os, GlycanTreeSampler const &mover)
 {
 	mover.show(os);
 	return os;
 }
 
 void
-GlycanRelaxMover::set_residue_selector(core::select::residue_selector::ResidueSelectorCOP selector ){
+GlycanTreeSampler::set_residue_selector(core::select::residue_selector::ResidueSelectorCOP selector ){
 	selector_ = selector->clone();
 }
 
 void
-GlycanRelaxMover::set_taskfactory(core::pack::task::TaskFactoryCOP tf){
+GlycanTreeSampler::set_taskfactory(core::pack::task::TaskFactoryCOP tf){
 	tf_ = tf;
 }
 
 void
-GlycanRelaxMover::set_selector(core::select::residue_selector::ResidueSelectorCOP selector){
+GlycanTreeSampler::set_selector(core::select::residue_selector::ResidueSelectorCOP selector){
 	selector_ = selector;
 }
 
 
 
 void
-GlycanRelaxMover::setup_default_task_factory(utility::vector1< bool > const & glycan_positions, core::pose::Pose const & pose ){
+GlycanTreeSampler::setup_default_task_factory(utility::vector1< bool > const & glycan_positions, core::pose::Pose const & pose ){
 	using namespace core::pack::task::operation;
 	using namespace core::select::residue_selector;
 
@@ -375,53 +375,53 @@ GlycanRelaxMover::setup_default_task_factory(utility::vector1< bool > const & gl
 
 
 void
-GlycanRelaxMover::set_scorefunction(core::scoring::ScoreFunctionCOP scorefxn){
+GlycanTreeSampler::set_scorefunction(core::scoring::ScoreFunctionCOP scorefxn){
 	scorefxn_ = scorefxn;
 }
 
 void
-GlycanRelaxMover::set_kt(core::Real kt){
+GlycanTreeSampler::set_kt(core::Real kt){
 	kt_ = kt;
 }
 
 void
-GlycanRelaxMover::set_rounds(core::Size rounds){
+GlycanTreeSampler::set_rounds(core::Size rounds){
 	rounds_ = rounds;
 }
 
 void
-GlycanRelaxMover::use_cartmin( bool use_cartmin ){
+GlycanTreeSampler::use_cartmin( bool use_cartmin ){
 	cartmin_ = use_cartmin;
 }
 
 void
-GlycanRelaxMover::set_refine( bool refine ){
+GlycanTreeSampler::set_refine( bool refine ){
 	refine_ = refine;
 }
 
 ///@brief set to minimize ring torsions during minimzation.  Default false.
 void
-GlycanRelaxMover::set_min_rings( bool min_rings){
+GlycanTreeSampler::set_min_rings( bool min_rings){
 	min_rings_ = min_rings;
 }
 
 void
-GlycanRelaxMover::set_population_based_conformer_sampling(bool pop_based_sampling){
+GlycanTreeSampler::set_population_based_conformer_sampling(bool pop_based_sampling){
 	population_based_conformer_sampling_ = pop_based_sampling;
 }
 
 void
-GlycanRelaxMover::set_conformer_sampling_sd(core::Real const conformer_sampling_sd){
+GlycanTreeSampler::set_conformer_sampling_sd(core::Real const conformer_sampling_sd){
 	conformer_sd_ = conformer_sampling_sd;
 }
 
 void
-GlycanRelaxMover::set_uniform_sd_sampling(bool uniform_sd_sampling){
+GlycanTreeSampler::set_uniform_sd_sampling(bool uniform_sd_sampling){
 	uniform_conformer_sd_sampling_ = uniform_sd_sampling;
 }
 
 void
-GlycanRelaxMover::setup_score_function(core::pose::Pose const & pose) {
+GlycanTreeSampler::setup_score_function(core::pose::Pose const & pose) {
 
 	//Create Scorefunction if needed.
 	if ( ! scorefxn_ ) {
@@ -445,7 +445,7 @@ GlycanRelaxMover::setup_score_function(core::pose::Pose const & pose) {
 
 
 void
-GlycanRelaxMover::setup_cartmin(core::scoring::ScoreFunctionOP scorefxn) const {
+GlycanTreeSampler::setup_cartmin(core::scoring::ScoreFunctionOP scorefxn) const {
 
 	scorefxn->set_weight_if_zero(core::scoring::cart_bonded, .5);
 	scorefxn->set_weight(core::scoring::pro_close, 0);
@@ -453,7 +453,7 @@ GlycanRelaxMover::setup_cartmin(core::scoring::ScoreFunctionOP scorefxn) const {
 }
 
 void
-GlycanRelaxMover::randomize_glycan_torsions(core::pose::Pose &pose, utility::vector1<bool> const & subset) const{
+GlycanTreeSampler::randomize_glycan_torsions(core::pose::Pose &pose, utility::vector1<bool> const & subset) const{
 
 	TR << "Randomizing glycan torsions " << std::endl;
 	SmallBBSampler random_sampler = SmallBBSampler(  360.0 ); // +/- 180 degrees
@@ -478,13 +478,13 @@ GlycanRelaxMover::randomize_glycan_torsions(core::pose::Pose &pose, utility::vec
 }
 
 void
-GlycanRelaxMover::idealize_glycan_residues(core::pose::Pose & , utility::vector1< core::Size > const & ) const {
+GlycanTreeSampler::idealize_glycan_residues(core::pose::Pose & , utility::vector1< core::Size > const & ) const {
 	TR << "Idealizing doing nothing.  Not currently implemented. " << std::endl;
 
 }
 
 void
-GlycanRelaxMover::setup_movers(
+GlycanTreeSampler::setup_movers(
 	core::pose::Pose & pose,
 	utility::vector1< bool > const & dihedral_subset,
 	utility::vector1< bool > const & sugar_bb_subset,
@@ -637,7 +637,7 @@ GlycanRelaxMover::setup_movers(
 }
 
 void
-GlycanRelaxMover::setup_packer(
+GlycanTreeSampler::setup_packer(
 	core::pose::Pose & pose,
 	utility::vector1< bool > const & full_subset)
 {
@@ -670,7 +670,7 @@ GlycanRelaxMover::setup_packer(
 
 ///@brief Initialize all objects.  Called at apply time!
 void
-GlycanRelaxMover::init_objects(core::pose::Pose & pose ){
+GlycanTreeSampler::init_objects(core::pose::Pose & pose ){
 
 
 	using namespace core::pose::carbohydrates;
@@ -699,7 +699,7 @@ GlycanRelaxMover::init_objects(core::pose::Pose & pose ){
 	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
 		if ( subset[ i ] ) {
 			if ( ! pose.residue( i ).is_carbohydrate() ) {
-				utility_exit_with_message(" GlycanRelaxMover: Residue "+utility::to_string(i)+" set in ResidueSelector, but not a carbohdyrate residue!");
+				utility_exit_with_message(" GlycanTreeSampler: Residue "+utility::to_string(i)+" set in ResidueSelector, but not a carbohdyrate residue!");
 			}
 			core::Size parent = pose.glycan_tree_set()->get_parent( i );
 			//Residue has no dihedrals.  So turn it off so we don't choose it and then do nothing with it.
@@ -729,7 +729,7 @@ GlycanRelaxMover::init_objects(core::pose::Pose & pose ){
 }
 
 void
-GlycanRelaxMover::apply( core::pose::Pose& pose ){
+GlycanTreeSampler::apply( core::pose::Pose& pose ){
 	using namespace core::kinematics;
 	using namespace core::chemical::carbohydrates;
 	using namespace core::scoring;
@@ -832,27 +832,27 @@ GlycanRelaxMover::apply( core::pose::Pose& pose ){
 /////////////// Creator ///////////////
 
 
-std::string GlycanRelaxMover::get_name() const {
+std::string GlycanTreeSampler::get_name() const {
 	return mover_name();
 }
 
-std::string GlycanRelaxMover::mover_name() {
-	return "GlycanRelaxMover";
+std::string GlycanTreeSampler::mover_name() {
+	return "GlycanTreeSampler";
 }
 
 
-std::string GlycanRelaxMoverCreator::keyname() const {
-	return GlycanRelaxMover::mover_name();
+std::string GlycanTreeSamplerCreator::keyname() const {
+	return GlycanTreeSampler::mover_name();
 }
 
 protocols::moves::MoverOP
-GlycanRelaxMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new GlycanRelaxMover );
+GlycanTreeSamplerCreator::create_mover() const {
+	return protocols::moves::MoverOP( new GlycanTreeSampler );
 }
 
-void GlycanRelaxMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+void GlycanTreeSamplerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	GlycanRelaxMover::provide_xml_schema( xsd );
+	GlycanTreeSampler::provide_xml_schema( xsd );
 }
 
 

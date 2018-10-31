@@ -7,16 +7,16 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/carbohydrates/GlycanTreeRelax.hh
-/// @brief A protocol for optimizing glycan trees using GlycanRelax from the base of the tree out to the leaves.
+/// @file protocols/carbohydrates/GlycanTreeModeler.hh
+/// @brief A protocol for optimizing glycan trees using the GlycanTreeSampler from the base of the tree out to the leaves.
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 /// @author Sebastian Raemisch (raemisch@scripps.edu)
 
-#ifndef INCLUDED_protocols_carbohydrates_GlycanTreeRelax_HH
-#define INCLUDED_protocols_carbohydrates_GlycanTreeRelax_HH
+#ifndef INCLUDED_protocols_carbohydrates_GlycanTreeModeler_HH
+#define INCLUDED_protocols_carbohydrates_GlycanTreeModeler_HH
 
 // Unit headers
-#include <protocols/carbohydrates/GlycanTreeRelax.fwd.hh>
+#include <protocols/carbohydrates/GlycanTreeModeler.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
 // Protocol headers
@@ -39,7 +39,7 @@ enum QuenchDirection {
 	backward
 };
 
-///@brief A protocol for optimizing glycan trees using GlycanRelax from the base of the tree out to the leaves.
+///@brief A protocol for optimizing glycan trees using the GlycanTreeSampler from the base of the tree out to the leaves.
 ///@details Works by making all other residues virtual except the ones it is working on (current Layer).
 /// A virtual residue is not scored.
 /// It will start at the first glycan residues, and then move out to the edges.
@@ -48,7 +48,7 @@ enum QuenchDirection {
 ///
 /// We start at the roots, and make all other glycan residues virtual.
 /// We first model towards the leaves and this is considered the forward direction.
-/// GlycanRelax is used for the actual modeling, we only model a layer at a time, until we reach the tips.
+/// the GlycanTreeSampler is used for the actual modeling, we only model a layer at a time, until we reach the tips.
 /// If more than one round is set, the protocol will move backwards on the next round, from the leafs to the roots.
 /// A third round will involve relaxation again in the forward direction.
 /// So we go forward, back, forward, etc. for how ever many rounds you set.
@@ -80,7 +80,7 @@ enum QuenchDirection {
 ///  part of the next layer.  A window size of 0, means that no residues will be re-modeled.
 ///  Typically, we would want at least a window size of 1.
 ///
-class GlycanTreeRelax : public protocols::moves::Mover {
+class GlycanTreeModeler : public protocols::moves::Mover {
 
 public:
 
@@ -89,13 +89,13 @@ public:
 	/////////////////////
 
 	/// @brief Default constructor
-	GlycanTreeRelax();
+	GlycanTreeModeler();
 
 	/// @brief Copy constructor (not needed unless you need deep copies)
-	GlycanTreeRelax( GlycanTreeRelax const & src );
+	GlycanTreeModeler( GlycanTreeModeler const & src );
 
 	/// @brief Destructor (important for properly forward-declaring smart-pointer members)
-	~GlycanTreeRelax() override;
+	~GlycanTreeModeler() override;
 
 	/////////////////////
 	/// Mover Methods ///
@@ -152,7 +152,7 @@ public:
 
 	///@brief Override Glycan Relax rounds.
 	void
-	set_glycan_relax_rounds( core::Size glycan_relax_rounds);
+	set_glycan_sampler_rounds( core::Size glycan_sampler_rounds);
 
 public:
 
@@ -186,7 +186,7 @@ public:
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose ) override;
 
-	//GlycanTreeRelax & operator=( GlycanTreeRelax const & src );
+	//GlycanTreeModeler & operator=( GlycanTreeModeler const & src );
 
 	/// @brief required in the context of the parser/scripting scheme
 	protocols::moves::MoverOP
@@ -229,7 +229,7 @@ private: // data
 	core::Size rounds_ = 1;
 	core::Size completed_quenches_ = 0;
 	core::Size trees_to_model_ = 0;
-	core::Size glycan_relax_rounds_ = 0;
+	core::Size glycan_sampler_rounds_ = 0;
 
 	bool refine_ = false;
 	bool quench_mode_ = false;
@@ -245,9 +245,9 @@ private: // data
 };
 
 std::ostream &
-operator<<( std::ostream & os, GlycanTreeRelax const & mover );
+operator<<( std::ostream & os, GlycanTreeModeler const & mover );
 
 } //protocols
 } //carbohydrates
 
-#endif //protocols_carbohydrates_GlycanTreeRelax_HH
+#endif //protocols_carbohydrates_GlycanTreeModeler_HH

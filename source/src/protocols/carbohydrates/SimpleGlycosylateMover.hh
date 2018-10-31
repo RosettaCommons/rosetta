@@ -36,7 +36,7 @@ namespace carbohydrates {
 
 /// @brief A mover for glycosylation of biological glycosylations.
 ///  Currently glysolylation is done based on string, not from PDB.
-///  Use GlycanRelax to model the resulting glycosylation!.
+///  Use the GlycanTreeSampler to model the resulting glycosylation!.
 ///
 /// @details
 ///  Single Glycosylation:

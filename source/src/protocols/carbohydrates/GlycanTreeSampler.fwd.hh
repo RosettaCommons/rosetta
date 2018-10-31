@@ -7,27 +7,37 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/carbohydrates/GlycanTreeRelax.fwd.hh
-/// @brief A protocol for optimizing glycan trees using GlycanRelax from the base of the tree out to the leaves.
+/// @file protocols/carbohydrates/GlycanTreeSampler.fwd.hh
+/// @brief Main mover for Glycan Relax, which optimizes glycans in a pose.
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
-#ifndef INCLUDED_protocols_carbohydrates_GlycanTreeRelax_fwd_hh
-#define INCLUDED_protocols_carbohydrates_GlycanTreeRelax_fwd_hh
+
+#ifndef INCLUDED_protocols_carbohydrates_GlycanTreeSampler_fwd_hh
+#define INCLUDED_protocols_carbohydrates_GlycanTreeSampler_fwd_hh
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
+
 
 
 // Forward
 namespace protocols {
 namespace carbohydrates {
 
-class GlycanTreeRelax;
+class GlycanTreeSampler;
 
-typedef utility::pointer::shared_ptr< GlycanTreeRelax > GlycanTreeRelaxOP;
-typedef utility::pointer::shared_ptr< GlycanTreeRelax const > GlycanTreeRelaxCOP;
+typedef utility::pointer::shared_ptr< GlycanTreeSampler > GlycanTreeSamplerOP;
+typedef utility::pointer::shared_ptr< GlycanTreeSampler const > GlycanTreeSamplerCOP;
+
+
 
 } //protocols
 } //carbohydrates
 
-#endif //INCLUDED_protocols_carbohydrates_GlycanTreeRelax_fwd_hh
+
+#endif //INCLUDED_protocols/carbohydrates_GlycanTreeSampler_fwd_hh
+
+
+
+
+

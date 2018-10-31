@@ -16,7 +16,7 @@
 
 // protocol headers
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/carbohydrates/GlycanRelaxMover.hh>
+#include <protocols/carbohydrates/GlycanTreeSampler.hh>
 
 // utility headers
 #include <utility/excn/Exceptions.hh>
@@ -59,7 +59,7 @@ main( int argc, char * argv [] )
 		}
 
 
-		protocols::carbohydrates::GlycanRelaxMoverOP mover_protocol( new protocols::carbohydrates::GlycanRelaxMover() );
+		protocols::carbohydrates::GlycanTreeSamplerOP mover_protocol( new protocols::carbohydrates::GlycanTreeSampler() );
 
 		protocols::jd2::JobDistributor::get_instance()->go( mover_protocol );
 

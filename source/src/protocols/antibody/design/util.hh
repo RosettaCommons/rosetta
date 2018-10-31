@@ -287,7 +287,7 @@ void
 set_native_cdr_sequence(AntibodyInfoCOP ab_info, CDRNameEnum cdr, core::pose::Pose & pose);
 
 std::string
-get_native_sequence(core::pose::Pose const & pose);
+get_native_sequence(core::pose::Pose const & pose, AntibodyInfo const & ab_info);
 
 bool
 has_native_sequence(core::pose::Pose const & pose);

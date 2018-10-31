@@ -2159,13 +2159,13 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 
 
 		#### Glycan Relax Options #####
-		Option_Group('glycan_relax',
-			Option('glycan_relax_test', 'Boolean',
+		Option_Group('glycan_sampler',
+			Option('glycan_sampler_test', 'Boolean',
 				desc='Indicates to go into testing mode for Glycan Relax.  '\
 					'Will try all torsions in a given PDB in a linear fashion',
 				default = 'false'
 				),
-			Option('glycan_relax_rounds', 'Integer',
+			Option('glycan_sampler_rounds', 'Integer',
 				desc = 'Number of rounds to use for Glycan Relax. Total rounds is this # times number of glycan residues in movemap',
 				default = '25'
 				),
@@ -2181,15 +2181,15 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 				desc = 'Do a final minimization of glycans after glycan relax protocol?',
 				default = 'true'
 				),
-			Option('glycan_relax_movie', 'Boolean',
+			Option('glycan_sampler_movie', 'Boolean',
 				desc = "Make a movie of accepts and trials (send to pymol)",
 				default = 'false',
 				),
-			Option('glycan_relax_kt', 'Real',
+			Option('glycan_sampler_kt', 'Real',
 				desc = "KT for GlycanRelaxMover",
 				default = '2.0',
 				),
-			Option('glycan_relax_refine', 'Boolean',
+			Option('glycan_sampler_refine', 'Boolean',
 				desc = "Set the protocol to not start from a random conformation, and instead refine the structure.",
 				default = 'false'
 				),
@@ -2215,7 +2215,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 				desc = 'Set whether if we are sampling uniform within the set number of standard deviations or by uniform within the SD.'
 				)
 
-		), # - glycan_relax
+		), # - glycan_sampler
 
 
 		##### Glycan Clash Check Options ######

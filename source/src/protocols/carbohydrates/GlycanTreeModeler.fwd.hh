@@ -7,35 +7,27 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/carbohydrates/GlycanRelaxMoverCreator.hh
-/// @brief Main mover for Glycan Relax, which optimizes glycans in a pose.
+/// @file protocols/carbohydrates/GlycanTreeModeler.fwd.hh
+/// @brief A protocol for optimizing glycan trees using the GlycanTreeSampler from the base of the tree out to the leaves.
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
-#ifndef INCLUDED_protocols_carbohydrates_GlycanRelaxMoverCreator_hh
-#define INCLUDED_protocols_carbohydrates_GlycanRelaxMoverCreator_hh
+#ifndef INCLUDED_protocols_carbohydrates_GlycanTreeModeler_fwd_hh
+#define INCLUDED_protocols_carbohydrates_GlycanTreeModeler_fwd_hh
 
-#include <protocols/moves/MoverCreator.hh>
+// Utility headers
+#include <utility/pointer/owning_ptr.hh>
 
 
+// Forward
 namespace protocols {
 namespace carbohydrates {
 
-class GlycanRelaxMoverCreator : public protocols::moves::MoverCreator {
+class GlycanTreeModeler;
 
-public:
-
-	protocols::moves::MoverOP create_mover() const override;
-	std::string keyname() const override;
-	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
-
-
-
-};
+typedef utility::pointer::shared_ptr< GlycanTreeModeler > GlycanTreeModelerOP;
+typedef utility::pointer::shared_ptr< GlycanTreeModeler const > GlycanTreeModelerCOP;
 
 } //protocols
 } //carbohydrates
 
-#endif //INCLUDED_protocols/carbohydrates_GlycanRelaxMover_fwd_hh
-
-
-
+#endif //INCLUDED_protocols_carbohydrates_GlycanTreeModeler_fwd_hh

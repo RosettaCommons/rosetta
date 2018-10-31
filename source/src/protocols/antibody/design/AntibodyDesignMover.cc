@@ -512,7 +512,7 @@ AntibodyDesignMover::setup_native_clusters(core::pose::Pose & pose){
 
 void
 AntibodyDesignMover::setup_native_sequence(core::pose::Pose & pose){
-	pose.data().set(core::pose::datacache::CacheableDataType::NATIVE_ANTIBODY_SEQ, DataCache_CacheableData::DataOP( new NativeAntibodySeq( pose, ab_info_) ));
+	pose.data().set(core::pose::datacache::CacheableDataType::NATIVE_ANTIBODY_SEQ, DataCache_CacheableData::DataOP( new NativeAntibodySeq( pose, *ab_info_) ));
 }
 //void
 //AntibodyDesignMover::set_cdr_set(CDRDBPoseSet& cdr_set, core::Size overhang){

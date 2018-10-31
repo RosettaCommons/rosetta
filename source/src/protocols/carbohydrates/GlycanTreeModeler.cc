@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/carbohydrates/GlycanTreeRelax.cc
-/// @brief A protocol for optimizing glycan trees using GlycanRelax from the base of the tree out to the leaves.
+/// @file protocols/carbohydrates/GlycanTreeModeler.cc
+/// @brief A protocol for optimizing glycan trees using the GlycanTreeSampler from the base of the tree out to the leaves.
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 /// @author Sebastian Raemisch (raemisch@scripps.edu)
 
 // Unit headers
-#include <protocols/carbohydrates/GlycanTreeRelax.hh>
-#include <protocols/carbohydrates/GlycanTreeRelaxCreator.hh>
-#include <protocols/carbohydrates/GlycanRelaxMover.hh>
+#include <protocols/carbohydrates/GlycanTreeModeler.hh>
+#include <protocols/carbohydrates/GlycanTreeModelerCreator.hh>
+#include <protocols/carbohydrates/GlycanTreeSampler.hh>
 #include <protocols/carbohydrates/util.hh>
 
 #include <protocols/simple_moves/ConvertRealToVirtualMover.hh>
@@ -64,7 +64,7 @@
 #include <protocols/moves/mover_schemas.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
-static basic::Tracer TR( "protocols.carbohydrates.GlycanTreeRelax" );
+static basic::Tracer TR( "protocols.carbohydrates.GlycanTreeModeler" );
 
 namespace protocols {
 namespace carbohydrates {
@@ -80,22 +80,22 @@ using namespace core::pose;
 /////////////////////
 
 /// @brief Default constructor
-GlycanTreeRelax::GlycanTreeRelax():
-	protocols::moves::Mover( GlycanTreeRelax::mover_name() )
+GlycanTreeModeler::GlycanTreeModeler():
+	protocols::moves::Mover( GlycanTreeModeler::mover_name() )
 {
 
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Copy constructor
-GlycanTreeRelax::GlycanTreeRelax( GlycanTreeRelax const & src ):
+GlycanTreeModeler::GlycanTreeModeler( GlycanTreeModeler const & src ):
 	protocols::moves::Mover( src ),
 	layer_size_(src.layer_size_),
 	window_size_(src.window_size_),
 	rounds_(src.rounds_),
 	completed_quenches_(src.completed_quenches_),
 	trees_to_model_(src.trees_to_model_),
-	glycan_relax_rounds_(src.glycan_relax_rounds_),
+	glycan_sampler_rounds_(src.glycan_sampler_rounds_),
 	refine_(src.refine_),
 	quench_mode_(src.quench_mode_),
 	final_min_pack_min_(src.final_min_pack_min_),
@@ -110,7 +110,7 @@ GlycanTreeRelax::GlycanTreeRelax( GlycanTreeRelax const & src ):
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Destructor (important for properly forward-declaring smart-pointer members)
-GlycanTreeRelax::~GlycanTreeRelax()= default;
+GlycanTreeModeler::~GlycanTreeModeler()= default;
 
 ////////////////////////////////////////////////////////////////////////////////
 /// Mover Methods ///
@@ -119,7 +119,7 @@ GlycanTreeRelax::~GlycanTreeRelax()= default;
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Show the contents of the Mover
 void
-GlycanTreeRelax::show(std::ostream & output) const
+GlycanTreeModeler::show(std::ostream & output) const
 {
 	protocols::moves::Mover::show(output);
 }
@@ -130,7 +130,7 @@ GlycanTreeRelax::show(std::ostream & output) const
 
 /// @brief parse XML tag (to use this Mover in Rosetta Scripts)
 void
-GlycanTreeRelax::parse_my_tag(
+GlycanTreeModeler::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap& datamap,
 	protocols::filters::Filters_map const & ,
@@ -145,7 +145,7 @@ GlycanTreeRelax::parse_my_tag(
 	refine_ = tag->getOption< bool >("refine", refine_);
 	quench_mode_ = tag->getOption< bool >("quench_mode", quench_mode_);
 	final_min_pack_min_ = tag->getOption< bool >("final_min_pack_min", final_min_pack_min_);
-	glycan_relax_rounds_ = tag->getOption< core::Size >("glycan_relax_rounds", glycan_relax_rounds_);
+	glycan_sampler_rounds_ = tag->getOption< core::Size >("glycan_sampler_rounds", glycan_sampler_rounds_);
 
 	if ( tag->hasOption("residue_selector") ) {
 		selector_ = protocols::rosetta_scripts::parse_residue_selector( tag, datamap );
@@ -163,27 +163,27 @@ GlycanTreeRelax::parse_my_tag(
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief required in the context of the parser/scripting scheme
 moves::MoverOP
-GlycanTreeRelax::fresh_instance() const
+GlycanTreeModeler::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new GlycanTreeRelax );
+	return protocols::moves::MoverOP( new GlycanTreeModeler );
 }
 
 /// @brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
-GlycanTreeRelax::clone() const
+GlycanTreeModeler::clone() const
 {
-	return protocols::moves::MoverOP( new GlycanTreeRelax( *this ) );
+	return protocols::moves::MoverOP( new GlycanTreeModeler( *this ) );
 }
 
-std::string GlycanTreeRelax::get_name() const {
+std::string GlycanTreeModeler::get_name() const {
 	return mover_name();
 }
 
-std::string GlycanTreeRelax::mover_name() {
-	return "GlycanTreeRelax";
+std::string GlycanTreeModeler::mover_name() {
+	return "GlycanTreeModeler";
 }
 
-void GlycanTreeRelax::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+void GlycanTreeModeler::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 
 	using namespace utility::tag;
@@ -220,11 +220,11 @@ void GlycanTreeRelax::provide_xml_schema( utility::tag::XMLSchemaDefinition & xs
 		+ XMLSchemaAttribute::attribute_w_default("final_min_pack_min", xsct_rosetta_bool, "Do a final set of cycles of min/pack", "true")
 		+ XMLSchemaAttribute::attribute_w_default("min_rings", xsct_rosetta_bool, "Minimize Carbohydrate Rings during minimization. ", "false")
 		+ XMLSchemaAttribute::attribute_w_default("cartmin", xsct_rosetta_bool, "Use Cartesian Minimization instead of Dihedral Minimization during packing steps.", "false")
-		+ XMLSchemaAttribute::attribute_w_default("glycan_relax_rounds", xsct_non_negative_integer, "Round Number for the internal GlycanRelax.  Default is the default of GlycanRelax.", "25");
+		+ XMLSchemaAttribute::attribute_w_default("glycan_sampler_rounds", xsct_non_negative_integer, "Round Number for the internal the GlycanTreeSampler.  Default is the default of the GlycanTreeSampler.", "25");
 
 
 	std::string documentation =
-		"Brief: A protocol for optimizing glycan trees using GlycanRelax from the base of the tree out to the leaves.\n"
+		"Brief: A protocol for optimizing glycan trees using the GlycanTreeSampler from the base of the tree out to the leaves.\n"
 		"Details: Works by making all other residues virtual except the ones it is working on (current Layer).\n"
 		"A virtual residue is not scored.\n"
 		"It will start at the first glycan residues, and then move out to the edges.\n"
@@ -233,7 +233,7 @@ void GlycanTreeRelax::provide_xml_schema( utility::tag::XMLSchemaDefinition & xs
 		"\n"
 		"We start at the roots, and make all other glycan residues virtual.\n"
 		"We first model towards the leaves and this is considered the forward direction.\n"
-		"GlycanRelax is used for the actual modeling, we only model a layer at a time, until we reach the tips.\n"
+		"the GlycanTreeSampler is used for the actual modeling, we only model a layer at a time, until we reach the tips.\n"
 		"If more than one round is set, the protocol will move backwards on the next round, from the leafs to the roots.\n"
 		"A third round will involve relaxation again in the forward direction.\n"
 		"So we go forward, back, forward, etc. for how ever many rounds you set.\n"
@@ -277,53 +277,53 @@ void GlycanTreeRelax::provide_xml_schema( utility::tag::XMLSchemaDefinition & xs
 
 
 void
-GlycanTreeRelax::set_layer_size( const core::Size layer_size ){
+GlycanTreeModeler::set_layer_size( const core::Size layer_size ){
 	layer_size_ = layer_size;
 }
 
 void
-GlycanTreeRelax::set_window_size( core::Size const window_size ){
+GlycanTreeModeler::set_window_size( core::Size const window_size ){
 	window_size_ = window_size;
 }
 
 void
-GlycanTreeRelax::set_refine(const bool refine){
+GlycanTreeModeler::set_refine(const bool refine){
 	refine_ = refine;
 }
 
 void
-GlycanTreeRelax::set_final_min_pack_min( const bool minpackmin ){
+GlycanTreeModeler::set_final_min_pack_min( const bool minpackmin ){
 	final_min_pack_min_ = minpackmin;
 }
 
 void
-GlycanTreeRelax::set_quench_mode( bool quench_mode ){
+GlycanTreeModeler::set_quench_mode( bool quench_mode ){
 	quench_mode_ = quench_mode;
 }
 
 void
-GlycanTreeRelax::set_scorefxn(core::scoring::ScoreFunctionCOP scorefxn){
+GlycanTreeModeler::set_scorefxn(core::scoring::ScoreFunctionCOP scorefxn){
 	scorefxn_ = scorefxn->clone();
 }
 
 void
-GlycanTreeRelax::set_selector(core::select::residue_selector::ResidueSelectorCOP selector){
+GlycanTreeModeler::set_selector(core::select::residue_selector::ResidueSelectorCOP selector){
 	selector_ = selector->clone();
 }
 
 void
-GlycanTreeRelax::set_rounds(const core::Size rounds){
+GlycanTreeModeler::set_rounds(const core::Size rounds){
 	rounds_ = rounds;
 }
 
 ///@brief Override Glycan Relax rounds.
 void
-GlycanTreeRelax::set_glycan_relax_rounds( core::Size glycan_relax_rounds){
-	glycan_relax_rounds_ = glycan_relax_rounds;
+GlycanTreeModeler::set_glycan_sampler_rounds( core::Size glycan_sampler_rounds){
+	glycan_sampler_rounds_ = glycan_sampler_rounds;
 }
 
 bool
-GlycanTreeRelax::is_quenched() const {
+GlycanTreeModeler::is_quenched() const {
 	if ( ! quench_mode_ && completed_quenches_ == 1 ) {
 		return true;
 	} else if ( ! quench_mode_ && completed_quenches_ == 0 ) {
@@ -337,7 +337,7 @@ GlycanTreeRelax::is_quenched() const {
 }
 
 void
-GlycanTreeRelax::setup_score_function(core::pose::Pose const & tree_pose) {
+GlycanTreeModeler::setup_score_function(core::pose::Pose const & tree_pose) {
 
 	//Create Scorefunction if needed.
 	if ( ! scorefxn_ ) {
@@ -360,7 +360,7 @@ GlycanTreeRelax::setup_score_function(core::pose::Pose const & tree_pose) {
 }
 
 void
-GlycanTreeRelax::setup_cartmin(core::scoring::ScoreFunctionOP scorefxn) const {
+GlycanTreeModeler::setup_cartmin(core::scoring::ScoreFunctionOP scorefxn) const {
 
 	scorefxn->set_weight_if_zero(core::scoring::cart_bonded, .5);
 	scorefxn->set_weight(core::scoring::pro_close, 0);
@@ -369,7 +369,7 @@ GlycanTreeRelax::setup_cartmin(core::scoring::ScoreFunctionOP scorefxn) const {
 
 /// @brief Apply the mover
 void
-GlycanTreeRelax::apply( core::pose::Pose & pose){
+GlycanTreeModeler::apply( core::pose::Pose & pose){
 	using namespace core::select::residue_selector;
 	using namespace core::kinematics;
 	using namespace core::pack::task;
@@ -418,35 +418,35 @@ GlycanTreeRelax::apply( core::pose::Pose & pose){
 	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
 		if ( starting_subset[ i ] ) {
 			if ( ! pose.residue_type( i ).is_carbohydrate() ) {
-				utility_exit_with_message(" GlycanTreeRelax: Residue "+utility::to_string(i)+" set in ResidueSelector, but not a carbohdyrate residue!");
+				utility_exit_with_message(" GlycanTreeModeler: Residue "+utility::to_string(i)+" set in ResidueSelector, but not a carbohdyrate residue!");
 			}
 		}
 	}
 
 	core::Size total_glycan_residues = count_selected(starting_subset);
 	if ( total_glycan_residues == 0 ) {
-		utility_exit_with_message("GlycanTreeRelax: No glycan residues to model.  Cannot continue.");
+		utility_exit_with_message("GlycanTreeModeler: No glycan residues to model.  Cannot continue.");
 	}
 
-	// Setup GlycanRelax
-	GlycanRelaxMover glycan_relax = GlycanRelaxMover();
+	// Setup the GlycanTreeSampler
+	GlycanTreeSampler glycan_sampler = GlycanTreeSampler();
 	if ( scorefxn_ ) {
-		glycan_relax.set_scorefunction( scorefxn_ );
+		glycan_sampler.set_scorefunction( scorefxn_ );
 	}
-	glycan_relax.set_refine( true );
+	glycan_sampler.set_refine( true );
 
 	if ( ! refine_ ) {
-		glycan_relax.randomize_glycan_torsions(pose, starting_subset);
+		glycan_sampler.randomize_glycan_torsions(pose, starting_subset);
 
 	}
 
-	//Only override cmd-line settings of GlycanRelax if it is set here.  Otherwise, cmd-line controls do not work.
-	if ( glycan_relax_rounds_ != 0 ) {
-		glycan_relax.set_rounds(glycan_relax_rounds_);
+	//Only override cmd-line settings of the GlycanTreeSampler if it is set here.  Otherwise, cmd-line controls do not work.
+	if ( glycan_sampler_rounds_ != 0 ) {
+		glycan_sampler.set_rounds(glycan_sampler_rounds_);
 	}
 
-	glycan_relax.use_cartmin( cartmin_ );
-	glycan_relax.set_min_rings( min_rings_ );
+	glycan_sampler.use_cartmin( cartmin_ );
+	glycan_sampler.set_min_rings( min_rings_ );
 
 	ConvertRealToVirtualMover real_to_virt = ConvertRealToVirtualMover();
 	ConvertVirtualToRealMover virt_to_real = ConvertVirtualToRealMover();
@@ -501,7 +501,7 @@ GlycanTreeRelax::apply( core::pose::Pose & pose){
 
 	if ( idealize_ ) {
 		TR << "Idealizing full glycan trees " << std::endl;
-		glycan_relax.idealize_glycan_residues(pose, tree_subset);
+		glycan_sampler.idealize_glycan_residues(pose, tree_subset);
 	}
 
 	core::Real starting_score = scorefxn_->score( pose );
@@ -569,7 +569,7 @@ GlycanTreeRelax::apply( core::pose::Pose & pose){
 
 				if ( max_end + 1 <= layer_size_ ) {
 					if ( ! quench_mode_ ) {
-						TR.Error << "Maximum number of layers smaller than the layer size.  Either decrease the layer_size or use GlycanRelax instead.  Layer-based sampling does not make sense here." << std::endl;
+						TR.Error << "Maximum number of layers smaller than the layer size.  Either decrease the layer_size or use the GlycanTreeSampler instead.  Layer-based sampling does not make sense here." << std::endl;
 						set_last_move_status(FAIL_DO_NOT_RETRY);
 						pose = starting_pose;
 						return;
@@ -622,13 +622,13 @@ GlycanTreeRelax::apply( core::pose::Pose & pose){
 					real_to_virt.set_residue_selector( and_selector_virt );
 					real_to_virt.apply( pose );
 
-					TR << "Running GlycanRelax on layer [ start -> end (including) ]: " << current_start << " " << current_end << std::endl;
+					TR << "Running the GlycanTreeSampler on layer [ start -> end (including) ]: " << current_start << " " << current_end << std::endl;
 
 					core::Size n_in_layer = count_selected( and_selector->apply( pose ) );
 
 					if ( n_in_layer > 0 ) {
-						glycan_relax.set_selector( and_selector );
-						glycan_relax.apply( pose );
+						glycan_sampler.set_selector( and_selector );
+						glycan_sampler.apply( pose );
 					} else {
 						TR << "No residues in layer, continueing." << std::endl;
 					}
@@ -667,7 +667,7 @@ GlycanTreeRelax::apply( core::pose::Pose & pose){
 					modeling_layer_selector->set_layer( current_start, current_end );
 					//ResidueSubset modeling_layer = modeling_layer_selector->apply( pose );
 
-					TR << "Running GlycanRelax on layer: " << current_start << " " << current_end << std::endl;
+					TR << "Running the GlycanTreeSampler on layer: " << current_start << " " << current_end << std::endl;
 
 					//Combine modeling layer with whatver the current_subset is.
 					store_subset->set_residue_subset( starting_subset );
@@ -683,8 +683,8 @@ GlycanTreeRelax::apply( core::pose::Pose & pose){
 					core::Size n_in_layer = count_selected( and_selector->apply( pose ) );
 
 					if ( n_in_layer > 0 ) {
-						glycan_relax.set_selector( and_selector );
-						glycan_relax.apply( pose );
+						glycan_sampler.set_selector( and_selector );
+						glycan_sampler.apply( pose );
 					} else {
 						TR << "No residues in layer, continueing." << std::endl;
 					}
@@ -764,20 +764,20 @@ GlycanTreeRelax::apply( core::pose::Pose & pose){
 /////////////// Creator ///////////////
 
 protocols::moves::MoverOP
-GlycanTreeRelaxCreator::create_mover() const
+GlycanTreeModelerCreator::create_mover() const
 {
-	return protocols::moves::MoverOP( new GlycanTreeRelax );
+	return protocols::moves::MoverOP( new GlycanTreeModeler );
 }
 
 std::string
-GlycanTreeRelaxCreator::keyname() const
+GlycanTreeModelerCreator::keyname() const
 {
-	return GlycanTreeRelax::mover_name();
+	return GlycanTreeModeler::mover_name();
 }
 
-void GlycanTreeRelaxCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+void GlycanTreeModelerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	GlycanTreeRelax::provide_xml_schema( xsd );
+	GlycanTreeModeler::provide_xml_schema( xsd );
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -786,7 +786,7 @@ void GlycanTreeRelaxCreator::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 
 
 std::ostream &
-operator<<( std::ostream & os, GlycanTreeRelax const & mover )
+operator<<( std::ostream & os, GlycanTreeModeler const & mover )
 {
 	mover.show(os);
 	return os;
