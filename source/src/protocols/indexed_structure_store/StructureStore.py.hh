@@ -18,6 +18,7 @@
 
 #include "pybind11/pybind11.h"
 #include "pybind11/numpy.h"
+#include "pybind11/eval.h"
 
 #include "ndarray.h"
 #include "ndarray/pybind11.h"
@@ -31,10 +32,19 @@ namespace protocols { namespace indexed_structure_store {
 template<typename Module> void bind_StructureStore(Module & m)
 {
 	namespace py = pybind11;
+
 	// Guard by numpy import, aborting binding definition if numpy interface
-	// isn't available.
-	try { py::module::import("numpy"); }
-catch (...) { return; }
+	// isn't available or numpy version < 1.9.
+	try {
+		auto numpy = py::module::import("numpy");
+		std::string version_check = "__version__.split('.') < '1.9'.split('.')";
+		if ( py::eval(version_check, numpy.attr("__dict__")).cast<bool>() ) {
+			return;
+		}
+	} catch (...) {
+		return;
+	}
+
 
 
 	PYBIND11_NUMPY_DTYPE(StructureEntry, id, name);
