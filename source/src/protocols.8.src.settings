@@ -12,6 +12,10 @@
 sources = {
 	"protocols/init": [
 		"init",
+		"register1",
+		"register2",
+		"register3",
+		"register4",
 	],
 }
 include_path = [

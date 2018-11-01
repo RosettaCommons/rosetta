@@ -7,40 +7,27 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   src/protocols/init/init.cc
+/// @file   src/protocols/init/register4.cc
 /// @brief  Declare WidgetRegistrators as static (global) variables in this .cc file
 ///         so that at load time, they will be initialized, and the Creator classes
 ///         they register will be handed to the appropriate WidgetFactory.
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
+/// @author Rocco Moretti (rmorettiase@gmail.com)
 
-#include <protocols/init/init.hh>
-#include <core/init/init.hh>
-
-#include <protocols/init/register1.hh>
-#include <protocols/init/register2.hh>
-#include <protocols/init/register3.hh>
 #include <protocols/init/register4.hh>
+
+// Just the movers, as they're likely the biggest
+
+#include <protocols/init/init.MoverCreators.ihh>
+#include <protocols/init/init.MoverRegistrators.ihh>
 
 namespace protocols {
 namespace init {
 
-void register_creators() {
-	register1(); // Absolutely needed to make sure the creaters get registered.
-	register2(); // Absolutely needed to make sure the creaters get registered.
-	register3(); // Absolutely needed to make sure the creaters get registered.
-	register4(); // Absolutely needed to make sure the creaters get registered.
-}
-
-void init( int argc, char * argv [] )
+void register4()
 {
-	register_creators();
-	core::init::init( argc, argv );
-}
-
-void init( utility::vector1< std::string > const & args )
-{
-	register_creators();
-	core::init::init( args );
+	// A no-op, but needed to make sure that the Creators/Registrators above get statically allocated.
+	// (As they might not before a function in this compilation unit is called.
 }
 
 } //namespace init

@@ -93,6 +93,9 @@ static TaskOperationRegistrator< protocols::task_operations::SequenceMotifTaskOp
 static TaskOperationRegistrator< protocols::task_operations::ThreadSequenceOperationCreator > ThreadSequenceOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::task_operations::AlignedThreadOperationCreator > AlignedThreadOperationCreator_registrator;
 
+static core::pack::task::operation::TaskOperationRegistrator<splice::DesignInterfacesOperationCreator > reg_DesignInterfacesOperationCreator;
+static core::pack::task::operation::TaskOperationRegistrator< splice::FindEndpointsOperationCreator > reg_FindEndpointsOperationCreator;
+static core::pack::task::operation::TaskOperationRegistrator< splice::SampleRotamersFromPDBCreator > reg_SampleRotamersFromPDBCreator;
 
 using core::pack::task::operation::ResFilterRegistrator;
 static ResFilterRegistrator< protocols::task_operations::ProteinCoreFilterCreator > ProteinCoreFilterCreator_registrator;

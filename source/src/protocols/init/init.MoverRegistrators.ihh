@@ -615,11 +615,8 @@ static protocols::moves::MoverRegistrator< splice::SpliceOutTailCreator > reg_Sp
 static protocols::moves::MoverRegistrator< splice::RBOutMoverCreator > reg_RBOutMoverCreator;
 static protocols::moves::MoverRegistrator< splice::RBInMoverCreator > reg_RBInMoverCreator;
 static protocols::moves::MoverRegistrator< splice::RotLibOutCreator > reg_RotLibOutCreator;
-static core::pack::task::operation::TaskOperationRegistrator<splice::DesignInterfacesOperationCreator > reg_DesignInterfacesOperationCreator;
-static core::pack::task::operation::TaskOperationRegistrator< splice::FindEndpointsOperationCreator > reg_FindEndpointsOperationCreator;
 static protocols::moves::MoverRegistrator< splice::AlignEndsMoverCreator > reg_AlignEndsMoverCreator;
 static protocols::moves::MoverRegistrator< cutoutdomain::CutOutDomainCreator > reg_CutOutDomainCreator;
-static core::pack::task::operation::TaskOperationRegistrator< splice::SampleRotamersFromPDBCreator > reg_SampleRotamersFromPDBCreator;
 
 // T //////////////////////////////////////////////////////////////////////////
 
