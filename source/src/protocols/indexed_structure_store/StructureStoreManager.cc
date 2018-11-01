@@ -65,7 +65,7 @@ StructureStoreOP StructureStoreManager::load_structure_store(std::string store_p
 
 			TR << "Trying cached store." << std::endl;
 			return store_cache[store_path];
-		} catch (std::bad_weak_ptr) {
+		} catch (std::bad_weak_ptr &) {
 
 			TR.Debug << "Cached store expired." << std::endl;
 			store_cache.erase(store_path);
