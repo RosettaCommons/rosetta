@@ -181,6 +181,7 @@ sources = {
 		"RangeRelaxMover",
 		"relax_main",
 		"RelaxProtocolBase",
+		"RelaxScriptManager",
 		"RepeatProteinRelax",
 		"util",
 		"WorkUnit_BatchRelax",

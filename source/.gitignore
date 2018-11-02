@@ -50,6 +50,7 @@ BuildPyRosetta.sh
 get_commit_id.sh
 /diffs*
 /compile*
+.vscode/
 .unit_test_results.json
 _performance_
 *~

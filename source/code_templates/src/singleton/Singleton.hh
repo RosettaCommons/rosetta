@@ -16,6 +16,7 @@
 #define INCLUDED_--path_underscore--_--class--_hh
 
 // Unit headers
+#include <--path--/--class--.fwd.hh>
 
 // Utility header
 #include <utility/SingletonBase.hh>

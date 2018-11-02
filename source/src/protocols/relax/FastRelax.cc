@@ -140,6 +140,7 @@ endrepeat
 #include <protocols/relax/FastRelaxCreator.hh>
 #include <protocols/relax/util.hh>
 #include <protocols/relax/cst_util.hh>
+#include <protocols/relax/RelaxScriptManager.hh>
 
 //Core Headers
 #include <core/chemical/ChemicalManager.fwd.hh>
@@ -1133,7 +1134,6 @@ void FastRelax::read_script_file( std::string const & script_file, core::Size st
 	using namespace basic::options;
 
 	script_.clear();
-	std::vector< std::string > filelines;
 
 	std::string script_file_path;
 	runtime_assert( standard_repeats > 0 );
@@ -1182,16 +1182,24 @@ void FastRelax::read_script_file( std::string const & script_file, core::Size st
 
 	auto const num_repeats_for_substitution = ( dualspace_ ? standard_repeats - 1 : standard_repeats );
 	VariableSubstitutionPair const repeat_subst = { "%%nrepeats%%", string_of( num_repeats_for_substitution ) };
-	std::ifstream infile( script_file_path.c_str() );
-	if ( !infile.good() ) {
-		utility_exit_with_message( "[ERROR] Error opening relaxscript file '" + script_file_path + "'\nParsed Script Name: " + script_file );
+
+	protocols::relax::RelaxScriptFileContents const & relax_script( protocols::relax::RelaxScriptManager::get_instance()->get_relax_script(script_file_path) );
+	utility::vector1< std::string > const & reflines( relax_script.get_file_lines() );
+	std::vector< std::string > filelines;
+	filelines.reserve(reflines.size());
+
+	//perform variable substitution
+	//Taken from https://stackoverflow.com/questions/1494399/how-do-i-search-find-and-replace-in-a-standard-string
+	for ( core::Size i(1), imax(reflines.size()); i<=imax; ++i ) {
+		std::string line( reflines[i] );
+		std::string::size_type position = line.find( repeat_subst.string_being_replaced );
+		while ( position != std::string::npos ) {
+			line.replace( position, repeat_subst.string_being_replaced.length(), repeat_subst.string_being_added );
+			position += repeat_subst.string_being_added.length();
+			position = line.find( repeat_subst.string_being_replaced, position );
+		}
+		filelines.push_back(line);
 	}
-	TR << "================== Reading script file: " << script_file_path << " ==================" << std::endl;
-	fill_in_filelines( infile, repeat_subst, filelines );
-	for ( auto const & line : filelines ) {
-		TR << line << std::endl;
-	}
-	infile.close();
 
 	set_script_from_lines( filelines );
 }
