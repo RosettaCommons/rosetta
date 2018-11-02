@@ -77,6 +77,7 @@ EnergyMethodOptions::EnergyMethodOptions():
 ///
 EnergyMethodOptions::EnergyMethodOptions( utility::options::OptionCollection const & options ) :
 	aa_composition_setup_files_(),
+	mhc_epitope_setup_files_(),
 	netcharge_setup_files_(),
 	aspartimide_penalty_value_(25.0),
 	// hard-wired default, but you can set this with etable_type( string )
@@ -176,6 +177,7 @@ EnergyMethodOptions &
 EnergyMethodOptions::operator = (EnergyMethodOptions const & src) {
 	if ( this != &src ) {
 		aa_composition_setup_files_ = src.aa_composition_setup_files_;
+		mhc_epitope_setup_files_ = src.mhc_epitope_setup_files_;
 		netcharge_setup_files_ = src.netcharge_setup_files_;
 		aspartimide_penalty_value_ = src.aspartimide_penalty_value_;
 		atom_vdw_atom_type_set_name_ = src.atom_vdw_atom_type_set_name_;
@@ -274,6 +276,7 @@ void EnergyMethodOptions::initialize_from_options( utility::options::OptionColle
 	etable_options_->initialize_from_options( options );
 
 	aa_composition_setup_files_ = (options[ basic::options::OptionKeys::score::aa_composition_setup_file ].user() ? options[ basic::options::OptionKeys::score::aa_composition_setup_file ]() : emptyvector);
+	mhc_epitope_setup_files_ = ( options[ basic::options::OptionKeys::score::mhc_epitope_setup_file ].user() ? options[ basic::options::OptionKeys::score::mhc_epitope_setup_file ]() : emptyvector);
 	netcharge_setup_files_ = ( options[ basic::options::OptionKeys::score::netcharge_setup_file ].user() ? options[ basic::options::OptionKeys::score::netcharge_setup_file ]() : emptyvector);
 	aspartimide_penalty_value_ = options[ basic::options::OptionKeys::score::aspartimide_penalty_value ]();
 	elec_max_dis_ = options[basic::options::OptionKeys::score::elec_max_dis ]();
@@ -387,6 +390,7 @@ EnergyMethodOptions::list_options_read( utility::options::OptionKeyList & read_o
 		+ basic::options::OptionKeys::score::grpelec_fade_param2
 		+ basic::options::OptionKeys::score::grpelec_fade_type
 		+ basic::options::OptionKeys::score::include_intra_res_protein
+		+ basic::options::OptionKeys::score::mhc_epitope_setup_file
 		+ basic::options::OptionKeys::score::netcharge_setup_file
 		+ basic::options::OptionKeys::score::protein_dielectric
 		+ basic::options::OptionKeys::score::put_intra_into_total
@@ -1307,6 +1311,7 @@ operator==( EnergyMethodOptions const & a, EnergyMethodOptions const & b ) {
 
 	return (
 		( a.aa_composition_setup_files_ == b.aa_composition_setup_files_ ) &&
+		( a.mhc_epitope_setup_files_ == b.mhc_epitope_setup_files_ ) &&
 		( a.netcharge_setup_files_ == b.netcharge_setup_files_ ) &&
 		( a.aspartimide_penalty_value_ == b.aspartimide_penalty_value_ ) &&
 		( a.atom_vdw_atom_type_set_name_ == b.atom_vdw_atom_type_set_name_ ) &&
@@ -1398,6 +1403,14 @@ EnergyMethodOptions::show( std::ostream & out ) const {
 		} else {
 			out << ".";
 		}
+	}
+	out << std::endl;
+
+	out << "EnergyMethodOptions::show: mhc_epitope_setup_files: ";
+	for ( core::Size i(1), imax(mhc_epitope_setup_file_count()); i<=imax; ++i ) {
+		out << mhc_epitope_setup_file(i);
+		if ( i < imax ) out << ", ";
+		else out << ".";
 	}
 	out << std::endl;
 
@@ -1723,6 +1736,7 @@ template< class Archive >
 void
 core::scoring::methods::EnergyMethodOptions::save( Archive & arc ) const {
 	arc( CEREAL_NVP( aa_composition_setup_files_ ) );
+	arc( CEREAL_NVP( mhc_epitope_setup_files_ ) );
 	arc( CEREAL_NVP( netcharge_setup_files_ ) );
 	arc( CEREAL_NVP( aspartimide_penalty_value_ ) ); //core::Real
 	arc( CEREAL_NVP( atom_vdw_atom_type_set_name_ ) ); // std::string
@@ -1813,6 +1827,7 @@ template< class Archive >
 void
 core::scoring::methods::EnergyMethodOptions::load( Archive & arc ) {
 	arc( aa_composition_setup_files_ );
+	arc( mhc_epitope_setup_files_ );
 	arc( netcharge_setup_files_ );
 	arc( aspartimide_penalty_value_ ); // core::Real
 	arc( atom_vdw_atom_type_set_name_ ); // std::string

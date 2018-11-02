@@ -153,6 +153,8 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "goap_angle" ] = goap_angle;
 	name2score_type_[ "pointwater" ] = pointwater;
 
+	name2score_type_[ "mhc_epitope" ] = mhc_epitope;
+
 	// PyRosetta score types
 #ifdef PYROSETTA
 		fill_score_range(name2score_type_, "PyRosettaTwoBodyContextIndepenedentEnergy", PyRosettaTwoBodyContextIndepenedentEnergy_first, PyRosettaTwoBodyContextIndepenedentEnergy_last);

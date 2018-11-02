@@ -117,6 +117,17 @@ void ScoreFunctionLoader::load_data(
 					emoptions.append_aa_composition_setup_files( filevect );
 				}
 
+				if ( mod_tag->hasOption("mhc_epitope_setup_file") ) {
+					std::stringstream filelist( mod_tag->getOption<std::string>("mhc_epitope_setup_file") );
+					utility::vector1 < std::string > filevect;
+					while ( !filelist.eof() ) {
+						std::string tempstring("");
+						filelist >> tempstring;
+						if ( !filelist.fail() ) filevect.push_back( tempstring );
+					}
+					emoptions.append_mhc_epitope_setup_files( filevect );
+				}
+
 				// Set up the list of netcharge score term setup files:
 				if ( mod_tag->hasOption("netcharge_setup_file") ) {
 					std::stringstream filelist( mod_tag->getOption<std::string>("netcharge_setup_file") );
@@ -352,6 +363,7 @@ ScoreFunctionLoader::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 	core::scoring::etable::EtableOptions::append_schema_attributes( set_attributes );
 	set_attributes
 		+ XMLSchemaAttribute( "aa_composition_setup_file", xs_string , "A list of one or more .comp files specifying desired amino acid compositions, used to set up the aa_composition score term." )
+		+ XMLSchemaAttribute( "mhc_epitope_setup_file", xs_string , "A list of one or more .mhc files specifying epitope prediction details for the mhc_epitope score term." )
 		+ XMLSchemaAttribute( "netcharge_setup_file", xs_string , "A list of one or more .charge files specifying desired net charges, used to set up the netcharge score term." )
 		+ XMLSchemaAttribute( "softrep_etable", xsct_rosetta_bool , "Should this scorefunction use a softened energy table for the fa_rep score term?" )
 		+ XMLSchemaAttribute( "fa_elec_min_dis", xsct_real , "The minimum distance for the fa_elec (Coulombic) score term." )

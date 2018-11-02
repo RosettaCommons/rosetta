@@ -12,6 +12,7 @@
 sources = {
 	"aa_composition" : [
 		"AddHelixSequenceConstraintsMoverTests",
+		"AddMHCEpitopeConstraintMover"
 	],
 	"abinitio" : [
 		"FragmentMover",

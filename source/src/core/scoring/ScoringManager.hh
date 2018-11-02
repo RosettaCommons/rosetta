@@ -49,6 +49,7 @@
 #include <core/scoring/WaterAdductHBondPotential.fwd.hh>
 
 #include <core/scoring/aa_composition_energy/AACompositionEnergySetup.fwd.hh>
+#include <core/scoring/mhc_epitope_energy/MHCEpitopeEnergySetup.fwd.hh>
 #include <core/scoring/netcharge_energy/NetChargeEnergySetup.fwd.hh>
 
 #include <core/scoring/carbohydrates/CHIEnergyFunction.fwd.hh>
@@ -631,6 +632,18 @@ public:
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	utility::vector1< core::scoring::aa_composition_energy::AACompositionEnergySetupOP > get_cloned_aa_comp_setup_helpers( core::scoring::methods::EnergyMethodOptions const &options ) const;
 
+	/// @brief Get a vector of owning pointers to data used by the MHCEpitopeEnergy score term.
+	/// @details If this vector has not yet been populated, this loads the data from disk (lazy loading).
+	/// @note The lazy loading has been made threadsafe.
+	/// @author Chris Bailey-Kellogg (cbk@cs.dartmouth.edu), copied from Vikram K. Mulligan's netcharge_energy
+	utility::vector1< core::scoring::mhc_epitope_energy::MHCEpitopeEnergySetupOP > get_cloned_mhc_epitope_setup_helpers( core::scoring::methods::EnergyMethodOptions const &options ) const;
+
+	/// @brief Create an instance of an MHCEpitopeEnergySetup object, by owning pointer.
+	/// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!
+	/// @note Not intended for use outside of ScoringManager.
+	/// @author Chris Bailey-Kellogg (cbk@cs.dartmouth.edu), copied from Vikram K. Mulligan's netcharge_energy
+	static core::scoring::mhc_epitope_energy::MHCEpitopeEnergySetupOP create_mhc_epitope_energy_setup_instance( std::string const &filename );
+
 	/// @brief Get a vector of owning pointers to data used by the NetChargeEnergy score term.
 	/// @details If this vector has not yet been populated, this loads the data from disk (lazy loading).
 	/// @note The lazy loading has been made threadsafe.
@@ -1138,6 +1151,7 @@ private:
 	mutable utility::thread::ReadWriteMutex etable_mutex_;
 	mutable std::mutex cp_rep_map_mutex_;
 	mutable utility::thread::ReadWriteMutex aa_comp_mutex_;
+	mutable utility::thread::ReadWriteMutex mhc_epitope_mutex_;
 	mutable utility::thread::ReadWriteMutex netcharge_mutex_;
 #ifdef OLDER_GXX_STDLIB
 	// Older versions of GCC lack the atomic_load and atomic_store functions for std::shared_ptr,
@@ -1287,6 +1301,11 @@ private:
 	/// @details Accessor function has been made threadsafe (as of the wee hours of 26 July 2017).
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	mutable std::map< std::string, core::scoring::aa_composition_energy::AACompositionEnergySetupOP > aa_composition_setup_helpers_;
+
+	/// @brief Cached data used by the MHCEpitopeEnergy.
+	/// @details Accessor function has been made threadsafe.
+	/// @author Chris Bailey-Kellogg (cbk@cs.dartmouth.edu), copied from Vikram K. Mulligan's netcharge_energy
+	mutable std::map< std::string, core::scoring::mhc_epitope_energy::MHCEpitopeEnergySetupOP > mhc_epitope_setup_helpers_;
 
 	/// @brief Cached data used by the NetChargeEnergy.
 	/// @details Accessor function has been made threadsafe.
