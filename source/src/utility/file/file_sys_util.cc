@@ -259,7 +259,6 @@ create_temp_filename( std::string const & dir, std::string const & prefix ) {
 	}
 	bool exists = false;
 	std::string const charset("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ");
-	std::string str = "";
 	std::string tempfilename;
 	std::random_device rd; // Gets unseeded random numbers from OS.
 	std::mt19937 mt(rd()); // Start the mt with the random device.
@@ -268,8 +267,11 @@ create_temp_filename( std::string const & dir, std::string const & prefix ) {
 		// We're using the C++ random number generator because we don't want
 		// to pull extra draws on the Rosetta one - besides,
 		// in utility we don't have access to it
-		str += charset[rand_int(mt)];
-		tempfilename  = dirname + str + prefix;
+		std::string str = "";
+		for ( int i = 0; i < 8; ++i ) {
+			str += charset[rand_int(mt)];
+		}
+		tempfilename  = dirname + prefix + str;
 		std::ifstream file(tempfilename.c_str());
 		if ( file ) {
 			file.close();

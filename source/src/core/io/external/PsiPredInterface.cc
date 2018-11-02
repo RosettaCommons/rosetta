@@ -35,7 +35,6 @@
 // C++ headers
 
 // C headers
-#include <ctime>
 
 static basic::Tracer TR( "core.io.external.psipredinterface" );
 
@@ -297,8 +296,7 @@ PsiPredInterface::run_psipred( core::pose::Pose const & pose, std::string const 
 			continue;
 		}
 		TR.Debug << "seq : " << seq << std::endl;
-		core::Size time_val = time(nullptr);
-		std::string const filebase = pose.sequence().substr(0,10) + "_" + boost::lexical_cast< std::string >(time_val);
+		std::string const filebase = utility::file::create_temp_filename(".", pose.sequence().substr(0,10) + "_");
 		std::string const fasta_filename = create_fasta_file( filebase, seq );
 		std::string psipred_filename = filebase + ".ss2";
 		std::string psipred_horiz_filename = filebase + ".horiz";
@@ -385,8 +383,7 @@ utility::vector1<utility::vector1< utility::vector1< core::Real > > > PsiPredInt
 			continue;
 		}
 		TR.Debug << "seq : " << seq << std::endl;
-		core::Size time_val = time(nullptr);
-		std::string const filebase = pose.sequence().substr(0,10) + "_" + boost::lexical_cast< std::string >(time_val);
+		std::string const filebase = utility::file::create_temp_filename(".", pose.sequence().substr(0,10) + "_");
 		std::string const fasta_filename = create_fasta_file( filebase, seq );
 		std::string const psipred_filename = filebase + ".ss2";
 
