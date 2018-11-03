@@ -572,9 +572,6 @@ enum ScoreType {
 
 	// Other energies.
 
-	// mhc_epitope energy, for deimmunization
-	mhc_epitope,
-
 	// packing score energy
 	pack_stat,
 

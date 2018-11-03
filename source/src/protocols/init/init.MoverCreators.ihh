@@ -19,7 +19,6 @@
 
 // A //////////////////////////////////////////////////////////////////////////
 #include <protocols/aa_composition/AddCompositionConstraintMoverCreator.hh>
-#include <protocols/aa_composition/AddMHCEpitopeConstraintMoverCreator.hh>
 #include <protocols/aa_composition/AddNetChargeConstraintMoverCreator.hh>
 #include <protocols/aa_composition/AddHelixSequenceConstraintsMoverCreator.hh>
 #include <protocols/aa_composition/ClearCompositionConstraintsMoverCreator.hh>

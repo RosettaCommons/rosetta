@@ -749,14 +749,6 @@ sources = {
 		"DFIRE_Energy",
 		"DFIRE_Potential",
 	],
-	"core/scoring/mhc_epitope_energy": [
-		"MHCEpitopeConstraint",
-		"MHCEpitopeEnergy",
-		"MHCEpitopeEnergySetup",
-		"MHCEpitopePredictor",
-                "MHCEpitopePredictorMatrix",
-                "MHCEpitopePredictorExternal",
-	],
 	"core/scoring/mm": [
 		"MMBondAngleLibrary",
 		"MMBondAngleResidueTypeParam",
@@ -1012,6 +1004,7 @@ sources = {
 		"sequence_motif",
 		"util",
 	],
+
 }
 include_path = [
 ]

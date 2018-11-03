@@ -88,7 +88,6 @@
 #include <core/scoring/vdwaals/VDW_EnergyCreator.hh>
 #include <core/scoring/methods/GoapEnergyCreator.hh>
 #include <core/scoring/methods/RingClosureEnergyCreator.hh>
-#include <core/scoring/mhc_epitope_energy/MHCEpitopeEnergyCreator.hh>
 #include <core/scoring/util_methods/DumpTrajectoryEnergyCreator.hh>
 #include <core/scoring/netcharge_energy/NetChargeEnergyCreator.hh>
 
@@ -415,7 +414,6 @@ static EnergyMethodRegistrator< scoring::etable::EtableEnergyCreator > EtableEne
 static EnergyMethodRegistrator< scoring::etable::EtableClassicIntraEnergyCreator > EtableClassicIntraEnergyCreator_registrator;
 static EnergyMethodRegistrator< pack::guidance_scoreterms::hbnet_energy::HBNetEnergyCreator > HBNetEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::hbonds::HBondEnergyCreator > HBondEnergyCreator_registrator;
-static EnergyMethodRegistrator< scoring::mhc_epitope_energy::MHCEpitopeEnergyCreator > MHCEpitopeEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::hbonds::NPDHBondEnergyCreator > NPDHBondEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::AspartimidePenaltyEnergyCreator > AspartimidePenaltyEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::ChainbreakEnergyCreator > ChainbreakEnergyCreator_registrator;

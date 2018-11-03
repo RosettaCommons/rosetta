@@ -85,7 +85,6 @@
 #include <core/scoring/methods/EnergyMethodCreator.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/aa_composition_energy/AACompositionEnergySetup.hh>
-#include <core/scoring/mhc_epitope_energy/MHCEpitopeEnergySetup.hh>
 #include <core/scoring/netcharge_energy/NetChargeEnergySetup.hh>
 #include <core/scoring/etable/Etable.hh>
 #include <core/scoring/etable/EtableOptions.hh>
@@ -120,8 +119,6 @@
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/thread/threadsafe_creation.hh>
-
-#include <utility/pointer/memory.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
@@ -205,7 +202,6 @@ ScoringManager::ScoringManager() :
 	etable_mutex_(),
 	cp_rep_map_mutex_(),
 	aa_comp_mutex_(),
-	mhc_epitope_mutex_(),
 	netcharge_mutex_(),
 #ifdef OLDER_GXX_STDLIB
 	pairE_bool_(false),
@@ -326,7 +322,6 @@ ScoringManager::ScoringManager() :
 	memb_etables_(),
 	cp_rep_map_byname_(),
 	aa_composition_setup_helpers_(),
-	mhc_epitope_setup_helpers_(),
 	netcharge_setup_helpers_(),
 	rama_prepro_mainchain_potentials_(),
 	rama_prepro_mainchain_potentials_beforeproline_(),
@@ -1323,28 +1318,6 @@ ScoringManager::get_cloned_netcharge_setup_helpers(
 	return return_vect;
 }
 
-/// @brief Get a vector of owning pointers to data used by the MHCEpitopeEnergy score term.
-/// @details If this vector has not yet been populated, this loads the data from disk (lazy loading).
-/// @note The lazy loading has been made threadsafe.
-/// @author Chris Bailey-Kellogg (cbk@cs.dartmouth.edu), copied from Vikram K. Mulligan's netcharge_energy
-utility::vector1< core::scoring::mhc_epitope_energy::MHCEpitopeEnergySetupOP >
-ScoringManager::get_cloned_mhc_epitope_setup_helpers(
-	core::scoring::methods::EnergyMethodOptions const &options
-) const {
-	core::Size const n_setup_helpers( options.mhc_epitope_setup_file_count() );
-
-	// Vector in which to return a clone of the data:
-	utility::vector1< core::scoring::mhc_epitope_energy::MHCEpitopeEnergySetupOP > return_vect;
-	return_vect.reserve(n_setup_helpers);
-
-	// Load the data if necessary (once, in a threadsafe manner), and populate the return vector:
-	for ( core::Size i(1); i<=n_setup_helpers; ++i ) {
-		boost::function< core::scoring::mhc_epitope_energy::MHCEpitopeEnergySetupOP () > creator( boost::bind( &ScoringManager::create_mhc_epitope_energy_setup_instance, boost::cref( options.mhc_epitope_setup_file(i) ) ) );
-		return_vect.push_back( ( utility::thread::safely_check_map_for_key_and_insert_if_absent(creator, SAFELY_PASS_MUTEX(mhc_epitope_mutex_), options.mhc_epitope_setup_file(i), mhc_epitope_setup_helpers_) )->clone() );
-	}
-
-	return return_vect;
-}
 
 /// @brief Get a particular MainchainScoreTable for the rama_prepro score term.
 /// @details If this has not yet been populated, loads the data from disk (lazy loading)
@@ -2187,20 +2160,6 @@ ScoringManager::create_aa_composition_energy_setup_instance(
 ) {
 	using namespace core::scoring::aa_composition_energy;
 	AACompositionEnergySetupOP op_to_return( new AACompositionEnergySetup );
-	op_to_return->initialize_from_file( filename );
-	return op_to_return;
-}
-
-/// @brief Create an instance of an MHCEpitopeEnergySetup object, by owning pointer.
-/// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!
-/// @note Not intended for use outside of ScoringManager.
-/// @author Chris Bailey-Kellogg (cbk@cs.dartmouth.edu), copied from Vikram K. Mulligan's netcharge_energy
-core::scoring::mhc_epitope_energy::MHCEpitopeEnergySetupOP
-ScoringManager::create_mhc_epitope_energy_setup_instance(
-	std::string const &filename
-) {
-	using namespace core::scoring::mhc_epitope_energy;
-	MHCEpitopeEnergySetupOP op_to_return( utility::pointer::make_shared< MHCEpitopeEnergySetup >() );
 	op_to_return->initialize_from_file( filename );
 	return op_to_return;
 }

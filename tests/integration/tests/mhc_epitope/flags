@@ -1,2 +1,0 @@
--parser:protocol inputs/mhc_epitope.xml
--in:file:s inputs/1ysb_monomer_relaxed.pdb
