@@ -134,6 +134,14 @@ StepWiseMinimizer::apply( core::pose::Pose & pose ) {
 
 }
 
+Real add_these( Size const final_idx, utility::vector1< Real > const & factors ) {
+	Real val = 0;
+	for ( Size ii = 1; ii <= final_idx; ++ii ) {
+		val += factors[ ii ];
+	}
+	return val;
+}
+
 //////////////////////////////////////////////////////////////////////////
 void
 StepWiseMinimizer::do_clustering( pose::Pose & pose ){
@@ -148,7 +156,63 @@ StepWiseMinimizer::do_clustering( pose::Pose & pose ){
 	clusterer.cluster();
 
 	pose_list_ = clusterer.pose_list();
-	pose = *pose_list_[ 1 ];
+
+	// If the options dictate it, make a Boltzmann-weighted choice from among pose_list_ options.
+	if ( options_->boltzmann_choice_post_enumerated_minimize() ) {
+		Real sum = 0;
+		//utility::vector1< std::pair< Size, Real > > factors;
+
+		utility::vector1< Real > energies;
+		utility::vector1< Real > factors;
+		for ( auto const & pose_elem : pose_list_ ) {
+			energies.push_back( pose_elem->energies().total_energy() );
+		}
+
+		Real min_energy = *std::min( energies.begin(), energies.end() );
+		for ( Real & energy : energies ) {
+			TR.Debug << "Pose with energy " << energy;
+			energy = energy - min_energy;
+			TR.Debug << " min-subtracted egap " << energy;
+			auto val = std::exp( -energy / 0.6 );
+			TR.Debug << " boltzmann factor " << val << std::endl;
+			factors.push_back( val );
+			sum += val;
+		}
+		for ( Real & factor : factors ) {
+			factor /= sum;
+			TR.Debug << "Pose with normalized factor " << factor << std::endl;
+		}
+		/*
+		for ( auto const & pose_elem : pose_list_ ) {
+		Real const egap = pose_list_[ 1 ]->energies().total_energy() - pose_elem->energies().total_energy();
+		Real const val = std::exp( -egap / 0.6 ); // arbitrary kT
+		sum += val;
+		factors.push_back( std::make_pair( factors.size() + 1, val ) );
+		}
+		*/
+		// sum is finished
+		/*for ( auto & elem : factors ) {
+		elem.second /= sum;
+		}*/
+
+		TR.Debug << "Normalization: " << add_these( factors.size(), factors ) << std::endl;
+		runtime_assert( add_these( factors.size(), factors ) <= 1.01 ); // rounding
+		auto chosen_point = numeric::random::uniform();
+		// Run through factors.
+		for ( Size ii = 1; ii <= factors.size(); ++ii ) {
+			if ( chosen_point < add_these( ii, factors ) ) {
+				pose = *pose_list_[ ii ];
+				TR << "Solution selection:" << std::endl <<
+					"-------------------" << std::endl <<
+					"Boltzmann-weighted selection. Lowest energy " << pose_list_[ 1 ]->energies().total_energy()
+					<< "; spin was " << chosen_point << "; choosing " << ii << "(energy " << pose_list_[ ii ]->energies().total_energy() << " factor " << factors[ ii ] << ")" << std::endl;
+				break;
+			}
+		}
+
+	} else {
+		pose = *pose_list_[ 1 ];
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////

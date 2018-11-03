@@ -52,13 +52,13 @@ public:
 	std::string
 	type() const{ return "StepWiseBasicModelerOptions";}
 
-	bool const & use_green_packer() const { return use_green_packer_; }
+	bool use_green_packer() const { return use_green_packer_; }
 	void set_use_green_packer( bool const & setting ){ use_green_packer_ = setting; }
 
-	bool const & verbose() const { return verbose_; }
+	bool verbose() const { return verbose_; }
 	void set_verbose( bool const & setting ){ verbose_ = setting; }
 
-	bool const & choose_random() const { return choose_random_; }
+	bool choose_random() const { return choose_random_; }
 	void set_choose_random( bool const & setting ){ choose_random_ = setting; }
 
 	void set_dump( bool const & setting ){ dump_ = setting; }
@@ -67,14 +67,14 @@ public:
 	void set_skip_minimize( bool const & setting ){ skip_minimize_ = setting; }
 	bool skip_minimize() const{ return skip_minimize_; }
 
-	bool const & disallow_realign() const { return disallow_realign_; }
-	void set_disallow_realign( bool const & setting ){ disallow_realign_ = setting; }
+	bool disallow_realign() const { return disallow_realign_; }
+	void set_disallow_realign( bool const setting ){ disallow_realign_ = setting; }
 
-	bool const & coordinate_constraints_during_minimize() const { return coordinate_constraints_during_minimize_; }
-	void set_coordinate_constraints_during_minimize( bool const & setting ){ coordinate_constraints_during_minimize_ = setting; }
+	bool coordinate_constraints_during_minimize() const { return coordinate_constraints_during_minimize_; }
+	void set_coordinate_constraints_during_minimize( bool const setting ){ coordinate_constraints_during_minimize_ = setting; }
 
-	bool const & virtualize_packable_moieties_in_screening_pose() const { return virtualize_packable_moieties_in_screening_pose_; }
-	void set_virtualize_packable_moieties_in_screening_pose( bool const & setting ){ virtualize_packable_moieties_in_screening_pose_ = setting; }
+	bool virtualize_packable_moieties_in_screening_pose() const { return virtualize_packable_moieties_in_screening_pose_; }
+	void set_virtualize_packable_moieties_in_screening_pose( bool const setting ){ virtualize_packable_moieties_in_screening_pose_ = setting; }
 
 protected:
 

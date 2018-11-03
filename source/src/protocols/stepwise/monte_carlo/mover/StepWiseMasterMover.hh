@@ -96,7 +96,8 @@ public:
 	resample_full_model( core::pose::Pose const & start_pose, core::pose::Pose & output_pose, bool const checkpointing_breadcrumbs );
 
 	void
-	resample_full_model( core::pose::Pose const & start_pose, core::pose::Pose & output_pose, bool const checkpointing_breadcrumbs, utility::vector1< Size > const & residues_to_resample );
+	resample_full_model( core::pose::Pose const & start_pose, core::pose::Pose & output_pose, bool const checkpointing_breadcrumbs,
+		utility::vector1< Size > const & residues_to_resample, Size const resample_round, Size const nstruct );
 
 	void
 	build_full_model( core::pose::Pose const & start_pose, core::pose::Pose & full_model_pose, bool const & choose_random = false );
@@ -116,6 +117,13 @@ private:
 
 	void
 	test_all_moves_recursively( core::pose::Pose & pose );
+
+	// Used only by resample_full_model
+	utility::vector1< StepWiseMove >
+	moves_for_pose(
+		core::pose::Pose const & start_pose,
+		utility::vector1< Size > const & residues_to_rebuild
+	);
 
 private:
 

@@ -7682,7 +7682,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'pack_protein_side_chains', 'Boolean', desc="allow neighboring protein side chains to be packed.", default='true' ),
 		Option( 'definitely_virtualize', 'IntegerVector', desc="definitely virtualize these residues (by seqpos)", default=[]),
 		Option( 'force_moving_res_for_erraser', 'Boolean', desc="For ERRASER resample moves, ENSURE that the appropriate residue is moving", default='false'),
-
+		Option( 'boltzmann_choice_post_enumerated_minimize', 'Boolean', desc="When enumerating and generating a big pose list, make a Boltzmann-weighted choice rather than just getting the lowest energy pose.", default='false'),
 		Option_Group( 'monte_carlo',
 			Option( 'verbose_scores', 'Boolean', desc= "Show all score components", default='false' ),
 			Option( 'skip_deletions', 'Boolean', desc= "no delete moves -- just for testing", default='false' ),

@@ -135,7 +135,7 @@ resample_full_model_test()
 
 	// run StepWiseMasterMover::resample_full_model
 	mover::StepWiseMasterMover master_mover( scorefxn, options );
-	master_mover.resample_full_model( *start_pose, seq_rebuild_pose, true /*checkpointing_breadcrumbs*/, sample_res );
+	master_mover.resample_full_model( *start_pose, seq_rebuild_pose, true /*checkpointing_breadcrumbs*/, sample_res, 1, 1 );
 
 	// score seq_rebuild pose
 	(*scorefxn)(seq_rebuild_pose);

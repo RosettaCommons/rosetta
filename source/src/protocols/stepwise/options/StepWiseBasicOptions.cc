@@ -86,6 +86,7 @@ StepWiseBasicOptions::initialize_variables(){
 	thermal_sampler_temperature_ = 0.5;
 	thermal_sampler_output_min_pose_ = false;
 	sample_pH_ = false;
+	boltzmann_choice_post_enumerated_minimize_ = false;
 }
 
 /// @brief clone the options
@@ -141,6 +142,7 @@ StepWiseBasicOptions::initialize_from_options_collection( utility::options::Opti
 	thermal_sampler_temperature_ = ( temps.size() > 0 )  ? temps[ 1 ] : 0.5;
 	thermal_sampler_output_min_pose_ = the_options[ OptionKeys::recces::output_min_pose ]();
 	sample_pH_ = the_options[ OptionKeys::pH::pH_mode ]();
+	boltzmann_choice_post_enumerated_minimize_ = option[ basic::options::OptionKeys::stepwise::boltzmann_choice_post_enumerated_minimize ]() ;
 }
 
 void
@@ -176,7 +178,9 @@ StepWiseBasicOptions::list_options_read( utility::options::OptionKeyList & opt )
 		+ OptionKeys::recces::n_cycle
 		+ OptionKeys::recces::temps
 		+ OptionKeys::recces::output_min_pose
-		+ OptionKeys::pH::pH_mode;
+		+ OptionKeys::pH::pH_mode
+		+ OptionKeys::stepwise::boltzmann_choice_post_enumerated_minimize;
+
 }
 
 

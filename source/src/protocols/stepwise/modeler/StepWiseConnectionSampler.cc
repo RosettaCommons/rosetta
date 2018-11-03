@@ -821,8 +821,8 @@ StepWiseConnectionSampler::initialize_ligand_bond_sampler( pose::Pose const & po
 
 	utility::vector1< Real > allowed_values{ -160, -140, -120, -100, -80, -60, -40, -20, 0, 20, 40, 60, 80, 100, 120, 140, 160, 180 };
 	StepWiseSamplerCombOP sampler( new StepWiseSamplerComb );
-	std::cout << "Setting up ligand sampler for " << pose.residue_type( moving_res_ ).name() << std::endl;
-	std::cout << "\t" << pose.residue_type( moving_res_ ) << std::endl;
+	TR << "Setting up ligand sampler for " << pose.residue_type( moving_res_ ).name() << std::endl;
+	TR << "\t" << pose.residue_type( moving_res_ ) << std::endl;
 	for ( Size ii = 1; ii <= pose.residue_type( moving_res_ ).nchi(); ++ii ) {
 		StepWiseSamplerOneTorsionOP foo( new StepWiseSamplerOneTorsion( core::id::TorsionID( moving_res_, id::CHI, ii ), allowed_values ) );
 		sampler->add_external_loop_rotamer( foo );

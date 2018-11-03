@@ -63,6 +63,9 @@ public:
 
 	void initialize_from_options( utility::options::OptionCollection const & options );
 
+	core::kinematics::MoveMap
+	movemap_setup( Pose & pose, std::set< Size > & cut_upper, std::set< Size > & cut_lower, ObjexxFCL::FArray1D< bool > & allow_insert );
+
 	void apply( Pose & pose ) override;
 
 	void parse_my_tag(
@@ -130,6 +133,12 @@ public:
 	edens_scorefxn( core::scoring::ScoreFunctionOP const & sfxn ) { edens_scorefxn_ = sfxn; }
 
 	void
+	nstruct( Size const nstruct ) { nstruct_ = nstruct; }
+
+	Size
+	nstruct() { return nstruct_; }
+
+	void
 	constrain_phosphate( bool const setting ) { constrain_phosphate_ = setting; }
 
 private:
@@ -146,6 +155,7 @@ private:
 	std::set< core::Size > fixed_res_list_;
 	utility::vector1< core::Size > cutpoint_list_;
 	std::string output_pdb_name_;
+	Size nstruct_ = 1;
 
 	ScoreFunctionOP scorefxn_;
 	ScoreFunctionOP edens_scorefxn_;

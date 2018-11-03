@@ -13,7 +13,10 @@
 
 // A good invocation:
 //
-// erraser2 -s my_pdb.pdb -edensity:mapfile map.ccp4 -edensity::mapreso 3.6 -score:weights stepwise/rna/rna_res_level_energy7beta.wts -set_weights elec_dens_fast 10.0 cart_bonded 5.0 linear_chainbreak 10.0 chainbreak 10.0 fa_rep 1.5 fa_intra_rep 0.5 rna_torsion 10 suiteness_bonus 5 rna_sugar_close 10 -rmsd_screen 3.0 -mute core.scoring.CartesianBondedEnergy core.scoring.electron_density.xray_scattering -fasta fasta_of_pdb.fasta
+// erraser2 -s my_pdb.pdb -edensity:mapfile map.ccp4 -edensity::mapreso 3.6 -score:weights stepwise/rna/rna_res_level_energy7beta.wts
+//         -set_weights elec_dens_fast 10.0 cart_bonded 5.0 linear_chainbreak 10.0 chainbreak 10.0 fa_rep 1.5 fa_intra_rep 0.5
+//         rna_torsion 10 suiteness_bonus 5 rna_sugar_close 10 -rmsd_screen 3.0
+//         -mute core.scoring.CartesianBondedEnergy core.scoring.electron_density.xray_scattering -fasta fasta_of_pdb.fasta
 //
 // Obtain the above fasta by running
 //
@@ -23,6 +26,10 @@
 //
 // You may need to edit the above fasta file if your PDB contains any non-RNA, non-protein residues
 //
+
+#ifdef USEMPI
+#include <mpi.h>
+#endif
 
 // protocols
 #include <protocols/viewer/viewers.hh>
@@ -73,6 +80,10 @@
 #include <utility/vector1.functions.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/io/izstream.hh>
+#include <numeric/random/random.hh>
+#include <numeric/random/random_permutation.hh>
+
+#include <ObjexxFCL/format.hh>
 
 // C++ headers
 #include <iostream>
@@ -88,39 +99,54 @@ using namespace core::scoring;
 using namespace protocols::rna::movers;
 using namespace core::pose::rna;
 using namespace utility::file;
+using namespace core::import_pose;
 using namespace core::import_pose::pose_stream;
+using namespace core::conformation;
+using namespace core::pose;
+using namespace core::pose::full_model_info;
+using namespace protocols::stepwise::monte_carlo;
+
+
 
 OPT_KEY( Integer, rounds )
 OPT_KEY( Boolean, minimize_protein )
 
-static basic::Tracer TR( "apps.pilot.awatkins.erraser2" );
+static basic::Tracer TR( "apps.public.rna.erraser.erraser2" );
 
 
-
-
-std::string first_preminimized_namer( std::string const & s ) {
+std::string first_preminimized_namer( std::string const & s, Size const nstruct ) {
 	std::stringstream minimized_name;
-	minimized_name << s << "_preminimized_round_1.pdb";
+	minimized_name << s << "_preminimized_round_1_" <<
+		ObjexxFCL::lead_zero_string_of( nstruct, 4 )
+		<< ".pdb";
 	return minimized_name.str();
 }
-std::string second_preminimized_namer( std::string const & s ) {
+std::string second_preminimized_namer( std::string const & s, Size const nstruct ) {
 	std::stringstream minimized_name;
-	minimized_name << s << "_preminimized_round_2.pdb";
+	minimized_name << s << "_preminimized_round_2_" <<
+		ObjexxFCL::lead_zero_string_of( nstruct, 4 )
+		<< ".pdb";
 	return minimized_name.str();
 }
-std::string third_preminimized_namer( std::string const & s ) {
+std::string third_preminimized_namer( std::string const & s, Size const nstruct ) {
 	std::stringstream minimized_name;
-	minimized_name << s << "_preminimized_round_3.pdb";
+	minimized_name << s << "_preminimized_round_3_" <<
+		ObjexxFCL::lead_zero_string_of( nstruct, 4 )
+		<< ".pdb";
 	return minimized_name.str();
 }
-std::string round_minimized_namer( std::string const & s, Size const ii ) {
+std::string round_minimized_namer( std::string const & s, Size const ii, Size const nstruct ) {
 	std::stringstream minimized_name;
-	minimized_name << s << "_minimized_" << ii << ".pdb";
+	minimized_name << s << "_minimized_" << ii << "_" <<
+		ObjexxFCL::lead_zero_string_of( nstruct, 4 )
+		<< ".pdb";
 	return minimized_name.str();
 }
-std::string round_resampled_namer( std::string const & s, Size const ii ) {
+std::string round_resampled_namer( std::string const & s, Size const ii, Size const nstruct ) {
 	std::stringstream minimized_name;
-	minimized_name << s << "_resampled_" << ii << ".pdb";
+	minimized_name << s << "_resampled_" << ii << "_" <<
+		ObjexxFCL::lead_zero_string_of( nstruct, 4 )
+		<< ".pdb";
 	return minimized_name.str();
 }
 
@@ -145,36 +171,37 @@ void fill_input_poses( utility::vector1< PoseOP > & input_poses, std::string con
 /// we have recovered a file with this type of name...
 void fill_input_poses_based_on_possible_checkpoints(
 	utility::vector1< PoseOP > & input_poses,
-	Size & checkpoints_to_pass
+	Size & checkpoints_to_pass,
+	Size const nstruct
 ) {
 
 	// Looks for 'latest possible' first.
 	for ( Size round = option[ rounds ].value(); round >= 1; --round ) {
-		if ( file_exists( round_resampled_namer( option[ in::file::s ]()[1], round ) ) ) {
-			fill_input_poses( input_poses, round_resampled_namer( option[ in::file::s ]()[1], round ) );
+		if ( file_exists( round_resampled_namer( option[ in::file::s ]()[1], round, nstruct ) ) ) {
+			fill_input_poses( input_poses, round_resampled_namer( option[ in::file::s ]()[1], round, nstruct ) );
 			checkpoints_to_pass = 3 + 2 * round;
 			return;
 		}
-		if ( file_exists( round_minimized_namer( option[ in::file::s ]()[1], round ) ) ) {
-			fill_input_poses( input_poses, round_minimized_namer( option[ in::file::s ]()[1], round ) );
+		if ( file_exists( round_minimized_namer( option[ in::file::s ]()[1], round, nstruct ) ) ) {
+			fill_input_poses( input_poses, round_minimized_namer( option[ in::file::s ]()[1], round, nstruct ) );
 			checkpoints_to_pass = 3 + 2 * round - 1;
 			return;
 		}
 	}
 
 	// This won't happen, probably -- it's been disabled down below.
-	if ( file_exists( third_preminimized_namer( option[ in::file::s ]()[1] ) ) ) {
-		fill_input_poses( input_poses, third_preminimized_namer( option[ in::file::s ]()[1] ) );
+	if ( file_exists( third_preminimized_namer( option[ in::file::s ]()[1], nstruct ) ) ) {
+		fill_input_poses( input_poses, third_preminimized_namer( option[ in::file::s ]()[1], nstruct ) );
 		checkpoints_to_pass = 3;
 		return;
 	}
-	if ( file_exists( second_preminimized_namer( option[ in::file::s ]()[1] ) ) ) {
-		fill_input_poses( input_poses, second_preminimized_namer( option[ in::file::s ]()[1] ) );
+	if ( file_exists( second_preminimized_namer( option[ in::file::s ]()[1], nstruct ) ) ) {
+		fill_input_poses( input_poses, second_preminimized_namer( option[ in::file::s ]()[1], nstruct ) );
 		checkpoints_to_pass = 2;
 		return;
 	}
-	if ( file_exists( first_preminimized_namer( option[ in::file::s ]()[1] ) ) ) {
-		fill_input_poses( input_poses, first_preminimized_namer( option[ in::file::s ]()[1] ) );
+	if ( file_exists( first_preminimized_namer( option[ in::file::s ]()[1], nstruct ) ) ) {
+		fill_input_poses( input_poses, first_preminimized_namer( option[ in::file::s ]()[1], nstruct ) );
 		checkpoints_to_pass = 1;
 		return;
 	}
@@ -183,7 +210,7 @@ void fill_input_poses_based_on_possible_checkpoints(
 	checkpoints_to_pass = 0;
 }
 
-void resample_full_model( pose::Pose & start_pose, ScoreFunctionOP const & scorefxn,  utility::vector1< Size > const & definite_residues  );
+void resample_full_model( Size const resample_round, pose::Pose & start_pose, ScoreFunctionOP const & scorefxn,  utility::vector1< Size > const & definite_residues, Size const nstruct );
 
 utility::vector1< Size >
 all_pose_residues( core::pose::Pose const & pose ) {
@@ -241,51 +268,16 @@ analyze_poses_for_convergence( utility::vector1< pose::Pose > const & poses ) {
 	return res;
 }
 
-///////////////////////////////////////////////////////////////////////////////
-void
-erraser2_test()
-{
-	// Outline:
-	// 1. Read in a pose.
-	// 2. Minimize it (using the ErraserMinimizerMover)
-	// 3. Rebuild residues that moved a lot plus geometric outliers
-	//   a. implement via resample_full_model with a custom sample res
-	// 4. [wash again if desired]
-	// 5. Minimize it
 
-	using namespace core::scoring;
-	using namespace core::chemical;
-	using namespace core::conformation;
-	using namespace core::io::silent;
-	using namespace core::import_pose;
-	using namespace core::import_pose::pose_stream;
-	using namespace core::pose;
-	using namespace core::pose::rna;
-	using namespace core::pose::full_model_info;
 
+PoseOP obtain_start_pose( Size const nstruct, utility::vector1< Size > & unconverged_res,  Size & checkpoints_to_pass ) {
 	// setup residue types
 	ResidueTypeSetCOP rsd_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
-
-	// setup score function
-	core::scoring::ScoreFunctionOP scorefxn;
-	if ( option[ score::weights ].user () ) {
-		scorefxn = get_score_function();
-	} else {
-		// Don't allow scorefunction to default.
-		utility_exit_with_message( "You must provide a scoring function via -score:weights. Try -score:weights stepwise/rna/rna_res_level_energy4.wts with -set_weights elec_dens_fast 10.0." );
-	}
-
-	if ( option[ in::file::s ]().empty() ) {
-		utility_exit_with_message( "You must provide a starting model via -in:file:s in PDB format." );
-	}
 
 
 	utility::vector1< PoseOP > input_poses;
 	PoseOP start_pose( new Pose );
 
-	utility::vector1< Size > unconverged_res;
-
-	Size checkpoints_to_pass = 0;
 	if ( option[ in::file::s ]().size() > 1 ) {
 		// We interpret multiple provided files as an attempt to say "hey, I need to know which residues to rebuild!"
 		PDBPoseInputStream input( option[ in::file::s ]() );
@@ -309,7 +301,7 @@ erraser2_test()
 		unconverged_res = analyze_poses_for_convergence( to_be_analyzed );
 	} else {
 
-		fill_input_poses_based_on_possible_checkpoints( input_poses, checkpoints_to_pass );
+		fill_input_poses_based_on_possible_checkpoints( input_poses, checkpoints_to_pass, nstruct );
 
 	}
 
@@ -321,7 +313,25 @@ erraser2_test()
 	builder.set_options( option );
 	builder.initialize_further_from_options();
 	builder.build(); // hope this will update original_poses[ 1 ]
-	start_pose = input_poses[ 1 ];
+	return input_poses[ 1 ];
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+void do_erraser2( Size const nstruct, /*PoseOP const & start_pose,*/ ScoreFunctionOP const & scorefxn ) {
+
+	// Outline:
+	// 1. Read in a pose.
+	// 2. Minimize it (using the ErraserMinimizerMover)
+	// 3. Rebuild residues that moved a lot plus geometric outliers
+	//   a. implement via resample_full_model with a custom sample res
+	// 4. [wash again if desired]
+	// 5. Minimize it
+
+	Size checkpoints_to_pass = 0;
+
+	utility::vector1< Size > unconverged_res;
+	PoseOP start_pose = obtain_start_pose( nstruct, unconverged_res, checkpoints_to_pass );
 	(*scorefxn)(*start_pose);
 
 	// Need to switch after minimizer!
@@ -339,6 +349,7 @@ erraser2_test()
 	core::Size const nrounds = option[ rounds ].value();
 
 	ErraserMinimizerMover erraser_minimizer;
+	erraser_minimizer.nstruct( nstruct );
 	erraser_minimizer.scorefxn( scorefxn );
 	erraser_minimizer.edens_scorefxn( scorefxn );
 	erraser_minimizer.minimize_protein( option[ minimize_protein ] );
@@ -348,14 +359,14 @@ erraser2_test()
 		//if ( !utility::file::file_exists( minimized_name.str() ) ) {
 		erraser_minimizer.constrain_phosphate( true );
 		erraser_minimizer.apply( *start_pose );
-		start_pose->dump_pdb( first_preminimized_namer( option[ in::file::s ]()[1]  ) );
+		start_pose->dump_pdb( first_preminimized_namer( option[ in::file::s ]()[1], nstruct ) );
 	}
 
 	if ( checkpoints_to_pass < 2 ) { // Second pass: constrain P, fun FT
 		if ( emm_ft.nres() == start_pose->size() ) start_pose->fold_tree( emm_ft ); // no-op if none specified
 		erraser_minimizer.constrain_phosphate( true );
 		erraser_minimizer.apply( *start_pose );
-		start_pose->dump_pdb( second_preminimized_namer( option[ in::file::s ]()[1]  ) );
+		start_pose->dump_pdb( second_preminimized_namer( option[ in::file::s ]()[1], nstruct ) );
 		if ( resample_fold_tree.nres() == start_pose->size() ) start_pose->fold_tree( resample_fold_tree ); // no-op if none specified
 	}
 
@@ -382,18 +393,14 @@ erraser2_test()
 			if ( emm_ft.nres() == start_pose->size() ) start_pose->fold_tree( emm_ft ); // no-op if none specified
 			erraser_minimizer.apply( *start_pose );
 			show_accuracy_report( *start_pose, "Minimized", ii/*, TR*/ );
-			start_pose->dump_pdb( round_minimized_namer( option[ in::file::s ]()[1], ii ) );
+			start_pose->dump_pdb( round_minimized_namer( option[ in::file::s ]()[1], ii, nstruct ) );
 		}
 
-		// Let's be REALLY SURE
-		//auto ft = start_pose.fold_tree();
-		//ft.reorder(start_pose.size());
-		//start_pose.fold_tree( ft );
 		if ( checkpoints_to_pass < 3 + 2 * ii ) {
 			if ( resample_fold_tree.nres() == start_pose->size() ) start_pose->fold_tree( resample_fold_tree ); // no-op if none specified
-			resample_full_model( *start_pose, scorefxn, unconverged_res );
+			resample_full_model( ii, *start_pose, scorefxn, unconverged_res, nstruct );
 			show_accuracy_report( *start_pose, "Resampled", ii/*, TR*/ );
-			start_pose->dump_pdb( round_resampled_namer( option[ in::file::s ]()[1], ii ) );
+			start_pose->dump_pdb( round_resampled_namer( option[ in::file::s ]()[1], ii, nstruct ) );
 		}
 	}
 
@@ -402,9 +409,67 @@ erraser2_test()
 	show_accuracy_report( *start_pose, "FINAL", 0/*, TR*/ );
 
 	std::stringstream filename_stream;
-	filename_stream << option[ in::file::s ]()[1] << "FINISHED.pdb";
+	filename_stream << option[ in::file::s ]()[1] << "FINISHED_" << nstruct << ".pdb";
 	start_pose->dump_pdb( filename_stream.str() );
 }
+
+
+
+
+
+
+void
+erraser2_test()
+{
+	Size const nstruct = option[ out::nstruct ].value();
+
+	// Distribute nstruct over cores
+	// use 'work partition' scheme because runtime will be comparable.
+	// in this scheme you do all nstruct with residue procid
+
+	int rank = 0, nproc = 1;
+#ifdef USEMPI
+	MPI_Comm_rank( MPI_COMM_WORLD, &rank );
+	MPI_Comm_size( MPI_COMM_WORLD, &nproc );
+#endif
+
+	utility::vector1< Size > my_nstruct;
+	for ( Size ii = rank + 1; ii <= nstruct; ii += nproc ) {
+		my_nstruct.push_back( ii );
+	}
+
+
+
+	// setup score function
+	core::scoring::ScoreFunctionOP scorefxn;
+	if ( option[ score::weights ].user () ) {
+		scorefxn = get_score_function();
+	} else {
+		// Don't allow scorefunction to default.
+		utility_exit_with_message( "You must provide a scoring function via -score:weights. Try -score:weights stepwise/rna/rna_res_level_energy4.wts with -set_weights elec_dens_fast 10.0." );
+	}
+
+	if ( option[ in::file::s ]().empty() ) {
+		utility_exit_with_message( "You must provide a starting model via -in:file:s in PDB format." );
+	}
+
+
+	// Input is handled for each nstruct because of checkpoint naming...
+
+
+	for ( Size const job : my_nstruct ) {
+		do_erraser2( job, /*start_pose, */scorefxn );
+	}
+
+#ifdef USEMPI
+	MPI_Barrier( MPI_COMM_WORLD );
+	MPI_Finalize();
+#endif
+}
+
+
+
+
 
 bool atoms_have_bond_to_bonded_atoms( pose::Pose const & pose, Size const ai, Size const ii, Size const aj, Size const jj ) {
 	// Loop through atoms in both residues
@@ -438,6 +503,12 @@ bool atoms_have_bond_to_bonded_atoms( pose::Pose const & pose, Size const ai, Si
 
 	return false;
 }
+
+
+
+
+
+
 
 bool atoms_have_mutual_bond_to_atom( pose::Pose const & pose, Size const ai, Size const ii, Size const aj, Size const jj ) {
 	// Loop through atoms in both residues
@@ -486,41 +557,40 @@ bump_check( pose::Pose const & pose, Size const ii ) {
 	return false;
 }
 
-void resample_full_model( pose::Pose & start_pose, ScoreFunctionOP const & scorefxn, utility::vector1< Size > const & definite_residues ) {
 
-	/*// Remove any single-residue checkpoint indicators if present.
-	#include <glob.h>
-	glob_t *pglob;
-	glob("seq_rebuild_temp_*pdb", );
-	seq_rebuild_temp_A:14.pdb
-	utility::delete_file( aaa)
-	*/
+utility::vector1< Size >
+determine_residues_to_rebuild(
+	utility::vector1< Size > const & definite_residues, pose::Pose const & start_pose
+) {
+	/*if ( utility::file::file_exists( residue_rebuild_log_namer( resample_round, nstruct ) ) ) {
+	// process it
+	return residues_to_rebuild_log( residue_rebuild_log_namer( resample_round, nstruct ) );
+	}*/
+
 	RNA_SuiteName suite_namer;
+	utility::vector1< Size > residues_to_rebuild = definite_residues;
 
-	// Rebuilds to be based on torsion score.
-	// (For now... later, do an actual PHENIX integration or something.)
-	std::set< Size > residues_to_rebuild( definite_residues.begin(), definite_residues.end() );
 	for ( Size ii = 1; ii <= start_pose.size(); ++ii ) {
 		if ( !option[ minimize_protein ].value() && start_pose.residue_type( ii ).is_protein() ) continue;
 
 		// This should pick up bad torsions
 		Real const torsion_score = start_pose.energies().residue_total_energies( ii )[ rna_torsion ];
 		if ( torsion_score > 1.2 ) {
-			TR << "Rebuilding residue " << ii <<" for a bad torsion score of " << torsion_score << std::endl;
-			residues_to_rebuild.insert( ii );
+			TR.Debug << "Rebuilding residue " << ii <<" for a bad torsion score of " << torsion_score << std::endl;
+			residues_to_rebuild.push_back( ii );
 		}
 
 		// Bad suites, if it hasn't been added already
 		// TODO: chain aware
 		auto suite_assignment = suite_namer.assign( start_pose, ii );
 		if ( suite_assignment.name == "!!" ) {
-			TR << "Rebuilding residue " << ii << " with its neighbors as possible for a bad suite" << std::endl;
+			TR.Debug << "Rebuilding residue " << ii << " with its neighbors as possible for a bad suite" << std::endl;
 			if ( ii > 1 ) {
-				residues_to_rebuild.insert( ii - 1 );
+				residues_to_rebuild.push_back( ii - 1 );
 			}
-			residues_to_rebuild.insert( ii );
+			residues_to_rebuild.push_back( ii );
 			if ( ii < start_pose.size() ) {
-				residues_to_rebuild.insert( ii + 1 );
+				residues_to_rebuild.push_back( ii + 1 );
 			}
 		}
 
@@ -528,15 +598,15 @@ void resample_full_model( pose::Pose & start_pose, ScoreFunctionOP const & score
 		// (If cart_bonded is on...)
 		Real const cart = start_pose.energies().residue_total_energies( ii )[ cart_bonded ];
 		if ( cart > 2 ) {
-			TR << "Rebuilding residue " << ii <<" for a bad cart_bonded score of " << cart << std::endl;
-			residues_to_rebuild.insert( ii );
+			TR.Debug << "Rebuilding residue " << ii <<" for a bad cart_bonded score of " << cart << std::endl;
+			residues_to_rebuild.push_back( ii );
 		}
 
 
 		// Clashes
 		if ( bump_check( start_pose, ii ) ) {
-			TR << "Rebuilding residue " << ii <<" for a bad bump check" << std::endl;
-			residues_to_rebuild.insert( ii );
+			TR.Debug << "Rebuilding residue " << ii <<" for a bad bump check" << std::endl;
+			residues_to_rebuild.push_back( ii );
 		}
 
 		// Make sure bad glycosylation sites get picked up here. Need samplers.
@@ -548,21 +618,19 @@ void resample_full_model( pose::Pose & start_pose, ScoreFunctionOP const & score
 		// (at first just Mg?)
 
 		// Make sure cyclic dinucleotide ligands are redocked. Also JUMP_DOCK.
-		if ( !start_pose.residue( ii ).is_polymer() ) residues_to_rebuild.insert( ii );
+		if ( !start_pose.residue( ii ).is_polymer() ) residues_to_rebuild.push_back( ii );
 	}
+
+	// Shuffle for this nstruct. This is your only chance!
+	auto tmpset = std::set< Size >( residues_to_rebuild.begin(), residues_to_rebuild.end() );
+	residues_to_rebuild = utility::vector1< Size >( tmpset.begin(), tmpset.end() );
+	numeric::random::random_permutation( residues_to_rebuild, numeric::random::rg() );
 	TR << "Total to resample this round: " << residues_to_rebuild << std::endl;
 
-	// OK, what residues might these be? What might be connected?
-	for ( auto const elem : residues_to_rebuild ) {
-		TR << elem << ": " << " " << start_pose.pdb_info()->chain( elem ) << start_pose.pdb_info()->number( elem ) << " " << start_pose.residue_type( elem ).name() << std::endl;
-	}
-	//return;
+	return residues_to_rebuild;
+}
 
-	using namespace protocols::stepwise::monte_carlo;
-	pose::Pose seq_rebuild_pose = start_pose;
-	protocols::viewer::add_conformation_viewer(seq_rebuild_pose.conformation(), "current", 500, 500);
-
-
+mover::StepWiseMasterMover configure_master_mover( ScoreFunctionOP const & scorefxn, Pose const & start_pose ) {
 	// initialize options
 	options::StepWiseMonteCarloOptionsOP options( new options::StepWiseMonteCarloOptions );
 	options->initialize_from_command_line();
@@ -571,29 +639,45 @@ void resample_full_model( pose::Pose & start_pose, ScoreFunctionOP const & score
 	options->set_skip_deletions( true );
 	options->set_output_minimized_pose_list( false );
 	options->set_force_moving_res_for_erraser( true );
+	options->set_boltzmann_choice_post_enumerated_minimize( true );
 
 	// run StepWiseMasterMover::resample_full_model
 	mover::StepWiseMasterMover master_mover( scorefxn, options );
-	// This is essential for rmsd_screen apparently
+	// This is essential for rmsd_screen
 	master_mover.set_native_pose( pose::PoseCOP( new pose::Pose( start_pose ) ) );
+	return master_mover;
+}
 
-	//master_mover.resample_full_model( start_pose, seq_rebuild_pose, true /*checkpointing_breadcrumbs*/ );
+void resample_full_model( Size const resample_round, pose::Pose & start_pose, ScoreFunctionOP const & scorefxn,
+	utility::vector1< Size > const & definite_residues, Size const nstruct ) {
 
+	// Determine residues to rebuild -- shuffled order, but who knows the checkpointing situation.
+	// TODO: if this is slow, figure out a way to skip it if there's a checkpoint file.
+	utility::vector1< Size > residues_to_rebuild = determine_residues_to_rebuild( definite_residues, start_pose );
+
+	// OK, what residues might these be? What might be connected?
+	for ( auto const elem : residues_to_rebuild ) {
+		TR.Debug << elem << ": " << " " << start_pose.pdb_info()->chain( elem ) << start_pose.pdb_info()->number( elem ) << " " << start_pose.residue_type( elem ).name() << std::endl;
+	}
 	//return;
-	master_mover.resample_full_model( start_pose, seq_rebuild_pose, true /*checkpointing_breadcrumbs*/, utility::vector1< Size >( residues_to_rebuild.begin(), residues_to_rebuild.end() ) );
-	// DEBUG 82
-	//master_mover.resample_full_model( start_pose, seq_rebuild_pose, true /*checkpointing_breadcrumbs*/, utility::vector1< Size >( 1, 82 ) );
-	//master_mover.resample_full_model( start_pose, seq_rebuild_pose, true /*checkpointing_breadcrumbs*/, utility::vector1< Size >( 1, 153 ) );
+
+	pose::Pose seq_rebuild_pose = start_pose;
+	protocols::viewer::add_conformation_viewer(seq_rebuild_pose.conformation(), "current", 500, 500);
+
+	mover::StepWiseMasterMover master_mover = configure_master_mover( scorefxn, start_pose );
+
+	master_mover.resample_full_model( start_pose, seq_rebuild_pose, true /*checkpointing_breadcrumbs*/,
+		residues_to_rebuild, resample_round, nstruct );
 
 	// score seq_rebuild pose
-	(*scorefxn)(seq_rebuild_pose);
+	( *scorefxn )( seq_rebuild_pose );
 
 	// show scores of start_pose and full_model_pose
 	//if ( option[ show_scores ]() ) {
 	TR << "\n Score before seq_rebuild:" << std::endl;
-	scorefxn->show( std::cout, start_pose );
+	scorefxn->show( TR, start_pose );
 	TR << "\n Score after seq_rebuild:" << std::endl;
-	scorefxn->show( std::cout, seq_rebuild_pose );
+	scorefxn->show( TR, seq_rebuild_pose );
 	//}
 
 	// dump pdb -- should figure out file name based on inputs

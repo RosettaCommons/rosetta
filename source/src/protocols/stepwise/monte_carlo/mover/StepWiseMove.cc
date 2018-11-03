@@ -99,6 +99,98 @@ StepWiseMove::StepWiseMove():
 {
 }
 
+StepWiseMove::StepWiseMove( std::string const & swa_move_string,
+	core::pose::full_model_info::FullModelParametersCOP full_model_parameters /* = 0 */ ):
+	utility::pointer::ReferenceCount(),
+	move_type_( NO_MOVE )
+{
+	// Obtain the move string vector
+	auto swa_move_string_vector_partial = utility::string_split_simple( swa_move_string );
+
+	utility::vector1< std::string > swa_move_string_vector;
+	for ( Size ii = 1; ii <= swa_move_string_vector_partial.size(); ++ii ) {
+		if ( swa_move_string_vector_partial[ ii ] == "Choice" ) continue;
+		if ( swa_move_string_vector_partial[ ii ] == "res" ) continue;
+		if ( swa_move_string_vector_partial[ ii ] == "with" ) continue;
+		if ( swa_move_string_vector_partial[ ii ] == "no" ) continue;
+		if ( swa_move_string_vector_partial[ ii ] == "attachments" ) continue;
+
+		// Find : -- if it's not a residue tag then it's an attachment.
+		if ( swa_move_string_vector_partial[ ii ].find( ':' ) != std::string::npos ) {
+			std::vector< int > resnum;
+			std::vector< char > chains;
+			std::vector< std::string > segids;
+			bool string_is_ok = utility::get_resnum_and_chain_from_one_tag( swa_move_string_vector_partial[ ii ], resnum, chains, segids );
+			if ( !string_is_ok ) {
+				// Attachment processing
+				auto attachment_parts = utility::string_split_simple( swa_move_string_vector_partial[ ii ], ':' );
+				swa_move_string_vector.push_back( attachment_parts[ 1 ] );
+				swa_move_string_vector.push_back( attachment_parts[ 2 ] );
+
+				continue;
+			}
+		}
+		swa_move_string_vector.push_back( swa_move_string_vector_partial[ ii ] );
+	}
+
+	using namespace ObjexxFCL;
+	Size const num_strings = swa_move_string_vector.size();
+	if ( num_strings == 0 ) return; // blank.
+	//  runtime_assert( num_strings >= 4 );
+
+	Size n( 1 );
+	move_type_ = move_type_from_string( swa_move_string_vector[ n ] ); n++;
+
+	bool string_is_ok( false );
+	while ( n <= num_strings ) {
+		//   std::vector <int> ints = ints_of( swa_move_string_vector[ n ], string_is_ok );
+		std::vector< int > resnum;
+		std::vector< char > chains;
+		std::vector< std::string > segids;
+		string_is_ok = utility::get_resnum_and_chain_from_one_tag( swa_move_string_vector[ n ], resnum, chains, segids );
+		if ( !string_is_ok ) break;
+		for ( Size i = 0; i < resnum.size(); i++ ) {
+			if ( full_model_parameters && chains[i] != ' ' ) { // a chain of ' ' probably means segid language
+				move_element_.push_back( full_model_parameters->conventional_to_full( resnum[i], chains[i], segids[i] ) );
+			} else {
+				move_element_.push_back( resnum[i] );
+			}
+		}
+		n++;
+	}
+
+	//  runtime_assert( n != num_strings );
+	while ( n <= num_strings ) {
+		AttachmentType attachment_type = attachment_type_from_string( swa_move_string_vector[ n ] );
+		n++;
+
+		if ( attachment_type == SUBMOTIF ) {
+			submotif_tag_ = swa_move_string_vector[ n ];
+			n++;
+		} else {
+			//   Size attachment_res = int_of( swa_move_string_vector[ n ] );
+			// attachment res should be one integer.
+			std::vector< int > resnum;
+			std::vector< char > chains;
+			std::vector< std::string > segids;
+			string_is_ok = utility::get_resnum_and_chain_from_one_tag( swa_move_string_vector[ n ], resnum, chains, segids );
+			runtime_assert( string_is_ok );
+			runtime_assert( resnum.size() == 1 );
+			Size attachment_res = resnum[0];
+			if ( full_model_parameters && chains[0] != ' ' ) attachment_res = full_model_parameters->conventional_to_full( resnum[0], chains[0], segids[0]  );
+			n++;
+
+			attachments_.push_back( Attachment( attachment_res, attachment_type ) );
+		}
+	}
+
+	if ( move_type_ == RESAMPLE_INTERNAL_LOCAL ) {
+		runtime_assert( attachments_.size() == 2 );
+		runtime_assert( attachments_[ 1 ].attachment_type() == BOND_TO_PREVIOUS );
+		runtime_assert( attachments_[ 2 ].attachment_type() == BOND_TO_NEXT );
+	}
+}
+
 StepWiseMove::StepWiseMove( utility::vector1< std::string > const & swa_move_string_vector,
 	core::pose::full_model_info::FullModelParametersCOP full_model_parameters /* = 0 */ ):
 	utility::pointer::ReferenceCount(),

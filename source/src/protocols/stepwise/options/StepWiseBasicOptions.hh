@@ -151,6 +151,9 @@ public:
 	void set_sample_pH( bool const setting ){ sample_pH_ = setting; }
 	bool sample_pH() const{ return sample_pH_; }
 
+	bool boltzmann_choice_post_enumerated_minimize() const { return boltzmann_choice_post_enumerated_minimize_; }
+	void set_boltzmann_choice_post_enumerated_minimize( bool const setting ){ boltzmann_choice_post_enumerated_minimize_ = setting; }
+
 	static void
 	list_options_read( utility::options::OptionKeyList & opt );
 
@@ -199,6 +202,8 @@ private:
 	core::Real thermal_sampler_temperature_;
 	bool thermal_sampler_output_min_pose_;
 	bool sample_pH_;
+	bool boltzmann_choice_post_enumerated_minimize_ = false;
+
 
 };
 
