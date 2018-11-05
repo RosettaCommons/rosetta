@@ -76,7 +76,8 @@ RNA_DeNovoMasterMover::RNA_DeNovoMasterMover( core::import_pose::options::RNA_Fr
 	core::pose::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
 	core::import_pose::RNA_BasePairHandlerCOP rna_base_pair_handler,
 	protocols::rna::movers::RNA_LoopCloserOP rna_loop_closer,
-	libraries::RNA_ChunkLibraryOP rna_chunk_library ):
+	libraries::RNA_ChunkLibraryOP rna_chunk_library,
+	core::scoring::ScoreFunctionOP sfxn ):
 	options_(std::move( options )),
 	frag_size_( 3 ),
 	jump_change_frequency_( 0.1 ), //  maybe updated based on options, or if rigid-body sampling
@@ -85,10 +86,11 @@ RNA_DeNovoMasterMover::RNA_DeNovoMasterMover( core::import_pose::options::RNA_Fr
 	do_rnp_docking_( false ),
 	move_type_( "" ),
 	rna_chunk_library_(std::move( rna_chunk_library )),
-	rna_loop_closer_(std::move( rna_loop_closer ))
+	rna_loop_closer_(std::move( rna_loop_closer )),
+	sfxn_( std::move( sfxn ) )
 {
 	RNA_Fragments const & all_rna_fragments_( RNA_LibraryManager::get_instance()->rna_fragment_library( options_->all_rna_fragments_file() ) );
-	rna_fragment_mover_ = RNA_FragmentMoverOP( new RNA_FragmentMover( all_rna_fragments_, atom_level_domain_map, options_->symm_hack_arity() ) );
+	rna_fragment_mover_ = RNA_FragmentMoverOP( new RNA_FragmentMover( all_rna_fragments_, atom_level_domain_map, options_->symm_hack_arity(), options_->exhaustive_fragment_insertion(), sfxn_ ) );
 
 	rna_jump_mover_ = RNA_JumpMoverOP( new RNA_JumpMover( RNA_LibraryManager::get_instance()->rna_jump_library_cop( options_->jump_library_file() ),
 		atom_level_domain_map ) );
@@ -410,7 +412,7 @@ RNA_DeNovoMasterMover::do_random_moves( core::pose::Pose & pose,
 	TR << "Heating up... " << heat_cycles << " cycles." << std::endl;
 
 	for ( Size i = 1; i <= heat_cycles; i++ ) {
-		rna_fragment_mover_->random_fragment_insertion( pose, 1 /*frag_size*/ );
+		rna_fragment_mover_->random_fragment_insertion( pose, 1 /*frag_size*/, true /*heating*/ );
 	}
 
 	rna_chunk_library_->initialize_random_chunks( pose );

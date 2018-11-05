@@ -30,6 +30,7 @@
 #include <core/pose/rna/util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
+#include <core/scoring/ScoreFunction.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/id/TorsionID.hh>
 #include <core/id/AtomID.hh>
@@ -253,7 +254,6 @@ FullAtomRNA_Fragments::pick_random_fragment(
 	utility::vector1< SYN_ANTI_RESTRICTION > const & restriction, /* = blank */
 	Size const type /* = MATCH_YR */) const
 {
-	// AMW: pass RNA_FragmentHomologyExclusionCOP here. get it from RNA_FragmentMonteCarlo initialization
 	FragmentLibraryOP fragment_library_pointer = get_fragment_library_pointer( RNA_string, RNA_secstruct_string, homology_exclusion, restriction, type );
 
 	Size const num_frags = fragment_library_pointer->get_align_depth();
@@ -334,6 +334,120 @@ FullAtomRNA_Fragments::apply_random_fragment(
 	TorsionSet torsion_set( size, position );
 	pick_random_fragment( torsion_set, pose, position, size, homology_exclusion, type );
 
+	insert_fragment( pose, position, torsion_set, atom_level_domain_map );
+	for ( Size ii = 1; ii < symm_hack_arity; ++ii ) {
+		insert_fragment( pose, ( position + ii * pose.size() / symm_hack_arity - 1 ) % pose.size() + 1, torsion_set, atom_level_domain_map );
+	}
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////
+void
+FullAtomRNA_Fragments::apply_best_fragment(
+	core::scoring::ScoreFunctionOP sfxn,
+	core::pose::Pose & pose,
+	Size const position,
+	Size const size,
+	Size const type,
+	RNA_FragmentHomologyExclusionCOP const & homology_exclusion,
+	core::pose::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
+	Size const symm_hack_arity,
+	Size const exhaustive ) const
+{
+	using namespace core::pose::full_model_info;
+
+	std::string const & RNA_sequence( pose.sequence() );
+	//std::string const & RNA_string = RNA_sequence.substr( position - 1, size );
+
+	// For every non-acgu character in the single letter sequence, we need to
+	// instead put in the na_analogue.
+	std::string RNA_string = RNA_sequence.substr( position - 1, size );
+	for ( Size ii = 0; ii < RNA_string.size(); ++ii ) {
+		if ( pose.residue_type( ii + position ).na_analogue() == chemical::na_rad ) {
+			RNA_string[ ii ] = 'a';
+		} else if ( pose.residue_type( ii + position ).na_analogue() == chemical::na_rcy ) {
+			RNA_string[ ii ] = 'c';
+		} else if ( pose.residue_type( ii + position ).na_analogue() == chemical::na_rgu ) {
+			RNA_string[ ii ] = 'g';
+		} else if ( pose.residue_type( ii + position ).na_analogue() == chemical::na_ura ) {
+			RNA_string[ ii ] = 'u';
+		}
+	}
+
+	// For the residues of interest, say which have to be syn or have to be anti
+	utility::vector1< SYN_ANTI_RESTRICTION > restriction( size, ANY );
+	if ( full_model_info_defined( pose ) ) {
+		utility::vector1< Size > const & res_list( const_full_model_info( pose ).res_list() );
+		for ( Size ii = 1; ii <= size; ++ii ) {
+			if ( const_full_model_info( pose ).rna_syn_chi_res().has_value( res_list[ position + ii - 1] ) ) {
+				restriction[ ii ] = SYN;
+			} else if ( const_full_model_info( pose ).rna_anti_chi_res().has_value( res_list[ position + ii - 1 ] ) ) {
+				restriction[ ii ] = ANTI;
+			}
+		}
+	}
+
+	//Desired "secondary structure".
+	std::string const & RNA_secstruct( core::pose::rna::secstruct_legacy::get_rna_secstruct_legacy( pose ) );
+	std::string const & RNA_secstruct_string = RNA_secstruct.substr( position - 1, size );
+
+
+
+
+
+	FragmentLibraryOP fragment_library_pointer = get_fragment_library_pointer( RNA_string, RNA_secstruct_string, homology_exclusion, restriction, type );
+	Size const num_frags = fragment_library_pointer->get_align_depth();
+
+	if ( num_frags == 0 ) { //trouble.
+		TR << "Fragment Library: zero fragments found for " << RNA_string << " " << RNA_secstruct_string << std::endl;
+		std::cerr << "Fragment Library: zero fragments found for " << RNA_string << " " << RNA_secstruct_string << std::endl;
+		utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
+	}
+	
+	Size best_idx = 1;
+	Real best_score = 0;
+	TorsionSet torsion_set( size, position );
+
+	if ( num_frags < exhaustive ) {
+		// Just try them all.
+		for ( Size ii = 1; ii <= num_frags; ++ii ) {
+			torsion_set = fragment_library_pointer->get_fragment_torsion_set( ii );
+
+			// Test this one
+			insert_fragment( pose, position, torsion_set, atom_level_domain_map );
+			for ( Size ii = 1; ii < symm_hack_arity; ++ii ) {
+				insert_fragment( pose, ( position + ii * pose.size() / symm_hack_arity - 1 ) % pose.size() + 1, torsion_set, atom_level_domain_map );
+			}
+
+			// OK: better?
+			Real new_score = ( *sfxn )( pose );
+			if ( ii == 1 || new_score < best_score ) {
+				best_score = new_score;
+				best_idx = ii;
+			}
+		}
+	} else {
+		for ( Size ii = 1; ii <= ( num_frags < exhaustive ? num_frags : exhaustive ); ++ii ) {
+			Size const which_frag = static_cast <Size> ( numeric::random::uniform() * num_frags) + 1;
+			torsion_set = fragment_library_pointer->get_fragment_torsion_set( which_frag );
+			
+			// Test this one
+			insert_fragment( pose, position, torsion_set, atom_level_domain_map );
+			for ( Size ii = 1; ii < symm_hack_arity; ++ii ) {
+				insert_fragment( pose, ( position + ii * pose.size() / symm_hack_arity - 1 ) % pose.size() + 1, torsion_set, atom_level_domain_map );
+			}
+
+			// OK: better?
+			Real new_score = ( *sfxn )( pose );
+			if ( ii == 1 || new_score < best_score ) {
+				best_score = new_score;
+				best_idx = which_frag;
+			}
+		}
+	}
+
+	torsion_set = fragment_library_pointer->get_fragment_torsion_set( best_idx );
 	insert_fragment( pose, position, torsion_set, atom_level_domain_map );
 	for ( Size ii = 1; ii < symm_hack_arity; ++ii ) {
 		insert_fragment( pose, ( position + ii * pose.size() / symm_hack_arity - 1 ) % pose.size() + 1, torsion_set, atom_level_domain_map );

@@ -239,7 +239,9 @@ RNA_FragmentMonteCarloOptions::initialize_from_options( utility::options::Option
 		align_pdb_ = "";
 	}
 
-	if ( opts[ OptionKeys::rna::denovo::symm_hack_arity ].user() ) set_symm_hack_arity( opts[ OptionKeys::rna::denovo::symm_hack_arity ] );
+	if ( opts[ OptionKeys::rna::denovo::symm_hack_arity ].user() ) set_symm_hack_arity( opts[ OptionKeys::rna::denovo::symm_hack_arity ]() );
+
+	if ( opts[ OptionKeys::rna::denovo::exhaustive_fragment_insertion ].user() ) set_exhaustive_fragment_insertion( opts[ OptionKeys::rna::denovo::exhaustive_fragment_insertion ] );
 
 	save_times_ = opts[ OptionKeys::out::save_times ]();
 }
@@ -335,7 +337,8 @@ RNA_FragmentMonteCarloOptions::list_options_read( utility::options::OptionKeyLis
 		+ OptionKeys::rna::denovo::refine_native_get_good_FT
 		+ OptionKeys::rna::denovo::symm_hack_arity
 		+ OptionKeys::out::save_times
-		+ OptionKeys::score::rna::rna_chemical_shift_exp_data;
+		+ OptionKeys::score::rna::rna_chemical_shift_exp_data
+		+ OptionKeys::rna::denovo::exhaustive_fragment_insertion;
 }
 
 

@@ -561,13 +561,14 @@ RNA_FragmentMonteCarlo::initialize_movers( core::pose::Pose const & pose ) {
 	// MasterMover handles fragments, jumps, chunks, docking
 	rna_denovo_master_mover_ = RNA_DeNovoMasterMoverOP( new RNA_DeNovoMasterMover( options_, atom_level_domain_map_,
 		rna_base_pair_handler_, rna_loop_closer_,
-		rna_chunk_library_ ) );
+		rna_chunk_library_,
+		denovo_scorefxn_->clone() ) );
 
 	if ( options_->initial_structures_provided() ) {
 		rna_denovo_master_mover_init_ = RNA_DeNovoMasterMoverOP( new RNA_DeNovoMasterMover( options_,
 			rna_chunk_initialization_library_->atom_level_domain_map(),
 			rna_base_pair_handler_, rna_loop_closer_init_,
-			rna_chunk_initialization_library_ ) );
+			rna_chunk_initialization_library_, denovo_scorefxn_->clone() ) );
 	}
 
 	if ( options_->dock_each_chunk_per_chain() && (options_->helical_substruct_res().size() > 0) ) {
@@ -671,6 +672,8 @@ RNA_FragmentMonteCarlo::update_rna_denovo_master_mover( Size const & r /*round n
 	if ( is_rna_and_protein_ && options_->rna_protein_docking() && options_->rna_protein_docking_legacy() ) {
 		rna_denovo_master_mover_->setup_rna_protein_docking_mover( pose, rot_mag, trans_mag );
 	}
+	
+	rna_denovo_master_mover_->set_sfxn( working_denovo_scorefxn_ );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////

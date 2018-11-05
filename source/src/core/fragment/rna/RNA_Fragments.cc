@@ -11,6 +11,7 @@
 // Rosetta Headers
 #include <core/fragment/rna/RNA_Fragments.hh>
 #include <core/pose/toolbox/AtomLevelDomainMap.fwd.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
 
 #include <core/types.hh>
@@ -36,6 +37,22 @@ RNA_Fragments::apply_random_fragment(
 	RNA_FragmentHomologyExclusionCOP const & /*homology_exclusion*/,
 	core::pose::toolbox::AtomLevelDomainMapCOP  /*atom_level_domain_map*/,
 	core::Size const /*symm_hack_arity*/
+) const {
+	std::cout << "Should not be in here! " << std::endl;
+}
+
+// empty shell.
+void
+RNA_Fragments::apply_best_fragment(
+	core::scoring::ScoreFunctionOP /*sfxn*/,
+	core::pose::Pose & /*pose*/,
+	core::Size const /*position*/,
+	core::Size const /*size*/,
+	core::Size const /*type = MATCH_YR*/,
+	RNA_FragmentHomologyExclusionCOP const & /*homology_exclusion*/,
+	core::pose::toolbox::AtomLevelDomainMapCOP  /*atom_level_domain_map*/,
+	core::Size const /*symm_hack_arity*/,
+	core::Size const /*exhaustive*/
 ) const {
 	std::cout << "Should not be in here! " << std::endl;
 }

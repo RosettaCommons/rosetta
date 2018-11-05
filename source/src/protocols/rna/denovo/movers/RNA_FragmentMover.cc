@@ -66,7 +66,9 @@ namespace movers {
 RNA_FragmentMover::RNA_FragmentMover(
 	RNA_Fragments const & rna_fragments,
 	core::pose::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
-	Size const symm_hack_arity
+	Size const symm_hack_arity,
+	Size const exhaustive/* = 1*/,
+	core::scoring::ScoreFunctionOP sfxn/* = nullptr*/
 ) : Mover(),
 	rna_fragments_( rna_fragments ),
 	atom_level_domain_map_(std::move( atom_level_domain_map )),
@@ -74,6 +76,8 @@ RNA_FragmentMover::RNA_FragmentMover(
 	insert_map_frag_size_( 0 ),
 	frag_size_( 0 ),
 	symm_hack_arity_( symm_hack_arity ),
+	exhaustive_( exhaustive ),
+	sfxn_( sfxn ),
 	homology_exclusion_( RNA_FragmentHomologyExclusionCOP( new RNA_FragmentHomologyExclusion( rna_fragments ) ) )
 {
 	Mover::type("RNA_FragmentMover");
@@ -86,7 +90,9 @@ RNA_FragmentMover::RNA_FragmentMover(RNA_FragmentMover const & object_to_copy) :
 	insert_map_(object_to_copy.insert_map_),
 	num_insertable_residues_(object_to_copy.num_insertable_residues_),
 	insert_map_frag_size_(object_to_copy.insert_map_frag_size_),
-	frag_size_(object_to_copy.frag_size_)
+	frag_size_(object_to_copy.frag_size_),
+	symm_hack_arity_(object_to_copy.symm_hack_arity_),
+	exhaustive_(object_to_copy.exhaustive_)
 {}
 
 
@@ -213,7 +219,8 @@ RNA_FragmentMover::update_insert_map( pose::Pose const & pose )
 Size
 RNA_FragmentMover::random_fragment_insertion(
 	core::pose::Pose & pose,
-	Size const frag_size
+	Size const frag_size,
+	bool const heating/* = false*/
 ) {
 	frag_size_ = frag_size;
 
@@ -228,8 +235,13 @@ RNA_FragmentMover::random_fragment_insertion(
 
 	// std::cout << " --- Trying fragment! at " << position << std::endl;
 
-	rna_fragments_.apply_random_fragment( pose, position, frag_size_, type, homology_exclusion_, atom_level_domain_map_, symm_hack_arity_ );
-
+	if ( exhaustive_ > 1 && !heating ) {
+		// Do something different
+		rna_fragments_.apply_best_fragment( sfxn_, pose, position, frag_size_, type, homology_exclusion_, atom_level_domain_map_, symm_hack_arity_, exhaustive_ );
+		//rna_fragments_.apply_random_fragment( pose, position, frag_size_, type, homology_exclusion_, atom_level_domain_map_, symm_hack_arity_ );
+	} else {
+		rna_fragments_.apply_random_fragment( pose, position, frag_size_, type, homology_exclusion_, atom_level_domain_map_, symm_hack_arity_ );
+	}
 	return position;
 }
 

@@ -21,6 +21,7 @@
 #include <core/pose/toolbox/AtomLevelDomainMap.fwd.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <utility/vector1.hh>
@@ -53,6 +54,19 @@ public:
 		RNA_FragmentHomologyExclusionCOP const & homology_exclusion,
 		core::pose::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
 		core::Size const symm_hack_arity ) const;
+
+	//Probably the only thing that will actually get called publicly:
+	virtual void
+	apply_best_fragment(
+		core::scoring::ScoreFunctionOP sfxn,
+		core::pose::Pose & pose,
+		core::Size const position,
+		core::Size const size,
+		core::Size const type,
+		RNA_FragmentHomologyExclusionCOP const & homology_exclusion,
+		core::pose::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
+		core::Size const symm_hack_arity,
+		core::Size const exhaustive ) const;
 
 	virtual FragmentLibraryOP
 	get_fragment_library_pointer(

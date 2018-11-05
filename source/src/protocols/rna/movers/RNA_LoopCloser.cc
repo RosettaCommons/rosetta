@@ -458,6 +458,7 @@ RNA_LoopCloser::get_chainbreak_xyz( pose::Pose const & pose,
 	upstream_xyzs.clear();
 	downstream_xyzs.clear();
 
+	// AMW TODO
 	upstream_xyzs.push_back( pose.residue( cutpoint ).xyz( " O3'" ) );
 	upstream_xyzs.push_back( pose.residue( cutpoint ).xyz( "OVL1" ) );
 	upstream_xyzs.push_back( pose.residue( cutpoint ).xyz( "OVL2" ) );

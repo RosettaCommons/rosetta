@@ -366,6 +366,9 @@ public:
 	void set_symm_hack_arity( Size const setting ){ symm_hack_arity_ = setting; }
 	Size symm_hack_arity() const { return symm_hack_arity_; }
 
+	void set_exhaustive_fragment_insertion( Size const setting ){ exhaustive_fragment_insertion_ = setting; }
+	Size exhaustive_fragment_insertion() const { return exhaustive_fragment_insertion_; }
+
 	void set_output_filters( bool const setting ){ output_filters_ = setting; }
 	bool output_filters() const { return output_filters_; }
 
@@ -489,6 +492,7 @@ private:
 
 	Size symm_hack_arity_ = 1;
 	bool save_times_ = false;
+	bool exhaustive_fragment_insertion_ = false;
 };
 
 } //options

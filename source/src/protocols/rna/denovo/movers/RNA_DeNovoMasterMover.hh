@@ -26,6 +26,7 @@
 #include <core/import_pose/RNA_JumpMover.fwd.hh>
 #include <protocols/rna/denovo/movers/RNA_HelixMover.fwd.hh>
 #include <protocols/rna/movers/RNA_LoopCloser.fwd.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/rigid/RigidBodyMover.fwd.hh>
 #include <core/pose/toolbox/AtomLevelDomainMap.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -46,7 +47,8 @@ public:
 		core::pose::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
 		core::import_pose::RNA_BasePairHandlerCOP rna_base_pair_handler,
 		protocols::rna::movers::RNA_LoopCloserOP rna_loop_closer,
-		core::import_pose::libraries::RNA_ChunkLibraryOP rna_chunk_library  );
+		core::import_pose::libraries::RNA_ChunkLibraryOP rna_chunk_library,
+		core::scoring::ScoreFunctionOP sfxn  );
 
 	//destructor
 	~RNA_DeNovoMasterMover();
@@ -105,6 +107,9 @@ public:
 	void
 	set_helix_mover_magnitude( core::Real const & rot_mag, core::Real const & trans_mag );
 
+	void
+	set_sfxn( core::scoring::ScoreFunctionOP const  & sfxn ) { sfxn_ = sfxn; }
+
 private:
 
 	void
@@ -157,6 +162,8 @@ private:
 		dock_into_density_mover_;
 	core::kinematics::FoldTree rnp_docking_ft_;
 	movers::RNA_HelixMoverOP rna_helix_mover_;
+
+	core::scoring::ScoreFunctionOP sfxn_;
 
 };
 
