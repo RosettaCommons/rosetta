@@ -278,7 +278,7 @@ main( int argc, char * argv [] )
 
 		//init
 		devel::init(argc, argv);
-		bool legacy = option[ OptionKeys::ddg::legacy ].user(); //Default false
+		bool legacy = option[ OptionKeys::ddg::legacy ].value(); //Default false
 		if ( !legacy ) {
 #ifdef _NLOHMANN_JSON_ENABLED_ //Json is required to run this ddg protocol
 			// read the pose

@@ -208,11 +208,12 @@ mutate_sequence(std::string & sequence, MutationSet mutations);
 utility::vector1<core::Size>
 involves_prolines( core::pose::Pose & pose, MutationSet mutations);
 
+/// @brief if the residue is part of a disulfide bond break it.
+void break_disulfides_to_residue( core::pose::Pose & pose, const core::Size res);
 
 /// @brief Mutate the pose to the residues specified in the mutation set.
 void
 mutate_pose(core::pose::Pose & pose, MutationSet mutations, core::scoring::ScoreFunctionOP score_fxn);
-
 
 /// @brief Pick fragments for mutationsets involving prolines and store them in the mutation set.
 void

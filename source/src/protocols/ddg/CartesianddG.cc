@@ -16,6 +16,8 @@
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/util.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -581,12 +583,29 @@ involves_prolines(
 }
 
 void
+break_disulfides_to_residue(core::pose::Pose & pose, const core::Size res){
+
+		//Don't try and break any disulfides if they don't exist
+		if( ! pose.conformation().residue( res ).type().is_disulfide_bonded() ){
+				return;
+		}
+		const core::Size partner_index = core::conformation::get_disulf_partner(pose.conformation(), res);
+		core::conformation::break_disulfide(pose.conformation(), res, partner_index);
+		return;
+}
+
+void
 mutate_pose(
 	core::pose::Pose & pose,
 	MutationSet mutations,
 	core::scoring::ScoreFunctionOP score_fxn)
 {
 
+	//Break the disulfide bonds of the mutations before making the packer task.
+	for ( core::Size i=1; i<=mutations.get_resnums().size(); i++ ) {
+		core::Size resnum = mutations.get_resnum(i);
+		break_disulfides_to_residue(pose,resnum);
+	}
 	pack::task::PackerTaskOP packer_task(pack::task::TaskFactory::create_packer_task(pose));
 	for ( core::Size i=1; i<=mutations.get_resnums().size(); i++ ) {
 		utility::vector1< bool > allowable( 20, false );
@@ -601,6 +620,7 @@ mutate_pose(
 			packer_task->nonconst_residue_task(i).prevent_repacking();
 		}
 	}
+
 	//Repack
 	protocols::minimization_packing::PackRotamersMoverOP packer(new protocols::minimization_packing::PackRotamersMover( score_fxn, packer_task ));
 	packer->apply(pose);

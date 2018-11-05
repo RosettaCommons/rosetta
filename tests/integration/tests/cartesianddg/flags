@@ -1,0 +1,15 @@
+-in::file::s inputs/toy.pdb 
+-ddg::iterations 1
+-ddg::score_cutoff 1
+-ddg::dump_pdbs false
+-ddg::bbnbrs 1
+-score:weights beta_nov15_cart
+-ddg::mut_file inputs/mutfile.mut
+-ddg:frag_nbrs 2
+-ignore_zero_occupancy false
+-missing_density_to_jump
+-ddg:flex_bb false
+-ddg::force_iterations false
+-fa_max_dis 9.0
+-ddg::json true
+-ddg:legacy false
