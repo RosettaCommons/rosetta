@@ -45,13 +45,13 @@ struct Item {
 inline std::ostream& operator <<(std::ostream &os, std::vector<Item> const & v)
 {
 	os << "[";
-	for(unsigned int i=0; i<v.size(); i++) {
+	for ( unsigned int i=0; i<v.size(); i++ ) {
 		os << "(" << v[i].type << " ";
 
-		if( v[i].type == _IT_String_ ) os << v[i].str;
-		if( v[i].type == _IT_Number_ ) os << v[i].num;
-		if( v[i].type == _IT_MarkupAbsTolerance_ ) os << v[i].num;
-		if( v[i].type == _IT_MarkupRelTolerance_ ) os << v[i].num;
+		if ( v[i].type == _IT_String_ ) os << v[i].str;
+		if ( v[i].type == _IT_Number_ ) os << v[i].num;
+		if ( v[i].type == _IT_MarkupAbsTolerance_ ) os << v[i].num;
+		if ( v[i].type == _IT_MarkupRelTolerance_ ) os << v[i].num;
 
 		os << "), ";
 	}
@@ -62,15 +62,16 @@ inline std::ostream& operator <<(std::ostream &os, std::vector<Item> const & v)
 
 inline bool isFloatNumber(std::string const &s, unsigned int start_pos, double &res, unsigned int &end_pos, bool isMarkup=false)
 {
-	if( start_pos >= s.size() ) return false; // if( s.size() == 0 ) return false;
+	res = 0; // Set res to 0, for the case when s is not actually a float.
 
-	if( isMarkup ) {
-		if( s[start_pos] == ' ' || s[start_pos] == '\t' ) return false; // we don't want it to skip whitespaces
-	}
-	else {
-		if( s[start_pos] != ' ' && s[start_pos] != '\t' ) return false; // we always want at least one whitespace before number
-		if( start_pos + 1 < s.size() ) {
-			if( s[start_pos+1] == ' ' || s[start_pos+1] == '\t' ) return false; // only one space before number is allowed
+	if ( start_pos >= s.size() ) return false; // if( s.size() == 0 ) return false;
+
+	if ( isMarkup ) {
+		if ( s[start_pos] == ' ' || s[start_pos] == '\t' ) return false; // we don't want it to skip whitespaces
+	} else {
+		if ( s[start_pos] != ' ' && s[start_pos] != '\t' ) return false; // we always want at least one whitespace before number
+		if ( start_pos + 1 < s.size() ) {
+			if ( s[start_pos+1] == ' ' || s[start_pos+1] == '\t' ) return false; // only one space before number is allowed
 		}
 	}
 
@@ -79,13 +80,13 @@ inline bool isFloatNumber(std::string const &s, unsigned int start_pos, double &
 
 	end_pos = end - (&s[0]);
 
-	if( !isMarkup ) {
-		if( end_pos < s.size() ) {  // check if number end up with space (only if its not the end of a line)
-			if( s[end_pos] != ' ' && s[end_pos] != '\t' ) return false;
+	if ( !isMarkup ) {
+		if ( end_pos < s.size() ) {  // check if number end up with space (only if its not the end of a line)
+			if ( s[end_pos] != ' ' && s[end_pos] != '\t' ) return false;
 		}
 	}
 
-	if( end_pos > start_pos ) return true;
+	if ( end_pos > start_pos ) return true;
 	else return false;
 }
 
@@ -93,22 +94,22 @@ inline bool isFloatNumber(std::string const &s, unsigned int start_pos, double &
 inline bool isMarkup(std::string const &s, unsigned int start_pos, double &res, unsigned int &end_pos, std::string markup)
 {
 	//std::string markup="set_abs_tolerance(";
-	if( start_pos >= s.size() ) return false; // if( s.size() == 0 ) return false;
+	if ( start_pos >= s.size() ) return false; // if( s.size() == 0 ) return false;
 	unsigned int r = s.find(markup, start_pos);
-	if( r != start_pos ) return false;
+	if ( r != start_pos ) return false;
 
 	unsigned int end;
-	if( !isFloatNumber(s, r+markup.size(), res, end, true) ) return false;
-	if( end >= s.size() ) return false;
-	if( s[end] != ')' ) return false;
+	if ( !isFloatNumber(s, r+markup.size(), res, end, true) ) return false;
+	if ( end >= s.size() ) return false;
+	if ( s[end] != ')' ) return false;
 	end_pos = end + 1;
 	return true;
 }
 
 inline bool smartAdd(bool f, double const &res, Item &I, ItemType type, std::vector<Item> &V)
 {
-	if(f) {
-		if( I.type == _IT_String_ ) {
+	if ( f ) {
+		if ( I.type == _IT_String_ ) {
 			//I.num = 0;
 			V.push_back(I);
 		}
@@ -128,22 +129,24 @@ inline std::vector<Item> ParseString(std::string const &s)
 	std::vector<Item> V;
 	Item r;
 
-	for(unsigned int i=0; i<s.size(); ) {
+	for ( unsigned int i=0; i<s.size(); ) {
 		double res;
 		unsigned int end_pos(0); // initialized to zero to keep compiler happy
 
-		if( smartAdd(isFloatNumber(s, i, res, end_pos), res, r, _IT_Number_, V) )
-			{ i=end_pos;  continue; }
-		if( smartAdd(isMarkup(s, i, res, end_pos, "set_abs_tolerance("), res, r, _IT_MarkupAbsTolerance_, V) )
-			{ i=end_pos;  continue; }
-		if( smartAdd(isMarkup(s, i, res, end_pos, "set_rel_tolerance("), res, r, _IT_MarkupRelTolerance_, V) )
-			{  i=end_pos;  continue; }
+		if ( smartAdd(isFloatNumber(s, i, res, end_pos), res, r, _IT_Number_, V) ) {
+			i=end_pos;  continue;
+		}
+		if ( smartAdd(isMarkup(s, i, res, end_pos, "set_abs_tolerance("), res, r, _IT_MarkupAbsTolerance_, V) ) {
+			i=end_pos;  continue;
+		}
+		if ( smartAdd(isMarkup(s, i, res, end_pos, "set_rel_tolerance("), res, r, _IT_MarkupRelTolerance_, V) ) {
+			i=end_pos;  continue;
+		}
 
-		if( r.type == _IT_String_ ) {
+		if ( r.type == _IT_String_ ) {
 			//r.num = 0;
 			r.str.push_back( s[i] );
-		}
-		else {
+		} else {
 			r.type = _IT_String_;
 			r.str = "";
 			r.str.push_back( s[i] );
@@ -151,7 +154,7 @@ inline std::vector<Item> ParseString(std::string const &s)
 		i++;
 		continue;
 	}
-	if( r.type == _IT_String_ ) {
+	if ( r.type == _IT_String_ ) {
 		V.push_back(r);
 	}
 	return V;
@@ -159,7 +162,7 @@ inline std::vector<Item> ParseString(std::string const &s)
 
 /// Smart compare strings, return true if they eq (with tolerance).
 inline bool isEq(std::string const & s1, std::string const & s2,
-		  double &abs_tolerance, double &rel_tolerance, std::string &error_message)
+	double &abs_tolerance, double &rel_tolerance, std::string &error_message)
 {
 	error_message = "";
 
@@ -167,13 +170,13 @@ inline bool isEq(std::string const & s1, std::string const & s2,
 	std::vector<Item> v2 = ParseString(" " + s2 + " ");
 
 	// Removing markup from vector 2.
-	for(int i=v2.size()-1; i>=0; i--) {
-		if( v2[i].type == _IT_None_ ) {
+	for ( int i=v2.size()-1; i>=0; i-- ) {
+		if ( v2[i].type == _IT_None_ ) {
 			error_message = "Wrong Item type: _IT_None_! Probably a bug in UTools.hh...";
 			return false;
 		}
 
-		if( v2[i].type == _IT_MarkupAbsTolerance_ || v2[i].type == _IT_MarkupRelTolerance_ ) {
+		if ( v2[i].type == _IT_MarkupAbsTolerance_ || v2[i].type == _IT_MarkupRelTolerance_ ) {
 			v2.erase( v2.begin() + i );
 			continue;
 		}
@@ -181,42 +184,42 @@ inline bool isEq(std::string const & s1, std::string const & s2,
 
 
 	unsigned int i=0, j=0;
-	for(; i<v1.size(); i++) {
+	for ( ; i<v1.size(); i++ ) {
 		Item &I1(v1[i]);
 		Item &I2(v2[j]);
 
-		if( I1.type == _IT_None_ ) {
+		if ( I1.type == _IT_None_ ) {
 			error_message = "Wrong Item type: _IT_None_! Probably a bug in UTools.hh...";
 			return false;
 		}
 
-		if( I1.type == _IT_MarkupAbsTolerance_ ) {
+		if ( I1.type == _IT_MarkupAbsTolerance_ ) {
 			abs_tolerance = I1.num;
 			continue;
 		}
 
-		if( I1.type == _IT_MarkupRelTolerance_ ) {
+		if ( I1.type == _IT_MarkupRelTolerance_ ) {
 			rel_tolerance = I1.num;
 			continue;
 		}
 
-		if( j>= v2.size() ) break;
+		if ( j>= v2.size() ) break;
 
-		if( I1.type != I2.type ) return false;
+		if ( I1.type != I2.type ) return false;
 
-		if( I1.type == _IT_String_ ) {
-			if( I1.str != I2.str ) {
+		if ( I1.type == _IT_String_ ) {
+			if ( I1.str != I2.str ) {
 				error_message = "`" + I1.str + "` != `" + I2.str + "`";
 				return false;
 			}
 			j++;  continue;
 		}
 
-		if( I1.type == _IT_Number_ ) {
+		if ( I1.type == _IT_Number_ ) {
 			double p = (I1.num + I2.num)/2. * rel_tolerance;
 			p = std::max(abs_tolerance, p);
 
-			if( fabs(I1.num - I2.num) > p ) {
+			if ( fabs(I1.num - I2.num) > p ) {
 				std::ostringstream s;
 				s <<  I1.num << "!=" << I2.num << " [abs_tolerance=" << abs_tolerance << ", rel_tolerance=" << rel_tolerance << "]";
 				error_message = s.str();
@@ -230,7 +233,7 @@ inline bool isEq(std::string const & s1, std::string const & s2,
 		return false;
 	}
 
-	if( i<v1.size() || j<v2.size() ) return false; // Some elements left in vectors - false!
+	if ( i<v1.size() || j<v2.size() ) return false; // Some elements left in vectors - false!
 
 	return true;
 }
