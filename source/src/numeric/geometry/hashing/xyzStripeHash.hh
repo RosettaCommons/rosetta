@@ -88,8 +88,8 @@ public:
 	void init( utility::vector1<Ball> const & balls );
 
 	virtual ~xyzStripeHash() {
-		if ( grid_balls_ )  delete grid_balls_;
-		if ( grid_stripe_ ) delete grid_stripe_;
+		if ( grid_balls_ )  delete[] grid_balls_;
+		if ( grid_stripe_ ) delete[] grid_stripe_;
 	}
 
 	const_iterator begin() const { return const_iterator(grid_balls_       ) ; }
