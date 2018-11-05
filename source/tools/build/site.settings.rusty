@@ -19,8 +19,8 @@
 # Typically you want to prepend to one of the settings listed to expand your
 # paths, but you can also append, override, or remove settings.
 
-# These settings are for the UCSD Gordon cluster used by the Simons Foundation / Flatiron Institute.
-# They were added on 13 October 2018 by Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+# These settings are for the Iron/Rusty cluster used by the Simons Foundation / Flatiron Institute.
+# They were added on 4 November 2018 by Vikram K. Mulligan (vmulligan@flatironinstitute.org).
 
 # Allow querying the operating system:
 import os
@@ -37,8 +37,8 @@ settings = {
 	    # below.
 	    "flags" : {
 		"compile" : [
-		    "march=native",
-		    "mtune=native",
+		    "march=broadwell",
+		    "mtune=broadwell",
 		],
 	    },
         },
@@ -46,11 +46,6 @@ settings = {
 	    # Import the full operating system environment.  Useful for
 	    # compiling with scons on different systems:
 	    "ENV" : os.environ,
-
-	    # When building for MPI, ensure that the following two lines are
-	    # uncommented.  They must be commented for non-MPI builds:
-	    "cxx": "mpicxx",
-	    "cc": "mpicc",
         },
         "removes" : {
 	    # Remove the default optimization settings.  The march=native,
