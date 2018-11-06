@@ -2346,6 +2346,9 @@ core::pose::Pose::load_with_options( Archive & arc, bool load_observers ) {
 	energies_->set_owner( this );
 
 	arc( metrics_ ); // metrics::PoseMetricContainerOP
+	if ( metrics_ ) {
+		metrics_->attach_to( *this );
+	}
 	arc( data_cache_ ); // BasicDataCacheOP
 	arc( constant_cache_ ); // ConstDataMapOP
 

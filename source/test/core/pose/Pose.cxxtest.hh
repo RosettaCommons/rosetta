@@ -20,6 +20,7 @@
 #include <cxxtest/TestSuite.h>
 
 #include <test/core/init_util.hh>
+#include <basic/MetricValue.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/variant_util.hh>
@@ -28,6 +29,8 @@
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/pose/metrics/CalculatorFactory.hh>
+#include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
 #include <core/pose/signals/ConformationEvent.hh>
 #include <core/pose/signals/DestructionEvent.hh>
 #include <core/pose/signals/EnergyEvent.hh>
@@ -586,6 +589,15 @@ public: // tests
 		using namespace core::kinematics;
 		using namespace core::scoring::constraints;
 		using namespace core::scoring::func;
+		using namespace core::pose::metrics;
+
+		// Validates that pose metrics are properly passed through serialization
+		// Metric container is private, so indirectly verify via calculation of a metric
+		std::string sasa_calc_name = "sasa";
+		if ( !CalculatorFactory::Instance().check_calculator_exists( sasa_calc_name ) ) {
+			PoseMetricCalculatorOP sasa_calculator( new simple_calculators::SasaCalculatorLegacy );
+			CalculatorFactory::Instance().register_calculator( sasa_calc_name, sasa_calculator );
+		}
 
 		// TO DO: Test constraint set propertly observes the deserialized pose (i.e. following residue insertion)
 		// TO DO: Test CacheableObservers properly observe the deserialized pose
@@ -596,6 +608,11 @@ public: // tests
 		ConstraintOP apc_1_10( new AtomPairConstraint( AtomID(3,1), AtomID(3,10), harm_0_1 ));
 		ConstraintOP apc_1_11( new AtomPairConstraint( AtomID(3,1), AtomID(3,11), harm_0_1 ));
 		trpcage->add_constraint( apc_1_10 );
+
+		// Calculate metric pre-serialization
+		basic::MetricValue< core::Real > sasa_m;
+		trpcage->metric( "sasa", "total_sasa", sasa_m);
+		core::Real pre_sasa = sasa_m.value();
 
 		// Now serialize the Pose
 		std::ostringstream oss;
@@ -612,6 +629,11 @@ public: // tests
 		}
 
 		TS_ASSERT( trpcage->total_residue() == trpcage_copy->total_residue() );
+
+		// Ensure that metrics are still evaluatable post-serialization
+		trpcage_copy->metric( "sasa", "total_sasa", sasa_m);
+		core::Real post_sasa = sasa_m.value();
+		TS_ASSERT_EQUALS(pre_sasa, post_sasa);
 
 		// Make sure constraint set was serialized properly
 		TS_ASSERT( ! trpcage_copy->constraint_set()->is_empty() );
@@ -632,6 +654,12 @@ public: // tests
 		// Pose's Conformation
 		core::conformation::ConformationCOP obs_by_pdb_info = trpcage_copy->pdb_info()->is_observing().lock();
 		TS_ASSERT_EQUALS( obs_by_pdb_info.get(), &trpcage_copy->conformation() );
+
+		// Ensure that metric evaluation observed the pose-change
+		trpcage_copy->metric( "sasa", "total_sasa", sasa_m);
+		core::Real post_mod_sasa = sasa_m.value();
+		TS_ASSERT(std::abs(post_mod_sasa - post_sasa) > 10);
+
 
 
 #endif
