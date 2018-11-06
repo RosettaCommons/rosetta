@@ -404,7 +404,7 @@ FullAtomRNA_Fragments::apply_best_fragment(
 		std::cerr << "Fragment Library: zero fragments found for " << RNA_string << " " << RNA_secstruct_string << std::endl;
 		utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
 	}
-	
+
 	Size best_idx = 1;
 	Real best_score = 0;
 	TorsionSet torsion_set( size, position );
@@ -431,7 +431,7 @@ FullAtomRNA_Fragments::apply_best_fragment(
 		for ( Size ii = 1; ii <= ( num_frags < exhaustive ? num_frags : exhaustive ); ++ii ) {
 			Size const which_frag = static_cast <Size> ( numeric::random::uniform() * num_frags) + 1;
 			torsion_set = fragment_library_pointer->get_fragment_torsion_set( which_frag );
-			
+
 			// Test this one
 			insert_fragment( pose, position, torsion_set, atom_level_domain_map );
 			for ( Size ii = 1; ii < symm_hack_arity; ++ii ) {

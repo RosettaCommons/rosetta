@@ -672,7 +672,7 @@ RNA_FragmentMonteCarlo::update_rna_denovo_master_mover( Size const & r /*round n
 	if ( is_rna_and_protein_ && options_->rna_protein_docking() && options_->rna_protein_docking_legacy() ) {
 		rna_denovo_master_mover_->setup_rna_protein_docking_mover( pose, rot_mag, trans_mag );
 	}
-	
+
 	rna_denovo_master_mover_->set_sfxn( working_denovo_scorefxn_ );
 }
 
