@@ -54,3 +54,50 @@ class SmokeTestDistributed(unittest.TestCase):
         self.assertAlmostEqual(
             score_result["total_score"], rs_result["total_score"]
         )
+
+    def test_update_score(self):
+        """PackedPose.update_score returns an updated copy.
+
+        PackedPose.update_score performs an copy-update of the pack, not an
+        inplace modification. New score values are applied from kwargs and args,
+        with kwargs and later-arg masking duplicate values.
+        """
+
+        work_pose = io.pose_from_sequence("TEST")
+
+        self.assertDictEqual(work_pose.scores, dict())
+
+        # Test merge and masking, just args
+        work_updated = work_pose.update_scores(
+            {"arg": 1.0, "dupe": "foo"},
+            dict(arg2=2.0, dupe="bar")
+        )
+
+        self.assertDictEqual(work_pose.scores, dict())
+        self.assertDictEqual(work_updated.scores, dict(arg=1.0, arg2=2.0, dupe="bar"))
+
+        # Test merge and masking, args and kwargs
+        work_updated = work_pose.update_scores(
+            {"arg": 1.0, "dupe": "foo"},
+            dict(arg2=2.0, dupe="bar"),
+            kwarg="yes",
+            dupe="bat"
+        )
+
+        self.assertDictEqual(work_pose.scores, dict())
+        self.assertDictEqual(work_updated.scores, dict(arg=1.0, arg2=2.0, kwarg="yes", dupe="bat"))
+
+        # Test just kwargs
+        work_updated = work_pose.update_scores(
+            kwarg="yes",
+            dupe="bat"
+        )
+
+        self.assertDictEqual(work_pose.scores, dict())
+        self.assertDictEqual(work_updated.scores, dict(kwarg="yes", dupe="bat"))
+
+        # Test no args
+        work_updated = work_pose.update_scores()
+
+        self.assertDictEqual(work_pose.scores, dict())
+        self.assertDictEqual(work_updated.scores, dict())

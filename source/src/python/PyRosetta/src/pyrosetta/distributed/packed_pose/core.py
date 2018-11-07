@@ -57,6 +57,18 @@ class PackedPose:
     def pose(self):
         return pickle.loads(self.pickled_pose)
 
+    def update_scores(self, *score_dicts, **score_kwargs):
+        new_scores = {}
+        for d in score_dicts:
+            new_scores.update(d)
+        new_scores.update(score_kwargs)
+
+        work_pose = self.pose
+        for k, v in new_scores.items():
+            work_pose.scores[k] = v
+
+        return PackedPose(work_pose)
+
 
 def pack_result(func):
     @functools.wraps(func)
