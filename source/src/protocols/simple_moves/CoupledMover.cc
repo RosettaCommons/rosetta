@@ -18,7 +18,6 @@
 #include <protocols/simple_moves/CoupledMoverCreator.hh>
 #include <protocols/kinematic_closure/KicMover.hh>
 
-
 // Project headers
 #include <core/kinematics/FoldTree.hh>
 #include <core/pack/task/operation/OperateOnResidueSubset.hh>
@@ -37,7 +36,14 @@
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/PackerTask_.hh>
 #include <core/kinematics/FoldTree.hh>
+#include <core/pack/task/operation/TaskOperations.hh>
+#include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/residue_selector/ClashBasedShellSelector.hh>
+
+#include <protocols/simple_moves/MutateResidue.hh>
+#include <core/pack/rotamer_set/RotamerLinks.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>
 #include <core/pack/task/operation/OperateOnResidueSubset.hh>
@@ -157,7 +163,6 @@ CoupledMover::apply( core::pose::Pose & pose )
 	if ( resnum_ == 0 ) {
 		randomize_resnum_ = true;
 	}
-
 	if ( randomize_resnum_ ) {
 		utility::vector1< core::Size > move_positions;
 		for ( core::Size i = 1; i <= packer_task_->total_residue(); i++ ) {
@@ -175,6 +180,7 @@ CoupledMover::apply( core::pose::Pose & pose )
 			if ( backbone_mover_ == "backrub" ) {
 				short_backrub_mover_->set_resnum( resnum_ );
 				short_backrub_mover_->apply( pose );
+
 			} else if ( backbone_mover_ == "kic" ) {
 				// Backbone move is KIC
 				protocols::kinematic_closure::KicMoverOP fullatom_kic_mover( new protocols::kinematic_closure::KicMover() );
@@ -219,20 +225,58 @@ CoupledMover::apply( core::pose::Pose & pose )
 				} else if ( ! start_index || ! stop_index ) {
 					TR << TR.Red << "[ WARNING ] Didn't apply KIC move to loop around residue number " << resnum_ << " (Rosetta numbering) because it's too close to end of chain or pose." << TR.Reset << std::endl;
 				}
-			}
-		}
-	} else {
+			} // KIC
+		} // Backbone mover
+
+	} else { // design residue is ligand
 		runtime_assert_string_msg( (get_ligand_resnum() != 0), "In CoupledMover, ligand mode not active but a ligand is present: please make CoupledMoves aware of the ligands.");
 		rigid_body_mover_->apply( pose );
-	}
+	} // end ligand
 
+	// Design residue
 	boltzmann_rotamer_mover_ = get_boltzmann_rotamer_mover();
 	boltzmann_rotamer_mover_->set_task( packer_task_ );
 	boltzmann_rotamer_mover_->set_scorefxn( score_fxn_ );
-	// Apply boltzmann_rotamer_mover to design residue
 	boltzmann_rotamer_mover_->set_resnum( resnum_ );
 	TR << "Applying boltzmann_rotamer_mover to residue number " << resnum_  << TR.Reset << std::endl;
 	boltzmann_rotamer_mover_->apply( pose );
+
+	// Design linked residue in symmetric unit (if applicable)
+	utility::vector1< core::Size > linked_positions;
+	if ( packer_task_->rotamer_links_exist() == 0 ) { return; } // no linked residues
+	else if ( packer_task_->rotamer_links_exist() == 1 ) {
+		if ( pose.residue( resnum_ ).is_protein() ) {
+			linked_positions = packer_task_->rotamer_links()->get_equiv( resnum_ );
+			TR << "Linked positions: " << linked_positions << TR.Reset << std::endl;
+		} else {
+			TR << "Residue at position " << resnum_ << " is not a protein!" << TR.Reset << std::endl;
+			return;
+		}
+		for ( core::Size i = 1; i<= linked_positions.size(); i++ ) {
+			if ( linked_positions.size() == 1 ) {
+				TR.Warning << "Linked positions only contains 1 residue... it doesn't have a linked partner." << TR.Reset << std::endl;
+				break;
+			}
+			if ( linked_positions[i] == resnum_ ) { continue; }
+			else if ( linked_positions[i] != resnum_ ) {
+				// mutate the linked residue
+				core::Size new_position_ = linked_positions[i];
+				std::string current_seq_ = pose.sequence();
+				char new_AA_ = current_seq_.at( resnum_ - 1 );
+				protocols::simple_moves::MutateResidue mut_res( new_position_, new_AA_ );
+				mut_res.apply( pose );
+				// repack around linked residue
+				core::pack::task::TaskFactoryOP repack_task_factory_;
+				repack_task_factory_ = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory() );
+				core::pack::task::PackerTaskOP repack_packer_task_( repack_task_factory_->create_task_and_apply_taskoperations( pose ) );
+				repack_packer_task_->restrict_to_repacking();
+				repack_packer_task_->temporarily_fix_everything();
+				repack_packer_task_->temporarily_set_pack_residue(linked_positions[i], true);
+				protocols::minimization_packing::PackRotamersMoverOP pack_mover( new protocols::minimization_packing::PackRotamersMover( score_fxn_, repack_packer_task_ ) );
+				pack_mover->apply( pose );
+			} //linked_positions[i] != resnum_
+		} // for loop iterating through linked_positions
+	} // linked residues
 
 	if ( repack_neighborhood_ ) {
 		// Repack shell around design position
@@ -320,7 +364,8 @@ void CoupledMover::set_translation_magnitude( core::Real translation_magnitude )
 void CoupledMover::set_short_backrub_mover( protocols::simple_moves::ShortBackrubMoverOP short_backrub_mover ) {
 	short_backrub_mover_ = short_backrub_mover;
 }
-void CoupledMover::set_boltzmann_rotamer_mover( protocols::minimization_packing::BoltzmannRotamerMoverOP boltzmann_rotamer_mover ) { boltzmann_rotamer_mover_ = boltzmann_rotamer_mover;
+void CoupledMover::set_boltzmann_rotamer_mover( protocols::minimization_packing::BoltzmannRotamerMoverOP boltzmann_rotamer_mover ) {
+	boltzmann_rotamer_mover_ = boltzmann_rotamer_mover;
 }
 void CoupledMover::set_rigid_body_mover( protocols::rigid::RigidBodyPerturbMoverOP rigid_body_mover ) {
 	rigid_body_mover_ = rigid_body_mover;

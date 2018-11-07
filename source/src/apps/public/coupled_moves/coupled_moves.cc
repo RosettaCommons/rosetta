@@ -102,6 +102,10 @@ my_main( void* )
 	protocols::coupled_moves::CoupledMovesProtocolOP coupled_moves( new protocols::coupled_moves::CoupledMovesProtocol );
 
 	// Set command line options for coupled moves
+	core::Size const ntrials = option[ basic::options::OptionKeys::coupled_moves::ntrials ];
+	coupled_moves->set_ntrials( ntrials );
+	bool const repack_neighborhood = option[ basic::options::OptionKeys::coupled_moves::repack_neighborhood ];
+	coupled_moves->set_repack_neighborhood( repack_neighborhood );
 
 	// Set backbone mover
 	if ( option[ basic::options::OptionKeys::coupled_moves::backbone_mover ].user() ) {
@@ -125,9 +129,9 @@ my_main( void* )
 			}
 			// Set kic loop size
 			if ( !option[ basic::options::OptionKeys::coupled_moves::kic_loop_size ].user() ) {
-				TR << TR.Red << "[ WARNING - kic_loop_size ] You did not specify -coupled_moves::kic_loop_size option." << std::endl;
-				TR << TR.Red << "[ WARNING - kic_loop_size ] Using default, which is probably fine." << std::endl;
-				TR << TR.Red << "[ WARNING - kic_loop_size ] See CoupledMoves wiki or doxygen for more information on kic_loop_size." << TR.Reset << std::endl;
+				TR << "[ NOTE - kic_loop_size ] You did not specify -coupled_moves::kic_loop_size option." << std::endl;
+				TR << "[ NOTE - kic_loop_size ] Using default, which is probably fine." << std::endl;
+				TR << "[ NOTE - kic_loop_size ] See CoupledMoves wiki or doxygen for more information on kic_loop_size." << TR.Reset << std::endl;
 			}
 			coupled_moves->set_loop_size( option[ basic::options::OptionKeys::coupled_moves::kic_loop_size ] );
 		} else if ( ( backbone_mover == "backrub" ) || ( backbone_mover == "" ) ) {
@@ -139,19 +143,13 @@ my_main( void* )
 		}
 	} else if ( !option[ basic::options::OptionKeys::coupled_moves::backbone_mover ].user() ) {
 		// If no backbone mover is specified in command line
-		TR << TR.Red << "[ WARNING - backbone_mover ] You did not specify -coupled_moves::backbone_mover option." << std::endl;
-		TR << TR.Red << "[ WARNING - backbone_mover ] Defaulting to legacy behavior '-coupled_moves::backbone_mover backrub'." << std::endl;
-		TR << TR.Red << "[ WARNING - backbone_mover ] Example usages:" << std::endl;
-		TR << TR.Red << "[ WARNING - backbone_mover ]     '-coupled_moves::backbone_mover kic'" << std::endl;
-		TR << TR.Red << "[ WARNING - backbone_mover ]     '-coupled_moves::backbone_mover backrub'" << std::endl;
-		TR << TR.Red << "[ WARNING - backbone_mover ] See CoupledMoves wiki or doxygen for more information on available backbone movers." << TR.Reset << std::endl;
-		coupled_moves->set_backbone_mover( "backrub" );
-	}
-
-	// Set repack_neighborhood option
-	if ( option[ basic::options::OptionKeys::coupled_moves::repack_neighborhood ].user() ) {
-		bool repack_neighborhood = option[ basic::options::OptionKeys::coupled_moves::repack_neighborhood ];
-		coupled_moves->set_repack_neighborhood( repack_neighborhood );
+		TR << "[ NOTE - backbone_mover ] You did not specify -coupled_moves::backbone_mover option." << std::endl;
+		TR << "[ NOTE - backbone_mover ] Defaulting to legacy behavior '-coupled_moves::backbone_mover backrub'." << std::endl;
+		TR << "[ NOTE - backbone_mover ] Example usages:" << std::endl;
+		TR << "[ NOTE - backbone_mover ]     '-coupled_moves::backbone_mover kic'" << std::endl;
+		TR << "[ NOTE - backbone_mover ]     '-coupled_moves::backbone_mover backrub'" << std::endl;
+		TR << "[ NOTE - backbone_mover ] See CoupledMoves wiki or doxygen for more information on available backbone movers." << TR.Reset << std::endl;
+		//coupled_moves->set_backbone_mover( "backrub" );
 	}
 
 	protocols::jd2::JobDistributor::get_instance()->go( coupled_moves );

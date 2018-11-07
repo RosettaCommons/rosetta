@@ -100,12 +100,16 @@ sources = {
 		"ConstraintGeneratorFactory",
 		"DihedralConstraintGeneratorTests",
 		"HydrogenBondConstraintGenerator",
-                "ResidueTypeConstraintGenerator",
-                "MetalContactsConstraintGenerator",
+		"ResidueTypeConstraintGenerator",
+		"MetalContactsConstraintGenerator",
 	],
 
 	"contact_map": [
 		"ContactMap",
+	],
+
+	"coupled_moves": [
+		"CoupledMovesProtocolTests",
 	],
 
 	"cyclic_peptide" : [
@@ -117,7 +121,7 @@ sources = {
 		"BetaAlphaDisulfideTests_betanov16",
 		"CrosslinkerMoverTests",
 		"CycpepSymmetryFilterTests",
-                "FlipChiralityMover",
+		"FlipChiralityMover",
 		"OversaturatedHbondAcceptorFilterTests",
 		"OversaturatedHbondAcceptorFilter_betanov15_Tests",
 		"OversaturatedHbondAcceptorFilter_betanov16_Tests",
@@ -303,8 +307,8 @@ sources = {
 	],
 
 	"hbnet" : [
-                "HBNet"
-        ],
+		"HBNet"
+	],
 
 	"helical_bundle" : [
 		"HelicalBundlePDBInfoTests",
@@ -319,20 +323,23 @@ sources = {
 	"hybridization" : [
 		"TMalign",
 	],
-        "init" : [
-                "features_reporter_creators",
-                "filter_creators",
-                #"mover_creators"
-        ],
-  "indexed_structure_store" : [
-    "DirectSegmentLookup",
-    "SegmentSequenceProfile",
+
+	"init" : [
+		"features_reporter_creators",
+		"filter_creators",
+		#"mover_creators"
+	],
+
+	"indexed_structure_store" : [
+	"DirectSegmentLookup",
+	"SegmentSequenceProfile",
 		"FragmentLookup",
 		"StructureStore",
-  ],
+	],
 	"indexed_structure_store/search" : [
 		"QueryDatabase",
 	],
+
 	"jd2" : [
 		"JobOutputter",
 		"MultiThreadedJobDistributor",
@@ -343,7 +350,7 @@ sources = {
 		"StandardJobQueen",
 		"StandardJobQueenOverrideInputter",
 		"StandardJobQueenOverrideOutputter",
-                "NodeManagers",
+		"NodeManagers",
 	#	"validate_w_xsd",
 	],
 	"jd3/pose_inputters" : [
@@ -389,7 +396,7 @@ sources = {
 		"ResidueTorsionRestraints",
 		"StartFrom",
 		"Transform",
- 	],
+	],
 
 	"loophash" : [
 		"loophash",
@@ -853,6 +860,9 @@ testinputfiles = [
 	"constraint_generator/HydrogenBondConstraintGenerator_complicated.cst",
 	"constraint_generator/HydrogenBondConstraintGenerator_complicated.pdb.gz",
 	"constraint_generator/HydrogenBondConstraintGenerator_9_OD1_16_NH2.cst",
+	"coupled_moves/input_files/1A80.resfile",
+	"coupled_moves/input_files/1A80_with_NAD_truncated.pdb",
+	"coupled_moves/input_files/NAD_from_1A80.params",
 	"cyclic_peptide/AIB_pose.pdb",
 	"cyclic_peptide/asymm.pdb",
 	"cyclic_peptide/c2_symm.pdb",

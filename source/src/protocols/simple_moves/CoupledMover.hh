@@ -11,6 +11,7 @@
 /// @brief definition of CoupledMover class and functions
 /// @author Noah Ollikainen (nollikai@gmail.com)
 /// @author Anum Glasgow (anumazam@gmail.com)
+/// @author Amanda Loshbaugh (aloshbau@gmail.com)
 
 #ifndef INCLUDED_protocols_simple_moves_CoupledMover_hh
 #define INCLUDED_protocols_simple_moves_CoupledMover_hh
@@ -21,7 +22,7 @@
 // Project headers
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 #include <protocols/kinematic_closure/KicMover.hh>
 #include <protocols/simple_moves/ShortBackrubMover.hh>
 #include <protocols/minimization_packing/BoltzmannRotamerMover.hh>

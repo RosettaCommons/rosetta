@@ -4750,11 +4750,11 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		),
 		Option('repack_neighborhood', 'Boolean',
 			default = 'false',
-			desc = 'After the backbone move and rotamer move, repack sidechains within 5A of the design residue. Default false for legacy behavior.'
+			desc = 'After the backbone move and rotamer move, repack sidechains within 5A of the design residue. Default false for legacy behavior (legacy = Ollikainen 2015).'
 		),
-		Option('legacy_task', 'Boolean',
+		Option('exclude_nonclashing_positions', 'Boolean',
 			default = 'true',
-			desc = 'Default true for legacy behavior (Ollikainen 2015). True = use Clash Based Shell Selector to define repack residues around design residues from resfile, and perform Coupled Moves on these repack/design residues. False = Perform Coupled Moves on design/repack residues as defined in resfile. '
+			desc = 'True = For each packable position, ClashBasedShellSelector iterates through rotamers to determine if the residue could clash with any designable positions. If a clash isnt possible, the packable position is changed from NATAA to NATRO. False = Perform side chain moves strictly as defined in resfile. Default true reproduces behavior from Ollikainen 2015.'
 		),
 	), #-coupled_moves
 
