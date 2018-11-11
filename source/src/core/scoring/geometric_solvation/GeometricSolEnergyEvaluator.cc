@@ -463,13 +463,22 @@ GeometricSolEnergyEvaluator::set_water_base_atm(
 
 	//Define coordinate system.
 	y = water_v - atom_v;
-	y.normalize();
+	try {
+		y.normalize();
+	} catch ( ... ) {
+		TR.Error << "Tried to normalize Y diff of water at " << water_v << " and atom at " << atom_v << std::endl;
+		utility_exit();
+	}
 
 	z = cross( y,  (atom_v - base_v) );
 	if ( z.length() == 0.0 ) z = cross( water_v - atom_v, water_v + atom_v ); // arbitrary
 	runtime_assert( z.length() > 0.0 );
-	z.normalize();
-
+	try {
+		z.normalize();
+	} catch ( ... ) {
+		TR.Error << "Tried to normalize diff of cross product between y " << y << " and atom-base vector " << (atom_v - base_v) << std::endl;
+		utility_exit();
+	}
 	x = cross( y, z );
 
 	// Plop the atom down
@@ -909,6 +918,8 @@ GeometricSolEnergyEvaluator::get_water_cos( Vector const & base_atm_xyz,
 	Vector const & polar_atm_xyz,
 	Vector const & occluding_atm_xyz ) const
 {
+	runtime_assert( (polar_atm_xyz - base_atm_xyz).length() != 0 );
+	runtime_assert( (occluding_atm_xyz - polar_atm_xyz).length() != 0 );
 	return dot( (polar_atm_xyz - base_atm_xyz).normalize(),  (occluding_atm_xyz - polar_atm_xyz).normalize() );
 }
 

@@ -70,6 +70,21 @@ ADD_PROPERTY LOWER_TERMINUS ## implies terminus
 END_CASE
 
 BEGIN_CASE ### THE GENERAL CASE ##########################################
+BEGIN_SELECTOR
+PROPERTY BETA_AA
+END_SELECTOR 
+
+SET_POLYMER_CONNECT LOWER NONE
+
+## totally making these up:
+SET_ICOOR H 120 60 1 N CA CM
+
+ADD_PROPERTY LOWER_TERMINUS ## implies terminus
+
+END_CASE
+
+
+BEGIN_CASE ### THE GENERAL CASE ##########################################
 
 SET_POLYMER_CONNECT LOWER NONE
 

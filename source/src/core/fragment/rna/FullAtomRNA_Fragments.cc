@@ -474,7 +474,7 @@ FullAtomRNA_Fragments::insert_fragment(
 
 		pose.set_secstruct( position_offset, torsion_set.secstruct( offset ) );
 
-		bool const has_virtual_phosphate = !atom_level_domain_map->get( AtomID( named_atom_id_to_atom_id( NamedAtomID( " P  ", position_offset ), pose ) ) );
+		bool const has_virtual_phosphate = !atom_level_domain_map->get( AtomID( named_atom_id_to_atom_id( NamedAtomID( "P", position_offset ), pose ) ) );
 
 		for ( Size j = 1; j <= NUM_RNA_TORSIONS; j++ ) {
 			id::TorsionID rna_torsion_id( position_offset, id::BB, j );

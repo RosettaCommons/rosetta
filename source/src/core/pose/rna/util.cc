@@ -486,22 +486,22 @@ initialize_atoms_for_which_we_need_new_dofs(
 	if ( (c1prime_atom->parent()->id()).atomno() == first_base_atom_index( rsd ) ) {
 		// There's a jump to this residue.
 		//std::cout << "RESIDUE WITH JUMP CONNECTIVITY : " <<  i << std::endl;
-		atoms_for_which_we_need_new_dofs.push_back( " C2'" );
-		atoms_for_which_we_need_new_dofs.push_back( " C3'" );
+		atoms_for_which_we_need_new_dofs.push_back( "C2'" );
+		atoms_for_which_we_need_new_dofs.push_back( "C3'" );
 		atoms_for_which_we_need_new_dofs.push_back( rsd.atom_name( rna_type.o4prime_atom_index() ) );
-		atoms_for_which_we_need_new_dofs.push_back( " C4'" );
-		atoms_for_which_we_need_new_dofs.push_back( " C5'" );
-		atoms_for_which_we_need_new_dofs.push_back( " O3'" );
+		atoms_for_which_we_need_new_dofs.push_back( "C4'" );
+		atoms_for_which_we_need_new_dofs.push_back( "C5'" );
+		atoms_for_which_we_need_new_dofs.push_back( "O3'" );
 	} else if ( (c2prime_atom->parent()->id()).atomno() ==  (o2prime_atom->id()).atomno() ) {
-		atoms_for_which_we_need_new_dofs.push_back( " C1'" );
-		atoms_for_which_we_need_new_dofs.push_back( " C3'" );
+		atoms_for_which_we_need_new_dofs.push_back( "C1'" );
+		atoms_for_which_we_need_new_dofs.push_back( "C3'" );
 		atoms_for_which_we_need_new_dofs.push_back( rsd.atom_name( rna_type.o4prime_atom_index() ) );
-		atoms_for_which_we_need_new_dofs.push_back( " C4'" );
-		atoms_for_which_we_need_new_dofs.push_back( " C5'" );
-		atoms_for_which_we_need_new_dofs.push_back( " O3'" );
+		atoms_for_which_we_need_new_dofs.push_back( "C4'" );
+		atoms_for_which_we_need_new_dofs.push_back( "C5'" );
+		atoms_for_which_we_need_new_dofs.push_back( "O3'" );
 	} else {
-		atoms_for_which_we_need_new_dofs.push_back( " C1'" );
-		atoms_for_which_we_need_new_dofs.push_back( " C2'" );
+		atoms_for_which_we_need_new_dofs.push_back( "C1'" );
+		atoms_for_which_we_need_new_dofs.push_back( "C2'" );
 		atoms_for_which_we_need_new_dofs.push_back( rsd.atom_name( rna_type.o4prime_atom_index() ) );
 	}
 }
@@ -1322,7 +1322,7 @@ get_op2_op1_sign( pose::Pose const & pose ) {
 		conformation::Residue const & rsd( pose.residue( i )  );
 		if ( !rsd.is_RNA() ) continue;
 
-		sign = dot( rsd.xyz( " O5'" ) - rsd.xyz( " P  " ), cross( rsd.xyz( " OP1" ) - rsd.xyz( " P  " ), rsd.xyz( " OP2" ) - rsd.xyz( " P  " ) ) );
+		sign = dot( rsd.xyz( "O5'" ) - rsd.xyz( "P" ), cross( rsd.xyz( "OP1" ) - rsd.xyz( "P" ), rsd.xyz( "OP2" ) - rsd.xyz( "P" ) ) );
 		found_valid_sign = true;
 		break;
 	}
@@ -1348,7 +1348,7 @@ get_op2_op1_sign( pose::Pose const & pose , Size res_num) {
 		if ( rsd.is_RNA()==false ) utility_exit_with_message("rsd.is_RNA()==false!");
 	}
 
-	Real const sign = dot( rsd.xyz( " O5'" ) - rsd.xyz( " P  " ), cross( rsd.xyz( " OP1" ) - rsd.xyz( " P  " ), rsd.xyz( " OP2" ) - rsd.xyz( " P  " ) ) );
+	Real const sign = dot( rsd.xyz( "O5'" ) - rsd.xyz( "P" ), cross( rsd.xyz( "OP1" ) - rsd.xyz( "P" ), rsd.xyz( "OP2" ) - rsd.xyz( "P" ) ) );
 
 	return sign;
 }
@@ -1376,10 +1376,10 @@ make_phosphate_nomenclature_matches_mini( pose::Pose & pose)
 				utility_exit_with_message("residue # " + string_of(res_num)+ " should be a RNA nucleotide!");
 			};
 
-			Vector const temp1 = rsd.xyz( " OP2" );
-			Vector const temp2 = rsd.xyz( " OP1" );
-			pose.set_xyz( id::AtomID( rsd.atom_index( " OP2" ), res_num ), temp2 );
-			pose.set_xyz( id::AtomID( rsd.atom_index( " OP1" ), res_num ), temp1 );
+			Vector const temp1 = rsd.xyz( "OP2" );
+			Vector const temp2 = rsd.xyz( "OP1" );
+			pose.set_xyz( id::AtomID( rsd.atom_index( "OP2" ), res_num ), temp2 );
+			pose.set_xyz( id::AtomID( rsd.atom_index( "OP1" ), res_num ), temp1 );
 		}
 	}
 }
@@ -2070,8 +2070,8 @@ check_phosphate_contacts_donor( utility::vector1< Vector > const & op_xyz_list,
 bool
 check_phosphate_contacts_donor( pose::Pose const & pose, Size const n ){
 	utility::vector1< Vector > op_xyz_list;
-	op_xyz_list.push_back( pose.residue( n ).xyz( " OP1" ) );
-	op_xyz_list.push_back( pose.residue( n ).xyz( " OP2" ) );
+	op_xyz_list.push_back( pose.residue( n ).xyz( "OP1" ) );
+	op_xyz_list.push_back( pose.residue( n ).xyz( "OP2" ) );
 
 	utility::vector1< Vector > donor_atom_xyz_list;
 	utility::vector1< Vector > donor_base_atom_xyz_list;
@@ -2111,8 +2111,8 @@ get_phosphate_atom_and_neighbor_list( core::pose::Pose const & pose,
 	neighbor_copy_dofs.clear();
 
 	Vector const phosphate_takeoff_xyz = (t == FIVE_PRIME) ?
-		pose.residue( n ).xyz( " C5'" ) :
-		pose.residue( n ).xyz( " O3'" );
+		pose.residue( n ).xyz( "C5'" ) :
+		pose.residue( n ).xyz( "O3'" );
 
 	for ( Size m = 1; m <= pose.size(); m++ ) {
 
@@ -2150,7 +2150,7 @@ detect_sugar_contacts( pose::Pose const & pose, Size const moving_res,
 	Distance o2prime_contact_distance_cutoff_ ) {
 
 	bool found_contact( false );
-	Vector const & moving_O2prime_xyz = pose.residue( moving_res ).xyz( " O2'" );
+	Vector const & moving_O2prime_xyz = pose.residue( moving_res ).xyz( "O2'" );
 	core::pose::PDBInfoCOP pdb_info = pose.pdb_info();
 	for ( Size i = 1; i <= pose.size(); i++ ) {
 		if ( i == moving_res ) continue;
@@ -2192,10 +2192,10 @@ setup_three_prime_phosphate_based_on_next_residue( pose::Pose & pose, Size const
 	runtime_assert( pose.residue_type( n+1 ).is_RNA() );
 	runtime_assert( pose.residue_type( n+1 ).has_variant_type( chemical::VIRTUAL_PHOSPHATE ) ||
 		pose.residue_type( n+1 ).has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) );
-	pose.set_xyz( id::NamedAtomID( "YP  ", n ), pose.residue( n+1 ).xyz( " P  " ) );
-	pose.set_xyz( id::NamedAtomID( "YOP1", n ), pose.residue( n+1 ).xyz( " OP1" ) );
-	pose.set_xyz( id::NamedAtomID( "YOP2", n ), pose.residue( n+1 ).xyz( " OP2" ) );
-	pose.set_xyz( id::NamedAtomID( "YO5'", n ), pose.residue( n+1 ).xyz( " O5'" ) );
+	pose.set_xyz( id::NamedAtomID( "YP  ", n ), pose.residue( n+1 ).xyz( "P" ) );
+	pose.set_xyz( id::NamedAtomID( "YOP1", n ), pose.residue( n+1 ).xyz( "OP1" ) );
+	pose.set_xyz( id::NamedAtomID( "YOP2", n ), pose.residue( n+1 ).xyz( "OP2" ) );
+	pose.set_xyz( id::NamedAtomID( "YO5'", n ), pose.residue( n+1 ).xyz( "O5'" ) );
 }
 
 

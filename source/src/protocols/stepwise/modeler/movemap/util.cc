@@ -116,8 +116,13 @@ figure_out_stepwise_movemap( core::kinematics::MoveMap & mm,
 			if ( n > 1 ) {
 				if ( move_takeoff_torsions && pose.residue_type( n-1 ).is_RNA() ) {
 					if ( working_minimize_res.has_value( n-1 ) ) atom_level_domain_map->set_phosphate( n, pose, true );
-					if ( atom_level_domain_map->get_domain( NamedAtomID( " O3'", n-1 ), pose ) !=
-							atom_level_domain_map->get_domain( NamedAtomID( " P  ", n )  , pose ) ) atom_level_domain_map->set_phosphate( n, pose, true );
+					if ( pose.residue_type( n-1 ).has( "O3'" ) ) {
+						if ( atom_level_domain_map->get_domain( NamedAtomID( "O3'", n-1 ), pose ) !=
+							atom_level_domain_map->get_domain( NamedAtomID( "P", n )  , pose ) ) atom_level_domain_map->set_phosphate( n, pose, true );
+					} else if ( pose.residue_type( n-1 ).has( "N3'" ) ) {
+						if ( atom_level_domain_map->get_domain( NamedAtomID( "N3'", n-1 ), pose ) !=
+							atom_level_domain_map->get_domain( NamedAtomID( "P", n )  , pose ) ) atom_level_domain_map->set_phosphate( n, pose, true );
+					}
 				}
 			}
 

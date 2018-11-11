@@ -1579,11 +1579,11 @@ ChiralFlipAtoms::apply( ResidueType & rsd ) const {
 	if ( rsd.is_l_aa() ) {
 		//rsd.delete_property( "L_AA" );
 		//rsd.add_property( "D_AA" );
-		base_atom_name = " N  ";
+		base_atom_name = "N";
 	} else if ( rsd.is_d_rna() ) {
 		//rsd.delete_property( "D_RNA" );
 		//rsd.add_property( "L_RNA" );
-		base_atom_name = " P  ";
+		base_atom_name = "P";
 	} else {
 		utility_exit_with_message( "For some reason, calling ChiralFlipAtoms on a non-AA, non-NA" );
 	}

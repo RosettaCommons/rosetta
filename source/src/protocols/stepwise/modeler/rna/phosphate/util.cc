@@ -80,10 +80,10 @@ position_five_prime_phosphate( pose::Pose & pose, Size const res ) {
 
 	// reposition XO3' "manually".
 	Residue const & rsd = pose.residue( res );
-	Vector const & P_xyz = rsd.xyz( " P  " );
-	Vector const & O5prime_xyz = rsd.xyz( " O5'" );
-	Vector const & C5prime_xyz = rsd.xyz( " C5'" );
-	Vector const & OP2_xyz     = rsd.xyz( " OP2" );
+	Vector const & P_xyz = rsd.xyz( "P" );
+	Vector const & O5prime_xyz = rsd.xyz( "O5'" );
+	Vector const & C5prime_xyz = rsd.xyz( "C5'" );
+	Vector const & OP2_xyz     = rsd.xyz( "OP2" );
 	Vector const & XO3prime_xyz  = rsd.xyz( "XO3'" );
 
 	Real const OP2_dihedral      = dihedral_degrees( OP2_xyz,      P_xyz, O5prime_xyz, C5prime_xyz );

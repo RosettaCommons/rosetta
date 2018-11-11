@@ -334,9 +334,9 @@ RNP_LowResEnergy::residue_pair_energy(
 	Vector rna_backbone_P_xyz;
 	if ( rsd1.is_RNA() ) {
 		// get the backbone phosphate position
-		rna_backbone_P_xyz = rsd1.xyz( " P  " );
+		rna_backbone_P_xyz = rsd1.xyz( "P" );
 	} else {
-		rna_backbone_P_xyz = rsd2.xyz( " P  " );
+		rna_backbone_P_xyz = rsd2.xyz( "P" );
 	}
 
 	Real dist_to_backbone = (protein_centroid - rna_backbone_P_xyz).length();

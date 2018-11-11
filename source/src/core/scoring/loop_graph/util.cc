@@ -51,12 +51,12 @@ get_loop_atom( Size const res,
 	core::conformation::Residue const & rsd = get_residue( res, pose );
 	std::string atom_name;
 	if ( rsd.is_TNA() ) {
-		atom_name = takeoff ? " O2'" : " C3'";
+		atom_name = takeoff ? "O2'" : "C3'";
 	} else if ( rsd.is_NA() ) {
-		atom_name = takeoff ? " O3'" : " C5'";
+		atom_name = takeoff ? ( rsd.has( "O3'") ? "O3'" : "N3'" ) : "C5'";
 	} else {
 		runtime_assert( rsd.is_protein() || rsd.is_peptoid() );
-		atom_name = takeoff ? " C  " : " N  ";
+		atom_name = takeoff ? "C" : "N";
 	}
 	get_loop_atom( res, pose, atom_name, atom_id, xyz );
 }

@@ -100,11 +100,11 @@ RNA_DataBackboneEnergy::initialize_atom_numbers_sugar() {
 	ResidueTypeCOP const & rsd_type( rsd_set->get_representative_type_aa( na_rad ) ); //Check out adenine.
 
 	atom_numbers_sugar_.clear();
-	atom_numbers_sugar_.push_back( rsd_type->atom_index( " C1'" ) );
-	atom_numbers_sugar_.push_back( rsd_type->atom_index( " C2'" ) );
-	atom_numbers_sugar_.push_back( rsd_type->atom_index( " C3'" ) );
-	atom_numbers_sugar_.push_back( rsd_type->atom_index( " C4'" ) );
-	atom_numbers_sugar_.push_back( rsd_type->atom_index( " C5'" ) );
+	atom_numbers_sugar_.push_back( rsd_type->atom_index( "C1'" ) );
+	atom_numbers_sugar_.push_back( rsd_type->atom_index( "C2'" ) );
+	atom_numbers_sugar_.push_back( rsd_type->atom_index( "C3'" ) );
+	atom_numbers_sugar_.push_back( rsd_type->atom_index( "C4'" ) );
+	atom_numbers_sugar_.push_back( rsd_type->atom_index( "C5'" ) );
 }
 
 /////////////////////////////////////////////////////////////////////////////

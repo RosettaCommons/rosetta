@@ -977,7 +977,7 @@ Residue::place( Residue const & src, Conformation const & conformation, bool pre
 		// coded more robustly by modifying orient_onto_residue() properly.
 
 		if ( !rsd_type_.atom_is_backbone(i) &&
-				!(rsd_type_.is_NA() && rsd_type_.atom_name(i) == " O2'") && //Special nucleic acid case
+				!(rsd_type_.is_NA() && ( rsd_type_.atom_name(i) == "O2'" || rsd_type_.atom_name(i) == " O2'" ) ) && //Special nucleic acid case
 				!(rsd_type_.is_NA() && rsd_type_.atom_name(i) == "HO2'") && //Special nucleic acid case
 				!( atom_depends_on_lower(i) ) &&
 				!( atom_depends_on_upper(i) )
@@ -1016,7 +1016,7 @@ Residue::place( Residue const & src, Conformation const & conformation, bool pre
 		auto const thresh_sq( static_cast<core::Real>( pow(static_cast<core::Real>(option[OptionKeys::packing::mainchain_h_rebuild_threshold]()),2.0) ) );
 		for ( core::Size i=1, imax=natoms(); i<=imax; ++i ) {
 			if ( !rsd_type_.atom_is_hydrogen(i) ) continue; //Skip non-hydrogen atoms.
-			if ( !rsd_type_.atom_is_backbone(i) && !(rsd_type_.atom_name(i) == " O2'") && !(rsd_type_.atom_name(i) == "HO2'") ) continue; //Skip non-backbone atoms, preserving special-case RNA atoms.
+			if ( !rsd_type_.atom_is_backbone(i) && !(rsd_type_.atom_name(i) == "O2'" || rsd_type_.atom_name(i) == " O2'" ) && !(rsd_type_.atom_name(i) == "HO2'") ) continue; //Skip non-backbone atoms, preserving special-case RNA atoms.
 			if ( !src.has( rsd_type_.atom_name(i) ) ) continue; //Skip if the source residue doesn't have this atom type.
 
 			// If the idealized position is less than the threshold from the source position, or it's polymer connection-dependent...
@@ -1046,7 +1046,8 @@ Residue::place( Residue const & src, Conformation const & conformation, bool pre
 		}
 
 		if ( is_RNA() ) {
-			root = " C1'";
+			if ( has( " C1'" ) ) root = " C1'";
+			else root = "C1'";
 			mobile_new = atom_name( chi_atoms( 1 )[ 3 ] ); //First atom in base...
 			mobile_src = src.atom_name( src.chi_atoms( 1 )[ 3 ] ); //First atom in base...
 		}
@@ -1067,7 +1068,7 @@ Residue::place( Residue const & src, Conformation const & conformation, bool pre
 				for ( Size atom_index(1); atom_index <= type().natoms(); ++atom_index ) {
 					if ( type().atom_is_backbone( atom_index ) ) continue;
 					//special case for RNA
-					if ( type().atom_name( atom_index ) == " O2'" || type().atom_name( atom_index ) == "HO2'" ) continue;
+					if ( type().atom_name( atom_index ) == "O2'" || type().atom_name( atom_index ) == " O2'" || type().atom_name( atom_index ) == "HO2'" ) continue;
 					Vector const old_xyz( atoms()[ atom_index ].xyz() );
 					Vector const new_xyz( src_stub.local2global( new_stub.global2local( old_xyz ) ) );
 					atoms()[ atom_index ].xyz( new_xyz );
@@ -1622,15 +1623,13 @@ Residue::connect_atom( Residue const & other ) const
 /// @return The atom indices of all heavy atoms bonded to the given atom (by index)
 /// @details This method does not count virtual atoms as heavy atoms.
 /// @author Labonte <JWLabonte@jhu.edu>
-core::chemical::AtomIndices
+utility::vector1< uint >
 Residue::get_adjacent_heavy_atoms( uint const atom_index ) const
 {
-	using namespace chemical;
-
-	AtomIndices bonded_heavy_atom_indices;
+	utility::vector1< uint > bonded_heavy_atom_indices;
 
 	// Get list of indices of all atoms connected to given connect atom.
-	AtomIndices const bonded_atom_indices( bonded_neighbor( atom_index ) );
+	utility::vector1< uint > const bonded_atom_indices( bonded_neighbor( atom_index ) );
 
 	// Search for heavy atoms.  (A residue connection is not an atom.)
 	Size const n_indices( bonded_atom_indices.size() );
@@ -1652,7 +1651,7 @@ Residue::get_adjacent_heavy_atoms( uint const atom_index ) const
 uint
 Residue::first_adjacent_heavy_atom( uint const atom_index ) const
 {
-	chemical::AtomIndices const atom_indices( get_adjacent_heavy_atoms( atom_index ) );
+	utility::vector1< uint > const atom_indices( get_adjacent_heavy_atoms( atom_index ) );
 
 	if ( atom_indices.empty() ) {
 		TR.Warning << "There are no adjacent heavy atoms to atom index " << atom_index << '!' << std::endl;
@@ -1661,79 +1660,69 @@ Residue::first_adjacent_heavy_atom( uint const atom_index ) const
 	return atom_indices[ 1 ];
 }
 
-/// @brief    Get a list of exocyclic atoms connected to a given ring atom.
-/// @return   The atom indices of all atoms bonded to the given atom (by index) that are not a part of the ring.
-/// @details  This method does not count virtual atoms as atoms.
-/// @author   Labonte <JWLabonte@jhu.edu>
-core::chemical::AtomIndices
-Residue::get_atoms_exocyclic_to_ring_atom( uint const atom_index ) const
-{
-	using namespace chemical;
+/// @brief    Get a list of exocyclic atoms connected to a given ring atom.	
+/// @return   The atom indices of all atoms bonded to the given atom (by index) that are not a part of the ring.	
+/// @details  This method does not count virtual atoms as atoms.	
+/// @author   Labonte <JWLabonte@jhu.edu>	
+core::chemical::AtomIndices	
+Residue::get_atoms_exocyclic_to_ring_atom( uint const atom_index ) const	
+{	
+	using namespace chemical;	
+ 	AtomIndices combined_ring_atoms, exocyclic_atoms;	
+ 	// A residue can have multiple rings; pool all of the rings' atoms into one list.	
+	for ( AtomIndices single_ring_atoms : type().ring_atoms() ) {	
+		combined_ring_atoms.append( single_ring_atoms );	
+	}	
+	if ( combined_ring_atoms.contains( atom_index ) ) {	
+		AtomIndices const & potential_exocyclic_atoms( bonded_neighbor( atom_index ) );	
+		for ( uint potential_exocyclic_atom : potential_exocyclic_atoms ) {	
+			if ( ( ! combined_ring_atoms.contains( potential_exocyclic_atom ) ) &&	
+					( ! is_virtual( potential_exocyclic_atom ) ) ) {	
+				// This atom must be exocyclic; add it to the list.	
+				exocyclic_atoms.push_back( potential_exocyclic_atom );	
+			}	
+		}	
+	} else {	
+		utility_exit_with_message( "Residue::get_atoms_exocyclic_to_ring_atom( uint const atom_index ): "	
+			"<atom_index> does not correspond to a ring atom." );	
+	}	
+ 	return exocyclic_atoms;	
+}	
+ /// @brief    Get a list of substituent atoms connected to a given ring atom.	
+/// @return   The atom indices of all heavy atoms bonded to the given atom (by index) that are not a part of the ring.	
+/// @details  This method does not count virtual atoms as atoms.	
+/// @author   Labonte <JWLabonte@jhu.edu>	
+core::chemical::AtomIndices	
+Residue::get_substituents_to_ring_atom( uint const atom_index ) const	
+{	
+	using namespace chemical;	
+ 	AtomIndices substituents;	
+	AtomIndices const & exocylic_atoms( get_atoms_exocyclic_to_ring_atom( atom_index ) );	
+ 	for ( uint exocyclic_atom : exocylic_atoms ) {	
+		if ( ! atom_is_hydrogen( exocyclic_atom ) ) {	
+			substituents.push_back( exocyclic_atom );	
+		}	
+	}	
+ 	return substituents;	
+}	
+ /// @brief    Get a list of hydrogen atoms connected to a given ring atom.	
+/// @return   The atom indices of hydrogens bonded to the given ring atom (by index).	
+/// @details  This method does not count virtual atoms as atoms.	
+/// @author   Labonte <JWLabonte@jhu.edu>	
+core::chemical::AtomIndices	
+Residue::get_hydrogens_bonded_to_ring_atom( uint const atom_index ) const	
+{	
+	using namespace chemical;	
+ 	AtomIndices hydrogens;	
+	AtomIndices const & exocylic_atoms( get_atoms_exocyclic_to_ring_atom( atom_index ) );	
+ 	for ( uint exocyclic_atom : exocylic_atoms ) {	
+		if ( atom_is_hydrogen( exocyclic_atom ) ) {	
+			hydrogens.push_back( exocyclic_atom );	
+		}	
+	}	
+ 	return hydrogens;	
+}	
 
-	AtomIndices combined_ring_atoms, exocyclic_atoms;
-
-	// A residue can have multiple rings; pool all of the rings' atoms into one list.
-	for ( AtomIndices single_ring_atoms : type().ring_atoms() ) {
-		combined_ring_atoms.append( single_ring_atoms );
-	}
-	if ( combined_ring_atoms.contains( atom_index ) ) {
-		AtomIndices const & potential_exocyclic_atoms( bonded_neighbor( atom_index ) );
-		for ( uint potential_exocyclic_atom : potential_exocyclic_atoms ) {
-			if ( ( ! combined_ring_atoms.contains( potential_exocyclic_atom ) ) &&
-					( ! is_virtual( potential_exocyclic_atom ) ) ) {
-				// This atom must be exocyclic; add it to the list.
-				exocyclic_atoms.push_back( potential_exocyclic_atom );
-			}
-		}
-	} else {
-		utility_exit_with_message( "Residue::get_atoms_exocyclic_to_ring_atom( uint const atom_index ): "
-			"<atom_index> does not correspond to a ring atom." );
-	}
-
-	return exocyclic_atoms;
-}
-
-/// @brief    Get a list of substituent atoms connected to a given ring atom.
-/// @return   The atom indices of all heavy atoms bonded to the given atom (by index) that are not a part of the ring.
-/// @details  This method does not count virtual atoms as atoms.
-/// @author   Labonte <JWLabonte@jhu.edu>
-core::chemical::AtomIndices
-Residue::get_substituents_to_ring_atom( uint const atom_index ) const
-{
-	using namespace chemical;
-
-	AtomIndices substituents;
-	AtomIndices const & exocylic_atoms( get_atoms_exocyclic_to_ring_atom( atom_index ) );
-
-	for ( uint exocyclic_atom : exocylic_atoms ) {
-		if ( ! atom_is_hydrogen( exocyclic_atom ) ) {
-			substituents.push_back( exocyclic_atom );
-		}
-	}
-
-	return substituents;
-}
-
-/// @brief    Get a list of hydrogen atoms connected to a given ring atom.
-/// @return   The atom indices of hydrogens bonded to the given ring atom (by index).
-/// @details  This method does not count virtual atoms as atoms.
-/// @author   Labonte <JWLabonte@jhu.edu>
-core::chemical::AtomIndices
-Residue::get_hydrogens_bonded_to_ring_atom( uint const atom_index ) const
-{
-	using namespace chemical;
-
-	AtomIndices hydrogens;
-	AtomIndices const & exocylic_atoms( get_atoms_exocyclic_to_ring_atom( atom_index ) );
-
-	for ( uint exocyclic_atom : exocylic_atoms ) {
-		if ( atom_is_hydrogen( exocyclic_atom ) ) {
-			hydrogens.push_back( exocyclic_atom );
-		}
-	}
-
-	return hydrogens;
-}
 
 PseudoBondCollectionCOP
 Residue::get_pseudobonds_to_residue( Size resid ) const

@@ -1662,7 +1662,12 @@ make_hbBasetoAcc_unitvector(
 		if ( hbondoptions.measure_sp3acc_BAH_from_hvy() ) {
 			PBxyz = Bxyz;
 			B2Aunit = Axyz - B2xyz;
-			B2Aunit.normalize();
+			try {
+				B2Aunit.normalize();
+			} catch ( ... ) {
+				tr.Error << "Tried to normalize diff of vectors " << Axyz << " and " << B2xyz << std::endl;
+				utility_exit();
+			}
 			b2a_is_set = true;
 		} else {
 			PBxyz = B2xyz;
@@ -1678,8 +1683,12 @@ make_hbBasetoAcc_unitvector(
 	}
 
 	BAunit = Axyz - PBxyz;
-	BAunit.normalize();
-
+	try {
+		BAunit.normalize();
+	} catch ( ... ) {
+		tr.Error << "Tried to normalize diff of vectors " << Axyz << " and " << B2xyz << std::endl;
+		utility_exit();
+	}
 	if ( !b2a_is_set ) {
 		B2Aunit = BAunit;
 	}

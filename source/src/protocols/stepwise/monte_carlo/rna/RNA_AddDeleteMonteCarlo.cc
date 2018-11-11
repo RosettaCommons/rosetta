@@ -143,7 +143,7 @@ void
 RNA_AddDeleteMonteCarlo::initialize_next_suite_atoms() {
 	// could initialize this once somewhere else.
 	next_suite_atoms_.clear();
-	next_suite_atoms_.push_back(" P  ");
+	next_suite_atoms_.push_back("P");
 	next_suite_atoms_.push_back(" OP2");
 	next_suite_atoms_.push_back(" OP1");
 	next_suite_atoms_.push_back(" O5'");

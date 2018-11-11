@@ -234,7 +234,7 @@ AtomLevelDomainMap::set_phosphate_domain( Size const & i,
 	Size const & setting )
 {
 	if ( pose.residue(i).is_coarse() ) {
-		set_domain( AtomID( named_atom_id_to_atom_id( NamedAtomID( " P  ", i ), pose ) ), setting );
+		set_domain( AtomID( named_atom_id_to_atom_id( NamedAtomID( "P", i ), pose ) ), setting );
 	} else {
 
 		utility::vector1< std::string > const & atoms_involved = core::chemical::rna::atoms_involved_in_phosphate_torsion;
@@ -517,7 +517,7 @@ AtomLevelDomainMap::update_to_not_move_virtual_o2prime( pose::Pose const & pose 
 	using namespace chemical;
 	for ( Size n = 1; n <= pose.size(); n++ ) {
 		if ( pose.residue_type( n ).has_variant_type( DEOXY_O2PRIME ) ) {
-			set_domain( AtomID( named_atom_id_to_atom_id( NamedAtomID( " O2'", n ), pose ) ), FIXED_DOMAIN, true /*ok_if_missing*/ );
+			set_domain( AtomID( named_atom_id_to_atom_id( NamedAtomID( "O2'", n ), pose ) ), FIXED_DOMAIN, true /*ok_if_missing*/ );
 			set_domain( AtomID( named_atom_id_to_atom_id( NamedAtomID( "HO2'", n ), pose ) ), FIXED_DOMAIN, true /*ok_if_missing*/ );
 		}
 	}
@@ -530,7 +530,7 @@ AtomLevelDomainMap::update_to_move_internal_phosphates( pose::Pose const & pose 
 	for ( Size i = 1; i < pose.size(); i++ ) {
 		if ( pose.residue_type( i   ).is_RNA() &&
 				pose.residue_type( i+1 ).is_RNA() &&
-				get_domain( id::NamedAtomID( " C1'", i ), pose ) == 0 &&
+				get_domain( id::NamedAtomID( "C1'", i ), pose ) == 0 &&
 				!pose.residue_type( i+1 ).has_variant_type( core::chemical::VIRTUAL_PHOSPHATE ) ) {
 			set_phosphate( i+1, pose, true );
 		}

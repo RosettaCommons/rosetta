@@ -1652,7 +1652,8 @@ add_fade_chain_break_constraint_across_gap( pose::Pose & pose,
 
 	Residue const & rsd1( pose.residue( five_prime_res ) );
 	Residue const & rsd2( pose.residue( three_prime_res ) );
-	AtomID const O3_id( rsd1.atom_index( "O3'" ), five_prime_res );
+	if ( !rsd1.has("N3'") && !rsd1.has("O3'") ) return;
+	AtomID const O3_id( rsd1.atom_index( rsd1.has("N3'") ? "N3'" : "O3'" ), five_prime_res );
 	AtomID const C5_id( rsd2.atom_index( "C5'" ), three_prime_res );
 
 	// distance from O3' to C5'

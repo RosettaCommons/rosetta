@@ -943,6 +943,9 @@ ResidueTypeSet::get_residue_type_with_variant_removed(
 		ResidueProperties::get_string_from_variant( old_type ) ) );
 
 	ResidueTypeCOP rsd_type = ResidueTypeFinder( *this ).residue_base_name( base_name ).variants( target_variants ).get_representative_type();
+	if ( !rsd_type ) {
+		rsd_type = ResidueTypeFinder( *this ).base_type( init_rsd.get_self_ptr() ).variants( target_variants ).get_representative_type();
+	}
 
 	if ( rsd_type == nullptr ) {
 		utility_exit_with_message( "unable to find desired non-variant residue: " + init_rsd.name() + " " + base_name +

@@ -825,7 +825,7 @@ VirtualSugarSampler::fast_full_atom_VDW_repulsion_screen( core::pose::Pose const
 
 	for ( Size n_1 = 1; n_1 <= rsd_1.natoms(); n_1++ ) {
 
-		//atom 1-4 are " P  ", " OP2", " OP1" and " O5'"
+		//atom 1-4 are "P", " OP2", " OP1" and " O5'"
 		Size const act_res_1 = ( is_prepend && n_1 <= 4 ) ? res_1 + 1: res_1;
 
 		if ( pose.residue( act_res_1 ).is_virtual( n_1 )  ) continue;
