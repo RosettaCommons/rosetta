@@ -77,7 +77,7 @@ QNetworkAccessManager * network_access_manager()
 
 QString server_base_url()
 {
-	return "http://ui.graylab.jhu.edu/";
+	return "https://ui.graylab.jhu.edu/";
 }
 
 QString server_url()

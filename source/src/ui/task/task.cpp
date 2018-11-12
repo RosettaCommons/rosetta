@@ -158,9 +158,8 @@ void Task::add_file(FileSP const &file)
 {
 	auto it_flag = files_.emplace(file);
 	if( !it_flag.second ) {
-		files_.erase(it_flag.first);
-		++it_flag.first;
-		files_.insert(it_flag.first, file);
+		auto hint = files_.erase(it_flag.first);
+		files_.insert(hint, file);
 	}
 	files_model_.update_from_task(*this);
 }
