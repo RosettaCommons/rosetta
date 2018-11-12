@@ -510,6 +510,13 @@ sources = {
     "MPSpanAngle",
     "MPSpanInsertion"
   ],
+  "scoring/mhc_epitope_energy" : [
+	"MHCEpitopeConstraint",
+	"MHCEpitopeEnergy",
+	"MHCEpitopeEnergySetup",
+	"MHCEpitopePredictorExternal",
+	"MHCEpitopePredictorMatrix"
+  ],
 	"scoring/mm" : [
 		"MMBondAngleLibrary",
 		"MMBondAngleScore",
