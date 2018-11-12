@@ -1660,68 +1660,68 @@ Residue::first_adjacent_heavy_atom( uint const atom_index ) const
 	return atom_indices[ 1 ];
 }
 
-/// @brief    Get a list of exocyclic atoms connected to a given ring atom.	
-/// @return   The atom indices of all atoms bonded to the given atom (by index) that are not a part of the ring.	
-/// @details  This method does not count virtual atoms as atoms.	
-/// @author   Labonte <JWLabonte@jhu.edu>	
-core::chemical::AtomIndices	
-Residue::get_atoms_exocyclic_to_ring_atom( uint const atom_index ) const	
-{	
-	using namespace chemical;	
- 	AtomIndices combined_ring_atoms, exocyclic_atoms;	
- 	// A residue can have multiple rings; pool all of the rings' atoms into one list.	
-	for ( AtomIndices single_ring_atoms : type().ring_atoms() ) {	
-		combined_ring_atoms.append( single_ring_atoms );	
-	}	
-	if ( combined_ring_atoms.contains( atom_index ) ) {	
-		AtomIndices const & potential_exocyclic_atoms( bonded_neighbor( atom_index ) );	
-		for ( uint potential_exocyclic_atom : potential_exocyclic_atoms ) {	
-			if ( ( ! combined_ring_atoms.contains( potential_exocyclic_atom ) ) &&	
-					( ! is_virtual( potential_exocyclic_atom ) ) ) {	
-				// This atom must be exocyclic; add it to the list.	
-				exocyclic_atoms.push_back( potential_exocyclic_atom );	
-			}	
-		}	
-	} else {	
-		utility_exit_with_message( "Residue::get_atoms_exocyclic_to_ring_atom( uint const atom_index ): "	
-			"<atom_index> does not correspond to a ring atom." );	
-	}	
- 	return exocyclic_atoms;	
-}	
- /// @brief    Get a list of substituent atoms connected to a given ring atom.	
-/// @return   The atom indices of all heavy atoms bonded to the given atom (by index) that are not a part of the ring.	
-/// @details  This method does not count virtual atoms as atoms.	
-/// @author   Labonte <JWLabonte@jhu.edu>	
-core::chemical::AtomIndices	
-Residue::get_substituents_to_ring_atom( uint const atom_index ) const	
-{	
-	using namespace chemical;	
- 	AtomIndices substituents;	
-	AtomIndices const & exocylic_atoms( get_atoms_exocyclic_to_ring_atom( atom_index ) );	
- 	for ( uint exocyclic_atom : exocylic_atoms ) {	
-		if ( ! atom_is_hydrogen( exocyclic_atom ) ) {	
-			substituents.push_back( exocyclic_atom );	
-		}	
-	}	
- 	return substituents;	
-}	
- /// @brief    Get a list of hydrogen atoms connected to a given ring atom.	
-/// @return   The atom indices of hydrogens bonded to the given ring atom (by index).	
-/// @details  This method does not count virtual atoms as atoms.	
-/// @author   Labonte <JWLabonte@jhu.edu>	
-core::chemical::AtomIndices	
-Residue::get_hydrogens_bonded_to_ring_atom( uint const atom_index ) const	
-{	
-	using namespace chemical;	
- 	AtomIndices hydrogens;	
-	AtomIndices const & exocylic_atoms( get_atoms_exocyclic_to_ring_atom( atom_index ) );	
- 	for ( uint exocyclic_atom : exocylic_atoms ) {	
-		if ( atom_is_hydrogen( exocyclic_atom ) ) {	
-			hydrogens.push_back( exocyclic_atom );	
-		}	
-	}	
- 	return hydrogens;	
-}	
+/// @brief    Get a list of exocyclic atoms connected to a given ring atom.
+/// @return   The atom indices of all atoms bonded to the given atom (by index) that are not a part of the ring.
+/// @details  This method does not count virtual atoms as atoms.
+/// @author   Labonte <JWLabonte@jhu.edu>
+core::chemical::AtomIndices
+Residue::get_atoms_exocyclic_to_ring_atom( uint const atom_index ) const
+{
+	using namespace chemical;
+	AtomIndices combined_ring_atoms, exocyclic_atoms;
+	// A residue can have multiple rings; pool all of the rings' atoms into one list.
+	for ( AtomIndices single_ring_atoms : type().ring_atoms() ) {
+		combined_ring_atoms.append( single_ring_atoms );
+	}
+	if ( combined_ring_atoms.contains( atom_index ) ) {
+		AtomIndices const & potential_exocyclic_atoms( bonded_neighbor( atom_index ) );
+		for ( uint potential_exocyclic_atom : potential_exocyclic_atoms ) {
+			if ( ( ! combined_ring_atoms.contains( potential_exocyclic_atom ) ) &&
+					( ! is_virtual( potential_exocyclic_atom ) ) ) {
+				// This atom must be exocyclic; add it to the list.
+				exocyclic_atoms.push_back( potential_exocyclic_atom );
+			}
+		}
+	} else {
+		utility_exit_with_message( "Residue::get_atoms_exocyclic_to_ring_atom( uint const atom_index ): "
+			"<atom_index> does not correspond to a ring atom." );
+	}
+	return exocyclic_atoms;
+}
+/// @brief    Get a list of substituent atoms connected to a given ring atom.
+/// @return   The atom indices of all heavy atoms bonded to the given atom (by index) that are not a part of the ring.
+/// @details  This method does not count virtual atoms as atoms.
+/// @author   Labonte <JWLabonte@jhu.edu>
+core::chemical::AtomIndices
+Residue::get_substituents_to_ring_atom( uint const atom_index ) const
+{
+	using namespace chemical;
+	AtomIndices substituents;
+	AtomIndices const & exocylic_atoms( get_atoms_exocyclic_to_ring_atom( atom_index ) );
+	for ( uint exocyclic_atom : exocylic_atoms ) {
+		if ( ! atom_is_hydrogen( exocyclic_atom ) ) {
+			substituents.push_back( exocyclic_atom );
+		}
+	}
+	return substituents;
+}
+/// @brief    Get a list of hydrogen atoms connected to a given ring atom.
+/// @return   The atom indices of hydrogens bonded to the given ring atom (by index).
+/// @details  This method does not count virtual atoms as atoms.
+/// @author   Labonte <JWLabonte@jhu.edu>
+core::chemical::AtomIndices
+Residue::get_hydrogens_bonded_to_ring_atom( uint const atom_index ) const
+{
+	using namespace chemical;
+	AtomIndices hydrogens;
+	AtomIndices const & exocylic_atoms( get_atoms_exocyclic_to_ring_atom( atom_index ) );
+	for ( uint exocyclic_atom : exocylic_atoms ) {
+		if ( atom_is_hydrogen( exocyclic_atom ) ) {
+			hydrogens.push_back( exocyclic_atom );
+		}
+	}
+	return hydrogens;
+}
 
 
 PseudoBondCollectionCOP
