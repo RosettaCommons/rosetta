@@ -1,0 +1,20 @@
+#!/bin/bash
+#http://redsymbol.net/articles/unofficial-bash-strict-mode/
+
+set -euo pipefail
+set -x
+IFS=$'\n\t'
+
+echo \# Bootstrap PyRosetta 
+BUILD_SHA=`python -c 'import pyrosetta; print(pyrosetta.rosetta.utility.Version.commit())'`
+BUILD_DIR=`python -c 'import pyrosetta; import os; print(os.path.dirname(pyrosetta.__file__))'`
+
+git checkout $BUILD_SHA
+pushd src
+
+cp $BUILD_DIR/rosetta.so pyrosetta/
+cp -r $BUILD_DIR/database pyrosetta/
+
+pushd `git rev-parse --show-toplevel`
+source/version.py
+popd
