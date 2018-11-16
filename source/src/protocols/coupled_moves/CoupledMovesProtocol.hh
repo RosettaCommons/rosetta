@@ -11,6 +11,7 @@
 /// @brief Mover that implements the CoupledMovesProtocol
 /// @author Noah <nollikai@gmail.com>, refactored into header by Steven Lewis smlewi@gmail.com
 /// @author Anum Glasgow
+/// @author Amanda Loshbaugh
 
 #ifndef INCLUDED_protocols_coupled_moves_CoupledMovesProtocol_hh
 #define INCLUDED_protocols_coupled_moves_CoupledMovesProtocol_hh
@@ -122,9 +123,6 @@ public:
 	core::Real get_ligand_prob() const { return ligand_prob_; }
 	utility::vector1<core::Size> get_ligand_resnums() const { return ligand_resnums_; }
 
-
-
-
 private:
 	///@brief sets up internal options based on options system
 	void initialize_from_options();
@@ -133,8 +131,8 @@ private:
 
 	core::scoring::ScoreFunctionOP score_fxn_;
 	core::pack::task::TaskFactoryOP main_task_factory_;
-	core::Size ntrials_;
-	std::string move_type_;
+	core::Size ntrials_ = 1000; //default copied from options system
+	std::string move_type_ = "RESIDUE"; //default to the safer case
 	utility::vector1<core::Size> move_positions_;
 	utility::vector1<core::Size> design_positions_;
 	std::map<std::string,core::Real> unique_sequences_;

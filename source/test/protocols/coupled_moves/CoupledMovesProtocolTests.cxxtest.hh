@@ -128,6 +128,18 @@ public:
 		core::Size n = unique_sequences.size();
 		TS_ASSERT( n > 0 );
 	} //test_apply
+
+	///@brief check that improperly initialized CoupledMovesProtocol objects fail informatively
+	void test_bad_init() {
+
+		//test that ntrials is initialized
+		protocols::coupled_moves::CoupledMovesProtocol cmp1;
+		TS_ASSERT_EQUALS(cmp1.get_ntrials(), 1000);
+		//we don't really care that this is 1000, mostly we care that it isn't an uninitialized variable, but 1000 is what it gets set to.
+
+		return;
+	}
+
 }; //class CoupledMovesProtocolTests
 
 #endif
