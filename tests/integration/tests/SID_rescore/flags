@@ -1,0 +1,5 @@
+-in:file:s ./1fgb_D_E_0001.pdb
+-interface D_E
+-AE 204.0
+-n_ints 1
+-skip_relax

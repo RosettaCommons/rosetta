@@ -539,6 +539,9 @@ sources = {
 	"pilot/jstev" : [
 		#"collect_features",
  	],
+	"pilot/jtseffer" : [
+		"SID_rescore",
+ 	],
 
 	# K ######################################################################
 	"pilot/kblacklock" : [
