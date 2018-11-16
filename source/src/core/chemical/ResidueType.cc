@@ -2368,6 +2368,12 @@ ResidueType::is_water() const {
 	return properties_->has_property( WATER );
 }
 
+/// @brief Is this an aramid?
+bool
+ResidueType::is_aramid() const {
+	return properties_->has_property( ARAMID );
+}
+
 /// @brief Is this an oligourea?
 bool
 ResidueType::is_oligourea() const {

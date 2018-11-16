@@ -89,7 +89,7 @@ OmegaTetherEnergy::residue_energy(
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
 	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ) return;
 
-	if ( rsd.is_protein() ) {
+	if ( rsd.is_protein() || rsd.type().is_aramid() ) {
 		Real omega_score, dscore_domega, dscore_dphi, dscore_dpsi;
 		potential_.eval_omega_score_residue( rsd, omega_score, dscore_domega, dscore_dphi, dscore_dpsi );
 		emap[ omega ] += omega_score;

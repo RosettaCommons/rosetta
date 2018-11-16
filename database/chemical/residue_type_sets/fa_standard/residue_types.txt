@@ -1050,3 +1050,11 @@ residue_types/coenzymes/flavin_oxidized.params
 residue_types/coenzymes/flavin_reduced.params
 #residue_types/coenzymes/flavin_mononucleotide.params
 residue_types/coenzymes/UDP.params
+
+## Polyaramids
+residue_types/polyaramids/ARA.params
+residue_types/polyaramids/ARC.params
+residue_types/polyaramids/ARE.params
+residue_types/polyaramids/ARG.params
+residue_types/polyaramids/ARM.params
+residue_types/polyaramids/ARS.params

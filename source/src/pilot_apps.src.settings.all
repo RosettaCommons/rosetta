@@ -85,6 +85,7 @@ sources = {
 		#"mike_linker_test",
 		#"peptidomimetic_ensembles",
 		#"peptoid_hbs",
+		"polyaramid_test",
 		#"pose_iteration",
 		#"sec_struct_finder",
 		"test_d_l_readin",

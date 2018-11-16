@@ -1672,6 +1672,9 @@ public:
 	/// @brief Is this an oligourea?
 	bool is_oligourea() const;
 
+	/// @brief Is this an aramid?
+	bool is_aramid() const;
+
 	/// @brief Does this type have groups (not just single atoms) that are polymer-bond dependent?
 	bool has_polymer_dependent_groups() const;
 

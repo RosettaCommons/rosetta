@@ -11,9 +11,11 @@
 /// @brief  OmegaTether potential class implementation
 /// @details  This potential constrains the inter-residue torsion (omega) to be 0 or 180 degrees.
 /// It works for alpha-amino acids, beta-amino acids, and oligoureas.  In the case of oligoureas,
-/// it constrains both omega and mu (the preceding torsion) to be 180.
+/// it constrains both omega and mu (the preceding torsion) to be 180. In the case of polyaramids,
+/// it constrains omega (which is torsion 5) to be 180.
 /// @author Andrew Leaver-Fay (leaverfa@email.unc.edu)
 /// @author Vikram K. Mulligan (vmullig@uw.edu) -- updated for oligoureas and beta-amino acids.
+/// @author Andy Watkins (amw579@stanford.edu) -- updated for polyaramids
 
 // Unit Headers
 #include <core/scoring/OmegaTether.hh>
@@ -70,6 +72,7 @@ core::Size OmegaTether::phi_index( core::conformation::Residue const &rsd ) cons
 {
 	if ( rsd.type().is_beta_aa() ) return core::id::theta_torsion_beta_aa; //Special case.
 	else if ( rsd.type().is_oligourea() ) return core::id::theta_torsion_oligourea; //Another special case
+	else if ( rsd.type().is_aramid() ) return core::id::theta_torsion_aramid; // two before peptide bond
 	return core::id::phi_torsion; //Default for alpha-amino acids.
 }
 
@@ -80,6 +83,7 @@ core::Size OmegaTether::psi_index( core::conformation::Residue const &rsd ) cons
 {
 	if ( rsd.type().is_beta_aa() ) return core::id::psi_torsion_beta_aa; //Special case.
 	else if ( rsd.type().is_oligourea() ) return core::id::psi_torsion_oligourea; //Another special case.
+	else if ( rsd.type().is_aramid() ) return core::id::psi_torsion_aramid;
 	return core::id::psi_torsion; //Default for alpha-amino acids.
 }
 
@@ -90,6 +94,7 @@ core::Size OmegaTether::omega_index( core::conformation::Residue const &rsd ) co
 {
 	if ( rsd.type().is_beta_aa() ) return core::id::omega_torsion_beta_aa; //Special case.
 	else if ( rsd.type().is_oligourea() ) return core::id::mu_torsion_oligourea; //Another special case.
+	else if ( rsd.type().is_aramid() ) return core::id::omega_torsion_aramid;
 	return core::id::omega_torsion; //Default for alpha-amino acids.
 }
 
@@ -120,7 +125,7 @@ OmegaTether::eval_omega_score_residue(
 ) const {
 	using namespace numeric;
 
-	debug_assert( rsd.is_protein() );
+	debug_assert( rsd.is_protein() || rsd.type().is_aramid() );
 
 	bool const is_d( rsd.type().is_d_aa() );
 	core::Real const d_multiplier( is_d ? -1.0 : 1.0 );

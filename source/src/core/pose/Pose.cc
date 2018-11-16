@@ -958,6 +958,8 @@ Pose::phi( Size const seqpos ) const
 			return residue( seqpos ).mainchain_torsion(phi_torsion_beta_aa );
 		} else if ( residue_type( seqpos ).is_oligourea() ) {
 			return residue( seqpos ).mainchain_torsion(phi_torsion_oligourea );
+		} else if ( residue_type( seqpos ).is_aramid() ) {
+			return residue( seqpos ).mainchain_torsion(phi_torsion_aramid );
 		} else { //Default case, including peptoids and alpha-amino acids:
 			return residue( seqpos ).mainchain_torsion( phi_torsion );
 		}
@@ -990,6 +992,8 @@ Pose::set_phi( Size const seqpos, Real const setting )
 			conformation_->set_torsion( TorsionID( seqpos, BB, phi_torsion_beta_aa ), setting );
 		} else if ( residue_type(seqpos).is_oligourea() ) {
 			conformation_->set_torsion( TorsionID( seqpos, BB, phi_torsion_oligourea ), setting );
+		} else if ( residue_type(seqpos).is_aramid() ) {
+			conformation_->set_torsion( TorsionID( seqpos, BB, phi_torsion_aramid ), setting );
 		} else { //Default case, including peptoids and alpha-amino acids:
 			conformation_->set_torsion( TorsionID( seqpos, BB, phi_torsion ), setting );
 		}
@@ -1018,6 +1022,8 @@ Pose::psi( Size const seqpos ) const
 			return residue(seqpos).mainchain_torsion(psi_torsion_beta_aa);
 		} else if ( residue_type(seqpos).is_oligourea() ) {
 			return residue(seqpos).mainchain_torsion(psi_torsion_oligourea);
+		} else if ( residue_type(seqpos).is_aramid() ) {
+			return residue(seqpos).mainchain_torsion(psi_torsion_aramid);
 		} else { //Default case, including peptoids and alpha-amino acids:
 			return residue(seqpos).mainchain_torsion(psi_torsion);
 		}
@@ -1047,6 +1053,8 @@ Pose::set_psi( Size const seqpos, Real const setting )
 			conformation_->set_torsion( TorsionID( seqpos, BB, psi_torsion_beta_aa ), setting);
 		} else if  ( residue_type(seqpos).is_oligourea() ) {
 			conformation_->set_torsion( TorsionID( seqpos, BB, psi_torsion_oligourea ), setting);
+		} else if  ( residue_type(seqpos).is_aramid() ) {
+			conformation_->set_torsion( TorsionID( seqpos, BB, psi_torsion_aramid ), setting);
 		} else { //Default case, including peptoids and alpha-amino acids:
 			conformation_->set_torsion( TorsionID( seqpos, BB, psi_torsion ), setting );
 		}
@@ -1076,6 +1084,8 @@ Real Pose::omega( Size const seqpos ) const
 			return residue(seqpos).mainchain_torsion(omega_torsion_beta_aa);
 		} else if ( residue_type(seqpos).is_oligourea() ) {
 			return residue(seqpos).mainchain_torsion(omega_torsion_oligourea);
+		} else if ( residue_type(seqpos).is_aramid() ) {
+			return residue(seqpos).mainchain_torsion(omega_torsion_aramid);
 		} else { //Default case, including peptoids and alpha-amino acids:
 			return residue(seqpos).mainchain_torsion(omega_torsion);
 		}
@@ -1106,6 +1116,8 @@ Pose::set_omega( Size const seqpos, Real const setting )
 			conformation_->set_torsion( TorsionID( seqpos, BB, omega_torsion_beta_aa ),  setting);
 		} else if ( residue_type(seqpos).is_oligourea() ) {
 			conformation_->set_torsion( TorsionID( seqpos, BB, omega_torsion_oligourea ),  setting);
+		} else if ( residue_type(seqpos).is_aramid() ) {
+			conformation_->set_torsion( TorsionID( seqpos, BB, omega_torsion_aramid ),  setting);
 		} else { //Default case, including peptoids and alpha-amino acids:
 			conformation_->set_torsion( TorsionID( seqpos, BB, omega_torsion ),  setting );
 		}
@@ -1129,6 +1141,8 @@ Pose::theta( Size const seqpos ) const
 		return residue(seqpos).mainchain_torsion(theta_torsion_beta_aa);
 	} else if ( residue_type(seqpos).is_oligourea() ) {
 		return residue(seqpos).mainchain_torsion(theta_torsion_oligourea);
+	} else if ( residue_type(seqpos).is_aramid() ) {
+		return residue(seqpos).mainchain_torsion(theta_torsion_aramid);
 	} else {
 		// Undefined.
 		return 0.0;
@@ -1149,8 +1163,10 @@ Pose::set_theta( Size const seqpos, Real const setting)
 	PyAssert( residue_type(seqpos).is_beta_aa() || residue_type(seqpos).is_oligourea(), "Pose::set_theta( Size const seqpos, Real const setting ): residue seqpos is not a beta-amino acid or oligourea residue!" );
 	if ( residue_type(seqpos).is_beta_aa() ) conformation_->set_torsion( TorsionID( seqpos, BB, theta_torsion_beta_aa ), setting );
 	else if ( residue_type(seqpos).is_oligourea() ) conformation_->set_torsion( TorsionID(seqpos, BB, theta_torsion_oligourea), setting);
+	else if ( residue_type(seqpos).is_aramid() ) conformation_->set_torsion( TorsionID(seqpos, BB, theta_torsion_aramid), setting);
 }
 
+// AMW TODO: getter and setter for eta (precedes theta for aramids) (not important, shouldn't move)
 
 /// @brief Returns the mu torsion angle of oligourea residue <seqpos>.
 /// @details Mu is defined as CM(n)-NU(n)-C(n)-N(n+1)

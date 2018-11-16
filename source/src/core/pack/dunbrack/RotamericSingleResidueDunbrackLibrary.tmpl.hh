@@ -201,6 +201,31 @@ RotamericSingleResidueDunbrackLibrary< T, N >::RotamericSingleResidueDunbrackLib
 				else return rsd.mainchain_torsion( ii - 1 ); // 2 == phi, 3 == psi
 			};
 		}
+	} else if ( rt.is_aramid() ) {
+		// This logic sets your IVs by default.
+		Real pnph = parent::PEPTIDE_NEUTRAL_PHI, pnps = parent::PEPTIDE_NEUTRAL_PSI;
+
+		// There are only two flexible angles and they are first and last. So N must be two,
+		for ( Size ii = 1; ii <= N; ++ii ) {
+			IVs[ ii ] = [ii, pnph, pnps] ( conformation::Residue const & rsd, pose::Pose const & /*pose*/ ) {
+
+				Size bb_torsion_index = 1;
+
+				if ( ii == 1 ) { //If no rotlibspec, assume all mainchain torsions in this residue are relevant.
+					bb_torsion_index = 1;
+				} else { // ii == 2
+					bb_torsion_index = 4;
+				}
+
+				debug_assert( rsd.type().is_aramid() );
+
+				Real const d_multiplier = rsd.type().is_d_aa() ? -1.0 : 1.0;
+				if      ( ( rsd.is_lower_terminus() || !rsd.has_lower_connect() ) && bb_torsion_index == 1 ) return d_multiplier * pnph;
+				else if ( ( rsd.is_upper_terminus() || !rsd.has_upper_connect() ) && bb_torsion_index == 4 ) return d_multiplier * pnps;
+				if ( bb_torsion_index != 0 ) return rsd.mainchain_torsion( bb_torsion_index );
+				return 0.0;
+			};
+		}
 	} else {
 		// This logic sets your IVs by default.
 		Real pnph = parent::PEPTIDE_NEUTRAL_PHI, pnps = parent::PEPTIDE_NEUTRAL_PSI;

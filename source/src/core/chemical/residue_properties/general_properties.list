@@ -38,6 +38,7 @@ TNA
 PNA
 PEPTOID
 OLIGOUREA # These resemble beta-amino acids, only with a urea linkage instead of a simple peptide bond.  See the work of Gilles Guichard.
+ARAMID
 CARBOHYDRATE
 LIPID
 TERPENE

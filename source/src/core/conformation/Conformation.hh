@@ -1521,6 +1521,17 @@ private:
 		AtomID & id4
 	) const;
 
+	/// @brief Get four backbone atoms which define this backbone torsion, if this residue is an aramid.
+	/// @author Andy Watkins (amw579@stanford.edu)
+	bool
+	backbone_torsion_angle_atoms_aramid(
+		TorsionID const & id,
+		AtomID & id1,
+		AtomID & id2,
+		AtomID & id3,
+		AtomID & id4
+	) const;
+
 	/// @brief  Find the four atoms that define the torsion angle of this branch connection.
 	bool branch_connection_torsion_angle_atoms(
 		TorsionID const & torsion,
