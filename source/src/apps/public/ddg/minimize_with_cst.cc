@@ -98,11 +98,14 @@
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 // C++ headers
 
+#include <basic/Tracer.hh>
+
 //C++ filechek
 #include <sys/stat.h>
 
 #include <utility/vector0.hh>
 
+static basic::Tracer TR( "apps.public.ddg.minimize_with_cst" );
 
 using namespace core;
 using namespace std;
@@ -154,7 +157,7 @@ setup_ca_constraints(pose::Pose & pose, ScoreFunction & s, float const CA_cutoff
 					Vector const CA_j( pose.residue(j).xyz(atom_j) );
 					Real const CA_dist = (CA_i - CA_j).length();
 					if ( CA_dist < CA_cutoff ) {
-						std::cout << "c-alpha constraints added to residues " << i << " and " << j << " dist " << CA_dist << " and tol " << cst_tol << std::endl;
+						TR << "c-alpha constraints added to residues " << i << " and " << j << " dist " << CA_dist << " and tol " << cst_tol << std::endl;
 						ConstraintCOP cst( ConstraintOP( new AtomPairConstraint( AtomID(atom_i,i),AtomID(atom_j,j),core::scoring::func::FuncOP(new core::scoring::func::HarmonicFunc(CA_dist, cst_tol))) ) );
 						pose.add_constraint(cst);
 					}
@@ -216,7 +219,7 @@ minimize_with_constraints(pose::Pose & p, ScoreFunction & s,std::string const & 
 				}
 			}
 		}
-		s.show(std::cout, p);
+		s.show(TR, p);
 		// This used to be higher, but then it couldn't respond to the adjustment
 		// for in case we are only doing sidechain minimization!
 		core::optimization::MinimizerOptions options( "lbfgs_armijo_nonmonotone", minimizer_tol, true /*use_nb_list*/,
@@ -232,15 +235,15 @@ minimize_with_constraints(pose::Pose & p, ScoreFunction & s,std::string const & 
 			reduce_fa_rep(0.1,*one_tenth_orig);
 			//min_struc.run(p,mm,s,options);
 			min_struc.run(p,mm,*one_tenth_orig,options);
-			std::cout << "one tenth repulsive fa_rep score-function" << std::endl;
-			one_tenth_orig->show(std::cout, p);
+			TR << "one tenth repulsive fa_rep score-function" << std::endl;
+			one_tenth_orig->show(TR, p);
 
 			//then set scorefxn fa_rep to 1/3 of original weight and then minimize
 			ScoreFunctionOP one_third_orig(s.clone());
 			reduce_fa_rep(0.33,*one_third_orig);
 			min_struc.run(p,mm,*one_third_orig,options);
-			std::cout << "one third repulsive fa_rep score-function" << std::endl;
-			one_third_orig->show(std::cout, p);
+			TR << "one third repulsive fa_rep score-function" << std::endl;
+			one_third_orig->show(TR, p);
 			//then set scorefxn fa_rep to original weight and then minimize
 		}
 		pose::Pose before(p);
@@ -249,7 +252,7 @@ minimize_with_constraints(pose::Pose & p, ScoreFunction & s,std::string const & 
 
 		if ( basic::options::option[OptionKeys::ddg::initial_repack]() ) {
 			//repack
-			std::cout << "repacking" << std::endl;
+			TR << "repacking" << std::endl;
 			ScoreFunctionOP spack = ScoreFunctionFactory::create_score_function("soft_rep_design.wts");
 			pack::task::PackerTaskOP repack(pack::task::TaskFactory::create_packer_task(p));
 			repack->restrict_to_repacking();
@@ -261,9 +264,9 @@ minimize_with_constraints(pose::Pose & p, ScoreFunction & s,std::string const & 
 			pack::pack_rotamers(p,(*spack),repack);
 		}
 
-		s.show(std::cout, p);
+		s.show(TR, p);
 		while ( std::abs(s(p)-s(before)) > 1 ) { //make sure furhter minimizations lead to same answer
-			std::cout << "running another iteration of minimization. difference is: " << (s(p)-s(before)) << std::endl;
+			TR << "running another iteration of minimization. difference is: " << (s(p)-s(before)) << std::endl;
 			before = p;
 			min_struc.run(p,mm,s,options);
 		}
@@ -276,7 +279,7 @@ minimize_with_constraints(pose::Pose & p, ScoreFunction & s,std::string const & 
 			p.dump_pdb(output_directory + "/" + out_pdb_prefix+"."+output_tag+"_0001.pdb");
 		}
 	} else {
-		std::cout << "file " << output_directory + "/" + out_pdb_prefix+"."+output_tag+"_0001.pdb" << " already exists! skipping" << std::endl;
+		TR << "file " << output_directory + "/" + out_pdb_prefix+"."+output_tag+"_0001.pdb" << " already exists! skipping" << std::endl;
 	}
 }
 
@@ -298,11 +301,11 @@ optimize_pose(pose::Pose & pose, ScoreFunctionOP scorefxn, std::string const & o
 
 bool
 already_minimized(std::string query,utility::vector1<std::string> check){
-	//std::cout << "query is " << query << std::endl;
+	//TR << "query is " << query << std::endl;
 	for ( unsigned int i=1; i <= check.size(); i++ ) {
-		//std::cout << "DEBUG: tag" << check[i] << std::endl;
+		//TR << "DEBUG: tag" << check[i] << std::endl;
 		if ( check[i].compare(query) == 0 ) {
-			//std::cout << "query " << query << " totall matches " << check[i] << std::endl;
+			//TR << "query " << query << " totall matches " << check[i] << std::endl;
 			return true;
 		}
 	}
@@ -344,17 +347,18 @@ main( int argc, char* argv [] )
 		// utility::vector1<std::string> tags;
 		utility::vector1<file::FileName> list;
 		if ( basic::options::option[in::file::s].user() ) {
-			std::cout << "using -s option" << std::endl;
-			list = option[in::file::s]();
+			TR << "using -s option" << std::endl;
+			files = option[in::file::s]();
 		} else if ( option[in::file::l].user() ) {
-			std::cout << "using -l option " << std::endl;
+			TR << "using -l option " << std::endl;
 			list = basic::options::option[ in::file::l ]();
 		} else if ( option[in::file::silent].user() ) {
+			TR << "Reading from silent file. Note: will only examine the first file provided." << std::endl;
 			read_from_silent = true;
 			//list = basic::options::option[in::file::silent]();
 		}
-		for ( unsigned int h=1; h<=list.size(); h++ ) {
-			utility::io::izstream pdbs(list[h]);
+		for ( auto const & listfile : list ) {
+			utility::io::izstream pdbs( listfile );
 			std::string fname;
 			while ( pdbs >> fname ) {
 				files.push_back(fname);
@@ -376,27 +380,27 @@ main( int argc, char* argv [] )
 			}
 		}
 		std::string prefix = basic::options::option[OptionKeys::ddg::out_pdb_prefix ]();
-		for ( unsigned int f=1; f<=files.size(); f++ ) {
+		for ( auto const & file : files ) {
 			pose::Pose pose;
-			std::cout << "examining file: " << files[f] << std::endl;
+			TR << "examining file: " << file << std::endl;
 			if ( read_from_silent ) {
 				SilentFileOptions opts; // initialized from the command line
-				SilentFileData in_sfd(files[f],false,false,"binary",opts);
-				in_sfd.read_file(files[f]);
+				SilentFileData in_sfd(file,false,false,"binary",opts);
+				in_sfd.read_file(file);
 				utility::vector1<std::string> tags = in_sfd.tags();
-				for ( unsigned int t=1; t <= tags.size(); t++ ) {
-					if ( !already_minimized(prefix+"."+tags[t]+"_0001",tags_done) ) {
-						SilentStructOP ss = in_sfd[tags[t]];
+				for ( auto const & tag : tags ) {
+					if ( !already_minimized(prefix+"."+tag+"_0001",tags_done) ) {
+						SilentStructOP ss = in_sfd[tag];
 						ss->fill_pose(pose,*rsd_set);
-						scorefxn->show(std::cout, pose);
-						std::cout << "tag assigned to pose: " << ss->decoy_tag() << std::endl;
+						scorefxn->show(TR, pose);
+						TR << "tag assigned to pose: " << ss->decoy_tag() << std::endl;
 						optimize_pose(pose,scorefxn,ss->decoy_tag());
 					} else {
-						std::cout << "tag " << tags[t] << " exists in outfile. skipping!" << std::endl;
+						TR << "tag " << tag << " exists in outfile. skipping!" << std::endl;
 					}
 				}
 			} else {
-				core::import_pose::pose_from_file(pose, files[f], core::import_pose::PDB_file);
+				core::import_pose::pose_from_file(pose, file, core::import_pose::PDB_file);
 				std::string output = pose.pdb_info()->name();
 				std::string pdb_prefix( utility::string_split( utility::string_split( output, '/' ).back(), '.' ).front() );
 				optimize_pose(pose, scorefxn, pdb_prefix);
@@ -406,7 +410,7 @@ main( int argc, char* argv [] )
 			}
 		}
 	} catch (utility::excn::Exception const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
+		TR << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}
 }
