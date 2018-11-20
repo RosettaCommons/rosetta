@@ -217,7 +217,7 @@ void RNA_KinematicCloser::init( pose::Pose const & pose_current /* has CUTPOINT 
 		pivot_ids_.emplace_back( NamedAtomID( " P  ", chainbreak_suite_ + 1 ) );
 
 		// pivot 3
-		pivot_ids_.emplace_back( NamedAtomID( "O3'", chainbreak_suite_ + 1 ) ); // HEY WAIT! SHOULDNT THIS BE O5' ??? -- rhiju 2016
+		pivot_ids_.emplace_back( NamedAtomID( "O5'", chainbreak_suite_ + 1 ) );
 		pivot_ids_.emplace_back( NamedAtomID( "C5'", chainbreak_suite_ + 1 ) );
 		pivot_ids_.emplace_back( NamedAtomID( "C4'", chainbreak_suite_ + 1 ) );
 	}
