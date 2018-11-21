@@ -131,6 +131,7 @@ LoopModeler::LoopModeler() {
 	is_build_stage_enabled_ = true;
 	is_centroid_stage_enabled_ = true;
 	is_fullatom_stage_enabled_ = true;
+	use_default_task_factory_ = true;
 
 	set_fa_scorefxn(loops::get_fa_scorefxn());
 	set_cen_scorefxn(loops::get_cen_scorefxn());
@@ -249,12 +250,10 @@ bool LoopModeler::do_apply(Pose & pose) {
 
 	// Set default task factory if the user doesn't give one
 
-	bool use_default_task_factory = !get_tool<TaskFactoryOP>(
-		loop_modeling::ToolboxKeys::TASK_FACTORY, TaskFactoryOP());
-
-	if ( use_default_task_factory ) {
+	if ( use_default_task_factory_ ) {
 		TR << "Set default task factory." << std::endl;
 		set_task_factory(get_default_task_factory(pose));
+		use_default_task_factory_ = true; // This line is important because the set_task_factory() function changes use_default_task_factory_
 	}
 
 	// Converting the pose to centroid mode can sometimes cause headaches with
@@ -291,12 +290,6 @@ bool LoopModeler::do_apply(Pose & pose) {
 		TR << "*******************************************" << endl;
 		prepare_for_fullatom_->apply(pose);
 		fullatom_stage_->apply(pose);
-	}
-
-	// Clear the default task factory such that it could be refreshed for next structure
-
-	if ( use_default_task_factory ) {
-		set_task_factory(TaskFactoryOP());
 	}
 
 	return true;
@@ -489,6 +482,7 @@ TaskFactoryOP LoopModeler::get_task_factory(TaskFactoryOP fallback) {
 
 void LoopModeler::set_task_factory(TaskFactoryOP task_factory) {
 	set_tool(loop_modeling::ToolboxKeys::TASK_FACTORY, task_factory);
+	use_default_task_factory_ = false;
 }
 
 core::pack::task::TaskFactoryOP

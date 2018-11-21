@@ -165,6 +165,7 @@ private:
 	loop_modeling::utilities::PrepareForCentroidOP prepare_for_centroid_;
 	loop_modeling::utilities::PrepareForFullatomOP prepare_for_fullatom_;
 
+	bool use_default_task_factory_;
 	bool is_build_stage_enabled_;
 	bool is_centroid_stage_enabled_;
 	bool is_fullatom_stage_enabled_;
