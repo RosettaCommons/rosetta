@@ -354,7 +354,7 @@ void InstallFarnesylMover::provide_xml_schema( utility::tag::XMLSchemaDefinition
 	core::select::residue_selector::attributes_for_parse_residue_selector_default_option_name( attlist );
 	attlist + XMLSchemaAttribute::attribute_w_default( "sample_per_residue", xsct_rosetta_bool, "Sample each residue as it's added", "false" );
 
-	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Install farnesyl moieties at each cysteine provided in the residue selector.", attlist );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "DOCUMENTATION STRING", attlist );
 }
 
 

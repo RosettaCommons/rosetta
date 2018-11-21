@@ -107,6 +107,8 @@ public:
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 	void set_selector( core::select::residue_selector::ResidueSelectorCOP const & selector ) {
+		std::cout << "In set_selector_ " << std::endl;
+		if ( selector ) { std::cout << "passed selector is nonnull " << std::endl; }
 		selector_ = selector;
 	}
 

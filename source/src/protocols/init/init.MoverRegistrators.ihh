@@ -488,7 +488,6 @@ static MoverRegistrator< sewing::movers::LigandBindingAssemblyMoverCreator > reg
 
 
 static MoverRegistrator< minimization_packing::BoltzmannRotamerMoverCreator > reg_BoltzmannRotamerMoverCreator;
-static MoverRegistrator< minimization_packing::DisulfideOptimizationMoverCreator > reg_DisulfideOptimizationMoverCreator;
 static MoverRegistrator< minimization_packing::MinMoverCreator > reg_MinMoverCreator;
 static MoverRegistrator< minimization_packing::MinPackMoverCreator > reg_MinPackMoverCreator;
 static MoverRegistrator< minimization_packing::PertMinMoverCreator > reg_PertMinMoverCreator;
