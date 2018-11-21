@@ -562,6 +562,7 @@ sources = {
 	],
 	"protocols/minimization_packing": [
 		"BoltzmannRotamerMover",
+		"DisulfideOptimizationMover",
 		"GreenPacker",
 		"MinMover",
 		"MinPackMover",
