@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/farnesyl/InstallFarnesylMover.hh
-/// @brief Modifies a free cysteine residue with a branch of 3 DMA residues (the terpene monomer) to create farnesyl-cysteine
+/// @file protocols/minimization_packing/DisulfideOptimizationMover.hh
+/// @brief A Mover to jointly optimize the geometry of a pair of disulfide-bonded residues.
 /// @author Andy Watkins (andy.watkins2@gmail.com)
 
-#ifndef INCLUDED_protocols_farnesyl_InstallFarnesylMover_HH
-#define INCLUDED_protocols_farnesyl_InstallFarnesylMover_HH
+#ifndef INCLUDED_protocols_minimization_packing_DisulfideOptimizationMover_HH
+#define INCLUDED_protocols_minimization_packing_DisulfideOptimizationMover_HH
 
 // Unit headers
-#include <protocols/farnesyl/InstallFarnesylMover.fwd.hh>
+#include <protocols/minimization_packing/DisulfideOptimizationMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
 // Protocol headers
@@ -24,16 +24,18 @@
 // Core headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 // Basic/Utility headers
 #include <basic/datacache/DataMap.fwd.hh>
 //#include <utility/tag/XMLSchemaGeneration.fwd.hh> //transcluded from Mover
 
 namespace protocols {
-namespace farnesyl {
+namespace minimization_packing {
 
-///@brief Modifies a free cysteine residue with a branch of 3 DMA residues (the terpene monomer) to create farnesyl-cysteine
-class InstallFarnesylMover : public protocols::moves::Mover {
+///@brief A Mover to jointly optimize the geometry of a pair of disulfide-bonded residues.
+class DisulfideOptimizationMover : public protocols::moves::Mover {
 
 public:
 
@@ -42,13 +44,13 @@ public:
 	/////////////////////
 
 	/// @brief Default constructor
-	InstallFarnesylMover();
+	DisulfideOptimizationMover();
 
 	/// @brief Copy constructor (not needed unless you need deep copies)
-	InstallFarnesylMover( InstallFarnesylMover const & src );
+	DisulfideOptimizationMover( DisulfideOptimizationMover const & src );
 
 	/// @brief Destructor (important for properly forward-declaring smart-pointer members)
-	~InstallFarnesylMover() override;
+	~DisulfideOptimizationMover() override;
 
 	/////////////////////
 	/// Mover Methods ///
@@ -58,16 +60,6 @@ public:
 	/// @brief Apply the mover
 	void
 	apply( core::pose::Pose & pose ) override;
-
-	void
-	sample_first( core::pose::Pose & pose, Size const cyspos );
-
-	void
-	sample_second( core::pose::Pose & pose );
-
-	void
-	sample_third( core::pose::Pose & pose );
-
 
 	void
 	show( std::ostream & output = std::cout ) const override;
@@ -85,7 +77,7 @@ public:
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose ) override;
 
-	//InstallFarnesylMover & operator=( InstallFarnesylMover const & src );
+	//DisulfideOptimizationMover & operator=( DisulfideOptimizationMover const & src );
 
 	/// @brief required in the context of the parser/scripting scheme
 	protocols::moves::MoverOP
@@ -110,18 +102,29 @@ public:
 		selector_ = selector;
 	}
 
+	void set_score_function( core::scoring::ScoreFunctionCOP const & sfxn ) {
+		sfxn_ = sfxn;
+	}
+
+	void set_final_optimization_n_iter( Size const final_optimization_n_iter ) {
+		final_optimization_n_iter_ = final_optimization_n_iter;
+	}
+
 private: // methods
+
+	void break_repack_reform( Pose & pose, utility::vector1< Size > const & cys_pos );
 
 private: // data
 	core::select::residue_selector::ResidueSelectorCOP selector_ = nullptr;
-	bool sample_per_residue_ = false;
+	core::scoring::ScoreFunctionCOP sfxn_ = nullptr;
+	Size final_optimization_n_iter_ = 0;
 
 };
 
 std::ostream &
-operator<<( std::ostream & os, InstallFarnesylMover const & mover );
+operator<<( std::ostream & os, DisulfideOptimizationMover const & mover );
 
 } //protocols
-} //farnesyl
+} //minimization_packing
 
-#endif //protocols_farnesyl_InstallFarnesylMover_HH
+#endif //protocols_minimization_packing_DisulfideOptimizationMover_HH

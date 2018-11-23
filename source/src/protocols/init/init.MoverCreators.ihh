@@ -474,6 +474,7 @@
 #include <protocols/sewing/movers/LigandBindingAssemblyMoverCreator.hh>
 
 #include <protocols/minimization_packing/BoltzmannRotamerMoverCreator.hh>
+#include <protocols/minimization_packing/DisulfideOptimizationMoverCreator.hh>
 #include <protocols/minimization_packing/MinMoverCreator.hh>
 #include <protocols/minimization_packing/MinPackMoverCreator.hh>
 #include <protocols/minimization_packing/PackRotamersMoverCreator.hh>
