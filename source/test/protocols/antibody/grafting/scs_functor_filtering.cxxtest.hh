@@ -46,7 +46,7 @@ public:
 	void setUp() {
 		// shared initialization goes here
 		// need options for a specific filter...
-		core_init_with_additional_options( "-antibody:exclude_homologs true -antibody:exclude_homologs_fr_cutoff 60 -out:level 500 -antibody:n_multi_templates 3 -antibody:ocd_cutoff 5" );
+		core_init_with_additional_options( "-antibody:exclude_homologs true -antibody:exclude_homologs_fr_cutoff 60 -out:level 500 -antibody:n_multi_templates 3 -antibody:ocd_cutoff 5 -antibody:exclude_pdb 1dlf" );
 		// sets sid on and cutoff to 80%
 		// sets sid cutoff to 60% for FR
 	} //setUp
@@ -632,4 +632,71 @@ public:
 		TS_ASSERT_EQUALS(good_brs[2]->pdb.compare(r->orientation[2]->pdb),0);
 #endif //__ANTIBODY_GRAFTING__
 	}
+
+	/// @brief specific filter test for SCS_BlastFilter_by_pdbid
+	void test_filter_by_pdbid() {
+#ifdef __ANTIBODY_GRAFTING__
+		using namespace protocols::antibody::grafting;
+
+		// this cannot be run on systems with "older" versions of the c++11 std library
+		// those without regex support will compile and link but not run.
+		if ( ! antibody_grafting_usable() ) { return; }
+
+		// set up dummy AntibodySequence
+		AntibodySequence as = AntibodySequence(heavy_chain_sequence, light_chain_sequence);
+		RegEx_based_CDR_Detector().detect(as);
+
+		// set up two BlastResults, a good one that should pass filtering and a dummy that should fail
+		// in the sequence length filter, the dummy should have an length different from the good
+		SCS_BlastResultOP dummy_br(new SCS_BlastResult);
+		SCS_BlastResultOP good_br(new SCS_BlastResult);
+
+		dummy_br->pdb = "1dlf";
+		good_br->pdb = "3liz";
+
+		// store BlastResults in ResultVector;
+		SCS_ResultVector results;
+		results.push_back(good_br);
+		results.push_back(dummy_br);
+
+		// store ResultVector in SCS_Results
+		SCS_ResultsOP r(new SCS_Results);
+		r->h1 = results;
+		r->h2 = results;
+		r->h3 = results;
+		r->l1 = results;
+		r->l2 = results;
+		r->l3 = results;
+		r->orientation = results; 
+		r->frh = results;
+		r->frl = results;
+
+		// now apply single filter to ResultsOP and test
+		SCS_FunctorCOP scs_filter( new SCS_BlastFilter_by_pdbid );
+		scs_filter->apply(as,r);
+
+		// now test, the top result should be "good" whereas "dummy" should have been filtered out (i.e. len(r->x)=0)
+		// orientation should remain unchanged.
+		TS_ASSERT_EQUALS(r->h1.size(),1)
+		TS_ASSERT_EQUALS(r->h2.size(),1)
+		TS_ASSERT_EQUALS(r->h3.size(),1)
+		TS_ASSERT_EQUALS(r->frh.size(),1)
+		TS_ASSERT_EQUALS(r->l1.size(),1)
+		TS_ASSERT_EQUALS(r->l2.size(),1)
+		TS_ASSERT_EQUALS(r->l3.size(),1)
+		TS_ASSERT_EQUALS(r->frl.size(),1)
+		TS_ASSERT_EQUALS(r->orientation.size(),1)
+
+		TS_ASSERT_EQUALS(good_br->pdb.compare(r->h1[0]->pdb),0);
+		TS_ASSERT_EQUALS(good_br->pdb.compare(r->h2[0]->pdb),0);
+		TS_ASSERT_EQUALS(good_br->pdb.compare(r->h3[0]->pdb),0);
+		TS_ASSERT_EQUALS(good_br->pdb.compare(r->frh[0]->pdb),0);
+		TS_ASSERT_EQUALS(good_br->pdb.compare(r->l1[0]->pdb),0);
+		TS_ASSERT_EQUALS(good_br->pdb.compare(r->l2[0]->pdb),0);
+		TS_ASSERT_EQUALS(good_br->pdb.compare(r->l3[0]->pdb),0);
+		TS_ASSERT_EQUALS(good_br->pdb.compare(r->frl[0]->pdb),0);
+#endif //__ANTIBODY_GRAFTING__
+	}
+
+
 };

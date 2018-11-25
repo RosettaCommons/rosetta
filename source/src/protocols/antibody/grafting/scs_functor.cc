@@ -558,6 +558,68 @@ void SCS_BlastFilter_by_outlier::apply(AntibodySequence const& /* A */,
 
 }
 
+SCS_BlastFilter_by_pdbid::SCS_BlastFilter_by_pdbid() {
+    init_from_options();
+}
+
+std::string SCS_BlastFilter_by_pdbid::get_pdb_name() const {
+    return pdb_name_;
+}
+
+void SCS_BlastFilter_by_pdbid::set_pdb_name( std::string pdb_name ) {
+    pdb_name_ = pdb_name;
+}
+
+void SCS_BlastFilter_by_pdbid::init_from_options() {
+
+    using namespace basic::options;
+
+    set_pdb_name( "" ); // default if flag is not given, i.e. do not filter
+    // if flag is set by user, then take that value
+    if ( option[ OptionKeys::antibody::exclude_pdb ].user() ) {
+        set_pdb_name( option[ basic::options::OptionKeys::antibody::exclude_pdb]() );
+    }
+
+}
+
+void SCS_BlastFilter_by_pdbid::apply(AntibodySequence const& /* A */,
+                                           SCS_ResultsOP results) const
+{
+
+    TR.Debug << "SCS_BlastFilter_by_pdbid: Results count before filtering " << CSI_Red() << result_sizes(results) << CSI_Reset() << std::endl;
+
+    struct {
+        SCS_ResultVector &r;
+        string ab_region;
+    } frh_h1_h2_frl_l1_l2_l3[] {
+        { results->frh, "FRH" },
+        { results->h1, "H1" },
+        { results->h2, "H2" },
+        { results->h3, "H3" },
+        { results->frl, "FRL" },
+        { results->l1, "L1" },
+        { results->l2, "L2" },
+        { results->l3, "L3" },
+        { results->orientation, "orientation" },
+    };
+
+    for(auto &region : frh_h1_h2_frl_l1_l2_l3) {
+        for(auto p = region.r.rbegin(); p != region.r.rend(); ) {
+            auto const *br = dynamic_cast< SCS_BlastResult const *>( p->get() );
+            if( !br ) throw CREATE_EXCEPTION(_AE_scs_failed_, "SCS_BlastFilter_by_pdbid::apply: Error! Could not cast SCS_Results to SCS_BlastResult!");
+
+            // check if pdb has been flagged for exclusion
+            if( pdb_name_ == br->pdb ) {
+                TR.Trace << CSI_Red() << "SCS_BlastFilter_by_pdbid: Filtering " << br->pdb << CSI_Reset() << std::endl;
+                region.r.erase( std::next(p++).base() );
+            }
+            else ++p;
+        }
+    }
+
+    TR.Debug << "SCS_BlastFilter_by_pdbid: Results count after filtering   " << CSI_Red() << result_sizes(results) << CSI_Reset() << std::endl;
+
+}
   //    def filter_by_template_bfactor(k, results, cdr_query, cdr_info):
   //    """ Template filter by bfactor
   //    """

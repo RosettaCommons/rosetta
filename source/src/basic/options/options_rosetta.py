@@ -3936,6 +3936,9 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
         Option('blastp', 'String',
             desc="Path to NCBI-Blast+ executable", default='blastp'),
 
+        Option('exclude_pdb', 'String',
+            desc = 'do not use given pdb as graft source (no default)'
+            ),
         Option('exclude_homologs', 'Boolean',
             desc = 'Filter BLAST matches by sequence identity? (false by default)',
             default = 'false'

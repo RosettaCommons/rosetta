@@ -110,7 +110,19 @@ private:
 class SCS_BlastFilter_by_outlier : public SCS_Functor
 {
 public:
-  void apply(AntibodySequence const &antibody_sequence, SCS_ResultsOP results) const override;
+   void apply(AntibodySequence const &antibody_sequence, SCS_ResultsOP results) const override;
+};
+
+class SCS_BlastFilter_by_pdbid : public SCS_Functor
+{
+public:
+    SCS_BlastFilter_by_pdbid();
+   void apply(AntibodySequence const &antibody_sequence, SCS_ResultsOP results) const override;
+   void init_from_options();
+   std::string get_pdb_name() const;
+   void set_pdb_name( std::string pdb_name );
+private:
+    std::string pdb_name_;
 };
 
 class SCS_BlastFilter_by_template_bfactor : public SCS_Functor

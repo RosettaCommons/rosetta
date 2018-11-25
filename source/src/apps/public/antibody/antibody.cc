@@ -271,6 +271,9 @@ int antibody_main()
 		SCS_BlastPlusOP blast = n_templates == 1 ? utility::pointer::make_shared<SCS_BlastPlus>(report) : utility::pointer::make_shared<SCS_BlastPlus>();
 		blast->init_from_options();
 
+        // in the future we should limit the number of times we loop over the results
+        // by only applying filters that are actually set
+        // see the pdbid filter for example
 		blast->add_filter( SCS_FunctorCOP(new SCS_BlastFilter_by_sequence_length) );
 		blast->add_filter( SCS_FunctorCOP(new SCS_BlastFilter_by_alignment_length) );
 
@@ -279,6 +282,10 @@ int antibody_main()
 		blast->add_filter( SCS_FunctorCOP(new SCS_BlastFilter_by_outlier) );
 		blast->add_filter( SCS_FunctorCOP(new SCS_BlastFilter_by_template_bfactor) );
 		blast->add_filter( SCS_FunctorCOP(new SCS_BlastFilter_by_OCD) );
+
+        if ( basic::options::option[ basic::options::OptionKeys::antibody::exclude_pdb ].user() ) {
+            blast->add_filter( SCS_FunctorCOP(new SCS_BlastFilter_by_pdbid) );
+        }
 
 		blast->set_sorter( SCS_FunctorCOP(new SCS_BlastComparator_BitScore_Resolution) );
 
