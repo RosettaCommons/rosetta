@@ -133,7 +133,25 @@ my_main( void* )
 				TR << "[ NOTE - kic_loop_size ] Using default, which is probably fine." << std::endl;
 				TR << "[ NOTE - kic_loop_size ] See CoupledMoves wiki or doxygen for more information on kic_loop_size." << TR.Reset << std::endl;
 			}
+
+			// remainder;
+			core::Size const loop_size = option[ basic::options::OptionKeys::coupled_moves::kic_loop_size ];
+			core::Size const remainder = loop_size % 2;
+			if ( remainder != 1 ) {
+				std::stringstream message;
+				message << "[ ERROR ] User-supplied -coupled_moves::kic_loop_size must be an odd number." << std::endl;
+				throw CREATE_EXCEPTION(utility::excn::Exception, message.str());
+			}
+			if ( loop_size < 5 ) {
+				std::stringstream message;
+				message << "[ ERROR ] User-supplied -coupled_moves::kic_loop_size must be at least 5 for KIC to sample phi and psi torsion angles." << std::endl;
+				throw CREATE_EXCEPTION(utility::excn::Exception, message.str());
+			}
 			coupled_moves->set_loop_size( option[ basic::options::OptionKeys::coupled_moves::kic_loop_size ] );
+
+
+
+
 		} else if ( ( backbone_mover == "backrub" ) || ( backbone_mover == "" ) ) {
 			coupled_moves->set_backbone_mover( backbone_mover );
 		} else {

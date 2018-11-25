@@ -273,17 +273,17 @@ protocols::simple_moves::CoupledMoverOP CoupledMovesProtocol::setup_coupled_move
 
 protocols::simple_moves::CoupledMoverOP CoupledMovesProtocol::setup_coupled_mover_for_ligand( core::pose::PoseOP pose_copy, core::pack::task::PackerTaskOP task, protocols::simple_moves::CoupledMoverOP coupled_mover ) {
 	runtime_assert_string_msg((number_ligands_ > 0), "in CoupledMovesProtocol, ligand_mode was requested but with 0 number_ligands - don't do that");
-	// ASSUMPTION: designable ligand(s) are the last residue(s) in the given PDB
+	// ASSUMPTION: ligand(s) allowed sampling by CoupledMover (sampling includes changing conformation and translating in cartesian space) are the last residue(s) in the given PDB
 	bool any_ligand(false);
 	core::Size const nres(pose_copy->size());
 	for ( core::Size res(1); res <= nres; ++res ) {
-		if ( pose_copy->residue_type(res).is_ligand() && task->design_residue(res) ) {
+		if ( ( pose_copy->residue_type(res).is_ligand() ) &&  task->design_residue(res) ) {
 			any_ligand = true;
 			continue;
 		}
-		//if we've hit a ligand and later hit a nonligand:
+		//if we've hit a designable ligand and later hit a nonligand:
 		if ( any_ligand && (!pose_copy->residue_type(res).is_ligand()) ) {
-			utility_exit_with_message("CoupledMovesProtocol requires that ligands all be at the end of the Pose. ASSUMPTION: the ligand(s) are the last residue(s) in the given PDB.");
+			utility_exit_with_message("CoupledMovesProtocol requires that ligands allowed sampling by CoupledMover (sampling includes changing conformation and translating in cartesian space) be at the end of the Pose. ASSUMPTION: the ligand(s) are the last residue(s) in the given PDB.");
 		}
 	}
 	for ( core::Size i(0); i < number_ligands_ ; ++i ) {
@@ -597,12 +597,14 @@ CoupledMovesProtocol::parse_my_tag(
 		TR << TR.White << "[ WARNING - backbone_mover ] See CoupledMoves wiki or doxygen for more information on available backbone movers." << TR.Reset << std::endl;
 	}
 
-	if ( !tag->hasOption( "kic_loop_size" ) ) {
-		TR << TR.White << "[ WARNING - kic_loop_size ] You did not specify -coupled_moves::kic_loop_size option." << std::endl;
-		TR << TR.White << "[ WARNING - kic_loop_size ] Using default, which is probably fine." << std::endl;
-		TR << TR.White << "[ WARNING - kic_loop_size ] See CoupledMoves wiki or doxygen for more information on kic_loop_size." << TR.Reset << std::endl;
+	set_loop_size( tag->getOption<core::Real>( "kic_loop_size", 9 ) );
+	core::Size remainder;
+	remainder = loop_size_ % 2;
+	if ( remainder != 1 ) {
+		std::stringstream message;
+		message << "[ ERROR ] -kic_loop_size '" << loop_size_ << "' must be an odd number. See documentation." << std::endl;
+		throw CREATE_EXCEPTION(utility::excn::Exception, message.str());
 	}
-	set_loop_size( tag->getOption<core::Real>( "kic_loop_size", 4 ) );
 	configure_score_fxn(); //SML this will add the extra bells and whistles to the scorefunction that the constructor used to do.  If the user actually sets those up in their scorefunction externally - this is a bad idea.  If the user has just passed REF15 as their scorefunction - this is necessary.  Anum approved at RosettaCON 2017.
 }
 

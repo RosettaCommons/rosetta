@@ -101,7 +101,7 @@ CoupledMover::CoupledMover() : protocols::moves::Mover()
 	translation_magnitude_ = 0.1;
 	short_backrub_mover_ = protocols::simple_moves::ShortBackrubMoverOP( new protocols::simple_moves::ShortBackrubMover() );
 	short_backrub_mover_->set_rotation_std_dev( rotation_std_dev_ );
-	loop_size_ = 4;
+	loop_size_ = 9;
 	boltzmann_rotamer_mover_ = protocols::minimization_packing::BoltzmannRotamerMoverOP( new protocols::minimization_packing::BoltzmannRotamerMover() );
 	boltzmann_rotamer_mover_->set_temperature( temperature_ );
 	boltzmann_rotamer_mover_->set_bias_sampling( bias_sampling_ );
@@ -186,22 +186,21 @@ CoupledMover::apply( core::pose::Pose & pose )
 				protocols::kinematic_closure::KicMoverOP fullatom_kic_mover( new protocols::kinematic_closure::KicMover() );
 				fullatom_kic_mover->add_perturber( perturber_ );
 				using protocols::loops::Loop;
-				if ( loop_size_ == 0 ) {
-					loop_size_ = numeric::random::rg().random_range( 3, 7 );
-				}
-
+				// Set up designable loop size
+				core::Size half_loop_size;
+				half_loop_size = ((loop_size_-1)/2);
 				// Make sure you give KIC residues that are on the same chain and in the pose
 				core::Size chainID = pose.residue( resnum_ ).chain();
 				core::Size start_index = 0;
-				if ( ( resnum_-loop_size_ >= 1 ) && ( resnum_-loop_size_ <= pose.size() ) ) {
-					start_index = (resnum_-loop_size_);
+				if ( ( resnum_-half_loop_size >= 1 ) && ( resnum_-half_loop_size <= pose.size() ) ) {
+					start_index = (resnum_-half_loop_size);
 					if ( pose.residue( start_index ).chain() != chainID ) {
 						start_index = 0;
 					}
 				}
 				core::Size stop_index = 0;
-				if ( ( resnum_+loop_size_ >= 1 ) && ( resnum_+loop_size_ <= (pose.size()-1) ) ) {
-					stop_index = (resnum_+loop_size_);
+				if ( ( resnum_+half_loop_size >= 1 ) && ( resnum_+half_loop_size <= (pose.size()-1) ) ) {
+					stop_index = (resnum_+half_loop_size);
 					if ( pose.residue( stop_index ).chain() != chainID ) {
 						stop_index = 0;
 					}
