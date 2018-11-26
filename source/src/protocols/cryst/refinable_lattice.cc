@@ -122,7 +122,6 @@ using namespace protocols;
 using namespace core;
 using namespace kinematics;
 using namespace scoring;
-using namespace scoring::symmetry;
 using namespace conformation;
 using namespace conformation::symmetry;
 

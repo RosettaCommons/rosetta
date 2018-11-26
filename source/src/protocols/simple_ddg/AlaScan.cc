@@ -35,7 +35,6 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreTypeManager.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/types.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <map>
@@ -95,8 +94,7 @@ AlaScan::AlaScan( bool const chain1, bool const chain2, core::Size const repeats
 	symmetry_( symmetry ),
 	repack_( true )
 {
-	if ( symmetry_ ) scorefxn_ = core::scoring::symmetry::symmetrize_scorefunction( *scorefxn );
-	else scorefxn_ = scorefxn->clone();
+	scorefxn_ = scorefxn->clone();
 }
 
 AlaScan::~AlaScan() = default;
@@ -125,15 +123,12 @@ AlaScan::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & dat
 	symmetry_ = tag->getOption< bool >( "symmetry", symmetry_ );
 	repack( tag->getOption< bool >( "repack", repack_ ) );
 
-	if ( symmetry_ ) {
-		using namespace core::scoring::symmetry;
-		scorefxn_ = symmetrize_scorefunction( *protocols::rosetta_scripts::parse_score_function( tag, data ) );
-		TR<<"Symmetric AlaScan with distance threshold of "<<distance_threshold_<<" Ang "<<". jump="<<jump_<<" partner1="<<chain1_<<", partner2="<<chain2_<<" using "<<repeats_<<" repeats."<<std::endl;
-		return;
-	}
-	using namespace core::scoring;
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
-	TR<<"AlaScan with distance threshold of "<<distance_threshold_<<" Ang "<<". jump="<<jump_<<" partner1="<<chain1_<<", partner2="<<chain2_<<" using "<<repeats_<<" repeats repack "<<repack()<<std::endl;
+	if ( symmetry_ ) {
+		TR<<"Symmetric AlaScan with distance threshold of "<<distance_threshold_<<" Ang "<<". jump="<<jump_<<" partner1="<<chain1_<<", partner2="<<chain2_<<" using "<<repeats_<<" repeats."<<std::endl;
+	} else {
+		TR<<"AlaScan with distance threshold of "<<distance_threshold_<<" Ang "<<". jump="<<jump_<<" partner1="<<chain1_<<", partner2="<<chain2_<<" using "<<repeats_<<" repeats repack "<<repack()<<std::endl;
+	}
 }
 
 

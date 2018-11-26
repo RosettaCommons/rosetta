@@ -36,17 +36,6 @@ SymDockBaseProtocol::SymDockBaseProtocol() :
 
 	using namespace basic::options;
 	using namespace core::scoring;
-	// if ( option[ OptionKeys::docking::symmetry::symm_definition ].user() ) {
-	//   symm_definition_file_ = option[ OptionKeys::docking::symmetry::symm_definition ];
-	// } else {
-	//  utility_exit_with_message("Need to give symmetry definition file...") ;
-	// }
-	//std::string symm_definition_file_ = "symm_def5.dat";
-	// Set up scoring functions
-	// symmetry::SymmetricScoreFunction scorefxn_sym_lowres ( ScoreFunctionFactory::create_score_function( "interchain_cen" ) );
-	// symmetry::SymmetricScoreFunction scorefxn_sym_highres ( core::scoring::PRE_TALARIS_2013_STANDARD_WTS, core::scoring::DOCK_PATCH );
-	// scorefxn_lowres_ = new symmetry::SymmetricScoreFunction( scorefxn_sym_lowres );
-	// scorefxn_hires_ = new symmetry::SymmetricScoreFunction( scorefxn_sym_highres );
 	scorefxn_lowres_ = ScoreFunctionFactory::create_score_function( "interchain_cen" );
 	scorefxn_hires_ =  ScoreFunctionFactory::create_score_function( core::scoring::PRE_TALARIS_2013_STANDARD_WTS, core::scoring::DOCK_PATCH );
 

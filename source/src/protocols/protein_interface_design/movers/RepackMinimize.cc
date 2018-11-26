@@ -20,7 +20,6 @@
 #include <protocols/symmetry/SetupForSymmetryMover.hh>
 
 // Project headers
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -96,13 +95,8 @@ RepackMinimize::RepackMinimize(
 	using namespace core::select::residue_selector;
 	target_residues( ResidueSelectorOP( new ResidueIndexSelector( target_res ) ) );
 	interface_distance_cutoff_ = interface_distance_cutoff;
-	if ( symmetry_ ) {
-		if ( scorefxn_repack ) scorefxn_repack_ = core::scoring::symmetry::symmetrize_scorefunction( *scorefxn_repack );
-		if ( scorefxn_minimize ) scorefxn_minimize_ = core::scoring::symmetry::symmetrize_scorefunction( *scorefxn_minimize );
-	} else {
-		if ( scorefxn_repack ) scorefxn_repack_ = core::scoring::symmetry::asymmetrize_scorefunction( *scorefxn_repack );
-		if ( scorefxn_minimize ) scorefxn_minimize_ = core::scoring::symmetry::asymmetrize_scorefunction( *scorefxn_minimize );
-	}
+	scorefxn_repack_ = scorefxn_repack->clone();
+	scorefxn_minimize_ = scorefxn_minimize->clone();
 	repack_non_ala_ = repack_non_ala;
 }
 

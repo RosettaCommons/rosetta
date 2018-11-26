@@ -97,7 +97,6 @@ HBondSelector::apply( core::pose::Pose const & pose ) const{
 
 	//Make sure the score function is correctly initialized
 	//Sorry, you're on your own!
-	//core::pose::symmetry::make_score_function_consistent_with_symmetric_state_of_pose( pose, scorefxn_ );
 	core::scoring::methods::EnergyMethodOptions energymethodoptions( scorefxn_->energy_method_options() );
 	energymethodoptions.hbond_options().decompose_bb_hb_into_pair_energies(true);
 	scorefxn_->set_energy_method_options( energymethodoptions );

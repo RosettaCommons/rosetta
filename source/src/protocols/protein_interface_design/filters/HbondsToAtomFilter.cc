@@ -46,7 +46,6 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/symmetry/util.hh>
 
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 
 //Objectxxxx header
 #include <ObjexxFCL/FArray1D.hh>

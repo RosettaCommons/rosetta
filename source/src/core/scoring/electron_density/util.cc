@@ -281,10 +281,6 @@ calculate_density_nbr(
 		myscore->set_weight( core::scoring::vdw, 10e-30 );
 	}
 
-	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		myscore = core::scoring::symmetry::symmetrize_scorefunction(*myscore);
-	}
-
 	(*myscore)(pose);
 
 	///////////////////////////////////////////////////////
@@ -431,9 +427,6 @@ calculate_rama(
 	if ( pose.conformation().contains_carbohydrate_residues() ) {
 		myscore->set_weight( core::scoring::sugar_bb, weight );
 	}
-	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		myscore = core::scoring::symmetry::symmetrize_scorefunction(*myscore);
-	}
 
 	(*myscore)(pose);
 
@@ -480,10 +473,6 @@ calc_per_rsd_score(
 
 	core::scoring::ScoreFunctionOP myscore( new core::scoring::ScoreFunction() );
 	myscore->set_weight( score_type, weight );
-
-	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		myscore = core::scoring::symmetry::symmetrize_scorefunction(*myscore);
-	}
 
 	(*myscore)(pose);
 	//myscore->show_line( fragbias_tr, pose ); fragbias_tr << std::endl;

@@ -57,7 +57,6 @@
 #include <core/kinematics/MoveMap.hh>
 
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/func/ScalarWeightedFunc.hh>

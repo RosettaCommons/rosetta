@@ -52,7 +52,6 @@
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/scoring/methods/PoissonBoltzmannEnergy.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 
 #include <protocols/calc_taskop_movers/DesignRepackMover.hh>
 #include <protocols/simple_task_operations/RestrictToInterface.hh>
@@ -444,11 +443,6 @@ ddG::calculate( pose::Pose const & pose_original )
 		cached_data = static_cast< PBLifetimeCacheOP > (pose.data().get_ptr< PBLifetimeCache > ( pose::datacache::CacheableDataType::PB_LIFETIME_CACHE ));
 		runtime_assert( cached_data != nullptr );
 		original_state = cached_data->get_energy_state();
-	}
-
-	if ( core::pose::symmetry::is_symmetric( pose ) ) {
-		// Except for score function conversion, symmetry is now handled inline (pack_rotamers does autodispatch).
-		scorefxn_ = core::scoring::symmetry::symmetrize_scorefunction( *scorefxn_ );
 	}
 
 	//---------------------------------

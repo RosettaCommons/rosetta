@@ -23,7 +23,6 @@
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/pose/symmetry/util.hh>
 //
 #include <protocols/indexed_structure_store/SSHashedFragmentStore.hh>
@@ -426,9 +425,6 @@ vector1< Real> StructProfileMover::calc_cenlist(Pose const & pose){
 		core::util::switch_to_residue_type_set(*centroidPose, core::chemical::CENTROID_t );
 	}
 	ScoreFunctionOP sfcen=ScoreFunctionFactory::create_score_function("score3");
-	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		sfcen=core::scoring::symmetry::symmetrize_scorefunction(*sfcen);
-	}
 	sfcen->score(*centroidPose);
 	vector1 <Real> cenlist;
 	Size nres1 = centroidPose->size();

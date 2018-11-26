@@ -19,7 +19,6 @@
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
 #include <utility/tag/Tag.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <basic/datacache/DataMap.hh>
 #include <protocols/docking/DockingProtocol.hh>
@@ -136,9 +135,8 @@ DockAndRetrieveSidechains::parse_my_tag( TagCOP const tag, basic::datacache::Dat
 	bool const ignore_default_docking_task( tag->getOption<bool>( "ignore_default_docking_task", false ) );
 
 	if ( symmetry_ ) {
-		using namespace core::scoring::symmetry;
-		ScoreFunctionOP scorelo = core::scoring::symmetry::symmetrize_scorefunction( *data.get_ptr< ScoreFunction >( "scorefxns", score_low ) );
-		ScoreFunctionOP scorehi = core::scoring::symmetry::symmetrize_scorefunction( *data.get_ptr< ScoreFunction >( "scorefxns", score_high ));
+		ScoreFunctionOP scorelo = data.get_ptr< ScoreFunction >( "scorefxns", score_low )->clone();
+		ScoreFunctionOP scorehi = data.get_ptr< ScoreFunction >( "scorefxns", score_high )->clone();
 
 		sym_docking_mover_ = protocols::symmetric_docking::SymDockProtocolOP( new protocols::symmetric_docking::SymDockProtocol( !low_res_protocol_only_, local_refine, view, scorelo, scorehi ) );
 

@@ -91,6 +91,13 @@ public:
 		accessed_options_.erase(key);
 	} // setOption
 
+	/// @brief Set the 'accessed' annotation of this option, without bothering to get the value.
+	/// Used to prevent no-longer relevant options from crashing the XML parsing.
+	void
+	setAccessed(std::string const& key) const {
+		accessed_options_[key]= key;
+	}
+
 	/// @brief Retrieve an option from the Tag with the given key name, using the
 	/// provided default value (t_default) if the option is not present in the tag.
 	/// @throws Throws a utility::excn::EXCN_Msg_Exception if the boost::lexical_cast

@@ -44,7 +44,6 @@
 #include <core/io/silent/SilentFileOptions.hh>
 
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/ScoreFunctionInfo.hh>
 #include <core/scoring/EnergyGraph.hh>
 
@@ -503,7 +502,7 @@ public:
 		std::string tag = sfd.begin()->decoy_tag();
 		Pose pose; sfd.get_structure( tag ).fill_pose( pose );
 
-		SymmetricScoreFunctionOP symm_sfxn( new SymmetricScoreFunction ); //get_score_function();
+		ScoreFunctionOP symm_sfxn( new ScoreFunction ); //get_score_function();
 		symm_sfxn->set_weight( fa_atr, 0.8 );
 		symm_sfxn->set_weight( fa_rep, 0.44 );
 		symm_sfxn->set_weight( fa_sol, 0.65 );

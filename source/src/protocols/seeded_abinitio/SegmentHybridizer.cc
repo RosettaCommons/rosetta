@@ -58,7 +58,6 @@
 #include <core/pose/util.hh>
 
 #include <core/scoring/ScoreFunction.hh>
-//#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/optimization/AtomTreeMinimizer.hh>
@@ -144,7 +143,6 @@ SegmentHybridizer::set_scorefunction(core::scoring::ScoreFunctionOP scorefxn_in)
 
 	min_scorefxn_ = scorefxn_in->clone();
 
-	//bonds_scorefxn_ = new core::scoring::symmetry::SymmetricScoreFunction();
 	bonds_scorefxn_ = scorefxn_in->clone();
 	bonds_scorefxn_->reset();
 	bonds_scorefxn_->set_weight( core::scoring::vdw, lowres_scorefxn_->get_weight( core::scoring::vdw ) );

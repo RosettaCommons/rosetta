@@ -21,7 +21,6 @@
 #include <core/conformation/symmetry/MirrorSymmetricConformation.hh>
 #include <core/conformation/symmetry/util.hh>
 #include <core/scoring/symmetry/SymmetricEnergies.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
@@ -84,29 +83,6 @@ is_mirror_symmetric( pose::Pose const & pose )
 	return conformation::symmetry::is_mirror_symmetric( pose.conformation() );
 }
 
-
-bool
-is_symmetric( scoring::ScoreFunction const & scorefxn )
-{
-	return ( dynamic_cast< scoring::symmetry::SymmetricScoreFunction const * >( &scorefxn ) );
-}
-
-
-void
-make_score_function_consistent_with_symmetric_state_of_pose(
-	pose::Pose const & pose,
-	scoring::ScoreFunctionOP & scorefxn
-) {
-	scoring::ScoreFunctionOP tmp_scorefxn = scorefxn;
-	if ( is_symmetric( pose ) && !is_symmetric( *scorefxn ) ) {
-		scorefxn = scoring::ScoreFunctionOP( new scoring::symmetry::SymmetricScoreFunction() );
-		scorefxn->assign(*tmp_scorefxn);
-	} else if ( !is_symmetric( pose ) && is_symmetric( *scorefxn) ) {
-		scorefxn = scoring::ScoreFunctionOP( new scoring::ScoreFunction() );
-		scorefxn->assign(*tmp_scorefxn);
-	}
-}
-
 /// @brief Convenience function for the number of residues in a subunit.
 /// Will return the total size for a asymmetric pose
 core::Size
@@ -118,7 +94,6 @@ get_nres_asymmetric_unit( pose::Pose const & pose ) {
 		return pose.size();
 	}
 }
-
 
 /// @details Attempts to grab the symmetry info if the pose is symmetric
 conformation::symmetry::SymmetryInfoCOP symmetry_info( pose::Pose const & pose )
@@ -1106,7 +1081,7 @@ get_buildingblock_and_neighbor_subs (Pose const &pose_in, utility::vector1<Size>
 
 	//fpd we need to first score the pose
 	Pose pose = pose_in;
-	core::scoring::symmetry::SymmetricScoreFunction sc_rep;
+	core::scoring::ScoreFunction sc_rep;
 	sc_rep.set_weight( core::scoring::fa_atr, 1.0 );
 	sc_rep( pose );
 

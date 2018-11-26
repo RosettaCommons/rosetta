@@ -19,7 +19,6 @@
 #include <protocols/simple_moves/FragmentMover.hh>
 
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/selection.hh>

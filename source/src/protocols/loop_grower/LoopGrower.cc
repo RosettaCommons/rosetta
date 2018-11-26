@@ -80,7 +80,6 @@
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/HBondDatabase.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/sequence/AnnotatedSequence.hh>
 #include <core/sequence/ScoringScheme.hh>
 #include <core/sequence/Sequence.hh>
@@ -3721,14 +3720,7 @@ Real LoopGrower::single_grow( core::pose::Pose& growpose, core::pose::Pose& grow
 				refine_cycle( growpose, growpose_cen, torsionrangelo, torsionrangehi, false, cycle, ctr, i, is_lower);
 
 
-				core::scoring::ScoreFunctionOP sf_densonly;
-				if ( core::pose::symmetry::is_symmetric( growpose ) ) {
-					//sf_densonly = core::scoring::ScoreFunctionOP( new core::scoring::symmetry::SymmetricScoreFunction );
-					core::scoring::symmetry::SymmetricScoreFunctionOP symmdens( new core::scoring::symmetry::SymmetricScoreFunction );
-					sf_densonly = utility::pointer::dynamic_pointer_cast< core::scoring::symmetry::SymmetricScoreFunction >(symmdens);
-				} else {
-					sf_densonly = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction );
-				}
+				core::scoring::ScoreFunctionOP sf_densonly( new core::scoring::ScoreFunction );
 				sf_densonly->set_weight( core::scoring::elec_dens_fast , sf_->get_weight(core::scoring::elec_dens_fast) );
 				core::scoring::ScoreFunctionOP sf_nodens;
 				sf_nodens = sf_->clone();

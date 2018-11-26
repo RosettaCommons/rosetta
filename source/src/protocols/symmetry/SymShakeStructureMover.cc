@@ -20,7 +20,6 @@
 
 
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 
@@ -121,7 +120,7 @@ SymShakeStructureMover::reduce_fa_rep(float fraction_fa_rep, core::scoring::Scor
 void
 SymShakeStructureMover::setup_for_run(core::pose::Pose & p){
 	if ( !get_scorefunction_initialized() ) {
-		core::scoring::ScoreFunctionOP s( new core::scoring::symmetry::SymmetricScoreFunction() );
+		core::scoring::ScoreFunctionOP s( new core::scoring::ScoreFunction() );
 		//std::cout << "[DEBUG]: scorefunction being initialized"<< std::endl;
 		s->set_weight(core::scoring::score_type_from_name("rama"), 4.0);
 		s->set_weight(core::scoring::score_type_from_name("omega"), 1.0);
@@ -175,10 +174,10 @@ SymShakeStructureMover::minimize_with_constraints(core::pose::Pose & p,
 	core::pose::symmetry::make_symmetric_movemap( p, *mm );
 
 	if ( get_ramp_fa_rep() ) {
-		core::scoring::symmetry::SymmetricScoreFunctionOP one_tenth_orig( core::scoring::symmetry::symmetrize_scorefunction(s) );
+		core::scoring::ScoreFunctionOP one_tenth_orig( s.clone() );
 		reduce_fa_rep(0.1,*one_tenth_orig);
 		min_struc.run(p,*mm,*one_tenth_orig,options);
-		core::scoring::symmetry::SymmetricScoreFunctionOP one_third_orig( core::scoring::symmetry::symmetrize_scorefunction(s) );
+		core::scoring::ScoreFunctionOP one_third_orig( s.clone() );
 		reduce_fa_rep(0.33,*one_third_orig);
 		min_struc.run(p,*mm,*one_third_orig,options);
 	}

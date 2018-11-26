@@ -40,7 +40,6 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreTypeManager.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/types.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <map>

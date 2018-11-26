@@ -54,7 +54,6 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/Energies.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.fwd.hh>
 #include <utility/down_cast.hh>
 #include <utility/vector1.fwd.hh>
 #include <utility/vector1.hh>
@@ -122,8 +121,7 @@ public:
 
 		core::pose::symmetry::make_symmetric_pose( pose );
 
-		scoring::ScoreFunctionOP scorefxn = scoring::get_score_function();
-		scoring::symmetry::SymmetricScoreFunctionOP sym_scorefxn = utility::pointer::dynamic_pointer_cast< scoring::symmetry::SymmetricScoreFunction > ( scorefxn );
+		scoring::ScoreFunctionOP sym_scorefxn = scoring::get_score_function();
 
 		//std::cout << "Symmetric score c2: " << (* scorefxn )( pose ) << std::endl;
 		//std::cout << "Symmetric score before: " << (* scorefxn )( pose ) << std::endl;
@@ -167,8 +165,7 @@ public:
 
 		core::pose::symmetry::make_symmetric_pose( pose );
 
-		scoring::ScoreFunctionOP scorefxn = scoring::get_score_function();
-		scoring::symmetry::SymmetricScoreFunctionOP sym_scorefxn = utility::pointer::dynamic_pointer_cast< scoring::symmetry::SymmetricScoreFunction > ( scorefxn );
+		scoring::ScoreFunctionOP sym_scorefxn = scoring::get_score_function();
 
 		//std::cout << "Symmetric score cs: " << (* scorefxn )( pose ) << std::endl;
 		//std::cout << "Symmetric score before: " << (* scorefxn )( pose ) << std::endl;
@@ -200,8 +197,7 @@ public:
 		core::pose::symmetry::make_symmetric_pose( pose );
 		//pose.dump_pdb( "c3b_before_min.pdb" );
 
-		scoring::ScoreFunctionOP scorefxn = scoring::get_score_function();
-		scoring::symmetry::SymmetricScoreFunctionOP sym_scorefxn = utility::pointer::dynamic_pointer_cast< scoring::symmetry::SymmetricScoreFunction > ( scorefxn );
+		scoring::ScoreFunctionOP sym_scorefxn = scoring::get_score_function();
 
 		//std::cout << "Symmetric score c3: " << (* scorefxn )( pose ) << std::endl;
 		//std::cout << "Symmetric score before: " << (* scorefxn )( pose ) << std::endl;
@@ -259,9 +255,6 @@ public:
 		core_init_with_additional_options( "-symmetry:symmetry_definition core/optimization/symmetry/fibril.symm -symmetry:initialize_rigid_body_dofs" );
 		//core_init_with_additional_options( "-symmetry:symmetry_definition core/optimization/symmetry/fibril_min.symdef -symmetry:initialize_rigid_body_dofs" );
 
-		//scoring::ScoreFunctionOP scorefxn = scoring::get_score_function();
-		//scoring::symmetry::SymmetricScoreFunctionOP sym_scorefxn = dynamic_cast< scoring::symmetry::SymmetricScoreFunction * > ( scorefxn() );
-
 		scoring::EnergyMap weights;
 		//1. etable
 		weights[ fa_atr] = 0.8;
@@ -314,7 +307,7 @@ public:
 		core::pose::symmetry::make_symmetric_pose( pose );
 		//pose.dump_pdb( "fibril_before_min.pdb" );
 
-		SymmetricScoreFunctionOP sym_scorefxn( new SymmetricScoreFunction );
+		ScoreFunctionOP sym_scorefxn( new ScoreFunction );
 		scoring::ScoreFunctionOP scorefxn = sym_scorefxn;
 
 		for ( Size ii = 1; ii <= (Size) end_of_score_type_enumeration; ++ii ) {
@@ -437,7 +430,7 @@ public:
 		}
 
 		// setup the options
-		scoring::ScoreFunctionOP scorefxn( new scoring::symmetry::SymmetricScoreFunction );
+		scoring::ScoreFunctionOP scorefxn( new scoring::ScoreFunction );
 
 		SymAtomTreeMinimizer minimizer;
 		MinimizerOptionsOP min_options( new MinimizerOptions( "linmin", 10.0, true, true, false ) );

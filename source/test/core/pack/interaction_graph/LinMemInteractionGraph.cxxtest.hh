@@ -32,7 +32,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
+#include <core/scoring/ScoreFunction.hh>
 
 #include <core/pack/packer_neighbors.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>

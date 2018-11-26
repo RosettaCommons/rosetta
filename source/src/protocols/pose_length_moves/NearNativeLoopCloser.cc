@@ -69,7 +69,6 @@
 #include <core/scoring/constraints/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 
 #include <core/sequence/ABEGOManager.hh>
 #include <core/sequence/SSManager.hh>
@@ -341,8 +340,7 @@ void PossibleLoop::generate_output_pose(bool output_closed,bool ideal_loop, Real
 			add_coordinate_csts_from_lookback(stub_ss_index_match_,uncached_stub_index_,resBeforeLoop_-1,true,working_poseOP);
 			add_dihedral_csts_from_lookback(stub_ss_index_match_,uncached_stub_index_,resBeforeLoop_-1,working_poseOP);
 			//Step 3 : Generate score function
-			core::scoring::ScoreFunctionOP scorefxn_tmp( core::scoring::ScoreFunctionFactory::create_score_function("score3"));
-			core::scoring::ScoreFunctionOP scorefxn(core::scoring::symmetry::asymmetrize_scorefunction(*scorefxn_tmp));
+			core::scoring::ScoreFunctionOP scorefxn( core::scoring::ScoreFunctionFactory::create_score_function("score3") );
 			scorefxn->set_weight(core::scoring::coordinate_constraint, 0.7);
 			scorefxn->set_weight(core::scoring::dihedral_constraint, 20.0 );
 			scorefxn->set_weight(core::scoring::rama,1.0);
@@ -826,12 +824,11 @@ Real NearNativeLoopCloser::close_loop(core::pose::Pose & pose) {
 				}
 			}
 			std::string new_chain_order=int_to_string.str();
-			core::scoring::ScoreFunctionOP scorefxn_tmp = core::scoring::ScoreFunctionFactory::create_score_function("score3");
+			core::scoring::ScoreFunctionOP scorefxn = core::scoring::ScoreFunctionFactory::create_score_function("score3");
 			if ( pose.is_fullatom() ) {
-				scorefxn_tmp = core::scoring::ScoreFunctionFactory::create_score_function(core::scoring::PRE_TALARIS_2013_STANDARD_WTS);
+				scorefxn = core::scoring::ScoreFunctionFactory::create_score_function(core::scoring::PRE_TALARIS_2013_STANDARD_WTS);
 
 			}
-			core::scoring::ScoreFunctionOP scorefxn(core::scoring::symmetry::asymmetrize_scorefunction(*scorefxn_tmp));
 			simple_moves::SwitchChainOrderMoverOP switch_chains(new simple_moves::SwitchChainOrderMover());
 			switch_chains->scorefxn(scorefxn);
 			switch_chains->chain_order(new_chain_order);
@@ -929,11 +926,10 @@ void NearNativeLoopCloser::combine_chains(core::pose::Pose & pose){
 	}
 	std::string new_chain_order=int_to_string.str();
 	simple_moves::SwitchChainOrderMoverOP switch_chains(new simple_moves::SwitchChainOrderMover());
-	core::scoring::ScoreFunctionOP scorefxn_tmp = core::scoring::ScoreFunctionFactory::create_score_function("score3");
+	core::scoring::ScoreFunctionOP scorefxn = core::scoring::ScoreFunctionFactory::create_score_function("score3");
 	if ( pose.is_fullatom() ) {
-		scorefxn_tmp = core::scoring::ScoreFunctionFactory::create_score_function(core::scoring::PRE_TALARIS_2013_STANDARD_WTS);
+		scorefxn = core::scoring::ScoreFunctionFactory::create_score_function(core::scoring::PRE_TALARIS_2013_STANDARD_WTS);
 	}
-	core::scoring::ScoreFunctionOP scorefxn(core::scoring::symmetry::asymmetrize_scorefunction(*scorefxn_tmp));
 	switch_chains->scorefxn(scorefxn);
 	switch_chains->chain_order(new_chain_order);
 	switch_chains->apply(pose);

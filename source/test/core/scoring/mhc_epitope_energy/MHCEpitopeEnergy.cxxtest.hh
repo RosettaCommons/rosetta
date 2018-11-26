@@ -354,16 +354,12 @@ public:
 		mhc_energy->set_up_residuearrayannealableenergy_for_packing( pose, rot_set, scorefxn );
 		core::Real presym_score = mhc_energy->calculate_energy( reslist, 0 );
 
-		//Make scorefxn symmetric
-		core::scoring::symmetry::SymmetricScoreFunctionOP sym_sfxn( new core::scoring::symmetry::SymmetricScoreFunction() );
-		sym_sfxn = core::scoring::symmetry::symmetrize_scorefunction(scorefxn);
-
 		//Make a symmetric pose, using a de novo c3 symmetry file.
 		core::Size nsub = 3; //Three subunits in the c3.sym file.
 		Pose sym_pose = pose;
 		core::pose::symmetry::make_symmetric_pose( sym_pose, "../../../../../../../../../../test/core/scoring/mhc_epitope_energy/c3.sym" );
 		//Score the pose
-		core::Real sym_score = (*sym_sfxn)(sym_pose);
+		core::Real sym_score = scorefxn(sym_pose);
 
 		//The score should be the pre-sym score * number of symmetric subunits.
 		TS_ASSERT_EQUALS( sym_score, presym_score * nsub );

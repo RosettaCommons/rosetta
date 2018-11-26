@@ -22,7 +22,6 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/util.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/Energies.hh>
 
 // Protocols headers
@@ -204,12 +203,7 @@ CrosslinkerMoverHelper::filter_by_constraints_energy(
 		add_linker_constraints_asymmetric( pose_copy, selection );
 	}
 
-	core::scoring::ScoreFunctionOP sfxn;
-	if ( symmetric ) {
-		sfxn = core::scoring::ScoreFunctionOP( core::scoring::symmetry::SymmetricScoreFunctionOP ( new core::scoring::symmetry::SymmetricScoreFunction ) );
-	} else {
-		sfxn = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction );
-	}
+	core::scoring::ScoreFunctionOP sfxn( new core::scoring::ScoreFunction );
 
 	sfxn->set_weight( core::scoring::atom_pair_constraint, 1.0 );
 	sfxn->set_weight( core::scoring::angle_constraint, 1.0 );

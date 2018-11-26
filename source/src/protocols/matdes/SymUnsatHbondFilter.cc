@@ -55,7 +55,6 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/util.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/id/AtomID_Map.hh>
 #include <basic/MetricValue.hh>
 #include <basic/options/option.hh>
@@ -180,19 +179,8 @@ SymUnsatHbondFilter::compute( core::pose::Pose const & pose, bool const & verb, 
 	}
 
 	//fpd we need to score pose here
-	core::scoring::ScoreFunctionOP scorehbond, scorehbond_refp;
-	if ( core::conformation::symmetry::is_symmetric( pose.conformation() ) ) {
-		scorehbond = core::scoring::ScoreFunctionOP( new core::scoring::symmetry::SymmetricScoreFunction( ) );
-	} else {
-		scorehbond = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction( ) );
-	}
-	if ( compare_to_ref_ ) {
-		if ( core::conformation::symmetry::is_symmetric( refp.conformation() ) ) {
-			scorehbond_refp = core::scoring::ScoreFunctionOP( new core::scoring::symmetry::SymmetricScoreFunction( ) );
-		} else {
-			scorehbond_refp = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction( ) );
-		}
-	}
+	core::scoring::ScoreFunctionOP scorehbond( new core::scoring::ScoreFunction( ) );
+	core::scoring::ScoreFunctionOP scorehbond_refp( new core::scoring::ScoreFunction( ) );
 
 	(*scorehbond)(bound);
 	core::pose::metrics::PoseMetricCalculatorOP unsat_calc_bound( new protocols::simple_pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("default", "default") );

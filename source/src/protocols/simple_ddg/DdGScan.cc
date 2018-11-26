@@ -39,7 +39,6 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreTypeManager.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/types.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <map>
@@ -169,18 +168,10 @@ DdGScan::ddG_for_single_residue( core::pose::Pose const & const_pose, core::Size
 		}
 	}
 
-	core::scoring::ScoreFunctionOP symmetry_ready_scorefxn;
-	if ( core::pose::symmetry::is_symmetric( pose_to_mutate ) ) {
-		// Except for score function conversion, symmetry is now handled inline (pack_rotamers does autodispatch).
-		symmetry_ready_scorefxn = core::scoring::symmetry::symmetrize_scorefunction( *scorefxn_ );
-	} else {
-		symmetry_ready_scorefxn = scorefxn_;
-	}
-
-	core::pack::pack_rotamers( pose_to_mutate, *symmetry_ready_scorefxn, task );
+	core::pack::pack_rotamers( pose_to_mutate, *scorefxn_, task );
 
 	// Set options for ddG mover, calculate, and return value
-	ddG_mover_->scorefxn( symmetry_ready_scorefxn );
+	ddG_mover_->scorefxn( scorefxn_ );
 
 	core::Real average( 0.0 );
 	for ( core::Size i=1; i<=repeats(); ++i ) {

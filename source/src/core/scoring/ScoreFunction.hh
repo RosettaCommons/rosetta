@@ -486,6 +486,24 @@ public:
 		kinematics::MinimizerMapBase const & min_map
 	) const;
 
+protected:
+	virtual
+	void
+	asym_setup_for_minimizing(
+		pose::Pose & pose,
+		kinematics::MinimizerMapBase const & min_map
+	) const;
+
+	virtual
+	void
+	sym_setup_for_minimizing(
+		pose::Pose & pose,
+		kinematics::MinimizerMapBase const & min_map
+	) const;
+
+public:
+
+
 	/// @brief Called after minimization.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	virtual
@@ -598,6 +616,18 @@ public:
 	void
 	setup_for_derivatives( pose::Pose & pose ) const;
 
+protected:
+
+	virtual
+	void
+	asym_setup_for_derivatives( pose::Pose & pose ) const;
+
+	virtual
+	void
+	sym_setup_for_derivatives( pose::Pose & pose ) const;
+
+public:
+
 	/// @brief
 	virtual
 	void
@@ -668,6 +698,28 @@ public:
 	void
 	eval_long_range_twobody_energies( pose::Pose & pose ) const;
 
+protected:
+
+	virtual
+	void
+	asym_eval_twobody_neighbor_energies( pose::Pose & pose ) const;
+
+	virtual
+	void
+	sym_eval_twobody_neighbor_energies( pose::Pose & pose ) const;
+
+	/// @brief
+	virtual
+	void
+	asym_eval_long_range_twobody_energies( pose::Pose & pose ) const;
+
+	/// @brief
+	virtual
+	void
+	sym_eval_long_range_twobody_energies( pose::Pose & pose ) const;
+
+public:
+
 	AllMethodsIterator
 	all_energies_begin() const;
 
@@ -731,6 +783,18 @@ public:
 	virtual
 	void
 	eval_onebody_energies( pose::Pose & pose ) const;
+
+protected:
+	virtual
+	void
+	asym_eval_onebody_energies( pose::Pose & pose ) const;
+
+
+	virtual
+	void
+	sym_eval_onebody_energies( pose::Pose & pose ) const;
+
+public:
 
 	/// This is now handled lazily by the Energies object itself
 	/// void
@@ -1129,6 +1193,31 @@ protected:
 	{
 		return any_intrares_energies_;
 	}
+
+	/////////////////////////////////////////////////////////////////////////////
+	// Symmetry specific
+	/////////////////////////////////////////////////////////////////////////////
+
+private:
+
+	void
+	intersubunit_hbond_energy( pose::Pose & pose, EnergyMap & intersubunit_energy  ) const;
+
+	void
+	symmetrical_allow_hbonds( pose::Pose & pose ) const;
+
+	void
+	set_symmetric_residue_neighbors_hbonds( pose::Pose & pose ) const;
+
+	void
+	set_symmetric_cenlist( pose::Pose & pose ) const;
+
+	void
+	correct_arrays_for_symmetry( pose::Pose & pose ) const;
+
+	void
+	correct_finalize_score( pose::Pose & pose ) const;
+
 
 	/////////////////////////////////////////////////////////////////////////////
 	// data

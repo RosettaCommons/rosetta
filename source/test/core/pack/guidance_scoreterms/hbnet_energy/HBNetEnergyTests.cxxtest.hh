@@ -28,7 +28,6 @@
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 // Protocols Headers
@@ -89,7 +88,7 @@ public:
 		pose2.update_residue_neighbors();
 		//pose2.dump_pdb( "hbnet_test2.pdb" ); //DELETE ME
 
-		core::scoring::ScoreFunctionOP sfxn2( core::scoring::symmetry::SymmetricScoreFunctionOP( new core::scoring::symmetry::SymmetricScoreFunction ) );
+		core::scoring::ScoreFunctionOP sfxn2( new core::scoring::ScoreFunction );
 		sfxn2->set_weight( core::scoring::hbnet, 1.0 );
 
 		core::Real const symm_score( (*sfxn2)(pose2) );

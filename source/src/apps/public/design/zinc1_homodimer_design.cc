@@ -48,7 +48,6 @@
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/RotamerTrialsMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/conformation/symmetry/util.hh>
 //Constraint Headers
 #include <core/scoring/func/Func.hh>
@@ -246,21 +245,21 @@ public:
 		TR << "Generating scorefunction..." << std::endl;
 		using namespace core::scoring;
 
-		ScoreFunctionOP softrep_scorefxn = ScoreFunctionFactory::create_score_function( SOFT_REP_DESIGN_WTS ); // SoftRep, will become SymmetricScoreFunction when symmetry definition file is included as an option
+		ScoreFunctionOP softrep_scorefxn = ScoreFunctionFactory::create_score_function( SOFT_REP_DESIGN_WTS );
 		softrep_scorefxn->set_weight( atom_pair_constraint, 4.0 ); // 4 distances
 		softrep_scorefxn->set_weight( angle_constraint, 2.0 );     // 10 angles (6 tetr + 4)
 		softrep_scorefxn->set_weight( dihedral_constraint, 8.0 );  // 1 dihedral per His
-		softrep_sym_scorefxn_ = new core::scoring::symmetry::SymmetricScoreFunction( *softrep_scorefxn );
+		softrep_sym_scorefxn_ = softrep_scorefxn;
 		TR << "Softrep Scorefunction: " << *softrep_sym_scorefxn_ << std::endl;
 
-		ScoreFunctionOP scorefxn = get_score_function(); // SCORE12, will become SymmetricScoreFunction when symmetry definition file is included as an option
+		ScoreFunctionOP scorefxn = get_score_function();
 		//scorefxn->set_weight( atom_pair_constraint, 4.0 ); // 4 distances
 		//scorefxn->set_weight( angle_constraint, 2.0 );     // 10 angles (6 tetr + 4)
 		//scorefxn->set_weight( dihedral_constraint, 8.0 );  // 1 dihedral per His
 		scorefxn->set_weight( res_type_constraint, basic::options::option[fav_nat_bonus].value() );
-		sym_scorefxn_ = new core::scoring::symmetry::SymmetricScoreFunction( *scorefxn );
-		TR << "Score12 Scorefunction: " << *sym_scorefxn_ << std::endl;
-		no_constraints_scorefxn_for_ddG_calc_ = new core::scoring::symmetry::SymmetricScoreFunction( *scorefxn );
+		sym_scorefxn_ = scorefxn->clone()
+			TR << "Score12 Scorefunction: " << *sym_scorefxn_ << std::endl;
+		no_constraints_scorefxn_for_ddG_calc_ = scorefxn->clone();
 
 		metal_scorefxn_ = new ScoreFunction;
 		metal_scorefxn_->set_weight( atom_pair_constraint, 4.0 ); // 4 distances
@@ -482,10 +481,10 @@ private:
 
 	utility::vector1< protocols::metal_interface::MetalSiteResidueOP > msr_;
 	core::pack::task::TaskFactoryCOP taskfactory_;
-	core::scoring::symmetry::SymmetricScoreFunctionOP softrep_sym_scorefxn_;
-	core::scoring::symmetry::SymmetricScoreFunctionOP sym_scorefxn_;
-	core::scoring::symmetry::SymmetricScoreFunctionOP no_constraints_scorefxn_for_ddG_calc_;
-	core::scoring::symmetry::SymmetricScoreFunctionOP centroid_scorefxn_for_ddG_calc_;
+	core::scoring::ScoreFunctionOP softrep_sym_scorefxn_;
+	core::scoring::ScoreFunctionOP sym_scorefxn_;
+	core::scoring::ScoreFunctionOP no_constraints_scorefxn_for_ddG_calc_;
+	core::scoring::ScoreFunctionOP centroid_scorefxn_for_ddG_calc_;
 
 	core::scoring::ScoreFunctionOP metal_scorefxn_;
 	core::scoring::ScoreFunctionOP pair_scorefxn_;

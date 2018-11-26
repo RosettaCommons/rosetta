@@ -32,8 +32,6 @@
 #include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 
-#include <core/scoring/symmetry/SymmetricScoreFunction.fwd.hh>
-
 // Package Headers
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
@@ -182,7 +180,7 @@ private:
 	void
 	classic_mcm_protocol(
 		core::pose::Pose & pose,
-		core::scoring::symmetry::SymmetricScoreFunctionOP scorefxn,
+		core::scoring::ScoreFunctionOP scorefxn,
 		protocols::moves::MonteCarloOP monteCarlo,
 		core::Size num_cycles,
 		core::Size repack_every_Nth
@@ -196,7 +194,7 @@ private:
 		protocols::moves::MoverOP repack_mover,
 		protocols::moves::MoverOP rigbod_mover,
 		core::kinematics::MoveMapOP movemap, //< would be COP but MinMover wants OP
-		core::scoring::symmetry::SymmetricScoreFunctionOP scorefxn,
+		core::scoring::ScoreFunctionOP scorefxn,
 		protocols::moves::MonteCarloOP monteCarlo
 	) const;
 

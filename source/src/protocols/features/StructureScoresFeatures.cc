@@ -211,7 +211,6 @@ StructureScoresFeatures::report_features(
 	StructureID struct_id,
 	sessionOP db_session
 ){
-	core::pose::symmetry::make_score_function_consistent_with_symmetric_state_of_pose(pose, scfxn_);
 	insert_structure_score_rows(pose, relevant_residues, struct_id, db_session);
 	return 0;
 }

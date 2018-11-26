@@ -210,7 +210,7 @@ public:
 private: // methods
 
 	void
-	setup_score_function(core::pose::Pose const & pose );
+	setup_score_function();
 
 	void
 	setup_cartmin(core::scoring::ScoreFunctionOP scorefxn) const;

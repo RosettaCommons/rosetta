@@ -245,8 +245,7 @@ FastDesign::apply( core::pose::Pose & pose )
 	FastRelax::apply( pose );
 
 	// show final scores
-	core::scoring::ScoreFunctionOP local_sfxn( get_scorefxn()->clone() );  //May need to be modified for symmetry
-	core::pose::symmetry::make_score_function_consistent_with_symmetric_state_of_pose( pose, local_sfxn ); //If the pose is symmetric but the scorefunction is not, remedy this.
+	core::scoring::ScoreFunctionOP local_sfxn( get_scorefxn()->clone() );
 	local_sfxn->show( TR, pose );
 	TR.flush();
 }

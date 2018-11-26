@@ -19,7 +19,6 @@
 #include <protocols/simple_moves/FragmentMover.hh>
 
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
@@ -108,10 +107,6 @@ void OptimizeThreadingMover::apply( core::pose::Pose & pose ) {
 
 	core::Size nres = hybridization::get_num_residues_nonvirt( pose );
 	while ( !pose.residue_type(nres).is_protein() ) --nres;
-	if ( core::pose::symmetry::is_symmetric( pose ) ) {
-		scorefxn_ = core::scoring::symmetry::symmetrize_scorefunction( *scorefxn_ );
-		scorefxn_sampling_ = core::scoring::symmetry::symmetrize_scorefunction( *scorefxn_sampling_ );
-	}
 
 	// see if the pose has NCS
 	symmetry::NCSResMappingOP ncs;

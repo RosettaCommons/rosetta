@@ -34,7 +34,6 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 
@@ -127,7 +126,7 @@ public:
 
 		make_symmetric_PackerTask_by_truncation( pose, task );
 
-		ScoreFunctionOP sfxn( new core::scoring::symmetry::SymmetricScoreFunction ); //get_score_function();
+		ScoreFunctionOP sfxn( new core::scoring::ScoreFunction ); //get_score_function();
 		sfxn->set_weight( fa_atr, 0.8 );
 		sfxn->set_weight( fa_rep, 0.44 );
 		sfxn->set_weight( fa_sol, 0.65 );

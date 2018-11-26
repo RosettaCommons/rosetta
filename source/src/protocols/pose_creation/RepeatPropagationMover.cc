@@ -54,7 +54,6 @@
 #include <core/scoring/constraints/MultiConstraint.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/rms_util.hh>
 

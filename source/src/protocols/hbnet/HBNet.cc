@@ -86,7 +86,6 @@
 #include <core/scoring/hbonds/hbonds_geom.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/sasa.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/util.hh>
 
 #include <core/select/residue_selector/LayerSelector.hh>
@@ -2486,9 +2485,6 @@ HBNet::set_symmetry( Pose & pose )
 {
 	//add_background_energies_ = 0; //we do not want to store background and intrares energies at 1-body for symmetry
 	//because 2-body energies of symm clones with themselves stored here
-
-	init_scorefxn_ = core::scoring::symmetry::symmetrize_scorefunction( *init_scorefxn_ );
-	scorefxn_ = core::scoring::symmetry::symmetrize_scorefunction( *scorefxn_ );
 
 	if ( !core::pose::symmetry::is_symmetric(pose) ) {
 		return;

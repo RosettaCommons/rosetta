@@ -50,7 +50,6 @@
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/kinematics/DomainMap.fwd.hh>
@@ -944,7 +943,6 @@ PeriodicBoxMover::apply( Pose & pose ) {
 	//pose.dump_pdb( "setup.pdb" );
 	//dump_ASU( pose, lattice_jump, "setup2.pdb" );
 
-	sf_ = core::scoring::symmetry::symmetrize_scorefunction( *sf_ );
 	core::io::silent::SilentFileOptions opts;
 	core::io::silent::SilentFileData sfd( opts ), sfd2( opts );
 

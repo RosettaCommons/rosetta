@@ -19,7 +19,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
+#include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/kinematics/Jump.hh>
 
@@ -171,8 +171,7 @@ SymDockingSlideIntoContact::SymDockingSlideIntoContact(
 {
 
 	protocols::moves::Mover::type( "SymDockingSlideIntoContact" );
-	core::scoring::ScoreFunctionOP scorefxn( core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::CENTROID_WTS, core::scoring::DOCK_LOW_PATCH ) );
-	scorefxn_ = core::scoring::symmetry::symmetrize_scorefunction( *scorefxn );
+	scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::CENTROID_WTS, core::scoring::DOCK_LOW_PATCH );
 }
 
 SymDockingSlideIntoContact::~SymDockingSlideIntoContact()= default;
@@ -233,7 +232,7 @@ FaSymDockingSlideTogether::FaSymDockingSlideTogether(
 	tolerance_(0.2)
 {
 	protocols::moves::Mover::type( "FaSymDockingSlideTogether" );
-	scorefxn_ = core::scoring::symmetry::SymmetricScoreFunctionOP( new core::scoring::symmetry::SymmetricScoreFunction() );
+	scorefxn_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() );
 	scorefxn_->set_weight( core::scoring::fa_rep, 1.0 );
 }
 
@@ -311,10 +310,9 @@ SymmetrySlider::SymmetrySlider(
 	SlideThreshold_ = "AUTOMATIC";
 
 	if ( SlideCriteriaType_ == CEN_DOCK_SCORE ) {
-		core::scoring::ScoreFunctionOP scorefxn ( core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::CENTROID_WTS, core::scoring::DOCK_LOW_PATCH ) );
-		scorefxn_ = core::scoring::symmetry::symmetrize_scorefunction( *scorefxn );
+		scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::CENTROID_WTS, core::scoring::DOCK_LOW_PATCH );
 	} else if ( SlideCriteriaType_ == FA_REP_SCORE  ) {
-		scorefxn_ = core::scoring::symmetry::SymmetricScoreFunctionOP( new core::scoring::symmetry::SymmetricScoreFunction() );
+		scorefxn_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() );
 		scorefxn_->set_weight( core::scoring::fa_rep, 1.0 );
 		(*scorefxn_)( pose );
 		core::Real const initial_fa_rep = pose.energies().total_energies()[ core::scoring::fa_rep ];
@@ -356,8 +354,7 @@ void SymmetrySlider::setup( core::pose::Pose & pose )
 	SlideCriteriaType_ = CEN_DOCK_SCORE;
 	SlideThreshold_ = "AUTOMATIC";
 
-	core::scoring::ScoreFunctionOP scorefxn ( ScoreFunctionFactory::create_score_function( CENTROID_WTS, DOCK_LOW_PATCH ) );
-	scorefxn_ = core::scoring::symmetry::symmetrize_scorefunction( *scorefxn );
+	scorefxn_ =  ScoreFunctionFactory::create_score_function( CENTROID_WTS, DOCK_LOW_PATCH );
 
 	total_num_slides_ = 0;
 

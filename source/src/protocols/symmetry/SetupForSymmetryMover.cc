@@ -25,7 +25,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
+#include <core/scoring/ScoreFunction.hh>
 
 //#include <basic/resource_manager/ResourceManager.hh>
 //#include <basic/resource_manager/util.hh>
@@ -266,7 +266,7 @@ SetupForSymmetryMover::apply( core::pose::Pose & pose )
 
 	//fpd  explicitly update disulfide lr energy container
 	if ( pose.is_fullatom() ) {
-		core::scoring::symmetry::SymmetricScoreFunction disulf_score;
+		core::scoring::ScoreFunction disulf_score;
 		disulf_score.set_weight( core::scoring::dslf_ss_dst, 1.0 );
 		disulf_score.setup_for_scoring( pose );
 	}

@@ -649,7 +649,7 @@ unsatisfied_buried_polars( core::pose::Pose & pose, core::scoring::ScoreFunction
 		pose_apart.replace_residue( i, pose_together.residue(i), false );
 	}
 
-	ScoreFunctionOP asym_sf( scoring::symmetry::asymmetrize_scorefunction( *sf ) );
+	ScoreFunctionOP asym_sf( sf->clone() );
 
 	id::AtomID_Map<Real> unsat_frequency;
 	core::pose::initialize_atomid_map( unsat_frequency, pose_together, 0.0 );
@@ -838,7 +838,7 @@ ddg (
 	esymm = easymm = 0.0;
 	perresddg.clear();
 
-	core::scoring::ScoreFunctionOP sf_asu = core::scoring::symmetry::asymmetrize_scorefunction(*sf), sfc = sf->clone();
+	core::scoring::ScoreFunctionOP sf_asu = sf->clone(), sfc = sf->clone();
 	sfc->set_weight( core::scoring::res_type_constraint , 0.0 );
 
 	(*sfc)(pose);

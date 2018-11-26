@@ -190,7 +190,7 @@ RemodelLoopMoverPoseFolder::default_score_function()
 }
 
 core::scoring::ScoreFunctionOP
-RemodelLoopMoverPoseFolder::create_scorefxn( core::pose::Pose const & pose ) const
+RemodelLoopMoverPoseFolder::create_scorefxn( core::pose::Pose const & ) const
 {
 	core::scoring::ScoreFunctionOP sfx;
 
@@ -199,8 +199,6 @@ RemodelLoopMoverPoseFolder::create_scorefxn( core::pose::Pose const & pose ) con
 	} else {
 		sfx = default_score_function();
 	}
-
-	core::pose::symmetry::make_score_function_consistent_with_symmetric_state_of_pose( pose, sfx );
 
 	return sfx;
 }

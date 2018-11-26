@@ -59,7 +59,6 @@
 #include <protocols/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 
 //JD2
 #include <protocols/jd2/JobDistributor.hh>
@@ -136,7 +135,7 @@ public:
 	void ala_interface(core::pose::Pose & pose);
 
 	core::Real calc_bb_E(core::pose::Pose & pose,
-		core::scoring::symmetry::SymmetricScoreFunctionOP scorefxn);
+		core::scoring::ScoreFunctionOP scorefxn);
 
 	MoverOP clone() const override {
 		return MoverOP( new HDdesignMover( *this ) );
@@ -155,7 +154,7 @@ private:
 	//init on new input control
 	//bool init_new_input_;
 	core::scoring::ScoreFunctionOP scorefxn_a;
-	core::scoring::symmetry::SymmetricScoreFunctionOP scorefxn_;
+	core::scoring::ScoreFunctionOP scorefxn_;
 	TaskFactoryOP  tf_design_;
 	//kinematics::MoveMapOP movemap_;
 	pack::task::PackerTaskOP task_design_;
@@ -179,7 +178,7 @@ private:
 HDdesignMover::HDdesignMover() {
 	// variable definitions
 	scorefxn_a = core::scoring::get_score_function();
-	scorefxn_ = core::scoring::symmetry::symmetrize_scorefunction( *scorefxn_a );
+	scorefxn_ = scorefxn_a->clone();
 	tf_design_ = TaskFactoryOP( new TaskFactory() );
 	//movemap_ = new core::kinematics::MoveMap();
 	//options
@@ -363,13 +362,13 @@ void HDdesignMover::ala_interface(core::pose::Pose & pose ){
 ///////////////////////////////////////////////////////////////
 //finds the bb-bb hbonding energy between chains and returns it
 core::Real HDdesignMover::calc_bb_E(core::pose::Pose & pose,
-	core::scoring::symmetry::SymmetricScoreFunctionOP scorefxn){
+	core::scoring::ScoreFunctionOP scorefxn){
 
 	using namespace core::scoring::hbonds;
 
 	//make copies to avoid screwing up real score and pose
 	core::pose::Pose pose_copy ( pose );
-	core::scoring::symmetry::SymmetricScoreFunctionOP scorefxn_copy (scorefxn);
+	core::scoring::ScoreFunctionOP scorefxn_copy (scorefxn);
 	//set up dssp info
 	core::scoring::dssp::Dssp dssp( pose_copy );
 	dssp.insert_ss_into_pose( pose_copy );
@@ -467,8 +466,7 @@ void HDdesignMover::apply (pose::Pose & pose ) {
 		//using namespace core::scoring;
 		symmetric_docking::SymDockProtocolOP dock_mover( new symmetric_docking::SymDockProtocol );
 		dock_mover->apply(pose);
-		scoring::ScoreFunctionOP dock_score_apple = scoring::ScoreFunctionFactory::create_score_function( "docking", "docking_min" );
-		core::scoring::symmetry::SymmetricScoreFunctionOP sym_dock_score = core::scoring::symmetry::symmetrize_scorefunction( *dock_score_apple );
+		core::scoring::ScoreFunctionOP sym_dock_score = scoring::ScoreFunctionFactory::create_score_function( "docking", "docking_min" );
 		TR << "Docking SCORE final: " << (*sym_dock_score)(pose) << std::endl;
 		TR << "Default SCORE after docking: " << (*scorefxn_)(pose) << std::endl;
 		//debugging checks

@@ -33,7 +33,6 @@
 
 #include <utility/file/file_sys_util.hh>
 
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/pose/symmetry/util.hh>
 #include <iostream>
 
@@ -123,7 +122,6 @@ public:
 		// test score3 difference
 		/*  core::scoring::ScoreFunctionOP scorefxn3_sym =
 		core::scoring::ScoreFunctionFactory::create_score_function( "score3" );
-		scorefxn3_sym = new core::scoring::symmetry::SymmetricScoreFunction(*scorefxn3_sym);
 		Real score3_ref = (*scorefxn3_sym)(ref_pose);
 		Real score3_restored = (*scorefxn3_sym)(restored_pose);
 		Real score3_del = std::fabs( score3_restored - score3_ref );
@@ -135,7 +133,6 @@ public:
 		// test score13 difference
 		core::scoring::ScoreFunctionOP scorefxn13_sym =
 			core::scoring::ScoreFunctionFactory::create_score_function( "score13_env_hb" );
-		scorefxn13_sym = core::scoring::symmetry::symmetrize_scorefunction(*scorefxn13_sym);
 		Real score13_ref = (*scorefxn13_sym)(ref_pose);
 		Real score13_restored = (*scorefxn13_sym)(restored_pose);
 		Real score13_del = std::fabs( score13_restored - score13_ref );

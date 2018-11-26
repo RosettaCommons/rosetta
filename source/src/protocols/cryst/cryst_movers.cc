@@ -35,7 +35,6 @@
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoringManager.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/lkball/LK_BallEnergy.hh>
 
@@ -268,8 +267,7 @@ core::Real ReportGradientsMover::compute(core::pose::Pose & pose ) {
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation const & > ( pose.conformation() ) );
 		core::conformation::symmetry::SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
-		// symmetrize scorefunct & movemap
-		working_scorefxn = core::scoring::symmetry::symmetrize_scorefunction( *working_scorefxn );
+		// symmetrize movemap
 		core::pose::symmetry::make_symmetric_movemap( pose, move_map );
 	}
 
@@ -1111,10 +1109,6 @@ void TagPoseWithRefinementStatsMover::apply( core::pose::Pose & pose ) {
 	/*core::Real xraytgt =*/ core::scoring::cryst::getPhenixInterface().getScore( pose );
 
 	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
-	//fpd if the pose is symmetric use a symmetric scorefunction
-	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		scorefxn = core::scoring::symmetry::symmetrize_scorefunction( *scorefxn );
-	}
 	core::Real score = (*scorefxn)(pose);
 	core::io::RemarkInfo remark;
 

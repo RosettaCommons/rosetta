@@ -28,7 +28,6 @@
 #include <core/pose/symmetry/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 
 
 #include <basic/Tracer.hh>
@@ -63,7 +62,6 @@ public: // tests
 		using namespace core::pose;
 		using namespace core::pose::symmetry;
 		using namespace core::scoring;
-		using namespace core::scoring::symmetry;
 
 		Pose pose;
 		core::import_pose::pose_from_file(pose, "core/scoring/symmetry/test_in.pdb", core::import_pose::PDB_file);
@@ -72,20 +70,8 @@ public: // tests
 		std::string symm_def("core/scoring/symmetry/sym_def.dat");
 		make_symmetric_pose(symm_pose, symm_def);
 
-		ScoreFunctionOP scfxn( new ScoreFunction() );
-		ScoreFunctionOP symm_scfxn( new SymmetricScoreFunction() );
-
 		TS_ASSERT(!is_symmetric(pose));
-		TS_ASSERT(!is_symmetric(*scfxn));
 		TS_ASSERT(is_symmetric(symm_pose));
-		TS_ASSERT(is_symmetric(*symm_scfxn));
-
-		make_score_function_consistent_with_symmetric_state_of_pose(pose, symm_scfxn);
-		TS_ASSERT(!is_symmetric(*symm_scfxn));
-
-		make_score_function_consistent_with_symmetric_state_of_pose(symm_pose, scfxn);
-		TS_ASSERT(is_symmetric(*scfxn));
-
 	}
 
 	void test_symmetrize_fold_tree()

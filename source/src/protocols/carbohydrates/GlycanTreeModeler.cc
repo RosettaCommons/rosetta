@@ -337,7 +337,7 @@ GlycanTreeModeler::is_quenched() const {
 }
 
 void
-GlycanTreeModeler::setup_score_function(core::pose::Pose const & tree_pose) {
+GlycanTreeModeler::setup_score_function() {
 
 	//Create Scorefunction if needed.
 	if ( ! scorefxn_ ) {
@@ -349,13 +349,6 @@ GlycanTreeModeler::setup_score_function(core::pose::Pose const & tree_pose) {
 		core::scoring::ScoreFunctionOP local= scorefxn_->clone();
 		setup_cartmin(local);
 		scorefxn_ = local;
-	}
-
-	if ( core::pose::symmetry::is_symmetric(tree_pose) ) {
-		TR <<"Ensuring ScoreFunction is symmetric" << std::endl;
-		core::scoring::ScoreFunctionOP local_scorefxn = scorefxn_->clone();
-		core::pose::symmetry::make_score_function_consistent_with_symmetric_state_of_pose(tree_pose, local_scorefxn);
-		scorefxn_ = local_scorefxn;
 	}
 }
 
@@ -410,7 +403,7 @@ GlycanTreeModeler::apply( core::pose::Pose & pose){
 
 	ResidueSubset min_subset = starting_subset;
 
-	setup_score_function( pose );
+	setup_score_function();
 	scorefxn_->score( pose );
 
 

@@ -20,7 +20,6 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoringManager.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/etable/EtableOptions.hh>
@@ -61,7 +60,6 @@ void ScoreFunctionLoader::load_data(
 
 	for ( TagCOP scorefxn_tag : scorefxn_tags ) {
 		using namespace core::scoring;
-		using namespace core::scoring::symmetry;
 
 		ScoreFunctionOP in_scorefxn;
 		std::string scorefxn_name( scorefxn_tag->getName() );
@@ -292,11 +290,9 @@ void ScoreFunctionLoader::load_data(
 			in_scorefxn->set_weight( backbone_stub_constraint, hs_hash );
 		}
 
-		//fpd should we symmetrize scorefunction?
-		bool const scorefxn_symm( scorefxn_tag->getOption<bool>( "symmetric", false ) );
-		if ( scorefxn_symm ) {
-			in_scorefxn = core::scoring::symmetry::symmetrize_scorefunction( *in_scorefxn );
-			TR<<"symmetrizing "<<scorefxn_name<< std::endl;
+		if (  scorefxn_tag->hasOption( "symmetric" ) ) { // To avoid errors and be compatible, we still need to check this option
+			scorefxn_tag->setAccessed( "symmetric" );
+			TR << "Scorefunction tag contains 'symmetric' option. This is no longer needed." << std::endl;
 		}
 
 		// auto-generate and set cache-tags for bound and unbound energy states, if PB term is used.

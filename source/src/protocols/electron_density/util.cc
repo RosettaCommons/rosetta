@@ -26,7 +26,6 @@
 #include <core/conformation/Residue.hh>
 
 // Symmetry
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/pose/symmetry/util.hh>
 
 #include <protocols/rigid/RB_geometry.hh>
@@ -220,9 +219,6 @@ core::Real dockPoseIntoMap( core::pose::Pose & pose, std::string const & align_i
 
 	// minimization
 	core::scoring::ScoreFunctionOP scorefxn_dens( new core::scoring::ScoreFunction() );
-	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		scorefxn_dens = core::scoring::symmetry::symmetrize_scorefunction( *scorefxn_dens );
-	}
 	core::scoring::electron_density::add_dens_scores_from_cmdline_to_scorefxn( *scorefxn_dens );
 
 	core::scoring::ScoreFunctionOP scorefxn_input = core::scoring::get_score_function();
@@ -266,7 +262,7 @@ core::Real dockPoseIntoMap( core::pose::Pose & pose, std::string const & align_i
 		TR << std::endl;
 
 		if ( isSymm ) {
-			core::scoring::ScoreFunctionOP symmscorefxn_dens = core::scoring::symmetry::symmetrize_scorefunction( *scorefxn_dens );
+			core::scoring::ScoreFunctionOP symmscorefxn_dens = scorefxn_dens->clone();
 			core::pose::symmetry::make_symmetric_movemap( pose, *rbmm );
 			moves::MoverOP min_mover( new minimization_packing::MinMover( rbmm, symmscorefxn_dens,  "lbfgs_armijo_nonmonotone", 1e-5, true ) );
 			min_mover->apply( pose );

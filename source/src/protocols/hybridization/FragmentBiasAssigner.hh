@@ -36,7 +36,6 @@
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 
 #include <numeric/random/random.hh>
 #include <numeric/random/WeightedSampler.hh>

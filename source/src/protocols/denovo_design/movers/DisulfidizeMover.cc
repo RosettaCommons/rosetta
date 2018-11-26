@@ -39,7 +39,6 @@
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/disulfides/DisulfideMatchingPotential.hh>
 #include <core/util/disulfide_util.hh>
 #include <protocols/rosetta_scripts/util.hh>
@@ -295,9 +294,6 @@ DisulfidizeMover::process_pose(
 	pose.fold_tree( remove_all_jump_atoms( pose.fold_tree() ) );
 
 	core::scoring::ScoreFunctionOP sfxn( sfxn_ ? sfxn_->clone() : core::scoring::get_score_function() );
-	if ( is_symmetric ) {
-		runtime_assert_string_msg( core::pose::symmetry::is_symmetric(*sfxn), "Error in protocols::denovo_design::movers::DisulfidizeMover::process_pose().  A symmetric scorefunction must be provided for symmetric poses." );
-	}
 
 	// get two sets of residues which will be connected by disulfides
 	core::select::residue_selector::ResidueSubset subset1;
@@ -589,11 +585,7 @@ DisulfidizeMover::find_possible_disulfides(
 	all_residues.insert( set2.begin(), set2.end() );
 	construct_poly_ala_pose( pose_copy, keep_current_ds_, all_residues ); //Updated to work with D-residues.
 
-	core::scoring::ScoreFunctionOP sfxn_disulfide_only (
-		core::pose::symmetry::is_symmetric(pose) ?
-		core::scoring::ScoreFunctionOP( new core::scoring::symmetry::SymmetricScoreFunction() ) :
-		core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() )
-	);
+	core::scoring::ScoreFunctionOP sfxn_disulfide_only ( new core::scoring::ScoreFunction() );
 	sfxn_disulfide_only->set_weight(core::scoring::dslf_fa13, 1.0);
 
 	for ( unsigned long itr : set1 ) {

@@ -105,11 +105,6 @@ ConstraintScoreFilter::report_sm( core::pose::Pose const & pose ) const
 	sfx_op->set_weight( core::scoring::coordinate_constraint, 1.0 );
 	sfx_op->set_weight( core::scoring::res_type_constraint, 1.0 );
 
-	if ( core::pose::symmetry::is_symmetric( posecopy ) ) {
-		// Why does this take an OP instead of a non-const &???
-		core::pose::symmetry::make_score_function_consistent_with_symmetric_state_of_pose( posecopy, sfx_op );
-	}
-
 	protocols::constraint_generator::AddConstraints( cgs_ ).apply( posecopy );
 	sfx_op->show( TR, posecopy );
 	TR.flush();

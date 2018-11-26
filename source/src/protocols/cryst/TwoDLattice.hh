@@ -26,7 +26,6 @@
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/util.hh>

@@ -43,7 +43,6 @@
 #include <protocols/symmetry/SetupForSymmetryMover.hh> //create symmetric homodimer from input monomer via symmetry:symmetry_definition option
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 //#include <core/conformation/symmetry/util.hh>
 //#include <core/conformation/symmetry/SymmetricConformation.hh>
 
@@ -224,7 +223,7 @@ public:
 		fa_metal_scorefxn_->set_weight( angle_constraint, 1.0 );
 
 		//SCOREFUNCTION --> make symmetric
-		fa_metal_sym_scorefxn_ = core::scoring::symmetry::symmetrize_scorefunction( *fa_metal_scorefxn_ );
+		fa_metal_sym_scorefxn_ = fa_metal_scorefxn_->clone();
 		TR << "fullatom + metal scorefunction: " << *fa_metal_sym_scorefxn_ << std::endl;
 
 
@@ -340,7 +339,7 @@ private:
 
 	core::pack::task::TaskFactoryOP taskfactory_;
 	core::scoring::ScoreFunctionOP fa_metal_scorefxn_;
-	core::scoring::symmetry::SymmetricScoreFunctionOP fa_metal_sym_scorefxn_;
+	core::scoring::ScoreFunctionOP fa_metal_sym_scorefxn_;
 
 	protocols::minimization_packing::PackRotamersMoverOP sym_pack_mover_;
 	protocols::minimization_packing::MinMoverOP sym_minmover_;

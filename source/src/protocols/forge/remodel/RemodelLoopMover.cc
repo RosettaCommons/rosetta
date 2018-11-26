@@ -63,7 +63,6 @@
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 
 
 #include <core/sequence/ABEGOManager.hh>

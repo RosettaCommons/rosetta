@@ -39,7 +39,6 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/pose/symmetry/util.hh>
@@ -92,8 +91,6 @@ core::Real getMLweight( core::scoring::ScoreFunction & scorefxn, core::pose::Pos
 		// symmetrize scorefunct & movemap
 		bool const old_sym_min( basic::options::option[ basic::options::OptionKeys::optimization::old_sym_min ]() );
 
-		rosetta_scorefxn = core::scoring::symmetry::symmetrize_scorefunction( *rosetta_scorefxn );
-		xtal_scorefxn = core::scoring::symmetry::symmetrize_scorefunction( *xtal_scorefxn );
 		core::pose::symmetry::make_symmetric_movemap( pose, move_map );
 
 		kinematics::MoveMap semisym_move_map;
@@ -202,9 +199,7 @@ core::Real getMLweight_cart( core::scoring::ScoreFunction & scorefxn, core::pose
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation const & > ( pose.conformation() ) );
 		core::conformation::symmetry::SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
-		// symmetrize scorefunct & movemap
-		rosetta_scorefxn = core::scoring::symmetry::symmetrize_scorefunction( *rosetta_scorefxn );
-		xtal_scorefxn = core::scoring::symmetry::symmetrize_scorefunction( *xtal_scorefxn );
+		// symmetrize movemap
 		core::pose::symmetry::make_symmetric_movemap( pose, move_map );
 	}
 

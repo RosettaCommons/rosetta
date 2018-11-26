@@ -16,7 +16,6 @@
 
 #include <protocols/symmetry/SymShakeStructureMover.fwd.hh>
 #include <protocols/simple_moves/ShakeStructureMover.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.fwd.hh>
 
 // C++ headers
 

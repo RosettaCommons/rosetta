@@ -22,7 +22,6 @@
 // Project headers
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/pose/symmetry/util.hh>
 
 #include <core/conformation/symmetry/SymmData.fwd.hh>
@@ -46,7 +45,6 @@ static basic::Tracer TR("test.scoring.fiber_diffraction.FiberDiffractionEnergy")
 
 using namespace core;
 using namespace scoring;
-using namespace scoring::symmetry;
 using namespace pose;
 
 
@@ -84,7 +82,7 @@ public:
 
 		core::Real const TOL(1e-5);
 
-		SymmetricScoreFunction sfxn;
+		ScoreFunction sfxn;
 		sfxn.set_weight(fiberdiffraction, 1 );
 		Energy score = sfxn( pose );
 
@@ -103,7 +101,7 @@ public:
 
 		core::Real const TOL(1e-5);
 
-		SymmetricScoreFunction sfxn;
+		ScoreFunction sfxn;
 		sfxn.set_weight(fiberdiffractiondens, 1 );
 
 		Energy score = sfxn( pose );

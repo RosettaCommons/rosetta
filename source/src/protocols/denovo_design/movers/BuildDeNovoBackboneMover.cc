@@ -587,10 +587,9 @@ BuildDeNovoBackboneMover::create_loops(
 }
 
 core::scoring::ScoreFunctionOP
-get_score_function( core::pose::Pose const & pose )
+get_score_function( core::pose::Pose const & )
 {
 	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
-	core::pose::symmetry::make_score_function_consistent_with_symmetric_state_of_pose( pose, scorefxn );
 	return scorefxn;
 }
 

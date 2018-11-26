@@ -73,7 +73,6 @@ using core::scoring::ScoreFunctionOP;
 using core::scoring::get_score_function;
 // using core::scoring::ScoreTypeManager;
 // using core::scoring::ScoreTypes;
-using core::pose::symmetry::make_score_function_consistent_with_symmetric_state_of_pose;
 using protocols::filters::Filters_map;
 using basic::datacache::DataMap;
 using protocols::moves::Movers_map;

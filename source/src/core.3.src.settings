@@ -895,7 +895,6 @@ sources = {
 	],
 	"core/scoring/symmetry": [
 		"SymmetricEnergies",
-		"SymmetricScoreFunction",
 	],
 	"core/scoring/trie": [
 		"CPDataCorrespondence",

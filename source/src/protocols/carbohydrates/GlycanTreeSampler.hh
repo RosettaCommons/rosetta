@@ -201,7 +201,7 @@ private:
 	setup_default_task_factory(utility::vector1< bool > const & glycan_residues, core::pose::Pose const & pose );
 
 	void
-	setup_score_function(core::pose::Pose const & pose );
+	setup_score_function();
 
 	void
 	setup_cartmin(core::scoring::ScoreFunctionOP scorefxn) const;

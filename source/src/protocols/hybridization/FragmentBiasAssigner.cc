@@ -34,7 +34,6 @@
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/electron_density/util.hh>
 
 #include <numeric/random/random.hh>
@@ -182,10 +181,6 @@ cal_perrsd_score(
 
 	core::scoring::ScoreFunctionOP myscore( new core::scoring::ScoreFunction() );
 	myscore->set_weight( score_type, weight );
-
-	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		myscore = core::scoring::symmetry::symmetrize_scorefunction(*myscore);
-	}
 
 	(*myscore)(pose);
 	//myscore->show_line( fragbias_tr, pose ); fragbias_tr << std::endl;
@@ -442,10 +437,6 @@ density(
 		myscore->set_weight( core::scoring::fa_rep, 1.0 );
 	} else {
 		myscore->set_weight( core::scoring::vdw, 1.0 );
-	}
-
-	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		myscore = core::scoring::symmetry::symmetrize_scorefunction(*myscore);
 	}
 
 	(*myscore)(pose);

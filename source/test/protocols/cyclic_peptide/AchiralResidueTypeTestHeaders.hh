@@ -25,7 +25,6 @@
 #include <core/import_pose/import_pose.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/RamaPrePro.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
@@ -83,7 +82,7 @@ public:
 		flip.apply( *pose2 );
 
 		core::scoring::ScoreFunctionOP sfxn( core::scoring::get_score_function() ); //Get whatever the current scorefunction is.
-		core::scoring::symmetry::SymmetricScoreFunctionOP sfxn_symm( core::scoring::symmetry::symmetrize_scorefunction( *sfxn ) ); //Set up a symmetric version
+		core::scoring::ScoreFunctionOP sfxn_symm( sfxn->clone() ); //Set up a symmetric version
 		core::Real const asymm_energy_1( (*sfxn)(*pose) );
 		core::Real const asymm_energy_2( (*sfxn)(*pose2) );
 		TR << "E1=" << asymm_energy_1 << std::endl;

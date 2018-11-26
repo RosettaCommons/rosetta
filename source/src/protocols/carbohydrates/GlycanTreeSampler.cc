@@ -421,7 +421,7 @@ GlycanTreeSampler::set_uniform_sd_sampling(bool uniform_sd_sampling){
 }
 
 void
-GlycanTreeSampler::setup_score_function(core::pose::Pose const & pose) {
+GlycanTreeSampler::setup_score_function() {
 
 	//Create Scorefunction if needed.
 	if ( ! scorefxn_ ) {
@@ -432,13 +432,6 @@ GlycanTreeSampler::setup_score_function(core::pose::Pose const & pose) {
 	if ( cartmin_ ) {
 		core::scoring::ScoreFunctionOP local_scorefxn = scorefxn_->clone();
 		setup_cartmin(local_scorefxn);
-		scorefxn_ = local_scorefxn;
-	}
-
-	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		TR <<"Ensuring ScoreFunction is symmetric" << std::endl;
-		core::scoring::ScoreFunctionOP local_scorefxn = scorefxn_->clone();
-		core::pose::symmetry::make_score_function_consistent_with_symmetric_state_of_pose(pose, local_scorefxn);
 		scorefxn_ = local_scorefxn;
 	}
 }
@@ -680,7 +673,7 @@ GlycanTreeSampler::init_objects(core::pose::Pose & pose ){
 
 	TR << "initializing objects " << std::endl;
 
-	setup_score_function(pose);
+	setup_score_function();
 	scorefxn_->score(pose);
 
 	if ( ! selector_ ) selector_ = GlycanResidueSelectorOP( new GlycanResidueSelector());

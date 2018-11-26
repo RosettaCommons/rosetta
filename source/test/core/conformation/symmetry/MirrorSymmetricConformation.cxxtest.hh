@@ -29,7 +29,6 @@
 #include <src/core/id/AtomID.hh>
 #include <src/core/id/TorsionID.hh>
 #include <src/core/scoring/ScoreFunction.hh>
-#include <src/core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <src/core/pack/pack_rotamers.hh>
 #include <src/core/pack/make_symmetric_task.hh>
 #include <src/core/pack/task/TaskFactory.hh>
@@ -168,7 +167,7 @@ public:
 		}
 
 		// Set up score function
-		core::scoring::symmetry::SymmetricScoreFunction scorefxn;
+		core::scoring::ScoreFunction scorefxn;
 		scorefxn.set_weight( core::scoring::aa_composition, 1 );
 		scorefxn.set_weight( core::scoring::fa_atr, 0.01 );
 		scorefxn.set_weight( core::scoring::fa_rep, 0.01 );

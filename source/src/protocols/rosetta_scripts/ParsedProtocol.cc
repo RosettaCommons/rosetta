@@ -39,7 +39,6 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 
 // JD2 headers
 #include <protocols/jd2/Job.hh>
@@ -203,9 +202,6 @@ ParsedProtocol::final_score(core::pose::Pose & pose) const {
 
 	if ( ! scorefxn ) { return; }
 
-	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		scorefxn = core::scoring::symmetry::symmetrize_scorefunction( *scorefxn );
-	}
 	(*scorefxn)(pose);
 }
 

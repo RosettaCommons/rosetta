@@ -16,7 +16,6 @@
 
 // Package headers
 
-//#include <core/scoring/symmetry/SymmetricScoreFunction.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
 #include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
@@ -31,7 +30,7 @@
 #include <utility/vector1.hh>
 
 #include <core/conformation/symmetry/SymDof.fwd.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.fwd.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/rigid/RigidBodyMover.fwd.hh>
 
 
@@ -94,7 +93,7 @@ private:
 	// dof to allow
 	std::map< Size, core::conformation::symmetry::SymDof > dofs_;
 	// scorefxn to use
-	core::scoring::symmetry::SymmetricScoreFunctionOP scorefxn_;
+	core::scoring::ScoreFunctionOP scorefxn_;
 };
 
 class FaSymDockingSlideTogether; // fwd declaration
@@ -121,7 +120,7 @@ private:
 	// dof to allow
 	std::map< Size, core::conformation::symmetry::SymDof > dofs_;
 	// scorefxn to use
-	core::scoring::symmetry::SymmetricScoreFunctionOP scorefxn_;
+	core::scoring::ScoreFunctionOP scorefxn_;
 	core::Real tolerance_; ///< how accurate do you want to be?
 
 };
@@ -179,7 +178,7 @@ private:
 	std::map< core::Size, core::kinematics::Jump > InitialJumps_;
 	std::map< core::Size, bool > InvertJump_;
 	core::conformation::symmetry::SlideCriteriaType SlideCriteriaType_;
-	core::scoring::symmetry::SymmetricScoreFunctionOP scorefxn_;
+	core::scoring::ScoreFunctionOP scorefxn_;
 	std::string SlideThreshold_;
 	bool reset_slide_;
 	core::Size total_num_slides_;

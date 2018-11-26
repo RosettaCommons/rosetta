@@ -37,7 +37,6 @@
 
 #include <core/conformation/symmetry/SymDof.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

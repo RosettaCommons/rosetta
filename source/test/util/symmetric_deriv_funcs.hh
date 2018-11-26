@@ -16,12 +16,12 @@
 
 // Test headers
 #include <test/util/deriv_funcs.hh>
+#include <cxxtest/TestSuite.h>
 
 // Project headers
 #include <core/scoring/symmetry/SymmetricEnergies.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/optimization/NumericalDerivCheckResult.hh>
 #include <core/optimization/CartesianMinimizerMap.hh>
 #include <core/optimization/CartesianMultifunc.hh>
@@ -41,7 +41,7 @@ class SymmetricAtomDerivValidator
 {
 private:
 	core::pose::PoseOP pose_;
-	core::scoring::symmetry::SymmetricScoreFunctionOP sfxn_;
+	core::scoring::ScoreFunctionOP sfxn_;
 	core::kinematics::MoveMapOP move_map_;
 	core::optimization::symmetry::SymMinimizerMapOP sym_min_map_;
 	//bool auto_update_; -- no autoupdate in symmetry
@@ -52,15 +52,15 @@ public:
 	inline SymmetricAtomDerivValidator() : nonzero_deriv_only_( false ) {}
 	inline SymmetricAtomDerivValidator(
 		core::pose::Pose const & pose,
-		core::scoring::symmetry::SymmetricScoreFunction const & sfxn,
+		core::scoring::ScoreFunction const & sfxn,
 		core::kinematics::MoveMap const & move_map
 	) :
 		pose_( new core::pose::Pose( pose )),
-		sfxn_( core::scoring::symmetry::symmetrize_scorefunction( sfxn ) ),
+		sfxn_( sfxn.clone() ),
 		move_map_( new core::kinematics::MoveMap( move_map )),
 		nonzero_deriv_only_( false )
 	{}
-	inline void set_score_function( core::scoring::symmetry::SymmetricScoreFunction const & sfxn ) { sfxn_ = core::scoring::symmetry::symmetrize_scorefunction(sfxn); }
+	inline void set_score_function( core::scoring::ScoreFunction const & sfxn ) { sfxn_ = sfxn.clone(); }
 	inline void set_pose( core::pose::Pose const & p ) { pose_ = core::pose::PoseOP( new core::pose::Pose( p ) ); }
 	inline void set_movemap( core::kinematics::MoveMap const & mm ) { move_map_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap( mm ) ); }
 	inline void set_nonzero_deriv_only( bool setting ) { nonzero_deriv_only_ = setting; }

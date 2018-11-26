@@ -915,14 +915,14 @@ struct HubDenovo {
 		}
 		using namespace core::scoring;
 		ScoreFunctionOP s4smooth( ScoreFunctionFactory::create_score_function("score4_smooth") );
-		sf3 = core::scoring::symmetry::symmetrize_scorefunction( *s4smooth );
+		sf3 = s4smooth->clone();
 		Real cstwt = 2.0*Real(cfg.nres)/Real(cfg.cst_bb.size());
 		if ( cfg.cst_bb.size()==0 ) cstwt = 0.0;
 		sf3->set_weight(atom_pair_constraint,cstwt);
 		sf3->set_weight(vdw,3.0);
 		sfsym  = get_score_function();
 		sfsymnocst  = get_score_function();
-		sfasym = core::scoring::symmetry::asymmetrize_scorefunction(*sfsym);
+		sfasym = sfsym->clone();
 		sfsym->set_weight(atom_pair_constraint,4*cstwt);
 		core::chemical::ResidueTypeSetCOP rtsfa( core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard") );
 

@@ -256,7 +256,6 @@ utility::vector1< utility::vector1 < core::Size > > UnsatSelector::compute(core:
 
 	//The scorefunction to use:
 	core::scoring::ScoreFunctionOP scorefxn( (scorefxn_ ? scorefxn_ : core::scoring::get_score_function()->clone() ) );
-	core::pose::symmetry::make_score_function_consistent_with_symmetric_state_of_pose( pose, scorefxn );
 
 	core::scoring::methods::EnergyMethodOptionsOP energy_options( new core::scoring::methods::EnergyMethodOptions(scorefxn->energy_method_options()) );
 

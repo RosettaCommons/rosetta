@@ -130,7 +130,6 @@ Size TotalScoreFeatures::report_features(
 
 	Pose non_const_pose = pose;
 	runtime_assert(scorefxn_.get() != nullptr);
-	core::pose::symmetry::make_score_function_consistent_with_symmetric_state_of_pose(pose, scorefxn_);
 	Real total_score = scorefxn_->score(non_const_pose);
 
 	// Write the total score to the database.

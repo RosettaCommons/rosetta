@@ -76,7 +76,6 @@
 #include <core/scoring/methods/LongRangeTwoBodyEnergy.fwd.hh>
 #include <core/scoring/methods/TwoBodyEnergy.fwd.hh>
 #include <core/scoring/methods/WholeStructureEnergy.fwd.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.fwd.hh>
 #include <protocols/rotamer_recovery/RRComparer.fwd.hh>
 #include <protocols/rotamer_recovery/RRProtocol.fwd.hh>
 #include <protocols/rotamer_recovery/RRReporter.fwd.hh>

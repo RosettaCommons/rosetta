@@ -314,7 +314,6 @@ RotamerRecoveryFeatures::report_features(
 	RotamerRecovery rotamer_recovery(protocol_, comparer_, reporter_);
 
 	Pose pose=pose_in;
-	core::pose::symmetry::make_score_function_consistent_with_symmetric_state_of_pose(pose, scfxn_);
 	(*scfxn_)(pose);
 
 	if ( task_factory_ == nullptr ) {

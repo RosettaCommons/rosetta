@@ -50,7 +50,6 @@
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/minimization_packing/RotamerTrialsMover.hh>
 
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/rms_util.hh>
@@ -79,7 +78,6 @@
 #include <core/kinematics/MoveMap.hh>
 
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
@@ -428,8 +426,8 @@ CartesianSampler::apply_frame(
 	mm_rb.set_jump ( true );
 
 	// set up packer
-	core::scoring::ScoreFunctionOP nonsymm_fa_scorefxn = core::scoring::symmetry::asymmetrize_scorefunction(*fa_scorefxn_);
-	core::scoring::ScoreFunctionOP nonsymm_cen_scorefxn = core::scoring::symmetry::asymmetrize_scorefunction(*scorefxn_);
+	core::scoring::ScoreFunctionOP nonsymm_fa_scorefxn = fa_scorefxn_->clone();
+	core::scoring::ScoreFunctionOP nonsymm_cen_scorefxn = scorefxn_->clone();
 
 	if ( bbmove_ && nonsymm_fa_scorefxn->get_weight( core::scoring::coordinate_constraint ) == 0 ) {
 		nonsymm_fa_scorefxn->set_weight( core::scoring::coordinate_constraint , 1 );

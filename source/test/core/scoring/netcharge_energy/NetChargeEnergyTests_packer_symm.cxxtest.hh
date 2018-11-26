@@ -35,7 +35,6 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/util.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 
 #include <core/pose/annotated_sequence.hh>
 
@@ -71,7 +70,6 @@ using namespace core::pose;
 using namespace core::scoring;
 using namespace core::scoring::methods;
 using namespace core::scoring::annealing;
-using namespace core::scoring::symmetry;
 
 using namespace core::pack;
 using namespace core::pack::task;
@@ -97,7 +95,7 @@ public:
 	/// @brief Test the energy calculation with the packer and symmetry.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).  Modified from Alex Ford's tests for the aa_composition energy.
 	void test_energy_annealing_symmetric() {
-		SymmetricScoreFunctionOP scorefxn( new SymmetricScoreFunction );
+		ScoreFunctionOP scorefxn( new ScoreFunction );
 		scorefxn->set_weight( netcharge, 1 );
 
 		Pose pose;

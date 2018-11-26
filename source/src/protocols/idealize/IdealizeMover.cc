@@ -32,7 +32,6 @@
 #include <core/select/util.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
@@ -210,12 +209,7 @@ IdealizeMover::apply( pose::Pose & pose ) {
 	}
 
 	// setup scorefunction
-	scoring::ScoreFunctionOP scorefxn;
-	if ( symm_info ) {
-		scorefxn = scoring::ScoreFunctionOP( new scoring::symmetry::SymmetricScoreFunction() );
-	} else {
-		scorefxn = scoring::ScoreFunctionOP( new scoring::ScoreFunction() );
-	}
+	scoring::ScoreFunctionOP scorefxn( new scoring::ScoreFunction() );
 	scorefxn->set_weight( atom_pair_constraint,  atom_pair_constraint_weight_ );
 	scorefxn->set_weight( coordinate_constraint, coordinate_constraint_weight_ );
 

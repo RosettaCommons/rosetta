@@ -619,8 +619,7 @@ void
 			Pose unbound_pose;
 			if ( intra_subs.size() == 1 ) {
 				core::pose::symmetry::extract_asymmetric_unit(pose, unbound_pose);
-				ScoreFunctionOP scorefxnasymm( core::scoring::symmetry::asymmetrize_scorefunction(scorefxn) );
-				(*scorefxnasymm)(unbound_pose);
+				(*scorefxn)(unbound_pose);
 			} else {
 				//fpd if there is ever a way to extract a symmetric subpose (e.g. trimer from tetrahedron)
 				//fpd  it can be done here for some speedup
@@ -639,7 +638,7 @@ void
 			// Calculate the Boltzmann probability for the rotamer at each designed position
 			if ( option[matdes::mutalyze::calc_rot_boltz]() == 1 ) {
 				if ( intra_subs.size() == 1 ) {
-					ScoreFunctionOP scorefxnasymm(  core::scoring::symmetry::asymmetrize_scorefunction(scorefxn) );
+					ScoreFunctionOP scorefxnasymm( scorefxn->clone() );
 					(*scorefxnasymm)(unbound_pose);
 					for ( Size ipos = 1; ipos <= mutalyze_pos.size(); ++ipos ) {
 						protocols::calc_taskop_filters::RotamerBoltzmannWeight rbc = protocols::calc_taskop_filters::RotamerBoltzmannWeight();

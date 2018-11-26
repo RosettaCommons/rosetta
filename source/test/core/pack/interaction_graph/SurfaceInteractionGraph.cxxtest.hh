@@ -98,7 +98,6 @@
 #include <core/scoring/TenANeighborGraph.fwd.hh>
 #include <core/scoring/TwelveANeighborGraph.fwd.hh>
 #include <core/scoring/methods/Methods.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.fwd.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/FArray1.io.hh>

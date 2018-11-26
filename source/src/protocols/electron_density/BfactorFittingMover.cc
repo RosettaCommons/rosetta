@@ -16,7 +16,6 @@
 
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/electron_density/ElectronDensity.hh>
 #include <core/scoring/electron_density/util.hh>
 #include <core/scoring/electron_density/xray_scattering.hh>
@@ -485,12 +484,7 @@ void BfactorFittingMover::apply(core::pose::Pose & pose) {
 	core::optimization::Minimizer minimizer( f_b, options );
 
 	// make sure interaction graphs are set up
-	core::scoring::ScoreFunctionOP sf;
-	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		sf = core::scoring::ScoreFunctionOP( new core::scoring::symmetry::SymmetricScoreFunction() );
-	} else {
-		sf = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() );
-	}
+	core::scoring::ScoreFunctionOP sf( new core::scoring::ScoreFunction() );
 	sf->set_weight( core::scoring::fa_rep, 1.0 );
 	(*sf)(pose);
 

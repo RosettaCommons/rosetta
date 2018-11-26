@@ -72,7 +72,6 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 
 #include <core/pack/make_symmetric_task.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -857,7 +856,7 @@ void FindZnCoordinatingResidues::find_coordinating_residues(
 	atomids_.clear(); atomids_.reserve( 4 );
 
 	core::pose::Pose copy_pose( p );
-	core::scoring::symmetry::SymmetricScoreFunction sfxn;
+	core::scoring::ScoreFunction sfxn;
 	sfxn.set_weight( core::scoring::fa_atr, 1.0 );
 	sfxn( copy_pose );
 

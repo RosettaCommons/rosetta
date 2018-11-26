@@ -47,7 +47,6 @@
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/minimization_packing/RotamerTrialsMover.hh>
 
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/rms_util.hh>
@@ -76,7 +75,6 @@
 #include <core/kinematics/MoveMap.hh>
 
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
@@ -380,17 +378,8 @@ FragmentExtension::apply( core::pose::Pose & pose ) {
 		pack_min_cycles_ = 0;
 	}
 	if ( !greedy_ ) {
-		if ( core::pose::symmetry::is_symmetric( pose ) ) {
-			sf_dens = core::scoring::ScoreFunctionOP( new core::scoring::symmetry::SymmetricScoreFunction );
-			sf_clashing = core::scoring::ScoreFunctionOP( new core::scoring::symmetry::SymmetricScoreFunction );
-			core::scoring::symmetry::SymmetricScoreFunctionOP symmdens( new core::scoring::symmetry::SymmetricScoreFunction );
-			sf_dens = utility::pointer::dynamic_pointer_cast< core::scoring::symmetry::SymmetricScoreFunction >(symmdens);
-			core::scoring::symmetry::SymmetricScoreFunctionOP symmclash( new core::scoring::symmetry::SymmetricScoreFunction );
-			sf_clashing = utility::pointer::dynamic_pointer_cast< core::scoring::symmetry::SymmetricScoreFunction >(symmclash);
-		} else {
-			sf_dens = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction );
-			sf_clashing = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction );
-		}
+		sf_dens = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction );
+		sf_clashing = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction );
 		sf_dens->set_weight( core::scoring::elec_dens_fast , cen_sf_->get_weight(core::scoring::elec_dens_fast) );
 		//sf_dens->set_weight( core::scoring::vdw , cen_sf_->get_weight(core::scoring::vdw) ); //vdw needs to be included if we want to get 1 body and 2 body in a single pass.
 		sf_clashing->set_weight( core::scoring::vdw , cen_sf_->get_weight(core::scoring::vdw) );

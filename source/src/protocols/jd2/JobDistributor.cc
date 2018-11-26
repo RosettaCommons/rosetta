@@ -23,7 +23,6 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <protocols/jd2/JobDistributorFactory.hh>
 #include <protocols/jd2/JobInputter.hh>
 #include <protocols/jd2/JobOutputter.hh>

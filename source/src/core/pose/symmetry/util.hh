@@ -42,24 +42,12 @@ bool
 is_mirror_symmetric( pose::Pose const & pose );
 
 bool
-is_symmetric( scoring::ScoreFunction const & scorefxn );
-
-bool
 is_symmetric( scoring::Energies const & energies );
 
 /// @brief Convenience function for the number of residues in a subunit.
 /// Will return the total size for an asymmetric pose
 core::Size
 get_nres_asymmetric_unit( pose::Pose const & pose );
-
-// This is a stopgap measure to refactoring SymmetricScoreFunction to
-// be interalized into the ScoreFunciton class to shield this logic
-// from the user.
-void
-make_score_function_consistent_with_symmetric_state_of_pose(
-	pose::Pose const & pose,
-	scoring::ScoreFunctionOP & scorefxn
-);
 
 conformation::symmetry::SymmetryInfoCOP
 symmetry_info( pose::Pose const & pose );

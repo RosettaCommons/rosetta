@@ -80,8 +80,7 @@ public:
 				dynamic_cast<core::conformation::symmetry::SymmetricConformation const & > ( pose.conformation() ) );
 			core::conformation::symmetry::SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
-			// symmetrize scorefunct & movemap
-			rosetta_scorefxn = core::scoring::symmetry::symmetrize_scorefunction( *rosetta_scorefxn );
+			// symmetrize movemap
 			core::pose::symmetry::make_symmetric_movemap( pose, move_map );
 		}
 

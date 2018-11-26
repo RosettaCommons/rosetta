@@ -14,7 +14,6 @@
 // libRosetta headers
 #include <protocols/simple_moves/ScoreMover.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/chemical/ChemicalManager.hh>
@@ -136,11 +135,6 @@ main( int argc, char * argv [] ) {
 		MoverOP mover;
 		core::scoring::ScoreFunctionOP sfxn;
 		sfxn = core::scoring::get_score_function();
-		if ( option[ basic::options::OptionKeys::symmetry::symmetric_rmsd ]() ) {
-			core::scoring::ScoreFunctionOP sfxn_sym =
-				core::scoring::symmetry::symmetrize_scorefunction( *sfxn );
-			sfxn = sfxn_sym;
-		}
 
 		ClusterPhilStyleOP clustering;
 

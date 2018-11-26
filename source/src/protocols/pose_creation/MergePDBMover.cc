@@ -26,7 +26,6 @@ static basic::Tracer TR( "protocols.pose_creation.MergePDBMover" );
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 
 #include <core/select/residue_selector/AndResidueSelector.hh>
 #include <core/select/residue_selector/ChainSelector.hh>
@@ -78,7 +77,6 @@ static basic::Tracer TR( "protocols.pose_creation.MergePDBMover" );
 #include <core/import_pose/import_pose.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/rms_util.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <numeric/xyzVector.hh>
 
 #include <protocols/jd2/JobDistributor.hh>
@@ -241,9 +239,6 @@ void MergePDBMover::generate_overlaps(Pose & pose, Size chain_id) {
 	utility::vector1<core::Size> res_in_chain = get_resnums_for_chain_id(pose,chain_id);
 	bool input_pose_symmetric = pose::symmetry::is_symmetric(pose);
 	core::scoring::ScoreFunctionOP sfxn0 = scoring::ScoreFunctionFactory::create_score_function( "score0" );
-	if ( input_pose_symmetric ) {
-		core::scoring::symmetry::symmetrize_scorefunction(*sfxn0);
-	}
 	Size start_res_chain = res_in_chain[1];
 	Size end_res_chain = chain_end_res(pose,chain_id);
 	//create a cloned version of xml_pose and xml_pose for rotamer copying.
@@ -892,8 +887,7 @@ void MergePDBMover::apply( Pose & pose )
 	core::Real baseline_score = sfxn_->score(pose);
 	core::Real xml_pose_score =0;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		core::scoring::ScoreFunctionOP sfxn_clone = sfxn_->clone();
-		asymm_score_ = core::scoring::symmetry::asymmetrize_scorefunction(*sfxn_clone);
+		asymm_score_ = sfxn_->clone();
 		xml_pose_score = asymm_score_->score(*xml_input_pose_);
 	} else {
 		xml_pose_score = sfxn_->score(*xml_input_pose_);

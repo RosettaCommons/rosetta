@@ -40,7 +40,6 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/make_symmetric_task.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/conformation/parametric/RealValuedParameter.hh>
 
 // Protocols Headers -- for convenience in setting up test case.
@@ -89,7 +88,7 @@ public:
 		layer_selector->set_layers( true, true, false );
 		utility::vector1< bool > selection( layer_selector->apply( pose ) );
 
-		core::scoring::symmetry::SymmetricScoreFunction sfxn;
+		core::scoring::ScoreFunction sfxn;
 		//sfxn.set_weight( core::scoring::fa_rep, 0.05 );
 		sfxn.set_weight( core::scoring::voids_penalty, 1.0 );
 		core::Real const initial_score( sfxn(pose) );

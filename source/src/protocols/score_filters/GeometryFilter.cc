@@ -39,7 +39,6 @@
 #include <protocols/score_filters/ScoreTypeFilter.hh>
 #include <protocols/constraint_movers/ConstraintSetMover.hh>
 #include <core/scoring/ScoreTypeManager.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/types.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <map>

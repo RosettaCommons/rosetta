@@ -24,7 +24,6 @@
 #include <core/pack/task/PackerTask.hh>
 
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/make_symmetric_task.hh>
@@ -399,15 +398,9 @@ DesignRepackMover::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::Dat
 
 	symmetry_ = tag->getOption< bool >( "symmetry", false );
 
-	if ( symmetry_ ) {
-		using namespace core::scoring::symmetry;
-		scorefxn_repack_ = core::scoring::symmetry::symmetrize_scorefunction( *protocols::rosetta_scripts::parse_score_function( tag, "scorefxn_repack", data ) );
-		scorefxn_minimize_ = core::scoring::symmetry::symmetrize_scorefunction( * protocols::rosetta_scripts::parse_score_function( tag, "scorefxn_minimize", data ) );
-	} else {
-		using namespace core::scoring;
-		scorefxn_repack_ = protocols::rosetta_scripts::parse_score_function( tag, "scorefxn_repack", data )->clone();
-		scorefxn_minimize_ = protocols::rosetta_scripts::parse_score_function( tag, "scorefxn_minimize", data )->clone();
-	}
+	using namespace core::scoring;
+	scorefxn_repack_ = protocols::rosetta_scripts::parse_score_function( tag, "scorefxn_repack", data )->clone();
+	scorefxn_minimize_ = protocols::rosetta_scripts::parse_score_function( tag, "scorefxn_minimize", data )->clone();
 	automatic_repacking_definition_ = tag->getOption<bool>( "automatic_repacking_definition", true );
 	TR<<"repack scorefxn "<<scorefxn_repack<<" and minimize scorefxn "<<scorefxn_minimize<<" automatic_repacking_definition set to "<<automatic_repacking_definition_<<" optimize fold tree="<<optimize_foldtree_<< std::endl;
 }

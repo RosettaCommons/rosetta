@@ -14,7 +14,6 @@
 
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/DockingScoreFunction.hh>
 #include <core/scoring/MinScoreScoreFunction.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
@@ -80,8 +79,6 @@ ScoreFunctionFactory::create_score_function(
 		scorefxn = ScoreFunctionOP( new MinScoreScoreFunction( options[ score::min_score_score ]() ) );
 	} else if ( options[ score::docking_interface_score ]() ) {
 		scorefxn = ScoreFunctionOP( new DockingScoreFunction );
-	} else if ( options[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() ) {
-		scorefxn = ScoreFunctionOP( new SymmetricScoreFunction( options ) );
 	} else {
 		scorefxn = ScoreFunctionOP( new ScoreFunction( options ) );
 	}
@@ -266,7 +263,6 @@ ScoreFunctionFactory::list_read_options( utility::options::OptionKeyList & opts 
 	MinScoreScoreFunction::list_options_read( opts );
 	DockingScoreFunction::list_options_read( opts );
 	ScoreFunction::list_options_read( opts );
-	symmetry::SymmetricScoreFunction::list_options_read( opts );
 
 	opts
 		+ score::min_score_score
@@ -395,10 +391,12 @@ get_score_function( pose::Pose const & pose, bool const is_fullatom )
 
 core::scoring::ScoreFunctionOP
 get_score_function( pose::Pose const & pose, utility::options::OptionCollection const & options, bool const is_fullatom )
+// Looks like this only exists to check if pose is symmetric.  Since scorefxn is symmetry-agnostic now, this could be removed
+// Would require changing all instances of get_score_function to the get_score_function( options, is_fullatom ) signature.
 {
 	core::scoring::ScoreFunctionOP scorefxn =  get_score_function( options, is_fullatom );
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
-		core::pose::symmetry::make_score_function_consistent_with_symmetric_state_of_pose(pose, scorefxn);
+		return scorefxn;
 	}
 	return scorefxn;
 }

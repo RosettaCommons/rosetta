@@ -29,7 +29,7 @@
 #include <core/pack/task/TaskFactory.hh>
 
 
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
+#include <core/scoring/ScoreFunction.hh>
 
 #include <core/pose/symmetry/util.hh>
 
@@ -97,14 +97,13 @@ public:
 		using namespace conformation;
 		using namespace chemical;
 		using namespace scoring;
-		using namespace scoring::symmetry;
 		using namespace pose;
 
 		// init/reset seeds in all RG objects we have to do this inside the test it self function since
 		// user could request to run just one singel test.
 		core::init::init_random_generators(1101, "mt19937");
 
-		SymmetricScoreFunction scorefxn;
+		ScoreFunction scorefxn;
 		scorefxn.set_weight( fa_atr, 0.80 );
 		scorefxn.set_weight( fa_rep, 0.44 );
 		scorefxn.set_weight( fa_sol, 0.65 );

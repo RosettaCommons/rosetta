@@ -643,7 +643,6 @@ HBondFeatures::report_features(
 	if ( !scfxn_ ) {
 		scfxn_ = get_score_function();
 	}
-	core::pose::symmetry::make_score_function_consistent_with_symmetric_state_of_pose(pose, scfxn_);
 
 	HBondSet hbond_set;
 

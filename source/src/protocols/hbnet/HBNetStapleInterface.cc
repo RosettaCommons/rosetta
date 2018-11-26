@@ -44,7 +44,6 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/conformation/util.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/selection.hh>

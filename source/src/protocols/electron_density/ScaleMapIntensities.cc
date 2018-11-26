@@ -14,7 +14,6 @@
 
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/electron_density/ElectronDensity.hh>
 #include <core/scoring/electron_density/xray_scattering.hh>
 #include <core/scoring/Energies.hh>

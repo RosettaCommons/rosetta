@@ -237,7 +237,6 @@ rebuild_test()
 	// now try a fastrelax
 	ScoreFunctionOP fa_scorefxn( get_score_function() );
 	runtime_assert( pose::symmetry::is_symmetric( pose ) );
-	runtime_assert( pose::symmetry::is_symmetric( *fa_scorefxn ) );
 	{
 		protocols::relax::FastRelax fastrelax( fa_scorefxn, 0 );
 
