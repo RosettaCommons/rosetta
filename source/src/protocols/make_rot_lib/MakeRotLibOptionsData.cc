@@ -97,6 +97,12 @@ MakeRotLibOptionsData::MakeRotLibOptionsData( std::string filename ) :
 	chi_ranges_.resize( n_chi_ );
 	bb_ids_.resize( n_bb_ );
 	bb_ranges_.resize( n_bb_ );
+
+	utility::vector1< utility::vector1< core::Real > > rotwells_for_chi;
+	Size const nrotchi = semirotameric_ ? n_chi_ - 1 : n_chi_;
+	rotwells_for_chi.resize( nrotchi );
+	bool rotwells_specified = false;
+
 	//TR << "resized arrays " << std::endl;
 	// second pass - get omg, phi, psi, eps torsion ranges, chi torsion ranges, and centroid data
 	core::Size bb_i = 1;
@@ -143,8 +149,64 @@ MakeRotLibOptionsData::MakeRotLibOptionsData( std::string filename ) :
 				for ( core::Size i( 1 ); i <= n_chi_; ++i ) l >> temp_crnv[ i ].angle >> temp_crnv[ i ].rot_num;
 			}
 			centroid_data_.push_back( temp_crnv );
+		} else if ( tag == "ROTWELLS" ) {
+			rotwells_specified = true;
+			Size chi_num, n_rotwells;
+			l >> chi_num >> n_rotwells;
+			TR << chi_num << " " << n_rotwells << std::endl;
+			for ( Size ii = 1; ii <= n_rotwells; ++ii ) {
+				Size rotwell_angle;
+				l >> rotwell_angle;
+				TR << rotwell_angle << " " << std::endl;
+				rotwells_for_chi[ chi_num ].push_back( rotwell_angle );
+			}
 		}
 	}
+
+	if ( centroid_data_.size() > 0 && rotwells_for_chi[ 1 ].size() > 0 ) {
+		utility_exit_with_message( "Warning: you specified both centroids and rotamer well combinations. We can't do both." );
+	}
+
+	//using the centroids designation (especially PRO/B3P) we want to skip this
+	if ( rotwells_specified ) {
+		// Okay, we need to generate all combinations of rotamer wells.
+		// indices is a vector over all chi that says which rotwell we're working with
+		// for each chi...
+		utility::vector1< Size > indices;
+		indices.resize( nrotchi + 1, 1 );
+		indices[ nrotchi + 1 ] = 0;
+		rotwells_for_chi.push_back( utility::vector1< core::Real >( 1, 0 ) );
+
+		Size p = 1;
+		while ( indices[ nrotchi + 1 ] == 0 ) {
+			CentroidRotNumVec temp_crnv;
+			temp_crnv.resize( nrotchi );
+			TR << "Pushing back ";
+			for ( Size i( 1 ); i <= nrotchi; ++i ) {
+				temp_crnv[ i ].angle   = rotwells_for_chi[ i ][ indices[ i ] ];
+				temp_crnv[ i ].rot_num = indices[ i ];
+				TR << " " << temp_crnv[ i ].angle << " ";
+			}
+			centroid_data_.push_back( temp_crnv );
+			TR << std::endl;
+			indices[ 1 ] += 1;
+			while ( indices[ p ] > rotwells_for_chi[ p ].size() ) {
+				if ( p <= nrotchi ) indices[ p ] = 1;
+				else                indices[ p ] = 0;
+				p = p + 1;
+				indices[ p ] += 1;
+				if ( indices[ p ] <= rotwells_for_chi[ p ].size() ) p = 1;
+			}
+		}
+	}
+	TR << "Resulting centroids:" << std::endl;
+	for ( auto const & crnv : centroid_data_ ) {
+		for ( auto const & dat : crnv ) TR << dat.angle << " " << dat.rot_num << " ";
+		TR << std::endl;
+	}
+	n_centroids_ = centroid_data_.size();
+
+
 	//TR << "Second pass done "<<std::endl;
 	// lastly get the polymer type
 	using namespace core::chemical;

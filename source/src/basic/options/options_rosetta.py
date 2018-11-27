@@ -6186,9 +6186,11 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'options_file', 'File', desc='path to make rot lib options file' ),
 		Option( 'two_fold_symmetry_135_315', 'IntegerVector', desc='the chi number at which to apply two fold symmetry across the 135/315 axis' ),
 		Option( 'two_fold_symmetry_0_180'  , 'IntegerVector', desc='the chi number at which to apply two fold symmetry across the 0/180 axis' ),
-		Option( 'three_fold_symmetry_90_210_330'  , 'IntegerVector', desc='the chi number at which to apply two fold symmetry across the 0/180 axis' ),
+		Option( 'three_fold_symmetry_90_210_330'  , 'IntegerVector', desc='the chi number at which to apply three fold symmetry across the 0/180 axis' ),
 		Option( 'use_terminal_residues'  , 'Boolean', desc='Use separate ACE and NME residues as terminal capping groups, rather than patches', default='false' ),
 		Option( 'k_medoids'  , 'Boolean', desc='Use k-medoids instead of k-means clustering', default='false' ),
+                Option( 'patch_name_for_residue', 'String', desc='Provide an explicit description of the patches for terminal capping' ),
+                Option( 'polymeric_context', 'File', desc='A file containing the RT at PDB number 0 and the flanking context as well.' ), 
 	), # -make_rot_lib
 
 	Option_Group( 'match',

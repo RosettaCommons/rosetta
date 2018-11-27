@@ -421,10 +421,6 @@ sources = {
 		"RepackingRefinerTests",
 	],
 
-	"make_rot_lib" : [
-		"MakeRotLib",
-	],
-
 	"match" : [
 		"BumpGrid",
 		"ExternalGeomSampler",

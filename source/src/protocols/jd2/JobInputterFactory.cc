@@ -68,8 +68,8 @@ JobInputterFactory::get_JobInputter_from_string( std::string const & job_inputte
 		return iter->second->create_JobInputter();
 	} else { //else, a non-existent JobInputter has been requested.  Print existing ones and exit.
 		TR << "Available : ";
-		for ( JobInputterMap::const_iterator mover_it = job_inputter_creator_map_.begin(); mover_it != job_inputter_creator_map_.end(); ++mover_it ) {
-			TR << mover_it->first<<", ";
+		for ( auto const & creator_elem : job_inputter_creator_map_ ) {
+			TR << creator_elem.first << ", ";
 		}
 		TR << std::endl;
 		utility_exit_with_message( job_inputter_type + " is not known to the JobInputterFactory. Was it registered via a JobInputterRegistrator in one of the init.cc files (devel/init.cc or protocols/init.cc)?" );
