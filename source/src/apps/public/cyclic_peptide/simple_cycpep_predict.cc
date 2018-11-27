@@ -256,10 +256,10 @@ main( int argc, char * argv [] )
 				TR << "Starting simple_cycpep_predict.cc, MPI version." << std::endl;
 				TR << "Application created 16 September 2015 by Vikram K. Mulligan, Ph.D., Baker laboratory." << std::endl;
 				TR << "For questions, contact vmullig@uw.edu." << std::endl << std::endl;
-				TR << "Launching " << MPI_n_procs << " parallel processes with " << total_hierarchy_levels + 1 << " levels of communication." << std::endl;
+				TR << "Launching " << MPI_n_procs << " parallel processes with " << total_hierarchy_levels << " levels of communication." << std::endl;
 				TR << "Batch size is ";
 				for(core::Size i=1, imax=batchsize_per_level.size(); i<=imax; ++i) {
-					TR << batchsize_per_level << " (level " << i << ")";
+					TR << batchsize_per_level[i] << " (level " << i << " to " << i+1 << ")";
 					if(i<imax) TR << ", ";
 				}
 				TR << "." << std::endl;
