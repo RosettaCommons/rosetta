@@ -527,6 +527,10 @@ if( EXTRAS )
     		-Wno-unused-function
 	    )
 
+	    list( APPEND compile
+			-pthread
+	    )
+
 	    list( APPEND link
 			-lpthread
 	    )
