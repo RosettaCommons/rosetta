@@ -27,7 +27,7 @@ scorefiles = []
 rmsd_cutoffs = {}
 
 # TODO: populate me for each target.
-min_e_cutoffs = {'gagua_pentaloop': -3, 'gcaa_tetraloop': -7, 'gg_mismatch': -9, 'j44a_p4p6': -14, 'r2_4x4': -14, 'srl_fixed': -9, 'srl_free_bulgedG': -9, 'srp_domainIV': -10, 'srp_domainIV_fixed': -9, 'tandem_ga_imino': -14, 'tandem_ga_sheared': -16, 'uucg_tetraloop': 0.5 }
+min_e_cutoffs = {'gagua_pentaloop': -3, 'gcaa_tetraloop': -7, 'gg_mismatch': -9, 'j44a_p4p6': -14, 'r2_4x4': -14, 'srl_fixed': -6, 'srl_free_bulgedG': -8, 'srp_domainIV': -10, 'srp_domainIV_fixed': -9, 'tandem_ga_imino': -14, 'tandem_ga_sheared': -16, 'uucg_tetraloop': 0.5 }
 min_e_rmsd_cutoffs = { 'gagua_pentaloop': 3, 'gcaa_tetraloop': 1.6, 'gg_mismatch': 1.8, 'j44a_p4p6': 4, 'r2_4x4': 4, 'srl_fixed': 6, 'srl_free_bulgedG': 6, 'srp_domainIV': 4, 'srp_domainIV_fixed': 3.5, 'tandem_ga_imino': 3, 'tandem_ga_sheared': 2, 'uucg_tetraloop': 3 }
 
 def main(args):

@@ -21,41 +21,47 @@ from benchmark import *
 benchmark.load_variables()  # Python black magic: load all variables saved by previous script into globals
 
 def failures(results):
-    s = "<b>Failures:</b><br/><ol>"
-    at_least_one = False
+    fails = []
     for target in targets:
         if "FALSE" in list(results[target].values()):
-            s += "<li>" + target + "</li>"
-            at_least_one = True
-    s += "</ol>"
-    if at_least_one: return s
-    else: return "<b>No failures; test passed.</b>"
+            fails.append(target)
+    return fails
 
-_index_html_template_ = '''\
-<html>
-<head>
-    <title>SWM scientific benchamrk test results</title>
+# read readme
+readme = subprocess.getoutput( "cat readme.md" ).splitlines()
 
-  <style>
-    fixed {{background-color: #eee; white-space: pre-wrap; font-family: Monaco, 'Liberation Mono', Courier, monospace; font-size:12px; }}
-  </style>
-</head>
-<body>
-<p>
-    The SWM benchmark, run on the classic RNA benchmark set 'favorites.txt', evaluates the stability in scientific performance of
-    the Das lab's high resolution Stepwise Monte Carlo structure prediction protocol. Specifically, we run twelve 'motif-scale' structure prediction targets of varying difficulty
-    and gauge whether the minimum energy structure's RMSD and the maximum sampled RMSD are within appropriate values.
-</p>
-<br/>
-<p>
-    {failures}
-</p>
-<br/>
-<p>
-    <img src='score_vs_rmsd.png' width='1200' height='720' />
-</p>
-</body></html>
-'''
+# build up html from readme, start with the starting tag
+_index_html_template_ = "<html>\n<body>"
+_index_html_template_ += "<H2>Scientific test: stepwise_rna_favorites</H2>\n"
+_index_html_template_ += "<h3>FAILURES</h3>\n<p>\n"
+
+failures = failures(results)
+# add failures to html
+if len( failures ) > 0:
+    for failure in failures:
+        _index_html_template_ += str(failure) + "<br>\n"
+else:
+    _index_html_template_ += "&nbsp;&nbsp;&nbsp;&nbsp;None<br>\n"
+_index_html_template_ += "</p>\n<h3>RESULTS</h3>\n"
+_index_html_template_ += '<img src="score_vs_rmsd.png" alt="alternative text" style="max-width: 100%">\n'
+
+# add text from readme
+for l in readme:
+
+    # headings
+    if l.startswith( "## " ):
+        _index_html_template_ += "<h3>" + l.replace( ">> ", "" ) + "</h3>\n"
+    
+    # ignore the description
+    elif l.startswith( "#### " ):
+        continue
+        
+    # insert the actual text as a paragraph
+    else:
+        _index_html_template_ += "<p>" + l + "</p>\n"
+
+# html closing tag
+_index_html_template_ += "</body></html>\n"
 
 
 def state_of_results(results):
