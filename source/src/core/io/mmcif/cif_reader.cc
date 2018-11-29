@@ -336,7 +336,7 @@ StructFileRepOP create_sfr_from_cif_file_op( CifFileOP cifFile, StructFileReader
 	}
 
 	// CRYST1
-	if ( block.IsTablePresent( "cell" ) && ! options.read_only_ATOM_entries() ) {
+	if ( block.IsTablePresent( "cell" ) && block.IsTablePresent( "symmetry" ) && ! options.read_only_ATOM_entries() ) {
 		ISTable& cell = block.GetTable("cell");
 		CrystInfo ci;
 		ci.A( atof( cell(0, "length_a" ).c_str() ) );

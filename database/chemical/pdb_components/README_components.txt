@@ -13,22 +13,7 @@ https://www.wwpdb.org/data/ccd
 
 3. Update src/basic/options/options_rosetta.py PDB_components_file flag to point to the new files.
 
+Andy Watkins, 2018
 
-# TODO
-
-A better strategy would be to keep the file uncompressed and let Git handle updates in a smart way. See discussion here:
-
-https://github.com/RosettaCommons/main/pull/2693
-
-One possibility would be to write a python script that ftps the current components.cif.gz and splits into:
-
- components.A.cif
- components.B.cif
-  ...
-
-And then have -PDB_components_file check through each one.
-
-That could also save runtime if GlobalResidueTypeSet.cc only checks components.N.cif if it needs to find a name3 that starts with N.
-
-
+Rhiju's proposed 'better strategy' -- divide the components by initial letter and let git version them -- have been updated. If you want to update the components, run update_components.sh in this directory, which only requires curl and python.
 

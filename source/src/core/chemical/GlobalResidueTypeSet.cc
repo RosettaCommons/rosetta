@@ -115,12 +115,12 @@ GlobalResidueTypeSet::GlobalResidueTypeSet(
 	place_adducts();
 
 	// Components file
-	if ( option[ OptionKeys::in::file::load_PDB_components ] || option[ OptionKeys::in::file::PDB_components_file ].user() || option[ OptionKeys::in::file::PDB_components_directory ].user() ) {
+	if ( option[ OptionKeys::in::file::load_PDB_components ] || option[ OptionKeys::in::file::PDB_components_overrides ].user() || option[ OptionKeys::in::file::PDB_components_directory ].user() ) {
 		if ( option[ OptionKeys::in::include_lipids ]  &&
 				!option[ OptionKeys::in::file::load_PDB_components ].user() ) {
 			TR.Warning << "Not using PDB components dictionary due to current incompatibilities with -include_lipids. Specify -load_PDB_components explicitly to try lipids and ligands, and if it breaks, contact your favorite lipid Rosetta developer. " << std::endl;
 		} else {
-			pdb_components_filenames( option[ OptionKeys::in::file::PDB_components_file ].value() );
+			pdb_components_overrides( option[ OptionKeys::in::file::PDB_components_overrides ].value() );
 			pdb_components_directory( option[ OptionKeys::in::file::PDB_components_directory ].value() );
 		}
 	}
@@ -839,22 +839,53 @@ ResidueTypeOP
 GlobalResidueTypeSet::load_pdb_component( std::string const & pdb_id ) const {
 	static THREAD_LOCAL bool warned_about_missing_file( false );
 	core::chemical::ResidueTypeOP new_rsd_type = nullptr;
-	// First try the components filenames, then the directory.
+
+	// First try the 'overriding' components filenames -- user customized overrides.
+	// Then, look at the overrides text file for 'default overrides' (replacing types
+	// that are just plain broken in the CCD). Finally, the directory.
 	bool found_file = false;
-	if ( pdb_components_filenames_.size() ) {
-		for ( auto const & pdb_components_filename : pdb_components_filenames_ ) {
+	if ( pdb_components_overrides_.size() ) {
+		for ( auto const & pdb_components_filename : pdb_components_overrides_ ) {
 			std::string db_filename = pdb_components_filename;
 			if ( !utility::file::file_exists( db_filename ) ) db_filename = pdb_components_filename + pdb_id[0] + ".gz";
+			if ( !utility::file::file_exists( db_filename ) ) db_filename = basic::database::full_name( pdb_components_filename, false );
 			if ( !utility::file::file_exists( db_filename ) ) db_filename = basic::database::full_name( pdb_components_filename + ".gz", false );
 			if ( !utility::file::file_exists( db_filename ) &&
-					!( option[ OptionKeys::in::file::load_PDB_components ] || option[ OptionKeys::in::file::PDB_components_file ].user() ) ) {
+					!( option[ OptionKeys::in::file::load_PDB_components ] || option[ OptionKeys::in::file::PDB_components_overrides ].user() ) ) {
 				// return without showing a warning, since user didn't request the PDB components and probably doesn't want to be bothered.
 			}
 
 			attempt_readin( db_filename, pdb_id, new_rsd_type, found_file );
 			if ( new_rsd_type ) return new_rsd_type;
-		} // pdb_components_files
+		} // pdb_components_overrides
 	}
+
+	// Read each line of the overrides.
+	utility::io::izstream data;
+	if ( pdb_components_directory_ != "" ) {
+		// User provided overrides
+		data.open( basic::database::full_name( pdb_components_directory_ + "/override.txt" ).c_str() );
+	} else {
+		data.open( basic::database::full_name( "chemical/pdb_components/override.txt" ).c_str() );
+	}
+	if ( !data.good() ) {
+		utility_exit_with_message( "Unable to open file: " + basic::database::full_name( "chemical/pdb_components/override.txt" ) + '\n' );
+	}
+	std::string line, tag;
+	while ( getline( data, line ) ) {
+		// Skip empty lines and comments.
+		if ( line.size() < 1 || line[0] == '#' ) continue;
+
+		attempt_readin( line, pdb_id, new_rsd_type, found_file );
+		if ( !new_rsd_type ) {
+			attempt_readin( basic::database::full_name( line ), pdb_id, new_rsd_type, found_file );
+		}
+		if ( new_rsd_type ) {
+			TR.Debug << "Overriding " << pdb_id << " with edited component " << line << std::endl;
+			return new_rsd_type;
+		}
+	}
+
 
 	// Now look in the directory.
 	if ( !new_rsd_type && pdb_components_directory_ != "" ) {
@@ -874,17 +905,14 @@ GlobalResidueTypeSet::load_pdb_component( std::string const & pdb_id ) const {
 
 		if ( ! found_file && ! warned_about_missing_file ) {
 			warned_about_missing_file = true;
-			TR.Warning << "PDB component dictionary file not found at (./)" << pdb_components_filenames_ << std::endl;
-			TR.Warning << "   or in the Rosetta database " << std::endl;
-			TR.Warning << "   or in the directory " << pdb_components_directory_ << std::endl;
-			TR.Warning << "For more information on how to obtain the file and set it for use with Rosetta, visit: \n\n";
-			TR.Warning << "  https://www.rosettacommons.org/docs/latest/build_documentation/Build-Documentation#setting-up-rosetta-3_obtaining-additional-files_pdb-chemical-components-dictionary  \n" << std::endl;
-			TR.Warning << "If you want a quick fix, you can try to directly ftp in the file: " << std::endl;
-			TR.Warning << " ftp -o " << basic::database::full_name( "chemical/components.cif.gz", false ) << " ftp://ftp.wwpdb.org/pub/pdb/data/monomers/components.cif.gz " << std::endl;
-			TR.Warning << "and then add to your Rosetta command-line: -PDB_components_file chemical/components.cif.gz ";
+			TR.Warning << "We haven't found a chemical components dictionary file for \"" << pdb_id << ".\"" << std::endl;
+			TR.Warning << "We looked in the directory " << pdb_components_directory_ << std::endl;
+			TR.Warning << "as well as any potential overriding files: " << pdb_components_overrides_ << std::endl;
+			TR.Warning << "If you are using an extremely recent PDB, you may need to update this file by running" << std::endl;
+			TR.Warning << "update_components.sh in the directory database/chemical/pdb_components/" << std::endl;
 		}
 
-		TR.Warning << "Could not find: '" << pdb_id << "' in pdb components files " << pdb_components_filenames_
+		TR.Warning << "Could not find: '" << pdb_id << "' in pdb components files " << pdb_components_overrides_
 			<< "! Skipping residue..." << std::endl;
 	}
 	return ResidueTypeOP( nullptr );

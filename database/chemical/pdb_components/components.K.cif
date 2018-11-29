@@ -14371,6 +14371,189 @@ K7J "Modify descriptor"        2011-06-04 RCSB
 K7J "Modify subcomponent list" 2012-02-01 RCSB 
 K7J "Other modification"       2012-02-01 RCSB 
 # 
+data_K7V
+# 
+_chem_comp.id                                    K7V 
+_chem_comp.name                                  " neo-Inositol pentakisphosphate" 
+_chem_comp.type                                  NON-POLYMER 
+_chem_comp.pdbx_type                             HETAIN 
+_chem_comp.formula                               "C6 H17 O21 P5" 
+_chem_comp.mon_nstd_parent_comp_id               ? 
+_chem_comp.pdbx_synonyms                         ? 
+_chem_comp.pdbx_formal_charge                    0 
+_chem_comp.pdbx_initial_date                     2018-01-31 
+_chem_comp.pdbx_modified_date                    2018-09-07 
+_chem_comp.pdbx_ambiguous_flag                   N 
+_chem_comp.pdbx_release_status                   REL 
+_chem_comp.pdbx_replaced_by                      ? 
+_chem_comp.pdbx_replaces                         ? 
+_chem_comp.formula_weight                        580.055 
+_chem_comp.one_letter_code                       ? 
+_chem_comp.three_letter_code                     K7V 
+_chem_comp.pdbx_model_coordinates_details        ? 
+_chem_comp.pdbx_model_coordinates_missing_flag   N 
+_chem_comp.pdbx_ideal_coordinates_details        Corina 
+_chem_comp.pdbx_ideal_coordinates_missing_flag   N 
+_chem_comp.pdbx_model_coordinates_db_code        6FL6 
+_chem_comp.pdbx_subcomponent_list                ? 
+_chem_comp.pdbx_processing_site                  EBI 
+# 
+loop_
+_chem_comp_atom.comp_id 
+_chem_comp_atom.atom_id 
+_chem_comp_atom.alt_atom_id 
+_chem_comp_atom.type_symbol 
+_chem_comp_atom.charge 
+_chem_comp_atom.pdbx_align 
+_chem_comp_atom.pdbx_aromatic_flag 
+_chem_comp_atom.pdbx_leaving_atom_flag 
+_chem_comp_atom.pdbx_stereo_config 
+_chem_comp_atom.model_Cartn_x 
+_chem_comp_atom.model_Cartn_y 
+_chem_comp_atom.model_Cartn_z 
+_chem_comp_atom.pdbx_model_Cartn_x_ideal 
+_chem_comp_atom.pdbx_model_Cartn_y_ideal 
+_chem_comp_atom.pdbx_model_Cartn_z_ideal 
+_chem_comp_atom.pdbx_component_atom_id 
+_chem_comp_atom.pdbx_component_comp_id 
+_chem_comp_atom.pdbx_ordinal 
+K7V P1  P1  P 0 1 N N N -1.843 -8.485 2.449 -3.557 -2.394 -0.493 P1  K7V 1  
+K7V P3  P2  P 0 1 N N N -6.785 -4.395 3.744 3.487  -2.458 -0.478 P3  K7V 2  
+K7V P4  P3  P 0 1 N N N -4.408 -3.097 7.935 3.519  1.536  1.221  P4  K7V 3  
+K7V P5  P4  P 0 1 N N N -2.906 -7.152 8.510 0.013  2.476  -2.069 P5  K7V 4  
+K7V P6  P5  P 0 1 N N N 0.947  -6.828 5.667 -3.524 1.601  1.206  P6  K7V 5  
+K7V C1  C1  C 0 1 N N R -2.448 -6.581 4.155 -1.274 -1.126 0.074  C1  K7V 6  
+K7V C2  C2  C 0 1 N N N -3.496 -5.638 3.590 -0.032 -1.881 0.554  C2  K7V 7  
+K7V C3  C3  C 0 1 N N S -4.392 -5.149 4.719 1.225  -1.149 0.080  C3  K7V 8  
+K7V C4  C4  C 0 1 N N R -3.591 -4.541 5.849 1.236  0.269  0.654  C4  K7V 9  
+K7V C5  C5  C 0 1 N N N -2.505 -5.485 6.379 -0.005 1.024  0.174  C5  K7V 10 
+K7V C6  C6  C 0 1 N N S -1.593 -5.931 5.241 -1.262 0.292  0.648  C6  K7V 11 
+K7V O11 O1  O 0 1 N N N -1.638 -7.011 3.071 -2.448 -1.810 0.518  O11 K7V 12 
+K7V O12 O2  O 0 1 N N N -2.834 -4.566 2.922 -0.036 -1.945 1.982  O12 K7V 13 
+K7V O13 O3  O 0 1 N N N -5.274 -4.129 4.259 2.384  -1.854 0.528  O13 K7V 14 
+K7V O14 O4  O 0 1 N N N -4.562 -4.265 6.849 2.410  0.953  0.210  O14 K7V 15 
+K7V O15 O5  O 0 1 N N N -3.146 -6.626 6.984 -0.001 1.088  -1.254 O15 K7V 16 
+K7V O16 O6  O 0 1 N N N -0.661 -6.891 5.742 -2.421 0.997  0.200  O16 K7V 17 
+K7V O21 O7  O 0 1 N N N -1.396 -8.256 1.008 -4.033 -1.311 -1.382 O21 K7V 18 
+K7V O23 O8  O 0 1 N N N -7.565 -3.323 4.448 4.217  -1.254 -1.259 O23 K7V 19 
+K7V O24 O9  O 0 1 N N N -4.048 -3.841 9.192 4.225  0.320  2.005  O24 K7V 20 
+K7V O25 O10 O 0 1 N N N -1.653 -8.022 8.425 -1.123 3.317  -1.632 O25 K7V 21 
+K7V O26 O11 O 0 1 N N N 1.285  -8.229 5.245 -4.615 2.437  0.368  O26 K7V 22 
+K7V O31 O12 O 0 1 N N N -3.317 -8.822 2.612 -2.908 -3.570 -1.380 O31 K7V 23 
+K7V O33 O13 O 0 1 N N N -7.164 -5.794 4.153 4.577  -3.294 0.360  O33 K7V 24 
+K7V O34 O14 O 0 1 N N N -5.798 -2.470 7.982 4.629  2.353  0.387  O34 K7V 25 
+K7V O35 O15 O 0 1 N N N -4.191 -7.895 8.782 1.395  3.251  -1.785 O35 K7V 26 
+K7V O36 O16 O 0 1 N N N 1.318  -6.480 7.079 -4.254 0.397  1.987  O36 K7V 27 
+K7V O41 O17 O 0 1 N N N -0.952 -9.342 3.325 -4.796 -2.980 0.351  O41 K7V 28 
+K7V O43 O18 O 0 1 N N N -6.616 -4.218 2.249 2.826  -3.351 -1.456 O43 K7V 29 
+K7V O44 O19 O 0 1 N N N -3.346 -2.185 7.405 2.871  2.441  2.196  O44 K7V 30 
+K7V O45 O20 O 0 1 N N N -2.743 -5.949 9.411 -0.119 2.174  -3.645 O45 K7V 31 
+K7V O46 O21 O 0 1 N N N 1.313  -5.760 4.662 -2.863 2.494  2.184  O46 K7V 32 
+K7V H1  H1  H 0 1 N N N -2.964 -7.446 4.596 -1.271 -1.078 -1.015 H1  K7V 33 
+K7V H2  H2  H 0 1 N N N -4.115 -6.196 2.872 -0.041 -2.891 0.145  H2  K7V 34 
+K7V H3  H3  H 0 1 N N N -4.969 -6.001 5.108 1.227  -1.100 -1.009 H3  K7V 35 
+K7V H4  H4  H 0 1 N N N -3.119 -3.611 5.501 1.234  0.220  1.742  H4  K7V 36 
+K7V H5  H5  H 0 1 N N N -1.904 -4.949 7.128 0.003  2.034  0.583  H5  K7V 37 
+K7V H6  H6  H 0 1 N N N -1.071 -5.057 4.824 -1.265 0.243  1.737  H6  K7V 38 
+K7V H7  H7  H 0 1 N N N -3.480 -3.969 2.564 0.724  -2.411 2.357  H7  K7V 39 
+K7V H8  H8  H 0 1 N N N -7.845 -2.669 3.818 4.673  -0.628 -0.679 H8  K7V 40 
+K7V H9  H9  H 0 1 N N N -3.168 -3.604 9.460 4.671  -0.314 1.427  H9  K7V 41 
+K7V H10 H10 H 0 1 N N N 1.688  -8.213 4.385 -5.311 2.830  0.911  H10 K7V 42 
+K7V H11 H11 H 0 1 N N N -3.735 -8.836 1.759 -2.573 -4.315 -0.862 H11 K7V 43 
+K7V H12 H12 H 0 1 N N N -7.234 -6.342 3.380 5.274  -3.688 -0.183 H12 K7V 44 
+K7V H13 H13 H 0 1 N N N -5.755 -1.578 7.657 5.330  2.733  0.933  H13 K7V 45 
+K7V H14 H14 H 0 1 N N N -4.010 -8.824 8.860 2.184  2.757  -2.048 H14 K7V 46 
+K7V H15 H15 H 0 1 N N N 1.730  -5.624 7.097 -4.710 -0.229 1.407  H15 K7V 47 
+K7V H16 H16 H 0 1 N N N -0.199 -9.632 2.824 -5.504 -3.349 -0.195 H16 K7V 48 
+K7V H17 H17 H 0 1 N N N -1.866 -5.943 9.777 -0.117 2.966  -4.199 H17 K7V 49 
+# 
+loop_
+_chem_comp_bond.comp_id 
+_chem_comp_bond.atom_id_1 
+_chem_comp_bond.atom_id_2 
+_chem_comp_bond.value_order 
+_chem_comp_bond.pdbx_aromatic_flag 
+_chem_comp_bond.pdbx_stereo_config 
+_chem_comp_bond.pdbx_ordinal 
+K7V O21 P1  DOUB N N 1  
+K7V O43 P3  DOUB N N 2  
+K7V P1  O31 SING N N 3  
+K7V P1  O11 SING N N 4  
+K7V P1  O41 SING N N 5  
+K7V O12 C2  SING N N 6  
+K7V O11 C1  SING N N 7  
+K7V C2  C1  SING N N 8  
+K7V C2  C3  SING N N 9  
+K7V P3  O33 SING N N 10 
+K7V P3  O13 SING N N 11 
+K7V P3  O23 SING N N 12 
+K7V C1  C6  SING N N 13 
+K7V O13 C3  SING N N 14 
+K7V O46 P6  DOUB N N 15 
+K7V C3  C4  SING N N 16 
+K7V C6  O16 SING N N 17 
+K7V C6  C5  SING N N 18 
+K7V O26 P6  SING N N 19 
+K7V P6  O16 SING N N 20 
+K7V P6  O36 SING N N 21 
+K7V C4  C5  SING N N 22 
+K7V C4  O14 SING N N 23 
+K7V C5  O15 SING N N 24 
+K7V O14 P4  SING N N 25 
+K7V O15 P5  SING N N 26 
+K7V O44 P4  DOUB N N 27 
+K7V P4  O34 SING N N 28 
+K7V P4  O24 SING N N 29 
+K7V O25 P5  DOUB N N 30 
+K7V P5  O35 SING N N 31 
+K7V P5  O45 SING N N 32 
+K7V C1  H1  SING N N 33 
+K7V C2  H2  SING N N 34 
+K7V C3  H3  SING N N 35 
+K7V C4  H4  SING N N 36 
+K7V C5  H5  SING N N 37 
+K7V C6  H6  SING N N 38 
+K7V O12 H7  SING N N 39 
+K7V O23 H8  SING N N 40 
+K7V O24 H9  SING N N 41 
+K7V O26 H10 SING N N 42 
+K7V O31 H11 SING N N 43 
+K7V O33 H12 SING N N 44 
+K7V O34 H13 SING N N 45 
+K7V O35 H14 SING N N 46 
+K7V O36 H15 SING N N 47 
+K7V O41 H16 SING N N 48 
+K7V O45 H17 SING N N 49 
+# 
+loop_
+_pdbx_chem_comp_descriptor.comp_id 
+_pdbx_chem_comp_descriptor.type 
+_pdbx_chem_comp_descriptor.program 
+_pdbx_chem_comp_descriptor.program_version 
+_pdbx_chem_comp_descriptor.descriptor 
+K7V InChI            InChI                1.03  "InChI=1S/C6H17O21P5/c7-1-2(23-28(8,9)10)4(25-30(14,15)16)6(27-32(20,21)22)5(26-31(17,18)19)3(1)24-29(11,12)13/h1-7H,(H2,8,9,10)(H2,11,12,13)(H2,14,15,16)(H2,17,18,19)(H2,20,21,22)/t1-,2+,3-,4-,5+,6-" 
+K7V InChIKey         InChI                1.03  CTPQAXVNYGZUAJ-WJVUKCJRSA-N                                                                                                                                                                              
+K7V SMILES_CANONICAL CACTVS               3.385 "O[C@@H]1[C@H](O[P](O)(O)=O)[C@@H](O[P](O)(O)=O)[C@@H](O[P](O)(O)=O)[C@@H](O[P](O)(O)=O)[C@@H]1O[P](O)(O)=O"                                                                                             
+K7V SMILES           CACTVS               3.385 "O[CH]1[CH](O[P](O)(O)=O)[CH](O[P](O)(O)=O)[CH](O[P](O)(O)=O)[CH](O[P](O)(O)=O)[CH]1O[P](O)(O)=O"                                                                                                        
+K7V SMILES_CANONICAL "OpenEye OEToolkits" 2.0.6 "[C@H]1([C@H](C([C@H]([C@@H](C1O)OP(=O)(O)O)OP(=O)(O)O)OP(=O)(O)O)OP(=O)(O)O)OP(=O)(O)O"                                                                                                                 
+K7V SMILES           "OpenEye OEToolkits" 2.0.6 "C1(C(C(C(C(C1OP(=O)(O)O)OP(=O)(O)O)OP(=O)(O)O)OP(=O)(O)O)OP(=O)(O)O)O"                                                                                                                                  
+# 
+loop_
+_pdbx_chem_comp_identifier.comp_id 
+_pdbx_chem_comp_identifier.type 
+_pdbx_chem_comp_identifier.program 
+_pdbx_chem_comp_identifier.program_version 
+_pdbx_chem_comp_identifier.identifier 
+K7V "SYSTEMATIC NAME" "OpenEye OEToolkits" 2.0.6 "[(1~{S},2~{R},4~{S},5~{R})-3-oxidanyl-2,4,5,6-tetraphosphonooxy-cyclohexyl] dihydrogen phosphate" 
+# 
+loop_
+_pdbx_chem_comp_audit.comp_id 
+_pdbx_chem_comp_audit.action_type 
+_pdbx_chem_comp_audit.date 
+_pdbx_chem_comp_audit.processing_site 
+K7V "Create component" 2018-01-31 EBI  
+K7V "Initial release"  2018-09-12 RCSB 
+# 
 data_K80
 # 
 _chem_comp.id                                    K80 
@@ -21876,6 +22059,162 @@ _pdbx_chem_comp_audit.processing_site
 KB8 "Create component" 2014-10-31 EBI  
 KB8 "Initial release"  2015-02-18 RCSB 
 # 
+data_KBA
+# 
+_chem_comp.id                                    KBA 
+_chem_comp.name                                  "(2~{S},3~{S},4~{R},5~{S},6~{R})-2-methyl-6-[2-(1,2,3-triazol-1-yl)ethoxy]oxane-3,4,5-triol" 
+_chem_comp.type                                  NON-POLYMER 
+_chem_comp.pdbx_type                             HETAIN 
+_chem_comp.formula                               "C10 H17 N3 O5" 
+_chem_comp.mon_nstd_parent_comp_id               ? 
+_chem_comp.pdbx_synonyms                         ? 
+_chem_comp.pdbx_formal_charge                    0 
+_chem_comp.pdbx_initial_date                     2018-06-28 
+_chem_comp.pdbx_modified_date                    2018-08-17 
+_chem_comp.pdbx_ambiguous_flag                   N 
+_chem_comp.pdbx_release_status                   REL 
+_chem_comp.pdbx_replaced_by                      ? 
+_chem_comp.pdbx_replaces                         ? 
+_chem_comp.formula_weight                        259.259 
+_chem_comp.one_letter_code                       ? 
+_chem_comp.three_letter_code                     KBA 
+_chem_comp.pdbx_model_coordinates_details        ? 
+_chem_comp.pdbx_model_coordinates_missing_flag   N 
+_chem_comp.pdbx_ideal_coordinates_details        Corina 
+_chem_comp.pdbx_ideal_coordinates_missing_flag   N 
+_chem_comp.pdbx_model_coordinates_db_code        6GY9 
+_chem_comp.pdbx_subcomponent_list                ? 
+_chem_comp.pdbx_processing_site                  EBI 
+# 
+loop_
+_chem_comp_atom.comp_id 
+_chem_comp_atom.atom_id 
+_chem_comp_atom.alt_atom_id 
+_chem_comp_atom.type_symbol 
+_chem_comp_atom.charge 
+_chem_comp_atom.pdbx_align 
+_chem_comp_atom.pdbx_aromatic_flag 
+_chem_comp_atom.pdbx_leaving_atom_flag 
+_chem_comp_atom.pdbx_stereo_config 
+_chem_comp_atom.model_Cartn_x 
+_chem_comp_atom.model_Cartn_y 
+_chem_comp_atom.model_Cartn_z 
+_chem_comp_atom.pdbx_model_Cartn_x_ideal 
+_chem_comp_atom.pdbx_model_Cartn_y_ideal 
+_chem_comp_atom.pdbx_model_Cartn_z_ideal 
+_chem_comp_atom.pdbx_component_atom_id 
+_chem_comp_atom.pdbx_component_comp_id 
+_chem_comp_atom.pdbx_ordinal 
+KBA C04 C1  C 0 1 N N N 1.617 5.347  43.231 -1.246 -0.373 0.356  C04 KBA 1  
+KBA C05 C2  C 0 1 N N N 1.120 5.805  44.607 -2.234 -0.720 -0.760 C05 KBA 2  
+KBA C06 C3  C 0 1 Y N N 1.073 8.363  45.011 -4.362 0.562  -1.119 C06 KBA 3  
+KBA C07 C4  C 0 1 Y N N 1.900 9.276  45.559 -5.501 0.725  -0.406 C07 KBA 4  
+KBA C1  C5  C 0 1 N N R 2.623 6.594  41.203 1.064  -0.547 0.971  C1  KBA 5  
+KBA C2  C6  C 0 1 N N S 2.305 7.645  40.161 2.390  -1.177 0.535  C2  KBA 6  
+KBA C3  C7  C 0 1 N N R 2.247 9.004  40.850 2.839  -0.541 -0.784 C3  KBA 7  
+KBA C4  C8  C 0 1 N N S 3.539 9.308  41.611 2.951  0.975  -0.595 C4  KBA 8  
+KBA C5  C9  C 0 1 N N S 3.979 8.130  42.500 1.604  1.522  -0.116 C5  KBA 9  
+KBA C6  C10 C 0 1 N N N 5.423 8.283  42.979 1.724  3.027  0.132  C6  KBA 10 
+KBA N01 N1  N 0 1 Y N N 1.676 7.100  45.091 -3.573 -0.258 -0.387 N01 KBA 11 
+KBA N02 N2  N 0 1 Y N N 3.053 8.650  46.000 -5.355 0.007  0.713  N02 KBA 12 
+KBA N03 N3  N 0 1 Y N N 2.980 7.245  45.731 -4.202 -0.564 0.694  N03 KBA 13 
+KBA O03 O1  O 0 1 N N N 1.752 6.444  42.332 0.061  -0.823 -0.008 O03 KBA 14 
+KBA O2  O2  O 0 1 N N N 1.052 7.285  39.585 2.212  -2.583 0.351  O2  KBA 15 
+KBA O3  O3  O 0 1 N N N 1.952 10.051 39.924 4.112  -1.071 -1.161 O3  KBA 16 
+KBA O4  O4  O 0 1 N N N 4.604 9.625  40.709 3.957  1.262  0.378  O4  KBA 17 
+KBA O5  O5  O 0 1 N N N 3.886 6.873  41.821 1.230  0.867  1.098  O5  KBA 18 
+KBA H1  H1  H 0 1 N N N 0.897 4.628  42.812 -1.230 0.707  0.504  H1  KBA 19 
+KBA H2  H2  H 0 1 N N N 2.596 4.859  43.349 -1.554 -0.862 1.280  H2  KBA 20 
+KBA H3  H3  H 0 1 N N N 0.026 5.904  44.557 -1.925 -0.230 -1.684 H3  KBA 21 
+KBA H4  H4  H 0 1 N N N 1.385 5.028  45.339 -2.250 -1.799 -0.908 H4  KBA 22 
+KBA H5  H5  H 0 1 N N N 0.104 8.571  44.581 -4.131 0.995  -2.081 H5  KBA 23 
+KBA H6  H6  H 0 1 N N N 1.694 10.333 45.641 -6.359 1.319  -0.685 H6  KBA 24 
+KBA H7  H7  H 0 1 N N N 2.694 5.626  40.685 0.761  -0.965 1.930  H7  KBA 25 
+KBA H8  H8  H 0 1 N N N 3.097 7.657  39.397 3.145  -1.002 1.301  H8  KBA 26 
+KBA H9  H9  H 0 1 N N N 1.436 8.958  41.592 2.108  -0.759 -1.562 H9  KBA 27 
+KBA H10 H10 H 0 1 N N N 3.351 10.171 42.266 3.217  1.441  -1.544 H10 KBA 28 
+KBA H11 H11 H 0 1 N N N 3.327 8.113  43.386 0.846  1.339  -0.877 H11 KBA 29 
+KBA H12 H12 H 0 1 N N N 5.694 7.423  43.608 2.010  3.526  -0.793 H12 KBA 30 
+KBA H13 H13 H 0 1 N N N 6.095 8.327  42.109 0.765  3.417  0.474  H13 KBA 31 
+KBA H14 H14 H 0 1 N N N 5.519 9.210  43.564 2.482  3.210  0.894  H14 KBA 32 
+KBA H15 H15 H 0 1 N N N 1.128 6.435  39.167 1.927  -3.051 1.148  H15 KBA 33 
+KBA H16 H16 H 0 1 N N N 1.923 10.882 40.384 4.116  -2.029 -1.291 H16 KBA 34 
+KBA H17 H17 H 0 1 N N N 5.394 9.810  41.203 4.082  2.206  0.548  H17 KBA 35 
+# 
+loop_
+_chem_comp_bond.comp_id 
+_chem_comp_bond.atom_id_1 
+_chem_comp_bond.atom_id_2 
+_chem_comp_bond.value_order 
+_chem_comp_bond.pdbx_aromatic_flag 
+_chem_comp_bond.pdbx_stereo_config 
+_chem_comp_bond.pdbx_ordinal 
+KBA O2  C2  SING N N 1  
+KBA O3  C3  SING N N 2  
+KBA C2  C3  SING N N 3  
+KBA C2  C1  SING N N 4  
+KBA O4  C4  SING N N 5  
+KBA C3  C4  SING N N 6  
+KBA C1  O5  SING N N 7  
+KBA C1  O03 SING N N 8  
+KBA C4  C5  SING N N 9  
+KBA O5  C5  SING N N 10 
+KBA O03 C04 SING N N 11 
+KBA C5  C6  SING N N 12 
+KBA C04 C05 SING N N 13 
+KBA C05 N01 SING N N 14 
+KBA C06 N01 SING Y N 15 
+KBA C06 C07 DOUB Y N 16 
+KBA N01 N03 SING Y N 17 
+KBA C07 N02 SING Y N 18 
+KBA N03 N02 DOUB Y N 19 
+KBA C04 H1  SING N N 20 
+KBA C04 H2  SING N N 21 
+KBA C05 H3  SING N N 22 
+KBA C05 H4  SING N N 23 
+KBA C06 H5  SING N N 24 
+KBA C07 H6  SING N N 25 
+KBA C1  H7  SING N N 26 
+KBA C2  H8  SING N N 27 
+KBA C3  H9  SING N N 28 
+KBA C4  H10 SING N N 29 
+KBA C5  H11 SING N N 30 
+KBA C6  H12 SING N N 31 
+KBA C6  H13 SING N N 32 
+KBA C6  H14 SING N N 33 
+KBA O2  H15 SING N N 34 
+KBA O3  H16 SING N N 35 
+KBA O4  H17 SING N N 36 
+# 
+loop_
+_pdbx_chem_comp_descriptor.comp_id 
+_pdbx_chem_comp_descriptor.type 
+_pdbx_chem_comp_descriptor.program 
+_pdbx_chem_comp_descriptor.program_version 
+_pdbx_chem_comp_descriptor.descriptor 
+KBA InChI            InChI                1.03  "InChI=1S/C10H17N3O5/c1-6-7(14)8(15)9(16)10(18-6)17-5-4-13-3-2-11-12-13/h2-3,6-10,14-16H,4-5H2,1H3/t6-,7+,8+,9-,10+/m0/s1" 
+KBA InChIKey         InChI                1.03  AQLGVIQGWAYMPY-LOLPMWEVSA-N                                                                                                
+KBA SMILES_CANONICAL CACTVS               3.385 "C[C@@H]1O[C@@H](OCCn2ccnn2)[C@@H](O)[C@H](O)[C@@H]1O"                                                                     
+KBA SMILES           CACTVS               3.385 "C[CH]1O[CH](OCCn2ccnn2)[CH](O)[CH](O)[CH]1O"                                                                              
+KBA SMILES_CANONICAL "OpenEye OEToolkits" 2.0.6 "C[C@H]1[C@H]([C@H]([C@@H]([C@@H](O1)OCCn2ccnn2)O)O)O"                                                                     
+KBA SMILES           "OpenEye OEToolkits" 2.0.6 "CC1C(C(C(C(O1)OCCn2ccnn2)O)O)O"                                                                                           
+# 
+loop_
+_pdbx_chem_comp_identifier.comp_id 
+_pdbx_chem_comp_identifier.type 
+_pdbx_chem_comp_identifier.program 
+_pdbx_chem_comp_identifier.program_version 
+_pdbx_chem_comp_identifier.identifier 
+KBA "SYSTEMATIC NAME" "OpenEye OEToolkits" 2.0.6 "(2~{S},3~{S},4~{R},5~{S},6~{R})-2-methyl-6-[2-(1,2,3-triazol-1-yl)ethoxy]oxane-3,4,5-triol" 
+# 
+loop_
+_pdbx_chem_comp_audit.comp_id 
+_pdbx_chem_comp_audit.action_type 
+_pdbx_chem_comp_audit.date 
+_pdbx_chem_comp_audit.processing_site 
+KBA "Create component" 2018-06-28 EBI  
+KBA "Initial release"  2018-08-22 RCSB 
+# 
 data_KBE
 # 
 _chem_comp.id                                    KBE 
@@ -22007,6 +22346,168 @@ _pdbx_chem_comp_audit.date
 _pdbx_chem_comp_audit.processing_site 
 KBE "Create component"  2010-02-05 RCSB 
 KBE "Modify descriptor" 2011-06-04 RCSB 
+# 
+data_KBF
+# 
+_chem_comp.id                                    KBF 
+_chem_comp.name                                  "3-oxidanyl-~{N}-[[(2~{R})-oxolan-2-yl]methyl]naphthalene-2-carboxamide" 
+_chem_comp.type                                  NON-POLYMER 
+_chem_comp.pdbx_type                             HETAIN 
+_chem_comp.formula                               "C16 H17 N O3" 
+_chem_comp.mon_nstd_parent_comp_id               ? 
+_chem_comp.pdbx_synonyms                         "3-hydroxy-N-(tetrahydrofuran-2-ylmethyl)naphthalene-2-carboxamide" 
+_chem_comp.pdbx_formal_charge                    0 
+_chem_comp.pdbx_initial_date                     2018-02-22 
+_chem_comp.pdbx_modified_date                    2018-09-07 
+_chem_comp.pdbx_ambiguous_flag                   N 
+_chem_comp.pdbx_release_status                   REL 
+_chem_comp.pdbx_replaced_by                      ? 
+_chem_comp.pdbx_replaces                         ? 
+_chem_comp.formula_weight                        271.311 
+_chem_comp.one_letter_code                       ? 
+_chem_comp.three_letter_code                     KBF 
+_chem_comp.pdbx_model_coordinates_details        ? 
+_chem_comp.pdbx_model_coordinates_missing_flag   N 
+_chem_comp.pdbx_ideal_coordinates_details        Corina 
+_chem_comp.pdbx_ideal_coordinates_missing_flag   N 
+_chem_comp.pdbx_model_coordinates_db_code        5ZC6 
+_chem_comp.pdbx_subcomponent_list                ? 
+_chem_comp.pdbx_processing_site                  RCSB 
+# 
+loop_
+_chem_comp_atom.comp_id 
+_chem_comp_atom.atom_id 
+_chem_comp_atom.alt_atom_id 
+_chem_comp_atom.type_symbol 
+_chem_comp_atom.charge 
+_chem_comp_atom.pdbx_align 
+_chem_comp_atom.pdbx_aromatic_flag 
+_chem_comp_atom.pdbx_leaving_atom_flag 
+_chem_comp_atom.pdbx_stereo_config 
+_chem_comp_atom.model_Cartn_x 
+_chem_comp_atom.model_Cartn_y 
+_chem_comp_atom.model_Cartn_z 
+_chem_comp_atom.pdbx_model_Cartn_x_ideal 
+_chem_comp_atom.pdbx_model_Cartn_y_ideal 
+_chem_comp_atom.pdbx_model_Cartn_z_ideal 
+_chem_comp_atom.pdbx_component_atom_id 
+_chem_comp_atom.pdbx_component_comp_id 
+_chem_comp_atom.pdbx_ordinal 
+KBF C3  C1  C 0 1 Y N N -10.174 -9.200  7.238  3.579  0.004  0.068  C3  KBF 1  
+KBF C4  C2  C 0 1 Y N N -9.575  -8.132  6.520  4.910  0.455  0.111  C4  KBF 2  
+KBF C5  C3  C 0 1 Y N N -8.310  -7.692  6.842  5.177  1.784  -0.011 C5  KBF 3  
+KBF C6  C4  C 0 1 Y N N -7.590  -8.299  7.893  4.149  2.711  -0.178 C6  KBF 4  
+KBF C7  C5  C 0 1 Y N N -8.146  -9.337  8.605  2.849  2.313  -0.224 C7  KBF 5  
+KBF C8  C6  C 0 1 Y N N -9.449  -9.811  8.294  2.533  0.948  -0.102 C8  KBF 6  
+KBF C9  C7  C 0 1 Y N N -10.038 -10.878 9.016  1.203  0.506  -0.146 C9  KBF 7  
+KBF C10 C8  C 0 1 Y N N -11.311 -11.351 8.725  0.928  -0.846 -0.021 C10 KBF 8  
+KBF C1  C9  C 0 1 Y N N -12.023 -10.716 7.651  1.975  -1.776 0.148  C1  KBF 9  
+KBF O1  O1  O 0 1 N N N -13.285 -11.106 7.282  1.688  -3.097 0.267  O1  KBF 10 
+KBF C2  C10 C 0 1 Y N N -11.473 -9.675  6.932  3.274  -1.360 0.197  C2  KBF 11 
+KBF C11 C11 C 0 1 N N N -11.840 -12.442 9.508  -0.470 -1.317 -0.066 C11 KBF 12 
+KBF N   N1  N 0 1 N N N -13.165 -12.791 9.408  -1.474 -0.432 -0.227 N   KBF 13 
+KBF C12 C12 C 0 1 N N N -13.801 -13.942 10.087 -2.862 -0.900 -0.271 C12 KBF 14 
+KBF O2  O2  O 0 1 N N N -11.153 -13.097 10.293 -0.716 -2.503 0.043  O2  KBF 15 
+KBF C15 C13 C 0 1 N N N -13.427 -14.529 6.836  -6.032 1.106  -0.063 C15 KBF 16 
+KBF C14 C14 C 0 1 N N N -14.530 -14.869 7.821  -5.275 -0.169 -0.510 C14 KBF 17 
+KBF C13 C15 C 0 1 N N R -13.764 -15.134 9.115  -3.797 0.296  -0.460 C13 KBF 18 
+KBF O3  O3  O 0 1 N N N -12.408 -15.419 8.753  -3.756 1.162  0.695  O3  KBF 19 
+KBF C16 C16 C 0 1 N N N -12.260 -15.356 7.343  -4.969 1.933  0.686  C16 KBF 20 
+KBF H2  H1  H 0 1 N N N -10.116 -7.660  5.713  5.718  -0.250 0.240  H2  KBF 21 
+KBF H3  H2  H 0 1 N N N -7.867  -6.878  6.287  6.201  2.126  0.023  H3  KBF 22 
+KBF H4  H3  H 0 1 N N N -6.599  -7.948  8.139  4.389  3.760  -0.272 H4  KBF 23 
+KBF H5  H4  H 0 1 N N N -7.587  -9.796  9.407  2.063  3.043  -0.354 H5  KBF 24 
+KBF H6  H5  H 0 1 N N N -9.480  -11.338 9.818  0.398  1.215  -0.274 H6  KBF 25 
+KBF H22 H6  H 0 1 N N N -13.570 -11.824 7.835  1.664  -3.572 -0.575 H22 KBF 26 
+KBF H1  H7  H 0 1 N N N -12.036 -9.219  6.131  4.067  -2.082 0.326  H1  KBF 27 
+KBF H21 H8  H 0 1 N N N -13.747 -12.221 8.829  -1.278 0.514  -0.313 H21 KBF 28 
+KBF H8  H9  H 0 1 N N N -14.843 -13.698 10.342 -2.986 -1.593 -1.103 H8  KBF 29 
+KBF H7  H10 H 0 1 N N N -13.247 -14.189 11.005 -3.105 -1.406 0.664  H7  KBF 30 
+KBF H12 H11 H 0 1 N N N -13.192 -13.455 6.859  -6.401 1.654  -0.930 H12 KBF 31 
+KBF H13 H12 H 0 1 N N N -13.705 -14.821 5.813  -6.854 0.847  0.604  H13 KBF 32 
+KBF H10 H13 H 0 1 N N N -15.228 -14.027 7.940  -5.449 -0.989 0.187  H10 KBF 33 
+KBF H11 H14 H 0 1 N N N -15.085 -15.763 7.500  -5.559 -0.454 -1.523 H11 KBF 34 
+KBF H9  H15 H 0 1 N N N -14.210 -16.006 9.615  -3.537 0.846  -1.364 H9  KBF 35 
+KBF H15 H16 H 0 1 N N N -12.291 -16.367 6.910  -4.803 2.878  0.169  H15 KBF 36 
+KBF H14 H17 H 0 1 N N N -11.307 -14.874 7.080  -5.297 2.120  1.708  H14 KBF 37 
+# 
+loop_
+_chem_comp_bond.comp_id 
+_chem_comp_bond.atom_id_1 
+_chem_comp_bond.atom_id_2 
+_chem_comp_bond.value_order 
+_chem_comp_bond.pdbx_aromatic_flag 
+_chem_comp_bond.pdbx_stereo_config 
+_chem_comp_bond.pdbx_ordinal 
+KBF C4  C5  DOUB Y N 1  
+KBF C4  C3  SING Y N 2  
+KBF C15 C16 SING N N 3  
+KBF C15 C14 SING N N 4  
+KBF C5  C6  SING Y N 5  
+KBF C2  C3  DOUB Y N 6  
+KBF C2  C1  SING Y N 7  
+KBF C3  C8  SING Y N 8  
+KBF O1  C1  SING N N 9  
+KBF C16 O3  SING N N 10 
+KBF C1  C10 DOUB Y N 11 
+KBF C14 C13 SING N N 12 
+KBF C6  C7  DOUB Y N 13 
+KBF C8  C7  SING Y N 14 
+KBF C8  C9  DOUB Y N 15 
+KBF C10 C9  SING Y N 16 
+KBF C10 C11 SING N N 17 
+KBF O3  C13 SING N N 18 
+KBF C13 C12 SING N N 19 
+KBF N   C11 SING N N 20 
+KBF N   C12 SING N N 21 
+KBF C11 O2  DOUB N N 22 
+KBF C4  H2  SING N N 23 
+KBF C5  H3  SING N N 24 
+KBF C6  H4  SING N N 25 
+KBF C7  H5  SING N N 26 
+KBF C9  H6  SING N N 27 
+KBF O1  H22 SING N N 28 
+KBF C2  H1  SING N N 29 
+KBF N   H21 SING N N 30 
+KBF C12 H8  SING N N 31 
+KBF C12 H7  SING N N 32 
+KBF C15 H12 SING N N 33 
+KBF C15 H13 SING N N 34 
+KBF C14 H10 SING N N 35 
+KBF C14 H11 SING N N 36 
+KBF C13 H9  SING N N 37 
+KBF C16 H15 SING N N 38 
+KBF C16 H14 SING N N 39 
+# 
+loop_
+_pdbx_chem_comp_descriptor.comp_id 
+_pdbx_chem_comp_descriptor.type 
+_pdbx_chem_comp_descriptor.program 
+_pdbx_chem_comp_descriptor.program_version 
+_pdbx_chem_comp_descriptor.descriptor 
+KBF InChI            InChI                1.03  "InChI=1S/C16H17NO3/c18-15-9-12-5-2-1-4-11(12)8-14(15)16(19)17-10-13-6-3-7-20-13/h1-2,4-5,8-9,13,18H,3,6-7,10H2,(H,17,19)/t13-/m1/s1" 
+KBF InChIKey         InChI                1.03  DBYOJRHWEJEBCL-CYBMUJFWSA-N                                                                                                           
+KBF SMILES_CANONICAL CACTVS               3.385 "Oc1cc2ccccc2cc1C(=O)NC[C@H]3CCCO3"                                                                                                   
+KBF SMILES           CACTVS               3.385 "Oc1cc2ccccc2cc1C(=O)NC[CH]3CCCO3"                                                                                                    
+KBF SMILES_CANONICAL "OpenEye OEToolkits" 2.0.6 "c1ccc2cc(c(cc2c1)C(=O)NC[C@H]3CCCO3)O"                                                                                               
+KBF SMILES           "OpenEye OEToolkits" 2.0.6 "c1ccc2cc(c(cc2c1)C(=O)NCC3CCCO3)O"                                                                                                   
+# 
+loop_
+_pdbx_chem_comp_identifier.comp_id 
+_pdbx_chem_comp_identifier.type 
+_pdbx_chem_comp_identifier.program 
+_pdbx_chem_comp_identifier.program_version 
+_pdbx_chem_comp_identifier.identifier 
+KBF "SYSTEMATIC NAME" "OpenEye OEToolkits" 2.0.6 "3-oxidanyl-~{N}-[[(2~{R})-oxolan-2-yl]methyl]naphthalene-2-carboxamide" 
+# 
+loop_
+_pdbx_chem_comp_audit.comp_id 
+_pdbx_chem_comp_audit.action_type 
+_pdbx_chem_comp_audit.date 
+_pdbx_chem_comp_audit.processing_site 
+KBF "Create component"              2018-02-22 RCSB 
+KBF "Modify model coordinates code" 2018-03-06 RCSB 
+KBF "Initial release"               2018-09-12 RCSB 
 # 
 data_KBG
 # 
@@ -31590,6 +32091,200 @@ KGM "Create component"  2013-06-23 EBI
 KGM "Initial release"   2014-02-12 RCSB 
 KGM "Modify descriptor" 2014-09-05 RCSB 
 # 
+data_KGN
+# 
+_chem_comp.id                                    KGN 
+_chem_comp.name                                  "D-chiro inositol hexakisphosphate" 
+_chem_comp.type                                  NON-POLYMER 
+_chem_comp.pdbx_type                             HETAIN 
+_chem_comp.formula                               "C6 H18 O24 P6" 
+_chem_comp.mon_nstd_parent_comp_id               ? 
+_chem_comp.pdbx_synonyms                         ? 
+_chem_comp.pdbx_formal_charge                    0 
+_chem_comp.pdbx_initial_date                     2018-01-30 
+_chem_comp.pdbx_modified_date                    2018-09-07 
+_chem_comp.pdbx_ambiguous_flag                   N 
+_chem_comp.pdbx_release_status                   REL 
+_chem_comp.pdbx_replaced_by                      ? 
+_chem_comp.pdbx_replaces                         ? 
+_chem_comp.formula_weight                        660.035 
+_chem_comp.one_letter_code                       ? 
+_chem_comp.three_letter_code                     KGN 
+_chem_comp.pdbx_model_coordinates_details        ? 
+_chem_comp.pdbx_model_coordinates_missing_flag   N 
+_chem_comp.pdbx_ideal_coordinates_details        Corina 
+_chem_comp.pdbx_ideal_coordinates_missing_flag   N 
+_chem_comp.pdbx_model_coordinates_db_code        6FL7 
+_chem_comp.pdbx_subcomponent_list                ? 
+_chem_comp.pdbx_processing_site                  EBI 
+# 
+loop_
+_chem_comp_atom.comp_id 
+_chem_comp_atom.atom_id 
+_chem_comp_atom.alt_atom_id 
+_chem_comp_atom.type_symbol 
+_chem_comp_atom.charge 
+_chem_comp_atom.pdbx_align 
+_chem_comp_atom.pdbx_aromatic_flag 
+_chem_comp_atom.pdbx_leaving_atom_flag 
+_chem_comp_atom.pdbx_stereo_config 
+_chem_comp_atom.model_Cartn_x 
+_chem_comp_atom.model_Cartn_y 
+_chem_comp_atom.model_Cartn_z 
+_chem_comp_atom.pdbx_model_Cartn_x_ideal 
+_chem_comp_atom.pdbx_model_Cartn_y_ideal 
+_chem_comp_atom.pdbx_model_Cartn_z_ideal 
+_chem_comp_atom.pdbx_component_atom_id 
+_chem_comp_atom.pdbx_component_comp_id 
+_chem_comp_atom.pdbx_ordinal 
+KGN P1  P1  P 0 1 N N N -0.923 6.124  -2.512  -1.670 -2.782 -2.352 P1  KGN 1  
+KGN P2  P2  P 0 1 N N N -5.386 3.641  -4.330  -3.922 -0.377 1.273  P2  KGN 2  
+KGN P3  P3  P 0 1 N N N -4.572 3.276  -8.700  -2.142 3.160  -0.507 P3  KGN 3  
+KGN P4  P4  P 0 1 N N N -0.626 3.822  -9.679  2.085  3.214  0.480  P4  KGN 4  
+KGN P5  P5  P 0 1 N N N 1.651  6.207  -6.383  3.949  -0.292 -1.273 P5  KGN 5  
+KGN P6  P6  P 0 1 N N N -2.653 9.148  -5.518  1.755  -2.723 2.371  P6  KGN 6  
+KGN C1  C1  C 0 1 N N N -2.522 6.007  -4.647  -0.719 -1.593 -0.156 C1  KGN 7  
+KGN C2  C2  C 0 1 N N N -3.500 5.117  -5.439  -1.384 -0.350 0.437  C2  KGN 8  
+KGN C3  C3  C 0 1 N N N -3.080 4.462  -6.766  -0.749 0.905  -0.165 C3  KGN 9  
+KGN C4  C4  C 0 1 N N N -1.875 5.047  -7.492  0.746  0.924  0.156  C4  KGN 10 
+KGN C5  C5  C 0 1 N N N -0.934 5.647  -6.470  1.411  -0.319 -0.437 C5  KGN 11 
+KGN C6  C6  C 0 1 N N N -1.595 6.724  -5.604  0.776  -1.574 0.166  C6  KGN 12 
+KGN O11 O1  O 0 1 N N N -1.737 5.309  -3.663  -0.902 -1.601 -1.573 O11 KGN 13 
+KGN O12 O2  O 0 1 N N N -3.855 4.011  -4.626  -2.782 -0.368 0.137  O12 KGN 14 
+KGN O13 O3  O 0 1 N N N -4.232 4.446  -7.622  -1.370 2.067  0.389  O13 KGN 15 
+KGN O14 O4  O 0 1 N N N -1.190 3.960  -8.152  1.340  2.096  -0.407 O14 KGN 16 
+KGN O15 O5  O 0 1 N N N 0.232  6.137  -7.130  2.809  -0.301 -0.137 O15 KGN 17 
+KGN O16 O6  O 0 1 N N N -2.353 7.742  -6.278  0.959  -1.566 1.583  O16 KGN 18 
+KGN O21 O7  O 0 1 N N N -1.132 7.586  -2.806  -3.019 -2.961 -1.771 O21 KGN 19 
+KGN O22 O8  O 0 1 N N N -5.596 2.265  -4.917  -5.368 -0.529 0.581  O22 KGN 20 
+KGN O23 O9  O 0 1 N N N -4.458 3.992  -10.035 -1.238 3.655  -1.569 O23 KGN 21 
+KGN O24 O10 O 0 1 N N N 0.854  4.112  -9.588  1.019  3.923  1.456  O24 KGN 22 
+KGN O25 O11 O 0 1 N N N 1.789  7.682  -6.089  5.398  -0.405 -0.580 O25 KGN 23 
+KGN O26 O12 O 0 1 N N N -1.328 9.596  -4.921  1.878  -2.326 3.926  O26 KGN 24 
+KGN O31 O13 O 0 1 N N N -1.532 5.625  -1.224  -1.802 -2.400 -3.910 O31 KGN 25 
+KGN O32 O14 O 0 1 N N N -6.180 4.722  -5.025  -3.694 -1.514 2.193  O32 KGN 26 
+KGN O33 O15 O 0 1 N N N -5.986 2.866  -8.377  -3.440 2.484  -1.178 O33 KGN 27 
+KGN O34 O16 O 0 1 N N N -1.393 4.776  -10.568 3.146  2.575  1.289  O34 KGN 28 
+KGN O35 O17 O 0 1 N N N 2.595  5.622  -7.383  3.748  -1.441 -2.184 O35 KGN 29 
+KGN O36 O18 O 0 1 N N N -3.695 8.822  -4.481  0.955  -4.114 2.233  O36 KGN 30 
+KGN O41 O19 O 0 1 N N N 0.526  5.736  -2.671  -0.837 -4.152 -2.204 O41 KGN 31 
+KGN O42 O20 O 0 1 N N N -5.384 3.660  -2.819  -3.866 1.003  2.101  O42 KGN 32 
+KGN O43 O21 O 0 1 N N N -3.579 2.160  -8.440  -2.600 4.390  0.425  O43 KGN 33 
+KGN O44 O22 O 0 1 N N N -0.890 2.365  -9.972  2.742  4.319  -0.490 O44 KGN 34 
+KGN O45 O23 O 0 1 N N N 1.525  5.336  -5.171  3.861  1.079  -2.112 O45 KGN 35 
+KGN O46 O24 O 0 1 N N N -3.181 10.034 -6.620  3.108  -2.874 1.791  O46 KGN 36 
+KGN H1  H1  H 0 1 N N N -3.123 6.772  -4.133  -1.172 -2.487 0.274  H1  KGN 37 
+KGN H2  H2  H 0 1 N N N -4.401 5.716  -5.639  -1.245 -0.344 1.518  H2  KGN 38 
+KGN H3  H3  H 0 1 N N N -2.827 3.418  -6.530  -0.889 0.899  -1.246 H3  KGN 39 
+KGN H4  H4  H 0 1 N N N -2.199 5.813  -8.211  0.886  0.930  1.237  H4  KGN 40 
+KGN H5  H5  H 0 1 N N N -0.630 4.835  -5.794  1.272  -0.325 -1.518 H5  KGN 41 
+KGN H6  H6  H 0 1 N N N -0.804 7.205  -5.010  1.250  -2.460 -0.257 H6  KGN 42 
+KGN H7  H7  H 0 1 N N N -6.208 2.319  -5.642  -6.104 -0.542 1.207  H7  KGN 43 
+KGN H8  H8  H 0 1 N N N 1.062  4.870  -10.122 0.293  4.364  0.993  H8  KGN 44 
+KGN H9  H9  H 0 1 N N N 2.495  8.045  -6.611  6.135  -0.405 -1.206 H9  KGN 45 
+KGN H10 H10 H 0 1 N N N -1.037 10.390 -5.354  2.347  -2.980 4.463  H10 KGN 46 
+KGN H11 H11 H 0 1 N N N -1.971 6.342  -0.782  -2.256 -3.069 -4.442 H11 KGN 47 
+KGN H12 H12 H 0 1 N N N -6.563 3.135  -9.082  -4.078 2.137  -0.539 H12 KGN 48 
+KGN H13 H13 H 0 1 N N N -4.515 9.242  -4.712  0.058  -4.089 2.593  H13 KGN 49 
+KGN H14 H14 H 0 1 N N N 1.032  6.498  -2.929  0.060  -4.108 -2.565 H14 KGN 50 
+KGN H15 H15 H 0 1 N N N -5.911 4.388  -2.510  -4.009 1.792  1.561  H15 KGN 51 
+KGN H16 H16 H 0 1 N N N -3.002 2.068  -9.189  -3.072 5.089  -0.049 H16 KGN 52 
+KGN H17 H17 H 0 1 N N N -1.512 2.293  -10.687 3.208  5.025  -0.023 H17 KGN 53 
+KGN H18 H18 H 0 1 N N N 2.077  4.569  -5.273  3.984  1.876  -1.577 H18 KGN 54 
+# 
+loop_
+_chem_comp_bond.comp_id 
+_chem_comp_bond.atom_id_1 
+_chem_comp_bond.atom_id_2 
+_chem_comp_bond.value_order 
+_chem_comp_bond.pdbx_aromatic_flag 
+_chem_comp_bond.pdbx_stereo_config 
+_chem_comp_bond.pdbx_ordinal 
+KGN O34 P4  DOUB N N 1  
+KGN O23 P3  DOUB N N 2  
+KGN O44 P4  SING N N 3  
+KGN P4  O24 SING N N 4  
+KGN P4  O14 SING N N 5  
+KGN P3  O43 SING N N 6  
+KGN P3  O33 SING N N 7  
+KGN P3  O13 SING N N 8  
+KGN O14 C4  SING N N 9  
+KGN O13 C3  SING N N 10 
+KGN C4  C3  SING N N 11 
+KGN C4  C5  SING N N 12 
+KGN O35 P5  DOUB N N 13 
+KGN O15 C5  SING N N 14 
+KGN O15 P5  SING N N 15 
+KGN C3  C2  SING N N 16 
+KGN O46 P6  DOUB N N 17 
+KGN C5  C6  SING N N 18 
+KGN P5  O25 SING N N 19 
+KGN P5  O45 SING N N 20 
+KGN O16 C6  SING N N 21 
+KGN O16 P6  SING N N 22 
+KGN C6  C1  SING N N 23 
+KGN P6  O26 SING N N 24 
+KGN P6  O36 SING N N 25 
+KGN C2  C1  SING N N 26 
+KGN C2  O12 SING N N 27 
+KGN O32 P2  DOUB N N 28 
+KGN O22 P2  SING N N 29 
+KGN C1  O11 SING N N 30 
+KGN O12 P2  SING N N 31 
+KGN P2  O42 SING N N 32 
+KGN O11 P1  SING N N 33 
+KGN O21 P1  DOUB N N 34 
+KGN O41 P1  SING N N 35 
+KGN P1  O31 SING N N 36 
+KGN C1  H1  SING N N 37 
+KGN C2  H2  SING N N 38 
+KGN C3  H3  SING N N 39 
+KGN C4  H4  SING N N 40 
+KGN C5  H5  SING N N 41 
+KGN C6  H6  SING N N 42 
+KGN O22 H7  SING N N 43 
+KGN O24 H8  SING N N 44 
+KGN O25 H9  SING N N 45 
+KGN O26 H10 SING N N 46 
+KGN O31 H11 SING N N 47 
+KGN O33 H12 SING N N 48 
+KGN O36 H13 SING N N 49 
+KGN O41 H14 SING N N 50 
+KGN O42 H15 SING N N 51 
+KGN O43 H16 SING N N 52 
+KGN O44 H17 SING N N 53 
+KGN O45 H18 SING N N 54 
+# 
+loop_
+_pdbx_chem_comp_descriptor.comp_id 
+_pdbx_chem_comp_descriptor.type 
+_pdbx_chem_comp_descriptor.program 
+_pdbx_chem_comp_descriptor.program_version 
+_pdbx_chem_comp_descriptor.descriptor 
+KGN InChI            InChI                1.03  
+"InChI=1S/C6H18O24P6/c7-31(8,9)25-1-2(26-32(10,11)12)4(28-34(16,17)18)6(30-36(22,23)24)5(29-35(19,20)21)3(1)27-33(13,14)15/h1-6H,(H2,7,8,9)(H2,10,11,12)(H2,13,14,15)(H2,16,17,18)(H2,19,20,21)(H2,22,23,24)/t1-,2-,3-,4-,5+,6+/m0/s1" 
+KGN InChIKey         InChI                1.03  IMQLKJBTEOYOSI-LKPKBOIGSA-N 
+KGN SMILES_CANONICAL CACTVS               3.385 "O[P](O)(=O)O[C@H]1[C@@H](O[P](O)(O)=O)[C@H](O[P](O)(O)=O)[C@H](O[P](O)(O)=O)[C@@H](O[P](O)(O)=O)[C@@H]1O[P](O)(O)=O" 
+KGN SMILES           CACTVS               3.385 "O[P](O)(=O)O[CH]1[CH](O[P](O)(O)=O)[CH](O[P](O)(O)=O)[CH](O[P](O)(O)=O)[CH](O[P](O)(O)=O)[CH]1O[P](O)(O)=O" 
+KGN SMILES_CANONICAL "OpenEye OEToolkits" 2.0.6 "C1(C(C(C(C(C1OP(=O)(O)O)OP(=O)(O)O)OP(=O)(O)O)OP(=O)(O)O)OP(=O)(O)O)OP(=O)(O)O" 
+KGN SMILES           "OpenEye OEToolkits" 2.0.6 "C1(C(C(C(C(C1OP(=O)(O)O)OP(=O)(O)O)OP(=O)(O)O)OP(=O)(O)O)OP(=O)(O)O)OP(=O)(O)O" 
+# 
+loop_
+_pdbx_chem_comp_identifier.comp_id 
+_pdbx_chem_comp_identifier.type 
+_pdbx_chem_comp_identifier.program 
+_pdbx_chem_comp_identifier.program_version 
+_pdbx_chem_comp_identifier.identifier 
+KGN "SYSTEMATIC NAME" "OpenEye OEToolkits" 2.0.6 "(2,3,4,5,6-pentaphosphonooxycyclohexyl) dihydrogen phosphate" 
+# 
+loop_
+_pdbx_chem_comp_audit.comp_id 
+_pdbx_chem_comp_audit.action_type 
+_pdbx_chem_comp_audit.date 
+_pdbx_chem_comp_audit.processing_site 
+KGN "Create component" 2018-01-30 EBI  
+KGN "Initial release"  2018-09-12 RCSB 
+# 
 data_KGQ
 # 
 _chem_comp.id                                    KGQ 
@@ -38777,6 +39472,348 @@ _pdbx_chem_comp_audit.date
 _pdbx_chem_comp_audit.processing_site 
 KK3 "Create component" 2014-05-05 RCSB 
 KK3 "Initial release"  2014-07-16 RCSB 
+# 
+data_KK7
+# 
+_chem_comp.id                                    KK7 
+_chem_comp.name                                  "N-[3-(4-methyl-4H-1,2,4-triazol-3-yl)phenyl]pyridine-2-carboxamide" 
+_chem_comp.type                                  NON-POLYMER 
+_chem_comp.pdbx_type                             HETAIN 
+_chem_comp.formula                               "C15 H13 N5 O" 
+_chem_comp.mon_nstd_parent_comp_id               ? 
+_chem_comp.pdbx_synonyms                         ? 
+_chem_comp.pdbx_formal_charge                    0 
+_chem_comp.pdbx_initial_date                     2018-07-13 
+_chem_comp.pdbx_modified_date                    2018-09-14 
+_chem_comp.pdbx_ambiguous_flag                   N 
+_chem_comp.pdbx_release_status                   REL 
+_chem_comp.pdbx_replaced_by                      ? 
+_chem_comp.pdbx_replaces                         ? 
+_chem_comp.formula_weight                        279.297 
+_chem_comp.one_letter_code                       ? 
+_chem_comp.three_letter_code                     KK7 
+_chem_comp.pdbx_model_coordinates_details        ? 
+_chem_comp.pdbx_model_coordinates_missing_flag   N 
+_chem_comp.pdbx_ideal_coordinates_details        Corina 
+_chem_comp.pdbx_ideal_coordinates_missing_flag   N 
+_chem_comp.pdbx_model_coordinates_db_code        6E2M 
+_chem_comp.pdbx_subcomponent_list                ? 
+_chem_comp.pdbx_processing_site                  RCSB 
+# 
+loop_
+_chem_comp_atom.comp_id 
+_chem_comp_atom.atom_id 
+_chem_comp_atom.alt_atom_id 
+_chem_comp_atom.type_symbol 
+_chem_comp_atom.charge 
+_chem_comp_atom.pdbx_align 
+_chem_comp_atom.pdbx_aromatic_flag 
+_chem_comp_atom.pdbx_leaving_atom_flag 
+_chem_comp_atom.pdbx_stereo_config 
+_chem_comp_atom.model_Cartn_x 
+_chem_comp_atom.model_Cartn_y 
+_chem_comp_atom.model_Cartn_z 
+_chem_comp_atom.pdbx_model_Cartn_x_ideal 
+_chem_comp_atom.pdbx_model_Cartn_y_ideal 
+_chem_comp_atom.pdbx_model_Cartn_z_ideal 
+_chem_comp_atom.pdbx_component_atom_id 
+_chem_comp_atom.pdbx_component_comp_id 
+_chem_comp_atom.pdbx_ordinal 
+KK7 C01 C1  C 0 1 Y N N -1.691 -26.304 48.206 5.507  0.562  0.613  C01 KK7 1  
+KK7 C02 C2  C 0 1 Y N N -0.584 -26.429 49.022 6.139  -0.606 0.217  C02 KK7 2  
+KK7 N03 N1  N 0 1 Y N N -2.945 -26.103 48.668 4.205  0.701  0.486  N03 KK7 3  
+KK7 C04 C3  C 0 1 Y N N -3.100 -26.010 50.003 3.448  -0.263 -0.022 C04 KK7 4  
+KK7 C05 C4  C 0 1 Y N N -2.048 -26.122 50.906 4.016  -1.464 -0.441 C05 KK7 5  
+KK7 C06 C5  C 0 1 Y N N -0.777 -26.340 50.396 5.386  -1.638 -0.319 C06 KK7 6  
+KK7 C07 C6  C 0 1 N N N -4.505 -25.778 50.413 1.986  -0.060 -0.146 C07 KK7 7  
+KK7 N08 N2  N 0 1 N N N -4.728 -25.933 51.770 1.430  1.099  0.257  N08 KK7 8  
+KK7 C09 C7  C 0 1 Y N N -5.948 -25.753 52.467 0.066  1.329  0.051  C09 KK7 9  
+KK7 C10 C8  C 0 1 Y N N -5.834 -25.646 53.865 -0.836 0.280  0.143  C10 KK7 10 
+KK7 C11 C9  C 0 1 Y N N -6.960 -25.448 54.672 -2.195 0.516  -0.063 C11 KK7 11 
+KK7 C12 C10 C 0 1 Y N N -8.213 -25.352 54.058 -2.638 1.805  -0.360 C12 KK7 12 
+KK7 C13 C11 C 0 1 Y N N -8.337 -25.454 52.676 -1.733 2.842  -0.450 C13 KK7 13 
+KK7 C14 C12 C 0 1 Y N N -7.205 -25.649 51.875 -0.386 2.611  -0.241 C14 KK7 14 
+KK7 O15 O1  O 0 1 N N N -5.334 -25.500 49.544 1.288  -0.940 -0.611 O15 KK7 15 
+KK7 C16 C13 C 0 1 Y N N -6.881 -25.341 56.133 -3.164 -0.599 0.034  C16 KK7 16 
+KK7 N17 N3  N 0 1 Y N N -5.852 -24.829 56.904 -4.517 -0.488 0.201  N17 KK7 17 
+KK7 C18 C14 C 0 1 Y N N -6.250 -24.945 58.198 -4.992 -1.763 0.233  C18 KK7 18 
+KK7 N19 N4  N 0 1 Y N N -7.444 -25.481 58.244 -3.970 -2.565 0.092  N19 KK7 19 
+KK7 N20 N5  N 0 1 Y N N -7.847 -25.723 56.957 -2.888 -1.882 -0.031 N20 KK7 20 
+KK7 C21 C15 C 0 1 N N N -4.588 -24.266 56.499 -5.295 0.747  0.321  C21 KK7 21 
+KK7 H1  H1  H 0 1 N N N -1.546 -26.371 47.138 6.090  1.366  1.036  H1  KK7 22 
+KK7 H2  H2  H 0 1 N N N 0.400  -26.591 48.606 7.209  -0.711 0.326  H2  KK7 23 
+KK7 H3  H3  H 0 1 N N N -2.216 -26.042 51.970 3.399  -2.247 -0.854 H3  KK7 24 
+KK7 H4  H4  H 0 1 N N N 0.064  -26.441 51.067 5.856  -2.558 -0.635 H4  KK7 25 
+KK7 H5  H5  H 0 1 N N N -3.938 -26.203 52.321 1.975  1.774  0.691  H5  KK7 26 
+KK7 H6  H6  H 0 1 N N N -4.859 -25.718 54.324 -0.488 -0.715 0.374  H6  KK7 27 
+KK7 H7  H7  H 0 1 N N N -9.094 -25.197 54.663 -3.690 1.991  -0.521 H7  KK7 28 
+KK7 H8  H8  H 0 1 N N N -9.312 -25.382 52.218 -2.078 3.839  -0.681 H8  KK7 29 
+KK7 H9  H9  H 0 1 N N N -7.306 -25.719 50.802 0.317  3.428  -0.308 H9  KK7 30 
+KK7 H10 H10 H 0 1 N N N -5.670 -24.642 59.057 -6.024 -2.058 0.353  H10 KK7 31 
+KK7 H11 H11 H 0 1 N N N -4.020 -23.961 57.390 -5.524 1.131  -0.673 H11 KK7 32 
+KK7 H12 H12 H 0 1 N N N -4.014 -25.019 55.939 -6.224 0.542  0.854  H12 KK7 33 
+KK7 H13 H13 H 0 1 N N N -4.766 -23.389 55.859 -4.716 1.489  0.873  H13 KK7 34 
+# 
+loop_
+_chem_comp_bond.comp_id 
+_chem_comp_bond.atom_id_1 
+_chem_comp_bond.atom_id_2 
+_chem_comp_bond.value_order 
+_chem_comp_bond.pdbx_aromatic_flag 
+_chem_comp_bond.pdbx_stereo_config 
+_chem_comp_bond.pdbx_ordinal 
+KK7 C01 N03 DOUB Y N 1  
+KK7 C01 C02 SING Y N 2  
+KK7 N03 C04 SING Y N 3  
+KK7 C02 C06 DOUB Y N 4  
+KK7 O15 C07 DOUB N N 5  
+KK7 C04 C07 SING N N 6  
+KK7 C04 C05 DOUB Y N 7  
+KK7 C06 C05 SING Y N 8  
+KK7 C07 N08 SING N N 9  
+KK7 N08 C09 SING N N 10 
+KK7 C14 C09 DOUB Y N 11 
+KK7 C14 C13 SING Y N 12 
+KK7 C09 C10 SING Y N 13 
+KK7 C13 C12 DOUB Y N 14 
+KK7 C10 C11 DOUB Y N 15 
+KK7 C12 C11 SING Y N 16 
+KK7 C11 C16 SING N N 17 
+KK7 C16 N17 SING Y N 18 
+KK7 C16 N20 DOUB Y N 19 
+KK7 C21 N17 SING N N 20 
+KK7 N17 C18 SING Y N 21 
+KK7 N20 N19 SING Y N 22 
+KK7 C18 N19 DOUB Y N 23 
+KK7 C01 H1  SING N N 24 
+KK7 C02 H2  SING N N 25 
+KK7 C05 H3  SING N N 26 
+KK7 C06 H4  SING N N 27 
+KK7 N08 H5  SING N N 28 
+KK7 C10 H6  SING N N 29 
+KK7 C12 H7  SING N N 30 
+KK7 C13 H8  SING N N 31 
+KK7 C14 H9  SING N N 32 
+KK7 C18 H10 SING N N 33 
+KK7 C21 H11 SING N N 34 
+KK7 C21 H12 SING N N 35 
+KK7 C21 H13 SING N N 36 
+# 
+loop_
+_pdbx_chem_comp_descriptor.comp_id 
+_pdbx_chem_comp_descriptor.type 
+_pdbx_chem_comp_descriptor.program 
+_pdbx_chem_comp_descriptor.program_version 
+_pdbx_chem_comp_descriptor.descriptor 
+KK7 SMILES           ACDLabs              12.01 "c3nc(C(Nc2cc(c1n(cnn1)C)ccc2)=O)ccc3"                                                                    
+KK7 InChI            InChI                1.03  "InChI=1S/C15H13N5O/c1-20-10-17-19-14(20)11-5-4-6-12(9-11)18-15(21)13-7-2-3-8-16-13/h2-10H,1H3,(H,18,21)" 
+KK7 InChIKey         InChI                1.03  KMUXXLWWJGMJFW-UHFFFAOYSA-N                                                                               
+KK7 SMILES_CANONICAL CACTVS               3.385 "Cn1cnnc1c2cccc(NC(=O)c3ccccn3)c2"                                                                        
+KK7 SMILES           CACTVS               3.385 "Cn1cnnc1c2cccc(NC(=O)c3ccccn3)c2"                                                                        
+KK7 SMILES_CANONICAL "OpenEye OEToolkits" 2.0.6 "Cn1cnnc1c2cccc(c2)NC(=O)c3ccccn3"                                                                        
+KK7 SMILES           "OpenEye OEToolkits" 2.0.6 "Cn1cnnc1c2cccc(c2)NC(=O)c3ccccn3"                                                                        
+# 
+loop_
+_pdbx_chem_comp_identifier.comp_id 
+_pdbx_chem_comp_identifier.type 
+_pdbx_chem_comp_identifier.program 
+_pdbx_chem_comp_identifier.program_version 
+_pdbx_chem_comp_identifier.identifier 
+KK7 "SYSTEMATIC NAME" ACDLabs              12.01 "N-[3-(4-methyl-4H-1,2,4-triazol-3-yl)phenyl]pyridine-2-carboxamide" 
+KK7 "SYSTEMATIC NAME" "OpenEye OEToolkits" 2.0.6 "~{N}-[3-(4-methyl-1,2,4-triazol-3-yl)phenyl]pyridine-2-carboxamide" 
+# 
+loop_
+_pdbx_chem_comp_audit.comp_id 
+_pdbx_chem_comp_audit.action_type 
+_pdbx_chem_comp_audit.date 
+_pdbx_chem_comp_audit.processing_site 
+KK7 "Create component" 2018-07-13 RCSB 
+KK7 "Initial release"  2018-09-19 RCSB 
+# 
+data_KK8
+# 
+_chem_comp.id                                    KK8 
+_chem_comp.name                                  "N-[3-(4-cyclopropyl-4H-1,2,4-triazol-3-yl)phenyl][3,4'-bipyridine]-2'-carboxamide" 
+_chem_comp.type                                  NON-POLYMER 
+_chem_comp.pdbx_type                             HETAIN 
+_chem_comp.formula                               "C22 H18 N6 O" 
+_chem_comp.mon_nstd_parent_comp_id               ? 
+_chem_comp.pdbx_synonyms                         ? 
+_chem_comp.pdbx_formal_charge                    0 
+_chem_comp.pdbx_initial_date                     2018-07-13 
+_chem_comp.pdbx_modified_date                    2018-09-14 
+_chem_comp.pdbx_ambiguous_flag                   N 
+_chem_comp.pdbx_release_status                   REL 
+_chem_comp.pdbx_replaced_by                      ? 
+_chem_comp.pdbx_replaces                         ? 
+_chem_comp.formula_weight                        382.418 
+_chem_comp.one_letter_code                       ? 
+_chem_comp.three_letter_code                     KK8 
+_chem_comp.pdbx_model_coordinates_details        ? 
+_chem_comp.pdbx_model_coordinates_missing_flag   N 
+_chem_comp.pdbx_ideal_coordinates_details        Corina 
+_chem_comp.pdbx_ideal_coordinates_missing_flag   N 
+_chem_comp.pdbx_model_coordinates_db_code        6E2N 
+_chem_comp.pdbx_subcomponent_list                ? 
+_chem_comp.pdbx_processing_site                  RCSB 
+# 
+loop_
+_chem_comp_atom.comp_id 
+_chem_comp_atom.atom_id 
+_chem_comp_atom.alt_atom_id 
+_chem_comp_atom.type_symbol 
+_chem_comp_atom.charge 
+_chem_comp_atom.pdbx_align 
+_chem_comp_atom.pdbx_aromatic_flag 
+_chem_comp_atom.pdbx_leaving_atom_flag 
+_chem_comp_atom.pdbx_stereo_config 
+_chem_comp_atom.model_Cartn_x 
+_chem_comp_atom.model_Cartn_y 
+_chem_comp_atom.model_Cartn_z 
+_chem_comp_atom.pdbx_model_Cartn_x_ideal 
+_chem_comp_atom.pdbx_model_Cartn_y_ideal 
+_chem_comp_atom.pdbx_model_Cartn_z_ideal 
+_chem_comp_atom.pdbx_component_atom_id 
+_chem_comp_atom.pdbx_component_comp_id 
+_chem_comp_atom.pdbx_ordinal 
+KK8 N01 N1  N 0 1 N N N -4.827 -25.809 51.538 -0.040 -2.003 0.165  N01 KK8 1  
+KK8 C02 C1  C 0 1 Y N N -6.066 -25.595 52.182 -1.395 -1.797 -0.114 C02 KK8 2  
+KK8 C03 C2  C 0 1 Y N N -6.010 -25.529 53.585 -1.971 -0.559 0.127  C03 KK8 3  
+KK8 C04 C3  C 0 1 Y N N -7.163 -25.293 54.347 -3.322 -0.359 -0.153 C04 KK8 4  
+KK8 C05 C4  C 0 1 Y N N -8.388 -25.123 53.679 -4.085 -1.405 -0.673 C05 KK8 5  
+KK8 C06 C5  C 0 1 Y N N -8.443 -25.156 52.283 -3.503 -2.633 -0.909 C06 KK8 6  
+KK8 C07 C6  C 0 1 Y N N -7.286 -25.397 51.535 -2.162 -2.831 -0.637 C07 KK8 7  
+KK8 C08 C7  C 0 1 Y N N -6.526 -25.191 57.923 -5.382 2.552  0.470  C08 KK8 8  
+KK8 N09 N2  N 0 1 Y N N -7.832 -25.357 57.888 -4.173 3.046  0.436  N09 KK8 9  
+KK8 N10 N3  N 0 1 Y N N -8.203 -25.402 56.561 -3.320 2.110  0.219  N10 KK8 10 
+KK8 C11 C8  C 0 1 Y N N -7.125 -25.272 55.804 -3.945 0.959  0.102  C11 KK8 11 
+KK8 N12 N4  N 0 1 Y N N -6.046 -25.141 56.655 -5.280 1.211  0.265  N12 KK8 12 
+KK8 C13 C9  C 0 1 N N N -4.540 -25.657 50.193 0.847  -1.006 -0.026 C13 KK8 13 
+KK8 C14 C10 C 0 1 Y N N -3.124 -25.902 49.814 2.293  -1.251 0.184  C14 KK8 14 
+KK8 N15 N5  N 0 1 Y N N -2.285 -26.131 50.853 2.708  -2.454 0.560  N15 KK8 15 
+KK8 C16 C11 C 0 1 Y N N -2.716 -25.862 48.495 3.203  -0.218 -0.021 C16 KK8 16 
+KK8 C17 C12 C 0 1 Y N N -1.370 -26.084 48.193 4.563  -0.466 0.181  C17 KK8 17 
+KK8 C18 C13 C 0 1 Y N N -0.499 -26.319 49.257 4.949  -1.747 0.583  C18 KK8 18 
+KK8 C19 C14 C 0 1 Y N N -0.990 -26.335 50.550 3.981  -2.720 0.759  C19 KK8 19 
+KK8 O20 O1  O 0 1 N N N -5.320 -25.314 49.315 0.460  0.093  -0.370 O20 KK8 20 
+KK8 C21 C15 C 0 1 N N N -4.660 -24.956 56.368 -6.374 0.237  0.226  C21 KK8 21 
+KK8 C22 C16 C 0 1 Y N N -0.936 -26.025 46.791 5.570  0.603  -0.025 C22 KK8 22 
+KK8 C23 C17 C 0 1 Y N N -1.759 -26.468 45.764 5.177  1.879  -0.425 C23 KK8 23 
+KK8 N24 N6  N 0 1 Y N N -1.466 -26.434 44.451 6.071  2.829  -0.608 N24 KK8 24 
+KK8 C25 C18 C 0 1 Y N N -0.269 -25.920 44.109 7.360  2.618  -0.423 C25 KK8 25 
+KK8 C26 C19 C 0 1 Y N N 0.639  -25.446 45.031 7.829  1.379  -0.026 C26 KK8 26 
+KK8 C27 C20 C 0 1 Y N N 0.299  -25.500 46.391 6.929  0.349  0.185  C27 KK8 27 
+KK8 C28 C21 C 0 1 N N N -4.157 -23.773 55.572 -7.749 0.700  0.712  C28 KK8 28 
+KK8 C29 C22 C 0 1 N N N -3.885 -23.852 57.044 -7.500 0.481  -0.782 C29 KK8 29 
+KK8 H1  H1  H 0 1 N N N -4.070 -26.104 52.121 0.262  -2.863 0.499  H1  KK8 30 
+KK8 H2  H2  H 0 1 N N N -5.062 -25.662 54.085 -1.376 0.247  0.530  H2  KK8 31 
+KK8 H3  H3  H 0 1 N N N -9.292 -24.966 54.248 -5.132 -1.253 -0.890 H3  KK8 32 
+KK8 H4  H4  H 0 1 N N N -9.384 -24.994 51.779 -4.095 -3.442 -1.311 H4  KK8 33 
+KK8 H5  H5  H 0 1 N N N -7.337 -25.430 50.457 -1.710 -3.793 -0.827 H5  KK8 34 
+KK8 H6  H6  H 0 1 N N N -5.931 -25.108 58.820 -6.294 3.106  0.636  H6  KK8 35 
+KK8 H7  H7  H 0 1 N N N -3.428 -25.662 47.708 2.863  0.759  -0.332 H7  KK8 36 
+KK8 H8  H8  H 0 1 N N N 0.552  -26.487 49.072 5.991  -1.977 0.749  H8  KK8 37 
+KK8 H9  H9  H 0 1 N N N -0.298 -26.521 51.358 4.275  -3.712 1.069  H9  KK8 38 
+KK8 H10 H10 H 0 1 N N N -4.082 -25.878 56.212 -6.091 -0.796 0.424  H10 KK8 39 
+KK8 H11 H11 H 0 1 N N N -2.719 -26.876 46.044 4.131  2.090  -0.587 H11 KK8 40 
+KK8 H12 H12 H 0 1 N N N -0.008 -25.877 43.062 8.059  3.424  -0.585 H12 KK8 41 
+KK8 H13 H13 H 0 1 N N N 1.589  -25.043 44.714 8.887  1.218  0.123  H13 KK8 42 
+KK8 H14 H14 H 0 1 N N N 0.993  -25.135 47.133 7.267  -0.628 0.496  H14 KK8 43 
+KK8 H15 H15 H 0 1 N N N -3.335 -23.904 54.853 -8.371 -0.030 1.231  H15 KK8 44 
+KK8 H16 H16 H 0 1 N N N -4.868 -23.029 55.184 -7.840 1.728  1.062  H16 KK8 45 
+KK8 H17 H17 H 0 1 N N N -2.863 -24.040 57.404 -7.426 1.365  -1.415 H17 KK8 46 
+KK8 H18 H18 H 0 1 N N N -4.397 -23.165 57.734 -7.958 -0.393 -1.246 H18 KK8 47 
+# 
+loop_
+_chem_comp_bond.comp_id 
+_chem_comp_bond.atom_id_1 
+_chem_comp_bond.atom_id_2 
+_chem_comp_bond.value_order 
+_chem_comp_bond.pdbx_aromatic_flag 
+_chem_comp_bond.pdbx_stereo_config 
+_chem_comp_bond.pdbx_ordinal 
+KK8 C25 N24 DOUB Y N 1  
+KK8 C25 C26 SING Y N 2  
+KK8 N24 C23 SING Y N 3  
+KK8 C26 C27 DOUB Y N 4  
+KK8 C23 C22 DOUB Y N 5  
+KK8 C27 C22 SING Y N 6  
+KK8 C22 C17 SING N N 7  
+KK8 C17 C16 DOUB Y N 8  
+KK8 C17 C18 SING Y N 9  
+KK8 C16 C14 SING Y N 10 
+KK8 C18 C19 DOUB Y N 11 
+KK8 O20 C13 DOUB N N 12 
+KK8 C14 C13 SING N N 13 
+KK8 C14 N15 DOUB Y N 14 
+KK8 C13 N01 SING N N 15 
+KK8 C19 N15 SING Y N 16 
+KK8 C07 C02 DOUB Y N 17 
+KK8 C07 C06 SING Y N 18 
+KK8 N01 C02 SING N N 19 
+KK8 C02 C03 SING Y N 20 
+KK8 C06 C05 DOUB Y N 21 
+KK8 C03 C04 DOUB Y N 22 
+KK8 C05 C04 SING Y N 23 
+KK8 C04 C11 SING N N 24 
+KK8 C28 C21 SING N N 25 
+KK8 C28 C29 SING N N 26 
+KK8 C11 N10 DOUB Y N 27 
+KK8 C11 N12 SING Y N 28 
+KK8 C21 N12 SING N N 29 
+KK8 C21 C29 SING N N 30 
+KK8 N10 N09 SING Y N 31 
+KK8 N12 C08 SING Y N 32 
+KK8 N09 C08 DOUB Y N 33 
+KK8 N01 H1  SING N N 34 
+KK8 C03 H2  SING N N 35 
+KK8 C05 H3  SING N N 36 
+KK8 C06 H4  SING N N 37 
+KK8 C07 H5  SING N N 38 
+KK8 C08 H6  SING N N 39 
+KK8 C16 H7  SING N N 40 
+KK8 C18 H8  SING N N 41 
+KK8 C19 H9  SING N N 42 
+KK8 C21 H10 SING N N 43 
+KK8 C23 H11 SING N N 44 
+KK8 C25 H12 SING N N 45 
+KK8 C26 H13 SING N N 46 
+KK8 C27 H14 SING N N 47 
+KK8 C28 H15 SING N N 48 
+KK8 C28 H16 SING N N 49 
+KK8 C29 H17 SING N N 50 
+KK8 C29 H18 SING N N 51 
+# 
+loop_
+_pdbx_chem_comp_descriptor.comp_id 
+_pdbx_chem_comp_descriptor.type 
+_pdbx_chem_comp_descriptor.program 
+_pdbx_chem_comp_descriptor.program_version 
+_pdbx_chem_comp_descriptor.descriptor 
+KK8 SMILES           ACDLabs              12.01 "N(c3cc(c1nncn1C2CC2)ccc3)C(c4nccc(c4)c5cnccc5)=O"                                                                                               
+KK8 InChI            InChI                1.03  "InChI=1S/C22H18N6O/c29-22(20-12-15(8-10-24-20)17-4-2-9-23-13-17)26-18-5-1-3-16(11-18)21-27-25-14-28(21)19-6-7-19/h1-5,8-14,19H,6-7H2,(H,26,29)" 
+KK8 InChIKey         InChI                1.03  SZZKJPNBENKCOL-UHFFFAOYSA-N                                                                                                                      
+KK8 SMILES_CANONICAL CACTVS               3.385 "O=C(Nc1cccc(c1)c2nncn2C3CC3)c4cc(ccn4)c5cccnc5"                                                                                                 
+KK8 SMILES           CACTVS               3.385 "O=C(Nc1cccc(c1)c2nncn2C3CC3)c4cc(ccn4)c5cccnc5"                                                                                                 
+KK8 SMILES_CANONICAL "OpenEye OEToolkits" 2.0.6 "c1cc(cc(c1)NC(=O)c2cc(ccn2)c3cccnc3)c4nncn4C5CC5"                                                                                               
+KK8 SMILES           "OpenEye OEToolkits" 2.0.6 "c1cc(cc(c1)NC(=O)c2cc(ccn2)c3cccnc3)c4nncn4C5CC5"                                                                                               
+# 
+loop_
+_pdbx_chem_comp_identifier.comp_id 
+_pdbx_chem_comp_identifier.type 
+_pdbx_chem_comp_identifier.program 
+_pdbx_chem_comp_identifier.program_version 
+_pdbx_chem_comp_identifier.identifier 
+KK8 "SYSTEMATIC NAME" ACDLabs              12.01 "N-[3-(4-cyclopropyl-4H-1,2,4-triazol-3-yl)phenyl][3,4'-bipyridine]-2'-carboxamide"       
+KK8 "SYSTEMATIC NAME" "OpenEye OEToolkits" 2.0.6 "~{N}-[3-(4-cyclopropyl-1,2,4-triazol-3-yl)phenyl]-4-pyridin-3-yl-pyridine-2-carboxamide" 
+# 
+loop_
+_pdbx_chem_comp_audit.comp_id 
+_pdbx_chem_comp_audit.action_type 
+_pdbx_chem_comp_audit.date 
+_pdbx_chem_comp_audit.processing_site 
+KK8 "Create component" 2018-07-13 RCSB 
+KK8 "Initial release"  2018-09-19 RCSB 
 # 
 data_KKA
 # 

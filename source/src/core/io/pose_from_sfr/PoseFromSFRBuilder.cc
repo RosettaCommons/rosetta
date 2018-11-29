@@ -437,16 +437,18 @@ PoseFromSFRBuilder::pass_2_resolve_residue_types()
 		bool is_d_aa = NomenclatureManager::get_instance()->decide_is_d_aa( name3 );
 		bool is_l_aa = NomenclatureManager::get_instance()->decide_is_l_aa( name3 );
 		bool is_achiral = NomenclatureManager::get_instance()->decide_is_known_achiral( name3 );
-		if ( ! (is_d_aa || is_l_aa || is_achiral ) ) {
-			chemical::detect_ld_chirality_from_polymer_residue( xyz, name3, is_d_aa, is_l_aa );
-		}
-
 		bool is_chemical_component_ligand = false;
 
 		// Get a list of ResidueTypes that could apply for this particular 3-letter PDB residue name.
 		if ( ! is_residue_type_recognized( ii, name3, is_chemical_component_ligand ) ) {
 			residue_was_recognized_[ ii ] = false;
 			continue;
+		}
+
+		// Don't try ld chirality detection on known CCD ligands -- that way leads madness
+		// (too many potential atom names, currently special cased, that might overlap)
+		if ( ! (is_d_aa || is_l_aa || is_achiral ) && !is_chemical_component_ligand ) {
+			chemical::detect_ld_chirality_from_polymer_residue( xyz, name3, is_d_aa, is_l_aa );
 		}
 
 		if ( is_chemical_component_ligand ) {

@@ -14391,20 +14391,20 @@ VAS "Obsolete component" 2012-01-11 RCSB
 data_VAU
 # 
 _chem_comp.id                                    VAU 
-_chem_comp.name                                  "(1R,3S,4S,5R)-3-(aminomethyl)-1,3,4,5-tetrakis(oxidanyl)cyclohexane-1-carboxylic acid" 
-_chem_comp.type                                  non-polymer 
+_chem_comp.name                                  "(1~{R},3~{R},4~{S},5~{R})-3-methyl-1,3,4,5-tetrakis(oxidanyl)cyclohexane-1-carboxylic acid" 
+_chem_comp.type                                  NON-POLYMER 
 _chem_comp.pdbx_type                             HETAIN 
-_chem_comp.formula                               "C8 H15 N O6" 
+_chem_comp.formula                               "C8 H14 O6" 
 _chem_comp.mon_nstd_parent_comp_id               ? 
 _chem_comp.pdbx_synonyms                         ? 
 _chem_comp.pdbx_formal_charge                    0 
 _chem_comp.pdbx_initial_date                     2015-03-30 
-_chem_comp.pdbx_modified_date                    2015-07-10 
+_chem_comp.pdbx_modified_date                    2018-08-21 
 _chem_comp.pdbx_ambiguous_flag                   N 
 _chem_comp.pdbx_release_status                   REL 
 _chem_comp.pdbx_replaced_by                      ? 
 _chem_comp.pdbx_replaces                         ? 
-_chem_comp.formula_weight                        221.208 
+_chem_comp.formula_weight                        206.193 
 _chem_comp.one_letter_code                       ? 
 _chem_comp.three_letter_code                     VAU 
 _chem_comp.pdbx_model_coordinates_details        ? 
@@ -14434,36 +14434,34 @@ _chem_comp_atom.pdbx_model_Cartn_z_ideal
 _chem_comp_atom.pdbx_component_atom_id 
 _chem_comp_atom.pdbx_component_comp_id 
 _chem_comp_atom.pdbx_ordinal 
-VAU CAJ  CAJ  C 0 1 N N N 7.240  -20.013 -18.097 2.033  1.831  -0.542 CAJ  VAU 1  
-VAU CAR  CAR  C 0 1 N N S 8.627  -20.378 -17.646 1.062  0.793  0.025  CAR  VAU 2  
-VAU OAG  OAG  O 0 1 N N N 9.516  -19.395 -17.948 1.127  0.811  1.453  OAG  VAU 3  
-VAU CAL  CAL  C 0 1 N N N 8.661  -20.289 -16.147 -0.362 1.128  -0.424 CAL  VAU 4  
-VAU CAQ  CAQ  C 0 1 N N R 9.617  -21.111 -15.385 -1.333 0.091  0.143  CAQ  VAU 5  
-VAU CAN  CAN  C 0 1 N N N 9.273  -21.327 -13.953 -2.735 0.421  -0.300 CAN  VAU 6  
-VAU OAC  OAC  O 0 1 N N N 9.807  -20.532 -13.199 -3.784 0.006  0.427  OAC  VAU 7  
-VAU OAB  OAB  O 0 1 N N N 8.631  -22.301 -13.693 -2.915 1.059  -1.311 OAB  VAU 8  
-VAU OAF  OAF  O 0 1 N N N 10.741 -20.271 -15.404 -1.268 0.109  1.570  OAF  VAU 9  
-VAU CAK  CAK  C 0 1 N N N 9.875  -22.492 -16.108 -0.951 -1.299 -0.368 CAK  VAU 10 
-VAU CAO  CAO  C 0 1 N N R 10.191 -22.329 -17.646 0.473  -1.634 0.082  CAO  VAU 11 
-VAU OAD  OAD  O 0 1 N N N 10.414 -23.613 -18.298 0.830  -2.933 -0.396 OAD  VAU 12 
-VAU CAP  CAP  C 0 1 N N S 8.978  -21.712 -18.266 1.444  -0.597 -0.486 CAP  VAU 13 
-VAU OAE  OAE  O 0 1 N N N 9.183  -21.579 -19.617 2.774  -0.910 -0.065 OAE  VAU 14 
-VAU NXT  NXT  N 0 1 N Y N 7.118  -18.771 -18.630 3.411  1.443  -0.211 NXT  VAU 15 
-VAU HAJ1 HAJ1 H 0 0 N N N 6.925  -20.743 -18.857 1.920  1.880  -1.625 HAJ1 VAU 16 
-VAU HAJ2 HAJ2 H 0 0 N N N 6.570  -20.078 -17.227 1.816  2.807  -0.109 HAJ2 VAU 17 
-VAU HXT1 HXT1 H 0 0 N N N 6.168  -18.616 -18.900 4.072  2.113  -0.575 HXT1 VAU 18 
-VAU HXT2 HXT2 H 0 0 N N N 7.387  -18.089 -17.950 3.525  1.328  0.785  HXT2 VAU 19 
-VAU HAG  HAG  H 0 1 N N N 10.383 -19.650 -17.653 2.002  0.607  1.809  HAG  VAU 20 
-VAU HAL1 HAL1 H 0 0 N N N 8.873  -19.239 -15.895 -0.635 2.119  -0.060 HAL1 VAU 21 
-VAU HAL2 HAL2 H 0 0 N N N 7.656  -20.556 -15.789 -0.411 1.115  -1.513 HAL2 VAU 22 
-VAU HAP  HAP  H 0 1 N N N 8.131  -22.391 -18.091 1.395  -0.610 -1.574 HAP  VAU 23 
-VAU HAF  HAF  H 0 1 N N N 11.455 -20.686 -14.935 -1.860 -0.525 1.999  HAF  VAU 24 
-VAU HAK1 HAK1 H 0 0 N N N 10.730 -22.987 -15.624 -1.643 -2.038 0.036  HAK1 VAU 25 
-VAU HAK2 HAK2 H 0 0 N N N 8.978  -23.119 -15.998 -1.000 -1.312 -1.457 HAK2 VAU 26 
-VAU HAC  HAC  H 0 1 N N N 9.645  -20.790 -12.299 -4.664 0.242  0.103  HAC  VAU 27 
-VAU HAO  HAO  H 0 1 N N N 11.062 -21.669 -17.770 0.522  -1.621 1.171  HAO  VAU 28 
-VAU HAD  HAD  H 0 1 N N N 10.600 -23.473 -19.219 0.256  -3.641 -0.075 HAD  VAU 29 
-VAU HAE  HAE  H 0 1 N N N 9.402  -22.425 -19.989 3.083  -1.779 -0.354 HAE  VAU 30 
+VAU CAJ C1  C 0 1 N N N 7.240  -20.013 -18.097 -1.914 2.283  0.645  CAJ VAU 1  
+VAU CAR C2  C 0 1 N N R 8.627  -20.378 -17.646 -1.142 1.112  0.034  CAR VAU 2  
+VAU OAG O1  O 0 1 N N N 9.516  -19.395 -17.948 -1.220 1.183  -1.392 OAG VAU 3  
+VAU CAL C3  C 0 1 N N N 8.661  -20.289 -16.147 0.323  1.186  0.468  CAL VAU 4  
+VAU CAQ C4  C 0 1 N N R 9.617  -21.111 -15.385 1.096  0.015  -0.144 CAQ VAU 5  
+VAU CAN C5  C 0 1 N N N 9.273  -21.327 -13.953 2.539  0.087  0.284  CAN VAU 6  
+VAU OAC O2  O 0 1 N N N 9.807  -20.532 -13.199 3.492  -0.479 -0.473 OAC VAU 7  
+VAU OAB O3  O 0 1 N N N 8.631  -22.301 -13.693 2.838  0.655  1.308  OAB VAU 8  
+VAU OAF O4  O 0 1 N N N 10.741 -20.271 -15.404 1.017  0.086  -1.569 OAF VAU 9  
+VAU CAK C6  C 0 1 N N N 9.875  -22.492 -16.108 0.487  -1.304 0.336  CAK VAU 10 
+VAU CAO C7  C 0 1 N N R 10.191 -22.329 -17.646 -0.978 -1.377 -0.099 CAO VAU 11 
+VAU OAD O5  O 0 1 N N N 10.414 -23.613 -18.298 -1.547 -2.609 0.349  OAD VAU 12 
+VAU CAP C8  C 0 1 N N S 8.978  -21.712 -18.266 -1.751 -0.207 0.513  CAP VAU 13 
+VAU OAE O6  O 0 1 N N N 9.183  -21.579 -19.617 -3.119 -0.275 0.108  OAE VAU 14 
+VAU H1  H1  H 0 1 N N N 6.955  -19.044 -17.661 -1.481 3.223  0.304  H1  VAU 15 
+VAU H2  H2  H 0 1 N N N 7.218  -19.942 -19.194 -2.958 2.230  0.336  H2  VAU 16 
+VAU H3  H3  H 0 1 N N N 9.245  -18.584 -17.533 -2.122 1.142  -1.738 H3  VAU 17 
+VAU H4  H4  H 0 1 N N N 8.873  -19.239 -15.895 0.757  2.125  0.126  H4  VAU 18 
+VAU H5  H5  H 0 1 N N N 7.656  -20.556 -15.789 0.383  1.132  1.555  H5  VAU 19 
+VAU H6  H6  H 0 1 N N N 9.645  -20.790 -12.299 4.404  -0.407 -0.158 H6  VAU 20 
+VAU H7  H7  H 0 1 N N N 11.455 -20.686 -14.935 1.486  -0.627 -2.025 H7  VAU 21 
+VAU H8  H8  H 0 1 N N N 8.978  -23.119 -15.998 1.037  -2.138 -0.101 H8  VAU 22 
+VAU H9  H9  H 0 1 N N N 10.730 -22.987 -15.624 0.547  -1.358 1.423  H9  VAU 23 
+VAU H10 H10 H 0 1 N N N 11.062 -21.669 -17.770 -1.038 -1.324 -1.186 H10 VAU 24 
+VAU H11 H11 H 0 1 N N N 11.181 -24.030 -17.923 -1.106 -3.396 -0.000 H11 VAU 25 
+VAU H12 H12 H 0 1 N N N 8.131  -22.391 -18.091 -1.691 -0.261 1.600  H12 VAU 26 
+VAU H13 H13 H 0 1 N N N 9.402  -22.425 -19.989 -3.570 -1.087 0.378  H13 VAU 27 
+VAU H14 H14 H 0 1 N N N 6.531  -20.786 -17.766 -1.855 2.229  1.732  H14 VAU 28 
 # 
 loop_
 _chem_comp_bond.comp_id 
@@ -14473,36 +14471,34 @@ _chem_comp_bond.value_order
 _chem_comp_bond.pdbx_aromatic_flag 
 _chem_comp_bond.pdbx_stereo_config 
 _chem_comp_bond.pdbx_ordinal 
-VAU CAJ CAR  SING N N 1  
-VAU CAJ NXT  SING N N 2  
-VAU CAR OAG  SING N N 3  
-VAU CAR CAL  SING N N 4  
-VAU CAR CAP  SING N N 5  
-VAU CAL CAQ  SING N N 6  
-VAU CAQ CAN  SING N N 7  
-VAU CAQ OAF  SING N N 8  
-VAU CAQ CAK  SING N N 9  
-VAU CAN OAC  SING N N 10 
-VAU CAN OAB  DOUB N N 11 
-VAU CAK CAO  SING N N 12 
-VAU CAO OAD  SING N N 13 
-VAU CAO CAP  SING N N 14 
-VAU CAP OAE  SING N N 15 
-VAU CAJ HAJ1 SING N N 16 
-VAU CAJ HAJ2 SING N N 17 
-VAU NXT HXT1 SING N N 18 
-VAU NXT HXT2 SING N N 19 
-VAU OAG HAG  SING N N 20 
-VAU CAL HAL1 SING N N 21 
-VAU CAL HAL2 SING N N 22 
-VAU CAP HAP  SING N N 23 
-VAU OAF HAF  SING N N 24 
-VAU CAK HAK1 SING N N 25 
-VAU CAK HAK2 SING N N 26 
-VAU OAC HAC  SING N N 27 
-VAU CAO HAO  SING N N 28 
-VAU OAD HAD  SING N N 29 
-VAU OAE HAE  SING N N 30 
+VAU OAE CAP SING N N 1  
+VAU OAD CAO SING N N 2  
+VAU CAP CAR SING N N 3  
+VAU CAP CAO SING N N 4  
+VAU CAJ CAR SING N N 5  
+VAU OAG CAR SING N N 6  
+VAU CAR CAL SING N N 7  
+VAU CAO CAK SING N N 8  
+VAU CAL CAQ SING N N 9  
+VAU CAK CAQ SING N N 10 
+VAU OAF CAQ SING N N 11 
+VAU CAQ CAN SING N N 12 
+VAU CAN OAB DOUB N N 13 
+VAU CAN OAC SING N N 14 
+VAU CAJ H1  SING N N 15 
+VAU CAJ H2  SING N N 16 
+VAU OAG H3  SING N N 17 
+VAU CAL H4  SING N N 18 
+VAU CAL H5  SING N N 19 
+VAU OAC H6  SING N N 20 
+VAU OAF H7  SING N N 21 
+VAU CAK H8  SING N N 22 
+VAU CAK H9  SING N N 23 
+VAU CAO H10 SING N N 24 
+VAU OAD H11 SING N N 25 
+VAU CAP H12 SING N N 26 
+VAU OAE H13 SING N N 27 
+VAU CAJ H14 SING N N 28 
 # 
 loop_
 _pdbx_chem_comp_descriptor.comp_id 
@@ -14510,12 +14506,12 @@ _pdbx_chem_comp_descriptor.type
 _pdbx_chem_comp_descriptor.program 
 _pdbx_chem_comp_descriptor.program_version 
 _pdbx_chem_comp_descriptor.descriptor 
-VAU InChI            InChI                1.03  "InChI=1S/C8H15NO6/c9-3-8(15)2-7(14,6(12)13)1-4(10)5(8)11/h4-5,10-11,14-15H,1-3,9H2,(H,12,13)/t4-,5+,7-,8+/m1/s1" 
-VAU InChIKey         InChI                1.03  INSJTZQVOJUBQR-ROHCDXGRSA-N                                                                                       
-VAU SMILES_CANONICAL CACTVS               3.385 "NC[C@@]1(O)C[C@](O)(C[C@@H](O)[C@@H]1O)C(O)=O"                                                                   
-VAU SMILES           CACTVS               3.385 "NC[C]1(O)C[C](O)(C[CH](O)[CH]1O)C(O)=O"                                                                          
-VAU SMILES_CANONICAL "OpenEye OEToolkits" 1.7.6 "C1[C@H]([C@@H]([C@](C[C@]1(C(=O)O)O)(CN)O)O)O"                                                                   
-VAU SMILES           "OpenEye OEToolkits" 1.7.6 "C1C(C(C(CC1(C(=O)O)O)(CN)O)O)O"                                                                                  
+VAU InChI            InChI                1.03  "InChI=1S/C8H14O6/c1-7(13)3-8(14,6(11)12)2-4(9)5(7)10/h4-5,9-10,13-14H,2-3H2,1H3,(H,11,12)/t4-,5+,7-,8-/m1/s1" 
+VAU InChIKey         InChI                1.03  AQOKFKYCBLFIKH-IXROVEORSA-N                                                                                    
+VAU SMILES_CANONICAL CACTVS               3.385 "C[C@@]1(O)C[C@](O)(C[C@@H](O)[C@@H]1O)C(O)=O"                                                                 
+VAU SMILES           CACTVS               3.385 "C[C]1(O)C[C](O)(C[CH](O)[CH]1O)C(O)=O"                                                                        
+VAU SMILES_CANONICAL "OpenEye OEToolkits" 2.0.6 "C[C@]1(C[C@](C[C@H]([C@@H]1O)O)(C(=O)O)O)O"                                                                   
+VAU SMILES           "OpenEye OEToolkits" 2.0.6 "CC1(CC(CC(C1O)O)(C(=O)O)O)O"                                                                                  
 # 
 loop_
 _pdbx_chem_comp_identifier.comp_id 
@@ -14523,15 +14519,16 @@ _pdbx_chem_comp_identifier.type
 _pdbx_chem_comp_identifier.program 
 _pdbx_chem_comp_identifier.program_version 
 _pdbx_chem_comp_identifier.identifier 
-VAU "SYSTEMATIC NAME" "OpenEye OEToolkits" 1.7.6 "(1R,3S,4S,5R)-3-(aminomethyl)-1,3,4,5-tetrakis(oxidanyl)cyclohexane-1-carboxylic acid" 
+VAU "SYSTEMATIC NAME" "OpenEye OEToolkits" 2.0.6 "(1~{R},3~{R},4~{S},5~{R})-3-methyl-1,3,4,5-tetrakis(oxidanyl)cyclohexane-1-carboxylic acid" 
 # 
 loop_
 _pdbx_chem_comp_audit.comp_id 
 _pdbx_chem_comp_audit.action_type 
 _pdbx_chem_comp_audit.date 
 _pdbx_chem_comp_audit.processing_site 
-VAU "Create component" 2015-03-30 EBI  
-VAU "Initial release"  2015-07-15 RCSB 
+VAU "Create component"   2015-03-30 EBI  
+VAU "Initial release"    2015-07-15 RCSB 
+VAU "Other modification" 2018-08-21 EBI  
 # 
 data_VAW
 # 
@@ -46274,6 +46271,199 @@ _pdbx_chem_comp_audit.processing_site
 VSI "Create component" 2013-01-28 PDBJ 
 VSI "Initial release"  2013-11-13 RCSB 
 # 
+data_VSK
+# 
+_chem_comp.id                                    VSK 
+_chem_comp.name                                  "(2~{S})-2-azanyl-3-(1~{H}-indol-3-yl)-~{N}-[2-(2,4,6-trimethylphenyl)ethyl]propanamide" 
+_chem_comp.type                                  NON-POLYMER 
+_chem_comp.pdbx_type                             HETAIN 
+_chem_comp.formula                               "C22 H27 N3 O" 
+_chem_comp.mon_nstd_parent_comp_id               ? 
+_chem_comp.pdbx_synonyms                         VSK-B24 
+_chem_comp.pdbx_formal_charge                    0 
+_chem_comp.pdbx_initial_date                     2017-07-21 
+_chem_comp.pdbx_modified_date                    2018-09-07 
+_chem_comp.pdbx_ambiguous_flag                   N 
+_chem_comp.pdbx_release_status                   REL 
+_chem_comp.pdbx_replaced_by                      ? 
+_chem_comp.pdbx_replaces                         ? 
+_chem_comp.formula_weight                        349.469 
+_chem_comp.one_letter_code                       ? 
+_chem_comp.three_letter_code                     VSK 
+_chem_comp.pdbx_model_coordinates_details        ? 
+_chem_comp.pdbx_model_coordinates_missing_flag   N 
+_chem_comp.pdbx_ideal_coordinates_details        Corina 
+_chem_comp.pdbx_ideal_coordinates_missing_flag   N 
+_chem_comp.pdbx_model_coordinates_db_code        5OJE 
+_chem_comp.pdbx_subcomponent_list                ? 
+_chem_comp.pdbx_processing_site                  EBI 
+# 
+loop_
+_chem_comp_atom.comp_id 
+_chem_comp_atom.atom_id 
+_chem_comp_atom.alt_atom_id 
+_chem_comp_atom.type_symbol 
+_chem_comp_atom.charge 
+_chem_comp_atom.pdbx_align 
+_chem_comp_atom.pdbx_aromatic_flag 
+_chem_comp_atom.pdbx_leaving_atom_flag 
+_chem_comp_atom.pdbx_stereo_config 
+_chem_comp_atom.model_Cartn_x 
+_chem_comp_atom.model_Cartn_y 
+_chem_comp_atom.model_Cartn_z 
+_chem_comp_atom.pdbx_model_Cartn_x_ideal 
+_chem_comp_atom.pdbx_model_Cartn_y_ideal 
+_chem_comp_atom.pdbx_model_Cartn_z_ideal 
+_chem_comp_atom.pdbx_component_atom_id 
+_chem_comp_atom.pdbx_component_comp_id 
+_chem_comp_atom.pdbx_ordinal 
+VSK C1  C1  C 0 1 Y N N -1.743 0.025  10.114 -5.283 0.927  -1.102 C1  VSK 1  
+VSK C10 C2  C 0 1 N N S 0.508  3.647  9.412  -1.755 0.610  0.473  C10 VSK 2  
+VSK C11 C3  C 0 1 N N N -0.175 5.004  9.541  -0.329 0.890  0.073  C11 VSK 3  
+VSK C12 C4  C 0 1 N N N -1.738 6.593  8.558  2.045  0.344  0.097  C12 VSK 4  
+VSK C13 C5  C 0 1 N N N -1.417 7.545  7.427  2.962  -0.726 0.693  C13 VSK 5  
+VSK C14 C6  C 0 1 Y N N -2.359 8.720  7.559  4.388  -0.446 0.293  C14 VSK 6  
+VSK C15 C7  C 0 1 Y N N -3.634 8.661  6.977  4.896  -0.984 -0.875 C15 VSK 7  
+VSK C16 C8  C 0 1 Y N N -4.503 9.740  7.139  6.203  -0.727 -1.243 C16 VSK 8  
+VSK C17 C9  C 0 1 Y N N -4.142 10.870 7.852  7.003  0.067  -0.442 C17 VSK 9  
+VSK C18 C10 C 0 1 Y N N -2.881 10.907 8.423  6.495  0.605  0.725  C18 VSK 10 
+VSK C19 C11 C 0 1 Y N N -1.979 9.852  8.297  5.186  0.353  1.090  C19 VSK 11 
+VSK C2  C12 C 0 1 Y N N -2.114 1.319  10.496 -4.965 -0.170 -0.300 C2  VSK 12 
+VSK C20 C13 C 0 1 N N N -0.619 9.963  8.949  4.630  0.944  2.360  C20 VSK 13 
+VSK C21 C14 C 0 1 N N N -5.096 12.032 8.002  8.429  0.347  -0.842 C21 VSK 14 
+VSK C22 C15 C 0 1 N N N -4.094 7.454  6.191  4.024  -1.850 -1.748 C22 VSK 15 
+VSK C3  C16 C 0 1 Y N N -3.476 1.592  10.739 -5.985 -0.863 0.378  C3  VSK 16 
+VSK C4  C17 C 0 1 Y N N -4.465 0.618  10.618 -7.304 -0.442 0.238  C4  VSK 17 
+VSK C5  C18 C 0 1 Y N N -4.061 -0.648 10.256 -7.595 0.642  -0.560 C5  VSK 18 
+VSK C6  C19 C 0 1 Y N N -2.719 -0.940 10.007 -6.584 1.327  -1.221 C6  VSK 19 
+VSK C7  C20 C 0 1 Y N N -2.326 3.471  11.082 -4.033 -1.859 0.873  C7  VSK 20 
+VSK C8  C21 C 0 1 Y N N -1.394 2.545  10.711 -3.715 -0.849 0.049  C8  VSK 21 
+VSK C9  C22 C 0 1 N N N 0.086  2.746  10.580 -2.333 -0.482 -0.429 C9  VSK 22 
+VSK N1  N1  N 0 1 Y N N -3.579 2.913  11.090 -5.385 -1.883 1.082  N1  VSK 23 
+VSK N2  N2  N 0 1 N N N 1.973  3.903  9.479  -2.553 1.836  0.331  N2  VSK 24 
+VSK N3  N3  N 0 1 N N N -0.948 5.371  8.518  0.660  0.072  0.486  N3  VSK 25 
+VSK O1  O1  O 0 1 N N N -0.006 5.694  10.546 -0.072 1.850  -0.621 O1  VSK 26 
+VSK H1  H1  H 0 1 N N N -0.710 -0.212 9.907  -4.503 1.461  -1.624 H1  VSK 27 
+VSK H2  H2  H 0 1 N N N 0.239  3.176  8.455  -1.782 0.277  1.511  H2  VSK 28 
+VSK H3  H3  H 0 1 N N N -1.543 7.105  9.512  2.342  1.325  0.469  H3  VSK 29 
+VSK H4  H4  H 0 1 N N N -2.803 6.324  8.497  2.127  0.328  -0.990 H4  VSK 30 
+VSK H5  H5  H 0 1 N N N -1.569 7.046  6.458  2.880  -0.710 1.780  H5  VSK 31 
+VSK H6  H6  H 0 1 N N N -0.374 7.886  7.505  2.666  -1.706 0.321  H6  VSK 32 
+VSK H7  H7  H 0 1 N N N -5.486 9.692  6.695  6.600  -1.148 -2.155 H7  VSK 33 
+VSK H8  H8  H 0 1 N N N -2.587 11.782 8.984  7.120  1.226  1.351  H8  VSK 34 
+VSK H9  H9  H 0 1 N N N 0.090  10.421 8.244  4.805  0.256  3.188  H9  VSK 35 
+VSK H10 H10 H 0 1 N N N -0.695 10.588 9.851  5.124  1.893  2.566  H10 VSK 36 
+VSK H11 H11 H 0 1 N N N -0.263 8.960  9.227  3.559  1.109  2.246  H11 VSK 37 
+VSK H12 H12 H 0 1 N N N -5.708 11.890 8.905  8.464  1.246  -1.457 H12 VSK 38 
+VSK H13 H13 H 0 1 N N N -4.524 12.967 8.091  9.035  0.493  0.051  H13 VSK 39 
+VSK H14 H14 H 0 1 N N N -5.751 12.085 7.120  8.818  -0.498 -1.411 H14 VSK 40 
+VSK H15 H15 H 0 1 N N N -3.834 7.585  5.130  4.122  -2.891 -1.440 H15 VSK 41 
+VSK H16 H16 H 0 1 N N N -3.599 6.552  6.581  2.984  -1.538 -1.646 H16 VSK 42 
+VSK H17 H17 H 0 1 N N N -5.184 7.346  6.290  4.334  -1.747 -2.787 H17 VSK 43 
+VSK H18 H18 H 0 1 N N N -5.505 0.846  10.800 -8.097 -0.965 0.752  H18 VSK 44 
+VSK H19 H19 H 0 1 N N N -4.798 -1.432 10.163 -8.620 0.967  -0.668 H19 VSK 45 
+VSK H20 H20 H 0 1 N N N -2.440 -1.944 9.724  -6.830 2.176  -1.842 H20 VSK 46 
+VSK H21 H21 H 0 1 N N N -2.107 4.498  11.334 -3.326 -2.550 1.308  H21 VSK 47 
+VSK H22 H22 H 0 1 N N N 0.555  1.761  10.440 -2.388 -0.116 -1.454 H22 VSK 48 
+VSK H23 H23 H 0 1 N N N 0.455  3.198  11.513 -1.691 -1.362 -0.391 H23 VSK 49 
+VSK H24 H24 H 0 1 N N N -4.428 3.391  11.315 -5.851 -2.523 1.642  H24 VSK 50 
+VSK H25 H25 H 0 1 N N N 2.467  3.037  9.398  -2.543 2.165  -0.623 H25 VSK 51 
+VSK H26 H26 H 0 1 N N N 2.240  4.510  8.730  -3.498 1.691  0.655  H26 VSK 52 
+VSK H28 H28 H 0 1 N N N -0.986 4.792  7.703  0.453  -0.696 1.041  H28 VSK 53 
+# 
+loop_
+_chem_comp_bond.comp_id 
+_chem_comp_bond.atom_id_1 
+_chem_comp_bond.atom_id_2 
+_chem_comp_bond.value_order 
+_chem_comp_bond.pdbx_aromatic_flag 
+_chem_comp_bond.pdbx_stereo_config 
+_chem_comp_bond.pdbx_ordinal 
+VSK C22 C15 SING N N 1  
+VSK C15 C16 DOUB Y N 2  
+VSK C15 C14 SING Y N 3  
+VSK C16 C17 SING Y N 4  
+VSK C13 C14 SING N N 5  
+VSK C13 C12 SING N N 6  
+VSK C14 C19 DOUB Y N 7  
+VSK C17 C21 SING N N 8  
+VSK C17 C18 DOUB Y N 9  
+VSK C19 C18 SING Y N 10 
+VSK C19 C20 SING N N 11 
+VSK N3  C12 SING N N 12 
+VSK N3  C11 SING N N 13 
+VSK C10 N2  SING N N 14 
+VSK C10 C11 SING N N 15 
+VSK C10 C9  SING N N 16 
+VSK C11 O1  DOUB N N 17 
+VSK C6  C1  DOUB Y N 18 
+VSK C6  C5  SING Y N 19 
+VSK C1  C2  SING Y N 20 
+VSK C5  C4  DOUB Y N 21 
+VSK C2  C8  SING Y N 22 
+VSK C2  C3  DOUB Y N 23 
+VSK C9  C8  SING N N 24 
+VSK C4  C3  SING Y N 25 
+VSK C8  C7  DOUB Y N 26 
+VSK C3  N1  SING Y N 27 
+VSK C7  N1  SING Y N 28 
+VSK C1  H1  SING N N 29 
+VSK C10 H2  SING N N 30 
+VSK C12 H3  SING N N 31 
+VSK C12 H4  SING N N 32 
+VSK C13 H5  SING N N 33 
+VSK C13 H6  SING N N 34 
+VSK C16 H7  SING N N 35 
+VSK C18 H8  SING N N 36 
+VSK C20 H9  SING N N 37 
+VSK C20 H10 SING N N 38 
+VSK C20 H11 SING N N 39 
+VSK C21 H12 SING N N 40 
+VSK C21 H13 SING N N 41 
+VSK C21 H14 SING N N 42 
+VSK C22 H15 SING N N 43 
+VSK C22 H16 SING N N 44 
+VSK C22 H17 SING N N 45 
+VSK C4  H18 SING N N 46 
+VSK C5  H19 SING N N 47 
+VSK C6  H20 SING N N 48 
+VSK C7  H21 SING N N 49 
+VSK C9  H22 SING N N 50 
+VSK C9  H23 SING N N 51 
+VSK N1  H24 SING N N 52 
+VSK N2  H25 SING N N 53 
+VSK N2  H26 SING N N 54 
+VSK N3  H28 SING N N 55 
+# 
+loop_
+_pdbx_chem_comp_descriptor.comp_id 
+_pdbx_chem_comp_descriptor.type 
+_pdbx_chem_comp_descriptor.program 
+_pdbx_chem_comp_descriptor.program_version 
+_pdbx_chem_comp_descriptor.descriptor 
+VSK InChI            InChI                1.03  "InChI=1S/C22H27N3O/c1-14-10-15(2)18(16(3)11-14)8-9-24-22(26)20(23)12-17-13-25-21-7-5-4-6-19(17)21/h4-7,10-11,13,20,25H,8-9,12,23H2,1-3H3,(H,24,26)/t20-/m0/s1" 
+VSK InChIKey         InChI                1.03  BQKLGIPTHQLBPK-FQEVSTJZSA-N                                                                                                                                     
+VSK SMILES_CANONICAL CACTVS               3.385 "Cc1cc(C)c(CCNC(=O)[C@@H](N)Cc2c[nH]c3ccccc23)c(C)c1"                                                                                                           
+VSK SMILES           CACTVS               3.385 "Cc1cc(C)c(CCNC(=O)[CH](N)Cc2c[nH]c3ccccc23)c(C)c1"                                                                                                             
+VSK SMILES_CANONICAL "OpenEye OEToolkits" 2.0.6 "Cc1cc(c(c(c1)C)CCNC(=O)[C@H](Cc2c[nH]c3c2cccc3)N)C"                                                                                                            
+VSK SMILES           "OpenEye OEToolkits" 2.0.6 "Cc1cc(c(c(c1)C)CCNC(=O)C(Cc2c[nH]c3c2cccc3)N)C"                                                                                                                
+# 
+loop_
+_pdbx_chem_comp_identifier.comp_id 
+_pdbx_chem_comp_identifier.type 
+_pdbx_chem_comp_identifier.program 
+_pdbx_chem_comp_identifier.program_version 
+_pdbx_chem_comp_identifier.identifier 
+VSK "SYSTEMATIC NAME" "OpenEye OEToolkits" 2.0.6 "(2~{S})-2-azanyl-3-(1~{H}-indol-3-yl)-~{N}-[2-(2,4,6-trimethylphenyl)ethyl]propanamide" 
+# 
+loop_
+_pdbx_chem_comp_audit.comp_id 
+_pdbx_chem_comp_audit.action_type 
+_pdbx_chem_comp_audit.date 
+_pdbx_chem_comp_audit.processing_site 
+VSK "Create component" 2017-07-21 EBI  
+VSK "Initial release"  2018-09-12 RCSB 
+# 
 data_VSO
 # 
 _chem_comp.id                                    VSO 
@@ -46765,6 +46955,171 @@ _pdbx_chem_comp_audit.processing_site
 VSV "Create component"     2010-02-10 EBI  
 VSV "Modify aromatic_flag" 2011-06-04 RCSB 
 VSV "Modify descriptor"    2011-06-04 RCSB 
+# 
+data_VT0
+# 
+_chem_comp.id                                    VT0 
+_chem_comp.name                                  "{[(2-phenylthieno[2,3-d]pyrimidin-4-yl)amino]methylene}bis(phosphonic acid)" 
+_chem_comp.type                                  NON-POLYMER 
+_chem_comp.pdbx_type                             HETAIN 
+_chem_comp.formula                               "C13 H13 N3 O6 P2 S" 
+_chem_comp.mon_nstd_parent_comp_id               ? 
+_chem_comp.pdbx_synonyms                         ? 
+_chem_comp.pdbx_formal_charge                    0 
+_chem_comp.pdbx_initial_date                     2018-01-16 
+_chem_comp.pdbx_modified_date                    2018-08-31 
+_chem_comp.pdbx_ambiguous_flag                   N 
+_chem_comp.pdbx_release_status                   REL 
+_chem_comp.pdbx_replaced_by                      ? 
+_chem_comp.pdbx_replaces                         ? 
+_chem_comp.formula_weight                        401.271 
+_chem_comp.one_letter_code                       ? 
+_chem_comp.three_letter_code                     VT0 
+_chem_comp.pdbx_model_coordinates_details        ? 
+_chem_comp.pdbx_model_coordinates_missing_flag   N 
+_chem_comp.pdbx_ideal_coordinates_details        Corina 
+_chem_comp.pdbx_ideal_coordinates_missing_flag   N 
+_chem_comp.pdbx_model_coordinates_db_code        6C56 
+_chem_comp.pdbx_subcomponent_list                ? 
+_chem_comp.pdbx_processing_site                  RCSB 
+# 
+loop_
+_chem_comp_atom.comp_id 
+_chem_comp_atom.atom_id 
+_chem_comp_atom.alt_atom_id 
+_chem_comp_atom.type_symbol 
+_chem_comp_atom.charge 
+_chem_comp_atom.pdbx_align 
+_chem_comp_atom.pdbx_aromatic_flag 
+_chem_comp_atom.pdbx_leaving_atom_flag 
+_chem_comp_atom.pdbx_stereo_config 
+_chem_comp_atom.model_Cartn_x 
+_chem_comp_atom.model_Cartn_y 
+_chem_comp_atom.model_Cartn_z 
+_chem_comp_atom.pdbx_model_Cartn_x_ideal 
+_chem_comp_atom.pdbx_model_Cartn_y_ideal 
+_chem_comp_atom.pdbx_model_Cartn_z_ideal 
+_chem_comp_atom.pdbx_component_atom_id 
+_chem_comp_atom.pdbx_component_comp_id 
+_chem_comp_atom.pdbx_ordinal 
+VT0 OAO O1  O 0 1 N N N -66.555 26.138 -30.789 2.615  -2.505 -0.973 OAO VT0 1  
+VT0 PAL P1  P 0 1 N N N -65.203 25.966 -29.927 1.895  -1.224 -1.145 PAL VT0 2  
+VT0 OAP O2  O 0 1 N N N -65.350 24.633 -28.972 2.622  -0.348 -2.283 OAP VT0 3  
+VT0 OAN O3  O 0 1 N N N -63.983 25.957 -30.791 0.374  -1.518 -1.585 OAN VT0 4  
+VT0 CAK C1  C 0 1 N N N -65.136 27.379 -28.786 1.905  -0.304 0.429  CAK VT0 5  
+VT0 PAM P2  P 0 1 N N N -66.599 27.337 -27.656 3.626  0.029  0.926  PAM VT0 6  
+VT0 OAR O4  O 0 1 N N N -67.910 27.336 -28.636 3.635  0.776  2.204  OAR VT0 7  
+VT0 OAS O5  O 0 1 N N N -66.472 28.792 -26.915 4.410  -1.365 1.114  OAS VT0 8  
+VT0 OAQ O6  O 0 1 N N N -66.506 26.203 -26.707 4.354  0.905  -0.212 OAQ VT0 9  
+VT0 NAJ N1  N 0 1 N N N -65.001 28.661 -29.537 1.191  0.964  0.258  NAJ VT0 10 
+VT0 C4  C2  C 0 1 Y N N -63.897 29.353 -29.212 -0.190 0.976  0.188  C4  VT0 11 
+VT0 N3  N2  N 0 1 Y N N -62.945 28.741 -28.497 -0.876 -0.151 0.274  N3  VT0 12 
+VT0 C5  C3  C 0 1 Y N N -63.768 30.615 -29.577 -0.892 2.201  0.028  C5  VT0 13 
+VT0 CAC C4  C 0 1 Y N N -64.635 31.350 -30.302 -0.397 3.559  -0.086 CAC VT0 14 
+VT0 CAD C5  C 0 1 Y N N -64.193 32.593 -30.513 -1.332 4.479  -0.226 CAD VT0 15 
+VT0 SAE S1  S 0 1 Y N N -62.693 32.719 -29.747 -2.934 3.768  -0.233 SAE VT0 16 
+VT0 C6  C6  C 0 1 Y N N -62.632 31.256 -29.201 -2.288 2.145  -0.036 C6  VT0 17 
+VT0 N1  N3  N 0 1 Y N N -61.668 30.658 -28.497 -2.899 0.959  0.055  N1  VT0 18 
+VT0 C2  C7  C 0 1 Y N N -61.831 29.372 -28.154 -2.204 -0.154 0.208  C2  VT0 19 
+VT0 CAT C8  C 0 1 Y N N -60.925 28.666 -27.365 -2.927 -1.444 0.310  CAT VT0 20 
+VT0 CAU C9  C 0 1 Y N N -61.279 27.407 -26.836 -4.319 -1.474 0.244  CAU VT0 21 
+VT0 CAV C10 C 0 1 Y N N -60.400 26.702 -26.014 -4.986 -2.678 0.339  CAV VT0 22 
+VT0 CAW C11 C 0 1 Y N N -59.180 27.297 -25.696 -4.276 -3.855 0.500  CAW VT0 23 
+VT0 CAX C12 C 0 1 Y N N -58.832 28.551 -26.208 -2.894 -3.831 0.566  CAX VT0 24 
+VT0 CAY C13 C 0 1 Y N N -59.705 29.241 -27.034 -2.216 -2.634 0.466  CAY VT0 25 
+VT0 H1  H1  H 0 1 N N N -66.198 24.231 -29.117 2.654  -0.776 -3.150 H1  VT0 26 
+VT0 H2  H2  H 0 1 N N N -64.238 26.056 -31.701 -0.159 -0.722 -1.716 H2  VT0 27 
+VT0 H3  H3  H 0 1 N N N -64.254 27.221 -28.148 1.412  -0.897 1.199  H3  VT0 28 
+VT0 H4  H4  H 0 1 N N N -67.184 29.355 -27.197 5.335  -1.263 1.379  H4  VT0 29 
+VT0 H5  H5  H 0 1 N N N -67.255 25.630 -26.823 4.385  0.477  -1.078 H5  VT0 30 
+VT0 H6  H6  H 0 1 N N N -64.970 28.454 -30.515 1.688  1.795  0.194  H6  VT0 31 
+VT0 H8  H8  H 0 1 N N N -65.579 30.977 -30.670 0.656  3.798  -0.058 H8  VT0 32 
+VT0 H9  H9  H 0 1 N N N -64.699 33.369 -31.068 -1.135 5.537  -0.325 H9  VT0 33 
+VT0 H12 H12 H 0 1 N N N -62.244 26.983 -27.071 -4.874 -0.556 0.119  H12 VT0 34 
+VT0 H13 H13 H 0 1 N N N -60.657 25.724 -25.635 -6.064 -2.703 0.288  H13 VT0 35 
+VT0 H14 H14 H 0 1 N N N -58.492 26.781 -25.043 -4.802 -4.795 0.574  H14 VT0 36 
+VT0 H15 H15 H 0 1 N N N -57.875 28.985 -25.958 -2.345 -4.753 0.691  H15 VT0 37 
+VT0 H16 H16 H 0 1 N N N -59.439 30.216 -27.416 -1.137 -2.617 0.513  H16 VT0 38 
+# 
+loop_
+_chem_comp_bond.comp_id 
+_chem_comp_bond.atom_id_1 
+_chem_comp_bond.atom_id_2 
+_chem_comp_bond.value_order 
+_chem_comp_bond.pdbx_aromatic_flag 
+_chem_comp_bond.pdbx_stereo_config 
+_chem_comp_bond.pdbx_ordinal 
+VT0 OAO PAL DOUB N N 1  
+VT0 PAL OAP SING N N 2  
+VT0 PAL OAN SING N N 3  
+VT0 PAL CAK SING N N 4  
+VT0 CAK PAM SING N N 5  
+VT0 CAK NAJ SING N N 6  
+VT0 PAM OAR DOUB N N 7  
+VT0 PAM OAS SING N N 8  
+VT0 PAM OAQ SING N N 9  
+VT0 NAJ C4  SING N N 10 
+VT0 C4  N3  DOUB Y N 11 
+VT0 C4  C5  SING Y N 12 
+VT0 N3  C2  SING Y N 13 
+VT0 C5  CAC SING Y N 14 
+VT0 C5  C6  DOUB Y N 15 
+VT0 CAC CAD DOUB Y N 16 
+VT0 CAD SAE SING Y N 17 
+VT0 SAE C6  SING Y N 18 
+VT0 C6  N1  SING Y N 19 
+VT0 N1  C2  DOUB Y N 20 
+VT0 C2  CAT SING N N 21 
+VT0 CAT CAU DOUB Y N 22 
+VT0 CAT CAY SING Y N 23 
+VT0 CAU CAV SING Y N 24 
+VT0 CAV CAW DOUB Y N 25 
+VT0 CAW CAX SING Y N 26 
+VT0 CAX CAY DOUB Y N 27 
+VT0 OAP H1  SING N N 28 
+VT0 OAN H2  SING N N 29 
+VT0 CAK H3  SING N N 30 
+VT0 OAS H4  SING N N 31 
+VT0 OAQ H5  SING N N 32 
+VT0 NAJ H6  SING N N 33 
+VT0 CAC H8  SING N N 34 
+VT0 CAD H9  SING N N 35 
+VT0 CAU H12 SING N N 36 
+VT0 CAV H13 SING N N 37 
+VT0 CAW H14 SING N N 38 
+VT0 CAX H15 SING N N 39 
+VT0 CAY H16 SING N N 40 
+# 
+loop_
+_pdbx_chem_comp_descriptor.comp_id 
+_pdbx_chem_comp_descriptor.type 
+_pdbx_chem_comp_descriptor.program 
+_pdbx_chem_comp_descriptor.program_version 
+_pdbx_chem_comp_descriptor.descriptor 
+VT0 SMILES           ACDLabs              12.01 "O=P(O)(O)C(P(=O)(O)O)Nc1nc(nc2c1ccs2)c3ccccc3"                                                                                                    
+VT0 InChI            InChI                1.03  "InChI=1S/C13H13N3O6P2S/c17-23(18,19)13(24(20,21)22)16-11-9-6-7-25-12(9)15-10(14-11)8-4-2-1-3-5-8/h1-7,13H,(H,14,15,16)(H2,17,18,19)(H2,20,21,22)" 
+VT0 InChIKey         InChI                1.03  OVNNLIKSDUSVRR-UHFFFAOYSA-N                                                                                                                        
+VT0 SMILES_CANONICAL CACTVS               3.385 "O[P](O)(=O)C(Nc1nc(nc2sccc12)c3ccccc3)[P](O)(O)=O"                                                                                                
+VT0 SMILES           CACTVS               3.385 "O[P](O)(=O)C(Nc1nc(nc2sccc12)c3ccccc3)[P](O)(O)=O"                                                                                                
+VT0 SMILES_CANONICAL "OpenEye OEToolkits" 2.0.6 "c1ccc(cc1)c2nc(c3ccsc3n2)NC(P(=O)(O)O)P(=O)(O)O"                                                                                                  
+VT0 SMILES           "OpenEye OEToolkits" 2.0.6 "c1ccc(cc1)c2nc(c3ccsc3n2)NC(P(=O)(O)O)P(=O)(O)O"                                                                                                  
+# 
+loop_
+_pdbx_chem_comp_identifier.comp_id 
+_pdbx_chem_comp_identifier.type 
+_pdbx_chem_comp_identifier.program 
+_pdbx_chem_comp_identifier.program_version 
+_pdbx_chem_comp_identifier.identifier 
+VT0 "SYSTEMATIC NAME" ACDLabs              12.01 "{[(2-phenylthieno[2,3-d]pyrimidin-4-yl)amino]methylene}bis(phosphonic acid)"    
+VT0 "SYSTEMATIC NAME" "OpenEye OEToolkits" 2.0.6 "[[(2-phenylthieno[2,3-d]pyrimidin-4-yl)amino]-phosphono-methyl]phosphonic acid" 
+# 
+loop_
+_pdbx_chem_comp_audit.comp_id 
+_pdbx_chem_comp_audit.action_type 
+_pdbx_chem_comp_audit.date 
+_pdbx_chem_comp_audit.processing_site 
+VT0 "Create component" 2018-01-16 RCSB 
+VT0 "Initial release"  2018-09-05 RCSB 
 # 
 data_VT1
 # 

@@ -34,7 +34,7 @@ class component_reading_Tests : public CxxTest::TestSuite
 public:
 	// Shared initialization goes here.
 	void setUp() {
-		core_init_with_additional_options( "-ignore_waters -PDB_components_file core/chemical/mmCIF/components_trimmed.cif" );
+		core_init_with_additional_options( "-ignore_waters" );
 	}
 
 	/// @brief Test the scoring scheme

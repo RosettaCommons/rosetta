@@ -165,6 +165,35 @@ mmCIFParser::get_molfile_molecule( Block & block ) {
 		}
 	}
 
+
+	// It's possible (NA8 is one example) that a peptide linking residue will have an
+	// atom bonded to OXT that is not named C. Catch this.
+	std::string rename_to_C = "C";
+	if ( is_peptide_linking ) {
+		if ( block.IsTablePresent( "chem_comp_bond" ) ) {
+			ISTable& bond_comp = block.GetTable("chem_comp_bond");
+
+			//start bond block
+			for ( Size ii = 0; ii < bond_comp.GetNumRows(); ++ii ) {
+				sdf::MolFileIOBondOP bond( new sdf::MolFileIOBond() );
+
+				std::string source( bond_comp( ii, "atom_id_1" ) ); //atom 1
+				std::string target( bond_comp( ii, "atom_id_2" ) ); //atom 2 - I guess thats self explanatory
+
+				// Could imagine getting 'all Hs' by finding, instead, the
+				// names that match H[number] -- but why not wait, for now.
+				// Really should build a dict of name-to-element from the atom block before this
+				// so we can just require 'C' or at least 'not H'
+				if ( source == "OXT" && target != "C" && target != "HXT" && target != "HOT" /* don't catch dead H */ ) {
+					rename_to_C = target;
+				} else if ( target == "OXT" && source != "C" && source != "HXT" && source != "HOT"  /* don't catch dead H */ ) {
+					rename_to_C = source;
+				}
+			}
+		}
+	}
+
+
 	// Get the chem_comp table first, because this will help us
 	// look out for extraneous atoms common in CIF entries -- extra nitrogen H
 	// and OH terminus on C
@@ -226,6 +255,9 @@ mmCIFParser::get_molfile_molecule( Block & block ) {
 
 				std::string source( bond_comp( ii, "atom_id_1" ) ); //atom 1
 				std::string target( bond_comp( ii, "atom_id_2" ) ); //atom 2 - I guess thats self explanatory
+
+				if ( source == rename_to_C ) source = "C";
+				if ( target == rename_to_C ) target = "C";
 
 				// Could imagine getting 'all Hs' by finding, instead, the
 				// names that match H[number] -- but why not wait, for now.
@@ -375,6 +407,7 @@ mmCIFParser::get_molfile_molecule( Block & block ) {
 	utility::vector1< std::string > actual_atoms_to_skip;
 	//start atom block
 	Size index = 1;
+	TR.Trace << "possible_atoms_to_skip: " << possible_atoms_to_skip << std::endl;
 	for ( Size ii = 0; ii < atom_comp.GetNumRows(); ++ii ) {
 		sdf::MolFileIOAtomOP atom( new sdf::MolFileIOAtom());
 		//atom id is whatever the number we are on +1, because we dont do 0 based index
@@ -385,12 +418,13 @@ mmCIFParser::get_molfile_molecule( Block & block ) {
 		atom->index( index );
 
 		//set atom name
-		std::string const & atom_name( atom_comp( ii, atom_name_type ) );
+		std::string atom_name = atom_comp( ii, atom_name_type );
 		TR.Trace << "Examining atom entry " << atom_name << std::endl;
 		if ( is_peptide_linking && atom_name == "OXT" ) continue;
 		if ( is_nucleic_linking && !interesting_pendant && atom_name == "OP3" ) continue;
 		if ( is_nucleic_linking && !interesting_pendant && atom_name == "O3P" ) continue;
-		TR.Trace << "Keeping atom entry " << atom_name << std::endl;
+
+		if ( atom_name == rename_to_C ) atom_name = "C";
 
 		atom->name( atom_name );
 
@@ -399,10 +433,14 @@ mmCIFParser::get_molfile_molecule( Block & block ) {
 		//set element name
 		atom->element( atom_comp( ii, "type_symbol" ) );
 
+		TR.Trace << "Type symbol for atom  " << atom_name << " is " <<  atom_comp( ii, "type_symbol" )  << std::endl;
 		if ( possible_atoms_to_skip.contains( atom_name ) && atom->element() == "H" ) {
 			actual_atoms_to_skip.push_back( atom_name );
 			continue;
 		}
+
+		TR.Trace << "Keeping atom entry " << atom_name << std::endl;
+
 
 		//get the xyz cordinates
 		std::vector< std::string > atom_coords;
@@ -425,6 +463,8 @@ mmCIFParser::get_molfile_molecule( Block & block ) {
 		index++;
 	}
 
+	TR.Trace << "actual_atoms_to_skip: " << actual_atoms_to_skip << std::endl;
+
 	// pdb_BVP messes with this logic because it names H3' "H1" and HO3' H3'.
 	// So we need to place an additional requirement for H skipping.
 	// This is actually a very hard problem.
@@ -437,8 +477,15 @@ mmCIFParser::get_molfile_molecule( Block & block ) {
 		for ( Size ii = 0; ii < bond_comp.GetNumRows(); ++ii ) {
 			sdf::MolFileIOBondOP bond( new sdf::MolFileIOBond() );
 
-			std::string const & source( bond_comp( ii, "atom_id_1" ) ); //atom 1
-			std::string const & target( bond_comp( ii, "atom_id_2" ) ); //atom 2 - I guess thats self explanatory
+			//std::string const & source( bond_comp( ii, "atom_id_1" ) ); //atom 1
+			//std::string const & target( bond_comp( ii, "atom_id_2" ) ); //atom 2 - I guess thats self explanatory
+			std::string source( bond_comp( ii, "atom_id_1" ) ); //atom 1
+			std::string target( bond_comp( ii, "atom_id_2" ) ); //atom 2 - I guess thats self explanatory
+
+			if ( source == rename_to_C ) source = "C";
+			if ( target == rename_to_C ) target = "C";
+
+			TR.Trace << "Examining bond entry " << source << " " << target << std::endl;
 
 			if ( is_peptide_linking && source == "OXT" ) continue;
 			if ( is_peptide_linking && target == "OXT" ) continue;
@@ -446,6 +493,8 @@ mmCIFParser::get_molfile_molecule( Block & block ) {
 			if ( is_nucleic_linking && !interesting_pendant && ( target == "OP3" || target == "O3P" ) ) continue;
 			if ( actual_atoms_to_skip.contains( source ) ) continue;
 			if ( actual_atoms_to_skip.contains( target ) ) continue;
+
+			TR.Trace << "Keeping bond entry " << source << " " << target << std::endl;
 
 			bond->atom1( atom_name_to_id[ source ] );
 			bond->atom2( atom_name_to_id[ target ] );

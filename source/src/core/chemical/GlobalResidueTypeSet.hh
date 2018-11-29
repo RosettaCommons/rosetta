@@ -158,10 +158,10 @@ private:
 	name( std::string const & setting ) { name_ = setting; }
 
 	void
-	pdb_components_filenames( utility::vector1< std::string > const & setting ) { pdb_components_filenames_ = setting; }
+	pdb_components_overrides( utility::vector1< std::string > const & setting ) { pdb_components_overrides_ = setting; }
 
 	utility::vector1< std::string > const &
-	pdb_components_filenames() const { return pdb_components_filenames_; }
+	pdb_components_overrides() const { return pdb_components_overrides_; }
 
 	void
 	pdb_components_directory( std::string const & setting ) { pdb_components_directory_ = setting; }
@@ -198,7 +198,7 @@ private:
 	std::set< std::string > exclude_pdb_component_ids_;
 
 	/// @brief data for lazy loading of PDB components
-	utility::vector1< std::string > pdb_components_filenames_;
+	utility::vector1< std::string > pdb_components_overrides_;
 
 	/// @brief data for lazy loading of PDB components
 	std::string pdb_components_directory_;

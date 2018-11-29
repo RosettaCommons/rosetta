@@ -105,7 +105,7 @@ public:
 
 	void setUp() {
 		using namespace core::chemical;
-		core_init_with_additional_options("-load_PDB_components -PDB_components_file core/chemical/mmCIF/components_trimmed.cif -check_all_PDB_components");
+		core_init_with_additional_options("-load_PDB_components -check_all_PDB_components");
 		rts_ = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 	}
 

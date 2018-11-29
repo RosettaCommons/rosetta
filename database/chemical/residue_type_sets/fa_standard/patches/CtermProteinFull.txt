@@ -236,6 +236,33 @@ ADD_PROPERTY UPPER_TERMINUS ## implies terminus
 
 END_CASE
 
+BEGIN_CASE ### TPL -- tryptophanol, no O -- just make it an OH
+BEGIN_SELECTOR
+NAME3 TPL
+END_SELECTOR
+
+## these are the operations involved
+
+ADD_ATOM  OXT OH   OH1 -0.5094419
+ADD_ATOM  HXT Hpol H   -0.3319091
+ADD_BOND C OXT
+ADD_BOND OXT HXT
+SET_BACKBONE_HEAVYATOM OXT
+SET_POLYMER_CONNECT UPPER NONE
+
+## making these up:
+
+SET_ICOOR OXT  59.972931 70.478287 1.428429   C CA N
+# Hs relative to OXT
+SET_ICOOR HXT 179.956314 73.168350 0.967403   OXT C CA  ## phi == 180 --> planar
+SET_ICOOR HC1 119.955666 70.542175 1.090395   C CA OXT ## phi == 180 --> planar
+SET_ICOOR HC2 119.967216 70.485359 1.088822   C CA OXT ## phi == 180 --> planar
+
+ADD_PROPERTY UPPER_TERMINUS ## implies terminus
+
+END_CASE
+
+
 BEGIN_CASE ### THE GENERAL CASE ##########################################
 
 BEGIN_SELECTOR
