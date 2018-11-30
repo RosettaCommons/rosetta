@@ -696,14 +696,6 @@ void
 init_crystal_refinement_correction( utility::options::OptionCollection & options ) {
 	//fpd  crystal-refinement specific changes
 	if ( options[cryst::crystal_refine] ) {
-		// use -correct rama fixes
-		if ( ! options[ corrections::score::rama_not_squared ].user() ) {
-			options[corrections::score::rama_not_squared].value( true );
-		}
-		if ( ! options[ corrections::score::rama_map ].user() ) {
-			options[ corrections::score::rama_map ].value("scoring/score_functions/rama/Rama09_noEH_kernel25_it08.dat");
-		}
-
 		// read pdbs properly
 		if ( ! options[ in::missing_density_to_jump ].user() ) {
 			options[in::missing_density_to_jump].value( true );
@@ -712,7 +704,7 @@ init_crystal_refinement_correction( utility::options::OptionCollection & options
 			options[in::preserve_crystinfo].value( true );
 		}
 
-		// hacky way of letting centroid structures be scored against crystal data
+		// let centroid structures be scored against crystal data
 		if ( ! options[ out::file::no_output_cen ].user() ) {
 			options[out::file::no_output_cen].value( true );
 		}
@@ -720,6 +712,23 @@ init_crystal_refinement_correction( utility::options::OptionCollection & options
 		// internal coordinate minimization change: don't dampen RB movement
 		if ( ! options[ optimization::scale_rb ].user() ) {
 			options[optimization::scale_rb].value( 1.0 );
+		}
+
+		// properly read & write glycans
+		if ( ! options[ in::include_sugars ].user() ) {
+			options[in::include_sugars].value( true );
+		}
+		if ( ! options[ in::alternate_3_letter_codes ].user() ) {
+			options[in::alternate_3_letter_codes].value( "pdb_sugar" );
+		}
+		if ( ! options[ in::auto_detect_glycan_connections ].user() ) {
+			options[in::auto_detect_glycan_connections].value( true );
+		}
+		if ( ! options[ out::file::write_glycan_pdb_codes ].user() ) {
+			options[out::file::write_glycan_pdb_codes].value( true );
+		}
+		if ( ! options[ score::ideal_sugars ].user() ) {
+			options[score::ideal_sugars].value( true );
 		}
 	}
 
