@@ -78,7 +78,7 @@ def project_callback(project, project_path, project_files):
     sources_key = xcode_util.PROJECT_KEYS[project][1]
 
     # read file
-    
+
     if not os.path.exists( xcode_filename ):
         shutil.copyfile( xcode_filename + '.template', xcode_filename )
 
@@ -172,6 +172,10 @@ if __name__ == "__main__":
 
     # (re)generate options files
     os.system('cd {source_dir}; ./update_options.sh'.format(source_dir=source_dir))
+
+    # Update any required submodules
+    # Not 100%, as it doesn't necessarily update extras-dependent submodules
+    os.system('cd {source_dir}; ./update_submodules.sh'.format(source_dir=source_dir))
 
     # (re)generate ResidueType enum files
     os.system('cd {source_dir}; ./update_ResidueType_enum_files.sh'.format(source_dir=source_dir))

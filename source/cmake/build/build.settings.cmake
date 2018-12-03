@@ -543,6 +543,9 @@ if( EXTRAS )
 
 endif()
 
+# Make sure that the submodules are up-to-date w/r/t the extras
+EXECUTE_PROCESS(COMMAND "../../update_submodules.sh" ${EXTRAS})
+
 
 ###########################################################################
 ###########################################################################

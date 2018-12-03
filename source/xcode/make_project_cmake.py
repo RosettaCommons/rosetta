@@ -19,6 +19,10 @@ os.chdir( starting_directory )
 # (re)generate options files
 os.system( 'cd ..; ./update_options.sh' )
 
+# Make sure we have any needed submodule files
+# (Not necessarily 100%, as we don't grab extras-dependent submodules)
+os.system( 'cd ..; ./update_submodules.sh' )
+
 # (re)generate ResidueType enum files
 os.system( 'cd ..; ./update_ResidueType_enum_files.sh' )
 
@@ -26,4 +30,4 @@ os.system( 'cd ..; ./update_ResidueType_enum_files.sh' )
 os.system( 'cd ../cmake ; ./make_project.py all ; cd build_xcode ; cmake -G Xcode . ')
 
 # it's symlink time
-os.system( 'rm Rosetta.xcodeproj ; ln -s ../cmake/build_xcode/minirosetta.xcodeproj Rosetta.xcodeproj' ); 
+os.system( 'rm Rosetta.xcodeproj ; ln -s ../cmake/build_xcode/minirosetta.xcodeproj Rosetta.xcodeproj' );

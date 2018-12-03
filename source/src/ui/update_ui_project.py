@@ -487,7 +487,7 @@ def main(args):
 
     print( 'Creating/Updating Qt project files and assuming that Rosetta source dir is at {}...'.format(rosetta_source_path) )
 
-    execute('Updating version, options and residue-type-enum files...', 'cd {} && ./version.py && ./update_options.sh && ./update_ResidueType_enum_files.sh'.format(rosetta_source_path) )
+    execute('Updating compilation submodules, version, options and residue-type-enum files...', 'cd {} && ./update_submodules.sh zeromq && ./version.py && ./update_options.sh && ./update_ResidueType_enum_files.sh'.format(rosetta_source_path) )
 
     ui_project_root = os.path.abspath(rosetta_source_path + '/build/qt')
 
