@@ -39,7 +39,7 @@ class MakeRotLibMover : public protocols::moves::Mover {
 public:
 
 	// ctor
-	MakeRotLibMover();
+	MakeRotLibMover( bool const write_log_file = true );
 
 	// dtor
 	~MakeRotLibMover() override= default;
@@ -94,6 +94,11 @@ private:
 	RotDataVec centroids_;
 	RotDataVec rotamers_;
 	RotDataVec final_rotamers_;
+
+	/// @brief Are we writing a logfile for each application of the mover?  Defaults to true, but can be
+	/// disabled.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	bool write_log_file_;
 
 };
 

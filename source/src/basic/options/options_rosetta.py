@@ -6184,6 +6184,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 	## Make Rot Lib Options ##
 	Option_Group( 'make_rot_lib',
 		Option( 'options_file', 'File', desc='path to make rot lib options file' ),
+		Option( 'output_logging', 'Boolean', desc="If true (the default), then logfiles are written for every mainchain torsion bin attempted.  These can take up a lot of space, so this can be disabled by setting this to false.", default='true' ),
 		Option( 'two_fold_symmetry_135_315', 'IntegerVector', desc='the chi number at which to apply two fold symmetry across the 135/315 axis' ),
 		Option( 'two_fold_symmetry_0_180'  , 'IntegerVector', desc='the chi number at which to apply two fold symmetry across the 0/180 axis' ),
 		Option( 'three_fold_symmetry_90_210_330'  , 'IntegerVector', desc='the chi number at which to apply three fold symmetry across the 0/180 axis' ),

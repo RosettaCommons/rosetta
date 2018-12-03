@@ -56,8 +56,14 @@ namespace make_rot_lib {
 static basic::Tracer TR( "protocols.make_rot_lib.MakeRotLibMover" );
 
 /// @brief Default constructor
-MakeRotLibMover::MakeRotLibMover() :
-	protocols::moves::Mover("MakeRotLibMover")
+MakeRotLibMover::MakeRotLibMover( bool const write_log_file /*= true*/ ) :
+	protocols::moves::Mover("MakeRotLibMover"),
+	scrfxn_(nullptr),
+	KbT_(1.0),
+	centroids_(),
+	rotamers_(),
+	final_rotamers_(),
+	write_log_file_(write_log_file)
 {
 	using namespace core::scoring;
 
@@ -65,6 +71,7 @@ MakeRotLibMover::MakeRotLibMover() :
 
 	scrfxn_ = core::scoring::get_score_function();
 
+	TR << "Writing of individual logfiles is " << (write_log_file_ ? "ENABLED" : "DISABLED") << "." << std::endl;
 }
 
 void
@@ -207,22 +214,28 @@ MakeRotLibMover::apply( core::pose::Pose & pose )
 		base_filename << "_" << numeric::principal_angle_degrees( bbs[ out_i ] ); //phi )
 	} // << "_" << numeric::principal_angle_degrees( psi )
 	base_filename << "_" << numeric::principal_angle_degrees( eps );
-	std::string log_filename( base_filename.str() + ".mrllog" ), rotlib_filename( base_filename.str() + ".rotlib" );
-	std::ofstream log_out( log_filename.c_str() );
+
+	if ( write_log_file_ ) {
+		std::string const log_filename( base_filename.str() + ".mrllog" );
+		std::ofstream log_out( log_filename.c_str() );
+		TR << "Printing out log file to " << log_filename << "..." << std::endl;
+		log_out << "ROTAMERS" << std::endl;
+		print_rot_data_vec( rotamers_, bb_ids, log_out );
+
+		log_out << "CENTROIDS" << std::endl;
+		print_rot_data_vec( centroids_, bb_ids, log_out );
+
+		log_out << "FINAL ROTAMERS" << std::endl;
+		print_rot_data_vec( final_rotamers_, bb_ids, log_out );
+
+		log_out << "AVERAGE CLUSTER CENTROID DISTANCE" << std::endl;
+		print_avg_cluster_centroid_dist( log_out );
+		log_out.close();
+	}
+
+
+	std::string const rotlib_filename( base_filename.str() + ".rotlib" );
 	std::ofstream rotlib_out( rotlib_filename.c_str() );
-
-	TR << "Printing out log file to " << log_filename << "..." << std::endl;
-	log_out << "ROTAMERS" << std::endl;
-	print_rot_data_vec( rotamers_, bb_ids, log_out );
-
-	log_out << "CENTROIDS" << std::endl;
-	print_rot_data_vec( centroids_, bb_ids, log_out );
-
-	log_out << "FINAL ROTAMERS" << std::endl;
-	print_rot_data_vec( final_rotamers_, bb_ids, log_out );
-
-	log_out << "AVERAGE CLUSTER CENTROID DISTANCE" << std::endl;
-	print_avg_cluster_centroid_dist( log_out );
 
 	TR << "Printing out rotamer library file to " << rotlib_filename << "..." << std::endl;
 	if ( semirotameric ) {
@@ -237,7 +250,6 @@ MakeRotLibMover::apply( core::pose::Pose & pose )
 			print_definitions( def_os );
 		}
 	}
-	log_out.close();
 	rotlib_out.close();
 
 }

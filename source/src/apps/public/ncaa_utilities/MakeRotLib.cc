@@ -22,9 +22,12 @@
 #include <devel/init.hh>
 
 // basic headers
+#include <basic/options/option.hh>
+#include <basic/options/keys/make_rot_lib.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
 // utility headers
+#include <utility/pointer/memory.hh>
 #include <utility/excn/Exceptions.hh>
 
 static basic::Tracer TR( "MakeRotLib" );
@@ -36,8 +39,8 @@ main( int argc, char * argv [] )
 
 		devel::init( argc, argv );
 
-		protocols::make_rot_lib::MakeRotLibMoverOP mrlm( new protocols::make_rot_lib::MakeRotLibMover() );
-		protocols::jd2::JobOutputterOP nojo( new protocols::jd2::NoOutputJobOutputter() );
+		protocols::make_rot_lib::MakeRotLibMoverOP mrlm( utility::pointer::make_shared< protocols::make_rot_lib::MakeRotLibMover >( basic::options::option[basic::options::OptionKeys::make_rot_lib::output_logging].value() ) );
+		protocols::jd2::JobOutputterOP nojo( utility::pointer::make_shared< protocols::jd2::NoOutputJobOutputter >() );
 		protocols::jd2::JobDistributor::get_instance()->go( mrlm, nojo );
 
 		TR << "\n+-----------------------------------------------------------------+\n"
