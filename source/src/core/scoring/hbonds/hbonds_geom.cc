@@ -1052,7 +1052,7 @@ hbond_compute_energy(
 	}
 
 	//double fade_factor = 1.0; // larger == stiffer fade
-	double exp1,exp2;
+	double exp1 = 0, exp2 = 0;
 	double fade_factor = basic::options::option[ basic::options::OptionKeys::score::hbond_fade ].value();
 	if ( !use_softmax ) {
 		energy = Pr*FxD*FxH + FSr*(PSxD*FxH + FxD*PSxH) + FLr*(PLxD*FxH + FxD*PLxH);

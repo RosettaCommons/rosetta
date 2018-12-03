@@ -262,8 +262,8 @@ PairingLibrary::read_from_file( std::string const& fn)
 
 	while ( getline( data,line ) ) {
 		std::istringstream is( line );
-		Vector n1, ca1, c1;
-		Vector n2, ca2, c2;
+		Vector n1(0.0, 0.0, 0.0), ca1(0.0, 0.0, 0.0), c1(0.0, 0.0, 0.0);
+		//Vector n2, ca2, c2;
 		is >> tag >> filename >> pos1 >> pos2 >> mn_dist >> mx_dist >>
 			o >> p1 >> p2 >>
 			Epos1(1,1) >> Epos1(2,1) >> Epos1(3,1) >>
