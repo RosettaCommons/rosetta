@@ -218,6 +218,13 @@ private:
 	//   simulating the changing backbone makes it slower.
 	bool assume_const_backbone_;
 
+	// We have to jump through some hoops to give the scorefunction the energies
+	//  of rotamers interacting with their symmetric copies. It asks for the energies
+	//  down the diagonal one at a time, so we have to cache how far we are.
+	mutable Size symm_vs_self_asu_resnum1 = 0;
+	mutable Size symm_vs_self_asu_resnum2 = 0;
+	mutable Size symm_vs_self_rotamer_count = 0;
+
 };
 
 } // approximate_buried_unsat_penalty

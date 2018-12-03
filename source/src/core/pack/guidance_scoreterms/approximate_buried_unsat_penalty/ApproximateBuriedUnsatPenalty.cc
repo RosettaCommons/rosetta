@@ -227,10 +227,46 @@ ApproximateBuriedUnsatPenalty::evaluate_rotamer_pair_energies(
 
 	numeric::MathMatrix<float> const & matrix = energies->map().at( key );
 
+	Real weight = sfxn.weights()[ core::scoring::approximate_buried_unsat_penalty ];
+
+	// When evaluating a symmetric rotamer against itself, the scorefunction walks down the diagonal
+	//  and asks for every pair individually. We detect this behavior and runtime_assert everywhere to
+	//  make sure this works correctly.
+	if ( core::pose::symmetry::is_symmetric( pose ) && set_a.num_rotamers() == 1 && set_b.num_rotamers() == 1
+			&& ( matrix.get_number_rows() != 1 || matrix.get_number_cols() != 1 ) ) {
+		runtime_assert( matrix.get_number_rows() == matrix.get_number_cols() );
+
+		// Are we starting on a new self-interaction?
+		if ( set_a.resid() != symm_vs_self_asu_resnum1 || set_b.resid() != symm_vs_self_asu_resnum2 ) {
+			// Make sure we finished the last self-interaction
+			runtime_assert( symm_vs_self_rotamer_count == 0 );
+
+			symm_vs_self_asu_resnum1 = set_a.resid();
+			symm_vs_self_asu_resnum2 = set_b.resid();
+			// symm_vs_self_rotamer_count = 0;
+		}
+
+		symm_vs_self_rotamer_count ++;
+
+		// std::cout << "SPos: " << set1.resid() << " " << set2.resid() << " " << symm_vs_self_rotamer_count << " " << matrix( symm_vs_self_rotamer_count, symm_vs_self_rotamer_count ) << std::endl;
+
+		energy_table( 1, 1 ) += matrix( symm_vs_self_rotamer_count, symm_vs_self_rotamer_count ) * weight;
+
+		// This is the last one, reset everything back to zero so we know we finished it.
+		if ( symm_vs_self_rotamer_count == matrix.get_number_rows() - 1 ) {
+			symm_vs_self_asu_resnum1 = 0;
+			symm_vs_self_asu_resnum2 = 0;
+			symm_vs_self_rotamer_count = 0;
+		}
+
+		return;
+	}
+
+	// std::cout << "Pos: " << set1.resid() << " " << set2.resid() << " " << matrix( symm_vs_self_rotamer_count, symm_vs_self_rotamer_count ) << std::endl;
+
+
 	runtime_assert( matrix.get_number_rows() - 1 == set_a.num_rotamers() );
 	runtime_assert( matrix.get_number_cols() - 1 == set_b.num_rotamers() );
-
-	Real weight = sfxn.weights()[ core::scoring::approximate_buried_unsat_penalty ];
 
 	for ( Size ia = 1; ia <= set_a.num_rotamers(); ia++ ) {
 		for ( Size ib = 1; ib <= set_b.num_rotamers(); ib++ ) {

@@ -21,6 +21,7 @@
 #include <core/scoring/hbonds/graph/AtomLevelHBondGraph.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/symmetry/util.hh>
 #include <core/pack/task/IGEdgeReweightContainer.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack_basic/RotamerSetsBase.hh>
@@ -55,6 +56,7 @@ void
 add_to_onebody(
 	basic::datacache::CacheableUint64MathMatrixFloatMapOP const & score_map,
 	pack::rotamer_set::RotamerSetsOP const & rotsets,
+	utility::vector1<bool> const & is_asu,
 	Size resnum,
 	Size rotamer_id,
 	float adder
@@ -77,6 +79,7 @@ void
 add_to_twobody(
 	basic::datacache::CacheableUint64MathMatrixFloatMapOP const & score_map,
 	pack::rotamer_set::RotamerSetsOP const & rotsets,
+	utility::vector1<bool> const & is_asu,
 	ReweightData & reweight_data,
 	Size resnum1,
 	Size rotamer_id1,

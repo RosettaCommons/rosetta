@@ -15,6 +15,7 @@
 
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 
 #include <core/pack/hbonds/HBondGraph_util.hh>
@@ -25,6 +26,7 @@
 #include <core/pack/rotamer_set/symmetry/SymmetricRotamerSet_.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/symmetry/util.hh>
 
 #include <core/scoring/Energies.hh>
 
@@ -35,6 +37,7 @@
 #include <core/scoring/hbonds/graph/AtomLevelHBondGraph.hh>
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/symmetry/SymmetricEnergies.hh>
 
 #include <list>
 
@@ -454,6 +457,7 @@ void delete_edges_with_degree_zero( scoring::hbonds::graph::AtomLevelHBondGraph 
 ///         are being packed at that position, any hbonds to the other Ns will not be reported.
 ///   If one wishes to have BB-BB hbonds for all pairs, enable all 4 hbond terms for
 ///   scorefxn_sc and leave scorefxn_bb as a nullptr (or a blank scorefxn)
+///   If you pose is symmetric, this internally desymmetrizes it and returns all hbonds
 scoring::hbonds::graph::AtomLevelHBondGraphOP
 hbond_graph_from_partial_rotsets(
 	pose::Pose const & pose_in,
@@ -465,13 +469,32 @@ hbond_graph_from_partial_rotsets(
 	float minimum_hb_cut /* =0 */
 ) {
 	bool separate_bb = bool(scorefxn_bb) && scorefxn_bb->get_nonzero_weighted_scoretypes().size() > 0;
+
+	// Grab the symm_info if we have a symmetric pose.
+	conformation::symmetry::SymmetryInfoCOP symm_info;
+	if ( core::pose::symmetry::is_symmetric( pose_in ) ) {
+		conformation::symmetry::SymmetricConformation const & symm_conf =
+			dynamic_cast< conformation::symmetry::SymmetricConformation const & >( pose_in.conformation() );
+
+		symm_info = symm_conf.Symmetry_Info();
+	}
+
 	// OK, so first we need to make a RotamerSets that has an entry for every single seqpos.
 	//     We'll reuse whatever we can from original_rotsets and then start adding the current rotamers.
 
 	// We need to score the pose. So we should probably make a copy so that we don't confuse the packer.
 
-	pose::Pose pose_sc = pose_in;
-	pose::Pose pose_bb = pose_in;
+	pose::Pose pose_sc;
+	pose::Pose pose_bb;
+
+	if ( symm_info ) {
+		pose_sc = pose_in;
+		core::pose::symmetry::make_asymmetric_pose( pose_sc );
+		pose_bb = pose_sc;
+	} else {
+		pose_sc = pose_in;
+		pose_bb = pose_in;
+	}
 
 	scorefxn_sc->score( pose_sc );
 	if ( separate_bb ) scorefxn_bb->score( pose_bb );
@@ -498,6 +521,14 @@ hbond_graph_from_partial_rotsets(
 	// Fill in the rotsets with either the RotamerSet from original_rotsets or make a new one from the current res
 	for ( Size resnum = 1; resnum <= pose_sc.size(); resnum++ ) {
 
+		// Get the asymmetric residue if this is symmetric.
+		//  Remember, the rotsets that was passed is only for the asymetric unit.
+		Size from_resnum = resnum;
+		if ( symm_info ) {
+			from_resnum = symm_info->bb_follows( resnum );
+			if ( from_resnum == 0 ) from_resnum = resnum; // In asymetric unit
+		}
+
 		// We need to make a new rotset in either case
 		//  Either because there was no rotset for this position
 		//  Or because we'll confuse the scorefunction machinery if we don't make a new one
@@ -508,14 +539,43 @@ hbond_graph_from_partial_rotsets(
 		pack::rotamer_set::RotamerSetOP bb_rotset( new pack::rotamer_set::RotamerSet_() );
 		bb_rotset->set_resid( resnum );
 
-		if ( original_rotsets.has_rotamer_set_for_residue( resnum ) ) {
-			pack::rotamer_set::RotamerSetCOP original_rotset = original_rotsets.rotamer_set_for_residue( resnum );
-			for ( Size irot = 1; irot <= original_rotset->num_rotamers(); irot++ ) {
-				rotset->add_rotamer( *original_rotset->rotamer( irot ) );
+		// This used to be so pretty before symmetry...
+		// If we have a rotamer set in the asymetric unit, then use it. Otherwise just use the residue from the pose
+		if ( original_rotsets.has_rotamer_set_for_residue( from_resnum ) ) {
+
+			// Get the current rotset
+			pack::rotamer_set::RotamerSetCOP original_rotset = original_rotsets.rotamer_set_for_residue( from_resnum );
+			pack::rotamer_set::symmetry::SymmetricRotamerSet_COP symm_rotset;
+			if ( symm_info ) {
+				symm_rotset = utility::pointer::dynamic_pointer_cast< pack::rotamer_set::symmetry::SymmetricRotamerSet_ const >( original_rotset );
+				runtime_assert( symm_rotset );
 			}
-			bb_rotset->add_rotamer( *original_rotset->rotamer( 1 ) );
+
+			// Copy the rotamers from the old rotset to the new rotset
+			for ( Size irot = 1; irot <= original_rotset->num_rotamers(); irot++ ) {
+				core::conformation::ResidueOP rotamer;
+				if ( from_resnum != resnum ) {
+					rotamer = symm_rotset->orient_rotamer_to_symmetric_partner( pose_in, *original_rotset->rotamer( irot ), resnum, true );
+				} else {
+					rotamer = original_rotset->rotamer( irot )->clone();
+				}
+				rotamer->seqpos( resnum );
+				rotset->add_rotamer( *rotamer );
+			}
+
+			// Only add the first rotamer to the backbone rotset
+			core::conformation::ResidueOP rotamer;
+			if ( from_resnum != resnum ) {
+				rotamer = symm_rotset->orient_rotamer_to_symmetric_partner( pose_in, *original_rotset->rotamer( 1 ), resnum, true );
+			} else {
+				rotamer = original_rotset->rotamer( 1 )->clone();
+			}
+			rotamer->seqpos( resnum );
+			bb_rotset->add_rotamer( *rotamer );
 			position_had_rotset[resnum] = true;
 		} else {
+
+			// If we don't have a rotset. Just use the poses's residue
 			rotset->add_rotamer( *pose_sc.residue(resnum).create_rotamer() );
 			bb_rotset->add_rotamer( *pose_bb.residue(resnum).create_rotamer() );
 			position_had_rotset[resnum] = false;
