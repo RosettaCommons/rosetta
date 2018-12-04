@@ -25,7 +25,7 @@
 # Allow querying the operating system:
 import os
 settings = {
-    "user" : {
+    "site" : {
         "prepends" : {
         },
         "appends" : {
