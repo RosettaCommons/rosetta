@@ -228,7 +228,7 @@ void determine_atom_level_edge_info(
 
 	if ( symm_info ) {
 
-		//Stolen from HBNet.cc
+		//Stolen from HBNet.cc, authored by Scott Boyken
 		std::map< char, std::pair< Size, Size > > chain_bounds;
 		for ( Size ic = 1; ic <= pose.conformation().num_chains(); ++ic ) {
 			Size ic_begin = pose.conformation().chain_begin( ic );
@@ -238,18 +238,13 @@ void determine_atom_level_edge_info(
 			chain_bounds[ chain ].second = ic_end;
 		}
 
-		std::list< Size > resids_for_A_clones;
-		std::list< Size > resids_for_B_clones;
-		for ( Size resid = 1; resid <= pose.size(); ++resid ) {
-			if ( resid == residA || resid == residB ) continue;
+		Size const num_symm_subunits = symm_info->subunits();
+		utility::vector1< Size > resids_for_A_clones( num_symm_subunits );
+		utility::vector1< Size > resids_for_B_clones( num_symm_subunits );
 
-			Size const resid_ind = get_symm_ind_res( pose, resid, symm_info, chain_bounds );
-			if ( resid_ind == residA ) {
-				resids_for_A_clones.push_back( resid );
-			}
-			if ( resid_ind == residB ) {
-				resids_for_B_clones.push_back( resid );
-			}
+		for ( Size subunit = 1; subunit <= num_symm_subunits; ++subunit ) {
+			resids_for_A_clones[ subunit ] = symm_info->equivalent_residue_on_subunit( subunit, residA );
+			resids_for_B_clones[ subunit ] = symm_info->equivalent_residue_on_subunit( subunit, residB );
 		}
 
 		if ( residA != residB ) {
@@ -257,15 +252,15 @@ void determine_atom_level_edge_info(
 		}
 
 		//We do not need to do an all-to-all comparison. We just need to iterate over one set of symmetric resids. If A is not symmetric, iterate over B
-		if ( resids_for_A_clones.size() ) {
+		if ( ! resids_for_A_clones.empty() ) {
 			rotamer_set::symmetry::SymmetricRotamerSet_COP sym_set =
 				utility::pointer::dynamic_pointer_cast< rotamer_set::symmetry::SymmetricRotamerSet_ const > ( rotamer_sets.rotamer_set_for_residue( residA ) );
 			runtime_assert( sym_set );
-			for ( Size sympos : resids_for_A_clones ) {
+			for ( Size const sympos : resids_for_A_clones ) {
 				conformation::ResidueOP resA_ii = sym_set->orient_rotamer_to_symmetric_partner( pose, resA, sympos );
 				find_hbonds_in_residue_pair( * resA_ii, resB, database, tenA_neighbor_graph, set );
 			}
-		} else if ( resids_for_B_clones.size() ) {
+		} else if ( ! resids_for_B_clones.empty() ) {
 			rotamer_set::symmetry::SymmetricRotamerSet_COP sym_set =
 				utility::pointer::dynamic_pointer_cast< rotamer_set::symmetry::SymmetricRotamerSet_ const > ( rotamer_sets.rotamer_set_for_residue( residB ) );
 			runtime_assert( sym_set );

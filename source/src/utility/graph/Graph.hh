@@ -25,6 +25,7 @@
 
 // STL Headers
 #include <iosfwd>
+#include <array>
 
 // Boost Headers
 #include <utility/graph/unordered_object_pool.fwd.hpp>
@@ -168,18 +169,15 @@ public:
 	= default;
 
 	/// @brief increment operator.  Point this iterator at the next element in the list.
-	inline
 	EdgeListIterator const & operator ++ ()
 	{debug_assert( valid() ); element_ = element_->next(); return *this; }
 
 	/// @brief decrement operator.  Point this iterator at the previous element in the list.
-	inline
 	EdgeListIterator const & operator -- ()
 	{debug_assert( valid() ); element_ = element_->previous(); return *this; }
 
 	/// @brief equality operator.  Do these elements point at the same list element?  Asserts
 	/// that they belong to the same list.  Never compare elements from separate lists.
-	inline
 	bool operator == ( EdgeListIterator const & rhs ) const {
 		debug_assert( owner_ == rhs.owner_ );
 		return element_ == rhs.element_;
@@ -187,7 +185,6 @@ public:
 
 	/// @brief inequality operator.  Do these elements point to different elements from the same list?  Asserts
 	/// that they belong to the same list.  Never compare elements from separate lists.
-	inline
 	bool operator != ( EdgeListIterator const & rhs ) const {
 		return ! ( operator == ( rhs ) );
 	}
@@ -254,18 +251,15 @@ public:
 	= default;
 
 	/// @brief increment operator.  Point this iterator at the next element in the list.
-	inline
 	EdgeListConstIterator const & operator ++ ()
 	{debug_assert( valid() ); element_ = element_->const_next(); return *this; }
 
 	/// @brief decrement operator.  Point this iterator at the previous element in the list.
-	inline
 	EdgeListConstIterator const & operator -- ()
 	{debug_assert( valid() ); element_ = element_->const_previous(); return *this; }
 
 	/// @brief equality operator.  Do these elements point at the same list element?  Asserts
 	/// that they belong to the same list.  Never compare elements from separate lists.
-	inline
 	bool operator == ( EdgeListConstIterator const & rhs ) const {
 		debug_assert( owner_ == rhs.owner_ );
 		return element_ == rhs.element_;
@@ -273,7 +267,6 @@ public:
 
 	/// @brief const-cast equality operator.  Do these elements point at the same list element?  Asserts
 	/// that they belong to the same list.  Never compare elements from separate lists.
-	inline
 	bool operator == ( EdgeListIterator const & rhs ) const {
 		debug_assert( owner_ == rhs.owner_ );
 		return element_ == rhs.element_;
@@ -283,7 +276,6 @@ public:
 	/// @brief inequality operator.  Do these elements point to different elements from the same list?  Asserts
 	/// that they belong to the same list.  Never compare elements from separate lists.
 	/// Elements need not be valid to be compared.
-	inline
 	bool operator != ( EdgeListConstIterator const & rhs ) const {
 		return ! ( operator == ( rhs ) );
 	}
@@ -291,7 +283,6 @@ public:
 	/// @brief const-cast inequality operator.  Do these elements point to different elements from the same list?  Asserts
 	/// that they belong to the same list.  Never compare elements from separate lists.
 	/// Elements need not be valid to be compared.
-	inline
 	bool operator != ( EdgeListIterator const & rhs ) const {
 		return ! ( operator == ( rhs ) );
 	}
@@ -308,7 +299,6 @@ public:
 	Edge const & operator -> () const {debug_assert( valid() ); return * (element_->const_edge()); }
 
 	/// @brief Is this a valid iterator?
-	inline
 	bool valid() const;
 
 	friend class EdgeList;
@@ -463,21 +453,18 @@ public:
 	EdgeListConstIter const_upper_edge_list_end() const { return incident_edge_list_.const_end(); }
 
 	/// @brief the index for this node
-	inline
 	platform::Size get_node_index() const
 	{
 		return node_index_;
 	}
 
 	/// @brief the number of edges incident on this node, which may include a loop edge
-	inline
 	platform::Size num_edges() const
 	{
 		return num_incident_edges_;
 	}
 
 	/// @brief the number of neighbors counting "self" as a neighbor.
-	inline
 	platform::Size num_neighbors_counting_self() const
 	{
 		if ( loop_incident_ ) { return num_incident_edges_; }
@@ -487,14 +474,12 @@ public:
 	/// @brief the number of neighbors counting "self" as neighbor. Defaults to
 	/// num_neighbors_counting_self() but can be set to other values as well.
 	/// Useful in calculation of symmetrical structures.
-	inline
 	platform::Size num_neighbors_counting_self_static() const
 	{
 		return num_neighbors_counting_self_static_;
 	}
 
 	/// @brief the number of lower neighbors
-	inline
 	platform::Size get_num_edges_to_smaller_indexed_nodes() const
 	{
 		return num_edges_to_smaller_indexed_nodes_;
@@ -502,7 +487,6 @@ public:
 
 	/// @brief the number of upper neighbors -- which "self" neighborness is counted if a loop edge
 	/// is present
-	inline
 	platform::Size get_num_edges_to_larger_indexed_nodes() const
 	{
 		return num_edges_to_larger_indexed_nodes_;
@@ -519,7 +503,6 @@ public:
 protected:
 
 	/// @brief derived class access to the owner
-	inline
 	Graph* get_owner() const
 	{
 		return owner_;
@@ -576,10 +559,9 @@ public:
 	Node * get_other_node(platform::Size node_index);
 
 	/// @brief returns the index of the lower node
-	inline
 	platform::Size get_first_node_ind() const { return node_indices_[0]; }
+
 	/// @brief returns the index of the upper node
-	inline
 	platform::Size get_second_node_ind() const { return node_indices_[1]; }
 
 	/// @brief called only by class Graph, this function gives the Edge the data it needs
@@ -605,7 +587,6 @@ protected:
 
 	/// @brief get the node index for one of the two nodes this edge is incident upon
 	/// uses c-style index-from-0.
-	inline
 	platform::Size get_node_index( platform::Size index ) const
 	{
 		debug_assert( index == 0 || index == 1 );
@@ -614,7 +595,6 @@ protected:
 
 	/// @brief get a const * to one node that this edge is incident upon
 	/// uses c-style index-from-0 for these two nodes
-	inline
 	Node const *
 	get_node( platform::Size index ) const
 	{
@@ -624,7 +604,6 @@ protected:
 
 	/// @brief get a non-const * to one node that this edge is incident upon
 	/// uses c-style index-from-0 for these two nodes
-	inline
 	Node *
 	get_node( platform::Size index )
 	{
@@ -634,7 +613,6 @@ protected:
 
 
 	/// @brief get a const * to the owning graph
-	inline
 	Graph const *
 	get_owner() const
 	{
@@ -642,7 +620,6 @@ protected:
 	}
 
 	/// @brief get a non-const * to the owning graph
-	inline
 	Graph *
 	get_owner()
 	{
@@ -650,10 +627,10 @@ protected:
 	}
 
 private:
-	platform::Size node_indices_[2];
-	Node* nodes_[2];
+	std::array< platform::Size, 2 > node_indices_;
+	std::array< Node*, 2 > nodes_;
 
-	EdgeListIter pos_in_nodes_edge_list_[2];
+	std::array< EdgeListIter, 2 > pos_in_nodes_edge_list_;
 
 	EdgeListIter pos_in_owners_edge_list_;
 	Graph* owner_;
@@ -707,7 +684,6 @@ public:
 	void copy_connectivity( Graph const & source );
 
 	/// @brief the number of nodes in the graph
-	inline
 	platform::Size num_nodes() const
 	{
 		return num_nodes_;
@@ -745,14 +721,12 @@ public:
 	ObjexxFCL::FArray2D_int all_pairs_shortest_paths() const;
 
 public:
-	inline
 	Node const * get_node( platform::Size index ) const
 	{
 		debug_assert( index > 0 && index <= num_nodes_ );
 		return nodes_[ index ];
 	}
 
-	inline
 	Node* get_node( platform::Size index )
 	{
 		debug_assert( index > 0 && index <= num_nodes_ );
@@ -760,7 +734,6 @@ public:
 	}
 
 
-	inline
 	platform::Size num_edges() const
 	{
 		return num_edges_;
@@ -768,7 +741,6 @@ public:
 
 	/// @brief returns a const iterator to the beginning of the (unordered) edge list for the graph.
 	/// this edge list contains all the edges in the graph, not simply those for a particular vertex
-	inline
 	EdgeListConstIter const_edge_list_begin() const
 	{
 		return edge_list_.const_begin();
@@ -776,7 +748,6 @@ public:
 
 	/// @brief returns a non-const iterator to the beginning of the (unordered) edge list for the graph.
 	/// this edge list contains all the edges in the graph, not simply those for a particular vertex
-	inline
 	EdgeListIter edge_list_begin()
 	{
 		return edge_list_.begin();
@@ -784,7 +755,6 @@ public:
 
 	/// @brief returns a const iterator to the end of the (unordered) edge list for the graph.
 	/// this edge list contains all the edges in the graph, not simply those for a particular vertex
-	inline
 	EdgeListConstIter const_edge_list_end() const
 	{
 		return edge_list_.const_end();
@@ -792,7 +762,6 @@ public:
 
 	/// @brief returns a non-const iterator to the end of the (unordered) edge list for the graph.
 	/// this edge list contains all the edges in the graph, not simply those for a particular vertex
-	inline
 	EdgeListIter edge_list_end()
 	{
 		return edge_list_.end();
