@@ -1386,9 +1386,9 @@ FlexPepDockingProtocol::apply( pose::Pose & pose )
 				core::scoring::constraints::add_fa_constraints_from_cmdline(pose, *scorefxn_);
 				hires_fpdock_protocol(pose);
 			}
-//			if ( ! flags_.pep_fold_only ) {
-//				if_metrics_ = fpdock_metrics_.calc_interface_metrics(pose,rb_jump_,scorefxn_); // interface metrics
-//			} TODO: no need in calculating this twice until we have hb filter
+			//   if ( ! flags_.pep_fold_only ) {
+			//    if_metrics_ = fpdock_metrics_.calc_interface_metrics(pose,rb_jump_,scorefxn_); // interface metrics
+			//   } TODO: no need in calculating this twice until we have hb filter
 			passed_filter = check_filters(pose);
 			if ( !passed_filter ) {
 				pose = current_pose;
