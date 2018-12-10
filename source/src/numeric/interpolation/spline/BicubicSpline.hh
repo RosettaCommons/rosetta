@@ -63,6 +63,8 @@
 #include <numeric/interpolation/spline/CubicSpline.fwd.hh>
 #include <numeric/MathMatrix.hh>
 
+#include <utility/pointer/memory.hh>
+
 namespace numeric {
 namespace interpolation {
 namespace spline {
@@ -75,7 +77,7 @@ public:
 	// construction and destruction //
 	//////////////////////////////////
 
-	/// construct generic BicubicSpline
+	/// @brief Construct generic BicubicSpline
 	BicubicSpline():
 		border_(), // Zero initialize C-style arrays
 		start_(),
@@ -83,7 +85,13 @@ public:
 		LinCont_()
 	{}
 
-	/// copy constructor
+	/// @brief clone function: make a copy and return owning pointer to the copy.
+	BicubicSplineOP clone() const {
+		return utility::pointer::make_shared< BicubicSpline >( *this );
+	}
+
+	/// @brief Captal-C Clone function: make a copy and return a *raw* pointer to the copy.
+	/// @details Why do we need this?!? --VKM, Nov 2018.
 	BicubicSpline* Clone() const
 	{
 		return new BicubicSpline( *this);

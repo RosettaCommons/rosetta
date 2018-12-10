@@ -57,6 +57,10 @@ public:
 	///
 	virtual ~PolycubicSplineBase() {}
 
+	/// @brief Pure virtual clone() function: returns an owning pointer to a copy of this object.
+	/// @details Must be implemented by derived classes.
+	virtual PolycubicSplineBaseOP clone() const = 0;
+
 	/////////////////
 	// data access //
 	/////////////////

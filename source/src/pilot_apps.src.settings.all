@@ -1083,6 +1083,7 @@ sources = {
 	"pilot/vmullig" : [
 		"cycpep_analysis",
 		"fit_helixparams",
+		"make_mainchain_potential",
 		"symmetrize_old_ramamap",
 	],
 

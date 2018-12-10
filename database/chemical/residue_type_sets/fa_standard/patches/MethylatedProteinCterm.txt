@@ -9,7 +9,7 @@ TYPES METHYLATED_CTERMINUS_VARIANT
 ##   nothing that is already C terminally patched
 ############################################################################################
 BEGIN_SELECTOR
-PROPERTY PROTEIN
+PROPERTY PROTEIN PEPTOID
 NOT VARIANT_TYPE UPPER_TERMINUS_VARIANT
 NOT VARIANT_TYPE METHYLATED_CTERMINUS_VARIANT
 NOT VARIANT_TYPE SHOVE_BB

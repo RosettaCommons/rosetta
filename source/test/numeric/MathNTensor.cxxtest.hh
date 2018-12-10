@@ -16,6 +16,7 @@
 #include <cxxtest/TestSuite.h>
 
 // Package Headers
+#include <numeric/MathNTensorBase.hh>
 #include <numeric/MathNTensor.hh>
 #include <numeric/MathMatrix.hh>
 #include <numeric/types.hh>
@@ -24,7 +25,7 @@
 
 class MathNTensorTests : public CxxTest::TestSuite {
 
-	public:
+public:
 
 	// Shared initialization goes here.
 	void setUp() {
@@ -40,33 +41,55 @@ class MathNTensorTests : public CxxTest::TestSuite {
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	void test_convert_to_MathMatrix() {
 		using namespace numeric;
-		
+
 		utility::vector1< Size > dimensions(2);
 		dimensions[1] = 4; dimensions[2] = 2;
-		
+
 		//Make a MathNTensor and fill it with 1..8.
 		MathNTensor< Size, 2 > mytensor( dimensions );
 		Size count=1;
-		for(Size j=0; j<2; ++j) {
-			for(Size i=0; i<4; ++i) {
+		for ( Size j=0; j<2; ++j ) {
+			for ( Size i=0; i<4; ++i ) {
 				utility::vector1 <Size> coords(2);
 				coords[1]=i; coords[2]=j;
 				mytensor( coords ) = count;
 				++count;
 			}
 		}
-		
+
 		//Convert to a MathMatrix and verify contents:
 		MathMatrix <Size> mymatrix( mytensor.get_mathmatrix() );
 		Size count2=1;
-		for(Size j=0; j<2; ++j) {
-			for(Size i=0; i<4; ++i) {
+		for ( Size j=0; j<2; ++j ) {
+			for ( Size i=0; i<4; ++i ) {
 				TS_ASSERT_EQUALS( mymatrix(i,j), count2 );
 				++count2;
 			}
 		}
 	}
 
+	/// @brief Test the max() and min() functions for the MathNTensor.
+	void test_maxmin() {
+		using namespace numeric;
 
+		//Make a 2D tensor:
+		utility::vector1< Size > dimensions({ 4, 2 });
+		MathNTensorBaseOP< Size > mytensor( new MathNTensor< Size, 2 >( dimensions ) );
+
+		Size count(5);
+		for ( Size j=0; j<2; ++j ) {
+			for ( Size i=0; i<4; ++i ) {
+				utility::vector1 <Size> coords(2);
+				coords[1]=i; coords[2]=j;
+				mytensor->set_value(coords, count);
+				++count;
+			}
+		}
+		mytensor->set_value( utility::vector1< Size >({3,1}), 732 ); //Max val
+		mytensor->set_value( utility::vector1< Size >({2,0}), 2 ); //Min val
+
+		TS_ASSERT_EQUALS( mytensor->max(), 732 );
+		TS_ASSERT_EQUALS( mytensor->min(), 2 );
+	}
 
 };

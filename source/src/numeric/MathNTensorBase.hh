@@ -55,6 +55,11 @@ public:
 	///
 	virtual ~MathNTensorBase() {}
 
+	/// @brief Pure virtual clone function.
+	/// @details Creates a copy of this object and returns an owning pointer to the copy.  Must be
+	/// implemented by derived classes.
+	virtual MathNTensorBaseOP< T > clone() const = 0;
+
 	/// @brief Costructor with dimensionality value.
 	///
 	MathNTensorBase( Size const dimensionality_in ) :
@@ -64,6 +69,32 @@ public:
 	/// @brief Get the dimensionality of derived classes.
 	/// @details Will need to store this in order to cast pointers to the appropriate type for the derived class.
 	Size dimensionality() const { return dimensionality_; }
+
+	/// @brief Is the given coordinate a valid position in the tensor?
+	/// @details Returns false if out of range.  Pure virtual; must be implemented by derived classes.
+	virtual bool is_valid_position( utility::vector1< Size > const & position ) const = 0;
+
+	/// @brief Set a value in a tensor.
+	/// @details Note that bounds-checking only occurs in debug builds!
+	/// @note Pure virtual.  Must be implemented by derived classes.
+	virtual void set_value( utility::vector1< Size > const &position, T const &value_in ) = 0;
+
+	/// @brief Get a value from a tensor.
+	/// @details Note that bounds-checking only occurs in debug builds!
+	/// @note Pure virtual.  Must be implemented by derived classes.
+	virtual T const & value( utility::vector1< Size > const &position ) const = 0;
+
+	/// @brief Get the number of bins for the nth dimension.
+	/// @details Pure virtual.  Must be implemented by derived classes.
+	virtual Size n_bins( Size const dimension ) const = 0;
+
+	/// @brief Get the minimum value stored in this tensor.
+	/// @details pure virtual.  Must be implemented by derived classes.
+	virtual T min() const = 0;
+
+	/// @brief Get the maximum value stored in this tensor.
+	/// @details pure virtual.  Must be implemented by derived classes.
+	virtual T max() const = 0;
 
 protected:
 

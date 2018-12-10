@@ -15,10 +15,14 @@
 // Unit Headers
 #include <core/chemical/mainchain_potential/MainchainScoreTable.hh>
 
+// Core Headers
+#include <core/chemical/ResidueType.hh>
+
 // Utility Headers
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
 #include <utility/fixedsizearray1.hh>
+#include <utility/pointer/memory.hh>
 
 // Basic Headers
 #include <basic/Tracer.hh>
@@ -61,6 +65,32 @@ MainchainScoreTable::MainchainScoreTable():
 	symmetrize_gly_(false)
 {
 	symmetrize_gly_ = basic::options::option[ basic::options::OptionKeys::score::symmetric_gly_tables ](); //Read from option system.
+}
+
+/// @brief Copy constructor.
+///
+MainchainScoreTable::MainchainScoreTable(
+	MainchainScoreTable const & src
+) :
+	initialized_(src.initialized_),
+	dimension_(src.dimension_),
+	energies_( src.energies_ == nullptr ? nullptr : src.energies_->clone() ),
+	probabilities_( src.probabilities_ == nullptr ? nullptr : src.probabilities_->clone() ),
+	cdf_( src.cdf_ == nullptr ? nullptr : src.cdf_->clone() ),
+	use_polycubic_interpolation_( src.use_polycubic_interpolation_ ),
+	energies_spline_1D_( src.energies_spline_1D_ == nullptr ? nullptr : src.energies_spline_1D_->clone() ),
+	energies_spline_2D_( src.energies_spline_2D_ == nullptr ? nullptr : src.energies_spline_2D_->clone() ),
+	energies_spline_ND_( src.energies_spline_ND_ == nullptr ? nullptr : src.energies_spline_ND_->clone() ),
+	n_mainchain_torsions_total_( src.n_mainchain_torsions_total_ ),
+	mainchain_torsions_covered_( src.mainchain_torsions_covered_ ),
+	symmetrize_gly_( src.symmetrize_gly_ )
+{}
+
+/// @brief Clone function: make a copy of this object and return
+/// an owning pointer to the copy.
+MainchainScoreTableOP
+MainchainScoreTable::clone() const {
+	return utility::pointer::make_shared< MainchainScoreTable >(*this);
 }
 
 /// @brief Parse a Shapovalov-style rama database file and set up this MainchainScoreTable.
@@ -255,6 +285,207 @@ MainchainScoreTable::parse_rama_map_file_shapovalov(
 	set_initialized();
 }
 
+/// @brief Reset this object completely.
+void
+MainchainScoreTable::clear() {
+	initialized_ = false;
+	dimension_ = 0;
+	energies_ = nullptr;
+	probabilities_ = nullptr;
+	cdf_ = nullptr;
+	use_polycubic_interpolation_ = true;
+	energies_spline_1D_ = nullptr;
+	energies_spline_2D_ = nullptr;
+	energies_spline_ND_ = nullptr;
+	n_mainchain_torsions_total_ = 2;
+	mainchain_torsions_covered_.clear();
+	symmetrize_gly_ = false;
+}
+
+/// @brief Initialize this object for on-the-fly generation of a mainchain scoretable.
+/// @details Calls clear() first.
+void
+MainchainScoreTable::initialize_for_de_novo_generation(
+	core::chemical::ResidueType const & restype,
+	utility::vector1< core::Size > const & dimensions,
+	utility::vector1< core::Size > const & mainchain_torsions_covered,
+	bool const symmetrize
+) {
+	clear();
+	set_dimension_and_ntorsions_for_restype( restype, dimensions, mainchain_torsions_covered );
+	set_symmetrize_gly( symmetrize );
+}
+
+/// @brief Set an entry in the energies tensor.
+/// @note Bounds checking only in debug build!
+void
+MainchainScoreTable::set_energy(
+	utility::vector1< core::Size > const & coords,
+	core::Real const & energy_in
+) {
+	debug_assert( energies_ != nullptr );
+	debug_assert( energies_->is_valid_position(coords) );
+	energies_->set_value( coords, energy_in );
+}
+
+/// @brief Given coordinates in the energy tensor, increment the coordinates.
+/// @returns Returns "true" if increment was successful, "false" if the end of the tensor has been reached.
+bool
+MainchainScoreTable::increment_energy_coords(
+	utility::vector1< core::Size > & coords
+) const {
+	debug_assert( energies_ != nullptr );
+	debug_assert( energies_->is_valid_position(coords) );
+	return increment_coords( coords, energies_ );
+}
+
+/// @brief After the energies tensor has been populated, compute all derived data.
+/// @details If "normalize" is true, the probabilities are normalized to 1, and the energies adjusted accordingly.  (This
+/// has the effect of raising or lowering all of the energies by some constant.)  If "symmetrize_gly_" is true, the tensors are
+/// made symmetric.
+/// @note Sets initalized_ to true.
+void
+MainchainScoreTable::finalize_de_novo_scoretable_from_energies(
+	core::Real const &kbt,
+	bool const normalize
+) {
+	//TODO:
+	//Symmetrize tensors (if symmetrize option is used).
+	//Generate probabilities from energies.
+	//Normalize probabilities.
+	//Regenerate energies from normalized probabilities.
+	TR << TR.Red << "\nDANGER DANGER DANGER\nTHE MainchainScoreTable::finalize_de_novo_scoretable_from_energies() function must be written!\nDANGER DANGER DANGER" << TR.Reset << std::endl;
+	TR.flush();
+
+	// Find lowest energy and shift up if negative:
+	core::Real lowest( energies_->min() );
+	if ( lowest < 0.0 ) lowest -= 1e-10;
+
+	// Generate probabilities:
+	TR << "Generating probabilities from energies." << std::endl;
+	utility::vector1< core::Size > coords( energies_->dimensionality(), 0 );
+	debug_assert( probabilities_->dimensionality() == energies_->dimensionality() );
+	core::Real accumulator( 0.0 );
+	for ( core::Size i(1), imax(coords.size()); i<=imax; ++i ) {
+		coords[i] = 0;
+	}
+	do {
+		debug_assert( energies_->is_valid_position( coords ) );
+		debug_assert( probabilities_->is_valid_position( coords ) );
+		if ( lowest < 0.0 ) energies_->set_value( coords, energies_->value(coords) - lowest ); //Shift energies up for probability calculation.
+
+		core::Real prob( std::exp( -energies_->value(coords) / kbt ) );
+		//if( std::isnan( prob ) ) prob = 1.0e-10; //TEMPORARY HACK -- fix later.
+		accumulator += prob;
+		probabilities_->set_value( coords, prob );
+	} while ( increment_energy_coords(coords) );
+
+	// Loop through again to normalize probabilities and to regenerate energies from probabilities:
+	if ( normalize ) {
+		TR << "Normalizing probabilities and regenerating energies." << std::endl;
+		TR.flush();
+		for ( core::Size i(1), imax(coords.size()); i<=imax; ++i ) {
+			coords[i] = 0;
+		}
+		do {
+			debug_assert( energies_->is_valid_position( coords ) );
+			debug_assert( probabilities_->is_valid_position( coords ) );
+			core::Real const normedprob( probabilities_->value(coords) / accumulator );
+			probabilities_->set_value(coords, normedprob);
+			if ( !symmetrize_gly_ ) energies_->set_value( coords, -kbt*std::log( normedprob ) ); //If the tensors have to be symmetrized anyways, don't bother calculating energies here.
+		} while( increment_energy_coords(coords) );
+	}
+
+	// Symmetrize tensors if we're supposed to do so:
+	if ( symmetrize_gly_ ) {
+		TR << "Symmetrizing probability tensor." << std::endl;
+		TR.flush();
+		symmetrize_tensor( probabilities_ );
+		TR << "Regenerating energies tensor." << std::endl;
+		TR.flush();
+		energies_from_probs( energies_, probabilities_, kbt );
+	}
+
+	initialized_ = true;
+}
+
+/// @brief After the mainchain scoretable has been finalized, write it to a scorefile.
+void
+MainchainScoreTable::write_mainchain_scoretable_to_stream( std::stringstream & outstream ) const {
+	outstream << "@N_MAINCHAIN_TORSIONS " << mainchain_torsions_covered_.size() << "\n";
+	outstream << "@N_MAINCHAIN_TORSIONS_TOTAL " << n_mainchain_torsions_total_ << "\n";
+	outstream << "@MAINCHAIN_TORSIONS_PROVIDED ";
+	for ( core::Size i(1), imax(mainchain_torsions_covered_.size()); i<=imax; ++i ) {
+		outstream << mainchain_torsions_covered_[i];
+		if ( i<imax ) outstream << " ";
+	}
+	outstream << "\n";
+	outstream << "@DIMENSIONS ";
+	for ( core::Size i(1), imax(energies_->dimensionality()); i<=imax; ++i ) {
+		outstream << energies_->n_bins(i);
+		if ( i<imax ) outstream << " ";
+	}
+	outstream << "\n";
+	outstream << "@OFFSETS ";
+	for ( core::Size i(1), imax(energies_->dimensionality()); i<=imax; ++i ) {
+		outstream << (symmetrize_gly_ ? static_cast<core::Size>(std::round(180.0/static_cast<core::Real>(energies_->n_bins(i)))) : 0 );
+		if ( i<imax ) outstream << " ";
+	}
+
+	outstream << "\n#Resname\t";
+	if ( dimension_ == 2 && ( mainchain_torsions_covered_.empty() || ( mainchain_torsions_covered_[1] == 1 && mainchain_torsions_covered_[2] == 2 ) ) ) {
+		outstream << "phi\tpsi\t";
+	} else {
+		for ( core::Size i(1); i<=dimension_; ++i ) {
+			outstream << "tors" << ( mainchain_torsions_covered_.empty() ? i : mainchain_torsions_covered_[i] ) << "\t";
+		}
+	}
+	outstream << "probablity\t-log(prob)\n";
+
+	utility::vector1< core::Size > coords( energies_->dimensionality(), 0 );
+	do {
+		utility::vector1< core::Real > torsions;
+		get_mainchain_torsions_from_coords( coords, torsions, false );
+
+		outstream << "NCAA_NAME\t"; //TODO replace with NCAA name.
+		for ( core::Size i(1), imax(torsions.size()); i<=imax; ++i ) {
+			outstream << numeric::principal_angle_degrees( torsions[i] ) << "\t";
+		}
+		outstream << probabilities_->value( coords ) << "\t" << energies_->value( coords ) << "\n";
+	} while( increment_energy_coords(coords) );
+}
+
+/// @brief Given a vector of coordinates, get the corresponding vector of mainchain torsions.
+/// @details Bounds-checking only in debug mode!
+/// @note Offset is 0 if symmetrize_gly_ is false, 1/2 well if symmetrize_gly_ is true.  Offset is only added if offset_if_symmetric
+/// is set to true.
+void
+MainchainScoreTable::get_mainchain_torsions_from_coords(
+	utility::vector1< core::Size > const & coords_in,
+	utility::vector1< core::Real > & torsions_out,
+	bool const offset_if_symmetric /*= true*/
+) const {
+	debug_assert( energies_ != nullptr );
+	debug_assert( energies_->is_valid_position(coords_in) );
+	torsions_out.resize(coords_in.size());
+	for ( core::Size i(1), imax(coords_in.size()); i<=imax; ++i ) {
+		core::Size const nbins( energies_->n_bins(i) );
+		torsions_out[i] = 360.0 / static_cast< core::Real >(nbins) * coords_in[i] + ( symmetrize_gly_ && offset_if_symmetric ? 180.0/static_cast<core::Real>( energies_->n_bins(i) ) : 0 );
+	}
+}
+
+/// @brief Access an entry in the energy tensor.
+/// @details Note that bounds checking only occurs in debug mode!
+/// @note Intended for unit testing.
+core::Real const &
+MainchainScoreTable::energy_tensor(
+	utility::vector1< core::Size > const & coords
+) const {
+	runtime_assert(initialized());
+	debug_assert( energies_->is_valid_position(coords) );
+	return energies_->value(coords);
+}
+
 /// @brief Access values in this MainchainScoreTable.
 /// @details Note that the vector is deliberately not passed by reference.  The function copies the vector and ensures
 /// that all coordinates are in the range [0, 360).
@@ -288,11 +519,9 @@ MainchainScoreTable::energy(
 	case 1 :
 		runtime_assert(energies_spline_1D_);
 		return energies_spline_1D_->F( coords[1] );
-		break;
 	case 2 :
 		runtime_assert(energies_spline_2D_);
 		return energies_spline_2D_->F( coords[1], coords[2] );
-		break;
 	case 3 : //Cases 3 through 9 all call the same code (numeric::interpolation::spline::get_PolycubicSpline_F).
 	case 4:
 	case 5:
@@ -301,7 +530,6 @@ MainchainScoreTable::energy(
 	case 8:
 	case 9 :
 		return get_PolycubicSpline_F( energies_spline_ND_, coords );
-		break;
 	default :
 		utility_exit_with_message( "Error in core::chemical::mainchain_potential::MainchainScoreTable::energy(): The dimensionality of the coordinates vector must be less than 9." );
 	}
@@ -442,6 +670,43 @@ void
 MainchainScoreTable::set_initialized() {
 	runtime_assert_string_msg( !initialized(), "Error in core::chemical::mainchain_potential::MainchainScoreTable::set_initialized(): The MainchainScoreTable is already initialized." );
 	initialized_ = true;
+}
+
+/// @brief Given a residue type, set dimension_ and n_mainchain_torsions_total_, and resize all tensors appropriately.
+/// @details Assumes that all data have already been cleared.  Call clear() before invoking this method.
+/// @note The mainchain_torsions_covered vector is deliberately passed by copy.
+void
+MainchainScoreTable::set_dimension_and_ntorsions_for_restype(
+	core::chemical::ResidueType const & restype,
+	utility::vector1< core::Size > const & dimensions,
+	utility::vector1< core::Size > mainchain_torsions_covered
+) {
+	static const std::string errmsg("Error in MainchainScoreTable::set_dimension_and_ntorsions_for_restype(): ");
+
+	dimension_ = dimensions.size();
+
+	// By default (if not user-specified), we generate the mainchain potential for all mainchain dihedrals:
+	if ( mainchain_torsions_covered.empty() ) {
+		mainchain_torsions_covered.resize(dimension_);
+		for ( core::Size i(1); i<=dimension_; ++i ) {
+			mainchain_torsions_covered[i] = i;
+		}
+	}
+
+	runtime_assert_string_msg( mainchain_torsions_covered.size() <= dimension_, errmsg + "The number of mainchain torsions specified exceeds the number for the " + restype.base_name() + " residue type." );
+
+	n_mainchain_torsions_total_ = mainchain_torsions_covered.size();
+	runtime_assert_string_msg( dimensions.size() == n_mainchain_torsions_total_, errmsg + "The number of entries in the mainchain scoretable dimensions vector does not match the number of rotatable mainchain bonds for residue type " + restype.name() + "." );
+
+	mainchain_torsions_covered_.clear();
+	mainchain_torsions_covered_.reserve( n_mainchain_torsions_total_ );
+	for ( core::Size i(1); i<=n_mainchain_torsions_total_; ++i ) {
+		runtime_assert_string_msg( !mainchain_torsions_covered_.has( mainchain_torsions_covered[i] ), errmsg + "A mainchain torsion index was given twice." );
+		runtime_assert_string_msg( mainchain_torsions_covered[i] <= dimension_, errmsg + "A mainchain torsion index was given that exceeds the number of mainchain torsions in the " + restype.base_name() + " residue type." );
+		mainchain_torsions_covered_.push_back( mainchain_torsions_covered[i] );
+	}
+
+	initialize_tensors(dimensions);
 }
 
 /// @brief Set up the cumulative distribution function.

@@ -93,7 +93,8 @@ VIRTUAL_METAL_CONJUGATION # Adds virtual atoms representing metals to metal-bind
 METHYLATED_NTERM_VARIANT  # Replace the LOWER connect with an attached methyl group
 ACETYLATED_NTERMINUS_VARIANT  # Replace the LOWER connect with an attached acetyl group
 
-METHYLATED_CTERMINUS_VARIANT  # Replace the UPPER connect with an attached methyl group
+METHYLATED_CTERMINUS_VARIANT  # Replace the UPPER connect with an attached N-methyl group, which is good for simulating the N and CA of the next residue.
+DIMETHYLATED_CTERMINUS_VARIANT  # Replace the UPPER connect with an attached N-dimethyl group, which is good for simulating the N, CA, and N-methylation of an N-substituted next residue (e.g. proline, peptoids, etc.)
 
 ## NON UPPER/LOWER
 

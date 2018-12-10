@@ -25,12 +25,16 @@
 #include <basic/Tracer.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/annotated_sequence.hh>
+#include <core/pose/variant_util.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/datacache/DataMap.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/parser/ScoreFunctionLoader.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
 
 static basic::Tracer TR( "FastRelaxTests" );
 
@@ -316,6 +320,60 @@ public:
 		TS_ASSERT_THROWS_ANYTHING( mover.parse_my_tag( tag, dm, fm, mm, pose ) );
 	}
 
+	/// @brief Check that this works for a noncanonical
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	void test_fastrelax_B3N() {
+		TR << "Testing with beta-3-asparagine..." << std::endl;
+		impl_test_fastrelax_B3N< protocols::relax::FastRelax >();
+		//Note: this isn't expected to work with FastDesign at the moment.
+		//impl_test_fastrelax_B3N< protocols::denovo_design::movers::FastDesign >();
+	}
 
+	/// @brief Check that this works for a noncanonical
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	template < typename T >
+	void impl_test_fastrelax_B3N() {
+		core::pose::Pose pose;
+		core::pose::make_pose_from_sequence(pose, "GX[B3N]G", "fa_standard");
+
+		core::scoring::ScoreFunctionOP sfxn( core::scoring::get_score_function() );
+		T mover( sfxn, 3 );
+		TS_ASSERT_THROWS_NOTHING( mover.apply(pose) ); //Just run and make sure we don't crash.
+	}
+
+	/// @brief Check that this works for a noncanonical with modified termini.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	void test_fastrelax_B3N_mod_termini() {
+		TR << "Testing with beta-3-asparagine with acetylated N-terminus and N-methylated C-terminus..." << std::endl;
+		impl_test_fastrelax_B3N_mod_termini< protocols::relax::FastRelax >();
+		//Note: this isn't expected to work with FastDesign at the moment.
+		//impl_test_fastrelax_B3N_mod_termini< protocols::denovo_design::movers::FastDesign >();
+	}
+
+	/// @brief Check that this works for a noncanonical
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	template < typename T >
+	void impl_test_fastrelax_B3N_mod_termini() {
+		core::pose::Pose pose;
+		core::pose::make_pose_from_sequence(pose, "X[B3N]", "fa_standard");
+
+		// Strip off terminal types:
+		core::pose::remove_lower_terminus_type_from_pose_residue( pose, 1 );
+		core::pose::remove_upper_terminus_type_from_pose_residue( pose, 1 );
+
+		// Add new terminal types:
+		core::pose::add_variant_type_to_pose_residue( pose, core::chemical::METHYLATED_CTERMINUS_VARIANT, 1 );
+		core::pose::add_variant_type_to_pose_residue( pose, core::chemical::ACETYLATED_NTERMINUS_VARIANT, 1 );
+
+		// Check that they're on there:
+		TS_ASSERT( pose.residue_type(1).has_variant_type( core::chemical::METHYLATED_CTERMINUS_VARIANT ) );
+		TS_ASSERT( pose.residue_type(1).has_variant_type( core::chemical::ACETYLATED_NTERMINUS_VARIANT ) );
+
+		//pose.dump_pdb("FRLX_B3N_MOD_TERMINI.pdb"); //DELETE ME
+
+		core::scoring::ScoreFunctionOP sfxn( core::scoring::get_score_function() );
+		T mover( sfxn, 3 );
+		TS_ASSERT_THROWS_NOTHING( mover.apply(pose) ); //Just run and make sure we don't crash.
+	}
 
 };//end class

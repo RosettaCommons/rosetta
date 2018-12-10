@@ -94,14 +94,6 @@ SingleNCAARotamerLibraryCreator::create( core::chemical::ResidueType const & res
 	// Peptoids need an additional DOF (omega-pre) (VKM TODO -- put this in the spec.
 	if ( restype.is_peptoid() ) ++n_rotlib_bb;
 
-	// AMW: This code sends a hideous shiver down my spine and it should do the same for yours.
-	// The last passage was a regrettable tragedy--where this function had to figure something out about
-	// the residue type besides whether its rotamer library was already known.
-	// This passage requires that we even check for variant types. What's next???
-	if ( restype.has_variant_type( chemical::ACETYLATED_NTERMINUS_VARIANT ) ) {
-		--n_rotlib_bb;
-	}
-
 	using namespace utility::options;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;

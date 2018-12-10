@@ -1,5 +1,5 @@
 -s 1UBQ.pdb.gz
--residue_name NVL
+-usec::residue_name NVL
 -frag_size 5
 -repack_fragments true
 

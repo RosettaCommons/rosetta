@@ -100,9 +100,9 @@ static basic::Tracer TR("DumpCapped");
 
 // application specific options
 namespace dumper {
-StringOptionKey const residue_name( "dumper::residue_name" );
-BooleanOptionKey const nopatch( "dumper::nopatch" );
-BooleanOptionKey const fiveprime( "dumper::fiveprime" );
+StringOptionKey const residue_name( "dumper:residue_name" );
+BooleanOptionKey const nopatch( "dumper:nopatch" );
+BooleanOptionKey const fiveprime( "dumper:fiveprime" );
 }
 
 int

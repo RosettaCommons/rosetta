@@ -146,6 +146,9 @@ patches/his_methylated.txt
 patches/MethylatedProteinCterm.txt
 patches/AcetylatedProteinNterm.txt
 
+## patch for the make_mainchain_potential protocol
+patches/DimethylatedProteinCterm.txt
+
 ## peptoid patches
 patches/NtermPeptoidFull.txt
 patches/CtermPeptoidFull.txt

@@ -6190,9 +6190,21 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'three_fold_symmetry_90_210_330'  , 'IntegerVector', desc='the chi number at which to apply three fold symmetry across the 0/180 axis' ),
 		Option( 'use_terminal_residues'  , 'Boolean', desc='Use separate ACE and NME residues as terminal capping groups, rather than patches', default='false' ),
 		Option( 'k_medoids'  , 'Boolean', desc='Use k-medoids instead of k-means clustering', default='false' ),
-                Option( 'patch_name_for_residue', 'String', desc='Provide an explicit description of the patches for terminal capping' ),
-                Option( 'polymeric_context', 'File', desc='A file containing the RT at PDB number 0 and the flanking context as well.' ), 
+		Option( 'patch_name_for_residue', 'String', desc='Provide an explicit description of the patches for terminal capping' ),
+		Option( 'polymeric_context', 'File', desc='A file containing the RT at PDB number 0 and the flanking context as well.' ), 
 	), # -make_rot_lib
+
+	## Options for the make_mainchain_potential application
+	Option_Group( 'make_mainchain_potential',
+		Option( 'do_minimization', 'Boolean', desc="If true, each side-chain rotamer is minimized using the Rosetta molecular mechanics forcefield prior to scoring.  True by default.", default='true'  ),
+		Option( 'mainchain_potential_points_per_dimension', 'IntegerVector', desc="The number of points for each dimension in the multidimensional mainchain potential, provided as a whitespace-separated list of integers.  Each integer must be strictly positive.  Required input." ),
+		Option( 'mainchain_torsions_covered', 'IntegerVector', desc="The mainchain torsions that are covered by this potential.  For example, an oligourea has four mainchain torsions, but only torsions 1, 2, and 3 are covered (and the fourth is restrained by the omega scoreterm), in which case this option can be set to 1 2 3.  If not specified, it defaults to all mainchain torsions." ),
+		Option( 'make_pre_proline_potential', 'Boolean', desc='If true, then this application will make a potential for a position preceding a proline, sarcosine, peptoid, or other N-substituted building-block.  If false (the default), then it generates a potential for a position preceding an unsubstituted position (e.g. the 19 canonical amino acids other than proline).', default='false' ),
+		Option( 'output_filename', 'File', desc='Output file to which the generated mainchain potential will be written.  Defaults to generated_mainchain_potential.txt', default='generated_mainchain_potential.txt' ),
+		Option( 'residue_name', 'String', desc='The name of the residue type for which we will be generating a mainchain potential.  Defaults to ALA if not set, but should be set by the user.', default='ALA' ),
+		Option( 'symmetrize_output', 'Boolean', desc='If true, the output will be made symmetric.  False by default.  Note that this necessitates a five degree offset.', default='false' ),
+		Option( 'write_potentials_for_individual_scoreterms', 'Boolean', desc="If true, a separate potential file is written for each scoreterm.  This is used to fit the weights for the molecular mechanics forcefield used by the make_mainchain_potential application.  Note that these tables will be written unnormalized and with weights of 1.0 for each term.  False by default.", default='false' ),
+	), # end of make_mainchain_potential option group
 
 	Option_Group( 'match',
 		Option( 'lig_name', 'String', desc="Name of the ligand to be matched.  This should be the same as the NAME field of the ligand's parameter file (the .params file)" ),

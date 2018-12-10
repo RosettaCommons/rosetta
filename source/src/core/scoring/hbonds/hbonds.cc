@@ -309,7 +309,7 @@ fill_hbond_set(
 bool
 calculate_intra_res_hbonds( conformation::Residue const & rsd,
 	HBondOptions const & options ) {
-	if ( rsd.is_protein() && options.exclude_intra_res_protein() /* default true */ ) return false;
+	if ( (rsd.is_protein() || rsd.is_peptoid()) && options.exclude_intra_res_protein() /* default true */ ) return false;
 	if ( rsd.is_DNA() && options.exclude_DNA_DNA() /* default true */ ) return false;
 	if ( rsd.is_RNA() && options.exclude_intra_res_RNA() /* default false */ ) return false;
 	return true;

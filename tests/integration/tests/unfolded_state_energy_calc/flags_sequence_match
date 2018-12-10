@@ -1,5 +1,5 @@
 -s 4FMH_A.pdb.gz
--residue_name 601
+-usec::residue_name 601
 -frag_size 5
 -repack_fragments true
 -sequence_match_sequence GP

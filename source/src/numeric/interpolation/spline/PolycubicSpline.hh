@@ -87,6 +87,12 @@ public:
 		LinCont_(src.LinCont_)
 	{}
 
+	/// @brief Implementation of pure virtual clone() function from base class: returns an owning
+	/// pointer to a copy of this object.
+	PolycubicSplineBaseOP clone() const override {
+		return utility::pointer::make_shared< PolycubicSpline< N > >( *this );
+	}
+
 	/////////////////
 	// data access //
 	/////////////////
@@ -197,6 +203,12 @@ public:
 		LinCont_(src.LinCont_)
 	{}
 
+	/// @brief Implementation of pure virtual clone() function from base class: returns an owning
+	/// pointer to a copy of this object.
+	PolycubicSplineBaseOP clone() const override {
+		return utility::pointer::make_shared< PolycubicSpline< 1 > >( *this );
+	}
+
 	/////////////////
 	// data access //
 	/////////////////
@@ -277,6 +289,11 @@ public:
 		LinCont_( utility::fixedsizearray1< bool, 2 >( false ) )
 	{}
 
+	/// @brief Implementation of pure virtual clone() function from base class: returns an owning
+	/// pointer to a copy of this object.
+	PolycubicSplineBaseOP clone() const override {
+		return utility::pointer::make_shared< PolycubicSpline< 2 > >( *this );
+	}
 
 	/// @brief Get the dimensionality.
 	///

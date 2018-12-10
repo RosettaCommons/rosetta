@@ -26,7 +26,7 @@
 /// @author Steven Combs, Nils Woetzl, Jens Meiler
 /// @author ported to Rosetta by Andrew Leaver-Fay (aleaverfay@gmail.com)
 /// @author generalized to N dimensions by Andrew Watkins
-/// @author Vikram K. Mulligan (vmullig@uw.edu) -- added default constructor
+/// @author Vikram K. Mulligan (vmullig@uw.edu) -- added default constructor, clone() operator.
 ///
 /////////////////////////////////////////////////////////////////////////
 
@@ -46,6 +46,7 @@
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
 #include <utility/fixedsizearray1.hh>
+#include <utility/pointer/memory.hh>
 
 // C++ headers
 #include <math.h>
@@ -126,6 +127,13 @@ public:
 		std::copy( src.data_, src.data_ + size_, data_ ); //for ( Size ii = 0; ii < size_; ++ii ) { data_[ ii ] = src.data_[ ii ]; }
 	}
 
+	/// @brief Implementation of pure virtual clone function from base class.
+	/// @details Creates a copy of this object and returns an owning pointer to the copy.  Must be
+	/// implemented by derived classes.
+	MathNTensorBaseOP< T > clone() const override {
+		return MathNTensorBaseOP< T >( utility::pointer::make_shared< MathNTensor< T, N > >(*this) );
+	}
+
 	/// @brief Assignment operator.
 	///
 	MathNTensor< T, N > &
@@ -166,12 +174,48 @@ public:
 	}
 
 	inline
-	bool is_valid_position( utility::vector1< Size > const & positions ) const {
+	bool is_valid_position( utility::vector1< Size > const & positions ) const override {
 		bool validity = true;
 		for ( Size i = 1; i <= N; ++i ) {
 			validity = validity && ( positions[ i ] < n_bins_[ i ] );
 		}
 		return validity;
+	}
+
+	/// @brief Set a value in a tensor.
+	/// @details Note that bounds-checking only occurs in debug builds!
+	/// @note Implements pure virtual function from base class.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	inline
+	void
+	set_value(
+		utility::vector1< Size > const &position,
+		T const &value_in
+	) override {
+		runtime_assert( position.size() == N );
+		debug_assert( is_valid_position(position) );
+		utility::fixedsizearray1< Size, N > fixedpos;
+		for ( Size i(1); i<=N; ++i ) {
+			fixedpos[i] = position[i];
+		}
+		(*this)( fixedpos ) = value_in;
+	}
+
+	/// @brief Get a value from a tensor.
+	/// @details Note that bounds-checking only occurs in debug builds!
+	/// @note Implements pure virtual function from base class.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	inline
+	T const & value(
+		utility::vector1< Size > const &position
+	) const override {
+		runtime_assert( position.size() == N );
+		debug_assert( is_valid_position(position) );
+		utility::fixedsizearray1< Size, N > fixedpos;
+		for ( Size i(1); i<=N; ++i ) {
+			fixedpos[i] = position[i];
+		}
+		return (*this)(fixedpos);
 	}
 
 	/// @brief Raw pointer constructor.  Avoid this.
@@ -193,9 +237,23 @@ public:
 
 	/// @brief return number of bins for ith dimension
 	inline
-	Size n_bins( Size i ) const
+	Size n_bins( Size const dimension ) const override
 	{
-		return n_bins_[ i ];
+		return n_bins_[ dimension ];
+	}
+
+	/// @brief Get the minimum value stored in this tensor.
+	/// @details Implements pure virtual from base class.
+	inline
+	T min() const override {
+		return *std::min_element( data_, data_ + size_ );
+	}
+
+	/// @brief Get the maximum value stored in this tensor.
+	/// @details Implements pure virtual from base class.
+	inline
+	T max() const override {
+		return *std::max_element( data_, data_ + size_ );
 	}
 
 	/// @brief Return number of dimensions overall (i.e. the dimensionality

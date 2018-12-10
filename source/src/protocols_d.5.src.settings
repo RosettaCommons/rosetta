@@ -23,6 +23,10 @@ sources = {
 		"UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor",
 		"UnfoldedStateEnergyCalculatorUtil",
 	],
+	"protocols/mainchain_potential" : [
+		"GenerateMainchainPotential",
+		"GenerateMainchainPotentialOptions",
+	],
 }
 include_path = [
 ]

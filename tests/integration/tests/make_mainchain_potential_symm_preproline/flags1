@@ -1,0 +1,8 @@
+-make_mainchain_potential:mainchain_potential_points_per_dimension 36 36
+-symmetrize_output true
+-make_mainchain_potential:residue_name AIB
+-ex1
+-ex2
+-extrachi_cutoff 0
+-make_pre_proline_potential true
+-write_potentials_for_individual_scoreterms false

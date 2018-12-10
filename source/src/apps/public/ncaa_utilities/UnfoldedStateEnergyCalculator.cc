@@ -70,12 +70,12 @@ static basic::Tracer TR("UnfoldedStateEnergyCalculator");
 
 // Local options
 namespace usec {
-IntegerOptionKey const frag_size( "usec::frag_size" );
-StringOptionKey const residue_name( "usec::residue_name" );
-BooleanOptionKey const repack_fragments( "usec::repack_fragments" );
-BooleanOptionKey const native_sequence( "usec::native_sequence" );
-StringOptionKey const sequence_match_sequence( "usec::sequence_match_sequence" );
-IntegerOptionKey const sequence_match_position( "usec::sequence_match_position" );
+IntegerOptionKey const frag_size( "usec:frag_size" );
+StringOptionKey const residue_name( "usec:residue_name" );
+BooleanOptionKey const repack_fragments( "usec:repack_fragments" );
+BooleanOptionKey const native_sequence( "usec:native_sequence" );
+StringOptionKey const sequence_match_sequence( "usec:sequence_match_sequence" );
+IntegerOptionKey const sequence_match_position( "usec:sequence_match_position" );
 }
 
 int

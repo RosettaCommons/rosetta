@@ -20,6 +20,7 @@
 
 // Project Headers
 #include <core/types.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
@@ -49,9 +50,17 @@ public:
 	///
 	MainchainScoreTable();
 
+	/// @brief Copy constructor.
+	///
+	MainchainScoreTable( MainchainScoreTable const & src );
+
 	/// @brief Default destructor.
 	///
 	~MainchainScoreTable() {}
+
+	/// @brief Clone function: make a copy of this object and return
+	/// an owning pointer to the copy.
+	MainchainScoreTableOP clone() const;
 
 public: //Read functions:
 
@@ -69,11 +78,49 @@ public: //Read functions:
 		bool const use_polycubic_interpolation
 	);
 
+public: //Functions for de novo generation
+
+	/// @brief Reset this object completely.
+	void clear();
+
+	/// @brief Initialize this object for on-the-fly generation of a mainchain scoretable.
+	/// @details Calls clear() first.
+	void initialize_for_de_novo_generation( core::chemical::ResidueType const & restype, utility::vector1< core::Size > const & dimensions, utility::vector1< core::Size > const & mainchain_torsions_covered, bool const symmetrize );
+
+	/// @brief Set an entry in the energies tensor.
+	/// @note Bounds checking only in debug build!
+	void set_energy( utility::vector1< core::Size > const & coords, core::Real const & energy_in );
+
+	/// @brief Given coordinates in the energy tensor, increment the coordinates.
+	/// @returns Returns "true" if increment was successful, "false" if the end of the tensor has been reached.
+	bool increment_energy_coords( utility::vector1< core::Size > & coords ) const;
+
+	/// @brief After the energies tensor has been populated, compute all derived data.
+	/// @details If "normalize" is true, the probabilities are normalized to 1, and the energies adjusted accordingly.  (This
+	/// has the effect of raising or lowering all of the energies by some constant.)  If "symmetrize_gly_" is true, the tensors are
+	/// made symmetric.
+	/// @note Sets initalized_ to true.
+	void finalize_de_novo_scoretable_from_energies( core::Real const &kbt, bool const normalize );
+
+	/// @brief After the mainchain scoretable has been finalized, write it to a scorefile.
+	void write_mainchain_scoretable_to_stream( std::stringstream & outstream ) const;
+
 public: //Accessor functions:
 
 	/// @brief Has this MainchainScoreTable been initialized?
 	/// @details False if no score table has been read yet; true otherwise.
 	inline bool initialized() const { return initialized_; }
+
+	/// @brief Given a vector of coordinates, get the corresponding vector of mainchain torsions.
+	/// @details Bounds-checking only in debug mode!
+	/// @note Offset is 0 if symmetrize_gly_ is false, 1/2 well if symmetrize_gly_ is true.  Offset is only added if offset_if_symmetric
+	/// is set to true.
+	void get_mainchain_torsions_from_coords( utility::vector1< core::Size > const & coords_in, utility::vector1< core::Real > & torsions_out, bool const offset_if_symmetric = true ) const;
+
+	/// @brief Access an entry in the energy tensor.
+	/// @details Note that bounds checking only occurs in debug mode!
+	/// @note Intended for unit testing.
+	core::Real const & energy_tensor( utility::vector1< core::Size > const & coords ) const;
 
 	/// @brief Access values in this MainchainScoreTable.
 	/// @details Note that the vector is deliberately not passed by reference.  The function copies the vector and ensures
@@ -116,6 +163,11 @@ private: //Private functions:
 	/// @details Double-checks that it's not already initialized, and throws an error if it is.
 	void set_initialized();
 
+	/// @brief Given a residue type, set dimension_ and n_mainchain_torsions_total_, and resize all tensors appropriately.
+	/// @details Assumes that all data have already been cleared.  Call clear() before invoking this method.
+	/// @note The mainchain_torsions_covered vector is deliberately passed by copy.
+	void set_dimension_and_ntorsions_for_restype( core::chemical::ResidueType const & restype, utility::vector1< core::Size > const & dimensions, utility::vector1< core::Size > mainchain_torsions_covered );
+
 	/// @brief Set up the cumulative distribution function.
 	/// @details The CDF is used for drawing random mainchain torsion values biased by the relative probabilities of mainchain torsion values.
 	/// @note Each bin stores the probability of being in the current bin or an earlier bin (so the final bin should store a probability of 1).
@@ -151,7 +203,7 @@ private: //Private functions:
 
 	/// @brief Given coordinates in the energy tensor, go to the next bin.
 	/// @details As row ends are reached, the row resets to 1 and the next column is selected (and so forth down the dimensions).
-	/// Returns "true" if increment was successful, "false" if the end of the tensor has been reached.
+	/// @returns Returns "true" if increment was successful, "false" if the end of the tensor has been reached.
 	bool increment_coords( utility::vector1 < core::Size > &coords, numeric::MathNTensorBaseCOP< core::Real > tensor ) const;
 
 	/// @brief Given a set of coordinates in a MathNTensor, get the opposite coordinates.

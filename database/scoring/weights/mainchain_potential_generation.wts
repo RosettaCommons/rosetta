@@ -1,0 +1,19 @@
+# A scorefunction used by the make_mainchain_potential application.
+# This is essentially mm_std_fa_elec_dslf_fa13.wts with the intra-residue
+# electrostatics and intra_residue hydrogen bonding turned on, and no
+# unfolded or constriant terms.
+# Added by Vikram K. Mulligan (vmulligan@flatironinstitute.org) on
+# 30 November 2018. 
+fa_intra_sol 1.16497
+mm_lj_intra_rep 0.324341
+mm_lj_intra_atr 0.537815
+mm_twist 0.2662
+ring_close 1.44777
+fa_intra_elec 0.73
+hbond_sr_bb 0.656728
+hbond_lr_bb 1.50186
+hbond_bb_sc 1.45367
+hbond_sc 1.18477
+dslf_fa13 1.0
+hbond_intra 1.0
+INCLUDE_INTRA_RES_PROTEIN

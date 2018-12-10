@@ -421,6 +421,10 @@ sources = {
 		"RepackingRefinerTests",
 	],
 
+	"mainchain_potential" : [
+		"GenerateMainchainPotentialTests",
+	],
+
 	"match" : [
 		"BumpGrid",
 		"ExternalGeomSampler",

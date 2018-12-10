@@ -7,40 +7,43 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file --path--/--app_name--.cc
-/// @brief --brief--
-/// @author --name-- (--email--)
+/// @file apps/pilot/vmullig/make_mainchain_potential.cc
+/// @brief An app to make a mainchain potential, using MM or QM methods, for an NCAA with an already-generated sidechain potential
+/// (Dunbrack library).
+/// @details I'll convert this to a JD3 app for parallelization later.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
 
 // devel headers
 #include <devel/init.hh>
 
 // protocol headers
-#include <protocols/jd2/JobDistributor.hh>
---mover_path--
+#include <protocols/mainchain_potential/GenerateMainchainPotential.hh>
+#include <protocols/mainchain_potential/GenerateMainchainPotentialOptions.hh>
 
 // utility headers
 #include <utility/excn/Exceptions.hh>
+#include <utility/options/OptionCollection.hh>
+#include <utility/pointer/memory.hh>
 
 // basic headers
 #include <basic/Tracer.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <utility/options/OptionCollection.hh>
 #include <basic/options/option_macros.hh>
 
-static basic::Tracer TR("--app_name--");
+static basic::Tracer TR("make_mainchain_potential");
 
 
 void register_options() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	
-	--app_options--
 
+	protocols::mainchain_potential::GenerateMainchainPotentialOptions::register_options();
+
+	//option.add_relevant( in::file::s );
+	//option.add_relevant( in::file::l );
 }
-
---new_app_options_out--
 
 int
 main( int argc, char * argv [] )
@@ -49,21 +52,13 @@ main( int argc, char * argv [] )
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
 
-		devel::init( argc, argv );
 		register_options();
+		devel::init( argc, argv );
 
-		--new_app_options_in--
-
-		if ( ( ! option [ in::file::l ].user() ) && ( ! option [ in::file::s ].user() ) ) {
-			utility_exit_with_message("Please specify either -s or -l to specify the input PDB.");
-		}
-
-
-		--mover_namespace--::--class--OP mover_protocol( new --mover_namespace--::--class--() );
-
-		protocols::jd2::JobDistributor::get_instance()->go( mover_protocol );
-
-
+		protocols::mainchain_potential::GenerateMainchainPotentialOptionsOP options( utility::pointer::make_shared< protocols::mainchain_potential::GenerateMainchainPotentialOptions >( true /*Initialize from global options system.*/ ) );
+		protocols::mainchain_potential::GenerateMainchainPotential generator(options);
+		generator.run();
+		generator.write_last_generated_to_disk();
 	} catch ( utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
