@@ -1055,6 +1055,7 @@ residue_types/coenzymes/UDP.params
 residue_types/polyaramids/ARA.params
 residue_types/polyaramids/ARC.params
 residue_types/polyaramids/ARE.params
+residue_types/polyaramids/ARF.params
 residue_types/polyaramids/ARG.params
 residue_types/polyaramids/ARM.params
 residue_types/polyaramids/ARS.params

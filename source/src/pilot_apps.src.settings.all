@@ -66,6 +66,7 @@ sources = {
 		#"jd2_parser_DNAInt", # /* Justin Ashworth, doc/apps/pilot/jd2_parser_DNAInt.dox, */
 	],
 	"pilot/awatkins" : [
+		"aramid_folding",
 		#"a3b_hbs_creator",
 		#"a3b_hbs_dock_design",
 		#"a3b_test",
