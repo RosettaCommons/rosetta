@@ -2979,6 +2979,46 @@ public:
 // Insertion operator (overloaded so that ResidueType can be "printed" in PyRosetta).
 std::ostream & operator<<(std::ostream & output, ResidueType const & object_to_output);
 
+inline
+Atom &
+ResidueType::atom( Size const atom_index ) {
+	return graph_[ ordered_atoms_[atom_index] ];
+}
+
+inline
+Atom const &
+ResidueType::atom( Size const atom_index ) const{
+	return graph_[ ordered_atoms_[ atom_index ] ];
+}
+
+inline
+Atom &
+ResidueType::atom( std::string const & atom_name ){
+	return graph_[ atom_name_to_vd_[atom_name] ];
+}
+
+inline
+Atom const &
+ResidueType::atom( std::string const & atom_name ) const{
+	auto iter = atom_name_to_vd_.find( atom_name );
+	debug_assert( iter != atom_name_to_vd_.end() );
+	return graph_[ iter->second ];
+}
+
+inline
+Atom &
+ResidueType::atom( VD const atom_vd ){
+	debug_assert( has(atom_vd) );
+	return graph_[ atom_vd ];
+}
+
+inline
+Atom const &
+ResidueType::atom( VD const atom_vd ) const{
+	debug_assert( has(atom_vd) );
+	return graph_[ atom_vd ];
+}
+
 
 } // chemical
 } // core

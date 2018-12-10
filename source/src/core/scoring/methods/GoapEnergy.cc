@@ -664,13 +664,12 @@ GoapEnergy::calculate_dipoles( pose::Pose const &pose,
 	Vector xyz3 = rsd1.xyz( i3 );
 
 	// careful; xyz2 can be from prv rsd
-	Vector xyz2;
+	Vector xyz2( 0 );
 	if ( i2 == 999 ) {
 		Size const i_prv( rsd1.seqpos() - 1 );
 
 		if ( i_prv == 0 ) {
 			return false;
-
 		} else {
 			conformation::Residue const &rsd_prv( pose.residue( i_prv ) );
 			debug_assert( rsd_prv.has(" C  ") );

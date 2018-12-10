@@ -2385,6 +2385,35 @@ private:
 
 std::ostream & operator << ( std::ostream & os, Residue const & res );
 
+inline
+Size
+Residue::atom_type_index( Size const atomno ) const
+{
+	return atoms_[ atomno ].type();
+}
+
+inline
+Real
+Residue::atomic_charge( Size const atomno ) const
+{
+	return rsd_type_.atom( atomno ).charge();
+}
+
+inline
+Vector const &
+Residue::xyz( Size const atm_index ) const
+{
+	return atoms_[ atm_index ].xyz();
+}
+
+inline
+Vector const &
+Residue::xyz( std::string const & atm_name ) const
+{
+	return atom( atm_name ).xyz();
+}
+
+
 } // conformation
 } // core
 

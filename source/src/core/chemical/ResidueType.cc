@@ -548,29 +548,6 @@ ResidueType::placeholder_clone() const
 	return rsd;
 }
 
-Atom & ResidueType::atom(Size const atom_index){
-	return graph_[ ordered_atoms_[atom_index] ];
-}
-Atom const & ResidueType::atom(Size const atom_index) const{
-	return graph_[ ordered_atoms_[atom_index] ];
-}
-Atom & ResidueType::atom(std::string const & atom_name){
-	return graph_[ atom_name_to_vd_[atom_name] ];
-}
-Atom const & ResidueType::atom(std::string const & atom_name) const{
-	auto found = atom_name_to_vd_.find( atom_name );
-	debug_assert( found != atom_name_to_vd_.end());
-	return graph_[  found->second ];
-}
-Atom & ResidueType::atom(VD const atom_vd){
-	debug_assert( has(atom_vd) );
-	return graph_[ atom_vd ];
-}
-Atom const & ResidueType::atom(VD const atom_vd) const{
-	debug_assert( has(atom_vd) );
-	return graph_[ atom_vd ];
-}
-
 Orbital const & ResidueType::orbital(Size const orbital_index) const{
 	return orbitals_[orbital_index];
 }
