@@ -510,7 +510,7 @@ void MPDomainAssembly::apply( Pose & pose ) {
 
 			TR << "adding linker " << i << " " << linkers_[i] << std::endl;
 
-			ResidueOP rsd( create_residue_from_olc( static_cast< char >( linkers_[i][j] ) ) );
+			ResidueOP rsd( create_residue_from_olc( static_cast< char >( linkers_[i][j-1] ) ) );
 			full_pose.conformation().safely_append_polymer_residue_after_seqpos( *rsd, full_pose.total_residue(), true );
 			set_random_torsion( full_pose, full_pose.total_residue() );
 

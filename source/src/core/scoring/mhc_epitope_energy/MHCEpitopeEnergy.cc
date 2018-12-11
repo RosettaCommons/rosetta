@@ -480,7 +480,7 @@ core::Real MHCEpitopeEnergy::difference_btw_cached_and_full_rescore(
 	total_ = tmp;
 
 	//Return the different between considered_total_ and full.  Should be 0 if the cache is working.
-	core::Real diff = abs(considered_total_ - full);
+	core::Real diff = std::abs(considered_total_ - full);
 	TR.Debug << "Difference between cached considered_total_ and full rescore is " << diff << std::endl;
 
 	if ( diff > 0.1 ) {
