@@ -1092,7 +1092,7 @@ MakeRotLibMover::print_dunbrack02_rotlib( core::Real omg, utility::vector1< core
 		chi_bin_nums[ i ].resize( nrot, 0 );
 		if ( i <= nchi ) {
 			for ( Size j = 1; j <= nrot; ++j ) {
-				chi_bin_nums[ i ][ j ] = Size( centroids_[ j ].get_lib_chi_val(i) );
+				chi_bin_nums[ i ][ j ] = centroids_[ j ].get_lib_chi_val(i);
 			}
 		}
 	}

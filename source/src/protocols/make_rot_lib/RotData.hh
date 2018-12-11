@@ -275,11 +275,11 @@ public:
 		return min_chi_[ num ];
 	}
 
-	void set_lib_chi_val ( int val, core::Size num) {
+	void set_lib_chi_val ( core::Size val, core::Size num) {
 		lib_chi_val_[ num ] = val;
 	}
 
-	core::Real get_lib_chi_val( core::Size num ) {
+	core::Size get_lib_chi_val( core::Size num ) {
 		return lib_chi_val_[ num ];
 	}
 
