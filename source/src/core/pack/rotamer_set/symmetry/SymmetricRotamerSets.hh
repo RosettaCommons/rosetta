@@ -53,28 +53,25 @@ public:
 	SymmetricRotamerSets();
 	~SymmetricRotamerSets();
 
-	virtual
 	void
 	compute_energies(
 		pose::Pose const & pose,
 		scoring::ScoreFunction const & scfxn,
 		utility::graph::GraphCOP packer_neighbor_graph,
 		interaction_graph::InteractionGraphBaseOP ig
-	);
+	) override;
 
-	virtual
 	void
 	compute_one_body_energies(
 		pose::Pose const & pose,
 		scoring::ScoreFunction const & scfxn,
 		utility::graph::GraphCOP packer_neighbor_graph,
 		interaction_graph::InteractionGraphBaseOP ig
-	);
+	) override;
 
 	/// @brief precomputes all rotamer pair energies between neighboring RotamerSets( residues )
 	/// and stores those energies in an intereaction graph capable of storing them
 	/// public so it can be used by the GreenPacker.
-	virtual
 	void
 	precompute_two_body_energies(
 		pose::Pose const & pose,
@@ -82,14 +79,13 @@ public:
 		utility::graph::GraphCOP packer_neighbor_graph,
 		interaction_graph::PrecomputedPairEnergiesInteractionGraphOP pig,
 		bool const finalize_edges = true
-	);
+	) override;
 
 	//fpd function to set some pose data needed SymmetricRotamerSets
-	virtual
 	void
 	initialize_pose_for_rotsets_creation(
 		pose::Pose & pose
-	) const;
+	) const override;
 
 
 private:

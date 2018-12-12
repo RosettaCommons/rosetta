@@ -28,7 +28,7 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/scoring/atomic_depth/AtomicDepth.hh>
-#include <core/scoring/hbonds/graph/AtomLevelHBondGraph.hh>
+#include <core/scoring/hbonds/graph/HBondGraph.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -112,7 +112,7 @@ PruneBuriedUnsats_RotamerSetsOperation::alter_rotamer_sets(
 
 	TR << "Building hbond graph " << std::endl;
 
-	scoring::hbonds::graph::AtomLevelHBondGraphOP hb_graph;
+	scoring::hbonds::graph::HBondGraphOP hb_graph;
 	hb_graph = core::pack::hbonds::hbond_graph_from_partial_rotsets( pose, rotamer_sets_in, scorefxn_sc_, scorefxn_bb_,
 		complete_rotsets, position_had_rotset, minimum_hbond_energy_ );
 
@@ -132,7 +132,7 @@ PruneBuriedUnsats_RotamerSetsOperation::alter_rotamer_sets(
 
 	for ( Size ihbnode = 1; ihbnode <= hb_graph->num_nodes(); ihbnode++ ) {
 
-		scoring::hbonds::graph::AtomLevelHBondNode * hbnode = hb_graph->get_node( ihbnode );
+		scoring::hbonds::graph::HBondNode * hbnode = hb_graph->get_node( ihbnode );
 		runtime_assert( hbnode );
 		conformation::ResidueCOP rotamer = complete_rotsets->rotamer( ihbnode );
 
@@ -159,7 +159,7 @@ PruneBuriedUnsats_RotamerSetsOperation::alter_rotamer_sets(
 
 	for ( Size ihbnode = 1; ihbnode <= hb_graph->num_nodes(); ihbnode++ ) {
 
-		scoring::hbonds::graph::AtomLevelHBondNode * hbnode = hb_graph->get_node( ihbnode );
+		scoring::hbonds::graph::HBondNode * hbnode = hb_graph->get_node( ihbnode );
 		runtime_assert( hbnode );
 		conformation::ResidueCOP rotamer = complete_rotsets->rotamer( ihbnode );
 		Size node_resnum = complete_rotsets->res_for_rotamer( ihbnode );
@@ -178,8 +178,8 @@ PruneBuriedUnsats_RotamerSetsOperation::alter_rotamer_sets(
 				it != hbnode->edge_list_end( *hb_graph );
 				++it ) {
 
-			scoring::hbonds::graph::AtomLevelHBondEdge * hb_edge =
-				static_cast< scoring::hbonds::graph::AtomLevelHBondEdge * >( *it );
+			scoring::hbonds::graph::HBondEdge * hb_edge =
+				static_cast< scoring::hbonds::graph::HBondEdge * >( *it );
 			Size first_node = hb_edge->get_first_node_ind();
 			Size second_node = hb_edge->get_second_node_ind();
 
@@ -215,7 +215,7 @@ PruneBuriedUnsats_RotamerSetsOperation::alter_rotamer_sets(
 
 	for ( Size ihbnode = 1; ihbnode <= hb_graph->num_nodes(); ihbnode++ ) {
 
-		scoring::hbonds::graph::AtomLevelHBondNode * hbnode = hb_graph->get_node( ihbnode );
+		scoring::hbonds::graph::HBondNode * hbnode = hb_graph->get_node( ihbnode );
 		runtime_assert( hbnode );
 		conformation::ResidueCOP rotamer = complete_rotsets->rotamer( ihbnode );
 
@@ -223,8 +223,8 @@ PruneBuriedUnsats_RotamerSetsOperation::alter_rotamer_sets(
 				it != hbnode->edge_list_end( *hb_graph );
 				++it ) {
 
-			scoring::hbonds::graph::AtomLevelHBondEdge * hb_edge =
-				static_cast< scoring::hbonds::graph::AtomLevelHBondEdge * >( *it );
+			scoring::hbonds::graph::HBondEdge * hb_edge =
+				static_cast< scoring::hbonds::graph::HBondEdge * >( *it );
 			Size first_node = hb_edge->get_first_node_ind();
 			Size second_node = hb_edge->get_second_node_ind();
 
@@ -272,7 +272,7 @@ PruneBuriedUnsats_RotamerSetsOperation::alter_rotamer_sets(
 
 	for ( Size ihbnode = 1; ihbnode <= hb_graph->num_nodes(); ihbnode++ ) {
 
-		scoring::hbonds::graph::AtomLevelHBondNode * hbnode = hb_graph->get_node( ihbnode );
+		scoring::hbonds::graph::HBondNode * hbnode = hb_graph->get_node( ihbnode );
 		runtime_assert( hbnode );
 		conformation::ResidueCOP rotamer = complete_rotsets->rotamer( ihbnode );
 		Size node_resnum = complete_rotsets->res_for_rotamer( ihbnode );

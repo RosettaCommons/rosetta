@@ -22,6 +22,8 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
 
+#include <utility/pointer/memory.hh>
+
 namespace core {
 namespace pack {
 namespace rotamer_set {
@@ -32,9 +34,9 @@ RotamerSetsOP
 RotamerSetsFactory::create_rotamer_sets( core::pose::Pose const & pose ) {
 
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
-		return RotamerSetsOP( new symmetry::SymmetricRotamerSets() );
+		return utility::pointer::make_shared< symmetry::SymmetricRotamerSets >();
 	} else { //if not symmetric
-		return RotamerSetsOP( new RotamerSets() );
+		return utility::pointer::make_shared< RotamerSets >();
 	}
 
 }

@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file core/pack/hbonds/AtomLevelHBondGraph.hh
-/// @brief This class holds the info needed to track potentially unsatisfied atoms. Used initially by the AtomLevelHBondGraph.
+/// @file core/pack/hbonds/HBondGraph.hh
+/// @brief This class holds the info needed to track potentially unsatisfied atoms. Used initially by the HBondGraph.
 /// @author Jack Maguire, jackmaguire1444@gmail.com
 
 #ifndef INCLUDED_core_scoring_hbonds_graph_AtomInfo_HH

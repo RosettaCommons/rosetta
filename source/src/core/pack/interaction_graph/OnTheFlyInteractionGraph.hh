@@ -82,35 +82,30 @@ public:
 	virtual void add_to_one_body_energy( int state, core::PackerEnergy energy );
 	virtual void zero_one_body_energy( int state );
 
-	inline
 	int
 	get_num_aa_types() const
 	{
 		return num_aa_types_;
 	}
 
-	inline
 	utility::vector1< int > &
 	get_num_states_for_aa_types()
 	{
 		return num_states_for_aatype_;
 	}
 
-	inline
 	utility::vector1< int > const &
 	get_num_states_for_aa_types() const
 	{
 		return num_states_for_aatype_;
 	}
 
-	inline
 	int
 	get_num_states_for_aa_type( int aa_type )
 	{
 		return num_states_for_aatype_[ aa_type ];
 	}
 
-	inline
 	SparseMatrixIndex const &
 	get_sparse_mat_info_for_state( int state ) const
 	{
@@ -118,13 +113,11 @@ public:
 		return sparse_mat_info_for_state_[ state ];
 	}
 
-	inline
 	int
 	get_state_offset_for_aatype( int aatype ) const {
 		return state_offset_for_aatype_[ aatype ];
 	}
 
-	inline
 	core::PackerEnergy
 	get_one_body_energy( int state ) const
 	{
@@ -151,45 +144,36 @@ public:
 
 protected:
 
-	inline
 	OnTheFlyEdge *
 	get_incident_otf_edge( int edge );
 
-	inline
 	OnTheFlyEdge const *
 	get_incident_otf_edge( int edge ) const;
 
-	inline
 	OnTheFlyNode *
 	get_adjacent_otf_node( int index );
 
-	inline
 	OnTheFlyNode const *
 	get_adjacent_otf_node( int index ) const;
 
-	inline
 	OnTheFlyInteractionGraph *
 	get_on_the_fly_owner();
 
-	inline
 	OnTheFlyInteractionGraph const *
 	get_on_the_fly_owner() const;
 
-	inline
 	conformation::Residue const &
 	get_rotamer( int state ) const
 	{
 		return *rotamers_[ state ];
 	}
 
-	inline
 	BoundingSphere const &
 	sc_bounding_sphere( int state ) const
 	{
 		return sc_bounding_spheres_[ state ];
 	}
 
-	inline
 	BoundingSphere const & bb_bounding_sphere() const { return bb_bounding_sphere_; }
 
 private:
@@ -237,7 +221,6 @@ public:
 		core::PackerEnergy sc_glybb_E
 	);
 
-	inline
 	core::PackerEnergy
 	get_proline_correction_for_node(
 		int node_ind,
@@ -248,7 +231,6 @@ public:
 		return get_proline_correction( which_node, state );
 	}
 
-	inline
 	core::PackerEnergy
 	get_glycine_correction_for_node(
 		int node_ind,
@@ -276,7 +258,6 @@ public:
 
 protected:
 
-	inline
 	core::PackerEnergy
 	get_proline_correction(
 		int which_node,
@@ -286,7 +267,6 @@ protected:
 		return proline_corrections_[ which_node ][ state ];
 	}
 
-	inline
 	core::PackerEnergy
 	get_glycine_correction(
 		int which_node,
@@ -296,14 +276,12 @@ protected:
 		return glycine_corrections_[ which_node ][ state ];
 	}
 
-	inline
 	OnTheFlyNode const *
 	get_otf_node( int which_node ) const
 	{
 		return static_cast< OnTheFlyNode const * > (get_node( which_node ));
 	}
 
-	inline
 	OnTheFlyNode *
 	get_otf_node( int which_node )
 	{
@@ -333,7 +311,6 @@ public:
 
 	virtual void initialize( pack_basic::RotamerSetsBase const & rot_sets );
 
-	inline
 	int get_num_aatypes() const
 	{
 		return num_aa_types_;
@@ -352,7 +329,6 @@ public:
 	void
 	set_pose( Pose const & );
 
-	inline
 	Pose const &
 	pose() const
 	{
@@ -360,7 +336,6 @@ public:
 	}
 
 	/// @brief debugging only -- modify the pose during simulated annealing, if you're so inclined
-	inline
 	Pose &
 	non_const_pose()
 	{
@@ -368,7 +343,6 @@ public:
 	}
 
 
-	inline
 	ScoreFunction const &
 	score_function() const
 	{
@@ -476,14 +450,12 @@ public:
 
 protected:
 
-	inline
 	OnTheFlyNode *
 	get_on_the_fly_node( int node_index )
 	{
 		return ( static_cast< OnTheFlyNode * > (get_node( node_index )) );
 	}
 
-	inline
 	OnTheFlyNode const *
 	get_on_the_fly_node( int node_index ) const
 	{

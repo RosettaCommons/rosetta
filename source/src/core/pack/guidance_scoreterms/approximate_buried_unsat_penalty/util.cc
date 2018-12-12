@@ -367,14 +367,14 @@ three_body_approximate_buried_unsat_calculation(
 	//  }
 	// }
 
-	// First we need to get the AtomLevelHBondGraph and its associated complete RotamerSets
+	// First we need to get the HBondGraph and its associated complete RotamerSets
 
 	utility::vector1<bool> position_had_rotset;
 	pack::rotamer_set::RotamerSetsOP complete_rotsets_out = nullptr;
 
 	TR << "Building hbond graph" << std::endl;
 
-	scoring::hbonds::graph::AtomLevelHBondGraphOP hb_graph;
+	scoring::hbonds::graph::HBondGraphOP hb_graph;
 	hb_graph = hbonds::hbond_graph_from_partial_rotsets( pose, *rotsets, scorefxn_sc, scorefxn_bb,
 		complete_rotsets_out, position_had_rotset, minimum_hb_cut );
 
@@ -406,7 +406,7 @@ three_body_approximate_buried_unsat_calculation(
 	for ( Size ihbnode = 1; ihbnode <= hb_graph->num_nodes(); ihbnode++ ) {
 
 		// These nodes are one-to-one with the complete_rotsets rotamers
-		scoring::hbonds::graph::AtomLevelHBondNode * hbnode = hb_graph->get_node( ihbnode );
+		scoring::hbonds::graph::HBondNode * hbnode = hb_graph->get_node( ihbnode );
 		runtime_assert( hbnode );
 		conformation::ResidueCOP rotamer = complete_rotsets->rotamer( ihbnode );
 		Size node_resnum = complete_rotsets->res_for_rotamer( ihbnode );
@@ -460,8 +460,8 @@ three_body_approximate_buried_unsat_calculation(
 					it != hbnode->edge_list_end( *hb_graph );
 					++it ) {
 
-				scoring::hbonds::graph::AtomLevelHBondEdge * hb_edge =
-					static_cast< scoring::hbonds::graph::AtomLevelHBondEdge * >( *it );
+				scoring::hbonds::graph::HBondEdge * hb_edge =
+					static_cast< scoring::hbonds::graph::HBondEdge * >( *it );
 				Size first_node = hb_edge->get_first_node_ind();
 				Size second_node = hb_edge->get_second_node_ind();
 

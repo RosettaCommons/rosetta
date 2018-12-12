@@ -8,11 +8,11 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file core/scoring/hbonds/graph/HBondGraph.fwd.hh
-/// @brief AtomLevelHBondGraph forward declarations
+/// @brief HBondGraph forward declarations
 /// @author Jack Maguire, jackmaguire1444@gmail.com
 
-#ifndef INCLUDED_core_scoring_hbonds_graph_AtomLevelHBondGraph_FWD_HH
-#define INCLUDED_core_scoring_hbonds_graph_AtomLevelHBondGraph_FWD_HH
+#ifndef INCLUDED_core_scoring_hbonds_graph_HBondGraph_FWD_HH
+#define INCLUDED_core_scoring_hbonds_graph_HBondGraph_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
 
@@ -21,17 +21,17 @@ namespace scoring {
 namespace hbonds {
 namespace graph {
 
-class AtomLevelHBondNode;
-using AtomLevelHBondNodeOP = utility::pointer::shared_ptr< AtomLevelHBondNode >;
-using AtomLevelHBondNodeCOP = utility::pointer::shared_ptr< AtomLevelHBondNode const >;
+class HBondNode;
+using HBondNodeOP = utility::pointer::shared_ptr< HBondNode >;
+using HBondNodeCOP = utility::pointer::shared_ptr< HBondNode const >;
 
-class AtomLevelHBondEdge;
-using AtomLevelHBondEdgeOP = utility::pointer::shared_ptr< AtomLevelHBondEdge >;
-using AtomLevelHBondEdgeCOP = utility::pointer::shared_ptr< AtomLevelHBondEdge const >;
+class HBondEdge;
+using HBondEdgeOP = utility::pointer::shared_ptr< HBondEdge >;
+using HBondEdgeCOP = utility::pointer::shared_ptr< HBondEdge const >;
 
-class AtomLevelHBondGraph;
-using AtomLevelHBondGraphOP = utility::pointer::shared_ptr< AtomLevelHBondGraph >;
-using AtomLevelHBondGraphCOP = utility::pointer::shared_ptr< AtomLevelHBondGraph const >;
+class HBondGraph;
+using HBondGraphOP = utility::pointer::shared_ptr< HBondGraph >;
+using HBondGraphCOP = utility::pointer::shared_ptr< HBondGraph const >;
 
 } //graph
 } //hbonds

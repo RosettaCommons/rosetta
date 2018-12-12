@@ -18,7 +18,7 @@
 // Unit headers
 
 // Package headers
-#include <core/scoring/hbonds/graph/AtomLevelHBondGraph.hh>
+#include <core/scoring/hbonds/graph/HBondGraph.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>

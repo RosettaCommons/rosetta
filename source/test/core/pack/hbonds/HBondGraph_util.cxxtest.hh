@@ -32,7 +32,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
-#include <core/scoring/hbonds/graph/AtomLevelHBondGraph.hh>
+#include <core/scoring/hbonds/graph/HBondGraph.hh>
 #include <core/pack/hbonds/HBondGraph_util.hh>
 
 
@@ -105,7 +105,7 @@ public:
 		pack::rotamer_set::RotamerSetsOP rotsets = nullptr;
 		utility::vector1<bool> not_used;
 
-		scoring::hbonds::graph::AtomLevelHBondGraphOP hb_graph;
+		scoring::hbonds::graph::HBondGraphOP hb_graph;
 		hb_graph = core::pack::hbonds::hbond_graph_from_partial_rotsets(
 			pose, *blank_rotsets, sfxn_sc, sfxn_bb, rotsets, not_used, -0.001f );
 
@@ -116,7 +116,7 @@ public:
 		TS_ASSERT( hb_graph->num_nodes() == pose.size() );
 
 		for ( Size resnum = 1; resnum <= pose.size(); resnum++ ) {
-			AtomLevelHBondNode * node = hb_graph->get_node( resnum );
+			HBondNode * node = hb_graph->get_node( resnum );
 			conformation::Residue const & res = pose.residue(resnum);
 
 			TS_ASSERT( node->moltenres() == rotsets->resid_2_moltenres( resnum ) );
@@ -163,7 +163,7 @@ public:
 			for ( Size jj = 1; jj <= pose.size(); jj++ ) {
 				if ( ii >= jj ) continue;
 
-				AtomLevelHBondEdge const * edge = hb_graph->find_edge( ii, jj );
+				HBondEdge const * edge = hb_graph->find_edge( ii, jj );
 				if ( ! edge ) continue;
 				Size first_id = edge->get_first_node_ind();
 				Size second_id = edge->get_second_node_ind();

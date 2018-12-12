@@ -570,7 +570,7 @@ sources = {
 		"HBCPData",
 	],
 	"core/scoring/hbonds/graph": [
-		"AtomLevelHBondGraph",
+		"HBondGraph",
 	],
 	"core/scoring/interface_": [
 		"DDPlookup",

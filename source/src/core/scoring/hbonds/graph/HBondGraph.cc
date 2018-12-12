@@ -7,11 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file core/scoring/hbonds/graph/AtomLevelHBondGraph.cc
-/// @brief AtomLevelHBondGraph, AtomLevelHBondNode, and AtomLevelHBondEdge classes
+/// @file core/scoring/hbonds/graph/HBondGraph.cc
+/// @brief HBondGraph, HBondNode, and HBondEdge classes
 /// @author Jack Maguire, jackmaguire1444@gmail.com
 
-#include <core/scoring/hbonds/graph/AtomLevelHBondGraph.hh>
+#include <core/scoring/hbonds/graph/HBondGraph.hh>
 
 #include <basic/Tracer.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
@@ -20,7 +20,7 @@
 #include <utility/graph/unordered_object_pool.hpp>
 #include <boost/pool/pool.hpp>
 
-static basic::Tracer TR( "core.scoring.hbonds.graph.AtomLevelHBondGraph" );
+static basic::Tracer TR( "core.scoring.hbonds.graph.HBondGraph" );
 
 namespace core {
 namespace scoring {
@@ -28,7 +28,7 @@ namespace hbonds {
 namespace graph {
 
 //dummy! please do not call these
-AtomLevelHBondNode::AtomLevelHBondNode() :
+HBondNode::HBondNode() :
 	utility::graph::LowMemNode( 0 ),
 	mres_id_( 0 ),
 	rotamer_id_( 0 ),
@@ -36,7 +36,7 @@ AtomLevelHBondNode::AtomLevelHBondNode() :
 	polar_sc_atoms_not_satisfied_by_background_()
 { runtime_assert( false ); }
 
-AtomLevelHBondNode::AtomLevelHBondNode( const AtomLevelHBondNode & ) :
+HBondNode::HBondNode( const HBondNode & ) :
 	utility::graph::LowMemNode( 0 ),
 	mres_id_( 0 ),
 	rotamer_id_( 0 ),
@@ -47,7 +47,7 @@ AtomLevelHBondNode::AtomLevelHBondNode( const AtomLevelHBondNode & ) :
 
 
 //Constructor
-AtomLevelHBondNode::AtomLevelHBondNode( Size node_id ) :
+HBondNode::HBondNode( Size node_id ) :
 	utility::graph::LowMemNode( node_id ),
 	mres_id_( 0 ),
 	rotamer_id_( 0 ),
@@ -55,7 +55,7 @@ AtomLevelHBondNode::AtomLevelHBondNode( Size node_id ) :
 	polar_sc_atoms_not_satisfied_by_background_()
 {}
 
-AtomLevelHBondNode::AtomLevelHBondNode( Size node_id, Size mres_id, Size rotamer_id ) :
+HBondNode::HBondNode( Size node_id, Size mres_id, Size rotamer_id ) :
 	utility::graph::LowMemNode( node_id ),
 	mres_id_( mres_id ),
 	rotamer_id_( rotamer_id ),
@@ -64,18 +64,18 @@ AtomLevelHBondNode::AtomLevelHBondNode( Size node_id, Size mres_id, Size rotamer
 {}
 
 //Destructor
-AtomLevelHBondNode::~AtomLevelHBondNode() = default;
+HBondNode::~HBondNode() = default;
 
-void AtomLevelHBondNode::print() const {
-	TR << "AtomLevelHBondNode: rotamer_id:" << rotamer_id_ << " mres_id:" << mres_id_ << " num_edges: " << num_edges() << std::endl;
+void HBondNode::print() const {
+	TR << "HBondNode: rotamer_id:" << rotamer_id_ << " mres_id:" << mres_id_ << " num_edges: " << num_edges() << std::endl;
 }
 
-Size AtomLevelHBondNode::count_static_memory() const
+Size HBondNode::count_static_memory() const
 {
-	return sizeof( AtomLevelHBondNode );
+	return sizeof( HBondNode );
 }
 
-Size AtomLevelHBondNode::count_dynamic_memory() const
+Size HBondNode::count_dynamic_memory() const
 {
 	return utility::graph::LowMemNode::count_dynamic_memory()
 		+ polar_sc_atoms_not_satisfied_by_background_.size() * sizeof( AtomInfo )
@@ -83,8 +83,8 @@ Size AtomLevelHBondNode::count_dynamic_memory() const
 }
 
 void
-AtomLevelHBondNode::merge_data(
-	AtomLevelHBondNode const & other,
+HBondNode::merge_data(
+	HBondNode const & other,
 	utility::vector1< Size > const & other_node_to_my_node,
 	bool merge_with_OR_logic
 ) {
@@ -139,34 +139,34 @@ AtomLevelHBondNode::merge_data(
 
 
 //Constructor
-AtomLevelHBondEdge::AtomLevelHBondEdge( Size first_node_ind, Size second_node_ind ):
+HBondEdge::HBondEdge( Size first_node_ind, Size second_node_ind ):
 	utility::graph::LowMemEdge( first_node_ind, second_node_ind ),
 	energy_( 0 ),
 	hbonds_( 0 )
 {}
 
-AtomLevelHBondEdge::AtomLevelHBondEdge( Size first_node_ind, Size second_node_ind, Real energy ):
+HBondEdge::HBondEdge( Size first_node_ind, Size second_node_ind, Real energy ):
 	utility::graph::LowMemEdge( first_node_ind, second_node_ind ),
 	energy_( energy ),
 	hbonds_( 0 )
 {}
 
 //Destructor
-AtomLevelHBondEdge::~AtomLevelHBondEdge() = default;
+HBondEdge::~HBondEdge() = default;
 
-Size AtomLevelHBondEdge::count_static_memory() const
+Size HBondEdge::count_static_memory() const
 {
-	return sizeof( AtomLevelHBondEdge );
+	return sizeof( HBondEdge );
 }
 
-Size AtomLevelHBondEdge::count_dynamic_memory() const
+Size HBondEdge::count_dynamic_memory() const
 {
 	return utility::graph::LowMemEdge::count_dynamic_memory() + hbonds_.size() * sizeof( HBondInfo );
 }
 
 void
-AtomLevelHBondEdge::merge_data(
-	AtomLevelHBondEdge const & other,
+HBondEdge::merge_data(
+	HBondEdge const & other,
 	utility::vector1< Size > const & other_node_to_my_node
 ) {
 	const Size my_other_first_node_ind = other_node_to_my_node[ other.get_first_node_ind() ];
@@ -198,41 +198,41 @@ AtomLevelHBondEdge::merge_data(
 
 
 //Constructor
-AtomLevelHBondGraph::AtomLevelHBondGraph()
+HBondGraph::HBondGraph()
 {}
 
-AtomLevelHBondGraph::AtomLevelHBondGraph( Size num_nodes ):
+HBondGraph::HBondGraph( Size num_nodes ):
 	PARENT( num_nodes )
 {
 }
 
 
-AtomLevelHBondGraph::~AtomLevelHBondGraph()
+HBondGraph::~HBondGraph()
 {}
 
 
 Size
-AtomLevelHBondGraph::count_static_memory() const
+HBondGraph::count_static_memory() const
 {
-	return sizeof( AtomLevelHBondGraph );
+	return sizeof( HBondGraph );
 }
 
 Size
-AtomLevelHBondGraph::count_dynamic_memory() const
+HBondGraph::count_dynamic_memory() const
 {
 	//so basically we are not really overriding this at the moment
 	return PARENT::count_dynamic_memory();
 }
 
-AtomLevelHBondEdge *
-AtomLevelHBondGraph::register_hbond( Size rotamerA, Size rotamerB, Real score ) {
-	AtomLevelHBondEdge * new_edge = add_edge( rotamerA, rotamerB );
+HBondEdge *
+HBondGraph::register_hbond( Size rotamerA, Size rotamerB, Real score ) {
+	HBondEdge * new_edge = add_edge( rotamerA, rotamerB );
 	new_edge->set_energy( score );
 	return new_edge;
 }
 
 void
-AtomLevelHBondGraph::merge( AtomLevelHBondGraph const & other, bool merge_nodes_with_OR_logic ) {
+HBondGraph::merge( HBondGraph const & other, bool merge_nodes_with_OR_logic ) {
 
 	// First we need to get a 1-1 mapping for the nodes
 	utility::vector1< Size > other_node_to_my_node( other.num_nodes() );
@@ -240,14 +240,14 @@ AtomLevelHBondGraph::merge( AtomLevelHBondGraph const & other, bool merge_nodes_
 	Size my_cur_node = 1;
 	for ( Size other_cur_node = 1; other_cur_node <= other.num_nodes(); other_cur_node++ ) {
 
-		AtomLevelHBondNode const * other_node = other.get_node( other_cur_node );
+		HBondNode const * other_node = other.get_node( other_cur_node );
 		debug_assert( other_node );
 		const Size other_moltenres = other_node->moltenres();
 		const Size other_rotamer_id = other_node->local_rotamer_id();
 
 		while ( my_cur_node <= num_nodes() ) {
 
-			AtomLevelHBondNode * my_node = get_node( my_cur_node );
+			HBondNode * my_node = get_node( my_cur_node );
 			debug_assert( my_node );
 			const Size my_moltenres = my_node->moltenres();
 			const Size my_rotamer_id = my_node->local_rotamer_id();
@@ -274,8 +274,8 @@ AtomLevelHBondGraph::merge( AtomLevelHBondGraph const & other, bool merge_nodes_
 	for ( Size other_first_node = 1; other_first_node <= other.num_nodes(); other_first_node++ ) {
 
 		Size my_first_node = other_node_to_my_node[ other_first_node ];
-		AtomLevelHBondNode const * other_node = other.get_node( other_first_node );
-		AtomLevelHBondNode * my_node = get_node( my_first_node );
+		HBondNode const * other_node = other.get_node( other_first_node );
+		HBondNode * my_node = get_node( my_first_node );
 
 		my_node->merge_data( *other_node, other_node_to_my_node, merge_nodes_with_OR_logic );
 
@@ -298,8 +298,8 @@ AtomLevelHBondGraph::merge( AtomLevelHBondGraph const & other, bool merge_nodes_
 				my_equiv_edge = add_edge( my_first_node, my_second_node );
 			}
 
-			AtomLevelHBondEdge * my_equiv_casted_edge = static_cast< AtomLevelHBondEdge * >( my_equiv_edge );
-			AtomLevelHBondEdge const * other_casted_edge = static_cast< AtomLevelHBondEdge const * >( other_edge );
+			HBondEdge * my_equiv_casted_edge = static_cast< HBondEdge * >( my_equiv_edge );
+			HBondEdge const * other_casted_edge = static_cast< HBondEdge const * >( other_edge );
 			my_equiv_casted_edge->merge_data( *other_casted_edge, other_node_to_my_node );
 		}
 	}

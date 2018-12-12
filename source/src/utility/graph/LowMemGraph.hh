@@ -167,7 +167,7 @@ private:
 ///            count_static_memory()
 ///            count_dynamic_memory()
 ///
-///          See core/scoring/hbonds/graph/AtomLevelHBondGraph.hh for example
+///          See core/scoring/hbonds/graph/HBondGraph.hh for example
 ///
 class LowMemNode {
 
@@ -278,7 +278,7 @@ private:
 ///            count_static_memory()
 ///            count_dynamic_memory()
 ///
-///          See core/scoring/hbonds/graph/AtomLevelHBondGraph.hh for example
+///          See core/scoring/hbonds/graph/HBondGraph.hh for example
 ///
 class LowMemEdge {
 
@@ -399,7 +399,7 @@ protected:
 ///             typedef LowMemGraph<MyNode,MyEdge> PARENT;
 ///     Then only count_static_memory and count_dynamic_memory need to be overwritten.
 ///
-///     See core/scoring/hbonds/graph/AtomLevelHBondGraph.hh for example on how to inherit.
+///     See core/scoring/hbonds/graph/HBondGraph.hh for example on how to inherit.
 ///
 /// @remarks This class saves an extra 8 bytes per edge by not storing a list of pointers
 ///           to a pool, but instead using templates. Templates cause all sorts

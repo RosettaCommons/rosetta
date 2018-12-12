@@ -17,7 +17,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/scoring/hbonds/graph/HBondInfo.hh>
 #include <core/scoring/hbonds/graph/AtomInfo.hh>
-#include <core/scoring/hbonds/graph/AtomLevelHBondGraph.hh>
+#include <core/scoring/hbonds/graph/HBondGraph.hh>
 //#include <core/pack/rotamer_set/RotamerSets.hh>
 
 namespace protocols {
@@ -46,8 +46,8 @@ class NetworkState {
 public:
 
 	NetworkState(
-		core::scoring::hbonds::graph::AtomLevelHBondEdge const * monte_carlo_seed,
-		core::scoring::hbonds::graph::AtomLevelHBondGraphOP const & hbond_graph
+		core::scoring::hbonds::graph::HBondEdge const * monte_carlo_seed,
+		core::scoring::hbonds::graph::HBondGraphOP const & hbond_graph
 	);
 
 	~NetworkState(){}
@@ -59,7 +59,7 @@ public:
 	///@brief NetworkState keeps track of polar atoms that need to be satisfied.
 	/// This function allows NetworkState to copy the vector of polar atoms from the HBondNode
 	void add_polar_atoms(
-		core::scoring::hbonds::graph::AtomLevelHBondNode const * node
+		core::scoring::hbonds::graph::HBondNode const * node
 	);
 
 	///@brief are there any buried unsats at this
@@ -83,31 +83,31 @@ public:
 	utility::vector1< mres_unsat_pair >::const_iterator
 	get_unsats_for_mres( unsigned int mres ) const;
 
-	utility::vector1< core::scoring::hbonds::graph::AtomLevelHBondNode const * > & nodes() {
+	utility::vector1< core::scoring::hbonds::graph::HBondNode const * > & nodes() {
 		return nodes_;
 	}
 
-	utility::vector1< core::scoring::hbonds::graph::AtomLevelHBondNode const * > const & nodes() const {
+	utility::vector1< core::scoring::hbonds::graph::HBondNode const * > const & nodes() const {
 		return nodes_;
 	}
 
-	void add_node( core::scoring::hbonds::graph::AtomLevelHBondNode const * node ) {
+	void add_node( core::scoring::hbonds::graph::HBondNode const * node ) {
 		nodes_.push_back( node );
 	}
 
-	utility::vector1< core::scoring::hbonds::graph::AtomLevelHBondEdge const * > & edges() {
+	utility::vector1< core::scoring::hbonds::graph::HBondEdge const * > & edges() {
 		return edges_;
 	}
 
-	utility::vector1< core::scoring::hbonds::graph::AtomLevelHBondEdge const * > const & edges() const {
+	utility::vector1< core::scoring::hbonds::graph::HBondEdge const * > const & edges() const {
 		return edges_;
 	}
 
-	void add_edge( core::scoring::hbonds::graph::AtomLevelHBondEdge const * edge ) {
+	void add_edge( core::scoring::hbonds::graph::HBondEdge const * edge ) {
 		edges_.push_back( edge );
 	}
 
-	core::scoring::hbonds::graph::AtomLevelHBondEdge const * monte_carlo_seed() const {
+	core::scoring::hbonds::graph::HBondEdge const * monte_carlo_seed() const {
 		return monte_carlo_seed_;
 	}
 
@@ -134,10 +134,10 @@ public:
 	}
 
 private:
-	utility::vector1< core::scoring::hbonds::graph::AtomLevelHBondNode const * > nodes_;
-	utility::vector1< core::scoring::hbonds::graph::AtomLevelHBondEdge const * > edges_;
+	utility::vector1< core::scoring::hbonds::graph::HBondNode const * > nodes_;
+	utility::vector1< core::scoring::hbonds::graph::HBondEdge const * > edges_;
 
-	core::scoring::hbonds::graph::AtomLevelHBondEdge const * monte_carlo_seed_;//"Seed" hbond to branch off of
+	core::scoring::hbonds::graph::HBondEdge const * monte_carlo_seed_;//"Seed" hbond to branch off of
 	core::Real full_twobody_energy_;//Sum of hbond score + clash score for all residue pairs in "residues" data object
 	core::Real score_;//This holds whatever metric is used for sorting
 

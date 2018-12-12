@@ -7,21 +7,21 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file core/scoring/hbonds/graph/AtomLevelHBondGraph.hh
-/// @brief class headers for AtomLevelHBondGraph, AtomLevelHBondNode, and AtomLevelHBondEdge
+/// @file core/scoring/hbonds/graph/HBondGraph.hh
+/// @brief class headers for HBondGraph, HBondNode, and HBondEdge
 /// @details This graph is different from a HBondGraph because it stores atom information for hbonds and residues.
-/// See core/pack/hbonds/HBondGraph_util.hh (especially create_init_and_create_edges_for_atom_level_hbond_graph() ) and HBondGraph.hh for instructions on how to best use this data structure. Here is the inteded way to use an HBondGraph:
+/// See core/pack/hbonds/HBondGraph_util.hh (especially create_init_and_create_edges_for_hbond_graph() ) and HBondGraph.hh for instructions on how to best use this data structure. Here is the inteded way to use an HBondGraph:
 /// (1) Call ctor
 /// (2) Immediately call core::pack::hbonds::init_node_info()
-/// (3) Use MCHBNetInteractionGraph and RotamerSets::compute_energies() to populate edges into this graph
-/// (4) If you are using an AtomLevelHBondGraph, call core::pack::hbonds::determine_atom_level_edge_info_for_all_edges() and core::pack::hbonds::determine_atom_level_node_info_for_all_nodes()
-/// (5) Optional: If you are using an AtomLevelHBondGraph and you only care to analyze unsatisfied atoms, call find_satisfying_interactions_with_background()
+/// (3) Use HBondGraphInitializerIG and RotamerSets::compute_energies() to populate edges into this graph
+/// (4) If you are using an HBondGraph, call core::pack::hbonds::determine_atom_level_edge_info_for_all_edges() and core::pack::hbonds::determine_atom_level_node_info_for_all_nodes()
+/// (5) Optional: If you are using an HBondGraph and you only care to analyze unsatisfied atoms, call find_satisfying_interactions_with_background()
 /// @author Jack Maguire, jackmaguire1444@gmail.com
 
-#ifndef INCLUDED_core_scoring_hbonds_graph_AtomLevelHBondGraph_HH
-#define INCLUDED_core_scoring_hbonds_graph_AtomLevelHBondGraph_HH
+#ifndef INCLUDED_core_scoring_hbonds_graph_HBondGraph_HH
+#define INCLUDED_core_scoring_hbonds_graph_HBondGraph_HH
 
-#include <core/scoring/hbonds/graph/AtomLevelHBondGraph.fwd.hh>
+#include <core/scoring/hbonds/graph/HBondGraph.fwd.hh>
 #include <core/scoring/hbonds/graph/AtomInfo.hh>
 #include <core/scoring/hbonds/graph/HBondInfo.hh>
 
@@ -43,23 +43,23 @@ namespace hbonds {
 namespace graph {
 
 
-///@brief Each AtomLevelHBondNode represents a rotamer from the RotamerSets object
-class AtomLevelHBondNode : public utility::graph::LowMemNode {
+///@brief Each HBondNode represents a rotamer from the RotamerSets object
+class HBondNode : public utility::graph::LowMemNode {
 
 public:
 
-	//Please do not use these. We need this to exist only so that we can reserve space in the vector< AtomLevelHBondNode >
-	AtomLevelHBondNode();
-	AtomLevelHBondNode( const AtomLevelHBondNode& );
+	//Please do not use these. We need this to exist only so that we can reserve space in the vector< HBondNode >
+	HBondNode();
+	HBondNode( const HBondNode& );
 	/////////////////////////////////
 
 	//constructor
-	AtomLevelHBondNode( Size node_id );
+	HBondNode( Size node_id );
 
-	AtomLevelHBondNode( Size node_id, Size mres_id, Size rotamer_id );
+	HBondNode( Size node_id, Size mres_id, Size rotamer_id );
 
 	//destructor
-	~AtomLevelHBondNode();
+	~HBondNode();
 
 public:
 
@@ -129,7 +129,15 @@ public://getters, setters, accessors
 		bool is_hydroxyl,
 		bool is_backbone
 	){
-		polar_sc_atoms_not_satisfied_by_background_.emplace_back( local_atom_id, atom_position, is_hydrogen, is_donor, is_acceptor, is_hydroxyl, is_backbone );
+		polar_sc_atoms_not_satisfied_by_background_.emplace_back(
+			local_atom_id,
+			atom_position,
+			is_hydrogen,
+			is_donor,
+			is_acceptor,
+			is_hydroxyl,
+			is_backbone
+		);
 	}
 
 	/// @brief The polar atoms are sorted, so we have to cleverly insert and maintain the order
@@ -139,23 +147,6 @@ public://getters, setters, accessors
 		if ( iter->local_atom_id() == info.local_atom_id() ) return;
 		polar_sc_atoms_not_satisfied_by_background_.insert( iter, info );
 	}
-
-	//Unstable means that the order is not preserved. I think this should not be used because it is handy to have all of the hydrogens at the end.
-	//for example, seeing if there are any unsatisfied heavy atoms is an O(1) lookup of ( ! atom_vec.size() || atom_vec.front().is_hydrogen() )
-	//These vectors are so short that I imagine we can pay the cost of down-shifting the higher elements on every removal
-
-	/*static bool remove_atom_info_from_vec_unstable( utility::vector1< AtomInfo > & atom_vec, unsigned short int local_atom_id ){
-	unsigned int const size = atom_vec.size();
-	for( unsigned int ii = 1; ii <= size; ++ii ){
-	if( atom_vec[ ii ].local_atom_id() == local_atom_id ){
-	std::swap( atom_vec[ ii ], atom_vec[ size ] );
-	debug_assert( atom_vec[ size ].local_atom_id() == local_atom_id );
-	atom_vec.pop_back();
-	return true;
-	}
-	}
-	return false;
-	}*/
 
 	///@brief returns true if the atom was present, false is absent. False does not indicate failure!
 	static bool remove_atom_info_from_vec_stable( utility::vector1< AtomInfo > & atom_vec, unsigned short int local_atom_id ){
@@ -182,7 +173,7 @@ public://getters, setters, accessors
 	///         to node indices in this graph.
 	///   other_node_to_my_node.size() == other_graph.num_nodes()
 	void merge_data(
-		AtomLevelHBondNode const & other,
+		HBondNode const & other,
 		utility::vector1< Size > const & other_node_to_my_node,
 		bool merge_with_OR_logic
 	);
@@ -196,7 +187,7 @@ private:
 	utility::vector1< AtomInfo > polar_sc_atoms_not_satisfied_by_background_;
 
 public://please do not use this. It is required for pyrosetta compilation
-	AtomLevelHBondNode & operator = ( AtomLevelHBondNode const & src ) {
+	HBondNode & operator = ( HBondNode const & src ) {
 		mres_id_ = src.mres_id_;
 		rotamer_id_ = src.rotamer_id_;
 		ids_of_clashing_nodes_ = src.ids_of_clashing_nodes_;
@@ -208,18 +199,18 @@ public://please do not use this. It is required for pyrosetta compilation
 };
 
 
-///@brief Each AtomLevelHBondEdge represents a hydrogen bond
-class AtomLevelHBondEdge : public utility::graph::LowMemEdge {
+///@brief Each HBondEdge represents a hydrogen bond
+class HBondEdge : public utility::graph::LowMemEdge {
 
 public:
 
 	//constructor
-	AtomLevelHBondEdge( Size first_node_ind, Size second_node_ind );
+	HBondEdge( Size first_node_ind, Size second_node_ind );
 
-	AtomLevelHBondEdge( Size first_node_ind, Size second_node_ind, Real energy );
+	HBondEdge( Size first_node_ind, Size second_node_ind, Real energy );
 
 	//destructor
-	~AtomLevelHBondEdge();
+	~HBondEdge();
 
 public:
 
@@ -232,9 +223,10 @@ public:
 		bool first_node_is_donor,
 		unsigned short int local_atom_id_A,
 		unsigned short int local_atom_id_D,
-		unsigned short int local_atom_id_H
+		unsigned short int local_atom_id_H,
+		float energy
 	){
-		hbonds_.emplace_back( first_node_is_donor, local_atom_id_A, local_atom_id_D, local_atom_id_H );
+		hbonds_.emplace_back( energy, first_node_is_donor, local_atom_id_A, local_atom_id_D, local_atom_id_H );
 	}
 
 	///@brief this is intended to be the raw energy from the interaction graph between the rotamers represented by this->get_first_node_ind() and this->get_second_node_ind()
@@ -269,7 +261,7 @@ public://getters and setters
 	/// @detail other_node_to_my_node is a map of node indices from the other graph
 	///         to node indices in this graph.
 	///   other_node_to_my_node.size() == other_graph.num_nodes()
-	void merge_data( AtomLevelHBondEdge const & other, utility::vector1< Size > const & other_node_to_my_node );
+	void merge_data( HBondEdge const & other, utility::vector1< Size > const & other_node_to_my_node );
 
 private:
 	float energy_;
@@ -277,7 +269,7 @@ private:
 	//  If memory is a bottleneck, it's because there are too many edges
 
 public://please do not use this. It is required for pyrosetta compilation
-	AtomLevelHBondEdge & operator = ( AtomLevelHBondEdge const & src ) {
+	HBondEdge & operator = ( HBondEdge const & src ) {
 		energy_ = src.energy_;
 		hbonds_ = src.hbonds_;
 		runtime_assert( false );
@@ -286,17 +278,17 @@ public://please do not use this. It is required for pyrosetta compilation
 
 };
 
-class AtomLevelHBondGraph : public utility::graph::LowMemGraph<AtomLevelHBondNode,AtomLevelHBondEdge> {
+class HBondGraph : public utility::graph::LowMemGraph<HBondNode,HBondEdge> {
 
 public:
-	typedef utility::graph::LowMemGraph<AtomLevelHBondNode,AtomLevelHBondEdge> PARENT;
+	typedef utility::graph::LowMemGraph<HBondNode,HBondEdge> PARENT;
 
 	//constructor
-	AtomLevelHBondGraph();
-	AtomLevelHBondGraph( Size num_nodes );
+	HBondGraph();
+	HBondGraph( Size num_nodes );
 
 	//destructor
-	~AtomLevelHBondGraph() override;
+	~HBondGraph() override;
 
 	Size count_static_memory() const override;
 	Size count_dynamic_memory() const override;
@@ -307,10 +299,10 @@ public:
 	/// @detail There are two ways to merge the atoms of a node.
 	///         OR_logic - Take the union of the atoms at each node
 	///         AND_logic - Take the intersection of the atoms at each node
-	void merge( AtomLevelHBondGraph const & other, bool merge_nodes_with_OR_logic );
+	void merge( HBondGraph const & other, bool merge_nodes_with_OR_logic );
 
 public://old methods & methods used for unit tests
-	AtomLevelHBondEdge * register_hbond( Size rotamerA, Size rotamerB, Real score );
+	HBondEdge * register_hbond( Size rotamerA, Size rotamerB, Real score );
 
 };
 

@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file core/pack/hbonds/MCHBNetInteractionGraph.cc
-/// @brief Dervied class of PDInteractionGraph that does not save twobody energy calculations but rather passes them directly to a AtomLevelHBondGraph
-/// @details This is a AtomLevelHBondGraph creator that is wearing an InteractionGraph disguise so that monte carlo HBNet can collect energy information without having to create custom interfaces in many other classes. This class should not be used as an InteractionGraph because it does not store all of the information that InteractionGraphs need to store. There are a few utility_exit_with_message() calls sprinkled within this class to make sure it is not being misused, but there really is not any need to use it for anything other than AtomLevelHBondGraph creation.
+/// @file core/pack/hbonds/HBondGraphInitializerIG.cc
+/// @brief Dervied class of PDInteractionGraph that does not save twobody energy calculations but rather passes them directly to a HBondGraph
+/// @details This is a HBondGraph creator that is wearing an InteractionGraph disguise so that monte carlo HBNet can collect energy information without having to create custom interfaces in many other classes. This class should not be used as an InteractionGraph because it does not store all of the information that InteractionGraphs need to store. There are a few utility_exit_with_message() calls sprinkled within this class to make sure it is not being misused, but there really is not any need to use it for anything other than HBondGraph creation.
 /// @author Jack Maguire, jackmaguire1444@gmail.com
 
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/pack/hbonds/MCHBNetInteractionGraph.hh>
+#include <core/pack/hbonds/HBondGraphInitializerIG.hh>
 #include <core/pack/interaction_graph/AminoAcidNeighborSparseMatrix.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pose/Pose.hh>
@@ -27,7 +27,7 @@ namespace core {
 namespace pack {
 namespace hbonds {
 
-static basic::Tracer TR( "core.pack.hbonds.MCHBNetInteractionGraph" );
+static basic::Tracer TR( "core.pack.hbonds.HBondGraphInitializerIG" );
 
 BareMinimumPDEdge::BareMinimumPDEdge( interaction_graph::InteractionGraphBase* owner, int first_node_ind, int second_node_ind ) :
 	interaction_graph::PDEdge( owner, first_node_ind, second_node_ind )
@@ -41,14 +41,14 @@ BareMinimumPDEdge::BareMinimumPDEdge( interaction_graph::InteractionGraphBase* o
 BareMinimumPDEdge::~BareMinimumPDEdge()= default;
 
 void BareMinimumPDEdge::add_to_two_body_energy(int const rot1, int const rot2, PackerEnergy const twobody ){
-	auto * owner = static_cast< MCHBNetInteractionGraph * > ( get_owner() );
+	auto * owner = static_cast< HBondGraphInitializerIG * > ( get_owner() );
 	unsigned int const offset1 = owner->rotamer_sets()->nrotamer_offset_for_moltenres( get_first_node_ind() );
 	unsigned int const offset2 = owner->rotamer_sets()->nrotamer_offset_for_moltenres( get_second_node_ind() );
 	owner->eval_rot_pair( offset1 + rot1, offset2 + rot2, twobody );
 }
 
 void BareMinimumPDEdge::add_to_two_body_energies( ObjexxFCL::FArray2< PackerEnergy > const & res_res_energy_array ){
-	auto * owner = static_cast< MCHBNetInteractionGraph * > ( get_owner() );
+	auto * owner = static_cast< HBondGraphInitializerIG * > ( get_owner() );
 	unsigned int const offset1 = owner->rotamer_sets()->nrotamer_offset_for_moltenres( get_first_node_ind() );
 	unsigned int const offset2 = owner->rotamer_sets()->nrotamer_offset_for_moltenres( get_second_node_ind() );
 	unsigned int const nrot1 = owner->rotamer_sets()->nrotamers_for_moltenres( get_first_node_ind() );
@@ -62,8 +62,8 @@ void BareMinimumPDEdge::add_to_two_body_energies( ObjexxFCL::FArray2< PackerEner
 }
 
 //Constructor
-MCHBNetInteractionGraph::MCHBNetInteractionGraph(
-	scoring::hbonds::graph::AtomLevelHBondGraphOP hbond_graph,
+HBondGraphInitializerIG::HBondGraphInitializerIG(
+	scoring::hbonds::graph::HBondGraphOP hbond_graph,
 	rotamer_set::RotamerSetsCOP rotamer_sets,
 	float hbond_threshold,
 	float clash_threshold
@@ -76,10 +76,10 @@ MCHBNetInteractionGraph::MCHBNetInteractionGraph(
 {}
 
 //Destructor
-MCHBNetInteractionGraph::~MCHBNetInteractionGraph() = default;
+HBondGraphInitializerIG::~HBondGraphInitializerIG() = default;
 
 void
-MCHBNetInteractionGraph::find_symmetric_hbonds(
+HBondGraphInitializerIG::find_symmetric_hbonds(
 	conformation::symmetry::SymmetryInfo const & symm_info,
 	pose::Pose const & pose,
 	Real hb_threshold
@@ -105,7 +105,7 @@ MCHBNetInteractionGraph::find_symmetric_hbonds(
 		for ( Size rot = 1; rot <= rotamer_sets_->nrotamers_for_moltenres( mres ); ++rot ) {
 			Real const one_body_1 = get_one_body_energy_for_node_state( mres, rot ) / scmult_1b;
 			if ( one_body_1 < hb_threshold ) {
-				scoring::hbonds::graph::AtomLevelHBondEdge * new_edge =
+				scoring::hbonds::graph::HBondEdge * new_edge =
 					hbond_graph_->add_edge( offset_for_mres + rot, offset_for_mres + rot );
 				new_edge->set_energy( one_body_1 );
 			}
@@ -116,7 +116,7 @@ MCHBNetInteractionGraph::find_symmetric_hbonds(
 
 //Straight-up stolen from HBNet.cc
 Size
-MCHBNetInteractionGraph::get_ind_res(
+HBondGraphInitializerIG::get_ind_res(
 	pose::Pose const & pose,
 	Size const res_i,
 	conformation::symmetry::SymmetryInfo const & symm_info,
@@ -138,7 +138,7 @@ MCHBNetInteractionGraph::get_ind_res(
 }
 
 
-void MCHBNetInteractionGraph::eval_rot_pair(
+void HBondGraphInitializerIG::eval_rot_pair(
 	unsigned int const global_rot1,
 	unsigned int const global_rot2,
 	PackerEnergy const two_body_energy
@@ -146,12 +146,12 @@ void MCHBNetInteractionGraph::eval_rot_pair(
 	using namespace scoring::hbonds::graph;
 
 	if ( two_body_energy > clash_threshold_ ) {
-		AtomLevelHBondNode * const node1 =
-			static_cast< AtomLevelHBondNode * >( hbond_graph_->get_node( global_rot1 ) );
+		HBondNode * const node1 =
+			static_cast< HBondNode * >( hbond_graph_->get_node( global_rot1 ) );
 		node1->register_clash( global_rot2 );
 
-		AtomLevelHBondNode * const node2 =
-			static_cast< AtomLevelHBondNode * >( hbond_graph_->get_node( global_rot2 ) );
+		HBondNode * const node2 =
+			static_cast< HBondNode * >( hbond_graph_->get_node( global_rot2 ) );
 		node2->register_clash( global_rot1 );
 		return;
 	}
@@ -167,7 +167,7 @@ void MCHBNetInteractionGraph::eval_rot_pair(
 	}
 }
 
-void MCHBNetInteractionGraph::finalize_hbond_graph() {
+void HBondGraphInitializerIG::finalize_hbond_graph() {
 
 	using namespace scoring::hbonds::graph;
 
@@ -178,8 +178,8 @@ void MCHBNetInteractionGraph::finalize_hbond_graph() {
 
 		float val = key_val.second;
 
-		AtomLevelHBondEdge & new_edge =
-			static_cast< AtomLevelHBondEdge & >( * hbond_graph_->add_edge( rot1, rot2 ) );
+		HBondEdge & new_edge =
+			static_cast< HBondEdge & >( * hbond_graph_->add_edge( rot1, rot2 ) );
 		new_edge.set_energy( val );
 	}
 

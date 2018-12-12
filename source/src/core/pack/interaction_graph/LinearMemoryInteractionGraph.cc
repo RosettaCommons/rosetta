@@ -38,7 +38,7 @@ namespace interaction_graph {
 static basic::Tracer T( "core.pack.interaction_graph.linmem_ig", basic::t_error );
 
 /// @brief For testing the LinMemIG, you'll want to set this to true
-bool const debug = { false };
+constexpr bool debug() { return false; }
 
 
 /// @brief main constructor, no default or copy constructors
@@ -200,7 +200,7 @@ LinearMemNode::assign_state(int new_state)
 		}
 		//T<< "..done" << std::endl;
 	}
-	if ( debug ) {
+	if ( debug() ) {
 		get_on_the_fly_owner()->non_const_pose().replace_residue( get_rotamer(current_state_).seqpos(), get_rotamer( current_state_ ), false );
 		get_on_the_fly_owner()->score_function()( get_on_the_fly_owner()->non_const_pose() );
 	}
@@ -298,7 +298,7 @@ LinearMemNode::project_deltaE_for_substitution
 		alternate_state_total_energy_ += alternate_state_two_body_energies_[ ii ];
 	}
 
-	if ( debug && ! get_owner()->any_vertex_state_unassigned() ) {
+	if ( debug() && ! get_owner()->any_vertex_state_unassigned() ) {
 		debug_assert( get_rotamer(alternate_state_).seqpos() == get_rotamer(current_state_).seqpos() );
 		get_on_the_fly_owner()->non_const_pose().replace_residue( get_rotamer(alternate_state_).seqpos(), get_rotamer( alternate_state_ ), false);
 		Real score_after = get_on_the_fly_owner()->score_function()( get_on_the_fly_owner()->non_const_pose() );
@@ -605,7 +605,7 @@ LinearMemNode::commit_considered_substitution()
 	}
 	accepted_rejected_substitution_history_( accepted_history_head_ ) = ACCEPTED;
 
-	if ( debug ) {
+	if ( debug() ) {
 		get_on_the_fly_owner()->non_const_pose().replace_residue( get_rotamer(current_state_).seqpos(), get_rotamer( current_state_ ), false );
 		get_on_the_fly_owner()->score_function()( get_on_the_fly_owner()->non_const_pose() );
 	}
@@ -1066,18 +1066,25 @@ LinearMemEdge::get_energy_for_alt_state
 	//T << " chID " << changing_node_index << " alt: " << alternate_state << " altHI: " << alternate_state_recent_history_index;
 	//T << " oncurr: " << other_node_curr_state << " oncurrHI: " << other_node_state_recent_history_index << std::endl;
 
-	bool assignment_of_interest = debug && false; //get_node_index(0) == 67 && get_node_index(1) == 68;
-
+	bool assignment_of_interest = debug() && false; //get_node_index(0) == 67 && get_node_index(1) == 68;
+	/*
 	///if ( false ) {
 	if ( assignment_of_interest ) {
-		T << "get_energy_for_alt_state: " << get_node_index( 0 )  << " " << get_node_index( 1 ) << " srpe: " << store_rpes;
-		T << " chID " << changing_node_index << " alt: " << alternate_state << " altHI: " << alternate_state_recent_history_index;
-		T << " oncurr: " << other_node_curr_state << " oncurrHI: " << other_node_state_recent_history_index << std::endl;
-		T << "store_rpes_[ 0 ] " << store_rpes_[ 0 ] << "store_rpes_[ 1 ] " << store_rpes_[ 1 ] << std::endl;
+	T << "get_energy_for_alt_state: " << get_node_index( 0 )  << " " << get_node_index( 1 ) << " srpe: " << store_rpes;
+	T << " chID " << changing_node_index << " alt: " << alternate_state << " altHI: " << alternate_state_recent_history_index;
+	T << " oncurr: " << other_node_curr_state << " oncurrHI: " << other_node_state_recent_history_index << std::endl;
+	T << "store_rpes_[ 0 ] " << store_rpes_[ 0 ] << "store_rpes_[ 1 ] " << store_rpes_[ 1 ] << std::endl;
 	}
+	*/
 
-	int const node_changing = changing_node_index == get_node_index( 0 ) ? 0 : 1;
-	int const node_not_changing = ! node_changing;
+	int node_changing, node_not_changing;
+	if ( changing_node_index == get_node_index( 0 ) ) {
+		node_changing = 0;
+		node_not_changing = 1;
+	} else {
+		node_changing = 1;
+		node_not_changing = 0;
+	}
 
 	if ( store_rpes && ! store_rpes_[ node_changing ] ) {
 		wipe( node_changing );

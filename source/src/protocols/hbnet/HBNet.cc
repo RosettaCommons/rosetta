@@ -47,7 +47,7 @@
 #include <core/kinematics/MoveMap.hh>
 
 #include <core/pack/hbonds/HBondGraph_util.hh>
-#include <core/pack/hbonds/MCHBNetInteractionGraph.hh>
+#include <core/pack/hbonds/HBondGraphInitializerIG.hh>
 #include <core/pack/interaction_graph/InteractionGraphBase.hh>
 #include <core/pack/interaction_graph/InteractionGraphFactory.hh>
 #include <core/pack/interaction_graph/PDInteractionGraph.hh>
@@ -81,7 +81,7 @@
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/constants.hh>
-#include <core/scoring/hbonds/graph/AtomLevelHBondGraph.hh>
+#include <core/scoring/hbonds/graph/HBondGraph.hh>
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/hbonds/hbonds_geom.hh>
 #include <core/scoring/rms_util.hh>
@@ -727,14 +727,14 @@ HBNet::MC_traverse_IG( ){
 
 	if ( symmetric_ ) {
 		static_cast< core::conformation::symmetry::SymmetricConformation & >( orig_pose_->conformation() ).recalculate_transforms();
-		static_cast< core::pack::hbonds::MCHBNetInteractionGraph & >( * ig_ ).find_symmetric_hbonds( *symm_info_, *orig_pose_, onebody_hb_threshold_ );
+		static_cast< core::pack::hbonds::HBondGraphInitializerIG & >( * ig_ ).find_symmetric_hbonds( *symm_info_, *orig_pose_, onebody_hb_threshold_ );
 	}
 
 	//Remove edges with no incident edges. If they can not be part of a network then they are wasting our time.
 	for ( utility::graph::LowMemEdgeListIter it = hbond_graph_->edge_list_begin(), end = hbond_graph_->edge_list_end();
 			it != end; ) {
 
-		auto * edge = static_cast< AtomLevelHBondEdge * >( *it );
+		auto * edge = static_cast< HBondEdge * >( *it );
 		if ( hbond_graph_->get_node( edge->get_first_node_ind() )->num_edges() == 1 &&
 				hbond_graph_->get_node( edge->get_second_node_ind() )->num_edges() == 1
 				) {
@@ -765,7 +765,7 @@ HBNet::MC_traverse_IG( ){
 	//Do not consider hbonds where one side clashes with the background
 	//Also, find satisfying interactions with background
 	for ( core::Size node_id = 1; node_id <= hbond_graph_->num_nodes(); ++node_id ) {
-		AtomLevelHBondNode * node = hbond_graph_->get_node( node_id );
+		HBondNode * node = hbond_graph_->get_node( node_id );
 		core::Real const one_body_1 = ig_->get_one_body_energy_for_node_state( node->moltenres(), node->local_rotamer_id() ) / scmult_1b;
 
 		if ( one_body_1 > clash_threshold_ ) {
@@ -783,10 +783,10 @@ HBNet::MC_traverse_IG( ){
 	//Look for seeds
 	for ( utility::graph::LowMemEdgeListConstIter it = hbond_graph_->const_edge_list_begin();
 			it != hbond_graph_->const_edge_list_end(); ++it ) {
-		auto const * edge = static_cast< AtomLevelHBondEdge const * >( *it );
+		auto const * edge = static_cast< HBondEdge const * >( *it );
 
-		AtomLevelHBondNode const * node1 = hbond_graph_->get_node( edge->get_first_node_ind() );
-		AtomLevelHBondNode const * node2 = hbond_graph_->get_node( edge->get_second_node_ind() );
+		HBondNode const * node1 = hbond_graph_->get_node( edge->get_first_node_ind() );
+		HBondNode const * node2 = hbond_graph_->get_node( edge->get_second_node_ind() );
 
 		core::Size const resid1 = rotamer_sets_->moltenres_2_resid( node1->moltenres() );
 		core::Size const resid2 = rotamer_sets_->moltenres_2_resid( node2->moltenres() );
@@ -1085,7 +1085,7 @@ HBNet::monte_carlo_net_clash( utility::vector1< HBondResStructCOP > const & resi
 	}
 
 	for ( core::Size const rot1 : global_rots1 ) {
-		AtomLevelHBondNode const * node1 = hbond_graph_->get_node( rot1 );
+		HBondNode const * node1 = hbond_graph_->get_node( rot1 );
 		for ( core::Size const rot2 : global_rots2 ) {
 			if ( node1->clashes( rot2 ) ) return true;
 
@@ -1676,7 +1676,7 @@ void HBNet::MC_branch_overlapping_networks(){
 
 	for ( core::Size run_id = 1; run_id <= total_num_mc_runs_; ++run_id ) {
 		core::Size const rand_index = 1 + numeric::random::rg().uniform() * num_seeds;
-		AtomLevelHBondEdge const * const starting_state = monte_carlo_seeds_[ rand_index ];
+		HBondEdge const * const starting_state = monte_carlo_seeds_[ rand_index ];
 
 		if ( ! --next_milestone ) {
 			TR << "\t" << next_milestone_title << "0% done with branching" << std::endl;
@@ -1686,7 +1686,7 @@ void HBNet::MC_branch_overlapping_networks(){
 
 		NetworkState current_network_state( starting_state, hbond_graph_ );
 
-		AtomLevelHBondNode * next_node = get_next_node( current_network_state );
+		HBondNode * next_node = get_next_node( current_network_state );
 		while ( next_node ) {//keep looping until there are no more nodes to add
 			add_residue_to_network_state( current_network_state, next_node );
 
@@ -2871,7 +2871,7 @@ void
 HBNet::select_best_networks()
 {
 
-	// TODO now that Jack's AtomLevelHBondGraph enables high-integrity unsat check on-the-fly,
+	// TODO now that Jack's HBondGraph enables high-integrity unsat check on-the-fly,
 	//   this function can be refactored to be more efficient, and written in a cleaner fashion
 
 	//min_network_size, min_core_res, and min_boundary_res apply to ASU;
@@ -3245,7 +3245,7 @@ HBNet::run( Pose & pose )
 	rotamer_sets_->prepare_sets_for_packing( pose, *init_scorefxn_ );
 	if ( monte_carlo_branch_ ) {
 		initialize_hbond_graph();
-		ig_ = pointer::make_shared< MCHBNetInteractionGraph >( hbond_graph_, rotamer_sets_, hydrogen_bond_threshold_, clash_threshold_ );
+		ig_ = pointer::make_shared< HBondGraphInitializerIG >( hbond_graph_, rotamer_sets_, hydrogen_bond_threshold_, clash_threshold_ );
 	} else {
 		ig_ = InteractionGraphFactory::create_interaction_graph( *task_, *rotamer_sets_, pose, *init_scorefxn_, *packer_neighbor_graph_ );
 	}
@@ -3264,7 +3264,7 @@ HBNet::run( Pose & pose )
 	// precompute_two_body_energies() now vitural and dervied; no longer need to cast to SymmetricRotamerSets first
 	rotamer_sets_->precompute_two_body_energies( pose, *init_scorefxn_, packer_neighbor_graph_, pig, true );
 	if ( monte_carlo_branch_ ) {
-		utility::pointer::dynamic_pointer_cast< MCHBNetInteractionGraph >( ig_ )->finalize_hbond_graph();
+		utility::pointer::dynamic_pointer_cast< HBondGraphInitializerIG >( ig_ )->finalize_hbond_graph();
 	}
 
 	if ( TR.visible() ) {
@@ -3758,7 +3758,7 @@ void HBNet::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 void HBNet::initialize_hbond_graph(){
 	debug_assert( rotamer_sets_ );
 	core::Size const nrot = rotamer_sets_->nrotamers();
-	hbond_graph_ = pointer::make_shared< AtomLevelHBondGraph >( nrot );
+	hbond_graph_ = pointer::make_shared< HBondGraph >( nrot );
 	core::pack::hbonds::init_node_info( * hbond_graph_, * rotamer_sets_ );
 }
 
@@ -3792,9 +3792,9 @@ bool HBNet::edge_can_yield_monte_carlo_seed( core::pack::interaction_graph::Edge
 	return edge_can_yield_monte_carlo_seed( resid1, resid2 );
 }
 
-AtomLevelHBondNode * HBNet::get_next_node( NetworkState & current_state ){
+HBondNode * HBNet::get_next_node( NetworkState & current_state ){
 
-	std::list< std::pair< core::Size, AtomLevelHBondNode * > > num_nbrs_per_node;
+	std::list< std::pair< core::Size, HBondNode * > > num_nbrs_per_node;
 	core::Size total_num_nbrs = 0;
 
 	bool all_nodes_satisfied( true );
@@ -3808,7 +3808,7 @@ AtomLevelHBondNode * HBNet::get_next_node( NetworkState & current_state ){
 	}
 
 
-	for ( AtomLevelHBondNode const * const current_node : current_state.nodes() ) {
+	for ( HBondNode const * const current_node : current_state.nodes() ) {
 
 		if ( ! all_nodes_satisfied ) {
 			unsigned int const mres = current_node->moltenres();
@@ -3817,13 +3817,13 @@ AtomLevelHBondNode * HBNet::get_next_node( NetworkState & current_state ){
 		core::Size const current_node_ind = current_node->global_rotamer_id();
 
 		for ( utility::graph::LowMemEdgeListConstIter it = current_node->const_edge_list_begin( *hbond_graph_ ); it != current_node->const_edge_list_end( *hbond_graph_ ); ++it ) {
-			AtomLevelHBondNode * const proposed_new_node = hbond_graph_->get_node( (*it)->get_other_ind( current_node_ind ) );
+			HBondNode * const proposed_new_node = hbond_graph_->get_node( (*it)->get_other_ind( current_node_ind ) );
 			if ( ! node_is_compatible( current_state, proposed_new_node ) ) {
 				continue;
 			}
 
 			if ( ! all_nodes_satisfied ) { // check if this edge satisfies a current unsat atom in the network
-				auto const * const al_edge = static_cast< AtomLevelHBondEdge const * >( *it );
+				auto const * const al_edge = static_cast< HBondEdge const * >( *it );
 				if ( ! edge_satisfies_heavy_unsat_for_node( current_state, current_node, al_edge ) ) continue;
 			}
 			// if everything is satisfied, we'll still try to grow (and network state will have already been stored)
@@ -3831,7 +3831,7 @@ AtomLevelHBondNode * HBNet::get_next_node( NetworkState & current_state ){
 			core::Size num_nbrs = 1;//add dummy of 1
 			core::Size const proposed_new_node_ind = proposed_new_node->global_rotamer_id();
 			for ( utility::graph::LowMemEdgeListConstIter it2 = proposed_new_node->const_edge_list_begin( *hbond_graph_ ); it2 != proposed_new_node->const_edge_list_end( *hbond_graph_ ); ++it2 ) {
-				AtomLevelHBondNode const * const proposed_nbr_node = hbond_graph_->get_node( ( *it2 )->get_other_ind( proposed_new_node_ind ) );
+				HBondNode const * const proposed_nbr_node = hbond_graph_->get_node( ( *it2 )->get_other_ind( proposed_new_node_ind ) );
 				if ( node_is_compatible( current_state, proposed_nbr_node ) ) {
 					++num_nbrs;
 				}
@@ -3857,7 +3857,7 @@ AtomLevelHBondNode * HBNet::get_next_node( NetworkState & current_state ){
 #endif
 
 	core::Size nbr_counter = 0;
-	for ( std::pair< core::Size, AtomLevelHBondNode * > & candidate : num_nbrs_per_node ) {
+	for ( std::pair< core::Size, HBondNode * > & candidate : num_nbrs_per_node ) {
 		nbr_counter += candidate.first;
 		if ( nbr_counter >= random_nbr_count ) {
 			return candidate.second;
@@ -3869,9 +3869,9 @@ AtomLevelHBondNode * HBNet::get_next_node( NetworkState & current_state ){
 }
 
 
-bool HBNet::monte_carlo_seed_is_dead_end( AtomLevelHBondEdge const * monte_carlo_seed ){
-	AtomLevelHBondNode const * const nodeA = hbond_graph_->get_node( monte_carlo_seed->get_first_node_ind()  );
-	AtomLevelHBondNode const * const nodeB = hbond_graph_->get_node( monte_carlo_seed->get_second_node_ind() );
+bool HBNet::monte_carlo_seed_is_dead_end( HBondEdge const * monte_carlo_seed ){
+	HBondNode const * const nodeA = hbond_graph_->get_node( monte_carlo_seed->get_first_node_ind()  );
+	HBondNode const * const nodeB = hbond_graph_->get_node( monte_carlo_seed->get_second_node_ind() );
 
 	core::Size const nodeA_ind = nodeA->global_rotamer_id();
 	core::Size const nodeB_ind = nodeB->global_rotamer_id();
@@ -3880,7 +3880,7 @@ bool HBNet::monte_carlo_seed_is_dead_end( AtomLevelHBondEdge const * monte_carlo
 
 	for ( utility::graph::LowMemEdgeListConstIter it_A = nodeA->const_edge_list_begin( *hbond_graph_ );
 			it_A != nodeA->const_edge_list_end( *hbond_graph_ ); ++it_A ) {
-		AtomLevelHBondNode const * const temp_node = hbond_graph_->get_node( (*it_A)->get_other_ind( nodeA_ind ) );
+		HBondNode const * const temp_node = hbond_graph_->get_node( (*it_A)->get_other_ind( nodeA_ind ) );
 
 		if ( temp_node->moltenres() == nodeB->moltenres() ) continue;
 		if ( nodeB->clashes( temp_node->global_rotamer_id() ) ) continue;
@@ -3890,7 +3890,7 @@ bool HBNet::monte_carlo_seed_is_dead_end( AtomLevelHBondEdge const * monte_carlo
 
 	for ( utility::graph::LowMemEdgeListConstIter it_B = nodeB->const_edge_list_begin( *hbond_graph_ );
 			it_B != nodeB->const_edge_list_end( *hbond_graph_ ); ++it_B ) {
-		AtomLevelHBondNode const * const temp_node = hbond_graph_->get_node( (*it_B)->get_other_ind( nodeB_ind ) );
+		HBondNode const * const temp_node = hbond_graph_->get_node( (*it_B)->get_other_ind( nodeB_ind ) );
 
 		if ( temp_node->moltenres() == nodeA->moltenres() ) continue;
 		if ( nodeA->clashes( temp_node->global_rotamer_id() ) ) continue;
@@ -3918,7 +3918,7 @@ void HBNet::append_to_network_vector( utility::vector1< DecoratedNetworkState > 
 
 		std::string sequence = poly_A_sequence;
 
-		for ( AtomLevelHBondNode const * const hbond_node : state.nodes() ) {
+		for ( HBondNode const * const hbond_node : state.nodes() ) {
 			core::Size const mres = hbond_node->moltenres();
 			core::Size const resid = rotamer_sets_->moltenres_2_resid( mres );
 			core::Size const rot =  hbond_node->local_rotamer_id();
@@ -3968,15 +3968,15 @@ void HBNet::append_to_network_vector( utility::vector1< DecoratedNetworkState > 
 
 }
 
-void HBNet::add_residue_to_network_state( NetworkState & current_network_state, AtomLevelHBondNode * node_being_added ) const {
+void HBNet::add_residue_to_network_state( NetworkState & current_network_state, HBondNode * node_being_added ) const {
 
 	current_network_state.add_polar_atoms( node_being_added );
 
-	for ( AtomLevelHBondNode const * const existing_node : current_network_state.nodes() ) {
+	for ( HBondNode const * const existing_node : current_network_state.nodes() ) {
 
 		//check for hbond
-		AtomLevelHBondEdge const * const hbond_edge =
-			static_cast< AtomLevelHBondEdge * > ( node_being_added->find_edge( existing_node->get_node_index(), *hbond_graph_ ) );
+		HBondEdge const * const hbond_edge =
+			static_cast< HBondEdge * > ( node_being_added->find_edge( existing_node->get_node_index(), *hbond_graph_ ) );
 		if ( hbond_edge ) {
 			current_network_state.edges().push_back( hbond_edge );
 			current_network_state.append_twobody_energy( hbond_edge->energy() );
@@ -3994,18 +3994,18 @@ void HBNet::add_residue_to_network_state( NetworkState & current_network_state, 
 				bool const new_node_is_first_node = new_node_mres < existing_node_mres;
 				if ( new_node_is_first_node == first_node_is_donor ) {
 					//node_being_added is donor
-					AtomLevelHBondNode::remove_atom_info_from_vec_stable( current_network_state.get_unsats_for_mres( existing_node_mres )->second, local_atom_id_A );
+					HBondNode::remove_atom_info_from_vec_stable( current_network_state.get_unsats_for_mres( existing_node_mres )->second, local_atom_id_A );
 
 					utility::vector1< AtomInfo > & donor_atom_vec = current_network_state.get_unsats_for_mres( new_node_mres )->second;
-					AtomLevelHBondNode::remove_atom_info_from_vec_stable( donor_atom_vec, local_atom_id_D );
-					AtomLevelHBondNode::remove_atom_info_from_vec_stable( donor_atom_vec, local_atom_id_H );
+					HBondNode::remove_atom_info_from_vec_stable( donor_atom_vec, local_atom_id_D );
+					HBondNode::remove_atom_info_from_vec_stable( donor_atom_vec, local_atom_id_H );
 				} else {
 					//node_being_added is acc
-					AtomLevelHBondNode::remove_atom_info_from_vec_stable( current_network_state.get_unsats_for_mres( new_node_mres )->second, local_atom_id_A );
+					HBondNode::remove_atom_info_from_vec_stable( current_network_state.get_unsats_for_mres( new_node_mres )->second, local_atom_id_A );
 
 					utility::vector1< AtomInfo > & donor_atom_vec = current_network_state.get_unsats_for_mres( existing_node_mres )->second;
-					AtomLevelHBondNode::remove_atom_info_from_vec_stable( donor_atom_vec, local_atom_id_D );
-					AtomLevelHBondNode::remove_atom_info_from_vec_stable( donor_atom_vec, local_atom_id_H );
+					HBondNode::remove_atom_info_from_vec_stable( donor_atom_vec, local_atom_id_D );
+					HBondNode::remove_atom_info_from_vec_stable( donor_atom_vec, local_atom_id_H );
 				}
 
 				//unsatisfied_sc_atoms
@@ -4014,8 +4014,8 @@ void HBNet::add_residue_to_network_state( NetworkState & current_network_state, 
 	}//existing_node
 
 	if ( symmetric_ ) { //TODO is symmtery the only case where this can happen?
-		AtomLevelHBondEdge const * const hbond_edge =
-			static_cast< AtomLevelHBondEdge * > ( node_being_added->find_edge( node_being_added->get_node_index(), *hbond_graph_ ) );
+		HBondEdge const * const hbond_edge =
+			static_cast< HBondEdge * > ( node_being_added->find_edge( node_being_added->get_node_index(), *hbond_graph_ ) );
 		if ( hbond_edge ) {
 			current_network_state.edges().push_back( hbond_edge );
 			current_network_state.append_twobody_energy( hbond_edge->energy() );
@@ -4024,14 +4024,14 @@ void HBNet::add_residue_to_network_state( NetworkState & current_network_state, 
 			unsigned int const new_node_mres = node_being_added->moltenres();
 
 			for ( HBondInfo const & hbond : hbond_edge->hbonds() ) {
-				AtomLevelHBondNode::remove_atom_info_from_vec_stable(
+				HBondNode::remove_atom_info_from_vec_stable(
 					current_network_state.get_unsats_for_mres( new_node_mres )->second,
 					hbond.local_atom_id_A()
 				);
 
 				utility::vector1< AtomInfo > & donor_atom_vec = current_network_state.get_unsats_for_mres( new_node_mres )->second;
-				AtomLevelHBondNode::remove_atom_info_from_vec_stable( donor_atom_vec, hbond.local_atom_id_D() );
-				AtomLevelHBondNode::remove_atom_info_from_vec_stable( donor_atom_vec, hbond.local_atom_id_H() );
+				HBondNode::remove_atom_info_from_vec_stable( donor_atom_vec, hbond.local_atom_id_D() );
+				HBondNode::remove_atom_info_from_vec_stable( donor_atom_vec, hbond.local_atom_id_H() );
 			}//hbond
 		}//hbond_edge
 	}//symm
@@ -4070,7 +4070,7 @@ bool HBNet::register_new_network(
 	rotamer_ids.reserve( current_network_state.nodes().size() );
 
 	core::Size sum = 0;
-	for ( AtomLevelHBondNode const * const hbond_node : current_network_state.nodes() ) {
+	for ( HBondNode const * const hbond_node : current_network_state.nodes() ) {
 		core::Size const rotamer_id = hbond_node->global_rotamer_id();
 		rotamer_ids.push_back( rotamer_id );
 		sum += rotamer_id;
@@ -4100,22 +4100,22 @@ bool HBNet::register_new_network(
 	return true;
 }
 
-bool HBNet::node_is_compatible( NetworkState const & current_state, AtomLevelHBondNode const * node_being_added ){
-	for ( AtomLevelHBondNode const * const existing_node : current_state.nodes() ) {
+bool HBNet::node_is_compatible( NetworkState const & current_state, HBondNode const * node_being_added ){
+	for ( HBondNode const * const existing_node : current_state.nodes() ) {
 		if ( existing_node->moltenres() == node_being_added->moltenres() ) return false;
 		if ( node_being_added->clashes( existing_node->global_rotamer_id() ) ) return false;
 	}
 	return true;
 }
 
-bool HBNet::network_state_is_done_growing( NetworkState const & current_state, AtomLevelHBondGraphCOP hbond_graph ){
+bool HBNet::network_state_is_done_growing( NetworkState const & current_state, HBondGraphCOP hbond_graph ){
 
-	for ( AtomLevelHBondNode const * const current_node : current_state.nodes() ) {
+	for ( HBondNode const * const current_node : current_state.nodes() ) {
 		core::Size const current_node_ind = current_node->global_rotamer_id();
 
 		for ( utility::graph::LowMemEdgeListConstIter it = current_node->const_edge_list_begin( *hbond_graph_ ); it != current_node->const_edge_list_end( *hbond_graph_ ); ++it ) {
 			core::Size const other_ind = (*it)->get_other_ind( current_node_ind );
-			AtomLevelHBondNode const * const proposed_new_node = hbond_graph->get_node( other_ind );
+			HBondNode const * const proposed_new_node = hbond_graph->get_node( other_ind );
 			if ( node_is_compatible( current_state, proposed_new_node ) ) {
 				return false;
 			}
@@ -4129,7 +4129,7 @@ core::Real HBNet::estimate_saturation( NetworkState const & network_state ) cons
 	using namespace core::scoring::hbonds::graph;
 	unsigned short int total_polar_groups_that_could_hbond( 0 );
 
-	for ( AtomLevelHBondNode const * node : network_state.nodes() ) {
+	for ( HBondNode const * node : network_state.nodes() ) {
 		core::conformation::Residue const & rotamer = * rotamer_sets_->rotamer( node->global_rotamer_id() );
 
 		unsigned char const n_Hpol = rotamer.Hpol_index().size();
@@ -4164,7 +4164,7 @@ core::Real HBNet::estimate_saturation( NetworkState const & network_state ) cons
 	//Is this fair - at least for a quick estimate?
 	//Real const polar_groups_making_hbonds = 2 * network_state.edges().size();
 	Real polar_groups_making_hbonds( 0 );
-	for ( AtomLevelHBondEdge const * edge : network_state.edges() ) {
+	for ( HBondEdge const * edge : network_state.edges() ) {
 		polar_groups_making_hbonds += 2 * edge->hbonds().size();
 	}
 

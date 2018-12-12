@@ -19,7 +19,7 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 
 #include <core/pack/hbonds/HBondGraph_util.hh>
-#include <core/pack/hbonds/MCHBNetInteractionGraph.hh>
+#include <core/pack/hbonds/HBondGraphInitializerIG.hh>
 #include <core/pack/interaction_graph/AminoAcidNeighborSparseMatrix.hh>
 #include <core/pack/packer_neighbors.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
@@ -34,7 +34,7 @@
 #include <core/scoring/hbonds/HBondDatabase.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
-#include <core/scoring/hbonds/graph/AtomLevelHBondGraph.hh>
+#include <core/scoring/hbonds/graph/HBondGraph.hh>
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/symmetry/SymmetricEnergies.hh>
@@ -50,7 +50,7 @@ namespace hbonds {
 
 using namespace scoring::hbonds::graph;
 
-scoring::hbonds::graph::AtomLevelHBondGraphOP create_init_and_create_edges_for_atom_level_hbond_graph(
+scoring::hbonds::graph::HBondGraphOP create_init_and_create_edges_for_hbond_graph(
 	rotamer_set::RotamerSetsOP rotamer_sets,
 	scoring::ScoreFunction const & sfxn,
 	pose::Pose const & pose,
@@ -59,9 +59,9 @@ scoring::hbonds::graph::AtomLevelHBondGraphOP create_init_and_create_edges_for_a
 	Real hbond_energy_threshold_for_satisfaction /*= -0.25f */,
 	bool include_backbone_at_atom_level /*= false*/
 ){
-	scoring::hbonds::graph::AtomLevelHBondGraphOP hbond_graph = create_and_init_atom_level_hbond_graph( * rotamer_sets );
+	scoring::hbonds::graph::HBondGraphOP hbond_graph = create_and_init_hbond_graph( * rotamer_sets );
 
-	MCHBNetInteractionGraphOP ig = utility::pointer::make_shared< MCHBNetInteractionGraph >( hbond_graph, rotamer_sets, hydrogen_bond_threshold, clash_threshold );
+	HBondGraphInitializerIGOP ig = utility::pointer::make_shared< HBondGraphInitializerIG >( hbond_graph, rotamer_sets, hydrogen_bond_threshold, clash_threshold );
 	ig->initialize( *rotamer_sets );
 
 	utility::graph::GraphOP packer_neighbor_graph = create_packer_graph( pose, sfxn, rotamer_sets->task() );
@@ -94,11 +94,11 @@ scoring::hbonds::graph::AtomLevelHBondGraphOP create_init_and_create_edges_for_a
 }
 
 
-void init_node_info( AtomLevelHBondGraph & graph, rotamer_set::RotamerSets const & rotamer_sets ){
+void init_node_info( HBondGraph & graph, rotamer_set::RotamerSets const & rotamer_sets ){
 	Size const nrot = rotamer_sets.nrotamers();
 
 	for ( Size rot = 1; rot <= nrot; ++rot ) {
-		AtomLevelHBondNode * node = graph.get_node( rot );
+		HBondNode * node = graph.get_node( rot );
 		Size const mres = rotamer_sets.moltenres_for_rotamer( rot );
 		debug_assert( mres );
 		node->set_moltenres( mres );
@@ -157,7 +157,7 @@ void find_hbonds_in_residue_pair(
 }
 
 void determine_atom_level_edge_info_for_all_edges(
-	scoring::hbonds::graph::AtomLevelHBondGraph & hb_graph,
+	scoring::hbonds::graph::HBondGraph & hb_graph,
 	rotamer_set::RotamerSets const & rotamer_sets,
 	scoring::hbonds::HBondDatabase const & database,
 	utility::graph::Graph const & tenA_neighbor_graph,
@@ -168,7 +168,7 @@ void determine_atom_level_edge_info_for_all_edges(
 ){
 	for ( utility::graph::LowMemEdgeListIter it = hb_graph.edge_list_begin();
 			it != hb_graph.edge_list_end(); ++it ) {
-		AtomLevelHBondEdge & edge = static_cast< AtomLevelHBondEdge & >( * ( * it ) );
+		HBondEdge & edge = static_cast< HBondEdge & >( * ( * it ) );
 
 		if ( skip_edges_with_degree_zero ) {
 			if ( hb_graph.get_node( edge.get_first_node_ind() )->num_edges() == 1 &&
@@ -211,7 +211,7 @@ Size get_symm_ind_res(
 
 
 void determine_atom_level_edge_info(
-	AtomLevelHBondEdge & hb_edge,
+	HBondEdge & hb_edge,
 	rotamer_set::RotamerSets const & rotamer_sets,
 	scoring::hbonds::HBondDatabase const & database,
 	utility::graph::Graph const & tenA_neighbor_graph,
@@ -285,17 +285,17 @@ void determine_atom_level_edge_info(
 		unsigned short int const Aatm = hbond.acc_atm();
 
 		if ( false ) { //TODO bridging_waters
-			//LKAtomLevelHBondEdge * lk_edge = static_cast< LKAtomLevelHBondEdge * >( lk_edge );
+			//LKHBondEdge * lk_edge = static_cast< LKHBondEdge * >( lk_edge );
 			//LKHBondInfo info = ...
 			//lk_edge->register_hbond( info, first_node_is_donor, Aatm, Datm, Hatm );
 		} else {
-			hb_edge.register_hbond( first_node_is_donor, Aatm, Datm, Hatm );
+			hb_edge.register_hbond( first_node_is_donor, Aatm, Datm, Hatm, hbond.energy() );
 		}
 	}// for all hbonds
 }
 
 void determine_atom_level_node_info_for_all_nodes(
-	scoring::hbonds::graph::AtomLevelHBondGraph & hb_graph,
+	scoring::hbonds::graph::HBondGraph & hb_graph,
 	rotamer_set::RotamerSets const & rotamer_sets,
 	utility::vector1< bool > const & include_these_resids,
 	bool skip_nodes_with_no_edges,
@@ -303,7 +303,7 @@ void determine_atom_level_node_info_for_all_nodes(
 ){
 	Size const num_nodes = hb_graph.num_nodes();
 	for ( unsigned int ii=1; ii <= num_nodes; ++ii ) {
-		auto * al_node = static_cast< AtomLevelHBondNode * >( hb_graph.get_node( ii ) );
+		auto * al_node = static_cast< HBondNode * >( hb_graph.get_node( ii ) );
 		if ( skip_nodes_with_no_edges && al_node->num_edges() == 0 ) {
 			continue;
 		}
@@ -313,7 +313,7 @@ void determine_atom_level_node_info_for_all_nodes(
 }
 
 void determine_atom_level_node_info(
-	AtomLevelHBondNode & al_node,
+	HBondNode & al_node,
 	rotamer_set::RotamerSets const & rotamer_sets,
 	utility::vector1< bool > const & include_these_resids,
 	bool include_backbone /*= false*/
@@ -366,14 +366,14 @@ void determine_atom_level_node_info(
 	}
 
 	if ( false ) { //TODO bridging waters
-		//LKAtomLevelHBondNode * lkal_node = static_cast< LKAtomLevelHBondNode * >( al_node );
+		//LKHBondNode * lkal_node = static_cast< LKHBondNode * >( al_node );
 	}
 }
 
 
 
 void find_satisfying_interactions_with_background(
-	AtomLevelHBondNode & node,
+	HBondNode & node,
 	rotamer_set::RotamerSets const & rotamer_sets,
 	utility::graph::Graph const & packer_neighbor_graph,
 	pose::Pose const & poly_ala_pose,
@@ -427,7 +427,7 @@ void find_satisfying_interactions_with_background(
 	}// for all hbonds
 }
 
-void delete_edges_with_degree_zero( scoring::hbonds::graph::AtomLevelHBondGraph & hb_graph ){
+void delete_edges_with_degree_zero( scoring::hbonds::graph::HBondGraph & hb_graph ){
 	std::list< utility::graph::LowMemEdge * > edges_to_delete;
 
 	for ( utility::graph::LowMemEdgeListIter it = hb_graph.edge_list_begin(), end = hb_graph.edge_list_end();
@@ -446,14 +446,14 @@ void delete_edges_with_degree_zero( scoring::hbonds::graph::AtomLevelHBondGraph 
 }
 
 
-/// @brief Construct an AtomLevelHBondGraph from a partial rotsets (like you might see during packing)
+/// @brief Construct an HBondGraph from a partial rotsets (like you might see during packing)
 /// @detail BB-BB hbonds are only included for the first residue. This means that prolines are not
 ///         handled correctly. If proline is the first resdiue at a position and other residues
 ///         are being packed at that position, any hbonds to the other Ns will not be reported.
 ///   If one wishes to have BB-BB hbonds for all pairs, enable all 4 hbond terms for
 ///   scorefxn_sc and leave scorefxn_bb as a nullptr (or a blank scorefxn)
-///   If you pose is symmetric, this internally desymmetrizes it and returns all hbonds
-scoring::hbonds::graph::AtomLevelHBondGraphOP
+///   If your pose is symmetric, this internally desymmetrizes it and returns all hbonds
+scoring::hbonds::graph::HBondGraphOP
 hbond_graph_from_partial_rotsets(
 	pose::Pose const & pose_in,
 	pack::rotamer_set::RotamerSets const & original_rotsets,
@@ -502,7 +502,7 @@ hbond_graph_from_partial_rotsets(
 	// Blank packer task that says we're going to pack every position
 	pack::task::PackerTaskOP task = pack::task::TaskFactory::create_packer_task( pose_sc );
 
-	// Our internal rotsets that the AtomLevelHBondGraph needs
+	// Our internal rotsets that the HBondGraph needs
 	pack::rotamer_set::RotamerSetsOP rotsets( new pack::rotamer_set::RotamerSets() );
 	rotsets->set_task( task );
 
@@ -527,11 +527,11 @@ hbond_graph_from_partial_rotsets(
 		// We need to make a new rotset in either case
 		//  Either because there was no rotset for this position
 		//  Or because we'll confuse the scorefunction machinery if we don't make a new one
-		pack::rotamer_set::RotamerSetOP rotset( new pack::rotamer_set::RotamerSet_() );
+		pack::rotamer_set::RotamerSetOP rotset = utility::pointer::make_shared< pack::rotamer_set::RotamerSet_ >();
 		rotset->set_resid( resnum );
 
 		// The bb rotset
-		pack::rotamer_set::RotamerSetOP bb_rotset( new pack::rotamer_set::RotamerSet_() );
+		pack::rotamer_set::RotamerSetOP bb_rotset = utility::pointer::make_shared< pack::rotamer_set::RotamerSet_ >();
 		bb_rotset->set_resid( resnum );
 
 		// This used to be so pretty before symmetry...
@@ -584,9 +584,9 @@ hbond_graph_from_partial_rotsets(
 	rotsets->update_offset_data();
 	bb_rotsets->update_offset_data();
 
-	// Use some of the HBNet machinery to load the AtomLevelHBondGraph for interactions involving sc
-	scoring::hbonds::graph::AtomLevelHBondGraphOP hb_graph;
-	hb_graph = pack::hbonds::create_init_and_create_edges_for_atom_level_hbond_graph(
+	// Use some of the HBNet machinery to load the HBondGraph for interactions involving sc
+	scoring::hbonds::graph::HBondGraphOP hb_graph;
+	hb_graph = pack::hbonds::create_init_and_create_edges_for_hbond_graph(
 		rotsets,    // our temporary rotsets
 		* scorefxn_sc, pose_sc,
 		minimum_hb_cut, // allow all hbonds during interation graph generation
@@ -597,9 +597,9 @@ hbond_graph_from_partial_rotsets(
 
 	if ( separate_bb ) {
 
-		// Use some of the HBNet machinery to load the AtomLevelHBondGraph for bb_bb only
-		scoring::hbonds::graph::AtomLevelHBondGraphOP bb_hb_graph;
-		bb_hb_graph = pack::hbonds::create_init_and_create_edges_for_atom_level_hbond_graph(
+		// Use some of the HBNet machinery to load the HBondGraph for bb_bb only
+		scoring::hbonds::graph::HBondGraphOP bb_hb_graph;
+		bb_hb_graph = pack::hbonds::create_init_and_create_edges_for_hbond_graph(
 			bb_rotsets,    // our temporary rotsets
 			* scorefxn_bb, pose_bb,
 			minimum_hb_cut, // allow all hbonds during interation graph generation
@@ -615,9 +615,6 @@ hbond_graph_from_partial_rotsets(
 
 	return hb_graph;
 }
-
-
-
 
 
 } //hbonds

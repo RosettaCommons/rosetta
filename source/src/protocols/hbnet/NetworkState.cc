@@ -17,8 +17,8 @@ namespace protocols {
 namespace hbnet {
 
 NetworkState::NetworkState(
-	core::scoring::hbonds::graph::AtomLevelHBondEdge const * monte_carlo_seed,
-	core::scoring::hbonds::graph::AtomLevelHBondGraphOP const & hbond_graph
+	core::scoring::hbonds::graph::HBondEdge const * monte_carlo_seed,
+	core::scoring::hbonds::graph::HBondGraphOP const & hbond_graph
 ) :
 	nodes_ ( 0 ),
 	edges_ ( 0 ),
@@ -32,12 +32,12 @@ NetworkState::NetworkState(
 
 	edges_.push_back( monte_carlo_seed_ );
 
-	core::scoring::hbonds::graph::AtomLevelHBondNode const * const first_node =
+	core::scoring::hbonds::graph::HBondNode const * const first_node =
 		hbond_graph->get_node( monte_carlo_seed_->get_first_node_ind() );
 	nodes_.push_back( first_node );
 	add_polar_atoms( first_node );
 
-	core::scoring::hbonds::graph::AtomLevelHBondNode const * const second_node =
+	core::scoring::hbonds::graph::HBondNode const * const second_node =
 		hbond_graph->get_node( monte_carlo_seed_->get_second_node_ind() );
 	//in the case of symmetry, this might evaluate to false:
 	if ( monte_carlo_seed_->get_first_node_ind() != monte_carlo_seed_->get_second_node_ind() ) {
@@ -57,23 +57,23 @@ NetworkState::NetworkState(
 
 		//Remove hbonding atoms from vector of unsats:
 		if ( first_node_is_donor ) {
-			AtomLevelHBondNode::remove_atom_info_from_vec_stable( get_unsats_for_mres( mres2 )->second, local_atom_id_A );
+			HBondNode::remove_atom_info_from_vec_stable( get_unsats_for_mres( mres2 )->second, local_atom_id_A );
 
 			utility::vector1< AtomInfo > & donor_atom_vec = get_unsats_for_mres( mres1 )->second;
-			AtomLevelHBondNode::remove_atom_info_from_vec_stable( donor_atom_vec, local_atom_id_D );
-			AtomLevelHBondNode::remove_atom_info_from_vec_stable( donor_atom_vec, local_atom_id_H );
+			HBondNode::remove_atom_info_from_vec_stable( donor_atom_vec, local_atom_id_D );
+			HBondNode::remove_atom_info_from_vec_stable( donor_atom_vec, local_atom_id_H );
 		} else {
-			AtomLevelHBondNode::remove_atom_info_from_vec_stable( get_unsats_for_mres( mres1 )->second, local_atom_id_A );
+			HBondNode::remove_atom_info_from_vec_stable( get_unsats_for_mres( mres1 )->second, local_atom_id_A );
 
 			utility::vector1< AtomInfo > & donor_atom_vec = get_unsats_for_mres( mres2 )->second;
-			AtomLevelHBondNode::remove_atom_info_from_vec_stable( donor_atom_vec, local_atom_id_D );
-			AtomLevelHBondNode::remove_atom_info_from_vec_stable( donor_atom_vec, local_atom_id_H );
+			HBondNode::remove_atom_info_from_vec_stable( donor_atom_vec, local_atom_id_D );
+			HBondNode::remove_atom_info_from_vec_stable( donor_atom_vec, local_atom_id_H );
 		}
 	}
 }
 
 void NetworkState::add_polar_atoms(
-	core::scoring::hbonds::graph::AtomLevelHBondNode const * node
+	core::scoring::hbonds::graph::HBondNode const * node
 ){
 	auto const & atoms_to_copy = node->polar_sc_atoms_not_satisfied_by_background();
 	core::Size const mres = node->moltenres();

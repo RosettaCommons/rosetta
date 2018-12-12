@@ -25,7 +25,7 @@
 
 #include <core/types.hh>
 //#include <core/graph/Graph.hh>
-#include <core/scoring/hbonds/graph/AtomLevelHBondGraph.hh>
+#include <core/scoring/hbonds/graph/HBondGraph.hh>
 #include <core/scoring/hbonds/graph/AtomInfo.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/Pose.hh>
@@ -95,8 +95,8 @@ inline bool contains( utility::vector1< core::scoring::hbonds::graph::AtomInfo >
 
 inline bool edge_satisfies_heavy_unsat_for_node(
 	NetworkState const & current_state,
-	core::scoring::hbonds::graph::AtomLevelHBondNode const * node,
-	core::scoring::hbonds::graph::AtomLevelHBondEdge const * edge
+	core::scoring::hbonds::graph::HBondNode const * node,
+	core::scoring::hbonds::graph::HBondEdge const * edge
 ){
 	utility::vector1< core::scoring::hbonds::graph::AtomInfo > const & atom_vec =
 		current_state.get_unsats_for_mres( node->moltenres() )->second;

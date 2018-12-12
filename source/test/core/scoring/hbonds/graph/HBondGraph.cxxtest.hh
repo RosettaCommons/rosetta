@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file   core/scoring/hbonds/graph/HBondGraph.cxxtest.hh
-/// @brief  test suite for HBondGraph, AtomLevelHBondGraph, AtomInfo
+/// @brief  test suite for HBondGraph, HBondGraph, AtomInfo
 /// @author Jack Maguire, jackmaguire1444@gmail.com
 
 // Test headers
@@ -34,7 +34,7 @@
 #include <core/scoring/hbonds/HBondDatabase.hh>
 #include <core/scoring/TenANeighborGraph.hh>
 
-#include <core/scoring/hbonds/graph/AtomLevelHBondGraph.hh>
+#include <core/scoring/hbonds/graph/HBondGraph.hh>
 #include <core/scoring/hbonds/graph/AtomInfo.hh>
 
 #include <core/types.hh>
@@ -74,12 +74,12 @@ public:
 		rotsets.build_rotamers( testPose, *sfxn, packer_neighbor_graph );
 		core::Size const nrot = rotsets.nrotamers();
 
-		core::scoring::hbonds::graph::AtomLevelHBondGraph alhbg( nrot );
+		core::scoring::hbonds::graph::HBondGraph alhbg( nrot );
 		core::pack::hbonds::init_node_info( alhbg, rotsets );
 		TS_ASSERT_EQUALS( alhbg.num_nodes(), nrot );
 
 		for ( core::Size rot = 1; rot <= nrot; ++rot ) {
-			core::scoring::hbonds::graph::AtomLevelHBondNode const * alhbg_node = alhbg.get_node( rot );
+			core::scoring::hbonds::graph::HBondNode const * alhbg_node = alhbg.get_node( rot );
 			TS_ASSERT( alhbg_node );
 			TS_ASSERT_EQUALS( alhbg_node->global_rotamer_id(), rot );
 			TS_ASSERT_EQUALS( alhbg_node->moltenres(), rotsets.moltenres_for_rotamer( rot ) );

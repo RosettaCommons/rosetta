@@ -99,7 +99,7 @@ sources = {
 	],
 	"core/pack/hbonds": [
 		"HBondGraph_util",
-		"MCHBNetInteractionGraph",
+		"HBondGraphInitializerIG",
 	],
 	"core/pack/interaction_graph": [
 		"AnnealableGraphBase",
