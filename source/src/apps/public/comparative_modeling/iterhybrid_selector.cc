@@ -644,7 +644,7 @@ int main( int argc, char * argv [] )
 
 			utility::vector1< core::Real > nquota = get_quota_per_silent( nsilent, nout );
 
-			core::Size keep_topn = nout*2>100 ? 100 : nout*2; // take twice bigger of noutput or 100 whichever bigger
+			core::Size keep_topn = nout*2>100 ? nout*2 : 100; // take twice bigger of noutput or 100 whichever bigger
 			for ( core::Size isilent = 1; isilent <= nsilent; ++isilent ) {
 				utility::vector1< core::Real > scores;
 				library_add = read_silent_input_as_library( option[ in::file::silent ](isilent), pose0, scores,
