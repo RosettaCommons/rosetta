@@ -11,9 +11,6 @@
 /// @brief   Mutate a residue, then do range relax for a membrane protein
 /// @author  JKLeman (julia.koehler1982@gmail.com)
 
-#ifndef INCLUDED_protocols_membrane_MPMutateRelaxMover_cc
-#define INCLUDED_protocols_membrane_MPMutateRelaxMover_cc
-
 // Unit Headers
 #include <protocols/relax/membrane/MPMutateRelaxMover.hh>
 #include <protocols/relax/membrane/MPMutateRelaxMoverCreator.hh>
@@ -29,6 +26,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/pack_rotamers.hh>
+#include <core/chemical/AA.hh>
 
 // Package Headers
 #include <core/pose/Pose.hh>
@@ -154,6 +152,7 @@ MPMutateRelaxMover::get_name() const {
 /// @brief Mutate residue and then range relax the membrane protein
 void MPMutateRelaxMover::apply( core::pose::Pose & pose ) {
 
+	using namespace basic::options;
 	using namespace utility;
 	using namespace core::pose;
 	using namespace core::scoring;
@@ -176,9 +175,7 @@ void MPMutateRelaxMover::apply( core::pose::Pose & pose ) {
 	// WHAT IS HAPPENING HERE:
 	// I am dumping the poses outside of JD2
 	// Why would I do that?
-	// because otherwise I would need to put the read_mutant_file function into
-	//   the pilot app (maybe people want to use it?) and I want the mutant to
-	//   be part of the output filename
+	// because I want the mutant to be part of the output filename
 
 	// make a deepcopy of the pose to start from
 	Pose original_pose = Pose( pose );
@@ -186,6 +183,15 @@ void MPMutateRelaxMover::apply( core::pose::Pose & pose ) {
 
 	// construct counter
 	Size counter(0);
+
+	// for debugging, iterating over constructs and mutants
+	for ( core::Size c = 1; c <= wt_res_.size(); ++c ) {
+		TR.Debug << "construct " << c << std::endl;
+
+		for ( core::Size m = 1; m <= wt_res_[c].size(); ++m ) {
+			TR.Debug << "mutant " << m << " wt_res " << wt_res_[c][m] << " resid " << resn_[c][m] << " mut_res " << mut_res_[c][m] << std::endl;
+		}
+	}
 
 	// go through each construct (i.e. outer vector)
 	for ( core::Size c = 1; c <= wt_res_.size(); ++c ) {
@@ -238,14 +244,14 @@ void MPMutateRelaxMover::apply( core::pose::Pose & pose ) {
 			while ( a <= nstruct_ ) {
 				output = output_filename( mutations, a );
 				if ( utility::file::file_exists( output ) ) {
-					continue;
+					++a;
 				} else {
 					break;
 				}
-				++a;
 			}
 
 			// dump pose
+			output = output_filename( mutations, a );
 			working_pose.dump_scored_pdb( output, *sfxn_ );
 
 			// increment counter
@@ -427,27 +433,41 @@ void MPMutateRelaxMover::get_repack_residues( Pose & pose ) {
 /// @brief Finalize setup
 void MPMutateRelaxMover::finalize_setup( Pose & pose ){
 
+	using namespace utility;
+	using namespace utility::io;
 	using namespace basic::options;
+	using namespace protocols::relax::membrane;
 
-	// get mutation
+	// one line per input file: several mutants within a single construct
+	utility::vector1< std::string > mutations;
+
+	// mutants given in command line
+	// input format A163F in pose numbering, can give multiple mutations
+	// split multiple mutations by whitespace
 	if ( option[ OptionKeys::mp::mutate_relax::mutation ].user() ) {
-
-		// input format A163F
-		std::string mutation = option[ OptionKeys::mp::mutate_relax::mutation ]();
-
-		TR << "Looking at mutation " << mutation << std::endl;
-
-		// add string to private data
-		add_mutant_to_vectors( mutation, pose );
+		utility::vector1< std::string > muts = option[ OptionKeys::mp::mutate_relax::mutation ]();
+		mutations.push_back( join( muts, " " ) );
+	}
+	// mutants given in mutant file
+	if ( option[ OptionKeys::mp::mutate_relax::mutant_file ].user() ) {
+		//  mutations = read_mutant_file_constructs( mutant_file_ );
+		mutations = get_lines_from_file_data( mutant_file_ );
 	}
 
-	// read mutant file
-	if ( mutant_file_.size() > 0 ) {
-		read_mutant_file( pose );
+	TR << "Looking at mutations " << mutations << std::endl;
+
+	// loop over constructs
+	for ( core::Size i = 1; i <= mutations.size(); ++i ) {
+
+		// add mutants in that line to vectors
+		add_mutant_to_vectors( pose, mutations[i], wt_res_, resn_, mut_res_ );
+
 	}
 
 	// error checking
-	check_mutant_file( pose );
+	if ( ! check_mutants_ok( pose, wt_res_, resn_ ) ) {
+		utility_exit_with_message( "Residue identity in input file doesn't match the pose!" );
+	}
 
 	// call AddMembraneMover
 	if ( ! pose.conformation().is_membrane() ) {
@@ -468,8 +488,10 @@ void MPMutateRelaxMover::finalize_setup( Pose & pose ){
 /// @brief Make mutations, returns string of output file
 std::string MPMutateRelaxMover::make_mutations( Pose & pose, core::Size num_construct ) {
 
-	using namespace protocols::simple_moves;
 	using namespace utility;
+	using namespace core::chemical;
+	using namespace protocols::simple_moves;
+	using namespace protocols::relax::membrane;
 
 	// mutations
 	std::string mutations = "";
@@ -479,236 +501,18 @@ std::string MPMutateRelaxMover::make_mutations( Pose & pose, core::Size num_cons
 	for ( Size m = 1; m <= wt_res_[ c ].size(); ++m ) {
 
 		// mutate residue
-		TR << "Mutating residue " << wt_res_[c][m] << resn_[c][m] << " to " << new_res_[c][m] << std::endl;
-		MutateResidueOP mutate( new MutateResidue( resn_[c][m], one2three( new_res_[c][m] ) ) );
+		TR << "Mutating residue " << wt_res_[c][m] << resn_[c][m] << " to " << mut_res_[c][m] << std::endl;
+		std::string aa3 = name_from_aa( aa_from_oneletter_code( mut_res_[c][m] ) );
+		MutateResidueOP mutate( new MutateResidue( resn_[c][m], aa3 ) );
 		mutate->apply( pose );
 
 		// get mutation as output tag
-		mutations += "_" + wt_res_[c][m] + to_string( resn_[c][m] ) + new_res_[c][m];
+		mutations += "_" + to_string( wt_res_[c][m] ) + to_string( resn_[c][m] ) + to_string( mut_res_[c][m] );
 
 	}// iterate over mutations in construct
 
 	return mutations;
 } // make mutations
-
-////////////////////////////////////////////////////////////////////////////////
-
-/// @brief Initialize from commandline
-void MPMutateRelaxMover::read_mutant_file( core::pose::Pose & pose ) {
-
-	using namespace utility;
-	using namespace utility::io;
-	TR << "reading mutant file" << std::endl;
-
-	// get file content
-	utility::vector1< std::string > lines = get_lines_from_file_data( mutant_file_ );
-
-	// go through lines
-	for ( core::Size i = 1; i <= lines.size(); ++i ) {
-
-		// add mutants in line to private data vectors
-		add_mutant_to_vectors( lines[ i ], pose );
-	}
-
-} // read mutant file
-
-////////////////////////////////////////////////////////////////////////////////
-
-/// @brief Add mutants to private data: list of A163F into vectors
-void MPMutateRelaxMover::add_mutant_to_vectors( std::string mutations, core::pose::Pose & pose ) {
-
-	using namespace utility;
-	TR << "adding mutants to vectors" << std::endl;
-
-	// initialize line vectors
-	utility::vector1< std::string > wildtypes;
-	utility::vector1< core::Size > seqids;
-	utility::vector1< std::string > mutants;
-
-	// initialize single point variables
-	std::string wt, mut;
-	core::Size seqid;
-
-	// PDB numbering?
-	bool pdb_numbering( false );
-
-	// split string by whitespace, write output into vector
-	utility::vector1< std::string > all_mutants = split_whitespace( mutations );
-
-	// iterate over mutants
-	for ( core::Size col = 1; col <= all_mutants.size(); ++col ) {
-
-		// get single mutant
-		std::string wt_id_mut = all_mutants[ col ];
-
-		// PDB or pose numbering?
-		// PDB numbering: A_E15L, chain, underscore, wt, resn, mutant
-		// pose numbering: E15L, wt, resn, mutant
-		// if string contains underscore, then PDB numbering
-		if ( col == 1 ) {
-			if ( wt_id_mut.find( "_" ) != std::string::npos ) {
-				TR << "Mutations are in PDB numbering scheme." << std::endl;
-				pdb_numbering = true;
-			} else {
-				TR << "Mutations are in pose numbering scheme." << std::endl;
-			}
-		}
-
-		// check input file format
-		if ( ! pdb_numbering && wt_id_mut.find( "_" ) != std::string::npos ) {
-			utility_exit_with_message( "Mutations should either be in PDB numbering (A_E15L) where A is the chain, or in pose numbering (E15L) where the residues are renumbered without gaps, starting from 1. Quitting." );
-		} else if ( pdb_numbering && wt_id_mut.find( "_" ) == std::string::npos ) {
-			utility_exit_with_message( "Mutations should either be in PDB numbering (A_E15L) where A is the chain, or in pose numbering (E15L) where the residues are renumbered without gaps, starting from 1. Quitting." );
-		}
-
-		// pose numbering
-		if ( pdb_numbering == false ) {
-
-			// get wt and mutant from vector: split string by character
-			wt = wt_id_mut[ 0 ];
-			mut = wt_id_mut[ wt_id_mut.size()-1 ];
-
-			// get residue number: get each digit
-			utility::vector1< std::string > tmp;
-			for ( core::Size i = 1; i <= wt_id_mut.size()-2; ++i ) {
-				tmp.push_back( to_string( wt_id_mut[ i ] ) );
-			}
-
-			// join digits together to the residue number
-			seqid = string2Size( join( tmp, "" ) );
-		} else {
-			// PDB numbering
-
-			// get chain
-			char chain = wt_id_mut[ 0 ];
-
-			// remove the chain and the underscore from the string
-			wt_id_mut.erase( 0, 2 );
-
-			// get wt and mutant from vector: split string by character
-			wt = wt_id_mut[ 0 ];
-			mut = wt_id_mut[ wt_id_mut.size()-1 ];
-
-			// get residue number: get each digit
-			utility::vector1< std::string > tmp;
-			for ( core::Size i = 1; i <= wt_id_mut.size()-2; ++i ) {
-				tmp.push_back( to_string( wt_id_mut[ i ] ) );
-			}
-
-			// join digits together to the residue number
-			int seqid_pdb = string2int( join( tmp, "" ) );
-
-			// get pose resnumber from pdb numbering
-			seqid = pose.pdb_info()->pdb2pose( chain, seqid_pdb );
-		}
-
-		TR << "wt " << wt << ", seqid " << seqid << ", mut " << mut << std::endl;
-
-		// put all of the wt / seqid / mut info into the line vectors
-		wildtypes.push_back( wt );
-		seqids.push_back( seqid );
-		mutants.push_back( mut );
-
-	} // iterate over columns in line
-
-	// add the line to the file (or outer vector in this case)
-	wt_res_.push_back( wildtypes );
-	resn_.push_back( seqids );
-	new_res_.push_back( mutants );
-
-} // add mutants to private data
-
-////////////////////////////////////////////////////////////////////////////////
-
-/// @brief Check mutant file for errors
-/// @details If Rosetta doesn't start crying, you're good to go
-void MPMutateRelaxMover::check_mutant_file( core::pose::Pose & pose ) {
-
-	using namespace utility;
-	TR << "checking mutant file" << std::endl;
-
-	// go through outer loop
-	for ( core::Size i = 1; i <= wt_res_.size(); ++i ) {
-
-		// go through inner loop
-		for ( core::Size j = 1; j <= wt_res_[ i ].size(); ++j ) {
-
-			// check whether wt residue has the same identity in the pose
-			if ( wt_res_[ i ][ j ] != to_string( pose.residue_type( resn_[ i ][ j ] ).name1() ) ) {
-				TR << "i " << i << ", j " << j << std::endl;
-				TR << "residue identity in PDB " << to_string( pose.residue_type( j ).name1() ) << ", " << wt_res_[ i ][ j ] << std::endl;
-				utility_exit_with_message( "Residue identity in input file doesn't match the pose!" );
-			}
-
-		} // inner loop
-	} // outer loop
-} // check mutant file
-
-////////////////////////////////////////////////////////////////////////////////
-
-/// @brief Convert one to three letter code
-std::string MPMutateRelaxMover::one2three( std::string one ) {
-
-	// error checking
-	if ( one == "B" || one == "J" || one == "O" || one == "U" || one == "X" || one == "Z" ) {
-		utility_exit_with_message( "One letter code doesn't belong to any of the 20 natural amino acids!" );
-	}
-
-	// create the vectors
-	utility::vector1< std::string > olc;
-	olc.push_back( "A" );
-	olc.push_back( "C" );
-	olc.push_back( "D" );
-	olc.push_back( "E" );
-	olc.push_back( "F" );
-	olc.push_back( "G" );
-	olc.push_back( "H" );
-	olc.push_back( "I" );
-	olc.push_back( "K" );
-	olc.push_back( "L" );
-	olc.push_back( "M" );
-	olc.push_back( "N" );
-	olc.push_back( "P" );
-	olc.push_back( "Q" );
-	olc.push_back( "R" );
-	olc.push_back( "S" );
-	olc.push_back( "T" );
-	olc.push_back( "V" );
-	olc.push_back( "W" );
-	olc.push_back( "Y" );
-
-	utility::vector1< std::string > tlc;
-	tlc.push_back( "ALA" );
-	tlc.push_back( "CYS" );
-	tlc.push_back( "ASP" );
-	tlc.push_back( "GLU" );
-	tlc.push_back( "PHE" );
-	tlc.push_back( "GLY" );
-	tlc.push_back( "HIS" );
-	tlc.push_back( "ILE" );
-	tlc.push_back( "LYS" );
-	tlc.push_back( "LEU" );
-	tlc.push_back( "MET" );
-	tlc.push_back( "ASN" );
-	tlc.push_back( "PRO" );
-	tlc.push_back( "GLN" );
-	tlc.push_back( "ARG" );
-	tlc.push_back( "SER" );
-	tlc.push_back( "THR" );
-	tlc.push_back( "VAL" );
-	tlc.push_back( "TRP" );
-	tlc.push_back( "TYR" );
-
-	// do the conversion
-	for ( core::Size i = 1; i <= 20; ++i ) {
-		if ( olc[ i ] == one ) {
-			return tlc[ i ];
-		}
-	}
-
-	return "WARNING: Your mutant seems to be non-canonical. Please use a different application!";
-
-} // one to three letter code
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -753,4 +557,3 @@ std::string MPMutateRelaxMover::output_filename( std::string mutation_tag, core:
 } // membrane
 } // protocols
 
-#endif // INCLUDED_protocols_membrane_MPMutateRelaxMover_cc

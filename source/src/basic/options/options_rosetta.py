@@ -3187,7 +3187,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		#mutate relax Option group - JKLeman (julia.koehler1982@gmail.com)
 		Option_Group( 'mutate_relax',
 
-			Option( 'mutation', 'String', desc='Single mutation: Format: One-letter code / residue number / one-letter code. Example: A163F'),
+			Option( 'mutation', 'StringVector', desc='Vector of single mutations: Format: One-letter code / residue number / one-letter code. Example: A163F'),
 			Option( 'mutant_file', 'String', desc='Input file containing mutations'),
 			Option( 'nmodels', 'Integer', desc='Number of models to produce per construct. Typically between 50 and 1,000.' ),
 			Option( 'repack_mutation_only', 'Boolean', desc='Boolean - Only repack the mutated residue(s), no relax.' ),
@@ -6640,7 +6640,8 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 
 	#mutate relax Option group - JKLeman (julia.koehler1982@gmail.com)
 	Option_Group( 'mutate',
-		Option( 'mutation', 'String', desc='Single mutation: Format: One-letter code / residue number / one-letter code. Example: A163F'),
+		Option( 'mutation', 'StringVector', desc='Vector of single mutations: Format: One-letter code / residue number / one-letter code. Example: A163F'),
+		Option( 'mutant_file', 'String', desc='Input file containing mutations'),
 	),
 
 	# NonlocalAbinitio

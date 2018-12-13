@@ -14,9 +14,6 @@
 ///    large to very large proteins (tested up to 5250 residues)
 /// @author     JKLeman (julia.koehler1982@gmail.com)
 
-#ifndef INCLUDED_protocols_relax_membrane_MPRangeRelaxMover_cc
-#define INCLUDED_protocols_relax_membrane_MPRangeRelaxMover_cc
-
 // Unit Headers
 #include <protocols/relax/membrane/MPRangeRelaxMover.hh>
 //#include <protocols/membrane/MPRangeRelaxMoverCreator.hh>
@@ -345,5 +342,3 @@ void MPRangeRelaxMover::init_from_cmd() {
 } // membrane
 } // relax
 } // protocols
-
-#endif // INCLUDED_protocols_relax_membrane_MPRangeRelaxMover_cc

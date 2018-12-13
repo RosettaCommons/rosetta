@@ -190,6 +190,7 @@ sources = {
 		"MPFastRelaxMover",
 		"MPMutateRelaxMover",
 		"MPRangeRelaxMover",
+		"util",
 	],
 	"protocols/relax/loop_closure": [
 		"FASelectSlidingWindowLoopClosure",
