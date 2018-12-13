@@ -38,12 +38,12 @@ namespace simple_filters {
 ///@brief Enum that tells us how to interpret the cutoff set.
 enum comparison_type{
 	eq = 1,
-	ne = 2,
-	lt = 3,
-	gt = 4,
-	lt_or_eq = 5,
-	gt_or_eq = 6,
-	bogus = 7,
+	ne,
+	lt,
+	gt,
+	lt_or_eq,
+	gt_or_eq,
+	bogus,
 	comparison_type_total = bogus
 
 };

@@ -175,7 +175,7 @@ get_metrics_from_datamap_and_subtags(
 				metrics.push_back( metric );
 				TR << "Added simple metric " << metric->name() << "." << std::endl;
 			} else {
-				throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "SimpleMetric " + gen + " not found in basic::datacache::DataMap.");
+				throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "SimpleMetric :" + gen + ": not found in basic::datacache::DataMap.");
 			}
 		}
 	}
@@ -242,10 +242,10 @@ add_per_residue_simple_metric_schema( utility::tag::XMLSchemaComplexTypeGenerato
 
 void
 throw_sm_override_error( std::string const & out_tag, std::string const & metric_name){
-	std::string const msg = "\n\nSimpleMetric error! Data of type "+ metric_name+ " with data output tag " + out_tag + " already exists! \n"
-		"Please use the prefix/suffix settings or set a custom_type for the metric.  See the documentation for more:\n"
-		"https://www.rosettacommons.org/docs/latest/scripting_documentation/RosettaScripts/SimpleMetrics/SimpleMetrics#effective-use-of-simplemetrics\n"
-		"You may also set the override option to true in RunSimpleMetrics mover if this was intentional.\n\n";
+	std::string const msg = "\n\nSimpleMetric error! \n The data of type "+ metric_name+ " with data output tag " + out_tag + " already exists! \n"
+		"Please use the prefix/suffix settings or set a custom_type for the metric.\n  See the documentation for more:\n"
+		"  https://www.rosettacommons.org/docs/latest/scripting_documentation/RosettaScripts/SimpleMetrics/SimpleMetrics#effective-use-of-simplemetrics.\n"
+		" Note: If this was intentional, please set the override option to true in RunSimpleMetricsMover\n\n";
 
 	throw CREATE_EXCEPTION(utility::excn::Exception,  msg);
 }

@@ -158,25 +158,43 @@ DensityFitResidueSelector::parse_my_tag(
 		if ( den_fit_metric_->name_static() != "PerResidueDensityFitMetric" ) {
 			utility_exit_with_status("DensityFitResidueSelector requires metric type of PerResidueDensityFitMetric");
 		}
-	} else {
-		if ( tag->hasOption("mixed_sliding_window") ) {
-			den_fit_metric_->set_mixed_sliding_window( tag->getOption< bool >("mixed_sliding_window") );
+
+		//Allow setting of these options here.  Cached calculate will take care of it.
+		if ( tag->hasOption("mixed_sliding_window") && use_cache_ ) {
+			TR.Warning << "Overriding mixed_sliding_window in passed density fit metric.  If cache is found, this will not be reflected. Please set the option in the PerResidueDensityFitMetric"<< std::endl;
 		}
-		if ( tag->hasOption("sliding_window_size") ) {
-			den_fit_metric_->set_sliding_window_size( tag->getOption< Size >("sliding_window_size") );
+		if ( tag->hasOption("sliding_window_size") && use_cache_ ) {
+			TR.Warning << "Overriding sliding_window_size in passed density fit metric.  If cache is found, this will not be reflected. Please set the option in the PerResidueDensityFitMetric"<< std::endl;
 		}
-		if ( tag->hasOption("match_res") ) {
-			den_fit_metric_->set_match_mode( tag->getOption< bool >("match_res") );
+		if ( tag->hasOption("match_res") && use_cache_ ) {
+			TR.Warning << "Overriding match_res in passed density fit metric.  If cache is found, this will not be reflected. Please set the option in the PerResidueDensityFitMetric"<< std::endl;
 		}
-		if ( tag->hasOption("use_selector_as_zscore_mask") ) {
-			den_fit_metric_->set_use_selector_as_zscore_mask( tag->getOption< bool >("use_selector_as_zscore_mask"));
+		if ( tag->hasOption("use_selector_as_zscore_mask") && use_cache_ ) {
+			TR.Warning << "Overriding use_selector_as_zscore_mask in passed density fit metric.  If cache is found, this will not be reflected. Please set the option in the PerResidueDensityFitMetric"<< std::endl;
 		}
 
 		if ( tag->hasOption("residue_selector") ) {
-			den_fit_metric_->set_residue_selector(parse_residue_selector( tag, datamap ));
+			TR.Warning << "Overriding residue_selector in passed density fit metric.  If cache is found, this will not be reflected. Please set the residue selector in the PerResidueDensityFitMetric"<< std::endl;
 		}
 	}
 
+	//Allow setting of these options here.  Cached calculate will take care of it.
+	if ( tag->hasOption("mixed_sliding_window") ) {
+		den_fit_metric_->set_mixed_sliding_window( tag->getOption< bool >("mixed_sliding_window") );
+	}
+	if ( tag->hasOption("sliding_window_size") ) {
+		den_fit_metric_->set_sliding_window_size( tag->getOption< Size >("sliding_window_size") );
+	}
+	if ( tag->hasOption("match_res") ) {
+		den_fit_metric_->set_match_mode( tag->getOption< bool >("match_res") );
+	}
+	if ( tag->hasOption("use_selector_as_zscore_mask") ) {
+		den_fit_metric_->set_use_selector_as_zscore_mask( tag->getOption< bool >("use_selector_as_zscore_mask"));
+	}
+
+	if ( tag->hasOption("residue_selector") ) {
+		den_fit_metric_->set_residue_selector(parse_residue_selector( tag, datamap ));
+	}
 
 }
 
@@ -219,7 +237,14 @@ void DensityFitResidueSelector::provide_xml_schema( utility::tag::XMLSchemaDefin
 		+ XMLSchemaAttribute::attribute_w_default("fail_on_missing_cache", xsct_rosetta_bool, "If we are using cached data, should we fail on no cache?", "false");
 
 	core::select::residue_selector::attributes_for_parse_residue_selector_default_option_name(attributes, "A Residue selector mask.  Used to only compute Zscore among a set of residues.  Useful for protein vs glycan density.  Since match_res is NOT a zscore, the selector acts as an AND selector, so we only compute the correlations on this set. " );
-	std::string documentation = "Select residues that have a good electron density fit. (Or bad fit using the invert option). Uses internal density tools to do so.  Numbers and cutoffs match well with Coot's density fit analysis tool. Zscore uses weighted sum of density, density-compared-to-neighbors, rama (where applicable) and cart_bonded to compute)  Correlation is same values used to calculate density scores.  Zscore reference is here: eLife 2016, Dimaio";
+
+	std::string documentation = "Select residues that have a good electron density fit. (Or bad fit using the invert option). Uses internal density tools to do so. \n"
+		" Numbers and cutoffs match well with Coot's density fit analysis tool.\n"
+		" Zscore uses weighted sum of density, density-compared-to-neighbors, rama (where applicable) and cart_bonded to compute)  \n"
+		"Correlation is same values used to calculate density scores.  Zscore: eLife 2016, Dimaio"
+		"\n"
+		"TIPS:\n"
+		" In order to do native comparisons, run the PerResidueDensityFit on the input (top of RS), and then use this selector on that.";
 
 	xsd_type_definition_w_attributes( xsd, class_name(), documentation, attributes );
 }

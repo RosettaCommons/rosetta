@@ -32,6 +32,7 @@
 #include <core/simple_metrics/PerResidueStringMetric.hh>
 
 #include <core/simple_metrics/test_classes.hh>
+#include <core/simple_metrics/test_classes.fwd.hh>
 
 #include <core/simple_metrics/metrics/SelectedResiduesMetric.hh>
 #include <core/simple_metrics/metrics/SelectedResiduesPyMOLMetric.hh>
@@ -39,9 +40,15 @@
 #include <core/simple_metrics/metrics/SequenceMetric.hh>
 #include <core/simple_metrics/metrics/SecondaryStructureMetric.hh>
 #include <core/simple_metrics/metrics/SasaMetric.hh>
+#include <core/simple_metrics/metrics/ResidueSummaryMetric.hh>
+#include <core/simple_metrics/metrics/InteractionEnergyMetric.hh>
 #include <core/simple_metrics/per_residue_metrics/PerResidueGlycanLayerMetric.hh>
+#include <core/simple_metrics/per_residue_metrics/PerResidueClashMetric.hh>
 #include <core/select/residue_selector/GlycanResidueSelector.hh>
+#include <core/select/residue_selector/NotResidueSelector.hh>
 #include <core/conformation/carbohydrates/GlycanTreeSet.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
 
 // Core Headers
 #include <core/pose/Pose.hh>
@@ -69,6 +76,8 @@ using namespace core::pose;
 using namespace protocols::antibody::residue_selector;
 using namespace protocols::antibody;
 using namespace core::scoring;
+using namespace core::select;
+using namespace core::select::residue_selector;
 
 class SimpleMetricTests : public CxxTest::TestSuite {
 	//Define Variables
@@ -81,7 +90,6 @@ public:
 	void setUp(){
 		core_init();
 		core_init_with_additional_options( "-include_sugars" );
-		pose_from_file( glycan_pose, "core/chemical/carbohydrates/gp120_2glycans_man5.pdb" , core::import_pose::PDB_file);
 	}
 
 	void test_string_metric() {
@@ -332,6 +340,7 @@ public:
 	}
 
 	void test_glycan_layer_metric() {
+		pose_from_file( glycan_pose, "core/chemical/carbohydrates/gp120_2glycans_man5.pdb" , core::import_pose::PDB_file);
 		PerResidueGlycanLayerMetric layer_metric = PerResidueGlycanLayerMetric();
 		std::map< core::Size, core::Real > result = layer_metric.calculate(glycan_pose);
 
@@ -339,6 +348,113 @@ public:
 			core::Size layer = static_cast<core::Size>(pair.second);
 			TS_ASSERT(layer == glycan_pose.glycan_tree_set()->get_distance_to_start(pair.first));
 		}
+	}
+
+	void test_residue_summary_metric() {
+		using namespace core::select::residue_selector;
+
+
+		TestPerResidueRealMetricOP tester = TestPerResidueRealMetricOP( new TestPerResidueRealMetric());
+		ResidueSummaryMetric summary_metric = ResidueSummaryMetric(tester);
+
+		//std::map< core::Size, core::Real > values = tester.calculate( pose );
+		//TS_ASSERT(names.size() == 1);
+		//TS_ASSERT( values.at(1) == 1.0);
+		//TS_ASSERT( values.at(2) == 2.0);
+
+
+		summary_metric.set_action( sum );
+		TS_ASSERT_DELTA( summary_metric.calculate(pose), 3.0, .01);
+
+		summary_metric.set_action( mean );
+		TS_ASSERT_DELTA( summary_metric.calculate(pose), 1.5, .01);
+
+		summary_metric.set_action( n_res_eq);
+		summary_metric.set_action_value( 1.0 );
+		TS_ASSERT( summary_metric.calculate(pose) == 1.0 );
+
+		summary_metric.set_action( n_res_ne);
+		TS_ASSERT( summary_metric.calculate(pose) == 1.0 );
+
+		summary_metric.set_action( n_res_gt );
+		summary_metric.set_action_value( 0.0 );
+		TS_ASSERT( summary_metric.calculate(pose) == 2.0 );
+
+		summary_metric.set_action( n_res_gt_or_eq );
+		summary_metric.set_action_value( 1.0 );
+		TS_ASSERT( summary_metric.calculate(pose ) == 2.0 );
+
+		summary_metric.set_action( n_res_lt_or_eq );
+		summary_metric.set_action_value( 2.0 );
+		TS_ASSERT( summary_metric.calculate(pose ) == 2.0);
+
+		summary_metric.set_action( n_res_lt );
+		TS_ASSERT( summary_metric.calculate(pose) == 1.0 );
+
+
+		/// Test Caching
+		tester->apply(ab_pose);
+		summary_metric.set_use_cached_data(true);
+		summary_metric.set_fail_on_missing_cache(true);
+
+		TS_ASSERT( summary_metric.calculate(ab_pose) == 1.0 );
+
+
+	}
+
+	void test_interaction_energy_metric(){
+		core::import_pose::pose_from_file(ab_pose, "core/simple_metrics/2r0l_1_1.pdb", core::import_pose::PDB_file);
+		ScoreFunctionOP default_scorefxn = get_score_function();
+		default_scorefxn->score(ab_pose);
+		AntibodyInfoOP ab_info =  AntibodyInfoOP( new AntibodyInfo(ab_pose, AHO_Scheme, North));
+		CDRResidueSelectorOP cdr_selector = CDRResidueSelectorOP( new CDRResidueSelector( ab_info));
+		cdr_selector->set_cdr( l3 );
+
+		NotResidueSelectorOP not_L3 = NotResidueSelectorOP( new NotResidueSelector( cdr_selector));
+
+		InteractionEnergyMetric metric = InteractionEnergyMetric( cdr_selector, not_L3 );
+		TS_ASSERT( metric.calculate(ab_pose) < 0);  //In case of score function changes, we just check this is indeed NOT zero
+
+
+		ScoreFunctionOP scorefxn = ScoreFunctionOP( new ScoreFunction());
+		scorefxn->set_weight(fa_rep, 1.0);
+		scorefxn->score(ab_pose);
+
+		utility::vector1< ScoreType > types;
+		types.push_back(fa_rep);
+
+		metric.set_include_only_scoretypes( types );
+		TS_ASSERT( metric.calculate(ab_pose) >= 12.0);
+
+
+	}
+
+	void test_per_residue_clash_metric(){
+		core::import_pose::pose_from_file(glycan_pose, "core/simple_metrics/two_glycans.pdb", core::import_pose::PDB_file);
+		GlycanResidueSelectorOP glycan_selector = GlycanResidueSelectorOP( new GlycanResidueSelector(148, true /*include_root*/));
+
+		ScoreFunctionOP default_scorefxn = get_score_function();
+		default_scorefxn->score(glycan_pose);
+
+		NotResidueSelectorOP not_glycans = NotResidueSelectorOP( new NotResidueSelector( glycan_selector));
+
+		PerResidueClashMetricOP metric = PerResidueClashMetricOP(new PerResidueClashMetric(glycan_selector, not_glycans));
+		metric->set_use_soft_clash(true);
+		metric->set_use_hydrogens(false);
+		metric->set_soft_dampening(.33);
+
+		ResidueSummaryMetric summary_metric = ResidueSummaryMetric( metric );
+		summary_metric.set_action(n_res_gt);
+		summary_metric.set_action_value(0.0);
+
+		//No clashes
+		TS_ASSERT(summary_metric.calculate(glycan_pose) == 0);
+
+		metric->set_secondary_residue_selector(glycan_selector);
+		summary_metric.set_metric(metric); //Not needed - but just to make sure.
+		TS_ASSERT_DELTA(summary_metric.calculate(glycan_pose), 7.0, .01);
+
+
 	}
 
 	void tearDown(){

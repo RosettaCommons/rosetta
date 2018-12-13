@@ -21,6 +21,10 @@ using core::simple_metrics::SimpleMetricRegistrator;
 
 static SimpleMetricRegistrator< core::simple_metrics::metrics::DihedralDistanceMetricCreator > reg_DihedralDistanceMetricCreator;
 
+static SimpleMetricRegistrator< core::simple_metrics::metrics::InteractionEnergyMetricCreator > reg_InteractionEnergyMetricCreator;
+
+static SimpleMetricRegistrator< core::simple_metrics::metrics::ResidueSummaryMetricCreator > reg_ResidueSummaryMetricCreator;
+
 static SimpleMetricRegistrator< core::simple_metrics::metrics::RMSDMetricCreator             > reg_RMSDMetricCreator;
 
 static SimpleMetricRegistrator< core::simple_metrics::metrics::SasaMetricCreator                   > reg_SasaMetricCreator;
@@ -47,6 +51,8 @@ static SimpleMetricRegistrator< core::simple_metrics::composite_metrics::Composi
 static SimpleMetricRegistrator< core::simple_metrics::composite_metrics::ProtocolSettingsMetricCreator  > reg_ProtocolSettingsMetricCreator;
 
 /////////// Per Residue ////////////
+static SimpleMetricRegistrator< core::simple_metrics::per_residue_metrics::PerResidueClashMetricCreator > reg_PerResidueClashMetricCreator;
+
 static SimpleMetricRegistrator< core::simple_metrics::per_residue_metrics::PerResidueDensityFitMetricCreator > reg_PerResidueDensityFitMetricCreator;
 
 static SimpleMetricRegistrator< core::simple_metrics::per_residue_metrics::PerResidueEnergyMetricCreator > reg_PerResidueEnergyMetricCreator;

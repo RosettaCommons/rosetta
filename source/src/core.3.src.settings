@@ -188,6 +188,7 @@ sources = {
 		"test_classes",
 	],
 	"core/simple_metrics/per_residue_metrics": [
+		"PerResidueClashMetric",
 		"PerResidueDensityFitMetric",
 		"PerResidueEnergyMetric",
 		"PerResidueGlycanLayerMetric",
@@ -196,6 +197,8 @@ sources = {
 	],
 	"core/simple_metrics/metrics": [
 		"DihedralDistanceMetric",
+		"InteractionEnergyMetric",
+		"ResidueSummaryMetric",
 		"RMSDMetric",
 		"SasaMetric",
 		"SecondaryStructureMetric",

@@ -1359,6 +1359,10 @@ public:
 
 	/// @brief Am I bonded to other?
 	/// Meaningful for arbitrary topologies (e.g. circular peptides, disulfides)
+	///
+	///  See Also:
+	///    For atom-atom bonding, see conformation.is_bonded(AtomID, AtomID)
+	///
 	bool
 	is_bonded( Residue const & other ) const;
 
@@ -1371,8 +1375,12 @@ public:
 
 	/// @brief Am I bonded to other?
 	/// Looks at all residue connections as opposed to doing arithmetic
+	///
+	/// See Also:
+	///  For atom-atom bonding, see conformation.is_bonded(AtomID, AtomID)
+	///
 	bool
-	is_bonded( Size const other_index ) const;
+	is_bonded( Size const other_residue_index ) const;
 
 	/// @brief Do I have any pseudobonds to other?
 	bool

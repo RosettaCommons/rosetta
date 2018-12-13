@@ -1729,21 +1729,44 @@ Conformation::inter_residue_connection_partner(
 	return residues_[ seqpos ]->inter_residue_connection_partner( connection_index, *this );
 }
 
+/// @brief Returns a boolean for two atomIDs to be bonded.
+
+bool
+Conformation::is_bonded(
+	core::id::AtomID const & atomid1,
+	core::id::AtomID const & atomid2,
+	bool virt /* false */,
+	bool skip_canonical_and_slovent /* false */
+) const
+{
+	bool const intra_res( atomid1.rsd() == atomid2.rsd() );
+	bool const inter_res( ! intra_res );
+
+	utility::vector1<id::AtomID> connected_atms = bonded_neighbor_all_res(atomid1, virt, skip_canonical_and_slovent, intra_res, inter_res);
+	return connected_atms.has_value(atomid2);
+}
+
 /// @details virtual atoms are excluded by default
 utility::vector1<id::AtomID>
 Conformation::bonded_neighbor_all_res(
-	id::AtomID atomid,
+	id::AtomID const & atomid,
 	bool virt, // = false
-	bool skip_canonical_and_solvent // = false
+	bool skip_canonical_and_solvent, // = false
+	bool intra_res, // = true
+	bool inter_res // = true
 ) const
 {
+	if ( ! (intra_res || inter_res ) ) {
+		utility_exit_with_message("Conformation: bonded_neighbor_all_res must have either intra_res or inter_res as true.");
+	}
+
 	conformation::Residue const & primary_residue(residue(atomid.rsd()));
 	bool primary_is_canonical_or_solvent = primary_residue.type().is_canonical() || primary_residue.type().is_solvent();
 
 	utility::vector1< id::AtomID > neighbors;
 
 	// add all the atoms in the same residue
-	if ( ! skip_canonical_and_solvent || ! primary_is_canonical_or_solvent ) {
+	if ( intra_res && ( ! skip_canonical_and_solvent || ! primary_is_canonical_or_solvent ) ) {
 		chemical::AtomIndices const & intrares_atomnos(primary_residue.bonded_neighbor(atomid.atomno()));
 		for ( Size const intrares_atomno : intrares_atomnos ) {
 			if ( virt || ! primary_residue.is_virtual( intrares_atomno ) ) {
@@ -1754,21 +1777,23 @@ Conformation::bonded_neighbor_all_res(
 
 	// add all the atoms in other residues
 	Size const num_connections(primary_residue.n_possible_residue_connections());
-	for ( Size i = 1; i <= num_connections; ++i ) {
-		if ( primary_residue.residue_connect_atom_index(i) == atomid.atomno() &&
-				!primary_residue.connection_incomplete(i) ) {
-			chemical::ResConnID resconid(primary_residue.actual_residue_connection(i));
-			Size connected_atomno(residue(resconid.resid()).residue_connect_atom_index(resconid.connid()));
-			chemical::ResidueType const & other_restype( residue( resconid.resid() ).type() );
+	if ( inter_res ) {
+		for ( Size i = 1; i <= num_connections; ++i ) {
+			if ( primary_residue.residue_connect_atom_index(i) == atomid.atomno() &&
+					!primary_residue.connection_incomplete(i) ) {
+				chemical::ResConnID resconid(primary_residue.actual_residue_connection(i));
+				Size connected_atomno(residue(resconid.resid()).residue_connect_atom_index(resconid.connid()));
+				chemical::ResidueType const & other_restype( residue( resconid.resid() ).type() );
 
-			// only report inter-residue bonds to non-canonicals, if requested
-			if ( skip_canonical_and_solvent && primary_is_canonical_or_solvent &&
-					( other_restype.is_canonical() || other_restype.is_solvent() ) ) {
-				continue;
-			}
+				// only report inter-residue bonds to non-canonicals, if requested
+				if ( skip_canonical_and_solvent && primary_is_canonical_or_solvent &&
+						( other_restype.is_canonical() || other_restype.is_solvent() ) ) {
+					continue;
+				}
 
-			if ( virt || ! other_restype.is_virtual(connected_atomno) ) {
-				neighbors.push_back( id::AtomID( connected_atomno, resconid.resid() ) );
+				if ( virt || ! other_restype.is_virtual(connected_atomno) ) {
+					neighbors.push_back( id::AtomID( connected_atomno, resconid.resid() ) );
+				}
 			}
 		}
 	}

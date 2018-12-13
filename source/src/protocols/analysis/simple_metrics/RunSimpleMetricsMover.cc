@@ -120,7 +120,7 @@ RunSimpleMetricsMover::apply( core::pose::Pose & pose )
 
 	for ( SimpleMetricCOP metric : metrics_ ) {
 		debug_assert( metric != nullptr );
-		TR << "Running: " << metric->name()<< " - " << "calculating " << metric->metric() << std::endl;
+		TR << "Running: " << metric->name()<< " - " << "calculating " << metric->get_final_sm_type() << std::endl;
 		metric->apply(pose, prefix_, suffix_, override_existing_data_);
 
 	}

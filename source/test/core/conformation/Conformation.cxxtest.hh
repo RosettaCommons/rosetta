@@ -301,6 +301,26 @@ public:
 		TS_ASSERT_EQUALS( partner5.atomno(), pose->residue(2).atom_index("CG") );
 	}
 
+	void test_is_bonded() {
+		core::pose::PoseOP pose( core::import_pose::pose_from_file("core/chemical/conn.pdb") );
+
+		core::id::AtomID r2 = core::id::AtomID(pose->residue(2).atom_index("CG"), 2);
+		core::id::AtomID r5 = core::id::AtomID(pose->residue(5).atom_index("NZ"), 5);
+
+		core::id::AtomID r5_ce = core::id::AtomID(pose->residue(5).atom_index("CE"), 5);
+		core::id::AtomID r5_cd = core::id::AtomID(pose->residue(5).atom_index("CD"), 5);
+
+		//Residue 2 (ASX) & 5 (LYX)
+		TS_ASSERT(pose->conformation().is_bonded(r2, r5));
+		TS_ASSERT(! (pose->conformation().is_bonded(r2, r5_ce)));
+		TS_ASSERT(! (pose->conformation().is_bonded(r2, r5_cd)));
+
+		//Intra-residue connections
+		TS_ASSERT(pose->conformation().is_bonded(r5, r5_ce));
+		TS_ASSERT(pose->conformation().is_bonded(r5_ce, r5_cd));
+		TS_ASSERT(! (pose->conformation().is_bonded(r5, r5_cd)));
+	}
+
 	/// @brief Test how ResidueTypeSets in Conformation are cloned
 	/// That is, are were doing a semi-shallow copy?
 	void test_Conformation_ResidueTypeSet_clone() {

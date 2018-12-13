@@ -122,7 +122,7 @@ template< class Archive >
 void
 core::simple_metrics::SimpleMetric::load( Archive & arc ) {
 	arc( simple_metric_type_ );
-	arc( CEREAL_NVP( custom_type_ ));
+	arc( custom_type_ );
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::simple_metrics::SimpleMetric );

@@ -43,6 +43,38 @@ public:
 	provide_xml_schema( utility::tag::XMLSchemaDefinition &) const override;
 };
 
+class InteractionEnergyMetricCreator : public core::simple_metrics::SimpleMetricCreator {
+public:
+
+
+	/// @brief Instantiate a particular SimpleMetric
+	virtual core::simple_metrics::SimpleMetricOP
+	create_simple_metric() const override;
+
+	/// @brief Return a string that will be used to instantiate the particular SimpleMetric
+	virtual std::string
+	keyname() const override;
+
+	virtual void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition &) const override;
+};
+
+class ResidueSummaryMetricCreator : public core::simple_metrics::SimpleMetricCreator {
+public:
+
+
+	/// @brief Instantiate a particular SimpleMetric
+	virtual core::simple_metrics::SimpleMetricOP
+	create_simple_metric() const override;
+
+	/// @brief Return a string that will be used to instantiate the particular SimpleMetric
+	virtual std::string
+	keyname() const override;
+
+	virtual void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition &) const override;
+};
+
 class RMSDMetricCreator : public core::simple_metrics::SimpleMetricCreator {
 public:
 
@@ -247,6 +279,22 @@ public:
 
 ////////////////// Per Residue Metrics ////////////////////////////
 namespace per_residue_metrics {
+
+class PerResidueClashMetricCreator : public core::simple_metrics::SimpleMetricCreator {
+public:
+
+
+	/// @brief Instantiate a particular SimpleMetric
+	virtual core::simple_metrics::SimpleMetricOP
+	create_simple_metric() const override;
+
+	/// @brief Return a string that will be used to instantiate the particular SimpleMetric
+	virtual std::string
+	keyname() const override;
+
+	virtual void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition &) const override;
+};
 
 class PerResidueEnergyMetricCreator : public core::simple_metrics::SimpleMetricCreator {
 public:

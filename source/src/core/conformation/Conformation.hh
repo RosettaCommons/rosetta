@@ -770,12 +770,31 @@ public:  // Bonds, Connections, Atoms, & Stubs
 		int connection_index
 	) const;
 
-	/// @brief get all atoms bonded to another
-	utility::vector1<core::id::AtomID>
-	bonded_neighbor_all_res(
-		core::id::AtomID atomid,
+	/// @brief Returns a boolean for two atomIDs to be bonded.
+	///
+	/// @details
+	///  Uses bonded_neighbor_all_res, which iterates through residue connections.
+	///  To speed up, we would need to turn the connects into a proper bonded graph
+	///
+	bool
+	is_bonded(
+		core::id::AtomID const & atomid1,
+		core::id::AtomID const & atomid2,
 		bool virt = false,
 		bool skip_canonical_and_solvent = false
+	) const;
+
+	/// @brief Get all atoms bonded to another
+	///
+	/// @details
+	///  If intra_res is false, we only find inter - residue neighbors
+	utility::vector1<core::id::AtomID>
+	bonded_neighbor_all_res(
+		core::id::AtomID const & atomid,
+		bool virt = false,
+		bool skip_canonical_and_solvent = false,
+		bool intra_res = true,
+		bool inter_res = true
 	) const;
 
 	virtual
