@@ -287,17 +287,12 @@ void SpliceOutTail::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd 
 
 	AttributeList attlist;
 
-	attlist
-		+ XMLSchemaAttribute::attribute_w_default( "debug", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "CG_const", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "rb_sensitive", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "chain_num", xsct_non_negative_integer, "XRW TO DO", "1" )
-		+ XMLSchemaAttribute( "segment", xs_string, "XRW TO DO" )
-		+ XMLSchemaAttribute::attribute_w_default( "superimposed", xsct_rosetta_bool, "XRW TO DO", "true" )
-		+ XMLSchemaAttribute::attribute_w_default( "delete_hairpin", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "delete_hairpin_n", xsct_non_negative_integer, "XRW TO DO", "4" )
-		+ XMLSchemaAttribute::attribute_w_default( "delete_hairpin_c", xsct_non_negative_integer, "XRW TO DO", "13" )
-		+ XMLSchemaAttribute( "tail_segment", "n_or_c", "XRW TO DO" );
+	attlist + XMLSchemaAttribute::attribute_w_default( "debug", xsct_rosetta_bool, "XRW TO DO", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "CG_const", xsct_rosetta_bool, "If true apply coordinate constraint on C-gammas of the segment during CCD/minimization", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "chain_num", xsct_non_negative_integer, "The pose's chain onto which the new segment is added.", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "superimposed", xsct_rosetta_bool, "superimpose source pdb onto current pose.", "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "thread_original_sequence", xsct_rosetta_bool, "If true, thread the seuqeunce from the refrence pdb onto the segment", "false" )
+		+ XMLSchemaAttribute( "tail_segment", "n_or_c", "Is this a C-ter (\"c\") or and N-ter (\"N\") segment." );
 
 	// The "Segments" subtag
 	AttributeList segments_subtag_attlist;
@@ -331,33 +326,21 @@ void SpliceOutTail::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd 
 
 	XMLSchemaSimpleSubelementList subelements;
 	subelements.add_already_defined_subelement( "Segments", SpliceOutTail_complex_type_name_for_subtag/*, 0*/ );
-
-	attlist + XMLSchemaAttribute( "use_sequence_profile", xsct_rosetta_bool, "XRW TO DO" );
 	protocols::rosetta_scripts::attributes_for_parse_score_function( attlist );
-	attlist + XMLSchemaAttribute::attribute_w_default( "add_sequence_constraints_only", xsct_rosetta_bool, "XRW TO DO", "false" )
+
+	attlist + XMLSchemaAttribute( "use_sequence_profile", xsct_rosetta_bool, "XRW TO DO" )
 		+ XMLSchemaAttribute( "template_file", xs_string, "XRW TO DO" )
-		+ XMLSchemaAttribute::attribute_w_default( "set_fold_tree_only", xsct_rosetta_bool, "XRW TO DO", "false" )
 		+ XMLSchemaAttribute( "source_pdb", xs_string, "XRW TO DO");
 	protocols::rosetta_scripts::attributes_for_parse_task_operations( attlist );
 	attlist + XMLSchemaAttribute::attribute_w_default( "from_res", xsct_refpose_enabled_residue_number, "XRW TO DO", "0" )
-		+ XMLSchemaAttribute( "design_task_operations", xs_string, "XRW TO DO" )
-		+ XMLSchemaAttribute( "residue_numbers_setter", xs_string, "XRW TO DO" )
 		+ XMLSchemaAttribute( "torsion_database", xs_string, "XRW TO DO" )
 		+ XMLSchemaAttribute::attribute_w_default( "design_shell", xsct_real, "XRW TO DO", "6.0" )
 		+ XMLSchemaAttribute::attribute_w_default( "repack_shell", xsct_real, "XRW TO DO", "8.0" )
 		+ XMLSchemaAttribute::attribute_w_default( "rms_cutoff", xsct_real, "XRW TO DO", "999999" )
-		+ XMLSchemaAttribute::attribute_w_default( "res_move", xsct_non_negative_integer, "XRW TO DO", "1000" )
-		+ XMLSchemaAttribute::attribute_w_default( "cut_secondarystruc", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "thread_ala", xsct_rosetta_bool, "XRW TO DO", "true" )
-		+ XMLSchemaAttribute::attribute_w_default( "design", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "thread_original_sequence", xsct_rosetta_bool, "XRW TO DO", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "rtmin", xsct_rosetta_bool, "XRW TO DO", "true" )
-		+ XMLSchemaAttribute::attribute_w_default( "allow_all_aa", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute( "checkpointing_file", xs_string, "XRW TO DO" )
 		+ XMLSchemaAttribute( "splice_filter", xs_string, "XRW TO DO" )
-		+ XMLSchemaAttribute( "mover", xs_string, "Which mover to use to close the segment" )
-		+ XMLSchemaAttribute::attribute_w_default( "restrict_to_repacking_chain2", xsct_rosetta_bool, "XRW TO DO", "true" )
-		+ XMLSchemaAttribute::attribute_w_default( "use_sequence_profiles", xsct_rosetta_bool, "XRW TO DO", "true" );
+		+ XMLSchemaAttribute( "mover", xs_string, "Which mover to use to optimize segment's backbone" )
+		+ XMLSchemaAttribute::attribute_w_default( "restrict_to_repacking_chain2", xsct_rosetta_bool, "XRW TO DO", "true" );
 
 	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "XRW TO DO", attlist, subelements );
 }

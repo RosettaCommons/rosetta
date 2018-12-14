@@ -297,7 +297,7 @@ void SpliceOutAntibody::parse_my_tag(TagCOP const tag, basic::datacache::DataMap
 		splicemanager.segment_type(tag->getOption<std::string>("segment"));
 		auto find_segment = std::find (splicemanager.segment_names_ordered().begin(), splicemanager.segment_names_ordered().end(), splicemanager.segment_type());
 		if ( find_segment == splicemanager.segment_names_ordered().end() ) {
-			TR.Error << "ERROR !! segment '"<<splicemanager.segment_type()<<"is not a recognized antibody segmetn \n" << std::endl;
+			TR.Error << "ERROR !! segment '"<<splicemanager.segment_type()<<"is not a recognized antibody segment \n" << std::endl;
 			runtime_assert( find_segment != splicemanager.segment_names_ordered().end() );
 		}
 		for ( auto const & segment_type : splicemanager.segment_names_ordered() ) {
@@ -305,7 +305,7 @@ void SpliceOutAntibody::parse_my_tag(TagCOP const tag, basic::datacache::DataMap
 			SpliceSegmentOP splice_segment( new SpliceSegment );
 			splice_segment->read_pdb_profile_file( antibody_DB(), segment_type );
 			splice_segment->read_many (antibody_DB(),segment_type);
-			TR<<splice_segment->get_cluster_name_by_PDB("1AHWD")<<std::endl;
+			//   TR<<splice_segment->get_cluster_name_by_PDB("1AHWD")<<std::endl;
 			splicemanager.splice_segments().insert( std::pair< std::string, SpliceSegmentOP >( segment_type, splice_segment ) );
 		}
 		splicemanager.use_sequence_profiles(true);
@@ -391,43 +391,7 @@ void SpliceOutAntibody::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 		+ XMLSchemaAttribute::attribute_w_default( "cut_site", xsct_non_negative_integer, "residue number of where to place cut", "1" )
 
 		+ XMLSchemaAttribute( "segment", xs_string, "XRW TO DO" )
-		+ XMLSchemaAttribute::attribute_w_default( "superimposed", xsct_rosetta_bool, "XRW TO DO", "true" )
-		+ XMLSchemaAttribute::attribute_w_default( "delete_hairpin", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "delete_hairpin_n", xsct_non_negative_integer, "XRW TO DO", "4" )
-		+ XMLSchemaAttribute::attribute_w_default( "delete_hairpin_c", xsct_non_negative_integer, "XRW TO DO", "13" );
-
-	// The "Segments" subtag
-	AttributeList segments_subtag_attlist;
-	segments_subtag_attlist + XMLSchemaAttribute( "current_segment", xs_string, "XRW TO DO" );
-
-	// The "segment" sub-subtag"
-	AttributeList subtag_segments_subtag_attlist;
-	subtag_segments_subtag_attlist + XMLSchemaAttribute( "pdb_profile_match", xs_string, "XRW TO DO" )
-		+ XMLSchemaAttribute( "profiles", xs_string, "XRW TO DO" );
-
-	XMLSchemaComplexTypeGenerator segment_subsubtag_gen;
-	segment_subsubtag_gen.complex_type_naming_func( & SpliceOutAntibody_complex_type_name_for_subsubtag )
-		.element_name( "segment" )
-		.description( "individual segment tag" )
-		.add_attributes( subtag_segments_subtag_attlist )
-		.add_optional_name_attribute()
-		.write_complex_type_to_schema( xsd );
-
-	XMLSchemaSimpleSubelementList subsubelements;
-	subsubelements.add_already_defined_subelement( "segment", SpliceOutAntibody_complex_type_name_for_subsubtag/*, 0*/ );
-
-	XMLSchemaComplexTypeGenerator segments_subtag_gen;
-	segments_subtag_gen.complex_type_naming_func( & SpliceOutAntibody_complex_type_name_for_subtag )
-		.element_name( "Segments" )
-		.description( "Wrapper for multiple segments tags" )
-		.add_attributes( segments_subtag_attlist )
-		.add_optional_name_attribute()
-		.set_subelements_repeatable( subsubelements )
-		.write_complex_type_to_schema( xsd );
-
-
-	XMLSchemaSimpleSubelementList subelements;
-	subelements.add_already_defined_subelement( "Segments", SpliceOutAntibody_complex_type_name_for_subtag/*, 0*/ );
+		+ XMLSchemaAttribute::attribute_w_default( "superimposed", xsct_rosetta_bool, "XRW TO DO", "true" );
 
 
 	protocols::rosetta_scripts::attributes_for_parse_score_function( attlist );
@@ -435,32 +399,22 @@ void SpliceOutAntibody::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 		+ XMLSchemaAttribute( "template_file", xs_string, "XRW TO DO" )
 		+ XMLSchemaAttribute( "source_pdb", xs_string, "XRW TO DO");
 	protocols::rosetta_scripts::attributes_for_parse_task_operations( attlist );
-	attlist + XMLSchemaAttribute::attribute_w_default( "from_res", xsct_refpose_enabled_residue_number, "XRW TO DO", "0" )
-		+ XMLSchemaAttribute::attribute_w_default( "to_res", xsct_refpose_enabled_residue_number, "XRW TO DO", "0" )
-		+ XMLSchemaAttribute( "design_task_operations", xs_string, "XRW TO DO" )
-		+ XMLSchemaAttribute( "residue_numbers_setter", xs_string, "XRW TO DO" )
-		+ XMLSchemaAttribute( "torsion_database", xs_string, "XRW TO DO" )
+	attlist + XMLSchemaAttribute( "torsion_database", xs_string, "XRW TO DO" )
 		+ XMLSchemaAttribute::attribute_w_default( "design_shell", xsct_real, "XRW TO DO", "6.0" )
 		+ XMLSchemaAttribute::attribute_w_default( "repack_shell", xsct_real, "XRW TO DO", "8.0" )
 		+ XMLSchemaAttribute::attribute_w_default( "rms_cutoff", xsct_real, "XRW TO DO", "999999" )
 		+ XMLSchemaAttribute::attribute_w_default( "rms_cutoff_loop", xsct_real, "XRW TO DO", "999999" )
-		+ XMLSchemaAttribute::attribute_w_default( "res_move", xsct_non_negative_integer, "XRW TO DO", "1000" )
 		+ XMLSchemaAttribute::attribute_w_default( "randomize_cut", xsct_rosetta_bool, "XRW TO DO", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "cut_secondarystruc", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "thread_ala", xsct_rosetta_bool, "XRW TO DO", "true" )
 		+ XMLSchemaAttribute::attribute_w_default( "design", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "thread_original_sequence", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "rtmin", xsct_rosetta_bool, "XRW TO DO", "true" )
-		+ XMLSchemaAttribute::attribute_w_default( "allow_all_aa", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute( "locked_residue", xs_string, "XRW TO DO" )
-		+ XMLSchemaAttribute( "checkpointing_file", xs_string, "XRW TO DO" )
-		+ XMLSchemaAttribute( "splice_filter", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute::attribute_w_default( "rtmin", xsct_rosetta_bool, "apply rtmin after CCD/minmover", "true" )
+		+ XMLSchemaAttribute( "splice_filter", xs_string, "name of filter used to test of mover finished successfully" )
 		+ XMLSchemaAttribute( "mover", xs_string, "Which mover to use to close the segment" )
 		+ XMLSchemaAttribute( "tail_mover", xs_string, "Which mover to use to close the segment" )
-		+ XMLSchemaAttribute::attribute_w_default( "restrict_to_repacking_chain2", xsct_rosetta_bool, "XRW TO DO", "true" )
-		+ XMLSchemaAttribute::attribute_w_default( "use_sequence_profile", xsct_rosetta_bool, "XRW TO DO", "true" );
+		+ XMLSchemaAttribute::attribute_w_default( "restrict_to_repacking_chain2", xsct_rosetta_bool, "If true do not design chain2", "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "use_sequence_profile", xsct_rosetta_bool, "If true build PSSM and apply sequence profile on pose", "true" );
 
-	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "XRW TO DO", attlist, subelements );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Change conformation of antibody segment", attlist );
 
 }
 

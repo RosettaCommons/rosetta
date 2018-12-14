@@ -816,20 +816,15 @@ void SpliceOut::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 
 	AttributeList attlist;
 
-	attlist
-		+ XMLSchemaAttribute::attribute_w_default( "tolerance", xsct_real, "XRW TO DO", "0.23" )
-		+ XMLSchemaAttribute::attribute_w_default( "ignore_chain_break", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "debug", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "CG_const", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "rb_sensitive", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "chain_num", xsct_non_negative_integer, "XRW TO DO", "1" )
-		+ XMLSchemaAttribute::attribute_w_default( "cut_site", xsct_non_negative_integer, "residue number of where to place cut", "1" )
+	attlist + XMLSchemaAttribute::attribute_w_default( "tolerance", xsct_real, "Splice mover performs an internal check of peptide bond length in the new segment. If the bond length is more than the set tolerance the mover reports failure.", "0.23" )
+		+ XMLSchemaAttribute::attribute_w_default( "ignore_chain_break", xsct_rosetta_bool, "f true, will ignore deviation in bond length. This is not recommended and usually used for debugging.", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "debug", xsct_rosetta_bool, "If true output is more verbose and PDB structures are dumped", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "CG_const", xsct_rosetta_bool, "If true apply coordinate constraint on C-gammas of the segment during CCD/minimization", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "chain_num", xsct_non_negative_integer, "The pose's chain onto which the new segment is added.", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "cut_site", xsct_non_negative_integer, "residue number of where to place cut, used mainly for debugging.", "1" )
 		+ XMLSchemaAttribute( "Segment", xs_string, "XRW TO DO" )
-		+ XMLSchemaAttribute::attribute_w_default( "superimposed", xsct_rosetta_bool, "XRW TO DO", "true" )
-		+ XMLSchemaAttribute::attribute_w_default( "delete_hairpin", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "delete_hairpin_n", xsct_non_negative_integer, "XRW TO DO", "4" )
-		+ XMLSchemaAttribute::attribute_w_default( "delete_hairpin_c", xsct_non_negative_integer, "XRW TO DO", "13" )
-		+ XMLSchemaAttribute( "source_pdb_to_res", xsct_refpose_enabled_residue_number, "XRW TO DO" );
+		+ XMLSchemaAttribute::attribute_w_default( "superimposed", xsct_rosetta_bool, "If false, superimpose source pdb onto current pose.", "true" )
+		+ XMLSchemaAttribute( "source_pdb_to_res", xsct_refpose_enabled_residue_number, "If structures are not aligned use the template from_res and source pdb from_res to align" );
 
 	// The "Segments" subtag
 	AttributeList segments_subtag_attlist;
@@ -837,8 +832,8 @@ void SpliceOut::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 
 	// The "segment" sub-subtag"
 	AttributeList subtag_segments_subtag_attlist;
-	subtag_segments_subtag_attlist + XMLSchemaAttribute( "pdb_profile_match", xs_string, "XRW TO DO" )
-		+ XMLSchemaAttribute( "profiles", xs_string, "XRW TO DO" );
+	subtag_segments_subtag_attlist + XMLSchemaAttribute( "pdb_profile_match", xs_string, "map from pdb source segment to  PSSM file" )
+		+ XMLSchemaAttribute( "profiles", xs_string, "path to PSSM files" );
 
 	XMLSchemaComplexTypeGenerator segment_subsubtag_gen;
 	segment_subsubtag_gen.complex_type_naming_func( & SpliceOut_complex_type_name_for_subsubtag )
@@ -864,35 +859,27 @@ void SpliceOut::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	XMLSchemaSimpleSubelementList subelements;
 	subelements.add_already_defined_subelement( "Segments", SpliceOut_complex_type_name_for_subtag/*, 0*/ );
 
-	attlist + XMLSchemaAttribute( "use_sequence_profile", xsct_rosetta_bool, "XRW TO DO" );
+	attlist + XMLSchemaAttribute( "use_sequence_profile", xsct_rosetta_bool, "If true, add sequence constraint to pose from pssm files" );
 	protocols::rosetta_scripts::attributes_for_parse_score_function( attlist );
-	attlist + XMLSchemaAttribute::attribute_w_default( "add_sequence_constraints_only", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute( "template_file", xs_string, "XRW TO DO" )
+	attlist + XMLSchemaAttribute( "template_file", xs_string, "The PDB file of the reference PDB (the one used to build to conformation database)" )
 		+ XMLSchemaAttribute::attribute_w_default( "set_fold_tree_only", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute( "source_pdb", xs_string, "XRW TO DO");
+		+ XMLSchemaAttribute( "source_pdb", xs_string, "The PDB file from which the segment conformation is extracted");
 	protocols::rosetta_scripts::attributes_for_parse_task_operations( attlist );
-	attlist + XMLSchemaAttribute::attribute_w_default( "from_res", xsct_refpose_enabled_residue_number, "XRW TO DO", "0" )
-		+ XMLSchemaAttribute::attribute_w_default( "to_res", xsct_refpose_enabled_residue_number, "XRW TO DO", "0" )
-		+ XMLSchemaAttribute( "design_task_operations", xs_string, "XRW TO DO" )
-		+ XMLSchemaAttribute( "residue_numbers_setter", xs_string, "XRW TO DO" )
-		+ XMLSchemaAttribute( "torsion_database", xs_string, "XRW TO DO" )
-		+ XMLSchemaAttribute::attribute_w_default( "design_shell", xsct_real, "XRW TO DO", "6.0" )
-		+ XMLSchemaAttribute::attribute_w_default( "repack_shell", xsct_real, "XRW TO DO", "8.0" )
-		+ XMLSchemaAttribute::attribute_w_default( "rms_cutoff", xsct_real, "XRW TO DO", "999999" )
-		+ XMLSchemaAttribute::attribute_w_default( "rms_cutoff_loop", xsct_real, "XRW TO DO", "999999" )
-		+ XMLSchemaAttribute::attribute_w_default( "res_move", xsct_non_negative_integer, "XRW TO DO", "1000" )
-		+ XMLSchemaAttribute::attribute_w_default( "randomize_cut", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "cut_secondarystruc", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "thread_ala", xsct_rosetta_bool, "XRW TO DO", "true" )
-		+ XMLSchemaAttribute::attribute_w_default( "design", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "thread_original_sequence", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "rtmin", xsct_rosetta_bool, "XRW TO DO", "true" )
-		+ XMLSchemaAttribute( "locked_residue", xs_string, "XRW TO DO" )
-		+ XMLSchemaAttribute( "checkpointing_file", xs_string, "XRW TO DO" )
-		+ XMLSchemaAttribute( "splice_filter", xs_string, "XRW TO DO" )
+	attlist + XMLSchemaAttribute::attribute_w_default( "from_res", xsct_refpose_enabled_residue_number, "The N-ter residue of the sampled segment", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "to_res", xsct_refpose_enabled_residue_number, "The C-ter residue of the sampled segment", "0" )
+		+ XMLSchemaAttribute( "torsion_database", xs_string, "Name of conformation file to save to" )
+		+ XMLSchemaAttribute::attribute_w_default( "design_shell", xsct_real, " Design shell radius around new segment conformation.", "6.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "repack_shell", xsct_real, " Repack shell radius around new segment conformation.", "8.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "rms_cutoff", xsct_real, "At the end of the run the RMSD value between the new segment conformation and source segment conformation. If RMSD value is above set cutoff value the run fails. This value only relates to secondary structure elements in the new segment.", "999999" )
+		+ XMLSchemaAttribute::attribute_w_default( "rms_cutoff_loop", xsct_real, "The same as rms_cutoff, but only relates to loop secondary structure elements.", "999999" )
+		+ XMLSchemaAttribute::attribute_w_default( "randomize_cut", xsct_rosetta_bool, "if true cut will be placed randomly in the segment", "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "cut_secondarystruc", xsct_rosetta_bool, "if true cut can be placed in secondary structure element.", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "thread_original_sequence", xsct_rosetta_bool, " If true,use sequence from source PDB", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "rtmin", xsct_rosetta_bool, " apply rtmin after CCD/minmover", "true" )
+		+ XMLSchemaAttribute( "splice_filter", xs_string, "name of filter used to test of mover finished successfully." )
 		+ XMLSchemaAttribute( "mover", xs_string, "Which mover to use to close the segment" )
-		+ XMLSchemaAttribute::attribute_w_default( "restrict_to_repacking_chain2", xsct_rosetta_bool, "XRW TO DO", "true" )
-		+ XMLSchemaAttribute::attribute_w_default( "use_sequence_profiles", xsct_rosetta_bool, "XRW TO DO", "true" );
+		+ XMLSchemaAttribute::attribute_w_default( "restrict_to_repacking_chain2", xsct_rosetta_bool, " If true do not design chain2", "true" );
+
 
 	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "XRW TO DO", attlist, subelements );
 

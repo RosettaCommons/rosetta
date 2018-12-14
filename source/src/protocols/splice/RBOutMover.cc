@@ -238,9 +238,9 @@ void RBOutMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	using namespace utility::tag;
 	AttributeList attlist;
-	attlist + XMLSchemaAttribute( "template_fname", xs_string, "XRW TO DO" )
-		+ XMLSchemaAttribute( "jump_dbase_fname", xs_string, "XRW TO DO" )
-		+ XMLSchemaAttribute::attribute_w_default( "jump_from_foldtree", xsct_rosetta_bool, "XRW TO DO", "false" );
+	attlist + XMLSchemaAttribute( "template_fname", xs_string, "The reference PDB file used to build the database" )
+		+ XMLSchemaAttribute( "jump_dbase_fname", xs_string, "jump coordinate database file" )
+		+ XMLSchemaAttribute::attribute_w_default( "jump_from_foldtree", xsct_rosetta_bool, "If true get jump from fold tree and not automatically from the pose chain break (dflt)", "false" );
 
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
 }

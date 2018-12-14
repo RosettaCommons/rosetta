@@ -531,28 +531,21 @@ void SpliceInTail::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	AttributeList attlist;
 
 	attlist
-		+ XMLSchemaAttribute::attribute_w_default( "debug", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "min_seg", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "CG_const", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "rb_sensitive", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "chain_num", xsct_non_negative_integer, "XRW TO DO", "1" )
-		+ XMLSchemaAttribute( "segment", xs_string, "XRW TO DO" )
-		+ XMLSchemaAttribute::attribute_w_default( "superimposed", xsct_rosetta_bool, "XRW TO DO", "true" )
-		+ XMLSchemaAttribute::attribute_w_default( "delete_hairpin", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "delete_hairpin_n", xsct_non_negative_integer, "XRW TO DO", "4" )
-		+ XMLSchemaAttribute::attribute_w_default( "delete_hairpin_c", xsct_non_negative_integer, "XRW TO DO", "13" )
-		+ XMLSchemaAttribute( "tail_segment", "n_or_c", "XRW TO DO" )
-		+ XMLSchemaAttribute::attribute_w_default( "skip_alignment", xsct_rosetta_bool, "XRW TO DO", "false" );
+		+ XMLSchemaAttribute::attribute_w_default( "debug", xsct_rosetta_bool, "If true output is more verbose and PDB structures are dumped.", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "min_seg", xsct_rosetta_bool, "Apply minimizer to the new segment. This is recommended to improve energy. Apply with coordinate constraints.", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "CG_const", xsct_rosetta_bool, "If true apply coordinate constraint on C-gammas of the segment during CCD/minimization", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "chain_num", xsct_non_negative_integer, "The pose's chain onto which the new segment is added.", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "superimposed", xsct_rosetta_bool, "If fasle, superimpose source pdb onto current pose.", "true" );
 
 	// The "Segments" subtag
 	AttributeList segments_subtag_attlist;
-	segments_subtag_attlist + XMLSchemaAttribute::attribute_w_default( "profile_weight_away_from_interface", xsct_real, "XRW TO DO", "1.0" )
-		+ XMLSchemaAttribute( "current_segment", xs_string, "XRW TO DO" );
+	segments_subtag_attlist + XMLSchemaAttribute::attribute_w_default( "profile_weight_away_from_interface", xsct_real, "multiply applied sequence constraint by a factor for residues outside predefined interface", "1.0" )
+		+ XMLSchemaAttribute( "current_segment", xs_string, "Which segment is currently being modified" );
 
 	// The "segment" sub-subtag"
 	AttributeList subtag_segments_subtag_attlist;
-	subtag_segments_subtag_attlist + XMLSchemaAttribute( "pdb_profile_match", xs_string, "XRW TO DO" )
-		+ XMLSchemaAttribute( "profiles", xs_string, "XRW TO DO" );
+	subtag_segments_subtag_attlist + XMLSchemaAttribute( "pdb_profile_match", xs_string, "Mapping between segment name and PSSM file" )
+		+ XMLSchemaAttribute( "profiles", xs_string, "list of PSSM files" );
 
 	XMLSchemaComplexTypeGenerator segment_subsubtag_gen;
 	segment_subsubtag_gen.complex_type_naming_func( & SpliceInTail_complex_type_name_for_subsubtag )
@@ -577,28 +570,19 @@ void SpliceInTail::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 
 	XMLSchemaSimpleSubelementList subelements;
 	subelements.add_already_defined_subelement( "Segments", SpliceInTail_complex_type_name_for_subtag/*, 0*/ );
-
-	attlist + XMLSchemaAttribute( "use_sequence_profile", xsct_rosetta_bool, "XRW TO DO" );
+	attlist + XMLSchemaAttribute( "use_sequence_profile", xsct_rosetta_bool, "If true build PSSM and apply sequence profile on pose" );
 	protocols::rosetta_scripts::attributes_for_parse_score_function( attlist );
-	attlist + XMLSchemaAttribute::attribute_w_default( "add_sequence_constraints_only", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute( "template_file", xs_string, "XRW TO DO" );
+	attlist + XMLSchemaAttribute( "template_file", xs_string, "The PDB file of the reference PDB (the one used to build to conformation database)" );
 	protocols::rosetta_scripts::attributes_for_parse_task_operations( attlist );
-	attlist
-
-		+ XMLSchemaAttribute( "residue_numbers_setter", xs_string, "XRW TO DO" )
-		+ XMLSchemaAttribute( "torsion_database", xs_string, "XRW TO DO" )
-		+ XMLSchemaAttribute( "database_entry", xsct_non_negative_integer, "XRW TO DO" )
-		+ XMLSchemaAttribute( "database_pdb_entry", xs_string, "XRW TO DO" )
-		+ XMLSchemaAttribute::attribute_w_default( "design_shell", xsct_real, "XRW TO DO", "6.0" )
-		+ XMLSchemaAttribute::attribute_w_default( "repack_shell", xsct_real, "XRW TO DO", "8.0" )
-		+ XMLSchemaAttribute::attribute_w_default( "thread_ala", xsct_rosetta_bool, "XRW TO DO", "true" )
-		+ XMLSchemaAttribute( "delta_lengths", xsct_int_cslist, "XRW TO DO" )
-		+ XMLSchemaAttribute::attribute_w_default( "thread_original_sequence", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "rtmin", xsct_rosetta_bool, "XRW TO DO", "true" )
-		+ XMLSchemaAttribute::attribute_w_default( "dbase_iterate", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute( "checkpointing_file", xs_string, "XRW TO DO" )
-		+ XMLSchemaAttribute::attribute_w_default( "use_sequence_profiles", xsct_rosetta_bool, "XRW TO DO", "true" );
-
+	attlist + XMLSchemaAttribute( "torsion_database", xs_string, "Name of conformation file to save to" )
+		+ XMLSchemaAttribute( "database_entry", xsct_non_negative_integer, "Which entry to use from database (by number, e.g. first entry = 1, second entry = 2, etc)" )
+		+ XMLSchemaAttribute( "database_pdb_entry", xs_string, "Which entry to use from database by PDB code" )
+		+ XMLSchemaAttribute::attribute_w_default( "design_shell", xsct_real, "how many residues around the built segment can be designed", "6.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "repack_shell", xsct_real, "how many residues around the built segment can be repacked", "8.0" )
+		+ XMLSchemaAttribute( "delta_lengths", xsct_int_cslist, "sample lengths of new segment conformation with length deltas relative to stratign pose segment (e.g, if delta length is set -2 then only segments that 2 AA shorter than the pose segment will be sampled from the database)" )
+		+ XMLSchemaAttribute::attribute_w_default( "thread_original_sequence", xsct_rosetta_bool, "Use sequence from torsion database.", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "rtmin", xsct_rosetta_bool, " apply rtmin after minmover/tailsegmentmover", "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "dbase_iterate", xsct_rosetta_bool, "if true, go through the torsion database iteratively (so in the same trajectory won\'t sample same conformation twice from the database)", "false" );
 	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "XRW TO DO", attlist, subelements );
 }
 

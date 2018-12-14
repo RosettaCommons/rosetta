@@ -333,88 +333,31 @@ void SpliceInAntibody::provide_xml_schema( utility::tag::XMLSchemaDefinition & x
 	AttributeList attlist;
 
 	attlist
-		+ XMLSchemaAttribute::attribute_w_default( "tolerance", xsct_real, "XRW TO DO", "0.23" )
+		+ XMLSchemaAttribute::attribute_w_default( "tolerance", xsct_real, "How many standard deviations is the bond length of the chain-break from the norm.", "0.23" )
 		+ XMLSchemaAttribute::attribute_w_default( "ignore_chain_break", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "debug", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "min_seg", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "CG_const", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "rb_sensitive", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "chain_num", xsct_non_negative_integer, "XRW TO DO", "1" )
-		+ XMLSchemaAttribute( "segment", xs_string, "XRW TO DO" )
-		+ XMLSchemaAttribute::attribute_w_default( "superimposed", xsct_rosetta_bool, "XRW TO DO", "true" )
-		+ XMLSchemaAttribute::attribute_w_default( "delete_hairpin", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "delete_hairpin_n", xsct_non_negative_integer, "XRW TO DO", "4" )
-		+ XMLSchemaAttribute::attribute_w_default( "delete_hairpin_c", xsct_non_negative_integer, "XRW TO DO", "13" )
-		+ XMLSchemaAttribute( "delta_lengths", xsct_int_cslist, "XRW TO DO" )
+		+ XMLSchemaAttribute::attribute_w_default( "debug", xsct_rosetta_bool, "If true, make output more verbose and dump pdbs.", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "min_seg", xsct_rosetta_bool, "Apply minimization on backbone and side-chains of the new segment conformation.", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "chain_num", xsct_non_negative_integer, "Specify pose chain number", "1" )
+		+ XMLSchemaAttribute( "segment", xs_string, "Which segment type are we changing (L1_L2,H1_H2,L3, or H3)" )
+		+ XMLSchemaAttribute::attribute_w_default( "superimposed", xsct_rosetta_bool, "Is the pose aligned to the template antibody", "true" )
+		+ XMLSchemaAttribute( "delta_lengths", xsct_int_cslist, "A list of integers separated by commas, specifying the length deltas between the current segment's lengths and those sampled from the database. E.g. if delta_length=-1,1 then only conformations that are longer or shorter by one residue compared to the original segment will be sampled." )
 		+ XMLSchemaAttribute::attribute_w_default( "dbase_iterate", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute( "database_entry", xsct_non_negative_integer, "XRW TO DO" )
-		+ XMLSchemaAttribute( "database_pdb_entry", xs_string, "XRW TO DO" );
-
-	// The "Segments" subtag
-	AttributeList segments_subtag_attlist;
-	segments_subtag_attlist + XMLSchemaAttribute( "current_segment", xs_string, "XRW TO DO" );
-
-	// The "segment" sub-subtag"
-	AttributeList subtag_segments_subtag_attlist;
-	subtag_segments_subtag_attlist + XMLSchemaAttribute( "pdb_profile_match", xs_string, "XRW TO DO" )
-		+ XMLSchemaAttribute( "profiles", xs_string, "XRW TO DO" );
-
-	XMLSchemaComplexTypeGenerator segment_subsubtag_gen;
-	segment_subsubtag_gen.complex_type_naming_func( & SpliceInAntibody_complex_type_name_for_subsubtag )
-		.element_name( "segment" )
-		.description( "individual segment tag" )
-		.add_attributes( subtag_segments_subtag_attlist )
-		.add_optional_name_attribute()
-		.write_complex_type_to_schema( xsd );
-
-	XMLSchemaSimpleSubelementList subsubelements;
-	subsubelements.add_already_defined_subelement( "segment", SpliceInAntibody_complex_type_name_for_subsubtag/*, 0*/ );
-
-	XMLSchemaComplexTypeGenerator segments_subtag_gen;
-	segments_subtag_gen.complex_type_naming_func( & SpliceInAntibody_complex_type_name_for_subtag )
-		.element_name( "Segments" )
-		.description( "Wrapper for multiple segments tags" )
-		.add_attributes( segments_subtag_attlist )
-		.add_optional_name_attribute()
-		.set_subelements_repeatable( subsubelements )
-		.write_complex_type_to_schema( xsd );
-
-
-	XMLSchemaSimpleSubelementList subelements;
-	subelements.add_already_defined_subelement( "Segments", SpliceInAntibody_complex_type_name_for_subtag/*, 0*/ );
+		+ XMLSchemaAttribute( "database_entry", xsct_non_negative_integer, "Specify entry number of conformation to sample from conformation database." )
+		+ XMLSchemaAttribute( "database_pdb_entry", xs_string, "Specify entry PDB code of conformation to sample from conformation database." );
 
 
 	protocols::rosetta_scripts::attributes_for_parse_score_function( attlist );
-	attlist + XMLSchemaAttribute::attribute_w_default( "add_sequence_constraints_only", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute( "template_file", xs_string, "XRW TO DO" )
-		+ XMLSchemaAttribute( "source_pdb", xs_string, "XRW TO DO");
+	attlist
+		+ XMLSchemaAttribute( "template_file", xs_string, " The pdb file used to construct the conformation database." );
 	protocols::rosetta_scripts::attributes_for_parse_task_operations( attlist );
-	attlist + XMLSchemaAttribute::attribute_w_default( "from_res", xsct_refpose_enabled_residue_number, "XRW TO DO", "0" )
-		+ XMLSchemaAttribute::attribute_w_default( "to_res", xsct_refpose_enabled_residue_number, "XRW TO DO", "0" )
-		+ XMLSchemaAttribute( "design_task_operations", xs_string, "XRW TO DO" )
-		+ XMLSchemaAttribute( "residue_numbers_setter", xs_string, "XRW TO DO" )
-		+ XMLSchemaAttribute( "torsion_database", xs_string, "XRW TO DO" )
-		+ XMLSchemaAttribute::attribute_w_default( "design_shell", xsct_real, "XRW TO DO", "6.0" )
-		+ XMLSchemaAttribute::attribute_w_default( "repack_shell", xsct_real, "XRW TO DO", "8.0" )
-		+ XMLSchemaAttribute::attribute_w_default( "rms_cutoff", xsct_real, "XRW TO DO", "999999" )
-		+ XMLSchemaAttribute::attribute_w_default( "rms_cutoff_loop", xsct_real, "XRW TO DO", "999999" )
-		+ XMLSchemaAttribute::attribute_w_default( "res_move", xsct_non_negative_integer, "XRW TO DO", "1000" )
-		+ XMLSchemaAttribute::attribute_w_default( "randomize_cut", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "cut_secondarystruc", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "thread_ala", xsct_rosetta_bool, "XRW TO DO", "true" )
-		+ XMLSchemaAttribute::attribute_w_default( "design", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "thread_original_sequence", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "rtmin", xsct_rosetta_bool, "XRW TO DO", "true" )
-		+ XMLSchemaAttribute::attribute_w_default( "allow_all_aa", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute( "locked_residue", xs_string, "XRW TO DO" )
-		+ XMLSchemaAttribute( "checkpointing_file", xs_string, "XRW TO DO" )
-		+ XMLSchemaAttribute( "splice_filter", xs_string, "XRW TO DO" )
-		+ XMLSchemaAttribute( "mover", xs_string, "Which mover to use to close the segment" )
-		+ XMLSchemaAttribute( "tail_mover", xs_string, "Which mover to use to close the segment" )
-		+ XMLSchemaAttribute::attribute_w_default( "restrict_to_repacking_chain2", xsct_rosetta_bool, "XRW TO DO", "true" )
-		+ XMLSchemaAttribute::attribute_w_default( "use_sequence_profile", xsct_rosetta_bool, "XRW TO DO", "true" );
+	attlist + XMLSchemaAttribute( "torsion_database", xs_string, " path to conformation database file. " )
+		+ XMLSchemaAttribute::attribute_w_default( "design_shell", xsct_real, "design shell around sampled conformation.", "6.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "repack_shell", xsct_real, "repack shell around sampled conformation.", "8.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "rtmin", xsct_rosetta_bool, "bool. Perform rtmin on new segment?", "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "restrict_to_repacking_chain2", xsct_rosetta_bool, " bool. Apply design to non antibody chain?", "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "use_sequence_profile", xsct_rosetta_bool, "use sequence constraints from conformation specific pssms.", "true" );
 
-	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "XRW TO DO", attlist, subelements );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Change conformation of antibody segment", attlist );
 
 }
 

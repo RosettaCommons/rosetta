@@ -602,24 +602,19 @@ void SpliceIn::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 		+ XMLSchemaAttribute::attribute_w_default( "CG_const", xsct_rosetta_bool, "apply coordinate constraints on C-gamma atoms", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "rb_sensitive", xsct_rosetta_bool, "apply rigid body addaptations", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "chain_num", xsct_non_negative_integer, "which chain number to apply splice on", "1" )
-		+ XMLSchemaAttribute( "segment", xs_string, "segment name" )
-		+ XMLSchemaAttribute::attribute_w_default( "superimposed", xsct_rosetta_bool, "are thr structures superimposed", "true" )
-		+ XMLSchemaAttribute::attribute_w_default( "delete_hairpin", xsct_rosetta_bool, "delete hairpin segment?", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "delete_hairpin_n", xsct_non_negative_integer, "how many residues to delete on N-ter hairpin", "4" )
-		+ XMLSchemaAttribute::attribute_w_default( "delete_hairpin_c", xsct_non_negative_integer, "how many residues to delete on C-ter hairpin", "13" )
-		+ XMLSchemaAttribute( "tail_segment", "n_or_c", "what direction is the tail segment" )
+		+ XMLSchemaAttribute::attribute_w_default( "superimposed", xsct_rosetta_bool, "are the structures superimposed", "true" )
 		+ XMLSchemaAttribute( "source_pdb_to_res", xsct_refpose_enabled_residue_number, "residue number of last residue on source segment" )
 		+ XMLSchemaAttribute::attribute_w_default( "skip_alignment", xsct_rosetta_bool, "whether to align pose to source pdb", "false" );
 
 	// The "Segments" subtag
 	AttributeList segments_subtag_attlist;
-	segments_subtag_attlist + XMLSchemaAttribute::attribute_w_default( "profile_weight_away_from_interface", xsct_real, "XRW TO DO", "1.0" )
-		+ XMLSchemaAttribute( "current_segment", xs_string, "XRW TO DO" );
+	segments_subtag_attlist + XMLSchemaAttribute::attribute_w_default( "profile_weight_away_from_interface", xsct_real, "multiply applied sequence constraint by a factor for residues outside predefined interface", "1.0" )
+		+ XMLSchemaAttribute( "current_segment", xs_string, "Which segment is currently being modified" );
 
 	// The "segment" sub-subtag"
 	AttributeList subtag_segments_subtag_attlist;
 	subtag_segments_subtag_attlist + XMLSchemaAttribute( "pdb_profile_match", xs_string, "XRW TO DO" )
-		+ XMLSchemaAttribute( "profiles", xs_string, "XRW TO DO" );
+		+ XMLSchemaAttribute( "profiles", xs_string, "path to PSSM files" );
 
 	XMLSchemaComplexTypeGenerator segment_subsubtag_gen;
 	segment_subsubtag_gen.complex_type_naming_func( & SpliceIn_complex_type_name_for_subsubtag )

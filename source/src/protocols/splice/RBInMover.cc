@@ -281,13 +281,12 @@ void RBInMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	// AMW TODO
 	using namespace utility::tag;
 	AttributeList attlist;
-	attlist + XMLSchemaAttribute( "rigid_body_dbase", xs_string, "XRW TO DO" )
-		+ XMLSchemaAttribute::attribute_w_default( "from_entry", xsct_non_negative_integer, "XRW TO DO", "1" )
-		+ XMLSchemaAttribute::attribute_w_default( "to_entry", xsct_non_negative_integer, "XRW TO DO", "1" )
-		+ XMLSchemaAttribute::attribute_w_default( "randomize", xsct_rosetta_bool, "XRW TO DO", "true" )
-		+ XMLSchemaAttribute( "checkpointing_file", xs_string, "XRW TO DO" )
-		+ XMLSchemaAttribute( "db_entry", xs_string, "XRW TO DO" )
-		+ XMLSchemaAttribute::attribute_w_default( "modify_foldtree", xsct_rosetta_bool, "XRW TO DO", "true" );
+	attlist + XMLSchemaAttribute( "rigid_body_dbase", xs_string, "path to database file with Vl/Vh orientations." )
+		+ XMLSchemaAttribute::attribute_w_default( "from_entry", xsct_non_negative_integer, "limit range to sample database from ", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "to_entry", xsct_non_negative_integer, "limit range to sample database from", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "randomize", xsct_rosetta_bool, "Randomly sample from database", "true" )
+		+ XMLSchemaAttribute( "db_entry", xs_string, "Select specific entry to sample from" )
+		+ XMLSchemaAttribute::attribute_w_default( "modify_foldtree", xsct_rosetta_bool, "If true, set a new fold tree with jump between Vl/Vh", "true" );
 
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
 }

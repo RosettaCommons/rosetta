@@ -302,12 +302,10 @@ void RotLibOut::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	using namespace utility::tag;
 	AttributeList attlist;
 	attlist + XMLSchemaAttribute( "min_frag_len", xs_string, "Set minimum fragment length to use in alignmnet" )
-		+ XMLSchemaAttribute( "jump_dbase_fname", xs_string, "filename of jump db file" )
-		+ XMLSchemaAttribute::attribute_w_default( "jump_from_foldtree", xsct_rosetta_bool, "boolean- whether or not use jump from foldtree", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "min_dist", xsct_non_negative_integer, "Minimum distance between aligned residues", "3" )
+		+ XMLSchemaAttribute::attribute_w_default( "min_dist", xsct_real, "Minimum distance between aligned residues", "3" )
 		+ XMLSchemaAttribute::attribute_w_default( "dump_pdb", xsct_rosetta_bool, "for debuging, whether to dump pdbs during run", "false" )
 		+ XMLSchemaAttribute( "rotamer_db_filename", xs_string, "Path to save rotamer db file")
-		+ XMLSchemaAttribute( "sequence_alignment_filename", xs_string, "Path to save rotamer db file");
+		+ XMLSchemaAttribute( "sequence_alignment_filename", xs_string, "file name to save sequence alignment between pose and input pdbs.");
 
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
 }
