@@ -38,6 +38,7 @@ options = {
     "mode" : [
         "debug",
         "release",
+        "release_native", # Build with -Ofast instead of -O3. Also activates -march=native and -mtune=native so you only want to run this on the computer that compiled it
         "release_symbols",  # Like release, but with debugging symbols attached
         "release_debug",    # Debug mode, but with release optimizations
         "release_debug_no_symbols", # release_debug, with symbols removed
@@ -48,6 +49,7 @@ options = {
         "addsan", # Mode adding special instrumentation to check for (sanitize) address errors
         "memsan", # Mode adding special instrumentation to check for (sanitize) memory errors
         "ubsan",  # Mode adding special instrumentation to check for (sanitize) undefined behavior
+
     ],
 
     "cat" : [
