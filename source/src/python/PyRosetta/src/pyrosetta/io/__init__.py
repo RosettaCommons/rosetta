@@ -41,6 +41,10 @@ def pose_from_sequence(seq, res_type="fa_standard", auto_termini=True):
     make_pose_from_sequence(pose, seq, res_type, auto_termini)
     #print 'Setting phi, psi, omega...'
     for i in range(0, pose.total_residue()):
+        res = pose.residue(i + 1)
+        if not res.is_protein() or res.is_peptoid() or res.is_carbohydrate():
+            continue
+
         pose.set_phi(i + 1, 180)
         pose.set_psi(i + 1, 180)
         pose.set_omega(i + 1, 180)
@@ -49,7 +53,7 @@ def pose_from_sequence(seq, res_type="fa_standard", auto_termini=True):
     # we have to reserve space for atoms....
     pose.pdb_info(rosetta.core.pose.PDBInfo(pose))
     pose.pdb_info().name(seq[:8])
-    #print pose
+    # print pose
     return pose
 
 
