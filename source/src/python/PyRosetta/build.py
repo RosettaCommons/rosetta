@@ -256,12 +256,29 @@ def install_llvm_tool(name, source_location, prefix_root, debug, clean=True):
 #     return package_dir + '/include'
 
 
+def get_compiler_version():
+    compiler = get_compiler_family()
+
+    if compiler == 'gcc':
+        _, version = execute('Getting gcc version...'.format(**locals()), 'gcc -dumpfullversion -dumpversion', return_='tuple', silent=True)
+
+    elif compiler == 'clang':
+        _, version = execute('Getting clang version...'.format(**locals()), 'clang --version', return_='tuple', silent=True)
+        version = version.split()[2].split('-')[0]
+
+    else:
+        version = 'unknown'
+
+    return version.split()[0]  # removing new lines if any
+
+
 def get_binding_build_root(rosetta_source_path, source=False, build=False, documentation=False):
     ''' Calculate bindings build path using current platform and compilation settings and create dir if it is not there yet '''
 
     p = os.path.join(rosetta_source_path, 'build/PyRosetta')
 
-    p =  os.path.join(p, Platform + '/' + get_compiler_family() + '/python-' + _python_version_)
+    #p =  os.path.join(p, Platform + ( '.' + Options.build_suffix if  Options.build_suffix else '') + '/' + get_compiler_family() + '-' + get_compiler_version() + '/python-' + _python_version_)
+    p =  os.path.join(p, Platform + '/' + get_compiler_family() + '-' + get_compiler_version() + '/python-' + _python_version_)
 
     p = os.path.join(p, Options.type.lower() + ('.serialization' if Options.serialization else '') )
 
@@ -588,7 +605,9 @@ def generate_bindings(rosetta_source_path):
     includes = ''.join( [' -isystem '+i for i in get_rosetta_system_include_directories()] ) + ''.join( [' -I'+i for i in get_rosetta_include_directories()] )
     defines  = ''.join( [' -D'+d for d in get_defines()] )
 
-    if Platform == 'macos': includes += ' -isystem /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1'
+    if Platform == 'macos':
+        includes += ' -isystem /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1'
+        if int( platform.mac_ver()[0].split('.')[1] ) > 13 : includes += ' -isystem /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include'
 
     if Options.binder_extra_options: includes += ' ' + Options.binder_extra_options
 
@@ -777,8 +796,13 @@ def main(args):
 
     parser.add_argument('--version', help='Supply JSON version file to be used for during package creation and documentation building. File must be in the same format as standard Rosetta .release.json used to mark release versions. If no file is supplied script will fallback to use main/.version.json.')
 
+    #parser.add_argument('--build-suffix', default=None, help='Specify build suffix that will be be used when creating build directories. Default is None, - use either $HOSTNAME or value provided in local .hostname file.')
+
+
     global Options
     Options = parser.parse_args()
+
+    #Options.build_suffix =  _machine_name_ if Options.build_suffix is None else Options.build_suffix
 
     rosetta_source_path = os.path.abspath('./../../../')
 
