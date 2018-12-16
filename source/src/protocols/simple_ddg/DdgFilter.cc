@@ -58,7 +58,9 @@ DdgFilter::DdgFilter() :
 	rb_jump_( 1 ),
 	use_custom_task_(false),
 	repack_bound_(true),
+	repack_unbound_(true),
 	relax_bound_(false),
+	relax_unbound_(true),
 	repeats_( 1 ),
 	repack_( true ),
 	relax_mover_( /* NULL */ ),
@@ -80,7 +82,9 @@ DdgFilter::DdgFilter( core::Real const ddg_threshold,
 	rb_jump_(rb_jump),
 	use_custom_task_( false ),
 	repack_bound_( true ),
+	repack_unbound_( true ),
 	relax_bound_( false ),
+	relax_unbound_( true ),
 	repeats_(repeats),
 	repack_( true ),
 	relax_mover_( /* NULL */ ),
@@ -139,7 +143,9 @@ DdgFilter::parse_my_tag( utility::tag::TagCOP tag,
 	use_custom_task( tag->hasOption("task_operations") );
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	repack_bound( tag->getOption<bool>( "repack_bound", true ) );
+	repack_unbound( tag->getOption<bool>( "repack_unbound", true ) );
 	relax_bound( tag->getOption<bool>( "relax_bound", false ) );
+	relax_unbound( tag->getOption<bool>( "relax_unbound", true ) );
 	translate_by_ = tag->getOption<core::Real>( "translate_by", 1000 );
 
 	if ( tag->hasOption( "relax_mover" ) ) {
@@ -247,12 +253,9 @@ DdgFilter::compute( core::pose::Pose const & pose_in ) const {
 			ddg.use_custom_task( use_custom_task() );
 			ddg.task_factory( task_factory() );
 		}
-		if ( repack_bound() ) {
-			ddg.repack_bound( repack_bound() );
-		}
-		if ( relax_bound() ) {
-			ddg.relax_bound( relax_bound() );
-		}
+		ddg.repack_bound( repack_bound() );
+		ddg.relax_bound( relax_bound() );
+		ddg.relax_unbound( relax_unbound() );
 		ddg.translate_by( translate_by() );
 		ddg.relax_mover( relax_mover() );
 		ddg.filter( filter() );
@@ -361,8 +364,10 @@ void DdgFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 		+ XMLSchemaAttribute::attribute_w_default( "repeats" , xsct_positive_integer , "Averages the calculation over the number of repeats. Note that ddg calculations show noise of about 1-1.5 energy units, so averaging over 3-5 repeats is recommended for many applications." , "1" )
 		+ XMLSchemaAttribute::attribute_w_default( "repack" , xsct_rosetta_bool , "Should the complex be repacked in the bound and unbound states prior to taking the energy difference? If false, the filter turns to a dG evaluator. If repack=false repeats should be turned to 1, b/c the energy evaluations converge very well with repack=false." , "1" )
 		+ XMLSchemaAttribute( "symmetry" , xs_string , "Note: DdgFilter autodetermines symmetry from input pose - symmetry option has no effect." ) //seems like this could be removed
-		+ XMLSchemaAttribute::attribute_w_default( "repack_bound" , xsct_rosetta_bool , "Should the complex be repacked in the bound state? Note: If repack=true, then the complex will be repacked in the bound and unbound state by default. However, if the complex has already been repacked in the bound state prior to calling the DdgFilter then setting repack_bound=false allows one to avoid unnecessary repetition." , "1" )
-		+ XMLSchemaAttribute::attribute_w_default( "relax_bound" , xsct_rosetta_bool , "Should the relax mover (if specified) be applied to the bound as well as the unbound state? Note: the bound state is not relaxed by default." , "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "repack_bound" , xsct_rosetta_bool , "Should the complex be repacked in the bound state? Note: If repack=true, then the complex will be repacked in the bound and unbound state by default. However, if the complex has already been repacked in the bound state prior to calling the DdgFilter then setting repack_bound=false allows one to avoid unnecessary repetition." , "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "repack_unbound" , xsct_rosetta_bool , "Should the complex be repacked in the unbound state? Note: If repack=true, then the complex will be repacked in the bound and unbound state by default. However, if a relaxation mover is provided that repacks the mover in the unbound state, then repack_unbound=false avoids unnecessary repetition." , "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "relax_bound" , xsct_rosetta_bool , "Should the relax mover (if specified) be applied to the bound state? Note: the bound state is not relaxed by default." , "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "relax_unbound" , xsct_rosetta_bool , "Should the relax mover (if specified) be applied to the unbound state? Note: the unbound state IS relaxed by default." , "true" )
 		+ XMLSchemaAttribute::attribute_w_default( "translate_by" , xsct_real , "How far to translate the unbound pose. Note: Default is now 100 Angstroms rather than 1000." , "100" )
 		+ XMLSchemaAttribute( "relax_mover" , xs_string , "Optionally define a mover which will be applied prior to computing the system energy in the unbound state." )
 		+ XMLSchemaAttribute( "filter" , xs_string , "If specified, the given filter will be calculated in the bound and unbound state for the score, rather than the given scorefunction. Repacking, if any, will be done with the provided scorefunction." )

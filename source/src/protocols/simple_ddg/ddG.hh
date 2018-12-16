@@ -75,10 +75,18 @@ public :
 	core::pack::task::TaskFactoryOP task_factory() const { return task_factory_; }
 	void use_custom_task( bool uct ) { use_custom_task_ = uct; }
 	bool use_custom_task() const { return use_custom_task_; }
+
+	inline void repack_unbound( bool rpu ) { repack_unbound_ = rpu; }
+	inline bool repack_unbound() const { return repack_unbound_; }
+
 	void repack_bound( bool rpb ) { repack_bound_ = rpb; }
 	bool repack_bound() const { return repack_bound_; }
+
 	void relax_bound( bool rlb ) { relax_bound_ = rlb; }
 	bool relax_bound() const { return relax_bound_; }
+
+	inline void relax_unbound( bool const rlu ) { relax_unbound_ = rlu; }
+	inline bool relax_unbound() const { return relax_unbound_; }
 
 	virtual void scorefxn( core::scoring::ScoreFunctionCOP scorefxn_in );
 
@@ -134,6 +142,7 @@ private :
 	bool use_custom_task_;
 	bool repack_bound_;
 	bool relax_bound_;
+	bool relax_unbound_;
 	bool solvate_; //fd solvate the bound and unbound states
 
 	/// info carrier for poisson-boltzmann potential energy computation

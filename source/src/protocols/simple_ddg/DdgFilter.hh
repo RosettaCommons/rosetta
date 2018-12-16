@@ -44,10 +44,14 @@ public:
 	void repeats( core::Size const repeats );
 	void repack( bool const repack );
 	bool repack() const;
-	void repack_bound( bool rpb ) { repack_bound_ = rpb; }
+	void repack_bound( bool const rpb ) { repack_bound_ = rpb; }
 	bool repack_bound() const { return repack_bound_; }
-	void relax_bound( bool rlb ) { relax_bound_ = rlb; }
+	inline void repack_unbound( bool const rpu ) { repack_unbound_ = rpu; }
+	inline bool repack_unbound() const { return repack_unbound_; }
+	void relax_bound( bool const rlb ) { relax_bound_ = rlb; }
 	bool relax_bound() const { return relax_bound_; }
+	void relax_unbound( bool const rlu ) { relax_unbound_ = rlu; }
+	bool relax_unbound() const { return relax_unbound_; }
 	void translate_by( core::Real const translate_by );
 	core::Real translate_by() const;
 	void task_factory( core::pack::task::TaskFactoryOP task_factory ) { task_factory_ = task_factory; }
@@ -89,7 +93,9 @@ private:
 	core::pack::task::TaskFactoryOP task_factory_;
 	bool use_custom_task_;
 	bool repack_bound_; //dflt true; Do you want to repack in the bound state (ddG). Avoid redundant packing if already packed beforing calling the filter.
+	bool repack_unbound_; //dflt true; Do you want to repack in the unbound state (ddG). Avoid redundant packing if already packed beforing calling the filter.
 	bool relax_bound_; //dflt false; Do you want to relax in the bound state (ddG). Avoid redundant relax if already relaxed before calling the filter.
+	bool relax_unbound_; //dflt false; Do you want to relax in the unbound state (ddG). Avoid redundant relax if already relaxed before calling the filter.
 	utility::vector1<core::Size> chain_ids_;
 	core::Size repeats_;//average of how many repeats? defaults to 1
 	bool repack_; //dflt true; Do you want to repack in the bound and unbound states (ddG) or merely compute the dG

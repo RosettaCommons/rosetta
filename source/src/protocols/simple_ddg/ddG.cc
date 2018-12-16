@@ -110,6 +110,7 @@ ddG::ddG() :
 	use_custom_task_(false),
 	repack_bound_(true),
 	relax_bound_(false),
+	relax_unbound_(true),
 	solvate_(false),
 	pb_enabled_(false),
 	translate_by_(1000)
@@ -131,6 +132,7 @@ ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in,
 	use_custom_task_(false),
 	repack_bound_(true),
 	relax_bound_(false),
+	relax_unbound_(true),
 	solvate_(false),
 	pb_enabled_(false),
 	translate_by_(1000)
@@ -166,6 +168,7 @@ ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in,
 	use_custom_task_(false),
 	repack_bound_(true),
 	relax_bound_(false),
+	relax_unbound_(true),
 	solvate_(false),
 	pb_enabled_(false),
 	translate_by_(1000)
@@ -206,6 +209,7 @@ void ddG::parse_my_tag(
 	use_custom_task( tag->hasOption("task_operations") );
 	repack_bound_ = tag->getOption<bool>("repack_bound",true);
 	relax_bound_ = tag->getOption<bool>("relax_bound",false);
+	relax_unbound_ = tag->getOption<bool>("relax_unbound",false);
 	solvate_ = tag->getOption<bool>("solvate",false);
 	translate_by_ = tag->getOption<core::Real>("translate_by", 1000);
 
@@ -509,7 +513,7 @@ ddG::calculate( pose::Pose const & pose_original )
 			if ( solvate_ ) do_minimize( pose );
 		}
 
-		if ( relax_mover() ) {
+		if ( relax_unbound() && relax_mover() ) {
 			relax_mover()->apply( pose );
 		}
 
@@ -760,8 +764,13 @@ ddG::define_ddG_schema() {
 
 	attlist + XMLSchemaAttribute::attribute_w_default(
 		"relax_bound", xsct_rosetta_bool,
-		"XSD XRW TO DO",
+		"Should we relax the bound state, if a relax mover is specified?  Default false.",
 		"false");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"relax_unbound", xsct_rosetta_bool,
+		"Should we relax the unbound state, if a relax mover is specified?  Default true.",
+		"true");
 
 	attlist + XMLSchemaAttribute::attribute_w_default(
 		"translate_by", xs_decimal,
