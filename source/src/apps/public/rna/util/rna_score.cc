@@ -65,6 +65,8 @@
 #include <iostream>
 #include <string>
 
+#include <numeric/conversions.hh>
+
 // option key includes
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/chemical.OptionKeys.gen.hh>
@@ -89,6 +91,8 @@ OPT_KEY( Boolean, color_by_score )
 OPT_KEY( Boolean, soft_rep )
 OPT_KEY( Boolean, rmsd_nosuper )
 OPT_KEY( Boolean, convert_protein_centroid )
+OPT_KEY( Boolean, dihedral_rms  )
+OPT_KEY( Boolean, gdt_ha )
 OPT_KEY( IntegerVector, rmsd_residues )
 
 // Move this out to protocols/toolbox/ before checkin.
@@ -221,6 +225,61 @@ do_color_by_score( core::pose::Pose & pose ) {
 		}
 	}
 
+}
+
+Real
+calc_dihedral_rms( core::pose::Pose const & pose, core::pose::Pose const & native_pose, bool verbose = false ) {
+	// Go residue by residue. These need to be the same length.
+
+	if ( pose.size() != native_pose.size() ) {
+		utility_exit_with_message( "Pose and native are different lengths. If you want, pass -dihedral_rms false" );
+	}
+
+	Real accumulator = 0;
+	Size count = 0;
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+		Size n_mainchain = pose.residue( ii ).n_mainchain_atoms();
+
+		if ( pose.residue( ii ).has_lower_connect() && native_pose.residue( ii ).has_lower_connect() ) {
+			if ( pose.residue( ii ).mainchain_torsion( 1 ) != native_pose.residue( ii ).mainchain_torsion( 1 ) ) {
+				accumulator += 1 - cos( numeric::conversions::radians< Real >( pose.residue( ii ).mainchain_torsion( 1 ) - native_pose.residue( ii ).mainchain_torsion( 1 ) ) );
+				//accumulator += ( pose.residue( ii ).mainchain_torsion( 1 ) - native_pose.residue( ii ).mainchain_torsion( 1 ) )
+				// * ( pose.residue( ii ).mainchain_torsion( 1 ) - native_pose.residue( ii ).mainchain_torsion( 1 ) );
+			}
+			if ( verbose ) {
+				std::cout << "pose " << pose.residue( ii ).mainchain_torsion( 1 ) << " native " << native_pose.residue( ii ).mainchain_torsion( 1 ) << std::endl;
+			}
+			count++;
+		}
+
+		for ( Size jj = 2; jj <= n_mainchain - 1; ++jj ) {
+			if ( pose.residue( ii ).mainchain_torsion( jj ) != native_pose.residue( ii ).mainchain_torsion( jj ) ) {
+				accumulator += 1 - cos( numeric::conversions::radians< Real >( pose.residue( ii ).mainchain_torsion( jj ) - native_pose.residue( ii ).mainchain_torsion( jj ) ) );
+				//accumulator += ( pose.residue( ii ).mainchain_torsion( jj ) - native_pose.residue( jj ).mainchain_torsion( 1 ) )
+				// * ( pose.residue( ii ).mainchain_torsion( jj ) - native_pose.residue( jj ).mainchain_torsion( 1 ) );
+			}
+			if ( verbose ) {
+				std::cout << "pose " << pose.residue( ii ).mainchain_torsion( jj ) << " native " << native_pose.residue( ii ).mainchain_torsion( jj ) << std::endl;
+			}
+			count++;
+		}
+
+		if ( pose.residue( ii ).has_upper_connect() && native_pose.residue( ii ).has_upper_connect() ) {
+			if ( pose.residue( ii ).mainchain_torsion( n_mainchain ) != native_pose.residue( ii ).mainchain_torsion( n_mainchain ) ) {
+				accumulator += 1 - cos( numeric::conversions::radians< Real >( pose.residue( ii ).mainchain_torsion( n_mainchain ) - native_pose.residue( ii ).mainchain_torsion( n_mainchain ) ) );
+				//accumulator += ( pose.residue( ii ).mainchain_torsion( n_mainchain ) - native_pose.residue( ii ).mainchain_torsion( n_mainchain ) )
+				// * ( pose.residue( ii ).mainchain_torsion( n_mainchain ) - native_pose.residue( ii ).mainchain_torsion( n_mainchain ) );
+			}
+			if ( verbose ) {
+				std::cout << "pose " << pose.residue( ii ).mainchain_torsion( n_mainchain ) << " native " << native_pose.residue( ii ).mainchain_torsion( n_mainchain ) << std::endl;
+			}
+			count++;
+		}
+	}
+	accumulator /= count;
+	accumulator = std::sqrt( accumulator );
+
+	return accumulator;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -382,6 +441,15 @@ rna_score_test()
 		std::string tag = tag_from_pose( *pose );
 		BinarySilentStruct s( opts, *pose, tag );
 
+		Real test_dihrms = calc_dihedral_rms( *pose, *pose, false );
+		if ( test_dihrms != 0 ) {
+			utility_exit_with_message( "Something is wrong with calc_dihedral_rms" );
+		}
+
+
+		std::map< Size, Size > resmap;
+		for ( Size ii = 1; ii <= pose->size(); ++ii ) resmap[ ii ] = ii;
+
 		if ( native_exists ) {
 			Real rmsd;
 			if ( option[ rmsd_nosuper ]() ) {
@@ -398,6 +466,15 @@ rna_score_test()
 			}
 			std::cout << "All atom rmsd over moving residues: " << tag << " " << rmsd << std::endl;
 			s.add_energy( "new_rms", rmsd );
+
+			// dihedral rms
+			if ( option[ dihedral_rms ]() ) {
+				s.add_energy( "dih_rms", calc_dihedral_rms( *pose, *native_pose, false ) );
+			}
+			if ( option[ gdt_ha ]() ) {
+				// requires perfect correspondence!
+				s.add_energy( "gdt_ha", gdtsc( *pose, *native_pose, resmap ) );
+			}
 
 			// Stem RMSD
 			// if ( option[params_file].user() ) {
@@ -482,6 +559,8 @@ main( int argc, char * argv [] )
 		NEW_OPT( rmsd_nosuper, "Calculate rmsd without superposition first", false);
 		NEW_OPT( convert_protein_centroid, "convert the protein residues to centroid rep", false);
 		NEW_OPT( rmsd_residues, "residues to calculate rmsd for; superimposition is still over ALL residues", utility::vector1<Size>() );
+		NEW_OPT( dihedral_rms, "calculate RMS dihedral distance too", true);
+		NEW_OPT( gdt_ha, "calculate heavyatom GDT too", true);
 
 		////////////////////////////////////////////////////////////////////////////
 		// setup
