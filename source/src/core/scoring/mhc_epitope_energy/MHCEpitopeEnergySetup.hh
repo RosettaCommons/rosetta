@@ -31,11 +31,7 @@
 #include <core/scoring/EnergyMap.fwd.hh>
 #include <core/scoring/methods/WholeStructureEnergy.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <core/chemical/ResidueType.fwd.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueProperties.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/chemical/ResidueProperty.hh>
 
 // Project headers
 #include <core/types.hh>

@@ -28,29 +28,9 @@
 #include <basic/Tracer.hh>
 
 // Package headers
-#include <core/chemical/AtomType.hh>
-#include <core/pose/Pose.hh>
-#include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/chemical/Atom.hh>
-#include <core/select/residue_selector/ResidueSelector.hh>
-#include <protocols/rosetta_scripts/util.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/hbonds/HBondSet.hh>
-#include <core/scoring/hbonds/hbonds.hh>
-#include <core/scoring/hbonds/HBondDatabase.hh>
-#include <core/scoring/hbonds/HBondOptions.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/EnergyMap.hh>
-#include <core/pose/selection.hh>
-#include <core/pose/symmetry/util.hh>
-#include <core/conformation/Residue.hh>
-#include <core/select/residue_selector/ResidueSelectorFactory.hh>
-#include <core/scoring/hbonds/HBondSet.hh>
-#include <protocols/hbnet/HBNet_util.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <protocols/hbnet/HBNet.hh>
-#include <core/id/AtomID.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.hh>

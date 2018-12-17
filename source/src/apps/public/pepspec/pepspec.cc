@@ -24,6 +24,7 @@
 #include <core/scoring/LREnergyContainer.hh>
 #include <core/scoring/methods/Methods.hh>
 #include <core/scoring/ScoreType.hh>
+#include <core/scoring/EnergyGraph.hh>
 
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>

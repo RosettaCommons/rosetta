@@ -27,9 +27,6 @@
 #include <core/pack/task/rna/RNA_ResidueLevelTask.fwd.hh>
 
 // Project Headers
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ResidueType.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/id/SequenceMapping.fwd.hh>
 

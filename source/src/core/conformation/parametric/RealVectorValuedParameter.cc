@@ -99,8 +99,8 @@ RealVectorValuedParameter::set_parameter_type(
 
 /// @brief Set the default value for this parameter.
 void
-RealVectorValuedParameter::set_default_value(\
-	utility::vector1< core::Real > const value_in
+RealVectorValuedParameter::set_default_value(
+	utility::vector1< core::Real > const & value_in
 ) {
 	runtime_assert_string_msg(!value_was_set(), "Error in RealVectorValuedParameter::set_default_value(): The default value cannot be set after the value has been set!");
 	default_value_ = value_in;

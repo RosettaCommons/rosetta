@@ -27,11 +27,10 @@
 #include <core/scoring/methods/ContextDependentOneBodyEnergy.hh>
 
 // Package Headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/conformation/membrane/Span.fwd.hh>
 #include <core/types.hh>
 
-#include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 // Utility Headers

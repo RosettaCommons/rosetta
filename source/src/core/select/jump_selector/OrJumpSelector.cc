@@ -18,7 +18,7 @@
 // Package headers
 #include <core/select/jump_selector/JumpSelectorFactory.hh>
 #include <core/select/jump_selector/util.hh>
-#include <core/pose/Pose.fwd.hh>
+#include <core/pose/Pose.hh>
 
 // Basic headers
 #include <basic/datacache/DataMap.hh>

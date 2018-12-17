@@ -18,7 +18,7 @@
 #include <core/scoring/HydroxylTorsionPotential.fwd.hh>
 
 // Package headers
-#include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
@@ -27,6 +27,7 @@
 
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
+#include <boost/unordered/unordered_map.hpp>
 
 namespace core {
 namespace scoring {

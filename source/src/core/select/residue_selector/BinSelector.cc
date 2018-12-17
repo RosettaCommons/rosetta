@@ -20,6 +20,7 @@
 #include <basic/datacache/DataMap.hh>
 
 // Package headers
+#include <core/pose/Pose.hh>
 #include <core/pose/selection.hh>
 #include <core/conformation/Residue.hh>
 #include <core/select/residue_selector/ResidueSelectorFactory.hh>

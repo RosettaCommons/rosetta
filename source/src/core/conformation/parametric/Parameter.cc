@@ -25,6 +25,7 @@
 
 // Utility Headers
 #include <utility/vector1.hh>
+#include <utility/string_util.hh>
 
 
 #ifdef SERIALIZATION
@@ -160,7 +161,7 @@ Parameter::set_global_for_parameters_set(
 /// @details The leading underscore should be omitted.
 void
 Parameter::set_copy_suffix(
-	std::string const suffix_in
+	std::string const & suffix_in
 ) {
 #ifndef NDEBUG
 	debug_assert( !suffix_in.empty() );

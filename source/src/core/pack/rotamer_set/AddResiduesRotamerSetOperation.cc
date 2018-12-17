@@ -13,7 +13,9 @@
 /// @author Tim Jacobs
 
 //Unit
-#include<core/pack/rotamer_set/AddResiduesRotamerSetOperation.hh>
+#include <core/pack/rotamer_set/AddResiduesRotamerSetOperation.hh>
+#include <core/pose/Pose.hh>
+#include <core/conformation/Residue.hh>
 #include <utility>
 
 namespace core {

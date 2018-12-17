@@ -20,7 +20,6 @@
 
 // Package headers
 #include <core/scoring/methods/ContextIndependentOneBodyEnergy.hh>
-#include <core/chemical/ResidueType.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/MinimizationData.fwd.hh>
 

@@ -26,6 +26,7 @@
 #include <core/select/util.hh>
 
 // Project headers
+#include <core/pose/Pose.hh>
 #include <core/pose/selection.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/Energies.hh>

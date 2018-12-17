@@ -31,6 +31,7 @@
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/Patch.hh>
+#include <core/chemical/Metapatch.hh>
 #include <core/chemical/PatchOperation.hh>
 #include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/MMAtomType.hh>

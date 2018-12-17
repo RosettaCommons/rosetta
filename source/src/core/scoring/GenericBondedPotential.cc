@@ -1661,8 +1661,8 @@ GenericBondedPotential::eval_residue_pair_energy_and_derivative_improper(
 
 void
 GenericBondedPotential::modify_tors_params(
-	std::string atm1, std::string atm2,
-	std::string atm3, std::string atm4,
+	std::string const & atm1, std::string const & atm2,
+	std::string const & atm3, std::string const & atm4,
 	core::Real k1_in, core::Real k2_in, core::Real k3_in,
 	core::Real f1_in, core::Real f2_in, core::Real f3_in
 ) {
@@ -1717,8 +1717,8 @@ GenericBondedPotential::modify_tors_params(
 
 void
 GenericBondedPotential::modify_special_tors_params(
-	std::string atm1, std::string atm2,
-	std::string atm3, std::string atm4,
+	std::string const & atm1, std::string const & atm2,
+	std::string const & atm3, std::string const & atm4,
 	core::Real k1_in, core::Real k2_in, core::Real k3_in,
 	core::Real k4_in, core::Real k8_in,
 	core::Real f1_in, core::Real f2_in, core::Real f3_in,

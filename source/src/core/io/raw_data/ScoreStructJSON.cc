@@ -16,6 +16,7 @@
 #include <core/io/raw_data/ScoreStructJSON.hh>
 #include <utility/json_spirit/json_spirit_writer.h>
 #include <utility/json_spirit/json_spirit_writer_template.h>
+#include <core/pose/Pose.hh>
 
 // C++ Headers
 #include <map>

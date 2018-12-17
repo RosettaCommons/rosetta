@@ -30,7 +30,7 @@
 
 // Project headers
 #include <core/types.hh>
-#include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 
 // ObjexxFCL headers

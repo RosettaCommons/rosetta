@@ -16,7 +16,7 @@
 
 // Package headers
 #include <core/id/AtomID_Map.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 // utility headers
 #include <basic/Tracer.hh>

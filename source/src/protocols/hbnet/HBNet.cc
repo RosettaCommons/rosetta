@@ -61,6 +61,8 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 
+#include <core/pack/interaction_graph/PrecomputedPairEnergiesInteractionGraph.hh>
+
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/selection.hh>

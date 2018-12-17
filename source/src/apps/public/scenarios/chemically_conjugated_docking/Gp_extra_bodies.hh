@@ -17,18 +17,13 @@
 // Unit Headers
 
 // Project Headers
-#include <core/chemical/ResidueType.hh>
-
-#include <core/kinematics/FoldTree.hh>
-
-#include <core/conformation/Conformation.hh>
-#include <core/conformation/Residue.hh>
-
 #include <core/pose/Pose.hh>
 
 #include <core/import_pose/import_pose.hh>
 
 // Utility Headers
+#include <core/conformation/Conformation.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/chemically_conjugated_docking.OptionKeys.gen.hh>

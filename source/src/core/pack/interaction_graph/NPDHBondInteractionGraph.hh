@@ -25,10 +25,6 @@
 #include <core/pack/interaction_graph/LinearMemoryInteractionGraph.hh>
 
 // Project Headers
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/ResidueType.hh>
-
 #include <core/conformation/Residue.hh>
 
 #include <core/pack/task/PackerTask.hh>

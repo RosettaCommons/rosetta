@@ -26,8 +26,7 @@
 #include <core/scoring/EnergyMap.fwd.hh>
 
 #include <core/scoring/ScoreType.hh>
-#include <core/id/AtomID.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 #include <string>
 

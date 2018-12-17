@@ -21,7 +21,7 @@
 // Package headers
 #include <core/types.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/select/util/SelectResiduesByLayer.fwd.hh>
 
 // Utility Headers

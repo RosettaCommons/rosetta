@@ -17,13 +17,17 @@
 
 //Core
 #include <core/types.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/rotamer_set/RotamerSetOperation.hh>
 #include <utility/graph/Graph.hh>
+#ifdef WIN32
 #include <core/conformation/Residue.hh>
+#else
+#include <core/conformation/Residue.fwd.hh>
+#endif
 
 namespace core {
 namespace pack {

@@ -24,8 +24,7 @@
 #include <core/scoring/elec/electrie/ElecTrie.fwd.hh>
 
 // Project headers
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
 #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
@@ -35,6 +34,8 @@
 #include <core/scoring/trie/TrieCountPairBase.fwd.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/elec/CPRepMapType.fwd.hh>
+#include <core/chemical/RestypeDestructionEvent.fwd.hh>
+#include <core/chemical/AtomType.hh> // for MAX_CHEMICAL_BOND_TO_HYDROGEN_LENGTH
 
 // Utility headers
 #include <utility/vector1.hh>

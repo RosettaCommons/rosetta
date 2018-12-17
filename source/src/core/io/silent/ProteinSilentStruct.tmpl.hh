@@ -42,7 +42,6 @@
 
 #include <core/chemical/AA.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 
 #include <core/conformation/Residue.hh>

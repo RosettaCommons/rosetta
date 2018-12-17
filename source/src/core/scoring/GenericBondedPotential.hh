@@ -18,10 +18,6 @@
 // Unit headers
 #include <core/scoring/GenericBondedPotential.fwd.hh>
 
-// Package headers
-#include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueTypeSet.fwd.hh>
-
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
@@ -30,6 +26,8 @@
 #include <core/scoring/EnergyMap.hh>
 
 #include <utility/vector1.hh>
+#include <boost/unordered/unordered_map.hpp>
+#include <utility/pointer/ReferenceCount.hh>
 
 namespace core {
 namespace scoring {
@@ -139,8 +137,8 @@ public:
 private:
 	void
 	modify_tors_params(
-		std::string const atm1, std::string const atm2,
-		std::string const atm3, std::string const atm4,
+		std::string const & atm1, std::string const & atm2,
+		std::string const & atm3, std::string const & atm4,
 		core::Real k1_in, core::Real k2_in, core::Real k3_in,
 		core::Real f1_in=0.0, core::Real f2_in=0.0,
 		core::Real f3_in=0.0
@@ -148,8 +146,8 @@ private:
 
 	void
 	modify_special_tors_params(
-		std::string const atm1, std::string const atm2,
-		std::string const atm3, std::string const atm4,
+		std::string const & atm1, std::string const & atm2,
+		std::string const & atm3, std::string const & atm4,
 		core::Real k1_in, core::Real k2_in, core::Real k3_in,
 		core::Real k4_in, core::Real k8_in,
 		core::Real f1_in=0.0, core::Real f2_in=0.0,

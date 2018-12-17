@@ -130,8 +130,8 @@ AACompositionPropertiesSetOP AACompositionPropertiesSet::clone() const {
 /// @brief Add a type to the list of types that are always counted.
 /// @details Checks that it hasn't yet been added to any list.
 void AACompositionPropertiesSet::add_included_type( std::string const &type ) {
-	runtime_assert_string_msg( !is_in_list(type, included_types_), "Error in core::scoring::aa_composition_energy::AACompositionPropertiesSet::add_included_type(): This type has already been added ot the list of included types!" );
-	runtime_assert_string_msg( !is_in_list(type, excluded_types_), "Error in core::scoring::aa_composition_energy::AACompositionPropertiesSet::add_included_type(): This type has already been added ot the list of excluded types!" );
+	runtime_assert_string_msg( !included_types_.contains( type ), "Error in core::scoring::aa_composition_energy::AACompositionPropertiesSet::add_included_type(): This type has already been added ot the list of included types!" );
+	runtime_assert_string_msg( !excluded_types_.contains( type ), "Error in core::scoring::aa_composition_energy::AACompositionPropertiesSet::add_included_type(): This type has already been added ot the list of excluded types!" );
 	included_types_.push_back( type );
 	return;
 }
@@ -139,8 +139,8 @@ void AACompositionPropertiesSet::add_included_type( std::string const &type ) {
 /// @brief Add a type to the list of types that are never counted.
 /// @details Checks that it hasn't yet been added to any list.
 void AACompositionPropertiesSet::add_excluded_type( std::string const &type ) {
-	runtime_assert_string_msg( !is_in_list(type, included_types_), "Error in core::scoring::aa_composition_energy::AACompositionPropertiesSet::add_included_type(): This type has already been added ot the list of included types!" );
-	runtime_assert_string_msg( !is_in_list(type, excluded_types_), "Error in core::scoring::aa_composition_energy::AACompositionPropertiesSet::add_included_type(): This type has already been added ot the list of excluded types!" );
+	runtime_assert_string_msg( !included_types_.contains( type ), "Error in core::scoring::aa_composition_energy::AACompositionPropertiesSet::add_included_type(): This type has already been added ot the list of included types!" );
+	runtime_assert_string_msg( !excluded_types_.contains( type ), "Error in core::scoring::aa_composition_energy::AACompositionPropertiesSet::add_included_type(): This type has already been added ot the list of excluded types!" );
 	excluded_types_.push_back( type );
 	return;
 }
@@ -148,9 +148,9 @@ void AACompositionPropertiesSet::add_excluded_type( std::string const &type ) {
 /// @brief Add a property to the list of properties that must be present.
 ///
 void AACompositionPropertiesSet::add_included_property( core::chemical::ResidueProperty const property ) {
-	runtime_assert_string_msg( !is_in_list(property, included_properties_), "Error in core::scoring::aa_composition_energy::AACompositionPropertiesSet::add_included_property(): Property has already been added to the included property list!" );
-	runtime_assert_string_msg( !is_in_list(property, or_properties_), "Error in core::scoring::aa_composition_energy::AACompositionPropertiesSet::add_included_property(): Property has already been added to the or properties list!" );
-	runtime_assert_string_msg( !is_in_list(property, excluded_properties_), "Error in core::scoring::aa_composition_energy::AACompositionPropertiesSet::add_included_property(): Property has already been added to the excluded property list!" );
+	runtime_assert_string_msg( !included_properties_.contains( property ), "Error in core::scoring::aa_composition_energy::AACompositionPropertiesSet::add_included_property(): Property has already been added to the included property list!" );
+	runtime_assert_string_msg( !or_properties_.contains( property ), "Error in core::scoring::aa_composition_energy::AACompositionPropertiesSet::add_included_property(): Property has already been added to the or properties list!" );
+	runtime_assert_string_msg( !excluded_properties_.contains( property ), "Error in core::scoring::aa_composition_energy::AACompositionPropertiesSet::add_included_property(): Property has already been added to the excluded property list!" );
 	included_properties_.push_back(property);
 	return;
 }
@@ -158,9 +158,9 @@ void AACompositionPropertiesSet::add_included_property( core::chemical::ResidueP
 /// @brief Add a property to the list of properties that, if present, result in the residue being counted
 /// if it's not in the excluded_types_ or excluded_properties_ lists.
 void AACompositionPropertiesSet::add_or_property( core::chemical::ResidueProperty const property ) {
-	runtime_assert_string_msg( !is_in_list(property, included_properties_), "Error in core::scoring::aa_composition_energy::AACompositionPropertiesSet::add_or_property(): Property has already been added to the included property list!" );
-	runtime_assert_string_msg( !is_in_list(property, or_properties_), "Error in core::scoring::aa_composition_energy::AACompositionPropertiesSet::add_or_property(): Property has already been added to the or properties list!" );
-	runtime_assert_string_msg( !is_in_list(property, excluded_properties_), "Error in core::scoring::aa_composition_energy::AACompositionPropertiesSet::add_or_property(): Property has already been added to the excluded property list!" );
+	runtime_assert_string_msg( !included_properties_.contains( property ), "Error in core::scoring::aa_composition_energy::AACompositionPropertiesSet::add_or_property(): Property has already been added to the included property list!" );
+	runtime_assert_string_msg( !or_properties_.contains( property ), "Error in core::scoring::aa_composition_energy::AACompositionPropertiesSet::add_or_property(): Property has already been added to the or properties list!" );
+	runtime_assert_string_msg( !excluded_properties_.contains( property ), "Error in core::scoring::aa_composition_energy::AACompositionPropertiesSet::add_or_property(): Property has already been added to the excluded property list!" );
 	or_properties_.push_back(property);
 	return;
 }
@@ -169,9 +169,9 @@ void AACompositionPropertiesSet::add_or_property( core::chemical::ResiduePropert
 /// @brief Add a property to the list of properties that must not be present.
 ///
 void AACompositionPropertiesSet::add_excluded_property( core::chemical::ResidueProperty const property ) {
-	runtime_assert_string_msg( !is_in_list(property, included_properties_), "Error in core::scoring::aa_composition_energy::AACompositionPropertiesSet::add_excluded_property(): Property has already been added to the included property list!" );
-	runtime_assert_string_msg( !is_in_list(property, or_properties_), "Error in core::scoring::aa_composition_energy::AACompositionPropertiesSet::add_excluded_property(): Property has already been added to the or properties list!" );
-	runtime_assert_string_msg( !is_in_list(property, excluded_properties_), "Error in core::scoring::aa_composition_energy::AACompositionPropertiesSet::add_excluded_property(): Property has already been added to the excluded properties list!" );
+	runtime_assert_string_msg( !included_properties_.contains( property ), "Error in core::scoring::aa_composition_energy::AACompositionPropertiesSet::add_excluded_property(): Property has already been added to the included property list!" );
+	runtime_assert_string_msg( !or_properties_.contains( property ), "Error in core::scoring::aa_composition_energy::AACompositionPropertiesSet::add_excluded_property(): Property has already been added to the or properties list!" );
+	runtime_assert_string_msg( !excluded_properties_.contains( property ), "Error in core::scoring::aa_composition_energy::AACompositionPropertiesSet::add_excluded_property(): Property has already been added to the excluded properties list!" );
 	excluded_properties_.push_back(property);
 	return;
 }

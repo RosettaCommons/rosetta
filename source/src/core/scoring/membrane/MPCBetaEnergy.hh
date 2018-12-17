@@ -28,8 +28,8 @@
 #include <core/scoring/EnvPairPotential.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
-#include <core/pose/Pose.hh>
-#include <core/conformation/Conformation.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <core/conformation/Conformation.fwd.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>

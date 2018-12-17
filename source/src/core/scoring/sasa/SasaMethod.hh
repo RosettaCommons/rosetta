@@ -14,8 +14,10 @@
 #ifndef INCLUDED_core_scoring_sasa_SASAMETHOD_HH
 #define INCLUDED_core_scoring_sasa_SASAMETHOD_HH
 
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/sasa/SasaMethod.fwd.hh>
+#include <utility/pointer/ReferenceCount.hh>
+
 #include <core/id/AtomID_Map.hh>
 
 #ifdef    SERIALIZATION
@@ -99,7 +101,6 @@ protected:
 
 	bool include_probe_radius_;
 	bool use_big_polar_H_;
-	//vector1<std::string> radii_names_;
 #ifdef    SERIALIZATION
 protected:
 	friend class cereal::access;

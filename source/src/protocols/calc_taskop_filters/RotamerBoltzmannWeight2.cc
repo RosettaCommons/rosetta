@@ -23,6 +23,7 @@
 
 // Core headers
 #include <core/conformation/Residue.hh>
+#include <core/pose/Pose.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/scoring/ScoreFunction.hh>

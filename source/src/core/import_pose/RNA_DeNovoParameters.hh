@@ -20,7 +20,6 @@
 #include <core/import_pose/RNA_DeNovoParameters.fwd.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/rna/BasePair.hh>
-#include <core/pose/Pose.hh>
 
 namespace core {
 namespace import_pose {

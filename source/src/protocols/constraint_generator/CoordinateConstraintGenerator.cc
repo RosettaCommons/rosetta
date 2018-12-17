@@ -20,6 +20,7 @@
 
 // Core headers
 #include <core/conformation/Residue.hh>
+#include <core/pose/Pose.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/kinematics/FoldTree.hh>

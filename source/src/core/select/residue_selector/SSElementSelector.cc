@@ -118,12 +118,12 @@ utility::vector1<SSElementSelector::SSElement> SSElementSelector::parse_ss(core:
 	bool delete_n_term_loop=false;
 	bool delete_c_term_loop=false;
 	Size ss_length = ss_elements[1].end_res-ss_elements[1].start_res;
-	if ( (ss_length<reassign_short_terminal_loop_)&&(ss_elements[1].type=="L") ) {
+	if ( (ss_length<reassign_short_terminal_loop_)&&(ss_elements[1].type=='L') ) {
 		ss_elements[2].start_res =ss_elements[1].start_res;
 		delete_n_term_loop=true;
 	}
 	ss_length = ss_elements[ss_elements.size()].end_res-ss_elements[ss_elements.size()].start_res;
-	if ( (ss_length<reassign_short_terminal_loop_)&&(ss_elements[ss_elements.size()].type=="L") ) {
+	if ( (ss_length<reassign_short_terminal_loop_)&&(ss_elements[ss_elements.size()].type=='L') ) {
 		ss_elements[ss_elements.size()-1].end_res =ss_elements[ss_elements.size()].end_res;
 		delete_c_term_loop=true;
 	}
@@ -142,7 +142,7 @@ utility::vector1<SSElementSelector::SSElement> SSElementSelector::parse_ss(core:
 	return(ss_elements_v2);
 }
 
-SSElementSelector::SSElement SSElementSelector::get_SSElement(utility::vector1<SSElementSelector::SSElement> ss_elements, int goal_position, std::string type,std::string description) const {
+SSElementSelector::SSElement SSElementSelector::get_SSElement(utility::vector1<SSElementSelector::SSElement> ss_elements, int goal_position, char const type,std::string description) const {
 	int ss_ct=0;
 	Size location=0;
 	if ( goal_position>0 ) {
@@ -200,7 +200,8 @@ utility::vector1<Size> SSElementSelector::convert_string_to_residues(utility::ve
 	//"2,L,M" and "2,L" case------------
 	utility::vector1 <std::string> split_string = utility::string_split(description,',',std::string());
 	int goal_position =utility::string2int(split_string[1]);
-	std::string ss_type = split_string[2];
+	//std::string ss_type = split_string[2];
+	char ss_type = split_string[2][0];
 	SSElement ss_element_selected = get_SSElement(ss_elements,goal_position,ss_type,description);
 	//"2,L" case
 	if ( split_string.size()==2 ) {

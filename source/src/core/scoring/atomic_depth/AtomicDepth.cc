@@ -38,6 +38,7 @@ warranty.
 #include <core/chemical/AtomType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/util.hh>
+#include <core/pose/Pose.hh>
 
 #include <basic/Tracer.hh>
 

@@ -10,15 +10,17 @@
 /// @file /protocols/simple_moves/chiral/ChiralMover.hh
 /// @brief
 /// @author Kevin Drew, kdrew@nyu.edu
+/// @author Andy Watkins, amw579@stanford.edu
+
 #ifndef INCLUDED_protocols_simple_moves_chiral_ChiralMover_hh
 #define INCLUDED_protocols_simple_moves_chiral_ChiralMover_hh
 // Unit Headers
 #include <protocols/simple_moves/chiral/ChiralMover.fwd.hh>
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
+#include <core/chemical/ResidueType.fwd.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/chemical/Patch.hh>
 
 #include <map>
 
@@ -36,7 +38,7 @@ enum Chirality {
 	FLIP_CHIRALITY //flip to the other chirality, ie L->D or D->L
 };
 
-core::chemical::ResidueType const & get_chiral_residue_type( core::chemical::ResidueType const & , Chirality, core::chemical::ResidueTypeSet const & );
+core::chemical::ResidueType const & get_chiral_residue_type( core::chemical::ResidueType const & rt, Chirality chirality, core::chemical::ResidueTypeSet const & residue_type_set );
 
 /// @details
 class ChiralMover : public protocols::moves::Mover {

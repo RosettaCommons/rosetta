@@ -20,8 +20,10 @@
 #include <core/pack/rotamer_set/RotamerSet_.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/hbonds/HBondGraph_util.hh>
+#include <core/pose/Pose.hh>
 #include <core/scoring/atomic_depth/AtomicDepth.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/pose/symmetry/util.hh>
 
 #include <basic/Tracer.hh>
 

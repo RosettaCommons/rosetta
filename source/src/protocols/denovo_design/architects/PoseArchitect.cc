@@ -24,6 +24,8 @@
 // Core headers
 #include <core/select/residue_selector/TrueResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
+#include <core/pose/Pose.hh>
+
 // Basic/Utility headers
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>

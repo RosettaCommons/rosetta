@@ -31,6 +31,7 @@
 #include <core/conformation/Conformation.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/AtomType.hh>
+#include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/id/AtomID.hh>

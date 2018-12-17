@@ -20,7 +20,7 @@
 // Package headers
 #include <core/types.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
@@ -54,12 +54,12 @@ public:
 	struct SSElement{
 		Size start_res;
 		Size end_res;
-		std::string type;
-		SSElement(Size start_res_i, Size end_res_i, Size type_res_i){
-			start_res = start_res_i;
-			end_res = end_res_i;
-			type = type_res_i;
-		}
+		char type;
+		SSElement(Size start_res_i, Size end_res_i, char type_res_i):
+			start_res( start_res_i ),
+			end_res( end_res_i ),
+			type( type_res_i )
+		{}
 	};
 
 public:
@@ -80,7 +80,7 @@ public:
 	utility::vector1<SSElement> parse_ss(core::pose::Pose const & pose) const;
 
 	// @brief This gets the SS_element when the user asks for things like the second helix
-	SSElementSelector::SSElement get_SSElement(utility::vector1<SSElementSelector::SSElement> ss_elements, int goal_position, std::string type,std::string description) const;
+	SSElementSelector::SSElement get_SSElement(utility::vector1<SSElementSelector::SSElement> ss_elements, int goal_position, char type,std::string description) const;
 
 	// @brief converts the strings shown below to protein residues
 	utility::vector1<Size> convert_string_to_residues(utility::vector1<SSElementSelector::SSElement> ss_elements, std::string description) const;

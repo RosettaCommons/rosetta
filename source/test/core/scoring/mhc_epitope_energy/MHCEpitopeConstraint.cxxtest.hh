@@ -16,6 +16,7 @@
 #include <core/scoring/mhc_epitope_energy/MHCEpitopeConstraint.hh>
 #include <core/scoring/mhc_epitope_energy/MHCEpitopeEnergySetup.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
+#include <core/pose/Pose.hh>
 
 // Package Headers
 #include <test/core/init_util.hh>

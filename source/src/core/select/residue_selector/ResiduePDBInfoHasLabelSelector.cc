@@ -21,6 +21,7 @@
 // Package headers
 #include <core/select/residue_selector/util.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/pose/Pose.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>

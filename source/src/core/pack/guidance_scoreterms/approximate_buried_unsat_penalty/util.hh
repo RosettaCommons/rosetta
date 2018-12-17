@@ -20,8 +20,6 @@
 // Package headers
 #include <core/scoring/hbonds/graph/HBondGraph.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
-#include <core/pose/Pose.hh>
-#include <core/pose/symmetry/util.hh>
 #include <core/pack/task/IGEdgeReweightContainer.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack_basic/RotamerSetsBase.hh>

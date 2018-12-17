@@ -20,9 +20,6 @@
 #include <core/conformation/parametric/Parameter.hh>
 #include <core/conformation/parametric/SizeValuedParameter.fwd.hh>
 
-// Package headers
-#include <core/conformation/Residue.hh>
-
 // Project headers
 #include <core/types.hh>
 

@@ -17,6 +17,7 @@
 
 // Core headers
 #include <core/conformation/Residue.hh>
+#include <core/pose/Pose.hh>
 #include <core/pose/selection.hh>
 #include <core/select/residue_selector/ResidueVector.hh>
 #include <core/select/residue_selector/TrueResidueSelector.hh>

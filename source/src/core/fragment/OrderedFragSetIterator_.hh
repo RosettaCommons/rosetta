@@ -16,25 +16,10 @@
 #ifndef INCLUDED_core_fragment_OrderedFragSetIterator__HH
 #define INCLUDED_core_fragment_OrderedFragSetIterator__HH
 
-// Unit Headers
-//#include <core/fragment/ConstantLengthFragSet.fwd.hh>
-
 // Package Headers
 #include <core/fragment/FrameList.hh>
 #include <core/fragment/FrameIteratorWorker_.hh>
-//#include <core/fragment/OrderedFragSet.hh>
-
-//#include <core/fragment/FragSet.hh>
-//#include <core/fragment/Frame.hh>
-//#include <core/fragment/Frame.fwd.hh>
-
-
-// Project Headers
-//#include <core/pose/Pose.hh>
-//#include <core/kinematics/MoveMap.hh>
 #include <core/types.hh>
-
-// ObjexxFCL Headers
 
 // Utility headers
 #include <utility/vector1.fwd.hh>

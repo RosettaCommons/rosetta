@@ -36,12 +36,14 @@ warranty.
 #define INCLUDED_core_scoring_atomic_depth_AtomicDepth_hh
 
 #include <core/scoring/atomic_depth/AtomicDepth.fwd.hh>
+#include <core/types.hh>
 
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/conformation/Atom.hh>
-#include <core/pose/Pose.hh>
+#include <core/chemical/AtomTypeSet.fwd.hh>
+#include <core/conformation/Atom.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
 
 #include <utility/vector1.hh>
+#include <utility/pointer/ReferenceCount.hh>
 
 namespace core {
 namespace scoring {

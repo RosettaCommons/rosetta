@@ -20,24 +20,8 @@
 // Unit Headers
 #include <core/fragment/BBTorsionSRFD.hh>
 
-// Package Headers
-//#include <core/fragment/Frame.fwd.hh>
-
-// Project Headers
-//#include <core/pose/Pose.hh>
-//#include <core/kinematics/MoveMap.fwd.hh>
-//#include <core/types.hh>
-
-//#include <core/conformation/Residue.hh> // for ResidueSRFD
-
-//#include <core/kinematics/types.hh>
-//#include <core/id/TorsionID.hh>
-
-// ObjexxFCL Headers
-
 // Utility headers
 #include <utility/vector1.hh>
-//#include <utility/pointer/ReferenceCount.hh>
 
 // C/C++ headers
 #include <vector>

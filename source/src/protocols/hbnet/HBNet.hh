@@ -28,30 +28,27 @@
 
 // CORE INCLUDES
 #include <core/types.hh>
-#include <core/pose/Pose.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/conformation/Residue.hh>
-#include <core/scoring/hbonds/hbonds.hh>
-#include <core/scoring/Energies.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
+#include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/graph/HBondInfo.hh>
 #include <core/scoring/hbonds/graph/AtomInfo.hh>
 #include <core/scoring/hbonds/graph/HBondGraph.fwd.hh>
 #include <core/pack/interaction_graph/InteractionGraphBase.fwd.hh>
-#include <core/pack/interaction_graph/PrecomputedPairEnergiesInteractionGraph.hh>
-#include <core/pack/rotamer_set/RotamerSets.hh>
-#include <core/pack/rotamer_set/RotamerLinks.hh>
-#include <core/pack/rotamer_set/symmetry/SymmetricRotamerSets.hh>
-#include <core/scoring/hbonds/HBondSet.hh>
 #include <core/id/AtomID.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
+
+#include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
+#include <core/pack/rotamer_set/RotamerLinks.fwd.hh>
+#include <core/pack/rotamer_set/RotamerSets.hh>
+#include <core/pack/rotamer_set/RotamerSet.fwd.hh>
+#include <core/scoring/hbonds/HBondSet.fwd.hh>
+#include <core/scoring/hbonds/HBondDatabase.fwd.hh>
 
 // PROTOCOL INCLUDES
 #include <protocols/rosetta_scripts/util.hh>

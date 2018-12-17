@@ -25,13 +25,9 @@
 #include <core/scoring/func/XYZ_Func.fwd.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
 
-#include <core/scoring/ScoreType.hh>
-#include <core/id/AtomID.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 #include <string>
-
-#include <utility/vector1.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers

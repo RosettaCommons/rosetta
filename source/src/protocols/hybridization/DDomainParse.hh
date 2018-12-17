@@ -16,17 +16,10 @@
 
 #include <protocols/loops/Loops.hh>
 
-#include <core/pose/Pose.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/conformation/Residue.hh>
-
-#include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/Jump.hh>
-#include <core/kinematics/Edge.hh>
-
+#include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
-#include <numeric/xyzVector.hh>
+#include <numeric/xyzVector.fwd.hh>
 
 #include <list>
 

@@ -22,6 +22,7 @@
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID_Map.hh>
+#include <core/pose/Pose.hh>
 #include <core/pack/hbonds/HBondGraph_util.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/rotamer_set/RotamerSetOperation.hh>

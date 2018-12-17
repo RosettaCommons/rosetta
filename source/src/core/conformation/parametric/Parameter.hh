@@ -20,9 +20,6 @@
 #include <core/conformation/parametric/Parameter.fwd.hh>
 #include <core/conformation/parametric/Parameters.fwd.hh>
 
-// Package headers
-#include <core/conformation/Residue.hh>
-
 // Project headers
 #include <core/types.hh>
 
@@ -184,7 +181,7 @@ public: //Setters
 
 	/// @brief Set the suffix for the copy tag (e.g. "copies_helix" in the case of helical bundles).
 	/// @details The leading underscore should be omitted.
-	void set_copy_suffix( std::string const suffix_in );
+	void set_copy_suffix( std::string const & suffix_in );
 
 	/// @brief Set the index of the Parameters object from which we will copy this parameter's value.
 	/// @details A setting of zero means no copying.

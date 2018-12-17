@@ -17,7 +17,11 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
+#ifdef WIN32
 #include <core/chemical/ResidueType.hh>
+#else
+#include <core/chemical/ResidueType.fwd.hh>
+#endif
 
 // Mover headers
 #include <protocols/moves/MoverContainer.hh>

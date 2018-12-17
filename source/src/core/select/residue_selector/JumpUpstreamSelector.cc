@@ -22,6 +22,7 @@
 #include <core/select/residue_selector/util.hh>
 
 // Project headers
+#include <core/pose/Pose.hh>
 #include <core/pose/selection.hh>
 #include <core/kinematics/FoldTree.hh>
 

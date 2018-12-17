@@ -19,6 +19,7 @@
 #include <core/scoring/sasa/SasaCalc.fwd.hh>
 
 #include <utility/vector1.hh>
+#include <utility/pointer/ReferenceCount.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers

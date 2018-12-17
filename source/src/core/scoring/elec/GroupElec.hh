@@ -23,8 +23,7 @@
 
 // Project headers
 #include <core/types.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 #include <core/scoring/etable/count_pair/CountPairFunction.hh>

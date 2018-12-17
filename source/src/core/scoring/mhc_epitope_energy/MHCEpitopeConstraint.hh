@@ -25,14 +25,9 @@
 #include <core/scoring/func/Func.fwd.hh>
 #include <core/scoring/func/XYZ_Func.fwd.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
-
-#include <core/scoring/ScoreType.hh>
-#include <core/id/AtomID.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 #include <string>
-
-#include <utility/vector1.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers
@@ -81,7 +76,7 @@ public: //Functions that actually do stuff:
 	select::residue_selector::ResidueSelectorCOP selector() const;
 
 	/// @brief Stores the name of the selector used to mask the constraint.
-	void set_selector_name( std::string selector_name ) { cst_selector_name_ = selector_name; }
+	void set_selector_name( std::string const & selector_name ) { cst_selector_name_ = selector_name; }
 
 	/// @brief Returns the name of the selector used to mask the constraint.
 	std::string get_selector_name() { return cst_selector_name_; }

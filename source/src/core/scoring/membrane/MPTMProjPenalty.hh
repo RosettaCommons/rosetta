@@ -27,15 +27,14 @@
 #include <core/scoring/methods/WholeStructureEnergy.hh>
 
 // Package Headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/conformation/membrane/Span.fwd.hh>
 #include <core/types.hh>
 
-#include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 // Utility Headers
-#include <utility/vector1.hh>
+#include <utility/vector1.fwd.hh>
 
 // C++ Headers
 #include <cstdlib>

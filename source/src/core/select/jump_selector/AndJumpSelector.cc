@@ -16,7 +16,7 @@
 #include <core/select/jump_selector/AndJumpSelectorCreator.hh>
 
 // Package headers
-#include <core/pose/Pose.fwd.hh>
+#include <core/pose/Pose.hh>
 #include <core/select/jump_selector/JumpSelectorFactory.hh>
 #include <core/select/jump_selector/util.hh>
 

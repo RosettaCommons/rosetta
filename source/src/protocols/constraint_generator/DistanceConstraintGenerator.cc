@@ -17,6 +17,7 @@
 #include <protocols/constraint_generator/ConstraintGeneratorFactory.hh>
 // Core headers
 #include <core/conformation/Residue.hh>
+#include <core/pose/Pose.hh>
 #include <core/id/AtomID.hh>
 #include <core/scoring/constraints/AmbiguousConstraint.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>

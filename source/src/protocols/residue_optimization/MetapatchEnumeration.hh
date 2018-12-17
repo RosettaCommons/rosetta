@@ -16,53 +16,9 @@
 
 // Project Headers
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/conformation/util.hh>
-
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/operation/TaskOperation.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
-
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/ScoringManager.hh>
-
-#include <core/chemical/VariantType.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/chemical/Patch.hh>
-#include <core/chemical/Metapatch.hh>
-
-#include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/MoveMap.hh>
-
-#include <utility>
+#include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
 #include <utility/pointer/owning_ptr.hh>
-
-// Mover headers
-#include <protocols/moves/MoverContainer.hh>
-#include <protocols/moves/TrialMover.hh>
-#include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/PyMOLMover.hh>
-#include <protocols/moves/RepeatMover.hh>
-#include <protocols/task_operations/DesignAroundOperation.hh>
-#include <protocols/minimization_packing/MinMover.hh>
-#include <protocols/minimization_packing/PackRotamersMover.hh>
-
-#include <core/chemical/ChemicalManager.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <utility/vector1.functions.hh>
-
-// Utility Headers
-#include <basic/options/util.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <basic/Tracer.hh>
-#include <utility/exit.hh>
 
 // C++ headers
 #include <string>

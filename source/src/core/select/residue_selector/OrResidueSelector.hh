@@ -20,7 +20,7 @@
 
 // Package headers
 #include <core/types.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/select/residue_selector/ResidueSelectorCreator.hh>
 
 // Utility Headers

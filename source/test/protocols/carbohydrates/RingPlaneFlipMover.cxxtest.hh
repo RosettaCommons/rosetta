@@ -21,6 +21,7 @@
 
 // Project headers
 #include <core/types.hh>
+#include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>

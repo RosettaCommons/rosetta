@@ -22,6 +22,7 @@
 #include <basic/datacache/DataMap.hh>
 
 // Project headers
+#include <core/pose/Pose.hh>
 #include <core/pose/selection.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/symmetry/util.hh>

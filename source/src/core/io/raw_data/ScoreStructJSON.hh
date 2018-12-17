@@ -18,7 +18,6 @@
 // mini headers
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/pose/Pose.hh>
 #include <core/io/raw_data/RawStruct.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <utility/vector1.hh>

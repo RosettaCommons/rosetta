@@ -45,6 +45,7 @@
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/hbonds/hbonds_geom.hh>
+#include <core/scoring/Energies.hh>
 #include <core/scoring/sasa.hh>
 #include <core/id/AtomID.hh>
 #include <ObjexxFCL/FArray2D.hh>

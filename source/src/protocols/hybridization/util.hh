@@ -16,7 +16,6 @@
 #define INCLUDED_protocols_hybridization_util_hh
 
 #include <core/pose/Pose.hh>
-#include <core/chemical/ResidueType.hh>
 #include <core/fragment/FragSet.fwd.hh>
 #include <core/conformation/Residue.hh>
 

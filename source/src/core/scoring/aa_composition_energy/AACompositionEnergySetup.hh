@@ -180,24 +180,6 @@ private:
 	Private functions:
 	******************/
 
-	/// @brief Check whether a ResidueProperty is in a list.
-	///
-	inline bool is_in_list( core::chemical::ResidueProperty const property, utility::vector1 < core::chemical::ResidueProperty > const &list) const {
-		for ( core::Size i=1, imax=list.size(); i<=imax; ++i ) {
-			if ( list[i]==property ) return true;
-		}
-		return false;
-	}
-
-	/// @brief Check whether a string is in a list.
-	///
-	inline bool is_in_list( std::string const &mystring, utility::vector1 < std::string > const &list) const {
-		for ( core::Size i=1, imax=list.size(); i<=imax; ++i ) {
-			if ( list[i]==mystring ) return true;
-		}
-		return false;
-	}
-
 	/// @brief Add a type to the list of types that are always counted.
 	/// @details Checks that it hasn't yet been added to any list.
 	void add_included_type( std::string const &type );

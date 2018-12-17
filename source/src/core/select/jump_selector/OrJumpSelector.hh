@@ -20,7 +20,7 @@
 
 // Package headers
 #include <core/types.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/select/jump_selector/JumpSelectorCreator.hh>
 
 // Utility Headers

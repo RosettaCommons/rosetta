@@ -28,7 +28,7 @@
 
 // Package headers
 #include <core/pose/reference_pose/ReferencePose.fwd.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 // Project headers
 #include <core/types.hh>

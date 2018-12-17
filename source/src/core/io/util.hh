@@ -17,13 +17,10 @@
 // Project headers
 #include <core/types.hh>
 #include <core/id/AtomID_Mask.fwd.hh>
-#include <core/io/StructFileRep.hh>
 #include <core/io/StructFileRep.fwd.hh>
 #include <core/io/StructFileRepOptions.fwd.hh>
 #include <core/io/ResidueInformation.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
-#include <core/chemical/ResidueType.fwd.hh>
-#include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
@@ -37,6 +34,7 @@
 // C++ headers
 #include <iosfwd>
 #include <sstream>
+#include <set>
 
 namespace core {
 namespace io {

@@ -21,7 +21,7 @@
 
 #include <core/scoring/EnergyMap.hh>
 
-#include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>

@@ -20,9 +20,6 @@
 #include <core/conformation/parametric/Parameter.hh>
 #include <core/conformation/parametric/RealVectorValuedParameter.fwd.hh>
 
-// Package headers
-#include <core/conformation/Residue.hh>
-
 // Project headers
 #include <core/types.hh>
 
@@ -84,7 +81,7 @@ public: //Setters
 	void set_parameter_type( ParameterType const type_in ) override;
 
 	/// @brief Set the default value for this parameter.
-	void set_default_value( utility::vector1< core::Real > const value_in );
+	void set_default_value( utility::vector1< core::Real > const & value_in );
 
 	/// @brief Given another parameter of the same type, copy its value.  This does *not* set value_set_ to true.
 	/// @details Performs type checking in debug mode.
