@@ -233,7 +233,7 @@ ResidueSummaryMetric::calculate(const core::pose::Pose & pose) const {
 		TR << "Returning the sum of the data" << std::endl;
 
 		sum_of_values = 0.0;
-		for ( auto const res_value: values ) {
+		for ( auto const & res_value: values ) {
 			sum_of_values+= res_value.second;
 		}
 		return sum_of_values;
@@ -242,7 +242,7 @@ ResidueSummaryMetric::calculate(const core::pose::Pose & pose) const {
 		TR << "Returning the mean of the data" << std::endl;
 
 		sum_of_values = 0.0;
-		for ( auto const res_value: values ) {
+		for ( auto const & res_value: values ) {
 			sum_of_values += res_value.second;
 		}
 		return sum_of_values/values.size();
@@ -251,7 +251,7 @@ ResidueSummaryMetric::calculate(const core::pose::Pose & pose) const {
 		TR << "Returning n res equal to "<< cutoff_ << std::endl;
 
 		n_res = 0;
-		for ( auto const res_value: values ) {
+		for ( auto const & res_value: values ) {
 			if ( numeric::equal_by_epsilon( res_value.second,cutoff_,epsilon_ ) ) {
 				n_res += 1;
 			}
@@ -262,7 +262,7 @@ ResidueSummaryMetric::calculate(const core::pose::Pose & pose) const {
 		TR << "Returning n res not equal to " << cutoff_ << std::endl;
 
 		n_res = 0;
-		for ( auto const res_value: values ) {
+		for ( auto const & res_value: values ) {
 			if ( ! numeric::equal_by_epsilon( res_value.second,cutoff_,epsilon_ ) ) {
 				n_res += 1;
 			}
@@ -274,7 +274,7 @@ ResidueSummaryMetric::calculate(const core::pose::Pose & pose) const {
 		TR << "Returning n res less than "<< cutoff_ << std::endl;
 
 		n_res = 0;
-		for ( auto const res_value : values ) {
+		for ( auto const & res_value : values ) {
 			if ( res_value.second < cutoff_ ) {
 				n_res += 1;
 			}
@@ -286,7 +286,7 @@ ResidueSummaryMetric::calculate(const core::pose::Pose & pose) const {
 		TR << "Returning n res less than or equal to "<< cutoff_ << std::endl;
 
 		n_res = 0;
-		for ( auto const res_value : values ) {
+		for ( auto const & res_value : values ) {
 			if ( res_value.second <= cutoff_ ) {
 				n_res += 1;
 			}
@@ -297,7 +297,7 @@ ResidueSummaryMetric::calculate(const core::pose::Pose & pose) const {
 		TR << "Returning n res greater than "<< cutoff_ << std::endl;
 
 		n_res = 0;
-		for ( auto const res_value : values ) {
+		for ( auto const & res_value : values ) {
 			if ( res_value.second > cutoff_ ) {
 				n_res += 1;
 			}
@@ -308,7 +308,7 @@ ResidueSummaryMetric::calculate(const core::pose::Pose & pose) const {
 		TR << "Returning n res greater than or equal to "<< cutoff_ << std::endl;
 
 		n_res = 0;
-		for ( auto const res_value : values ) {
+		for ( auto const & res_value : values ) {
 			if ( res_value.second >= cutoff_ ) {
 				n_res += 1;
 			}
