@@ -4,5 +4,6 @@
 -o testTRP.stubs
 -mute core.io.database
 -run:n_cycles 5
+-hotspot::batch_size 5
 -norepack1
 -overwrite

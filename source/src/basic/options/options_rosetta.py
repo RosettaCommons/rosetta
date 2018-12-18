@@ -828,7 +828,7 @@ Options = Option_Group( '',
 			Option( 'output_pose_cache_data', 'Boolean', default = 'true', desc='Output the pose cache.'),
 			Option( 'output_pose_fold_tree', 'Boolean', default = 'false', desc = "Output the foldtree of the pose. Will go in rosetta_additional column for cif files."),
 			Option( 'output_only_asymmetric_unit', 'Boolean', default= 'false', desc = "For symmetrical poses, de-symmetrize the pose before output in order to output only the master subunit.  Energies will still be output as symmetrical. Does not work with Silent files."),
-			
+
 			# mmCIF options
 			Option( 'cif_extra_data_separate_file', 'Boolean', default='false', desc="When outputting mmCIF, write extra data and energies to separate files (JOBNAME.extradata and JOBNAME.eneriges)"),
 
@@ -1337,7 +1337,7 @@ Options = Option_Group( '',
 		Option( 'buffer_silent_output', 'Integer', default = '1', desc = 'write structures to silent-files in blocks of N structures to', ),
 		Option( 'buffer_flush_frequency', 'Real', default = '1.0', desc = 'when N structures (buffer_silent_output) are collected dump to file with probability X' ),
 		#why is this default false?  It should definitely be true - a better name for this used to be "jd2:dont_leak_memory".  However, at the time this was implemented there were untested, against-the-design hacks of JD2 that would cause crashes when this flag was true.
-		#Now it's radioactive and nobody would touch it.  You should ALWAYS set this flag true when using JD2; if your code crashes it is a sign you are misusing JD2 anyway, and you can just turn the flag back off to perform your evil.     
+		#Now it's radioactive and nobody would touch it.  You should ALWAYS set this flag true when using JD2; if your code crashes it is a sign you are misusing JD2 anyway, and you can just turn the flag back off to perform your evil.
 		Option( 'delete_old_poses', 'Boolean', default = 'false', desc = 'Delete poses after they have been processed.  For jobs that process a large number of structures, the memory consumed by old poses is wasteful.', ),
 		Option( 'checkpoint_file', 'File', desc='write/read nstruct-based checkpoint files to the desired filename.' ),
 		#Option( 'nthreads', 'Integer', desc='The maximum number of threads to run at once using the MultiThreadedJobDistributor' ),
@@ -2444,7 +2444,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'dun_entropy_correction', 'Boolean', desc="Add Shannon entropy correction to rotamer energy: E = -logP + S", default="false" ),
 			Option( 'no_autogen_cart_improper', 'Boolean', desc="Ignore the auto parameter generation of improper torsions (undefined torsions) in CartesianBondedEnergy, generate_impropers_map_res."),
 		), #-corrections:score
-		
+
 		Option_Group( 'chemical',
 			Option( 'icoor_05_2009', 'Boolean', desc="New set of idealized coordinates for full atom, 05-2009" ),
 			Option( 'parse_charge', 'Boolean', desc="Use PARSE charge set." ),
@@ -5101,7 +5101,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'n_cyd_seqpos', 'Integer', desc='The sequential position of the residue in the n-ter of the putative disulfide; 0 signals the peptide n-ter', default='0.0' ),
 		Option( 'c_cyd_seqpos', 'Integer', desc='The sequential position of the residue in the c-ter of the putative disulfide; 0 signals the peptide c-ter', default='0.0' ),
 		Option( 'max_dslf_pot', 'Real', desc='The maximum allowed match score for disulfide rotation and translation', default='2.0'),
-		# Distribution of disulfide energy in peptides and proteins shows only few structures have energies above -0.5 and almost none have energies above 0 
+		# Distribution of disulfide energy in peptides and proteins shows only few structures have energies above -0.5 and almost none have energies above 0
 		Option( 'max_dslf_energy', 'Real', desc='The maximum allowed change in disulfide energy upon peptide disulfide bridge formation', default='-0.5'),
 		Option( 'min_dslf_dist_multiplier', 'Real', desc='A multiplier for the minimum allowed distance between residues that might form a disulfide.', default='1.0'),
 		Option( 'max_dslf_dist_multiplier', 'Real', desc='A multiplier for the maximum allowed distance between residues that might form a disulfide.', default='1.0'),
@@ -6073,6 +6073,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'envhb', 'Boolean', desc='Use environment dependent Hbonds when scoring hotspots.', default='false'),
 		Option( 'angle', 'Real', desc='Maximum allowed angle between stubCA, target CoM, and stubCB. Used to determine if stub is pointing towards target. Negative numbers deactivates this check (default)', default='-1' ),
 		Option( 'angle_res', 'Integer', desc='Residue to use for angle calculation from stubCA, <this option>, and stubCB. Used to determine if stub is pointing towards target. 0 uses the default, which is the targets center of mass', default='0' ),
+		Option( 'batch_size', 'Integer', desc='Run stub hashing in batches of this size. (Ignored if target_res is set) ', default='10' ),
 	), # -hotspot
 
 	Option_Group( 'indexed_structure_store',
@@ -6191,7 +6192,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'use_terminal_residues'  , 'Boolean', desc='Use separate ACE and NME residues as terminal capping groups, rather than patches', default='false' ),
 		Option( 'k_medoids'  , 'Boolean', desc='Use k-medoids instead of k-means clustering', default='false' ),
 		Option( 'patch_name_for_residue', 'String', desc='Provide an explicit description of the patches for terminal capping' ),
-		Option( 'polymeric_context', 'File', desc='A file containing the RT at PDB number 0 and the flanking context as well.' ), 
+		Option( 'polymeric_context', 'File', desc='A file containing the RT at PDB number 0 and the flanking context as well.' ),
 	), # -make_rot_lib
 
 	## Options for the make_mainchain_potential application

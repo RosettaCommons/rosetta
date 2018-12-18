@@ -424,11 +424,12 @@ main( int argc, char * argv [] )
 			// do hashing in 10-stub cycles to minimize file i/o. If we named a target residue, do 1-stub cycles (targets are a rare find)
 			Size n_per;
 			if ( target_resnum ) n_per = 1;
-			else n_per = 10;
+			else n_per = option[ hotspot::batch_size ]();
 			Size n_cycles = n_stubs / n_per;
 			// make sure we do at least one cycle
 			if ( n_cycles <= 0 ) n_cycles = 1;
 			// PERFORM HASHING
+			TR.Debug << "Running hash of " << n_stubs << " stubs in " << n_cycles << " cycles of " << n_per << " each." << std::endl;
 			for ( Size i = 1; i <= n_cycles; ++i ) {
 				Size const length( option[ hotspot::length ]() );
 				stubset.clear();
