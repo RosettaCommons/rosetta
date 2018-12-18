@@ -72,6 +72,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 //#include <basic/options/keys/file.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <basic/options/keys/rna.OptionKeys.gen.hh>
 #include <basic/options/keys/chemical.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
@@ -570,7 +571,14 @@ determine_residues_to_rebuild(
 	RNA_SuiteName suite_namer;
 	utility::vector1< Size > residues_to_rebuild = definite_residues;
 
+	using namespace basic::options;
+	using namespace core::pose::full_model_info;
+	auto fixed_res = const_full_model_info( start_pose ).full_model_parameters()->conventional_to_full( option[ OptionKeys::rna::erraser::fixed_res ].resnum_and_chain() );
+	// In theory could use a full-to-sub mapping after this, but we happen to know this is a finished pose w/r/t its fasta.
+
 	for ( Size ii = 1; ii <= start_pose.size(); ++ii ) {
+		if ( fixed_res.contains( ii ) ) continue;
+
 		if ( !option[ minimize_protein ].value() && start_pose.residue_type( ii ).is_protein() ) continue;
 
 		// This should pick up bad torsions
