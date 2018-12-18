@@ -136,6 +136,7 @@ sources = {
 		"cartesian_ddg",
 	],
 	"public/design": [
+		"create_clash-based_repack_shell",
 		"fixbb",
 		"mpi_msd",
 		"pmut_scan_parallel",
