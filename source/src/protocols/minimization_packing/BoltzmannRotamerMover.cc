@@ -185,7 +185,6 @@ BoltzmannRotamerMover::apply( core::pose::Pose & pose )
 
 	// void core::scoring::methods::EnergyMethod::prepare_rotamers_for_packing
 	// If an energy method needs to cache data in a packing::RotamerSet object before rotamer energies are calculated, it does so during this function. The packer must ensure this function is called. The default behavior is to do nothing.
-
 	if ( rotset->num_rotamers() <= 1 ) {
 		return;
 	}
@@ -212,20 +211,33 @@ BoltzmannRotamerMover::apply( core::pose::Pose & pose )
 	// 3) calculate boltzmann weighted probabilities for each amino acid
 	// 4) use probabilities to select an amino acid
 	// 5) replace resnum_ with the selected rotamer / amino acid
-	if ( pose.residue(resnum_).is_protein() ) {
 
+	if ( pose.residue(resnum_).is_protein() ) {
 		boltzmann_factors.resize( core::chemical::num_canonical_aas );
 		rotamer_partition_funtions.resize( core::chemical::num_canonical_aas, 0.0 );
 
+		bool current_rotamer_energy_good(true);
+		if ( rotset->id_for_current_rotamer() > one_body_energies.size() ) {
+			TR.Error << "resnum_ " << resnum_ << " out of bounds, current rotamer " << rotset->id_for_current_rotamer() << " more than energies vector size " <<  one_body_energies.size() << ".  We do not know what causes this error.  This warning represents us skipping some science to preclude a segfault." << std::endl;
+			current_rotamer_energy_good = false;
+		}
+
 		// iterator over each rotamer
+		if ( rotset->id_for_current_rotamer() == 0 ) {
+			TR.Warning << "BoltzmannRotamerMover is trying to calculate starting energy for a residue not included in its rotamer set. In some cases, this is caused when the pose has a residue not allowed by the task, e.g. at a position, your starting pdb has residue Q, but resfile says NOTAA Q, and can be resolved by changing your inputs." << std::endl;
+			current_rotamer_energy_good = false;
+		}
+
 		for ( core::Size i = 1; i <= one_body_energies.size(); i++ ) {
 			core::chemical::AA aa_type = (*rotset->rotamer(i)).type().aa();
-			core::PackerEnergy init_score = one_body_energies[rotset->id_for_current_rotamer()];
+			core::PackerEnergy init_score = 0;  //this will be nonzero if the current rotamer is valid, as is usually the case
+			if ( current_rotamer_energy_good ) init_score = one_body_energies[rotset->id_for_current_rotamer()];
 			core::PackerEnergy move_score = one_body_energies[i];
-
 			ligand_bonuses[i] = 0.0;
 			if ( ligand_neighbor_index != 0 ) {
-				init_score += two_body_energies[rotset->id_for_current_rotamer()][ligand_neighbor_index] * (ligand_weight_ - 1.0);
+				if ( current_rotamer_energy_good ) {
+					init_score += two_body_energies[rotset->id_for_current_rotamer()][ligand_neighbor_index] * (ligand_weight_ - 1.0);
+				}
 				move_score += two_body_energies[i][ligand_neighbor_index] * (ligand_weight_ - 1.0);
 				ligand_bonuses[i] = two_body_energies[i][ligand_neighbor_index] * (ligand_weight_ - 1.0);
 			}
@@ -236,6 +248,7 @@ BoltzmannRotamerMover::apply( core::pose::Pose & pose )
 				boltzmann_factors[aa_type].push_back(std::make_pair(i, boltzmann_factor));
 			}
 		}
+
 		utility::vector1<std::pair<core::Size, core::Real> > selected_rotamers;
 		core::Real amino_acid_partition_function = 0.0;
 		// select rotamer for each amino acid
@@ -251,6 +264,7 @@ BoltzmannRotamerMover::apply( core::pose::Pose & pose )
 		// select an amino acid and get the id of its selected rotamer
 		core::Real final_aa = select_rotamer(selected_rotamers, amino_acid_partition_function);
 		final_rot_id = selected_rotamers[final_aa].first;
+
 	} else {
 		// if resnum_ is not in a protein, do the following:
 		// 1) calculate boltzmann weighted probability for each rotamer
