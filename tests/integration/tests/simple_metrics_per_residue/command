@@ -10,5 +10,5 @@ test "${PIPESTATUS[0]}" != '0' && exit 1 || true
 
 %(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST \
     -parser:protocol test_per_residue_simple_metrics.xml -s two_glycans.pdb \
-    -in:file:native two_glycans.pdb -overwrite -include_sugars > log2
+    -in:file:native two_glycans.pdb -overwrite -include_sugars 2>&1 | egrep -vf ../../ignore_list > log2
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true
