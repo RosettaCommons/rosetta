@@ -40,6 +40,7 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/ScoreFunction.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/antibody.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
@@ -68,7 +69,9 @@
 #include <set>
 
 static basic::Tracer TR( "protocols.antibody.SnugDockProtocol" );
+
 using namespace core;
+using namespace core::scoring;
 
 namespace protocols {
 namespace antibody {
@@ -212,7 +215,11 @@ void SnugDockProtocol::apply( Pose & pose ) {
 	while ( pose.residue(1).is_virtual_residue() ) {
 		pose.delete_residue_slow(1);
 	}
-
+	
+	//JAB - Needed as delete_residue_slow clears the energies cache
+	ScoreFunctionOP scorefxn = get_score_function();
+	scorefxn->score(pose);
+	
 	if ( option[ OptionKeys::antibody::output_ab_scheme].user() ) {
 		AntibodyNumberingConverterMover converter = AntibodyNumberingConverterMover();
 		converter.apply( pose ); // might become broken?
