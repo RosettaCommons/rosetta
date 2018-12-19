@@ -379,10 +379,18 @@ void
 CloseFold::apply( core::pose::Pose & pose ){
 	using protocols::loops::Loops;
 
+	utility::vector1< core::Size > chains_local = chains_;
+	if ( chains_local.empty() ) {
+		TR<<"no chains specified, defaulting to use all chains" << std::endl;
+		for ( Size chain = 1; chain <= pose.conformation().num_chains(); ++chain ) {
+			chains_local.push_back( chain );
+		}
+	}
+
 	Size residues = 0;
 	//ensure that the residues specified are covered by the secondary structure input
-	for ( Size it = 1; it <= chains_.size(); ++it ) {
-		residues += pose.split_by_chain( chains_[it] )->size();
+	for ( core::Size chain: chains_local ) {
+		residues += pose.split_by_chain( chain )->size();
 		TR <<"residues to compare: "<<residues <<std::endl;
 	}
 	TR << pose.fold_tree() <<std::endl;
@@ -394,9 +402,9 @@ CloseFold::apply( core::pose::Pose & pose ){
 	}
 
 	//define offset points, as in which residue to start searching loops
-	Size start_res = pose.conformation().chain_begin( chains_[1] );
+	Size start_res = pose.conformation().chain_begin( chains_local[1] );
 	//end point, at the last chain
-	Size stop_res = pose.conformation().chain_end( chains_[chains_.size()] );
+	Size stop_res = pose.conformation().chain_end( chains_local[chains_local.size()] );
 
 	//for debugging
 	if ( secstructure_.length() != stop_res - start_res + 1 ) {
@@ -433,8 +441,8 @@ CloseFold::parse_my_tag(
 	basic::datacache::DataMap & data ,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
-	core::pose::Pose const & pose )
-{
+	core::pose::Pose const & pose
+) {
 	TR<<"CloseFold has been instantiated"<<std::endl;
 
 	using core::fragment::FragmentIO;
@@ -504,15 +512,6 @@ CloseFold::parse_my_tag(
 			ss >> n;
 			chains_.push_back( n );
 			TR<<"adding chain "<<key<<std::endl;
-		}
-	}
-
-	//if( !tag->hasOption( "chains_num" ) ){
-	if ( chains_.size() <= 0 ) {
-		//TR<<"no chains specified, defaulting to last chain only"<<std::endl;
-		for ( Size chain = 1; chain <= pose.conformation().num_chains(); ++chain ) {
-			chains_.push_back( chain );
-			TR<<"no chains specified, defaulting to use the last chain: "<< chain << std::endl;
 		}
 	}
 

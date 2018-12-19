@@ -78,7 +78,7 @@ HelixHelixAngleFilterCreator::keyname() const { return "HelixHelixAngle"; }
 HelixHelixAngleFilter::~HelixHelixAngleFilter(){}
 
 void
-HelixHelixAngleFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & pose )
+HelixHelixAngleFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
 {
 	start_helix_1_ = tag->getOption< core::Size >( "start_helix_1", 0 );
 	start_helix_2_ = tag->getOption< core::Size >( "start_helix_2", 0  );
@@ -94,11 +94,33 @@ HelixHelixAngleFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache:
 	if ( tag->hasOption( "helix_num_1" ) ) {
 		helix_num_1_ = tag->getOption< core::Size > ( "helix_num_1", 1 );
 		helix_num_2_ = tag->getOption< core::Size > ( "helix_num_2", 2 );
-		core::scoring::dssp::Dssp dssp( pose );
 		by_helices_ = true;
+	} else {
+		if ( start_helix_1_ >= end_helix_1_ || start_helix_2_ >= end_helix_2_ ) utility_exit_with_message( "illegal helices" );
+		by_helices_ = false;
+	}
+	if ( angle_min_ >= angle_max_ ) utility_exit_with_message( "illegal min and max angles" );
+	if ( dist_min_ >= dist_max_ ) utility_exit_with_message( "illegal min and max distances" );
+}
+
+/// @brief Calculate the extent of helicies for this pose
+/// Returns values by reference
+void
+HelixHelixAngleFilter::get_helix_start_stop( core::pose::Pose const & pose,
+	core::Size & start_helix_1, core::Size & end_helix_1,
+	core::Size & start_helix_2, core::Size & end_helix_2
+) const {
+	if ( ! by_helices_ ) {
+		// Using the explicitly-set values.
+		start_helix_1 = start_helix_1_;
+		end_helix_1 = end_helix_1_;
+		start_helix_2 = start_helix_2_;
+		end_helix_2 = end_helix_2_;
+	} else {
+		// Use the calculated values
+		core::scoring::dssp::Dssp dssp( pose );
 		std::string dssp_str( dssp.get_dssp_secstruct() );
 		utility::vector1 < std::pair< core::Size, core::Size > > helices;
-		helices.clear();
 		bool open_helix(false);
 		core::Size start( 0 );
 		core::Size end( 0 );
@@ -133,20 +155,17 @@ HelixHelixAngleFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache:
 			}
 		}
 		if ( helices.size() == 0 ) {
-			utility_exit_with_message("DSSP has no helices, defne actual residue indices using start_helix_1, end_helix_1 etc.");
+			utility_exit_with_message("DSSP has no helices, define actual residue indices using start_helix_1, end_helix_1 etc.");
 		}
-		TR << chain << " " << helices << std::endl; // necessary for compilation.
-		start_helix_1_ = helices[ helix_num_1_ ].first;
-		end_helix_1_ = helices[ helix_num_1_ ].second;
-		start_helix_2_ = helices[ helix_num_2_ ].first;
-		end_helix_2_ = helices[ helix_num_2_ ].second;
-	} else {
-		by_helices_ = false;
+		TR.Debug << chain << " " << helices << std::endl; // necessary for compilation.
+		start_helix_1 = helices[ helix_num_1_ ].first;
+		end_helix_1 = helices[ helix_num_1_ ].second;
+		start_helix_2 = helices[ helix_num_2_ ].first;
+		end_helix_2 = helices[ helix_num_2_ ].second;
 	}
-	if ( start_helix_1_ >= end_helix_1_ || start_helix_2_ >= end_helix_2_ ) utility_exit_with_message( "illegal helices" );
-	if ( angle_min_ >= angle_max_ ) utility_exit_with_message( "illegal min and max angles" );
-	if ( dist_min_ >= dist_max_ ) utility_exit_with_message( "illegal min and max distances" );
+	if ( start_helix_1 >= end_helix_1 || start_helix_2 >= end_helix_2 ) utility_exit_with_message( "illegal helices" );
 }
+
 
 bool
 HelixHelixAngleFilter::apply( core::pose::Pose const & pose ) const
@@ -182,13 +201,16 @@ HelixHelixAngleFilter::report_sm( core::pose::Pose const & pose ) const
 core::Real
 HelixHelixAngleFilter::compute( core::pose::Pose const & pose ) const
 {
+	core::Size start_helix_1, end_helix_1, start_helix_2, end_helix_2;
+	get_helix_start_stop( pose, start_helix_1, end_helix_1, start_helix_2, end_helix_2 );
+
 	if ( angle_or_dist_ == "dist" && dist_by_atom_ ) {
-		core::Real dist = calc_shortest_dist_by_atoms( pose );
+		core::Real dist = calc_shortest_dist_by_atoms( pose, start_helix_1, end_helix_1, start_helix_2, end_helix_2 );
 		return( dist );
 	}
-	TR << "helices defined " << start_helix_1_ << "->" << end_helix_1_ << " and " << start_helix_2_ << "->" << end_helix_2_ << std::endl;
-	utility::vector1< numeric::xyzVector < core::Real > > l1( find_helix_vector( pose, start_helix_1_, end_helix_1_ ) );
-	utility::vector1< numeric::xyzVector < core::Real > > l2( find_helix_vector( pose, start_helix_2_, end_helix_2_ ) );
+	TR << "helices defined " << start_helix_1 << "->" << end_helix_1 << " and " << start_helix_2 << "->" << end_helix_2 << std::endl;
+	utility::vector1< numeric::xyzVector < core::Real > > l1( find_helix_vector( pose, start_helix_1, end_helix_1 ) );
+	utility::vector1< numeric::xyzVector < core::Real > > l2( find_helix_vector( pose, start_helix_2, end_helix_2 ) );
 
 	std::pair<numeric::xyzVector<core::Real>, numeric::xyzVector<core::Real>> closest_pnts( find_closest_pnts( l1, l2 ) );
 
@@ -215,13 +237,15 @@ HelixHelixAngleFilter::compute( core::pose::Pose const & pose ) const
 ///
 // @brief iterate all atoms in both TMs, return the minimal distance between them
 core::Real
-HelixHelixAngleFilter::calc_shortest_dist_by_atoms( core::pose::Pose const & pose ) const
-{
+HelixHelixAngleFilter::calc_shortest_dist_by_atoms( core::pose::Pose const & pose,
+	core::Size start_helix_1, core::Size end_helix_1,
+	core::Size start_helix_2, core::Size end_helix_2
+) const {
 	core::Real dist( 100000000 );
 	core::Real temp_dist( 0.0 );
 	core::Size sel_i( 0 ), sel_j( 0 ), sel_i_atm( 0 ), sel_j_atm( 0 );
-	for ( core::Size i=start_helix_1_; i<=end_helix_1_; ++i ) {
-		for ( core::Size j=start_helix_2_; j<=end_helix_2_; ++j ) {
+	for ( core::Size i=start_helix_1; i<=end_helix_1; ++i ) {
+		for ( core::Size j=start_helix_2; j<=end_helix_2; ++j ) {
 			for ( core::Size i_atm=1; i_atm <= pose.residue( i ).nheavyatoms(); ++i_atm ) {
 				if ( pose.residue( i ).atom_is_backbone( i_atm ) ) {
 					for ( core::Size j_atm=1; j_atm<=pose.residue( j ).nheavyatoms(); ++j_atm ) {

@@ -275,6 +275,9 @@ PredesignPerturbMover::apply(
 	core::pose::Pose & pose
 )
 {
+	// Update the constraint reporter for the current position of the ligand.
+	constraint_reporter_.ligand_resno( (core::Size) pose.fold_tree().downstream_jump_residue( pose.num_jump() ));
+
 	//make a poly ala of the designable
 	protocols::enzdes::EnzdesBaseProtocolOP enzprot( new protocols::enzdes::EnzdesBaseProtocol() );
 	core::pose::Pose org_Pose(pose);
@@ -328,12 +331,11 @@ PredesignPerturbMover::parse_my_tag(
 	basic::datacache::DataMap & datamap,
 	protocols::filters::Filters_map const & ,
 	protocols::moves::Movers_map const & ,
-	core::pose::Pose const & pose)
+	core::pose::Pose const & )
 {
 	trans_magnitude( tag -> getOption< core::Real >( "trans_magnitude", 0.1 ) );
 	rot_magnitude( tag -> getOption< core::Real >( "rot_magnitude", 2.0 ) );
 	dock_trials_ = tag -> getOption< core::Size >( "dock_trials", 100 );
-	constraint_reporter_.ligand_resno( (core::Size) pose.fold_tree().downstream_jump_residue( pose.num_jump() ));
 	if ( tag->hasOption("task_operations") ) task_factory_ = ( protocols::rosetta_scripts::parse_task_operations( tag, datamap ) );
 	else task_factory_ = nullptr;
 

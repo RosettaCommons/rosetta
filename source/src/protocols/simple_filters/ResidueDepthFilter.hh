@@ -25,6 +25,7 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <utility/pointer/ReferenceCount.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 #include <core/types.hh>
 #include <numeric/xyzVector.hh>
@@ -77,8 +78,7 @@ private:
 class ResidueDepthCalculator
 {
 public:
-	ResidueDepthCalculator(){}
-	ResidueDepthCalculator( core::pose::Pose const &pose );
+	ResidueDepthCalculator();
 	~ResidueDepthCalculator();
 
 	// this is main
@@ -92,10 +92,12 @@ public:
 	void set_dcut2( core::Real const value ){ dcut2_ = value; }
 
 	// helpers
-	core::Real get_scdepth_avrg( core::Size const ires ) const
-	{ if ( ires > sc_depth_avrg_.size() ) return -1.0;
-		return sc_depth_avrg_[ires]; }
+	core::Real get_scdepth_avrg( core::Size const ires ) const  {
+		if ( ires > sc_depth_avrg_.size() ) return -1.0;
+		return sc_depth_avrg_[ires];
+	}
 
+	/// These are only valid after the call to estimate_sidechain_depth()
 	core::Size nres() const { return nres_; };
 	utility::vector1< core::Real > get_scdepth_avrg() const { return sc_depth_avrg_; }
 	utility::vector1< core::Real > get_scdepth_sdev() const { return sc_depth_sdev_; }
@@ -104,7 +106,7 @@ public:
 private:
 
 	void
-	initialize( core::pose::Pose const &pose );
+	initialize();
 
 	utility::vector1< core::Vector >
 	read_unit_waterbox( core::Vector &boxwidth) const;
@@ -164,13 +166,14 @@ private:
 private:
 
 	core::Size niter_;
-	core::Size nres_;
 	std::string waterbox_file_;
 	core::Real dcut1_, dcut2_;
 
 	bool use_bb_, use_sc_;
 	bool report_crd_;
 
+	// These variables will be updated in the call to estimate_sidechain_depth()
+	mutable core::Size nres_ = 0;
 	mutable utility::vector1< core::Vector > waterbox_;
 	mutable utility::vector1< core::Real > sc_depth_avrg_;
 	mutable utility::vector1< core::Real > sc_depth_sdev_;
@@ -182,11 +185,8 @@ private:
 class ResidueDepthFilter : public filters::Filter
 {
 public:
-	ResidueDepthFilter() : filters::Filter( "ResidueDepth" ) {}
+	ResidueDepthFilter();
 	~ResidueDepthFilter() override;
-
-	//ResidueDepthFilter( ResidueDepthFilter const &init );
-	ResidueDepthFilter( core::pose::Pose const &pose );
 
 	bool apply( core::pose::Pose const & ) const override;
 
@@ -243,7 +243,7 @@ private:
 	{ return lhs.first < rhs.first; }
 	*/
 
-	void initialize( core::pose::Pose const &pose );
+	void initialize();
 
 	void read_db( std::string const infile );
 	void read_GUIP_matrix( std::string const infile );
@@ -308,7 +308,7 @@ private:
 	utility::vector1< utility::vector1< core::Real > > GUIP_matrix_;
 
 	// For filtering
-	utility::vector1< bool > evalres_;
+	core::select::residue_selector::ResidueSelectorCOP evalres_;
 	core::Real maxdist_, mindist_;
 
 

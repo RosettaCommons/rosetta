@@ -199,7 +199,7 @@ BuriedUnsatHbondFilter::BuriedUnsatHbondFilter( BuriedUnsatHbondFilter const & r
 BuriedUnsatHbondFilter::~BuriedUnsatHbondFilter()= default;
 
 void
-BuriedUnsatHbondFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & pose )
+BuriedUnsatHbondFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
 {
 	legacy_options_ = tag->getOption<bool>( "use_legacy_options", false );
 	generous_hbonds_ = tag->getOption<bool>( "generous_hbonds", true );
@@ -290,10 +290,6 @@ BuriedUnsatHbondFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache
 		buried_unsat_hbond_filter_tracer << " you set sym_dof_names, which means will use ddG-style calculation for unsats; if you do not want this, pass a residue selector instead of defining symdofs" << std::endl;
 		use_ddG_style_ = true;
 	}
-	if ( use_ddG_style_ && core::conformation::symmetry::is_symmetric( pose.conformation() ) && sym_dof_names_ == "" ) {
-		buried_unsat_hbond_filter_tracer << " WARNING! using ddG_style, and your Pose is symmetric but you didn't define your sym_dof_names?  Is that want you want? setting only_interface=true to be safe" << std::endl;
-		only_interface_ = true;
-	}
 	if ( legacy_options_ ) {
 		set_legacy_options();
 	}
@@ -301,6 +297,7 @@ BuriedUnsatHbondFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache
 
 bool
 BuriedUnsatHbondFilter::apply( core::pose::Pose const & pose ) const {
+
 
 	core::Real const unsat_hbonds( compute( pose ) );
 
@@ -345,10 +342,16 @@ BuriedUnsatHbondFilter::compute( core::pose::Pose const & pose ) const {
 
 	Size total_res( pose.size() );
 
+	bool only_interface_local = only_interface_;
+
 	// CHECK FOR SYMMETRY: if symmetric, only count within ASU, as is standard throughout most of Rosetta
 	//   h-bonds across the symmetric interface are still considered and can satisfy ASU polar atoms
 	bool symmetric( ( core::conformation::symmetry::is_symmetric( pose.conformation() ) ) ? true : false );
 	if ( symmetric ) {
+		if ( use_ddG_style_ && sym_dof_names_ == "" ) {
+			buried_unsat_hbond_filter_tracer.Warning << "Using ddG_style, and your Pose is symmetric but you didn't define your sym_dof_names?  Is that want you want? Treating things like only_interface=true was set to be safe" << std::endl;
+			only_interface_local = true;
+		}
 		buried_unsat_hbond_filter_tracer << " DETECTED THAT POSE IS SYMMETRIC:  " << std::endl;
 		buried_unsat_hbond_filter_tracer << "    if symmetric pose and only_interface=true (default for symmetric case), then will only look at symmetric interface residues " << std::endl;
 		buried_unsat_hbond_filter_tracer << "    if symmetric pose and only_interface=false (set explicitly in XML), then will add up all unsats in ASU " << std::endl;
@@ -375,7 +378,7 @@ BuriedUnsatHbondFilter::compute( core::pose::Pose const & pose ) const {
 				region_to_calculate.insert(r);
 			}
 		}
-	} else if ( only_interface_ && pose.num_chains() > 1 ) { // if more than 1 chain, focus on interface
+	} else if ( only_interface_local && pose.num_chains() > 1 ) { // if more than 1 chain, focus on interface
 
 		buried_unsat_hbond_filter_tracer << " LOOKING FOR UNSATS ONLY AT INTERFACE RESIDUES: " << std::endl;
 

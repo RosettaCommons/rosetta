@@ -55,7 +55,7 @@ StubScoreLoopsFilter::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap &,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
-	core::pose::Pose const & pose )
+	core::pose::Pose const & )
 {
 	tr.Info << "StubScoreLoopsFilter"<<std::endl;
 	cb_force_ = tag->getOption< core::Real >( "cb_force", 0.5 );
@@ -70,15 +70,19 @@ StubScoreLoopsFilter::parse_my_tag( utility::tag::TagCOP tag,
 	if ( loop_stop_ <= loop_start_ ) {
 		utility_exit_with_message( "loop-stop has to be larger than loop-start. assign with 'stop'" );
 	}
+	resfile_ = tag->getOption< std::string >("resfile","NONE");
+}
+
+core::Real
+StubScoreLoopsFilter::get_score( core::pose::Pose const & pose ) const {
+	core::scoring::constraints::ConstraintCOPs constraints;
 	protein_interface_design::movers::SetupHotspotConstraintsLoopsMover hspmover( stub_set_ );
 	hspmover.set_loop_start( loop_start_ );
 	hspmover.set_loop_stop( loop_stop_ );
-	resfile_ = tag->getOption< std::string >("resfile","NONE");
 	if ( resfile_ != "NONE" ) hspmover.set_resfile( resfile_ );
-	core::scoring::constraints::ConstraintCOPs constraints;
 	core::Size ncst = hspmover.generate_csts( pose, constraints );
-	set_constraints( constraints );
-	tr.Info << "Filter with " << ncst << " hotspots in " << constraints.size() << " constraints." << std::endl;
+	tr.Info << "Running StubScoreLoopsFilter with " << ncst << " hotspots in " << constraints.size() << " constraints." << std::endl;
+	return get_score( pose, constraints );
 }
 
 protocols::filters::FilterOP

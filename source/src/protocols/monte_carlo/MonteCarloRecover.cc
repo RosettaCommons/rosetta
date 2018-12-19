@@ -105,7 +105,7 @@ MonteCarloRecover::set_MC( GenericMonteCarloMoverOP mc ){
 }
 
 void
-MonteCarloRecover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, Filters_map const &, Movers_map const &movers, Pose const & pose ){
+MonteCarloRecover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, Filters_map const &, Movers_map const &movers, Pose const & ){
 	std::string const mc_name( tag->getOption< std::string >( "MC_name" ) );
 	auto find_mover( movers.find( mc_name ) );
 	if ( find_mover == movers.end() ) {
@@ -113,10 +113,10 @@ MonteCarloRecover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, 
 	}
 
 	set_MC( utility::pointer::dynamic_pointer_cast< protocols::monte_carlo::GenericMonteCarloMover > ( find_mover->second ) );
+	// The MC object is initialized by its own parse_my_tag, and reset in its apply()
+
 	recover_low( tag->getOption< bool >( "recover_low", true ) );
-	Pose temp_pose( pose );
-	get_MC()->initialize();
-	get_MC()->reset( temp_pose );
+
 	TR<<"Setting MonteCarloRecover with mover "<<mc_name<<" and recover_low set to "<<recover_low()<<std::endl;
 }
 
@@ -124,9 +124,9 @@ void
 MonteCarloRecover::apply( core::pose::Pose & pose ){
 	if ( recover_low() ) {
 		MC_mover_->recover_low( pose );
-	} else {
+	} else if ( MC_mover_->last_accepted_pose() != nullptr ) {
 		pose = *(MC_mover_->last_accepted_pose());
-	}
+	} // Don't do anything - there isn't a workable pose to use.
 }
 
 bool

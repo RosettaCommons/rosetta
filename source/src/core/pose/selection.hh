@@ -128,7 +128,7 @@ attributes_for_get_resnum_string( utility::tag::AttributeList & attlist, std::st
 ///@brief Companion function for get_resnum_selector
 ///@details Appends relevant XMLSchemaAttributes to the AttributeList; needs the xsd because it adds restricted types
 void
-attributes_for_get_resnum_selector( utility::tag::AttributeList & attlist, utility::tag::XMLSchemaDefinition & xsd, std::string const& tag="" );
+attributes_for_get_resnum_selector( utility::tag::AttributeList & attlist, utility::tag::XMLSchemaDefinition & xsd, std::string const& tag="", std::string const & description = "" );
 
 ///@brief Companion function for parse_resnum
 ///@details Appends relevant XMLSchemaAttributes to the AttributeList

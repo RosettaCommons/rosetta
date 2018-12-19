@@ -260,6 +260,11 @@ PlaceOnLoop::set_kinematic_defaults()
 void
 PlaceOnLoop::apply( Pose & pose )
 {
+	core::Size const chain_begin( pose.conformation().chain_begin( host_chain_ ) );
+	core::Size const chain_end( pose.conformation().chain_end( host_chain_ ) );
+	runtime_assert( chain_begin < loop_begin_ && loop_begin_ < chain_end );
+	runtime_assert( chain_begin < loop_end_ && loop_end_ < chain_end );
+
 	bool const success( loop_length( pose ) );
 	if ( success ) set_last_move_status( MS_SUCCESS );
 	else set_last_move_status( FAIL_RETRY );
@@ -271,17 +276,14 @@ PlaceOnLoop::apply( Pose & pose )
 // XRW TEMP }
 
 void
-PlaceOnLoop::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
+PlaceOnLoop::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )
 {
 	host_chain_ = tag->getOption< core::Size >( "host_chain", 2 );
 	loop_begin_ = tag->getOption< core::Size >( "loop_begin" );
 	loop_end_ = tag->getOption< core::Size >( "loop_end" );
 	runtime_assert( loop_begin_ < loop_end_ );
 	runtime_assert( loop_begin_ > 1 );
-	core::Size const chain_begin( pose.conformation().chain_begin( host_chain_ ) );
-	core::Size const chain_end( pose.conformation().chain_end( host_chain_ ) );
-	runtime_assert( chain_begin < loop_begin_ && loop_begin_ < chain_end );
-	runtime_assert( chain_begin < loop_end_ && loop_end_ < chain_end );
+
 	minimize_toward_stub_ = tag->getOption< bool >( "minimize_toward_stub", true );
 	if ( tag->hasOption( "stubfile" ) ) {
 		std::string const stub_fname = tag->getOption< std::string >( "stubfile" );

@@ -91,6 +91,19 @@ TopologyBrokerMover::apply( pose::Pose & pose )
 	using namespace core::scoring;
 	using namespace core::pack::task::operation;
 
+	if ( pose.conformation().num_chains()!=2 ) {
+		utility_exit_with_message( "In TopologyBrokerMover, pose must contain contain exactly two chains: A is target, B is design to be folded" );
+	}
+
+	if ( align_ ) {
+		if ( start_ < pose.conformation().chain_begin( 2 ) || end_ < pose.conformation().chain_begin( 2 )
+				|| start_ > pose.conformation().chain_end( 2 ) || end_ > pose.conformation().chain_end( 2 )
+				|| start_ >= end_ ) {
+			TR.Error << "rigid_start " << start_ << " and rigid_end " << end_ << " is not in range " << pose.conformation().chain_begin( 2 ) <<"-" << pose.conformation().chain_end( 2 ) << std::endl;
+			utility_exit_with_message( "To realign in TopologyBrokerMover, please provide start and end values in range." );
+		}
+	}
+
 	//separate the two chains
 	core::pose::Pose pose1 = pose;
 	core::pose::Pose pose2 = pose;
@@ -147,24 +160,15 @@ TopologyBrokerMover::apply( pose::Pose & pose )
 // XRW TEMP }
 
 void
-TopologyBrokerMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
+TopologyBrokerMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )
 {
 	TR<<"Setup TopologyBrokerMover Mover " << std::endl;
-	if ( pose.conformation().num_chains()!=2 ) {
-		utility_exit_with_message( "Expect your input pose -in:file:s to contain exactly two chains, A is target, B is design to be folded" );
-	}
 
 	align_ = tag->getOption< bool >( "realign", false );
 	if ( align_ ) {
 		if ( tag->hasOption("rigid_start") && tag->hasOption("rigid_end") ) {
 			start_ = tag->getOption< core::Size >( "rigid_start", 1 );
 			end_ = tag->getOption< core::Size >( "rigid_end", 1 );
-			if ( start_<pose.conformation().chain_begin( 2 ) || end_ < pose.conformation().chain_begin( 2 )
-					|| start_>pose.conformation().chain_end( 2 ) || end_ > pose.conformation().chain_end( 2 )
-					|| start_ >= end_ ) {
-				TR << "rigid_start " << start_ << " and rigid_end " << end_ << " is not in range " << pose.conformation().chain_begin( 2 ) <<"-" << pose.conformation().chain_end( 2 ) << std::endl;
-				utility_exit_with_message( "If you want to realign, please provide motif structure and target structure!" );
-			}
 		} else {
 			utility_exit_with_message( "If you want to realign, please provide motif rigid_start and rigid_end in pose numbering!" );
 		}

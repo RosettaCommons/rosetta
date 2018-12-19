@@ -380,7 +380,7 @@ attributes_for_get_resnum_string( utility::tag::AttributeList & attlist, std::st
 ///@brief Companion function for get_resnum_list
 ///@brief Appends relevant XMLSchemaAttributes to the AttributeList
 void
-attributes_for_get_resnum_selector( utility::tag::AttributeList & attlist, utility::tag::XMLSchemaDefinition & xsd, string const& tag ){
+attributes_for_get_resnum_selector( utility::tag::AttributeList & attlist, utility::tag::XMLSchemaDefinition & xsd, string const& tag, string const & description ){
 	using namespace utility::tag;
 	std::string resnum_list_regex = "(" + refpose_enabled_residue_number_string() + ")([,\\-](" + refpose_enabled_residue_number_string() + "))*";
 	XMLSchemaRestriction restriction;
@@ -392,7 +392,7 @@ attributes_for_get_resnum_selector( utility::tag::AttributeList & attlist, utili
 
 	if ( ! utility::tag::attribute_w_name_in_attribute_list( tag, attlist ) ) {
 
-		attlist + XMLSchemaAttribute( tag, "resnum_list_with_ranges", "List of residue numbers to use" );
+		attlist + XMLSchemaAttribute( tag, "resnum_list_with_ranges", ( description.empty() ? "List of residue numbers to use" : description ) );
 	}
 }
 

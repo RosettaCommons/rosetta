@@ -76,7 +76,7 @@ private:
 	SizeFilter_map jump_filters_; // filter. Defaults to TrueFilter
 	std::map< core::Size, std::string > allowed_aas_per_jump_; //defaults to "ADEIKLMNQRSTVWY"
 	std::map< core::Size, core::scoring::ScoreFunctionCOP > minimization_scorefxns_;
-	std::map< core::Size, protocols::moves::MoverOP > jump_movers_; //defaults to null mover
+	std::map< core::Size, protocols::moves::MoverOP > jump_movers_;
 	std::string file_name_prefix_;
 };
 

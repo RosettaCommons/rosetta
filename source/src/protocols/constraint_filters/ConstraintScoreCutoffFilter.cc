@@ -88,10 +88,15 @@ ConstraintScoreCutoffFilter::apply( core::pose::Pose const & pose ) const {
 
 core::Real
 ConstraintScoreCutoffFilter::get_score( core::pose::Pose const & pose_in ) const {
+	return get_score( pose_in, constraints_ );
+}
+
+core::Real
+ConstraintScoreCutoffFilter::get_score( core::pose::Pose const & pose_in, core::scoring::constraints::ConstraintCOPs csts ) const {
 	using namespace core::scoring;
 	core::pose::Pose pose( pose_in );
 	pose.constraint_set( nullptr );
-	pose.add_constraints( constraints_ );
+	pose.add_constraints( csts );
 	ScoreFunction scorefxn;
 	scorefxn.set_weight( score_type_, 1.0 );
 	return scorefxn( pose );

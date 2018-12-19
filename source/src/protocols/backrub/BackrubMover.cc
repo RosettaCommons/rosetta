@@ -131,7 +131,7 @@ BackrubMover::parse_my_tag(
 	basic::datacache::DataMap & /*data*/,
 	protocols::filters::Filters_map const & /*filters*/,
 	protocols::moves::Movers_map const & /*movers*/,
-	core::pose::Pose const & pose
+	core::pose::Pose const &
 )
 {
 	if ( tag->hasOption("pivot_residues") ) {
@@ -151,9 +151,9 @@ BackrubMover::parse_my_tag(
 	set_preserve_detailed_balance( tag->getOption<bool>( "preserve_detailed_balance", preserve_detailed_balance() ) );
 	set_require_mm_bend( tag->getOption<bool>( "require_mm_bend", require_mm_bend() ) );
 
-	set_input_pose(PoseCOP( PoseOP( new core::pose::Pose(pose) ) ));
 
 	clear_segments();
+	// set_input_pose(PoseCOP( PoseOP( new core::pose::Pose(pose) ) )); // Will be called on first apply() call.
 	// add_mainchain_segments(); // Will be called on apply() call
 
 	if ( ! branchopt_.initialized() ) branchopt_.read_database();

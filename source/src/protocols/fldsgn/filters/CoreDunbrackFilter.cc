@@ -181,11 +181,15 @@ CoreDunbrackFilter::compute( Pose const & pose ) const
 bool CoreDunbrackFilter::apply( Pose const & pose ) const
 {
 	Real value = compute( pose );
-	if ( value < filter_value_ ) {
+	Real threshold = filter_value_;
+	if ( threshold == -1 ) { // -1 is a special sentinel value from parse_my_tag which specifies to use the length of the pose.
+		threshold = pose.size();
+	}
+	if ( value < threshold ) {
 		tr << "Successfully filtered: " << type_ << " " << value << std::endl;
 		return true;
 	} else {
-		tr << "Filter failed current/threshold=" << value << "/" << filter_value_ << std::endl;
+		tr << "Filter failed current/threshold=" << value << "/" << threshold << std::endl;
 		return false;
 	}
 } // apply_filter
@@ -197,13 +201,13 @@ CoreDunbrackFilter::parse_my_tag(
 	basic::datacache::DataMap &,
 	Filters_map const &,
 	Movers_map const &,
-	Pose const & pose )
+	Pose const & )
 {
 	// set filter type
 	type_ = tag->getOption<String>( "type", "average" );
 
 	// set threshold
-	filter_value_ = tag->getOption<Real>( "threshold", Real( pose.size() ) );
+	filter_value_ = tag->getOption<Real>( "threshold", -1 );
 	if ( type_ == "average" ) {}
 	else if ( type_ == "num_frustrated_residue" ) {}
 	else if ( type_ == "total" ) {}

@@ -32,6 +32,9 @@
 #include <core/chemical/AA.hh>
 #include <core/pose/PDBInfo.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
+#include <core/select/residue_selector/FalseResidueSelector.hh>
+#include <core/select/residue_selector/ResidueIndexSelector.hh>
+#include <core/pose/selection.hh>
 
 #include <core/scoring/TenANeighborGraph.hh>
 #include <core/scoring/EnergyGraph.hh>
@@ -52,6 +55,8 @@
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
 #include <utility/io/izstream.hh>
+#include <utility/pointer/memory.hh>
+
 #include <basic/Tracer.hh>
 
 // C++ headers
@@ -102,20 +107,20 @@ ResidueDepthFrag::get_CENcrd() const {
 }
 
 ////////////////////////////////////////////////////////////////////////
-ResidueDepthCalculator::ResidueDepthCalculator( core::pose::Pose const &pose )
+ResidueDepthCalculator::ResidueDepthCalculator()
 {
-	initialize( pose );
+	initialize();
 }
 
 ResidueDepthCalculator::~ResidueDepthCalculator() = default;
 
 void
-ResidueDepthCalculator::initialize( core::pose::Pose const &pose )
+ResidueDepthCalculator::initialize()
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	nres_ = pose.size();
+	nres_ = 0;
 	niter_ = 25; // # independent runs
 	//niter_ = 1; // # independent runs
 	sc_depth_avrg_.resize( nres_, 0.0 );
@@ -499,6 +504,9 @@ ResidueDepthCalculator::stack_and_getaverage(
 	core::Size const niter
 ) const
 {
+	// This function must only be called from within estimate_sidechain_depth(), which sets up the vectors
+	debug_assert( sc_depth.size() == sc_depth_avrg_.size() );
+
 	// validate
 	core::Size nerr( 0 );
 	if ( niter > 1 ) {
@@ -556,6 +564,12 @@ utility::vector1< core::Real >
 ResidueDepthCalculator::estimate_sidechain_depth( core::pose::Pose const &pose ) const
 {
 	TR << "start!" << std::endl;
+
+	// Update the values for the data storage.
+	nres_ = pose.size();
+	sc_depth_avrg_.resize( nres_, 0.0 );
+	sc_depth_sdev_.resize( nres_, 0.0 );
+	sc_depth_fvar_.resize( nres_, 0.0 );
 
 	utility::vector1< Vector > unit_waterbox_crd, protein_crd;
 	utility::vector1< core::Size > coarse_index, res_id;
@@ -617,19 +631,13 @@ ResidueDepthCalculator::estimate_sidechain_depth( core::pose::Pose const &pose )
 ////////////////////////////////////////////////////////////////////////////
 ///Filter
 
-ResidueDepthFilter::ResidueDepthFilter( core::pose::Pose const &pose )
+ResidueDepthFilter::ResidueDepthFilter() :
+	filters::Filter( "ResidueDepth" )
 {
-	initialize( pose );
+	initialize();
 }
 
 ResidueDepthFilter::~ResidueDepthFilter()= default;
-
-/*
-ResidueDepthFilter::ResidueDepthFilter( ResidueDepthFilter const &init )
-{
-initialize( pose );
-}
-*/
 
 bool
 ResidueDepthFilter::apply( core::pose::Pose const & pose ) const
@@ -653,14 +661,19 @@ ResidueDepthFilter::apply( core::pose::Pose const & pose ) const
 	TR << " Report starts " << std::endl;
 	TR << "===================================================================" << std::endl;
 	TR << "#Ires  Eval PDBRES Chain  AA Depth    Var" << std::endl;
+	utility::vector1< bool > evalres( pose.size(), false );
+	if ( evalres_ ) {
+		evalres = evalres_->apply( pose );
+	}
+	debug_assert( sde.size() == pose.size() );
 	for ( core::Size ires = 1; ires <= sde.size(); ++ires ) {
-		if ( !evalres_[ires] ) continue;
+		if ( !evalres[ires] ) continue;
 		if ( sde[ires] > maxdist_ || sde[ires] < mindist_ ) {
 			passed = false;
 			//break;
 		}
 
-		TR << I(4, ires) << "    " << evalres_[ires]
+		TR << I(4, ires) << "    " << evalres[ires]
 			<< "   " << I(6, pose.pdb_info()->number( ires ) )
 			<< "     " << pose.pdb_info()->chain( ires )
 			<< " " << pose.residue(ires).name().c_str()
@@ -672,9 +685,9 @@ ResidueDepthFilter::apply( core::pose::Pose const & pose ) const
 }
 
 void
-ResidueDepthFilter::initialize( core::pose::Pose const &pose )
+ResidueDepthFilter::initialize()
 {
-	RDC_ = ResidueDepthCalculator( pose );
+	RDC_ = ResidueDepthCalculator(); // Reset the RDC
 	ncandidate1_ = 500;
 	ncandidate2_ = 40;
 	//similarity_mode_ = "simple";
@@ -690,7 +703,7 @@ ResidueDepthFilter::initialize( core::pose::Pose const &pose )
 	read_GUIP_matrix( GUIP_matrix_file_ );
 
 	// by default eval no res
-	evalres_ = utility::vector1< bool >( RDC_.nres(), false );
+	evalres_ = utility::pointer::make_shared< core::select::residue_selector::FalseResidueSelector >();
 }
 
 void
@@ -1234,11 +1247,9 @@ ResidueDepthFilter::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap &,
 	filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
-	core::pose::Pose const & pose)
+	core::pose::Pose const &)
 {
 	using namespace ObjexxFCL;
-
-	initialize( pose );
 
 	mindist_ = tag->getOption<core::Real>( "mindist", 0.0 );
 	maxdist_ = tag->getOption<core::Real>( "maxdist", 99.0 );
@@ -1250,16 +1261,10 @@ ResidueDepthFilter::parse_my_tag( utility::tag::TagCOP tag,
 		RDC_.set_dcut2( tag->getOption<core::Real>( "dcut2", 4.2 ) );
 	}
 
-
-	evalres_ = utility::vector1< bool >( pose.size(), false );
+	evalres_ = utility::pointer::make_shared< core::select::residue_selector::FalseResidueSelector >();
 
 	if ( tag->hasOption("evalres") ) {
-		utility::vector1< std::string> evalres_str
-			= utility::string_split(tag->getOption<std::string>( "evalres" ), ',');
-		for ( core::Size i = 1; i <= evalres_str.size(); ++i ) {
-			auto ires = (Size)(int_of( evalres_str[i] ));
-			evalres_[ires] = true;
-		}
+		evalres_ =  utility::pointer::make_shared< core::select::residue_selector::ResidueIndexSelector >( tag->getOption<std::string>( "evalres" ) );
 	}
 }
 
@@ -1290,10 +1295,8 @@ void ResidueDepthFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 		+ XMLSchemaAttribute::attribute_w_default(
 		"dcut2", xsct_real,
 		"XRW TO DO",
-		"4.2")
-		+ XMLSchemaAttribute(
-		"evalres", xsct_bool_cslist,
-		"Residues to evalute");
+		"4.2");
+	core::pose::attributes_for_get_resnum_selector( attlist, xsd, "evalres", "Residues to evalute" );
 
 	protocols::filters::xsd_type_definition_w_attributes(
 		xsd, class_name(),

@@ -68,6 +68,9 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+	using protocols::constraint_filters::ConstraintScoreCutoffFilter::get_score; // For the other overloads
+	core::Real get_score( core::pose::Pose const & pose ) const override;
+
 private:
 	hotspot_hashing::HotspotStubSetOP stub_set_;
 	std::string resfile_;

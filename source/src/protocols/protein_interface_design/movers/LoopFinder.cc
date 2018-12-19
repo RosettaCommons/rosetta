@@ -124,6 +124,7 @@ LoopFinder::apply( core::pose::Pose & pose )
 	protocols::scoring::Interface iface;
 	iface.distance( iface_cutoff_ );
 	if ( interface_ ) {
+		runtime_assert( pose.num_jump() >= 1 );
 		iface.jump( interface_ );
 		iface.calculate( pose );
 	}
@@ -201,7 +202,7 @@ LoopFinder::apply( core::pose::Pose & pose )
 
 
 void
-LoopFinder::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
+LoopFinder::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )
 {
 	interface_ = tag->getOption<Size>( "interface", 1 );
 	ch1_ = tag->getOption<bool>( "ch1", false );
@@ -210,7 +211,6 @@ LoopFinder::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, pr
 	max_length_ = tag->getOption<core::Size>( "max_length", 1000 );
 	iface_cutoff_ = tag->getOption<core::Real>( "iface_cutoff", 8.0 );
 	runtime_assert( ch1_ || ch2_ );
-	if ( interface_ ) runtime_assert( pose.num_jump() >= 1 );
 	mingap_ = tag->getOption<core::Size>( "mingap", 1 );
 	resnum_ = core::pose::get_resnum_string( tag, "", "" );
 	if ( ! resnum_.empty() ) {

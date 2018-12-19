@@ -87,7 +87,9 @@ public:
 	void set_constraints( core::scoring::constraints::ConstraintCOPs cst_in );
 	void set_score_type( core::scoring::ScoreType scotype );
 
-	core::Real get_score( core::pose::Pose const & pose ) const;
+	virtual core::Real get_score( core::pose::Pose const & pose ) const;
+	core::Real get_score( core::pose::Pose const & pose_in, core::scoring::constraints::ConstraintCOPs csts ) const;
+
 	// Undefined commenting out to fix PyRosetta build  void apply_cst( core::pose::Pose const& pose ) const;
 
 	std::string name() const override {

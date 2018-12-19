@@ -100,10 +100,15 @@ public:
 	static
 	void attributes( utility::tag::AttributeList & attlist );
 
+protected:
+
+	std::map< core::Size, core::Size >
+	get_alignment( core::pose::Pose const & p ) const;
+
 private:
 	protocols::filters::FilterOP filter_; //which filter to use
 	protocols::moves::MoverOP relax_mover_; // a mover to be called before evaluating the filter's value.
-	std::map< core::Size, core::Size > alignment_; //alignment of active pose to the pose read from disk. Only the segments that are threaded need be specified. Assumes a mapping from disk sequence to input structure sequence
+	std::string alignment_str_; // String-based representation of an alignment of active pose to the pose read from disk. Only the segments that are threaded need be specified. Assumes a mapping from disk sequence to input structure sequence
 	std::string dump_pose_fname_; //filename of dumped pose. Empty means no dumping
 	core::pose::PoseOP pose_;
 	core::scoring::ScoreFunctionOP scorefxn_;

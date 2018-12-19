@@ -152,7 +152,10 @@ SSPredictionFilter::compute( core::pose::Pose const & pose ) const
 	// if a blueprint is specified, use it. If not, use Dssp or pose metadata.
 	if ( blueprint_ ) {
 		wanted_ss = blueprint_->secstruct();
-	} else if ( secstruct_ != "" ) {
+	} else if ( ! secstruct_.empty() ) {
+		if ( secstruct_.length() != pose.size() ) {
+			utility_exit_with_message("The secondary structure string provided to SSPredictionFilter is not the same length as the pose");
+		}
 		wanted_ss = secstruct_;
 	} else if ( components::StructureDataFactory::get_instance()->observer_attached( pose ) ) {
 		wanted_ss = components::StructureDataFactory::get_instance()->get_from_const_pose( pose ).ss();
@@ -230,7 +233,8 @@ void SSPredictionFilter::parse_my_tag(
 	basic::datacache::DataMap &,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
-	core::pose::Pose const & pose ){
+	core::pose::Pose const &
+) {
 	threshold_ = tag->getOption< core::Real >( "threshold", threshold_ );
 	use_probability_ = tag->getOption< bool >( "use_probability", use_probability_ );
 	mismatch_probability_ = tag->getOption< bool >( "mismatch_probability", mismatch_probability_ );
@@ -263,9 +267,6 @@ void SSPredictionFilter::parse_my_tag(
 	if ( !secstruct.empty() ) {
 		if ( !secstruct.empty() and !blueprint_file.empty() ) {
 			utility_exit_with_message("Please provide either a blueprint or secondary structure sting, not both.");
-		}
-		if ( secstruct.length() !=  pose.size() ) {
-			utility_exit_with_message("The secondary structure string provided is not the same length as the pose");
 		}
 		set_secstruct(secstruct);
 	}

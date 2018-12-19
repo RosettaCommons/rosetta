@@ -271,6 +271,16 @@ MapHotspot::apply( core::pose::Pose & pose ){
 	core::pose::Pose chainA = *pose.split_by_chain( 1 );
 	core::pose::Pose const start_pose( pose );
 	pose = chainA; // this will make the viewer shows the working pose
+	if ( jump_movers_.size() != pose.num_jump() ) {
+		TR.Error << "Pose has " << pose.num_jump() << " jumps. MapHotspot is only set up for poses with " << jump_movers_.size() << " jumps." << std::endl;
+		utility_exit_with_message("Number of jump mismatch in Pose vs. MapHotspot");
+	}
+	for ( core::Size ii(1); ii <= pose.num_jump(); ++ii ) {
+		if ( jump_movers_.count(ii) == 0 ) {
+			TR.Error << "In MapHotspot, specification for jump " << ii << " not found. Pose has " << pose.num_jump() << " jumps." << std::endl;
+			utility_exit_with_message("Couldn't find specifications for jump in MapHotspot.");
+		}
+	}
 	GenerateMap( start_pose, pose, 1 );
 	set_last_move_status( protocols::moves::FAIL_DO_NOT_RETRY );
 }
@@ -285,7 +295,7 @@ MapHotspot::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const &filters,
 	protocols::moves::Movers_map const &movers,
-	core::pose::Pose const & pose)
+	core::pose::Pose const & )
 {
 	using namespace utility::tag;
 
@@ -297,12 +307,8 @@ MapHotspot::parse_my_tag( utility::tag::TagCOP tag,
 		std::string const btag_name( btag->getName() );
 		if ( btag_name == "Jumps" ) {
 			utility::vector0< TagCOP > const & jump_tags( btag->getTags() );
-			runtime_assert( jump_tags.size() == pose.num_jump() );
 			for ( TagCOP j_tag : jump_tags ) {
 				auto const jump( j_tag->getOption< core::Size >( "jump" ) );
-				bool const jump_fine( jump <= pose.num_jump() );
-				if ( !jump_fine ) TR.Error<<"Jump "<<jump<<" is larger than the number of jumps in pose="<<pose.num_jump()<<std::endl;
-				runtime_assert( jump_fine );
 				explosion_[ jump ] = j_tag->getOption<core::Size>( "explosion", 0 );
 				std::string const filter_name( j_tag->getOption<std::string>( "filter_name", "true_filter" ));
 				auto find_filter( filters.find( filter_name ));

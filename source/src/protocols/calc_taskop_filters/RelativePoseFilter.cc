@@ -67,7 +67,6 @@ RelativePoseFilter::RelativePoseFilter() :
 	symmetry_definition_(""),
 	rtmin_( false )
 {
-	alignment_.clear();
 	copy_comments_.clear();
 }
 
@@ -158,8 +157,10 @@ RelativePoseFilter::thread_seq( core::pose::Pose const & p ) const{
 		}
 	}//fi copy_comments.size()
 
+	std::map< Size, Size > alignment = get_alignment( p );
+
 	if ( copy_stretch() ) { // just copy the aligned stretch, and then go straight to relax. No repacking
-		copy_pose->copy_segment( alignment_.size()/*how many residues*/, p/*src*/, alignment_.begin()->first/*start on target*/, alignment_.begin()->second/*start on src*/ );
+		copy_pose->copy_segment( alignment.size()/*how many residues*/, p/*src*/, alignment.begin()->first/*start on target*/, alignment.begin()->second/*start on src*/ );
 		copy_pose->conformation().detect_disulfides();
 	} else { // no copy_stretch. Repack etc. carefully
 		DesignAroundOperationOP dao( new DesignAroundOperation );
@@ -167,7 +168,7 @@ RelativePoseFilter::thread_seq( core::pose::Pose const & p ) const{
 		std::vector< core::Size > diffs;
 		diffs.clear();
 		TR<<"differences at positions: ";
-		for ( auto const & aln : alignment_ ) {
+		for ( auto const & aln : alignment ) {
 			char const res1_name(pose()->conformation().residue( aln.first ).name1());
 			char const res2_name(p.conformation().residue( aln.second ).name1());
 			if ( res1_name != res2_name ) {
@@ -202,7 +203,7 @@ RelativePoseFilter::thread_seq( core::pose::Pose const & p ) const{
 				if ( thread() ) {
 					//allow the aa at the corresonding position in the alignment with the disk pose p
 					//we can't use the alignment_ map's [] operator because it can add new elements and this is a const function!
-					allowed_aas[ p.residue( alignment_.find( i )->second ).aa() ] = true;
+					allowed_aas[ p.residue( alignment.find( i )->second ).aa() ] = true;
 				} else {
 					//or allow the original aa in the current pose
 					allowed_aas[ pose()->residue( i ).aa() ] = true;
@@ -272,7 +273,7 @@ RelativePoseFilter::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const & filters,
 	protocols::moves::Movers_map const & movers,
-	core::pose::Pose const & p )
+	core::pose::Pose const & )
 {
 	using namespace protocols::rosetta_scripts;
 
@@ -306,8 +307,30 @@ RelativePoseFilter::parse_my_tag( utility::tag::TagCOP tag,
 		TR<<"Baseline turned off. Is that intended?"<<std::endl;
 	}
 	dump_pose_fname( tag->getOption< std::string >( "dump_pose", "" ) );
-	if ( tag->hasOption( "alignment" ) ) {
-		utility::vector1< std::string > const residue_pairs( utility::string_split( tag->getOption< std::string >( "alignment", "" ), ',' ) );
+	alignment_str_ = tag->getOption< std::string >( "alignment", "" );
+	scorefxn( parse_score_function( tag, data ) );
+	packing_shell( tag->getOption( "packing_shell", packing_shell() ));
+	rtmin( tag->getOption< bool >("rtmin", false ) );
+	runtime_assert( packing_shell() >= 0 );
+	thread( tag->getOption< bool >( "thread", thread() ) );
+	unbound( tag->getOption< bool >( "unbound", false ) );
+	copy_stretch( tag->getOption< bool >( "copy_stretch", false ) );
+	if ( tag->hasOption( "copy_comments" ) ) {
+		copy_comments( utility::string_split( tag->getOption< std::string >( "copy_comments","" ), ',' ) );
+	}
+	TR << "with pdb: " << pose_fname << " dumping fname: " << dump_pose_fname() << " thread: " << thread()
+		<< " unbound: " << unbound() << " copy_stretch: " << copy_stretch() << " rtmin: " << rtmin() << " and packing_shell: " << packing_shell();
+	if ( symmetry_definition_!="" ) TR << " symmetry: " << symmetry_definition_;
+	TR<<std::endl;
+}
+
+std::map< core::Size, core::Size >
+RelativePoseFilter::get_alignment( core::pose::Pose const & p ) const {
+
+	std::map< core::Size, core::Size > alignment;
+
+	if ( ! alignment_str_.empty() ) {
+		utility::vector1< std::string > const residue_pairs( utility::string_split( alignment_str_, ',' ) );
 		for ( std::string const & residue_pair : residue_pairs ) {
 			utility::vector1< std::string > const residues( utility::string_split( residue_pair, ':' ) );
 			runtime_assert( residues.size() == 2 );
@@ -325,7 +348,7 @@ RelativePoseFilter::parse_my_tag( utility::tag::TagCOP tag,
 					if ( pdbinfo2->chain( p_res ) == residues2_cstr ) break;
 				}
 				for ( core::Size index = 0; ; ++index ) {/// push aligned residues
-					alignment_[ pose_res ] = p_res;
+					alignment[ pose_res ] = p_res;
 					if ( pose_res == pose()->size() || p_res == p.size() ) { //end of chains -> stop aligning
 						break;
 					}
@@ -336,29 +359,19 @@ RelativePoseFilter::parse_my_tag( utility::tag::TagCOP tag,
 					}
 				}
 			} else { //fi aligning two chains /// aligning individual residues
-				alignment_[ core::pose::parse_resnum( residues[ 1 ], *pose() ) ] = core::pose::parse_resnum( residues[ 2 ], p );
+				alignment[ core::pose::parse_resnum( residues[ 1 ], *pose() ) ] = core::pose::parse_resnum( residues[ 2 ], p );
 			}
 		}
 	} else {
 		//  runtime_assert( pose()->size() == p.size() || core::pose::symmetry::is_symmetric( p ) );
 		for ( core::Size i=1; i<=p.size(); ++i ) {
-			alignment_[ i ] = i;
+			alignment[ i ] = i;
 		}
 	}
-	scorefxn( parse_score_function( tag, data ) );
-	packing_shell( tag->getOption( "packing_shell", packing_shell() ));
-	rtmin( tag->getOption< bool >("rtmin", false ) );
-	runtime_assert( packing_shell() >= 0 );
-	thread( tag->getOption< bool >( "thread", thread() ) );
-	unbound( tag->getOption< bool >( "unbound", false ) );
-	copy_stretch( tag->getOption< bool >( "copy_stretch", false ) );
-	if ( tag->hasOption( "copy_comments" ) ) {
-		copy_comments( utility::string_split( tag->getOption< std::string >( "copy_comments","" ), ',' ) );
-	}
-	TR<<"with pdb: "<<pose_fname<<" dumping fname "<<dump_pose_fname()<<" thread: "<<thread()<<" unbound "<<unbound()<<" copy_stretch: "<<copy_stretch()<<" rtmin "<<rtmin()<<" and packing_shell: "<<packing_shell();
-	if ( symmetry_definition_!="" ) TR<<" symmetry: "<<symmetry_definition_<<std::endl;
-	TR<<std::endl;
+
+	return alignment;
 }
+
 
 protocols::filters::FilterOP
 RelativePoseFilter::fresh_instance() const{

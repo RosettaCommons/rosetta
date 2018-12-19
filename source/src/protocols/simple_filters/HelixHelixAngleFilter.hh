@@ -48,7 +48,10 @@ public:
 	core::Real compute( core::pose::Pose const & pose ) const;
 
 	// @brief iterate all atoms in both TMs, return the minimal distance between them
-	core::Real calc_shortest_dist_by_atoms( core::pose::Pose const & pose  ) const;
+	core::Real calc_shortest_dist_by_atoms( core::pose::Pose const & pose,
+		core::Size start_helix_1, core::Size end_helix_1,
+		core::Size start_helix_2, core::Size end_helix_2
+	) const;
 
 	// @brief find point of approach (closest points) on the vectors, and return the distance
 	std::pair< numeric::xyzVector< core::Real >, numeric::xyzVector< core::Real > >
@@ -78,6 +81,15 @@ public:
 	static
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+protected:
+
+	/// @brief Calculate the extent of helicies for this pose
+	/// Returns values by reference
+	void get_helix_start_stop( core::pose::Pose const & pose,
+		core::Size & start_helix_1, core::Size & end_helix_1,
+		core::Size & start_helix_2, core::Size & end_helix_2
+	) const;
 
 private:
 	core::Size start_helix_1_ = 0;

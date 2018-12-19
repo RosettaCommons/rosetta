@@ -95,7 +95,7 @@ ResidueCountFilter::parse_my_tag(
 	basic::datacache::DataMap & data,
 	filters::Filters_map const &,
 	moves::Movers_map const &,
-	core::pose::Pose const & pose
+	core::pose::Pose const &
 ) {
 	if ( tag->hasOption("max_residue_count") ) {
 		enable_max_residue_count(true);
@@ -115,24 +115,9 @@ ResidueCountFilter::parse_my_tag(
 		std::string const res_type_str( tag->getOption< std::string >("residue_types", "") );
 		utility::vector1< std::string > const res_type_vec( utility::string_split( res_type_str, ',' ) );
 		TR << "Residue types specified: " << res_type_vec << std::endl;
-		// if a pose with residues is given, check the residue types vs the pose residue type set to warn the user before runtime
-		core::chemical::ResidueTypeSetCOP restype_set;
-		if ( pose.size() ) {
-			restype_set = pose.residue_type_set_for_pose();
-		} else {
-			restype_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
-		}
-		// loop through residue types, check to see if they are valid, and add them if they are valid
-		for ( core::Size i=1; i<=res_type_vec.size(); ++i ) {
-			if ( ! add_residue_type_by_name( *restype_set, res_type_vec[i] ) ) {
-				// try adding from the default residue type set, instead:
-				core::chemical::ResidueTypeSetCOP restype_set2 = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
-				if ( ! add_residue_type_by_name( *restype_set2, res_type_vec[i] ) ) {
-					// tried twice to add the residue type -- if it doesn't exist in the residue type set, inform the user and exit
-					utility_exit_with_message( "An invalid residue type (" + res_type_vec[i] + ") was specified to the ResidueCount filter.  This residue type is neither in the input pose, nor in the fa_standard residue type set." );
-				}
-			}
-		} // for all res type specified
+		// Ideally, we could check the sanity of the residue types here -- but due to the fact that the ResidueTypeSet actually at issue
+		// isn't know until apply time, we really can't check the types here.
+		res_types( res_type_vec );
 	}
 	if ( tag->hasOption("include_property") ) {
 		std::string const res_prop_str( tag->getOption< std::string >("include_property", "") );
@@ -229,6 +214,14 @@ ResidueCountFilter::compute(
 		}
 	}
 
+	// loop through residue types, check to see if they are valid
+	core::chemical::ResidueTypeSetCOP restype_set = pose.residue_type_set_for_pose();
+	for ( std::string const & restype: res_types_ ) {
+		if ( !restype_set->has_name( restype ) && !restype_set->has_name3( restype ) ) {
+			utility_exit_with_message( "An invalid residue type (" + restype + ") was specified to the ResidueCount filter.  This residue type is not valid for this pose." );
+		}
+	}
+
 	core::Size count( 0 );
 	for ( core::Size i=1; i<=target_res.size(); ++i ) {
 		bool counted(false);
@@ -285,10 +278,7 @@ void
 ResidueCountFilter::res_types(
 	utility::vector1< std::string > const & res_types
 ) {
-	res_types_.clear();
-	for ( core::Size i=1; i<=res_types.size(); ++i ) {
-		res_types_.push_back( res_types[i] );
-	}
+	res_types_ = res_types;
 }
 
 utility::vector1< std::string >

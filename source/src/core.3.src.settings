@@ -940,6 +940,7 @@ sources = {
 		"ChainSelector",
 		"CloseContactResidueSelector",
 		"DensityFitResidueSelector",
+		"FalseResidueSelector",
 		"GlycanResidueSelector",
 		"GlycanSequonsSelector",
 		"GlycanPositionSelector",

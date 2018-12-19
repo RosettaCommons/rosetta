@@ -43,7 +43,6 @@ SequenceDistance::SequenceDistance() :
 	protocols::filters::Filter( "SequenceDistance" ),
 	sequence_comment_id_( "" ),
 	target_seq_( "" ),
-	pose_seq_( "" ),
 	threshold_( 100000 )
 {
 }
@@ -51,7 +50,7 @@ SequenceDistance::SequenceDistance() :
 SequenceDistance::~SequenceDistance() = default;
 
 void
-SequenceDistance::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & pose )
+SequenceDistance::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
 {
 	threshold( tag->getOption< core::Size >( "threshold", 8000 ) );
 
@@ -59,15 +58,8 @@ SequenceDistance::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::Data
 
 	if ( tag->hasOption("sequence_comment_id") ) {
 		sequence_comment_id( tag->getOption< std::string >( "sequence_comment_id","" ) );
-		target_seq(core::pose::get_all_comments(pose)[ sequence_comment_id() ]);
 	} else if ( tag->hasOption("target_sequence") ) {
 		target_seq( tag->getOption< std::string >( "target_sequence","" ) );
-	}
-
-	pose_seq( pose.sequence() );
-
-	if ( target_seq().length() != pose_seq().length() ) {
-		utility_exit_with_message("SequenceDistance filter cannot compare sequences of different length");
 	}
 
 }
@@ -96,10 +88,23 @@ SequenceDistance::compute(
 ) const {
 	core::Size distance = 0;
 
-	std::string pose_sequence = pose.sequence(); // we already this in pose_sequence, but I need to use pose for something, otherwise compiler warning... Silly.
+	std::string const & pose_sequence = pose.sequence();
+	std::string target_sequence = target_seq();
+	if ( ! sequence_comment_id().empty() ) {
+		auto all_comments = core::pose::get_all_comments(pose);
+		if ( all_comments.count( sequence_comment_id() ) == 0 ) {
+			utility_exit_with_message("In SequenceDistance Filter, pose does not have sequence comment " + sequence_comment_id() );
+		}
+		target_sequence = all_comments[ sequence_comment_id() ];
+	}
+
+	if ( target_sequence.length() != pose_sequence.length() ) {
+		TR.Error << "Attempted to use SequenceDistance filter on pose of length " << pose_sequence.length() << " with target sequence of length " << target_sequence.length() << std::endl;
+		utility_exit_with_message("SequenceDistance filter cannot compare sequences of different length");
+	}
 
 	for ( core::Size i=1; i <= pose_sequence.length(); i++ ) {
-		if ( pose_sequence[i] != target_seq()[i-1] ) distance++;
+		if ( pose_sequence[i] != target_sequence[i-1] ) distance++;
 	}
 
 	//TR << "The sequence distance is " << distance << std::endl;

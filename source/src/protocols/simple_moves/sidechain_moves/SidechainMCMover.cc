@@ -32,7 +32,7 @@
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <utility/tag/Tag.hh>
-
+#include <core/pack/task/operation/TaskOperations.hh>
 // Numeric Headers
 #include <numeric/random/random.hh>
 
@@ -335,7 +335,7 @@ SidechainMCMover::pass_metropolis(core::Real delta_energy , core::Real last_prop
 }
 
 void
-SidechainMCMover::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & pose) {
+SidechainMCMover::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) {
 
 	// code duplication: should really call SidechainMover::parse_my_tag() instead of having most of the code below
 	if ( tag->hasOption("task_operations") ) {
@@ -356,11 +356,10 @@ SidechainMCMover::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::Data
 		set_task_factory(new_task_factory);
 
 	} else {
-
-		pack::task::PackerTaskOP pt = core::pack::task::TaskFactory::create_packer_task( pose );
-		set_task( pt );
-		pt->restrict_to_repacking();
-		// probably should call init_task(), but it's cleaner if we wait untill it's called in apply()
+		core::pack::task::TaskFactoryOP new_task_factory( new core::pack::task::TaskFactory );
+		core::pack::task::operation::TaskOperationOP rtr( new core::pack::task::operation::RestrictToRepacking );
+		new_task_factory->push_back( rtr );
+		set_task_factory(new_task_factory);
 	}
 
 	ntrials_ = tag->getOption<core::Size>( "ntrials", 10000 );

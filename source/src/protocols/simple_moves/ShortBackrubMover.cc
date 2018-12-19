@@ -21,6 +21,7 @@
 #include <core/conformation/Residue.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/filters/Filter.fwd.hh>
+#include <core/kinematics/FoldTree.hh>
 
 // Parser headers
 #include <basic/datacache/DataMap.hh>
@@ -47,7 +48,6 @@ using basic::Error;
 using basic::Warning;
 
 static basic::Tracer TR( "protocols.simple_moves.ShortBackrubMover" );
-//static numeric::random::RandomGenerator RG(415609);
 
 namespace protocols {
 namespace simple_moves {
@@ -124,6 +124,12 @@ ShortBackrubMover::fresh_instance() const
 void
 ShortBackrubMover::apply( core::pose::Pose & pose )
 {
+	if ( !backrubmover_->get_input_pose() || backrubmover_->get_input_pose()->fold_tree() != pose.fold_tree() ) {
+		backrubmover_->set_input_pose( core::pose::PoseCOP( new core::pose::Pose(pose) ) );
+		backrubmover_->clear_segments();
+		backrubmover_->add_mainchain_segments( pose );
+	}
+
 	if ( resnum_ == 0 ) {
 		randomize_resnum_ = true;
 	}
@@ -254,11 +260,8 @@ ShortBackrubMover::parse_my_tag(
 	basic::datacache::DataMap &,
 	Filters_map const &,
 	protocols::moves::Movers_map const &,
-	Pose const & pose)
+	Pose const & )
 {
-	backrubmover_->set_input_pose(core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose(pose) ) ));
-	backrubmover_->clear_segments();
-	backrubmover_->add_mainchain_segments( pose );
 	backrubmover_->branchopt().read_database();
 }
 

@@ -82,7 +82,7 @@ MonteCarloReset::set_MC( GenericMonteCarloMoverOP mc ){
 }
 
 void
-MonteCarloReset::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, Filters_map const &, Movers_map const &movers, Pose const & pose ){
+MonteCarloReset::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, Filters_map const &, Movers_map const &movers, Pose const & ){
 	std::string const mc_name( tag->getOption< std::string >( "MC_name" ) );
 	auto find_mover( movers.find( mc_name ) );
 	if ( find_mover == movers.end() ) {
@@ -90,9 +90,8 @@ MonteCarloReset::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, Fi
 	}
 
 	set_MC( utility::pointer::dynamic_pointer_cast< protocols::monte_carlo::GenericMonteCarloMover > ( find_mover->second ) );
-	Pose temp_pose( pose );
-	get_MC()->initialize();
-	get_MC()->reset( temp_pose );
+	// The MC object is initialized by its own parse_my_tag, and reset in its apply()
+
 	TR<<"Setting MonteCarlo container with mover "<<mc_name<<std::endl;
 }
 

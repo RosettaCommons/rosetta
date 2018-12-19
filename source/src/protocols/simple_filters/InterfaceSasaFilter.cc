@@ -91,7 +91,7 @@ InterfaceSasaFilter::fresh_instance() const{
 }
 
 void
-InterfaceSasaFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &,moves::Movers_map const &, core::pose::Pose const & pose )
+InterfaceSasaFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &,moves::Movers_map const &, core::pose::Pose const & )
 {
 	lower_threshold_ = tag->getOption<core::Real>( "threshold", 800 );
 	upper_threshold_ = tag->getOption<core::Real>( "upper_threshold", 1000000);
@@ -119,20 +119,10 @@ InterfaceSasaFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::D
 
 		jumps_.resize(0);
 		sym_dof_names_ = utility::string_split( specified_sym_dof_names, ',');
-	} else if ( core::pose::symmetry::is_symmetric( pose ) && core::pose::symmetry::is_multicomponent( pose) ) {
-		// get the sym_dof_names for all slidable dofs
-		std::set<core::Size> sym_aware_jump_ids;
-		Size nslidedofs = core::pose::symmetry::symmetry_info(pose)->num_slidablejumps();
-		for ( Size j = 1; j <= nslidedofs; j++ ) {
-			sym_aware_jump_ids.insert(core::pose::symmetry::get_sym_aware_jump_num(pose, j ));
-		}
-		for ( core::Size sym_aware_jump_id : sym_aware_jump_ids ) {
-			sym_dof_names_.push_back(core::pose::symmetry::jump_num_sym_dof(pose,sym_aware_jump_id));
-		}
 	} else {
-		TR.Debug << "Defaulting to jump 1. " << std::endl;
-
-		jump(1);
+		jumps_.resize(0);
+		sym_dof_names_.resize(0);
+		// Defer capture to later.
 	}
 
 	hydrophobic_ = tag->getOption<bool>( "hydrophobic", false );
@@ -143,7 +133,8 @@ InterfaceSasaFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::D
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Polar and hydrophobic flags specified in Sasa filter." );
 	}
 
-	if ( ( polar_ || hydrophobic_ ) && (jumps_.size() != 1 || jumps_[1] != 1) ) {
+	if ( ( polar_ || hydrophobic_ ) && ( !sym_dof_names_.empty() || jumps_.size() > 1 || (jumps_.size() == 1 && jumps_[1] != 1) ) ) {
+		// Remember to permit the default (empty jumps_) which is treated like jumps_ = [1,]
 		TR.Error << "Only total sasa is supported across a jump other than 1. Remove polar and hydrophobic flags and try again: " << tag << std::endl;
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Only total sasa is supported across a jump other than 1. Remove polar and hydrophobic flags and try again." );
 	}
@@ -235,11 +226,26 @@ InterfaceSasaFilter::compute( core::pose::Pose const & pose ) const {
 
 	bool symm = core::pose::symmetry::is_symmetric( pose );
 	if ( symm && core::pose::symmetry::is_multicomponent( pose) ) {
+		utility::vector1<std::string> sym_dof_names_local = sym_dof_names_;
+		if ( ! jumps_.empty() ) {
+			TR.Warning << "In InterfaceSasaFilter, the jumps list is non-empty for a multicomponent symmetric system - those jumps will be ignored!" << std::endl;
+		}
+		if ( sym_dof_names_local.empty() ) {
+			// Fall back to all slidable dofs
+			std::set<core::Size> sym_aware_jump_ids;
+			Size nslidedofs = core::pose::symmetry::symmetry_info(pose)->num_slidablejumps();
+			for ( Size j = 1; j <= nslidedofs; j++ ) {
+				sym_aware_jump_ids.insert(core::pose::symmetry::get_sym_aware_jump_num(pose, j ));
+			}
+			for ( core::Size sym_aware_jump_id : sym_aware_jump_ids ) {
+				sym_dof_names_local.push_back(core::pose::symmetry::jump_num_sym_dof(pose,sym_aware_jump_id));
+			}
+		}
 		Real buried_sasa = 0;
-		for ( Size i = 1; i <= sym_dof_names_.size(); i++ ) {
-			core::pose::Pose full_component_subpose = core::pose::symmetry::get_full_intracomponent_subpose(pose, sym_dof_names_[i]);
-			core::pose::Pose full_component_neighbors_subpose = core::pose::symmetry::get_full_intracomponent_neighbor_subpose(pose, sym_dof_names_[i]);
-			core::pose::Pose full_component_and_neighbors_subpose = core::pose::symmetry::get_full_intracomponent_and_neighbor_subpose(pose, sym_dof_names_[i]);
+		for ( std::string const & dof_name: sym_dof_names_local ) {
+			core::pose::Pose full_component_subpose = core::pose::symmetry::get_full_intracomponent_subpose(pose, dof_name);
+			core::pose::Pose full_component_neighbors_subpose = core::pose::symmetry::get_full_intracomponent_neighbor_subpose(pose, dof_name);
+			core::pose::Pose full_component_and_neighbors_subpose = core::pose::symmetry::get_full_intracomponent_and_neighbor_subpose(pose, dof_name);
 			//full_component_subpose.dump_pdb("full_component_subpose_" + protocols::jd2::current_output_name() + ".pdb");
 			//full_component_neighbors_subpose.dump_pdb("full_component_neighbors_subpose_" + protocols::jd2::current_output_name() + ".pdb");
 			//full_component_and_neighbors_subpose.dump_pdb("full_component_and_neighbors_subpose_" + protocols::jd2::current_output_name() + ".pdb");
@@ -247,16 +253,16 @@ InterfaceSasaFilter::compute( core::pose::Pose const & pose ) const {
 			MetricValue< core::Real > mv_sasa;
 			full_component_subpose.metric( "sasa", "total_sasa", mv_sasa);
 			core::Real const full_component_sasa( mv_sasa.value() );
-			TR << "sasa for component controlled by sym_dof " << sym_dof_names_[i] << " = " << full_component_sasa << std::endl;
+			TR << "sasa for component controlled by sym_dof " << dof_name << " = " << full_component_sasa << std::endl;
 
 			full_component_neighbors_subpose.metric( "sasa", "total_sasa", mv_sasa);
 			core::Real const full_component_neighbors_sasa( mv_sasa.value() );
-			TR << "sasa for the neighboring subunits of the component controlled by sym_dof " << sym_dof_names_[i] << " = " << full_component_neighbors_sasa << std::endl;
+			TR << "sasa for the neighboring subunits of the component controlled by sym_dof " << dof_name << " = " << full_component_neighbors_sasa << std::endl;
 
 			full_component_and_neighbors_subpose.metric( "sasa", "total_sasa", mv_sasa);
 			core::Real const full_component_and_neighbors_sasa( mv_sasa.value() );
-			TR << "sasa for component controlled by sym_dof and its neighboring subunits" << sym_dof_names_[i] << " = " << full_component_and_neighbors_sasa << std::endl;
-			utility::vector1<Size> sym_dof_subunits = core::pose::symmetry::get_jump_name_to_subunits(pose, sym_dof_names_[i]);
+			TR << "sasa for component controlled by sym_dof and its neighboring subunits" << dof_name << " = " << full_component_and_neighbors_sasa << std::endl;
+			utility::vector1<Size> sym_dof_subunits = core::pose::symmetry::get_jump_name_to_subunits(pose, dof_name);
 			TR << "number of subunits = " << sym_dof_subunits.size() << std::endl;
 			core::Real individual_component_buried_sasa = ((full_component_sasa + full_component_neighbors_sasa) - full_component_and_neighbors_sasa) / (2*sym_dof_subunits.size());
 			TR << "individual_component_buried_sasa = " << individual_component_buried_sasa << std::endl;
@@ -274,9 +280,14 @@ InterfaceSasaFilter::compute( core::pose::Pose const & pose ) const {
 		}
 
 		if ( !symm ) {
-			for ( Size i = 1; i <= jumps_.size(); i++ ) {
-				TR.Debug << "getting sym_aware_jump_id from " << jumps_[i] << std::endl;
-				sym_aware_jump_ids.insert(jumps_[i]);
+			utility::vector1<core::Size> jumps_local = jumps_;
+			if ( jumps_local.empty() && sym_dof_names_.empty() ) {
+				TR.Debug << "Defaulting to jump 1. " << std::endl;
+				jumps_local.push_back(1);
+			}
+			for ( Size const & jump: jumps_local ) {
+				TR.Debug << "getting sym_aware_jump_id from " << jump << std::endl;
+				sym_aware_jump_ids.insert(jump);
 			}
 		} else {
 			// all slidable jumps

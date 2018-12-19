@@ -43,15 +43,11 @@ public:
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &filters, moves::Movers_map const &, core::pose::Pose const & pose) override;
 	core::Size compute( core::pose::Pose const & pose ) const;
 
-	std::string sequence_comment_id() const { return sequence_comment_id_; }
+	std::string const & sequence_comment_id() const { return sequence_comment_id_; }
 	void sequence_comment_id( std::string const & s ) { sequence_comment_id_ = s; }
 
-	std::string target_seq() const { return target_seq_; }
+	std::string const & target_seq() const { return target_seq_; }
 	void target_seq( std::string const & s ) { target_seq_ = s; }
-
-	std::string pose_seq() const { return pose_seq_; }
-	void pose_seq( std::string const & s ) { pose_seq_ = s; }
-
 
 	core::Size threshold() const { return threshold_; }
 	void threshold( core::Size const & t ) { threshold_ = t; }
@@ -71,7 +67,6 @@ public:
 private:
 	std::string sequence_comment_id_; //dflt ""; define the comment name
 	std::string target_seq_; // dflt ""; the sequence you want to compare to.
-	std::string pose_seq_; // dflt ""; the sequence you want to compare to.
 	core::Size threshold_; //dflt ""; define the comment value
 };
 }
