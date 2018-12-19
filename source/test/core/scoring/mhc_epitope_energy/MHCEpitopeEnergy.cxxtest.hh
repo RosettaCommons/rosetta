@@ -190,7 +190,7 @@ public:
 	void test_mhc_energy_external() {
 #ifndef MULTI_THREADED
 		//Setup the config file
-		utility::vector1< std::string > files(1, "../../../../../../../../../../test/core/scoring/mhc_epitope_energy/external_db.mhc");
+		utility::vector1< std::string > files(1, "core/scoring/mhc_epitope_energy/external_db.mhc");
 		methods::EnergyMethodOptions options;
 		options.set_mhc_epitope_setup_files(files);
 
@@ -357,7 +357,7 @@ public:
 		//Make a symmetric pose, using a de novo c3 symmetry file.
 		core::Size nsub = 3; //Three subunits in the c3.sym file.
 		Pose sym_pose = pose;
-		core::pose::symmetry::make_symmetric_pose( sym_pose, "../../../../../../../../../../test/core/scoring/mhc_epitope_energy/c3.sym" );
+		core::pose::symmetry::make_symmetric_pose( sym_pose, "core/scoring/mhc_epitope_energy/c3.sym" );
 		//Score the pose
 		core::Real sym_score = scorefxn(sym_pose);
 

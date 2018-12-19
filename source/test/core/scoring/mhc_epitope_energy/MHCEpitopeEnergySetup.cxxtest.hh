@@ -114,7 +114,7 @@ public:
 		TS_ASSERT( mhc_from_file->is_default() );
 
 		// Initialize from a .mhc file
-		mhc_from_file->initialize_from_file( "../../../../../../../../../../test/core/scoring/mhc_epitope_energy/external_db.mhc" );
+		mhc_from_file->initialize_from_file( "core/scoring/mhc_epitope_energy/external_db.mhc" );
 
 		// The setup object should no longer be the default.
 		TS_ASSERT( ! mhc_from_file->is_default() );
@@ -128,7 +128,7 @@ public:
 		MHCEpitopeEnergySetupOP mhc_from_string( new MHCEpitopeEnergySetup() );
 
 		// Set up a string object that matches the .mhc file
-		std::string config_string = "method external ../../../../../../../../../../test/core/scoring/mhc_epitope_energy/externaldb.sql\nalleles *\nunseen penalize 100";
+		std::string config_string = "method external core/scoring/mhc_epitope_energy/externaldb.sql\nalleles *\nunseen penalize 100";
 
 		// Initialize it using the string
 		mhc_from_string->initialize_from_file_contents( config_string );
@@ -141,7 +141,7 @@ public:
 
 		// One with a different unseen penalty
 		MHCEpitopeEnergySetupOP mhc_from_string2( new MHCEpitopeEnergySetup() );
-		std::string config_string2 = "method external ../../../../../../../../../../test/core/scoring/mhc_epitope_energy/externaldb.sql\nalleles *\nunseen penalize 1";
+		std::string config_string2 = "method external core/scoring/mhc_epitope_energy/externaldb.sql\nalleles *\nunseen penalize 1";
 		mhc_from_string2->initialize_from_file_contents( config_string2 );
 		TS_ASSERT_EQUALS ( *mhc_from_string2 == *mhc_from_string, false );
 

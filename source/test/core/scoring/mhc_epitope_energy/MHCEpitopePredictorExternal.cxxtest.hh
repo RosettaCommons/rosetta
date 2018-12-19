@@ -69,7 +69,7 @@ public:
 		TS_ASSERT(! pred_e->get_database() );
 
 		//Now, load the external database.
-		pred_e->connect( "../../../../../../../../../../test/core/scoring/mhc_epitope_energy/externaldb.sql" );
+		pred_e->connect( "core/scoring/mhc_epitope_energy/externaldb.sql" );
 		TS_ASSERT( pred_e->get_database() );
 
 		//Check the score for an unknown peptide
