@@ -215,11 +215,11 @@ void SnugDockProtocol::apply( Pose & pose ) {
 	while ( pose.residue(1).is_virtual_residue() ) {
 		pose.delete_residue_slow(1);
 	}
-	
+
 	//JAB - Needed as delete_residue_slow clears the energies cache
 	ScoreFunctionOP scorefxn = get_score_function();
 	scorefxn->score(pose);
-	
+
 	if ( option[ OptionKeys::antibody::output_ab_scheme].user() ) {
 		AntibodyNumberingConverterMover converter = AntibodyNumberingConverterMover();
 		converter.apply( pose ); // might become broken?
