@@ -57,7 +57,18 @@ enum CDRNameEnum {
 	CDRNameEnum_proto_start = proto_h4,
 	CDRNameEnum_proto_total = proto_l4,
 	l4 = proto_l4,
-	h4 = proto_h4
+	h4 = proto_h4,
+
+	//Capital equivalence
+	L1 = l1,
+	L2 = l2,
+	L3 = l3,
+	H1 = h1,
+	H2 = h2,
+	H3 = h3,
+	L4 = l4,
+	H4 = h4
+
 
 };
 

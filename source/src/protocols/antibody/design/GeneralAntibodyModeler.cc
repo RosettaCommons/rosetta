@@ -296,9 +296,8 @@ GeneralAntibodyModeler::get_cdr_loops(Pose const & pose) const {
 
 	protocols::loops::LoopsOP cdr_loops( new protocols::loops::Loops );
 
-	for ( Size i = 1; i <= core::Size( ab_info_->get_total_num_CDRs( true /* include_cdr4 */)); ++i ) {
-		if ( model_cdrs_[i] ) {
-			auto cdr = static_cast<CDRNameEnum>(i);
+	for ( auto const & cdr : ab_info_->get_all_cdrs_present( true /* include_cdr4 */) ) {
+		if ( model_cdrs_[ cdr ] ) {
 			Size start = ab_info_->get_CDR_start(cdr, pose);
 			Size stop =  ab_info_->get_CDR_end(cdr, pose);
 			Size cutpoint = (stop-start)/2+start;
@@ -314,9 +313,8 @@ GeneralAntibodyModeler::get_cdr_loops_with_overhang(Pose const & pose) const {
 
 	protocols::loops::LoopsOP cdr_loops( new protocols::loops::Loops );
 
-	for ( Size i = 1; i <= core::Size( ab_info_->get_total_num_CDRs( true /* include_cdr4 */)); ++i ) {
-		if ( model_cdrs_[i] ) {
-			auto cdr = static_cast<CDRNameEnum>(i);
+	for ( auto const & cdr : ab_info_->get_all_cdrs_present( true /* include_cdr4 */) ) {
+		if ( model_cdrs_[cdr] ) {
 			protocols::loops::Loop cdr_loop = get_cdr_loop_with_overhang(pose, cdr);
 			cdr_loops->add_loop(cdr_loop);
 		}
@@ -352,9 +350,8 @@ GeneralAntibodyModeler::get_cdrs_movemap_with_overhang(Pose  & pose, bool min_bb
 
 	pose.update_residue_neighbors();
 	MoveMapOP mm( new MoveMap() );
-	for ( core::Size i = 1; i <= core::Size( ab_info_->get_total_num_CDRs( true /* include_cdr4 */) ); ++i ) {
-		if ( model_cdrs_[i] ) {
-			auto cdr = static_cast<CDRNameEnum>(i);
+	for ( auto const & cdr : ab_info_->get_all_cdrs_present( true /* include_cdr4 */) ) {
+		if ( model_cdrs_[ cdr ] ) {
 			protocols::loops::Loop cdr_loop = ab_info_->get_CDR_loop(cdr, pose, overhangs_[ cdr ]);
 
 			vector1<bool> all_included_res(pose.size(), false);

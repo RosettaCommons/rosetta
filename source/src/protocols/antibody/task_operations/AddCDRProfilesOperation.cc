@@ -509,9 +509,8 @@ AddCDRProfilesOperation::apply(const core::pose::Pose& pose, core::pack::task::P
 	cons_task_->include_native_aa(include_native_restype_);
 	core::Size cons_task_residues = 0;
 
-	for ( core::Size i = 1; i <= core::Size(local_ab_info->get_total_num_CDRs(true /* Include DE */)); ++i ) {
-		auto cdr = static_cast< CDRNameEnum >( i );
-		if ( (no_data_cdrs[ i ]  && seq_design_options_[ i ]->fallback_strategy() == seq_design_conservative) || (seq_design_options_[ i ]->design() && seq_design_options_[ i ]->design_strategy() == seq_design_conservative) ) {
+	for ( auto const & cdr : local_ab_info->get_all_cdrs_present(true /* Include DE */) ) {
+		if ( (no_data_cdrs[ cdr ]  && seq_design_options_[ cdr ]->fallback_strategy() == seq_design_conservative) || (seq_design_options_[ cdr ]->design() && seq_design_options_[ cdr ]->design_strategy() == seq_design_conservative) ) {
 
 			TR << "Using conservative op for " << local_ab_info->get_CDR_name(cdr) << std::endl;
 			for ( core::Size resnum = local_ab_info->get_CDR_start(cdr, pose, North); resnum <= local_ab_info->get_CDR_end(cdr, pose, North); ++resnum ) {
@@ -540,9 +539,8 @@ AddCDRProfilesOperation::apply(const core::pose::Pose& pose, core::pack::task::P
 	RestrictResidueToRepacking restrict = RestrictResidueToRepacking();
 	core::Size restrict_residues = 0;
 	//TR << "No data cdrs: " << utility::to_string(no_data_cdrs) << std::endl;
-	for ( core::Size i = 1; i <= core::Size(local_ab_info->get_total_num_CDRs()); ++i ) {
-		auto cdr = static_cast< CDRNameEnum >( i );
-		if ( (no_data_cdrs[ cdr ] && seq_design_options_[ i ]->fallback_strategy() == seq_design_none) || (seq_design_options_[ i ]->design() && seq_design_options_[ i ]->design_strategy() == seq_design_none) ) {
+	for ( auto const & cdr : local_ab_info->get_all_cdrs_present() ) {
+		if ( (no_data_cdrs[ cdr ] && seq_design_options_[ cdr ]->fallback_strategy() == seq_design_none) || (seq_design_options_[ cdr ]->design() && seq_design_options_[ cdr ]->design_strategy() == seq_design_none) ) {
 			TR << "Disabling design for " << local_ab_info->get_CDR_name(cdr) << std::endl;
 
 			for ( core::Size resnum = local_ab_info->get_CDR_start(cdr, pose, North); resnum <= local_ab_info->get_CDR_end(cdr, pose, North); ++resnum ) {

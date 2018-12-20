@@ -228,6 +228,9 @@ CDRGraftDesignOptionsParser::parse_options(CDRNameEnum cdr, std::string const & 
 			continue;
 		}
 
+		if ( utility::contains(line, "#") ) {
+			utility_exit_with_message("Cannot have comments on the same line as instructions.");
+		}
 		boost::to_upper(line); //Capitalize everything.
 
 		vector1< string > lineSP = string_split_multi_delim(line); //Split on space or tab
@@ -397,6 +400,10 @@ CDRGraftDesignOptionsParser::set_cdr_graft_neighbor_mintype_options(utility::vec
 
 	for ( core::Size i = 4; i <= lineSP.size(); ++i ) {
 		std::string cdr_type = lineSP[i];
+		if ( cdr_type == "NONE" ) {
+			cdr_options_->neighbor_min_clear();
+			return;
+		}
 		if ( ! ab_manager_->cdr_name_is_present(cdr_type) ) {
 			utility_exit_with_message("Unrecognized CDR type - "+cdr_type);
 		}

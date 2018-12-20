@@ -175,8 +175,7 @@ MutateFrameworkForCluster::has_framework_dependant_cluster(const core::pose::Pos
 
 bool
 MutateFrameworkForCluster::has_framework_dependant_clusters(const core::pose::Pose& pose){
-	for ( core::Size i = 1; i <= static_cast<core::Size>(ab_info_->get_total_num_CDRs()); ++i ) {
-		auto cdr = static_cast<CDRNameEnum>( i );
+	for ( auto const & cdr : ab_info_->get_all_cdrs_present()  ) {
 		if ( has_framework_dependant_cluster(pose, cdr) ) {
 			return true;
 		} else {
@@ -328,8 +327,7 @@ MutateFrameworkForCluster::apply(core::pose::Pose& pose) {
 
 	bool framework_dependant_clusters = false;
 
-	for ( core::Size i = 1; i <= core::Size( ab_info_->get_total_num_CDRs() ); ++i ) {
-		auto cdr = static_cast<CDRNameEnum>( i );
+	for ( auto const & cdr : ab_info_->get_all_cdrs_present() ) {
 		if ( ! cdrs_[ cdr ] ) continue;
 
 		CDRClusterEnum current_cluster;

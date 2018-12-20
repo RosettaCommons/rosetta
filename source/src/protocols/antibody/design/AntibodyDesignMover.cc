@@ -964,8 +964,7 @@ AntibodyDesignMover::apply_to_cdr(Pose & pose, CDRNameEnum cdr, core::Size index
 			//
 
 			//Now that AntibodyInfo and the Cacheable data is updated.  Add the correct CDR constraints to all CDRs.
-			for ( core::Size i = 1; i <= core::Size(ab_info_->get_total_num_CDRs()); ++i ) {
-				auto cdr_in_pose = static_cast<CDRNameEnum>(i);
+			for ( auto const & cdr_in_pose: ab_info_->get_all_cdrs_present() ) {
 				cdr_dihedral_cst_mover_->set_cdr(cdr_in_pose);
 				if ( cdr_in_pose == cdr ) {
 					cdr_dihedral_cst_mover_->set_force_cluster(cdr_pose.cluster);
@@ -1012,8 +1011,7 @@ catch ( utility::excn::Exception& excn ) {
 		////////// Constraints /////////////////////////////////////////////
 		//
 		//
-		for ( core::Size i = 1; i <= core::Size(ab_info_->get_total_num_CDRs()); ++i ) {
-			auto cdr_in_pose = static_cast<CDRNameEnum>(i);
+		for ( auto const & cdr_in_pose : ab_info_->get_all_cdrs_present() ) {
 			cdr_dihedral_cst_mover_->set_cdr(cdr_in_pose);
 			cdr_dihedral_cst_mover_->set_remove_any_set_forced_cluster();
 			cdr_dihedral_cst_mover_->apply(pose);
@@ -1605,10 +1603,7 @@ AntibodyDesignMover::show(std::ostream & output) const{
 	output << "//  Inner Cycles: "<< inner_cycles_ << std::endl;
 	output << "//  Dock? " << std::boolalpha << dock_post_graft_ << std::endl;
 	output << std::endl;
-	for ( core::Size i=1; i<=core::Size( ab_info_->get_total_num_CDRs() ); ++i ) {
-
-		auto cdr = static_cast<CDRNameEnum>(i);
-
+	for ( auto const & cdr : ab_info_->get_all_cdrs_present() ) {
 
 		CDRSetOptionsCOP set_options = cdr_set_options_[cdr];
 		CDRGraftDesignOptionsCOP graft_options = cdr_graft_design_options_[cdr];

@@ -142,7 +142,8 @@ public:
 	//contacts_antigen(pose::Pose const & pose, CDRNameEnum const cdr_name) const;
 
 	/// @brief return num of cdr loops, 3 (nanobody) or 6 (regular antibody)
-	CDRNameEnum
+	/// Do not use for enum-based for loop if including cdr4.  Use get_all_cdrs_present instead!
+	core::Size
 	get_total_num_CDRs( bool include_proto_cdr4 = false ) const;
 
 	///@brief Get a vector of all the CDRs in this antibody. Easy to iterate on.

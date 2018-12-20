@@ -259,8 +259,7 @@ paratope_sasa( const core::pose::Pose & pose, const protocols::antibody::Antibod
 	TR << "Total polar SASA is: " << total_polar_sasa << std::endl;
 
 	////////iterate to define antibody paratope/////////////////////////////////////////////
-	for ( core::Size i=1; i<=core::Size(ab_info.get_total_num_CDRs(include_de_loop)); ++i ) {
-		auto loop = static_cast<CDRNameEnum>(i);
+	for ( auto const & loop : ab_info.get_all_cdrs_present(include_de_loop) ) {
 		Size loop_start = ab_info.get_CDR_start(loop, pose);
 		Size loop_end = ab_info.get_CDR_end(loop, pose);
 		TR.Debug << loop << " loop_start " << loop_start << std::endl;
@@ -280,8 +279,8 @@ paratope_sasa( const core::pose::Pose & pose, const protocols::antibody::Antibod
 		}
 		polar_loop_sasa = loop_sasa - hydrop_loop_sasa;
 
-		sasa_results.cdr[i] = loop_sasa;
-		hsasa_results.cdr[i] = hydrop_loop_sasa;
+		sasa_results.cdr[loop] = loop_sasa;
+		hsasa_results.cdr[loop] = hydrop_loop_sasa;
 
 		/////////////////////out CDR values//////////////////////////////////////////////
 		TR << "Loop " << ab_info.get_CDR_name(loop) << ": CDR  sasa " << loop_sasa
@@ -326,8 +325,7 @@ paratope_charge( core::pose::Pose const & pose, const protocols::antibody::Antib
 	charge_results.cdr.resize(ab_info.get_total_num_CDRs( include_de_loop ), 0);
 	core::SSize paratope_charge = 0;
 
-	for ( core::Size ia=1; ia<=core::Size(ab_info.get_total_num_CDRs( include_de_loop ) ); ++ia ) {
-		auto loop = static_cast<CDRNameEnum>(ia);
+	for ( auto const & loop : ab_info.get_all_cdrs_present( include_de_loop ) ) {
 		Size loop_start = ab_info.get_CDR_start(loop, pose);
 		Size loop_end = ab_info.get_CDR_end(loop, pose);
 
@@ -345,7 +343,7 @@ paratope_charge( core::pose::Pose const & pose, const protocols::antibody::Antib
 		}
 		loop_charge = plus_charge + minus_charge;
 		paratope_charge += loop_charge;
-		charge_results.cdr[ia] = loop_charge;
+		charge_results.cdr[loop] = loop_charge;
 
 		TR << "Loop " << ab_info.get_CDR_name(loop) << ": "
 			<< std::setw(3) << minus_charge << " anions, "

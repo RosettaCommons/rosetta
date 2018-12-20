@@ -291,8 +291,7 @@ AddCDRProfileSetsOperation::apply(const core::pose::Pose& pose, core::pack::task
 
 	MutationSetDesignOperation mut_set_op = MutationSetDesignOperation();
 
-	for ( core::Size i_cdr = 1; i_cdr <= core::Size(local_ab_info->get_total_num_CDRs( true /* inlude cdr4 */)); ++i_cdr ) {
-		auto cdr = static_cast<CDRNameEnum>( i_cdr );
+	for ( auto const & cdr : local_ab_info->get_all_cdrs_present( true /* inlude cdr4 */) ) {
 		if ( sequences.count(cdr) == 0 || sequences[ cdr ].size() <= cutoff_ ) continue;
 		TR << "applying profile set operation for " << local_ab_info->get_CDR_name(cdr) << std::endl;
 		utility::vector1< std::map< core::Size, core::chemical::AA > > mutation_sets;

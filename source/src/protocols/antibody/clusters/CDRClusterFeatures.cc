@@ -169,8 +169,7 @@ CDRClusterFeatures::report_features(core::pose::Pose const & pose, utility::vect
 	std::string stmt_string = "INSERT INTO CDR_clusters( struct_id, resnum_begin, resnum_end, chain, CDR, length, fullcluster, dis, normDis, normDis_deg, sequence) VALUES (?,?,?,?,?,?,?,?,?,?,?);";
 	statement stmt(basic::database::safely_prepare_statement(stmt_string, db_session));
 
-	for ( core::Size i = 1; i <= core::Size(ab_info->get_total_num_CDRs()); ++i ) {
-		auto cdr = static_cast<CDRNameEnum>(i);
+	for ( auto const & cdr : ab_info->get_all_cdrs_present() ) {
 		CDRClusterCOP cluster = ab_info->get_CDR_cluster(cdr);
 
 		//Short-circuit evaluation here:

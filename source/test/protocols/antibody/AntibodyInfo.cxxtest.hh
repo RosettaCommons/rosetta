@@ -194,8 +194,31 @@ public:
 		TS_ASSERT_EQUALS('H', ab_info_north_aho->get_CDR_chain(h3));
 		TS_ASSERT(! ab_info_north_aho->antigen_present());
 		TS_ASSERT_EQUALS(24, ab_info_north_aho->get_CDR_start_PDB_num(l1));
-		TS_ASSERT_EQUALS(CDRNameEnum_total, ab_info_north_aho->get_total_num_CDRs());
+		TS_ASSERT_EQUALS(6, ab_info_north_aho->get_total_num_CDRs());
+		TS_ASSERT_EQUALS(6, ab_info_north_aho->get_all_cdrs_present().size());
+		TS_ASSERT_EQUALS(8, ab_info_north_aho->get_total_num_CDRs(true /*cdr4*/));
+		TS_ASSERT_EQUALS(8, ab_info_north_aho->get_all_cdrs_present( true /*cdr4*/).size());
 		TS_ASSERT_EQUALS(0, ab_info_north_aho->get_antigen_chains().size());
+
+		utility::vector1< CDRNameEnum > canonical_cdrs = ab_info_north_aho->get_all_cdrs_present();
+		TS_ASSERT(canonical_cdrs.contains(L1));
+		TS_ASSERT(canonical_cdrs.contains(L2));
+		TS_ASSERT(canonical_cdrs.contains(L3));
+		TS_ASSERT(canonical_cdrs.contains(H1));
+		TS_ASSERT(canonical_cdrs.contains(H2));
+		TS_ASSERT(canonical_cdrs.contains(H3));
+		TS_ASSERT(! canonical_cdrs.contains(L4));
+		TS_ASSERT(! canonical_cdrs.contains(H4));
+
+		utility::vector1< CDRNameEnum > all_cdrs = ab_info_north_aho->get_all_cdrs_present(true);
+		TS_ASSERT(all_cdrs.contains(L1));
+		TS_ASSERT(all_cdrs.contains(L2));
+		TS_ASSERT(all_cdrs.contains(L3));
+		TS_ASSERT(all_cdrs.contains(H1));
+		TS_ASSERT(all_cdrs.contains(H2));
+		TS_ASSERT(all_cdrs.contains(H3));
+		TS_ASSERT(all_cdrs.contains(L4));
+		TS_ASSERT(all_cdrs.contains(H4));
 
 		//Test Camelid
 		TS_ASSERT(! ab_info_chothia->is_camelid());
@@ -237,6 +260,29 @@ public:
 		ab_info_aho_camelid = AntibodyInfoOP(new AntibodyInfo(ab_pose_aho_camelid, AHO_Scheme, North));
 		TS_ASSERT_EQUALS(ab_info_aho_camelid->is_camelid(), true);
 		TS_ASSERT_EQUALS(ab_info_aho_camelid->get_total_num_CDRs(), 3);
+		TS_ASSERT_EQUALS(ab_info_aho_camelid->get_total_num_CDRs( true /*cdr4*/), 4);
+		TS_ASSERT_EQUALS(ab_info_aho_camelid->get_all_cdrs_present(true /*cdr4*/).size(), 4);
+
+		utility::vector1< CDRNameEnum > canonical_cdrs = ab_info_aho_camelid->get_all_cdrs_present();
+		TS_ASSERT(!canonical_cdrs.contains(L1));
+		TS_ASSERT(!canonical_cdrs.contains(L2));
+		TS_ASSERT(!canonical_cdrs.contains(L3));
+		TS_ASSERT(canonical_cdrs.contains(H1));
+		TS_ASSERT(canonical_cdrs.contains(H2));
+		TS_ASSERT(canonical_cdrs.contains(H3));
+		TS_ASSERT(!canonical_cdrs.contains(L4));
+		TS_ASSERT(!canonical_cdrs.contains(H4));
+
+		utility::vector1< CDRNameEnum > all_cdrs = ab_info_aho_camelid->get_all_cdrs_present(true);
+		TS_ASSERT(!all_cdrs.contains(L1));
+		TS_ASSERT(!all_cdrs.contains(L2));
+		TS_ASSERT(!all_cdrs.contains(L3));
+		TS_ASSERT(all_cdrs.contains(H1));
+		TS_ASSERT(all_cdrs.contains(H2));
+		TS_ASSERT(all_cdrs.contains(H3));
+		TS_ASSERT(!all_cdrs.contains(L4));
+		TS_ASSERT(all_cdrs.contains(H4));
+
 	}
 	void test_kink_functions(){
 		// Aroop

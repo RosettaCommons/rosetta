@@ -217,6 +217,10 @@ CDRSeqDesignOptionsParser::parse_options(CDRNameEnum cdr, std::string const & pa
 			continue;
 		}
 
+		if ( utility::contains(line, "#") ) {
+			utility_exit_with_message("Cannot have comments on the same line as instructions.");
+		}
+
 		boost::to_upper(line); //Capitalize entire line.
 		vector1< string > lineSP = string_split_multi_delim(line); //Split on space or tab
 

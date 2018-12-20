@@ -47,9 +47,7 @@ static basic::Tracer TR( "protocols.antibody.clusters" );
 void
 add_cluster_comments_to_pose(core::pose::Pose& pose, AntibodyInfoCOP ab_info){
 
-	for ( core::Size i = 1; i <= core::Size( ab_info->get_total_num_CDRs() ); ++i ) {
-		auto cdr = static_cast<CDRNameEnum>(i);
-
+	for ( auto const & cdr : ab_info->get_all_cdrs_present() ) {
 
 		if ( pose.data().has(core::pose::datacache::CacheableDataType::CDR_CLUSTER_INFO) ) {
 			auto const & cluster_cache = static_cast< BasicCDRClusterSet const & >(pose.data().get(core::pose::datacache::CacheableDataType::CDR_CLUSTER_INFO));

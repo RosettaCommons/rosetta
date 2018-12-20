@@ -220,8 +220,8 @@ void AntibodyInfo::init(pose::Pose const & pose) {
 		all_cdrs_present_.push_back( cdr );
 		all_cdrs_present_and_proto_.push_back( cdr );
 	}
-	all_cdrs_present_and_proto_.push_back( l4 );
-	if ( ! is_camelid() ) all_cdrs_present_and_proto_.push_back( h4 );
+	all_cdrs_present_and_proto_.push_back( h4 );
+	if ( ! is_camelid() ) all_cdrs_present_and_proto_.push_back( l4 );
 
 
 	numbering_parser_ = AntibodyNumberingParserOP( new AntibodyNumberingParser(enum_manager_) );
@@ -791,12 +791,12 @@ AntibodyInfo::check_cdr_quality(const pose::Pose& pose) const {
 	}
 }
 
-CDRNameEnum
+core::Size
 AntibodyInfo::get_total_num_CDRs(bool include_proto_cdr4 /* false */) const{
 	if ( include_proto_cdr4 ) {
-		return all_cdrs_present_and_proto_.back();
+		return all_cdrs_present_and_proto_.size();
 	} else {
-		return total_cdr_loops_;
+		return all_cdrs_present_.size();
 	}
 }
 
@@ -1208,16 +1208,11 @@ AntibodyInfo::get_CDR_end(CDRNameEnum const cdr_name, pose::Pose const & pose, C
 AntibodyRegionEnum
 AntibodyInfo::get_region_of_residue(const core::pose::Pose& pose, core::Size resnum, bool de_as_framework /* true */) const {
 	char chain = core::pose::get_chain_from_chain_id(pose.chain(resnum), pose);
+
 	if ( chain == 'L' || chain == 'H' ) {
 
 		//Check if the resnum is part of a CDR:
-		auto total_cdrs = core::Size(total_cdr_loops_);
-		if ( ! de_as_framework ) {
-			total_cdrs = core::Size( CDRNameEnum_proto_total );
-		}
-		for ( core::Size i = 1; i <= total_cdrs; ++i ) {
-			auto cdr = static_cast<CDRNameEnum>(i);
-			if ( ! has_CDR(cdr) ) continue;
+		for ( auto const & cdr : get_all_cdrs_present(! de_as_framework) ) {
 
 			core::Size start = this->get_CDR_start(cdr, pose);
 			core::Size end   = this->get_CDR_end(cdr, pose);

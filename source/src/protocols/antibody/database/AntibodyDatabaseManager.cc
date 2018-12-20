@@ -207,8 +207,7 @@ AntibodyDatabaseManager::get_cluster_totals(bool use_outliers) const{
 	utility::vector1<core::Size> totals(CDRClusterEnum_total, 0);
 
 	CDRClusterEnumManagerCOP manager = ab_info_->get_cdr_cluster_enum_manager();
-	for ( core::Size i = 1; i <= core::Size(ab_info_->get_total_num_CDRs( true /* include CDR4 */)); ++i ) {
-		auto cdr = static_cast<CDRNameEnum>( i );
+	for ( auto const & cdr : ab_info_->get_all_cdrs_present( true /*include cdr4*/) ) {
 		std::string const & CDR_name( ab_info_->get_CDR_name(cdr) ); // To extend lifetime
 
 
@@ -903,9 +902,8 @@ AntibodyDatabaseManager::load_cdr_sequences(
 
 	CDRDBSequenceSet sequence_set;
 
-	for ( core::Size i = 1; i <= core::Size(ab_info_->get_total_num_CDRs( true /* include CDR4 */)); ++i ) {
-		if ( ! cdrs[ i ] ) { continue; }
-		auto cdr = static_cast<CDRNameEnum>( i );
+	for ( auto const & cdr : ab_info_->get_all_cdrs_present( true /* include CDR4 */ ) ) {
+		if ( ! cdrs[ core::Size(cdr) ] ) { continue; }
 
 		if ( cdr == l4 || cdr == h4 ) {
 			TR << "Skipping L4/H4 sequence loading.  No profiles exist!" << std::endl;

@@ -426,8 +426,7 @@ check_fix_aho_cdr_numbering(AntibodyInfoCOP ab_info, CDRNameEnum cdr, core::pose
 void
 check_fix_aho_cdr_numbering(AntibodyInfoCOP ab_info, core::pose::Pose & pose){
 
-	for ( core::Size i = 1; i <= core::Size(ab_info->get_total_num_CDRs()); ++i ) {
-		auto cdr = static_cast<CDRNameEnum>(i);
+	for ( auto const & cdr : ab_info->get_all_cdrs_present() ) {
 		check_fix_aho_cdr_numbering(ab_info, cdr, pose);
 	}
 

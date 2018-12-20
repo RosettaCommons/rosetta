@@ -222,8 +222,7 @@ AntibodyFeatures::report_features(
 	utility::vector1<bool> antigen_residues(pose.size(), false);
 
 	//Setup CDR residues:
-	for ( core::SSize i = 1; i <= ab_info_->get_total_num_CDRs(include_proto_cdr4_); ++i ) {
-		auto cdr = static_cast<CDRNameEnum>(i);
+	for ( auto const & cdr : ab_info_->get_all_cdrs_present(include_proto_cdr4_) ) {
 		//TR << "Setting up CDR residues: " << ab_info_->get_CDR_name(cdr) << std::endl;
 
 		for ( core::Size i = ab_info_->get_CDR_start(cdr, pose); i <= ab_info_->get_CDR_end(cdr, pose); ++i ) {
@@ -250,8 +249,7 @@ AntibodyFeatures::report_features(
 
 
 
-	for ( core::SSize i = 1; i <= ab_info_->get_total_num_CDRs(include_proto_cdr4_); ++i ) {
-		auto cdr = static_cast<CDRNameEnum>(i);
+	for ( auto const & cdr : ab_info_->get_all_cdrs_present(include_proto_cdr4_) ) {
 		report_cdr_metrics_features(pose, struct_id, db_session, cdr);
 		report_cdr_residue_features(pose, struct_id, db_session, cdr, relevant_residues);
 
@@ -346,8 +344,7 @@ AntibodyFeatures::report_ab_metrics_features(
 
 	//Get CDR residue total - don't think this would be useful anywhere
 	core::Size cdr_residues = 0;
-	for ( core::SSize i = 1; i <= ab_info_->get_total_num_CDRs(include_proto_cdr4_); ++i ) {
-		auto cdr_name = static_cast<CDRNameEnum>(i);
+	for ( auto const & cdr_name : ab_info_->get_all_cdrs_present(include_proto_cdr4_) ) {
 		cdr_residues = cdr_residues + ab_info_->get_CDR_length(cdr_name, pose);
 	}
 

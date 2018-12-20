@@ -74,7 +74,6 @@ void
 NativeAntibodySeq::set_sequence(const core::pose::Pose &pose, AntibodyInfo const & ab_info ) {
 	seq_.clear();
 	cdr_seq_.clear();
-	TR << "Setting full pose sequence" << std::endl;
 	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 
 		AA res = pose.aa(i);
@@ -90,8 +89,7 @@ NativeAntibodySeq::set_sequence(const core::pose::Pose &pose, AntibodyInfo const
 	}
 
 	//Setup CDR Regions
-	for ( core::Size i = 1; i <= core::Size(ab_info.get_total_num_CDRs( true /* include CDR4 */)); ++i ) {
-		auto cdr = static_cast< CDRNameEnum >( i );
+	for ( auto const & cdr : ab_info.get_all_cdrs_present( true /* include CDR4 */) ) {
 		set_from_cdr( pose, ab_info, cdr);
 	}
 }
@@ -145,8 +143,7 @@ NativeAntibodySeq::get_native_sequence_matching_current_length(const core::pose:
 	}
 
 	//Go through each of the CDRs.  Update the final sequence with what is stored here.
-	for ( core::Size i = 1; i <= core::Size( ab_info.get_total_num_CDRs()); ++i ) {
-		auto cdr = static_cast< CDRNameEnum >( i );
+	for ( auto const & cdr : ab_info.get_all_cdrs_present() ) {
 		core::Size cdr_start_resnum = ab_info.get_CDR_start( cdr, pose );
 
 		if ( cdr_seq_.find( cdr ) != cdr_seq_.end() ) continue;
