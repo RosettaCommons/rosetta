@@ -29,7 +29,7 @@ void
 add_schema_restrictions_for_strings(
 	XMLSchemaDefinition & xsd,
 	std::string type_name,
-	vector1< std::string > & restrictions );
+	vector1< std::string > const & restrictions );
 
 
 

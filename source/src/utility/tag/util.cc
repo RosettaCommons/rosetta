@@ -27,13 +27,13 @@ void
 add_schema_restrictions_for_strings(
 	XMLSchemaDefinition & xsd,
 	std::string type_name,
-	vector1< std::string > & restrictions )
+	vector1< std::string > const & restrictions )
 {
 	XMLSchemaRestriction general_restriction;
 	general_restriction.name(type_name);
 	general_restriction.base_type( xs_string );
 
-	for ( std::string res : restrictions ) {
+	for ( std::string const & res : restrictions ) {
 		general_restriction.add_restriction( xsr_enumeration, res);
 	}
 	xsd.add_top_level_element( general_restriction );

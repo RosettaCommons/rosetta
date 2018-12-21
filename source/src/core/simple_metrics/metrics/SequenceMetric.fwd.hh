@@ -10,6 +10,7 @@
 /// @file core/simple_metrics/metrics/SequenceMetric.fwd.hh
 /// @brief A SimpleMetric to output the single-letter OR three-letter sequence of a protein or subset of positions/regions using a ResidueSelector.
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org) -- Added support for writing full residue type names or basenames.
 
 #ifndef INCLUDED_core_simple_metrics_metrics_SequenceMetric_fwd_hh
 #define INCLUDED_core_simple_metrics_metrics_SequenceMetric_fwd_hh

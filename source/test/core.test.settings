@@ -591,6 +591,7 @@ sources = {
 	],
 	"simple_metrics/metrics" : [
 		"SelectedResidueCountMetricTests",
+		"SequenceMetricTests",
 		"SequenceSimilarityMetricTests",
 	],
 	"util" : [
