@@ -8,8 +8,7 @@ steps:
         run: linux-anvil
         config: source/conda/docker-compose.yml
 
-  # Disable OSX Build, see https://github.com/RosettaCommons/main/pull/3595
-  #- label: OSX Build - Rosetta + Pyrosetta
-  #  command: source/conda/full_build ${CONDA_BUILD_PACKAGES} -- ${CONDA_BUILD_ARGS?}
-  #  agents:
-  #    queue: ${LOCAL_BUILD_QUEUE?}
+  - label: OSX Build - Rosetta + Pyrosetta
+    command: source/conda/full_build ${CONDA_BUILD_PACKAGES} -- ${CONDA_BUILD_ARGS?}
+    agents:
+      queue: ${LOCAL_BUILD_QUEUE?}
