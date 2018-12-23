@@ -50,6 +50,11 @@ sources = {
 		"FloppyTailMover",
 		"FloppyTail_publication",
 	],
+	#I put these here becaiuse this library is relatively empty, and because there are not a lot of protocols-level dependencies for these.  VKM:
+	"protocols/quantum_annealing" : [
+		"ExternalPackerResultLoader",
+		"InteractionGraphSummaryMetric",
+	],
 }
 include_path = [
 ]

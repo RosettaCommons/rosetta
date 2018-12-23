@@ -46,21 +46,21 @@ public:
 public:
 	FASTERNode(InteractionGraphBase * owner, int node_id, int num_states);
 	virtual ~FASTERNode();
-	virtual void print() const;
+	void print() const override;
 
-	void update_one_body_energy( int state, core::PackerEnergy energy );
+	void update_one_body_energy( int state, core::PackerEnergy energy ) override;
 	virtual void update_one_body_energies( ObjexxFCL::FArray1< core::PackerEnergy > & energies );
-	void add_to_one_body_energy( int state, core::PackerEnergy energy );
-	virtual void add_to_one_body_energies( ObjexxFCL::FArray1< core::PackerEnergy > & energies );
-	virtual void zero_one_body_energies();
-	core::PackerEnergy get_one_body_energy( int state );
+	void add_to_one_body_energy( int state, core::PackerEnergy energy ) override;
+	void add_to_one_body_energies( ObjexxFCL::FArray1< core::PackerEnergy > & energies ) override;
+	void zero_one_body_energies() override;
+	core::PackerEnergy get_one_body_energy( int state ) const override;
 
-	virtual void prepare_for_simulated_annealing();
+	void prepare_for_simulated_annealing() override;
 	void prepare_for_FASTER();
 	//virtual unsigned int getMemoryUsageInBytes() const;
 
-	void assign_zero_state();
-	virtual bool state_unassigned() const { return current_state_ == 0; }
+	void assign_zero_state() override;
+	bool state_unassigned() const override { return current_state_ == 0; }
 	void assign_state(int new_state);
 	int get_current_state() const;
 	core::PackerEnergy get_one_body_energy_current_state() const;
@@ -104,8 +104,8 @@ public:
 	bool get_node_corresponded_to_file_node();
 	*/
 
-	virtual unsigned int count_static_memory() const;
-	virtual unsigned int count_dynamic_memory() const;
+	unsigned int count_static_memory() const override;
+	unsigned int count_dynamic_memory() const override;
 
 protected:
 	void update_internal_vectors();
@@ -203,22 +203,20 @@ public:
 public:
 	FASTEREdge(InteractionGraphBase* owner, int first_node_ind, int second_node_ind);
 	virtual ~FASTEREdge();
-	virtual void set_sparse_aa_info(ObjexxFCL::FArray2_bool const & ) {}
-	virtual bool get_sparse_aa_info( int, int) const {return true;} //"all amino acids are neighbors"
-	virtual void add_to_two_body_energy(int const, int const, core::PackerEnergy const);
-	virtual void add_to_two_body_energies( ObjexxFCL::FArray2< core::PackerEnergy > const & res_res_energy_array );
-	virtual
-	void set_two_body_energy(int const, int const, core::PackerEnergy const);
-	virtual
-	void clear_two_body_energy(int const, int const);
-	virtual core::PackerEnergy get_two_body_energy( int const, int const ) const;
+	void set_sparse_aa_info(ObjexxFCL::FArray2_bool const & ) override {}
+	bool get_sparse_aa_info( int, int) const override {return true;} //"all amino acids are neighbors"
+	void add_to_two_body_energy(int const, int const, core::PackerEnergy const) override;
+	void add_to_two_body_energies( ObjexxFCL::FArray2< core::PackerEnergy > const & res_res_energy_array ) override;
+	void set_two_body_energy(int const, int const, core::PackerEnergy const) override;
+	void clear_two_body_energy(int const, int const) override;
+	core::PackerEnergy get_two_body_energy( int const, int const ) const override;
 
-	virtual void force_aa_neighbors(int, int) {} //all aa's are already neighbors -- dense representation
-	virtual void force_all_aa_neighbors() {} //same thing
+	void force_aa_neighbors(int, int) override {} //all aa's are already neighbors -- dense representation
+	void force_all_aa_neighbors() override {} //same thing
 
 
-	virtual void declare_energies_final();
-	virtual void prepare_for_simulated_annealing();
+	void declare_energies_final() override;
+	void prepare_for_simulated_annealing() override;
 	virtual void prepare_for_FASTER();
 	//virtual unsigned int getMemoryUsageInBytes() const;
 
@@ -257,8 +255,8 @@ public:
 	//ObjexxFCL::FArray2Da< core::PackerEnergy > get_lonode_edge_table_ptr();
 	//ObjexxFCL::FArray2Da< core::PackerEnergy > get_hinode_edge_table_ptr();
 
-	virtual unsigned int count_static_memory() const;
-	virtual unsigned int count_dynamic_memory() const;
+	unsigned int count_static_memory() const override;
+	unsigned int count_dynamic_memory() const override;
 
 	//methods for FASTER
 	core::PackerEnergy get_two_body_energies_for_relaxed_states();
@@ -281,7 +279,7 @@ public:
 	core::PackerEnergy get_deltaE_for_perturbation();
 	core::PackerEnergy get_deltaE_for_neighbor_following_perturbation( int node_index );
 
-	void set_edge_weight( Real weight );
+	void set_edge_weight( Real weight ) override;
 
 	void
 	swap_edge_energies(

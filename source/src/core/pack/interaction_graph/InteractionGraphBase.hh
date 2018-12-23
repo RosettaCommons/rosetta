@@ -322,7 +322,7 @@ public:
 	virtual int get_num_total_states() const {return num_total_states_;}
 	virtual core::PackerEnergy get_one_body_energy_for_node_state( int node, int state) = 0;
 	void add_edge( int node1, int node2);
-	bool get_edge_exists(int node1, int node2);
+	bool get_edge_exists(int node1, int node2) const;
 	void drop_all_edges_for_node( int node );
 
 	void print_vertices() const;

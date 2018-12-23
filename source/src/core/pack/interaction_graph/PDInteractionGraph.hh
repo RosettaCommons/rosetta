@@ -52,39 +52,60 @@ class PDInteractionGraph;
 class PDNode : public PrecomputedPairEnergiesNode
 {
 public:
+
+	/// @brief Constructor.
 	PDNode(InteractionGraphBase * owner, int node_id, int num_states);
+
+	/// @brief Destructor.
 	virtual ~PDNode();
+
 	/// @brief prints a description of the node and all of it's one-body energies
-	virtual void print() const;
+	void print() const override;
+
 	/// @brief sets the amino acid type for each state
 	virtual void set_amino_acid_types( std::vector< int > const & );
+
 	/// @brief return the amino acid type for a particular state -- this indexing is of course completely
 	/// arbitrary
 	virtual
 	int aatype_for_state( int state ) const;
+
 	/// @brief returns an FArray & with the number of states for each amino acid type
 	utility::vector1< int > const & get_num_states_for_aa_types() const;
+
 	/// @brief update energy to the one-body energy for state
-	virtual void update_one_body_energy( int state, core::PackerEnergy energy );
+	void update_one_body_energy( int state, core::PackerEnergy energy ) override;
+
 	/// @brief set all the one-body energies for this node
 	virtual void update_one_body_energies( ObjexxFCL::FArray1< core::PackerEnergy > & energies );
+
 	/// @brief adds energy to the one-body energy for state state
-	virtual void add_to_one_body_energy( int state, core::PackerEnergy energy );
+	void add_to_one_body_energy( int state, core::PackerEnergy energy ) override;
+
 	/// @brief adds all the energies in energies to the one-body energies for this node
-	virtual void add_to_one_body_energies( ObjexxFCL::FArray1< core::PackerEnergy > & energies );
-	virtual void zero_one_body_energies();
+	void add_to_one_body_energies( ObjexxFCL::FArray1< core::PackerEnergy > & energies ) override;
+
+	/// @brief Set all onebody energies to zero.
+	void zero_one_body_energies() override;
+
 	/// @brief returns the one body energy for a state
-	core::PackerEnergy get_one_body_energy( int state );
+	core::PackerEnergy get_one_body_energy( int state ) const override;
+
 	/// @brief prepares node for simulated annealing
-	virtual void prepare_for_simulated_annealing();
+	void prepare_for_simulated_annealing() override;
 
 	/// @brief assigns node's state to it's zero, or "unassigned" state.
-	void assign_zero_state();
-	virtual bool state_unassigned() const { return current_state_ == 0;}
+	void assign_zero_state() override;
+
+	/// @brief Is the current state unassigned (set to the zero or null state)?
+	bool state_unassigned() const override { return current_state_ == 0;}
+
 	/// @brief assigns node a new_state
 	void assign_state(int new_state);
+
 	/// @brief returns the state the node is currently assigned
 	int get_current_state() const;
+
 	/// @brief returns the one body energy for the state the node is currently assigned
 	core::PackerEnergy get_one_body_energy_current_state() const;
 
@@ -133,33 +154,9 @@ public:
 
 	void update_internal_energy_sums();
 
-	virtual unsigned int count_static_memory() const;
-	virtual unsigned int count_dynamic_memory() const;
+	unsigned int count_static_memory() const override;
 
-
-	/*
-	void prepare_to_write_to_file();
-	void initialize_aa_for_state_array();
-	void clean_up_after_writing_to_file();
-	void prepare_to_read_energies_from_file( int num_states_for_node_in_file );
-	void clean_up_after_reading_energies_from_file();
-
-	void set_aa_for_file_state(int file_state, int aa );
-	void set_instance_state_correspondence( int instance_state, int state_from_file );
-	int get_correspondence_for_state( int instance_state );
-
-	int get_num_rots_absent_from_file();
-	void get_absent_rots( ObjexxFCL::FArray1_int & rots_absent );
-
-	int get_num_states_in_file();
-	int & get_aatypes_for_file_states();
-
-	int & get_aatypes_for_states();
-	int & get_num_file_states_for_aa();
-	int & get_file_states_2_instance_states_array();
-
-	bool get_node_corresponded_to_file_node();
-	*/
+	unsigned int count_dynamic_memory() const override;
 
 protected:
 	void update_internal_vectors();
@@ -238,22 +235,18 @@ class PDEdge : public PrecomputedPairEnergiesEdge
 public:
 	PDEdge(InteractionGraphBase* owner, int first_node_ind, int second_node_ind);
 	virtual ~PDEdge();
-	virtual void set_sparse_aa_info(ObjexxFCL::FArray2_bool const & sparse_conn_info);
-	virtual void force_aa_neighbors(int node1aa, int node2aa);
-	virtual void force_all_aa_neighbors();
-	virtual bool get_sparse_aa_info( int node1aa, int node2aa) const;
-	virtual void add_to_two_body_energy(int const, int const, core::PackerEnergy const);
-	virtual void
-	add_to_two_body_energies( ObjexxFCL::FArray2< core::PackerEnergy > const & res_res_energy_array );
-	virtual
-	void set_two_body_energy(int const, int const, core::PackerEnergy const);
-	virtual
-	void clear_two_body_energy(int const, int const);
-	virtual core::PackerEnergy get_two_body_energy( int const, int const ) const;
+	void set_sparse_aa_info(ObjexxFCL::FArray2_bool const & sparse_conn_info) override;
+	void force_aa_neighbors(int node1aa, int node2aa) override;
+	void force_all_aa_neighbors() override;
+	bool get_sparse_aa_info( int node1aa, int node2aa) const override;
+	void add_to_two_body_energy(int const, int const, core::PackerEnergy const) override;
+	void add_to_two_body_energies( ObjexxFCL::FArray2< core::PackerEnergy > const & res_res_energy_array ) override;
+	void set_two_body_energy(int const, int const, core::PackerEnergy const) override;
+	void clear_two_body_energy(int const, int const) override;
+	core::PackerEnergy get_two_body_energy( int const, int const ) const override;
 
-	virtual void declare_energies_final();
-	virtual void prepare_for_simulated_annealing();
-	//virtual unsigned int getMemoryUsageInBytes() const;
+	void declare_energies_final() override;
+	void prepare_for_simulated_annealing() override;
 
 	core::PackerEnergy get_current_two_body_energy();
 
@@ -311,8 +304,8 @@ public:
 	int get_two_body_table_size() const;
 	core::PackerEnergy & get_edge_table_ptr();
 
-	virtual unsigned int count_static_memory() const;
-	virtual unsigned int count_dynamic_memory() const;
+	unsigned int count_static_memory() const override;
+	unsigned int count_dynamic_memory() const override;
 
 	ObjexxFCL::FArray2D< core::PackerEnergy >
 	get_aa_submatrix_energies(
@@ -320,19 +313,7 @@ public:
 		int node2aa
 	) const;
 
-	/*
-	void read_edge_energies_from_file( std::ifstream & infile );
-	static void skip_over_edge_energies_from_file
-	(
-	std::ifstream & infile,
-	int num_aa,
-	ObjexxFCL::FArray1_int & num_file_states_for_aa_node1,
-	ObjexxFCL::FArray1_int & num_file_states_for_aa_node2
-	);
-	void write_edge_energies_to_file( std::ofstream & outfile );
-	*/
-
-	virtual void set_edge_weight( Real weight );
+	void set_edge_weight( Real weight ) override;
 
 protected:
 

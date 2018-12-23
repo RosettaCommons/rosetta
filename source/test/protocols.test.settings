@@ -544,6 +544,10 @@ sources = {
 		"SiteGrid",
 	],
 
+	"quantum_annealing" : [
+		"InteractionGraphSummaryMetricTests",
+	],
+
 	"relax" : [
 		"AtomCoordinateCstMover",
 		"FastRelax",

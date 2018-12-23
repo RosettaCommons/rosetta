@@ -42,6 +42,13 @@ public:
 		FixedBBNode( owner, node_id, num_states )
 	{}
 
+public:
+
+	/// @brief Get the one-body energy for a state of this node.
+	/// @details Must be implmented by derived classes.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	virtual core::PackerEnergy get_one_body_energy( int state ) const = 0;
+
 };
 
 class PrecomputedPairEnergiesEdge : public FixedBBEdge
@@ -56,6 +63,12 @@ public:
 	:
 		FixedBBEdge( owner, first_node_ind, second_node_ind )
 	{}
+
+
+	/// @brief Get the two-body energy for two states of the nodes connected to this edge.
+	/// @details Must be implmented by derived classes.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	virtual core::PackerEnergy get_two_body_energy( int const first_state, int const second_state ) const = 0;
 
 	virtual
 	void add_to_two_body_energy(int const, int const, core::PackerEnergy const) = 0;

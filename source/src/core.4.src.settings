@@ -127,6 +127,7 @@ sources = {
 		"SymmOnTheFlyInteractionGraph",
 		"SymmLinMemInteractionGraph",
 		"SymmMinimalistInteractionGraph",
+		"util",
 	],
 	"core/pack/rotamer_set": [
 		"AddResiduesRotamerSetOperation",

@@ -33,6 +33,12 @@
 
 #include <utility/vector1.hh>
 
+#ifdef SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
+
 
 namespace core {
 namespace pack {
@@ -96,11 +102,22 @@ private:
 private:
 	OperationList operations_;
 
+#ifdef SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
+
+
 };
 
 } //namespace task
 } //namespace pack
 } //namespace core
 
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_pack_task_TaskFactory )
+#endif // SERIALIZATION
 
 #endif

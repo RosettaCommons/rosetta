@@ -251,27 +251,40 @@ void BinarySilentStruct::chain_endings( utility::vector1< Size > const & endings
 	std::sort( chain_endings_.begin(), chain_endings_.end() ); // keep the list sorted
 }
 
-bool BinarySilentStruct::init_from_lines(
+/// @brief Initialize object from a set of lines.
+/// @details Does not skip read from container.
+bool
+BinarySilentStruct::init_from_lines(
 	utility::vector1< std::string > const & lines,
 	SilentFileData & container
+) {
+	return init_from_lines(lines, container, false );
+}
+
+bool BinarySilentStruct::init_from_lines(
+	utility::vector1< std::string > const & lines,
+	SilentFileData & container,
+	bool const skip_read_from_container/*=false*/
 ) {
 
 	utility::vector1< std::string > energy_names_;
 	auto iter = lines.begin();
 
 	if ( iter->substr(0,9) != "SEQUENCE:" ) {
-		// get sequence and scorename data from the silent-file data object,
-		// because I don't have it!
-		EnergyNamesOP enames = EnergyNamesOP(
-			utility::pointer::static_pointer_cast< core::io::silent::EnergyNames > ( container.get_shared_silent_data( energynames ) )
-		);
+		if ( !skip_read_from_container ) {
+			// get sequence and scorename data from the silent-file data object,
+			// because I don't have it!
+			EnergyNamesOP enames = EnergyNamesOP(
+				utility::pointer::static_pointer_cast< core::io::silent::EnergyNames > ( container.get_shared_silent_data( energynames ) )
+			);
 
-		SimpleSequenceDataOP seqdata = SimpleSequenceDataOP(
-			utility::pointer::static_pointer_cast< core::io::silent::SimpleSequenceData > ( container.get_shared_silent_data( simplesequencedata ) )
-		);
+			SimpleSequenceDataOP seqdata = SimpleSequenceDataOP(
+				utility::pointer::static_pointer_cast< core::io::silent::SimpleSequenceData > ( container.get_shared_silent_data( simplesequencedata ) )
+			);
 
-		sequence      ( seqdata->sequence()   );
-		energy_names_ = enames ->energy_names();
+			sequence      ( seqdata->sequence()   );
+			energy_names_ = enames ->energy_names();
+		}
 	} else {
 		// get sequence and scorename data from the first two lines provided,
 		// put them into container for further use by other SilentStruct

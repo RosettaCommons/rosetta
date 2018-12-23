@@ -439,6 +439,8 @@ static MoverRegistrator< protein_interface_design::movers::TopologyBrokerMoverCr
 // Q //////////////////////////////////////////////////////////////////////////
 static MoverRegistrator< qsar::RenderGridsToKinemageCreator > reg_RenderGridsToKinemageCreator;
 
+static MoverRegistrator< quantum_annealing::ExternalPackerResultLoaderCreator > reg_ExternalPackerResultLoaderCreator;
+
 // R //////////////////////////////////////////////////////////////////////////
 static MoverRegistrator< rbsegment_relax::MakeStarTopologyMoverCreator > reg_MakeStarTopologyMoverCreator;
 static MoverRegistrator< rbsegment_relax::OptimizeThreadingMoverCreator > reg_OptimizeThreadingMoverCreator;

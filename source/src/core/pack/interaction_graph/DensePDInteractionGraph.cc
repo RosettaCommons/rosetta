@@ -137,7 +137,7 @@ void DensePDNode::zero_one_body_energies()
 /// @brief returns the one body energy for a state
 ///
 /// @param state - [in]
-core::PackerEnergy DensePDNode::get_one_body_energy( int state )
+core::PackerEnergy DensePDNode::get_one_body_energy( int state ) const
 {
 	return one_body_energies_[ state ];
 }

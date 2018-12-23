@@ -22,6 +22,16 @@
 
 #include <utility/vector1.hh>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/list.hpp>
+#endif // SERIALIZATION
+
+
 
 namespace core {
 namespace pack {
@@ -120,3 +130,24 @@ TaskFactory::size() const
 } //namespace pack
 } //namespace core
 
+#ifdef SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::pack::task::TaskFactory::save( Archive & arc ) const {
+	arc( CEREAL_NVP( operations_ ) ); //OperationList
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::pack::task::TaskFactory::load( Archive & arc ) {
+	arc( operations_ ); //OperationList
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::pack::task::TaskFactory );
+CEREAL_REGISTER_TYPE( core::pack::task::TaskFactory )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_pack_task_TaskFactory )
+#endif // SERIALIZATION

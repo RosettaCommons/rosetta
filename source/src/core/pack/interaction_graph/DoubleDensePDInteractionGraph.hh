@@ -47,20 +47,20 @@ class DoubleDensePDNode : public PrecomputedPairEnergiesNode
 public:
 	DoubleDensePDNode(InteractionGraphBase * owner, int node_id, int num_states);
 	virtual ~DoubleDensePDNode();
-	virtual void print() const;
+	void print() const override;
 
-	void update_one_body_energy( int state, core::PackerEnergy energy );
+	void update_one_body_energy( int state, core::PackerEnergy energy ) override;
 	virtual void update_one_body_energies( ObjexxFCL::FArray1< core::PackerEnergy > & energies );
-	void add_to_one_body_energy( int state, core::PackerEnergy energy );
-	virtual void add_to_one_body_energies( ObjexxFCL::FArray1< core::PackerEnergy > & energies );
-	virtual void zero_one_body_energies();
-	core::PackerEnergy get_one_body_energy( int state );
+	void add_to_one_body_energy( int state, core::PackerEnergy energy ) override;
+	void add_to_one_body_energies( ObjexxFCL::FArray1< core::PackerEnergy > & energies ) override;
+	void zero_one_body_energies() override;
+	core::PackerEnergy get_one_body_energy( int state ) const override;
 
-	virtual void prepare_for_simulated_annealing();
+	void prepare_for_simulated_annealing() override;
 	//virtual unsigned int getMemoryUsageInBytes() const;
 
-	void assign_zero_state();
-	virtual bool state_unassigned() const { return current_state_ == 0;}
+	void assign_zero_state() override;
+	bool state_unassigned() const override { return current_state_ == 0;}
 	void assign_state(int new_state);
 	int get_current_state() const;
 	core::PackerEnergy get_one_body_energy_current_state();
@@ -70,20 +70,6 @@ public:
 		core::PackerEnergy & prev_node_energy
 	);
 	void commit_considered_substitution();
-
-	// <directed_design>
-	/* void project_deltaE_for_substitution
-	(
-	int alternate_state,
-	core::PackerEnergy & deltaE_unweighted,
-	core::PackerEnergy & prevE_unweighted,
-	core::PackerEnergy & deltaE_weighted,
-	core::PackerEnergy & prevE_weighted,
-	ObjexxFCL::FArray2D< core::PackerEnergy > const& weights
-	); */
-
-	//core::PackerEnergy get_weighted_energy_with_higher_indexed_nodes(ObjexxFCL::FArray2D< core::PackerEnergy > const& weights) const;
-	// </directed_design>
 
 	inline
 	void acknowledge_neighbors_state_substitution(
@@ -95,32 +81,8 @@ public:
 
 	void update_internal_energy_sums();
 
-	/*
-	void prepare_to_write_to_file();
-	void initialize_aa_for_state_array();
-	void clean_up_after_writing_to_file();
-	void prepare_to_read_energies_from_file( int num_states_for_node_in_file );
-	void clean_up_after_reading_energies_from_file();
-
-	void set_aa_for_file_state(int file_state, int aa );
-	void set_instance_state_correspondence( int instance_state, int state_from_file );
-	int get_correspondence_for_state( int instance_state );
-
-	int get_num_rots_absent_from_file();
-	void get_absent_rots( ObjexxFCL::FArray1DB_int & rots_absent );
-
-	int get_num_states_in_file();
-	int & get_aatypes_for_file_states();
-
-	int & get_aatypes_for_states();
-	int & get_num_file_states_for_aa();
-	int & get_file_states_2_instance_states_array();
-
-	bool get_node_corresponded_to_file_node();
-	*/
-
-	virtual unsigned int count_static_memory() const;
-	virtual unsigned int count_dynamic_memory() const;
+	unsigned int count_static_memory() const override;
+	unsigned int count_dynamic_memory() const override;
 
 protected:
 	void update_internal_vectors();
@@ -176,23 +138,20 @@ class DoubleDensePDEdge : public PrecomputedPairEnergiesEdge
 public:
 	DoubleDensePDEdge(InteractionGraphBase* owner, int first_node_ind, int second_node_ind);
 	virtual ~DoubleDensePDEdge();
-	virtual void set_sparse_aa_info(ObjexxFCL::FArray2_bool const & ) {}
-	virtual bool get_sparse_aa_info( int, int) const {return true;} //"all amino acids are neighbors"
-	virtual void add_to_two_body_energy(int const, int const, core::PackerEnergy const);
-	virtual void
-	add_to_two_body_energies( ObjexxFCL::FArray2< core::PackerEnergy > const & res_res_energy_array );
-	virtual
-	void set_two_body_energy(int const, int const, core::PackerEnergy const);
-	virtual
-	void clear_two_body_energy(int const, int const);
-	virtual core::PackerEnergy get_two_body_energy( int const, int const ) const;
+	void set_sparse_aa_info(ObjexxFCL::FArray2_bool const & ) override {}
+	bool get_sparse_aa_info( int, int) const override {return true;} //"all amino acids are neighbors"
+	void add_to_two_body_energy(int const, int const, core::PackerEnergy const) override;
+	void add_to_two_body_energies( ObjexxFCL::FArray2< core::PackerEnergy > const & res_res_energy_array ) override;
+	void set_two_body_energy(int const, int const, core::PackerEnergy const) override;
+	void clear_two_body_energy(int const, int const) override;
+	core::PackerEnergy get_two_body_energy( int const, int const ) const override;
 
-	virtual void force_aa_neighbors(int, int) {} //all aa's are already neighbors -- dense representation
-	virtual void force_all_aa_neighbors() {} //same thing
+	void force_aa_neighbors(int, int) override {} //all aa's are already neighbors -- dense representation
+	void force_all_aa_neighbors() override {} //same thing
 
 
-	virtual void declare_energies_final();
-	virtual void prepare_for_simulated_annealing();
+	void declare_energies_final() override;
+	void prepare_for_simulated_annealing() override;
 	//virtual unsigned int getMemoryUsageInBytes() const;
 
 	core::PackerEnergy get_current_two_body_energy();
@@ -221,10 +180,10 @@ public:
 	int get_two_body_table_size() const;
 	//ObjexxFCL::FArray2Da< core::PackerEnergy > get_edge_table_ptr();
 
-	virtual unsigned int count_static_memory() const;
-	virtual unsigned int count_dynamic_memory() const;
+	unsigned int count_static_memory() const override;
+	unsigned int count_dynamic_memory() const override;
 
-	virtual void set_edge_weight( Real weight );
+	void set_edge_weight( Real weight ) override;
 
 private:
 	inline

@@ -183,7 +183,7 @@ void PDNode::zero_one_body_energies()
 
 
 /// @param state - [in]
-core::PackerEnergy PDNode::get_one_body_energy( int state )
+core::PackerEnergy PDNode::get_one_body_energy( int state ) const
 {
 	return one_body_energies_[ state ];
 }

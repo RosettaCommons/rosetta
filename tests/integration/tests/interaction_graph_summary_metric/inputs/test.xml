@@ -1,0 +1,60 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<ScoreFunction name="r15" weights="inputs/ref2015_mod.wts" />
+	</SCOREFXNS>
+	<RESIDUE_SELECTORS>
+		<Layer name="select_core"     select_core="true"  select_boundary="false" select_surface="false" use_sidechain_neighbors="true" ball_radius="4" core_cutoff="1.5" surface_cutoff="0.75" />
+		<Layer name="select_boundary" select_core="false" select_boundary="true"  select_surface="false" use_sidechain_neighbors="true" ball_radius="4" core_cutoff="1.5" surface_cutoff="0.75" />
+		<Layer name="select_surf"     select_core="false" select_boundary="false" select_surface="true"  use_sidechain_neighbors="true" ball_radius="4" core_cutoff="1.5" surface_cutoff="0.75" />
+
+		<Not name="select_not_core"     selector="select_core"     />
+		<Not name="select_not_boundary" selector="select_boundary" />
+		<Not name="select_not_surf"     selector="select_surf"     />
+
+		<Phi name="select_pos_phi" select_positive_phi="true" />
+		<Not name="select_neg_phi" selector="select_pos_phi" />
+
+		<And name="select_pos_phi_core"     selectors="select_pos_phi,select_core"     />
+		<And name="select_pos_phi_boundary" selectors="select_pos_phi,select_boundary" />
+		<And name="select_pos_phi_surf"     selectors="select_pos_phi,select_surf"     />
+		<And name="select_neg_phi_core"     selectors="select_neg_phi,select_core"     />
+		<And name="select_neg_phi_boundary" selectors="select_neg_phi,select_boundary" />
+		<And name="select_neg_phi_surf"     selectors="select_neg_phi,select_surf"     />
+	</RESIDUE_SELECTORS>
+	<TASKOPERATIONS>
+		<!-- Task operations for design: -->
+		<ExtraRotamersGeneric name="extra_rot" ex1="false" ex2="false" extrachi_cutoff="0" />
+		<LimitAromaChi2 name="limit_aro_chi2" />
+		<ReadResfile name="l_design_core"     filename="inputs/resfile_L_core.txt"     selector="select_neg_phi_core"     />
+		<ReadResfile name="l_design_boundary" filename="inputs/resfile_L_boundary.txt" selector="select_neg_phi_boundary" />
+		<ReadResfile name="l_design_surf"     filename="inputs/resfile_L_surface.txt"  selector="select_neg_phi_surf"     />
+		<ReadResfile name="d_design_core"     filename="inputs/resfile_D_core.txt"     selector="select_pos_phi_core"     />
+		<ReadResfile name="d_design_boundary" filename="inputs/resfile_D_boundary.txt" selector="select_pos_phi_boundary" />
+		<ReadResfile name="d_design_surf"     filename="inputs/resfile_D_surface.txt"  selector="select_pos_phi_surf"     />
+	</TASKOPERATIONS>
+	<MOVE_MAP_FACTORIES>
+	</MOVE_MAP_FACTORIES>
+	<SIMPLE_METRICS>
+		<!-- This simple metric generates a summary of the interaction graph in a foramt that the quantum packer can read: -->
+		<InteractionGraphSummaryMetric name="intgraph_summary" scorefxn="r15" task_operations="extra_rot,limit_aro_chi2,l_design_core,l_design_boundary,l_design_surf,d_design_core,d_design_boundary,d_design_surf" />
+	</SIMPLE_METRICS>
+	<FILTERS>
+	</FILTERS>
+	<MOVERS>
+		<DeclareBond name="connect_ends" atom1="C" atom2="N" res1="32" res2="1" />
+		<DeclareBond name="connect_ends2" atom1="C" atom2="N" res1="16" res2="17" />
+
+		<!-- Evaluate qpacker metrics: produce output for quantum packer -->
+		<RunSimpleMetrics name="qpacker_metric" metrics="intgraph_summary" prefix="qpacker_" />	
+
+		<!-- Design -->
+		<PackRotamersMover name="design" scorefxn="r15" task_operations="extra_rot,limit_aro_chi2,l_design_core,l_design_boundary,l_design_surf,d_design_core,d_design_boundary,d_design_surf" />
+	</MOVERS>
+	<PROTOCOLS>
+		<Add mover="connect_ends" />
+		<Add mover="connect_ends2" />
+		<Add mover="qpacker_metric" />
+		<Add mover="design" />
+	</PROTOCOLS>
+	<OUTPUT scorefxn="r15" />
+</ROSETTASCRIPTS>

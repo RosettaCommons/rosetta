@@ -64,7 +64,7 @@ public:
 
 	BinarySilentStructOP shared_from_this() { return utility::pointer::static_pointer_cast<BinarySilentStruct>( SilentStruct::shared_from_this() ); }
 
-	virtual SilentStructOP clone() const {
+	SilentStructOP clone() const override {
 		return SilentStructOP( new BinarySilentStruct( *this ) );
 	}
 
@@ -83,47 +83,56 @@ public:
 		BinarySilentStruct const & src
 	);
 
-	/// @brief Initialize object from a set of lines
-	virtual bool init_from_lines(
+	/// @brief Initialize object from a set of lines.
+	/// @details Does not skip read from container.
+	bool init_from_lines(
 		utility::vector1< std::string > const & lines,
 		SilentFileData & container
+	) override;
+
+	/// @brief Initialize object from a set of lines.
+	/// @details If skip_read_from_container is true, then the container object is not used.
+	bool init_from_lines(
+		utility::vector1< std::string > const & lines,
+		SilentFileData & container,
+		bool const skip_read_from_container
 	);
 
 	/// @brief Configure the conformation of the given Pose with the
 	/// conformational data within this BinarySilentStruct. Calls
 	/// pose.clear() and rebuilds Pose from scratch using FA_STANDARD residue
 	/// types.
-	virtual void fill_pose(
+	void fill_pose(
 		core::pose::Pose & pose,
 		bool const metapatches = true
-	) const ;
+	) const override;
 
 	/// @brief Configure the conformation of the given Pose with the
 	/// conformational data within this BinarySilentStruct. Calls
 	/// pose.clear() and rebuilds Pose from scratch using the user-specified
 	/// residue types.
-	virtual void fill_pose(
+	void fill_pose(
 		core::pose::Pose & pose,
 		core::chemical::ResidueTypeSet const & residue_set,
 		bool const metapatches = true
-	) const;
+	) const override;
 
 	/// @brief opposite of fill_pose
-	virtual void fill_struct( core::pose::Pose const & pose, std::string tag );
+	void fill_struct( core::pose::Pose const & pose, std::string tag ) override;
 
 	/// @brief for stepwise modeling, setup other_poses inside full_model_info
 	void
 	setup_other_poses( core::pose::Pose & pose, core::chemical::ResidueTypeSet const & residue_set ) const;
 
 	/// @brief print header information
-	virtual void print_header( std::ostream & out ) const;
+	void print_header( std::ostream & out ) const override;
 
 	/// @brief Prints the conformation information within this
 	/// BinarySilentStruct to the given std::ostream.
-	virtual void print_conformation( std::ostream & output ) const;
+	void print_conformation( std::ostream & output ) const override;
 
 	/// @brief returns the positions of the CA atoms
-	virtual ObjexxFCL::FArray2D< Real > get_CA_xyz() const;
+	ObjexxFCL::FArray2D< Real > get_CA_xyz() const override;
 
 	// model quality-related methods.
 	virtual Real CA_rmsd( BinarySilentStruct other_pss );
@@ -131,7 +140,7 @@ public:
 	/// @brief calculates the RMSD between the C-alpha atoms of a Pose built from
 	/// the torsions in this ProteinSilentStruct and the C-alpha atoms from this
 	/// ProteinSilentStruct.
-	virtual Real get_debug_rmsd();
+	core::Real get_debug_rmsd() override;
 
 
 	void add_jump( kinematics::Jump jump ) {

@@ -428,6 +428,8 @@
 // Q //////////////////////////////////////////////////////////////////////////
 #include <protocols/qsar/RenderGridsToKinemageCreator.hh>
 
+#include <protocols/quantum_annealing/ExternalPackerResultLoaderCreator.hh>
+
 // R //////////////////////////////////////////////////////////////////////////
 #include <protocols/rbsegment_relax/MakeStarTopologyCreator.hh>
 #include <protocols/rbsegment_relax/OptimizeThreadingCreator.hh>

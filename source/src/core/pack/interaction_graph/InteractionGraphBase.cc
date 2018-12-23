@@ -857,9 +857,9 @@ void InteractionGraphBase::add_edge(int index1, int index2)
 /// @author apl
 ///
 ////////////////////////////////////////////////////////////////////////////////
-bool InteractionGraphBase::get_edge_exists(int node1, int node2)
+bool InteractionGraphBase::get_edge_exists(int node1, int node2) const
 {
-	EdgeBase* edge = find_edge( node1, node2 );
+	EdgeBase const * edge = find_edge( node1, node2 );
 	return (edge != nullptr);
 }
 

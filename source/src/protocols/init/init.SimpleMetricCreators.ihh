@@ -23,3 +23,5 @@
 #include <protocols/analysis/simple_metrics/SequenceRecoveryMetricCreator.hh>
 
 #include <protocols/analysis/burial_metrics/PolarGroupBurialPyMolStringMetricCreator.hh> //Added by VKM, 22 April 2018.
+
+#include <protocols/quantum_annealing/InteractionGraphSummaryMetricCreator.hh> //Added by VKM, 5 September 2018.
