@@ -65,17 +65,40 @@ void runpsipred_name_mangle_check(
 
 
 /// @brief default constructor
-PsiPredInterface::PsiPredInterface( std::string const & cmd )
+PsiPredInterface::PsiPredInterface( std::string const & cmd, std::string const & scratch_dir /* = "" */ )
 : ReferenceCount(),
 	cmd_( cmd )
-{}
+{
+	set_scratch_dir( scratch_dir );
+}
 
 /// @brief copy constructor
 PsiPredInterface::PsiPredInterface( PsiPredInterface const & rval )
 : ReferenceCount(),
 	psipred_output_( rval.psipred_output_ ),
 	cmd_( rval.cmd_ )
-{}
+{
+	set_scratch_dir( rval.scratch_dir_ );
+}
+
+void
+PsiPredInterface::set_scratch_dir( std::string const & scratch_dir_in ) {
+	std::string scratch_dir = scratch_dir_in;
+	if ( scratch_dir.length() == 0 ) {
+		scratch_dir_ = "";
+		return;
+	}
+	if ( scratch_dir.at( scratch_dir.length() - 1 ) != platform::file::PATH_SEPARATOR ) {
+		scratch_dir += platform::file::PATH_SEPARATOR;
+	}
+	if ( ! utility::file::is_directory( scratch_dir ) ) {
+		utility_exit_with_message("Error: PsiPredInterface scratch directory " + scratch_dir +
+			" does not appear to be a directory!" );
+	}
+	// So there's no guarentee that it's writable. But that's rare enough that I don't think we should
+	//   check for it.
+	scratch_dir_ = scratch_dir;
+}
 
 /// @brief given a pose, generates a fasta string
 /*std::string
@@ -108,13 +131,11 @@ PsiPredInterface::convert_to_fasta( std::string const & pname, std::string const
 /// returns filename if successful
 /// exits rosetta if not successful
 std::string
-PsiPredInterface::create_fasta_file( std::string const & pname, std::string const & seq ) const
+PsiPredInterface::create_fasta_file( std::string const & filename, std::string const & seq ) const
 {
-	std::string fasta_filename( pname + ".fasta" );
-	// get rid of the path and just use the current directory
-	if ( fasta_filename.find('/') != std::string::npos ) {
-		fasta_filename = fasta_filename.substr( fasta_filename.find_last_of( '/' )+1, std::string::npos );
-	}
+	std::string fasta_filename( filename + ".fasta" );
+	std::string pname( utility::file_basename( filename ) );
+
 	std::string fasta( convert_to_fasta( pname, seq ) );
 	TR.Debug << "Fasta: " << fasta << std::endl;
 	TR << "Fasta filename: " << fasta_filename << std::endl;
@@ -296,7 +317,9 @@ PsiPredInterface::run_psipred( core::pose::Pose const & pose, std::string const 
 			continue;
 		}
 		TR.Debug << "seq : " << seq << std::endl;
-		std::string const filebase = utility::file::create_temp_filename(".", pose.sequence().substr(0,10) + "_");
+
+		bool const scratch_defined = scratch_dir_.length() > 0;
+		std::string const filebase = utility::file::create_temp_filename( scratch_defined ? scratch_dir_ : ".", pose.sequence().substr(0,10) + "_");
 		std::string const fasta_filename = create_fasta_file( filebase, seq );
 		std::string psipred_filename = filebase + ".ss2";
 		std::string psipred_horiz_filename = filebase + ".horiz";
@@ -304,7 +327,8 @@ PsiPredInterface::run_psipred( core::pose::Pose const & pose, std::string const 
 		// ensure we can get a shell
 		runtime_assert( cmd_ != "" );
 		// Call psipred on the fasta file
-		std::string command = cmd_ + " " + fasta_filename;
+		std::string command = cmd_ + " " + utility::file_basename( fasta_filename );
+		if ( scratch_defined ) command = "cd " + scratch_dir_ + " && " + command;
 #ifndef WIN32
 		command += " > /dev/null";
 #endif
@@ -383,7 +407,9 @@ utility::vector1<utility::vector1< utility::vector1< core::Real > > > PsiPredInt
 			continue;
 		}
 		TR.Debug << "seq : " << seq << std::endl;
-		std::string const filebase = utility::file::create_temp_filename(".", pose.sequence().substr(0,10) + "_");
+
+		bool const scratch_defined = scratch_dir_.length() > 0;
+		std::string const filebase = utility::file::create_temp_filename( scratch_defined ? scratch_dir_ : ".", pose.sequence().substr(0,10) + "_");
 		std::string const fasta_filename = create_fasta_file( filebase, seq );
 		std::string const psipred_filename = filebase + ".ss2";
 
@@ -391,7 +417,8 @@ utility::vector1<utility::vector1< utility::vector1< core::Real > > > PsiPredInt
 		// ensure we can get a shell
 		runtime_assert( cmd_ != "" );
 		// Call psipred on the fasta file
-		std::string command = cmd_ + " " + fasta_filename;
+		std::string command = cmd_ + " " + utility::file_basename( fasta_filename );
+		if ( scratch_defined ) command = "cd " + scratch_dir_ + " && " + command;
 #ifndef WIN32
 		command += " > /dev/null";
 #endif

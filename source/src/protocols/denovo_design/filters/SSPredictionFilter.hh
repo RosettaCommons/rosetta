@@ -40,7 +40,8 @@ public:
 		std::string const & cmd,
 		std::string const & blueprint_filename,
 		bool const use_probability,
-		bool const mismatch_probability );
+		bool const mismatch_probability,
+		bool const use_scratch_dir = false );
 	virtual ~SSPredictionFilter();
 	bool apply( core::pose::Pose const & pose ) const override;
 	protocols::filters::FilterOP clone() const override;
@@ -76,6 +77,9 @@ private:
 	/// @brief computes one minus the geometric mean of the passed vector
 	core::Real compute_mismatch_prob( utility::vector1< core::Real > const & probabilities ) const;
 
+	/// @brief set the scratch dir to out::path::scratch or error if that's not set
+	void set_scratch_dir();
+
 
 private:
 	core::Real threshold_;
@@ -96,6 +100,8 @@ private:
 	/// @brief the object which communicates with psipred and interprets its output
 	core::io::external::PsiPredInterfaceOP psipred_interface_;
 	std::string secstruct_;
+	/// @brief the scratch folder to use with psipred (or "")
+	std::string scratch_dir_;
 };  //SSPredictionFilter
 
 //namespaces

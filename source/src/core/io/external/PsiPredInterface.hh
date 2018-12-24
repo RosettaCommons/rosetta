@@ -60,7 +60,7 @@ nonmatching_residues( std::string const & blueprint_ss, std::string const & pred
 
 class PsiPredInterface : public utility::pointer::ReferenceCount {
 public:
-	PsiPredInterface( std::string const & cmd );
+	PsiPredInterface( std::string const & cmd, std::string const & scratch_dir = "" );
 
 	PsiPredInterface( PsiPredInterface const & rval );
 
@@ -82,10 +82,15 @@ private:
 
 	/// @brief dumps fasta sequence for the pose into a file and returns the filename
 	/// or exits rosetta if not successful
+	/// @details An optional output_folder may be passed where the fasta file will be written. The string is expected to
+	/// end with / and will not be returned as part of the filename
 	std::string create_fasta_file( std::string const & pname, std::string const & seq ) const;
 
 	/// @brief deletes files created by psipred and convert_to_fasta
 	void cleanup_after_psipred( std::string const & psipred_filename, std::string const & fasta_filename ) const;
+
+	/// @brief Set the scratch directory. Notably adding a / if the path does not end with one
+	void set_scratch_dir( std::string const & scratch_dir );
 
 	/// @brief Parses the psipred output and returns the predicted secondary structure and likelihoods of the blueprint secondary structure being present on the pose at each position.
 	PsiPredResult
@@ -105,6 +110,8 @@ private:
 	PsiPredResultMap psipred_output_;
 	/// @brief The PsiPred command
 	std::string cmd_;
+	/// @brief A scratch directory to store files in. Always ends with /
+	std::string scratch_dir_;
 };
 
 } //core

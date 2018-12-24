@@ -29,6 +29,8 @@
 #include <protocols/ss_prediction/SS_predictor.hh>
 
 // utility headers
+#include <basic/options/option.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
 
@@ -59,7 +61,8 @@ SSPredictionFilter::SSPredictionFilter()
 	temp_( 0.6 ),
 	ss_predictor_( /* NULL */ ),
 	psipred_interface_( /* NULL */ ),
-	secstruct_("")
+	secstruct_(""),
+	scratch_dir_("")
 {}
 
 // value constructor
@@ -67,7 +70,8 @@ SSPredictionFilter::SSPredictionFilter( core::Real const threshold,
 	std::string const & cmd,
 	std::string const & blueprint_filename,
 	bool const use_probability,
-	bool const mismatch_probability )
+	bool const mismatch_probability,
+	bool const use_scratch_dir /* = false */ )
 : protocols::filters::Filter( "SSPrediction" ),
 	threshold_( threshold ),
 	cmd_( cmd ),
@@ -78,9 +82,13 @@ SSPredictionFilter::SSPredictionFilter( core::Real const threshold,
 	use_svm_( true ),
 	temp_( 0.6 ),
 	ss_predictor_( /* NULL */ ),
-	psipred_interface_( PsiPredInterfaceOP( new PsiPredInterface( cmd ) ) ),
-	secstruct_("")
-{}
+	psipred_interface_( /* NULL */ ),
+	secstruct_(""),
+	scratch_dir_("")
+{
+	if ( use_scratch_dir ) set_scratch_dir();
+	psipred_interface_ = PsiPredInterfaceOP( new PsiPredInterface( cmd, scratch_dir_ ) );
+}
 
 SSPredictionFilter::~SSPredictionFilter() = default;
 
@@ -227,6 +235,14 @@ void SSPredictionFilter::set_secstruct(std::string const secstruct){
 	secstruct_ = secstruct ;
 }
 
+void SSPredictionFilter::set_scratch_dir() {
+	// There is a default value, but I'm 99% sure no one would ever want to use it
+	if ( ! basic::options::option[ basic::options::OptionKeys::out::path::scratch ].user() ) {
+		utility_exit_with_message("Set SSPrediction Filter use_scratch_dir=\"true\" but didn't set -out:path:scratch !");
+	}
+	scratch_dir_ = basic::options::option[ basic::options::OptionKeys::out::path::scratch ]();
+}
+
 //parse the rosetta scripts xml
 void SSPredictionFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
@@ -247,11 +263,13 @@ void SSPredictionFilter::parse_my_tag(
 		utility_exit_with_message("The SSPrediction Filter requires the psipred executable be set with the cmd option in the XML tag if SVM is not being used. Exiting now...");
 	}
 
+	if ( tag->getOption< bool >( "use_scratch_dir", false ) ) set_scratch_dir();
+
 	// now that cmd is set, create the psipred interface
 	if ( use_svm_ ) {
 		ss_predictor_ = protocols::ss_prediction::SS_predictorOP( new protocols::ss_prediction::SS_predictor( "HLE" ) );
 	} else {
-		psipred_interface_ = PsiPredInterfaceOP( new PsiPredInterface( cmd_ ) );
+		psipred_interface_ = PsiPredInterfaceOP( new PsiPredInterface( cmd_, scratch_dir_ ) );
 	}
 
 	std::string blueprint_file = tag->getOption< std::string >( "blueprint", "" );
@@ -336,7 +354,11 @@ void SSPredictionFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 		"secstruct", xs_string,
 		"If specified, the filter will take desired secondary structure from "
 		"this string, rather from DSSP on the pose. Format is: 'L' for loop, 'H' for helix"
-		"and 'E' ");
+		"and 'E' ")
+		+ XMLSchemaAttribute(
+		"use_scratch_dir", xsct_rosetta_bool,
+		"If specified, use the directory specified with -out:path:scratch for the temporary "
+		"files produced by PsiPred. The path must exist.");
 
 	protocols::filters::xsd_type_definition_w_attributes(
 		xsd, class_name(),

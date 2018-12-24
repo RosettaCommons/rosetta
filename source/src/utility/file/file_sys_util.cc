@@ -254,8 +254,8 @@ create_temp_filename( std::string const & dir, std::string const & prefix ) {
 	free( tmpname_output );
 #else
 	std::string dirname = dir;
-	if ( *dirname.rbegin() != '/' ) {
-		dirname += "/";
+	if ( *dirname.rbegin() != platform::file::PATH_SEPARATOR ) {
+		dirname += platform::file::PATH_SEPARATOR;
 	}
 	bool exists = false;
 	std::string const charset("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ");
