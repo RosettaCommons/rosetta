@@ -47,7 +47,8 @@ public:
 	PrimarySequenceNeighborhoodSelector(
 		core::Size const lower_residues,
 		core::Size const upper_residues,
-		core::select::residue_selector::ResidueSelectorCOP const selector );
+		core::select::residue_selector::ResidueSelectorCOP const selector,
+		bool cross_chain_boundaries=false );
 
 	virtual ~PrimarySequenceNeighborhoodSelector();
 
@@ -67,6 +68,7 @@ public:
 	void set_lower_residues( core::Size const nres );
 	void set_upper_residues( core::Size const nres );
 	void set_selector( core::select::residue_selector::ResidueSelectorCOP const selector );
+	void set_cross_chain_boundaries( bool cross );
 
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
@@ -74,6 +76,7 @@ private: // data members
 	core::Size lower_residues_;
 	core::Size upper_residues_;
 	core::select::residue_selector::ResidueSelectorCOP selector_;
+	bool cross_chain_boundaries_;
 };
 
 } //namespace residue_selector

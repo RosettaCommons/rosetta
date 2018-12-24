@@ -45,7 +45,8 @@ namespace residue_selector {
 PrimarySequenceNeighborhoodSelector::PrimarySequenceNeighborhoodSelector() :
 	lower_residues_( 1 ),
 	upper_residues_( 1 ),
-	selector_()
+	selector_(),
+	cross_chain_boundaries_( false )
 {
 }
 
@@ -56,10 +57,12 @@ ResidueSelectorOP PrimarySequenceNeighborhoodSelector::clone() const { return Re
 PrimarySequenceNeighborhoodSelector::PrimarySequenceNeighborhoodSelector(
 	core::Size const lower_residues,
 	core::Size const upper_residues,
-	core::select::residue_selector::ResidueSelectorCOP const selector ) :
+	core::select::residue_selector::ResidueSelectorCOP const selector,
+	bool cross_chain_boundaries ) :
 	lower_residues_( lower_residues ),
 	upper_residues_( upper_residues ),
-	selector_( selector )
+	selector_( selector ),
+	cross_chain_boundaries_( cross_chain_boundaries )
 {
 }
 
@@ -79,13 +82,13 @@ PrimarySequenceNeighborhoodSelector::apply( core::pose::Pose const & pose ) cons
 		Size start = range.start();
 		Size end = range.stop();
 		Size count = 0;
-		while ( ( count < lower_residues_ ) && !pose::is_lower_terminus( pose, start ) ) {
+		while ( ( count < lower_residues_ ) && ( start > 1 ) && ! ( pose::is_lower_terminus( pose, start ) && ! cross_chain_boundaries_ ) ) {
 			++count;
 			--start;
 		}
 		TR.Debug << count << " residues added to lower terminus" << std::endl;
 		count = 0;
-		while ( ( count < upper_residues_ ) && !pose::is_upper_terminus( pose, end ) ) {
+		while ( ( count < upper_residues_ ) && ( end < pose.size() ) && ! ( pose::is_upper_terminus( pose, end ) && ! cross_chain_boundaries_ ) ) {
 			++count;
 			++end;
 		}
@@ -109,6 +112,9 @@ PrimarySequenceNeighborhoodSelector::parse_my_tag(
 
 	if ( tag->hasOption( "upper" ) ) {
 		set_upper_residues( tag->getOption< Size >( "upper" ) );
+	}
+	if ( tag->hasOption( "cross_chain_boundaries" ) ) {
+		set_cross_chain_boundaries( tag->getOption< bool >( "cross_chain_boundaries" ) );
 	}
 
 	if ( tag->hasOption( "selector" ) ) {
@@ -159,6 +165,12 @@ PrimarySequenceNeighborhoodSelector::set_upper_residues( core::Size const nres )
 	upper_residues_ = nres;
 }
 
+void
+PrimarySequenceNeighborhoodSelector::set_cross_chain_boundaries( bool cross )
+{
+	cross_chain_boundaries_ = cross;
+}
+
 std::string
 PrimarySequenceNeighborhoodSelector::get_name() const
 {
@@ -179,7 +191,8 @@ PrimarySequenceNeighborhoodSelector::provide_xml_schema( utility::tag::XMLSchema
 	attributes
 		+ XMLSchemaAttribute( "lower", xsct_non_negative_integer , "XRW TO DO" )
 		+ XMLSchemaAttribute( "upper", xsct_non_negative_integer , "XRW TO DO" )
-		+ XMLSchemaAttribute( "selector", xs_string , "XRW TO DO" );
+		+ XMLSchemaAttribute( "selector", xs_string , "XRW TO DO" )
+		+ XMLSchemaAttribute( "cross_chain_boundaries", xsct_rosetta_bool, "Allow the selector to cross chain boundaries? By default false.");
 	xsd_type_definition_w_attributes_and_optional_subselector( xsd, class_name(),"XRW TO DO", attributes );
 }
 
