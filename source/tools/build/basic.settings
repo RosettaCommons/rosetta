@@ -467,6 +467,7 @@ settings = {
                 # These flags enable the actual profiling.
                 # -g allows line by line profiling.
                 "mode" : [
+                    "fno-omit-frame-pointer",  # Keep frame pointer information, to help with stack traces
                     "g",
                     "ggdb",
                     "pg"
