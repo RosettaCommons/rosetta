@@ -1,0 +1,37 @@
+# Properties of paramagnetic spin-label residues.
+#
+# Author: Georg.Kuenze@vanderbilt.edu
+#
+# Notes:
+# This file contains properties for the following spin-label residues:
+# R1A, CED, C2X, C3X, C4X, NTA.
+# Add properties of any new spin-label to this list, in addition to the
+# spin-label residue type params file. The fields "Key", "Chemical_Name",
+# "Three_Letter_Code", "One_Letter_Code" and "Radical_Atom" are mandatory.
+# The remaining fields are optional and should be labeled "N/A" if not present.
+# They have the following meaning:
+# A distance potential histogram file is needed for conversion of PRE distances
+# into CB-CB atom pair constraints and is used as histogram for the Spline
+# constraints function. The histogram file should contain two lines: the first
+# line contains the x-values, the second line the y-values. Values must be TAB
+# separated and in ascending order. The bin size must be 0.5. It is further
+# assumed that the values return to the base line at the edge of the given x-axis
+# value range. If the spin-label is going to be used with the PREEnergy scoring
+# method a file containing the PDB rotamers of this spin-label must be added to
+# the database and its path must be included in this table.
+#  
+# References:
+# R1A: Alexander NS et al., 2013, PLoS One, 8(9):e72851
+# CED: Ikegami T et al., 2004, Journal of Biomolecular NMR, 29(3):339-349
+# C2X: Graham B. et al., 2011, Bioconjugate Chemistry, 22(10):2118-2125
+# C3X: Loh CT et al., 2013, Bioconjugate Chemistry, 24(2):260-268
+# C4X: Loh CT et al., 2013, Bioconjugate Chemistry, 24(2):260-268
+# NTA: Yagi H et al., 2013, Journal of Biomolecular NMR, 55(2):157-166
+#
+# Key Chemical_Name Three_Letter_Code One_Letter_Code Radical_Atom Distance_Potential Ensemble_Conformers
+R1A MTSL                             R1A Z O1   scoring/nmr/spinlabel/r1a_pre_hn_distance_potential.histogram  chemical/residue_type_sets/fa_standard/residue_types/spin_labels/R1A_rotamers_nonclashing_moe_saved.pdb
+CED MTS-EDTA                         CED X CAL1 N/A                                                            chemical/residue_type_sets/fa_standard/residue_types/spin_labels/CED_non_clashing_rotamers.pdb
+C2X MTS-DOTA-amide                   C2X X LAL1 N/A                                                            chemical/residue_type_sets/fa_standard/residue_types/spin_labels/C2X_non_clashing_rotamers.pdb
+C3X p-Azido-Phenylalanine-DOTA-amide C3X X LAN1 N/A                                                            chemical/residue_type_sets/fa_standard/residue_types/spin_labels/C3X_non_clashing_rotamers.pdb
+C4X p-Azido-Phenylalanine-DOTA-amide C4X X LAO1 N/A                                                            chemical/residue_type_sets/fa_standard/residue_types/spin_labels/C4X_non_clashing_rotamers.pdb
+NTA p-Azido-Phenylalanine-NTA	     NTA X CAX1 N/A                                                            chemical/residue_type_sets/fa_standard/residue_types/spin_labels/NTA_non_clashing_rotamers.pdb

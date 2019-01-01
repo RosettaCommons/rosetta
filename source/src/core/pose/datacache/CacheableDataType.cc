@@ -99,6 +99,12 @@ CacheableDataType::initialize_name_map() {
 	name2enum_()["PB_LIFETIME_CACHE"] = PB_LIFETIME_CACHE;
 	name2enum_()["FAELEC_CONTEXT_DATA"] = FAELEC_CONTEXT_DATA;
 	name2enum_()["POSE_SEQUENCE"] = POSE_SEQUENCE;
+	name2enum_()["NMR_PCS_DATA"] = NMR_PCS_DATA;
+	name2enum_()["NMR_RDC_DATA"] = NMR_RDC_DATA;
+	name2enum_()["NMR_PRE_DATA"] = NMR_PRE_DATA;
+	//name2enum_()["STRUCTURAL_CONSERVATION"] = STRUCTURAL_CONSERVATION;
+	//name2enum_()["SURFACE_PARAMS"] = SURFACE_PARAMS;
+	//name2enum_()["FLOATING_POINT_CLOUD_INFO"] = FLOATING_POINT_CLOUD_INFO;
 
 	runtime_assert( name2enum_().size() == CacheableDataType::num_cacheable_data_types );
 

@@ -1,0 +1,154 @@
+## fullatom patch to load spin-label residues with Lu3+
+## By Georg Kuenze, January 2018, georg.kuenze@vanderbilt.edu
+
+NAME Lu3Coordinating
+TYPES LU3_COORDINATION 
+
+## general requirements for this patch
+
+BEGIN_SELECTOR
+PROPERTY PROTEIN
+PROPERTY SPINLABEL
+END_SELECTOR
+
+BEGIN_CASE ### DOTA-C2  ###################################
+
+BEGIN_SELECTOR
+NAME3 C2X
+END_SELECTOR
+
+# Remove La atom:
+DELETE_ATOM LAL1
+
+# Add Lu atom:
+ADD_ATOM LUL1 Lu    X       3.01 
+
+# Define the connectivity of the added atoms:
+ADD_BOND  NL2 LUL1
+ADD_BOND  NM4 LUL1
+ADD_BOND  NM5 LUL1
+ADD_BOND  NM6 LUL1
+ADD_BOND  OK1 LUL1
+ADD_BOND  OM1 LUL1
+ADD_BOND  OM2 LUL1
+ADD_BOND  OM3 LUL1
+
+# Set the coordinates of the added atoms:
+SET_ICOOR   LUL1   44.045285   73.268864    2.772066   NL2   CK2   CI
+SET_ICOOR    NM4 -110.078887  112.489361    2.783291  LUL1   NL2   CK2
+SET_ICOOR    CN7  136.256934   72.562580    1.489006   NM4  LUL1   NL2
+SET_ICOOR    CN8   40.852224   68.887770    1.516192   CN7   NM4  LUL1
+SET_ICOOR    CN1 -119.118832   70.829304    1.501738   NM4  LUL1   CN7
+SET_ICOOR    CM7  -44.876071   66.692775    1.526277   CN1   NM4  LUL1
+SET_ICOOR    CN2 -120.296998   69.877858    1.499771   NM4  LUL1   CN1
+SET_ICOOR    CN3  -41.575008   65.304858    1.524365   CN2   NM4  LUL1
+SET_ICOOR    OK1   80.987598  116.403296    2.557631  LUL1   NL2   NM4
+
+# Change residue properties:
+ADD_PROPERTY DIAMAGNETIC
+DELETE_PROPERTY PARAMAGNETIC
+
+END_CASE   ### DOTA-C2  ###################################
+
+BEGIN_CASE ### DOTA-C3  ###################################
+
+BEGIN_SELECTOR
+NAME3 C3X
+END_SELECTOR
+
+# Remove La atom:
+DELETE_ATOM LAN1
+
+# Add Lu atom:
+ADD_ATOM LUN1 Lu    X       3.01 
+
+# Define the connectivity of the added atoms:
+ADD_BOND  OX1 LUN1
+ADD_BOND  OX2 LUN1
+ADD_BOND  OX3 LUN1
+ADD_BOND  NM  LUN1
+ADD_BOND  NX4 LUN1
+ADD_BOND  NX5 LUN1
+ADD_BOND  NX6 LUN1
+
+# Set the coordinates of the added atoms:
+SET_ICOOR   LUN1   47.545639   71.393039    2.777197   NM    CL    CK2
+SET_ICOOR    OX1  -91.774587   52.931819    2.512466  LUN1   NM    CL
+SET_ICOOR    CO6  -15.366315   54.072163    1.277484   OX1  LUN1   NM
+SET_ICOOR    NP1 -172.158806   58.862065    1.334928   CO6   OX1  LUN1
+
+# Change residue properties:
+ADD_PROPERTY DIAMAGNETIC
+DELETE_PROPERTY PARAMAGNETIC
+
+END_CASE   ### DOTA-C3  ###################################
+
+BEGIN_CASE ### DOTA-C4  ###################################
+
+BEGIN_SELECTOR
+NAME3 C4X
+END_SELECTOR
+
+# Remove La atom:
+DELETE_ATOM LAO1
+
+# Add Lu atom:
+ADD_ATOM LUO1 Lu    X       3.01
+
+# Define the connectivity of the added atoms:
+ADD_BOND  NO1 LUO1
+ADD_BOND  NP1 LUO1
+ADD_BOND  NP2 LUO1
+ADD_BOND  NP3 LUO1
+ADD_BOND  OX1 LUO1
+ADD_BOND  OP1 LUO1
+ADD_BOND  OP2 LUO1
+ADD_BOND  OP3 LUO1
+
+# Set the coordinates of the added atoms:
+SET_ICOOR   LUO1   40.449175   72.202203    2.789845   NO1   CX1   CN
+SET_ICOOR    NP1 -110.336804  112.436619    2.772558  LUO1   NO1   CX1
+SET_ICOOR    CP1  137.083242   72.015574    1.489423   NP1  LUO1   NO1
+SET_ICOOR    CP2   40.027894   68.838493    1.516457   CP1   NP1  LUO1
+SET_ICOOR    CO2 -119.050002   71.113433    1.501378   NP1  LUO1   CP1
+SET_ICOOR    CO1  -46.561215   66.644723    1.526193   CO2   NP1  LUO1
+SET_ICOOR    CO3 -120.333369   70.231629    1.500318   NP1  LUO1   CO2
+SET_ICOOR    CO4  -42.464392   65.258243    1.524944   CO3   NP1  LUO1
+SET_ICOOR    OX1   84.388246  116.551420    2.552748  LUO1   NO1   NP1
+
+# Change residue properties:
+ADD_PROPERTY DIAMAGNETIC
+DELETE_PROPERTY PARAMAGNETIC
+
+END_CASE   ### DOTA-C4  ###################################
+
+BEGIN_CASE ### pAzF-NTA ###################################
+
+BEGIN_SELECTOR
+NAME3 NTA
+END_SELECTOR
+
+# Remove Ca atom:
+DELETE_ATOM CAX1
+
+# Add Lu atom:
+ADD_ATOM LUX1 Lu    X       3.01
+
+# Define the connectivity of the added atoms:
+ADD_BOND  NN1 LUX1
+ADD_BOND  OO1 LUX1
+ADD_BOND  OO2 LUX1
+ADD_BOND  OX3 LUX1
+
+# Set the coordinates of the added atoms:
+SET_ICOOR   LUX1  172.786830   74.366200    2.596250   NN1   CM    CL
+
+# Change residue properties:
+ADD_PROPERTY DIAMAGNETIC
+DELETE_PROPERTY PARAMAGNETIC
+
+END_CASE   ### pAzF-NTA ###################################
+
+# Add here other spin-labels
+# ...
+

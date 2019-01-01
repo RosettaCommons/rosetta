@@ -378,6 +378,9 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "pcs2" ] = pcs2;
 	name2score_type_[ "dock_ens_conf" ] = dock_ens_conf;
 
+	name2score_type_[ "nmr_pcs" ] = nmr_pcs;
+	name2score_type_[ "nmr_rdc" ] = nmr_rdc;
+	name2score_type_[ "nmr_pre" ] = nmr_pre;
 	// hydrate/SPaDES protocol
 	name2score_type_[ "wat_desolv" ] = wat_desolv;
 

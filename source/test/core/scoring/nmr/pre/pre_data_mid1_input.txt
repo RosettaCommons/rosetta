@@ -1,0 +1,81 @@
+# Example of the PREData main input file
+#
+# Remarks:
+# Datasets that were collected for the same spinlabel site (e.g. 13 A) should be placed within a PRE MULTISET group starting with "MULTISET" and ending with "END".
+# The following input parameter must be provided for each PRE MULTISET as key-value pairs separated by an equality ("=") sign. This is because we optimize the protein and spinlabel correlation time across the MULTISET.
+#
+# "spinlabel_position": residue number of the spinlabel site (integer)
+#
+# "chain_id": chain ID of the spinlabel site (one single character)
+#
+# "gridsearch": comma-separated and bracket-enclosed list of parameter that define the gridsearch of the metal ion or radical atom position. This list must contain exactly 6 elements in the following order:
+# [ grid_atom1, grid_atom2, distance_center_atom1, grid_stepsize, grid_min_radius, grid_max_radius ] ([ string, string, float, float, float, float ]) 
+# The gridsearch parameter have the following meaning:
+# "grid_stepsize": stepsize of the grid search (float)
+# "grid_min_radius": minimal radius of the grid search (float)
+# "grid_max_radius": maximal radius of the grid search (float)
+# "grid_atom1": atom 1 used to define the center of the grid search (string)
+# "grid_atom2": atom 2 used to define the center of the grid search (string)
+# "distance_center_atom1": distance between atom 1 and the grid search center (float)
+#
+# Alternatively to a gridseach, the user can declare a specific spinlabel with which the datasets were performed and for which a ResidueType exists in the Rosetta database.
+# The three-letter code of the spinlabel residue is set with the option "spinlabel_type". In this case, the metal ion position is inferred from the chemical structure of the spinlabel.
+# "spinlabel_type": type of the spinlabel residue as stored in the Rosetta database e.g. R1A (string)
+#
+# "ion_type": type of the radical atom or paramagnetic ion as stored in the Rosetta database e.g. Mn2+ (string)
+#
+# "protein_mass": molecular mass of the protein in kDa (float)
+#
+# "temperature": temperature (in Kelvin) at which the PRE datasets were recorded (float)
+#
+# "dataset": comma-separated and bracket-enclosed list of input parameter of one single PRE dataset collected for a particular spin (e.g. 15N or 1H) and PRE rate type (e.g. R1 or R2).
+# This list must contain exactly 5 elements in the following order: [ pre_datafile, dataset_weight, single_value_weighting_scheme, pre_rate_type, field_strength ] ([ string, float, string, float, float ])
+# The dataset parameter have the following meaning:
+# "pre_datafile": path to the textfile that contains the input PRE values (string)
+# "dataset_weight": weight by which the score of this dataset is multiplied (float)
+# "single_value_weighting_scheme": type how individual PRE values are weighted. Possible values are CONST, SIGMA and OBSIG. (string)
+# "pre_rate_type": which paramagnetic relaxation rate was measured. Possible values are R1 and R2 (string)
+# "field_strength": magnetic field strength in MHz (float)
+#
+# Optional parameter of the PRE MULTISET include:
+#
+# "averaging": possible values are MEAN and SUM (string)
+#
+# "tauc_min": lower bound of the spinlabel correlation time in nsec (float)
+#
+# "tauc_max": upper bound of the spinlabel correlation time in nsec; must be provided together with tauc_max (float)
+#
+# I suggest putting datasets for R1 and R2 PRE rates or different nuclear spins into separate MULTISETs because their values differ by several orders of magnitude. Thus R2 PRE values will dominate the residual calculation.
+# Alternatively, one can turn on normalization of the PRE data with the option -nmr::pre::normalize_data set to true. This will scale the PRE values by the dataset's standard deviation.    
+#
+MULTISET
+
+spinlabel_position = 44
+chain_id           = A
+gridsearch         = [ MN, MN, 0.0, 2.0, 0.0, 4.0 ] 
+ion_type           = Mn2+
+protein_mass       = 10.2
+temperature        = 298.0
+tauc_min           = 2.0
+tauc_max           = 12.0
+dataset            = [ core/scoring/nmr/pre/sim_pres_mn2_1h_r1.txt, 1.0, CONST, R1, 600 ]
+dataset            = [ core/scoring/nmr/pre/sim_pres_mn2_1h_r2.txt, 1.0, CONST, R2, 600 ]
+
+END
+#
+#
+#
+MULTISET
+
+spinlabel_position = 44
+chain_id           = A
+gridsearch         = [ MN, MN, 0.0, 2.0, 0.0, 4.0 ] 
+ion_type           = Cu2+
+protein_mass       = 10.2
+temperature        = 298.0
+tauc_min           = 2.0
+tauc_max           = 12.0
+dataset            = [ core/scoring/nmr/pre/sim_pres_cu2_1h_r1.txt, 1.0, CONST, R1, 600 ]
+dataset            = [ core/scoring/nmr/pre/sim_pres_cu2_1h_r2.txt, 1.0, CONST, R2, 600 ]
+
+END

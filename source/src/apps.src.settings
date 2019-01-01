@@ -263,6 +263,8 @@ sources = {
 	],
 	"public/nmr": [
 		"r_noe_assign",
+		"ligand_transform_with_pcs",
+		"calc_nmr_tensor",
 	],
 	"public/noncanonical_backbones": [
 		"hbs_design",

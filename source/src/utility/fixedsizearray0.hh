@@ -404,7 +404,8 @@ protected:
 
 	bool
 	range( Size index ) const {
-		return index > (Size) 0 && index <= (Size) S;
+		//return index > (Size) 0 && index <= (Size) S;
+		return index >= (Size) 0 && index < (Size) S; // should be indexed by 0, changed by Georg Kuenze 05/10/2016
 	}
 
 private:

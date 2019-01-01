@@ -26,6 +26,9 @@ sources = {
 		"FileSystemResourceLocatorTests",
 		"StringResourceStream",
 	],
+	"svd" : [
+		"SVD_Solver",
+	]
 }
 include_path = [ "#external/cxxtest", "#" ]
 library_path = []

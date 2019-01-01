@@ -29,5 +29,7 @@ static GridRegistrator<ShapeGridCreator> reg_ShapeGridCreator;
 static GridRegistrator<SolvationGridCreator> reg_SolvationGridCreator;
 static GridRegistrator<SolvationMetaGridCreator> reg_SolvationMetaGridCreator;
 static GridRegistrator<LigandPropertyScoreCreator> reg_LigandPropertyScoreCreator;
+static GridRegistrator<PCSSingleGridCreator> reg_PCSSingleGridCreator;
+static GridRegistrator<PCSMultiGridCreator> reg_PCSMultiGridCreator;
 
 } //namespace protocols

@@ -1235,6 +1235,239 @@ ObjexxFCL::FArray2D<T> xyzmatrix_to_FArray(numeric::xyzMatrix<T> const & input)
 
 }
 
+// @brief update three Euler angles to fall in range [0,180)
+// @author Georg Kuenze (georg.kuenze@vanderbilt.edu)
+template<typename T>
+inline
+void angles_between_0_180(xyzVector<T> & angles) {
+	T a = modulo(angles(1), T(360.0)); // angle in range [ 0, 360 )
+	T b = modulo(angles(2), T(360.0));
+	T c = modulo(angles(3), T(360.0));
+
+	if ( (0<=a) && (a<180.0) ) { //a in 0, 180
+		if ( (0<=b) && (b<180.0) ) { //b in 0, 180
+			if ( (0<=c) && (c<180.0) ) { //c in 0, 180
+				;
+			} else { //c in 180, 360
+				c += 180.0;
+			}
+		} else { //b in 180, 360
+			if ( (0<=c) && (c<180.0) ) { //c in 0, 180
+				b += 180.0;
+				c = -1.0*c + 180.0;
+			} else { //c in 180, 360
+				b += 180.0;
+				c *= -1.0;
+			}
+		}
+	} else { //a in 180, 360
+		if ( (0<=b) && (b<180.0) ) { //b in 0, 180
+			if ( (0<=c) && (c<180.0) ) { //c in 0, 180
+				a += 180.0;
+				b = -1.0*b + 180.0;
+				c = -1.0*c + 180.0;
+			} else { //c in 180, 360
+				a += 180.0;
+				b = -1.0*b + 180.0;
+				c = -1.0*c;
+			}
+		} else { //b in 180, 360
+			if ( (0<=c) && (c<180.0) ) { //c in 0, 180
+				a += 180.0;
+				b = -1.0*b;
+				c = 1.0 * c;
+			} else { //g in 180, 360
+				a += 180.0;
+				b = -1.0*b;
+				c += 180.0;
+			}
+		}
+	}
+	angles(1) = modulo(a, T(360.0));
+	angles(2) = modulo(b, T(360.0));
+	angles(3) = modulo(c, T(360.0));
+}
+
+// @brief create a ZYZ rotation matrix rotM given three Euler angles in degrees
+// @author Georg Kuenze (georg.kuenze@vanderbilt.edu)
+template<typename T>
+inline
+xyzMatrix<T> rotation_matrix_from_euler_angles_ZYZ(xyzVector<T> const & angles) {
+	T ca = std::cos( angles(1) * numeric::NumericTraits< T >::pi_over_180() );
+	T cb = std::cos( angles(2) * numeric::NumericTraits< T >::pi_over_180() );
+	T cg = std::cos( angles(3) * numeric::NumericTraits< T >::pi_over_180() );
+	T sa = std::sin( angles(1) * numeric::NumericTraits< T >::pi_over_180() );
+	T sb = std::sin( angles(2) * numeric::NumericTraits< T >::pi_over_180() );
+	T sg = std::sin( angles(3) * numeric::NumericTraits< T >::pi_over_180() );
+
+	xyzMatrix<T> rotM;
+
+	rotM(1,1) = ((-sg * sa ) + ( cb * ca * cg ));
+	rotM(1,2) = (( sg * ca ) + ( cb * sa * cg ));
+	rotM(1,3) = ((-cg * sb ));
+	rotM(2,1) = ((-cg * sa ) - ( cb * ca * sg ));
+	rotM(2,2) = (( cg * ca ) - ( cb * sa * sg ));
+	rotM(2,3) = (( sg * sb ));
+	rotM(3,1) = (( sb * ca ));
+	rotM(3,2) = (( sb * sa ));
+	rotM(3,3) = (( cb      ));
+
+	return rotM;
+}
+
+// @brief create a ZXZ rotation matrix rotM given three Euler angles in degrees
+// @author Georg Kuenze (georg.kuenze@vanderbilt.edu)
+template<typename T>
+inline
+xyzMatrix<T> rotation_matrix_from_euler_angles_ZXZ(xyzVector<T> const & angles) {
+	T ca = std::cos( angles(1) * numeric::NumericTraits< T >::pi_over_180() );
+	T cb = std::cos( angles(2) * numeric::NumericTraits< T >::pi_over_180() );
+	T cg = std::cos( angles(3) * numeric::NumericTraits< T >::pi_over_180() );
+	T sa = std::sin( angles(1) * numeric::NumericTraits< T >::pi_over_180() );
+	T sb = std::sin( angles(2) * numeric::NumericTraits< T >::pi_over_180() );
+	T sg = std::sin( angles(3) * numeric::NumericTraits< T >::pi_over_180() );
+
+	xyzMatrix<T> rotM;
+
+	rotM(1,1) = (( cg * ca ) - ( cb * sa * sg ));
+	rotM(1,2) = (( cg * sa ) + ( cb * ca * sg ));
+	rotM(1,3) = (( sg * sb ));
+	rotM(2,1) = ((-sg * ca ) - ( cb * sa * cg ));
+	rotM(2,2) = ((-sg * sa ) + ( cb * ca * cg ));
+	rotM(2,3) = (( cg * sb ));
+	rotM(3,1) = (( sb * sa ));
+	rotM(3,2) = ((-sb * ca ));
+	rotM(3,3) = (( cb      ));
+
+	return rotM;
+}
+
+// @brief creates a ZYX rotation matrix rotM given three Euler angles in degrees
+// @author Georg Kuenze (georg.kuenze@vanderbilt.edu)
+template<typename T>
+inline
+xyzMatrix<T> rotation_matrix_from_euler_angles_ZYX(xyzVector<T> const & angles) {
+	T ca = std::cos( angles(1) * numeric::NumericTraits< T >::pi_over_180() );
+	T cb = std::cos( angles(2) * numeric::NumericTraits< T >::pi_over_180() );
+	T cg = std::cos( angles(3) * numeric::NumericTraits< T >::pi_over_180() );
+	T sa = std::sin( angles(1) * numeric::NumericTraits< T >::pi_over_180() );
+	T sb = std::sin( angles(2) * numeric::NumericTraits< T >::pi_over_180() );
+	T sg = std::sin( angles(3) * numeric::NumericTraits< T >::pi_over_180() );
+
+	xyzMatrix<T> rotM;
+
+	rotM(1,1) = (( cb * ca ));
+	rotM(1,2) = (( sg * sb * ca ) - ( cg * sa ));
+	rotM(1,3) = (( cg * sb * ca ) + ( sg * sa ));
+	rotM(2,1) = (( cb * sa ));
+	rotM(2,2) = (( sg * sb * sa ) + ( cg * ca ));
+	rotM(2,3) = (( cg * sb * sa ) - ( sg * ca ));
+	rotM(3,1) = ((-sb      ));
+	rotM(3,2) = (( sg * cb ));
+	rotM(3,3) = (( cg * cb ));
+
+	return rotM;
+}
+
+// @brief: determines the three Euler angles given a ZYZ rotation matrix rotM
+// @author Georg Kuenze (georg.kuenze@vanderbilt.edu)
+template<typename T>
+inline
+xyzVector<T> euler_angles_from_rotation_matrix_ZYZ(xyzMatrix<T> const & rotM) {
+	T const FLOAT_PRECISION( 1e-5 );
+
+	xyzVector<T> euler;
+
+	if ( !( std::abs( ( std::abs( sin_cos_range( rotM(3,3) ) ) - 1 ) ) <= FLOAT_PRECISION ) ) {
+		euler(2) = std::acos( rotM(3,3) ); // two values of beta are possible here;
+		// my convention here is to use the positive one in the interval [0, pi)
+		// which is the principal value returned by std::acos
+		T sb = std::sin(euler(2));
+		euler(1) = std::atan2( sin_cos_range( rotM(3,2) ) / sb, sin_cos_range( rotM(3,1) ) / sb );
+		euler(3) = std::atan2( sin_cos_range( rotM(2,3) ) / sb, sin_cos_range(-rotM(1,3) ) / sb );
+	} else {
+		euler(3) = 0.0;
+		if ( std::abs( sin_cos_range( rotM(3,3) ) - 1 ) <= FLOAT_PRECISION ) {
+			euler(2) = 0.0;
+			euler(1) = std::atan2( sin_cos_range( rotM(1,2) ), sin_cos_range( rotM(1,1) ) );
+		} else {
+			euler(2) = numeric::NumericTraits< T >::pi();
+			euler(1) = std::atan2( sin_cos_range(-rotM(1,2) ), sin_cos_range(-rotM(1,1) ) );
+		}
+	}
+
+	euler = euler / numeric::NumericTraits< T >::pi_over_180();
+	angles_between_0_180(euler);
+
+	return euler;
+}
+
+// @brief: determines the three Euler angles given a ZXZ rotation matrix rotM
+// @author Georg Kuenze (georg.kuenze@vanderbilt.edu)
+template<typename T>
+inline
+xyzVector<T> euler_angles_from_rotation_matrix_ZXZ(xyzMatrix<T> const & rotM) {
+	T const FLOAT_PRECISION( 1e-5 );
+
+	xyzVector<T> euler;
+
+	if ( !( std::fabs( ( std::fabs( sin_cos_range( rotM(3,3) ) ) - 1 ) ) <= FLOAT_PRECISION ) ) {
+		euler(2) = std::acos( rotM(3,3) ); // two values of beta are possible here;
+		// my convention here is to use the positive one in the interval [0, pi]
+		// which is the principal value returned by std::acos
+		T sb = std::sin(euler(2));
+		euler(1) = std::atan2( sin_cos_range( rotM(3,1) ) / sb, sin_cos_range(-rotM(3,2) ) / sb );
+		euler(3) = std::atan2( sin_cos_range( rotM(1,3) ) / sb, sin_cos_range( rotM(2,3) ) / sb );
+	} else {
+		euler(3) = 0.0;
+		euler(1) = std::atan2( sin_cos_range( rotM(1,2) ), sin_cos_range( rotM(1,1) ) );
+		if ( std::abs( sin_cos_range( rotM(3,3) ) - 1 ) <= FLOAT_PRECISION ) {
+			euler(2) = 0.0;
+		} else {
+			euler(2) = numeric::NumericTraits< T >::pi();
+		}
+	}
+
+	euler = euler / numeric::NumericTraits< T >::pi_over_180();
+	angles_between_0_180(euler);
+
+	return euler;
+}
+
+// @brief: determines the three Euler angles given a ZYX rotation matrix rotM
+// @author Georg Kuenze (georg.kuenze@vanderbilt.edu)
+template<typename T>
+inline
+xyzVector<T> euler_angles_from_rotation_matrix_ZYX(xyzMatrix<T> const & rotM) {
+	T const FLOAT_PRECISION( 1e-5 );
+
+	xyzVector<T> euler;
+
+	if ( !( std::abs( ( std::abs( sin_cos_range( rotM(3,1) ) ) - 1.0)) <= FLOAT_PRECISION ) ) {
+		euler(2) = -std::asin(rotM(3,1)); // two values of beta are possible here: (pi/2 - x) and (pi/2 + x);
+		// my convention here is to use the smaller value in the interval [-pi/2, +pi/2]
+		// which is the principal value returned by std::asin
+		T cb = std::cos(euler(2));
+		euler(1) = std::atan2( sin_cos_range( rotM(2,1) ) / cb, sin_cos_range( rotM(1,1) ) / cb );
+		euler(3) = std::atan2( sin_cos_range( rotM(3,2) ) / cb, sin_cos_range( rotM(3,3) ) / cb );
+	} else {
+		euler(3) = 0.0;
+		if ( std::abs( sin_cos_range( rotM(3,3) ) - 1 ) <= FLOAT_PRECISION ) {
+			euler(2) = -numeric::NumericTraits< T >::pi_over_2();
+			euler(1) = std::atan2( sin_cos_range(-rotM(1,2) ), sin_cos_range(-rotM(1,3) ) );
+		} else {
+			euler(2) = numeric::NumericTraits< T >::pi_over_2();
+			euler(1) = -std::atan2( sin_cos_range( rotM(1,2) ), sin_cos_range( rotM(1,3) ) );
+		}
+	}
+
+	euler = euler / numeric::NumericTraits< T >::pi_over_180();
+	angles_between_0_180(euler);
+
+	return euler;
+}
+
+
 } // namespace numeric
 
 

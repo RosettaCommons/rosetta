@@ -6645,6 +6645,50 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'mutant_file', 'String', desc='Input file containing mutations'),
 	),
 
+  ## ------------------------------------------------------- ##
+  ## ------------ Options for new NMR framework ------------ ##
+  ## ------------------------------------------------------- ##
+  Option_Group( 'nmr',
+    Option_Group( 'pcs',
+      Option( 'input_file', 'File', desc = 'PCS input file.'  ),
+      Option( 'nls_repeats', 'Integer', desc = 'Number of repeats in non-linear least squares fitting of the PCS tensor.', default = '5', lower = '1', upper = '100' ),
+      Option( 'optimize_tensor', 'Boolean', desc = 'Optimize the lanthanide ion position and other parameters of the PCS tensor after grid search.', default = 'false' ),
+      Option( 'multiset_weights', 'RealVector', desc = 'Vector of weights of PCSMultiSets. One PCSMultiSet refers to data collected for multiple lanthanides at one tagging site.', n_lower = '0', n_upper = '100' ),
+      Option( 'normalize_data', 'Boolean', desc = 'Normalize PCS data of every experiment by their standard deviation.', default = 'false' ),
+      Option( 'use_symmetry_calc', 'Boolean', desc = 'Consider the contribution from symmetric subunits for PCS calculation. Only the PCSs of the asymmetric subunit must to be provided as input. The symmetric residues are deduced from the symmetry information carried by the pose. Alternatively, one can provide all residues contributing to one PCS as an ambiguous atom selection in the input file.', default = 'false' ),
+      Option( 'show_info', 'Boolean', desc = 'Show additional information about PCS calculation (experimental vs. back-calculated PCSs and PCS tensor summary) at the end of every ab-initio folding stage.', default = 'false' ),
+    ), # -pcs
+    Option_Group( 'rdc',
+      Option( 'input_file', 'File', desc = 'RDC input file.'  ),   
+      Option( 'nls_repeats', 'Integer', desc = 'Number of repeats in non-linear least squares fitting of the alignment tensor.', default = '5', lower = '1', upper = '100' ),
+      Option( 'multiset_weights', 'RealVector', desc = 'Vector of weights of RDCMultiSets. One RDCMultiSet refers data collected for multiple experiments in one alignment medium.', n_lower = '0', n_upper = '100' ),
+      Option( 'use_symmetry_calc', 'Boolean', desc = 'Consider the contribution from symmetric subunits for RDC calculation. Only RDCs of the asymmetric subunit must be provided as input. The symmetric residues are deduced from the symmetry information carried by the pose. This option is still experimental and works so far for cases with C-symmetry and D2-symmetry for which the alignment tensor axes coincide with the symmetry axes.', default = 'false'),
+      Option( 'show_info', 'Boolean', desc = 'Show additional information about RDC calculation (experimental vs. back-calculated RDCs and alignment tensor summary) at the end of every ab-initio folding stage.', default = 'false' ),
+      Option( 'normalization_type', 'String', desc = 'Apply scaling of input RDC values. Possible options are NH, CH or none. By default RDCs are expected not to be normalized and will be scaled relative to N-H (i.e. option NH). In case of option CH RDCs will be scaled relative to CA-HA. If option none is chosen it is assumed that RDC values have been normalized to H-N before and thus no additional scaling will be applied.', default = 'NH' ),
+      Option( 'correct_sign', 'Boolean', desc = 'Use the correct sign of the 15N gyromagnetic ratio and thus of the dipolar coupling constants i.e. positive for NC and NH and negative for CH. Use this option if input couplings have different signs. By default the 15N gyromagnetic ratio is taken to be positive and the dipolar coupling constants to have the same sign.', default = 'false' ),
+    ), # -rdc
+    Option_Group( 'pre',
+      Option( 'input_file', 'File', desc = 'PRE input file.' ),
+      Option( 'nls_repeats', 'Integer', desc = 'Number of repeats in non-linear least squares fitting of the spinlabel correlation time.', default = '3', lower = '1', upper = '100' ),
+      Option( 'optimize_para_ion_position', 'Boolean', desc = 'Optimize the position of the paramagnetic ion. Only in combination with a gridsearch.', default = 'false' ),
+			Option( 'multiset_weights', 'RealVector', desc = 'Vector of weights of PREMultiSets. One PREMultiSet refers to multiple datasets collected for the same spinlabel site.', n_lower = '0', n_upper = '100'  ),
+      Option( 'normalize_data', 'Boolean', desc = 'Normalize PRE data of every experiment by their standard deviation.', default = 'false' ),
+      Option( 'use_symmetry_calc', 'Boolean', desc = 'Consider the contribution from symmetric subunits for PRE calculation. Only the PREs of the asymmetric subunit must be provided as input. The symmetric residues are deduced from the symmetry information carried by the pose. Alternatively, one can provide all residues contributing to one PRE as an ambiguous atom selection in the input file.', default = 'false' ),
+      Option( 'show_info', 'Boolean', desc = 'Show additional information about PRE calculation (experimental vs. back-calculated PREs and PRE spinlabel summary) at the end of every ab-initio folding stage.', default = 'false' ),
+    ), # -pre
+    Option_Group( 'spinlabel',
+      Option( 'max_ensemble_size', 'Integer', desc = 'Maximum number of spinlabel rotamers that make up the ensemble. If the ensemble size is higher, rotamers are binned to speed up the calculation.', default = '20' ),
+      Option( 'highres_conformer_filter_type', 'String', desc = 'Type of filtering spinlabel conformers in Rosetta full-atom mode. Possible modes are: DISTANCE and BUMP_ENERGY. Default is BUMP_ENERGY in which case conformers are checked for clashes by their packer energy. The DISTANCE filter detects clashes by measuring the distance of spin-label side-chain heavy atoms to the NBR_ATOM of neighborhood residues.', default = 'BUMP_ENERGY' ),
+			Option( 'elaborate_rotamer_clash_check', 'Boolean', desc = 'If true, perform an elaborate clash check of every heavy atom of all spinlabel rotamers with the atoms in the surrounding amino acid residues. If all rotamers produce at least one clash, return that rotamer with the lowest number of clashes. If false, consider only heavy atoms in non-clashing rotamers and return a random member in case their are no non-clashing rotamers.', default = 'false' ),
+			Option( 'boltzmann_kt', 'Real', desc = 'Scaling factor for Boltzmann weighting of the spinlabel rotamer probabilities.', default = '2.0')
+		), # -spinlabel
+		Option_Group( 'score',
+			Option( 'verbose', 'Boolean', desc = 'Write separate score values and Q-factors for each spinlabel site, alignment medium and/or lanthanide ion to the scorefile.', default = 'false' ),
+			Option( 'output_exp_calc', 'Boolean', desc = 'Write a table of experimental vs. calculated NMR values for each NMR dataset to prediction file.', default = 'false' ),
+			Option( 'output_tensor_info', 'Boolean', desc = 'Write tensor and/or spinlabel info for each NMR dataset to info file.', default = 'false' ),
+    ), # -score
+  ), # -nmr
+
 	# NonlocalAbinitio
 	Option_Group('nonlocal',
 #		Option('builder', 'String', desc = 'One of {simple, star}. Specifies how non-local abinitio should construct the fold tree', default = 'star'),

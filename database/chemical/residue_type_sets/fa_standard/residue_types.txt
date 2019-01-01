@@ -568,7 +568,13 @@ residue_types/metal_ions/NA.params
 residue_types/metal_ions/ZN.params
 
 ## Spin label types
-## residue_types/spin_labels/R1A.params # kills my unit tests???
+residue_types/spin_labels/R1A.params
+residue_types/spin_labels/CED.params
+residue_types/spin_labels/C2X.params
+residue_types/spin_labels/C3X.params
+residue_types/spin_labels/C4X.params
+residue_types/spin_labels/NTA.params
+## kills my unit tests???
 
 ## Mineral Surface
 #residue_types/mineral_surface/PHA.params

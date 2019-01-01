@@ -25,3 +25,5 @@
 #include <protocols/qsar/scoring_grid/SolvationGridCreator.hh>
 #include <protocols/qsar/scoring_grid/SolvationMetaGridCreator.hh>
 #include <protocols/qsar/scoring_grid/LigandPropertyScoreCreator.hh>
+#include <protocols/qsar/scoring_grid/PCSSingleGridCreator.hh>
+#include <protocols/qsar/scoring_grid/PCSMultiGridCreator.hh>

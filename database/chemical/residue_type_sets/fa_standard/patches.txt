@@ -210,3 +210,19 @@ patches/water/VirtualWater.txt
 
 ## repulsive backbone
 patches/ReplsBB.txt
+
+## Patches for metal ion spin-labels
+patches/spinlabel_ca2_coordination.txt
+patches/spinlabel_co2_coordination.txt
+patches/spinlabel_cu2_coordination.txt
+patches/spinlabel_dy3_coordination.txt
+patches/spinlabel_fe2_coordination.txt
+patches/spinlabel_fe3_coordination.txt
+patches/spinlabel_la3_coordination.txt
+patches/spinlabel_lu3_coordination.txt
+patches/spinlabel_mg2_coordination.txt
+patches/spinlabel_mn2_coordination.txt
+patches/spinlabel_tb3_coordination.txt
+patches/spinlabel_tm3_coordination.txt
+patches/spinlabel_yb3_coordination.txt
+patches/spinlabel_er3_coordination.txt

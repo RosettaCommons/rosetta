@@ -43,6 +43,9 @@
 #ifndef INCLUDED_basic_svd_SVD_Solver_hh
 #define INCLUDED_basic_svd_SVD_Solver_hh
 
+// Unit headers
+#include <basic/svd/SVD_Solver.fwd.hh>
+
 // Package headers
 
 #include <platform/types.hh>   // for Size

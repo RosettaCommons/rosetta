@@ -27,11 +27,13 @@
 #include <numeric/constants.hh>
 #include <utility/vector1.hh>
 
+#include <iostream>
+
 // --------------- Test Class --------------- //
 
 class XYZFunctionsTests : public CxxTest::TestSuite {
 
-	public:
+public:
 
 	// Shared data elements go here.
 	double delta_percent;         // percentage difference for floating-point comparisons in TS_ASSERT_DELTA
@@ -116,8 +118,8 @@ class XYZFunctionsTests : public CxxTest::TestSuite {
 
 		// compute eigenvalues
 		xyzVector_double ev1 = eigenvalue_jacobi( m1, 0.0 );
-	//	std::cout << "m1:\n" << m1 << std::endl;
-	//	std::cout << "eigenvalue_Jacobi returned: \n" << ev1 << std::endl;
+		// std::cout << "m1:\n" << m1 << std::endl;
+		// std::cout << "eigenvalue_Jacobi returned: \n" << ev1 << std::endl;
 		TS_ASSERT_DELTA( ev1.x(),  0.9084668081160422, delta_percent );
 		TS_ASSERT_DELTA( ev1.y(), -0.7863597288923477, delta_percent );
 		TS_ASSERT_DELTA( ev1.z(), 15.67789292077631  , delta_percent );
@@ -125,11 +127,11 @@ class XYZFunctionsTests : public CxxTest::TestSuite {
 		// compute eigenvectors
 		xyzMatrix_double ew1;
 		ev1 = eigenvector_jacobi( m1, 0.0, ew1 );
-	//	std::cout << "Eigenvalues from eigenvector_Jacobi:\n" << ev1 << std::endl;
+		// std::cout << "Eigenvalues from eigenvector_Jacobi:\n" << ev1 << std::endl;
 		TS_ASSERT_DELTA( ev1.x(),  0.9084668081160422, delta_percent );
 		TS_ASSERT_DELTA( ev1.y(), -0.7863597288923477, delta_percent );
 		TS_ASSERT_DELTA( ev1.z(), 15.67789292077631  , delta_percent );
-	//	std::cout << "Eigenvectors:\n" << ew1 << std::endl;
+		// std::cout << "Eigenvectors:\n" << ew1 << std::endl;
 		TS_ASSERT_DELTA( ew1.xx(),  0.7968224391550893, delta_percent );
 		TS_ASSERT_DELTA( ew1.xy(),  0.5228228506830058, delta_percent );
 		TS_ASSERT_DELTA( ew1.xz(),  0.3028700501248519, delta_percent );
@@ -143,7 +145,7 @@ class XYZFunctionsTests : public CxxTest::TestSuite {
 		// compute product of eigenvectors and a diagonal matrix of eigenvalues
 		xyzMatrix_double diag = xyzMatrix_double::diag( ev1.x(), ev1.y(), ev1.z() );
 		xyzMatrix_double ew1_diag = ew1 * diag;
-	//	std::cout << "Eigenvectors * diagonal:\n" << ew1_diag  << std::endl;
+		// std::cout << "Eigenvectors * diagonal:\n" << ew1_diag  << std::endl;
 		TS_ASSERT_DELTA( ew1_diag.xx(),  0.7238867379344632, delta_percent );
 		TS_ASSERT_DELTA( ew1_diag.xy(), -0.4111268351218129, delta_percent );
 		TS_ASSERT_DELTA( ew1_diag.xz(),  4.748364214767583 , delta_percent );
@@ -156,7 +158,7 @@ class XYZFunctionsTests : public CxxTest::TestSuite {
 
 		// compute product of original matrix and eigenvectors
 		xyzMatrix_double m1_ew1 = m1 * ew1;
-	//	std::cout << "m1 * Eigenvectors:\n" << m1_ew1 << std::endl;
+		// std::cout << "m1 * Eigenvectors:\n" << m1_ew1 << std::endl;
 		TS_ASSERT_DELTA( m1_ew1.xx(),  0.7238867379344631, delta_percent );
 		TS_ASSERT_DELTA( m1_ew1.xy(), -0.4111268351218125, delta_percent );
 		TS_ASSERT_DELTA( m1_ew1.xz(),  4.748364214767580 , delta_percent );
@@ -224,26 +226,26 @@ class XYZFunctionsTests : public CxxTest::TestSuite {
 
 		// compute a dihedral angle
 		{
-		xyzVector_float p1( -16.577999, 5.2760000, -10.507000 );
-		xyzVector_float p2( -16.726999, 6.5549998, -10.734000 );
-		xyzVector_float p3( -17.601999, 7.3889999, -9.8529997 );
-		xyzVector_float p4( -16.798000, 7.8550000, -8.6330004 );
-		TS_ASSERT_DELTA( dihedral( p1,  p2,  p3,  p4 ), 85.0868f, delta_percent );
+			xyzVector_float p1( -16.577999, 5.2760000, -10.507000 );
+			xyzVector_float p2( -16.726999, 6.5549998, -10.734000 );
+			xyzVector_float p3( -17.601999, 7.3889999, -9.8529997 );
+			xyzVector_float p4( -16.798000, 7.8550000, -8.6330004 );
+			TS_ASSERT_DELTA( dihedral( p1,  p2,  p3,  p4 ), 85.0868f, delta_percent );
 		}
 
 		// compute another dihedral angle
 		{
-		xyzVector_float p1( -2.5362606, 15.318624, 30.642799 );
-		xyzVector_float p2( -2.6063213, 15.113583, 32.148636 );
-		xyzVector_float p3( -2.8367538, 16.429384, 32.877182 );
-		xyzVector_float p4( -2.9080868, 16.243940, 34.351967 );
+			xyzVector_float p1( -2.5362606, 15.318624, 30.642799 );
+			xyzVector_float p2( -2.6063213, 15.113583, 32.148636 );
+			xyzVector_float p3( -2.8367538, 16.429384, 32.877182 );
+			xyzVector_float p4( -2.9080868, 16.243940, 34.351967 );
 
-		// test normal case
-		TS_ASSERT_DELTA( dihedral( p1,  p2,  p3,  p4 ), 179.9761f, delta_percent );
+			// test normal case
+			TS_ASSERT_DELTA( dihedral( p1,  p2,  p3,  p4 ), 179.9761f, delta_percent );
 
-		// test degenerate cases (angle should be zero)
-		TS_ASSERT_DELTA( dihedral( p1,  p1,  p3,  p4 ), 0.0f, delta_percent );
-		TS_ASSERT_DELTA( dihedral( p1,  p2,  p3,  p2 ), 0.0f, delta_percent );
+			// test degenerate cases (angle should be zero)
+			TS_ASSERT_DELTA( dihedral( p1,  p1,  p3,  p4 ), 0.0f, delta_percent );
+			TS_ASSERT_DELTA( dihedral( p1,  p2,  p3,  p2 ), 0.0f, delta_percent );
 		}
 	}
 
@@ -286,7 +288,7 @@ class XYZFunctionsTests : public CxxTest::TestSuite {
 			1.0,2.0,3.0,
 			4.0,5.0,6.0,
 			7.0,8.0,9.0
-		));
+			));
 
 		ObjexxFCL::FArray2D<numeric::Real> output_matrix_array(numeric::xyzmatrix_to_FArray<numeric::Real>(input_matrix));
 		TS_ASSERT_EQUALS(output_matrix_array.size1(),3);
@@ -306,6 +308,60 @@ class XYZFunctionsTests : public CxxTest::TestSuite {
 
 		numeric::xyzMatrix<numeric::Real> output_matrix(numeric::FArray_to_xyzmatrix(output_matrix_array));
 		TS_ASSERT_EQUALS(input_matrix,output_matrix);
+	}
+
+	// @author Georg Kuenze (georg.kuenze@vanderbilt.edu)
+	void test_xyz_functions_euler_rotations() {
+		numeric::xyzVector<double> angles(45, 30, 60);
+		numeric::xyzMatrix<double> rotM_ZYZ = numeric::rotation_matrix_from_euler_angles_ZYZ(angles);
+		numeric::xyzMatrix<double> rotM_ZXZ = numeric::rotation_matrix_from_euler_angles_ZXZ(angles);
+		numeric::xyzMatrix<double> rotM_ZYX = numeric::rotation_matrix_from_euler_angles_ZYX(angles);
+
+		TS_ASSERT_DELTA(rotM_ZYZ(1,1), -std::sqrt(6)/8.0, delta_percent);
+		TS_ASSERT_DELTA(rotM_ZYZ(1,2), 3.0*std::sqrt(6)/8.0, delta_percent);
+		TS_ASSERT_DELTA(rotM_ZYZ(1,3), -0.25, delta_percent);
+		TS_ASSERT_DELTA(rotM_ZYZ(2,1), -5.0*std::sqrt(2)/8.0, delta_percent);
+		TS_ASSERT_DELTA(rotM_ZYZ(2,2), -std::sqrt(2)/8.0, delta_percent);
+		TS_ASSERT_DELTA(rotM_ZYZ(2,3), std::sqrt(3)/4.0, delta_percent);
+		TS_ASSERT_DELTA(rotM_ZYZ(3,1), 1/std::sqrt(8), delta_percent);
+		TS_ASSERT_DELTA(rotM_ZYZ(3,2), 1/std::sqrt(8), delta_percent);
+		TS_ASSERT_DELTA(rotM_ZYZ(3,3), std::sqrt(3)/2, delta_percent);
+
+		TS_ASSERT_DELTA(rotM_ZXZ(1,1), -std::sqrt(2)/8.0, delta_percent);
+		TS_ASSERT_DELTA(rotM_ZXZ(1,2), 5.0*std::sqrt(2)/8.0, delta_percent);
+		TS_ASSERT_DELTA(rotM_ZXZ(1,3), std::sqrt(3)/4.0, delta_percent);
+		TS_ASSERT_DELTA(rotM_ZXZ(2,1), -3.0*std::sqrt(6)/8.0, delta_percent);
+		TS_ASSERT_DELTA(rotM_ZXZ(2,2), -std::sqrt(6)/8.0, delta_percent);
+		TS_ASSERT_DELTA(rotM_ZXZ(2,3), 0.25, delta_percent);
+		TS_ASSERT_DELTA(rotM_ZXZ(3,1), 1/std::sqrt(8), delta_percent);
+		TS_ASSERT_DELTA(rotM_ZXZ(3,2), -1/std::sqrt(8), delta_percent);
+		TS_ASSERT_DELTA(rotM_ZXZ(3,3), std::sqrt(3)/2.0, delta_percent);
+
+		TS_ASSERT_DELTA(rotM_ZYX(1,1), std::sqrt(6)/4.0, delta_percent);
+		TS_ASSERT_DELTA(rotM_ZYX(1,2), (std::sqrt(6)-std::sqrt(8))/8.0, delta_percent);
+		TS_ASSERT_DELTA(rotM_ZYX(1,3), (std::sqrt(2)+std::sqrt(24))/8.0, delta_percent);
+		TS_ASSERT_DELTA(rotM_ZYX(2,1), std::sqrt(3)/std::sqrt(8), delta_percent);
+		TS_ASSERT_DELTA(rotM_ZYX(2,2), (std::sqrt(6)+std::sqrt(8))/8.0, delta_percent);
+		TS_ASSERT_DELTA(rotM_ZYX(2,3), (std::sqrt(2)-std::sqrt(24))/8.0, delta_percent);
+		TS_ASSERT_DELTA(rotM_ZYX(3,1), -0.5, delta_percent);
+		TS_ASSERT_DELTA(rotM_ZYX(3,2), 0.75, delta_percent);
+		TS_ASSERT_DELTA(rotM_ZYX(3,3), std::sqrt(3)/4.0, delta_percent);
+
+		numeric::xyzVector<double> angles_from_rotM_ZYZ = numeric::euler_angles_from_rotation_matrix_ZYZ(rotM_ZYZ);
+		numeric::xyzVector<double> angles_from_rotM_ZXZ = numeric::euler_angles_from_rotation_matrix_ZXZ(rotM_ZXZ);
+		numeric::xyzVector<double> angles_from_rotM_ZYX = numeric::euler_angles_from_rotation_matrix_ZYX(rotM_ZYX);
+
+		TS_ASSERT_DELTA(angles_from_rotM_ZYZ(1), 45, delta_percent);
+		TS_ASSERT_DELTA(angles_from_rotM_ZYZ(2), 30, delta_percent);
+		TS_ASSERT_DELTA(angles_from_rotM_ZYZ(3), 60, delta_percent);
+
+		TS_ASSERT_DELTA(angles_from_rotM_ZXZ(1), 45, delta_percent);
+		TS_ASSERT_DELTA(angles_from_rotM_ZXZ(2), 30, delta_percent);
+		TS_ASSERT_DELTA(angles_from_rotM_ZXZ(3), 60, delta_percent);
+
+		TS_ASSERT_DELTA(angles_from_rotM_ZYX(1), 45, delta_percent);
+		TS_ASSERT_DELTA(angles_from_rotM_ZYX(2), 30, delta_percent);
+		TS_ASSERT_DELTA(angles_from_rotM_ZYX(3), 60, delta_percent);
 	}
 
 	void test_alignVectorSets() {
@@ -457,16 +513,16 @@ class XYZFunctionsTests : public CxxTest::TestSuite {
 		TS_ASSERT_THROWS_NOTHING( rot_matrix = numeric::alignVectorSets(A1,B1,A2,B2) );
 		A3 = rot_matrix * A1;  B3 = rot_matrix * B1;
 
-/* Doesn't quite work.
- * It doesn't crash, but the slight shifts mean that the normalized average vector are rather misaligned.
- * I'm guessing a completely different approach would be needed in the calculations.
+		/* Doesn't quite work.
+		* It doesn't crash, but the slight shifts mean that the normalized average vector are rather misaligned.
+		* I'm guessing a completely different approach would be needed in the calculations.
 		TS_ASSERT_DELTA( A3.x(),  1.22474487139, delta_percent ); //sqrt(3/2)
 		TS_ASSERT_DELTA( A3.y(),  1.22474487139, delta_percent );
 		TS_ASSERT_DELTA( A3.z(),  0.0, delta_percent );
 		TS_ASSERT_DELTA( B3.x(), -1.22474487139, delta_percent );
 		TS_ASSERT_DELTA( B3.y(), -1.22474487139, delta_percent );
 		TS_ASSERT_DELTA( B3.z(),  0.0, delta_percent );
-*/
+		*/
 
 		// Two zeros, source
 		A1.assign(0,0,0), B1.assign( 0,0,0 );

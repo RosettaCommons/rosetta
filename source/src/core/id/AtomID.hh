@@ -18,6 +18,9 @@
 #include <core/id/AtomID.fwd.hh>
 
 #include <utility/exit.hh>
+#include <utility/json_spirit/json_spirit_value.h>
+#include <utility/tools/make_vector.hh>
+
 // C++ headers
 
 #include <core/types.hh>
@@ -95,6 +98,20 @@ public: // Properties
 	bool
 	valid() const { return ( atomno_ > 0 ) && ( rsd_ > 0 ); }
 
+	/// @brief serialize an AtomID to a json_spirit object
+	inline
+	utility::json_spirit::Value serialize() const {
+		utility::json_spirit::Pair atomno("atomno", utility::json_spirit::Value(static_cast<uint64_t>(atomno_)));
+		utility::json_spirit::Pair rsd("rsd", utility::json_spirit::Value(static_cast<uint64_t>(rsd_)));
+		return utility::json_spirit::Value(utility::tools::make_vector(atomno,rsd));
+	}
+
+	/// @brief deserialize a json_spirit object to an AtomID
+	inline
+	void deserialize(utility::json_spirit::mObject data) {
+		atomno_ = static_cast<Size>(data["atomno"].get_uint64());
+		rsd_    = static_cast<Size>(data["rsd"].get_uint64());
+	}
 
 public: // Friends
 

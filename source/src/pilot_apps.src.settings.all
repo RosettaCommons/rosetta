@@ -334,6 +334,11 @@ sources = {
 	],
 
 	# G ######################################################################
+	"pilot/georgkuenze" : [
+		"spinlabel_activity",
+		#"score_with_para_nmr_data_jd2",
+		#"ligand_transform_with_pcs",
+	],
 	"pilot/gideonla" : [
 		"CutOutDomain", # /* Grant,Documentation Location,Demo Location */
 

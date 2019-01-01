@@ -96,6 +96,9 @@ public:
 		FAELEC_CONTEXT_DATA, // a core::scoring::elec::FAElecContextData; used by FA_GrpElecEnergy
 		POSE_SEQUENCE, // a core::scoring::electron_density_atomwise::PoseSeqeunce
 		APPROXIMATE_UNSAT_POSE_INFO, // a basic::datacache::CacheableUint64MathMatrixFloatMap used by ApproximateBuriedUnsatPenalty
+		NMR_PCS_DATA, // a core::scoring::nmr::pcs::PCSData; stores pseudocontact shift data of the paramagnetic NMR framework (implemented in 2016)
+		NMR_RDC_DATA, // a core::scoring::nmr::rdc::RDCData; stores residual dipolar coupling data of the paramagnetic NMR framework (implemented in 2016)
+		NMR_PRE_DATA, // a core::scoring::nmr::pre::PREData; stores paramagnetic relaxation enhancement data of the paramagnetic NMR framework (implemented in 2016)
 
 		// Old, unused terms
 		//  MEMBRANE_POTENTIAL,

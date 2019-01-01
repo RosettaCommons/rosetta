@@ -1,0 +1,52 @@
+# Example of the PCSData main input file
+#
+# Remarks: 
+# Datasets that were collected for the same tagging site (e.g. 56 A) should be placed within a MULTISET group starting with "MULTISET" and ending with "END".
+# The following input parameter MUST be provided for each MULTISET as key-value pairs separated by an equality ("=") sign. 
+#
+# "spinlabel_position": residue number of the paramagnetic spinlabel (integer)
+#
+# "chain_id": chain ID of the paramganetic tag (one single character)
+#
+# "gridsearch": comma-separated and bracket-enclosed list of input parameter that define the gridsearch of the PCS tensor. This list must contain exactly 6 elements in the following order:
+# [ grid_atom1, grid_atom2, distance_center_atom1, grid_stepsize, grid_min_radius, grid_max_radius ] ([ string, string, float, float, float, float ])
+# The gridsearch parameter have the following meaning:
+# "grid_stepsize": stepsize of the grid search (float)
+# "grid_min_radius": minimal radius of the grid search (float)
+# "grid_max_radius": maximal radius of the grid search (float)
+# "grid_atom1": atom 1 used to define the center of the grid search (string)
+# "grid_atom2": atom 2 used to define the center of the grid search (string)
+# "distance_center_atom1": distance between atom 1 and the grid search center (float)
+#
+# Alternatively to a gridseach, the user can declare a specific paramagnetic spinlabel with which the experiments were performed and for which a ResidueType exists in the Rosetta database.
+# The three-letter code of the spinlabel residue is set with the option "spinlabel_type". In this case, the metal ion position is inferred from the chemical structure of the spinlabel.
+#
+# "dataset": comma-separated and bracket-enclosed list of input parameter for one single PCS dataset collected for one lanthanide ion. This list must contain exactly 14 elements in the following order:
+# [ pcs_datafile, metal_ion_label, experiment_weight, single_value_weighting_scheme, averaging, computation_type, xM, yM, zM, Xax, Xrh, alpha, beta, gamma ]
+# ([ string, string, float, string, string, string, float, float, float, float, float, float, float, float ])
+# The dataset parameter have the following meaning:
+# "pcs_datafile": path to the textfile that contains the input PCS values (string)
+# "metal_ion_label": name of the lanthanide ion, e.g. TB (string)
+# "experiment_weight": weight by which the score of this dataset is multiplied (float)
+# "single_value_weighting_scheme": type how individual PCS values are weighted. Possible values are CONST, SIGMA and OBSIG. (string)
+# "averaging": type how the PCS is averaged. Possible values are MEAN and SUM. (string)
+# "computation_type": type how the delta chi tensor and PCS score are calculated. Possible values are SVD, NLS, NLSAX, NLSRH and NLSAXRH. (string)
+# The last three computation types perform non-linear least squares fitting with fixed values of Xax and/or Xrh.
+# The last 8 parameter in the dataset list are the values of the delta chi tensor in the principal axis system: xM, yM, zM, Xax, Xrh, alpha, beta, gamma.
+# These values will not be used for the actual PCS score calculation unless the "fixed_tensor" option (see below) is set to true.
+# In most cases, the delta chi tensor is not known in beforehand but must be determined by SVD or NLS.
+# However, if computation types NLSAX, NLSRH or NLSAXRH are chosen, pre-determined values of Xax and/or Xrh values must be provided and will be used.
+#
+# Optional parameter of the PCS MULTISET include:
+# "fixed_tensor": Do not determine the delta chi tensor but calculate the PCS score from tensor values provided in the dataset list. Possible values are TRUE and FALSE which is the default. (string)
+#
+MULTISET
+
+spinlabel_position = 14
+chain_id           = A
+gridsearch         = [ CA, CB, 10.0, 1.0, 0.0, 25.0 ]
+dataset            = [ core/scoring/nmr/pcs/sim_pcs_val_2ilk_asu_tb.txt, Tb, 1.0, CONST, MEAN, SVD, 10.0, 10.0, 10.0, 40.0, 4.0, 10.0, 10.0, 10.0 ] 
+dataset            = [ core/scoring/nmr/pcs/sim_pcs_val_2ilk_asu_dy.txt, Dy, 1.0, CONST, MEAN, SVD, 10.0, 10.0, 10.0, 40.0, 4.0, 10.0, 10.0, 10.0 ]
+dataset            = [ core/scoring/nmr/pcs/sim_pcs_val_2ilk_asu_tm.txt, Tm, 1.0, CONST, MEAN, SVD, 10.0, 10.0, 10.0, 40.0, 4.0, 10.0, 10.0, 10.0 ]
+
+END

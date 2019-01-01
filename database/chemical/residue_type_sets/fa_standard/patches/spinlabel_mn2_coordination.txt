@@ -1,0 +1,82 @@
+## fullatom patch to load spin-label residues with Mn2+
+## By Georg Kuenze, January 2018, georg.kuenze@vanderbilt.edu
+
+NAME Mn2Coordinating
+TYPES MN2_COORDINATION 
+
+## general requirements for this patch
+
+BEGIN_SELECTOR
+PROPERTY PROTEIN
+PROPERTY SPINLABEL
+END_SELECTOR
+
+BEGIN_CASE ### MTS-EDTA ###################################
+
+BEGIN_SELECTOR
+NAME3 CED
+END_SELECTOR
+
+# Remove Ca atom:
+DELETE_ATOM CAL1
+
+# Add Mn atom:
+ADD_ATOM MNL1 Mn    X       2.01 
+
+# Define the connectivity of the added atoms:
+ADD_BOND MNL1  OK1
+ADD_BOND MNL1  OM1
+ADD_BOND MNL1  OM2
+ADD_BOND MNL1  OM3
+ADD_BOND  NL2  MNL1
+ADD_BOND  NM4  MNL1
+
+# Set the coordinates of the added atoms:
+SET_ICOOR   MNL1   45.788798   68.463641    2.597400   NM4    CN6   CM6
+SET_ICOOR    OK1  -34.796951   49.692253    2.465545   MNL1   NM4   CN6
+SET_ICOOR    OM1  -66.799538  109.519196    2.350802   MNL1   NM4   OK1
+SET_ICOOR    CN4    0.053639   58.622673    1.273421   OM1   MNL1   NM4
+SET_ICOOR    CN2  -19.769945   63.865017    1.541720   CN4   OM1   MNL1
+SET_ICOOR    OM2 -106.610269  112.762701    2.358546   MNL1   NM4   OM1
+SET_ICOOR    CN3  -21.717938   57.051032    1.272705   OM2   MNL1   NM4
+SET_ICOOR    CN1    8.155652   63.412603    1.539922   CN3   OM2   MNL1
+SET_ICOOR    OM3  -99.464342   97.799802    2.347781   MNL1   NM4   OM2
+SET_ICOOR    CN5  -70.180812   54.331915    1.271770   OM3   MNL1   NM4
+SET_ICOOR    CM5  -16.792696   63.642404    1.542404   CN5   OM3   MNL1
+
+# Change residue properties:
+ADD_PROPERTY PARAMAGNETIC
+DELETE_PROPERTY DIAMAGNETIC
+
+END_CASE   ### MTS-EDTA ###################################
+
+BEGIN_CASE ### pAzF-NTA ###################################
+
+BEGIN_SELECTOR
+NAME3 NTA
+END_SELECTOR
+
+# Remove Ca atom:
+DELETE_ATOM CAX1
+
+# Add Mn atom:
+ADD_ATOM MNX1 Mn    X       2.01
+
+# Define the connectivity of the added atoms:
+ADD_BOND  NN1 MNX1
+ADD_BOND  OO1 MNX1
+ADD_BOND  OO2 MNX1
+ADD_BOND  OX3 MNX1
+
+# Set the coordinates of the added atoms:
+SET_ICOOR   MNX1  172.786830   74.366200    2.596250   NN1   CM    CL
+
+# Change residue properties:
+ADD_PROPERTY PARAMAGNETIC
+DELETE_PROPERTY DIAMAGNETIC
+
+END_CASE   ### pAzF-NTA ###################################
+
+# Add here other spin-labels
+# ...
+

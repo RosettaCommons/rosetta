@@ -51,6 +51,7 @@ Haro     H    1.2000    0.0500    0.0000    3.5000    0.0000
 CH3      C    2.0000    0.1811    1.5000    3.5000   30.0000
 Mg2p    MG    1.1850    0.0150   -5.0000    3.5000    7.0000 SP3_HYBRID  #radius/wdepth: ion radius CHARMM27; LK vol wild guess 4/3 pi r^3; LK dgfree wild guess. 
 Ca2p    CA    1.3670    0.1200    0.0000    2.0000   10.7000 SP3_HYBRID  # radius/wdepth: Marchard 1998 Proteins;CHARMM27, MacKerell 2004;kosta makrodimitris; LK vol wild guess 4/3 pi r^3; LK lambda ZAHN Phys.Chem.Chem.Phys.,2003,5,4004; kosta makrodimitris; LK dgfree HOP /HA; Lazaridis 1999 PROTEINS; kosta makrodimitris
+Cu2p    CU    1.0978    0.2500   -5.0000    3.5000    5.5419 SP3_HYBRID  # radius/wdepth: ion radius for zinc from CHARMM27 times the ratio of the van der Waals radii of Cu to Zn; LK vol wild guess 4/3 pi r^3; LK dgfree wild guess
 
 #atom types for carbohydrates. Values come from rosetta_database/chemical/atom_type_sets/fa_standard/atom_properties.txt
 COO      C    2.0000    0.1200   -1.4000    3.5000    8.3000

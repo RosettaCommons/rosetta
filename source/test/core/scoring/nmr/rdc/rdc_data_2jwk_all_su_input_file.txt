@@ -1,0 +1,53 @@
+# Example of the RDCData main input file
+#
+# Remarks:
+# RDC experiments that were collected in the same alignment medium should be grouped within a MULTISET starting with "MULTISET" and ending with "END".
+# The following input parameter must be provided for each MULTISET as key-value pairs separated by an equality ("=") sign. 
+#
+# "alignment_medium": name of the alignment medium (string)
+#
+# "computation_type": possible arguments for the computation type are: SVD, NLS, NLSDA, NLSR and NLSDAR (string)
+# If NLSDAR, NLSDA or NLSR are selected as computation type, pre-determined values of Da (alignment magnitude) and/or R (rhombicity) must be provided in the tensor parameter list (see below).
+# 
+# "dataset": comma-separated and bracket-enclosed list of input parameter of one RDC dataset measured for one type of spin pair (e.g. N-H). This list must contain exactly 3 elements in the following order:
+# [ rdc_datafile, experiment_weight, single_value_weighting_scheme ] ([ string, float, string ])
+# The dataset parameter have the following meaning:
+# "rdc_datafile": path to the textfile that contains the input RDC values (string)
+# "experiment_weight": weight by which the score of this dataset is multiplied (float)
+# "single_value_weighting_scheme": type how individual RDC values are weighted. Possible values are CONST, SIGMA and OBSIG. (string)
+#
+# "alignment_tensor": comma-separated and bracket-enclosed list of alignment tensor values in the principal axis system:
+# [ Da, R, alpha, beta, gamma ] ([ float, float, float, float, float ]).
+# These values of the alignment tensor are used for the RDC score calculation if the "fixed_tensor" option (see below) is set to true or if the computation type is NLSDA, NLSR or NLSDAR, respectively.
+# In most cases however, the alignment tensor is unknown and must be determined using the SVD or NLS method.
+#
+# Optional parameter of the RDC MULTISET include:
+# "averaging": possible values are: MEAN and SUM (string)
+#
+# "fixed_tensor": Do not determine the alignment tensor but calculate the RDC score from the input values provided through the separate tensor list. Possible values are TRUE and FALSE which is the default. (string)
+#
+MULTISET
+
+alignment_medium = Phage_Pf1
+computation_type = SVD
+alignment_tensor = [ 20.0, 0.3, 10.0, 10.0, 10.0 ]
+dataset          = [ core/scoring/nmr/rdc/2jwk_caco_all_su.txt, 1.0, CONST ]
+dataset          = [ core/scoring/nmr/rdc/2jwk_caha_all_su.txt, 1.0, CONST ]
+dataset          = [ core/scoring/nmr/rdc/2jwk_nco_all_su.txt, 1.0, CONST ]
+dataset          = [ core/scoring/nmr/rdc/2jwk_nh_all_su.txt, 1.0, CONST ]
+
+END
+#
+#
+#
+MULTISET
+
+alignment_medium = Phage_Pf1_
+computation_type = NLS
+alignment_tensor = [ 20.0, 0.3, 10.0, 10.0, 10.0 ]
+dataset          = [ core/scoring/nmr/rdc/2jwk_caco_all_su.txt, 1.0, OBSIG ]
+dataset          = [ core/scoring/nmr/rdc/2jwk_caha_all_su.txt, 1.0, OBSIG ]
+dataset          = [ core/scoring/nmr/rdc/2jwk_nco_all_su.txt, 1.0, OBSIG ]
+dataset          = [ core/scoring/nmr/rdc/2jwk_nh_all_su.txt, 1.0, OBSIG ] 
+
+END

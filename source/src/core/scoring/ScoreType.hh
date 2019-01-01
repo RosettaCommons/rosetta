@@ -503,6 +503,12 @@ enum ScoreType {
 	rdc_segments, //fit alignment on multiple segments independently
 	rdc_rohl,
 
+	// Para NMR Framework Whole Structure Energies
+	// added by Georg Kuenze 10/23/16
+	nmr_pcs,
+	nmr_rdc,
+	nmr_pre,
+
 	cen_pair_motifs, //will's motif score applied to the wholeStructure
 	cen_pair_motif_degree,
 

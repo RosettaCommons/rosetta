@@ -377,6 +377,10 @@ static MoverRegistrator< ncbb::NcbbDockDesignProtocolCreator > reg_NcbbDockDesig
 static MoverRegistrator< ncbb::oop::OopDockDesignProtocolCreator > reg_OopDockDesignProtocolCreator;
 static MoverRegistrator< ncbb::oop::OopCreatorMoverCreator > reg_OopCreatorMoverCreator;
 
+static MoverRegistrator< nmr::ParaNMRScoreMoverCreator > reg_ParaNMRScoreMoverCreator;
+static MoverRegistrator< nmr::pre::PREMoverCreator > reg_PREMoverCreator;
+static MoverRegistrator< nmr::pcs::PCSLigandTransformMoverCreator > reg_PCSLigandTransformMoverCreator;
+
 static MoverRegistrator< nonlocal::SingleFragmentMoverCreator > reg_SingleFragmentMoverCreator;
 
 static MoverRegistrator< normalmode::NormalModeRelaxMoverCreator > reg_NormalModeRelaxMoverCreator;

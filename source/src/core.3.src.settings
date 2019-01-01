@@ -30,10 +30,17 @@ sources = {
 	],
 	"core/io/external": [
 		"PsiPredInterface",
-    ],
+    	],
 	"core/io/mmcif": [
 		"cif_reader",
 		"cif_writer",
+	],
+	"core/io/nmr" : [
+		"ParaIon",
+		"ParamagneticDatabaseHandler",
+		"AtomSelection",
+		"SpinlabelDatabaseHandler",
+		"util",
 	],
 	"core/io/pdb": [
 		"Field",
@@ -785,6 +792,35 @@ sources = {
 		"NetChargeConstraint",
 		"NetChargeEnergy",
 		"NetChargeEnergySetup",
+	],
+	"core/scoring/nmr": [
+		"util",
+		"NMRTensor",
+		"NMRDataFactory",
+		"NMRGridSearch",	
+		"NMRSpinlabel",
+		"NMRDummySpinlabelEnsemble",
+		"NMRDummySpinlabelVoxelGrid",
+	],
+	"core/scoring/nmr/pcs" : [
+		"PCSTensor",
+		"PCSSingle",
+		"PCSSingleSet",
+		"PCSMultiSet",
+		"PCSData",
+	],
+	"core/scoring/nmr/pre" : [
+		"PRESingle",
+		"PRESingleSet",
+		"PREMultiSet",
+		"PREData",
+	],
+	"core/scoring/nmr/rdc" : [
+		"RDCTensor",
+		"RDCSingle",
+		"RDCSingleSet",
+		"RDCMultiSet",
+		"RDCData",
 	],
 	"core/scoring/nv": [
 		"NVlookup",

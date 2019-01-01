@@ -32,5 +32,8 @@ static EnergyMethodRegistrator< scoring::methods::InterchainPairEnergyCreator > 
 static EnergyMethodRegistrator< protocols::scoring::methods::saxs::PDDFEnergyCreator > PDDFEnergyCreator_registrator;
 static EnergyMethodRegistrator< protocols::scoring::VDW_GridEnergyCreator > VDW_GridEnergyCreator_registrator;
 static EnergyMethodRegistrator< protocols::fldsgn::potentials::sspot::NatbiasSecondaryStructureEnergyCreator > NatbiasSecondaryStructureEnergyCreator_registrator;
+static EnergyMethodRegistrator< nmr::pcs::PCSEnergyCreator > PCSEnergyCreator_registrator;
+static EnergyMethodRegistrator< nmr::rdc::RDCEnergyCreator > RDCEnergyCreator_registrator;
+static EnergyMethodRegistrator< nmr::pre::PREEnergyCreator > PREEnergyCreator_registrator;
 
 } //namespace protocols

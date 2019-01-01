@@ -46,12 +46,11 @@ spline::SplineGenerator spline_from_file(std::string const &  filename,platform:
 	std::string line;
 	utility::vector1< std::pair<std::string,spline::LinearFunction> > boundary_functions;
 
-	while ( getline(potential_file,line) )
-			{
-		if ( line.size() == 0 ) {
+	while ( getline(potential_file,line) ) {
+		boost::trim(line);
+		if ( ( line.size() == 0 ) || ( line[ 0 ] == '#' ) ) {
 			continue;
 		}
-		boost::trim(line);
 		utility::vector1<std::string>  split_fields(utility::string_split(line,'\t'));
 		if ( split_fields[1] == "x_axis" ) {
 			for ( platform::Size count = 2; count <= split_fields.size(); ++count ) {
