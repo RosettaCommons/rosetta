@@ -179,6 +179,7 @@ public:
 		// Show score and determined tensor
 		TR.Debug << "Calculated PCS score and tensor for dataset " << single_dataset_tb.get_dataset_name() << std::endl;
 		TR.Debug << "PCS score = " << best_score << std::endl;
+		TR.Debug << "PCS score = " << score << std::endl;
 		PCSTensorOP tensor(single_dataset_tb.get_tensor());
 		tensor->show_tensor_stats(TR.Debug);
 		tensor->diagonalize_tensor();
@@ -247,6 +248,7 @@ public:
 		// Show score and determined tensor
 		TR.Debug << "Calculated PCS score and tensor for (scaled) dataset " << single_dataset_tb.get_dataset_name() << std::endl;
 		TR.Debug << "PCS score = " << best_score << std::endl;
+		TR.Debug << "PCS score = " << score << std::endl;
 		PCSTensorOP tensor(single_dataset_tb.get_tensor());
 		tensor->show_tensor_stats(TR.Debug);
 		tensor->diagonalize_tensor();
@@ -524,6 +526,7 @@ public:
 		// Show score and tensor as determined by SVD for Tb dataset
 		TR.Debug << "Calculated PCS score and tensor for dataset " << single_dataset_tb.get_dataset_name() << std::endl;
 		TR.Debug << "PCS score = " << best_score_dataset_tb << std::endl;
+		TR.Debug << "PCS score = " << score_dataset_tb << std::endl;
 		PCSTensorOP tensor_tb_dataset(single_dataset_tb.get_tensor());
 		tensor_tb_dataset->show_tensor_stats(TR.Debug);
 		tensor_tb_dataset->diagonalize_tensor();

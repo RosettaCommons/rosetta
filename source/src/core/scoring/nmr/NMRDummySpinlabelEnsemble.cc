@@ -343,10 +343,10 @@ NMRDummySpinlabelEnsemble::coordinate_transform_from_target_site(
 ) const
 {
 	std::map< std::string, Vector > bb_coo;
-	bb_coo.insert(std::make_pair("CA", Vector()));
-	bb_coo.insert(std::make_pair("CB", Vector()));
-	bb_coo.insert(std::make_pair("C",  Vector()));
-	bb_coo.insert(std::make_pair("N",  Vector()));
+	bb_coo.insert(std::make_pair("CA", Vector(0.0,0.0,0.0)));
+	bb_coo.insert(std::make_pair("CB", Vector(0.0,0.0,0.0)));
+	bb_coo.insert(std::make_pair("C",  Vector(0.0,0.0,0.0)));
+	bb_coo.insert(std::make_pair("N",  Vector(0.0,0.0,0.0)));
 
 	for ( auto const & atom : bb_coo ) {
 		std::string atom_name = atom.first;
@@ -391,10 +391,10 @@ NMRDummySpinlabelEnsemble::define_ensemble_frame() {
 	NMRDummySpinlabelAtomTable const & conf_1_atom_table_ref = (*(conformer_table_.begin()))->get_atom_table();
 
 	std::map< std::string, Vector > focus_bb_coo;
-	focus_bb_coo.insert(std::make_pair("CA", Vector()));
-	focus_bb_coo.insert(std::make_pair("CB", Vector()));
-	focus_bb_coo.insert(std::make_pair("C",  Vector()));
-	focus_bb_coo.insert(std::make_pair("N",  Vector()));
+	focus_bb_coo.insert(std::make_pair("CA", Vector(0.0,0.0,0.0)));
+	focus_bb_coo.insert(std::make_pair("CB", Vector(0.0,0.0,0.0)));
+	focus_bb_coo.insert(std::make_pair("C",  Vector(0.0,0.0,0.0)));
+	focus_bb_coo.insert(std::make_pair("N",  Vector(0.0,0.0,0.0)));
 
 	for ( auto const & atom : focus_bb_coo ) {
 		std::string atom_name = atom.first;

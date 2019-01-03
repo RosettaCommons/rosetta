@@ -146,6 +146,7 @@ public:
 		}
 
 		TR.Debug << "Overall score calculated for group of PCSSingleSets by SVD " << best_score_svd << std::endl;
+		TR.Debug << "PCS score before PCSTensorOptimizer " << score_svd << std::endl;
 
 		core::optimization::Multivec tensor_params_all(number_metal_ions*5 + 3);
 		tensor_params_all[1] = singleset_tensors[1]->get_metal_center().x();

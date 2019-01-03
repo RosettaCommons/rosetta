@@ -81,15 +81,10 @@ read_selection_group_from_string(
 	if ( start != std::string::npos && end != std::string::npos ) {
 		std::string substring = str.substr(start+1, end-start-1);
 		Size start_atomsel(0);
-		Size end_atomsel(substring.size());
 		Size found_or(0);
 		do {
 			found_or = substring.find("or", start_atomsel);
-			if ( found_or == std::string::npos ) {
-				end_atomsel = substring.size();
-			} else {
-				end_atomsel = found_or;
-			}
+			Size const end_atomsel = ( found_or == std::string::npos ) ? substring.size() : found_or;
 			try {
 				read_atom_selection_from_string(substring.substr(start_atomsel,end_atomsel-start_atomsel), atom);
 			} catch (utility::excn::BadInput & excn) {

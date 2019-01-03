@@ -1074,6 +1074,7 @@ PREMultiSet::set_exp_default_conditions() {
 	tau_c_ = calc_tau_c();
 	tau_c_min_ = 0.1 * tau_r_;
 	tau_c_max_ = 10.0* tau_r_;
+	tau_t_ = tau_c_;
 }
 
 /// @brief creates MTSL spinlabel as default
