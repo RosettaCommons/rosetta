@@ -494,6 +494,9 @@
 #include <protocols/pose_creation/ExtendedPoseMoverCreator.hh>
 #include <protocols/pose_creation/MakePolyXMoverCreator.hh>
 
+#include <protocols/replica_docking/AddEncounterConstraintMoverCreator.hh>
+#include <protocols/replica_docking/ModulatedMoverCreator.hh>
+
 #include <protocols/simple_moves/AddChainMoverCreator.hh>
 #include <protocols/simple_moves/AddJobPairDataCreator.hh>
 #include <protocols/simple_moves/AddResidueLabelMoverCreator.hh>
