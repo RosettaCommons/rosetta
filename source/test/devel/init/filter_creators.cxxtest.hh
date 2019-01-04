@@ -28,6 +28,12 @@
 #include <devel/denovo_design/filters/CavityVolumeFilterCreator.hh>
 #include <devel/denovo_design/filters/CoreResiduesPerElementFilterCreator.hh>
 #include <devel/denovo_design/filters/FoldabilityFilterCreator.hh>
+#include <devel/replica_docking/InteractionScoreFilterCreator.hh>
+#include <devel/replica_docking/IrmsdFilterCreator.hh>
+#include <devel/replica_docking/FnatFilterCreator.hh>
+#include <devel/replica_docking/LrmsdFilterCreator.hh>
+#include <devel/replica_docking/FnonnatFilterCreator.hh>
+#include <devel/replica_docking/CaIrmsdFilterCreator.hh>
 #include <devel/buns/BuriedUnsatHbondFilter2Creator.hh>
 
 class BackwardsDevelFilterCreatorTests : public CxxTest::TestSuite
@@ -42,6 +48,24 @@ public:
 
 	void test_devel_denovo_design_filters_FoldabilityFilterCreator_name()
 	{ devel::denovo_design::filters::FoldabilityFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "Foldability" ); }
+
+	void test_devel_replica_docking_InteractionScoreFilterCreator_name()
+	{ devel::replica_docking::InteractionScoreFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "I_sc" ); }
+
+	void test_devel_replica_docking_IrmsdFilterCreator_name()
+	{ devel::replica_docking::IrmsdFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "Irms" ); }
+
+	void test_devel_replica_docking_FnatFilterCreator_name()
+	{ devel::replica_docking::FnatFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "Fnat" ); }
+
+	void test_devel_replica_docking_LrmsdFilterCreator_name()
+	{ devel::replica_docking::LrmsdFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "Lrmsd" ); }
+
+	void test_devel_replica_docking_FnonnatFilterCreator_name()
+	{ devel::replica_docking::FnonnatFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "Fnonnat" ); }
+
+	void test_devel_replica_docking_CaIrmsdFilterCreator_name()
+	{ devel::replica_docking::CaIrmsdFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "Ca_Irms" ); }
 
 	void test_devel_buns_BuriedUnsatHbondFilter2Creator_name()
 	{ devel::buns::BuriedUnsatHbondFilter2Creator cr; TS_ASSERT_EQUALS( cr.keyname(), "BuriedUnsatHbonds2" ); }

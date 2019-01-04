@@ -17,9 +17,8 @@
 #include <protocols/comparative_modeling/AlignRmsdTargetEvaluatorCreator.hh>
 
 /// include <protocols/constraints_additional/CombinedConstraintEvaluatorCreator.hh>
+#include <protocols/topology_broker/ConstraintEvaluatorWrapperCreator.hh>
 #include <protocols/constraints_additional/ConstraintEvaluatorCreator.hh>
-
-#include <protocols/replica_docking/WrapFilterAsEvaluatorCreator.hh>
 
 #include <protocols/simple_filters/CamShiftEvaluatorCreator.hh>
 #include <protocols/simple_filters/ContactMapEvaluatorCreator.hh>
@@ -39,5 +38,3 @@
 #include <protocols/simple_filters/StructureSimilarityEvaluatorCreator.hh>
 
 #include <protocols/sparta/ChemicalShiftEvaluatorCreator.hh>
-
-#include <protocols/topology_broker/ConstraintEvaluatorWrapperCreator.hh>

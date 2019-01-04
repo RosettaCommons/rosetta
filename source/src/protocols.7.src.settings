@@ -393,24 +393,6 @@ sources = {
 	        "MPI_Refine_Master",
 		"Serial_Refine",
 	],
-        "protocols/replica_docking": [
-               "AddEncounterConstraintMover",
-        #       "FrozenSidechainsMover",
-               "FnatFilter",
-               "IrmsdFilter",
-               "CaIrmsdFilter",
-               "InteractionScoreFilter",
-               "LrmsdFilter",
-               "FnonnatFilter",
-	       "WrapFilterAsEvaluator",
-	       "WrapFilterAsEvaluatorCreator",
-               "ModulatedMover",
-               "TempInterpolator",
-               #"ThermodynamicRigidBodyMover", # renamed to UnbiasedRigidBodyMover
-               "TempInterpolatorFactory",
-               "TempWeightedMetropolisHastingsMover",
-	       "UnbiasedRigidBodyMover",
-        ],
 
 	"protocols/residue_optimization": [
 		"MetapatchEnumeration",

@@ -40,7 +40,4 @@ static protocols::evaluation::EvaluatorRegistrator<protocols::simple_filters::Pa
 static protocols::evaluation::EvaluatorRegistrator<protocols::simple_filters::ExtraScoreEvaluatorCreator> ExtraScoreEvaluatorCreator_registrator;
 static protocols::evaluation::EvaluatorRegistrator<protocols::simple_filters::JumpNrEvaluatorCreator> JumpNrEvaluatorCreator_registrator;
 
-static protocols::evaluation::EvaluatorRegistrator< protocols::replica_docking::WrapFilterAsEvaluatorCreator > reg_WrapFilterAsEvaluatorCreator;
-
-
 } //namespace protocols

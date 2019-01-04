@@ -453,9 +453,6 @@ static MoverRegistrator< rbsegment_relax::IdealizeHelicesMoverCreator > reg_Idea
 static MoverRegistrator< recces::scratch::ThermalSamplingMoverCreator > reg_ThermalSamplingMoverCreator;
 static MoverRegistrator< recces::scratch::ThermalMinimizerCreator > reg_ThermalMinimizerCreator;
 
-static MoverRegistrator< replica_docking::AddEncounterConstraintMoverCreator > reg_AddEncounterConstraintMoverCreator;
-static MoverRegistrator< replica_docking::ModulatedMoverCreator > reg_ModulatedMoverCreator;
-
 static MoverRegistrator< relax::AtomCoordinateCstMoverCreator> reg_AtomCoordinateCstMoverCreator;
 static MoverRegistrator< relax::FastRelaxCreator> reg_FastRelaxCreator;
 static MoverRegistrator< relax::LocalRelaxCreator> reg_LocalRelaxCreator;

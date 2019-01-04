@@ -115,14 +115,6 @@
 #include <protocols/protein_interface_design/filters/StubScoreFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/TorsionFilterCreator.hh>
 
-#include <protocols/replica_docking/CaIrmsdFilterCreator.hh>
-#include <protocols/replica_docking/FnatFilterCreator.hh>
-#include <protocols/replica_docking/FnonnatFilterCreator.hh>
-#include <protocols/replica_docking/InteractionScoreFilterCreator.hh>
-#include <protocols/replica_docking/IrmsdFilterCreator.hh>
-#include <protocols/replica_docking/LrmsdFilterCreator.hh>
-#include <protocols/replica_docking/WrapFilterAsEvaluatorCreator.hh>
-
 #include <protocols/simple_ddg/AlaScanCreator.hh>
 #include <protocols/simple_filters/AtomicContactFilterCreator.hh>
 #include <protocols/simple_filters/AtomicDistanceFilterCreator.hh>

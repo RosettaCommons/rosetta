@@ -41,6 +41,8 @@
 #include <devel/loop_creation/CCDLoopCloserCreator.hh>
 #include <devel/loop_creation/FragmentLoopInserterCreator.hh>
 #include <devel/matdes/SymmetrizerMoverCreator.hh>
+#include <devel/replica_docking/AddEncounterConstraintMoverCreator.hh>
+#include <devel/replica_docking/ModulatedMoverCreator.hh>
 #include <devel/loophash_loopclosure/LoopHashLoopClosureMoverCreator.hh>
 #include <devel/scientific_tests/PDBDiagnosticMoverCreator.hh>
 #include <devel/matdes/StoreQuasiSymmetricTaskMoverCreator.hh>
@@ -49,8 +51,15 @@
 #include <devel/denovo_design/filters/CavityVolumeFilterCreator.hh>
 #include <devel/denovo_design/filters/CoreResiduesPerElementFilterCreator.hh>
 #include <devel/denovo_design/filters/FoldabilityFilterCreator.hh>
+#include <devel/replica_docking/InteractionScoreFilterCreator.hh>
 #include <devel/matdes/GenericSymmetricSamplerCreator.hh>
+#include <devel/replica_docking/IrmsdFilterCreator.hh>
+#include <devel/replica_docking/CaIrmsdFilterCreator.hh>
 #include <devel/buns/BuriedUnsatHbondFilter2Creator.hh>
+#include <devel/replica_docking/FnatFilterCreator.hh>
+#include <devel/replica_docking/LrmsdFilterCreator.hh>
+#include <devel/replica_docking/FnonnatFilterCreator.hh>
+#include <devel/replica_docking/WrapFilterAsEvaluatorCreator.hh>
 
 //ResidueSelector creators
 #include <core/select/residue_selector/ResidueSelectorCreators.hh>
@@ -93,6 +102,8 @@ static protocols::moves::MoverRegistrator< devel::loop_creation::IterativeLoopha
 static protocols::moves::MoverRegistrator< devel::matdes::SymmetrizerMoverCreator > reg_SymmetrizerMoverCreator;
 static protocols::moves::MoverRegistrator< devel::matdes::StoreQuasiSymmetricTaskMoverCreator > reg_StoreQuasiSymmetricTaskMoverCreator;
 static protocols::moves::MoverRegistrator< devel::matdes::GenericSymmetricSamplerCreator > reg_GenericSymmetricSamplerCreator;
+static protocols::moves::MoverRegistrator< replica_docking::AddEncounterConstraintMoverCreator > reg_AddEncounterConstraintMoverCreator;
+static protocols::moves::MoverRegistrator< replica_docking::ModulatedMoverCreator > reg_ModulatedMoverCreator;
 static protocols::moves::MoverRegistrator< loophash_loopclosure::LoopHashLoopClosureMoverCreator > reg_LoopHashLoopClosureMoverCreator;
 
 static protocols::moves::MoverRegistrator< scientific_tests::PDBDiagnosticMoverCreator > reg_PDBDiagnosticMoverCreator;
@@ -109,8 +120,15 @@ core::pack::task::operation::TaskOperationRegistrator< devel::znhash::DisableZnC
 static protocols::filters::FilterRegistrator< denovo_design::filters::CavityVolumeFilterCreator > reg_CavityVolumeFilterCreator;
 static protocols::filters::FilterRegistrator< denovo_design::filters::CoreResiduesPerElementFilterCreator > reg_CoreResiduesPerElementFilterCreator;
 static protocols::filters::FilterRegistrator< denovo_design::filters::FoldabilityFilterCreator > reg_FoldabilityFilterCreator;
+static protocols::filters::FilterRegistrator< devel::replica_docking::InteractionScoreFilterCreator > IscCreator_registrator;
+static protocols::filters::FilterRegistrator< devel::replica_docking::IrmsdFilterCreator > IrmsdCreator_registrator;
+static protocols::filters::FilterRegistrator< devel::replica_docking::FnatFilterCreator > FnatCreator_registrator;
+static protocols::filters::FilterRegistrator< devel::replica_docking::LrmsdFilterCreator > LrmsdCreator_registrator;
+static protocols::filters::FilterRegistrator< devel::replica_docking::FnonnatFilterCreator > FnonnatCreator_registrator;
+static protocols::filters::FilterRegistrator< devel::replica_docking::CaIrmsdFilterCreator > CaIrmsdCreator_registrator;
 static protocols::filters::FilterRegistrator< devel::buns::BuriedUnsatHbondFilter2Creator > BuriedUnsatHbondFilter2_registrator;
 
+static protocols::evaluation::EvaluatorRegistrator< devel::replica_docking::WrapFilterAsEvaluatorCreator > reg_WrapFilterAsEvaluatorCreator;
 
 
 // Energy methods

@@ -135,14 +135,6 @@ static FilterRegistrator< protocols::protein_interface_design::filters::StubScor
 static FilterRegistrator< protocols::protein_interface_design::filters::StubScoreLoopsFilterCreator > reg_StubScoreLoopsFilterCreator;
 static FilterRegistrator< protocols::protein_interface_design::filters::TorsionCreator > reg_TorsionCreator;
 
-static FilterRegistrator< protocols::replica_docking::InteractionScoreFilterCreator > IscCreator_registrator;
-static FilterRegistrator< protocols::replica_docking::IrmsdFilterCreator > IrmsdCreator_registrator;
-static FilterRegistrator< protocols::replica_docking::FnatFilterCreator > FnatCreator_registrator;
-static FilterRegistrator< protocols::replica_docking::LrmsdFilterCreator > LrmsdCreator_registrator;
-static FilterRegistrator< protocols::replica_docking::FnonnatFilterCreator > FnonnatCreator_registrator;
-static FilterRegistrator< protocols::replica_docking::CaIrmsdFilterCreator > CaIrmsdCreator_registrator;
-
-
 static FilterRegistrator< protocols::score_filters::GeometryFilterCreator > reg_GeometryFilterCreator;
 static FilterRegistrator< protocols::score_filters::ScoreCutoffFilterCreator > reg_ScoreCutoffFilterCreator;
 static FilterRegistrator< protocols::score_filters::ScoreTypeFilterCreator > reg_ScoreTypeFilterCreator;

@@ -44,6 +44,8 @@
 #include <devel/matdes/SymmetrizerMoverCreator.hh>
 #include <devel/matdes/StoreQuasiSymmetricTaskMoverCreator.hh>
 #include <devel/matdes/GenericSymmetricSamplerCreator.hh>
+#include <devel/replica_docking/AddEncounterConstraintMoverCreator.hh>
+#include <devel/replica_docking/ModulatedMoverCreator.hh>
 #include <devel/loophash_loopclosure/LoopHashLoopClosureMoverCreator.hh>
 
 
@@ -107,6 +109,12 @@ public:
 
 	void test_devel_matdes_GenericSymmetricSamplerCreator_name()
 	{ devel::matdes::GenericSymmetricSamplerCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "GenericSymmetricSampler" ); }
+
+	void test_devel_replica_docking_AddEncounterConstraintMoverCreator_name()
+	{ devel::replica_docking::AddEncounterConstraintMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "AddEncounterConstraintMover" ); }
+
+	void test_devel_replica_docking_ModulatedMoverCreator_name()
+	{ devel::replica_docking::ModulatedMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "ModulatedMover" ); }
 
 	void test_devel_loophash_loopclosure_LoopHashLoopClosureMoverCreator_name()
 	{ devel::loophash_loopclosure::LoopHashLoopClosureMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "LoopHashLoopClosureMover" ); }
