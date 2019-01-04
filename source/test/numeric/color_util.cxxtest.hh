@@ -93,7 +93,7 @@ public:
 		numeric::xyzVector<platform::Real> real_blue_rgb(0,0,1.0);
 		TS_ASSERT(test_blue_rgb == real_blue_rgb);
 
-		numeric::xyzVector<platform::Real> test_random_rgb(numeric::hsv_to_rgb(255,0.77,0.58));
+		//numeric::xyzVector<platform::Real> test_random_rgb(numeric::hsv_to_rgb(255,0.77,0.58));
 		numeric::xyzVector<platform::Real> real_random_rgb(0.14,0.25,0.58);
 
 

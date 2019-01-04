@@ -1224,7 +1224,7 @@ HBondEnergy::finalize_total_energy(
 	auto const & hbond_set
 		( static_cast< hbonds::HBondSet const & >( pose.energies().data().get( HBOND_SET )));
 
-	EnergyMap hbond_emap(totals);
+	//EnergyMap hbond_emap(totals);
 
 	// the current logic is that we fill the hbond set with backbone
 	// hbonds only at the beginning of scoring. this is done to setup

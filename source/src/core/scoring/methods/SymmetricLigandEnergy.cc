@@ -98,7 +98,7 @@ SymmetricLigandEnergy::residue_energy(
 	} else { // full atom
 		if ( "HIS" == rsd.name3() && rsd.xyz("NE2").z() > 0.0 ) {
 			numeric::xyzVector<core::Real> cen  = rsd.xyz("NE2");
-			numeric::xyzVector<core::Real> base = (rsd.xyz("CG")+rsd.xyz("ND1"))/2.0;
+			//numeric::xyzVector<core::Real> base = (rsd.xyz("CG")+rsd.xyz("ND1"))/2.0;
 			Real score = numeric::min( 0.0, (-8.0 / (cen.distance(target) + 1.0) + 1.0) );
 			// no orientation here yet because I don't wanna do derives for it
 			// if( score != 0.0 ) {

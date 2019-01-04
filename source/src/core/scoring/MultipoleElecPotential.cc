@@ -2900,7 +2900,7 @@ MultipoleElecPotential::calculate_and_store_all_derivs(
 						Vector const pj_cross_r( p2.cross_product( Rij ) );
 						Vector const pi_cross_rj( p1.cross_product( xyzj ) );
 						Vector const pj_cross_rj( p2.cross_product( xyzj ) );
-						Vector const pi_cross_ri( p1.cross_product( xyzi ) );
+						//Vector const pi_cross_ri( p1.cross_product( xyzi ) );
 						Vector const pj_cross_ri( p2.cross_product( xyzi ) );
 						Real const pi_dot_pj( p1.dot_product( p2 ) );
 
@@ -2910,7 +2910,7 @@ MultipoleElecPotential::calculate_and_store_all_derivs(
 						Vector const ipj_cross_r( ip2.cross_product( Rij ) );
 						Vector const ipi_cross_rj( ip1.cross_product( xyzj ) );
 						Vector const ipj_cross_rj( ip2.cross_product( xyzj ) );
-						Vector const ipi_cross_ri( ip1.cross_product( xyzi ) );
+						//Vector const ipi_cross_ri( ip1.cross_product( xyzi ) );
 						Vector const ipj_cross_ri( ip2.cross_product( xyzi ) );
 						Real const ipi_dot_pj( ip1.dot_product( p2 ) );
 						Real const pi_dot_ipj( p1.dot_product( ip2 ) );

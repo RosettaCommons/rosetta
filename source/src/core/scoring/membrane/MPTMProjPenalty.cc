@@ -108,8 +108,8 @@ MPTMProjPenalty::finalize_total_energy(
 
 	// Initialize WHole Pose Data
 	core::conformation::Conformation const & conf( pose.conformation() );
-	core::Vector center = conf.membrane_info()->membrane_center(conf);
-	core::Vector normal = conf.membrane_info()->membrane_normal(conf);
+	//core::Vector center = conf.membrane_info()->membrane_center(conf);
+	//core::Vector normal = conf.membrane_info()->membrane_normal(conf);
 
 	// Get Topology from the pose
 	SpanningTopologyOP topology = conf.membrane_info()->spanning_topology();

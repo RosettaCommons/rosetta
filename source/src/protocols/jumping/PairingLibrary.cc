@@ -314,9 +314,9 @@ PairingLibrary::read_from_file( std::string const& fn)
 		t_reverse.omega (2) = omega1;
 		const int o_key( ( o  < 0.0 ) ? 1 : 2 ); // orientation
 		const int p_key( ( p1 < 0.0 ) ? 1 : 2 ); // pleating
-		Vector dNN = n1-ca1;
-		Vector dNC = n1-c1;
-		Vector dCCA = c1-ca1;
+		//Vector dNN = n1-ca1;
+		//Vector dNC = n1-c1;
+		//Vector dCCA = c1-ca1;
 		pairings_[ std::make_pair( o_key, p_key ) ].push_back( t );
 		pairings_[ std::make_pair( o_key, p_key ) ].push_back( t_reverse );
 

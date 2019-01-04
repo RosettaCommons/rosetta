@@ -1344,7 +1344,7 @@ MakeLatticeMover::build_lattice_of_virtuals(
 
 	// get gridspace in each dimension
 	numeric::xyzVector< Size > grid = sg_.get_nsubdivisions();
-	numeric::xyzVector< Size > trans_dofs = sg_.get_trans_dofs();
+	//numeric::xyzVector< Size > trans_dofs = sg_.get_trans_dofs();
 
 	numeric::xyzVector< core::Real > O, Ax, Bx, Cx, Ay, By, Cy;
 	if ( sg_.setting() == HEXAGONAL ) {

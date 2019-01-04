@@ -286,7 +286,7 @@ SetMembraneNormalMover::apply( core::pose::Pose & pose ) {
 
 	// Compute Rotation Axis - CrossProd between Current & New Normal axis
 	core::conformation::Conformation const & conf( pose.conformation() );
-	core::Vector current_normal( conf.membrane_info()->membrane_normal(conf) );
+	//core::Vector current_normal( conf.membrane_info()->membrane_normal(conf) );
 	core::Vector current_center( conf.membrane_info()->membrane_center(conf) );
 
 	pose.conformation().update_membrane_position( current_center, normal_ );

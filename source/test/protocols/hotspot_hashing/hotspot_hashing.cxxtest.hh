@@ -80,9 +80,9 @@ public:
 		core::conformation::ResidueOP residue;
 		core::chemical::ResidueTypeSetCOP residue_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) );
 
-		Vector xunit = Vector(1, 0, 0);
-		Vector yunit = Vector(0, 1, 0);
-		Vector zunit = Vector(0, 0, 1);
+		//Vector xunit = Vector(1, 0, 0);
+		//Vector yunit = Vector(0, 1, 0);
+		//Vector zunit = Vector(0, 0, 1);
 
 		{
 			core::chemical::ResidueType const & restype( residue_set->name_map( "ALA" ) );
@@ -481,9 +481,9 @@ public:
 		// Initialize residue representation
 		core::conformation::ResidueOP residue = StubGenerator::getStubByName("ALA");
 
-		Vector xunit = Vector(1, 0, 0);
-		Vector yunit = Vector(0, 1, 0);
-		Vector zunit = Vector(0, 0, 1);
+		//Vector xunit = Vector(1, 0, 0);
+		//Vector yunit = Vector(0, 1, 0);
+		//Vector zunit = Vector(0, 0, 1);
 
 		// Null transform
 		{
@@ -735,15 +735,15 @@ public:
 			// Expected distance between CB atoms is 2*clash_distance
 			// Calculate global residue position in the slide frame (rotated)
 			// and the post-slide frame
-			Vector start_ca_loc = slide_stub.local2global( residue->xyz("CA"));
-			Vector start_cb_loc = slide_stub.local2global( residue->xyz("CB"));
+			//Vector start_ca_loc = slide_stub.local2global( residue->xyz("CA"));
+			//Vector start_cb_loc = slide_stub.local2global( residue->xyz("CB"));
 			Vector contact_cb_loc = searchpoints[1].local2global( residue->xyz("CB"));
 			Vector src_cb_loc = static_stub.local2global(residue->xyz("CB"));
 
 			// Convert coordinates from the rotated frame into source frame
 			// Should move CA-CB vector back onto X axis
-			Vector start_ca_loc_trans = static_stub.global2local(start_ca_loc);
-			Vector start_cb_loc_trans = static_stub.global2local(start_cb_loc);
+			//Vector start_ca_loc_trans = static_stub.global2local(start_ca_loc);
+			//Vector start_cb_loc_trans = static_stub.global2local(start_cb_loc);
 			Vector contact_cb_loc_trans = static_stub.global2local(contact_cb_loc);
 			Vector src_cb_loc_trans = static_stub.global2local(src_cb_loc);
 
@@ -770,8 +770,8 @@ public:
 			// Expected distance between CB atoms is 2*clash_distance
 			// Calculate global residue position in the slide frame (rotated)
 			// and the post-slide frame
-			Vector start_ca_loc = displaced_stub.local2global( residue->xyz("CA"));
-			Vector start_cb_loc = displaced_stub.local2global( residue->xyz("CB"));
+			//Vector start_ca_loc = displaced_stub.local2global( residue->xyz("CA"));
+			//Vector start_cb_loc = displaced_stub.local2global( residue->xyz("CB"));
 
 			core::Real sic_distance = sic_fast.slide_into_contact_DEPRICATED(
 				displaced_stub,
@@ -785,8 +785,8 @@ public:
 
 			// Convert coordinates from the rotated frame into source frame
 			// Should move CA-CB vector back onto X axis
-			Vector start_ca_loc_trans = static_stub.global2local(start_ca_loc);
-			Vector start_cb_loc_trans = static_stub.global2local(start_cb_loc);
+			//Vector start_ca_loc_trans = static_stub.global2local(start_ca_loc);
+			//Vector start_cb_loc_trans = static_stub.global2local(start_cb_loc);
 			Vector contact_cb_loc_trans = static_stub.global2local(contact_cb_loc);
 			Vector src_cb_loc_trans = static_stub.global2local(src_cb_loc);
 

@@ -1685,7 +1685,7 @@ void FACTSPotential::evaluate_polar_otf_energy(Residue const & rsd1,
 			if ( !(dis2 < cut_off_square) ) continue;
 
 			Real const dis = std::sqrt(dis2);
-			Vector const dxyz = xyz1 - xyz2;
+			//Vector const dxyz = xyz1 - xyz2;
 
 			// Shift function (required for truncation at cut_off)
 			Real const sf1 = 1.0 - dis2/cut_off_square;

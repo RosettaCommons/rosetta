@@ -289,7 +289,7 @@ LigandConformer::frame_from_global_orientation(
 	//std::cout << "  " << oframe.xz() << " " << oframe.yz() << " " << oframe.zz() << " " << oframe.pz() << std::endl;
 	//std::cout.precision( 6 );
 
-	Vector euler_deg2 = oframe.euler_angles_deg();
+	//Vector euler_deg2 = oframe.euler_angles_deg();
 	//std::cout << "reverse euler angles: " << euler_deg2(1) << " " << euler_deg2(2) << " " << euler_deg2(3) << std::endl;
 
 	return oframe;

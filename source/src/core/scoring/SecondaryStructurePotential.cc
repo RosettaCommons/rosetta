@@ -1396,7 +1396,7 @@ SecondaryStructurePotential::spherical(
 	runtime_assert( r1 != 0 );
 
 	//car unit vector along v21
-	Vector const u21( v21.normalized_or_zero() );
+	//Vector const u21( v21.normalized_or_zero() );
 
 	//car the same thing in function calls (is this expensive?)
 	//$$$      unitvec(v1,uz);

@@ -127,7 +127,7 @@ DensitySymmInfo::resolve_symm_axes(
 	numeric::xyzVector< core::Real > const &p3, numeric::xyzVector< core::Real > const &p43,
 	core::Real &error )
 {
-	numeric::xyzVector< core::Real > p2 = p1+p21, p4 = p3+p43;
+	//numeric::xyzVector< core::Real > p2 = p1+p21, p4 = p3+p43;
 	numeric::xyzVector< core::Real > p13 = p1-p3;
 
 	core::Real d1343 = p13[0] * p43[0] + p13[1] * p43[1] + p13[2] * p43[2];

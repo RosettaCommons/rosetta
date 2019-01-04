@@ -268,7 +268,7 @@ LocalCoordinateConstraint::score(
 
 	kinematics::Stub my_stub( s1, s2, s3 );
 	//tr.Trace << "score: global "<< xyz.x() << " " << xyz.y() << " " << xyz.z() << std::endl;
-	Vector xyz_local( my_stub.global2local( xyz ) );
+	//Vector xyz_local( my_stub.global2local( xyz ) );
 	//tr.Trace << xyz_local.x() << " " << xyz_local.y() << " " << xyz_local.z() << " " << std::endl;
 	return func( xyz_target_.distance( my_stub.global2local( xyz ) ) );
 }

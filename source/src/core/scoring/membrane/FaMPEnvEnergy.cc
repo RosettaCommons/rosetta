@@ -150,8 +150,8 @@ FaMPEnvEnergy::eval_atom_derivative(
 	Vector const heavy_atom_i( rsd1.xyz( m ) );
 
 	// Get Membrane Center from Pose
-	core::conformation::Conformation const & conf( pose.conformation() );
-	core::Vector center = conf.membrane_info()->membrane_center(conf);
+	//core::conformation::Conformation const & conf( pose.conformation() );
+	//core::Vector center = conf.membrane_info()->membrane_center(conf);
 	Real cp_weight = 1.0;
 
 	// Initialize f1, f2

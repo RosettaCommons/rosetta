@@ -369,7 +369,7 @@ MakeLayerMover::build_layer_of_virtuals(
 
 	// get gridspace in each dimension
 	numeric::xyzVector< Size > grid = wg_.get_nsubdivisions();
-	numeric::xyzVector< Size > trans_dofs = wg_.get_trans_dofs();
+	//numeric::xyzVector< Size > trans_dofs = wg_.get_trans_dofs();
 
 	Vector O, Ax, Bx, Cx, Ay, By, Cy;
 	if ( wg_.setting() == wgHEXAGONAL ) {

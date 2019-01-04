@@ -345,7 +345,7 @@ RNA_LJ_BaseEnergy::eval_atom_energy(
 			Vector const d_ij = heavy_atom_j - heavy_atom_i;
 			Real const d2 = d_ij.length_squared();
 			//Real const d = std::sqrt( d2 );
-			Vector const d_ij_norm = d_ij.normalized();
+			//Vector const d_ij_norm = d_ij.normalized();
 
 			if ( ( d2 >= safe_max_dis2_ ) || ( d2 == Real( 0.0 ) ) ) continue;
 

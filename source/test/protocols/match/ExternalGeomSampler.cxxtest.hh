@@ -167,7 +167,7 @@ public:
 		HTReal ex_ht6 = ex_ht5 * sam.transform( HT_tor_U1D3, 1 );
 
 
-		core::Vector xp4( ex_ht4.point()), xp5( ex_ht5.point()), xp6( ex_ht6.point());
+		//core::Vector xp4( ex_ht4.point()), xp5( ex_ht5.point()), xp6( ex_ht6.point());
 
 		/*
 		std::cout << "ht4:" << std::endl;

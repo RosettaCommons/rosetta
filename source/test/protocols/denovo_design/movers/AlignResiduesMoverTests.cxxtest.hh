@@ -240,11 +240,11 @@ public:
 
 		core::Vector const bcatvec1 = orig_pose.residue(orig.segment("prot.cat.1").start()).xyz("CB");
 		core::Vector const bcatvec2 = orig_pose.residue(orig.segment("prot.cat.2").start()).xyz("CB");
-		core::Vector const bcatvecs = bcatvec1 - bcatvec2;
+		//core::Vector const bcatvecs = bcatvec1 - bcatvec2;
 
 		core::Vector const bhvec1 = built.residue( sd.alias( alias1 ) ).xyz("CB");
 		core::Vector const bhvec2 = built.residue( sd.alias( alias2 ) ).xyz("CB");
-		core::Vector const bhvecs = bhvec1 - bhvec2;
+		//core::Vector const bhvecs = bhvec1 - bhvec2;
 
 		TS_ASSERT_DELTA( catvecs.length(), hvecs.length(), 1e-6 );
 	}

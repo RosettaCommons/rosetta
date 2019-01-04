@@ -726,7 +726,7 @@ PeriodicBoxMover::perturb_molecule_move( Pose & pose, core::Size lattice_jump, b
 
 		for ( core::Size i=1; i<=pose.residue(mol_num).natoms(); ++i ) {
 			core::Vector Rb = pose.residue(mol_num).xyz(i);
-			core::Vector Rc = R*( Rb - com) +T+com;
+			//core::Vector Rc = R*( Rb - com) +T+com;
 			pose.set_xyz( core::id::AtomID( i, mol_num ), R*( pose.residue(mol_num).xyz(i) - com) +T+com );
 		}
 

@@ -367,7 +367,7 @@ MPFoldingMover::apply( Pose & pose ) {
 		Vector new_normal = embedding_new->embedding(i)->normal();
 		Size jumpnum = i;
 
-		Vector trans_vec = new_center - old_center;
+		//Vector trans_vec = new_center - old_center;
 
 		TR << "old_center: " << old_center.to_string() << std::endl;
 		TR << "old_normal: " << old_normal.to_string() << std::endl;
@@ -402,7 +402,7 @@ MPFoldingMover::apply( Pose & pose ) {
 
 			// get angle between old and new embedding normal
 			//   Real angle = numeric::conversions::degrees( angle_of( new_normal, emb.normal() ) );
-			Vector axis = center - emb.embedding(i)->center();
+			//Vector axis = center - emb.embedding(i)->center();
 
 			FlipMoverOP flip( new FlipMover( i, 180 ) );
 			flip->apply( pose );

@@ -633,7 +633,7 @@ DockIntoDensityMover::density_grid_search (
 	RBfitResultDB & results
 ) {
 	core::scoring::electron_density::ElectronDensity &density = core::scoring::electron_density::getDensityMap();
-	numeric::xyzVector<int> grid = density.getGrid();
+	//numeric::xyzVector<int> grid = density.getGrid();
 
 	// allocate space for SHT
 	numeric::fourier::SHT SOFT(B_, nRsteps_);

@@ -510,10 +510,10 @@ void FiberDiffractionEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunc
 						}
 						D_tmp += 2*(dr*unit_r + dz*unit_z + dphi*dphi_vec);
 
-						numeric::xyzVector< core::Real > t1( dr*unit_r);
-						numeric::xyzVector< core::Real > t2( dz*unit_z );
+						//numeric::xyzVector< core::Real > t1( dr*unit_r);
+						//numeric::xyzVector< core::Real > t2( dz*unit_z );
 						numeric::xyzVector< core::Real > t3( dphi_vec  );
-						numeric::xyzVector< core::Real > t4( (unit_x-cos(phi[atom1]+0e-6)*unit_r)  );
+						//numeric::xyzVector< core::Real > t4( (unit_x-cos(phi[atom1]+0e-6)*unit_r)  );
 
 						D += D_tmp;
 						D_cross_R += D_tmp.cross(cartesian_coord_atom1);

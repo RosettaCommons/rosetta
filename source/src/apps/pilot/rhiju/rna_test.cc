@@ -3954,7 +3954,7 @@ fix_sugar_bond_angles_CLOSE_BOND( pose::Pose & pose )
 			kinematics::Stub const input_stub( rsd.xyz( rna_type.c4prime_atom_index() ), rsd.xyz( rna_type.c4prime_atom_index() ),
 				rsd.xyz( rna_type.c3prime_atom_index() ), rsd.xyz( rna_type.c4prime_atom_index() ) );
 
-			Vector v1 = input_stub.global2local( rsd.xyz( rna_type.o4prime_atom_index() ) );
+			//Vector v1 = input_stub.global2local( rsd.xyz( rna_type.o4prime_atom_index() ) );
 			//   std::cout << "VEC " << v1.x() << " " << v1.y() << " " << v1.z() << std::endl;
 
 			Size const j = rna_type.c3prime_atom_index();

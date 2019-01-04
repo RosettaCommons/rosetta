@@ -1242,7 +1242,7 @@ public:
 	}
 
 	void apply( Pose & pose) override {
-		numeric::xyzVector<Real> native_shift = center_pose_at_origin( pose );
+		//numeric::xyzVector<Real> native_shift = center_pose_at_origin( pose );
 
 		std::string infile = option[ crystdock::hits_in ];
 		std::string outfile = option[ crystdock::hits_out ];

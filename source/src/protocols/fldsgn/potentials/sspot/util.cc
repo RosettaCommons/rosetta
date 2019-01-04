@@ -67,7 +67,7 @@ spherical(
 	Real const v2y = v2.dot( uy ); //v2(1)*uy(1) + v2(2)*uy(2) + v2(3)*uy(3); // v2y=v2.uy
 	Real const v2z = v2.dot( uz ); //v2(1)*uz(1) + v2(2)*uz(2) + v2(3)*uz(3); // v2z=v2.uz
 
-	Vector const u21( v21.normalized_or_zero() ); // unit vector along v21
+	//Vector const u21( v21.normalized_or_zero() ); // unit vector along v21
 
 	phi = 200.0; // why set to 200?
 	//  if v2y = 0, v2 lies in xz plane and phi is zero; if v2x=0, v2 lies in yz plane and phi is 90 or -90

@@ -68,7 +68,7 @@ void AssignOrbitals::assign_orbitals( )
 				core::Size atm_index3= restype_->bonded_neighbor(Aindex_)[2];
 				AOdist_ =0.7;
 				AOhybridization_=2;
-				numeric::xyzVector<core::Real> acct_coord = ((restype_->atom(Aindex_).ideal_xyz() - restype_->atom(atm_index2).ideal_xyz())/2);
+				//numeric::xyzVector<core::Real> acct_coord = ((restype_->atom(Aindex_).ideal_xyz() - restype_->atom(atm_index2).ideal_xyz())/2);
 
 				//std::cout << restype_->name3() << " " << restype_->atom_name(Aindex_) << " " << restype_->atom_name(atm_index2) << " " << restype_->atom_name(atm_index3) << std::endl;
 				//std::cout << acct_coord.x() << " " << acct_coord.y() << " " << acct_coord.z() << std::endl;

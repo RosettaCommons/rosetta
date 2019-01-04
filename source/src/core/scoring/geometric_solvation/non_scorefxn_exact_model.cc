@@ -182,7 +182,7 @@ void add_to_individual_sol_energies(
 
 			// Apply the transformation to put this atom onto the current grid
 			core::Vector const & orig_occ_atom_xyz( occ_rsd.atom( occ_atomno ).xyz() );
-			core::Vector const translated_occ_atom_xyz = orig_occ_atom_xyz + translation_vector;
+			//core::Vector const translated_occ_atom_xyz = orig_occ_atom_xyz + translation_vector;
 			core::Vector const transformed_occ_atom_xyz = transformation_matrix * ( orig_occ_atom_xyz + translation_vector );
 
 			// Double-check transformations

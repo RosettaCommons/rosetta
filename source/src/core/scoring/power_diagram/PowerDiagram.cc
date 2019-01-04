@@ -1158,13 +1158,13 @@ find_intersections(
 	Real const alpha2( -s_dot_dir - discrim_sqrt );
 
 	if ( alpha1 >= 0.0 && ( max_extent < 0.0 || alpha1 <= max_extent ) ) {
-		Vector new_inter_pt( start_pt + alpha1*dir );
+		//Vector new_inter_pt( start_pt + alpha1*dir );
 		//TR << "Checky check atom radius " << psph->rad() << " compares with alpha1 point " << new_inter_pt.distance( psph->xyz() ) << std::endl;
 		return true;
 	}
 
 	if ( alpha2 >= 0.0 && ( max_extent < 0.0 || alpha2 <= max_extent ) ) {
-		Vector new_inter_pt( start_pt + alpha2*dir );
+		//Vector new_inter_pt( start_pt + alpha2*dir );
 		//TR << "Checky check atom radius " << psph->rad() << " compares with alpha2 point " << new_inter_pt.distance( psph->xyz() ) << std::endl;
 		return true;
 	}
@@ -1577,10 +1577,10 @@ get_derivs_from_cycle(
 
 		//  Real const para_fac2( 0.5*phi_i*other_rad*( 1.0 - ( other_rad*other_rad - this_rad*this_rad )/(atom_dist*atom_dist) )/atom_dist );
 		//  Real const perp_fac2( -1.0*other_rad/perp_dist_denom );
-		Vector const r21( p1 - p2 );
-		Vector const arc_chord2( -arc_chord );
-		Vector const chord2_cross_r21( arc_chord2.cross_product( r21 ) );
-		Vector const p1_cross_r21( -1.0*p1.cross_product( p2 ) );
+		//Vector const r21( p1 - p2 );
+		//Vector const arc_chord2( -arc_chord );
+		//Vector const chord2_cross_r21( arc_chord2.cross_product( r21 ) );
+		//Vector const p1_cross_r21( -1.0*p1.cross_product( p2 ) );
 
 		//  Real const para_fac_full( 0.5*phi_i*(this_rad+other_rad)*( 1.0 - ( this_rad - other_rad )*( this_rad - other_rad )/(atom_dist*atom_dist) )/atom_dist );
 		//  Real const para_fac_full( 0.5*phi_i*this_rad*( 1.0 - ( this_rad - other_rad )*( this_rad - other_rad )/(atom_dist*atom_dist) )/atom_dist );
@@ -1684,11 +1684,11 @@ get_area_from_cycle(
 		Vector e_i( ( other_atom->xyz() - this_atom->xyz() ).normalized() );
 		Vector e_im1( ( other_atom_m1->xyz() - this_atom->xyz() ).normalized() );
 
-		Vector v_i( ( inter_i->xyz() - this_atom->xyz() ).normalized() );
-		Vector v_ip1( ( inter_ip1->xyz() - this_atom->xyz() ).normalized() );
+		//Vector v_i( ( inter_i->xyz() - this_atom->xyz() ).normalized() );
+		//Vector v_ip1( ( inter_ip1->xyz() - this_atom->xyz() ).normalized() );
 
-		Vector outer_i( e_i.cross( v_i ) );
-		Vector outer_im1( e_im1.cross( v_i ) );
+		//Vector outer_i( e_i.cross( v_i ) );
+		//Vector outer_im1( e_im1.cross( v_i ) );
 
 		Real const cos_theta_i( cycle[arc_num].cos_theta() );
 		Real const cos_theta_im1( cycle[arc_num_m1].cos_theta() );

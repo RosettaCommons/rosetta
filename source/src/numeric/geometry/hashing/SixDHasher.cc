@@ -137,7 +137,7 @@ SixDCoordinateBinner::halfbin6( Real6 const & values ) const
 	Bin6D bin = bin6( values );
 
 	numeric::xyzVector< numeric::Real > xyzcoord( values[ 1 ], values[ 2 ], values[ 3 ] );
-	numeric::xyzVector< numeric::Real > from_corner = xyzcoord - bounding_box_.lower();
+	//numeric::xyzVector< numeric::Real > from_corner = xyzcoord - bounding_box_.lower();
 
 	numeric::xyzVector< numeric::Real > r3lower_corner = bounding_box_.lower() +
 		Vector( bin[1]*bin_widths_[1], bin[2]*bin_widths_[2], bin[3]*bin_widths_[3] );

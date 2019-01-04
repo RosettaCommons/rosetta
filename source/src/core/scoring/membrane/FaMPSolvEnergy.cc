@@ -192,7 +192,7 @@ FaMPSolvEnergy::eval_atom_derivative(
 			Vector const heavy_atom_j( rsd2.xyz( n ) );
 			Vector const d_ij = heavy_atom_j - heavy_atom_i;
 			Real const d2 = d_ij.length_squared();
-			Vector const d_ij_norm = d_ij.normalized();
+			//Vector const d_ij_norm = d_ij.normalized();
 
 			if ( ( d2 >= safe_max_dis2_) || ( d2 == Real(0.0) ) ) continue;
 
