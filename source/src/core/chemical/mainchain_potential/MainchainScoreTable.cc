@@ -67,25 +67,6 @@ MainchainScoreTable::MainchainScoreTable():
 	symmetrize_gly_ = basic::options::option[ basic::options::OptionKeys::score::symmetric_gly_tables ](); //Read from option system.
 }
 
-/// @brief Copy constructor.
-///
-MainchainScoreTable::MainchainScoreTable(
-	MainchainScoreTable const & src
-) :
-	initialized_(src.initialized_),
-	dimension_(src.dimension_),
-	energies_( src.energies_ == nullptr ? nullptr : src.energies_->clone() ),
-	probabilities_( src.probabilities_ == nullptr ? nullptr : src.probabilities_->clone() ),
-	cdf_( src.cdf_ == nullptr ? nullptr : src.cdf_->clone() ),
-	use_polycubic_interpolation_( src.use_polycubic_interpolation_ ),
-	energies_spline_1D_( src.energies_spline_1D_ == nullptr ? nullptr : src.energies_spline_1D_->clone() ),
-	energies_spline_2D_( src.energies_spline_2D_ == nullptr ? nullptr : src.energies_spline_2D_->clone() ),
-	energies_spline_ND_( src.energies_spline_ND_ == nullptr ? nullptr : src.energies_spline_ND_->clone() ),
-	n_mainchain_torsions_total_( src.n_mainchain_torsions_total_ ),
-	mainchain_torsions_covered_( src.mainchain_torsions_covered_ ),
-	symmetrize_gly_( src.symmetrize_gly_ )
-{}
-
 /// @brief Clone function: make a copy of this object and return
 /// an owning pointer to the copy.
 MainchainScoreTableOP

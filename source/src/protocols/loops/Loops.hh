@@ -318,6 +318,13 @@ public:
 
 }; // Loops
 
+// For member deep copies
+inline
+LoopsOP
+deep_copy( Loops const & source) {
+	return source.clone();
+}
+
 } //namespace loops
 } //namespace protocols
 

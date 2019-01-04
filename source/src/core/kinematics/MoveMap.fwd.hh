@@ -26,6 +26,9 @@ class MoveMap;
 typedef utility::pointer::shared_ptr< MoveMap > MoveMapOP;
 typedef utility::pointer::shared_ptr< MoveMap const > MoveMapCOP;
 
+// For member deep copies
+MoveMapOP deep_copy( MoveMap const & source);
+
 } // namespace kinematics
 } // namespace core
 

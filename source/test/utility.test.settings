@@ -76,6 +76,7 @@ sources = {
 		#"access_ptr",
 		#"owning_ptr",
 		#"owning_ptr_MI",
+		'deep_copy',
 		'make_shared',
 	],
 	"signals" : [

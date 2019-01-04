@@ -870,6 +870,13 @@ operator <<( std::ostream & out, MoveMap const & mm )
 	return out;
 }
 
+// For member deep copies
+inline
+MoveMapOP
+deep_copy( MoveMap const & source) {
+	return source.clone();
+}
+
 }  // namespace kinematics
 }  // namespace core
 

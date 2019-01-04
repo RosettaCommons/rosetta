@@ -19,19 +19,20 @@
 //Unit Headers
 #include <protocols/grafting/GraftMoverBase.hh>
 #include <protocols/grafting/AnchoredGraftMover.fwd.hh>
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 
 //Core
 #include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/select/movemap/MoveMapFactory.fwd.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
 
 //Protocols
 #include <protocols/minimization_packing/MinMover.fwd.hh>
 #include <protocols/simple_moves/BackboneMover.fwd.hh>
-#include <protocols/loops/Loops.hh>
+#include <protocols/loops/Loops.fwd.hh>
+#include <utility/pointer/deep_copy.hh>
 #include <utility/tag/Tag.hh>
 
 namespace protocols {
@@ -83,10 +84,6 @@ public:
 	AnchoredGraftMover(
 		core::Size const start, core::Size const end,
 		core::pose::Pose const & piece, core::Size Nter_overhang_length=0, core::Size Cter_overhang_length=0, bool copy_pdbinfo = false);
-
-	AnchoredGraftMover(AnchoredGraftMover const & src);
-
-	~AnchoredGraftMover() override;
 
 	void
 	set_cycles(core::Size cycles);
@@ -192,7 +189,7 @@ public:
 	/// @returns the Cterminal loop end (Last flexible residue).  Useful to use after insertion.
 	core::Size get_Cter_loop_end();
 
-	protocols::loops::Loops
+	protocols::loops::Loops const &
 	get_loops() {
 		return *loops_;
 	};
@@ -303,14 +300,14 @@ private:
 	bool skip_sampling_;//Option to skip the small mover sampling step.
 	bool test_control_mode_;//TESTING ONLY  Set to randomize the flexible residues before trying to graft.
 
-	core::kinematics::MoveMapOP movemap_ = nullptr;
-	core::kinematics::MoveMapCOP scaffold_movemap_ = nullptr;
-	core::kinematics::MoveMapCOP insert_movemap_ = nullptr;
+	utility::pointer::DeepCopyOP< core::kinematics::MoveMap > movemap_ = nullptr;
+	utility::pointer::DeepCopyOP< core::kinematics::MoveMap const > scaffold_movemap_ = nullptr;
+	utility::pointer::DeepCopyOP< core::kinematics::MoveMap const > insert_movemap_ = nullptr;
 	core::select::movemap::MoveMapFactoryCOP scaffold_movemap_factory_ = nullptr;
 	core::select::movemap::MoveMapFactoryCOP insert_movemap_factory_ = nullptr;
 
-	core::scoring::ScoreFunctionOP cen_scorefxn_ = nullptr;
-	core::scoring::ScoreFunctionOP fa_scorefxn_ = nullptr;
+	utility::pointer::DeepCopyOP< core::scoring::ScoreFunction > cen_scorefxn_ = nullptr;
+	utility::pointer::DeepCopyOP< core::scoring::ScoreFunction > fa_scorefxn_ = nullptr;
 
 	bool use_default_movemap_; //Instructs setup_movemap_and_regions what to do.
 	core::Size Nter_scaffold_flexibility_;
@@ -331,7 +328,7 @@ private:
 	std::string scaffold_end_;
 	bool idealize_insert_;
 
-	protocols::loops::LoopsOP loops_ = nullptr;
+	utility::pointer::DeepCopyOP< protocols::loops::Loops > loops_ = nullptr;
 
 }; //Class AnchoredGraftMover
 

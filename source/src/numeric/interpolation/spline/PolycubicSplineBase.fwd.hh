@@ -32,6 +32,8 @@ typedef utility::pointer::shared_ptr< PolycubicSplineBase > PolycubicSplineBaseO
 // Const-access owning pointer:
 typedef utility::pointer::shared_ptr< PolycubicSplineBase const > PolycubicSplineBaseCOP;
 
+PolycubicSplineBaseOP deep_copy( PolycubicSplineBase const & );
+
 }//end namespace spline
 }//end namespace interpolation
 }//end namespace numeric

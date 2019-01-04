@@ -123,42 +123,6 @@ AnchoredGraftMover::AnchoredGraftMover(
 	copy_pdbinfo(copy_pdb_info);
 }
 
-AnchoredGraftMover::~AnchoredGraftMover() = default;
-
-AnchoredGraftMover::AnchoredGraftMover(const AnchoredGraftMover& src):
-	GraftMoverBase(src),
-	cycles_(src.cycles_),
-	mintype_(src.mintype_),
-	skip_sampling_(src.skip_sampling_),
-	test_control_mode_(src.test_control_mode_),
-	use_default_movemap_(src.use_default_movemap_),
-	Nter_scaffold_flexibility_(src.Nter_scaffold_flexibility_),
-	Nter_insert_flexibility_(src.Nter_insert_flexibility_),
-	Nter_loop_start_(src.Nter_loop_start_),
-	Nter_loop_end_(src.Nter_loop_end_),
-	Cter_scaffold_flexibility_(src.Cter_scaffold_flexibility_),
-	Cter_insert_flexibility_(src.Cter_insert_flexibility_),
-	Cter_loop_start_(src.Cter_loop_start_),
-	Cter_loop_end_(src.Cter_loop_end_),
-	stop_at_closure_(src.stop_at_closure_),
-	final_repack_(src.final_repack_),
-	neighbor_dis_(src.neighbor_dis_),
-	scaffold_start_( src.scaffold_start_),
-	scaffold_end_( src.scaffold_end_),
-	idealize_insert_(src.idealize_insert_)
-{
-
-	if ( src.movemap_ ) movemap_ = src.movemap_->clone();
-	if ( src.scaffold_movemap_ ) scaffold_movemap_ = src.scaffold_movemap_->clone();
-	if ( src.insert_movemap_ ) insert_movemap_ = src.insert_movemap_->clone();
-	scaffold_movemap_factory_ = src.scaffold_movemap_factory_; //COP, so won't alter
-	insert_movemap_factory_ = src.insert_movemap_factory_; //COP, so won't alter
-	if ( src.cen_scorefxn_ ) cen_scorefxn_ = src.cen_scorefxn_->clone();
-	if ( src.fa_scorefxn_ ) fa_scorefxn_ = src.fa_scorefxn_->clone();
-	if ( src.loops_ ) loops_ = src.loops_->clone();
-
-}
-
 void
 AnchoredGraftMover::set_defaults(){
 	loops_ = protocols::loops::LoopsOP( new protocols::loops::Loops() );

@@ -26,6 +26,7 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/io/izstream.hh>
 #include <utility/vector1.hh>
+#include <utility/pointer/deep_copy.hh>
 
 // Numeric Headers
 #include <numeric/MathNTensorBase.fwd.hh>
@@ -49,14 +50,6 @@ public:
 	/// @brief Default constructor.
 	///
 	MainchainScoreTable();
-
-	/// @brief Copy constructor.
-	///
-	MainchainScoreTable( MainchainScoreTable const & src );
-
-	/// @brief Default destructor.
-	///
-	~MainchainScoreTable() {}
 
 	/// @brief Clone function: make a copy of this object and return
 	/// an owning pointer to the copy.
@@ -238,16 +231,16 @@ private: //Private variables:
 
 	/// @brief N-dimensional tensor for storing energies data.
 	///
-	numeric::MathNTensorBaseOP< core::Real > energies_;
+	utility::pointer::DeepCopyOP< numeric::MathNTensorBase< core::Real > > energies_;
 
 	/// @brief N-dimensional tensor for storing probabilities data.
 	///
-	numeric::MathNTensorBaseOP< core::Real > probabilities_;
+	utility::pointer::DeepCopyOP< numeric::MathNTensorBase< core::Real > > probabilities_;
 
 	/// @brief N-dimensional tensor for storing the cumulative distribution function.
 	/// @details This is used for drawing random mainchain torsion values biased by the relative
 	/// probabilities of having a set of mainchain torsion values.
-	numeric::MathNTensorBaseOP< core::Real > cdf_;
+	utility::pointer::DeepCopyOP< numeric::MathNTensorBase< core::Real > > cdf_;
 
 	/// @brief Is this MainchainScoreTable set up with polycubic interpolation?
 	/// @details Default true.  If false, interpolation is linear.
@@ -256,17 +249,17 @@ private: //Private variables:
 	/// @brief Interpolation spline for the 1D case.
 	/// @details Only used if use_polycubic_interpolation_ is true and the energies_ MathNTensor is 1D.
 	/// Null otherwise.
-	numeric::interpolation::spline::CubicSplineOP energies_spline_1D_;
+	utility::pointer::DeepCopyOP< numeric::interpolation::spline::CubicSpline > energies_spline_1D_;
 
 	/// @brief Interpolation spline for the 2D case.
 	/// @details Only used if use_polycubic_interpolation_ is true and the energies_ MathNTensor is 2D.
 	/// Null otherwise.
-	numeric::interpolation::spline::BicubicSplineOP energies_spline_2D_;
+	utility::pointer::DeepCopyOP< numeric::interpolation::spline::BicubicSpline > energies_spline_2D_;
 
 	/// @brief Interpolation spline for the N-dimensional case, where N > 2.
 	/// @details Only used if use_polycubic_interpolation_ is true and the energies_ MathNTensor is N-dimensional, where N > 2.
 	/// Null otherwise.
-	numeric::interpolation::spline::PolycubicSplineBaseOP energies_spline_ND_;
+	utility::pointer::DeepCopyOP< numeric::interpolation::spline::PolycubicSplineBase > energies_spline_ND_;
 
 	/// @brief What is the total number of mainchain torsions for this residue type?
 	/// @details Could be different than the dimension of the tensors, if certain torsions are fixed.  Note that this excludes omega (the inter-residue torsion),

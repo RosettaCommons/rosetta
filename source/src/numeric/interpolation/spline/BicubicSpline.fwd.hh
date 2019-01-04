@@ -25,6 +25,8 @@ class BicubicSpline;
 typedef utility::pointer::shared_ptr< BicubicSpline > BicubicSplineOP;
 typedef utility::pointer::shared_ptr< BicubicSpline const > BicubicSplineCOP;
 
+BicubicSplineOP deep_copy( BicubicSpline const & source );
+
 }//end namespace spline
 }//end namespace interpolation
 }//end namespace numeric

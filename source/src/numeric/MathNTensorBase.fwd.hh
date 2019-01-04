@@ -33,6 +33,9 @@ using MathNTensorBaseOP = utility::pointer::shared_ptr< MathNTensorBase< T > >; 
 template< class T >
 using MathNTensorBaseCOP = utility::pointer::shared_ptr< MathNTensorBase< T > const >;
 
+template< class T >
+MathNTensorBaseOP< T > deep_copy( MathNTensorBase< T > const & source );
+
 } // namespace numeric
 
 #endif // INCLUDED_numeric_MathNTensorBase_fwd_hh

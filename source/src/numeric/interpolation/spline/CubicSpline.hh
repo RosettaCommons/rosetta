@@ -65,6 +65,8 @@
 
 #include <numeric/interpolation/spline/CubicSpline.fwd.hh>
 
+#include <utility/pointer/memory.hh>
+
 namespace numeric {
 namespace interpolation {
 namespace spline {
@@ -86,9 +88,9 @@ public:
 	}
 
 	//! @brief copy constructor
-	CubicSpline* clone() const
+	CubicSplineOP clone() const
 	{
-		return new CubicSpline( *this);
+		return utility::pointer::make_shared< CubicSpline >( *this );
 	}
 
 
@@ -193,6 +195,12 @@ public:
 #endif // SERIALIZATION
 
 };
+
+inline
+CubicSplineOP
+deep_copy( CubicSpline const & source ) {
+	return source.clone();
+}
 
 }//namespace
 }

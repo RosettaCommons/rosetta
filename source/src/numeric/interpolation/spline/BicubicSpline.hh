@@ -184,6 +184,12 @@ private:
 
 };
 
+inline
+BicubicSplineOP
+deep_copy( BicubicSpline const & source ) {
+	return source.clone();
+}
+
 }//end namespace spline
 }//end namespace interpolation
 }//end namespace numeric

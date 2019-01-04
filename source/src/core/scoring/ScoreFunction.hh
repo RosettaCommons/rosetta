@@ -1291,6 +1291,13 @@ operator <<( std::ostream & out, ScoreFunction const & sf )
 	return out;
 }
 
+// For member deep copies
+inline
+ScoreFunctionOP
+deep_copy( ScoreFunction const & source) {
+	return source.clone();
+}
+
 /// @brief Utility function to locate a weights or patch file, either with a fully qualified path,
 /// in the local directory, or in the database. Names may be passes either with or without the
 /// optional extension.

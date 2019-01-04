@@ -109,6 +109,14 @@ private:
 
 };
 
+template< class T >
+MathNTensorBaseOP< T >
+deep_copy( MathNTensorBase< T > const & source ) {
+	return source.clone();
+}
+
+/// @brief Explicit template instantiation, apparently needed for PyRosetta
+template MathNTensorBaseOP< Real > deep_copy( MathNTensorBase< Real > const &  );
 
 }//end namespace numeric
 

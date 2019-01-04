@@ -83,6 +83,11 @@ private:
 
 };
 
+inline
+PolycubicSplineBaseOP
+deep_copy( PolycubicSplineBase const & source ) {
+	return source.clone();
+}
 
 }//end namespace spline
 }//end namespace interpolation

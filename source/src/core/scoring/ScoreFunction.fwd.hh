@@ -28,6 +28,9 @@ class ScoreFunction;
 typedef utility::pointer::shared_ptr< ScoreFunction > ScoreFunctionOP;
 typedef utility::pointer::shared_ptr< ScoreFunction const > ScoreFunctionCOP;
 
+// For member deep copies
+ScoreFunctionOP deep_copy( ScoreFunction const & source);
+
 } // namespace scoring
 } // namespace core
 

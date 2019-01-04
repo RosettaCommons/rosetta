@@ -33,6 +33,9 @@ using MathNTensorOP = utility::pointer::shared_ptr< MathNTensor< T,N > >; //Vikr
 template< class T, numeric::Size N >
 using MathNTensorCOP = utility::pointer::shared_ptr< MathNTensor< T,N > const >;
 
+template< class T, numeric::Size N >
+MathNTensorOP<T,N> deep_copy( MathNTensor< T,N > const & source );
+
 } // namespace numeric
 
 #endif // INCLUDED_numeric_MathNTensor_fwd_hh

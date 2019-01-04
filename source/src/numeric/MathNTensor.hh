@@ -543,6 +543,12 @@ private:
 	T * data_;
 };
 
+template< class T, numeric::Size N >
+MathNTensorOP<T,N>
+deep_copy( MathNTensor< T,N > const & source ) {
+	return source.clone();
+}
+
 }//end namespace numeric
 
 

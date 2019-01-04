@@ -26,6 +26,9 @@ class Loops;
 typedef utility::pointer::shared_ptr< Loops > LoopsOP;
 typedef utility::pointer::shared_ptr< Loops const > LoopsCOP;
 
+// For member deep copies
+LoopsOP deep_copy( Loops const & source);
+
 } //namespace loops
 } //namespace protocols
 

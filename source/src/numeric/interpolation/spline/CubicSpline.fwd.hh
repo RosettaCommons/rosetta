@@ -27,6 +27,8 @@ class CubicSpline;
 typedef utility::pointer::shared_ptr< CubicSpline > CubicSplineOP;
 typedef utility::pointer::shared_ptr< CubicSpline const > CubicSplineCOP;
 
+CubicSplineOP deep_copy( CubicSpline const & );
+
 }
 }
 }
