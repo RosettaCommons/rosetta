@@ -103,7 +103,7 @@ void SavePoseConstraintToFileFilter::parse_my_tag( utility::tag::TagCOP tag,
 }
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP SavePoseConstraintToFileFilterCreator::create_filter() const { return protocols::filters::FilterOP( new SavePoseConstraintToFileFilter ); }
+// XRW TEMP SavePoseConstraintToFileFilterCreator::create_filter() const { return utility::pointer::make_shared< SavePoseConstraintToFileFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP SavePoseConstraintToFileFilterCreator::keyname() const { return "SavePoseConstraintToFile"; }
@@ -132,7 +132,7 @@ std::string SavePoseConstraintToFileFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 SavePoseConstraintToFileFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new SavePoseConstraintToFileFilter );
+	return utility::pointer::make_shared< SavePoseConstraintToFileFilter >();
 }
 
 void SavePoseConstraintToFileFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

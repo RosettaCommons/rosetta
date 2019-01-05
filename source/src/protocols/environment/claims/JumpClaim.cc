@@ -199,7 +199,7 @@ LocalPosition const& JumpClaim::cut() const {
 }
 
 EnvClaimOP JumpClaim::clone() const {
-	return EnvClaimOP( new JumpClaim( *this ) );
+	return utility::pointer::make_shared< JumpClaim >( *this );
 }
 
 

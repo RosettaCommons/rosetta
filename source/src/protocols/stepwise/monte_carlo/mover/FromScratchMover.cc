@@ -58,7 +58,7 @@ FromScratchMover::~FromScratchMover() = default;
 
 protocols::moves::MoverOP
 FromScratchMover::clone() const {
-	return FromScratchMoverOP( new FromScratchMover( *this ) );
+	return utility::pointer::make_shared< FromScratchMover >( *this );
 }
 
 
@@ -78,7 +78,7 @@ void FromScratchMover::parse_my_tag(
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const & pose ) {
 
-	auto options( protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptionsCOP( new protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptions ) );
+	auto options( utility::pointer::make_shared< protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptions >() );
 	auto scorefxn  = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
 	stepwise_modeler_ = setup_unified_stepwise_modeler( options, scorefxn );
 
@@ -197,7 +197,7 @@ std::string FromScratchMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 FromScratchMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new FromScratchMover );
+	return utility::pointer::make_shared< FromScratchMover >();
 }
 
 void FromScratchMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

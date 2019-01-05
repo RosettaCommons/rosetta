@@ -457,11 +457,11 @@ NubInitioLoopClosureMover::repack( core::pose::Pose & pose )
 
 	// Make task Factory
 	TaskFactoryOP postTaskFact( new TaskFactory );
-	TaskOperationOP fixMotifOperation( new OperateOnResidueSubset( ResLvlTaskOperationCOP( new PreventRepackingRLT() ), not_to_move_selector ) );
+	TaskOperationOP fixMotifOperation( new OperateOnResidueSubset( utility::pointer::make_shared< PreventRepackingRLT >(), not_to_move_selector ) );
 	postTaskFact->push_back( fixMotifOperation );
 	if ( not design_ ) {
 		TR.Trace << "No sequence design" << std::endl;
-		TaskOperationOP templateOperation( new OperateOnResidueSubset( ResLvlTaskOperationCOP( new RestrictToRepackingRLT() ), active_packable_selector ) );
+		TaskOperationOP templateOperation( new OperateOnResidueSubset( utility::pointer::make_shared< RestrictToRepackingRLT >(), active_packable_selector ) );
 		postTaskFact->push_back( templateOperation );
 	} else {
 		TR.Trace << "Sequence design allowed" << std::endl;
@@ -716,13 +716,13 @@ NubInitioLoopClosureMover::fragments( core::fragment::FragSetOP frags) {
 protocols::moves::MoverOP
 NubInitioLoopClosureMover::clone() const
 {
-	return protocols::moves::MoverOP( new NubInitioLoopClosureMover( *this ) );
+	return utility::pointer::make_shared< NubInitioLoopClosureMover >( *this );
 }
 
 protocols::moves::MoverOP
 NubInitioLoopClosureMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new NubInitioLoopClosureMover );
+	return utility::pointer::make_shared< NubInitioLoopClosureMover >();
 }
 
 std::string NubInitioLoopClosureMover::get_name() const {
@@ -740,7 +740,7 @@ std::string NubInitioLoopClosureMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 NubInitioLoopClosureMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new NubInitioLoopClosureMover );
+	return utility::pointer::make_shared< NubInitioLoopClosureMover >();
 }
 
 void NubInitioLoopClosureMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {

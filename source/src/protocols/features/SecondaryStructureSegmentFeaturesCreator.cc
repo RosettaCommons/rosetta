@@ -27,7 +27,7 @@ namespace features {
 // XRW TEMP SecondaryStructureSegmentFeaturesCreator::SecondaryStructureSegmentFeaturesCreator() {}
 // XRW TEMP SecondaryStructureSegmentFeaturesCreator::~SecondaryStructureSegmentFeaturesCreator() = default;
 // XRW TEMP FeaturesReporterOP SecondaryStructureSegmentFeaturesCreator::create_features_reporter() const {
-// XRW TEMP  return FeaturesReporterOP( new SecondaryStructureSegmentFeatures );
+// XRW TEMP  return utility::pointer::make_shared< SecondaryStructureSegmentFeatures >();
 // XRW TEMP }
 
 // XRW TEMP std::string SecondaryStructureSegmentFeaturesCreator::type_name() const {

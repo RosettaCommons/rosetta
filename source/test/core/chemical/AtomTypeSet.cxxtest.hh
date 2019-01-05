@@ -53,7 +53,7 @@ public:
 
 		// note this reads the atom properties in the unit test directory
 		// not the rosetta_database
-		atomtypeset = AtomTypeSetOP( new AtomTypeSet( "core/chemical/") );
+		atomtypeset = utility::pointer::make_shared< AtomTypeSet >( "core/chemical/");
 		//atomtypeset->read_file( "core/chemical/atom_properties.txt" );
 	}
 

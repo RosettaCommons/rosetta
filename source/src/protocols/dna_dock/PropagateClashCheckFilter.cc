@@ -116,12 +116,12 @@ PropagateClashCheckFilter::~PropagateClashCheckFilter() = default;
 
 protocols::filters::FilterOP
 PropagateClashCheckFilter::fresh_instance() const{
-	return protocols::filters::FilterOP( new PropagateClashCheckFilter() );
+	return utility::pointer::make_shared< PropagateClashCheckFilter >();
 }
 
 protocols::filters::FilterOP
 PropagateClashCheckFilter::clone() const{
-	return protocols::filters::FilterOP( new PropagateClashCheckFilter( *this ) );
+	return utility::pointer::make_shared< PropagateClashCheckFilter >( *this );
 }
 
 // @brief getters
@@ -243,7 +243,7 @@ PropagateClashCheckFilter::parse_my_tag(
 }
 
 protocols::filters::FilterOP
-PropagateClashCheckFilterCreator::create_filter() const { return protocols::filters::FilterOP( new PropagateClashCheckFilter ); }
+PropagateClashCheckFilterCreator::create_filter() const { return utility::pointer::make_shared< PropagateClashCheckFilter >(); }
 
 std::string
 PropagateClashCheckFilterCreator::keyname() const { return "PropagateClashCheck"; }

@@ -44,7 +44,7 @@ methods::EnergyMethodOP
 SuckerEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new SuckerEnergy );
+	return utility::pointer::make_shared< SuckerEnergy >();
 }
 
 ScoreTypes
@@ -56,7 +56,7 @@ SuckerEnergyCreator::score_types_for_method() const {
 
 
 SuckerEnergy::SuckerEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new SuckerEnergyCreator ) )
+	parent( utility::pointer::make_shared< SuckerEnergyCreator >() )
 {
 	utility::io::izstream izin;
 	basic::database::open( izin, basic::options::option[ basic::options::OptionKeys::in::file::sucker_params ]() );
@@ -114,7 +114,7 @@ SuckerEnergy::SuckerEnergy() :
 EnergyMethodOP
 SuckerEnergy::clone() const
 {
-	return EnergyMethodOP( new SuckerEnergy() );
+	return utility::pointer::make_shared< SuckerEnergy >();
 }
 
 

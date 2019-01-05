@@ -506,9 +506,9 @@ look_for_jumps_to_next( Size const virtual_sugar_res,
 
 sampler::copy_dofs::ResidueAlternativeSetOP
 convert_sugar_modeling_to_residue_alternative_set( SugarModeling const & sugar_modeling ){
-	return sampler::copy_dofs::ResidueAlternativeSetOP( new sampler::copy_dofs::ResidueAlternativeSet( sugar_modeling.pose_list,
+	return utility::pointer::make_shared< sampler::copy_dofs::ResidueAlternativeSet >( sugar_modeling.pose_list,
 		get_res_map( sugar_modeling ),
-		sugar_modeling.moving_res ) );
+		sugar_modeling.moving_res );
 }
 
 

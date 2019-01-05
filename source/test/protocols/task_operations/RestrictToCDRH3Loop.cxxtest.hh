@@ -86,7 +86,7 @@ public:
 		TR << "Running test_RestrictNonSurfaceToRepackingOperation..." << std::endl;
 
 		core::pack::task::TaskFactory tf;
-		tf.push_back( TaskOperationCOP( new RestrictToCDRH3Loop() ) );
+		tf.push_back( utility::pointer::make_shared< RestrictToCDRH3Loop >() );
 
 		// the following call should work even if the pose hasn't been scored
 		core::pack::task::PackerTaskOP task = tf.create_task_and_apply_taskoperations( pose );

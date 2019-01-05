@@ -73,8 +73,8 @@ using cppdb::result;
 
 
 DatabaseJobInputter::DatabaseJobInputter() :
-	scfxn_(core::scoring::ScoreFunctionOP( new ScoreFunction() )),
-	protein_silent_report_(protocols::features::ProteinSilentReportOP( new ProteinSilentReport() ))
+	scfxn_(utility::pointer::make_shared< ScoreFunction >()),
+	protein_silent_report_(utility::pointer::make_shared< ProteinSilentReport >())
 
 {
 	tr.Debug << "Instantiate DatabaseJobInputter" << endl;
@@ -339,7 +339,7 @@ void protocols::features::DatabaseJobInputter::fill_jobs( protocols::jd2::JobsCo
 		<< " InnerJob Objects" << endl;
 
 	for ( std::map<std::string, StructureID>::const_iterator iter=tag_structures_.begin(); iter!=tag_structures_.end(); ++iter ) {
-		inner_jobs.push_back(protocols::jd2::InnerJobOP( new protocols::jd2::InnerJob(iter->first, nstruct) ));
+		inner_jobs.push_back(utility::pointer::make_shared< protocols::jd2::InnerJob >(iter->first, nstruct));
 	}
 
 	//tr.Debug
@@ -351,7 +351,7 @@ void protocols::features::DatabaseJobInputter::fill_jobs( protocols::jd2::JobsCo
 	tr.Debug << "fill job list with... " << endl;
 	for ( Size index = 1; index <= nstruct; ++index ) {
 		for ( protocols::jd2::InnerJobOP ijob : inner_jobs ) {
-			jobs.push_back(protocols::jd2::JobOP( new protocols::jd2::Job(ijob, index) ));
+			jobs.push_back(utility::pointer::make_shared< protocols::jd2::Job >(ijob, index));
 			tr.Trace
 				<< "pushing " << ijob->input_tag() << " nstruct index " << index << std::endl;
 		}
@@ -374,7 +374,7 @@ DatabaseJobInputterCreator::keyname() const
 
 protocols::jd2::JobInputterOP
 DatabaseJobInputterCreator::create_JobInputter() const {
-	return protocols::jd2::JobInputterOP( new DatabaseJobInputter );
+	return utility::pointer::make_shared< DatabaseJobInputter >();
 }
 
 } // namespace features

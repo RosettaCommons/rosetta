@@ -91,7 +91,7 @@ const core::scoring::disulfides::CentroidDisulfidePotential DisulfideMover::pote
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP DisulfideMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new DisulfideMover );
+// XRW TEMP  return utility::pointer::make_shared< DisulfideMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -115,7 +115,7 @@ DisulfideMover::DisulfideMover( core::Size targetResidue ) :
 	rb_jump_(1)
 {
 	using namespace core::select::residue_selector;
-	target_residues( ResidueSelectorOP( new ResidueIndexSelector(targetResidue) ) );
+	target_residues( utility::pointer::make_shared< ResidueIndexSelector >(targetResidue) );
 }
 
 /// @brief Constructor with multiple target residues
@@ -124,7 +124,7 @@ DisulfideMover::DisulfideMover( utility::vector1<core::Size> const& targetResidu
 	rb_jump_(1)
 {
 	using namespace core::select::residue_selector;
-	target_residues( ResidueSelectorOP( new ResidueIndexSelector(targetResidues) ) );
+	target_residues( utility::pointer::make_shared< ResidueIndexSelector >(targetResidues) );
 }
 
 DisulfideMover::~DisulfideMover() = default;
@@ -351,7 +351,7 @@ std::string DisulfideMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 DisulfideMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new DisulfideMover );
+	return utility::pointer::make_shared< DisulfideMover >();
 }
 
 void DisulfideMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

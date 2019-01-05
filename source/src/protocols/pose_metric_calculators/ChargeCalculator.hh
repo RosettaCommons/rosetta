@@ -48,7 +48,7 @@ public:
 
 
 	core::pose::metrics::PoseMetricCalculatorOP clone() const {
-		return core::pose::metrics::PoseMetricCalculatorOP( new ChargeCalculator( special_region_) ); };
+		return utility::pointer::make_shared< ChargeCalculator >( special_region_); };
 
 protected:
 

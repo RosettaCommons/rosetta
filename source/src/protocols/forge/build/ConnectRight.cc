@@ -102,7 +102,7 @@ ConnectRight & ConnectRight::operator =( ConnectRight const & rval ) {
 
 /// @brief clone this object
 BuildInstructionOP ConnectRight::clone() const {
-	return BuildInstructionOP( new ConnectRight( *this ) );
+	return utility::pointer::make_shared< ConnectRight >( *this );
 }
 
 
@@ -360,7 +360,7 @@ void ConnectRight::modify_impl( Pose & pose_left ) {
 
 		// if pose_left doesn't have PDBInfo, create it
 		if ( pose_left.pdb_info().get() == nullptr ) {
-			pose_left.pdb_info( PDBInfoOP( new PDBInfo( pose_left ) ) );
+			pose_left.pdb_info( utility::pointer::make_shared< PDBInfo >( pose_left ) );
 		}
 
 		// force obsolete

@@ -169,7 +169,7 @@ std::string fragext_subelement_ct_name( std::string const & name ) {
 
 protocols::moves::MoverOP
 FragmentExtensionCreator::create_mover() const {
-	return protocols::moves::MoverOP( new FragmentExtension );
+	return utility::pointer::make_shared< FragmentExtension >();
 }
 
 std::string
@@ -241,8 +241,8 @@ FragmentExtension::FragmentExtension( ) {
 
 }
 
-protocols::moves::MoverOP FragmentExtension::clone() const { return protocols::moves::MoverOP( new FragmentExtension( *this ) ); }
-protocols::moves::MoverOP FragmentExtension::fresh_instance() const { return protocols::moves::MoverOP( new FragmentExtension ); }
+protocols::moves::MoverOP FragmentExtension::clone() const { return utility::pointer::make_shared< FragmentExtension >( *this ); }
+protocols::moves::MoverOP FragmentExtension::fresh_instance() const { return utility::pointer::make_shared< FragmentExtension >(); }
 
 void
 FragmentExtension::apply( core::pose::Pose & pose ) {
@@ -252,7 +252,7 @@ FragmentExtension::apply( core::pose::Pose & pose ) {
 
 	// native
 	if ( option[ in::file::native ].user() ) {
-		native_ = core::pose::PoseOP( new core::pose::Pose );
+		native_ = utility::pointer::make_shared< core::pose::Pose >();
 		core::import_pose::pose_from_file( *native_, option[ in::file::native ](), true );
 
 	}
@@ -378,8 +378,8 @@ FragmentExtension::apply( core::pose::Pose & pose ) {
 		pack_min_cycles_ = 0;
 	}
 	if ( !greedy_ ) {
-		sf_dens = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction );
-		sf_clashing = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction );
+		sf_dens = utility::pointer::make_shared< core::scoring::ScoreFunction >();
+		sf_clashing = utility::pointer::make_shared< core::scoring::ScoreFunction >();
 		sf_dens->set_weight( core::scoring::elec_dens_fast , cen_sf_->get_weight(core::scoring::elec_dens_fast) );
 		//sf_dens->set_weight( core::scoring::vdw , cen_sf_->get_weight(core::scoring::vdw) ); //vdw needs to be included if we want to get 1 body and 2 body in a single pass.
 		sf_clashing->set_weight( core::scoring::vdw , cen_sf_->get_weight(core::scoring::vdw) );
@@ -498,7 +498,7 @@ FragmentExtension::apply( core::pose::Pose & pose ) {
 
 		// update sequencemap
 		core::pose::symmetry::extract_asymmetric_unit(pose, pose_for_seq, false);
-		t_pdb_seq = core::sequence::SequenceOP( new core::sequence::Sequence( pose_for_seq.sequence(), "pose_seq" ));
+		t_pdb_seq = utility::pointer::make_shared< core::sequence::Sequence >( pose_for_seq.sequence(), "pose_seq" );
 		fasta2template_ = sw_align.align(fullength_seq_, t_pdb_seq, ss);
 		sequencemap = fasta2template_.sequence_mapping(1,2); //creates the sequence map
 	}
@@ -512,7 +512,7 @@ FragmentExtension::apply( core::pose::Pose & pose ) {
 		comparator.set_scores(pose);
 
 		protocols::moves::MoverOP restore_sc;
-		restore_sc = protocols::simple_moves::ReturnSidechainMoverOP( new protocols::simple_moves::ReturnSidechainMover( pose ));
+		restore_sc = utility::pointer::make_shared< protocols::simple_moves::ReturnSidechainMover >( pose );
 		TR << "applying comparator " << std::endl;
 
 		//the creation of comparator pose is only necessary if you want to use the option to remove a clashing loop. This is currrently disabled but I'm leaving the logic here for now
@@ -606,7 +606,7 @@ FragmentExtension::parse_my_tag(
 			fulllength_clean += i;
 		}
 	}
-	fullength_seq_ = core::sequence::SequenceOP(new core::sequence::Sequence( fulllength_clean, "target" ));
+	fullength_seq_ = utility::pointer::make_shared< core::sequence::Sequence >( fulllength_clean, "target" );
 
 	// fragments
 	utility::vector1< utility::tag::TagCOP > const branch_tags( tag->getTags() );

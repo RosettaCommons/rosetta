@@ -77,7 +77,7 @@ steric_fusion_scan::steric_fusion_scan( steric_fusion_scan const & ) {
 
 steric_fusion_scanOP
 steric_fusion_scan::clone() const {
-	return steric_fusion_scanOP( new steric_fusion_scan( *this ) );
+	return utility::pointer::make_shared< steric_fusion_scan >( *this );
 }
 
 int
@@ -223,12 +223,12 @@ main( int argc, char * argv [] )
 		numeric::HomogeneousTransform< core::Real > mobile_to_stationary_ht = stationary_ht * inverse_mobile_ht;
 		n_terminal->apply_transform_Rx_plus_v(mobile_to_stationary_ht.rotation_matrix(),mobile_to_stationary_ht.point());
 
-		core::pose::PoseOP output_pose = core::pose::PoseOP(new core::pose::Pose(*n_terminal,1,best_interaction_n_terminal_resnums[current_entry]));
-		core::pose::PoseOP append_pose = core::pose::PoseOP(new core::pose::Pose(*c_terminal,best_interaction_c_terminal_resnums[current_entry]+1,c_terminal->size()));
+		core::pose::PoseOP output_pose = utility::pointer::make_shared< core::pose::Pose >(*n_terminal,1,best_interaction_n_terminal_resnums[current_entry]);
+		core::pose::PoseOP append_pose = utility::pointer::make_shared< core::pose::Pose >(*c_terminal,best_interaction_c_terminal_resnums[current_entry]+1,c_terminal->size());
 		output_pose->append_pose_by_jump(*append_pose,output_pose->size(),"CA","CA");
 		output_pose->fold_tree(core::kinematics::FoldTree(output_pose->size()));
 
-		core::pose::PoseOP final_pose = core::pose::PoseOP(new core::pose::Pose());
+		core::pose::PoseOP final_pose = utility::pointer::make_shared< core::pose::Pose >();
 
 		core::pose::make_pose_from_sequence(*final_pose, output_pose->sequence(), *res_type_set,false);
 

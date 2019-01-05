@@ -63,7 +63,7 @@ public:
 		core_init();
 
 		// scorefxn isn't really used, but necessary for call to finalize_total_energy
-		scorefxn = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction );
+		scorefxn = utility::pointer::make_shared< core::scoring::ScoreFunction >();
 
 		// rg_energy = new RG_Energy;
 		// rg_energy_fast = new RG_Energy_Fast;

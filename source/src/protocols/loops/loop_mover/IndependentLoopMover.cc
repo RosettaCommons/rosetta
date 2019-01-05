@@ -79,7 +79,7 @@ IndependentLoopMover::IndependentLoopMover(
 
 IndependentLoopMover::IndependentLoopMover(
 	utility::vector1< bool > const& selection
-) : LoopMover( protocols::loops::LoopsOP( new protocols::loops::Loops( selection ) ) )
+) : LoopMover( utility::pointer::make_shared< protocols::loops::Loops >( selection ) )
 {
 	Mover::type("IndependentLoopMover");
 	set_defaults();

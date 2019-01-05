@@ -230,12 +230,12 @@ DeclareBond::parse_my_tag(
 	kic_res2_ = tag->getOption< Size >( "KIC_res2", 0);
 }
 
-moves::MoverOP DeclareBond::clone() const { return moves::MoverOP( new DeclareBond( *this ) ); }
-moves::MoverOP DeclareBond::fresh_instance() const { return moves::MoverOP( new DeclareBond ); }
+moves::MoverOP DeclareBond::clone() const { return utility::pointer::make_shared< DeclareBond >( *this ); }
+moves::MoverOP DeclareBond::fresh_instance() const { return utility::pointer::make_shared< DeclareBond >(); }
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP DeclareBondCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new DeclareBond );
+// XRW TEMP  return utility::pointer::make_shared< DeclareBond >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -287,7 +287,7 @@ std::string DeclareBondCreator::keyname() const {
 
 protocols::moves::MoverOP
 DeclareBondCreator::create_mover() const {
-	return protocols::moves::MoverOP( new DeclareBond );
+	return utility::pointer::make_shared< DeclareBond >();
 }
 
 void DeclareBondCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

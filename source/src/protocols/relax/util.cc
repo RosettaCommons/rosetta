@@ -102,28 +102,28 @@ generate_relax_from_cmd(
 
 	RelaxProtocolBaseOP protocol;
 	if ( options[ OptionKeys::relax::sequence_file ].user() ) {
-		protocol = RelaxProtocolBaseOP( new FastRelax( scorefxn, options[ OptionKeys::relax::sequence_file ]() ) );
+		protocol = utility::pointer::make_shared< FastRelax >( scorefxn, options[ OptionKeys::relax::sequence_file ]() );
 	} else if ( options[ OptionKeys::relax::script ].user() ) {
-		protocol = RelaxProtocolBaseOP( new FastRelax( scorefxn, options[ OptionKeys::relax::script ]() ) );
+		protocol = utility::pointer::make_shared< FastRelax >( scorefxn, options[ OptionKeys::relax::script ]() );
 	} else if ( options[ OptionKeys::relax::quick ]() ) {
-		protocol = RelaxProtocolBaseOP( new FastRelax( scorefxn, options[ OptionKeys::relax::default_repeats ]() /*default 5*/) );
+		protocol = utility::pointer::make_shared< FastRelax >( scorefxn, options[ OptionKeys::relax::default_repeats ]() /*default 5*/);
 	} else if ( options[ OptionKeys::relax::thorough ]() ) {
-		protocol = RelaxProtocolBaseOP( new FastRelax( scorefxn, 15 ) );
+		protocol = utility::pointer::make_shared< FastRelax >( scorefxn, 15 );
 	} else if ( options[ OptionKeys::relax::fast ]() ) {
-		protocol = RelaxProtocolBaseOP( new FastRelax( scorefxn, options[ OptionKeys::relax::default_repeats ]() /*default 5*/) );
+		protocol = utility::pointer::make_shared< FastRelax >( scorefxn, options[ OptionKeys::relax::default_repeats ]() /*default 5*/);
 	} else if ( options[ OptionKeys::relax::classic ]() ) {
-		protocol = RelaxProtocolBaseOP( new ClassicRelax ( scorefxn ) );
+		protocol = utility::pointer::make_shared< ClassicRelax > ( scorefxn );
 	} else if ( options[ OptionKeys::relax::mini ]() ) {
-		protocol = RelaxProtocolBaseOP( new MiniRelax( scorefxn ) );
+		protocol = utility::pointer::make_shared< MiniRelax >( scorefxn );
 	} else if ( options[ OptionKeys::relax::centroid_mode ]() ) {
-		protocol = RelaxProtocolBaseOP( new CentroidRelax() );
+		protocol = utility::pointer::make_shared< CentroidRelax >();
 	} else {
 		// default relax should be a quick sequence relax
 		if ( NULL_if_no_flag ) {
 			TR.Debug << "no relax protocol specified at command line" << std::endl;
 			return nullptr;
 		}
-		protocol = RelaxProtocolBaseOP( new FastRelax( scorefxn ) );
+		protocol = utility::pointer::make_shared< FastRelax >( scorefxn );
 	}
 
 	return protocol;
@@ -224,11 +224,11 @@ cyclize_pose(core::pose::Pose & pose) {
 	AtomID b1( pose.residue(1).atom_index(  "CA"), 1 ), b2( pose.residue(pose.size()).atom_index("OVL2"), pose.size() );
 	AtomID c1( pose.residue(1).atom_index("OVU1"), 1 ), c2( pose.residue(pose.size()).atom_index(   "C"), pose.size() );
 	core::scoring::func::FuncOP fx1( new core::scoring::func::HarmonicFunc(0.0,0.1) );
-	pose.add_constraint(scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint(a1,a2,fx1) ) ));
+	pose.add_constraint(utility::pointer::make_shared< AtomPairConstraint >(a1,a2,fx1));
 	core::scoring::func::FuncOP fx2( new core::scoring::func::HarmonicFunc(0.0,0.1) );
-	pose.add_constraint(scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint(b1,b2,fx2) ) ));
+	pose.add_constraint(utility::pointer::make_shared< AtomPairConstraint >(b1,b2,fx2));
 	core::scoring::func::FuncOP fx3( new core::scoring::func::HarmonicFunc(0.0,0.1) );
-	pose.add_constraint(scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint(c1,c2,fx3) ) ));
+	pose.add_constraint(utility::pointer::make_shared< AtomPairConstraint >(c1,c2,fx3));
 }
 core::scoring::constraints::ConstraintCOPs
 add_coordinate_constraint_func_atoms( core::pose::Pose const & pose, core::Size const resnum, core::conformation::Residue const & rsd_i, core::scoring::func::HarmonicFuncOP coord_cst_func, core::id::AtomID const & anchor_atom )
@@ -248,52 +248,52 @@ add_coordinate_constraint_func_atoms( core::pose::Pose const & pose, core::Size 
 		switch ( aa ){
 		using namespace core::id;
 		case( aa_tyr ) : //Keep placement of OH group in place
-			cst.push_back( core::scoring::constraints::ConstraintOP( new CoordinateConstraint( AtomID( rsd_type.atom_index( "CZ" ), resnum ), anchor_atom, rsd_i.xyz( "CZ" ),coord_cst_func) ));
-			cst.push_back( core::scoring::constraints::ConstraintOP( new CoordinateConstraint( AtomID( rsd_type.atom_index( "OH" ), resnum ), anchor_atom, rsd_i.xyz( "OH" ),coord_cst_func ) ));
+			cst.push_back( utility::pointer::make_shared< CoordinateConstraint >( AtomID( rsd_type.atom_index( "CZ" ), resnum ), anchor_atom, rsd_i.xyz( "CZ" ),coord_cst_func));
+			cst.push_back( utility::pointer::make_shared< CoordinateConstraint >( AtomID( rsd_type.atom_index( "OH" ), resnum ), anchor_atom, rsd_i.xyz( "OH" ),coord_cst_func ));
 			break;
 		case( aa_trp ) :
-			cst.push_back( core::scoring::constraints::ConstraintOP( new CoordinateConstraint( AtomID( rsd_type.atom_index( "NE1" ), resnum ), anchor_atom, rsd_i.xyz( "NE1" ),coord_cst_func) ));
+			cst.push_back( utility::pointer::make_shared< CoordinateConstraint >( AtomID( rsd_type.atom_index( "NE1" ), resnum ), anchor_atom, rsd_i.xyz( "NE1" ),coord_cst_func));
 			break;
 		case( aa_gln ) :
-			cst.push_back( core::scoring::constraints::ConstraintOP( new CoordinateConstraint( AtomID( rsd_type.atom_index( "OE1" ), resnum ), anchor_atom, rsd_i.xyz( "OE1" ),coord_cst_func ) ));
-			cst.push_back( core::scoring::constraints::ConstraintOP( new CoordinateConstraint( AtomID( rsd_type.atom_index( "NE2" ), resnum ), anchor_atom, rsd_i.xyz( "NE2" ),coord_cst_func ) ));
+			cst.push_back( utility::pointer::make_shared< CoordinateConstraint >( AtomID( rsd_type.atom_index( "OE1" ), resnum ), anchor_atom, rsd_i.xyz( "OE1" ),coord_cst_func ));
+			cst.push_back( utility::pointer::make_shared< CoordinateConstraint >( AtomID( rsd_type.atom_index( "NE2" ), resnum ), anchor_atom, rsd_i.xyz( "NE2" ),coord_cst_func ));
 			break;
 		case( aa_glu ) :
-			cst.push_back( core::scoring::constraints::ConstraintOP( new CoordinateConstraint( AtomID( rsd_type.atom_index( "OE1" ), resnum ), anchor_atom, rsd_i.xyz( "OE1" ),coord_cst_func ) ) );
-			cst.push_back( core::scoring::constraints::ConstraintOP( new CoordinateConstraint( AtomID( rsd_type.atom_index( "OE2" ), resnum ), anchor_atom, rsd_i.xyz( "OE2" ),coord_cst_func ) ) );
+			cst.push_back( utility::pointer::make_shared< CoordinateConstraint >( AtomID( rsd_type.atom_index( "OE1" ), resnum ), anchor_atom, rsd_i.xyz( "OE1" ),coord_cst_func ) );
+			cst.push_back( utility::pointer::make_shared< CoordinateConstraint >( AtomID( rsd_type.atom_index( "OE2" ), resnum ), anchor_atom, rsd_i.xyz( "OE2" ),coord_cst_func ) );
 			break;
 		case( aa_arg ) :
-			cst.push_back( core::scoring::constraints::ConstraintOP( new CoordinateConstraint( AtomID( rsd_type.atom_index( "NH1" ), resnum ), anchor_atom, rsd_i.xyz( "NH1" ),coord_cst_func ) ) );
-			cst.push_back( core::scoring::constraints::ConstraintOP( new CoordinateConstraint( AtomID( rsd_type.atom_index( "NH2" ), resnum ) , anchor_atom, rsd_i.xyz( "NH2" ),coord_cst_func  ) ) );
+			cst.push_back( utility::pointer::make_shared< CoordinateConstraint >( AtomID( rsd_type.atom_index( "NH1" ), resnum ), anchor_atom, rsd_i.xyz( "NH1" ),coord_cst_func ) );
+			cst.push_back( utility::pointer::make_shared< CoordinateConstraint >( AtomID( rsd_type.atom_index( "NH2" ), resnum ) , anchor_atom, rsd_i.xyz( "NH2" ),coord_cst_func  ) );
 			break;
 		case( aa_lys ) :
-			cst.push_back( core::scoring::constraints::ConstraintOP( new CoordinateConstraint( AtomID( rsd_type.atom_index( "NZ" ), resnum ), anchor_atom, rsd_i.xyz( "NZ" ),coord_cst_func ) ) );
+			cst.push_back( utility::pointer::make_shared< CoordinateConstraint >( AtomID( rsd_type.atom_index( "NZ" ), resnum ), anchor_atom, rsd_i.xyz( "NZ" ),coord_cst_func ) );
 			break;
 		case( aa_asn ) :
-			cst.push_back( core::scoring::constraints::ConstraintOP( new CoordinateConstraint( AtomID( rsd_type.atom_index( "OD1" ), resnum ), anchor_atom, rsd_i.xyz( "OD1" ),coord_cst_func ) ) );
-			cst.push_back( core::scoring::constraints::ConstraintOP( new CoordinateConstraint( AtomID( rsd_type.atom_index( "ND2" ), resnum ), anchor_atom, rsd_i.xyz( "ND2" ),coord_cst_func ) ) );
+			cst.push_back( utility::pointer::make_shared< CoordinateConstraint >( AtomID( rsd_type.atom_index( "OD1" ), resnum ), anchor_atom, rsd_i.xyz( "OD1" ),coord_cst_func ) );
+			cst.push_back( utility::pointer::make_shared< CoordinateConstraint >( AtomID( rsd_type.atom_index( "ND2" ), resnum ), anchor_atom, rsd_i.xyz( "ND2" ),coord_cst_func ) );
 			break;
 		case( aa_his ) :
-			cst.push_back( core::scoring::constraints::ConstraintOP( new CoordinateConstraint( AtomID( rsd_type.atom_index( "ND1" ), resnum ) , anchor_atom, rsd_i.xyz( "ND1" ),coord_cst_func ) ) );
-			cst.push_back( core::scoring::constraints::ConstraintOP( new CoordinateConstraint( AtomID( rsd_type.atom_index( "NE2" ), resnum ), anchor_atom, rsd_i.xyz( "NE2" ),coord_cst_func ) ) );
+			cst.push_back( utility::pointer::make_shared< CoordinateConstraint >( AtomID( rsd_type.atom_index( "ND1" ), resnum ) , anchor_atom, rsd_i.xyz( "ND1" ),coord_cst_func ) );
+			cst.push_back( utility::pointer::make_shared< CoordinateConstraint >( AtomID( rsd_type.atom_index( "NE2" ), resnum ), anchor_atom, rsd_i.xyz( "NE2" ),coord_cst_func ) );
 			break;
 		case( aa_asp ) :
-			cst.push_back( core::scoring::constraints::ConstraintOP( new CoordinateConstraint( AtomID( rsd_type.atom_index( "OD1" ), resnum ), anchor_atom, rsd_i.xyz( "OD1" ),coord_cst_func ) ) );
-			cst.push_back( core::scoring::constraints::ConstraintOP( new CoordinateConstraint( AtomID( rsd_type.atom_index( "OD2" ), resnum ), anchor_atom, rsd_i.xyz( "OD2" ),coord_cst_func ) ) );
+			cst.push_back( utility::pointer::make_shared< CoordinateConstraint >( AtomID( rsd_type.atom_index( "OD1" ), resnum ), anchor_atom, rsd_i.xyz( "OD1" ),coord_cst_func ) );
+			cst.push_back( utility::pointer::make_shared< CoordinateConstraint >( AtomID( rsd_type.atom_index( "OD2" ), resnum ), anchor_atom, rsd_i.xyz( "OD2" ),coord_cst_func ) );
 			break;
 		case( aa_met ) :
-			cst.push_back( core::scoring::constraints::ConstraintOP( new CoordinateConstraint( AtomID( rsd_type.atom_index( "SD" ), resnum ), anchor_atom, rsd_i.xyz( "SD" ),coord_cst_func ) ) );
+			cst.push_back( utility::pointer::make_shared< CoordinateConstraint >( AtomID( rsd_type.atom_index( "SD" ), resnum ), anchor_atom, rsd_i.xyz( "SD" ),coord_cst_func ) );
 			break;
 		case( aa_cys ) :
-			cst.push_back( core::scoring::constraints::ConstraintOP( new CoordinateConstraint( AtomID( rsd_type.atom_index( "SG" ), resnum ), anchor_atom, rsd_i.xyz( "SG" ), coord_cst_func ) ) );
+			cst.push_back( utility::pointer::make_shared< CoordinateConstraint >( AtomID( rsd_type.atom_index( "SG" ), resnum ), anchor_atom, rsd_i.xyz( "SG" ), coord_cst_func ) );
 			// Preserve the CB, since the chi angle is important in disulfides
-			cst.push_back( core::scoring::constraints::ConstraintOP( new CoordinateConstraint( AtomID( rsd_type.atom_index( "CB" ), resnum ), anchor_atom, rsd_i.xyz( "CB" ), coord_cst_func ) ) );
+			cst.push_back( utility::pointer::make_shared< CoordinateConstraint >( AtomID( rsd_type.atom_index( "CB" ), resnum ), anchor_atom, rsd_i.xyz( "CB" ), coord_cst_func ) );
 			break;
 		case( aa_thr ) :
-			cst.push_back( core::scoring::constraints::ConstraintOP( new CoordinateConstraint( AtomID( rsd_type.atom_index( "OG1" ), resnum ), anchor_atom, rsd_i.xyz( "OG1" ), coord_cst_func ) ) );
+			cst.push_back( utility::pointer::make_shared< CoordinateConstraint >( AtomID( rsd_type.atom_index( "OG1" ), resnum ), anchor_atom, rsd_i.xyz( "OG1" ), coord_cst_func ) );
 			break;
 		case( aa_ser ) :
-			cst.push_back( core::scoring::constraints::ConstraintOP( new CoordinateConstraint( AtomID( rsd_type.atom_index( "OG" ), resnum ), anchor_atom, rsd_i.xyz( "OG" ), coord_cst_func ) ) );
+			cst.push_back( utility::pointer::make_shared< CoordinateConstraint >( AtomID( rsd_type.atom_index( "OG" ), resnum ), anchor_atom, rsd_i.xyz( "OG" ), coord_cst_func ) );
 			break;
 		default :
 			TR.Warning << "Cannot add functional group coordinate constraints to residue type. Ignoring." << std::endl;

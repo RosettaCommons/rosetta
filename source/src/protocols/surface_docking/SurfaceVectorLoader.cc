@@ -131,7 +131,7 @@ SurfaceVectorLoader::provide_xml_schema(
 
 basic::resource_manager::ResourceLoaderOP SurfaceVectorLoaderCreator::create_resource_loader() const
 {
-	return basic::resource_manager::ResourceLoaderOP( new SurfaceVectorLoader() );
+	return utility::pointer::make_shared< SurfaceVectorLoader >();
 }
 
 std::string SurfaceVectorLoaderCreator::loader_type() const

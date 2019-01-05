@@ -446,7 +446,7 @@ public:
 
 	protocols::moves::MoverOP
 	fresh_instance() const override {
-		return protocols::moves::MoverOP( new PhProtocol );
+		return utility::pointer::make_shared< PhProtocol >();
 	}
 
 

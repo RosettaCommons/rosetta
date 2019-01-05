@@ -60,7 +60,7 @@ static basic::Tracer TR( "protocols.fldsgn.potentials.SetAACompositionPotential"
 /// @brief
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP SetAACompositionPotentialCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new SetAACompositionPotential );
+// XRW TEMP  return utility::pointer::make_shared< SetAACompositionPotential >();
 // XRW TEMP }
 
 
@@ -91,7 +91,7 @@ SetAACompositionPotential::~SetAACompositionPotential() = default;
 SetAACompositionPotential::MoverOP
 SetAACompositionPotential::clone() const
 {
-	return SetAACompositionPotential::MoverOP( new SetAACompositionPotential( *this ) );
+	return utility::pointer::make_shared< SetAACompositionPotential >( *this );
 }
 
 
@@ -99,7 +99,7 @@ SetAACompositionPotential::clone() const
 SetAACompositionPotential::MoverOP
 SetAACompositionPotential::fresh_instance() const
 {
-	return SetAACompositionPotential::MoverOP( new SetAACompositionPotential() );
+	return utility::pointer::make_shared< SetAACompositionPotential >();
 }
 
 /// @brief set parameters
@@ -228,7 +228,7 @@ std::string SetAACompositionPotentialCreator::keyname() const {
 
 protocols::moves::MoverOP
 SetAACompositionPotentialCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SetAACompositionPotential );
+	return utility::pointer::make_shared< SetAACompositionPotential >();
 }
 
 void SetAACompositionPotentialCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

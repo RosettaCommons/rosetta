@@ -287,8 +287,8 @@ ZnCoordinationScorer::ZnCoordinationScorer() : utility::pointer::ReferenceCount(
 	utility::vector1< core::Real > coeffs( 4 );
 	coeffs[ 1 ] = -2; coeffs[ 2 ] =  3; coeffs[ 3 ] =  0; coeffs[ 4 ] = -1;
 
-	ramp_to_zero_poly_ = numeric::Polynomial_1dOP( new numeric::Polynomial_1d(
-		"ramp", 0, 1, -1, 0, 1, 12, 4, coeffs ) );
+	ramp_to_zero_poly_ = utility::pointer::make_shared< numeric::Polynomial_1d >(
+		"ramp", 0, 1, -1, 0, 1, 12, 4, coeffs );
 }
 
 ZnCoordinationScorer::~ZnCoordinationScorer() = default;
@@ -550,7 +550,7 @@ void ZnCoordinationScorer::add_match_from_istream( std::istream & )
 
 void ZnCoordinationScorer::finalize_after_all_matches_added()
 {
-	hash_ = ZnHashOP( new ZnHash );
+	hash_ = utility::pointer::make_shared< ZnHash >();
 	hash_->set_uniform_bin_width( reach_ );
 	for ( Size ii = 1; ii <= zn_matches_.size(); ++ii ) {
 		hash_->add_zn_coordinate( zn_matches_[ ii ].zn_and_orbitals() );
@@ -1064,7 +1064,7 @@ ZnCoordinationConstraint::~ZnCoordinationConstraint() = default;
 
 core::scoring::constraints::ConstraintOP
 ZnCoordinationConstraint::clone() const {
-	return core::scoring::constraints::ConstraintOP( new ZnCoordinationConstraint( zn_score_ ) );
+	return utility::pointer::make_shared< ZnCoordinationConstraint >( zn_score_ );
 }
 
 bool

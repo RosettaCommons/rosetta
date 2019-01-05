@@ -74,7 +74,7 @@ SymFoldandDockMoveRbJumpMover::parse_my_tag(
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP SymFoldandDockMoveRbJumpMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new SymFoldandDockMoveRbJumpMover() );
+// XRW TEMP  return utility::pointer::make_shared< SymFoldandDockMoveRbJumpMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -104,7 +104,7 @@ std::string SymFoldandDockMoveRbJumpMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 SymFoldandDockMoveRbJumpMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SymFoldandDockMoveRbJumpMover );
+	return utility::pointer::make_shared< SymFoldandDockMoveRbJumpMover >();
 }
 
 void SymFoldandDockMoveRbJumpMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

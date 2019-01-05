@@ -96,11 +96,11 @@ void CreateTorsionConstraint::apply( core::pose::Pose & pose )
 			Size atomno2 = pose.residue_type(res2_[i_cst]).atom_index(atom2_[i_cst]);
 			Size atomno3 = pose.residue_type(res3_[i_cst]).atom_index(atom3_[i_cst]);
 			Size atomno4 = pose.residue_type(res4_[i_cst]).atom_index(atom4_[i_cst]);
-			pose.add_constraint( core::scoring::constraints::ConstraintCOP( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::DihedralConstraint(core::id::AtomID(atomno1,res1_[i_cst]),
+			pose.add_constraint( core::scoring::constraints::ConstraintCOP( utility::pointer::make_shared< core::scoring::constraints::DihedralConstraint >(core::id::AtomID(atomno1,res1_[i_cst]),
 				core::id::AtomID(atomno2,res2_[i_cst]),
 				core::id::AtomID(atomno3,res3_[i_cst]),
 				core::id::AtomID(atomno4,res4_[i_cst]),
-				func ) ) )
+				func ) )
 			);
 		}
 	}
@@ -134,12 +134,12 @@ CreateTorsionConstraint::parse_my_tag(
 	}
 }
 
-moves::MoverOP CreateTorsionConstraint::clone() const { return moves::MoverOP( new CreateTorsionConstraint( *this ) ); }
-moves::MoverOP CreateTorsionConstraint::fresh_instance() const { return moves::MoverOP( new CreateTorsionConstraint ); }
+moves::MoverOP CreateTorsionConstraint::clone() const { return utility::pointer::make_shared< CreateTorsionConstraint >( *this ); }
+moves::MoverOP CreateTorsionConstraint::fresh_instance() const { return utility::pointer::make_shared< CreateTorsionConstraint >(); }
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP CreateTorsionConstraintCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new CreateTorsionConstraint );
+// XRW TEMP  return utility::pointer::make_shared< CreateTorsionConstraint >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -195,7 +195,7 @@ std::string CreateTorsionConstraintCreator::keyname() const {
 
 protocols::moves::MoverOP
 CreateTorsionConstraintCreator::create_mover() const {
-	return protocols::moves::MoverOP( new CreateTorsionConstraint );
+	return utility::pointer::make_shared< CreateTorsionConstraint >();
 }
 
 void CreateTorsionConstraintCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

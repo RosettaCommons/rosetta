@@ -326,7 +326,7 @@ PDBPoseOutputter::list_options_read(
 
 PoseOutputterOP PDBPoseOutputterCreator::create_outputter() const
 {
-	return PoseOutputterOP( new PDBPoseOutputter );
+	return utility::pointer::make_shared< PDBPoseOutputter >();
 }
 
 std::string PDBPoseOutputterCreator::keyname() const

@@ -110,10 +110,10 @@ public:
 
 
 	filters::FilterOP clone() const override {
-		return filters::FilterOP( new PackerNeighborGraphFilter( *this ) ); }
+		return utility::pointer::make_shared< PackerNeighborGraphFilter >( *this ); }
 
 	filters::FilterOP fresh_instance() const override {
-		return filters::FilterOP( new PackerNeighborGraphFilter() ); }
+		return utility::pointer::make_shared< PackerNeighborGraphFilter >(); }
 
 
 	/// @brief Returns true if the given pose passes the filter, false otherwise.

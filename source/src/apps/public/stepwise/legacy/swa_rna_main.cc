@@ -654,7 +654,7 @@ post_rebuild_bulge_assembly() ///Oct 22, 2011
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	core::pose::MiniPose const mini_rebuild_pose = *( core::pose::MiniPoseOP( new core::pose::MiniPose( rebuild_pose ) ) );
+	core::pose::MiniPose const mini_rebuild_pose = *( utility::pointer::make_shared< core::pose::MiniPose >( rebuild_pose ) );
 	if ( mini_rebuild_pose.size() != total_res ) {
 		std::cout << "mini_rebuild_pose.size() = " << mini_rebuild_pose.size() << std::endl;
 		std::cout << "total_res = " << total_res << std::endl;

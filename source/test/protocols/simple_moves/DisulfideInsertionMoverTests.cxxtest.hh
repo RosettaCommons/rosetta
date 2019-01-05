@@ -43,7 +43,7 @@ public:
 
 	void setUp() {
 		protocols_init_with_additional_options("-max_dslf_energy 0");
-		test_edge_pose_ = core::pose::PoseOP( new core::pose::Pose() );
+		test_edge_pose_ = utility::pointer::make_shared< core::pose::Pose >();
 		core::import_pose::pose_from_file( *test_edge_pose_, "protocols/simple_moves/1A2A_A.pdb" , core::import_pose::PDB_file);
 
 
@@ -52,9 +52,9 @@ public:
 		core::Size const C_TER = test_edge_pose_->conformation().chain_end(PEP_CHAIN);
 		core::Size const N_TER_SHORT_PEP = N_TER+1;
 
-		test_shorter_pose_ = core::pose::PoseOP( new core::pose::Pose(*test_edge_pose_, N_TER_SHORT_PEP, C_TER) );
+		test_shorter_pose_ = utility::pointer::make_shared< core::pose::Pose >(*test_edge_pose_, N_TER_SHORT_PEP, C_TER);
 
-		inserter_edges_ = protocols::simple_moves::DisulfideInsertionMoverOP( new protocols::simple_moves::DisulfideInsertionMover() );
+		inserter_edges_ = utility::pointer::make_shared< protocols::simple_moves::DisulfideInsertionMover >();
 		inserter_edges_->set_peptide_chain(PEP_CHAIN);
 
 	}

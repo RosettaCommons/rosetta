@@ -78,7 +78,7 @@ public:
 		//kdrew: create new residue type set with oop patches included, cannot use chemical manager residue type set singleton because already initialized without oop patches
 		std::string const directory( basic::database::full_name( "chemical/residue_type_sets/fa_standard/" ) );
 		std::string const tag( "fa_standard" );
-		residue_set = chemical::GlobalResidueTypeSetOP( new chemical::GlobalResidueTypeSet( tag, directory ) );
+		residue_set = utility::pointer::make_shared< chemical::GlobalResidueTypeSet >( tag, directory );
 
 		// read pdb file
 		core::import_pose::pose_from_file( pose, *residue_set, "protocols/simple_moves/oop/oop_test.pdb" , core::import_pose::PDB_file);

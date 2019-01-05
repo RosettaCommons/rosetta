@@ -43,7 +43,7 @@ EnableMultiCoolAnnealer::~EnableMultiCoolAnnealer() = default;
 
 TaskOperationOP
 EnableMultiCoolAnnealer::clone() const {
-	return TaskOperationOP( new EnableMultiCoolAnnealer( *this ) );
+	return utility::pointer::make_shared< EnableMultiCoolAnnealer >( *this );
 }
 
 EnableMultiCoolAnnealer::EnableMultiCoolAnnealer( EnableMultiCoolAnnealer const & /*src*/ ) = default;
@@ -83,7 +83,7 @@ EnableMultiCoolAnnealer::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 core::pack::task::operation::TaskOperationOP
 EnableMultiCoolAnnealerCreator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new EnableMultiCoolAnnealer );
+	return utility::pointer::make_shared< EnableMultiCoolAnnealer >();
 }
 
 std::string

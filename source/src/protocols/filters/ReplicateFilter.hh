@@ -38,10 +38,10 @@ public:
 	core::Real compute( core::pose::Pose const & pose ) const;
 
 	protocols::filters::FilterOP clone() const override {
-		return protocols::filters::FilterOP( new ReplicateFilter( *this ) );
+		return utility::pointer::make_shared< ReplicateFilter >( *this );
 	}
 	protocols::filters::FilterOP fresh_instance() const override{
-		return protocols::filters::FilterOP( new ReplicateFilter() );
+		return utility::pointer::make_shared< ReplicateFilter >();
 	}
 
 	~ReplicateFilter() override= default;

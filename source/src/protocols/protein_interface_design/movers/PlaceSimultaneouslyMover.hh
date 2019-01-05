@@ -63,7 +63,7 @@ public:
 	PlaceSimultaneouslyMover();
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override {
-		return protocols::moves::MoverOP( new PlaceSimultaneouslyMover );
+		return utility::pointer::make_shared< PlaceSimultaneouslyMover >();
 	}
 
 	void apply( core::pose::Pose & pose ) override;

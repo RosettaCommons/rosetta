@@ -54,7 +54,7 @@ OrbitalsScoreCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const
 {
-	return methods::EnergyMethodOP( new OrbitalsScore(options) );
+	return utility::pointer::make_shared< OrbitalsScore >(options);
 }
 
 ScoreTypes
@@ -74,7 +74,7 @@ static basic::Tracer TR( "core.scoring.orbitals_hpol" );
 //Because we don't really use the energy method options anyways
 
 OrbitalsScore::OrbitalsScore() :
-	parent( methods::EnergyMethodCreatorOP( new OrbitalsScoreCreator ) ),
+	parent( utility::pointer::make_shared< OrbitalsScoreCreator >() ),
 	lookup_table_(core::scoring::ScoringManager::get_instance()->get_OrbitalsLookupTable()),
 	max_orbital_dist_squared_(9),
 	max_dist_squared_(36)
@@ -85,7 +85,7 @@ OrbitalsScore::OrbitalsScore() :
 }
 
 OrbitalsScore::OrbitalsScore( methods::EnergyMethodOptions const & ) :
-	parent( methods::EnergyMethodCreatorOP( new OrbitalsScoreCreator ) ),
+	parent( utility::pointer::make_shared< OrbitalsScoreCreator >() ),
 	lookup_table_(core::scoring::ScoringManager::get_instance()->get_OrbitalsLookupTable()),
 	max_orbital_dist_squared_(9),
 	max_dist_squared_(36)
@@ -99,7 +99,7 @@ OrbitalsScore::OrbitalsScore( methods::EnergyMethodOptions const & ) :
 methods::EnergyMethodOP
 OrbitalsScore::clone() const
 {
-	return methods::EnergyMethodOP( new OrbitalsScore(*this) );
+	return utility::pointer::make_shared< OrbitalsScore >(*this);
 }
 
 void OrbitalsScore::setup_for_scoring(pose::Pose & pose, ScoreFunction const & ) const

@@ -63,7 +63,7 @@ methods::EnergyMethodOP
 MPEnvEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new MPEnvEnergy );
+	return utility::pointer::make_shared< MPEnvEnergy >();
 }
 
 /// @brief Return Appropriate Score Type Name
@@ -76,7 +76,7 @@ MPEnvEnergyCreator::score_types_for_method() const {
 
 /// @brief Default Constructor
 MPEnvEnergy::MPEnvEnergy() :
-	parent( EnergyMethodCreatorOP( new MPEnvEnergyCreator ) ),
+	parent( utility::pointer::make_shared< MPEnvEnergyCreator >() ),
 	mpdata_( ScoringManager::get_instance()->get_MembraneData() )
 	// penalties_( true )
 {}
@@ -85,7 +85,7 @@ MPEnvEnergy::MPEnvEnergy() :
 EnergyMethodOP
 MPEnvEnergy::clone() const
 {
-	return EnergyMethodOP( new MPEnvEnergy );
+	return utility::pointer::make_shared< MPEnvEnergy >();
 }
 
 /// Scoring Methods //////////////////////

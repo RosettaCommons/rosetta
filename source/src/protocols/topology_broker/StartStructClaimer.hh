@@ -71,7 +71,7 @@ public:
 	StartStructClaimerOP shared_from_this() { return utility::pointer::dynamic_pointer_cast<StartStructClaimer>( FragmentClaimer::shared_from_this() ); }
 
 	TopologyClaimerOP clone() const override {
-		return TopologyClaimerOP( new StartStructClaimer( *this ) );
+		return utility::pointer::make_shared< StartStructClaimer >( *this );
 	}
 
 	/// @brief type() is specifying the output name of the TopologyClaimer

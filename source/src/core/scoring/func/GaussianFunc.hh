@@ -50,7 +50,7 @@ public:
 	{}
 
 	/// @brief returns a clone of this GaussianFunc
-	FuncOP clone() const { return FuncOP( new GaussianFunc( *this ) ); }
+	FuncOP clone() const { return utility::pointer::make_shared< GaussianFunc >( *this ); }
 
 	virtual bool operator == ( Func const & other ) const;
 	virtual bool same_type_as_me( Func const & other ) const;

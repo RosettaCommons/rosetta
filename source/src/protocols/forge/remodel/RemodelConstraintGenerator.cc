@@ -239,7 +239,7 @@ GenericRemodelConstraintGenerator::GenericRemodelConstraintGenerator(
 protocols::moves::MoverOP
 GenericRemodelConstraintGenerator::clone() const
 {
-	return protocols::moves::MoverOP( new GenericRemodelConstraintGenerator( *this ) );
+	return utility::pointer::make_shared< GenericRemodelConstraintGenerator >( *this );
 }
 
 void

@@ -55,7 +55,7 @@ using namespace utility::tag;
 core::pack::task::operation::TaskOperationOP
 RestrictToInterfaceVectorOperationCreator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new RestrictToInterfaceVectorOperation );
+	return utility::pointer::make_shared< RestrictToInterfaceVectorOperation >();
 }
 
 void RestrictToInterfaceVectorOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -159,7 +159,7 @@ RestrictToInterfaceVectorOperation::~RestrictToInterfaceVectorOperation() = defa
 /// @details be warned if you use clone that you'll not get a new interface calculator
 core::pack::task::operation::TaskOperationOP RestrictToInterfaceVectorOperation::clone() const
 {
-	return core::pack::task::operation::TaskOperationOP( new RestrictToInterfaceVectorOperation( *this ) );
+	return utility::pointer::make_shared< RestrictToInterfaceVectorOperation >( *this );
 }
 
 

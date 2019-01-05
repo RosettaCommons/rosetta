@@ -29,7 +29,7 @@ int main( int argc, char* argv[] )
 	try {
 		devel::init(argc, argv);
 
-		protocols::jd2::JobDistributor::get_instance()->go(protocols::moves::MoverOP( new protocols::floppy_tail::FloppyTailMover ));
+		protocols::jd2::JobDistributor::get_instance()->go(utility::pointer::make_shared< protocols::floppy_tail::FloppyTailMover >());
 
 		TR << "************************d**o**n**e**************************************" << std::endl;
 	} catch (utility::excn::Exception const & e ) {

@@ -80,7 +80,7 @@ void* graphics_main(protocols::moves::MoverOP mover) {
 
 void* StarAbinitio_main(void*) {
 	check_required();
-	return graphics_main(protocols::moves::MoverOP( new StarAbinitio() ));
+	return graphics_main(utility::pointer::make_shared< StarAbinitio >());
 }
 
 }  // namespace star

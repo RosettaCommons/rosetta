@@ -250,11 +250,11 @@ void FragmentPicker::fragment_contacts( core::Size const fragment_size, utility:
 	for ( it=contact_types_.begin(); it != ctend; ++it ) {
 		if ( *it == CEN ) {
 			std::pair<core::Real,ContactType> p(0,*it);
-			contact_counts[p] = protocols::frag_picker::ContactCountsOP( new ContactCounts() );
+			contact_counts[p] = utility::pointer::make_shared< ContactCounts >();
 		} else {
 			for ( core::Size i=1; i<=contacts_dist_cutoffs_squared_.size(); ++i ) {
 				std::pair<core::Real,ContactType> p(contacts_dist_cutoffs_squared_[i],*it);
-				contact_counts[p] = protocols::frag_picker::ContactCountsOP( new ContactCounts() );
+				contact_counts[p] = utility::pointer::make_shared< ContactCounts >();
 			}
 		}
 	}
@@ -467,7 +467,7 @@ void FragmentPicker::nonlocal_pairs_at_positions( utility::vector1<core::Size> c
 										has_good_constraint = true;
 									}
 								}
-								if ( dist_squared <= cutoff_dist_squared ) contacts.push_back(ContactOP( new Contact( qpi, qpj, dist_squared, *it ) ));
+								if ( dist_squared <= cutoff_dist_squared ) contacts.push_back(utility::pointer::make_shared< Contact >( qpi, qpj, dist_squared, *it ));
 							}
 							qpj++;
 						}
@@ -499,11 +499,11 @@ void FragmentPicker::nonlocal_pairs( core::Size const fragment_size, utility::ve
 	bool has_native = false;
 	core::pose::PoseOP nativePose;
 	if ( option[in::file::native].user() ) {
-		nativePose = core::pose::PoseOP( new core::pose::Pose );
+		nativePose = utility::pointer::make_shared< core::pose::Pose >();
 		core::import_pose::pose_from_file(*nativePose, option[in::file::native](), core::import_pose::PDB_file);
 		has_native = true;
 	} else if ( option[in::file::s].user() ) {
-		nativePose = core::pose::PoseOP( new core::pose::Pose );
+		nativePose = utility::pointer::make_shared< core::pose::Pose >();
 		core::import_pose::pose_from_file(*nativePose, option[in::file::s]()[1], core::import_pose::PDB_file);
 		has_native = true;
 	}
@@ -589,11 +589,11 @@ void FragmentPicker::nonlocal_pairs( core::Size const fragment_size, utility::ve
 	for ( it=contact_types_.begin(), end =contact_types_.end(); it != end; ++it ) {
 		if ( *it == CEN ) {
 			std::pair<core::Real,ContactType> p(0,*it);
-			contact_counts[p] = protocols::frag_picker::ContactCountsOP( new ContactCounts() );
+			contact_counts[p] = utility::pointer::make_shared< ContactCounts >();
 		} else {
 			for ( core::Size i=1; i<=contacts_dist_cutoffs_squared_.size(); ++i ) {
 				std::pair<core::Real,ContactType> p(contacts_dist_cutoffs_squared_[i],*it);
-				contact_counts[p] = protocols::frag_picker::ContactCountsOP( new ContactCounts() );
+				contact_counts[p] = utility::pointer::make_shared< ContactCounts >();
 			}
 		}
 	}
@@ -1469,7 +1469,7 @@ void FragmentPicker::parse_command_line() {
 #endif
 	// score with multiple threads
 	while ( max_threads_ > scores_.size() )
-			scores_.push_back(scores::FragmentScoreManagerOP( new scores::FragmentScoreManager() ));
+			scores_.push_back(utility::pointer::make_shared< scores::FragmentScoreManager >());
 	while ( max_threads_ > candidates_sinks_.size() ) {
 		CandidatesSink storage;
 		candidates_sinks_.push_back(storage);
@@ -1603,12 +1603,12 @@ void FragmentPicker::parse_command_line() {
 	tr.Info << "Creating fragment scoring scheme for the selection step" << std::endl;
 	FragmentScoreManagerOP selection_scoring;
 	if ( option[frags::picking::selecting_scorefxn].user() ) {
-		selection_scoring = FragmentScoreManagerOP( new FragmentScoreManager() );
+		selection_scoring = utility::pointer::make_shared< FragmentScoreManager >();
 		selection_scoring->create_scores(option[frags::picking::selecting_scorefxn](), get_self_ptr());
-		selector_ = FragmentSelectingRuleOP( new CustomScoreSelector(n_frags_, selection_scoring) );
+		selector_ = utility::pointer::make_shared< CustomScoreSelector >(n_frags_, selection_scoring);
 	} else {
 		// note: The selector is based on the first score manager so the score managers have to have the same scoring scheme! -dk
-		selector_ = FragmentSelectingRuleOP( new BestTotalScoreSelector(n_frags_, get_score_manager()) );
+		selector_ = utility::pointer::make_shared< BestTotalScoreSelector >(n_frags_, get_score_manager());
 	}
 
 	//-------- collector & selector set up
@@ -1667,7 +1667,7 @@ void FragmentPicker::parse_command_line() {
 	for ( core::Size i = 1; i <= contact_types.size(); ++i ) {
 		contact_types_.insert(contact_type(contact_types[i]));
 		if ( contact_type(contact_types[i]) == CEN ) {
-			sidechain_contact_dist_cutoff_ = SidechainContactDistCutoffOP( new SidechainContactDistCutoff( option[ frags::contacts::centroid_distance_scale_factor ]() ) );
+			sidechain_contact_dist_cutoff_ = utility::pointer::make_shared< SidechainContactDistCutoff >( option[ frags::contacts::centroid_distance_scale_factor ]() );
 		}
 	}
 	// sequence separation
@@ -1727,7 +1727,7 @@ void FragmentPicker::set_query_seq(core::sequence::SequenceProfileOP query_seque
 /// @brief sets the query sequence
 void FragmentPicker::set_query_seq(std::string & query_sequence) {
 	if ( query_profile_ == nullptr ) {
-		query_profile_ = core::sequence::SequenceProfileOP( new core::sequence::SequenceProfile() );
+		query_profile_ = utility::pointer::make_shared< core::sequence::SequenceProfile >();
 		tr.Warning << "CAUTION: No sequence profile supplied. Profile-dependant options/scoring will not work." << std::endl;
 	}
 	query_profile_->sequence(query_sequence);
@@ -1942,12 +1942,12 @@ void FragmentPicker::parse_quota_command_line() {
 }
 
 void FragmentPicker::read_vall( utility::vector1< std::string > const & fns ) {
-	chunks_ = VallProviderOP( new VallProvider() );
+	chunks_ = utility::pointer::make_shared< VallProvider >();
 	chunks_->vallChunksFromLibraries(fns);
 }
 
 void FragmentPicker::read_vall( std::string const & fn ) {
-	chunks_ = VallProviderOP( new VallProvider() );
+	chunks_ = utility::pointer::make_shared< VallProvider >();
 	chunks_->vallChunksFromLibrary(fn);
 }
 
@@ -2061,7 +2061,7 @@ utility::vector1<ConstantLengthFragSetOP> FragmentPicker::getFragSet(int residue
 					core::Real omega        = r->omega();
 
 					if ( i == 1 ) {
-						current_fragment = FragDataOP( new AnnotatedFragData( pdbid, index ) );
+						current_fragment = utility::pointer::make_shared< AnnotatedFragData >( pdbid, index );
 					}
 					utility::pointer::shared_ptr< BBTorsionSRFD > res_torsions( new BBTorsionSRFD(3,ss,aa) ); // 3 protein torsions
 					res_torsions->set_torsion   ( 1, phi   ); // ugly numbers 1-3, but pose.set_phi also uses explicit numbers

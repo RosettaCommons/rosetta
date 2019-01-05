@@ -97,8 +97,8 @@ BackrubMover::BackrubMover() :
 
 BackrubMover::BackrubMover( BackrubMover const & ) = default;
 
-protocols::moves::MoverOP BackrubMover::clone() const { return protocols::moves::MoverOP( new BackrubMover( *this ) ); }
-protocols::moves::MoverOP BackrubMover::fresh_instance() const { return protocols::moves::MoverOP( new BackrubMover ); }
+protocols::moves::MoverOP BackrubMover::clone() const { return utility::pointer::make_shared< BackrubMover >( *this ); }
+protocols::moves::MoverOP BackrubMover::fresh_instance() const { return utility::pointer::make_shared< BackrubMover >(); }
 
 void
 init_backrub_mover_with_options(
@@ -171,7 +171,7 @@ BackrubMover::initialize_simulation(
 	if ( !(num_segments() && get_input_pose() && get_input_pose()->fold_tree() == pose.fold_tree()) ) {
 
 		if ( !(get_input_pose() && get_input_pose()->fold_tree() == pose.fold_tree()) ) {
-			set_input_pose(PoseCOP( PoseOP( new core::pose::Pose(pose) ) ));
+			set_input_pose(utility::pointer::make_shared< core::pose::Pose >(pose));
 		}
 
 		// this code shouldn't get called when the parser is in use
@@ -209,7 +209,7 @@ BackrubMover::apply(
 	if ( !(num_segments() && get_input_pose() && get_input_pose()->fold_tree() == pose.fold_tree()) ) {
 
 		if ( !(get_input_pose() && get_input_pose()->fold_tree() == pose.fold_tree()) ) {
-			set_input_pose(PoseCOP( PoseOP( new core::pose::Pose(pose) ) ));
+			set_input_pose(utility::pointer::make_shared< core::pose::Pose >(pose));
 		}
 
 		clear_segments();
@@ -1271,7 +1271,7 @@ std::string BackrubMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 BackrubMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new BackrubMover );
+	return utility::pointer::make_shared< BackrubMover >();
 }
 
 void BackrubMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

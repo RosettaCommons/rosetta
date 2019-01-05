@@ -58,13 +58,13 @@ ResidueLabelsToPymolSelectionMover::parse_my_tag(
 protocols::moves::MoverOP
 ResidueLabelsToPymolSelectionMover::clone() const
 {
-	return protocols::moves::MoverOP( new ResidueLabelsToPymolSelectionMover( *this ) );
+	return utility::pointer::make_shared< ResidueLabelsToPymolSelectionMover >( *this );
 }
 
 protocols::moves::MoverOP
 ResidueLabelsToPymolSelectionMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new ResidueLabelsToPymolSelectionMover );
+	return utility::pointer::make_shared< ResidueLabelsToPymolSelectionMover >();
 }
 
 void
@@ -127,7 +127,7 @@ std::string ResidueLabelsToPymolSelectionMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 ResidueLabelsToPymolSelectionMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ResidueLabelsToPymolSelectionMover );
+	return utility::pointer::make_shared< ResidueLabelsToPymolSelectionMover >();
 }
 
 void ResidueLabelsToPymolSelectionMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

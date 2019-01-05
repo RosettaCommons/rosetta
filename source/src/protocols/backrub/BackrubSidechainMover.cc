@@ -70,8 +70,8 @@ namespace backrub {
 BackrubSidechainMover::BackrubSidechainMover(
 ) :
 	protocols::canonical_sampling::ThermodynamicMover(),
-	backrub_mover_(BackrubMoverOP( new BackrubMover )),
-	sidechain_mover_(protocols::simple_moves::sidechain_moves::SidechainMoverOP( new protocols::simple_moves::sidechain_moves::SidechainMover )),
+	backrub_mover_(utility::pointer::make_shared< BackrubMover >()),
+	sidechain_mover_(utility::pointer::make_shared< protocols::simple_moves::sidechain_moves::SidechainMover >()),
 	record_statistics_(false),
 	statistics_filename_("brsc_stats.txt")
 {
@@ -108,13 +108,13 @@ BackrubSidechainMover::~BackrubSidechainMover()= default;
 protocols::moves::MoverOP
 BackrubSidechainMover::clone() const
 {
-	return protocols::moves::MoverOP( new BackrubSidechainMover( *this ) );
+	return utility::pointer::make_shared< BackrubSidechainMover >( *this );
 }
 
 protocols::moves::MoverOP
 BackrubSidechainMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new BackrubSidechainMover );
+	return utility::pointer::make_shared< BackrubSidechainMover >();
 }
 
 void
@@ -147,7 +147,7 @@ BackrubSidechainMover::parse_my_tag(
 
 	} else {
 
-		new_task_factory->push_back( core::pack::task::operation::TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ) );
+		new_task_factory->push_back( utility::pointer::make_shared< core::pack::task::operation::RestrictToRepacking >() );
 	}
 
 	set_task_factory(new_task_factory);
@@ -169,10 +169,10 @@ BackrubSidechainMover::update_segments(
 )
 {
 	if ( !(backrub_mover_->get_input_pose() && backrub_mover_->get_input_pose()->fold_tree() == pose.fold_tree()) ) {
-		backrub_mover_->set_input_pose(core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose(pose) ) ));
+		backrub_mover_->set_input_pose(utility::pointer::make_shared< core::pose::Pose >(pose));
 	}
 
-	backrub_mover_->set_input_pose(core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose(pose) ) ));
+	backrub_mover_->set_input_pose(utility::pointer::make_shared< core::pose::Pose >(pose));
 	backrub_mover_->clear_segments();
 	backrub_mover_->add_mainchain_segments( pose );
 
@@ -302,7 +302,7 @@ BackrubSidechainMover::set_task_factory(
 	core::pack::task::TaskFactoryOP task_factory
 )
 {
-	task_factory->push_back( core::pack::task::operation::TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ) );
+	task_factory->push_back( utility::pointer::make_shared< core::pack::task::operation::RestrictToRepacking >() );
 	sidechain_mover_->set_task_factory(task_factory);
 }
 
@@ -584,7 +584,7 @@ std::string BackrubSidechainMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 BackrubSidechainMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new BackrubSidechainMover );
+	return utility::pointer::make_shared< BackrubSidechainMover >();
 }
 
 void BackrubSidechainMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

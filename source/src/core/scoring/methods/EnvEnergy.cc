@@ -47,7 +47,7 @@ methods::EnergyMethodOP
 EnvEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new EnvEnergy );
+	return utility::pointer::make_shared< EnvEnergy >();
 }
 
 ScoreTypes
@@ -61,7 +61,7 @@ EnvEnergyCreator::score_types_for_method() const {
 
 /// c-tor
 EnvEnergy::EnvEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new EnvEnergyCreator ) ),
+	parent( utility::pointer::make_shared< EnvEnergyCreator >() ),
 	potential_( ScoringManager::get_instance()->get_EnvPairPotential() )
 {}
 
@@ -70,7 +70,7 @@ EnvEnergy::EnvEnergy() :
 EnergyMethodOP
 EnvEnergy::clone() const
 {
-	return EnergyMethodOP( new EnvEnergy );
+	return utility::pointer::make_shared< EnvEnergy >();
 }
 
 

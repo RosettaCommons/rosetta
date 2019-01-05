@@ -356,17 +356,17 @@ StoreCompoundTaskMover::parse_my_tag(
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP StoreCompoundTaskMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new StoreCompoundTaskMover );
+// XRW TEMP  return utility::pointer::make_shared< StoreCompoundTaskMover >();
 // XRW TEMP }
 
 protocols::moves::MoverOP
 StoreCompoundTaskMover::clone() const {
-	return protocols::moves::MoverOP( new StoreCompoundTaskMover( *this ) );
+	return utility::pointer::make_shared< StoreCompoundTaskMover >( *this );
 }
 
 protocols::moves::MoverOP
 StoreCompoundTaskMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new StoreCompoundTaskMover );
+	return utility::pointer::make_shared< StoreCompoundTaskMover >();
 }
 
 std::string StoreCompoundTaskMover::get_name() const {
@@ -433,7 +433,7 @@ std::string StoreCompoundTaskMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 StoreCompoundTaskMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new StoreCompoundTaskMover );
+	return utility::pointer::make_shared< StoreCompoundTaskMover >();
 }
 
 void StoreCompoundTaskMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

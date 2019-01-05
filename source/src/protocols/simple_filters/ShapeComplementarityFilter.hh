@@ -71,10 +71,10 @@ public:// constructor/destructor
 
 public:// virtual constructor
 	// @brief make clone
-	filters::FilterOP clone() const override { return filters::FilterOP( new ShapeComplementarityFilter( *this ) ); }
+	filters::FilterOP clone() const override { return utility::pointer::make_shared< ShapeComplementarityFilter >( *this ); }
 
 	// @brief make fresh instance
-	filters::FilterOP fresh_instance() const override { return filters::FilterOP( new ShapeComplementarityFilter() ); }
+	filters::FilterOP fresh_instance() const override { return utility::pointer::make_shared< ShapeComplementarityFilter >(); }
 
 public:// accessor
 	// @brief get name of this filter

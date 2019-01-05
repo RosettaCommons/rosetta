@@ -63,7 +63,7 @@ DatabaseResourceLocatorCreator::~DatabaseResourceLocatorCreator() = default;
 
 ResourceLocatorOP
 DatabaseResourceLocatorCreator::create_resource_locator() const {
-	return ResourceLocatorOP( new DatabaseResourceLocator );
+	return utility::pointer::make_shared< DatabaseResourceLocator >();
 }
 
 string

@@ -137,7 +137,7 @@ AddCavitiesMover::add_suckers( Pose & pose ) {
 	using namespace basic;
 	using namespace basic::datacache;
 
-	pose.data().set( core::pose::datacache::CacheableDataType::POSE_BEFORE_CAVITIES_ADDED, DataCache_CacheableData::DataOP( new CacheablePoseRawPtr( PoseOP( new Pose(pose))) ) );
+	pose.data().set( core::pose::datacache::CacheableDataType::POSE_BEFORE_CAVITIES_ADDED, utility::pointer::make_shared< CacheablePoseRawPtr >( utility::pointer::make_shared< Pose >(pose)) );
 
 	CavBalls cbs = get_cavities(pose, 10.0, min_nb_, 3.0 );
 	int Ncb = max_cav_;
@@ -163,10 +163,10 @@ AddCavitiesMover::add_suckers( Pose & pose ) {
 		pose.append_residue_by_jump( *sucker, closest.rsd() );
 		int suck_resno = pose.size();
 
-		pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new CoordinateConstraint( AtomID(1,suck_resno),
+		pose.add_constraint( scoring::constraints::ConstraintCOP( utility::pointer::make_shared< CoordinateConstraint >( AtomID(1,suck_resno),
 			AtomID(1,virt_resno),
 			sucker->xyz(1),
-			func ) ) ) );
+			func ) ) );
 		++count;
 	}
 	//std::cerr << "added " << count << " suckers" << std::endl;

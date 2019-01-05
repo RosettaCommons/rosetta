@@ -58,12 +58,12 @@ KeepRegionMover::KeepRegionMover(KeepRegionMover const & ) = default;
 
 protocols::moves::MoverOP
 KeepRegionMover::clone() const {
-	return protocols::moves::MoverOP( new KeepRegionMover(*this) );
+	return utility::pointer::make_shared< KeepRegionMover >(*this);
 }
 
 protocols::moves::MoverOP
 KeepRegionMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new KeepRegionMover );
+	return utility::pointer::make_shared< KeepRegionMover >();
 }
 
 // XRW TEMP std::string
@@ -73,7 +73,7 @@ KeepRegionMover::fresh_instance() const {
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP KeepRegionMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new KeepRegionMover );
+// XRW TEMP  return utility::pointer::make_shared< KeepRegionMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -191,7 +191,7 @@ std::string KeepRegionMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 KeepRegionMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new KeepRegionMover );
+	return utility::pointer::make_shared< KeepRegionMover >();
 }
 
 void KeepRegionMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

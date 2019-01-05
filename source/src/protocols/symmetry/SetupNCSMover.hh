@@ -40,7 +40,7 @@ public:
 	NCSResMapping( core::pose::Pose &pose );
 
 	basic::datacache::CacheableDataOP clone() const  override{
-		return basic::datacache::CacheableDataOP( new NCSResMapping(*this) );
+		return utility::pointer::make_shared< NCSResMapping >(*this);
 	}
 
 	utility::vector1< core::Size > get_equiv( core::Size resid );
@@ -95,7 +95,7 @@ public:
 	// clear all groups
 	// Undefined, commenting out to fix PyRosetta build   void clear();
 
-	moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new SetupNCSMover( *this ) ) ); }
+	moves::MoverOP clone() const override { return( utility::pointer::make_shared< SetupNCSMover >( *this ) ); }
 
 	void apply( core::pose::Pose & pose ) override;
 

@@ -41,8 +41,8 @@ public:
 		using namespace core::scoring::func;
 
 		SumFuncOP sumfunc( new SumFunc() ); // serialize this through a pointer to the base class
-		sumfunc->add_func( FuncOP( new HarmonicFunc( 1.2, 2.3 )));
-		sumfunc->add_func( FuncOP( new PeriodicFunc(1.2,2.3,3.4,4.5)));
+		sumfunc->add_func( utility::pointer::make_shared< HarmonicFunc >( 1.2, 2.3 ));
+		sumfunc->add_func( utility::pointer::make_shared< PeriodicFunc >(1.2,2.3,3.4,4.5));
 		FuncOP instance = sumfunc;
 
 		std::ostringstream oss;

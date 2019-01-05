@@ -84,7 +84,7 @@ static basic::Tracer TR( "protocols.evolution.NucleotideMutation" );
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP NucleotideMutationCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new NucleotideMutation );
+// XRW TEMP  return utility::pointer::make_shared< NucleotideMutation >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -414,7 +414,7 @@ NucleotideMutation::apply( core::pose::Pose & pose )
 			}
 			TR<<"Effectuating mutation of residue " << pose.residue( target_aa_no ).name3() << " " << target_aa_no <<" to ";
 			protocols::minimization_packing::PackRotamersMoverOP pack;
-			pack = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover( scorefxn(), mutate_residue ) );
+			pack = utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >( scorefxn(), mutate_residue );
 			pack->apply( pose );
 			TR << pose.residue( target_aa_no ).name3() << " in pose. " << std::endl;
 
@@ -471,7 +471,7 @@ NucleotideMutation::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &d
 
 protocols::moves::MoverOP
 NucleotideMutation::clone() const {
-	return( protocols::moves::MoverOP( new NucleotideMutation( *this ) ));
+	return( utility::pointer::make_shared< NucleotideMutation >( *this ));
 }
 
 core::scoring::ScoreFunctionOP
@@ -536,7 +536,7 @@ std::string NucleotideMutationCreator::keyname() const {
 
 protocols::moves::MoverOP
 NucleotideMutationCreator::create_mover() const {
-	return protocols::moves::MoverOP( new NucleotideMutation );
+	return utility::pointer::make_shared< NucleotideMutation >();
 }
 
 void NucleotideMutationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

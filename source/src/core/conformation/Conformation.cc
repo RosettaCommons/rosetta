@@ -116,8 +116,8 @@ Conformation::~Conformation()
 
 Conformation::Conformation() :
 	utility::pointer::ReferenceCount(),
-	fold_tree_( FoldTreeOP( new FoldTree ) ),
-	atom_tree_( AtomTreeOP( new AtomTree ) ),
+	fold_tree_( utility::pointer::make_shared< FoldTree >() ),
+	atom_tree_( utility::pointer::make_shared< AtomTree >() ),
 	parameters_set_(), //Empty list by default; almost no memory overhead for non-parametric Conformation objects.
 	contains_carbohydrate_residues_( false) ,
 	residue_coordinates_need_updating_( false ),
@@ -141,8 +141,8 @@ Conformation::Conformation( Conformation const & src ) :
 	residue_type_sets_ = src.residue_type_sets_;
 
 	// kinematics
-	fold_tree_ = FoldTreeOP( new FoldTree( *src.fold_tree_ ) );
-	atom_tree_ = AtomTreeOP( new AtomTree( *src.atom_tree_ ) );
+	fold_tree_ = utility::pointer::make_shared< FoldTree >( *src.fold_tree_ );
+	atom_tree_ = utility::pointer::make_shared< AtomTree >( *src.atom_tree_ );
 	atom_tree_->set_weak_pointer_to_self( atom_tree_ );
 
 	// parametric conformations
@@ -159,7 +159,7 @@ Conformation::Conformation( Conformation const & src ) :
 	// membranes
 	using namespace core::conformation::membrane;
 	if ( src.membrane_info_ != nullptr ) {
-		membrane_info_ = MembraneInfoOP( new MembraneInfo( *src.membrane_info_ ) );
+		membrane_info_ = utility::pointer::make_shared< MembraneInfo >( *src.membrane_info_ );
 	} else if ( membrane_info_ != nullptr ) {
 		membrane_info_ = nullptr;
 	}
@@ -283,7 +283,7 @@ Conformation::detached_copy( Conformation const & src )
 ConformationOP
 Conformation::clone() const
 {
-	return ConformationOP( new Conformation( *this ) );
+	return utility::pointer::make_shared< Conformation >( *this );
 }
 
 // clear data
@@ -509,7 +509,7 @@ Conformation::modifiable_residue_type_set_for_conf( core::chemical::TypeSetMode 
 	}
 	// We're still using the global version - make a new PoseResidueTypeSet of the appropriate type.
 	ResidueTypeSetCOP global_rts( ChemicalManager::get_instance()->residue_type_set( mode )  );
-	return PoseResidueTypeSetOP( new PoseResidueTypeSet( global_rts ) );
+	return utility::pointer::make_shared< PoseResidueTypeSet >( global_rts );
 }
 
 /// @brief Reset the Conformation-specific PoseResidueTypeSet for the appropriat mode to the given RTS.
@@ -790,7 +790,7 @@ Conformation::glycan_tree_set() const {
 void
 Conformation::setup_glycan_trees(){
 	if ( ! tree_set_observer_ ) {
-		tree_set_observer_ = carbohydrates::GlycanTreeSetObserverOP( new carbohydrates::GlycanTreeSetObserver( *this ) );
+		tree_set_observer_ = utility::pointer::make_shared< carbohydrates::GlycanTreeSetObserver >( *this );
 		tree_set_observer_->attach_to(*this);
 	} else {
 		TR << "GlycanTreeSet already present. Nothing to be done." << std::endl;
@@ -4800,9 +4800,9 @@ Conformation::add_pseudobond(
 
 	if ( residues_[ lr ]->is_pseudo_bonded( *residues_[ ur ] ) ) {
 		PseudoBondCollectionCOP existing_pbs = residues_[ lr ]->get_pseudobonds_to_residue( ur );
-		new_pbs = PseudoBondCollectionOP( new PseudoBondCollection( *existing_pbs ) );
+		new_pbs = utility::pointer::make_shared< PseudoBondCollection >( *existing_pbs );
 	} else {
-		new_pbs = PseudoBondCollectionOP( new PseudoBondCollection() );
+		new_pbs = utility::pointer::make_shared< PseudoBondCollection >();
 	}
 	PseudoBond new_pb;
 	new_pb.lr( lr ); new_pb.lr_conn_id( lr_connid );

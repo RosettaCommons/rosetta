@@ -89,13 +89,13 @@ AtomInResidueAtomInResiduePairFeatures::write_atom_in_residue_pairs_table_schema
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
-	Column residue_type1("residue_type1", DbDataTypeOP( new DbText() ));
-	Column atom_type1("atom_type1", DbDataTypeOP( new DbText() ));
-	Column residue_type2("residue_type2", DbDataTypeOP( new DbText() ));
-	Column atom_type2("atom_type2", DbDataTypeOP( new DbText() ));
-	Column distance_bin("distance_bin", DbDataTypeOP( new DbText() ));
-	Column count("count", DbDataTypeOP( new DbInteger() ));
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >());
+	Column residue_type1("residue_type1", utility::pointer::make_shared< DbText >());
+	Column atom_type1("atom_type1", utility::pointer::make_shared< DbText >());
+	Column residue_type2("residue_type2", utility::pointer::make_shared< DbText >());
+	Column atom_type2("atom_type2", utility::pointer::make_shared< DbText >());
+	Column distance_bin("distance_bin", utility::pointer::make_shared< DbText >());
+	Column count("count", utility::pointer::make_shared< DbInteger >());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -253,7 +253,7 @@ std::string AtomInResidueAtomInResiduePairFeaturesCreator::type_name() const {
 
 protocols::features::FeaturesReporterOP
 AtomInResidueAtomInResiduePairFeaturesCreator::create_features_reporter() const {
-	return protocols::features::FeaturesReporterOP( new AtomInResidueAtomInResiduePairFeatures );
+	return utility::pointer::make_shared< AtomInResidueAtomInResiduePairFeatures >();
 }
 
 void AtomInResidueAtomInResiduePairFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

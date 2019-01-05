@@ -50,7 +50,7 @@ GridBaseOP SolvationGridCreator::create_grid(utility::tag::TagCOP tag) const
 
 GridBaseOP SolvationGridCreator::create_grid() const
 {
-	return GridBaseOP( new SolvationGrid() );
+	return utility::pointer::make_shared< SolvationGrid >();
 }
 
 void SolvationGridCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -71,7 +71,7 @@ SolvationGrid::SolvationGrid() :SingleGrid("SolvationGrid")
 SolvationGrid::~SolvationGrid() = default;
 
 GridBaseOP SolvationGrid::clone() const {
-	return GridBaseOP( new SolvationGrid( *this ) );
+	return utility::pointer::make_shared< SolvationGrid >( *this );
 }
 
 void SolvationGrid::refresh(core::pose::Pose const & pose, core::Vector const & /*center*/)

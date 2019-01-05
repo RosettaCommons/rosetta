@@ -52,7 +52,7 @@ using namespace utility::tag;
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP AddCompositionConstraintMoverCreator::create_mover() const
 // XRW TEMP {
-// XRW TEMP  return protocols::moves::MoverOP( new AddCompositionConstraintMover );
+// XRW TEMP  return utility::pointer::make_shared< AddCompositionConstraintMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -86,11 +86,11 @@ AddCompositionConstraintMover::~AddCompositionConstraintMover()= default;
 
 /// @brief Copy this object and return a pointer to the copy.
 ///
-protocols::moves::MoverOP AddCompositionConstraintMover::clone() const { return protocols::moves::MoverOP( new protocols::aa_composition::AddCompositionConstraintMover( *this ) ); }
+protocols::moves::MoverOP AddCompositionConstraintMover::clone() const { return utility::pointer::make_shared< protocols::aa_composition::AddCompositionConstraintMover >( *this ); }
 
 /// @brief Create a new object of this type and return a pointer to it.
 ///
-protocols::moves::MoverOP AddCompositionConstraintMover::fresh_instance() const { return protocols::moves::MoverOP( new AddCompositionConstraintMover ); }
+protocols::moves::MoverOP AddCompositionConstraintMover::fresh_instance() const { return utility::pointer::make_shared< AddCompositionConstraintMover >(); }
 
 /// @brief Returns the name of this mover ("AddCompositionConstraintMover").
 ///
@@ -166,7 +166,7 @@ AddCompositionConstraintMover::parse_my_tag(
 void
 AddCompositionConstraintMover::create_constraint_from_file( std::string const &filename ) {
 	runtime_assert_string_msg( !constraint_, "Error in protocols::aa_composition::AddCompositionConstraintMover::create_constraint_from_file():  The constraint object already has been created!" );
-	constraint_ = core::scoring::aa_composition_energy::AACompositionConstraintOP( new core::scoring::aa_composition_energy::AACompositionConstraint() );
+	constraint_ = utility::pointer::make_shared< core::scoring::aa_composition_energy::AACompositionConstraint >();
 	constraint_->initialize_from_file( filename );
 	if ( TR.visible() ) {
 		TR << "Initialized AACompositionConstraint object from file " << filename << "." << std::endl;
@@ -182,7 +182,7 @@ AddCompositionConstraintMover::create_constraint_from_file_contents(
 	std::string const &filecontents
 ) {
 	runtime_assert_string_msg( !constraint_, "Error in protocols::aa_composition::AddCompositionConstraintMover::create_constraint_from_filecontents():  The constraint object already has been created!" );
-	constraint_ = core::scoring::aa_composition_energy::AACompositionConstraintOP( new core::scoring::aa_composition_energy::AACompositionConstraint() );
+	constraint_ = utility::pointer::make_shared< core::scoring::aa_composition_energy::AACompositionConstraint >();
 	constraint_->initialize_from_file_contents( filecontents );
 	if ( TR.visible() ) {
 		TR << "Initialized AACompositionConstraint object from file contents:\n" << filecontents << std::endl;
@@ -232,7 +232,7 @@ std::string AddCompositionConstraintMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 AddCompositionConstraintMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new AddCompositionConstraintMover );
+	return utility::pointer::make_shared< AddCompositionConstraintMover >();
 }
 
 void AddCompositionConstraintMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

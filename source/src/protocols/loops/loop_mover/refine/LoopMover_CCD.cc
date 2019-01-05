@@ -171,7 +171,7 @@ LoopMover_Refine_CCD::show(std::ostream & output) const
 
 //clone
 protocols::moves::MoverOP LoopMover_Refine_CCD::clone() const {
-	return protocols::moves::MoverOP( new LoopMover_Refine_CCD(*this) );
+	return utility::pointer::make_shared< LoopMover_Refine_CCD >(*this);
 }
 
 
@@ -180,7 +180,7 @@ void LoopMover_Refine_CCD::set_default_settings()
 	redesign_loop_ = false;
 	packing_isolated_to_active_loops_ = false;
 	flank_residue_min_ = false; // added by JQX
-	move_map_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap );
+	move_map_ = utility::pointer::make_shared< core::kinematics::MoveMap >();
 	inner_cycles_ = max_inner_cycles_;
 	current_cycle_number_ = 0;
 	original_fold_tree_ = nullptr;
@@ -238,7 +238,7 @@ void LoopMover_Refine_CCD::set_task_factory(
 {
 	// make local, non-const copy from const input
 	runtime_assert( task_factory_in != nullptr );
-	task_factory_ = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory( *task_factory_in ) );
+	task_factory_ = utility::pointer::make_shared< core::pack::task::TaskFactory >( *task_factory_in );
 }
 
 core::pack::task::TaskFactoryCOP LoopMover_Refine_CCD::get_task_factory() const { return task_factory_; }
@@ -297,7 +297,7 @@ void LoopMover_Refine_CCD::apply( core::pose::Pose & pose )
 	/// must be called once the Pose has become available.
 	resolve_loop_indices( pose );
 
-	if ( ! get_native_pose() ) set_native_pose( core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose( pose ) ) ) );
+	if ( ! get_native_pose() ) set_native_pose( utility::pointer::make_shared< core::pose::Pose >( pose ) );
 	if ( use_loops_from_observer_cache() ) this->set_loops_from_pose_observer_cache( pose );
 
 	setup_foldtree_and_add_cutpoint_variants( pose );
@@ -388,7 +388,7 @@ basic::Tracer & LoopMover_Refine_CCD::tr() const
 // XRW TEMP LoopMover_Refine_CCDCreator::~LoopMover_Refine_CCDCreator() {}
 
 // XRW TEMP moves::MoverOP LoopMover_Refine_CCDCreator::create_mover() const {
-// XRW TEMP  return moves::MoverOP( new LoopMover_Refine_CCD() );
+// XRW TEMP  return utility::pointer::make_shared< LoopMover_Refine_CCD >();
 // XRW TEMP }
 
 // XRW TEMP std::string LoopMover_Refine_CCDCreator::keyname() const {
@@ -417,7 +417,7 @@ void LoopMover_Refine_CCD::setup_foldtree_and_add_cutpoint_variants( core::pose:
 {
 	if ( set_fold_tree_from_loops_ ) {
 		core::kinematics::FoldTree f_new;
-		original_fold_tree_ = core::kinematics::FoldTreeOP( new core::kinematics::FoldTree( pose.fold_tree() ) );
+		original_fold_tree_ = utility::pointer::make_shared< core::kinematics::FoldTree >( pose.fold_tree() );
 		loops::fold_tree_from_loops( pose, *( this->loops() ), f_new);
 		pose.fold_tree( f_new );
 	}
@@ -434,10 +434,10 @@ core::pack::task::PackerTaskOP LoopMover_Refine_CCD::get_packer_task( core::pose
 		using namespace core::pack::task::operation;
 		using simple_task_operations::RestrictToLoopsAndNeighbors;
 		using simple_task_operations::RestrictToLoopsAndNeighborsOP;
-		task_factory_ = core::pack::task::TaskFactoryOP( new TaskFactory );
-		task_factory_->push_back( TaskOperationCOP( new InitializeFromCommandline ) );
-		task_factory_->push_back( TaskOperationCOP( new IncludeCurrent ) );
-		task_factory_->push_back( TaskOperationCOP( new NoRepackDisulfides ) );
+		task_factory_ = utility::pointer::make_shared< TaskFactory >();
+		task_factory_->push_back( utility::pointer::make_shared< InitializeFromCommandline >() );
+		task_factory_->push_back( utility::pointer::make_shared< IncludeCurrent >() );
+		task_factory_->push_back( utility::pointer::make_shared< NoRepackDisulfides >() );
 
 		RestrictToLoopsAndNeighborsOP restrict_to_loops_and_neighbors( new RestrictToLoopsAndNeighbors() );
 
@@ -527,7 +527,7 @@ std::string LoopMover_Refine_CCDCreator::keyname() const {
 
 protocols::moves::MoverOP
 LoopMover_Refine_CCDCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LoopMover_Refine_CCD );
+	return utility::pointer::make_shared< LoopMover_Refine_CCD >();
 }
 
 void LoopMover_Refine_CCDCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

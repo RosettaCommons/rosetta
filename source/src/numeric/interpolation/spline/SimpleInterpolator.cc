@@ -50,7 +50,7 @@ SimpleInterpolator::SimpleInterpolator() :Interpolator()
 
 InterpolatorOP
 SimpleInterpolator::clone() const {
-	return InterpolatorOP( new SimpleInterpolator( *this ) );
+	return utility::pointer::make_shared< SimpleInterpolator >( *this );
 }
 
 

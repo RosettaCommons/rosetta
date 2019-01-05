@@ -140,7 +140,7 @@ PreloadedPDB::loadSilentFile( std::string const & filename ) {
 			center_residues(pdb->calpha_vector_, pdb->num_residue_);
 
 			// Start a new pdb
-			pdb = SimPDBOP( new SimPDB(num_residue_) );
+			pdb = utility::pointer::make_shared< SimPDB >(num_residue_);
 			isNewPDB = true;
 			numResidue = 0;
 
@@ -198,7 +198,7 @@ PreloadedPDB::loadSilentFile( std::string const & filename ) {
 	* same filename is entered twice into filename2PDB, the name will not
 	* be duplicated here.
 	*/
-	names_ = StringVecOP( new StringVec );
+	names_ = utility::pointer::make_shared< StringVec >();
 	for ( auto const & elem : filename2PDB ) {
 		names_->push_back( elem.first );
 	}
@@ -226,7 +226,7 @@ PreloadedPDB::loadPDBFromList( std::string const & filename )
 	*/
 	//mNames = new std::vector<char *>(0);
 	std::string line;
-	names_ = StringVecOP( new StringVec );
+	names_ = utility::pointer::make_shared< StringVec >();
 	while ( std::getline( input, line ) ) {
 		// Line has only one entry in this format: the PDB file name.
 		names_->push_back(line);

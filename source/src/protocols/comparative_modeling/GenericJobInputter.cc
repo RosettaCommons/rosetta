@@ -92,7 +92,7 @@ void GenericJobInputter::fill_jobs( protocols::jd2::JobsContainer & jobs ){
 	protocols::jd2::InnerJobOP ijob( new protocols::jd2::InnerJob( basic::options::option[ generic_job_name ].value() , nstruct ) );
 
 	for ( core::Size index = 1; index <= nstruct; ++index ) {
-		jobs.push_back( protocols::jd2::JobOP( new protocols::jd2::Job( ijob, index ) ) );
+		jobs.push_back( utility::pointer::make_shared< protocols::jd2::Job >( ijob, index ) );
 		tr.Trace << "create job index " << index << std::endl;
 	}
 }
@@ -112,7 +112,7 @@ GenericJobInputterCreator::keyname() const
 
 protocols::jd2::JobInputterOP
 GenericJobInputterCreator::create_JobInputter() const {
-	return protocols::jd2::JobInputterOP( new GenericJobInputter );
+	return utility::pointer::make_shared< GenericJobInputter >();
 }
 
 }// comparative_modeling

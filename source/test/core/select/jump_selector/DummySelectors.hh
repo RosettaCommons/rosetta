@@ -26,7 +26,7 @@ public:
 	OddJumpSelector(OddJumpSelector const &)
 	{}
 
-	JumpSelectorOP clone() const { return JumpSelectorOP( new OddJumpSelector(*this) ); }
+	JumpSelectorOP clone() const { return utility::pointer::make_shared< OddJumpSelector >(*this); }
 
 	virtual
 	JumpSubset
@@ -54,7 +54,7 @@ public:
 		y_( src.y_ )
 	{}
 
-	JumpSelectorOP clone() const { return JumpSelectorOP( new XModYJumpSelector(*this) ); }
+	JumpSelectorOP clone() const { return utility::pointer::make_shared< XModYJumpSelector >(*this); }
 
 
 	virtual

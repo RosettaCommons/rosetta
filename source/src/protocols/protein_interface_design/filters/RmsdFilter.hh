@@ -42,7 +42,7 @@ public:
 	bool apply( core::pose::Pose const & pose ) const override;
 	protocols::filters::FilterOP clone() const override;
 	protocols::filters::FilterOP fresh_instance() const override {
-		return protocols::filters::FilterOP( new RmsdFilter() );
+		return utility::pointer::make_shared< RmsdFilter >();
 	}
 	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
 	void reference_pose( core::pose::PoseOP ref ) { reference_pose_ = ref; }

@@ -69,7 +69,7 @@ AtomCountFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataM
 }
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP AtomCountFilterCreator::create_filter() const { return protocols::filters::FilterOP( new AtomCountFilter ); }
+// XRW TEMP AtomCountFilterCreator::create_filter() const { return utility::pointer::make_shared< AtomCountFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP AtomCountFilterCreator::keyname() const { return "AtomCount"; }
@@ -100,7 +100,7 @@ std::string AtomCountFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 AtomCountFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new AtomCountFilter );
+	return utility::pointer::make_shared< AtomCountFilter >();
 }
 
 void AtomCountFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

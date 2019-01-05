@@ -299,18 +299,18 @@ InterfacePackingFilter::parse_my_tag( utility::tag::TagCOP tag,
 
 protocols::filters::FilterOP
 InterfacePackingFilter::fresh_instance() const{
-	return protocols::filters::FilterOP( new InterfacePackingFilter() );
+	return utility::pointer::make_shared< InterfacePackingFilter >();
 }
 
 InterfacePackingFilter::~InterfacePackingFilter()= default;
 
 protocols::filters::FilterOP
 InterfacePackingFilter::clone() const{
-	return protocols::filters::FilterOP( new InterfacePackingFilter( *this ) );
+	return utility::pointer::make_shared< InterfacePackingFilter >( *this );
 }
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP InterfacePackingFilterCreator::create_filter() const { return protocols::filters::FilterOP( new InterfacePackingFilter ); }
+// XRW TEMP InterfacePackingFilterCreator::create_filter() const { return utility::pointer::make_shared< InterfacePackingFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP InterfacePackingFilterCreator::keyname() const { return "InterfacePacking"; }
@@ -343,7 +343,7 @@ std::string InterfacePackingFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 InterfacePackingFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new InterfacePackingFilter );
+	return utility::pointer::make_shared< InterfacePackingFilter >();
 }
 
 void InterfacePackingFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

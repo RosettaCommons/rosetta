@@ -65,7 +65,7 @@ public:
 		core::pose::Pose input_pose;
 		core::io::pdb::build_pose_from_pdb_as_is( input_pose, "protocols/optimize_weights/1UAD.wt_complex.pdb" );
 		// obliterate pdb info so that residues are numbered sanely
-		input_pose.pdb_info( core::pose::PDBInfoOP( new core::pose::PDBInfo( input_pose ) ) );
+		input_pose.pdb_info( utility::pointer::make_shared< core::pose::PDBInfo >( input_pose ) );
 
 		PreProlineFilter prepro;
 		prepro.set_use_statistical_potential( false );
@@ -108,7 +108,7 @@ public:
 		core::pose::Pose input_pose;
 		core::io::pdb::build_pose_from_pdb_as_is( input_pose, "protocols/optimize_weights/1UAD.wt_complex.pdb" );
 		// obliterate pdb info so that residues are numbered sanely
-		input_pose.pdb_info( core::pose::PDBInfoOP( new core::pose::PDBInfo( input_pose ) ) );
+		input_pose.pdb_info( utility::pointer::make_shared< core::pose::PDBInfo >( input_pose ) );
 
 		PreProlineFilter prepro;
 		prepro.set_use_statistical_potential( true );

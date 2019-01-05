@@ -55,7 +55,7 @@ public:
 
 	//clone
 	TopologyClaimerOP clone() const override {
-		return TopologyClaimerOP( new FibrilModelingClaimer( *this ) );
+		return utility::pointer::make_shared< FibrilModelingClaimer >( *this );
 	}
 
 	/// @brief type() is specifying the output name of the TopologyClaimer

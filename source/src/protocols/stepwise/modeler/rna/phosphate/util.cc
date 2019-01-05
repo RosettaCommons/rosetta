@@ -187,7 +187,7 @@ core::scoring::ScoreFunctionCOP
 get_phosphate_scorefxn( core::scoring::methods::EnergyMethodOptions const & options ) {
 	using namespace scoring;
 	ScoreFunctionOP phosphate_scorefxn;
-	phosphate_scorefxn = ScoreFunctionOP( new ScoreFunction ); // creating anew seems wasteful, but having problems with setting from input scorefxn.
+	phosphate_scorefxn = utility::pointer::make_shared< ScoreFunction >(); // creating anew seems wasteful, but having problems with setting from input scorefxn.
 	phosphate_scorefxn->set_energy_method_options( options );
 	phosphate_scorefxn->set_weight( scoring::fa_atr, 0.1); // argh seems to trigger etable?
 	phosphate_scorefxn->set_weight( scoring::fa_rep, 0.1);

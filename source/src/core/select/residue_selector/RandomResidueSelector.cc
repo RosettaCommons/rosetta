@@ -65,7 +65,7 @@ RandomResidueSelector::RandomResidueSelector():
 ResidueSelectorOP
 RandomResidueSelector::clone() const
 {
-	return ResidueSelectorOP( new RandomResidueSelector( *this ) );
+	return utility::pointer::make_shared< RandomResidueSelector >( *this );
 }
 
 RandomResidueSelector::RandomResidueSelector( ResidueSelectorCOP selector, Size const num_residues ):
@@ -209,7 +209,7 @@ RandomResidueSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & x
 ResidueSelectorOP
 RandomResidueSelectorCreator::create_residue_selector() const
 {
-	return ResidueSelectorOP( new RandomResidueSelector );
+	return utility::pointer::make_shared< RandomResidueSelector >();
 }
 
 std::string

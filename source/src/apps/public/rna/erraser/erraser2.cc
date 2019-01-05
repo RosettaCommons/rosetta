@@ -652,7 +652,7 @@ mover::StepWiseMasterMover configure_master_mover( ScoreFunctionOP const & score
 	// run StepWiseMasterMover::resample_full_model
 	mover::StepWiseMasterMover master_mover( scorefxn, options );
 	// This is essential for rmsd_screen
-	master_mover.set_native_pose( pose::PoseCOP( new pose::Pose( start_pose ) ) );
+	master_mover.set_native_pose( utility::pointer::make_shared< pose::Pose >( start_pose ) );
 	return master_mover;
 }
 

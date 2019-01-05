@@ -125,7 +125,7 @@ Loops::~Loops()= default;
 
 LoopsOP
 Loops::clone() const {
-	return LoopsOP( new Loops( *this ));
+	return utility::pointer::make_shared< Loops >( *this );
 }
 
 
@@ -491,7 +491,7 @@ Loops::LoopList const & Loops::loops() const { return loops_; }
 
 LoopsFileIOOP Loops::get_loop_file_reader()
 {
-	return LoopsFileIOOP( new LoopsFileIO );
+	return utility::pointer::make_shared< LoopsFileIO >();
 }
 
 Loops::LoopList Loops::setup_loops_from_data( SerializedLoopList const & loop_data )

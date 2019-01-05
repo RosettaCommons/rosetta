@@ -58,7 +58,7 @@ namespace protocols {
 namespace features {
 
 // XRW TEMP FeaturesReporterOP RuntimeFeaturesCreator::create_features_reporter() const { // {{{1
-// XRW TEMP  return FeaturesReporterOP( new RuntimeFeatures );
+// XRW TEMP  return utility::pointer::make_shared< RuntimeFeatures >();
 // XRW TEMP }
 
 // XRW TEMP string RuntimeFeaturesCreator::type_name() const { // {{{1
@@ -77,9 +77,9 @@ vector1 <string> RuntimeFeatures::features_reporter_dependencies() const { // {{
 void RuntimeFeatures::write_schema_to_db(sessionOP db_session) const { // {{{1
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt ));
-	Column timestamp("timestamp", DbDataTypeOP( new DbText(20) ));
-	Column elapsed_time("elapsed_time", DbDataTypeOP( new DbInteger ));
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >());
+	Column timestamp("timestamp", utility::pointer::make_shared< DbText >(20));
+	Column elapsed_time("elapsed_time", utility::pointer::make_shared< DbInteger >());
 
 	PrimaryKey primary_key(struct_id);
 	ForeignKey foreign_key(struct_id, "structures", "struct_id", true);
@@ -143,7 +143,7 @@ std::string RuntimeFeaturesCreator::type_name() const {
 
 protocols::features::FeaturesReporterOP
 RuntimeFeaturesCreator::create_features_reporter() const {
-	return protocols::features::FeaturesReporterOP( new RuntimeFeatures );
+	return utility::pointer::make_shared< RuntimeFeatures >();
 }
 
 void RuntimeFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

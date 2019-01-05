@@ -105,7 +105,7 @@ UnfoldedStateEnergyCalculatorMover::UnfoldedStateEnergyCalculatorMover(
 protocols::moves::MoverOP
 UnfoldedStateEnergyCalculatorMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new UnfoldedStateEnergyCalculatorMover( *this ) );
+	return utility::pointer::make_shared< UnfoldedStateEnergyCalculatorMover >( *this );
 }
 
 void

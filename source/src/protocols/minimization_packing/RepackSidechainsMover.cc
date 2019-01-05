@@ -59,7 +59,7 @@ RepackSidechainsMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 RepackSidechainsMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new RepackSidechainsMover );
+	return utility::pointer::make_shared< RepackSidechainsMover >();
 }
 
 std::string
@@ -154,14 +154,14 @@ RepackSidechainsMover::parse_score_function(
 protocols::moves::MoverOP
 RepackSidechainsMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new RepackSidechainsMover );
+	return utility::pointer::make_shared< RepackSidechainsMover >();
 }
 
 /// @brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
 RepackSidechainsMover::clone() const
 {
-	return protocols::moves::MoverOP( new protocols::minimization_packing::RepackSidechainsMover( *this ) );
+	return utility::pointer::make_shared< protocols::minimization_packing::RepackSidechainsMover >( *this );
 }
 
 // setters

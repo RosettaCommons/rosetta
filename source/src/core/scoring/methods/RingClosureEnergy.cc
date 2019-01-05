@@ -50,7 +50,7 @@ methods::EnergyMethodOP
 RingClosureEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new RingClosureEnergy );
+	return utility::pointer::make_shared< RingClosureEnergy >();
 }
 
 ScoreTypes
@@ -63,7 +63,7 @@ RingClosureEnergyCreator::score_types_for_method() const {
 /// @brief Constructor.
 ///
 RingClosureEnergy::RingClosureEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new RingClosureEnergyCreator ) ),
+	parent( utility::pointer::make_shared< RingClosureEnergyCreator >() ),
 	std_dev_sq_(basic::options::option[ basic::options::OptionKeys::score::ring_close_shadow_constraint ])
 {
 	std_dev_sq_ = std_dev_sq_*std_dev_sq_; //Since we'll only ever use the square of this value, let's store the square of the value, calculated once, rather than recalculating it a zillion times.
@@ -72,7 +72,7 @@ RingClosureEnergy::RingClosureEnergy() :
 /// @brief Copy constructor.
 ///
 RingClosureEnergy::RingClosureEnergy( RingClosureEnergy const &src ):
-	parent( methods::EnergyMethodCreatorOP( new RingClosureEnergyCreator ) ),
+	parent( utility::pointer::make_shared< RingClosureEnergyCreator >() ),
 	std_dev_sq_( src.std_dev_sq_ )
 {}
 
@@ -81,7 +81,7 @@ RingClosureEnergy::RingClosureEnergy( RingClosureEnergy const &src ):
 EnergyMethodOP
 RingClosureEnergy::clone() const
 {
-	return EnergyMethodOP( new RingClosureEnergy );
+	return utility::pointer::make_shared< RingClosureEnergy >();
 }
 
 /////////////////////////////////////////////////////////////////////////////

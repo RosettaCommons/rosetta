@@ -124,7 +124,7 @@ core::pack::task::TaskFactoryOP setup_tf( core::pack::task::TaskFactoryOP task_f
 			task_factory_->push_back( top );
 		}
 	} else {
-		task_factory_->push_back( TaskOperationCOP( new pack::task::operation::InitializeFromCommandline ) );
+		task_factory_->push_back( utility::pointer::make_shared< pack::task::operation::InitializeFromCommandline >() );
 	}
 
 	return task_factory_;

@@ -50,7 +50,7 @@ InsertPoseIntoPoseMover::InsertPoseIntoPoseMover(
 	end_(res_end),
 	copy_pdbinfo_(copy_pdbinfo)
 {
-	src_pose_ = core::pose::PoseCOP( new core::pose::Pose(src_pose) );
+	src_pose_ = utility::pointer::make_shared< core::pose::Pose >(src_pose);
 }
 
 
@@ -61,7 +61,7 @@ InsertPoseIntoPoseMover::~InsertPoseIntoPoseMover()= default;
 
 void
 InsertPoseIntoPoseMover::src_pose(const core::pose::Pose& src_pose){
-	src_pose_ = core::pose::PoseOP( new core::pose::Pose(src_pose) );
+	src_pose_ = utility::pointer::make_shared< core::pose::Pose >(src_pose);
 }
 
 void
@@ -91,7 +91,7 @@ InsertPoseIntoPoseMover::end() const {
 
 protocols::moves::MoverOP
 InsertPoseIntoPoseMover::clone() const {
-	return protocols::moves::MoverOP( new InsertPoseIntoPoseMover(*this) );
+	return utility::pointer::make_shared< InsertPoseIntoPoseMover >(*this);
 }
 
 void
@@ -112,7 +112,7 @@ InsertPoseIntoPoseMover::parse_my_tag(
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP InsertPoseIntoPoseMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new InsertPoseIntoPoseMover );
+// XRW TEMP  return utility::pointer::make_shared< InsertPoseIntoPoseMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -168,7 +168,7 @@ std::string InsertPoseIntoPoseMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 InsertPoseIntoPoseMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new InsertPoseIntoPoseMover );
+	return utility::pointer::make_shared< InsertPoseIntoPoseMover >();
 }
 
 void InsertPoseIntoPoseMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

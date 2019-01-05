@@ -152,14 +152,14 @@ RollMover::parse_my_tag(
 	if ( tag->hasOption("stop_res") ) {
 		stop_res_ = core::pose::parse_resnum( tag->getOption<std::string>("stop_res") );
 	} else {
-		stop_res_ = core::pose::ResidueIndexDescriptionCOP( new core::pose::ResidueIndexDescriptionLastResidue );
+		stop_res_ = utility::pointer::make_shared< core::pose::ResidueIndexDescriptionLastResidue >();
 	}
 
 	if ( tag->hasOption("chain") ) {
 		if ( tag->hasOption("start_res") || tag->hasOption("stop_res") ) utility_exit_with_message("cannot specify start/stop res AND chain!");
 		auto const chain = tag->getOption<core::Size>("chain");
-		start_res_ = core::pose::ResidueIndexDescriptionCOP( new core::pose::ResidueIndexDescriptionChainEnd( chain, /*chain_start=*/ true ) );
-		stop_res_ = core::pose::ResidueIndexDescriptionCOP( new core::pose::ResidueIndexDescriptionChainEnd( chain, /*chain_start=*/ false ) );
+		start_res_ = utility::pointer::make_shared< core::pose::ResidueIndexDescriptionChainEnd >( chain, /*chain_start=*/ true );
+		stop_res_ = utility::pointer::make_shared< core::pose::ResidueIndexDescriptionChainEnd >( chain, /*chain_start=*/ false );
 	}
 
 	random_roll_       = tag->getOption<bool>("random_roll",false);
@@ -240,21 +240,21 @@ RollMover::parse_my_tag(
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP RollMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new RollMover );
+// XRW TEMP  return utility::pointer::make_shared< RollMover >();
 // XRW TEMP }
 
 /// @brief required in the context of the parser/scripting scheme
 moves::MoverOP
 RollMover::fresh_instance() const
 {
-	return moves::MoverOP( new RollMover );
+	return utility::pointer::make_shared< RollMover >();
 }
 
 /// @brief required in the context of the parser/scripting scheme
 moves::MoverOP
 RollMover::clone() const
 {
-	return moves::MoverOP( new RollMover( *this ) );
+	return utility::pointer::make_shared< RollMover >( *this );
 }
 
 /// @brief
@@ -332,7 +332,7 @@ std::string RollMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 RollMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new RollMover );
+	return utility::pointer::make_shared< RollMover >();
 }
 
 void RollMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

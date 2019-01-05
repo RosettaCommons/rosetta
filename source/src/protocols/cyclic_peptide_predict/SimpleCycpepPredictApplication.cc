@@ -1502,7 +1502,7 @@ SimpleCycpepPredictApplication::run() const {
 		if ( native_pose_ ) {
 			native_pose=native_pose_->clone();
 		} else {
-			native_pose=core::pose::PoseOP(new core::pose::Pose);
+			native_pose=utility::pointer::make_shared< core::pose::Pose >();
 			TR << "Importing native structure from " << native_filename_ << "." << std::endl;
 			import_and_set_up_native ( native_filename_, native_pose, resnames.size() );
 		}
@@ -1727,7 +1727,7 @@ SimpleCycpepPredictApplication::run() const {
 			if ( silentlist_out_ ) {
 				silentlist_->push_back(ss);
 				core::Size curjob( summarylist_->size() + 1 );
-				summarylist_->push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary( my_rank_, curjob, pose->energies().total_energy(), (native_pose ? native_rmsd : 0), static_cast< core::Size >( std::round(-1.0*final_hbonds) ), cis_peptide_bonds ) ) );
+				summarylist_->push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >( my_rank_, curjob, pose->energies().total_energy(), (native_pose ? native_rmsd : 0), static_cast< core::Size >( std::round(-1.0*final_hbonds) ), cis_peptide_bonds ) );
 			}
 		} else { //if pdb output
 			char outstring[512];
@@ -4082,9 +4082,9 @@ SimpleCycpepPredictApplication::re_append_linker_residues(
 		newpose->append_residue_by_jump( pose->residue(lastres), linker_positions[i][1] ); //Jump from the first residue that links this linker, to the linker itself.
 		protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelperOP helper;
 		if ( linker_name == "TBM" ) {
-			helper = protocols::cyclic_peptide::crosslinker::TBMB_HelperOP( new protocols::cyclic_peptide::crosslinker::TBMB_Helper );
+			helper = utility::pointer::make_shared< protocols::cyclic_peptide::crosslinker::TBMB_Helper >();
 		} else if ( linker_name == "TMA" ) {
-			helper = protocols::cyclic_peptide::crosslinker::TMA_HelperOP( new protocols::cyclic_peptide::crosslinker::TMA_Helper );
+			helper = utility::pointer::make_shared< protocols::cyclic_peptide::crosslinker::TMA_Helper >();
 		}
 
 		utility::vector1< core::Size > res_indices(3);

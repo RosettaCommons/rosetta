@@ -121,9 +121,9 @@ DockingHighRes::DockingHighRes( DockingHighRes const & old_instance ) :
 
 	movable_jumps_ = old_instance.movable_jumps_;
 	if ( old_instance.tf_ ) {
-		tf_ = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory( *old_instance.tf_ ) );
+		tf_ = utility::pointer::make_shared< core::pack::task::TaskFactory >( *old_instance.tf_ );
 	}
-	tf2_ = protocols::docking::DockTaskFactoryOP( new DockTaskFactory( *old_instance.tf2_ ) );
+	tf2_ = utility::pointer::make_shared< DockTaskFactory >( *old_instance.tf2_ );
 }
 
 void DockingHighRes::init( DockJumps const movable_jumps )
@@ -136,7 +136,7 @@ void DockingHighRes::init( DockJumps const movable_jumps )
 
 	movable_jumps_ = movable_jumps;
 	tf_ = nullptr; //might need this
-	tf2_ = protocols::docking::DockTaskFactoryOP( new DockTaskFactory() );
+	tf2_ = utility::pointer::make_shared< DockTaskFactory >();
 }
 
 //destructor
@@ -145,7 +145,7 @@ DockingHighRes::~DockingHighRes() = default;
 void
 DockingHighRes::set_task_factory( core::pack::task::TaskFactoryCOP tf )
 {
-	tf_ = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory( *tf ) );
+	tf_ = utility::pointer::make_shared< core::pack::task::TaskFactory >( *tf );
 }
 
 void  DockingHighRes::set_ignore_default_task( bool ignore_default_task )

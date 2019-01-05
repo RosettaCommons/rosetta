@@ -35,7 +35,7 @@ CacheableStringFloatMap::~CacheableStringFloatMap() = default;
 
 CacheableDataOP
 CacheableStringFloatMap::clone() const {
-	return CacheableDataOP( new CacheableStringFloatMap(*this) );
+	return utility::pointer::make_shared< CacheableStringFloatMap >(*this);
 }
 
 CacheableStringFloatMapOP

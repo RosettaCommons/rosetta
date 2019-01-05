@@ -77,13 +77,13 @@ public:
 	MultipoleElecResidueInfoOP
 	copy_clone() const
 	{
-		return core::scoring::MultipoleElecResidueInfoOP( new MultipoleElecResidueInfo( *this ) );
+		return utility::pointer::make_shared< MultipoleElecResidueInfo >( *this );
 	}
 
 	basic::datacache::CacheableDataOP
 	clone() const override
 	{
-		return basic::datacache::CacheableDataOP( new MultipoleElecResidueInfo( *this ) );
+		return utility::pointer::make_shared< MultipoleElecResidueInfo >( *this );
 	}
 
 	///
@@ -413,7 +413,7 @@ public:
 	basic::datacache::CacheableDataOP
 	clone() const override
 	{
-		return basic::datacache::CacheableDataOP( new MultipoleElecPoseInfo( *this ) );
+		return utility::pointer::make_shared< MultipoleElecPoseInfo >( *this );
 	}
 
 	///
@@ -524,7 +524,7 @@ public:
 	basic::datacache::CacheableDataOP
 	clone() const override
 	{
-		return basic::datacache::CacheableDataOP( new MultipoleElecRotamerSetInfo( *this ) );
+		return utility::pointer::make_shared< MultipoleElecRotamerSetInfo >( *this );
 	}
 
 	///
@@ -617,7 +617,7 @@ public:
 	MultipoleParameterOP
 	clone() const
 	{
-		return MultipoleParameterOP( new MultipoleParameter( *this ) );
+		return utility::pointer::make_shared< MultipoleParameter >( *this );
 	}
 
 	MultipoleAxisType & coord_type() { return coord_type_; }

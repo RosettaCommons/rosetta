@@ -66,14 +66,14 @@ ResidueInSequenceMotifSelector::~ResidueInSequenceMotifSelector() {}
 /// @details Copy this object and return owning pointer to the copy (created on the heap).
 core::select::residue_selector::ResidueSelectorOP
 ResidueInSequenceMotifSelector::clone() const {
-	return ResidueSelectorOP( utility::pointer::dynamic_pointer_cast<ResidueSelector>( ResidueSelectorOP( new ResidueInSequenceMotifSelector(*this) ) ) );
+	return ResidueSelectorOP( utility::pointer::dynamic_pointer_cast<ResidueSelector>( utility::pointer::make_shared< ResidueInSequenceMotifSelector >(*this) ) );
 }
 
 ResidueSelectorOP
 ResidueInSequenceMotifSelectorCreator::create_residue_selector() const {
 	return core::select::residue_selector::ResidueSelectorOP(
 		utility::pointer::dynamic_pointer_cast< core::select::residue_selector::ResidueSelector > (
-		ResidueInSequenceMotifSelectorOP( new ResidueInSequenceMotifSelector )
+		utility::pointer::make_shared< ResidueInSequenceMotifSelector >()
 		)
 	);
 }

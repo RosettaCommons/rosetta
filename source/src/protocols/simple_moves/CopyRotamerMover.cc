@@ -167,14 +167,14 @@ CopyRotamerMover::parse_my_tag(
 moves::MoverOP
 CopyRotamerMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new CopyRotamerMover );
+	return utility::pointer::make_shared< CopyRotamerMover >();
 }
 
 /// @brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
 CopyRotamerMover::clone() const
 {
-	return protocols::moves::MoverOP( new CopyRotamerMover( *this ) );
+	return utility::pointer::make_shared< CopyRotamerMover >( *this );
 }
 
 ///////////////////////////////
@@ -284,7 +284,7 @@ operator<<( std::ostream & os, CopyRotamerMover const & mover )
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP CopyRotamerMoverCreator::create_mover() const
 // XRW TEMP {
-// XRW TEMP  return protocols::moves::MoverOP( new CopyRotamerMover );
+// XRW TEMP  return utility::pointer::make_shared< CopyRotamerMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -339,7 +339,7 @@ std::string CopyRotamerMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 CopyRotamerMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new CopyRotamerMover );
+	return utility::pointer::make_shared< CopyRotamerMover >();
 }
 
 void CopyRotamerMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

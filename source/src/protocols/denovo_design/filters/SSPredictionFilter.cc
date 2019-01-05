@@ -75,7 +75,7 @@ SSPredictionFilter::SSPredictionFilter( core::Real const threshold,
 : protocols::filters::Filter( "SSPrediction" ),
 	threshold_( threshold ),
 	cmd_( cmd ),
-	blueprint_( protocols::parser::BluePrintOP( new protocols::parser::BluePrint( blueprint_filename ) ) ),
+	blueprint_( utility::pointer::make_shared< protocols::parser::BluePrint >( blueprint_filename ) ),
 	use_probability_( use_probability ),
 	mismatch_probability_ (mismatch_probability),
 	use_confidence_( false ),
@@ -87,7 +87,7 @@ SSPredictionFilter::SSPredictionFilter( core::Real const threshold,
 	scratch_dir_("")
 {
 	if ( use_scratch_dir ) set_scratch_dir();
-	psipred_interface_ = PsiPredInterfaceOP( new PsiPredInterface( cmd, scratch_dir_ ) );
+	psipred_interface_ = utility::pointer::make_shared< PsiPredInterface >( cmd, scratch_dir_ );
 }
 
 SSPredictionFilter::~SSPredictionFilter() = default;
@@ -107,12 +107,12 @@ SSPredictionFilter::apply( core::pose::Pose const & pose ) const {
 
 protocols::filters::FilterOP
 SSPredictionFilter::clone() const {
-	return protocols::filters::FilterOP( new SSPredictionFilter( *this ) );
+	return utility::pointer::make_shared< SSPredictionFilter >( *this );
 }
 
 protocols::filters::FilterOP
 SSPredictionFilter::fresh_instance() const {
-	return protocols::filters::FilterOP( new SSPredictionFilter() );
+	return utility::pointer::make_shared< SSPredictionFilter >();
 }
 
 void SSPredictionFilter::report( std::ostream & out, core::pose::Pose const & pose ) const {
@@ -267,16 +267,16 @@ void SSPredictionFilter::parse_my_tag(
 
 	// now that cmd is set, create the psipred interface
 	if ( use_svm_ ) {
-		ss_predictor_ = protocols::ss_prediction::SS_predictorOP( new protocols::ss_prediction::SS_predictor( "HLE" ) );
+		ss_predictor_ = utility::pointer::make_shared< protocols::ss_prediction::SS_predictor >( "HLE" );
 	} else {
-		psipred_interface_ = PsiPredInterfaceOP( new PsiPredInterface( cmd_, scratch_dir_ ) );
+		psipred_interface_ = utility::pointer::make_shared< PsiPredInterface >( cmd_, scratch_dir_ );
 	}
 
 	std::string blueprint_file = tag->getOption< std::string >( "blueprint", "" );
 
 	if ( blueprint_file != "" ) {
 		TR << "Dssp-derived secondary structure will be overridden by user-specified blueprint file." << std::endl;
-		blueprint_ = protocols::parser::BluePrintOP( new protocols::parser::BluePrint( blueprint_file ) );
+		blueprint_ = utility::pointer::make_shared< protocols::parser::BluePrint >( blueprint_file );
 		if ( ! blueprint_ ) {
 			utility_exit_with_message("There was an error getting the blueprint file loaded.");
 		}
@@ -292,7 +292,7 @@ void SSPredictionFilter::parse_my_tag(
 
 // XRW TEMP protocols::filters::FilterOP
 // XRW TEMP SSPredictionFilterCreator::create_filter() const {
-// XRW TEMP  return protocols::filters::FilterOP( new SSPredictionFilter() );
+// XRW TEMP  return utility::pointer::make_shared< SSPredictionFilter >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -389,7 +389,7 @@ std::string SSPredictionFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 SSPredictionFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new SSPredictionFilter );
+	return utility::pointer::make_shared< SSPredictionFilter >();
 }
 
 void SSPredictionFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

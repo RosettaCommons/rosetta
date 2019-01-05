@@ -89,7 +89,7 @@ PolarHydrogenPacker::~PolarHydrogenPacker() = default;
 ///////////////////////////////////////////////////////////////////////////////////
 void
 PolarHydrogenPacker::init(){
-	hbond_options_ = HBondOptionsOP( new HBondOptions() );
+	hbond_options_ = utility::pointer::make_shared< HBondOptions >();
 	hbond_options_->use_hb_env_dep( false );
 	hbond_database_ = HBondDatabase::get_database( hbond_options_->params_database_tag() );
 }

@@ -72,8 +72,8 @@ public:
 	void setUp(){
 		core_init();
 		core::import_pose::pose_from_file(pose, "protocols/antibody/aho_with_antigen.pdb", core::import_pose::PDB_file); //AHO renumbered pose
-		ab_info = AntibodyInfoOP( new AntibodyInfo(pose, AHO_Scheme, North) );
-		prob_design = ResidueProbDesignOperationOP( new ResidueProbDesignOperation());
+		ab_info = utility::pointer::make_shared< AntibodyInfo >(pose, AHO_Scheme, North);
+		prob_design = utility::pointer::make_shared< ResidueProbDesignOperation >();
 		db_manager = AntibodyDatabaseManagerOP(new AntibodyDatabaseManager(ab_info, true /* force paper ab_db */));
 		first_run = false; //Change to output to STD out rather then load U.
 	}

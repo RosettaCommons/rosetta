@@ -77,13 +77,13 @@ SetResidueAliasMover::parse_my_tag(
 protocols::moves::MoverOP
 SetResidueAliasMover::clone() const
 {
-	return protocols::moves::MoverOP( new SetResidueAliasMover( *this ) );
+	return utility::pointer::make_shared< SetResidueAliasMover >( *this );
 }
 
 protocols::moves::MoverOP
 SetResidueAliasMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new SetResidueAliasMover );
+	return utility::pointer::make_shared< SetResidueAliasMover >();
 }
 
 // XRW TEMP std::string
@@ -141,7 +141,7 @@ SetResidueAliasMover::apply( core::pose::Pose & pose )
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP SetResidueAliasMoverCreator::create_mover() const
 // XRW TEMP {
-// XRW TEMP  return protocols::moves::MoverOP( new SetResidueAliasMover );
+// XRW TEMP  return utility::pointer::make_shared< SetResidueAliasMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -176,7 +176,7 @@ std::string SetResidueAliasMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 SetResidueAliasMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SetResidueAliasMover );
+	return utility::pointer::make_shared< SetResidueAliasMover >();
 }
 
 void SetResidueAliasMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

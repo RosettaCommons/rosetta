@@ -271,7 +271,7 @@ FragQualCalculator::parse_my_tag(
 	if ( tag->hasOption( "end" ) ) {
 		end_ = core::pose::parse_resnum( tag->getOption<std::string>( "end" ) );
 	} else {
-		end_ = core::pose::ResidueIndexDescriptionCOP( new core::pose::ResidueIndexDescriptionLastResidue );
+		end_ = utility::pointer::make_shared< core::pose::ResidueIndexDescriptionLastResidue >();
 	}
 
 	String const fset_string ( tag->getOption<String>( "frag", "" ) );

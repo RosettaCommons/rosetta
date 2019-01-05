@@ -79,7 +79,7 @@ FilterReporterMover::assign(FilterReporterMover & lhs, FilterReporterMover const
 
 protocols::moves::MoverOP
 FilterReporterMover::clone() const {
-	return protocols::moves::MoverOP( new FilterReporterMover(*this) );
+	return utility::pointer::make_shared< FilterReporterMover >(*this);
 }
 
 std::string
@@ -89,7 +89,7 @@ FilterReporterMover::get_name() const {
 
 protocols::moves::MoverOP
 FilterReporterMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new FilterReporterMover );
+	return utility::pointer::make_shared< FilterReporterMover >();
 }
 
 protocols::moves::MoverOP

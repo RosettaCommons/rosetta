@@ -117,7 +117,7 @@ void steal_constant_length_frag_set_from_pose ( pose::Pose const& pose_in, Const
 
 		//steal backbone torsion fragment
 		if ( free_of_cut ) {
-			frame = FrameOP( new Frame( pos, FragDataCOP( FragDataOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), len ) ) ) ) );
+			frame = utility::pointer::make_shared< Frame >( pos, utility::pointer::make_shared< FragData >( utility::pointer::make_shared< BBTorsionSRFD >(), len ) );
 			frame->steal( pose );
 			fragset.add( frame );
 		}
@@ -132,7 +132,7 @@ void steal_frag_set_from_pose ( pose::Pose const& pose_in, FragSet& fragset, cor
 	pose::Pose pose = pose_in;
 	pose::set_ss_from_phipsi( pose );
 	for ( Size pos = 1; pos <= pose.size() - len + 1; ++pos ) {
-		frame = FrameOP( new Frame( pos, frag_type ) );
+		frame = utility::pointer::make_shared< Frame >( pos, frag_type );
 		frame->steal( pose );
 		fragset.add( frame );
 	}
@@ -146,7 +146,7 @@ void steal_frag_set_from_pose ( pose::Pose const& pose_in, Size const begin, Siz
 	pose::Pose pose = pose_in;
 	pose::set_ss_from_phipsi( pose );
 	for ( Size pos = begin; pos <= end - len + 1; ++pos ) {
-		frame = FrameOP( new Frame( pos, frag_type ) );
+		frame = utility::pointer::make_shared< Frame >( pos, frag_type );
 		frame->steal( pose );
 		fragset.add( frame );
 	}
@@ -165,7 +165,7 @@ void steal_frag_set_from_pose (
 	pose::Pose pose = pose_in;
 	pose::set_ss_from_phipsi( pose );
 	for ( core::Size selected_residue : selected_residues ) {
-		frame = FrameOP( new Frame( selected_residue, frag_type ) );
+		frame = utility::pointer::make_shared< Frame >( selected_residue, frag_type );
 		frame->steal( pose );
 		fragset.add( frame );
 	}
@@ -178,7 +178,7 @@ void chop_fragments( core::fragment::FragSet& source, core::fragment::FragSet& d
 	runtime_assert( tlen < slen );
 	FrameList dest_frames;
 	for ( Size pos = 1; pos <= source.max_pos() + slen - tlen; pos++ ) {
-		dest_frames.push_back( core::fragment::FrameOP( new Frame( pos, tlen ) ) );
+		dest_frames.push_back( utility::pointer::make_shared< Frame >( pos, tlen ) );
 	}
 	for ( ConstFrameIterator it=source.begin(), eit=source.end(); it!=eit; ++it ) {
 		Frame const& fr( **it );
@@ -450,12 +450,12 @@ void read_std_frags_from_cmd( FragSetOP& fragset_large, FragSetOP& fragset_small
 		tr.Info << " stealing fragments from native pose: ATTENTION: native pose has to be IDEALIZED!!! " << std::endl;
 		//  utility_exit_with_message(" stealing fragments from pose: currently not supported! ask Oliver " );
 		if ( option[ OptionKeys::abinitio::steal_9mers ]() ) {
-			if ( !fragset_large ) fragset_large = FragSetOP( new ConstantLengthFragSet( 9 ) );
-			steal_frag_set_from_pose( *native_pose, *fragset_large, core::fragment::FragDataCOP( core::fragment::FragDataOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_large->max_frag_length() ) ) ) );
+			if ( !fragset_large ) fragset_large = utility::pointer::make_shared< ConstantLengthFragSet >( 9 );
+			steal_frag_set_from_pose( *native_pose, *fragset_large, utility::pointer::make_shared< FragData >( utility::pointer::make_shared< BBTorsionSRFD >(), fragset_large->max_frag_length() ) );
 		}
 		if ( option[ OptionKeys::abinitio::steal_3mers ]() ) {
-			if ( !fragset_small ) fragset_small = FragSetOP( new ConstantLengthFragSet( 3 ) );
-			steal_frag_set_from_pose( *native_pose, *fragset_small, core::fragment::FragDataCOP( core::fragment::FragDataOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_small->max_frag_length() ) ) ) );
+			if ( !fragset_small ) fragset_small = utility::pointer::make_shared< ConstantLengthFragSet >( 3 );
+			steal_frag_set_from_pose( *native_pose, *fragset_small, utility::pointer::make_shared< FragData >( utility::pointer::make_shared< BBTorsionSRFD >(), fragset_small->max_frag_length() ) );
 		}
 	}
 

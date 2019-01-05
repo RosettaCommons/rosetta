@@ -104,7 +104,7 @@ ResidueIndexDescriptionPoseNum::show( std::ostream & out ) const {
 
 ResidueIndexDescriptionCOP
 make_rid_posenum( core::Size resnum ) {
-	return ResidueIndexDescriptionCOP( new ResidueIndexDescriptionPoseNum( resnum ) );
+	return utility::pointer::make_shared< ResidueIndexDescriptionPoseNum >( resnum );
 }
 
 ResidueIndexDescriptionPDB::~ResidueIndexDescriptionPDB() = default;

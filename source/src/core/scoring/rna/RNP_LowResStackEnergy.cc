@@ -74,7 +74,7 @@ methods::EnergyMethodOP
 RNP_LowResStackEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new RNP_LowResStackEnergy );
+	return utility::pointer::make_shared< RNP_LowResStackEnergy >();
 }
 
 ScoreTypes
@@ -87,7 +87,7 @@ RNP_LowResStackEnergyCreator::score_types_for_method() const {
 
 /// c-tor
 RNP_LowResStackEnergy::RNP_LowResStackEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new RNP_LowResStackEnergyCreator ) ),
+	parent( utility::pointer::make_shared< RNP_LowResStackEnergyCreator >() ),
 	potential_( ScoringManager::get_instance()->get_RNP_LowResStackData() )
 {
 	//std::cout << "Constructed the RNP stack energy" << std::endl;
@@ -97,7 +97,7 @@ RNP_LowResStackEnergy::RNP_LowResStackEnergy() :
 methods::EnergyMethodOP
 RNP_LowResStackEnergy::clone() const
 {
-	return methods::EnergyMethodOP( new RNP_LowResStackEnergy );
+	return utility::pointer::make_shared< RNP_LowResStackEnergy >();
 }
 
 /////////////////////////////////////////////////////////////////////////////

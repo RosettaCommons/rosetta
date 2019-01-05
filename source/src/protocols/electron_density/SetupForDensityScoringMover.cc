@@ -73,7 +73,7 @@ using namespace core;
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP SetupForDensityScoringMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new SetupForDensityScoringMover );
+// XRW TEMP  return utility::pointer::make_shared< SetupForDensityScoringMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -106,7 +106,7 @@ void SetupForDensityScoringMover::apply( core::pose::Pose & pose ) {
 
 protocols::moves::MoverOP
 SetupForDensityScoringMover::clone() const {
-	return( protocols::moves::MoverOP( new SetupForDensityScoringMover( *this ) ) );
+	return( utility::pointer::make_shared< SetupForDensityScoringMover >( *this ) );
 }
 
 // XRW TEMP std::string
@@ -169,7 +169,7 @@ std::string SetupForDensityScoringMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 SetupForDensityScoringMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SetupForDensityScoringMover );
+	return utility::pointer::make_shared< SetupForDensityScoringMover >();
 }
 
 void SetupForDensityScoringMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

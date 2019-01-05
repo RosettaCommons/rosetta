@@ -59,7 +59,7 @@ core::Size nearest_to_entry_stop_on_pose (core::pose::Pose const & pose,core::po
 				return pose.conformation().chain_end( chain );
 			} else if ( segment=="L3" ) {
 				protocols::simple_moves::CutChainMover ccm;
-				core::pose::PoseOP copy_pose_ = core::pose::PoseOP( new core::pose::Pose(pose) );
+				core::pose::PoseOP copy_pose_ = utility::pointer::make_shared< core::pose::Pose >(pose);
 				return  ccm.chain_cut(*copy_pose_);
 			}
 		} else { //for now I assume a genral case, might change in the future
@@ -242,7 +242,7 @@ void min_seg(core::pose::Pose & pose, ResidueBBDofs dofs,bool debug, core::Size 
 
 	core::kinematics::MoveMapOP mm;
 	protocols::splice::SpliceOP splice;
-	mm = core::kinematics::MoveMapOP( new core::kinematics::MoveMap );
+	mm = utility::pointer::make_shared< core::kinematics::MoveMap >();
 	mm->set_chi(false);
 	mm->set_bb(false);
 	mm->set_jump(false);

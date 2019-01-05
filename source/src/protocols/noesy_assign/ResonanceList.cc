@@ -249,13 +249,13 @@ void ResonanceList::read_from_stream( std::istream& is ) {
 		bool is_proton = ( name[ 0 ]=='Q' || ( name.find("H") != std::string::npos && name[ 0 ] != 'C' /*not CH2 on TRP*/ ) );
 		ResonanceOP save_resonance( nullptr );
 		if ( is_proton ) {
-			save_resonance = ResonanceOP( new ProtonResonance( label, freq, error, core::id::NamedAtomID( name, resn ), aa, intensity ) );
+			save_resonance = utility::pointer::make_shared< ProtonResonance >( label, freq, error, core::id::NamedAtomID( name, resn ), aa, intensity );
 		} else {
-			save_resonance = ResonanceOP( new LabelResonance( label, freq, error,  core::id::NamedAtomID( name, resn ), aa, intensity ) );
+			save_resonance = utility::pointer::make_shared< LabelResonance >( label, freq, error,  core::id::NamedAtomID( name, resn ), aa, intensity );
 		}
 
 		if ( !floats.empty() ) { //size() ) {
-			save_resonance = ResonanceOP( new FloatingResonance( *save_resonance, floats, this ) );
+			save_resonance = utility::pointer::make_shared< FloatingResonance >( *save_resonance, floats, this );
 		}
 
 		// before assigning to Resonance List put it in DEQUE (push_back), maybe it will get combined with next resonance...

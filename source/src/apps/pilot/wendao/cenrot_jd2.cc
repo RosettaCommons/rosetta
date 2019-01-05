@@ -408,9 +408,9 @@ public:
 		scorefxn_ = core::scoring::get_score_function();
 
 		//bbgmover
-		bbgmover_ = BBG8T3AMoverOP( new BBG8T3AMover() );
+		bbgmover_ = utility::pointer::make_shared< BBG8T3AMover >();
 		//scmove
-		sidechainmover_ = CenRotSidechainMoverOP( new CenRotSidechainMover() );
+		sidechainmover_ = utility::pointer::make_shared< CenRotSidechainMover >();
 
 		mc_steps_ = option[relax_step_per_cycle];
 
@@ -422,7 +422,7 @@ public:
 		mc_temp_ = option[relax_temp];
 
 		if ( first_run_ ) {
-			mc_ = MonteCarloOP( new MonteCarlo(pose, *scorefxn_, mc_temp_) );
+			mc_ = utility::pointer::make_shared< MonteCarlo >(pose, *scorefxn_, mc_temp_);
 			first_run_ = false;
 		} else {
 			mc_->reset(pose);
@@ -583,9 +583,9 @@ public:
 
 		//repack
 		using core::pack::task::operation::TaskOperationCOP;
-		pack_rotamers_ = minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover() );
+		pack_rotamers_ = utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >();
 		TaskFactoryOP main_task_factory( new TaskFactory );
-		main_task_factory->push_back( TaskOperationCOP( new operation::RestrictToRepacking ) );
+		main_task_factory->push_back( utility::pointer::make_shared< operation::RestrictToRepacking >() );
 		pack_rotamers_->task_factory(main_task_factory);
 		pack_rotamers_->score_function(scorefxn_repack_);
 
@@ -678,16 +678,16 @@ public:
 	{
 		// mover
 		core::kinematics::MoveMap mm; mm.set_jump(true);
-		rb_mover_ = protocols::rigid::RigidBodyPerturbNoCenterMoverOP( new rigid::RigidBodyPerturbNoCenterMover( pose, mm, rot_magnitude_, trans_magnitude_, protocols::rigid::n2c ) );
-		combo_ = moves::SequenceMoverOP( new moves::SequenceMover() );
+		rb_mover_ = utility::pointer::make_shared< rigid::RigidBodyPerturbNoCenterMover >( pose, mm, rot_magnitude_, trans_magnitude_, protocols::rigid::n2c );
+		combo_ = utility::pointer::make_shared< moves::SequenceMover >();
 		combo_->add_mover(rb_mover_);
 
 		if ( do_repack_ ) combo_->add_mover(pack_rotamers_);
 
 		// Monte Carlo
-		mc_ = moves::MonteCarloOP( new moves::MonteCarlo( pose, (*scorefxn_dock_), temperature_ ) );
+		mc_ = utility::pointer::make_shared< moves::MonteCarlo >( pose, (*scorefxn_dock_), temperature_ );
 
-		trial_ = moves::TrialMoverOP( new moves::TrialMover(combo_, mc_) );
+		trial_ = utility::pointer::make_shared< moves::TrialMover >(combo_, mc_);
 
 		first_run_ = false;
 	}
@@ -757,17 +757,17 @@ public:
 		movemap->set_bb( true );
 
 		fragset_small_ = FragmentIO(option[ abinitio::number_3mer_frags ] ).read_data( option[in::file::frag3] );
-		sms_ = simple_moves::ClassicFragmentMoverOP( new SmoothFragmentMover ( fragset_small_, movemap, FragmentCostOP( new GunnCost ) ) );
+		sms_ = utility::pointer::make_shared< SmoothFragmentMover > ( fragset_small_, movemap, utility::pointer::make_shared< GunnCost >() );
 
 		//repack
 		using core::pack::task::operation::TaskOperationCOP;
-		pack_rotamers_ = minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover() );
+		pack_rotamers_ = utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >();
 		TaskFactoryOP main_task_factory( new TaskFactory );
-		main_task_factory->push_back( TaskOperationCOP( new operation::RestrictToRepacking ) );
+		main_task_factory->push_back( utility::pointer::make_shared< operation::RestrictToRepacking >() );
 		pack_rotamers_->task_factory(main_task_factory);
 		pack_rotamers_->score_function(scorefxn_);
 
-		combo_smooth_ = moves::SequenceMoverOP( new moves::SequenceMover() );
+		combo_smooth_ = utility::pointer::make_shared< moves::SequenceMover >();
 		combo_smooth_->add_mover(sms_);
 		combo_smooth_->add_mover(pack_rotamers_);
 
@@ -780,8 +780,8 @@ public:
 	void apply( Pose &p ) override
 	{
 		Real temperature = option[relax_temp]; // init temp
-		mc_ = moves::MonteCarloOP( new moves::MonteCarlo( p, (*scorefxn_), temperature ) );
-		smooth_trial_small_pack_ = moves::TrialMoverOP( new moves::TrialMover(combo_smooth_, mc_) );
+		mc_ = utility::pointer::make_shared< moves::MonteCarlo >( p, (*scorefxn_), temperature );
+		smooth_trial_small_pack_ = utility::pointer::make_shared< moves::TrialMover >(combo_smooth_, mc_);
 
 		for ( Size i=1; i<=outer_cycles_; i++ ) {
 			moves::RepeatMover( smooth_trial_small_pack_, inner_cycles_ ).apply(p);
@@ -1103,17 +1103,17 @@ my_main( void* ) {
 	//switch
 	//input pose is either centroid or fullatom
 	if ( option[switch_to_centroid]() ) {
-		do_cenrot->add_mover(MoverOP( new SwitchResidueTypeSetMover("centroid") ));
+		do_cenrot->add_mover(utility::pointer::make_shared< SwitchResidueTypeSetMover >("centroid"));
 	} else {
 		TR.Debug << "Switch to CenRot model" << std::endl;
-		do_cenrot->add_mover(MoverOP( new SwitchResidueTypeSetMover("centroid_rot") ));
+		do_cenrot->add_mover(utility::pointer::make_shared< SwitchResidueTypeSetMover >("centroid_rot"));
 	}
 
-	if ( !option[keep_silent_header] ) do_cenrot->add_mover(MoverOP( new ClearPoseHeader() ));
+	if ( !option[keep_silent_header] ) do_cenrot->add_mover(utility::pointer::make_shared< ClearPoseHeader >());
 
 	//output intcoord
 	if ( option[output_cenrot_intcoord]() ) {
-		do_cenrot->add_mover(MoverOP( new OutputCenrotIntCoord() ));
+		do_cenrot->add_mover(utility::pointer::make_shared< OutputCenrotIntCoord >());
 	} else {
 		//setup the scorefxn
 		// TODO: if score:weights is not specified, load default cenrot rather than talaris2013

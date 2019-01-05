@@ -49,9 +49,9 @@ StructureStoreManager::StructureStoreManager() : store_providers()
 #ifdef USEHDF5
 	store_providers[Key(0, "hdf5")] = StructureStoreProviderOP(new H5StructureStoreBackend());
 #endif
-	store_providers[Key( 5, "json" )] = StructureStoreProviderOP(new JSONStructureStoreBackend());
-	store_providers[Key(10, "silent")] = StructureStoreProviderOP(new SilentStructureStoreBackend());
-	store_providers[Key(10, "dir")] = StructureStoreProviderOP(new DirStructureStoreBackend());
+	store_providers[Key( 5, "json" )] = utility::pointer::make_shared< JSONStructureStoreBackend >();
+	store_providers[Key(10, "silent")] = utility::pointer::make_shared< SilentStructureStoreBackend >();
+	store_providers[Key(10, "dir")] = utility::pointer::make_shared< DirStructureStoreBackend >();
 }
 
 StructureStoreOP StructureStoreManager::load_structure_store(std::string store_path)

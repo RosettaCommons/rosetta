@@ -70,12 +70,12 @@ public:
 		// correct answers taken from rosetta++ v19429
 		using namespace core::io::silent;
 		SilentFileOptions opts;
-		sfd = SilentFileDataOP( new SilentFileData( opts ) );
+		sfd = utility::pointer::make_shared< SilentFileData >( opts );
 		sfd->read_file( "core/scoring/methods/score3_in.silent_out" );
 		// contact order calculations in rosetta++ used centroids
 		rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
 		// scorefxn isn't really used, but necessary for call to finalize_total_energy
-		scorefxn = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction );
+		scorefxn = utility::pointer::make_shared< core::scoring::ScoreFunction >();
 	}
 
 	// Shared finalization goes here.

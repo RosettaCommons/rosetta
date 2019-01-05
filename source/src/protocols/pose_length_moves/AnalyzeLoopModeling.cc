@@ -79,7 +79,7 @@ AnalyzeLoopModeling::AnalyzeLoopModeling():moves::Mover("AnalyzeLoopModeling"){}
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP AnalyzeLoopModelingCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new AnalyzeLoopModeling );
+// XRW TEMP  return utility::pointer::make_shared< AnalyzeLoopModeling >();
 // XRW TEMP }
 
 protocols::loops::Loops AnalyzeLoopModeling::get_loops(core::pose::Pose const & pose){
@@ -284,7 +284,7 @@ std::string AnalyzeLoopModelingCreator::keyname() const {
 
 protocols::moves::MoverOP
 AnalyzeLoopModelingCreator::create_mover() const {
-	return protocols::moves::MoverOP( new AnalyzeLoopModeling );
+	return utility::pointer::make_shared< AnalyzeLoopModeling >();
 }
 
 void AnalyzeLoopModelingCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

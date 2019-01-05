@@ -62,7 +62,7 @@ GaussianChainGeneralFunc::GaussianChainGeneralFunc(
 FuncOP
 GaussianChainGeneralFunc::clone() const
 {
-	return FuncOP( new GaussianChainGeneralFunc( gaussian_variance_, loop_fixed_cost_, other_distances_ ) );
+	return utility::pointer::make_shared< GaussianChainGeneralFunc >( gaussian_variance_, loop_fixed_cost_, other_distances_ );
 }
 
 bool GaussianChainGeneralFunc::operator == ( Func const & other ) const

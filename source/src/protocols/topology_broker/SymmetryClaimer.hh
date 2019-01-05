@@ -56,7 +56,7 @@ public:
 
 
 	TopologyClaimerOP clone() const override {
-		return TopologyClaimerOP( new SymmetryClaimer( *this ) );
+		return utility::pointer::make_shared< SymmetryClaimer >( *this );
 	}
 
 	std::string type() const override {

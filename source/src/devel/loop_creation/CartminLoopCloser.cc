@@ -59,7 +59,7 @@ CartminLoopCloserCreator::keyname() const
 
 protocols::moves::MoverOP
 CartminLoopCloserCreator::create_mover() const {
-	return protocols::moves::MoverOP( new CartminLoopCloser );
+	return utility::pointer::make_shared< CartminLoopCloser >();
 }
 
 std::string
@@ -94,11 +94,11 @@ CartminLoopCloser::CartminLoopCloser(
 
 protocols::moves::MoverOP
 CartminLoopCloser::clone() const {
-	return( protocols::moves::MoverOP( new CartminLoopCloser( *this ) ) );
+	return( utility::pointer::make_shared< CartminLoopCloser >( *this ) );
 }
 protocols::moves::MoverOP
 CartminLoopCloser::fresh_instance() const {
-	return protocols::moves::MoverOP( new CartminLoopCloser );
+	return utility::pointer::make_shared< CartminLoopCloser >();
 }
 
 std::string

@@ -114,8 +114,8 @@ FragmentScoringMethodOP MakeScoreEValuator::make(core::Size priority,
 		core::Size len = picker->get_vall()->get_largest_chunk_size();
 		trProfScore << "Profile scoring method is: "
 			<< option[frags::scoring::profile_score]() << std::endl;
-		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new ScoreEValuator(priority,
-			lowest_acceptable_value, use_lowest, picker->get_query_seq(), ss, len) );
+		return (FragmentScoringMethodOP) utility::pointer::make_shared< ScoreEValuator >(priority,
+			lowest_acceptable_value, use_lowest, picker->get_query_seq(), ss, len);
 	}
 	utility_exit_with_message(
 		"[ERROR] Undefined profile scoring method. Provide it with frags::scoring_scheme flag");

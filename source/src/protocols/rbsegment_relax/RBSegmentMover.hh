@@ -200,7 +200,7 @@ public:
 		std::cerr << "HelicalGaussianMover : Setting params (" << sigAxisR_ << ", " << sigAxisT_ << ", " << sigOffAxisR_ << ", " << sigOffAxisT_ << ")\n";
 	}
 
-	protocols::moves::MoverOP clone() const override { return RBSegmentMoverOP( new HelicalGaussianMover(*this) ); }
+	protocols::moves::MoverOP clone() const override { return utility::pointer::make_shared< HelicalGaussianMover >(*this); }
 
 	/// @brief Apply a +1 or -1 residue "shift" to this helix
 	void apply( core::pose::Pose & pose ) override;
@@ -259,7 +259,7 @@ public:
 
 	/// @brief clone this object
 	protocols::moves::MoverOP
-	clone() const override { return RBSegmentMoverOP( new SequenceShiftMover(*this) ); }
+	clone() const override { return utility::pointer::make_shared< SequenceShiftMover >(*this); }
 
 	/// @brief set movement parameters.  ignore all input args
 	void
@@ -344,7 +344,7 @@ public:
 	}
 
 	/// @brief clone this object
-	protocols::moves::MoverOP clone() const override { return RBSegmentMoverOP( new GaussianRBSegmentMover(*this) ); }
+	protocols::moves::MoverOP clone() const override { return utility::pointer::make_shared< GaussianRBSegmentMover >(*this); }
 
 	/// @brief Randomly perturb the segment
 	void apply( core::pose::Pose & pose ) override;
@@ -416,7 +416,7 @@ public:
 		std::cerr << "StrandTwistingMover : Setting params (" << sigAxisR_ << ", " << sigAxisT_ << ", " << sigOffAxisR_ << ", " << sigOffAxisT_ << ")\n";
 	}
 
-	protocols::moves::MoverOP clone() const override { return RBSegmentMoverOP( new StrandTwistingMover(*this) ); }
+	protocols::moves::MoverOP clone() const override { return utility::pointer::make_shared< StrandTwistingMover >(*this); }
 
 	/// @brief Apply a +1 or -1 residue "shift" to this helix
 	void apply( core::pose::Pose & pose ) override;

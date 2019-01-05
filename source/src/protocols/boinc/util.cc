@@ -106,7 +106,7 @@ void boincOutputFilter(core::Real runTime, core::Real minTimePerModel){
 	input.add_pose_input_stream(tempSilentStreamOrig);
 	while ( input.has_another_pose() ) {
 		core::pose::PoseOP input_poseOP;
-		input_poseOP = core::pose::PoseOP( new core::pose::Pose() );
+		input_poseOP = utility::pointer::make_shared< core::pose::Pose >();
 		input.fill_pose(*input_poseOP,*rsd_set);
 		std::string tag = core::pose::tag_from_pose(*input_poseOP);
 		if ( rsd_set->mode() == core::chemical::FULL_ATOM_t ) {
@@ -152,7 +152,7 @@ void boincOutputFilter(core::Real runTime, core::Real minTimePerModel){
 	input_rd2.add_pose_input_stream(tempSilentStream);
 	while ( input_rd2.has_another_pose() ) {
 		core::pose::PoseOP input_poseOP;
-		input_poseOP = core::pose::PoseOP( new core::pose::Pose() );
+		input_poseOP = utility::pointer::make_shared< core::pose::Pose >();
 		input_rd2.fill_pose(*input_poseOP,*rsd_set);
 		std::string tag = core::pose::tag_from_pose(*input_poseOP);
 		Real tmpScore;

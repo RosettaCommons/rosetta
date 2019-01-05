@@ -68,11 +68,11 @@ AddMHCEpitopeConstraintMover::~AddMHCEpitopeConstraintMover()= default;
 
 /// @brief Copy this object and return a pointer to the copy.
 ///
-protocols::moves::MoverOP AddMHCEpitopeConstraintMover::clone() const { return protocols::moves::MoverOP( new protocols::aa_composition::AddMHCEpitopeConstraintMover( *this ) ); }
+protocols::moves::MoverOP AddMHCEpitopeConstraintMover::clone() const { return utility::pointer::make_shared< protocols::aa_composition::AddMHCEpitopeConstraintMover >( *this ); }
 
 /// @brief Create a new object of this type and return a pointer to it.
 ///
-protocols::moves::MoverOP AddMHCEpitopeConstraintMover::fresh_instance() const { return protocols::moves::MoverOP( new AddMHCEpitopeConstraintMover ); }
+protocols::moves::MoverOP AddMHCEpitopeConstraintMover::fresh_instance() const { return utility::pointer::make_shared< AddMHCEpitopeConstraintMover >(); }
 
 /// @brief Actually apply the mover to a pose.
 ///
@@ -133,7 +133,7 @@ AddMHCEpitopeConstraintMover::parse_my_tag(
 void
 AddMHCEpitopeConstraintMover::create_constraint_from_file( std::string const &filename ) {
 	runtime_assert_string_msg( !constraint_, "Error in protocols::aa_composition::AddMHCEpitopeConstraintMover::create_constraint_from_file():  The constraint object already has been created!" );
-	constraint_ = core::scoring::mhc_epitope_energy::MHCEpitopeConstraintOP( new core::scoring::mhc_epitope_energy::MHCEpitopeConstraint() );
+	constraint_ = utility::pointer::make_shared< core::scoring::mhc_epitope_energy::MHCEpitopeConstraint >();
 	constraint_->initialize_from_file( filename );
 	if ( TR.visible() ) {
 		TR << "Initialized MHCEpitopeConstraint object from file " << filename << "." << std::endl;
@@ -149,7 +149,7 @@ AddMHCEpitopeConstraintMover::create_constraint_from_file_contents(
 	std::string const &filecontents
 ) {
 	runtime_assert_string_msg( !constraint_, "Error in protocols::aa_composition::AddMHCEpitopeConstraintMover::create_constraint_from_filecontents():  The constraint object already has been created!" );
-	constraint_ = core::scoring::mhc_epitope_energy::MHCEpitopeConstraintOP( new core::scoring::mhc_epitope_energy::MHCEpitopeConstraint() );
+	constraint_ = utility::pointer::make_shared< core::scoring::mhc_epitope_energy::MHCEpitopeConstraint >();
 	constraint_->initialize_from_file_contents( filecontents );
 	if ( TR.visible() ) {
 		TR << "Initialized MHCEpitopeConstraint object from file contents:\n" << filecontents << std::endl;
@@ -200,7 +200,7 @@ std::string AddMHCEpitopeConstraintMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 AddMHCEpitopeConstraintMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new AddMHCEpitopeConstraintMover );
+	return utility::pointer::make_shared< AddMHCEpitopeConstraintMover >();
 }
 
 void AddMHCEpitopeConstraintMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

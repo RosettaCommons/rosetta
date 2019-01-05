@@ -40,9 +40,9 @@ ReferenceEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
 	if ( options.has_method_weights( ref ) ) {
-		return methods::EnergyMethodOP( new ReferenceEnergy( options.method_weights( ref ), options.ordered_wat_penalty() ));
+		return utility::pointer::make_shared< ReferenceEnergy >( options.method_weights( ref ), options.ordered_wat_penalty() );
 	} else {
-		return methods::EnergyMethodOP( new ReferenceEnergy( options.ordered_wat_penalty() ));
+		return utility::pointer::make_shared< ReferenceEnergy >( options.ordered_wat_penalty() );
 	}
 }
 
@@ -54,12 +54,12 @@ ReferenceEnergyCreator::score_types_for_method() const {
 }
 
 ReferenceEnergy::ReferenceEnergy( Real ordered_wat_penalty ) :
-	parent( methods::EnergyMethodCreatorOP( new ReferenceEnergyCreator ) ),
+	parent( utility::pointer::make_shared< ReferenceEnergyCreator >() ),
 	ordered_wat_penalty_ (ordered_wat_penalty)
 {}
 
 ReferenceEnergy::ReferenceEnergy( utility::vector1< Real > const & aa_weights_in, Real ordered_wat_penalty ):
-	parent( methods::EnergyMethodCreatorOP( new ReferenceEnergyCreator ) ),
+	parent( utility::pointer::make_shared< ReferenceEnergyCreator >() ),
 	aa_weights_( aa_weights_in ),
 	ordered_wat_penalty_ (ordered_wat_penalty)
 {}
@@ -69,7 +69,7 @@ ReferenceEnergy::~ReferenceEnergy() = default;
 EnergyMethodOP
 ReferenceEnergy::clone() const
 {
-	return EnergyMethodOP( new ReferenceEnergy( aa_weights_, ordered_wat_penalty_ ) );
+	return utility::pointer::make_shared< ReferenceEnergy >( aa_weights_, ordered_wat_penalty_ );
 }
 
 

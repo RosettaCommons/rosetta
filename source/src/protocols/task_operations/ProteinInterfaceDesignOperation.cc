@@ -55,7 +55,7 @@ using namespace utility::tag;
 core::pack::task::operation::TaskOperationOP
 ProteinInterfaceDesignOperationCreator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new ProteinInterfaceDesignOperation );
+	return utility::pointer::make_shared< ProteinInterfaceDesignOperation >();
 }
 
 void ProteinInterfaceDesignOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -85,7 +85,7 @@ ProteinInterfaceDesignOperation::~ProteinInterfaceDesignOperation() = default;
 
 core::pack::task::operation::TaskOperationOP ProteinInterfaceDesignOperation::clone() const
 {
-	return core::pack::task::operation::TaskOperationOP( new ProteinInterfaceDesignOperation( *this ) );
+	return utility::pointer::make_shared< ProteinInterfaceDesignOperation >( *this );
 }
 
 /// @brief the default taskoperation for protein-interface design. Sets up which chains to repack/design
@@ -164,7 +164,7 @@ ProteinInterfaceDesignOperation::apply( core::pose::Pose const & pose, core::pac
 	// the pose if the vector of indices is empty
 	if ( residues.size() != 0 ) {
 		OperateOnCertainResidues oocr;
-		oocr.op( ResLvlTaskOperationCOP( new PreventRepackingRLT ) );
+		oocr.op( utility::pointer::make_shared< PreventRepackingRLT >() );
 		oocr.residue_indices( residues );
 		oocr.apply( pose, task );
 	}

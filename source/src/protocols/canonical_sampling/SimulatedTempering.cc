@@ -93,7 +93,7 @@ using namespace core;
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP SimulatedTemperingCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new SimulatedTempering );
+// XRW TEMP  return utility::pointer::make_shared< SimulatedTempering >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -220,13 +220,13 @@ SimulatedTempering::temperature_move( core::Real score ) {
 protocols::moves::MoverOP
 SimulatedTempering::clone() const
 {
-	return protocols::moves::MoverOP( new protocols::canonical_sampling::SimulatedTempering(*this) );
+	return utility::pointer::make_shared< protocols::canonical_sampling::SimulatedTempering >(*this);
 }
 
 protocols::moves::MoverOP
 SimulatedTempering::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new SimulatedTempering );
+	return utility::pointer::make_shared< SimulatedTempering >();
 }
 
 void
@@ -392,7 +392,7 @@ std::string SimulatedTemperingCreator::keyname() const {
 
 protocols::moves::MoverOP
 SimulatedTemperingCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SimulatedTempering );
+	return utility::pointer::make_shared< SimulatedTempering >();
 }
 
 void SimulatedTemperingCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

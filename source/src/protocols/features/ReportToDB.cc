@@ -84,7 +84,7 @@ namespace features {
 
 // XRW TEMP moves::MoverOP
 // XRW TEMP ReportToDBCreator::create_mover() const {
-// XRW TEMP  return moves::MoverOP( new ReportToDB );
+// XRW TEMP  return utility::pointer::make_shared< ReportToDB >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -150,7 +150,7 @@ ReportToDB::ReportToDB():
 	custom_structure_input_tag_(false),
 	structure_input_tag_(""),
 	last_struct_id_(0),
-	task_factory_(core::pack::task::TaskFactoryOP( new TaskFactory() )),
+	task_factory_(utility::pointer::make_shared< TaskFactory >()),
 	relevant_residues_mode_(RelevantResiduesMode::Exclusive),
 	features_reporter_factory_(FeaturesReporterFactory::get_instance()),
 	features_reporters_(),
@@ -174,7 +174,7 @@ ReportToDB::ReportToDB(string const & type):
 	custom_structure_input_tag_(false),
 	structure_input_tag_(""),
 	last_struct_id_(0),
-	task_factory_(core::pack::task::TaskFactoryOP( new TaskFactory() )),
+	task_factory_(utility::pointer::make_shared< TaskFactory >()),
 	relevant_residues_mode_(RelevantResiduesMode::Exclusive),
 	features_reporter_factory_(FeaturesReporterFactory::get_instance()),
 	features_reporters_(),
@@ -203,7 +203,7 @@ ReportToDB::ReportToDB(
 	custom_structure_input_tag_(false),
 	structure_input_tag_(""),
 	last_struct_id_(0),
-	task_factory_(core::pack::task::TaskFactoryOP( new TaskFactory() )),
+	task_factory_(utility::pointer::make_shared< TaskFactory >()),
 	relevant_residues_mode_(RelevantResiduesMode::Exclusive),
 	features_reporter_factory_(FeaturesReporterFactory::get_instance()),
 	features_reporters_(),
@@ -236,7 +236,7 @@ ReportToDB::ReportToDB(
 	custom_structure_input_tag_(false),
 	structure_input_tag_(""),
 	last_struct_id_(0),
-	task_factory_(core::pack::task::TaskFactoryOP( new TaskFactory() )),
+	task_factory_(utility::pointer::make_shared< TaskFactory >()),
 	relevant_residues_mode_(RelevantResiduesMode::Exclusive),
 	features_reporter_factory_(FeaturesReporterFactory::get_instance()),
 	features_reporters_(),
@@ -288,11 +288,11 @@ ReportToDB::register_options() const {
 	//TODO call relevant_options on FeaturesMover objects
 }
 
-MoverOP ReportToDB::fresh_instance() const { return MoverOP( new ReportToDB ); }
+MoverOP ReportToDB::fresh_instance() const { return utility::pointer::make_shared< ReportToDB >(); }
 
 MoverOP ReportToDB::clone() const
 {
-	return MoverOP( new ReportToDB( *this ) );
+	return utility::pointer::make_shared< ReportToDB >( *this );
 }
 
 void
@@ -668,9 +668,9 @@ void
 ReportToDB::initialize_reporters()
 {
 	// the protocols, batches, and structure features are special
-	protocol_features_ = protocols::features::ProtocolFeaturesOP( new ProtocolFeatures() );
-	batch_features_ = protocols::features::BatchFeaturesOP( new BatchFeatures() );
-	structure_features_ = protocols::features::StructureFeaturesOP( new StructureFeatures() );
+	protocol_features_ = utility::pointer::make_shared< ProtocolFeatures >();
+	batch_features_ = utility::pointer::make_shared< BatchFeatures >();
+	structure_features_ = utility::pointer::make_shared< StructureFeatures >();
 }
 
 void
@@ -930,7 +930,7 @@ std::string ReportToDBCreator::keyname() const {
 
 protocols::moves::MoverOP
 ReportToDBCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ReportToDB );
+	return utility::pointer::make_shared< ReportToDB >();
 }
 
 void ReportToDBCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

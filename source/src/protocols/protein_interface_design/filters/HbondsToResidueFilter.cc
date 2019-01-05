@@ -89,7 +89,7 @@ static basic::Tracer TR( "protocols.protein_interface_design.filters.HbondsToRes
 using core::pose::Pose;
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP HbondsToResidueFilterCreator::create_filter() const { return protocols::filters::FilterOP( new HbondsToResidueFilter ); }
+// XRW TEMP HbondsToResidueFilterCreator::create_filter() const { return utility::pointer::make_shared< HbondsToResidueFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP HbondsToResidueFilterCreator::keyname() const { return "HbondsToResidue"; }
@@ -327,7 +327,7 @@ std::string HbondsToResidueFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 HbondsToResidueFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new HbondsToResidueFilter );
+	return utility::pointer::make_shared< HbondsToResidueFilter >();
 }
 
 void HbondsToResidueFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

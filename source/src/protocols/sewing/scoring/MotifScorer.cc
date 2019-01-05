@@ -259,7 +259,7 @@ MotifScorer::type_name(){
 //////Creator methods//////////
 AssemblyScorerOP
 MotifScorerCreator::create_assembly_scorer() const{
-	return AssemblyScorerOP( new MotifScorer );
+	return utility::pointer::make_shared< MotifScorer >();
 }
 
 

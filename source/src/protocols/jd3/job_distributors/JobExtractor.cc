@@ -95,7 +95,7 @@ JobExtractor::pop_job_from_queue()
 	jobs_for_current_digraph_node_.pop_front();
 	digraph_node_for_job_[ job->job_index() ] = current_digraph_node_;
 	if ( jobs_running_for_digraph_nodes_.count( current_digraph_node_ ) == 0 ) {
-		jobs_running_for_digraph_nodes_[ current_digraph_node_ ] = JobSetOP( new JobSet );
+		jobs_running_for_digraph_nodes_[ current_digraph_node_ ] = utility::pointer::make_shared< JobSet >();
 	}
 	jobs_running_for_digraph_nodes_[ current_digraph_node_ ]->insert( job->job_index() );
 	running_jobs_[ job->job_index() ] = job;

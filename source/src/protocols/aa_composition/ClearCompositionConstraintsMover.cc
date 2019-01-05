@@ -52,7 +52,7 @@ using namespace utility::tag;
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP ClearCompositionConstraintsMoverCreator::create_mover() const
 // XRW TEMP {
-// XRW TEMP  return protocols::moves::MoverOP( new ClearCompositionConstraintsMover );
+// XRW TEMP  return utility::pointer::make_shared< ClearCompositionConstraintsMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -84,11 +84,11 @@ ClearCompositionConstraintsMover::~ClearCompositionConstraintsMover()= default;
 
 /// @brief Copy this object and return a pointer to the copy.
 ///
-protocols::moves::MoverOP ClearCompositionConstraintsMover::clone() const { return protocols::moves::MoverOP( new protocols::aa_composition::ClearCompositionConstraintsMover( *this ) ); }
+protocols::moves::MoverOP ClearCompositionConstraintsMover::clone() const { return utility::pointer::make_shared< protocols::aa_composition::ClearCompositionConstraintsMover >( *this ); }
 
 /// @brief Create a new object of this type and return a pointer to it.
 ///
-protocols::moves::MoverOP ClearCompositionConstraintsMover::fresh_instance() const { return protocols::moves::MoverOP( new ClearCompositionConstraintsMover ); }
+protocols::moves::MoverOP ClearCompositionConstraintsMover::fresh_instance() const { return utility::pointer::make_shared< ClearCompositionConstraintsMover >(); }
 
 /// @brief Returns the name of this mover ("ClearCompositionConstraintsMover").
 ///
@@ -146,7 +146,7 @@ std::string ClearCompositionConstraintsMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 ClearCompositionConstraintsMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ClearCompositionConstraintsMover );
+	return utility::pointer::make_shared< ClearCompositionConstraintsMover >();
 }
 
 void ClearCompositionConstraintsMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

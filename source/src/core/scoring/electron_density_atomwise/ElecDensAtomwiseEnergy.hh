@@ -51,13 +51,13 @@ public:
 	PoseSequenceOP
 	copy_clone() const
 	{
-		return PoseSequenceOP( new PoseSequence( *this ) );
+		return utility::pointer::make_shared< PoseSequence >( *this );
 	}
 
 	basic::datacache::CacheableDataOP
 	clone() const override
 	{
-		return basic::datacache::CacheableDataOP( new PoseSequence( *this ) );
+		return utility::pointer::make_shared< PoseSequence >( *this );
 	}
 
 private:

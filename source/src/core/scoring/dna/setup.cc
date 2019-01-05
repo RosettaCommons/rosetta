@@ -41,7 +41,7 @@ set_base_partner(
 	using basic::datacache::DataCache_CacheableData;
 	utility::vector1< Size > partner;
 	find_basepairs( pose, partner );
-	pose.data().set( core::pose::datacache::CacheableDataType::BASE_PARTNER, DataCache_CacheableData::DataOP( new BasePartner( partner ) ) );
+	pose.data().set( core::pose::datacache::CacheableDataType::BASE_PARTNER, utility::pointer::make_shared< BasePartner >( partner ) );
 }
 
 void

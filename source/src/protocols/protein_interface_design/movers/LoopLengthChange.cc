@@ -62,7 +62,7 @@ LoopLengthChangeCreator::keyname() const
 
 protocols::moves::MoverOP
 LoopLengthChangeCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LoopLengthChange );
+	return utility::pointer::make_shared< LoopLengthChange >();
 }
 
 
@@ -187,7 +187,7 @@ LoopLengthChange::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, p
 
 protocols::moves::MoverOP
 LoopLengthChange::clone() const {
-	return( protocols::moves::MoverOP( new LoopLengthChange( *this ) ));
+	return( utility::pointer::make_shared< LoopLengthChange >( *this ));
 }
 
 void

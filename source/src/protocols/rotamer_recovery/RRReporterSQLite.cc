@@ -176,8 +176,8 @@ RRReporterSQLite::write_nchi_table_schema(
 	using namespace basic::database;
 	using namespace boost::assign;
 
-	Column name3("name3", DbDataTypeOP( new DbText() ));
-	Column nchi("nchi", DbDataTypeOP( new DbInteger() ));
+	Column name3("name3", utility::pointer::make_shared< DbText >());
+	Column nchi("nchi", utility::pointer::make_shared< DbInteger >());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(name3);
@@ -221,21 +221,21 @@ RRReporterSQLite::write_rotamer_recovery_full_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct1_name("struct1_name", DbDataTypeOP( new DbText() ));
-	Column name1("name1", DbDataTypeOP( new DbText() ));
-	Column name3("name3", DbDataTypeOP( new DbText() ));
-	Column residue_type("residue_type", DbDataTypeOP( new DbText() ));
-	Column chain1("chain1", DbDataTypeOP( new DbInteger() ));
-	Column res1("res1", DbDataTypeOP( new DbInteger() ));
-	Column struct2_name("struct2_name", DbDataTypeOP( new DbText() ));
-	Column chain2("chain2", DbDataTypeOP( new DbInteger() ));
-	Column res2("res2", DbDataTypeOP( new DbInteger() ));
-	Column protocol_name("protocol_name", DbDataTypeOP( new DbText() ));
-	Column protocol_params("protocol_params", DbDataTypeOP( new DbText() ));
-	Column comparer_name("comparer_name", DbDataTypeOP( new DbText() ));
-	Column comparer_params("comparer_params", DbDataTypeOP( new DbText() ));
-	Column score("score", DbDataTypeOP( new DbReal() ));
-	Column recovered("recovered", DbDataTypeOP( new DbInteger() ));
+	Column struct1_name("struct1_name", utility::pointer::make_shared< DbText >());
+	Column name1("name1", utility::pointer::make_shared< DbText >());
+	Column name3("name3", utility::pointer::make_shared< DbText >());
+	Column residue_type("residue_type", utility::pointer::make_shared< DbText >());
+	Column chain1("chain1", utility::pointer::make_shared< DbInteger >());
+	Column res1("res1", utility::pointer::make_shared< DbInteger >());
+	Column struct2_name("struct2_name", utility::pointer::make_shared< DbText >());
+	Column chain2("chain2", utility::pointer::make_shared< DbInteger >());
+	Column res2("res2", utility::pointer::make_shared< DbInteger >());
+	Column protocol_name("protocol_name", utility::pointer::make_shared< DbText >());
+	Column protocol_params("protocol_params", utility::pointer::make_shared< DbText >());
+	Column comparer_name("comparer_name", utility::pointer::make_shared< DbText >());
+	Column comparer_params("comparer_params", utility::pointer::make_shared< DbText >());
+	Column score("score", utility::pointer::make_shared< DbReal >());
+	Column recovered("recovered", utility::pointer::make_shared< DbInteger >());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct1_name);
@@ -267,10 +267,10 @@ RRReporterSQLite::write_rotamer_recovery_features_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
-	Column resNum("resNum", DbDataTypeOP( new DbInteger() ));
-	Column divergence("divergence", DbDataTypeOP( new DbReal() ));
-	Column recovered("recovered", DbDataTypeOP( new DbInteger() ));
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >());
+	Column resNum("resNum", utility::pointer::make_shared< DbInteger >());
+	Column divergence("divergence", utility::pointer::make_shared< DbReal >());
+	Column recovered("recovered", utility::pointer::make_shared< DbInteger >());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -300,10 +300,10 @@ RRReporterSQLite::write_predicted_features_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
-	Column resNum("resNum", DbDataTypeOP( new DbInteger() ));
-	Column predicted_struct_id("predicted_struct_id", DbDataTypeOP( new DbBigInt() ));
-	Column predicted_resNum("predicted_resNum", DbDataTypeOP( new DbInteger() ));
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >());
+	Column resNum("resNum", utility::pointer::make_shared< DbInteger >());
+	Column predicted_struct_id("predicted_struct_id", utility::pointer::make_shared< DbBigInt >());
+	Column predicted_resNum("predicted_resNum", utility::pointer::make_shared< DbInteger >());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);

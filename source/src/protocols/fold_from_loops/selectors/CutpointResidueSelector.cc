@@ -71,7 +71,7 @@ CutpointResidueSelector::CutpointResidueSelector( CutpointResidueSelector const 
 /// @brief Clone operator.
 /// @details Copy this object and return an owning pointer to the new object.
 core::select::residue_selector::ResidueSelectorOP CutpointResidueSelector::clone() const {
-	return core::select::residue_selector::ResidueSelectorOP( new CutpointResidueSelector(*this) );
+	return utility::pointer::make_shared< CutpointResidueSelector >(*this);
 }
 
 core::select::residue_selector::ResidueSubset
@@ -121,7 +121,7 @@ CutpointResidueSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 
 core::select::residue_selector::ResidueSelectorOP
 CutpointResidueSelectorCreator::create_residue_selector() const {
-	return core::select::residue_selector::ResidueSelectorOP( new CutpointResidueSelector );
+	return utility::pointer::make_shared< CutpointResidueSelector >();
 }
 
 std::string

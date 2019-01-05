@@ -79,7 +79,7 @@ ConformerSwitchMover::ConformerSwitchMover() :
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP ConformerSwitchMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new ConformerSwitchMover );
+// XRW TEMP  return utility::pointer::make_shared< ConformerSwitchMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -100,7 +100,7 @@ ConformerSwitchMover::ConformerSwitchMover(
 {
 	ensemble_ = ensemble;
 
-	lowres_filter_ = protocols::docking::DockingLowResFilterOP( new protocols::docking::DockingLowResFilter() );
+	lowres_filter_ = utility::pointer::make_shared< protocols::docking::DockingLowResFilter >();
 }
 
 void ConformerSwitchMover::set_temperature( core::Real temp_in )
@@ -148,7 +148,7 @@ void ConformerSwitchMover::apply( core::pose::Pose & pose )
 		using namespace basic::datacache;
 		pose.data().set(
 			CacheableDataType::ARBITRARY_FLOAT_DATA,
-			DataCache_CacheableData::DataOP( new basic::datacache::CacheableStringFloatMap() )
+			utility::pointer::make_shared< basic::datacache::CacheableStringFloatMap >()
 		);
 	}
 
@@ -267,7 +267,7 @@ std::string ConformerSwitchMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 ConformerSwitchMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ConformerSwitchMover );
+	return utility::pointer::make_shared< ConformerSwitchMover >();
 }
 
 void ConformerSwitchMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

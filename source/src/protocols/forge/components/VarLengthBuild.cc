@@ -193,13 +193,13 @@ VarLengthBuild::~VarLengthBuild() = default;
 
 /// @brief clone this object
 protocols::moves::MoverOP VarLengthBuild::clone() const {
-	return protocols::moves::MoverOP( new VarLengthBuild( *this ) );
+	return utility::pointer::make_shared< VarLengthBuild >( *this );
 }
 
 
 /// @brief create a new instance of this type of object
 protocols::moves::MoverOP VarLengthBuild::fresh_instance() const {
-	return protocols::moves::MoverOP( new VarLengthBuild() );
+	return utility::pointer::make_shared< VarLengthBuild >();
 }
 
 
@@ -523,7 +523,7 @@ void VarLengthBuild::apply( Pose & pose ) {
 				// std::cout << "man handle loop." << std::endl;
 				loops->add_loop( Loop(1, remodel_data_.blueprint.size()+2, 0, 0, true) );
 			} else {
-				loops = LoopsOP( new Loops( intervals_to_loops( loop_intervals.begin(), loop_intervals.end() ) ) );
+				loops = utility::pointer::make_shared< Loops >( intervals_to_loops( loop_intervals.begin(), loop_intervals.end() ) );
 			}
 
 			Pose bufferPose(archive_pose);
@@ -934,7 +934,7 @@ void VarLengthBuild::pick_all_fragments(
 	// pick full-mers
 	if ( use_fullmer_ ) {
 		if ( !fragfull_.get() ) {
-			fragfull_ = OrderedFragSetOP( new OrderedFragSet() );
+			fragfull_ = utility::pointer::make_shared< OrderedFragSet >();
 		}
 
 		fragfull_->add( pick_fragments( complete_ss, complete_aa, complete_abego, interval, interval.length(), n_frags ) );
@@ -942,7 +942,7 @@ void VarLengthBuild::pick_all_fragments(
 
 	// pick 9-mers
 	if ( !frag9_.get() ) {
-		frag9_ = ConstantLengthFragSetOP( new ConstantLengthFragSet( 9 ) );
+		frag9_ = utility::pointer::make_shared< ConstantLengthFragSet >( 9 );
 	}
 	if ( basic::options::option[basic::options::OptionKeys::in::file::frag9].user() ) {
 		frag9_->read_fragment_file( basic::options::option[basic::options::OptionKeys::in::file::frag9]());
@@ -952,7 +952,7 @@ void VarLengthBuild::pick_all_fragments(
 
 	// pick 3-mers
 	if ( !frag3_.get() ) {
-		frag3_ = ConstantLengthFragSetOP( new ConstantLengthFragSet( 3 ) );
+		frag3_ = utility::pointer::make_shared< ConstantLengthFragSet >( 3 );
 	}
 	ConstantLengthFragSetOP tmp_frag3( new ConstantLengthFragSet( 3 ) );
 	if ( basic::options::option[basic::options::OptionKeys::in::file::frag3].user() ) {
@@ -965,7 +965,7 @@ void VarLengthBuild::pick_all_fragments(
 
 	// make 1-mers from 3-mers
 	if ( !frag1_.get() ) {
-		frag1_ = ConstantLengthFragSetOP( new ConstantLengthFragSet( 1 ) );
+		frag1_ = utility::pointer::make_shared< ConstantLengthFragSet >( 1 );
 	}
 	frag1_->add( *smallmer_from_largemer( tmp_frag3->begin(), tmp_frag3->end(), 1 ) );
 }

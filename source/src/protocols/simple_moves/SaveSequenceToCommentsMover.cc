@@ -53,12 +53,12 @@ SaveSequenceToCommentsMover::parse_my_tag(
 	save_seq_name( tag->getOption< std::string >( "save_seq_name", "" ) );
 }
 
-moves::MoverOP SaveSequenceToCommentsMover::clone() const { return moves::MoverOP( new SaveSequenceToCommentsMover( *this ) ); }
-moves::MoverOP SaveSequenceToCommentsMover::fresh_instance() const { return moves::MoverOP( new SaveSequenceToCommentsMover ); }
+moves::MoverOP SaveSequenceToCommentsMover::clone() const { return utility::pointer::make_shared< SaveSequenceToCommentsMover >( *this ); }
+moves::MoverOP SaveSequenceToCommentsMover::fresh_instance() const { return utility::pointer::make_shared< SaveSequenceToCommentsMover >(); }
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP SaveSequenceToCommentsMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new SaveSequenceToCommentsMover );
+// XRW TEMP  return utility::pointer::make_shared< SaveSequenceToCommentsMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -102,7 +102,7 @@ std::string SaveSequenceToCommentsMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 SaveSequenceToCommentsMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SaveSequenceToCommentsMover );
+	return utility::pointer::make_shared< SaveSequenceToCommentsMover >();
 }
 
 void SaveSequenceToCommentsMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

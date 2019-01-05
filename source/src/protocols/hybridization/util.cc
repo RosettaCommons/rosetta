@@ -118,7 +118,7 @@ void setup_centroid_constraints(
 		// automatic constraints
 		generate_centroid_constraints( pose, templates, template_weights, ignore_res_for_AUTO );
 	} else if ( !cen_cst_file.empty() && cen_cst_file != "NONE" ) {
-		ConstraintSetOP constraint_set = ConstraintIO::get_instance()->read_constraints_new( cen_cst_file, ConstraintSetOP( new ConstraintSet ), pose );
+		ConstraintSetOP constraint_set = ConstraintIO::get_instance()->read_constraints_new( cen_cst_file, utility::pointer::make_shared< ConstraintSet >(), pose );
 		pose.constraint_set( constraint_set );  //reset constraints
 	}
 }
@@ -139,13 +139,13 @@ void setup_fullatom_constraints(
 		protocols::constraint_movers::AddConstraintsToCurrentConformationMover add_constraints;
 		add_constraints.apply(pose);
 	} else if ( !fa_cst_file.empty() && fa_cst_file != "NONE" ) {
-		ConstraintSetOP constraint_set = ConstraintIO::get_instance()->read_constraints_new( fa_cst_file, ConstraintSetOP( new ConstraintSet ), pose );
+		ConstraintSetOP constraint_set = ConstraintIO::get_instance()->read_constraints_new( fa_cst_file, utility::pointer::make_shared< ConstraintSet >(), pose );
 		pose.constraint_set( constraint_set );  //reset constraints
 	} else if ( cen_cst_file == "AUTO" ) {
 		// automatic constraints
 		generate_centroid_constraints( pose, templates, template_weights );
 	} else if ( !cen_cst_file.empty() && cen_cst_file != "NONE" ) {
-		ConstraintSetOP constraint_set = ConstraintIO::get_instance()->read_constraints_new( cen_cst_file, ConstraintSetOP( new ConstraintSet ), pose );
+		ConstraintSetOP constraint_set = ConstraintIO::get_instance()->read_constraints_new( cen_cst_file, utility::pointer::make_shared< ConstraintSet >(), pose );
 		pose.constraint_set( constraint_set );  //reset constraints
 	}
 }
@@ -154,7 +154,7 @@ void setup_constraints(
 	core::pose::Pose &pose,
 	std::string & cst_in) {
 	std::istringstream cst_ss(cst_in);
-	ConstraintSetOP constraint_set = ConstraintIO::get_instance()->read_constraints_new( cst_ss, ConstraintSetOP( new ConstraintSet ), pose );
+	ConstraintSetOP constraint_set = ConstraintIO::get_instance()->read_constraints_new( cst_ss, utility::pointer::make_shared< ConstraintSet >(), pose );
 	pose.constraint_set( constraint_set );  //reset constraints
 }
 
@@ -218,9 +218,9 @@ void generate_centroid_constraints(
 					}
 
 					using namespace core::scoring::func;
-					FuncOP fx( new ScalarWeightedFunc( 1.0, FuncOP( new USOGFunc( dist, COORDDEV ) ) ) );
+					FuncOP fx( new ScalarWeightedFunc( 1.0, utility::pointer::make_shared< USOGFunc >( dist, COORDDEV ) ) );
 					pose.add_constraint(
-						scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint( core::id::AtomID(2,resid_j), core::id::AtomID(2,resid_k), fx ) ) )
+						utility::pointer::make_shared< AtomPairConstraint >( core::id::AtomID(2,resid_j), core::id::AtomID(2,resid_k), fx )
 					);
 				}
 			}
@@ -238,12 +238,12 @@ void setup_user_coordinate_constraints(
 	for ( core::Size i=1; i<=reses.size(); ++i ) {
 		core::scoring::func::FuncOP fx( new core::scoring::func::USOGFunc( 0, COORDDEV ) );
 		pose.add_constraint(
-			scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new core::scoring::constraints::CoordinateConstraint(
+			scoring::constraints::ConstraintCOP( utility::pointer::make_shared< core::scoring::constraints::CoordinateConstraint >(
 			core::id::AtomID(2,reses[i]),
 			core::id::AtomID(2,pose.size()),
 			pose.residue(reses[i]).atom(2).xyz(),
 			fx
-			) ) ) );
+			) ) );
 	}
 }
 
@@ -264,9 +264,9 @@ void add_strand_pairs_cst(core::pose::Pose & pose, utility::vector1< std::pair< 
 		core::Real dist = pose.residue(strand_pair.first).xyz(2).distance( pose.residue(strand_pair.second).xyz(2) );
 		if ( dist <= MAXDIST ) {
 			using namespace core::scoring::func;
-			FuncOP fx( new ScalarWeightedFunc( 4.0, FuncOP( new USOGFunc( dist, COORDDEV ) ) ) ); // try to lock it down with a high weight
+			FuncOP fx( new ScalarWeightedFunc( 4.0, utility::pointer::make_shared< USOGFunc >( dist, COORDDEV ) ) ); // try to lock it down with a high weight
 			pose.add_constraint(
-				scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint( core::id::AtomID(2,strand_pair.first), core::id::AtomID(2,strand_pair.second), fx ) ) )
+				utility::pointer::make_shared< AtomPairConstraint >( core::id::AtomID(2,strand_pair.first), core::id::AtomID(2,strand_pair.second), fx )
 			);
 		}
 	}
@@ -315,7 +315,7 @@ void add_non_protein_cst(core::pose::Pose & pose, core::pose::Pose & tmpl, core:
 
 					if ( dist <= MAXDIST ) {
 						using namespace core::scoring::func;
-						FuncOP fx( new ScalarWeightedFunc( het_prot_cst_weight, FuncOP( new USOGFunc( dist, COORDDEV ) ) ) );
+						FuncOP fx( new ScalarWeightedFunc( het_prot_cst_weight, utility::pointer::make_shared< USOGFunc >( dist, COORDDEV ) ) );
 						pose.add_constraint(
 							scoring::constraints::ConstraintCOP(
 							new core::scoring::constraints::AtomPairConstraint( core::id::AtomID(iatom,ires_tgt), core::id::AtomID(jatom,jres_tgt), fx ) )
@@ -355,7 +355,7 @@ void add_non_protein_cst(core::pose::Pose & pose, core::pose::Pose & tmpl, core:
 
 						if ( dist1 <= MAXDIST ) {
 							using namespace core::scoring::func;
-							FuncOP fx( new ScalarWeightedFunc( self_cst_weight, FuncOP( new USOGFunc( dist1, COORDDEV ) ) ) );
+							FuncOP fx( new ScalarWeightedFunc( self_cst_weight, utility::pointer::make_shared< USOGFunc >( dist1, COORDDEV ) ) );
 							pose.add_constraint(
 								scoring::constraints::ConstraintCOP(
 								new core::scoring::constraints::AtomPairConstraint( core::id::AtomID(iatom,ires_tgt), core::id::AtomID(jatom,jres_tgt), fx ) )
@@ -821,7 +821,7 @@ core::Real get_gdtmm( core::pose::Pose & native, core::pose::Pose & pose, core::
 	if ( !aln ) {
 		core::sequence::SequenceOP model_seq( new core::sequence::Sequence( pose.sequence(),  "model",  1 ) );
 		core::sequence::SequenceOP native_seq( new core::sequence::Sequence( native.sequence(), "native", 1 ) );
-		aln = core::sequence::SequenceAlignmentOP( new core::sequence::SequenceAlignment );
+		aln = utility::pointer::make_shared< core::sequence::SequenceAlignment >();
 		*aln = align_naive(model_seq,native_seq);
 	}
 

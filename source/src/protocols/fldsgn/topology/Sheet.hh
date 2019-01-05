@@ -68,7 +68,7 @@ public:// construct/destruct
 
 	/// @brief clone this object
 	SheetOP clone() {
-		return SheetOP( new Sheet( *this ) );
+		return utility::pointer::make_shared< Sheet >( *this );
 	}
 
 	/// @brief return strand pairing

@@ -93,7 +93,7 @@ CovalentCompliance::CovalentCompliance() :
 
 /// @details WARNING WARNING WARNING! THREAD UNSAFE!
 void CovalentCompliance::load_dist_table( std::string const& file ) {
-	covalent_distances_ = FragsToAtomDistOP( new FragsToAtomDist( file ) );
+	covalent_distances_ = utility::pointer::make_shared< FragsToAtomDist >( file );
 }
 
 bool CovalentCompliance::is_compliant( core::id::NamedAtomID const& atom1, core::id::NamedAtomID const& atom2, core::Real cutoff ) const {

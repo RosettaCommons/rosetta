@@ -90,13 +90,13 @@ using protocols::moves::NullMover;
 
 /// @brief setup filters map with some of the the RosettaScript defaults
 inline void prime_Filters( Filters_map & filters ) {
-	filters["true_filter"] = protocols::filters::FilterOP( new protocols::filters::TrueFilter );
-	filters["false_filter"] = protocols::filters::FilterOP( new protocols::filters::FalseFilter );
+	filters["true_filter"] = utility::pointer::make_shared< protocols::filters::TrueFilter >();
+	filters["false_filter"] = utility::pointer::make_shared< protocols::filters::FalseFilter >();
 }
 
 /// @brief setup movers map with some of the the RosettaScript defaults
 inline void prime_Movers( Movers_map & movers ) {
-	movers["null"] = protocols::moves::MoverOP( new protocols::moves::NullMover );
+	movers["null"] = utility::pointer::make_shared< protocols::moves::NullMover >();
 }
 
 /// @brief setup data map with *some* of the the RosettaScript defaults
@@ -229,8 +229,8 @@ public:
 		value_(value),
 		tag_(tag)
 	{}
-	FilterOP clone() const { return FilterOP( new StubFilter( *this ) ); }
-	FilterOP fresh_instance() const { return FilterOP( new StubFilter() ); }
+	FilterOP clone() const { return utility::pointer::make_shared< StubFilter >( *this ); }
+	FilterOP fresh_instance() const { return utility::pointer::make_shared< StubFilter >(); }
 	void set( bool truth, core::Real value) { truth_ = truth; value_ = value; }
 	bool apply( core::pose::Pose const & ) const { ++num_apply; return truth_; }
 	core::Real report_sm( core::pose::Pose const & ) const { ++num_report_sm; return value_;}
@@ -266,8 +266,8 @@ public:
 		pos_(1),
 		tag_(tag)
 	{}
-	FilterOP clone() const { return FilterOP( new StubMultiFilter( *this ) ); }
-	FilterOP fresh_instance() const { return FilterOP( new StubMultiFilter() ); }
+	FilterOP clone() const { return utility::pointer::make_shared< StubMultiFilter >( *this ); }
+	FilterOP fresh_instance() const { return utility::pointer::make_shared< StubMultiFilter >(); }
 	void set( utility::vector1<core::Real> const & values, bool truth=true, std::string tag="") { values_ = values, truth_ = truth; tag_ = tag; }
 	void push_back( core::Real value ) { values_.push_back( value); }
 	void set_pos( core::Size pos = 1) { pos_ = pos; }

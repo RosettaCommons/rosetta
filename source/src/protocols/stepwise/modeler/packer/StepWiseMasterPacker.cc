@@ -81,7 +81,7 @@ void
 StepWiseMasterPacker::initialize( pose::Pose const & pose ) {
 
 	if ( options_->sampler_perform_phosphate_pack() ) {
-		phosphate_sampler_ = rna::phosphate::MultiPhosphateSamplerOP( new rna::phosphate::MultiPhosphateSampler( pose ) );
+		phosphate_sampler_ = utility::pointer::make_shared< rna::phosphate::MultiPhosphateSampler >( pose );
 		phosphate_sampler_->set_moving_partition_res( working_parameters_->working_moving_partition_res() );
 		phosphate_sampler_->set_scorefxn( rna::phosphate::get_phosphate_scorefxn( scorefxn_->energy_method_options() ) );
 		phosphate_sampler_->set_force_phosphate_instantiation( options_->force_phosphate_instantiation() );
@@ -89,7 +89,7 @@ StepWiseMasterPacker::initialize( pose::Pose const & pose ) {
 
 	if ( options_->o2prime_legacy_mode() ) { // this is the only action that is non-const for the pose... deprecate?
 		rna::check_instantiated_O2Prime_hydrogen( pose ); // i.e., instantiate all 2'-OH.
-		o2prime_packer_ = rna::o2prime::O2PrimePackerOP( new rna::o2prime::O2PrimePacker( pose, scorefxn_, working_parameters_->working_moving_partition_res() ) );
+		o2prime_packer_ = utility::pointer::make_shared< rna::o2prime::O2PrimePacker >( pose, scorefxn_, working_parameters_->working_moving_partition_res() );
 	}
 
 	initialize_packer();
@@ -128,21 +128,21 @@ StepWiseMasterPacker::add_packer_screeners( utility::vector1< screener::StepWise
 
 	// testing -- OK to move down here? No won't be inherited by the actual pose, right?
 	if ( options_->sampler_perform_phosphate_pack() ) {
-		screeners.push_back( screener::StepWiseScreenerOP( new PhosphateScreener( phosphate_sampler_ ) ) );
+		screeners.push_back( utility::pointer::make_shared< PhosphateScreener >( phosphate_sampler_ ) );
 	}
 
 	if ( options_->sampler_try_sugar_instantiation() &&
 			working_parameters_->floating_base() ) {
-		screeners.push_back( stepwise::screener::StepWiseScreenerOP( new SugarInstantiator( *sugar_instantiation_pose, working_parameters_->working_moving_res() ) ) );
+		screeners.push_back( utility::pointer::make_shared< SugarInstantiator >( *sugar_instantiation_pose, working_parameters_->working_moving_res() ) );
 	}
 
 	if ( options_->o2prime_legacy_mode() ) {
-		screeners.push_back( screener::StepWiseScreenerOP( new O2PrimeScreener( o2prime_packer_ ) ) );
+		screeners.push_back( utility::pointer::make_shared< O2PrimeScreener >( o2prime_packer_ ) );
 		if ( !protein::contains_protein( pose ) ) return; // don't put in PackScreener below.
 	}
 
 	packer_pose_ = pose.clone();
-	screeners.push_back( screener::StepWiseScreenerOP( new PackScreener( *packer_pose_, packer_ ) ) ); // includes HO2' for RNA.
+	screeners.push_back( utility::pointer::make_shared< PackScreener >( *packer_pose_, packer_ ) ); // includes HO2' for RNA.
 }
 
 ///////////////////////////////////////////////////////////////////////////

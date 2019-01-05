@@ -194,12 +194,12 @@ CoupledSidechainProtocol::show_counters( std::ostream & out){
 
 protocols::moves::MoverOP
 CoupledSidechainProtocol::clone() const {
-	return( protocols::moves::MoverOP( new CoupledSidechainProtocol( *this ) ) );
+	return( utility::pointer::make_shared< CoupledSidechainProtocol >( *this ) );
 }
 
 protocols::moves::MoverOP
 CoupledSidechainProtocol::fresh_instance() const {
-	return (protocols::moves::MoverOP( new CoupledSidechainProtocol ));
+	return (utility::pointer::make_shared< CoupledSidechainProtocol >());
 }
 
 void

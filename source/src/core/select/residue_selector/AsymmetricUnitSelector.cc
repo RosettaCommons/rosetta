@@ -72,7 +72,7 @@ AsymmetricUnitSelector::~AsymmetricUnitSelector() {}
 /// @details Copy this object and return owning pointer to the copy (created on the heap).
 core::select::residue_selector::ResidueSelectorOP
 AsymmetricUnitSelector::clone() const {
-	return core::select::residue_selector::ResidueSelectorOP( new AsymmetricUnitSelector(*this) );
+	return utility::pointer::make_shared< AsymmetricUnitSelector >(*this);
 }
 
 
@@ -140,7 +140,7 @@ AsymmetricUnitSelector::apply(
 
 core::select::residue_selector::ResidueSelectorOP
 AsymmetricUnitSelectorCreator::create_residue_selector() const {
-	return core::select::residue_selector::ResidueSelectorOP( new AsymmetricUnitSelector );
+	return utility::pointer::make_shared< AsymmetricUnitSelector >();
 }
 
 std::string

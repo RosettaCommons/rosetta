@@ -80,17 +80,17 @@ namespace cyclic_peptide {
 
 moves::MoverOP PeptideCyclizeMover::clone() const
 {
-	return moves::MoverOP( new PeptideCyclizeMover( *this ) );
+	return utility::pointer::make_shared< PeptideCyclizeMover >( *this );
 }
 
 moves::MoverOP PeptideCyclizeMover::fresh_instance() const
 {
-	return moves::MoverOP( new PeptideCyclizeMover );
+	return utility::pointer::make_shared< PeptideCyclizeMover >();
 }
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP PeptideCyclizeMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new PeptideCyclizeMover );
+// XRW TEMP  return utility::pointer::make_shared< PeptideCyclizeMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -119,7 +119,7 @@ PeptideCyclizeMover::PeptideCyclizeMover() :
 	bond_assigned_ = false;
 	angle_assigned_ = false;
 	torsion_assigned_ = false;
-	//set_rosetta_scripts_tag( utility::tag::TagOP( new utility::tag::Tag() ) ); //do I need this?
+	//set_rosetta_scripts_tag( utility::pointer::make_shared< utility::tag::Tag >() ); //do I need this?
 }
 
 //these are setters. Set user-defined values.
@@ -531,7 +531,7 @@ std::string PeptideCyclizeMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 PeptideCyclizeMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new PeptideCyclizeMover );
+	return utility::pointer::make_shared< PeptideCyclizeMover >();
 }
 
 void PeptideCyclizeMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

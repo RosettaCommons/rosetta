@@ -51,13 +51,13 @@ ResetFoldTree::apply( Pose & pose )
 moves::MoverOP
 ResetFoldTree::clone() const
 {
-	return moves::MoverOP( new ResetFoldTree( *this ) );
+	return utility::pointer::make_shared< ResetFoldTree >( *this );
 }
 
 moves::MoverOP
 ResetFoldTree::fresh_instance() const
 {
-	return moves::MoverOP( new ResetFoldTree );
+	return utility::pointer::make_shared< ResetFoldTree >();
 }
 
 void
@@ -95,7 +95,7 @@ std::string ResetFoldTreeCreator::keyname() const {
 
 protocols::moves::MoverOP
 ResetFoldTreeCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ResetFoldTree );
+	return utility::pointer::make_shared< ResetFoldTree >();
 }
 
 void ResetFoldTreeCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

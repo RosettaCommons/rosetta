@@ -34,7 +34,7 @@ public:
 		core::Size is_global = 0);
 
 	protocols::wum::WorkUnitBaseOP clone() const override {
-		return protocols::wum::WorkUnitBaseOP( new WorkUnit_LoopHash( *this ) );
+		return utility::pointer::make_shared< WorkUnit_LoopHash >( *this );
 	}
 
 	// Pure virtual functions
@@ -75,7 +75,7 @@ public:
 		bool const fullatom = false
 	);
 	protocols::wum::WorkUnitBaseOP clone() const override {
-		return protocols::wum::WorkUnitBaseOP( new WorkUnit_FragInsert( *this ) );
+		return utility::pointer::make_shared< WorkUnit_FragInsert >( *this );
 	}
 
 	// Pure virtual functions
@@ -117,7 +117,7 @@ public:
 		bool const kicclose = true
 	);
 	protocols::wum::WorkUnitBaseOP clone() const override {
-		return protocols::wum::WorkUnitBaseOP( new WorkUnit_KicCloser( *this ));
+		return utility::pointer::make_shared< WorkUnit_KicCloser >( *this );
 	}
 
 	// Pure virtual functions
@@ -149,7 +149,7 @@ public:
 		bool const reconstruct = false
 	);
 	protocols::wum::WorkUnitBaseOP clone() const override {
-		return protocols::wum::WorkUnitBaseOP( new WorkUnit_PartialAbinitio( *this ) );
+		return utility::pointer::make_shared< WorkUnit_PartialAbinitio >( *this );
 	}
 
 	// Pure virtual functions

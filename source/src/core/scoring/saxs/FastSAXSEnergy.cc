@@ -121,11 +121,11 @@ ScoreTypes FastSAXSEnergyCreator::score_types_for_method() const {
 }
 
 methods::EnergyMethodOP FastSAXSEnergyCreator::create_energy_method( methods::EnergyMethodOptions const &) const {
-	return methods::EnergyMethodOP( new FastSAXSEnergy() );
+	return utility::pointer::make_shared< FastSAXSEnergy >();
 }
 
 FastSAXSEnergy::FastSAXSEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new FastSAXSEnergyCreator ) ) {
+	parent( utility::pointer::make_shared< FastSAXSEnergyCreator >() ) {
 	chi2=0;
 	dchi2_dca.clear();
 	dchi2_dsc.clear();
@@ -133,7 +133,7 @@ FastSAXSEnergy::FastSAXSEnergy() :
 
 /// clone
 methods::EnergyMethodOP FastSAXSEnergy::clone() const {
-	return methods::EnergyMethodOP( new FastSAXSEnergy( *this ) );
+	return utility::pointer::make_shared< FastSAXSEnergy >( *this );
 }
 
 void FastSAXSEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const {

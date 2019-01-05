@@ -390,7 +390,7 @@ has_chain(char const & chain, core::pose::Pose const & pose){
 	PDBInfoCOP pdb_info( pose.pdb_info() );
 	if ( ! pdb_info ) {
 		TR.Warning << "In has_chain(): Pose doesn't have a PDBInfo object - making a temporary default one." << std::endl;
-		pdb_info = PDBInfoCOP( new PDBInfo( pose ) );
+		pdb_info = utility::pointer::make_shared< PDBInfo >( pose );
 	}
 	for ( core::Size ii=1; ii <= pose.size(); ++ii ) {
 		if ( pdb_info->chain( ii ) == chain ) {
@@ -422,7 +422,7 @@ get_chain_ids_from_chains(utility::vector1< char > const & chains, core::pose::P
 	PDBInfoCOP pdb_info( pose.pdb_info() );
 	if ( ! pdb_info ) {
 		TR.Warning << "In get_chain_ids_from_chains(): Pose doesn't have a PDBInfo object - making a temporary default one." << std::endl;
-		pdb_info = PDBInfoCOP( new PDBInfo( pose ) );
+		pdb_info = utility::pointer::make_shared< PDBInfo >( pose );
 	}
 
 	for ( core::Size ii(1); ii <= pose.size(); ++ii ) {
@@ -473,7 +473,7 @@ get_chain_from_chain_id( core::Size const & chain_id, core::pose::Pose const & p
 	PDBInfoCOP pdb_info( pose.pdb_info() );
 	if ( ! pdb_info ) {
 		TR.Warning << "In res_in_chain(): Pose doesn't have a PDBInfo object - making a temporary default one." << std::endl;
-		pdb_info = PDBInfoCOP( new PDBInfo( pose ) );
+		pdb_info = utility::pointer::make_shared< PDBInfo >( pose );
 	}
 	core::Size first_chaisize = pose.conformation().chain_begin( chain_id );
 	return pose.pdb_info()->chain(first_chaisize);
@@ -519,7 +519,7 @@ get_jump_ids_from_chain( char const & chain, core::pose::Pose const & pose ) {
 	PDBInfoCOP pdb_info( pose.pdb_info() );
 	if ( ! pdb_info ) {
 		TR.Warning << "In get_jump_ids_from_chain(): Pose doesn't have a PDBInfo object - making a temporary default one." << std::endl;
-		pdb_info = PDBInfoCOP( new PDBInfo( pose ) );
+		pdb_info = utility::pointer::make_shared< PDBInfo >( pose );
 	}
 
 	for ( core::Size jump_id=1; jump_id <= pose.num_jump(); jump_id++ ) {
@@ -574,7 +574,7 @@ get_chain_from_jump_id(core::Size const & jump_id, core::pose::Pose const & pose
 	PDBInfoCOP pdb_info( pose.pdb_info() );
 	if ( ! pdb_info ) {
 		TR.Warning << "In get_chain_from_jump_id(): Pose doesn't have a PDBInfo object - making a temporary default one." << std::endl;
-		pdb_info = PDBInfoCOP( new PDBInfo( pose ) );
+		pdb_info = utility::pointer::make_shared< PDBInfo >( pose );
 	}
 	return pdb_info->chain( downstream_residue_id );
 }
@@ -584,7 +584,7 @@ get_resnums_for_chain( core::pose::Pose const & pose, char chain ) {
 	PDBInfoCOP pdb_info( pose.pdb_info() );
 	if ( ! pdb_info ) {
 		TR.Warning << "Attempted to find chain for Pose without annotated chain letters - making default chain letters." << std::endl;
-		pdb_info = PDBInfoCOP( new PDBInfo( pose ) );
+		pdb_info = utility::pointer::make_shared< PDBInfo >( pose );
 	}
 
 	utility::vector1<core::Size> resnums_in_chain;
@@ -616,7 +616,7 @@ get_chain_residues( core::pose::Pose const & pose, core::Size const chain_id ) {
 	core::Size const end( pose.conformation().chain_end(chain_id) );
 	core::conformation::ResidueCOPs residues;
 	for ( ; begin <= end; ++begin ) {
-		residues.push_back( core::conformation::ResidueOP( new core::conformation::Residue(pose.residue(begin)) ) );
+		residues.push_back( utility::pointer::make_shared< core::conformation::Residue >(pose.residue(begin)) );
 	}
 	return residues;
 }
@@ -639,7 +639,7 @@ bool res_in_chain( core::pose::Pose const & pose, core::Size resnum, std::string
 	PDBInfoCOP pdb_info( pose.pdb_info() );
 	if ( ! pdb_info ) {
 		TR.Warning << "In res_in_chain(): Pose doesn't have a PDBInfo object - making a temporary default one." << std::endl;
-		pdb_info = PDBInfoCOP( new PDBInfo( pose ) );
+		pdb_info = utility::pointer::make_shared< PDBInfo >( pose );
 	}
 	return pdb_info->chain( resnum ) == chain[0];
 }
@@ -649,7 +649,7 @@ core::Size get_hash_from_chain(char const & chain, core::pose::Pose const & pose
 	PDBInfoCOP pdb_info( pose.pdb_info() );
 	if ( ! pdb_info ) {
 		TR.Warning << "In get_hash_from_chain: Pose doesn't have a PDBInfo object - making a temporary default one." << std::endl;
-		pdb_info = PDBInfoCOP( new PDBInfo( pose ) );
+		pdb_info = utility::pointer::make_shared< PDBInfo >( pose );
 	}
 
 	std::size_t hash = 0;
@@ -677,7 +677,7 @@ core::Size get_hash_excluding_chain(char const & chain, core::pose::Pose const &
 	PDBInfoCOP pdb_info( pose.pdb_info() );
 	if ( ! pdb_info ) {
 		TR.Warning << "In get_hash_excluding_chain: Pose doesn't have a PDBInfo object - making a temporary default one." << std::endl;
-		pdb_info = PDBInfoCOP( new PDBInfo( pose ) );
+		pdb_info = utility::pointer::make_shared< PDBInfo >( pose );
 	}
 
 	std::size_t hash = 0;
@@ -712,7 +712,7 @@ get_sha1_hash_from_chains(utility::vector1< std::string > const & chains, core::
 	PDBInfoCOP pdb_info( pose.pdb_info() );
 	if ( ! pdb_info ) {
 		TR.Warning << "In get_sha1_hash_from_chain: Pose doesn't have a PDBInfo object - making a temporary default one." << std::endl;
-		pdb_info = PDBInfoCOP( new PDBInfo( pose ) );
+		pdb_info = utility::pointer::make_shared< PDBInfo >( pose );
 	}
 
 	std::stringstream coord_stream;
@@ -756,7 +756,7 @@ get_sha1_hash_excluding_chains(utility::vector1< std::string > const & chains, c
 	PDBInfoCOP pdb_info( pose.pdb_info() );
 	if ( ! pdb_info ) {
 		TR.Warning << "In get_sha1_hash_excluding_chain: Pose doesn't have a PDBInfo object - making a temporary default one." << std::endl;
-		pdb_info = PDBInfoCOP( new PDBInfo( pose ) );
+		pdb_info = utility::pointer::make_shared< PDBInfo >( pose );
 	}
 
 	std::stringstream coord_stream;

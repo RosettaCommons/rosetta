@@ -60,13 +60,13 @@ KClusterElement::~KClusterElement() = default;
 
 KClusterOP get_K_cluster_engine(const string &style)
 {
-	if ( style == "GKC" ) return KClusterOP( new GreedyKCenter() );
-	else if ( style == "KMedoid" ) return KClusterOP( new KMedoid() );
+	if ( style == "GKC" ) return utility::pointer::make_shared< GreedyKCenter >();
+	else if ( style == "KMedoid" ) return utility::pointer::make_shared< KMedoid >();
 	else {
 		utility_exit_with_message("Undefined KCluster type!");
 	}
 
-	return KClusterOP( new GreedyKCenter() );
+	return utility::pointer::make_shared< GreedyKCenter >();
 }
 
 //get desired output file name from tag

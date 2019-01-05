@@ -73,7 +73,7 @@ public:
 
 	/// clone
 	virtual EnergyMethodOP clone() const {
-		return EnergyMethodOP( new LinearBranchEnergy(*this) );
+		return utility::pointer::make_shared< LinearBranchEnergy >(*this);
 	}
 
 	/// called at the end of energy evaluation

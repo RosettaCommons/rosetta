@@ -45,7 +45,7 @@ using namespace std;
 core::pack::task::operation::TaskOperationOP
 ThreadSequenceOperationCreator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new ThreadSequenceOperation );
+	return utility::pointer::make_shared< ThreadSequenceOperation >();
 }
 
 void ThreadSequenceOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -72,7 +72,7 @@ ThreadSequenceOperation::~ThreadSequenceOperation() = default;
 
 core::pack::task::operation::TaskOperationOP ThreadSequenceOperation::clone() const
 {
-	return core::pack::task::operation::TaskOperationOP( new ThreadSequenceOperation( *this ) );
+	return utility::pointer::make_shared< ThreadSequenceOperation >( *this );
 }
 
 void

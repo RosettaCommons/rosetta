@@ -65,31 +65,31 @@ namespace topology_broker {
 
 // Registers commonly used claimers with the name returned by claimer->type()
 TopologyClaimerFactory::TopologyClaimerFactory() {
-	add_type(TopologyClaimerOP( new RigidChunkClaimer() ));
-	add_type(TopologyClaimerOP( new SequenceClaimer() ));
-	add_type(TopologyClaimerOP( new FragmentJumpClaimer() ));
-	add_type(TopologyClaimerOP( new DisulfJumpClaimer() ));
-	add_type(TopologyClaimerOP( new FragmentClaimer() ));
-	add_type(TopologyClaimerOP( new ConstraintClaimer() ));
-	add_type(TopologyClaimerOP( new MembraneTopologyClaimer() ));
-	add_type(TopologyClaimerOP( new MetalloClaimer() ));
-	add_type(TopologyClaimerOP( new TemplateJumpClaimer() ));
-	add_type(TopologyClaimerOP( new CoordConstraintClaimer() ));
-	add_type(TopologyClaimerOP( new StartStructClaimer() ));
-	add_type(TopologyClaimerOP( new CutBiasClaimer() ));
-	add_type(TopologyClaimerOP( new DensityScoringClaimer() ));
-	add_type(TopologyClaimerOP( new PseudocontactShiftEnergyController() ));
-	add_type(TopologyClaimerOP( new PseudocontactShiftEnergyController_Ts1() ));
-	add_type(TopologyClaimerOP( new PseudocontactShiftEnergyController_Ts2() ));
-	add_type(TopologyClaimerOP( new PseudocontactShiftEnergyController_Ts3() ));
-	add_type(TopologyClaimerOP( new PseudocontactShiftEnergyController_Ts4() ));
-	add_type(TopologyClaimerOP( new PcsEnergyController() ));
-	add_type(TopologyClaimerOP( new FoldandDockClaimer() ));
-	add_type(TopologyClaimerOP( new FibrilModelingClaimer() ));
-	add_type(TopologyClaimerOP( new AsymFoldandDockClaimer() ));
-	add_type(TopologyClaimerOP( new TMHTopologySamplerClaimer() ));
-	add_type(TopologyClaimerOP( new SymmetryClaimer() ));
-	add_type(TopologyClaimerOP( new BasicJumpClaimer() ));
+	add_type(utility::pointer::make_shared< RigidChunkClaimer >());
+	add_type(utility::pointer::make_shared< SequenceClaimer >());
+	add_type(utility::pointer::make_shared< FragmentJumpClaimer >());
+	add_type(utility::pointer::make_shared< DisulfJumpClaimer >());
+	add_type(utility::pointer::make_shared< FragmentClaimer >());
+	add_type(utility::pointer::make_shared< ConstraintClaimer >());
+	add_type(utility::pointer::make_shared< MembraneTopologyClaimer >());
+	add_type(utility::pointer::make_shared< MetalloClaimer >());
+	add_type(utility::pointer::make_shared< TemplateJumpClaimer >());
+	add_type(utility::pointer::make_shared< CoordConstraintClaimer >());
+	add_type(utility::pointer::make_shared< StartStructClaimer >());
+	add_type(utility::pointer::make_shared< CutBiasClaimer >());
+	add_type(utility::pointer::make_shared< DensityScoringClaimer >());
+	add_type(utility::pointer::make_shared< PseudocontactShiftEnergyController >());
+	add_type(utility::pointer::make_shared< PseudocontactShiftEnergyController_Ts1 >());
+	add_type(utility::pointer::make_shared< PseudocontactShiftEnergyController_Ts2 >());
+	add_type(utility::pointer::make_shared< PseudocontactShiftEnergyController_Ts3 >());
+	add_type(utility::pointer::make_shared< PseudocontactShiftEnergyController_Ts4 >());
+	add_type(utility::pointer::make_shared< PcsEnergyController >());
+	add_type(utility::pointer::make_shared< FoldandDockClaimer >());
+	add_type(utility::pointer::make_shared< FibrilModelingClaimer >());
+	add_type(utility::pointer::make_shared< AsymFoldandDockClaimer >());
+	add_type(utility::pointer::make_shared< TMHTopologySamplerClaimer >());
+	add_type(utility::pointer::make_shared< SymmetryClaimer >());
+	add_type(utility::pointer::make_shared< BasicJumpClaimer >());
 }
 
 TopologyClaimerFactory::~TopologyClaimerFactory() = default;

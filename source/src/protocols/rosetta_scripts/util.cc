@@ -329,7 +329,7 @@ parse_movemap_factory_legacy(
 		}
 	}
 	if ( mmf == nullptr ) {
-		mmf = core::select::movemap::MoveMapFactoryOP( new core::select::movemap::MoveMapFactory );
+		mmf = utility::pointer::make_shared< core::select::movemap::MoveMapFactory >();
 	}
 
 	if ( reset_movemap && ! from_datamap ) {

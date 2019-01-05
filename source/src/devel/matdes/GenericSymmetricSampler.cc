@@ -60,7 +60,7 @@ using namespace utility;
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP GenericSymmetricSamplerCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new GenericSymmetricSampler );
+// XRW TEMP  return utility::pointer::make_shared< GenericSymmetricSampler >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -85,12 +85,12 @@ GenericSymmetricSampler::GenericSymmetricSampler() :
 
 protocols::moves::MoverOP
 GenericSymmetricSampler::clone() const {
-	return protocols::moves::MoverOP( new GenericSymmetricSampler( *this ) );
+	return utility::pointer::make_shared< GenericSymmetricSampler >( *this );
 }
 
 protocols::moves::MoverOP
 GenericSymmetricSampler::fresh_instance() const {
-	return protocols::moves::MoverOP( new GenericSymmetricSampler() );
+	return utility::pointer::make_shared< GenericSymmetricSampler >();
 }
 
 
@@ -251,7 +251,7 @@ std::string GenericSymmetricSamplerCreator::keyname() const {
 
 protocols::moves::MoverOP
 GenericSymmetricSamplerCreator::create_mover() const {
-	return protocols::moves::MoverOP( new GenericSymmetricSampler );
+	return utility::pointer::make_shared< GenericSymmetricSampler >();
 }
 
 void GenericSymmetricSamplerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

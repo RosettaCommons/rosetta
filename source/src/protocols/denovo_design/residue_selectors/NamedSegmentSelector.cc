@@ -72,7 +72,7 @@ NamedSegmentSelector::~NamedSegmentSelector() = default;
 NamedSegmentSelector::ResidueSelectorOP
 NamedSegmentSelector::clone() const
 {
-	return ResidueSelectorOP( new NamedSegmentSelector( *this ) );
+	return utility::pointer::make_shared< NamedSegmentSelector >( *this );
 }
 
 /// @brief "Apply" function.
@@ -278,7 +278,7 @@ NamedSegmentSelector::set_residues( std::string const & residues_str )
 NamedSegmentSelector::ResidueSelectorOP
 NamedSegmentSelectorCreator::create_residue_selector() const
 {
-	return NamedSegmentSelector::ResidueSelectorOP( new NamedSegmentSelector );
+	return utility::pointer::make_shared< NamedSegmentSelector >();
 }
 
 std::string

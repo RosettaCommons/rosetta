@@ -41,7 +41,7 @@ methods::EnergyMethodOP
 SymmetricLigandEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new SymmetricLigandEnergy );
+	return utility::pointer::make_shared< SymmetricLigandEnergy >();
 }
 
 ScoreTypes
@@ -56,7 +56,7 @@ SymmetricLigandEnergyCreator::score_types_for_method() const {
 ////////////////////////////////////////////////////////////////////////////
 
 SymmetricLigandEnergy::SymmetricLigandEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new SymmetricLigandEnergyCreator ) )
+	parent( utility::pointer::make_shared< SymmetricLigandEnergyCreator >() )
 {}
 
 
@@ -66,7 +66,7 @@ SymmetricLigandEnergy::~SymmetricLigandEnergy() = default;
 EnergyMethodOP
 SymmetricLigandEnergy::clone() const
 {
-	return EnergyMethodOP( new SymmetricLigandEnergy );
+	return utility::pointer::make_shared< SymmetricLigandEnergy >();
 }
 
 /////////////////////////////////////////////////////////////////////////////

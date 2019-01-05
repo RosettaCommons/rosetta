@@ -221,14 +221,14 @@ void DisulfideOptimizationMover::provide_xml_schema( utility::tag::XMLSchemaDefi
 protocols::moves::MoverOP
 DisulfideOptimizationMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new DisulfideOptimizationMover );
+	return utility::pointer::make_shared< DisulfideOptimizationMover >();
 }
 
 /// @brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
 DisulfideOptimizationMover::clone() const
 {
-	return protocols::moves::MoverOP( new DisulfideOptimizationMover( *this ) );
+	return utility::pointer::make_shared< DisulfideOptimizationMover >( *this );
 }
 
 std::string DisulfideOptimizationMover::get_name() const {
@@ -246,7 +246,7 @@ std::string DisulfideOptimizationMover::mover_name() {
 protocols::moves::MoverOP
 DisulfideOptimizationMoverCreator::create_mover() const
 {
-	return protocols::moves::MoverOP( new DisulfideOptimizationMover );
+	return utility::pointer::make_shared< DisulfideOptimizationMover >();
 }
 
 std::string

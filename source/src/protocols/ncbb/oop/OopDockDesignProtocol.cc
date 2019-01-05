@@ -339,7 +339,7 @@ OopDockDesignProtocol::apply(
 	// create a task factory and task operations
 	using core::pack::task::operation::TaskOperationCOP;
 	TaskFactoryOP pert_tf( new TaskFactory() );
-	pert_tf->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
+	pert_tf->push_back( utility::pointer::make_shared< core::pack::task::operation::InitializeFromCommandline >() );
 
 	operation::ReadResfileOP pert_rrop( new operation::ReadResfile() );
 	pert_rrop->default_filename();
@@ -382,7 +382,7 @@ OopDockDesignProtocol::apply(
 
 	// create a task factory and task operations
 	TaskFactoryOP desn_tf( new TaskFactory() );
-	desn_tf->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
+	desn_tf->push_back( utility::pointer::make_shared< core::pack::task::operation::InitializeFromCommandline >() );
 
 	operation::ReadResfileOP desn_rrop( new operation::ReadResfile() );
 	desn_rrop->default_filename();
@@ -525,7 +525,7 @@ OopDockDesignProtocol::apply(
 
 protocols::moves::MoverOP
 OopDockDesignProtocol::clone() const {
-	return protocols::moves::MoverOP( new OopDockDesignProtocol (
+	return utility::pointer::make_shared< OopDockDesignProtocol > (
 		score_fxn_,
 		mc_temp_,
 		pert_mc_temp_,
@@ -549,7 +549,7 @@ OopDockDesignProtocol::clone() const {
 		oop_design_first_,
 		pymol_,
 		keep_history_
-		) );
+	);
 }
 
 void
@@ -572,7 +572,7 @@ OopDockDesignProtocol::parse_my_tag
 
 // MoverCreator
 // XRW TEMP moves::MoverOP OopDockDesignProtocolCreator::create_mover() const {
-// XRW TEMP  return moves::MoverOP( new OopDockDesignProtocol() );
+// XRW TEMP  return utility::pointer::make_shared< OopDockDesignProtocol >();
 // XRW TEMP }
 
 // XRW TEMP std::string OopDockDesignProtocolCreator::keyname() const {
@@ -606,7 +606,7 @@ std::string OopDockDesignProtocolCreator::keyname() const {
 
 protocols::moves::MoverOP
 OopDockDesignProtocolCreator::create_mover() const {
-	return protocols::moves::MoverOP( new OopDockDesignProtocol );
+	return utility::pointer::make_shared< OopDockDesignProtocol >();
 }
 
 void OopDockDesignProtocolCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

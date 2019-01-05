@@ -40,7 +40,7 @@ MultiStateFitnessFunction::~MultiStateFitnessFunction()= default;
 void
 MultiStateFitnessFunction::add_state( core::pose::Pose const & pose, bool is_positive )
 {
-	add_state( SingleStateOP( new SingleState( pose, is_positive ) ) );
+	add_state( utility::pointer::make_shared< SingleState >( pose, is_positive ) );
 }
 
 void

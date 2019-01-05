@@ -159,14 +159,14 @@ FragmentScoringMethodOP MakeTorsionBinSimilarity::make(
 	utility::vector1< utility::vector1< core::Real > > probs = reader.matrix();
 
 	return (
-		FragmentScoringMethodOP( new TorsionBinSimilarity(
+		utility::pointer::make_shared< TorsionBinSimilarity >(
 		priority,
 		lowest_acceptable_value,
 		use_lowest,
 		probs,
 		sequence_length,
 		vall_max_len
-		) )
+		)
 	);
 }
 

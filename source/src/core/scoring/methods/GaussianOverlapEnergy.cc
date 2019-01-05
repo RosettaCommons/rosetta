@@ -50,7 +50,7 @@ methods::EnergyMethodOP
 GaussianOverlapEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new GaussianOverlapEnergy );
+	return utility::pointer::make_shared< GaussianOverlapEnergy >();
 }
 
 ScoreTypes
@@ -62,7 +62,7 @@ GaussianOverlapEnergyCreator::score_types_for_method() const {
 
 
 GaussianOverlapEnergy::GaussianOverlapEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new GaussianOverlapEnergyCreator ) )
+	parent( utility::pointer::make_shared< GaussianOverlapEnergyCreator >() )
 {
 }
 
@@ -71,7 +71,7 @@ GaussianOverlapEnergy::GaussianOverlapEnergy() :
 EnergyMethodOP
 GaussianOverlapEnergy::clone() const
 {
-	return EnergyMethodOP( new GaussianOverlapEnergy() );
+	return utility::pointer::make_shared< GaussianOverlapEnergy >();
 }
 
 

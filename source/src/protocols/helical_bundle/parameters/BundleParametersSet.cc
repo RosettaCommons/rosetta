@@ -69,7 +69,7 @@ BundleParametersSet::~BundleParametersSet() = default;
 core::conformation::parametric::ParametersSetOP
 BundleParametersSet::clone() const
 {
-	return ParametersSetOP( new BundleParametersSet( *this ) );
+	return utility::pointer::make_shared< BundleParametersSet >( *this );
 }
 
 /// @brief Get a summary of this ParametersSet object, for output to remark lines of a PDB file.

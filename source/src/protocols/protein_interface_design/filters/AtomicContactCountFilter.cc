@@ -74,8 +74,8 @@ AtomicContactCountFilter::AtomicContactCountFilter( AtomicContactCountFilter con
 
 AtomicContactCountFilter::~AtomicContactCountFilter() = default;
 
-protocols::filters::FilterOP AtomicContactCountFilter::clone() const { return protocols::filters::FilterOP( new AtomicContactCountFilter( *this ) ); }
-protocols::filters::FilterOP AtomicContactCountFilter::fresh_instance() const { return protocols::filters::FilterOP( new AtomicContactCountFilter() ); }
+protocols::filters::FilterOP AtomicContactCountFilter::clone() const { return utility::pointer::make_shared< AtomicContactCountFilter >( *this ); }
+protocols::filters::FilterOP AtomicContactCountFilter::fresh_instance() const { return utility::pointer::make_shared< AtomicContactCountFilter >(); }
 
 void AtomicContactCountFilter::initialize_all_atoms( core::pack::task::TaskFactoryOP task_factoryA, bool individual_tasks, core::pack::task::TaskFactoryOP task_factoryB, bool normalize_by_carbon_count)
 {
@@ -478,7 +478,7 @@ core::Real AtomicContactCountFilter::compute(core::pose::Pose const & pose) cons
 }
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP AtomicContactCountFilterCreator::create_filter() const { return protocols::filters::FilterOP( new AtomicContactCountFilter ); }
+// XRW TEMP AtomicContactCountFilterCreator::create_filter() const { return utility::pointer::make_shared< AtomicContactCountFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP AtomicContactCountFilterCreator::keyname() const { return "AtomicContactCount"; }
@@ -525,7 +525,7 @@ std::string AtomicContactCountFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 AtomicContactCountFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new AtomicContactCountFilter );
+	return utility::pointer::make_shared< AtomicContactCountFilter >();
 }
 
 void AtomicContactCountFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

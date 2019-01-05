@@ -133,7 +133,7 @@ MembraneSpanConstraint::same_type_as_me( Constraint const & other ) const
 
 ConstraintOP
 MembraneSpanConstraint::remapped_clone( pose::Pose const& pose, pose::Pose const&, id::SequenceMappingCOP ) const {
-	return ConstraintOP( new MembraneSpanConstraint( pose ) );
+	return utility::pointer::make_shared< MembraneSpanConstraint >( pose );
 }
 
 

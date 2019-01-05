@@ -65,7 +65,7 @@ SelectedResidueCountMetric::SelectedResidueCountMetric( SelectedResidueCountMetr
 
 core::simple_metrics::SimpleMetricOP
 SelectedResidueCountMetric::clone() const {
-	return core::simple_metrics::SimpleMetricOP(new SelectedResidueCountMetric( *this ) );
+	return utility::pointer::make_shared< SelectedResidueCountMetric >( *this );
 }
 
 std::string
@@ -147,7 +147,7 @@ SelectedResidueCountMetricCreator::keyname() const {
 
 core::simple_metrics::SimpleMetricOP
 SelectedResidueCountMetricCreator::create_simple_metric() const {
-	return core::simple_metrics::SimpleMetricOP( new SelectedResidueCountMetric );
+	return utility::pointer::make_shared< SelectedResidueCountMetric >();
 
 }
 

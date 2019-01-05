@@ -110,7 +110,7 @@ public:
 
 	void set_resid( core::Size const resid ) override;
 	protocols::moves::MoverOP clone() const override;
-	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new ParsedProtocol ); }
+	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< ParsedProtocol >(); }
 	void parse_my_tag( utility::tag::TagCOP, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override; // this is defined as public here, b/c I need to circumvent the name-check, since this is called both by the Movers section (as ParsedProtocol) and the PROTOCOLS section.
 	void clear() { movers_.clear(); }
 	std::string mode() const{ return mode_; }

@@ -52,7 +52,7 @@ using utility::tag::TagCOP;
 using basic::datacache::DataMap;
 
 TaskOperationOP RestrictToLoopsCreator::create_task_operation() const {
-	return TaskOperationOP( new RestrictToLoops );
+	return utility::pointer::make_shared< RestrictToLoops >();
 }
 
 void RestrictToLoopsCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -83,7 +83,7 @@ RestrictToLoops & RestrictToLoops::operator = ( RestrictToLoops const & rhs ) {
 }
 
 TaskOperationOP RestrictToLoops::clone() const {
-	return TaskOperationOP( new RestrictToLoops(*this) );
+	return utility::pointer::make_shared< RestrictToLoops >(*this);
 }
 
 void RestrictToLoops::parse_tag( TagCOP tag, DataMap & ) {
@@ -127,7 +127,7 @@ void RestrictToLoops::init() {
 void RestrictToLoops::copy( RestrictToLoops & lhs, RestrictToLoops const & rhs ) {
 	lhs.design_loops_ = rhs.design_loops_;
 	lhs.restrict_only_design_ = rhs.restrict_only_design_;
-	lhs.loops_ = loops::LoopsCOP( loops::LoopsOP( new Loops( *rhs.loops_ ) ) );
+	lhs.loops_ = utility::pointer::make_shared< Loops >( *rhs.loops_ );
 }
 
 void RestrictToLoops::apply( Pose const & pose, PackerTask & task ) const {
@@ -208,7 +208,7 @@ void RestrictToLoops::set_loops( LoopsCOP loops ) {
 
 
 void RestrictToLoops::set_loops_from_file( string loops_file ) {
-	loops_ = loops::LoopsCOP( loops::LoopsOP( new Loops( loops_file ) ) );
+	loops_ = utility::pointer::make_shared< Loops >( loops_file );
 }
 
 

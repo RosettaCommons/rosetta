@@ -102,7 +102,7 @@ CCDEndsGraftMover::~CCDEndsGraftMover() = default;
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP CCDEndsGraftMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new CCDEndsGraftMover );
+// XRW TEMP  return utility::pointer::make_shared< CCDEndsGraftMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -117,12 +117,12 @@ CCDEndsGraftMover::~CCDEndsGraftMover() = default;
 
 protocols::moves::MoverOP
 CCDEndsGraftMover::clone() const{
-	return protocols::moves::MoverOP( new CCDEndsGraftMover(*this) );
+	return utility::pointer::make_shared< CCDEndsGraftMover >(*this);
 }
 
 protocols::moves::MoverOP
 CCDEndsGraftMover::fresh_instance() const{
-	return protocols::moves::MoverOP( new CCDEndsGraftMover() );
+	return utility::pointer::make_shared< CCDEndsGraftMover >();
 }
 
 SmallMoverOP
@@ -250,8 +250,8 @@ CCDEndsGraftMover::apply(Pose & pose){
 
 	add_cutpoint_variants_for_ccd(combined, *loop_set);
 
-	loop_set_map[Nter_loop] = protocols::loops::loop_closure::ccd::CCDLoopClosureMoverOP( new loop_closure::ccd::CCDLoopClosureMover(Nter_loop, movemap()) );
-	loop_set_map[Cter_loop] = protocols::loops::loop_closure::ccd::CCDLoopClosureMoverOP( new loop_closure::ccd::CCDLoopClosureMover(Cter_loop, movemap()) );
+	loop_set_map[Nter_loop] = utility::pointer::make_shared< loop_closure::ccd::CCDLoopClosureMover >(Nter_loop, movemap());
+	loop_set_map[Cter_loop] = utility::pointer::make_shared< loop_closure::ccd::CCDLoopClosureMover >(Cter_loop, movemap());
 
 	//combined.dump_pdb("before_idealize.pdb");
 
@@ -349,7 +349,7 @@ std::string CCDEndsGraftMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 CCDEndsGraftMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new CCDEndsGraftMover );
+	return utility::pointer::make_shared< CCDEndsGraftMover >();
 }
 
 void CCDEndsGraftMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

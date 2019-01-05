@@ -42,7 +42,7 @@ public:
 
 
 	basic::datacache::CacheableDataOP clone() const {
-		return basic::datacache::CacheableDataOP( new CentroidScatter( *this ) );
+		return utility::pointer::make_shared< CentroidScatter >( *this );
 	}
 
 	utility::vector1< OneGaussianScattering > getValues() {

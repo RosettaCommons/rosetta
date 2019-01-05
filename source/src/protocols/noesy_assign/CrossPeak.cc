@@ -107,7 +107,7 @@ void CrossPeak::add_full_assignment( Size res_ids[] ) {
 	Size ind1 = assign_spin( 1, res_ids );
 	Size ind2 = assign_spin( 2, res_ids );
 #ifndef WIN32
-	assignments_.push_back( protocols::noesy_assign::PeakAssignmentOP( new PeakAssignment( this, ind1, ind2 ) ) );
+	assignments_.push_back( utility::pointer::make_shared< PeakAssignment >( this, ind1, ind2 ) );
 #endif
 	// for ( Size i = 1;
 	//need to find resonances in Spins and add them if they are still missing.
@@ -134,7 +134,7 @@ void CrossPeak::find_assignments( ) {
 	for ( Size ct1 = 1; ct1 <= n_assigned_1; ++ct1 ) {
 		for ( Size ct2 = 1; ct2 <= n_assigned_2; ++ct2 ) {
 #ifndef WIN32
-			assignments_.push_back( protocols::noesy_assign::PeakAssignmentOP( new PeakAssignment( this, ct1, ct2 ) ) );
+			assignments_.push_back( utility::pointer::make_shared< PeakAssignment >( this, ct1, ct2 ) );
 #endif
 		}
 	}
@@ -306,7 +306,7 @@ CrossPeak::create_fa_and_cen_constraint(
 				mapped_inv_weight = inv_weight;
 			}
 			std::string const comment( "CEN mapped automatic NOE: Peak "+ ObjexxFCL::string_of( peak_id() ) );
-			cen_cst = my_cen_cst->clone( core::scoring::func::FuncOP( new BoundFunc( 1.5, round(mapped_upl,round_digits), round(mapped_inv_weight,round_digits), comment ) ) );
+			cen_cst = my_cen_cst->clone( utility::pointer::make_shared< BoundFunc >( 1.5, round(mapped_upl,round_digits), round(mapped_inv_weight,round_digits), comment ) );
 		}
 		// tr.Trace << "constraint for " << peak_id() << " finished " << std::endl;
 	}

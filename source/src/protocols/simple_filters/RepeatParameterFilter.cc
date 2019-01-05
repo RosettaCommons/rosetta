@@ -46,7 +46,7 @@ using core::Real;
 
 static basic::Tracer TR( "protocols.simple_filters.RepeatParameterFilter" );
 
-// XRW TEMP protocols::filters::FilterOP RepeatParameterFilterCreator::create_filter() const { return protocols::filters::FilterOP( new RepeatParameterFilter ); }
+// XRW TEMP protocols::filters::FilterOP RepeatParameterFilterCreator::create_filter() const { return utility::pointer::make_shared< RepeatParameterFilter >(); }
 
 // XRW TEMP std::string RepeatParameterFilterCreator::keyname() const { return "RepeatParameter"; }
 
@@ -337,7 +337,7 @@ std::string RepeatParameterFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 RepeatParameterFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new RepeatParameterFilter );
+	return utility::pointer::make_shared< RepeatParameterFilter >();
 }
 
 void RepeatParameterFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

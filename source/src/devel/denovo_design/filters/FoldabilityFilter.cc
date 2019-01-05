@@ -68,7 +68,7 @@ namespace filters {
 
 // XRW TEMP protocols::filters::FilterOP
 // XRW TEMP FoldabilityFilterCreator::create_filter() const {
-// XRW TEMP  return protocols::filters::FilterOP( new FoldabilityFilter() );
+// XRW TEMP  return utility::pointer::make_shared< FoldabilityFilter >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -107,8 +107,8 @@ FoldabilityFilter::FoldabilityFilter() :
 	output_poses_( false ),
 	scorefxn_(),
 	selector_(),
-	picker_( PickerOP( new Picker() ) ),
-	vlb_( protocols::forge::components::VarLengthBuildOP( new protocols::forge::components::VarLengthBuild() ) )
+	picker_( utility::pointer::make_shared< Picker >() ),
+	vlb_( utility::pointer::make_shared< protocols::forge::components::VarLengthBuild >() )
 {
 	segments_.clear();
 }
@@ -122,13 +122,13 @@ FoldabilityFilter::~FoldabilityFilter() = default;
 protocols::filters::FilterOP
 FoldabilityFilter::clone() const
 {
-	return protocols::filters::FilterOP( new FoldabilityFilter(*this) );
+	return utility::pointer::make_shared< FoldabilityFilter >(*this);
 }
 
 protocols::filters::FilterOP
 FoldabilityFilter::fresh_instance() const
 {
-	return protocols::filters::FilterOP( new FoldabilityFilter() );
+	return utility::pointer::make_shared< FoldabilityFilter >();
 }
 
 void
@@ -276,7 +276,7 @@ FoldabilityFilter::generate_pose( core::pose::Pose const & pose ) const
 {
 	core::pose::PoseOP posecopy;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		posecopy = core::pose::PoseOP( new core::pose::Pose );
+		posecopy = utility::pointer::make_shared< core::pose::Pose >();
 		core::pose::symmetry::extract_asymmetric_unit(pose, *posecopy);
 		for ( core::Size i=1, endi=posecopy->size(); i<=endi; ++i ) {
 			if ( posecopy->residue_type(i).name() == "VRT" ) {
@@ -538,7 +538,7 @@ std::string FoldabilityFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 FoldabilityFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new FoldabilityFilter );
+	return utility::pointer::make_shared< FoldabilityFilter >();
 }
 
 void FoldabilityFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -70,7 +70,7 @@ DockSetupMover::DockSetupMover() {
 /// @brief clone operator, calls the copy constructor
 protocols::moves::MoverOP
 DockSetupMover::clone() const {
-	return protocols::moves::MoverOP( new DockSetupMover(*this) );
+	return utility::pointer::make_shared< DockSetupMover >(*this);
 }
 
 /// @brief copy ctor
@@ -186,7 +186,7 @@ DockSetupMover::parse_my_tag(
 	// using RigidBodyInfo to store movable_jumps, then rb_mover is free from DockSetupMover
 	if ( !data_map.has( "RigidBodyInfo", "docking_setup" ) ) {
 		// as member variable: RigidBodyInfoOP rigid_body_info_;
-		rigid_body_info_ = protocols::docking::RigidBodyInfoOP( new protocols::docking::RigidBodyInfo );
+		rigid_body_info_ = utility::pointer::make_shared< protocols::docking::RigidBodyInfo >();
 		data_map.add( "RigidBodyInfo", "docking_setup", rigid_body_info_ );
 		tr.Debug << "added RigidBodyInfo into basic::datacache::DataMap" << std::endl;
 	} else {
@@ -207,7 +207,7 @@ DockSetupMover::parse_my_tag(
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP DockSetupMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new DockSetupMover() );
+// XRW TEMP  return utility::pointer::make_shared< DockSetupMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -242,7 +242,7 @@ std::string DockSetupMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 DockSetupMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new DockSetupMover );
+	return utility::pointer::make_shared< DockSetupMover >();
 }
 
 void DockSetupMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

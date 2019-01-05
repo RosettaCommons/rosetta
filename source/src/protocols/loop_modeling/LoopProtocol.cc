@@ -75,10 +75,10 @@ namespace loop_modeling {
 static basic::Tracer TR("protocols.loop_modeling.LoopProtocol");
 
 LoopProtocol::LoopProtocol() {
-	protocol_ = add_child( LoopMoverGroupOP( new LoopMoverGroup ) );
+	protocol_ = add_child( utility::pointer::make_shared< LoopMoverGroup >() );
 	movers_ = protocol_->add_mover_group();
 	refiners_ = protocol_->add_mover_group();
-	logger_ = TrajectoryLoggerOP( new TrajectoryLogger );
+	logger_ = utility::pointer::make_shared< TrajectoryLogger >();
 	monte_carlo_ = nullptr;
 
 	sfxn_cycles_ = 1;
@@ -310,8 +310,8 @@ void LoopProtocol::start_protocol(Pose & pose) {
 		add_constraints_from_cmdline(pose, *scorefxn);
 	}
 
-	monte_carlo_ = protocols::moves::MonteCarloOP( new protocols::moves::MonteCarlo(
-		pose, *scorefxn, initial_temp_) );
+	monte_carlo_ = utility::pointer::make_shared< protocols::moves::MonteCarlo >(
+		pose, *scorefxn, initial_temp_);
 
 	// Use the rama2b scoring term instead of the rama term
 
@@ -448,7 +448,7 @@ void LoopProtocol::add_filter(protocols::filters::FilterOP filter) {
 }
 
 void LoopProtocol::add_acceptance_check(string name) {
-	movers_->add_mover(LoopMoverOP( new utilities::AcceptanceCheck(monte_carlo_, name) ));
+	movers_->add_mover(utility::pointer::make_shared< utilities::AcceptanceCheck >(monte_carlo_, name));
 }
 
 void LoopProtocol::clear_movers() {
@@ -548,7 +548,7 @@ std::string LoopProtocolCreator::keyname() const {
 
 protocols::moves::MoverOP
 LoopProtocolCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LoopProtocol );
+	return utility::pointer::make_shared< LoopProtocol >();
 }
 
 void LoopProtocolCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

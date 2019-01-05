@@ -918,7 +918,7 @@ void PhenixInterface::initialize_target_evaluator(
 	//fix_bfactorsH( pose_asu );
 	//fix_bfactorsMissing( pose_asu );
 
-	ref_pose_ = core::pose::PoseOP( new core::pose::Pose( pose_asu ) );
+	ref_pose_ = utility::pointer::make_shared< core::pose::Pose >( pose_asu );
 	//ref_pose_->conformation().detect_disulfides();
 
 	chdir(tempdir_.c_str());

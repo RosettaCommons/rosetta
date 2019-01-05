@@ -62,7 +62,7 @@ static basic::Tracer TR( "protocols.simple_filters.SymmetricMotifFilter" );
 
 // creator
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP SymmetricMotifFilterCreator::create_filter() const { return protocols::filters::FilterOP( new SymmetricMotifFilter ); }
+// XRW TEMP SymmetricMotifFilterCreator::create_filter() const { return utility::pointer::make_shared< SymmetricMotifFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP SymmetricMotifFilterCreator::keyname() const { return "SymmetricMotif"; }
@@ -176,7 +176,7 @@ SymmetricMotifFilter::set_defaults() {
 
 protocols::filters::FilterOP
 SymmetricMotifFilter::clone() const {
-	return protocols::filters::FilterOP( new SymmetricMotifFilter( *this ) );
+	return utility::pointer::make_shared< SymmetricMotifFilter >( *this );
 }
 
 bool
@@ -675,7 +675,7 @@ std::string SymmetricMotifFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 SymmetricMotifFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new SymmetricMotifFilter );
+	return utility::pointer::make_shared< SymmetricMotifFilter >();
 }
 
 void SymmetricMotifFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -307,9 +307,9 @@ int main( int argc, char * argv [] )
 		using namespace core::pack::task;
 		using namespace core::pack::task::operation;
 		TaskFactoryOP main_task_factory( new TaskFactory );
-		main_task_factory->push_back( TaskOperationCOP( new operation::InitializeFromCommandline ) );
+		main_task_factory->push_back( utility::pointer::make_shared< operation::InitializeFromCommandline >() );
 		if ( option[ packing::resfile ].user() ) {
-			main_task_factory->push_back( TaskOperationCOP( new operation::ReadResfile ) );
+			main_task_factory->push_back( utility::pointer::make_shared< operation::ReadResfile >() );
 		}
 		core::scoring::ScoreFunctionOP score_fxn = core::scoring::get_score_function();
 		protocols::minimization_packing::PackRotamersMoverOP pack_mover( new protocols::minimization_packing::PackRotamersMover );

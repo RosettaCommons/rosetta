@@ -50,8 +50,8 @@ public:
 	void set_use_constraints( bool flag, core::Real cutoff=1.0 ); /// @brief add docking constraints
 	bool apply( core::pose::Pose const & pose ) const override;
 	void report( std::ostream & out, core::pose::Pose const & pose) const override;
-	protocols::filters::FilterOP clone() const override { return protocols::filters::FilterOP( new DockingLowResFilter( *this ) ); }
-	protocols::filters::FilterOP fresh_instance() const override { return protocols::filters::FilterOP( new DockingLowResFilter() ); }
+	protocols::filters::FilterOP clone() const override { return utility::pointer::make_shared< DockingLowResFilter >( *this ); }
+	protocols::filters::FilterOP fresh_instance() const override { return utility::pointer::make_shared< DockingLowResFilter >(); }
 
 private:
 	bool use_constraints_;            /// @brief boolean to indicate if constraints are used
@@ -77,7 +77,7 @@ public:
 	bool apply( core::pose::Pose const & pose ) const override;
 	//core::Real report_interface_score() const { return interface_score_; } // only valid after apply()
 	protocols::filters::FilterOP clone() const override;
-	protocols::filters::FilterOP fresh_instance() const override { return protocols::filters::FilterOP( new DockingHighResFilter() ); }
+	protocols::filters::FilterOP fresh_instance() const override { return utility::pointer::make_shared< DockingHighResFilter >(); }
 
 private:
 	DockJumps movable_jumps_;

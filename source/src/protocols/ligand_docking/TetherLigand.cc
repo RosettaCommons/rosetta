@@ -91,12 +91,12 @@ restrain_ligand_nbr_atom(
 	core::id::AtomID const fixed_pt(pose.atom_tree().root()->atom_id());
 
 	core::conformation::Residue const & residue = pose.residue(lig_id);
-	core::scoring::constraints::ConstraintCOP constraint( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::CoordinateConstraint(
+	core::scoring::constraints::ConstraintCOP constraint( utility::pointer::make_shared< core::scoring::constraints::CoordinateConstraint >(
 		core::id::AtomID( residue.nbr_atom(), lig_id),
 		fixed_pt,
 		residue.nbr_atom_xyz(),
 		restraint_function
-		) ) );
+		) );
 	constraint = pose.add_constraint(constraint);
 
 	return constraint;

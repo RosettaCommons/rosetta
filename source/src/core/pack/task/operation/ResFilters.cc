@@ -103,7 +103,7 @@ AnyResFilter::AnyResFilter(utility::vector1<ResFilterCOP> const & sub_filters) :
 	parent(sub_filters)
 {}
 
-ResFilterOP AnyResFilter::clone() const { return ResFilterOP( new AnyResFilter( *this ) ); }
+ResFilterOP AnyResFilter::clone() const { return utility::pointer::make_shared< AnyResFilter >( *this ); }
 
 bool AnyResFilter::operator() ( Pose const & pose, Size index ) const
 {
@@ -127,7 +127,7 @@ void AnyResFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 
 ResFilterOP AnyResFilterCreator::create_res_filter() const
 {
-	return ResFilterOP( new AnyResFilter() );
+	return utility::pointer::make_shared< AnyResFilter >();
 }
 
 std::string AnyResFilterCreator::keyname() const { return AnyResFilter::keyname(); }
@@ -144,7 +144,7 @@ AllResFilter::AllResFilter(utility::vector1<ResFilterCOP> const & sub_filters) :
 	parent(sub_filters)
 {}
 
-ResFilterOP AllResFilter::clone() const { return ResFilterOP( new AllResFilter( *this ) ); }
+ResFilterOP AllResFilter::clone() const { return utility::pointer::make_shared< AllResFilter >( *this ); }
 
 bool AllResFilter::operator() ( Pose const & pose, Size index ) const
 {
@@ -168,7 +168,7 @@ void AllResFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 
 ResFilterOP AllResFilterCreator::create_res_filter() const
 {
-	return ResFilterOP( new AllResFilter() );
+	return utility::pointer::make_shared< AllResFilter >();
 }
 
 std::string AllResFilterCreator::keyname() const { return AllResFilter::keyname(); }
@@ -185,7 +185,7 @@ NoResFilter::NoResFilter(utility::vector1<ResFilterCOP> const & sub_filters) :
 	parent(sub_filters)
 {}
 
-ResFilterOP NoResFilter::clone() const { return ResFilterOP( new NoResFilter( *this ) ); }
+ResFilterOP NoResFilter::clone() const { return utility::pointer::make_shared< NoResFilter >( *this ); }
 
 bool NoResFilter::operator() ( Pose const & pose, Size index ) const
 {
@@ -209,7 +209,7 @@ void NoResFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) 
 
 ResFilterOP NoResFilterCreator::create_res_filter() const
 {
-	return ResFilterOP( new NoResFilter() );
+	return utility::pointer::make_shared< NoResFilter >();
 }
 
 std::string NoResFilterCreator::keyname() const { return NoResFilter::keyname(); }
@@ -228,7 +228,7 @@ ResidueTypeFilter::ResidueTypeFilter(bool polar, bool apolar, bool aromatic, boo
 	polar_(polar), apolar_(apolar), aromatic_(aromatic), charged_(charged)
 {}
 
-ResFilterOP ResidueTypeFilter::clone() const { return ResFilterOP( new ResidueTypeFilter( *this ) ); }
+ResFilterOP ResidueTypeFilter::clone() const { return utility::pointer::make_shared< ResidueTypeFilter >( *this ); }
 
 bool ResidueTypeFilter::operator() ( Pose const & pose, Size index ) const
 {
@@ -266,7 +266,7 @@ void ResidueTypeFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 
 ResFilterOP ResidueTypeFilterCreator::create_res_filter() const
 {
-	return ResFilterOP( new ResidueTypeFilter() );
+	return utility::pointer::make_shared< ResidueTypeFilter >();
 }
 
 std::string ResidueTypeFilterCreator::keyname() const { return ResidueTypeFilter::keyname(); }
@@ -294,7 +294,7 @@ bool ResidueHasProperty::operator() ( Pose const & pose, Size index ) const
 	return pose.residue_type(index).has_property( property_ );
 }
 
-ResFilterOP ResidueHasProperty::clone() const { return ResFilterOP( new ResidueHasProperty( *this ) ); }
+ResFilterOP ResidueHasProperty::clone() const { return utility::pointer::make_shared< ResidueHasProperty >( *this ); }
 
 void ResidueHasProperty::parse_tag( TagCOP tag )
 {
@@ -319,7 +319,7 @@ ResidueHasProperty::get_xml_schema_attributes()
 
 ResFilterOP
 ResidueHasPropertyCreator::create_res_filter() const {
-	return ResFilterOP( new ResidueHasProperty );
+	return utility::pointer::make_shared< ResidueHasProperty >();
 }
 
 std::string ResidueHasPropertyCreator::keyname() const { return ResidueHasProperty::keyname(); }
@@ -342,7 +342,7 @@ bool ResidueLacksProperty::operator() ( Pose const & pose, Size index ) const
 	return ( ! parent::operator()( pose, index ) );
 }
 
-ResFilterOP ResidueLacksProperty::clone() const { return ResFilterOP( new ResidueLacksProperty( *this ) ); }
+ResFilterOP ResidueLacksProperty::clone() const { return utility::pointer::make_shared< ResidueLacksProperty >( *this ); }
 
 std::string ResidueLacksProperty::keyname() { return "ResidueLacksProperty"; }
 
@@ -353,7 +353,7 @@ void ResidueLacksProperty::provide_xml_schema( utility::tag::XMLSchemaDefinition
 
 ResFilterOP
 ResidueLacksPropertyCreator::create_res_filter() const {
-	return ResFilterOP( new ResidueLacksProperty );
+	return utility::pointer::make_shared< ResidueLacksProperty >();
 }
 
 std::string ResidueLacksPropertyCreator::keyname() const { return ResidueLacksProperty::keyname(); }
@@ -379,7 +379,7 @@ bool ResiduePDBInfoHasLabel::operator() ( Pose const & pose, Size index ) const
 	return pose.pdb_info()->res_haslabel( index, property_ );
 }
 
-ResFilterOP ResiduePDBInfoHasLabel::clone() const { return ResFilterOP( new ResiduePDBInfoHasLabel( *this ) ); }
+ResFilterOP ResiduePDBInfoHasLabel::clone() const { return utility::pointer::make_shared< ResiduePDBInfoHasLabel >( *this ); }
 
 void ResiduePDBInfoHasLabel::parse_tag( TagCOP tag )
 {
@@ -403,7 +403,7 @@ ResiduePDBInfoHasLabel::get_xml_schema_attributes()
 
 ResFilterOP
 ResiduePDBInfoHasLabelCreator::create_res_filter() const {
-	return ResFilterOP( new ResiduePDBInfoHasLabel );
+	return utility::pointer::make_shared< ResiduePDBInfoHasLabel >();
 }
 
 std::string ResiduePDBInfoHasLabelCreator::keyname() const { return ResiduePDBInfoHasLabel::keyname(); }
@@ -428,7 +428,7 @@ bool ResiduePDBInfoLacksLabel::operator() ( Pose const & pose, Size index ) cons
 	return ( ! parent::operator()( pose, index ) );
 }
 
-ResFilterOP ResiduePDBInfoLacksLabel::clone() const { return ResFilterOP( new ResiduePDBInfoLacksLabel( *this ) ); }
+ResFilterOP ResiduePDBInfoLacksLabel::clone() const { return utility::pointer::make_shared< ResiduePDBInfoLacksLabel >( *this ); }
 
 std::string ResiduePDBInfoLacksLabel::keyname() { return "ResiduePDBInfoLacksLabel"; }
 
@@ -438,7 +438,7 @@ void ResiduePDBInfoLacksLabel::provide_xml_schema( utility::tag::XMLSchemaDefini
 
 ResFilterOP
 ResiduePDBInfoLacksLabelCreator::create_res_filter() const {
-	return ResFilterOP( new ResiduePDBInfoLacksLabel );
+	return utility::pointer::make_shared< ResiduePDBInfoLacksLabel >();
 }
 
 std::string ResiduePDBInfoLacksLabelCreator::keyname() const { return ResiduePDBInfoLacksLabel::keyname(); }
@@ -473,7 +473,7 @@ bool ResidueName3Is::operator() ( Pose const & pose, Size index ) const
 	runtime_assert( index > 0 && index <= pose.size() );
 	return name3_set.count(pose.residue_type(index).name3()) != 0;
 }
-ResFilterOP ResidueName3Is::clone() const { return ResFilterOP( new ResidueName3Is( *this ) ); }
+ResFilterOP ResidueName3Is::clone() const { return utility::pointer::make_shared< ResidueName3Is >( *this ); }
 
 void ResidueName3Is::parse_tag( TagCOP tag )
 {
@@ -501,7 +501,7 @@ ResidueName3Is::get_xml_schema_attributes()
 
 ResFilterOP
 ResidueName3IsCreator::create_res_filter() const {
-	return ResFilterOP( new ResidueName3Is );
+	return utility::pointer::make_shared< ResidueName3Is >();
 }
 
 std::string ResidueName3IsCreator::keyname() const { return ResidueName3Is::keyname(); }
@@ -528,7 +528,7 @@ bool ResidueName3Isnt::operator() ( Pose const & pose, Size index ) const
 	return ( ! parent::operator()( pose, index ) );
 }
 
-ResFilterOP ResidueName3Isnt::clone() const { return ResFilterOP( new ResidueName3Isnt( *this ) ); }
+ResFilterOP ResidueName3Isnt::clone() const { return utility::pointer::make_shared< ResidueName3Isnt >( *this ); }
 
 std::string ResidueName3Isnt::keyname() { return "ResidueName3Isnt"; }
 
@@ -538,7 +538,7 @@ void ResidueName3Isnt::provide_xml_schema( utility::tag::XMLSchemaDefinition & x
 
 ResFilterOP
 ResidueName3IsntCreator::create_res_filter() const {
-	return ResFilterOP( new ResidueName3Isnt );
+	return utility::pointer::make_shared< ResidueName3Isnt >();
 }
 
 std::string ResidueName3IsntCreator::keyname() const { return ResidueName3Isnt::keyname(); }
@@ -573,7 +573,7 @@ bool ResidueIndexIs::operator() ( Pose const & pose, Size index ) const
 	return std::find( indices_.begin(), indices_.end(), index ) != indices_.end();
 }
 
-ResFilterOP ResidueIndexIs::clone() const { return ResFilterOP( new ResidueIndexIs( *this ) ); }
+ResFilterOP ResidueIndexIs::clone() const { return utility::pointer::make_shared< ResidueIndexIs >( *this ); }
 
 void ResidueIndexIs::parse_tag( TagCOP tag )
 {
@@ -618,7 +618,7 @@ ResidueIndexIs::get_xml_schema_attributes()
 
 ResFilterOP
 ResidueIndexIsCreator::create_res_filter() const {
-	return ResFilterOP( new ResidueIndexIs );
+	return utility::pointer::make_shared< ResidueIndexIs >();
 }
 
 std::string ResidueIndexIsCreator::keyname() const { return ResidueIndexIs::keyname(); }
@@ -646,7 +646,7 @@ bool ResidueIndexIsnt::operator() ( Pose const & pose, Size index ) const
 	return ( ! parent::operator()( pose, index ) );
 }
 
-ResFilterOP ResidueIndexIsnt::clone() const { return ResFilterOP( new ResidueIndexIsnt( *this ) ); }
+ResFilterOP ResidueIndexIsnt::clone() const { return utility::pointer::make_shared< ResidueIndexIsnt >( *this ); }
 
 std::string ResidueIndexIsnt::keyname() { return "ResidueIndexIsnt"; }
 
@@ -656,7 +656,7 @@ void ResidueIndexIsnt::provide_xml_schema( utility::tag::XMLSchemaDefinition & x
 
 ResFilterOP
 ResidueIndexIsntCreator::create_res_filter() const {
-	return ResFilterOP( new ResidueIndexIsnt );
+	return utility::pointer::make_shared< ResidueIndexIsnt >();
 }
 
 std::string ResidueIndexIsntCreator::keyname() const { return ResidueIndexIsnt::keyname(); }
@@ -696,7 +696,7 @@ bool ResiduePDBIndexIs::operator() ( Pose const & pose, Size index ) const
 }
 
 
-ResFilterOP ResiduePDBIndexIs::clone() const { return ResFilterOP( new ResiduePDBIndexIs( *this ) ); }
+ResFilterOP ResiduePDBIndexIs::clone() const { return utility::pointer::make_shared< ResiduePDBIndexIs >( *this ); }
 
 /// @brief the expected format for the 'indices' option is: indices=A.2,B.3,Z.-20
 void ResiduePDBIndexIs::parse_tag( TagCOP tag )
@@ -754,7 +754,7 @@ ResiduePDBIndexIs::get_xml_schema_attributes( utility::tag::XMLSchemaDefinition 
 
 ResFilterOP
 ResiduePDBIndexIsCreator::create_res_filter() const {
-	return ResFilterOP( new ResiduePDBIndexIs );
+	return utility::pointer::make_shared< ResiduePDBIndexIs >();
 }
 
 std::string ResiduePDBIndexIsCreator::keyname() const { return ResiduePDBIndexIs::keyname(); }
@@ -781,7 +781,7 @@ bool ResiduePDBIndexIsnt::operator() ( Pose const & pose, Size index ) const
 	return ( ! parent::operator()( pose, index ) );
 }
 
-ResFilterOP ResiduePDBIndexIsnt::clone() const { return ResFilterOP( new ResiduePDBIndexIs( *this ) ); }
+ResFilterOP ResiduePDBIndexIsnt::clone() const { return utility::pointer::make_shared< ResiduePDBIndexIs >( *this ); }
 
 std::string ResiduePDBIndexIsnt::keyname() { return "ResiduePDBIndexIsnt"; }
 
@@ -791,7 +791,7 @@ void ResiduePDBIndexIsnt::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 
 ResFilterOP
 ResiduePDBIndexIsntCreator::create_res_filter() const {
-	return ResFilterOP( new ResiduePDBIndexIsnt );
+	return utility::pointer::make_shared< ResiduePDBIndexIsnt >();
 }
 
 std::string ResiduePDBIndexIsntCreator::keyname() const { return ResiduePDBIndexIsnt::keyname(); }
@@ -820,7 +820,7 @@ bool ChainIs::operator() ( Pose const & pose, Size index ) const
 	return( (pose.pdb_info()->chain(index) == chain_) ? true : false );
 }
 
-ResFilterOP ChainIs::clone() const { return ResFilterOP( new ChainIs( *this ) ); }
+ResFilterOP ChainIs::clone() const { return utility::pointer::make_shared< ChainIs >( *this ); }
 
 void ChainIs::parse_tag( TagCOP tag )
 {
@@ -852,7 +852,7 @@ ChainIs::get_xml_schema_attributes( utility::tag::XMLSchemaDefinition & xsd )
 
 ResFilterOP
 ChainIsCreator::create_res_filter() const {
-	return ResFilterOP( new ChainIs );
+	return utility::pointer::make_shared< ChainIs >();
 }
 
 std::string ChainIsCreator::keyname() const { return ChainIs::keyname(); }
@@ -875,7 +875,7 @@ bool ChainIsnt::operator() ( Pose const & pose, Size index ) const
 	return ( ! parent::operator()( pose, index ) );
 }
 
-ResFilterOP ChainIsnt::clone() const { return ResFilterOP( new ChainIsnt( *this ) ); }
+ResFilterOP ChainIsnt::clone() const { return utility::pointer::make_shared< ChainIsnt >( *this ); }
 
 std::string ChainIsnt::keyname() { return "ChainIsnt"; }
 
@@ -885,7 +885,7 @@ void ChainIsnt::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 
 ResFilterOP
 ChainIsntCreator::create_res_filter() const {
-	return ResFilterOP( new ChainIsnt );
+	return utility::pointer::make_shared< ChainIsnt >();
 }
 
 std::string ChainIsntCreator::keyname() const { return ChainIsnt::keyname(); }

@@ -73,7 +73,7 @@ using Mat = numeric::xyzMatrix<Real>;
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP SymDofMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new SymDofMover );
+// XRW TEMP  return utility::pointer::make_shared< SymDofMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -108,12 +108,12 @@ SymDofMover::SymDofMover() :
 
 protocols::moves::MoverOP
 SymDofMover::clone() const {
-	return protocols::moves::MoverOP( new SymDofMover( *this ) );
+	return utility::pointer::make_shared< SymDofMover >( *this );
 }
 
 protocols::moves::MoverOP
 SymDofMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new SymDofMover() );
+	return utility::pointer::make_shared< SymDofMover >();
 }
 
 utility::vector1<std::string>
@@ -765,7 +765,7 @@ std::string SymDofMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 SymDofMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SymDofMover );
+	return utility::pointer::make_shared< SymDofMover >();
 }
 
 void SymDofMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -79,14 +79,14 @@ BuriedSurfaceAreaFilter::parse_my_tag(
 protocols::filters::FilterOP
 BuriedSurfaceAreaFilter::clone() const
 {
-	return protocols::filters::FilterOP( new BuriedSurfaceAreaFilter( *this ) );
+	return utility::pointer::make_shared< BuriedSurfaceAreaFilter >( *this );
 }
 
 
 protocols::filters::FilterOP
 BuriedSurfaceAreaFilter::fresh_instance() const
 {
-	return protocols::filters::FilterOP( new BuriedSurfaceAreaFilter );
+	return utility::pointer::make_shared< BuriedSurfaceAreaFilter >();
 }
 
 bool
@@ -359,7 +359,7 @@ BuriedSurfaceAreaFilter::compute_residue_selection(
 protocols::filters::FilterOP
 BuriedSurfaceAreaFilterCreator::create_filter() const
 {
-	return protocols::filters::FilterOP( new BuriedSurfaceAreaFilter );
+	return utility::pointer::make_shared< BuriedSurfaceAreaFilter >();
 }
 
 std::string

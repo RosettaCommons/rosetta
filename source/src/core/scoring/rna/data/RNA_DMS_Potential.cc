@@ -375,7 +375,7 @@ RNA_DMS_Potential::initialize( core::pose::Pose const & pose ) {
 	//
 	hbonds::HBondOptionsOP hbond_options( new hbonds::HBondOptions() );
 	hbond_options->use_hb_env_dep( false );
-	hbond_set_ = hbonds::HBondSetOP( new hbonds::HBondSet( *hbond_options ) );
+	hbond_set_ = utility::pointer::make_shared< hbonds::HBondSet >( *hbond_options );
 	hbonds::fill_hbond_set( pose, false /*calc deriv*/, *hbond_set_ );
 
 	// setup poses in which one residue base can be virtualized, and
@@ -386,8 +386,8 @@ RNA_DMS_Potential::initialize( core::pose::Pose const & pose ) {
 	add_probe_to_pose( *working_pose_with_probe_ );
 
 	// clone() above actually does not reset scoring_ flag in Energies object, leading to early exit.
-	working_pose_->set_new_energies_object( scoring::EnergiesOP( new scoring::Energies ) );
-	working_pose_with_probe_->set_new_energies_object( scoring::EnergiesOP( new scoring::Energies ) );
+	working_pose_->set_new_energies_object( utility::pointer::make_shared< scoring::Energies >() );
+	working_pose_with_probe_->set_new_energies_object( utility::pointer::make_shared< scoring::Energies >() );
 
 	// I think this needs to be initialized ...
 	if ( DMS_potential_.size() == 0 ) initialize_DMS_potential();

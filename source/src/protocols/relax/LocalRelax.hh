@@ -80,7 +80,7 @@ public:
 
 	/// @brief return a fresh instance of this class in an owning pointer
 	protocols::moves::MoverOP clone() const override {
-		return protocols::moves::MoverOP( new LocalRelax(*this) );
+		return utility::pointer::make_shared< LocalRelax >(*this);
 	}
 
 	void apply( core::pose::Pose & pose) override;

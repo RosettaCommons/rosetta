@@ -46,7 +46,7 @@ methods::EnergyMethodOP
 symECreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new symEnergy );
+	return utility::pointer::make_shared< symEnergy >();
 }
 
 ScoreTypes
@@ -58,12 +58,12 @@ symECreator::score_types_for_method() const {
 
 
 symEnergy::symEnergy() :
-	parent( core::scoring::methods::EnergyMethodCreatorOP( new symECreator ) )
+	parent( utility::pointer::make_shared< symECreator >() )
 {}
 
 methods::EnergyMethodOP symEnergy::clone() const
 {
-	return methods::EnergyMethodOP( new symEnergy(*this) );
+	return utility::pointer::make_shared< symEnergy >(*this);
 }
 
 void symEnergy::setup_for_scoring(pose::Pose &pose, const ScoreFunction &) const

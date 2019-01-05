@@ -278,11 +278,11 @@ void RNAThreadAndMinimizeMover::accomodate_length_change( Pose & pose, Size cons
 		using namespace core::scoring::constraints;
 		using namespace core::scoring::func;
 		Real const stdev = ( ii > begin || ii < end ) ? 6 : 2;
-		pose.add_constraint( ConstraintOP( new CoordinateConstraint(
+		pose.add_constraint( utility::pointer::make_shared< CoordinateConstraint >(
 			id::AtomID( pose.residue_type( ii ).atom_index( "P" ), ii ),
 			id::AtomID( 1, pose.total_residue() ),
 			ref_pose.residue( ii ).xyz( pose.residue_type( ii ).atom_index( "P" ) ),
-			FuncOP( new HarmonicFunc( 0.0, stdev ) ) ) ) );
+			utility::pointer::make_shared< HarmonicFunc >( 0.0, stdev ) ) );
 	}
 
 	///*
@@ -444,7 +444,7 @@ void RNAThreadAndMinimizeMover::accomodate_length_change( Pose & pose, Size cons
 
 	// By the end, there shouldn't be much strain left in the structure--we can
 	// remove coordinate constraints.
-	pose.constraint_set( core::scoring::constraints::ConstraintSetOP( new core::scoring::constraints::ConstraintSet ) );
+	pose.constraint_set( utility::pointer::make_shared< core::scoring::constraints::ConstraintSet >() );
 
 	ins_minm->apply( pose );
 	ins_minm->apply( recovered_low );
@@ -577,13 +577,13 @@ RNAThreadAndMinimizeMover::parse_my_tag(
 protocols::moves::MoverOP
 RNAThreadAndMinimizeMover::clone() const
 {
-	return protocols::moves::MoverOP( new RNAThreadAndMinimizeMover( *this ) );
+	return utility::pointer::make_shared< RNAThreadAndMinimizeMover >( *this );
 }
 
 protocols::moves::MoverOP
 RNAThreadAndMinimizeMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new RNAThreadAndMinimizeMover );
+	return utility::pointer::make_shared< RNAThreadAndMinimizeMover >();
 }
 
 std::string
@@ -681,7 +681,7 @@ RNAThreadAndMinimizeMover::apply( core::pose::Pose & pose )
 protocols::moves::MoverOP
 RNAThreadAndMinimizeMoverCreator::create_mover() const
 {
-	return protocols::moves::MoverOP( new RNAThreadAndMinimizeMover );
+	return utility::pointer::make_shared< RNAThreadAndMinimizeMover >();
 }
 
 std::string

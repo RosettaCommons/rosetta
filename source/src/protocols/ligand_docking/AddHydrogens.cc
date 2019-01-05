@@ -51,7 +51,7 @@ static basic::Tracer add_hydrogens_tracer( "protocols.ligand_docking.LigandDesig
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP AddHydrogensCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new AddHydrogens );
+// XRW TEMP  return utility::pointer::make_shared< AddHydrogens >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -73,11 +73,11 @@ AddHydrogens::AddHydrogens(AddHydrogens const & /*that*/) = default;
 AddHydrogens::~AddHydrogens() = default;
 
 protocols::moves::MoverOP AddHydrogens::clone() const {
-	return protocols::moves::MoverOP( new AddHydrogens( *this ) );
+	return utility::pointer::make_shared< AddHydrogens >( *this );
 }
 
 protocols::moves::MoverOP AddHydrogens::fresh_instance() const {
-	return protocols::moves::MoverOP( new AddHydrogens );
+	return utility::pointer::make_shared< AddHydrogens >();
 }
 
 // XRW TEMP std::string AddHydrogens::get_name() const{
@@ -140,7 +140,7 @@ std::string AddHydrogensCreator::keyname() const {
 
 protocols::moves::MoverOP
 AddHydrogensCreator::create_mover() const {
-	return protocols::moves::MoverOP( new AddHydrogens );
+	return utility::pointer::make_shared< AddHydrogens >();
 }
 
 void AddHydrogensCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

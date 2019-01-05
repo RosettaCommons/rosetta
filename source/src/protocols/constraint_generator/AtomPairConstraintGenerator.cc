@@ -42,7 +42,7 @@ namespace constraint_generator {
 protocols::constraint_generator::ConstraintGeneratorOP
 AtomPairConstraintGeneratorCreator::create_constraint_generator() const
 {
-	return protocols::constraint_generator::ConstraintGeneratorOP( new AtomPairConstraintGenerator );
+	return utility::pointer::make_shared< AtomPairConstraintGenerator >();
 }
 
 std::string
@@ -73,7 +73,7 @@ AtomPairConstraintGenerator::~AtomPairConstraintGenerator() = default;
 protocols::constraint_generator::ConstraintGeneratorOP
 AtomPairConstraintGenerator::clone() const
 {
-	return AtomPairConstraintGeneratorOP( new AtomPairConstraintGenerator( *this ) );
+	return utility::pointer::make_shared< AtomPairConstraintGenerator >( *this );
 }
 
 void
@@ -295,7 +295,7 @@ AtomPairConstraintGenerator::add_constraints(
 
 			core::scoring::func::FuncOP pair_func;
 			if ( !use_harmonic_ ) {  // This is the default behaviour
-				pair_func = core::scoring::func::FuncOP( new core::scoring::func::SOGFunc( dist, sd_ ) );
+				pair_func = utility::pointer::make_shared< core::scoring::func::SOGFunc >( dist, sd_ );
 			} else {
 				pair_func = core::scoring::func::FuncOP (new core::scoring::func::HarmonicFunc( dist, sd_ ) );
 			}
@@ -303,9 +303,9 @@ AtomPairConstraintGenerator::add_constraints(
 			core::scoring::constraints::ConstraintCOP newcst;
 			if ( !unweighted_ ) {  // This is the default behaviour
 				core::scoring::func::FuncOP weighted_func = scalar_weighted( pair_func, weight_ );
-				newcst = core::scoring::constraints::ConstraintCOP( new core::scoring::constraints::AtomPairConstraint( pose_atom1, pose_atom2, weighted_func ) );
+				newcst = utility::pointer::make_shared< core::scoring::constraints::AtomPairConstraint >( pose_atom1, pose_atom2, weighted_func );
 			} else {
-				newcst = core::scoring::constraints::ConstraintCOP( new core::scoring::constraints::AtomPairConstraint( pose_atom1, pose_atom2, pair_func ) );
+				newcst = utility::pointer::make_shared< core::scoring::constraints::AtomPairConstraint >( pose_atom1, pose_atom2, pair_func );
 			}
 
 			csts.push_back( newcst );

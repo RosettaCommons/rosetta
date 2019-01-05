@@ -144,16 +144,16 @@ public:
 
 		// add some randomly high values for consideration.
 		container.insert(
-			KDPointOP( new KDPoint( vector1< Real >( 4, 25 ),
-			sq_vec_distance( vector1< Real >( 4, 25 ), origin ) ) )
+			utility::pointer::make_shared< KDPoint >( vector1< Real >( 4, 25 ),
+			sq_vec_distance( vector1< Real >( 4, 25 ), origin ) )
 		);
 		container.insert(
-			KDPointOP( new KDPoint( vector1< Real >( 4, 67 ),
-			sq_vec_distance( vector1< Real >( 4, 67 ), origin ) ) )
+			utility::pointer::make_shared< KDPoint >( vector1< Real >( 4, 67 ),
+			sq_vec_distance( vector1< Real >( 4, 67 ), origin ) )
 		);
 		container.insert(
-			KDPointOP( new KDPoint( vector1< Real >( 4, 99 ),
-			sq_vec_distance( vector1< Real >( 4, 99 ), origin ) ) )
+			utility::pointer::make_shared< KDPoint >( vector1< Real >( 4, 99 ),
+			sq_vec_distance( vector1< Real >( 4, 99 ), origin ) )
 		);
 		for ( Size ii = 1; ii <= 20; ++ii ) {
 			vector1< Real > k_loc( ndim, ii );
@@ -179,24 +179,24 @@ public:
 		{ // scope for merging test
 			KDPointList container2( wanted );
 			container2.insert(
-				KDPointOP( new KDPoint( vector1< Real >( 4, 2.5 ),
-				sq_vec_distance( vector1< Real >( 4, 2.5 ), origin ) ) )
+				utility::pointer::make_shared< KDPoint >( vector1< Real >( 4, 2.5 ),
+				sq_vec_distance( vector1< Real >( 4, 2.5 ), origin ) )
 			);
 			container2.insert(
-				KDPointOP( new KDPoint( vector1< Real >( 4, 25 ),
-				sq_vec_distance( vector1< Real >( 4, 25 ), origin ) ) )
+				utility::pointer::make_shared< KDPoint >( vector1< Real >( 4, 25 ),
+				sq_vec_distance( vector1< Real >( 4, 25 ), origin ) )
 			);
 			container2.insert(
-				KDPointOP( new KDPoint( vector1< Real >( 4, 67 ),
-				sq_vec_distance( vector1< Real >( 4, 67 ), origin ) ) )
+				utility::pointer::make_shared< KDPoint >( vector1< Real >( 4, 67 ),
+				sq_vec_distance( vector1< Real >( 4, 67 ), origin ) )
 			);
 			container2.insert(
-				KDPointOP( new KDPoint( vector1< Real >( 4, 99 ),
-				sq_vec_distance( vector1< Real >( 4, 99 ), origin ) ) )
+				utility::pointer::make_shared< KDPoint >( vector1< Real >( 4, 99 ),
+				sq_vec_distance( vector1< Real >( 4, 99 ), origin ) )
 			);
 			container2.insert(
-				KDPointOP( new KDPoint( vector1< Real >( 4, 99 ),
-				sq_vec_distance( vector1< Real >( 4, 99 ), origin ) ) )
+				utility::pointer::make_shared< KDPoint >( vector1< Real >( 4, 99 ),
+				sq_vec_distance( vector1< Real >( 4, 99 ), origin ) )
 			);
 			TS_ASSERT( container2.size() == 5 );
 			TS_ASSERT( container2.worst_distance() == 39204 );

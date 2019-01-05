@@ -46,8 +46,8 @@ public:
 		FuncOP some_func( new HarmonicFunc( 1, 2 ));
 		FuncOP some_func2( new HarmonicFunc( 1.1, 2.1 ));
 		ConstraintCOPs csts;
-		csts.push_back( ConstraintCOP( new AtomPairConstraint( AtomID( 1, 2 ), AtomID( 2, 3 ), some_func )));
-		csts.push_back( ConstraintCOP( new AtomPairConstraint( AtomID( 3, 4 ), AtomID( 4, 5 ), some_func )));
+		csts.push_back( utility::pointer::make_shared< AtomPairConstraint >( AtomID( 1, 2 ), AtomID( 2, 3 ), some_func ));
+		csts.push_back( utility::pointer::make_shared< AtomPairConstraint >( AtomID( 3, 4 ), AtomID( 4, 5 ), some_func ));
 		ConstraintOP instance( new AmbiguousNMRConstraint( csts, some_func2 ) ); // serialize this through a pointer to the base class
 
 		std::ostringstream oss;

@@ -220,7 +220,7 @@ SegmentContactOrderScorer::type_name(){
 //////Creator methods//////////
 AssemblyScorerOP
 SegmentContactOrderScorerCreator::create_assembly_scorer() const{
-	return AssemblyScorerOP( new SegmentContactOrderScorer );
+	return utility::pointer::make_shared< SegmentContactOrderScorer >();
 }
 
 

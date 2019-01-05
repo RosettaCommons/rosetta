@@ -310,19 +310,19 @@ StoreQuasiSymmetricTaskMover::parse_my_tag( TagCOP const tag, basic::datacache::
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP StoreQuasiSymmetricTaskMoverCreator::create_mover() const {
 // XRW TEMP  //return new StoreQuasiSymmetricTaskMover;
-// XRW TEMP  return protocols::moves::MoverOP( new StoreQuasiSymmetricTaskMover );
+// XRW TEMP  return utility::pointer::make_shared< StoreQuasiSymmetricTaskMover >();
 // XRW TEMP }
 
 protocols::moves::MoverOP
 StoreQuasiSymmetricTaskMover::clone() const {
 	//return new StoreQuasiSymmetricTaskMover( *this );
-	return protocols::moves::MoverOP( new StoreQuasiSymmetricTaskMover( *this ) );
+	return utility::pointer::make_shared< StoreQuasiSymmetricTaskMover >( *this );
 }
 
 protocols::moves::MoverOP
 StoreQuasiSymmetricTaskMover::fresh_instance() const {
 	//return new StoreQuasiSymmetricTaskMover;
-	return protocols::moves::MoverOP( new StoreQuasiSymmetricTaskMover );
+	return utility::pointer::make_shared< StoreQuasiSymmetricTaskMover >();
 }
 
 std::string StoreQuasiSymmetricTaskMover::get_name() const {
@@ -355,7 +355,7 @@ std::string StoreQuasiSymmetricTaskMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 StoreQuasiSymmetricTaskMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new StoreQuasiSymmetricTaskMover );
+	return utility::pointer::make_shared< StoreQuasiSymmetricTaskMover >();
 }
 
 void StoreQuasiSymmetricTaskMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

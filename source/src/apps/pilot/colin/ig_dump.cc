@@ -80,9 +80,9 @@ main( int argc, char * argv [] )
 		using namespace core::pack::task;
 		using namespace core::pack::task::operation;
 		TaskFactoryOP main_task_factory( new TaskFactory );
-		main_task_factory->push_back( TaskOperationCOP( new operation::InitializeFromCommandline ) );
+		main_task_factory->push_back( utility::pointer::make_shared< operation::InitializeFromCommandline >() );
 		if ( option[ packing::resfile ].user() ) {
-			main_task_factory->push_back( TaskOperationCOP( new operation::ReadResfile ) );
+			main_task_factory->push_back( utility::pointer::make_shared< operation::ReadResfile >() );
 		}
 
 		core::scoring::ScoreFunctionOP score_fxn = core::scoring::get_score_function();
@@ -95,7 +95,7 @@ main( int argc, char * argv [] )
 			TR << "Processing " << input_jobs[i]->input_tag() << "..." << std::endl;
 
 			// load the PDB file
-			input_pose = core::pose::PoseOP( new core::pose::Pose() );
+			input_pose = utility::pointer::make_shared< core::pose::Pose >();
 			if ( option[ in::file::centroid_input ].user() ) {
 				core::import_pose::centroid_pose_from_pdb( *input_pose, input_jobs[i]->input_tag() , core::import_pose::PDB_file);
 			} else {

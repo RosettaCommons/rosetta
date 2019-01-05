@@ -141,7 +141,7 @@ AntibodyNumberingConverterMover::apply( core::pose::Pose & pose)
 	}
 
 
-	AntibodyEnumManagerCOP manager = AntibodyEnumManagerCOP( new AntibodyEnumManager() );
+	AntibodyEnumManagerCOP manager = utility::pointer::make_shared< AntibodyEnumManager >();
 	AntibodyNumberingParser numbering_parser = AntibodyNumberingParser(manager);
 	AntibodyNumbering const numbering = numbering_parser.get_antibody_numbering(from_scheme_, North); //North is ambiguous - we really don't care here.
 
@@ -296,13 +296,13 @@ AntibodyNumberingConverterMover::apply( core::pose::Pose & pose)
 protocols::moves::MoverOP
 AntibodyNumberingConverterMover::clone() const
 {
-	return protocols::moves::MoverOP( new AntibodyNumberingConverterMover( *this ) );
+	return utility::pointer::make_shared< AntibodyNumberingConverterMover >( *this );
 }
 
 protocols::moves::MoverOP
 AntibodyNumberingConverterMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new AntibodyNumberingConverterMover );
+	return utility::pointer::make_shared< AntibodyNumberingConverterMover >();
 }
 
 // XRW TEMP std::string
@@ -337,7 +337,7 @@ operator<<( std::ostream & os, AntibodyNumberingConverterMover const & mover )
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP AntibodyNumberingConverterMoverCreator::create_mover() const
 // XRW TEMP {
-// XRW TEMP  return protocols::moves::MoverOP( new AntibodyNumberingConverterMover );
+// XRW TEMP  return utility::pointer::make_shared< AntibodyNumberingConverterMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -390,7 +390,7 @@ std::string AntibodyNumberingConverterMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 AntibodyNumberingConverterMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new AntibodyNumberingConverterMover );
+	return utility::pointer::make_shared< AntibodyNumberingConverterMover >();
 }
 
 void AntibodyNumberingConverterMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

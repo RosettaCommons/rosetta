@@ -200,7 +200,7 @@ AntibodyCDRGrafter::parse_my_tag(
 protocols::moves::MoverOP
 AntibodyCDRGrafter::clone() const{
 
-	return protocols::moves::MoverOP( new AntibodyCDRGrafter( *this ) );
+	return utility::pointer::make_shared< AntibodyCDRGrafter >( *this );
 
 }
 
@@ -212,7 +212,7 @@ moves::MoverOP
 AntibodyCDRGrafter::fresh_instance() const
 {
 
-	return protocols::moves::MoverOP( new AntibodyCDRGrafter );
+	return utility::pointer::make_shared< AntibodyCDRGrafter >();
 
 }
 
@@ -226,8 +226,8 @@ AntibodyCDRGrafter::fresh_instance() const
 void
 AntibodyCDRGrafter::setup_classes(){
 
-	graft_mover_ = protocols::grafting::CCDEndsGraftMoverOP( new CCDEndsGraftMover() );
-	anchored_graft_mover_ = protocols::grafting::AnchoredGraftMoverOP( new AnchoredGraftMover() );
+	graft_mover_ = utility::pointer::make_shared< CCDEndsGraftMover >();
+	anchored_graft_mover_ = utility::pointer::make_shared< AnchoredGraftMover >();
 
 }
 
@@ -335,7 +335,7 @@ AntibodyCDRGrafter::set_cdrs(const utility::vector1<bool> & cdrs){
 
 void
 AntibodyCDRGrafter::set_donor_structure(const core::pose::Pose & pose){
-	donor_structure_ = core::pose::PoseOP( new core::pose::Pose(pose));
+	donor_structure_ = utility::pointer::make_shared< core::pose::Pose >(pose);
 }
 
 void
@@ -405,7 +405,7 @@ AntibodyCDRGrafter::apply( core::pose::Pose& pose ){
 	}
 
 	if ( ! ab_info_ ) {
-		ab_info_ = AntibodyInfoOP(new AntibodyInfo( pose, numbering_scheme_, cdr_definition_ ));
+		ab_info_ = utility::pointer::make_shared< AntibodyInfo >( pose, numbering_scheme_, cdr_definition_ );
 	}
 
 
@@ -549,7 +549,7 @@ AntibodyCDRGrafter::apply_to_cdr(core::pose::Pose& pose, core::pose::Pose & cdr_
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP AntibodyCDRGrafterCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new AntibodyCDRGrafter );
+// XRW TEMP  return utility::pointer::make_shared< AntibodyCDRGrafter >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -642,7 +642,7 @@ std::string AntibodyCDRGrafterCreator::keyname() const {
 
 protocols::moves::MoverOP
 AntibodyCDRGrafterCreator::create_mover() const {
-	return protocols::moves::MoverOP( new AntibodyCDRGrafter );
+	return utility::pointer::make_shared< AntibodyCDRGrafter >();
 }
 
 void AntibodyCDRGrafterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

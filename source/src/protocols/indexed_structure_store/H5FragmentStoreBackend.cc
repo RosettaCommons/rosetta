@@ -164,7 +164,7 @@ FragmentStoreOP H5FragmentStoreBackend::get_fragment_store(std::string store_nam
 	DataSpace store_dataspace(store_dataset.getSpace());
 	TR.Debug << "Loading: " << store_path << " size:" << store_dataspace.getSimpleExtentNpoints() << std::endl;
 
-	FragmentStoreOP fragment_store = FragmentStoreOP(new FragmentStore(fragment_spec, store_dataspace.getSimpleExtentNpoints()));
+	FragmentStoreOP fragment_store = utility::pointer::make_shared< FragmentStore >(fragment_spec, store_dataspace.getSimpleExtentNpoints());
 
 	store_dataset.read(&fragment_store->fragment_threshold_distances[0],FragmentThresholdDistanceEntryDatatype());
 

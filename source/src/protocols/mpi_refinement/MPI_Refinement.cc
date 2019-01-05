@@ -127,7 +127,7 @@ MPI_Refinement::set_defaults(){
 	// initial "reference" structure should be provided as the first at -in:file:s
 	core::import_pose::pose_from_file( pose0_, *rsd_set, option[ in::file::s ](1) , core::import_pose::PDB_file);
 
-	fobj_ = MultiObjectiveOP( new MultiObjective() );
+	fobj_ = utility::pointer::make_shared< MultiObjective >();
 
 	mpi_resume_ = "";
 	if ( option[ OptionKeys::lh::mpi_resume ].user() ) {
@@ -194,7 +194,7 @@ MPI_Refinement::load_structures_from_cmdline_into_library(
 			if ( option[ OptionKeys::constraints::cst_fa_file ].user() ) {
 				ConstraintSetOP cstset =
 					ConstraintIO::get_instance()->read_constraints( get_cst_fa_file_option(),
-					ConstraintSetOP( new ConstraintSet ), pose );
+					utility::pointer::make_shared< ConstraintSet >(), pose );
 				TR << "Read constraints: " << ( cstset->has_constraints() ? "YES" : "NONE" ) << std::endl;
 				pose.constraint_set( cstset );
 			} else { // strong coordinate constraint

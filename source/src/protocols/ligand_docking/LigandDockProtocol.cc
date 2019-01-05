@@ -356,7 +356,7 @@ LigandDockProtocol::classic_protocol(
 			(Mover *) new protocols::minimization_packing::RotamerTrialsMover(scorefxn, *rottrials_task)
 		);
 		// Wrap it in something to disable the torsion constraints before packing!
-		pack_mover = MoverOP( new protocols::ligand_docking::UnconstrainedTorsionsMover( pack_mover, ligand_torsion_restraints_ ) );
+		pack_mover = utility::pointer::make_shared< protocols::ligand_docking::UnconstrainedTorsionsMover >( pack_mover, ligand_torsion_restraints_ );
 
 		//MoverOP dockmcm_mover = make_dockmcm_mover(pose, jump_id, pack_mover, simple_rigbod, movemap, scorefxn, monteCarlo);
 		//dockmcm_mover->apply(pose);
@@ -889,7 +889,7 @@ LigandDockProtocol::restrain_ligand_chis(
 	} else {
 		for ( core::Size i = 1; i <= pose.size(); ++i ) {
 			if ( pose.residue(i).is_polymer() ) continue;
-			ligand_torsion_restraints_.push_back( protocols::ligand_docking::ResidueTorsionRestraintsOP( new protocols::ligand_docking::ResidueTorsionRestraints(pose, i, ligand_chi_stddev_deg_) ) );
+			ligand_torsion_restraints_.push_back( utility::pointer::make_shared< protocols::ligand_docking::ResidueTorsionRestraints >(pose, i, ligand_chi_stddev_deg_) );
 		}
 	}
 }

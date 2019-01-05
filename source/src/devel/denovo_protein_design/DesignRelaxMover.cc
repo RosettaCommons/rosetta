@@ -90,10 +90,10 @@ void DesignRelaxMover::apply( core::pose::Pose & pose )
 	// the designtaskfactory_ comes from the ctor
 	// core::pack::task::TaskFactoryOP designtaskfactory_ = new core::pack::task::TaskFactory;
 	// designrelaxmover works with resfile and commandline operations
-	designtaskfactory_->push_back( TaskOperationCOP( new operation::InitializeFromCommandline ) );
+	designtaskfactory_->push_back( utility::pointer::make_shared< operation::InitializeFromCommandline >() );
 	// check for resfile - if present use it
 	if ( basic::options::option [ basic::options::OptionKeys::packing::resfile ].user()  ) {
-		designtaskfactory_->push_back( TaskOperationCOP( new operation::ReadResfile ) );
+		designtaskfactory_->push_back( utility::pointer::make_shared< operation::ReadResfile >() );
 	}
 
 

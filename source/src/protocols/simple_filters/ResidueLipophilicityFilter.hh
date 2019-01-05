@@ -44,10 +44,10 @@ public:
 	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	core::Real compute( core::pose::Pose const & pose ) const;
 	filters::FilterOP clone() const  override {
-		return filters::FilterOP( new ResidueLipophilicityFilter( *this ) );
+		return utility::pointer::make_shared< ResidueLipophilicityFilter >( *this );
 	}
 	filters::FilterOP fresh_instance() const override {
-		return filters::FilterOP( new ResidueLipophilicityFilter() );
+		return utility::pointer::make_shared< ResidueLipophilicityFilter >();
 	}
 
 	virtual ~ResidueLipophilicityFilter();

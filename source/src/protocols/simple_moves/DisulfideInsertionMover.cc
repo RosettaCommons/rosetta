@@ -105,7 +105,7 @@ DisulfideInsertionMover::DisulfideInsertionMover(DisulfideInsertionMover const &
 
 // @brief clone function that returns a deep copy of the mover
 protocols::moves::MoverOP DisulfideInsertionMover::clone() const {
-	return DisulfideInsertionMoverOP(new DisulfideInsertionMover(*this));
+	return utility::pointer::make_shared< DisulfideInsertionMover >(*this);
 }
 
 
@@ -270,7 +270,7 @@ DisulfideInsertionMover::apply( core::pose::Pose & peptide_receptor_pose )
 	if ( movemap_factory_ != nullptr ) {
 		movemap = movemap_factory_->create_movemap_from_pose( peptide_receptor_pose );
 	} else {
-		movemap = core::kinematics::MoveMapOP( new core::kinematics::MoveMap );
+		movemap = utility::pointer::make_shared< core::kinematics::MoveMap >();
 	}
 	movemap->set_bb_true_range(this_pose_n_cyd, this_pose_c_cyd);
 	core::util::rebuild_disulfide(peptide_receptor_pose, this_pose_n_cyd, this_pose_c_cyd,
@@ -326,33 +326,33 @@ DisulfideInsertionMover::setup_constraints( core::pose::Pose & peptide_receptor_
 		core::scoring::constraints::AtomPairConstraintCOP(new core::scoring::constraints::AtomPairConstraint(
 		n_sg_atom_id,
 		c_sg_atom_id,
-		core::scoring::func::HarmonicFuncOP( new core::scoring::func::HarmonicFunc( 2.02 /*anchor*/, 0.35 /*stdev*/)))));
+		utility::pointer::make_shared< core::scoring::func::HarmonicFunc >( 2.02 /*anchor*/, 0.35 /*stdev*/))));
 	cys_cst_set->add_constraint(
 		core::scoring::constraints::DihedralConstraintCOP(new core::scoring::constraints::DihedralConstraint(
 		n_ca_atom_id,
 		n_cb_atom_id,
 		n_sg_atom_id,
 		c_sg_atom_id,
-		core::scoring::func::HarmonicFuncOP( new core::scoring::func::HarmonicFunc( -0.558 /*anchor*/, 0.1 /*stdev*/) ))));
+		utility::pointer::make_shared< core::scoring::func::HarmonicFunc >( -0.558 /*anchor*/, 0.1 /*stdev*/))));
 	cys_cst_set->add_constraint(
 		core::scoring::constraints::DihedralConstraintCOP(new core::scoring::constraints::DihedralConstraint(
 		c_ca_atom_id,
 		c_cb_atom_id,
 		c_sg_atom_id,
 		n_sg_atom_id,
-		core::scoring::func::HarmonicFuncOP( new core::scoring::func::HarmonicFunc( -2 /*anchor*/, 0.1 /*stdev*/) ))));
+		utility::pointer::make_shared< core::scoring::func::HarmonicFunc >( -2 /*anchor*/, 0.1 /*stdev*/))));
 	cys_cst_set->add_constraint(
 		core::scoring::constraints::AngleConstraintCOP(new core::scoring::constraints::AngleConstraint(
 		n_cb_atom_id,
 		n_sg_atom_id,
 		c_sg_atom_id,
-		core::scoring::func::HarmonicFuncOP(new core::scoring::func::HarmonicFunc( 1.804 /*anchor*/, 0.08 /*stdev*/) )) ));
+		utility::pointer::make_shared< core::scoring::func::HarmonicFunc >( 1.804 /*anchor*/, 0.08 /*stdev*/)) ));
 	cys_cst_set->add_constraint(
 		core::scoring::constraints::AngleConstraintCOP(new core::scoring::constraints::AngleConstraint(
 		c_cb_atom_id,
 		c_sg_atom_id,
 		n_sg_atom_id,
-		core::scoring::func::HarmonicFuncOP( new core::scoring::func::HarmonicFunc( 1.804 /*anchor*/, 0.08 /*stdev*/) )) ));
+		utility::pointer::make_shared< core::scoring::func::HarmonicFunc >( 1.804 /*anchor*/, 0.08 /*stdev*/)) ));
 	peptide_receptor_pose.constraint_set( cys_cst_set );
 
 }
@@ -439,7 +439,7 @@ std::string DisulfideInsertionMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 DisulfideInsertionMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new DisulfideInsertionMover );
+	return utility::pointer::make_shared< DisulfideInsertionMover >();
 }
 
 void DisulfideInsertionMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

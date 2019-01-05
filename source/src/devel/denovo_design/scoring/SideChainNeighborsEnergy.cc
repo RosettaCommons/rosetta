@@ -47,7 +47,7 @@ methods::EnergyMethodOP
 SideChainNeighborsEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & ) const
 {
-	return methods::EnergyMethodOP( new SideChainNeighborsEnergy() );
+	return utility::pointer::make_shared< SideChainNeighborsEnergy >();
 }
 
 ScoreTypes
@@ -70,7 +70,7 @@ SideChainNeighborsEnergy::setup_for_scoring(
 EnergyMethodOP
 SideChainNeighborsEnergy::clone() const
 {
-	return EnergyMethodOP( new SideChainNeighborsEnergy() );
+	return utility::pointer::make_shared< SideChainNeighborsEnergy >();
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -78,7 +78,7 @@ SideChainNeighborsEnergy::clone() const
 /////////////////////////////////////////////////////////////////////////////
 
 SideChainNeighborsEnergy::SideChainNeighborsEnergy() :
-	ContextDependentOneBodyEnergy( methods::EnergyMethodCreatorOP( new SideChainNeighborsEnergyCreator() ) )
+	ContextDependentOneBodyEnergy( utility::pointer::make_shared< SideChainNeighborsEnergyCreator >() )
 {
 }
 

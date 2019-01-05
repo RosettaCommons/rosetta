@@ -73,9 +73,9 @@ ScoreTypes SAXSEnergyCreator::score_types_for_method() const {
 
 methods::EnergyMethodOP SAXSEnergyCreator::create_energy_method( methods::EnergyMethodOptions const &) const {
 	methods::EnergyMethodCreatorOP creator( new SAXSEnergyCreatorCEN );
-	return methods::EnergyMethodOP( new SAXSEnergy(SAXSEnergy::cen_cfg_file_,
+	return utility::pointer::make_shared< SAXSEnergy >(SAXSEnergy::cen_cfg_file_,
 		chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::CENTROID),
-		saxs_cen_score, creator ) );
+		saxs_cen_score, creator );
 }
 
 /// c-tor
@@ -299,7 +299,7 @@ void SAXSEnergy::rehash_form_factors(const core::pose::Pose & pose) const {
 		utility::vector1<DistanceHistogramOP> row;
 		dhist_.push_back( row );
 		for ( Size j=1; j<=ff_ops_.size(); j++ ) {
-			dhist_[i].push_back( DistanceHistogramOP( new DistanceHistogram() ) );
+			dhist_[i].push_back( utility::pointer::make_shared< DistanceHistogram >() );
 		}
 	}
 

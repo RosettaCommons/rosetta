@@ -21,10 +21,10 @@ namespace scoring_grid {
 
 ScoreNormalizationOP get_score_normalization_function(std::string const & norm_tag)
 {
-	if ( norm_tag == "HeavyAtomNormalization" ) return ScoreNormalizationOP( new HeavyAtomNormalization );
-	if ( norm_tag == "AllAtomNormalization" ) return ScoreNormalizationOP( new AllAtomNormalization );
-	if ( norm_tag == "ChiAngleNormalization" ) return ScoreNormalizationOP( new ChiAngleNormalization );
-	if ( norm_tag == "MolecularWeightNormalization" ) return ScoreNormalizationOP( new MolecularWeightNormalization );
+	if ( norm_tag == "HeavyAtomNormalization" ) return utility::pointer::make_shared< HeavyAtomNormalization >();
+	if ( norm_tag == "AllAtomNormalization" ) return utility::pointer::make_shared< AllAtomNormalization >();
+	if ( norm_tag == "ChiAngleNormalization" ) return utility::pointer::make_shared< ChiAngleNormalization >();
+	if ( norm_tag == "MolecularWeightNormalization" ) return utility::pointer::make_shared< MolecularWeightNormalization >();
 
 	throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, norm_tag+" is not a valid Score Normalization method");
 	return nullptr;

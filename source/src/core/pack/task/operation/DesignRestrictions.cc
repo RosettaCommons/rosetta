@@ -53,7 +53,7 @@ DesignRestrictions::~DesignRestrictions() {}
 
 TaskOperationOP
 DesignRestrictions::clone() const {
-	return TaskOperationOP( new DesignRestrictions( *this ) );
+	return utility::pointer::make_shared< DesignRestrictions >( *this );
 }
 
 DesignRestrictions::DesignRestrictions( DesignRestrictions const & src ):
@@ -191,7 +191,7 @@ DesignRestrictions::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd 
 TaskOperationOP
 DesignRestrictionsCreator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new DesignRestrictions );
+	return utility::pointer::make_shared< DesignRestrictions >();
 }
 
 std::string

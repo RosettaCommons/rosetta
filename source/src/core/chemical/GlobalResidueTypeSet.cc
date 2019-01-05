@@ -101,7 +101,7 @@ GlobalResidueTypeSet::GlobalResidueTypeSet(
 	clock_t const time_start( clock() );
 
 	name( cm_name );
-	set_merge_behavior_manager( MergeBehaviorManagerCOP( new MergeBehaviorManager( directory ) ) );
+	set_merge_behavior_manager( utility::pointer::make_shared< MergeBehaviorManager >( directory ) );
 	load_exclude_pdb_component_ids( directory );
 
 	init_restypes_from_database(); // Will also load the sub-typesets

@@ -226,7 +226,7 @@ PDBChunkLibraryInputter::list_options_read(
 
 ChunkLibraryInputterOP PDBChunkLibraryInputterCreator::create_inputter() const
 {
-	return ChunkLibraryInputterOP( new PDBChunkLibraryInputter );
+	return utility::pointer::make_shared< PDBChunkLibraryInputter >();
 }
 
 std::string PDBChunkLibraryInputterCreator::keyname() const

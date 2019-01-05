@@ -26,7 +26,7 @@ namespace features {
 protocols::moves::MoverOP
 InterfaceDdGMoverCreator::create_mover() const
 {
-	return protocols::moves::MoverOP( new InterfaceDdGMover );
+	return utility::pointer::make_shared< InterfaceDdGMover >();
 }
 
 std::string

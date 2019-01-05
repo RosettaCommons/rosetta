@@ -216,7 +216,7 @@ optimize_linkers_centroid_mode(
 	// read fragments file
 	core::fragment::ConstantLengthFragSetOP fragset3mer = nullptr;
 	if ( basic::options::option[ basic::options::OptionKeys::in::file::frag3].user() ) {
-		fragset3mer = core::fragment::ConstantLengthFragSetOP( new core::fragment::ConstantLengthFragSet( 3 ) );
+		fragset3mer = utility::pointer::make_shared< core::fragment::ConstantLengthFragSet >( 3 );
 		fragset3mer->read_fragment_file( basic::options::option[ basic::options::OptionKeys::in::file::frag3 ]() );
 	}
 
@@ -230,7 +230,7 @@ optimize_linkers_centroid_mode(
 	TrialMoverOP centroid_trial_mover = nullptr;
 	if ( fragset3mer ) {
 		protocols::simple_moves::FragmentMoverOP frag_mover( new protocols::simple_moves::ClassicFragmentMover(fragset3mer, mm) );
-		centroid_trial_mover = TrialMoverOP( new TrialMover( frag_mover, mc ) );
+		centroid_trial_mover = utility::pointer::make_shared< TrialMover >( frag_mover, mc );
 	} else {
 		// if no fragments, use coarse small moves
 		Size nmoves ( 1 );
@@ -238,7 +238,7 @@ optimize_linkers_centroid_mode(
 		coarse_small_mover->angle_max( 'H', 180.0 );  // max angle displacement 180 degrees
 		coarse_small_mover->angle_max( 'E', 180.0 );
 		coarse_small_mover->angle_max( 'L', 180.0 );
-		centroid_trial_mover = TrialMoverOP( new TrialMover( coarse_small_mover, mc ) );
+		centroid_trial_mover = utility::pointer::make_shared< TrialMover >( coarse_small_mover, mc );
 	}
 
 	RepeatMoverOP inner_centroid_loop( new RepeatMover( centroid_trial_mover, inside_steps_stage1 ) );
@@ -469,7 +469,7 @@ optimize_linkers_rna_fullatom_mode(
 	//Size outside_steps_stage2 ( 5 );
 
 	// Create a rna fragment mover, set its fragsize, and then do an initialization move
-	RNA_FragmentMoverOP rna_fragment_mover = RNA_FragmentMoverOP( new RNA_FragmentMover( *all_rna_fragments, set_moveable_rna( full_pose, linker_rna), 1 ) );
+	RNA_FragmentMoverOP rna_fragment_mover = utility::pointer::make_shared< RNA_FragmentMover >( *all_rna_fragments, set_moveable_rna( full_pose, linker_rna), 1 );
 	rna_fragment_mover -> set_frag_size( Size(1) );
 	for ( Size i = 1; i <= rna_normalize_step; ++i ) {
 		rna_fragment_mover -> apply(full_pose);
@@ -631,7 +631,7 @@ assemble_domains_optimize()
 	std::string filename_linkers_rna = option[ OptionKeys::DomainAssembly::da_linker_file_rna]();
 	//If a rna linker file is passed, fill the fragment library and the rna linker ranges
 	if ( filename_linkers_rna != "--" ) {
-		all_rna_fragments = RNA_FragmentsOP( new FullAtomRNA_Fragments( basic::database::full_name("sampling/rna/1jj2.torsions"  ) ) );
+		all_rna_fragments = utility::pointer::make_shared< FullAtomRNA_Fragments >( basic::database::full_name("sampling/rna/1jj2.torsions"  ) );
 		read_linker_file( filename_linkers_rna, linker_ranges_rna);
 	}
 

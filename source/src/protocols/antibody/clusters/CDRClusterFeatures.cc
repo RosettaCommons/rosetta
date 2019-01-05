@@ -74,17 +74,17 @@ void
 CDRClusterFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
-	Column chain("chain", DbDataTypeOP( new DbText() ));
-	Column CDR("CDR", DbDataTypeOP( new DbText() ));
-	Column length("length", DbDataTypeOP( new DbInteger() ));
-	Column fullcluster("fullcluster", DbDataTypeOP( new DbText() ));
-	Column dis("dis", DbDataTypeOP( new DbReal() ));
-	Column normDis("normDis", DbDataTypeOP( new DbReal() ));
-	Column normDis_deg("normDis_deg", DbDataTypeOP( new DbReal() ));
-	Column resnum_begin("resnum_begin", DbDataTypeOP( new DbInteger() ));
-	Column resnum_end("resnum_end", DbDataTypeOP( new DbInteger() ));
-	Column sequence("sequence", DbDataTypeOP( new DbText() ));
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >());
+	Column chain("chain", utility::pointer::make_shared< DbText >());
+	Column CDR("CDR", utility::pointer::make_shared< DbText >());
+	Column length("length", utility::pointer::make_shared< DbInteger >());
+	Column fullcluster("fullcluster", utility::pointer::make_shared< DbText >());
+	Column dis("dis", utility::pointer::make_shared< DbReal >());
+	Column normDis("normDis", utility::pointer::make_shared< DbReal >());
+	Column normDis_deg("normDis_deg", utility::pointer::make_shared< DbReal >());
+	Column resnum_begin("resnum_begin", utility::pointer::make_shared< DbInteger >());
+	Column resnum_end("resnum_end", utility::pointer::make_shared< DbInteger >());
+	Column sequence("sequence", utility::pointer::make_shared< DbText >());
 
 
 	Columns primary_keys;
@@ -123,7 +123,7 @@ CDRClusterFeatures::parse_my_tag(utility::tag::TagCOP tag, basic::datacache::Dat
 	using namespace basic::options::OptionKeys;
 
 	cdrs_.clear();
-	AntibodyEnumManagerCOP enum_manager( AntibodyEnumManagerOP( new AntibodyEnumManager() ) );
+	AntibodyEnumManagerCOP enum_manager( utility::pointer::make_shared< AntibodyEnumManager >() );
 	std::string cdrs = tag->getOption< std::string >("cdrs", "L1,L2,L3,H1,H2,H3");
 	std::string scheme;
 
@@ -219,7 +219,7 @@ std::string CDRClusterFeaturesCreator::type_name() const {
 
 protocols::features::FeaturesReporterOP
 CDRClusterFeaturesCreator::create_features_reporter() const {
-	return protocols::features::FeaturesReporterOP( new CDRClusterFeatures );
+	return utility::pointer::make_shared< CDRClusterFeatures >();
 }
 
 void CDRClusterFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

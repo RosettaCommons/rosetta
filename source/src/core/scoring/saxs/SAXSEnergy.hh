@@ -60,9 +60,9 @@ public:
 	virtual methods::EnergyMethodOP clone() const {
 
 		if ( saxs_score_variant_ == saxs_fa_score ) {
-			return methods::EnergyMethodOP( new SAXSEnergy(the_config_file_,q_, reference_intensities_,saxs_score_variant_, methods::EnergyMethodCreatorOP( new SAXSEnergyCreatorFA ) ) );
+			return utility::pointer::make_shared< SAXSEnergy >(the_config_file_,q_, reference_intensities_,saxs_score_variant_, utility::pointer::make_shared< SAXSEnergyCreatorFA >() );
 		} else {
-			return methods::EnergyMethodOP( new SAXSEnergy(the_config_file_,q_, reference_intensities_,saxs_score_variant_, methods::EnergyMethodCreatorOP( new SAXSEnergyCreatorCEN ) ) );
+			return utility::pointer::make_shared< SAXSEnergy >(the_config_file_,q_, reference_intensities_,saxs_score_variant_, utility::pointer::make_shared< SAXSEnergyCreatorCEN >() );
 		}
 	}
 
@@ -74,9 +74,9 @@ public:
 	methods::EnergyMethodOP create_energy_method(methods::EnergyMethodOptions const &) const {
 
 		if ( saxs_score_variant_ == saxs_fa_score ) {
-			return methods::EnergyMethodOP( new SAXSEnergy(the_config_file_,q_, reference_intensities_,saxs_score_variant_, methods::EnergyMethodCreatorOP( new SAXSEnergyCreatorFA ) ) );
+			return utility::pointer::make_shared< SAXSEnergy >(the_config_file_,q_, reference_intensities_,saxs_score_variant_, utility::pointer::make_shared< SAXSEnergyCreatorFA >() );
 		} else {
-			return methods::EnergyMethodOP( new SAXSEnergy(the_config_file_,q_, reference_intensities_,saxs_score_variant_, methods::EnergyMethodCreatorOP( new SAXSEnergyCreatorCEN ) ) );
+			return utility::pointer::make_shared< SAXSEnergy >(the_config_file_,q_, reference_intensities_,saxs_score_variant_, utility::pointer::make_shared< SAXSEnergyCreatorCEN >() );
 		}
 	}
 

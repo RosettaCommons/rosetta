@@ -207,7 +207,7 @@ ChemicalManager::create_orbital_type_set( std::string const & tag ) const
 {
 	// read from file
 	std::string const directory( basic::database::full_name( "chemical/orbital_type_sets/"+tag+"/" ) );
-	return orbitals::OrbitalTypeSetOP( new orbitals::OrbitalTypeSet( directory, tag ) );
+	return utility::pointer::make_shared< orbitals::OrbitalTypeSet >( directory, tag );
 }
 
 /// @details if the tag is not in the map, input it from a database file and add it

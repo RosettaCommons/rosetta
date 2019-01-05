@@ -56,7 +56,7 @@ public:
 		Pose pose;
 		pose_from_file(pose, "core/pack/task/residue_selector/2NXX.pdb", PDB_file);
 
-		auto allaa_193 = ReadResfileOP( new ReadResfile("core/pack/task/operation/ALLAA_193.resfile") );
+		auto allaa_193 = utility::pointer::make_shared< ReadResfile >("core/pack/task/operation/ALLAA_193.resfile");
 		basic::datacache::DataMap data;
 		data.add("task_operations", "allaa_193", allaa_193);
 

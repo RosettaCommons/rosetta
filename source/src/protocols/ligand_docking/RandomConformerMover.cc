@@ -57,7 +57,7 @@ void RandomConformerMover::apply( core::pose::Pose & pose )
 	PackerTaskOP dummy_pack_task = TaskFactory::create_packer_task(pose);
 	dummy_pack_task->initialize_from_command_line(); // -ex1 -ex2  etc.
 	utility::vector1< utility::vector1< core::Real > > dummy_extra_chi_steps;
-	utility::graph::GraphCOP dummy_graph( utility::graph::GraphOP( new utility::graph::Graph() ) );
+	utility::graph::GraphCOP dummy_graph( utility::pointer::make_shared< utility::graph::Graph >() );
 
 	// Retrieve conformers
 	core::pack::rotamers::SingleResidueRotamerLibraryCOP reslib = core::pack::rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( pose.residue_type(resid_) );

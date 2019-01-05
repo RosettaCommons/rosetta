@@ -63,7 +63,7 @@ methods::EnergyMethodOP
 DNA_DihedralEnergyCreator::create_energy_method(
 	EnergyMethodOptions const &// options
 ) const {
-	return EnergyMethodOP( new DNA_DihedralEnergy() );
+	return utility::pointer::make_shared< DNA_DihedralEnergy >();
 }
 
 ScoreTypes
@@ -80,13 +80,13 @@ DNA_DihedralEnergyCreator::score_types_for_method() const {
 
 /// ctor
 DNA_DihedralEnergy::DNA_DihedralEnergy() :
-	parent( EnergyMethodCreatorOP( new DNA_DihedralEnergyCreator ) ),
+	parent( utility::pointer::make_shared< DNA_DihedralEnergyCreator >() ),
 	potential_( ScoringManager::get_instance()->get_DNA_DihedralPotential() )
 {
 	configure_from_options_system();
 }
 DNA_DihedralEnergy::DNA_DihedralEnergy( DNA_DihedralEnergy const & src ) :
-	parent( EnergyMethodCreatorOP( new DNA_DihedralEnergyCreator ) ),
+	parent( utility::pointer::make_shared< DNA_DihedralEnergyCreator >() ),
 	potential_( src.potential_ )
 {
 	configure_from_options_system();
@@ -96,7 +96,7 @@ DNA_DihedralEnergy::DNA_DihedralEnergy( DNA_DihedralEnergy const & src ) :
 EnergyMethodOP
 DNA_DihedralEnergy::clone() const
 {
-	return EnergyMethodOP( new DNA_DihedralEnergy( *this ) );
+	return utility::pointer::make_shared< DNA_DihedralEnergy >( *this );
 }
 
 
@@ -285,7 +285,7 @@ DNA_DihedralEnergy::eval_residue_derivatives(
 		Real mean,sdev;
 		potential_.get_sugar_torsion_mean_and_sdev( tor, rsd, pucker_index, mean, sdev );
 		DihedralConstraint const cst( atom_ids[tor-1], atom_ids[tor], atom_ids[tor+1], atom_ids[tor+2],
-			func::FuncOP( new CircularHarmonicFunc( radians(mean), radians(sdev) )),
+			utility::pointer::make_shared< CircularHarmonicFunc >( radians(mean), radians(sdev) ),
 			dna_dihedral_sugar );
 
 		for ( Size i=tor-1; i<= tor+2; ++i ) {

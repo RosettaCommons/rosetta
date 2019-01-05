@@ -469,13 +469,13 @@ SmallMover::~SmallMover() = default;
 protocols::moves::MoverOP
 SmallMover::clone() const
 {
-	return protocols::moves::MoverOP( new SmallMover( *this ) );
+	return utility::pointer::make_shared< SmallMover >( *this );
 }
 
 protocols::moves::MoverOP
 SmallMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new SmallMover() );
+	return utility::pointer::make_shared< SmallMover >();
 }
 
 
@@ -647,7 +647,7 @@ SmallMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 protocols::moves::MoverOP
 SmallMoverCreator::create_mover() const
 {
-	return protocols::moves::MoverOP( new SmallMover );
+	return utility::pointer::make_shared< SmallMover >();
 }
 
 std::string
@@ -688,13 +688,13 @@ ShearMover::~ShearMover() = default;
 protocols::moves::MoverOP
 ShearMover::clone() const
 {
-	return protocols::moves::MoverOP( new protocols::simple_moves::ShearMover( *this ) );
+	return utility::pointer::make_shared< protocols::simple_moves::ShearMover >( *this );
 }
 
 protocols::moves::MoverOP
 ShearMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new protocols::simple_moves::ShearMover() );
+	return utility::pointer::make_shared< protocols::simple_moves::ShearMover >();
 }
 
 void
@@ -985,7 +985,7 @@ ShearMover::setup_list_for_saccharide_residue( core::pose::Pose & pose, core::ui
 protocols::moves::MoverOP
 ShearMoverCreator::create_mover() const
 {
-	return protocols::moves::MoverOP( new ShearMover );
+	return utility::pointer::make_shared< ShearMover >();
 }
 
 std::string

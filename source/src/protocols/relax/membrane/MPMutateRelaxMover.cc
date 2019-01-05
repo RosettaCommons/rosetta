@@ -96,13 +96,13 @@ MPMutateRelaxMover::~MPMutateRelaxMover() = default;
 /// @brief Create a Clone of this mover
 protocols::moves::MoverOP
 MPMutateRelaxMover::clone() const {
-	return ( protocols::moves::MoverOP( new MPMutateRelaxMover( *this ) ) );
+	return ( utility::pointer::make_shared< MPMutateRelaxMover >( *this ) );
 }
 
 /// @brief Create a Fresh Instance of this Mover
 protocols::moves::MoverOP
 MPMutateRelaxMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new MPMutateRelaxMover() );
+	return utility::pointer::make_shared< MPMutateRelaxMover >();
 }
 
 /// @brief Parse Rosetta Scripts Options for this Mover
@@ -122,7 +122,7 @@ MPMutateRelaxMover::parse_my_tag(
 /// @brief Create a new copy of this mover
 protocols::moves::MoverOP
 MPMutateRelaxMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MPMutateRelaxMover() );
+	return utility::pointer::make_shared< MPMutateRelaxMover >();
 }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)

@@ -38,7 +38,7 @@ using utility::vector1;
 static basic::Tracer TR( "protocols.simple_filters.AngleToVector" );
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP AngleToVectorFilterCreator::create_filter() const { return protocols::filters::FilterOP( new AngleToVector ); }
+// XRW TEMP AngleToVectorFilterCreator::create_filter() const { return utility::pointer::make_shared< AngleToVector >(); }
 
 // XRW TEMP std::string
 // XRW TEMP AngleToVectorFilterCreator::keyname() const { return "AngleToVector"; }
@@ -138,7 +138,7 @@ std::string AngleToVectorFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 AngleToVectorFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new AngleToVector );
+	return utility::pointer::make_shared< AngleToVector >();
 }
 
 void AngleToVectorFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

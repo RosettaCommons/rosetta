@@ -267,7 +267,7 @@ void FragData::show_classic( std::ostream &os ) const {
 }
 
 FragDataOP AnnotatedFragData::clone() const {
-	return FragDataOP( new AnnotatedFragData( pdbid_, startpos_, *Parent::clone() ) );
+	return utility::pointer::make_shared< AnnotatedFragData >( pdbid_, startpos_, *Parent::clone() );
 }
 
 void AnnotatedFragData::copy(FragData const& frag_data)

@@ -37,7 +37,7 @@ FiberDiffractionOptionsCreator::~FiberDiffractionOptionsCreator() = default;
 
 ResourceOptionsOP
 FiberDiffractionOptionsCreator::create_options() const {
-	return ResourceOptionsOP( new FiberDiffractionOptions );
+	return utility::pointer::make_shared< FiberDiffractionOptions >();
 }
 
 string

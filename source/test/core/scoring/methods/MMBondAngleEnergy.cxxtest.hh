@@ -134,7 +134,7 @@ public:
 		// init pose
 		pose = create_test_in_pdb_poseop();
 		//core::import_pose::pose_from_file( *pose, "core/scoring/methods/test_in.pdb" , core::import_pose::PDB_file);
-		pose_ideal = PoseOP( new Pose() );
+		pose_ideal = utility::pointer::make_shared< Pose >();
 		core::pose::make_pose_from_sequence(*pose_ideal, "ACDEFGHIKLMNQRSTVWY", "fa_standard");
 
 		// init delta
@@ -159,7 +159,7 @@ public:
 
 		EnergyMethodOptionsOP energy_method_options( new EnergyMethodOptions );
 
-		energy_method_options->bond_angle_residue_type_param_set(scoring::mm::MMBondAngleResidueTypeParamSetOP( new core::scoring::mm::MMBondAngleResidueTypeParamSet() ));
+		energy_method_options->bond_angle_residue_type_param_set(utility::pointer::make_shared< core::scoring::mm::MMBondAngleResidueTypeParamSet >());
 
 		MMBondAngleEnergyOP mmbondangleenergy( new MMBondAngleEnergy(*energy_method_options) );
 

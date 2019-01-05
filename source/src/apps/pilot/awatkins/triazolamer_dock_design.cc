@@ -360,7 +360,7 @@ TrizaolamerDockDesignMinimizeMover::apply(
 
 	// create a task factory and task operations
 	TaskFactoryOP pert_tf(new TaskFactory());
-	pert_tf->push_back( operation::TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
+	pert_tf->push_back( utility::pointer::make_shared< core::pack::task::operation::InitializeFromCommandline >() );
 
 	operation::ReadResfileOP pert_rrop( new operation::ReadResfile() );
 	pert_rrop->default_filename();
@@ -402,7 +402,7 @@ TrizaolamerDockDesignMinimizeMover::apply(
 
 	// create a task factory and task operations
 	TaskFactoryOP desn_tf( new TaskFactory() );
-	desn_tf->push_back( operation::TaskOperationCOP( new operation::InitializeFromCommandline ) );
+	desn_tf->push_back( utility::pointer::make_shared< operation::InitializeFromCommandline >() );
 
 	operation::ReadResfileOP desn_rrop( new operation::ReadResfile() );
 	desn_rrop->default_filename();
@@ -433,7 +433,7 @@ TrizaolamerDockDesignMinimizeMover::apply(
 	//definitely want sidechain minimization here
 	using protocols::minimization_packing::TaskAwareMinMoverOP;
 	using protocols::minimization_packing::TaskAwareMinMover;
-	TaskAwareMinMoverOP desn_ta_min = TaskAwareMinMoverOP( new TaskAwareMinMover( desn_min, desn_tf ) );
+	TaskAwareMinMoverOP desn_ta_min = utility::pointer::make_shared< TaskAwareMinMover >( desn_min, desn_tf );
 
 	/*********************************************************
 	Common Setup
@@ -571,7 +571,7 @@ TrizaolamerDockDesignMinimizeMover::apply(
 	Pose repack_stats_pose( stats_pose );
 
 	TaskFactoryOP tf(new TaskFactory());
-	tf->push_back( operation::TaskOperationCOP( new operation::InitializeFromCommandline ) );
+	tf->push_back( utility::pointer::make_shared< operation::InitializeFromCommandline >() );
 	operation::RestrictToRepackingOP rtrp( new operation::RestrictToRepacking() );
 	tf->push_back( rtrp );
 	minimization_packing::PackRotamersMoverOP packer( new protocols::minimization_packing::PackRotamersMover() );

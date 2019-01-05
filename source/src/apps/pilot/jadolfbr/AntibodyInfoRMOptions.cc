@@ -9,7 +9,7 @@
 
 /// @file   protocols/antibody/AntibodyInfoRMOptions.cc
 /// @brief
-/// @author 
+/// @author
 
 //unit headers
 #include <protocols/antibody/AntibodyInfoRMOptions.hh>
@@ -27,7 +27,7 @@ std::string
 AntibodyInfoRMOptionsCreator::options_type() const { return "AntibodyInfoRMOptions"; }
 
 basic::resource_manager::ResourceOptionsOP
-AntibodyInfoRMOptionsCreator::create_options() const { return basic::resource_manager::ResourceOptionsOP( new AntibodyInfoRMOptions ); }
+AntibodyInfoRMOptionsCreator::create_options() const { return utility::pointer::make_shared< AntibodyInfoRMOptions >(); }
 
 
 AntibodyInfoRMOptions::AntibodyInfoRMOptions() : basic::resource_manager::ResourceOptions() {}

@@ -126,7 +126,7 @@ RNA_TorsionPotential::RNA_TorsionPotential( RNA_EnergyMethodOptions const & opti
 	use_2prime_OH_potential_( basic::options::option[ basic::options::OptionKeys::score::rna::use_2prime_OH_potential ]() ),
 	use_chi_potential_( basic::options::option[ basic::options::OptionKeys::score::rna::use_rna_chi_potential ]() ),
 	syn_G_potential_bonus_( options.syn_G_potential_bonus() ),
-	rna_fitted_torsion_info_( chemical::rna::RNA_FittedTorsionInfoOP( new chemical::rna::RNA_FittedTorsionInfo ) ),
+	rna_fitted_torsion_info_( utility::pointer::make_shared< chemical::rna::RNA_FittedTorsionInfo >() ),
 	intrares_side_chain_score_( 0.0 )
 {
 	path_to_torsion_files_ = "scoring/rna/torsion_potentials/" + options.torsion_potential();
@@ -718,8 +718,8 @@ RNA_TorsionPotential::init_potentials_from_rna_torsion_database_files() {
 		}
 	}
 
-	chi_potential_syn_guanosine_bonus_ = core::scoring::func::FuncOP( new core::scoring::func::FadeFunc( -120.0/*cutoff_lower*/, 0.0 /*cutoff_upper*/, 10.0 /*fade_zone*/,
-		syn_G_potential_bonus_ /*well depth*/, 0 ) );
+	chi_potential_syn_guanosine_bonus_ = utility::pointer::make_shared< core::scoring::func::FadeFunc >( -120.0/*cutoff_lower*/, 0.0 /*cutoff_upper*/, 10.0 /*fade_zone*/,
+		syn_G_potential_bonus_ /*well depth*/, 0 );
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -734,7 +734,7 @@ RNA_TorsionPotential::initialize_potential_from_file( core::scoring::func::FuncO
 		utility_exit_with_message( "full_torsional_potential_filename " + full_filename + " doesn't exist!" );
 	}
 
-	func = core::scoring::func::FuncOP( new core::scoring::func::CircularGeneral1D_Func( full_filename ) );
+	func = utility::pointer::make_shared< core::scoring::func::CircularGeneral1D_Func >( full_filename );
 
 }
 
@@ -748,42 +748,42 @@ RNA_TorsionPotential::init_fade_functions()
 	Real const DELTA_CUTOFF_ = rna_fitted_torsion_info_->delta_cutoff();
 
 	// FadeFunc initialized with min, max, fade-width, and function value.
-	fade_delta_north_ = core::scoring::func::FuncOP( new func::FadeFunc(
+	fade_delta_north_ = utility::pointer::make_shared< func::FadeFunc >(
 		-180.0 -delta_fade_,
 		DELTA_CUTOFF_ + 0.5*delta_fade_,
 		delta_fade_,
-		1.0  ) );
-	fade_delta_south_ = core::scoring::func::FuncOP( new func::FadeFunc(
+		1.0  );
+	fade_delta_south_ = utility::pointer::make_shared< func::FadeFunc >(
 		DELTA_CUTOFF_ - 0.5*delta_fade_,
 		180.0 + delta_fade_,
 		delta_fade_,
-		1.0  ) );
+		1.0  );
 
 
 	// FadeFunc initialized with min, max, fade-width, and function value.
-	fade_alpha_sc_minus_ = core::scoring::func::FuncOP( new func::FadeFunc(
+	fade_alpha_sc_minus_ = utility::pointer::make_shared< func::FadeFunc >(
 		-120.0 - 0.5 * alpha_fade_,
 		0.0 + 0.5 * alpha_fade_,
 		alpha_fade_,
-		1.0  ) );
-	fade_alpha_sc_plus_ = core::scoring::func::FuncOP( new func::FadeFunc(
+		1.0  );
+	fade_alpha_sc_plus_ = utility::pointer::make_shared< func::FadeFunc >(
 		0.0 - 0.5 * alpha_fade_,
 		100.0 + 0.5 * alpha_fade_,
 		alpha_fade_,
-		1.0  ) );
+		1.0  );
 
-	fade_alpha_ap_ = core::scoring::func::SumFuncOP( new func::SumFunc() );
-	fade_alpha_ap_->add_func( func::FuncOP( new func::FadeFunc(
+	fade_alpha_ap_ = utility::pointer::make_shared< func::SumFunc >();
+	fade_alpha_ap_->add_func( utility::pointer::make_shared< func::FadeFunc >(
 		-180.0 - alpha_fade_,
 		-120.0 + 0.5 * alpha_fade_,
 		alpha_fade_,
-		1.0  ) ) );
+		1.0  ) );
 
-	fade_alpha_ap_->add_func( func::FuncOP( new func::FadeFunc(
+	fade_alpha_ap_->add_func( utility::pointer::make_shared< func::FadeFunc >(
 		100.0 - 0.5 * alpha_fade_,
 		180.0 + alpha_fade_,
 		alpha_fade_,
-		1.0  ) ) );
+		1.0  ) );
 }
 
 } //rna

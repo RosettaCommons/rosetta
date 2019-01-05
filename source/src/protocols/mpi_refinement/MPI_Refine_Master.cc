@@ -164,7 +164,7 @@ MPI_Refine_Master::init(){
 					//wu = new WorkUnit_KicCloser( 1, 1, res1, res2, false );
 					//wu->set_wu_type( "kiccloser" );
 				} else {
-					wu = WorkUnit_SamplerOP( new WorkUnit_KicCloser( 1, 1, res1, res2, false ) );
+					wu = utility::pointer::make_shared< WorkUnit_KicCloser >( 1, 1, res1, res2, false );
 					wu->set_wu_type( "kiccloser" );
 				}
 				wu->decoys().add( decoy );
@@ -750,10 +750,10 @@ MPI_Refine_Master::create_WUs( const core::io::silent::SilentStructOP &start_str
 			TR.Debug << "Adding a new loophash WU: " << start_ir << " - " << end_ir << ", ssid = " << ssid << std::endl;
 
 			if ( params.relax_type == 1 ) {
-				new_wu = WorkUnit_SamplerOP( new WorkUnit_LoopHash( start_ir, end_ir, ssid, 1 ) );
+				new_wu = utility::pointer::make_shared< WorkUnit_LoopHash >( start_ir, end_ir, ssid, 1 );
 
 			} else {
-				new_wu = WorkUnit_SamplerOP( new WorkUnit_LoopHash( start_ir, end_ir, ssid, 0 ) );
+				new_wu = utility::pointer::make_shared< WorkUnit_LoopHash >( start_ir, end_ir, ssid, 0 );
 			}
 
 			new_wu->set_wu_type( lhtype );
@@ -798,9 +798,9 @@ MPI_Refine_Master::create_WUs( const core::io::silent::SilentStructOP &start_str
 			// nstruct, cartesian
 			// don't minimize here; let's use rerelax
 			if ( params.relax_type == 1 ) { // cartesian combine
-				new_wu = WorkUnit_SamplerOP( new WorkUnit_CombinePose( params.nperrun, true ) );
+				new_wu = utility::pointer::make_shared< WorkUnit_CombinePose >( params.nperrun, true );
 			} else { // torsion combine
-				new_wu = WorkUnit_SamplerOP( new WorkUnit_CombinePose( params.nperrun, false ) );
+				new_wu = utility::pointer::make_shared< WorkUnit_CombinePose >( params.nperrun, false );
 			}
 			new_wu->set_wu_type("combine");
 			new_wu->decoys().add( ss );
@@ -823,7 +823,7 @@ MPI_Refine_Master::create_WUs( const core::io::silent::SilentStructOP &start_str
 
 			if ( movername.compare("relax") == 0 ) {
 				TR << "sending name/score: " << params.name << " " << params.score_type << std::endl;
-				new_wu = WorkUnit_SamplerOP( new WorkUnit_Relax( params.relax_type, params.score_type, params.nperrun, params.cstw ) );
+				new_wu = utility::pointer::make_shared< WorkUnit_Relax >( params.relax_type, params.score_type, params.nperrun, params.cstw );
 
 			} else if ( movername.compare("cartnmcen") == 0 || movername.compare( "torsnmcen" ) == 0 ||
 					movername.compare("cartnm") == 0    || movername.compare( "torsnm" ) == 0 ) { //NM
@@ -838,7 +838,7 @@ MPI_Refine_Master::create_WUs( const core::io::silent::SilentStructOP &start_str
 					wuname = "nm"; nmtype = 4;
 				}
 				// params.cstw is pert scale
-				new_wu = WorkUnit_SamplerOP( new WorkUnit_NormalMode( params.nperrun, nmtype, params.relax_type, params.cstw ) );
+				new_wu = utility::pointer::make_shared< WorkUnit_NormalMode >( params.nperrun, nmtype, params.relax_type, params.cstw );
 
 			} else if ( movername.compare("md") == 0 || movername.compare("mdloop") == 0 ) {
 
@@ -846,10 +846,10 @@ MPI_Refine_Master::create_WUs( const core::io::silent::SilentStructOP &start_str
 				bool looponly( false );
 				if ( movername.compare( "mdloop" ) == 0 ) looponly = true;
 
-				new_wu = WorkUnit_SamplerOP( new WorkUnit_MD( params.relax_type, params.score_type, params.nperrun, params.cstw , looponly ) );
+				new_wu = utility::pointer::make_shared< WorkUnit_MD >( params.relax_type, params.score_type, params.nperrun, params.cstw , looponly );
 
 			} else if ( movername.compare("bbgauss") == 0 ) {
-				new_wu = WorkUnit_SamplerOP( new WorkUnit_bbGauss( params.nperrun, 0.32 ) );
+				new_wu = utility::pointer::make_shared< WorkUnit_bbGauss >( params.nperrun, 0.32 );
 
 			} else if ( movername.compare("fraginsertcen") == 0 || movername.compare("fraginsert") == 0
 					|| movername.compare("kiccloser") == 0 || movername.compare("cartcloser") == 0
@@ -874,25 +874,25 @@ MPI_Refine_Master::create_WUs( const core::io::silent::SilentStructOP &start_str
 				// loop info should be included either in silent or by loopfile
 				if ( movername_loc.compare("fraginsert") == 0 ) {
 					wuname = "fraginsert";
-					new_wu = WorkUnit_SamplerOP( new WorkUnit_FragInsert( params.nperrun, params.score_type, res1, res2, true ) );
+					new_wu = utility::pointer::make_shared< WorkUnit_FragInsert >( params.nperrun, params.score_type, res1, res2, true );
 				} else if ( movername_loc.compare("fraginsertcen") == 0 ) {
 					wuname = "fraginsert";
-					new_wu = WorkUnit_SamplerOP( new WorkUnit_FragInsert( 25, params.score_type, res1, res2, false ) );
+					new_wu = utility::pointer::make_shared< WorkUnit_FragInsert >( 25, params.score_type, res1, res2, false );
 				} else if ( movername_loc.compare("kiccloser") == 0 ) {
 					wuname = "kiccloser";
-					new_wu = WorkUnit_SamplerOP( new WorkUnit_KicCloser( params.nperrun, params.score_type, res1, res2, true ) );
+					new_wu = utility::pointer::make_shared< WorkUnit_KicCloser >( params.nperrun, params.score_type, res1, res2, true );
 				} else if ( movername_loc.compare("cartcloser") == 0 ) {
 					wuname = "kiccloser";
-					new_wu = WorkUnit_SamplerOP( new WorkUnit_KicCloser( params.nperrun, params.score_type, res1, res2, false ) );
+					new_wu = utility::pointer::make_shared< WorkUnit_KicCloser >( params.nperrun, params.score_type, res1, res2, false );
 				} else if ( movername_loc.compare("ramapert") == 0 ) {
 					wuname = "ramapert";
-					new_wu = WorkUnit_SamplerOP( new WorkUnit_RamaPerturber( params.nperrun, res1, res2, 4.0 ) );
+					new_wu = utility::pointer::make_shared< WorkUnit_RamaPerturber >( params.nperrun, res1, res2, 4.0 );
 				} else if ( movername_loc.compare("partialabinitio") == 0 ) {
 					wuname = "partialabinitio";
-					new_wu = WorkUnit_SamplerOP( new WorkUnit_PartialAbinitio( params.nperrun, true ) );
+					new_wu = utility::pointer::make_shared< WorkUnit_PartialAbinitio >( params.nperrun, true );
 				} else if ( movername_loc.compare("partialrefine") == 0 ) {
 					wuname = "partialabinitio";
-					new_wu = WorkUnit_SamplerOP( new WorkUnit_PartialAbinitio( params.nperrun, false ) );
+					new_wu = utility::pointer::make_shared< WorkUnit_PartialAbinitio >( params.nperrun, false );
 				}
 
 			} else {

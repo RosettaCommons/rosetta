@@ -53,8 +53,8 @@ DihedralConstraintsScore::DihedralConstraintsScore(core::Size priority,
 	constrainable_atoms, "DihedralConstraintsScore") {
 
 	using core::scoring::func::FuncOP;
-	factory_.add_type("PERIODIC", FuncOP( new core::scoring::func::PeriodicFunc(
-		0, 0, 0, 0) ));
+	factory_.add_type("PERIODIC", utility::pointer::make_shared< core::scoring::func::PeriodicFunc >(
+		0, 0, 0, 0));
 
 	data_.resize(get_query_size());
 	read_constraints(constraints_file_name);
@@ -67,8 +67,8 @@ DihedralConstraintsScore::DihedralConstraintsScore(core::Size priority,
 	"DihedralConstraintsScore") {
 
 	using core::scoring::func::FuncOP;
-	factory_.add_type("PERIODIC", FuncOP( new core::scoring::func::PeriodicFunc(
-		0, 0, 0, 0) ));
+	factory_.add_type("PERIODIC", utility::pointer::make_shared< core::scoring::func::PeriodicFunc >(
+		0, 0, 0, 0));
 
 	data_.resize(get_query_size());
 	read_constraints(constraints_file_name);
@@ -234,7 +234,7 @@ void DihedralConstraintsScore::read_constraints(
 			}
 
 			FourAtomsConstraintDataOP dat;
-			dat = FourAtomsConstraintDataOP( new FourAtomsConstraintData(func, a1, o2, a2, o3, a3, o4, a4) );
+			dat = utility::pointer::make_shared< FourAtomsConstraintData >(func, a1, o2, a2, o3, a3, o4, a4);
 			if ( res1 > data_.size() ) {
 				trDihedralConstraintsScore.Warning
 					<< "Skipping a constraint that involves residue "
@@ -260,9 +260,9 @@ FragmentScoringMethodOP MakeDihedralConstraintsScore::make(core::Size priority,
 		trDihedralConstraintsScore << "Constraints loaded from: "
 			<< option[constraints::cst_file]()[1] << std::endl;
 
-		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new DihedralConstraintsScore(priority,
+		return (FragmentScoringMethodOP) utility::pointer::make_shared< DihedralConstraintsScore >(priority,
 			lowest_acceptable_value, use_lowest, option[constraints::cst_file]()[1],
-			picker->size_of_query()) );
+			picker->size_of_query());
 	}
 	utility_exit_with_message(
 		"Can't read a constraints file. Provide it with constraints::cst_file flag");

@@ -75,7 +75,7 @@ BinTransitionCalculator::~BinTransitionCalculator() = default;
 /// @brief Clone operation for BinTransitionCalculator.
 /// @details Returns an owning pointer to a copy of this object.
 BinTransitionCalculatorOP BinTransitionCalculator::clone() const
-{ return BinTransitionCalculatorOP( new BinTransitionCalculator( *this ) ); }
+{ return utility::pointer::make_shared< BinTransitionCalculator >( *this ); }
 
 /// @brief Set the bin params file, and load all the bin params and transition probabilities.
 ///

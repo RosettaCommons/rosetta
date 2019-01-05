@@ -86,7 +86,7 @@ void RdcTargetEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & 
 			core::import_pose::pose_from_file( *rdc_pose, rdc_target[ ct ] , core::import_pose::PDB_file);
 			std::string tag( ObjexxFCL::string_of( ct ) );
 			if ( rdc_col_name.size() >= ct ) tag = rdc_col_name[ ct ];
-			eval.add_evaluation( PoseEvaluatorOP( new simple_filters::SelectRDC_Evaluator( rdc_pose, tag ) ) );
+			eval.add_evaluation( utility::pointer::make_shared< simple_filters::SelectRDC_Evaluator >( rdc_pose, tag ) );
 		}
 	}
 

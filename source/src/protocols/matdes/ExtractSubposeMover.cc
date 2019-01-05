@@ -60,7 +60,7 @@ using namespace utility;
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP ExtractSubposeMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new ExtractSubposeMover );
+// XRW TEMP  return utility::pointer::make_shared< ExtractSubposeMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -89,12 +89,12 @@ ExtractSubposeMover::ExtractSubposeMover(const ExtractSubposeMover& rval) :
 
 protocols::moves::MoverOP
 ExtractSubposeMover::clone() const {
-	return protocols::moves::MoverOP( new ExtractSubposeMover( *this ) );
+	return utility::pointer::make_shared< ExtractSubposeMover >( *this );
 }
 
 protocols::moves::MoverOP
 ExtractSubposeMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new ExtractSubposeMover() );
+	return utility::pointer::make_shared< ExtractSubposeMover >();
 }
 
 void
@@ -249,7 +249,7 @@ std::string ExtractSubposeMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 ExtractSubposeMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ExtractSubposeMover );
+	return utility::pointer::make_shared< ExtractSubposeMover >();
 }
 
 void ExtractSubposeMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

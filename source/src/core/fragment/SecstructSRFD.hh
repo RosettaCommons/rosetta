@@ -48,13 +48,13 @@ public:
 
 
 	SingleResidueFragDataOP clone() const override {
-		return SingleResidueFragDataOP( new SecstructSRFD( *this ) );
+		return utility::pointer::make_shared< SecstructSRFD >( *this );
 	};
 
 	/// @brief create a new instance of this object
 
 	SingleResidueFragDataOP create() const override {
-		return SingleResidueFragDataOP( new SecstructSRFD() );
+		return utility::pointer::make_shared< SecstructSRFD >();
 	}
 
 	/// get secstruct for this position

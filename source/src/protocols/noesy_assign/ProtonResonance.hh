@@ -62,7 +62,7 @@ public:
 	~ProtonResonance() override;
 
 	ResonanceOP clone() override {
-		return ResonanceOP( new ProtonResonance( *this ) );
+		return utility::pointer::make_shared< ProtonResonance >( *this );
 	}
 
 	/// @brief match the proton and corresponding label atom at same time

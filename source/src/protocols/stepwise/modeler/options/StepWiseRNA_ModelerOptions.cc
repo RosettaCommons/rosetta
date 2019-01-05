@@ -110,7 +110,7 @@ StepWiseRNA_ModelerOptions::initialize_variables(){
 StepWiseRNA_ModelerOptionsOP
 StepWiseRNA_ModelerOptions::clone() const
 {
-	return StepWiseRNA_ModelerOptionsOP( new StepWiseRNA_ModelerOptions( *this ) );
+	return utility::pointer::make_shared< StepWiseRNA_ModelerOptions >( *this );
 }
 
 /////////////////////////////////////////////////////////////////////////////////////

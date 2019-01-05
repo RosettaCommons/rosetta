@@ -55,10 +55,10 @@ methods::EnergyMethodOP
 Fa_MbsolvEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
-	return methods::EnergyMethodOP( new Fa_MbsolvEnergy(
+	return utility::pointer::make_shared< Fa_MbsolvEnergy >(
 		*( ScoringManager::get_instance()->etable( options ).lock() ),
 		*( ScoringManager::get_instance()->memb_etable( options.etable_type() ).lock() )
-		) );
+	);
 }
 
 ScoreTypes
@@ -69,7 +69,7 @@ Fa_MbsolvEnergyCreator::score_types_for_method() const {
 }
 
 Fa_MbsolvEnergy::Fa_MbsolvEnergy( etable::Etable const & etable_in, etable::MembEtable const & memb_etable_in):
-	parent( methods::EnergyMethodCreatorOP( new Fa_MbsolvEnergyCreator ) ),
+	parent( utility::pointer::make_shared< Fa_MbsolvEnergyCreator >() ),
 	etable_(etable_in),
 	//memb_etable_(memb_etable_in),
 	solv1_(memb_etable_in.solv1()),
@@ -97,7 +97,7 @@ Fa_MbsolvEnergy::atomic_interaction_cutoff() const
 EnergyMethodOP
 Fa_MbsolvEnergy::clone() const
 {
-	return EnergyMethodOP( new Fa_MbsolvEnergy( *this ) );
+	return utility::pointer::make_shared< Fa_MbsolvEnergy >( *this );
 }
 
 /////////////////////////////////////////////////////////////////////////////

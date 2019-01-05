@@ -67,7 +67,7 @@ public: // test functions
 		core_init_with_additional_options("-in:file:extra_res_fa protocols/membrane/RET.params");
 
 		// Load in poses from pdb (general case)
-		pose_with_ligand_ = core::pose::PoseOP( new Pose() );
+		pose_with_ligand_ = utility::pointer::make_shared< Pose >();
 		pose_from_file( *pose_with_ligand_, "protocols/membrane/3PXO_A_tr.pdb" , core::import_pose::PDB_file);
 
 		// Initialize Spans from spanfile

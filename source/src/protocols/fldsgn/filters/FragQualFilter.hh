@@ -77,10 +77,10 @@ public:// virtual constructor
 
 
 	// @brief make clone
-	FilterOP clone() const override { return FilterOP( new FragQualFilter( *this ) ); }
+	FilterOP clone() const override { return utility::pointer::make_shared< FragQualFilter >( *this ); }
 
 	// @brief make fresh instance
-	FilterOP fresh_instance() const override { return FilterOP( new FragQualFilter() ); }
+	FilterOP fresh_instance() const override { return utility::pointer::make_shared< FragQualFilter >(); }
 
 
 public:// mutator

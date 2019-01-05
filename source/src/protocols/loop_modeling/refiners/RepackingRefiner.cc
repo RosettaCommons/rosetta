@@ -38,7 +38,7 @@ using core::pack::task::TaskFactoryOP;
 using core::scoring::ScoreFunctionOP;
 
 // XRW TEMP protocols::moves::MoverOP RepackingRefinerCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new RepackingRefiner );
+// XRW TEMP  return utility::pointer::make_shared< RepackingRefiner >();
 // XRW TEMP }
 
 // XRW TEMP std::string RepackingRefinerCreator::keyname() const {
@@ -134,7 +134,7 @@ std::string RepackingRefinerCreator::keyname() const {
 
 protocols::moves::MoverOP
 RepackingRefinerCreator::create_mover() const {
-	return protocols::moves::MoverOP( new RepackingRefiner );
+	return utility::pointer::make_shared< RepackingRefiner >();
 }
 
 void RepackingRefinerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

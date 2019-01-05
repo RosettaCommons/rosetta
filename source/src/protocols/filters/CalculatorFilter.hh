@@ -48,10 +48,10 @@ public:
 	core::Real compute( core::pose::Pose const & pose ) const;
 
 	protocols::filters::FilterOP clone() const override {
-		return protocols::filters::FilterOP( new CalculatorFilter( *this ) );
+		return utility::pointer::make_shared< CalculatorFilter >( *this );
 	}
 	protocols::filters::FilterOP fresh_instance() const override{
-		return protocols::filters::FilterOP( new CalculatorFilter() );
+		return utility::pointer::make_shared< CalculatorFilter >();
 	}
 
 	void parse_my_tag( utility::tag::TagCOP tag,

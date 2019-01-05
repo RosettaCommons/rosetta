@@ -127,7 +127,7 @@ DockingLowRes::~DockingLowRes() = default;
 
 protocols::moves::MoverOP
 DockingLowRes::clone() const {
-	return protocols::moves::MoverOP( new DockingLowRes(*this) );
+	return utility::pointer::make_shared< DockingLowRes >(*this);
 }
 
 void DockingLowRes::set_trans_magnitude( core::Real trans_magnitude ) { trans_magnitude_ = trans_magnitude; }
@@ -184,7 +184,7 @@ void DockingLowRes::sync_objects_with_flags()
 	rb_trial_ = nullptr;
 
 	// the movable dof's -- jumps only in this case
-	movemap_ = core::kinematics::MoveMapOP( new kinematics::MoveMap() );
+	movemap_ = utility::pointer::make_shared< kinematics::MoveMap >();
 	movemap_->set_chi( chi_ ); // is this right?
 	movemap_->set_bb( bb_ ); // is this right?
 	for ( DockJumps::const_iterator it = movable_jumps_.begin(); it != movable_jumps_.end(); ++it ) {
@@ -192,7 +192,7 @@ void DockingLowRes::sync_objects_with_flags()
 	}
 
 	// setup the mc object
-	mc_ = protocols::moves::MonteCarloOP( new moves::MonteCarlo( *scorefxn_, temperature_ ) );
+	mc_ = utility::pointer::make_shared< moves::MonteCarlo >( *scorefxn_, temperature_ );
 
 	flags_and_objects_are_in_sync_ = true;
 	first_apply_with_current_setup_ = true;
@@ -208,12 +208,12 @@ void DockingLowRes::set_scorefxn( core::scoring::ScoreFunctionCOP scorefxn )
 void DockingLowRes::finalize_setup( core::pose::Pose & pose){
 	using namespace moves;
 
-	rb_mover_ = protocols::rigid::RigidBodyPerturbNoCenterMoverOP( new rigid::RigidBodyPerturbNoCenterMover( pose, *movemap_, rot_magnitude_, trans_magnitude_, protocols::rigid::n2c ) );
+	rb_mover_ = utility::pointer::make_shared< rigid::RigidBodyPerturbNoCenterMover >( pose, *movemap_, rot_magnitude_, trans_magnitude_, protocols::rigid::n2c );
 
-	rb_seq_ = protocols::moves::SequenceMoverOP( new SequenceMover );
+	rb_seq_ = utility::pointer::make_shared< SequenceMover >();
 	rb_seq_->add_mover( rb_mover_ );
 	if ( view_in_pymol_ ) {
-		pymol_mover_ = PyMOLMoverOP( new PyMOLMover() );
+		pymol_mover_ = utility::pointer::make_shared< PyMOLMover >();
 		pymol_mover_->keep_history( true );
 		rb_seq_->add_mover( pymol_mover_ );
 	}

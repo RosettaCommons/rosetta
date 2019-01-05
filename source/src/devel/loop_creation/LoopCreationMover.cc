@@ -96,7 +96,7 @@ using namespace core;
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP LoopCreationMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new LoopCreationMover );
+// XRW TEMP  return utility::pointer::make_shared< LoopCreationMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -151,16 +151,16 @@ LoopCreationMover::LoopCreationMover(
 void
 LoopCreationMover::init()
 {
-	loop_filter_ = protocols::filters::FilterOP( new protocols::filters::TrueFilter );
+	loop_filter_ = utility::pointer::make_shared< protocols::filters::TrueFilter >();
 }
 
 protocols::moves::MoverOP
 LoopCreationMover::clone() const {
-	return( protocols::moves::MoverOP( new LoopCreationMover( *this ) ) );
+	return( utility::pointer::make_shared< LoopCreationMover >( *this ) );
 }
 protocols::moves::MoverOP
 LoopCreationMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new LoopCreationMover );
+	return utility::pointer::make_shared< LoopCreationMover >();
 }
 
 // XRW TEMP std::string
@@ -193,7 +193,7 @@ LoopCreationMover::apply(
 		utility_exit_with_message("No LoopInserter given to LoopCreationMover!");
 	}
 	if ( loop_filter_ == nullptr ) {
-		loop_filter_ = protocols::filters::FilterOP( new protocols::filters::TrueFilter );//default to true filter
+		loop_filter_ = utility::pointer::make_shared< protocols::filters::TrueFilter >();//default to true filter
 	}
 	TR.Debug << "Fold tree prior to LoopCreationMover: " << pose.fold_tree() << endl;
 
@@ -517,7 +517,7 @@ LoopCreationMover::refine_loop(
 	if ( include_neighbors_ ) {
 		string const nb_calc("neighbor_calculator");
 		pose::metrics::CalculatorFactory::Instance().register_calculator( nb_calc,
-			core::pose::metrics::PoseMetricCalculatorOP( new protocols::pose_metric_calculators::NeighborhoodByDistanceCalculator( loop_residues ) ) );
+			utility::pointer::make_shared< protocols::pose_metric_calculators::NeighborhoodByDistanceCalculator >( loop_residues ) );
 
 		basic::MetricValue< set< Size > > neighbor_mv;
 		pose.metric( nb_calc, "neighbors", neighbor_mv);
@@ -717,7 +717,7 @@ std::string LoopCreationMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 LoopCreationMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LoopCreationMover );
+	return utility::pointer::make_shared< LoopCreationMover >();
 }
 
 void LoopCreationMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

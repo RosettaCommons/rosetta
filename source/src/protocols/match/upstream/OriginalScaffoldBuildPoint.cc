@@ -110,7 +110,7 @@ OriginalBackboneBuildPoint::initialize_from_residue(
 {
 	using HTReal = numeric::HomogeneousTransform<core::Real>;
 
-	input_conformation_ = core::conformation::ResidueOP( new core::conformation::Residue( res ) );
+	input_conformation_ = utility::pointer::make_shared< core::conformation::Residue >( res );
 
 
 	debug_assert(   res.has( "N" ));

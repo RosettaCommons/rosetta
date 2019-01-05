@@ -75,7 +75,7 @@ StepWiseProteinCCD_Closer::StepWiseProteinCCD_Closer( working_parameters::StepWi
 	moving_residues_( working_parameters->working_moving_res_list() ),
 	is_pre_proline_( working_parameters->is_pre_proline() ),
 	ccd_close_res_( 0 ),
-	mm_( core::kinematics::MoveMapOP( new kinematics::MoveMap ) ),
+	mm_( utility::pointer::make_shared< kinematics::MoveMap >() ),
 	closed_loop_( false ),
 	ntries_( 0 )
 {
@@ -129,7 +129,7 @@ StepWiseProteinCCD_Closer::CCD_loop_close( core::pose::Pose & pose )
 {
 	// Lazy initialization of ccd_loop_closure_mover_
 	if ( ccd_loop_closure_mover_.get() == nullptr ) {
-		ccd_loop_closure_mover_ = loops::loop_closure::ccd::CCDLoopClosureMoverOP( new loops::loop_closure::ccd::CCDLoopClosureMover() );
+		ccd_loop_closure_mover_ = utility::pointer::make_shared< loops::loop_closure::ccd::CCDLoopClosureMover >();
 		ccd_loop_closure_mover_->max_cycles( 1000 );
 		ccd_loop_closure_mover_->tolerance( 0.001 );
 		ccd_loop_closure_mover_->check_rama_scores( false );

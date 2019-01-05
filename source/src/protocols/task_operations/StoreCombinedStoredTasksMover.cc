@@ -166,17 +166,17 @@ StoreCombinedStoredTasksMover::parse_my_tag( TagCOP const tag, basic::datacache:
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP StoreCombinedStoredTasksMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new StoreCombinedStoredTasksMover );
+// XRW TEMP  return utility::pointer::make_shared< StoreCombinedStoredTasksMover >();
 // XRW TEMP }
 
 protocols::moves::MoverOP
 StoreCombinedStoredTasksMover::clone() const {
-	return protocols::moves::MoverOP( new StoreCombinedStoredTasksMover( *this ) );
+	return utility::pointer::make_shared< StoreCombinedStoredTasksMover >( *this );
 }
 
 protocols::moves::MoverOP
 StoreCombinedStoredTasksMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new StoreCombinedStoredTasksMover );
+	return utility::pointer::make_shared< StoreCombinedStoredTasksMover >();
 }
 
 std::string StoreCombinedStoredTasksMover::get_name() const {
@@ -219,7 +219,7 @@ std::string StoreCombinedStoredTasksMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 StoreCombinedStoredTasksMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new StoreCombinedStoredTasksMover );
+	return utility::pointer::make_shared< StoreCombinedStoredTasksMover >();
 }
 
 void StoreCombinedStoredTasksMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

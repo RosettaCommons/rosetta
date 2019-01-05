@@ -97,7 +97,7 @@ AntibodyInfo::AntibodyInfo( pose::Pose const & pose,
 	bool const cdr_pdb_numbered):
 	utility::pointer::ReferenceCount()
 {
-	enum_manager_ = AntibodyEnumManagerOP( new AntibodyEnumManager() );
+	enum_manager_ = utility::pointer::make_shared< AntibodyEnumManager >();
 	set_default();
 
 	numbering_info_.numbering_scheme = numbering_scheme;
@@ -112,7 +112,7 @@ AntibodyInfo::AntibodyInfo(const pose::Pose& pose, const bool cdr_pdb_numbered):
 	utility::pointer::ReferenceCount()
 {
 
-	enum_manager_ = AntibodyEnumManagerOP( new AntibodyEnumManager() );
+	enum_manager_ = utility::pointer::make_shared< AntibodyEnumManager >();
 	set_default();
 	cdr_pdb_numbered_ = cdr_pdb_numbered;
 
@@ -125,7 +125,7 @@ AntibodyInfo::AntibodyInfo(const pose::Pose & pose,
 	bool const cdr_pdb_numbered):
 	utility::pointer::ReferenceCount()
 {
-	enum_manager_ = AntibodyEnumManagerOP( new AntibodyEnumManager() );
+	enum_manager_ = utility::pointer::make_shared< AntibodyEnumManager >();
 	set_default();
 
 	numbering_info_.cdr_definition = cdr_definition;
@@ -161,24 +161,24 @@ AntibodyInfo::AntibodyInfo(const AntibodyInfo& src):
 {
 	using namespace protocols::loops;
 
-	if ( src.loopsop_having_allcdrs_ ) loopsop_having_allcdrs_ = LoopsOP( new Loops( *src.loopsop_having_allcdrs_ ));
-	if ( src.cdr_cluster_set_ ) cdr_cluster_set_ = CDRClusterSetOP(new CDRClusterSet( *src.cdr_cluster_set_ ));
+	if ( src.loopsop_having_allcdrs_ ) loopsop_having_allcdrs_ = utility::pointer::make_shared< Loops >( *src.loopsop_having_allcdrs_ );
+	if ( src.cdr_cluster_set_ ) cdr_cluster_set_ = utility::pointer::make_shared< CDRClusterSet >( *src.cdr_cluster_set_ );
 
-	if ( src.enum_manager_ ) enum_manager_ = AntibodyEnumManagerOP(new AntibodyEnumManager( *src.enum_manager_));
-	if ( src.cdr_cluster_manager_ ) cdr_cluster_manager_ = CDRClusterEnumManagerOP(new CDRClusterEnumManager( *src.cdr_cluster_manager_));
-	if ( src.numbering_parser_ ) numbering_parser_  = AntibodyNumberingParserOP( new AntibodyNumberingParser( *src.numbering_parser_ ));
+	if ( src.enum_manager_ ) enum_manager_ = utility::pointer::make_shared< AntibodyEnumManager >( *src.enum_manager_);
+	if ( src.cdr_cluster_manager_ ) cdr_cluster_manager_ = utility::pointer::make_shared< CDRClusterEnumManager >( *src.cdr_cluster_manager_);
+	if ( src.numbering_parser_ ) numbering_parser_  = utility::pointer::make_shared< AntibodyNumberingParser >( *src.numbering_parser_ );
 
 
 	vector1_loopsop_having_cdr_.clear(); // each Loops contains one CDR
 	for ( LoopsOP l : src.vector1_loopsop_having_cdr_ ) {
-		LoopsOP new_loop = LoopsOP( new Loops( *l));
+		LoopsOP new_loop = utility::pointer::make_shared< Loops >( *l);
 		vector1_loopsop_having_cdr_.push_back( new_loop );
 	}
 }
 
 AntibodyInfoOP
 AntibodyInfo::clone() const{
-	return AntibodyInfoOP( new AntibodyInfo( * this));
+	return utility::pointer::make_shared< AntibodyInfo >( * this);
 }
 
 void AntibodyInfo::set_default() {
@@ -224,11 +224,11 @@ void AntibodyInfo::init(pose::Pose const & pose) {
 	if ( ! is_camelid() ) all_cdrs_present_and_proto_.push_back( l4 );
 
 
-	numbering_parser_ = AntibodyNumberingParserOP( new AntibodyNumberingParser(enum_manager_) );
+	numbering_parser_ = utility::pointer::make_shared< AntibodyNumberingParser >(enum_manager_);
 
 
-	cdr_cluster_manager_ = CDRClusterEnumManagerOP( new CDRClusterEnumManager() );
-	cdr_cluster_set_ = CDRClusterSetOP( new CDRClusterSet(this) );
+	cdr_cluster_manager_ = utility::pointer::make_shared< CDRClusterEnumManager >();
+	cdr_cluster_set_ = utility::pointer::make_shared< CDRClusterSet >(this);
 
 	setup_numbering_info_for_scheme(numbering_info_.numbering_scheme, numbering_info_.cdr_definition);
 	setup_CDRsInfo(pose) ;
@@ -517,7 +517,7 @@ void AntibodyInfo::setup_CDRsInfo( pose::Pose const & pose ) {
 	}
 
 	int loop_start_in_pose, loop_stop_in_pose, cut_position ;
-	loopsop_having_allcdrs_ = loops::LoopsOP( new loops::Loops() );
+	loopsop_having_allcdrs_ = utility::pointer::make_shared< loops::Loops >();
 
 	for ( Size i=start_cdr_loop; i<= core::Size(total_cdr_loops_); ++i ) {
 
@@ -1927,7 +1927,7 @@ AntibodyInfo::get_TaskFactory_AllCDRs(pose::Pose & pose)  const {
 	pack::task::TaskFactoryOP tf ;
 	tf= setup_packer_task(pose);
 	// tf->push_back( new RestrictToInterface(loop_residues) ); //JQX: not sure why we use loop_residues, in stead of sc_is_packable
-	tf->push_back( TaskOperationCOP( new RestrictToInterface(sc_is_packable) ) );
+	tf->push_back( utility::pointer::make_shared< RestrictToInterface >(sc_is_packable) );
 
 
 	//pack::task::PackerTaskOP my_task2(tf->create_task_and_apply_taskoperations(pose));
@@ -1946,7 +1946,7 @@ AntibodyInfo::get_TaskFactory_OneCDR(pose::Pose & pose, CDRNameEnum const cdr_na
 
 	pack::task::TaskFactoryOP tf ;
 	tf= setup_packer_task(pose);
-	tf->push_back( TaskOperationCOP( new RestrictToInterface(sc_is_packable) ) );
+	tf->push_back( utility::pointer::make_shared< RestrictToInterface >(sc_is_packable) );
 
 	return tf;
 }

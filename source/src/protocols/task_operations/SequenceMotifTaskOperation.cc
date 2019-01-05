@@ -65,7 +65,7 @@ SequenceMotifTaskOperation::~SequenceMotifTaskOperation() {}
 
 core::pack::task::operation::TaskOperationOP
 SequenceMotifTaskOperation::clone() const {
-	return TaskOperationOP( new SequenceMotifTaskOperation( *this ) );
+	return utility::pointer::make_shared< SequenceMotifTaskOperation >( *this );
 }
 
 SequenceMotifTaskOperation::SequenceMotifTaskOperation( SequenceMotifTaskOperation const & src ):
@@ -171,7 +171,7 @@ SequenceMotifTaskOperation::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 core::pack::task::operation::TaskOperationOP
 SequenceMotifTaskOperationCreator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new SequenceMotifTaskOperation );
+	return utility::pointer::make_shared< SequenceMotifTaskOperation >();
 }
 
 std::string

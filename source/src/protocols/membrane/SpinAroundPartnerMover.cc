@@ -130,13 +130,13 @@ SpinAroundPartnerMover::~SpinAroundPartnerMover() = default;
 /// @brief Create a Clone of this mover
 protocols::moves::MoverOP
 SpinAroundPartnerMover::clone() const {
-	return ( protocols::moves::MoverOP( new SpinAroundPartnerMover( *this ) ) );
+	return ( utility::pointer::make_shared< SpinAroundPartnerMover >( *this ) );
 }
 
 /// @brief Create a Fresh Instance of this Mover
 protocols::moves::MoverOP
 SpinAroundPartnerMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new SpinAroundPartnerMover() );
+	return utility::pointer::make_shared< SpinAroundPartnerMover >();
 }
 
 /// @brief Pase Rosetta Scripts Options for this Mover
@@ -174,7 +174,7 @@ SpinAroundPartnerMover::parse_my_tag(
 /// @brief Create a new copy of this mover
 protocols::moves::MoverOP
 SpinAroundPartnerMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SpinAroundPartnerMover() );
+	return utility::pointer::make_shared< SpinAroundPartnerMover >();
 }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)

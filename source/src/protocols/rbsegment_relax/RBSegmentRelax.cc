@@ -126,15 +126,15 @@ void RBSegmentRelax::initialize( utility::vector1< core::fragment::FragSetOP > c
 
 	// set up default movesets ( start and end positions are set in apply() )
 	if ( ! option[ OptionKeys::RBSegmentRelax::skip_seqshift_moves ]() ) {
-		HelixMoveSet_.push_back( RBSegmentMoverOP( new SequenceShiftMover(  ) ) );
-		StrandMoveSet_.push_back( RBSegmentMoverOP( new SequenceShiftMover(  ) ) );
+		HelixMoveSet_.push_back( utility::pointer::make_shared< SequenceShiftMover >(  ) );
+		StrandMoveSet_.push_back( utility::pointer::make_shared< SequenceShiftMover >(  ) );
 	}
 
 	if ( ! option[ OptionKeys::RBSegmentRelax::skip_rb_moves ]() ) {
-		HelixMoveSet_.push_back( RBSegmentMoverOP( new HelicalGaussianMover( helical_sigR, helical_sigT, helical_sigOffAxisR, helical_sigOffAxisT ) ) );
-		StrandMoveSet_.push_back( RBSegmentMoverOP( new StrandTwistingMover( strand_sigR, strand_sigT, strand_sigOffAxisR, strand_sigOffAxisT ) ) );
-		GenericRBMoveSet_.push_back( RBSegmentMoverOP( new GaussianRBSegmentMover( genericRB_sigR , genericRB_sigT ) ) );
-		CompositeSegmentMoveSet_.push_back( RBSegmentMoverOP( new GaussianRBSegmentMover( genericRB_sigR , genericRB_sigT ) ) );
+		HelixMoveSet_.push_back( utility::pointer::make_shared< HelicalGaussianMover >( helical_sigR, helical_sigT, helical_sigOffAxisR, helical_sigOffAxisT ) );
+		StrandMoveSet_.push_back( utility::pointer::make_shared< StrandTwistingMover >( strand_sigR, strand_sigT, strand_sigOffAxisR, strand_sigOffAxisT ) );
+		GenericRBMoveSet_.push_back( utility::pointer::make_shared< GaussianRBSegmentMover >( genericRB_sigR , genericRB_sigT ) );
+		CompositeSegmentMoveSet_.push_back( utility::pointer::make_shared< GaussianRBSegmentMover >( genericRB_sigR , genericRB_sigT ) );
 	}
 
 	// frags
@@ -340,7 +340,7 @@ void RBSegmentRelax::apply( core::pose::Pose & pose ) {
 	//     allow the MC object to be exposed in the interface
 	//  -  A side effect of this is that the viewer -- that needs the MC object --
 	//     can only be called here.  Again, this should be fixed in the future
-	mc_ = protocols::moves::MonteCarloOP( new protocols::moves::MonteCarlo( pose_noloops , *scorefxn_ , init_temp ) );
+	mc_ = utility::pointer::make_shared< protocols::moves::MonteCarlo >( pose_noloops , *scorefxn_ , init_temp );
 
 	// wrap in a MC search for 'cycles' iteration
 	int total_cycles = cycles_;

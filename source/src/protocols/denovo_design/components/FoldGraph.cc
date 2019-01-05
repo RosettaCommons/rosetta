@@ -48,7 +48,7 @@ namespace components {
 
 FoldGraph::FoldGraph( StructureData const & perm ):
 	utility::pointer::ReferenceCount(),
-	sd_( StructureDataOP( new StructureData( perm ) ) )
+	sd_( utility::pointer::make_shared< StructureData >( perm ) )
 {
 	TR.Debug << "Constructing foldgraph for " << sd().id() << " : " << sd()  << std::endl;
 	g_.drop_all_edges();
@@ -949,7 +949,7 @@ FoldGraph::create_loops( Solution const & solution ) const
 	}
 
 	// now make a loops object
-	protocols::loops::LoopsOP loops = protocols::loops::LoopsOP( new protocols::loops::Loops() );
+	protocols::loops::LoopsOP loops = utility::pointer::make_shared< protocols::loops::Loops >();
 	for ( auto const & nset : solution ) {
 		int min_res = -1;
 		int max_res = -1;

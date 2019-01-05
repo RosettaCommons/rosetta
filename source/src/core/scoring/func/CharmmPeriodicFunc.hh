@@ -41,7 +41,7 @@ public:
 	CharmmPeriodicFunc ( Real const x0_in, Real const k_in, Real const n_periodic_in) : x0_( x0_in ), k_( k_in ), n_periodic_( n_periodic_in ){}
 
 	FuncOP
-	clone() const { return FuncOP( new CharmmPeriodicFunc( *this ) ); }
+	clone() const { return utility::pointer::make_shared< CharmmPeriodicFunc >( *this ); }
 
 	virtual bool operator == ( Func const & other ) const;
 	virtual bool same_type_as_me( Func const & other ) const;

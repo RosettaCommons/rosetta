@@ -90,7 +90,7 @@ GlycanTree::GlycanTree( GlycanTree const & src ):
 {
 	tree_.clear();
 	for ( auto const & kv : src.tree_ ) {
-		tree_[kv.first] = GlycanNodeOP( new GlycanNode( *kv.second));
+		tree_[kv.first] = utility::pointer::make_shared< GlycanNode >( *kv.second);
 	}
 
 }
@@ -98,7 +98,7 @@ GlycanTree::GlycanTree( GlycanTree const & src ):
 
 GlycanTreeOP
 GlycanTree::clone() const {
-	return GlycanTreeOP( new GlycanTree( *this ) );
+	return utility::pointer::make_shared< GlycanTree >( *this );
 }
 
 
@@ -131,7 +131,7 @@ GlycanTree::setup_glycan_nodes( conformation::Conformation const & conf, Size co
 		// Create a new GlycanNode instance for this residue
 		// The node will contain info about all direct downstream connections
 		// Add the node to the tree
-		tree_[ pos ] = GlycanNodeOP( new GlycanNode( conf, start_pos, pos ) );
+		tree_[ pos ] = utility::pointer::make_shared< GlycanNode >( conf, start_pos, pos );
 	}
 
 	root_ = find_seqpos_of_saccharides_parent_residue( conf.residue( start_pos ) );
@@ -264,7 +264,7 @@ GlycanTree::update_on_length_change(core::conformation::signals::LengthEvent con
 
 			//New residue.
 			if ( ! new_trees.count( node_residue ) ) {
-				GlycanNodeOP new_tree = GlycanNodeOP( new GlycanNode( conf, start_pos_, node_residue ) );
+				GlycanNodeOP new_tree = utility::pointer::make_shared< GlycanNode >( conf, start_pos_, node_residue );
 				new_trees[node_residue] = new_tree;
 
 			}

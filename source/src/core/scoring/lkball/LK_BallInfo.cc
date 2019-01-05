@@ -739,7 +739,7 @@ LKB_ResidueInfo::LKB_ResidueInfo( LKB_ResidueInfo const & /*src*/ ) = default;
 basic::datacache::CacheableDataOP
 LKB_ResidueInfo::clone() const
 {
-	return basic::datacache::CacheableDataOP( new LKB_ResidueInfo( *this ) );
+	return utility::pointer::make_shared< LKB_ResidueInfo >( *this );
 }
 
 
@@ -748,14 +748,14 @@ LKB_ResiduesInfo::LKB_ResiduesInfo( LKB_ResiduesInfo const & src ):
 {
 	residues_info_.clear();
 	for ( Size i=1; i<= src.size(); ++i ) {
-		residues_info_.push_back( LKB_ResidueInfoOP( new LKB_ResidueInfo( src[i] ) ) );
+		residues_info_.push_back( utility::pointer::make_shared< LKB_ResidueInfo >( src[i] ) );
 	}
 }
 
 basic::datacache::CacheableDataOP
 LKB_ResiduesInfo::clone() const
 {
-	return basic::datacache::CacheableDataOP( new LKB_ResiduesInfo( *this ) );
+	return utility::pointer::make_shared< LKB_ResiduesInfo >( *this );
 }
 
 /// @details This function is never called in the code, and it

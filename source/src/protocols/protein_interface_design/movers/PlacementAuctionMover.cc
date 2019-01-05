@@ -79,7 +79,7 @@ using namespace core;
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP PlacementAuctionMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new PlacementAuctionMover );
+// XRW TEMP  return utility::pointer::make_shared< PlacementAuctionMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -96,7 +96,7 @@ PlacementAuctionMover::~PlacementAuctionMover() = default;
 
 protocols::moves::MoverOP
 PlacementAuctionMover::clone() const {
-	return( protocols::moves::MoverOP( new PlacementAuctionMover( *this ) ) );
+	return( utility::pointer::make_shared< PlacementAuctionMover >( *this ) );
 }
 
 PlacementAuctionMover::ResidueAuction
@@ -163,11 +163,11 @@ PlacementAuctionMover::apply( core::pose::Pose & pose )
 	protocols::filters::FilterOP stf;
 	if ( stub_energy_fxn_ == "backbone_stub_constraint" ) {
 		only_stub_scorefxn->set_weight( backbone_stub_constraint, 1.0 );
-		stf = protocols::filters::FilterOP( new protocols::score_filters::ScoreTypeFilter(only_stub_scorefxn, backbone_stub_constraint, 1.0 ) );
+		stf = utility::pointer::make_shared< protocols::score_filters::ScoreTypeFilter >(only_stub_scorefxn, backbone_stub_constraint, 1.0 );
 
 	} else if ( stub_energy_fxn_ == "backbone_stub_linear_constraint" ) {
 		only_stub_scorefxn->set_weight( backbone_stub_linear_constraint, 1.0 );
-		stf = protocols::filters::FilterOP( new protocols::score_filters::ScoreTypeFilter(only_stub_scorefxn, backbone_stub_linear_constraint, 1.0 ) );
+		stf = utility::pointer::make_shared< protocols::score_filters::ScoreTypeFilter >(only_stub_scorefxn, backbone_stub_linear_constraint, 1.0 );
 	} else {
 		utility_exit_with_message( "ERROR: unrecognized stub_energy_fxn_. Only support backbone_stub_constraint or backbone_stub_linear_constraint");
 	}
@@ -220,14 +220,14 @@ PlacementAuctionMover::apply( core::pose::Pose & pose )
 				ConstraintCOPs stub_constraints;
 				core::conformation::Residue const host_res( pose.conformation().residue( host_residue ) );
 				if ( stub_energy_fxn_ == "backbone_stub_constraint" ) {
-					stub_constraints.push_back( core::scoring::constraints::ConstraintOP( new BackboneStubConstraint( pose, host_residue, fixed_atom_id, host_res, bonus, cb_force_ ) ) );
+					stub_constraints.push_back( utility::pointer::make_shared< BackboneStubConstraint >( pose, host_residue, fixed_atom_id, host_res, bonus, cb_force_ ) );
 					stub_constraints = pose.add_constraints( stub_constraints );
 					core::Real const bb_cst_score( stf->report_sm( pose ) );
 					if ( bb_cst_score <= -0.5 ) { // take only residues that make some appreciable contribution
 						insert( std::make_pair( bb_cst_score, std::make_pair( host_residue, std::make_pair( stub_set, stub ) ) ) );
 					}
 				} else if ( stub_energy_fxn_ == "backbone_stub_linear_constraint" ) {
-					stub_constraints.push_back( core::scoring::constraints::ConstraintOP( new BackboneStubLinearConstraint( pose, host_residue, fixed_atom_id, *(stub->residue()), bonus, cb_force_ ) ) );
+					stub_constraints.push_back( utility::pointer::make_shared< BackboneStubLinearConstraint >( pose, host_residue, fixed_atom_id, *(stub->residue()), bonus, cb_force_ ) );
 					stub_constraints = pose.add_constraints( stub_constraints );
 					core::Real const bb_cst_score( stf->report_sm( pose ) );
 					insert( std::make_pair( bonus+bb_cst_score, std::make_pair( host_residue, std::make_pair( stub_set, stub ) ) ) );
@@ -419,7 +419,7 @@ std::string PlacementAuctionMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 PlacementAuctionMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new PlacementAuctionMover );
+	return utility::pointer::make_shared< PlacementAuctionMover >();
 }
 
 void PlacementAuctionMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

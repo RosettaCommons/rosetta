@@ -35,7 +35,7 @@ class MakeStarTopologyMover : public moves::Mover {
 public:
 	MakeStarTopologyMover() : Mover(), mode_(""), restore_(false) {}
 
-	moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new MakeStarTopologyMover( *this ) ) ); }
+	moves::MoverOP clone() const override { return( utility::pointer::make_shared< MakeStarTopologyMover >( *this ) ); }
 
 	void apply( core::pose::Pose & pose ) override;
 	void parse_my_tag(

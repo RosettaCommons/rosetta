@@ -102,8 +102,8 @@ public:
 
 	void setUp() {
 		protocols_init_with_additional_options("-in:missing_density_to_jump 1 -DisulfideInsertion:max_dslf_dist_multiplier 0.9");
-		test_pose_ = core::pose::PoseOP( new core::pose::Pose() );
-		cyclic_test_pose_ = core::pose::PoseOP( new core::pose::Pose() );
+		test_pose_ = utility::pointer::make_shared< core::pose::Pose >();
+		cyclic_test_pose_ = utility::pointer::make_shared< core::pose::Pose >();
 
 		// NOTE : this pose is PDB entry 2HLE modified such that
 		// 1. only residues 144-157 from chain A and 114-134 from chain B are included
@@ -137,7 +137,7 @@ public:
 		core::import_pose::pose_from_file( *test_pose_, "protocols/peptide_deriver/2hle_remixed.pdb" , core::import_pose::PDB_file);
 		core::import_pose::pose_from_file( *cyclic_test_pose_, "protocols/peptide_deriver/1sfi_short.pdb", core::import_pose::PDB_file);
 
-		peptiderive_ = protocols::peptide_deriver::PeptideDeriverFilterOP( new protocols::peptide_deriver::PeptideDeriverFilter() );
+		peptiderive_ = utility::pointer::make_shared< protocols::peptide_deriver::PeptideDeriverFilter >();
 
 		peptiderive_->set_is_skip_zero_isc(false); // we want to count all residues
 		peptiderive_->set_is_do_minimize(true);

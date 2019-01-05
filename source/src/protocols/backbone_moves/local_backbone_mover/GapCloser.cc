@@ -38,7 +38,7 @@ namespace local_backbone_mover {
 GapCloser::GapCloser():
 	utility::pointer::ReferenceCount()
 {
-	set_solution_picker(gap_solution_pickers::GapSolutionPickerOP(new gap_solution_pickers::RandomGapSolutionPicker));
+	set_solution_picker(utility::pointer::make_shared< gap_solution_pickers::RandomGapSolutionPicker >());
 }
 
 GapCloser::~GapCloser()= default;
@@ -49,7 +49,7 @@ GapCloser::GapCloser( GapCloser const & ) {
 
 GapCloserOP
 GapCloser::clone() const {
-	return GapCloserOP( new GapCloser( *this ) );
+	return utility::pointer::make_shared< GapCloser >( *this );
 }
 
 void

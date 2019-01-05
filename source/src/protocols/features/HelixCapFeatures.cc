@@ -78,18 +78,18 @@ HelixCapFeatures::write_schema_to_db(
 	using namespace basic::database::schema_generator;
 
 	//******secondary structure segments******//
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ), false);
-	Column resnum("resnum", DbDataTypeOP( new DbInteger() ), false);
-	Column type("type", DbDataTypeOP( new DbText(1) ), false);
-	Column im4("im4", DbDataTypeOP( new DbInteger() ), false);
-	Column im3("im3", DbDataTypeOP( new DbInteger() ), false);
-	Column im2("im2", DbDataTypeOP( new DbInteger() ), false);
-	Column im1("im1", DbDataTypeOP( new DbInteger() ), false);
-	Column ip1("ip1", DbDataTypeOP( new DbInteger() ), false);
-	Column ip2("ip2", DbDataTypeOP( new DbInteger() ), false);
-	Column ip3("ip3", DbDataTypeOP( new DbInteger() ), false);
-	Column ip4("ip4", DbDataTypeOP( new DbInteger() ), false);
-	Column dssp("dssp", DbDataTypeOP( new DbText(1) ), false);
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >(), false);
+	Column resnum("resnum", utility::pointer::make_shared< DbInteger >(), false);
+	Column type("type", utility::pointer::make_shared< DbText >(1), false);
+	Column im4("im4", utility::pointer::make_shared< DbInteger >(), false);
+	Column im3("im3", utility::pointer::make_shared< DbInteger >(), false);
+	Column im2("im2", utility::pointer::make_shared< DbInteger >(), false);
+	Column im1("im1", utility::pointer::make_shared< DbInteger >(), false);
+	Column ip1("ip1", utility::pointer::make_shared< DbInteger >(), false);
+	Column ip2("ip2", utility::pointer::make_shared< DbInteger >(), false);
+	Column ip3("ip3", utility::pointer::make_shared< DbInteger >(), false);
+	Column ip4("ip4", utility::pointer::make_shared< DbInteger >(), false);
+	Column dssp("dssp", utility::pointer::make_shared< DbText >(1), false);
 
 	Columns pkey_cols;
 	pkey_cols.push_back(struct_id);
@@ -268,7 +268,7 @@ std::string HelixCapFeaturesCreator::type_name() const {
 
 protocols::features::FeaturesReporterOP
 HelixCapFeaturesCreator::create_features_reporter() const {
-	return protocols::features::FeaturesReporterOP( new HelixCapFeatures );
+	return utility::pointer::make_shared< HelixCapFeatures >();
 }
 
 void HelixCapFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -52,10 +52,10 @@ public:
 
 	void apply( core::pose::Pose & pose ) override;
 	protocols::moves::MoverOP clone() const override {
-		return (protocols::moves::MoverOP( new protocols::simple_moves::MembraneTopology( *this ) ) );
+		return (utility::pointer::make_shared< protocols::simple_moves::MembraneTopology >( *this ) );
 	}
 	protocols::moves::MoverOP fresh_instance() const override {
-		return protocols::moves::MoverOP( new MembraneTopology );
+		return utility::pointer::make_shared< MembraneTopology >();
 	}
 
 	void parse_my_tag( utility::tag::TagCOP tag,

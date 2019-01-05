@@ -57,7 +57,7 @@ static basic::Tracer TR( "protocols.protein_interface_design.movers.RepackMinimi
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP RepackMinimizeCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new RepackMinimize );
+// XRW TEMP  return utility::pointer::make_shared< RepackMinimize >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -68,7 +68,7 @@ static basic::Tracer TR( "protocols.protein_interface_design.movers.RepackMinimi
 
 protocols::moves::MoverOP
 RepackMinimize::clone() const {
-	return( protocols::moves::MoverOP( new RepackMinimize( *this ) ) );
+	return( utility::pointer::make_shared< RepackMinimize >( *this ) );
 }
 
 RepackMinimize::RepackMinimize() :
@@ -93,7 +93,7 @@ RepackMinimize::RepackMinimize(
 	repack_partner2_ = repack_partner2;
 	repack_partner1_ = repack_partner1;
 	using namespace core::select::residue_selector;
-	target_residues( ResidueSelectorOP( new ResidueIndexSelector( target_res ) ) );
+	target_residues( utility::pointer::make_shared< ResidueIndexSelector >( target_res ) );
 	interface_distance_cutoff_ = interface_distance_cutoff;
 	scorefxn_repack_ = scorefxn_repack->clone();
 	scorefxn_minimize_ = scorefxn_minimize->clone();
@@ -175,7 +175,7 @@ std::string RepackMinimizeCreator::keyname() const {
 
 protocols::moves::MoverOP
 RepackMinimizeCreator::create_mover() const {
-	return protocols::moves::MoverOP( new RepackMinimize );
+	return utility::pointer::make_shared< RepackMinimize >();
 }
 
 void RepackMinimizeCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -82,7 +82,7 @@ static basic::Tracer TR( "protocols.loophash.LoophashLoopInserter" );
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP LoophashLoopInserterCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new LoophashLoopInserter );
+// XRW TEMP  return utility::pointer::make_shared< LoophashLoopInserter >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -108,11 +108,11 @@ LoophashLoopInserter::LoophashLoopInserter():
 
 protocols::moves::MoverOP
 LoophashLoopInserter::clone() const {
-	return( protocols::moves::MoverOP( new LoophashLoopInserter( *this ) ) );
+	return( utility::pointer::make_shared< LoophashLoopInserter >( *this ) );
 }
 protocols::moves::MoverOP
 LoophashLoopInserter::fresh_instance() const {
-	return protocols::moves::MoverOP( new LoophashLoopInserter );
+	return utility::pointer::make_shared< LoophashLoopInserter >();
 }
 
 // XRW TEMP std::string
@@ -551,7 +551,7 @@ std::string LoophashLoopInserterCreator::keyname() const {
 
 protocols::moves::MoverOP
 LoophashLoopInserterCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LoophashLoopInserter );
+	return utility::pointer::make_shared< LoophashLoopInserter >();
 }
 
 void LoophashLoopInserterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

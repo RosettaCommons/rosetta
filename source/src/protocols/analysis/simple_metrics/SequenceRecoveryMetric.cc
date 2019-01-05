@@ -72,7 +72,7 @@ SequenceRecoveryMetric::SequenceRecoveryMetric( SequenceRecoveryMetric const &  
 
 core::simple_metrics::SimpleMetricOP
 SequenceRecoveryMetric::clone() const {
-	return core::simple_metrics::SimpleMetricOP(new SequenceRecoveryMetric( *this ) );
+	return utility::pointer::make_shared< SequenceRecoveryMetric >( *this );
 
 }
 
@@ -304,7 +304,7 @@ SequenceRecoveryMetric::set_residue_selector_ref( core::select::residue_selector
 
 void
 SequenceRecoveryMetric::load_pssm( std::string const & pssm_filename ) {
-	ref_profile_ = core::sequence::SequenceProfileOP( new core::sequence::SequenceProfile );
+	ref_profile_ = utility::pointer::make_shared< core::sequence::SequenceProfile >();
 	ref_profile_->read_from_file( utility::file::FileName( pssm_filename ) );
 }
 
@@ -321,7 +321,7 @@ SequenceRecoveryMetricCreator::keyname() const {
 
 core::simple_metrics::SimpleMetricOP
 SequenceRecoveryMetricCreator::create_simple_metric() const {
-	return core::simple_metrics::SimpleMetricOP( new SequenceRecoveryMetric );
+	return utility::pointer::make_shared< SequenceRecoveryMetric >();
 
 }
 

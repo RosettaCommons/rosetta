@@ -62,7 +62,7 @@ ContinuousAssembly::ContinuousAssembly():
 
 AssemblyOP
 ContinuousAssembly::clone(){
-	return AssemblyOP( new ContinuousAssembly(*this) );
+	return utility::pointer::make_shared< ContinuousAssembly >(*this);
 }
 
 

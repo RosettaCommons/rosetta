@@ -46,7 +46,7 @@ public:
 		core::pose::Pose const & ) override;
 
 	protocols::moves::MoverOP clone() const override;
-	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new HotspotDisjointedFoldTreeMover ); }
+	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< HotspotDisjointedFoldTreeMover >(); }
 	virtual ~HotspotDisjointedFoldTreeMover();
 
 	void set_residues( core::select::residue_selector::ResidueSelectorCOP residues );

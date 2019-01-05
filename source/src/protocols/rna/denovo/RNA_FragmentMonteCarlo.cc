@@ -81,9 +81,9 @@ using utility::tools::make_vector1;
 using utility::vector1;
 
 #ifdef GL_GRAPHICS
-namespace protocols { namespace viewer { 
+namespace protocols { namespace viewer {
 	typedef std::map< int, ConformationViewerOP > ConformationViewers;
-	extern ConformationViewers conformation_viewers; 
+	extern ConformationViewers conformation_viewers;
 } }
 #endif
 
@@ -522,7 +522,7 @@ RNA_FragmentMonteCarlo::initialize_libraries( pose::Pose & pose ) {
 	if ( user_input_rna_chunk_library_ != nullptr ) {
 		rna_chunk_library_ = user_input_rna_chunk_library_->clone();
 	} else {
-		rna_chunk_library_ = RNA_ChunkLibraryOP( new RNA_ChunkLibrary( pose ) );
+		rna_chunk_library_ = utility::pointer::make_shared< RNA_ChunkLibrary >( pose );
 		// AMW: fixed a bad bug here! We should disallow movement of extra_min_res input_res
 		// if bps_moves aren't on, as well!
 		if ( !options_->bps_moves() || options_->disallow_bps_at_extra_min_res() ) rna_chunk_library_->atom_level_domain_map()->disallow_movement_of_input_res( pose );
@@ -534,7 +534,7 @@ RNA_FragmentMonteCarlo::initialize_libraries( pose::Pose & pose ) {
 		rna_chunk_initialization_library_ = user_input_rna_chunk_initialization_library_->clone();
 	}
 
-	if ( rna_base_pair_handler_ == nullptr ) rna_base_pair_handler_ = RNA_BasePairHandlerOP( new RNA_BasePairHandler( pose ) );
+	if ( rna_base_pair_handler_ == nullptr ) rna_base_pair_handler_ = utility::pointer::make_shared< RNA_BasePairHandler >( pose );
 
 	if ( options_->bps_moves() ) {
 		rna_chunk_library_->setup_base_pair_step_chunks( pose, rna_base_pair_handler_->get_canonical_base_pair_steps(),
@@ -550,25 +550,26 @@ RNA_FragmentMonteCarlo::initialize_libraries( pose::Pose & pose ) {
 ////////////////////////////////////////////////////////////////////////////
 void
 RNA_FragmentMonteCarlo::initialize_movers( core::pose::Pose const & pose ) {
-	rna_loop_closer_ = protocols::rna::movers::RNA_LoopCloserOP( new protocols::rna::movers::RNA_LoopCloser );
+	rna_loop_closer_ = utility::pointer::make_shared< protocols::rna::movers::RNA_LoopCloser >();
 	rna_loop_closer_->set_atom_level_domain_map( atom_level_domain_map_ );
 
 	if ( options_->initial_structures_provided() ) {
-		rna_loop_closer_init_ = protocols::rna::movers::RNA_LoopCloserOP( new protocols::rna::movers::RNA_LoopCloser );
+		rna_loop_closer_init_ = utility::pointer::make_shared< protocols::rna::movers::RNA_LoopCloser >();
 		rna_loop_closer_init_->set_atom_level_domain_map( rna_chunk_initialization_library_->atom_level_domain_map() );
 	}
 
 	// MasterMover handles fragments, jumps, chunks, docking
-	rna_denovo_master_mover_ = RNA_DeNovoMasterMoverOP( new RNA_DeNovoMasterMover( options_, atom_level_domain_map_,
+	rna_denovo_master_mover_ = utility::pointer::make_shared< RNA_DeNovoMasterMover >( options_, atom_level_domain_map_,
 		rna_base_pair_handler_, rna_loop_closer_,
 		rna_chunk_library_,
-		denovo_scorefxn_->clone() ) );
+		denovo_scorefxn_->clone()
+	);
 
 	if ( options_->initial_structures_provided() ) {
-		rna_denovo_master_mover_init_ = RNA_DeNovoMasterMoverOP( new RNA_DeNovoMasterMover( options_,
+		rna_denovo_master_mover_init_ = utility::pointer::make_shared< RNA_DeNovoMasterMover >( options_,
 			rna_chunk_initialization_library_->atom_level_domain_map(),
 			rna_base_pair_handler_, rna_loop_closer_init_,
-			rna_chunk_initialization_library_, denovo_scorefxn_->clone() ) );
+			rna_chunk_initialization_library_, denovo_scorefxn_->clone() );
 	}
 
 	if ( options_->dock_each_chunk_per_chain() && (options_->helical_substruct_res().size() > 0) ) {
@@ -576,30 +577,30 @@ RNA_FragmentMonteCarlo::initialize_movers( core::pose::Pose const & pose ) {
 		if ( options_->move_first_rigid_body() || options_->dock_into_density() ) {
 			move_first_rigid_body = true;
 		}
-		rna_helix_mover_ = protocols::rna::denovo::movers::RNA_HelixMoverOP( new protocols::rna::denovo::movers::RNA_HelixMover(
-			options_->helical_substruct_res(), rna_base_pair_handler_, move_first_rigid_body ));
+		rna_helix_mover_ = utility::pointer::make_shared< protocols::rna::denovo::movers::RNA_HelixMover >(
+			options_->helical_substruct_res(), rna_base_pair_handler_, move_first_rigid_body );
 		// check whether the helix mover actually has helices that it can move
 		// if not, don't set it in the master mover (so it will never be called)
 		rna_denovo_master_mover_->set_rna_helix_mover( rna_helix_mover_ );
 	}
 
 	if ( options_->relax_structure() || options_->minimize_structure() ) {
-		rna_minimizer_ = RNA_MinimizerOP( new RNA_Minimizer( options_ ) );
+		rna_minimizer_ = utility::pointer::make_shared< RNA_Minimizer >( options_ );
 		rna_minimizer_->set_score_function( hires_scorefxn_ );
 		rna_minimizer_->set_atom_level_domain_map( atom_level_domain_map_ );
 
-		rna_relaxer_ = RNA_RelaxerOP( new RNA_Relaxer( rna_denovo_master_mover_->rna_fragment_mover(), rna_minimizer_) );
+		rna_relaxer_ = utility::pointer::make_shared< RNA_Relaxer >( rna_denovo_master_mover_->rna_fragment_mover(), rna_minimizer_);
 		rna_relaxer_->simple_rmsd_cutoff_relax( options_->simple_rmsd_cutoff_relax() );
 	}
 
 	// separate dependency on minimize_structure?
 	if ( is_rna_and_protein_ && options_->minimize_structure() && options_->rnp_high_res_relax() ) {
-		rnp_high_res_mover_ = RNP_HighResMoverOP( new RNP_HighResMover( rna_denovo_master_mover_->rna_fragment_mover(), rna_loop_closer_, options_ ));
+		rnp_high_res_mover_ = utility::pointer::make_shared< RNP_HighResMover >( rna_denovo_master_mover_->rna_fragment_mover(), rna_loop_closer_, options_ );
 		rnp_high_res_mover_->initialize( pose );
 	}
 
 	if ( outputter_ == nullptr ) {
-		outputter_ = output::RNA_FragmentMonteCarloOutputterOP( new output::RNA_FragmentMonteCarloOutputter( options_, align_pose_ ) );
+		outputter_ = utility::pointer::make_shared< output::RNA_FragmentMonteCarloOutputter >( options_, align_pose_ );
 	}
 }
 ////////////////////////////////////////////////////////////////////////////
@@ -1101,7 +1102,7 @@ RNA_FragmentMonteCarlo::randomize_and_close_all_chains( core::pose::Pose & pose 
 	options_chainbreak->set_skip_o2prime_trials( true );
 	options_chainbreak->set_protein_packing( false );
 
-	RNA_MinimizerOP chainbreak_rna_min_ = RNA_MinimizerOP( new RNA_Minimizer( options_chainbreak ) );
+	RNA_MinimizerOP chainbreak_rna_min_ = utility::pointer::make_shared< RNA_Minimizer >( options_chainbreak );
 	chainbreak_rna_min_->set_score_function( chainbreak_sfxn_ );
 	chainbreak_rna_min_->set_atom_level_domain_map( rna_chunk_initialization_library_->atom_level_domain_map() );
 	chainbreak_rna_min_->set_skip_chi_min( true );

@@ -53,8 +53,8 @@ public:
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & ) override;
-	protocols::moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new MapHotspot( *this ) ) ); }
-	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new MapHotspot ); }
+	protocols::moves::MoverOP clone() const override { return( utility::pointer::make_shared< MapHotspot >( *this ) ); }
+	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< MapHotspot >(); }
 	void output_pose( core::pose::Pose const & pose ) const;
 	RotamerSetOP create_rotamer_set( core::pose::Pose const &, core::Size const hotspot_resnum, core::Size const explosion ) const;
 	virtual ~MapHotspot();

@@ -62,10 +62,10 @@ public:
 	find_helix_vector( core::pose::Pose const & pose, core::Size start, core::Size end  ) const;
 
 	filters::FilterOP clone() const override {
-		return filters::FilterOP( new HelixHelixAngleFilter( *this ) );
+		return utility::pointer::make_shared< HelixHelixAngleFilter >( *this );
 	}
 	filters::FilterOP fresh_instance() const override {
-		return filters::FilterOP( new HelixHelixAngleFilter() );
+		return utility::pointer::make_shared< HelixHelixAngleFilter >();
 	}
 
 	virtual ~HelixHelixAngleFilter();

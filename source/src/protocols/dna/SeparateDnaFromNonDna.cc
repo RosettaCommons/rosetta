@@ -46,7 +46,7 @@ static basic::Tracer TR( "protocols.dna.SeparateDnaFromNonDna", basic::t_info );
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP SeparateDnaFromNonDnaCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new SeparateDnaFromNonDna );
+// XRW TEMP  return utility::pointer::make_shared< SeparateDnaFromNonDna >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -195,14 +195,14 @@ void SeparateDnaFromNonDna::parse_my_tag(
 moves::MoverOP
 SeparateDnaFromNonDna::fresh_instance() const
 {
-	return moves::MoverOP( new SeparateDnaFromNonDna );
+	return utility::pointer::make_shared< SeparateDnaFromNonDna >();
 }
 
 /// @brief required in the context of the parser/scripting scheme
 moves::MoverOP
 SeparateDnaFromNonDna::clone() const
 {
-	return moves::MoverOP( new SeparateDnaFromNonDna( *this ) );
+	return utility::pointer::make_shared< SeparateDnaFromNonDna >( *this );
 }
 
 std::string SeparateDnaFromNonDna::get_name() const {
@@ -226,7 +226,7 @@ std::string SeparateDnaFromNonDnaCreator::keyname() const {
 
 protocols::moves::MoverOP
 SeparateDnaFromNonDnaCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SeparateDnaFromNonDna );
+	return utility::pointer::make_shared< SeparateDnaFromNonDna >();
 }
 
 void SeparateDnaFromNonDnaCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

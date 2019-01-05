@@ -42,12 +42,12 @@ DeNovoArchitectFactory::DeNovoArchitectFactory():
 	creators_()
 {
 	// eventually, use registrators, but for now we can just put the creators here
-	add_creator( DeNovoArchitectCreatorOP( new BetaSheetArchitectCreator ) );
-	add_creator( DeNovoArchitectCreatorOP( new BlueprintArchitectCreator ) );
-	add_creator( DeNovoArchitectCreatorOP( new CompoundArchitectCreator ) );
-	add_creator( DeNovoArchitectCreatorOP( new HelixArchitectCreator ) );
-	add_creator( DeNovoArchitectCreatorOP( new PoseArchitectCreator ) );
-	add_creator( DeNovoArchitectCreatorOP( new StrandArchitectCreator ) );
+	add_creator( utility::pointer::make_shared< BetaSheetArchitectCreator >() );
+	add_creator( utility::pointer::make_shared< BlueprintArchitectCreator >() );
+	add_creator( utility::pointer::make_shared< CompoundArchitectCreator >() );
+	add_creator( utility::pointer::make_shared< HelixArchitectCreator >() );
+	add_creator( utility::pointer::make_shared< PoseArchitectCreator >() );
+	add_creator( utility::pointer::make_shared< StrandArchitectCreator >() );
 }
 
 DeNovoArchitectFactory::~DeNovoArchitectFactory() = default;

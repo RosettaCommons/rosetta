@@ -165,14 +165,14 @@ DeclareStructureDataCovalentBondMover::parse_my_tag(
 moves::MoverOP
 DeclareStructureDataCovalentBondMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new DeclareStructureDataCovalentBondMover );
+	return utility::pointer::make_shared< DeclareStructureDataCovalentBondMover >();
 }
 
 /// @brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
 DeclareStructureDataCovalentBondMover::clone() const
 {
-	return protocols::moves::MoverOP( new DeclareStructureDataCovalentBondMover( *this ) );
+	return utility::pointer::make_shared< DeclareStructureDataCovalentBondMover >( *this );
 }
 
 // XRW TEMP std::string
@@ -196,7 +196,7 @@ DeclareStructureDataCovalentBondMover::clone() const
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP DeclareStructureDataCovalentBondMoverCreator::create_mover() const
 // XRW TEMP {
-// XRW TEMP  return protocols::moves::MoverOP( new DeclareStructureDataCovalentBondMover );
+// XRW TEMP  return utility::pointer::make_shared< DeclareStructureDataCovalentBondMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -230,7 +230,7 @@ std::string DeclareStructureDataCovalentBondMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 DeclareStructureDataCovalentBondMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new DeclareStructureDataCovalentBondMover );
+	return utility::pointer::make_shared< DeclareStructureDataCovalentBondMover >();
 }
 
 void DeclareStructureDataCovalentBondMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

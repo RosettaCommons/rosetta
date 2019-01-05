@@ -73,7 +73,7 @@ SymmetricRMSMover::apply( core::pose::Pose & pose )
 		core::Real const rms( core::scoring::rmsd_with_super_subset( *get_native_pose(), pose, superpos, core::scoring::is_protein_CA ) );
 		score_map[ "rms" ] = rms;
 		using namespace basic::datacache;
-		pose.data().set(core::pose::datacache::CacheableDataType::SCORE_MAP, DataCache_CacheableData::DataOP( new basic::datacache::DiagnosticData( score_map ) ));
+		pose.data().set(core::pose::datacache::CacheableDataType::SCORE_MAP, utility::pointer::make_shared< basic::datacache::DiagnosticData >( score_map ));
 	}
 
 }

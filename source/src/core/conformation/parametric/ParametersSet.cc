@@ -79,7 +79,7 @@ ParametersSet::~ParametersSet() = default;
 ParametersSetOP
 ParametersSet::clone() const
 {
-	return ParametersSetOP( new ParametersSet( *this ) );
+	return utility::pointer::make_shared< ParametersSet >( *this );
 }
 
 /// @brief Only for copying Conformation objects, this ensures that the new ParametersSet object's

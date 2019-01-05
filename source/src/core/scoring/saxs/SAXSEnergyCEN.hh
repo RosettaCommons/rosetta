@@ -41,7 +41,7 @@ public:
 
 	/// c-tor
 	SAXSEnergyCEN() : SAXSEnergy( cen_cfg_file_,
-		chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::CENTROID),saxs_cen_score,methods::EnergyMethodCreatorOP( new SAXSEnergyCreatorCEN )) {}
+		chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::CENTROID),saxs_cen_score,utility::pointer::make_shared< SAXSEnergyCreatorCEN >()) {}
 
 };
 

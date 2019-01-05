@@ -60,13 +60,13 @@ MakeAsymmetricStructureDataMover::parse_my_tag(
 protocols::moves::MoverOP
 MakeAsymmetricStructureDataMover::clone() const
 {
-	return protocols::moves::MoverOP( new MakeAsymmetricStructureDataMover( *this ) );
+	return utility::pointer::make_shared< MakeAsymmetricStructureDataMover >( *this );
 }
 
 protocols::moves::MoverOP
 MakeAsymmetricStructureDataMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new MakeAsymmetricStructureDataMover );
+	return utility::pointer::make_shared< MakeAsymmetricStructureDataMover >();
 }
 
 // XRW TEMP std::string
@@ -142,7 +142,7 @@ MakeAsymmetricStructureDataMover::apply( core::pose::Pose & pose )
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP MakeAsymmetricStructureDataMoverCreator::create_mover() const
 // XRW TEMP {
-// XRW TEMP  return protocols::moves::MoverOP( new MakeAsymmetricStructureDataMover );
+// XRW TEMP  return utility::pointer::make_shared< MakeAsymmetricStructureDataMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -172,7 +172,7 @@ std::string MakeAsymmetricStructureDataMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 MakeAsymmetricStructureDataMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MakeAsymmetricStructureDataMover );
+	return utility::pointer::make_shared< MakeAsymmetricStructureDataMover >();
 }
 
 void MakeAsymmetricStructureDataMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

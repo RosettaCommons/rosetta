@@ -27,7 +27,7 @@ std::string ResidueLoaderOptionsCreator::options_type() const
 
 basic::resource_manager::ResourceOptionsOP ResidueLoaderOptionsCreator::create_options() const
 {
-	return basic::resource_manager::ResourceOptionsOP( new ResidueLoaderOptions );
+	return utility::pointer::make_shared< ResidueLoaderOptions >();
 }
 
 

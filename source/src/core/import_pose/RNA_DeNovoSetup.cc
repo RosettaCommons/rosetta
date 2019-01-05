@@ -141,7 +141,7 @@ dump_stems( RNA_SecStruct const & working_secstruct, std::string const & working
 
 //Constructor
 RNA_DeNovoSetup::RNA_DeNovoSetup():
-	options_( options::RNA_DeNovoProtocolOptionsOP( new options::RNA_DeNovoProtocolOptions ) )
+	options_( utility::pointer::make_shared< options::RNA_DeNovoProtocolOptions >() )
 {}
 
 //Destructor
@@ -393,7 +393,7 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 		vector1< int > res_numbers_in_pose;
 		for ( Size n = 1; n <= sequence.size(); n++ ) res_numbers_in_pose.push_back( n + offset );
 		core::import_pose::get_extra_cutpoints_from_names( sequence.size(), cutpoint_open_in_full_model, non_standard_residue_map );
-		full_model_parameters = FullModelParametersOP( new FullModelParameters( sequence, cutpoint_open_in_full_model, res_numbers_in_pose ) );
+		full_model_parameters = utility::pointer::make_shared< FullModelParameters >( sequence, cutpoint_open_in_full_model, res_numbers_in_pose );
 		full_model_parameters->set_non_standard_residue_map( non_standard_residue_map );
 		Size chain_num( 1 ), res( 0 );
 		utility::vector1< char > chains; utility::vector1< Size > resnum;
@@ -878,7 +878,7 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 	////////////////////////
 	std::string const in_path = opts[ in::path::path ]()[1];
 	Pose full_pose;
-	pose_ = PoseOP( new Pose );
+	pose_ = utility::pointer::make_shared< Pose >();
 	std::string const full_annotated_sequence = full_model_parameters->full_annotated_sequence();
 	make_pose_from_sequence( full_pose, full_annotated_sequence, *rsd_set_ );
 	set_output_res_and_chain( full_pose, std::make_tuple( full_model_parameters->conventional_numbering(),
@@ -931,7 +931,7 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 		pdbslice( *native_pose_, working_res );
 	} else if ( opts[ OptionKeys::rna::denovo::working_native ].user() ) {
 		std::string native_pdb_file  = opts[ OptionKeys::rna::denovo::working_native ];
-		native_pose_ = PoseOP( new Pose );
+		native_pose_ = utility::pointer::make_shared< Pose >();
 		core::import_pose::pose_from_file( *native_pose_, *rsd_set_, in_path + native_pdb_file , core::import_pose::PDB_file);
 		if ( option[ basic::options::OptionKeys::edensity::mapfile ].user() ) {
 			core::pose::addVirtualResAsRoot( *native_pose_ );
@@ -963,7 +963,7 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 	if ( opts[ OptionKeys::constraints::cst_file ].user() ) {
 		ConstraintSetOP cst_set( new ConstraintSet );
 		//opts[ OptionKeys::constraints::force_pdb_info_mapping ].def( true ); // using option as global variable due to difficulty in dealing with static functions.
-		cst_set = ConstraintIO::get_instance()->read_constraints( opts[ OptionKeys::constraints::cst_file ](1), ConstraintSetOP( new ConstraintSet ), full_pose, true /*force_pdb_info_mapping*/ );
+		cst_set = ConstraintIO::get_instance()->read_constraints( opts[ OptionKeys::constraints::cst_file ](1), utility::pointer::make_shared< ConstraintSet >(), full_pose, true /*force_pdb_info_mapping*/ );
 		full_pose.constraint_set( cst_set );
 		id::SequenceMappingOP sequence_map( new id::SequenceMapping( working_res ) );
 		sequence_map->reverse();
@@ -983,10 +983,10 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 				//        cst_file_outstring +=  " O3* %d  C5* %d   FADE %6.3f  %6.3f  %6.3f %6.3f %6.3f \n" %
 				//            ( cst_gap[0], cst_gap[1],  -stdev, max_dist, stdev, -1*bonus, bonus)
 				FuncOP distance_func( new FadeFunc( -stdev, max_dist, stdev, -1.0*bonus, bonus ) );
-				pose_->add_constraint( ConstraintCOP( ConstraintOP( new AtomPairConstraint(
+				pose_->add_constraint( ConstraintCOP( utility::pointer::make_shared< AtomPairConstraint >(
 					named_atom_id_to_atom_id( NamedAtomID( " O3'",m), *pose_),
 					named_atom_id_to_atom_id( NamedAtomID( " C5'",m+1), *pose_),
-					distance_func ) ) ) );
+					distance_func ) ) );
 			}
 		}
 	}
@@ -1226,10 +1226,10 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 			if ( option[ OptionKeys::rna::denovo::fold_tree_from_silent_file_tag ].user() ) {
 				utility::vector1< std::string > filename_vector;
 				filename_vector.push_back( ft_silent_file );
-				input = core::import_pose::pose_stream::SilentFilePoseInputStreamOP( new core::import_pose::pose_stream::SilentFilePoseInputStream( filename_vector,
-					option[ OptionKeys::rna::denovo::fold_tree_from_silent_file_tag ]() ));
+				input = utility::pointer::make_shared< core::import_pose::pose_stream::SilentFilePoseInputStream >( filename_vector,
+					option[ OptionKeys::rna::denovo::fold_tree_from_silent_file_tag ]() );
 			} else {
-				input = core::import_pose::pose_stream::SilentFilePoseInputStreamOP( new core::import_pose::pose_stream::SilentFilePoseInputStream( ft_silent_file ));
+				input = utility::pointer::make_shared< core::import_pose::pose_stream::SilentFilePoseInputStream >( ft_silent_file );
 			}
 
 			int pose_count = 1;
@@ -1256,7 +1256,7 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 	///////////////////////////////////
 	// package above into params
 	///////////////////////////////////
-	rna_params_ = RNA_DeNovoParametersOP( new RNA_DeNovoParameters );
+	rna_params_ = utility::pointer::make_shared< RNA_DeNovoParameters >();
 	rna_params_->set_rna_pairing_list( rna_pairing_list );
 	rna_params_->set_obligate_pairing_sets( working_obligate_pair_sets );
 	rna_params_->set_stem_pairing_sets( working_stem_pairing_sets );
@@ -1284,7 +1284,7 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 	//if ( opts[ in::file::native ].user() ) {
 	// //Read in native if it exists.
 	// std::string native_pdb_file  = opts[ in::file::native ]();
-	// native_pose_ = PoseOP( new Pose );
+	// native_pose_ = utility::pointer::make_shared< Pose >();
 	// core::import_pose::pose_from_file( *native_pose_, *rsd_set_, in_path + native_pdb_file , core::import_pose::PDB_file);
 	// pdbslice( *native_pose_, working_res );
 	// // set the pose equal to the native pose if user wants to refine_native
@@ -1294,7 +1294,7 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 	// }
 	//} else if ( opts[ OptionKeys::rna::denovo::working_native ].user() ) {
 	// std::string native_pdb_file  = opts[ OptionKeys::rna::denovo::working_native ];
-	// native_pose_ = PoseOP( new Pose );
+	// native_pose_ = utility::pointer::make_shared< Pose >();
 	// core::import_pose::pose_from_file( *native_pose_, *rsd_set_, in_path + native_pdb_file , core::import_pose::PDB_file);
 	//} else {
 	// runtime_assert( !opts[ OptionKeys::rna::denovo::refine_native ]() );
@@ -1374,7 +1374,7 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line_legacy()
 
 	if ( option[ in::file::native ].user() ) {
 		//Read in native if it exists.
-		native_pose_ = pose::PoseOP( new pose::Pose );
+		native_pose_ = utility::pointer::make_shared< pose::Pose >();
 		pose::Pose & native_pose = *native_pose_;
 		std::string native_pdb_file  = option[ in::file::native ]();
 		core::import_pose::pose_from_file( native_pose, *rsd_set_, in_path + native_pdb_file , core::import_pose::PDB_file);
@@ -1383,7 +1383,7 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line_legacy()
 	}
 
 	//Prepare starting structure from scratch --> read from fasta.
-	pose_ = PoseOP( new Pose );
+	pose_ = utility::pointer::make_shared< Pose >();
 	if ( option[ OptionKeys::rna::denovo::refine_native ]() ) {
 		pose_ = native_pose_->clone();
 	} else {
@@ -1398,7 +1398,7 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line_legacy()
 	TR.Debug << pose_->sequence() << std::endl;
 
 	if ( option[ OptionKeys::constraints::cst_file ].user() ) {
-		ConstraintSetOP cst_set = ConstraintIO::get_instance()->read_constraints( option[ OptionKeys::constraints::cst_file ](1), ConstraintSetOP( new ConstraintSet ), *pose_ );
+		ConstraintSetOP cst_set = ConstraintIO::get_instance()->read_constraints( option[ OptionKeys::constraints::cst_file ](1), utility::pointer::make_shared< ConstraintSet >(), *pose_ );
 		pose_->constraint_set( cst_set );
 	}
 
@@ -1407,7 +1407,7 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line_legacy()
 		rna_data_reader.fill_rna_data_info( *pose_ );
 	}
 
-	rna_params_ = RNA_DeNovoParametersOP( new RNA_DeNovoParameters( options_->rna_params_file() ) );
+	rna_params_ = utility::pointer::make_shared< RNA_DeNovoParameters >( options_->rna_params_file() );
 }
 
 ///////////////////////////////////////////////////////////////
@@ -1453,10 +1453,10 @@ RNA_DeNovoSetup::get_refine_pose_list( std::string const & input_silent_file,
 		if ( option[ OptionKeys::rna::denovo::refine_silent_tags ].user() ) {
 			utility::vector1< std::string > filename_vector;
 			filename_vector.push_back( input_silent_file );
-			input = SilentFilePoseInputStreamOP( new SilentFilePoseInputStream( filename_vector,
-				option[ OptionKeys::rna::denovo::refine_silent_tags ]() ));
+			input = utility::pointer::make_shared< SilentFilePoseInputStream >( filename_vector,
+				option[ OptionKeys::rna::denovo::refine_silent_tags ]() );
 		} else {
-			input = SilentFilePoseInputStreamOP( new SilentFilePoseInputStream( input_silent_file ));
+			input = utility::pointer::make_shared< SilentFilePoseInputStream >( input_silent_file );
 		}
 
 		int pose_count = 1;

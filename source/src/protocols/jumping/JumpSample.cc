@@ -79,7 +79,7 @@ ChainbreakDistFunc::ChainbreakDistFunc( Real const x0_in ) : d2target_( x0_in*x0
 ChainbreakDistFunc::~ChainbreakDistFunc() = default;
 
 core::scoring::func::FuncOP
-ChainbreakDistFunc::clone() const { return core::scoring::func::FuncOP( new ChainbreakDistFunc( *this ) ); }
+ChainbreakDistFunc::clone() const { return utility::pointer::make_shared< ChainbreakDistFunc >( *this ); }
 
 bool
 ChainbreakDistFunc::operator == ( core::scoring::func::Func const & other ) const {
@@ -221,7 +221,7 @@ JumpSample::correct_jump_atoms_for_fragments() const {
 void
 JumpSample::generate_tree_from_jumps_and_cuts( Size root) {
 	if ( total_residue_ == 0 ) total_residue_ = 2500; //don't make it too big.. it alloates an FArray1bool in fold-tree with this size
-	fold_tree_ = core::kinematics::FoldTreeOP( new kinematics::FoldTree );
+	fold_tree_ = utility::pointer::make_shared< kinematics::FoldTree >();
 	bValidTree_ = fold_tree_->tree_from_jumps_and_cuts( total_residue_, njump_, jumps_, cuts_, root, true /* verbose */ );
 	if ( bValidTree_ ) correct_jump_atoms_for_fragments();
 }
@@ -237,7 +237,7 @@ JumpSample::jumps2pairings() {
 void
 JumpSample::generate_random_tree_from_jumps( FArray1D_float const& prob, Size root ) {
 	if ( total_residue_ == 0 ) total_residue_ = 2500;
-	fold_tree_ = core::kinematics::FoldTreeOP( new kinematics::FoldTree );
+	fold_tree_ = utility::pointer::make_shared< kinematics::FoldTree >();
 	bValidTree_ = false;
 	Size attempts( 10 );
 	while ( !bValidTree_ && attempts-- > 0 )  {
@@ -262,7 +262,7 @@ JumpSample::generate_random_tree_from_jumps( FArray1D_float const& prob, Size ro
 }
 
 JumpSample::JumpSample( kinematics::FoldTree const& f ) {
-	apply_to( core::kinematics::FoldTreeOP( new kinematics::FoldTree( f ) ) );
+	apply_to( utility::pointer::make_shared< kinematics::FoldTree >( f ) );
 	correct_jump_atoms_for_fragments();
 }
 
@@ -398,8 +398,8 @@ JumpSample::generate_jump_frames(
 				BBTorsionSRFDOP start( new BBTorsionSRFD( 3, 'E', 'X' ) );
 				frag_data->add_residue( start );
 			}
-			frag_data->add_residue( SingleResidueFragDataOP( new UpJumpSRFD ) );
-			frag_data->add_residue( SingleResidueFragDataOP( new DownJumpSRFD ) );
+			frag_data->add_residue( utility::pointer::make_shared< UpJumpSRFD >() );
+			frag_data->add_residue( utility::pointer::make_shared< DownJumpSRFD >() );
 
 			if ( bWithTorsion && mm.get_bb( down_jump_res ) ) {
 				BBTorsionSRFDOP stop( new BBTorsionSRFD( 3, 'E', 'X' ) );
@@ -546,11 +546,11 @@ JumpSample::add_chainbreaks_as_distance_constraint( pose::Pose &pose ) const {
 	for ( Size i = 1; i<= njump_; i++ ) {
 		core::scoring::func::FuncOP f( new ChainbreakDistFunc( 1.7424 ) );
 		pose.add_constraint(
-			scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint(
+			scoring::constraints::ConstraintCOP( utility::pointer::make_shared< AtomPairConstraint >(
 			id::AtomID( pose.residue(cuts_(i)    ).atom_index("C"), cuts_(i)    ),
 			id::AtomID( pose.residue(cuts_(i) + 1).atom_index("N"), cuts_(i) + 1),
 			f
-			) ) )
+			) )
 		);
 	}
 }
@@ -566,11 +566,11 @@ JumpSample::add_chainbreaks_as_distance_constraint(
 		if ( sp.dist( cuts_(i), cuts_(i)+1 ) <= max_dist ) {
 			tr.Debug << "add chainbreak as distance constraint to residues " << cuts_(i) << " and " << cuts_(i)+1 << std::endl;
 			core::scoring::func::FuncOP f( new ChainbreakDistFunc( 1.7424 ) );
-			pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint(
+			pose.add_constraint( scoring::constraints::ConstraintCOP( utility::pointer::make_shared< AtomPairConstraint >(
 				id::AtomID( pose.residue(cuts_(i)    ).atom_index("C"), cuts_(i)    ),
 				id::AtomID( pose.residue(cuts_(i) + 1).atom_index("N"), cuts_(i) + 1),
 				f
-				) ) ) );
+				) ) );
 		}
 	}
 }

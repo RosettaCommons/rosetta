@@ -56,7 +56,7 @@ using core::pack::task::operation::RestrictToRepackingRLT;
 ////////////////// Creator ////////////////
 TaskOperationOP
 RestrictToTerminiOperationCreator::create_task_operation() const {
-	return TaskOperationOP( new RestrictToTerminiOperation );
+	return utility::pointer::make_shared< RestrictToTerminiOperation >();
 }
 
 void RestrictToTerminiOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -93,7 +93,7 @@ RestrictToTerminiOperation::~RestrictToTerminiOperation() = default;
 
 TaskOperationOP
 RestrictToTerminiOperation::clone() const {
-	return TaskOperationOP( new RestrictToTerminiOperation( *this ) );
+	return utility::pointer::make_shared< RestrictToTerminiOperation >( *this );
 }
 
 /// @brief restrict to pack only the N and/or C-termini

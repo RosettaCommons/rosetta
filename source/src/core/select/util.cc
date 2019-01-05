@@ -90,7 +90,7 @@ get_residue_selector_from_subset(
 	utility::vector1<Size> seq_pos = get_residues_from_subset( subset );
 	std::string res_string = utility::join( seq_pos, "," );
 
-	return residue_selector::ResidueIndexSelectorOP( new residue_selector::ResidueIndexSelector( res_string ) );
+	return utility::pointer::make_shared< residue_selector::ResidueIndexSelector >( res_string );
 }
 
 utility::vector1< bool >

@@ -293,7 +293,7 @@ void GasteigerAtomTypeData::initialize() {
 //! @return pointer to new GasteigerAtomTypeData
 GasteigerAtomTypeDataOP GasteigerAtomTypeData::Clone() const
 {
-	return GasteigerAtomTypeDataOP( new GasteigerAtomTypeData( *this) );
+	return utility::pointer::make_shared< GasteigerAtomTypeData >( *this);
 }
 
 /////////////////

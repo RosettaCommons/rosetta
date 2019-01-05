@@ -60,7 +60,7 @@ namespace rna {
 methods::EnergyMethodOP
 RNA_JR_SuiteEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
-) const { return methods::EnergyMethodOP( new RNA_JR_SuiteEnergy ); }
+) const { return utility::pointer::make_shared< RNA_JR_SuiteEnergy >(); }
 
 ScoreTypes
 RNA_JR_SuiteEnergyCreator::score_types_for_method() const {
@@ -71,12 +71,12 @@ RNA_JR_SuiteEnergyCreator::score_types_for_method() const {
 
 /// ctor
 RNA_JR_SuiteEnergy::RNA_JR_SuiteEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new RNA_JR_SuiteEnergyCreator ) )
+	parent( utility::pointer::make_shared< RNA_JR_SuiteEnergyCreator >() )
 {}
 
 /// clone
 methods::EnergyMethodOP
-RNA_JR_SuiteEnergy::clone() const { return methods::EnergyMethodOP( new RNA_JR_SuiteEnergy ); }
+RNA_JR_SuiteEnergy::clone() const { return utility::pointer::make_shared< RNA_JR_SuiteEnergy >(); }
 
 ///////////////////////////////////////////////////////////////////////////////
 void

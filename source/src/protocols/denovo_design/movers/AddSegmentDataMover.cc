@@ -78,13 +78,13 @@ AddSegmentDataMover::parse_my_tag(
 protocols::moves::MoverOP
 AddSegmentDataMover::clone() const
 {
-	return protocols::moves::MoverOP( new AddSegmentDataMover( *this ) );
+	return utility::pointer::make_shared< AddSegmentDataMover >( *this );
 }
 
 protocols::moves::MoverOP
 AddSegmentDataMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new AddSegmentDataMover );
+	return utility::pointer::make_shared< AddSegmentDataMover >();
 }
 
 // XRW TEMP std::string
@@ -149,7 +149,7 @@ AddSegmentDataMover::create_segment( components::StructureData & perm ) const
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP AddSegmentDataMoverCreator::create_mover() const
 // XRW TEMP {
-// XRW TEMP  return protocols::moves::MoverOP( new AddSegmentDataMover );
+// XRW TEMP  return utility::pointer::make_shared< AddSegmentDataMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -183,7 +183,7 @@ std::string AddSegmentDataMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 AddSegmentDataMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new AddSegmentDataMover );
+	return utility::pointer::make_shared< AddSegmentDataMover >();
 }
 
 void AddSegmentDataMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

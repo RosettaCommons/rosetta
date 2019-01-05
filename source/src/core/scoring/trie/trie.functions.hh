@@ -94,7 +94,7 @@ create_trie(
 
 	sort( rotamer_descriptors.begin(), rotamer_descriptors.end() );
 
-	RotamerTrieBaseOP newtrie = RotamerTrieBaseOP( new RotamerTrie< AT, CPDAT >( rotamer_descriptors, atomic_interaction_cutoff ) );
+	RotamerTrieBaseOP newtrie = utility::pointer::make_shared< RotamerTrie< AT, CPDAT > >( rotamer_descriptors, atomic_interaction_cutoff );
 	for ( Size ii = 1; ii <= cpdata_map.n_entries(); ++ii ) {
 		newtrie->set_resid_2_connection_entry( cpdata_map.resid_for_entry( ii ), ii );
 	}
@@ -154,7 +154,7 @@ create_trie(
 	}
 	rotamer_descriptor[ 1 ].rotamer_id( 1 );
 
-	RotamerTrieBaseOP newtrie = RotamerTrieBaseOP( new RotamerTrie< AT, CPDAT >( rotamer_descriptor, atomic_interaction_cutoff ) );
+	RotamerTrieBaseOP newtrie = utility::pointer::make_shared< RotamerTrie< AT, CPDAT > >( rotamer_descriptor, atomic_interaction_cutoff );
 	for ( Size ii = 1; ii <= cpdata_map.n_entries(); ++ii ) {
 		newtrie->set_resid_2_connection_entry( cpdata_map.resid_for_entry( ii ), ii );
 	}
@@ -234,7 +234,7 @@ create_trie(
 
 	sort( rotamer_descriptors.begin(), rotamer_descriptors.end() );
 
-	RotamerTrieBaseOP newtrie = RotamerTrieBaseOP( new RotamerTrie< AT, CPDAT >( rotamer_descriptors, atomic_interaction_cutoff ) );
+	RotamerTrieBaseOP newtrie = utility::pointer::make_shared< RotamerTrie< AT, CPDAT > >( rotamer_descriptors, atomic_interaction_cutoff );
 	for ( Size ii = 1; ii <= cpdata_map.n_entries(); ++ii ) {
 		newtrie->set_resid_2_connection_entry( cpdata_map.resid_for_entry( ii ), ii );
 	}
@@ -291,7 +291,7 @@ create_trie(
 	}
 	rotamer_descriptor[ 1 ].rotamer_id( 1 );
 
-	RotamerTrieBaseOP newtrie = RotamerTrieBaseOP( new RotamerTrie< AT, CPDAT >( rotamer_descriptor, atomic_interaction_cutoff ) );
+	RotamerTrieBaseOP newtrie = utility::pointer::make_shared< RotamerTrie< AT, CPDAT > >( rotamer_descriptor, atomic_interaction_cutoff );
 	for ( Size ii = 1; ii <= cpdata_map.n_entries(); ++ii ) {
 		newtrie->set_resid_2_connection_entry( cpdata_map.resid_for_entry( ii ), ii );
 	}

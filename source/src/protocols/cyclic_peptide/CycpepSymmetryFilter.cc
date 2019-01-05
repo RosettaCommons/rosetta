@@ -104,14 +104,14 @@ CycpepSymmetryFilter::set_angle_threshold(
 protocols::filters::FilterOP
 CycpepSymmetryFilter::clone() const
 {
-	return protocols::filters::FilterOP( new CycpepSymmetryFilter( *this ) );
+	return utility::pointer::make_shared< CycpepSymmetryFilter >( *this );
 }
 
 
 protocols::filters::FilterOP
 CycpepSymmetryFilter::fresh_instance() const
 {
-	return protocols::filters::FilterOP( new CycpepSymmetryFilter );
+	return utility::pointer::make_shared< CycpepSymmetryFilter >();
 }
 
 bool
@@ -294,7 +294,7 @@ CycpepSymmetryFilter::mainchain_torsions_differ(
 protocols::filters::FilterOP
 CycpepSymmetryFilterCreator::create_filter() const
 {
-	return protocols::filters::FilterOP( new CycpepSymmetryFilter );
+	return utility::pointer::make_shared< CycpepSymmetryFilter >();
 }
 
 std::string

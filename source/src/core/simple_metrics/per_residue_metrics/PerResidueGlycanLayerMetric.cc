@@ -65,7 +65,7 @@ PerResidueGlycanLayerMetric::PerResidueGlycanLayerMetric( PerResidueGlycanLayerM
 
 core::simple_metrics::SimpleMetricOP
 PerResidueGlycanLayerMetric::clone() const {
-	return core::simple_metrics::SimpleMetricOP(new PerResidueGlycanLayerMetric( *this ) );
+	return utility::pointer::make_shared< PerResidueGlycanLayerMetric >( *this );
 
 }
 
@@ -136,7 +136,7 @@ PerResidueGlycanLayerMetricCreator::keyname() const {
 
 core::simple_metrics::SimpleMetricOP
 PerResidueGlycanLayerMetricCreator::create_simple_metric() const {
-	return core::simple_metrics::SimpleMetricOP( new PerResidueGlycanLayerMetric );
+	return utility::pointer::make_shared< PerResidueGlycanLayerMetric >();
 
 }
 

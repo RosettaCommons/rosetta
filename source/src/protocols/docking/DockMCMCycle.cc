@@ -128,13 +128,13 @@ DockMCMCycle::~DockMCMCycle() = default;
 
 //clone
 protocols::moves::MoverOP DockMCMCycle::clone() const {
-	return protocols::moves::MoverOP( new DockMCMCycle(*this) );
+	return utility::pointer::make_shared< DockMCMCycle >(*this);
 }
 
 void
 DockMCMCycle::set_task_factory( core::pack::task::TaskFactoryCOP tf )
 {
-	tf_ = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory( *tf ) );
+	tf_ = utility::pointer::make_shared< core::pack::task::TaskFactory >( *tf );
 }
 
 void DockMCMCycle::set_default()
@@ -166,7 +166,7 @@ void DockMCMCycle::set_default()
 	}
 
 	// setup the movemap
-	movemap_ = core::kinematics::MoveMapOP( new kinematics::MoveMap() );
+	movemap_ = utility::pointer::make_shared< kinematics::MoveMap >();
 	movemap_->set_chi( false );
 	movemap_->set_bb( false );
 	for ( DockJumps::const_iterator it = movable_jumps_.begin(); it != movable_jumps_.end(); ++it ) {
@@ -190,8 +190,8 @@ void DockMCMCycle::set_default()
 	nb_list_ = true;
 
 	// setup the mc object
-	mc_ = moves::MonteCarloOP( new moves::MonteCarlo( *scorefxn_, 0.8 ) );
-	tf_ = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory );
+	mc_ = utility::pointer::make_shared< moves::MonteCarlo >( *scorefxn_, 0.8 );
+	tf_ = utility::pointer::make_shared< core::pack::task::TaskFactory >();
 
 	// packing information
 	repack_period_ = 8;
@@ -322,7 +322,7 @@ void DockMCMCycle::setup_protocol( core::pose::Pose & pose ) {
 	//JQX: define the cycle mover
 	//JQX: 1. rb_mover_min_trail (7 times)
 	//JQX: 2. repack_tep (1 time)
-	dock_mcm_cycle_ = moves::CycleMoverOP( new CycleMover );
+	dock_mcm_cycle_ = utility::pointer::make_shared< CycleMover >();
 	for ( Size i=1; i<repack_period_; ++i ) dock_mcm_cycle_->add_mover( rb_mover_min_trail );
 	dock_mcm_cycle_->add_mover( repack_step );
 

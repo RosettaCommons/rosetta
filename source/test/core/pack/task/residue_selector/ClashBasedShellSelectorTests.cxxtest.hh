@@ -86,7 +86,7 @@ public:
 				task->nonconst_residue_task(i).restrict_to_repacking();
 			}
 		}
-		auto selector = ClashBasedShellSelectorOP( new ClashBasedShellSelector( task ) );
+		auto selector = utility::pointer::make_shared< ClashBasedShellSelector >( task );
 		selector->set_include_focus(false);
 		return make_shell(selector, pose);
 	}
@@ -495,18 +495,18 @@ public:
 		// 132+135: Pymol has a rotamer pointing towards these two residues, but
 		// rosetta doesn't.
 
-		auto sele = ResidueIndexSelectorOP( new ResidueIndexSelector );
+		auto sele = utility::pointer::make_shared< ResidueIndexSelector >();
 		sele->set_index("104");
 
-		auto taskop = OperateOnResidueSubsetOP( new OperateOnResidueSubset );
-		taskop->op( ResLvlTaskOperationOP( new PreventRepackingRLT ) );
+		auto taskop = utility::pointer::make_shared< OperateOnResidueSubset >();
+		taskop->op( utility::pointer::make_shared< PreventRepackingRLT >() );
 		taskop->selector( sele );
 		taskop->flip_subset(true);
 
 		basic::datacache::DataMap data;
 		data.add("ResidueSelector", "sel_104", sele);
 		data.add("task_operations", "op_104", taskop);
-		data.add("task_operations", "no_design", RestrictToRepackingOP( new RestrictToRepacking ) );
+		data.add("task_operations", "no_design", utility::pointer::make_shared< RestrictToRepacking >() );
 
 		// Empty selector; no errors.
 		TS_ASSERT_EQUALS(

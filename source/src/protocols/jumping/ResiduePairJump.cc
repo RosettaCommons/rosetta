@@ -131,8 +131,8 @@ ResiduePairJump::ResiduePairJump(
 	core::chemical::ResidueType const & residue2
 )
 {
-	residues_.push_back( ResiduePairJumpSingleOP( new ResiduePairJumpSingle( residue1 ) ) );
-	residues_.push_back( ResiduePairJumpSingleOP( new ResiduePairJumpSingle( residue2 ) ) );
+	residues_.push_back( utility::pointer::make_shared< ResiduePairJumpSingle >( residue1 ) );
+	residues_.push_back( utility::pointer::make_shared< ResiduePairJumpSingle >( residue2 ) );
 }
 
 void
@@ -143,8 +143,8 @@ ResiduePairJump::add_residue_pair(
 {
 	residues_.clear();
 	cstInfoMap_.clear();
-	residues_.push_back( ResiduePairJumpSingleOP( new ResiduePairJumpSingle( residue1 ) ) );
-	residues_.push_back( ResiduePairJumpSingleOP( new ResiduePairJumpSingle( residue2 ) ) );
+	residues_.push_back( utility::pointer::make_shared< ResiduePairJumpSingle >( residue1 ) );
+	residues_.push_back( utility::pointer::make_shared< ResiduePairJumpSingle >( residue2 ) );
 }
 /////////////////////////////////////////////////////////////////////
 void
@@ -154,7 +154,7 @@ ResiduePairJump::add_residue_single(
 {
 	if ( residues_.size() < 2 ) {
 		cstInfoMap_.clear();
-		residues_.push_back( ResiduePairJumpSingleOP( new ResiduePairJumpSingle(residue) ) );
+		residues_.push_back( utility::pointer::make_shared< ResiduePairJumpSingle >(residue) );
 	} else {
 		utility_exit_with_message("ResiduePairJump can only take two residues\n");
 	}
@@ -236,7 +236,7 @@ ResiduePairJump::init_mini_pose()
 
 	runtime_assert( cstAtoms_defined() );
 
-	miniPose_ = core::pose::PoseOP( new core::pose::Pose() );
+	miniPose_ = utility::pointer::make_shared< core::pose::Pose >();
 
 	// initial configuration for how these two residues are connected
 	//  Real init_phi = numeric::conversions::radians(180.0);

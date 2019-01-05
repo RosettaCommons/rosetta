@@ -56,7 +56,7 @@ RestrictChainToRepackingOperation::~RestrictChainToRepackingOperation() = defaul
 
 core::pack::task::operation::TaskOperationOP RestrictChainToRepackingOperation::clone() const
 {
-	return core::pack::task::operation::TaskOperationOP( new RestrictChainToRepackingOperation( *this ) );
+	return utility::pointer::make_shared< RestrictChainToRepackingOperation >( *this );
 }
 
 void
@@ -112,7 +112,7 @@ void RestrictChainToRepackingOperation::provide_xml_schema( utility::tag::XMLSch
 core::pack::task::operation::TaskOperationOP
 RestrictChainToRepackingOperationCreator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new RestrictChainToRepackingOperation );
+	return utility::pointer::make_shared< RestrictChainToRepackingOperation >();
 }
 
 std::string RestrictChainToRepackingOperationCreator::keyname() const { return RestrictChainToRepackingOperation::keyname(); }

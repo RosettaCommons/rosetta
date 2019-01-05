@@ -72,7 +72,7 @@ std::string SymRotamerTrialsMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 SymRotamerTrialsMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SymRotamerTrialsMover );
+	return utility::pointer::make_shared< SymRotamerTrialsMover >();
 }
 
 void SymRotamerTrialsMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

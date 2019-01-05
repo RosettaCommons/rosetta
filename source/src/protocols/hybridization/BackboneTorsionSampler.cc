@@ -174,7 +174,7 @@ void BackboneTorsionSampler::apply( core::pose::Pose & pose ) {
 		task = core::pack::task::TaskFactory::create_packer_task( pose );
 		task->initialize_from_command_line().restrict_to_repacking();
 	}
-	pack_full_repack_ = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover( scorefxn_, task ) );
+	pack_full_repack_ = utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >( scorefxn_, task );
 	//task->show_all_residue_tasks();
 
 	pose.conformation().detect_disulfides();
@@ -186,7 +186,7 @@ void BackboneTorsionSampler::apply( core::pose::Pose & pose ) {
 
 	perturbed_res_ = 0;
 	for ( core::Size i_nest=1; i_nest<=n_nested_+1; ++i_nest ) {
-		mc[i_nest] = protocols::moves::MonteCarloOP( new protocols::moves::MonteCarlo( pose, *scorefxn_, temperature_ ) );
+		mc[i_nest] = utility::pointer::make_shared< protocols::moves::MonteCarlo >( pose, *scorefxn_, temperature_ );
 		mc[i_nest]->set_autotemp( false, temperature_ );
 		if ( i_nest == 1 ) {
 			ncycles[i_nest] = 10 * pose.size() * increase_cycles_;
@@ -197,9 +197,9 @@ void BackboneTorsionSampler::apply( core::pose::Pose & pose ) {
 		}
 	}
 
-	minimizer_ = core::optimization::AtomTreeMinimizerOP( new core::optimization::AtomTreeMinimizer() );
+	minimizer_ = utility::pointer::make_shared< core::optimization::AtomTreeMinimizer >();
 	//minimizer_ = new core::optimization::CartesianMinimizer();
-	options_ = core::optimization::MinimizerOptionsOP( new core::optimization::MinimizerOptions( "lbfgs_armijo_nonmonotone", 0.01, true, false, false ) );
+	options_ = utility::pointer::make_shared< core::optimization::MinimizerOptions >( "lbfgs_armijo_nonmonotone", 0.01, true, false, false );
 
 	options_->max_iter(10);
 	mm_.set_bb  ( true );
@@ -342,7 +342,7 @@ BackboneTorsionSampler::parse_my_tag(
 		residue_list_.push_back(ires);
 	}
 	if ( tag->hasOption( "native") ) {
-		native_ = core::pose::PoseOP( new core::pose::Pose );
+		native_ = utility::pointer::make_shared< core::pose::Pose >();
 		core::import_pose::pose_from_file( *native_, tag->getOption< std::string >( "native" ), core::import_pose::PDB_file);
 	}
 
@@ -376,10 +376,10 @@ BackboneTorsionSampler::parse_my_tag(
 }
 
 moves::MoverOP BackboneTorsionSampler::clone() const {
-	return moves::MoverOP( new BackboneTorsionSampler( *this ) );
+	return utility::pointer::make_shared< BackboneTorsionSampler >( *this );
 }
 moves::MoverOP BackboneTorsionSampler::fresh_instance() const {
-	return moves::MoverOP( new BackboneTorsionSampler );
+	return utility::pointer::make_shared< BackboneTorsionSampler >();
 }
 
 // XRW TEMP std::string
@@ -389,7 +389,7 @@ moves::MoverOP BackboneTorsionSampler::fresh_instance() const {
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP BackboneTorsionSamplerCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new BackboneTorsionSampler );
+// XRW TEMP  return utility::pointer::make_shared< BackboneTorsionSampler >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -445,7 +445,7 @@ std::string BackboneTorsionSamplerCreator::keyname() const {
 
 protocols::moves::MoverOP
 BackboneTorsionSamplerCreator::create_mover() const {
-	return protocols::moves::MoverOP( new BackboneTorsionSampler );
+	return utility::pointer::make_shared< BackboneTorsionSampler >();
 }
 
 void BackboneTorsionSamplerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

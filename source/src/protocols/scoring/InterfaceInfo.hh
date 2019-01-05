@@ -75,7 +75,7 @@ public:
 	basic::datacache::CacheableDataOP
 	clone() const override
 	{
-		return basic::datacache::CacheableDataOP( new InterfaceInfo( *this ) );
+		return utility::pointer::make_shared< InterfaceInfo >( *this );
 	}
 
 	/// @brief Removes all jumps from the interface calculation

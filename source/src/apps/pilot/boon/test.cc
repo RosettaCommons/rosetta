@@ -183,7 +183,7 @@ int main(int argc, char *argv[])
 		mm->set_jump(2, true);
 		mm->set_jump(5, false);
 		// create a standard scorefxn
-		core::scoring::ScoreFunctionCOP scorefxn( core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction ) );
+		core::scoring::ScoreFunctionCOP scorefxn( utility::pointer::make_shared< core::scoring::ScoreFunction >() );
 		scorefxn = core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
 		// setup other inputs
 		std::string const min_type_in = "linmin";

@@ -36,10 +36,10 @@ public :
 	RelativeSegmentFilter() : Filter( "RelativeSegment" ) {}
 	bool apply( core::pose::Pose const & pose ) const override;
 	protocols::filters::FilterOP clone() const override {
-		return protocols::filters::FilterOP( new RelativeSegmentFilter( *this ) );
+		return utility::pointer::make_shared< RelativeSegmentFilter >( *this );
 	}
 	protocols::filters::FilterOP fresh_instance() const override {
-		return protocols::filters::FilterOP( new RelativeSegmentFilter() );
+		return utility::pointer::make_shared< RelativeSegmentFilter >();
 	}
 
 	void report( std::ostream & out, core::pose::Pose const & pose ) const override;

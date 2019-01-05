@@ -31,10 +31,10 @@ public:
 	PoseComment();
 	~PoseComment() override;
 	filters::FilterOP clone() const override {
-		return filters::FilterOP( new PoseComment( *this ) );
+		return utility::pointer::make_shared< PoseComment >( *this );
 	}
 	filters::FilterOP fresh_instance() const override{
-		return filters::FilterOP( new PoseComment() );
+		return utility::pointer::make_shared< PoseComment >();
 	}
 
 	bool apply( core::pose::Pose const & pose ) const override;

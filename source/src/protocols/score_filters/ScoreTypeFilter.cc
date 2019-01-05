@@ -59,7 +59,7 @@ using namespace ObjexxFCL::format;
 static basic::Tracer score_type_filter_tracer( "protocols.simple_filters.ScoreTypeFilter" );
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP ScoreTypeFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ScoreTypeFilter ); }
+// XRW TEMP ScoreTypeFilterCreator::create_filter() const { return utility::pointer::make_shared< ScoreTypeFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP ScoreTypeFilterCreator::keyname() const { return "ScoreType"; }
@@ -187,7 +187,7 @@ std::string ScoreTypeFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 ScoreTypeFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new ScoreTypeFilter );
+	return utility::pointer::make_shared< ScoreTypeFilter >();
 }
 
 void ScoreTypeFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

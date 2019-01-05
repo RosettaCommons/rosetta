@@ -46,7 +46,7 @@ class CoupledMovesProtocolTests : public CxxTest::TestSuite {
 private:
 	protocols::coupled_moves::CoupledMovesProtocolOP coupled_moves_protocol_;
 	core::pack::task::TaskFactoryOP main_task_factory_;
-	core::pose::PoseOP pose_ = core::pose::PoseOP( new core::pose::Pose );
+	core::pose::PoseOP pose_ = utility::pointer::make_shared< core::pose::Pose >();
 
 public:
 
@@ -56,7 +56,7 @@ public:
 	}
 
 	void test_apply() {
-		coupled_moves_protocol_ = protocols::coupled_moves::CoupledMovesProtocolOP( new protocols::coupled_moves::CoupledMovesProtocol );
+		coupled_moves_protocol_ = utility::pointer::make_shared< protocols::coupled_moves::CoupledMovesProtocol >();
 		core::import_pose::pose_from_file( *pose_, "protocols/coupled_moves/input_files/1A80_with_NAD_truncated.pdb", core::import_pose::PDB_file );
 		// Test that defaults are set up correctly
 		// loop_size_

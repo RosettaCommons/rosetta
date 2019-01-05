@@ -158,10 +158,10 @@ public:
 
 	// inline overrides
 	protocols::filters::FilterOP clone() const override {
-		return protocols::filters::FilterOP( new PeptideDeriverFilter( *this ) );
+		return utility::pointer::make_shared< PeptideDeriverFilter >( *this );
 	}
 	protocols::filters::FilterOP fresh_instance() const override {
-		return protocols::filters::FilterOP( new PeptideDeriverFilter );
+		return utility::pointer::make_shared< PeptideDeriverFilter >();
 	}
 
 	// NOTE : I have no idea why this virtual method exists together with the get_type() method, which

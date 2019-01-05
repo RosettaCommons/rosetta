@@ -53,12 +53,12 @@ public:
 
 	/// @brief clone this object
 	SingleResidueFragDataOP clone() const override {
-		return SingleResidueFragDataOP( new BBTorsionSRFD( *this ) );
+		return utility::pointer::make_shared< BBTorsionSRFD >( *this );
 	}
 
 	/// @brief create a new instance of this object
 	SingleResidueFragDataOP create() const override {
-		return SingleResidueFragDataOP( new BBTorsionSRFD() );
+		return utility::pointer::make_shared< BBTorsionSRFD >();
 	}
 
 	/// @brief number of backbone torsions described by this fragment

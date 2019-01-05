@@ -213,7 +213,7 @@ BuriedUnsatisfiedPolarsCalculator::assert_calculators()
 		// potentially will need instances of both if want to run in same pose or XML
 		// default now uses generous h-bonds (counts all h-bonds); if generous_hbonds_=false, use lagacy behavior, which only counts h-bonds that sfxn respects
 		if ( !CalculatorFactory::Instance().check_calculator_exists( name_of_hbond_calc_ ) ) {
-			CalculatorFactory::Instance().register_calculator( name_of_hbond_calc_, PoseMetricCalculatorOP( new NumberHBondsCalculator( generous_hbonds_ ) ) );
+			CalculatorFactory::Instance().register_calculator( name_of_hbond_calc_, utility::pointer::make_shared< NumberHBondsCalculator >( generous_hbonds_ ) );
 		}
 	}
 	if ( name_of_sasa_calc_ == "dalphaball" ) {
@@ -224,10 +224,10 @@ BuriedUnsatisfiedPolarsCalculator::assert_calculators()
 		name_of_sasa_calc_ = ( vsasa_ ) ? "bur_unsat_calc_vsasa_calc" : "bur_unsat_calc_legacy_sasa_calc";
 		if ( !CalculatorFactory::Instance().check_calculator_exists( name_of_sasa_calc_ ) ) {
 			if ( vsasa_ ) { // new default 17/09/03
-				CalculatorFactory::Instance().register_calculator( name_of_sasa_calc_, protocols::vardist_solaccess::VarSolDistSasaCalculatorOP( new protocols::vardist_solaccess::VarSolDistSasaCalculator() ) );
+				CalculatorFactory::Instance().register_calculator( name_of_sasa_calc_, utility::pointer::make_shared< protocols::vardist_solaccess::VarSolDistSasaCalculator >() );
 			} else {
 				name_of_sasa_calc_ = "bur_unsat_calc_legacy_sasa_calc";
-				CalculatorFactory::Instance().register_calculator( name_of_sasa_calc_, PoseMetricCalculatorOP( new core::pose::metrics::simple_calculators::SasaCalculatorLegacy( probe_radius_ ) ) );
+				CalculatorFactory::Instance().register_calculator( name_of_sasa_calc_, utility::pointer::make_shared< core::pose::metrics::simple_calculators::SasaCalculatorLegacy >( probe_radius_ ) );
 			}
 		}
 	}

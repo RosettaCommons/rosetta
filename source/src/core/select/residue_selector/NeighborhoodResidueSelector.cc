@@ -107,7 +107,7 @@ NeighborhoodResidueSelector::~NeighborhoodResidueSelector() = default;
 
 /// @brief Clone operator.
 /// @details Copy this object and return an owning pointer to the new object.
-ResidueSelectorOP NeighborhoodResidueSelector::clone() const { return ResidueSelectorOP( new NeighborhoodResidueSelector(*this) ); }
+ResidueSelectorOP NeighborhoodResidueSelector::clone() const { return utility::pointer::make_shared< NeighborhoodResidueSelector >(*this); }
 
 void
 NeighborhoodResidueSelector::set_defaults() {
@@ -359,7 +359,7 @@ NeighborhoodResidueSelector::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 
 ResidueSelectorOP
 NeighborhoodResidueSelectorCreator::create_residue_selector() const {
-	return ResidueSelectorOP( new NeighborhoodResidueSelector );
+	return utility::pointer::make_shared< NeighborhoodResidueSelector >();
 }
 
 std::string

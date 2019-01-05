@@ -31,10 +31,10 @@ public:
 	AngleToVector();
 	~AngleToVector() override;
 	filters::FilterOP clone() const override {
-		return filters::FilterOP( new AngleToVector( *this ) );
+		return utility::pointer::make_shared< AngleToVector >( *this );
 	}
 	filters::FilterOP fresh_instance() const override{
-		return filters::FilterOP( new AngleToVector() );
+		return utility::pointer::make_shared< AngleToVector >();
 	}
 
 	bool apply( core::pose::Pose const & pose ) const override;

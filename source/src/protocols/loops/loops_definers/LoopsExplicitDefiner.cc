@@ -70,7 +70,7 @@ LoopsExplicitDefiner::LoopsExplicitDefiner(LoopsExplicitDefiner const & /*src*/)
 LoopsDefinerOP
 LoopsExplicitDefiner::clone(
 ) const {
-	return LoopsDefinerOP( new LoopsExplicitDefiner(*this) );
+	return utility::pointer::make_shared< LoopsExplicitDefiner >(*this);
 }
 
 SerializedLoop

@@ -1818,7 +1818,7 @@ NPDHBondInteractionGraph<V, E, G>::set_pose( pose::Pose const & pose ) {
 		dynamic_cast<pack::interaction_graph::LinearMemoryInteractionGraph*>(this)->set_pose( pose );
 	}
 
-	pose_ = pose::PoseOP( new pose::Pose( pose ) );
+	pose_ = utility::pointer::make_shared< pose::Pose >( pose );
 	hbonding_to_res_.resize( pose_->total_residue() );
 }
 
@@ -1844,10 +1844,10 @@ NPDHBondInteractionGraph<V, E, G>::set_score_function( scoring::ScoreFunction co
 
 	npd_hbond_set_ = utility::pointer::static_pointer_cast< NPDHBondSet > ( pose_->energies().data().get_ptr( NPD_HBOND_SET ) );
 	if ( ! npd_hbond_set_ ) {
-		npd_hbond_set_ = NPDHBondSetOP( new NPDHBondSet );
+		npd_hbond_set_ = utility::pointer::make_shared< NPDHBondSet >();
 	}
 
-	hbond_options_ = HBondOptionsOP( new HBondOptions( npd_hbond_set_->hbond_options() ));
+	hbond_options_ = utility::pointer::make_shared< HBondOptions >( npd_hbond_set_->hbond_options() );
 	hbond_database_ = HBondDatabase::get_database(hbond_options_->params_database_tag());
 
 
@@ -1859,7 +1859,7 @@ NPDHBondInteractionGraph<V, E, G>::set_packer_neighbor_graph( utility::graph::Gr
 {
 	using utility::graph::Graph;
 	using utility::graph::GraphOP;
-	neighbor_graph_ = GraphOP( new Graph( neighbor_graph ) );
+	neighbor_graph_ = utility::pointer::make_shared< Graph >( neighbor_graph );
 }
 
 /// @brief
@@ -1875,7 +1875,7 @@ NPDHBondInteractionGraph<V, E, G>::set_packer_task( task::PackerTask const & the
 template < typename V, typename E, typename G >
 void
 NPDHBondInteractionGraph<V, E, G>::set_rotamer_sets( rotamer_set::RotamerSets const & rotsets ) {
-	rotamer_sets_ = rotamer_set::RotamerSetsOP( new rotamer_set::RotamerSets( rotsets ) );
+	rotamer_sets_ = utility::pointer::make_shared< rotamer_set::RotamerSets >( rotsets );
 }
 
 ///
@@ -1949,7 +1949,7 @@ void NPDHBondInteractionGraph< V, E, G >::initialize( pack_basic::RotamerSetsBas
 			using core::conformation::ResidueOP;
 			++count_bg;
 			set_residue_as_background_residue( ii );
-			get_npd_hbond_bg_node( count_bg )->set_rotamer( ResidueOP( new Residue( pose().residue( ii ) )));
+			get_npd_hbond_bg_node( count_bg )->set_rotamer( utility::pointer::make_shared< Residue >( pose().residue( ii ) ));
 		}
 	}
 
@@ -2445,10 +2445,10 @@ utility::vector1< char > & NPDHBondInteractionGraph< V, E, G >::hbonding_to_res_
 template < typename V, typename E, typename G >
 NPDHBondOP NPDHBondInteractionGraph< V, E, G >::unused_hbond()
 {
-	// return NPDHBondOP( new NPDHBond ); // TEMP!
+	// return utility::pointer::make_shared< NPDHBond >(); // TEMP!
 
 	if ( hbonds_queue_.empty() ) {
-		return NPDHBondOP( new NPDHBond );
+		return utility::pointer::make_shared< NPDHBond >();
 	}
 	NPDHBondOP next = hbonds_queue_.front();
 	hbonds_queue_.pop_front();

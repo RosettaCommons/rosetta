@@ -28,7 +28,7 @@ namespace features {
 // XRW TEMP UnrecognizedAtomFeaturesCreator::UnrecognizedAtomFeaturesCreator() {}
 // XRW TEMP UnrecognizedAtomFeaturesCreator::~UnrecognizedAtomFeaturesCreator() = default;
 // XRW TEMP FeaturesReporterOP UnrecognizedAtomFeaturesCreator::create_features_reporter() const {
-// XRW TEMP  return FeaturesReporterOP( new UnrecognizedAtomFeatures );
+// XRW TEMP  return utility::pointer::make_shared< UnrecognizedAtomFeatures >();
 // XRW TEMP }
 
 // XRW TEMP std::string UnrecognizedAtomFeaturesCreator::type_name() const {

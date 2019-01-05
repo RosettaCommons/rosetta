@@ -272,7 +272,7 @@ create_glycan_movemap_from_residue_selector(
 {
 	using namespace core::id;
 
-	core::kinematics::MoveMapOP movemap = core::kinematics::MoveMapOP( new core::kinematics::MoveMap());
+	core::kinematics::MoveMapOP movemap = utility::pointer::make_shared< core::kinematics::MoveMap >();
 
 	// Make sure everything is OFF first.
 	movemap->set_bb(false);

@@ -70,8 +70,8 @@ public:
 			sessionOP db_session = basic::database::get_db_session( test_db_name );
 			using namespace basic::database::schema_generator;
 
-			Column id( "id", DbDataTypeOP( new DbBigInt ) );
-			Column value( "val", DbDataTypeOP( new DbText ) );
+			Column id( "id", utility::pointer::make_shared< DbBigInt >() );
+			Column value( "val", utility::pointer::make_shared< DbText >() );
 			PrimaryKey primary_key( id );
 			Schema table( "example_table", primary_key );
 			table.add_column( value );

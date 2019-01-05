@@ -48,7 +48,7 @@ static basic::Tracer TR("core.scoring.util_methods.DumpTrajectoryEnergy");
 core::scoring::methods::EnergyMethodOP
 DumpTrajectoryEnergyCreator::create_energy_method( core::scoring::methods::EnergyMethodOptions const & options ) const
 {
-	return core::scoring::methods::EnergyMethodOP( new DumpTrajectoryEnergy( options ) );
+	return utility::pointer::make_shared< DumpTrajectoryEnergy >( options );
 }
 
 /// @brief Defines the score types that this energy method calculates.
@@ -64,7 +64,7 @@ DumpTrajectoryEnergyCreator::score_types_for_method() const
 /// @brief Options constructor.
 ///
 DumpTrajectoryEnergy::DumpTrajectoryEnergy ( core::scoring::methods::EnergyMethodOptions const & ) :
-	parent1( core::scoring::methods::EnergyMethodCreatorOP( new DumpTrajectoryEnergyCreator ) ),
+	parent1( utility::pointer::make_shared< DumpTrajectoryEnergyCreator >() ),
 	parent2( ),
 	state_( IDLE ),
 	dump_filename_( "" ),
@@ -76,7 +76,7 @@ DumpTrajectoryEnergy::DumpTrajectoryEnergy ( core::scoring::methods::EnergyMetho
 /// @brief Copy constructor.
 /// @details Must move to IDLE before we duplicate.
 DumpTrajectoryEnergy::DumpTrajectoryEnergy( DumpTrajectoryEnergy const &src ) :
-	parent1( core::scoring::methods::EnergyMethodCreatorOP( new DumpTrajectoryEnergyCreator ) ),
+	parent1( utility::pointer::make_shared< DumpTrajectoryEnergyCreator >() ),
 	parent2( src ) {
 
 	// Move to IDLE first. This class abuses mutable so we must do this first.
@@ -95,7 +95,7 @@ DumpTrajectoryEnergy::~DumpTrajectoryEnergy() {}
 /// @brief Clone: create a copy of this object, and return an owning pointer
 /// to the copy.
 core::scoring::methods::EnergyMethodOP DumpTrajectoryEnergy::clone() const {
-	return core::scoring::methods::EnergyMethodOP( new DumpTrajectoryEnergy(*this) );
+	return utility::pointer::make_shared< DumpTrajectoryEnergy >(*this);
 }
 
 /// @brief DumpTrajectoryEnergy is context-independent and thus indicates that no context graphs need to be maintained by

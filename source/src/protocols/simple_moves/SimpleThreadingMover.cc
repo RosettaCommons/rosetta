@@ -102,7 +102,7 @@ SimpleThreadingMover::SimpleThreadingMover(SimpleThreadingMover const & )= defau
 
 protocols::moves::MoverOP
 SimpleThreadingMover::clone() const{
-	return protocols::moves::MoverOP( new SimpleThreadingMover(*this) );
+	return utility::pointer::make_shared< SimpleThreadingMover >(*this);
 
 }
 
@@ -113,7 +113,7 @@ SimpleThreadingMover::clone() const{
 
 moves::MoverOP
 SimpleThreadingMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new SimpleThreadingMover);
+	return utility::pointer::make_shared< SimpleThreadingMover >();
 
 }
 
@@ -180,8 +180,8 @@ SimpleThreadingMover::apply(core::pose::Pose& pose){
 	}
 
 	TR << "Threading Sequence :"<<thread_sequence_<<":"<<std::endl;
-	TaskFactoryOP tf = TaskFactoryOP( new TaskFactory());
-	tf->push_back(TaskOperationCOP(new InitializeFromCommandline()) );
+	TaskFactoryOP tf = utility::pointer::make_shared< TaskFactory >();
+	tf->push_back(utility::pointer::make_shared< InitializeFromCommandline >() );
 	PackerTaskOP task = tf->create_task_and_apply_taskoperations(pose);
 
 
@@ -306,7 +306,7 @@ std::string SimpleThreadingMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 SimpleThreadingMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SimpleThreadingMover );
+	return utility::pointer::make_shared< SimpleThreadingMover >();
 }
 
 void SimpleThreadingMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

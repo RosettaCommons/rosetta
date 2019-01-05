@@ -155,9 +155,9 @@ FragmentScoringMethodOP MakeProfileScoreStructL1::make(core::Size priority,
 
 	core::Size len = picker->get_vall()->get_largest_chunk_size();
 	trProfScoreL1 << "Profile scoring method is: L1" << std::endl;
-	return (FragmentScoringMethodOP) FragmentScoringMethodOP( new ProfileScoreStructL1(priority,
+	return (FragmentScoringMethodOP) utility::pointer::make_shared< ProfileScoreStructL1 >(priority,
 		lowest_acceptable_value, use_lowest, picker->get_query_seq(),
-		picker->frag_sizes_,len) );
+		picker->frag_sizes_,len);
 }
 
 } //scores

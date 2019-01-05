@@ -62,7 +62,7 @@ public:
 	void assemble_missing_chain(std::map<std::string, Chain> & connected_chains,std::string chain_assembled,std::string chain_remainder);
 	void generate_best_final_pose(core::pose::Pose & pose,utility::vector1< utility::vector1 <std::string> > chains_in_poses,std::map<std::string, Chain> connected_chains);
 	void apply( Pose & pose ) override;
-	moves::MoverOP clone() const override { return moves::MoverOP( new ConnectChainsMover( *this ) ); }
+	moves::MoverOP clone() const override { return utility::pointer::make_shared< ConnectChainsMover >( *this ); }
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 
 	std::string

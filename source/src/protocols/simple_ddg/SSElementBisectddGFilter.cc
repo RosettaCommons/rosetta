@@ -254,7 +254,7 @@ SSElementBisectddGFilter::parse_my_tag(
 }
 
 // XRW TEMP filters::FilterOP
-// XRW TEMP SSElementBisectddGFilterCreator::create_filter() const { return protocols::filters::FilterOP(new SSElementBisectddGFilter); }
+// XRW TEMP SSElementBisectddGFilterCreator::create_filter() const { return utility::pointer::make_shared< SSElementBisectddGFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP SSElementBisectddGFilterCreator::keyname() const { return "SSBisectddGFilter"; }
@@ -289,7 +289,7 @@ std::string SSElementBisectddGFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 SSElementBisectddGFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new SSElementBisectddGFilter );
+	return utility::pointer::make_shared< SSElementBisectddGFilter >();
 }
 
 void SSElementBisectddGFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

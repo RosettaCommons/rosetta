@@ -36,7 +36,7 @@ namespace constraint_generator {
 protocols::constraint_generator::ConstraintGeneratorOP
 MembraneSpanConstraintGeneratorCreator::create_constraint_generator() const
 {
-	return protocols::constraint_generator::ConstraintGeneratorOP( new MembraneSpanConstraintGenerator );
+	return utility::pointer::make_shared< MembraneSpanConstraintGenerator >();
 }
 
 std::string
@@ -55,7 +55,7 @@ MembraneSpanConstraintGenerator::~MembraneSpanConstraintGenerator() = default;
 protocols::constraint_generator::ConstraintGeneratorOP
 MembraneSpanConstraintGenerator::clone() const
 {
-	return protocols::constraint_generator::ConstraintGeneratorOP( new MembraneSpanConstraintGenerator( *this ) );
+	return utility::pointer::make_shared< MembraneSpanConstraintGenerator >( *this );
 }
 
 std::string
@@ -77,7 +77,7 @@ MembraneSpanConstraintGenerator::apply( core::pose::Pose const & pose ) const
 	//return boost::assign::list_of (amb_cst);
 	//
 	core::scoring::constraints::ConstraintCOPs csts;
-	csts.push_back( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::MembraneSpanConstraint( pose ) ) );
+	csts.push_back( utility::pointer::make_shared< core::scoring::constraints::MembraneSpanConstraint >( pose ) );
 	return csts;
 }
 

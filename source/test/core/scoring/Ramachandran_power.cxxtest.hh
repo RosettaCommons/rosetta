@@ -44,7 +44,7 @@ public:
 	// is used by several of the tests to compare against.
 	void setUp() {
 		core_init_with_additional_options("-rama_power 2.0");
-		pose_ = core::pose::PoseOP( new core::pose::Pose );
+		pose_ = utility::pointer::make_shared< core::pose::Pose >();
 		core::pose::make_pose_from_sequence(*pose_, "AVVAVA", "fa_standard", false);
 
 		pose_->set_phi(2, 296); pose_->set_psi(2, 319);  // alpha helix

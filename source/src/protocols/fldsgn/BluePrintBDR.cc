@@ -179,7 +179,7 @@ BluePrintBDR::BluePrintBDR( BluePrintBDR const & rval ) :
 	rcgs_( rval.rcgs_ )
 {
 	if ( rval.vlb_.get() ) {
-		vlb_ = VarLengthBuildOP( new VarLengthBuild( *rval.vlb_ ) );
+		vlb_ = utility::pointer::make_shared< VarLengthBuild >( *rval.vlb_ );
 	}
 }
 
@@ -190,14 +190,14 @@ BluePrintBDR::~BluePrintBDR() = default;
 BluePrintBDR::MoverOP
 BluePrintBDR::clone() const
 {
-	return BluePrintBDR::MoverOP( new BluePrintBDR( *this ) );
+	return utility::pointer::make_shared< BluePrintBDR >( *this );
 }
 
 /// @brief create this type of object
 BluePrintBDR::MoverOP
 BluePrintBDR::fresh_instance() const
 {
-	return BluePrintBDR::MoverOP( new BluePrintBDR() );
+	return utility::pointer::make_shared< BluePrintBDR >();
 }
 
 /// @brief the centroid level score function, default "remodel_cen"
@@ -249,7 +249,7 @@ BluePrintBDR::scorefunction( ScoreFunctionOP sfx )
 void
 BluePrintBDR::set_blueprint( String const & filename )
 {
-	blueprint_ = BluePrintOP( new BluePrint( filename ) );
+	blueprint_ = utility::pointer::make_shared< BluePrint >( filename );
 }
 
 /// @brief use blueprint
@@ -347,10 +347,10 @@ BluePrintBDR::set_instruction_blueprint( Pose const & pose )
 				}
 				TR << "SegmentInsert left " << left << ", right: " << right
 					<< ", ss: " << ss << ", aa:" << aa << ", pdb:" << insert_name << std::endl;
-				add_instruction( BuildInstructionOP( new SegmentInsert( Interval( left, right ), ss, aa, insert_pose ) ) );
+				add_instruction( utility::pointer::make_shared< SegmentInsert >( Interval( left, right ), ss, aa, insert_pose ) );
 			} else {
 				TR << "SegmentRebuild left: " << left << ", right: " << right << ", ss: " << ss << ", aa:" << aa << std::endl;
-				add_instruction( BuildInstructionOP( new SegmentRebuild( Interval( left, right ), ss, aa ) ) );
+				add_instruction( utility::pointer::make_shared< SegmentRebuild >( Interval( left, right ), ss, aa ) );
 			}
 
 			flag = false;
@@ -386,7 +386,7 @@ BluePrintBDR::set_instruction_blueprint( Pose const & pose )
 			right = blueprint_->resnum( blueprint_->total_residue() );
 			runtime_assert( right <= pose.size() );
 		}
-		add_instruction( BuildInstructionOP( new SegmentRebuild( Interval( left, right ), ss, aa ) ) );
+		add_instruction( utility::pointer::make_shared< SegmentRebuild >( Interval( left, right ), ss, aa ) );
 		TR << "SegmentRebuild left: " << left << ", right: " << right << ", ss: " << ss << ", aa:" << aa << std::endl;
 	}
 
@@ -487,7 +487,7 @@ BluePrintBDR::apply( Pose & pose )
 
 	//fpd reinitialize PDBinfo
 	if ( !pose.pdb_info() || pose.pdb_info()->obsolete() ) {
-		pose.pdb_info( core::pose::PDBInfoOP( new core::pose::PDBInfo(pose, true) ) );
+		pose.pdb_info( utility::pointer::make_shared< core::pose::PDBInfo >(pose, true) );
 	}
 }
 
@@ -547,7 +547,7 @@ bool BluePrintBDR::centroid_build(
 	// Run VLB to build the new section, if no segments have been added/deleted
 	// we use the same VLB so that fragment caching works properly
 	if ( !vlb_.get() ) {
-		vlb_ = VarLengthBuildOP( new VarLengthBuild( manager_ ) );
+		vlb_ = utility::pointer::make_shared< VarLengthBuild >( manager_ );
 	}
 
 	// set weight of constraints
@@ -720,7 +720,7 @@ BluePrintBDR::parse_my_tag(
 		String cstfilename = tag->getOption<String>( "invrot_tree", "");
 		toolbox::match_enzdes_util::EnzConstraintIOOP enzcst_io( new toolbox::match_enzdes_util::EnzConstraintIO( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) ) );
 		enzcst_io->read_enzyme_cstfile( cstfilename );
-		invrot_tree_ = protocols::toolbox::match_enzdes_util::InvrotTreeOP( new protocols::toolbox::match_enzdes_util::TheozymeInvrotTree( enzcst_io ) );
+		invrot_tree_ = utility::pointer::make_shared< protocols::toolbox::match_enzdes_util::TheozymeInvrotTree >( enzcst_io );
 		invrot_tree_->generate_targets_and_inverse_rotamers();
 		enzcst_io_ = enzcst_io;
 
@@ -803,7 +803,7 @@ std::string BluePrintBDRCreator::keyname() const {
 
 protocols::moves::MoverOP
 BluePrintBDRCreator::create_mover() const {
-	return protocols::moves::MoverOP( new BluePrintBDR );
+	return utility::pointer::make_shared< BluePrintBDR >();
 }
 
 void BluePrintBDRCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

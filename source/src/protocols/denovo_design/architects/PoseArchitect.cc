@@ -48,7 +48,7 @@ PoseArchitect::~PoseArchitect() = default;
 DeNovoArchitectOP
 PoseArchitect::clone() const
 {
-	return DeNovoArchitectOP( new PoseArchitect( *this ) );
+	return utility::pointer::make_shared< PoseArchitect >( *this );
 }
 
 std::string
@@ -135,7 +135,7 @@ PoseArchitectCreator::keyname() const
 DeNovoArchitectOP
 PoseArchitectCreator::create_architect( std::string const & id ) const
 {
-	return DeNovoArchitectOP( new PoseArchitect( id ) );
+	return utility::pointer::make_shared< PoseArchitect >( id );
 }
 
 } //architects

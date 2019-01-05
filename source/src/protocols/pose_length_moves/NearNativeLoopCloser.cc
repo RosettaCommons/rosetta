@@ -549,11 +549,11 @@ void PossibleLoop::add_coordinate_csts_from_lookback(Size stub_ss_index_match, S
 
 	ConstraintCOPs csts;
 	core::id::AtomID const anchor_atom( core::id::AtomID( poseOP->residue(1).atom_index("CA"), 1) );
-	//core::scoring::func::HarmonicFuncOP coord_cst_func = core::scoring::func::HarmonicFuncOP( new core::scoring::func::HarmonicFunc( 0.1, 1.0 ) );
-	core::scoring::func::HarmonicFuncOP coord_cst_func = core::scoring::func::HarmonicFuncOP( new core::scoring::func::HarmonicFunc( 0.0, 0.2 ) );
+	//core::scoring::func::HarmonicFuncOP coord_cst_func = utility::pointer::make_shared< core::scoring::func::HarmonicFunc >( 0.1, 1.0 );
+	core::scoring::func::HarmonicFuncOP coord_cst_func = utility::pointer::make_shared< core::scoring::func::HarmonicFunc >( 0.0, 0.2 );
 	for ( Size ii = 0;  ii < 9; ++ii ) {
 		Size atomindex =  poseOP->residue( pose_residue ).atom_index( "CA" );
-		csts.push_back( core::scoring::constraints::ConstraintOP( new CoordinateConstraint(core::id::AtomID( atomindex, pose_residue+ii),anchor_atom,fragCoordinates_rot[ii],coord_cst_func) ));
+		csts.push_back( utility::pointer::make_shared< CoordinateConstraint >(core::id::AtomID( atomindex, pose_residue+ii),anchor_atom,fragCoordinates_rot[ii],coord_cst_func));
 	}
 	poseOP->add_constraints( csts );
 }
@@ -753,7 +753,7 @@ NearNativeLoopCloser::NearNativeLoopCloser():moves::Mover("NearNativeLoopCloser"
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP NearNativeLoopCloserCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new NearNativeLoopCloser );
+// XRW TEMP  return utility::pointer::make_shared< NearNativeLoopCloser >();
 // XRW TEMP }
 
 
@@ -1063,7 +1063,7 @@ vector1<PossibleLoopOP> NearNativeLoopCloser::create_potential_loops(core::pose:
 		for ( int ii=low_start; ii<=high_start; ++ii ) {
 			for ( Size kk=loopLengthRangeLow_; kk<=loopLengthRangeHigh_; ++kk ) {
 				if ( (ii+resBeforeLoop_>=3)&&(ii+resAfterLoop_<=max_length_poseOP->total_residue()-3) ) { //ensures at least a 3 residue SS element next to loop
-					PossibleLoopOP tmpLoopOP=PossibleLoopOP(new PossibleLoop(ii,ii,kk,resBeforeLoop_,resAfterLoop_,resTypeBeforeLoop,resTypeAfterLoop,resAdjustmentStartHigh_,resAdjustmentStopHigh_,max_length_poseOP,orig_atom_type_max_length_poseOP));
+					PossibleLoopOP tmpLoopOP=utility::pointer::make_shared< PossibleLoop >(ii,ii,kk,resBeforeLoop_,resAfterLoop_,resTypeBeforeLoop,resTypeAfterLoop,resAdjustmentStartHigh_,resAdjustmentStopHigh_,max_length_poseOP,orig_atom_type_max_length_poseOP);
 					possibleLoops.push_back(tmpLoopOP);
 				}
 			}
@@ -1088,7 +1088,7 @@ vector1<PossibleLoopOP> NearNativeLoopCloser::create_potential_loops(core::pose:
 			for ( int jj=resAdjustmentStopLow_; jj<=resAdjustmentStopHigh_; ++jj ) {
 				for ( Size kk=loopLengthRangeLow_; kk<=loopLengthRangeHigh_; ++kk ) {
 					if ( (ii+resBeforeLoop_>=3)&&(jj+resAfterLoop_<=max_length_poseOP->total_residue()-3) ) {
-						PossibleLoopOP tmpLoopOP=PossibleLoopOP(new PossibleLoop(ii,jj,kk,resBeforeLoop_,resAfterLoop_,resTypeBeforeLoop,resTypeAfterLoop,resAdjustmentStartHigh_,resAdjustmentStopHigh_,max_length_poseOP,orig_atom_type_max_length_poseOP));
+						PossibleLoopOP tmpLoopOP=utility::pointer::make_shared< PossibleLoop >(ii,jj,kk,resBeforeLoop_,resAfterLoop_,resTypeBeforeLoop,resTypeAfterLoop,resAdjustmentStartHigh_,resAdjustmentStopHigh_,max_length_poseOP,orig_atom_type_max_length_poseOP);
 						possibleLoops.push_back(tmpLoopOP);
 					}
 				}
@@ -1191,7 +1191,7 @@ core::pose::PoseOP NearNativeLoopCloser::get_additional_output_with_rmsd(Real & 
 			top_outputed_=true;
 			set_last_move_status(protocols::moves::MS_SUCCESS);
 			possibleLoops_[ii]->get_finalPoseOP()->data().set(
-				core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG,basic::datacache::DataCache_CacheableData::DataOP( new basic::datacache::CacheableString( pose_name_ ) ) );
+				core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG,utility::pointer::make_shared< basic::datacache::CacheableString >( pose_name_ ) );
 			return_rmsd = possibleLoops_[ii]->get_final_RMSD();
 			return(possibleLoops_[ii]->get_finalPoseOP());
 		}
@@ -1281,7 +1281,7 @@ std::string NearNativeLoopCloserCreator::keyname() const {
 
 protocols::moves::MoverOP
 NearNativeLoopCloserCreator::create_mover() const {
-	return protocols::moves::MoverOP( new NearNativeLoopCloser );
+	return utility::pointer::make_shared< NearNativeLoopCloser >();
 }
 
 void NearNativeLoopCloserCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

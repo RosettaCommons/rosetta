@@ -63,7 +63,7 @@ static basic::Tracer TR( "protocols.protein_interface_design.movers.HotspotDisjo
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP HotspotDisjointedFoldTreeMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new HotspotDisjointedFoldTreeMover );
+// XRW TEMP  return utility::pointer::make_shared< HotspotDisjointedFoldTreeMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -152,7 +152,7 @@ HotspotDisjointedFoldTreeMover::make_disjointed_foldtree( core::pose::Pose const
 
 protocols::moves::MoverOP
 HotspotDisjointedFoldTreeMover::clone() const {
-	return( protocols::moves::MoverOP( new HotspotDisjointedFoldTreeMover( *this ) ) );
+	return( utility::pointer::make_shared< HotspotDisjointedFoldTreeMover >( *this ) );
 }
 
 void
@@ -289,7 +289,7 @@ std::string HotspotDisjointedFoldTreeMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 HotspotDisjointedFoldTreeMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new HotspotDisjointedFoldTreeMover );
+	return utility::pointer::make_shared< HotspotDisjointedFoldTreeMover >();
 }
 
 void HotspotDisjointedFoldTreeMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

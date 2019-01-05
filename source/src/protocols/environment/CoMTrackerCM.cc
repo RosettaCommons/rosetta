@@ -88,7 +88,7 @@ using namespace protocols::environment;
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP CoMTrackerCMCreator::create_mover() const {
-// XRW TEMP  return ClientMoverOP( new CoMTrackerCM );
+// XRW TEMP  return utility::pointer::make_shared< CoMTrackerCM >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -318,11 +318,11 @@ claims::EnvClaims CoMTrackerCM::yield_claims( core::pose::Pose const& pose,
 // XRW TEMP }
 
 moves::MoverOP CoMTrackerCM::fresh_instance() const {
-	return ClientMoverOP( new CoMTrackerCM() );
+	return utility::pointer::make_shared< CoMTrackerCM >();
 }
 
 moves::MoverOP CoMTrackerCM::clone() const{
-	return ClientMoverOP( new CoMTrackerCM( *this ) );
+	return utility::pointer::make_shared< CoMTrackerCM >( *this );
 }
 
 std::string CoMTrackerCM::get_name() const {
@@ -360,7 +360,7 @@ std::string CoMTrackerCMCreator::keyname() const {
 
 protocols::moves::MoverOP
 CoMTrackerCMCreator::create_mover() const {
-	return protocols::moves::MoverOP( new CoMTrackerCM );
+	return utility::pointer::make_shared< CoMTrackerCM >();
 }
 
 void CoMTrackerCMCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

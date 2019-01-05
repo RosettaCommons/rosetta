@@ -83,8 +83,8 @@ class zinc2_homodimer_setup : public protocols::moves::Mover {
 public:
 
 	zinc2_homodimer_setup() :
-		msr_1_(5, protocols::metal_interface::MetalSiteResidueOP( new protocols::metal_interface::MetalSiteResidue )),
-		msr_2_(5, protocols::metal_interface::MetalSiteResidueOP( new protocols::metal_interface::MetalSiteResidue ))
+		msr_1_(5, utility::pointer::make_shared< protocols::metal_interface::MetalSiteResidue >()),
+		msr_2_(5, utility::pointer::make_shared< protocols::metal_interface::MetalSiteResidue >())
 	{
 		core::import_pose::pose_from_file( match1_, basic::options::option[match1].value() , core::import_pose::PDB_file);
 		core::import_pose::pose_from_file( match2_, basic::options::option[match2].value() , core::import_pose::PDB_file);
@@ -256,7 +256,7 @@ public:
 	setup_filter_clashes() {
 		using namespace core::scoring;
 		scorefunction_ = core::scoring::get_score_function();
-		interface_analyzer_ = protocols::analysis::InterfaceAnalyzerMoverOP( new protocols::analysis::InterfaceAnalyzerMover( 3, false, scorefunction_ ) ); // zinc1 and zinc2 get jumps 1 and 2, chain B gets jump 3
+		interface_analyzer_ = utility::pointer::make_shared< protocols::analysis::InterfaceAnalyzerMover >( 3, false, scorefunction_ ); // zinc1 and zinc2 get jumps 1 and 2, chain B gets jump 3
 	}
 
 
@@ -441,7 +441,7 @@ main( int argc, char* argv[] )
 		option.add( tetrahedral_angle_sumsq_cutoff, "tetrahedral_angle_sumsq_cutoff" ).def(1800);
 
 		devel::init(argc, argv);
-		protocols::jd2::JobDistributor::get_instance()->go( protocols::moves::MoverOP( new zinc2_homodimer_setup() ) );
+		protocols::jd2::JobDistributor::get_instance()->go( utility::pointer::make_shared< zinc2_homodimer_setup >() );
 
 		TR << "************************d**o**n**e**************************************" << std::endl;
 

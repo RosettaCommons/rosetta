@@ -64,7 +64,7 @@ static basic::Tracer TZ( "protocols.simple_moves.symmetry.SetupNCSMover" );
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP SetupNCSMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new SetupNCSMover );
+// XRW TEMP  return utility::pointer::make_shared< SetupNCSMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -179,7 +179,7 @@ void SetupNCSMover::apply( core::pose::Pose & pose ) {
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::NCS_RESIDUE_MAPPING ) ) {
 		ncs = ( utility::pointer::static_pointer_cast< protocols::symmetry::NCSResMapping > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::NCS_RESIDUE_MAPPING ) ));
 	}
-	ncs = NCSResMappingOP( new NCSResMapping(pose) );
+	ncs = utility::pointer::make_shared< NCSResMapping >(pose);
 	pose.data().set( core::pose::datacache::CacheableDataType::NCS_RESIDUE_MAPPING, ncs );
 
 	// map residue ranges -> resid pairs (using PDBinfo if necessary)
@@ -223,7 +223,7 @@ void SetupNCSMover::apply( core::pose::Pose & pose ) {
 					if ( id_b1.atomno()==0 || id_b2.atomno()==0 || id_b3.atomno()==0 || id_b4.atomno()==0 ) continue;
 
 					// make the cst
-					pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new DihedralPairConstraint( id_a1, id_a2, id_a3, id_a4, id_b1, id_b2, id_b3, id_b4, core::scoring::func::FuncOP( new core::scoring::func::TopOutFunc( wt_, 0.0, limit_ ) ) ) ) ) );
+					pose.add_constraint( utility::pointer::make_shared< DihedralPairConstraint >( id_a1, id_a2, id_a3, id_a4, id_b1, id_b2, id_b3, id_b4, utility::pointer::make_shared< core::scoring::func::TopOutFunc >( wt_, 0.0, limit_ ) ) );
 				}
 			}
 
@@ -251,7 +251,7 @@ void SetupNCSMover::apply( core::pose::Pose & pose ) {
 					if ( id_b1.atomno()==0 || id_b2.atomno()==0 || id_b3.atomno()==0 || id_b4.atomno()==0 ) continue;
 
 					// make the cst
-					pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new DihedralPairConstraint( id_a1, id_a2, id_a3, id_a4, id_b1, id_b2, id_b3, id_b4, core::scoring::func::FuncOP( new core::scoring::func::TopOutFunc( wt_, 0.0, limit_ ) ) ) ) ) );
+					pose.add_constraint( utility::pointer::make_shared< DihedralPairConstraint >( id_a1, id_a2, id_a3, id_a4, id_b1, id_b2, id_b3, id_b4, utility::pointer::make_shared< core::scoring::func::TopOutFunc >( wt_, 0.0, limit_ ) ) );
 				}
 			}
 		}
@@ -322,7 +322,7 @@ void SetupNCSMover::apply( core::pose::Pose & pose ) {
 				id_bd2 = id::AtomID(pose.residue(resnum_tgt2).atom_index("CA") , resnum_tgt2);
 
 				// make the cst
-				pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new DistancePairConstraint( id_ad1, id_ad2, id_bd1, id_bd2, core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc( 0.0, sd_ ) ) ) ) ) ); // for Harmonic
+				pose.add_constraint( utility::pointer::make_shared< DistancePairConstraint >( id_ad1, id_ad2, id_bd1, id_bd2, utility::pointer::make_shared< core::scoring::func::HarmonicFunc >( 0.0, sd_ ) ) ); // for Harmonic
 
 			}
 		}
@@ -426,7 +426,7 @@ std::string SetupNCSMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 SetupNCSMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SetupNCSMover );
+	return utility::pointer::make_shared< SetupNCSMover >();
 }
 
 void SetupNCSMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

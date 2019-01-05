@@ -53,11 +53,11 @@ public:
 	~MultiplePoseMover() override = default;
 
 	protocols::moves::MoverOP clone() const override {
-		return protocols::moves::MoverOP( new MultiplePoseMover(*this) );
+		return utility::pointer::make_shared< MultiplePoseMover >(*this);
 	}
 
 	protocols::moves::MoverOP fresh_instance() const override {
-		return protocols::moves::MoverOP( new MultiplePoseMover() );
+		return utility::pointer::make_shared< MultiplePoseMover >();
 	}
 
 	void apply(core::pose::Pose& pose) override;

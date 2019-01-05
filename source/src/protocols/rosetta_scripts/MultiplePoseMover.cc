@@ -67,7 +67,7 @@ static basic::Tracer TR( "protocols.rosetta_scripts.MultiplePoseMover" );
 
 // XRW TEMP protocols::moves::MoverOP MultiplePoseMoverCreator::create_mover() const
 // XRW TEMP {
-// XRW TEMP  return protocols::moves::MoverOP( new MultiplePoseMover() );
+// XRW TEMP  return utility::pointer::make_shared< MultiplePoseMover >();
 // XRW TEMP }
 
 ////////////////////////////////////////////////////////////////////////
@@ -491,7 +491,7 @@ std::string MultiplePoseMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 MultiplePoseMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MultiplePoseMover );
+	return utility::pointer::make_shared< MultiplePoseMover >();
 }
 
 void MultiplePoseMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

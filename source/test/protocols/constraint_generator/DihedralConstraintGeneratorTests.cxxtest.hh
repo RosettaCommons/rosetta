@@ -77,8 +77,8 @@ public:
 
 		utility::vector1< CDRNameEnum > cdrs;
 		cdrs.push_back( l1 ); //Set constraints for L1 residues!
-		CDRResidueSelectorOP selector = CDRResidueSelectorOP( new CDRResidueSelector( ab_info_, cdrs ));
-		DihedralConstraintGeneratorOP generator = DihedralConstraintGeneratorOP( new DihedralConstraintGenerator());
+		CDRResidueSelectorOP selector = utility::pointer::make_shared< CDRResidueSelector >( ab_info_, cdrs );
+		DihedralConstraintGeneratorOP generator = utility::pointer::make_shared< DihedralConstraintGenerator >();
 
 		generator->set_torsion_type( core::id::phi_dihedral);
 		generator->set_residue_selector( selector );
@@ -93,7 +93,7 @@ public:
 		utility::vector1< bool > subset(pose_.total_residue(), false);
 		subset[L1_start] = true;
 
-		ReturnResidueSubsetSelectorOP subset_selector = ReturnResidueSubsetSelectorOP( new ReturnResidueSubsetSelector( subset ));
+		ReturnResidueSubsetSelectorOP subset_selector = utility::pointer::make_shared< ReturnResidueSubsetSelector >( subset );
 
 		generator->set_residue_selector( subset_selector );
 

@@ -93,7 +93,7 @@ VoidsPenaltyVoxelGrid::VoidsPenaltyVoxelGrid( VoidsPenaltyVoxelGrid const &src )
 /// @brief Clone operator: copy this object and return an owning pointer to the copy.
 VoidsPenaltyVoxelGridOP
 VoidsPenaltyVoxelGrid::clone() const {
-	return VoidsPenaltyVoxelGridOP( new VoidsPenaltyVoxelGrid( *this ) );
+	return utility::pointer::make_shared< VoidsPenaltyVoxelGrid >( *this );
 }
 
 /// @brief Sets the voxel size and padding.

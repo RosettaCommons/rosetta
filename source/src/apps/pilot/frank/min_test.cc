@@ -155,9 +155,9 @@ public:
 			Residue const & nat_i_rsd( constraint_pose.residue(i) );
 			for ( Size ii = 1; ii<= 3; ++ii ) {  // N/CA/C only
 				func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, coord_sdev ) );
-				pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new CoordinateConstraint(
+				pose.add_constraint( scoring::constraints::ConstraintCOP( utility::pointer::make_shared< CoordinateConstraint >(
 					AtomID(ii,i), AtomID(1,nres), nat_i_rsd.xyz( ii ),
-					fx ) ) ) );
+					fx ) ) );
 			}
 		}
 	}
@@ -441,9 +441,9 @@ public:
 			// repack
 			if ( option[ OptionKeys::min::pack ]() || option[ OptionKeys::relax::ramady ]() )  {
 				TaskFactoryOP local_tf( new TaskFactory() );
-				local_tf->push_back(TaskOperationCOP( new InitializeFromCommandline() ));
-				local_tf->push_back(TaskOperationCOP( new RestrictToRepacking() ));
-				local_tf->push_back(TaskOperationCOP( new IncludeCurrent() ));
+				local_tf->push_back(utility::pointer::make_shared< InitializeFromCommandline >());
+				local_tf->push_back(utility::pointer::make_shared< RestrictToRepacking >());
+				local_tf->push_back(utility::pointer::make_shared< IncludeCurrent >());
 
 				// mask by movemap
 				bool repack = true;
@@ -461,7 +461,7 @@ public:
 
 				protocols::minimization_packing::PackRotamersMoverOP pack_full_repack( new protocols::minimization_packing::PackRotamersMover( scorefxn ) );
 				if ( core::pose::symmetry::is_symmetric( pose ) )  {
-					pack_full_repack = protocols::minimization_packing::PackRotamersMoverOP( new minimization_packing::symmetry::SymPackRotamersMover( scorefxn ) );
+					pack_full_repack = utility::pointer::make_shared< minimization_packing::symmetry::SymPackRotamersMover >( scorefxn );
 				}
 				pack_full_repack->task_factory(local_tf);
 				pack_full_repack->apply( pose );
@@ -534,7 +534,7 @@ my_main( void* ) {
 			protocols::jd2::JobDistributor::get_instance()->set_job_outputter( JobDistributorFactory::create_job_outputter( jobout ));
 		}
 
-		protocols::jd2::JobDistributor::get_instance()->go( protocols::moves::MoverOP( new MinTestMover() ) );
+		protocols::jd2::JobDistributor::get_instance()->go( utility::pointer::make_shared< MinTestMover >() );
 	} catch (utility::excn::Exception& excn ) {
 		std::cerr << "Exception: " << std::endl;
 		excn.show( std::cerr );

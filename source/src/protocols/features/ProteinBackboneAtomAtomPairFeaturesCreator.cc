@@ -28,7 +28,7 @@ namespace features {
 // XRW TEMP ProteinBackboneAtomAtomPairFeaturesCreator::ProteinBackboneAtomAtomPairFeaturesCreator() {}
 // XRW TEMP ProteinBackboneAtomAtomPairFeaturesCreator::~ProteinBackboneAtomAtomPairFeaturesCreator() = default;
 // XRW TEMP FeaturesReporterOP ProteinBackboneAtomAtomPairFeaturesCreator::create_features_reporter() const {
-// XRW TEMP  return FeaturesReporterOP( new ProteinBackboneAtomAtomPairFeatures );
+// XRW TEMP  return utility::pointer::make_shared< ProteinBackboneAtomAtomPairFeatures >();
 // XRW TEMP }
 
 // XRW TEMP std::string ProteinBackboneAtomAtomPairFeaturesCreator::type_name() const {

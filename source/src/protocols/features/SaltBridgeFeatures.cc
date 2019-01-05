@@ -118,13 +118,13 @@ SaltBridgeFeatures::write_salt_bridges_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
-	Column don_resNum("don_resNum", DbDataTypeOP( new DbInteger() ));
-	Column acc_id("acc_id", DbDataTypeOP( new DbInteger() ));
-	Column psi("psi", DbDataTypeOP( new DbReal() ));
-	Column theta("theta", DbDataTypeOP( new DbReal() ));
-	Column rho("rho", DbDataTypeOP( new DbReal() ));
-	Column orbital("orbital", DbDataTypeOP( new DbText() ));
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >());
+	Column don_resNum("don_resNum", utility::pointer::make_shared< DbInteger >());
+	Column acc_id("acc_id", utility::pointer::make_shared< DbInteger >());
+	Column psi("psi", utility::pointer::make_shared< DbReal >());
+	Column theta("theta", utility::pointer::make_shared< DbReal >());
+	Column rho("rho", utility::pointer::make_shared< DbReal >());
+	Column orbital("orbital", utility::pointer::make_shared< DbText >());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -318,7 +318,7 @@ std::string SaltBridgeFeaturesCreator::type_name() const {
 
 protocols::features::FeaturesReporterOP
 SaltBridgeFeaturesCreator::create_features_reporter() const {
-	return protocols::features::FeaturesReporterOP( new SaltBridgeFeatures );
+	return utility::pointer::make_shared< SaltBridgeFeatures >();
 }
 
 void SaltBridgeFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

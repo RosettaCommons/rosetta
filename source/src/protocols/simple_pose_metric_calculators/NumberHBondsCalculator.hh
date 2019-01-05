@@ -55,7 +55,7 @@ public:
 	//core::pose::metrics::PoseMetricCalculatorOP clone() const;
 
 	core::pose::metrics::PoseMetricCalculatorOP clone() const {
-		return core::pose::metrics::PoseMetricCalculatorOP( new NumberHBondsCalculator( use_generous_hbonds_, special_region_ ) ); };
+		return utility::pointer::make_shared< NumberHBondsCalculator >( use_generous_hbonds_, special_region_ ); };
 
 	static core::Real
 	sum_Hbond_terms( core::scoring::EnergyMap const & emap );

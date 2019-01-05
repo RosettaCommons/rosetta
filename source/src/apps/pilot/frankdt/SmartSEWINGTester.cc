@@ -47,7 +47,7 @@ SmartSEWINGTester::SmartSEWINGTester( SmartSEWINGTester const & ) {
 
 SmartSEWINGTesterOP
 SmartSEWINGTester::clone() const {
-	return SmartSEWINGTesterOP( new SmartSEWINGTester( *this ) );
+	return utility::pointer::make_shared< SmartSEWINGTester >( *this );
 }
 
 
@@ -62,7 +62,7 @@ main( int argc, char * argv [] )
 
 	devel::init(argc,argv);
 
-	protocols::sewing::hashing::ModelFileReaderOP modelfilereader = protocols::sewing::hashing::ModelFileReaderOP(new protocols::sewing::hashing::ModelFileReader);
+	protocols::sewing::hashing::ModelFileReaderOP modelfilereader = utility::pointer::make_shared< protocols::sewing::hashing::ModelFileReader >();
 	utility::vector1<protocols::sewing::data_storage::SmartSegmentOP> segment_list = modelfilereader->read_model_file("test_model_file").second;
 
 	for ( protocols::sewing::data_storage::SmartSegmentOP current_segment : segment_list ) {

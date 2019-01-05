@@ -79,7 +79,7 @@ MutateFrameworkForCluster::MutateFrameworkForCluster(MutateFrameworkForCluster c
 	pack_shell_(src.pack_shell_),
 	keep_current_(src.keep_current_)
 {
-	if ( src.ab_info_ ) ab_info_ = AntibodyInfoOP( new AntibodyInfo( *src.ab_info_ ));
+	if ( src.ab_info_ ) ab_info_ = utility::pointer::make_shared< AntibodyInfo >( *src.ab_info_ );
 	if ( src.scorefxn_ ) scorefxn_ = scorefxn_->clone();
 
 }
@@ -96,12 +96,12 @@ MutateFrameworkForCluster::set_defaults() {
 
 //moves::MoverOP
 //MutateFrameworkForCluster::clone() const {
-// return moves::MoverOP(new MutateFrameworkForCluster(*this));
+// return utility::pointer::make_shared< MutateFrameworkForCluster >(*this);
 //}
 
 protocols::moves::MoverOP
 MutateFrameworkForCluster::fresh_instance() const {
-	return moves::MoverOP(new MutateFrameworkForCluster());
+	return utility::pointer::make_shared< MutateFrameworkForCluster >();
 }
 
 std::string
@@ -117,7 +117,7 @@ MutateFrameworkForCluster::parse_my_tag(
 	const moves::Movers_map&,
 	const Pose& pose)
 {
-	ab_info_ = AntibodyInfoOP( new AntibodyInfo( pose ));
+	ab_info_ = utility::pointer::make_shared< AntibodyInfo >( pose );
 	cdrs_ = get_cdr_bool_from_tag(tag, "cdrs");
 	keep_current_ = tag->getOption("keep_current", keep_current_);
 	pack_shell_ = tag->getOption("pack_shell", pack_shell_);
@@ -318,8 +318,8 @@ MutateFrameworkForCluster::apply(core::pose::Pose& pose) {
 	}
 	*/
 
-	TaskFactoryOP tf = TaskFactoryOP( new TaskFactory());
-	tf->push_back(TaskOperationCOP(new InitializeFromCommandline()) );
+	TaskFactoryOP tf = utility::pointer::make_shared< TaskFactory >();
+	tf->push_back(utility::pointer::make_shared< InitializeFromCommandline >() );
 
 	PackerTaskOP task = tf->create_task_and_apply_taskoperations(pose);
 
@@ -416,7 +416,7 @@ MutateFrameworkForCluster::apply(core::pose::Pose& pose) {
 
 protocols::moves::MoverOP
 MutateFrameworkForClusterCreator::create_mover() const {
-	return protocols::moves::MoverOP(new MutateFrameworkForCluster());
+	return utility::pointer::make_shared< MutateFrameworkForCluster >();
 }
 
 std::string

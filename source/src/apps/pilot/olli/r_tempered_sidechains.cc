@@ -43,7 +43,7 @@ main( int argc, char * argv [] )
 		devel::init(argc, argv);
 		// devel::init_random_generators(3,numeric::random::_RND_TestRun_, "mt19937"); //JQX from Sergery
 
-		JobDistributor::get_instance()->go( protocols::moves::MoverOP( new CoupledSidechainProtocol ) );
+		JobDistributor::get_instance()->go( utility::pointer::make_shared< CoupledSidechainProtocol >() );
 	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

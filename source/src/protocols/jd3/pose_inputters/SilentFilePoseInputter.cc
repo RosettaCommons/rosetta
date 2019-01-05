@@ -198,10 +198,10 @@ SilentFilePoseInputter::initialize_sfd_from_options_and_tag(
 	using namespace core::io::silent;
 	using namespace basic::options::OptionKeys;
 
-	sf_opts_ = SilentFileOptionsOP( new SilentFileOptions( options ) );
+	sf_opts_ = utility::pointer::make_shared< SilentFileOptions >( options );
 	if ( tag ) sf_opts_->read_from_tag( tag );
 
-	sfd_ = SilentFileDataOP( new SilentFileData( *sf_opts_ ));
+	sfd_ = utility::pointer::make_shared< SilentFileData >( *sf_opts_ );
 
 	utility::vector1< utility::file::FileName > silent_files;
 	utility::vector1< std::string > tags_vector;
@@ -264,7 +264,7 @@ SilentFilePoseInputter::initialize_sfd_from_files_and_tags(
 
 protocols::jd3::pose_inputters::PoseInputterOP
 SilentFilePoseInputterCreator::create_inputter() const {
-	return PoseInputterOP( new SilentFilePoseInputter );
+	return utility::pointer::make_shared< SilentFilePoseInputter >();
 }
 
 std::string

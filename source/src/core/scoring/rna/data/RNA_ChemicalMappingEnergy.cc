@@ -54,7 +54,7 @@ namespace data {
 methods::EnergyMethodOP
 RNA_ChemicalMappingEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
-) const { return methods::EnergyMethodOP( new RNA_ChemicalMappingEnergy ); }
+) const { return utility::pointer::make_shared< RNA_ChemicalMappingEnergy >(); }
 
 ScoreTypes
 RNA_ChemicalMappingEnergyCreator::score_types_for_method() const {
@@ -64,7 +64,7 @@ RNA_ChemicalMappingEnergyCreator::score_types_for_method() const {
 	return sts;
 }
 RNA_ChemicalMappingEnergy::RNA_ChemicalMappingEnergy():
-	parent( methods::EnergyMethodCreatorOP( new RNA_ChemicalMappingEnergyCreator ) ),
+	parent( utility::pointer::make_shared< RNA_ChemicalMappingEnergyCreator >() ),
 	DMS_potential_( ScoringManager::get_instance()->get_RNA_DMS_Potential() ),
 	DMS_low_resolution_potential_( ScoringManager::get_instance()->get_RNA_DMS_LowResolutionPotential() )
 {
@@ -76,7 +76,7 @@ RNA_ChemicalMappingEnergy::~RNA_ChemicalMappingEnergy() = default;
 methods::EnergyMethodOP
 RNA_ChemicalMappingEnergy::clone() const
 {
-	return methods::EnergyMethodOP( new RNA_ChemicalMappingEnergy() );
+	return utility::pointer::make_shared< RNA_ChemicalMappingEnergy >();
 }
 
 /////////////////////////////////////////////////////////////////////////////

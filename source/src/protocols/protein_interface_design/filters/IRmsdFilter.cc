@@ -64,7 +64,7 @@ IRmsdFilter::~IRmsdFilter() = default;
 
 protocols::filters::FilterOP
 IRmsdFilter::clone() const {
-	return protocols::filters::FilterOP( new IRmsdFilter( *this ) );
+	return utility::pointer::make_shared< IRmsdFilter >( *this );
 }
 
 static basic::Tracer TR( "protocols.protein_interface_design.filters.IRmsdFilter" );
@@ -108,7 +108,7 @@ IRmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &
 	if ( tag->hasOption("reference_name") ) {
 		reference_pose_ = protocols::rosetta_scripts::saved_reference_pose(tag,data_map );
 	} else {
-		reference_pose_ = core::pose::PoseOP( new core::pose::Pose( reference_pose ) );
+		reference_pose_ = utility::pointer::make_shared< core::pose::Pose >( reference_pose );
 		if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
 			core::import_pose::pose_from_file( *reference_pose_, basic::options::option[ basic::options::OptionKeys::in::file::native ] , core::import_pose::PDB_file);
 		}
@@ -129,7 +129,7 @@ IRmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &
 }
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP IRmsdFilterCreator::create_filter() const { return protocols::filters::FilterOP( new IRmsdFilter ); }
+// XRW TEMP IRmsdFilterCreator::create_filter() const { return utility::pointer::make_shared< IRmsdFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP IRmsdFilterCreator::keyname() const { return "IRmsd"; }
@@ -160,7 +160,7 @@ std::string IRmsdFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 IRmsdFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new IRmsdFilter );
+	return utility::pointer::make_shared< IRmsdFilter >();
 }
 
 void IRmsdFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

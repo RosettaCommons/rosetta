@@ -166,9 +166,9 @@ ScoreFunction::reset( utility::options::OptionCollection const & options )
 #endif
 
 	score_function_info_current_ = true;
-	score_function_info_ = ScoreFunctionInfoOP( new ScoreFunctionInfo );
+	score_function_info_ = utility::pointer::make_shared< ScoreFunctionInfo >();
 	any_intrares_energies_ = false;
-	energy_method_options_ = methods::EnergyMethodOptionsOP( new methods::EnergyMethodOptions( options ) );
+	energy_method_options_ = utility::pointer::make_shared< methods::EnergyMethodOptions >( options );
 	initialize_methods_arrays();
 	weights_.clear();
 }
@@ -360,12 +360,12 @@ ScoreFunction::_add_weights_from_stream( std::istream & data, bool patch/*=false
 				central_atoms.push_back( central_atom );
 			}
 			if ( ! energy_method_options_->bond_angle_residue_type_param_set() ) {
-				energy_method_options_->bond_angle_residue_type_param_set( scoring::mm::MMBondAngleResidueTypeParamSetOP( new core::scoring::mm::MMBondAngleResidueTypeParamSet() ) );
+				energy_method_options_->bond_angle_residue_type_param_set( utility::pointer::make_shared< core::scoring::mm::MMBondAngleResidueTypeParamSet >() );
 			}
 			energy_method_options_->bond_angle_residue_type_param_set()->central_atoms_to_score( central_atoms );
 		} else if ( tag == "BOND_ANGLE_USE_RESIDUE_TYPE_THETA0" ) {
 			if ( ! energy_method_options_->bond_angle_residue_type_param_set() ) {
-				energy_method_options_->bond_angle_residue_type_param_set( scoring::mm::MMBondAngleResidueTypeParamSetOP( new core::scoring::mm::MMBondAngleResidueTypeParamSet() ) );
+				energy_method_options_->bond_angle_residue_type_param_set( utility::pointer::make_shared< core::scoring::mm::MMBondAngleResidueTypeParamSet >() );
 			}
 			energy_method_options_->bond_angle_residue_type_param_set()->use_residue_type_theta0( true );
 		} else if ( tag == "UNFOLDED_ENERGIES_TYPE" ) {
@@ -500,7 +500,7 @@ ScoreFunction::set_energy_method_options(
 	energy_method_options_in )
 {
 	energy_method_options_
-		= methods::EnergyMethodOptionsOP( new methods::EnergyMethodOptions( energy_method_options_in ) );
+		= utility::pointer::make_shared< methods::EnergyMethodOptions >( energy_method_options_in );
 
 	// Some of the energy methods only know about these options when
 	// they are constructed. So the safest thing is to destroy them and
@@ -569,7 +569,7 @@ ScoreFunction::assign( ScoreFunction const & src )
 	weights_ = src.weights_;
 
 	// deep copy of the energy method options
-	energy_method_options_ = methods::EnergyMethodOptionsOP( new methods::EnergyMethodOptions( * src.energy_method_options_ ) );
+	energy_method_options_ = utility::pointer::make_shared< methods::EnergyMethodOptions >( * src.energy_method_options_ );
 
 	// copy the methods:
 	initialize_methods_arrays(); // clears & sizes the arrays
@@ -582,7 +582,7 @@ ScoreFunction::assign( ScoreFunction const & src )
 
 	/// SL: Fri Jun 29 12:51:25 EDT 2007 @744 /Internet Time/
 	score_function_info_current_ = src.score_function_info_current_;
-	score_function_info_ = ScoreFunctionInfoOP( new ScoreFunctionInfo( *src.score_function_info_ ) );
+	score_function_info_ = utility::pointer::make_shared< ScoreFunctionInfo >( *src.score_function_info_ );
 
 	any_intrares_energies_ = src.any_intrares_energies_;
 }
@@ -3096,7 +3096,7 @@ ScoreFunction::info() const
 		score_function_info_->initialize_from( *this );
 		score_function_info_current_ = true;
 	}
-	return ScoreFunctionInfoOP( new ScoreFunctionInfo( *score_function_info_ ) );
+	return utility::pointer::make_shared< ScoreFunctionInfo >( *score_function_info_ );
 }
 
 ScoreFunction::AllMethods const & ScoreFunction::all_methods() const {

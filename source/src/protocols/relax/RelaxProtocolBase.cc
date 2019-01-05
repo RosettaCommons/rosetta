@@ -303,7 +303,7 @@ void RelaxProtocolBase::set_default_coordinate_settings(){
 void RelaxProtocolBase::set_default_movemap(){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	movemap_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap() );
+	movemap_ = utility::pointer::make_shared< core::kinematics::MoveMap >();
 
 	if ( option[ OptionKeys::in::file::movemap ].user() ) {
 
@@ -434,7 +434,7 @@ void RelaxProtocolBase::apply_disulfides( core::pose::Pose & pose ){
 
 		task->initialize_from_command_line().restrict_to_repacking().restrict_to_residues(allow_repack);
 		task->or_include_current( true );
-		full_repack = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover( disulf_score_only, task ) );
+		full_repack = utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >( disulf_score_only, task );
 
 		( *disulf_score_only )( pose );
 
@@ -478,7 +478,7 @@ void RelaxProtocolBase::set_up_constraints(
 		}
 
 		if ( constrain_relax_segments_ ) {
-			coord_cst_mover.set_loop_segments( protocols::loops::LoopsCOP( protocols::loops::LoopsOP( new protocols::loops::Loops(  option[ OptionKeys::relax::constrain_relax_segments ]() ) ) ) );
+			coord_cst_mover.set_loop_segments( utility::pointer::make_shared< protocols::loops::Loops >(  option[ OptionKeys::relax::constrain_relax_segments ]() ) );
 		}
 
 		//if -relax::coord_cst_width is given, the code instead uses _bounded_ constraints on
@@ -515,7 +515,7 @@ void RelaxProtocolBase::set_up_constraints(
 			std::string const filename = cst_files( i_cst );
 			ConstraintSetOP user_csts
 				= ConstraintIO::get_instance()->read_constraints_new( filename,
-				ConstraintSetOP( new ConstraintSet ), pose );
+				utility::pointer::make_shared< ConstraintSet >(), pose );
 			pose.constraint_set( user_csts );
 		}
 	} // if constrain_user_defined_

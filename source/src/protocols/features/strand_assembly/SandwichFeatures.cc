@@ -112,22 +112,22 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 	// Columns
 	// id of sheet
 	//unique
-	Column sheet_PK_id ("sheet_PK_id", DbDataTypeOP( new DbInteger() ), false /*not null*/, false /*no autoincrement*/);
+	Column sheet_PK_id ("sheet_PK_id", utility::pointer::make_shared< DbInteger >(), false /*not null*/, false /*no autoincrement*/);
 
 	// could be redundant
-	Column sheet_id ("sheet_id", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*no autoincrement*/);
+	Column sheet_id ("sheet_id", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*no autoincrement*/);
 	// <history> changed into 'null-possible' because of sandwich
 
-	Column sheet_antiparallel ("sheet_antiparallel", DbDataTypeOP( new DbText() ), true /* could be null at first, eventually it will not be null though*/, false /*no autoincrement*/);
+	Column sheet_antiparallel ("sheet_antiparallel", utility::pointer::make_shared< DbText >(), true /* could be null at first, eventually it will not be null though*/, false /*no autoincrement*/);
 	// A: antiparallel
 	// P_or_mix: parallel or mix of antiparallel and parallel
-	Column num_of_sheets_that_surround_this_sheet ("num_of_sheets_that_surround_this_sheet", DbDataTypeOP( new DbInteger() ), true /* could be null */, false /*no autoincrement*/);
+	Column num_of_sheets_that_surround_this_sheet ("num_of_sheets_that_surround_this_sheet", utility::pointer::make_shared< DbInteger >(), true /* could be null */, false /*no autoincrement*/);
 
 	// unique key of original PDB file
-	Column struct_id             ("struct_id",              DbDataTypeOP( new DbBigInt() ),    false /*not null*/, false /*don't autoincrement*/);
+	Column struct_id             ("struct_id",              utility::pointer::make_shared< DbBigInt >(),    false /*not null*/, false /*don't autoincrement*/);
 
 	// ForeignKey
-	Column segment_id ("segment_id", DbDataTypeOP( new DbInteger() ), false /*not null*/, false /*don't autoincrement*/);
+	Column segment_id ("segment_id", utility::pointer::make_shared< DbInteger >(), false /*not null*/, false /*don't autoincrement*/);
 
 	// Schema - sheet
 	// PrimaryKey
@@ -164,18 +164,18 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 	// Columns
 	// id of sw_can_by_sh
 	//unique
-	Column sw_can_by_sh_PK_id ("sw_can_by_sh_PK_id", DbDataTypeOP( new DbInteger() ), false /*not null*/, false /*no autoincrement*/);
+	Column sw_can_by_sh_PK_id ("sw_can_by_sh_PK_id", utility::pointer::make_shared< DbInteger >(), false /*not null*/, false /*no autoincrement*/);
 
 	// could be redundant
 	//Column tag ("tag", new DbText(), false /*not null*/, false /*no autoincrement*/);
-	Column tag ("tag", DbDataTypeOP( new DbText() ), true /*could be null*/, false /*no autoincrement*/);
+	Column tag ("tag", utility::pointer::make_shared< DbText >(), true /*could be null*/, false /*no autoincrement*/);
 
 	// could be redundant
-	Column sw_can_by_sh_id ("sw_can_by_sh_id", DbDataTypeOP( new DbInteger() ), false /*not null*/, false /*no autoincrement*/);
+	Column sw_can_by_sh_id ("sw_can_by_sh_id", utility::pointer::make_shared< DbInteger >(), false /*not null*/, false /*no autoincrement*/);
 	//Column sw_can_by_sh_id ("sw_can_by_sh_id", new DbInteger(), true /*could be null*/, false /*no autoincrement*/);
 
 	// could be redundant
-	Column strand_num ("strand_num", DbDataTypeOP( new DbInteger() ), false /*not null*/, false /*no autoincrement*/);
+	Column strand_num ("strand_num", utility::pointer::make_shared< DbInteger >(), false /*not null*/, false /*no autoincrement*/);
 
 	// Schema - sw_can_by_sh_id
 	// PrimaryKey
@@ -217,195 +217,195 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 	// id of sandwich
 
 	//unique
-	Column sandwich_PK_id ("sandwich_PK_id", DbDataTypeOP( new DbInteger() ), false /*not null*/, false /*no autoincrement*/);
+	Column sandwich_PK_id ("sandwich_PK_id", utility::pointer::make_shared< DbInteger >(), false /*not null*/, false /*no autoincrement*/);
 
 	// could be redundant
-	Column sandwich_bs_id ("sandwich_bs_id", DbDataTypeOP( new DbInteger() ), true /* could be null*/, false /*no autoincrement*/);
+	Column sandwich_bs_id ("sandwich_bs_id", utility::pointer::make_shared< DbInteger >(), true /* could be null*/, false /*no autoincrement*/);
 
-	Column long_strand_id ("long_strand_id", DbDataTypeOP( new DbInteger() ), true /* could be null*/, false /*no autoincrement*/);
+	Column long_strand_id ("long_strand_id", utility::pointer::make_shared< DbInteger >(), true /* could be null*/, false /*no autoincrement*/);
 
-	Column strand_edge ("strand_edge", DbDataTypeOP( new DbText() ), true /* could be null*/, false /*no autoincrement*/);
+	Column strand_edge ("strand_edge", utility::pointer::make_shared< DbText >(), true /* could be null*/, false /*no autoincrement*/);
 	// edge strand
 	// core strand
 
-	Column num_strands_in_each_sw ("num_strands_in_each_sw", DbDataTypeOP( new DbInteger() ), true /* could be null*/, false /*no autoincrement*/);
-	Column num_edge_strands_in_each_sw ("num_edge_strands_in_each_sw", DbDataTypeOP( new DbInteger() ), true /* could be null*/, false /*no autoincrement*/);
+	Column num_strands_in_each_sw ("num_strands_in_each_sw", utility::pointer::make_shared< DbInteger >(), true /* could be null*/, false /*no autoincrement*/);
+	Column num_edge_strands_in_each_sw ("num_edge_strands_in_each_sw", utility::pointer::make_shared< DbInteger >(), true /* could be null*/, false /*no autoincrement*/);
 
-	Column intra_sheet_con_id ("intra_sheet_con_id", DbDataTypeOP( new DbInteger() ), true /* could be null*/, false /*no autoincrement*/);
-	Column inter_sheet_con_id ("inter_sheet_con_id", DbDataTypeOP( new DbInteger() ), true /* could be null*/, false /*no autoincrement*/);
+	Column intra_sheet_con_id ("intra_sheet_con_id", utility::pointer::make_shared< DbInteger >(), true /* could be null*/, false /*no autoincrement*/);
+	Column inter_sheet_con_id ("inter_sheet_con_id", utility::pointer::make_shared< DbInteger >(), true /* could be null*/, false /*no autoincrement*/);
 
-	Column loop_kind ("loop_kind", DbDataTypeOP( new DbText() ), true /* could be null*/, false /*no autoincrement*/);
+	Column loop_kind ("loop_kind", utility::pointer::make_shared< DbText >(), true /* could be null*/, false /*no autoincrement*/);
 	// starting_loop
 	// hairpin_loop (intra-sheet loop)
 	// inter_sheet_loop
 	// ending_loop
 
-	Column LR ("LR", DbDataTypeOP( new DbText() ), true /* could be null*/, false /*no autoincrement*/);
+	Column LR ("LR", utility::pointer::make_shared< DbText >(), true /* could be null*/, false /*no autoincrement*/);
 
-	Column canonical_LR ("canonical_LR", DbDataTypeOP( new DbText() ), true /* could be null*/, false /*no autoincrement*/);
+	Column canonical_LR ("canonical_LR", utility::pointer::make_shared< DbText >(), true /* could be null*/, false /*no autoincrement*/);
 	// T, -> true, canonical chiral
 	// F, -> false, non-canonical chiral
 	// U, -> uncertain, this loop-size with this condition has no definite canonical chiral reference in the first place!
 
-	Column turn_type ("turn_type", DbDataTypeOP( new DbText() ), true /* could be null*/, false /*no autoincrement*/);
+	Column turn_type ("turn_type", utility::pointer::make_shared< DbText >(), true /* could be null*/, false /*no autoincrement*/);
 
-	Column i_AA ("i_AA", DbDataTypeOP( new DbText() ), true /* could be null*/, false /*no autoincrement*/);
-	Column i_p1_AA ("i_p1_AA", DbDataTypeOP( new DbText() ), true /* could be null*/, false /*no autoincrement*/);
-	Column i_p2_AA ("i_p2_AA", DbDataTypeOP( new DbText() ), true /* could be null*/, false /*no autoincrement*/);
-	Column i_p3_AA ("i_p3_AA", DbDataTypeOP( new DbText() ), true /* could be null*/, false /*no autoincrement*/);
+	Column i_AA ("i_AA", utility::pointer::make_shared< DbText >(), true /* could be null*/, false /*no autoincrement*/);
+	Column i_p1_AA ("i_p1_AA", utility::pointer::make_shared< DbText >(), true /* could be null*/, false /*no autoincrement*/);
+	Column i_p2_AA ("i_p2_AA", utility::pointer::make_shared< DbText >(), true /* could be null*/, false /*no autoincrement*/);
+	Column i_p3_AA ("i_p3_AA", utility::pointer::make_shared< DbText >(), true /* could be null*/, false /*no autoincrement*/);
 
-	Column canonical_turn_AA ("canonical_turn_AA", DbDataTypeOP( new DbText() ), true /* could be null*/, false /*no autoincrement*/);
+	Column canonical_turn_AA ("canonical_turn_AA", utility::pointer::make_shared< DbText >(), true /* could be null*/, false /*no autoincrement*/);
 
-	Column PA_by_preceding_E ("PA_by_preceding_E", DbDataTypeOP( new DbText() ), true /* could be null*/, false /*no autoincrement*/);
-	Column PA_by_following_E ("PA_by_following_E", DbDataTypeOP( new DbText() ), true /* could be null*/, false /*no autoincrement*/);
+	Column PA_by_preceding_E ("PA_by_preceding_E", utility::pointer::make_shared< DbText >(), true /* could be null*/, false /*no autoincrement*/);
+	Column PA_by_following_E ("PA_by_following_E", utility::pointer::make_shared< DbText >(), true /* could be null*/, false /*no autoincrement*/);
 
-	Column cano_PA ("cano_PA", DbDataTypeOP( new DbText() ), true /* could be null*/, false /*no autoincrement*/);
+	Column cano_PA ("cano_PA", utility::pointer::make_shared< DbText >(), true /* could be null*/, false /*no autoincrement*/);
 	// T, -> true, canonical PA
 	// F, -> false, non-canonical PA
 	// U, -> uncertain, this loop-size with this condition has no definite canonical PA reference in the first place!
 
-	Column heading_direction ("heading_direction", DbDataTypeOP( new DbText() ), true /* could be null*/, false /*no autoincrement*/);
-	Column parallel_EE ("parallel_EE", DbDataTypeOP( new DbText() ), true /* could be null*/, false /*no autoincrement*/);
-	Column cano_parallel_EE ("cano_parallel_EE", DbDataTypeOP( new DbText() ), true /* could be null*/, false /*no autoincrement*/);
-	Column component_size ("component_size", DbDataTypeOP( new DbInteger() ), true /* could be null*/, false /*no autoincrement*/);
+	Column heading_direction ("heading_direction", utility::pointer::make_shared< DbText >(), true /* could be null*/, false /*no autoincrement*/);
+	Column parallel_EE ("parallel_EE", utility::pointer::make_shared< DbText >(), true /* could be null*/, false /*no autoincrement*/);
+	Column cano_parallel_EE ("cano_parallel_EE", utility::pointer::make_shared< DbText >(), true /* could be null*/, false /*no autoincrement*/);
+	Column component_size ("component_size", utility::pointer::make_shared< DbInteger >(), true /* could be null*/, false /*no autoincrement*/);
 
-	Column A  ("A", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
-	Column C  ("C", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
-	Column D  ("D", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
-	Column E  ("E", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
+	Column A  ("A", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
+	Column C  ("C", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
+	Column D  ("D", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
+	Column E  ("E", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
 
-	Column F  ("F", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
-	Column G  ("G", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
-	Column H  ("H", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
-	Column I  ("I", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
-	Column K  ("K", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
-	Column L  ("L", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
-	Column M  ("M", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
-	Column N  ("N", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
-	Column P  ("P", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
+	Column F  ("F", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
+	Column G  ("G", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
+	Column H  ("H", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
+	Column I  ("I", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
+	Column K  ("K", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
+	Column L  ("L", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
+	Column M  ("M", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
+	Column N  ("N", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
+	Column P  ("P", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
 
-	Column Q  ("Q", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
-	Column R  ("R", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
-	Column S  ("S", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
-	Column T  ("T", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
-	Column V  ("V", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
-	Column W  ("W", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
-	Column Y  ("Y", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
+	Column Q  ("Q", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
+	Column R  ("R", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
+	Column S  ("S", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
+	Column T  ("T", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
+	Column V  ("V", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
+	Column W  ("W", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
+	Column Y  ("Y", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
 
-	Column A_core_heading  ("A_core_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
-	Column A_surface_heading  ("A_surface_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
+	Column A_core_heading  ("A_core_heading", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
+	Column A_surface_heading  ("A_surface_heading", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
 
-	Column C_core_heading  ("C_core_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
-	Column C_surface_heading  ("C_surface_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
-
-
-	Column D_core_heading  ("D_core_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
-	Column D_surface_heading  ("D_surface_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
-	Column E_core_heading  ("E_core_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
-	Column E_surface_heading  ("E_surface_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
+	Column C_core_heading  ("C_core_heading", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
+	Column C_surface_heading  ("C_surface_heading", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
 
 
-	Column F_core_heading  ("F_core_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
-	Column F_surface_heading  ("F_surface_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
-
-	Column G_core_heading  ("G_core_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
-	Column G_surface_heading  ("G_surface_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
-
-	Column H_core_heading  ("H_core_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
-	Column H_surface_heading  ("H_surface_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
-	Column I_core_heading  ("I_core_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
-	Column I_surface_heading  ("I_surface_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
-
-	Column K_core_heading  ("K_core_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
-	Column K_surface_heading  ("K_surface_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
-
-	Column L_core_heading  ("L_core_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
-	Column L_surface_heading  ("L_surface_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
-
-	Column M_core_heading  ("M_core_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
-	Column M_surface_heading  ("M_surface_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
-
-	Column N_core_heading  ("N_core_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
-	Column N_surface_heading  ("N_surface_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
+	Column D_core_heading  ("D_core_heading", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
+	Column D_surface_heading  ("D_surface_heading", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
+	Column E_core_heading  ("E_core_heading", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
+	Column E_surface_heading  ("E_surface_heading", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
 
 
-	Column P_core_heading  ("P_core_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
-	Column P_surface_heading  ("P_surface_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
+	Column F_core_heading  ("F_core_heading", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
+	Column F_surface_heading  ("F_surface_heading", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
 
-	Column Q_core_heading  ("Q_core_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
-	Column Q_surface_heading  ("Q_surface_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
+	Column G_core_heading  ("G_core_heading", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
+	Column G_surface_heading  ("G_surface_heading", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
 
-	Column R_core_heading  ("R_core_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
-	Column R_surface_heading  ("R_surface_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
+	Column H_core_heading  ("H_core_heading", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
+	Column H_surface_heading  ("H_surface_heading", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
+	Column I_core_heading  ("I_core_heading", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
+	Column I_surface_heading  ("I_surface_heading", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
 
+	Column K_core_heading  ("K_core_heading", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
+	Column K_surface_heading  ("K_surface_heading", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
 
-	Column S_core_heading  ("S_core_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
-	Column S_surface_heading  ("S_surface_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
-	Column T_core_heading  ("T_core_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
-	Column T_surface_heading  ("T_surface_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
+	Column L_core_heading  ("L_core_heading", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
+	Column L_surface_heading  ("L_surface_heading", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
 
+	Column M_core_heading  ("M_core_heading", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
+	Column M_surface_heading  ("M_surface_heading", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
 
-	Column V_core_heading  ("V_core_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
-	Column V_surface_heading  ("V_surface_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
-	Column W_core_heading  ("W_core_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
-	Column W_surface_heading  ("W_surface_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
-
-	Column Y_core_heading  ("Y_core_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
-	Column Y_surface_heading  ("Y_surface_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
-
-
-	Column H_percentage ("H_percentage", DbDataTypeOP( new DbReal() ), true /*could be null*/, false /*don't autoincrement*/);
-	Column E_percentage ("E_percentage", DbDataTypeOP( new DbReal() ), true /*could be null*/, false /*don't autoincrement*/);
-	Column L_percentage ("L_percentage", DbDataTypeOP( new DbReal() ), true /*could be null*/, false /*don't autoincrement*/);
-
-	Column number_of_core_heading_charged_AAs_in_a_pair_of_edge_strands ("number_of_core_heading_charged_AAs_in_a_pair_of_edge_strands", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
-
-	Column number_of_core_heading_aro_AAs_in_a_pair_of_edge_strands ("number_of_core_heading_aro_AAs_in_a_pair_of_edge_strands", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
-
-	Column residue_begin("residue_begin", DbDataTypeOP( new DbInteger() ), false /*not null*/, false /*don't autoincrement*/);
-	Column residue_end  ("residue_end", DbDataTypeOP( new DbInteger() ), false /*not null*/, false /*don't autoincrement*/);
+	Column N_core_heading  ("N_core_heading", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
+	Column N_surface_heading  ("N_surface_heading", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
 
 
-	Column number_of_hydrophobic_res ("number_of_hydrophobic_res", DbDataTypeOP( new DbInteger() ), true /* could be null*/, false /*no autoincrement*/);
-	Column number_of_hydrophilic_res ("number_of_hydrophilic_res", DbDataTypeOP( new DbInteger() ), true /* could be null*/, false /*no autoincrement*/);
+	Column P_core_heading  ("P_core_heading", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
+	Column P_surface_heading  ("P_surface_heading", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
 
-	Column number_of_CGP ("number_of_CGP", DbDataTypeOP( new DbInteger() ), true /* could be null*/, false /*no autoincrement*/);
-	Column ratio_hydrophobic_philic_of_sw_in_percent ("ratio_hydrophobic_philic_of_sw_in_percent", DbDataTypeOP( new DbReal() ), true /* could be null*/, false /*no autoincrement*/);
+	Column Q_core_heading  ("Q_core_heading", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
+	Column Q_surface_heading  ("Q_surface_heading", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
 
-	Column number_of_RK_in_sw ("number_of_RK_in_sw", DbDataTypeOP( new DbInteger() ), true /* could be null*/, false /*no autoincrement*/);
-	Column number_of_DE_in_sw ("number_of_DE_in_sw", DbDataTypeOP( new DbInteger() ), true /* could be null*/, false /*no autoincrement*/);
-	Column net_charge_of_sw ("net_charge_of_sw", DbDataTypeOP( new DbInteger() ), true /* could be null*/, false /*no autoincrement*/);
+	Column R_core_heading  ("R_core_heading", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
+	Column R_surface_heading  ("R_surface_heading", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
 
-	Column number_of_core_heading_FWY_in_sw ("number_of_core_heading_FWY_in_sw", DbDataTypeOP( new DbInteger() ), true /* could be null*/, false /*no autoincrement*/);
-	Column ratio_of_core_heading_FWY_in_sw ("ratio_of_core_heading_FWY_in_sw", DbDataTypeOP( new DbReal() ), true /* could be null*/, false /*no autoincrement*/);
-	Column number_of_core_heading_W_in_sw ("number_of_core_heading_W_in_sw", DbDataTypeOP( new DbInteger() ), true /* could be null*/, false /*no autoincrement*/);
-	Column number_of_core_heading_L_in_core_strands_in_sw ("number_of_core_heading_L_in_core_strands_in_sw", DbDataTypeOP( new DbInteger() ), true /* could be null*/, false /*no autoincrement*/);
-	Column number_of_core_heading_W_in_core_strands_in_sw ("number_of_core_heading_W_in_core_strands_in_sw", DbDataTypeOP( new DbInteger() ), true /* could be null*/, false /*no autoincrement*/);
-	Column number_of_core_heading_Y_in_core_strands_in_sw ("number_of_core_heading_Y_in_core_strands_in_sw", DbDataTypeOP( new DbInteger() ), true /* could be null*/, false /*no autoincrement*/);
-	Column avg_dihedral_angle_between_core_strands_across_facing_sheets ("avg_dihedral_angle_between_core_strands_across_facing_sheets", DbDataTypeOP( new DbReal() ), true /* could be null*/, false /*no autoincrement*/);
-	Column sw_res_size ("sw_res_size", DbDataTypeOP( new DbInteger() ), true /* could be null*/, false /*no autoincrement*/);
 
-	Column multimer_is_suspected ("multimer_is_suspected", DbDataTypeOP( new DbText() ), true /* could be null*/, false /*no autoincrement*/);
-	Column avg_b_factor_CB_at_each_component ("avg_b_factor_CB_at_each_component", DbDataTypeOP( new DbReal() ), true /* could be null*/, false /*no autoincrement*/);
+	Column S_core_heading  ("S_core_heading", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
+	Column S_surface_heading  ("S_surface_heading", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
+	Column T_core_heading  ("T_core_heading", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
+	Column T_surface_heading  ("T_surface_heading", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
 
-	Column topology_candidate ("topology_candidate", DbDataTypeOP( new DbText() ), true /* could be null*/, false /*no autoincrement*/);
+
+	Column V_core_heading  ("V_core_heading", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
+	Column V_surface_heading  ("V_surface_heading", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
+	Column W_core_heading  ("W_core_heading", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
+	Column W_surface_heading  ("W_surface_heading", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
+
+	Column Y_core_heading  ("Y_core_heading", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
+	Column Y_surface_heading  ("Y_surface_heading", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
+
+
+	Column H_percentage ("H_percentage", utility::pointer::make_shared< DbReal >(), true /*could be null*/, false /*don't autoincrement*/);
+	Column E_percentage ("E_percentage", utility::pointer::make_shared< DbReal >(), true /*could be null*/, false /*don't autoincrement*/);
+	Column L_percentage ("L_percentage", utility::pointer::make_shared< DbReal >(), true /*could be null*/, false /*don't autoincrement*/);
+
+	Column number_of_core_heading_charged_AAs_in_a_pair_of_edge_strands ("number_of_core_heading_charged_AAs_in_a_pair_of_edge_strands", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
+
+	Column number_of_core_heading_aro_AAs_in_a_pair_of_edge_strands ("number_of_core_heading_aro_AAs_in_a_pair_of_edge_strands", utility::pointer::make_shared< DbInteger >(), true /*could be null*/, false /*don't autoincrement*/);
+
+	Column residue_begin("residue_begin", utility::pointer::make_shared< DbInteger >(), false /*not null*/, false /*don't autoincrement*/);
+	Column residue_end  ("residue_end", utility::pointer::make_shared< DbInteger >(), false /*not null*/, false /*don't autoincrement*/);
+
+
+	Column number_of_hydrophobic_res ("number_of_hydrophobic_res", utility::pointer::make_shared< DbInteger >(), true /* could be null*/, false /*no autoincrement*/);
+	Column number_of_hydrophilic_res ("number_of_hydrophilic_res", utility::pointer::make_shared< DbInteger >(), true /* could be null*/, false /*no autoincrement*/);
+
+	Column number_of_CGP ("number_of_CGP", utility::pointer::make_shared< DbInteger >(), true /* could be null*/, false /*no autoincrement*/);
+	Column ratio_hydrophobic_philic_of_sw_in_percent ("ratio_hydrophobic_philic_of_sw_in_percent", utility::pointer::make_shared< DbReal >(), true /* could be null*/, false /*no autoincrement*/);
+
+	Column number_of_RK_in_sw ("number_of_RK_in_sw", utility::pointer::make_shared< DbInteger >(), true /* could be null*/, false /*no autoincrement*/);
+	Column number_of_DE_in_sw ("number_of_DE_in_sw", utility::pointer::make_shared< DbInteger >(), true /* could be null*/, false /*no autoincrement*/);
+	Column net_charge_of_sw ("net_charge_of_sw", utility::pointer::make_shared< DbInteger >(), true /* could be null*/, false /*no autoincrement*/);
+
+	Column number_of_core_heading_FWY_in_sw ("number_of_core_heading_FWY_in_sw", utility::pointer::make_shared< DbInteger >(), true /* could be null*/, false /*no autoincrement*/);
+	Column ratio_of_core_heading_FWY_in_sw ("ratio_of_core_heading_FWY_in_sw", utility::pointer::make_shared< DbReal >(), true /* could be null*/, false /*no autoincrement*/);
+	Column number_of_core_heading_W_in_sw ("number_of_core_heading_W_in_sw", utility::pointer::make_shared< DbInteger >(), true /* could be null*/, false /*no autoincrement*/);
+	Column number_of_core_heading_L_in_core_strands_in_sw ("number_of_core_heading_L_in_core_strands_in_sw", utility::pointer::make_shared< DbInteger >(), true /* could be null*/, false /*no autoincrement*/);
+	Column number_of_core_heading_W_in_core_strands_in_sw ("number_of_core_heading_W_in_core_strands_in_sw", utility::pointer::make_shared< DbInteger >(), true /* could be null*/, false /*no autoincrement*/);
+	Column number_of_core_heading_Y_in_core_strands_in_sw ("number_of_core_heading_Y_in_core_strands_in_sw", utility::pointer::make_shared< DbInteger >(), true /* could be null*/, false /*no autoincrement*/);
+	Column avg_dihedral_angle_between_core_strands_across_facing_sheets ("avg_dihedral_angle_between_core_strands_across_facing_sheets", utility::pointer::make_shared< DbReal >(), true /* could be null*/, false /*no autoincrement*/);
+	Column sw_res_size ("sw_res_size", utility::pointer::make_shared< DbInteger >(), true /* could be null*/, false /*no autoincrement*/);
+
+	Column multimer_is_suspected ("multimer_is_suspected", utility::pointer::make_shared< DbText >(), true /* could be null*/, false /*no autoincrement*/);
+	Column avg_b_factor_CB_at_each_component ("avg_b_factor_CB_at_each_component", utility::pointer::make_shared< DbReal >(), true /* could be null*/, false /*no autoincrement*/);
+
+	Column topology_candidate ("topology_candidate", utility::pointer::make_shared< DbText >(), true /* could be null*/, false /*no autoincrement*/);
 	// "fnIII" or "not_fnIII" or "not_known_topology"
 
-	Column min_dis_between_sheets_by_all_res ("min_dis_between_sheets_by_all_res", DbDataTypeOP( new DbReal() ), true /* could be null*/, false /*no autoincrement*/);
+	Column min_dis_between_sheets_by_all_res ("min_dis_between_sheets_by_all_res", utility::pointer::make_shared< DbReal >(), true /* could be null*/, false /*no autoincrement*/);
 	// all residues of not only edge strands, but all strands
 
-	Column min_dis_between_sheets_by_cen_res ("min_dis_between_sheets_by_cen_res", DbDataTypeOP( new DbReal() ), true /* could be null*/, false /*no autoincrement*/);
+	Column min_dis_between_sheets_by_cen_res ("min_dis_between_sheets_by_cen_res", utility::pointer::make_shared< DbReal >(), true /* could be null*/, false /*no autoincrement*/);
 	// central residues of not only edge strands, but all strands
 
-	Column avg_dis_between_sheets_by_cen_res ("avg_dis_between_sheets_by_cen_res", DbDataTypeOP( new DbReal() ), true /* could be null*/, false /*no autoincrement*/);
+	Column avg_dis_between_sheets_by_cen_res ("avg_dis_between_sheets_by_cen_res", utility::pointer::make_shared< DbReal >(), true /* could be null*/, false /*no autoincrement*/);
 	// central residues of not only edge strands, but all strands
 
-	Column num_PRO_in_starting_loop_and_1st_3rd_inter_sheet_loop ("num_PRO_in_starting_loop_and_1st_3rd_inter_sheet_loop", DbDataTypeOP( new DbInteger() ), true /* could be null*/, false /*no autoincrement*/);
-	Column num_PRO_in_starting_loop ("num_PRO_in_starting_loop", DbDataTypeOP( new DbInteger() ), true /* could be null*/, false /*no autoincrement*/);
-	Column num_PRO_in_1st_inter_sheet_loop ("num_PRO_in_1st_inter_sheet_loop", DbDataTypeOP( new DbInteger() ), true /* could be null*/, false /*no autoincrement*/);
-	Column num_PRO_in_3rd_inter_sheet_loop ("num_PRO_in_3rd_inter_sheet_loop", DbDataTypeOP( new DbInteger() ), true /* could be null*/, false /*no autoincrement*/);
-	Column weighted_num_PRO_prevent ("weighted_num_PRO_prevent", DbDataTypeOP( new DbInteger() ), true /* could be null*/, false /*no autoincrement*/);
-	Column shortest_dis_between_facing_aro_in_sw ("shortest_dis_between_facing_aro_in_sw", DbDataTypeOP( new DbReal() ), true /* could be null*/, false /*no autoincrement*/);
+	Column num_PRO_in_starting_loop_and_1st_3rd_inter_sheet_loop ("num_PRO_in_starting_loop_and_1st_3rd_inter_sheet_loop", utility::pointer::make_shared< DbInteger >(), true /* could be null*/, false /*no autoincrement*/);
+	Column num_PRO_in_starting_loop ("num_PRO_in_starting_loop", utility::pointer::make_shared< DbInteger >(), true /* could be null*/, false /*no autoincrement*/);
+	Column num_PRO_in_1st_inter_sheet_loop ("num_PRO_in_1st_inter_sheet_loop", utility::pointer::make_shared< DbInteger >(), true /* could be null*/, false /*no autoincrement*/);
+	Column num_PRO_in_3rd_inter_sheet_loop ("num_PRO_in_3rd_inter_sheet_loop", utility::pointer::make_shared< DbInteger >(), true /* could be null*/, false /*no autoincrement*/);
+	Column weighted_num_PRO_prevent ("weighted_num_PRO_prevent", utility::pointer::make_shared< DbInteger >(), true /* could be null*/, false /*no autoincrement*/);
+	Column shortest_dis_between_facing_aro_in_sw ("shortest_dis_between_facing_aro_in_sw", utility::pointer::make_shared< DbReal >(), true /* could be null*/, false /*no autoincrement*/);
 
 	// Schema
 	// PrimaryKey
@@ -605,11 +605,11 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 	// Columns
 
 	// unique_primary_key
-	Column rkde_in_strands_PK_id ("rkde_in_strands_PK_id", DbDataTypeOP( new DbInteger() ), false /*not null*/, false /*no autoincrement*/);
+	Column rkde_in_strands_PK_id ("rkde_in_strands_PK_id", utility::pointer::make_shared< DbInteger >(), false /*not null*/, false /*no autoincrement*/);
 
 	// may not be unique
-	Column residue_number ("residue_number", DbDataTypeOP( new DbInteger() ), false /*not null*/, false /*no autoincrement*/);
-	Column residue_type ("residue_type", DbDataTypeOP( new DbText() ), false /*not null*/, false /*no autoincrement*/);
+	Column residue_number ("residue_number", utility::pointer::make_shared< DbInteger >(), false /*not null*/, false /*no autoincrement*/);
+	Column residue_type ("residue_type", utility::pointer::make_shared< DbText >(), false /*not null*/, false /*no autoincrement*/);
 
 	// Schema
 	// PrimaryKey
@@ -641,7 +641,7 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 	// Columns
 
 	// unique_primary_key
-	Column rkde_PK_id ("rkde_PK_id", DbDataTypeOP( new DbInteger() ), false /*not null*/, false /*no autoincrement*/);
+	Column rkde_PK_id ("rkde_PK_id", utility::pointer::make_shared< DbInteger >(), false /*not null*/, false /*no autoincrement*/);
 
 	// Schema
 	// PrimaryKey
@@ -2340,7 +2340,7 @@ std::string SandwichFeaturesCreator::type_name() const {
 
 protocols::features::FeaturesReporterOP
 SandwichFeaturesCreator::create_features_reporter() const {
-	return protocols::features::FeaturesReporterOP( new SandwichFeatures );
+	return utility::pointer::make_shared< SandwichFeatures >();
 }
 
 void SandwichFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

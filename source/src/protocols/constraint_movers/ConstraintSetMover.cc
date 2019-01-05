@@ -52,7 +52,7 @@ using namespace utility::tag;
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP ConstraintSetMoverCreator::create_mover() const
 // XRW TEMP {
-// XRW TEMP  return protocols::moves::MoverOP( new ConstraintSetMover );
+// XRW TEMP  return utility::pointer::make_shared< ConstraintSetMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -94,8 +94,8 @@ ConstraintSetMover::read_options()
 void
 ConstraintSetMover::constraint_set( ConstraintSetCOP cst_set )
 {
-	constraint_set_low_res_ = ConstraintSetOP( new ConstraintSet( *cst_set ) );
-	constraint_set_high_res_ = ConstraintSetOP( new ConstraintSet( *cst_set ) );
+	constraint_set_low_res_ = utility::pointer::make_shared< ConstraintSet >( *cst_set );
+	constraint_set_high_res_ = utility::pointer::make_shared< ConstraintSet >( *cst_set );
 }
 
 void
@@ -120,10 +120,10 @@ ConstraintSetMover::apply( Pose & pose )
 			// uninitialized filename not tolerated, in order to avoid potential confusion
 			if ( cst_file_.empty() ) utility_exit_with_message("Can\'t read constraints from empty file!");
 			// special case: set cst_file_ to "none" to effectively remove constraints from Pose
-			else if ( cst_file_ == "none" ) constraint_set_low_res_ = ConstraintSetOP( new ConstraintSet );
+			else if ( cst_file_ == "none" ) constraint_set_low_res_ = utility::pointer::make_shared< ConstraintSet >();
 			else {
 				constraint_set_low_res_ =
-					ConstraintIO::get_instance()->read_constraints( cst_file_, ConstraintSetOP( new ConstraintSet ), pose );
+					ConstraintIO::get_instance()->read_constraints( cst_file_, utility::pointer::make_shared< ConstraintSet >(), pose );
 				//ConstraintIO::get_instance()->read_constraints_new( cst_file_, new ConstraintSet, pose );
 			}
 		}
@@ -131,10 +131,10 @@ ConstraintSetMover::apply( Pose & pose )
 			// uninitialized filename not tolerated, in order to avoid potential confusion
 			if ( cst_fa_file_.empty() ) utility_exit_with_message("Can\'t read constraints from empty file!");
 			// special case: set cst_file_ to "none" to effectively remove constraints from Pose
-			else if ( cst_fa_file_ == "none" ) constraint_set_high_res_ = ConstraintSetOP( new ConstraintSet );
+			else if ( cst_fa_file_ == "none" ) constraint_set_high_res_ = utility::pointer::make_shared< ConstraintSet >();
 			else {
 				constraint_set_high_res_ =
-					ConstraintIO::get_instance()->read_constraints( cst_fa_file_, ConstraintSetOP( new ConstraintSet ), pose );
+					ConstraintIO::get_instance()->read_constraints( cst_fa_file_, utility::pointer::make_shared< ConstraintSet >(), pose );
 				//ConstraintIO::get_instance()->read_constraints_new( cst_fa_file_, new ConstraintSet, pose );
 			}
 		}
@@ -169,8 +169,8 @@ ConstraintSetMover::apply( Pose & pose )
 // XRW TEMP  return ConstraintSetMover::mover_name();
 // XRW TEMP }
 
-protocols::moves::MoverOP ConstraintSetMover::clone() const { return protocols::moves::MoverOP( new protocols::constraint_movers::ConstraintSetMover( *this ) ); }
-protocols::moves::MoverOP ConstraintSetMover::fresh_instance() const { return protocols::moves::MoverOP( new ConstraintSetMover ); }
+protocols::moves::MoverOP ConstraintSetMover::clone() const { return utility::pointer::make_shared< protocols::constraint_movers::ConstraintSetMover >( *this ); }
+protocols::moves::MoverOP ConstraintSetMover::fresh_instance() const { return utility::pointer::make_shared< ConstraintSetMover >(); }
 
 void
 ConstraintSetMover::register_options()
@@ -226,7 +226,7 @@ std::string ConstraintSetMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 ConstraintSetMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ConstraintSetMover );
+	return utility::pointer::make_shared< ConstraintSetMover >();
 }
 
 void ConstraintSetMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

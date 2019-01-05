@@ -59,7 +59,7 @@ OrResidueSelector::~OrResidueSelector() = default;
 
 /// @brief Clone operator.
 /// @details Copy this object and return an owning pointer to the new object.
-ResidueSelectorOP OrResidueSelector::clone() const { return ResidueSelectorOP( new OrResidueSelector(*this) ); }
+ResidueSelectorOP OrResidueSelector::clone() const { return utility::pointer::make_shared< OrResidueSelector >(*this); }
 
 OrResidueSelector::OrResidueSelector( ResidueSelectorCOP selector1, ResidueSelectorCOP selector2 )
 {
@@ -171,7 +171,7 @@ OrResidueSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 
 ResidueSelectorOP
 OrResidueSelectorCreator::create_residue_selector() const {
-	return ResidueSelectorOP( new OrResidueSelector );
+	return utility::pointer::make_shared< OrResidueSelector >();
 }
 
 std::string

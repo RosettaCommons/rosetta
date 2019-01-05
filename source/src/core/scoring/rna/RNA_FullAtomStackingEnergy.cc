@@ -105,7 +105,7 @@ methods::EnergyMethodOP
 RNA_FullAtomStackingEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
-	return methods::EnergyMethodOP( new RNA_FullAtomStackingEnergy( options ) );
+	return utility::pointer::make_shared< RNA_FullAtomStackingEnergy >( options );
 }
 
 ScoreTypes
@@ -128,7 +128,7 @@ RNA_FullAtomStackingEnergyCreator::score_types_for_method() const {
 
 /// c-tor
 RNA_FullAtomStackingEnergy::RNA_FullAtomStackingEnergy( methods::EnergyMethodOptions const & options ) :
-	parent( methods::EnergyMethodCreatorOP( new RNA_FullAtomStackingEnergyCreator ) ),
+	parent( utility::pointer::make_shared< RNA_FullAtomStackingEnergyCreator >() ),
 	//Parameters are totally arbitrary and made up!
 	prefactor_    ( -0.2 ),
 	stack_cutoff_ ( 4.0 ), //Encompass next base stack
@@ -152,7 +152,7 @@ RNA_FullAtomStackingEnergy::RNA_FullAtomStackingEnergy( RNA_FullAtomStackingEner
 methods::EnergyMethodOP
 RNA_FullAtomStackingEnergy::clone() const
 {
-	return methods::EnergyMethodOP( new RNA_FullAtomStackingEnergy( *this ) );
+	return utility::pointer::make_shared< RNA_FullAtomStackingEnergy >( *this );
 }
 
 
@@ -192,7 +192,7 @@ RNA_FullAtomStackingEnergy::setup_for_minimizing(
 	NeighborListOP nblist;
 	Real const tolerated_motion = pose.energies().use_nblist_auto_update() ? basic::options::option[ basic::options::OptionKeys::run::nblist_autoupdate_narrow ] : 1.5;
 	Real const XX = dist_cutoff + 2 * tolerated_motion;
-	nblist = NeighborListOP( new NeighborList( min_map.domain_map(), XX*XX, XX*XX, XX*XX ) );
+	nblist = utility::pointer::make_shared< NeighborList >( min_map.domain_map(), XX*XX, XX*XX, XX*XX );
 	if ( pose.energies().use_nblist_auto_update() ) {
 		nblist->set_auto_update( tolerated_motion );
 	}
@@ -705,7 +705,7 @@ RNA_FullAtomStackingEnergy::get_count_pair_function(
 {
 	using namespace etable::count_pair;
 	if ( res1 == res2 ) {
-		return etable::count_pair::CountPairFunctionCOP( etable::count_pair::CountPairFunctionOP( new CountPairNone ) );
+		return utility::pointer::make_shared< CountPairNone >();
 	}
 	conformation::Residue const & rsd1( pose.residue( res1 ) );
 	conformation::Residue const & rsd2( pose.residue( res2 ) );
@@ -721,10 +721,10 @@ RNA_FullAtomStackingEnergy::get_count_pair_function(
 {
 	using namespace etable::count_pair;
 
-	if ( !rsd1.is_RNA() && !rsd1.is_TNA() ) return etable::count_pair::CountPairFunctionCOP( etable::count_pair::CountPairFunctionOP( new CountPairNone ) );
-	if ( !rsd2.is_RNA() && !rsd2.is_TNA() ) return etable::count_pair::CountPairFunctionCOP( etable::count_pair::CountPairFunctionOP( new CountPairNone ) );
-	if ( rsd1.seqpos() == rsd2.seqpos() ) return etable::count_pair::CountPairFunctionCOP( etable::count_pair::CountPairFunctionOP( new CountPairNone ) );
-	return etable::count_pair::CountPairFunctionCOP( etable::count_pair::CountPairFunctionOP( new CountPairAll ) );
+	if ( !rsd1.is_RNA() && !rsd1.is_TNA() ) return utility::pointer::make_shared< CountPairNone >();
+	if ( !rsd2.is_RNA() && !rsd2.is_TNA() ) return utility::pointer::make_shared< CountPairNone >();
+	if ( rsd1.seqpos() == rsd2.seqpos() ) return utility::pointer::make_shared< CountPairNone >();
+	return utility::pointer::make_shared< CountPairAll >();
 }
 
 

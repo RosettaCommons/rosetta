@@ -175,7 +175,7 @@ GridScorer::GridScorer( core::scoring::ScoreFunctionOP sfxn ) :
 	sfxn_1b_clash_->set_energy_method_options(e_opts);
 
 	// set up scorefunction-derived parameters
-	LKBe_ = core::scoring::lkball::LK_BallEnergyOP( new core::scoring::lkball::LK_BallEnergy(e_opts) );
+	LKBe_ = utility::pointer::make_shared< core::scoring::lkball::LK_BallEnergy >(e_opts);
 	coulomb_ = core::scoring::etable::coulomb::CoulombOP ( new core::scoring::etable::coulomb::Coulomb(e_opts) );
 	coulomb_->initialize();
 	core::scoring::hbonds::HBondOptions const & hbopt = e_opts.hbond_options();
@@ -281,7 +281,7 @@ GridScorer::prepare_grid( core::pose::Pose const &pose, core::Size const lig_res
 	dims_[0] = (core::Size)std::ceil( 2*(maxRad + bbox_padding_) / voxel_spacing_ );
 	dims_[2] = dims_[1] = dims_[0];
 
-	ref_pose_ = core::pose::PoseOP( new core::pose::Pose(pose) ); // reference pose (used in scoring)
+	ref_pose_ = utility::pointer::make_shared< core::pose::Pose >(pose); // reference pose (used in scoring)
 
 	TR << "  ... built grid with " << maxRad << " + " << bbox_padding_ << " A radius; "
 		<< voxel_spacing_ << " A grid spacing" << std::endl;
@@ -915,7 +915,7 @@ GridScorer::score( core::pose::Pose &pose, LigandConformer const &lig, bool soft
 		core::Size resid = (i==0 ? lig.ligand_id() : lig.moving_scs()[i]);
 		core::conformation::Residue const &res_i = pose.residue( resid );
 		if ( useLKB ) {
-			alllkbrinfo[i+1] = core::scoring::lkball::LKB_ResidueInfoOP( new core::scoring::lkball::LKB_ResidueInfo (res_i) );
+			alllkbrinfo[i+1] = utility::pointer::make_shared< core::scoring::lkball::LKB_ResidueInfo > (res_i);
 		}
 		ReweightableRepEnergy score_i = get_1b_energy( res_i, alllkbrinfo[i+1], soft );
 		score_grid += score_i.score( w_rep_ );
@@ -1304,7 +1304,7 @@ GridScorer::derivatives(
 		for ( core::Size i=0; i<=nSCs; ++i ) {
 			core::Size resid = (i==0 ? lig.ligand_id() : lig.moving_scs()[i]);
 			core::conformation::Residue const &res_i = pose.residue( resid );
-			alllkbrinfo[i+1] = core::scoring::lkball::LKB_ResidueInfoOP( new core::scoring::lkball::LKB_ResidueInfo (res_i) );
+			alllkbrinfo[i+1] = utility::pointer::make_shared< core::scoring::lkball::LKB_ResidueInfo > (res_i);
 			alllkbrinfo[i+1]->build_waters( res_i, true );
 			allNwaters[i+1] = alllkbrinfo[i+1]->n_attached_waters();
 			allwaters[i+1] = alllkbrinfo[i+1]->waters();

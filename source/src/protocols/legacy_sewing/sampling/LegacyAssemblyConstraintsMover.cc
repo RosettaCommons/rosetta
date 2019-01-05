@@ -66,7 +66,7 @@ LegacyReadNativeRotamersFile::~LegacyReadNativeRotamersFile() = default;
 
 TaskOperationOP
 LegacyReadNativeRotamersFileCreator::create_task_operation() const {
-	return TaskOperationOP( new LegacyReadNativeRotamersFile );
+	return utility::pointer::make_shared< LegacyReadNativeRotamersFile >();
 }
 
 std::string
@@ -82,7 +82,7 @@ void LegacyReadNativeRotamersFileCreator::provide_xml_schema( utility::tag::XMLS
 
 core::pack::task::operation::TaskOperationOP
 LegacyReadNativeRotamersFile::clone() const {
-	return core::pack::task::operation::TaskOperationOP( new LegacyReadNativeRotamersFile( *this ) );
+	return utility::pointer::make_shared< LegacyReadNativeRotamersFile >( *this );
 }
 
 void
@@ -155,7 +155,7 @@ LegacyReadRepeatNativeRotamersFile::~LegacyReadRepeatNativeRotamersFile() = defa
 
 core::pack::task::operation::TaskOperationOP
 LegacyReadRepeatNativeRotamersFile::clone() const {
-	return core::pack::task::operation::TaskOperationOP( new LegacyReadRepeatNativeRotamersFile( *this ) );
+	return utility::pointer::make_shared< LegacyReadRepeatNativeRotamersFile >( *this );
 }
 
 ///@brief apply the normal ReadNativeRotamerFile operations, then add RotamerLinks for the repeating unit
@@ -212,7 +212,7 @@ void LegacyReadRepeatNativeRotamersFile::provide_xml_schema( utility::tag::XMLSc
 
 core::pack::task::operation::TaskOperationOP
 LegacyReadRepeatNativeRotamersFileCreator::create_task_operation() const {
-	return core::pack::task::operation::TaskOperationOP( new LegacyReadRepeatNativeRotamersFile );
+	return utility::pointer::make_shared< LegacyReadRepeatNativeRotamersFile >();
 }
 
 std::string LegacyReadRepeatNativeRotamersFileCreator::keyname() const
@@ -230,7 +230,7 @@ void LegacyReadRepeatNativeRotamersFileCreator::provide_xml_schema( utility::tag
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP LegacyAssemblyConstraintsMoverCreator::create_mover() const
 // XRW TEMP {
-// XRW TEMP  return protocols::moves::MoverOP( new LegacyAssemblyConstraintsMover );
+// XRW TEMP  return utility::pointer::make_shared< LegacyAssemblyConstraintsMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -247,12 +247,12 @@ void LegacyReadRepeatNativeRotamersFileCreator::provide_xml_schema( utility::tag
 
 protocols::moves::MoverOP
 LegacyAssemblyConstraintsMover::clone() const {
-	return( protocols::moves::MoverOP( new LegacyAssemblyConstraintsMover( *this ) ) );
+	return( utility::pointer::make_shared< LegacyAssemblyConstraintsMover >( *this ) );
 }
 
 protocols::moves::MoverOP
 LegacyAssemblyConstraintsMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new LegacyAssemblyConstraintsMover );
+	return utility::pointer::make_shared< LegacyAssemblyConstraintsMover >();
 }
 
 // XRW TEMP std::string
@@ -452,7 +452,7 @@ std::string LegacyAssemblyConstraintsMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 LegacyAssemblyConstraintsMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LegacyAssemblyConstraintsMover );
+	return utility::pointer::make_shared< LegacyAssemblyConstraintsMover >();
 }
 
 void LegacyAssemblyConstraintsMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -61,7 +61,7 @@ public:
 
 	StructureIndependentPeakCalibrator() : PeakCalibrator( 1 /*normal sign*/ ) {};
 	PeakCalibratorOP fresh_instance() override {
-		return PeakCalibratorOP( new StructureIndependentPeakCalibrator() );
+		return utility::pointer::make_shared< StructureIndependentPeakCalibrator >();
 	}
 
 	void collect_upperbound_statistics( core::Size  /*peak*/, TypeCumulator const& /*types*/ ) override;

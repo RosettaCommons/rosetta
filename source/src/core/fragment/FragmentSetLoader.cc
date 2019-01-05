@@ -80,7 +80,7 @@ FragmentSetLoader::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 /// @details Return an owning pointer to a newly constructed default instance of FragmentSetLoader.
 basic::resource_manager::ResourceLoaderOP FragmentSetLoaderCreator::create_resource_loader() const
 {
-	return basic::resource_manager::ResourceLoaderOP( new FragmentSetLoader() );
+	return utility::pointer::make_shared< FragmentSetLoader >();
 }
 
 /// @details Return a string specifying the type of %ResourceLoader to create

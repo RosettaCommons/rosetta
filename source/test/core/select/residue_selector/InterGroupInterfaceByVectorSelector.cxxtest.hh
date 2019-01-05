@@ -46,7 +46,7 @@ public:
 		upper_(src.upper_)
 	{}
 
-	ResidueSelectorOP clone() const { return ResidueSelectorOP( new ResRangeSelector(*this) ); }
+	ResidueSelectorOP clone() const { return utility::pointer::make_shared< ResRangeSelector >(*this); }
 
 	virtual
 	ResidueSubset
@@ -118,8 +118,8 @@ public:
 	void test_interface_vector_selector_from_resselector_on_test_in_pdb() {
 		InterGroupInterfaceByVectorSelectorOP igibv_rs( new InterGroupInterfaceByVectorSelector );
 
-		igibv_rs->group1_selector( ResidueSelectorCOP( new ResRangeSelector( 1, 20 ) ) );
-		igibv_rs->group2_selector( ResidueSelectorCOP( new ResRangeSelector( 45, 66 ) ) );
+		igibv_rs->group1_selector( utility::pointer::make_shared< ResRangeSelector >( 1, 20 ) );
+		igibv_rs->group2_selector( utility::pointer::make_shared< ResRangeSelector >( 45, 66 ) );
 
 		core::pose::Pose pose = create_test_in_pdb_pose();
 		ResidueSubset subset = igibv_rs->apply( pose );

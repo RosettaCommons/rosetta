@@ -77,8 +77,8 @@ public:
 	core::pack::rotamer_set::Rotamers::const_iterator begin() const { return rotset_->begin(); }
 	core::pack::rotamer_set::Rotamers::const_iterator end() const { return rotset_->end(); }
 
-	protocols::moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new TryRotamers( *this ) ) ); }
-	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new TryRotamers ); }
+	protocols::moves::MoverOP clone() const override { return( utility::pointer::make_shared< TryRotamers >( *this ) ); }
+	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< TryRotamers >(); }
 	virtual ~TryRotamers();
 
 	std::string

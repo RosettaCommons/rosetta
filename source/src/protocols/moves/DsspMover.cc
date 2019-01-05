@@ -48,12 +48,12 @@ DsspMover::~DsspMover() = default;
 /// @brief clone this object
 DsspMover::MoverOP DsspMover::clone() const {
 
-	return DsspMover::MoverOP( new DsspMover( *this ) );
+	return utility::pointer::make_shared< DsspMover >( *this );
 }
 
 /// @brief create this type of object
 DsspMover::MoverOP DsspMover::fresh_instance() const {
-	return DsspMover::MoverOP( new DsspMover() );
+	return utility::pointer::make_shared< DsspMover >();
 }
 
 /// @details virtual main
@@ -114,7 +114,7 @@ std::string DsspMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 DsspMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new DsspMover );
+	return utility::pointer::make_shared< DsspMover >();
 }
 
 void DsspMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

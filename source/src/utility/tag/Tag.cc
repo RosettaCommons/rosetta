@@ -359,7 +359,7 @@ struct tag_closure : public boost::spirit::classic::closure< tag_closure,TagOP >
 
 void set_name_and_options( TagOP & tag, name_and_options_value_type const & v )
 {
-	tag = TagOP( new Tag() );
+	tag = utility::pointer::make_shared< Tag >();
 	tag->setName( v.first );
 	for ( auto const & i : v.second ) {
 		tag->setOption( i.first, i.second );

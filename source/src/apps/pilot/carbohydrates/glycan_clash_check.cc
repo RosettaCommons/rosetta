@@ -114,14 +114,14 @@ public:  // Standard Rosetta methods
 	protocols::moves::MoverOP
 	clone() const override
 	{
-		return protocols::moves::MoverOP( new GlycanClashCheckMover( *this ) );
+		return utility::pointer::make_shared< GlycanClashCheckMover >( *this );
 	}
 
 
 	protocols::moves::MoverOP
 	fresh_instance() const override
 	{
-		return protocols::moves::MoverOP( new GlycanClashCheckMover );
+		return utility::pointer::make_shared< GlycanClashCheckMover >();
 	}
 
 	bool

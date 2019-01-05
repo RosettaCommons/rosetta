@@ -55,7 +55,7 @@ public:
 	{}
 
 	/// @brief returns a clone of this EtableFunc
-	FuncOP clone() const { return FuncOP( new EtableFunc( *this ) ); }
+	FuncOP clone() const { return utility::pointer::make_shared< EtableFunc >( *this ); }
 
 	virtual bool operator == ( Func const & other ) const;
 	virtual bool same_type_as_me( Func const & other ) const;

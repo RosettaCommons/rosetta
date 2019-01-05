@@ -112,8 +112,8 @@ void AlignRmsdTargetEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvalua
 					align_rmsd_fns[ii], option[ OptionKeys::evaluation::align_rmsd_format ]()
 					).front();
 			}
-			eval.add_evaluation( PoseEvaluatorOP( new Align_RmsdEvaluator(rmsd_pose,tag,true,aln,gdt_by_TM) ) );
-			eval.add_evaluation( PoseEvaluatorOP( new Align_RotamerEvaluator(rmsd_pose,tag,true,aln) ) );
+			eval.add_evaluation( utility::pointer::make_shared< Align_RmsdEvaluator >(rmsd_pose,tag,true,aln,gdt_by_TM) );
+			eval.add_evaluation( utility::pointer::make_shared< Align_RotamerEvaluator >(rmsd_pose,tag,true,aln) );
 		}
 	}
 

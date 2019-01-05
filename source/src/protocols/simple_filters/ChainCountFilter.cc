@@ -107,7 +107,7 @@ std::string ChainCountFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 ChainCountFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new ChainCountFilter );
+	return utility::pointer::make_shared< ChainCountFilter >();
 }
 
 void ChainCountFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

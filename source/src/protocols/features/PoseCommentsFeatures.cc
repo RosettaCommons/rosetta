@@ -87,9 +87,9 @@ PoseCommentsFeatures::write_schema_to_db(utility::sql_database::sessionOP db_ses
 	using namespace basic::database::schema_generator;
 
 	//******pose_comments******//
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ), false);
-	Column comment_key("comment_key", DbDataTypeOP( new DbTextKey() ), false);
-	Column value("value", DbDataTypeOP( new DbText() ), false);
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >(), false);
+	Column comment_key("comment_key", utility::pointer::make_shared< DbTextKey >(), false);
+	Column value("value", utility::pointer::make_shared< DbText >(), false);
 
 	utility::vector1<Column> pkey_cols;
 	pkey_cols.push_back(struct_id);
@@ -206,7 +206,7 @@ std::string PoseCommentsFeaturesCreator::type_name() const {
 
 protocols::features::FeaturesReporterOP
 PoseCommentsFeaturesCreator::create_features_reporter() const {
-	return protocols::features::FeaturesReporterOP( new PoseCommentsFeatures );
+	return utility::pointer::make_shared< PoseCommentsFeatures >();
 }
 
 void PoseCommentsFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

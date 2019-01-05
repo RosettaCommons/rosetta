@@ -194,9 +194,9 @@ JobDistributor::JobDistributor(bool empty)
 		init_jd();
 	} else {
 		job_inputter_ = nullptr;
-		job_outputter_ = JobOutputterOP( new NoOutputJobOutputter );
+		job_outputter_ = utility::pointer::make_shared< NoOutputJobOutputter >();
 		parser_ = JobDistributorFactory::create_parser();
-		jobs_ = JobsContainerOP( new JobsContainer );
+		jobs_ = utility::pointer::make_shared< JobsContainer >();
 	}
 }
 
@@ -209,7 +209,7 @@ void JobDistributor::init_jd()
 	if ( batches_.size() > 0 ) {
 		tr.Debug << "batches present... " << std::endl;
 		current_batch_id_ = 1;
-		job_inputter_ = JobInputterOP( new BatchJobInputter(batches_[1]) );
+		job_inputter_ = utility::pointer::make_shared< BatchJobInputter >(batches_[1]);
 	} else { //no batches...
 		try{
 			job_inputter_ = JobDistributorFactory::create_job_inputter();
@@ -501,7 +501,7 @@ JobDistributor::run_one_job(
 	// setup profiling
 	evaluation::TimeEvaluatorOP run_time(nullptr);
 	if ( !option[OptionKeys::run::no_prof_info_in_silentout].value() ) {
-		job_outputter_->add_evaluation(run_time = evaluation::TimeEvaluatorOP( new evaluation::TimeEvaluator )); //just don't use this in integration tests!
+		job_outputter_->add_evaluation(run_time = utility::pointer::make_shared< evaluation::TimeEvaluator >()); //just don't use this in integration tests!
 	}
 
 	tr.Debug << "Starting job " << job_outputter_->output_name( current_job_ ) << std::endl;
@@ -1057,7 +1057,7 @@ void JobDistributor::load_new_batch()
 	//this is the first batch!
 	job_inputter_ = nullptr; //triggers destructor --> restores options
 	tr.Info << "start batch " << batches_[current_batch_id_] << std::endl;
-	job_inputter_ = JobInputterOP( new BatchJobInputter(batches_[current_batch_id_]) );
+	job_inputter_ = utility::pointer::make_shared< BatchJobInputter >(batches_[current_batch_id_]);
 
 	job_inputter_->fill_jobs(*jobs_);
 	// have to initialize these AFTER BatchJobInputter->fill_jobs an new batch
@@ -1167,7 +1167,7 @@ void JobDistributor::reset_job_state() {
 void JobDistributor::get_job_list_from_job_inputter() {
 	// get jobs
 	try {
-		jobs_ = JobsContainerOP( new JobsContainer ); //Create the jobs container object
+		jobs_ = utility::pointer::make_shared< JobsContainer >(); //Create the jobs container object
 		job_inputter_->fill_jobs(*jobs_);
 	} catch (utility::excn::Exception & excn) {
 		basic::Error()

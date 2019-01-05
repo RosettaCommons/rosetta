@@ -101,10 +101,10 @@ MetalSiteFinderMover::~MetalSiteFinderMover(){}
 
 //Virtual methods
 protocols::moves::MoverOP MetalSiteFinderMover::clone() const{
-	return protocols::moves::MoverOP( new MetalSiteFinderMover(*this) );
+	return utility::pointer::make_shared< MetalSiteFinderMover >(*this);
 }
 protocols::moves::MoverOP MetalSiteFinderMover::fresh_instance() const{
-	return protocols::moves::MoverOP( new MetalSiteFinderMover);
+	return utility::pointer::make_shared< MetalSiteFinderMover >();
 }
 std::string MetalSiteFinderMover::get_name() const{
 	return "MetalSiteFinderMover";
@@ -758,7 +758,7 @@ void MetalSiteFinderMover::apply(core::pose::Pose & pose){
 					}
 				}
 				TR << std::endl;
-				dummy_pose = core::pose::PoseOP(new core::pose::Pose(pose, sse_begin, site_end) );
+				dummy_pose = utility::pointer::make_shared< core::pose::Pose >(pose, sse_begin, site_end);
 				//core::pose::add_lower_terminus_type_to_pose_residue( *dummy_pose, 1 );
 				//TR << "Added lower terminus to site" << std::endl;
 				//core::pose::add_upper_terminus_type_to_pose_residue( *dummy_pose, dummy_pose->total_residue() );

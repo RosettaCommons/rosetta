@@ -93,7 +93,7 @@ StepWiseBasicOptions::initialize_variables(){
 StepWiseBasicOptionsOP
 StepWiseBasicOptions::clone() const
 {
-	return StepWiseBasicOptionsOP( new StepWiseBasicOptions( *this ) );
+	return utility::pointer::make_shared< StepWiseBasicOptions >( *this );
 }
 
 /////////////////////////////////////////////////////////////////////////////////////

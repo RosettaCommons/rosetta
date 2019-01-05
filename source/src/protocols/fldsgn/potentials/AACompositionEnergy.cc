@@ -35,7 +35,7 @@ namespace potentials {
 AACompositionEnergyCreator::EnergyMethodOP
 AACompositionEnergyCreator::create_energy_method( EnergyMethodOptions const & ) const
 {
-	return AACompositionEnergyCreator::EnergyMethodOP( new AACompositionEnergy );
+	return utility::pointer::make_shared< AACompositionEnergy >();
 }
 
 AACompositionEnergyCreator::ScoreTypes
@@ -49,13 +49,13 @@ AACompositionEnergyCreator::score_types_for_method() const
 
 /// @brief default constructor
 AACompositionEnergy::AACompositionEnergy() :
-	parent( core::scoring::methods::EnergyMethodCreatorOP( new AACompositionEnergyCreator ) )
+	parent( utility::pointer::make_shared< AACompositionEnergyCreator >() )
 {}
 
 
 /// @brief default constructor
 AACompositionEnergy::AACompositionEnergy( std::map< AA, std::pair< Real, Real > > const & comp_constraint_aas ) :
-	parent( core::scoring::methods::EnergyMethodCreatorOP( new AACompositionEnergyCreator ) ),
+	parent( utility::pointer::make_shared< AACompositionEnergyCreator >() ),
 	comp_constraint_aas_( comp_constraint_aas )
 {
 	initialize();
@@ -74,7 +74,7 @@ AACompositionEnergy::~AACompositionEnergy() = default;
 AACompositionEnergy::EnergyMethodOP
 AACompositionEnergy::clone() const
 {
-	return AACompositionEnergy::EnergyMethodOP( new AACompositionEnergy( *this ) );
+	return utility::pointer::make_shared< AACompositionEnergy >( *this );
 }
 
 

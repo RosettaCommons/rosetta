@@ -211,7 +211,7 @@ public:
 		core_init();
 		core::import_pose::pose_from_file( pose_, "protocols/abinitio/2GB3.pdb" , core::import_pose::PDB_file);
 
-		fragset3mer_ = ConstantLengthFragSetOP( new ConstantLengthFragSet );
+		fragset3mer_ = utility::pointer::make_shared< ConstantLengthFragSet >();
 		fragset3mer_->read_fragment_file( "protocols/abinitio/mfr_aa2GB3_03_05.200_v1_3" );
 
 		TS_ASSERT_EQUALS( fragset3mer_->max_frag_length(), 3 );

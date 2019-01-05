@@ -44,10 +44,10 @@ public:
 	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
 	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	filters::FilterOP clone() const override {
-		return filters::FilterOP( new AtomicDistanceFilter( *this ) );
+		return utility::pointer::make_shared< AtomicDistanceFilter >( *this );
 	}
 	filters::FilterOP fresh_instance() const override{
-		return filters::FilterOP( new AtomicDistanceFilter() );
+		return utility::pointer::make_shared< AtomicDistanceFilter >();
 	}
 
 	~AtomicDistanceFilter() override= default;

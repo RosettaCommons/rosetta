@@ -139,7 +139,7 @@ LoopMover_Perturb_KIC::~LoopMover_Perturb_KIC()= default;
 
 //clone
 protocols::moves::MoverOP LoopMover_Perturb_KIC::clone() const {
-	return protocols::moves::MoverOP( new LoopMover_Perturb_KIC(*this) );
+	return utility::pointer::make_shared< LoopMover_Perturb_KIC >(*this);
 }
 
 void LoopMover_Perturb_KIC::set_default_settings()
@@ -274,7 +274,7 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 	bool use_nblist( false ), deriv_check( false ), use_cartmin ( option[ OptionKeys::loops::kic_with_cartmin ]() ); // true ); // false );
 
 	if ( use_cartmin ) runtime_assert( scorefxn()->get_weight( core::scoring::cart_bonded ) > 1e-3 ); // AS -- actually I'm not sure if this makes any sense in centroid... ask Frank?
-	min_mover = protocols::minimization_packing::MinMoverOP( new protocols::minimization_packing::MinMover( mm_one_loop_OP, scorefxn(), min_type, dummy_tol, use_nblist, deriv_check ) );
+	min_mover = utility::pointer::make_shared< protocols::minimization_packing::MinMover >( mm_one_loop_OP, scorefxn(), min_type, dummy_tol, use_nblist, deriv_check );
 	//min_mover = new protocols::minimization_packing::MinMover(); // version above doesn't work, but setting all one by one does.. try again with scorefxn() w/o the star though
 
 	/*
@@ -631,7 +631,7 @@ basic::Tracer & LoopMover_Perturb_KIC::tr() const
 // XRW TEMP LoopMover_Perturb_KICCreator::~LoopMover_Perturb_KICCreator() {}
 
 // XRW TEMP moves::MoverOP LoopMover_Perturb_KICCreator::create_mover() const {
-// XRW TEMP  return moves::MoverOP( new LoopMover_Perturb_KIC() );
+// XRW TEMP  return utility::pointer::make_shared< LoopMover_Perturb_KIC >();
 // XRW TEMP }
 
 // XRW TEMP std::string LoopMover_Perturb_KICCreator::keyname() const {
@@ -660,7 +660,7 @@ std::string LoopMover_Perturb_KICCreator::keyname() const {
 
 protocols::moves::MoverOP
 LoopMover_Perturb_KICCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LoopMover_Perturb_KIC );
+	return utility::pointer::make_shared< LoopMover_Perturb_KIC >();
 }
 
 void LoopMover_Perturb_KICCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -78,7 +78,7 @@ LigandMetalContactSelector::LigandMetalContactSelector(LigandMetalContactSelecto
 /// @details Copy this object and return owning pointer to the copy (created on the heap).
 core::select::residue_selector::ResidueSelectorOP
 LigandMetalContactSelector::clone() const {
-	return core::select::residue_selector::ResidueSelectorOP( new LigandMetalContactSelector(*this) );
+	return utility::pointer::make_shared< LigandMetalContactSelector >(*this);
 }
 
 /// @brief "Apply" function.
@@ -200,7 +200,7 @@ void LigandMetalContactSelector::provide_xml_schema( utility::tag::XMLSchemaDefi
 
 core::select::residue_selector::ResidueSelectorOP
 LigandMetalContactSelectorCreator::create_residue_selector() const {
-	return core::select::residue_selector::ResidueSelectorOP( new LigandMetalContactSelector );
+	return utility::pointer::make_shared< LigandMetalContactSelector >();
 }
 
 std::string

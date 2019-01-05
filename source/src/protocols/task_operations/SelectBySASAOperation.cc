@@ -54,7 +54,7 @@ using namespace utility::tag;
 core::pack::task::operation::TaskOperationOP
 SelectBySASAOperationCreator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new SelectBySASAOperation );
+	return utility::pointer::make_shared< SelectBySASAOperation >();
 }
 
 void SelectBySASAOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -86,7 +86,7 @@ SelectBySASAOperation::~SelectBySASAOperation() = default;
 
 core::pack::task::operation::TaskOperationOP SelectBySASAOperation::clone() const
 {
-	return core::pack::task::operation::TaskOperationOP( new SelectBySASAOperation( *this ) );
+	return utility::pointer::make_shared< SelectBySASAOperation >( *this );
 }
 
 void

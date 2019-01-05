@@ -41,7 +41,7 @@ namespace rdf {
 
 RDFBaseOP RDFEtableCreator::create_rdf_function() const
 {
-	return RDFBaseOP( new RDFEtableFunction );
+	return utility::pointer::make_shared< RDFEtableFunction >();
 }
 
 std::string RDFEtableCreator::type_name() const
@@ -77,7 +77,7 @@ void RDFEtableFunction::parse_my_tag(utility::tag::TagCOP tag, basic::datacache:
 	core::scoring::ScoreFunctionOP scorefxn(data_map.get_ptr< core::scoring::ScoreFunction >( "scorefxns", scorefxn_name));
 	core::scoring::methods::EnergyMethodOptions options(scorefxn->energy_method_options());
 	core::scoring::etable::EtableCOP etable(core::scoring::ScoringManager::get_instance()->etable( options ));
-	etable_evaluator_ = core::scoring::etable::AnalyticEtableEvaluatorOP( new core::scoring::etable::AnalyticEtableEvaluator(*etable) );
+	etable_evaluator_ = utility::pointer::make_shared< core::scoring::etable::AnalyticEtableEvaluator >(*etable);
 
 }
 
@@ -119,7 +119,7 @@ RDFResultList RDFEtableFunction::operator()(AtomPairData const & atom_data )
 
 RDFBaseOP RDFElecCreator::create_rdf_function() const
 {
-	return RDFBaseOP( new RDFElecFunction );
+	return utility::pointer::make_shared< RDFElecFunction >();
 }
 
 std::string RDFElecCreator::type_name() const
@@ -157,7 +157,7 @@ void RDFElecFunction::parse_my_tag(
 	std::string scorefxn_name = tag->getOption<std::string>("scorefxn");
 	core::scoring::ScoreFunctionOP scorefxn(data_map.get_ptr< core::scoring::ScoreFunction >( "scorefxns", scorefxn_name));
 	core::scoring::methods::EnergyMethodOptions options(scorefxn->energy_method_options());
-	coloumb_ = core::scoring::etable::coulomb::CoulombOP( new core::scoring::etable::coulomb::Coulomb(options) );
+	coloumb_ = utility::pointer::make_shared< core::scoring::etable::coulomb::Coulomb >(options);
 	coloumb_->initialize();
 
 }
@@ -188,7 +188,7 @@ RDFResultList RDFElecFunction::operator()(AtomPairData const & atom_data )
 
 RDFBaseOP RDFChargeCreator::create_rdf_function() const
 {
-	return RDFBaseOP( new RDFChargeFunction );
+	return utility::pointer::make_shared< RDFChargeFunction >();
 }
 
 std::string RDFChargeCreator::type_name() const
@@ -289,7 +289,7 @@ RDFResultList RDFChargeFunction::operator()(AtomPairData const & atom_data )
 
 RDFBaseOP RDFHbondCreator::create_rdf_function() const
 {
-	return RDFBaseOP( new RDFHbondFunction );
+	return utility::pointer::make_shared< RDFHbondFunction >();
 }
 
 std::string RDFHbondCreator::type_name() const
@@ -360,7 +360,7 @@ RDFHbondFunction::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ){
 
 void RDFHbondFunction::preamble(core::pose::Pose & pose)
 {
-	hbond_set_ = core::scoring::hbonds::HBondSetOP( new core::scoring::hbonds::HBondSet );
+	hbond_set_ = utility::pointer::make_shared< core::scoring::hbonds::HBondSet >();
 	pose.update_residue_neighbors();
 	hbond_set_->setup_for_residue_pair_energies(pose,false,false);
 }
@@ -400,7 +400,7 @@ RDFResultList RDFHbondFunction::operator()(AtomPairData const & atom_data )
 
 RDFBaseOP RDFBinaryHbondCreator::create_rdf_function() const
 {
-	return RDFBaseOP( new RDFBinaryHbondFunction );
+	return utility::pointer::make_shared< RDFBinaryHbondFunction >();
 }
 
 std::string RDFBinaryHbondCreator::type_name() const
@@ -496,7 +496,7 @@ RDFResultList RDFBinaryHbondFunction::operator()(AtomPairData const & atom_data)
 
 RDFBaseOP RDFOrbitalFunctionCreator::create_rdf_function() const
 {
-	return RDFBaseOP( new RDFOrbitalFunction );
+	return utility::pointer::make_shared< RDFOrbitalFunction >();
 }
 
 std::string RDFOrbitalFunctionCreator::type_name() const
@@ -572,13 +572,13 @@ RDFResultList RDFOrbitalFunction::operator()(AtomPairData const & atom_data )
 void RDFOrbitalFunction::preamble(core::pose::Pose & pose)
 {
 	pose_ = pose.get_self_ptr();
-	orbital_score_ = core::scoring::orbitals::OrbitalsScoreOP( new core::scoring::orbitals::OrbitalsScore() );
+	orbital_score_ = utility::pointer::make_shared< core::scoring::orbitals::OrbitalsScore >();
 	pose.update_residue_neighbors();
 }
 
 RDFBaseOP RDFBinaryOrbitalFunctionCreator::create_rdf_function() const
 {
-	return RDFBaseOP( new RDFBinaryOrbitalFunction );
+	return utility::pointer::make_shared< RDFBinaryOrbitalFunction >();
 }
 
 std::string RDFBinaryOrbitalFunctionCreator::type_name() const

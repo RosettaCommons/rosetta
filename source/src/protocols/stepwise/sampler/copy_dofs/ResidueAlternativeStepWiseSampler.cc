@@ -111,7 +111,7 @@ ResidueAlternativeStepWiseSampler::initialize_residues_for_type( Residue const &
 	for ( Size n = 1; n <= pose_list_.size(); n++ ) {
 		pose::PoseOP pose = pose_list_[ n ];
 		Residue const & original_rsd = pose->residue( representative_seqpos_ );
-		residues.push_back( ResidueOP( new Residue( rsd_in.type(), original_rsd, pose->conformation() /*pray this works*/ ) ) );
+		residues.push_back( utility::pointer::make_shared< Residue >( rsd_in.type(), original_rsd, pose->conformation() /*pray this works*/ ) );
 	}
 	std::string type_in = rsd_in.name(); // could be a hash.
 	residues_for_each_type_[ type_in ] = residues;

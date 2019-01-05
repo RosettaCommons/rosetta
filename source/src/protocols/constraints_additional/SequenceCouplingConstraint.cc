@@ -97,7 +97,7 @@ SequenceCouplingConstraint::~SequenceCouplingConstraint() = default;
 
 ConstraintOP
 SequenceCouplingConstraint::clone() const {
-	return ConstraintOP( new SequenceCouplingConstraint( *this ) );
+	return utility::pointer::make_shared< SequenceCouplingConstraint >( *this );
 }
 
 bool SequenceCouplingConstraint::operator == ( core::scoring::constraints::Constraint const & other ) const
@@ -160,7 +160,7 @@ SequenceCouplingConstraint::read_def(
 
 	// if filename is not "none" by this point, read it even if sequence_coupling_ is not currently NULL
 	if ( coupling_filename != "none" ) {
-		sequence_coupling_ = SequenceCouplingOP( new SequenceCoupling );
+		sequence_coupling_ = utility::pointer::make_shared< SequenceCoupling >();
 		sequence_coupling_->read_from_file( FileName(coupling_filename) );
 	}
 

@@ -79,13 +79,13 @@ MakeCanonicalHelix::parse_my_tag(
 
 protocols::moves::MoverOP
 MakeCanonicalHelix::clone() const{
-	return protocols::moves::MoverOP( new MakeCanonicalHelix( *this ) );
+	return utility::pointer::make_shared< MakeCanonicalHelix >( *this );
 }
 
 moves::MoverOP
 MakeCanonicalHelix::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new MakeCanonicalHelix );
+	return utility::pointer::make_shared< MakeCanonicalHelix >();
 }
 
 // XRW TEMP std::string
@@ -135,7 +135,7 @@ MakeCanonicalHelix::is_valid( core::pose::Pose& pose ) {
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP MakeCanonicalHelixCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new MakeCanonicalHelix );
+// XRW TEMP  return utility::pointer::make_shared< MakeCanonicalHelix >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -172,7 +172,7 @@ std::string MakeCanonicalHelixCreator::keyname() const {
 
 protocols::moves::MoverOP
 MakeCanonicalHelixCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MakeCanonicalHelix );
+	return utility::pointer::make_shared< MakeCanonicalHelix >();
 }
 
 void MakeCanonicalHelixCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

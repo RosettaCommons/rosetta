@@ -150,18 +150,18 @@ Torsion::parse_my_tag( utility::tag::TagCOP tag,
 
 protocols::filters::FilterOP
 Torsion::fresh_instance() const{
-	return protocols::filters::FilterOP( new Torsion() );
+	return utility::pointer::make_shared< Torsion >();
 }
 
 Torsion::~Torsion()= default;
 
 protocols::filters::FilterOP
 Torsion::clone() const{
-	return protocols::filters::FilterOP( new Torsion( *this ) );
+	return utility::pointer::make_shared< Torsion >( *this );
 }
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP TorsionCreator::create_filter() const { return protocols::filters::FilterOP( new Torsion ); }
+// XRW TEMP TorsionCreator::create_filter() const { return utility::pointer::make_shared< Torsion >(); }
 
 // XRW TEMP std::string
 // XRW TEMP TorsionCreator::keyname() const { return "Torsion"; }
@@ -222,7 +222,7 @@ std::string TorsionCreator::keyname() const {
 
 protocols::filters::FilterOP
 TorsionCreator::create_filter() const {
-	return protocols::filters::FilterOP( new Torsion );
+	return utility::pointer::make_shared< Torsion >();
 }
 
 void TorsionCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

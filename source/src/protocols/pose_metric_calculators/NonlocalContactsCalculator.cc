@@ -201,7 +201,7 @@ NonlocalContactsCalculator::recompute( Pose const & this_pose )
 	special_region1_intra_nlcontacts_ = 0;
 	region1_region2_nlcontacts_ = 0;
 
-	nlcontacts_graph_ = utility::graph::GraphOP( new utility::graph::Graph( this_pose.size() ) );
+	nlcontacts_graph_ = utility::pointer::make_shared< utility::graph::Graph >( this_pose.size() );
 
 	EnergyMap cur_weights = this_pose.energies().weights();
 

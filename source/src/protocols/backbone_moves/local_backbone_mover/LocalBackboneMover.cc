@@ -56,7 +56,7 @@ namespace local_backbone_mover {
 LocalBackboneMover::LocalBackboneMover():
 	protocols::moves::Mover( LocalBackboneMover::mover_name() )
 {
-	gap_closer_ = GapCloserOP(new GapCloser);
+	gap_closer_ = utility::pointer::make_shared< GapCloser >();
 	set_max_trial_num(10);
 }
 
@@ -125,13 +125,13 @@ LocalBackboneMover::parse_my_tag(
 
 	std::string config = tag->getOption<std::string>("move_type", "translate");
 	if ( "translate" == config ) {
-		add_free_peptide_mover(FreePeptideMoverOP( new TranslationFreePeptideMover(0.5) ));
+		add_free_peptide_mover(utility::pointer::make_shared< TranslationFreePeptideMover >(0.5));
 	} else if ( "rotate" == config ) {
-		add_free_peptide_mover(FreePeptideMoverOP( new LongAxisRotationFreePeptideMover(1, true) ));
+		add_free_peptide_mover(utility::pointer::make_shared< LongAxisRotationFreePeptideMover >(1, true));
 	} else if ( "shear" == config ) {
-		add_free_peptide_mover(FreePeptideMoverOP( new ShearFreePeptideMover(pivot1_ + 1, 120, true) ));
+		add_free_peptide_mover(utility::pointer::make_shared< ShearFreePeptideMover >(pivot1_ + 1, 120, true));
 	} else if ( "circular_permute" == config ) {
-		add_free_peptide_mover(FreePeptideMoverOP( new CircularPermuteFreePeptideMover(1) ));
+		add_free_peptide_mover(utility::pointer::make_shared< CircularPermuteFreePeptideMover >(1));
 	}
 
 }
@@ -141,14 +141,14 @@ LocalBackboneMover::parse_my_tag(
 moves::MoverOP
 LocalBackboneMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new LocalBackboneMover );
+	return utility::pointer::make_shared< LocalBackboneMover >();
 }
 
 /// @brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
 LocalBackboneMover::clone() const
 {
-	return protocols::moves::MoverOP( new LocalBackboneMover( *this ) );
+	return utility::pointer::make_shared< LocalBackboneMover >( *this );
 }
 
 std::string LocalBackboneMover::get_name() const {
@@ -186,7 +186,7 @@ void LocalBackboneMover::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 protocols::moves::MoverOP
 LocalBackboneMoverCreator::create_mover() const
 {
-	return protocols::moves::MoverOP( new LocalBackboneMover );
+	return utility::pointer::make_shared< LocalBackboneMover >();
 }
 
 std::string
@@ -211,7 +211,7 @@ void LocalBackboneMover::set_free_peptide(core::pose::Pose &pose, Size pivot1, S
 		utility_exit_with_message("Residue there must be at least 2 residues between pivot 1 and pivot2!");
 	}
 
-	free_peptide_ = FreePeptideOP(new FreePeptide(pose, pivot1, pivot2));
+	free_peptide_ = utility::pointer::make_shared< FreePeptide >(pose, pivot1, pivot2);
 }
 
 

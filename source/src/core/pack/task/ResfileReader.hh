@@ -182,7 +182,7 @@ public:
 class NATRO : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return ResfileCommandOP( new NATRO ); }
+	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< NATRO >(); }
 
 	virtual
 	void initialize_from_tokens(
@@ -210,7 +210,7 @@ public:
 class NATAA : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return ResfileCommandOP( new NATAA ); }
+	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< NATAA >(); }
 
 	virtual
 	void initialize_from_tokens(
@@ -238,7 +238,7 @@ public:
 class ALLAA : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return ResfileCommandOP( new ALLAA ); }
+	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< ALLAA >(); }
 
 	virtual
 	void initialize_from_tokens(
@@ -266,7 +266,7 @@ public:
 class ALLAAxc : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return ResfileCommandOP( new ALLAAxc ); }
+	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< ALLAAxc >(); }
 
 	virtual
 	void initialize_from_tokens(
@@ -294,7 +294,7 @@ public:
 class ALLAAwc : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return ResfileCommandOP( new ALLAAwc ); }
+	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< ALLAAwc >(); }
 
 	virtual
 	void initialize_from_tokens(
@@ -323,7 +323,7 @@ public:
 class PIKAA : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return ResfileCommandOP( new PIKAA ); }
+	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< PIKAA >(); }
 
 	virtual
 	void initialize_from_tokens(
@@ -354,7 +354,7 @@ private:
 class PIKNA : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return ResfileCommandOP( new PIKNA ); }
+	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< PIKNA >(); }
 
 	virtual
 	void initialize_from_tokens(
@@ -384,7 +384,7 @@ private:
 class PIKRNA : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return ResfileCommandOP( new PIKRNA ); }
+	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< PIKRNA >(); }
 
 	virtual
 	void initialize_from_tokens(
@@ -414,7 +414,7 @@ private:
 class NOTAA : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return ResfileCommandOP( new NOTAA ); }
+	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< NOTAA >(); }
 
 	virtual
 	void initialize_from_tokens(
@@ -444,7 +444,7 @@ private:
 class EMPTY : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return ResfileCommandOP( new EMPTY ); }
+	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< EMPTY >(); }
 
 	virtual
 	void initialize_from_tokens(
@@ -472,7 +472,7 @@ public:
 class RESET : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return ResfileCommandOP( new RESET ); }
+	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< RESET >(); }
 
 	virtual
 	void initialize_from_tokens(
@@ -501,7 +501,7 @@ public:
 class PROPERTY : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return ResfileCommandOP( new PROPERTY ); }
+	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< PROPERTY >(); }
 
 	virtual
 	void initialize_from_tokens(
@@ -531,7 +531,7 @@ public:
 class POLAR : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return ResfileCommandOP( new POLAR ); }
+	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< POLAR >(); }
 
 	virtual
 	void initialize_from_tokens(
@@ -559,7 +559,7 @@ public:
 class APOLAR : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return ResfileCommandOP( new APOLAR ); }
+	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< APOLAR >(); }
 
 	virtual
 	void initialize_from_tokens(
@@ -587,7 +587,7 @@ public:
 class APOLA : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return ResfileCommandOP( new APOLA ); }
+	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< APOLA >(); }
 
 	virtual
 	void initialize_from_tokens(
@@ -616,7 +616,7 @@ public:
 class CHARGED : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return ResfileCommandOP( new CHARGED ); }
+	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< CHARGED >(); }
 
 	virtual
 	void initialize_from_tokens(
@@ -646,7 +646,7 @@ public:
 class AROMATIC : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return ResfileCommandOP( new AROMATIC ); }
+	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< AROMATIC >(); }
 
 	virtual
 	void initialize_from_tokens(
@@ -683,7 +683,7 @@ public:
 		which_chi_( 0 ) // Does this make sense?
 	{}
 
-	virtual ResfileCommandOP clone() const { return ResfileCommandOP( new EX ); }
+	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< EX >(); }
 
 	virtual
 	void initialize_from_tokens(
@@ -717,7 +717,7 @@ private:
 class NC : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return ResfileCommandOP( new NC ); }
+	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< NC >(); }
 
 	virtual
 	void initialize_from_tokens(
@@ -747,7 +747,7 @@ private:
 class EX_CUTOFF : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return ResfileCommandOP( new EX_CUTOFF ); }
+	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< EX_CUTOFF >(); }
 
 	virtual
 	void initialize_from_tokens(
@@ -777,7 +777,7 @@ private:
 class USE_INPUT_SC : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return ResfileCommandOP( new USE_INPUT_SC ); }
+	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< USE_INPUT_SC >(); }
 
 	virtual
 	void initialize_from_tokens(
@@ -807,7 +807,7 @@ public:
 class AUTO : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return ResfileCommandOP( new AUTO ); }
+	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< AUTO >(); }
 
 	virtual
 	void initialize_from_tokens(
@@ -837,7 +837,7 @@ public:
 class SCAN : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return ResfileCommandOP( new SCAN ); }
+	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< SCAN >(); }
 
 	virtual
 	void initialize_from_tokens(
@@ -871,7 +871,7 @@ public:
 class TARGET : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return ResfileCommandOP( new TARGET ); }
+	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< TARGET >(); }
 
 	virtual
 	void initialize_from_tokens(
@@ -903,7 +903,7 @@ private:
 class NO_ADDUCTS : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return ResfileCommandOP( new NO_ADDUCTS ); }
+	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< NO_ADDUCTS >(); }
 
 	virtual
 	void initialize_from_tokens(
@@ -931,7 +931,7 @@ public:
 class FIX_HIS_TAUTOMER : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return ResfileCommandOP( new FIX_HIS_TAUTOMER ); }
+	virtual ResfileCommandOP clone() const { return utility::pointer::make_shared< FIX_HIS_TAUTOMER >(); }
 
 	virtual
 	void initialize_from_tokens(

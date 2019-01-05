@@ -47,7 +47,7 @@ AmbiguousConstraintCreator::AmbiguousConstraintCreator() = default;
 AmbiguousConstraintCreator::~AmbiguousConstraintCreator() = default;
 
 ConstraintOP AmbiguousConstraintCreator::create_constraint() const {
-	return ConstraintOP( new AmbiguousConstraint );
+	return utility::pointer::make_shared< AmbiguousConstraint >();
 }
 
 std::string AmbiguousConstraintCreator::keyname() const
@@ -59,7 +59,7 @@ AmbiguousNMRConstraintCreator::AmbiguousNMRConstraintCreator() = default;
 AmbiguousNMRConstraintCreator::~AmbiguousNMRConstraintCreator() = default;
 
 ConstraintOP AmbiguousNMRConstraintCreator::create_constraint() const {
-	return ConstraintOP( new AmbiguousNMRConstraint );
+	return utility::pointer::make_shared< AmbiguousNMRConstraint >();
 }
 
 std::string AmbiguousNMRConstraintCreator::keyname() const
@@ -71,7 +71,7 @@ AmbiguousNMRDistanceConstraintCreator::AmbiguousNMRDistanceConstraintCreator() =
 AmbiguousNMRDistanceConstraintCreator::~AmbiguousNMRDistanceConstraintCreator() = default;
 
 ConstraintOP AmbiguousNMRDistanceConstraintCreator::create_constraint() const {
-	return ConstraintOP( new AmbiguousNMRDistanceConstraint );
+	return utility::pointer::make_shared< AmbiguousNMRDistanceConstraint >();
 }
 
 std::string AmbiguousNMRDistanceConstraintCreator::keyname() const
@@ -95,7 +95,7 @@ AtomPairConstraintCreator::AtomPairConstraintCreator() = default;
 AtomPairConstraintCreator::~AtomPairConstraintCreator() = default;
 
 ConstraintOP AtomPairConstraintCreator::create_constraint() const {
-	return ConstraintOP( new AtomPairConstraint( id::AtomID(), id::AtomID(), nullptr ) );
+	return utility::pointer::make_shared< AtomPairConstraint >( id::AtomID(), id::AtomID(), nullptr );
 }
 
 std::string AtomPairConstraintCreator::keyname() const
@@ -107,8 +107,8 @@ BasePairConstraintCreator::BasePairConstraintCreator() = default;
 BasePairConstraintCreator::~BasePairConstraintCreator() = default;
 
 ConstraintOP BasePairConstraintCreator::create_constraint() const {
-	//return ConstraintOP( dynamic_cast< Constraint * >( new BasePairConstraint ) ); //BasePairConstraintOP( new BasePairConstraint( 0,0)));
-	return ConstraintOP( new BasePairConstraint( 0, 0 ) );
+	//return ConstraintOP( dynamic_cast< Constraint * >( new BasePairConstraint ) ); //utility::pointer::make_shared< BasePairConstraint >( 0,0));
+	return utility::pointer::make_shared< BasePairConstraint >( 0, 0 );
 }
 
 std::string BasePairConstraintCreator::keyname() const
@@ -120,7 +120,7 @@ BigBinConstraintCreator::BigBinConstraintCreator() = default;
 BigBinConstraintCreator::~BigBinConstraintCreator() = default;
 
 ConstraintOP BigBinConstraintCreator::create_constraint() const {
-	return ConstraintOP( new BigBinConstraint );
+	return utility::pointer::make_shared< BigBinConstraint >();
 }
 
 std::string BigBinConstraintCreator::keyname() const
@@ -132,7 +132,7 @@ CoordinateConstraintCreator::CoordinateConstraintCreator() = default;
 CoordinateConstraintCreator::~CoordinateConstraintCreator() = default;
 
 ConstraintOP CoordinateConstraintCreator::create_constraint() const {
-	return ConstraintOP( new CoordinateConstraint );
+	return utility::pointer::make_shared< CoordinateConstraint >();
 }
 
 std::string CoordinateConstraintCreator::keyname() const
@@ -144,7 +144,7 @@ DihedralConstraintCreator::DihedralConstraintCreator() = default;
 DihedralConstraintCreator::~DihedralConstraintCreator() = default;
 
 ConstraintOP DihedralConstraintCreator::create_constraint() const {
-	return ConstraintOP( new DihedralConstraint( id::AtomID(), id::AtomID(), id::AtomID(), id::AtomID(), nullptr ) );
+	return utility::pointer::make_shared< DihedralConstraint >( id::AtomID(), id::AtomID(), id::AtomID(), id::AtomID(), nullptr );
 }
 
 std::string DihedralConstraintCreator::keyname() const
@@ -156,9 +156,9 @@ DihedralPairConstraintCreator::DihedralPairConstraintCreator() = default;
 DihedralPairConstraintCreator::~DihedralPairConstraintCreator() = default;
 
 ConstraintOP DihedralPairConstraintCreator::create_constraint() const {
-	return ConstraintOP( new DihedralPairConstraint(
+	return utility::pointer::make_shared< DihedralPairConstraint >(
 		id::AtomID(), id::AtomID(), id::AtomID(), id::AtomID(),
-		id::AtomID(), id::AtomID(), id::AtomID(), id::AtomID(), nullptr ) );
+		id::AtomID(), id::AtomID(), id::AtomID(), id::AtomID(), nullptr );
 }
 
 std::string DihedralPairConstraintCreator::keyname() const
@@ -170,7 +170,7 @@ KofNConstraintCreator::KofNConstraintCreator() = default;
 KofNConstraintCreator::~KofNConstraintCreator() = default;
 
 ConstraintOP KofNConstraintCreator::create_constraint() const {
-	return ConstraintOP( new KofNConstraint );
+	return utility::pointer::make_shared< KofNConstraint >();
 }
 
 std::string KofNConstraintCreator::keyname() const
@@ -182,7 +182,7 @@ LocalCoordinateConstraintCreator::LocalCoordinateConstraintCreator() = default;
 LocalCoordinateConstraintCreator::~LocalCoordinateConstraintCreator() = default;
 
 ConstraintOP LocalCoordinateConstraintCreator::create_constraint() const {
-	return ConstraintOP( new LocalCoordinateConstraint );
+	return utility::pointer::make_shared< LocalCoordinateConstraint >();
 }
 
 std::string LocalCoordinateConstraintCreator::keyname() const
@@ -194,7 +194,7 @@ MultiConstraintCreator::MultiConstraintCreator() = default;
 MultiConstraintCreator::~MultiConstraintCreator() = default;
 
 ConstraintOP MultiConstraintCreator::create_constraint() const {
-	return ConstraintOP( new MultiConstraint );
+	return utility::pointer::make_shared< MultiConstraint >();
 }
 
 std::string MultiConstraintCreator::keyname() const
@@ -206,7 +206,7 @@ SiteConstraintCreator::SiteConstraintCreator() = default;
 SiteConstraintCreator::~SiteConstraintCreator() = default;
 
 ConstraintOP SiteConstraintCreator::create_constraint() const {
-	return ConstraintOP( new SiteConstraint );
+	return utility::pointer::make_shared< SiteConstraint >();
 }
 
 std::string SiteConstraintCreator::keyname() const
@@ -218,7 +218,7 @@ SiteConstraintResiduesCreator::SiteConstraintResiduesCreator() = default;
 SiteConstraintResiduesCreator::~SiteConstraintResiduesCreator() = default;
 
 ConstraintOP SiteConstraintResiduesCreator::create_constraint() const {
-	return ConstraintOP( new SiteConstraintResidues );
+	return utility::pointer::make_shared< SiteConstraintResidues >();
 }
 
 std::string SiteConstraintResiduesCreator::keyname() const
@@ -230,7 +230,7 @@ FabConstraintCreator::FabConstraintCreator() = default;
 FabConstraintCreator::~FabConstraintCreator() = default;
 
 ConstraintOP FabConstraintCreator::create_constraint() const {
-	return ConstraintOP( new FabConstraint );
+	return utility::pointer::make_shared< FabConstraint >();
 }
 
 std::string FabConstraintCreator::keyname() const
@@ -242,7 +242,7 @@ NamedAngleConstraintCreator::NamedAngleConstraintCreator() = default;
 NamedAngleConstraintCreator::~NamedAngleConstraintCreator() = default;
 
 ConstraintOP NamedAngleConstraintCreator::create_constraint() const {
-	return ConstraintOP( new NamedAngleConstraint( id::NamedAtomID(), id::NamedAtomID(), id::NamedAtomID(), nullptr ) ) ;
+	return utility::pointer::make_shared< NamedAngleConstraint >( id::NamedAtomID(), id::NamedAtomID(), id::NamedAtomID(), nullptr ) ;
 }
 
 std::string NamedAngleConstraintCreator::keyname() const

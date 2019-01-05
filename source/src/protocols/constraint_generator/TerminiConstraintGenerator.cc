@@ -39,7 +39,7 @@ namespace constraint_generator {
 protocols::constraint_generator::ConstraintGeneratorOP
 TerminiConstraintGeneratorCreator::create_constraint_generator() const
 {
-	return protocols::constraint_generator::ConstraintGeneratorOP( new TerminiConstraintGenerator );
+	return utility::pointer::make_shared< TerminiConstraintGenerator >();
 }
 
 std::string
@@ -62,7 +62,7 @@ TerminiConstraintGenerator::~TerminiConstraintGenerator() = default;
 ConstraintGeneratorOP
 TerminiConstraintGenerator::clone() const
 {
-	return ConstraintGeneratorOP( new TerminiConstraintGenerator( *this ) );
+	return utility::pointer::make_shared< TerminiConstraintGenerator >( *this );
 }
 
 void

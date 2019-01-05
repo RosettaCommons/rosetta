@@ -48,7 +48,7 @@ ChunkSet::ChunkSet(
 {
 	// MiniPose is a more compact format than Pose.
 	for ( auto const & pose : pose_list ) {
-		mini_pose_list_.push_back( core::pose::MiniPoseOP( new core::pose::MiniPose( *pose ) ) );
+		mini_pose_list_.push_back( utility::pointer::make_shared< core::pose::MiniPose >( *pose ) );
 	}
 	filter_poses_have_same_sequence_and_variants();
 	setup_atom_id_mask_and_mapper( *( pose_list[ 1 ] ) );
@@ -102,7 +102,7 @@ ChunkSet::setup_atom_id_mask( core::pose::Pose const & pose )
 void
 ChunkSet::setup_atom_id_mapper_to_vanilla_chunk_pose( core::pose::Pose const & pose ) {
 	using namespace core::pose::toolbox;
-	atom_id_mapper_to_vanilla_chunk_pose_ = AtomID_MapperCOP( new AtomID_Mapper( pose, true /*map_to_vanilla_pose*/ ) );
+	atom_id_mapper_to_vanilla_chunk_pose_ = utility::pointer::make_shared< AtomID_Mapper >( pose, true /*map_to_vanilla_pose*/ );
 }
 
 

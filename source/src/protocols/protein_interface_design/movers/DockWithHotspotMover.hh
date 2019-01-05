@@ -53,10 +53,10 @@ public:
 
 	virtual void apply( core::pose::Pose & pose ) override;
 	virtual protocols::moves::MoverOP clone() const override {
-		return (protocols::moves::MoverOP( new protocols::protein_interface_design::movers::DockWithHotspotMover( *this ) ) );
+		return (utility::pointer::make_shared< protocols::protein_interface_design::movers::DockWithHotspotMover >( *this ) );
 	}
 	virtual protocols::moves::MoverOP fresh_instance() const override {
-		return protocols::moves::MoverOP( new DockWithHotspotMover );
+		return utility::pointer::make_shared< DockWithHotspotMover >();
 	}
 
 	void parse_my_tag( utility::tag::TagCOP tag,

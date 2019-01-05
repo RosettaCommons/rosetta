@@ -56,7 +56,7 @@ public:
 	ScoreJumpFileSilentStructOP shared_from_this() { return utility::pointer::static_pointer_cast<ScoreJumpFileSilentStruct>( SilentStruct::shared_from_this() ); }
 
 	virtual SilentStructOP clone() const {
-		return SilentStructOP( new ScoreJumpFileSilentStruct( *this ) );
+		return utility::pointer::make_shared< ScoreJumpFileSilentStruct >( *this );
 	}
 
 	/// @brief Re-dimension the storage capacity of this ScoreJumpFileSilentStruct to the given number of

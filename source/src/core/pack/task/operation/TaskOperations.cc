@@ -72,7 +72,7 @@ RestrictToRepacking::~RestrictToRepacking() = default;
 
 TaskOperationOP RestrictToRepacking::clone() const
 {
-	return TaskOperationOP( new RestrictToRepacking( *this ) );
+	return utility::pointer::make_shared< RestrictToRepacking >( *this );
 }
 
 void
@@ -94,7 +94,7 @@ void RestrictToRepacking::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 
 TaskOperationOP RestrictToRepackingCreator::create_task_operation() const
 {
-	return TaskOperationOP( new RestrictToRepacking );
+	return utility::pointer::make_shared< RestrictToRepacking >();
 }
 
 void RestrictToRepackingCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -111,7 +111,7 @@ RestrictResidueToRepacking::~RestrictResidueToRepacking() = default;
 
 TaskOperationOP RestrictResidueToRepacking::clone() const
 {
-	return TaskOperationOP( new RestrictResidueToRepacking( *this ) );
+	return utility::pointer::make_shared< RestrictResidueToRepacking >( *this );
 }
 
 void
@@ -147,7 +147,7 @@ void RestrictResidueToRepacking::provide_xml_schema( utility::tag::XMLSchemaDefi
 
 TaskOperationOP RestrictResidueToRepackingCreator::create_task_operation() const
 {
-	return TaskOperationOP( new RestrictResidueToRepacking );
+	return utility::pointer::make_shared< RestrictResidueToRepacking >();
 }
 
 std::string RestrictResidueToRepackingCreator::keyname() const {
@@ -181,7 +181,7 @@ RestrictAbsentCanonicalAAS::~RestrictAbsentCanonicalAAS()= default;
 
 TaskOperationOP RestrictAbsentCanonicalAAS::clone() const
 {
-	return TaskOperationOP( new RestrictAbsentCanonicalAAS( *this ) );
+	return utility::pointer::make_shared< RestrictAbsentCanonicalAAS >( *this );
 }
 
 void
@@ -250,7 +250,7 @@ void RestrictAbsentCanonicalAAS::provide_xml_schema( utility::tag::XMLSchemaDefi
 
 TaskOperationOP RestrictAbsentCanonicalAASCreator::create_task_operation() const
 {
-	return TaskOperationOP( new RestrictAbsentCanonicalAAS );
+	return utility::pointer::make_shared< RestrictAbsentCanonicalAAS >();
 }
 
 std::string RestrictAbsentCanonicalAASCreator::keyname() const {
@@ -285,7 +285,7 @@ DisallowIfNonnative::~DisallowIfNonnative()= default;
 
 TaskOperationOP DisallowIfNonnative::clone() const
 {
-	return TaskOperationOP( new DisallowIfNonnative( *this ) );
+	return utility::pointer::make_shared< DisallowIfNonnative >( *this );
 }
 
 void DisallowIfNonnative::clear(){
@@ -370,7 +370,7 @@ void DisallowIfNonnative::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 
 TaskOperationOP DisallowIfNonnativeCreator::create_task_operation() const
 {
-	return TaskOperationOP( new DisallowIfNonnative );
+	return utility::pointer::make_shared< DisallowIfNonnative >();
 }
 
 std::string DisallowIfNonnativeCreator::keyname() const {
@@ -396,7 +396,7 @@ RotamerExplosion::~RotamerExplosion() = default;
 
 TaskOperationOP RotamerExplosion::clone() const
 {
-	return TaskOperationOP( new RotamerExplosion( *this ) );
+	return utility::pointer::make_shared< RotamerExplosion >( *this );
 }
 
 void
@@ -448,7 +448,7 @@ void RotamerExplosion::provide_xml_schema( utility::tag::XMLSchemaDefinition & x
 
 TaskOperationOP RotamerExplosionCreator::create_task_operation() const
 {
-	return TaskOperationOP( new RotamerExplosion );
+	return utility::pointer::make_shared< RotamerExplosion >();
 }
 
 std::string RotamerExplosionCreator::keyname() const { return RotamerExplosion::keyname(); }
@@ -466,7 +466,7 @@ InitializeFromCommandline::~InitializeFromCommandline() = default;
 
 TaskOperationOP InitializeFromCommandline::clone() const
 {
-	return TaskOperationOP( new InitializeFromCommandline( *this ) );
+	return utility::pointer::make_shared< InitializeFromCommandline >( *this );
 }
 
 void
@@ -489,7 +489,7 @@ void InitializeFromCommandline::provide_xml_schema( utility::tag::XMLSchemaDefin
 
 TaskOperationOP InitializeFromCommandlineCreator::create_task_operation() const
 {
-	return TaskOperationOP( new InitializeFromCommandline );
+	return utility::pointer::make_shared< InitializeFromCommandline >();
 }
 
 std::string InitializeFromCommandlineCreator::keyname() const {
@@ -519,7 +519,7 @@ UseMultiCoolAnnealer::UseMultiCoolAnnealer( core::Size states )
 
 TaskOperationOP UseMultiCoolAnnealer::clone() const
 {
-	return TaskOperationOP( new UseMultiCoolAnnealer( *this ) );
+	return utility::pointer::make_shared< UseMultiCoolAnnealer >( *this );
 }
 
 void
@@ -550,7 +550,7 @@ void UseMultiCoolAnnealer::provide_xml_schema( utility::tag::XMLSchemaDefinition
 
 TaskOperationOP UseMultiCoolAnnealerCreator::create_task_operation() const
 {
-	return TaskOperationOP( new UseMultiCoolAnnealer );
+	return utility::pointer::make_shared< UseMultiCoolAnnealer >();
 }
 
 std::string UseMultiCoolAnnealerCreator::keyname() const {
@@ -582,7 +582,7 @@ InitializeFromOptionCollection::~InitializeFromOptionCollection() = default;
 
 TaskOperationOP InitializeFromOptionCollection::clone() const
 {
-	return TaskOperationOP( new InitializeFromOptionCollection( *this ) );
+	return utility::pointer::make_shared< InitializeFromOptionCollection >( *this );
 }
 
 void
@@ -622,7 +622,7 @@ void InitializeFromOptionCollection::provide_xml_schema( utility::tag::XMLSchema
 
 TaskOperationOP InitializeFromOptionCollectionCreator::create_task_operation() const
 {
-	return TaskOperationOP( new InitializeFromOptionCollection );
+	return utility::pointer::make_shared< InitializeFromOptionCollection >();
 }
 
 std::string InitializeFromOptionCollectionCreator::keyname() const {
@@ -640,7 +640,7 @@ InitializeExtraRotsFromCommandline::~InitializeExtraRotsFromCommandline() = defa
 
 TaskOperationOP InitializeExtraRotsFromCommandline::clone() const
 {
-	return TaskOperationOP( new InitializeExtraRotsFromCommandline( *this ) );
+	return utility::pointer::make_shared< InitializeExtraRotsFromCommandline >( *this );
 }
 
 void
@@ -657,7 +657,7 @@ void InitializeExtraRotsFromCommandline::provide_xml_schema( utility::tag::XMLSc
 
 TaskOperationOP InitializeExtraRotsFromCommandlineCreator::create_task_operation() const
 {
-	return TaskOperationOP( new InitializeExtraRotsFromCommandline );
+	return utility::pointer::make_shared< InitializeExtraRotsFromCommandline >();
 }
 
 std::string InitializeExtraRotsFromCommandlineCreator::keyname() const {
@@ -678,7 +678,7 @@ IncludeCurrent::~IncludeCurrent() = default;
 
 TaskOperationOP IncludeCurrent::clone() const
 {
-	return TaskOperationOP( new IncludeCurrent( *this ) );
+	return utility::pointer::make_shared< IncludeCurrent >( *this );
 }
 
 void
@@ -695,7 +695,7 @@ void IncludeCurrent::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 
 TaskOperationOP IncludeCurrentCreator::create_task_operation() const
 {
-	return TaskOperationOP( new IncludeCurrent );
+	return utility::pointer::make_shared< IncludeCurrent >();
 }
 
 std::string IncludeCurrentCreator::keyname() const {
@@ -738,7 +738,7 @@ ExtraRotamersGeneric::~ExtraRotamersGeneric() = default;
 
 TaskOperationOP ExtraRotamersGeneric::clone() const
 {
-	return TaskOperationOP( new ExtraRotamersGeneric( *this ) );
+	return utility::pointer::make_shared< ExtraRotamersGeneric >( *this );
 }
 
 void
@@ -826,7 +826,7 @@ void ExtraRotamersGeneric::provide_xml_schema( utility::tag::XMLSchemaDefinition
 
 TaskOperationOP ExtraRotamersGenericCreator::create_task_operation() const
 {
-	return TaskOperationOP( new ExtraRotamersGeneric );
+	return utility::pointer::make_shared< ExtraRotamersGeneric >();
 }
 
 std::string ExtraRotamersGenericCreator::keyname() const {
@@ -990,7 +990,7 @@ ReadResfile::~ReadResfile() = default;
 
 TaskOperationOP ReadResfile::clone() const
 {
-	return TaskOperationOP( new ReadResfile( *this ) );
+	return utility::pointer::make_shared< ReadResfile >( *this );
 }
 
 void
@@ -1154,7 +1154,7 @@ void ReadResfile::list_options_read( utility::options::OptionKeyList & options )
 
 TaskOperationOP ReadResfileCreator::create_task_operation() const
 {
-	return TaskOperationOP( new ReadResfile );
+	return utility::pointer::make_shared< ReadResfile >();
 }
 
 std::string ReadResfileCreator::keyname() const { return ReadResfile::keyname(); }
@@ -1180,7 +1180,7 @@ ReadResfileAndObeyLengthEvents::~ReadResfileAndObeyLengthEvents()= default;
 
 TaskOperationOP ReadResfileAndObeyLengthEvents::clone() const
 {
-	return TaskOperationOP( new ReadResfileAndObeyLengthEvents( *this ) );
+	return utility::pointer::make_shared< ReadResfileAndObeyLengthEvents >( *this );
 }
 
 
@@ -1276,7 +1276,7 @@ void ReadResfileAndObeyLengthEvents::provide_xml_schema( utility::tag::XMLSchema
 
 TaskOperationOP ReadResfileAndObeyLengthEventsCreator::create_task_operation() const
 {
-	return TaskOperationOP( new ReadResfileAndObeyLengthEvents );
+	return utility::pointer::make_shared< ReadResfileAndObeyLengthEvents >();
 }
 
 std::string ReadResfileAndObeyLengthEventsCreator::keyname() const {
@@ -1308,7 +1308,7 @@ SetRotamerCouplings::operator = ( SetRotamerCouplings const & rhs )
 
 TaskOperationOP SetRotamerCouplings::clone() const
 {
-	return TaskOperationOP( new SetRotamerCouplings( *this ) );
+	return utility::pointer::make_shared< SetRotamerCouplings >( *this );
 }
 
 void
@@ -1331,7 +1331,7 @@ void SetRotamerCouplings::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 
 TaskOperationOP SetRotamerCouplingsCreator::create_task_operation() const
 {
-	return TaskOperationOP( new SetRotamerCouplings );
+	return utility::pointer::make_shared< SetRotamerCouplings >();
 }
 
 std::string SetRotamerCouplingsCreator::keyname() const {
@@ -1365,7 +1365,7 @@ SetRotamerLinks::operator = ( SetRotamerLinks const & rhs )
 
 TaskOperationOP SetRotamerLinks::clone() const
 {
-	return TaskOperationOP( new SetRotamerLinks( *this ) );
+	return utility::pointer::make_shared< SetRotamerLinks >( *this );
 }
 
 void
@@ -1388,7 +1388,7 @@ void SetRotamerLinks::provide_xml_schema( utility::tag::XMLSchemaDefinition & xs
 
 TaskOperationOP SetRotamerLinksCreator::create_task_operation() const
 {
-	return TaskOperationOP( new SetRotamerLinks );
+	return utility::pointer::make_shared< SetRotamerLinks >();
 }
 
 std::string SetRotamerLinksCreator::keyname() const {
@@ -1418,7 +1418,7 @@ AppendRotamer::AppendRotamer( AppendRotamer const & src )
 
 TaskOperationOP AppendRotamer::clone() const
 {
-	return TaskOperationOP( new AppendRotamer( *this ) );
+	return utility::pointer::make_shared< AppendRotamer >( *this );
 }
 
 void
@@ -1443,7 +1443,7 @@ void AppendRotamer::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd 
 
 TaskOperationOP AppendRotamerCreator::create_task_operation() const
 {
-	return TaskOperationOP( new AppendRotamer );
+	return utility::pointer::make_shared< AppendRotamer >();
 }
 
 std::string AppendRotamerCreator::keyname() const {
@@ -1473,7 +1473,7 @@ AppendRotamerSet::AppendRotamerSet( AppendRotamerSet const & src )
 
 TaskOperationOP AppendRotamerSet::clone() const
 {
-	return TaskOperationOP( new AppendRotamerSet( *this ) );
+	return utility::pointer::make_shared< AppendRotamerSet >( *this );
 }
 
 void
@@ -1498,7 +1498,7 @@ void AppendRotamerSet::provide_xml_schema( utility::tag::XMLSchemaDefinition & x
 
 TaskOperationOP AppendRotamerSetCreator::create_task_operation() const
 {
-	return TaskOperationOP( new AppendRotamerSet );
+	return utility::pointer::make_shared< AppendRotamerSet >();
 }
 
 std::string AppendRotamerSetCreator::keyname() const {
@@ -1532,7 +1532,7 @@ AppendResidueRotamerSet::AppendResidueRotamerSet( AppendResidueRotamerSet const 
 
 TaskOperationOP AppendResidueRotamerSet::clone() const
 {
-	return TaskOperationOP( new AppendResidueRotamerSet( *this ) );
+	return utility::pointer::make_shared< AppendResidueRotamerSet >( *this );
 }
 
 void
@@ -1561,7 +1561,7 @@ void AppendResidueRotamerSet::provide_xml_schema( utility::tag::XMLSchemaDefinit
 
 TaskOperationOP AppendResidueRotamerSetCreator::create_task_operation() const
 {
-	return TaskOperationOP( new AppendResidueRotamerSet );
+	return utility::pointer::make_shared< AppendResidueRotamerSet >();
 }
 
 std::string AppendResidueRotamerSetCreator::keyname() const {
@@ -1580,7 +1580,7 @@ PreserveCBeta::~PreserveCBeta() = default;
 
 TaskOperationOP PreserveCBeta::clone() const
 {
-	return TaskOperationOP( new PreserveCBeta( *this ) );
+	return utility::pointer::make_shared< PreserveCBeta >( *this );
 }
 
 void
@@ -1597,7 +1597,7 @@ void PreserveCBeta::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd 
 
 TaskOperationOP PreserveCBetaCreator::create_task_operation() const
 {
-	return TaskOperationOP( new PreserveCBeta );
+	return utility::pointer::make_shared< PreserveCBeta >();
 }
 
 std::string PreserveCBetaCreator::keyname() const {
@@ -1614,7 +1614,7 @@ PreventRepacking::~PreventRepacking() = default;
 
 TaskOperationOP PreventRepacking::clone() const
 {
-	return TaskOperationOP( new PreventRepacking( *this ) );
+	return utility::pointer::make_shared< PreventRepacking >( *this );
 }
 
 void
@@ -1653,7 +1653,7 @@ void PreventRepacking::provide_xml_schema( utility::tag::XMLSchemaDefinition & x
 
 TaskOperationOP PreventRepackingCreator::create_task_operation() const
 {
-	return TaskOperationOP( new PreventRepacking );
+	return utility::pointer::make_shared< PreventRepacking >();
 }
 
 std::string
@@ -1687,7 +1687,7 @@ RestrictYSDesign::apply( pose::Pose const &, PackerTask & task ) const {
 }
 
 TaskOperationOP RestrictYSDesign::clone() const {
-	return TaskOperationOP( new RestrictYSDesign( *this ) );
+	return utility::pointer::make_shared< RestrictYSDesign >( *this );
 }
 
 void
@@ -1705,7 +1705,7 @@ void RestrictYSDesign::provide_xml_schema( utility::tag::XMLSchemaDefinition & x
 
 TaskOperationOP RestrictYSDesignCreator::create_task_operation() const
 {
-	return TaskOperationOP( new RestrictYSDesign );
+	return utility::pointer::make_shared< RestrictYSDesign >();
 }
 
 std::string RestrictYSDesignCreator::keyname() const { return RestrictYSDesign::keyname(); }
@@ -1735,7 +1735,7 @@ ExtraRotamers::~ExtraRotamers() = default;
 
 TaskOperationOP ExtraRotamers::clone() const
 {
-	return TaskOperationOP( new ExtraRotamers( *this ) );
+	return utility::pointer::make_shared< ExtraRotamers >( *this );
 }
 
 void
@@ -1802,7 +1802,7 @@ void ExtraRotamers::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd 
 
 TaskOperationOP ExtraRotamersCreator::create_task_operation() const
 {
-	return TaskOperationOP( new ExtraRotamers );
+	return utility::pointer::make_shared< ExtraRotamers >();
 }
 
 std::string ExtraRotamersCreator::keyname() const {
@@ -1830,7 +1830,7 @@ ExtraChiCutoff::~ExtraChiCutoff() = default;
 
 TaskOperationOP ExtraChiCutoff::clone() const
 {
-	return TaskOperationOP( new ExtraChiCutoff( *this ) );
+	return utility::pointer::make_shared< ExtraChiCutoff >( *this );
 }
 
 void
@@ -1874,7 +1874,7 @@ void ExtraChiCutoff::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 
 TaskOperationOP ExtraChiCutoffCreator::create_task_operation() const
 {
-	return TaskOperationOP( new ExtraChiCutoff );
+	return utility::pointer::make_shared< ExtraChiCutoff >();
 }
 
 /*std::string ExtraChiCutoffCreator::keyname() const {

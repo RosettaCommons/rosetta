@@ -47,7 +47,7 @@ using namespace utility::tag;
 TaskOperationOP
 CrystalContactsOperationCreator::create_task_operation() const
 {
-	return TaskOperationOP( new CrystalContactsOperation );
+	return utility::pointer::make_shared< CrystalContactsOperation >();
 }
 
 void CrystalContactsOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -74,7 +74,7 @@ CrystalContactsOperation::~CrystalContactsOperation() = default;
 
 TaskOperationOP CrystalContactsOperation::clone() const
 {
-	return TaskOperationOP( new CrystalContactsOperation( *this ) );
+	return utility::pointer::make_shared< CrystalContactsOperation >( *this );
 }
 
 void

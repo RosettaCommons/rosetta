@@ -65,7 +65,7 @@ NumNeighborsSelector::NumNeighborsSelector( NumNeighborsSelector const &src) :
 
 /// @brief Clone operator.
 /// @details Copy this object and return an owning pointer to the new object.
-ResidueSelectorOP NumNeighborsSelector::clone() const { return ResidueSelectorOP( new NumNeighborsSelector(*this) ); }
+ResidueSelectorOP NumNeighborsSelector::clone() const { return utility::pointer::make_shared< NumNeighborsSelector >(*this); }
 
 NumNeighborsSelector::NumNeighborsSelector( Size threshold, Real distance_cutoff ) :
 	count_water_( false ),
@@ -148,7 +148,7 @@ void NumNeighborsSelector::distance_cutoff( Size setting ) { distance_cutoff_ = 
 
 ResidueSelectorOP
 NumNeighborsSelectorCreator::create_residue_selector() const {
-	return ResidueSelectorOP( new NumNeighborsSelector );
+	return utility::pointer::make_shared< NumNeighborsSelector >();
 }
 
 std::string

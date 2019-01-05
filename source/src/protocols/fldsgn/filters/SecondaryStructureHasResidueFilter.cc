@@ -101,10 +101,10 @@ SecondaryStructureHasResidueFilter::parse_my_tag(
 	}
 
 	std::string const res_taskop_str( tag->getOption< std::string >( "res_check_task_operations", "" ) );
-	if ( res_taskop_str.empty() ) res_check_task_factory_ = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory );
+	if ( res_taskop_str.empty() ) res_check_task_factory_ = utility::pointer::make_shared< core::pack::task::TaskFactory >();
 	else res_check_task_factory_ = protocols::rosetta_scripts::parse_task_operations( res_taskop_str, data );
 	std::string const ss_taskop_str( tag->getOption< std::string >( "ss_select_task_operations", "" ) );
-	if ( ss_taskop_str.empty() ) ss_select_task_factory_ = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory );
+	if ( ss_taskop_str.empty() ) ss_select_task_factory_ = utility::pointer::make_shared< core::pack::task::TaskFactory >();
 	else ss_select_task_factory_ = protocols::rosetta_scripts::parse_task_operations( ss_taskop_str, data );
 }
 
@@ -264,7 +264,7 @@ void SecondaryStructureHasResidueFilter::report( std::ostream & out, core::pose:
 }
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP SecondaryStructureHasResidueFilterCreator::create_filter() const { return protocols::filters::FilterOP( new SecondaryStructureHasResidueFilter ); }
+// XRW TEMP SecondaryStructureHasResidueFilterCreator::create_filter() const { return utility::pointer::make_shared< SecondaryStructureHasResidueFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP SecondaryStructureHasResidueFilterCreator::keyname() const { return "SecondaryStructureHasResidue"; }
@@ -305,7 +305,7 @@ std::string SecondaryStructureHasResidueFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 SecondaryStructureHasResidueFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new SecondaryStructureHasResidueFilter );
+	return utility::pointer::make_shared< SecondaryStructureHasResidueFilter >();
 }
 
 void SecondaryStructureHasResidueFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -542,7 +542,7 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 			using protocols::forge::build::SegmentInsertConnectionScheme::N; // default N2C insertion
 
 			protocols::forge::build::SegmentInsertConnectionScheme::Enum connection_scheme = N; // default N2C insertion
-			segIns = SegmentInsertOP( new SegmentInsert( Interval(head,tail), insert_SS_string , data.insertPose, false /*omega at junction*/, connection_scheme ) );
+			segIns = utility::pointer::make_shared< SegmentInsert >( Interval(head,tail), insert_SS_string , data.insertPose, false /*omega at junction*/, connection_scheme );
 			manager.add( segIns );
 			continue;
 		}
@@ -572,7 +572,7 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 		using protocols::forge::build::SegmentInsertConnectionScheme::N; // default N2C insertion
 
 		protocols::forge::build::SegmentInsertConnectionScheme::Enum connection_scheme = N; // default N2C insertion
-		segIns = SegmentInsertOP( new SegmentInsert( Interval(head,tail), insert_SS_string , data.insertPose2, false , connection_scheme ) );
+		segIns = utility::pointer::make_shared< SegmentInsert >( Interval(head,tail), insert_SS_string , data.insertPose2, false , connection_scheme );
 		manager.add( segIns );
 		continue;
 		}
@@ -592,7 +592,7 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 			for ( int count = 0; count < gap; count++ ) {
 				mod_region_aa += seq_aa[headNew-1+count];
 			}
-			manager.add( BuildInstructionOP( new SegmentRebuild( Interval(1,tail),  data.dssp_updated_ss.substr( headNew-1, gap ), mod_region_aa ) ) );
+			manager.add( utility::pointer::make_shared< SegmentRebuild >( Interval(1,tail),  data.dssp_updated_ss.substr( headNew-1, gap ), mod_region_aa ) );
 		} else if ( tail == 0 && i.residues.back() == static_cast<int>(model_length) ) {
 			TR << "C-terminal extension found" << std::endl;
 			gap = (int)data.blueprint.size()-i.residues.front()+1;
@@ -600,14 +600,14 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 			for ( int count = 0; count < gap; count++ ) {
 				mod_region_aa += seq_aa[i.residues.front()-1+count];
 			}
-			manager.add( BuildInstructionOP( new SegmentRebuild( Interval(head,input_pose.total_residue()), DSSP.substr( i.residues.front()-1, gap ), mod_region_aa ) ) );
+			manager.add( utility::pointer::make_shared< SegmentRebuild >( Interval(head,input_pose.total_residue()), DSSP.substr( i.residues.front()-1, gap ), mod_region_aa ) );
 		} else if ( head != 0 && headNew == 1 && i.residues.front() == 1 ) { // N-term deletion
 			TR << "debug: N-term deletion" << std::endl;
 			std::string mod_region_aa;
 			for ( int count = 0; count < gap; count++ ) {
 				mod_region_aa += seq_aa[headNew-1+count];
 			}
-			this->manager.add( BuildInstructionOP( new SegmentRebuild( Interval(1,tail),  DSSP.substr( headNew-1, gap ), mod_region_aa ) ) );
+			this->manager.add( utility::pointer::make_shared< SegmentRebuild >( Interval(1,tail),  DSSP.substr( headNew-1, gap ), mod_region_aa ) );
 		} else if ( tail != static_cast<int>(input_pose.total_residue()) && tailNew == static_cast<int>(model_length) && headNew == 1 &&
 				i.residues.back() == static_cast<int>(model_length) ) { // C-term deletion
 			gap = (int)data.blueprint.size()-i.residues.front()+1;
@@ -616,7 +616,7 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 				mod_region_aa += seq_aa[i.residues.front()-1+count];
 			}
 			TR << "debug: C-term deletion" << std::endl;
-			this->manager.add( BuildInstructionOP( new SegmentRebuild( Interval(head,input_pose.total_residue()), DSSP.substr( i.residues.front()-1, gap ), mod_region_aa ) ) );
+			this->manager.add( utility::pointer::make_shared< SegmentRebuild >( Interval(head,input_pose.total_residue()), DSSP.substr( i.residues.front()-1, gap ), mod_region_aa ) );
 		} else {
 			TR << "normal rebuild" << std::endl;
 			// if the sequence contains ncaa, handle it properly
@@ -624,7 +624,7 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 			for ( int count = 0; count < gap; count++ ) {
 				mod_region_aa += seq_aa[headNew-1+count];
 			}
-			manager.add( BuildInstructionOP( new SegmentRebuild( Interval(head, tail), DSSP.substr( headNew-1, gap ), mod_region_aa) ) );
+			manager.add( utility::pointer::make_shared< SegmentRebuild >( Interval(head, tail), DSSP.substr( headNew-1, gap ), mod_region_aa) );
 		}
 	}
 

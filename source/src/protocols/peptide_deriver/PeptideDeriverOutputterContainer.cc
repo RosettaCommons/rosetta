@@ -38,7 +38,7 @@ PeptideDeriverOutputterContainer::PeptideDeriverOutputterContainer( PeptideDeriv
 
 PeptideDeriverOutputterContainerOP
 PeptideDeriverOutputterContainer::clone() const {
-	return PeptideDeriverOutputterContainerOP( new PeptideDeriverOutputterContainer( *this ) );
+	return utility::pointer::make_shared< PeptideDeriverOutputterContainer >( *this );
 }
 
 

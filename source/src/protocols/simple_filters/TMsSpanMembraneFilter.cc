@@ -67,7 +67,7 @@ namespace simple_filters {
 static basic::Tracer TR( "protocols.simple_filters.TMsSpanMembraneFilter" );
 
 protocols::filters::FilterOP
-TMsSpanMembraneFilterCreator::create_filter() const { return protocols::filters::FilterOP( new TMsSpanMembraneFilter ); }
+TMsSpanMembraneFilterCreator::create_filter() const { return utility::pointer::make_shared< TMsSpanMembraneFilter >(); }
 
 std::string
 TMsSpanMembraneFilterCreator::keyname() const { return "TMsSpanMembrane"; }

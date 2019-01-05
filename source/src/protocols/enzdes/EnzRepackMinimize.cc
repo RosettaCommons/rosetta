@@ -70,7 +70,7 @@ namespace enzdes {
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP EnzRepackMinimizeCreator::create_mover() const
 // XRW TEMP {
-// XRW TEMP  return protocols::moves::MoverOP( new EnzRepackMinimize );
+// XRW TEMP  return utility::pointer::make_shared< EnzRepackMinimize >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -104,13 +104,13 @@ EnzRepackMinimize::~EnzRepackMinimize() = default;
 protocols::moves::MoverOP
 EnzRepackMinimize::clone() const
 {
-	return protocols::moves::MoverOP( new EnzRepackMinimize( *this ) );
+	return utility::pointer::make_shared< EnzRepackMinimize >( *this );
 }
 
 protocols::moves::MoverOP
 EnzRepackMinimize::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new EnzRepackMinimize );
+	return utility::pointer::make_shared< EnzRepackMinimize >();
 }
 
 void
@@ -176,7 +176,7 @@ EnzRepackMinimize::create_ptask( core::pose::Pose & pose )
 
 	using namespace core::pack::task;
 	TR<<"Creating packer task based on specified task operations..."<< std::endl;
-	task_factory_->push_back( operation::TaskOperationCOP( new operation::InitializeFromCommandline ) );
+	task_factory_->push_back( utility::pointer::make_shared< operation::InitializeFromCommandline >() );
 	PackerTaskOP task = task_factory_->create_task_and_apply_taskoperations( pose );
 	return task;
 }
@@ -418,7 +418,7 @@ std::string EnzRepackMinimizeCreator::keyname() const {
 
 protocols::moves::MoverOP
 EnzRepackMinimizeCreator::create_mover() const {
-	return protocols::moves::MoverOP( new EnzRepackMinimize );
+	return utility::pointer::make_shared< EnzRepackMinimize >();
 }
 
 void EnzRepackMinimizeCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

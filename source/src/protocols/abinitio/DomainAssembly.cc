@@ -67,7 +67,7 @@ static basic::Tracer TR( "protocols.protein_interface_design.movers.DomainAssemb
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP DomainAssemblyCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new DomainAssembly );
+// XRW TEMP  return utility::pointer::make_shared< DomainAssembly >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -98,13 +98,13 @@ DomainAssembly::~DomainAssembly() = default;
 
 protocols::moves::MoverOP
 DomainAssembly::clone() const {
-	return( protocols::moves::MoverOP( new DomainAssembly( *this ) ) );
+	return( utility::pointer::make_shared< DomainAssembly >( *this ) );
 }
 
 protocols::moves::MoverOP
 DomainAssembly::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new DomainAssembly );
+	return utility::pointer::make_shared< DomainAssembly >();
 }
 
 void
@@ -258,7 +258,7 @@ std::string DomainAssemblyCreator::keyname() const {
 
 protocols::moves::MoverOP
 DomainAssemblyCreator::create_mover() const {
-	return protocols::moves::MoverOP( new DomainAssembly );
+	return utility::pointer::make_shared< DomainAssembly >();
 }
 
 void DomainAssemblyCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

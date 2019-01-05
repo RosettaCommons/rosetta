@@ -83,7 +83,7 @@ CDRSetOptions::set_defaults() {
 
 CDRSetOptionsOP
 CDRSetOptions::clone() const {
-	return CDRSetOptionsOP( new CDRSetOptions(*this) );
+	return utility::pointer::make_shared< CDRSetOptions >(*this);
 }
 
 void

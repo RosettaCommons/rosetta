@@ -74,7 +74,7 @@ namespace constraint_filters {
 static basic::Tracer TR( "protocols.constraint_filters.ShowConstraintsFilter" );
 
 protocols::filters::FilterOP
-ShowConstraintsFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ShowConstraintsFilter ); }
+ShowConstraintsFilterCreator::create_filter() const { return utility::pointer::make_shared< ShowConstraintsFilter >(); }
 
 std::string
 ShowConstraintsFilterCreator::keyname() const { return "ShowConstraints"; }

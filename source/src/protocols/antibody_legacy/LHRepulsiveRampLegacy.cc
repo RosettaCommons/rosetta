@@ -129,7 +129,7 @@ LHRepulsiveRampLegacy::~LHRepulsiveRampLegacy() = default;
 
 //clone
 protocols::moves::MoverOP LHRepulsiveRampLegacy::clone() const {
-	return( protocols::moves::MoverOP( new LHRepulsiveRampLegacy() ) );
+	return( utility::pointer::make_shared< LHRepulsiveRampLegacy >() );
 }
 
 
@@ -139,7 +139,7 @@ void LHRepulsiveRampLegacy::init(loops::Loops loops_in, bool camelid ) {
 	is_camelid_ = camelid;
 	all_loops_ = loops_in;
 
-	tf_ = pack::task::TaskFactoryOP( new pack::task::TaskFactory );
+	tf_ = utility::pointer::make_shared< pack::task::TaskFactory >();
 
 }
 
@@ -179,7 +179,7 @@ void LHRepulsiveRampLegacy::finalize_setup(pose::Pose & pose ) {
 	( *dock_scorefxn_ )( pose );
 
 	//setting MoveMap
-	cdr_dock_map_ = kinematics::MoveMapOP( new kinematics::MoveMap() );
+	cdr_dock_map_ = utility::pointer::make_shared< kinematics::MoveMap >();
 	cdr_dock_map_->clear();
 	cdr_dock_map_->set_chi( false );
 	cdr_dock_map_->set_bb( false );
@@ -208,7 +208,7 @@ void LHRepulsiveRampLegacy::finalize_setup(pose::Pose & pose ) {
 	} // check mapping
 
 	using namespace protocols::simple_task_operations;
-	tf_->push_back( TaskOperationCOP( new RestrictToInterface( rb_jump, loop_residues ) ) );
+	tf_->push_back( utility::pointer::make_shared< RestrictToInterface >( rb_jump, loop_residues ) );
 
 
 	TR<<"   finish finalize_setup function !!!"<<std::endl;
@@ -327,7 +327,7 @@ void LHRepulsiveRampLegacy::snugfit_MC_min(pose::Pose & pose, core::scoring::Sco
 
 
 void LHRepulsiveRampLegacy:: set_task_factory(pack::task::TaskFactoryCOP tf) {
-	tf_ = pack::task::TaskFactoryOP( new pack::task::TaskFactory(*tf) );
+	tf_ = utility::pointer::make_shared< pack::task::TaskFactory >(*tf);
 }
 
 

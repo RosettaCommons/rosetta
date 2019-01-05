@@ -62,7 +62,7 @@ static basic::Tracer TR( "protocols.simple_moves.symmetry.SetupForSymmetryMover"
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP SetupForSymmetryMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new SetupForSymmetryMover );
+// XRW TEMP  return utility::pointer::make_shared< SetupForSymmetryMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -77,7 +77,7 @@ static basic::Tracer TR( "protocols.simple_moves.symmetry.SetupForSymmetryMover"
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP ExtractAsymmetricUnitMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new ExtractAsymmetricUnitMover );
+// XRW TEMP  return utility::pointer::make_shared< ExtractAsymmetricUnitMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -94,7 +94,7 @@ static basic::Tracer TR( "protocols.simple_moves.symmetry.SetupForSymmetryMover"
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP ExtractAsymmetricPoseMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new ExtractAsymmetricPoseMover );
+// XRW TEMP  return utility::pointer::make_shared< ExtractAsymmetricPoseMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -407,7 +407,7 @@ std::string SetupForSymmetryMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 SetupForSymmetryMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SetupForSymmetryMover );
+	return utility::pointer::make_shared< SetupForSymmetryMover >();
 }
 
 void SetupForSymmetryMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -495,7 +495,7 @@ std::string ExtractAsymmetricUnitMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 ExtractAsymmetricUnitMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ExtractAsymmetricUnitMover );
+	return utility::pointer::make_shared< ExtractAsymmetricUnitMover >();
 }
 
 void ExtractAsymmetricUnitMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -576,7 +576,7 @@ std::string ExtractAsymmetricPoseMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 ExtractAsymmetricPoseMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ExtractAsymmetricPoseMover );
+	return utility::pointer::make_shared< ExtractAsymmetricPoseMover >();
 }
 
 void ExtractAsymmetricPoseMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

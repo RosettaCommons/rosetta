@@ -37,7 +37,7 @@ CacheableUint64MathMatrixFloatMap::~CacheableUint64MathMatrixFloatMap() = defaul
 
 CacheableDataOP
 CacheableUint64MathMatrixFloatMap::clone() const {
-	return CacheableDataOP( new CacheableUint64MathMatrixFloatMap(*this) );
+	return utility::pointer::make_shared< CacheableUint64MathMatrixFloatMap >(*this);
 }
 
 CacheableUint64MathMatrixFloatMapOP

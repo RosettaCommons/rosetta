@@ -43,7 +43,7 @@ ModelFileReader::ModelFileReader( ModelFileReader const & ) {
 
 ModelFileReaderOP
 ModelFileReader::clone() const {
-	return ModelFileReaderOP( new ModelFileReader( *this ) );
+	return utility::pointer::make_shared< ModelFileReader >( *this );
 }
 
 SegmentVectorOP
@@ -58,11 +58,11 @@ ModelFileReader::read_model_file(std::string filename){
 	//Starting to declare the vars we need
 	std::string line;
 	core::Size version = 0;
-	SegmentVectorOP segment_list = SegmentVectorOP(new SegmentVector());
+	SegmentVectorOP segment_list = utility::pointer::make_shared< SegmentVector >();
 
-	data_storage::SmartSegmentOP current_segment = data_storage::SmartSegmentOP(new data_storage::SmartSegment);
-	data_storage::SmartSegmentOP last_segment = data_storage::SmartSegmentOP(new data_storage::SmartSegment);
-	data_storage::SmartSewingResidueOP current_residue = data_storage::SmartSewingResidueOP(new data_storage::SmartSewingResidue);
+	data_storage::SmartSegmentOP current_segment = utility::pointer::make_shared< data_storage::SmartSegment >();
+	data_storage::SmartSegmentOP last_segment = utility::pointer::make_shared< data_storage::SmartSegment >();
+	data_storage::SmartSewingResidueOP current_residue = utility::pointer::make_shared< data_storage::SmartSewingResidue >();
 	utility::vector1<data_storage::SmartSewingResidueOP> residues_vector;
 	bool c_fixed = false;
 	utility::vector1<core::conformation::Atom> atoms_vector;
@@ -93,7 +93,7 @@ ModelFileReader::read_model_file(std::string filename){
 			//    residues_vector.clear();
 			//    segment_list->push_back(current_segment);//add it to the list
 			//   }
-			//   current_segment = data_storage::SmartSegmentOP(new data_storage::SmartSegment);
+			//   current_segment = utility::pointer::make_shared< data_storage::SmartSegment >();
 			//   current_segment->set_segment_id(segment_list->size()+1);// do we really need this anymore?
 			//
 		} else if ( tokens[1]=="SEGMENT" ) {
@@ -108,7 +108,7 @@ ModelFileReader::read_model_file(std::string filename){
 				residues_vector.clear();
 				segment_list->push_back(current_segment);//add it to the list
 				last_segment = current_segment; //hand over the new segment
-				current_segment = data_storage::SmartSegmentOP(new data_storage::SmartSegment); //make a new segment
+				current_segment = utility::pointer::make_shared< data_storage::SmartSegment >(); //make a new segment
 				if ( tokens[3] == "N_FIXD" ) {
 					if ( c_fixed ) {
 						data_storage::SmartSegment::link_to( *(segment_list->rbegin()),current_segment); // set up the dual links to it
@@ -128,7 +128,7 @@ ModelFileReader::read_model_file(std::string filename){
 			//   TR << "Found residue" << std::endl;
 			current_residue->set_atom_vector(atoms_vector);
 			atoms_vector.clear();
-			current_residue = data_storage::SmartSewingResidueOP(new data_storage::SmartSewingResidue);
+			current_residue = utility::pointer::make_shared< data_storage::SmartSewingResidue >();
 			residues_vector.push_back(current_residue);
 			current_residue->set_amino_acid_type(tokens[2]);// we need a dictionary here
 			current_residue->set_full_type_name(tokens[3]);
@@ -159,7 +159,7 @@ ModelFileReader::read_model_file(std::string filename){
 		current_segment->set_length(residues_vector.size());
 		//residues_vector.clear();
 		//last_segment = current_segment; //hand over the new segment
-		//current_segment = data_storage::SmartSegmentOP(new data_storage::SmartSegment); //make a new segment
+		//current_segment = utility::pointer::make_shared< data_storage::SmartSegment >(); //make a new segment
 		//if (tokens[3] == "N_FIXD"){
 		//if( c_fixed ){ //The last segment's C-terminus was fixed
 		//This should already be connected

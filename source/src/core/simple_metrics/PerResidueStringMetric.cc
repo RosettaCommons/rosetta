@@ -43,7 +43,7 @@ using namespace core::select::residue_selector;
 PerResidueStringMetric::PerResidueStringMetric():
 	SimpleMetric("PerResidueStringMetric")
 {
-	selector_ = TrueResidueSelectorOP( new TrueResidueSelector());
+	selector_ = utility::pointer::make_shared< TrueResidueSelector >();
 }
 
 

@@ -75,13 +75,13 @@ RemoveConstraints::parse_my_tag(
 
 protocols::moves::MoverOP
 RemoveConstraints::clone() const{
-	return protocols::moves::MoverOP( new RemoveConstraints( *this ) );
+	return utility::pointer::make_shared< RemoveConstraints >( *this );
 }
 
 moves::MoverOP
 RemoveConstraints::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new RemoveConstraints );
+	return utility::pointer::make_shared< RemoveConstraints >();
 }
 
 // XRW TEMP std::string
@@ -126,7 +126,7 @@ RemoveConstraints::add_generator( ConstraintGeneratorCOP generator )
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP RemoveConstraintsCreator::create_mover() const
 // XRW TEMP {
-// XRW TEMP  return protocols::moves::MoverOP( new RemoveConstraints );
+// XRW TEMP  return utility::pointer::make_shared< RemoveConstraints >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -158,7 +158,7 @@ std::string RemoveConstraintsCreator::keyname() const {
 
 protocols::moves::MoverOP
 RemoveConstraintsCreator::create_mover() const {
-	return protocols::moves::MoverOP( new RemoveConstraints );
+	return utility::pointer::make_shared< RemoveConstraints >();
 }
 
 void RemoveConstraintsCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

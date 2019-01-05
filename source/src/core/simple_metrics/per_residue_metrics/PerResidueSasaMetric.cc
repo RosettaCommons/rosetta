@@ -62,7 +62,7 @@ PerResidueSasaMetric::PerResidueSasaMetric( PerResidueSasaMetric const &  ) = de
 
 core::simple_metrics::SimpleMetricOP
 PerResidueSasaMetric::clone() const {
-	return core::simple_metrics::SimpleMetricOP(new PerResidueSasaMetric( *this ) );
+	return utility::pointer::make_shared< PerResidueSasaMetric >( *this );
 
 }
 
@@ -129,7 +129,7 @@ PerResidueSasaMetricCreator::keyname() const {
 
 core::simple_metrics::SimpleMetricOP
 PerResidueSasaMetricCreator::create_simple_metric() const {
-	return core::simple_metrics::SimpleMetricOP( new PerResidueSasaMetric );
+	return utility::pointer::make_shared< PerResidueSasaMetric >();
 
 }
 

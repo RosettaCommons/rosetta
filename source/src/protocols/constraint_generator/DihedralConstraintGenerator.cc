@@ -59,7 +59,7 @@ using namespace core::select::residue_selector;
 protocols::constraint_generator::ConstraintGeneratorOP
 DihedralConstraintGeneratorCreator::create_constraint_generator() const
 {
-	return protocols::constraint_generator::ConstraintGeneratorOP( new DihedralConstraintGenerator );
+	return utility::pointer::make_shared< DihedralConstraintGenerator >();
 }
 
 std::string
@@ -79,7 +79,7 @@ DihedralConstraintGenerator::~DihedralConstraintGenerator()
 protocols::constraint_generator::ConstraintGeneratorOP
 DihedralConstraintGenerator::clone() const
 {
-	return protocols::constraint_generator::ConstraintGeneratorOP( new DihedralConstraintGenerator( *this ) );
+	return utility::pointer::make_shared< DihedralConstraintGenerator >( *this );
 }
 
 std::string

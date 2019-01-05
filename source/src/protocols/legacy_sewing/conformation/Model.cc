@@ -1340,9 +1340,9 @@ create_alpha_beta_models_table(){
 	using namespace utility;
 
 	//******smotifs******//
-	Column model_id("model_id", DbDataTypeOP( new DbInteger() ), true);
-	Column struct_id_column("struct_id", DbDataTypeOP( new DbBigInt() ), false);
-	Column ss_segment_id("ss_segment_id", DbDataTypeOP( new DbInteger() ), false);
+	Column model_id("model_id", utility::pointer::make_shared< DbInteger >(), true);
+	Column struct_id_column("struct_id", utility::pointer::make_shared< DbBigInt >(), false);
+	Column ss_segment_id("ss_segment_id", utility::pointer::make_shared< DbInteger >(), false);
 
 	Columns foreign_key_columns1;
 	foreign_key_columns1.push_back(struct_id_column);

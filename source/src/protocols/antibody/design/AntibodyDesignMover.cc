@@ -121,7 +121,7 @@ AntibodyDesignMover::AntibodyDesignMover():
 	cdr_dihedral_cst_mover_ (/* NULL */)
 
 {
-	design_enum_manager_ = AntibodyDesignEnumManagerOP( new AntibodyDesignEnumManager);
+	design_enum_manager_ = utility::pointer::make_shared< AntibodyDesignEnumManager >();
 	read_command_line_options();
 	set_defaults();
 
@@ -138,7 +138,7 @@ AntibodyDesignMover::AntibodyDesignMover( AntibodyInfoCOP ab_info ):
 {
 	ab_info_ = ab_info->clone();
 
-	design_enum_manager_ = AntibodyDesignEnumManagerOP( new AntibodyDesignEnumManager);
+	design_enum_manager_ = utility::pointer::make_shared< AntibodyDesignEnumManager >();
 	read_command_line_options();
 	set_defaults();
 
@@ -248,12 +248,12 @@ AntibodyDesignMover::read_command_line_options(){
 
 protocols::moves::MoverOP
 AntibodyDesignMover::clone() const {
-	return protocols::moves::MoverOP( new AntibodyDesignMover(*this) );
+	return utility::pointer::make_shared< AntibodyDesignMover >(*this);
 }
 
 protocols::moves::MoverOP
 AntibodyDesignMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new AntibodyDesignMover );
+	return utility::pointer::make_shared< AntibodyDesignMover >();
 }
 
 AntibodyDesignMover::AntibodyDesignMover( AntibodyDesignMover const & src ):
@@ -314,21 +314,21 @@ AntibodyDesignMover::AntibodyDesignMover( AntibodyDesignMover const & src ):
 		top_designs_.push_back( new_p );
 	}
 
-	if ( src.ab_info_ ) ab_info_ = AntibodyInfoOP( new AntibodyInfo( *src.ab_info_));
-	if ( src.design_enum_manager_ ) design_enum_manager_ = AntibodyDesignEnumManagerOP( new AntibodyDesignEnumManager( *src.design_enum_manager_ ));
-	if ( src.seq_design_creator_ ) seq_design_creator_ = AntibodySeqDesignTFCreatorOP( new AntibodySeqDesignTFCreator( *src.seq_design_creator_));
-	if ( src.graft_mover_ ) graft_mover_ = CCDEndsGraftMoverOP( new CCDEndsGraftMover( *src.graft_mover_));
-	if ( src.anchored_graft_mover_ ) anchored_graft_mover_ = AnchoredGraftMoverOP( new AnchoredGraftMover( *src.anchored_graft_mover_));
-	if ( src.framework_mutator_ ) MutateFrameworkForClusterOP( new MutateFrameworkForCluster( *src.framework_mutator_));
-	if ( src.modeler_ ) modeler_ = GeneralAntibodyModelerOP( new GeneralAntibodyModeler( *src.modeler_ ));
-	if ( src.cart_min_graft_ ) cart_min_graft_ = MinMoverOP( new MinMover( *src.cart_min_graft_ ));
+	if ( src.ab_info_ ) ab_info_ = utility::pointer::make_shared< AntibodyInfo >( *src.ab_info_);
+	if ( src.design_enum_manager_ ) design_enum_manager_ = utility::pointer::make_shared< AntibodyDesignEnumManager >( *src.design_enum_manager_ );
+	if ( src.seq_design_creator_ ) seq_design_creator_ = utility::pointer::make_shared< AntibodySeqDesignTFCreator >( *src.seq_design_creator_);
+	if ( src.graft_mover_ ) graft_mover_ = utility::pointer::make_shared< CCDEndsGraftMover >( *src.graft_mover_);
+	if ( src.anchored_graft_mover_ ) anchored_graft_mover_ = utility::pointer::make_shared< AnchoredGraftMover >( *src.anchored_graft_mover_);
+	if ( src.framework_mutator_ ) utility::pointer::make_shared< MutateFrameworkForCluster >( *src.framework_mutator_);
+	if ( src.modeler_ ) modeler_ = utility::pointer::make_shared< GeneralAntibodyModeler >( *src.modeler_ );
+	if ( src.cart_min_graft_ ) cart_min_graft_ = utility::pointer::make_shared< MinMover >( *src.cart_min_graft_ );
 	if ( src.mc_ ) mc_ = src.mc_->clone();
 	if ( src.inner_mc_ ) inner_mc_ = src.inner_mc_->clone();
 
-	if ( src.paratope_epitope_cst_mover_ ) paratope_epitope_cst_mover_ = ParatopeEpitopeSiteConstraintMoverOP( new constraints::ParatopeEpitopeSiteConstraintMover( *src.paratope_epitope_cst_mover_));
-	if ( src.paratope_cst_mover_ ) paratope_cst_mover_ = ParatopeSiteConstraintMoverOP( new ParatopeSiteConstraintMover( *src.paratope_cst_mover_));
-	if ( src.cdr_dihedral_cst_mover_ ) cdr_dihedral_cst_mover_ = CDRDihedralConstraintMoverOP( new CDRDihedralConstraintMover( *src.cdr_dihedral_cst_mover_));
-	if ( src.db_manager_ ) db_manager_ = AntibodyDatabaseManagerOP( new AntibodyDatabaseManager( *src.db_manager_ ));
+	if ( src.paratope_epitope_cst_mover_ ) paratope_epitope_cst_mover_ = utility::pointer::make_shared< constraints::ParatopeEpitopeSiteConstraintMover >( *src.paratope_epitope_cst_mover_);
+	if ( src.paratope_cst_mover_ ) paratope_cst_mover_ = utility::pointer::make_shared< ParatopeSiteConstraintMover >( *src.paratope_cst_mover_);
+	if ( src.cdr_dihedral_cst_mover_ ) cdr_dihedral_cst_mover_ = utility::pointer::make_shared< CDRDihedralConstraintMover >( *src.cdr_dihedral_cst_mover_);
+	if ( src.db_manager_ ) db_manager_ = utility::pointer::make_shared< AntibodyDatabaseManager >( *src.db_manager_ );
 
 }
 
@@ -512,7 +512,7 @@ AntibodyDesignMover::setup_native_clusters(core::pose::Pose & pose){
 
 void
 AntibodyDesignMover::setup_native_sequence(core::pose::Pose & pose){
-	pose.data().set(core::pose::datacache::CacheableDataType::NATIVE_ANTIBODY_SEQ, DataCache_CacheableData::DataOP( new NativeAntibodySeq( pose, *ab_info_) ));
+	pose.data().set(core::pose::datacache::CacheableDataType::NATIVE_ANTIBODY_SEQ, utility::pointer::make_shared< NativeAntibodySeq >( pose, *ab_info_));
 }
 //void
 //AntibodyDesignMover::set_cdr_set(CDRDBPoseSet& cdr_set, core::Size overhang){
@@ -542,7 +542,7 @@ AntibodyDesignMover::set_instruction_file(std::string instruction_file){
 
 void
 AntibodyDesignMover::initialize_cdr_set(core::pose::Pose const & pose){
-	db_manager_ = AntibodyDatabaseManagerOP( new AntibodyDatabaseManager(ab_info_));
+	db_manager_ = utility::pointer::make_shared< AntibodyDatabaseManager >(ab_info_);
 	cdr_set_ = db_manager_->load_cdr_poses(cdr_set_options_, pose);
 
 }
@@ -675,7 +675,7 @@ AntibodyDesignMover::setup_default_graft_settings(){
 
 void
 AntibodyDesignMover::setup_cart_minimizer(){
-	cart_min_graft_ = minimization_packing::MinMoverOP( new minimization_packing::MinMover());
+	cart_min_graft_ = utility::pointer::make_shared< minimization_packing::MinMover >();
 	cart_min_graft_->cartesian(true);
 	cart_min_graft_->min_type("lbfgs_armijo_nonmonotone");
 	cart_min_graft_->min_options()->max_iter(200);
@@ -686,7 +686,7 @@ AntibodyDesignMover::setup_cart_minimizer(){
 void
 AntibodyDesignMover::setup_modeler(){
 
-	modeler_ = GeneralAntibodyModelerOP( new GeneralAntibodyModeler(ab_info_) );
+	modeler_ = utility::pointer::make_shared< GeneralAntibodyModeler >(ab_info_);
 	modeler_->set_scorefunction(scorefxn_); //Note that modeler will setup its own docking scorefunctions with proper constraint weights.
 	modeler_->set_scorefunction_min(scorefxn_min_);
 	modeler_->interface_detection_dis(interface_dis_);
@@ -741,13 +741,13 @@ AntibodyDesignMover::setup_paratope_epitope_constraints(Pose & pose){
 
 	//Create classes if they don't yet exist
 	if ( !paratope_epitope_cst_mover_ ) {
-		paratope_epitope_cst_mover_ = constraints::ParatopeEpitopeSiteConstraintMoverOP( new ParatopeEpitopeSiteConstraintMover(ab_info_) );
+		paratope_epitope_cst_mover_ = utility::pointer::make_shared< ParatopeEpitopeSiteConstraintMover >(ab_info_);
 	}
 	if ( ! paratope_cst_mover_ ) {
-		paratope_cst_mover_ = constraints::ParatopeSiteConstraintMoverOP( new ParatopeSiteConstraintMover(ab_info_) );
+		paratope_cst_mover_ = utility::pointer::make_shared< ParatopeSiteConstraintMover >(ab_info_);
 	}
 	if ( ! cdr_dihedral_cst_mover_ ) {
-		cdr_dihedral_cst_mover_ = constraints::CDRDihedralConstraintMoverOP( new CDRDihedralConstraintMover(ab_info_));
+		cdr_dihedral_cst_mover_ = utility::pointer::make_shared< CDRDihedralConstraintMover >(ab_info_);
 	}
 
 	//The residues need to be regenerated if size is changing.
@@ -772,8 +772,8 @@ AntibodyDesignMover::setup_paratope_epitope_constraints(Pose & pose){
 void
 AntibodyDesignMover::finalize_setup(Pose & pose){
 
-	seq_design_creator_ = AntibodySeqDesignTFCreatorOP( new AntibodySeqDesignTFCreator(ab_info_, cdr_seq_design_options_, false, 2 /* cdr_stem_size */) );
-	framework_mutator_ = MutateFrameworkForClusterOP( new MutateFrameworkForCluster(ab_info_));
+	seq_design_creator_ = utility::pointer::make_shared< AntibodySeqDesignTFCreator >(ab_info_, cdr_seq_design_options_, false, 2 /* cdr_stem_size */);
+	framework_mutator_ = utility::pointer::make_shared< MutateFrameworkForCluster >(ab_info_);
 
 	framework_mutator_->set_scorefxn(scorefxn_);
 	framework_mutator_->set_pack_shell(neighbor_dis_);
@@ -821,11 +821,11 @@ AntibodyDesignMover::finalize_setup(Pose & pose){
 	}
 
 	//////////// Setup GraftMovers and settings ////////////////////////////////
-	graft_mover_ = protocols::grafting::CCDEndsGraftMoverOP( new CCDEndsGraftMover(
-		ab_info_->get_CDR_start(cdrs_to_design_[1], pose)-1, ab_info_->get_CDR_end(cdrs_to_design_[1], pose)+1) );
+	graft_mover_ = utility::pointer::make_shared< CCDEndsGraftMover >(
+		ab_info_->get_CDR_start(cdrs_to_design_[1], pose)-1, ab_info_->get_CDR_end(cdrs_to_design_[1], pose)+1);
 
-	anchored_graft_mover_ = protocols::grafting::AnchoredGraftMoverOP( new AnchoredGraftMover(
-		ab_info_->get_CDR_start(cdrs_to_design_[1], pose) - 1, ab_info_->get_CDR_end(cdrs_to_design_[1], pose)+1) );
+	anchored_graft_mover_ = utility::pointer::make_shared< AnchoredGraftMover >(
+		ab_info_->get_CDR_start(cdrs_to_design_[1], pose) - 1, ab_info_->get_CDR_end(cdrs_to_design_[1], pose)+1);
 
 	setup_default_graft_settings();
 
@@ -1139,7 +1139,7 @@ AntibodyDesignMover::run_optimization_cycle(core::pose::Pose& pose, protocols::m
 		TR << "Setting up DockDesign TF" << std::endl;
 		dock_design_tf = seq_design_creator_->generate_tf_seq_design( pose );
 		seq_design_creator_->disable_design_for_non_designing_cdrs( dock_design_tf, pose );
-		dock_design_tf->push_back(TaskOperationCOP( new protocols::simple_task_operations::RestrictToInterface( 1, interface_dis_) ));
+		dock_design_tf->push_back(utility::pointer::make_shared< protocols::simple_task_operations::RestrictToInterface >( 1, interface_dis_));
 	}
 	//TR <<"DockDesign task" << std::endl;
 	//dock_design_tf->create_task_and_apply_taskoperations(pose)->show(TR);
@@ -1223,14 +1223,14 @@ AntibodyDesignMover::check_for_top_designs(core::pose::Pose & pose){
 
 	if ( top_scores_.size()==0 ) {
 		top_scores_.push_back(score);
-		top_designs_.push_back(core::pose::PoseOP( new Pose() ));
+		top_designs_.push_back(utility::pointer::make_shared< Pose >());
 		*(top_designs_[top_designs_.size()]) = pose;
 	} else {
 		bool inserted = false;
 		for ( core::Size i = 1; i<=top_scores_.size(); ++i ) {
 			if ( score <= top_scores_[i] ) {
 				top_scores_.insert(score_it+i-1, score);
-				top_designs_.insert(pose_it+i-1, core::pose::PoseOP( new Pose() ));
+				top_designs_.insert(pose_it+i-1, utility::pointer::make_shared< Pose >());
 				*(top_designs_[i]) = pose;
 				inserted = true;
 				break;
@@ -1238,7 +1238,7 @@ AntibodyDesignMover::check_for_top_designs(core::pose::Pose & pose){
 		}
 		if ( ! inserted && top_scores_.size() < num_top_designs_ ) {
 			top_scores_.push_back(score);
-			top_designs_.push_back(core::pose::PoseOP( new Pose() ));
+			top_designs_.push_back(utility::pointer::make_shared< Pose >());
 			*(top_designs_[top_designs_.size()]) = pose;
 		} else if ( inserted && top_scores_.size() > num_top_designs_ ) {
 			top_scores_.pop_back();
@@ -1321,7 +1321,7 @@ AntibodyDesignMover::run_basic_mc_algorithm(Pose & pose, vector1<CDRNameEnum>& c
 	TR << "Running basic monte carlo algorithm " << std::endl;
 
 	top_scores_.push_back((*scorefxn_)(pose));
-	top_designs_.push_back(core::pose::PoseOP( new Pose() ));
+	top_designs_.push_back(utility::pointer::make_shared< Pose >());
 	*(top_designs_[1]) = pose;
 	mc_->reset(pose);
 
@@ -1474,7 +1474,7 @@ AntibodyDesignMover::apply(core::pose::Pose & pose){
 	//}
 
 	if ( !ab_info_ ) {
-		ab_info_ = AntibodyInfoOP(new AntibodyInfo(pose, AHO_Scheme, North));
+		ab_info_ = utility::pointer::make_shared< AntibodyInfo >(pose, AHO_Scheme, North);
 	}
 
 	ab_info_->show(std::cout);
@@ -1521,11 +1521,11 @@ AntibodyDesignMover::apply(core::pose::Pose & pose){
 
 
 	if ( mc_optimize_dG_ ) {
-		mc_ =       MonteCarloInterfaceOP( new MonteCarloInterface( pose, *scorefxn_, outer_kt_, modeler_->get_dock_chains() ) );
-		inner_mc_ = MonteCarloInterfaceOP( new MonteCarloInterface( pose, *scorefxn_, inner_kt_, modeler_->get_dock_chains() ) );
+		mc_ =       utility::pointer::make_shared< MonteCarloInterface >( pose, *scorefxn_, outer_kt_, modeler_->get_dock_chains() );
+		inner_mc_ = utility::pointer::make_shared< MonteCarloInterface >( pose, *scorefxn_, inner_kt_, modeler_->get_dock_chains() );
 	} else {
-		mc_ =       MonteCarloOP( new MonteCarlo(pose, *scorefxn_, outer_kt_) );
-		inner_mc_ = MonteCarloOP( new MonteCarlo(pose, *scorefxn_, inner_kt_) );
+		mc_ =       utility::pointer::make_shared< MonteCarlo >(pose, *scorefxn_, outer_kt_);
+		inner_mc_ = utility::pointer::make_shared< MonteCarlo >(pose, *scorefxn_, inner_kt_);
 	}
 
 	core::Real benchmark_start_score = scorefxn_->score(pose);
@@ -1853,7 +1853,7 @@ std::string AntibodyDesignMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 AntibodyDesignMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new AntibodyDesignMover );
+	return utility::pointer::make_shared< AntibodyDesignMover >();
 }
 
 void AntibodyDesignMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -67,7 +67,7 @@ ScreeningJobInputterCreator::keyname() const
 
 protocols::jd2::JobInputterOP
 ScreeningJobInputterCreator::create_JobInputter() const {
-	return protocols::jd2::JobInputterOP( new ScreeningJobInputter );
+	return utility::pointer::make_shared< ScreeningJobInputter >();
 }
 
 

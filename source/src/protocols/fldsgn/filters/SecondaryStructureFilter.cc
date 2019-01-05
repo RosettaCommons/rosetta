@@ -413,7 +413,7 @@ SecondaryStructureFilter::get_filtered_secstruct( core::pose::Pose const & pose 
 }
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP SecondaryStructureFilterCreator::create_filter() const { return protocols::filters::FilterOP( new SecondaryStructureFilter ); }
+// XRW TEMP SecondaryStructureFilterCreator::create_filter() const { return utility::pointer::make_shared< SecondaryStructureFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP SecondaryStructureFilterCreator::keyname() const { return "SecondaryStructure"; }
@@ -455,7 +455,7 @@ std::string SecondaryStructureFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 SecondaryStructureFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new SecondaryStructureFilter );
+	return utility::pointer::make_shared< SecondaryStructureFilter >();
 }
 
 void SecondaryStructureFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -53,7 +53,7 @@ public:
 
 	TopologyClaimerOP // clone
 	clone() const override {
-		return TopologyClaimerOP( new PcsEnergyController( *this ) );
+		return utility::pointer::make_shared< PcsEnergyController >( *this );
 	}
 
 	/// @brief type() is specifying the output name of the TopologyClaimer

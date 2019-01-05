@@ -32,7 +32,7 @@ LinearChainbreakEnergyCreator::create_energy_method(const EnergyMethodOptions& o
 	// in the event that the caller does not specify a sequence separation
 	// constraint. Currently, cst_max_seq_sep() defaults to +inf.
 	Size allowable_sequence_separation = opt.cst_max_seq_sep();
-	return EnergyMethodOP( new LinearChainbreakEnergy(allowable_sequence_separation) );
+	return utility::pointer::make_shared< LinearChainbreakEnergy >(allowable_sequence_separation);
 }
 
 ScoreTypes

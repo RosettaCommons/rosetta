@@ -68,7 +68,7 @@ StepWiseModelerOptions::initialize_variables(){
 StepWiseModelerOptionsOP
 StepWiseModelerOptions::clone() const
 {
-	return StepWiseModelerOptionsOP( new StepWiseModelerOptions( *this ) );
+	return utility::pointer::make_shared< StepWiseModelerOptions >( *this );
 }
 
 /////////////////////////////////////////////////////////////////////////////////////

@@ -154,23 +154,23 @@ main( int argc, char* argv[] )
 		utility::vector1< core::Size > oop_low_e_puck_positions( option[oop_creator::oop_low_e_puck_positions].value() );
 		ResidueSelectorOP oop_plus_selector( nullptr );
 		if ( ! oop_plus_positions.empty() ) {
-			oop_plus_selector = ResidueSelectorOP( new ResidueIndexSelector( oop_plus_positions ) );
+			oop_plus_selector = utility::pointer::make_shared< ResidueIndexSelector >( oop_plus_positions );
 		}
 		ResidueSelectorOP oop_minus_selector( nullptr );
 		if ( ! oop_minus_positions.empty() ) {
-			oop_minus_selector = ResidueSelectorOP( new ResidueIndexSelector( oop_minus_positions ) );
+			oop_minus_selector = utility::pointer::make_shared< ResidueIndexSelector >( oop_minus_positions );
 		}
 		ResidueSelectorOP oop_d_plus_selector( nullptr );
 		if ( ! oop_d_plus_positions.empty() ) {
-			oop_d_plus_selector = ResidueSelectorOP( new ResidueIndexSelector( oop_d_plus_positions ) );
+			oop_d_plus_selector = utility::pointer::make_shared< ResidueIndexSelector >( oop_d_plus_positions );
 		}
 		ResidueSelectorOP oop_d_minus_selector( nullptr );
 		if ( ! oop_d_minus_positions.empty() ) {
-			oop_d_minus_selector = ResidueSelectorOP( new ResidueIndexSelector( oop_d_minus_positions ) );
+			oop_d_minus_selector = utility::pointer::make_shared< ResidueIndexSelector >( oop_d_minus_positions );
 		}
 		ResidueSelectorOP oop_low_e_puck_selector( nullptr );
 		if ( ! oop_low_e_puck_positions.empty() ) {
-			oop_low_e_puck_selector = ResidueSelectorOP( new ResidueIndexSelector( oop_low_e_puck_positions ) );
+			oop_low_e_puck_selector = utility::pointer::make_shared< ResidueIndexSelector >( oop_low_e_puck_positions );
 		}
 
 

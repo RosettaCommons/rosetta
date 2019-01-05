@@ -123,7 +123,7 @@ void Prepare(){
 				fulllength_clean += i;
 			}
 		}
-		sequence = core::sequence::SequenceOP(new core::sequence::Sequence( fulllength_clean, "target" ));
+		sequence = utility::pointer::make_shared< core::sequence::Sequence >( fulllength_clean, "target" );
 		hasfasta = true;
 	}
 	//Get the Fragsizes and respective amounts

@@ -40,7 +40,7 @@ methods::EnergyMethodOP
 SmoothCenPairEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new methods::SmoothCenPairEnergy );
+	return utility::pointer::make_shared< methods::SmoothCenPairEnergy >();
 }
 
 /// @brief Return the set of score types claimed by the EnergyMethod
@@ -56,7 +56,7 @@ SmoothCenPairEnergyCreator::score_types_for_method() const {
 
 /// c-tor
 SmoothCenPairEnergy::SmoothCenPairEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new SmoothCenPairEnergyCreator ) ),
+	parent( utility::pointer::make_shared< SmoothCenPairEnergyCreator >() ),
 	potential_( ScoringManager::get_instance()->get_SmoothEnvPairPotential() )
 {}
 
@@ -64,7 +64,7 @@ SmoothCenPairEnergy::SmoothCenPairEnergy() :
 /// clone
 EnergyMethodOP
 SmoothCenPairEnergy::clone() const {
-	return EnergyMethodOP( new SmoothCenPairEnergy() );
+	return utility::pointer::make_shared< SmoothCenPairEnergy >();
 }
 
 

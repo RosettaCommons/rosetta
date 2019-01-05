@@ -55,7 +55,7 @@ static basic::Tracer TR( "protocols.constraint_generator.HydrogenBondConstraintG
 protocols::constraint_generator::ConstraintGeneratorOP
 HydrogenBondConstraintGeneratorCreator::create_constraint_generator() const
 {
-	return protocols::constraint_generator::ConstraintGeneratorOP( new HydrogenBondConstraintGenerator );
+	return utility::pointer::make_shared< HydrogenBondConstraintGenerator >();
 }
 
 std::string
@@ -84,7 +84,7 @@ HydrogenBondConstraintGenerator::~HydrogenBondConstraintGenerator() = default;
 protocols::constraint_generator::ConstraintGeneratorOP
 HydrogenBondConstraintGenerator::clone() const
 {
-	return protocols::constraint_generator::ConstraintGeneratorOP( new HydrogenBondConstraintGenerator( *this ) );
+	return utility::pointer::make_shared< HydrogenBondConstraintGenerator >( *this );
 }
 
 void
@@ -374,7 +374,7 @@ ambiguous_constraint_wrap( core::scoring::constraints::ConstraintOPs const & cst
 		// no sense to create ambiguous constraint for 1 cst
 		return *( csts.begin() );
 	} else {
-		return core::scoring::constraints::ConstraintOP( new core::scoring::constraints::AmbiguousConstraint( csts ) );
+		return utility::pointer::make_shared< core::scoring::constraints::AmbiguousConstraint >( csts );
 	}
 }
 
@@ -483,27 +483,27 @@ HydrogenBondConstraintGenerator::create_residue_constraint(
 		<< atomid2 << " " << parent_atomid2 << std::endl;
 
 	ConstraintOPs hb_csts;
-	hb_csts.push_back( ConstraintOP( new AtomPairConstraint( atomid1, atomid2, atom_pair_func( a1, a2 ) ) ) );
-	hb_csts.push_back( ConstraintOP( new AngleConstraint( parent_atomid1, atomid1, atomid2, angle1_func( a1 ) ) ) );
-	hb_csts.push_back( ConstraintOP( new AngleConstraint( atomid1, atomid2, parent_atomid2, angle2_func( a2 ) ) ) );
+	hb_csts.push_back( utility::pointer::make_shared< AtomPairConstraint >( atomid1, atomid2, atom_pair_func( a1, a2 ) ) );
+	hb_csts.push_back( utility::pointer::make_shared< AngleConstraint >( parent_atomid1, atomid1, atomid2, angle1_func( a1 ) ) );
+	hb_csts.push_back( utility::pointer::make_shared< AngleConstraint >( atomid1, atomid2, parent_atomid2, angle2_func( a2 ) ) );
 
 	if ( !a1.dihedrals().empty() ) {
 		ConstraintOPs dihedral_csts;
 		for ( double d : a1.dihedrals() ) {
-			dihedral_csts.push_back( ConstraintOP( new DihedralConstraint(
-				parent2_atomid1, parent_atomid1, atomid1, atomid2, dihedral_func( d ) ) ) );
+			dihedral_csts.push_back( utility::pointer::make_shared< DihedralConstraint >(
+				parent2_atomid1, parent_atomid1, atomid1, atomid2, dihedral_func( d ) ) );
 		}
 		hb_csts.push_back( ambiguous_constraint_wrap( dihedral_csts ) );
 	}
 	if ( !a2.dihedrals().empty() ) {
 		ConstraintOPs dihedral_csts;
 		for ( double d : a2.dihedrals() ) {
-			dihedral_csts.push_back( ConstraintOP( new DihedralConstraint(
-				atomid1, atomid2, parent_atomid2, parent2_atomid2, dihedral_func( d ) ) ) );
+			dihedral_csts.push_back( utility::pointer::make_shared< DihedralConstraint >(
+				atomid1, atomid2, parent_atomid2, parent2_atomid2, dihedral_func( d ) ) );
 		}
 		hb_csts.push_back( ambiguous_constraint_wrap( dihedral_csts ) );
 	}
-	return ConstraintOP( new MultiConstraint( hb_csts ) );
+	return utility::pointer::make_shared< MultiConstraint >( hb_csts );
 }
 
 HydrogenBondingAtom::HydrogenBondingAtom(

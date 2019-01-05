@@ -28,7 +28,7 @@ namespace features {
 // XRW TEMP OrbitalsFeaturesCreator::OrbitalsFeaturesCreator() {}
 // XRW TEMP OrbitalsFeaturesCreator::~OrbitalsFeaturesCreator() = default;
 // XRW TEMP FeaturesReporterOP OrbitalsFeaturesCreator::create_features_reporter() const {
-// XRW TEMP  return FeaturesReporterOP( new OrbitalsFeatures );
+// XRW TEMP  return utility::pointer::make_shared< OrbitalsFeatures >();
 // XRW TEMP }
 
 // XRW TEMP std::string OrbitalsFeaturesCreator::type_name() const {

@@ -49,7 +49,7 @@ CompoundInterpolator::CompoundInterpolator( CompoundInterpolator const & other )
 }
 
 InterpolatorOP CompoundInterpolator::clone() const {
-	return InterpolatorOP( new CompoundInterpolator( *this ) );
+	return utility::pointer::make_shared< CompoundInterpolator >( *this );
 }
 
 void

@@ -61,7 +61,7 @@ public:
 
 	std::string get_name() const override { return "TailSegmentMover"; }
 
-	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new TailSegmentMover ); }
+	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< TailSegmentMover >(); }
 
 	bool reinitialize_for_each_job() const override { return false; }
 

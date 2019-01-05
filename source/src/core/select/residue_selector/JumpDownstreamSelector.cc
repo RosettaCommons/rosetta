@@ -60,7 +60,7 @@ JumpDownstreamSelector::JumpDownstreamSelector( JumpDownstreamSelector const &sr
 
 /// @brief Clone operator.
 /// @details Copy this object and return an owning pointer to the new object.
-ResidueSelectorOP JumpDownstreamSelector::clone() const { return ResidueSelectorOP( new JumpDownstreamSelector(*this) ); }
+ResidueSelectorOP JumpDownstreamSelector::clone() const { return utility::pointer::make_shared< JumpDownstreamSelector >(*this); }
 
 JumpDownstreamSelector::JumpDownstreamSelector( int jump )
 {
@@ -134,7 +134,7 @@ JumpDownstreamSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 
 ResidueSelectorOP
 JumpDownstreamSelectorCreator::create_residue_selector() const {
-	return ResidueSelectorOP( new JumpDownstreamSelector );
+	return utility::pointer::make_shared< JumpDownstreamSelector >();
 }
 
 std::string

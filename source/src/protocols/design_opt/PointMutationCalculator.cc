@@ -157,7 +157,7 @@ PointMutationCalculator::~PointMutationCalculator()= default;
 //creators
 protocols::design_opt::PointMutationCalculatorOP
 PointMutationCalculator::clone() const{
-	return protocols::design_opt::PointMutationCalculatorOP( new PointMutationCalculator( *this ) );
+	return utility::pointer::make_shared< PointMutationCalculator >( *this );
 }
 
 // setter - getter pairs
@@ -324,14 +324,14 @@ PointMutationCalculator::mutate_and_relax(
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		mutate_residue->request_symmetrize_by_union();
 	}
-	pack = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover( scorefxn(), mutate_residue ) );
+	pack = utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >( scorefxn(), mutate_residue );
 	pack->apply( pose );
 	if ( rtmin ) {
 		// definition/allocation of RTmin mover must flag dependant, as some scoreterms are incompatable with RTmin initilization
 		if ( core::pose::symmetry::is_symmetric( pose ) ) {
 			utility_exit_with_message("Cannot currently use PointMutationCalculator (GreedyOptMutation/ParetoOptMutation) with rtmin on a symmetric pose!");
 		}
-		rtmin = protocols::minimization_packing::RotamerTrialsMinMoverOP( new protocols::minimization_packing::RotamerTrialsMinMover( scorefxn(), *mutate_residue ) );
+		rtmin = utility::pointer::make_shared< protocols::minimization_packing::RotamerTrialsMinMover >( scorefxn(), *mutate_residue );
 		rtmin->apply( pose );
 		TR<<"Finished rtmin"<<std::endl;
 	}

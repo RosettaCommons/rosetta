@@ -121,7 +121,7 @@ void setup_coordinate_constraints(const Pose& pose, LoopsCOP aligned, Constraint
 
 			Real distance = ca_coords.distance(fixed_coords);
 			FuncOP function( new HarmonicFunc(distance, 5) );
-			ConstraintCOP constraint( ConstraintOP( new CoordinateConstraint(ca_atom, fixed_atom, fixed_coords, function) ) );
+			ConstraintCOP constraint( utility::pointer::make_shared< CoordinateConstraint >(ca_atom, fixed_atom, fixed_coords, function) );
 			constraints->add_constraint(constraint);
 		}
 	}
@@ -145,7 +145,7 @@ void setup_atom_pair_constraints(const Pose& pose, LoopsCOP aligned, ConstraintS
 			TR.Warning << "Multiple constraint files specified; using first" << std::endl;
 		}
 
-		ConstraintSetOP additional = ConstraintIO::get_instance()->read_constraints(filenames[1], ConstraintSetOP( new ConstraintSet() ), pose);
+		ConstraintSetOP additional = ConstraintIO::get_instance()->read_constraints(filenames[1], utility::pointer::make_shared< ConstraintSet >(), pose);
 		ConstraintCOPs cst_list = additional->get_all_constraints();
 
 		for ( ConstraintCOPs::const_iterator i = cst_list.begin(); i != cst_list.end(); ++i ) {
@@ -263,7 +263,7 @@ void MedalExchangeMover::apply(Pose& pose) {
 	// Housekeeping
 	pose.remove_constraints();
 	builder->tear_down(&pose);
-	pose.set_new_energies_object(core::scoring::EnergiesOP( new Energies(energies) ));
+	pose.set_new_energies_object(utility::pointer::make_shared< Energies >(energies));
 }
 
 MedalExchangeMover::MedalExchangeMover() {
@@ -274,7 +274,7 @@ MedalExchangeMover::MedalExchangeMover() {
 
 	FragmentIO io;
 	fragments_ = io.read_data(option[in::file::frag3]());
-	pred_ss_ = core::fragment::SecondaryStructureOP( new SecondaryStructure(*fragments_) );
+	pred_ss_ = utility::pointer::make_shared< SecondaryStructure >(*fragments_);
 }
 
 std::string MedalExchangeMover::get_name() const {
@@ -282,11 +282,11 @@ std::string MedalExchangeMover::get_name() const {
 }
 
 protocols::moves::MoverOP MedalExchangeMover::clone() const {
-	return protocols::moves::MoverOP( new MedalExchangeMover(*this) );
+	return utility::pointer::make_shared< MedalExchangeMover >(*this);
 }
 
 protocols::moves::MoverOP MedalExchangeMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new MedalExchangeMover() );
+	return utility::pointer::make_shared< MedalExchangeMover >();
 }
 
 }  // namespace medal

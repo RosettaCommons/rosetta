@@ -95,12 +95,12 @@ AddCDRProfileSetsOperation::AddCDRProfileSetsOperation(AddCDRProfileSetsOperatio
 	numbering_scheme_(src.numbering_scheme_),
 	ignore_light_chain_( src.ignore_light_chain_ )
 {
-	if ( src.ab_info_ ) ab_info_ = AntibodyInfoOP( new AntibodyInfo( *src.ab_info_));
+	if ( src.ab_info_ ) ab_info_ = utility::pointer::make_shared< AntibodyInfo >( *src.ab_info_);
 }
 
 TaskOperationOP
 AddCDRProfileSetsOperation::clone() const {
-	return TaskOperationOP( new AddCDRProfileSetsOperation( *this));
+	return utility::pointer::make_shared< AddCDRProfileSetsOperation >( *this);
 }
 
 AddCDRProfileSetsOperation::~AddCDRProfileSetsOperation()= default;
@@ -236,7 +236,7 @@ AddCDRProfileSetsOperation::set_cutoff(core::Size cutoff){
 utility::vector1<bool>
 AddCDRProfileSetsOperation::pre_load_data(const core::pose::Pose& pose){
 	if ( ! ab_info_ ) {
-		ab_info_ = AntibodyInfoOP(new AntibodyInfo(pose, numbering_scheme_, North));
+		ab_info_ = utility::pointer::make_shared< AntibodyInfo >(pose, numbering_scheme_, North);
 	}
 
 	AntibodyDatabaseManager manager = AntibodyDatabaseManager(ab_info_, force_north_paper_db_);
@@ -271,7 +271,7 @@ AddCDRProfileSetsOperation::apply(const core::pose::Pose& pose, core::pack::task
 	//This is due to const apply and no pose in parse_my_tag.
 	AntibodyInfoOP local_ab_info;
 	if ( ! ab_info_ ) {
-		local_ab_info = AntibodyInfoOP(new AntibodyInfo(pose, numbering_scheme_, North));
+		local_ab_info = utility::pointer::make_shared< AntibodyInfo >(pose, numbering_scheme_, North);
 	} else {
 		local_ab_info = ab_info_->clone();
 	}
@@ -315,7 +315,7 @@ AddCDRProfileSetsOperation::apply(const core::pose::Pose& pose, core::pack::task
 core::pack::task::operation::TaskOperationOP
 AddCDRProfileSetsOperationCreator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new AddCDRProfileSetsOperation );
+	return utility::pointer::make_shared< AddCDRProfileSetsOperation >();
 }
 
 void AddCDRProfileSetsOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

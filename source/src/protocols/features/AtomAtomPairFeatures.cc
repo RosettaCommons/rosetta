@@ -157,12 +157,12 @@ AtomAtomPairFeatures::write_atom_pairs_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
-	Column atom_type("atom_type", DbDataTypeOP( new DbText() ));
-	Column element("element", DbDataTypeOP( new DbText() ));
-	Column lower_break("lower_break", DbDataTypeOP( new DbReal() ));
-	Column upper_break("upper_break", DbDataTypeOP( new DbReal() ));
-	Column count("count", DbDataTypeOP( new DbInteger() ));
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >());
+	Column atom_type("atom_type", utility::pointer::make_shared< DbText >());
+	Column element("element", utility::pointer::make_shared< DbText >());
+	Column lower_break("lower_break", utility::pointer::make_shared< DbReal >());
+	Column upper_break("upper_break", utility::pointer::make_shared< DbReal >());
+	Column count("count", utility::pointer::make_shared< DbInteger >());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -347,7 +347,7 @@ std::string AtomAtomPairFeaturesCreator::type_name() const {
 
 protocols::features::FeaturesReporterOP
 AtomAtomPairFeaturesCreator::create_features_reporter() const {
-	return protocols::features::FeaturesReporterOP( new AtomAtomPairFeatures );
+	return utility::pointer::make_shared< AtomAtomPairFeatures >();
 }
 
 void AtomAtomPairFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

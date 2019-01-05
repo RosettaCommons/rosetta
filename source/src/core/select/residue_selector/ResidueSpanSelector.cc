@@ -55,7 +55,7 @@ ResidueSpanSelector::ResidueSpanSelector() = default;
 
 ResidueSpanSelector::ResidueSpanSelector( ResidueSpanSelector const & ) = default;
 
-ResidueSelectorOP ResidueSpanSelector::clone() const { return ResidueSelectorOP( new ResidueSpanSelector(*this) ); }
+ResidueSelectorOP ResidueSpanSelector::clone() const { return utility::pointer::make_shared< ResidueSpanSelector >(*this); }
 
 
 ResidueSpanSelector::ResidueSpanSelector(
@@ -160,7 +160,7 @@ ResidueSpanSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 
 ResidueSelectorOP
 ResidueSpanSelectorCreator::create_residue_selector() const {
-	return ResidueSelectorOP( new ResidueSpanSelector );
+	return utility::pointer::make_shared< ResidueSpanSelector >();
 }
 
 std::string

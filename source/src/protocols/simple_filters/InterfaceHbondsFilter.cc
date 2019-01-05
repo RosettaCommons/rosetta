@@ -354,7 +354,7 @@ std::string InterfaceHbondsFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 InterfaceHbondsFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new InterfaceHbondsFilter );
+	return utility::pointer::make_shared< InterfaceHbondsFilter >();
 }
 
 void InterfaceHbondsFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -48,7 +48,7 @@ using Xform = numeric::xyzTransform<double>;
 static basic::Tracer TR( "protocols.simple_moves.MotifScoreFilter" );
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP MotifScoreFilterCreator::create_filter() const { return protocols::filters::FilterOP( new MotifScoreFilter ); }
+// XRW TEMP MotifScoreFilterCreator::create_filter() const { return utility::pointer::make_shared< MotifScoreFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP MotifScoreFilterCreator::keyname() const { return "MotifScore"; }
@@ -147,7 +147,7 @@ std::string MotifScoreFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 MotifScoreFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new MotifScoreFilter );
+	return utility::pointer::make_shared< MotifScoreFilter >();
 }
 
 void MotifScoreFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

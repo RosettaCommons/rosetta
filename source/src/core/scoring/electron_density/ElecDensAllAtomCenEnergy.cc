@@ -66,7 +66,7 @@ methods::EnergyMethodOP
 ElecDensAllAtomCenEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new ElecDensAllAtomCenEnergy );
+	return utility::pointer::make_shared< ElecDensAllAtomCenEnergy >();
 }
 
 ScoreTypes
@@ -86,14 +86,14 @@ ElecDensAllAtomCenEnergy::long_range_type() const { return methods::elec_dens_al
 
 /// c-tor
 ElecDensAllAtomCenEnergy::ElecDensAllAtomCenEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new ElecDensAllAtomCenEnergyCreator ) )
+	parent( utility::pointer::make_shared< ElecDensAllAtomCenEnergyCreator >() )
 {}
 
 
 /// clone
 methods::EnergyMethodOP
 ElecDensAllAtomCenEnergy::clone() const {
-	return methods::EnergyMethodOP( new ElecDensAllAtomCenEnergy( *this ) );
+	return utility::pointer::make_shared< ElecDensAllAtomCenEnergy >( *this );
 }
 
 

@@ -76,7 +76,7 @@ LayerSelector::~LayerSelector() = default;
 /// @details Copy this object and return an owning pointer to the new object.
 ResidueSelectorOP LayerSelector::clone() const {
 	return utility::pointer::make_shared< LayerSelector >( *this );
-	//return ResidueSelectorOP( new LayerSelector(*this) );
+	//return utility::pointer::make_shared< LayerSelector >(*this);
 }
 
 /// @brief Apply function: generate a ResidueSubset given a Pose.
@@ -325,7 +325,7 @@ LayerSelector::set_dist_exponent( core::Real const val )
 ResidueSelectorOP
 LayerSelectorCreator::create_residue_selector() const {
 	return utility::pointer::make_shared< LayerSelector >();
-	//return ResidueSelectorOP( new LayerSelector );
+	//return utility::pointer::make_shared< LayerSelector >();
 }
 
 /// @brief Get the class name.

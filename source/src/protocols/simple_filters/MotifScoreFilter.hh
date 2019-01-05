@@ -40,10 +40,10 @@ public:
 	~MotifScoreFilter() override = default;
 
 	filters::FilterOP clone() const override {
-		return filters::FilterOP( new MotifScoreFilter( *this ) ); }
+		return utility::pointer::make_shared< MotifScoreFilter >( *this ); }
 
 	filters::FilterOP fresh_instance() const override{
-		return filters::FilterOP( new MotifScoreFilter() );
+		return utility::pointer::make_shared< MotifScoreFilter >();
 	}
 
 

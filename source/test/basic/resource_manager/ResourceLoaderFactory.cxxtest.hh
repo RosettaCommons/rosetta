@@ -86,7 +86,7 @@ public:
 
 		ResourceLoaderFactory * factory = ResourceLoaderFactory::get_instance();
 		factory->set_throw_on_double_registration();
-		factory->factory_register( ResourceLoaderCreatorOP( new DummyResourceLoaderCreator ) );
+		factory->factory_register( utility::pointer::make_shared< DummyResourceLoaderCreator >() );
 		ResourceLoaderOP loader = factory->create_resource_loader( "DummyResource" );
 		TS_ASSERT( loader.get() ); // make sure we got back a non-null pointer
 		DummyResourceLoader * dloader = dynamic_cast< DummyResourceLoader * > ( loader.get() );
@@ -97,7 +97,7 @@ public:
 		try {
 			ResourceLoaderFactory * factory = ResourceLoaderFactory::get_instance();
 			factory->set_throw_on_double_registration();
-			factory->factory_register( ResourceLoaderCreatorOP( new DummyResourceLoaderCreator ) );
+			factory->factory_register( utility::pointer::make_shared< DummyResourceLoaderCreator >() );
 			TS_ASSERT( false );
 		} catch (utility::excn::Exception & e ) {
 			std::string expected_error_message = "Double registration of a ResourceLoaderCreator in the ResourceLoaderFactory, named DummyResource. Are there two registrators for this ResourceLoader object, or have you chosen a previously assigned name to a new resource option?";

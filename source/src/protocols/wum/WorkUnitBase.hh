@@ -47,7 +47,7 @@ public:
 	~WorkUnitBase () override= default;
 
 	virtual protocols::wum::WorkUnitBaseOP clone() const {
-		return protocols::wum::WorkUnitBaseOP( new WorkUnitBase( *this ) );
+		return utility::pointer::make_shared< WorkUnitBase >( *this );
 	}
 
 	/// @brief Remove all data, make sure that the memory is also cleared, hence the cals to reserve
@@ -202,7 +202,7 @@ public:
 	~WorkUnit_Wait() override= default;
 
 	protocols::wum::WorkUnitBaseOP clone() const override {
-		return protocols::wum::WorkUnitBaseOP( new WorkUnit_Wait( *this ) );
+		return utility::pointer::make_shared< WorkUnit_Wait >( *this );
 	}
 
 	// @brief Run the workunit - overloaded by children of this class
@@ -223,7 +223,7 @@ public:
 	~WorkUnit_SilentStructStore() override= default;
 
 	protocols::wum::WorkUnitBaseOP clone() const override {
-		return protocols::wum::WorkUnitBaseOP( new WorkUnit_SilentStructStore( *this ) );
+		return utility::pointer::make_shared< WorkUnit_SilentStructStore >( *this );
 	}
 
 	/// @brief This Work unit doesnt do *anything* - its just keeps the structures
@@ -258,7 +258,7 @@ public:
 	~WorkUnit_MoverWrapper() override= default;
 
 	protocols::wum::WorkUnitBaseOP clone() const override {
-		return protocols::wum::WorkUnitBaseOP( new WorkUnit_MoverWrapper( *this ) );
+		return utility::pointer::make_shared< WorkUnit_MoverWrapper >( *this );
 	}
 
 	// @brief Run the workunit - overloaded by children of this class

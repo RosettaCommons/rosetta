@@ -84,7 +84,7 @@ std::string TailSegmentMoverCreator::keyname() const {
 }
 
 protocols::moves::MoverOP TailSegmentMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new TailSegmentMover );
+	return utility::pointer::make_shared< TailSegmentMover >();
 }
 
 std::string TailSegmentMoverCreator::mover_name() {
@@ -130,7 +130,7 @@ TailSegmentMover & TailSegmentMover::operator=( TailSegmentMover const & rhs ){
 	task_factory_      = rhs.task_factory_->clone();
 	movemap_        = rhs.movemap_->clone();
 	movemap_lesstail_    = rhs.movemap_lesstail_->clone();
-	foldtree_ = core::kinematics::FoldTreeOP( new core::kinematics::FoldTree(*rhs.foldtree_) ); //no clone operation, and no proper copy ctor
+	foldtree_ = utility::pointer::make_shared< core::kinematics::FoldTree >(*rhs.foldtree_); //no clone operation, and no proper copy ctor
 	return *this;
 }
 
@@ -148,7 +148,7 @@ void TailSegmentMover::set_task_factory(
 {
 	// make local, non-const copy from const input
 	runtime_assert( task_factory_in != nullptr );
-	task_factory_ = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory( *task_factory_in ) );
+	task_factory_ = utility::pointer::make_shared< core::pack::task::TaskFactory >( *task_factory_in );
 }
 
 void TailSegmentMover::apply( core::pose::Pose & pose ){

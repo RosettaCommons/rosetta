@@ -56,7 +56,7 @@ ClassicMatchAlgorithm::~ClassicMatchAlgorithm() = default;
 
 DownstreamAlgorithmOP
 ClassicMatchAlgorithm::clone() const {
-	return DownstreamAlgorithmOP( new ClassicMatchAlgorithm( *this ) );
+	return utility::pointer::make_shared< ClassicMatchAlgorithm >( *this );
 }
 
 void

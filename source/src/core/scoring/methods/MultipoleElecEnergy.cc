@@ -81,7 +81,7 @@ public:
 	MultipoleElecResPairMinData();
 	~MultipoleElecResPairMinData() override = default;
 	basic::datacache::CacheableDataOP clone() const override
-	{ return basic::datacache::CacheableDataOP( new MultipoleElecResPairMinData( *this ) ); }
+	{ return utility::pointer::make_shared< MultipoleElecResPairMinData >( *this ); }
 
 	void
 	initialize(
@@ -134,7 +134,7 @@ retrieve_nonconst_mp_pairdata(
 		debug_assert( utility::pointer::dynamic_pointer_cast< MultipoleElecResPairMinData > ( pairdata.get_data( mp_respair_data ) ));
 		mp_pairdata = utility::pointer::static_pointer_cast< MultipoleElecResPairMinData > ( pairdata.get_data( mp_respair_data ) );
 	} else {
-		mp_pairdata = MultipoleElecResPairMinDataOP( new MultipoleElecResPairMinData );
+		mp_pairdata = utility::pointer::make_shared< MultipoleElecResPairMinData >();
 		pairdata.set_data( mp_respair_data, mp_pairdata );
 	}
 	return *mp_pairdata;
@@ -161,7 +161,7 @@ retrieve_nonconst_mp_resdata(
 		debug_assert( utility::pointer::dynamic_pointer_cast< MultipoleElecResidueInfo > ( resdata.get_data( mp_res_data ) ) );
 		mp_resdata = utility::pointer::static_pointer_cast< MultipoleElecResidueInfo > ( resdata.get_data( mp_res_data ) );
 	} else {
-		mp_resdata = MultipoleElecResidueInfoOP( new MultipoleElecResidueInfo );
+		mp_resdata = utility::pointer::make_shared< MultipoleElecResidueInfo >();
 		resdata.set_data( mp_res_data, mp_resdata );
 	}
 	return *mp_resdata;
@@ -195,7 +195,7 @@ methods::EnergyMethodOP
 MultipoleElecEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
-	return methods::EnergyMethodOP( new MultipoleElecEnergy( options ) );
+	return utility::pointer::make_shared< MultipoleElecEnergy >( options );
 }
 
 ScoreTypes
@@ -210,7 +210,7 @@ MultipoleElecEnergy::MultipoleElecEnergy( MultipoleElecEnergy const & /*src*/ ) 
 
 
 MultipoleElecEnergy::MultipoleElecEnergy( EnergyMethodOptions const & options ):
-	parent( methods::EnergyMethodCreatorOP( new MultipoleElecEnergyCreator ) ),
+	parent( utility::pointer::make_shared< MultipoleElecEnergyCreator >() ),
 	potential_( ScoringManager::get_instance()->get_MultipoleElecPotential( options ) ),
 	exclude_DNA_DNA_( options.exclude_DNA_DNA() )
 {}
@@ -220,7 +220,7 @@ MultipoleElecEnergy::MultipoleElecEnergy( EnergyMethodOptions const & options ):
 EnergyMethodOP
 MultipoleElecEnergy::clone() const
 {
-	return EnergyMethodOP( new MultipoleElecEnergy( *this ) );
+	return utility::pointer::make_shared< MultipoleElecEnergy >( *this );
 }
 
 bool
@@ -303,7 +303,7 @@ MultipoleElecEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const &
 	}
 
 	if ( create_new_lre_container ) {
-		LREnergyContainerOP new_dec = LREnergyContainerOP( new DenseEnergyContainer( pose.size(), multipole_elec ) );
+		LREnergyContainerOP new_dec = utility::pointer::make_shared< DenseEnergyContainer >( pose.size(), multipole_elec );
 		energies.set_long_range_container( lr_type, new_dec );
 	}
 }
@@ -332,7 +332,7 @@ MultipoleElecEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction con
 	}
 
 	if ( create_new_lre_container ) {
-		LREnergyContainerOP new_dec = LREnergyContainerOP( new DenseEnergyContainer( pose.size(), multipole_elec ) );
+		LREnergyContainerOP new_dec = utility::pointer::make_shared< DenseEnergyContainer >( pose.size(), multipole_elec );
 		energies.set_long_range_container( lr_type, new_dec );
 	}
 

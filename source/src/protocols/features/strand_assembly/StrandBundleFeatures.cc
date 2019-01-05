@@ -160,14 +160,14 @@ StrandBundleFeatures::write_schema_to_db(utility::sql_database::sessionOP db_ses
 
 	// PrimaryKey
 	// id of beta_selected_segments
-	Column beta_selected_segments_id ("beta_selected_segments_id", DbDataTypeOP( new DbInteger() ), false /*not null*/, false /*no autoincrement*/);
+	Column beta_selected_segments_id ("beta_selected_segments_id", utility::pointer::make_shared< DbInteger >(), false /*not null*/, false /*no autoincrement*/);
 
 	// unique key of original PDB file
-	Column struct_id             ("struct_id", DbDataTypeOP( new DbBigInt() ),    false /*not null*/, false /*don't autoincrement*/);
+	Column struct_id             ("struct_id", utility::pointer::make_shared< DbBigInt >(),    false /*not null*/, false /*don't autoincrement*/);
 
 	// ForeignKey
-	Column residue_begin("residue_begin", DbDataTypeOP( new DbInteger() ), false /*not null*/, false /*don't autoincrement*/);
-	Column residue_end  ("residue_end", DbDataTypeOP( new DbInteger() ), false /*not null*/, false /*don't autoincrement*/);
+	Column residue_begin("residue_begin", utility::pointer::make_shared< DbInteger >(), false /*not null*/, false /*don't autoincrement*/);
+	Column residue_end  ("residue_end", utility::pointer::make_shared< DbInteger >(), false /*not null*/, false /*don't autoincrement*/);
 
 	utility::vector1<Column> primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -210,17 +210,17 @@ StrandBundleFeatures::write_schema_to_db(utility::sql_database::sessionOP db_ses
 
 	// Columns
 	// id of strand_pairs
-	Column strand_pairs_id              ("strand_pairs_id",               DbDataTypeOP( new DbInteger() ), false /*not null*/, false /*no autoincrement*/);
+	Column strand_pairs_id              ("strand_pairs_id",               utility::pointer::make_shared< DbInteger >(), false /*not null*/, false /*no autoincrement*/);
 
 	// bool_parallel is PrimaryKey just because it doesn't point to any foreign values
-	Column bool_parallel         ("bool_parallel",          DbDataTypeOP( new DbInteger() ), false /*not null*/, false /*don't autoincrement*/);
+	Column bool_parallel         ("bool_parallel",          utility::pointer::make_shared< DbInteger >(), false /*not null*/, false /*don't autoincrement*/);
 
 	// unique key of original PDB file
 	// Column struct_id             ("struct_id",              new DbBigInt(),    false /*not null*/, false /*don't autoincrement*/);
 
 	// ForeignKey
-	Column beta_select_id_i ("beta_select_id_i", DbDataTypeOP( new DbInteger() ), false /*not null*/, false /*don't autoincrement*/);
-	Column beta_select_id_j ("beta_select_id_j", DbDataTypeOP( new DbInteger() ), false /*not null*/, false /*don't autoincrement*/);
+	Column beta_select_id_i ("beta_select_id_i", utility::pointer::make_shared< DbInteger >(), false /*not null*/, false /*don't autoincrement*/);
+	Column beta_select_id_j ("beta_select_id_j", utility::pointer::make_shared< DbInteger >(), false /*not null*/, false /*don't autoincrement*/);
 
 	// Schema - strand_pairs
 	// PrimaryKey
@@ -262,12 +262,12 @@ StrandBundleFeatures::write_schema_to_db(utility::sql_database::sessionOP db_ses
 	/****** <begin> writing sandwich ******/
 
 	// PrimaryKey
-	Column sandwich_id ("sandwich_id", DbDataTypeOP( new DbInteger() ), false /*not null*/, false /*no-autoincrement*/);
+	Column sandwich_id ("sandwich_id", utility::pointer::make_shared< DbInteger >(), false /*not null*/, false /*no-autoincrement*/);
 
-	Column sp_id_1 ("sp_id_1", DbDataTypeOP( new DbInteger() ), false /*not null*/, false /*don't autoincrement*/);
-	Column sp_id_2 ("sp_id_2", DbDataTypeOP( new DbInteger() ), false /*not null*/, false /*don't autoincrement*/);
+	Column sp_id_1 ("sp_id_1", utility::pointer::make_shared< DbInteger >(), false /*not null*/, false /*don't autoincrement*/);
+	Column sp_id_2 ("sp_id_2", utility::pointer::make_shared< DbInteger >(), false /*not null*/, false /*don't autoincrement*/);
 
-	Column shortest_sc_dis ("shortest_sc_dis", DbDataTypeOP( new DbDouble() ), false /*not null*/, false /*don't autoincrement*/);
+	Column shortest_sc_dis ("shortest_sc_dis", utility::pointer::make_shared< DbDouble >(), false /*not null*/, false /*don't autoincrement*/);
 
 	// Schema
 	// PrimaryKey
@@ -310,10 +310,10 @@ StrandBundleFeatures::write_schema_to_db(utility::sql_database::sessionOP db_ses
 
 	// Columns
 	// id of node
-	Column node_id ("node_id", DbDataTypeOP( new DbInteger() ), false /*not null*/, false /* not autoincrement*/);
+	Column node_id ("node_id", utility::pointer::make_shared< DbInteger >(), false /*not null*/, false /* not autoincrement*/);
 
-	Column bss_id_1 ("bss_id_1", DbDataTypeOP( new DbInteger() ), false /*not null*/, false /*don't autoincrement*/);
-	Column bss_id_2 ("bss_id_2", DbDataTypeOP( new DbInteger() ), false /*not null*/, false /*don't autoincrement*/);
+	Column bss_id_1 ("bss_id_1", utility::pointer::make_shared< DbInteger >(), false /*not null*/, false /*don't autoincrement*/);
+	Column bss_id_2 ("bss_id_2", utility::pointer::make_shared< DbInteger >(), false /*not null*/, false /*don't autoincrement*/);
 
 	// Schema - node
 	// PrimaryKey
@@ -1333,7 +1333,7 @@ std::string StrandBundleFeaturesCreator::type_name() const {
 
 protocols::features::FeaturesReporterOP
 StrandBundleFeaturesCreator::create_features_reporter() const {
-	return protocols::features::FeaturesReporterOP( new StrandBundleFeatures );
+	return utility::pointer::make_shared< StrandBundleFeatures >();
 }
 
 void StrandBundleFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

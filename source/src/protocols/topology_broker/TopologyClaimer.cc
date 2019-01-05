@@ -90,13 +90,13 @@ void TopologyClaimer::read_mover_weight( std::istream& is ) {
 	core::Real weight;
 	is >> type >> weight;
 	if ( type == "LargeStage" ) { //sample when ClassicAbinitio likes to have "large" fragments
-		set_mover_weight( weights::AbinitioMoverWeightOP( new weights::LargeFragWeight( weight ) ) );
+		set_mover_weight( utility::pointer::make_shared< weights::LargeFragWeight >( weight ) );
 	} else if ( type == "SmallStage" ) { //sample when ClassicAbinitio likes to have "small" fragments
-		set_mover_weight( weights::AbinitioMoverWeightOP( new weights::SmallFragWeight( weight ) ) );
+		set_mover_weight( utility::pointer::make_shared< weights::SmallFragWeight >( weight ) );
 	} else if ( type == "SmoothStage" ) { //sample when ClassicAbinitio likes to have "small" fragments
-		set_mover_weight( weights::AbinitioMoverWeightOP( new weights::SmoothFragWeight( weight ) ) );
+		set_mover_weight( utility::pointer::make_shared< weights::SmoothFragWeight >( weight ) );
 	} else if ( type == "AllStage" ) { //always on
-		set_mover_weight( weights::AbinitioMoverWeightOP( new weights::ConstAbinitioMoverWeight( weight ) ) );
+		set_mover_weight( utility::pointer::make_shared< weights::ConstAbinitioMoverWeight >( weight ) );
 	} else {
 		throw CREATE_EXCEPTION(EXCN_Input,  "weight can only by one of LargeStage, SmallStage or AllStage " );
 	}

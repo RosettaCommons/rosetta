@@ -59,7 +59,7 @@ main( int argc, char * argv [] )
 			core::Size num_cyclic_chains( option[chains_to_cyclize].value().size() );
 
 			for ( core::Size i(1); i <= num_cyclic_chains; ++i ) {
-				sm->add_mover( MoverOP( new CyclizationMover( option[chains_to_cyclize].value()[i], option[add_constraints].value(), true, option[num_min_rebuild].value() ) ) );
+				sm->add_mover( utility::pointer::make_shared< CyclizationMover >( option[chains_to_cyclize].value()[i], option[add_constraints].value(), true, option[num_min_rebuild].value() ) );
 			}
 		}
 

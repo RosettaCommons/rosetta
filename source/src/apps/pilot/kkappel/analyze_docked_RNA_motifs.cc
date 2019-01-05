@@ -209,15 +209,15 @@ count_contacts()
 	PoseInputStreamOP input;
 	if ( option[ in::file::silent ].user() ) {
 		if ( option[ in::file::tags ].user() ) {
-			input = PoseInputStreamOP( new SilentFilePoseInputStream(
+			input = utility::pointer::make_shared< SilentFilePoseInputStream >(
 				option[ in::file::silent ](),
 				option[ in::file::tags ]()
-				) );
+			);
 		} else {
-			input = PoseInputStreamOP( new SilentFilePoseInputStream( option[ in::file::silent ]() ) );
+			input = utility::pointer::make_shared< SilentFilePoseInputStream >( option[ in::file::silent ]() );
 		}
 	} else {
-		input = PoseInputStreamOP( new PDBPoseInputStream( option[ in::file::s ]() ) );
+		input = utility::pointer::make_shared< PDBPoseInputStream >( option[ in::file::s ]() );
 	}
 
 	// score function setup

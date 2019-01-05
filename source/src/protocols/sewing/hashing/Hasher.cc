@@ -48,14 +48,14 @@ namespace hashing {
 void
 Hasher::allocate_segments(){
 	core::Size const larger_than_possible_segment_size = 100;
-	seg1_ = data_storage::SmartSegmentOP( new data_storage::SmartSegment( false, larger_than_possible_segment_size ) );
-	seg2_ = data_storage::SmartSegmentOP( new data_storage::SmartSegment( false, larger_than_possible_segment_size ) );
+	seg1_ = utility::pointer::make_shared< data_storage::SmartSegment >( false, larger_than_possible_segment_size );
+	seg2_ = utility::pointer::make_shared< data_storage::SmartSegment >( false, larger_than_possible_segment_size );
 	int const max_substructure_length = 5; //max number of seg in a substructure = 5, max num neighbors = 4
 	seg1_substructure_ = utility::vector1< data_storage::SmartSegmentOP >( max_substructure_length );
 	seg2_substructure_ = utility::vector1< data_storage::SmartSegmentOP >( max_substructure_length );
 	for ( int i=1; i <= max_substructure_length; i++ ) {
-		seg1_substructure_[i] = data_storage::SmartSegmentOP( new data_storage::SmartSegment( false, larger_than_possible_segment_size ) );
-		seg2_substructure_[i] = data_storage::SmartSegmentOP( new data_storage::SmartSegment( false, larger_than_possible_segment_size ) );
+		seg1_substructure_[i] = utility::pointer::make_shared< data_storage::SmartSegment >( false, larger_than_possible_segment_size );
+		seg2_substructure_[i] = utility::pointer::make_shared< data_storage::SmartSegment >( false, larger_than_possible_segment_size );
 	}
 }
 
@@ -73,7 +73,7 @@ Hasher::Hasher( Hasher const & other) {
 	segment_vector_.clear();
 	for( core::Size i = 1; i <= other.segment_vector().size(); ++i ){
 	data_storage::SmartSegmentOP seg = other.segment_vector().at( i );
-	segment_vector_.push_back( data_storage::SmartSegmentOP( new data_storage::SmartSegment( *seg ) ) );
+	segment_vector_.push_back( utility::pointer::make_shared< data_storage::SmartSegment >( *seg ) );
 	if( i > 1 && seg->is_n_terminus_fixed() ){
 	data_storage::SmartSegment::link_to( segment_vector_[ i - 1 ], segment_vector_[ i ] );
 	}
@@ -109,7 +109,7 @@ Hasher::Hasher( HasherSettings & hasher_settings, SegmentVectorCOP segment_vecto
 	/*
 	for( core::Size i = 1; i <= segment_vector.size(); ++i ){
 	data_storage::SmartSegmentOP seg = segment_vector[ i ];
-	segment_vector_.push_back( data_storage::SmartSegmentOP( new data_storage::SmartSegment( *seg ) ) );
+	segment_vector_.push_back( utility::pointer::make_shared< data_storage::SmartSegment >( *seg ) );
 	if( i > 1 && seg->is_n_terminus_fixed() ){
 	data_storage::SmartSegment::link_to( segment_vector_[ i - 1 ], segment_vector_[ i ] );
 	}
@@ -137,7 +137,7 @@ Hasher::Hasher( HasherSettings & hasher_settings, SegmentVectorCOP segment_vecto
 
 HasherOP
 Hasher::clone() const {
-	return HasherOP( new Hasher( *this ) );
+	return utility::pointer::make_shared< Hasher >( *this );
 }
 
 Hasher::~Hasher(){}
@@ -155,7 +155,7 @@ Hasher::segment_vector( SegmentVectorCOP segvec ) {
 	segment_vector_.clear();
 	for( core::Size i = 1; i <= segvec.size(); ++i ){
 	data_storage::SmartSegmentOP seg = segvec[ i ];
-	segment_vector_.push_back( data_storage::SmartSegmentOP( new data_storage::SmartSegment( *seg ) ) );
+	segment_vector_.push_back( utility::pointer::make_shared< data_storage::SmartSegment >( *seg ) );
 	if( i > 1 && seg->is_n_terminus_fixed() ){
 	data_storage::SmartSegment::link_to( segment_vector_[ i - 1 ], segment_vector_[ i ] );
 	}

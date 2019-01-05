@@ -66,7 +66,7 @@ public:
 		}
 
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
-		trpcage.pdb_info( core::pose::PDBInfoOP( new core::pose::PDBInfo( trpcage ) ) );
+		trpcage.pdb_info( utility::pointer::make_shared< core::pose::PDBInfo >( trpcage ) );
 		std::set< core::Size > residues = boost::assign::list_of (9)(20)(2)(7);
 		for ( std::set< core::Size >::const_iterator res = residues.begin(); res != residues.end(); ++res ) {
 			trpcage.pdb_info()->add_reslabel( *res, "TESTPROPERTY" );

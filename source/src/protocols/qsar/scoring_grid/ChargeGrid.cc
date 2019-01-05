@@ -70,7 +70,7 @@ GridBaseOP ChargeGridCreator::create_grid(utility::tag::TagCOP tag) const
 GridBaseOP ChargeGridCreator::create_grid() const
 {
 
-	return GridBaseOP( new ChargeGrid() );
+	return utility::pointer::make_shared< ChargeGrid >();
 }
 
 void ChargeGridCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -105,7 +105,7 @@ ChargeGrid::ChargeGrid(core::Real /*charge*/) :
 }
 
 GridBaseOP ChargeGrid::clone() const {
-	return GridBaseOP( new ChargeGrid( *this ) );
+	return utility::pointer::make_shared< ChargeGrid >( *this );
 }
 
 utility::json_spirit::Value ChargeGrid::serialize() const

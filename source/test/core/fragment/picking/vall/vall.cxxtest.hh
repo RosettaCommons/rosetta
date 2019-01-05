@@ -173,8 +173,8 @@ public: // tests
 		vall_library_from_file( "core/fragment/picking/vall/vall_test.dat", library );
 
 		VallLibrarian librarian;
-		librarian.add_fragment_gen( VallFragmentGenCOP( new gen::LengthGen( 3 ) ) ); // 3-mers
-		librarian.add_fragment_eval( VallFragmentEvalCOP( new eval::IdentityEval( "HLE", "...", 1.0, 0.0, true ) ) );
+		librarian.add_fragment_gen( utility::pointer::make_shared< gen::LengthGen >( 3 ) ); // 3-mers
+		librarian.add_fragment_eval( utility::pointer::make_shared< eval::IdentityEval >( "HLE", "...", 1.0, 0.0, true ) );
 
 		// catalog fragment library sorting via bookmark scores
 		librarian.catalog( library );
@@ -194,8 +194,8 @@ public: // tests
 		vall_library_from_file( "core/fragment/picking/vall/vall_test.dat", library );
 
 		VallLibrarian librarian;
-		librarian.add_fragment_gen( VallFragmentGenCOP( new gen::SecStructGen( "EEH" ) ) ); // 3-mer
-		librarian.add_fragment_eval( VallFragmentEvalCOP( new eval::IdentityEval( "EEH", "...", 1.0, 0.0, true ) ) );
+		librarian.add_fragment_gen( utility::pointer::make_shared< gen::SecStructGen >( "EEH" ) ); // 3-mer
+		librarian.add_fragment_eval( utility::pointer::make_shared< eval::IdentityEval >( "EEH", "...", 1.0, 0.0, true ) );
 
 		// catalog fragment library sorting via bookmark scores
 		librarian.catalog( library );

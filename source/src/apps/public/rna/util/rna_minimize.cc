@@ -152,7 +152,7 @@ rna_fullatom_minimize_test()
 			input = input1;
 		}
 	} else {
-		input = PoseInputStreamOP( new PDBPoseInputStream( option[ in::file::s ]() ) );
+		input = utility::pointer::make_shared< PDBPoseInputStream >( option[ in::file::s ]() );
 	}
 
 	// native pose setup -- also align pose for the sake of StepWisePoseAligner-compatible setup
@@ -234,7 +234,7 @@ rna_fullatom_minimize_test()
 			core::pose::Pose test_pose;
 			core::pose::make_pose_from_sequence( test_pose, pose->annotated_sequence(), *rsd_set );
 			ConstraintSetOP cst_set = ConstraintIO::get_instance()->read_constraints(
-				option[OptionKeys::constraints::cst_fa_file][1], ConstraintSetOP( new ConstraintSet ), test_pose );
+				option[OptionKeys::constraints::cst_fa_file][1], utility::pointer::make_shared< ConstraintSet >(), test_pose );
 			pose->constraint_set( cst_set );
 		}
 

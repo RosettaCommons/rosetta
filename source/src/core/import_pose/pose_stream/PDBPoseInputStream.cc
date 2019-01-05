@@ -77,7 +77,7 @@ void PDBPoseInputStream::fill_pose(
 	using namespace basic::datacache;
 	pose.data().set(
 		core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG,
-		DataCache_CacheableData::DataOP( new basic::datacache::CacheableString( *current_position_ ) )
+		utility::pointer::make_shared< basic::datacache::CacheableString >( *current_position_ )
 	);
 	++current_position_;
 	preprocess_pose( pose );
@@ -100,7 +100,7 @@ void PDBPoseInputStream::fill_pose(
 	using namespace basic::datacache;
 	pose.data().set(
 		core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG,
-		DataCache_CacheableData::DataOP( new basic::datacache::CacheableString( *current_position_ ) )
+		utility::pointer::make_shared< basic::datacache::CacheableString >( *current_position_ )
 	);
 	++current_position_;
 	preprocess_pose( pose );

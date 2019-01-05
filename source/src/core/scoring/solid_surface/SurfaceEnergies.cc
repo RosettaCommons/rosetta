@@ -91,7 +91,7 @@ SurfaceEnergies::~SurfaceEnergies() = default;
 EnergiesOP
 SurfaceEnergies::clone() const
 {
-	return EnergiesOP( new SurfaceEnergies( *this ) );
+	return utility::pointer::make_shared< SurfaceEnergies >( *this );
 }
 
 

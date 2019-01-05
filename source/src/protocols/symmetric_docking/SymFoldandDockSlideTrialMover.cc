@@ -128,7 +128,7 @@ SymFoldandDockSlideTrialMover::parse_my_tag(
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP SymFoldandDockSlideTrialMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new SymFoldandDockSlideTrialMover() );
+// XRW TEMP  return utility::pointer::make_shared< SymFoldandDockSlideTrialMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -159,7 +159,7 @@ std::string SymFoldandDockSlideTrialMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 SymFoldandDockSlideTrialMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SymFoldandDockSlideTrialMover );
+	return utility::pointer::make_shared< SymFoldandDockSlideTrialMover >();
 }
 
 void SymFoldandDockSlideTrialMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -59,7 +59,7 @@ MotifHit::MotifHit( MotifHit const & src ) :
 MotifHitOP
 MotifHit::clone() const
 {
-	return MotifHitOP( new MotifHit(*this) );
+	return utility::pointer::make_shared< MotifHit >(*this);
 }
 
 void

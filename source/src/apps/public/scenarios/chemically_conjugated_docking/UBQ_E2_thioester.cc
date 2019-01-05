@@ -134,7 +134,7 @@ public:
 		loop_(), //we want default ctor
 		atomIDs(8, core::id::AtomID::BOGUS_ATOM_ID() ),
 		InterfaceSasaDefinition_("InterfaceSasaDefinition_" + 1),
-		IAM_(protocols::analysis::InterfaceAnalyzerMoverOP( new protocols::analysis::InterfaceAnalyzerMover )),
+		IAM_(utility::pointer::make_shared< protocols::analysis::InterfaceAnalyzerMover >()),
 		extra_bodies_chains_() //uninitializable
 	{
 		//set up fullatom scorefunction
@@ -147,7 +147,7 @@ public:
 		using namespace protocols::pose_metric_calculators;
 		//magic number: chains 1 and 2; set up interface SASA calculator
 		if ( !CalculatorFactory::Instance().check_calculator_exists( InterfaceSasaDefinition_ ) ) {
-			CalculatorFactory::Instance().register_calculator( InterfaceSasaDefinition_, PoseMetricCalculatorOP( new core::pose::metrics::simple_calculators::InterfaceSasaDefinitionCalculator(core::Size(1), core::Size(2)) ));
+			CalculatorFactory::Instance().register_calculator( InterfaceSasaDefinition_, utility::pointer::make_shared< core::pose::metrics::simple_calculators::InterfaceSasaDefinitionCalculator >(core::Size(1), core::Size(2)));
 		}
 
 		IAM_->set_use_centroid_dG(false);
@@ -179,7 +179,7 @@ public:
 		core::import_pose::pose_from_file( UBQ, basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::UBQpdb].value() , core::import_pose::PDB_file);
 		core::Size const UBQlength = UBQ.size();
 		core::pose::PoseOP UBQ_second;
-		if ( two_ubiquitins_ ) UBQ_second = core::pose::PoseOP( new core::pose::Pose(UBQ) );
+		if ( two_ubiquitins_ ) UBQ_second = utility::pointer::make_shared< core::pose::Pose >(UBQ);
 		if ( basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::UBQ2_pdb].user() ) {
 			core::import_pose::pose_from_file( *UBQ_second, basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::UBQ2_pdb].value() , core::import_pose::PDB_file);
 		}
@@ -352,7 +352,7 @@ public:
 		//setup MoveMaps
 		//small/shear behave improperly @ the last residue - psi is considered nonexistent and the wrong phis apply.
 		bool const dont_minimize_omega(basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::dont_minimize_omega].value());
-		thioester_mm_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap );
+		thioester_mm_ = utility::pointer::make_shared< core::kinematics::MoveMap >();
 		for ( core::Size i(1), ntailres(basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::n_tail_res]); i<ntailres; ++i ) { //slightly irregular < comparison because C-terminus is functionally zero-indexed
 			thioester_mm_->set_bb((complexlength-i), true);
 			if ( dont_minimize_omega ) {
@@ -381,13 +381,13 @@ public:
 		//setup of TaskFactory
 		using namespace core::pack::task;
 		using namespace core::pack::task::operation;
-		task_factory_ = core::pack::task::TaskFactoryOP( new TaskFactory );
-		task_factory_->push_back( TaskOperationCOP( new InitializeFromCommandline ) );
+		task_factory_ = utility::pointer::make_shared< TaskFactory >();
+		task_factory_->push_back( utility::pointer::make_shared< InitializeFromCommandline >() );
 		if ( basic::options::option[ basic::options::OptionKeys::packing::resfile ].user() ) {
-			task_factory_->push_back( TaskOperationCOP( new ReadResfile ) );
+			task_factory_->push_back( utility::pointer::make_shared< ReadResfile >() );
 		}
 		//task_factory_->push_back( new protocols::task_operations::RestrictToInterfaceOperation );
-		task_factory_->push_back( TaskOperationCOP( new IncludeCurrent ) );
+		task_factory_->push_back( utility::pointer::make_shared< IncludeCurrent >() );
 		//prevent repacking at linkage cysteine!
 		PreventRepackingOP prevent( new PreventRepacking );
 		prevent->include_residue(E2_cys);
@@ -403,8 +403,8 @@ public:
 			using core::pose::metrics::PoseMetricCalculatorOP;
 			std::string const interface_calc("UBQE2_InterfaceNeighborDefinitionCalculator");
 			std::string const neighborhood_calc("UBQE2_NeighborhoodByDistanceCalculator");
-			core::pose::metrics::CalculatorFactory::Instance().register_calculator( interface_calc, PoseMetricCalculatorOP( new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator( core::Size(1), core::Size(2)) ) );
-			core::pose::metrics::CalculatorFactory::Instance().register_calculator( neighborhood_calc, PoseMetricCalculatorOP( new protocols::pose_metric_calculators::NeighborhoodByDistanceCalculator( loop_posns ) ) );
+			core::pose::metrics::CalculatorFactory::Instance().register_calculator( interface_calc, utility::pointer::make_shared< core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator >( core::Size(1), core::Size(2)) );
+			core::pose::metrics::CalculatorFactory::Instance().register_calculator( neighborhood_calc, utility::pointer::make_shared< protocols::pose_metric_calculators::NeighborhoodByDistanceCalculator >( loop_posns ) );
 
 			//this is the constructor parameter for the calculator - pairs of calculators and calculations to perform
 			utility::vector1< std::pair< std::string, std::string> > calcs_and_calcns;
@@ -412,7 +412,7 @@ public:
 			calcs_and_calcns.push_back(std::make_pair(neighborhood_calc, "neighbors"));
 
 			using protocols::task_operations::RestrictByCalculatorsOperation;
-			task_factory_->push_back(TaskOperationCOP( new RestrictByCalculatorsOperation( calcs_and_calcns ) ));
+			task_factory_->push_back(utility::pointer::make_shared< RestrictByCalculatorsOperation >( calcs_and_calcns ));
 
 		} else {
 
@@ -517,19 +517,19 @@ public:
 				core::pose::metrics::CalculatorFactory::Instance().remove_calculator(calc);
 				TR.Error << "removed a PoseMetricCalculator " << calc << ", track down why" << std::endl;
 			}
-			core::pose::metrics::CalculatorFactory::Instance().register_calculator( calc, PoseMetricCalculatorOP( new protocols::pose_metric_calculators::InterGroupNeighborsCalculator(vector_of_pairs) ) );
+			core::pose::metrics::CalculatorFactory::Instance().register_calculator( calc, utility::pointer::make_shared< protocols::pose_metric_calculators::InterGroupNeighborsCalculator >(vector_of_pairs) );
 
 			//now that calculator exists, add the sucker to the TaskFactory via RestrictByCalculatorsOperation
 			utility::vector1< std::pair< std::string, std::string> > calculators_used;
 			std::pair< std::string, std::string> IGNC_cmd( calc, "neighbors" );
 			calculators_used.push_back( IGNC_cmd );
-			task_factory_->push_back( TaskOperationCOP( new protocols::task_operations::RestrictByCalculatorsOperation( calculators_used ) ) );
+			task_factory_->push_back( utility::pointer::make_shared< protocols::task_operations::RestrictByCalculatorsOperation >( calculators_used ) );
 
 		}
 
 		//calculator for number of neighbors for I44
 		if ( basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::publication].value() ) {
-			core::pose::metrics::CalculatorFactory::Instance().register_calculator( "I44neighbors", PoseMetricCalculatorOP( new protocols::pose_metric_calculators::NeighborsByDistanceCalculator( 198 ) ) );
+			core::pose::metrics::CalculatorFactory::Instance().register_calculator( "I44neighbors", utility::pointer::make_shared< protocols::pose_metric_calculators::NeighborsByDistanceCalculator >( 198 ) );
 		}
 
 		//add constraints; protected internally if no constraints
@@ -812,7 +812,7 @@ public:
 
 	protocols::moves::MoverOP
 	fresh_instance() const override {
-		return protocols::moves::MoverOP( new UBQ_E2Mover );
+		return utility::pointer::make_shared< UBQ_E2Mover >();
 	}
 
 
@@ -873,7 +873,7 @@ int main( int argc, char* argv[] )
 			utility_exit_with_message("do not use an input PDB with this protocol (program uses internally); use -UBQpdb and -E2pdb instead");
 		}
 
-		protocols::jd2::JobDistributor::get_instance()->go(protocols::moves::MoverOP( new UBQ_E2Mover ));
+		protocols::jd2::JobDistributor::get_instance()->go(utility::pointer::make_shared< UBQ_E2Mover >());
 
 		basic::prof_show();
 		TR << "************************d**o**n**e**************************************" << std::endl;

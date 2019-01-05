@@ -48,11 +48,11 @@ public:
 	bool apply( core::pose::Pose const & pose ) const override;
 
 	filters::FilterOP clone() const override {
-		return filters::FilterOP( new ReadPoseExtraScoreFilter( *this ) );
+		return utility::pointer::make_shared< ReadPoseExtraScoreFilter >( *this );
 	}
 
 	filters::FilterOP fresh_instance() const override {
-		return filters::FilterOP( new ReadPoseExtraScoreFilter() );
+		return utility::pointer::make_shared< ReadPoseExtraScoreFilter >();
 	}
 
 	/// @brief Sets the name of the term being searched for in the pose

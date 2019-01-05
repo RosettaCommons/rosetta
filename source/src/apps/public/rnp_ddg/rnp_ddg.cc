@@ -693,8 +693,8 @@ core::Real calculate_binding_energy(
 		utility::vector1< std::string > RNA_input = option[ unbound_wtRNA_ens ]();
 		PoseInputStreamOP protein_input_stream, rna_input_stream;
 		core::pose::Pose protein_pose, RNA_pose;
-		protein_input_stream = PoseInputStreamOP( new PDBPoseInputStream( protein_input ) );
-		rna_input_stream = PoseInputStreamOP( new PDBPoseInputStream( RNA_input ) );
+		protein_input_stream = utility::pointer::make_shared< PDBPoseInputStream >( protein_input );
+		rna_input_stream = utility::pointer::make_shared< PDBPoseInputStream >( RNA_input );
 		protein_input_stream->fill_pose( protein_pose, *rsd_set );
 		core::Real unbound_RNA_score, unbound_protein_score;
 		// the ~partition function for a given secondary structure, assuming we are loading in all microstates
@@ -741,7 +741,7 @@ core::Real calculate_binding_energy(
 		std::string protein_input = option[ unbound_protein ]();
 
 		PoseInputStreamOP protein_input_stream;
-		protein_input_stream = PoseInputStreamOP( new PDBPoseInputStream( protein_input ) );
+		protein_input_stream = utility::pointer::make_shared< PDBPoseInputStream >( protein_input );
 		protein_input_stream->fill_pose( protein_pose, *rsd_set );
 
 		unbound_protein_score = (*sfxn)( protein_pose );
@@ -1087,7 +1087,7 @@ void mutate_and_score_RNP() {
 
 			// Then we should read in the silent file and loop through its structures
 			PoseInputStreamOP input;
-			input = PoseInputStreamOP( new SilentFilePoseInputStream( input_mutant_structs[mutant_index] ));
+			input = utility::pointer::make_shared< SilentFilePoseInputStream >( input_mutant_structs[mutant_index] );
 			while ( input->has_another_pose() ) {
 				input->fill_pose( starting_mutant_pose, *rsd_set );
 				// Loop through mutation protocol many times

@@ -61,7 +61,7 @@ LRmsdFilter::~LRmsdFilter() = default;
 
 protocols::filters::FilterOP
 LRmsdFilter::clone() const {
-	return protocols::filters::FilterOP( new LRmsdFilter( *this ) );
+	return utility::pointer::make_shared< LRmsdFilter >( *this );
 }
 
 static basic::Tracer TR( "protocols.protein_interface_design.filters.LRmsdFilter" );
@@ -104,7 +104,7 @@ LRmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &
 	if ( tag->hasOption("reference_name") ) {
 		reference_pose_ = protocols::rosetta_scripts::saved_reference_pose(tag,data_map );
 	} else {
-		reference_pose_ = core::pose::PoseOP( new core::pose::Pose( reference_pose ) );
+		reference_pose_ = utility::pointer::make_shared< core::pose::Pose >( reference_pose );
 		if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
 			core::import_pose::pose_from_file( *reference_pose_, basic::options::option[ basic::options::OptionKeys::in::file::native ] , core::import_pose::PDB_file);
 		}
@@ -120,7 +120,7 @@ LRmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &
 }
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP LRmsdFilterCreator::create_filter() const { return protocols::filters::FilterOP( new LRmsdFilter ); }
+// XRW TEMP LRmsdFilterCreator::create_filter() const { return utility::pointer::make_shared< LRmsdFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP LRmsdFilterCreator::keyname() const { return "LRmsd"; }
@@ -149,7 +149,7 @@ std::string LRmsdFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 LRmsdFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new LRmsdFilter );
+	return utility::pointer::make_shared< LRmsdFilter >();
 }
 
 void LRmsdFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

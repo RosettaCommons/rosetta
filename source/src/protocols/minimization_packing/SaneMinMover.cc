@@ -43,7 +43,7 @@ static basic::Tracer TR( "protocols.minimization_packing.SaneMinMover" );
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP SaneMinMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new SaneMinMover );
+// XRW TEMP  return utility::pointer::make_shared< SaneMinMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -116,13 +116,13 @@ SaneMinMover::apply( core::pose::Pose & pose ) {
 // XRW TEMP  return SaneMinMover::mover_name();
 // XRW TEMP }
 
-protocols::moves::MoverOP SaneMinMover::clone() const { return protocols::moves::MoverOP( new protocols::minimization_packing::SaneMinMover( *this ) ); }
+protocols::moves::MoverOP SaneMinMover::clone() const { return utility::pointer::make_shared< protocols::minimization_packing::SaneMinMover >( *this ); }
 
 void SaneMinMover::set_defaults_() {
 	cartesian_   = false;
-	movemap_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap );
+	movemap_ = utility::pointer::make_shared< core::kinematics::MoveMap >();
 	scorefxn_    = core::scoring::get_score_function();
-	min_options_ = core::optimization::MinimizerOptionsOP( new core::optimization::MinimizerOptions( "lbfgs_armijo_nonmonotone", 1e-2, true, false, false ) );
+	min_options_ = utility::pointer::make_shared< core::optimization::MinimizerOptions >( "lbfgs_armijo_nonmonotone", 1e-2, true, false, false );
 }
 
 std::string SaneMinMover::get_name() const {
@@ -152,7 +152,7 @@ std::string SaneMinMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 SaneMinMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SaneMinMover );
+	return utility::pointer::make_shared< SaneMinMover >();
 }
 
 void SaneMinMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -82,7 +82,7 @@ core::scoring::methods::EnergyMethodOP
 PseudocontactShiftEnergyCreator::create_energy_method(
 	core::scoring::methods::EnergyMethodOptions const &
 ) const {
-	return core::scoring::methods::EnergyMethodOP( new PCS_Energy );
+	return utility::pointer::make_shared< PCS_Energy >();
 }
 
 core::scoring::ScoreTypes
@@ -112,13 +112,13 @@ PCS_Energy::~PCS_Energy()= default;
 
 /// c-tor
 PCS_Energy::PCS_Energy() :
-	parent( core::scoring::methods::EnergyMethodCreatorOP( new PseudocontactShiftEnergyCreator ) )
+	parent( utility::pointer::make_shared< PseudocontactShiftEnergyCreator >() )
 {}
 
 /// clone
 core::scoring::methods::EnergyMethodOP
 PCS_Energy::clone() const{
-	return core::scoring::methods::EnergyMethodOP( new PCS_Energy );
+	return utility::pointer::make_shared< PCS_Energy >();
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -168,9 +168,9 @@ PCS_Energy::PCS_data_from_pose(core::pose::Pose & pose) const{
 	if ( has_exclude_residues ) {
 		utility::vector1< bool > exclude_residues;
 		exclude_residues = PCS_Energy_parameters_manager::get_instance()->get_vector_exclude_residues();
-		pcs_d = PCS_dataOP( new PCS_data(pcs_d_i, exclude_residues) );
+		pcs_d = utility::pointer::make_shared< PCS_data >(pcs_d_i, exclude_residues);
 	} else {
-		pcs_d = PCS_dataOP( new PCS_data(pcs_d_i) );
+		pcs_d = utility::pointer::make_shared< PCS_data >(pcs_d_i);
 	}
 
 	if ( have_exclusions_changed ) {

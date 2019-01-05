@@ -457,7 +457,7 @@ methods::EnergyMethodOP
 LK_BallEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
-	return methods::EnergyMethodOP( new LK_BallEnergy( options ) );
+	return utility::pointer::make_shared< LK_BallEnergy >( options );
 }
 
 ScoreTypes
@@ -523,7 +523,7 @@ public:
 	LKB_ResPairMinData( LKB_ResPairMinData const & src );
 	~LKB_ResPairMinData() override = default;
 	basic::datacache::CacheableDataOP clone() const override
-	{ return basic::datacache::CacheableDataOP( new LKB_ResPairMinData( *this ) ); }
+	{ return utility::pointer::make_shared< LKB_ResPairMinData >( *this ); }
 
 	void
 	initialize(
@@ -584,7 +584,7 @@ retrieve_lkb_resdata(
 
 
 LK_BallEnergy::LK_BallEnergy( methods::EnergyMethodOptions const & options ):
-	parent             ( methods::EnergyMethodCreatorOP( new LK_BallEnergyCreator ) ),
+	parent             ( utility::pointer::make_shared< LK_BallEnergyCreator >() ),
 	etable_            ( ScoringManager::get_instance()->etable( options ).lock() ),
 	solv1_             ( ScoringManager::get_instance()->etable( options ).lock()->solv1()),
 	solv2_             ( ScoringManager::get_instance()->etable( options ).lock()->solv2()),
@@ -626,7 +626,7 @@ LK_BallEnergy::atomic_interaction_cutoff() const
 methods::EnergyMethodOP
 LK_BallEnergy::clone() const
 {
-	return methods::EnergyMethodOP( new LK_BallEnergy( *this ) );
+	return utility::pointer::make_shared< LK_BallEnergy >( *this );
 }
 
 
@@ -701,7 +701,7 @@ LK_BallEnergy::setup_for_minimizing_for_residue_pair(
 	CountPairFunctionOP cpfxn = CountPairFactory::create_count_pair_function( rsd1, rsd2, crossover );
 
 	ResiduePairNeighborListOP nblist( utility::pointer::static_pointer_cast< core::scoring::ResiduePairNeighborList > ( pair_data.get_data( lkball_nblist ) ));
-	if ( ! nblist ) nblist = ResiduePairNeighborListOP( new ResiduePairNeighborList );
+	if ( ! nblist ) nblist = utility::pointer::make_shared< ResiduePairNeighborList >();
 
 	//Real const XX2 = etable_->nblist_dis2_cutoff_XX();
 	//Real const XH2 = etable_->nblist_dis2_cutoff_XH();
@@ -2133,7 +2133,7 @@ LK_BallEnergy::create_rotamer_trie(
 			rotamer_descriptors[ ii ].rotamer_id( ii );
 		}
 		sort( rotamer_descriptors.begin(), rotamer_descriptors.end() );
-		retval = lkbtrie::LKBRotamerTrieOP( new RotamerTrie< LKBAtom, CountPairDataGeneric >( rotamer_descriptors, atomic_interaction_cutoff()) );
+		retval = utility::pointer::make_shared< RotamerTrie< LKBAtom, CountPairDataGeneric > >( rotamer_descriptors, atomic_interaction_cutoff());
 	} else if ( cpdata_map.n_entries() == 1 || cpdata_map.n_entries() == 0 /* HACK! */ ) {
 		utility::vector1< RotamerDescriptor< LKBAtom, CountPairData_1_1 > > rotamer_descriptors( rotset.num_rotamers() );
 		for ( Size ii = 1; ii <= rotset.num_rotamers(); ++ii ) {
@@ -2141,7 +2141,7 @@ LK_BallEnergy::create_rotamer_trie(
 			rotamer_descriptors[ ii ].rotamer_id( ii );
 		}
 		sort( rotamer_descriptors.begin(), rotamer_descriptors.end() );
-		retval = lkbtrie::LKBRotamerTrieOP( new RotamerTrie< LKBAtom, CountPairData_1_1 >( rotamer_descriptors, atomic_interaction_cutoff()) );
+		retval = utility::pointer::make_shared< RotamerTrie< LKBAtom, CountPairData_1_1 > >( rotamer_descriptors, atomic_interaction_cutoff());
 	} else if ( cpdata_map.n_entries() == 2 ) {
 		utility::vector1< RotamerDescriptor< LKBAtom, CountPairData_1_2 > > rotamer_descriptors( rotset.num_rotamers() );
 		for ( Size ii = 1; ii <= rotset.num_rotamers(); ++ii ) {
@@ -2149,7 +2149,7 @@ LK_BallEnergy::create_rotamer_trie(
 			rotamer_descriptors[ ii ].rotamer_id( ii );
 		}
 		sort( rotamer_descriptors.begin(), rotamer_descriptors.end() );
-		retval = lkbtrie::LKBRotamerTrieOP( new RotamerTrie< LKBAtom, CountPairData_1_2 >( rotamer_descriptors, atomic_interaction_cutoff()) );
+		retval = utility::pointer::make_shared< RotamerTrie< LKBAtom, CountPairData_1_2 > >( rotamer_descriptors, atomic_interaction_cutoff());
 	} else if ( cpdata_map.n_entries() == 3 ) {
 		utility::vector1< RotamerDescriptor< LKBAtom, CountPairData_1_3 > > rotamer_descriptors( rotset.num_rotamers() );
 		for ( Size ii = 1; ii <= rotset.num_rotamers(); ++ii ) {
@@ -2157,7 +2157,7 @@ LK_BallEnergy::create_rotamer_trie(
 			rotamer_descriptors[ ii ].rotamer_id( ii );
 		}
 		sort( rotamer_descriptors.begin(), rotamer_descriptors.end() );
-		retval = lkbtrie::LKBRotamerTrieOP( new RotamerTrie< LKBAtom, CountPairData_1_3 >( rotamer_descriptors, atomic_interaction_cutoff()) );
+		retval = utility::pointer::make_shared< RotamerTrie< LKBAtom, CountPairData_1_3 > >( rotamer_descriptors, atomic_interaction_cutoff());
 	} else {
 		utility_exit_with_message( "Unknown residue connection in LK_BallEnergy::create_rotamer_trie");
 	}
@@ -2190,22 +2190,22 @@ LK_BallEnergy::create_rotamer_trie(
 		utility::vector1< RotamerDescriptor< LKBAtom, CountPairDataGeneric > > rotamer_descriptors( 1 );
 		create_rotamer_descriptor( res, info, cpdata_map, rotamer_descriptors[ 1 ] );
 		rotamer_descriptors[ 1 ].rotamer_id( 1 );
-		retval = lkbtrie::LKBRotamerTrieOP( new RotamerTrie< LKBAtom, CountPairDataGeneric >( rotamer_descriptors, atomic_interaction_cutoff()) );
+		retval = utility::pointer::make_shared< RotamerTrie< LKBAtom, CountPairDataGeneric > >( rotamer_descriptors, atomic_interaction_cutoff());
 	} else if ( cpdata_map.n_entries() == 1 || cpdata_map.n_entries() == 0 /* HACK! */ ) {
 		utility::vector1< RotamerDescriptor< LKBAtom, CountPairData_1_1 > > rotamer_descriptors( 1 );
 		create_rotamer_descriptor( res, info, cpdata_map, rotamer_descriptors[ 1 ] );
 		rotamer_descriptors[ 1 ].rotamer_id( 1 );
-		retval = lkbtrie::LKBRotamerTrieOP( new RotamerTrie< LKBAtom, CountPairData_1_1 >( rotamer_descriptors, atomic_interaction_cutoff()) );
+		retval = utility::pointer::make_shared< RotamerTrie< LKBAtom, CountPairData_1_1 > >( rotamer_descriptors, atomic_interaction_cutoff());
 	} else if ( cpdata_map.n_entries() == 2 ) {
 		utility::vector1< RotamerDescriptor< LKBAtom, CountPairData_1_2 > > rotamer_descriptors( 1 );
 		create_rotamer_descriptor( res, info, cpdata_map, rotamer_descriptors[ 1 ] );
 		rotamer_descriptors[ 1 ].rotamer_id( 1 );
-		return lkbtrie::LKBRotamerTrieOP( new RotamerTrie< LKBAtom, CountPairData_1_2 >( rotamer_descriptors, atomic_interaction_cutoff()) );
+		return utility::pointer::make_shared< RotamerTrie< LKBAtom, CountPairData_1_2 > >( rotamer_descriptors, atomic_interaction_cutoff());
 	} else if ( cpdata_map.n_entries() == 3 ) {
 		utility::vector1< RotamerDescriptor< LKBAtom, CountPairData_1_3 > > rotamer_descriptors( 1 );
 		create_rotamer_descriptor( res, info, cpdata_map, rotamer_descriptors[ 1 ] );
 		rotamer_descriptors[ 1 ].rotamer_id( 1 );
-		retval = lkbtrie::LKBRotamerTrieOP( new RotamerTrie< LKBAtom, CountPairData_1_3 >( rotamer_descriptors, atomic_interaction_cutoff()) );
+		retval = utility::pointer::make_shared< RotamerTrie< LKBAtom, CountPairData_1_3 > >( rotamer_descriptors, atomic_interaction_cutoff());
 	} else {
 		utility_exit_with_message( "Unknown residue connection in LK_BallEnergy::create_rotamer_trie");
 	}
@@ -2263,10 +2263,10 @@ LK_BallEnergy::get_count_pair_function_trie(
 		CPCrossoverBehavior crossover = (res1.is_polymer_bonded(res2) && res2.is_polymer_bonded(res1))? CP_CROSSOVER_4 : CP_CROSSOVER_3;
 		switch ( crossover ) {
 		case CP_CROSSOVER_3 :
-			tcpfxn = TrieCountPairBaseOP( new TrieCountPair1BC3( conn1, conn2 ) );
+			tcpfxn = utility::pointer::make_shared< TrieCountPair1BC3 >( conn1, conn2 );
 			break;
 		case CP_CROSSOVER_4 :
-			tcpfxn = TrieCountPairBaseOP( new TrieCountPair1BC4( conn1, conn2 ) );
+			tcpfxn = utility::pointer::make_shared< TrieCountPair1BC4 >( conn1, conn2 );
 			break;
 		default :
 			utility_exit();
@@ -2285,7 +2285,7 @@ LK_BallEnergy::get_count_pair_function_trie(
 		cpgen->hard_crossover( false );
 		tcpfxn = cpgen;
 	} else {
-		tcpfxn = TrieCountPairBaseOP( new TrieCountPairAll );
+		tcpfxn = utility::pointer::make_shared< TrieCountPairAll >();
 	}
 	return tcpfxn;
 }

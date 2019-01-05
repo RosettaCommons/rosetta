@@ -85,7 +85,7 @@ LigandSegment::~LigandSegment(){
 
 LigandSegmentOP
 LigandSegment::clone() const{
-	return LigandSegmentOP( new LigandSegment( *this ) );
+	return utility::pointer::make_shared< LigandSegment >( *this );
 }
 
 std::set< core::Size >

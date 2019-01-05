@@ -48,7 +48,7 @@ ResidueNblistData::~ResidueNblistData() = default;
 ResiduePairNeighborList::CacheableDataOP
 ResidueNblistData::clone() const
 {
-	return ResiduePairNeighborList::CacheableDataOP( new ResidueNblistData( *this ) );
+	return utility::pointer::make_shared< ResidueNblistData >( *this );
 }
 
 void ResidueNblistData::initialize(
@@ -86,7 +86,7 @@ void ResidueNblistData::initialize(
 ResiduePairNeighborList::ResiduePairNeighborList() = default;
 ResiduePairNeighborList::~ResiduePairNeighborList() = default;
 
-ResiduePairNeighborList::CacheableDataOP ResiduePairNeighborList::clone() const { return ResiduePairNeighborList::CacheableDataOP( new ResiduePairNeighborList( *this ) ); }
+ResiduePairNeighborList::CacheableDataOP ResiduePairNeighborList::clone() const { return utility::pointer::make_shared< ResiduePairNeighborList >( *this ); }
 
 void
 ResiduePairNeighborList::initialize_from_residues(

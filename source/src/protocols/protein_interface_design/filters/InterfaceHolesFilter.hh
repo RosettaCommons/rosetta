@@ -37,10 +37,10 @@ public:
 	}
 	bool apply( core::pose::Pose const & pose ) const override;
 	protocols::filters::FilterOP clone() const override {
-		return protocols::filters::FilterOP( new InterfaceHolesFilter( *this ) );
+		return utility::pointer::make_shared< InterfaceHolesFilter >( *this );
 	}
 	protocols::filters::FilterOP fresh_instance() const override {
-		return protocols::filters::FilterOP( new InterfaceHolesFilter() );
+		return utility::pointer::make_shared< InterfaceHolesFilter >();
 	}
 	InterfaceHolesFilter( InterfaceHolesFilter const & init ) :
 		//utility::pointer::ReferenceCount(),

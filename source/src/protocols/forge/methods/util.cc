@@ -447,13 +447,13 @@ remodel_generic_taskfactory(){
 
 	core::pack::task::TaskFactoryOP TF( new core::pack::task::TaskFactory() );
 
-	TF->push_back( TaskOperationCOP( new InitializeFromCommandline() ) ); // also inits -ex options
+	TF->push_back( utility::pointer::make_shared< InitializeFromCommandline >() ); // also inits -ex options
 	if ( basic::options::option[basic::options::OptionKeys::remodel::design::include_current] ) {
-		TF->push_back( TaskOperationCOP( new IncludeCurrent() ) ); // enforce keeping of input sidechains
+		TF->push_back( utility::pointer::make_shared< IncludeCurrent >() ); // enforce keeping of input sidechains
 	}
-	TF->push_back( TaskOperationCOP( new NoRepackDisulfides() ) );
+	TF->push_back( utility::pointer::make_shared< NoRepackDisulfides >() );
 	if ( !basic::options::option[basic::options::OptionKeys::remodel::design::allow_rare_aro_chi]() ) {
-		TF->push_back( TaskOperationCOP( new LimitAromaChi2Operation() ) );
+		TF->push_back( utility::pointer::make_shared< LimitAromaChi2Operation >() );
 	}
 
 	return TF;
@@ -501,7 +501,7 @@ fill_non_loop_cst_set(
 
 			for ( core::Size ii = 1; ii <= i_rsd.nheavyatoms(); ++ii ) {
 				core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc(0.0, coord_sdev) );
-				cst_set->add_constraint( ConstraintCOP( ConstraintOP( new CoordinateConstraint(AtomID(ii,i), AtomID(1, my_anchor), i_rsd.xyz(ii), fx ) ) ));
+				cst_set->add_constraint( utility::pointer::make_shared< CoordinateConstraint >(AtomID(ii,i), AtomID(1, my_anchor), i_rsd.xyz(ii), fx ));
 			}
 		}
 	}

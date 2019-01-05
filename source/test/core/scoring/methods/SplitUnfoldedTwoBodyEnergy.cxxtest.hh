@@ -66,7 +66,7 @@ public:
 		TOLERATED_ERROR = 0.001;
 		core_init();
 
-		the_pose = PoseOP( new Pose );
+		the_pose = utility::pointer::make_shared< Pose >();
 		core::chemical::ResidueTypeSetCOP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 		core::pose::make_pose_from_sequence( *the_pose, "DFGLK", *rsd_set );
 

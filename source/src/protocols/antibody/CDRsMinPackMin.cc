@@ -126,7 +126,7 @@ void CDRsMinPackMin::finalize_setup( pose::Pose & pose ) {
 	using namespace protocols::simple_task_operations;
 	using namespace protocols::moves;
 
-	cdr_sequence_move_ = protocols::moves::SequenceMoverOP( new moves::SequenceMover() );
+	cdr_sequence_move_ = utility::pointer::make_shared< moves::SequenceMover >();
 
 	// **************** FoldTree ****************
 	if ( alter_foldtree_ ) {
@@ -143,7 +143,7 @@ void CDRsMinPackMin::finalize_setup( pose::Pose & pose ) {
 
 	//**************** MoveMap ****************
 	if ( !allcdr_map_ ) { // use this if, because sometimes a user may input a movemap at the beginning
-		allcdr_map_ = core::kinematics::MoveMapOP( new kinematics::MoveMap() );
+		allcdr_map_ = utility::pointer::make_shared< kinematics::MoveMap >();
 		*allcdr_map_=ab_info_->get_MoveMap_for_Loops(pose, *ab_info_->get_AllCDRs_in_loopsop(), false, true, 10.0);
 	} else {
 		if ( update_rounds_ > 0 && ab_info_ ) {
@@ -239,11 +239,11 @@ std::string CDRsMinPackMin::get_name() const {
 }
 
 void CDRsMinPackMin::set_task_factory(core::pack::task::TaskFactoryCOP tf) {
-	tf_ = core::pack::task::TaskFactoryOP( new pack::task::TaskFactory(*tf) );
+	tf_ = utility::pointer::make_shared< pack::task::TaskFactory >(*tf);
 }
 
 void CDRsMinPackMin::set_move_map(kinematics::MoveMapCOP movemap) {
-	allcdr_map_ = core::kinematics::MoveMapOP( new kinematics::MoveMap(*movemap) );
+	allcdr_map_ = utility::pointer::make_shared< kinematics::MoveMap >(*movemap);
 }
 
 

@@ -26,7 +26,7 @@ LoopsFileDefinerCreator::~LoopsFileDefinerCreator() = default;
 
 LoopsDefinerOP
 LoopsFileDefinerCreator::create_loops_definer() const {
-	return LoopsDefinerOP( new LoopsFileDefiner );
+	return utility::pointer::make_shared< LoopsFileDefiner >();
 }
 
 string

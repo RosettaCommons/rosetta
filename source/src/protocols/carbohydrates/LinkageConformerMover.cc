@@ -94,14 +94,14 @@ LinkageConformerMover::set_defaults(){
 	sample_protein_linkage_ = true;
 	use_conformer_population_stats_ = true;
 
-	SugarBBSamplerOP phi_sampler = SugarBBSamplerOP( new SugarBBSampler( core::id::phi_dihedral ) );
-	phi_sampler_mover_ = BBDihedralSamplerMoverOP( new BBDihedralSamplerMover( phi_sampler ) );
+	SugarBBSamplerOP phi_sampler = utility::pointer::make_shared< SugarBBSampler >( core::id::phi_dihedral );
+	phi_sampler_mover_ = utility::pointer::make_shared< BBDihedralSamplerMover >( phi_sampler );
 
-	SugarBBSamplerOP psi_sampler = SugarBBSamplerOP( new SugarBBSampler( core::id::psi_dihedral ) );
-	psi_sampler_mover_ = BBDihedralSamplerMoverOP( new BBDihedralSamplerMover( psi_sampler ) );
+	SugarBBSamplerOP psi_sampler = utility::pointer::make_shared< SugarBBSampler >( core::id::psi_dihedral );
+	psi_sampler_mover_ = utility::pointer::make_shared< BBDihedralSamplerMover >( psi_sampler );
 
-	SugarBBSamplerOP omega_sampler = SugarBBSamplerOP( new SugarBBSampler( core::id::omega_dihedral ) );
-	omega_sampler_mover_ = BBDihedralSamplerMoverOP( new BBDihedralSamplerMover( omega_sampler ) );
+	SugarBBSamplerOP omega_sampler = utility::pointer::make_shared< SugarBBSampler >( core::id::omega_dihedral );
+	omega_sampler_mover_ = utility::pointer::make_shared< BBDihedralSamplerMover >( omega_sampler );
 
 }
 
@@ -119,9 +119,9 @@ LinkageConformerMover::LinkageConformerMover( LinkageConformerMover const & src 
 	random_sampler_(src.random_sampler_)
 {
 	if ( src.selector_ ) selector_ = src.selector_->clone();
-	phi_sampler_mover_ = BBDihedralSamplerMoverOP( new BBDihedralSamplerMover( *src.phi_sampler_mover_ ) );
-	psi_sampler_mover_ = BBDihedralSamplerMoverOP( new BBDihedralSamplerMover( *src.psi_sampler_mover_ ) );
-	omega_sampler_mover_ = BBDihedralSamplerMoverOP( new BBDihedralSamplerMover( *src.omega_sampler_mover_ ) );
+	phi_sampler_mover_ = utility::pointer::make_shared< BBDihedralSamplerMover >( *src.phi_sampler_mover_ );
+	psi_sampler_mover_ = utility::pointer::make_shared< BBDihedralSamplerMover >( *src.psi_sampler_mover_ );
+	omega_sampler_mover_ = utility::pointer::make_shared< BBDihedralSamplerMover >( *src.omega_sampler_mover_ );
 }
 
 void
@@ -138,7 +138,7 @@ LinkageConformerMover::set_single_resnum( core::pose::Pose const & pose, core::S
 	utility::vector1< bool > subset(pose.total_residue(), false);
 
 	subset[ resnum ] = true;
-	selector_ = ReturnResidueSubsetSelectorOP( new ReturnResidueSubsetSelector( subset));
+	selector_ = utility::pointer::make_shared< ReturnResidueSubsetSelector >( subset);
 }
 
 void
@@ -166,14 +166,14 @@ LinkageConformerMover::parse_my_tag(
 
 protocols::moves::MoverOP
 LinkageConformerMover::clone() const{
-	return protocols::moves::MoverOP( new LinkageConformerMover( *this ) );
+	return utility::pointer::make_shared< LinkageConformerMover >( *this );
 }
 
 
 moves::MoverOP
 LinkageConformerMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new LinkageConformerMover );
+	return utility::pointer::make_shared< LinkageConformerMover >();
 }
 
 void
@@ -226,7 +226,7 @@ LinkageConformerMover::apply( core::pose::Pose & pose )
 
 	if ( ! selector_ ) {
 		TR << "No Residue Selector set.  Attempting to use all carbohydrate residues." << std::endl;
-		selector_ = GlycanResidueSelectorOP( new GlycanResidueSelector() );
+		selector_ = utility::pointer::make_shared< GlycanResidueSelector >();
 	}
 
 	phi_sampler_mover_->set_residue_selector(selector_);
@@ -363,7 +363,7 @@ std::string LinkageConformerMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 LinkageConformerMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LinkageConformerMover );
+	return utility::pointer::make_shared< LinkageConformerMover >();
 }
 
 void LinkageConformerMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

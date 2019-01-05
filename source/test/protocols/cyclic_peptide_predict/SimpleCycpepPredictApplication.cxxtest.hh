@@ -70,16 +70,16 @@ public:
 		using namespace protocols::cyclic_peptide_predict;
 
 		utility::vector1 < SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP > summarylist;
-		summarylist.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  1, -12.31, 1.23, 1, 2) ) );
-		summarylist.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  2, -14.87, 2.72, 3, 0) ) );
-		summarylist.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  3,  -5.12, 3.11, 5, 0) ) );
-		summarylist.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  4,   2.16, 4.52, 2, 3) ) );
-		summarylist.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  5, -13.99, 1.83, 0, 0) ) );
-		summarylist.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  6, -18.54, 0.07, 5, 5) ) );
-		summarylist.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  7, -16.12, 1.32, 2, 3) ) );
-		summarylist.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  8, -13.43, 0.32, 4, 0) ) );
-		summarylist.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  9, -10.63, 0.86, 3, 1) ) );
-		summarylist.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3, 10,  -8.12, 1.96, 2, 0) ) );
+		summarylist.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  1, -12.31, 1.23, 1, 2) );
+		summarylist.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  2, -14.87, 2.72, 3, 0) );
+		summarylist.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  3,  -5.12, 3.11, 5, 0) );
+		summarylist.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  4,   2.16, 4.52, 2, 3) );
+		summarylist.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  5, -13.99, 1.83, 0, 0) );
+		summarylist.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  6, -18.54, 0.07, 5, 5) );
+		summarylist.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  7, -16.12, 1.32, 2, 3) );
+		summarylist.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  8, -13.43, 0.32, 4, 0) );
+		summarylist.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  9, -10.63, 0.86, 3, 1) );
+		summarylist.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3, 10,  -8.12, 1.96, 2, 0) );
 
 		TR << "Before sort:" << std::endl;
 		for ( core::Size i=1, imax=summarylist.size(); i<=imax; ++i ) {
@@ -108,16 +108,16 @@ public:
 		using namespace protocols::cyclic_peptide_predict;
 
 		utility::vector1 < SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP > summarylist;
-		summarylist.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  1, -12.31, 1.23, 1, 0) ) );
-		summarylist.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  2, -14.87, 2.72, 4, 1) ) );
-		summarylist.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  3,  -5.12, 3.11, 3, 1) ) );
-		summarylist.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  4,   2.16, 4.52, 1, 2) ) );
-		summarylist.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  5, -13.99, 1.83, 7, 0) ) );
-		summarylist.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  6, -18.54, 0.07, 5, 0) ) );
-		summarylist.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  7, -16.12, 1.32, 6, 5) ) );
-		summarylist.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  8, -13.43, 0.32, 6, 3) ) );
-		summarylist.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  9, -10.63, 0.86, 4, 0) ) );
-		summarylist.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3, 10,  -8.12, 1.96, 3, 0) ) );
+		summarylist.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  1, -12.31, 1.23, 1, 0) );
+		summarylist.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  2, -14.87, 2.72, 4, 1) );
+		summarylist.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  3,  -5.12, 3.11, 3, 1) );
+		summarylist.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  4,   2.16, 4.52, 1, 2) );
+		summarylist.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  5, -13.99, 1.83, 7, 0) );
+		summarylist.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  6, -18.54, 0.07, 5, 0) );
+		summarylist.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  7, -16.12, 1.32, 6, 5) );
+		summarylist.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  8, -13.43, 0.32, 6, 3) );
+		summarylist.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  9, -10.63, 0.86, 4, 0) );
+		summarylist.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3, 10,  -8.12, 1.96, 3, 0) );
 
 		TR << "Before sort:" << std::endl;
 		for ( core::Size i=1, imax=summarylist.size(); i<=imax; ++i ) {
@@ -146,16 +146,16 @@ public:
 		using namespace protocols::cyclic_peptide_predict;
 
 		utility::vector1 < SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP > summarylist;
-		summarylist.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  1, -12.31, 1.23, 1, 0) ) );
-		summarylist.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  2, -14.87, 2.72, 4, 2) ) );
-		summarylist.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  3,  -5.12, 3.11, 3, 3) ) );
-		summarylist.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  4,   2.16, 4.52, 1, 8) ) );
-		summarylist.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  5, -13.99, 1.83, 7, 0) ) );
-		summarylist.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  6, -18.54, 0.07, 5, 1) ) );
-		summarylist.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  7, -16.12, 1.32, 6, 4) ) );
-		summarylist.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  8, -13.43, 0.32, 6, 3) ) );
-		summarylist.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  9, -10.63, 0.86, 4, 4) ) );
-		summarylist.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3, 10,  -8.12, 1.96, 3, 0) ) );
+		summarylist.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  1, -12.31, 1.23, 1, 0) );
+		summarylist.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  2, -14.87, 2.72, 4, 2) );
+		summarylist.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  3,  -5.12, 3.11, 3, 3) );
+		summarylist.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  4,   2.16, 4.52, 1, 8) );
+		summarylist.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  5, -13.99, 1.83, 7, 0) );
+		summarylist.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  6, -18.54, 0.07, 5, 1) );
+		summarylist.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  7, -16.12, 1.32, 6, 4) );
+		summarylist.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  8, -13.43, 0.32, 6, 3) );
+		summarylist.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  9, -10.63, 0.86, 4, 4) );
+		summarylist.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3, 10,  -8.12, 1.96, 3, 0) );
 
 		TR << "Before sort:" << std::endl;
 		for ( core::Size i=1, imax=summarylist.size(); i<=imax; ++i ) {
@@ -184,30 +184,30 @@ public:
 		using namespace protocols::cyclic_peptide_predict;
 
 		utility::vector1 < SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP > summarylist1;
-		summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  1, -12.31, 1.23, 7, 0) ) );
-		summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  2, -11.41, 2.72, 5, 5) ) );
-		summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  3,  -7.93, 3.11, 3, 3) ) );
-		summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  4,  -6.33, 4.52, 1, 0) ) );
-		summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  5,  -5.99, 1.83, 2, 5) ) );
-		summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  6,  -5.54, 0.07, 3, 0) ) );
-		summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  7,  -2.12, 1.32, 8, 2) ) );
-		summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  8,  -1.43, 0.32, 3, 2) ) );
-		summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  9,   1.63, 0.86, 1, 1) ) );
-		summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3, 10,   2.12, 1.96, 3, 0) ) );
-		summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3, 11,   2.13, 1.53, 2, 0) ) );
-		summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3, 12,   2.15, 1.54, 1, 1) ) );
+		summarylist1.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  1, -12.31, 1.23, 7, 0) );
+		summarylist1.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  2, -11.41, 2.72, 5, 5) );
+		summarylist1.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  3,  -7.93, 3.11, 3, 3) );
+		summarylist1.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  4,  -6.33, 4.52, 1, 0) );
+		summarylist1.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  5,  -5.99, 1.83, 2, 5) );
+		summarylist1.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  6,  -5.54, 0.07, 3, 0) );
+		summarylist1.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  7,  -2.12, 1.32, 8, 2) );
+		summarylist1.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  8,  -1.43, 0.32, 3, 2) );
+		summarylist1.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  9,   1.63, 0.86, 1, 1) );
+		summarylist1.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3, 10,   2.12, 1.96, 3, 0) );
+		summarylist1.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3, 11,   2.13, 1.53, 2, 0) );
+		summarylist1.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3, 12,   2.15, 1.54, 1, 1) );
 
 		utility::vector1 < SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP > summarylist2;
-		summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(5,  1, -14.74, 7.23, 6, 0) ) );
-		summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(5,  2, -13.86, 3.78, 7, 0) ) );
-		summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(5,  3, -13.32, 4.51, 3, 3) ) );
-		summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(5,  4, -10.28, 0.52, 5, 5) ) );
-		summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(5,  5,  -9.97, 1.83, 2, 0) ) );
-		summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(5,  6,  -8.11, 6.17, 6, 4) ) );
-		summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(5,  7,  -6.10, 8.35, 2, 3) ) );
-		summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(5,  8,  -3.09, 2.35, 1, 2) ) );
-		summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(5,  9,  -0.06, 9.86, 2, 0) ) );
-		summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(5, 10,   2.88, 4.46, 1, 0) ) );
+		summarylist2.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(5,  1, -14.74, 7.23, 6, 0) );
+		summarylist2.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(5,  2, -13.86, 3.78, 7, 0) );
+		summarylist2.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(5,  3, -13.32, 4.51, 3, 3) );
+		summarylist2.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(5,  4, -10.28, 0.52, 5, 5) );
+		summarylist2.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(5,  5,  -9.97, 1.83, 2, 0) );
+		summarylist2.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(5,  6,  -8.11, 6.17, 6, 4) );
+		summarylist2.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(5,  7,  -6.10, 8.35, 2, 3) );
+		summarylist2.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(5,  8,  -3.09, 2.35, 1, 2) );
+		summarylist2.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(5,  9,  -0.06, 9.86, 2, 0) );
+		summarylist2.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(5, 10,   2.88, 4.46, 1, 0) );
 
 		TR << "List 1 before sort:" << std::endl;
 		for ( core::Size i=1, imax=summarylist1.size(); i<=imax; ++i ) {
@@ -247,16 +247,16 @@ public:
 		{ //2nd list empty
 			TR << "Trying with second list empty..." << std::endl;
 			utility::vector1 < SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP > summarylist1;
-			summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  1, -12.31, 1.23, 6, 1) ) );
-			summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  2, -11.41, 2.72, 7, 1) ) );
-			summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  3,  -7.93, 3.11, 4, 3) ) );
-			summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  4,  -6.33, 4.52, 7, 0) ) );
-			summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  5,  -5.99, 1.83, 5, 2) ) );
-			summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  6,  -5.54, 0.07, 3, 6) ) );
-			summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  7,  -2.12, 1.32, 5, 2) ) );
-			summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  8,  -1.43, 0.32, 2, 5) ) );
-			summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  9,   1.63, 0.86, 1, 1) ) );
-			summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3, 10,   2.12, 1.96, 3, 0) ) );
+			summarylist1.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  1, -12.31, 1.23, 6, 1) );
+			summarylist1.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  2, -11.41, 2.72, 7, 1) );
+			summarylist1.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  3,  -7.93, 3.11, 4, 3) );
+			summarylist1.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  4,  -6.33, 4.52, 7, 0) );
+			summarylist1.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  5,  -5.99, 1.83, 5, 2) );
+			summarylist1.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  6,  -5.54, 0.07, 3, 6) );
+			summarylist1.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  7,  -2.12, 1.32, 5, 2) );
+			summarylist1.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  8,  -1.43, 0.32, 2, 5) );
+			summarylist1.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  9,   1.63, 0.86, 1, 1) );
+			summarylist1.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3, 10,   2.12, 1.96, 3, 0) );
 
 			utility::vector1 < SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP > summarylist2;
 
@@ -286,16 +286,16 @@ public:
 		{ //1st list empty
 			TR << "Trying with first list empty..." << std::endl;
 			utility::vector1 < SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP > summarylist2;
-			summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  1, -12.31, 1.23, 8, 1) ) );
-			summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  2, -11.41, 2.72, 5, 1) ) );
-			summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  3,  -7.93, 3.11, 7, 2) ) );
-			summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  4,  -6.33, 4.52, 2, 1) ) );
-			summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  5,  -5.99, 1.83, 3, 3) ) );
-			summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  6,  -5.54, 0.07, 2, 0) ) );
-			summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  7,  -2.12, 1.32, 1, 1) ) );
-			summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  8,  -1.43, 0.32, 3, 0) ) );
-			summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  9,   1.63, 0.86, 1, 1) ) );
-			summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3, 10,   2.12, 1.96, 1, 0) ) );
+			summarylist2.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  1, -12.31, 1.23, 8, 1) );
+			summarylist2.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  2, -11.41, 2.72, 5, 1) );
+			summarylist2.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  3,  -7.93, 3.11, 7, 2) );
+			summarylist2.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  4,  -6.33, 4.52, 2, 1) );
+			summarylist2.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  5,  -5.99, 1.83, 3, 3) );
+			summarylist2.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  6,  -5.54, 0.07, 2, 0) );
+			summarylist2.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  7,  -2.12, 1.32, 1, 1) );
+			summarylist2.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  8,  -1.43, 0.32, 3, 0) );
+			summarylist2.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  9,   1.63, 0.86, 1, 1) );
+			summarylist2.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3, 10,   2.12, 1.96, 1, 0) );
 
 			utility::vector1 < SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP > summarylist1;
 
@@ -363,28 +363,28 @@ public:
 		using namespace protocols::cyclic_peptide_predict;
 
 		utility::vector1 < SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP > summarylist1;
-		summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  1,  -2.12, 0.23, 1, 1) ) );
-		summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  2, -11.41, 0.72, 4, 3) ) );
-		summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  3,   7.93, 0.83, 1, 1) ) );
-		summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  4,  -2.33, 1.52, 2, 5) ) );
-		summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  5, -12.99, 1.83, 5, 1) ) );
-		summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  6,  -5.54, 2.07, 1, 2) ) );
-		summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  7, -12.31, 2.32, 5, 2) ) );
-		summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  8,  -1.43, 2.35, 1, 2) ) );
-		summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3,  9,   3.63, 3.86, 3, 0) ) );
-		summarylist1.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(3, 10,  -5.12, 4.96, 2, 1) ) );
+		summarylist1.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  1,  -2.12, 0.23, 1, 1) );
+		summarylist1.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  2, -11.41, 0.72, 4, 3) );
+		summarylist1.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  3,   7.93, 0.83, 1, 1) );
+		summarylist1.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  4,  -2.33, 1.52, 2, 5) );
+		summarylist1.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  5, -12.99, 1.83, 5, 1) );
+		summarylist1.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  6,  -5.54, 2.07, 1, 2) );
+		summarylist1.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  7, -12.31, 2.32, 5, 2) );
+		summarylist1.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  8,  -1.43, 2.35, 1, 2) );
+		summarylist1.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3,  9,   3.63, 3.86, 3, 0) );
+		summarylist1.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(3, 10,  -5.12, 4.96, 2, 1) );
 
 		utility::vector1 < SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP > summarylist2;
-		summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(5,  1, -14.74, 0.21, 6, 6) ) );
-		summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(5,  2,  -3.86, 0.78, 2, 2) ) );
-		summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(5,  3, -13.32, 0.91, 6, 0) ) );
-		summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(5,  4,  -0.28, 1.42, 1, 0) ) );
-		summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(5,  5, -19.97, 1.90, 5, 2) ) );
-		summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(5,  6,  -8.11, 2.17, 1, 2) ) );
-		summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(5,  7, -12.10, 2.33, 5, 1) ) );
-		summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(5,  8,  -3.09, 2.37, 3, 0) ) );
-		summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(5,  9,  -0.06, 2.86, 1, 1) ) );
-		summarylist2.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary(5, 10,   2.88, 3.46, 2, 3) ) );
+		summarylist2.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(5,  1, -14.74, 0.21, 6, 6) );
+		summarylist2.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(5,  2,  -3.86, 0.78, 2, 2) );
+		summarylist2.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(5,  3, -13.32, 0.91, 6, 0) );
+		summarylist2.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(5,  4,  -0.28, 1.42, 1, 0) );
+		summarylist2.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(5,  5, -19.97, 1.90, 5, 2) );
+		summarylist2.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(5,  6,  -8.11, 2.17, 1, 2) );
+		summarylist2.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(5,  7, -12.10, 2.33, 5, 1) );
+		summarylist2.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(5,  8,  -3.09, 2.37, 3, 0) );
+		summarylist2.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(5,  9,  -0.06, 2.86, 1, 1) );
+		summarylist2.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >(5, 10,   2.88, 3.46, 2, 3) );
 
 
 		TR << "List 1 before sort:" << std::endl;

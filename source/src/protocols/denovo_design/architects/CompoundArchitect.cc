@@ -48,7 +48,7 @@ CompoundArchitect::~CompoundArchitect() = default;
 CompoundArchitect::DeNovoArchitectOP
 CompoundArchitect::clone() const
 {
-	return DeNovoArchitectOP( new CompoundArchitect( *this ) );
+	return utility::pointer::make_shared< CompoundArchitect >( *this );
 }
 
 std::string
@@ -347,7 +347,7 @@ CompoundArchitectCreator::keyname() const
 DeNovoArchitectOP
 CompoundArchitectCreator::create_architect( std::string const & architect_id ) const
 {
-	return DeNovoArchitectOP( new CompoundArchitect( architect_id ) );
+	return utility::pointer::make_shared< CompoundArchitect >( architect_id );
 }
 
 } //protocols

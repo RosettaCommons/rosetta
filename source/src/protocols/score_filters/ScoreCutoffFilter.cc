@@ -261,7 +261,7 @@ ScoreCutoffFilter::output_residue_pair_energies( std::ostream & ostr, core::pose
 }
 
 // XRW TEMP filters::FilterOP
-// XRW TEMP ScoreCutoffFilterCreator::create_filter() const { return filters::FilterOP( new ScoreCutoffFilter ); }
+// XRW TEMP ScoreCutoffFilterCreator::create_filter() const { return utility::pointer::make_shared< ScoreCutoffFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP ScoreCutoffFilterCreator::keyname() const { return "ScoreCutoffFilter"; }
@@ -291,7 +291,7 @@ std::string ScoreCutoffFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 ScoreCutoffFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new ScoreCutoffFilter );
+	return utility::pointer::make_shared< ScoreCutoffFilter >();
 }
 
 void ScoreCutoffFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

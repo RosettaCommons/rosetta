@@ -128,19 +128,19 @@ public:
 		TS_ASSERT_THROWS_ANYTHING( cst_gen.parse_my_tag( tag, datamap ) );
 
 		TR << "Invalid both contact" << std::endl;
-		tag = utility::tag::TagOP( new utility::tag::Tag() );
+		tag = utility::pointer::make_shared< utility::tag::Tag >();
 		tag->read( ss_invalid_both_contact );
 		set_throw_on_next_assertion_failure();
 		TS_ASSERT_THROWS_ANYTHING( cst_gen.parse_my_tag( tag, datamap ) );
 
 		TR << "Invalid neither ligand" << std::endl;
-		tag = utility::tag::TagOP( new utility::tag::Tag() );
+		tag = utility::pointer::make_shared< utility::tag::Tag >();
 		tag->read( ss_invalid_neither_ligand );
 		set_throw_on_next_assertion_failure();
 		TS_ASSERT_THROWS_ANYTHING( cst_gen.parse_my_tag( tag, datamap ) );
 
 		TR << "Invalid no atom" << std::endl;
-		tag = utility::tag::TagOP( new utility::tag::Tag() );
+		tag = utility::pointer::make_shared< utility::tag::Tag >();
 		tag->read( ss_invalid_no_atom );
 		set_throw_on_next_assertion_failure();
 		TS_ASSERT_THROWS_ANYTHING( cst_gen.parse_my_tag( tag, datamap ) );
@@ -184,7 +184,7 @@ public:
 		TS_ASSERT_DELTA( cst_gen.get_dist_cutoff_multiplier(), 2.0, TOLERANCE );
 
 		cst_gen = MetalContactsConstraintGenerator();
-		tag = utility::tag::TagOP( new utility::tag::Tag() );
+		tag = utility::pointer::make_shared< utility::tag::Tag >();
 		TR << "Set ideal values" << std::endl;
 		tag->read( ss_set_ideal_values );
 		TS_ASSERT_THROWS_NOTHING( cst_gen.parse_my_tag( tag, datamap ) );
@@ -196,14 +196,14 @@ public:
 		TS_ASSERT_EQUALS( cst_gen.get_ideal_dihedral_3().size(), 1 );
 
 		cst_gen = MetalContactsConstraintGenerator();
-		tag = utility::tag::TagOP( new utility::tag::Tag() );
+		tag = utility::pointer::make_shared< utility::tag::Tag >();
 		tag->read( ss_set_bool );
 		TR << "Set score against internal contacts" << std::endl;
 		TS_ASSERT_THROWS_NOTHING( cst_gen.parse_my_tag( tag, datamap ) );
 		TS_ASSERT_EQUALS( cst_gen.get_score_against_internal_contacts(), true );
 
 		cst_gen = MetalContactsConstraintGenerator();
-		tag = utility::tag::TagOP( new utility::tag::Tag() );
+		tag = utility::pointer::make_shared< utility::tag::Tag >();
 		TR << "Set atom bases" << std::endl;
 		tag->read( ss_set_bases );
 		TS_ASSERT_THROWS_NOTHING( cst_gen.parse_my_tag( tag, datamap ) );
@@ -239,7 +239,7 @@ public:
 
 		//string
 		cst_gen = MetalContactsConstraintGenerator();
-		tag = utility::tag::TagOP( new utility::tag::Tag() );
+		tag = utility::pointer::make_shared< utility::tag::Tag >();
 		TR << "Ligand specified with string" << std::endl;
 		tag->read( ss_string );
 		TS_ASSERT_THROWS_NOTHING( cst_gen.parse_my_tag( tag, datamap ) );
@@ -276,7 +276,7 @@ public:
 		TS_ASSERT_EQUALS( constraints.size(), 9 );
 
 		cst_gen = MetalContactsConstraintGenerator();
-		tag = utility::tag::TagOP( new utility::tag::Tag() );
+		tag = utility::pointer::make_shared< utility::tag::Tag >();
 		TR << "Contacts specified with string" << std::endl;
 		tag->read( ss_string );
 		TS_ASSERT_THROWS_NOTHING( cst_gen.parse_my_tag( tag, datamap ) );

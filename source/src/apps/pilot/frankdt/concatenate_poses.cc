@@ -73,7 +73,7 @@ concatenate_poses::concatenate_poses( concatenate_poses const & ) {
 
 concatenate_posesOP
 concatenate_poses::clone() const {
-	return concatenate_posesOP( new concatenate_poses( *this ) );
+	return utility::pointer::make_shared< concatenate_poses >( *this );
 }
 
 int
@@ -112,7 +112,7 @@ main( int argc, char * argv [] )
 				immobile_ht = new_ht;
 			}
 		} else {
-			poses.push_back(core::pose::PoseOP(new core::pose::Pose));
+			poses.push_back(utility::pointer::make_shared< core::pose::Pose >());
 			core::pose::make_pose_from_sequence(*(poses.back()), line, *res_type_set,false);
 			for ( core::Size i = 1; i <= poses.back()->size(); i++ ) {
 				poses.back()->set_phi(i,-180);
@@ -138,7 +138,7 @@ main( int argc, char * argv [] )
 		}
 	}
 
-	core::pose::PoseOP working_pose = core::pose::PoseOP(new core::pose::Pose(*poses[1]));
+	core::pose::PoseOP working_pose = utility::pointer::make_shared< core::pose::Pose >(*poses[1]);
 
 	for ( core::Size current_pose_number = 2; current_pose_number <= poses.size(); current_pose_number++ ) {
 		poses[current_pose_number-1]->append_residue_by_bond(poses[current_pose_number]->residue(1),true);
@@ -177,7 +177,7 @@ main( int argc, char * argv [] )
 		working_pose->apply_transform_Rx_plus_v(mobile_to_stationary_ht.rotation_matrix(),mobile_to_stationary_ht.point());
 	}
 
-	core::pose::PoseOP output_pose = core::pose::PoseOP(new core::pose::Pose);
+	core::pose::PoseOP output_pose = utility::pointer::make_shared< core::pose::Pose >();
 
 	core::pose::make_pose_from_sequence(*output_pose, working_pose->sequence(), *res_type_set,false);
 

@@ -72,7 +72,7 @@ public:
 		runtime_assert( end_ >= start_  );
 
 		//set default score function settings use set_sf to set custom scorefunction
-		sf_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction );
+		sf_ = utility::pointer::make_shared< core::scoring::ScoreFunction >();
 		sf_->set_weight( core::scoring::hbond_sr_bb, 0);
 		sf_->set_weight( core::scoring::hbond_lr_bb, 0);
 		sf_->set_weight( core::scoring::vdw, 1);

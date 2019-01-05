@@ -618,7 +618,7 @@ StepWiseRNA_CombineLongLoopFilterer::setup_silent_file_stream(){
 
 	if ( silent_files_in_.size() != 2 ) utility_exit_with_message( "silent_files_in_.size() != 2!, silent_files_in_.size() = " + string_of( silent_files_in_.size() ) );
 
-	silent_file_stream_ONE_ = core::import_pose::pose_stream::SilentFilePoseInputStreamOP( new core::import_pose::pose_stream::SilentFilePoseInputStream() );
+	silent_file_stream_ONE_ = utility::pointer::make_shared< core::import_pose::pose_stream::SilentFilePoseInputStream >();
 	silent_file_stream_ONE_->set_order_by_energy( true );
 	silent_file_stream_ONE_->set_record_source( false ); //change to false on July 29, 2011
 
@@ -627,7 +627,7 @@ StepWiseRNA_CombineLongLoopFilterer::setup_silent_file_stream(){
 	singleton_list_ONE.push_back( silent_files_in_[1] );
 	silent_file_stream_ONE_->filenames( singleton_list_ONE ); //triggers read in of files, too.
 
-	silent_file_stream_TWO_ = core::import_pose::pose_stream::SilentFilePoseInputStreamOP( new core::import_pose::pose_stream::SilentFilePoseInputStream() );
+	silent_file_stream_TWO_ = utility::pointer::make_shared< core::import_pose::pose_stream::SilentFilePoseInputStream >();
 	silent_file_stream_TWO_->set_order_by_energy( true );
 	silent_file_stream_TWO_->set_record_source( false ); //change to false on July 29, 2011
 

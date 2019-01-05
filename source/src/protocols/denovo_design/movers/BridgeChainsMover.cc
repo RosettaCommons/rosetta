@@ -88,13 +88,13 @@ BridgeChainsMover::parse_my_tag(
 protocols::moves::MoverOP
 BridgeChainsMover::clone() const
 {
-	return protocols::moves::MoverOP( new BridgeChainsMover( *this ) );
+	return utility::pointer::make_shared< BridgeChainsMover >( *this );
 }
 
 protocols::moves::MoverOP
 BridgeChainsMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new BridgeChainsMover );
+	return utility::pointer::make_shared< BridgeChainsMover >();
 }
 
 // XRW TEMP std::string
@@ -268,7 +268,7 @@ std::string BridgeChainsMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 BridgeChainsMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new BridgeChainsMover );
+	return utility::pointer::make_shared< BridgeChainsMover >();
 }
 
 void BridgeChainsMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -281,7 +281,7 @@ void BridgeChainsMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefini
 protocols::moves::MoverOP
 BridgeChainsCreator::create_mover() const
 {
-	return protocols::moves::MoverOP( new BridgeChainsMover );
+	return utility::pointer::make_shared< BridgeChainsMover >();
 }
 
 std::string
@@ -309,7 +309,7 @@ BridgeChainsCreator::keyname() const
 //
 //protocols::moves::MoverOP
 //BridgeChainsCreator::create_mover() const {
-// return protocols::moves::MoverOP( new BridgeChainsMover );
+// return utility::pointer::make_shared< BridgeChainsMover >();
 //}
 
 void BridgeChainsCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

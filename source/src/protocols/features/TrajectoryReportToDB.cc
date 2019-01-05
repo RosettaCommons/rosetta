@@ -120,7 +120,7 @@ TrajectoryReportToDB::get_cycle_counts() const {
 
 // XRW TEMP moves::MoverOP
 // XRW TEMP TrajectoryReportToDBCreator::create_mover() const {
-// XRW TEMP  return moves::MoverOP( new TrajectoryReportToDB );
+// XRW TEMP  return utility::pointer::make_shared< TrajectoryReportToDB >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -132,18 +132,18 @@ TrajectoryReportToDB::get_cycle_counts() const {
 static basic::Tracer TR( "protocols.features.TrajectoryReportToDB" );
 
 moves::MoverOP
-TrajectoryReportToDB::fresh_instance() const { return moves::MoverOP( new TrajectoryReportToDB ); }
+TrajectoryReportToDB::fresh_instance() const { return utility::pointer::make_shared< TrajectoryReportToDB >(); }
 
 moves::MoverOP
 TrajectoryReportToDB::clone() const
 {
-	return moves::MoverOP( new TrajectoryReportToDB( *this ) );
+	return utility::pointer::make_shared< TrajectoryReportToDB >( *this );
 }
 
 void
 TrajectoryReportToDB::initialize_trajectory_reporter()
 {
-	trajectory_map_features_reporter_ = TrajectoryMapFeaturesOP( new TrajectoryMapFeatures() );
+	trajectory_map_features_reporter_ = utility::pointer::make_shared< TrajectoryMapFeatures >();
 	ReportToDB::add_features_reporter( trajectory_map_features_reporter_ );
 }
 
@@ -227,7 +227,7 @@ std::string TrajectoryReportToDBCreator::keyname() const {
 
 protocols::moves::MoverOP
 TrajectoryReportToDBCreator::create_mover() const {
-	return protocols::moves::MoverOP( new TrajectoryReportToDB );
+	return utility::pointer::make_shared< TrajectoryReportToDB >();
 }
 
 void TrajectoryReportToDBCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

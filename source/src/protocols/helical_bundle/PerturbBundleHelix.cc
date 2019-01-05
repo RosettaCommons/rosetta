@@ -63,7 +63,7 @@ static basic::Tracer TR("protocols.helical_bundle.PerturbBundleHelix");
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP PerturbBundleHelixCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new PerturbBundleHelix );
+// XRW TEMP  return utility::pointer::make_shared< PerturbBundleHelix >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -89,13 +89,13 @@ PerturbBundleHelix::~PerturbBundleHelix() = default;
 
 /// @brief Clone operator to create a pointer to a fresh PerturbBundleHelix object that copies this one.
 protocols::moves::MoverOP PerturbBundleHelix::clone() const {
-	return protocols::moves::MoverOP( new PerturbBundleHelix( *this ) );
+	return utility::pointer::make_shared< PerturbBundleHelix >( *this );
 }
 
 
 /// @brief Fresh_instance operator to create a pointer to a fresh PerturbBundleHelix object that does NOT copy this one.
 protocols::moves::MoverOP PerturbBundleHelix::fresh_instance() const {
-	return protocols::moves::MoverOP( new PerturbBundleHelix );
+	return utility::pointer::make_shared< PerturbBundleHelix >();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -161,7 +161,7 @@ std::string PerturbBundleHelixCreator::keyname() const {
 
 protocols::moves::MoverOP
 PerturbBundleHelixCreator::create_mover() const {
-	return protocols::moves::MoverOP( new PerturbBundleHelix );
+	return utility::pointer::make_shared< PerturbBundleHelix >();
 }
 
 void PerturbBundleHelixCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

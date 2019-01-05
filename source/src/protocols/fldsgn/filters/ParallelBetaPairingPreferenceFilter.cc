@@ -220,7 +220,7 @@ ParallelBetaPairingPreferenceFilter::parse_my_tag(
 }
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP ParallelBetaPairingPreferenceFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ParallelBetaPairingPreferenceFilter ); }
+// XRW TEMP ParallelBetaPairingPreferenceFilterCreator::create_filter() const { return utility::pointer::make_shared< ParallelBetaPairingPreferenceFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP ParallelBetaPairingPreferenceFilterCreator::keyname() const { return "ParallelBetaPairingPreference"; }
@@ -249,7 +249,7 @@ std::string ParallelBetaPairingPreferenceFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 ParallelBetaPairingPreferenceFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new ParallelBetaPairingPreferenceFilter );
+	return utility::pointer::make_shared< ParallelBetaPairingPreferenceFilter >();
 }
 
 void ParallelBetaPairingPreferenceFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

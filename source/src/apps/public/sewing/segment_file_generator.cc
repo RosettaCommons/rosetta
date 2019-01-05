@@ -75,7 +75,7 @@ segment_file_generator::segment_file_generator( segment_file_generator const & )
 
 segment_file_generatorOP
 segment_file_generator::clone() const {
-	return segment_file_generatorOP( new segment_file_generator( *this ) );
+	return utility::pointer::make_shared< segment_file_generator >( *this );
 }
 
 
@@ -296,11 +296,11 @@ compare_segment_to_motif( utility::vector1< Motif > & motifs_to_match, core::Siz
 
 protocols::sewing::hashing::SegmentVectorOP
 store_segment_motif_match( protocols::sewing::data_storage::SmartSegmentOP segment, core::Size last_segment_position ){
-	protocols::sewing::hashing::SegmentVectorOP seg_vec = protocols::sewing::hashing::SegmentVectorOP( new protocols::sewing::hashing::SegmentVector() );
+	protocols::sewing::hashing::SegmentVectorOP seg_vec = utility::pointer::make_shared< protocols::sewing::hashing::SegmentVector >();
 	core::Size position = 1;
 	bool all_segments_added = false;
 	while ( !all_segments_added ) {
-		seg_vec->push_back( protocols::sewing::data_storage::SmartSegmentOP( new protocols::sewing::data_storage::SmartSegment( *segment ) ) );
+		seg_vec->push_back( utility::pointer::make_shared< protocols::sewing::data_storage::SmartSegment >( *segment ) );
 		if ( position > 1 ) { //if we've already added other segments, link them up.
 			protocols::sewing::data_storage::SmartSegment::link_to( seg_vec->at( position - 1 ), seg_vec->at( position ) );
 		}
@@ -374,7 +374,7 @@ main( int argc, char * argv [] )
 	}
 
 	std::string line;
-	protocols::sewing::hashing::SegmentVectorCOP empty_const_segvec = protocols::sewing::hashing::SegmentVectorCOP( new protocols::sewing::hashing::SegmentVector() );
+	protocols::sewing::hashing::SegmentVectorCOP empty_const_segvec = utility::pointer::make_shared< protocols::sewing::hashing::SegmentVector >();
 	//right now generator doesn't handle ligands....
 	utility::vector1< protocols::sewing::data_storage::LigandDescription > ligands;
 	utility::vector1< protocols::sewing::data_storage::LigandDescription > expanded_ligands;

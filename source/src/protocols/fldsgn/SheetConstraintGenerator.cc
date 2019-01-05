@@ -71,7 +71,7 @@ SheetConstraintGeneratorCreator::keyname() const
 protocols::constraint_generator::ConstraintGeneratorOP
 SheetConstraintGeneratorCreator::create_constraint_generator() const
 {
-	return protocols::constraint_generator::ConstraintGeneratorOP( new SheetConstraintGenerator );
+	return utility::pointer::make_shared< SheetConstraintGenerator >();
 }
 
 std::string
@@ -105,7 +105,7 @@ SheetConstraintGenerator::~SheetConstraintGenerator() = default;
 protocols::constraint_generator::ConstraintGeneratorOP
 SheetConstraintGenerator::clone() const
 {
-	return protocols::constraint_generator::ConstraintGeneratorOP( new SheetConstraintGenerator( *this ) );
+	return utility::pointer::make_shared< SheetConstraintGenerator >( *this );
 }
 
 /// @brief
@@ -489,9 +489,9 @@ SheetConstraintGenerator::create_caca_atom_pair_func( core::Real const ideal_dis
 	core::Real const lb = 0.0;
 	std::string const tag( "constraints_in_beta_sheet" );
 	if ( flat_bottom_constraints_ ) {
-		return weighted_func( FuncOP( new core::scoring::constraints::BoundFunc( lb, ideal_dist, dist_tolerance_, tag ) ) );
+		return weighted_func( utility::pointer::make_shared< core::scoring::constraints::BoundFunc >( lb, ideal_dist, dist_tolerance_, tag ) );
 	} else {
-		return weighted_func( FuncOP( new HarmonicFunc( ideal_dist, dist_tolerance_ ) ) );
+		return weighted_func( utility::pointer::make_shared< HarmonicFunc >( ideal_dist, dist_tolerance_ ) );
 	}
 }
 
@@ -501,11 +501,11 @@ SheetConstraintGenerator::create_bb_angle_func( core::Real const ideal_angle ) c
 	using core::scoring::constraints::BoundFunc;
 	using namespace core::scoring::func;
 	if ( flat_bottom_constraints_ ) {
-		return weighted_func( FuncOP( new BoundFunc(
+		return weighted_func( utility::pointer::make_shared< BoundFunc >(
 			ideal_angle-angle_tolerance_,
-			ideal_angle+angle_tolerance_, sqrt(1.0/42.0), "angle_bb") ) );
+			ideal_angle+angle_tolerance_, sqrt(1.0/42.0), "angle_bb") );
 	} else {
-		return weighted_func( FuncOP( new CircularHarmonicFunc( ideal_angle, angle_tolerance_ ) ) );
+		return weighted_func( utility::pointer::make_shared< CircularHarmonicFunc >( ideal_angle, angle_tolerance_ ) );
 	}
 }
 
@@ -516,12 +516,12 @@ SheetConstraintGenerator::create_bb_dihedral_func( core::Real const ideal_dihedr
 	using namespace core::scoring::func;
 	core::Real const periodicity = numeric::constants::f::pi;
 	if ( flat_bottom_constraints_ ) {
-		return weighted_func( FuncOP( new OffsetPeriodicBoundFunc(
+		return weighted_func( utility::pointer::make_shared< OffsetPeriodicBoundFunc >(
 			ideal_dihedral-bb_dihedral_tolerance_,
 			ideal_dihedral+bb_dihedral_tolerance_,
-			std::sqrt(1.0/42.0), "dihed_bb", periodicity, 0.0 ) ) );
+			std::sqrt(1.0/42.0), "dihed_bb", periodicity, 0.0 ) );
 	} else {
-		return weighted_func( FuncOP( new CircularHarmonicFunc( ideal_dihedral, bb_dihedral_tolerance_ ) ) );
+		return weighted_func( utility::pointer::make_shared< CircularHarmonicFunc >( ideal_dihedral, bb_dihedral_tolerance_ ) );
 	}
 }
 
@@ -532,12 +532,12 @@ SheetConstraintGenerator::create_cacb_dihedral_func( core::Real const ideal_dihe
 	using namespace core::scoring::func;
 	core::Real const periodicity = 2 * numeric::constants::f::pi;
 	if ( flat_bottom_constraints_ ) {
-		return weighted_func( FuncOP( new OffsetPeriodicBoundFunc(
+		return weighted_func( utility::pointer::make_shared< OffsetPeriodicBoundFunc >(
 			ideal_dihedral-cacb_dihedral_tolerance_,
 			ideal_dihedral+cacb_dihedral_tolerance_,
-			std::sqrt(1.0/42.0), "dihed_cacb", periodicity, 0.0 ) ) );
+			std::sqrt(1.0/42.0), "dihed_cacb", periodicity, 0.0 ) );
 	} else {
-		return weighted_func( FuncOP( new CircularHarmonicFunc( ideal_dihedral, cacb_dihedral_tolerance_ ) ) );
+		return weighted_func( utility::pointer::make_shared< CircularHarmonicFunc >( ideal_dihedral, cacb_dihedral_tolerance_ ) );
 	}
 }
 
@@ -555,9 +555,9 @@ SheetConstraintGenerator::create_bb_dihedral_constraint(
 	core::id::AtomID const resi_o( pose.residue_type( res1 ).atom_index( "O" ), res1 );
 	core::id::AtomID const resj_c( pose.residue_type( res2 ).atom_index( "C" ), res2 );
 	ConstraintCOPs const csts = boost::assign::list_of
-		( ConstraintOP( new DihedralConstraint( resi_o, resi_n, resi_c, resj_c, func1 ) ) )
-		( ConstraintOP( new DihedralConstraint( resi_o, resi_n, resi_c, resj_c, func2 ) ) );
-	return ConstraintOP( new AmbiguousConstraint( csts ) );
+		( utility::pointer::make_shared< DihedralConstraint >( resi_o, resi_n, resi_c, resj_c, func1 ) )
+		( utility::pointer::make_shared< DihedralConstraint >( resi_o, resi_n, resi_c, resj_c, func2 ) );
+	return utility::pointer::make_shared< AmbiguousConstraint >( csts );
 }
 
 core::scoring::constraints::ConstraintOP
@@ -567,7 +567,7 @@ SheetConstraintGenerator::create_ca_ca_atom_pair_constraint(
 	core::scoring::func::FuncOP func ) const
 {
 	using core::scoring::constraints::AtomPairConstraint;
-	return  core::scoring::constraints::ConstraintOP( new AtomPairConstraint( atom1, atom2, func ) );
+	return  utility::pointer::make_shared< AtomPairConstraint >( atom1, atom2, func );
 }
 
 core::scoring::constraints::ConstraintOP
@@ -578,7 +578,7 @@ SheetConstraintGenerator::create_bb_angle_constraint(
 	core::scoring::func::FuncOP func ) const
 {
 	using core::scoring::constraints::AngleConstraint;
-	return core::scoring::constraints::ConstraintOP( new AngleConstraint( atom1, atom2, atom3, func ) );
+	return utility::pointer::make_shared< AngleConstraint >( atom1, atom2, atom3, func );
 }
 
 core::scoring::constraints::ConstraintOP
@@ -589,7 +589,7 @@ SheetConstraintGenerator::create_bb_cacb_dihedral_constraint(
 	core::id::AtomID const & atom4,
 	core::scoring::func::FuncOP func ) const
 {
-	return core::scoring::constraints::ConstraintOP( new core::scoring::constraints::DihedralConstraint( atom1, atom2, atom3, atom4, func ) );
+	return utility::pointer::make_shared< core::scoring::constraints::DihedralConstraint >( atom1, atom2, atom3, atom4, func );
 }
 
 } //namespace fldsgn

@@ -117,9 +117,9 @@ DesignBySecondaryStructureOperation::DesignBySecondaryStructureOperation( std::s
 	psipred_interface_( /* NULL */ )
 {
 	if ( cmd != "" ) {
-		psipred_interface_ = core::io::external::PsiPredInterfaceOP( new core::io::external::PsiPredInterface( cmd ) );
+		psipred_interface_ = utility::pointer::make_shared< core::io::external::PsiPredInterface >( cmd );
 	} else {
-		ss_predictor_ = protocols::ss_prediction::SS_predictorOP( new protocols::ss_prediction::SS_predictor( "HLE" ) );
+		ss_predictor_ = utility::pointer::make_shared< protocols::ss_prediction::SS_predictor >( "HLE" );
 	}
 	initialize_blueprint_ss( bp_file );
 }
@@ -130,7 +130,7 @@ DesignBySecondaryStructureOperation::~DesignBySecondaryStructureOperation() = de
 /// @brief make clone
 core::pack::task::operation::TaskOperationOP
 DesignBySecondaryStructureOperation::clone() const {
-	return core::pack::task::operation::TaskOperationOP( new DesignBySecondaryStructureOperation( *this ) );
+	return utility::pointer::make_shared< DesignBySecondaryStructureOperation >( *this );
 }
 
 /// @brief utility function that compares two resid-probability pairs and returns true of the probability of the first is greater than probability of the second
@@ -313,7 +313,7 @@ DesignBySecondaryStructureOperation::parse_tag( utility::tag::TagCOP tag, basic:
 		utility_exit_with_message( "cmd must be set in DesignBySecondaryStructure." );
 	}
 	// now that we have a command, we can create the psipred interface object
-	psipred_interface_ = core::io::external::PsiPredInterfaceOP( new core::io::external::PsiPredInterface( cmd ) );
+	psipred_interface_ = utility::pointer::make_shared< core::io::external::PsiPredInterface >( cmd );
 	prevent_bad_point_mutants_ = tag->getOption< bool >( "prevent_bad_point_mutations", prevent_bad_point_mutants_ );
 }
 
@@ -349,7 +349,7 @@ DesignBySecondaryStructureOperation::initialize_blueprint_ss( std::string const 
 
 core::pack::task::operation::TaskOperationOP
 DesignBySecondaryStructureOperationCreator::create_task_operation() const {
-	return core::pack::task::operation::TaskOperationOP( new DesignBySecondaryStructureOperation );
+	return utility::pointer::make_shared< DesignBySecondaryStructureOperation >();
 }
 
 std::string

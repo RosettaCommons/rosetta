@@ -127,7 +127,7 @@ GenBornPoseInfo::initialize( pose::Pose const & pose )
 	placeholder_info_.resize( nres, nullptr );
 
 	for ( Size i=1; i<= nres; ++i ) {
-		if ( !residue_info_[i] ) residue_info_[i] = GenBornResidueInfoOP( new GenBornResidueInfo( pose.residue(i) ) );
+		if ( !residue_info_[i] ) residue_info_[i] = utility::pointer::make_shared< GenBornResidueInfo >( pose.residue(i) );
 		else  residue_info_[i]->initialize( pose.residue(i) );
 	}
 
@@ -161,7 +161,7 @@ GenBornRotamerSetInfo::initialize( RotamerSetBase const & rotamer_set )
 	Size const nrot( rotamer_set.num_rotamers() );
 	residue_info_.resize( nrot );
 	for ( Size i=1; i<= nrot; ++i ) {
-		residue_info_[i] = GenBornResidueInfoOP( new GenBornResidueInfo( *rotamer_set.rotamer(i) ) );
+		residue_info_[i] = utility::pointer::make_shared< GenBornResidueInfo >( *rotamer_set.rotamer(i) );
 	}
 }
 
@@ -266,7 +266,7 @@ GenBornPotential::get_all_born_radii(
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::GEN_BORN_POSE_INFO ) ) {
 		gb_info = utility::pointer::static_pointer_cast< core::scoring::GenBornPoseInfo > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::GEN_BORN_POSE_INFO ) );
 	} else {
-		gb_info = GenBornPoseInfoOP( new GenBornPoseInfo() );
+		gb_info = utility::pointer::make_shared< GenBornPoseInfo >();
 	}
 
 	//jjh zero out arrays
@@ -311,7 +311,7 @@ GenBornPotential::setup_for_packing(
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::GEN_BORN_POSE_INFO ) ) {
 		gb_info = utility::pointer::static_pointer_cast< core::scoring::GenBornPoseInfo > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::GEN_BORN_POSE_INFO ) );
 	} else {
-		gb_info = GenBornPoseInfoOP( new GenBornPoseInfo() );
+		gb_info = utility::pointer::make_shared< GenBornPoseInfo >();
 	}
 
 	//jjh zero out arrays
@@ -346,7 +346,7 @@ GenBornPotential::build_placeholders(
 		if ( !existing_rsd.is_protein() ) {
 			std::cout << "WARNING: no mechanism for building genborn placeholders at non-protein positions\n" <<
 				"Using existing residue coords" << std::endl;
-			gb_info.set_placeholder( i, existing_rsd.clone(), GenBornResidueInfoOP( new GenBornResidueInfo( existing_rsd ) ) );
+			gb_info.set_placeholder( i, existing_rsd.clone(), utility::pointer::make_shared< GenBornResidueInfo >( existing_rsd ) );
 		} else {
 			// build a placeholder at this position
 			chemical::ResidueTypeCOP protein_placeholder_residue_type( residue_set->name_mapOP("GB_AA_PLACEHOLDER") );

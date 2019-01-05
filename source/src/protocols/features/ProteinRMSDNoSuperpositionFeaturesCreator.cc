@@ -29,7 +29,7 @@ namespace features {
 // XRW TEMP ProteinRMSDNoSuperpositionFeaturesCreator::ProteinRMSDNoSuperpositionFeaturesCreator() {}
 // XRW TEMP ProteinRMSDNoSuperpositionFeaturesCreator::~ProteinRMSDNoSuperpositionFeaturesCreator() = default;
 // XRW TEMP FeaturesReporterOP ProteinRMSDNoSuperpositionFeaturesCreator::create_features_reporter() const {
-// XRW TEMP  return FeaturesReporterOP( new ProteinRMSDNoSuperpositionFeatures );
+// XRW TEMP  return utility::pointer::make_shared< ProteinRMSDNoSuperpositionFeatures >();
 // XRW TEMP }
 
 // XRW TEMP std::string ProteinRMSDNoSuperpositionFeaturesCreator::type_name() const {

@@ -90,7 +90,7 @@ GlycanNode::GlycanNode( GlycanNode const & src ):
 
 GlycanNodeOP
 GlycanNode::clone() const {
-	return GlycanNodeOP( new GlycanNode( *this ) );
+	return utility::pointer::make_shared< GlycanNode >( *this );
 }
 
 void

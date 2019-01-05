@@ -72,7 +72,7 @@ StructureDataFactory::save_into_pose( core::pose::Pose & pose, StructureData con
 	set_cached_data( pose, sd );
 
 	// wipe out pdb info except for remarks
-	pose.pdb_info( core::pose::PDBInfoOP( new core::pose::PDBInfo( pose, true ) ) );
+	pose.pdb_info( utility::pointer::make_shared< core::pose::PDBInfo >( pose, true ) );
 
 	// read cached remarks and save them as actual remarks
 	debug_assert( pose.pdb_info() );
@@ -678,7 +678,7 @@ StructureDataFactory::set_cached_data( core::pose::Pose & pose, StructureData co
 	using core::pose::datacache::CacheableDataType;
 
 	if ( !pose.data().has( CacheableDataType::WRITEABLE_DATA ) ) {
-		pose.data().set( CacheableDataType::WRITEABLE_DATA, WriteableCacheableMapOP( new WriteableCacheableMap ) );
+		pose.data().set( CacheableDataType::WRITEABLE_DATA, utility::pointer::make_shared< WriteableCacheableMap >() );
 	}
 
 	debug_assert( pose.data().has( CacheableDataType::WRITEABLE_DATA ) );
@@ -688,7 +688,7 @@ StructureDataFactory::set_cached_data( core::pose::Pose & pose, StructureData co
 
 	// Create data set if necessary
 	wmap[ StructureData::class_name() ].clear();
-	wmap.insert( WriteableCacheableDataOP( new StructureData( sd ) ) );
+	wmap.insert( utility::pointer::make_shared< StructureData >( sd ) );
 }
 
 /// @brief adds a remark to remarks object

@@ -51,7 +51,7 @@ public:
 	{}
 
 	basic::datacache::CacheableDataOP clone() const override {
-		return basic::datacache::CacheableDataOP( new SigmoidWeightedCenList( *this ) );
+		return utility::pointer::make_shared< SigmoidWeightedCenList >( *this );
 	}
 
 	Size size() const { return fcen6_.size();}

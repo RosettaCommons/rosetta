@@ -156,7 +156,7 @@ SemiExplicitWaterUnsatisfiedPolarsCalculator::assert_calculators()
 		if ( name_of_hbond_calc_ != "default" ) TR << "Attention: couldn't find the specified hbond calculator ( " << name_of_hbond_calc_ << " ), instantiating default one." << std::endl;
 		name_of_hbond_calc_ = "unsat_calc_default_hbond_calc";
 		if ( !CalculatorFactory::Instance().check_calculator_exists( name_of_hbond_calc_ ) ) {
-			CalculatorFactory::Instance().register_calculator( name_of_hbond_calc_, PoseMetricCalculatorOP( new NumberHBondsCalculator() ) );
+			CalculatorFactory::Instance().register_calculator( name_of_hbond_calc_, utility::pointer::make_shared< NumberHBondsCalculator >() );
 		}
 	}
 }

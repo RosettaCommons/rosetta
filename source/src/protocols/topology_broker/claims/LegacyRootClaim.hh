@@ -61,7 +61,7 @@ public:
 		local_position_ ( local_position )
 	{}
 
-	virtual DofClaimOP clone() const { return DofClaimOP( new LegacyRootClaim( *this ) ); }
+	virtual DofClaimOP clone() const { return utility::pointer::make_shared< LegacyRootClaim >( *this ); }
 
 	std::pair< std::string, core::Size > local_position() const {
 		return local_position_;

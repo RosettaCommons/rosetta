@@ -105,7 +105,7 @@ void ResidueSelectorLoader::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 
 
 DataLoaderOP
-ResidueSelectorLoaderCreator::create_loader() const { return DataLoaderOP( new ResidueSelectorLoader ); }
+ResidueSelectorLoaderCreator::create_loader() const { return utility::pointer::make_shared< ResidueSelectorLoader >(); }
 
 std::string
 ResidueSelectorLoaderCreator::keyname() const { return ResidueSelectorLoader::loader_name(); }

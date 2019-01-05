@@ -228,9 +228,9 @@ Clustering::initialize( std::string const & filename, double const threshold )
 
 	for ( int i = 0; i < n_pdbs_; i++ ) {
 		if ( AdjacentList::list_mode_ == MATRIX ) {
-			adjacent_lists_[i] = AdjacentListOP( new AdjacentList(i, n_pdbs_) );
+			adjacent_lists_[i] = utility::pointer::make_shared< AdjacentList >(i, n_pdbs_);
 		} else {
-			adjacent_lists_[i] = AdjacentListOP( new AdjacentList() );
+			adjacent_lists_[i] = utility::pointer::make_shared< AdjacentList >();
 			adjacent_lists_[i]->which_ = i;
 		}
 	}
@@ -286,9 +286,9 @@ Clustering::reinitialize(
 	adjacent_lists_.resize(n_pdbs_);
 	for ( int i=0; i < n_pdbs_; i++ ) {
 		if ( AdjacentList::list_mode_ == MATRIX ) {
-			adjacent_lists_[i] = AdjacentListOP(new AdjacentList(i, n_pdbs_));
+			adjacent_lists_[i] = utility::pointer::make_shared< AdjacentList >(i, n_pdbs_);
 		} else {
-			adjacent_lists_[i] = AdjacentListOP(new AdjacentList());
+			adjacent_lists_[i] = utility::pointer::make_shared< AdjacentList >();
 			adjacent_lists_[i]->which_ = i;
 		}
 	}
@@ -705,10 +705,10 @@ Clustering::readDecoys( std::vector<std::string> const & decoynames ) {
 	allocateSpaceForRMSD(mLen);
 
 	std::vector< StruOP > decoys( decoynames.size(), nullptr );
-	decoys[0] = StruOP( new Stru( firstPDB, mLen, pref_use_sig ) );//std::shared_ptr<Stru>( new Stru(firstPDB, mLen) );
+	decoys[0] = utility::pointer::make_shared< Stru >( firstPDB, mLen, pref_use_sig );//std::shared_ptr<Stru>( new Stru(firstPDB, mLen) );
 
 	for ( unsigned int i=1; i < decoynames.size(); i++ ) {
-		decoys[i] = StruOP( new Stru( SimPDBOP( new SimPDB( decoynames[i], mLen ) ), mLen, pref_use_sig ) );
+		decoys[i] = utility::pointer::make_shared< Stru >( utility::pointer::make_shared< SimPDB >( decoynames[i], mLen ), mLen, pref_use_sig );
 	}
 	return decoys;
 }
@@ -754,10 +754,10 @@ Clustering::readDecoys(
 		if ( mLen == 0 ) {
 			SimPDBOP aPDB( new SimPDB(dName));
 			mLen = aPDB->num_residue_;
-			s = StruOP( new Stru(aPDB, mLen, pref_use_sig));
+			s = utility::pointer::make_shared< Stru >(aPDB, mLen, pref_use_sig);
 			allocateSpaceForRMSD(mLen);
 		} else {
-			s = StruOP( new Stru( SimPDBOP( new SimPDB(dName, mLen)), mLen, pref_use_sig) );
+			s = utility::pointer::make_shared< Stru >( utility::pointer::make_shared< SimPDB >(dName, mLen), mLen, pref_use_sig);
 		}
 		bool isOutlier = false;
 		if ( FILTER_MODE ) { // then we shall decide whether to include s
@@ -780,7 +780,7 @@ Clustering::readDecoys(
 		}
 		if ( !isOutlier ) {
 			newNames.push_back(dName);
-			newDecoys.push_back( StruOP( new Stru( *s ) ) );
+			newDecoys.push_back( utility::pointer::make_shared< Stru >( *s ) );
 		}
 	}
 	std::cout << "Read " << newNames.size() << " decoys.";
@@ -1574,7 +1574,7 @@ Clustering::get_neighbor_list(std::vector< StruOP > const & decoys,
 	}
 	for ( int i=0; i < M; i++ ) { // for each candidate...
 		dName = nborsCandidates[i];
-		StruOP a( new Stru( SimPDBOP( new SimPDB( dName, mLen ) ), mLen, pref_use_sig ) );
+		StruOP a( new Stru( utility::pointer::make_shared< SimPDB >( dName, mLen ), mLen, pref_use_sig ) );
 		for ( int j=0; j < N; j++ ) {// ...insert it into each candidate list.
 			std::vector< double > & nl = nbors[j];
 			Stru const & b = *decoys[j];

@@ -83,7 +83,7 @@ RosettaScriptsJobQueen::RosettaScriptsJobQueen()
 	RosettaScriptsParser::list_options_read( opts );
 
 	add_options( opts );
-	parser_ = RosettaScriptsParserOP( new RosettaScriptsParser() );
+	parser_ = utility::pointer::make_shared< RosettaScriptsParser >();
 	resource_manager_ = utility::pointer::make_shared< basic::resource_manager::ResourceManager >();
 	if ( basic::options::option[ basic::options::OptionKeys::jd3::resource_definition_files ].user() ) {
 

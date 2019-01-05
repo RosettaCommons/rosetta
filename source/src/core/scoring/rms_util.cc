@@ -603,7 +603,7 @@ CA_or_equiv_rmsd(
 	int natoms;
 	FArray2D< core::Real > p1a;
 	FArray2D< core::Real > p2a;
-	PredicateOP pred( new ResRangePredicate( start, calc_end, PredicateCOP( new IsMainAtomPredicate ) ) );
+	PredicateOP pred( new ResRangePredicate( start, calc_end, utility::pointer::make_shared< IsMainAtomPredicate >() ) );
 	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, pred.get() );
 
 	if ( end != 0 && (int) (calc_end - start + 1) > natoms ) { tr.Warning << "In CA_or_equiv_rmsd, residue range " << start << " to " << end
@@ -637,7 +637,7 @@ CA_rmsd(
 	int natoms;
 	FArray2D< core::Real > p1a;
 	FArray2D< core::Real > p2a;
-	PredicateOP pred( new ResRangePredicate( start, calc_end, PredicateCOP( new IsProteinCAPredicate ) ) );
+	PredicateOP pred( new ResRangePredicate( start, calc_end, utility::pointer::make_shared< IsProteinCAPredicate >() ) );
 	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, pred.get() );
 
 	if ( end != 0 && (int) (calc_end - start + 1) > natoms ) { tr.Warning << "In CA_rmsd, residue range " << start << " to " << end
@@ -740,7 +740,7 @@ CA_rmsd(
 	int natoms;
 	FArray2D< core::Real > p1a;//( 3, pose1.size() );
 	FArray2D< core::Real > p2a;//( 3, pose2.size() );
-	PredicateOP pred( new ResRangePredicate( start, end, PredicateCOP( new ExcludedResPredicate( exclude, PredicateCOP( new IsProteinCAPredicate ) ) ) ) );
+	PredicateOP pred( new ResRangePredicate( start, end, utility::pointer::make_shared< ExcludedResPredicate >( exclude, utility::pointer::make_shared< IsProteinCAPredicate >() ) ) );
 	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, pred.get() );
 
 	// Calc rms
@@ -790,7 +790,7 @@ CA_or_equiv_rmsd(
 	int natoms;
 	FArray2D< core::Real > p1a;//( 3, pose1.size() );
 	FArray2D< core::Real > p2a;//( 3, pose2.size() );
-	PredicateOP pred( new SelectedResPredicate( residue_selection, PredicateCOP( new IsMainAtomPredicate ) ) );
+	PredicateOP pred( new SelectedResPredicate( residue_selection, utility::pointer::make_shared< IsMainAtomPredicate >() ) );
 	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, pred.get() );
 
 	if ( (int) residue_selection.size() > natoms ) { tr.Warning << "In CA_rmsd " << residue_selection.size()
@@ -821,7 +821,7 @@ CA_rmsd(
 	int natoms;
 	FArray2D< core::Real > p1a;//( 3, pose1.size() );
 	FArray2D< core::Real > p2a;//( 3, pose2.size() );
-	PredicateOP pred( new SelectedResPredicate( residue_selection, PredicateCOP( new IsProteinCAPredicate ) ) );
+	PredicateOP pred( new SelectedResPredicate( residue_selection, utility::pointer::make_shared< IsProteinCAPredicate >() ) );
 	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, pred.get() );
 
 	if ( (int) residue_selection.size() > natoms ) { tr.Warning << "In CA_rmsd " << residue_selection.size()
@@ -924,7 +924,7 @@ CA_maxsub(
 	int natoms;
 	FArray2D< core::Real > p1a;//( 3, pose1.size() );
 	FArray2D< core::Real > p2a;//( 3, pose2.size() );
-	PredicateOP pred( new SelectedResPredicate( residue_selection, PredicateCOP( new IsProteinCAPredicate ) ) );
+	PredicateOP pred( new SelectedResPredicate( residue_selection, utility::pointer::make_shared< IsProteinCAPredicate >() ) );
 	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, pred.get() );
 
 	if ( (int) residue_selection.size() > natoms ) { tr.Warning << "In CA_maxsub " << residue_selection.size()
@@ -983,7 +983,7 @@ CA_gdtmm(
 	int natoms;
 	FArray2D< core::Real > p1a( 3, pose1.size() );
 	FArray2D< core::Real > p2a( 3, pose2.size() );
-	PredicateOP pred( new SelectedResPredicate( residue_selection, PredicateCOP( new IsProteinCAPredicate ) ) );
+	PredicateOP pred( new SelectedResPredicate( residue_selection, utility::pointer::make_shared< IsProteinCAPredicate >() ) );
 	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, pred.get() );
 
 	if ( (int) residue_selection.size() > natoms ) { tr.Warning << "In CA_gdtmm " << residue_selection.size()
@@ -1103,7 +1103,7 @@ CA_gdttm(
 	int natoms;
 	FArray2D< core::Real > p1a( 3, pose1.size() );
 	FArray2D< core::Real > p2a( 3, pose2.size() );
-	PredicateOP pred( new SelectedResPredicate( residue_selection, PredicateCOP( new IsProteinCAPredicate ) ) );
+	PredicateOP pred( new SelectedResPredicate( residue_selection, utility::pointer::make_shared< IsProteinCAPredicate >() ) );
 	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, pred.get() );
 
 	if ( (int) residue_selection.size() > natoms ) { tr.Warning << "In CA_gdtmm " << residue_selection.size()

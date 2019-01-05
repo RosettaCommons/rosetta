@@ -58,7 +58,7 @@ public:
 	~CartesianMD() override;
 
 	// From Mover
-	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new CartesianMD() ); };
+	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< CartesianMD >(); };
 	protocols::moves::MoverOP clone() const override;
 	void apply( core::pose::Pose & pose ) override;
 

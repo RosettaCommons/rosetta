@@ -38,7 +38,7 @@ ElectronDensityOptionsCreator::~ElectronDensityOptionsCreator() = default;
 
 ResourceOptionsOP
 ElectronDensityOptionsCreator::create_options() const {
-	return ResourceOptionsOP( new ElectronDensityOptions );
+	return utility::pointer::make_shared< ElectronDensityOptions >();
 }
 
 string

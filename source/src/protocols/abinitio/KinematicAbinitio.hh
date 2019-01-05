@@ -80,7 +80,7 @@ public:
 	~KinematicAbinitio() override;
 
 	moves::MoverOP clone() const override {
-		return moves::MoverOP( new KinematicAbinitio(*this) );
+		return utility::pointer::make_shared< KinematicAbinitio >(*this);
 	}
 
 	static void register_options();
@@ -195,7 +195,7 @@ public:
 	);
 
 	moves::MoverOP clone() const override {
-		return moves::MoverOP( new JumpingFoldConstraintsWrapper(*this) );
+		return utility::pointer::make_shared< JumpingFoldConstraintsWrapper >(*this);
 	}
 
 	//static void register_options();

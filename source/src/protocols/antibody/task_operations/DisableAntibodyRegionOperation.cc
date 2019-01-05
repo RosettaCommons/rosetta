@@ -76,7 +76,7 @@ DisableAntibodyRegionOperation::~DisableAntibodyRegionOperation() = default;
 
 TaskOperationOP
 DisableAntibodyRegionOperation::clone() const {
-	return TaskOperationOP( new DisableAntibodyRegionOperation( *this));
+	return utility::pointer::make_shared< DisableAntibodyRegionOperation >( *this);
 }
 
 DisableAntibodyRegionOperation::DisableAntibodyRegionOperation(DisableAntibodyRegionOperation const & src):
@@ -86,7 +86,7 @@ DisableAntibodyRegionOperation::DisableAntibodyRegionOperation(DisableAntibodyRe
 	numbering_scheme_(src.numbering_scheme_),
 	cdr_definition_(src.cdr_definition_)
 {
-	if ( src.ab_info_ ) ab_info_ = AntibodyInfoOP( new AntibodyInfo( *src.ab_info_ ));
+	if ( src.ab_info_ ) ab_info_ = utility::pointer::make_shared< AntibodyInfo >( *src.ab_info_ );
 }
 
 void
@@ -142,7 +142,7 @@ DisableAntibodyRegionOperation::apply(const core::pose::Pose& pose, core::pack::
 	//This is due to const apply and no pose in parse_my_tag.
 	AntibodyInfoOP local_ab_info;
 	if ( ! ab_info_ ) {
-		local_ab_info = AntibodyInfoOP(new AntibodyInfo(pose, numbering_scheme_, cdr_definition_));
+		local_ab_info = utility::pointer::make_shared< AntibodyInfo >(pose, numbering_scheme_, cdr_definition_);
 	} else {
 		local_ab_info = ab_info_->clone();
 	}
@@ -186,7 +186,7 @@ void DisableAntibodyRegionOperation::provide_xml_schema( utility::tag::XMLSchema
 core::pack::task::operation::TaskOperationOP
 DisableAntibodyRegionOperationCreator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new DisableAntibodyRegionOperation );
+	return utility::pointer::make_shared< DisableAntibodyRegionOperation >();
 }
 
 void DisableAntibodyRegionOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -382,7 +382,7 @@ Segment get_segment_from_indel( Segment const& indel ) {
 
 	debug_assert( indel.aas.size() != 0 );
 
-	rval.pose = core::pose::PoseOP( new core::pose::Pose );
+	rval.pose = utility::pointer::make_shared< core::pose::Pose >();
 
 	make_pose_from_sequence( *rval.pose, get_seq_from_aas(indel.aas) );
 

@@ -53,7 +53,7 @@ static basic::Tracer rotates_tracer( "protocols.ligand_docking.ligand_options.ro
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP RotatesCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new Rotates );
+// XRW TEMP  return utility::pointer::make_shared< Rotates >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -74,11 +74,11 @@ Rotates::Rotates(Rotates const & that):
 Rotates::~Rotates() = default;
 
 protocols::moves::MoverOP Rotates::clone() const {
-	return protocols::moves::MoverOP( new Rotates( *this ) );
+	return utility::pointer::make_shared< Rotates >( *this );
 }
 
 protocols::moves::MoverOP Rotates::fresh_instance() const {
-	return protocols::moves::MoverOP( new Rotates );
+	return utility::pointer::make_shared< Rotates >();
 }
 
 // XRW TEMP std::string Rotates::get_name() const{
@@ -126,7 +126,7 @@ Rotates::parse_my_tag(
 			rotate_info.distribution= distribution;
 			rotate_info.degrees = degrees;
 			rotate_info.cycles = cycles;
-			rotates_.push_back( protocols::ligand_docking::RotateOP( new Rotate(rotate_info) ) );
+			rotates_.push_back( utility::pointer::make_shared< Rotate >(rotate_info) );
 		}
 	}
 }
@@ -171,7 +171,7 @@ std::string RotatesCreator::keyname() const {
 
 protocols::moves::MoverOP
 RotatesCreator::create_mover() const {
-	return protocols::moves::MoverOP( new Rotates );
+	return utility::pointer::make_shared< Rotates >();
 }
 
 void RotatesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

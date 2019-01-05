@@ -45,7 +45,7 @@ public:
 
 	/// @brief Clone this object
 	virtual protocols::moves::MoverOP clone() const {
-		return protocols::moves::MoverOP( new RNA_Minimizer(*this) );
+		return utility::pointer::make_shared< RNA_Minimizer >(*this);
 	}
 
 	/// @brief Apply the loop-rebuild protocol to the input pose

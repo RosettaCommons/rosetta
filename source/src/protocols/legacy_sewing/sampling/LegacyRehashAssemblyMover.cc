@@ -93,11 +93,11 @@ LegacyRehashAssemblyMoverCreator::mover_name()
 
 protocols::moves::MoverOP
 LegacyRehashAssemblyMover::clone() const {
-	return( protocols::moves::MoverOP( new LegacyRehashAssemblyMover( *this ) ) );
+	return( utility::pointer::make_shared< LegacyRehashAssemblyMover >( *this ) );
 }
 protocols::moves::MoverOP
 LegacyRehashAssemblyMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new LegacyRehashAssemblyMover );
+	return utility::pointer::make_shared< LegacyRehashAssemblyMover >();
 }
 
 std::string

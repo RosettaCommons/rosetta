@@ -129,7 +129,7 @@ PDBDiagnosticMover::apply( core::pose::Pose & pose ){
 			//create a task factory: this will create a new PackerTask for each input pose
 			using core::pack::task::operation::TaskOperationCOP;
 			core::pack::task::TaskFactoryOP main_task_factory( new core::pack::task::TaskFactory );
-			main_task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
+			main_task_factory->push_back( utility::pointer::make_shared< core::pack::task::operation::InitializeFromCommandline >() );
 			using protocols::minimization_packing::PackRotamersMoverOP;
 			using protocols::minimization_packing::PackRotamersMover;
 			PackRotamersMoverOP pack_rotamers(new protocols::minimization_packing::PackRotamersMover());
@@ -193,14 +193,14 @@ void PDBDiagnosticMover::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 protocols::moves::MoverOP
 PDBDiagnosticMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new PDBDiagnosticMover );
+	return utility::pointer::make_shared< PDBDiagnosticMover >();
 }
 
 /// @brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
 PDBDiagnosticMover::clone() const
 {
-	return protocols::moves::MoverOP( new PDBDiagnosticMover( *this ) );
+	return utility::pointer::make_shared< PDBDiagnosticMover >( *this );
 }
 
 std::string PDBDiagnosticMover::get_name() const {
@@ -218,7 +218,7 @@ std::string PDBDiagnosticMover::mover_name() {
 protocols::moves::MoverOP
 PDBDiagnosticMoverCreator::create_mover() const
 {
-	return protocols::moves::MoverOP( new PDBDiagnosticMover );
+	return utility::pointer::make_shared< PDBDiagnosticMover >();
 }
 
 std::string

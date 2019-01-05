@@ -64,7 +64,7 @@ EnergiesByTaskCalculator::EnergiesByTaskCalculator(
 
 core::pose::metrics::PoseMetricCalculatorOP
 EnergiesByTaskCalculator::clone() const {
-	return core::pose::metrics::PoseMetricCalculatorOP( new EnergiesByTaskCalculator(*this) );
+	return utility::pointer::make_shared< EnergiesByTaskCalculator >(*this);
 }
 
 void EnergiesByTaskCalculator::lookup( std::string const & key, basic::MetricValueBase * valptr ) const {

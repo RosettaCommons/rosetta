@@ -54,7 +54,7 @@ public:
 	ResidueAuction auction_results() const;
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override {
-		return protocols::moves::MoverOP( new PlacementAuctionMover );
+		return utility::pointer::make_shared< PlacementAuctionMover >();
 	}
 	void insert( ResidueAuctionItem const & item );
 	core::Size size() const;

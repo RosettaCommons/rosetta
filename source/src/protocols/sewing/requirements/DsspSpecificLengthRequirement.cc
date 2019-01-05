@@ -45,7 +45,7 @@ DsspSpecificLengthRequirement::DsspSpecificLengthRequirement( DsspSpecificLength
 
 DsspSpecificLengthRequirementOP
 DsspSpecificLengthRequirement::clone() const {
-	return DsspSpecificLengthRequirementOP( new DsspSpecificLengthRequirement( *this ) );
+	return utility::pointer::make_shared< DsspSpecificLengthRequirement >( *this );
 }
 std::pair<bool,bool>
 DsspSpecificLengthRequirement::test(data_storage::SmartAssemblyOP assembly){
@@ -157,7 +157,7 @@ DsspSpecificLengthRequirementCreator::provide_xml_schema( utility::tag::XMLSchem
 
 AssemblyRequirementOP
 DsspSpecificLengthRequirementCreator::create_requirement() const{
-	return AssemblyRequirementOP( new DsspSpecificLengthRequirement() );
+	return utility::pointer::make_shared< DsspSpecificLengthRequirement >();
 }
 
 std::string

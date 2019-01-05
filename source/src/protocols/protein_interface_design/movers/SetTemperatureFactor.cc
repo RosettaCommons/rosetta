@@ -53,7 +53,7 @@ static basic::Tracer TR( "protocols.protein_interface_design.movers.SetTemperatu
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP SetTemperatureFactorCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new SetTemperatureFactor );
+// XRW TEMP  return utility::pointer::make_shared< SetTemperatureFactor >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -105,7 +105,7 @@ SetTemperatureFactor::parse_my_tag( TagCOP const tag, basic::datacache::DataMap 
 
 protocols::moves::MoverOP
 SetTemperatureFactor::clone() const {
-	return( protocols::moves::MoverOP( new SetTemperatureFactor( *this ) ));
+	return( utility::pointer::make_shared< SetTemperatureFactor >( *this ));
 }
 
 void
@@ -152,7 +152,7 @@ std::string SetTemperatureFactorCreator::keyname() const {
 
 protocols::moves::MoverOP
 SetTemperatureFactorCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SetTemperatureFactor );
+	return utility::pointer::make_shared< SetTemperatureFactor >();
 }
 
 void SetTemperatureFactorCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

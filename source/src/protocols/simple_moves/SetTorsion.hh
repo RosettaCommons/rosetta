@@ -59,10 +59,10 @@ public:
 
 	void apply( core::pose::Pose & pose ) override;
 	protocols::moves::MoverOP clone() const override {
-		return (protocols::moves::MoverOP( new protocols::simple_moves::SetTorsion( *this ) ) );
+		return (utility::pointer::make_shared< protocols::simple_moves::SetTorsion >( *this ) );
 	}
 	protocols::moves::MoverOP fresh_instance() const override {
-		return protocols::moves::MoverOP( new SetTorsion );
+		return utility::pointer::make_shared< SetTorsion >();
 	}
 
 	core::Size n_torsion_sets() const {

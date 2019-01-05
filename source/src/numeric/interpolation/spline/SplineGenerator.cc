@@ -90,7 +90,7 @@ SplineGenerator::get_interpolator()
 			}
 			x.push_back( ubx_ );
 			y.push_back( uby_ );
-			interpolator_ = InterpolatorOP( new SimpleInterpolator(x,y,lbdy_,ubdy_) );
+			interpolator_ = utility::pointer::make_shared< SimpleInterpolator >(x,y,lbdy_,ubdy_);
 		} else {
 			// std::cerr << "compound!" << std::endl;
 			CompoundInterpolatorOP interp( new CompoundInterpolator() );
@@ -104,7 +104,7 @@ SplineGenerator::get_interpolator()
 					x.push_back(p.x);
 					y.push_back(p.y);
 					// std::cerr << "add range " << lbx << " " << p.x << std::endl;
-					interp->add_range( InterpolatorOP( new SimpleInterpolator(x,y,lbdy,p.dy) ), lbx, p.x );
+					interp->add_range( utility::pointer::make_shared< SimpleInterpolator >(x,y,lbdy,p.dy), lbx, p.x );
 					lbx  = p.x;
 					//lby  = p.y;  // set, but never used ~Labonte
 					lbdy = p.dy;

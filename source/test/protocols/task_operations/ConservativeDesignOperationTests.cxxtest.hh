@@ -78,10 +78,10 @@ public:
 	void setUp(){
 		core_init();
 		core::import_pose::pose_from_file(pose, "protocols/antibody/aho_with_antigen.pdb", core::import_pose::PDB_file); //AHO renumbered pose
-		ab_info = AntibodyInfoOP( new AntibodyInfo(pose, AHO_Scheme, North) );
-		conservative_design = ConservativeDesignOperationOP( new ConservativeDesignOperation());
+		ab_info = utility::pointer::make_shared< AntibodyInfo >(pose, AHO_Scheme, North);
+		conservative_design = utility::pointer::make_shared< ConservativeDesignOperation >();
 		conservative_design->set_data_source("chothia_1976");
-		conservative_design_blosum62 = ConservativeDesignOperationOP( new ConservativeDesignOperation("BLOSUM62"));
+		conservative_design_blosum62 = utility::pointer::make_shared< ConservativeDesignOperation >("BLOSUM62");
 
 		//Setup positions.
 		for ( core::Size i = ab_info->get_CDR_start(l1, pose); i <= ab_info->get_CDR_end(l1, pose); ++i ) {

@@ -157,7 +157,7 @@ std::map<numeric::Size, FragmentStoreOP> FragmentStoreManager::load_grouped_frag
 		std::map<Size,FragmentStoreOP> typed_frags;
 		FragmentSpecification fragment_spec = fullStore->fragment_specification;
 		for ( type_ct_iter=type_ct.begin(); type_ct_iter != type_ct.end(); ++type_ct_iter ) {
-			FragmentStoreOP fragment_store = FragmentStoreOP(new FragmentStore(fragment_spec, type_ct_iter->second ));
+			FragmentStoreOP fragment_store = utility::pointer::make_shared< FragmentStore >(fragment_spec, type_ct_iter->second );
 			fragment_store->hash_id = type_ct_iter->first;
 			typed_frags.insert(std::pair<Size,FragmentStoreOP> (type_ct_iter->first, fragment_store));
 		}

@@ -88,13 +88,13 @@ public:
 		num_trp->res_types( res_to_count );
 
 		// for test purposes, we will mutate residues 25 and 52 to TRP
-		mut_to_trp = protocols::simple_moves::MutateResidueOP( new protocols::simple_moves::MutateResidue( 25, "TRP" ) );
-		mut_to_trp2 = protocols::simple_moves::MutateResidueOP( new protocols::simple_moves::MutateResidue( 52, "TRP" ) );
+		mut_to_trp = utility::pointer::make_shared< protocols::simple_moves::MutateResidue >( 25, "TRP" );
+		mut_to_trp2 = utility::pointer::make_shared< protocols::simple_moves::MutateResidue >( 52, "TRP" );
 		// mutate residues 25 and 52 to ALA
-		mut_to_ala = protocols::simple_moves::MutateResidueOP( new protocols::simple_moves::MutateResidue( 25, "ALA" ) );
-		mut_to_ala2 = protocols::simple_moves::MutateResidueOP( new protocols::simple_moves::MutateResidue( 52, "ALA" ) );
+		mut_to_ala = utility::pointer::make_shared< protocols::simple_moves::MutateResidue >( 25, "ALA" );
+		mut_to_ala2 = utility::pointer::make_shared< protocols::simple_moves::MutateResidue >( 52, "ALA" );
 		// mutate residue 25 to PHE
-		mut_to_phe = protocols::simple_moves::MutateResidueOP( new protocols::simple_moves::MutateResidue( 25, "PHE" ) );
+		mut_to_phe = utility::pointer::make_shared< protocols::simple_moves::MutateResidue >( 25, "PHE" );
 
 		// get the total score
 		score_filter = utility::pointer::shared_ptr< protocols::score_filters::ScoreTypeFilter >(

@@ -133,7 +133,7 @@ FunGroupTK::FunGroupTK(
 	vector1<Size> & pos
 ) : pose_(alapose(p_in)), pos_(allifnone(pos,pose_->size()))
 {
-	ifc_ = protocols::scoring::ImplicitFastClashCheckCOP( protocols::scoring::ImplicitFastClashCheckOP( new ImplicitFastClashCheck(*pose_,2.2) ) );
+	ifc_ = utility::pointer::make_shared< ImplicitFastClashCheck >(*pose_,2.2);
 	frs_ = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
 	core::chemical::ResidueTypeSetCOP frs( frs_ );
 	vector1<string> res_types;

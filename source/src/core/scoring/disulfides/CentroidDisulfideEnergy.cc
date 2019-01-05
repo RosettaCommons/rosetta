@@ -47,7 +47,7 @@ methods::EnergyMethodOP
 CentroidDisulfideEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new CentroidDisulfideEnergy( ScoringManager::get_instance()->get_CentroidDisulfidePotential() ) );
+	return utility::pointer::make_shared< CentroidDisulfideEnergy >( ScoringManager::get_instance()->get_CentroidDisulfidePotential() );
 }
 
 ScoreTypes
@@ -67,7 +67,7 @@ static basic::Tracer TR( "core.scoring.disulfides.CentroidDisulfideEnergy" );
 CentroidDisulfideEnergy::CentroidDisulfideEnergy(
 	CentroidDisulfidePotential const & potential
 ) :
-	parent( methods::EnergyMethodCreatorOP( methods::EnergyMethodCreatorOP( new CentroidDisulfideEnergyCreator ) ) ),
+	parent( utility::pointer::make_shared< CentroidDisulfideEnergyCreator >() ),
 	potential_( potential )
 {}
 
@@ -77,7 +77,7 @@ CentroidDisulfideEnergy::~CentroidDisulfideEnergy() = default;
 
 methods::EnergyMethodOP CentroidDisulfideEnergy::clone() const
 {
-	return methods::EnergyMethodOP( new CentroidDisulfideEnergy( potential_ ) );
+	return utility::pointer::make_shared< CentroidDisulfideEnergy >( potential_ );
 }
 
 

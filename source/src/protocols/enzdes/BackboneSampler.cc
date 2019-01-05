@@ -71,7 +71,7 @@ static basic::Tracer TR( "protocols.enzdes.BackboneSampler" );
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP BackboneSamplerCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new BackboneSampler() );
+// XRW TEMP  return utility::pointer::make_shared< BackboneSampler >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -107,7 +107,7 @@ BackboneSampler::~BackboneSampler() = default;
 
 protocols::moves::MoverOP
 BackboneSampler::clone() const {
-	return( protocols::moves::MoverOP( new BackboneSampler( *this ) ) );
+	return( utility::pointer::make_shared< BackboneSampler >( *this ) );
 }
 
 void
@@ -236,7 +236,7 @@ std::string BackboneSamplerCreator::keyname() const {
 
 protocols::moves::MoverOP
 BackboneSamplerCreator::create_mover() const {
-	return protocols::moves::MoverOP( new BackboneSampler );
+	return utility::pointer::make_shared< BackboneSampler >();
 }
 
 void BackboneSamplerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

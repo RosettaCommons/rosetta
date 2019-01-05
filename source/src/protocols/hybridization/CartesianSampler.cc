@@ -159,7 +159,7 @@ static basic::Tracer TR( "protocols.hybridization.CartesianSampler" );
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP CartesianSamplerCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new CartesianSampler );
+// XRW TEMP  return utility::pointer::make_shared< CartesianSampler >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -231,8 +231,8 @@ CartesianSampler::update_fragment_library_pointers() {
 	}
 }
 
-protocols::moves::MoverOP CartesianSampler::clone() const { return protocols::moves::MoverOP( new CartesianSampler( *this ) ); }
-protocols::moves::MoverOP CartesianSampler::fresh_instance() const { return protocols::moves::MoverOP( new CartesianSampler ); }
+protocols::moves::MoverOP CartesianSampler::clone() const { return utility::pointer::make_shared< CartesianSampler >( *this ); }
+protocols::moves::MoverOP CartesianSampler::fresh_instance() const { return utility::pointer::make_shared< CartesianSampler >(); }
 
 // get frag->pose transform, return RMS
 // default overlap_ = 2
@@ -329,12 +329,12 @@ CartesianSampler::apply_fragcsts(
 			for ( core::uint i = 1; i <= 3; ++i ) {
 				core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
 				working_frag.add_constraint(
-					scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new CoordinateConstraint(
+					scoring::constraints::ConstraintCOP( utility::pointer::make_shared< CoordinateConstraint >(
 					core::id::AtomID(i,j+1),
 					core::id::AtomID(2,working_frag.size()),
 					pose.residue(startpos+j).atom(i).xyz(),
 					fx
-					) ) )
+					) )
 				);
 			}
 		}
@@ -344,12 +344,12 @@ CartesianSampler::apply_fragcsts(
 			for ( int i=1; i<=3; ++i ) {
 				core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
 				working_frag.add_constraint(
-					scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new CoordinateConstraint(
+					scoring::constraints::ConstraintCOP( utility::pointer::make_shared< CoordinateConstraint >(
 					core::id::AtomID(i,j+1),
 					core::id::AtomID(2,working_frag.size()),
 					pose.residue(startpos+j).atom(i).xyz(),
 					fx
-					) ) )
+					) )
 				);
 			}
 		}
@@ -435,7 +435,7 @@ CartesianSampler::apply_frame(
 
 	if ( selection_bias_ == "density" ) {
 		core::pack::task::TaskFactoryOP main_task_factory( new core::pack::task::TaskFactory );
-		main_task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ) );
+		main_task_factory->push_back( utility::pointer::make_shared< core::pack::task::operation::RestrictToRepacking >() );
 
 		protocols::minimization_packing::PackRotamersMoverOP pack_mover( new protocols::minimization_packing::PackRotamersMover );
 		pack_mover->task_factory( main_task_factory );
@@ -555,7 +555,7 @@ CartesianSampler::apply_frame(
 		if ( fullatom_ ) {
 			// set up packer
 			core::pack::task::TaskFactoryOP main_task_factory( new core::pack::task::TaskFactory );
-			main_task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ) );
+			main_task_factory->push_back( utility::pointer::make_shared< core::pack::task::operation::RestrictToRepacking >() );
 			protocols::minimization_packing::PackRotamersMoverOP pack_mover( new protocols::minimization_packing::PackRotamersMover );
 			pack_mover->task_factory( main_task_factory );
 			pack_mover->score_function( fa_scorefxn_ ); // Note this doesn't contain the coordinate_constraint check.
@@ -662,9 +662,9 @@ CartesianSampler::apply_constraints(
 				if ( symm_info && !symm_info->bb_is_independent( tgt_resid_j ) ) continue;
 				if ( symm_info && !symm_info->bb_is_independent( tgt_resid_k ) ) continue;
 
-				FuncOP fx( new ScalarWeightedFunc( ref_cst_weight_, FuncOP( new USOGFunc( dist, COORDDEV ) ) ) );
+				FuncOP fx( new ScalarWeightedFunc( ref_cst_weight_, utility::pointer::make_shared< USOGFunc >( dist, COORDDEV ) ) );
 				pose.add_constraint(
-					scoring::constraints::ConstraintCOP( new AtomPairConstraint( core::id::AtomID(2,tgt_resid_j), core::id::AtomID(2,tgt_resid_k), fx ) )
+					utility::pointer::make_shared< AtomPairConstraint >( core::id::AtomID(2,tgt_resid_j), core::id::AtomID(2,tgt_resid_k), fx )
 				);
 			}
 		}
@@ -825,7 +825,7 @@ apply(
 	bool fullatom_input = pose.is_fullatom();
 	protocols::moves::MoverOP restore_sc;
 	if ( fullatom_input && !fullatom_ ) {
-		restore_sc = protocols::moves::MoverOP( new protocols::simple_moves::ReturnSidechainMover( pose ) );
+		restore_sc = utility::pointer::make_shared< protocols::simple_moves::ReturnSidechainMover >( pose );
 		protocols::moves::MoverOP tocen( new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID ) );
 		tocen->apply( pose );
 	} else if ( !fullatom_input && fullatom_ ) {
@@ -1236,7 +1236,7 @@ std::string CartesianSamplerCreator::keyname() const {
 
 protocols::moves::MoverOP
 CartesianSamplerCreator::create_mover() const {
-	return protocols::moves::MoverOP( new CartesianSampler );
+	return utility::pointer::make_shared< CartesianSampler >();
 }
 
 void CartesianSamplerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

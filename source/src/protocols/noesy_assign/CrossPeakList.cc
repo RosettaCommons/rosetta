@@ -188,7 +188,7 @@ void CrossPeakList::find_assignments() {
 }
 
 void CrossPeakList::update_assignment_list() {
-	assignments_ = PeakAssignmentResidueMapOP( new PeakAssignmentResidueMap() );
+	assignments_ = utility::pointer::make_shared< PeakAssignmentResidueMap >();
 	assignments_->add( *this );
 
 	PeakAssignmentParameters const& params( *PeakAssignmentParameters::get_instance() );

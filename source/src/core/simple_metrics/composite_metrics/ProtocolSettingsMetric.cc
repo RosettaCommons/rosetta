@@ -81,7 +81,7 @@ ProtocolSettingsMetric::ProtocolSettingsMetric( ProtocolSettingsMetric const & )
 
 core::simple_metrics::SimpleMetricOP
 ProtocolSettingsMetric::clone() const {
-	return core::simple_metrics::SimpleMetricOP(new ProtocolSettingsMetric( *this ) );
+	return utility::pointer::make_shared< ProtocolSettingsMetric >( *this );
 
 }
 
@@ -275,7 +275,7 @@ ProtocolSettingsMetricCreator::keyname() const {
 
 core::simple_metrics::SimpleMetricOP
 ProtocolSettingsMetricCreator::create_simple_metric() const {
-	return core::simple_metrics::SimpleMetricOP( new ProtocolSettingsMetric );
+	return utility::pointer::make_shared< ProtocolSettingsMetric >();
 
 }
 

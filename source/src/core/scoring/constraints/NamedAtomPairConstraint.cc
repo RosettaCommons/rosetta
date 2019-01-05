@@ -97,7 +97,7 @@ ConstraintOP NamedAtomPairConstraint::remapped_clone( pose::Pose const&, pose::P
 	id::AtomID id1( core::pose::named_atom_id_to_atom_id( named_atom1, dest ) );
 	id::AtomID id2( core::pose::named_atom_id_to_atom_id( named_atom2, dest ) );
 	if ( id1.valid() && id2.valid() ) {
-		return ConstraintOP( new NamedAtomPairConstraint( named_atom1, named_atom2, get_func().clone(), score_type() ) );
+		return utility::pointer::make_shared< NamedAtomPairConstraint >( named_atom1, named_atom2, get_func().clone(), score_type() );
 	} else {
 		return nullptr;
 	}
@@ -252,7 +252,7 @@ Obsolet_NamedAtomPairConstraint::mapto(
 	id::AtomID id1( core::pose::named_atom_id_to_atom_id( NamedAtomID( atom1_.atom(), map[ atom1_.rsd() ] ), pose ));
 	id::AtomID id2( core::pose::named_atom_id_to_atom_id( NamedAtomID( atom2_.atom(), map[ atom2_.rsd() ] ), pose ));
 	if ( id1.valid() && id2.valid() ) {
-		return AtomPairConstraintOP( new AtomPairConstraint( id1, id2, cst_->get_func().clone(), cst_->score_type() ) );
+		return utility::pointer::make_shared< AtomPairConstraint >( id1, id2, cst_->get_func().clone(), cst_->score_type() );
 	}
 	return nullptr; // if translation not possible
 }
@@ -265,7 +265,7 @@ Obsolet_NamedAtomPairConstraint::mapto( id::SequenceMapping const& map ) const
 	id1.rsd() = map[ id1.rsd() ];
 	id2.rsd() = map[ id2.rsd() ];
 	if ( id1.valid() && id2.valid() ) {
-		return Obsolet_NamedAtomPairConstraintOP( new Obsolet_NamedAtomPairConstraint( id1, id2, cst_ ) );
+		return utility::pointer::make_shared< Obsolet_NamedAtomPairConstraint >( id1, id2, cst_ );
 	}
 	return nullptr;
 }
@@ -275,7 +275,7 @@ Obsolet_NamedAtomPairConstraint::mapto( core::pose::Pose const& pose ) const {
 	id::AtomID id1( core::pose::named_atom_id_to_atom_id(atom1_, pose ));
 	id::AtomID id2( core::pose::named_atom_id_to_atom_id(atom2_, pose ));
 	if ( id1.valid() && id2.valid() ) {
-		return AtomPairConstraintOP( new AtomPairConstraint( id1, id2, cst_->get_func().clone(), cst_->score_type() ) );
+		return utility::pointer::make_shared< AtomPairConstraint >( id1, id2, cst_->get_func().clone(), cst_->score_type() );
 	}
 	return nullptr;
 }

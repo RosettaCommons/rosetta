@@ -120,8 +120,8 @@ EnzdesCacheableObserver::EnzdesCacheableObserver( EnzdesCacheableObserver const 
 	enz_loops_file_(other.enz_loops_file_ ),
 	lig_rigid_body_confs_( other.lig_rigid_body_confs_ )
 {
-	if ( other.cst_cache_ ) cst_cache_ = toolbox::match_enzdes_util::EnzdesCstCacheOP( new toolbox::match_enzdes_util::EnzdesCstCache( *(other.cst_cache_) ) );
-	if ( other.seq_recovery_cache_ ) seq_recovery_cache_ = EnzdesSeqRecoveryCacheOP( new EnzdesSeqRecoveryCache( *(other.seq_recovery_cache_) ) );
+	if ( other.cst_cache_ ) cst_cache_ = utility::pointer::make_shared< toolbox::match_enzdes_util::EnzdesCstCache >( *(other.cst_cache_) );
+	if ( other.seq_recovery_cache_ ) seq_recovery_cache_ = utility::pointer::make_shared< EnzdesSeqRecoveryCache >( *(other.seq_recovery_cache_) );
 }
 
 EnzdesCacheableObserver::~EnzdesCacheableObserver()= default;
@@ -129,13 +129,13 @@ EnzdesCacheableObserver::~EnzdesCacheableObserver()= default;
 core::pose::datacache::CacheableObserverOP
 EnzdesCacheableObserver::clone()
 {
-	return core::pose::datacache::CacheableObserverOP( new EnzdesCacheableObserver( *this ) );
+	return utility::pointer::make_shared< EnzdesCacheableObserver >( *this );
 }
 
 core::pose::datacache::CacheableObserverOP
 EnzdesCacheableObserver::create()
 {
-	return core::pose::datacache::CacheableObserverOP( new EnzdesCacheableObserver() );
+	return utility::pointer::make_shared< EnzdesCacheableObserver >();
 }
 
 bool
@@ -324,7 +324,7 @@ EnzdesCacheableObserver::setup_favor_native_constraints(
 			// add individual profile constraint for each residue position
 			// because of the underlying constraint implementation, this enures that the constraint is
 			// a context-independent 1-body energy, or (intra)residue constraint
-			pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new core::scoring::constraints::SequenceProfileConstraint( pose, seqpos, profile ) ) ) );
+			pose.add_constraint( utility::pointer::make_shared< core::scoring::constraints::SequenceProfileConstraint >( pose, seqpos, profile ) );
 		}
 	}// else if ( option[ OptionKeys::constraints::in::file::pssm ].user() ){
 	//}

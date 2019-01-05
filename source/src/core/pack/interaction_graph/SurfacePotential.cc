@@ -527,8 +527,8 @@ void SurfacePotential::compute_pose_hpatch_score(
 	utility::vector1< InvRotamerDotsOP > invdots( pose.size() );
 
 	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
-		rdots[ii] = RotamerDotsOP( new RotamerDots( pose.residue(ii).clone(), true /* exclude H's */, true /* use expanded polar atom radii */) );
-		invdots[ii] = InvRotamerDotsOP( new InvRotamerDots() );
+		rdots[ii] = utility::pointer::make_shared< RotamerDots >( pose.residue(ii).clone(), true /* exclude H's */, true /* use expanded polar atom radii */);
+		invdots[ii] = utility::pointer::make_shared< InvRotamerDots >();
 	}
 
 	// PointGraph is a one-way graph, which makes it somewhat annoying for iterating over neighbors of a certain

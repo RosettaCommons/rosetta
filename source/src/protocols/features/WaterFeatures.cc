@@ -121,17 +121,17 @@ WaterFeatures::write_water_hbond_geom_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
-	Column unrecognized_atom_res("unrecognized_atom_res", DbDataTypeOP( new DbInteger() ));
-	Column unrecognized_atom_name("unrecognized_atom_name", DbDataTypeOP( new DbText(255) ));
-	Column partner_site_id("partner_site_id", DbDataTypeOP( new DbInteger() ));
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >());
+	Column unrecognized_atom_res("unrecognized_atom_res", utility::pointer::make_shared< DbInteger >());
+	Column unrecognized_atom_name("unrecognized_atom_name", utility::pointer::make_shared< DbText >(255));
+	Column partner_site_id("partner_site_id", utility::pointer::make_shared< DbInteger >());
 	// donor only
-	Column whdist("WHdist", DbDataTypeOP( new DbReal() ));
-	Column whd("WHD", DbDataTypeOP( new DbReal() ));
+	Column whdist("WHdist", utility::pointer::make_shared< DbReal >());
+	Column whd("WHD", utility::pointer::make_shared< DbReal >());
 	// acceptors only
-	Column awdist("AWdist", DbDataTypeOP( new DbReal() ));
-	Column baw("BAW", DbDataTypeOP( new DbReal() ));
-	Column chi("chi", DbDataTypeOP( new DbReal() ));
+	Column awdist("AWdist", utility::pointer::make_shared< DbReal >());
+	Column baw("BAW", utility::pointer::make_shared< DbReal >());
+	Column chi("chi", utility::pointer::make_shared< DbReal >());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -390,15 +390,15 @@ WaterFeatures::report_features(
 				igen_wat_accepts.add_row(
 					utility::tools::make_vector(
 					struct_id_data,
-					RowDataBaseOP( new RowData<Size>(
+					RowDataBaseOP( utility::pointer::make_shared< RowData<Size> >(
 					"unrecognized_atom_res",
 					unrecognized_atom_res) ),
-					RowDataBaseOP( new RowData<std::string>(
+					RowDataBaseOP( utility::pointer::make_shared< RowData<std::string> >(
 					"unrecognized_atom_name",
 					unrecognized_atom_name) ),
-					RowDataBaseOP( new RowData<core::Real>("partner_site_id", partner_site_id) ),
-					RowDataBaseOP( new RowData<core::Real>("WHdist", whdist) ),
-					RowDataBaseOP( new RowData<core::Real>("WHD", whd) )));
+					RowDataBaseOP( utility::pointer::make_shared< RowData<core::Real> >("partner_site_id", partner_site_id) ),
+					RowDataBaseOP( utility::pointer::make_shared< RowData<core::Real> >("WHdist", whdist) ),
+					RowDataBaseOP( utility::pointer::make_shared< RowData<core::Real> >("WHD", whd) )));
 			} else {
 				core::Length awdist = hbond_site_xyz.distance(wat_xyz);
 				TR << "Hbond site is an acceptor." << std::endl;
@@ -417,18 +417,18 @@ WaterFeatures::report_features(
 				igen_wat_donates.add_row(
 					utility::tools::make_vector(
 					struct_id_data,
-					RowDataBaseOP( new RowData<Size>(
+					RowDataBaseOP( utility::pointer::make_shared< RowData<Size> >(
 					"unrecognized_atom_res",
 					unrecognized_atom_res) ),
-					RowDataBaseOP( new RowData<std::string>(
+					RowDataBaseOP( utility::pointer::make_shared< RowData<std::string> >(
 					"unrecognized_atom_name",
 					unrecognized_atom_name) ),
-					RowDataBaseOP( new RowData<Size>(
+					RowDataBaseOP( utility::pointer::make_shared< RowData<Size> >(
 					"partner_site_id",
 					partner_site_id) ),
-					RowDataBaseOP( new RowData<core::Real>("AWdist", awdist) ),
-					RowDataBaseOP( new RowData<core::Real>("BAW", baw) ),
-					RowDataBaseOP( new RowData<core::Real>("chi", chi) )));
+					RowDataBaseOP( utility::pointer::make_shared< RowData<core::Real> >("AWdist", awdist) ),
+					RowDataBaseOP( utility::pointer::make_shared< RowData<core::Real> >("BAW", baw) ),
+					RowDataBaseOP( utility::pointer::make_shared< RowData<core::Real> >("chi", chi) )));
 			}
 		} //while(hbond_site_result.next()){
 	} //while(wat_result.next()){
@@ -468,7 +468,7 @@ std::string WaterFeaturesCreator::type_name() const {
 
 protocols::features::FeaturesReporterOP
 WaterFeaturesCreator::create_features_reporter() const {
-	return protocols::features::FeaturesReporterOP( new WaterFeatures );
+	return utility::pointer::make_shared< WaterFeatures >();
 }
 
 void WaterFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

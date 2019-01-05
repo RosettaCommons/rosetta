@@ -57,7 +57,7 @@ methods::EnergyMethodOP
 CenPairMotifDegreeEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new CenPairMotifDegreeEnergy );
+	return utility::pointer::make_shared< CenPairMotifDegreeEnergy >();
 }
 
 ScoreTypes
@@ -68,7 +68,7 @@ CenPairMotifDegreeEnergyCreator::score_types_for_method() const {
 }
 
 CenPairMotifDegreeEnergy::CenPairMotifDegreeEnergy():
-	parent(methods::EnergyMethodCreatorOP( new CenPairMotifDegreeEnergyCreator ) )
+	parent(utility::pointer::make_shared< CenPairMotifDegreeEnergyCreator >() )
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;

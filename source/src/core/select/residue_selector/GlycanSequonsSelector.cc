@@ -61,13 +61,13 @@ GlycanSequonsSelector::GlycanSequonsSelector():
 /// @details Copy this object and return owning pointer to the copy (created on the heap).
 ResidueSelectorOP
 GlycanSequonsSelector::clone() const {
-	return ResidueSelectorOP( utility::pointer::dynamic_pointer_cast<ResidueSelector>( GlycanSequonsSelectorOP( new GlycanSequonsSelector(*this) ) ) );
+	return ResidueSelectorOP( utility::pointer::dynamic_pointer_cast<ResidueSelector>( utility::pointer::make_shared< GlycanSequonsSelector >(*this) ) );
 }
 ResidueSelectorOP
 GlycanSequonsSelectorCreator::create_residue_selector() const {
 	return core::select::residue_selector::ResidueSelectorOP(
 		utility::pointer::dynamic_pointer_cast< core::select::residue_selector::ResidueSelector > (
-		GlycanSequonsSelectorOP( new GlycanSequonsSelector )
+		utility::pointer::make_shared< GlycanSequonsSelector >()
 		)
 	);
 }

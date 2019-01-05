@@ -143,7 +143,7 @@ TwelveANeighborGraph::conditionally_add_edge(
 ContextGraphOP
 TwelveANeighborGraph::clone() const
 {
-	return ContextGraphOP( new TwelveANeighborGraph( *this ) );
+	return utility::pointer::make_shared< TwelveANeighborGraph >( *this );
 }
 
 void

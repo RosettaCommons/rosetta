@@ -82,12 +82,12 @@ TaskAwareSASAFilter::~TaskAwareSASAFilter() = default;
 
 protocols::filters::FilterOP
 TaskAwareSASAFilter::fresh_instance() const{
-	return protocols::filters::FilterOP( new TaskAwareSASAFilter() );
+	return utility::pointer::make_shared< TaskAwareSASAFilter >();
 }
 
 protocols::filters::FilterOP
 TaskAwareSASAFilter::clone() const{
-	return protocols::filters::FilterOP( new TaskAwareSASAFilter( *this ) );
+	return utility::pointer::make_shared< TaskAwareSASAFilter >( *this );
 }
 
 // @brief getters
@@ -207,7 +207,7 @@ TaskAwareSASAFilter::report( std::ostream & out, core::pose::Pose const & pose )
 }
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP TaskAwareSASAFilterCreator::create_filter() const { return protocols::filters::FilterOP( new TaskAwareSASAFilter ); }
+// XRW TEMP TaskAwareSASAFilterCreator::create_filter() const { return utility::pointer::make_shared< TaskAwareSASAFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP TaskAwareSASAFilterCreator::keyname() const { return "TaskAwareSASA"; }
@@ -241,7 +241,7 @@ std::string TaskAwareSASAFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 TaskAwareSASAFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new TaskAwareSASAFilter );
+	return utility::pointer::make_shared< TaskAwareSASAFilter >();
 }
 
 void TaskAwareSASAFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

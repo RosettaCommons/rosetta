@@ -358,7 +358,7 @@ SilentFilePoseOutputter::list_options_read(
 
 PoseOutputterOP SilentFilePoseOutputterCreator::create_outputter() const
 {
-	return PoseOutputterOP( new SilentFilePoseOutputter );
+	return utility::pointer::make_shared< SilentFilePoseOutputter >();
 }
 
 std::string SilentFilePoseOutputterCreator::keyname() const

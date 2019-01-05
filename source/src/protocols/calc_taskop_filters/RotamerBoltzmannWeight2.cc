@@ -135,14 +135,14 @@ RotamerBoltzmannWeight2::parse_my_tag(
 protocols::filters::FilterOP
 RotamerBoltzmannWeight2::clone() const
 {
-	return protocols::filters::FilterOP( new RotamerBoltzmannWeight2( *this ) );
+	return utility::pointer::make_shared< RotamerBoltzmannWeight2 >( *this );
 }
 
 
 protocols::filters::FilterOP
 RotamerBoltzmannWeight2::fresh_instance() const
 {
-	return protocols::filters::FilterOP( new RotamerBoltzmannWeight2 );
+	return utility::pointer::make_shared< RotamerBoltzmannWeight2 >();
 }
 
 std::string
@@ -387,7 +387,7 @@ RotamerBoltzmannWeight2::calculator_id() const
 // XRW TEMP protocols::filters::FilterOP
 // XRW TEMP RotamerBoltzmannWeight2Creator::create_filter() const
 // XRW TEMP {
-// XRW TEMP  return protocols::filters::FilterOP( new RotamerBoltzmannWeight2 );
+// XRW TEMP  return utility::pointer::make_shared< RotamerBoltzmannWeight2 >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -432,7 +432,7 @@ std::string RotamerBoltzmannWeight2Creator::keyname() const {
 
 protocols::filters::FilterOP
 RotamerBoltzmannWeight2Creator::create_filter() const {
-	return protocols::filters::FilterOP( new RotamerBoltzmannWeight2 );
+	return utility::pointer::make_shared< RotamerBoltzmannWeight2 >();
 }
 
 void RotamerBoltzmannWeight2Creator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

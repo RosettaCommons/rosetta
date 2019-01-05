@@ -61,7 +61,7 @@ ResidueDecompositionByChainCalculator::ResidueDecompositionByChainCalculator(
 
 core::pose::metrics::PoseMetricCalculatorOP
 ResidueDecompositionByChainCalculator::clone() const {
-	return core::pose::metrics::PoseMetricCalculatorOP( new ResidueDecompositionByChainCalculator(*this) );
+	return utility::pointer::make_shared< ResidueDecompositionByChainCalculator >(*this);
 }
 
 void

@@ -52,7 +52,7 @@ public:
 		using namespace core::scoring::func;
 
 		core::pose::Pose pose;
-		pose.add_constraint( ConstraintOP( new ConstantConstraint( FuncOP( new ConstantFunc( 5 ) ) ) ) );
+		pose.add_constraint( utility::pointer::make_shared< ConstantConstraint >( utility::pointer::make_shared< ConstantFunc >( 5 ) ) );
 		// Pose has one constraint
 
 		protocols::constraint_movers::ClearConstraintsMover ccm;

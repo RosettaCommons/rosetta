@@ -252,7 +252,7 @@ PeptoidDesignMover::apply(
 
 	using core::pack::task::operation::TaskOperationCOP;
 	TaskFactoryOP desn_tf( new TaskFactory() );
-	desn_tf->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
+	desn_tf->push_back( utility::pointer::make_shared< core::pack::task::operation::InitializeFromCommandline >() );
 
 	// maybe a restrict to interface operation
 

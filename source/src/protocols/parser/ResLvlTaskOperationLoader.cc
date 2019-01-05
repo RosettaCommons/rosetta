@@ -93,7 +93,7 @@ void ResLvlTaskOperationLoader::provide_xml_schema( utility::tag::XMLSchemaDefin
 
 
 DataLoaderOP
-ResLvlTaskOperationLoaderCreator::create_loader() const { return DataLoaderOP( new ResLvlTaskOperationLoader ); }
+ResLvlTaskOperationLoaderCreator::create_loader() const { return utility::pointer::make_shared< ResLvlTaskOperationLoader >(); }
 
 std::string
 ResLvlTaskOperationLoaderCreator::keyname() const { return ResLvlTaskOperationLoader::loader_name(); }

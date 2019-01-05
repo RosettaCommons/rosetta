@@ -63,7 +63,7 @@ methods::EnergyMethodOP
 SSElementMotifContactEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new SSElementMotifContactEnergy );
+	return utility::pointer::make_shared< SSElementMotifContactEnergy >();
 }
 
 ScoreTypes
@@ -74,7 +74,7 @@ SSElementMotifContactEnergyCreator::score_types_for_method() const {
 }
 
 SSElementMotifContactEnergy::SSElementMotifContactEnergy():
-	parent(methods::EnergyMethodCreatorOP( new SSElementMotifContactEnergyCreator ) )
+	parent(utility::pointer::make_shared< SSElementMotifContactEnergyCreator >() )
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;

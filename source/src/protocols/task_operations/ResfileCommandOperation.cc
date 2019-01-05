@@ -65,7 +65,7 @@ ResfileCommandOperation::~ResfileCommandOperation() {}
 
 TaskOperationOP
 ResfileCommandOperation::clone() const {
-	return TaskOperationOP( new ResfileCommandOperation( *this ) );
+	return utility::pointer::make_shared< ResfileCommandOperation >( *this );
 }
 
 ResfileCommandOperation::ResfileCommandOperation( ResfileCommandOperation const & src ):
@@ -144,7 +144,7 @@ ResfileCommandOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 TaskOperationOP
 ResfileCommandOperationCreator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new ResfileCommandOperation );
+	return utility::pointer::make_shared< ResfileCommandOperation >();
 }
 
 std::string

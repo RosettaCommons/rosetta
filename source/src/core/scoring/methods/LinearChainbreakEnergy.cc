@@ -50,12 +50,12 @@ using core::Size;
 static basic::Tracer tr( "core.scoring.methods.LinearChainbreak", basic::t_info );
 
 LinearChainbreakEnergy::LinearChainbreakEnergy()
-: parent(methods::EnergyMethodCreatorOP( new LinearChainbreakEnergyCreator )) {
+: parent(utility::pointer::make_shared< LinearChainbreakEnergyCreator >()) {
 	initialize( std::numeric_limits<core::Size>::max() );
 }
 
 LinearChainbreakEnergy::LinearChainbreakEnergy(Size allowable_sequence_sep)
-: parent(methods::EnergyMethodCreatorOP( new LinearChainbreakEnergyCreator )) {
+: parent(utility::pointer::make_shared< LinearChainbreakEnergyCreator >()) {
 	initialize(allowable_sequence_sep);
 }
 

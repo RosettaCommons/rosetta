@@ -37,10 +37,10 @@ public:
 	~RmsdFromResidueSelectorFilter() override;
 
 	inline protocols::filters::FilterOP clone() const override {
-		return protocols::filters::FilterOP( new RmsdFromResidueSelectorFilter( *this ) );
+		return utility::pointer::make_shared< RmsdFromResidueSelectorFilter >( *this );
 	};
 	inline protocols::filters::FilterOP fresh_instance() const override {
-		return protocols::filters::FilterOP( new RmsdFromResidueSelectorFilter() );
+		return utility::pointer::make_shared< RmsdFromResidueSelectorFilter >();
 	};
 	void reference_pose( core::pose::PoseOP const & ref ) {
 		reference_pose_->detached_copy( *ref );

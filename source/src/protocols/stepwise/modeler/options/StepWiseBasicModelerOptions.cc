@@ -71,7 +71,7 @@ StepWiseBasicModelerOptions::initialize_variables(){
 StepWiseBasicModelerOptionsOP
 StepWiseBasicModelerOptions::clone() const
 {
-	return StepWiseBasicModelerOptionsOP( new StepWiseBasicModelerOptions( *this ) );
+	return utility::pointer::make_shared< StepWiseBasicModelerOptions >( *this );
 }
 
 /////////////////////////////////////////////////////////////////////////////////////

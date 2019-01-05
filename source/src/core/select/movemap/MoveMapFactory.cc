@@ -76,7 +76,7 @@ MoveMapFactory::MoveMapFactory( MoveMapFactory const & ) = default;
 MoveMapFactory & MoveMapFactory::operator = ( MoveMapFactory const & ) = default;
 
 MoveMapFactoryOP MoveMapFactory::clone() const {
-	return MoveMapFactoryOP( new MoveMapFactory( *this ) );
+	return utility::pointer::make_shared< MoveMapFactory >( *this );
 }
 
 MoveMapFactory::~MoveMapFactory() = default;

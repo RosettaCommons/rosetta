@@ -89,7 +89,7 @@ static basic::Tracer TR( "protocols.helical_bundle.BundleReporterFilter" );
 static basic::Tracer TRReport( "protocols.helical_bundle.BundleReporterFilter.REPORT" );
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP BundleReporterFilterCreator::create_filter() const { return protocols::filters::FilterOP( new BundleReporterFilter ); }
+// XRW TEMP BundleReporterFilterCreator::create_filter() const { return utility::pointer::make_shared< BundleReporterFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP BundleReporterFilterCreator::keyname() const { return "BundleReporter"; }
@@ -355,7 +355,7 @@ std::string BundleReporterFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 BundleReporterFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new BundleReporterFilter );
+	return utility::pointer::make_shared< BundleReporterFilter >();
 }
 
 void BundleReporterFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -44,7 +44,7 @@ methods::EnergyMethodOP
 RMS_EnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new RMS_Energy );
+	return utility::pointer::make_shared< RMS_Energy >();
 }
 
 ScoreTypes
@@ -56,7 +56,7 @@ RMS_EnergyCreator::score_types_for_method() const {
 
 /// c-tor
 RMS_Energy::RMS_Energy() :
-	parent( methods::EnergyMethodCreatorOP( new RMS_EnergyCreator ) )
+	parent( utility::pointer::make_shared< RMS_EnergyCreator >() )
 {
 	// configure native pose. Not perfect, ideally we should have some way of
 	// guaranteeing that the native pose and pose provided for scoring have
@@ -77,7 +77,7 @@ RMS_Energy::RMS_Energy() :
 EnergyMethodOP
 RMS_Energy::clone() const
 {
-	return EnergyMethodOP( new RMS_Energy() );
+	return utility::pointer::make_shared< RMS_Energy >();
 }
 
 

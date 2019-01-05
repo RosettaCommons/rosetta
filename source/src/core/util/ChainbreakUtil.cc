@@ -29,7 +29,7 @@ bool ChainbreakUtil::has_chainbreak(const core::pose::Pose& pose) const {
 	using core::pose::Pose;
 
 	if ( !score_ ) {
-		score_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() );
+		score_ = utility::pointer::make_shared< core::scoring::ScoreFunction >();
 		score_->set_weight( core::scoring::linear_chainbreak, 1.0 );
 	}
 

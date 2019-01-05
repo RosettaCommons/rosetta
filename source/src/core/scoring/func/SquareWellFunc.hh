@@ -41,7 +41,7 @@ public:
 	SquareWellFunc( Real const x0_in, Real const well_depth_in ): x0_( x0_in ), well_depth_( well_depth_in ){}
 
 	FuncOP
-	clone() const { return FuncOP( new SquareWellFunc( *this ) ); }
+	clone() const { return utility::pointer::make_shared< SquareWellFunc >( *this ); }
 	virtual bool operator == ( Func const & other ) const;
 	virtual bool same_type_as_me( Func const & other ) const;
 

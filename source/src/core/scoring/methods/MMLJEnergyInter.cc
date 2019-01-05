@@ -89,7 +89,7 @@ methods::EnergyMethodOP
 MMLJEnergyInterCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new MMLJEnergyInter );
+	return utility::pointer::make_shared< MMLJEnergyInter >();
 }
 
 ScoreTypes
@@ -101,7 +101,7 @@ MMLJEnergyInterCreator::score_types_for_method() const {
 }
 
 MMLJEnergyInter::MMLJEnergyInter() :
-	parent( EnergyMethodCreatorOP( new MMLJEnergyInterCreator ) ),
+	parent( utility::pointer::make_shared< MMLJEnergyInterCreator >() ),
 	potential_( scoring::ScoringManager::get_instance()->get_MMLJEnergyTable() )
 {}
 
@@ -109,7 +109,7 @@ MMLJEnergyInter::MMLJEnergyInter() :
 EnergyMethodOP
 MMLJEnergyInter::clone() const
 {
-	return EnergyMethodOP( new MMLJEnergyInter() );
+	return utility::pointer::make_shared< MMLJEnergyInter >();
 }
 
 void
@@ -583,9 +583,9 @@ MMLJEnergyInter::get_count_pair_function_trie(
 	Size conn2 = trie2->get_count_pair_data_for_residue( res1.seqpos() );
 
 	if ( connection != CP_NO_BONDS ) {
-		tcpfxn = TrieCountPairBaseOP( new TrieCountPair1BC3( conn1, conn2 ) );
+		tcpfxn = utility::pointer::make_shared< TrieCountPair1BC3 >( conn1, conn2 );
 	} else {
-		tcpfxn = TrieCountPairBaseOP( new TrieCountPairAll );
+		tcpfxn = utility::pointer::make_shared< TrieCountPairAll >();
 	}
 	return tcpfxn;
 

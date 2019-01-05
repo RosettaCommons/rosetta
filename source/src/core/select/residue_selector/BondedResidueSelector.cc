@@ -227,7 +227,7 @@ std::string BondedResidueSelector::class_name() {
 
 ResidueSelectorOP
 BondedResidueSelectorCreator::create_residue_selector() const {
-	return ResidueSelectorOP( new BondedResidueSelector );
+	return utility::pointer::make_shared< BondedResidueSelector >();
 }
 
 std::string

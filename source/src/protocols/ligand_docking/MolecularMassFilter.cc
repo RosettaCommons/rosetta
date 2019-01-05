@@ -72,7 +72,7 @@ MolecularMassFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::D
 }
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP MolecularMassFilterCreator::create_filter() const { return protocols::filters::FilterOP( new MolecularMassFilter ); }
+// XRW TEMP MolecularMassFilterCreator::create_filter() const { return utility::pointer::make_shared< MolecularMassFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP MolecularMassFilterCreator::keyname() const { return "MolecularMass"; }
@@ -101,7 +101,7 @@ std::string MolecularMassFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 MolecularMassFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new MolecularMassFilter );
+	return utility::pointer::make_shared< MolecularMassFilter >();
 }
 
 void MolecularMassFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -111,7 +111,7 @@ AutoRBMover::AutoRBMover() {
 	scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function(
 		option[ OptionKeys::RBSegmentRelax::rb_scorefxn ]() );
 
-	movemap_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap() );
+	movemap_ = utility::pointer::make_shared< core::kinematics::MoveMap >();
 
 	nouter_cycles_ = option[ OptionKeys::RBSegmentRelax::nrboutercycles ]();
 	ninner_cycles_ = option[ OptionKeys::RBSegmentRelax::nrbmoves ]();
@@ -127,11 +127,11 @@ AutoRBMover::AutoRBMover() {
 
 	// fa stuff
 	using core::pack::task::operation::TaskOperationCOP;
-	tf_ = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory() );
-	tf_->push_back( TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ) );
-	tf_->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
-	tf_->push_back( TaskOperationCOP( new core::pack::task::operation::IncludeCurrent ) );
-	tf_->push_back( TaskOperationCOP( new core::pack::task::operation::NoRepackDisulfides ) );
+	tf_ = utility::pointer::make_shared< core::pack::task::TaskFactory >();
+	tf_->push_back( utility::pointer::make_shared< core::pack::task::operation::RestrictToRepacking >() );
+	tf_->push_back( utility::pointer::make_shared< core::pack::task::operation::InitializeFromCommandline >() );
+	tf_->push_back( utility::pointer::make_shared< core::pack::task::operation::IncludeCurrent >() );
+	tf_->push_back( utility::pointer::make_shared< core::pack::task::operation::NoRepackDisulfides >() );
 
 	fa_scorefxn_ = core::scoring::get_score_function();
 	fa_scorefxn_->set_weight( core::scoring::chainbreak, 10.0/3.0);
@@ -203,7 +203,7 @@ AutoRBMover::apply( core::pose::Pose & pose ) {
 
 		// rigid-body move
 		for ( int i=1; i<=(int)rb_chunks_.size(); ++i ) {
-			random_move.add_mover(MoverOP( new rigid::RigidBodyPerturbMover( i , 3.0 , 1.0 ) ));
+			random_move.add_mover(utility::pointer::make_shared< rigid::RigidBodyPerturbMover >( i , 3.0 , 1.0 ));
 		}
 
 		//TODO rigid-chunk fragment insertion
@@ -214,14 +214,14 @@ AutoRBMover::apply( core::pose::Pose & pose ) {
 			for ( int i=1; i<=(int)rb_chunks_.size(); ++i ) {
 				for ( int j=1; j<=(int)rb_chunks_[i].nContinuousSegments(); ++j ) {
 					protocols::moves::SequenceMoverOP seq_shift_move( new protocols::moves::SequenceMover );
-					seq_shift_move->add_mover( MoverOP( new SequenceShiftMover(rb_chunks_[i][j]) ) );
+					seq_shift_move->add_mover( utility::pointer::make_shared< SequenceShiftMover >(rb_chunks_[i][j]) );
 
 					// find adjacent loops
 					for ( core::Size k=1; k<=loops_.size(); ++k ) {
 						bool adjLoopN = (loops_[k].stop() >= rb_chunks_[i][j].start()-1) && (loops_[k].stop() <= rb_chunks_[i][j].end()+1);
 						bool adjLoopC = (loops_[k].start() >= rb_chunks_[i][j].start()-1) && (loops_[k].start() <= rb_chunks_[i][j].end()+1);
 						if ( adjLoopN || adjLoopC ) {
-							seq_shift_move->add_mover( MoverOP( new CCDMoveWrapper(movemap_, loops_[k].start(), loops_[k].stop(), loops_[k].cut() ) ) );
+							seq_shift_move->add_mover( utility::pointer::make_shared< CCDMoveWrapper >(movemap_, loops_[k].start(), loops_[k].stop(), loops_[k].cut() ) );
 						}
 					}
 					random_move.add_mover(seq_shift_move, 0.5);

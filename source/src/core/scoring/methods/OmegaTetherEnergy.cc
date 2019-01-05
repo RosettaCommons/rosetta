@@ -50,7 +50,7 @@ methods::EnergyMethodOP
 OmegaTetherEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new OmegaTetherEnergy );
+	return utility::pointer::make_shared< OmegaTetherEnergy >();
 }
 
 ScoreTypes
@@ -63,7 +63,7 @@ OmegaTetherEnergyCreator::score_types_for_method() const {
 
 /// ctor
 OmegaTetherEnergy::OmegaTetherEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new OmegaTetherEnergyCreator ) ),
+	parent( utility::pointer::make_shared< OmegaTetherEnergyCreator >() ),
 	potential_( ScoringManager::get_instance()->get_OmegaTether() )
 {}
 
@@ -71,7 +71,7 @@ OmegaTetherEnergy::OmegaTetherEnergy() :
 EnergyMethodOP
 OmegaTetherEnergy::clone() const
 {
-	return EnergyMethodOP( new OmegaTetherEnergy );
+	return utility::pointer::make_shared< OmegaTetherEnergy >();
 }
 
 /////////////////////////////////////////////////////////////////////////////

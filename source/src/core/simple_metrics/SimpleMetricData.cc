@@ -53,7 +53,7 @@ SimpleMetricData::~SimpleMetricData() = default;
 
 basic::datacache::CacheableDataOP
 SimpleMetricData::clone() const {
-	return basic::datacache::CacheableDataOP( new SimpleMetricData(*this) );
+	return utility::pointer::make_shared< SimpleMetricData >(*this);
 }
 
 SimpleMetricDataOP

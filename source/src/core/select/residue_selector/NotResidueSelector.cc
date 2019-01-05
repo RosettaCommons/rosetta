@@ -59,7 +59,7 @@ NotResidueSelector::NotResidueSelector( NotResidueSelector const &src) :
 
 /// @brief Clone operator.
 /// @details Copy this object and return an owning pointer to the new object.
-ResidueSelectorOP NotResidueSelector::clone() const { return ResidueSelectorOP( new NotResidueSelector(*this) ); }
+ResidueSelectorOP NotResidueSelector::clone() const { return utility::pointer::make_shared< NotResidueSelector >(*this); }
 
 NotResidueSelector::NotResidueSelector( ResidueSelectorCOP selector )
 {
@@ -151,7 +151,7 @@ NotResidueSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd 
 
 ResidueSelectorOP
 NotResidueSelectorCreator::create_residue_selector() const {
-	return ResidueSelectorOP( new NotResidueSelector );
+	return utility::pointer::make_shared< NotResidueSelector >();
 }
 
 std::string

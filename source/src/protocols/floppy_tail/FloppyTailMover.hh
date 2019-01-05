@@ -67,7 +67,7 @@ public:
 
 	std::string get_name() const override { return "FloppyTailMover"; }
 
-	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new FloppyTailMover ); }
+	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< FloppyTailMover >(); }
 
 	bool reinitialize_for_each_job() const override { return false; }
 

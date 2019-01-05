@@ -125,13 +125,13 @@ RingPlaneFlipMover::get_name() const {
 protocols::moves::MoverOP
 RingPlaneFlipMover::clone() const
 {
-	return protocols::moves::MoverOP( new RingPlaneFlipMover( *this ) );
+	return utility::pointer::make_shared< RingPlaneFlipMover >( *this );
 }
 
 protocols::moves::MoverOP
 RingPlaneFlipMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new RingPlaneFlipMover() );
+	return utility::pointer::make_shared< RingPlaneFlipMover >();
 }
 
 void
@@ -240,7 +240,7 @@ RingPlaneFlipMover::movemap( core::pose::Pose const & pose ) const
 		if ( movemap_factory_ ) {
 			movemap_ = movemap_factory_->create_movemap_from_pose( pose );
 		} else {
-			movemap_ = MoveMapOP( new MoveMap );
+			movemap_ = utility::pointer::make_shared< MoveMap >();
 		}
 	}
 	return movemap_;
@@ -400,7 +400,7 @@ RingPlaneFlipMoverCreator::keyname() const
 protocols::moves::MoverOP
 RingPlaneFlipMoverCreator::create_mover() const
 {
-	return protocols::moves::MoverOP( new RingPlaneFlipMover );
+	return utility::pointer::make_shared< RingPlaneFlipMover >();
 }
 
 void

@@ -70,7 +70,7 @@ static basic::Tracer TR("core.pack.guidance_scoreterms.hbnet_energy.HBNetEnergy"
 core::scoring::methods::EnergyMethodOP
 HBNetEnergyCreator::create_energy_method( core::scoring::methods::EnergyMethodOptions const &options ) const
 {
-	return core::scoring::methods::EnergyMethodOP( new HBNetEnergy( options ) );
+	return utility::pointer::make_shared< HBNetEnergy >( options );
 }
 
 /// @brief Defines the score types that this energy method calculates.
@@ -86,7 +86,7 @@ HBNetEnergyCreator::score_types_for_method() const
 /// @brief Options constructor.
 ///
 HBNetEnergy::HBNetEnergy ( core::scoring::methods::EnergyMethodOptions const &options ) :
-	parent1( core::scoring::methods::EnergyMethodCreatorOP( new HBNetEnergyCreator ) ),
+	parent1( utility::pointer::make_shared< HBNetEnergyCreator >() ),
 	parent2( ),
 	disabled_(false),
 	neighbour_graph_(),
@@ -107,7 +107,7 @@ HBNetEnergy::~HBNetEnergy() = default;
 /// @brief Clone: create a copy of this object, and return an owning pointer
 /// to the copy.
 core::scoring::methods::EnergyMethodOP HBNetEnergy::clone() const {
-	return core::scoring::methods::EnergyMethodOP( new HBNetEnergy(*this) );
+	return utility::pointer::make_shared< HBNetEnergy >(*this);
 }
 
 /// @brief HBNetEnergy is context-independent and thus indicates that no context graphs need to be maintained by

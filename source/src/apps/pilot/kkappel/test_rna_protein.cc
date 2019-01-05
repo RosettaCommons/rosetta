@@ -92,7 +92,7 @@ int main( int argc, char ** argv ) {
 	////
 	////// this stuff should go in the bootcamp mover
 	//// //Set up the monte carlo mover
-	//// protocols::moves::MonteCarloOP mc = protocols::moves::MonteCarloOP( new protocols::moves::MonteCarlo( *mypose, *sfxn, 1 ) );
+	//// protocols::moves::MonteCarloOP mc = utility::pointer::make_shared< protocols::moves::MonteCarlo >( *mypose, *sfxn, 1 );
 	////
 	//// // Set up minimization
 	//// core::kinematics::MoveMap mm;

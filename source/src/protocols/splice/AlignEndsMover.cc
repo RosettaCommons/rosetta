@@ -47,7 +47,7 @@ using namespace::protocols;
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP AlignEndsMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new AlignEndsMover );
+// XRW TEMP  return utility::pointer::make_shared< AlignEndsMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -255,13 +255,13 @@ AlignEndsMover::apply( Pose & pose ){
 moves::MoverOP
 AlignEndsMover::clone() const
 {
-	return moves::MoverOP( new AlignEndsMover( *this ) );
+	return utility::pointer::make_shared< AlignEndsMover >( *this );
 }
 
 moves::MoverOP
 AlignEndsMover::fresh_instance() const
 {
-	return moves::MoverOP( new AlignEndsMover );
+	return utility::pointer::make_shared< AlignEndsMover >();
 }
 
 void
@@ -341,7 +341,7 @@ std::string AlignEndsMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 AlignEndsMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new AlignEndsMover );
+	return utility::pointer::make_shared< AlignEndsMover >();
 }
 
 void AlignEndsMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -43,7 +43,7 @@ HashedSmartAssembly::HashedSmartAssembly( HashedSmartAssembly const & other):
 
 HashedSmartAssemblyOP
 HashedSmartAssembly::clone() const {
-	return HashedSmartAssemblyOP( new HashedSmartAssembly( *this ) );
+	return utility::pointer::make_shared< HashedSmartAssembly >( *this );
 }
 
 void

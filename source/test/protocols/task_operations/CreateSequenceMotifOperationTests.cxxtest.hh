@@ -66,11 +66,11 @@ public:
 
 		subset[160] = true; //24L, start of L1
 
-		ReturnResidueSubsetSelectorOP selector = ReturnResidueSubsetSelectorOP( new ::ReturnResidueSubsetSelector( subset ));
+		ReturnResidueSubsetSelectorOP selector = utility::pointer::make_shared< ::ReturnResidueSubsetSelector >( subset );
 
 		std::string motif = "VT[^S][%PROPERTY AROMATIC][ST]-X";
-		TaskFactoryOP tf = TaskFactoryOP( new TaskFactory() );
-		SequenceMotifTaskOperationOP motif_op = SequenceMotifTaskOperationOP( new SequenceMotifTaskOperation( selector, motif ) );
+		TaskFactoryOP tf = utility::pointer::make_shared< TaskFactory >();
+		SequenceMotifTaskOperationOP motif_op = utility::pointer::make_shared< SequenceMotifTaskOperation >( selector, motif );
 
 
 		tf->push_back(motif_op);

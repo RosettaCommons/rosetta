@@ -56,7 +56,7 @@ SizeInSegmentsRequirement::SizeInSegmentsRequirement( SizeInSegmentsRequirement 
 
 SizeInSegmentsRequirementOP
 SizeInSegmentsRequirement::clone() const {
-	return SizeInSegmentsRequirementOP( new SizeInSegmentsRequirement( *this ) );
+	return utility::pointer::make_shared< SizeInSegmentsRequirement >( *this );
 }
 
 std::pair<bool,bool>
@@ -142,7 +142,7 @@ SizeInSegmentsRequirementCreator::provide_xml_schema( utility::tag::XMLSchemaDef
 
 AssemblyRequirementOP
 SizeInSegmentsRequirementCreator::create_requirement() const{
-	return AssemblyRequirementOP( new SizeInSegmentsRequirement() );
+	return utility::pointer::make_shared< SizeInSegmentsRequirement >();
 }
 
 std::string

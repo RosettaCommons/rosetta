@@ -55,7 +55,7 @@ namespace monte_carlo {
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP MonteCarloTestCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new MonteCarloTest );
+// XRW TEMP  return utility::pointer::make_shared< MonteCarloTest >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -84,14 +84,14 @@ MonteCarloTest::~MonteCarloTest()= default;
 MoverOP
 MonteCarloTest::clone() const
 {
-	return MoverOP( new MonteCarloTest( *this ) );
+	return utility::pointer::make_shared< MonteCarloTest >( *this );
 }
 
 /// @brief create this type of object
 MoverOP
 MonteCarloTest::fresh_instance() const
 {
-	return MoverOP( new MonteCarloTest() );
+	return utility::pointer::make_shared< MonteCarloTest >();
 }
 
 GenericMonteCarloMoverOP
@@ -157,7 +157,7 @@ std::string MonteCarloTestCreator::keyname() const {
 
 protocols::moves::MoverOP
 MonteCarloTestCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MonteCarloTest );
+	return utility::pointer::make_shared< MonteCarloTest >();
 }
 
 void MonteCarloTestCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

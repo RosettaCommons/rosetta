@@ -173,7 +173,7 @@ void AtomicDistanceFilter::parse_my_tag( utility::tag::TagCOP tag,
 }
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP AtomicDistanceFilterCreator::create_filter() const { return protocols::filters::FilterOP( new AtomicDistanceFilter ); }
+// XRW TEMP AtomicDistanceFilterCreator::create_filter() const { return utility::pointer::make_shared< AtomicDistanceFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP AtomicDistanceFilterCreator::keyname() const { return "AtomicDistance"; }
@@ -208,7 +208,7 @@ std::string AtomicDistanceFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 AtomicDistanceFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new AtomicDistanceFilter );
+	return utility::pointer::make_shared< AtomicDistanceFilter >();
 }
 
 void AtomicDistanceFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

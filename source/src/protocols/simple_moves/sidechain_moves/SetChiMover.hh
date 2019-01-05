@@ -44,10 +44,10 @@ public:
 
 	void apply( core::pose::Pose & pose ) override;
 	protocols::moves::MoverOP clone() const  override{
-		return (protocols::moves::MoverOP( new protocols::simple_moves::sidechain_moves::SetChiMover( *this ) ) );
+		return (utility::pointer::make_shared< protocols::simple_moves::sidechain_moves::SetChiMover >( *this ) );
 	}
 	protocols::moves::MoverOP fresh_instance() const override {
-		return protocols::moves::MoverOP( new SetChiMover );
+		return utility::pointer::make_shared< SetChiMover >();
 	}
 
 	void parse_my_tag( utility::tag::TagCOP tag,

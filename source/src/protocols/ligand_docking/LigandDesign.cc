@@ -61,7 +61,7 @@ static basic::Tracer ligand_design_tracer( "protocols.ligand_docking.LigandDesig
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP LigandDesignCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new LigandDesign );
+// XRW TEMP  return utility::pointer::make_shared< LigandDesign >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -95,11 +95,11 @@ LigandDesign::set_fragments(){
 }
 
 protocols::moves::MoverOP LigandDesign::clone() const {
-	return protocols::moves::MoverOP( new LigandDesign( *this ) );
+	return utility::pointer::make_shared< LigandDesign >( *this );
 }
 
 protocols::moves::MoverOP LigandDesign::fresh_instance() const {
-	return protocols::moves::MoverOP( new LigandDesign );
+	return utility::pointer::make_shared< LigandDesign >();
 }
 
 // XRW TEMP std::string LigandDesign::get_name() const{
@@ -270,7 +270,7 @@ std::string LigandDesignCreator::keyname() const {
 
 protocols::moves::MoverOP
 LigandDesignCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LigandDesign );
+	return utility::pointer::make_shared< LigandDesign >();
 }
 
 void LigandDesignCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

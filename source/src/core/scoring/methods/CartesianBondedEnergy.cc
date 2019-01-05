@@ -164,7 +164,7 @@ methods::EnergyMethodOP
 CartesianBondedEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
-	return methods::EnergyMethodOP( new CartesianBondedEnergy( options ) );
+	return utility::pointer::make_shared< CartesianBondedEnergy >( options );
 }
 
 ScoreTypes
@@ -426,7 +426,7 @@ IdealParametersDatabase::read_length_database(
 		CartBondedParametersOP params_i( new BBIndepCartBondedParameters(mu_d, K_d) );
 		bondlengths_indep_.insert( std::make_pair( tuple, params_i ) );
 		tuple = boost::make_tuple( restag, atom2, atom1 );
-		params_i = CartBondedParametersOP( new BBIndepCartBondedParameters(mu_d, K_d) );
+		params_i = utility::pointer::make_shared< BBIndepCartBondedParameters >(mu_d, K_d);
 		bondlengths_indep_.insert( std::make_pair( tuple, params_i ) );
 	}
 	TR << "Read " << bondlengths_indep_.size() << " bb-independent lengths." << std::endl;
@@ -445,8 +445,8 @@ IdealParametersDatabase::read_length_database(
 		core::Real const avgmu( (param1->mu(0.0, 0.0) + param2->mu(0.0, 0.0)) / 2.0 );
 		core::Real const avgK( (param1->K(0.0, 0.0) + param2->K(0.0, 0.0)) / 2.0 );
 		bondlengths_indep_.erase(it); bondlengths_indep_.erase(it2);
-		bondlengths_indep_.insert( std::make_pair(tuple1, CartBondedParametersOP( new BBIndepCartBondedParameters(avgmu, avgK) ) ) );
-		bondlengths_indep_.insert( std::make_pair(tuple2, CartBondedParametersOP( new BBIndepCartBondedParameters(avgmu, avgK) ) ) );
+		bondlengths_indep_.insert( std::make_pair(tuple1, utility::pointer::make_shared< BBIndepCartBondedParameters >(avgmu, avgK) ) );
+		bondlengths_indep_.insert( std::make_pair(tuple2, utility::pointer::make_shared< BBIndepCartBondedParameters >(avgmu, avgK) ) );
 #ifndef NDEBUG
 		{ // Sanity checks -- debug mode only.
 			boost::unordered_map<atm_name_pair,CartBondedParametersOP>::iterator it3 = bondlengths_indep_.find( tuple1 );
@@ -493,8 +493,8 @@ IdealParametersDatabase::read_angle_database(
 		atm_name_triple const tuple2( boost::make_tuple( "GLY", "N", "CA", "2HA" ) );
 		core::Real const avgmu( (bondangles_indep_[ tuple1 ]->mu(0.0, 0.0) + bondangles_indep_[ tuple2 ]->mu(0.0, 0.0)) / 2.0 );
 		core::Real const avgK( (bondangles_indep_[ tuple1 ]->K(0.0, 0.0) + bondangles_indep_[ tuple2 ]->K(0.0, 0.0)) / 2.0 );
-		bondangles_indep_[ tuple1 ] = CartBondedParametersOP( new BBIndepCartBondedParameters(avgmu, avgK) );
-		bondangles_indep_[ tuple2 ] = CartBondedParametersOP( new BBIndepCartBondedParameters(avgmu, avgK) );
+		bondangles_indep_[ tuple1 ] = utility::pointer::make_shared< BBIndepCartBondedParameters >(avgmu, avgK);
+		bondangles_indep_[ tuple2 ] = utility::pointer::make_shared< BBIndepCartBondedParameters >(avgmu, avgK);
 		//Debug-mode sanity checks:
 		debug_assert( bondangles_indep_[tuple1]->mu(0,0) == bondangles_indep_[tuple2]->mu(0,0) );
 		debug_assert( bondangles_indep_[tuple1]->K(0,0) == bondangles_indep_[tuple2]->K(0,0) );
@@ -617,62 +617,62 @@ IdealParametersDatabase::read_bbdep_table(
 	CartBondedParametersOP temp;
 	temp = bondlengths_indep_[boost::make_tuple(resbase,"C", "N")];
 	if ( !temp ) temp = bondlengths_indep_[boost::make_tuple("*","C", "N")];
-	if ( !temp ) temp = CartBondedParametersOP( new BBIndepCartBondedParameters(0,0) );
+	if ( !temp ) temp = utility::pointer::make_shared< BBIndepCartBondedParameters >(0,0);
 	core::Real CN_indep_avg=temp->mu(0,0),CN_indep_K=temp->K(0,0);
 
 	temp = bondlengths_indep_[boost::make_tuple(resbase,"N", "CA")];
 	if ( !temp ) temp = bondlengths_indep_[boost::make_tuple("*","N", "CA")];
-	if ( !temp ) temp = CartBondedParametersOP( new BBIndepCartBondedParameters(0,0) );
+	if ( !temp ) temp = utility::pointer::make_shared< BBIndepCartBondedParameters >(0,0);
 	core::Real NCA_indep_avg=temp->mu(0,0),NCA_indep_K=temp->K(0,0);
 
 	temp = bondlengths_indep_[boost::make_tuple(resbase,"CA", "CB")];
 	if ( !temp ) temp = bondlengths_indep_[boost::make_tuple("*","CA", "CB")];
-	if ( !temp ) temp = CartBondedParametersOP( new BBIndepCartBondedParameters(0,0) );
+	if ( !temp ) temp = utility::pointer::make_shared< BBIndepCartBondedParameters >(0,0);
 	core::Real CACB_indep_avg=temp->mu(0,0),CACB_indep_K=temp->K(0,0);
 
 	temp = bondlengths_indep_[boost::make_tuple(resbase,"CA", "C")];
 	if ( !temp ) temp = bondlengths_indep_[boost::make_tuple("*","CA", "C")];
-	if ( !temp ) temp = CartBondedParametersOP( new BBIndepCartBondedParameters(0,0) );
+	if ( !temp ) temp = utility::pointer::make_shared< BBIndepCartBondedParameters >(0,0);
 	core::Real CAC_indep_avg=temp->mu(0,0),CAC_indep_K=temp->K(0,0);
 
 	temp = bondlengths_indep_[boost::make_tuple(resbase,"C", "O")];
 	if ( !temp ) temp = bondlengths_indep_[boost::make_tuple("*","C", "O")];
-	if ( !temp ) temp = CartBondedParametersOP( new BBIndepCartBondedParameters(0,0) );
+	if ( !temp ) temp = utility::pointer::make_shared< BBIndepCartBondedParameters >(0,0);
 	core::Real CO_indep_avg=temp->mu(0,0),CO_indep_K=temp->K(0,0);
 
 	temp = bondangles_indep_[boost::make_tuple(resbase,"C", "N", "CA")];
 	if ( !temp ) temp = bondangles_indep_[boost::make_tuple("*","C", "N", "CA")];
-	if ( !temp ) temp = CartBondedParametersOP( new BBIndepCartBondedParameters(0,0) );
+	if ( !temp ) temp = utility::pointer::make_shared< BBIndepCartBondedParameters >(0,0);
 	core::Real CNCA_indep_avg=temp->mu(0,0),CNCA_indep_K=temp->K(0,0);
 
 	temp = bondangles_indep_[boost::make_tuple(resbase,"N", "CA", "CB")];
 	if ( !temp ) temp = bondangles_indep_[boost::make_tuple("*","N", "CA", "CB")];
-	if ( !temp ) temp = CartBondedParametersOP( new BBIndepCartBondedParameters(0,0) );
+	if ( !temp ) temp = utility::pointer::make_shared< BBIndepCartBondedParameters >(0,0);
 	core::Real NCACB_indep_avg=temp->mu(0,0),NCACB_indep_K=temp->K(0,0);
 
 	temp = bondangles_indep_[boost::make_tuple(resbase,"N", "CA", "C")];
 	if ( !temp ) temp = bondangles_indep_[boost::make_tuple("*","N", "CA", "C")];
-	if ( !temp ) temp = CartBondedParametersOP( new BBIndepCartBondedParameters(0,0) );
+	if ( !temp ) temp = utility::pointer::make_shared< BBIndepCartBondedParameters >(0,0);
 	core::Real NCAC_indep_avg=temp->mu(0,0),NCAC_indep_K=temp->K(0,0);
 
 	temp = bondangles_indep_[boost::make_tuple(resbase,"CB", "CA", "C")];
 	if ( !temp ) temp = bondangles_indep_[boost::make_tuple("*","CB", "CA", "C")];
-	if ( !temp ) temp = CartBondedParametersOP( new BBIndepCartBondedParameters(0,0) );
+	if ( !temp ) temp = utility::pointer::make_shared< BBIndepCartBondedParameters >(0,0);
 	core::Real CBCAC_indep_avg=temp->mu(0,0),CBCAC_indep_K=temp->K(0,0);
 
 	temp = bondangles_indep_[boost::make_tuple(resbase,"CA", "C", "O")];
 	if ( !temp ) temp = bondangles_indep_[boost::make_tuple("*","CA", "C", "O")];
-	if ( !temp ) temp = CartBondedParametersOP( new BBIndepCartBondedParameters(0,0) );
+	if ( !temp ) temp = utility::pointer::make_shared< BBIndepCartBondedParameters >(0,0);
 	core::Real CACO_indep_avg=temp->mu(0,0),CACO_indep_K=temp->K(0,0);
 
 	temp = bondangles_indep_[boost::make_tuple(resbase,"CA", "C", "N")];
 	if ( !temp ) temp = bondangles_indep_[boost::make_tuple("*","CA", "C", "N")];
-	if ( !temp ) temp = CartBondedParametersOP( new BBIndepCartBondedParameters(0,0) );
+	if ( !temp ) temp = utility::pointer::make_shared< BBIndepCartBondedParameters >(0,0);
 	core::Real CACN_indep_avg=temp->mu(0,0),CACN_indep_K=temp->K(0,0);
 
 	temp = bondangles_indep_[boost::make_tuple(resbase,"O", "C", "N")];
 	if ( !temp ) temp = bondangles_indep_[boost::make_tuple("*","O", "C", "N")];
-	if ( !temp ) temp = CartBondedParametersOP( new BBIndepCartBondedParameters(0,0) );
+	if ( !temp ) temp = utility::pointer::make_shared< BBIndepCartBondedParameters >(0,0);
 	core::Real OCN_indep_avg=temp->mu(0,0),OCN_indep_K=temp->K(0,0);
 
 	// all the relevant tables
@@ -802,18 +802,18 @@ IdealParametersDatabase::read_bbdep_table(
 	}
 
 	// make the database entries
-	bondlengths[boost::make_tuple("N","C")] = bondlengths[boost::make_tuple("C","N")] = CartBondedParametersOP( new BBDepCartBondedParameters(CNavg_tbl, CNdev_tbl ,"C-N") );
-	bondlengths[boost::make_tuple("CA","N")] = bondlengths[boost::make_tuple("N","CA")] = CartBondedParametersOP( new BBDepCartBondedParameters(NCAavg_tbl, NCAdev_tbl,"CA-N") );
-	bondlengths[boost::make_tuple("CB","CA")] = bondlengths[boost::make_tuple("CA","CB")] = CartBondedParametersOP( new BBDepCartBondedParameters(CACBavg_tbl, CACBdev_tbl,"CB-CA") );
-	bondlengths[boost::make_tuple("C","CA")] = bondlengths[boost::make_tuple("CA","C")] = CartBondedParametersOP( new BBDepCartBondedParameters(CACavg_tbl, CACdev_tbl,"C-CA") );
-	bondlengths[boost::make_tuple("O","C")] = bondlengths[boost::make_tuple("C","O")] = CartBondedParametersOP( new BBDepCartBondedParameters(COavg_tbl, COdev_tbl,"C-O") );
-	bondangles[boost::make_tuple("CA","N","C")] = bondangles[boost::make_tuple("C","N","CA")] = CartBondedParametersOP( new BBDepCartBondedParameters(CNCAavg_tbl, CNCAdev_tbl, "C-N-CA") );
-	bondangles[boost::make_tuple("CB","CA","N")] = bondangles[boost::make_tuple("N","CA","CB")] = CartBondedParametersOP( new BBDepCartBondedParameters(NCACBavg_tbl, NCACBdev_tbl, "N-CA-CB") );
-	bondangles[boost::make_tuple("C","CA","N")] = bondangles[boost::make_tuple("N","CA","C")] = CartBondedParametersOP( new BBDepCartBondedParameters(NCACavg_tbl, NCACdev_tbl, "N-CA-C") );
-	bondangles[boost::make_tuple("C","CA","CB")] = bondangles[boost::make_tuple("CB","CA","C")] = CartBondedParametersOP( new BBDepCartBondedParameters(CBCACavg_tbl, CBCACdev_tbl, "CB-CA-C") );
-	bondangles[boost::make_tuple("O","C","CA")] = bondangles[boost::make_tuple("CA","C","O")] = CartBondedParametersOP( new BBDepCartBondedParameters(CACOavg_tbl, CACOdev_tbl, "CA-C-O") );
-	bondangles[boost::make_tuple("N","C","CA")] = bondangles[boost::make_tuple("CA","C","N")] = CartBondedParametersOP( new BBDepCartBondedParameters(CACNavg_tbl, CACNdev_tbl, "CA-C-N") );
-	bondangles[boost::make_tuple("N","C","O")] = bondangles[boost::make_tuple("O","C","N")] = CartBondedParametersOP( new BBDepCartBondedParameters(OCNavg_tbl, OCNdev_tbl, "O-C-N") );
+	bondlengths[boost::make_tuple("N","C")] = bondlengths[boost::make_tuple("C","N")] = utility::pointer::make_shared< BBDepCartBondedParameters >(CNavg_tbl, CNdev_tbl ,"C-N");
+	bondlengths[boost::make_tuple("CA","N")] = bondlengths[boost::make_tuple("N","CA")] = utility::pointer::make_shared< BBDepCartBondedParameters >(NCAavg_tbl, NCAdev_tbl,"CA-N");
+	bondlengths[boost::make_tuple("CB","CA")] = bondlengths[boost::make_tuple("CA","CB")] = utility::pointer::make_shared< BBDepCartBondedParameters >(CACBavg_tbl, CACBdev_tbl,"CB-CA");
+	bondlengths[boost::make_tuple("C","CA")] = bondlengths[boost::make_tuple("CA","C")] = utility::pointer::make_shared< BBDepCartBondedParameters >(CACavg_tbl, CACdev_tbl,"C-CA");
+	bondlengths[boost::make_tuple("O","C")] = bondlengths[boost::make_tuple("C","O")] = utility::pointer::make_shared< BBDepCartBondedParameters >(COavg_tbl, COdev_tbl,"C-O");
+	bondangles[boost::make_tuple("CA","N","C")] = bondangles[boost::make_tuple("C","N","CA")] = utility::pointer::make_shared< BBDepCartBondedParameters >(CNCAavg_tbl, CNCAdev_tbl, "C-N-CA");
+	bondangles[boost::make_tuple("CB","CA","N")] = bondangles[boost::make_tuple("N","CA","CB")] = utility::pointer::make_shared< BBDepCartBondedParameters >(NCACBavg_tbl, NCACBdev_tbl, "N-CA-CB");
+	bondangles[boost::make_tuple("C","CA","N")] = bondangles[boost::make_tuple("N","CA","C")] = utility::pointer::make_shared< BBDepCartBondedParameters >(NCACavg_tbl, NCACdev_tbl, "N-CA-C");
+	bondangles[boost::make_tuple("C","CA","CB")] = bondangles[boost::make_tuple("CB","CA","C")] = utility::pointer::make_shared< BBDepCartBondedParameters >(CBCACavg_tbl, CBCACdev_tbl, "CB-CA-C");
+	bondangles[boost::make_tuple("O","C","CA")] = bondangles[boost::make_tuple("CA","C","O")] = utility::pointer::make_shared< BBDepCartBondedParameters >(CACOavg_tbl, CACOdev_tbl, "CA-C-O");
+	bondangles[boost::make_tuple("N","C","CA")] = bondangles[boost::make_tuple("CA","C","N")] = utility::pointer::make_shared< BBDepCartBondedParameters >(CACNavg_tbl, CACNdev_tbl, "CA-C-N");
+	bondangles[boost::make_tuple("N","C","O")] = bondangles[boost::make_tuple("O","C","N")] = utility::pointer::make_shared< BBDepCartBondedParameters >(OCNavg_tbl, OCNdev_tbl, "O-C-N");
 }
 
 /// @brief Symmetrize the glycine backbone-dependent table.
@@ -1134,7 +1134,7 @@ IdealParametersDatabase::lookup_angle(
 		utility::thread::WriteLockGuard lock( data_map_mutex_ );
 #endif
 		if ( bondangles_indep_.count( tuple ) == 0 ) {
-			bondangles_indep_[ tuple ] = CartBondedParametersOP( new BBIndepCartBondedParameters( theta0, Ktheta ) );
+			bondangles_indep_[ tuple ] = utility::pointer::make_shared< BBIndepCartBondedParameters >( theta0, Ktheta );
 			TR << "Adding undefined angle "
 				<< restag << ": " << tuple.get<1>() << "," << tuple.get<2>() << "," << tuple.get<3>() << " to DB with"
 				<< " theta0 = " << theta0 << " , Ktheta = " << Ktheta << std::endl;
@@ -1203,7 +1203,7 @@ IdealParametersDatabase::lookup_length(
 		utility::thread::WriteLockGuard lock( data_map_mutex_ );
 #endif
 		if ( bondlengths_indep_.count( tuple ) == 0 ) {
-			bondlengths_indep_[ tuple ] = CartBondedParametersOP( new BBIndepCartBondedParameters( d0, Kd ) );
+			bondlengths_indep_[ tuple ] = utility::pointer::make_shared< BBIndepCartBondedParameters >( d0, Kd );
 			TR << "Adding undefined length "
 				<< restag << ": " << tuple.get<1>() << "," << tuple.get<2>() << "," << " to DB with"
 				<< " d0 = " << d0 << " , Kd = " << Kd << std::endl;
@@ -1813,7 +1813,7 @@ IdealParametersDatabase::restype_destruction_observer( core::chemical::RestypeDe
 //////////////////////
 /// EnergyMethod
 CartesianBondedEnergy::CartesianBondedEnergy( methods::EnergyMethodOptions const & options ) :
-	parent( methods::EnergyMethodCreatorOP( new CartesianBondedEnergyCreator ) ),
+	parent( utility::pointer::make_shared< CartesianBondedEnergyCreator >() ),
 	pro_nv_("NV")
 {
 	// if flag _or_ energy method wants a linear potential, make the potential linear
@@ -1834,7 +1834,7 @@ CartesianBondedEnergy::~CartesianBondedEnergy() = default;
 
 EnergyMethodOP
 CartesianBondedEnergy::clone() const {
-	return EnergyMethodOP( new CartesianBondedEnergy( *this ) );
+	return utility::pointer::make_shared< CartesianBondedEnergy >( *this );
 }
 
 void
@@ -4301,7 +4301,7 @@ CartesianBondedEnergy::get_db(Real k_len, Real k_ang, Real k_tors, Real k_tors_p
 	FiveReals key(k_len, k_ang, k_tors, k_tors_prot, k_tors_improper );
 	if ( databases.count( key ) == 0 ) {
 		// Only create once - we're protected against double creation by the mutex
-		databases[ key ] =  IdealParametersDatabaseOP( new IdealParametersDatabase(k_len, k_ang, k_tors, k_tors_prot, k_tors_improper) );
+		databases[ key ] =  utility::pointer::make_shared< IdealParametersDatabase >(k_len, k_ang, k_tors, k_tors_prot, k_tors_improper);
 	}
 	return databases[ key ];
 }

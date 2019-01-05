@@ -51,7 +51,7 @@ public:
 	);
 
 	core::io::silent::SilentStructOP clone() const override {
-		return core::io::silent::SilentStructOP( new PDBSilentStruct( *this ) );
+		return utility::pointer::make_shared< PDBSilentStruct >( *this );
 	}
 
 	// destructor

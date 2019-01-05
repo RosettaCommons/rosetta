@@ -98,10 +98,10 @@ Minimize::Minimize() :
 Minimize::~Minimize() = default;
 
 MoverOP Minimize::clone() const {
-	return MoverOP( new Minimize( *this ) );
+	return utility::pointer::make_shared< Minimize >( *this );
 }
 MoverOP Minimize::fresh_instance() const {
-	return MoverOP( new Minimize );
+	return utility::pointer::make_shared< Minimize >();
 }
 
 void

@@ -229,14 +229,14 @@ loop_closure_test(){
 	io::pdb::pose_from_file( pose_input, *rsd_set, option[ in::file::s]()[1] , core::import_pose::PDB_file);
 
 	pose = pose_input;
-	//	make_pose_from_sequence( pose, pose_input.sequence(), *rsd_set );
+	// make_pose_from_sequence( pose, pose_input.sequence(), *rsd_set );
 
 	/////////////////////
 	// Read in native
 	PoseOP native_pose;
 	bool native_exists( false );
-	if (option[ in::file::native ].user() ) {
-		native_pose = PoseOP( new Pose );
+	if ( option[ in::file::native ].user() ) {
+		native_pose = utility::pointer::make_shared< Pose >();
 		std::string native_pdb_file  = option[ in::file::native ];
 		io::pdb::pose_from_file( *native_pose, *rsd_set, native_pdb_file , core::import_pose::PDB_file);
 	}
@@ -270,17 +270,17 @@ loop_closure_test(){
 
 	pose.dump_pdb( "extended.pdb" );
 
-// 	std::map< Size, Size > res_map;
-// 	FArray1D<bool> is_loop( pose.size(), false );
-// 	for ( Size i = 1; i <= loop_residues.size(); i++ ) is_loop( loop_residues[ i ] ) = true;
-// 	for ( Size n = 1; n <= pose.size(); n++ ) {
-// 		if (!is_loop( n ) ) {
-// 			res_map[ n ] = n;
-// 			std::cout << "will copy dofs " << n << std::endl;
-// 		}
-// 	}
-// 	copy_dofs( pose, pose_input, res_map );
-// 	pose.dump_pdb( "copy_dofs.pdb" );
+	//  std::map< Size, Size > res_map;
+	//  FArray1D<bool> is_loop( pose.size(), false );
+	//  for ( Size i = 1; i <= loop_residues.size(); i++ ) is_loop( loop_residues[ i ] ) = true;
+	//  for ( Size n = 1; n <= pose.size(); n++ ) {
+	//   if (!is_loop( n ) ) {
+	//    res_map[ n ] = n;
+	//    std::cout << "will copy dofs " << n << std::endl;
+	//   }
+	//  }
+	//  copy_dofs( pose, pose_input, res_map );
+	//  pose.dump_pdb( "copy_dofs.pdb" );
 
 	Pose start_pose = pose;
 
@@ -306,11 +306,11 @@ loop_closure_test(){
 
 		///// CCD close
 		//CCDLoopClosureMover ccd_closer( loop, movemap );
-		//	ccd_closer.set_ccd_cycles( 1000 );
-		//	ccd_closer.apply( pose );
+		// ccd_closer.set_ccd_cycles( 1000 );
+		// ccd_closer.apply( pose );
 		Real forward_deviation, backward_deviation, torsion_delta, rama_delta;
 		fast_ccd_loop_closure( pose, *movemap, loop.start(), loop.stop(), loop.cut(), 10000, 0.0000001, false, 0.5, 10, 50, 75,
-													 forward_deviation, backward_deviation, torsion_delta, rama_delta );
+			forward_deviation, backward_deviation, torsion_delta, rama_delta );
 		pose.dump_pdb( "ccd_closed.pdb" );
 	}
 
@@ -328,7 +328,7 @@ loop_closure_test(){
 	utility::vector1<Real> dt_ang, db_len, db_ang, save_t_ang, save_b_len, save_b_ang, R0 (3);
 	utility::vector1<Real> dummy_t_ang, dummy_b_ang, dummy_b_len;
 	utility::vector1<conformation::ResidueOP> save_residues;
- 	Size ind;
+	Size ind;
 
 	Size const start_res_ = loop.start();
 	Size const middle_res_ = loop.start() + 1;
@@ -337,30 +337,30 @@ loop_closure_test(){
 	Size const seg_len = end_res_ - start_res_ + 1;
 	atoms.resize((seg_len + 2) * 3); // one extra residue on each side to establish the geometric frame
 
-// 	std::cout << "About to fill atoms" << std::endl;
-// 	ind = 1;
-// 	for (Size i =  start_res_ - 1;  i <= end_res_ + 1;		 i++) {
-// 		std::cout << "Filling residue " << i << std::endl;
-// 		conformation::Residue res = start_pose.residue(i);
-// 		for (Size j=1; j<=3; j++) { // DJM: just keeping N, CA, C atoms. We assume these are always the first 3.  BAD -- PROTEIN ONLY ASSUMPTION -- How about metal ions with only 1 atom?
-// 			atoms[ind].resize(3);
-// 			atoms[ind][1] = static_cast<Real> (res.xyz(j).x());
-// 			atoms[ind][2] = static_cast<Real> (res.xyz(j).y());
-// 			atoms[ind][3] = static_cast<Real> (res.xyz(j).z());
-// 			ind++;
-// 		}
-// 	}
+	//  std::cout << "About to fill atoms" << std::endl;
+	//  ind = 1;
+	//  for (Size i =  start_res_ - 1;  i <= end_res_ + 1;   i++) {
+	//   std::cout << "Filling residue " << i << std::endl;
+	//   conformation::Residue res = start_pose.residue(i);
+	//   for (Size j=1; j<=3; j++) { // DJM: just keeping N, CA, C atoms. We assume these are always the first 3.  BAD -- PROTEIN ONLY ASSUMPTION -- How about metal ions with only 1 atom?
+	//    atoms[ind].resize(3);
+	//    atoms[ind][1] = static_cast<Real> (res.xyz(j).x());
+	//    atoms[ind][2] = static_cast<Real> (res.xyz(j).y());
+	//    atoms[ind][3] = static_cast<Real> (res.xyz(j).z());
+	//    ind++;
+	//   }
+	//  }
 
-// 	std::cout << "About to run chainTORS" << std::endl;
+	//  std::cout << "About to run chainTORS" << std::endl;
 
-// 	chainTORS(atoms.size(), atoms, save_t_ang , save_b_ang, save_b_len, R0, Q0);
+	//  chainTORS(atoms.size(), atoms, save_t_ang , save_b_ang, save_b_len, R0, Q0);
 
 	std::cout << "About to run chainTORS" << std::endl;
 	ind = 1;
-	for (Size i =  start_res_ - 1;  i <= end_res_ + 1;		 i++) {
+	for ( Size i =  start_res_ - 1;  i <= end_res_ + 1;   i++ ) {
 		std::cout << "Filling residue " << i << std::endl;
 		conformation::Residue res = pose.residue(i);
-		for (Size j=1; j<=3; j++) { // DJM: just keeping N, CA, C atoms. We assume these are always the first 3.  BAD -- PROTEIN ONLY ASSUMPTION -- How about metal ions with only 1 atom?
+		for ( Size j=1; j<=3; j++ ) { // DJM: just keeping N, CA, C atoms. We assume these are always the first 3.  BAD -- PROTEIN ONLY ASSUMPTION -- How about metal ions with only 1 atom?
 			atoms[ind].resize(3);
 			atoms[ind][1] = static_cast<Real> (res.xyz(j).x());
 			atoms[ind][2] = static_cast<Real> (res.xyz(j).y());
@@ -382,20 +382,20 @@ loop_closure_test(){
 	pivots[2]=pvatom2;
 	pivots[3]=pvatom3;
 
-// 	//idealize?
-// 	if ( false ){
-// 		// set all bond lengths, angles, and omegas for closure to ideal values
-// 		Real idl_C_N_CA_(121.7), 	idl_N_CA_C_(111.2), 	idl_CA_C_N_(116.2), 	idl_C_N_(1.32869), 	idl_N_CA_(1.458), 	idl_CA_C_(1.52326);
-// 		for (Size i=1; i<=atoms.size(); i+=3) {
-// 			db_ang[i]=idl_C_N_CA_;
-// 			db_ang[i+1]=idl_N_CA_C_;
-// 			db_ang[i+2]=idl_CA_C_N_;
-// 			db_len[i]=idl_N_CA_;
-// 			db_len[i+1]=idl_CA_C_;
-// 			db_len[i+2]=idl_C_N_;
-// 			//dt_ang[i+2]=OMEGA_MEAN_;
-// 		}
-// 	}
+	//  //idealize?
+	//  if ( false ){
+	//   // set all bond lengths, angles, and omegas for closure to ideal values
+	//   Real idl_C_N_CA_(121.7),  idl_N_CA_C_(111.2),  idl_CA_C_N_(116.2),  idl_C_N_(1.32869),  idl_N_CA_(1.458),  idl_CA_C_(1.52326);
+	//   for (Size i=1; i<=atoms.size(); i+=3) {
+	//    db_ang[i]=idl_C_N_CA_;
+	//    db_ang[i+1]=idl_N_CA_C_;
+	//    db_ang[i+2]=idl_CA_C_N_;
+	//    db_len[i]=idl_N_CA_;
+	//    db_len[i+1]=idl_CA_C_;
+	//    db_len[i+2]=idl_C_N_;
+	//    //dt_ang[i+2]=OMEGA_MEAN_;
+	//   }
+	//  }
 
 
 	std::cout << "About to run bridgeObjects" << std::endl;
@@ -407,8 +407,8 @@ loop_closure_test(){
 
 	std::cout << "Finished bridgeObjects" << std::endl;
 
-	for (Size i = 1; i <= t_ang.size(); i++) {
-		for( core::Size res = 0; res < seg_len; res++ ){
+	for ( Size i = 1; i <= t_ang.size(); i++ ) {
+		for ( core::Size res = 0; res < seg_len; res++ ) {
 			pose.set_phi( start_res_ + res, t_ang[ i ][ (3*(res+1)) + 1 ] );
 			pose.set_psi( start_res_ + res, t_ang[ i ][ (3*(res+1)) + 2 ] );
 		}
@@ -439,51 +439,51 @@ main( int argc, char * argv [] )
 
 	try {
 
-	using namespace core::options;
+		using namespace core::options;
 
-	utility::vector1< Size > blank_size_vector;
-	utility::vector1< std::string > blank_string_vector;
+		utility::vector1< Size > blank_size_vector;
+		utility::vector1< std::string > blank_string_vector;
 
-	//Uh, options?
-	NEW_OPT( cluster_test, "cluster", false );
-	NEW_OPT( cst_file, "Input file for constraints", "default.constraints" );
+		//Uh, options?
+		NEW_OPT( cluster_test, "cluster", false );
+		NEW_OPT( cst_file, "Input file for constraints", "default.constraints" );
 
-	NEW_OPT( s1, "input file(s)", blank_string_vector );
-	NEW_OPT( s2, "input file(s)", blank_string_vector );
-	NEW_OPT( silent1, "input file", blank_string_vector );
-	NEW_OPT( silent2, "input file", blank_string_vector );
-	NEW_OPT( tags1, "input tag(s)", blank_string_vector );
-	NEW_OPT( tags2, "input tag(s)", blank_string_vector );
-	NEW_OPT( slice_res1, "Residues to slice out of starting file", blank_size_vector );
-	NEW_OPT( slice_res2, "Residues to slice out of starting file", blank_size_vector );
-	NEW_OPT( input_res1, "Residues already present in starting file", blank_size_vector );
-	NEW_OPT( input_res2, "Residues already present in starting file2", blank_size_vector );
-	NEW_OPT( pack_weights, "weights for green packing", "standard.wts" );
-	NEW_OPT( score_diff_cut, "score difference cut for clustering", 1000000.0 );
-	NEW_OPT( cluster_by_all_atom_rmsd, "cluster by all atom rmsd", false );
-	NEW_OPT( output_start, "output starting pdb", false );
-	NEW_OPT( auto_tune, "autotune rmsd for clustering between 0.1A up to 2.0A", false );
-	NEW_OPT( parse_pathway, "parse the pathway", false );
+		NEW_OPT( s1, "input file(s)", blank_string_vector );
+		NEW_OPT( s2, "input file(s)", blank_string_vector );
+		NEW_OPT( silent1, "input file", blank_string_vector );
+		NEW_OPT( silent2, "input file", blank_string_vector );
+		NEW_OPT( tags1, "input tag(s)", blank_string_vector );
+		NEW_OPT( tags2, "input tag(s)", blank_string_vector );
+		NEW_OPT( slice_res1, "Residues to slice out of starting file", blank_size_vector );
+		NEW_OPT( slice_res2, "Residues to slice out of starting file", blank_size_vector );
+		NEW_OPT( input_res1, "Residues already present in starting file", blank_size_vector );
+		NEW_OPT( input_res2, "Residues already present in starting file2", blank_size_vector );
+		NEW_OPT( pack_weights, "weights for green packing", "standard.wts" );
+		NEW_OPT( score_diff_cut, "score difference cut for clustering", 1000000.0 );
+		NEW_OPT( cluster_by_all_atom_rmsd, "cluster by all atom rmsd", false );
+		NEW_OPT( output_start, "output starting pdb", false );
+		NEW_OPT( auto_tune, "autotune rmsd for clustering between 0.1A up to 2.0A", false );
+		NEW_OPT( parse_pathway, "parse the pathway", false );
 
-	NEW_OPT( loop_res, "Loop residues to remodel", blank_size_vector );
+		NEW_OPT( loop_res, "Loop residues to remodel", blank_size_vector );
 
-	////////////////////////////////////////////////////////////////////////////
-	// setup
-	////////////////////////////////////////////////////////////////////////////
-	devel::init(argc, argv);
+		////////////////////////////////////////////////////////////////////////////
+		// setup
+		////////////////////////////////////////////////////////////////////////////
+		devel::init(argc, argv);
 
 
-	////////////////////////////////////////////////////////////////////////////
-	// end of setup
-	////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		////////////////////////////////////////////////////////////////////////////
 
-	protocols::viewer::viewer_main( my_main );
+		protocols::viewer::viewer_main( my_main );
 
-	exit( 0 );
+		exit( 0 );
 
-	////////////////////////////////////////////////////////////////////////////
-	// end of setup
-	////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		////////////////////////////////////////////////////////////////////////////
 
 	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

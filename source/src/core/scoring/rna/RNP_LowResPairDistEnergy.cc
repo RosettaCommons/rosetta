@@ -74,7 +74,7 @@ methods::EnergyMethodOP
 RNP_LowResPairDistEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new RNP_LowResPairDistEnergy );
+	return utility::pointer::make_shared< RNP_LowResPairDistEnergy >();
 }
 
 ScoreTypes
@@ -87,7 +87,7 @@ RNP_LowResPairDistEnergyCreator::score_types_for_method() const {
 
 /// c-tor
 RNP_LowResPairDistEnergy::RNP_LowResPairDistEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new RNP_LowResPairDistEnergyCreator ) ),
+	parent( utility::pointer::make_shared< RNP_LowResPairDistEnergyCreator >() ),
 	potential_( ScoringManager::get_instance()->get_RNP_LowResPairDistPotential() )
 {
 	//std::cout << "Constructed the RNP pair dist energy" << std::endl;
@@ -97,7 +97,7 @@ RNP_LowResPairDistEnergy::RNP_LowResPairDistEnergy() :
 methods::EnergyMethodOP
 RNP_LowResPairDistEnergy::clone() const
 {
-	return methods::EnergyMethodOP( new RNP_LowResPairDistEnergy );
+	return utility::pointer::make_shared< RNP_LowResPairDistEnergy >();
 }
 
 /////////////////////////////////////////////////////////////////////////////

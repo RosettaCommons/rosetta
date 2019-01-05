@@ -100,7 +100,7 @@ StepWiseMoveSelector::StepWiseMoveSelector( options::StepWiseMoveSelectorOptions
 
 //Constructor
 StepWiseMoveSelector::StepWiseMoveSelector():
-	options_( options::StepWiseMoveSelectorOptionsCOP( new options::StepWiseMoveSelectorOptions ) ),
+	options_( utility::pointer::make_shared< options::StepWiseMoveSelectorOptions >() ),
 	allow_delete_( true ),
 	force_unique_moves_( false ),
 	choose_random_( true )
@@ -121,7 +121,7 @@ StepWiseMoveSelector::StepWiseMoveSelector( StepWiseMoveSelector const & src ) :
 StepWiseMoveSelectorOP
 StepWiseMoveSelector::clone() const
 {
-	return StepWiseMoveSelectorOP( new StepWiseMoveSelector( *this ) );
+	return utility::pointer::make_shared< StepWiseMoveSelector >( *this );
 }
 
 

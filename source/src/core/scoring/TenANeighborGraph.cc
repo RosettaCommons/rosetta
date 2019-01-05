@@ -190,7 +190,7 @@ TenANeighborGraph::conditionally_add_edge(
 ContextGraphOP
 TenANeighborGraph::clone() const
 {
-	return ContextGraphOP( new TenANeighborGraph( *this ) );
+	return utility::pointer::make_shared< TenANeighborGraph >( *this );
 }
 
 void

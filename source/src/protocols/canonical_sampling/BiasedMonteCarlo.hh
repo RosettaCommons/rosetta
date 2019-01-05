@@ -58,7 +58,7 @@ public:
 
 
 	protocols::moves::MonteCarloOP clone() override {
-		return protocols::moves::MonteCarloOP( new BiasedMonteCarlo( *this ) );
+		return utility::pointer::make_shared< BiasedMonteCarlo >( *this );
 	}
 	//BiasedMonteCarlo& operator=( BiasedMonteCarlo const& );
 

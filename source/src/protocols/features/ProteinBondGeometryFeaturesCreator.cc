@@ -28,7 +28,7 @@ namespace features {
 // XRW TEMP ProteinBondGeometryFeaturesCreator::ProteinBondGeometryFeaturesCreator() {}
 // XRW TEMP ProteinBondGeometryFeaturesCreator::~ProteinBondGeometryFeaturesCreator() = default;
 // XRW TEMP FeaturesReporterOP ProteinBondGeometryFeaturesCreator::create_features_reporter() const {
-// XRW TEMP  return FeaturesReporterOP( new ProteinBondGeometryFeatures );
+// XRW TEMP  return utility::pointer::make_shared< ProteinBondGeometryFeatures >();
 // XRW TEMP }
 
 // XRW TEMP std::string ProteinBondGeometryFeaturesCreator::type_name() const {

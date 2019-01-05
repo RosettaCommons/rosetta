@@ -63,7 +63,7 @@ using namespace core;
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP MakeStarTopologyMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new MakeStarTopologyMover );
+// XRW TEMP  return utility::pointer::make_shared< MakeStarTopologyMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -112,7 +112,7 @@ void MakeStarTopologyMover::parse_my_tag(
 		ft_restore_ = data.get_ptr<core::kinematics::FoldTree>( "foldtrees", tag_ );
 		TR << "Found foldtree " << tag_ << " on datamap" << std::endl;
 	} else {
-		ft_restore_ = core::kinematics::FoldTreeOP( new core::kinematics::FoldTree( pose.fold_tree() ) );
+		ft_restore_ = utility::pointer::make_shared< core::kinematics::FoldTree >( pose.fold_tree() );
 		// make a copy of current pose ... if restore is called before 'set' this could be oddly behaved
 		data.add( "foldtrees", tag_, ft_restore_ );
 		TR << "Adding foldtrees " << tag_ << " to datamap" << std::endl;
@@ -153,7 +153,7 @@ std::string MakeStarTopologyMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 MakeStarTopologyMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MakeStarTopologyMover );
+	return utility::pointer::make_shared< MakeStarTopologyMover >();
 }
 
 void MakeStarTopologyMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

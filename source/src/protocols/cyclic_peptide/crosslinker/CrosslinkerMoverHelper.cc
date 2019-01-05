@@ -203,7 +203,7 @@ CrosslinkerMoverHelper::filter_by_constraints_energy(
 		add_linker_constraints_asymmetric( pose_copy, selection );
 	}
 
-	core::scoring::ScoreFunctionOP sfxn( new core::scoring::ScoreFunction );
+	core::scoring::ScoreFunctionOP sfxn( utility::pointer::make_shared< core::scoring::ScoreFunction >() );
 
 	sfxn->set_weight( core::scoring::atom_pair_constraint, 1.0 );
 	sfxn->set_weight( core::scoring::angle_constraint, 1.0 );

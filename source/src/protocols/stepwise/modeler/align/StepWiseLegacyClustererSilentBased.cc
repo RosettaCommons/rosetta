@@ -139,7 +139,7 @@ StepWiseLegacyClustererSilentBased::initialize_parameters_and_input(){
 	score_min_ =  0.0 ;
 	score_min_defined_ = false;
 
-	input_ = core::import_pose::pose_stream::SilentFilePoseInputStreamOP( new core::import_pose::pose_stream::SilentFilePoseInputStream() );
+	input_ = utility::pointer::make_shared< core::import_pose::pose_stream::SilentFilePoseInputStream >();
 	input_->set_order_by_energy( true );
 
 	initialize_auto_tune_cluster_rmsds();

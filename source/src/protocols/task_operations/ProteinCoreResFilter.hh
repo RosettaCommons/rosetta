@@ -32,7 +32,7 @@ class ProteinCore : public core::pack::task::operation::ResFilter {
 public:
 	ProteinCore();
 	virtual bool operator() ( Pose const &, Size ) const;
-	virtual core::pack::task::operation::ResFilterOP clone() const {return (core::pack::task::operation::ResFilterOP( new ProteinCore( *this) ));}
+	virtual core::pack::task::operation::ResFilterOP clone() const {return (utility::pointer::make_shared< ProteinCore >( *this));}
 	virtual void parse_tag( TagCOP );
 
 	static std::string keyname();

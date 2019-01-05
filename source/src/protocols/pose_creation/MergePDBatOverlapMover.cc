@@ -89,7 +89,7 @@ std::string MergePDBatOverlapMoverCreator::keyname() const{
 
 protocols::moves::MoverOP
 MergePDBatOverlapMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MergePDBatOverlapMover );
+	return utility::pointer::make_shared< MergePDBatOverlapMover >();
 }
 
 void MergePDBatOverlapMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -111,13 +111,13 @@ MergePDBatOverlapMover::MergePDBatOverlapMover(core::scoring::ScoreFunctionOP sf
 moves::MoverOP
 MergePDBatOverlapMover::clone() const
 {
-	return moves::MoverOP( new MergePDBatOverlapMover( *this ) );
+	return utility::pointer::make_shared< MergePDBatOverlapMover >( *this );
 }
 
 moves::MoverOP
 MergePDBatOverlapMover::fresh_instance() const
 {
-	return moves::MoverOP( new MergePDBatOverlapMover );
+	return utility::pointer::make_shared< MergePDBatOverlapMover >();
 }
 
 
@@ -363,12 +363,12 @@ void MergePDBatOverlapMover::minimize_overlap(Pose & pose,Size overlap_start,Siz
 	sfxn_->set_weight(core::scoring::cart_bonded, 1.0 );  //to repair any cuts.
 	sfxn_->set_weight(core::scoring::cart_bonded_length,0.2);
 	sfxn_->set_weight(core::scoring::cart_bonded_angle,0.5);
-	core::scoring::func::HarmonicFuncOP coord_cst_func = core::scoring::func::HarmonicFuncOP( new core::scoring::func::HarmonicFunc( 0.0, 0.2 ) );
+	core::scoring::func::HarmonicFuncOP coord_cst_func = utility::pointer::make_shared< core::scoring::func::HarmonicFunc >( 0.0, 0.2 );
 	core::id::AtomID const anchor_atom( core::id::AtomID( pose.residue(1).atom_index("CA"), 1) );
 	for ( core::Size resnum = 1; resnum <= pose.size(); ++resnum ) {
 		if ( resnum<midpoint-2 || resnum > midpoint+2 ) {
 			Size atomindex =  pose.residue(resnum ).atom_index( "CA" );
-			csts.push_back( core::scoring::constraints::ConstraintOP( new CoordinateConstraint(core::id::AtomID( atomindex, resnum),anchor_atom,pose.residue(resnum).xyz( "CA" ),coord_cst_func) ));
+			csts.push_back( utility::pointer::make_shared< CoordinateConstraint >(core::id::AtomID( atomindex, resnum),anchor_atom,pose.residue(resnum).xyz( "CA" ),coord_cst_func));
 		} else {
 			std::cout << "unconstrained:" << resnum << std::endl;
 		}
@@ -440,7 +440,7 @@ void MergePDBatOverlapMover::parse_my_tag(
 	attachment_termini_ = tag->getOption< std::string >( "attachment_termini" ,"n_term" );
 	overlap_length_ = tag->getOption< core::Size >( "overlap_length", 40);
 	max_overlap_rmsd_ = tag->getOption<Real>("max_overlap_rmsd", 4.0);
-	attach_pose_ = core::pose::PoseOP( new pose::Pose );
+	attach_pose_ = utility::pointer::make_shared< pose::Pose >();
 	std::string fname( tag->getOption< std::string >( "attach_pdb" ) );
 
 

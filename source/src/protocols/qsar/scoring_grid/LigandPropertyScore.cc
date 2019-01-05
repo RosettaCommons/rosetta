@@ -36,7 +36,7 @@ GridBaseOP LigandPropertyScoreCreator::create_grid(utility::tag::TagCOP tag) con
 
 GridBaseOP LigandPropertyScoreCreator::create_grid() const
 {
-	return GridBaseOP( new LigandPropertyScore() );
+	return utility::pointer::make_shared< LigandPropertyScore >();
 }
 
 std::string LigandPropertyScoreCreator::keyname() const
@@ -58,7 +58,7 @@ LigandPropertyScore::LigandPropertyScore() = default;
 
 /// @brief Make a copy of the grid, respecting the subclassing.
 GridBaseOP LigandPropertyScore::clone() const {
-	return GridBaseOP( new LigandPropertyScore( *this ) );
+	return utility::pointer::make_shared< LigandPropertyScore >( *this );
 }
 
 void LigandPropertyScore::parse_my_tag(utility::tag::TagCOP tag)

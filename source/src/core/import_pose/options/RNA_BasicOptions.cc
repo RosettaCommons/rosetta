@@ -55,7 +55,7 @@ RNA_BasicOptions::RNA_BasicOptions( RNA_BasicOptions const & src ) :
 RNA_BasicOptionsOP
 RNA_BasicOptions::clone() const
 {
-	return RNA_BasicOptionsOP( new RNA_BasicOptions( *this ) );
+	return utility::pointer::make_shared< RNA_BasicOptions >( *this );
 }
 
 ///////////////////////////////////////////////////////////////////

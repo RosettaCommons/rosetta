@@ -98,13 +98,13 @@ AddMPLigandMover::~AddMPLigandMover() = default;
 /// @brief Create a Clone of this mover
 protocols::moves::MoverOP
 AddMPLigandMover::clone() const {
-	return ( protocols::moves::MoverOP( new AddMPLigandMover( *this ) ) );
+	return ( utility::pointer::make_shared< AddMPLigandMover >( *this ) );
 }
 
 /// @brief Create a Fresh Instance of this Mover
 protocols::moves::MoverOP
 AddMPLigandMover::fresh_instance() const {
-	return ( protocols::moves::MoverOP( new AddMPLigandMover() ) );
+	return ( utility::pointer::make_shared< AddMPLigandMover >() );
 }
 
 /// @brief Pase Rosetta Scripts Options for this Mover
@@ -132,7 +132,7 @@ AddMPLigandMover::parse_my_tag(
 /// @brief Create a new copy of this mover
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP AddMPLigandMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new AddMPLigandMover );
+// XRW TEMP  return utility::pointer::make_shared< AddMPLigandMover >();
 // XRW TEMP }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)
@@ -257,7 +257,7 @@ std::string AddMPLigandMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 AddMPLigandMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new AddMPLigandMover );
+	return utility::pointer::make_shared< AddMPLigandMover >();
 }
 
 void AddMPLigandMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

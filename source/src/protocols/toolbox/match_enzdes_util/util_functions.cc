@@ -122,7 +122,7 @@ constrain_pose_res_to_invrots(
 {
 	using namespace core::scoring::constraints;
 
-	if ( !constraint_func ) constraint_func = core::scoring::func::FuncOP( new BoundFunc( 0, 0.05, 0.4, "invrot") );
+	if ( !constraint_func ) constraint_func = utility::pointer::make_shared< BoundFunc >( 0, 0.05, 0.4, "invrot");
 	//see the comment in protocols/ligand_docking/LigandBaseProtocol.cc::restrain_protein_Calphas
 	//core::id::AtomID fixed_pt( pose.atom_tree().root()->atom_id() );
 	//tr << "Hackack fixed_pt was passed in to be AtomID " << fixed_pt << std::endl;
@@ -143,21 +143,21 @@ constrain_pose_res_to_invrots(
 		for ( auto const & invrot : invrots ) {
 
 			utility::vector1< ConstraintCOP > cur_res_invrot_csts;
-			cur_res_invrot_csts.push_back( core::scoring::constraints::ConstraintOP( new BackboneStubConstraint( pose, seqpos[i], fixed_pt, *invrot, -20.0, 0.8) ) );
+			cur_res_invrot_csts.push_back( utility::pointer::make_shared< BackboneStubConstraint >( pose, seqpos[i], fixed_pt, *invrot, -20.0, 0.8) );
 
 			//old style: coordinate constraints for all atoms, backbone stub csts
 			// might be working better
-			cur_res_invrot_csts.push_back( core::scoring::constraints::ConstraintOP( new CoordinateConstraint( rem_CA, fixed_pt, invrot->xyz("CA"), constraint_func ) ) );
-			cur_res_invrot_csts.push_back( core::scoring::constraints::ConstraintOP( new CoordinateConstraint( rem_CB, fixed_pt, invrot->xyz("CB"), constraint_func ) ) );
-			cur_res_invrot_csts.push_back( core::scoring::constraints::ConstraintOP( new CoordinateConstraint( rem_N, fixed_pt, invrot->xyz("N"), constraint_func ) ) );
+			cur_res_invrot_csts.push_back( utility::pointer::make_shared< CoordinateConstraint >( rem_CA, fixed_pt, invrot->xyz("CA"), constraint_func ) );
+			cur_res_invrot_csts.push_back( utility::pointer::make_shared< CoordinateConstraint >( rem_CB, fixed_pt, invrot->xyz("CB"), constraint_func ) );
+			cur_res_invrot_csts.push_back( utility::pointer::make_shared< CoordinateConstraint >( rem_N, fixed_pt, invrot->xyz("N"), constraint_func ) );
 
-			all_res_invrot_csts.push_back( core::scoring::constraints::ConstraintOP( new MultiConstraint( cur_res_invrot_csts ) ) );
+			all_res_invrot_csts.push_back( utility::pointer::make_shared< MultiConstraint >( cur_res_invrot_csts ) );
 		}// loop over invrots
 	}//loop over seqpos
 
 	tr << "Created a total of " << all_res_invrot_csts.size() << " constraints between " << invrots.size() << " inverse rotamers and " << totrescount << " residues." << std::endl;
 
-	return core::scoring::constraints::AmbiguousConstraintCOP( core::scoring::constraints::AmbiguousConstraintOP( new AmbiguousConstraint( all_res_invrot_csts ) ) );
+	return utility::pointer::make_shared< AmbiguousConstraint >( all_res_invrot_csts );
 
 } //constrain_pose_res_to_invrots
 
@@ -179,7 +179,7 @@ cst_residue_in_pose(
 
 	runtime_assert( res_cache->seqpos_map_size() == 1 );
 
-	return core::conformation::ResidueCOP( core::conformation::ResidueOP( new core::conformation::Residue( pose.residue( res_cache->seqpos_map_begin()->first ) ) ) );
+	return core::conformation::ResidueCOP( utility::pointer::make_shared< core::conformation::Residue >( pose.residue( res_cache->seqpos_map_begin()->first ) ) );
 }
 
 

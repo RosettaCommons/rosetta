@@ -617,7 +617,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		utility::vector1< bool > subset( bisected_man_.size(), false);
 		subset[2] = true; //Single Glycan residue.  Make sure all are enabled.
 
-		ReturnResidueSubsetSelectorOP return_subset = ReturnResidueSubsetSelectorOP( new ReturnResidueSubsetSelector( subset));
+		ReturnResidueSubsetSelectorOP return_subset = utility::pointer::make_shared< ReturnResidueSubsetSelector >( subset);
 
 		bool move_ring = true;
 		bool move_bb = true;
@@ -707,7 +707,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		utility::vector1< bool > subset( bisected_man_.size(), false);
 		subset[2] = true; //Single Glycan residue.  Make sure all are enabled.
 
-		ReturnResidueSubsetSelectorOP return_subset = ReturnResidueSubsetSelectorOP( new ReturnResidueSubsetSelector( subset));
+		ReturnResidueSubsetSelectorOP return_subset = utility::pointer::make_shared< ReturnResidueSubsetSelector >( subset);
 
 		//MoveMapOP mm = create_glycan_movemap_from_residue_selector( bisected_man_, return_subset, move_chi, move_ring, move_bb );
 

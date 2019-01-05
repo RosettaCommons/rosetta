@@ -57,7 +57,7 @@ AddOrRemoveMatchCsts::AddOrRemoveMatchCsts()
 	if ( basic::options::option[basic::options::OptionKeys::enzdes::cstfile].user() ) {
 		option_cstfile_ = basic::options::option[basic::options::OptionKeys::enzdes::cstfile].value();
 	}
-	sfxn_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() );
+	sfxn_ = utility::pointer::make_shared< core::scoring::ScoreFunction >();
 
 	//this might change in the future to a scorefunction that's fully definable
 	//through a weights file, but atm it's probably safe to simply set the constraint
@@ -75,13 +75,13 @@ AddOrRemoveMatchCsts::~AddOrRemoveMatchCsts()= default;
 protocols::moves::MoverOP
 AddOrRemoveMatchCsts::clone() const
 {
-	return protocols::moves::MoverOP( new AddOrRemoveMatchCsts( *this ) );
+	return utility::pointer::make_shared< AddOrRemoveMatchCsts >( *this );
 }
 
 protocols::moves::MoverOP
 AddOrRemoveMatchCsts::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new AddOrRemoveMatchCsts() );
+	return utility::pointer::make_shared< AddOrRemoveMatchCsts >();
 }
 
 void
@@ -230,7 +230,7 @@ std::string AddOrRemoveMatchCstsCreator::keyname() const {
 
 protocols::moves::MoverOP
 AddOrRemoveMatchCstsCreator::create_mover() const {
-	return protocols::moves::MoverOP( new AddOrRemoveMatchCsts );
+	return utility::pointer::make_shared< AddOrRemoveMatchCsts >();
 }
 
 void AddOrRemoveMatchCstsCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

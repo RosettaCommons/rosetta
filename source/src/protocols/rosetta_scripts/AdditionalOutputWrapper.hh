@@ -50,11 +50,11 @@ public:
 	~AdditionalOutputWrapper() override = default;
 
 	protocols::moves::MoverOP clone() const override {
-		return protocols::moves::MoverOP( new AdditionalOutputWrapper(*this) );
+		return utility::pointer::make_shared< AdditionalOutputWrapper >(*this);
 	}
 
 	protocols::moves::MoverOP fresh_instance() const override {
-		return protocols::moves::MoverOP( new AdditionalOutputWrapper() );
+		return utility::pointer::make_shared< AdditionalOutputWrapper >();
 	}
 
 	void apply(core::pose::Pose& pose) override;

@@ -361,12 +361,12 @@ HBondDatabase::initialize_HBPoly1D()
 
 		Polynomial_1dOP p;
 		try{
-			p = Polynomial_1dOP( new Polynomial_1d(
+			p = utility::pointer::make_shared< Polynomial_1d >(
 				polynomial_name,
 				geometric_dimension,
 				xmin, xmax, min_val, max_val, root1, root2,
 				degree,
-				coefficients_) );
+				coefficients_);
 		} catch ( utility::excn::Exception& excn ) {
 			std::stringstream msg;
 			msg
@@ -1184,13 +1184,13 @@ HBondDatabase::write_hbond_fade_interval_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column database_tag("database_tag", DbDataTypeOP( new DbText() ));
-	Column name("name", DbDataTypeOP( new DbText() ));
-	Column junction_type("junction_type", DbDataTypeOP( new DbText() ));
-	Column min0("min0", DbDataTypeOP( new DbReal() ));
-	Column fmin("fmin", DbDataTypeOP( new DbReal() ));
-	Column fmax("fmax", DbDataTypeOP( new DbReal() ));
-	Column max0("max0", DbDataTypeOP( new DbReal() ));
+	Column database_tag("database_tag", utility::pointer::make_shared< DbText >());
+	Column name("name", utility::pointer::make_shared< DbText >());
+	Column junction_type("junction_type", utility::pointer::make_shared< DbText >());
+	Column min0("min0", utility::pointer::make_shared< DbReal >());
+	Column fmin("fmin", utility::pointer::make_shared< DbReal >());
+	Column fmax("fmax", utility::pointer::make_shared< DbReal >());
+	Column max0("max0", utility::pointer::make_shared< DbReal >());
 
 
 	Columns primary_key_columns;
@@ -1214,27 +1214,27 @@ HBondDatabase::write_hbond_polynomial_1d_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column database_tag("database_tag", DbDataTypeOP( new DbText() ));
-	Column name("name", DbDataTypeOP( new DbText() ));
-	Column dimension("dimension", DbDataTypeOP( new DbText() ));
-	Column xmin("xmin", DbDataTypeOP( new DbReal() ));
-	Column xmax("xmax", DbDataTypeOP( new DbReal() ));
-	Column min_val("min_val", DbDataTypeOP( new DbReal() ));
-	Column max_val("max_val", DbDataTypeOP( new DbReal() ));
-	Column root1("root1", DbDataTypeOP( new DbReal() ));
-	Column root2("root2", DbDataTypeOP( new DbReal() ));
-	Column degree("degree", DbDataTypeOP( new DbInteger() ));
-	Column c_a("c_a", DbDataTypeOP( new DbReal() ));
-	Column c_b("c_b", DbDataTypeOP( new DbReal() ));
-	Column c_c("c_c", DbDataTypeOP( new DbReal() ));
-	Column c_d("c_d", DbDataTypeOP( new DbReal() ));
-	Column c_e("c_e", DbDataTypeOP( new DbReal() ));
-	Column c_f("c_f", DbDataTypeOP( new DbReal() ));
-	Column c_g("c_g", DbDataTypeOP( new DbReal() ));
-	Column c_h("c_h", DbDataTypeOP( new DbReal() ));
-	Column c_i("c_i", DbDataTypeOP( new DbReal() ));
-	Column c_j("c_j", DbDataTypeOP( new DbReal() ));
-	Column c_k("c_k", DbDataTypeOP( new DbReal() ));
+	Column database_tag("database_tag", utility::pointer::make_shared< DbText >());
+	Column name("name", utility::pointer::make_shared< DbText >());
+	Column dimension("dimension", utility::pointer::make_shared< DbText >());
+	Column xmin("xmin", utility::pointer::make_shared< DbReal >());
+	Column xmax("xmax", utility::pointer::make_shared< DbReal >());
+	Column min_val("min_val", utility::pointer::make_shared< DbReal >());
+	Column max_val("max_val", utility::pointer::make_shared< DbReal >());
+	Column root1("root1", utility::pointer::make_shared< DbReal >());
+	Column root2("root2", utility::pointer::make_shared< DbReal >());
+	Column degree("degree", utility::pointer::make_shared< DbInteger >());
+	Column c_a("c_a", utility::pointer::make_shared< DbReal >());
+	Column c_b("c_b", utility::pointer::make_shared< DbReal >());
+	Column c_c("c_c", utility::pointer::make_shared< DbReal >());
+	Column c_d("c_d", utility::pointer::make_shared< DbReal >());
+	Column c_e("c_e", utility::pointer::make_shared< DbReal >());
+	Column c_f("c_f", utility::pointer::make_shared< DbReal >());
+	Column c_g("c_g", utility::pointer::make_shared< DbReal >());
+	Column c_h("c_h", utility::pointer::make_shared< DbReal >());
+	Column c_i("c_i", utility::pointer::make_shared< DbReal >());
+	Column c_j("c_j", utility::pointer::make_shared< DbReal >());
+	Column c_k("c_k", utility::pointer::make_shared< DbReal >());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(database_tag);
@@ -1270,22 +1270,22 @@ HBondDatabase::write_hbond_evaluation_types_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column database_tag("database_tag", DbDataTypeOP( new DbText() ));
-	Column don_chem_type("don_chem_type", DbDataTypeOP( new DbText() ));
-	Column acc_chem_type("acc_chem_type", DbDataTypeOP( new DbText() ));
-	Column separation("separation", DbDataTypeOP( new DbText() ));
-	Column AHdist_short_fade("AHdist_short_fade", DbDataTypeOP( new DbText() ));
-	Column AHdist_long_fade("AHdist_long_fade", DbDataTypeOP( new DbText() ));
-	Column cosBAH_fade("cosBAH_fade", DbDataTypeOP( new DbText() ));
-	Column cosBAH2_fade("cosBAH2_fade", DbDataTypeOP( new DbText() ));
-	Column cosAHD_fade("cosAHD_fade", DbDataTypeOP( new DbText() ));
-	Column AHdist("AHdist", DbDataTypeOP( new DbText() ));
-	Column cosBAH_short("cosBAH_short", DbDataTypeOP( new DbText() ));
-	Column cosBAH_long("cosBAH_long", DbDataTypeOP( new DbText() ));
-	Column cosBAH2_poly("cosBAH2_poly", DbDataTypeOP( new DbText() ));
-	Column cosAHD_short("cosAHD_short", DbDataTypeOP( new DbText() ));
-	Column cosAHD_long("cosAHD_long", DbDataTypeOP( new DbText() ));
-	Column weight_type("weight_type", DbDataTypeOP( new DbText() ));
+	Column database_tag("database_tag", utility::pointer::make_shared< DbText >());
+	Column don_chem_type("don_chem_type", utility::pointer::make_shared< DbText >());
+	Column acc_chem_type("acc_chem_type", utility::pointer::make_shared< DbText >());
+	Column separation("separation", utility::pointer::make_shared< DbText >());
+	Column AHdist_short_fade("AHdist_short_fade", utility::pointer::make_shared< DbText >());
+	Column AHdist_long_fade("AHdist_long_fade", utility::pointer::make_shared< DbText >());
+	Column cosBAH_fade("cosBAH_fade", utility::pointer::make_shared< DbText >());
+	Column cosBAH2_fade("cosBAH2_fade", utility::pointer::make_shared< DbText >());
+	Column cosAHD_fade("cosAHD_fade", utility::pointer::make_shared< DbText >());
+	Column AHdist("AHdist", utility::pointer::make_shared< DbText >());
+	Column cosBAH_short("cosBAH_short", utility::pointer::make_shared< DbText >());
+	Column cosBAH_long("cosBAH_long", utility::pointer::make_shared< DbText >());
+	Column cosBAH2_poly("cosBAH2_poly", utility::pointer::make_shared< DbText >());
+	Column cosAHD_short("cosAHD_short", utility::pointer::make_shared< DbText >());
+	Column cosAHD_long("cosAHD_long", utility::pointer::make_shared< DbText >());
+	Column weight_type("weight_type", utility::pointer::make_shared< DbText >());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(database_tag);

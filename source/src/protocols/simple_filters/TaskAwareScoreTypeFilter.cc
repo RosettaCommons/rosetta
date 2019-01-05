@@ -367,18 +367,18 @@ TaskAwareScoreTypeFilter::parse_my_tag( utility::tag::TagCOP tag,
 
 protocols::filters::FilterOP
 TaskAwareScoreTypeFilter::fresh_instance() const{
-	return protocols::filters::FilterOP( new TaskAwareScoreTypeFilter() );
+	return utility::pointer::make_shared< TaskAwareScoreTypeFilter >();
 }
 
 TaskAwareScoreTypeFilter::~TaskAwareScoreTypeFilter()= default;
 
 protocols::filters::FilterOP
 TaskAwareScoreTypeFilter::clone() const{
-	return protocols::filters::FilterOP( new TaskAwareScoreTypeFilter( *this ) );
+	return utility::pointer::make_shared< TaskAwareScoreTypeFilter >( *this );
 }
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP TaskAwareScoreTypeFilterCreator::create_filter() const { return protocols::filters::FilterOP( new TaskAwareScoreTypeFilter ); }
+// XRW TEMP TaskAwareScoreTypeFilterCreator::create_filter() const { return utility::pointer::make_shared< TaskAwareScoreTypeFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP TaskAwareScoreTypeFilterCreator::keyname() const { return "TaskAwareScoreType"; }
@@ -428,7 +428,7 @@ std::string TaskAwareScoreTypeFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 TaskAwareScoreTypeFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new TaskAwareScoreTypeFilter );
+	return utility::pointer::make_shared< TaskAwareScoreTypeFilter >();
 }
 
 void TaskAwareScoreTypeFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

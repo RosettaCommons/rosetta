@@ -239,7 +239,7 @@ VirtualSugarSampler::setup_sugar_conformations( utility::vector1< PoseOP > & pos
 
 		utility::vector1< Size > const & moving_partition_res = working_parameters_->working_moving_partition_res();
 		if ( moving_partition_res.has_value( sugar_modeling_.moving_res ) == moving_partition_res.has_value( sugar_modeling_.reference_res ) ) {
-			atr_rep_checker = checker::RNA_AtrRepCheckerOP( new checker::RNA_AtrRepChecker( pose, sugar_modeling_.moving_res, sugar_modeling_.reference_res, 0 /*gap_size = 0 forces loose rep_cutoff (10.0 )*/, scorefxn_->energy_method_options().clone() ) );
+			atr_rep_checker = utility::pointer::make_shared< checker::RNA_AtrRepChecker >( pose, sugar_modeling_.moving_res, sugar_modeling_.reference_res, 0 /*gap_size = 0 forces loose rep_cutoff (10.0 )*/, scorefxn_->energy_method_options().clone() );
 		}
 	}
 
@@ -535,7 +535,7 @@ VirtualSugarSampler::bulge_chain_closure_legacy( utility::vector1< PoseOP > & po
 	Size num_closed_chain_pose = 0;
 
 	utility::vector1< RNA_AtrRepCheckerOP > atr_rep_checkers_;
-	for ( auto const & poseop : pose_list ) atr_rep_checkers_.push_back( rna::checker::RNA_AtrRepCheckerOP( new RNA_AtrRepChecker( *poseop, bulge_suite, bulge_rsd, 0 /*gap_size*/ ) ) );
+	for ( auto const & poseop : pose_list ) atr_rep_checkers_.push_back( utility::pointer::make_shared< RNA_AtrRepChecker >( *poseop, bulge_suite, bulge_rsd, 0 /*gap_size*/ ) );
 
 	RNA_ChainClosableGeometryCheckerOP chain_closable_geometry_checker_( new RNA_ChainClosableGeometryChecker( sugar_modeling_.five_prime_chain_break, 0 /*gap_size*/ ) );
 	RNA_ChainClosureCheckerOP chain_closure_checker_( new RNA_ChainClosureChecker( screening_pose, sugar_modeling_.five_prime_chain_break ) );
@@ -720,7 +720,7 @@ VirtualSugarSampler::setup_VDW_bin_checker( pose::Pose const & input_pose ){
 
 	utility::vector1 < core::Size > ignore_res_list = make_vector1( sugar_modeling_.moving_res, sugar_modeling_.bulge_res, sugar_modeling_.reference_res );
 
-	VDW_bin_checker_ = checker::RNA_VDW_BinCheckerOP( new checker::RNA_VDW_BinChecker() );
+	VDW_bin_checker_ = utility::pointer::make_shared< checker::RNA_VDW_BinChecker >();
 	VDW_bin_checker_->create_VDW_screen_bin( input_pose, ignore_res_list, sugar_modeling_.is_prepend, reference_stub.v, false /*verbose*/ );
 }
 

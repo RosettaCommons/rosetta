@@ -61,7 +61,7 @@ static basic::Tracer TR( "protocols.simple_moves.SuperimposeMover" );
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP SuperimposeMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new SuperimposeMover );
+// XRW TEMP  return utility::pointer::make_shared< SuperimposeMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -77,12 +77,12 @@ SuperimposeMover::SuperimposeMover() :
 
 SuperimposeMover::SuperimposeMover( Pose const & ref_pose ) :
 	protocols::moves::Mover("SuperimposeMover"),
-	ref_pose_(core::pose::PoseOP( new Pose(ref_pose) ))
+	ref_pose_(utility::pointer::make_shared< Pose >(ref_pose))
 {}
 
 SuperimposeMover::SuperimposeMover(Pose const & ref_pose, core::Size ref_start, core::Size ref_end, core::Size target_start, core::Size target_end, bool CA_only):
 	protocols::moves::Mover("SuperimposeMover"),
-	ref_pose_(core::pose::PoseOP( new Pose(ref_pose) )),
+	ref_pose_(utility::pointer::make_shared< Pose >(ref_pose)),
 	ref_start_(ref_start),
 	ref_end_(ref_end),
 	target_start_(target_start),
@@ -96,18 +96,18 @@ SuperimposeMover::~SuperimposeMover() = default;
 protocols::moves::MoverOP
 SuperimposeMover::clone() const
 {
-	return protocols::moves::MoverOP( new SuperimposeMover( *this ) );
+	return utility::pointer::make_shared< SuperimposeMover >( *this );
 }
 
 protocols::moves::MoverOP
 SuperimposeMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new SuperimposeMover() );
+	return utility::pointer::make_shared< SuperimposeMover >();
 }
 
 void
 SuperimposeMover::set_reference_pose( Pose const & pose,Size start, Size end ) {
-	ref_pose_ = core::pose::PoseOP( new Pose(pose) );
+	ref_pose_ = utility::pointer::make_shared< Pose >(pose);
 	ref_start_ = start;
 	ref_end_ = (end == 0) ? pose.size() : end;
 	runtime_assert(ref_start_ > 0 && ref_start_ < ref_end_ && ref_end_ <= pose.size());
@@ -284,7 +284,7 @@ std::string SuperimposeMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 SuperimposeMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SuperimposeMover );
+	return utility::pointer::make_shared< SuperimposeMover >();
 }
 
 void SuperimposeMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

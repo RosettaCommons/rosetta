@@ -285,7 +285,7 @@ void ZincHeterodimerMover::generate_scorefunctions(){
 	TR << "Using default fullatom scorefunction (TALARIS_2013)\n"
 		<< *fullatom_scorefunction_ << std::flush;
 
-	centroid_scorefunction_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction );
+	centroid_scorefunction_ = utility::pointer::make_shared< core::scoring::ScoreFunction >();
 	centroid_scorefunction_->set_weight( env,         2.0 );
 	centroid_scorefunction_->set_weight( cbeta,       1.0 );
 	centroid_scorefunction_->set_weight( vdw,         1.0 );
@@ -303,9 +303,9 @@ void ZincHeterodimerMover::generate_factory(){
 	using namespace core::pack::task;
 	using namespace basic::options;
 	TaskFactoryOP task_factory( new TaskFactory() );
-	task_factory->push_back(operation::TaskOperationOP( new operation::InitializeFromCommandline() ));
+	task_factory->push_back(utility::pointer::make_shared< operation::InitializeFromCommandline >());
 	if ( option[ OptionKeys::packing::resfile ].user() ) {
-		task_factory->push_back(operation::TaskOperationOP( new operation::ReadResfile ));
+		task_factory->push_back(utility::pointer::make_shared< operation::ReadResfile >());
 	}
 	operation::PreventRepackingOP prop( new operation::PreventRepacking() );
 	for ( core::Size it : metal_site_ ) {
@@ -313,7 +313,7 @@ void ZincHeterodimerMover::generate_factory(){
 	}
 	task_factory->push_back(prop);
 	//this assumes that the two protein partners are chains 1 and 3 - this is dangerous!!!!
-	task_factory->push_back(operation::TaskOperationOP( new protocols::task_operations::RestrictToInterfaceOperation(1, 3) ));
+	task_factory->push_back(utility::pointer::make_shared< protocols::task_operations::RestrictToInterfaceOperation >(1, 3));
 
 	TR << "using default TaskFactory (init from command line, read resfile, prevent repacking at metal site, detect interface" << std::endl;
 

@@ -193,7 +193,7 @@ void EnvClaimBroker::broker_fold_tree( Conformation& conf,
 	basic::datacache::BasicDataCache& datacache ){
 
 	core::environment::FoldTreeSketch fts( conf.size() );
-	result_.closer_ft = core::kinematics::FoldTreeOP( new core::kinematics::FoldTree( conf.fold_tree() ) );
+	result_.closer_ft = utility::pointer::make_shared< core::kinematics::FoldTree >( conf.fold_tree() );
 
 	//FTElements: virtual residues ---------------------------------------------------------------
 	ResElemVect r_elems = collect_elements< ResidueElement >( fts );
@@ -204,7 +204,7 @@ void EnvClaimBroker::broker_fold_tree( Conformation& conf,
 	debug_assert( fts.nres() == conf.size() + result().new_vrts.size() );
 
 	//set up bogus attachments for new VRTs
-	result_.closer_ft = core::kinematics::FoldTreeOP( new core::kinematics::FoldTree( conf.fold_tree() ) );
+	result_.closer_ft = utility::pointer::make_shared< core::kinematics::FoldTree >( conf.fold_tree() );
 	for ( Size i = 1; i <= result_.new_vrts.size(); ++i ) {
 		result_.closer_ft->insert_residue_by_jump( conf.size()+i, conf.size()+i-1 );
 	}
@@ -289,7 +289,7 @@ utility::vector1< core::Size > introduce_datamap_cuts( FoldTreeSketch const & ft
 		boost::hash_value( utility::join( jump_points, "," ) );
 
 	if ( !datacache.has( CacheableDataType::WRITEABLE_DATA ) ) {
-		datacache.set( CacheableDataType::WRITEABLE_DATA, DataCache_CacheableData::DataOP( new WriteableCacheableMap() ) );
+		datacache.set( CacheableDataType::WRITEABLE_DATA, utility::pointer::make_shared< WriteableCacheableMap >() );
 	}
 
 	WriteableCacheableMapOP datamap = utility::pointer::dynamic_pointer_cast< WriteableCacheableMap >( datacache.get_ptr( CacheableDataType::WRITEABLE_DATA ) );
@@ -668,7 +668,7 @@ EnvClaims EnvClaimBroker::collect_claims( MoverPassMap const & movers_and_passes
 
 	WriteableCacheableMapOP bk_map;
 	if ( !pose.data().has( CacheableDataType::WRITEABLE_DATA ) ) {
-		pose.data().set( CacheableDataType::WRITEABLE_DATA, DataCache_CacheableData::DataOP( new WriteableCacheableMap() ) );
+		pose.data().set( CacheableDataType::WRITEABLE_DATA, utility::pointer::make_shared< WriteableCacheableMap >() );
 	}
 
 	// Create a sandboxed copy of the map

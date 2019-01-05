@@ -95,10 +95,10 @@ get_basic_protein_sampler(
 	if ( options->frag_files().size() > 0 ) {
 		std::string const frag_file  = options->frag_files()[ 1 ];
 		utility::vector1< Size > const & slice_res = working_parameters->working_res_list();
-		sampler = StepWiseSamplerSizedOP( new ProteinFragmentStepWiseSampler( frag_file, slice_res, moving_res_list ) );
+		sampler = utility::pointer::make_shared< ProteinFragmentStepWiseSampler >( frag_file, slice_res, moving_res_list );
 		if ( input_streams.size() == 1 ) {
 			StepWiseSamplerSizedOP sampler_identity( new InputStreamStepWiseSampler( input_streams[1] ) );
-			sampler = StepWiseSamplerSizedOP( new StepWiseSamplerSizedComb( sampler_identity /*outer*/, sampler /*inner, fragment generator above*/) );
+			sampler = utility::pointer::make_shared< StepWiseSamplerSizedComb >( sampler_identity /*outer*/, sampler /*inner, fragment generator above*/);
 		}
 	} else if ( input_streams.size() == 2 ) {
 		// assume that we want to "combine" two streams of poses...
@@ -107,10 +107,10 @@ get_basic_protein_sampler(
 		//   runtime_assert( stepwise_pose_setup_ != 0 );
 		StepWiseSamplerSizedOP input_stream_sampler1( new InputStreamStepWiseSampler( input_streams[1] ) );
 		StepWiseSamplerSizedOP input_stream_sampler2( new InputStreamStepWiseSampler( input_streams[2] ) );
-		sampler = StepWiseSamplerSizedOP( new StepWiseSamplerSizedComb( input_stream_sampler1 /*outer*/, input_stream_sampler2 /*inner*/) );
+		sampler = utility::pointer::make_shared< StepWiseSamplerSizedComb >( input_stream_sampler1 /*outer*/, input_stream_sampler2 /*inner*/);
 	} else if ( options->sample_beta() ) {
 		if ( moving_res_list.size() !=  1 ) utility_exit_with_message( "Sample beta only works for adding one residue to a beta sheet...");
-		sampler = StepWiseSamplerSizedOP( new ProteinBetaAntiParallelStepWiseSampler( pose, moving_res_list[1] ) );
+		sampler = utility::pointer::make_shared< ProteinBetaAntiParallelStepWiseSampler >( pose, moving_res_list[1] );
 	} else if ( moving_res_list.size() > 0 ) {
 
 		//////////////////////////////////////////////////////////////////////
@@ -139,9 +139,9 @@ get_basic_protein_sampler(
 		// Could also put loose chainbreak closure check here.
 		Pose sampler_pose = pose;
 		backbone_sampler.apply( sampler_pose );
-		sampler = StepWiseSamplerSizedOP( new ProteinMainChainStepWiseSampler( backbone_sampler.which_torsions( sampler_pose ),
+		sampler = utility::pointer::make_shared< ProteinMainChainStepWiseSampler >( backbone_sampler.which_torsions( sampler_pose ),
 			backbone_sampler.main_chain_torsion_set_lists_real( sampler_pose ),
-			options->choose_random() ) );
+			options->choose_random() );
 		TR << "Using ProteinMainChainStepWiseSampler. Num poses: " << backbone_sampler.main_chain_torsion_set_lists_real( sampler_pose ).size() << std::endl;
 	} else {
 		sampler = nullptr; // no op.

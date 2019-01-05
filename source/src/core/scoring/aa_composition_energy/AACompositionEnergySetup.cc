@@ -124,7 +124,7 @@ AACompositionPropertiesSet::~AACompositionPropertiesSet() = default;
 /// @brief Clone: create a copy of this object, and return an owning pointer
 /// to the copy.
 AACompositionPropertiesSetOP AACompositionPropertiesSet::clone() const {
-	return AACompositionPropertiesSetOP( new AACompositionPropertiesSet(*this) );
+	return utility::pointer::make_shared< AACompositionPropertiesSet >(*this);
 }
 
 /// @brief Add a type to the list of types that are always counted.
@@ -330,7 +330,7 @@ AACompositionEnergySetup::~AACompositionEnergySetup() = default;
 /// @brief Clone: create a copy of this object, and return an owning pointer
 /// to the copy.
 AACompositionEnergySetupOP AACompositionEnergySetup::clone() const {
-	return AACompositionEnergySetupOP( new AACompositionEnergySetup(*this) );
+	return utility::pointer::make_shared< AACompositionEnergySetup >(*this);
 }
 
 /// @brief Reset all data in this data storage object.

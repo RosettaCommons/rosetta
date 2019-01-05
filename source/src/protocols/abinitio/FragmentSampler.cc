@@ -126,7 +126,7 @@ FragmentSampler::~FragmentSampler() = default;
 moves::MoverOP
 FragmentSampler::clone() const
 {
-	return moves::MoverOP( new FragmentSampler( *this ) );
+	return utility::pointer::make_shared< FragmentSampler >( *this );
 }
 
 void FragmentSampler::checkpointed_cycle_block(
@@ -259,7 +259,7 @@ void FragmentSampler::set_defaults() {
 void FragmentSampler::set_default_mc(
 	scoring::ScoreFunction const & scorefxn
 ) {
-	set_mc( moves::MonteCarloOP( new moves::MonteCarlo( scorefxn, temperature_ ) ) );
+	set_mc( utility::pointer::make_shared< moves::MonteCarlo >( scorefxn, temperature_ ) );
 	canonical_sampling::mc_convergence_checks::setup_convergence_checks_from_cmdline( *mc_ );
 }
 
@@ -433,7 +433,7 @@ FragmentSampler::mover( pose::Pose const& pose, StageID stage_id, core::scoring:
 }
 
 void FragmentSampler::do_stage1_cycles( pose::Pose &pose ) {
-	moves::RepeatMover( moves::MoverOP( new moves::TrialMover( mover( pose, STAGE_1, current_scorefxn() ), mc_ptr() ) ), stage1_cycles() ).apply( pose );
+	moves::RepeatMover( utility::pointer::make_shared< moves::TrialMover >( mover( pose, STAGE_1, current_scorefxn() ), mc_ptr() ), stage1_cycles() ).apply( pose );
 	mc().reset( pose ); // make sure that we keep the final structure
 	if ( option[OptionKeys::abinitio::explicit_pdb_debug] ) {
 		protocols::jd2::output_intermediate_pose( pose, "stage1_cycles" );
@@ -445,7 +445,7 @@ void FragmentSampler::do_stage1_cycles( pose::Pose &pose ) {
 }
 
 void FragmentSampler::do_stage2_cycles( pose::Pose &pose ) {
-	moves::RepeatMover( moves::MoverOP( new moves::TrialMover( mover( pose, STAGE_2, current_scorefxn() ), mc_ptr() ) ), stage2_cycles() ).apply( pose );
+	moves::RepeatMover( utility::pointer::make_shared< moves::TrialMover >( mover( pose, STAGE_2, current_scorefxn() ), mc_ptr() ), stage2_cycles() ).apply( pose );
 	if ( option[OptionKeys::abinitio::explicit_pdb_debug] ) {
 		protocols::jd2::output_intermediate_pose( pose, "stage2_cycles" );
 	}

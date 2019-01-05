@@ -54,7 +54,7 @@ namespace monte_carlo {
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP MonteCarloRecoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new MonteCarloRecover );
+// XRW TEMP  return utility::pointer::make_shared< MonteCarloRecover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -84,14 +84,14 @@ MonteCarloRecover::~MonteCarloRecover()= default;
 MoverOP
 MonteCarloRecover::clone() const
 {
-	return MoverOP( new MonteCarloRecover( *this ) );
+	return utility::pointer::make_shared< MonteCarloRecover >( *this );
 }
 
 /// @brief create this type of object
 MoverOP
 MonteCarloRecover::fresh_instance() const
 {
-	return MoverOP( new MonteCarloRecover() );
+	return utility::pointer::make_shared< MonteCarloRecover >();
 }
 
 GenericMonteCarloMoverOP
@@ -177,7 +177,7 @@ std::string MonteCarloRecoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 MonteCarloRecoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MonteCarloRecover );
+	return utility::pointer::make_shared< MonteCarloRecover >();
 }
 
 void MonteCarloRecoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

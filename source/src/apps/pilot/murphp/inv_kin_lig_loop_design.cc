@@ -101,7 +101,7 @@ int main( int argc, char ** argv ) {
 		// Step 2 - start up job distributor
 
 		utility::vector1< protocols::jobdist::BasicJobOP > input_jobs;
-		input_jobs.push_back( protocols::jobdist::BasicJobOP( new protocols::jobdist::BasicJob( output_prefix, "yyy",  nstruct) ) );
+		input_jobs.push_back( utility::pointer::make_shared< protocols::jobdist::BasicJob >( output_prefix, "yyy",  nstruct) );
 
 		protocols::jobdist::PlainPdbJobDistributor jobdist( input_jobs );
 
@@ -131,7 +131,7 @@ int main( int argc, char ** argv ) {
 			cout << "inv_kin_lig_loop_design::cloning pose0" << endl;
 			core::pose::PoseOP pose1 = cloner.clone();
 			using namespace basic::datacache;
-			pose1->data().set(core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG, DataCache_CacheableData::DataOP( new basic::datacache::CacheableString(curr_job->output_tag(curr_nstruct)) ));
+			pose1->data().set(core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG, utility::pointer::make_shared< basic::datacache::CacheableString >(curr_job->output_tag(curr_nstruct)));
 
 			cout << "inv_kin_lig_loop_design::dumping clone" << endl;
 			core::io::pdb::dump_pdb( *pose1, "out0.pdb" );

@@ -63,7 +63,7 @@ methods::EnergyMethodOP
 HolesEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new HolesEnergy );
+	return utility::pointer::make_shared< HolesEnergy >();
 }
 
 ScoreTypes
@@ -81,7 +81,7 @@ HolesEnergyCreator::score_types_for_method() const {
 //////////////////////////////////////////////////////
 //@brief
 //////////////////////////////////////////////////////
-HolesEnergy::HolesEnergy() : parent( methods::EnergyMethodCreatorOP( new HolesEnergyCreator ) )
+HolesEnergy::HolesEnergy() : parent( utility::pointer::make_shared< HolesEnergyCreator >() )
 {
 	decoy_params_.read_data_file(basic::database::full_name("scoring/rosettaholes/decoy25.params"));
 	resl_params_ .read_data_file(basic::database::full_name("scoring/rosettaholes/resl.params"));
@@ -132,7 +132,7 @@ HolesEnergy::setup_for_derivatives(
 	using basic::datacache::DataCache_CacheableData;
 
 	if ( !pose.data().has( core::pose::datacache::CacheableDataType::HOLES_POSE_INFO ) ) {
-		pose.data().set( core::pose::datacache::CacheableDataType::HOLES_POSE_INFO, DataCache_CacheableData::DataOP( new CacheableAtomID_MapVector ) );
+		pose.data().set( core::pose::datacache::CacheableDataType::HOLES_POSE_INFO, utility::pointer::make_shared< CacheableAtomID_MapVector >() );
 	}
 	CacheableDataOP dat( pose.data().get_ptr( core::pose::datacache::CacheableDataType::HOLES_POSE_INFO ) );
 	CacheableAtomID_MapVectorOP cachemap = utility::pointer::dynamic_pointer_cast<CacheableAtomID_MapVector>( dat );

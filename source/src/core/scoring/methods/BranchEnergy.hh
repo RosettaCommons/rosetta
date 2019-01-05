@@ -46,7 +46,7 @@ public:
 	virtual
 	EnergyMethodOP
 	clone() const {
-		return EnergyMethodOP( new BranchEnergy );
+		return utility::pointer::make_shared< BranchEnergy >();
 	}
 
 	/// @brief Called at the end of the energy evaluation.

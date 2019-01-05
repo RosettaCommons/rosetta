@@ -67,7 +67,7 @@ methods::EnergyMethodOP
 MPNonHelixPenaltyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new MPNonHelixPenalty );
+	return utility::pointer::make_shared< MPNonHelixPenalty >();
 }
 
 /// @brief Log Score Types
@@ -81,7 +81,7 @@ MPNonHelixPenaltyCreator::score_types_for_method() const {
 
 /// @brief Default Constructor
 MPNonHelixPenalty::MPNonHelixPenalty() :
-	parent( methods::EnergyMethodCreatorOP( new MPNonHelixPenaltyCreator ) ),
+	parent( utility::pointer::make_shared< MPNonHelixPenaltyCreator >() ),
 	mpdata_( ScoringManager::get_instance()->get_MembraneData() )
 {}
 
@@ -89,7 +89,7 @@ MPNonHelixPenalty::MPNonHelixPenalty() :
 methods::EnergyMethodOP
 MPNonHelixPenalty::clone() const
 {
-	return methods::EnergyMethodOP( new MPNonHelixPenalty() );
+	return utility::pointer::make_shared< MPNonHelixPenalty >();
 }
 
 /// Scoring Methods /////////////////////////

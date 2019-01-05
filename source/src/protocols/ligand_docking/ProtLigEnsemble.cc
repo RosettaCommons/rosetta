@@ -125,13 +125,13 @@ ProtLigEnsemble::ProtLigEnsemble(ProtLigEnsemble const & /*that*/) = default;
 ProtLigEnsemble::~ProtLigEnsemble() = default;
 
 protocols::moves::MoverOP ProtLigEnsemble::clone() const {
-	return protocols::moves::MoverOP( new ProtLigEnsemble( *this ) );
+	return utility::pointer::make_shared< ProtLigEnsemble >( *this );
 }
 
 bool ProtLigEnsemble::reinitialize_for_each_job() const { return true; }
 
 protocols::moves::MoverOP ProtLigEnsemble::fresh_instance() const {
-	return protocols::moves::MoverOP(new ProtLigEnsemble );
+	return utility::pointer::make_shared< ProtLigEnsemble >();
 }
 
 ///@brief parse XML (specifically in the context of the parser/scripting scheme)
@@ -364,12 +364,12 @@ ProtLigEnsemble::apply(core::pose::Pose & pose) {
 			if ( cycle % repack_every_Nth_ == 1 ) {
 				TR << "making PackRotamersMover" << std::endl;
 				//Use minPackMOver instead of PackRotamers to do pack and minimization in one go.
-				pack_mover = protocols::moves::MoverOP(new protocols::minimization_packing::PackRotamersMover(score_fxn_, packer_task));
+				pack_mover = utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >(score_fxn_, packer_task);
 
-				// pack_mover= moves::MoverOP( new protocols::minimization_packing::PackRotamersMover(score_fxn_, packer_task) );
+				// pack_mover= utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >(score_fxn_, packer_task);
 			} else {
 				TR << "making RotamerTrialsMover" << std::endl;
-				pack_mover = protocols::moves::MoverOP( new protocols::minimization_packing::RotamerTrialsMover(score_fxn_, *packer_task) );
+				pack_mover = utility::pointer::make_shared< protocols::minimization_packing::RotamerTrialsMover >(score_fxn_, *packer_task);
 			}
 
 			TR << "Making rigid body moves" << std::endl;
@@ -612,7 +612,7 @@ ProtLigEnsembleCreator::keyname() const
 
 protocols::moves::MoverOP
 ProtLigEnsembleCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ProtLigEnsemble );
+	return utility::pointer::make_shared< ProtLigEnsemble >();
 }
 
 std::string

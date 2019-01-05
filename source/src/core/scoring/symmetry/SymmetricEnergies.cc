@@ -105,7 +105,7 @@ SymmetricEnergies::same_type_as_me( Energies const & other, bool recurse  /* = t
 EnergiesOP
 SymmetricEnergies::clone() const
 {
-	return EnergiesOP( new SymmetricEnergies( *this ) );
+	return utility::pointer::make_shared< SymmetricEnergies >( *this );
 }
 
 SymmetricEnergies::~SymmetricEnergies() = default;
@@ -150,7 +150,7 @@ SymmetricEnergies::update_neighbor_links(
 
 	conformation::PointGraphOP pg( point_graph() );
 	if ( pg == nullptr ) {
-		pg = conformation::PointGraphOP( new conformation::PointGraph );
+		pg = utility::pointer::make_shared< conformation::PointGraph >();
 	}
 	fill_point_graph( pose, pg );
 

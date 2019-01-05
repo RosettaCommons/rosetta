@@ -57,7 +57,7 @@ LoopsFileDefiner::LoopsFileDefiner(LoopsFileDefiner const & /*src*/) = default;
 LoopsDefinerOP
 LoopsFileDefiner::clone(
 ) const {
-	return LoopsDefinerOP( new LoopsFileDefiner(*this) );
+	return utility::pointer::make_shared< LoopsFileDefiner >(*this);
 }
 
 /// @brief Used to parse an xml-like tag to load parameters and properties.

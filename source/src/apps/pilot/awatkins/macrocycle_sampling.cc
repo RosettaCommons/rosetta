@@ -251,7 +251,7 @@ main( int argc, char *argv[] )
 		LoopProtocolOP protocol( new LoopProtocol );
 		KicMoverOP kic_mover( new KicMover );
 		kic_mover->clear_perturbers();
-		kic_mover->add_perturber(kinematic_closure::perturbers::PerturberOP( new RamaPerturber ));//to emulate legacy KIC behavior
+		kic_mover->add_perturber(utility::pointer::make_shared< RamaPerturber >());//to emulate legacy KIC behavior
 
 		if ( option[OptionKeys::loops::ramp_rama].user() ) {
 			protocol->set_rama_term_ramping(true);
@@ -266,9 +266,9 @@ main( int argc, char *argv[] )
 		protocol->set_temp_cycles(temp_cycles);
 		protocol->set_mover_cycles(2);
 		protocol->add_mover(kic_mover);
-		protocol->add_mover(LoopMoverOP( new RepackingRefiner(repack_period) ));
-		protocol->add_mover(LoopMoverOP( new RotamerTrialsRefiner ));
-		protocol->add_mover(LoopMoverOP( new MinimizationRefiner ));
+		protocol->add_mover(utility::pointer::make_shared< RepackingRefiner >(repack_period));
+		protocol->add_mover(utility::pointer::make_shared< RotamerTrialsRefiner >());
+		protocol->add_mover(utility::pointer::make_shared< MinimizationRefiner >());
 		protocol->apply(pose);
 
 

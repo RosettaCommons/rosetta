@@ -276,7 +276,7 @@ public:
 		// read resfile
 		core::pack::task::TaskFactoryOP task ( new core::pack::task::TaskFactory );
 		if ( basic::options::option[basic::options::OptionKeys::packing::resfile].user() ) {
-			task->push_back( core::pack::task::operation::TaskOperationOP( new core::pack::task::operation::ReadResfile ) );
+			task->push_back( utility::pointer::make_shared< core::pack::task::operation::ReadResfile >() );
 		}
 		core::pack::task::PackerTaskOP ptask_resfile = task->create_task_and_apply_taskoperations( pose );
 
@@ -412,7 +412,7 @@ public:
 		// read resfile
 		core::pack::task::TaskFactoryOP task ( new core::pack::task::TaskFactory );
 		if ( basic::options::option[basic::options::OptionKeys::packing::resfile].user() ) {
-			task->push_back( core::pack::task::operation::TaskOperationOP( new core::pack::task::operation::ReadResfile ) );
+			task->push_back( utility::pointer::make_shared< core::pack::task::operation::ReadResfile >() );
 		}
 		core::pack::task::PackerTaskOP ptask_resfile = task->create_task_and_apply_taskoperations( pose );
 
@@ -517,9 +517,9 @@ int main( int argc, char * argv [] )
 		SequenceMoverOP seq( new SequenceMover() );
 
 		if ( basic::options::option[basic::options::OptionKeys::ssm::packing]() ) {
-			seq->add_mover( MoverOP(new Packing_energies()) );
+			seq->add_mover( utility::pointer::make_shared< Packing_energies >() );
 		} else {
-			seq->add_mover( MoverOP(new SSM_energies()) );
+			seq->add_mover( utility::pointer::make_shared< SSM_energies >() );
 		}
 
 		// main loop

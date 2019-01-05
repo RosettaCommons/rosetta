@@ -127,10 +127,10 @@ UnrecognizedAtomFeatures::write_unrecognized_residues_table_schema(
 
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
-	Column residue_number("residue_number", DbDataTypeOP( new DbInteger() ));
-	Column name3("name3", DbDataTypeOP( new DbText() ));
-	Column max_temperature("max_temperature", DbDataTypeOP( new DbReal() ));
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >());
+	Column residue_number("residue_number", utility::pointer::make_shared< DbInteger >());
+	Column name3("name3", utility::pointer::make_shared< DbText >());
+	Column max_temperature("max_temperature", utility::pointer::make_shared< DbReal >());
 
 	Columns residues_pkey_cols;
 	residues_pkey_cols.push_back(struct_id);
@@ -157,13 +157,13 @@ UnrecognizedAtomFeatures::write_unrecognized_atoms_table_schema(
 
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
-	Column residue_number("residue_number", DbDataTypeOP( new DbInteger() ));
-	Column atom_name("atom_name", DbDataTypeOP( new DbText() ));
-	Column coord_x("coord_x", DbDataTypeOP( new DbReal() ));
-	Column coord_y("coord_y", DbDataTypeOP( new DbReal() ));
-	Column coord_z("coord_z", DbDataTypeOP( new DbReal() ));
-	Column temperature("temperature", DbDataTypeOP( new DbReal() ));
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >());
+	Column residue_number("residue_number", utility::pointer::make_shared< DbInteger >());
+	Column atom_name("atom_name", utility::pointer::make_shared< DbText >());
+	Column coord_x("coord_x", utility::pointer::make_shared< DbReal >());
+	Column coord_y("coord_y", utility::pointer::make_shared< DbReal >());
+	Column coord_z("coord_z", utility::pointer::make_shared< DbReal >());
+	Column temperature("temperature", utility::pointer::make_shared< DbReal >());
 
 	Columns residues_pkey_cols;
 	residues_pkey_cols.push_back(struct_id);
@@ -192,10 +192,10 @@ UnrecognizedAtomFeatures::write_unrecognized_neighbors_table_schema(
 
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ), false);
-	Column residue_number("residue_number", DbDataTypeOP( new DbInteger() ), false);
-	Column unrecognized_residue_number("unrecognized_residue_number", DbDataTypeOP( new DbReal() ), false);
-	Column closest_contact("closest_contact", DbDataTypeOP( new DbReal() ), false);
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >(), false);
+	Column residue_number("residue_number", utility::pointer::make_shared< DbInteger >(), false);
+	Column unrecognized_residue_number("unrecognized_residue_number", utility::pointer::make_shared< DbReal >(), false);
+	Column closest_contact("closest_contact", utility::pointer::make_shared< DbReal >(), false);
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -295,9 +295,9 @@ UnrecognizedAtomFeatures::insert_unrecognized_residues_rows(
 		insert_generator.add_row(
 			make_vector(
 			struct_id_data,
-			RowDataBaseOP( new RowData<Size>("residue_number", ua.res_num()) ),
-			RowDataBaseOP( new RowData<string>("name3", ua.res_name()) ),
-			RowDataBaseOP( new RowData<Real>("max_temperature", ua.temp()) )));
+			RowDataBaseOP(utility::pointer::make_shared< RowData<Size> >("residue_number", ua.res_num()) ),
+			RowDataBaseOP(utility::pointer::make_shared< RowData<string> >("name3", ua.res_name()) ),
+			RowDataBaseOP(utility::pointer::make_shared< RowData<Real> >("max_temperature", ua.temp()) )));
 	}
 
 	insert_generator.write_to_database(db_session);
@@ -330,12 +330,12 @@ UnrecognizedAtomFeatures::insert_unrecognized_atoms_rows(
 		insert_generator.add_row(
 			make_vector(
 			struct_id_data,
-			RowDataBaseOP( new RowData<Size>("residue_number", ua.res_num()) ),
-			RowDataBaseOP( new RowData<string>("atom_name", ua.atom_name()) ),
-			RowDataBaseOP( new RowData<Real>("coord_x", ua.coords().x()) ),
-			RowDataBaseOP( new RowData<Real>("coord_y", ua.coords().y()) ),
-			RowDataBaseOP( new RowData<Real>("coord_z", ua.coords().z()) ),
-			RowDataBaseOP( new RowData<Real>("temperature", ua.temp()) )));
+			RowDataBaseOP(utility::pointer::make_shared< RowData<Size> >("residue_number", ua.res_num()) ),
+			RowDataBaseOP(utility::pointer::make_shared< RowData<string> >("atom_name", ua.atom_name()) ),
+			RowDataBaseOP(utility::pointer::make_shared< RowData<Real> >("coord_x", ua.coords().x()) ),
+			RowDataBaseOP(utility::pointer::make_shared< RowData<Real> >("coord_y", ua.coords().y()) ),
+			RowDataBaseOP(utility::pointer::make_shared< RowData<Real> >("coord_z", ua.coords().z()) ),
+			RowDataBaseOP(utility::pointer::make_shared< RowData<Real> >("temperature", ua.temp()) )));
 
 	}
 
@@ -383,9 +383,9 @@ UnrecognizedAtomFeatures::insert_unrecognized_neighbors_rows(
 			insert_generator.add_row(
 				make_vector(
 				struct_id_data,
-				RowDataBaseOP( new RowData<Size>("residue_number", resNum) ),
-				RowDataBaseOP( new RowData<Size>("unrecognized_residue_number", closest_ua_resNum) ),
-				RowDataBaseOP( new RowData<Distance>("closest_contact", closest_ua_distance) )));
+				RowDataBaseOP( utility::pointer::make_shared< RowData<Size> >("residue_number", resNum) ),
+				RowDataBaseOP( utility::pointer::make_shared< RowData<Size> >("unrecognized_residue_number", closest_ua_resNum) ),
+				RowDataBaseOP( utility::pointer::make_shared< RowData<Distance> >("closest_contact", closest_ua_distance) )));
 		}
 	}
 
@@ -425,7 +425,7 @@ std::string UnrecognizedAtomFeaturesCreator::type_name() const {
 
 protocols::features::FeaturesReporterOP
 UnrecognizedAtomFeaturesCreator::create_features_reporter() const {
-	return protocols::features::FeaturesReporterOP( new UnrecognizedAtomFeatures );
+	return utility::pointer::make_shared< UnrecognizedAtomFeatures >();
 }
 
 void UnrecognizedAtomFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

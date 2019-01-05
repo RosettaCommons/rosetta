@@ -366,7 +366,7 @@ Motif::Motif(
 MotifOP
 Motif::clone() const
 {
-	return MotifOP( new Motif( *this ) );
+	return utility::pointer::make_shared< Motif >( *this );
 }
 
 Motif::~Motif() = default;

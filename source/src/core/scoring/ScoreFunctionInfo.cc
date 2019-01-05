@@ -97,7 +97,7 @@ ScoreFunctionInfo::initialize_from( ScoreFunction const & scorefxn ) {
 
 	/// Use the copy constructor to create a new object -- do not simply take a pointer to the existing object, which might change.
 	if ( ! energy_method_options_ ) {
-		energy_method_options_ = methods::EnergyMethodOptionsOP( new methods::EnergyMethodOptions( scorefxn.energy_method_options() ) );
+		energy_method_options_ = utility::pointer::make_shared< methods::EnergyMethodOptions >( scorefxn.energy_method_options() );
 	} else {
 		*energy_method_options_ = scorefxn.energy_method_options();
 	}

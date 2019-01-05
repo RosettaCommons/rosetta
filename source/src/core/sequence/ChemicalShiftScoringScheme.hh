@@ -35,10 +35,10 @@ public:
 	}
 
 	ScoringSchemeOP clone() const override {
-		return ScoringSchemeOP( new ChemicalShiftScoringScheme(
+		return utility::pointer::make_shared< ChemicalShiftScoringScheme >(
 			gap_open(),
 			gap_extend()
-			) );
+		);
 	}
 
 	/// @brief dtor

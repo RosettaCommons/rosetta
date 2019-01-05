@@ -80,7 +80,7 @@ RestrictToLoopsAndNeighbors::~RestrictToLoopsAndNeighbors() = default;
 TaskOperationOP
 RestrictToLoopsAndNeighbors::clone() const
 {
-	return TaskOperationOP( new RestrictToLoopsAndNeighbors( *this ) );
+	return utility::pointer::make_shared< RestrictToLoopsAndNeighbors >( *this );
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -173,7 +173,7 @@ void RestrictToLoopsAndNeighbors::set_cutoff_distance( core::Real cutoff_distanc
 
 TaskOperationOP RestrictToLoopsAndNeighborsCreator::create_task_operation() const
 {
-	return TaskOperationOP( new RestrictToLoopsAndNeighbors );
+	return utility::pointer::make_shared< RestrictToLoopsAndNeighbors >();
 }
 
 void RestrictToLoopsAndNeighborsCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -58,12 +58,12 @@ bool STMStoredTask::has_task( const std::string & task_name ) const { return ( t
 
 basic::datacache::CacheableDataOP
 STMStoredTask::clone() const {
-	return basic::datacache::CacheableDataOP( new STMStoredTask ( *this ) );
+	return utility::pointer::make_shared< STMStoredTask > ( *this );
 }
 
 basic::datacache::CacheableDataOP
 STMStoredTask::fresh_instance() const {
-	return basic::datacache::CacheableDataOP( new STMStoredTask );
+	return utility::pointer::make_shared< STMStoredTask >();
 }
 
 } // task_operations

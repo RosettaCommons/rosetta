@@ -74,18 +74,18 @@ ProteinSilentReport::ProteinSilentReport() :
 	protocol_id_(0),
 	batch_id_(0),
 	structure_map_(),
-	protocol_features_( protocols::features::ProtocolFeaturesOP( new ProtocolFeatures() ) ),
-	batch_features_( protocols::features::BatchFeaturesOP( new BatchFeatures() ) ),
-	pdb_data_features_( protocols::features::PdbDataFeaturesOP( new PdbDataFeatures() )),
-	structure_features_( protocols::features::StructureFeaturesOP( new StructureFeatures() ) ),
-	structure_scores_features_( protocols::features::StructureScoresFeaturesOP( new StructureScoresFeatures() ) ),
-	score_type_features_(protocols::features::ScoreTypeFeaturesOP( new ScoreTypeFeatures() )),
-	pose_conformation_features_( protocols::features::PoseConformationFeaturesOP( new PoseConformationFeatures() ) ),
-	pose_comments_features_( protocols::features::PoseCommentsFeaturesOP( new PoseCommentsFeatures() ) ),
-	protein_residue_conformation_features_( protocols::features::ProteinResidueConformationFeaturesOP( new ProteinResidueConformationFeatures() ) ),
-	residue_features_ (protocols::features::ResidueFeaturesOP( new ResidueFeatures() ) ),
-	residue_conformation_features_ (protocols::features::ResidueConformationFeaturesOP( new ResidueConformationFeatures() ) ),
-	job_data_features_ (protocols::features::JobDataFeaturesOP( new JobDataFeatures() ) )
+	protocol_features_( utility::pointer::make_shared< ProtocolFeatures >() ),
+	batch_features_( utility::pointer::make_shared< BatchFeatures >() ),
+	pdb_data_features_( utility::pointer::make_shared< PdbDataFeatures >()),
+	structure_features_( utility::pointer::make_shared< StructureFeatures >() ),
+	structure_scores_features_( utility::pointer::make_shared< StructureScoresFeatures >() ),
+	score_type_features_(utility::pointer::make_shared< ScoreTypeFeatures >()),
+	pose_conformation_features_( utility::pointer::make_shared< PoseConformationFeatures >() ),
+	pose_comments_features_( utility::pointer::make_shared< PoseCommentsFeatures >() ),
+	protein_residue_conformation_features_( utility::pointer::make_shared< ProteinResidueConformationFeatures >() ),
+	residue_features_ (utility::pointer::make_shared< ResidueFeatures >() ),
+	residue_conformation_features_ (utility::pointer::make_shared< ResidueConformationFeatures >() ),
+	job_data_features_ (utility::pointer::make_shared< JobDataFeatures >() )
 {
 	database_filter_=get_DB_filter_ptr();
 

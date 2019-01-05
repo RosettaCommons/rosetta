@@ -48,7 +48,7 @@ public:
 
 	DummyResidueSelector( DummyResidueSelector const & ) {}
 
-	ResidueSelectorOP clone() const { return ResidueSelectorOP( new DummyResidueSelector(*this) ); }
+	ResidueSelectorOP clone() const { return utility::pointer::make_shared< DummyResidueSelector >(*this); }
 
 	virtual
 	ResidueSubset apply( core::pose::Pose const & ) const
@@ -65,7 +65,7 @@ public:
 	virtual
 	ResidueSelectorOP
 	create_residue_selector() const {
-		return ResidueSelectorOP( new DummyResidueSelector );
+		return utility::pointer::make_shared< DummyResidueSelector >();
 	}
 
 	virtual
@@ -87,7 +87,7 @@ public:
 	void test_register_one_creator_with_ResidueSelectorFactory() {
 		ResidueSelectorFactory * factory = ResidueSelectorFactory::get_instance();
 		factory->set_throw_on_double_registration();
-		factory->factory_register( ResidueSelectorCreatorOP( new DummyResidueSelectorCreator ) );
+		factory->factory_register( utility::pointer::make_shared< DummyResidueSelectorCreator >() );
 		basic::datacache::DataMap dm;
 		ResidueSelectorOP selector = factory->new_residue_selector( "DummyResidueSelector", 0, dm );
 		TS_ASSERT( selector.get() ); // make sure we got back a non-null pointer
@@ -125,7 +125,7 @@ public:
 		try {
 			ResidueSelectorFactory * factory = ResidueSelectorFactory::get_instance();
 			factory->set_throw_on_double_registration();
-			factory->factory_register( ResidueSelectorCreatorOP( new DummyResidueSelectorCreator ) );
+			factory->factory_register( utility::pointer::make_shared< DummyResidueSelectorCreator >() );
 			TS_ASSERT( false );
 		} catch (utility::excn::Exception & e ) {
 			std::string expected_err_msg = "Factory Name Conflict: Two or more ResidueSelectorCreators registered with the name DummyResidueSelector";

@@ -58,7 +58,7 @@ public:
 	void initialize( Size const nres );
 
 	basic::datacache::CacheableDataOP clone() const {
-		return FAElecContextDataOP( new FAElecContextData( *this ) );
+		return utility::pointer::make_shared< FAElecContextData >( *this );
 	}
 
 	Real &n( core::Size i ){ return n_[i]; };

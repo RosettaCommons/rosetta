@@ -51,7 +51,7 @@ scoring::methods::EnergyMethodOP
 ApproximateBuriedUnsatPenaltyCreator::create_energy_method(
 	scoring::methods::EnergyMethodOptions const & options
 ) const {
-	return scoring::methods::EnergyMethodOP( new ApproximateBuriedUnsatPenalty( options ) );
+	return utility::pointer::make_shared< ApproximateBuriedUnsatPenalty >( options );
 }
 
 scoring::ScoreTypes

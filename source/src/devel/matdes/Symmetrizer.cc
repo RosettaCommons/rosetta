@@ -62,7 +62,7 @@ using namespace utility;
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP SymmetrizerMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new Symmetrizer );
+// XRW TEMP  return utility::pointer::make_shared< Symmetrizer >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -89,12 +89,12 @@ Symmetrizer::Symmetrizer() :
 
 protocols::moves::MoverOP
 Symmetrizer::clone() const {
-	return protocols::moves::MoverOP( new Symmetrizer( *this ) );
+	return utility::pointer::make_shared< Symmetrizer >( *this );
 }
 
 protocols::moves::MoverOP
 Symmetrizer::fresh_instance() const {
-	return protocols::moves::MoverOP( new Symmetrizer() );
+	return utility::pointer::make_shared< Symmetrizer >();
 }
 
 
@@ -280,7 +280,7 @@ std::string SymmetrizerMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 SymmetrizerMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new Symmetrizer );
+	return utility::pointer::make_shared< Symmetrizer >();
 }
 
 void SymmetrizerMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

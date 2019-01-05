@@ -66,13 +66,13 @@ ReportXYZ::apply( Pose & pose )
 moves::MoverOP
 ReportXYZ::clone() const
 {
-	return moves::MoverOP( new ReportXYZ( *this ) );
+	return utility::pointer::make_shared< ReportXYZ >( *this );
 }
 
 moves::MoverOP
 ReportXYZ::fresh_instance() const
 {
-	return moves::MoverOP( new ReportXYZ );
+	return utility::pointer::make_shared< ReportXYZ >();
 }
 
 void
@@ -123,7 +123,7 @@ std::string ReportXYZCreator::keyname() const {
 
 protocols::moves::MoverOP
 ReportXYZCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ReportXYZ );
+	return utility::pointer::make_shared< ReportXYZ >();
 }
 
 void ReportXYZCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

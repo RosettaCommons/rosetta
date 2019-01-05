@@ -32,7 +32,7 @@ namespace simple_filters {
 static basic::Tracer TR( "protocols.simple_filters.PoseComment" );
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP PoseCommentFilterCreator::create_filter() const { return protocols::filters::FilterOP( new PoseComment ); }
+// XRW TEMP PoseCommentFilterCreator::create_filter() const { return utility::pointer::make_shared< PoseComment >(); }
 
 // XRW TEMP std::string
 // XRW TEMP PoseCommentFilterCreator::keyname() const { return "PoseComment"; }
@@ -161,7 +161,7 @@ std::string PoseCommentFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 PoseCommentFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new PoseComment );
+	return utility::pointer::make_shared< PoseComment >();
 }
 
 void PoseCommentFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -380,7 +380,7 @@ std::string ResidueIEFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 ResidueIEFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new ResidueIEFilter );
+	return utility::pointer::make_shared< ResidueIEFilter >();
 }
 
 void ResidueIEFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

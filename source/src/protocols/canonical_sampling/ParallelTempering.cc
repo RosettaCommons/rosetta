@@ -91,7 +91,7 @@ using namespace core;
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP ParallelTemperingCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new ParallelTempering );
+// XRW TEMP  return utility::pointer::make_shared< ParallelTempering >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -340,13 +340,13 @@ ParallelTempering::shuffle_temperatures( const double *energies ) {
 protocols::moves::MoverOP
 ParallelTempering::clone() const
 {
-	return protocols::moves::MoverOP( new protocols::canonical_sampling::ParallelTempering(*this) );
+	return utility::pointer::make_shared< protocols::canonical_sampling::ParallelTempering >(*this);
 }
 
 protocols::moves::MoverOP
 ParallelTempering::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new ParallelTempering );
+	return utility::pointer::make_shared< ParallelTempering >();
 }
 
 void
@@ -398,7 +398,7 @@ std::string ParallelTemperingCreator::keyname() const {
 
 protocols::moves::MoverOP
 ParallelTemperingCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ParallelTempering );
+	return utility::pointer::make_shared< ParallelTempering >();
 }
 
 void ParallelTemperingCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

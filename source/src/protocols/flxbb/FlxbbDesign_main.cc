@@ -56,7 +56,7 @@ void FlxbbDesign_main(){
 	}
 
 	MoverOP protocol;
-	protocol = MoverOP( new FlxbbDesign( scorefxn_design, scorefxn_relax ) );
+	protocol = utility::pointer::make_shared< FlxbbDesign >( scorefxn_design, scorefxn_relax );
 	JobDistributor::get_instance()->go( protocol );
 
 }

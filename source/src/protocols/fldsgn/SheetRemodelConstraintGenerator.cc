@@ -46,7 +46,7 @@ SheetRemodelConstraintGenerator::~SheetRemodelConstraintGenerator() = default;
 protocols::moves::MoverOP
 SheetRemodelConstraintGenerator::clone() const
 {
-	return protocols::moves::MoverOP( new SheetRemodelConstraintGenerator( *this ) );
+	return utility::pointer::make_shared< SheetRemodelConstraintGenerator >( *this );
 }
 
 void
@@ -75,7 +75,7 @@ SheetRemodelConstraintGenerator::generate_remodel_constraints( core::pose::Pose 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP SheetRemodelConstraintGeneratorCreator::create_mover() const
 // XRW TEMP {
-// XRW TEMP  return protocols::moves::MoverOP( new SheetRemodelConstraintGenerator );
+// XRW TEMP  return utility::pointer::make_shared< SheetRemodelConstraintGenerator >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -107,7 +107,7 @@ std::string SheetRemodelConstraintGeneratorCreator::keyname() const {
 
 protocols::moves::MoverOP
 SheetRemodelConstraintGeneratorCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SheetRemodelConstraintGenerator );
+	return utility::pointer::make_shared< SheetRemodelConstraintGenerator >();
 }
 
 void SheetRemodelConstraintGeneratorCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -74,7 +74,7 @@ TimingProfileMetric::TimingProfileMetric( TimingProfileMetric const & src ):
 
 core::simple_metrics::SimpleMetricOP
 TimingProfileMetric::clone() const {
-	return SimpleMetricOP(new TimingProfileMetric( *this ) );
+	return utility::pointer::make_shared< TimingProfileMetric >( *this );
 
 }
 
@@ -146,7 +146,7 @@ TimingProfileMetricCreator::keyname() const {
 
 core::simple_metrics::SimpleMetricOP
 TimingProfileMetricCreator::create_simple_metric() const {
-	return core::simple_metrics::SimpleMetricOP( new TimingProfileMetric );
+	return utility::pointer::make_shared< TimingProfileMetric >();
 
 }
 

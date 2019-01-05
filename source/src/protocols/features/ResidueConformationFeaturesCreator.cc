@@ -28,7 +28,7 @@ namespace features {
 // XRW TEMP ResidueConformationFeaturesCreator::ResidueConformationFeaturesCreator() {}
 // XRW TEMP ResidueConformationFeaturesCreator::~ResidueConformationFeaturesCreator() = default;
 // XRW TEMP FeaturesReporterOP ResidueConformationFeaturesCreator::create_features_reporter() const {
-// XRW TEMP  return FeaturesReporterOP( new ResidueConformationFeatures );
+// XRW TEMP  return utility::pointer::make_shared< ResidueConformationFeatures >();
 // XRW TEMP }
 
 // XRW TEMP std::string ResidueConformationFeaturesCreator::type_name() const {

@@ -855,7 +855,7 @@ HBNet::rec_trav_native( Pose const & pose, Size new_res, Size prev_res, utility:
 			return;
 		}
 	}
-	//residues.push_back( HBondResStructCOP( new HBondResStruct( new_res, 0, pose.residue(new_res).name1(), pose.pdb_info()->chain(new_res), pose.residue(new_res).is_protein(), pose.residue(new_res).is_water(), pose.residue(new_res).is_ligand() ) ) );
+	//residues.push_back( utility::pointer::make_shared< HBondResStruct >( new_res, 0, pose.residue(new_res).name1(), pose.pdb_info()->chain(new_res), pose.residue(new_res).is_protein(), pose.residue(new_res).is_water(), pose.residue(new_res).is_ligand() ) );
 
 	residues.push_back(
 		pointer::make_shared< HBondResStruct >(

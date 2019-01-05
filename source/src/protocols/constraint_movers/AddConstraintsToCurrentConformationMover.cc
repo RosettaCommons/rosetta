@@ -205,16 +205,16 @@ AddConstraintsToCurrentConformationMover::generate_coordinate_constraints(
 		// add constraints
 		core::scoring::func::FuncOP cc_func; //NULL
 		if ( !use_bounded_func_ || use_harmonic_func_ ) {
-			cc_func = core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc( 0.0, coord_dev_ ) );
+			cc_func = utility::pointer::make_shared< core::scoring::func::HarmonicFunc >( 0.0, coord_dev_ );
 		} else {
-			cc_func = core::scoring::func::FuncOP( new BoundFunc( 0, bound_width_, coord_dev_, "xyz" ) );
+			cc_func = utility::pointer::make_shared< BoundFunc >( 0, bound_width_, coord_dev_, "xyz" );
 		}
 		runtime_assert(cc_func);
 
 
 		for ( Size iatom=iatom_start; iatom<=iatom_stop; ++iatom ) {
-			csts.push_back( scoring::constraints::ConstraintCOP( new CoordinateConstraint(
-				core::id::AtomID(iatom,ires), best_anchor_id, pose.residue(ires).xyz(iatom), cc_func ) ) );
+			csts.push_back( utility::pointer::make_shared< CoordinateConstraint >(
+				core::id::AtomID(iatom,ires), best_anchor_id, pose.residue(ires).xyz(iatom), cc_func ) );
 			TR.Debug << "coordinate constraint generated for residue " << ires << ", atom " << iatom << ", using func" << std::endl << *cc_func << std::endl;
 		}
 	} //loop through residues
@@ -266,19 +266,19 @@ AddConstraintsToCurrentConformationMover::generate_atom_pair_constraints(
 
 					core::scoring::func::FuncOP apc_func; //NULL!
 					if ( use_harmonic_func_ ) {
-						apc_func = core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc( dist, coord_dev_ ) );
+						apc_func = utility::pointer::make_shared< core::scoring::func::HarmonicFunc >( dist, coord_dev_ );
 						TR.Debug << "Using harmonic func with AtomPairConstraint: " << *apc_func << std::endl;
 					} else if ( use_bounded_func_ ) {
 						//establish bound_func limits based on basin around distance
 						core::Real lower_limit( dist - ( 0.5  * bound_width_) );
 						if ( lower_limit < 0 ) lower_limit = 0;
 						core::Real const upper_limit( dist + ( 0.5 * bound_width_ ) );
-						apc_func = core::scoring::func::FuncOP( new BoundFunc( lower_limit, upper_limit, coord_dev_, "xyz" ) );
+						apc_func = utility::pointer::make_shared< BoundFunc >( lower_limit, upper_limit, coord_dev_, "xyz" );
 						TR.Debug << "Using Bounded func with AtomPairConstraint: " << *apc_func << std::endl;
 					} else {
 						core::scoring::func::FuncOP weighted_func;
 						core::scoring::func::FuncOP sog_func( new core::scoring::func::SOGFunc( dist, coord_dev_ ) );
-						apc_func = core::scoring::func::FuncOP( new core::scoring::func::ScalarWeightedFunc( cst_weight_, sog_func ) );
+						apc_func = utility::pointer::make_shared< core::scoring::func::ScalarWeightedFunc >( cst_weight_, sog_func );
 						TR.Debug << "Using SOG func with AtomPairConstraint: " << *apc_func << std::endl;
 					}
 					runtime_assert(apc_func); //make sure that func got populated; should have been forced down one of the two if branches above
@@ -369,15 +369,15 @@ void AddConstraintsToCurrentConformationMover::task_factory( TaskFactoryOP tf )
 }
 
 moves::MoverOP AddConstraintsToCurrentConformationMover::clone() const {
-	return moves::MoverOP( new AddConstraintsToCurrentConformationMover( *this ) );
+	return utility::pointer::make_shared< AddConstraintsToCurrentConformationMover >( *this );
 }
 moves::MoverOP AddConstraintsToCurrentConformationMover::fresh_instance() const {
-	return moves::MoverOP( new AddConstraintsToCurrentConformationMover );
+	return utility::pointer::make_shared< AddConstraintsToCurrentConformationMover >();
 }
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP AddConstraintsToCurrentConformationMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new AddConstraintsToCurrentConformationMover );
+// XRW TEMP  return utility::pointer::make_shared< AddConstraintsToCurrentConformationMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -431,7 +431,7 @@ std::string AddConstraintsToCurrentConformationMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 AddConstraintsToCurrentConformationMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new AddConstraintsToCurrentConformationMover );
+	return utility::pointer::make_shared< AddConstraintsToCurrentConformationMover >();
 }
 
 void AddConstraintsToCurrentConformationMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

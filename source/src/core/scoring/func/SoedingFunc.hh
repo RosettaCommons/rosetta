@@ -38,7 +38,7 @@ public:
 	{}
 
 	/// @brief returns a clone of this SoedingFunc
-	FuncOP clone() const { return FuncOP( new SoedingFunc( *this ) ); }
+	FuncOP clone() const { return utility::pointer::make_shared< SoedingFunc >( *this ); }
 	virtual bool operator == ( Func const & other ) const;
 	virtual bool same_type_as_me( Func const & other ) const;
 

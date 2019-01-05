@@ -64,7 +64,7 @@ protocols::make_rot_lib::MakeRotLibJobInputter::MakeRotLibJobInputter() :
 	//option[ in::file::extra_res_fa ].push_back( utility::file::FileName( std::string( "terminal/ACE.params" ) ) );
 	//option[ in::file::extra_res_fa ].push_back( utility::file::FileName( std::string( "terminal/NME.params" ) ) );
 
-	mrlod_ = MakeRotLibOptionsDataOP( new MakeRotLibOptionsData( option[ OptionKeys::make_rot_lib::options_file ].value() ) );
+	mrlod_ = utility::pointer::make_shared< MakeRotLibOptionsData >( option[ OptionKeys::make_rot_lib::options_file ].value() );
 }
 
 protocols::make_rot_lib::MakeRotLibJobInputter::~MakeRotLibJobInputter()= default;
@@ -204,7 +204,7 @@ void protocols::make_rot_lib::MakeRotLibJobInputter::fill_jobs( jd2::JobsContain
 					TR << " bb" << bb_ids[ push_i ] << ": " << bbs[ push_i ];
 				}
 				TR << " eps: " << e << " bin" << std::endl;
-				jobs.push_back( jd2::JobOP( new MakeRotLibJob( ij, nstruct, o, bbs, bb_ids, e, mrlod_, semirotameric ) ) );
+				jobs.push_back( utility::pointer::make_shared< MakeRotLibJob >( ij, nstruct, o, bbs, bb_ids, e, mrlod_, semirotameric ) );
 			}
 
 			i[ 1 ] += steps[ 1 ];
@@ -237,7 +237,7 @@ MakeRotLibJobInputterCreator::keyname() const
 protocols::jd2::JobInputterOP
 MakeRotLibJobInputterCreator::create_JobInputter() const
 {
-	return protocols::jd2::JobInputterOP( new MakeRotLibJobInputter );
+	return utility::pointer::make_shared< MakeRotLibJobInputter >();
 }
 
 }//make_rot_lib

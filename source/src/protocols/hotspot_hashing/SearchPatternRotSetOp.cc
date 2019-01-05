@@ -55,7 +55,7 @@ SearchPatternRotSetOp::SearchPatternRotSetOp( SearchPatternRotSetOp const & othe
 core::pack::rotamer_set::RotamerSetOperationOP
 SearchPatternRotSetOp::clone() const
 {
-	return core::pack::rotamer_set::RotamerSetOperationOP( new SearchPatternRotSetOp(*this) );
+	return utility::pointer::make_shared< SearchPatternRotSetOp >(*this);
 }
 
 
@@ -106,7 +106,7 @@ core::Real SearchPatternRotSetOp::increase_packer_residue_radius(
 )
 {
 	// Calculate the centroid frame and centroid location in the centroid frame
-	core::conformation::ResidueCOP source_residue( core::conformation::ResidueOP( new core::conformation::Residue(pose.residue(residue_index)) ) );
+	core::conformation::ResidueCOP source_residue( utility::pointer::make_shared< core::conformation::Residue >(pose.residue(residue_index)) );
 	TR.Debug << "Increasing packer residue radius for residue: " << residue_index << " " << source_residue->name() << std::endl;
 
 	core::kinematics::Stub centroid_frame = StubGenerator::residueStubCentroidFrame(source_residue);
@@ -142,7 +142,7 @@ AddSearchPatternRotSetOp::~AddSearchPatternRotSetOp()= default;
 core::pack::task::operation::TaskOperationOP
 AddSearchPatternRotSetOp::clone() const
 {
-	return core::pack::task::operation::TaskOperationOP( new AddSearchPatternRotSetOp(*this) );
+	return utility::pointer::make_shared< AddSearchPatternRotSetOp >(*this);
 }
 
 /// @details not valid now, extend with search pattern parsing

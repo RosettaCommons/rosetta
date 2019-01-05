@@ -114,9 +114,9 @@ ResidueTotalScoresFeatures::write_residue_total_scores_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
-	Column resNum("resNum", DbDataTypeOP( new DbInteger() ));
-	Column score_value("score_value", DbDataTypeOP( new DbReal() ));
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >());
+	Column resNum("resNum", utility::pointer::make_shared< DbInteger >());
+	Column score_value("score_value", utility::pointer::make_shared< DbReal >());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -248,7 +248,7 @@ std::string ResidueTotalScoresFeaturesCreator::type_name() const {
 
 protocols::features::FeaturesReporterOP
 ResidueTotalScoresFeaturesCreator::create_features_reporter() const {
-	return protocols::features::FeaturesReporterOP( new ResidueTotalScoresFeatures );
+	return utility::pointer::make_shared< ResidueTotalScoresFeatures >();
 }
 
 void ResidueTotalScoresFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -295,7 +295,7 @@ ParsedProtocol::set_resid( core::Size const resid ){
 
 protocols::moves::MoverOP ParsedProtocol::clone() const
 {
-	return protocols::moves::MoverOP( new protocols::rosetta_scripts::ParsedProtocol( *this ) );
+	return utility::pointer::make_shared< protocols::rosetta_scripts::ParsedProtocol >( *this );
 }
 
 std::pair< moves::MoverOP, std::string >
@@ -339,7 +339,7 @@ parse_mover_subtag( utility::tag::TagCOP const tag_ptr,
 		mover_to_add = new_mover;
 		mover_name = "OnTheFly("+tag_ptr->getName()+")";
 	} else {
-		mover_to_add = MoverOP( new NullMover() );
+		mover_to_add = utility::pointer::make_shared< NullMover >();
 		mover_name = "NULL_MOVER";
 	}
 
@@ -402,7 +402,7 @@ ParsedProtocol::parse_my_tag(
 			}
 			filter_to_add = find_filter->second;
 		} else {
-			filter_to_add = protocols::filters::FilterOP( new protocols::filters::TrueFilter );
+			filter_to_add = utility::pointer::make_shared< protocols::filters::TrueFilter >();
 		}
 
 		TR << "added mover \"" << mover_name << "\" with filter \"" << filter_name << "\"" << std::endl;
@@ -746,7 +746,7 @@ std::string ParsedProtocolCreator::keyname() const {
 
 protocols::moves::MoverOP
 ParsedProtocolCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ParsedProtocol );
+	return utility::pointer::make_shared< ParsedProtocol >();
 }
 
 void ParsedProtocolCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

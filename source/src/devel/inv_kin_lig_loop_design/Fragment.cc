@@ -272,7 +272,7 @@ void File::convertEntries(const int from, const int to) {
 
 Fragment::FileCOP Librarian::getFragmentFile_loop() {
 	if ( frag_file_loop == nullptr ) {
-		frag_file_loop = Fragment::FileOP( new Fragment::File(get("LLL")) );
+		frag_file_loop = utility::pointer::make_shared< Fragment::File >(get("LLL"));
 		frag_file_loop->convertEntries(3,1);
 	}
 	return frag_file_loop;
@@ -280,7 +280,7 @@ Fragment::FileCOP Librarian::getFragmentFile_loop() {
 
 Fragment::FileCOP Librarian::getFragmentFile_sheet() {
 	if ( frag_file_sheet == nullptr ) {
-		frag_file_sheet = Fragment::FileOP( new Fragment::File(get("EEE")) );
+		frag_file_sheet = utility::pointer::make_shared< Fragment::File >(get("EEE"));
 		frag_file_sheet->convertEntries(3,1);
 	}
 	return frag_file_sheet;
@@ -288,7 +288,7 @@ Fragment::FileCOP Librarian::getFragmentFile_sheet() {
 
 Fragment::FileCOP Librarian::getFragmentFile_helix() {
 	if ( frag_file_helix == nullptr ) {
-		frag_file_helix = Fragment::FileOP( new Fragment::File(get("HHH")) );
+		frag_file_helix = utility::pointer::make_shared< Fragment::File >(get("HHH"));
 		frag_file_helix->convertEntries(3,1);
 	}
 	return frag_file_helix;
@@ -384,7 +384,7 @@ Fragment::FileCOP Librarian::getFragmentFile(const string& ss0) {
 			cout << "Fragment::getFragmentFile - trying to open '" << filename << "'" << endl;
 
 			if ( fin ) {
-				fragfile = Fragment::FileOP( new Fragment::File() );
+				fragfile = utility::pointer::make_shared< Fragment::File >();
 				cout << "Fragment::getFragmentFile - successfully opened '" << filename << "'" << endl;
 				fin >> *fragfile;
 				found = true;

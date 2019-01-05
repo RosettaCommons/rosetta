@@ -86,7 +86,7 @@ void ScoreFunctionLoader::load_data(
 					<< scorefxn_weights << "\"" << std::endl;
 			}
 		} else {
-			in_scorefxn = ScoreFunctionOP( new ScoreFunction );
+			in_scorefxn = utility::pointer::make_shared< ScoreFunction >();
 			in_scorefxn->reset();
 			TR << "***WARNING***: No weights/patch defined. Defining " << scorefxn_name << " with all-zero weights." << std::endl;
 		}
@@ -431,7 +431,7 @@ ScoreFunctionLoader::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 }
 
 DataLoaderOP
-ScoreFunctionLoaderCreator::create_loader() const { return DataLoaderOP( new ScoreFunctionLoader ); }
+ScoreFunctionLoaderCreator::create_loader() const { return utility::pointer::make_shared< ScoreFunctionLoader >(); }
 
 std::string
 ScoreFunctionLoaderCreator::keyname() const { return ScoreFunctionLoader::loader_name(); }

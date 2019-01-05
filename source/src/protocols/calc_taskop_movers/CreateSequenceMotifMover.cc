@@ -150,7 +150,7 @@ CreateSequenceMotifMover::initialize_objects( core::pose::Pose & pose){
 
 	//create TF if not present.
 	if ( ! tf_ ) {
-		tf_ = TaskFactoryOP( new TaskFactory());
+		tf_ = utility::pointer::make_shared< TaskFactory >();
 	} else {
 		tf_->clear();
 	}
@@ -158,11 +158,11 @@ CreateSequenceMotifMover::initialize_objects( core::pose::Pose & pose){
 	//Create operations if not present.
 
 	if ( ! cmd_line_operation_ ) {
-		cmd_line_operation_ = InitializeFromCommandlineOP( new InitializeFromCommandline() );
+		cmd_line_operation_ = utility::pointer::make_shared< InitializeFromCommandline >();
 	}
 
 	if ( ! motif_operation_ ) {
-		motif_operation_ = SequenceMotifTaskOperationOP( new SequenceMotifTaskOperation() );
+		motif_operation_ = utility::pointer::make_shared< SequenceMotifTaskOperation >();
 	}
 
 	if ( ! scorefxn_ ) {
@@ -176,11 +176,11 @@ CreateSequenceMotifMover::initialize_objects( core::pose::Pose & pose){
 	//Restrict restypes using the new task op.
 
 	if ( neighbor_operations_.size() == 0 ) {
-		OperateOnResidueSubsetOP operate_on_neighbors = OperateOnResidueSubsetOP( new OperateOnResidueSubset() );
-		OperateOnResidueSubsetOP operate_on_others = OperateOnResidueSubsetOP( new OperateOnResidueSubset() );
+		OperateOnResidueSubsetOP operate_on_neighbors = utility::pointer::make_shared< OperateOnResidueSubset >();
+		OperateOnResidueSubsetOP operate_on_others = utility::pointer::make_shared< OperateOnResidueSubset >();
 
-		PreventRepackingRLTOP prevent_repacking = PreventRepackingRLTOP( new PreventRepackingRLT() );
-		RestrictToRepackingRLTOP restrict_to_repacking = RestrictToRepackingRLTOP( new RestrictToRepackingRLT() );
+		PreventRepackingRLTOP prevent_repacking = utility::pointer::make_shared< PreventRepackingRLT >();
+		RestrictToRepackingRLTOP restrict_to_repacking = utility::pointer::make_shared< RestrictToRepackingRLT >();
 		utility::vector1< bool > subset = selector_->apply( pose );
 		utility::vector1< bool > focus( pose.total_residue(), false);
 
@@ -300,14 +300,14 @@ CreateSequenceMotifMover::parse_my_tag(
 protocols::moves::MoverOP
 CreateSequenceMotifMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new CreateSequenceMotifMover );
+	return utility::pointer::make_shared< CreateSequenceMotifMover >();
 }
 
 /// @brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
 CreateSequenceMotifMover::clone() const
 {
-	return protocols::moves::MoverOP( new CreateSequenceMotifMover( *this ) );
+	return utility::pointer::make_shared< CreateSequenceMotifMover >( *this );
 }
 
 std::string CreateSequenceMotifMover::get_name() const {
@@ -353,7 +353,7 @@ void CreateSequenceMotifMover::provide_xml_schema( utility::tag::XMLSchemaDefini
 protocols::moves::MoverOP
 CreateSequenceMotifMoverCreator::create_mover() const
 {
-	return protocols::moves::MoverOP( new CreateSequenceMotifMover );
+	return utility::pointer::make_shared< CreateSequenceMotifMover >();
 }
 
 std::string

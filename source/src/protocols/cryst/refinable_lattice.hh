@@ -83,8 +83,8 @@ public:
 	void apply( core::pose::Pose & pose ) override;
 
 
-	protocols::moves::MoverOP clone() const override { return protocols::moves::MoverOP(new UpdateCrystInfo(*this)); }
-	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP(new UpdateCrystInfo()); }
+	protocols::moves::MoverOP clone() const override { return utility::pointer::make_shared< UpdateCrystInfo >(*this); }
+	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< UpdateCrystInfo >(); }
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -117,8 +117,8 @@ public:
 
 	void apply( core::pose::Pose & pose ) override;
 
-	protocols::moves::MoverOP clone() const override { return protocols::moves::MoverOP(new CrystRMS(*this)); }
-	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP(new CrystRMS()); }
+	protocols::moves::MoverOP clone() const override { return utility::pointer::make_shared< CrystRMS >(*this); }
+	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< CrystRMS >(); }
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -208,8 +208,8 @@ public:
 	void set_temp(core::Real val) { kT_=val; }
 
 
-	protocols::moves::MoverOP clone() const override { return protocols::moves::MoverOP(new DockLatticeMover(*this)); }
-	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP(new DockLatticeMover()); }
+	protocols::moves::MoverOP clone() const override { return utility::pointer::make_shared< DockLatticeMover >(*this); }
+	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< DockLatticeMover >(); }
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -324,8 +324,8 @@ public:
 	void apply( core::pose::Pose & pose ) override;
 
 
-	protocols::moves::MoverOP clone() const override { return protocols::moves::MoverOP(new MakeLatticeMover(*this)); }
-	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP(new MakeLatticeMover()); }
+	protocols::moves::MoverOP clone() const override { return utility::pointer::make_shared< MakeLatticeMover >(*this); }
+	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< MakeLatticeMover >(); }
 
 	void
 	spacegroup( Spacegroup const & sg_in ) {

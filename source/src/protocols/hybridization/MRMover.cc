@@ -198,7 +198,7 @@ void MRMover::apply( Pose &pose ) {
 	if ( threaded ) {
 		core::Size nres = pose.size();
 		while ( !pose.residue(nres).is_polymer() ) nres--;
-		my_loops = LoopsOP( new Loops( job->loops( nres ) ) );
+		my_loops = utility::pointer::make_shared< Loops >( job->loops( nres ) );
 
 		if ( max_gaplength_to_model_ < 999 ) {
 			trim_target_pose( pose, *my_loops, max_gaplength_to_model_ );

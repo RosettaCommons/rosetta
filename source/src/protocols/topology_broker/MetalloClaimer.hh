@@ -67,7 +67,7 @@ public:
 	MetalloClaimerOP shared_from_this() { return utility::pointer::dynamic_pointer_cast<MetalloClaimer>( TopologyClaimer::shared_from_this() ); }
 
 	TopologyClaimerOP clone() const override {
-		return TopologyClaimerOP( new MetalloClaimer( *this ) );
+		return utility::pointer::make_shared< MetalloClaimer >( *this );
 	}
 
 	void generate_sequence_claims( claims::DofClaims& dc ) override {

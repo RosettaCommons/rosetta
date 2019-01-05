@@ -121,7 +121,7 @@ ScoreOnlyJobOutputterCreator::keyname() const
 
 protocols::jd2::JobOutputterOP
 ScoreOnlyJobOutputterCreator::create_JobOutputter() const {
-	return protocols::jd2::JobOutputterOP( new ScoreOnlyJobOutputter );
+	return utility::pointer::make_shared< ScoreOnlyJobOutputter >();
 }
 
 }

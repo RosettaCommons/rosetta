@@ -160,7 +160,7 @@ core::scoring::constraints::ConstraintSetOP convert_caAtomsToConstrain_to_coordC
 		Size residue_id = *caAtomsToConstrain_start;
 		tr.Debug << "constraining " << residue_id << std::endl;
 		Residue const & rsd( pose.residue(residue_id) );
-		cst_set->add_constraint(ConstraintCOP( ConstraintOP( new CoordinateConstraint(AtomID(rsd.atom_index("CA"),residue_id), AtomID(1,pose.size()), rsd.xyz(atom_name),core::scoring::func::FuncOP(new core::scoring::func::HarmonicFunc(0.0,default_coord_sdev))) ) ));
+		cst_set->add_constraint(ConstraintCOP( utility::pointer::make_shared< CoordinateConstraint >(AtomID(rsd.atom_index("CA"),residue_id), AtomID(1,pose.size()), rsd.xyz(atom_name),utility::pointer::make_shared< core::scoring::func::HarmonicFunc >(0.0,default_coord_sdev)) ));
 		++caAtomsToConstrain_start;
 	}
 	return(cst_set);
@@ -338,7 +338,7 @@ std::set<Size> get_residuesToConstrain(const Size /*coordCstGapInitial*/, const 
 				std::set_union(caAtomsToConstrain.begin(), caAtomsToConstrain.end(), distDeviationResiduesToConstrain.begin(), distDeviationResiduesToConstrain.end(), std::inserter(tmp_caAtomsToConstrain, tmp_caAtomsToConstrain.begin()));
 				caAtomsToConstrain = tmp_caAtomsToConstrain;
 				cst_set = convert_caAtomsToConstrain_to_coordCsts(caAtomsToConstrain,pose);
-				rd2relaxed_poseOP = core::pose::PoseOP( new core::pose::Pose(pose) );
+				rd2relaxed_poseOP = utility::pointer::make_shared< core::pose::Pose >(pose);
 				add_virtual_residue_to_cterm(*rd2relaxed_poseOP);
 				rd2relaxed_poseOP->constraint_set(cst_set);
 				relaxer2.apply(*rd2relaxed_poseOP);

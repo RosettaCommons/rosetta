@@ -159,7 +159,7 @@ PackerTask_::update_commutative(
 
 
 	if ( o.IG_edge_reweights_ ) {
-		IG_edge_reweights_ = IGEdgeReweightContainerOP( new IGEdgeReweightContainer(nres_) );
+		IG_edge_reweights_ = utility::pointer::make_shared< IGEdgeReweightContainer >(nres_);
 		for ( auto i = o.IG_edge_reweights_->reweighters_begin();
 				i != o.IG_edge_reweights_->reweighters_end(); ++i ) {
 			IG_edge_reweights_->add_reweighter(*i);
@@ -860,7 +860,7 @@ IGEdgeReweightContainerOP
 PackerTask_::set_IGEdgeReweights()
 {
 	if ( !IG_edge_reweights_ ) {
-		IG_edge_reweights_ = IGEdgeReweightContainerOP( new IGEdgeReweightContainer( nres_ ) );
+		IG_edge_reweights_ = utility::pointer::make_shared< IGEdgeReweightContainer >( nres_ );
 	}
 	return IG_edge_reweights_;
 

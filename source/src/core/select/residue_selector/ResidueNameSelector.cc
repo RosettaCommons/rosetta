@@ -75,7 +75,7 @@ ResidueNameSelector::ResidueNameSelector( std::string const & res_name3_str, boo
 
 /// @brief Clone operator.
 /// @details Copy this object and return an owning pointer to the new object.
-ResidueSelectorOP ResidueNameSelector::clone() const { return ResidueSelectorOP( new ResidueNameSelector(*this) ); }
+ResidueSelectorOP ResidueNameSelector::clone() const { return utility::pointer::make_shared< ResidueNameSelector >(*this); }
 
 ResidueNameSelector::~ResidueNameSelector() = default;
 
@@ -200,7 +200,7 @@ ResidueNameSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 
 ResidueSelectorOP
 ResidueNameSelectorCreator::create_residue_selector() const {
-	return ResidueSelectorOP( new ResidueNameSelector );
+	return utility::pointer::make_shared< ResidueNameSelector >();
 }
 
 std::string

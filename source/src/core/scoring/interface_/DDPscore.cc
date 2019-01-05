@@ -35,7 +35,7 @@ methods::EnergyMethodOP
 DDPscoreCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new DDPscore );
+	return utility::pointer::make_shared< DDPscore >();
 }
 
 ScoreTypes
@@ -47,13 +47,13 @@ DDPscoreCreator::score_types_for_method() const {
 
 
 DDPscore::DDPscore() :
-	parent( methods::EnergyMethodCreatorOP( new DDPscoreCreator ) ),
+	parent( utility::pointer::make_shared< DDPscoreCreator >() ),
 	lookup_table_( core::scoring::ScoringManager::get_instance()->get_DDPLookupTable() )
 { }
 
 methods::EnergyMethodOP DDPscore::clone() const
 {
-	return methods::EnergyMethodOP( new DDPscore(*this) );
+	return utility::pointer::make_shared< DDPscore >(*this);
 }
 
 void DDPscore::setup_for_scoring(pose::Pose&, const ScoreFunction& ) const

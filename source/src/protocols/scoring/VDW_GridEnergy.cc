@@ -58,7 +58,7 @@ core::scoring::methods::EnergyMethodOP
 VDW_GridEnergyCreator::create_energy_method(
 	core::scoring::methods::EnergyMethodOptions const &
 ) const {
-	return core::scoring::methods::EnergyMethodOP( new VDW_GridEnergy );
+	return utility::pointer::make_shared< VDW_GridEnergy >();
 }
 
 core::scoring::ScoreTypes
@@ -71,7 +71,7 @@ VDW_GridEnergyCreator::score_types_for_method() const {
 
 /// ctor
 VDW_GridEnergy::VDW_GridEnergy() :
-	parent( core::scoring::methods::EnergyMethodCreatorOP( new VDW_GridEnergyCreator ) ),
+	parent( utility::pointer::make_shared< VDW_GridEnergyCreator >() ),
 	clash_penalty_( 1.0 ) /*Totally made up for now*/
 {}
 
@@ -81,7 +81,7 @@ VDW_GridEnergy::~VDW_GridEnergy() = default;
 core::scoring::methods::EnergyMethodOP
 VDW_GridEnergy::clone() const
 {
-	return core::scoring::methods::EnergyMethodOP( new VDW_GridEnergy );
+	return utility::pointer::make_shared< VDW_GridEnergy >();
 }
 
 /////////////////////////////////////////////////////////////////////////////

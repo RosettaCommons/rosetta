@@ -107,7 +107,7 @@ void PoseInfoFilter::parse_my_tag( utility::tag::TagCOP const,
 }
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP PoseInfoFilterCreator::create_filter() const { return protocols::filters::FilterOP( new PoseInfoFilter ); }
+// XRW TEMP PoseInfoFilterCreator::create_filter() const { return utility::pointer::make_shared< PoseInfoFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP PoseInfoFilterCreator::keyname() const { return "PoseInfo"; }
@@ -141,7 +141,7 @@ std::string PoseInfoFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 PoseInfoFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new PoseInfoFilter );
+	return utility::pointer::make_shared< PoseInfoFilter >();
 }
 
 void PoseInfoFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

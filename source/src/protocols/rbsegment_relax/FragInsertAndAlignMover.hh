@@ -51,7 +51,7 @@ public:
 
 	/// @brief clone this object
 	protocols::moves::MoverOP clone() const override {
-		return protocols::moves::MoverOP( new FragInsertAndAlignMover(*this) );
+		return utility::pointer::make_shared< FragInsertAndAlignMover >(*this);
 	}
 
 	/// @brief take a CA-only pose and insert idealized fragments close to the trace

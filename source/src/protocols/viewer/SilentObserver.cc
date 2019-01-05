@@ -53,7 +53,7 @@ SilentObserver::SilentObserver( std::string const & name_in, bool fullatom = fal
 	silent_file_name_( name_in + ".out" )
 {
 	core::io::silent::SilentFileOptions opts;
-	sfd_ = core::io::silent::SilentFileDataOP( new core::io::silent::SilentFileData(opts) );
+	sfd_ = utility::pointer::make_shared< core::io::silent::SilentFileData >(opts);
 }
 
 

@@ -74,7 +74,7 @@ public:
 	void apply( core::pose::Pose& pose ) override;
 
 	protocols::moves::MoverOP clone() const override {
-		return protocols::moves::MoverOP( new LoopHashLibrary( *this ) );
+		return utility::pointer::make_shared< LoopHashLibrary >( *this );
 	}
 
 
@@ -83,7 +83,7 @@ public:
 	}
 
 	protocols::moves::MoverOP fresh_instance() const override {
-		return protocols::moves::MoverOP( new LoopHashLibrary );
+		return utility::pointer::make_shared< LoopHashLibrary >();
 	}
 
 

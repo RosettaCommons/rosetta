@@ -63,7 +63,7 @@ AddOrDeleteMover::AddOrDeleteMover( AddMoverOP rna_add_mover,
 	rna_delete_mover_(std::move( rna_delete_mover )),
 	rna_from_scratch_mover_(std::move( rna_from_scratch_mover )),
 	disallow_deletion_of_last_residue_( false ),
-	swa_move_selector_( StepWiseMoveSelectorOP( new StepWiseMoveSelector ) ),
+	swa_move_selector_( utility::pointer::make_shared< StepWiseMoveSelector >() ),
 	choose_random_( true )
 {}
 

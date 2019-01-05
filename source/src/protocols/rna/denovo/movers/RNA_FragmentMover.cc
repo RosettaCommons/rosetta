@@ -78,7 +78,7 @@ RNA_FragmentMover::RNA_FragmentMover(
 	symm_hack_arity_( symm_hack_arity ),
 	exhaustive_( exhaustive ),
 	sfxn_( sfxn ),
-	homology_exclusion_( RNA_FragmentHomologyExclusionCOP( new RNA_FragmentHomologyExclusion( rna_fragments ) ) )
+	homology_exclusion_( utility::pointer::make_shared< RNA_FragmentHomologyExclusion >( rna_fragments ) )
 {
 	Mover::type("RNA_FragmentMover");
 }
@@ -107,13 +107,13 @@ RNA_FragmentMover::get_name() const {
 protocols::moves::MoverOP
 RNA_FragmentMover::clone() const
 {
-	return protocols::moves::MoverOP( new RNA_FragmentMover(*this) );
+	return utility::pointer::make_shared< RNA_FragmentMover >(*this);
 }
 
 // protocols::moves::MoverOP
 // RNA_FragmentMover::fresh_instance() const
 // {
-//  return protocols::moves::MoverOP( new RNA_FragmentMover() );
+//  return utility::pointer::make_shared< RNA_FragmentMover >();
 // }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

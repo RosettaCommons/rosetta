@@ -52,7 +52,7 @@ using namespace ObjexxFCL::format;
 static basic::Tracer TR( "protocols.simple_filters.ResidueSetChainEnergyFilter" );
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP ResidueSetChainEnergyFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ResidueSetChainEnergyFilter ); }
+// XRW TEMP ResidueSetChainEnergyFilterCreator::create_filter() const { return utility::pointer::make_shared< ResidueSetChainEnergyFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP ResidueSetChainEnergyFilterCreator::keyname() const { return "ResidueSetChainEnergy"; }
@@ -213,7 +213,7 @@ std::string ResidueSetChainEnergyFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 ResidueSetChainEnergyFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new ResidueSetChainEnergyFilter );
+	return utility::pointer::make_shared< ResidueSetChainEnergyFilter >();
 }
 
 void ResidueSetChainEnergyFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

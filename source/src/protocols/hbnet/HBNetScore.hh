@@ -36,11 +36,11 @@ public:
 	~HBNetScore();
 
 	protocols::filters::FilterOP clone() const override{
-		return protocols::filters::FilterOP( new HBNetScore( *this ) );
+		return utility::pointer::make_shared< HBNetScore >( *this );
 	}
 
 	protocols::filters::FilterOP fresh_instance() const override{
-		return protocols::filters::FilterOP( new HBNetScore );
+		return utility::pointer::make_shared< HBNetScore >();
 	}
 
 public:

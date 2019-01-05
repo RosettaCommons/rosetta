@@ -47,7 +47,7 @@ methods::EnergyMethodOP
 SequenceDependentRefEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new SequenceDependentRefEnergy );
+	return utility::pointer::make_shared< SequenceDependentRefEnergy >();
 }
 
 ScoreTypes
@@ -59,13 +59,13 @@ SequenceDependentRefEnergyCreator::score_types_for_method() const {
 
 
 SequenceDependentRefEnergy::SequenceDependentRefEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new SequenceDependentRefEnergyCreator ) )
+	parent( utility::pointer::make_shared< SequenceDependentRefEnergyCreator >() )
 {
 	read_energy_weight_table();
 }
 
 SequenceDependentRefEnergy::SequenceDependentRefEnergy( utility::vector1< utility::vector1< Real > > const & aa_seq_weights_in ):
-	parent( methods::EnergyMethodCreatorOP( new SequenceDependentRefEnergyCreator ) )
+	parent( utility::pointer::make_shared< SequenceDependentRefEnergyCreator >() )
 {
 	aa_seq_weights_.clear();
 	for ( auto const & it : aa_seq_weights_in ) {
@@ -132,7 +132,7 @@ void SequenceDependentRefEnergy::read_energy_weight_table() {
 EnergyMethodOP
 SequenceDependentRefEnergy::clone() const
 {
-	return EnergyMethodOP( new SequenceDependentRefEnergy( aa_seq_weights_ ) );
+	return utility::pointer::make_shared< SequenceDependentRefEnergy >( aa_seq_weights_ );
 }
 
 

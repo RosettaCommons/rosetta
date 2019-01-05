@@ -49,7 +49,7 @@ using namespace core::scoring;
 static basic::Tracer TR( "protocols.simple_filters.ResidueCountFilter" );
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP ResidueCountFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ResidueCountFilter ); }
+// XRW TEMP ResidueCountFilterCreator::create_filter() const { return utility::pointer::make_shared< ResidueCountFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP ResidueCountFilterCreator::keyname() const { return "ResidueCount"; }
@@ -72,12 +72,12 @@ ResidueCountFilter::~ResidueCountFilter() = default;
 
 filters::FilterOP
 ResidueCountFilter::clone() const {
-	return filters::FilterOP( new ResidueCountFilter( *this ) );
+	return utility::pointer::make_shared< ResidueCountFilter >( *this );
 }
 
 filters::FilterOP
 ResidueCountFilter::fresh_instance() const {
-	return filters::FilterOP( new ResidueCountFilter() );
+	return utility::pointer::make_shared< ResidueCountFilter >();
 }
 
 
@@ -461,7 +461,7 @@ std::string ResidueCountFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 ResidueCountFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new ResidueCountFilter );
+	return utility::pointer::make_shared< ResidueCountFilter >();
 }
 
 void ResidueCountFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

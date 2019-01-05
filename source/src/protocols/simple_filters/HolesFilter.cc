@@ -212,7 +212,7 @@ HolesFilter::parse_my_tag(
 }
 
 // XRW TEMP filters::FilterOP
-// XRW TEMP HolesFilterCreator::create_filter() const { return filters::FilterOP( new HolesFilter ); }
+// XRW TEMP HolesFilterCreator::create_filter() const { return utility::pointer::make_shared< HolesFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP HolesFilterCreator::keyname() const { return "Holes"; }
@@ -249,7 +249,7 @@ std::string HolesFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 HolesFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new HolesFilter );
+	return utility::pointer::make_shared< HolesFilter >();
 }
 
 void HolesFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

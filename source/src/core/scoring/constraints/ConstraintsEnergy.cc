@@ -47,7 +47,7 @@ methods::EnergyMethodOP
 ConstraintsEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new ConstraintsEnergy );
+	return utility::pointer::make_shared< ConstraintsEnergy >();
 }
 
 ScoreTypes
@@ -81,14 +81,14 @@ ConstraintsEnergyCreator::score_types_for_method() const {
 
 static basic::Tracer tr( "core.scoring.ConstraintsEnergy" );
 
-ConstraintsEnergy::ConstraintsEnergy() : parent( methods::EnergyMethodCreatorOP( new ConstraintsEnergyCreator ) ) {}
+ConstraintsEnergy::ConstraintsEnergy() : parent( utility::pointer::make_shared< ConstraintsEnergyCreator >() ) {}
 
 ConstraintsEnergy::~ConstraintsEnergy() = default;
 
 methods::EnergyMethodOP
 ConstraintsEnergy::clone() const
 {
-	return methods::EnergyMethodOP( new ConstraintsEnergy );
+	return utility::pointer::make_shared< ConstraintsEnergy >();
 }
 
 methods::LongRangeEnergyType

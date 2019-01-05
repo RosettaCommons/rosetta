@@ -56,7 +56,7 @@ namespace monte_carlo {
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP GenericSimulatedAnnealerCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new GenericSimulatedAnnealer );
+// XRW TEMP  return utility::pointer::make_shared< GenericSimulatedAnnealer >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -88,14 +88,14 @@ GenericSimulatedAnnealer::~GenericSimulatedAnnealer() = default;
 protocols::moves::MoverOP
 GenericSimulatedAnnealer::clone() const
 {
-	return protocols::moves::MoverOP( new GenericSimulatedAnnealer( *this ) );
+	return utility::pointer::make_shared< GenericSimulatedAnnealer >( *this );
 }
 
 /// @brief create this type of object
 protocols::moves::MoverOP
 GenericSimulatedAnnealer::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new GenericSimulatedAnnealer() );
+	return utility::pointer::make_shared< GenericSimulatedAnnealer >();
 }
 
 core::Real
@@ -786,7 +786,7 @@ std::string GenericSimulatedAnnealerCreator::keyname() const {
 
 protocols::moves::MoverOP
 GenericSimulatedAnnealerCreator::create_mover() const {
-	return protocols::moves::MoverOP( new GenericSimulatedAnnealer );
+	return utility::pointer::make_shared< GenericSimulatedAnnealer >();
 }
 
 void GenericSimulatedAnnealerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

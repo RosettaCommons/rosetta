@@ -60,7 +60,7 @@ using namespace core::scoring::constraints;
 using namespace core::scoring::func;
 
 /*AlignmentEnergy::AlignmentEnergy():
-core::scoring::methods::WholeStructureEnergy( core::scoring::methods::EnergyMethodCreatorOP( new AlignmentEnergyCreator ) ),
+core::scoring::methods::WholeStructureEnergy( utility::pointer::make_shared< AlignmentEnergyCreator >() ),
 align_pose_( nullptr ),
 pose_aligner_( nullptr )
 {}*/
@@ -69,7 +69,7 @@ AlignmentEnergy::AlignmentEnergy(
 	core::scoring::methods::EnergyMethodOptions const & //options //core::pose::PoseOP const & align_pose,
 	//utility::vector1< Size > const & moving_res_list
 ):
-	core::scoring::methods::WholeStructureEnergy( core::scoring::methods::EnergyMethodCreatorOP( new AlignmentEnergyCreator ) )//,
+	core::scoring::methods::WholeStructureEnergy( utility::pointer::make_shared< AlignmentEnergyCreator >() )//,
 	//align_pose_( align_pose ),
 	//moving_res_list_( moving_res_list ),
 {
@@ -79,12 +79,12 @@ AlignmentEnergy::AlignmentEnergy(
 	// Keep at nullptr and hope it gets initialized later if there's no align_pdb
 	if (  option[ OptionKeys::stepwise::new_align_pdb ].user() ) {
 		align_pose_ = core::import_pose::get_pdb_with_full_model_info(  option[ OptionKeys::stepwise::new_align_pdb ](), rsd_set );
-		pose_aligner_ = stepwise::modeler::align::StepWisePoseAlignerOP( new stepwise::modeler::align::StepWisePoseAligner( *align_pose_ ) );
+		pose_aligner_ = utility::pointer::make_shared< stepwise::modeler::align::StepWisePoseAligner >( *align_pose_ );
 	}
 
 	if ( option[ OptionKeys::stepwise::rmsd_screen ].user() ) {
 		rmsd_screen_ = option[ OptionKeys::stepwise::rmsd_screen ].value();
-		func_ = core::scoring::func::FuncOP( new core::scoring::func::FlatHarmonicFunc( 0, option[ OptionKeys::score::alignment_sharpness ].value(), rmsd_screen_ ) );
+		func_ = utility::pointer::make_shared< core::scoring::func::FlatHarmonicFunc >( 0, option[ OptionKeys::score::alignment_sharpness ].value(), rmsd_screen_ );
 	}
 }
 
@@ -92,7 +92,7 @@ void AlignmentEnergy::rmsd_screen( core::Real const setting ) {
 	rmsd_screen_ = setting;
 	// Update func too...
 	using namespace basic::options;
-	func_ = core::scoring::func::FuncOP( new core::scoring::func::FlatHarmonicFunc( 0, option[ OptionKeys::score::alignment_sharpness ].value(), rmsd_screen_ ) );
+	func_ = utility::pointer::make_shared< core::scoring::func::FlatHarmonicFunc >( 0, option[ OptionKeys::score::alignment_sharpness ].value(), rmsd_screen_ );
 }
 
 // copy constructor (not needed unless you need deep copies)
@@ -105,7 +105,7 @@ void AlignmentEnergy::rmsd_screen( core::Real const setting ) {
 /// to the copy.
 core::scoring::methods::EnergyMethodOP
 AlignmentEnergy::clone() const {
-	return core::scoring::methods::EnergyMethodOP( new AlignmentEnergy( *this ) );
+	return utility::pointer::make_shared< AlignmentEnergy >( *this );
 }
 
 /// @brief Indicate required setup steps for scoring
@@ -123,7 +123,7 @@ AlignmentEnergy::indicate_required_context_graphs( utility::vector1< bool > & /*
 
 void AlignmentEnergy::align_pose( core::pose::PoseOP const & align_pose ) {
 	align_pose_ = align_pose;
-	pose_aligner_ = stepwise::modeler::align::StepWisePoseAlignerOP( new stepwise::modeler::align::StepWisePoseAligner( *align_pose_ ) );
+	pose_aligner_ = utility::pointer::make_shared< stepwise::modeler::align::StepWisePoseAligner >( *align_pose_ );
 }
 
 
@@ -141,7 +141,7 @@ AlignmentEnergy::eval_atom_derivative(
 	Vector our_f2( 0 );
 
 	// Slow but sure to work.
-	//auto pose_aligner_ = stepwise::modeler::align::StepWisePoseAlignerOP( new stepwise::modeler::align::StepWisePoseAligner( *align_pose_ ) );
+	//auto pose_aligner_ = utility::pointer::make_shared< stepwise::modeler::align::StepWisePoseAligner >( *align_pose_ );
 
 	utility::vector1< Size > root_partition_res = stepwise::modeler::figure_out_root_partition_res( pose, core::pose::full_model_info::get_moving_res_from_full_model_info_const( pose ) );
 	pose_aligner_->set_root_partition_res( root_partition_res );
@@ -159,7 +159,7 @@ AlignmentEnergy::eval_atom_derivative(
 	Real const factor =  dfunc / ( 2 * n * rmsd );
 	if ( factor == 0 ) return;
 
-	auto func = FuncOP( new HarmonicFunc( 0, 1 ) );
+	auto func = utility::pointer::make_shared< HarmonicFunc >( 0, 1 );
 	//for ( auto const & elem : pose_aligner_->superimpose_atom_id_map() ) {
 	for ( auto const & elem : coord_cst_aid_map ) {
 
@@ -202,7 +202,7 @@ AlignmentEnergy::finalize_total_energy(
 	// No penalty from 0 to rmsd_screen_.
 
 	// Slow but sure to work.
-	//auto pose_aligner_ = stepwise::modeler::align::StepWisePoseAlignerOP( new stepwise::modeler::align::StepWisePoseAligner( *align_pose_ ) );
+	//auto pose_aligner_ = utility::pointer::make_shared< stepwise::modeler::align::StepWisePoseAligner >( *align_pose_ );
 
 	utility::vector1< Size > root_partition_res = stepwise::modeler::figure_out_root_partition_res( pose, core::pose::full_model_info::get_moving_res_from_full_model_info( pose ) );
 	//TR << "root_partition_res is " << root_partition_res << std::endl;
@@ -224,7 +224,7 @@ AlignmentEnergy::finalize_total_energy(
 core::scoring::methods::EnergyMethodOP
 AlignmentEnergyCreator::create_energy_method( core::scoring::methods::EnergyMethodOptions const & options ) const {
 	// return bunk one maybe for now...
-	return core::scoring::methods::EnergyMethodOP( new AlignmentEnergy( options ) );
+	return utility::pointer::make_shared< AlignmentEnergy >( options );
 }
 
 core::scoring::ScoreTypes

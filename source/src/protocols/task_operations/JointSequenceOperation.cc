@@ -56,7 +56,7 @@ using namespace utility::tag;
 TaskOperationOP
 JointSequenceOperationCreator::create_task_operation() const
 {
-	return TaskOperationOP( new JointSequenceOperation );
+	return utility::pointer::make_shared< JointSequenceOperation >();
 }
 
 void JointSequenceOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -86,7 +86,7 @@ JointSequenceOperation::~JointSequenceOperation() = default;
 /// @brief clone
 TaskOperationOP
 JointSequenceOperation::clone() const {
-	return TaskOperationOP( new JointSequenceOperation( *this ) );
+	return utility::pointer::make_shared< JointSequenceOperation >( *this );
 }
 
 /// @brief all AA that have a higher probability in the seqprofile
@@ -285,7 +285,7 @@ JointSequenceOperation::add_pose( Pose const & pose )
 	if ( new_pose.pdb_info() ) {
 		name = new_pose.pdb_info()->name();
 	}
-	sequences_.push_back( core::sequence::SequenceOP( new core::sequence::Sequence(new_pose.sequence(), name) ) );
+	sequences_.push_back( utility::pointer::make_shared< core::sequence::Sequence >(new_pose.sequence(), name) );
 
 }
 
@@ -319,7 +319,7 @@ JointSequenceOperation::use_current_pose( bool ucp )
 void
 JointSequenceOperation::use_natro( bool unr ) {
 	if ( !use_natro_ && unr ) {
-		ubr_ = core::pack::rotamer_set::UnboundRotamersOperationOP( new core::pack::rotamer_set::UnboundRotamersOperation );
+		ubr_ = utility::pointer::make_shared< core::pack::rotamer_set::UnboundRotamersOperation >();
 	}
 	if ( use_natro_ && !unr ) {
 		ubr_.reset(); // Allow owning pointer to garbage collect as necessary.
@@ -339,7 +339,7 @@ JointSequenceOperation::add_native_fasta( std::string fasta_file ) {
 
 	//core::sequence::SequenceOPSequenceOP native_sequence = new Sequence(fasta_file,"fasta",1);
 	std::string name("unknown");
-	sequences_.push_back( core::sequence::SequenceOP( new core::sequence::Sequence(fasta_file, name) ) );
+	sequences_.push_back( utility::pointer::make_shared< core::sequence::Sequence >(fasta_file, name) );
 
 	//string query_sequence ( read_fasta_file( option[ in::file::fasta ]()[1])[1]->sequence() );
 	//core::pose::PoseOP poseop(new core::pose::Pose);

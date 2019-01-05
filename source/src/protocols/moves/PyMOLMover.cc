@@ -120,7 +120,7 @@ getRG()
 
 	if ( RG == nullptr ) {
 		//RG = new numeric::random::mt19937_RG;
-		RG = numeric::random::uniform_RG_OP( new numeric::random::standard_RG );
+		RG = utility::pointer::make_shared< numeric::random::standard_RG >();
 		RG->setSeed( time(nullptr) );
 	}
 
@@ -1014,12 +1014,12 @@ PyMOLObserver::operator= (PyMOLObserver const &rval) {
 
 core::pose::datacache::CacheableObserverOP
 PyMOLObserver::clone() {
-	return core::pose::datacache::CacheableObserverOP( new PyMOLObserver( *this ) );
+	return utility::pointer::make_shared< PyMOLObserver >( *this );
 }
 
 core::pose::datacache::CacheableObserverOP
 PyMOLObserver::create() {
-	return core::pose::datacache::CacheableObserverOP( new PyMOLObserver );
+	return utility::pointer::make_shared< PyMOLObserver >();
 }
 
 void
@@ -1127,7 +1127,7 @@ PyMOLObserverOP AddPyMOLObserver_to_conformation(core::pose::Pose &p, bool keep_
 
 /// @brief PyMOLMoverCreator interface, return a new instance
 // XRW TEMP protocols::moves::MoverOP PyMOLMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new PyMOLMover() );
+// XRW TEMP  return utility::pointer::make_shared< PyMOLMover >();
 // XRW TEMP }
 
 /// @brief allows for the setting of certain variabel from the rosetta scripts interface, only keep history
@@ -1155,14 +1155,14 @@ PyMOLMover::parse_my_tag(
 protocols::moves::MoverOP
 PyMOLMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new PyMOLMover );
+	return utility::pointer::make_shared< PyMOLMover >();
 }
 
 /// @brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
 PyMOLMover::clone() const
 {
-	return protocols::moves::MoverOP( new protocols::moves::PyMOLMover( *this ) );
+	return utility::pointer::make_shared< protocols::moves::PyMOLMover >( *this );
 }
 
 std::string PyMOLMover::get_name() const {
@@ -1211,7 +1211,7 @@ std::string PyMOLMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 PyMOLMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new PyMOLMover );
+	return utility::pointer::make_shared< PyMOLMover >();
 }
 
 void PyMOLMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

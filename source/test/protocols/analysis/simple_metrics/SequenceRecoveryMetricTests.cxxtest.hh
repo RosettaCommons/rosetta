@@ -86,7 +86,7 @@ public:
 		core::select::residue_selector::ResidueSelectorOP select( new core::select::residue_selector::ResidueIndexSelector("4-15") ); // 12 residues inclusive
 
 		protocols::analysis::simple_metrics::SequenceRecoveryMetric metric;
-		metric.set_comparison_pose( core::pose::PoseOP( new core::pose::Pose(pose) ) );
+		metric.set_comparison_pose( utility::pointer::make_shared< core::pose::Pose >(pose) );
 		metric.set_residue_selector( select );
 
 		TS_ASSERT_EQUALS( metric.calculate( pose ),  1.0 ); // No difference between them,
@@ -149,7 +149,7 @@ public:
 		metric.set_residue_selector( select );
 		metric.load_pssm( "protocols/analysis/simple_metrics/trp_cage.pssm" );
 		metric.set_use_ave_pssm( true );
-		metric.set_comparison_pose( core::pose::PoseOP( new core::pose::Pose(pose) ) );
+		metric.set_comparison_pose( utility::pointer::make_shared< core::pose::Pose >(pose) );
 
 		// Native
 		TS_ASSERT_EQUALS( metric.calculate( pose ), 0 );

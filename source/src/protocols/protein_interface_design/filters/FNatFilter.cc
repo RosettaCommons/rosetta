@@ -64,7 +64,7 @@ FNatFilter::~FNatFilter() = default;
 
 protocols::filters::FilterOP
 FNatFilter::clone() const {
-	return protocols::filters::FilterOP( new FNatFilter( *this ) );
+	return utility::pointer::make_shared< FNatFilter >( *this );
 }
 
 static basic::Tracer TR( "protocols.protein_interface_design.filters.FNatFilter" );
@@ -107,7 +107,7 @@ FNatFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & 
 	if ( tag->hasOption("reference_name") ) {
 		reference_pose_ = protocols::rosetta_scripts::saved_reference_pose(tag,data_map );
 	} else {
-		reference_pose_ = core::pose::PoseOP( new core::pose::Pose( reference_pose ) );
+		reference_pose_ = utility::pointer::make_shared< core::pose::Pose >( reference_pose );
 		if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
 			core::import_pose::pose_from_file( *reference_pose_, basic::options::option[ basic::options::OptionKeys::in::file::native ] , core::import_pose::PDB_file);
 		}
@@ -129,7 +129,7 @@ FNatFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & 
 }
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP FNatFilterCreator::create_filter() const { return protocols::filters::FilterOP( new FNatFilter ); }
+// XRW TEMP FNatFilterCreator::create_filter() const { return utility::pointer::make_shared< FNatFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP FNatFilterCreator::keyname() const { return "FNat"; }
@@ -160,7 +160,7 @@ std::string FNatFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 FNatFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new FNatFilter );
+	return utility::pointer::make_shared< FNatFilter >();
 }
 
 void FNatFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

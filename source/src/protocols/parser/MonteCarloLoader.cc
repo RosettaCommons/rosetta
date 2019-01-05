@@ -107,7 +107,7 @@ MonteCarloLoader::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 
 
 DataLoaderOP
-MonteCarloLoaderCreator::create_loader() const { return DataLoaderOP( new MonteCarloLoader ); }
+MonteCarloLoaderCreator::create_loader() const { return utility::pointer::make_shared< MonteCarloLoader >(); }
 
 std::string
 MonteCarloLoaderCreator::keyname() const { return MonteCarloLoader::loader_name(); }

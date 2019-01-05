@@ -424,7 +424,7 @@ ScoringManager::get_MultipoleElecPotential( methods::EnergyMethodOptions const &
 	boost::function< MultipoleElecPotentialOP () > creator( boost::bind( &ScoringManager::create_multipole_elec_instance, boost::cref( options ) ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, multipole_elec_potential_, SAFELY_PASS_MUTEX(multipole_elec_mutex_), SAFELY_PASS_THREADSAFETY_BOOL(multipole_elec_bool_) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	//if ( multipole_elec_potential_ == nullptr ) {
-	// multipole_elec_potential_ = MultipoleElecPotentialOP( new MultipoleElecPotential() );
+	// multipole_elec_potential_ = utility::pointer::make_shared< MultipoleElecPotential >();
 	// multipole_elec_potential_->use_polarization = options.use_polarization();
 	// multipole_elec_potential_->use_gen_kirkwood = options.use_gen_kirkwood();
 	// multipole_elec_potential_->Ep = options.protein_dielectric();
@@ -996,7 +996,7 @@ ScoringManager::get_PointWaterPotential() const
 	utility::thread::safely_create_load_once_object_by_OP( creator, pwp_, SAFELY_PASS_MUTEX( pwp_mutex_ ), SAFELY_PASS_THREADSAFETY_BOOL( pwp_bool_ ) );
 	return *pwp_;
 	//  if ( pwp_ == 0 ) {
-	//    pwp_ =  PointWaterPotentialOP( new PointWaterPotential );
+	//    pwp_ =  utility::pointer::make_shared< PointWaterPotential >();
 	//  }
 	//  return *pwp_;
 }
@@ -1208,23 +1208,23 @@ ScoringManager::etable( etable::EtableOptions const & options_in ) const
 			/*
 			if ( option[corrections::beta_nov15 ]() || option[ corrections::beta_nov15_cart ]() ) {
 			// hacky route for beta energy function
-			etable_ptr = EtableOP( new Etable( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ),
-			options_local, "SOFTBETANOV15" ) );
+			etable_ptr = utility::pointer::make_shared< Etable >( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ),
+			options_local, "SOFTBETANOV15" );
 			*/
 			if ( option[ mistakes::restore_pre_talaris_2013_behavior ]() || option[ corrections::restore_talaris_behavior ]() ) {
-				etable_ptr = EtableOP( new Etable( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ),
-					options_local, "SOFT" ) );
+				etable_ptr = utility::pointer::make_shared< Etable >( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ),
+					options_local, "SOFT" );
 			} else { // default
-				etable_ptr = EtableOP( new Etable( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ),
-					options_local, "SOFTBETANOV15" ) );
+				etable_ptr = utility::pointer::make_shared< Etable >( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ),
+					options_local, "SOFTBETANOV15" );
 			}
 		} else if ( table_id == FA_STANDARD_MULTIPOLE ) {
 			// multipole etable: change to lj_switch_dis2sigma to make harder repulsion.
 			// Necessary to stop oppositely charged atoms from approaching each other.
 			EtableOptions options_local( options_in );
 			options_local.lj_switch_dis2sigma = 0.1;
-			etable_ptr = EtableOP( new Etable( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ),
-				options_in ) );
+			etable_ptr = utility::pointer::make_shared< Etable >( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ),
+				options_in );
 		} else if ( utility::startswith( table_id, "FA_STANDARD_SOFT" ) ) {
 			// add more softies, radii and lj_switch_dis2sigma are linear-interpolated from standard to SOFT
 			// radii are given in database/chemical/atom_type_sets/fa_standard/extras/extra_soft_rep_params.txt
@@ -1234,11 +1234,11 @@ ScoringManager::etable( etable::EtableOptions const & options_in ) const
 			// original comments: note we check for soft rep 1st since that would match this as well -- confusing??
 			// apply a modification of the radii/wdepths
 			std::string const alternate_parameters( table_id.substr( FA_STANDARD_DEFAULT.size() + 1 ) );
-			etable_ptr = EtableOP( new Etable( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ),
-				options_in, alternate_parameters ) );
+			etable_ptr = utility::pointer::make_shared< Etable >( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ),
+				options_in, alternate_parameters );
 		} else { // General way of adding
-			etable_ptr = EtableOP( new Etable( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ),
-				options_in ) );
+			etable_ptr = utility::pointer::make_shared< Etable >( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ),
+				options_in );
 		}
 
 #ifdef MULTI_THREADED
@@ -1437,7 +1437,7 @@ ScoringManager::has_energy_method(
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 PairEPotentialOP
 ScoringManager::create_pairE_potential_instance() {
-	return PairEPotentialOP( new PairEPotential );
+	return utility::pointer::make_shared< PairEPotential >();
 }
 
 /// @brief Create an instance of the GenBornPotential object, by owning pointer.
@@ -1446,7 +1446,7 @@ ScoringManager::create_pairE_potential_instance() {
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 GenBornPotentialOP
 ScoringManager::create_genborn_instance() {
-	return GenBornPotentialOP( new GenBornPotential );
+	return utility::pointer::make_shared< GenBornPotential >();
 }
 
 /// @brief Create an instance of the HydroxylTorsionPotential object, by owning pointer.
@@ -1455,7 +1455,7 @@ ScoringManager::create_genborn_instance() {
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 HydroxylTorsionPotentialOP
 ScoringManager::create_hxl_potential_instance() {
-	return HydroxylTorsionPotentialOP( new HydroxylTorsionPotential );
+	return utility::pointer::make_shared< HydroxylTorsionPotential >();
 }
 
 /// @brief Create an instance of the VdWTinkerPotential object, by owning pointer.
@@ -1464,7 +1464,7 @@ ScoringManager::create_hxl_potential_instance() {
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 VdWTinkerPotentialOP
 ScoringManager::create_vdw_tinker_potential_instance() {
-	return VdWTinkerPotentialOP( new VdWTinkerPotential );
+	return utility::pointer::make_shared< VdWTinkerPotential >();
 }
 
 /// @brief Create an instance of the HydroxylTorsionPotential object, by owning pointer.
@@ -1475,7 +1475,7 @@ MultipoleElecPotentialOP
 ScoringManager::create_multipole_elec_instance(
 	methods::EnergyMethodOptions const & options
 ) {
-	return MultipoleElecPotentialOP( new MultipoleElecPotential(options) );
+	return utility::pointer::make_shared< MultipoleElecPotential >(options);
 }
 
 /// @brief Create an instance of the SASAPotential object, by owning pointer.
@@ -1484,7 +1484,7 @@ ScoringManager::create_multipole_elec_instance(
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 SASAPotentialOP
 ScoringManager::create_sasa_potential_instance() {
-	return SASAPotentialOP( new SASAPotential );
+	return utility::pointer::make_shared< SASAPotential >();
 }
 
 
@@ -1494,7 +1494,7 @@ ScoringManager::create_sasa_potential_instance() {
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 FACTSPotentialOP
 ScoringManager::create_facts_potential_instance() {
-	return FACTSPotentialOP( new FACTSPotential );
+	return utility::pointer::make_shared< FACTSPotential >();
 }
 
 /// @brief Create an instance of the GenericBondedPotential object, by owning pointer.
@@ -1502,7 +1502,7 @@ ScoringManager::create_facts_potential_instance() {
 /// @note Not intended for use outside of ScoringManager.
 GenericBondedPotentialOP
 ScoringManager::create_generic_bonded_potential_instance() {
-	return GenericBondedPotentialOP( new GenericBondedPotential );
+	return utility::pointer::make_shared< GenericBondedPotential >();
 }
 
 /// @brief Create an instance of the FactsPotential object, by owning pointer.
@@ -1511,7 +1511,7 @@ ScoringManager::create_generic_bonded_potential_instance() {
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 dna::DNA_BasePotentialOP
 ScoringManager::create_dnabase_potential_instance() {
-	return dna::DNA_BasePotentialOP( new dna::DNA_BasePotential );
+	return utility::pointer::make_shared< dna::DNA_BasePotential >();
 }
 
 /// @brief Create an instance of the Ramachandran object, by owning pointer.
@@ -1520,7 +1520,7 @@ ScoringManager::create_dnabase_potential_instance() {
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 RamachandranOP
 ScoringManager::create_rama_instance() {
-	return RamachandranOP( new Ramachandran );
+	return utility::pointer::make_shared< Ramachandran >();
 }
 
 /// @brief Create an instance of the Ramachandran2B object, by owning pointer.
@@ -1528,7 +1528,7 @@ ScoringManager::create_rama_instance() {
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 Ramachandran2BOP
 ScoringManager::create_rama2b_instance() {
-	return Ramachandran2BOP( new Ramachandran2B );
+	return utility::pointer::make_shared< Ramachandran2B >();
 }
 
 /// @brief Create an instance of the RamaPrePro object, by owning pointer.
@@ -1536,7 +1536,7 @@ ScoringManager::create_rama2b_instance() {
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 RamaPreProOP
 ScoringManager::create_ramapp_instance() {
-	return RamaPreProOP( new RamaPrePro );
+	return utility::pointer::make_shared< RamaPrePro >();
 }
 
 /// @brief Create an instance of the P_AA_ABEGO3 object, by owning pointer.
@@ -1545,7 +1545,7 @@ ScoringManager::create_ramapp_instance() {
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 P_AA_ABEGO3_OP
 ScoringManager::create_p_aa_abego3_instance() {
-	return P_AA_ABEGO3_OP( new P_AA_ABEGO3 );
+	return utility::pointer::make_shared< P_AA_ABEGO3 >();
 }
 
 /// @brief Create an instance of the P_AA object, by owning pointer.
@@ -1554,7 +1554,7 @@ ScoringManager::create_p_aa_abego3_instance() {
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 P_AAOP
 ScoringManager::create_p_aa_instance() {
-	return P_AAOP( new P_AA );
+	return utility::pointer::make_shared< P_AA >();
 }
 
 /// @brief Create an instance of the P_AA_ss object, by owning pointer.
@@ -1563,7 +1563,7 @@ ScoringManager::create_p_aa_instance() {
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 P_AA_ssOP
 ScoringManager::create_p_aa_ss_instance() {
-	return P_AA_ssOP( new P_AA_ss );
+	return utility::pointer::make_shared< P_AA_ss >();
 }
 
 /// @brief Create an instance of the DNABFormPotential object, by owning pointer.
@@ -1572,7 +1572,7 @@ ScoringManager::create_p_aa_ss_instance() {
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 dna::DNABFormPotentialOP
 ScoringManager::create_dna_bform_potential_instance() {
-	return dna::DNABFormPotentialOP( new dna::DNABFormPotential );
+	return utility::pointer::make_shared< dna::DNABFormPotential >();
 }
 
 /// @brief Create an instance of the DNATorsionPotential object, by owning pointer.
@@ -1581,7 +1581,7 @@ ScoringManager::create_dna_bform_potential_instance() {
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 dna::DNATorsionPotentialOP
 ScoringManager::create_dna_torsion_potential_instance() {
-	return dna::DNATorsionPotentialOP( new dna::DNATorsionPotential );
+	return utility::pointer::make_shared< dna::DNATorsionPotential >();
 }
 
 /// @brief Create an instance of the OmegaTether object, by owning pointer.
@@ -1590,7 +1590,7 @@ ScoringManager::create_dna_torsion_potential_instance() {
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 OmegaTetherOP
 ScoringManager::create_omegatether_instance() {
-	return OmegaTetherOP( new OmegaTether );
+	return utility::pointer::make_shared< OmegaTether >();
 }
 
 /// @brief Create an instance of the SmoothEnvPairPotential object, by owning pointer.
@@ -1599,7 +1599,7 @@ ScoringManager::create_omegatether_instance() {
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 SmoothEnvPairPotentialOP
 ScoringManager::create_smoothenvpair_instance() {
-	return SmoothEnvPairPotentialOP( new SmoothEnvPairPotential );
+	return utility::pointer::make_shared< SmoothEnvPairPotential >();
 }
 
 /// @brief Create an instance of the CenRotEnvPairPotential object, by owning pointer.
@@ -1608,7 +1608,7 @@ ScoringManager::create_smoothenvpair_instance() {
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 CenRotEnvPairPotentialOP
 ScoringManager::create_cenrotenvpair_instance() {
-	return CenRotEnvPairPotentialOP( new CenRotEnvPairPotential );
+	return utility::pointer::make_shared< CenRotEnvPairPotential >();
 }
 
 /// @brief Create an instance of the CenHBPotential object, by owning pointer.
@@ -1617,7 +1617,7 @@ ScoringManager::create_cenrotenvpair_instance() {
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 CenHBPotentialOP
 ScoringManager::create_cenhbpotential_instance() {
-	return CenHBPotentialOP( new CenHBPotential );
+	return utility::pointer::make_shared< CenHBPotential >();
 }
 
 /// @brief Create an instance of the EnvPairPotential object, by owning pointer.
@@ -1626,7 +1626,7 @@ ScoringManager::create_cenhbpotential_instance() {
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 EnvPairPotentialOP
 ScoringManager::create_envpairpotential_instance() {
-	return EnvPairPotentialOP( new EnvPairPotential );
+	return utility::pointer::make_shared< EnvPairPotential >();
 }
 
 /// @brief Create an instance of the DNA_EnvPairPotential object, by owning pointer.
@@ -1635,7 +1635,7 @@ ScoringManager::create_envpairpotential_instance() {
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 dna::DNA_EnvPairPotentialOP
 ScoringManager::create_dna_envpairpotential_instance() {
-	return dna::DNA_EnvPairPotentialOP( new dna::DNA_EnvPairPotential );
+	return utility::pointer::make_shared< dna::DNA_EnvPairPotential >();
 }
 
 /// @brief Create an instance of the DNA_DihedralPotential object, by owning pointer.
@@ -1644,7 +1644,7 @@ ScoringManager::create_dna_envpairpotential_instance() {
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 dna::DNA_DihedralPotentialOP
 ScoringManager::create_dna_dihedralpotential_instance() {
-	return dna::DNA_DihedralPotentialOP( new dna::DNA_DihedralPotential );
+	return utility::pointer::make_shared< dna::DNA_DihedralPotential >();
 }
 
 /// @brief Create an instance of the SecondaryStructurePotential object, by owning pointer.
@@ -1653,7 +1653,7 @@ ScoringManager::create_dna_dihedralpotential_instance() {
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 SecondaryStructurePotentialOP
 ScoringManager::create_secondarystructurepotential_instance() {
-	return SecondaryStructurePotentialOP( new SecondaryStructurePotential );
+	return utility::pointer::make_shared< SecondaryStructurePotential >();
 }
 
 
@@ -1665,7 +1665,7 @@ AtomVDWOP
 ScoringManager::create_atomvdw_instance(
 	std::string const & atom_type_set_name
 ) {
-	return AtomVDWOP( new AtomVDW( atom_type_set_name ) );
+	return utility::pointer::make_shared< AtomVDW >( atom_type_set_name );
 }
 
 /// @brief Create an instance of the RNA_AtomVDW object, by owning pointer.
@@ -1674,7 +1674,7 @@ ScoringManager::create_atomvdw_instance(
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 rna::RNA_AtomVDWOP
 ScoringManager::create_rna_atomvdw_instance() {
-	return rna::RNA_AtomVDWOP( new rna::RNA_AtomVDW );
+	return utility::pointer::make_shared< rna::RNA_AtomVDW >();
 }
 
 /// @brief Create an instance of the DatabaseOccSolEne object, by owning pointer.
@@ -1686,7 +1686,7 @@ ScoringManager::create_database_occsolene_instance(
 	std::string const & atom_type_set_name,
 	core::Real const & min_occ_energy
 ) {
-	return geometric_solvation::DatabaseOccSolEneOP( new geometric_solvation::DatabaseOccSolEne( atom_type_set_name, min_occ_energy ) );
+	return utility::pointer::make_shared< geometric_solvation::DatabaseOccSolEne >( atom_type_set_name, min_occ_energy );
 }
 
 /// @brief Create an instance of the CarbonHBondPotential object, by owning pointer.
@@ -1695,7 +1695,7 @@ ScoringManager::create_database_occsolene_instance(
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 carbon_hbonds::CarbonHBondPotentialOP
 ScoringManager::create_carbon_hbond_potential_instance() {
-	return carbon_hbonds::CarbonHBondPotentialOP( new carbon_hbonds::CarbonHBondPotential );
+	return utility::pointer::make_shared< carbon_hbonds::CarbonHBondPotential >();
 }
 
 /// @brief Create an instance of the RNA_SuitePotential object, by owning pointer.
@@ -1707,7 +1707,7 @@ ScoringManager::create_rna_suitepotential_instance(
 	bool const & calculate_suiteness_bonus,
 	std::string const & suiteness_bonus
 ) {
-	return rna::RNA_SuitePotentialOP( new rna::RNA_SuitePotential( calculate_suiteness_bonus, suiteness_bonus ) );
+	return utility::pointer::make_shared< rna::RNA_SuitePotential >( calculate_suiteness_bonus, suiteness_bonus );
 }
 
 /// @brief Create an instance of the TNA_SuitePotential object, by owning pointer.
@@ -1716,7 +1716,7 @@ ScoringManager::create_rna_suitepotential_instance(
 /// @author Andy Watkins (amw579@stanford.edu)
 rna::TNA_SuitePotentialOP
 ScoringManager::create_tna_suitepotential_instance() {
-	return rna::TNA_SuitePotentialOP( new rna::TNA_SuitePotential );
+	return utility::pointer::make_shared< rna::TNA_SuitePotential >();
 }
 
 /// @brief Create an instance of the SixDTransRotPotential object, by owning pointer.
@@ -1729,7 +1729,7 @@ ScoringManager::create_sixdtransrotpotential_instance(
 ) {
 	if ( utility::file::file_exists(  database_file ) )  {
 		TR << "Reading in: " << database_file << std::endl;
-		return loop_graph::evaluator::SixDTransRotPotentialOP( new loop_graph::evaluator::SixDTransRotPotential( database_file ) );
+		return utility::pointer::make_shared< loop_graph::evaluator::SixDTransRotPotential >( database_file );
 	}
 	TR.Warning << "File " << database_file << " does not exist!" << std::endl;
 	return nullptr; // save information that database file does not exist. (?)
@@ -1744,10 +1744,10 @@ ScoringManager::create_rna_lowresolutionpotential_instance( std::string const & 
 	// OK. CHECK for the full_name version but don't wrap it in ctor.
 	if ( utility::file::file_exists(  database_file ) )  {
 		TR << "Reading in: " << database_file << std::endl;
-		return rna::RNA_LowResolutionPotentialOP( new rna::RNA_LowResolutionPotential( database_file ) );
+		return utility::pointer::make_shared< rna::RNA_LowResolutionPotential >( database_file );
 	} else if ( utility::file::file_exists( basic::database::full_name( database_file ) ) ) {
 		TR << "Reading in: " << basic::database::full_name( database_file ) << std::endl;
-		return rna::RNA_LowResolutionPotentialOP( new rna::RNA_LowResolutionPotential( database_file ) );
+		return utility::pointer::make_shared< rna::RNA_LowResolutionPotential >( database_file );
 	}
 	TR.Warning << "File " << database_file << " does not exist!" << std::endl;
 	return nullptr;
@@ -1759,7 +1759,7 @@ ScoringManager::create_rna_lowresolutionpotential_instance( std::string const & 
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 rna::RNP_LowResPotentialOP
 ScoringManager::create_rnp_lowrespotential_instance() {
-	return rna::RNP_LowResPotentialOP( new rna::RNP_LowResPotential );
+	return utility::pointer::make_shared< rna::RNP_LowResPotential >();
 }
 
 /// @brief Create an instance of the RNP_LowResPairDistPotential object, by owning pointer.
@@ -1768,7 +1768,7 @@ ScoringManager::create_rnp_lowrespotential_instance() {
 /// @author Andrew Watkins (amw579@stanford.edu)
 rna::RNP_LowResPairDistPotentialOP
 ScoringManager::create_rnp_lowrespairdistpotential_instance() {
-	return rna::RNP_LowResPairDistPotentialOP( new rna::RNP_LowResPairDistPotential );
+	return utility::pointer::make_shared< rna::RNP_LowResPairDistPotential >();
 }
 
 /// @brief Create an instance of the RNP_LowResStackData object, by owning pointer.
@@ -1777,7 +1777,7 @@ ScoringManager::create_rnp_lowrespairdistpotential_instance() {
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 rna::RNP_LowResStackDataOP
 ScoringManager::create_rnp_lowresstackdata_instance() {
-	return rna::RNP_LowResStackDataOP( new rna::RNP_LowResStackData );
+	return utility::pointer::make_shared< rna::RNP_LowResStackData >();
 }
 
 /// @brief Create an instance of the RNA_ChemicalShiftPotential object, by owning pointer.
@@ -1786,7 +1786,7 @@ ScoringManager::create_rnp_lowresstackdata_instance() {
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 rna::chemical_shift::RNA_ChemicalShiftPotentialOP
 ScoringManager::create_rna_chemshiftpotential_instance() {
-	return rna::chemical_shift::RNA_ChemicalShiftPotentialOP( new rna::chemical_shift::RNA_ChemicalShiftPotential );
+	return utility::pointer::make_shared< rna::chemical_shift::RNA_ChemicalShiftPotential >();
 }
 
 /// @brief Create an instance of the RNA_DMS_Potential object, by owning pointer.
@@ -1795,7 +1795,7 @@ ScoringManager::create_rna_chemshiftpotential_instance() {
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 rna::data::RNA_DMS_PotentialOP
 ScoringManager::create_rna_dms_potential_instance() {
-	return rna::data::RNA_DMS_PotentialOP( new rna::data::RNA_DMS_Potential );
+	return utility::pointer::make_shared< rna::data::RNA_DMS_Potential >();
 }
 
 /// @brief Create an instance of the RNA_DMS_LowResolutionPotential object, by owning pointer.
@@ -1804,7 +1804,7 @@ ScoringManager::create_rna_dms_potential_instance() {
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 rna::data::RNA_DMS_LowResolutionPotentialOP
 ScoringManager::create_rna_dms_lowrespotential_instance() {
-	return rna::data::RNA_DMS_LowResolutionPotentialOP( new rna::data::RNA_DMS_LowResolutionPotential );
+	return utility::pointer::make_shared< rna::data::RNA_DMS_LowResolutionPotential >();
 }
 
 /// @brief Create an instance of the DirectReadoutPotential object, by owning pointer.
@@ -1813,7 +1813,7 @@ ScoringManager::create_rna_dms_lowrespotential_instance() {
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 dna::DirectReadoutPotentialOP
 ScoringManager::create_dna_directreadoutpotential_instance() {
-	return dna::DirectReadoutPotentialOP( new dna::DirectReadoutPotential );
+	return utility::pointer::make_shared< dna::DirectReadoutPotential >();
 }
 
 /// @brief Create an instance of the MMLJLibrary object, by owning pointer.
@@ -1822,7 +1822,7 @@ ScoringManager::create_dna_directreadoutpotential_instance() {
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 mm::MMLJLibraryOP
 ScoringManager::create_mm_lj_library_instance() {
-	return mm::MMLJLibraryOP( new mm::MMLJLibrary( chemical::ChemicalManager::get_instance()->mm_atom_type_set( chemical::FA_STANDARD ) ) );
+	return utility::pointer::make_shared< mm::MMLJLibrary >( chemical::ChemicalManager::get_instance()->mm_atom_type_set( chemical::FA_STANDARD ) );
 }
 
 /// @brief Create an instance of the MMLJEnergyTable object, by owning pointer.
@@ -1831,7 +1831,7 @@ ScoringManager::create_mm_lj_library_instance() {
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 mm::MMLJEnergyTableOP
 ScoringManager::create_mm_lj_energy_table_instance() {
-	return mm::MMLJEnergyTableOP( new mm::MMLJEnergyTable );
+	return utility::pointer::make_shared< mm::MMLJEnergyTable >();
 }
 
 /// @brief Create an instance of the MMTorsionLibrary object, by owning pointer.
@@ -1881,7 +1881,7 @@ ScoringManager::create_mm_bondlength_library_instance() {
 carbohydrates::CHIEnergyFunctionOP
 ScoringManager::create_chi_energy_function_instance() {
 	TR << "Creating CHI Energy Function." << std::endl;
-	return carbohydrates::CHIEnergyFunctionOP( new carbohydrates::CHIEnergyFunction );
+	return utility::pointer::make_shared< carbohydrates::CHIEnergyFunction >();
 }
 
 /// @brief Create a (default) instance of the OmegaPreferencesFunction object, by owning pointer.
@@ -1890,7 +1890,7 @@ ScoringManager::create_chi_energy_function_instance() {
 carbohydrates::OmegaPreferencesFunctionOP
 ScoringManager::create_omega_preferences_function_instance() {
 	TR << "Creating carbohydrate omega preferences function." << std::endl;
-	return carbohydrates::OmegaPreferencesFunctionOP( new carbohydrates::OmegaPreferencesFunction );
+	return utility::pointer::make_shared< carbohydrates::OmegaPreferencesFunction >();
 }
 
 /// @brief Create an instance of the NVlookup object, by owning pointer.
@@ -1901,7 +1901,7 @@ nv::NVlookupOP
 ScoringManager::create_nvlookup_instance() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	return nv::NVlookupOP( new nv::NVlookup(basic::database::full_name(option[score::NV_table]())) );
+	return utility::pointer::make_shared< nv::NVlookup >(basic::database::full_name(option[score::NV_table]()));
 }
 
 /// @brief Create an instance of the OrbitalsLookup object, by owning pointer.
@@ -1932,7 +1932,7 @@ ScoringManager::create_orbitals_lookup_instance() {
 
 	ACO_energies.push_back("scoring/score_functions/orbitals/BiCubic_ACO.txt");
 
-	return orbitals::OrbitalsLookupOP( new orbitals::OrbitalsLookup( DHO_energies, AOH_energies, AOO_orb_orb_energies, DOO_orb_orb_energies,ACO_energies ) );
+	return utility::pointer::make_shared< orbitals::OrbitalsLookup >( DHO_energies, AOH_energies, AOO_orb_orb_energies, DOO_orb_orb_energies,ACO_energies );
 }
 
 /// @brief Create an instance of the DDPlookup object, by owning pointer.
@@ -1943,7 +1943,7 @@ interface_::DDPlookupOP
 ScoringManager::create_ddp_lookup_instance() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	return interface_::DDPlookupOP( new interface_::DDPlookup("scoring/score_functions/DDPscore/interface_ddp_score.txt") );
+	return utility::pointer::make_shared< interface_::DDPlookup >("scoring/score_functions/DDPscore/interface_ddp_score.txt");
 }
 
 /// @brief Create an instance of the UnfoldedStatePotential object, by owning pointer.
@@ -1957,17 +1957,17 @@ ScoringManager::create_unfolded_state_potential_instance(std::string const &type
 
 	if ( type == UNFOLDED_SPLIT_USER_DEFINED || option[ unfolded_state::unfolded_energies_file ].user() ) {
 		TR << "Creating unfolded state potential using file: " <<  option[ unfolded_state::unfolded_energies_file ].value() << std::endl;
-		return UnfoldedStatePotentialOP( new UnfoldedStatePotential( option[ unfolded_state::unfolded_energies_file ].value() ) );
+		return utility::pointer::make_shared< UnfoldedStatePotential >( option[ unfolded_state::unfolded_energies_file ].value() );
 	} else if ( type == UNFOLDED_SCORE12 ) {
-		return UnfoldedStatePotentialOP( new UnfoldedStatePotential( basic::database::full_name( "scoring/score_functions/unfolded/unfolded_state_residue_energies_score12" ) ) );
+		return utility::pointer::make_shared< UnfoldedStatePotential >( basic::database::full_name( "scoring/score_functions/unfolded/unfolded_state_residue_energies_score12" ) );
 	} else if ( type == UNFOLDED_MM_STD ) {
-		return UnfoldedStatePotentialOP( new UnfoldedStatePotential( basic::database::full_name( "scoring/score_functions/unfolded/unfolded_state_residue_energies_mm_std" ) ) );
+		return utility::pointer::make_shared< UnfoldedStatePotential >( basic::database::full_name( "scoring/score_functions/unfolded/unfolded_state_residue_energies_mm_std" ) );
 	} else if ( type == UNFOLDED_RNA ) {
-		return UnfoldedStatePotentialOP( new UnfoldedStatePotential( basic::database::full_name( "scoring/score_functions/unfolded/unfolded_state_residue_energies_rna" ) ) );  // This will later get more elaborated
+		return utility::pointer::make_shared< UnfoldedStatePotential >( basic::database::full_name( "scoring/score_functions/unfolded/unfolded_state_residue_energies_rna" ) );  // This will later get more elaborated
 	} else if ( type == UNFOLDED_SPLIT_TALARIS2013 ) {
-		return UnfoldedStatePotentialOP( new UnfoldedStatePotential( basic::database::full_name( "scoring/score_functions/split_unfolded/split_unfolded_one_body_talaris2013" ) ) ); //for the split unfolded energy one body term.
+		return utility::pointer::make_shared< UnfoldedStatePotential >( basic::database::full_name( "scoring/score_functions/split_unfolded/split_unfolded_one_body_talaris2013" ) ); //for the split unfolded energy one body term.
 	} else if ( type == UNFOLDED_SPLIT_MM_STD ) {
-		return UnfoldedStatePotentialOP( new UnfoldedStatePotential( basic::database::full_name( "scoring/score_functions/split_unfolded/split_unfolded_one_body_mm_std" ) ) ); //for the split unfolded energy one body term.
+		return utility::pointer::make_shared< UnfoldedStatePotential >( basic::database::full_name( "scoring/score_functions/split_unfolded/split_unfolded_one_body_mm_std" ) ); //for the split unfolded energy one body term.
 	} else {
 		utility_exit_with_message("unrecognized unfolded type: "+type );
 	}
@@ -1980,7 +1980,7 @@ ScoringManager::create_unfolded_state_potential_instance(std::string const &type
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 WaterAdductHBondPotentialOP
 ScoringManager::create_water_adduct_hbond_potential_instance() {
-	return WaterAdductHBondPotentialOP( new WaterAdductHBondPotential );
+	return utility::pointer::make_shared< WaterAdductHBondPotential >();
 }
 
 /// @brief Create an instance of the MembranePotential object, by owning pointer.
@@ -1989,7 +1989,7 @@ ScoringManager::create_water_adduct_hbond_potential_instance() {
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 MembranePotentialOP
 ScoringManager::create_membrane_potential_instance() {
-	return MembranePotentialOP( new MembranePotential );
+	return utility::pointer::make_shared< MembranePotential >();
 }
 
 /// @brief Create an instance of the MembraneData object, by owning pointer.
@@ -1998,7 +1998,7 @@ ScoringManager::create_membrane_potential_instance() {
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 membrane::MembraneDataOP
 ScoringManager::create_membrane_data_instance() {
-	return membrane::MembraneDataOP( new membrane::MembraneData );
+	return utility::pointer::make_shared< membrane::MembraneData >();
 }
 
 /// @brief Create an instance of the Membrane_FAPotential object, by owning pointer.
@@ -2007,7 +2007,7 @@ ScoringManager::create_membrane_data_instance() {
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 Membrane_FAPotentialOP
 ScoringManager::create_membrane_fa_potential_instance() {
-	return Membrane_FAPotentialOP( new Membrane_FAPotential );
+	return utility::pointer::make_shared< Membrane_FAPotential >();
 }
 
 /// @brief Create an instance of the ProQPotential object, by owning pointer.
@@ -2016,7 +2016,7 @@ ScoringManager::create_membrane_fa_potential_instance() {
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 ProQPotentialOP
 ScoringManager::create_proq_potential_instance() {
-	return ProQPotentialOP( new ProQPotential );
+	return utility::pointer::make_shared< ProQPotential >();
 }
 
 /// @brief Create an instance of the ProQPotential object, by owning pointer.
@@ -2025,7 +2025,7 @@ ScoringManager::create_proq_potential_instance() {
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 PointWaterPotentialOP
 ScoringManager::create_point_water_potential_instance() {
-	return PointWaterPotentialOP( new PointWaterPotential );
+	return utility::pointer::make_shared< PointWaterPotential >();
 }
 
 /// @brief Create an instance of the PoissonBoltzmannPotential object, by owning pointer.
@@ -2034,7 +2034,7 @@ ScoringManager::create_point_water_potential_instance() {
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 PoissonBoltzmannPotentialOP
 ScoringManager::create_poisson_boltzmann_potential_instance() {
-	return PoissonBoltzmannPotentialOP( new PoissonBoltzmannPotential );
+	return utility::pointer::make_shared< PoissonBoltzmannPotential >();
 }
 
 /// @brief Create an instance of the SplitUnfoldedTwoBodyPotential object, by owning pointer.
@@ -2056,7 +2056,7 @@ ScoringManager::create_split_unfolded_2body_potential_instance(
 	if ( label_type == SPLIT_UNFOLDED_USER_DEFINED || value_type == SPLIT_UNFOLDED_USER_DEFINED || option[ unfolded_state::split_unfolded_energies_file ].user() ) {
 		TR << "Creating split unfolded state potential using file: " <<  option[ unfolded_state::split_unfolded_energies_file ].value()
 			<< " with an atom type of " << option[ unfolded_state::split_unfolded_energies_atom_type ].value() << std::endl;
-		return SplitUnfoldedTwoBodyPotentialOP( new SplitUnfoldedTwoBodyPotential( option[ unfolded_state::split_unfolded_energies_file ].value(), option[ unfolded_state::split_unfolded_energies_atom_type ].value() ) );
+		return utility::pointer::make_shared< SplitUnfoldedTwoBodyPotential >( option[ unfolded_state::split_unfolded_energies_file ].value(), option[ unfolded_state::split_unfolded_energies_atom_type ].value() );
 	}
 
 	if ( label_type == SPLIT_UNFOLDED_ELE ) {
@@ -2102,10 +2102,10 @@ ScoringManager::create_split_unfolded_2body_potential_instance(
 
 	if ( atom_label_type != "" ) {
 		TR << "Creating split unfolded state potential using file: " << basic::database::full_name( database_path ) << std::endl;
-		return SplitUnfoldedTwoBodyPotentialOP( new SplitUnfoldedTwoBodyPotential( basic::database::full_name( database_path ), atom_label_type ) );
+		return utility::pointer::make_shared< SplitUnfoldedTwoBodyPotential >( basic::database::full_name( database_path ), atom_label_type );
 	}
 	TR << "Creating split unfolded state potential using file: " << basic::database::full_name( database_path ) << std::endl;
-	return SplitUnfoldedTwoBodyPotentialOP( new SplitUnfoldedTwoBodyPotential( basic::database::full_name( database_path ) ) );
+	return utility::pointer::make_shared< SplitUnfoldedTwoBodyPotential >( basic::database::full_name( database_path ) );
 }
 
 /// @brief Create an instance of the FullatomDisulfidePotential object, by owning pointer.
@@ -2114,7 +2114,7 @@ ScoringManager::create_split_unfolded_2body_potential_instance(
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 disulfides::FullatomDisulfidePotentialOP
 ScoringManager::create_fullatom_disulfide_potential_instance() {
-	return disulfides::FullatomDisulfidePotentialOP( new disulfides::FullatomDisulfidePotential );
+	return utility::pointer::make_shared< disulfides::FullatomDisulfidePotential >();
 }
 
 /// @brief Create an instance of the CentroidDisulfidePotential object, by owning pointer.
@@ -2123,7 +2123,7 @@ ScoringManager::create_fullatom_disulfide_potential_instance() {
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 disulfides::CentroidDisulfidePotentialOP
 ScoringManager::create_centroid_disulfide_potential_instance() {
-	return disulfides::CentroidDisulfidePotentialOP( new disulfides::CentroidDisulfidePotential );
+	return utility::pointer::make_shared< disulfides::CentroidDisulfidePotential >();
 }
 
 /// @brief Create an instance of the DisulfideMatchingPotential object, by owning pointer.
@@ -2132,7 +2132,7 @@ ScoringManager::create_centroid_disulfide_potential_instance() {
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 disulfides::DisulfideMatchingPotentialOP
 ScoringManager::create_disulfide_matching_potential_instance() {
-	return disulfides::DisulfideMatchingPotentialOP( new disulfides::DisulfideMatchingPotential );
+	return utility::pointer::make_shared< disulfides::DisulfideMatchingPotential >();
 }
 
 /// @brief Create an instance of a MainchainScoreTable, by owning pointer.

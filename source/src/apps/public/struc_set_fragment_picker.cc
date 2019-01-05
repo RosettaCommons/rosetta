@@ -102,7 +102,7 @@ run()
 	FrameOP frame(new Frame( 1, frag_length ));
 	for ( Size i=1; i <= poses.size(); ++i ) {
 		for ( Size pos=1; pos <= poses[i].size()-frag_length; ++pos ) {
-			FragDataOP frag(new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), frag_length ));
+			FragDataOP frag(new FragData( utility::pointer::make_shared< BBTorsionSRFD >(), frag_length ));
 			bool steal_success = frag->steal( poses[i], pos, pos + frag_length -1 );
 			if ( steal_success && frag->is_valid() ) {
 				bool success = frame->add_fragment( frag );

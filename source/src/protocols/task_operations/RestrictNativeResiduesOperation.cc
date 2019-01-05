@@ -51,7 +51,7 @@ using namespace utility::tag;
 core::pack::task::operation::TaskOperationOP
 RestrictNativeResiduesOperationCreator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new RestrictNativeResiduesOperation );
+	return utility::pointer::make_shared< RestrictNativeResiduesOperation >();
 }
 
 void RestrictNativeResiduesOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -81,7 +81,7 @@ RestrictNativeResiduesOperation::~RestrictNativeResiduesOperation() = default;
 /// @brief clone
 core::pack::task::operation::TaskOperationOP
 RestrictNativeResiduesOperation::clone() const {
-	return core::pack::task::operation::TaskOperationOP( new RestrictNativeResiduesOperation( *this ) );
+	return utility::pointer::make_shared< RestrictNativeResiduesOperation >( *this );
 }
 
 core::pose::PoseCOP
@@ -99,7 +99,7 @@ RestrictNativeResiduesOperation::reference_pose( core::pose::PoseCOP pose )
 void
 RestrictNativeResiduesOperation::reference_pose( core::pose::Pose const & pose )
 {
-	reference_pose_ = core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose( pose ) ) );
+	reference_pose_ = utility::pointer::make_shared< core::pose::Pose >( pose );
 }
 
 bool

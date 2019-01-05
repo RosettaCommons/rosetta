@@ -35,7 +35,7 @@ CacheableStringMap::~CacheableStringMap() = default;
 
 CacheableDataOP
 CacheableStringMap::clone() const {
-	return CacheableDataOP( new CacheableStringMap(*this) );
+	return utility::pointer::make_shared< CacheableStringMap >(*this);
 }
 
 std::map< std::string, std::string > &

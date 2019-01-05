@@ -93,9 +93,9 @@ GeometricSolvationFeatures::write_geometric_solvation_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
-	Column hbond_site_id("hbond_site_id", DbDataTypeOP( new DbInteger() ));
-	Column geometric_solvation_exact("geometric_solvation_exact", DbDataTypeOP( new DbReal() ));
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >());
+	Column hbond_site_id("hbond_site_id", utility::pointer::make_shared< DbInteger >());
+	Column geometric_solvation_exact("geometric_solvation_exact", utility::pointer::make_shared< DbReal >());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -191,7 +191,7 @@ std::string GeometricSolvationFeaturesCreator::type_name() const {
 protocols::features::FeaturesReporterOP
 GeometricSolvationFeaturesCreator::create_features_reporter() const {
 	core::scoring::methods::EnergyMethodOptions options;
-	return FeaturesReporterOP( new GeometricSolvationFeatures(options) );
+	return utility::pointer::make_shared< GeometricSolvationFeatures >(options);
 }
 
 void GeometricSolvationFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

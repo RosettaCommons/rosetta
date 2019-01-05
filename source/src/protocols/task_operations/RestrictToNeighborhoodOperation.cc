@@ -78,7 +78,7 @@ RestrictToNeighborhoodOperation::~RestrictToNeighborhoodOperation() = default;
 /// @details be warned if you use clone that you'll not get a new interface calculator
 core::pack::task::operation::TaskOperationOP RestrictToNeighborhoodOperation::clone() const
 {
-	return core::pack::task::operation::TaskOperationOP( new RestrictToNeighborhoodOperation( *this ) );
+	return utility::pointer::make_shared< RestrictToNeighborhoodOperation >( *this );
 }
 
 RestrictToNeighborhoodOperation::RestrictToNeighborhoodOperation( RestrictToNeighborhoodOperation const & rhs) :
@@ -112,7 +112,7 @@ void RestrictToNeighborhoodOperation::make_calculator(
 			<< " already exists, this is hopefully correct for your purposes" << std::endl;
 	} else {
 		using protocols::pose_metric_calculators::NeighborhoodByDistanceCalculator;
-		CalculatorFactory::Instance().register_calculator( calculator_name_, PoseMetricCalculatorOP( new NeighborhoodByDistanceCalculator( central_residues, dist_cutoff ) ) );
+		CalculatorFactory::Instance().register_calculator( calculator_name_, utility::pointer::make_shared< NeighborhoodByDistanceCalculator >( central_residues, dist_cutoff ) );
 	}
 }
 
@@ -126,7 +126,7 @@ void RestrictToNeighborhoodOperation::make_calculator( std::set< core::Size > co
 			<< " already exists, this is hopefully correct for your purposes" << std::endl;
 	} else {
 		using protocols::pose_metric_calculators::NeighborhoodByDistanceCalculator;
-		CalculatorFactory::Instance().register_calculator( calculator_name_, PoseMetricCalculatorOP( new NeighborhoodByDistanceCalculator( central_residues ) ) );
+		CalculatorFactory::Instance().register_calculator( calculator_name_, utility::pointer::make_shared< NeighborhoodByDistanceCalculator >( central_residues ) );
 	}
 }
 
@@ -205,7 +205,7 @@ void RestrictToNeighborhoodOperation::provide_xml_schema( utility::tag::XMLSchem
 core::pack::task::operation::TaskOperationOP
 RestrictToNeighborhoodOperationCreator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new RestrictToNeighborhoodOperation );
+	return utility::pointer::make_shared< RestrictToNeighborhoodOperation >();
 }
 
 void RestrictToNeighborhoodOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

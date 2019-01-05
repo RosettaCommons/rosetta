@@ -35,10 +35,10 @@ public:
 	FileExistFilter();
 	bool apply( core::pose::Pose const & pose ) const override;
 	filters::FilterOP clone() const override {
-		return filters::FilterOP( new FileExistFilter( *this ) );
+		return utility::pointer::make_shared< FileExistFilter >( *this );
 	}
 	filters::FilterOP fresh_instance() const override{
-		return filters::FilterOP( new FileExistFilter() );
+		return utility::pointer::make_shared< FileExistFilter >();
 	}
 
 	void report( std::ostream & out, core::pose::Pose const & pose ) const override;

@@ -103,9 +103,9 @@ LoopAnchorFeatures::write_loop_anchors_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
-	Column residue_begin("residue_begin", DbDataTypeOP( new DbInteger() ));
-	Column residue_end("residue_end", DbDataTypeOP( new DbInteger() ));
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >());
+	Column residue_begin("residue_begin", utility::pointer::make_shared< DbInteger >());
+	Column residue_end("residue_end", utility::pointer::make_shared< DbInteger >());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -142,17 +142,17 @@ LoopAnchorFeatures::write_loop_anchor_transforms_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
-	Column residue_begin("residue_begin", DbDataTypeOP( new DbInteger() ));
-	Column residue_end("residue_end", DbDataTypeOP( new DbInteger() ));
-	Column x("x", DbDataTypeOP( new DbReal() ));
-	Column y("y", DbDataTypeOP( new DbReal() ));
-	Column z("z", DbDataTypeOP( new DbReal() ));
-	Column phi("phi", DbDataTypeOP( new DbReal() ));
-	Column psi("psi", DbDataTypeOP( new DbReal() ));
-	Column theta("theta", DbDataTypeOP( new DbReal() ));
-	Column alpha101("alpha101", DbDataTypeOP( new DbReal() ));
-	Column tau101("tau101", DbDataTypeOP( new DbReal() ));
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >());
+	Column residue_begin("residue_begin", utility::pointer::make_shared< DbInteger >());
+	Column residue_end("residue_end", utility::pointer::make_shared< DbInteger >());
+	Column x("x", utility::pointer::make_shared< DbReal >());
+	Column y("y", utility::pointer::make_shared< DbReal >());
+	Column z("z", utility::pointer::make_shared< DbReal >());
+	Column phi("phi", utility::pointer::make_shared< DbReal >());
+	Column psi("psi", utility::pointer::make_shared< DbReal >());
+	Column theta("theta", utility::pointer::make_shared< DbReal >());
+	Column alpha101("alpha101", utility::pointer::make_shared< DbReal >());
+	Column tau101("tau101", utility::pointer::make_shared< DbReal >());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -394,7 +394,7 @@ std::string LoopAnchorFeaturesCreator::type_name() const {
 
 protocols::features::FeaturesReporterOP
 LoopAnchorFeaturesCreator::create_features_reporter() const {
-	return protocols::features::FeaturesReporterOP( new LoopAnchorFeatures );
+	return utility::pointer::make_shared< LoopAnchorFeatures >();
 }
 
 void LoopAnchorFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

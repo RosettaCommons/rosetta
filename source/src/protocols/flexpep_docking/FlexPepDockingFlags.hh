@@ -42,7 +42,7 @@ public:
 
 	// TODO: documentation
 	FlexPepDockingFlagsOP clone() const {
-		return FlexPepDockingFlagsOP( new FlexPepDockingFlags( *this ) );
+		return utility::pointer::make_shared< FlexPepDockingFlags >( *this );
 	}
 
 	// TODO: more documentation

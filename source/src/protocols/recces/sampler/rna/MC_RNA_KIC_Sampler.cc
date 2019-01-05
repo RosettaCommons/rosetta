@@ -123,11 +123,11 @@ void MC_RNA_KIC_Sampler::init() {
 	}
 
 	////////// Make a stored loop closer /////////
-	stored_loop_closer_ = RNA_KinematicCloserOP( new RNA_KinematicCloser( *update_pose_, moving_suite_, chainbreak_suite_ ) );
+	stored_loop_closer_ = utility::pointer::make_shared< RNA_KinematicCloser >( *update_pose_, moving_suite_, chainbreak_suite_ );
 	stored_loop_closer_->set_calculate_jacobians( true );
 
 	////////// Loop Closer //////////
-	loop_closer_ = RNA_KinematicCloserOP( new RNA_KinematicCloser( *update_pose_, moving_suite_, chainbreak_suite_ ) );
+	loop_closer_ = utility::pointer::make_shared< RNA_KinematicCloser >( *update_pose_, moving_suite_, chainbreak_suite_ );
 	loop_closer_->set_calculate_jacobians( true );
 	loop_closer_->set_verbose( verbose_ );
 

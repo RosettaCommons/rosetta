@@ -44,10 +44,10 @@ public:
 	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	core::Real compute( core::pose::Pose const & pose ) const;
 	filters::FilterOP clone() const override {
-		return filters::FilterOP( new SpanTopologyMatchPoseFilter( *this ) );
+		return utility::pointer::make_shared< SpanTopologyMatchPoseFilter >( *this );
 	}
 	filters::FilterOP fresh_instance() const override {
-		return filters::FilterOP( new SpanTopologyMatchPoseFilter() );
+		return utility::pointer::make_shared< SpanTopologyMatchPoseFilter >();
 	}
 
 	virtual ~SpanTopologyMatchPoseFilter();

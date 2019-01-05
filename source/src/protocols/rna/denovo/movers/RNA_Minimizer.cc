@@ -132,7 +132,7 @@ void RNA_Minimizer::apply( core::pose::Pose & pose )
 		if ( !scorefxn_->has_nonzero_weight( base_pair_constraint ) )  scorefxn_->set_weight( base_pair_constraint, 1.0 );
 		if ( !scorefxn_->has_nonzero_weight( coordinate_constraint ) ) scorefxn_->set_weight( coordinate_constraint, 1.0 );
 	}
-	if ( options_ == nullptr ) options_ = options::RNA_MinimizerOptionsOP( new options::RNA_MinimizerOptions );
+	if ( options_ == nullptr ) options_ = utility::pointer::make_shared< options::RNA_MinimizerOptions >();
 	if ( options_->vary_bond_geometry() ) scorefxn_->set_weight( rna_bond_geometry, 1.0 );
 	if ( include_default_linear_chainbreak_ && !scorefxn_->has_nonzero_weight( linear_chainbreak ) ) scorefxn_->set_weight( linear_chainbreak, 5.0 );
 
@@ -148,7 +148,7 @@ void RNA_Minimizer::apply( core::pose::Pose & pose )
 	if ( atom_level_domain_map_input_ != nullptr ) {
 		atom_level_domain_map_ = atom_level_domain_map_input_->clone();
 	} else {
-		atom_level_domain_map_ = toolbox::AtomLevelDomainMapOP( new toolbox::AtomLevelDomainMap( pose ) ); // initialized to let all dofs move.
+		atom_level_domain_map_ = utility::pointer::make_shared< toolbox::AtomLevelDomainMap >( pose ); // initialized to let all dofs move.
 	}
 	if ( options_->minimize_bps() ) update_atom_level_domain_map_to_move_rosetta_library_chunks();
 	update_atom_level_domain_map_with_extra_minimize_res( pose );

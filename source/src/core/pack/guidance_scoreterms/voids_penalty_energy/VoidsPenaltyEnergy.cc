@@ -68,7 +68,7 @@ static basic::Tracer TR("core.pack.voids_penalty_energy.VoidsPenaltyEnergy");
 core::scoring::methods::EnergyMethodOP
 VoidsPenaltyEnergyCreator::create_energy_method( core::scoring::methods::EnergyMethodOptions const &options ) const
 {
-	return core::scoring::methods::EnergyMethodOP( new VoidsPenaltyEnergy( options ) );
+	return utility::pointer::make_shared< VoidsPenaltyEnergy >( options );
 }
 
 /// @brief Defines the score types that this energy method calculates.
@@ -84,7 +84,7 @@ VoidsPenaltyEnergyCreator::score_types_for_method() const
 /// @brief Options constructor.
 ///
 VoidsPenaltyEnergy::VoidsPenaltyEnergy ( core::scoring::methods::EnergyMethodOptions const &options ) :
-	parent1( core::scoring::methods::EnergyMethodCreatorOP( new VoidsPenaltyEnergyCreator ) ),
+	parent1( utility::pointer::make_shared< VoidsPenaltyEnergyCreator >() ),
 	parent2( ),
 	cone_dotproduct_cutoff_( options.voids_penalty_energy_cone_dotproduct_cutoff() ),
 	cone_distance_cutoff_( options.voids_penalty_energy_cone_distance_cutoff() ),
@@ -102,7 +102,7 @@ VoidsPenaltyEnergy::VoidsPenaltyEnergy ( core::scoring::methods::EnergyMethodOpt
 /// @brief Copy constructor.
 ///
 VoidsPenaltyEnergy::VoidsPenaltyEnergy( VoidsPenaltyEnergy const &src ) :
-	parent1( core::scoring::methods::EnergyMethodCreatorOP( new VoidsPenaltyEnergyCreator ) ),
+	parent1( utility::pointer::make_shared< VoidsPenaltyEnergyCreator >() ),
 	parent2( src ),
 	cone_dotproduct_cutoff_( src.cone_dotproduct_cutoff_ ),
 	cone_distance_cutoff_( src.cone_distance_cutoff_ ),
@@ -122,7 +122,7 @@ VoidsPenaltyEnergy::~VoidsPenaltyEnergy() {}
 /// @brief Clone: create a copy of this object, and return an owning pointer
 /// to the copy.
 core::scoring::methods::EnergyMethodOP VoidsPenaltyEnergy::clone() const {
-	return core::scoring::methods::EnergyMethodOP( new VoidsPenaltyEnergy(*this) );
+	return utility::pointer::make_shared< VoidsPenaltyEnergy >(*this);
 }
 
 /// @brief VoidsPenaltyEnergy is context-independent and thus indicates that no context graphs need to be maintained by

@@ -140,7 +140,7 @@ VdWTinkerPoseInfo::initialize( pose::Pose const & pose )
 	placeholder_info_.resize( nres, nullptr );
 
 	for ( Size i=1; i<= nres; ++i ) {
-		if ( !residue_info_[i] ) residue_info_[i] = VdWTinkerResidueInfoOP( new VdWTinkerResidueInfo( pose.residue(i) ) );
+		if ( !residue_info_[i] ) residue_info_[i] = utility::pointer::make_shared< VdWTinkerResidueInfo >( pose.residue(i) );
 		else  residue_info_[i]->initialize( pose.residue(i) );
 	}
 
@@ -173,7 +173,7 @@ VdWTinkerRotamerSetInfo::initialize( RotamerSetBase const & rotamer_set )
 	Size const nrot( rotamer_set.num_rotamers() );
 	residue_info_.resize( nrot );
 	for ( Size i=1; i<= nrot; ++i ) {
-		residue_info_[i] = VdWTinkerResidueInfoOP( new VdWTinkerResidueInfo( *rotamer_set.rotamer(i) ) );
+		residue_info_[i] = utility::pointer::make_shared< VdWTinkerResidueInfo >( *rotamer_set.rotamer(i) );
 	}
 }
 
@@ -334,7 +334,7 @@ VdWTinkerPotential::assign_all_amoeba_types(
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::VDWTINKER_POSE_INFO ) ) {
 		vdw_info = utility::pointer::static_pointer_cast< VdWTinkerPoseInfo >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::VDWTINKER_POSE_INFO ) );
 	} else {
-		vdw_info = VdWTinkerPoseInfoOP( new VdWTinkerPoseInfo() );
+		vdw_info = utility::pointer::make_shared< VdWTinkerPoseInfo >();
 	}
 
 	for ( Size res1 = 1; res1 <= nres; ++res1 ) {
@@ -359,7 +359,7 @@ VdWTinkerPotential::setup_for_scoring(
 		vdw_info = utility::pointer::static_pointer_cast< VdWTinkerPoseInfo >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::VDWTINKER_POSE_INFO ) );
 	} else {
 		//TR << "Allocating fresh vdw info objects" << std::endl;
-		vdw_info = VdWTinkerPoseInfoOP( new VdWTinkerPoseInfo() );
+		vdw_info = utility::pointer::make_shared< VdWTinkerPoseInfo >();
 		vdw_info->initialize( pose );
 		pose.data().set( pose::datacache::CacheableDataType::VDWTINKER_POSE_INFO, vdw_info );
 		assign_all_amoeba_types( pose );

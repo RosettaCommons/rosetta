@@ -691,7 +691,7 @@ visualize_fold_tree(
 		auto markjump = ( char )NULL;
 		for ( Size jr = lb; jr <= ub; ++jr ) if ( mark_jump_to_res.count( jr ) ) markjump = mark_jump_to_res.find( jr )->second;
 		Size follows = jump_follows.find( jnum ) != jump_follows.end() ? jump_follows.find( jnum )->second : ( Size ) 0;
-		nodemap[ res_to_nodename[ ir ] ] = NodeOP( new Node( res_to_nodename[ ir ], jnum, jumpfrom, jumpto, markjump, follows ) );
+		nodemap[ res_to_nodename[ ir ] ] = utility::pointer::make_shared< Node >( res_to_nodename[ ir ], jnum, jumpfrom, jumpto, markjump, follows );
 	}
 	// set tree topology
 	for ( Size i = 1; i <= ft.num_jump(); ++i ) {

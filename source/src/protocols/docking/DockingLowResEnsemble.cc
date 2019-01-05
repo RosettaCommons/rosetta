@@ -84,7 +84,7 @@ DockingLowResEnsemble::~DockingLowResEnsemble() = default;
 
 
 protocols::moves::MoverOP DockingLowResEnsemble::clone() const {
-	return protocols::moves::MoverOP( new DockingLowResEnsemble(*this) );
+	return utility::pointer::make_shared< DockingLowResEnsemble >(*this);
 }
 
 core::Size DockingLowResEnsemble::get_current_conformer_ensemble1() { return current_conformer_ensemble1_; }
@@ -93,12 +93,12 @@ core::Size DockingLowResEnsemble::get_current_conformer_ensemble2() { return cur
 
 void DockingLowResEnsemble::set_ensemble1( DockingEnsembleOP ensemble1 )
 {
-	ensemble1_mover_ = protocols::docking::ConformerSwitchMoverOP( new protocols::docking::ConformerSwitchMover( ensemble1, true ) );
+	ensemble1_mover_ = utility::pointer::make_shared< protocols::docking::ConformerSwitchMover >( ensemble1, true );
 }
 
 void DockingLowResEnsemble::set_ensemble2( DockingEnsembleOP ensemble2 )
 {
-	ensemble2_mover_ = protocols::docking::ConformerSwitchMoverOP( new protocols::docking::ConformerSwitchMover( ensemble2, true ) );
+	ensemble2_mover_ = utility::pointer::make_shared< protocols::docking::ConformerSwitchMover >( ensemble2, true );
 }
 
 void DockingLowResEnsemble::ensemble_defaults(){
@@ -125,10 +125,10 @@ void DockingLowResEnsemble::initialize_movers(){
 
 	set_rb_trial( TrialMoverOP ( new TrialMover( get_rb_seq(), get_mc() ) ) );
 
-	ensemble1_trial_ = TrialMoverOP( new TrialMover( ensemble1_seq_, get_mc() ) );
+	ensemble1_trial_ = utility::pointer::make_shared< TrialMover >( ensemble1_seq_, get_mc() );
 	ensemble1_trial_->keep_stats_type( accept_reject );
 
-	ensemble2_trial_ = TrialMoverOP( new TrialMover( ensemble2_seq_, get_mc() ) );
+	ensemble2_trial_ = utility::pointer::make_shared< TrialMover >( ensemble2_seq_, get_mc() );
 	ensemble2_trial_->keep_stats_type( accept_reject );
 }
 
@@ -300,10 +300,10 @@ void DockingLowResEnsemble::finalize_setup( core::pose::Pose & pose ){
 
 	ensemble_defaults(); // cannot override set_defaults() because it is called from the constructor of the base class
 
-	ensemble1_seq_ = protocols::moves::SequenceMoverOP( new SequenceMover );
+	ensemble1_seq_ = utility::pointer::make_shared< SequenceMover >();
 	ensemble1_seq_->add_mover( ensemble1_mover_ );
 
-	ensemble2_seq_ = protocols::moves::SequenceMoverOP( new SequenceMover );
+	ensemble2_seq_ = utility::pointer::make_shared< SequenceMover >();
 	ensemble2_seq_->add_mover( ensemble2_mover_ );
 
 	if ( get_view_in_pymol() ) {

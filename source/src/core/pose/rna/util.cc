@@ -1537,7 +1537,7 @@ add_chi_constraints( pose::Pose & pose,
 
 		AtomID id1,id2,id3,id4;
 		pose.conformation().get_torsion_angle_atom_ids( TorsionID( j, core::id::CHI, 1 ), id1, id2, id3, id4 );
-		pose.add_constraint( DihedralConstraintOP( new DihedralConstraint( id1, id2, id3, id4, chi_potential_restraint, rna_torsion ) ) );
+		pose.add_constraint( utility::pointer::make_shared< DihedralConstraint >( id1, id2, id3, id4, chi_potential_restraint, rna_torsion ) );
 	}
 }
 
@@ -1689,9 +1689,9 @@ setup_base_pair_constraints(
 
 	if ( use_flat_harmonic ) {
 		Distance const distance_tolerance( 1.0 );
-		distance_func = FuncOP( new FlatHarmonicFunc( WC_distance, distance_stddev, distance_tolerance ) );
+		distance_func = utility::pointer::make_shared< FlatHarmonicFunc >( WC_distance, distance_stddev, distance_tolerance );
 		Distance const C1prime_distance_tolerance( 2.0 );
-		C1prime_distance_func = FuncOP( new FlatHarmonicFunc( C1prime_distance, C1prime_distance_stddev, C1prime_distance_tolerance  ) );
+		C1prime_distance_func = utility::pointer::make_shared< FlatHarmonicFunc >( C1prime_distance, C1prime_distance_stddev, C1prime_distance_tolerance  );
 	}
 
 	for ( auto const & pairing : pairings ) {
@@ -1706,10 +1706,10 @@ setup_base_pair_constraints(
 
 			Size const atom1 = pose.residue_type(i).RNA_info().c1prime_atom_index();
 			Size const atom2 = pose.residue_type(j).RNA_info().c1prime_atom_index();
-			pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint(
+			pose.add_constraint( scoring::constraints::ConstraintCOP( utility::pointer::make_shared< AtomPairConstraint >(
 				id::AtomID(atom1,i),
 				id::AtomID(atom2,j),
-				C1prime_distance_func, core::scoring::base_pair_constraint ) ) ) );
+				C1prime_distance_func, core::scoring::base_pair_constraint ) ) );
 
 			utility::vector1< std::string > atom_ids1, atom_ids2;
 			get_base_pair_atoms( pose.residue_type(i), pose.residue_type(j), atom_ids1, atom_ids2, WATSON_CRICK, WATSON_CRICK, CIS );
@@ -1724,10 +1724,10 @@ setup_base_pair_constraints(
 					atom_ids1[p] << " <--> " <<
 					atom_ids2[p] << ".  [ " << atom1 << "-" << atom2 << "]" << std::endl;
 
-				pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint(
+				pose.add_constraint( scoring::constraints::ConstraintCOP( utility::pointer::make_shared< AtomPairConstraint >(
 					id::AtomID(atom1,i),
 					id::AtomID(atom2,j),
-					distance_func, core::scoring::base_pair_constraint ) ) ) );
+					distance_func, core::scoring::base_pair_constraint ) ) );
 			}
 		} else { //coarse-grained RNA
 
@@ -1747,10 +1747,10 @@ setup_base_pair_constraints(
 					pose.residue_type(j).name1() << I(3,j) << "   " <<
 					" S  " << " <--> " <<
 					" S  " << ".  [ " << atom1 << "-" << atom2 << "]" << std::endl;
-				pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint(
+				pose.add_constraint( scoring::constraints::ConstraintCOP( utility::pointer::make_shared< AtomPairConstraint >(
 					id::AtomID(atom1,i),
 					id::AtomID(atom2,j),
-					coarse_SUG_distance_func, core::scoring::base_pair_constraint ) ) ) );
+					coarse_SUG_distance_func, core::scoring::base_pair_constraint ) ) );
 			}
 
 			static Real const coarse_WC_CEN_distance( 5.5 );
@@ -1768,10 +1768,10 @@ setup_base_pair_constraints(
 					pose.residue_type(j).name1() << I(3,j) << "   " <<
 					" CEN" << " <--> " <<
 					" CEN" << ".  [ " << atom1 << "-" << atom2 << "]" << std::endl;
-				pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint(
+				pose.add_constraint( scoring::constraints::ConstraintCOP( utility::pointer::make_shared< AtomPairConstraint >(
 					id::AtomID(atom1,i),
 					id::AtomID(atom2,j),
-					coarse_CEN_distance_func, core::scoring::base_pair_constraint ) ) ) );
+					coarse_CEN_distance_func, core::scoring::base_pair_constraint ) ) );
 			}
 
 			static Real const coarse_WC_X_distance( 3.5 );
@@ -1788,10 +1788,10 @@ setup_base_pair_constraints(
 					pose.residue_type(j).name1() << I(3,j) << "   " <<
 					" X  " << " <--> " <<
 					" X  " << ".  [ " << atom1 << "-" << atom2 << "]" << std::endl;
-				pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint(
+				pose.add_constraint( scoring::constraints::ConstraintCOP( utility::pointer::make_shared< AtomPairConstraint >(
 					id::AtomID(atom1,i),
 					id::AtomID(atom2,j),
-					coarse_X_distance_func, core::scoring::base_pair_constraint ) ) ) );
+					coarse_X_distance_func, core::scoring::base_pair_constraint ) ) );
 			}
 		}
 	}

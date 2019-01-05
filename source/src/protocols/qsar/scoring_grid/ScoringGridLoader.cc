@@ -141,7 +141,7 @@ void ScoringGridLoader::parse_gridset_tag( utility::tag::TagCOP tag, utility::ta
 }
 
 protocols::parser::DataLoaderOP
-ScoringGridLoaderCreator::create_loader() const { return protocols::parser::DataLoaderOP( new ScoringGridLoader ); }
+ScoringGridLoaderCreator::create_loader() const { return utility::pointer::make_shared< ScoringGridLoader >(); }
 
 std::string
 ScoringGridLoaderCreator::keyname() const { return ScoringGridLoader::loader_name(); }

@@ -136,7 +136,7 @@ static basic::Tracer TR("LocalRelax");
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP LocalRelaxCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new LocalRelax() );
+// XRW TEMP  return utility::pointer::make_shared< LocalRelax >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -358,9 +358,9 @@ LocalRelax::apply( core::pose::Pose & pose) {
 
 	// set up packer task [to do: make this RS selectible]
 	core::pack::task::TaskFactoryOP task ( new core::pack::task::TaskFactory );
-	task->push_back( core::pack::task::operation::TaskOperationOP( new core::pack::task::operation::InitializeFromCommandline ) );
-	task->push_back( core::pack::task::operation::TaskOperationOP( new core::pack::task::operation::RestrictToRepacking ) );
-	task->push_back( core::pack::task::operation::TaskOperationOP( new core::pack::task::operation::IncludeCurrent ) );
+	task->push_back( utility::pointer::make_shared< core::pack::task::operation::InitializeFromCommandline >() );
+	task->push_back( utility::pointer::make_shared< core::pack::task::operation::RestrictToRepacking >() );
+	task->push_back( utility::pointer::make_shared< core::pack::task::operation::IncludeCurrent >() );
 	core::pack::task::PackerTaskOP ptask_resfile = task->create_task_and_apply_taskoperations( pose );
 
 	// for each residue
@@ -528,7 +528,7 @@ std::string LocalRelaxCreator::keyname() const {
 
 protocols::moves::MoverOP
 LocalRelaxCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LocalRelax );
+	return utility::pointer::make_shared< LocalRelax >();
 }
 
 void LocalRelaxCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

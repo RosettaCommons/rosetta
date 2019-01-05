@@ -207,13 +207,13 @@ HelixFromSequence::parse_my_tag(
 moves::MoverOP
 HelixFromSequence::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new HelixFromSequence );
+	return utility::pointer::make_shared< HelixFromSequence >();
 }
 
 /// @brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
 HelixFromSequence::clone() const{
-	return protocols::moves::MoverOP( new HelixFromSequence( *this ) );
+	return utility::pointer::make_shared< HelixFromSequence >( *this );
 }
 
 /*
@@ -234,7 +234,7 @@ std::ostream &operator<< (std::ostream &os, HelixFromSequence const &mover)
 
 protocols::moves::MoverOP
 HelixFromSequenceCreator::create_mover() const {
-	return protocols::moves::MoverOP( new HelixFromSequence );
+	return utility::pointer::make_shared< HelixFromSequence >();
 }
 
 std::string

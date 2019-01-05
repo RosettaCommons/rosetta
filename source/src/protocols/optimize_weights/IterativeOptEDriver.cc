@@ -172,7 +172,7 @@ public:
 
 	core::pack::task::operation::TaskOperationOP
 	clone() const override {
-		return core::pack::task::operation::TaskOperationOP( new ScaleAnnealerTemperatureOperation( *this ) );
+		return utility::pointer::make_shared< ScaleAnnealerTemperatureOperation >( *this );
 	}
 
 
@@ -229,7 +229,7 @@ IterativeOptEDriver::IterativeOptEDriver() :
 	using_unfolded_energy_term_( false )
 {
 	// default task factory, generates 'vanilla' PackerTasks
-	task_factory_ = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory );
+	task_factory_ = utility::pointer::make_shared< core::pack::task::TaskFactory >();
 
 	// load custom TaskOperations according to an xml-like utility::tag file
 	if ( option[ optE::parse_tagfile ].user() ) {
@@ -239,7 +239,7 @@ IterativeOptEDriver::IterativeOptEDriver() :
 		// else use default TaskOperation(s)
 	} else if ( ! option[ optE::design_with_minpack ] ) {
 		using core::pack::task::operation::TaskOperationCOP;
-		task_factory_->push_back( TaskOperationCOP( new pack::task::operation::InitializeFromCommandline ) );
+		task_factory_->push_back( utility::pointer::make_shared< pack::task::operation::InitializeFromCommandline >() );
 	}
 
 	int mpi_rank( 0 ), mpi_nprocs( 1 );
@@ -284,7 +284,7 @@ IterativeOptEDriver::~IterativeOptEDriver() = default;
 void
 IterativeOptEDriver::task_factory( core::pack::task::TaskFactoryCOP tf )
 {
-	task_factory_ = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory( *tf ) );
+	task_factory_ = utility::pointer::make_shared< core::pack::task::TaskFactory >( *tf );
 }
 
 ///
@@ -939,7 +939,7 @@ IterativeOptEDriver::compute_rotamer_energies_for_assigned_pdbs()
 
 	if ( MPI_rank_ == 0 ) TR << "compute_rotamer_energies_for_assigned_pdbs(): entered method" << std::endl;
 
-	optE_data_ = OptEDataOP( new OptEData ); // get rid of old optEdata...
+	optE_data_ = utility::pointer::make_shared< OptEData >(); // get rid of old optEdata...
 
 	if ( MPI_rank_ == 0 && option[ optE::constrain_weights ].user() ) {
 		ConstraintedOptimizationWeightFuncOP cst( new ConstraintedOptimizationWeightFunc( free_score_list_ ) );
@@ -1218,7 +1218,7 @@ IterativeOptEDriver::collect_decoy_discrimination_data()
 			}
 		}
 
-		decoy_discrim_data_ = OptEDataOP( new OptEData );
+		decoy_discrim_data_ = utility::pointer::make_shared< OptEData >();
 
 		ScoreFunctionOP scorefxn = create_unweighted_scorefunction();
 		ScoreFunctionOP weighted_sfxn = create_weighted_scorefunction();
@@ -1623,7 +1623,7 @@ IterativeOptEDriver::collect_ligand_discrimination_data()
 
 	if ( ligand_discrim_data_ == nullptr ) {
 
-		ligand_discrim_data_ = OptEDataOP( new OptEData );
+		ligand_discrim_data_ = utility::pointer::make_shared< OptEData >();
 
 		/// Refactor this
 		ScoreFunctionOP scorefxn = create_unweighted_scorefunction();
@@ -2011,7 +2011,7 @@ void IterativeOptEDriver::optimize_weights()
 		Size ndofs = start_dofs.size();
 		if ( option[ optE::wrap_dof_optimization ].user() ) {
 			if ( outer_loop_counter_ == 1 ) {
-				wrapped_opt_min_ = WrapperOptEMultifuncOP( new WrapperOptEMultifunc() );
+				wrapped_opt_min_ = utility::pointer::make_shared< WrapperOptEMultifunc >();
 				wrapped_opt_min_->init(
 					free_score_list_, (int) free_count_,
 					fixed_score_list_, fixed_parameters_,
@@ -3624,7 +3624,7 @@ IterativeOptEDriver::get_nat_aa_opte_data(
 				std::cerr << "Warning position " << resi << " in " << pdb_name << " pssm data does not match native amino acid: ";
 				std::cerr << pssm_data_[ resi ].first << " vs " << native_pose.residue( resi ).aa()  << std::endl;
 				std::cerr << "Falling back on PNatAAOptEPositionData" << std::endl;
-				this_pos_data = PNatAAOptEPositionDataOP( new PNatAAOptEPositionData );
+				this_pos_data = utility::pointer::make_shared< PNatAAOptEPositionData >();
 			}
 		} else {
 			if ( option[ optE::optimize_pssm ]() ) {
@@ -3637,11 +3637,11 @@ IterativeOptEDriver::get_nat_aa_opte_data(
 			// get to the code that deals with the unfolded state energy.
 			// Note: This special position data class is not compatible with PSSM optimization.
 			if ( using_unfolded_energy_term_ ) {
-				this_pos_data = PNatAAOptEPositionDataOP( new NestedEnergyTermPNatAAOptEPositionData );
+				this_pos_data = utility::pointer::make_shared< NestedEnergyTermPNatAAOptEPositionData >();
 				(utility::pointer::dynamic_pointer_cast< protocols::optimize_weights::NestedEnergyTermPNatAAOptEPositionData > ( this_pos_data ))->set_unfolded_energy_emap_vector( e );
 
 			} else {
-				this_pos_data = PNatAAOptEPositionDataOP( new PNatAAOptEPositionData );
+				this_pos_data = utility::pointer::make_shared< PNatAAOptEPositionData >();
 			}
 		}
 
@@ -4014,7 +4014,7 @@ IterativeOptEDriver::collect_dG_of_binding_data()
 	using namespace basic::options::OptionKeys;
 
 	if ( dG_binding_data_ == nullptr ) {
-		dG_binding_data_ = OptEDataOP( new OptEData() );
+		dG_binding_data_ = utility::pointer::make_shared< OptEData >();
 		ScoreFunctionOP sfxn = create_unweighted_scorefunction();
 
 		bool const no_fa_rep = option[ optE::pretend_no_ddG_repulsion ]();
@@ -4046,7 +4046,7 @@ IterativeOptEDriver::collect_ddG_of_mutation_data()
 	using namespace basic::options::OptionKeys;
 
 	if ( ddG_mutation_data_ == nullptr ) {
-		ddG_mutation_data_ = OptEDataOP( new OptEData );
+		ddG_mutation_data_ = utility::pointer::make_shared< OptEData >();
 
 		// rescore wt's less often
 		std::map< std::string, std::pair< SingleStructureDataOP, std::string > > structure_map;
@@ -4078,9 +4078,9 @@ IterativeOptEDriver::collect_ddG_of_mutation_data()
 			// If not for this special check, then we'll always be creating the standard position data objects and won't ever
 			// get to the code that deals with the unfolded state energy.
 			if ( using_unfolded_energy_term_ ) {
-				ddg_data = DDGMutationOptEDataOP( new NestedEnergyTermDDGMutationOptEData );
+				ddg_data = utility::pointer::make_shared< NestedEnergyTermDDGMutationOptEData >();
 			} else {
-				ddg_data = DDGMutationOptEDataOP( new DDGMutationOptEData );
+				ddg_data = utility::pointer::make_shared< DDGMutationOptEData >();
 			}
 
 			// save the experimental ddg for this wt/mut list-of-files pair
@@ -4396,7 +4396,7 @@ IterativeOptEDriver::collect_ddG_of_binding_data()
 	using namespace basic::options::OptionKeys;
 
 	if ( ddG_bind_optE_data_ == nullptr ) {
-		ddG_bind_optE_data_ = OptEDataOP( new OptEData );
+		ddG_bind_optE_data_ = utility::pointer::make_shared< OptEData >();
 
 		// rescore wt's less often
 		std::map< std::string, std::pair< SingleStructureDataOP, std::string > > structure_map;
@@ -4751,7 +4751,7 @@ IterativeOptEDriver::measure_sequence_recovery(
 	//ScoreFunctionOP sfxn2 = ScoreFunctionFactory::create_score_function( get_scorefile_name() );
 	using core::pack::task::operation::TaskOperationCOP;
 	TaskFactoryOP task_factory_for_design( new TaskFactory( *task_factory_ ) );
-	task_factory_for_design->push_back( TaskOperationCOP( new ScaleAnnealerTemperatureOperation( sfxn->weights()[ fa_atr ] / 0.8 ) ) );
+	task_factory_for_design->push_back( utility::pointer::make_shared< ScaleAnnealerTemperatureOperation >( sfxn->weights()[ fa_atr ] / 0.8 ) );
 
 	if ( MPI_rank_ == 0 ) {
 		if ( sfxn->get_weight( scoring::surface ) != 0.0 ) {
@@ -4904,7 +4904,7 @@ IterativeOptEDriver::measure_rotamer_recovery(
 	using namespace core::pack::task;
 	using core::pack::task::operation::TaskOperationCOP;
 	TaskFactoryOP task_factory_for_repacking( new TaskFactory( *task_factory_ ) );
-	task_factory_for_repacking->push_back( TaskOperationCOP( new operation::RestrictToRepacking ) );
+	task_factory_for_repacking->push_back( utility::pointer::make_shared< operation::RestrictToRepacking >() );
 
 	protocols::minimization_packing::PackRotamersMoverOP pack_mover( new protocols::minimization_packing::PackRotamersMover );
 	pack_mover->task_factory( task_factory_for_repacking );
@@ -5240,9 +5240,9 @@ IterativeOptEDriver::repack_and_minimize_pose(
 
 	protocols::minimization_packing::PackRotamersMover packer( sfxn );
 	TaskFactoryOP factory( new TaskFactory );
-	factory->push_back( TaskOperationCOP( new operation::RestrictToRepacking ) );
-	factory->push_back( TaskOperationCOP( new operation::IncludeCurrent ) );
-	factory->push_back( TaskOperationCOP( new operation::InitializeExtraRotsFromCommandline ) );
+	factory->push_back( utility::pointer::make_shared< operation::RestrictToRepacking >() );
+	factory->push_back( utility::pointer::make_shared< operation::IncludeCurrent >() );
+	factory->push_back( utility::pointer::make_shared< operation::InitializeExtraRotsFromCommandline >() );
 	packer.task_factory( factory );
 
 	packer.apply( pose );

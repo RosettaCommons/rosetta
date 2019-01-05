@@ -345,7 +345,7 @@ initialize_thermal_sampler( pose::Pose const & pose,
 	MC_AnyOP jump_sampler;
 	if ( options.sample_jump() ) {
 		TR << TR.Green << pose.fold_tree() << std::endl;
-		jump_sampler = MC_AnyOP( new MC_Any );
+		jump_sampler = utility::pointer::make_shared< MC_Any >();
 		for ( Size n = 1; n <= pose.num_jump(); n++ ) {
 			MC_RNA_OneJumpOP one_jump_sampler;
 			one_jump_sampler = initialize_jump_sampler( pose, n, options );

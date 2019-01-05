@@ -31,7 +31,7 @@ namespace features {
 // XRW TEMP FeaturesReporterOP GeometricSolvationFeaturesCreator::create_features_reporter() const {
 // XRW TEMP
 // XRW TEMP  core::scoring::methods::EnergyMethodOptions options;
-// XRW TEMP  return FeaturesReporterOP( new GeometricSolvationFeatures(options) );
+// XRW TEMP  return utility::pointer::make_shared< GeometricSolvationFeatures >(options);
 // XRW TEMP }
 
 // XRW TEMP std::string GeometricSolvationFeaturesCreator::type_name() const {

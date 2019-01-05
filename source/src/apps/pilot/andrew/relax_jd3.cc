@@ -190,7 +190,7 @@ public:
 		// (potentially) dock map into density
 		if ( (*job_options)[ OptionKeys::edensity::mapfile ].user() ) {
 			protocols::moves::SequenceMoverOP seqmov( new protocols::moves::SequenceMover );
-			seqmov->add_mover( MoverOP( new protocols::electron_density::SetupForDensityScoringMover( *job_options ) ) );
+			seqmov->add_mover( utility::pointer::make_shared< protocols::electron_density::SetupForDensityScoringMover >( *job_options ) );
 			seqmov->add_mover( protocol );
 			protocol = seqmov;
 		}
@@ -199,7 +199,7 @@ public:
 		//   to avoid adding extra VRTs
 		if ( (*job_options)[ OptionKeys::symmetry::symmetry_definition ].user() )  {
 			protocols::moves::SequenceMoverOP seqmov( new protocols::moves::SequenceMover );
-			seqmov->add_mover( MoverOP( new protocols::symmetry::SetupForSymmetryMover( *job_options ) ) );
+			seqmov->add_mover( utility::pointer::make_shared< protocols::symmetry::SetupForSymmetryMover >( *job_options ) );
 			seqmov->add_mover( protocol );
 			protocol = seqmov;
 		}

@@ -24,7 +24,7 @@ namespace rotamer_set {
 core::pack::rotamer_set::RotamerSetOperationOP
 DeleteAllRotamerSetOperation::clone() const
 {
-	return core::pack::rotamer_set::RotamerSetOperationOP( new DeleteAllRotamerSetOperation( *this ) );
+	return utility::pointer::make_shared< DeleteAllRotamerSetOperation >( *this );
 }
 
 void DeleteAllRotamerSetOperation::alter_rotamer_set(

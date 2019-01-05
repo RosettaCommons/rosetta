@@ -98,7 +98,7 @@ PDBOutput::final_pose( JobOP job, Pose const & pose, std::string const & /*tag*/
 {
 	if ( !enabled_ ) return; // to allow easy overrides of excess pdb writing in higher-level code
 	call_output_observers( pose, job );
-	pose_copy_ = PoseOP( new Pose( pose ) );
+	pose_copy_ = utility::pointer::make_shared< Pose >( pose );
 	ozstream pdbout( extended_name(job) );
 	if ( !pdbout.good() ) {
 		utility_exit_with_message( "Unable to open file: " + extended_name(job) + "\n" );
@@ -120,7 +120,7 @@ PDBOutput::operator() (
 )
 {
 	if ( !enabled_ ) return; // to allow easy overrides of excess pdb writing in higher-level code
-	pose_copy_ = PoseOP( new Pose( pose ) );
+	pose_copy_ = utility::pointer::make_shared< Pose >( pose );
 	make_subdirs( name );
 	ozstream pdbout( name );
 	if ( !pdbout.good() ) {
@@ -157,7 +157,7 @@ void PDBOutput::starting_pose( Pose const & pose ) { reference_pose( pose ); }
 void PDBOutput::reference_pose( Pose const & pose )
 {
 	// make hard copy to guarantee that the reference pose remains unchanged
-	reference_pose_ = PoseCOP( PoseOP( new Pose( pose ) ) );
+	reference_pose_ = utility::pointer::make_shared< Pose >( pose );
 	designed_residues_.assign( reference_pose_->size(), false );
 }
 pose::PoseCOP PDBOutput::reference_pose() const { return reference_pose_; }

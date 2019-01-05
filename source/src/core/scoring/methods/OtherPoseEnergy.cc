@@ -30,7 +30,7 @@ methods::EnergyMethodOP
 OtherPoseEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new OtherPoseEnergy );
+	return utility::pointer::make_shared< OtherPoseEnergy >();
 }
 
 ScoreTypes
@@ -43,7 +43,7 @@ OtherPoseEnergyCreator::score_types_for_method() const {
 
 /// c-tor
 OtherPoseEnergy::OtherPoseEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new OtherPoseEnergyCreator ) )
+	parent( utility::pointer::make_shared< OtherPoseEnergyCreator >() )
 {}
 
 
@@ -51,7 +51,7 @@ OtherPoseEnergy::OtherPoseEnergy() :
 EnergyMethodOP
 OtherPoseEnergy::clone() const
 {
-	return EnergyMethodOP( new OtherPoseEnergy );
+	return utility::pointer::make_shared< OtherPoseEnergy >();
 }
 
 /////////////////////////////////////////////////////////////////////////////

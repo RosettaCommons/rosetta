@@ -144,7 +144,7 @@ public:
 		rand->append_sequence( "MG" ); // gen3
 		mmt_driver.set_randomizer( rand );
 
-		fc_ = utility::io::FileContentsMapOP( new utility::io::FileContentsMap );
+		fc_ = utility::pointer::make_shared< utility::io::FileContentsMap >();
 		fc_->set_file_contents( "ubq.pdb", ubq_twores_string() );
 		fc_->set_file_contents( "ubq.corr", "1 1 _\n2 2 _\n" );
 		fc_->set_file_contents( "ubq_entity.resfile", "2\nstart\n1 A PIKAA AM\n2 A PIKAA GQ\n" );

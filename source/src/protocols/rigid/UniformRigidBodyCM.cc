@@ -73,7 +73,7 @@ using namespace protocols::environment;
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP UniformRigidBodyCMCreator::create_mover() const {
-// XRW TEMP  return ClientMoverOP( new UniformRigidBodyCM );
+// XRW TEMP  return utility::pointer::make_shared< UniformRigidBodyCM >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -83,7 +83,7 @@ using namespace protocols::environment;
 
 UniformRigidBodyCM::UniformRigidBodyCM():
 	ClientMover(),
-	mover_( UniformRigidBodyMoverOP( new UniformRigidBodyMover() ) )
+	mover_( utility::pointer::make_shared< UniformRigidBodyMover >() )
 {}
 
 UniformRigidBodyCM::UniformRigidBodyCM( std::string const & name,
@@ -95,7 +95,7 @@ UniformRigidBodyCM::UniformRigidBodyCM( std::string const & name,
 	name_( name ),
 	mobile_label_( mobile_label ),
 	stationary_label_( stationary_label ),
-	mover_( UniformRigidBodyMoverOP( new UniformRigidBodyMover( 0, rotation_magnitude, translation_magnitude ) ) )
+	mover_( utility::pointer::make_shared< UniformRigidBodyMover >( 0, rotation_magnitude, translation_magnitude ) )
 {}
 
 void UniformRigidBodyCM::passport_updated(){
@@ -172,11 +172,11 @@ claims::EnvClaims UniformRigidBodyCM::yield_claims( core::pose::Pose const&,
 // XRW TEMP }
 
 moves::MoverOP UniformRigidBodyCM::fresh_instance() const {
-	return ClientMoverOP( new UniformRigidBodyCM() );
+	return utility::pointer::make_shared< UniformRigidBodyCM >();
 }
 
 moves::MoverOP UniformRigidBodyCM::clone() const{
-	return ClientMoverOP( new UniformRigidBodyCM( *this ) );
+	return utility::pointer::make_shared< UniformRigidBodyCM >( *this );
 }
 
 std::string UniformRigidBodyCM::get_name() const {
@@ -212,7 +212,7 @@ std::string UniformRigidBodyCMCreator::keyname() const {
 
 protocols::moves::MoverOP
 UniformRigidBodyCMCreator::create_mover() const {
-	return protocols::moves::MoverOP( new UniformRigidBodyCM );
+	return utility::pointer::make_shared< UniformRigidBodyCM >();
 }
 
 void UniformRigidBodyCMCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

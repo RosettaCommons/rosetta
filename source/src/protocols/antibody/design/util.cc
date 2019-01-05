@@ -883,7 +883,7 @@ set_native_cdr_sequence( AntibodyInfoCOP ab_info, CDRNameEnum cdr, core::pose::P
 		data->set_from_cdr(pose, *ab_info, cdr );
 
 	} else {
-		pose.data().set(core::pose::datacache::CacheableDataType::NATIVE_ANTIBODY_SEQ, DataCache_CacheableData::DataOP( new NativeAntibodySeq( pose, *ab_info) ));
+		pose.data().set(core::pose::datacache::CacheableDataType::NATIVE_ANTIBODY_SEQ, utility::pointer::make_shared< NativeAntibodySeq >( pose, *ab_info));
 	}
 }
 

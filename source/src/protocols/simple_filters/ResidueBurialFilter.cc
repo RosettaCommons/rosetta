@@ -53,7 +53,7 @@ distance_threshold_( distance_threshold ),
 task_factory_( NULL ) {}
 */
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP ResidueBurialFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ResidueBurialFilter ); }
+// XRW TEMP ResidueBurialFilterCreator::create_filter() const { return utility::pointer::make_shared< ResidueBurialFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP ResidueBurialFilterCreator::keyname() const { return "ResidueBurial"; }
@@ -161,12 +161,12 @@ ResidueBurialFilter::compute( core::pose::Pose const & pose ) const {
 
 filters::FilterOP
 ResidueBurialFilter::clone() const {
-	return filters::FilterOP( new ResidueBurialFilter( *this ) );
+	return utility::pointer::make_shared< ResidueBurialFilter >( *this );
 }
 
 filters::FilterOP
 ResidueBurialFilter::fresh_instance() const{
-	return filters::FilterOP( new ResidueBurialFilter() );
+	return utility::pointer::make_shared< ResidueBurialFilter >();
 }
 
 std::string ResidueBurialFilter::name() const {
@@ -197,7 +197,7 @@ std::string ResidueBurialFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 ResidueBurialFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new ResidueBurialFilter );
+	return utility::pointer::make_shared< ResidueBurialFilter >();
 }
 
 void ResidueBurialFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

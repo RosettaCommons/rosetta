@@ -44,7 +44,7 @@ RandomTorsionPoseFolder::~RandomTorsionPoseFolder() = default;
 RandomTorsionPoseFolder::PoseFolderOP
 RandomTorsionPoseFolder::clone() const
 {
-	return RandomTorsionPoseFolder::PoseFolderOP( new RandomTorsionPoseFolder( *this ) );
+	return utility::pointer::make_shared< RandomTorsionPoseFolder >( *this );
 }
 
 std::string

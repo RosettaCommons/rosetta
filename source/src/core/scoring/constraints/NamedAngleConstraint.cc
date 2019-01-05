@@ -114,7 +114,7 @@ NamedAngleConstraint::remapped_clone(
 	id::AtomID id2( core::pose::named_atom_id_to_atom_id( atom2, dest ) );
 	id::AtomID id3( core::pose::named_atom_id_to_atom_id( atom3, dest ) );
 	if ( id1.valid() && id2.valid() && id3.valid() ) {
-		return ConstraintOP( new NamedAngleConstraint( atom1, atom2, atom3, func()->clone(), score_type() ) );
+		return utility::pointer::make_shared< NamedAngleConstraint >( atom1, atom2, atom3, func()->clone(), score_type() );
 	} else {
 		return nullptr;
 	}

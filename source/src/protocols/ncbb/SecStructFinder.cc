@@ -542,7 +542,7 @@ SecStructFinder::apply( Pose & pose )
 }//apply
 
 protocols::moves::MoverOP SecStructFinder::clone() const {
-	return SecStructFinderOP( new SecStructFinder(
+	return utility::pointer::make_shared< SecStructFinder >(
 		residue_,
 		min_length_,
 		max_length_,
@@ -554,7 +554,7 @@ protocols::moves::MoverOP SecStructFinder::clone() const {
 		dihedral_pattern_,
 		alpha_beta_pattern_,
 		min_everything_,
-		cart_ ) );
+		cart_ );
 }
 
 void SecStructFinder::parse_my_tag(
@@ -636,7 +636,7 @@ void SecStructFinder::parse_my_tag(
 
 // MoverCreator
 moves::MoverOP SecStructFinderCreator::create_mover() const {
-	return SecStructFinderOP( new SecStructFinder() );
+	return utility::pointer::make_shared< SecStructFinder >();
 }
 
 std::string SecStructFinderCreator::keyname() const {

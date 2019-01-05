@@ -82,7 +82,7 @@ PerResidueRMSDMetric::PerResidueRMSDMetric( PerResidueRMSDMetric const & ) = def
 
 core::simple_metrics::SimpleMetricOP
 PerResidueRMSDMetric::clone() const {
-	return core::simple_metrics::SimpleMetricOP(new PerResidueRMSDMetric( *this ) );
+	return utility::pointer::make_shared< PerResidueRMSDMetric >( *this );
 
 }
 
@@ -339,7 +339,7 @@ PerResidueRMSDMetricCreator::keyname() const {
 
 core::simple_metrics::SimpleMetricOP
 PerResidueRMSDMetricCreator::create_simple_metric() const {
-	return core::simple_metrics::SimpleMetricOP( new PerResidueRMSDMetric );
+	return utility::pointer::make_shared< PerResidueRMSDMetric >();
 
 }
 

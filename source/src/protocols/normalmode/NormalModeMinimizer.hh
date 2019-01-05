@@ -76,8 +76,8 @@ public:
 		Pose const & ) override;
 
 
-	protocols::moves::MoverOP clone() const override { return protocols::moves::MoverOP( new NormalModeMinimizer( *this ) ); }
-	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new NormalModeMinimizer ); }
+	protocols::moves::MoverOP clone() const override { return utility::pointer::make_shared< NormalModeMinimizer >( *this ); }
+	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< NormalModeMinimizer >(); }
 
 	std::string
 	get_name() const override;

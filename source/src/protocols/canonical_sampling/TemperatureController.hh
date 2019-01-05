@@ -208,7 +208,7 @@ public:
 
 	/// @brief Return a copy of this mover.
 	protocols::moves::MoverOP
-	clone() const override { return protocols::moves::MoverOP( new protocols::canonical_sampling::FixedTemperatureController( temperature_ ) ); };
+	clone() const override { return utility::pointer::make_shared< protocols::canonical_sampling::FixedTemperatureController >( temperature_ ); };
 
 
 	std::string

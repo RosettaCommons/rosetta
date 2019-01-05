@@ -77,8 +77,8 @@ ResidueSecondaryStructureFeatures::write_schema_to_db(utility::sql_database::ses
 	using namespace basic::database;
 	using namespace boost::assign;
 
-	Column code("code", DbDataTypeOP( new DbText(1) ), false);
-	Column label("label", DbDataTypeOP( new DbText() ), false);
+	Column code("code", utility::pointer::make_shared< DbText >(1), false);
+	Column label("label", utility::pointer::make_shared< DbText >(), false);
 	Schema dssp_codes("dssp_codes", PrimaryKey(code));
 	dssp_codes.add_column(label);
 
@@ -95,9 +95,9 @@ ResidueSecondaryStructureFeatures::write_schema_to_db(utility::sql_database::ses
 	insert_or_ignore("dssp_codes", dssp_cols, list_of(" ")("Irregular"), db_session);
 
 	/******residue_secondary_structure******/
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ), false);
-	Column resNum("resNum", DbDataTypeOP( new DbInteger() ), false);
-	Column dssp("dssp", DbDataTypeOP( new DbText(1) ));
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >(), false);
+	Column resNum("resNum", utility::pointer::make_shared< DbInteger >(), false);
+	Column dssp("dssp", utility::pointer::make_shared< DbText >(1));
 
 	utility::vector1<Column> sec_struct_pkey_cols;
 	sec_struct_pkey_cols.push_back(struct_id);
@@ -192,7 +192,7 @@ std::string ResidueSecondaryStructureFeaturesCreator::type_name() const {
 
 protocols::features::FeaturesReporterOP
 ResidueSecondaryStructureFeaturesCreator::create_features_reporter() const {
-	return protocols::features::FeaturesReporterOP( new ResidueSecondaryStructureFeatures );
+	return utility::pointer::make_shared< ResidueSecondaryStructureFeatures >();
 }
 
 void ResidueSecondaryStructureFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

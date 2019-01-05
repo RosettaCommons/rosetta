@@ -69,7 +69,7 @@ public:
 		using namespace core;
 		core_init_with_additional_options("-score:symmetric_gly_tables");
 
-		paapp_energy = P_AA_pp_EnergyOP( new P_AA_pp_Energy );
+		paapp_energy = utility::pointer::make_shared< P_AA_pp_Energy >();
 		the_pose = core::pose::PoseOP(new core::pose::Pose);
 
 	}

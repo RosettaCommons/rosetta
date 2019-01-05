@@ -58,7 +58,7 @@ static basic::Tracer random_conformer_tracer( "protocols.ligand_docking.ligand_o
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP RandomConformersCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new RandomConformers );
+// XRW TEMP  return utility::pointer::make_shared< RandomConformers >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -77,11 +77,11 @@ RandomConformers::RandomConformers(RandomConformers const & /*that*/) = default;
 RandomConformers::~RandomConformers() = default;
 
 protocols::moves::MoverOP RandomConformers::clone() const {
-	return protocols::moves::MoverOP( new RandomConformers( *this ) );
+	return utility::pointer::make_shared< RandomConformers >( *this );
 }
 
 protocols::moves::MoverOP RandomConformers::fresh_instance() const {
-	return protocols::moves::MoverOP( new RandomConformers );
+	return utility::pointer::make_shared< RandomConformers >();
 }
 
 // XRW TEMP std::string RandomConformers::get_name() const{
@@ -155,7 +155,7 @@ std::string RandomConformersCreator::keyname() const {
 
 protocols::moves::MoverOP
 RandomConformersCreator::create_mover() const {
-	return protocols::moves::MoverOP( new RandomConformers );
+	return utility::pointer::make_shared< RandomConformers >();
 }
 
 void RandomConformersCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

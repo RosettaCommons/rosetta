@@ -71,13 +71,13 @@ public:
 	/// @brief Makea  copy of this mover, and return an owning pointer to the copy.
 	///
 	protocols::moves::MoverOP clone() const override {
-		return (protocols::moves::MoverOP( new protocols::simple_moves::StorePoseSnapshot( *this ) ) );
+		return (utility::pointer::make_shared< protocols::simple_moves::StorePoseSnapshot >( *this ) );
 	}
 
 	/// @brief Create a new instance of this mover, initialized to default settings.
 	///
 	protocols::moves::MoverOP fresh_instance() const override {
-		return protocols::moves::MoverOP( new StorePoseSnapshot );
+		return utility::pointer::make_shared< StorePoseSnapshot >();
 	}
 
 	/// @brief Parse RosettaScripts XML to set up this mover.

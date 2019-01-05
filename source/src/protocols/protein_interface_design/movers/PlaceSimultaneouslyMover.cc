@@ -110,7 +110,7 @@ using namespace core;
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP PlaceSimultaneouslyMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new PlaceSimultaneouslyMover );
+// XRW TEMP  return utility::pointer::make_shared< PlaceSimultaneouslyMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -123,7 +123,7 @@ PlaceSimultaneouslyMover::~PlaceSimultaneouslyMover() = default;
 
 protocols::moves::MoverOP
 PlaceSimultaneouslyMover::clone() const {
-	return( protocols::moves::MoverOP( new PlaceSimultaneouslyMover( *this ) ) );
+	return( utility::pointer::make_shared< PlaceSimultaneouslyMover >( *this ) );
 }
 
 
@@ -401,7 +401,7 @@ PlaceSimultaneouslyMover::pair_sets_with_positions( core::pose::Pose & pose )
 			//Size residue= each_auction_result->second.first;  // unused ~Labonte
 			residue_level_tasks_for_placed_hotspots_->clear();
 			core::pack::task::TaskFactoryOP pack_around_placed_hotspots_ = residue_level_tasks_for_placed_hotspots_->clone();
-			pack_around_placed_hotspots_->push_back( TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ) );
+			pack_around_placed_hotspots_->push_back( utility::pointer::make_shared< core::pack::task::operation::RestrictToRepacking >() );
 			core::pack::task::operation::PreventRepackingOP prop( new core::pack::task::operation::PreventRepacking );
 
 			for ( core::Size i=1; i<=saved_pose.size(); ++i ) {
@@ -494,7 +494,7 @@ PlaceSimultaneouslyMover::pair_sets_with_positions( core::pose::Pose & pose )
 		//core::pack::task::TaskFactoryOP pack_around_placed_hotspots_ = new core::pack::task::TaskFactory;
 		//if( task_factory() )
 		//  *pack_around_placed_hotspots_ = *(task_factory());
-		pack_around_placed_hotspots_->push_back( TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ) );
+		pack_around_placed_hotspots_->push_back( utility::pointer::make_shared< core::pack::task::operation::RestrictToRepacking >() );
 		core::pack::task::operation::PreventRepackingOP prop( new core::pack::task::operation::PreventRepacking );
 
 		//  task->/*initialize_from_command_line().*/or_include_current( true ); // we don't want rotamer explosion with ex1 ex2
@@ -784,7 +784,7 @@ PlaceSimultaneouslyMover::parse_my_tag( TagCOP const tag,
 	std::string const after_placement_filter_name( tag->getOption<std::string>( "after_placement_filter", "true_filter" ) );
 	auto ap_filter( filters.find( after_placement_filter_name ) );
 	if ( after_placement_filter_name == "true_filter" ) {
-		after_placement_filter_ = protocols::filters::FilterOP( new protocols::filters::TrueFilter );
+		after_placement_filter_ = utility::pointer::make_shared< protocols::filters::TrueFilter >();
 	} else {
 		after_placement_filter_ = ap_filter->second->clone();
 	}
@@ -855,7 +855,7 @@ PlaceSimultaneouslyMover::parse_my_tag( TagCOP const tag,
 					stubset->read_data( stub_fname );
 				}
 
-				stub_sets_.push_back(std::make_pair(stubset, std::make_pair(HotspotStubOP( new HotspotStub() ), 0)));  // REQUIRED FOR WINDOWS
+				stub_sets_.push_back(std::make_pair(stubset, std::make_pair(utility::pointer::make_shared< HotspotStub >(), 0)));  // REQUIRED FOR WINDOWS
 				//stub_sets_.push_back( StubSetStubPos( stubset, std::pair< HotspotStubOP, core::Size >( 0, 0 ) ) );
 				core::pose::PoseOP ala_pose( new core::pose::Pose( pose ) );
 				pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( *ala_pose ));
@@ -887,7 +887,7 @@ PlaceSimultaneouslyMover::parse_my_tag( TagCOP const tag,
 				core::scoring::ScoreFunctionOP scorefxn( get_score_function() );
 				pack::pack_rotamers( *ala_pose, *scorefxn, task);
 				(*scorefxn)( *ala_pose );
-				stubset->pair_with_scaffold( *ala_pose, host_chain_, protocols::filters::FilterCOP( protocols::filters::FilterOP( new protocols::filters::TrueFilter ) ) );
+				stubset->pair_with_scaffold( *ala_pose, host_chain_, utility::pointer::make_shared< protocols::filters::TrueFilter >() );
 				std::string const stub_set_filter_name( stubset_tag->getOption< std::string >( "filter_name", "true_filter" ) );
 				auto stub_set_filter( filters.find( stub_set_filter_name ) );
 				runtime_assert( stub_set_filter != filters.end() );
@@ -916,13 +916,13 @@ PlaceSimultaneouslyMover::parse_my_tag( TagCOP const tag,
 PlaceSimultaneouslyMover::PlaceSimultaneouslyMover() :
 	calc_taskop_movers::DesignRepackMover( PlaceSimultaneouslyMover::mover_name() )
 {
-	residue_level_tasks_for_placed_hotspots_ = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory );//watch out! Never allocate a new task factory for this guy after parsing has been done, b/c in parsing all task aware movers will be watching it through their task_factory_
+	residue_level_tasks_for_placed_hotspots_ = utility::pointer::make_shared< core::pack::task::TaskFactory >();//watch out! Never allocate a new task factory for this guy after parsing has been done, b/c in parsing all task aware movers will be watching it through their task_factory_
 	// user_defined_auction_ = false;
 	// user_defined_stub_score_filter_ = false;
 	// user_defined_bbstub_minimization_ = false;
-	auction_ = PlacementAuctionMoverOP( new PlacementAuctionMover );
-	rbstub_minimization_ = PlacementMinimizationMoverOP( new PlacementMinimizationMover );
-	stub_score_filter_ = protocols::protein_interface_design::filters::StubScoreFilterOP( new protocols::protein_interface_design::filters::StubScoreFilter );
+	auction_ = utility::pointer::make_shared< PlacementAuctionMover >();
+	rbstub_minimization_ = utility::pointer::make_shared< PlacementMinimizationMover >();
+	stub_score_filter_ = utility::pointer::make_shared< protocols::protein_interface_design::filters::StubScoreFilter >();
 	stub_sets_.clear();
 	stub_set_filters_.clear();
 	host_chain_=2;
@@ -1156,7 +1156,7 @@ std::string PlaceSimultaneouslyMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 PlaceSimultaneouslyMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new PlaceSimultaneouslyMover );
+	return utility::pointer::make_shared< PlaceSimultaneouslyMover >();
 }
 
 void PlaceSimultaneouslyMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

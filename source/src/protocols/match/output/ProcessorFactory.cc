@@ -273,11 +273,11 @@ ProcessorFactory::create_output_writer(
 	} else if ( (mtask->output_writer_name()  == "PDB" ) || (mtask->output_writer_name()  == "pdb" )  || (mtask->output_writer_name()  == "CloudPDB" ) || ( mtask->output_writer_name() == "PoseMatchOutputWriter" ) ) {
 		output::PDBWriterOP pdb_writer;
 		if ( (mtask->output_writer_name()  == "PDB" ) || (mtask->output_writer_name()  == "pdb" ) ) {
-			pdb_writer = output::PDBWriterOP( new output::PDBWriter );
+			pdb_writer = utility::pointer::make_shared< output::PDBWriter >();
 		} else if ( mtask->output_writer_name() == "PoseMatchOutputWriter" ) {
-			pdb_writer = output::PDBWriterOP( new output::PoseMatchOutputWriter( create_grouper( matcher, mtask, cacher) ) );
+			pdb_writer = utility::pointer::make_shared< output::PoseMatchOutputWriter >( create_grouper( matcher, mtask, cacher) );
 		} else {
-			pdb_writer = output::PDBWriterOP( new output::CloudPDBWriter( create_grouper( matcher, mtask, cacher) ) );
+			pdb_writer = utility::pointer::make_shared< output::CloudPDBWriter >( create_grouper( matcher, mtask, cacher) );
 		}
 		pdb_writer->set_coordinate_cacher( cacher );
 		pdb_writer->initialize_from_matcher_task( mtask );
@@ -303,7 +303,7 @@ ProcessorFactory::create_output_writer(
 
 MatchScoreWriterOP
 ProcessorFactory::create_match_score_writer() {
-	return MatchScoreWriterOP( new MatchScoreWriter() );
+	return utility::pointer::make_shared< MatchScoreWriter >();
 }
 
 

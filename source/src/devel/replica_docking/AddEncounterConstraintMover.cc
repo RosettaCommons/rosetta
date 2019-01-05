@@ -64,7 +64,7 @@ static basic::Tracer tr( "devel.replica_docking.AddEncounterConstraintMover" );
 
 // XRW TEMP moves::MoverOP
 // XRW TEMP AddEncounterConstraintMoverCreator::create_mover() const {
-// XRW TEMP  return moves::MoverOP( new AddEncounterConstraintMover );
+// XRW TEMP  return utility::pointer::make_shared< AddEncounterConstraintMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -83,7 +83,7 @@ AddEncounterConstraintMover::AddEncounterConstraintMover()
 
 moves::MoverOP
 AddEncounterConstraintMover::clone() const {
-	return moves::MoverOP( new AddEncounterConstraintMover( *this ) );
+	return utility::pointer::make_shared< AddEncounterConstraintMover >( *this );
 }
 
 AddEncounterConstraintMover::~AddEncounterConstraintMover() = default;
@@ -166,7 +166,7 @@ AddEncounterConstraintMover::generate_encounter_cst( pose::Pose & pose) {
 	}
 	tr.Debug << "dist_pos1: " << std::sqrt(dist_pos1) << "; dist_pos2: " << std::sqrt(dist_pos2) << std::endl;
 	func::FuncOP bound_func( new constraints::BoundFunc(0.1, std::sqrt(dist_pos1) + std::sqrt(dist_pos2) + gap_, 0.5, 10000, "Encounter") );
-	constraints::AtomPairConstraintCOP cst( constraints::AtomPairConstraintOP( new constraints::AtomPairConstraint( atom_pos1, atom_pos2, bound_func ) ) );
+	constraints::AtomPairConstraintCOP cst( utility::pointer::make_shared< constraints::AtomPairConstraint >( atom_pos1, atom_pos2, bound_func ) );
 
 	return cst;
 }
@@ -215,7 +215,7 @@ std::string AddEncounterConstraintMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 AddEncounterConstraintMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new AddEncounterConstraintMover );
+	return utility::pointer::make_shared< AddEncounterConstraintMover >();
 }
 
 void AddEncounterConstraintMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

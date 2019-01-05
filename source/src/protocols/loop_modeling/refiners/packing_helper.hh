@@ -55,8 +55,8 @@ bool packing_helper(
 		extra_rotamers->ex2(true);
 		extra_rotamers->extrachi_cutoff(0);
 
-		task_factory = TaskFactoryOP( new TaskFactory );
-		task_factory->push_back(TaskOperationCOP( new RestrictToRepacking ));
+		task_factory = utility::pointer::make_shared< TaskFactory >();
+		task_factory->push_back(utility::pointer::make_shared< RestrictToRepacking >());
 		task_factory->push_back(restrict_to_loops);
 		task_factory->push_back(extra_rotamers);
 	}

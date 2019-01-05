@@ -50,7 +50,7 @@ public:
 	core::Size get_valid_resid(int resid,core::pose::Pose const pose);
 	core::Real generate_lookback_rmsd(core::pose::Pose pose, core::Size position);
 	void apply( Pose & pose ) override;
-	moves::MoverOP clone() const override { return moves::MoverOP( new AnalyzeLoopModeling( *this ) ); }
+	moves::MoverOP clone() const override { return utility::pointer::make_shared< AnalyzeLoopModeling >( *this ); }
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 
 	std::string

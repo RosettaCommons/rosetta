@@ -66,7 +66,7 @@ class TestCalculatorCreator : public NPDPropCalculatorCreator
 
 	virtual
 	NPDPropCalculatorOP
-	new_calculator() const { return NPDPropCalculatorOP( new TestCalculator ); }
+	new_calculator() const { return utility::pointer::make_shared< TestCalculator >(); }
 };
 
 
@@ -745,7 +745,7 @@ public:
 		std::string corr_resfile_string( "2\nstart\n1 A PIKAA AP\n 2 A PIKAA FW EX ARO 1 LEVEL 4 EX ARO 2 LEVEL 4 EX_CUTOFF 1\n" );
 		std::istringstream corr_resfile( corr_resfile_string );
 		ds->set_entity_resfile( corr_resfile, "unnamed" );
-		ds->add_npdpro_calculator_creator( NPDPropCalculatorCreatorOP( new TestCalculatorCreator ) );
+		ds->add_npdpro_calculator_creator( utility::pointer::make_shared< TestCalculatorCreator >() );
 
 		DynamicAggregateFunctionDriverOP daf( new DynamicAggregateFunctionDriver );
 		daf->add_file_contents( "1l2y.pdb", trp_cage_ideal() );
@@ -765,7 +765,7 @@ public:
 		std::string corr_resfile_string( "2\nstart\n1 A PIKAA AP\n 2 A PIKAA FW EX ARO 1 LEVEL 4 EX ARO 2 LEVEL 4 EX_CUTOFF 1\n" );
 		std::istringstream corr_resfile( corr_resfile_string );
 		ds->set_entity_resfile( corr_resfile, "unnamed" );
-		ds->add_npdpro_calculator_creator( NPDPropCalculatorCreatorOP( new TestCalculatorCreator ) );
+		ds->add_npdpro_calculator_creator( utility::pointer::make_shared< TestCalculatorCreator >() );
 
 		DynamicAggregateFunctionDriverOP daf( new DynamicAggregateFunctionDriver );
 		daf->add_file_contents( "1l2y.pdb", trp_cage_ideal() );

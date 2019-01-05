@@ -56,12 +56,12 @@ namespace kinematic_closure {
 // Member functions:
 
 BalancedKicMover::BalancedKicMover() { // {{{1
-	perturbers_ = perturbers::PerturberSetOP( new perturbers::PerturberSet );
-	perturbers_->add(perturbers::PerturberOP( new perturbers::RamaPerturber ));
+	perturbers_ = utility::pointer::make_shared< perturbers::PerturberSet >();
+	perturbers_->add(utility::pointer::make_shared< perturbers::RamaPerturber >());
 	perturbers_->mark_as_default();
 
 	loop_ = Loop(0, 0);
-	pivot_picker_ = pivot_pickers::PivotPickerOP( new pivot_pickers::StandardPivots );
+	pivot_picker_ = utility::pointer::make_shared< pivot_pickers::StandardPivots >();
 	is_fold_tree_stale_ = true;
 }
 

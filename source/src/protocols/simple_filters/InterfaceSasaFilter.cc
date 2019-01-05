@@ -44,7 +44,7 @@ namespace simple_filters {
 static basic::Tracer TR( "protocols.simple_filters.InterfaceSasaFilter" );
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP InterfaceSasaFilterCreator::create_filter() const { return protocols::filters::FilterOP( new InterfaceSasaFilter ); }
+// XRW TEMP InterfaceSasaFilterCreator::create_filter() const { return utility::pointer::make_shared< InterfaceSasaFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP InterfaceSasaFilterCreator::keyname() const { return "Sasa"; }
@@ -82,12 +82,12 @@ InterfaceSasaFilter::~InterfaceSasaFilter()= default;
 
 filters::FilterOP
 InterfaceSasaFilter::clone() const{
-	return filters::FilterOP( new InterfaceSasaFilter( *this ) );
+	return utility::pointer::make_shared< InterfaceSasaFilter >( *this );
 }
 
 filters::FilterOP
 InterfaceSasaFilter::fresh_instance() const{
-	return filters::FilterOP( new InterfaceSasaFilter );
+	return utility::pointer::make_shared< InterfaceSasaFilter >();
 }
 
 void
@@ -383,7 +383,7 @@ std::string InterfaceSasaFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 InterfaceSasaFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new InterfaceSasaFilter );
+	return utility::pointer::make_shared< InterfaceSasaFilter >();
 }
 
 void InterfaceSasaFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -117,7 +117,7 @@ void set_rb_constraints(
 				if ( CSTs_i.size() > 0 ) {
 					TR << "Adding " << CSTs_i.size() << " ambiguous constraints for res " << resmap[cst_i]
 						<< " (= input " << cst_i << ")" << std::endl;
-					new_csts->add_constraint( ConstraintCOP( ConstraintOP( new core::scoring::constraints::AmbiguousConstraint( CSTs_i ) ) ) );
+					new_csts->add_constraint( utility::pointer::make_shared< core::scoring::constraints::AmbiguousConstraint >( CSTs_i ) );
 				}
 
 			}
@@ -174,7 +174,7 @@ void set_constraints(
 
 		if ( CSTs_i.size() > 0 ) {
 			TR << "Adding " << CSTs_i.size() << " ambiguous constraints for res " << cst_i << std::endl;
-			new_csts->add_constraint( ConstraintCOP( ConstraintOP( new core::scoring::constraints::AmbiguousConstraint( CSTs_i ) ) ) );
+			new_csts->add_constraint( utility::pointer::make_shared< core::scoring::constraints::AmbiguousConstraint >( CSTs_i ) );
 		}
 	}
 	pose.constraint_set( new_csts );
@@ -271,7 +271,7 @@ utility::vector1< core::Size > setup_pose_rbsegs_keep_loops(
 
 	core::pose::PDBInfoOP pdbinfo_old;
 	if ( pose.pdb_info() ) {
-		pdbinfo_old = core::pose::PDBInfoOP( new core::pose::PDBInfo( *(pose.pdb_info()) ) );
+		pdbinfo_old = utility::pointer::make_shared< core::pose::PDBInfo >( *(pose.pdb_info()) );
 	}
 
 	// cb variants
@@ -373,7 +373,7 @@ setup_disconnected( core::pose::Pose & pose ) {
 
 	core::pose::PDBInfoOP pdbinfo_old;
 	if ( pose.pdb_info() ) {
-		pdbinfo_old = core::pose::PDBInfoOP( new core::pose::PDBInfo( *(pose.pdb_info()) ) );
+		pdbinfo_old = utility::pointer::make_shared< core::pose::PDBInfo >( *(pose.pdb_info()) );
 	}
 
 	// cb variants

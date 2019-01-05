@@ -136,7 +136,7 @@ UBQ_GTPaseMover::UBQ_GTPaseMover():
 	loop_(), //we want default ctor
 	atomIDs(8, core::id::AtomID::BOGUS_ATOM_ID() ),
 	InterfaceSasaDefinition_("InterfaceSasaDefinition_" + 1),
-	IAM_(protocols::analysis::InterfaceAnalyzerMoverOP( new protocols::analysis::InterfaceAnalyzerMover )),
+	IAM_(utility::pointer::make_shared< protocols::analysis::InterfaceAnalyzerMover >()),
 	extra_bodies_(false),
 	n_tail_res_(3),
 	scorefilter_(),
@@ -155,7 +155,7 @@ UBQ_GTPaseMover::UBQ_GTPaseMover():
 	using namespace protocols::pose_metric_calculators;
 	//magic number: chains 1 and 2; set up interface SASA calculator
 	if ( !CalculatorFactory::Instance().check_calculator_exists( InterfaceSasaDefinition_ ) ) {
-		CalculatorFactory::Instance().register_calculator( InterfaceSasaDefinition_, PoseMetricCalculatorOP( new core::pose::metrics::simple_calculators::InterfaceSasaDefinitionCalculator(core::Size(1), core::Size(2)) ));
+		CalculatorFactory::Instance().register_calculator( InterfaceSasaDefinition_, utility::pointer::make_shared< core::pose::metrics::simple_calculators::InterfaceSasaDefinitionCalculator >(core::Size(1), core::Size(2)));
 	}
 
 	IAM_->set_use_centroid_dG(false);
@@ -333,7 +333,7 @@ catch ( utility::excn::Exception & e ) {
 
 	//setup MoveMaps
 	//small/shear behave improperly @ the last residue - psi is considered nonexistent and the wrong phis apply.
-	amide_mm_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap );
+	amide_mm_ = utility::pointer::make_shared< core::kinematics::MoveMap >();
 	for ( core::Size i(1), ntailres(n_tail_res_); i<ntailres; ++i ) { //slightly irregular < comparison because C-terminus is functionally zero-indexed
 		amide_mm_->set_bb((complexlength-i), true);
 	}
@@ -358,13 +358,13 @@ catch ( utility::excn::Exception & e ) {
 	//setup of TaskFactory
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
-	task_factory_ = core::pack::task::TaskFactoryOP( new TaskFactory );
-	task_factory_->push_back( TaskOperationCOP( new InitializeFromCommandline ) );
+	task_factory_ = utility::pointer::make_shared< TaskFactory >();
+	task_factory_->push_back( utility::pointer::make_shared< InitializeFromCommandline >() );
 	if ( basic::options::option[ basic::options::OptionKeys::packing::resfile ].user() ) {
-		task_factory_->push_back( TaskOperationCOP( new ReadResfile ) );
+		task_factory_->push_back( utility::pointer::make_shared< ReadResfile >() );
 	}
 	//task_factory_->push_back( new protocols::task_operations::RestrictToInterfaceOperation );
-	task_factory_->push_back( TaskOperationCOP( new IncludeCurrent ) );
+	task_factory_->push_back( utility::pointer::make_shared< IncludeCurrent >() );
 	//prevent repacking at linkage lysine!
 	PreventRepackingOP prevent( new PreventRepacking );
 	prevent->include_residue(GTPase_lys_);
@@ -445,13 +445,13 @@ catch ( utility::excn::Exception & e ) {
 		//TR.Error << "removed a PoseMetricCalculator " << calc << ", track down why" << std::endl;
 	}
 	using core::pose::metrics::PoseMetricCalculatorOP;
-	core::pose::metrics::CalculatorFactory::Instance().register_calculator( calc, PoseMetricCalculatorOP( new protocols::pose_metric_calculators::InterGroupNeighborsCalculator(vector_of_pairs) ) );
+	core::pose::metrics::CalculatorFactory::Instance().register_calculator( calc, utility::pointer::make_shared< protocols::pose_metric_calculators::InterGroupNeighborsCalculator >(vector_of_pairs) );
 
 	//now that calculator exists, add the sucker to the TaskFactory via RestrictByCalculatorsOperation
 	utility::vector1< std::pair< std::string, std::string> > calculators_used;
 	std::pair< std::string, std::string> IGNC_cmd( calc, "neighbors" );
 	calculators_used.push_back( IGNC_cmd );
-	task_factory_->push_back( TaskOperationCOP( new protocols::task_operations::RestrictByCalculatorsOperation( calculators_used ) ) );
+	task_factory_->push_back( utility::pointer::make_shared< protocols::task_operations::RestrictByCalculatorsOperation >( calculators_used ) );
 
 	//create constraints
 	core::scoring::constraints::add_constraints_from_cmdline_to_pose( starting_pose_ ); //protected internally if no constraints
@@ -782,14 +782,14 @@ void UBQ_GTPaseMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xs
 protocols::moves::MoverOP
 UBQ_GTPaseMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new UBQ_GTPaseMover );
+	return utility::pointer::make_shared< UBQ_GTPaseMover >();
 }
 
 /// @brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
 UBQ_GTPaseMover::clone() const
 {
-	return protocols::moves::MoverOP( new UBQ_GTPaseMover( *this ) );
+	return utility::pointer::make_shared< UBQ_GTPaseMover >( *this );
 }
 
 std::string UBQ_GTPaseMover::get_name() const {
@@ -807,7 +807,7 @@ std::string UBQ_GTPaseMover::mover_name() {
 protocols::moves::MoverOP
 UBQ_GTPaseMoverCreator::create_mover() const
 {
-	return protocols::moves::MoverOP( new UBQ_GTPaseMover );
+	return utility::pointer::make_shared< UBQ_GTPaseMover >();
 }
 
 std::string

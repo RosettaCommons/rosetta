@@ -125,7 +125,7 @@ class DummyPoseInputter : public PoseInputter
 class DummyInputterCreator : public PoseInputterCreator
 {
 public:
-	PoseInputterOP create_inputter() const { return PoseInputterOP( new DummyPoseInputter ); }
+	PoseInputterOP create_inputter() const { return utility::pointer::make_shared< DummyPoseInputter >(); }
 	std::string keyname() const { return "Dummy"; }
 	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
 		AttributeList attrs;
@@ -146,7 +146,7 @@ class DerivedJobQueen2 : public DerivedJobQueen
 public:
 	DerivedJobQueen2() {
 		do_not_accept_all_pose_inputters_from_factory();
-		allow_pose_inputter( PoseInputterCreatorOP( new DummyInputterCreator ));
+		allow_pose_inputter( utility::pointer::make_shared< DummyInputterCreator >());
 	}
 	~DerivedJobQueen2() {}
 };
@@ -157,7 +157,7 @@ class DerivedJobQueen3 : public DerivedJobQueen
 {
 public:
 	DerivedJobQueen3() {
-		allow_pose_inputter( PoseInputterCreatorOP( new DummyInputterCreator ));
+		allow_pose_inputter( utility::pointer::make_shared< DummyInputterCreator >());
 	}
 	~DerivedJobQueen3() {}
 };

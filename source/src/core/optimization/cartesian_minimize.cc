@@ -272,7 +272,7 @@ cart_numerical_derivative_check(
 
 	// setup for saving diagnostics
 	NumDerivCheckDataOP min_debug;
-	if ( deriv_check_result ) min_debug = NumDerivCheckDataOP( new NumDerivCheckData( ndofs, n_increment ) );
+	if ( deriv_check_result ) min_debug = utility::pointer::make_shared< NumDerivCheckData >( ndofs, n_increment );
 
 	Multivec vars( start_vars );
 

@@ -2776,7 +2776,7 @@ PNatStructureOptEData::receive_from_node( int const source_node, int const tag )
 		for ( Size jj = 1; jj <= n_fixed; ++jj ) {
 			fixed_data_v[ jj ] = fixed_data[ ( ii - 1 ) * n_fixed + ( jj - 1 ) ];
 		}
-		natives_.push_back( SingleStructureDataOP( new SingleStructureData( free_data_v, fixed_data_v ) ) );
+		natives_.push_back( utility::pointer::make_shared< SingleStructureData >( free_data_v, fixed_data_v ) );
 		natives_[ ii ]->rms( rms[ ii-1 ] );
 		//std::cout << "received native with rms: " << rms[ (ii-1) ] << std::endl;
 	}
@@ -2805,7 +2805,7 @@ PNatStructureOptEData::receive_from_node( int const source_node, int const tag )
 		for ( Size jj = 1; jj <= n_fixed; ++jj ) {
 			fixed_data_v[ jj ] = fixed_data[ ( ii - 1 ) * n_fixed + ( jj - 1 ) ];
 		}
-		decoys_.push_back( SingleStructureDataOP( new SingleStructureData( free_data_v, fixed_data_v ) ) );
+		decoys_.push_back( utility::pointer::make_shared< SingleStructureData >( free_data_v, fixed_data_v ) );
 		decoys_[ ii ]->rms( rms[ ii - 1 ] );
 		//std::cout << "received decoy  with rms: " << rms[ (ii-1) ] << std::endl;
 	}
@@ -3836,7 +3836,7 @@ DDGMutationOptEData::receive_from_node( int const source_node, int const tag )
 		for ( Size jj = 1; jj <= n_fixed; ++jj ) {
 			fixed_data_v[ jj ] = fixed_data[ ( ii - 1 ) * n_fixed + ( jj - 1 ) ];
 		}
-		wts_.push_back( SingleStructureDataOP( new SingleStructureData( free_data_v, fixed_data_v ) ) );
+		wts_.push_back( utility::pointer::make_shared< SingleStructureData >( free_data_v, fixed_data_v ) );
 	}
 
 
@@ -3860,7 +3860,7 @@ DDGMutationOptEData::receive_from_node( int const source_node, int const tag )
 		for ( Size jj = 1; jj <= n_fixed; ++jj ) {
 			fixed_data_v[ jj ] = fixed_data[ ( ii - 1 ) * n_fixed + ( jj - 1 ) ];
 		}
-		muts_.push_back( SingleStructureDataOP( new SingleStructureData( free_data_v, fixed_data_v ) ) );
+		muts_.push_back( utility::pointer::make_shared< SingleStructureData >( free_data_v, fixed_data_v ) );
 	}
 
 
@@ -4065,27 +4065,27 @@ OptEPositionDataFactory::create_position_data( OptEPositionDataType const type )
 {
 	switch ( type ) {
 	case prob_native_amino_acid :
-		return OptEPositionDataOP( new PNatAAOptEPositionData );
+		return utility::pointer::make_shared< PNatAAOptEPositionData >();
 	case prob_native_amino_acid_with_unfolded_energy :
-		return OptEPositionDataOP( new NestedEnergyTermPNatAAOptEPositionData );
+		return utility::pointer::make_shared< NestedEnergyTermPNatAAOptEPositionData >();
 	case pssm_data :
-		return OptEPositionDataOP( new PSSMOptEPositionData );
+		return utility::pointer::make_shared< PSSMOptEPositionData >();
 	case prob_native_rotamer :
-		return OptEPositionDataOP( new PNatRotOptEPositionData );
+		return utility::pointer::make_shared< PNatRotOptEPositionData >();
 	case prob_native_structure :
-		return OptEPositionDataOP( new PNatStructureOptEData );
+		return utility::pointer::make_shared< PNatStructureOptEData >();
 	case prob_native_ligand_pose :
-		return OptEPositionDataOP( new PNatLigPoseOptEData );
+		return utility::pointer::make_shared< PNatLigPoseOptEData >();
 	case dG_binding_correlation :
-		return OptEPositionDataOP( new DGBindOptEData );
+		return utility::pointer::make_shared< DGBindOptEData >();
 	case ddG_mutation_correlation :
-		return OptEPositionDataOP( new DDGMutationOptEData );
+		return utility::pointer::make_shared< DDGMutationOptEData >();
 	case ddG_mutation_correlation_with_unfolded_energy :
-		return OptEPositionDataOP( new NestedEnergyTermDDGMutationOptEData );
+		return utility::pointer::make_shared< NestedEnergyTermDDGMutationOptEData >();
 	case ddG_bind_correlation :
-		return OptEPositionDataOP( new DDGBindOptEData );
+		return utility::pointer::make_shared< DDGBindOptEData >();
 	case constrained_optimization_weight_func :
-		return OptEPositionDataOP( new ConstraintedOptimizationWeightFunc );
+		return utility::pointer::make_shared< ConstraintedOptimizationWeightFunc >();
 	}
 	return nullptr;
 }

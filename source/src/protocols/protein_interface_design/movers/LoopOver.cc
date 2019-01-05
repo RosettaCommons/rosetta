@@ -44,7 +44,7 @@ static basic::Tracer TR( "protocols.protein_interface_design.movers.LoopOver" );
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP LoopOverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new LoopOver );
+// XRW TEMP  return utility::pointer::make_shared< LoopOver >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -188,7 +188,7 @@ std::string LoopOverCreator::keyname() const {
 
 protocols::moves::MoverOP
 LoopOverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LoopOver );
+	return utility::pointer::make_shared< LoopOver >();
 }
 
 void LoopOverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

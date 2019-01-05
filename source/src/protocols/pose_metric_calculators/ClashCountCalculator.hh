@@ -39,7 +39,7 @@ public:
 
 	ClashCountCalculator( core::Real clash_threshold );
 
-	core::pose::metrics::PoseMetricCalculatorOP clone() const { return core::pose::metrics::PoseMetricCalculatorOP( new ClashCountCalculator( clash_threshold_ ) ); };
+	core::pose::metrics::PoseMetricCalculatorOP clone() const { return utility::pointer::make_shared< ClashCountCalculator >( clash_threshold_ ); };
 
 protected:
 

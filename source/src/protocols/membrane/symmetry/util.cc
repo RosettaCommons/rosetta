@@ -63,7 +63,7 @@ symmetrize_spans(
 	auto & symm_conf ( dynamic_cast< SymmetricConformation & > ( pose.conformation()) );
 
 	// Create a new symmetric spanning topology object
-	SpanningTopologyOP symmetrized_topology = SpanningTopologyOP( new SpanningTopology() );
+	SpanningTopologyOP symmetrized_topology = utility::pointer::make_shared< SpanningTopology >();
 
 	// Iterate through the subunits and add spans to the spanning topology
 	core::Size nsubunits( symm_conf.Symmetry_Info()->subunits() );

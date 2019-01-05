@@ -110,16 +110,16 @@ ChargeChargeFeatures::write_schema_to_db(
 
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ), false);
-	Column q1_site_id("q1_site_id", DbDataTypeOP( new DbInteger() ), false);
-	Column q2_site_id("q2_site_id", DbDataTypeOP( new DbInteger() ), false);
-	Column q1_charge("q1_charge", DbDataTypeOP( new DbInteger() ), false);
-	Column q2_charge("q2_charge", DbDataTypeOP( new DbInteger() ), false);
-	Column B1q1q2_angle("B1q1q2_angle", DbDataTypeOP( new DbReal() ), false);
-	Column B2q2q1_angle("B2q2q1_angle", DbDataTypeOP( new DbReal() ), false);
-	Column q1q2_distance("q1q2_distance", DbDataTypeOP( new DbReal() ), false);
-	Column B1q1_torsion("B1q1_torsion", DbDataTypeOP( new DbReal() ), false);
-	Column B2q2_torsion("B2q2_torsion", DbDataTypeOP( new DbReal() ), false);
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >(), false);
+	Column q1_site_id("q1_site_id", utility::pointer::make_shared< DbInteger >(), false);
+	Column q2_site_id("q2_site_id", utility::pointer::make_shared< DbInteger >(), false);
+	Column q1_charge("q1_charge", utility::pointer::make_shared< DbInteger >(), false);
+	Column q2_charge("q2_charge", utility::pointer::make_shared< DbInteger >(), false);
+	Column B1q1q2_angle("B1q1q2_angle", utility::pointer::make_shared< DbReal >(), false);
+	Column B2q2q1_angle("B2q2q1_angle", utility::pointer::make_shared< DbReal >(), false);
+	Column q1q2_distance("q1q2_distance", utility::pointer::make_shared< DbReal >(), false);
+	Column B1q1_torsion("B1q1_torsion", utility::pointer::make_shared< DbReal >(), false);
+	Column B2q2_torsion("B2q2_torsion", utility::pointer::make_shared< DbReal >(), false);
 
 	utility::vector1<Column> pkeys;
 	pkeys.push_back(struct_id);
@@ -301,7 +301,7 @@ std::string ChargeChargeFeaturesCreator::type_name() const {
 
 protocols::features::FeaturesReporterOP
 ChargeChargeFeaturesCreator::create_features_reporter() const {
-	return protocols::features::FeaturesReporterOP( new ChargeChargeFeatures );
+	return utility::pointer::make_shared< ChargeChargeFeatures >();
 }
 
 void ChargeChargeFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

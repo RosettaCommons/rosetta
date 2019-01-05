@@ -96,7 +96,7 @@ bool PValuedFragmentScoreManager::score_fragment(FragmentCandidateOP candidate,
 		statistics_.resize( pos );
 		for ( core::Size k=size_is+1; k<=pos; k++ ) {
 			for ( core::Size l=1; l<=scores_.size(); l++ ) {
-				statistics_[k].push_back(protocols::frag_picker::scores::AdaptiveScoreHistogramOP( new AdaptiveScoreHistogram(0.01,1) ));
+				statistics_[k].push_back(utility::pointer::make_shared< AdaptiveScoreHistogram >(0.01,1));
 			}
 		}
 	}
@@ -118,7 +118,7 @@ bool PValuedFragmentScoreManager::score_fragment_from_cache(FragmentCandidateOP 
 		statistics_.resize( pos );
 		for ( core::Size k=size_is+1; k<=pos; k++ ) {
 			for ( core::Size l=1; l<=scores_.size(); l++ ) {
-				statistics_[k].push_back(protocols::frag_picker::scores::AdaptiveScoreHistogramOP( new AdaptiveScoreHistogram(0.01,1) ));
+				statistics_[k].push_back(utility::pointer::make_shared< AdaptiveScoreHistogram >(0.01,1));
 			}
 		}
 	}

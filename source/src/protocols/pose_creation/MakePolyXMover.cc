@@ -48,7 +48,7 @@ namespace pose_creation {
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP MakePolyXMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new MakePolyXMover );
+// XRW TEMP  return utility::pointer::make_shared< MakePolyXMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -79,12 +79,12 @@ MakePolyXMover::~MakePolyXMover() = default;
 
 /// @brief clone this object
 protocols::moves::MoverOP MakePolyXMover::clone() const {
-	return protocols::moves::MoverOP( new protocols::pose_creation::MakePolyXMover( *this ) );
+	return utility::pointer::make_shared< protocols::pose_creation::MakePolyXMover >( *this );
 }
 
 /// @brief create this type of object
 protocols::moves::MoverOP MakePolyXMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new protocols::pose_creation::MakePolyXMover() );
+	return utility::pointer::make_shared< protocols::pose_creation::MakePolyXMover >();
 }
 
 /// @details virtual main
@@ -175,7 +175,7 @@ std::string MakePolyXMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 MakePolyXMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MakePolyXMover );
+	return utility::pointer::make_shared< MakePolyXMover >();
 }
 
 void MakePolyXMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

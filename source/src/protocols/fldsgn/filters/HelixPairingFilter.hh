@@ -88,10 +88,10 @@ public:// virtual constructor
 
 
 	// @brief make clone
-	FilterOP clone() const override { return FilterOP( new HelixPairingFilter( *this ) ); }
+	FilterOP clone() const override { return utility::pointer::make_shared< HelixPairingFilter >( *this ); }
 
 	// @brief make fresh instance
-	FilterOP fresh_instance() const override { return FilterOP( new HelixPairingFilter() ); }
+	FilterOP fresh_instance() const override { return utility::pointer::make_shared< HelixPairingFilter >(); }
 
 
 public:// mutator

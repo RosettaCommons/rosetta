@@ -96,7 +96,7 @@ PertMinMover::parse_my_tag(
 
 protocols::moves::MoverOP
 PertMinMover::clone() const{
-	return protocols::moves::MoverOP( new PertMinMover( *this ) );
+	return utility::pointer::make_shared< PertMinMover >( *this );
 }
 
 /*
@@ -109,7 +109,7 @@ return PertMinMover( src );
 moves::MoverOP
 PertMinMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new PertMinMover );
+	return utility::pointer::make_shared< PertMinMover >();
 }
 
 std::string
@@ -178,7 +178,7 @@ PertMinMover::min( core::pose::Pose & pose ) const {
 		mm = movemap_factory_->create_movemap_from_pose( pose );
 	} else {
 		TR << "Using a default MoveMap." << std::endl;
-		mm = core::kinematics::MoveMapOP( new core::kinematics::MoveMap );
+		mm = utility::pointer::make_shared< core::kinematics::MoveMap >();
 		mm->set_bb( true );
 		mm->set_chi( true );
 		mm->set_jump( true );
@@ -210,7 +210,7 @@ PertMinMover::min( core::pose::Pose & pose ) const {
 
 protocols::moves::MoverOP
 PertMinMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new PertMinMover );
+	return utility::pointer::make_shared< PertMinMover >();
 }
 
 std::string

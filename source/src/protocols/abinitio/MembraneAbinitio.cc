@@ -184,10 +184,10 @@ MembraneAbinitio::MembraneAbinitio(
 	} else { */
 
 	using namespace protocols::simple_moves;
-	bms25 = simple_moves::ClassicFragmentMoverOP( new ClassicFragmentMover( fragset_small_top25, movemap ) );
-	bms = simple_moves::ClassicFragmentMoverOP( new ClassicFragmentMover( fragset_small, movemap ) );
-	bml = simple_moves::ClassicFragmentMoverOP( new ClassicFragmentMover( fragset_large, movemap ) );
-	sms = simple_moves::ClassicFragmentMoverOP( new SmoothFragmentMover ( fragset_small, movemap, FragmentCostOP( new GunnCost ) ) );
+	bms25 = utility::pointer::make_shared< ClassicFragmentMover >( fragset_small_top25, movemap );
+	bms = utility::pointer::make_shared< ClassicFragmentMover >( fragset_small, movemap );
+	bml = utility::pointer::make_shared< ClassicFragmentMover >( fragset_large, movemap );
+	sms = utility::pointer::make_shared< SmoothFragmentMover > ( fragset_small, movemap, utility::pointer::make_shared< GunnCost >() );
 	// }
 	/*
 	bms->set_end_bias( option[ OptionKeys::abinitio::end_bias_2 ] ); //default is 30.0
@@ -216,7 +216,7 @@ MembraneAbinitio::init( core::pose::Pose const& pose ) {
 moves::MoverOP
 MembraneAbinitio::clone() const
 {
-	return moves::MoverOP( new MembraneAbinitio( *this ) );
+	return utility::pointer::make_shared< MembraneAbinitio >( *this );
 }
 
 void MembraneAbinitio::apply( pose::Pose & pose ) {
@@ -540,24 +540,24 @@ void MembraneAbinitio::update_moves() {
 void MembraneAbinitio::set_trials() {
 	// setup loop1
 	debug_assert( brute_move_large_ );
-	trial_large_ = moves::TrialMoverOP( new moves::TrialMover( brute_move_large_, mc_ ) );
+	trial_large_ = utility::pointer::make_shared< moves::TrialMover >( brute_move_large_, mc_ );
 	// trial_large_->keep_stats_type( false );
 	//trial_large_->keep_stats_type( moves::all_stats );
 
 	debug_assert( brute_move_small_ );
-	trial_small_ = moves::TrialMoverOP( new moves::TrialMover( brute_move_small_, mc_ ) );
+	trial_small_ = utility::pointer::make_shared< moves::TrialMover >( brute_move_small_, mc_ );
 	//trial_small_->set_keep_stats( false );
 	// trial_small_->keep_stats_type( false );
 	//trial_small_->keep_stats_type( moves::all_stats );
 
 	debug_assert( brute_move_small_top25_ );
-	trial_small_top25_ = moves::TrialMoverOP( new moves::TrialMover( brute_move_small_top25_, mc_ ) );
+	trial_small_top25_ = utility::pointer::make_shared< moves::TrialMover >( brute_move_small_top25_, mc_ );
 	//trial_small_top25_ ->set_keep_stats( false );
 	//trial_small_top25_ ->keep_stats_type( false );
 	//trial_small_top25_ ->keep_stats_type( moves::all_stats );
 
 	debug_assert( smooth_move_small_ );
-	smooth_trial_small_ = moves::TrialMoverOP( new moves::TrialMover( smooth_move_small_, mc_ ) );
+	smooth_trial_small_ = utility::pointer::make_shared< moves::TrialMover >( smooth_move_small_, mc_ );
 	// smooth_trial_small_->set_keep_stats( false );
 	//smooth_trial_small_->keep_stats_type( false );
 	//smooth_trial_small_ ->keep_stats_type( moves::all_stats );
@@ -565,7 +565,7 @@ void MembraneAbinitio::set_trials() {
 
 //@detail sets Monto-Carlo object to default
 void MembraneAbinitio::set_default_mc( pose::Pose const& pose, scoring::ScoreFunction const& scorefxn ) {
-	set_mc( moves::MonteCarloOP( new moves::MonteCarlo( pose, scorefxn, temperature_ ) ) );
+	set_mc( utility::pointer::make_shared< moves::MonteCarlo >( pose, scorefxn, temperature_ ) );
 }
 
 //@detail sets Monto-Carlo object

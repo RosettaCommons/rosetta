@@ -62,7 +62,7 @@ namespace minimization_packing {
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP RotamerTrialsMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new RotamerTrialsMover );
+// XRW TEMP  return utility::pointer::make_shared< RotamerTrialsMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -105,14 +105,14 @@ RotamerTrialsMover::~RotamerTrialsMover()= default;
 RotamerTrialsMover::MoverOP
 RotamerTrialsMover::clone() const
 {
-	return RotamerTrialsMover::MoverOP( new protocols::minimization_packing::RotamerTrialsMover( *this ) );
+	return utility::pointer::make_shared< protocols::minimization_packing::RotamerTrialsMover >( *this );
 }
 
 // create this type of object
 RotamerTrialsMover::MoverOP
 RotamerTrialsMover::fresh_instance() const
 {
-	return RotamerTrialsMover::MoverOP( new protocols::minimization_packing::RotamerTrialsMover() );
+	return utility::pointer::make_shared< protocols::minimization_packing::RotamerTrialsMover >();
 }
 
 // setters
@@ -237,7 +237,7 @@ std::string RotamerTrialsMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 RotamerTrialsMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new RotamerTrialsMover );
+	return utility::pointer::make_shared< RotamerTrialsMover >();
 }
 
 void RotamerTrialsMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

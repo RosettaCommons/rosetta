@@ -57,7 +57,7 @@ PeptideStapleDesignMover::~PeptideStapleDesignMover() = default;
 
 protocols::moves::MoverOP
 PeptideStapleDesignMover::clone() const {
-	return( protocols::moves::MoverOP( new PeptideStapleDesignMover( *this ) ));
+	return( utility::pointer::make_shared< PeptideStapleDesignMover >( *this ));
 }
 
 void PeptideStapleDesignMover::apply( core::pose::Pose & pose )
@@ -100,7 +100,7 @@ std::string PeptideStapleDesignMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 PeptideStapleDesignMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new PeptideStapleDesignMover );
+	return utility::pointer::make_shared< PeptideStapleDesignMover >();
 }
 
 void PeptideStapleDesignMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

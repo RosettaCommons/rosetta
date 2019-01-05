@@ -108,7 +108,7 @@ InterfaceHolesFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::
 }
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP InterfaceHolesFilterCreator::create_filter() const { return protocols::filters::FilterOP( new InterfaceHolesFilter ); }
+// XRW TEMP InterfaceHolesFilterCreator::create_filter() const { return utility::pointer::make_shared< InterfaceHolesFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP InterfaceHolesFilterCreator::keyname() const { return "InterfaceHoles"; }
@@ -137,7 +137,7 @@ std::string InterfaceHolesFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 InterfaceHolesFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new InterfaceHolesFilter );
+	return utility::pointer::make_shared< InterfaceHolesFilter >();
 }
 
 void InterfaceHolesFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

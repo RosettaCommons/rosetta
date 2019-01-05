@@ -46,11 +46,11 @@ public:
 
 	/// @brief clone has to be overridden only if clone invocation is expected.
 	moves::MoverOP clone() const override {
-		return moves::MoverOP( new FastGapMover( *this ) );
+		return utility::pointer::make_shared< FastGapMover >( *this );
 	}
 
 	moves::MoverOP fresh_instance() const override {
-		return moves::MoverOP( new FastGapMover );
+		return utility::pointer::make_shared< FastGapMover >();
 	}
 
 	void

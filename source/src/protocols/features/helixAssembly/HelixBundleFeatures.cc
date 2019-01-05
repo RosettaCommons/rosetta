@@ -100,11 +100,11 @@ HelixBundleFeatures::write_schema_to_db(utility::sql_database::sessionOP db_sess
 {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbDataTypeOP(new DbBigInt()), false /*not null*/, false /*don't autoincrement*/);
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >(), false /*not null*/, false /*don't autoincrement*/);
 
 	/******helix_bundles******/
-	Column bundle_id("bundle_id", DbDataTypeOP(new DbInteger()), false /*not null*/, true /*autoincrement*/);
-	Column num_helices_per_bundle("num_helices_per_bundle", DbDataTypeOP(new DbInteger()), false, false);
+	Column bundle_id("bundle_id", utility::pointer::make_shared< DbInteger >(), false /*not null*/, true /*autoincrement*/);
+	Column num_helices_per_bundle("num_helices_per_bundle", utility::pointer::make_shared< DbInteger >(), false, false);
 
 	Schema helix_bundles("helix_bundles", bundle_id);
 	helix_bundles.add_column(num_helices_per_bundle);
@@ -113,12 +113,12 @@ HelixBundleFeatures::write_schema_to_db(utility::sql_database::sessionOP db_sess
 	helix_bundles.write(db_session);
 
 	/******bundle_helices******/
-	Column helix_id("helix_id", DbDataTypeOP(new DbInteger()), false /*not null*/, true /*autoincrement*/);
-	Column bundle_id_fkey("bundle_id", DbDataTypeOP(new DbInteger()), false, false);
+	Column helix_id("helix_id", utility::pointer::make_shared< DbInteger >(), false /*not null*/, true /*autoincrement*/);
+	Column bundle_id_fkey("bundle_id", utility::pointer::make_shared< DbInteger >(), false, false);
 
-	Column residue_begin("residue_begin", DbDataTypeOP(new DbInteger()));
-	Column residue_end("residue_end", DbDataTypeOP(new DbInteger()));
-	Column reversed("reversed", DbDataTypeOP(new DbInteger()));
+	Column residue_begin("residue_begin", utility::pointer::make_shared< DbInteger >());
+	Column residue_end("residue_end", utility::pointer::make_shared< DbInteger >());
+	Column reversed("reversed", utility::pointer::make_shared< DbInteger >());
 
 	utility::vector1<std::string> fkey_res_reference_cols;
 	fkey_res_reference_cols.push_back("struct_id");
@@ -143,9 +143,9 @@ HelixBundleFeatures::write_schema_to_db(utility::sql_database::sessionOP db_sess
 
 	/******helix_pairs******/
 
-	Column pair_id("pair_id", DbDataTypeOP(new DbInteger()), false /*not null*/, true /*autoincrement*/);
-	Column helix_id_1("helix_id_1", DbDataTypeOP(new DbInteger()), false, false);
-	Column helix_id_2("helix_id_2", DbDataTypeOP(new DbInteger()), false, false);
+	Column pair_id("pair_id", utility::pointer::make_shared< DbInteger >(), false /*not null*/, true /*autoincrement*/);
+	Column helix_id_1("helix_id_1", utility::pointer::make_shared< DbInteger >(), false, false);
+	Column helix_id_2("helix_id_2", utility::pointer::make_shared< DbInteger >(), false, false);
 
 	Schema helix_pairs("helix_pairs", pair_id);
 	helix_pairs.add_foreign_key(ForeignKey(struct_id, "structures", "struct_id", false /*defer*/));
@@ -184,11 +184,11 @@ utility::vector1<HelicalFragmentOP> HelixBundleFeatures::get_helices(StructureID
 
 		if ( residue_begin - prev_residue_end == 2 && all_helices.size() > 0 ) {
 			all_helices.pop_back();
-			all_helices.push_back(HelicalFragmentOP(new HelicalFragment(prev_residue_begin, residue_end)));
+			all_helices.push_back(utility::pointer::make_shared< HelicalFragment >(prev_residue_begin, residue_end));
 			TR  << "combining helix segments: " << prev_residue_begin << "-" << prev_residue_end
 				<< " and " << residue_begin << "-" << residue_end << std::endl;
 		} else {
-			all_helices.push_back(HelicalFragmentOP(new HelicalFragment(residue_begin, residue_end)));
+			all_helices.push_back(utility::pointer::make_shared< HelicalFragment >(residue_begin, residue_end));
 		}
 		prev_residue_begin=residue_begin;
 		prev_residue_end=residue_end;
@@ -532,7 +532,7 @@ std::string HelixBundleFeaturesCreator::type_name() const {
 
 protocols::features::FeaturesReporterOP
 HelixBundleFeaturesCreator::create_features_reporter() const {
-	return protocols::features::FeaturesReporterOP( new HelixBundleFeatures );
+	return utility::pointer::make_shared< HelixBundleFeatures >();
 }
 
 void HelixBundleFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

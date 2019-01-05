@@ -52,7 +52,7 @@ SymmetricalResidueSelector::SymmetricalResidueSelector() :
 
 /// @brief Clone operator.
 /// @details Copy this object and return an owning pointer to the new object.
-ResidueSelectorOP SymmetricalResidueSelector::clone() const { return ResidueSelectorOP( new SymmetricalResidueSelector(*this) ); }
+ResidueSelectorOP SymmetricalResidueSelector::clone() const { return utility::pointer::make_shared< SymmetricalResidueSelector >(*this); }
 
 SymmetricalResidueSelector::SymmetricalResidueSelector(
 	core::select::residue_selector::ResidueSelectorCOP const selector ) :
@@ -192,7 +192,7 @@ void SymmetricalResidueSelector::provide_xml_schema( utility::tag::XMLSchemaDefi
 
 ResidueSelectorOP
 SymmetricalResidueSelectorCreator::create_residue_selector() const {
-	return ResidueSelectorOP( new SymmetricalResidueSelector );
+	return utility::pointer::make_shared< SymmetricalResidueSelector >();
 }
 
 std::string

@@ -268,13 +268,13 @@ void DockingProtocol::setup_objects()
 	docking_highres_mover_ = nullptr;
 
 	// Residue movers
-	to_centroid_ = protocols::simple_moves::SwitchResidueTypeSetMoverOP( new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID ) );
+	to_centroid_ = utility::pointer::make_shared< protocols::simple_moves::SwitchResidueTypeSetMover >( core::chemical::CENTROID );
 
 	//generate to_all_atom mover:  to_all_atom_ =
 	using protocols::moves::MoverOP;
 	protocols::moves::SequenceMoverOP to_all_atom_and_repack( new protocols::moves::SequenceMover );
-	to_all_atom_and_repack->add_mover( MoverOP( new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::FA_STANDARD ) ) );
-	to_all_atom_and_repack->add_mover( MoverOP( new protocols::minimization_packing::RepackSidechainsMover( docking_scorefxn_pack_ ) ) );
+	to_all_atom_and_repack->add_mover( utility::pointer::make_shared< protocols::simple_moves::SwitchResidueTypeSetMover >( core::chemical::FA_STANDARD ) );
+	to_all_atom_and_repack->add_mover( utility::pointer::make_shared< protocols::minimization_packing::RepackSidechainsMover >( docking_scorefxn_pack_ ) );
 	to_all_atom_=to_all_atom_and_repack;
 
 	sync_objects_with_flags();
@@ -288,19 +288,19 @@ void DockingProtocol::sync_objects_with_flags()
 		}
 
 		if ( !perturber_ ) {
-			perturber_ = protocols::docking::DockingInitialPerturbationOP( new DockingInitialPerturbation( movable_jumps_, true /*slide into contact*/, autofoldtree_ ) );
+			perturber_ = utility::pointer::make_shared< DockingInitialPerturbation >( movable_jumps_, true /*slide into contact*/, autofoldtree_ );
 		}
 
 		if ( !docking_lowres_mover_ ) {
 			// Modified by DK
 			if ( if_ensemble_ ) {
-				docking_lowres_mover_ = protocols::docking::DockingLowResOP( new DockingLowResEnsemble( docking_scorefxn_low_, movable_jumps_ ) );
+				docking_lowres_mover_ = utility::pointer::make_shared< DockingLowResEnsemble >( docking_scorefxn_low_, movable_jumps_ );
 			} else {
-				docking_lowres_mover_ = protocols::docking::DockingLowResOP( new DockingLowRes( docking_scorefxn_low_, movable_jumps_ ) );
+				docking_lowres_mover_ = utility::pointer::make_shared< DockingLowRes >( docking_scorefxn_low_, movable_jumps_ );
 			}
 		}
 		if ( !no_filters_ && !lowres_filter_ ) {
-			lowres_filter_ = protocols::docking::DockingLowResFilterOP( new protocols::docking::DockingLowResFilter() );
+			lowres_filter_ = utility::pointer::make_shared< protocols::docking::DockingLowResFilter >();
 		}
 	} else {
 		perturber_ = nullptr;
@@ -336,7 +336,7 @@ void DockingProtocol::sync_objects_with_flags()
 			docking_highres_mover_->set_partners( partners_ );
 		}
 		if ( !no_filters_ && !highres_filter_ ) {
-			highres_filter_ = protocols::docking::DockingHighResFilterOP( new protocols::docking::DockingHighResFilter() );
+			highres_filter_ = utility::pointer::make_shared< protocols::docking::DockingHighResFilter >();
 		}
 	} else {
 		docking_highres_mover_ = nullptr;
@@ -351,7 +351,7 @@ void DockingProtocol::sync_objects_with_flags()
 		docking_constraint_ = nullptr;
 	} else {
 		if ( !docking_constraint_ ) {
-			docking_constraint_ = protocols::constraint_movers::ConstraintSetMoverOP( new protocols::constraint_movers::ConstraintSetMover() );
+			docking_constraint_ = utility::pointer::make_shared< protocols::constraint_movers::ConstraintSetMover >();
 		}
 	}
 
@@ -619,7 +619,7 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 
 		TR << "Ensemble 1: " << ensemble1_filename_ << std::endl;
 
-		ensemble1_ = protocols::docking::DockingEnsembleOP( new DockingEnsemble( p1_start, p1_end, rb_jump, ensemble1_filename_, "dock_ens_conf1", docking_scorefxn_low_, docking_scorefxn_high_ ) );
+		ensemble1_ = utility::pointer::make_shared< DockingEnsemble >( p1_start, p1_end, rb_jump, ensemble1_filename_, "dock_ens_conf1", docking_scorefxn_low_, docking_scorefxn_high_ );
 
 		// check sequence
 		if ( ensemble1_->get_conformer(1).sequence().compare(p1_seq) != 0 ) {
@@ -628,7 +628,7 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 
 		TR << "Ensemble 2: " << ensemble2_filename_ << std::endl;
 
-		ensemble2_ = protocols::docking::DockingEnsembleOP( new DockingEnsemble( p2_start, p2_end, rb_jump, ensemble2_filename_, "dock_ens_conf2", docking_scorefxn_low_, docking_scorefxn_high_ ) );
+		ensemble2_ = utility::pointer::make_shared< DockingEnsemble >( p2_start, p2_end, rb_jump, ensemble2_filename_, "dock_ens_conf2", docking_scorefxn_low_, docking_scorefxn_high_ );
 
 		// check sequence
 		if ( ensemble2_->get_conformer(1).sequence().compare(p2_seq) != 0 ) {
@@ -656,10 +656,10 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 			if ( !recover_sidechains_ ) {
 				core::pose::Pose a_pose;
 				core::import_pose::pose_from_file( a_pose, recover_sidechains_filename_ , core::import_pose::PDB_file);
-				recover_sidechains_ = protocols::simple_moves::ReturnSidechainMoverOP( new protocols::simple_moves::ReturnSidechainMover( a_pose ) );
+				recover_sidechains_ = utility::pointer::make_shared< protocols::simple_moves::ReturnSidechainMover >( a_pose );
 			} //first initialization ?
 		} else if ( get_input_pose() && get_input_pose()->is_fullatom() ) {
-			recover_sidechains_ = protocols::simple_moves::ReturnSidechainMoverOP( new protocols::simple_moves::ReturnSidechainMover( *get_input_pose() ) );
+			recover_sidechains_ = utility::pointer::make_shared< protocols::simple_moves::ReturnSidechainMover >( *get_input_pose() );
 		} else {
 			// recover sidechains mover is not needed with ensemble docking since the sidechains are recovered from the partners in the ensemble fi
 			recover_sidechains_ = nullptr;
@@ -721,13 +721,13 @@ DockingProtocol::~DockingProtocol() = default;
 protocols::moves::MoverOP
 DockingProtocol::clone() const {
 	//return( new DockingProtocol( movable_jumps_, low_res_protocol_only_, docking_local_refine_, autofoldtree_, docking_scorefxn_low_, docking_scorefxn_high_ ) ); This is bad do not clone this way.
-	return protocols::moves::MoverOP( new DockingProtocol(*this) );
+	return utility::pointer::make_shared< DockingProtocol >(*this);
 }
 
 /// @brief fresh_instance returns a default-constructed object for the JD2
 protocols::moves::MoverOP
 DockingProtocol::fresh_instance() const {
-	return protocols::moves::MoverOP( new DockingProtocol() );
+	return utility::pointer::make_shared< DockingProtocol >();
 }
 
 /// @brief This mover retains state such that a fresh version is needed if the input Pose is about to change
@@ -781,7 +781,7 @@ void DockingProtocol::initForEqualOperatorAndCopyConstructor(DockingProtocol & l
 	if ( rhs.docking_scorefxn_pack_ ) lhs.docking_scorefxn_pack_ = rhs.docking_scorefxn_pack_->clone();
 	if ( rhs.docking_scorefxn_output_ ) lhs.docking_scorefxn_output_ = rhs.docking_scorefxn_output_->clone();
 	if ( rhs.mc_ ) { //not used currently but might be needed later
-		lhs.mc_ = protocols::moves::MonteCarloOP( new moves::MonteCarlo( *(rhs.mc_) ) );
+		lhs.mc_ = utility::pointer::make_shared< moves::MonteCarlo >( *(rhs.mc_) );
 	}
 	if ( rhs.lowres_filter_ ) lhs.lowres_filter_ = utility::pointer::static_pointer_cast< protocols::docking::DockingLowResFilter > ( rhs.lowres_filter_->clone() );
 	if ( rhs.highres_filter_ ) lhs.highres_filter_ = utility::pointer::static_pointer_cast< protocols::docking::DockingHighResFilter > ( rhs.highres_filter_->clone() );
@@ -794,11 +794,11 @@ void DockingProtocol::initForEqualOperatorAndCopyConstructor(DockingProtocol & l
 	if ( rhs.to_centroid_ ) lhs.to_centroid_ = utility::pointer::static_pointer_cast< protocols::simple_moves::SwitchResidueTypeSetMover > ( rhs.to_centroid_->clone() );
 	if ( rhs.to_all_atom_ ) lhs.to_all_atom_ = rhs.to_all_atom_->clone();
 	if ( rhs.ensemble1_ ) {
-		lhs.ensemble1_ = protocols::docking::DockingEnsembleOP( new protocols::docking::DockingEnsemble( *(rhs.ensemble1_) ) );
+		lhs.ensemble1_ = utility::pointer::make_shared< protocols::docking::DockingEnsemble >( *(rhs.ensemble1_) );
 		lhs.ensemble1_filename_ = rhs.ensemble1_filename_ ;
 	}
 	if ( rhs.ensemble2_ ) {
-		lhs.ensemble2_ = protocols::docking::DockingEnsembleOP( new protocols::docking::DockingEnsemble( *(rhs.ensemble2_) ) );
+		lhs.ensemble2_ = utility::pointer::make_shared< protocols::docking::DockingEnsemble >( *(rhs.ensemble2_) );
 		lhs.ensemble2_filename_ = rhs.ensemble2_filename_;
 	}
 	if ( rhs.docking_constraint_ ) {
@@ -808,7 +808,7 @@ void DockingProtocol::initForEqualOperatorAndCopyConstructor(DockingProtocol & l
 		lhs.recover_sidechains_ = utility::pointer::static_pointer_cast< protocols::simple_moves::ReturnSidechainMover > ( rhs.recover_sidechains_->clone() );
 	}
 	if ( rhs.init_task_factory_ ) {
-		lhs.init_task_factory_ = core::pack::task::TaskFactoryOP( new  core::pack::task::TaskFactory( *(rhs.init_task_factory_) ) );
+		lhs.init_task_factory_ = utility::pointer::make_shared< core::pack::task::TaskFactory >( *(rhs.init_task_factory_) );
 	}
 	lhs.design_ = rhs.design_;
 	lhs.ignore_default_docking_task_ = rhs.ignore_default_docking_task_;
@@ -1147,9 +1147,9 @@ DockingProtocol::apply( pose::Pose & pose )
 
 			// SSRB: A repack was necessary as high fa_rep was being observed after side chain recovery
 			core::pack::task::TaskFactoryOP local_tf( new core::pack::task::TaskFactory() );
-			local_tf->push_back( core::pack::task::operation::TaskOperationCOP( new core::pack::task::operation::IncludeCurrent ) );
-			local_tf->push_back( core::pack::task::operation::TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ) );
-			local_tf->push_back( core::pack::task::operation::TaskOperationCOP( new core::pack::task::operation::NoRepackDisulfides) );
+			local_tf->push_back( utility::pointer::make_shared< core::pack::task::operation::IncludeCurrent >() );
+			local_tf->push_back( utility::pointer::make_shared< core::pack::task::operation::RestrictToRepacking >() );
+			local_tf->push_back( utility::pointer::make_shared< core::pack::task::operation::NoRepackDisulfides >() );
 			protocols::minimization_packing::PackRotamersMoverOP conformer_full_repack( new protocols::minimization_packing::PackRotamersMover( docking_scorefxn_high_ ) );
 			conformer_full_repack->task_factory( local_tf );
 			conformer_full_repack->apply( pose );
@@ -1246,7 +1246,7 @@ void DockingProtocol::set_docking_highres_mover( protocols::docking::DockingHigh
 void DockingProtocol::add_additional_low_resolution_step( protocols::moves::MoverOP additional_low_resolution_mover )
 {
 	if ( ! additional_low_resolution_steps_ ) {
-		additional_low_resolution_steps_ = protocols::moves::SequenceMoverOP( new moves::SequenceMover );
+		additional_low_resolution_steps_ = utility::pointer::make_shared< moves::SequenceMover >();
 	}
 	additional_low_resolution_steps_->add_mover( additional_low_resolution_mover );
 }
@@ -1343,7 +1343,7 @@ DockingProtocol::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & dat
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP DockingProtocolCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new DockingProtocol() );
+// XRW TEMP  return utility::pointer::make_shared< DockingProtocol >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -1382,7 +1382,7 @@ std::string DockingProtocolCreator::keyname() const {
 
 protocols::moves::MoverOP
 DockingProtocolCreator::create_mover() const {
-	return protocols::moves::MoverOP( new DockingProtocol );
+	return utility::pointer::make_shared< DockingProtocol >();
 }
 
 void DockingProtocolCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -143,7 +143,7 @@ CutBiasClaim::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ){
 }
 
 EnvClaimOP CutBiasClaim::clone() const {
-	return EnvClaimOP( new CutBiasClaim( *this ) );
+	return utility::pointer::make_shared< CutBiasClaim >( *this );
 }
 
 std::string CutBiasClaim::type() const{

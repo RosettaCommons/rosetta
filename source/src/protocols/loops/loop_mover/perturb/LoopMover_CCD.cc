@@ -158,7 +158,7 @@ LoopMover_Perturb_CCD::show(std::ostream & output) const
 
 //clone
 protocols::moves::MoverOP LoopMover_Perturb_CCD::clone() const {
-	return protocols::moves::MoverOP( new LoopMover_Perturb_CCD(*this) );
+	return utility::pointer::make_shared< LoopMover_Perturb_CCD >(*this);
 }
 
 loop_mover::LoopResult LoopMover_Perturb_CCD::model_loop(
@@ -347,9 +347,9 @@ loop_mover::LoopResult LoopMover_Perturb_CCD::model_loop(
 	bool const use_nblist( false ), deriv_check( false ); // true ); // false );
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		// minimizer = dynamic_cast<AtomTreeMinimizer*> (new core::optimization::symmetry::SymAtomTreeMinimizer);
-		minimizer = AtomTreeMinimizerOP( new core::optimization::symmetry::SymAtomTreeMinimizer );
+		minimizer = utility::pointer::make_shared< core::optimization::symmetry::SymAtomTreeMinimizer >();
 	} else {
-		minimizer = AtomTreeMinimizerOP( new core::optimization::AtomTreeMinimizer );
+		minimizer = utility::pointer::make_shared< core::optimization::AtomTreeMinimizer >();
 	}
 
 	MinimizerOptions options( "linmin", dummy_tol, use_nblist, deriv_check);
@@ -462,7 +462,7 @@ basic::Tracer & LoopMover_Perturb_CCD::tr() const
 // XRW TEMP LoopMover_Perturb_CCDCreator::~LoopMover_Perturb_CCDCreator() {}
 
 // XRW TEMP moves::MoverOP LoopMover_Perturb_CCDCreator::create_mover() const {
-// XRW TEMP  return moves::MoverOP( new LoopMover_Perturb_CCD() );
+// XRW TEMP  return utility::pointer::make_shared< LoopMover_Perturb_CCD >();
 // XRW TEMP }
 
 // XRW TEMP std::string LoopMover_Perturb_CCDCreator::keyname() const {
@@ -490,7 +490,7 @@ std::string LoopMover_Perturb_CCDCreator::keyname() const {
 
 protocols::moves::MoverOP
 LoopMover_Perturb_CCDCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LoopMover_Perturb_CCD );
+	return utility::pointer::make_shared< LoopMover_Perturb_CCD >();
 }
 
 void LoopMover_Perturb_CCDCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -48,7 +48,7 @@ methods::EnergyMethodOP
 MissingEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new MissingEnergy );
+	return utility::pointer::make_shared< MissingEnergy >();
 }
 
 ScoreTypes
@@ -61,14 +61,14 @@ MissingEnergyCreator::score_types_for_method() const {
 
 /// c-tor
 MissingEnergy::MissingEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new MissingEnergyCreator ) )
+	parent( utility::pointer::make_shared< MissingEnergyCreator >() )
 {}
 
 /// clone
 methods::EnergyMethodOP
 MissingEnergy::clone() const
 {
-	return methods::EnergyMethodOP( new MissingEnergy );
+	return utility::pointer::make_shared< MissingEnergy >();
 }
 
 

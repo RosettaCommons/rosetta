@@ -171,7 +171,7 @@ ResidueLevelTask_::ResidueLevelTask_(
 		// for non-amino acids, default is to include only the existing residuetype
 		allowed_residue_types_.push_back( original_residue.type_ptr() );
 	}
-	if ( original_residue.is_RNA() ) rna_task_ = rna::RNA_ResidueLevelTaskOP( new rna::RNA_ResidueLevelTask );
+	if ( original_residue.is_RNA() ) rna_task_ = utility::pointer::make_shared< rna::RNA_ResidueLevelTask >();
 	// The intention is for all ResidueTasks to *start off* as repackable.
 	// Some, like protein AAs and DNA, also start off designable.
 	determine_if_designing();

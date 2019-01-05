@@ -105,7 +105,7 @@ void JumpSelectorLoader::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 
 
 DataLoaderOP
-JumpSelectorLoaderCreator::create_loader() const { return DataLoaderOP( new JumpSelectorLoader ); }
+JumpSelectorLoaderCreator::create_loader() const { return utility::pointer::make_shared< JumpSelectorLoader >(); }
 
 std::string
 JumpSelectorLoaderCreator::keyname() const { return JumpSelectorLoader::loader_name(); }

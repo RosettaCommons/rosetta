@@ -50,7 +50,7 @@ using namespace core;
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP SubroutineMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new SubroutineMover );
+// XRW TEMP  return utility::pointer::make_shared< SubroutineMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -61,7 +61,7 @@ using namespace core;
 
 protocols::moves::MoverOP
 SubroutineMover::clone() const {
-	return( protocols::moves::MoverOP( new SubroutineMover( *this ) ) );
+	return( utility::pointer::make_shared< SubroutineMover >( *this ) );
 }
 
 
@@ -90,7 +90,7 @@ SubroutineMover::parse_my_tag( TagCOP const tag,
 
 protocols::moves::MoverOP
 SubroutineMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new SubroutineMover );
+	return utility::pointer::make_shared< SubroutineMover >();
 }
 
 SubroutineMover::~SubroutineMover()= default;
@@ -128,7 +128,7 @@ std::string SubroutineMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 SubroutineMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SubroutineMover );
+	return utility::pointer::make_shared< SubroutineMover >();
 }
 
 void SubroutineMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

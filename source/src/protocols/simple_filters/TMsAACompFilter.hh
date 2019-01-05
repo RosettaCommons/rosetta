@@ -56,11 +56,11 @@ public:
 	) const;
 
 	filters::FilterOP clone() const override {
-		return filters::FilterOP( new TMsAACompFilter( *this ) );
+		return utility::pointer::make_shared< TMsAACompFilter >( *this );
 	}
 
 	filters::FilterOP fresh_instance() const override {
-		return filters::FilterOP( new TMsAACompFilter() );
+		return utility::pointer::make_shared< TMsAACompFilter >();
 	}
 
 	virtual ~TMsAACompFilter();

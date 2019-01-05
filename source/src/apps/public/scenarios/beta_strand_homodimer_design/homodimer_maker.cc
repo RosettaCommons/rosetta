@@ -133,7 +133,7 @@ public:
 
 
 	MoverOP clone() const override {
-		return MoverOP( new HDmakerMover( *this ) );
+		return utility::pointer::make_shared< HDmakerMover >( *this );
 	}
 
 	MoverOP fresh_instance() const override {
@@ -496,7 +496,7 @@ main( int argc, char* argv[] ) {
 		//making our own output
 		basic::options::option[ OptionKeys::jd2::no_output ].def(true);
 
-		protocols::jd2::JobDistributor::get_instance()->go( protocols::moves::MoverOP( new HDmakerMover ) );
+		protocols::jd2::JobDistributor::get_instance()->go( utility::pointer::make_shared< HDmakerMover >() );
 
 		TR<< "Complete." << std::endl;
 	} catch (utility::excn::Exception const & e ) {

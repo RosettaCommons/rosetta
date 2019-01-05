@@ -54,9 +54,9 @@ public:
 	// Shared initialization goes here.
 	void setUp() {
 		core_init();
-		the_pose = pose::PoseOP( new pose::Pose );
+		the_pose = utility::pointer::make_shared< pose::Pose >();
 		core::import_pose::centroid_pose_from_pdb( *the_pose, "protocols/scoring/dock_in.pdb" );
-		func = core::scoring::func::FlatHarmonicFuncOP( new core::scoring::func::FlatHarmonicFunc( 0.0, 1.0, 5.0 ) );
+		func = utility::pointer::make_shared< core::scoring::func::FlatHarmonicFunc >( 0.0, 1.0, 5.0 );
 		name = "CA";
 	}
 

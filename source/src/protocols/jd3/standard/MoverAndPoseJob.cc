@@ -107,10 +107,10 @@ core::pose::PoseCOP MoverAndPoseJob::pose() const {
 }
 
 PoseJobResultOP
-MoverAndPoseJob::create_job_result() { return PoseJobResultOP( new PoseJobResult ); }
+MoverAndPoseJob::create_job_result() { return utility::pointer::make_shared< PoseJobResult >(); }
 
 EnergyJobSummaryOP
-MoverAndPoseJob::create_job_summary() { return EnergyJobSummaryOP( new EnergyJobSummary ); }
+MoverAndPoseJob::create_job_summary() { return utility::pointer::make_shared< EnergyJobSummary >(); }
 
 /// @details Template method invoked by the base class during result preparation and finalization.
 /// The derived MoverAndPoseJob class is encouraged to stash any additional information in

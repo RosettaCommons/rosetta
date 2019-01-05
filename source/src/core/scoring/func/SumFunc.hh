@@ -55,7 +55,7 @@ public:
 	//}
 
 	FuncOP
-	clone() const { return FuncOP( new SumFunc( *this ) ); }
+	clone() const { return utility::pointer::make_shared< SumFunc >( *this ); }
 	virtual bool operator == ( Func const & other ) const;
 	virtual bool same_type_as_me( Func const & other ) const;
 

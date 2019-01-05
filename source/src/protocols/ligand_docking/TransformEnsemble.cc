@@ -99,12 +99,12 @@ TransformEnsemble::~TransformEnsemble() = default;
 
 protocols::moves::MoverOP TransformEnsemble::clone() const
 {
-	return protocols::moves::MoverOP( new TransformEnsemble (*this) );
+	return utility::pointer::make_shared< TransformEnsemble > (*this);
 }
 
 protocols::moves::MoverOP TransformEnsemble::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new TransformEnsemble);
+	return utility::pointer::make_shared< TransformEnsemble >();
 }
 
 void TransformEnsemble::parse_my_tag
@@ -722,7 +722,7 @@ void TransformEnsemble::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 
 protocols::moves::MoverOP TransformEnsembleCreator::create_mover() const
 {
-	return protocols::moves::MoverOP( new TransformEnsemble );
+	return utility::pointer::make_shared< TransformEnsemble >();
 }
 
 std::string TransformEnsemble::mover_name()

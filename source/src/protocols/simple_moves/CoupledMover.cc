@@ -99,10 +99,10 @@ CoupledMover::CoupledMover() : protocols::moves::Mover()
 	ligand_weight_ = 1.0;
 	rotation_magnitude_ = 1;
 	translation_magnitude_ = 0.1;
-	short_backrub_mover_ = protocols::simple_moves::ShortBackrubMoverOP( new protocols::simple_moves::ShortBackrubMover() );
+	short_backrub_mover_ = utility::pointer::make_shared< protocols::simple_moves::ShortBackrubMover >();
 	short_backrub_mover_->set_rotation_std_dev( rotation_std_dev_ );
 	loop_size_ = 9;
-	boltzmann_rotamer_mover_ = protocols::minimization_packing::BoltzmannRotamerMoverOP( new protocols::minimization_packing::BoltzmannRotamerMover() );
+	boltzmann_rotamer_mover_ = utility::pointer::make_shared< protocols::minimization_packing::BoltzmannRotamerMover >();
 	boltzmann_rotamer_mover_->set_temperature( temperature_ );
 	boltzmann_rotamer_mover_->set_bias_sampling( bias_sampling_ );
 	boltzmann_rotamer_mover_->set_ligand_resnum( ligand_resnum_ );
@@ -117,7 +117,7 @@ CoupledMover::CoupledMover(
 	core::scoring::ScoreFunctionOP score_fxn,
 	core::pack::task::PackerTaskOP packer_task ) : protocols::simple_moves::CoupledMover()
 {
-	short_backrub_mover_ = protocols::simple_moves::ShortBackrubMoverOP( new protocols::simple_moves::ShortBackrubMover( pose ) );
+	short_backrub_mover_ = utility::pointer::make_shared< protocols::simple_moves::ShortBackrubMover >( pose );
 	set_score_fxn( score_fxn );
 	set_packer_task( packer_task );
 }
@@ -132,7 +132,7 @@ CoupledMover::CoupledMover(
 {
 	ligand_resnum_ = ligand_resnum;
 	ligand_jump_id_ = pose->fold_tree().get_jump_that_builds_residue( ligand_resnum );
-	rigid_body_mover_ = protocols::rigid::RigidBodyPerturbMoverOP( new protocols::rigid::RigidBodyPerturbMover( ligand_jump_id_, rotation_magnitude_, translation_magnitude_ ) );
+	rigid_body_mover_ = utility::pointer::make_shared< protocols::rigid::RigidBodyPerturbMover >( ligand_jump_id_, rotation_magnitude_, translation_magnitude_ );
 	set_rigid_body_mover( rigid_body_mover_ );
 }
 
@@ -146,14 +146,14 @@ CoupledMover::~CoupledMover()= default;
 CoupledMover::MoverOP
 CoupledMover::clone() const
 {
-	return CoupledMover::MoverOP( new protocols::simple_moves::CoupledMover( *this ) );
+	return utility::pointer::make_shared< protocols::simple_moves::CoupledMover >( *this );
 }
 
 // create this type of object
 CoupledMover::MoverOP
 CoupledMover::fresh_instance() const
 {
-	return CoupledMover::MoverOP( new protocols::simple_moves::CoupledMover() );
+	return utility::pointer::make_shared< protocols::simple_moves::CoupledMover >();
 }
 
 void
@@ -266,7 +266,7 @@ CoupledMover::apply( core::pose::Pose & pose )
 				mut_res.apply( pose );
 				// repack around linked residue
 				core::pack::task::TaskFactoryOP repack_task_factory_;
-				repack_task_factory_ = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory() );
+				repack_task_factory_ = utility::pointer::make_shared< core::pack::task::TaskFactory >();
 				core::pack::task::PackerTaskOP repack_packer_task_( repack_task_factory_->create_task_and_apply_taskoperations( pose ) );
 				repack_packer_task_->restrict_to_repacking();
 				repack_packer_task_->temporarily_fix_everything();
@@ -282,7 +282,7 @@ CoupledMover::apply( core::pose::Pose & pose )
 		TR << "Repacking neighborhood around design position "  << resnum_ << TR.Reset << std::endl;
 		core::pack::task::TaskFactoryOP tf( new core::pack::task::TaskFactory() );
 		// Set all positions to repack only
-		tf->push_back( core::pack::task::operation::TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ) );
+		tf->push_back( utility::pointer::make_shared< core::pack::task::operation::RestrictToRepacking >() );
 		// Prevent non-neighbor positions from repacking
 		core::select::residue_selector::NeighborhoodResidueSelector nbr_selector = core::select::residue_selector::NeighborhoodResidueSelector();
 		utility::vector1< bool > focus(pose.size(), false);
@@ -290,9 +290,9 @@ CoupledMover::apply( core::pose::Pose & pose )
 		nbr_selector.set_focus( focus );
 		nbr_selector.set_distance( 5 ); // distance of 4 results in no neighbors found. distance of 6 results in drastically lowered acceptance rate.
 		nbr_selector.set_include_focus_in_subset( true );
-		core::pack::task::operation::PreventRepackingRLTOP prevent_repacking = core::pack::task::operation::PreventRepackingRLTOP( new core::pack::task::operation::PreventRepackingRLT() );
+		core::pack::task::operation::PreventRepackingRLTOP prevent_repacking = utility::pointer::make_shared< core::pack::task::operation::PreventRepackingRLT >();
 		core::select::residue_selector::ResidueSelectorOP nbr_selectorOP = nbr_selector.clone();
-		core::pack::task::operation::OperateOnResidueSubsetOP operate_on_neighbors = core::pack::task::operation::OperateOnResidueSubsetOP( new core::pack::task::operation::OperateOnResidueSubset() );
+		core::pack::task::operation::OperateOnResidueSubsetOP operate_on_neighbors = utility::pointer::make_shared< core::pack::task::operation::OperateOnResidueSubset >();
 		operate_on_neighbors->op( prevent_repacking );
 		operate_on_neighbors->selector( nbr_selectorOP );
 
@@ -346,7 +346,7 @@ void CoupledMover::set_ligand_resnum( core::Size ligand_resnum, core::pose::Pose
 }
 void CoupledMover::set_ligand_jump_id( core::Size ligand_jump_id ) {
 	ligand_jump_id_ = ligand_jump_id;
-	rigid_body_mover_ = protocols::rigid::RigidBodyPerturbMoverOP( new protocols::rigid::RigidBodyPerturbMover( ligand_jump_id_, rotation_magnitude_, translation_magnitude_ ) );
+	rigid_body_mover_ = utility::pointer::make_shared< protocols::rigid::RigidBodyPerturbMover >( ligand_jump_id_, rotation_magnitude_, translation_magnitude_ );
 }
 void CoupledMover::set_ligand_weight( core::Real ligand_weight ) {
 	ligand_weight_ = ligand_weight;
@@ -486,7 +486,7 @@ std::string CoupledMoverCreator::keyname() const {
 }
 protocols::moves::MoverOP
 CoupledMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new CoupledMover );
+	return utility::pointer::make_shared< CoupledMover >();
 }
 
 // XML functions

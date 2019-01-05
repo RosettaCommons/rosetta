@@ -116,7 +116,7 @@ using namespace scoring;
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP ReportGradientsMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new ReportGradientsMover );
+// XRW TEMP  return utility::pointer::make_shared< ReportGradientsMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -133,7 +133,7 @@ using namespace scoring;
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP SetCrystWeightMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new SetCrystWeightMover );
+// XRW TEMP  return utility::pointer::make_shared< SetCrystWeightMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -149,7 +149,7 @@ using namespace scoring;
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP RecomputeDensityMapMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new RecomputeDensityMapMover );
+// XRW TEMP  return utility::pointer::make_shared< RecomputeDensityMapMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -165,7 +165,7 @@ using namespace scoring;
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP LoadDensityMapMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new LoadDensityMapMover );
+// XRW TEMP  return utility::pointer::make_shared< LoadDensityMapMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -181,7 +181,7 @@ using namespace scoring;
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP FitBfactorsMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new FitBfactorsMover );
+// XRW TEMP  return utility::pointer::make_shared< FitBfactorsMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -197,7 +197,7 @@ using namespace scoring;
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP UpdateSolventMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new UpdateSolventMover );
+// XRW TEMP  return utility::pointer::make_shared< UpdateSolventMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -213,7 +213,7 @@ using namespace scoring;
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP TagPoseWithRefinementStatsMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new TagPoseWithRefinementStatsMover );
+// XRW TEMP  return utility::pointer::make_shared< TagPoseWithRefinementStatsMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -229,7 +229,7 @@ using namespace scoring;
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP SetRefinementOptionsMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new SetRefinementOptionsMover );
+// XRW TEMP  return utility::pointer::make_shared< SetRefinementOptionsMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -579,7 +579,7 @@ std::string ReportGradientsMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 ReportGradientsMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ReportGradientsMover );
+	return utility::pointer::make_shared< ReportGradientsMover >();
 }
 
 void ReportGradientsMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -645,7 +645,7 @@ void SetCrystWeightMover::parse_my_tag(
 
 	// also can specify defaults
 	if ( tag->hasOption("jump") ) {
-		if ( ! mmf_ ) mmf_ = core::select::movemap::MoveMapFactoryOP( new core::select::movemap::MoveMapFactory );
+		if ( ! mmf_ ) mmf_ = utility::pointer::make_shared< core::select::movemap::MoveMapFactory >();
 		utility::vector1<std::string> jumps = utility::string_split( tag->getOption<std::string>( "jump" ), ',' );
 		// string 'ALL' makes all jumps movable
 		if ( jumps.size() == 1 && (jumps[1] == "ALL" || jumps[1] == "All" || jumps[1] == "all") ) {
@@ -660,22 +660,22 @@ void SetCrystWeightMover::parse_my_tag(
 	}
 	if ( tag->hasOption("chi") ) {
 		bool const value( tag->getOption<bool>("chi") );
-		if ( ! mmf_ ) mmf_ = core::select::movemap::MoveMapFactoryOP( new core::select::movemap::MoveMapFactory );
+		if ( ! mmf_ ) mmf_ = utility::pointer::make_shared< core::select::movemap::MoveMapFactory >();
 		mmf_->all_chi(value);
 	}
 	if ( tag->hasOption("bb") ) {
 		bool const value( tag->getOption<bool>("bb") );
-		if ( ! mmf_ ) mmf_ = core::select::movemap::MoveMapFactoryOP( new core::select::movemap::MoveMapFactory );
+		if ( ! mmf_ ) mmf_ = utility::pointer::make_shared< core::select::movemap::MoveMapFactory >();
 		mmf_->all_bb(value);
 	}
 	if ( tag->hasOption("bondangle") ) {
 		bool const value( tag->getOption<bool>("bondangle") );
-		if ( ! mmf_ ) mmf_ = core::select::movemap::MoveMapFactoryOP( new core::select::movemap::MoveMapFactory );
+		if ( ! mmf_ ) mmf_ = utility::pointer::make_shared< core::select::movemap::MoveMapFactory >();
 		mmf_->all_bondangles( value );
 	}
 	if ( tag->hasOption("bondlength") ) {
 		bool const value( tag->getOption<bool>("bondlength") );
-		if ( ! mmf_ ) mmf_ = core::select::movemap::MoveMapFactoryOP( new core::select::movemap::MoveMapFactory );
+		if ( ! mmf_ ) mmf_ = utility::pointer::make_shared< core::select::movemap::MoveMapFactory >();
 		mmf_->all_bondlengths( value );
 	}
 
@@ -759,7 +759,7 @@ std::string SetCrystWeightMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 SetCrystWeightMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SetCrystWeightMover );
+	return utility::pointer::make_shared< SetCrystWeightMover >();
 }
 
 void SetCrystWeightMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -812,7 +812,7 @@ std::string RecomputeDensityMapMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 RecomputeDensityMapMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new RecomputeDensityMapMover );
+	return utility::pointer::make_shared< RecomputeDensityMapMover >();
 }
 
 void RecomputeDensityMapMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -871,7 +871,7 @@ std::string LoadDensityMapMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 LoadDensityMapMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LoadDensityMapMover );
+	return utility::pointer::make_shared< LoadDensityMapMover >();
 }
 
 void LoadDensityMapMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -980,7 +980,7 @@ std::string FitBfactorsMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 FitBfactorsMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new FitBfactorsMover );
+	return utility::pointer::make_shared< FitBfactorsMover >();
 }
 
 void FitBfactorsMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -1057,7 +1057,7 @@ std::string UpdateSolventMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 UpdateSolventMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new UpdateSolventMover );
+	return utility::pointer::make_shared< UpdateSolventMover >();
 }
 
 void UpdateSolventMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -1195,7 +1195,7 @@ std::string TagPoseWithRefinementStatsMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 TagPoseWithRefinementStatsMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new TagPoseWithRefinementStatsMover );
+	return utility::pointer::make_shared< TagPoseWithRefinementStatsMover >();
 }
 
 void TagPoseWithRefinementStatsMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -1301,7 +1301,7 @@ std::string SetRefinementOptionsMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 SetRefinementOptionsMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SetRefinementOptionsMover );
+	return utility::pointer::make_shared< SetRefinementOptionsMover >();
 }
 
 void SetRefinementOptionsMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -51,7 +51,7 @@ public:
 	// Shared initialization goes here.
 	void setUp() {
 
-		g = DigraphOP( new Digraph(10) );
+		g = utility::pointer::make_shared< Digraph >(10);
 		g->add_edge(1,2);
 		g->add_edge(2,3);
 		g->add_edge(3,4);

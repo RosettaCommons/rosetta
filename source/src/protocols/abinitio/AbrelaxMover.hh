@@ -59,7 +59,7 @@ public:
 
 	void clear(); //set's all pointers to zero
 
-	moves::MoverOP fresh_instance() const override { return moves::MoverOP( new AbrelaxMover() ); }
+	moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< AbrelaxMover >(); }
 
 	FragmentSamplerOP sampling_protocol();
 

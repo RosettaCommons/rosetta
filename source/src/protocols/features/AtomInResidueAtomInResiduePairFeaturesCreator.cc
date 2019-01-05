@@ -27,7 +27,7 @@ namespace features {
 // XRW TEMP AtomInResidueAtomInResiduePairFeaturesCreator::AtomInResidueAtomInResiduePairFeaturesCreator() {}
 // XRW TEMP AtomInResidueAtomInResiduePairFeaturesCreator::~AtomInResidueAtomInResiduePairFeaturesCreator() = default;
 // XRW TEMP FeaturesReporterOP AtomInResidueAtomInResiduePairFeaturesCreator::create_features_reporter() const {
-// XRW TEMP  return FeaturesReporterOP( new AtomInResidueAtomInResiduePairFeatures );
+// XRW TEMP  return utility::pointer::make_shared< AtomInResidueAtomInResiduePairFeatures >();
 // XRW TEMP }
 
 // XRW TEMP std::string AtomInResidueAtomInResiduePairFeaturesCreator::type_name() const {

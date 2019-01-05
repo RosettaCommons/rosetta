@@ -89,7 +89,7 @@ public:
 		basic::options::option[basic::options::OptionKeys::run::preserve_header ].value(true);
 		*/
 
-		tim_enz_io = protocols::toolbox::match_enzdes_util::EnzConstraintIOOP( new protocols::toolbox::match_enzdes_util::EnzConstraintIO(const_residue_set) );
+		tim_enz_io = utility::pointer::make_shared< protocols::toolbox::match_enzdes_util::EnzConstraintIO >(const_residue_set);
 	}
 
 	// Shared finalization goes here.

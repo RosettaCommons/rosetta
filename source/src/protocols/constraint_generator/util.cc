@@ -58,7 +58,7 @@ get_native_pose()
 core::scoring::func::FuncOP
 scalar_weighted( core::scoring::func::FuncOP func, core::Real const weight )
 {
-	return core::scoring::func::FuncOP( new core::scoring::func::ScalarWeightedFunc( weight, func ) );
+	return utility::pointer::make_shared< core::scoring::func::ScalarWeightedFunc >( weight, func );
 }
 
 /// @brief creates a function from a text definition

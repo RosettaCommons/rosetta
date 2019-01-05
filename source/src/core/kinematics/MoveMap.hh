@@ -126,7 +126,7 @@ public:
 	MoveMap(){}
 
 	MoveMapOP clone() const {
-		return MoveMapOP( new MoveMap( *this ) );
+		return utility::pointer::make_shared< MoveMap >( *this );
 	}
 
 	/// @brief clear -- sets all to FALSE

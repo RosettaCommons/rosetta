@@ -64,7 +64,7 @@ SmartSegment::SmartSegment(bool is_vital, core::Size max_segment_length):
 	is_in_Assembly_ = false;
 	length_ = 0;
 	for ( core::Size current_residue_number = 1; current_residue_number <= (2*max_segment_length); current_residue_number++ ) {
-		SmartSewingResidueOP current_residue = SmartSewingResidueOP(new SmartSewingResidue);
+		SmartSewingResidueOP current_residue = utility::pointer::make_shared< SmartSewingResidue >();
 		residues_.push_back(current_residue);
 	}
 
@@ -91,7 +91,7 @@ SmartSegment::SmartSegment( SmartSegment const & other ) {
 	//Deep copy the residue vector
 	residues_.clear();
 	for ( data_storage::SmartSewingResidueOP res: other.get_const_residue_vector() ) {
-		residues_.push_back( data_storage::SmartSewingResidueOP( new data_storage::SmartSewingResidue( *res ) ) );
+		residues_.push_back( utility::pointer::make_shared< data_storage::SmartSewingResidue >( *res ) );
 	}
 	dssp_code_ = other.get_dssp_code();
 	is_a_chimaera_ = other.is_chimaeric();
@@ -117,7 +117,7 @@ SmartSegment::SmartSegment( SmartSegment const & other ) {
 
 SmartSegmentOP
 SmartSegment::clone() const {
-	return SmartSegmentOP( new SmartSegment( *this ) );
+	return utility::pointer::make_shared< SmartSegment >( *this );
 }
 // this is the beginning of all the standard getters and setters
 void

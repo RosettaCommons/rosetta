@@ -52,7 +52,7 @@ SymRestrictTaskForDocking::~SymRestrictTaskForDocking()= default;
 
 task::operation::TaskOperationOP SymRestrictTaskForDocking::clone() const
 {
-	return task::operation::TaskOperationOP( new SymRestrictTaskForDocking( *this ) );
+	return utility::pointer::make_shared< SymRestrictTaskForDocking >( *this );
 }
 
 void

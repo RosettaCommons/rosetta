@@ -45,7 +45,7 @@ static basic::Tracer tr( "core.scoring.methods.Chainbreak", basic::t_info );
 methods::EnergyMethodOP
 ChainbreakEnergyCreator::create_energy_method( methods::EnergyMethodOptions const & ) const
 {
-	return methods::EnergyMethodOP( new ChainbreakEnergy );
+	return utility::pointer::make_shared< ChainbreakEnergy >();
 }
 
 ScoreTypes
@@ -57,7 +57,7 @@ ChainbreakEnergyCreator::score_types_for_method() const
 }
 
 
-ChainbreakEnergy::ChainbreakEnergy() : parent( methods::EnergyMethodCreatorOP( new ChainbreakEnergyCreator ) )
+ChainbreakEnergy::ChainbreakEnergy() : parent( utility::pointer::make_shared< ChainbreakEnergyCreator >() )
 {}
 
 

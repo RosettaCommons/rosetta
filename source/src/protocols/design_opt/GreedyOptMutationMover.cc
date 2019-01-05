@@ -127,12 +127,12 @@ GreedyOptMutationMover::~GreedyOptMutationMover()= default;
 //creators
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP GreedyOptMutationMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new GreedyOptMutationMover );
+// XRW TEMP  return utility::pointer::make_shared< GreedyOptMutationMover >();
 // XRW TEMP }
 
 protocols::moves::MoverOP
 GreedyOptMutationMover::clone() const{
-	return protocols::moves::MoverOP( new GreedyOptMutationMover( *this ) );
+	return utility::pointer::make_shared< GreedyOptMutationMover >( *this );
 }
 
 //name getters
@@ -999,7 +999,7 @@ std::string GreedyOptMutationMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 GreedyOptMutationMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new GreedyOptMutationMover );
+	return utility::pointer::make_shared< GreedyOptMutationMover >();
 }
 
 void GreedyOptMutationMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

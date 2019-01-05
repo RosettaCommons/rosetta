@@ -118,7 +118,7 @@ ubi_e2c_modeler::~ubi_e2c_modeler() = default;
 
 //clone
 protocols::moves::MoverOP ubi_e2c_modeler::clone() const {
-	return( protocols::moves::MoverOP( new ubi_e2c_modeler() ) );
+	return( utility::pointer::make_shared< ubi_e2c_modeler >() );
 }
 
 void ubi_e2c_modeler::set_default() {
@@ -734,7 +734,7 @@ void ubi_e2c_modeler::apply( pose::Pose & pose_in ) {
 	}
 
 	using namespace basic::datacache;
-	pose_in.data().set( core::pose::datacache::CacheableDataType::SCORE_MAP, DataCache_CacheableData::DataOP( new basic::datacache::DiagnosticData(score_map_) ) );
+	pose_in.data().set( core::pose::datacache::CacheableDataType::SCORE_MAP, utility::pointer::make_shared< basic::datacache::DiagnosticData >(score_map_) );
 
 	TR << "UBI Outputing structure after " << tries << " times" << std::endl;
 
@@ -810,11 +810,11 @@ ubi_e2c_modeler::setup_move_maps() {
 	using namespace kinematics;
 
 	if ( init_all_dof_map_ ) {
-		all_dof_map_ = core::kinematics::MoveMapOP( new MoveMap( *init_all_dof_map_ ) );
-		k48r_docking_map_ = core::kinematics::MoveMapOP( new MoveMap( *init_k48r_docking_map_ ) );
-		d77_docking_map_ = core::kinematics::MoveMapOP( new MoveMap( *init_d77_docking_map_ ) );
-		docking_map_ = core::kinematics::MoveMapOP( new MoveMap( *init_docking_map_ ) );
-		flex_cter_map_ = core::kinematics::MoveMapOP( new MoveMap( *init_flex_cter_map_ ) );
+		all_dof_map_ = utility::pointer::make_shared< MoveMap >( *init_all_dof_map_ );
+		k48r_docking_map_ = utility::pointer::make_shared< MoveMap >( *init_k48r_docking_map_ );
+		d77_docking_map_ = utility::pointer::make_shared< MoveMap >( *init_d77_docking_map_ );
+		docking_map_ = utility::pointer::make_shared< MoveMap >( *init_docking_map_ );
+		flex_cter_map_ = utility::pointer::make_shared< MoveMap >( *init_flex_cter_map_ );
 
 		TR << "UBI Reinitializing Move Maps" << std::endl;
 		return;
@@ -825,28 +825,28 @@ ubi_e2c_modeler::setup_move_maps() {
 	bool bb = false;
 	bool chi = true;
 
-	k48r_docking_map_ = core::kinematics::MoveMapOP( new MoveMap() );
+	k48r_docking_map_ = utility::pointer::make_shared< MoveMap >();
 	k48r_docking_map_->clear();
 	k48r_docking_map_->set_chi( chi );
 	k48r_docking_map_->set_bb( bb );
 	k48r_docking_map_->set_jump( e2_k48r_jump_, true );
 	k48r_docking_map_->set_jump( e2_d77_jump_, false );
 
-	d77_docking_map_ = core::kinematics::MoveMapOP( new MoveMap() );
+	d77_docking_map_ = utility::pointer::make_shared< MoveMap >();
 	d77_docking_map_->clear();
 	d77_docking_map_->set_chi( chi );
 	d77_docking_map_->set_bb( bb );
 	d77_docking_map_->set_jump( e2_k48r_jump_, false );
 	d77_docking_map_->set_jump( e2_d77_jump_, true );
 
-	docking_map_ = core::kinematics::MoveMapOP( new MoveMap() );
+	docking_map_ = utility::pointer::make_shared< MoveMap >();
 	docking_map_->clear();
 	docking_map_->set_chi( chi );
 	docking_map_->set_bb( bb );
 	docking_map_->set_jump( e2_k48r_jump_, true );
 	docking_map_->set_jump( e2_d77_jump_, true );
 
-	flex_cter_map_ = core::kinematics::MoveMapOP( new MoveMap() );
+	flex_cter_map_ = utility::pointer::make_shared< MoveMap >();
 	flex_cter_map_->clear();
 	flex_cter_map_->set_chi( chi );
 	flex_cter_map_->set_bb( bb );
@@ -863,7 +863,7 @@ ubi_e2c_modeler::setup_move_maps() {
 		flex_cter_map_->set_bb( d77_end_ - ( flex_cter_ + 2 ), true );
 	}
 
-	all_dof_map_ = core::kinematics::MoveMapOP( new MoveMap() );
+	all_dof_map_ = utility::pointer::make_shared< MoveMap >();
 	all_dof_map_->clear();
 	all_dof_map_->set_chi( chi );
 	all_dof_map_->set_bb( bb );
@@ -997,10 +997,10 @@ ubi_e2c_modeler::initial_cter_perturbation(
 	perturb_min_cter->add_mover( min_mover );
 
 	MonteCarloOP mc;
-	mc = MonteCarloOP( new moves::MonteCarlo( pose_in, *lowres_cst_scorefxn_,temperature_) );
+	mc = utility::pointer::make_shared< moves::MonteCarlo >( pose_in, *lowres_cst_scorefxn_,temperature_);
 	TrialMoverOP cter_pert_trial( new TrialMover( perturb_min_cter, mc ) );
 	RepeatMoverOP cter_cycle;
-	cter_cycle = RepeatMoverOP( new RepeatMover( cter_pert_trial, 40 ) ); // cycles
+	cter_cycle = utility::pointer::make_shared< RepeatMover >( cter_pert_trial, 40 ); // cycles
 	cter_cycle->apply( pose_in );
 	mc->recover_low( pose_in );
 
@@ -1142,8 +1142,8 @@ ubi_e2c_modeler::init_k48r_perturbation(
 			rigid::RigidBodyPerturbNoCenterMover( e2_k48r_jump_, 10.0, // rot_magnitude
 			1.0 ) ); // trans_magnitude_
 		MonteCarloOP mc;
-		mc = MonteCarloOP( new moves::MonteCarlo( e2_k48r, *dock_lowres_scorefxn_,
-			temperature_ ) );
+		mc = utility::pointer::make_shared< moves::MonteCarlo >( e2_k48r, *dock_lowres_scorefxn_,
+			temperature_ );
 		TrialMoverOP dock_trial( new TrialMover( dock_e2_mono_ub, mc ) );
 		Size const cycles( 50 );
 		RepeatMoverOP rbp_cycle( new RepeatMover( dock_trial, cycles ) );
@@ -1426,11 +1426,11 @@ ubi_e2c_modeler::centroid_mode_perturbation(
 		perturb_min_cter->add_mover( min_mover );
 
 		MonteCarloOP c_ter_mc;
-		c_ter_mc = MonteCarloOP( new moves::MonteCarlo( pose_in, *lowres_cst_scorefxn_,
-			temperature_ ) );
+		c_ter_mc = utility::pointer::make_shared< moves::MonteCarlo >( pose_in, *lowres_cst_scorefxn_,
+			temperature_ );
 		TrialMoverOP cter_pert_trial( new TrialMover( perturb_min_cter,
 			c_ter_mc ) );
-		cter_cycle = RepeatMoverOP( new RepeatMover( cter_pert_trial, 10 ) ); // cycles
+		cter_cycle = utility::pointer::make_shared< RepeatMover >( cter_pert_trial, 10 ); // cycles
 	}
 
 	//SequenceMoverOP dock_n_perturb( new SequenceMover() );
@@ -1546,7 +1546,7 @@ ubi_e2c_modeler::fullatom_mode_perturbation(
 		pack_scorefxn_, tf_ ) );
 
 	MonteCarloOP mc;
-	mc = MonteCarloOP( new moves::MonteCarlo( pose_in, *dockfa_cst_scorefxn_,temperature_) );
+	mc = utility::pointer::make_shared< moves::MonteCarlo >( pose_in, *dockfa_cst_scorefxn_,temperature_);
 
 	// cter movers
 
@@ -1567,7 +1567,7 @@ ubi_e2c_modeler::fullatom_mode_perturbation(
 	perturb_min_cter->add_mover( flex_cter_min_mover );
 
 	TrialMoverOP cter_pert_trial( new TrialMover( perturb_min_cter, mc ) );
-	cter_mover_rot = RepeatMoverOP( new RepeatMover( cter_pert_trial, 10 ) ); // cycles
+	cter_mover_rot = utility::pointer::make_shared< RepeatMover >( cter_pert_trial, 10 ); // cycles
 
 	SequenceMoverOP cter_mover_repack( new SequenceMover() );
 	cter_mover_repack->add_mover( cter_mover_rot );
@@ -1680,7 +1680,7 @@ ubi_e2c_modeler::initial_repack(
 	TR << "UBI Initial Repack" << std::endl;
 
 	moves::MonteCarloOP mc;
-	mc = moves::MonteCarloOP( new moves::MonteCarlo( pose_in, *pack_scorefxn_, temperature_ ) );
+	mc = utility::pointer::make_shared< moves::MonteCarlo >( pose_in, *pack_scorefxn_, temperature_ );
 
 	setup_packer_task( pose_in );
 	// restrict_to_interfacial_loop_packing( pose_in );
@@ -1709,20 +1709,20 @@ ubi_e2c_modeler::setup_packer_task(
 
 
 	if ( init_task_factory_ ) {
-		tf_ = core::pack::task::TaskFactoryOP( new TaskFactory( *init_task_factory_ ) );
+		tf_ = utility::pointer::make_shared< TaskFactory >( *init_task_factory_ );
 		TR << "UBI Reinitializing Packer Task" << std::endl;
 		return;
 	} else {
-		tf_ = core::pack::task::TaskFactoryOP( new TaskFactory );
+		tf_ = utility::pointer::make_shared< TaskFactory >();
 	}
 
 	TR << "UBI Setting Up Packer Task" << std::endl;
 
-	tf_->push_back( TaskOperationCOP( new OperateOnCertainResidues( ResLvlTaskOperationOP( new PreventRepackingRLT ), ResFilterOP( new ResidueLacksProperty("PROTEIN") ) ) ) );
-	tf_->push_back( TaskOperationCOP( new InitializeFromCommandline ) );
-	tf_->push_back( TaskOperationCOP( new IncludeCurrent ) );
-	tf_->push_back( TaskOperationCOP( new RestrictToRepacking ) );
-	tf_->push_back( TaskOperationCOP( new NoRepackDisulfides ) );
+	tf_->push_back( utility::pointer::make_shared< OperateOnCertainResidues >( utility::pointer::make_shared< PreventRepackingRLT >(), utility::pointer::make_shared< ResidueLacksProperty >("PROTEIN") ) );
+	tf_->push_back( utility::pointer::make_shared< InitializeFromCommandline >() );
+	tf_->push_back( utility::pointer::make_shared< IncludeCurrent >() );
+	tf_->push_back( utility::pointer::make_shared< RestrictToRepacking >() );
+	tf_->push_back( utility::pointer::make_shared< NoRepackDisulfides >() );
 
 	// incorporating Ian's UnboundRotamer operation.
 	// note that nothing happens if unboundrot option is inactive!
@@ -1760,7 +1760,7 @@ ubi_e2c_modeler::restrict_to_interfacial_loop_packing(
 	utility::vector1_size rb_jumps;
 	rb_jumps.push_back( e2_k48r_jump_ );
 	rb_jumps.push_back( e2_d77_jump_ );
-	tf_->push_back( TaskOperationCOP( new protocols::simple_task_operations::RestrictToInterface( rb_jumps, loop_residues) ) );
+	tf_->push_back( utility::pointer::make_shared< protocols::simple_task_operations::RestrictToInterface >( rb_jumps, loop_residues) );
 
 	TR << "UBI Done: Restricting To Interface" << std::endl;
 	return;
@@ -2510,7 +2510,7 @@ void ubi_e2c_modeler::monoub_apply( pose::Pose & pose_in ) {
 	score_map_["AJ_monoub_rms"] = monoub_calc_Lrmsd( pose_in, start_pose );
 
 	pose_in.data().set( core::pose::datacache::CacheableDataType::SCORE_MAP,
-		DataCache_CacheableData::DataOP( new basic::datacache::DiagnosticData(score_map_) ));
+		utility::pointer::make_shared< basic::datacache::DiagnosticData >(score_map_));
 
 	TR << "UBI Mono Ubi Outputing structure after " << tries << " times"
 		<< std::endl;
@@ -2559,9 +2559,9 @@ ubi_e2c_modeler::monoub_setup_move_maps() {
 	using namespace kinematics;
 
 	if ( init_all_dof_map_ ) {
-		monoub_all_dof_map_ = core::kinematics::MoveMapOP( new MoveMap( *init_monoub_all_dof_map_ ) );
-		monoub_docking_map_ = core::kinematics::MoveMapOP( new MoveMap( *init_monoub_docking_map_ ) );
-		monoub_flex_cter_map_ = core::kinematics::MoveMapOP( new MoveMap( *init_monoub_flex_cter_map_ ) );
+		monoub_all_dof_map_ = utility::pointer::make_shared< MoveMap >( *init_monoub_all_dof_map_ );
+		monoub_docking_map_ = utility::pointer::make_shared< MoveMap >( *init_monoub_docking_map_ );
+		monoub_flex_cter_map_ = utility::pointer::make_shared< MoveMap >( *init_monoub_flex_cter_map_ );
 
 		TR << "UBI Mono Ubi Reinitializing Move Maps" << std::endl;
 		return;
@@ -2572,13 +2572,13 @@ ubi_e2c_modeler::monoub_setup_move_maps() {
 	bool bb = false;
 	bool chi = true;
 
-	monoub_docking_map_ = core::kinematics::MoveMapOP( new MoveMap() );
+	monoub_docking_map_ = utility::pointer::make_shared< MoveMap >();
 	monoub_docking_map_->clear();
 	monoub_docking_map_->set_chi( chi );
 	monoub_docking_map_->set_bb( bb );
 	monoub_docking_map_->set_jump( 1, true );
 
-	monoub_flex_cter_map_ = core::kinematics::MoveMapOP( new MoveMap() );
+	monoub_flex_cter_map_ = utility::pointer::make_shared< MoveMap >();
 	monoub_flex_cter_map_->clear();
 	monoub_flex_cter_map_->set_chi( chi );
 	monoub_flex_cter_map_->set_bb( bb );
@@ -2587,7 +2587,7 @@ ubi_e2c_modeler::monoub_setup_move_maps() {
 		monoub_flex_cter_map_->set_bb( monoub_end_ - i, true );
 	}
 
-	monoub_all_dof_map_ = core::kinematics::MoveMapOP( new MoveMap() );
+	monoub_all_dof_map_ = utility::pointer::make_shared< MoveMap >();
 	monoub_all_dof_map_->clear();
 	monoub_all_dof_map_->set_chi( chi );
 	monoub_all_dof_map_->set_bb( bb );
@@ -2694,10 +2694,10 @@ ubi_e2c_modeler::monoub_initial_cter_perturbation(
 	perturb_min_cter->add_mover( min_mover );
 
 	MonteCarloOP mc;
-	mc = MonteCarloOP( new moves::MonteCarlo( pose_in, *lowres_cst_scorefxn_,temperature_) );
+	mc = utility::pointer::make_shared< moves::MonteCarlo >( pose_in, *lowres_cst_scorefxn_,temperature_);
 	TrialMoverOP cter_pert_trial( new TrialMover( perturb_min_cter, mc ) );
 	RepeatMoverOP cter_cycle;
-	cter_cycle = RepeatMoverOP( new RepeatMover( cter_pert_trial, 40 ) ); // cycles
+	cter_cycle = utility::pointer::make_shared< RepeatMover >( cter_pert_trial, 40 ); // cycles
 	cter_cycle->apply( pose_in );
 	mc->recover_low( pose_in );
 
@@ -2840,11 +2840,11 @@ ubi_e2c_modeler::monoub_centroid_mode_perturbation(
 		perturb_min_cter->add_mover( min_mover );
 
 		MonteCarloOP c_ter_mc;
-		c_ter_mc = MonteCarloOP( new moves::MonteCarlo( pose_in, *lowres_cst_scorefxn_,
-			temperature_ ) );
+		c_ter_mc = utility::pointer::make_shared< moves::MonteCarlo >( pose_in, *lowres_cst_scorefxn_,
+			temperature_ );
 		TrialMoverOP cter_pert_trial( new TrialMover( perturb_min_cter,
 			c_ter_mc ) );
-		cter_cycle = RepeatMoverOP( new RepeatMover( cter_pert_trial, 10 ) ); // cycles
+		cter_cycle = utility::pointer::make_shared< RepeatMover >( cter_pert_trial, 10 ); // cycles
 	}
 
 	docker->add_mover( dock_e2_monoub, 0.75 );
@@ -2924,7 +2924,7 @@ ubi_e2c_modeler::monoub_fullatom_mode_perturbation(
 		pack_scorefxn_, tf_ ) );
 
 	MonteCarloOP mc;
-	mc = MonteCarloOP( new moves::MonteCarlo( pose_in, *dockfa_cst_scorefxn_,temperature_) );
+	mc = utility::pointer::make_shared< moves::MonteCarlo >( pose_in, *dockfa_cst_scorefxn_,temperature_);
 
 	// cter movers
 
@@ -2945,7 +2945,7 @@ ubi_e2c_modeler::monoub_fullatom_mode_perturbation(
 	perturb_min_cter->add_mover( flex_cter_min_mover );
 
 	TrialMoverOP cter_pert_trial( new TrialMover( perturb_min_cter, mc ) );
-	cter_mover_rot = RepeatMoverOP( new RepeatMover( cter_pert_trial, 10 ) ); // cycles
+	cter_mover_rot = utility::pointer::make_shared< RepeatMover >( cter_pert_trial, 10 ); // cycles
 
 	SequenceMoverOP cter_mover_repack( new SequenceMover() );
 	cter_mover_repack->add_mover( cter_mover_rot );

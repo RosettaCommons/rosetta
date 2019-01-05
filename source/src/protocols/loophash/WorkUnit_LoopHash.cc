@@ -79,7 +79,7 @@ WorkUnit_LoopHash::init_from_cmd( const core::Size mpi_rank )
 	}
 	core::Size assigned_num = mpi_rank % num_partitions;
 	try{
-		library_ = LoopHashLibraryOP( new LoopHashLibrary( loop_sizes, num_partitions, assigned_num ) );
+		library_ = utility::pointer::make_shared< LoopHashLibrary >( loop_sizes, num_partitions, assigned_num );
 		// load initial library from disk
 		library_->load_mergeddb();
 	}

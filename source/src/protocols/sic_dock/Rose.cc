@@ -45,9 +45,9 @@ using std::endl;
 using Vec = numeric::xyzVector<platform::Real>;
 using Mat = numeric::xyzMatrix<platform::Real>;
 
-Rose::Rose(PoseCOP pin                                                     ) : p(std::move(pin)),h(HashCOP( HashOP( new Hash(*p, core::pose::PoseCoordPickMode_BB ,4.0) ) )) {}
-Rose::Rose(PoseCOP pin, core::pose::PoseCoordPickMode const & coord_picker ) : p(std::move(pin)),h(HashCOP( HashOP( new Hash(*p,coord_picker,4.0) ) )) {}
-Rose::Rose(PoseCOP pin, core::id::AtomID_Map<Real>  const & clash_atoms    ) : p(std::move(pin)),h(HashCOP( HashOP( new Hash(*p,clash_atoms ,4.0) ) )) {}
+Rose::Rose(PoseCOP pin                                                     ) : p(std::move(pin)),h(utility::pointer::make_shared< Hash >(*p, core::pose::PoseCoordPickMode_BB ,4.0)) {}
+Rose::Rose(PoseCOP pin, core::pose::PoseCoordPickMode const & coord_picker ) : p(std::move(pin)),h(utility::pointer::make_shared< Hash >(*p,coord_picker,4.0)) {}
+Rose::Rose(PoseCOP pin, core::id::AtomID_Map<Real>  const & clash_atoms    ) : p(std::move(pin)),h(utility::pointer::make_shared< Hash >(*p,clash_atoms ,4.0)) {}
 
 
 bool Rose::clashes(RCR o) const {

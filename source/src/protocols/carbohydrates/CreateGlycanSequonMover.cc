@@ -55,7 +55,7 @@ CreateGlycanSequonMover::CreateGlycanSequonMover():
 	protocols::moves::Mover( CreateGlycanSequonMover::mover_name() )
 {
 	sequons_ = create_sequons();
-	motif_mover_ = CreateSequenceMotifMoverOP( new CreateSequenceMotifMover() );
+	motif_mover_ = utility::pointer::make_shared< CreateSequenceMotifMover >();
 }
 
 CreateGlycanSequonMover::CreateGlycanSequonMover( ResidueSelectorCOP selector ):
@@ -63,7 +63,7 @@ CreateGlycanSequonMover::CreateGlycanSequonMover( ResidueSelectorCOP selector ):
 {
 	set_residue_selector(selector);
 	sequons_ = create_sequons();
-	motif_mover_ = CreateSequenceMotifMoverOP( new CreateSequenceMotifMover() );
+	motif_mover_ = utility::pointer::make_shared< CreateSequenceMotifMover >();
 }
 
 
@@ -86,7 +86,7 @@ CreateGlycanSequonMover::CreateGlycanSequonMover( CreateGlycanSequonMover const 
 	if ( src.scorefxn_ ) {
 		scorefxn_ = src.scorefxn_->clone();
 	}
-	motif_mover_ = CreateSequenceMotifMoverOP( new CreateSequenceMotifMover( *src.motif_mover_ ) );
+	motif_mover_ = utility::pointer::make_shared< CreateSequenceMotifMover >( *src.motif_mover_ );
 	sequons_ = create_sequons();
 }
 
@@ -104,7 +104,7 @@ CreateGlycanSequonMover::set_glycosylation_position(core::Size position, core::p
 	utility::vector1<bool> subset(pose.size(), false);
 	subset[position] = true;
 
-	selector_ = ReturnResidueSubsetSelectorOP( new ReturnResidueSubsetSelector( subset ));
+	selector_ = utility::pointer::make_shared< ReturnResidueSubsetSelector >( subset );
 }
 
 void
@@ -280,14 +280,14 @@ void CreateGlycanSequonMover::provide_xml_schema( utility::tag::XMLSchemaDefinit
 protocols::moves::MoverOP
 CreateGlycanSequonMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new CreateGlycanSequonMover );
+	return utility::pointer::make_shared< CreateGlycanSequonMover >();
 }
 
 /// @brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
 CreateGlycanSequonMover::clone() const
 {
-	return protocols::moves::MoverOP( new CreateGlycanSequonMover( *this ) );
+	return utility::pointer::make_shared< CreateGlycanSequonMover >( *this );
 }
 
 std::string CreateGlycanSequonMover::get_name() const {
@@ -305,7 +305,7 @@ std::string CreateGlycanSequonMover::mover_name() {
 protocols::moves::MoverOP
 CreateGlycanSequonMoverCreator::create_mover() const
 {
-	return protocols::moves::MoverOP( new CreateGlycanSequonMover );
+	return utility::pointer::make_shared< CreateGlycanSequonMover >();
 }
 
 std::string
@@ -355,7 +355,7 @@ CreateGlycanSequonMover::apply( core::pose::Pose& pose ){
 			}
 		}
 
-		ReturnResidueSubsetSelectorOP subset_selector = ReturnResidueSubsetSelectorOP( new ReturnResidueSubsetSelector( new_subset ) );
+		ReturnResidueSubsetSelectorOP subset_selector = utility::pointer::make_shared< ReturnResidueSubsetSelector >( new_subset );
 		motif_mover_->set_residue_selector( subset_selector );
 	} else {
 		motif_mover_->set_residue_selector( selector_ );

@@ -219,7 +219,7 @@ CoreDunbrackFilter::parse_my_tag(
 }
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP CoreDunbrackFilterCreator::create_filter() const { return protocols::filters::FilterOP( new CoreDunbrackFilter ); }
+// XRW TEMP CoreDunbrackFilterCreator::create_filter() const { return utility::pointer::make_shared< CoreDunbrackFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP CoreDunbrackFilterCreator::keyname() const { return "CoreDunbrack"; }
@@ -257,7 +257,7 @@ std::string CoreDunbrackFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 CoreDunbrackFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new CoreDunbrackFilter );
+	return utility::pointer::make_shared< CoreDunbrackFilter >();
 }
 
 void CoreDunbrackFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -80,9 +80,9 @@ public:
 		// Test angle between single helix and normal azis is 0 after transformation
 		// Case: TM domain of the M2 proton channel (single helix)
 
-		m2_pose_ = core::pose::PoseOP( new Pose() );
+		m2_pose_ = utility::pointer::make_shared< Pose >();
 		core::import_pose::pose_from_file( *m2_pose_, "protocols/membrane/1mp6.pdb" , core::import_pose::PDB_file);
-		AddMembraneMoverOP add_memb1 = AddMembraneMoverOP( new AddMembraneMover( "protocols/membrane/1mp6.span" ) );
+		AddMembraneMoverOP add_memb1 = utility::pointer::make_shared< AddMembraneMover >( "protocols/membrane/1mp6.span" );
 		add_memb1->apply( *m2_pose_ );
 
 	}
@@ -268,7 +268,7 @@ public:
 		// Calculate the "vector" representing the helix as the difference
 		// between start & end TM helices.
 		SpanOP helix_span( m2_pose_->conformation().membrane_info()->spanning_topology()->span( 1 ) );
-		EmbeddingDefOP span_embed = EmbeddingDefOP( new EmbeddingDef( *m2_pose_, helix_span->start(), helix_span->end() ) );
+		EmbeddingDefOP span_embed = utility::pointer::make_shared< EmbeddingDef >( *m2_pose_, helix_span->start(), helix_span->end() );
 		Vector helix_axis( span_embed->normal() );
 		normal.normalize();
 		helix_axis.normalize();

@@ -48,7 +48,7 @@ using namespace core::scoring;
 static basic::Tracer TR( "protocols.simple_filters.DisulfideEntropyFilter" );
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP DisulfideEntropyFilterCreator::create_filter() const { return protocols::filters::FilterOP( new DisulfideEntropyFilter ); }
+// XRW TEMP DisulfideEntropyFilterCreator::create_filter() const { return utility::pointer::make_shared< DisulfideEntropyFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP DisulfideEntropyFilterCreator::keyname() const { return "DisulfideEntropy"; }
@@ -80,12 +80,12 @@ DisulfideEntropyFilter::~DisulfideEntropyFilter() = default;
 
 filters::FilterOP
 DisulfideEntropyFilter::clone() const {
-	return filters::FilterOP( new DisulfideEntropyFilter( *this ) );
+	return utility::pointer::make_shared< DisulfideEntropyFilter >( *this );
 }
 
 filters::FilterOP
 DisulfideEntropyFilter::fresh_instance() const {
-	return filters::FilterOP( new DisulfideEntropyFilter() );
+	return utility::pointer::make_shared< DisulfideEntropyFilter >();
 }
 
 core::Real
@@ -342,7 +342,7 @@ std::string DisulfideEntropyFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 DisulfideEntropyFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new DisulfideEntropyFilter );
+	return utility::pointer::make_shared< DisulfideEntropyFilter >();
 }
 
 void DisulfideEntropyFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -72,12 +72,12 @@ public:// virtual constructor
 
 	// @brief make clone
 	filters::FilterOP clone() const override {
-		return filters::FilterOP(new IntraRepeatContactFilter( *this ));
+		return utility::pointer::make_shared< IntraRepeatContactFilter >( *this );
 	}
 
 	// @brief make fresh instance
 	filters::FilterOP fresh_instance() const override {
-		return filters::FilterOP(new IntraRepeatContactFilter() );
+		return utility::pointer::make_shared< IntraRepeatContactFilter >();
 	}
 
 

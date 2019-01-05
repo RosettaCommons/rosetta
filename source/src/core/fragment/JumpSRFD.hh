@@ -50,13 +50,13 @@ public:
 
 	/// @brief clone
 	SingleResidueFragDataOP clone() const override {
-		return SingleResidueFragDataOP( new UpJumpSRFD( *this ) );
+		return utility::pointer::make_shared< UpJumpSRFD >( *this );
 	};
 
 	/// @brief create a new instance of this object
 
 	SingleResidueFragDataOP create() const override {
-		return SingleResidueFragDataOP( new UpJumpSRFD() );
+		return utility::pointer::make_shared< UpJumpSRFD >();
 	}
 
 	bool apply( pose::Pose&, Size const, Frame const& ) const override {
@@ -144,13 +144,13 @@ public:
 
 	/// @brief clone
 	SingleResidueFragDataOP clone() const override {
-		return SingleResidueFragDataOP( new DownJumpSRFD( *this ) );
+		return utility::pointer::make_shared< DownJumpSRFD >( *this );
 	};
 
 	/// @brief create a new instance of this object
 
 	SingleResidueFragDataOP create() const override {
-		return SingleResidueFragDataOP( new DownJumpSRFD() );
+		return utility::pointer::make_shared< DownJumpSRFD >();
 	}
 
 	/// @brief set value of jump

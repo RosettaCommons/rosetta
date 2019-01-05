@@ -104,12 +104,12 @@ DNAClashCheckFilter::~DNAClashCheckFilter() = default;
 
 protocols::filters::FilterOP
 DNAClashCheckFilter::fresh_instance() const{
-	return protocols::filters::FilterOP( new DNAClashCheckFilter() );
+	return utility::pointer::make_shared< DNAClashCheckFilter >();
 }
 
 protocols::filters::FilterOP
 DNAClashCheckFilter::clone() const{
-	return protocols::filters::FilterOP( new DNAClashCheckFilter( *this ) );
+	return utility::pointer::make_shared< DNAClashCheckFilter >( *this );
 }
 
 // @brief getters
@@ -177,7 +177,7 @@ DNAClashCheckFilter::parse_my_tag(
 }
 
 protocols::filters::FilterOP
-DNAClashCheckFilterCreator::create_filter() const { return protocols::filters::FilterOP( new DNAClashCheckFilter ); }
+DNAClashCheckFilterCreator::create_filter() const { return utility::pointer::make_shared< DNAClashCheckFilter >(); }
 
 std::string
 DNAClashCheckFilterCreator::keyname() const { return "DNAClashCheck"; }

@@ -46,7 +46,7 @@ FiberDiffractionLoaderCreator::~FiberDiffractionLoaderCreator() = default;
 
 ResourceLoaderOP
 FiberDiffractionLoaderCreator::create_resource_loader() const {
-	return ResourceLoaderOP( new FiberDiffractionLoader );
+	return utility::pointer::make_shared< FiberDiffractionLoader >();
 }
 
 string
@@ -92,7 +92,7 @@ FiberDiffractionLoader::create_resource(
 
 ResourceOptionsOP
 FiberDiffractionLoader::default_options() const {
-	return ResourceOptionsOP( new FiberDiffractionOptions() );
+	return utility::pointer::make_shared< FiberDiffractionOptions >();
 }
 
 } // namespace

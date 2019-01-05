@@ -41,7 +41,7 @@ namespace buns {
 static basic::Tracer TR( "devel.buns.BuriedUnsatHbondFilter2" );
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP BuriedUnsatHbondFilter2Creator::create_filter() const { return protocols::filters::FilterOP( new BuriedUnsatHbondFilter2 ); }
+// XRW TEMP BuriedUnsatHbondFilter2Creator::create_filter() const { return utility::pointer::make_shared< BuriedUnsatHbondFilter2 >(); }
 
 // XRW TEMP std::string
 // XRW TEMP BuriedUnsatHbondFilter2Creator::keyname() const { return "BuriedUnsatHbonds2"; }
@@ -75,9 +75,9 @@ BuriedUnsatHbondFilter2::parse_my_tag( utility::tag::TagCOP tag, basic::datacach
 	jump_num_ = tag->getOption<core::Size>( "jump_number", 1 );
 	upper_threshold_ = tag->getOption<core::Size>( "cutoff", 20 );
 
-	// calc_ = devel::buns::BuriedUnsatisfiedPolarsCalculator2OP( new devel::buns::BuriedUnsatisfiedPolarsCalculator2("default") );
+	// calc_ = utility::pointer::make_shared< devel::buns::BuriedUnsatisfiedPolarsCalculator2 >("default");
 	//  sboyken NEED DIFFERENT NAME THAN "default" OTHERWISE DOES NOT PLAY NICE WHEN CALL MULTIPLE UNSAT FILTERS WITHIN SAME XML!!!
-	calc_ = devel::buns::BuriedUnsatisfiedPolarsCalculator2OP( new devel::buns::BuriedUnsatisfiedPolarsCalculator2("bunsat_calc2_default_weak_bunsat_calc") );
+	calc_ = utility::pointer::make_shared< devel::buns::BuriedUnsatisfiedPolarsCalculator2 >("bunsat_calc2_default_weak_bunsat_calc");
 
 	if ( tag->hasOption("generous_hbonds") ) {
 		calc_->set_generous_hbonds(tag->getOption<bool>( "generous_hbonds", true  ));
@@ -206,11 +206,11 @@ BuriedUnsatHbondFilter2::compute( core::pose::Pose const & pose ) const {
 }
 
 //protocols::filters::FilterOP BuriedUnsatHbondFilter2::clone() const {
-// return protocols::filters::FilterOP( new BuriedUnsatHbondFilter2( *this ) );
+// return utility::pointer::make_shared< BuriedUnsatHbondFilter2 >( *this );
 //}
 //
 //protocols::filters::FilterOP BuriedUnsatHbondFilter2::fresh_instance() const{
-// return protocols::filters::FilterOP( new BuriedUnsatHbondFilter2() );
+// return utility::pointer::make_shared< BuriedUnsatHbondFilter2 >();
 //}
 
 void
@@ -256,7 +256,7 @@ std::string BuriedUnsatHbondFilter2Creator::keyname() const {
 
 protocols::filters::FilterOP
 BuriedUnsatHbondFilter2Creator::create_filter() const {
-	return protocols::filters::FilterOP( new BuriedUnsatHbondFilter2 );
+	return utility::pointer::make_shared< BuriedUnsatHbondFilter2 >();
 }
 
 void BuriedUnsatHbondFilter2Creator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

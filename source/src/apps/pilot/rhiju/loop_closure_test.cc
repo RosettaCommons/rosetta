@@ -173,14 +173,14 @@ extend_loop( pose::Pose & pose, utility::vector1< Size > const & loop_residues )
 ///////////////////////////////////////////////////////////////////////////////
 void
 read_native_pose(  pose::PoseOP & native_pose,
-									 core::chemical::ResidueTypeSetCAP & rsd_set ){
+	core::chemical::ResidueTypeSetCAP & rsd_set ){
 
 	using namespace core::options;
 	using namespace core::options::OptionKeys;
 	using namespace core::pose;
 
-	if (option[ in::file::native ].user() ) {
-		native_pose = PoseOP( new Pose );
+	if ( option[ in::file::native ].user() ) {
+		native_pose = utility::pointer::make_shared< Pose >();
 		std::string native_pdb_file  = option[ in::file::native ];
 		io::pdb::pose_from_file( *native_pose, *rsd_set, native_pdb_file , core::import_pose::PDB_file);
 	}
@@ -189,8 +189,8 @@ read_native_pose(  pose::PoseOP & native_pose,
 ////////////////////////////////////////////////////////////////////
 void
 setup_pose_with_loop( pose::Pose & pose,
-											utility::vector1< Size > const & loop_residues,
-											protocols::loops::Loop & loop ){
+	utility::vector1< Size > const & loop_residues,
+	protocols::loops::Loop & loop ){
 
 	using namespace core::kinematics;
 	using namespace core::options;
@@ -222,26 +222,26 @@ setup_pose_with_loop( pose::Pose & pose,
 
 
 ///////////////////////////////////////////////////////////////////////////////
-	//void
-	//copy_dofs_outside_loop(){
-// 	std::map< Size, Size > res_map;
-// 	FArray1D<bool> is_loop( pose.size(), false );
-// 	for ( Size i = 1; i <= loop_residues.size(); i++ ) is_loop( loop_residues[ i ] ) = true;
-// 	for ( Size n = 1; n <= pose.size(); n++ ) {
-// 		if (!is_loop( n ) ) {
-// 			res_map[ n ] = n;
-// 			std::cout << "will copy dofs " << n << std::endl;
-// 		}
-// 	}
-// 	copy_dofs( pose, pose_input, res_map );
-// 	pose.dump_pdb( "copy_dofs.pdb" );
+//void
+//copy_dofs_outside_loop(){
+//  std::map< Size, Size > res_map;
+//  FArray1D<bool> is_loop( pose.size(), false );
+//  for ( Size i = 1; i <= loop_residues.size(); i++ ) is_loop( loop_residues[ i ] ) = true;
+//  for ( Size n = 1; n <= pose.size(); n++ ) {
+//   if (!is_loop( n ) ) {
+//    res_map[ n ] = n;
+//    std::cout << "will copy dofs " << n << std::endl;
+//   }
+//  }
+//  copy_dofs( pose, pose_input, res_map );
+//  pose.dump_pdb( "copy_dofs.pdb" );
 
 
 ///////////////////////////////////////////////////////////////////////////////
 void
 ccd_loop_close( pose::Pose & pose,
-								utility::vector1< Size > const & loop_residues,
-								protocols::loops::Loop const& loop )
+	utility::vector1< Size > const & loop_residues,
+	protocols::loops::Loop const& loop )
 {
 
 	using namespace core::kinematics;
@@ -258,12 +258,12 @@ ccd_loop_close( pose::Pose & pose,
 
 	///// CCD close
 	//CCDLoopClosureMover ccd_closer( loop, movemap );
-	//	ccd_closer.set_ccd_cycles( 1000 );
-	//	ccd_closer.apply( pose );
+	// ccd_closer.set_ccd_cycles( 1000 );
+	// ccd_closer.apply( pose );
 	Real forward_deviation, backward_deviation, torsion_delta, rama_delta;
 	fast_ccd_loop_closure( pose, *movemap, loop.start(), loop.stop(), loop.cut(),
-												 10000, 0.0000001, false, 0.5, 10, 50, 75,
-												 forward_deviation, backward_deviation, torsion_delta, rama_delta );
+		10000, 0.0000001, false, 0.5, 10, 50, 75,
+		forward_deviation, backward_deviation, torsion_delta, rama_delta );
 	pose.dump_pdb( "ccd_closed.pdb" );
 }
 
@@ -271,20 +271,20 @@ ccd_loop_close( pose::Pose & pose,
 ///////////////////////////////////////////////////////////////////////////
 void
 output_chainTORS( utility::vector1< core::Real > const & dt_ang,
-									utility::vector1< core::Real > const & db_ang,
-									utility::vector1< core::Real > const & db_len ) {
+	utility::vector1< core::Real > const & db_ang,
+	utility::vector1< core::Real > const & db_len ) {
 
 	std::cout << "------  chainTORS output ---- " << std::endl;
-	for (Size i = 1; i <= ( dt_ang.size()/3) ; i++) {
+	for ( Size i = 1; i <= ( dt_ang.size()/3) ; i++ ) {
 
 		std::cout << "TORSIONS: ";
-		for (Size j = 1; j <= 3; j++) std::cout << F(8,3,dt_ang[ 3*(i-1)+ j ]) << " ";
+		for ( Size j = 1; j <= 3; j++ ) std::cout << F(8,3,dt_ang[ 3*(i-1)+ j ]) << " ";
 
 		std::cout << "   BOND_ANGLES: ";
-		for (Size j = 1; j <= 3; j++) std::cout << F(8,3,db_ang[ 3*(i-1)+ j ]) << " ";
+		for ( Size j = 1; j <= 3; j++ ) std::cout << F(8,3,db_ang[ 3*(i-1)+ j ]) << " ";
 
 		std::cout << "   BOND_LENGTHS: ";
-		for (Size j = 1; j <= 3; j++) std::cout << F(8,3,db_len[ 3*(i-1)+ j ]) << " ";
+		for ( Size j = 1; j <= 3; j++ ) std::cout << F(8,3,db_len[ 3*(i-1)+ j ]) << " ";
 
 		std::cout << std::endl;
 
@@ -294,23 +294,23 @@ output_chainTORS( utility::vector1< core::Real > const & dt_ang,
 /////////////////////////////////////////////////////////////////////////////////////
 void
 fill_chainTORS_info( pose::Pose const & pose,
-					 utility::vector1<utility::vector1<Real> > & atoms,
-					 utility::vector1<Real> & dt_ang,
-					 utility::vector1<Real> & db_ang,
-					 utility::vector1<Real> & db_len,
-					 Size const & start_res_ ,
-					 Size const & end_res_,
-					 bool const verbose = true ) {
+	utility::vector1<utility::vector1<Real> > & atoms,
+	utility::vector1<Real> & dt_ang,
+	utility::vector1<Real> & db_ang,
+	utility::vector1<Real> & db_len,
+	Size const & start_res_ ,
+	Size const & end_res_,
+	bool const verbose = true ) {
 
 	using namespace numeric::kinematic_closure;
 
 	if ( verbose ) std::cout << "About to run chainTORS" << std::endl;
 
 	Size ind = 1;
-	for (Size i =  start_res_ - 1;  i <= end_res_ + 1;		 i++) {
+	for ( Size i =  start_res_ - 1;  i <= end_res_ + 1;   i++ ) {
 		if ( verbose ) std::cout << "Filling residue " << i << std::endl;
 		conformation::Residue res = pose.residue(i);
-		for (Size j=1; j<=3; j++) { // DJM: just keeping N, CA, C atoms. We assume these are always the first 3.  BAD -- PROTEIN ONLY ASSUMPTION -- How about metal ions with only 1 atom?
+		for ( Size j=1; j<=3; j++ ) { // DJM: just keeping N, CA, C atoms. We assume these are always the first 3.  BAD -- PROTEIN ONLY ASSUMPTION -- How about metal ions with only 1 atom?
 			atoms[ind].resize(3);
 			atoms[ind][1] = static_cast<Real> (res.xyz(j).x());
 			atoms[ind][2] = static_cast<Real> (res.xyz(j).y());
@@ -324,16 +324,16 @@ fill_chainTORS_info( pose::Pose const & pose,
 
 	chainTORS(atoms.size(), atoms, dt_ang, db_ang, db_len, R0, Q0);
 
-	if ( verbose )	output_chainTORS( dt_ang, db_ang, db_len );
+	if ( verbose ) output_chainTORS( dt_ang, db_ang, db_len );
 
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
 void
 KIC_loop_close( pose::Pose & pose,
-								protocols::loops::Loop const & loop,
-								utility::vector1< pose::PoseOP > & pose_list,
-								bool const verbose = false ){
+	protocols::loops::Loop const & loop,
+	utility::vector1< pose::PoseOP > & pose_list,
+	bool const verbose = false ){
 
 	using namespace core::kinematics;
 	using namespace protocols::loops;
@@ -358,7 +358,7 @@ KIC_loop_close( pose::Pose & pose,
 	Size const seg_len = end_res_ - start_res_ + 1;
 	atoms.resize( (seg_len + 2) * 3); // one extra residue on each side to establish the geometric frame
 
-	//	fill_chainTORS_info( reference_pose, atoms, save_t_ang, save_b_ang, save_b_len, start_res_, end_res_, verbose );
+	// fill_chainTORS_info( reference_pose, atoms, save_t_ang, save_b_ang, save_b_len, start_res_, end_res_, verbose );
 	fill_chainTORS_info( pose, atoms, dt_ang, db_ang, db_len, start_res_, end_res_, verbose );
 
 	// Need to fix bond lengths and angles at cutpoint
@@ -378,9 +378,9 @@ KIC_loop_close( pose::Pose & pose,
 	///////////////////////////////////////////////////////////////////////////////
 	// omega from CCD chain closure looks totally weirdo. Manually reset to 180.0
 	///////////////////////////////////////////////////////////////////////////////
-	for (Size i = 1; i <= seg_len; i++)		dt_ang[ 3*i + 3 ] = 180.0;
+	for ( Size i = 1; i <= seg_len; i++ )  dt_ang[ 3*i + 3 ] = 180.0;
 
-	if ( verbose ) 	output_chainTORS( dt_ang, db_ang, db_len );
+	if ( verbose )  output_chainTORS( dt_ang, db_ang, db_len );
 
 	order[1]=1;
 	order[2]=2;
@@ -403,16 +403,16 @@ KIC_loop_close( pose::Pose & pose,
 	bridgeObjects(atoms, dt_ang, db_ang, db_len, pivots, order, t_ang, b_ang, b_len, nsol);
 	if ( verbose ) std::cout << "Finished bridgeObjects" << std::endl;
 
-	//	std::cout << "Found number of solutions " << t_ang.size() << std::endl;
-	for (Size i = 1; i <= t_ang.size(); i++) {
-		for ( core::Size res = 0; res < seg_len; res++ ){
+	// std::cout << "Found number of solutions " << t_ang.size() << std::endl;
+	for ( Size i = 1; i <= t_ang.size(); i++ ) {
+		for ( core::Size res = 0; res < seg_len; res++ ) {
 
 			Real const phi   = t_ang[ i ][ (3*(res+1)) + 1 ];
 			Real const psi   = t_ang[ i ][ (3*(res+1)) + 2 ];
 			Real const omega = t_ang[ i ][ (3*(res+1)) + 3 ];
 
 			Size const resnum = start_res_ + res;
-			//			std::cout << resnum << " " << phi << " " << psi << " " << omega << std::endl;
+			//   std::cout << resnum << " " << phi << " " << psi << " " << omega << std::endl;
 			pose.set_phi  ( resnum,  phi);
 			pose.set_psi  ( resnum,  psi);
 			pose.set_omega( resnum,  omega);
@@ -426,7 +426,7 @@ KIC_loop_close( pose::Pose & pose,
 		*pose_op = pose;
 		pose_list.push_back( pose_op );
 
-		//		protocols::viewer::clear_conformation_viewers();		exit( 0 );
+		//  protocols::viewer::clear_conformation_viewers();  exit( 0 );
 
 	}
 
@@ -488,13 +488,13 @@ loop_closure_test(){
 
 void
 output_to_silent( Size const count,
-									pose::Pose const & pose,
-									Size const nsol,
-									Size const & sample_residue,
-									utility::vector1< Size > const & loop_residues,
-									pose::PoseOP & native_pose,
-									core::io::silent::SilentFileData & silent_file_data,
-									std::string const & silent_file_out ){
+	pose::Pose const & pose,
+	Size const nsol,
+	Size const & sample_residue,
+	utility::vector1< Size > const & loop_residues,
+	pose::PoseOP & native_pose,
+	core::io::silent::SilentFileData & silent_file_data,
+	std::string const & silent_file_out ){
 
 	using namespace core::io::silent;
 	using namespace core::scoring;
@@ -512,7 +512,7 @@ output_to_silent( Size const count,
 		s.add_energy( "tau"+string_of( k++ ),  pose.psi( loop_residues[m] ) );
 	}
 
-	if ( native_pose ){
+	if ( native_pose ) {
 		s.add_energy( "backbone_rms", rmsd_no_super( pose, *native_pose, is_protein_backbone_including_O ) );
 	}
 
@@ -578,13 +578,13 @@ modeler_closure_test(){
 	(*scorefxn)( pose );
 	output_to_silent( count, pose, 0, sample_residue, loop_residues, native_pose, *silent_file_data, score_all_file_out  );
 
-	for ( Size i = 1; i <= num_bins; i++ ){
+	for ( Size i = 1; i <= num_bins; i++ ) {
 
 		std::cout << "Scanning " << i << " out of " << num_bins << std::endl;
 		Real const phi  = i * ( 360.0 / num_bins );
 		pose.set_phi( sample_residue, phi );
 
-		for ( Size j = 1; j <= num_bins; j++ ){
+		for ( Size j = 1; j <= num_bins; j++ ) {
 
 			Real const psi  = j * ( 360.0 / num_bins );
 			pose.set_psi( sample_residue, psi );
@@ -597,19 +597,19 @@ modeler_closure_test(){
 			/////////////////////////////////////////
 
 			Size const nsol = pose_list.size();
-			for ( Size n = 1; n <= nsol; n++ ){
+			for ( Size n = 1; n <= nsol; n++ ) {
 
-					Real const score = (*scorefxn)( *pose_list[n] );
-					count++;
-					output_to_silent( count, *pose_list[n], nsol, sample_residue, loop_residues, native_pose, *silent_file_data, score_all_file_out  );
-				}
+				Real const score = (*scorefxn)( *pose_list[n] );
+				count++;
+				output_to_silent( count, *pose_list[n], nsol, sample_residue, loop_residues, native_pose, *silent_file_data, score_all_file_out  );
+			}
 
 		}
 	}
 
 	StepWiseLegacyClusterer stepwise_clusterer( silent_file_data );
 	Size max_decoys( 400 );
-	if ( option[ out::nstruct].user() )	 max_decoys =  option[ out::nstruct ];
+	if ( option[ out::nstruct].user() )  max_decoys =  option[ out::nstruct ];
 	stepwise_clusterer.set_max_decoys( max_decoys );
 	utility::vector1< Size > calc_rms_res;
 	calc_rms_res.push_back( sample_residue );
@@ -617,7 +617,7 @@ modeler_closure_test(){
 	stepwise_clusterer.set_calc_rms_res( calc_rms_res );
 	Real cluster_radius( 0.25 );
 	if ( option[ OptionKeys::cluster::radius ].user() ) cluster_radius = option[ OptionKeys::cluster::radius ]();
-	stepwise_clusterer.set_cluster_radius( cluster_radius	);
+	stepwise_clusterer.set_cluster_radius( cluster_radius );
 	stepwise_clusterer.set_rename_tags( true /*option[ rename_tags ]*/ );
 
 	// Do it!
@@ -635,7 +635,7 @@ my_main( void* )
 
 	using namespace core::options;
 
-	if ( option[ modeler ] ){
+	if ( option[ modeler ] ) {
 		modeler_closure_test();
 	} else {
 		loop_closure_test();
@@ -655,49 +655,49 @@ main( int argc, char * argv [] )
 
 	try {
 
-	using namespace core::options;
+		using namespace core::options;
 
-	utility::vector1< Size > blank_size_vector;
-	utility::vector1< std::string > blank_string_vector;
+		utility::vector1< Size > blank_size_vector;
+		utility::vector1< std::string > blank_string_vector;
 
-	//Uh, options?
-	NEW_OPT( cst_file, "Input file for constraints", "default.constraints" );
-	NEW_OPT( s1, "input file(s)", blank_string_vector );
-	NEW_OPT( s2, "input file(s)", blank_string_vector );
-	NEW_OPT( silent1, "input file", blank_string_vector );
-	NEW_OPT( silent2, "input file", blank_string_vector );
-	NEW_OPT( tags1, "input tag(s)", blank_string_vector );
-	NEW_OPT( tags2, "input tag(s)", blank_string_vector );
-	NEW_OPT( slice_res1, "Residues to slice out of starting file", blank_size_vector );
-	NEW_OPT( slice_res2, "Residues to slice out of starting file", blank_size_vector );
-	NEW_OPT( input_res1, "Residues already present in starting file", blank_size_vector );
-	NEW_OPT( input_res2, "Residues already present in starting file2", blank_size_vector );
-	NEW_OPT( pack_weights, "weights for green packing", "standard.wts" );
-	NEW_OPT( score_diff_cut, "score difference cut for clustering", 1000000.0 );
-	NEW_OPT( auto_tune, "autotune rmsd for clustering between 0.1A up to 2.0A", false );
-	NEW_OPT( cut, "cutpoint", 0 );
-	NEW_OPT( sample_res, "cutpoint", 0 );
-	NEW_OPT( modeler, "modeler over 1 residue, close the others...", false );
-	NEW_OPT( loop_res, "Loop residues to remodel", blank_size_vector );
-	NEW_OPT( bin_width, "width of bins", 10.0 );
+		//Uh, options?
+		NEW_OPT( cst_file, "Input file for constraints", "default.constraints" );
+		NEW_OPT( s1, "input file(s)", blank_string_vector );
+		NEW_OPT( s2, "input file(s)", blank_string_vector );
+		NEW_OPT( silent1, "input file", blank_string_vector );
+		NEW_OPT( silent2, "input file", blank_string_vector );
+		NEW_OPT( tags1, "input tag(s)", blank_string_vector );
+		NEW_OPT( tags2, "input tag(s)", blank_string_vector );
+		NEW_OPT( slice_res1, "Residues to slice out of starting file", blank_size_vector );
+		NEW_OPT( slice_res2, "Residues to slice out of starting file", blank_size_vector );
+		NEW_OPT( input_res1, "Residues already present in starting file", blank_size_vector );
+		NEW_OPT( input_res2, "Residues already present in starting file2", blank_size_vector );
+		NEW_OPT( pack_weights, "weights for green packing", "standard.wts" );
+		NEW_OPT( score_diff_cut, "score difference cut for clustering", 1000000.0 );
+		NEW_OPT( auto_tune, "autotune rmsd for clustering between 0.1A up to 2.0A", false );
+		NEW_OPT( cut, "cutpoint", 0 );
+		NEW_OPT( sample_res, "cutpoint", 0 );
+		NEW_OPT( modeler, "modeler over 1 residue, close the others...", false );
+		NEW_OPT( loop_res, "Loop residues to remodel", blank_size_vector );
+		NEW_OPT( bin_width, "width of bins", 10.0 );
 
-	////////////////////////////////////////////////////////////////////////////
-	// setup
-	////////////////////////////////////////////////////////////////////////////
-	devel::init(argc, argv);
+		////////////////////////////////////////////////////////////////////////////
+		// setup
+		////////////////////////////////////////////////////////////////////////////
+		devel::init(argc, argv);
 
 
-	////////////////////////////////////////////////////////////////////////////
-	// end of setup
-	////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		////////////////////////////////////////////////////////////////////////////
 
-	protocols::viewer::viewer_main( my_main );
+		protocols::viewer::viewer_main( my_main );
 
-	exit( 0 );
+		exit( 0 );
 
-	////////////////////////////////////////////////////////////////////////////
-	// end of setup
-	////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		////////////////////////////////////////////////////////////////////////////
 
 	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

@@ -44,7 +44,7 @@ static basic::Tracer tr( "core.scoring.methods.Branch", basic::t_info );
 methods::EnergyMethodOP
 BranchEnergyCreator::create_energy_method( methods::EnergyMethodOptions const & ) const
 {
-	return methods::EnergyMethodOP( new BranchEnergy );
+	return utility::pointer::make_shared< BranchEnergy >();
 }
 
 ScoreTypes
@@ -56,7 +56,7 @@ BranchEnergyCreator::score_types_for_method() const
 }
 
 
-BranchEnergy::BranchEnergy() : parent( methods::EnergyMethodCreatorOP( new BranchEnergyCreator ) )
+BranchEnergy::BranchEnergy() : parent( utility::pointer::make_shared< BranchEnergyCreator >() )
 {}
 
 // Called at the end of the energy evaluation.

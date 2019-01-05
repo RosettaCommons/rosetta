@@ -98,7 +98,7 @@ CoarseRNA_Fragments::initialize_frag_source_pose(){
 		import_pose::pose_from_file( pose, *rsd_set, frag_source_file_ , core::import_pose::PDB_file);
 		core::pose::rna::figure_out_secstruct( pose );
 		frag_source_secstruct_ = core::pose::rna::secstruct_legacy::get_rna_secstruct_legacy( pose );
-		frag_source_pose_ = core::pose::MiniPoseOP( new MiniPose( pose ) );
+		frag_source_pose_ = utility::pointer::make_shared< MiniPose >( pose );
 	} else {
 
 		// Figure out correspondence: P,S,CEN,X,Y --> 1,2,3,4,5. Hopefully!
@@ -135,7 +135,7 @@ CoarseRNA_Fragments::initialize_frag_source_pose(){
 		//  std::cout << "SIZE     ! " << all_res_coords.size() << std::endl;
 		//  std::cout << "SEQUENCE ! " << sequence << std::endl;
 		//  std::cout << "SECSTRUCT! " << frag_source_secstruct_ << std::endl;
-		frag_source_pose_ = core::pose::MiniPoseOP( new MiniPose( all_res_coords, FoldTree( all_res_coords.size() ), sequence ) );
+		frag_source_pose_ = utility::pointer::make_shared< MiniPose >( all_res_coords, FoldTree( all_res_coords.size() ), sequence );
 
 	}
 

@@ -148,12 +148,12 @@ MatDesGreedyOptMutationMover::~MatDesGreedyOptMutationMover()= default;
 //creators
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP MatDesGreedyOptMutationMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new MatDesGreedyOptMutationMover );
+// XRW TEMP  return utility::pointer::make_shared< MatDesGreedyOptMutationMover >();
 // XRW TEMP }
 
 protocols::moves::MoverOP
 MatDesGreedyOptMutationMover::clone() const{
-	return protocols::moves::MoverOP( new MatDesGreedyOptMutationMover( *this ) );
+	return utility::pointer::make_shared< MatDesGreedyOptMutationMover >( *this );
 }
 
 //name getters
@@ -1117,7 +1117,7 @@ std::string MatDesGreedyOptMutationMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 MatDesGreedyOptMutationMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MatDesGreedyOptMutationMover );
+	return utility::pointer::make_shared< MatDesGreedyOptMutationMover >();
 }
 
 void MatDesGreedyOptMutationMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

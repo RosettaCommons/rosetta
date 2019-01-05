@@ -97,7 +97,7 @@ Matcher::~Matcher() = default;
 
 void Matcher::set_upstream_pose( core::pose::Pose const & pose )
 {
-	upstream_pose_ = core::pose::PoseOP( new core::pose::Pose( pose ) );
+	upstream_pose_ = utility::pointer::make_shared< core::pose::Pose >( pose );
 }
 
 void Matcher::set_downstream_pose(
@@ -107,7 +107,7 @@ void Matcher::set_downstream_pose(
 {
 	runtime_assert( orientation_atoms.size() == 3 );
 
-	downstream_pose_ = core::pose::PoseOP( new core::pose::Pose( pose ) );
+	downstream_pose_ = utility::pointer::make_shared< core::pose::Pose >( pose );
 	downstream_orientation_atoms_ = orientation_atoms;
 }
 
@@ -182,7 +182,7 @@ void Matcher::add_upstream_restype_for_constraint(
 	if ( ! upstream_builders_[ cst_id ] ) {
 		upstream::ProteinUpstreamBuilderOP prot_sc_builder( new upstream::ProteinUpstreamBuilder );
 		/// default to dunbrack sampler
-		prot_sc_builder->set_sampler( upstream::ProteinSCSamplerCOP( upstream::ProteinSCSamplerOP( new upstream::DunbrackSCSampler ) ) );
+		prot_sc_builder->set_sampler( utility::pointer::make_shared< upstream::DunbrackSCSampler >() );
 		prot_sc_builder->set_use_input_sidechain( use_input_sc_ );
 		upstream_builders_[ cst_id ] = prot_sc_builder;
 	}
@@ -1569,8 +1569,8 @@ Matcher::initialize_scaffold_build_points()
 	for ( Size ii = 1; ii <= pose_build_resids_.size(); ++ii ) {
 		runtime_assert_msg( pose_build_resids_[ ii ] <= upstream_pose_->size(),
 			"pos file contains position outside of valid range.");
-		all_build_points_[ ii ] = protocols::match::upstream::ScaffoldBuildPointOP( new upstream::OriginalBackboneBuildPoint(
-			upstream_pose_->residue( pose_build_resids_[ ii ] ), ii ) );
+		all_build_points_[ ii ] = utility::pointer::make_shared< upstream::OriginalBackboneBuildPoint >(
+			upstream_pose_->residue( pose_build_resids_[ ii ] ), ii );
 	}
 	return true;
 }
@@ -1634,7 +1634,7 @@ Matcher::initialize_active_site_grid()
 	}*/
 
 	if ( read_gridlig_file_ ) {
-		active_site_grid_ = downstream::ActiveSiteGridOP( new downstream::ActiveSiteGrid );
+		active_site_grid_ = utility::pointer::make_shared< downstream::ActiveSiteGrid >();
 		active_site_grid_->initialize_from_gridlig_file( gridlig_fname_ );
 
 		/*Bool3DGridKinemageWriter writer;
@@ -1643,7 +1643,7 @@ Matcher::initialize_active_site_grid()
 		writer.set_line_color( "green" );
 		writer.write_grid_to_kinemage( ostr, "act_site", active_site_grid_->grid() );*/
 	} else {
-		active_site_grid_ = downstream::ActiveSiteGridOP( new downstream::ActiveSiteGrid );
+		active_site_grid_ = utility::pointer::make_shared< downstream::ActiveSiteGrid >();
 		active_site_grid_->set_bin_width( 0.25 ); /// Same resolution as the bump grid!
 
 		for ( std::list< std::pair< Size, Real > >::const_iterator
@@ -1708,7 +1708,7 @@ Matcher::initialize_active_site_grid()
 void
 Matcher::initialize_occupied_space_hash()
 {
-	occ_space_hash_ = OccupiedSpaceHashOP( new OccupiedSpaceHash );
+	occ_space_hash_ = utility::pointer::make_shared< OccupiedSpaceHash >();
 	occ_space_hash_->set_bounding_box( occ_space_bounding_box_ );
 	occ_space_hash_->set_xyz_bin_widths( euclidean_bin_widths_ );
 	occ_space_hash_->set_euler_bin_widths( euler_bin_widths_ );

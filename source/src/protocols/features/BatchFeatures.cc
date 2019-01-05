@@ -75,16 +75,16 @@ BatchFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session, c
 	using namespace basic::database::schema_generator;
 
 	if ( batch_id ) {
-		PrimaryKey batch_id(Column("batch_id", DbDataTypeOP( new DbInteger() )));
+		PrimaryKey batch_id(Column("batch_id", utility::pointer::make_shared< DbInteger >()));
 
 		ForeignKey protocol_id(
-			Column("protocol_id", DbDataTypeOP( new DbInteger() )),
+			Column("protocol_id", utility::pointer::make_shared< DbInteger >()),
 			"protocols",
 			"protocol_id",
 			true /*defer*/);
 
-		Column name(Column("name", DbDataTypeOP( new DbText() )));
-		Column description(Column("description", DbDataTypeOP( new DbText() )));
+		Column name(Column("name", utility::pointer::make_shared< DbText >()));
+		Column description(Column("description", utility::pointer::make_shared< DbText >()));
 
 		Schema batches("batches", batch_id);
 		batches.add_foreign_key(protocol_id);
@@ -95,16 +95,16 @@ BatchFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session, c
 
 	} else {
 		PrimaryKey batch_id(
-			Column("batch_id", DbDataTypeOP( new DbInteger() ), false /*not null*/, true /*autoincrement*/));
+			Column("batch_id", utility::pointer::make_shared< DbInteger >(), false /*not null*/, true /*autoincrement*/));
 
 		ForeignKey protocol_id(
-			Column("protocol_id", DbDataTypeOP( new DbInteger() )),
+			Column("protocol_id", utility::pointer::make_shared< DbInteger >()),
 			"protocols",
 			"protocol_id",
 			true /*defer*/);
 
-		Column name(Column("name", DbDataTypeOP( new DbText() )));
-		Column description(Column("description", DbDataTypeOP( new DbText() )));
+		Column name(Column("name", utility::pointer::make_shared< DbText >()));
+		Column description(Column("description", utility::pointer::make_shared< DbText >()));
 
 		Schema batches("batches", batch_id);
 		batches.add_foreign_key(protocol_id);

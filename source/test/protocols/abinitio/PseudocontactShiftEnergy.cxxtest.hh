@@ -113,7 +113,7 @@ public:
 			"-in:file:fasta protocols/abinitio/pose_funcs_test.fasta");
 
 		//We read the setup file with the topologyclaimer framework
-		top_bro_OP_ = protocols::topology_broker::TopologyBrokerOP( new  protocols::topology_broker::TopologyBroker() );
+		top_bro_OP_ = utility::pointer::make_shared< protocols::topology_broker::TopologyBroker >();
 		try {
 			add_cmdline_claims(*top_bro_OP_, false);
 		}
@@ -123,7 +123,7 @@ catch (utility::excn::Exception &excn )  {
 }
 
 		the_pose_ = create_test_in_pdb_poseop();
-		pcs_energy_ = PCS_EnergyOP( new PCS_Energy() );
+		pcs_energy_ = utility::pointer::make_shared< PCS_Energy >();
 	}
 
 

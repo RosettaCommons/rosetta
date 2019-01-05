@@ -46,7 +46,7 @@ ElectronDensityLoaderCreator::~ElectronDensityLoaderCreator() = default;
 
 ResourceLoaderOP
 ElectronDensityLoaderCreator::create_resource_loader() const {
-	return ResourceLoaderOP( new ElectronDensityLoader );
+	return utility::pointer::make_shared< ElectronDensityLoader >();
 }
 
 string
@@ -92,7 +92,7 @@ ElectronDensityLoader::create_resource(
 ResourceOptionsOP
 ElectronDensityLoader::default_options(
 ) const {
-	return ResourceOptionsOP( new ElectronDensityOptions() );
+	return utility::pointer::make_shared< ElectronDensityOptions >();
 }
 
 } // namespace

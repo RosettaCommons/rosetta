@@ -233,7 +233,7 @@ SimpleMetricFeatures::write_general_schema_to_db(
 	//Create the table using the set SimpleMetrics
 	utility::vector1< Column > new_columns;
 
-	Column struct_id_column("struct_id", DbDataTypeOP( new DbBigInt() ));
+	Column struct_id_column("struct_id", utility::pointer::make_shared< DbBigInt >());
 	new_columns.push_back(struct_id_column);
 
 	//Primary Key
@@ -253,16 +253,16 @@ SimpleMetricFeatures::write_general_schema_to_db(
 	//C++ 11 we have ordered maps.
 	for ( auto name_data : name_value_type ) {
 		if ( name_data.second == "real" ) {
-			Column new_column(name_data.first, DbDataTypeOP( new DbReal() ));
+			Column new_column(name_data.first, utility::pointer::make_shared< DbReal >());
 			new_columns.push_back( new_column );
 		} else if ( name_data.second == "string" ) {
-			Column new_column(name_data.first, DbDataTypeOP( new DbText() ));
+			Column new_column(name_data.first, utility::pointer::make_shared< DbText >());
 			new_columns.push_back( new_column );
 		}
 	}
 
-	Column prefix("prefix", DbDataTypeOP( new DbText()));
-	Column suffix("suffix", DbDataTypeOP( new DbText()));
+	Column prefix("prefix", utility::pointer::make_shared< DbText >());
+	Column suffix("suffix", utility::pointer::make_shared< DbText >());
 	table.add_column(prefix);
 	table.add_column(suffix);
 	for ( auto col : new_columns ) {
@@ -302,8 +302,8 @@ SimpleMetricFeatures::write_per_residue_schema_to_db(utility::sql_database::sess
 	//Create the table using the set SimpleMetrics
 	utility::vector1< Column > new_columns;
 
-	Column struct_id_column("struct_id", DbDataTypeOP( new DbBigInt() ));
-	Column res_id_column("resNum", DbDataTypeOP( new DbInteger() ) );
+	Column struct_id_column("struct_id", utility::pointer::make_shared< DbBigInt >());
+	Column res_id_column("resNum", utility::pointer::make_shared< DbInteger >() );
 	new_columns.push_back(struct_id_column);
 	new_columns.push_back(res_id_column);
 
@@ -334,16 +334,16 @@ SimpleMetricFeatures::write_per_residue_schema_to_db(utility::sql_database::sess
 	//C++ 11 we have ordered maps.
 	for ( auto name_data : name_value_type ) {
 		if ( name_data.second == "real" ) {
-			Column new_column(name_data.first, DbDataTypeOP( new DbReal() ));
+			Column new_column(name_data.first, utility::pointer::make_shared< DbReal >());
 			new_columns.push_back( new_column );
 		} else if ( name_data.second == "string" ) {
-			Column new_column(name_data.first, DbDataTypeOP( new DbText() ));
+			Column new_column(name_data.first, utility::pointer::make_shared< DbText >());
 			new_columns.push_back( new_column );
 		}
 	}
 
-	Column prefix("prefix", DbDataTypeOP( new DbText()));
-	Column suffix("suffix", DbDataTypeOP( new DbText()));
+	Column prefix("prefix", utility::pointer::make_shared< DbText >());
+	Column suffix("suffix", utility::pointer::make_shared< DbText >());
 	table.add_column(prefix);
 	table.add_column(suffix);
 	for ( auto col : new_columns ) {
@@ -651,7 +651,7 @@ std::string SimpleMetricFeaturesCreator::type_name() const {
 
 protocols::features::FeaturesReporterOP
 SimpleMetricFeaturesCreator::create_features_reporter() const {
-	return protocols::features::FeaturesReporterOP( new SimpleMetricFeatures );
+	return utility::pointer::make_shared< SimpleMetricFeatures >();
 }
 
 void SimpleMetricFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

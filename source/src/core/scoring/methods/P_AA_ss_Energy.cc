@@ -43,7 +43,7 @@ methods::EnergyMethodOP
 P_AA_ss_EnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new P_AA_ss_Energy );
+	return utility::pointer::make_shared< P_AA_ss_Energy >();
 }
 
 ScoreTypes
@@ -79,14 +79,14 @@ P_AA_ss_Energy::setup_for_minimizing(
 
 
 P_AA_ss_Energy::P_AA_ss_Energy() :
-	parent( methods::EnergyMethodCreatorOP( new P_AA_ss_EnergyCreator ) ),
+	parent( utility::pointer::make_shared< P_AA_ss_EnergyCreator >() ),
 	P_AA_ss_( ScoringManager::get_instance()->get_P_AA_ss() )
 {}
 
 
 EnergyMethodOP
 P_AA_ss_Energy::clone() const {
-	return EnergyMethodOP( new P_AA_ss_Energy );
+	return utility::pointer::make_shared< P_AA_ss_Energy >();
 }
 
 

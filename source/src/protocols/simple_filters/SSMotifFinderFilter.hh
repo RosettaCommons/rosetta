@@ -33,10 +33,10 @@ public:
 	SSMotifFinder();
 	~SSMotifFinder() override;
 	filters::FilterOP clone() const override {
-		return filters::FilterOP( new SSMotifFinder( *this ) );
+		return utility::pointer::make_shared< SSMotifFinder >( *this );
 	}
 	filters::FilterOP fresh_instance() const override{
-		return filters::FilterOP( new SSMotifFinder() );
+		return utility::pointer::make_shared< SSMotifFinder >();
 	}
 
 	bool apply( core::pose::Pose const & pose ) const override;

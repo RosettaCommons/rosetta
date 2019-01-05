@@ -38,7 +38,7 @@ static basic::Tracer TR("protocols.legacy_sewing.sampling.requirements.LegacyGlo
 //////Creator methods/////
 LegacyGlobalRequirementOP
 LegacyGlobalLengthRequirementCreator::create_requirement() const{
-	return LegacyGlobalRequirementOP( new LegacyGlobalLengthRequirement() );
+	return utility::pointer::make_shared< LegacyGlobalLengthRequirement >();
 }
 
 std::string

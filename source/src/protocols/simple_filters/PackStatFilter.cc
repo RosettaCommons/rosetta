@@ -130,7 +130,7 @@ PackStatFilter::parse_my_tag(
 }
 
 // XRW TEMP filters::FilterOP
-// XRW TEMP PackStatFilterCreator::create_filter() const { return filters::FilterOP( new PackStatFilter ); }
+// XRW TEMP PackStatFilterCreator::create_filter() const { return utility::pointer::make_shared< PackStatFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP PackStatFilterCreator::keyname() const { return "PackStat"; }
@@ -160,7 +160,7 @@ std::string PackStatFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 PackStatFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new PackStatFilter );
+	return utility::pointer::make_shared< PackStatFilter >();
 }
 
 void PackStatFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

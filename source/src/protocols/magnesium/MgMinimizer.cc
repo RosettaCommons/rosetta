@@ -72,7 +72,7 @@ MgMinimizer::apply( core::pose::Pose & pose ) {
 				new CoordinateConstraint( AtomID( 1, mg_res ),
 				AtomID( 1, 1 ),
 				pose.residue( mg_res ).xyz( 1 ),
-				FuncOP( new HarmonicFunc( 0.0, mg_coord_cst_dist_ ) ) ) ) ) );
+				utility::pointer::make_shared< HarmonicFunc >( 0.0, mg_coord_cst_dist_ ) ) ) ) );
 		}
 	}
 

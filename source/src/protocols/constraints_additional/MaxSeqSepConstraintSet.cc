@@ -91,7 +91,7 @@ MaxSeqSepConstraintSet::MaxSeqSepConstraintSet( ConstraintSet const & other, cor
 	ConstraintSet( other )
 {
 	tr.Trace << f << std::endl;
-	shortest_path_ = core::kinematics::ShortestPathInFoldTreeOP( new ShortestPathInFoldTree( f ) );
+	shortest_path_ = utility::pointer::make_shared< ShortestPathInFoldTree >( f );
 }
 
 /// @copy constructor. Performs a shallow copy of the constraints and the ShortestPathInFoldTree object
@@ -128,7 +128,7 @@ MaxSeqSepConstraintSet::operator = ( ConstraintSet const & rhs )
 
 ConstraintSetOP
 MaxSeqSepConstraintSet::clone() const {
-	return ConstraintSetOP( new MaxSeqSepConstraintSet( *this ) );
+	return utility::pointer::make_shared< MaxSeqSepConstraintSet >( *this );
 }
 
 void MaxSeqSepConstraintSet::detached_copy( ConstraintSet const & src ) {
@@ -138,7 +138,7 @@ void MaxSeqSepConstraintSet::detached_copy( ConstraintSet const & src ) {
 	}
 	deep_copy( src );
 	max_seq_sep_ = msscs_src->max_seq_sep_;
-	shortest_path_ = core::kinematics::ShortestPathInFoldTreeOP( new core::kinematics::ShortestPathInFoldTree( *msscs_src->shortest_path_ ));
+	shortest_path_ = utility::pointer::make_shared< core::kinematics::ShortestPathInFoldTree >( *msscs_src->shortest_path_ );
 }
 
 

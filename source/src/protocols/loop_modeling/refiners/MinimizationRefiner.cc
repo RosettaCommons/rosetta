@@ -45,7 +45,7 @@ using protocols::minimization_packing::MinMover;
 using protocols::minimization_packing::MinMoverOP;
 
 // XRW TEMP protocols::moves::MoverOP MinimizationRefinerCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new MinimizationRefiner );
+// XRW TEMP  return utility::pointer::make_shared< MinimizationRefiner >();
 // XRW TEMP }
 
 // XRW TEMP std::string MinimizationRefinerCreator::keyname() const {
@@ -133,11 +133,11 @@ void MinimizationRefiner::set_min_options(MinimizerOptionsOP options) {
 	// exact choice of minimizer options.
 
 	if ( ! options ) {
-		min_options_ = MinimizerOptionsOP( new MinimizerOptions(
+		min_options_ = utility::pointer::make_shared< MinimizerOptions >(
 			"lbfgs_armijo_nonmonotone",   // min_type
 			1e-3,       // min_tolerance
 			true,       // use_nblist
-			false) );   // deriv_check
+			false);   // deriv_check
 	} else {
 		min_options_ = options;
 	}
@@ -194,7 +194,7 @@ std::string MinimizationRefinerCreator::keyname() const {
 
 protocols::moves::MoverOP
 MinimizationRefinerCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MinimizationRefiner );
+	return utility::pointer::make_shared< MinimizationRefiner >();
 }
 
 void MinimizationRefinerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

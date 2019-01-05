@@ -46,7 +46,7 @@ public:
 	virtual
 	EnergyMethodOP
 	clone() const {
-		return EnergyMethodOP( new SSElementMotifContactEnergy );
+		return utility::pointer::make_shared< SSElementMotifContactEnergy >();
 	}
 
 	utility::vector1<std::pair<Size,Size> > get_ss_elements(const pose::Pose & pose) const;

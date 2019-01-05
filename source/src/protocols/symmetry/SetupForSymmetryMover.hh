@@ -55,7 +55,7 @@ public:
 
 	~SetupForSymmetryMover();
 
-	moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new SetupForSymmetryMover( *this ) ) ); }
+	moves::MoverOP clone() const override { return( utility::pointer::make_shared< SetupForSymmetryMover >( *this ) ); }
 
 	virtual void apply( core::pose::Pose & pose ) override;
 	virtual void parse_my_tag(
@@ -134,7 +134,7 @@ public:
 
 	~ExtractAsymmetricUnitMover();
 
-	moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new ExtractAsymmetricUnitMover( *this ) ) ); }
+	moves::MoverOP clone() const override { return( utility::pointer::make_shared< ExtractAsymmetricUnitMover >( *this ) ); }
 
 	virtual void apply( core::pose::Pose & pose ) override;
 	virtual void parse_my_tag(
@@ -191,7 +191,7 @@ public:
 
 	~ExtractAsymmetricPoseMover();
 
-	moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new ExtractAsymmetricPoseMover( *this ) ) ); }
+	moves::MoverOP clone() const override { return( utility::pointer::make_shared< ExtractAsymmetricPoseMover >( *this ) ); }
 
 	virtual void apply( core::pose::Pose & pose ) override;
 	virtual void parse_my_tag(

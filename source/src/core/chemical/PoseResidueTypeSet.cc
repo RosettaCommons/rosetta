@@ -62,7 +62,7 @@ PoseResidueTypeSet::PoseResidueTypeSet(core::chemical::ResidueTypeSetCOP deflt_r
 
 PoseResidueTypeSetOP
 PoseResidueTypeSet::clone() const {
-	return PoseResidueTypeSetOP( new PoseResidueTypeSet( *this ) );
+	return utility::pointer::make_shared< PoseResidueTypeSet >( *this );
 }
 
 void

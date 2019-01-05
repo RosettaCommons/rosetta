@@ -89,7 +89,7 @@ public: // Creation
 	static
 	ProductOP
 	factory_create() {
-		return ProductOP( new ProductA() );
+		return utility::pointer::make_shared< ProductA >();
 	}
 
 	/// @brief Destructor
@@ -146,7 +146,7 @@ public: // Creation
 	ProductOP
 	factory_create()
 	{
-		return ProductOP( new ProductB() );
+		return utility::pointer::make_shared< ProductB >();
 	}
 
 	/// @brief Destructor
@@ -178,7 +178,7 @@ utility::factory::Registrant< Product > const ProductB::factory_registrant_( "Pr
 
 class FactoryTests : public CxxTest::TestSuite {
 
-	public:
+public:
 
 	/// @brief General tests
 	void test_Factory_general() {

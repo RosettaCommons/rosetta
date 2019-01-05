@@ -437,7 +437,7 @@ ChunkLibraryJobQueen::initial_job_dag()
 		preliminary_job_nodes_complete_[ ii ] = 0;
 	}
 	// create a DAG with as many nodes in it as there are preliminary larval jobs
-	job_graph_ = JobDigraphOP( new JobDigraph( preliminary_larval_jobs_.size() ) );
+	job_graph_ = utility::pointer::make_shared< JobDigraph >( preliminary_larval_jobs_.size() );
 	return job_graph_;
 }
 
@@ -946,7 +946,7 @@ ChunkLibraryJobQueen::expand_job_list( ChunkLibraryInnerLarvalJobOP inner_job, c
 ChunkLibraryInnerLarvalJobOP
 ChunkLibraryJobQueen::create_inner_larval_job( core::Size nstruct, core::Size prelim_job_node ) const
 {
-	return ChunkLibraryInnerLarvalJobOP( new ChunkLibraryInnerLarvalJob( nstruct, prelim_job_node ) );
+	return utility::pointer::make_shared< ChunkLibraryInnerLarvalJob >( nstruct, prelim_job_node );
 }
 
 /// @details Factory method instantiates the base-class LarvalJob to start.
@@ -959,13 +959,13 @@ ChunkLibraryJobQueen::create_larval_job(
 	core::Size larval_job_index
 )
 {
-	return LarvalJobOP( new LarvalJob( job, nstruct_index, larval_job_index ));
+	return utility::pointer::make_shared< LarvalJob >( job, nstruct_index, larval_job_index );
 }
 
 JobOP
 ChunkLibraryJobQueen::create_job( LarvalJobCOP ) const
 {
-	return JobOP( new MoverAndChunkLibraryJob );
+	return utility::pointer::make_shared< MoverAndChunkLibraryJob >();
 }
 
 LarvalJobs
@@ -1833,7 +1833,7 @@ ChunkLibraryJobQueen::get_outputter_from_job_tag( utility::tag::TagCOP tag ) con
 					outputter = default_outputter_creator_->create_outputter();
 				} else {
 					runtime_assert( outputter_creators_.count( pose_outputters::DeNovoSilentFilePoseOutputter::keyname() ) );
-					outputter = pose_outputters::PoseOutputterOP( new pose_outputters::DeNovoSilentFilePoseOutputter );
+					outputter = utility::pointer::make_shared< pose_outputters::DeNovoSilentFilePoseOutputter >();
 				}
 			}
 		}

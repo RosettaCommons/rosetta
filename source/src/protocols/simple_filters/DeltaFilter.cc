@@ -248,18 +248,18 @@ DeltaFilter::parse_my_tag( utility::tag::TagCOP tag,
 
 protocols::filters::FilterOP
 DeltaFilter::fresh_instance() const{
-	return protocols::filters::FilterOP( new DeltaFilter() );
+	return utility::pointer::make_shared< DeltaFilter >();
 }
 
 DeltaFilter::~DeltaFilter()= default;
 
 protocols::filters::FilterOP
 DeltaFilter::clone() const{
-	return protocols::filters::FilterOP( new DeltaFilter( *this ) );
+	return utility::pointer::make_shared< DeltaFilter >( *this );
 }
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP DeltaFilterCreator::create_filter() const { return protocols::filters::FilterOP( new DeltaFilter ); }
+// XRW TEMP DeltaFilterCreator::create_filter() const { return utility::pointer::make_shared< DeltaFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP DeltaFilterCreator::keyname() const { return "Delta"; }
@@ -318,7 +318,7 @@ std::string DeltaFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 DeltaFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new DeltaFilter );
+	return utility::pointer::make_shared< DeltaFilter >();
 }
 
 void DeltaFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -941,9 +941,9 @@ void PointMutScanDriver::make_mutant_structure( pose::Pose & mutant_pose, pose::
 
 	// now create the movers that will do the repacking and minimization of the native structure
 	protocols::minimization_packing::PackRotamersMoverOP native_pack_mover( new protocols::minimization_packing::PackRotamersMover( scorefxn_, wt_task, 2 ) ); // ndruns: 2
-	min_mover = protocols::minimization_packing::MinMoverOP( new protocols::minimization_packing::MinMover( movemap, scorefxn_, option[ OptionKeys::run::min_type ].value(), 0.01, true ) ); // use nb_list: true
-	task_aware_min_mover = protocols::minimization_packing::TaskAwareMinMoverOP( new protocols::minimization_packing::TaskAwareMinMover( min_mover, native_tf ) );
-	seq_mover = protocols::moves::SequenceMoverOP( new protocols::moves::SequenceMover );
+	min_mover = utility::pointer::make_shared< protocols::minimization_packing::MinMover >( movemap, scorefxn_, option[ OptionKeys::run::min_type ].value(), 0.01, true ); // use nb_list: true
+	task_aware_min_mover = utility::pointer::make_shared< protocols::minimization_packing::TaskAwareMinMover >( min_mover, native_tf );
+	seq_mover = utility::pointer::make_shared< protocols::moves::SequenceMover >();
 	seq_mover->add_mover( native_pack_mover );
 	seq_mover->add_mover( task_aware_min_mover );
 

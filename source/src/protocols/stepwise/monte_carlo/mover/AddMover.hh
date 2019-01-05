@@ -56,7 +56,7 @@ public:
 
 	/// @brief Apply the minimizer to one pose
 	virtual void apply( core::pose::Pose & pose_to_visualize ) override;
-	protocols::moves::MoverOP fresh_instance() const override { return AddMoverOP( new AddMover ); }
+	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< AddMover >(); }
 	protocols::moves::MoverOP clone() const override;
 	void parse_my_tag( utility::tag::TagCOP, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 

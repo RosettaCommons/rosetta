@@ -74,7 +74,7 @@ SelectedResiduesMetric::SelectedResiduesMetric( SelectedResiduesMetric const & s
 
 core::simple_metrics::SimpleMetricOP
 SelectedResiduesMetric::clone() const {
-	return core::simple_metrics::SimpleMetricOP(new SelectedResiduesMetric( *this ) );
+	return utility::pointer::make_shared< SelectedResiduesMetric >( *this );
 
 }
 
@@ -192,7 +192,7 @@ SelectedResiduesMetricCreator::keyname() const {
 
 core::simple_metrics::SimpleMetricOP
 SelectedResiduesMetricCreator::create_simple_metric() const {
-	return core::simple_metrics::SimpleMetricOP( new SelectedResiduesMetric );
+	return utility::pointer::make_shared< SelectedResiduesMetric >();
 
 }
 

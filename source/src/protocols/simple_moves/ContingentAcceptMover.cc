@@ -41,7 +41,7 @@ namespace simple_moves {
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP ContingentAcceptMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new ContingentAcceptMover );
+// XRW TEMP  return utility::pointer::make_shared< ContingentAcceptMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -95,13 +95,13 @@ ContingentAcceptMover::apply( Pose & pose )
 moves::MoverOP
 ContingentAcceptMover::clone() const
 {
-	return moves::MoverOP( new ContingentAcceptMover( *this ) );
+	return utility::pointer::make_shared< ContingentAcceptMover >( *this );
 }
 
 moves::MoverOP
 ContingentAcceptMover::fresh_instance() const
 {
-	return moves::MoverOP( new ContingentAcceptMover );
+	return utility::pointer::make_shared< ContingentAcceptMover >();
 }
 
 /*
@@ -159,7 +159,7 @@ std::string ContingentAcceptMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 ContingentAcceptMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ContingentAcceptMover );
+	return utility::pointer::make_shared< ContingentAcceptMover >();
 }
 
 void ContingentAcceptMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

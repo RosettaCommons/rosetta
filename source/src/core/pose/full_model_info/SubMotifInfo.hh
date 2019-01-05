@@ -56,7 +56,7 @@ public:
 	SubMotifInfoOP
 	clone() const
 	{
-		return SubMotifInfoOP( new SubMotifInfo( *this ) );
+		return utility::pointer::make_shared< SubMotifInfo >( *this );
 	}
 
 	// setters/getters

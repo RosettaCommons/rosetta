@@ -42,7 +42,7 @@ public:
 
 
 	basic::datacache::CacheableDataOP clone() const {
-		return basic::datacache::CacheableDataOP( new FAScatter( *this ) );
+		return utility::pointer::make_shared< FAScatter >( *this );
 	}
 
 	utility::vector0< utility::vector1< utility::vector1< core::Real > > > getValues() {

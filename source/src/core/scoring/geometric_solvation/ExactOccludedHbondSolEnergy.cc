@@ -148,7 +148,7 @@ GridInfo::GridInfo() {
 
 // private constructor
 WaterWeightGridSet::WaterWeightGridSet() :
-	hbondoptions_( hbonds::HBondOptionsOP( new HBondOptions ) ),
+	hbondoptions_( utility::pointer::make_shared< HBondOptions >() ),
 	hb_database_(HBondDatabase::get_database())
 {
 	using namespace hbonds;
@@ -355,16 +355,16 @@ ExactOccludedHbondSolEnergy::ExactOccludedHbondSolEnergy(
 	core::Real const occ_radius_scaling,
 	bool const verbose
 ) :
-	parent( methods::EnergyMethodCreatorOP( new ExactOccludedHbondSolEnergyCreator ) ),
+	parent( utility::pointer::make_shared< ExactOccludedHbondSolEnergyCreator >() ),
 	exact_occ_skip_Hbonders_( exact_occ_skip_Hbonders ),
 	exact_occ_pairwise_( exact_occ_pairwise ),
 	exact_occ_pairwise_by_res_( exact_occ_pairwise_by_res ),
 	exact_occ_split_between_res_( exact_occ_split_between_res ),
 	exact_occ_self_res_occ_( exact_occ_self_res_occ ),
 	occ_radius_scaling_( occ_radius_scaling ),
-	hbondoptions_( hbonds::HBondOptionsOP( new HBondOptions ) ),
+	hbondoptions_( utility::pointer::make_shared< HBondOptions >() ),
 	hb_database_( HBondDatabase::get_database() ),
-	hbond_set_( hbonds::HBondSetOP( new hbonds::HBondSet( *hbondoptions_ ) ) ),
+	hbond_set_( utility::pointer::make_shared< hbonds::HBondSet >( *hbondoptions_ ) ),
 	lk_safe_max_dis2_( etable_in.get_safe_max_dis2() ),
 	verbose_( verbose )
 {
@@ -386,9 +386,9 @@ ExactOccludedHbondSolEnergy::ExactOccludedHbondSolEnergy(
 	allocate_grid_of_occluded_sites();
 
 	if ( analytic_etable_evaluation ) {
-		etable_evaluator_ = etable::EtableEvaluatorOP( new etable::AnalyticEtableEvaluator( etable_in ) );
+		etable_evaluator_ = utility::pointer::make_shared< etable::AnalyticEtableEvaluator >( etable_in );
 	} else {
-		etable_evaluator_ = etable::EtableEvaluatorOP( new etable::TableLookupEvaluator( etable_in ) );
+		etable_evaluator_ = utility::pointer::make_shared< etable::TableLookupEvaluator >( etable_in );
 	}
 }
 
@@ -404,7 +404,7 @@ ExactOccludedHbondSolEnergy::ExactOccludedHbondSolEnergy( ExactOccludedHbondSolE
 	hbondoptions_(src.hbondoptions_),
 	hb_database_(src.hb_database_),
 	atom_type_set_ptr_( src.atom_type_set_ptr_ ),
-	hbond_set_(hbonds::HBondSetOP(new hbonds::HBondSet(*src.hbond_set_))),
+	hbond_set_(utility::pointer::make_shared< hbonds::HBondSet >(*src.hbond_set_)),
 	lk_safe_max_dis2_( src.lk_safe_max_dis2_ ),
 	verbose_( src.verbose_ )
 {
@@ -415,7 +415,7 @@ ExactOccludedHbondSolEnergy::ExactOccludedHbondSolEnergy( ExactOccludedHbondSolE
 methods::EnergyMethodOP
 ExactOccludedHbondSolEnergy::clone() const
 {
-	return methods::EnergyMethodOP( new ExactOccludedHbondSolEnergy( *this ) );
+	return utility::pointer::make_shared< ExactOccludedHbondSolEnergy >( *this );
 }
 
 

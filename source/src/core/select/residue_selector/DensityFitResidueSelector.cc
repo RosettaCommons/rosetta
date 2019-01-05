@@ -109,7 +109,7 @@ DensityFitResidueSelector::DensityFitResidueSelector(DensityFitResidueSelector c
 /// @details Copy this object and return owning pointer to the copy (created on the heap).
 core::select::residue_selector::ResidueSelectorOP
 DensityFitResidueSelector::clone() const {
-	return core::select::residue_selector::ResidueSelectorOP( new DensityFitResidueSelector(*this) );
+	return utility::pointer::make_shared< DensityFitResidueSelector >(*this);
 }
 
 void
@@ -251,7 +251,7 @@ void DensityFitResidueSelector::provide_xml_schema( utility::tag::XMLSchemaDefin
 
 core::select::residue_selector::ResidueSelectorOP
 DensityFitResidueSelectorCreator::create_residue_selector() const {
-	return core::select::residue_selector::ResidueSelectorOP( new DensityFitResidueSelector );
+	return utility::pointer::make_shared< DensityFitResidueSelector >();
 }
 
 std::string

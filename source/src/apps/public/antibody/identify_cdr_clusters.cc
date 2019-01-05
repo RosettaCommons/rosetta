@@ -99,7 +99,7 @@ int main(int argc, char* argv[])
 	try{
 		devel::init(argc, argv);
 
-		protocols::jd2::JobDistributor::get_instance()->go(protocols::moves::MoverOP( new IdentifyCDRClusters ));
+		protocols::jd2::JobDistributor::get_instance()->go(utility::pointer::make_shared< IdentifyCDRClusters >());
 		std::cout<< std::endl << std::endl << "App Author: Jared Adolf-Bryfogle; PI: Roland Dunbrack " << std::endl<< std::endl;
 		std::cout<< " CDR Classification done using the same methodology as PyIgClassify." << std::endl<<std::endl;
 		std::cout<< " Please cite RosettaAntibody and the following:" << std::endl;

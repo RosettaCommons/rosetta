@@ -27,7 +27,7 @@ ResidueMaskOP ExcludedFilter::excluded;
 ///
 void ExcludedFilter::init(Pose& ps, std::string const& ex_fname) {
 
-	excluded = ResidueMaskOP( new ResidueMask(ps, ex_fname) );
+	excluded = utility::pointer::make_shared< ResidueMask >(ps, ex_fname);
 }
 
 

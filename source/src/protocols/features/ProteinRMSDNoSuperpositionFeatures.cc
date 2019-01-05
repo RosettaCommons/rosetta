@@ -122,16 +122,16 @@ ProteinRMSDNoSuperpositionFeatures::write_protein_rmsd_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
-	Column reference_tag("reference_tag", DbDataTypeOP( new DbText(255) ));
-	Column protein_CA("protein_CA", DbDataTypeOP( new DbReal() ));
-	Column protein_CA_or_CB("protein_CA_or_CB", DbDataTypeOP( new DbReal() ));
-	Column protein_backbone("protein_backbone", DbDataTypeOP( new DbReal() ));
-	Column protein_backbone_including_O("protein_backbone_including_O", DbDataTypeOP( new DbReal() ));
-	Column protein_backbone_sidechain_heavyatom("protein_backbone_sidechain_heavyatom", DbDataTypeOP( new DbReal() ));
-	Column heavyatom("heavyatom", DbDataTypeOP( new DbReal() ));
-	Column nbr_atom("nbr_atom", DbDataTypeOP( new DbReal() ));
-	Column all_atom("all_atom", DbDataTypeOP( new DbReal() ));
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >());
+	Column reference_tag("reference_tag", utility::pointer::make_shared< DbText >(255));
+	Column protein_CA("protein_CA", utility::pointer::make_shared< DbReal >());
+	Column protein_CA_or_CB("protein_CA_or_CB", utility::pointer::make_shared< DbReal >());
+	Column protein_backbone("protein_backbone", utility::pointer::make_shared< DbReal >());
+	Column protein_backbone_including_O("protein_backbone_including_O", utility::pointer::make_shared< DbReal >());
+	Column protein_backbone_sidechain_heavyatom("protein_backbone_sidechain_heavyatom", utility::pointer::make_shared< DbReal >());
+	Column heavyatom("heavyatom", utility::pointer::make_shared< DbReal >());
+	Column nbr_atom("nbr_atom", utility::pointer::make_shared< DbReal >());
+	Column all_atom("all_atom", utility::pointer::make_shared< DbReal >());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -197,7 +197,7 @@ ProteinRMSDNoSuperpositionFeatures::reference_pose_from_options(core::pose::Pose
 		reference_pose(ref_pose);
 	} else {
 		tr << "Setting '" << type_name() << "' to reference the starting structure." << endl;
-		reference_pose(PoseCOP( PoseOP( new Pose(pose) ) ));
+		reference_pose(utility::pointer::make_shared< Pose >(pose));
 	}
 }
 
@@ -264,7 +264,7 @@ std::string ProteinRMSDNoSuperpositionFeaturesCreator::type_name() const {
 
 protocols::features::FeaturesReporterOP
 ProteinRMSDNoSuperpositionFeaturesCreator::create_features_reporter() const {
-	return protocols::features::FeaturesReporterOP( new ProteinRMSDNoSuperpositionFeatures );
+	return utility::pointer::make_shared< ProteinRMSDNoSuperpositionFeatures >();
 }
 
 void ProteinRMSDNoSuperpositionFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

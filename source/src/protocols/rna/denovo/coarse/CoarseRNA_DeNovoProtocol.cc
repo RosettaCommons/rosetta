@@ -112,8 +112,8 @@ CoarseRNA_DeNovoProtocol::CoarseRNA_DeNovoProtocol(
 	all_rna_fragments_file_( basic::database::full_name("1jj2_coarse_coords.txt") ),
 	jump_library_file_( basic::database::full_name("chemical/rna/1jj2_coarse_jumps.dat" ) ),
 	lores_scorefxn_( "rna/denovo/coarse_rna.wts" ),
-	rna_structure_parameters_( protocols::rna::denovo::RNA_DeNovoPoseSetupOP( new protocols::rna::denovo::RNA_DeNovoPoseSetup ) ),
-	rna_loop_closer_( protocols::rna::denovo::coarse::CoarseRNA_LoopCloserOP( new protocols::rna::denovo::coarse::CoarseRNA_LoopCloser ) ),
+	rna_structure_parameters_( utility::pointer::make_shared< protocols::rna::denovo::RNA_DeNovoPoseSetup >() ),
+	rna_loop_closer_( utility::pointer::make_shared< protocols::rna::denovo::coarse::CoarseRNA_LoopCloser >() ),
 	close_loops_( false ),
 	choose_best_solution_( false ),
 	force_ideal_chainbreak_( false ),
@@ -125,7 +125,7 @@ CoarseRNA_DeNovoProtocol::CoarseRNA_DeNovoProtocol(
 
 /// @brief Clone this object
 protocols::moves::MoverOP CoarseRNA_DeNovoProtocol::clone() const {
-	return protocols::moves::MoverOP( new CoarseRNA_DeNovoProtocol(*this) );
+	return utility::pointer::make_shared< CoarseRNA_DeNovoProtocol >(*this);
 }
 
 //////////////////////////////////////////////////
@@ -151,10 +151,10 @@ void CoarseRNA_DeNovoProtocol::apply( core::pose::Pose & pose ) {
 
 	rna_structure_parameters_->initialize_for_de_novo_protocol( pose, rna_params_file_, jump_library_file_, true /*ignore_secstruct*/ );
 
-	rna_data_reader_ = core::io::rna::RNA_DataReaderOP( new core::io::rna::RNA_DataReader( rna_data_file_ ) );
+	rna_data_reader_ = utility::pointer::make_shared< core::io::rna::RNA_DataReader >( rna_data_file_ );
 	rna_data_reader_->fill_rna_data_info( pose ); // this seems repeated below? get rid of one instance?
 
-	if ( input_res_.size() > 0 ) rna_chunk_library_ = protocols::rna::denovo::RNA_ChunkLibraryOP( new protocols::rna::denovo::RNA_ChunkLibrary( chunk_silent_files_, pose, input_res_ ) );
+	if ( input_res_.size() > 0 ) rna_chunk_library_ = utility::pointer::make_shared< protocols::rna::denovo::RNA_ChunkLibrary >( chunk_silent_files_, pose, input_res_ );
 	rna_structure_parameters_->set_atom_level_domain_map( rna_chunk_library_->atom_level_domain_map() );
 	rna_structure_parameters_->setup_fold_tree_and_jumps_and_variants( pose );
 
@@ -165,7 +165,7 @@ void CoarseRNA_DeNovoProtocol::apply( core::pose::Pose & pose ) {
 	if ( dump_pdb_ ) { std::cout << "Allow insert: " << std::endl; rna_structure_parameters_->atom_level_domain_map()->show(); }
 
 	protocols::rna::denovo::RNA_FragmentsOP rna_fragments( new CoarseRNA_Fragments( all_rna_fragments_file_ ) );
-	frag_mover_ = protocols::rna::denovo::RNA_FragmentMoverOP( new protocols::rna::denovo::RNA_FragmentMover( *rna_fragments, rna_structure_parameters_->atom_level_domain_map() ) );
+	frag_mover_ = utility::pointer::make_shared< protocols::rna::denovo::RNA_FragmentMover >( *rna_fragments, rna_structure_parameters_->atom_level_domain_map() );
 
 	rna_data_reader_->fill_rna_data_info( pose );
 	initialize_constraints( pose );
@@ -176,7 +176,7 @@ void CoarseRNA_DeNovoProtocol::apply( core::pose::Pose & pose ) {
 	rna_loop_closer_->set_atom_level_domain_map( rna_structure_parameters_->atom_level_domain_map() );
 	if ( choose_best_solution_ ) rna_loop_closer_->choose_best_solution_based_on_score_function( denovo_scorefxn_ );
 
-	multiple_domain_mover_ = protocols::rna::denovo::MultipleDomainMoverOP( new protocols::rna::denovo::MultipleDomainMover( pose, rna_loop_closer_ ) );
+	multiple_domain_mover_ = utility::pointer::make_shared< protocols::rna::denovo::MultipleDomainMover >( pose, rna_loop_closer_ );
 	domain_move_frequency_ = 0.0;
 	domain_move_frequency_ =  ( multiple_domain_mover_->num_domains() > 1 && !freeze_domains_ ) ? 0.7: 0.0;
 
@@ -187,7 +187,7 @@ void CoarseRNA_DeNovoProtocol::apply( core::pose::Pose & pose ) {
 
 	Pose start_pose = pose;
 
-	monte_carlo_ = protocols::moves::MonteCarloOP( new protocols::moves::MonteCarlo( pose, *denovo_scorefxn_, m_Temperature_ ) );
+	monte_carlo_ = utility::pointer::make_shared< protocols::moves::MonteCarlo >( pose, *denovo_scorefxn_, m_Temperature_ );
 
 	if ( view_monte_carlo_ ) protocols::viewer::add_monte_carlo_viewer( *monte_carlo_, "", 400,400 );
 

@@ -101,7 +101,7 @@ void LoopsDefinerLoader::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 
 
 parser::DataLoaderOP
-LoopsDefinerLoaderCreator::create_loader() const { return parser::DataLoaderOP( new LoopsDefinerLoader ); }
+LoopsDefinerLoaderCreator::create_loader() const { return utility::pointer::make_shared< LoopsDefinerLoader >(); }
 
 string
 LoopsDefinerLoaderCreator::keyname() const { return LoopsDefinerLoader::loader_name(); }

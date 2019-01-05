@@ -56,7 +56,7 @@ SmartSewingResidue::SmartSewingResidue( SmartSewingResidue const & other ) {
 
 SmartSewingResidueOP
 SmartSewingResidue::clone() const {
-	return SmartSewingResidueOP( new SmartSewingResidue( *this ) );
+	return utility::pointer::make_shared< SmartSewingResidue >( *this );
 }
 
 void

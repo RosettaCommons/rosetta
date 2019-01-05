@@ -127,7 +127,7 @@ void FragmentStore::delete_homologs(){
 void FragmentStore::generate_residue_subset_fragment_store(std::vector<numeric::Size> residues){
 	numeric::Size tmp_fragment_length = residues.size();
 	FragmentSpecification tmp_fragment_spec = FragmentSpecification(tmp_fragment_length,fragment_specification.fragment_atoms);
-	FragmentStoreOP tmp_fragment_store = FragmentStoreOP(new FragmentStore(tmp_fragment_spec,num_fragments_));
+	FragmentStoreOP tmp_fragment_store = utility::pointer::make_shared< FragmentStore >(tmp_fragment_spec,num_fragments_);
 	for ( numeric::Size ii=0; ii<num_fragments_; ++ii ) {//num fragments
 		Size tmp_frag_index=0;
 		for ( numeric::Size jj=0; jj<fragment_specification.coordinates_per_fragment(); ++jj ) {
@@ -157,7 +157,7 @@ void FragmentStore::generate_residue_subset_fragment_store(std::vector<numeric::
 //done so that the fragmentLookup is cached when calculated.
 FragmentLookupOP FragmentStore::get_fragmentLookup(){
 	if ( fragLookupOP_==nullptr ) {
-		fragLookupOP_ = FragmentLookupOP(new FragmentLookup(this->get_self_ptr()));
+		fragLookupOP_ = utility::pointer::make_shared< FragmentLookup >(this->get_self_ptr());
 	}
 	return(fragLookupOP_);
 }

@@ -53,7 +53,7 @@ namespace fldsgn {
 // -------------  Mover Creator -------------
 
 // XRW TEMP protocols::moves::MoverOP
-// XRW TEMP MatchResiduesMoverCreator::create_mover() const { return protocols::moves::MoverOP( new MatchResiduesMover ); }
+// XRW TEMP MatchResiduesMoverCreator::create_mover() const { return utility::pointer::make_shared< MatchResiduesMover >(); }
 
 // XRW TEMP std::string
 // XRW TEMP MatchResiduesMoverCreator::keyname() const { return "MatchResiduesMover"; }
@@ -69,12 +69,12 @@ MatchResiduesMover::~MatchResiduesMover() = default;
 
 protocols::moves::MoverOP
 MatchResiduesMover::fresh_instance() const{
-	return protocols::moves::MoverOP( new MatchResiduesMover() );
+	return utility::pointer::make_shared< MatchResiduesMover >();
 }
 
 protocols::moves::MoverOP
 MatchResiduesMover::clone() const{
-	return protocols::moves::MoverOP( new MatchResiduesMover( *this ) );
+	return utility::pointer::make_shared< MatchResiduesMover >( *this );
 }
 
 
@@ -134,7 +134,7 @@ std::string MatchResiduesMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 MatchResiduesMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MatchResiduesMover );
+	return utility::pointer::make_shared< MatchResiduesMover >();
 }
 
 void MatchResiduesMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

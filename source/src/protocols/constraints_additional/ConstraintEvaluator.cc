@@ -64,7 +64,7 @@ using namespace constraints;
 
 ConstraintEvaluator::ConstraintEvaluator( std::string const & tag, ConstraintSet const& cst, Size /*viol_level*/, Real /*threshold*/,  Size max_seq_sep )
 : name_( tag ),
-	constraints_( core::scoring::constraints::ConstraintSetOP( new ConstraintSet( cst ) ) ),
+	constraints_( utility::pointer::make_shared< ConstraintSet >( cst ) ),
 	tried_fullatom_pose_( false ),
 	tried_centroid_pose_( false ),
 	file_name_( "" ),
@@ -77,7 +77,7 @@ ConstraintEvaluator::ConstraintEvaluator( std::string const & tag, ConstraintSet
 
 ConstraintEvaluator::ConstraintEvaluator( std::string const & tag, ConstraintCOPs const & csts, Size /*viol_level*/, Real /*threshold*/, Size max_seq_sep )
 : name_( tag ),
-	constraints_( core::scoring::constraints::ConstraintSetOP( new ConstraintSet() ) ),
+	constraints_( utility::pointer::make_shared< ConstraintSet >() ),
 	tried_fullatom_pose_( false ),
 	tried_centroid_pose_( false ),
 	file_name_( "" ),
@@ -132,13 +132,13 @@ void ConstraintEvaluator::prepare_pose( core::pose::Pose const& pose_in, core::p
 		//  ConstraintCreatorCOP orig_atom_pair_creator( ConstraintFactory::get_instance()->get_creator( "AtomPair" ) ); // <-- this may actually be a NamedAtomPairConstraintCreator, we don't know; restore it, when done.
 		//  ConstraintFactory::get_instance()->replace_creator( new_atom_pair_creator );
 		try{
-			now_cst = ConstraintIO::get_instance()->read_constraints( file_name_, ConstraintSetOP( new ConstraintSet ), pose );
+			now_cst = ConstraintIO::get_instance()->read_constraints( file_name_, utility::pointer::make_shared< ConstraintSet >(), pose );
 			scoring::constraints::ConstraintCOPs added_constraints = now_cst->get_all_constraints();
 			kinematics::ShortestPathInFoldTree sp( pose.fold_tree() );
 			scoring::constraints::choose_effective_sequence_separation( sp, added_constraints );
 			utility::vector1< bool > combine_exclude_res;
 			scoring::constraints::combine_constraints( added_constraints, constraints_combine_ratio_, combine_exclude_res, sp ); // if combine_ratio_ > 1 this wil
-			now_cst = ConstraintSetOP( new ConstraintSet() );
+			now_cst = utility::pointer::make_shared< ConstraintSet >();
 			now_cst->add_constraints( added_constraints );
 		} catch ( core::id::EXCN_AtomNotFound& excn ) {
 			tr.Warning << " cannot use constraint file " << file_name_ << " on " << ( pose.is_fullatom() ? " fullatom " : " centroid " ) << " pose " << std::endl;
@@ -160,13 +160,13 @@ void ConstraintEvaluator::prepare_pose( core::pose::Pose const& pose_in, core::p
 
 	constraints_additional::MaxSeqSepConstraintSetOP new_cst( nullptr );
 	if ( max_seq_sep_ > 0 ) {
-		new_cst = constraints_additional::MaxSeqSepConstraintSetOP( new constraints_additional::MaxSeqSepConstraintSet( *now_cst, pose.fold_tree() ) );
+		new_cst = utility::pointer::make_shared< constraints_additional::MaxSeqSepConstraintSet >( *now_cst, pose.fold_tree() );
 		new_cst->set_max_seq_sep( max_seq_sep_ );
 	} else {
 		//if not specified  we copy the max_seq_separation if present
 		constraints_additional::MaxSeqSepConstraintSetCOP ms_set = utility::pointer::dynamic_pointer_cast< constraints_additional::MaxSeqSepConstraintSet const > ( pose_in.constraint_set() );
 		if ( ms_set ) {
-			new_cst = constraints_additional::MaxSeqSepConstraintSetOP( new constraints_additional::MaxSeqSepConstraintSet( *now_cst, pose.fold_tree()  ) );
+			new_cst = utility::pointer::make_shared< constraints_additional::MaxSeqSepConstraintSet >( *now_cst, pose.fold_tree()  );
 			new_cst->set_max_seq_sep( ms_set->max_seq_sep() );
 		}
 	}

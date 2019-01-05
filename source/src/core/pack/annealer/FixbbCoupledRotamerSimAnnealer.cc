@@ -124,7 +124,7 @@ FixbbCoupledRotamerSimAnnealer::setup_rotamer_couplings(
 {
 	// setup the rotamer couplings
 	// for each moltenres
-	rotamer_couplings_ = RotamerCouplingsOP( new rotamer_set::RotamerCouplings() );
+	rotamer_couplings_ = utility::pointer::make_shared< rotamer_set::RotamerCouplings >();
 	rotamer_couplings_->resize( rotamer_sets()->nmoltenres() );
 
 	for ( Size moltenres_id=1; moltenres_id<= rotamer_sets()->nmoltenres(); ++moltenres_id ) {

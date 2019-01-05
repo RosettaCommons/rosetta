@@ -324,15 +324,15 @@ add_triazole_constraints(
 	enforce_triazole_distance( r2, pose );
 
 	/*
-	AtomPairConstraintOP NT1_CT1_atompair( new AtomPairConstraint( NT1, CT1, FuncOP( new TopOutFunc( 10, 2.285, 50 ) ) ) );
-	AtomPairConstraintOP NT1_CI1_atompair( new AtomPairConstraint( NT1, CI1, FuncOP( new TopOutFunc( 10, 2.285, 50 ) ) ) );
-	AtomPairConstraintOP NT2_CT2_atompair( new AtomPairConstraint( NT2, CT2, FuncOP( new TopOutFunc( 10, 2.285, 50 ) ) ) );
-	AtomPairConstraintOP NT2_CI2_atompair( new AtomPairConstraint( NT2, CI2, FuncOP( new TopOutFunc( 10, 2.285, 50 ) ) ) );
+	AtomPairConstraintOP NT1_CT1_atompair( new AtomPairConstraint( NT1, CT1, utility::pointer::make_shared< TopOutFunc >( 10, 2.285, 50 ) ) );
+	AtomPairConstraintOP NT1_CI1_atompair( new AtomPairConstraint( NT1, CI1, utility::pointer::make_shared< TopOutFunc >( 10, 2.285, 50 ) ) );
+	AtomPairConstraintOP NT2_CT2_atompair( new AtomPairConstraint( NT2, CT2, utility::pointer::make_shared< TopOutFunc >( 10, 2.285, 50 ) ) );
+	AtomPairConstraintOP NT2_CI2_atompair( new AtomPairConstraint( NT2, CI2, utility::pointer::make_shared< TopOutFunc >( 10, 2.285, 50 ) ) );
 
-	AtomPairConstraintOP NZ1_CT1_atompair( new AtomPairConstraint( NZ1, CT1, FuncOP( new TopOutFunc( 10, 1.385, 50 ) ) ) );
-	AtomPairConstraintOP NI1_CI1_atompair( new AtomPairConstraint( NI1, CI1, FuncOP( new TopOutFunc( 10, 1.385, 50 ) ) ) );
-	AtomPairConstraintOP NZ2_CT2_atompair( new AtomPairConstraint( NZ2, CT2, FuncOP( new TopOutFunc( 10, 1.385, 50 ) ) ) );
-	AtomPairConstraintOP NI2_CI2_atompair( new AtomPairConstraint( NI2, CI2, FuncOP( new TopOutFunc( 10, 1.385, 50 ) ) ) );
+	AtomPairConstraintOP NZ1_CT1_atompair( new AtomPairConstraint( NZ1, CT1, utility::pointer::make_shared< TopOutFunc >( 10, 1.385, 50 ) ) );
+	AtomPairConstraintOP NI1_CI1_atompair( new AtomPairConstraint( NI1, CI1, utility::pointer::make_shared< TopOutFunc >( 10, 1.385, 50 ) ) );
+	AtomPairConstraintOP NZ2_CT2_atompair( new AtomPairConstraint( NZ2, CT2, utility::pointer::make_shared< TopOutFunc >( 10, 1.385, 50 ) ) );
+	AtomPairConstraintOP NI2_CI2_atompair( new AtomPairConstraint( NI2, CI2, utility::pointer::make_shared< TopOutFunc >( 10, 1.385, 50 ) ) );
 	*/
 
 	DihedralConstraintOP exo11( new DihedralConstraint( CE1, NZ1, CT1, CI1, dih_func_180 ) );
@@ -571,7 +571,7 @@ MikeLinkerMover::apply(
 
 	// create a task factory and task operations
 	TaskFactoryOP pert_tf( new TaskFactory() );
-	pert_tf->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
+	pert_tf->push_back( utility::pointer::make_shared< core::pack::task::operation::InitializeFromCommandline >() );
 
 	operation::ReadResfileOP pert_rrop( new operation::ReadResfile() );
 	pert_rrop->default_filename();

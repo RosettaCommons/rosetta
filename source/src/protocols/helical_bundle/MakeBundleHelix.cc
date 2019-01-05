@@ -100,13 +100,13 @@ MakeBundleHelix::~MakeBundleHelix() {}
 
 /// @brief Clone operator to create a pointer to a fresh MakeBundleHelix object that copies this one.
 protocols::moves::MoverOP MakeBundleHelix::clone() const {
-	return protocols::moves::MoverOP( new MakeBundleHelix ( *this ) );
+	return utility::pointer::make_shared< MakeBundleHelix > ( *this );
 }
 
 
 /// @brief Fresh_instance operator to create a pointer to a fresh MakeBundleHelix object that does NOT copy this one.
 protocols::moves::MoverOP MakeBundleHelix::fresh_instance() const {
-	return protocols::moves::MoverOP( new MakeBundleHelix );
+	return utility::pointer::make_shared< MakeBundleHelix >();
 }
 
 /// @brief Copy the parameter values for parameters that have not been set from the global parameters.
@@ -276,7 +276,7 @@ std::string MakeBundleHelixCreator::keyname() const {
 
 protocols::moves::MoverOP
 MakeBundleHelixCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MakeBundleHelix );
+	return utility::pointer::make_shared< MakeBundleHelix >();
 }
 
 void MakeBundleHelixCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

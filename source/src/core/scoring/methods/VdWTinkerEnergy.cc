@@ -80,7 +80,7 @@ public:
 	VdWTinkerResPairMinData();
 	~VdWTinkerResPairMinData() override = default;
 	basic::datacache::CacheableDataOP clone() const override
-	{ return basic::datacache::CacheableDataOP( new VdWTinkerResPairMinData( *this ) ); }
+	{ return utility::pointer::make_shared< VdWTinkerResPairMinData >( *this ); }
 
 	void
 	initialize(
@@ -131,7 +131,7 @@ retrieve_nonconst_vdw_pairdata(
 		debug_assert( utility::pointer::dynamic_pointer_cast< VdWTinkerResPairMinData > ( pairdata.get_data( vdw_respair_data ) ));
 		vdw_pairdata = utility::pointer::static_pointer_cast< VdWTinkerResPairMinData > ( pairdata.get_data( vdw_respair_data ) );
 	} else {
-		vdw_pairdata = VdWTinkerResPairMinDataOP( new VdWTinkerResPairMinData );
+		vdw_pairdata = utility::pointer::make_shared< VdWTinkerResPairMinData >();
 		pairdata.set_data( vdw_respair_data, vdw_pairdata );
 	}
 	return *vdw_pairdata;
@@ -157,7 +157,7 @@ retrieve_nonconst_vdw_resdata(
 		debug_assert( utility::pointer::dynamic_pointer_cast< VdWTinkerResidueInfo > ( resdata.get_data( vdw_res_data ) ) );
 		vdw_resdata = utility::pointer::static_pointer_cast< VdWTinkerResidueInfo > ( resdata.get_data( vdw_res_data ) );
 	} else {
-		vdw_resdata = VdWTinkerResidueInfoOP( new VdWTinkerResidueInfo );
+		vdw_resdata = utility::pointer::make_shared< VdWTinkerResidueInfo >();
 		resdata.set_data( vdw_res_data, vdw_resdata );
 	}
 	return *vdw_resdata;
@@ -189,7 +189,7 @@ methods::EnergyMethodOP
 VdWTinkerEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
-	return methods::EnergyMethodOP( new VdWTinkerEnergy( options ) );
+	return utility::pointer::make_shared< VdWTinkerEnergy >( options );
 }
 
 ScoreTypes
@@ -204,7 +204,7 @@ VdWTinkerEnergy::VdWTinkerEnergy( VdWTinkerEnergy const & /*src*/ ) = default;
 
 
 VdWTinkerEnergy::VdWTinkerEnergy( EnergyMethodOptions const & options ):
-	parent( methods::EnergyMethodCreatorOP( new VdWTinkerEnergyCreator ) ),
+	parent( utility::pointer::make_shared< VdWTinkerEnergyCreator >() ),
 	potential_( ScoringManager::get_instance()->get_VdWTinkerPotential() ),
 	exclude_DNA_DNA_( options.exclude_DNA_DNA() )
 {}
@@ -214,7 +214,7 @@ VdWTinkerEnergy::VdWTinkerEnergy( EnergyMethodOptions const & options ):
 EnergyMethodOP
 VdWTinkerEnergy::clone() const
 {
-	return EnergyMethodOP( new VdWTinkerEnergy( *this ) );
+	return utility::pointer::make_shared< VdWTinkerEnergy >( *this );
 }
 
 bool
@@ -282,7 +282,7 @@ VdWTinkerEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) c
 	}
 
 	if ( create_new_lre_container ) {
-		LREnergyContainerOP new_dec = LREnergyContainerOP( new DenseEnergyContainer( pose.size(), fa_vdw_tinker ) );
+		LREnergyContainerOP new_dec = utility::pointer::make_shared< DenseEnergyContainer >( pose.size(), fa_vdw_tinker );
 		energies.set_long_range_container( lr_type, new_dec );
 	}
 }
@@ -311,7 +311,7 @@ VdWTinkerEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const &
 	}
 
 	if ( create_new_lre_container ) {
-		LREnergyContainerOP new_dec = LREnergyContainerOP( new DenseEnergyContainer( pose.size(), fa_vdw_tinker ) );
+		LREnergyContainerOP new_dec = utility::pointer::make_shared< DenseEnergyContainer >( pose.size(), fa_vdw_tinker );
 		energies.set_long_range_container( lr_type, new_dec );
 	}
 }

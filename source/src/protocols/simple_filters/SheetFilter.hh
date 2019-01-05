@@ -52,10 +52,10 @@ public:
 	~SheetFilter() override = default;
 
 	filters::FilterOP clone() const override {
-		return filters::FilterOP( new SheetFilter( *this ) ); }
+		return utility::pointer::make_shared< SheetFilter >( *this ); }
 
 	filters::FilterOP fresh_instance() const override{
-		return filters::FilterOP( new SheetFilter() ); }
+		return utility::pointer::make_shared< SheetFilter >(); }
 
 
 	/// @brief Returns true if the given pose passes the filter, false otherwise.

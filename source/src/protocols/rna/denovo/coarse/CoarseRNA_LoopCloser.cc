@@ -203,7 +203,7 @@ CoarseRNA_LoopCloser::output_forward_backward_res(){
 bool
 CoarseRNA_LoopCloser::figure_out_pivots( core::pose::Pose const & pose ){
 
-	if ( !atom_level_domain_map_ ) atom_level_domain_map_ = core::pose::toolbox::AtomLevelDomainMapOP( new core::pose::toolbox::AtomLevelDomainMap( pose ) );
+	if ( !atom_level_domain_map_ ) atom_level_domain_map_ = utility::pointer::make_shared< core::pose::toolbox::AtomLevelDomainMap >( pose );
 
 	figure_out_forward_backward_res_by_backtracking( pose );
 

@@ -66,13 +66,13 @@ IndependentBBTorsionSRFD & IndependentBBTorsionSRFD::operator =( IndependentBBTo
 
 /// @brief clone this object
 SingleResidueFragDataOP IndependentBBTorsionSRFD::clone() const {
-	return SingleResidueFragDataOP( new IndependentBBTorsionSRFD( *this ) );
+	return utility::pointer::make_shared< IndependentBBTorsionSRFD >( *this );
 }
 
 
 /// @brief create a new instance of this object
 SingleResidueFragDataOP IndependentBBTorsionSRFD::create() const {
-	return SingleResidueFragDataOP( new IndependentBBTorsionSRFD() );
+	return utility::pointer::make_shared< IndependentBBTorsionSRFD >();
 }
 
 

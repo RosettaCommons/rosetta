@@ -150,7 +150,7 @@ LigandBindingAssemblyMover::set_up_assembly(core::pose::Pose & pose){
 		}
 
 	} else {
-		assembly = data_storage::SmartAssemblyOP( new data_storage::SmartAssembly( get_segment_vector(), get_window_width() ) );
+		assembly = utility::pointer::make_shared< data_storage::SmartAssembly >( get_segment_vector(), get_window_width() );
 		std::map< core::Size, data_storage::SmartSegmentOP > pdbsegs;
 		pdbsegs.clear();
 		hashing::AlignmentFileGeneratorMover::add_pose_segments_to_segment_vector( pose, get_partner_pdb(), assembly->get_segment_vector(), pdbsegs, get_pose_segment_starts_string(), get_pose_segment_ends_string(), get_pose_segment_dssp(), ligands, partner_ligands, expanded_ligands_, required_resnums, required_selector, get_strict_dssp_changes() );
@@ -224,7 +224,7 @@ LigandBindingAssemblyMover::generate_assembly(data_storage::SmartAssemblyOP asse
 		if ( ligand_des.ideal_contacts_num.size() == 0 ) {
 			continue;
 		}
-		binder_finders_[ ligand_des.ligand_id ] = hashing::LigandBindingResPlacerOP( new hashing::LigandBindingResPlacer( ligand_des.ligand_coords, assembly->get_local_ligands().at( ligand_des.ligand_id ) ) );
+		binder_finders_[ ligand_des.ligand_id ] = utility::pointer::make_shared< hashing::LigandBindingResPlacer >( ligand_des.ligand_coords, assembly->get_local_ligands().at( ligand_des.ligand_id ) );
 		binder_finders_[ ligand_des.ligand_id ]->set_geometry_score_weight( ligand_des.geometry_score_threshold );
 	}
 
@@ -619,13 +619,13 @@ LigandBindingAssemblyMover::parse_my_tag(
 /// @brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
 LigandBindingAssemblyMover::fresh_instance() const{
-	return protocols::moves::MoverOP( new LigandBindingAssemblyMover );
+	return utility::pointer::make_shared< LigandBindingAssemblyMover >();
 }
 
 /// @brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
 LigandBindingAssemblyMover::clone() const{
-	return protocols::moves::MoverOP( new LigandBindingAssemblyMover( *this ) );
+	return utility::pointer::make_shared< LigandBindingAssemblyMover >( *this );
 }
 
 void
@@ -671,7 +671,7 @@ LigandBindingAssemblyMover::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 protocols::moves::MoverOP
 LigandBindingAssemblyMoverCreator::create_mover() const
 {
-	return protocols::moves::MoverOP( new LigandBindingAssemblyMover );
+	return utility::pointer::make_shared< LigandBindingAssemblyMover >();
 }
 
 //Why do we have three functions in the creator that do exactly the same thing??

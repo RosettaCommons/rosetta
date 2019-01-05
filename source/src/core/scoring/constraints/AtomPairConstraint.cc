@@ -199,7 +199,7 @@ ConstraintOP AtomPairConstraint::remapped_clone( pose::Pose const& src, pose::Po
 	id::AtomID id1( named_atom_id_to_atom_id( atom1, dest ) );
 	id::AtomID id2( named_atom_id_to_atom_id( atom2, dest ) );
 	if ( id1.valid() && id2.valid() ) {
-		return ConstraintOP( new AtomPairConstraint( id1, id2, func_, score_type() ) );
+		return utility::pointer::make_shared< AtomPairConstraint >( id1, id2, func_, score_type() );
 	} else {
 		return nullptr;
 	}
@@ -284,7 +284,7 @@ AtomPairConstraint::remap_resid( core::id::SequenceMapping const &seqmap ) const
 	if ( seqmap[atom1_.rsd()] != 0 && seqmap[atom2_.rsd()] != 0 ) {
 		AtomID remap_a1( atom1_.atomno(), seqmap[atom1_.rsd()] ),
 			remap_a2( atom2_.atomno(), seqmap[atom2_.rsd()] );
-		return ConstraintOP( new AtomPairConstraint( remap_a1, remap_a2, this->func_ ) );
+		return utility::pointer::make_shared< AtomPairConstraint >( remap_a1, remap_a2, this->func_ );
 	} else {
 		return nullptr;
 	}

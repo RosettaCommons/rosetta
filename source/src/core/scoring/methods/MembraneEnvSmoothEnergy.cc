@@ -52,7 +52,7 @@ methods::EnergyMethodOP
 MembraneEnvSmoothEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new MembraneEnvSmoothEnergy );
+	return utility::pointer::make_shared< MembraneEnvSmoothEnergy >();
 }
 
 ScoreTypes
@@ -71,7 +71,7 @@ DistanceSquared const end_sig2   = end_sig*end_sig;
 ////////////////////////////////////////////////////////////////////////////
 
 MembraneEnvSmoothEnergy::MembraneEnvSmoothEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new MembraneEnvSmoothEnergyCreator ) )
+	parent( utility::pointer::make_shared< MembraneEnvSmoothEnergyCreator >() )
 {
 	Size const max_aa( 20 );
 	Size const env_log_table_cen10_bins( 40 );
@@ -98,7 +98,7 @@ MembraneEnvSmoothEnergy::MembraneEnvSmoothEnergy() :
 EnergyMethodOP
 MembraneEnvSmoothEnergy::clone() const
 {
-	return EnergyMethodOP( new MembraneEnvSmoothEnergy( *this ) );
+	return utility::pointer::make_shared< MembraneEnvSmoothEnergy >( *this );
 }
 
 /////////////////////////////////////////////////////////////////////////////

@@ -54,7 +54,7 @@ LigandClashRequirement::LigandClashRequirement( LigandClashRequirement const & s
 
 LigandClashRequirementOP
 LigandClashRequirement::clone() const {
-	return LigandClashRequirementOP( new LigandClashRequirement( *this ) );
+	return utility::pointer::make_shared< LigandClashRequirement >( *this );
 }
 
 std::pair<bool,bool>
@@ -183,7 +183,7 @@ LigandClashRequirementCreator::provide_xml_schema( utility::tag::XMLSchemaDefini
 
 AssemblyRequirementOP
 LigandClashRequirementCreator::create_requirement() const{
-	return AssemblyRequirementOP( new LigandClashRequirement() );
+	return utility::pointer::make_shared< LigandClashRequirement >();
 }
 
 std::string

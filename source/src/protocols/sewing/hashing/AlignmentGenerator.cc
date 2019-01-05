@@ -60,7 +60,7 @@ AlignmentGenerator::AlignmentGenerator( AlignmentGenerator const & other ):
 
 AlignmentGeneratorOP
 AlignmentGenerator::clone() const {
-	return AlignmentGeneratorOP( new AlignmentGenerator( *this ) );
+	return utility::pointer::make_shared< AlignmentGenerator >( *this );
 }
 
 //Getters
@@ -102,7 +102,7 @@ AlignmentGenerator::pdb_segments( std::map< core::Size, data_storage::SmartSegme
 utility::vector1< std::pair< core::Size, core::Size > >
 AlignmentGenerator::get_all_alignments( data_storage::SmartSegmentCOP s1, data_storage::SmartSegmentCOP s2 ){
 	//Create a new Hasher
-	HasherOP alignment_hasher = HasherOP( new Hasher( hasher_settings_, segment_vector_, pdb_segments_ ) );
+	HasherOP alignment_hasher = utility::pointer::make_shared< Hasher >( hasher_settings_, segment_vector_, pdb_segments_ );
 
 	//Get iterators for possible basis pairs
 	std::pair< utility::vector1< std::pair<core::Size, core::Size > >::const_iterator, utility::vector1< std::pair< core::Size, core::Size > >::const_iterator > iters = alignment_hasher->iterate_over_basis_pairs(s1, s2 );

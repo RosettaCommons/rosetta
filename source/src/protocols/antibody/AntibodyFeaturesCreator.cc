@@ -29,7 +29,7 @@ using namespace protocols::features;
 // XRW TEMP AntibodyFeaturesCreator::AntibodyFeaturesCreator() {}
 // XRW TEMP AntibodyFeaturesCreator::~AntibodyFeaturesCreator() = default;
 // XRW TEMP FeaturesReporterOP AntibodyFeaturesCreator::create_features_reporter() const {
-// XRW TEMP  return FeaturesReporterOP( new AntibodyFeatures );
+// XRW TEMP  return utility::pointer::make_shared< AntibodyFeatures >();
 // XRW TEMP }
 
 // XRW TEMP std::string AntibodyFeaturesCreator::type_name() const {

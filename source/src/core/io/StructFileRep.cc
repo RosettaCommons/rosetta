@@ -74,8 +74,8 @@ bool link_in_vector( utility::vector1< LinkInformation > const & link_vector, Li
 StructFileRep::StructFileRep() : utility::pointer::ReferenceCount(),
 	filename_( "" ),
 	modeltag_( "" ),
-	header_( HeaderInformationOP( new HeaderInformation() ) ),
-	remarks_( RemarksOP( new Remarks ) ),
+	header_( utility::pointer::make_shared< HeaderInformation >() ),
+	remarks_( utility::pointer::make_shared< Remarks >() ),
 	heterogen_names_(),
 	residue_type_base_names_(),
 	HELIXInformations_(),
@@ -94,7 +94,7 @@ StructFileRep::~StructFileRep() = default;
 /// @details Uses the compiler-default copy constructor.
 StructFileRepOP
 StructFileRep::clone() const {
-	return StructFileRepOP( new StructFileRep( *this ) );
+	return utility::pointer::make_shared< StructFileRep >( *this );
 }
 
 // Helper Functions ///////////////////////////////////////////////////////////

@@ -93,7 +93,7 @@ public:
 		core::pack::task::TaskFactoryOP taskfactory( new core::pack::task::TaskFactory );
 		core::pack::task::operation::RestrictToRepackingOP rtrp( new core::pack::task::operation::RestrictToRepacking );
 		taskfactory->push_back( rtrp );
-		pack_ = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover );
+		pack_ = utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >();
 		pack_->score_function( scorefxn_ );
 		pack_->task_factory( taskfactory );
 

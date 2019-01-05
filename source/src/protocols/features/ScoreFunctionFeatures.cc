@@ -137,10 +137,10 @@ ScoreFunctionFeatures::write_score_function_weights_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column batch_id("batch_id", DbDataTypeOP( new DbInteger() ), true);
-	Column score_function_name("score_function_name", DbDataTypeOP( new DbText(255) ), true);
-	Column score_type_id("score_type_id", DbDataTypeOP( new DbInteger() ), true);
-	Column weight("weight", DbDataTypeOP( new DbReal() ), true);
+	Column batch_id("batch_id", utility::pointer::make_shared< DbInteger >(), true);
+	Column score_function_name("score_function_name", utility::pointer::make_shared< DbText >(255), true);
+	Column score_type_id("score_type_id", utility::pointer::make_shared< DbInteger >(), true);
+	Column weight("weight", utility::pointer::make_shared< DbReal >(), true);
 
 	utility::vector1<Column> pkey_cols;
 	pkey_cols.push_back(batch_id);
@@ -273,7 +273,7 @@ std::string ScoreFunctionFeaturesCreator::type_name() const {
 
 protocols::features::FeaturesReporterOP
 ScoreFunctionFeaturesCreator::create_features_reporter() const {
-	return protocols::features::FeaturesReporterOP( new ScoreFunctionFeatures );
+	return utility::pointer::make_shared< ScoreFunctionFeatures >();
 }
 
 void ScoreFunctionFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

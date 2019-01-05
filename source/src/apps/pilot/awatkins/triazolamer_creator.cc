@@ -257,10 +257,10 @@ TriazoleCreator::apply(
 	//first, load the file of residue types to get min energies for.
 
 	//now do initialization stuff.
-	TaskFactoryOP task_factory = TaskFactoryOP( new TaskFactory );
-	task_factory->push_back( operation::TaskOperationCOP( new operation::InitializeFromCommandline ) );
+	TaskFactoryOP task_factory = utility::pointer::make_shared< TaskFactory >();
+	task_factory->push_back( utility::pointer::make_shared< operation::InitializeFromCommandline >() );
 	//need these to keep pack_rotamers from redesigning the residue.
-	operation::RestrictToRepackingOP rtrop = operation::RestrictToRepackingOP( new operation::RestrictToRepacking );
+	operation::RestrictToRepackingOP rtrop = utility::pointer::make_shared< operation::RestrictToRepacking >();
 	task_factory->push_back( rtrop );
 
 	ScoreFunctionOP scorefxn = get_score_function();

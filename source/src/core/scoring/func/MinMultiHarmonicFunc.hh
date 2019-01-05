@@ -39,7 +39,7 @@ public:
 	MinMultiHarmonicFunc( utility::vector1<Real> const & x0_in, utility::vector1<Real> const & sd_in );
 
 	FuncOP
-	clone() const { return FuncOP( new MinMultiHarmonicFunc( *this ) ); }
+	clone() const { return utility::pointer::make_shared< MinMultiHarmonicFunc >( *this ); }
 
 	virtual bool operator == ( Func const & other ) const;
 	virtual bool same_type_as_me( Func const & other ) const;

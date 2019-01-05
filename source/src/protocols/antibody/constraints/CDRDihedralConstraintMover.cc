@@ -111,7 +111,7 @@ CDRDihedralConstraintMover::CDRDihedralConstraintMover(CDRDihedralConstraintMove
 	general_phi_sd_(src.general_phi_sd_),
 	general_psi_sd_(src.general_psi_sd_)
 {
-	if ( src.ab_info_ ) ab_info_ = AntibodyInfoOP( new AntibodyInfo( *src.ab_info_));
+	if ( src.ab_info_ ) ab_info_ = utility::pointer::make_shared< AntibodyInfo >( *src.ab_info_);
 }
 
 
@@ -253,7 +253,7 @@ CDRDihedralConstraintMover::apply(core::pose::Pose& pose) {
 	using namespace core::pose::datacache;
 
 	if ( ! ab_info_ ) {
-		ab_info_ = AntibodyInfoOP(new AntibodyInfo(pose));
+		ab_info_ = utility::pointer::make_shared< AntibodyInfo >(pose);
 	}
 
 	if ( ! cdr_is_set_ ) throw CREATE_EXCEPTION(utility::excn::Exception, "CDR not set for CDRDihedralConstraintMover!");
@@ -312,7 +312,7 @@ CDRDihedralConstraintMover::add_harmonic_cluster_constraint(core::pose::Pose & p
 	std::string fname = get_harmonic_cluster_constraint_filename(cluster);
 	if ( fname=="NA" ) { return false;}
 	try {
-		ConstraintSetOP cst = ConstraintIO::get_instance()->read_constraints(fname, ConstraintSetOP( new ConstraintSet ), pose);
+		ConstraintSetOP cst = ConstraintIO::get_instance()->read_constraints(fname, utility::pointer::make_shared< ConstraintSet >(), pose);
 
 		pose.add_constraints(cst->get_all_constraints());
 		return true;
@@ -497,7 +497,7 @@ std::string CDRDihedralConstraintMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 CDRDihedralConstraintMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new CDRDihedralConstraintMover );
+	return utility::pointer::make_shared< CDRDihedralConstraintMover >();
 }
 
 void CDRDihedralConstraintMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

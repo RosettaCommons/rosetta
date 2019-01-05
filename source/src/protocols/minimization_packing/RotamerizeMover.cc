@@ -63,14 +63,14 @@ RotamerizeMover::RotamerizeMover() :
 	Mover("RotamerizeMover"),
 	task_(/* 0 */),
 	task_factory_(/* 0 */),
-	rotamer_sets_( RotamerSetsOP( new rotamer_set::RotamerSets ) )
+	rotamer_sets_( utility::pointer::make_shared< rotamer_set::RotamerSets >() )
 {}
 
 RotamerizeMover::RotamerizeMover( std::string const & type_name ) :
 	Mover( type_name ),
 	task_(/* 0 */),
 	task_factory_(/* 0 */),
-	rotamer_sets_( RotamerSetsOP( new rotamer_set::RotamerSets ) )
+	rotamer_sets_( utility::pointer::make_shared< rotamer_set::RotamerSets >() )
 {}
 
 // constructors with arguments
@@ -80,7 +80,7 @@ RotamerizeMover::RotamerizeMover(
 	Mover("RotamerizeMover"),
 	task_(std::move( task )),
 	task_factory_(/* 0 */),
-	rotamer_sets_( RotamerSetsOP( new rotamer_set::RotamerSets ) )
+	rotamer_sets_( utility::pointer::make_shared< rotamer_set::RotamerSets >() )
 {}
 
 RotamerizeMover::~RotamerizeMover()= default;
@@ -90,7 +90,7 @@ RotamerizeMover::RotamerizeMover( RotamerizeMover const & other )
 {
 	task_ = other.task();
 	task_factory_ = other.task_factory();
-	rotamer_sets_ = RotamerSetsOP( new rotamer_set::RotamerSets );
+	rotamer_sets_ = utility::pointer::make_shared< rotamer_set::RotamerSets >();
 }
 
 void

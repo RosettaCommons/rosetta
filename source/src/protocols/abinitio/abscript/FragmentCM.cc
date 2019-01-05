@@ -77,7 +77,7 @@ using namespace environment;
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP FragmentCMCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new FragmentCM );
+// XRW TEMP  return utility::pointer::make_shared< FragmentCM >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -164,9 +164,9 @@ void FragmentCM::parse_my_tag( utility::tag::TagCOP tag,
 
 	std::string const& frag_type = tag->getOption< std::string >( "frag_type", "classic" );
 	if ( frag_type == "classic" ) {
-		set_mover( simple_moves::FragmentMoverOP( new simple_moves::ClassicFragmentMover( frag_io.read_data( tag->getOption< std::string >( frag_file_tag ) ) ) ) );
+		set_mover( utility::pointer::make_shared< simple_moves::ClassicFragmentMover >( frag_io.read_data( tag->getOption< std::string >( frag_file_tag ) ) ) );
 	} else if ( frag_type == "smooth" ) {
-		set_mover( simple_moves::FragmentMoverOP( new simple_moves::SmoothFragmentMover( frag_io.read_data( tag->getOption< std::string >( frag_file_tag ) ), protocols::simple_moves::FragmentCostOP( new simple_moves::GunnCost() ) ) ) );
+		set_mover( utility::pointer::make_shared< simple_moves::SmoothFragmentMover >( frag_io.read_data( tag->getOption< std::string >( frag_file_tag ) ), utility::pointer::make_shared< simple_moves::GunnCost >() ) );
 	} else {
 		std::ostringstream ss;
 		ss << "The fragment type " << frag_type << " is not valid. The options "
@@ -187,10 +187,10 @@ claims::EnvClaims FragmentCM::yield_claims( core::pose::Pose const& pose,
 
 	if ( yield_cut_bias() ) {
 		core::fragment::SecondaryStructureOP ss( new core::fragment::SecondaryStructure( *( mover()->fragments() ) ) );
-		claim_list.push_back( protocols::environment::claims::EnvClaimOP( new environment::claims::CutBiasClaim(
+		claim_list.push_back( utility::pointer::make_shared< environment::claims::CutBiasClaim >(
 			utility::pointer::static_pointer_cast< ClientMover > ( get_self_ptr() ),
 			"BASE",
-			*ss ) ) );
+			*ss ) );
 	}
 
 	if ( selector() ) {
@@ -322,7 +322,7 @@ std::string FragmentCMCreator::keyname() const {
 
 protocols::moves::MoverOP
 FragmentCMCreator::create_mover() const {
-	return protocols::moves::MoverOP( new FragmentCM );
+	return utility::pointer::make_shared< FragmentCM >();
 }
 
 void FragmentCMCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

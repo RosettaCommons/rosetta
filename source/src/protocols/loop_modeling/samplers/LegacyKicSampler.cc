@@ -39,7 +39,7 @@ using protocols::loops::loop_closure::kinematic_closure::TorsionSamplingKinemati
 using protocols::loops::loop_closure::kinematic_closure::TorsionSamplingKinematicPerturberOP;
 
 // XRW TEMP protocols::moves::MoverOP LegacyKicSamplerCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new LegacyKicSampler );
+// XRW TEMP  return utility::pointer::make_shared< LegacyKicSampler >();
 // XRW TEMP }
 
 // XRW TEMP std::string LegacyKicSamplerCreator::keyname() const {
@@ -48,7 +48,7 @@ using protocols::loops::loop_closure::kinematic_closure::TorsionSamplingKinemati
 
 LegacyKicSampler::LegacyKicSampler() {
 
-	mover_ = protocols::loops::loop_closure::kinematic_closure::KinematicMoverOP( new KinematicMover() );
+	mover_ = utility::pointer::make_shared< KinematicMover >();
 	TorsionSamplingKinematicPerturberOP perturber( new TorsionSamplingKinematicPerturber(protocols::loops::loop_closure::kinematic_closure::KinematicMoverCAP(mover_)) );
 
 	mover_->set_perturber(perturber);
@@ -92,7 +92,7 @@ std::string LegacyKicSamplerCreator::keyname() const {
 
 protocols::moves::MoverOP
 LegacyKicSamplerCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LegacyKicSampler );
+	return utility::pointer::make_shared< LegacyKicSampler >();
 }
 
 void LegacyKicSamplerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

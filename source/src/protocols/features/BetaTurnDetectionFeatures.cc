@@ -51,10 +51,10 @@ using utility::sql_database::sessionOP;
 using utility::vector1;
 using cppdb::statement;
 
-BetaTurnDetectionFeatures::BetaTurnDetectionFeatures() : FeaturesReporter(), btd_( BetaTurnDetectionCOP( BetaTurnDetectionOP( new BetaTurnDetection ) ) ) {}
+BetaTurnDetectionFeatures::BetaTurnDetectionFeatures() : FeaturesReporter(), btd_( utility::pointer::make_shared< BetaTurnDetection >() ) {}
 
 BetaTurnDetectionFeatures::BetaTurnDetectionFeatures( BetaTurnDetectionFeatures const & from ) :
-	FeaturesReporter(), btd_( BetaTurnDetectionCOP( BetaTurnDetectionOP( new BetaTurnDetection( * from.btd_ ) ) ) ) {}
+	FeaturesReporter(), btd_( utility::pointer::make_shared< BetaTurnDetection >( * from.btd_ ) ) {}
 
 BetaTurnDetectionFeatures::~BetaTurnDetectionFeatures() = default;
 
@@ -74,9 +74,9 @@ BetaTurnDetectionFeatures::write_beta_turns_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id( "struct_id", DbDataTypeOP( new DbBigInt() ) );
-	Column residue_begin( "residue_begin", DbDataTypeOP( new DbInteger() ) );
-	Column turn_type( "turn_type", DbDataTypeOP( new DbText() ) );
+	Column struct_id( "struct_id", utility::pointer::make_shared< DbBigInt >() );
+	Column residue_begin( "residue_begin", utility::pointer::make_shared< DbInteger >() );
+	Column turn_type( "turn_type", utility::pointer::make_shared< DbText >() );
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back( struct_id );
@@ -161,7 +161,7 @@ std::string BetaTurnDetectionFeaturesCreator::type_name() const {
 
 protocols::features::FeaturesReporterOP
 BetaTurnDetectionFeaturesCreator::create_features_reporter() const {
-	return protocols::features::FeaturesReporterOP( new BetaTurnDetectionFeatures );
+	return utility::pointer::make_shared< BetaTurnDetectionFeatures >();
 }
 
 void BetaTurnDetectionFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

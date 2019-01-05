@@ -103,12 +103,12 @@ SymUnsatHbondFilter::SymUnsatHbondFilter( SymUnsatHbondFilter const & )= default
 
 protocols::filters::FilterOP
 SymUnsatHbondFilter::fresh_instance() const{
-	return protocols::filters::FilterOP( new SymUnsatHbondFilter() );
+	return utility::pointer::make_shared< SymUnsatHbondFilter >();
 }
 
 protocols::filters::FilterOP
 SymUnsatHbondFilter::clone() const{
-	return protocols::filters::FilterOP( new SymUnsatHbondFilter( *this ) );
+	return utility::pointer::make_shared< SymUnsatHbondFilter >( *this );
 }
 
 // @brief getters
@@ -407,7 +407,7 @@ SymUnsatHbondFilter::report( std::ostream & out, core::pose::Pose const & pose )
 }
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP SymUnsatHbondFilterCreator::create_filter() const { return protocols::filters::FilterOP( new SymUnsatHbondFilter ); }
+// XRW TEMP SymUnsatHbondFilterCreator::create_filter() const { return utility::pointer::make_shared< SymUnsatHbondFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP SymUnsatHbondFilterCreator::keyname() const { return "SymUnsatHbonds"; }
@@ -453,7 +453,7 @@ std::string SymUnsatHbondFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 SymUnsatHbondFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new SymUnsatHbondFilter );
+	return utility::pointer::make_shared< SymUnsatHbondFilter >();
 }
 
 void SymUnsatHbondFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -41,7 +41,7 @@ SetIGTypeOperation::~SetIGTypeOperation()= default;
 
 core::pack::task::operation::TaskOperationOP SetIGTypeOperation::clone() const
 {
-	return core::pack::task::operation::TaskOperationOP( new SetIGTypeOperation( *this ) );
+	return utility::pointer::make_shared< SetIGTypeOperation >( *this );
 }
 
 void SetIGTypeOperation::apply( core::pose::Pose const &, core::pack::task::PackerTask & task ) const
@@ -72,7 +72,7 @@ void SetIGTypeOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 
 core::pack::task::operation::TaskOperationOP SetIGTypeOperationCreator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new SetIGTypeOperation );
+	return utility::pointer::make_shared< SetIGTypeOperation >();
 }
 
 void SetIGTypeOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

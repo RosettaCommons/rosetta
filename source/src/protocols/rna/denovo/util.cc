@@ -410,25 +410,25 @@ setup_coarse_chainbreak_constraints( pose::Pose & pose, Size const & n )
 	Size const atom_S2 = pose.residue_type( n+1 ).atom_index( " S  " );
 	Size const atom_P2 = pose.residue_type( n+1 ).atom_index( " P  " );
 
-	pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint(
+	pose.add_constraint( scoring::constraints::ConstraintCOP( utility::pointer::make_shared< AtomPairConstraint >(
 		id::AtomID(atom_S1, n),
 		id::AtomID(atom_P2, n+1),
-		S_P_distance_func, core::scoring::coarse_chainbreak_constraint ) ) ) );
+		S_P_distance_func, core::scoring::coarse_chainbreak_constraint ) ) );
 
-	pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint(
+	pose.add_constraint( scoring::constraints::ConstraintCOP( utility::pointer::make_shared< AtomPairConstraint >(
 		id::AtomID(atom_S1, n),
 		id::AtomID(atom_P2, n+1),
-		S_P_harmonic_func, core::scoring::coarse_chainbreak_constraint ) ) ) );
+		S_P_harmonic_func, core::scoring::coarse_chainbreak_constraint ) ) );
 
-	pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint(
+	pose.add_constraint( scoring::constraints::ConstraintCOP( utility::pointer::make_shared< AtomPairConstraint >(
 		id::AtomID(atom_P1, n),
 		id::AtomID(atom_P2, n+1),
-		P_P_distance_func, core::scoring::coarse_chainbreak_constraint ) ) ) );
+		P_P_distance_func, core::scoring::coarse_chainbreak_constraint ) ) );
 
-	pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint(
+	pose.add_constraint( scoring::constraints::ConstraintCOP( utility::pointer::make_shared< AtomPairConstraint >(
 		id::AtomID(atom_S1, n),
 		id::AtomID(atom_S2, n+1),
-		S_S_distance_func, core::scoring::coarse_chainbreak_constraint ) ) ) );
+		S_S_distance_func, core::scoring::coarse_chainbreak_constraint ) ) );
 }
 
 ///////////////////////////////////////////////////////////////////////

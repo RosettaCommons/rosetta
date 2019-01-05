@@ -61,7 +61,7 @@ CloseOneCDRLoop::~CloseOneCDRLoop() = default;
 void CloseOneCDRLoop::set_default() {
 	allowed_separation_ = 1.9;
 	flanking_residues_ = 5; // default 5;
-	movemap_ = core::kinematics::MoveMapOP( new kinematics::MoveMap() );
+	movemap_ = utility::pointer::make_shared< kinematics::MoveMap >();
 	movemap_->set_chi( false );
 	movemap_->set_bb( false );
 } // CloseOneCDRLoop::set_default

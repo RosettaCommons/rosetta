@@ -85,7 +85,7 @@ SurfaceVectorFallbackConfiguration::could_not_create_resource_error_message( Res
 basic::resource_manager::FallbackConfigurationOP
 SurfaceVectorFallbackConfigurationCreator::create_fallback_configuration() const
 {
-	return basic::resource_manager::FallbackConfigurationOP( new SurfaceVectorFallbackConfiguration );
+	return utility::pointer::make_shared< SurfaceVectorFallbackConfiguration >();
 }
 
 std::string

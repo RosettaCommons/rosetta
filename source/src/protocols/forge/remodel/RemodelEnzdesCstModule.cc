@@ -64,7 +64,7 @@ RemodelEnzdesCstModule::apply(core::pose::Pose & pose)
 		toolbox::match_enzdes_util::EnzdesCstCacheOP cst_cache = toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache();
 		if ( !cst_cache ) {
 			TR << "cst_cache nonexistant; make new instance." << std::endl;
-			toolbox::match_enzdes_util::get_enzdes_observer( pose )->set_cst_cache( toolbox::match_enzdes_util::EnzdesCstCacheOP( new EnzdesCstCache( get_self_ptr(), cst_pairs_.size() ) ) );
+			toolbox::match_enzdes_util::get_enzdes_observer( pose )->set_cst_cache( utility::pointer::make_shared< EnzdesCstCache >( get_self_ptr(), cst_pairs_.size() ) );
 			cst_cache = toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache();
 		}
 		//tmp hack over

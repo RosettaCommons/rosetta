@@ -68,7 +68,7 @@ methods::EnergyMethodOP
 MPPairEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new MPPairEnergy );
+	return utility::pointer::make_shared< MPPairEnergy >();
 }
 
 /// @brief Return the relevant score type - MPPair
@@ -81,7 +81,7 @@ MPPairEnergyCreator::score_types_for_method() const {
 
 /// @brief Default Constructor
 MPPairEnergy::MPPairEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new MPPairEnergyCreator ) ),
+	parent( utility::pointer::make_shared< MPPairEnergyCreator >() ),
 	mpdata_( ScoringManager::get_instance()->get_MembraneData() ),
 	no_interpolate_mpair_( true ) // temp
 {}
@@ -89,7 +89,7 @@ MPPairEnergy::MPPairEnergy() :
 /// @brief Clone Method
 methods::EnergyMethodOP
 MPPairEnergy::clone() const {
-	return methods::EnergyMethodOP( new MPPairEnergy() );
+	return utility::pointer::make_shared< MPPairEnergy >();
 }
 
 /// Scoring Methods ///////////////////////

@@ -76,7 +76,7 @@ public:
 	void setUp() {
 		if ( !dummy_initialized_ ) {
 			dummy_initialized_ = true;
-			TaskOperationFactory::get_instance()->factory_register( TaskOperationCreatorOP( new DummyTaskOpCreator ));
+			TaskOperationFactory::get_instance()->factory_register( utility::pointer::make_shared< DummyTaskOpCreator >());
 		}
 		core_init();
 	}
@@ -155,7 +155,7 @@ public:
 	/// is always going to cause an exception to be thrown.
 	/// This should be the last test in this test suite
 	void test_task_op_factory_w_bad_xsd() {
-		TaskOperationFactory::get_instance()->factory_register( TaskOperationCreatorOP( new DummyTaskOp2Creator ));
+		TaskOperationFactory::get_instance()->factory_register( utility::pointer::make_shared< DummyTaskOp2Creator >());
 		try {
 			XMLSchemaDefinition xsd;
 			TaskOperationFactory::get_instance()->define_task_op_xml_schema( xsd );

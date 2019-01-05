@@ -57,9 +57,9 @@ public:
 		using namespace basic::options::OptionKeys;
 
 		if ( basic::options::option[ in::file::residue_type_set ]() == "fa_standard" ) {
-			saxs_ = SAXSEnergyOP( new core::scoring::saxs::SAXSEnergyFA() );
+			saxs_ = utility::pointer::make_shared< core::scoring::saxs::SAXSEnergyFA >();
 		} else {
-			saxs_ = SAXSEnergyOP( new core::scoring::saxs::SAXSEnergyCEN() );
+			saxs_ = utility::pointer::make_shared< core::scoring::saxs::SAXSEnergyCEN >();
 		}
 		mdl_cnt_ = 1;
 	}

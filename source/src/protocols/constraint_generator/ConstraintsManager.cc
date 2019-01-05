@@ -63,7 +63,7 @@ ConstraintsManager::remove_constraints( core::pose::Pose & pose, std::string con
 void
 ConstraintsManager::store_empty_constraints_map( core::pose::Pose & pose ) const
 {
-	pose.data().set( MY_TYPE, ConstraintsMapOP( new ConstraintsMap ) );
+	pose.data().set( MY_TYPE, utility::pointer::make_shared< ConstraintsMap >() );
 }
 
 /// @brief Given a nonconst pose, returns a nonconst reference to its constraints map

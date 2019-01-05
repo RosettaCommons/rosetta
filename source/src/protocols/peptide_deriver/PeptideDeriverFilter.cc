@@ -108,7 +108,7 @@ DerivedPeptideEntry::DerivedPeptideEntry(core::Real const lin_isc, core::Size co
 	this->pep_start = pep_start;
 	this->lin_pose = lin_pose;
 	for ( auto & method : this->cyc_info_set ) {
-		method = CyclizedPeptideInfoOP(new CyclizedPeptideInfo(lin_pose));
+		method = utility::pointer::make_shared< CyclizedPeptideInfo >(lin_pose);
 	}
 }
 // END DerivedPeptideEntry implementation
@@ -374,11 +374,11 @@ PeptideDeriverFilter::report(std::ostream & out, core::pose::Pose const & orig_p
 	// this is simpler than creating a full-fledged factory. Sorry, design pattern people. --yuvals
 	switch ( report_format_ ) {
 	case PRF_MARKDOWN :
-		output.push_back( PeptideDeriverOutputterOP( new PeptideDeriverMarkdownStreamOutputter( output_stream , /*
-			prefix=*/"" ) ) );
+		output.push_back( utility::pointer::make_shared< PeptideDeriverMarkdownStreamOutputter >( output_stream , /*
+			prefix=*/"" ) );
 		break;
 	case PRF_BASIC :
-		output.push_back( PeptideDeriverOutputterOP( new PeptideDeriverBasicStreamOutputter( output_stream , /*prefix=*/"" ) ) );
+		output.push_back( utility::pointer::make_shared< PeptideDeriverBasicStreamOutputter >( output_stream , /*prefix=*/"" ) );
 		break;
 	}
 
@@ -389,8 +389,8 @@ PeptideDeriverFilter::report(std::ostream & out, core::pose::Pose const & orig_p
 			<< "prepared=" << is_dump_prepared_pose_ << ","
 			<< "cyclic=" << is_dump_cyclic_poses_ << ")"
 			<< std::endl;
-		output.push_back( PeptideDeriverOutputterOP( new PeptideDeriverPoseOutputter( is_dump_peptide_pose_,
-			is_dump_prepared_pose_, is_dump_cyclic_poses_, scorefxn_deriver_ ) ) );
+		output.push_back( utility::pointer::make_shared< PeptideDeriverPoseOutputter >( is_dump_peptide_pose_,
+			is_dump_prepared_pose_, is_dump_cyclic_poses_, scorefxn_deriver_ ) );
 	}
 
 	// prepare the PDB
@@ -628,7 +628,7 @@ PeptideDeriverFilter::derive_peptide(
 
 		// initialize arrays explicitly
 		for ( core::Size method=0; method<NUM_CYCLIZATION_METHODS; ++method ) {
-			best_cyc_by_method[method] = DerivedPeptideEntryOP( new DerivedPeptideEntry() );
+			best_cyc_by_method[method] = utility::pointer::make_shared< DerivedPeptideEntry >();
 			any_peptide_cyclizable_by_method[method] = false;
 			any_peptide_cyclic_model_created_by_method[method] = false;
 		}
@@ -1170,7 +1170,7 @@ std::string PeptideDeriverFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 PeptideDeriverFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new PeptideDeriverFilter );
+	return utility::pointer::make_shared< PeptideDeriverFilter >();
 }
 
 void PeptideDeriverFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

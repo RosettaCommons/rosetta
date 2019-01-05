@@ -67,10 +67,10 @@ public :
 
 	bool apply( core::pose::Pose const & pose ) const override;
 	protocols::filters::FilterOP clone() const override {
-		return protocols::filters::FilterOP( new HbondsToAtomFilter( *this ) );
+		return utility::pointer::make_shared< HbondsToAtomFilter >( *this );
 	}
 	protocols::filters::FilterOP fresh_instance() const override {
-		return protocols::filters::FilterOP( new HbondsToAtomFilter() );
+		return utility::pointer::make_shared< HbondsToAtomFilter >();
 	}
 
 	void report( std::ostream & out, core::pose::Pose const & pose ) const override;

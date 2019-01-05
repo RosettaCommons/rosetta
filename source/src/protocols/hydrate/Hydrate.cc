@@ -69,9 +69,9 @@ Hydrate::Hydrate(): Mover(),
 	TR << "Initializing hydrate protocol" << std::endl;
 
 	// Setting up task
-	main_task_factory_->push_back( operation::InitializeFromCommandlineOP( new operation::InitializeFromCommandline ) );
+	main_task_factory_->push_back( utility::pointer::make_shared< operation::InitializeFromCommandline >() );
 	if ( option[ packing::resfile ].user() ) {
-		main_task_factory_->push_back( operation::ReadResfileOP( new operation::ReadResfile ) );
+		main_task_factory_->push_back( utility::pointer::make_shared< operation::ReadResfile >() );
 	} else {
 		operation::RestrictToRepackingOP rtrop( new operation::RestrictToRepacking );
 		main_task_factory_->push_back( rtrop );
@@ -116,9 +116,9 @@ Hydrate::Hydrate(
 	TR << "Initializing hydrate protocol" << std::endl;
 
 	// Setting up task
-	main_task_factory_->push_back( operation::InitializeFromCommandlineOP( new operation::InitializeFromCommandline ) );
+	main_task_factory_->push_back( utility::pointer::make_shared< operation::InitializeFromCommandline >() );
 	if ( option[ packing::resfile ].user() ) {
-		main_task_factory_->push_back( operation::ReadResfileOP( new operation::ReadResfile ) );
+		main_task_factory_->push_back( utility::pointer::make_shared< operation::ReadResfile >() );
 	} else {
 		operation::RestrictToRepackingOP rtrop( new operation::RestrictToRepacking );
 		main_task_factory_->push_back( rtrop );
@@ -178,13 +178,13 @@ Hydrate::get_name() const
 protocols::moves::MoverOP
 Hydrate::clone() const
 {
-	return HydrateOP( new Hydrate( *this ) );
+	return utility::pointer::make_shared< Hydrate >( *this );
 }
 
 protocols::moves::MoverOP
 Hydrate::fresh_instance() const
 {
-	return HydrateOP( new Hydrate() );
+	return utility::pointer::make_shared< Hydrate >();
 }
 
 

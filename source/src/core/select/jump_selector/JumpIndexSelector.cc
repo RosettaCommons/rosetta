@@ -54,7 +54,7 @@ JumpIndexSelector::JumpIndexSelector( JumpIndexSelector const & ) = default;
 
 /// @brief Clone operator.
 /// @details Copy this object and return an owning pointer to the new object.
-JumpSelectorOP JumpIndexSelector::clone() const { return JumpSelectorOP( new JumpIndexSelector(*this) ); }
+JumpSelectorOP JumpIndexSelector::clone() const { return utility::pointer::make_shared< JumpIndexSelector >(*this); }
 
 JumpIndexSelector::JumpIndexSelector( int jump, bool soft_error ):
 	jump_( jump ),
@@ -138,7 +138,7 @@ JumpIndexSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 
 JumpSelectorOP
 JumpIndexSelectorCreator::create_jump_selector() const {
-	return JumpSelectorOP( new JumpIndexSelector );
+	return utility::pointer::make_shared< JumpIndexSelector >();
 }
 
 std::string

@@ -41,7 +41,7 @@ methods::EnergyMethodOP
 UnfoldedStateEnergyCreator::create_energy_method( methods::EnergyMethodOptions const & options ) const {
 
 	if ( !options.has_method_weights( unfolded ) ) {
-		return methods::EnergyMethodOP( new UnfoldedStateEnergy( options.unfolded_energies_type() ) );
+		return utility::pointer::make_shared< UnfoldedStateEnergy >( options.unfolded_energies_type() );
 	}
 
 	utility::vector1< Real > const & v = options.method_weights( unfolded );
@@ -55,7 +55,7 @@ UnfoldedStateEnergyCreator::create_energy_method( methods::EnergyMethodOptions c
 		e[ (ScoreType) ii ] = v[ii];
 	}
 
-	return methods::EnergyMethodOP( new UnfoldedStateEnergy( options.unfolded_energies_type(), e ) );
+	return utility::pointer::make_shared< UnfoldedStateEnergy >( options.unfolded_energies_type(), e );
 }
 
 ScoreTypes
@@ -84,7 +84,7 @@ UnfoldedStateEnergyCreator::score_types_for_method() const {
 
 
 UnfoldedStateEnergy::UnfoldedStateEnergy( std::string const & type ) :
-	parent( methods::EnergyMethodCreatorOP( new UnfoldedStateEnergyCreator ) ),
+	parent( utility::pointer::make_shared< UnfoldedStateEnergyCreator >() ),
 	type_( type ),
 	unf_state_potential_( ScoringManager::get_instance()->get_UnfoldedStatePotential( type ) ),
 	score_type_weights_( unf_state_potential_.get_unfoled_potential_file_weights() )
@@ -93,7 +93,7 @@ UnfoldedStateEnergy::UnfoldedStateEnergy( std::string const & type ) :
 }
 
 UnfoldedStateEnergy::UnfoldedStateEnergy( std::string const & type, const EnergyMap & emap_in ):
-	parent( methods::EnergyMethodCreatorOP( new UnfoldedStateEnergyCreator ) ),
+	parent( utility::pointer::make_shared< UnfoldedStateEnergyCreator >() ),
 	type_( type ),
 	unf_state_potential_( ScoringManager::get_instance()->get_UnfoldedStatePotential( type ) ),
 	score_type_weights_( emap_in )
@@ -105,7 +105,7 @@ UnfoldedStateEnergy::~UnfoldedStateEnergy() = default;
 
 EnergyMethodOP
 UnfoldedStateEnergy::clone() const {
-	return EnergyMethodOP( new UnfoldedStateEnergy( type_, score_type_weights_ ) );
+	return utility::pointer::make_shared< UnfoldedStateEnergy >( type_, score_type_weights_ );
 }
 
 void

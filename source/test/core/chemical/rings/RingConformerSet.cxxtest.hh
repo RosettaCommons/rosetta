@@ -46,8 +46,8 @@ public:
 		lows.push_back( "3E" );
 		lows.push_back( "PINEAPPLE" );  // should be ignored by RingConformerSet
 
-		set5_ = rings::RingConformerSetOP( new rings::RingConformerSet( 5, "1E", lows ) );
-		set6_ = rings::RingConformerSetOP( new rings::RingConformerSet( 6, "", lows ) );  // should default to 4C1
+		set5_ = utility::pointer::make_shared< rings::RingConformerSet >( 5, "1E", lows );
+		set6_ = utility::pointer::make_shared< rings::RingConformerSet >( 6, "", lows );  // should default to 4C1
 	}
 
 	// Destruction

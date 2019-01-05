@@ -113,7 +113,7 @@ CDRSeqDesignOptions::set_cdr(CDRNameEnum cdr) {
 
 CDRSeqDesignOptionsOP
 CDRSeqDesignOptions::clone() const {
-	return CDRSeqDesignOptionsOP( new CDRSeqDesignOptions(*this) );
+	return utility::pointer::make_shared< CDRSeqDesignOptions >(*this);
 }
 
 void
@@ -129,8 +129,8 @@ CDRSeqDesignOptionsParser::CDRSeqDesignOptionsParser():
 	utility::pointer::ReferenceCount(),
 	default_and_user_(false)
 {
-	ab_manager_ = AntibodyEnumManagerCOP( new AntibodyEnumManager() );
-	design_enum_manager_ = AntibodyDesignEnumManagerCOP( new AntibodyDesignEnumManager());
+	ab_manager_ = utility::pointer::make_shared< AntibodyEnumManager >();
+	design_enum_manager_ = utility::pointer::make_shared< AntibodyDesignEnumManager >();
 }
 
 CDRSeqDesignOptionsParser::~CDRSeqDesignOptionsParser() = default;
@@ -140,14 +140,14 @@ CDRSeqDesignOptionsParser::CDRSeqDesignOptionsParser( CDRSeqDesignOptionsParser 
 	instructions_path_( src.instructions_path_ ),
 	default_and_user_( src.default_and_user_)
 {
-	if ( src.ab_manager_ ) ab_manager_ = AntibodyEnumManagerOP( new AntibodyEnumManager( *src.ab_manager_ ));
-	if ( src.design_enum_manager_ ) design_enum_manager_ = AntibodyDesignEnumManagerOP( new AntibodyDesignEnumManager( *src.design_enum_manager_ ));
-	if ( src.cdr_options_ ) cdr_options_ = CDRSeqDesignOptionsOP( new CDRSeqDesignOptions( *src.cdr_options_ ));
+	if ( src.ab_manager_ ) ab_manager_ = utility::pointer::make_shared< AntibodyEnumManager >( *src.ab_manager_ );
+	if ( src.design_enum_manager_ ) design_enum_manager_ = utility::pointer::make_shared< AntibodyDesignEnumManager >( *src.design_enum_manager_ );
+	if ( src.cdr_options_ ) cdr_options_ = utility::pointer::make_shared< CDRSeqDesignOptions >( *src.cdr_options_ );
 }
 
 CDRSeqDesignOptionsParserOP
 CDRSeqDesignOptionsParser::clone() const {
-	return CDRSeqDesignOptionsParserOP( new CDRSeqDesignOptionsParser( *this ) );
+	return utility::pointer::make_shared< CDRSeqDesignOptionsParser >( *this );
 }
 
 utility::vector1<CDRSeqDesignOptionsOP>
@@ -163,7 +163,7 @@ CDRSeqDesignOptionsParser::parse_default_and_user_options(std::string const & fi
 CDRSeqDesignOptionsOP
 CDRSeqDesignOptionsParser::parse_default_and_user_options(CDRNameEnum cdr, std::string const & filename) {
 
-	cdr_options_ = CDRSeqDesignOptionsOP( new CDRSeqDesignOptions(cdr) );
+	cdr_options_ = utility::pointer::make_shared< CDRSeqDesignOptions >(cdr);
 	std::string path = basic::options::option [basic::options::OptionKeys::antibody::design::base_cdr_instructions]();
 	default_and_user_ = true;
 	parse_options(cdr, path);
@@ -192,7 +192,7 @@ CDRSeqDesignOptionsParser::parse_options(CDRNameEnum cdr, std::string const & pa
 	if ( default_and_user_ ) {
 		cdr_options_->set_cdr(cdr);
 	} else {
-		cdr_options_ = CDRSeqDesignOptionsOP( new CDRSeqDesignOptions(cdr) );
+		cdr_options_ = utility::pointer::make_shared< CDRSeqDesignOptions >(cdr);
 	}
 
 

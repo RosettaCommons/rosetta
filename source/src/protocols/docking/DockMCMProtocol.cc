@@ -130,14 +130,14 @@ void DockMCMProtocol::set_filter( DockingHighResFilterOP filter ) { filter_ = fi
 
 //clone
 protocols::moves::MoverOP DockMCMProtocol::clone() const {
-	return protocols::moves::MoverOP( new DockMCMProtocol(*this) );
+	return utility::pointer::make_shared< DockMCMProtocol >(*this);
 }
 
 void
 DockMCMProtocol::init()
 {
 	moves::Mover::type( "DockMCMProtocol" );
-	filter_ = DockingHighResFilterOP( new DockingHighResFilter() );
+	filter_ = utility::pointer::make_shared< DockingHighResFilter >();
 	movemap_reset_ = false;
 	num_of_first_cycle_=4;
 	num_of_second_cycle_=45;
@@ -171,7 +171,7 @@ void DockMCMProtocol::apply( core::pose::Pose& pose )
 	(*scorefxn())( pose );
 	jd2::write_score_tracer( pose, "DockMCM_start" );
 
-	dock_mcm_ = DockMCMCycleOP( new DockMCMCycle( movable_jumps(), scorefxn(), scorefxn_pack() ) );
+	dock_mcm_ = utility::pointer::make_shared< DockMCMCycle >( movable_jumps(), scorefxn(), scorefxn_pack() );
 	if ( movemap_reset_ ) {
 		dock_mcm_->set_move_map(movemap_);
 	}
@@ -311,7 +311,7 @@ std::ostream & operator<<(std::ostream& out, const DockMCMProtocol & dmp )
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP DockMCMProtocolCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new DockMCMProtocol() );
+// XRW TEMP  return utility::pointer::make_shared< DockMCMProtocol >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -341,7 +341,7 @@ std::string DockMCMProtocolCreator::keyname() const {
 
 protocols::moves::MoverOP
 DockMCMProtocolCreator::create_mover() const {
-	return protocols::moves::MoverOP( new DockMCMProtocol );
+	return utility::pointer::make_shared< DockMCMProtocol >();
 }
 
 void DockMCMProtocolCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -69,7 +69,7 @@ methods::EnergyMethodOP
 PointWaterEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &opts
 ) const {
-	return methods::EnergyMethodOP( new PointWaterEnergy( opts ) );
+	return utility::pointer::make_shared< PointWaterEnergy >( opts );
 }
 
 ScoreTypes
@@ -82,7 +82,7 @@ PointWaterEnergyCreator::score_types_for_method() const {
 
 ////////////////////////////////////////////////////////////////////////////
 PointWaterEnergy::PointWaterEnergy( methods::EnergyMethodOptions const &opts ):
-	parent( methods::EnergyMethodCreatorOP( new PointWaterEnergyCreator ) ),
+	parent( utility::pointer::make_shared< PointWaterEnergyCreator >() ),
 	potential_( ScoringManager::get_instance()->get_PointWaterPotential() )
 {
 	using namespace basic::options;
@@ -104,7 +104,7 @@ PointWaterEnergy::PointWaterEnergy( PointWaterEnergy const & src ):
 methods::EnergyMethodOP
 PointWaterEnergy::clone() const
 {
-	return methods::EnergyMethodOP( new PointWaterEnergy( *this ) );
+	return utility::pointer::make_shared< PointWaterEnergy >( *this );
 }
 
 void

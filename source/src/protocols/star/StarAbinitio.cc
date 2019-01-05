@@ -147,7 +147,7 @@ void setup_constraints(const Loops& aligned, Pose* pose) {
 
 					Real distance = p.distance(q);
 					if ( distance <= option[OptionKeys::abinitio::star::initial_dist_cutoff]() ) {
-						pose->add_constraint(core::scoring::constraints::ConstraintCOP( core::scoring::constraints::ConstraintOP( new AtomPairConstraint(ai, aj, core::scoring::func::FuncOP(new HarmonicFunc(distance, 2))) ) ));
+						pose->add_constraint(utility::pointer::make_shared< AtomPairConstraint >(ai, aj, utility::pointer::make_shared< HarmonicFunc >(distance, 2)));
 						TR << "AtomPair CA " << k << " CA " << l << " HARMONIC " << distance << " 2" << std::endl;
 						++n_csts;
 					}
@@ -348,10 +348,10 @@ StarAbinitio::StarAbinitio() {
 
 	// Approximate secondary structure from fragments when psipred isn't available
 	if ( option[in::file::psipred_ss2].user() ) {
-		pred_ss_ = core::fragment::SecondaryStructureOP( new SecondaryStructure() );
+		pred_ss_ = utility::pointer::make_shared< SecondaryStructure >();
 		pred_ss_->read_psipred_ss2(option[in::file::psipred_ss2]());
 	} else {
-		pred_ss_ = core::fragment::SecondaryStructureOP( new SecondaryStructure(*fragments_sm_) );
+		pred_ss_ = utility::pointer::make_shared< SecondaryStructure >(*fragments_sm_);
 	}
 
 	// Configure the minimizer
@@ -359,7 +359,7 @@ StarAbinitio::StarAbinitio() {
 	min_score->set_weight(core::scoring::atom_pair_constraint, option[OptionKeys::constraints::cst_weight]());
 
 	MinimizerOptionsOP min_options;
-	min_options = MinimizerOptionsOP( new MinimizerOptions("lbfgs_armijo_nonmonotone", 0.01, true, false, false) );
+	min_options = utility::pointer::make_shared< MinimizerOptions >("lbfgs_armijo_nonmonotone", 0.01, true, false, false);
 	min_options->max_iter(100);
 
 	MoveMapOP mm( new MoveMap() );
@@ -367,7 +367,7 @@ StarAbinitio::StarAbinitio() {
 	mm->set_chi(true);
 	mm->set_jump(true);
 
-	minimizer_ = protocols::minimization_packing::SaneMinMoverOP( new SaneMinMover(mm, min_score, min_options, true) );
+	minimizer_ = utility::pointer::make_shared< SaneMinMover >(mm, min_score, min_options, true);
 }
 
 std::string StarAbinitio::get_name() const {
@@ -375,11 +375,11 @@ std::string StarAbinitio::get_name() const {
 }
 
 protocols::moves::MoverOP StarAbinitio::clone() const {
-	return protocols::moves::MoverOP( new StarAbinitio(*this) );
+	return utility::pointer::make_shared< StarAbinitio >(*this);
 }
 
 protocols::moves::MoverOP StarAbinitio::fresh_instance() const {
-	return protocols::moves::MoverOP( new StarAbinitio() );
+	return utility::pointer::make_shared< StarAbinitio >();
 }
 
 }  // namespace star

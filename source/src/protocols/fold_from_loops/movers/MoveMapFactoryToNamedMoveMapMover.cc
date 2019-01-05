@@ -67,13 +67,13 @@ MoveMapFactoryToNamedMoveMapMover::parse_my_tag(
 protocols::moves::MoverOP
 MoveMapFactoryToNamedMoveMapMover::clone() const
 {
-	return protocols::moves::MoverOP( new MoveMapFactoryToNamedMoveMapMover( *this ) );
+	return utility::pointer::make_shared< MoveMapFactoryToNamedMoveMapMover >( *this );
 }
 
 protocols::moves::MoverOP
 MoveMapFactoryToNamedMoveMapMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new MoveMapFactoryToNamedMoveMapMover );
+	return utility::pointer::make_shared< MoveMapFactoryToNamedMoveMapMover >();
 }
 
 void
@@ -108,7 +108,7 @@ std::string MoveMapFactoryToNamedMoveMapMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 MoveMapFactoryToNamedMoveMapMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MoveMapFactoryToNamedMoveMapMover );
+	return utility::pointer::make_shared< MoveMapFactoryToNamedMoveMapMover >();
 }
 
 void MoveMapFactoryToNamedMoveMapMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

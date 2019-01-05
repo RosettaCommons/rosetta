@@ -173,7 +173,7 @@ public:
 	//The function clone creates an exact copy of the FACTSResidueInfo object.
 	//It returns a pointer that points to the new object
 	FACTSResidueInfoOP clone() const{
-		return FACTSResidueInfoOP( new FACTSResidueInfo( *this ) );
+		return utility::pointer::make_shared< FACTSResidueInfo >( *this );
 	}
 
 	//The constructor with a residue as its input parameter.
@@ -301,7 +301,7 @@ public:
 	}
 
 	basic::datacache::CacheableDataOP clone() const
-	{ return basic::datacache::CacheableDataOP( new FACTSRotamerSetInfo( *this ) ); }
+	{ return utility::pointer::make_shared< FACTSRotamerSetInfo >( *this ); }
 
 	Size size() const
 	{ return residue_info_.size(); }

@@ -31,7 +31,7 @@ namespace rotamer_recovery {
 
 // XRW TEMP moves::MoverOP
 // XRW TEMP RotamerRecoveryMoverCreator::create_mover() const {
-// XRW TEMP  return moves::MoverOP( new RotamerRecoveryMover );
+// XRW TEMP  return utility::pointer::make_shared< RotamerRecoveryMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -131,11 +131,11 @@ static Tracer TR("protocol.rotamer_recovery.RotamerRecoveryMover");
 RotamerRecoveryMover::RotamerRecoveryMover() :
 	rotamer_recovery_( /* NULL */ ),
 	scfxn_(/* NULL */),
-	task_factory_(core::pack::task::TaskFactoryOP( new TaskFactory ))
+	task_factory_(utility::pointer::make_shared< TaskFactory >())
 {
 	using core::pack::task::operation::TaskOperationCOP;
-	task_factory_->push_back( TaskOperationCOP( new InitializeFromCommandline ) );
-	task_factory_->push_back( TaskOperationCOP( new RestrictToRepacking ) );
+	task_factory_->push_back( utility::pointer::make_shared< InitializeFromCommandline >() );
+	task_factory_->push_back( utility::pointer::make_shared< RestrictToRepacking >() );
 }
 
 RotamerRecoveryMover::RotamerRecoveryMover(
@@ -200,13 +200,13 @@ RotamerRecoveryMover::apply( Pose & pose
 
 MoverOP
 RotamerRecoveryMover::fresh_instance() const {
-	return MoverOP( new RotamerRecoveryMover );
+	return utility::pointer::make_shared< RotamerRecoveryMover >();
 }
 
 
 MoverOP
 RotamerRecoveryMover::clone() const {
-	return MoverOP( new RotamerRecoveryMover( *this ) );
+	return utility::pointer::make_shared< RotamerRecoveryMover >( *this );
 }
 
 void
@@ -234,7 +234,7 @@ RotamerRecoveryMover::parse_my_tag(
 	if ( tag->hasOption("mover") || tag->hasOption("mover_name") ) {
 		MoverOP mover = parse_mover(tag->hasOption("mover") ?
 			tag->getOption<string>("mover") : tag->getOption<string>("mover_name"), movers);
-		protocol = RRProtocolOP( new RRProtocolMover(mover) );
+		protocol = utility::pointer::make_shared< RRProtocolMover >(mover);
 	} else {
 		protocol = factory->get_rotamer_recovery_protocol(tag->getOption<string>("protocol", "RRProtocolMinPack"));
 	}
@@ -246,7 +246,7 @@ RotamerRecoveryMover::parse_my_tag(
 		factory->get_rotamer_recovery_reporter(
 		tag->getOption<string>("reporter", "RRReporterSimple")));
 
-	rotamer_recovery_ = rotamer_recovery::RotamerRecoveryOP( new RotamerRecovery(protocol, comparer, reporter) );
+	rotamer_recovery_ = utility::pointer::make_shared< RotamerRecovery >(protocol, comparer, reporter);
 }
 
 ScoreFunctionOP
@@ -306,7 +306,7 @@ std::string RotamerRecoveryMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 RotamerRecoveryMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new RotamerRecoveryMover );
+	return utility::pointer::make_shared< RotamerRecoveryMover >();
 }
 
 void RotamerRecoveryMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -63,7 +63,7 @@ methods::EnergyMethodOP
 RNA_FA_ElecEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
-	return methods::EnergyMethodOP( new RNA_FA_ElecEnergy( options ) );
+	return utility::pointer::make_shared< RNA_FA_ElecEnergy >( options );
 }
 
 ScoreTypes
@@ -84,7 +84,7 @@ RNA_FA_ElecEnergy::RNA_FA_ElecEnergy(
 ):
 	parent( options )
 {
-	set_score_types( methods::EnergyMethodCreatorOP( new RNA_FA_ElecEnergyCreator ) );
+	set_score_types( utility::pointer::make_shared< RNA_FA_ElecEnergyCreator >() );
 }
 
 
@@ -92,14 +92,14 @@ RNA_FA_ElecEnergy::RNA_FA_ElecEnergy(
 RNA_FA_ElecEnergy::RNA_FA_ElecEnergy( RNA_FA_ElecEnergy const & src ):
 	parent( src )
 {
-	set_score_types( methods::EnergyMethodCreatorOP( new RNA_FA_ElecEnergyCreator ) );
+	set_score_types( utility::pointer::make_shared< RNA_FA_ElecEnergyCreator >() );
 }
 
 /// clone
 methods::EnergyMethodOP
 RNA_FA_ElecEnergy::clone() const
 {
-	return methods::EnergyMethodOP( new RNA_FA_ElecEnergy( *this ) );
+	return utility::pointer::make_shared< RNA_FA_ElecEnergy >( *this );
 }
 
 //////////////////////////////////////
@@ -171,7 +171,7 @@ RNA_FA_ElecEnergy::setup_for_minimizing(
 	NeighborListOP nblist;
 	Real const tolerated_motion = pose.energies().use_nblist_auto_update() ? option[ run::nblist_autoupdate_narrow ] : 1.5;
 	Real const XX = coulomb().max_dis() + 2 * tolerated_motion;
-	nblist = NeighborListOP( new NeighborList( min_map.domain_map(), XX*XX, XX*XX, XX*XX) );
+	nblist = utility::pointer::make_shared< NeighborList >( min_map.domain_map(), XX*XX, XX*XX, XX*XX);
 	if ( pose.energies().use_nblist_auto_update() ) {
 		nblist->set_auto_update( tolerated_motion );
 	}
@@ -333,7 +333,7 @@ RNA_FA_ElecEnergy::setup_for_minimizing_for_residue_pair(
 
 	// update the existing nblist if it's already present in the min_data object
 	ResiduePairNeighborListOP nblist( utility::pointer::static_pointer_cast< core::scoring::ResiduePairNeighborList > ( pair_data.get_data( rna_elec_pair_nblist ) ));
-	if ( ! nblist ) nblist = ResiduePairNeighborListOP( new ResiduePairNeighborList );
+	if ( ! nblist ) nblist = utility::pointer::make_shared< ResiduePairNeighborList >();
 
 	/// STOLEN CODE!
 	Real const tolerated_narrow_nblist_motion = 0.75; //option[ run::nblist_autoupdate_narrow ];

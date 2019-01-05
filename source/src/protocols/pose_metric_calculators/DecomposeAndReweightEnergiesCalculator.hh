@@ -180,7 +180,7 @@ public:
 	);
 
 	core::pose::metrics::PoseMetricCalculatorOP clone() const
-	{ return core::pose::metrics::PoseMetricCalculatorOP( new DecomposeAndReweightEnergiesCalculator( *this ) ); }
+	{ return utility::pointer::make_shared< DecomposeAndReweightEnergiesCalculator >( *this ); }
 
 	std::string const & residue_decomposition_calculator() const { return name_of_ResidueDecompositionCalculator_; }
 	core::scoring::EnergyMap const & original_weights() const { return original_weights_; }

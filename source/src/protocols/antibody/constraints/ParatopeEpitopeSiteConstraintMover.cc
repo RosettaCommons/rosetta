@@ -88,7 +88,7 @@ ParatopeEpitopeSiteConstraintMover::ParatopeEpitopeSiteConstraintMover( Paratope
 	interface_distance_( src.interface_distance_ )
 
 {
-	if ( src.ab_info_ ) ab_info_ = AntibodyInfoOP( new AntibodyInfo( *src.ab_info_ ));
+	if ( src.ab_info_ ) ab_info_ = utility::pointer::make_shared< AntibodyInfo >( *src.ab_info_ );
 	if ( src.current_func_ ) current_func_ = current_func_->clone();
 }
 
@@ -235,7 +235,7 @@ ParatopeEpitopeSiteConstraintMover::apply(core::pose::Pose& pose) {
 	using namespace core::scoring::constraints;
 
 	if ( ! ab_info_ ) {
-		ab_info_ = AntibodyInfoCOP( AntibodyInfoOP( new AntibodyInfo(pose) ) );
+		ab_info_ = utility::pointer::make_shared< AntibodyInfo >(pose);
 	}
 
 	//Check if antigen is present
@@ -259,7 +259,7 @@ ParatopeEpitopeSiteConstraintMover::apply(core::pose::Pose& pose) {
 
 	//If no constraint is set.  Use the default.
 	if ( !current_func_ ) {
-		current_func_ = core::scoring::func::FuncOP( new core::scoring::func::FlatHarmonicFunc(0, 1, interface_distance_) );
+		current_func_ = utility::pointer::make_shared< core::scoring::func::FlatHarmonicFunc >(0, 1, interface_distance_);
 	}
 
 	//Setup antigen paratope residues if none are set.
@@ -411,7 +411,7 @@ std::string ParatopeEpitopeSiteConstraintMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 ParatopeEpitopeSiteConstraintMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ParatopeEpitopeSiteConstraintMover );
+	return utility::pointer::make_shared< ParatopeEpitopeSiteConstraintMover >();
 }
 
 void ParatopeEpitopeSiteConstraintMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

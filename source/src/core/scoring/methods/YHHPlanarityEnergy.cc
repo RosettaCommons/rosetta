@@ -45,7 +45,7 @@ methods::EnergyMethodOP
 YHHPlanarityEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new YHHPlanarityEnergy );
+	return utility::pointer::make_shared< YHHPlanarityEnergy >();
 }
 
 ScoreTypes
@@ -58,14 +58,14 @@ YHHPlanarityEnergyCreator::score_types_for_method() const {
 
 /// ctor
 YHHPlanarityEnergy::YHHPlanarityEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new YHHPlanarityEnergyCreator ) )
+	parent( utility::pointer::make_shared< YHHPlanarityEnergyCreator >() )
 {}
 
 /// clone
 EnergyMethodOP
 YHHPlanarityEnergy::clone() const
 {
-	return EnergyMethodOP( new YHHPlanarityEnergy );
+	return utility::pointer::make_shared< YHHPlanarityEnergy >();
 }
 
 /////////////////////////////////////////////////////////////////////////////

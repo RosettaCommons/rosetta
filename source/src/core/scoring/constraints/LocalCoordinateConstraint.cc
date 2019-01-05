@@ -118,7 +118,7 @@ LocalCoordinateConstraint::remapped_clone( pose::Pose const& src, pose::Pose con
 	id::AtomID id3( core::pose::named_atom_id_to_atom_id(atom3, dest ));
 	id::AtomID id4( core::pose::named_atom_id_to_atom_id(atom4, dest ));
 	if ( id1.valid() && id2.valid() && id3.valid() && id4.valid() ) {
-		return ConstraintOP( new LocalCoordinateConstraint( id1, id::StubID( id2, id3, id4) , xyz_target_, func_ ? func_->clone() : func_, score_type() ) );
+		return utility::pointer::make_shared< LocalCoordinateConstraint >( id1, id::StubID( id2, id3, id4) , xyz_target_, func_ ? func_->clone() : func_, score_type() );
 	} else {
 		return nullptr;
 	}
@@ -136,7 +136,7 @@ LocalCoordinateConstraint::remap_resid( core::id::SequenceMapping const &seqmap 
 		id::AtomID remap_s2( fixed_stub_.atom( 2 ).atomno(), seqmap[ fixed_stub_.atom( 2 ).rsd() ] );
 		id::AtomID remap_s3( fixed_stub_.atom( 3 ).atomno(), seqmap[ fixed_stub_.atom( 3 ).rsd() ] );
 		id::StubID remap_stub( remap_s1, remap_s2, remap_s3 );
-		return ConstraintOP( new LocalCoordinateConstraint( remap_a, remap_stub, xyz_target_, this->func_, score_type() ) );
+		return utility::pointer::make_shared< LocalCoordinateConstraint >( remap_a, remap_stub, xyz_target_, this->func_, score_type() );
 	} else {
 		return nullptr;
 	}

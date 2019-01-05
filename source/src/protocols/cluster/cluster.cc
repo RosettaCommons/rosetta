@@ -747,7 +747,7 @@ std::vector< PoseOP >  ClusterBase::return_lowest_poses_in_clusters() {
 	std::vector< PoseOP > templist;
 	for ( i=0; i<(int)clusterlist.size(); i++ ) {
 		PoseOP tempPointer;
-		if ( clusterlist[i].size() > 0 ) templist.push_back( core::pose::PoseOP( new Pose(poselist[ clusterlist[i][0] ]) ) );
+		if ( clusterlist[i].size() > 0 ) templist.push_back( utility::pointer::make_shared< Pose >(poselist[ clusterlist[i][0] ]) );
 	}
 	return templist;
 }
@@ -760,17 +760,17 @@ std::vector< core::pose::PoseOP >  ClusterBase::return_top_poses_in_clusters( co
 		core::pose::PoseOP tempPointer;
 		if ( clusterlist[i].size() < 2 ) {
 			//if singleton return the cluster center
-			tempPointer = core::pose::PoseOP( new core::pose::Pose(poselist[ clusterlist[i][0]]) );
+			tempPointer = utility::pointer::make_shared< core::pose::Pose >(poselist[ clusterlist[i][0]]);
 			templist.push_back(tempPointer);
 		} else if ( clusterlist[i].size() >= 2 &&
 				clusterlist[i].size() <= count+1 ) { //+1 because of cluster center
 			for ( Size j = 1; j < clusterlist[i].size(); j++ ) {
-				tempPointer = core::pose::PoseOP( new core::pose::Pose(poselist[ clusterlist[i][j]]) );
+				tempPointer = utility::pointer::make_shared< core::pose::Pose >(poselist[ clusterlist[i][j]]);
 				templist.push_back(tempPointer);
 			}
 		} else if ( clusterlist[i].size() > count+1 ) {
 			for ( Size j = 1; j <= count; j++ ) {
-				tempPointer = core::pose::PoseOP( new core::pose::Pose(poselist[ clusterlist[i][j]]) );
+				tempPointer = utility::pointer::make_shared< core::pose::Pose >(poselist[ clusterlist[i][j]]);
 				templist.push_back(tempPointer);
 			}
 		} else { }

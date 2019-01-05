@@ -74,9 +74,9 @@ public:// virtual constructor
 
 
 	// @brief make clone
-	filters::FilterOP clone() const override { return filters::FilterOP(new SSElementMotifContactFilter(*this));}
+	filters::FilterOP clone() const override { return utility::pointer::make_shared< SSElementMotifContactFilter >(*this);}
 	// @brief make fresh instance
-	filters::FilterOP fresh_instance() const override { return filters::FilterOP(new SSElementMotifContactFilter());}
+	filters::FilterOP fresh_instance() const override { return utility::pointer::make_shared< SSElementMotifContactFilter >();}
 
 
 public:// mutator

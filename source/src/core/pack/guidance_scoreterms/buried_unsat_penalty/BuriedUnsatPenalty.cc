@@ -81,7 +81,7 @@ static basic::Tracer TR("core.pack.guidance_scoreterms.buried_unsat_penalty.Buri
 core::scoring::methods::EnergyMethodOP
 BuriedUnsatPenaltyCreator::create_energy_method( core::scoring::methods::EnergyMethodOptions const &options ) const
 {
-	return core::scoring::methods::EnergyMethodOP( utility::pointer::make_shared< BuriedUnsatPenalty >( options ) );
+	return utility::pointer::make_shared< BuriedUnsatPenalty >( options );
 }
 
 /// @brief Defines the score types that this energy method calculates.
@@ -97,7 +97,7 @@ BuriedUnsatPenaltyCreator::score_types_for_method() const
 /// @brief Options constructor.
 ///
 BuriedUnsatPenalty::BuriedUnsatPenalty ( core::scoring::methods::EnergyMethodOptions const &options ) :
-	parent1( core::scoring::methods::EnergyMethodCreatorOP( utility::pointer::make_shared< BuriedUnsatPenaltyCreator >() ) ),
+	parent1( utility::pointer::make_shared< BuriedUnsatPenaltyCreator >() ),
 	parent2( ),
 	disabled_(false),
 	unsat_graph_(nullptr),
@@ -136,7 +136,7 @@ BuriedUnsatPenalty::~BuriedUnsatPenalty() {}
 /// @brief Clone: create a copy of this object, and return an owning pointer
 /// to the copy.
 core::scoring::methods::EnergyMethodOP BuriedUnsatPenalty::clone() const {
-	return core::scoring::methods::EnergyMethodOP( utility::pointer::make_shared< BuriedUnsatPenalty >(*this) );
+	return utility::pointer::make_shared< BuriedUnsatPenalty >(*this);
 }
 
 /// @brief BuriedUnsatPenalty is context-independent and thus indicates that no context graphs need to be maintained by

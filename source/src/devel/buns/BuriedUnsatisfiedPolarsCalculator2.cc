@@ -146,17 +146,17 @@ BuriedUnsatisfiedPolarsCalculator2::assert_calculators() {
 				using namespace protocols::vardist_solaccess;
 				TR << "Registering VarSolDist SASA Calculator" << std::endl;
 				CalculatorFactory::Instance().register_calculator(sasa_calc_name,
-					VarSolDistSasaCalculatorOP( new VarSolDistSasaCalculator() ));
+					utility::pointer::make_shared< VarSolDistSasaCalculator >());
 			} else {
 				TR << "Registering SASA Calculator" << std::endl;
 				CalculatorFactory::Instance().register_calculator(sasa_calc_name,
-					PoseMetricCalculatorOP( new pose::metrics::simple_calculators::SasaCalculatorLegacy() ));
+					utility::pointer::make_shared< pose::metrics::simple_calculators::SasaCalculatorLegacy >());
 			}
 		}
 		std::string num_hbonds_calc_name("num_hbonds_calc_name");
 		if ( !CalculatorFactory::Instance().check_calculator_exists( num_hbonds_calc_name ) ) {
 			CalculatorFactory::Instance().register_calculator(num_hbonds_calc_name,
-				PoseMetricCalculatorOP( new NumberHBondsCalculator() ));
+				utility::pointer::make_shared< NumberHBondsCalculator >());
 		}
 		if ( !CalculatorFactory::Instance().check_calculator_exists( name_of_weak_bunsat_calc_ ) ) {
 			using namespace protocols::pose_metric_calculators;

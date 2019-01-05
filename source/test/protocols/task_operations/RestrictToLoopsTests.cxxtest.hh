@@ -48,7 +48,7 @@ public:
 	void setUp() {
 		protocols_init();
 		core::pose::make_pose_from_sequence(pose_, "AAAAAAAAA", "fa_standard");
-		loops_ = LoopsOP( new Loops ); loops_->add_loop(2, 4); loops_->add_loop(6, 8);
+		loops_ = utility::pointer::make_shared< Loops >(); loops_->add_loop(2, 4); loops_->add_loop(6, 8);
 	}
 
 	void test_copy_constructor() {

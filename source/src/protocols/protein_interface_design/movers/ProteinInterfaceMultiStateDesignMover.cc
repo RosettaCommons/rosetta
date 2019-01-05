@@ -91,7 +91,7 @@ static basic::Tracer TR( "protocols.protein_interface_design.movers.ProteinInter
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP ProteinInterfaceMultiStateDesignMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new ProteinInterfaceMultiStateDesignMover );
+// XRW TEMP  return utility::pointer::make_shared< ProteinInterfaceMultiStateDesignMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -283,7 +283,7 @@ ProteinInterfaceMultiStateDesignMover::initialize( Pose & pose )
 
 	// always start with a fresh GeneticAlgorithm
 	// important when reusing ProteinInterfaceMultistateDesign mover
-	gen_alg_ = GeneticAlgorithmOP( new GeneticAlgorithm );
+	gen_alg_ = utility::pointer::make_shared< GeneticAlgorithm >();
 
 	// set up genetic algorithm
 	gen_alg_->set_max_generations( generations_ );
@@ -299,13 +299,13 @@ ProteinInterfaceMultiStateDesignMover::initialize( Pose & pose )
 	// if PackRotamerMover base class has no initialized TaskFactory, create default one here
 	if ( ! task_factory() ) {
 		// Protein-interface design-specific TaskFactory -> PackerTask -> figure out positions to design
-		my_tf = TaskFactoryOP( new TaskFactory );
+		my_tf = utility::pointer::make_shared< TaskFactory >();
 	} else { // TaskFactory already exists, add to it
-		my_tf = TaskFactoryOP( new TaskFactory( *task_factory() ) );
+		my_tf = utility::pointer::make_shared< TaskFactory >( *task_factory() );
 	}
 
-	my_tf->push_back( TaskOperationCOP( new InitializeFromCommandline ) );
-	if ( option[ OptionKeys::packing::resfile ].user() ) my_tf->push_back( TaskOperationCOP( new ReadResfile ) );
+	my_tf->push_back( utility::pointer::make_shared< InitializeFromCommandline >() );
+	if ( option[ OptionKeys::packing::resfile ].user() ) my_tf->push_back( utility::pointer::make_shared< ReadResfile >() );
 
 	task_factory( my_tf ); // PackRotamersMover base class setter
 
@@ -330,7 +330,7 @@ ProteinInterfaceMultiStateDesignMover::initialize( Pose & pose )
 				if ( aaset.find( aa ) != aaset.end() ) continue;
 				aaset.insert(aa);
 				TR(t_debug) << "adding choice " << aa << std::endl;
-				choices.push_back( protocols::genetic_algorithm::EntityElementOP( new PosType( i, aa ) ) );
+				choices.push_back( utility::pointer::make_shared< PosType >( i, aa ) );
 			}
 			rand->append_choices( choices );
 		}
@@ -340,10 +340,10 @@ ProteinInterfaceMultiStateDesignMover::initialize( Pose & pose )
 	TR(t_info) << "There will be " << rand->library_size() << " possible sequences." << std::endl;
 
 	// set up fitness function
-	multistate_packer_ = multistate_design::MultiStatePackerOP( new MultiStatePacker( num_packs_ ) );
+	multistate_packer_ = utility::pointer::make_shared< MultiStatePacker >( num_packs_ );
 
 	multistate_packer_->set_aggregate_function(
-		MultiStateAggregateFunction::COP( MultiStateAggregateFunction::OP( new PartitionAggregateFunction( boltz_temp_, anchor_offset_, compare_energy_to_ground_state_ ) ) ) );
+		utility::pointer::make_shared< PartitionAggregateFunction >( boltz_temp_, anchor_offset_, compare_energy_to_ground_state_ ) );
 
 	multistate_packer_->set_scorefxn( scorefxn_ );
 
@@ -377,7 +377,7 @@ ProteinInterfaceMultiStateDesignMover::initialize( Pose & pose )
 			for ( vector1<Size>::const_iterator i( design_positions.begin() ),
 					end( design_positions.end() ); i != end; ++i ) {
 				PosType pt( *i, (*s)->pose().residue_type(*i).aa() );
-				traits.push_back( protocols::genetic_algorithm::EntityElementOP( new PosType( pt ) ));
+				traits.push_back( utility::pointer::make_shared< PosType >( pt ));
 				TR(t_info) << pt.to_string() << " ";
 			}
 			gen_alg_->add_entity( traits );
@@ -414,8 +414,8 @@ ProteinInterfaceMultiStateDesignMover::output_alternative_states( core::pose::Po
 	using namespace core::pack::task::operation;
 
 	TaskFactoryOP tf( new TaskFactory( *task_factory() ) );// Allow all repackable residues to move, but not redesign
-	tf->push_back( TaskOperationCOP( new InitializeFromCommandline ) );
-	tf->push_back( TaskOperationCOP( new RestrictToRepacking ) );
+	tf->push_back( utility::pointer::make_shared< InitializeFromCommandline >() );
+	tf->push_back( utility::pointer::make_shared< RestrictToRepacking >() );
 	PackerTaskCOP ptask_output_pose = tf->create_task_and_apply_taskoperations( output_pose );
 	std::string const output_pose_fname( fname_prefix_ + "_ms_pos_0000.pdb" );
 	core::pose::Pose copy_pose( output_pose );
@@ -570,7 +570,7 @@ void ProteinInterfaceMultiStateDesignMover::parse_my_tag(
 		core::pose::PoseOP new_pose( new core::pose::Pose );
 		state_poses_.push_back( new_pose );
 		core::import_pose::pose_from_file( *new_pose, fname , core::import_pose::PDB_file);
-		saved_state_poses_.push_back( core::pose::PoseOP( new core::pose::Pose( *new_pose ) ) ); //deep copying new pose so that its saved throughout the run
+		saved_state_poses_.push_back( utility::pointer::make_shared< core::pose::Pose >( *new_pose ) ); //deep copying new pose so that its saved throughout the run
 		state_unbound_.push_back( unbound );
 		state_unfolded_.push_back( unfolded );
 
@@ -594,14 +594,14 @@ void ProteinInterfaceMultiStateDesignMover::parse_my_tag(
 moves::MoverOP
 ProteinInterfaceMultiStateDesignMover::fresh_instance() const
 {
-	return moves::MoverOP( new ProteinInterfaceMultiStateDesignMover );
+	return utility::pointer::make_shared< ProteinInterfaceMultiStateDesignMover >();
 }
 
 /// @brief required in the context of the parser/scripting scheme
 moves::MoverOP
 ProteinInterfaceMultiStateDesignMover::clone() const
 {
-	return moves::MoverOP( new ProteinInterfaceMultiStateDesignMover( *this ) );
+	return utility::pointer::make_shared< ProteinInterfaceMultiStateDesignMover >( *this );
 }
 
 /// @details we build one target (bound) and two competitor (unbound and unfolded) states.
@@ -739,7 +739,7 @@ std::string ProteinInterfaceMultiStateDesignMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 ProteinInterfaceMultiStateDesignMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ProteinInterfaceMultiStateDesignMover );
+	return utility::pointer::make_shared< ProteinInterfaceMultiStateDesignMover >();
 }
 
 void ProteinInterfaceMultiStateDesignMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

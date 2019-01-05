@@ -116,21 +116,21 @@ fix_with_coord_cst( Loops const& rigid, core::pose::Pose& pose, bool bCstAllAtom
 			conformation::Residue const & rsd( pose.residue( pos ) );
 			if ( bCstAllAtom ) {
 				for ( Size ii = 1; ii<= rsd.natoms(); ++ii ) {
-					pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new scoring::constraints::CoordinateConstraint(
+					pose.add_constraint( scoring::constraints::ConstraintCOP( utility::pointer::make_shared< scoring::constraints::CoordinateConstraint >(
 						id::AtomID( ii, pos),
 						id::AtomID( 1, pos ) /*this is completely ignored! */,
 						rsd.xyz( ii ),
 						fx
-						) ) ) );
+						) ) );
 				}
 			} else {
 				id::AtomID atomID( pose.residue_type(pos).atom_index("CA"), pos );
-				pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new scoring::constraints::CoordinateConstraint(
+				pose.add_constraint( scoring::constraints::ConstraintCOP( utility::pointer::make_shared< scoring::constraints::CoordinateConstraint >(
 					atomID,
 					id::AtomID( 1, pos ) /*this is completely ignored! */,
 					rsd.xyz( atomID.atomno() ),
 					fx
-					) ) ) );
+					) ) );
 			}
 		}
 	}
@@ -375,9 +375,9 @@ void add_coordinate_constraints_to_pose( core::pose::Pose & pose, const core::po
 		if ( coordconstraint_segments.is_loop_residue( i ) ) {
 			Residue const & nat_i_rsd( pose.residue(i) );
 			for ( Size ii = 1; ii<= nat_i_rsd.last_backbone_atom(); ++ii ) {
-				pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new CoordinateConstraint(
+				pose.add_constraint( scoring::constraints::ConstraintCOP( utility::pointer::make_shared< CoordinateConstraint >(
 					AtomID(ii,i), AtomID(1,nres), nat_i_rsd.xyz( ii ),
-					fx ) ) ) );
+					fx ) ) );
 			}
 		}
 	}

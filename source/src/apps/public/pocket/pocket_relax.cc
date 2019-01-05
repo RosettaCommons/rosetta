@@ -129,11 +129,11 @@ NCMinimize::NCMinimize() :
 NCMinimize::~NCMinimize() = default;
 
 MoverOP NCMinimize::clone() const {
-	return MoverOP( new NCMinimize( *this ) );
+	return utility::pointer::make_shared< NCMinimize >( *this );
 }
 
 MoverOP NCMinimize::fresh_instance() const {
-	return MoverOP( new NCMinimize );
+	return utility::pointer::make_shared< NCMinimize >();
 }
 
 void NCMinimize::apply( Pose & pose ) {
@@ -266,7 +266,7 @@ main( int argc, char * argv [] )
 		// (potentially) dock map into density
 		if ( option[ OptionKeys::edensity::mapfile ].user() ) {
 			protocols::moves::SequenceMoverOP seqmov( new protocols::moves::SequenceMover );
-			seqmov->add_mover( MoverOP( new protocols::electron_density::SetupForDensityScoringMover ) );
+			seqmov->add_mover( utility::pointer::make_shared< protocols::electron_density::SetupForDensityScoringMover >() );
 			seqmov->add_mover( protocol );
 			protocol = seqmov;
 		}
@@ -275,7 +275,7 @@ main( int argc, char * argv [] )
 		//   to avoid adding extra VRTs
 		if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
 			protocols::moves::SequenceMoverOP seqmov( new protocols::moves::SequenceMover );
-			seqmov->add_mover( MoverOP( new protocols::symmetry::SetupForSymmetryMover ) );
+			seqmov->add_mover( utility::pointer::make_shared< protocols::symmetry::SetupForSymmetryMover >() );
 			seqmov->add_mover( protocol );
 			protocol = seqmov;
 		}

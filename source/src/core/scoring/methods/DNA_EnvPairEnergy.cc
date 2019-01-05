@@ -45,7 +45,7 @@ methods::EnergyMethodOP
 DNA_EnvPairEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & //options
 ) const {
-	return EnergyMethodOP( new DNA_EnvPairEnergy() );
+	return utility::pointer::make_shared< DNA_EnvPairEnergy >();
 }
 
 ScoreTypes
@@ -64,7 +64,7 @@ DNA_EnvPairEnergy::version() const { return 1; }
 
 /// @details  C-TOR
 DNA_EnvPairEnergy::DNA_EnvPairEnergy(): // constructor
-	parent( EnergyMethodCreatorOP( new DNA_EnvPairEnergyCreator ) ),
+	parent( utility::pointer::make_shared< DNA_EnvPairEnergyCreator >() ),
 	potential_( ScoringManager::get_instance()->get_DNA_EnvPairPotential() )
 {
 }
@@ -74,7 +74,7 @@ DNA_EnvPairEnergy::DNA_EnvPairEnergy(): // constructor
 EnergyMethodOP
 DNA_EnvPairEnergy::clone() const
 {
-	return EnergyMethodOP( new DNA_EnvPairEnergy() );
+	return utility::pointer::make_shared< DNA_EnvPairEnergy >();
 }
 
 /// @details  Totally inefficient implementation to avoid defining nbr-ness

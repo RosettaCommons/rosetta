@@ -151,12 +151,12 @@ void AddResidueLabelMover::parse_my_tag(
 
 protocols::moves::MoverOP
 AddResidueLabelMover::clone() const {
-	return protocols::moves::MoverOP( new AddResidueLabelMover( *this ) );
+	return utility::pointer::make_shared< AddResidueLabelMover >( *this );
 }
 
 protocols::moves::MoverOP
 AddResidueLabelMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new AddResidueLabelMover );
+	return utility::pointer::make_shared< AddResidueLabelMover >();
 }
 
 std::string
@@ -177,7 +177,7 @@ AddResidueLabelMoverCreator::mover_name() {
 
 protocols::moves::MoverOP
 AddResidueLabelMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new AddResidueLabelMover );
+	return utility::pointer::make_shared< AddResidueLabelMover >();
 }
 
 void

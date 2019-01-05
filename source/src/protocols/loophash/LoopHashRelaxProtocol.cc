@@ -261,11 +261,11 @@ LoopHashRelaxProtocol::apply( core::pose::Pose& /*pose*/ )
 }
 
 protocols::moves::MoverOP LoopHashRelaxProtocol::clone() const {
-	return protocols::moves::MoverOP( new LoopHashRelaxProtocol( *this ) );
+	return utility::pointer::make_shared< LoopHashRelaxProtocol >( *this );
 }
 
 protocols::moves::MoverOP LoopHashRelaxProtocol::fresh_instance() const {
-	return protocols::moves::MoverOP( new LoopHashRelaxProtocol( library_ ) );
+	return utility::pointer::make_shared< LoopHashRelaxProtocol >( library_ );
 }
 
 } // namespace loops

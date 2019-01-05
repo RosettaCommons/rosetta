@@ -303,7 +303,7 @@ CovalentPeptidomimeticCreator::apply(
 	// create a task factory and task operations
 
 	TaskFactoryOP pert_tf(new TaskFactory());
-	pert_tf->push_back( operation::TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
+	pert_tf->push_back( utility::pointer::make_shared< core::pack::task::operation::InitializeFromCommandline >() );
 	operation::OperateOnCertainResiduesOP pert_res( new operation::OperateOnCertainResidues() );
 	utility::vector1< Size > indices;
 	for ( Size i = 1; i <= pose.size(); ++i ) {

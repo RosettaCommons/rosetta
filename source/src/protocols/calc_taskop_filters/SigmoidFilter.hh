@@ -34,10 +34,10 @@ public:
 	Sigmoid();
 	~Sigmoid() override;
 	filters::FilterOP clone() const override {
-		return filters::FilterOP( new Sigmoid( *this ) );
+		return utility::pointer::make_shared< Sigmoid >( *this );
 	}
 	filters::FilterOP fresh_instance() const override{
-		return filters::FilterOP( new Sigmoid() );
+		return utility::pointer::make_shared< Sigmoid >();
 	}
 
 	bool apply( core::pose::Pose const & pose ) const override;

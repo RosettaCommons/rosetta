@@ -91,7 +91,7 @@ public:
 
 	///@brief copy constructor implicit in clone call
 	core::pose::metrics::PoseMetricCalculatorOP clone() const {
-		return core::pose::metrics::PoseMetricCalculatorOP( new BuriedUnsatisfiedPolarsCalculator( name_of_sasa_calc_, name_of_hbond_calc_, special_region_, burial_cutoff_, probe_radius_, residue_surface_cutoff_, generous_hbonds_, legacy_counting_, vsasa_, use_sc_neighbors_, skip_surface_res_ ) ); };
+		return utility::pointer::make_shared< BuriedUnsatisfiedPolarsCalculator >( name_of_sasa_calc_, name_of_hbond_calc_, special_region_, burial_cutoff_, probe_radius_, residue_surface_cutoff_, generous_hbonds_, legacy_counting_, vsasa_, use_sc_neighbors_, skip_surface_res_ ); };
 
 	std::string const & name_of_hbond_calc() const { return name_of_hbond_calc_; }
 	std::string const & name_of_sasa_calc() const { return name_of_sasa_calc_; }

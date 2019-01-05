@@ -177,7 +177,7 @@ LinkerScore::LinkerScore(
 	}
 
 	if ( !loop_hash_library_ ) {
-		loop_hash_library_ = protocols::loophash::LoopHashLibraryOP( new protocols::loophash::LoopHashLibrary ( loopsizes_, 1, 0 ) );
+		loop_hash_library_ = utility::pointer::make_shared< protocols::loophash::LoopHashLibrary > ( loopsizes_, 1, 0 );
 		TR << "loading loophash data" << std::endl;
 		if ( loopsizes_.size() ) loop_hash_library_->load_mergeddb();
 		TR << "done loading loophash data" << std::endl;

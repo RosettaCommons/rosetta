@@ -87,7 +87,7 @@ void ConstraintEvaluatorWrapperCreator::add_evaluators( evaluation::MetaPoseEval
 			cst->set_centroid( false );
 			cst->set_filter_weight( 1 );
 			cst->set_skip_redundant( 1 );
-			eval.add_evaluation( PoseEvaluatorOP( new ConstraintEvaluatorWrapper( cst->tag(), cst ) ) );
+			eval.add_evaluation( utility::pointer::make_shared< ConstraintEvaluatorWrapper >( cst->tag(), cst ) );
 		}
 	}
 }

@@ -82,7 +82,7 @@ static basic::Tracer TR( "protocols.legacy_sewing.LegacyRepeatAssemblyMover" );
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP LegacyRepeatAssemblyMoverCreator::create_mover() const
 // XRW TEMP {
-// XRW TEMP  return protocols::moves::MoverOP(new LegacyRepeatAssemblyMover);
+// XRW TEMP  return utility::pointer::make_shared< LegacyRepeatAssemblyMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -99,11 +99,11 @@ static basic::Tracer TR( "protocols.legacy_sewing.LegacyRepeatAssemblyMover" );
 
 protocols::moves::MoverOP
 LegacyRepeatAssemblyMover::clone() const {
-	return( protocols::moves::MoverOP( new LegacyRepeatAssemblyMover( *this ) ) );
+	return( utility::pointer::make_shared< LegacyRepeatAssemblyMover >( *this ) );
 }
 protocols::moves::MoverOP
 LegacyRepeatAssemblyMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new LegacyRepeatAssemblyMover );
+	return utility::pointer::make_shared< LegacyRepeatAssemblyMover >();
 }
 
 // XRW TEMP std::string
@@ -494,7 +494,7 @@ std::string LegacyRepeatAssemblyMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 LegacyRepeatAssemblyMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LegacyRepeatAssemblyMover );
+	return utility::pointer::make_shared< LegacyRepeatAssemblyMover >();
 }
 
 void LegacyRepeatAssemblyMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

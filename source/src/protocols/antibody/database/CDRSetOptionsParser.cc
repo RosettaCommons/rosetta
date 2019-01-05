@@ -52,8 +52,8 @@ CDRSetOptionsParser::CDRSetOptionsParser():
 	utility::pointer::ReferenceCount(),
 	default_and_user_(false)
 {
-	ab_manager_ = AntibodyEnumManagerCOP( AntibodyEnumManagerOP( new AntibodyEnumManager() ) );
-	cluster_manager_ = clusters::CDRClusterEnumManagerCOP( clusters::CDRClusterEnumManagerOP( new CDRClusterEnumManager() ) );
+	ab_manager_ = utility::pointer::make_shared< AntibodyEnumManager >();
+	cluster_manager_ = utility::pointer::make_shared< CDRClusterEnumManager >();
 }
 
 
@@ -65,14 +65,14 @@ CDRSetOptionsParser::CDRSetOptionsParser( CDRSetOptionsParser const & src ):
 {
 	using namespace clusters;
 
-	if ( src.cdr_options_ ) cdr_options_ = CDRSetOptionsOP( new CDRSetOptions( *src.cdr_options_ ));
-	if ( src.ab_manager_ ) ab_manager_ = AntibodyEnumManagerOP( new AntibodyEnumManager( * src.ab_manager_ ));
-	if ( src.cluster_manager_ ) cluster_manager_ = CDRClusterEnumManagerOP( new CDRClusterEnumManager( *src.cluster_manager_ ));
+	if ( src.cdr_options_ ) cdr_options_ = utility::pointer::make_shared< CDRSetOptions >( *src.cdr_options_ );
+	if ( src.ab_manager_ ) ab_manager_ = utility::pointer::make_shared< AntibodyEnumManager >( * src.ab_manager_ );
+	if ( src.cluster_manager_ ) cluster_manager_ = utility::pointer::make_shared< CDRClusterEnumManager >( *src.cluster_manager_ );
 }
 
 CDRSetOptionsParserOP
 CDRSetOptionsParser::clone() const {
-	return CDRSetOptionsParserOP( new CDRSetOptionsParser( *this ));
+	return utility::pointer::make_shared< CDRSetOptionsParser >( *this );
 }
 
 utility::vector1<CDRSetOptionsOP>
@@ -88,7 +88,7 @@ CDRSetOptionsParser::parse_default_and_user_options(std::string const & filename
 CDRSetOptionsOP
 CDRSetOptionsParser::parse_default_and_user_options(CDRNameEnum cdr, std::string const & filename) {
 
-	cdr_options_ = CDRSetOptionsOP( new CDRSetOptions(cdr) );
+	cdr_options_ = utility::pointer::make_shared< CDRSetOptions >(cdr);
 	std::string path = basic::options::option [basic::options::OptionKeys::antibody::design::base_cdr_instructions]();
 	default_and_user_ = true;
 	parse_options(cdr, path);
@@ -118,7 +118,7 @@ CDRSetOptionsParser::parse_options(CDRNameEnum cdr, std::string const & path) {
 	if ( default_and_user_ ) {
 		cdr_options_->set_cdr(cdr);
 	} else {
-		cdr_options_ = CDRSetOptionsOP( new CDRSetOptions(cdr) );
+		cdr_options_ = utility::pointer::make_shared< CDRSetOptions >(cdr);
 	}
 
 

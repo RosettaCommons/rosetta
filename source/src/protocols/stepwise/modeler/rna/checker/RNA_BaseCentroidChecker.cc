@@ -52,7 +52,7 @@ RNA_BaseCentroidChecker::RNA_BaseCentroidChecker( core::pose::Pose const & pose,
 	working_parameters::StepWiseWorkingParametersCOP & working_parameters,
 	bool const tether_jump /* = false */ ):
 	working_parameters_( working_parameters ),
-	rna_centroid_info_( core::scoring::rna::RNA_CentroidInfoOP( new core::scoring::rna::RNA_CentroidInfo ) ),
+	rna_centroid_info_( utility::pointer::make_shared< core::scoring::rna::RNA_CentroidInfo >() ),
 	base_stack_dist_cutoff_( 6.364 ),
 	base_stack_z_offset_max_( 4.5 ),
 	base_stack_z_offset_min_( 2.5 ),

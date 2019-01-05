@@ -132,7 +132,7 @@ ConstraintOP KofNConstraint::clone() const {
 
 MultiConstraintOP KofNConstraint::empty_clone() const {
 	debug_assert( member_constraints().size() > 0 );
-	return MultiConstraintOP( new KofNConstraint );
+	return utility::pointer::make_shared< KofNConstraint >();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -228,7 +228,7 @@ KofNConstraint::remap_resid( core::id::SequenceMapping const &seqmap ) const {
 		if ( new_cst ) new_csts.push_back( new_cst );
 	}
 	if ( new_csts.size() > 0 ) {
-		return ConstraintOP( new KofNConstraint( new_csts ) );
+		return utility::pointer::make_shared< KofNConstraint >( new_csts );
 	} else return nullptr;
 }
 

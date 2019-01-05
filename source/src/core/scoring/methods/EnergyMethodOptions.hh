@@ -79,7 +79,7 @@ public:
 	/// clone
 	EnergyMethodOptionsOP
 	clone() const{
-		return EnergyMethodOptionsOP( new EnergyMethodOptions( *this ) );
+		return utility::pointer::make_shared< EnergyMethodOptions >( *this );
 	}
 
 	/// @brief Initialize a new EnergyMethodOptions with defaults from the global option collection

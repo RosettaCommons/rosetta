@@ -41,7 +41,7 @@ FillAUTOTaskOperation::~FillAUTOTaskOperation() = default;
 
 TaskOperationOP
 FillAUTOTaskOperation::clone() const {
-	return TaskOperationOP( new FillAUTOTaskOperation( *this ) );
+	return utility::pointer::make_shared< FillAUTOTaskOperation >( *this );
 }
 
 FillAUTOTaskOperation::FillAUTOTaskOperation( FillAUTOTaskOperation const & /*src*/ ) = default;
@@ -73,7 +73,7 @@ FillAUTOTaskOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & x
 core::pack::task::operation::TaskOperationOP
 FillAUTOTaskOperationCreator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new FillAUTOTaskOperation );
+	return utility::pointer::make_shared< FillAUTOTaskOperation >();
 }
 
 std::string

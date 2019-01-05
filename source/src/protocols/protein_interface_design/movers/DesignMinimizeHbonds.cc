@@ -60,7 +60,7 @@ static basic::Tracer TR( "protocols.protein_interface_design.movers.DesignMinimi
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP DesignMinimizeHbondsCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new DesignMinimizeHbonds );
+// XRW TEMP  return utility::pointer::make_shared< DesignMinimizeHbonds >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -95,7 +95,7 @@ DesignMinimizeHbonds::DesignMinimizeHbonds(
 	scorefxn_repack_ = scorefxn_repack->clone();
 	scorefxn_minimize_ = scorefxn_minimize->clone();
 	using namespace core::select::residue_selector;
-	target_residues( ResidueSelectorOP( new ResidueIndexSelector( target_res ) ) );
+	target_residues( utility::pointer::make_shared< ResidueIndexSelector >( target_res ) );
 	repack_partner1_ = repack_partner1;
 	repack_partner2_ = repack_partner2;
 	donors_ = donors; acceptors_ = acceptors;
@@ -130,7 +130,7 @@ DesignMinimizeHbonds::DesignMinimizeHbonds(
 	scorefxn_repack_ = scorefxn_repack;
 	scorefxn_minimize_ = scorefxn_minimize;
 	using namespace core::select::residue_selector;
-	target_residues( ResidueSelectorOP( new ResidueIndexSelector( target_res ) ) );
+	target_residues( utility::pointer::make_shared< ResidueIndexSelector >( target_res ) );
 	bb_hbond_ = bb_hbond;
 	sc_hbond_ = sc_hbond;
 	hbond_energy_threshold_ = hbond_energy_threshold;
@@ -145,7 +145,7 @@ DesignMinimizeHbonds::~DesignMinimizeHbonds() = default;
 
 protocols::moves::MoverOP
 DesignMinimizeHbonds::clone() const {
-	return( protocols::moves::MoverOP( new DesignMinimizeHbonds( *this ) ) );
+	return( utility::pointer::make_shared< DesignMinimizeHbonds >( *this ) );
 }
 
 
@@ -335,7 +335,7 @@ std::string DesignMinimizeHbondsCreator::keyname() const {
 
 protocols::moves::MoverOP
 DesignMinimizeHbondsCreator::create_mover() const {
-	return protocols::moves::MoverOP( new DesignMinimizeHbonds );
+	return utility::pointer::make_shared< DesignMinimizeHbonds >();
 }
 
 void DesignMinimizeHbondsCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

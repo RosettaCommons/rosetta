@@ -197,7 +197,7 @@ public:
 	virtual ~CBSG_Dihedral_Func();
 
 	func::FuncOP
-	clone() const { return func::FuncOP( new CBSG_Dihedral_Func( *this ) ); };
+	clone() const { return utility::pointer::make_shared< CBSG_Dihedral_Func >( *this ); };
 
 	virtual bool operator == ( Func const & other ) const;
 	virtual bool same_type_as_me( Func const & other ) const;
@@ -229,7 +229,7 @@ public:
 	~SGSG_Dihedral_Func();
 
 	func::FuncOP
-	clone() const { return func::FuncOP( new SGSG_Dihedral_Func( *this ) ); };
+	clone() const { return utility::pointer::make_shared< SGSG_Dihedral_Func >( *this ); };
 
 	virtual bool operator == ( Func const & other ) const;
 	virtual bool same_type_as_me( Func const & other ) const;
@@ -263,7 +263,7 @@ public:
 	~CB_Angle_Func();
 
 	func::FuncOP
-	clone() const { return func::FuncOP( new CB_Angle_Func( *this ) ); };
+	clone() const { return utility::pointer::make_shared< CB_Angle_Func >( *this ); };
 
 	virtual bool operator == ( Func const & other ) const;
 	virtual bool same_type_as_me( Func const & other ) const;
@@ -296,7 +296,7 @@ public:
 	~SG_Dist_Func();
 
 	func::FuncOP
-	clone() const { return func::FuncOP( new SG_Dist_Func( *this ) ); };
+	clone() const { return utility::pointer::make_shared< SG_Dist_Func >( *this ); };
 
 	virtual bool operator == ( Func const & other ) const;
 	virtual bool same_type_as_me( Func const & other ) const;

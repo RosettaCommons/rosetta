@@ -103,7 +103,7 @@ void StartStructClaimer::generate_init_frags( core::pose::Pose const& pose ) {
 
 	using namespace fragment;
 	ConstantLengthFragSetOP fragset( new ConstantLengthFragSet( 1 ) );
-	steal_frag_set_from_pose( pose, *fragset, core::fragment::FragDataCOP( core::fragment::FragDataOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), 1 ) ) ), start_region );
+	steal_frag_set_from_pose( pose, *fragset, utility::pointer::make_shared< FragData >( utility::pointer::make_shared< BBTorsionSRFD >(), 1 ), start_region );
 	simple_moves::ClassicFragmentMoverOP mover( new simple_moves::ClassicFragmentMover( fragset ) );
 	mover->set_check_ss( false ); /* not good if we want to initialize from 1mer fragments */
 	set_mover( mover );
@@ -113,7 +113,7 @@ void StartStructClaimer::generate_init_frags( core::pose::Pose const& pose ) {
 
 void StartStructClaimer::generate_claims( claims::DofClaims& new_claims ){
 	for ( Size i=1; i <= broker().resolve_sequence_label( label() ).length(); ++i ) {
-		new_claims.push_back( claims::DofClaimOP( new claims::BBClaim( get_self_weak_ptr(), std::make_pair( label(), i ), claims::DofClaim::INIT ) ) );
+		new_claims.push_back( utility::pointer::make_shared< claims::BBClaim >( get_self_weak_ptr(), std::make_pair( label(), i ), claims::DofClaim::INIT ) );
 	}
 }
 

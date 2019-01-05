@@ -74,7 +74,7 @@ NativeFallbackConfiguration::get_native_filename_from_options() const
 basic::resource_manager::FallbackConfigurationOP
 NativeFallbackConfigurationCreator::create_fallback_configuration() const
 {
-	return basic::resource_manager::FallbackConfigurationOP( new NativeFallbackConfiguration );
+	return utility::pointer::make_shared< NativeFallbackConfiguration >();
 }
 
 std::string

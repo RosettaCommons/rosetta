@@ -384,7 +384,7 @@ RotamerSet_::build_rotamers_for_concrete(
 				// Suppress printing of info message in common known null-return cases
 				tt << "Using simple Rotamer generation logic for " << concrete_residue->name() << std::endl;
 			}
-			rotlib = core::pack::rotamers::SingleBasicRotamerLibraryOP( new core::pack::rotamers::SingleBasicRotamerLibrary );
+			rotlib = utility::pointer::make_shared< core::pack::rotamers::SingleBasicRotamerLibrary >();
 			rotlib->fill_rotamer_vector( pose, scorefxn, task, packer_neighbor_graph, concrete_residue, existing_residue, extra_chi_steps, buried, suggested_rotamers);
 		}
 

@@ -37,7 +37,7 @@ using namespace core::scoring;
 static basic::Tracer TR( "protocols.simple_filters.ReportFilter" );
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP ReportFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ReportFilter ); }
+// XRW TEMP ReportFilterCreator::create_filter() const { return utility::pointer::make_shared< ReportFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP ReportFilterCreator::keyname() const { return "Report"; }
@@ -190,7 +190,7 @@ std::string ReportFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 ReportFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new ReportFilter );
+	return utility::pointer::make_shared< ReportFilter >();
 }
 
 void ReportFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

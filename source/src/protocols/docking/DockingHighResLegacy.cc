@@ -163,7 +163,7 @@ DockingHighResLegacy::~DockingHighResLegacy() = default;
 
 //clone
 protocols::moves::MoverOP DockingHighResLegacy::clone() const {
-	return protocols::moves::MoverOP( new DockingHighResLegacy(*this) );
+	return utility::pointer::make_shared< DockingHighResLegacy >(*this);
 }
 
 void DockingHighResLegacy::set_min_type( std::string min_type_in ) { min_type_ = min_type_in;}
@@ -208,12 +208,12 @@ void DockingHighResLegacy::set_default( core::pose::Pose & pose ) {
 	//repack_period_ = 8;
 
 	//sets up MC object
-	mc_ = moves::MonteCarloOP( new moves::MonteCarlo( pose, *scorefxn(), temperature_ ) );
+	mc_ = utility::pointer::make_shared< moves::MonteCarlo >( pose, *scorefxn(), temperature_ );
 
 	//sets up default movemap
 	bb_ = false;
 	chi_ = false;
-	movemap_ = core::kinematics::MoveMapOP( new kinematics::MoveMap() );
+	movemap_ = utility::pointer::make_shared< kinematics::MoveMap >();
 	movemap_->set_chi( chi_ );
 	movemap_->set_bb( bb_ );
 	for ( DockJumps::const_iterator it = movable_jumps().begin(); it != movable_jumps().end(); ++it ) {
@@ -263,7 +263,7 @@ void DockingHighResLegacy::define_loops( pose::Pose const & pose, loops::LoopsOP
 	pack::task::TaskFactory tf;
 	//tf.push_back( rtfd );
 	//tf.push_back( new RestrictTaskForDocking( scorefxn_, rb_jump_, true, interface_dist ) );
-	tf.push_back( TaskOperationCOP( new RestrictToInterface( movable_jumps(), interface_dist ) ) );
+	tf.push_back( utility::pointer::make_shared< RestrictToInterface >( movable_jumps(), interface_dist ) );
 	pack::task::PackerTaskOP task = tf.create_task_and_apply_taskoperations( pose );
 
 	// extend one residue beyond borders of repackable regions, don't allow 1-residue loops
@@ -393,7 +393,7 @@ void DockingHighResLegacy::set_dock_min_protocol() {
 
 	protocols::minimization_packing::MinMoverOP min_mover( new protocols::minimization_packing::MinMover( movemap_, scorefxn(), min_type_, min_tolerance_, nb_list_ ) );
 	TrialMoverOP minimize_trial( new TrialMover( min_mover, mc_ ) );
-	docking_highres_protocol_mover_ = moves::SequenceMoverOP( new SequenceMover );
+	docking_highres_protocol_mover_ = utility::pointer::make_shared< SequenceMover >();
 	docking_highres_protocol_mover_->add_mover( minimize_trial );
 }
 
@@ -430,7 +430,7 @@ void DockingHighResLegacy::set_dock_mcm_protocol( core::pose::Pose & pose ) {
 	//set up sidechain movers for each movable jump
 
 	TaskFactoryOP tf( new TaskFactory( *task_factory() ) );
-	tf->push_back( TaskOperationCOP( new RestrictToInterface( movable_jumps() ) ) );
+	tf->push_back( utility::pointer::make_shared< RestrictToInterface >( movable_jumps() ) );
 	set_task_factory( tf );
 	//RotamerTrialsMoverOP pack_rottrial = new protocols::minimization_packing::RotamerTrialsMover( scorefxn_pack(), task_factory() );
 
@@ -479,13 +479,13 @@ void DockingHighResLegacy::set_dock_mcm_protocol( core::pose::Pose & pose ) {
 				TR << "Setting up for ccd loop modeling" << std::endl;
 				protocols::loops::fold_tree_from_loops( pose, *loop_set, loop_fold_tree );
 				// need to pass a clone of the scorefxn because LoopMover requires a non-const scorefxn
-				loop_refine = loops::loop_mover::LoopMoverOP( new loops::loop_mover::refine::LoopMover_Refine_CCD( loop_set, scorefxn_pack()->clone() ) );
+				loop_refine = utility::pointer::make_shared< loops::loop_mover::refine::LoopMover_Refine_CCD >( loop_set, scorefxn_pack()->clone() );
 			} else if ( flex_bb_docking_type == "kic" ) {
 				// jk KIC loop refinement (fullatom only)
 				TR << "Setting up for kinematic (kic) loop modeling" << std::endl;
 				protocols::loops::fold_tree_from_loops( pose, *loop_set, loop_fold_tree );
 				// need to pass a clone of the scorefxn because LoopMover requires a non-const scorefxn
-				loop_refine = loops::loop_mover::LoopMoverOP( new loops::loop_mover::refine::LoopMover_Refine_KIC( loop_set, scorefxn_pack()->clone() ) );
+				loop_refine = utility::pointer::make_shared< loops::loop_mover::refine::LoopMover_Refine_KIC >( loop_set, scorefxn_pack()->clone() );
 			} else if ( flex_bb_docking_type == "backrub" ) {
 				// jk backrub loop refinement (fullatom only)
 				TR << "Setting up for backrub loop modeling" << std::endl;
@@ -493,7 +493,7 @@ void DockingHighResLegacy::set_dock_mcm_protocol( core::pose::Pose & pose ) {
 				// note: this assumes that the termini are not allowed to move (and in define_loops they aren't)
 				loop_fold_tree.simple_tree( pose.size() );
 				// need to pass a clone of the scorefxn because LoopMover requires a non-const scorefxn
-				loop_refine = loops::loop_mover::LoopMoverOP( new loops::loop_mover::refine::LoopMover_Refine_Backrub( loop_set, scorefxn_pack()->clone() ) );
+				loop_refine = utility::pointer::make_shared< loops::loop_mover::refine::LoopMover_Refine_Backrub >( loop_set, scorefxn_pack()->clone() );
 			}
 
 			moves::ChangeFoldTreeMoverOP get_loop_ft( new moves::ChangeFoldTreeMover( loop_fold_tree ) );
@@ -535,9 +535,9 @@ void DockingHighResLegacy::set_dock_mcm_protocol( core::pose::Pose & pose ) {
 
 	JumpOutMoverOP rb_mover_min;
 	if ( option[ OptionKeys::docking::extra_rottrial] ) {
-		rb_mover_min = JumpOutMoverOP( new JumpOutMover( rb_mover, min_repack_mover, scorefxn(), minimization_threshold ) );
+		rb_mover_min = utility::pointer::make_shared< JumpOutMover >( rb_mover, min_repack_mover, scorefxn(), minimization_threshold );
 	} else {
-		rb_mover_min = JumpOutMoverOP( new JumpOutMover( rb_mover, min_mover, scorefxn(), minimization_threshold ) );
+		rb_mover_min = utility::pointer::make_shared< JumpOutMover >( rb_mover, min_mover, scorefxn(), minimization_threshold );
 	}
 
 	TrialMoverOP rb_mover_min_trial( new TrialMover( rb_mover_min, mc_ ) );
@@ -575,7 +575,7 @@ void DockingHighResLegacy::set_dock_mcm_protocol( core::pose::Pose & pose ) {
 	//set up protocol mover
 	TR << "::::::::::::::::::DOCK_MCM:::::::::::::::::::" << std::endl;
 
-	docking_highres_protocol_mover_ = moves::SequenceMoverOP( new SequenceMover );
+	docking_highres_protocol_mover_ = utility::pointer::make_shared< SequenceMover >();
 	if ( repack_switch_ ) docking_highres_protocol_mover_->add_mover( initial_repack );
 	docking_highres_protocol_mover_->add_mover( minimize_trial );
 	docking_highres_protocol_mover_->add_mover( mcm_four_cycles );
@@ -629,7 +629,7 @@ void DockingHighResLegacy::set_dock_ppk_protocol( core::pose::Pose & pose ) {
 	SidechainMinMoverOP scmin_mover( new SidechainMinMover(scorefxn_pack(), task) );
 
 	// set up protocol
-	docking_highres_protocol_mover_ = moves::SequenceMoverOP( new SequenceMover );
+	docking_highres_protocol_mover_ = utility::pointer::make_shared< SequenceMover >();
 	if ( sc_min() ) docking_highres_protocol_mover_->add_mover( scmin_mover );
 	for ( auto & it : trans_away_vec ) {
 		docking_highres_protocol_mover_->add_mover( it );
@@ -653,7 +653,7 @@ void DockingHighResLegacy::setup_packing( core::pose::Pose & pose ) {
 
 	if ( init_task_factory_ ) {
 		TR << "Using user-defined TaskFactory." << std::endl;
-		local_tf = TaskFactoryOP( new TaskFactory( *init_task_factory_ ) );
+		local_tf = utility::pointer::make_shared< TaskFactory >( *init_task_factory_ );
 	}
 
 	if ( design_ ) {
@@ -669,24 +669,24 @@ void DockingHighResLegacy::setup_packing( core::pose::Pose & pose ) {
 		if ( repack_chains.size() > 0 ) {
 			for ( DockJumps::const_iterator it = repack_chains.begin(); it != repack_chains.end(); ++it ) {
 				TR << "Not designing chain " << *it << std::endl;
-				local_tf->push_back( TaskOperationCOP( new protocols::task_operations::RestrictChainToRepackingOperation( *it ) ) ); //
+				local_tf->push_back( utility::pointer::make_shared< protocols::task_operations::RestrictChainToRepackingOperation >( *it ) ); //
 			}
 		}
 	} else { // default case -- restrict everything to repacking.
-		local_tf->push_back( TaskOperationCOP( new RestrictToRepacking ) );
+		local_tf->push_back( utility::pointer::make_shared< RestrictToRepacking >() );
 	}
 	// tf_->push_back( new OperateOnCertainResidues( new PreventRepackingRLT, new ResidueLacksProperty("PROTEIN") ) );
-	local_tf->push_back( TaskOperationCOP( new InitializeFromCommandline ) );
-	local_tf->push_back( TaskOperationCOP( new IncludeCurrent ) );
-	local_tf->push_back( TaskOperationCOP( new NoRepackDisulfides ) );
-	if ( option[OptionKeys::packing::resfile].user() ) local_tf->push_back( TaskOperationCOP( new ReadResfile ) );
+	local_tf->push_back( utility::pointer::make_shared< InitializeFromCommandline >() );
+	local_tf->push_back( utility::pointer::make_shared< IncludeCurrent >() );
+	local_tf->push_back( utility::pointer::make_shared< NoRepackDisulfides >() );
+	if ( option[OptionKeys::packing::resfile].user() ) local_tf->push_back( utility::pointer::make_shared< ReadResfile >() );
 
 	// DockingNoRepack only works over the first rb_jump in movable_jumps
 	// In a 2-body case this separates 1 & 2 based on the only cutpoint
 	// In a multibody case, this separates 1 & 2 based on the first cutpoint
 	using namespace protocols::task_operations;
-	if ( option[ OptionKeys::docking::norepack1 ].user() ) local_tf->push_back( TaskOperationCOP( new DockingNoRepack1( movable_jumps()[1] ) ) );
-	if ( option[ OptionKeys::docking::norepack2 ].user() ) local_tf->push_back( TaskOperationCOP( new DockingNoRepack2( movable_jumps()[1] ) ) );
+	if ( option[ OptionKeys::docking::norepack1 ].user() ) local_tf->push_back( utility::pointer::make_shared< DockingNoRepack1 >( movable_jumps()[1] ) );
+	if ( option[ OptionKeys::docking::norepack2 ].user() ) local_tf->push_back( utility::pointer::make_shared< DockingNoRepack2 >( movable_jumps()[1] ) );
 
 	// incorporating Ian's UnboundRotamer operation.
 	// note that nothing happens if unboundrot option is inactive!
@@ -716,7 +716,7 @@ void DockingHighResLegacy::setup_packing( core::pose::Pose & pose ) {
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP DockingHighResLegacyCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new DockingHighResLegacy() );
+// XRW TEMP  return utility::pointer::make_shared< DockingHighResLegacy >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -746,7 +746,7 @@ std::string DockingHighResLegacyCreator::keyname() const {
 
 protocols::moves::MoverOP
 DockingHighResLegacyCreator::create_mover() const {
-	return protocols::moves::MoverOP( new DockingHighResLegacy );
+	return utility::pointer::make_shared< DockingHighResLegacy >();
 }
 
 void DockingHighResLegacyCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

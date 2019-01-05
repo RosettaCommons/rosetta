@@ -164,7 +164,7 @@ bool RigidBodySilentStruct::init_from_lines(
 } // init_from_lines
 
 void RigidBodySilentStruct::fold_tree( kinematics::FoldTree const& f ) {
-	fold_tree_ = kinematics::FoldTreeOP( new kinematics::FoldTree(f) );
+	fold_tree_ = utility::pointer::make_shared< kinematics::FoldTree >(f);
 }
 
 kinematics::FoldTree const& RigidBodySilentStruct::fold_tree() const {
@@ -242,7 +242,7 @@ RigidBodySilentStruct & RigidBodySilentStruct::operator= (
 		add_rt( src.jump(jj) );
 	}
 	if ( src.fold_tree_ ) {
-		fold_tree_ = kinematics::FoldTreeOP( new kinematics::FoldTree( *src.fold_tree_ ) );
+		fold_tree_ = utility::pointer::make_shared< kinematics::FoldTree >( *src.fold_tree_ );
 	}
 	return *this;
 }

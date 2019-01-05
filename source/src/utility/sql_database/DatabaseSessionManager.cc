@@ -50,10 +50,10 @@ session::begin_transaction(){
 			//do nothing
 			break;
 		case(TransactionMode::standard) :
-			cur_transaction_ = transactionOP( new transaction(*this) );
+			cur_transaction_ = utility::pointer::make_shared< transaction >(*this);
 			break;
 		case(TransactionMode::chunk) :
-			cur_transaction_ = transactionOP( new transaction(*this) );
+			cur_transaction_ = utility::pointer::make_shared< transaction >(*this);
 			break;
 		default :
 			utility_exit_with_message(

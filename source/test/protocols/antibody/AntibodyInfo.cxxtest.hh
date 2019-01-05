@@ -69,9 +69,9 @@ public:
 		core::import_pose::pose_from_file(ab_pose_aho_antigen, "protocols/antibody/aho_with_antigen.pdb", core::import_pose::PDB_file);
 
 		ab_info_north_aho = AntibodyInfoOP(new AntibodyInfo(ab_pose_aho, AHO_Scheme, North));
-		ab_info_chothia = AntibodyInfoOP( new AntibodyInfo(ab_pose_chothia, Chothia_Scheme, Chothia));
-		ab_info_aroop = AntibodyInfoOP( new AntibodyInfo(ab_pose_chothia, Chothia_Scheme, Aroop) );
-		ab_info_aho_antigen = AntibodyInfoOP( new AntibodyInfo(ab_pose_aho_antigen, AHO_Scheme, North));
+		ab_info_chothia = utility::pointer::make_shared< AntibodyInfo >(ab_pose_chothia, Chothia_Scheme, Chothia);
+		ab_info_aroop = utility::pointer::make_shared< AntibodyInfo >(ab_pose_chothia, Chothia_Scheme, Aroop);
+		ab_info_aho_antigen = utility::pointer::make_shared< AntibodyInfo >(ab_pose_aho_antigen, AHO_Scheme, North);
 
 		infos[North] = std::make_pair(ab_pose_aho, ab_info_north_aho);
 		infos[Chothia] = std::make_pair(ab_pose_chothia, ab_info_chothia);
@@ -323,7 +323,7 @@ public:
 		converter.set_scheme_conversion(AHO_Scheme, Chothia_Scheme);
 		TS_ASSERT_THROWS_NOTHING( converter.apply(ab_pose_aho) );
 
-		AntibodyInfoOP ab_info = AntibodyInfoOP( new AntibodyInfo( ab_pose_aho, Chothia_Scheme, North ));
+		AntibodyInfoOP ab_info = utility::pointer::make_shared< AntibodyInfo >( ab_pose_aho, Chothia_Scheme, North );
 
 		for ( core::Size i = 1; i<= 6; ++i ) {
 			CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
@@ -339,7 +339,7 @@ public:
 
 		converter.set_scheme_conversion(Chothia_Scheme, AHO_Scheme);
 		TS_ASSERT_THROWS_NOTHING( converter.apply(ab_pose_aho) );
-		ab_info = AntibodyInfoOP( new AntibodyInfo( ab_pose_aho, AHO_Scheme, North ));
+		ab_info = utility::pointer::make_shared< AntibodyInfo >( ab_pose_aho, AHO_Scheme, North );
 
 		for ( core::Size i = 1; i<= 6; ++i ) {
 			CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
@@ -356,7 +356,7 @@ public:
 		converter.set_scheme_conversion(Chothia_Scheme, AHO_Scheme);
 		TS_ASSERT_THROWS_NOTHING( converter.apply(ab_pose_chothia) );
 
-		ab_info = AntibodyInfoOP( new AntibodyInfo( ab_pose_chothia, AHO_Scheme, North ));
+		ab_info = utility::pointer::make_shared< AntibodyInfo >( ab_pose_chothia, AHO_Scheme, North );
 		for ( core::Size i = 1; i<= 6; ++i ) {
 			CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 
@@ -372,7 +372,7 @@ public:
 		converter.set_scheme_conversion(AHO_Scheme, Chothia_Scheme);
 		TS_ASSERT_THROWS_NOTHING( converter.apply(ab_pose_chothia) );
 
-		ab_info = AntibodyInfoOP( new AntibodyInfo( ab_pose_chothia, Chothia_Scheme, North ));
+		ab_info = utility::pointer::make_shared< AntibodyInfo >( ab_pose_chothia, Chothia_Scheme, North );
 		for ( core::Size i = 1; i<= 6; ++i ) {
 			CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 

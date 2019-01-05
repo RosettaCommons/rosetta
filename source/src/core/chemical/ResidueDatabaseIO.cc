@@ -69,17 +69,17 @@ ResidueDatabaseIO::write_residue_type_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column residue_type_set_name("residue_type_set_name", DbDataTypeOP( new DbText(255) ));
-	Column version("version", DbDataTypeOP( new DbText() ));
-	Column name("name", DbDataTypeOP( new DbText(255) ));
-	Column name3("name3", DbDataTypeOP( new DbText(3) ));
-	Column name1("name1", DbDataTypeOP( new DbText(2) )); // TODO Fix ccpdb to allow putting in just a single character rather then a one character string.
-	Column aa("aa", DbDataTypeOP( new DbInteger() ));
-	Column lower_connect("lower_connect", DbDataTypeOP( new DbInteger() ));
-	Column upper_connect("upper_connect", DbDataTypeOP( new DbInteger() ));
-	Column nbr_atom("nbr_atom", DbDataTypeOP( new DbInteger() ));
-	Column nbr_radius("nbr_radius", DbDataTypeOP( new DbReal() ));
-	Column rotamer_library("rotamer_library", DbDataTypeOP( new DbText() ));
+	Column residue_type_set_name("residue_type_set_name", utility::pointer::make_shared< DbText >(255));
+	Column version("version", utility::pointer::make_shared< DbText >());
+	Column name("name", utility::pointer::make_shared< DbText >(255));
+	Column name3("name3", utility::pointer::make_shared< DbText >(3));
+	Column name1("name1", utility::pointer::make_shared< DbText >(2)); // TODO Fix ccpdb to allow putting in just a single character rather then a one character string.
+	Column aa("aa", utility::pointer::make_shared< DbInteger >());
+	Column lower_connect("lower_connect", utility::pointer::make_shared< DbInteger >());
+	Column upper_connect("upper_connect", utility::pointer::make_shared< DbInteger >());
+	Column nbr_atom("nbr_atom", utility::pointer::make_shared< DbInteger >());
+	Column nbr_radius("nbr_radius", utility::pointer::make_shared< DbReal >());
+	Column rotamer_library("rotamer_library", utility::pointer::make_shared< DbText >());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(residue_type_set_name);
@@ -106,14 +106,14 @@ ResidueDatabaseIO::write_residue_type_atom_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column residue_type_set_name("residue_type_set_name", DbDataTypeOP( new DbText(255) ));
-	Column residue_type_name("residue_type_name", DbDataTypeOP( new DbText(255) ));
-	Column atom_index("atom_index", DbDataTypeOP( new DbInteger() ));
-	Column atom_name("atom_name", DbDataTypeOP( new DbText() ));
-	Column atom_type_name("atom_type_name", DbDataTypeOP( new DbText() ));
-	Column mm_atom_type_name("mm_atom_type_name", DbDataTypeOP( new DbText() ));
-	Column charge("charge", DbDataTypeOP( new DbReal() ));
-	Column is_backbone("is_backbone", DbDataTypeOP( new DbInteger() ));
+	Column residue_type_set_name("residue_type_set_name", utility::pointer::make_shared< DbText >(255));
+	Column residue_type_name("residue_type_name", utility::pointer::make_shared< DbText >(255));
+	Column atom_index("atom_index", utility::pointer::make_shared< DbInteger >());
+	Column atom_name("atom_name", utility::pointer::make_shared< DbText >());
+	Column atom_type_name("atom_type_name", utility::pointer::make_shared< DbText >());
+	Column mm_atom_type_name("mm_atom_type_name", utility::pointer::make_shared< DbText >());
+	Column charge("charge", utility::pointer::make_shared< DbReal >());
+	Column is_backbone("is_backbone", utility::pointer::make_shared< DbInteger >());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(residue_type_set_name);
@@ -154,11 +154,11 @@ ResidueDatabaseIO::write_residue_type_bond_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column residue_type_set_name("residue_type_set_name", DbDataTypeOP( new DbText(255) ));
-	Column residue_type_name("residue_type_name", DbDataTypeOP( new DbText(255) ));
-	Column atom1("atom1", DbDataTypeOP( new DbInteger() ));
-	Column atom2("atom2", DbDataTypeOP( new DbInteger() ));
-	Column bond_type("bond_type", DbDataTypeOP( new DbInteger() ));
+	Column residue_type_set_name("residue_type_set_name", utility::pointer::make_shared< DbText >(255));
+	Column residue_type_name("residue_type_name", utility::pointer::make_shared< DbText >(255));
+	Column atom1("atom1", utility::pointer::make_shared< DbInteger >());
+	Column atom2("atom2", utility::pointer::make_shared< DbInteger >());
+	Column bond_type("bond_type", utility::pointer::make_shared< DbInteger >());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(residue_type_set_name);
@@ -190,10 +190,10 @@ ResidueDatabaseIO::write_residue_type_cut_bond_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column residue_type_set_name("residue_type_set_name", DbDataTypeOP( new DbText(255) ));
-	Column residue_type_name("residue_type_name", DbDataTypeOP( new DbText(255) ));
-	Column atom1("atom1", DbDataTypeOP( new DbInteger() ));
-	Column atom2("atom2", DbDataTypeOP( new DbInteger() ));
+	Column residue_type_set_name("residue_type_set_name", utility::pointer::make_shared< DbText >(255));
+	Column residue_type_name("residue_type_name", utility::pointer::make_shared< DbText >(255));
+	Column atom1("atom1", utility::pointer::make_shared< DbInteger >());
+	Column atom2("atom2", utility::pointer::make_shared< DbInteger >());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(residue_type_set_name);
@@ -223,13 +223,13 @@ ResidueDatabaseIO::write_residue_type_chi_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column residue_type_set_name("residue_type_set_name", DbDataTypeOP( new DbText(255) ));
-	Column residue_type_name("residue_type_name", DbDataTypeOP( new DbText(255) ));
-	Column chino("chino", DbDataTypeOP( new DbInteger() ));
-	Column atom1("atom1", DbDataTypeOP( new DbText() ));
-	Column atom2("atom2", DbDataTypeOP( new DbText() ));
-	Column atom3("atom3", DbDataTypeOP( new DbText() ));
-	Column atom4("atom4", DbDataTypeOP( new DbText() ));
+	Column residue_type_set_name("residue_type_set_name", utility::pointer::make_shared< DbText >(255));
+	Column residue_type_name("residue_type_name", utility::pointer::make_shared< DbText >(255));
+	Column chino("chino", utility::pointer::make_shared< DbInteger >());
+	Column atom1("atom1", utility::pointer::make_shared< DbText >());
+	Column atom2("atom2", utility::pointer::make_shared< DbText >());
+	Column atom3("atom3", utility::pointer::make_shared< DbText >());
+	Column atom4("atom4", utility::pointer::make_shared< DbText >());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(residue_type_set_name);
@@ -265,11 +265,11 @@ ResidueDatabaseIO::write_residue_type_chi_rotamer_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column residue_type_set_name("residue_type_set_name", DbDataTypeOP( new DbText(255) ));
-	Column residue_type_name("residue_type_name", DbDataTypeOP( new DbText(255) ));
-	Column chino("chino", DbDataTypeOP( new DbInteger() ));
-	Column mean("mean", DbDataTypeOP( new DbReal() ));
-	Column sdev("sdev", DbDataTypeOP( new DbReal() ));
+	Column residue_type_set_name("residue_type_set_name", utility::pointer::make_shared< DbText >(255));
+	Column residue_type_name("residue_type_name", utility::pointer::make_shared< DbText >(255));
+	Column chino("chino", utility::pointer::make_shared< DbInteger >());
+	Column mean("mean", utility::pointer::make_shared< DbReal >());
+	Column sdev("sdev", utility::pointer::make_shared< DbReal >());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(residue_type_set_name);
@@ -300,11 +300,11 @@ ResidueDatabaseIO::write_residue_type_proton_chi_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column residue_type_set_name("residue_type_set_name", DbDataTypeOP( new DbText(255) ));
-	Column residue_type_name("residue_type_name", DbDataTypeOP( new DbText(255) ));
-	Column chino("chino", DbDataTypeOP( new DbInteger() ));
-	Column sample("sample", DbDataTypeOP( new DbReal() ));
-	Column is_extra("is_extra", DbDataTypeOP( new DbInteger() ));
+	Column residue_type_set_name("residue_type_set_name", utility::pointer::make_shared< DbText >(255));
+	Column residue_type_name("residue_type_name", utility::pointer::make_shared< DbText >(255));
+	Column chino("chino", utility::pointer::make_shared< DbInteger >());
+	Column sample("sample", utility::pointer::make_shared< DbReal >());
+	Column is_extra("is_extra", utility::pointer::make_shared< DbInteger >());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(residue_type_set_name);
@@ -335,9 +335,9 @@ ResidueDatabaseIO::write_residue_type_property_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column residue_type_set_name("residue_type_set_name", DbDataTypeOP( new DbText(255) ));
-	Column residue_type_name("residue_type_name", DbDataTypeOP( new DbText(255) ));
-	Column property("property", DbDataTypeOP( new DbText() ));
+	Column residue_type_set_name("residue_type_set_name", utility::pointer::make_shared< DbText >(255));
+	Column residue_type_name("residue_type_name", utility::pointer::make_shared< DbText >(255));
+	Column property("property", utility::pointer::make_shared< DbText >());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(residue_type_set_name);
@@ -366,9 +366,9 @@ ResidueDatabaseIO::write_residue_type_variant_type_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column residue_type_set_name("residue_type_set_name", DbDataTypeOP( new DbText(255) ));
-	Column residue_type_name("residue_type_name", DbDataTypeOP( new DbText(255) ));
-	Column variant_type("variant_type", DbDataTypeOP( new DbText() ));
+	Column residue_type_set_name("residue_type_set_name", utility::pointer::make_shared< DbText >(255));
+	Column residue_type_name("residue_type_name", utility::pointer::make_shared< DbText >(255));
+	Column variant_type("variant_type", utility::pointer::make_shared< DbText >());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(residue_type_set_name);
@@ -397,16 +397,16 @@ ResidueDatabaseIO::write_residue_type_icoor_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column residue_type_set_name("residue_type_set_name", DbDataTypeOP( new DbText(255) ));
-	Column residue_type_name("residue_type_name", DbDataTypeOP( new DbText(255) ));
-	Column icoor_sequence("icoor_sequence", DbDataTypeOP( new DbInteger() ));
-	Column child_atom("child_atom", DbDataTypeOP( new DbText() ));
-	Column phi("phi", DbDataTypeOP( new DbReal() ));
-	Column theta("theta", DbDataTypeOP( new DbReal() ));
-	Column distance("distance", DbDataTypeOP( new DbReal() ));
-	Column parent_atom("parent_atom", DbDataTypeOP( new DbText() ));
-	Column angle_atom("angle_atom", DbDataTypeOP( new DbText() ));
-	Column torsion_atom("torsion_atom", DbDataTypeOP( new DbText() ));
+	Column residue_type_set_name("residue_type_set_name", utility::pointer::make_shared< DbText >(255));
+	Column residue_type_name("residue_type_name", utility::pointer::make_shared< DbText >(255));
+	Column icoor_sequence("icoor_sequence", utility::pointer::make_shared< DbInteger >());
+	Column child_atom("child_atom", utility::pointer::make_shared< DbText >());
+	Column phi("phi", utility::pointer::make_shared< DbReal >());
+	Column theta("theta", utility::pointer::make_shared< DbReal >());
+	Column distance("distance", utility::pointer::make_shared< DbReal >());
+	Column parent_atom("parent_atom", utility::pointer::make_shared< DbText >());
+	Column angle_atom("angle_atom", utility::pointer::make_shared< DbText >());
+	Column torsion_atom("torsion_atom", utility::pointer::make_shared< DbText >());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(residue_type_set_name);
@@ -651,7 +651,7 @@ void ResidueDatabaseIO::read_residue_type(
 		if ( res_type.rotamer_library_specification() && ! pdb_rotlibspec ) {
 			utility_exit_with_message("Cannot set PDB rotamer library name, restype already has a " + res_type.rotamer_library_specification()->keyname() + " library." );
 		}
-		res_type.rotamer_library_specification( rotamers::PDBRotamerLibrarySpecificationOP( new rotamers::PDBRotamerLibrarySpecification( rotamer_library ) ) );
+		res_type.rotamer_library_specification( utility::pointer::make_shared< rotamers::PDBRotamerLibrarySpecification >( rotamer_library ) );
 	}
 
 }

@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file 	 protocols/membrane/UniformPositionMover.cxxtest.hh
+/// @file   protocols/membrane/UniformPositionMover.cxxtest.hh
 ///
-/// @brief 	 Unit Test: Uniform Position Mover
+/// @brief   Unit Test: Uniform Position Mover
 /// @details The add membrane mover sets up an anchored membrane fold tree, is responsible for
-///			 adding the membrane residue and passing correct information to MembraneInfo for setup.
-///			 Last Modified: 7/8/14
+///    adding the membrane residue and passing correct information to MembraneInfo for setup.
+///    Last Modified: 7/8/14
 ///
 /// @author  Rebecca Alford (rfalford12@gmail.com)
 
@@ -48,20 +48,20 @@ class UniformPositionMoverTest : public CxxTest::TestSuite {
 
 public: // test functions
 
-    // Test Setup Functions ///////////////////////////
+	// Test Setup Functions ///////////////////////////
 
-    /// @brief Setup Test
-    void setUp() {
+	/// @brief Setup Test
+	void setUp() {
 
 		using namespace core::pose;
 		using namespace core::import_pose;
 
-        // Initialize core & options system
-        core_init();
+		// Initialize core & options system
+		core_init();
 
-        // Load in pose from pdb
-        pose_ = core::pose::PoseOP( new Pose() );
-        pose_from_file( *pose_, "protocols/membrane/1C3W_TR_A.pdb" , core::import_pose::PDB_file);
+		// Load in pose from pdb
+		pose_ = utility::pointer::make_shared< Pose >();
+		pose_from_file( *pose_, "protocols/membrane/1C3W_TR_A.pdb" , core::import_pose::PDB_file);
 
 		// Add virtual atom to the root of the pose
 		setup_virtual( *pose_ );
@@ -138,8 +138,8 @@ private:
 
 		// Grab the current residue typeset and create a new residue
 		ResidueTypeSetCOP const & residue_set(
-											  ChemicalManager::get_instance()->residue_type_set( pose.is_fullatom() ? core::chemical::FA_STANDARD : core::chemical::CENTROID )
-											  );
+			ChemicalManager::get_instance()->residue_type_set( pose.is_fullatom() ? core::chemical::FA_STANDARD : core::chemical::CENTROID )
+		);
 
 		// Create a new Residue from rsd typeset of type VRT
 		ResidueTypeCOPs const & rsd_type_list( residue_set->name3_map("VRT") );

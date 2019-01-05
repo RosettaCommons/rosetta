@@ -205,7 +205,7 @@ public:
 
 			MoverOP pack_mover;
 			if ( job_tag->hasTag( PackRotamersMoverCreator::mover_name() ) ) {
-				pack_mover = MoverOP( new PackRotamersMover( *job_options ));
+				pack_mover = utility::pointer::make_shared< PackRotamersMover >( *job_options );
 				TR << "Calling PRM::parse_my_tag" << std::endl;
 				pack_mover->parse_my_tag(
 					job_tag->getTag( PackRotamersMoverCreator::mover_name() ),
@@ -221,15 +221,15 @@ public:
 				pack_mover = prm;
 				prm->score_function( core::scoring::get_score_function( *job_options ) );
 				core::pack::task::TaskFactoryOP task_factory( new core::pack::task::TaskFactory );
-				task_factory->push_back( TaskOperationOP( new InitializeFromOptionCollection( job_options )));
-				task_factory->push_back( TaskOperationOP( new ReadResfile( *job_options )));
+				task_factory->push_back( utility::pointer::make_shared< InitializeFromOptionCollection >( job_options ));
+				task_factory->push_back( utility::pointer::make_shared< ReadResfile >( *job_options ));
 				prm->task_factory( task_factory );
 			}
 			seq->add_mover( pack_mover );
 
 			MoverOP min_mover;
 			if ( job_tag->hasTag( MinMoverCreator::mover_name() ) ) {
-				min_mover = MoverOP( new MinMover );
+				min_mover = utility::pointer::make_shared< MinMover >();
 				min_mover->parse_my_tag(
 					job_tag->getTag( MinMoverCreator::mover_name()),
 					datamap,
@@ -240,13 +240,13 @@ public:
 				core::scoring::ScoreFunctionOP score_fxn = core::scoring::get_score_function( *job_options );
 				core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
 				movemap->set_chi( true );
-				min_mover = MinMoverOP( new MinMover(
+				min_mover = utility::pointer::make_shared< MinMover >(
 					movemap,
 					score_fxn,
 					(*job_options)[ basic::options::OptionKeys::run::min_type ].value(),
 					0.01,
 					true
-					));
+				);
 			}
 			if ( min_mover ) seq->add_mover( min_mover );
 
@@ -254,8 +254,8 @@ public:
 			// initialize the pack rotamers mover and (possibly) the min mover from the job-options object.
 			// create a task factory and initialize w/ a read-resfile and init from options pair of task operations.
 			core::pack::task::TaskFactoryOP main_task_factory( new core::pack::task::TaskFactory );
-			main_task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromOptionCollection( job_options ) ));
-			main_task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::ReadResfile ) );
+			main_task_factory->push_back( utility::pointer::make_shared< core::pack::task::operation::InitializeFromOptionCollection >( job_options ));
+			main_task_factory->push_back( utility::pointer::make_shared< core::pack::task::operation::ReadResfile >() );
 
 			//create a ScoreFunction from commandline options
 			core::scoring::ScoreFunctionOP score_fxn = core::scoring::get_score_function( *job_options );
@@ -271,13 +271,13 @@ public:
 				core::scoring::ScoreFunctionOP score_fxn = core::scoring::get_score_function( *job_options );
 				core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
 				movemap->set_chi( true );
-				min_mover = MinMoverOP( new MinMover(
+				min_mover = utility::pointer::make_shared< MinMover >(
 					movemap,
 					score_fxn,
 					(*job_options)[ basic::options::OptionKeys::run::min_type ].value(),
 					0.01,
 					true
-					));
+				);
 			}
 			if ( min_mover ) seq->add_mover( min_mover );
 

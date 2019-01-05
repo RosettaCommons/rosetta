@@ -208,10 +208,10 @@ int main( int argc, char * argv [] )
 		using protocols::moves::MoverOP;
 
 		// 4. Go to full atom
-		seq_mover->add_mover( MoverOP( new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::FA_STANDARD ) ));
+		seq_mover->add_mover( utility::pointer::make_shared< protocols::simple_moves::SwitchResidueTypeSetMover >( core::chemical::FA_STANDARD ));
 
 		// 5. ZNCoordinationConstraintReporterMover to report on which residues are zn coordinated
-		seq_mover->add_mover( MoverOP( new devel::znhash::ZNCoordinationConstraintReporterMover( init_zn ) ) );
+		seq_mover->add_mover( utility::pointer::make_shared< devel::znhash::ZNCoordinationConstraintReporterMover >( init_zn ) );
 
 
 		// 6. Place best match on the pose and restore the native sidechains

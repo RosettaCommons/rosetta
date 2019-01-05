@@ -186,7 +186,7 @@ void NoesyModule::read_input_files() {
 
 	{ //scope
 		//read peak lists
-		crosspeaks_ = CrossPeakListOP( new CrossPeakList() );
+		crosspeaks_ = utility::pointer::make_shared< CrossPeakList >();
 		Size nfiles( option[ OptionKeys::noesy::in::peaks ]().size() );
 
 		//loop-all files: read one file at a time
@@ -273,9 +273,9 @@ void NoesyModule::write_assignments( std::string file_name ) {
 	PeakFileFormatOP format;
 	std::string const format_str( option[ OptionKeys::noesy::out::format ]() );
 	if ( format_str == "xeasy" ) {
-		format = PeakFileFormatOP( new PeakFileFormat_xeasy() );
+		format = utility::pointer::make_shared< PeakFileFormat_xeasy >();
 	} else if ( format_str == "sparky" ) {
-		format = PeakFileFormatOP( new PeakFileFormat_Sparky() );
+		format = utility::pointer::make_shared< PeakFileFormat_Sparky >();
 	} else utility_exit_with_message( "NOE_data output format "+format_str+" is not known! ");
 	format->set_write_atom_names( option[ OptionKeys::noesy::out::names ]() );
 	format->set_write_only_highest_VC( option[ OptionKeys::noesy::out::unambiguous ]() );

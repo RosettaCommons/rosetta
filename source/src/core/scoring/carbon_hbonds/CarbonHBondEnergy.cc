@@ -61,7 +61,7 @@ methods::EnergyMethodOP
 CarbonHBondEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new CarbonHBondEnergy );
+	return utility::pointer::make_shared< CarbonHBondEnergy >();
 }
 
 ScoreTypes
@@ -77,7 +77,7 @@ CarbonHBondEnergyCreator::score_types_for_method() const {
 
 /// @brief copy c-tor
 CarbonHBondEnergy::CarbonHBondEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new CarbonHBondEnergyCreator ) ),
+	parent( utility::pointer::make_shared< CarbonHBondEnergyCreator >() ),
 	carbon_hbond_potential_( ScoringManager::get_instance()->get_CarbonHBondPotential() ),
 	max_dis_( carbon_hbond_potential_.max_dis() ),
 	max_dis2_( max_dis_*max_dis_ ),
@@ -101,7 +101,7 @@ CarbonHBondEnergy::CarbonHBondEnergy( CarbonHBondEnergy const & src ):
 methods::EnergyMethodOP
 CarbonHBondEnergy::clone() const
 {
-	return methods::EnergyMethodOP( new CarbonHBondEnergy( *this ) );
+	return utility::pointer::make_shared< CarbonHBondEnergy >( *this );
 }
 
 

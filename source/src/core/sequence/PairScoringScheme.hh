@@ -53,11 +53,11 @@ public:
 	ScoringSchemeOP clone() const override {
 		// maybe clone the scoring_schemes() if object re-use ever causes a weird
 		// problem.
-		return ScoringSchemeOP( new PairScoringScheme(
+		return utility::pointer::make_shared< PairScoringScheme >(
 			gap_open(),
 			gap_extend(),
 			pairs()
-			) );
+		);
 	}
 
 	utility::vector1< utility::vector1< core::Real > > pairs() const {

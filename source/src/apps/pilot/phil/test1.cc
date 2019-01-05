@@ -1393,7 +1393,7 @@ dna_coupled_rotamer_design_test()
 			for ( Size i=1; i<= nres; ++i ) {
 				if ( partner[i] ) {
 					(*couplings)[i].first = partner[i];
-					(*couplings)[i].second = core::conformation::ResidueMatcherOP( new conformation::WatsonCrickResidueMatcher() );
+					(*couplings)[i].second = utility::pointer::make_shared< conformation::WatsonCrickResidueMatcher >();
 				}
 			}
 			task->rotamer_couplings( couplings );

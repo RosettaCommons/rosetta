@@ -40,7 +40,7 @@ public:
 	ReportGradientsMover(core::scoring::ScoreFunctionOP sfin) :
 		Mover(), verbose_(false), score_function_(std::move(sfin)) {}
 
-	moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new ReportGradientsMover( *this ) ) ); }
+	moves::MoverOP clone() const override { return( utility::pointer::make_shared< ReportGradientsMover >( *this ) ); }
 
 	void apply( core::pose::Pose & pose ) override;
 
@@ -80,7 +80,7 @@ public:
 	SetCrystWeightMover() :
 		Mover(), autoset_wt_(true), cartesian_(false), weight_(0.0), weight_scale_(1.0), weight_min_(1.0) {}
 
-	moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new SetCrystWeightMover( *this ) ) ); }
+	moves::MoverOP clone() const override { return( utility::pointer::make_shared< SetCrystWeightMover >( *this ) ); }
 
 	void apply( core::pose::Pose & pose ) override;
 	void parse_my_tag(
@@ -117,7 +117,7 @@ class RecomputeDensityMapMover : public moves::Mover {
 public:
 	RecomputeDensityMapMover() : Mover(), keep_sidechains_(true) {}
 
-	moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new RecomputeDensityMapMover( *this ) ) ); }
+	moves::MoverOP clone() const override { return( utility::pointer::make_shared< RecomputeDensityMapMover >( *this ) ); }
 
 	void apply( core::pose::Pose & pose ) override;
 	void parse_my_tag(
@@ -149,7 +149,7 @@ class LoadDensityMapMover : public moves::Mover {
 public:
 	LoadDensityMapMover() : Mover(), mapfile_("") {}
 
-	moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new LoadDensityMapMover( *this ) ) ); }
+	moves::MoverOP clone() const override { return( utility::pointer::make_shared< LoadDensityMapMover >( *this ) ); }
 
 	void apply( core::pose::Pose & pose ) override;
 	void parse_my_tag(
@@ -183,7 +183,7 @@ class FitBfactorsMover : public moves::Mover {
 public:
 	FitBfactorsMover() : Mover(), adp_strategy_("individual"), b_min_(5.0), b_max_(5.0) {}
 
-	moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new FitBfactorsMover( *this ) ) ); }
+	moves::MoverOP clone() const override { return( utility::pointer::make_shared< FitBfactorsMover >( *this ) ); }
 
 	void apply( core::pose::Pose & pose ) override;
 	void parse_my_tag(
@@ -216,7 +216,7 @@ class UpdateSolventMover : public moves::Mover {
 public:
 	UpdateSolventMover() : Mover(), update_mask_(true), update_fcalc_(true), optimize_mask_(false), optimize_params_(false) {}
 
-	moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new UpdateSolventMover( *this ) ) ); }
+	moves::MoverOP clone() const override { return( utility::pointer::make_shared< UpdateSolventMover >( *this ) ); }
 
 	void apply( core::pose::Pose & pose ) override;
 	void parse_my_tag(
@@ -247,7 +247,7 @@ class TagPoseWithRefinementStatsMover : public moves::Mover {
 public:
 	TagPoseWithRefinementStatsMover() : Mover(), tag_(""), dump_pose_(false),report_grads_(false) {}
 
-	moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new TagPoseWithRefinementStatsMover( *this ) ) ); }
+	moves::MoverOP clone() const override { return( utility::pointer::make_shared< TagPoseWithRefinementStatsMover >( *this ) ); }
 
 	void apply( core::pose::Pose & pose ) override;
 	void parse_my_tag(
@@ -280,7 +280,7 @@ public:
 		Mover(), res_high_(0.0), res_low_(0.0), sharpen_b_(0.0), twin_law_(""), algo_(""), target_(""), map_type_(""), setmap_type_(false)
 	{}
 
-	moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new SetRefinementOptionsMover( *this ) ) ); }
+	moves::MoverOP clone() const override { return( utility::pointer::make_shared< SetRefinementOptionsMover >( *this ) ); }
 
 	void apply( core::pose::Pose & pose ) override;
 	void parse_my_tag(

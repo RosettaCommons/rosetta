@@ -91,7 +91,7 @@ static basic::Tracer TR( "protocols.dna.DesignProteinBackboneAroundDNA", t_info 
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP DesignProteinBackboneAroundDNACreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new DesignProteinBackboneAroundDNA );
+// XRW TEMP  return utility::pointer::make_shared< DesignProteinBackboneAroundDNA >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -146,8 +146,8 @@ DesignProteinBackboneAroundDNA::apply( Pose & pose )
 {
 	if ( ! task_factory() ) {
 		TaskFactoryOP new_tf( new TaskFactory );
-		new_tf->push_back( TaskOperationCOP( new InitializeFromCommandline ) );
-		if ( option[ OptionKeys::packing::resfile ].user() ) new_tf->push_back( TaskOperationCOP( new ReadResfile ) );
+		new_tf->push_back( utility::pointer::make_shared< InitializeFromCommandline >() );
+		if ( option[ OptionKeys::packing::resfile ].user() ) new_tf->push_back( utility::pointer::make_shared< ReadResfile >() );
 		RestrictDesignToProteinDNAInterfaceOP rest( new RestrictDesignToProteinDNAInterface );
 		rest->set_base_only( option[ OptionKeys::dna::design::base_contacts_only ]() );
 		rest->copy_targeted_dna( targeted_dna_ );
@@ -184,17 +184,17 @@ DesignProteinBackboneAroundDNA::apply( Pose & pose )
 	//this 'second-shell' TaskFactory will be used for packer operations during the backbone protocols
 	TaskFactoryOP task_factory2( new TaskFactory );
 
-	task_factory2->push_back( operation::TaskOperationCOP( new IncludeCurrent ) );
+	task_factory2->push_back( utility::pointer::make_shared< IncludeCurrent >() );
 	// the following will disable packing outside of the neighborhood around design_positions
 
 	task_operations::RestrictToNeighborhoodOperationOP nbop( new task_operations::RestrictToNeighborhoodOperation( packing_positions ) );
 	task_factory2->push_back( nbop );
 
 	// option-dependent designable second shell
-	if ( ! designable_second_shell_ ) task_factory2->push_back( TaskOperationCOP( new RestrictToRepacking ) );
+	if ( ! designable_second_shell_ ) task_factory2->push_back( utility::pointer::make_shared< RestrictToRepacking >() );
 
 	// prevent DNA packing/designing
-	task_factory2->push_back( TaskOperationCOP( new OperateOnCertainResidues( ResLvlTaskOperationOP(new RestrictToRepackingRLT), ResFilterOP(new ResidueHasProperty("DNA")) ) ) );
+	task_factory2->push_back( utility::pointer::make_shared< OperateOnCertainResidues >( utility::pointer::make_shared< RestrictToRepackingRLT >(), utility::pointer::make_shared< ResidueHasProperty >("DNA") ) );
 
 	// make loops
 	loops::LoopsOP loops_to_move( new Loops() );
@@ -258,14 +258,14 @@ void DesignProteinBackboneAroundDNA::parse_my_tag(
 moves::MoverOP
 DesignProteinBackboneAroundDNA::fresh_instance() const
 {
-	return moves::MoverOP( new DesignProteinBackboneAroundDNA );
+	return utility::pointer::make_shared< DesignProteinBackboneAroundDNA >();
 }
 
 /// @brief required in the context of the parser/scripting scheme
 moves::MoverOP
 DesignProteinBackboneAroundDNA::clone() const
 {
-	return moves::MoverOP( new DesignProteinBackboneAroundDNA( *this ) );
+	return utility::pointer::make_shared< DesignProteinBackboneAroundDNA >( *this );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -306,7 +306,7 @@ DesignProteinBackboneAroundDNA::ccd(
 	refine_ccd->repack_period( repack_rate_ );
 	refine_ccd->temp_initial( temp_initial_ );
 	refine_ccd->temp_final( temp_final_ );
-	refine_ccd->set_native_pose( PoseCOP( PoseOP( new Pose( pose ) ) ) );
+	refine_ccd->set_native_pose( utility::pointer::make_shared< Pose >( pose ) );
 	refine_ccd->set_task_factory( task_factory2 );
 	refine_ccd->apply( pose );
 }
@@ -330,7 +330,7 @@ DesignProteinBackboneAroundDNA::backrub(
 	backrubmover.branchopt().read_database();
 
 	// this mover appears to require a separate copy of the input pose
-	PoseCOP input_pose( PoseOP( new Pose( pose ) ) );
+	PoseCOP input_pose( utility::pointer::make_shared< Pose >( pose ) );
 	backrubmover.set_input_pose( input_pose ); // virtual funtion in Mover base class
 
 	// set up backrub segments
@@ -437,7 +437,7 @@ std::string DesignProteinBackboneAroundDNACreator::keyname() const {
 
 protocols::moves::MoverOP
 DesignProteinBackboneAroundDNACreator::create_mover() const {
-	return protocols::moves::MoverOP( new DesignProteinBackboneAroundDNA );
+	return utility::pointer::make_shared< DesignProteinBackboneAroundDNA >();
 }
 
 void DesignProteinBackboneAroundDNACreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

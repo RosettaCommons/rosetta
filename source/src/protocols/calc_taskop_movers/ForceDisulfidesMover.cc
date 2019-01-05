@@ -60,13 +60,13 @@ ForceDisulfidesMover::~ForceDisulfidesMover() = default;
 protocols::moves::MoverOP
 ForceDisulfidesMover::clone() const
 {
-	return protocols::moves::MoverOP( new ForceDisulfidesMover( *this ) );
+	return utility::pointer::make_shared< ForceDisulfidesMover >( *this );
 }
 
 protocols::moves::MoverOP
 ForceDisulfidesMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new ForceDisulfidesMover() );
+	return utility::pointer::make_shared< ForceDisulfidesMover >();
 }
 
 void
@@ -90,7 +90,7 @@ ForceDisulfidesMover::apply( Pose & pose ) {
 	}
 	TaskFactoryOP tf( new TaskFactory );
 	tf->push_back( dao );
-	tf->push_back( TaskOperationCOP( new operation::InitializeFromCommandline ) );
+	tf->push_back( utility::pointer::make_shared< operation::InitializeFromCommandline >() );
 	PackerTaskOP ptask = tf->create_task_and_apply_taskoperations( pose );
 	PackRotamersMover prm( scorefxn(), ptask );
 	TR<<"repacking disulfide surroundings"<<std::endl;
@@ -179,7 +179,7 @@ std::string ForceDisulfidesMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 ForceDisulfidesMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ForceDisulfidesMover );
+	return utility::pointer::make_shared< ForceDisulfidesMover >();
 }
 
 void ForceDisulfidesMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

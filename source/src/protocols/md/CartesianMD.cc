@@ -103,7 +103,7 @@ using namespace ObjexxFCL::format;
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP CartesianMDCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new CartesianMD );
+// XRW TEMP  return utility::pointer::make_shared< CartesianMD >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -172,7 +172,7 @@ CartesianMD::~CartesianMD() = default;
 
 protocols::moves::MoverOP
 CartesianMD::clone() const {
-	return protocols::moves::MoverOP( new CartesianMD(*this) );
+	return utility::pointer::make_shared< CartesianMD >(*this);
 }
 
 // XRW TEMP std::string CartesianMD::get_name() const
@@ -1001,7 +1001,7 @@ std::string CartesianMDCreator::keyname() const {
 
 protocols::moves::MoverOP
 CartesianMDCreator::create_mover() const {
-	return protocols::moves::MoverOP( new CartesianMD );
+	return utility::pointer::make_shared< CartesianMD >();
 }
 
 void CartesianMDCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

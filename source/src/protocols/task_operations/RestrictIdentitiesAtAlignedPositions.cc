@@ -54,7 +54,7 @@ using namespace std;
 core::pack::task::operation::TaskOperationOP
 RestrictIdentitiesAtAlignedPositionsOperationCreator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new RestrictIdentitiesAtAlignedPositionsOperation );
+	return utility::pointer::make_shared< RestrictIdentitiesAtAlignedPositionsOperation >();
 }
 
 void RestrictIdentitiesAtAlignedPositionsOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -77,7 +77,7 @@ RestrictIdentitiesAtAlignedPositionsOperation::RestrictIdentitiesAtAlignedPositi
 	design_shell_(0.01),
 	repack_shell_(6.0)
 {
-	source_pose_ = core::pose::PoseOP( new core::pose::Pose );
+	source_pose_ = utility::pointer::make_shared< core::pose::Pose >();
 	res_ids_.clear();
 }
 
@@ -85,7 +85,7 @@ RestrictIdentitiesAtAlignedPositionsOperation::~RestrictIdentitiesAtAlignedPosit
 
 core::pack::task::operation::TaskOperationOP RestrictIdentitiesAtAlignedPositionsOperation::clone() const
 {
-	return core::pack::task::operation::TaskOperationOP( new RestrictIdentitiesAtAlignedPositionsOperation( *this ) );
+	return utility::pointer::make_shared< RestrictIdentitiesAtAlignedPositionsOperation >( *this );
 }
 
 void

@@ -88,13 +88,13 @@ LengthEventCollector::events() const{
 pose::datacache::CacheableObserverOP
 LengthEventCollector::create()
 {
-	return pose::datacache::CacheableObserverOP( new LengthEventCollector() );
+	return utility::pointer::make_shared< LengthEventCollector >();
 }
 
 pose::datacache::CacheableObserverOP
 LengthEventCollector::clone()
 {
-	return pose::datacache::CacheableObserverOP( new LengthEventCollector( *this ) );
+	return utility::pointer::make_shared< LengthEventCollector >( *this );
 }
 
 
@@ -158,13 +158,13 @@ SpecialSegmentsObserver::operator =( SpecialSegmentsObserver const & rval ) {
 pose::datacache::CacheableObserverOP
 SpecialSegmentsObserver::create()
 {
-	return pose::datacache::CacheableObserverOP( new SpecialSegmentsObserver() );
+	return utility::pointer::make_shared< SpecialSegmentsObserver >();
 }
 
 pose::datacache::CacheableObserverOP
 SpecialSegmentsObserver::clone()
 {
-	return pose::datacache::CacheableObserverOP( new SpecialSegmentsObserver( *this ) );
+	return utility::pointer::make_shared< SpecialSegmentsObserver >( *this );
 }
 
 void

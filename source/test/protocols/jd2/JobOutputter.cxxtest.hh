@@ -89,7 +89,7 @@ public:
 		DummyObserver & observer3 = *observer3_op;
 		SilentFileJobOutputter job_outputter;
 		core::pose::Pose pose;
-		JobOP job( new Job( InnerJobOP( new InnerJob( "job", 1 ) ), 1 ) );
+		JobOP job( new Job( utility::pointer::make_shared< InnerJob >( "job", 1 ), 1 ) );
 		job_outputter.call_output_observers( pose, job  );
 		TS_ASSERT( observer1.call_counter_ == 0 );
 		job->add_output_observer( DummyObserverAP(observer1_op) );

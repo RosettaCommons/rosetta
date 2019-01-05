@@ -51,18 +51,18 @@ make_scorefxn(std::string weights_tag){
 	sfxn->set_energy_method_options( options );
 	sfxn->add_weights_from_file( basic::database::full_name( "scoring/weights/"+weights_tag+".wts" ) );
 
-	if( sfxn->has_zero_weight( fa_intra_rep ) ) sfxn->set_weight( fa_intra_rep, 0.004 ); // from standard.wts
+	if ( sfxn->has_zero_weight( fa_intra_rep ) ) sfxn->set_weight( fa_intra_rep, 0.004 ); // from standard.wts
 
 	// For some reason, electrostatics is not in the .wts files...
 	// fa_elec has a different dielectric constant than Rosetta++ (10r vs. 6r in ++)
 	// It also includes all atom pairs instead of only ligand-protein interactions.
-	if( sfxn->has_zero_weight( fa_elec ) ) sfxn->set_weight( fa_elec, 0.42 ); // from Meiler & Baker 2006
+	if ( sfxn->has_zero_weight( fa_elec ) ) sfxn->set_weight( fa_elec, 0.42 ); // from Meiler & Baker 2006
 
 	sfxn->set_weight( hbond_sc, 1.30 ); // from Lin Jiang
 	sfxn->set_weight( hbond_bb_sc, 1.30 ); // from Lin Jiang
 	sfxn->set_weight( rama, 0.2);
 
-	if( sfxn->has_zero_weight( rama ) ) sfxn->set_weight( rama, 0.2 ); // from score12.wts_patch
+	if ( sfxn->has_zero_weight( rama ) ) sfxn->set_weight( rama, 0.2 ); // from score12.wts_patch
 
 	return sfxn;
 
@@ -124,7 +124,7 @@ public:
 	}
 
 	LigandDockBench():
-			protocols::moves::Mover("LigandDockBench"), slide_together_("X")
+		protocols::moves::Mover("LigandDockBench"), slide_together_("X")
 	{
 		//setup(); // have to read in flags first
 	}
@@ -139,10 +139,10 @@ public:
 	{}
 
 	virtual protocols::moves::MoverOP clone() const{
-		return protocols::moves::MoverOP( new LigandDockBench( *this ) );
+		return utility::pointer::make_shared< LigandDockBench >( *this );
 	}
 	virtual protocols::moves::MoverOP fresh_instance() const{
-		return protocols::moves::MoverOP( new LigandDockBench );
+		return utility::pointer::make_shared< LigandDockBench >();
 	}
 	virtual std::string get_name() const{ return "LigandDockBench";}
 
@@ -177,18 +177,18 @@ public:
 	virtual void setUp() {
 		basic::options::option.load_options_from_file("ligand_dock/ligand_dock_script_flags.txt");
 
-		ligand_dock_protocol_ = LigandDockBenchOP( new LigandDockBench);
+		ligand_dock_protocol_ = utility::pointer::make_shared< LigandDockBench >();
 		ligand_dock_protocol_->setup(); // Can't call this from the constructor because flags are needed by score function
 
 		std::string pdb_file_name= basic::options::option[ basic::options::OptionKeys::in::file::s ]()[1];
-		ligand_dock_pose_ = core::pose::PoseOP( new core::pose::Pose );
+		ligand_dock_pose_ = utility::pointer::make_shared< core::pose::Pose >();
 		core::import_pose::pose_from_file(*ligand_dock_pose_, pdb_file_name, core::import_pose::PDB_file);
 	};
 
 	virtual void run(core::Real scaleFactor) {
 		core::Size reps( (core::Size)(1 * scaleFactor) );
-		if( reps == 0 ) { reps = 1; } // do at least one rep, regardless of scale factor
-		for(core::Size i=0; i< reps; i++) {
+		if ( reps == 0 ) { reps = 1; } // do at least one rep, regardless of scale factor
+		for ( core::Size i=0; i< reps; i++ ) {
 			ligand_dock_protocol_->apply(*ligand_dock_pose_);
 		}
 

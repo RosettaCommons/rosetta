@@ -209,7 +209,7 @@ void CDRH3Modeler::apply( pose::Pose & pose_in ) {
 
 		// Packer
 		protocols::minimization_packing::PackRotamersMoverOP packer;
-		packer = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover( highres_scorefxn_ ) );
+		packer = utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >( highres_scorefxn_ );
 		packer->task_factory(tf_);
 		packer->apply( antibody_in_.Fv );
 	}
@@ -222,7 +222,7 @@ void CDRH3Modeler::apply( pose::Pose & pose_in ) {
 				repack_cycles = 3;
 			}
 			protocols::minimization_packing::PackRotamersMoverOP packer;
-			packer = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover( highres_scorefxn_ ) );
+			packer = utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >( highres_scorefxn_ );
 			packer->task_factory(tf_);
 			packer->nloop( repack_cycles );
 			packer->apply( antibody_in_.Fv );
@@ -762,7 +762,7 @@ void CDRH3Modeler::scored_frag_close (
 
 	//setting MoveMap
 	kinematics::MoveMapOP cdrh3_map;
-	cdrh3_map = kinematics::MoveMapOP( new kinematics::MoveMap() );
+	cdrh3_map = utility::pointer::make_shared< kinematics::MoveMap >();
 	cdrh3_map->clear();
 	cdrh3_map->set_chi( true );
 	cdrh3_map->set_bb( false );
@@ -774,8 +774,8 @@ void CDRH3Modeler::scored_frag_close (
 	// setup monte_carlo
 	Real temp( 2.0);
 	MonteCarloOP mc, outer_mc;
-	mc = MonteCarloOP( new moves::MonteCarlo( pose_in, *lowres_scorefxn_, temp ) );
-	outer_mc = MonteCarloOP( new moves::MonteCarlo( pose_in, *lowres_scorefxn_, temp ) );
+	mc = utility::pointer::make_shared< moves::MonteCarlo >( pose_in, *lowres_scorefxn_, temp );
+	outer_mc = utility::pointer::make_shared< moves::MonteCarlo >( pose_in, *lowres_scorefxn_, temp );
 	Size buffer( (is_camelid_ && antibody_in_.extended_) ? 2 : 0 );
 	while ( !loop_found && ( total_cycles++ < cycles1) ) {
 		// insert random fragments over the whole loop
@@ -828,10 +828,10 @@ void CDRH3Modeler::scored_frag_close (
 				CCDLoopClosureMoverOP ccd_moves( new CCDLoopClosureMover( trimmed_cdr_h3, cdrh3_map ) );
 				RepeatMoverOP ccd_cycle;
 				if ( trimmed_cdr_h3.size() <= 5 ) {
-					ccd_cycle = RepeatMoverOP( new RepeatMover(ccd_moves,500*trimmed_cdr_h3.size()) );
+					ccd_cycle = utility::pointer::make_shared< RepeatMover >(ccd_moves,500*trimmed_cdr_h3.size());
 					ccd_cycle->apply( pose_in );
 				} else {
-					ccd_cycle = RepeatMoverOP( new RepeatMover(ccd_moves, 10*trimmed_cdr_h3.size()) );
+					ccd_cycle = utility::pointer::make_shared< RepeatMover >(ccd_moves, 10*trimmed_cdr_h3.size());
 					ccd_cycle->apply( pose_in );
 				}
 				mc->boltzmann( pose_in );
@@ -1101,7 +1101,7 @@ void CDRH3Modeler::loop_fa_relax( pose::Pose & pose_in, Size const loop_begin, S
 
 	//setting MoveMap
 	kinematics::MoveMapOP cdrh3_map;
-	cdrh3_map = kinematics::MoveMapOP( new kinematics::MoveMap() );
+	cdrh3_map = utility::pointer::make_shared< kinematics::MoveMap >();
 	cdrh3_map->clear();
 	cdrh3_map->set_chi( false );
 	cdrh3_map->set_bb( false );
@@ -1153,8 +1153,8 @@ void CDRH3Modeler::loop_fa_relax( pose::Pose & pose_in, Size const loop_begin, S
 	ChangeFoldTreeMoverOP one_loop_fold_tree;
 	ChangeFoldTreeMoverOP with_flank_fold_tree;
 	simple_fold_tree( pose_in, loop_begin - 1, cutpoint, loop_end + 1 );
-	one_loop_fold_tree = ChangeFoldTreeMoverOP( new ChangeFoldTreeMover( pose_in.fold_tree() ) );
-	with_flank_fold_tree = ChangeFoldTreeMoverOP( new ChangeFoldTreeMover( pose_in.fold_tree() ) );
+	one_loop_fold_tree = utility::pointer::make_shared< ChangeFoldTreeMover >( pose_in.fold_tree() );
+	with_flank_fold_tree = utility::pointer::make_shared< ChangeFoldTreeMover >( pose_in.fold_tree() );
 
 	//////////////////
 	// setup fold_tree
@@ -1162,7 +1162,7 @@ void CDRH3Modeler::loop_fa_relax( pose::Pose & pose_in, Size const loop_begin, S
 	if ( current_loop_is_H3_  && flank_relax_ && freeze_h3_ ) {
 		simple_fold_tree( pose_in, loop_begin - h3_flank_ - 1, cutpoint,
 			loop_end + h3_flank_ + 1 );
-		with_flank_fold_tree = ChangeFoldTreeMoverOP( new ChangeFoldTreeMover( pose_in.fold_tree() ) );
+		with_flank_fold_tree = utility::pointer::make_shared< ChangeFoldTreeMover >( pose_in.fold_tree() );
 		for ( Size i = 1; i <= pose_in.size(); i++ ) {
 			if ( (i >= (loop_begin - h3_flank_)) && (i <= (loop_end + h3_flank_)) ) {
 				flank_allow_bb_move[i] = true;
@@ -1197,7 +1197,7 @@ void CDRH3Modeler::loop_fa_relax( pose::Pose & pose_in, Size const loop_begin, S
 	protocols::minimization_packing::PackRotamersMoverOP loop_repack( new protocols::minimization_packing::PackRotamersMover(highres_scorefxn_) );
 	setup_packer_task( start_pose_ );
 	( *highres_scorefxn_ )( pose_in );
-	tf_->push_back( TaskOperationCOP( new RestrictToInterface( allow_repack ) ) );
+	tf_->push_back( utility::pointer::make_shared< RestrictToInterface >( allow_repack ) );
 	loop_repack->task_factory(tf_);
 	// loop_repack->apply( pose_in );
 
@@ -1271,7 +1271,7 @@ void CDRH3Modeler::loop_fa_relax( pose::Pose & pose_in, Size const loop_begin, S
 	cdrh3_map->set_chi( allow_repack );
 	setup_packer_task( start_pose_ );
 	( *highres_scorefxn_ )( pose_in );
-	tf_->push_back( TaskOperationCOP( new RestrictToInterface( allow_repack ) ) );
+	tf_->push_back( utility::pointer::make_shared< RestrictToInterface >( allow_repack ) );
 	protocols::minimization_packing::RotamerTrialsMoverOP pack_rottrial( new protocols::minimization_packing::RotamerTrialsMover(
 		highres_scorefxn_, tf_ ) );
 
@@ -1284,7 +1284,7 @@ void CDRH3Modeler::loop_fa_relax( pose::Pose & pose_in, Size const loop_begin, S
 	Real temperature = init_temp;
 
 	MonteCarloOP mc;
-	mc = MonteCarloOP( new moves::MonteCarlo( pose_in, *highres_scorefxn_, temperature ) );
+	mc = utility::pointer::make_shared< moves::MonteCarlo >( pose_in, *highres_scorefxn_, temperature );
 	mc->reset( pose_in ); // monte carlo reset
 
 	bool relaxed_H3_found_ever( false );
@@ -1314,7 +1314,7 @@ void CDRH3Modeler::loop_fa_relax( pose::Pose & pose_in, Size const loop_begin, S
 			cdrh3_map->set_chi( allow_repack );
 			setup_packer_task( start_pose_ );
 			( *highres_scorefxn_ )( pose_in );
-			tf_->push_back( TaskOperationCOP( new RestrictToInterface( allow_repack ) ) );
+			tf_->push_back( utility::pointer::make_shared< RestrictToInterface >( allow_repack ) );
 			protocols::minimization_packing::RotamerTrialsMoverOP pack_rottrial( new protocols::minimization_packing::RotamerTrialsMover(
 				highres_scorefxn_, tf_ ) );
 			pack_rottrial->apply( pose_in );
@@ -1361,10 +1361,10 @@ void CDRH3Modeler::loop_fa_relax( pose::Pose & pose_in, Size const loop_begin, S
 
 			if ( numeric::mod(j,Size(20))==0 || j==inner_cycles ) {
 				// repack trial
-				loop_repack = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover( highres_scorefxn_ ) );
+				loop_repack = utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >( highres_scorefxn_ );
 				setup_packer_task( start_pose_ );
 				( *highres_scorefxn_ )( pose_in );
-				tf_->push_back( TaskOperationCOP( new RestrictToInterface( allow_repack ) ) );
+				tf_->push_back( utility::pointer::make_shared< RestrictToInterface >( allow_repack ) );
 				loop_repack->task_factory( tf_ );
 				loop_repack->apply( pose_in );
 				mc->boltzmann( pose_in );
@@ -1430,7 +1430,7 @@ CDRH3Modeler::loop_centroid_relax( pose::Pose & pose_in, Size const loop_begin, 
 
 	//setting MoveMap
 	kinematics::MoveMapOP loop_map;
-	loop_map = kinematics::MoveMapOP( new kinematics::MoveMap() );
+	loop_map = utility::pointer::make_shared< kinematics::MoveMap >();
 	loop_map->clear();
 	loop_map->set_chi( false );
 	loop_map->set_bb( false );
@@ -1521,7 +1521,7 @@ CDRH3Modeler::loop_centroid_relax( pose::Pose & pose_in, Size const loop_begin, 
 	Real temperature = init_temp;
 
 	MonteCarloOP mc;
-	mc = MonteCarloOP( new moves::MonteCarlo( pose_in, *lowres_scorefxn_, temperature ) );
+	mc = utility::pointer::make_shared< moves::MonteCarlo >( pose_in, *lowres_scorefxn_, temperature );
 	mc->reset( pose_in ); // monte carlo reset
 
 	// outer cycle
@@ -1561,20 +1561,20 @@ CDRH3Modeler::setup_packer_task(
 	using namespace pack::task::operation;
 
 	if ( init_task_factory_ ) {
-		tf_ = core::pack::task::TaskFactoryOP( new TaskFactory( *init_task_factory_ ) );
+		tf_ = utility::pointer::make_shared< TaskFactory >( *init_task_factory_ );
 		TR << "CDRH3Modeler Reinitializing Packer Task" << std::endl;
 		return;
 	} else {
-		tf_ = core::pack::task::TaskFactoryOP( new TaskFactory );
+		tf_ = utility::pointer::make_shared< TaskFactory >();
 	}
 
 	TR << "CDRH3Modeler Setting Up Packer Task" << std::endl;
 
-	tf_->push_back( TaskOperationCOP( new OperateOnCertainResidues( ResLvlTaskOperationOP( new PreventRepackingRLT ), ResFilterOP( new ResidueLacksProperty("PROTEIN") ) ) ) );
-	tf_->push_back( TaskOperationCOP( new InitializeFromCommandline ) );
-	tf_->push_back( TaskOperationCOP( new IncludeCurrent ) );
-	tf_->push_back( TaskOperationCOP( new RestrictToRepacking ) );
-	tf_->push_back( TaskOperationCOP( new NoRepackDisulfides ) );
+	tf_->push_back( utility::pointer::make_shared< OperateOnCertainResidues >( utility::pointer::make_shared< PreventRepackingRLT >(), utility::pointer::make_shared< ResidueLacksProperty >("PROTEIN") ) );
+	tf_->push_back( utility::pointer::make_shared< InitializeFromCommandline >() );
+	tf_->push_back( utility::pointer::make_shared< IncludeCurrent >() );
+	tf_->push_back( utility::pointer::make_shared< RestrictToRepacking >() );
+	tf_->push_back( utility::pointer::make_shared< NoRepackDisulfides >() );
 
 	// incorporating Ian's UnboundRotamer operation.
 	// note that nothing happens if unboundrot option is inactive!

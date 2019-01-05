@@ -96,7 +96,7 @@ EnergyBasedClusteringProtocol::~EnergyBasedClusteringProtocol()= default;
 
 EnergyBasedClusteringProtocolOP
 EnergyBasedClusteringProtocol::clone() const {
-	return EnergyBasedClusteringProtocolOP( new EnergyBasedClusteringProtocol( *this ) );
+	return utility::pointer::make_shared< EnergyBasedClusteringProtocol >( *this );
 }
 
 /// @brief Indicate which options-system options are relvant.

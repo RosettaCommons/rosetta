@@ -41,7 +41,7 @@ static basic::Tracer TR( "protocols.protein_interface_design.movers.FavorNativeR
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP FavorNativeResiduePreCycleCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new FavorNativeResiduePreCycle );
+// XRW TEMP  return utility::pointer::make_shared< FavorNativeResiduePreCycle >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -103,7 +103,7 @@ std::string FavorNativeResiduePreCycleCreator::keyname() const {
 
 protocols::moves::MoverOP
 FavorNativeResiduePreCycleCreator::create_mover() const {
-	return protocols::moves::MoverOP( new FavorNativeResiduePreCycle );
+	return utility::pointer::make_shared< FavorNativeResiduePreCycle >();
 }
 
 void FavorNativeResiduePreCycleCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

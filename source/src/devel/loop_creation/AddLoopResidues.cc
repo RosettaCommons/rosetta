@@ -46,7 +46,7 @@ static basic::Tracer TR( "devel.loop_creation.AddLoopResidues" );
 protocols::moves::MoverOP
 AddLoopResiduesCreator::create_mover() const
 {
-	return protocols::moves::MoverOP( new AddLoopResidues );
+	return utility::pointer::make_shared< AddLoopResidues >();
 }
 
 std::string
@@ -68,11 +68,11 @@ AddLoopResidues::AddLoopResidues():
 
 protocols::moves::MoverOP
 AddLoopResidues::clone() const {
-	return( protocols::moves::MoverOP( new AddLoopResidues( *this ) ) );
+	return( utility::pointer::make_shared< AddLoopResidues >( *this ) );
 }
 protocols::moves::MoverOP
 AddLoopResidues::fresh_instance() const {
-	return protocols::moves::MoverOP( new AddLoopResidues );
+	return utility::pointer::make_shared< AddLoopResidues >();
 }
 
 string

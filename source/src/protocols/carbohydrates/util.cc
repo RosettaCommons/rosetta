@@ -33,19 +33,19 @@ get_all_glycans_and_neighbor_res_task_factory(utility::vector1< bool > const & g
 	using namespace core::pack::task::operation;
 	using namespace core::select::residue_selector;
 
-	TaskFactoryOP tf = TaskFactoryOP( new TaskFactory());
-	tf->push_back(InitializeFromCommandlineOP( new InitializeFromCommandline));
+	TaskFactoryOP tf = utility::pointer::make_shared< TaskFactory >();
+	tf->push_back(utility::pointer::make_shared< InitializeFromCommandline >());
 
 	//If a resfile is provided, we just use that and get out.
 	if ( read_resfile && option[ OptionKeys::packing::resfile ].user() ) {
-		tf->push_back( ReadResfileOP( new ReadResfile()) );
+		tf->push_back( utility::pointer::make_shared< ReadResfile >() );
 	} else {
-		NeighborhoodResidueSelectorOP neighbor_selector = NeighborhoodResidueSelectorOP( new NeighborhoodResidueSelector(glycan_positions, pack_distance, true /* include focus */));
-		PreventRepackingRLTOP prevent_repacking = PreventRepackingRLTOP( new PreventRepackingRLT());
+		NeighborhoodResidueSelectorOP neighbor_selector = utility::pointer::make_shared< NeighborhoodResidueSelector >(glycan_positions, pack_distance, true /* include focus */);
+		PreventRepackingRLTOP prevent_repacking = utility::pointer::make_shared< PreventRepackingRLT >();
 
-		OperateOnResidueSubsetOP subset_op = OperateOnResidueSubsetOP( new OperateOnResidueSubset( prevent_repacking, neighbor_selector, true /* flip */));
+		OperateOnResidueSubsetOP subset_op = utility::pointer::make_shared< OperateOnResidueSubset >( prevent_repacking, neighbor_selector, true /* flip */);
 		tf->push_back( subset_op );
-		tf->push_back( RestrictToRepackingOP( new RestrictToRepacking()));
+		tf->push_back( utility::pointer::make_shared< RestrictToRepacking >());
 
 	}
 	return tf;

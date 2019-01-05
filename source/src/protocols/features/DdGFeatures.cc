@@ -114,10 +114,10 @@ DdGFeatures::write_ddG_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
-	Column resNum("resNum", DbDataTypeOP( new DbInteger() ));
-	Column mutated_to_name3("mutated_to_name3", DbDataTypeOP( new DbText(3) ));
-	Column ddG_value("ddG_value", DbDataTypeOP( new DbReal() ));
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >());
+	Column resNum("resNum", utility::pointer::make_shared< DbInteger >());
+	Column mutated_to_name3("mutated_to_name3", utility::pointer::make_shared< DbText >(3));
+	Column ddG_value("ddG_value", utility::pointer::make_shared< DbReal >());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -237,7 +237,7 @@ std::string DdGFeaturesCreator::type_name() const {
 
 protocols::features::FeaturesReporterOP
 DdGFeaturesCreator::create_features_reporter() const {
-	return protocols::features::FeaturesReporterOP( new DdGFeatures );
+	return utility::pointer::make_shared< DdGFeatures >();
 }
 
 void DdGFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

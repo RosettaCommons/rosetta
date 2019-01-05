@@ -1274,8 +1274,8 @@ core::id::SequenceMapping sequence_map_from_pdbinfo( Pose const & first, Pose co
 	} else {
 		TR << "One or both poses do not have usable PDBInfo, using sequence alignment instead." << std::endl;
 		retval = core::sequence::map_seq1_seq2(
-			core::sequence::SequenceOP( new core::sequence::Sequence(first ) ),
-			core::sequence::SequenceOP( new core::sequence::Sequence(second) )
+			utility::pointer::make_shared< core::sequence::Sequence >(first ),
+			utility::pointer::make_shared< core::sequence::Sequence >(second)
 		);
 	}
 
@@ -1794,22 +1794,22 @@ get_constraints_from_link_records( core::pose::Pose & pose, io::StructFileRep co
 					id::AtomID aidH( NUC.atom_index( "1HE" ), id2 );
 					id::AtomID aidCG( NUC.atom_index( "CG" ), id2 );
 
-					pose.add_constraint( ConstraintCOP( new DihedralConstraint( aidCA, aidO, aidC, aidNUC, dih_func ) ) );
-					pose.add_constraint( ConstraintCOP( new DihedralConstraint( aidO, aidC, aidNUC, aidH, dih_func ) ) );
-					pose.add_constraint( ConstraintCOP( new DihedralConstraint( aidC, aidNUC, aidH, aidCG, dih_func ) ) );
-					pose.add_constraint( ConstraintCOP( new AngleConstraint( aidH, aidNUC, aidC, ang_func ) ) );
-					pose.add_constraint( ConstraintCOP( new AngleConstraint( aidNUC, aidC, aidO, ang_func ) ) );
+					pose.add_constraint( utility::pointer::make_shared< DihedralConstraint >( aidCA, aidO, aidC, aidNUC, dih_func ) );
+					pose.add_constraint( utility::pointer::make_shared< DihedralConstraint >( aidO, aidC, aidNUC, aidH, dih_func ) );
+					pose.add_constraint( utility::pointer::make_shared< DihedralConstraint >( aidC, aidNUC, aidH, aidCG, dih_func ) );
+					pose.add_constraint( utility::pointer::make_shared< AngleConstraint >( aidH, aidNUC, aidC, ang_func ) );
+					pose.add_constraint( utility::pointer::make_shared< AngleConstraint >( aidNUC, aidC, aidO, ang_func ) );
 
 				} else if ( record.name1 == " NZ " ) {
 					// lysine
 					id::AtomID aidH( NUC.atom_index( "1HZ" ), id2 );
 					id::AtomID aidCD( NUC.atom_index( "CD" ), id2 );
 
-					pose.add_constraint( ConstraintCOP( new DihedralConstraint( aidCA, aidO, aidC, aidNUC, dih_func ) ) );
-					pose.add_constraint( ConstraintCOP( new DihedralConstraint( aidO, aidC, aidNUC, aidH, dih_func ) ) );
-					pose.add_constraint( ConstraintCOP( new DihedralConstraint( aidC, aidNUC, aidH, aidCD, dih_func ) ) );
-					pose.add_constraint( ConstraintCOP( new AngleConstraint( aidH, aidNUC, aidC, ang_func ) ) );
-					pose.add_constraint( ConstraintCOP( new AngleConstraint( aidNUC, aidC, aidO, ang_func ) ) );
+					pose.add_constraint( utility::pointer::make_shared< DihedralConstraint >( aidCA, aidO, aidC, aidNUC, dih_func ) );
+					pose.add_constraint( utility::pointer::make_shared< DihedralConstraint >( aidO, aidC, aidNUC, aidH, dih_func ) );
+					pose.add_constraint( utility::pointer::make_shared< DihedralConstraint >( aidC, aidNUC, aidH, aidCD, dih_func ) );
+					pose.add_constraint( utility::pointer::make_shared< AngleConstraint >( aidH, aidNUC, aidC, ang_func ) );
+					pose.add_constraint( utility::pointer::make_shared< AngleConstraint >( aidNUC, aidC, aidO, ang_func ) );
 
 				}
 				continue;

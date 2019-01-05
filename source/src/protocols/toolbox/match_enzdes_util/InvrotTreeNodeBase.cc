@@ -43,7 +43,7 @@ InvrotCollector::~InvrotCollector()= default;
 
 InvrotCollectorOP
 InvrotCollector::clone() const {
-	return InvrotCollectorOP( new InvrotCollector( *this ) );
+	return utility::pointer::make_shared< InvrotCollector >( *this );
 }
 
 void

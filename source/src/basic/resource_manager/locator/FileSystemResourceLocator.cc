@@ -58,7 +58,7 @@ FileSystemResourceLocatorCreator::~FileSystemResourceLocatorCreator() = default;
 
 ResourceLocatorOP
 FileSystemResourceLocatorCreator::create_resource_locator() const {
-	return ResourceLocatorOP( new FileSystemResourceLocator );
+	return utility::pointer::make_shared< FileSystemResourceLocator >();
 }
 
 string
@@ -220,7 +220,7 @@ FileSystemResourceLocator::locate_resource_stream(
 		std::string fname = search_path + input_id;
 		std::ifstream ifstr( fname.c_str() );
 		if ( ! ifstr.fail() ) {
-			return ResourceStreamOP( new FileStream( fname, open_mode_ ) );
+			return utility::pointer::make_shared< FileStream >( fname, open_mode_ );
 		}
 	}
 

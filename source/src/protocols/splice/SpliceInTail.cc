@@ -129,7 +129,7 @@ std::string SpliceInTailCreator::keyname() const {
 }
 
 protocols::moves::MoverOP SpliceInTailCreator::create_mover() const {
-	return protocols::moves::MoverOP(new SpliceInTail);
+	return utility::pointer::make_shared< SpliceInTail >();
 }
 
 std::string SpliceInTailCreator::mover_name() {
@@ -147,7 +147,7 @@ SpliceInTail::SpliceInTail() : Mover(SpliceInTailCreator::mover_name())
 	tolerance_ = 0.23;
 	allowed_cuts_ = 1;
 	tail_dbase_subset_.clear();
-	end_tail_dbase_subset_ = DataccacheBoolDataOP( new basic::datacache::DataMapObj<bool> );
+	end_tail_dbase_subset_ = utility::pointer::make_shared< basic::datacache::DataMapObj<bool> >();
 
 }
 SpliceInTail::~SpliceInTail() = default;
@@ -166,7 +166,7 @@ void SpliceInTail::apply(core::pose::Pose & pose) {
 		TR << "Did not find the request source conformation;Should we fail loudly if this happens??"<< std::endl;
 		return;
 	}
-	splicemanager.mm(core::kinematics::MoveMapOP(new core::kinematics::MoveMap));
+	splicemanager.mm(utility::pointer::make_shared< core::kinematics::MoveMap >());
 
 	runtime_assert(dbase_entry <= tail_torsion_database_.size());
 	splicemanager.dofs() = tail_torsion_database_[dbase_entry];
@@ -247,9 +247,9 @@ void SpliceInTail::apply(core::pose::Pose & pose) {
 	///Apply user defined design shell and repack shell around spliced segment
 	core::pack::task::TaskFactoryOP tf;
 	if ( splicemanager.task_factory() == nullptr ) {
-		tf = core::pack::task::TaskFactoryOP(new core::pack::task::TaskFactory());
+		tf = utility::pointer::make_shared< core::pack::task::TaskFactory >();
 	} else {
-		tf = core::pack::task::TaskFactoryOP(new core::pack::task::TaskFactory(*splicemanager.task_factory()));
+		tf = utility::pointer::make_shared< core::pack::task::TaskFactory >(*splicemanager.task_factory());
 	}
 	using namespace protocols::task_operations;
 	DesignAroundOperationOP dao(new DesignAroundOperation);
@@ -390,7 +390,7 @@ void SpliceInTail::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &dat
 }
 
 protocols::moves::MoverOP SpliceInTail::clone() const {
-	return (protocols::moves::MoverOP(new SpliceInTail(*this)));
+	return (utility::pointer::make_shared< SpliceInTail >(*this));
 }
 
 core::Size SpliceInTail::find_dbase_entry(core::pose::Pose const & pose) {

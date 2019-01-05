@@ -104,13 +104,13 @@ MPRangeRelaxMover::~MPRangeRelaxMover() = default;
 /// @brief Create a Clone of this mover
 protocols::moves::MoverOP
 MPRangeRelaxMover::clone() const {
-	return ( protocols::moves::MoverOP( new MPRangeRelaxMover( *this ) ) );
+	return ( utility::pointer::make_shared< MPRangeRelaxMover >( *this ) );
 }
 
 /// @brief Create a Fresh Instance of this Mover
 protocols::moves::MoverOP
 MPRangeRelaxMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new MPRangeRelaxMover() );
+	return utility::pointer::make_shared< MPRangeRelaxMover >();
 }
 
 /// @brief Parse Rosetta Scripts Options for this Mover
@@ -166,7 +166,7 @@ void MPRangeRelaxMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 /// @brief Create a new copy of this mover
 //protocols::moves::MoverOP
 //MPRangeRelaxMoverCreator::create_mover() const {
-// return protocols::moves::MoverOP( new MPRangeRelaxMover() );
+// return utility::pointer::make_shared< MPRangeRelaxMover >();
 //}
 //
 ///// @brief Return the Name of this mover (as seen by Rscripts)

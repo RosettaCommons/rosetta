@@ -125,7 +125,7 @@ LoopMover_Refine_KIC::~LoopMover_Refine_KIC()= default;
 
 //clone
 protocols::moves::MoverOP LoopMover_Refine_KIC::clone() const {
-	return protocols::moves::MoverOP( new LoopMover_Refine_KIC(*this) );
+	return utility::pointer::make_shared< LoopMover_Refine_KIC >(*this);
 }
 
 void LoopMover_Refine_KIC::init( core::scoring::ScoreFunctionCOP  scorefxn )
@@ -301,7 +301,7 @@ void LoopMover_Refine_KIC::apply(
 	core::Real dummy_tol( 0.001 );
 	bool use_nblist( true ), deriv_check( false ), use_cartmin ( option[ OptionKeys::loops::kic_with_cartmin ]() ); // true ); // false );
 	if ( use_cartmin ) runtime_assert( min_scorefxn->get_weight( core::scoring::cart_bonded ) > 1e-3 );
-	min_mover = protocols::minimization_packing::MinMoverOP( new protocols::minimization_packing::MinMover() );
+	min_mover = utility::pointer::make_shared< protocols::minimization_packing::MinMover >();
 	min_mover->score_function( min_scorefxn );
 	min_mover->min_type( min_type );
 	min_mover->tolerance( dummy_tol );
@@ -317,14 +317,14 @@ void LoopMover_Refine_KIC::apply(
 	// Set up the packer tasks: one for rotamer trials, one for repacking (with design if resfile supplied)
 	using namespace pack::task;
 	if ( task_factory == nullptr ) {
-		task_factory = core::pack::task::TaskFactoryOP( new TaskFactory );
+		task_factory = utility::pointer::make_shared< TaskFactory >();
 		// TaskOperations replace the following kind of code:
 		// base_packer_task->initialize_from_command_line().or_include_current( true );
-		task_factory->push_back( operation::TaskOperationCOP( new operation::InitializeFromCommandline ) );
-		task_factory->push_back( operation::TaskOperationCOP( new operation::IncludeCurrent ) );
+		task_factory->push_back( utility::pointer::make_shared< operation::InitializeFromCommandline >() );
+		task_factory->push_back( utility::pointer::make_shared< operation::IncludeCurrent >() );
 		if ( option[ OptionKeys::packing::resfile ].user() ) {
 			// Note - resfile is obeyed, so use NATAA as default to maintain protocol behavior
-			task_factory->push_back( operation::TaskOperationCOP( new core::pack::task::operation::ReadResfile ) );
+			task_factory->push_back( utility::pointer::make_shared< core::pack::task::operation::ReadResfile >() );
 			redesign_loop_ = true;
 		}
 	}
@@ -949,7 +949,7 @@ basic::Tracer & LoopMover_Refine_KIC::tr() const
 // XRW TEMP LoopMover_Refine_KICCreator::~LoopMover_Refine_KICCreator() {}
 
 // XRW TEMP moves::MoverOP LoopMover_Refine_KICCreator::create_mover() const {
-// XRW TEMP  return moves::MoverOP( new LoopMover_Refine_KIC() );
+// XRW TEMP  return utility::pointer::make_shared< LoopMover_Refine_KIC >();
 // XRW TEMP }
 
 // XRW TEMP std::string LoopMover_Refine_KICCreator::keyname() const {
@@ -979,7 +979,7 @@ std::string LoopMover_Refine_KICCreator::keyname() const {
 
 protocols::moves::MoverOP
 LoopMover_Refine_KICCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LoopMover_Refine_KIC );
+	return utility::pointer::make_shared< LoopMover_Refine_KIC >();
 }
 
 void LoopMover_Refine_KICCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

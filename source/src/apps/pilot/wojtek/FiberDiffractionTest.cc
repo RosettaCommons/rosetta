@@ -63,9 +63,9 @@ public:
 	void apply( core::pose::Pose& pose ) override;
 	std::string get_name() const override { return "MyScoreMover"; }
 
-	MoverOP clone() const override { return MoverOP( new MyScoreMover( *this )); }
+	MoverOP clone() const override { return utility::pointer::make_shared< MyScoreMover >( *this ); }
 
-	MoverOP fresh_instance() const override { return MoverOP( new MyScoreMover ); }
+	MoverOP fresh_instance() const override { return utility::pointer::make_shared< MyScoreMover >(); }
 
 	void set_keep_input_scores(){ keep_scores_flag_ = true; }
 	void set_skip_scoring(){ skip_scoring_ = true; }

@@ -39,12 +39,12 @@ namespace protocols { namespace indexed_structure_store { namespace  movers {
 
 moves::MoverOP
 DirectSegmentLookupMover::clone() const {
-	return moves::MoverOP( new DirectSegmentLookupMover( *this ) );
+	return utility::pointer::make_shared< DirectSegmentLookupMover >( *this );
 }
 
 void
 DirectSegmentLookupMover::apply(core::pose::Pose & pose) {
-	source_pose_ = core::pose::PoseOP(new core::pose::Pose());
+	source_pose_ = utility::pointer::make_shared< core::pose::Pose >();
 	source_pose_->detached_copy( pose );
 
 	runtime_assert(from_chain_ <= source_pose_->conformation().num_chains() && from_chain_ >= 1);
@@ -147,7 +147,7 @@ DirectSegmentLookupMover::generate_result_pose(core::pose::Pose & source_pose, D
 
 		TR << boost::format("Storing residue subset %s as range [%i, %i)") % stored_subset_name_ % insertion_start_res % insertion_end_res << std::endl;
 
-		stored_subsets.set_subset( ResidueSubsetCOP(new ResidueSubset(inserted_subset)), stored_subset_name_);
+		stored_subsets.set_subset( utility::pointer::make_shared< ResidueSubset >(inserted_subset), stored_subset_name_);
 	}
 
 	if ( !label_insertion_.empty() ) {
@@ -213,7 +213,7 @@ DirectSegmentLookupMover::init_structure_store() {
 	if ( !structure_store_ ) {
 		runtime_assert(!structure_database_);
 		structure_store_ = StructureStoreManager::get_instance()->load_structure_store(structure_store_path());
-		structure_database_ = search::StructureDatabaseOP(new search::StructureDatabase());
+		structure_database_ = utility::pointer::make_shared< search::StructureDatabase >();
 		structure_database_->initialize(structure_store_->residue_entries);
 	}
 }
@@ -273,7 +273,7 @@ DirectSegmentLookupMover::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 
 protocols::moves::MoverOP
 DirectSegmentLookupMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP(new DirectSegmentLookupMover());
+	return utility::pointer::make_shared< DirectSegmentLookupMover >();
 }
 
 std::string

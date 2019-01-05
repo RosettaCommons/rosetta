@@ -59,7 +59,7 @@ using namespace utility::tag;
 core::pack::task::operation::TaskOperationOP
 RestrictIdentitiesOperationCreator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new RestrictIdentitiesOperation );
+	return utility::pointer::make_shared< RestrictIdentitiesOperation >();
 }
 
 void RestrictIdentitiesOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -87,7 +87,7 @@ RestrictIdentitiesOperation::~RestrictIdentitiesOperation() = default;
 // @brief copy constructor
 core::pack::task::operation::TaskOperationOP RestrictIdentitiesOperation::clone() const
 {
-	return core::pack::task::operation::TaskOperationOP( new RestrictIdentitiesOperation( *this ) );
+	return utility::pointer::make_shared< RestrictIdentitiesOperation >( *this );
 }
 
 // @brief getters

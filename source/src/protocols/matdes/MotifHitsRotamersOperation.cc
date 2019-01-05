@@ -46,7 +46,7 @@ MotifHitsRotamersOperation::MotifHitsRotamersOperation(
 core::pack::rotamer_set::RotamerSetOperationOP
 MotifHitsRotamersOperation::clone() const
 {
-	return core::pack::rotamer_set::RotamerSetOperationOP( new MotifHitsRotamersOperation( *this ));
+	return utility::pointer::make_shared< MotifHitsRotamersOperation >( *this );
 }
 
 

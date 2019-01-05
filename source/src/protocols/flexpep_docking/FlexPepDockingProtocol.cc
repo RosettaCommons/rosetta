@@ -195,53 +195,53 @@ void FlexPepDockingProtocol::set_default()
 
 	// all-protein packer settings:
 	using core::pack::task::operation::TaskOperationCOP;
-	allprotein_tf_ = core::pack::task::TaskFactoryOP( new task::TaskFactory );
-	allprotein_tf_->push_back( TaskOperationCOP( new operation::InitializeFromCommandline ) ); // -ex1,ex2,use_input_sc,etc.
-	allprotein_tf_->push_back( TaskOperationCOP( new operation::IncludeCurrent ) ); // TODO: since our input is a prepacked structure, I always included its side-chains (these are NOT necessarily the native side-chains). But, maybe this should be left to the user (Barak)
-	//allprotein_tf_->push_back( TaskOperationCOP( new operation::RestrictToRepacking ) ); // prevents design
+	allprotein_tf_ = utility::pointer::make_shared< task::TaskFactory >();
+	allprotein_tf_->push_back( utility::pointer::make_shared< operation::InitializeFromCommandline >() ); // -ex1,ex2,use_input_sc,etc.
+	allprotein_tf_->push_back( utility::pointer::make_shared< operation::IncludeCurrent >() ); // TODO: since our input is a prepacked structure, I always included its side-chains (these are NOT necessarily the native side-chains). But, maybe this should be left to the user (Barak)
+	//allprotein_tf_->push_back( utility::pointer::make_shared< operation::RestrictToRepacking >() ); // prevents design
 	allprotein_tf_->push_back( append_ubrot_taskoper ); // add support to -unboundrot
 	if ( option[OptionKeys::packing::resfile].user() ) {
-		allprotein_tf_->push_back( TaskOperationCOP( new operation::ReadResfile ) );
+		allprotein_tf_->push_back( utility::pointer::make_shared< operation::ReadResfile >() );
 	}
 
 	/*core::pack::task::operation::RestrictResidueToRepackingOP receptor_protector_oper_;
-	receptor_protector_oper_ = core::pack::task::operation::RestrictResidueToRepackingOP( new operation::RestrictResidueToRepacking() );
+	receptor_protector_oper_ = utility::pointer::make_shared< operation::RestrictResidueToRepacking >();
 	receptor_protector_oper_->clear();
 	for ( int i = flags_.receptor_first_res(); i <= receptor_last_res(); ++i ){
 	receptor_protector_oper_->include_residue(i);
 	}*/
 
 	if ( ! flags_.design_peptide ) {
-		allprotein_tf_->push_back( core::pack::task::operation::TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ) );
+		allprotein_tf_->push_back( utility::pointer::make_shared< core::pack::task::operation::RestrictToRepacking >() );
 	}
 
 	/*if ( flags_.design_peptide )
 	allprotein_tf_->push_back( receptor_protector_oper_ );*/
 
 	// interface packer settings:
-	interface_tf_ = core::pack::task::TaskFactoryOP( new task::TaskFactory(*allprotein_tf_) ); // based on settings for allprotein_tf_
+	interface_tf_ = utility::pointer::make_shared< task::TaskFactory >(*allprotein_tf_); // based on settings for allprotein_tf_
 	if ( ! flags_.pep_fold_only ) {
-		interface_tf_->push_back( TaskOperationCOP( new protocols::simple_task_operations::RestrictToInterface( rb_jump_ ) ));
+		interface_tf_->push_back( utility::pointer::make_shared< protocols::simple_task_operations::RestrictToInterface >( rb_jump_ ));
 	}
 
-	interface_packer_ = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover() );
+	interface_packer_ = utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >();
 	interface_packer_->score_function( scorefxn_ );
 	interface_packer_->task_factory( interface_tf_ );
 
-	movemap_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap() );
-	movemap_minimizer_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap() );
+	movemap_ = utility::pointer::make_shared< core::kinematics::MoveMap >();
+	movemap_minimizer_ = utility::pointer::make_shared< core::kinematics::MoveMap >();
 
 
 	//design packer setting
-	/*design_tf_ = core::pack::task::TaskFactoryOP( new tast::TaskFactory );
-	design_tf_->push_back( TaskOperationCOP( new operation::InitializeFromCommandline ) );
-	design_tf_->push_back( TaskOperationCOP( new operation::InitializeFromCommandline ) );
-	design_tf_->push_back( TaskOperationCOP( new operation::IncludeCurrent ) );
+	/*design_tf_ = utility::pointer::make_shared< tast::TaskFactory >();
+	design_tf_->push_back( utility::pointer::make_shared< operation::InitializeFromCommandline >() );
+	design_tf_->push_back( utility::pointer::make_shared< operation::InitializeFromCommandline >() );
+	design_tf_->push_back( utility::pointer::make_shared< operation::IncludeCurrent >() );
 	design_tf_->push_back( TaskOperationCOP( append_ubrot_taskoper );
-	design_tf_->push_back( TaskOperationCOP( new operation::ReadResfile );
-	design_tf_->push_back( TaskOperationCOP( new protocols::simple_task_operations::RestrictToInterface( rb_jump_ ) ));
+	design_tf_->push_back( utility::pointer::make_shared< operation::ReadResfile >();
+	design_tf_->push_back( utility::pointer::make_shared< protocols::simple_task_operations::RestrictToInterface >( rb_jump_ ));
 
-	receptor_protector_oper_ = options::RestrictResidueToRepackingOP( new options::restrict_to_repacking() );
+	receptor_protector_oper_ = utility::pointer::make_shared< options::restrict_to_repacking >();
 	receptor_protector_oper_->clear();
 	for ( int i = flags_.receptor_first_res(); i <= receptor_last_res(); ++i ){
 	receptor_protector_oper_->include_residue(i);
@@ -250,7 +250,7 @@ void FlexPepDockingProtocol::set_default()
 	if ( flags_.prevent_receptor_design )
 	design_tf_->push_back( receptor_protector_oper_ );
 
-	design_packer_ = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover() );
+	design_packer_ = utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >();
 	design_packer_->score_function( scorefxn_ );
 	design_packer_->task_factory( design_tf_ );
 	*/
@@ -259,7 +259,7 @@ void FlexPepDockingProtocol::set_default()
 	// Loop modeling options
 	// NOTE: most LoopRelax options are initiated automatically from cmd-line
 	// TODO: should refine be set to default? we want to guarantee a full-atom output
-	loop_relax_mover_ = protocols::comparative_modeling::LoopRelaxMoverOP( new protocols::comparative_modeling::LoopRelaxMover() );
+	loop_relax_mover_ = utility::pointer::make_shared< protocols::comparative_modeling::LoopRelaxMover >();
 	loop_relax_mover_->fa_scorefxn(scorefxn_); // TODO: for now we do not touch the centroid part...
 	loop_relax_mover_->remodel("no"); // remodel only in centroid part, if at all? // TODO: rethink this
 	loop_relax_mover_->relax("no"); // We don't want structure relaxation by all means // TODO: inform user
@@ -399,8 +399,8 @@ FlexPepDockingProtocol::set_receptor_constraints( core::pose::Pose & pose )
 		// Residue const  & reside = pose.residue( i );
 		AtomID CAi ( pose.residue(i).atom_index( " CA " ), i );
 		cst_set->add_constraint
-			(  ConstraintCOP( ConstraintOP( new CoordinateConstraint
-			( CAi, CAi, conformation.xyz( CAi ), spring ) ) )
+			(  ConstraintCOP( utility::pointer::make_shared< CoordinateConstraint >
+			( CAi, CAi, conformation.xyz( CAi ), spring ) )
 		);
 	}
 	pose.constraint_set( cst_set );
@@ -568,7 +568,7 @@ FlexPepDockingProtocol::place_peptide_on_binding_site(
 
 	// reading siteconstraints and storing receptor binding site residues to a vector1 object
 	if ( option[ OptionKeys::constraints::cst_file ].user() ) {
-		core::scoring::constraints::ConstraintSetOP site_cstset( core::scoring::constraints::ConstraintIO::get_instance()->read_constraints( core::scoring::constraints::get_cst_file_option(), core::scoring::constraints::ConstraintSetOP( new core::scoring::constraints::ConstraintSet ), pose  ) );
+		core::scoring::constraints::ConstraintSetOP site_cstset( core::scoring::constraints::ConstraintIO::get_instance()->read_constraints( core::scoring::constraints::get_cst_file_option(), utility::pointer::make_shared< core::scoring::constraints::ConstraintSet >(), pose  ) );
 		TR << "Read Site Constraints: " << ( site_cstset->has_constraints() ? "YES" : "NONE" ) << std::endl;
 		utility::vector1< core::scoring::constraints::ConstraintCOP > site_cstset_list( site_cstset->get_all_constraints() );
 
@@ -1173,7 +1173,7 @@ FlexPepDockingProtocol::hires_fpdock_protocol(pose::Pose& pose)
 	pack::task::TaskFactoryOP design_tf( new pack::task::TaskFactory );
 	if(! flags_.pep_fold_only)
 	{
-	receptor_protector_oper_ = core::pack::task::operation::RestrictResidueToRepackingOP( new core::pack::task::operation::RestrictResidueToRepacking() );
+	receptor_protector_oper_ = utility::pointer::make_shared< core::pack::task::operation::RestrictResidueToRepacking >();
 	receptor_protector_oper_->clear();
 	for(int i = flags_.receptor_first_res();
 	i <= flags_.receptor_last_res(); ++i){
@@ -1279,7 +1279,7 @@ FlexPepDockingProtocol::apply( pose::Pose & pose )
 
 	// if no native provided, use pose as pseudo-native reference
 	if ( get_native_pose().get() == nullptr ) {
-		set_native_pose( PoseCOP( PoseOP( new pose::Pose(pose) ) ) ); // TODO: debug this - will it work for PoseCOP;
+		set_native_pose( utility::pointer::make_shared< pose::Pose >(pose) ); // TODO: debug this - will it work for PoseCOP;
 		TR.Warning << "No native supplied by used - using starting structure as reference for statistics" << std::endl;
 	}
 
@@ -1468,7 +1468,7 @@ FlexPepDockingProtocol::markNativeInterface
 	// find interface
 	if ( ! flags_.pep_fold_only ) { // docking mode
 		native_interface
-			= protocols::scoring::InterfaceOP( new protocols::scoring::Interface(rb_jump_) );
+			= utility::pointer::make_shared< protocols::scoring::Interface >(rb_jump_);
 		native_interface->distance(8); // between CB atoms, CA for Gly (to be precise, the anchor atom is set within the mini DB)
 		native_pose.update_residue_neighbors();
 		native_interface->calculate( native_pose );
@@ -1855,7 +1855,7 @@ void FlexPepDockingProtocol::parse_my_tag(
 //////////////////////////FlexPepDockingProtocolCreator//////////////////////////////
 
 // XRW TEMP moves::MoverOP FlexPepDockingProtocolCreator::create_mover() const {
-// XRW TEMP  return moves::MoverOP( new FlexPepDockingProtocol(1, true, true) );
+// XRW TEMP  return utility::pointer::make_shared< FlexPepDockingProtocol >(1, true, true);
 // XRW TEMP }
 
 // XRW TEMP std::string FlexPepDockingProtocolCreator::keyname() const {
@@ -1922,7 +1922,7 @@ std::string FlexPepDockingProtocolCreator::keyname() const {
 
 protocols::moves::MoverOP
 FlexPepDockingProtocolCreator::create_mover() const {
-	return protocols::moves::MoverOP( new FlexPepDockingProtocol );
+	return utility::pointer::make_shared< FlexPepDockingProtocol >();
 }
 
 void FlexPepDockingProtocolCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

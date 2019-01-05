@@ -28,7 +28,7 @@ namespace features {
 // XRW TEMP LoopAnchorFeaturesCreator::LoopAnchorFeaturesCreator() {}
 // XRW TEMP LoopAnchorFeaturesCreator::~LoopAnchorFeaturesCreator() = default;
 // XRW TEMP FeaturesReporterOP LoopAnchorFeaturesCreator::create_features_reporter() const {
-// XRW TEMP  return FeaturesReporterOP( new LoopAnchorFeatures );
+// XRW TEMP  return utility::pointer::make_shared< LoopAnchorFeatures >();
 // XRW TEMP }
 
 // XRW TEMP std::string LoopAnchorFeaturesCreator::type_name() const {

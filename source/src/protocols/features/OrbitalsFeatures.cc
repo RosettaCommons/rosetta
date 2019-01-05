@@ -100,24 +100,24 @@ OrbitalsFeatures::write_HPOL_orbital_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
-	Column resNum1("resNum1", DbDataTypeOP( new DbInteger() ));
-	Column resName1("resName1", DbDataTypeOP( new DbText() ));
-	Column orbNum1("orbNum1", DbDataTypeOP( new DbInteger() ));
-	Column orbName1("orbName1", DbDataTypeOP( new DbText() ));
-	Column resNum2("resNum2", DbDataTypeOP( new DbInteger() ));
-	Column resName2("resName2", DbDataTypeOP( new DbText() ));
-	Column hpolNum2("hpolNum2", DbDataTypeOP( new DbInteger() ));
-	Column htype2("htype2", DbDataTypeOP( new DbText() ));
-	Column OrbHdist("OrbHdist", DbDataTypeOP( new DbReal() ));
-	Column cosAOH("cosAOH", DbDataTypeOP( new DbReal() ));
-	Column cosDHO("cosDHO", DbDataTypeOP( new DbReal() ));
-	Column chiBAOH("chiBAOH", DbDataTypeOP( new DbReal() ));
-	Column chiBDHO("chiBDHO", DbDataTypeOP( new DbReal() ));
-	Column AOH_angle("AOH_angle", DbDataTypeOP( new DbReal() ));
-	Column DHO_angle("DHO_angle", DbDataTypeOP( new DbReal() ));
-	Column chiBAHD("chiBAHD", DbDataTypeOP( new DbReal() ));
-	Column cosAHD("cosAHD", DbDataTypeOP( new DbReal() ));
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >());
+	Column resNum1("resNum1", utility::pointer::make_shared< DbInteger >());
+	Column resName1("resName1", utility::pointer::make_shared< DbText >());
+	Column orbNum1("orbNum1", utility::pointer::make_shared< DbInteger >());
+	Column orbName1("orbName1", utility::pointer::make_shared< DbText >());
+	Column resNum2("resNum2", utility::pointer::make_shared< DbInteger >());
+	Column resName2("resName2", utility::pointer::make_shared< DbText >());
+	Column hpolNum2("hpolNum2", utility::pointer::make_shared< DbInteger >());
+	Column htype2("htype2", utility::pointer::make_shared< DbText >());
+	Column OrbHdist("OrbHdist", utility::pointer::make_shared< DbReal >());
+	Column cosAOH("cosAOH", utility::pointer::make_shared< DbReal >());
+	Column cosDHO("cosDHO", utility::pointer::make_shared< DbReal >());
+	Column chiBAOH("chiBAOH", utility::pointer::make_shared< DbReal >());
+	Column chiBDHO("chiBDHO", utility::pointer::make_shared< DbReal >());
+	Column AOH_angle("AOH_angle", utility::pointer::make_shared< DbReal >());
+	Column DHO_angle("DHO_angle", utility::pointer::make_shared< DbReal >());
+	Column chiBAHD("chiBAHD", utility::pointer::make_shared< DbReal >());
+	Column cosAHD("cosAHD", utility::pointer::make_shared< DbReal >());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -171,24 +171,24 @@ OrbitalsFeatures::write_HARO_orbital_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
-	Column resNum1("resNum1", DbDataTypeOP( new DbInteger() ));
-	Column resName1("resName1", DbDataTypeOP( new DbText() ));
-	Column orbNum1("orbNum1", DbDataTypeOP( new DbInteger() ));
-	Column orbName1("orbName1", DbDataTypeOP( new DbText() ));
-	Column resNum2("resNum2", DbDataTypeOP( new DbInteger() ));
-	Column resName2("resName2", DbDataTypeOP( new DbText() ));
-	Column haroNum2("haroNum2", DbDataTypeOP( new DbInteger() ));
-	Column htype2("htype2", DbDataTypeOP( new DbText() ));
-	Column OrbHdist("orbHdist", DbDataTypeOP( new DbReal() ));
-	Column cosAOH("cosAOH", DbDataTypeOP( new DbReal() ));
-	Column cosDHO("cosDHO", DbDataTypeOP( new DbReal() ));
-	Column chiBAOH("chiBAOH", DbDataTypeOP( new DbReal() ));
-	Column chiBDHO("chiBDHO", DbDataTypeOP( new DbReal() ));
-	Column AOH_angle("AOH_angle", DbDataTypeOP( new DbReal() ));
-	Column DHO_angle("DHO_angle", DbDataTypeOP( new DbReal() ));
-	Column chiBAHD("chiBAHD", DbDataTypeOP( new DbReal() ));
-	Column cosAHD("cosAHD", DbDataTypeOP( new DbReal() ));
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >());
+	Column resNum1("resNum1", utility::pointer::make_shared< DbInteger >());
+	Column resName1("resName1", utility::pointer::make_shared< DbText >());
+	Column orbNum1("orbNum1", utility::pointer::make_shared< DbInteger >());
+	Column orbName1("orbName1", utility::pointer::make_shared< DbText >());
+	Column resNum2("resNum2", utility::pointer::make_shared< DbInteger >());
+	Column resName2("resName2", utility::pointer::make_shared< DbText >());
+	Column haroNum2("haroNum2", utility::pointer::make_shared< DbInteger >());
+	Column htype2("htype2", utility::pointer::make_shared< DbText >());
+	Column OrbHdist("orbHdist", utility::pointer::make_shared< DbReal >());
+	Column cosAOH("cosAOH", utility::pointer::make_shared< DbReal >());
+	Column cosDHO("cosDHO", utility::pointer::make_shared< DbReal >());
+	Column chiBAOH("chiBAOH", utility::pointer::make_shared< DbReal >());
+	Column chiBDHO("chiBDHO", utility::pointer::make_shared< DbReal >());
+	Column AOH_angle("AOH_angle", utility::pointer::make_shared< DbReal >());
+	Column DHO_angle("DHO_angle", utility::pointer::make_shared< DbReal >());
+	Column chiBAHD("chiBAHD", utility::pointer::make_shared< DbReal >());
+	Column cosAHD("cosAHD", utility::pointer::make_shared< DbReal >());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -242,26 +242,26 @@ OrbitalsFeatures::write_orbital_orbital_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
-	Column resNum1("resNum1", DbDataTypeOP( new DbInteger() ));
-	Column resName1("resName1", DbDataTypeOP( new DbText() ));
-	Column orbNum1("orbNum1", DbDataTypeOP( new DbInteger() ));
-	Column orbName1("orbName1", DbDataTypeOP( new DbText() ));
-	Column resNum2("resNum2", DbDataTypeOP( new DbInteger() ));
-	Column resName2("resName2", DbDataTypeOP( new DbText() ));
-	Column orbNum2("orbNum2", DbDataTypeOP( new DbInteger() ));
-	Column orbName2("orbName2", DbDataTypeOP( new DbText() ));
-	Column orbOrbdist("orbOrbdist", DbDataTypeOP( new DbReal() ));
-	Column cosAOO("cosAOO", DbDataTypeOP( new DbReal() ));
-	Column cosDOO("cosDOO", DbDataTypeOP( new DbReal() ));
-	Column chiBAOO("chiBAOO", DbDataTypeOP( new DbReal() ));
-	Column chiBDOO("chiBDOO", DbDataTypeOP( new DbReal() ));
-	Column AOO_angle("AOO_angle", DbDataTypeOP( new DbReal() ));
-	Column DOO_angle("DOO_angle", DbDataTypeOP( new DbReal() ));
-	Column DOA_angle("DOA_angle", DbDataTypeOP( new DbReal() ));
-	Column AOD_angle("AOD_angle", DbDataTypeOP( new DbReal() ));
-	Column chiBAHD("chiBAHD", DbDataTypeOP( new DbReal() ));
-	Column cosAHD("cosAHD", DbDataTypeOP( new DbReal() ));
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >());
+	Column resNum1("resNum1", utility::pointer::make_shared< DbInteger >());
+	Column resName1("resName1", utility::pointer::make_shared< DbText >());
+	Column orbNum1("orbNum1", utility::pointer::make_shared< DbInteger >());
+	Column orbName1("orbName1", utility::pointer::make_shared< DbText >());
+	Column resNum2("resNum2", utility::pointer::make_shared< DbInteger >());
+	Column resName2("resName2", utility::pointer::make_shared< DbText >());
+	Column orbNum2("orbNum2", utility::pointer::make_shared< DbInteger >());
+	Column orbName2("orbName2", utility::pointer::make_shared< DbText >());
+	Column orbOrbdist("orbOrbdist", utility::pointer::make_shared< DbReal >());
+	Column cosAOO("cosAOO", utility::pointer::make_shared< DbReal >());
+	Column cosDOO("cosDOO", utility::pointer::make_shared< DbReal >());
+	Column chiBAOO("chiBAOO", utility::pointer::make_shared< DbReal >());
+	Column chiBDOO("chiBDOO", utility::pointer::make_shared< DbReal >());
+	Column AOO_angle("AOO_angle", utility::pointer::make_shared< DbReal >());
+	Column DOO_angle("DOO_angle", utility::pointer::make_shared< DbReal >());
+	Column DOA_angle("DOA_angle", utility::pointer::make_shared< DbReal >());
+	Column AOD_angle("AOD_angle", utility::pointer::make_shared< DbReal >());
+	Column chiBAHD("chiBAHD", utility::pointer::make_shared< DbReal >());
+	Column cosAHD("cosAHD", utility::pointer::make_shared< DbReal >());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -815,7 +815,7 @@ std::string OrbitalsFeaturesCreator::type_name() const {
 
 protocols::features::FeaturesReporterOP
 OrbitalsFeaturesCreator::create_features_reporter() const {
-	return protocols::features::FeaturesReporterOP( new OrbitalsFeatures );
+	return utility::pointer::make_shared< OrbitalsFeatures >();
 }
 
 void OrbitalsFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

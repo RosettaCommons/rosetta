@@ -49,7 +49,7 @@ KeepLigandContactsRequirement::KeepLigandContactsRequirement( KeepLigandContacts
 
 KeepLigandContactsRequirementOP
 KeepLigandContactsRequirement::clone() const {
-	return KeepLigandContactsRequirementOP( new KeepLigandContactsRequirement( *this ) );
+	return utility::pointer::make_shared< KeepLigandContactsRequirement >( *this );
 }
 std::pair<bool,bool>
 KeepLigandContactsRequirement::test(data_storage::SmartAssemblyOP assembly) {
@@ -139,7 +139,7 @@ KeepLigandContactsRequirementCreator::provide_xml_schema( utility::tag::XMLSchem
 
 AssemblyRequirementOP
 KeepLigandContactsRequirementCreator::create_requirement() const{
-	return AssemblyRequirementOP( new KeepLigandContactsRequirement() );
+	return utility::pointer::make_shared< KeepLigandContactsRequirement >();
 }
 
 std::string

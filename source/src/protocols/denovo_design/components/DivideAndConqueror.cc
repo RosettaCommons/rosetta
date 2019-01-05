@@ -137,7 +137,7 @@ DivideAndConqueror::divide_and_conquer( StructureData const & sd ) const
 DivideAndConquerorOP
 DivideAndConqueror::clone() const
 {
-	return DivideAndConquerorOP( new DivideAndConqueror( *this ) );
+	return utility::pointer::make_shared< DivideAndConqueror >( *this );
 }
 
 FoldingSolutions::const_iterator
@@ -292,7 +292,7 @@ SolutionPredicate::SolutionPredicate(
 	pairs_( pairs ),
 	start_segments_( start_seg ),
 	stop_segments_( stop_seg ),
-	sd_( StructureDataOP( new StructureData( sd ) ) )
+	sd_( utility::pointer::make_shared< StructureData >( sd ) )
 {}
 
 bool

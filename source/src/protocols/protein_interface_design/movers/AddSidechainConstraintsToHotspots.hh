@@ -39,8 +39,8 @@ public:
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & ) override;
-	protocols::moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new AddSidechainConstraintsToHotspots( *this ) ) ); }
-	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new AddSidechainConstraintsToHotspots ); }
+	protocols::moves::MoverOP clone() const override { return( utility::pointer::make_shared< AddSidechainConstraintsToHotspots >( *this ) ); }
+	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< AddSidechainConstraintsToHotspots >(); }
 	virtual ~AddSidechainConstraintsToHotspots();
 	core::Size chain() const;
 	void chain( core::Size const c );

@@ -65,7 +65,7 @@ void
 CachedResidueSubset::set_subset( ResidueSubsetCOP const subset, std::string const & name )
 {
 	debug_assert( subset );
-	subsets_[ name ] = BoolVectorOP( new BoolVector( subset->begin(), subset->end() ) );
+	subsets_[ name ] = utility::pointer::make_shared< BoolVector >( subset->begin(), subset->end() );
 }
 
 ResidueSubsetCOP
@@ -81,7 +81,7 @@ CachedResidueSubset::get_subset( std::string const & name ) const
 		msg << std::endl;
 		throw CREATE_EXCEPTION(utility::excn::BadInput,  msg.str() );
 	}
-	return ResidueSubsetCOP( new ResidueSubset( subset->second->begin(), subset->second->end() ) );
+	return utility::pointer::make_shared< ResidueSubset >( subset->second->begin(), subset->second->end() );
 }
 
 // @brief check to see if the task you're interested in is in the object
@@ -94,13 +94,13 @@ CachedResidueSubset::has_subset( std::string const & name ) const
 basic::datacache::CacheableDataOP
 CachedResidueSubset::clone() const
 {
-	return basic::datacache::CacheableDataOP( new CachedResidueSubset ( *this ) );
+	return utility::pointer::make_shared< CachedResidueSubset > ( *this );
 }
 
 basic::datacache::CacheableDataOP
 CachedResidueSubset::fresh_instance() const
 {
-	return basic::datacache::CacheableDataOP( new CachedResidueSubset );
+	return utility::pointer::make_shared< CachedResidueSubset >();
 }
 
 } // residue_selector

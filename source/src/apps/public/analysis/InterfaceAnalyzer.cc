@@ -72,7 +72,7 @@ public:
 	bool reinitialize_for_each_job() const override { return true; }
 
 	bool reinitialize_for_new_input() const override { return true; }
-	protocols::moves::MoverOP fresh_instance() const override {return protocols::moves::MoverOP( new IAMover );}
+	protocols::moves::MoverOP fresh_instance() const override {return utility::pointer::make_shared< IAMover >();}
 
 
 	void assign_IA_mover(core::pose::Pose & pose);
@@ -100,7 +100,7 @@ void IAMover::assign_IA_mover(core::pose::Pose & pose){
 	if ( (num_chains <= 2) ) {
 		TR << "Computing interface between two chains in pose" << std::endl;
 		core::Size const interface_jump = basic::options::option[ jumpnum ].value();
-		IAM_ = protocols::analysis::InterfaceAnalyzerMoverOP( new protocols::analysis::InterfaceAnalyzerMover(
+		IAM_ = utility::pointer::make_shared< protocols::analysis::InterfaceAnalyzerMover >(
 			interface_jump,
 			tracer,
 			scorefxn_,
@@ -108,7 +108,7 @@ void IAMover::assign_IA_mover(core::pose::Pose & pose){
 			pack_in,
 			pack_sep,
 			jobname
-			) );
+		);
 	} else if ( basic::options::option[fixedchains].active() ) {
 		utility::vector1<std::string> fixed_chains_string (basic::options::option[fixedchains].value());
 		//parse the fixed chains to figure out pose chain nums
@@ -126,7 +126,7 @@ void IAMover::assign_IA_mover(core::pose::Pose & pose){
 		}
 		TR << "these will be moved together." << std::endl;
 
-		IAM_ = protocols::analysis::InterfaceAnalyzerMoverOP( new protocols::analysis::InterfaceAnalyzerMover(
+		IAM_ = utility::pointer::make_shared< protocols::analysis::InterfaceAnalyzerMover >(
 			fixed_chains,
 			tracer,
 			scorefxn_,
@@ -134,11 +134,11 @@ void IAMover::assign_IA_mover(core::pose::Pose & pose){
 			pack_in,
 			pack_sep,
 			jobname
-			) );
+		);
 	} else if ( basic::options::option[interface].active() ) {
 		std::string dock_chains = basic::options::option[interface].value();
 		TR << "Using interface definition: "<<dock_chains <<std::endl;
-		IAM_ = protocols::analysis::InterfaceAnalyzerMoverOP( new protocols::analysis::InterfaceAnalyzerMover(
+		IAM_ = utility::pointer::make_shared< protocols::analysis::InterfaceAnalyzerMover >(
 			dock_chains,
 			tracer,
 			scorefxn_,
@@ -146,7 +146,7 @@ void IAMover::assign_IA_mover(core::pose::Pose & pose){
 			pack_in,
 			pack_sep,
 			jobname
-			) );
+		);
 	} else {
 		utility_exit_with_message("More than two chains present but no -fixedchains or -interface declared.   Aborting.");
 	}
@@ -199,7 +199,7 @@ main( int argc, char* argv[] )
 		option.add( interface, "dock_chains interface definition, optional, ex LH_A.  Can handle any number of chains. ");
 		devel::init(argc, argv);
 
-		protocols::jd2::JobDistributor::get_instance()->go(protocols::moves::MoverOP( new IAMover() ));
+		protocols::jd2::JobDistributor::get_instance()->go(utility::pointer::make_shared< IAMover >());
 
 		TR << "************************d**o**n**e**************************************" << std::endl;
 	} catch (utility::excn::Exception const & e ) {

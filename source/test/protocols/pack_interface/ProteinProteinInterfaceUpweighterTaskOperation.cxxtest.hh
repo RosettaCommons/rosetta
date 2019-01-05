@@ -84,7 +84,7 @@ public:
 
 
 		core::pack::task::TaskFactoryOP tf( new core::pack::task::TaskFactory() );
-		tf->push_back( TaskOperationCOP( new IncludeCurrent() ) );
+		tf->push_back( utility::pointer::make_shared< IncludeCurrent >() );
 		tf->push_back( make_shared< OperateOnResidueSubset >(
 			make_shared< PreventRepackingRLT >(), make_shared< ResidueIndexSelector >( allow_repacking_res ), true ) );
 

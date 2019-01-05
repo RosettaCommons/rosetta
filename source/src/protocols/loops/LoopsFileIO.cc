@@ -149,7 +149,7 @@ LoopsFileData::resolve_loops(
 ) const
 {
 	SerializedLoopList sloops = resolve_as_serialized_loops( pose );
-	return LoopsOP( new Loops( sloops ) );
+	return utility::pointer::make_shared< Loops >( sloops );
 }
 
 SerializedLoopList
@@ -195,7 +195,7 @@ GuardedLoopsFromFile::GuardedLoopsFromFile() :
 	in_charge_( true ),
 	pose_has_resolved_loop_indices_( true ),
 	rely_on_loopfile_indices_( false ),
-	loops_( LoopsOP( new Loops ) )
+	loops_( utility::pointer::make_shared< Loops >() )
 {}
 
 /// @details construct from LoopsFileData: set state to expect a Pose
@@ -204,7 +204,7 @@ GuardedLoopsFromFile::GuardedLoopsFromFile( LoopsFileData const & lfd ) :
 	pose_has_resolved_loop_indices_( false ),
 	rely_on_loopfile_indices_( true ),
 	loops_file_data_( lfd ),
-	loops_( LoopsOP( new Loops ) )
+	loops_( utility::pointer::make_shared< Loops >() )
 {}
 
 /// @details construct from a LoopsOP
@@ -221,7 +221,7 @@ GuardedLoopsFromFile::GuardedLoopsFromFile( Loops const & loops ) :
 	in_charge_( false ),
 	pose_has_resolved_loop_indices_( true ),
 	rely_on_loopfile_indices_( false ),
-	loops_( LoopsOP( new Loops( loops ) ) ) // copy the contents into a new loops object -- assume this pointer comes from some other GuardedLoopsFromFile object and that I am not in charge
+	loops_( utility::pointer::make_shared< Loops >( loops ) ) // copy the contents into a new loops object -- assume this pointer comes from some other GuardedLoopsFromFile object and that I am not in charge
 {}
 
 /// @details Shallow copy of the LoopsOP data so that it can be shared between
@@ -684,9 +684,9 @@ JSONFormattedLoopsFileReader::parse_json_residue_info(
 
 	core::pose::RID_SourceCOP rid_source( new core::pose::RID_FileSource( filename, approximate_linenumber ) );
 	if ( usesPDBNumbering ) {
-		return ResidueIndexDescriptionCOP( new core::pose::ResidueIndexDescriptionPDB( rid_source, chain_id, resNo, insert_code ) );
+		return utility::pointer::make_shared< core::pose::ResidueIndexDescriptionPDB >( rid_source, chain_id, resNo, insert_code );
 	} else {
-		return ResidueIndexDescriptionCOP( new core::pose::ResidueIndexDescriptionPoseNum( rid_source, resNo ) );
+		return utility::pointer::make_shared< core::pose::ResidueIndexDescriptionPoseNum >( rid_source, resNo );
 	}
 }
 

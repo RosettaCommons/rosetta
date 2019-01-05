@@ -205,7 +205,7 @@ void SilentStruct::finish_pose(
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	pose.pdb_info( core::pose::PDBInfoOP( new core::pose::PDBInfo(pose) ) );
+	pose.pdb_info( utility::pointer::make_shared< core::pose::PDBInfo >(pose) );
 
 	if ( options_.keep_input_scores() ) {
 		tr.Debug << "keep input scores... call energies into pose " << std::endl;
@@ -221,7 +221,7 @@ void SilentStruct::finish_pose(
 			!cache.has( core::pose::datacache::CacheableDataType::WRITEABLE_DATA ) ) {
 		using namespace basic::datacache;
 		cache.set( core::pose::datacache::CacheableDataType::WRITEABLE_DATA,
-			DataCache_CacheableData::DataOP( new basic::datacache::WriteableCacheableMap() ) );
+			utility::pointer::make_shared< basic::datacache::WriteableCacheableMap >() );
 	}
 
 	for ( auto const & comment : cache_remarks_ ) {
@@ -726,7 +726,7 @@ void SilentStruct::energies_into_pose( core::pose::Pose & pose ) const {
 		using namespace basic::datacache;
 		pose.data().set(
 			CacheableDataType::ARBITRARY_FLOAT_DATA,
-			DataCache_CacheableData::DataOP( new basic::datacache::CacheableStringFloatMap() )
+			utility::pointer::make_shared< basic::datacache::CacheableStringFloatMap >()
 		);
 	}
 

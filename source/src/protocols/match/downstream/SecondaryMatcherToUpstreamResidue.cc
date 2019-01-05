@@ -77,7 +77,7 @@ SecondaryMatcherToUpstreamResidue::~SecondaryMatcherToUpstreamResidue() = defaul
 DownstreamAlgorithmOP
 SecondaryMatcherToUpstreamResidue::clone() const
 {
-	return DownstreamAlgorithmOP( new SecondaryMatcherToUpstreamResidue( *this ) );
+	return utility::pointer::make_shared< SecondaryMatcherToUpstreamResidue >( *this );
 }
 
 /// @details This DownstreamAlgorithm structures it's iteration over the target hits
@@ -451,7 +451,7 @@ SecondaryMatcherToUpstreamResidue::prepare_for_hit_generation(
 	target_hits_end_ = matcher.hits( target_geomcst_id_ ).end();
 
 	/// Initialize the target_geomcst_coords_ object;
-	target_geomcst_coords_ = TargetRotamerCoordsOP( new TargetRotamerCoords );
+	target_geomcst_coords_ = utility::pointer::make_shared< TargetRotamerCoords >();
 	upstream::UpstreamBuilderCOP usbuilder = matcher.upstream_builder( target_geomcst_id_ );
 
 	Size n_target_restypes = usbuilder->n_restypes_to_build();

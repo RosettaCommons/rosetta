@@ -71,8 +71,8 @@ RadiusOfGyrationFeatures::write_radius_of_gyration_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
-	Column radius_of_gyration("radius_of_gyration", DbDataTypeOP( new DbReal() ));
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >());
+	Column radius_of_gyration("radius_of_gyration", utility::pointer::make_shared< DbReal >());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -136,7 +136,7 @@ std::string RadiusOfGyrationFeaturesCreator::type_name() const {
 
 protocols::features::FeaturesReporterOP
 RadiusOfGyrationFeaturesCreator::create_features_reporter() const {
-	return protocols::features::FeaturesReporterOP( new RadiusOfGyrationFeatures );
+	return utility::pointer::make_shared< RadiusOfGyrationFeatures >();
 }
 
 void RadiusOfGyrationFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

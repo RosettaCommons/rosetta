@@ -37,10 +37,10 @@ public:
 
 	virtual void setUp() {
 		using namespace core;
-		pose = pose::PoseOP( new pose::Pose() );
+		pose = utility::pointer::make_shared< pose::Pose >();
 		core::import_pose::pose_from_file(*pose, "test_in.pdb", core::import_pose::PDB_file);
 
-		movemap = kinematics::MoveMapOP( new kinematics::MoveMap() );
+		movemap = utility::pointer::make_shared< kinematics::MoveMap >();
 		movemap->set_chi( true );
 		movemap->set_bb( true );
 

@@ -63,12 +63,12 @@ ScreeningFeatures::~ScreeningFeatures() = default;
 void ScreeningFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const
 {
 	using namespace basic::database::schema_generator;
-	Column struct_id("struct_id",DbDataTypeOP( new DbBigInt() ),false);
-	Column chain_name("chain_id",DbDataTypeOP( new DbText(1) ),false);
-	Column residue_number("residue_number",DbDataTypeOP( new DbInteger() ),false);
-	Column name3("name3",DbDataTypeOP( new DbText() ),false);
-	Column experiment_group("group_name",DbDataTypeOP( new DbText() ),false);
-	Column descriptor_data("descriptor_data",DbDataTypeOP( new DbText() ),false);
+	Column struct_id("struct_id",utility::pointer::make_shared< DbBigInt >(),false);
+	Column chain_name("chain_id",utility::pointer::make_shared< DbText >(1),false);
+	Column residue_number("residue_number",utility::pointer::make_shared< DbInteger >(),false);
+	Column name3("name3",utility::pointer::make_shared< DbText >(),false);
+	Column experiment_group("group_name",utility::pointer::make_shared< DbText >(),false);
+	Column descriptor_data("descriptor_data",utility::pointer::make_shared< DbText >(),false);
 
 	utility::vector1<Column> primary_keys;
 	primary_keys.push_back(struct_id);
@@ -243,7 +243,7 @@ std::string ScreeningFeaturesCreator::type_name() const {
 
 protocols::features::FeaturesReporterOP
 ScreeningFeaturesCreator::create_features_reporter() const {
-	return protocols::features::FeaturesReporterOP( new ScreeningFeatures );
+	return utility::pointer::make_shared< ScreeningFeatures >();
 }
 
 void ScreeningFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

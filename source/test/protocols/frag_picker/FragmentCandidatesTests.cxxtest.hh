@@ -53,7 +53,7 @@ public:
 	// test for reading fragments and vall files
 	void test_read_vall_fragments() {
 
-		chunks_ = protocols::frag_picker::VallProviderOP( new VallProvider() );
+		chunks_ = utility::pointer::make_shared< VallProvider >();
 		chunks_->vallChunksFromLibrary("protocols/frag_picker/1a32A-H1.vall");
 		TS_ASSERT( chunks_->size() == 229);
 

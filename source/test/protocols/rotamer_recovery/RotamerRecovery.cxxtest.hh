@@ -135,7 +135,7 @@ public:
 
 		TaskFactory task_factory;
 
-		task_factory.push_back( TaskOperationCOP( new RestrictToRepacking ) );
+		task_factory.push_back( utility::pointer::make_shared< RestrictToRepacking >() );
 		packer_task_1ten_ = task_factory.create_task_and_apply_taskoperations( pose_1ten_ );
 
 	}

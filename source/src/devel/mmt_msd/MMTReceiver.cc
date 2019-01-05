@@ -312,7 +312,7 @@ MMTReceiver::initialize_state_data( StateInputData const & sid )
 	StateData sd;
 
 	// initialize the pose
-	sd.pose = core::pose::PoseOP( new core::pose::Pose );
+	sd.pose = utility::pointer::make_shared< core::pose::Pose >();
 	core::import_pose::ImportPoseOptions import_opts;
 	core::import_pose::pose_from_pdbstring( *sd.pose, sid.pdb_string, import_opts, sid.pdb_name );
 

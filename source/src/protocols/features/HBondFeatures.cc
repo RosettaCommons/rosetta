@@ -186,8 +186,8 @@ HBondFeatures::write_hbond_chem_types_table_schema(
 	using namespace basic::database::schema_generator;
 	using boost::assign::list_of;
 
-	Column chem_type("chem_type", DbDataTypeOP( new DbText(255) ));
-	Column label("label", DbDataTypeOP( new DbText(255) ));
+	Column chem_type("chem_type", utility::pointer::make_shared< DbText >(255));
+	Column label("label", utility::pointer::make_shared< DbText >(255));
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(chem_type);
@@ -246,15 +246,15 @@ HBondFeatures::write_hbond_sites_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
-	Column site_id("site_id", DbDataTypeOP( new DbInteger() ));
-	Column resNum("resNum", DbDataTypeOP( new DbInteger() ));
-	Column atmNum("atmNum", DbDataTypeOP( new DbInteger() ));
-	Column is_donor("is_donor", DbDataTypeOP( new DbInteger() ));
-	Column chain("chain", DbDataTypeOP( new DbInteger() ));
-	Column resType("resType", DbDataTypeOP( new DbText() ));
-	Column atmType("atmType", DbDataTypeOP( new DbText() ));
-	Column HBChemType("HBChemType", DbDataTypeOP( new DbText(255) ));
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >());
+	Column site_id("site_id", utility::pointer::make_shared< DbInteger >());
+	Column resNum("resNum", utility::pointer::make_shared< DbInteger >());
+	Column atmNum("atmNum", utility::pointer::make_shared< DbInteger >());
+	Column is_donor("is_donor", utility::pointer::make_shared< DbInteger >());
+	Column chain("chain", utility::pointer::make_shared< DbInteger >());
+	Column resType("resType", utility::pointer::make_shared< DbText >());
+	Column atmType("atmType", utility::pointer::make_shared< DbText >());
+	Column HBChemType("HBChemType", utility::pointer::make_shared< DbText >(255));
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -296,13 +296,13 @@ HBondFeatures::write_hbond_sites_pdb_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
-	Column site_id("site_id", DbDataTypeOP( new DbInteger() ));
-	Column chain("chain", DbDataTypeOP( new DbText(1) ));
-	Column resNum("resNum", DbDataTypeOP( new DbInteger() ));
-	Column iCode("iCode", DbDataTypeOP( new DbText(1) ));
-	Column heavy_atom_temperature("heavy_atom_temperature", DbDataTypeOP( new DbReal() ));
-	Column heavy_atom_occupancy("heavy_atom_occupancy", DbDataTypeOP( new DbReal() ));
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >());
+	Column site_id("site_id", utility::pointer::make_shared< DbInteger >());
+	Column chain("chain", utility::pointer::make_shared< DbText >(1));
+	Column resNum("resNum", utility::pointer::make_shared< DbInteger >());
+	Column iCode("iCode", utility::pointer::make_shared< DbText >(1));
+	Column heavy_atom_temperature("heavy_atom_temperature", utility::pointer::make_shared< DbReal >());
+	Column heavy_atom_occupancy("heavy_atom_occupancy", utility::pointer::make_shared< DbReal >());
 
 
 	Columns primary_key_columns;
@@ -335,13 +335,13 @@ HBondFeatures::write_hbond_site_environment_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
-	Column site_id("site_id", DbDataTypeOP( new DbInteger() ));
-	Column sasa_r100("sasa_r100", DbDataTypeOP( new DbReal() ));
-	Column sasa_r140("sasa_r140", DbDataTypeOP( new DbReal() ));
-	Column sasa_r200("sasa_r200", DbDataTypeOP( new DbReal() ));
-	Column hbond_energy("hbond_energy", DbDataTypeOP( new DbReal() ));
-	Column num_hbonds("num_hbonds", DbDataTypeOP( new DbInteger() ));
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >());
+	Column site_id("site_id", utility::pointer::make_shared< DbInteger >());
+	Column sasa_r100("sasa_r100", utility::pointer::make_shared< DbReal >());
+	Column sasa_r140("sasa_r140", utility::pointer::make_shared< DbReal >());
+	Column sasa_r200("sasa_r200", utility::pointer::make_shared< DbReal >());
+	Column hbond_energy("hbond_energy", utility::pointer::make_shared< DbReal >());
+	Column num_hbonds("num_hbonds", utility::pointer::make_shared< DbInteger >());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -373,20 +373,20 @@ HBondFeatures::write_hbond_site_atoms_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
-	Column site_id("site_id", DbDataTypeOP( new DbInteger() ));
-	Column atm_x("atm_x", DbDataTypeOP( new DbReal() ));
-	Column atm_y("atm_y", DbDataTypeOP( new DbReal() ));
-	Column atm_z("atm_z", DbDataTypeOP( new DbReal() ));
-	Column base_x("base_x", DbDataTypeOP( new DbReal() ));
-	Column base_y("base_y", DbDataTypeOP( new DbReal() ));
-	Column base_z("base_z", DbDataTypeOP( new DbReal() ));
-	Column bbase_x("bbase_x", DbDataTypeOP( new DbReal() ));
-	Column bbase_y("bbase_y", DbDataTypeOP( new DbReal() ));
-	Column bbase_z("bbase_z", DbDataTypeOP( new DbReal() ));
-	Column base2_x("base2_x", DbDataTypeOP( new DbReal() ));
-	Column base2_y("base2_y", DbDataTypeOP( new DbReal() ));
-	Column base2_z("base2_z", DbDataTypeOP( new DbReal() ));
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >());
+	Column site_id("site_id", utility::pointer::make_shared< DbInteger >());
+	Column atm_x("atm_x", utility::pointer::make_shared< DbReal >());
+	Column atm_y("atm_y", utility::pointer::make_shared< DbReal >());
+	Column atm_z("atm_z", utility::pointer::make_shared< DbReal >());
+	Column base_x("base_x", utility::pointer::make_shared< DbReal >());
+	Column base_y("base_y", utility::pointer::make_shared< DbReal >());
+	Column base_z("base_z", utility::pointer::make_shared< DbReal >());
+	Column bbase_x("bbase_x", utility::pointer::make_shared< DbReal >());
+	Column bbase_y("bbase_y", utility::pointer::make_shared< DbReal >());
+	Column bbase_z("bbase_z", utility::pointer::make_shared< DbReal >());
+	Column base2_x("base2_x", utility::pointer::make_shared< DbReal >());
+	Column base2_y("base2_y", utility::pointer::make_shared< DbReal >());
+	Column base2_z("base2_z", utility::pointer::make_shared< DbReal >());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -425,16 +425,16 @@ HBondFeatures::write_hbonds_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
-	Column hbond_id("hbond_id", DbDataTypeOP( new DbInteger() ));
-	Column don_id("don_id", DbDataTypeOP( new DbInteger() ));
-	Column acc_id("acc_id", DbDataTypeOP( new DbInteger() ));
-	Column HBEvalType("HBEvalType", DbDataTypeOP( new DbInteger() ));
-	Column energy("energy", DbDataTypeOP( new DbReal() ));
-	Column envWeight("envWeight", DbDataTypeOP( new DbReal() ));
-	Column score_weight("score_weight", DbDataTypeOP( new DbReal() ));
-	Column donRank("donRank", DbDataTypeOP( new DbInteger() ));
-	Column accRank("accRank", DbDataTypeOP( new DbInteger() ));
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >());
+	Column hbond_id("hbond_id", utility::pointer::make_shared< DbInteger >());
+	Column don_id("don_id", utility::pointer::make_shared< DbInteger >());
+	Column acc_id("acc_id", utility::pointer::make_shared< DbInteger >());
+	Column HBEvalType("HBEvalType", utility::pointer::make_shared< DbInteger >());
+	Column energy("energy", utility::pointer::make_shared< DbReal >());
+	Column envWeight("envWeight", utility::pointer::make_shared< DbReal >());
+	Column score_weight("score_weight", utility::pointer::make_shared< DbReal >());
+	Column donRank("donRank", utility::pointer::make_shared< DbInteger >());
+	Column accRank("accRank", utility::pointer::make_shared< DbInteger >());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -478,20 +478,20 @@ HBondFeatures::write_hbond_lennard_jones_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
-	Column hbond_id("hbond_id", DbDataTypeOP( new DbInteger() ));
-	Column don_acc_atrE("don_acc_atrE", DbDataTypeOP( new DbReal() ));
-	Column don_acc_repE("don_acc_repE", DbDataTypeOP( new DbReal() ));
-	Column don_acc_solv("don_acc_solv", DbDataTypeOP( new DbReal() ));
-	Column don_acc_base_atrE("don_acc_base_atrE", DbDataTypeOP( new DbReal() ));
-	Column don_acc_base_repE("don_acc_base_repE", DbDataTypeOP( new DbReal() ));
-	Column don_acc_base_solv("don_acc_base_solv", DbDataTypeOP( new DbReal() ));
-	Column h_acc_atrE("h_acc_atrE", DbDataTypeOP( new DbReal() ));
-	Column h_acc_repE("h_acc_repE", DbDataTypeOP( new DbReal() ));
-	Column h_acc_solv("h_acc_solv", DbDataTypeOP( new DbReal() ));
-	Column h_acc_base_atrE("h_acc_base_atrE", DbDataTypeOP( new DbReal() ));
-	Column h_acc_base_repE("h_acc_base_repE", DbDataTypeOP( new DbReal() ));
-	Column h_acc_base_solv("h_acc_base_solv", DbDataTypeOP( new DbReal() ));
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >());
+	Column hbond_id("hbond_id", utility::pointer::make_shared< DbInteger >());
+	Column don_acc_atrE("don_acc_atrE", utility::pointer::make_shared< DbReal >());
+	Column don_acc_repE("don_acc_repE", utility::pointer::make_shared< DbReal >());
+	Column don_acc_solv("don_acc_solv", utility::pointer::make_shared< DbReal >());
+	Column don_acc_base_atrE("don_acc_base_atrE", utility::pointer::make_shared< DbReal >());
+	Column don_acc_base_repE("don_acc_base_repE", utility::pointer::make_shared< DbReal >());
+	Column don_acc_base_solv("don_acc_base_solv", utility::pointer::make_shared< DbReal >());
+	Column h_acc_atrE("h_acc_atrE", utility::pointer::make_shared< DbReal >());
+	Column h_acc_repE("h_acc_repE", utility::pointer::make_shared< DbReal >());
+	Column h_acc_solv("h_acc_solv", utility::pointer::make_shared< DbReal >());
+	Column h_acc_base_atrE("h_acc_base_atrE", utility::pointer::make_shared< DbReal >());
+	Column h_acc_base_repE("h_acc_base_repE", utility::pointer::make_shared< DbReal >());
+	Column h_acc_base_solv("h_acc_base_solv", utility::pointer::make_shared< DbReal >());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -530,12 +530,12 @@ HBondFeatures::write_hbond_geom_coords_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
-	Column hbond_id("hbond_id", DbDataTypeOP( new DbInteger() ));
-	Column AHdist("AHdist", DbDataTypeOP( new DbReal() ));
-	Column cosBAH("cosBAH", DbDataTypeOP( new DbReal() ));
-	Column cosAHD("cosAHD", DbDataTypeOP( new DbReal() ));
-	Column chi("chi", DbDataTypeOP( new DbReal() ));
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >());
+	Column hbond_id("hbond_id", utility::pointer::make_shared< DbInteger >());
+	Column AHdist("AHdist", utility::pointer::make_shared< DbReal >());
+	Column cosBAH("cosBAH", utility::pointer::make_shared< DbReal >());
+	Column cosAHD("cosAHD", utility::pointer::make_shared< DbReal >());
+	Column chi("chi", utility::pointer::make_shared< DbReal >());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -566,9 +566,9 @@ HBondFeatures::write_hbond_dehydrons_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
-	Column hbond_id("hbond_id", DbDataTypeOP( new DbInteger() ));
-	Column wrapping_count("wrapping_count", DbDataTypeOP( new DbInteger() ));
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >());
+	Column hbond_id("hbond_id", utility::pointer::make_shared< DbInteger >());
+	Column wrapping_count("wrapping_count", utility::pointer::make_shared< DbInteger >());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -1269,7 +1269,7 @@ std::string HBondFeaturesCreator::type_name() const {
 
 protocols::features::FeaturesReporterOP
 HBondFeaturesCreator::create_features_reporter() const {
-	return protocols::features::FeaturesReporterOP( new HBondFeatures );
+	return utility::pointer::make_shared< HBondFeatures >();
 }
 
 void HBondFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -198,73 +198,73 @@ OPT_KEY( Boolean, parse_pathway )
 // // might be useful in a util.cc somewhere
 // core::scoring::constraints::ConstraintSetOP
 // constraint_set_slice( core::scoring::constraints::ConstraintSetOP & cst_set,
-// 												utility::vector1< core::Size > const & slice_res )
+//             utility::vector1< core::Size > const & slice_res )
 // {
 
-// 	using namespace core::scoring::constraints;
-// 	using namespace core::scoring;
-// 	using namespace core::id;
+//  using namespace core::scoring::constraints;
+//  using namespace core::scoring;
+//  using namespace core::id;
 
-// 	ConstraintSetOP cst_set_new( new scoring::constraints::ConstraintSet );
+//  ConstraintSetOP cst_set_new( new scoring::constraints::ConstraintSet );
 
-// 	ConstraintCOPs csts( cst_set->get_all_constraints() );
+//  ConstraintCOPs csts( cst_set->get_all_constraints() );
 
-// 	std::map< Size, Size > slice_map;
-// 	for (Size i = 1; i <= slice_res.size();i++) slice_map[ slice_res[ i ] ] = i;
+//  std::map< Size, Size > slice_map;
+//  for (Size i = 1; i <= slice_res.size();i++) slice_map[ slice_res[ i ] ] = i;
 
-// 	for ( Size n = 1; n <= csts.size(); n++ ) {
+//  for ( Size n = 1; n <= csts.size(); n++ ) {
 
-// 		ConstraintCOP const & cst( csts[n] );
+//   ConstraintCOP const & cst( csts[n] );
 
-// 		if ( cst->score_type() == atom_pair_constraint)  { // currently only defined for pairwise distance constraints.
-// 			Size const i = cst->atom( 1 ).rsd();
-// 			Size const j = cst->atom( 2 ).rsd();
-// 			//			Size const dist( shortest_path_in_fold_tree.dist( i , j ) );
-// 			//			if ( dist  > separation_cutoff ) continue;
+//   if ( cst->score_type() == atom_pair_constraint)  { // currently only defined for pairwise distance constraints.
+//    Size const i = cst->atom( 1 ).rsd();
+//    Size const j = cst->atom( 2 ).rsd();
+//    //   Size const dist( shortest_path_in_fold_tree.dist( i , j ) );
+//    //   if ( dist  > separation_cutoff ) continue;
 
-// 			if ( slice_map.find( i ) == slice_map.end()  ) continue;
-// 			if ( slice_map.find( j ) == slice_map.end()  ) continue;
+//    if ( slice_map.find( i ) == slice_map.end()  ) continue;
+//    if ( slice_map.find( j ) == slice_map.end()  ) continue;
 
-// 			//std::cout << "CST MAP: " << i << " " << slice_map[ i] << "          " << j << " " << slice_map[ j ] << std::endl;
-// 			AtomID atom1_new( cst->atom(1).atomno(),  slice_map[ i ]);
-// 			AtomID atom2_new( cst->atom(2).atomno(),  slice_map[ j ]);
-// 			ConstraintOP cst_new = new AtomPairConstraint( atom1_new, atom2_new,
-// 																										 cst->get_func().clone() /*is this defined?*/, cst->score_type() );
+//    //std::cout << "CST MAP: " << i << " " << slice_map[ i] << "          " << j << " " << slice_map[ j ] << std::endl;
+//    AtomID atom1_new( cst->atom(1).atomno(),  slice_map[ i ]);
+//    AtomID atom2_new( cst->atom(2).atomno(),  slice_map[ j ]);
+//    ConstraintOP cst_new = new AtomPairConstraint( atom1_new, atom2_new,
+//                            cst->get_func().clone() /*is this defined?*/, cst->score_type() );
 
-// 			cst_set_new->add_constraint( cst_new );
+//    cst_set_new->add_constraint( cst_new );
 
-// 		}
+//   }
 
-// 	}
+//  }
 
 
-// 	std::cout << "NUM CONSTRAINTS " << cst_set_new->get_all_constraints().size() << " out of " <<
-// 		csts.size() << std::endl;
+//  std::cout << "NUM CONSTRAINTS " << cst_set_new->get_all_constraints().size() << " out of " <<
+//   csts.size() << std::endl;
 
-// 	return cst_set_new;
+//  return cst_set_new;
 // }
 
 
 ///////////////////////////////////////////////////////////////////////////////
 core::io::pose_stream::PoseInputStreamOP
 setup_pose_input_stream(
-												utility::vector1< std::string > const & option_s1,
-												utility::vector1< std::string > const & option_silent1,
-												utility::vector1< std::string > const & option_tags1
-												){
+	utility::vector1< std::string > const & option_s1,
+	utility::vector1< std::string > const & option_silent1,
+	utility::vector1< std::string > const & option_tags1
+){
 	using namespace core::io::pose_stream;
 
 	PoseInputStreamOP input1;
 
-	if( option_s1.size() > 0 ) {
+	if ( option_s1.size() > 0 ) {
 		// pdb input(s).
 		input1 = new PDBPoseInputStream( option_s1 );
 
-	} else if ( option_silent1.size() > 0 ){
+	} else if ( option_silent1.size() > 0 ) {
 
-		if ( option_tags1.size() > 0) {
+		if ( option_tags1.size() > 0 ) {
 			input1 = new SilentFilePoseInputStream( option_silent1 ,
-																							option_tags1 );
+				option_tags1 );
 		} else {
 			input1 = new SilentFilePoseInputStream( option_silent1 );
 		}
@@ -321,7 +321,7 @@ parse_pathway_test(){
 	minimize_scorefxn->show( std::cout, start_pose );
 
 	std::string silent_file = input_pdb_file + ".sc";
-	if( option[ out::file::silent  ].user() )  silent_file = option[ out::file::silent  ]();
+	if ( option[ out::file::silent  ].user() )  silent_file = option[ out::file::silent  ]();
 
 	bool const add_peptide_plane_( true );
 
@@ -337,15 +337,15 @@ parse_pathway_test(){
 			if ( i > 1 && add_peptide_plane_ ) {
 				//Pose pose_copy = pose;
 				//remove_variant_type_from_pose_residue( pose, "LOWER_TERMINUS", 1  );
-				//				pose.set_xyz( core::id::AtomID( pose.residue(1).atom_index("H"),  1 ),
-				//											pose_copy.xyz( core::id::AtomID( pose.residue( 1 ).atom_index( "1H" ), 1 ) ) );
+				//    pose.set_xyz( core::id::AtomID( pose.residue(1).atom_index("H"),  1 ),
+				//           pose_copy.xyz( core::id::AtomID( pose.residue( 1 ).atom_index( "1H" ), 1 ) ) );
 				add_variant_type_to_pose_residue( pose, "N_ACETYLATION", 1 );
 				pose.set_phi( 1, start_pose.phi( i ) ) ;
 			}
 
 
 			if ( j < nres && add_peptide_plane_ ) {
-				//				remove_variant_type_from_pose_residue( pose, "UPPER_TERMINUS", pose.size()  );
+				//    remove_variant_type_from_pose_residue( pose, "UPPER_TERMINUS", pose.size()  );
 				add_variant_type_to_pose_residue( pose, "C_METHYLAMIDATION", pose.size() );
 				pose.set_psi( pose.size(), start_pose.psi( j ) ) ;
 				pose.set_omega( pose.size(), start_pose.omega( j ) ) ;
@@ -403,22 +403,22 @@ stepwise_template_test(){
 	Pose full_pose;
 	make_pose_from_sequence( full_pose, desired_sequence, *rsd_set );
 	bool read_start_pdb_from_disk( false );
-	//	if ( option[ in::file::s ].user() ) {
-		//		io::pdb::pose_from_file( full_pose, *rsd_set, option[ in::file::s]()[1] , core::import_pose::PDB_file);
-		//		read_start_pdb_from_disk = true;
-	//	}
+	// if ( option[ in::file::s ].user() ) {
+	//  io::pdb::pose_from_file( full_pose, *rsd_set, option[ in::file::s]()[1] , core::import_pose::PDB_file);
+	//  read_start_pdb_from_disk = true;
+	// }
 
 	/////////////////////
 	// Read in native
 	PoseOP native_pose, align_pose;
-	if (option[ in::file::native ].user() ) {
-		native_pose = PoseOP( new Pose );
+	if ( option[ in::file::native ].user() ) {
+		native_pose = utility::pointer::make_shared< Pose >();
 		std::string native_pdb_file  = option[ in::file::native ];
 		io::pdb::pose_from_file( *native_pose, *rsd_set, native_pdb_file , core::import_pose::PDB_file);
 		if ( desired_sequence != native_pose->sequence() ) utility_exit_with_message( "Native pose sequence looks wrong." );
 	}
-	if (option[ align_pdb ].user() ) {
-		align_pose = PoseOP( new Pose );
+	if ( option[ align_pdb ].user() ) {
+		align_pose = utility::pointer::make_shared< Pose >();
 		std::string align_pdb_file  = option[ align_pdb ]();
 		io::pdb::pose_from_file( *align_pose, *rsd_set, align_pdb_file , core::import_pose::PDB_file);
 	}
@@ -470,7 +470,7 @@ stepwise_template_test(){
 		pose.set_psi( pos, 150);
 		pose.set_omega( pos, 180 );
 	}
-	//	pose.dump_pdb( "extended.pdb" );
+	// pose.dump_pdb( "extended.pdb" );
 
 	// Constraints...
 	ConstraintSetOP cst_set;
@@ -487,7 +487,7 @@ stepwise_template_test(){
 	ScoreFunctionOP pack_scorefxn = ScoreFunctionFactory::create_score_function( option[pack_weights] );
 	ScoreFunctionOP minimize_scorefxn = get_score_function();
 
-	if ( constraints_exist ){
+	if ( constraints_exist ) {
 		pack_scorefxn->set_weight( atom_pair_constraint, 1.0 );
 		minimize_scorefxn->set_weight( atom_pair_constraint, 1.0 );
 	}
@@ -511,7 +511,7 @@ stepwise_template_test(){
 
 
 	//////////////////////////////////////////
- 	// main loop.
+	// main loop.
 	//////////////////////////////////////////
 	PoseInputStreamOP stream1 = setup_pose_input_stream( option[ s1 ](), option[ silent1 ](), option[ tags1 ]() );
 	PoseInputStreamOP stream2 = setup_pose_input_stream( option[ s2 ](), option[ silent2 ](), option[ tags2 ]() );
@@ -521,15 +521,15 @@ stepwise_template_test(){
 
 	utility::vector1< Size > const slice_res1_ = option[ slice_res1 ]();
 	utility::vector1< Size > const slice_res2_ = option[ slice_res2 ]();
- 	Pose pose_silent, input_pose1, input_pose2;
+	Pose pose_silent, input_pose1, input_pose2;
 	Pose start_pose = pose;
 	Size count1( 0 ), count2( 0 );
- 	while ( stream1->has_another_pose() ) {
+	while ( stream1->has_another_pose() ) {
 
 		pose = start_pose;
 
 		stream1->fill_pose( input_pose1, *rsd_set );
-		//		pose.dump_pdb( "start0.pdb" );
+		//  pose.dump_pdb( "start0.pdb" );
 
 		if ( input_pose1.size() > 0 ) {
 			if ( slice_res1_.size() > 0 ) pdbslice( input_pose1, slice_res1_ );
@@ -540,23 +540,23 @@ stepwise_template_test(){
 		}
 		count1 += 1;
 
-		//		pose.dump_pdb( "start1.pdb" );
+		//  pose.dump_pdb( "start1.pdb" );
 
 		while ( stream2->has_another_pose() ) {
 
 			stream2->fill_pose( input_pose2, *rsd_set );
 			if ( input_pose2.size() > 0 ) {
-				if ( slice_res2_.size() > 0 ) 	 pdbslice( input_pose2, slice_res2_ );
+				if ( slice_res2_.size() > 0 )   pdbslice( input_pose2, slice_res2_ );
 				copy_dofs( pose, input_pose2, res_map2 );
 			}
 			count2 += 1;
 
-			//			pose.dump_pdb( "start2.pdb" );
+			//   pose.dump_pdb( "start2.pdb" );
 
 			(*minimize_scorefxn)( pose );
 			if ( option[ output_start ] ) output_silent_struct( pose, native_pose, silent_file, "START" );
 
-			if ( align_pose ){
+			if ( align_pose ) {
 				id::AtomID_Map< id::AtomID > const & alignment_atom_id_map =
 					create_alignment_id_map( pose, *align_pose, superimpose_res );
 				core::scoring::superimpose_pose( pose, *align_pose, alignment_atom_id_map);
@@ -591,10 +591,10 @@ cluster_outfile_test(){
 	protocols::stepwise::StepWiseLegacyClusterer stepwise_clusterer( silent_files_in );
 
 	Size max_decoys( 400 );
-	if ( option[ out::nstruct].user() )	 max_decoys =  option[ out::nstruct ];
+	if ( option[ out::nstruct].user() )  max_decoys =  option[ out::nstruct ];
 	stepwise_clusterer.set_max_decoys( max_decoys );
 
-	stepwise_clusterer.set_cluster_radius(	option[ OptionKeys::cluster::radius ]()	);
+	stepwise_clusterer.set_cluster_radius( option[ OptionKeys::cluster::radius ]() );
 	stepwise_clusterer.set_cluster_by_all_atom_rmsd( option[ cluster_by_all_atom_rmsd ] );
 	stepwise_clusterer.set_score_diff_cut( option[ score_diff_cut ] );
 	stepwise_clusterer.set_auto_tune( option[ auto_tune ] );
@@ -615,9 +615,9 @@ my_main( void* )
 
 	using namespace core::options;
 
-	if ( option[ cluster_test ] ){
+	if ( option[ cluster_test ] ) {
 		cluster_outfile_test();
-	} else if ( option[ parse_pathway ] ){
+	} else if ( option[ parse_pathway ] ) {
 		parse_pathway_test();
 	} else {
 		stepwise_template_test();
@@ -634,50 +634,50 @@ main( int argc, char * argv [] )
 
 	try {
 
-	using namespace core::options;
+		using namespace core::options;
 
-	utility::vector1< Size > blank_size_vector;
-	utility::vector1< std::string > blank_string_vector;
+		utility::vector1< Size > blank_size_vector;
+		utility::vector1< std::string > blank_string_vector;
 
-	//Uh, options?
-	NEW_OPT( cluster_test, "cluster", false );
-	NEW_OPT( cst_file, "Input file for constraints", "default.constraints" );
+		//Uh, options?
+		NEW_OPT( cluster_test, "cluster", false );
+		NEW_OPT( cst_file, "Input file for constraints", "default.constraints" );
 
-	NEW_OPT( s1, "input file(s)", blank_string_vector );
-	NEW_OPT( s2, "input file(s)", blank_string_vector );
-	NEW_OPT( silent1, "input file", blank_string_vector );
-	NEW_OPT( silent2, "input file", blank_string_vector );
-	NEW_OPT( tags1, "input tag(s)", blank_string_vector );
-	NEW_OPT( tags2, "input tag(s)", blank_string_vector );
-	NEW_OPT( slice_res1, "Residues to slice out of starting file", blank_size_vector );
-	NEW_OPT( slice_res2, "Residues to slice out of starting file", blank_size_vector );
-	NEW_OPT( input_res1, "Residues already present in starting file", blank_size_vector );
-	NEW_OPT( input_res2, "Residues already present in starting file2", blank_size_vector );
-	NEW_OPT( pack_weights, "weights for green packing", "standard.wts" );
-	NEW_OPT( align_pdb, "PDB file for alignment", "" );
-	NEW_OPT( score_diff_cut, "score difference cut for clustering", 1000000.0 );
-	NEW_OPT( cluster_by_all_atom_rmsd, "cluster by all atom rmsd", false );
-	NEW_OPT( output_start, "output starting pdb", false );
-	NEW_OPT( auto_tune, "autotune rmsd for clustering between 0.1A up to 2.0A", false );
-	NEW_OPT( parse_pathway, "parse the pathway", false );
+		NEW_OPT( s1, "input file(s)", blank_string_vector );
+		NEW_OPT( s2, "input file(s)", blank_string_vector );
+		NEW_OPT( silent1, "input file", blank_string_vector );
+		NEW_OPT( silent2, "input file", blank_string_vector );
+		NEW_OPT( tags1, "input tag(s)", blank_string_vector );
+		NEW_OPT( tags2, "input tag(s)", blank_string_vector );
+		NEW_OPT( slice_res1, "Residues to slice out of starting file", blank_size_vector );
+		NEW_OPT( slice_res2, "Residues to slice out of starting file", blank_size_vector );
+		NEW_OPT( input_res1, "Residues already present in starting file", blank_size_vector );
+		NEW_OPT( input_res2, "Residues already present in starting file2", blank_size_vector );
+		NEW_OPT( pack_weights, "weights for green packing", "standard.wts" );
+		NEW_OPT( align_pdb, "PDB file for alignment", "" );
+		NEW_OPT( score_diff_cut, "score difference cut for clustering", 1000000.0 );
+		NEW_OPT( cluster_by_all_atom_rmsd, "cluster by all atom rmsd", false );
+		NEW_OPT( output_start, "output starting pdb", false );
+		NEW_OPT( auto_tune, "autotune rmsd for clustering between 0.1A up to 2.0A", false );
+		NEW_OPT( parse_pathway, "parse the pathway", false );
 
-	////////////////////////////////////////////////////////////////////////////
-	// setup
-	////////////////////////////////////////////////////////////////////////////
-	devel::init(argc, argv);
+		////////////////////////////////////////////////////////////////////////////
+		// setup
+		////////////////////////////////////////////////////////////////////////////
+		devel::init(argc, argv);
 
 
-	////////////////////////////////////////////////////////////////////////////
-	// end of setup
-	////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		////////////////////////////////////////////////////////////////////////////
 
-	protocols::viewer::viewer_main( my_main );
+		protocols::viewer::viewer_main( my_main );
 
-	exit( 0 );
+		exit( 0 );
 
-	////////////////////////////////////////////////////////////////////////////
-	// end of setup
-	////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		////////////////////////////////////////////////////////////////////////////
 
 	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

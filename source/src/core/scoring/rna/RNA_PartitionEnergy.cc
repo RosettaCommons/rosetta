@@ -56,7 +56,7 @@ methods::EnergyMethodOP
 RNA_PartitionEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new RNA_PartitionEnergy );
+	return utility::pointer::make_shared< RNA_PartitionEnergy >();
 }
 
 ScoreTypes
@@ -69,14 +69,14 @@ RNA_PartitionEnergyCreator::score_types_for_method() const {
 
 /// c-tor // TODO initialize partition cache here
 RNA_PartitionEnergy::RNA_PartitionEnergy() :
-	parent1( methods::EnergyMethodCreatorOP( new RNA_PartitionEnergyCreator ) ),
+	parent1( utility::pointer::make_shared< RNA_PartitionEnergyCreator >() ),
 	parent2()
 {}
 
 /// copy
 RNA_PartitionEnergy::RNA_PartitionEnergy(
 	RNA_PartitionEnergy const & src) :
-	parent1( methods::EnergyMethodCreatorOP( new RNA_PartitionEnergyCreator ) ),
+	parent1( utility::pointer::make_shared< RNA_PartitionEnergyCreator >() ),
 	parent2( src ),
 	partition_cache_( src.partition_cache_ ),
 	global_mapping_( src.global_mapping_ ),
@@ -88,7 +88,7 @@ RNA_PartitionEnergy::RNA_PartitionEnergy(
 methods::EnergyMethodOP
 RNA_PartitionEnergy::clone() const
 {
-	return methods::EnergyMethodOP( new RNA_PartitionEnergy( *this ) );
+	return utility::pointer::make_shared< RNA_PartitionEnergy >( *this );
 }
 
 

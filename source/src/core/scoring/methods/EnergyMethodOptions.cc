@@ -117,8 +117,8 @@ EnergyMethodOptions::EnergyMethodOptions( utility::options::OptionCollection con
 	geom_sol_intrares_path_distance_cutoff_( 7 ), // originally implemented for RNA base/phosphate.
 	eval_intrares_elec_ST_only_( false ),
 	envsmooth_zero_negatives_( false ),
-	hbond_options_(hbonds::HBondOptionsOP( new hbonds::HBondOptions( options ) )),
-	etable_options_(core::scoring::etable::EtableOptionsOP( new core::scoring::etable::EtableOptions( options ) )),
+	hbond_options_(utility::pointer::make_shared< hbonds::HBondOptions >( options )),
+	etable_options_(utility::pointer::make_shared< core::scoring::etable::EtableOptions >( options )),
 	rna_options_( new rna::RNA_EnergyMethodOptions() ),
 	free_dof_options_( new methods::FreeDOF_Options() ),
 	cst_max_seq_sep_( std::numeric_limits<core::Size>::max() ),
@@ -218,10 +218,10 @@ EnergyMethodOptions::operator = (EnergyMethodOptions const & src) {
 		geom_sol_intrares_path_distance_cutoff_ = src.geom_sol_intrares_path_distance_cutoff_;
 		eval_intrares_elec_ST_only_ = src.eval_intrares_elec_ST_only_;
 		envsmooth_zero_negatives_ = src.envsmooth_zero_negatives_;
-		hbond_options_ = hbonds::HBondOptionsOP( new hbonds::HBondOptions( *(src.hbond_options_) ) );
-		etable_options_ = core::scoring::etable::EtableOptionsOP( new etable::EtableOptions( *(src.etable_options_) ) );
-		rna_options_ = rna::RNA_EnergyMethodOptionsOP( new rna::RNA_EnergyMethodOptions( *(src.rna_options_) ) );
-		free_dof_options_ = methods::FreeDOF_OptionsOP( new methods::FreeDOF_Options( *(src.free_dof_options_) ) );
+		hbond_options_ = utility::pointer::make_shared< hbonds::HBondOptions >( *(src.hbond_options_) );
+		etable_options_ = utility::pointer::make_shared< etable::EtableOptions >( *(src.etable_options_) );
+		rna_options_ = utility::pointer::make_shared< rna::RNA_EnergyMethodOptions >( *(src.rna_options_) );
+		free_dof_options_ = utility::pointer::make_shared< methods::FreeDOF_Options >( *(src.free_dof_options_) );
 		cst_max_seq_sep_ = src.cst_max_seq_sep_;
 		bond_angle_central_atoms_to_score_ = src.bond_angle_central_atoms_to_score_;
 		bond_angle_residue_type_param_set_ = src.bond_angle_residue_type_param_set_;
@@ -807,7 +807,7 @@ EnergyMethodOptions::hbond_options() {
 
 void
 EnergyMethodOptions::hbond_options( hbonds::HBondOptions const & opts ) {
-	hbond_options_ = hbonds::HBondOptionsOP( new hbonds::HBondOptions( opts ) );
+	hbond_options_ = utility::pointer::make_shared< hbonds::HBondOptions >( opts );
 }
 
 etable::EtableOptions const &
@@ -822,7 +822,7 @@ EnergyMethodOptions::etable_options() {
 
 void
 EnergyMethodOptions::etable_options( etable::EtableOptions const & opts ) {
-	etable_options_ = core::scoring::etable::EtableOptionsOP( new etable::EtableOptions( opts ) );
+	etable_options_ = utility::pointer::make_shared< etable::EtableOptions >( opts );
 }
 
 rna::RNA_EnergyMethodOptions const &
@@ -837,7 +837,7 @@ EnergyMethodOptions::rna_options() {
 
 void
 EnergyMethodOptions::rna_options( rna::RNA_EnergyMethodOptions const & opts ) {
-	rna_options_ = rna::RNA_EnergyMethodOptionsOP( new rna::RNA_EnergyMethodOptions( opts ) );
+	rna_options_ = utility::pointer::make_shared< rna::RNA_EnergyMethodOptions >( opts );
 }
 
 methods::FreeDOF_Options const &
@@ -852,7 +852,7 @@ EnergyMethodOptions::free_dof_options() {
 
 void
 EnergyMethodOptions::free_dof_options( methods::FreeDOF_Options const & opts ) {
-	free_dof_options_ = methods::FreeDOF_OptionsOP( new methods::FreeDOF_Options( opts ) );
+	free_dof_options_ = utility::pointer::make_shared< methods::FreeDOF_Options >( opts );
 }
 
 std::string const &
@@ -1544,10 +1544,10 @@ EnergyMethodOptions::write_score_function_method_options_table_schema(
 ) {
 	using namespace basic::database::schema_generator;
 
-	Column batch_id("batch_id", DbDataTypeOP( new DbInteger() ), true);
-	Column score_function_name("score_function_name", DbDataTypeOP( new DbText(255) ), true);
-	Column option_key("option_key", DbDataTypeOP( new DbText(255) ), true);
-	Column option_value("option_value", DbDataTypeOP( new DbText(255) ), true);
+	Column batch_id("batch_id", utility::pointer::make_shared< DbInteger >(), true);
+	Column score_function_name("score_function_name", utility::pointer::make_shared< DbText >(255), true);
+	Column option_key("option_key", utility::pointer::make_shared< DbText >(255), true);
+	Column option_value("option_value", utility::pointer::make_shared< DbText >(255), true);
 
 	utility::vector1<Column> pkey_cols;
 	pkey_cols.push_back(batch_id);

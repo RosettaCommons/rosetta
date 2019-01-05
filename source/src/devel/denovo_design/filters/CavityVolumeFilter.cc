@@ -73,7 +73,7 @@ namespace filters {
 
 // XRW TEMP protocols::filters::FilterOP
 // XRW TEMP CavityVolumeFilterCreator::create_filter() const {
-// XRW TEMP  return protocols::filters::FilterOP( new CavityVolumeFilter() );
+// XRW TEMP  return utility::pointer::make_shared< CavityVolumeFilter >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -100,13 +100,13 @@ CavityVolumeFilter::~CavityVolumeFilter() = default;
 protocols::filters::FilterOP
 CavityVolumeFilter::clone() const
 {
-	return protocols::filters::FilterOP( new CavityVolumeFilter(*this) );
+	return utility::pointer::make_shared< CavityVolumeFilter >(*this);
 }
 
 protocols::filters::FilterOP
 CavityVolumeFilter::fresh_instance() const
 {
-	return protocols::filters::FilterOP( new CavityVolumeFilter() );
+	return utility::pointer::make_shared< CavityVolumeFilter >();
 }
 
 void
@@ -248,7 +248,7 @@ std::string CavityVolumeFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 CavityVolumeFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new CavityVolumeFilter );
+	return utility::pointer::make_shared< CavityVolumeFilter >();
 }
 
 void CavityVolumeFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

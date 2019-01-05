@@ -37,7 +37,7 @@ using namespace core::scoring;
 static basic::Tracer TR( "protocols.simple_filters.AveragePathLengthFilter" );
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP AveragePathLengthFilterCreator::create_filter() const { return protocols::filters::FilterOP( new AveragePathLengthFilter ); }
+// XRW TEMP AveragePathLengthFilterCreator::create_filter() const { return utility::pointer::make_shared< AveragePathLengthFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP AveragePathLengthFilterCreator::keyname() const { return "AveragePathLength"; }
@@ -69,12 +69,12 @@ AveragePathLengthFilter::~AveragePathLengthFilter() = default;
 
 filters::FilterOP
 AveragePathLengthFilter::clone() const {
-	return filters::FilterOP( new AveragePathLengthFilter( *this ) );
+	return utility::pointer::make_shared< AveragePathLengthFilter >( *this );
 }
 
 filters::FilterOP
 AveragePathLengthFilter::fresh_instance() const {
-	return filters::FilterOP( new AveragePathLengthFilter() );
+	return utility::pointer::make_shared< AveragePathLengthFilter >();
 }
 
 core::Real
@@ -214,7 +214,7 @@ std::string AveragePathLengthFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 AveragePathLengthFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new AveragePathLengthFilter );
+	return utility::pointer::make_shared< AveragePathLengthFilter >();
 }
 
 void AveragePathLengthFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

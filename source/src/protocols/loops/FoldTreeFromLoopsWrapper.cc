@@ -41,7 +41,7 @@ static basic::Tracer TR( "protocols.loops.FoldTreeFromLoopsWrapper" );
 FoldTreeFromLoops::FoldTreeFromLoops() :
 	Mover( FoldTreeFromLoops::mover_name() ), loop_str_( "" )
 {
-	loops_ = LoopsOP( new Loops );
+	loops_ = utility::pointer::make_shared< Loops >();
 	loops_->clear();
 }
 
@@ -50,12 +50,12 @@ FoldTreeFromLoops::~FoldTreeFromLoops() = default;
 
 protocols::moves::MoverOP FoldTreeFromLoops::clone() const
 {
-	return protocols::moves::MoverOP( new FoldTreeFromLoops( *this ) );
+	return utility::pointer::make_shared< FoldTreeFromLoops >( *this );
 }
 
 protocols::moves::MoverOP FoldTreeFromLoops::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new FoldTreeFromLoops );
+	return utility::pointer::make_shared< FoldTreeFromLoops >();
 }
 
 void
@@ -119,7 +119,7 @@ LoopsOP FoldTreeFromLoops::loops() const
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP FoldTreeFromLoopsCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new FoldTreeFromLoops );
+// XRW TEMP  return utility::pointer::make_shared< FoldTreeFromLoops >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -157,7 +157,7 @@ FoldTreeFromLoops::add_cutpoint_variants( bool add_cp_variants ){
 
 protocols::moves::MoverOP
 FoldTreeFromLoopsCreator::create_mover() const {
-	return protocols::moves::MoverOP( new FoldTreeFromLoops );
+	return utility::pointer::make_shared< FoldTreeFromLoops >();
 }
 
 void FoldTreeFromLoopsCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -141,18 +141,18 @@ AverageDegreeFilter::parse_my_tag( utility::tag::TagCOP tag,
 
 protocols::filters::FilterOP
 AverageDegreeFilter::fresh_instance() const{
-	return protocols::filters::FilterOP( new AverageDegreeFilter() );
+	return utility::pointer::make_shared< AverageDegreeFilter >();
 }
 
 AverageDegreeFilter::~AverageDegreeFilter()= default;
 
 protocols::filters::FilterOP
 AverageDegreeFilter::clone() const{
-	return protocols::filters::FilterOP( new AverageDegreeFilter( *this ) );
+	return utility::pointer::make_shared< AverageDegreeFilter >( *this );
 }
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP AverageDegreeFilterCreator::create_filter() const { return protocols::filters::FilterOP( new AverageDegreeFilter ); }
+// XRW TEMP AverageDegreeFilterCreator::create_filter() const { return utility::pointer::make_shared< AverageDegreeFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP AverageDegreeFilterCreator::keyname() const { return "AverageDegree"; }
@@ -182,7 +182,7 @@ std::string AverageDegreeFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 AverageDegreeFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new AverageDegreeFilter );
+	return utility::pointer::make_shared< AverageDegreeFilter >();
 }
 
 void AverageDegreeFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

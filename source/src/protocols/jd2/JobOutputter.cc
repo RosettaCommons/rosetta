@@ -51,7 +51,7 @@ namespace jd2 {
 
 static basic::MemTracer mem_tr;
 
-JobOutputter::JobOutputter() : evaluators_(evaluation::PoseEvaluatorsOP( new protocols::evaluation::PoseEvaluators() )) {
+JobOutputter::JobOutputter() : evaluators_(utility::pointer::make_shared< protocols::evaluation::PoseEvaluators >()) {
 	evaluation::EvaluatorFactory::get_instance()->add_all_evaluators(*evaluators_);
 	mem_tr << "JobOutputter CSTOR" << std::endl;
 	set_defaults();
@@ -159,7 +159,7 @@ void JobOutputter::add_evaluation( evaluation::PoseEvaluatorOP ev_in ) {
 /// ( the list will be copied, the evaluations are OPs )
 ///
 void JobOutputter::set_evaluators( evaluation::PoseEvaluators const& ev_in ) {
-	evaluators_ = evaluation::PoseEvaluatorsOP( new protocols::evaluation::PoseEvaluators(ev_in) );
+	evaluators_ = utility::pointer::make_shared< protocols::evaluation::PoseEvaluators >(ev_in);
 }
 
 /// @brief clear the list of evaluators

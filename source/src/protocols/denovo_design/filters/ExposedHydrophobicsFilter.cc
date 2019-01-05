@@ -67,7 +67,7 @@ std::string const ExposedHydrophobicsFilter::hydrophobic_residues_ = "MLIVFAWY";
 
 // XRW TEMP protocols::filters::FilterOP
 // XRW TEMP ExposedHydrophobicsFilterCreator::create_filter() const {
-// XRW TEMP  return protocols::filters::FilterOP( new ExposedHydrophobicsFilter() );
+// XRW TEMP  return utility::pointer::make_shared< ExposedHydrophobicsFilter >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -94,13 +94,13 @@ ExposedHydrophobicsFilter::~ExposedHydrophobicsFilter() = default;
 protocols::filters::FilterOP
 ExposedHydrophobicsFilter::clone() const
 {
-	return protocols::filters::FilterOP( new ExposedHydrophobicsFilter(*this) );
+	return utility::pointer::make_shared< ExposedHydrophobicsFilter >(*this);
 }
 
 protocols::filters::FilterOP
 ExposedHydrophobicsFilter::fresh_instance() const
 {
-	return protocols::filters::FilterOP( new ExposedHydrophobicsFilter() );
+	return utility::pointer::make_shared< ExposedHydrophobicsFilter >();
 }
 
 void
@@ -216,7 +216,7 @@ std::string ExposedHydrophobicsFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 ExposedHydrophobicsFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new ExposedHydrophobicsFilter );
+	return utility::pointer::make_shared< ExposedHydrophobicsFilter >();
 }
 
 void ExposedHydrophobicsFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

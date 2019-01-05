@@ -77,7 +77,7 @@ methods::EnergyMethodOP
 RNA_FullAtomVDW_BasePhosphateCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
-	return methods::EnergyMethodOP( new RNA_FullAtomVDW_BasePhosphate( options ) );
+	return utility::pointer::make_shared< RNA_FullAtomVDW_BasePhosphate >( options );
 }
 
 ScoreTypes
@@ -94,14 +94,14 @@ RNA_FullAtomVDW_BasePhosphateCreator::score_types_for_method() const {
 RNA_FullAtomVDW_BasePhosphate::RNA_FullAtomVDW_BasePhosphate(
 	methods::EnergyMethodOptions const & options
 ):
-	parent( methods::EnergyMethodCreatorOP( new RNA_FullAtomVDW_BasePhosphateCreator ) )
+	parent( utility::pointer::make_shared< RNA_FullAtomVDW_BasePhosphateCreator >() )
 	//options_( options )
 {
 	etable::Etable const & etable = *(ScoringManager::get_instance()->etable( options ).lock());
 	if ( options.analytic_etable_evaluation() ) {
-		etable_evaluator_ = etable::EtableEvaluatorOP( new etable::AnalyticEtableEvaluator( etable ) );
+		etable_evaluator_ = utility::pointer::make_shared< etable::AnalyticEtableEvaluator >( etable );
 	} else {
-		etable_evaluator_ = etable::EtableEvaluatorOP( new etable::TableLookupEvaluator( etable ) );
+		etable_evaluator_ = utility::pointer::make_shared< etable::TableLookupEvaluator >( etable );
 	}
 
 	etable_evaluator_->set_scoretypes(
@@ -119,7 +119,7 @@ methods::EnergyMethodOP
 RNA_FullAtomVDW_BasePhosphate::clone() const
 {
 
-	return methods::EnergyMethodOP( new RNA_FullAtomVDW_BasePhosphate( *this ) );
+	return utility::pointer::make_shared< RNA_FullAtomVDW_BasePhosphate >( *this );
 }
 
 void

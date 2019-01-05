@@ -40,7 +40,7 @@ namespace simple_filters {
 static basic::Tracer TR( "protocols.simple_filters.StemFinder" );
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP StemFinderFilterCreator::create_filter() const { return protocols::filters::FilterOP( new StemFinder ); }
+// XRW TEMP StemFinderFilterCreator::create_filter() const { return utility::pointer::make_shared< StemFinder >(); }
 
 // XRW TEMP std::string
 // XRW TEMP StemFinderFilterCreator::keyname() const { return "StemFinder"; }
@@ -357,7 +357,7 @@ std::string StemFinderFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 StemFinderFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new StemFinder );
+	return utility::pointer::make_shared< StemFinder >();
 }
 
 void StemFinderFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

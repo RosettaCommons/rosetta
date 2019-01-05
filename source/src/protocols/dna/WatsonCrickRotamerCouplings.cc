@@ -54,7 +54,7 @@ static basic::Tracer TR( "protocols.dna.WatsonCrickRotamerCouplings", t_info );
 
 TaskOperationOP WatsonCrickRotamerCouplingsCreator::create_task_operation() const
 {
-	return TaskOperationOP( new WatsonCrickRotamerCouplings );
+	return utility::pointer::make_shared< WatsonCrickRotamerCouplings >();
 }
 
 void WatsonCrickRotamerCouplingsCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -71,7 +71,7 @@ WatsonCrickRotamerCouplings::~WatsonCrickRotamerCouplings() = default;
 
 TaskOperationOP WatsonCrickRotamerCouplings::clone() const
 {
-	return TaskOperationOP( new WatsonCrickRotamerCouplings( *this ) );
+	return utility::pointer::make_shared< WatsonCrickRotamerCouplings >( *this );
 }
 
 void
@@ -111,9 +111,9 @@ WatsonCrickRotamerCouplings::apply(
 			<< "." << pose.pdb_info()->number(bot) << "." << dna_full_name3( pose.residue_type(bot).name3() )
 			<< std::endl;
 		(*couplings)[ top ].first = bot;
-		(*couplings)[ top ].second = ResidueMatcherCOP( ResidueMatcherOP( new conformation::WatsonCrickResidueMatcher() ) );
+		(*couplings)[ top ].second = utility::pointer::make_shared< conformation::WatsonCrickResidueMatcher >();
 		(*couplings)[ bot ].first = top;
-		(*couplings)[ bot ].second = ResidueMatcherCOP( ResidueMatcherOP( new conformation::WatsonCrickResidueMatcher() ) );
+		(*couplings)[ bot ].second = utility::pointer::make_shared< conformation::WatsonCrickResidueMatcher >();
 	}
 	ptask.rotamer_couplings( couplings );
 }

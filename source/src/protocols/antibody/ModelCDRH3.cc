@@ -79,8 +79,8 @@ void ModelCDRH3::init( ) {
 		c_ter_stem_ = 0;
 	}
 
-	h3_cter_insert_mover_ = H3CterInsertOP( new H3CterInsert(ab_info_) );
-	h3_perturb_ccd_build_ = H3PerturbCCDOP( new H3PerturbCCD(ab_info_, lowres_scorefxn_) );
+	h3_cter_insert_mover_ = utility::pointer::make_shared< H3CterInsert >(ab_info_);
+	h3_perturb_ccd_build_ = utility::pointer::make_shared< H3PerturbCCD >(ab_info_, lowres_scorefxn_);
 }
 
 
@@ -115,7 +115,7 @@ void ModelCDRH3::set_lowres_score_func(scoring::ScoreFunctionCOP lowres_scorefxn
 
 
 void ModelCDRH3::set_task_factory(pack::task::TaskFactoryCOP tf) {
-	tf_ = pack::task::TaskFactoryOP( new pack::task::TaskFactory(*tf) );
+	tf_ = utility::pointer::make_shared< pack::task::TaskFactory >(*tf);
 }
 
 
@@ -245,7 +245,7 @@ void ModelCDRH3::apply( pose::Pose & pose_in ) {
 	}
 
 	antibody::AntibodyInfoOP starting_antibody;
-	starting_antibody = antibody::AntibodyInfoOP( new AntibodyInfo(*ab_info_) );
+	starting_antibody = utility::pointer::make_shared< AntibodyInfo >(*ab_info_);
 	bool closed_cutpoints( false );
 
 

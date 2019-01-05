@@ -528,7 +528,7 @@ find_pairing_idx( topology::StrandPairingSet & spairset, core::Size const s1, co
 }
 
 //protocols::filters::FilterOP
-//SheetTopologyFilterCreator::create_filter() const { return protocols::filters::FilterOP( new SheetTopologyFilter ); }
+//SheetTopologyFilterCreator::create_filter() const { return utility::pointer::make_shared< SheetTopologyFilter >(); }
 
 void
 SheetTopologyFilter::set_secstruct( std::string const & ss )
@@ -566,7 +566,7 @@ std::string SheetTopologyFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 SheetTopologyFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new SheetTopologyFilter );
+	return utility::pointer::make_shared< SheetTopologyFilter >();
 }
 
 void SheetTopologyFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

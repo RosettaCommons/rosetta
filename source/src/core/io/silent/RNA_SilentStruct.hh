@@ -93,7 +93,7 @@ public:
 	);
 
 	virtual SilentStructOP clone() const {
-		return SilentStructOP( new RNA_SilentStruct( *this ) );
+		return utility::pointer::make_shared< RNA_SilentStruct >( *this );
 	};
 
 	// destructor

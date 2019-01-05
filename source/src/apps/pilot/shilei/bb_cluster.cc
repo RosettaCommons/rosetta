@@ -94,7 +94,7 @@ int main(int argc, char *argv[])
 		for ( Size i = 1; i <= input_pdb_size; ++i ) {
 			std::string pdbnamei=basic::options::option[ basic::options::OptionKeys::in::file::s ]()[i];
 			//  TR << pdbnamei << endl;
-			pose = core::pose::PoseOP( new core::pose::Pose );
+			pose = utility::pointer::make_shared< core::pose::Pose >();
 			core::import_pose::pose_from_file( *pose, pdbnamei.c_str() , core::import_pose::PDB_file);
 			PoseVec.push_back(pose);
 		}

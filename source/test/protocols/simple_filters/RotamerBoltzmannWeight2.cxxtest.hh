@@ -109,7 +109,7 @@ public:
 
 		RotamerBoltzmannWeight2 rbw2;
 		rbw2.set_scorefxn( core::scoring::get_score_function() );
-		rbw2.set_residue_selector( core::select::residue_selector::ResidueSelectorCOP( new core::select::residue_selector::ResidueIndexSelector( "7" ) ) );
+		rbw2.set_residue_selector( utility::pointer::make_shared< core::select::residue_selector::ResidueIndexSelector >( "7" ) );
 
 		// hp: these scores actually aren't identical since they use different residue sets
 		//     increase the tolerance

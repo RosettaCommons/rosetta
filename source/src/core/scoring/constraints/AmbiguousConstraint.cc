@@ -68,7 +68,7 @@ AmbiguousConstraint::clone() const {
 
 MultiConstraintOP
 AmbiguousConstraint::empty_clone() const {
-	return MultiConstraintOP( new AmbiguousConstraint );
+	return utility::pointer::make_shared< AmbiguousConstraint >();
 }
 
 
@@ -189,7 +189,7 @@ AmbiguousConstraint::remap_resid( core::id::SequenceMapping const & seqmap ) con
 	}
 
 	if ( new_csts.size() > 0 ) {
-		return ConstraintOP( new AmbiguousConstraint( new_csts ) );
+		return utility::pointer::make_shared< AmbiguousConstraint >( new_csts );
 	} else return nullptr;
 
 }

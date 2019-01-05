@@ -41,7 +41,7 @@ GridBaseOP ClassicGridCreator::create_grid(utility::tag::TagCOP tag) const
 
 GridBaseOP ClassicGridCreator::create_grid() const
 {
-	return GridBaseOP( new ClassicGrid() );
+	return utility::pointer::make_shared< ClassicGrid >();
 }
 
 void ClassicGridCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -60,7 +60,7 @@ ClassicGrid::ClassicGrid(): SingleGrid("ClassicGrid"), atr_radius_(4.75), rep_ra
 }
 
 GridBaseOP ClassicGrid::clone() const {
-	return GridBaseOP( new ClassicGrid( *this ) );
+	return utility::pointer::make_shared< ClassicGrid >( *this );
 }
 
 utility::json_spirit::Value ClassicGrid::serialize() const

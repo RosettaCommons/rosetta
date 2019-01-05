@@ -169,7 +169,7 @@ void FragSetLoader::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd 
 }
 
 DataLoaderOP
-FragSetLoaderCreator::create_loader() const { return DataLoaderOP( new FragSetLoader ); }
+FragSetLoaderCreator::create_loader() const { return utility::pointer::make_shared< FragSetLoader >(); }
 
 std::string
 FragSetLoaderCreator::keyname() const {

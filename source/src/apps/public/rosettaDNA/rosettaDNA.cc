@@ -53,7 +53,7 @@ my_main( void * )
 	MoverOP dummy_mover( new DummyMover );
 
 	// loads dna-specific PDBOutput class into the JobDistributor
-	JobDistributor::get_instance()->go( dummy_mover, JobOutputterOP( new PDBOutput ) );
+	JobDistributor::get_instance()->go( dummy_mover, utility::pointer::make_shared< PDBOutput >() );
 
 	TR << "*********************successful completion**************************" << std::endl;
 	return nullptr;

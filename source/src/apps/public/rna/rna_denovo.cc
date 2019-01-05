@@ -195,9 +195,9 @@ public:
 		if ( rna_params_ == nullptr ) {
 			if ( !options_->rna_params_file().empty() ) {
 				std::cout << std::endl << options_->rna_params_file() << std::endl;
-				rna_params_ = RNA_DeNovoParametersCOP( new RNA_DeNovoParameters( options_->rna_params_file() ) );
+				rna_params_ = utility::pointer::make_shared< RNA_DeNovoParameters >( options_->rna_params_file() );
 			} else {
-				rna_params_ = RNA_DeNovoParametersCOP( new RNA_DeNovoParameters );
+				rna_params_ = utility::pointer::make_shared< RNA_DeNovoParameters >();
 			}
 		}
 		native_pose_ = rna_de_novo_setup->native_pose();
@@ -222,7 +222,7 @@ public:
 		// requires further setup later (once user input fragments have been inserted in the pose)
 		if ( options_->filter_vdw() ) {
 			protocols::scoring::fill_vdw_cached_rep_screen_info_from_options( pose, *job_options );
-			vdw_grid_ = protocols::stepwise::modeler::rna::checker::RNA_VDW_BinCheckerOP( new protocols::stepwise::modeler::rna::checker::RNA_VDW_BinChecker( pose ) );
+			vdw_grid_ = utility::pointer::make_shared< protocols::stepwise::modeler::rna::checker::RNA_VDW_BinChecker >( pose );
 		}
 
 		// RNA score function (both low-res and high-res).
@@ -269,7 +269,7 @@ public:
 
 		// main loop
 		if ( rna_fragment_monte_carlo_ == nullptr ) {
-			rna_fragment_monte_carlo_ = RNA_FragmentMonteCarloOP( new RNA_FragmentMonteCarlo( options_ ) );
+			rna_fragment_monte_carlo_ = utility::pointer::make_shared< RNA_FragmentMonteCarlo >( options_ );
 		}
 
 		rna_fragment_monte_carlo_->set_user_input_chunk_library( user_input_chunk_library );
@@ -427,8 +427,9 @@ public:
 		// Why do I need to supply the damn file name? That seems silly.
 		TR << "Making silent struct for " << out_file_tag << std::endl;
 
-		SilentStructOP s = ( options_->binary_rna_output() ) ? SilentStructOP( new BinarySilentStruct( opts, pose, out_file_tag ) ) :
-			SilentStructOP( new RNA_SilentStruct( opts, pose, out_file_tag ) );
+		SilentStructOP s = ( options_->binary_rna_output() ) ?
+			SilentStructOP( utility::pointer::make_shared< BinarySilentStruct >( opts, pose, out_file_tag ) ) :
+			SilentStructOP( utility::pointer::make_shared< RNA_SilentStruct >( opts, pose, out_file_tag ) );
 
 		if ( options_->use_chem_shift_data() ) add_chem_shift_info( *s, pose);
 

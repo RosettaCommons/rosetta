@@ -203,7 +203,7 @@ my_main( void* ) {
 	using namespace protocols::moves;
 
 	SequenceMoverOP seq( new SequenceMover() );
-	seq->add_mover( MoverOP( new compute_Irmsd() ) );
+	seq->add_mover( utility::pointer::make_shared< compute_Irmsd >() );
 
 	try{
 		protocols::jd2::JobDistributor::get_instance()->go( seq );

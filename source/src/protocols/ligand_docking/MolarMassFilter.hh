@@ -54,11 +54,11 @@ public:
 
 	bool apply( core::pose::Pose const & pose ) const override;
 	protocols::filters::FilterOP clone() const override {
-		return protocols::filters::FilterOP( new MolarMassFilter( *this ) );
+		return utility::pointer::make_shared< MolarMassFilter >( *this );
 	}
 
 	protocols::filters::FilterOP fresh_instance() const override{
-		return protocols::filters::FilterOP( new MolarMassFilter() );
+		return utility::pointer::make_shared< MolarMassFilter >();
 	}
 
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & reference_pose ) override;

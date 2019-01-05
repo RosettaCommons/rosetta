@@ -220,7 +220,7 @@ BackboneStubConstraint::BackboneStubConstraint(
 	// to get access to AngleConstraint derivatives
 	// note: PeriodicFunc has functional form y = ( k * cos(n * (x - x0) ) ) + C
 	func::FuncOP cos_func( new func::PeriodicFunc(0., 1., 1., 0.) );
-	ang_cst_ = AngleConstraintOP( new AngleConstraint( cos_func ) );
+	ang_cst_ = utility::pointer::make_shared< AngleConstraint >( cos_func );
 }
 
 //kdrew: this is the non-peptidic implementation (peptoids, beta-peptides, etc),
@@ -284,7 +284,7 @@ BackboneStubConstraint::BackboneStubConstraint(
 	// to get access to AngleConstraint derivatives
 	// note: PeriodicFunc has functional form y = ( k * cos(n * (x - x0) ) ) + C
 	func::FuncOP cos_func( new func::PeriodicFunc(0., 1., 1., 0.) );
-	ang_cst_ = AngleConstraintOP( new AngleConstraint( cos_func ) );
+	ang_cst_ = utility::pointer::make_shared< AngleConstraint >( cos_func );
 }
 
 //kdrew: this is the peptide centric implementation
@@ -344,7 +344,7 @@ BackboneStubConstraint::BackboneStubConstraint(
 	// to get access to AngleConstraint derivatives
 	// note: PeriodicFunc has functional form y = ( k * cos(n * (x - x0) ) ) + C
 	func::FuncOP cos_func( new func::PeriodicFunc(0., 1., 1., 0.) );
-	ang_cst_ = AngleConstraintOP( new AngleConstraint( cos_func ) );
+	ang_cst_ = utility::pointer::make_shared< AngleConstraint >( cos_func );
 }
 
 BackboneStubConstraint::BackboneStubConstraint( BackboneStubConstraint const & src ) :
@@ -651,7 +651,7 @@ ConstraintOP BackboneStubConstraint::remapped_clone( pose::Pose const& /*src*/, 
 	ala->set_xyz("C",backbone2_target_);
 	ala->set_xyz("N",backbone1_target_);
 
-	return ConstraintOP( new BackboneStubConstraint(dest, new_seqpos, new_fixed_atom_id, *ala, superposition_bonus_, force_constant_ ) );
+	return utility::pointer::make_shared< BackboneStubConstraint >(dest, new_seqpos, new_fixed_atom_id, *ala, superposition_bonus_, force_constant_ );
 }
 
 
@@ -665,7 +665,7 @@ AtomID remap_a1( atom1_.atomno(), seqmap[atom1_.rsd()] ),
 remap_a2( atom2_.atomno(), seqmap[atom2_.rsd()] ),
 remap_a3( atom3_.atomno(), seqmap[atom3_.rsd()] ),
 remap_a4( atom4_.atomno(), seqmap[atom4_.rsd()] );
-return ConstraintOP( new DihedralConstraint( remap_a1, remap_a2, remap_a3, remap_a4, this->func_ ) );
+return utility::pointer::make_shared< DihedralConstraint >( remap_a1, remap_a2, remap_a3, remap_a4, this->func_ );
 } else {
 return NULL;
 }

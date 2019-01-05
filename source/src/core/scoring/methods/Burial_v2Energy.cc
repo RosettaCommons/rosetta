@@ -49,7 +49,7 @@ methods::EnergyMethodOP
 Burial_v2EnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new Burial_v2Energy );
+	return utility::pointer::make_shared< Burial_v2Energy >();
 }
 
 ScoreTypes
@@ -63,7 +63,7 @@ Burial_v2EnergyCreator::score_types_for_method() const {
 
 /// clone
 EnergyMethodOP Burial_v2Energy::clone() const {
-	return EnergyMethodOP( new Burial_v2Energy );
+	return utility::pointer::make_shared< Burial_v2Energy >();
 }
 
 core::Real Burial_v2Energy::using_atom_distance(core::pose::Pose const & pose) const{

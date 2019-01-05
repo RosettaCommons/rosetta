@@ -141,14 +141,14 @@ GeneralAntibodyModeler::GeneralAntibodyModeler( GeneralAntibodyModeler const & s
 	if ( src.tf_ ) tf_ = src.tf_->clone();
 
 	if ( src.loops_operation_ ) {
-		loops_operation_ = RestrictToLoopsAndNeighborsOP( new RestrictToLoopsAndNeighbors( *src.loops_operation_ ));
+		loops_operation_ = utility::pointer::make_shared< RestrictToLoopsAndNeighbors >( *src.loops_operation_ );
 	}
 	if ( src.cmd_line_operation_ ) {
-		cmd_line_operation_ = InitializeFromCommandlineOP( new InitializeFromCommandline( *src.cmd_line_operation_ ));
+		cmd_line_operation_ = utility::pointer::make_shared< InitializeFromCommandline >( *src.cmd_line_operation_ );
 	}
 
 	if ( src.restrict_design_operation_ ) {
-		restrict_design_operation_ = RestrictToRepackingOP( new RestrictToRepacking( *src.restrict_design_operation_ ));
+		restrict_design_operation_ = utility::pointer::make_shared< RestrictToRepacking >( *src.restrict_design_operation_ );
 	}
 
 
@@ -157,7 +157,7 @@ GeneralAntibodyModeler::GeneralAntibodyModeler( GeneralAntibodyModeler const & s
 
 GeneralAntibodyModelerOP
 GeneralAntibodyModeler::clone() const {
-	return GeneralAntibodyModelerOP( new GeneralAntibodyModeler( *this ));
+	return utility::pointer::make_shared< GeneralAntibodyModeler >( *this );
 }
 void
 GeneralAntibodyModeler::read_command_line_options(){
@@ -182,19 +182,19 @@ void
 GeneralAntibodyModeler::setup_task_operations(){
 
 	tf_set_ = false;
-	cmd_line_operation_ = operation::InitializeFromCommandlineOP( new core::pack::task::operation::InitializeFromCommandline() );
-	restrict_design_operation_ = operation::RestrictToRepackingOP( new core::pack::task::operation::RestrictToRepacking() );
-	loops_operation_ = protocols::simple_task_operations::RestrictToLoopsAndNeighborsOP( new RestrictToLoopsAndNeighbors() );
+	cmd_line_operation_ = utility::pointer::make_shared< core::pack::task::operation::InitializeFromCommandline >();
+	restrict_design_operation_ = utility::pointer::make_shared< core::pack::task::operation::RestrictToRepacking >();
+	loops_operation_ = utility::pointer::make_shared< RestrictToLoopsAndNeighbors >();
 
-	tf_ = TaskFactoryOP( new core::pack::task::TaskFactory() );
-	interface_tf_ = TaskFactoryOP( new core::pack::task::TaskFactory() );
+	tf_ = utility::pointer::make_shared< core::pack::task::TaskFactory >();
+	interface_tf_ = utility::pointer::make_shared< core::pack::task::TaskFactory >();
 	interface_tf_->push_back(cmd_line_operation_);
 	interface_tf_->push_back( restrict_design_operation_);
-	interface_tf_->push_back(TaskOperationCOP( new RestrictToInterface(1, interface_dis_/*Distance*/) ));
+	interface_tf_->push_back(utility::pointer::make_shared< RestrictToInterface >(1, interface_dis_/*Distance*/));
 
-	interface_tf_->push_back( TaskOperationCOP( new ExtraRotamers( 0 /*all*/, 1 /*ex1*/, 1 /*level*/ ) ) );
-	interface_tf_->push_back( TaskOperationCOP( new ExtraRotamers( 0 /*all*/, 2 /*ex2*/, 1 /*level*/ ) ) );
-	interface_tf_->push_back(TaskOperationCOP( new IncludeCurrent() ));
+	interface_tf_->push_back( utility::pointer::make_shared< ExtraRotamers >( 0 /*all*/, 1 /*ex1*/, 1 /*level*/ ) );
+	interface_tf_->push_back( utility::pointer::make_shared< ExtraRotamers >( 0 /*all*/, 2 /*ex2*/, 1 /*level*/ ) );
+	interface_tf_->push_back(utility::pointer::make_shared< IncludeCurrent >());
 }
 
 void
@@ -430,9 +430,9 @@ GeneralAntibodyModeler::repack_cdrs(Pose& pose, bool include_neighbor_sc ) {
 		tf_->push_back(cmd_line_operation_ );
 		tf_->push_back( restrict_design_operation_ );
 		tf_->push_back(loops_operation_);
-		tf_->push_back( TaskOperationCOP( new ExtraRotamers( 0 /*all*/, 1 /*ex1*/, 1 /*level*/ ) ) );
-		tf_->push_back( TaskOperationCOP( new ExtraRotamers( 0 /*all*/, 2 /*ex2*/, 1 /*level*/ ) ) );
-		tf_->push_back(TaskOperationCOP( new IncludeCurrent() ));
+		tf_->push_back( utility::pointer::make_shared< ExtraRotamers >( 0 /*all*/, 1 /*ex1*/, 1 /*level*/ ) );
+		tf_->push_back( utility::pointer::make_shared< ExtraRotamers >( 0 /*all*/, 2 /*ex2*/, 1 /*level*/ ) );
+		tf_->push_back(utility::pointer::make_shared< IncludeCurrent >());
 	}
 
 	core::pack::task::PackerTaskOP task = tf_->create_task_and_apply_taskoperations(pose);
@@ -542,9 +542,9 @@ GeneralAntibodyModeler::relax_cdrs(Pose & pose,  bool include_neighbor_sc /*true
 		tf_->push_back( restrict_design_operation_ );
 		tf_->push_back(loops_operation_);
 
-		tf_->push_back( TaskOperationCOP( new ExtraRotamers( 0 /*all*/, 1 /*ex1*/, 1 /*level*/ ) ) );
-		tf_->push_back( TaskOperationCOP( new ExtraRotamers( 0 /*all*/, 2 /*ex2*/, 1 /*level*/ ) ) );
-		tf_->push_back(TaskOperationCOP( new IncludeCurrent() ));
+		tf_->push_back( utility::pointer::make_shared< ExtraRotamers >( 0 /*all*/, 1 /*ex1*/, 1 /*level*/ ) );
+		tf_->push_back( utility::pointer::make_shared< ExtraRotamers >( 0 /*all*/, 2 /*ex2*/, 1 /*level*/ ) );
+		tf_->push_back(utility::pointer::make_shared< IncludeCurrent >());
 	}
 
 	core::Real start_e = (*scorefxn_)(pose);
@@ -689,16 +689,16 @@ GeneralAntibodyModeler::backrub_cdrs( core::pose::Pose & pose, bool min_sc, bool
 		tf_->push_back(cmd_line_operation_ );
 		tf_->push_back( restrict_design_operation_ );
 		tf_->push_back(loops_operation_);
-		tf_->push_back( TaskOperationCOP( new ExtraRotamers( 0 /*all*/, 1 /*ex1*/, 1 /*level*/ ) ) );
-		tf_->push_back( TaskOperationCOP( new ExtraRotamers( 0 /*all*/, 2 /*ex2*/, 1 /*level*/ ) ) );
-		tf_->push_back(TaskOperationCOP( new IncludeCurrent() ));
+		tf_->push_back( utility::pointer::make_shared< ExtraRotamers >( 0 /*all*/, 1 /*ex1*/, 1 /*level*/ ) );
+		tf_->push_back( utility::pointer::make_shared< ExtraRotamers >( 0 /*all*/, 2 /*ex2*/, 1 /*level*/ ) );
+		tf_->push_back(utility::pointer::make_shared< IncludeCurrent >());
 
 	} else {
 		tf_->push_back( restrict_design_operation_ );
 	}
 
 
-	BackrubProtocolOP backrub_protocol = BackrubProtocolOP( new BackrubProtocol());
+	BackrubProtocolOP backrub_protocol = utility::pointer::make_shared< BackrubProtocol >();
 	backrub_protocol->set_movemap(mm);
 	backrub_protocol->set_scorefunction(local_scorefxn);
 	backrub_protocol->set_taskfactory(tf_);
@@ -753,8 +753,8 @@ GeneralAntibodyModeler::repack_antigen_interface(Pose & pose) const {
 	core::pack::task::TaskFactoryOP tf = interface_tf_->clone();
 	Size L_chain  = core::pose::get_chain_id_from_chain('L', pose);
 	Size H_chain = core::pose::get_chain_id_from_chain('H', pose);
-	tf->push_back(TaskOperationCOP( new PreventChainFromRepackingOperation(L_chain) ));
-	tf->push_back(TaskOperationCOP( new PreventChainFromRepackingOperation(H_chain) ));
+	tf->push_back(utility::pointer::make_shared< PreventChainFromRepackingOperation >(L_chain));
+	tf->push_back(utility::pointer::make_shared< PreventChainFromRepackingOperation >(H_chain));
 
 	core::pack::task::PackerTaskOP task = tf->create_task_and_apply_taskoperations(pose);
 
@@ -782,7 +782,7 @@ GeneralAntibodyModeler::repack_antibody_interface(Pose & pose) const {
 
 	for ( Size i = 1; i <= antigen_chains.size(); ++i ) {
 		Size chain = core::pose::get_chain_id_from_chain(antigen_chains[i], pose);
-		tf->push_back(TaskOperationCOP( new PreventChainFromRepackingOperation(chain) ));
+		tf->push_back(utility::pointer::make_shared< PreventChainFromRepackingOperation >(chain));
 	}
 	core::pack::task::PackerTaskOP task = tf->create_task_and_apply_taskoperations(pose);
 

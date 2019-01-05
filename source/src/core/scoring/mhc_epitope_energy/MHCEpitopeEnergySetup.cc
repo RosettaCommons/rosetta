@@ -81,7 +81,7 @@ MHCEpitopeEnergySetup::~MHCEpitopeEnergySetup() = default;
 /// @brief Clone: create a copy of this object, and return an owning pointer
 /// to the copy.
 MHCEpitopeEnergySetupOP MHCEpitopeEnergySetup::clone() const {
-	return MHCEpitopeEnergySetupOP( new MHCEpitopeEnergySetup(*this) );
+	return utility::pointer::make_shared< MHCEpitopeEnergySetup >(*this);
 }
 
 /// @brief Reset all data in this data storage object.

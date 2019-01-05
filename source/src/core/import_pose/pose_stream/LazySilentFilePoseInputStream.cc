@@ -104,7 +104,7 @@ void LazySilentFilePoseInputStream::fill_pose(
 	using namespace basic::datacache;
 	pose.data().set(
 		core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG,
-		DataCache_CacheableData::DataOP( new basic::datacache::CacheableString( current_struct_->decoy_tag() ) )
+		utility::pointer::make_shared< basic::datacache::CacheableString >( current_struct_->decoy_tag() )
 	);
 	tr.Debug << "decoy_tag() == " << current_struct_->decoy_tag() << std::endl;
 
@@ -151,7 +151,7 @@ void LazySilentFilePoseInputStream::fill_pose(
 	using namespace basic::datacache;
 	pose.data().set(
 		core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG,
-		DataCache_CacheableData::DataOP( new basic::datacache::CacheableString( current_struct_->decoy_tag() ) )
+		utility::pointer::make_shared< basic::datacache::CacheableString >( current_struct_->decoy_tag() )
 	);
 	tr.Debug << "decoy_tag() == " << current_struct_->decoy_tag() << std::endl;
 

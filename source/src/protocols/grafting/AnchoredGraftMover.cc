@@ -125,7 +125,7 @@ AnchoredGraftMover::AnchoredGraftMover(
 
 void
 AnchoredGraftMover::set_defaults(){
-	loops_ = protocols::loops::LoopsOP( new protocols::loops::Loops() );
+	loops_ = utility::pointer::make_shared< protocols::loops::Loops >();
 
 	idealize_insert(false);
 	set_skip_sampling(false);
@@ -142,7 +142,7 @@ AnchoredGraftMover::set_defaults(){
 
 protocols::moves::MoverOP
 AnchoredGraftMover::clone() const{
-	return protocols::moves::MoverOP( new AnchoredGraftMover(*this) );
+	return utility::pointer::make_shared< AnchoredGraftMover >(*this);
 }
 
 // XRW TEMP std::string
@@ -151,7 +151,7 @@ AnchoredGraftMover::clone() const{
 protocols::moves::MoverOP
 AnchoredGraftMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new AnchoredGraftMover );
+	return utility::pointer::make_shared< AnchoredGraftMover >();
 }
 
 void
@@ -309,7 +309,7 @@ AnchoredGraftMover::set_fa_scorefunction(ScoreFunctionCOP score){
 void
 AnchoredGraftMover::set_default_cen_scorefunction(){
 	//cen_scorefxn_=protocols::loops::get_cen_scorefxn();
-	cen_scorefxn_ = core::scoring::ScoreFunctionOP( new ScoreFunction() );
+	cen_scorefxn_ = utility::pointer::make_shared< ScoreFunction >();
 	cen_scorefxn_->set_weight( chainbreak,        20.00);
 	cen_scorefxn_->set_weight( linear_chainbreak, 20.00);
 
@@ -386,7 +386,7 @@ AnchoredGraftMover::setup_movemap_and_regions(Pose & pose){
 void
 AnchoredGraftMover::set_default_movemap(){
 	TR <<"Setting default movemap"<<std::endl;
-	movemap_ = MoveMapOP( new core::kinematics::MoveMap() );
+	movemap_ = utility::pointer::make_shared< core::kinematics::MoveMap >();
 	for ( Size i=Nter_loop_start_; i<=Nter_loop_end_; ++i ) {
 		movemap_->set_bb(i, true);
 		movemap_->set_chi(i, true);
@@ -495,7 +495,7 @@ AnchoredGraftMover::final_repack(){
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP AnchoredGraftMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new AnchoredGraftMover );
+// XRW TEMP  return utility::pointer::make_shared< AnchoredGraftMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -756,7 +756,7 @@ std::string AnchoredGraftMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 AnchoredGraftMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new AnchoredGraftMover );
+	return utility::pointer::make_shared< AnchoredGraftMover >();
 }
 
 void AnchoredGraftMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -66,7 +66,7 @@ namespace simple_filters {
 static basic::Tracer TR( "protocols.simple_filters.ResidueLipophilicityFilter" );
 
 protocols::filters::FilterOP
-ResidueLipophilicityFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ResidueLipophilicityFilter ); }
+ResidueLipophilicityFilterCreator::create_filter() const { return utility::pointer::make_shared< ResidueLipophilicityFilter >(); }
 
 std::string
 ResidueLipophilicityFilterCreator::keyname() const { return "ResidueLipophilicity"; }

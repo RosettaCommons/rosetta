@@ -85,7 +85,7 @@ DockingPrepackProtocol::DockingPrepackProtocol(): DockingHighRes()
 void DockingPrepackProtocol::setup_defaults()
 {
 	trans_magnitude_ = 1000.0;
-	pack_operations_ = SequenceMoverOP( new SequenceMover() );
+	pack_operations_ = utility::pointer::make_shared< SequenceMover >();
 	dock_ppk_ = false;
 	membrane_ = false;
 	movers_setup_ = false;
@@ -146,19 +146,19 @@ void DockingPrepackProtocol::score_and_output(std::string outfilename,
 
 void DockingPrepackProtocol::setup_pack_operation_movers()
 {
-	prepack_full_repack_ = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover() );
+	prepack_full_repack_ = utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >();
 	prepack_full_repack_->score_function( scorefxn_pack() );
 	prepack_full_repack_->task_factory( task_factory() );
 	pack_operations_->add_mover(prepack_full_repack_);
 
 	if ( rt_min() ) {
-		rtmin_mover_ = protocols::minimization_packing::RotamerTrialsMinMoverOP( new protocols::minimization_packing::RotamerTrialsMinMover( ) );
+		rtmin_mover_ = utility::pointer::make_shared< protocols::minimization_packing::RotamerTrialsMinMover >( );
 		rtmin_mover_->score_function( scorefxn_pack() );
 		rtmin_mover_->task_factory( task_factory() );
 		pack_operations_->add_mover(rtmin_mover_);
 	}
 	if ( sc_min() ) {
-		scmin_mover_ = SidechainMinMoverOP( new SidechainMinMover() );
+		scmin_mover_ = utility::pointer::make_shared< SidechainMinMover >();
 		scmin_mover_->set_scorefxn( scorefxn_pack() );
 		scmin_mover_->set_task_factory( task_factory() );
 		pack_operations_->add_mover( scmin_mover_ );
@@ -288,7 +288,7 @@ void DockingPrepackProtocol::apply( core::pose::Pose & pose )
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP DockingPrepackProtocolCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new DockingPrepackProtocol() );
+// XRW TEMP  return utility::pointer::make_shared< DockingPrepackProtocol >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -318,7 +318,7 @@ std::string DockingPrepackProtocolCreator::keyname() const {
 
 protocols::moves::MoverOP
 DockingPrepackProtocolCreator::create_mover() const {
-	return protocols::moves::MoverOP( new DockingPrepackProtocol );
+	return utility::pointer::make_shared< DockingPrepackProtocol >();
 }
 
 void DockingPrepackProtocolCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

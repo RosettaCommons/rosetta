@@ -130,14 +130,14 @@ IteratedConvergenceMover::parse_my_tag(
 MoverOP
 IteratedConvergenceMover::fresh_instance() const
 {
-	return MoverOP( new IteratedConvergenceMover );
+	return utility::pointer::make_shared< IteratedConvergenceMover >();
 }
 
 /// @brief required in the context of the parser/scripting scheme
 MoverOP
 IteratedConvergenceMover::clone() const
 {
-	return MoverOP( new IteratedConvergenceMover( *this ) );
+	return utility::pointer::make_shared< IteratedConvergenceMover >( *this );
 }
 
 // setters
@@ -224,7 +224,7 @@ std::string IteratedConvergenceMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 IteratedConvergenceMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new IteratedConvergenceMover );
+	return utility::pointer::make_shared< IteratedConvergenceMover >();
 }
 
 void IteratedConvergenceMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

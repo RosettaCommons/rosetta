@@ -352,7 +352,7 @@ OopCreatorMover::apply(
 		// create a task factory and task operations
 		using core::pack::task::operation::TaskOperationCOP;
 		TaskFactoryOP tf( new TaskFactory() );
-		tf->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
+		tf->push_back( utility::pointer::make_shared< core::pack::task::operation::InitializeFromCommandline >() );
 
 		if ( option[ packing::resfile ].user() ) {
 			operation::ReadResfileOP rrop( new operation::ReadResfile() );
@@ -409,7 +409,7 @@ OopCreatorMover::apply(
 		// create a task factory and task operations
 		using core::pack::task::operation::TaskOperationCOP;
 		TaskFactoryOP tf( new TaskFactory() );
-		tf->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
+		tf->push_back( utility::pointer::make_shared< core::pack::task::operation::InitializeFromCommandline >() );
 
 
 		if ( option[ packing::resfile ].user() ) {
@@ -446,7 +446,7 @@ OopCreatorMover::apply(
 			pose.conformation().get_torsion_angle_atom_ids( torsion_id, id1, id2, id3, id4 );
 			Real torsion_value( pose.torsion( torsion_id ) );
 			CircularHarmonicFuncOP circularharm_func( new CircularHarmonicFunc( radians( torsion_value ), radians( 10.0 ) ) );
-			ConstraintCOP dihedral1( ConstraintOP( new DihedralConstraint( id1, id2, id3, id4, circularharm_func ) ) );
+			ConstraintCOP dihedral1( utility::pointer::make_shared< DihedralConstraint >( id1, id2, id3, id4, circularharm_func ) );
 			pose.add_constraint( dihedral1 );
 		}
 		//kdrew: if constraint weight is not set on commandline or elsewhere, set to 1.0
@@ -472,7 +472,7 @@ OopCreatorMover::apply(
 protocols::moves::MoverOP
 OopCreatorMover::clone() const
 {
-	return protocols::moves::MoverOP( new OopCreatorMover () );
+	return utility::pointer::make_shared< OopCreatorMover > ();
 }
 
 void
@@ -545,7 +545,7 @@ OopCreatorMover::parse_my_tag(
 // MoverCreator
 // XRW TEMP moves::MoverOP
 // XRW TEMP OopCreatorMoverCreator::create_mover() const {
-// XRW TEMP  return moves::MoverOP( new OopCreatorMover() );
+// XRW TEMP  return utility::pointer::make_shared< OopCreatorMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string OopCreatorMoverCreator::keyname() const {
@@ -589,7 +589,7 @@ std::string OopCreatorMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 OopCreatorMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new OopCreatorMover );
+	return utility::pointer::make_shared< OopCreatorMover >();
 }
 
 void OopCreatorMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

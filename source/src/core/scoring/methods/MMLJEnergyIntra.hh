@@ -51,7 +51,7 @@ public:
 	{}
 
 	basic::datacache::CacheableDataOP
-	clone() const { return basic::datacache::CacheableDataOP( new NeighborListData( *this ) ); }
+	clone() const { return utility::pointer::make_shared< NeighborListData >( *this ); }
 
 	scoring::NeighborListOP
 	nblist() const { return nblist_; }

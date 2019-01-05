@@ -194,7 +194,7 @@ MultipoleElecPoseInfo::initialize( pose::Pose const & pose )
 	placeholder_info_.resize( nres, nullptr );
 
 	for ( Size i=1; i<= nres; ++i ) {
-		if ( !residue_info_[i] ) residue_info_[i] = MultipoleElecResidueInfoOP( new MultipoleElecResidueInfo( pose.residue(i) ) );
+		if ( !residue_info_[i] ) residue_info_[i] = utility::pointer::make_shared< MultipoleElecResidueInfo >( pose.residue(i) );
 		else  residue_info_[i]->initialize( pose.residue(i) );
 	}
 
@@ -227,7 +227,7 @@ MultipoleElecRotamerSetInfo::initialize( RotamerSetBase const & rotamer_set )
 	Size const nrot( rotamer_set.num_rotamers() );
 	residue_info_.resize( nrot );
 	for ( Size i=1; i<= nrot; ++i ) {
-		residue_info_[i] = MultipoleElecResidueInfoOP( new MultipoleElecResidueInfo( *rotamer_set.rotamer(i) ) );
+		residue_info_[i] = utility::pointer::make_shared< MultipoleElecResidueInfo >( *rotamer_set.rotamer(i) );
 	}
 }
 
@@ -1273,7 +1273,7 @@ MultipoleElecPotential::assign_all_amoeba_types(
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::MULTIPOLE_POSE_INFO ) ) {
 		multipole_info = utility::pointer::static_pointer_cast< MultipoleElecPoseInfo >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::MULTIPOLE_POSE_INFO ) );
 	} else {
-		multipole_info = MultipoleElecPoseInfoOP( new MultipoleElecPoseInfo() );
+		multipole_info = utility::pointer::make_shared< MultipoleElecPoseInfo >();
 	}
 
 	for ( Size res1 = 1; res1 <= nres; ++res1 ) {
@@ -1411,7 +1411,7 @@ MultipoleElecPotential::calculate_fixed_fields_for_polarization(
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::MULTIPOLE_POSE_INFO ) ) {
 		multipole_info = utility::pointer::static_pointer_cast< MultipoleElecPoseInfo >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::MULTIPOLE_POSE_INFO ) );
 	} else {
-		multipole_info = MultipoleElecPoseInfoOP( new MultipoleElecPoseInfo() );
+		multipole_info = utility::pointer::make_shared< MultipoleElecPoseInfo >();
 	}
 
 	// Zero out the fixed field members
@@ -1464,7 +1464,7 @@ MultipoleElecPotential::calculate_induced_fields_for_polarization(
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::MULTIPOLE_POSE_INFO ) ) {
 		multipole_info = utility::pointer::static_pointer_cast< MultipoleElecPoseInfo >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::MULTIPOLE_POSE_INFO ) );
 	} else {
-		multipole_info = MultipoleElecPoseInfoOP( new MultipoleElecPoseInfo() );
+		multipole_info = utility::pointer::make_shared< MultipoleElecPoseInfo >();
 	}
 
 	// Zero out the induced field members
@@ -1511,7 +1511,7 @@ MultipoleElecPotential::clear_induced_fields(
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::MULTIPOLE_POSE_INFO ) ) {
 		multipole_info = utility::pointer::static_pointer_cast< MultipoleElecPoseInfo >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::MULTIPOLE_POSE_INFO ) );
 	} else {
-		multipole_info = MultipoleElecPoseInfoOP( new MultipoleElecPoseInfo() );
+		multipole_info = utility::pointer::make_shared< MultipoleElecPoseInfo >();
 	}
 
 	// Zero out the induced field members
@@ -1748,7 +1748,7 @@ MultipoleElecPotential::induce_polarizable_dipoles(
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::MULTIPOLE_POSE_INFO ) ) {
 		multipole_info = utility::pointer::static_pointer_cast< MultipoleElecPoseInfo >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::MULTIPOLE_POSE_INFO ) );
 	} else {
-		multipole_info = MultipoleElecPoseInfoOP( new MultipoleElecPoseInfo() );
+		multipole_info = utility::pointer::make_shared< MultipoleElecPoseInfo >();
 	}
 
 	// Will need functions that do the following:
@@ -1825,7 +1825,7 @@ MultipoleElecPotential::setup_for_scoring(
 		multipole_info = utility::pointer::static_pointer_cast< MultipoleElecPoseInfo >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::MULTIPOLE_POSE_INFO ) );
 	} else {
 		//TR << "Allocating fresh multipole info objects" << std::endl;
-		multipole_info = MultipoleElecPoseInfoOP( new MultipoleElecPoseInfo() );
+		multipole_info = utility::pointer::make_shared< MultipoleElecPoseInfo >();
 		multipole_info->initialize( pose );
 		pose.data().set( pose::datacache::CacheableDataType::MULTIPOLE_POSE_INFO, multipole_info );
 		assign_all_amoeba_types( pose );

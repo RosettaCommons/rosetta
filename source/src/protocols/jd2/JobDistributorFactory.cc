@@ -160,7 +160,7 @@ rosetta_scripts::RosettaScriptsParserOP
 JobDistributorFactory::create_parser()
 {
 
-	return rosetta_scripts::RosettaScriptsParserOP( new rosetta_scripts::RosettaScriptsParser );
+	return utility::pointer::make_shared< rosetta_scripts::RosettaScriptsParser >();
 
 }
 

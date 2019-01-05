@@ -97,13 +97,13 @@ GlycosyltransferaseMover::register_options()
 moves::MoverOP
 GlycosyltransferaseMover::clone() const
 {
-	return moves::MoverOP( new GlycosyltransferaseMover( *this ) );
+	return utility::pointer::make_shared< GlycosyltransferaseMover >( *this );
 }
 
 moves::MoverOP
 GlycosyltransferaseMover::fresh_instance() const
 {
-	return moves::MoverOP( new GlycosyltransferaseMover() );
+	return utility::pointer::make_shared< GlycosyltransferaseMover >();
 }
 
 void
@@ -200,7 +200,7 @@ GlycosyltransferaseMover::copy_data(
 // XRW TEMP moves::MoverOP
 // XRW TEMP GlycosyltransferaseMoverCreator::create_mover() const
 // XRW TEMP {
-// XRW TEMP  return moves::MoverOP( new GlycosyltransferaseMover );
+// XRW TEMP  return utility::pointer::make_shared< GlycosyltransferaseMover >();
 // XRW TEMP }
 
 // Return the string identifier for the associated Mover (GlycosyltransferaseMover).
@@ -238,7 +238,7 @@ std::string GlycosyltransferaseMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 GlycosyltransferaseMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new GlycosyltransferaseMover );
+	return utility::pointer::make_shared< GlycosyltransferaseMover >();
 }
 
 void GlycosyltransferaseMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -71,7 +71,7 @@ static basic::Tracer TR( "protocols.simple_moves.StorePoseSnapshot" );
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP StorePoseSnapshotCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new StorePoseSnapshot );
+// XRW TEMP  return utility::pointer::make_shared< StorePoseSnapshot >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -190,7 +190,7 @@ std::string StorePoseSnapshotCreator::keyname() const {
 
 protocols::moves::MoverOP
 StorePoseSnapshotCreator::create_mover() const {
-	return protocols::moves::MoverOP( new StorePoseSnapshot );
+	return utility::pointer::make_shared< StorePoseSnapshot >();
 }
 
 void StorePoseSnapshotCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

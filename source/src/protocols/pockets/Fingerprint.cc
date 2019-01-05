@@ -805,7 +805,7 @@ void NonPlaidFingerprint::setup_from_EggshellGrid() {
 		for ( core::Size c = 0; c < nconformers; ++c ) {
 			core::pose::PoseOP tmp_pose(new core::pose::Pose(pf.pose(), c+1, c+1));
 			core::Size const lig_res_num = pf.compute_ligand_resnum(*tmp_pose);
-			core::conformation::ResidueCOP ligand_rsd( core::conformation::ResidueOP( new core::conformation::Residue( tmp_pose->conformation().residue(lig_res_num) ) ) );
+			core::conformation::ResidueCOP ligand_rsd( utility::pointer::make_shared< core::conformation::Residue >( tmp_pose->conformation().residue(lig_res_num) ) );
 			numeric::xyzVector<core::Real> ligand_com(0.);
 			//copy atomcoords without hydrogens (included 'radius') for shapeonly calculations
 			//aslo copy center of mass of each conformers
@@ -1672,7 +1672,7 @@ PlaidFingerprint::PlaidFingerprint( core::pose::Pose const & input_pose, Fingerp
 	pose_.apply_transform_Rx_plus_v(I_mat, fp.CoM() - ligand_CoM);
 
 	core::Size const lig_res_num = compute_ligand_resnum();
-	core::conformation::ResidueCOP ligand_rsd( core::conformation::ResidueOP( new core::conformation::Residue( pose_.conformation().residue(lig_res_num) ) ) );
+	core::conformation::ResidueCOP ligand_rsd( utility::pointer::make_shared< core::conformation::Residue >( pose_.conformation().residue(lig_res_num) ) );
 
 	numeric::xyzVector<core::Real> no_CoM_offset(0.);
 	select_conf_and_move_ligand_(fp,no_CoM_offset,0,0,0,0);
@@ -1775,7 +1775,7 @@ core::conformation::ResidueCOP PlaidFingerprint::select_conf_and_move_ligand_( F
 
 	core::Size const lig_res_num = compute_ligand_resnum(*tmp_pose);
 	// core::Size const ligand_natoms = compute_ligand_natoms(*tmp_pose);
-	core::conformation::ResidueCOP ligand_rsd( core::conformation::ResidueOP( new core::conformation::Residue( tmp_pose->conformation().residue(lig_res_num) ) ) );
+	core::conformation::ResidueCOP ligand_rsd( utility::pointer::make_shared< core::conformation::Residue >( tmp_pose->conformation().residue(lig_res_num) ) );
 
 	return ligand_rsd;
 
@@ -2296,7 +2296,7 @@ core::pose::Pose PlaidFingerprint::get_oriented_pose( FingerprintBase & fp, core
 	origin_ = fp.origin() + CoM_ - fp.CoM();
 	origin_ += CoM_offset;
 	core::Size const lig_res_num = compute_ligand_resnum(*tmp_pose);
-	core::conformation::ResidueCOP ligand_rsd( core::conformation::ResidueOP( new core::conformation::Residue( tmp_pose->conformation().residue(lig_res_num) ) ) );
+	core::conformation::ResidueCOP ligand_rsd( utility::pointer::make_shared< core::conformation::Residue >( tmp_pose->conformation().residue(lig_res_num) ) );
 	bool update_derivatives = false;
 	update_rhos_( fp, ligand_rsd, update_derivatives );
 	core::pose::Pose new_pose = *tmp_pose;

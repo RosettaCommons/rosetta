@@ -57,7 +57,7 @@ methods::EnergyMethodOP
 SurfEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new SurfEnergy );
+	return utility::pointer::make_shared< SurfEnergy >();
 }
 
 ScoreTypes
@@ -72,7 +72,7 @@ SurfEnergyCreator::score_types_for_method() const {
 //@brief
 //////////////////////////////////////////////////////
 SurfEnergy::SurfEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new SurfEnergyCreator ) )
+	parent( utility::pointer::make_shared< SurfEnergyCreator >() )
 {}
 
 
@@ -102,8 +102,8 @@ SurfEnergy::setup_for_derivatives(
 	using basic::datacache::DataCache_CacheableData;
 
 	if ( !pose.data().has( core::pose::datacache::CacheableDataType::DAB_SASA_POSE_INFO ) ) {
-		pose.data().set( core::pose::datacache::CacheableDataType::DAB_SASA_POSE_INFO, DataCache_CacheableData::DataOP( new CacheableAtomID_MapVector ) );
-		pose.data().set(  core::pose::datacache::CacheableDataType::DAB_SEV_POSE_INFO, DataCache_CacheableData::DataOP( new CacheableAtomID_MapVector ) );
+		pose.data().set( core::pose::datacache::CacheableDataType::DAB_SASA_POSE_INFO, utility::pointer::make_shared< CacheableAtomID_MapVector >() );
+		pose.data().set(  core::pose::datacache::CacheableDataType::DAB_SEV_POSE_INFO, utility::pointer::make_shared< CacheableAtomID_MapVector >() );
 	}
 
 	CacheableDataOP dat1( pose.data().get_ptr( core::pose::datacache::CacheableDataType::DAB_SASA_POSE_INFO ) );

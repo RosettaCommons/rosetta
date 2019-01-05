@@ -34,10 +34,10 @@ public:
 	NonSequentialNeighborsFilter();
 	bool apply( core::pose::Pose const & pose ) const override;
 	filters::FilterOP clone() const override {
-		return filters::FilterOP( new NonSequentialNeighborsFilter( *this ) );
+		return utility::pointer::make_shared< NonSequentialNeighborsFilter >( *this );
 	}
 	filters::FilterOP fresh_instance() const override{
-		return filters::FilterOP( new NonSequentialNeighborsFilter() );
+		return utility::pointer::make_shared< NonSequentialNeighborsFilter >();
 	}
 
 	void report( std::ostream & out, core::pose::Pose const & pose ) const override;

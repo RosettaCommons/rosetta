@@ -159,7 +159,7 @@ void FoldFromLoopsMover::apply (core::pose::Pose & input_pose )
 
 		input_pose.constraint_set( ca_csts_ );
 
-		abinitio = protocols::abinitio::ClassicAbinitioOP( new protocols::abinitio::FoldConstraints( frag_small_, frag_large_ ,movemap ) );
+		abinitio = utility::pointer::make_shared< protocols::abinitio::FoldConstraints >( frag_small_, frag_large_ ,movemap );
 
 	}
 

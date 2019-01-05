@@ -180,7 +180,7 @@ void LargeNstructJobInputter::populate_next_n_jobs(
 	protocols::jd2::InnerJobOP ijob( new protocols::jd2::InnerJob( basic::options::option[ generic_job_name ].value() , total_jobs ) );
 
 	for ( core::Size index = first_job_index, index_max = number_of_jobs_to_add + first_job_index - 1 ; index <= index_max; ++index ) {
-		jobs.push_back( protocols::jd2::JobOP( new protocols::jd2::Job( ijob, index ) ) );
+		jobs.push_back( utility::pointer::make_shared< protocols::jd2::Job >( ijob, index ) );
 		//if(tr.Debug.visible()) tr.Debug << "create job index " << index << std::endl;
 	}
 }
@@ -194,7 +194,7 @@ LargeNstructJobInputterCreator::keyname() const
 
 protocols::jd2::JobInputterOP
 LargeNstructJobInputterCreator::create_JobInputter() const {
-	return protocols::jd2::JobInputterOP( new LargeNstructJobInputter );
+	return utility::pointer::make_shared< LargeNstructJobInputter >();
 }
 
 }// jd2

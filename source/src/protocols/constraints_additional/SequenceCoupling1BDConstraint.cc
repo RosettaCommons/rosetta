@@ -79,7 +79,7 @@ SequenceCoupling1BDConstraint::~SequenceCoupling1BDConstraint() = default;
 
 ConstraintOP
 SequenceCoupling1BDConstraint::clone() const {
-	return ConstraintOP( new SequenceCoupling1BDConstraint( *this ) );
+	return utility::pointer::make_shared< SequenceCoupling1BDConstraint >( *this );
 }
 
 bool SequenceCoupling1BDConstraint::operator == ( core::scoring::constraints::Constraint const & other ) const

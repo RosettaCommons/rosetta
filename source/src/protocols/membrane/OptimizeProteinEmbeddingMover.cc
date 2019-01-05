@@ -81,13 +81,13 @@ OptimizeProteinEmbeddingMover::~OptimizeProteinEmbeddingMover() = default;
 /// @brief Create a Clone of this mover
 protocols::moves::MoverOP
 OptimizeProteinEmbeddingMover::clone() const {
-	return ( protocols::moves::MoverOP( new OptimizeProteinEmbeddingMover( *this ) ) );
+	return ( utility::pointer::make_shared< OptimizeProteinEmbeddingMover >( *this ) );
 }
 
 /// @brief Create a Fresh Instance of this Mover
 protocols::moves::MoverOP
 OptimizeProteinEmbeddingMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new OptimizeProteinEmbeddingMover() );
+	return utility::pointer::make_shared< OptimizeProteinEmbeddingMover >();
 }
 
 /// @brief Parse Rosetta Scripts Options for this Mover
@@ -118,7 +118,7 @@ void OptimizeProteinEmbeddingMover::provide_xml_schema( utility::tag::XMLSchemaD
 /// @brief Create a new copy of this mover
 protocols::moves::MoverOP
 OptimizeProteinEmbeddingMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new OptimizeProteinEmbeddingMover() );
+	return utility::pointer::make_shared< OptimizeProteinEmbeddingMover >();
 }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)

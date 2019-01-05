@@ -52,10 +52,10 @@ public:
 	bool apply( core::pose::Pose const & pose ) const override;
 
 	filters::FilterOP clone() const override {
-		return filters::FilterOP( new ScoreTypeFilter( *this ) );
+		return utility::pointer::make_shared< ScoreTypeFilter >( *this );
 	}
 	filters::FilterOP fresh_instance() const override{
-		return filters::FilterOP( new ScoreTypeFilter() );
+		return utility::pointer::make_shared< ScoreTypeFilter >();
 	}
 
 	/// @brief Sets the scorefunction.

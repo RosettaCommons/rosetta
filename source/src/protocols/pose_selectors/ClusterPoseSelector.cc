@@ -46,7 +46,7 @@ namespace pose_selectors {
 
 // Creator
 protocols::rosetta_scripts::PoseSelectorOP ClusterPoseSelectorCreator::create_selector() const {
-	return protocols::rosetta_scripts::PoseSelectorOP( new ClusterPoseSelector() );
+	return utility::pointer::make_shared< ClusterPoseSelector >();
 }
 
 // Selector

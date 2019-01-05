@@ -83,7 +83,7 @@ ResiduePairJumpSetup::read_file( std::string fname ) {
 		std::istringstream in( line );
 		in >> tag;
 		if ( tag == "BEGIN" ) {
-			residue_pair_jump = ResiduePairJumpOP( new ResiduePairJump );
+			residue_pair_jump = utility::pointer::make_shared< ResiduePairJump >();
 			continue;
 		} else if ( tag == "END" ) {
 			residue_pair_jump->init_mini_pose();

@@ -33,9 +33,9 @@ ContextGraphOP
 ContextGraphFactory::create_context_graph( ContextGraphType type ) {
 	switch ( type ) {
 	case ten_A_neighbor_graph :
-		return ContextGraphOP( new TenANeighborGraph() );
+		return utility::pointer::make_shared< TenANeighborGraph >();
 	case twelve_A_neighbor_graph :
-		return ContextGraphOP( new TwelveANeighborGraph() );
+		return utility::pointer::make_shared< TwelveANeighborGraph >();
 		break;
 	default :
 		utility_exit_with_message( "Error in ContextGraphFactory.cc.  Unsupported context graph requested" );

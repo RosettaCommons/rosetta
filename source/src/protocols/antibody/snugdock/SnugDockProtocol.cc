@@ -111,13 +111,13 @@ std::string SnugDockProtocol::get_name() const {
 //@brief clone operator, calls the copy constructor
 protocols::moves::MoverOP
 SnugDockProtocol::clone() const {
-	return protocols::moves::MoverOP( new SnugDockProtocol( *this ) );
+	return utility::pointer::make_shared< SnugDockProtocol >( *this );
 }
 
 /// @brief fresh_instance returns a default-constructed object for JD2
 protocols::moves::MoverOP
 SnugDockProtocol::fresh_instance() const {
-	return protocols::moves::MoverOP( new SnugDockProtocol() );
+	return utility::pointer::make_shared< SnugDockProtocol >();
 }
 
 /// @brief This mover retains state such that a fresh version is needed if the input Pose is about to change
@@ -240,7 +240,7 @@ void SnugDockProtocol::setup_objects( Pose & pose ) {
 
 	/// AntibodyInfo is used to store information about the Ab-Ag complex and to generate useful helper objects based on
 	/// that information (e.g. the various FoldTrees that are needed for SnugDock).
-	antibody_info_ = AntibodyInfoOP( new AntibodyInfo( pose ) );
+	antibody_info_ = utility::pointer::make_shared< AntibodyInfo >( pose );
 
 	// Convert FT to "Universal FT", so we don't have to repeatedly change back and forth.
 	// This also should remove the necessity for LH_A chain order.
@@ -294,17 +294,17 @@ void SnugDockProtocol::setup_loop_refinement_movers() {
 	}
 
 	// these should use loops output from the new foldtree function
-	low_res_refine_cdr_h2_ = RefineOneCDRLoopOP( new RefineOneCDRLoop(
+	low_res_refine_cdr_h2_ = utility::pointer::make_shared< RefineOneCDRLoop >(
 		CDR_loops_[h2],
 		loop_refinement_method_,
 		low_res_loop_refinement_scorefxn
-		) );
+	);
 
-	low_res_refine_cdr_h3_ = RefineOneCDRLoopOP( new RefineOneCDRLoop(
+	low_res_refine_cdr_h3_ = utility::pointer::make_shared< RefineOneCDRLoop >(
 		CDR_loops_[h3],
 		loop_refinement_method_,
 		low_res_loop_refinement_scorefxn
-		) );
+	);
 
 	low_res_refine_cdr_h3_->set_h3_filter( h3_filter_ );
 	low_res_refine_cdr_h3_->set_num_filter_tries( h3_filter_tolerance_ );
@@ -321,12 +321,12 @@ core::pack::task::TaskFactoryOP SnugDockProtocol::repack_tf_from_residue_sets(Po
 	// use interface_vector_calculate then pass vector
 	TaskFactoryOP tf( new TaskFactory() );
 	// restrict to repacking & typical settings
-	tf->push_back( TaskOperationCOP( new RestrictToRepacking ) );
-	tf->push_back( TaskOperationCOP( new InitializeFromCommandline ) );
-	tf->push_back( TaskOperationCOP( new IncludeCurrent ) );
-	tf->push_back( TaskOperationCOP( new NoRepackDisulfides ) );
+	tf->push_back( utility::pointer::make_shared< RestrictToRepacking >() );
+	tf->push_back( utility::pointer::make_shared< InitializeFromCommandline >() );
+	tf->push_back( utility::pointer::make_shared< IncludeCurrent >() );
+	tf->push_back( utility::pointer::make_shared< NoRepackDisulfides >() );
 	// check if resfile option is given, then read from it
-	if ( basic::options::option[ basic::options::OptionKeys::packing::resfile ].user() ) tf->push_back( core::pack::task::operation::TaskOperationCOP( new core::pack::task::operation::ReadResfile ) );
+	if ( basic::options::option[ basic::options::OptionKeys::packing::resfile ].user() ) tf->push_back( utility::pointer::make_shared< core::pack::task::operation::ReadResfile >() );
 
 	// identify interface residues hard coded numbers are taken from function defaults
 	utility::vector1<bool> non_interacting_residues = core::select::util::calc_interacting_vector( pose, ab_residues, ag_residues, 10.0, 5.5, 75.0, 9.0 );
@@ -334,8 +334,8 @@ core::pack::task::TaskFactoryOP SnugDockProtocol::repack_tf_from_residue_sets(Po
 	non_interacting_residues.flip();
 
 	// Residue-Level TaskOperation to prevent repacking on non-interacting residues
-	PreventRepackingRLTOP prevent_repacking = PreventRepackingRLTOP( new PreventRepackingRLT());
-	OperateOnResidueSubsetOP subset_op = OperateOnResidueSubsetOP( new OperateOnResidueSubset( prevent_repacking, non_interacting_residues));
+	PreventRepackingRLTOP prevent_repacking = utility::pointer::make_shared< PreventRepackingRLT >();
+	OperateOnResidueSubsetOP subset_op = utility::pointer::make_shared< OperateOnResidueSubset >( prevent_repacking, non_interacting_residues);
 	tf->push_back(subset_op);
 
 	return tf;
@@ -415,7 +415,7 @@ void SnugDockProtocol::setup_ab_ag_foldtree( Pose & pose, AntibodyInfoOP antibod
 	// start with a vanilla FT and vanilla Pose
 	PoseOP pose_vrt( new Pose );
 	// initialize PDBInfo
-	pose_vrt->pdb_info( PDBInfoOP( new PDBInfo( *pose_vrt, true ) ) );
+	pose_vrt->pdb_info( utility::pointer::make_shared< PDBInfo >( *pose_vrt, true ) );
 
 	// Set number of flanking residues about CDR loops.
 	// If LoopOP is passed to any CDR mover, it cannot alter the FT and set flanking,
@@ -745,7 +745,7 @@ docking::DockingProtocolOP SnugDockProtocol::docking() const {
 	if ( ! docking_ ) {
 		/// The full DockingProtocol is used with a custom high resolution phase and post-low-resolution phase
 		/// All FoldTrees will be setup through AntibodyInfo so DockingProtocol's autofoldtree setup is disabled.
-		docking_ = docking::DockingProtocolOP( new docking::DockingProtocol(utility::tools::make_vector1<core::SSize>(1), false, false, false, nullptr, nullptr));
+		docking_ = utility::pointer::make_shared< docking::DockingProtocol >(utility::tools::make_vector1<core::SSize>(1), false, false, false, nullptr, nullptr);
 	}
 	return docking_;
 }

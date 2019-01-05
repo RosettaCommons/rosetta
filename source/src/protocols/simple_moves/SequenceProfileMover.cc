@@ -62,7 +62,7 @@ SequenceProfileMover::apply( core::pose::Pose & pose )
 	SequenceProfileOP profile( new SequenceProfile );
 	profile->read_from_checkpoint( cst_file_name_ );
 	for ( core::Size seqpos( 1 ), end( pose.size() ); seqpos <= end; ++seqpos ) {
-		pose.add_constraint( core::scoring::constraints::ConstraintCOP( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::SequenceProfileConstraint( pose, seqpos, profile ) ) ) );
+		pose.add_constraint( utility::pointer::make_shared< core::scoring::constraints::SequenceProfileConstraint >( pose, seqpos, profile ) );
 	}
 
 	TR << "Added sequence profile constraints specified in file " << cst_file_name_ << "." << std::endl;
@@ -75,12 +75,12 @@ SequenceProfileMover::apply( core::pose::Pose & pose )
 
 protocols::moves::MoverOP
 SequenceProfileMover::clone() const{
-	return protocols::moves::MoverOP( new SequenceProfileMover( *this ) );
+	return utility::pointer::make_shared< SequenceProfileMover >( *this );
 }
 
 protocols::moves::MoverOP
 SequenceProfileMover::fresh_instance() const{
-	return protocols::moves::MoverOP( new SequenceProfileMover );
+	return utility::pointer::make_shared< SequenceProfileMover >();
 }
 
 void
@@ -116,7 +116,7 @@ SequenceProfileMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap 
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP SequenceProfileMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new SequenceProfileMover );
+// XRW TEMP  return utility::pointer::make_shared< SequenceProfileMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -150,7 +150,7 @@ std::string SequenceProfileMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 SequenceProfileMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SequenceProfileMover );
+	return utility::pointer::make_shared< SequenceProfileMover >();
 }
 
 void SequenceProfileMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

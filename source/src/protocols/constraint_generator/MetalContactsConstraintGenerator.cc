@@ -58,7 +58,7 @@ namespace constraint_generator {
 protocols::constraint_generator::ConstraintGeneratorOP
 MetalContactsConstraintGeneratorCreator::create_constraint_generator() const
 {
-	return protocols::constraint_generator::ConstraintGeneratorOP( new MetalContactsConstraintGenerator );
+	return utility::pointer::make_shared< MetalContactsConstraintGenerator >();
 }
 
 std::string
@@ -101,7 +101,7 @@ MetalContactsConstraintGenerator::MetalContactsConstraintGenerator( MetalContact
 protocols::constraint_generator::ConstraintGeneratorOP
 MetalContactsConstraintGenerator::clone() const
 {
-	return protocols::constraint_generator::ConstraintGeneratorOP( new MetalContactsConstraintGenerator( *this ) );
+	return utility::pointer::make_shared< MetalContactsConstraintGenerator >( *this );
 }
 
 std::string
@@ -245,38 +245,38 @@ MetalContactsConstraintGenerator::apply( core::pose::Pose const & pose ) const
 	//Distance will have a harmonic func; all others will be AmbiguousConstraints with as many CircularHarmonicFunc as there are distances
 	core::scoring::func::FuncOP distance_func;
 	if ( ideal_distance_ > 0 ) {
-		distance_func = core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc( ideal_distance_, 0.05 ) );
+		distance_func = utility::pointer::make_shared< core::scoring::func::HarmonicFunc >( ideal_distance_, 0.05 );
 	}
 	utility::vector1< core::scoring::func::FuncOP > angle_about_contact_func;
 	for ( core::Real angle: ideal_angle_about_contact_ ) {
 		angle = numeric::conversions::radians< core::Real >( angle );
 		TR.Debug << "Ideal angle: " << angle << std::endl;
-		angle_about_contact_func.push_back( core::scoring::func::FuncOP( new core::scoring::func::CircularHarmonicFunc( angle, 0.1 ) ) );
+		angle_about_contact_func.push_back( utility::pointer::make_shared< core::scoring::func::CircularHarmonicFunc >( angle, 0.1 ) );
 	}
 	utility::vector1< core::scoring::func::FuncOP > dihedral_about_contact_func;
 	for ( core::Real dihedral: ideal_dihedral_about_contact_ ) {
 		dihedral = numeric::conversions::radians< core::Real >( dihedral );
 		TR.Debug << "Ideal dihedral: " << dihedral << std::endl;
-		dihedral_about_contact_func.push_back( core::scoring::func::FuncOP( new core::scoring::func::CircularHarmonicFunc( dihedral, 0.2 ) ) );
+		dihedral_about_contact_func.push_back( utility::pointer::make_shared< core::scoring::func::CircularHarmonicFunc >( dihedral, 0.2 ) );
 	}
 	utility::vector1< core::scoring::func::FuncOP > angle_about_metal_func;
 	for ( core::Real angle: ideal_angle_about_metal_ ) {
 		angle = numeric::conversions::radians< core::Real >( angle );
 		TR.Debug << "Ideal angle2: " << angle << std::endl;
-		angle_about_metal_func.push_back( core::scoring::func::FuncOP( new core::scoring::func::CircularHarmonicFunc( angle, 0.1 ) ) );
+		angle_about_metal_func.push_back( utility::pointer::make_shared< core::scoring::func::CircularHarmonicFunc >( angle, 0.1 ) );
 	}
 	utility::vector1< core::scoring::func::FuncOP > dihedral_about_metal_func;
 	for ( core::Real dihedral: ideal_dihedral_about_metal_ ) {
 		dihedral = numeric::conversions::radians< core::Real >( dihedral );
 		TR.Debug << "Ideal dihedral2: " << dihedral << std::endl;
-		dihedral_about_metal_func.push_back( core::scoring::func::FuncOP( new core::scoring::func::CircularHarmonicFunc( dihedral, 0.2 ) ) );
+		dihedral_about_metal_func.push_back( utility::pointer::make_shared< core::scoring::func::CircularHarmonicFunc >( dihedral, 0.2 ) );
 	}
 
 	utility::vector1< core::scoring::func::FuncOP > dihedral_3_func;
 	for ( core::Real dihedral: ideal_dihedral_3_ ) {
 		dihedral = numeric::conversions::radians< core::Real >( dihedral );
 		TR.Debug << "Ideal dihedral3: " << dihedral << std::endl;
-		dihedral_3_func.push_back( core::scoring::func::FuncOP( new core::scoring::func::CircularHarmonicFunc( dihedral, 0.2 ) ) );
+		dihedral_3_func.push_back( utility::pointer::make_shared< core::scoring::func::CircularHarmonicFunc >( dihedral, 0.2 ) );
 	}
 	already_added_contacts.clear();
 	//Find out what internal contact atoms are and add to already_added_contacts
@@ -400,10 +400,10 @@ MetalContactsConstraintGenerator::apply( core::pose::Pose const & pose ) const
 			numeric::xyzVector< core::Real > dist_at2_coords = pose.residue( metal_atom_id.rsd() ).atom( metal_atom_id.atomno() ).xyz();
 			core::Real distance = dist_at1_coords.distance( dist_at2_coords );
 			TR << "Constraining to distance " << distance << std::endl;
-			distance_func = core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc( distance, 0.05 ) );
+			distance_func = utility::pointer::make_shared< core::scoring::func::HarmonicFunc >( distance, 0.05 );
 		}
 		//Distance constraint
-		core::scoring::constraints::ConstraintCOP distance_cst = core::scoring::constraints::ConstraintCOP( new core::scoring::constraints::AtomPairConstraint( contact, metal_atom_id, distance_func, core::scoring::metalbinding_constraint ) );
+		core::scoring::constraints::ConstraintCOP distance_cst = utility::pointer::make_shared< core::scoring::constraints::AtomPairConstraint >( contact, metal_atom_id, distance_func, core::scoring::metalbinding_constraint );
 		csts.push_back( distance_cst );
 
 
@@ -417,9 +417,9 @@ MetalContactsConstraintGenerator::apply( core::pose::Pose const & pose ) const
 		if ( angle_about_contact_func.size() == 0 && valid_base ) {
 			//Define func
 			TR << "Constraining to angle (in radians ) " << current_angle << std::endl;
-			core::scoring::func::FuncOP anglefunc = core::scoring::func::FuncOP( new core::scoring::func::CircularHarmonicFunc( current_angle, .1 ) ); //~5 degrees
+			core::scoring::func::FuncOP anglefunc = utility::pointer::make_shared< core::scoring::func::CircularHarmonicFunc >( current_angle, .1 ); //~5 degrees
 			//Define constraint
-			core::scoring::constraints::ConstraintCOP angle_cst = core::scoring::constraints::ConstraintCOP( new core::scoring::constraints::AngleConstraint( base_atom, contact, metal_atom_id, anglefunc, core::scoring::metalbinding_constraint ) );
+			core::scoring::constraints::ConstraintCOP angle_cst = utility::pointer::make_shared< core::scoring::constraints::AngleConstraint >( base_atom, contact, metal_atom_id, anglefunc, core::scoring::metalbinding_constraint );
 			//Add to set
 			contact_angle_csts.push_back( angle_cst );
 		} else if ( constrain_to_closest_ ) {
@@ -430,18 +430,18 @@ MetalContactsConstraintGenerator::apply( core::pose::Pose const & pose ) const
 			}
 			core::scoring::func::FuncOP anglefunc = angle_about_contact_func.at( utility::arg_min( diff_vector ) );
 			//Define constraint
-			core::scoring::constraints::ConstraintCOP angle_cst = core::scoring::constraints::ConstraintCOP( new core::scoring::constraints::AngleConstraint( base_atom, contact, metal_atom_id, anglefunc, core::scoring::metalbinding_constraint ) );
+			core::scoring::constraints::ConstraintCOP angle_cst = utility::pointer::make_shared< core::scoring::constraints::AngleConstraint >( base_atom, contact, metal_atom_id, anglefunc, core::scoring::metalbinding_constraint );
 			//Add to set
 			contact_angle_csts.push_back( angle_cst );
 		} else {
 			for ( core::scoring::func::FuncOP anglefunc: angle_about_contact_func ) {
 				if ( !valid_base ) break;
-				core::scoring::constraints::ConstraintCOP angle_cst = core::scoring::constraints::ConstraintCOP( new core::scoring::constraints::AngleConstraint( base_atom, contact, metal_atom_id, anglefunc, core::scoring::metalbinding_constraint ) );
+				core::scoring::constraints::ConstraintCOP angle_cst = utility::pointer::make_shared< core::scoring::constraints::AngleConstraint >( base_atom, contact, metal_atom_id, anglefunc, core::scoring::metalbinding_constraint );
 				contact_angle_csts.push_back( angle_cst );
 			}
 		}
 		if ( valid_base ) {
-			core::scoring::constraints::ConstraintCOP contact_angle_ambig_cst = core::scoring::constraints::ConstraintCOP( new core::scoring::constraints::AmbiguousConstraint( contact_angle_csts ) );
+			core::scoring::constraints::ConstraintCOP contact_angle_ambig_cst = utility::pointer::make_shared< core::scoring::constraints::AmbiguousConstraint >( contact_angle_csts );
 			csts.push_back( contact_angle_ambig_cst );
 		}
 
@@ -462,9 +462,9 @@ MetalContactsConstraintGenerator::apply( core::pose::Pose const & pose ) const
 			if ( dihedral_about_contact_func.size() == 0 ) {
 				//Define func
 				TR << "Constraining to dihedral (in radians ) " << current_dihedral << std::endl;
-				core::scoring::func::FuncOP dihedralfunc = core::scoring::func::FuncOP( new core::scoring::func::CircularHarmonicFunc( current_dihedral, .2 ) ); //~10 degrees
+				core::scoring::func::FuncOP dihedralfunc = utility::pointer::make_shared< core::scoring::func::CircularHarmonicFunc >( current_dihedral, .2 ); //~10 degrees
 				//Define constraint
-				core::scoring::constraints::ConstraintCOP dihedral_cst = core::scoring::constraints::ConstraintCOP( new core::scoring::constraints::DihedralConstraint( base_base_atom, base_atom, contact, metal_atom_id, dihedralfunc, core::scoring::metalbinding_constraint ) );
+				core::scoring::constraints::ConstraintCOP dihedral_cst = utility::pointer::make_shared< core::scoring::constraints::DihedralConstraint >( base_base_atom, base_atom, contact, metal_atom_id, dihedralfunc, core::scoring::metalbinding_constraint );
 				//Add to set
 				contact_dihedral_csts.push_back( dihedral_cst );
 			} else if ( constrain_to_closest_ ) {
@@ -475,16 +475,16 @@ MetalContactsConstraintGenerator::apply( core::pose::Pose const & pose ) const
 				}
 				core::scoring::func::FuncOP dihedralfunc = dihedral_about_contact_func.at( utility::arg_min( diff_vector ) );
 				//Define constraint
-				core::scoring::constraints::ConstraintCOP dihedral_cst = core::scoring::constraints::ConstraintCOP( new core::scoring::constraints::DihedralConstraint( base_base_atom, base_atom, contact, metal_atom_id, dihedralfunc, core::scoring::metalbinding_constraint ) );
+				core::scoring::constraints::ConstraintCOP dihedral_cst = utility::pointer::make_shared< core::scoring::constraints::DihedralConstraint >( base_base_atom, base_atom, contact, metal_atom_id, dihedralfunc, core::scoring::metalbinding_constraint );
 				//Add to set
 				contact_dihedral_csts.push_back( dihedral_cst );
 			} else {
 				for ( core::scoring::func::FuncOP dihedralfunc: dihedral_about_contact_func ) {
-					core::scoring::constraints::ConstraintCOP dihedral_cst = core::scoring::constraints::ConstraintCOP( new core::scoring::constraints::DihedralConstraint( base_base_atom, base_atom, contact, metal_atom_id, dihedralfunc, core::scoring::metalbinding_constraint ) );
+					core::scoring::constraints::ConstraintCOP dihedral_cst = utility::pointer::make_shared< core::scoring::constraints::DihedralConstraint >( base_base_atom, base_atom, contact, metal_atom_id, dihedralfunc, core::scoring::metalbinding_constraint );
 					contact_dihedral_csts.push_back( dihedral_cst );
 				}
 			}
-			core::scoring::constraints::ConstraintCOP contact_dihedral_ambig_cst = core::scoring::constraints::ConstraintCOP( new core::scoring::constraints::AmbiguousConstraint( contact_dihedral_csts ) );
+			core::scoring::constraints::ConstraintCOP contact_dihedral_ambig_cst = utility::pointer::make_shared< core::scoring::constraints::AmbiguousConstraint >( contact_dihedral_csts );
 			csts.push_back( contact_dihedral_ambig_cst );
 		}
 
@@ -505,9 +505,9 @@ MetalContactsConstraintGenerator::apply( core::pose::Pose const & pose ) const
 			if ( angle_about_metal_func.size() == 0 ) {
 				//Define func
 				TR << "Constraining to angle (in radians ) " << current_angle2 << std::endl;
-				core::scoring::func::FuncOP anglefunc = core::scoring::func::FuncOP( new core::scoring::func::CircularHarmonicFunc( current_angle2, .1 ) );
+				core::scoring::func::FuncOP anglefunc = utility::pointer::make_shared< core::scoring::func::CircularHarmonicFunc >( current_angle2, .1 );
 				//Define constraint
-				core::scoring::constraints::ConstraintCOP angle_cst = core::scoring::constraints::ConstraintCOP( new core::scoring::constraints::AngleConstraint( contact, metal_atom_id, other_contact, anglefunc, core::scoring::metalbinding_constraint ) );
+				core::scoring::constraints::ConstraintCOP angle_cst = utility::pointer::make_shared< core::scoring::constraints::AngleConstraint >( contact, metal_atom_id, other_contact, anglefunc, core::scoring::metalbinding_constraint );
 				//Add to set
 				angle_csts.push_back( angle_cst );
 			} else if ( constrain_to_closest_ ) {
@@ -516,16 +516,16 @@ MetalContactsConstraintGenerator::apply( core::pose::Pose const & pose ) const
 					diff_vector.push_back( std::abs( utility::pointer::dynamic_pointer_cast< core::scoring::func::CircularHarmonicFunc>( anglefunc )->x0() - current_angle2 ) );
 				}
 				core::scoring::func::FuncOP anglefunc = angle_about_metal_func.at( utility::arg_min( diff_vector ) );
-				core::scoring::constraints::ConstraintCOP angle_cst = core::scoring::constraints::ConstraintCOP( new core::scoring::constraints::AngleConstraint( contact, metal_atom_id, other_contact, anglefunc, core::scoring::metalbinding_constraint ) );
+				core::scoring::constraints::ConstraintCOP angle_cst = utility::pointer::make_shared< core::scoring::constraints::AngleConstraint >( contact, metal_atom_id, other_contact, anglefunc, core::scoring::metalbinding_constraint );
 				//Add to set
 				angle_csts.push_back( angle_cst );
 			} else {
 				for ( core::scoring::func::FuncOP anglefunc: angle_about_metal_func ) {
-					core::scoring::constraints::ConstraintCOP angle_cst = core::scoring::constraints::ConstraintCOP( new core::scoring::constraints::AngleConstraint( contact, metal_atom_id, other_contact, anglefunc, core::scoring::metalbinding_constraint ) );
+					core::scoring::constraints::ConstraintCOP angle_cst = utility::pointer::make_shared< core::scoring::constraints::AngleConstraint >( contact, metal_atom_id, other_contact, anglefunc, core::scoring::metalbinding_constraint );
 					angle_csts.push_back( angle_cst );
 				}
 			}
-			core::scoring::constraints::ConstraintCOP angle_ambig_cst = core::scoring::constraints::ConstraintCOP( new core::scoring::constraints::AmbiguousConstraint( angle_csts ) );
+			core::scoring::constraints::ConstraintCOP angle_ambig_cst = utility::pointer::make_shared< core::scoring::constraints::AmbiguousConstraint >( angle_csts );
 			csts.push_back( angle_ambig_cst );
 
 
@@ -556,9 +556,9 @@ MetalContactsConstraintGenerator::apply( core::pose::Pose const & pose ) const
 				if ( dihedral_about_metal_func.size() == 0 ) {
 					//Define func
 					TR << "Constraining to dihedral (in radians ) " << current_dihedral2 << std::endl;
-					core::scoring::func::FuncOP dihedralfunc = core::scoring::func::FuncOP( new core::scoring::func::CircularHarmonicFunc( current_dihedral2, 0.2 ) );
+					core::scoring::func::FuncOP dihedralfunc = utility::pointer::make_shared< core::scoring::func::CircularHarmonicFunc >( current_dihedral2, 0.2 );
 					//Define constraint
-					core::scoring::constraints::ConstraintCOP dihedral_cst = core::scoring::constraints::ConstraintCOP( new core::scoring::constraints::DihedralConstraint( base_atom, contact, metal_atom_id, other_contact, dihedralfunc, core::scoring::metalbinding_constraint ) );
+					core::scoring::constraints::ConstraintCOP dihedral_cst = utility::pointer::make_shared< core::scoring::constraints::DihedralConstraint >( base_atom, contact, metal_atom_id, other_contact, dihedralfunc, core::scoring::metalbinding_constraint );
 					//Add to set
 					dihedral_csts.push_back( dihedral_cst );
 				} else if ( constrain_to_closest_ ) {
@@ -567,16 +567,16 @@ MetalContactsConstraintGenerator::apply( core::pose::Pose const & pose ) const
 						diff_vector.push_back( std::abs( utility::pointer::dynamic_pointer_cast< core::scoring::func::CircularHarmonicFunc>( dihedralfunc )->x0() - current_dihedral2 ) );
 					}
 					core::scoring::func::FuncOP dihedralfunc = dihedral_about_metal_func.at( utility::arg_min( diff_vector ) );
-					core::scoring::constraints::ConstraintCOP dihedral_cst = core::scoring::constraints::ConstraintCOP( new core::scoring::constraints::DihedralConstraint( base_atom, contact, metal_atom_id, other_contact, dihedralfunc, core::scoring::metalbinding_constraint ) );
+					core::scoring::constraints::ConstraintCOP dihedral_cst = utility::pointer::make_shared< core::scoring::constraints::DihedralConstraint >( base_atom, contact, metal_atom_id, other_contact, dihedralfunc, core::scoring::metalbinding_constraint );
 					//Add to set
 					dihedral_csts.push_back( dihedral_cst );
 				} else {
 					for ( core::scoring::func::FuncOP dihedralfunc: dihedral_about_metal_func ) {
-						core::scoring::constraints::ConstraintCOP dihedral_cst = core::scoring::constraints::ConstraintCOP( new core::scoring::constraints::DihedralConstraint( base_atom, contact, metal_atom_id, other_contact, dihedralfunc, core::scoring::metalbinding_constraint ) );
+						core::scoring::constraints::ConstraintCOP dihedral_cst = utility::pointer::make_shared< core::scoring::constraints::DihedralConstraint >( base_atom, contact, metal_atom_id, other_contact, dihedralfunc, core::scoring::metalbinding_constraint );
 						dihedral_csts.push_back( dihedral_cst );
 					}
 				}
-				core::scoring::constraints::ConstraintCOP dihedral_ambig_cst = core::scoring::constraints::ConstraintCOP( new core::scoring::constraints::AmbiguousConstraint( dihedral_csts ) );
+				core::scoring::constraints::ConstraintCOP dihedral_ambig_cst = utility::pointer::make_shared< core::scoring::constraints::AmbiguousConstraint >( dihedral_csts );
 				csts.push_back( dihedral_ambig_cst );
 			}
 			//Dihedral 3 constraints
@@ -601,9 +601,9 @@ MetalContactsConstraintGenerator::apply( core::pose::Pose const & pose ) const
 			if ( dihedral_3_func.size() == 0 ) {
 				//Define func
 				TR << "Constraining to dihedral (in radians ) " << current_dihedral3 << std::endl;
-				core::scoring::func::FuncOP dihedral3func = core::scoring::func::FuncOP( new core::scoring::func::CircularHarmonicFunc( current_dihedral3, 0.2 ) );
+				core::scoring::func::FuncOP dihedral3func = utility::pointer::make_shared< core::scoring::func::CircularHarmonicFunc >( current_dihedral3, 0.2 );
 				//Define constraint
-				core::scoring::constraints::ConstraintCOP dihedral_3_cst = core::scoring::constraints::ConstraintCOP( new core::scoring::constraints::DihedralConstraint( contact, metal_atom_id, other_contact, other_base, dihedral3func, core::scoring::metalbinding_constraint ) );
+				core::scoring::constraints::ConstraintCOP dihedral_3_cst = utility::pointer::make_shared< core::scoring::constraints::DihedralConstraint >( contact, metal_atom_id, other_contact, other_base, dihedral3func, core::scoring::metalbinding_constraint );
 				//Add to set
 				dihedral_3_csts.push_back( dihedral_3_cst );
 			} else if ( constrain_to_closest_ ) {
@@ -612,16 +612,16 @@ MetalContactsConstraintGenerator::apply( core::pose::Pose const & pose ) const
 					diff_vector.push_back( std::abs( utility::pointer::dynamic_pointer_cast< core::scoring::func::CircularHarmonicFunc>( dihedral3func )->x0() - current_dihedral3 ) );
 				}
 				core::scoring::func::FuncOP dihedral3func = dihedral_3_func.at( utility::arg_min( diff_vector ) );
-				core::scoring::constraints::ConstraintCOP dihedral_3_cst = core::scoring::constraints::ConstraintCOP( new core::scoring::constraints::DihedralConstraint( contact, metal_atom_id, other_contact, other_base, dihedral3func, core::scoring::metalbinding_constraint ) );
+				core::scoring::constraints::ConstraintCOP dihedral_3_cst = utility::pointer::make_shared< core::scoring::constraints::DihedralConstraint >( contact, metal_atom_id, other_contact, other_base, dihedral3func, core::scoring::metalbinding_constraint );
 				//Add to set
 				dihedral_3_csts.push_back( dihedral_3_cst );
 			} else {
 				for ( core::scoring::func::FuncOP dihedral3func: dihedral_3_func ) {
-					core::scoring::constraints::ConstraintCOP dihedral_3_cst = core::scoring::constraints::ConstraintCOP( new core::scoring::constraints::DihedralConstraint( contact, metal_atom_id, other_contact, other_base, dihedral3func, core::scoring::metalbinding_constraint ) );
+					core::scoring::constraints::ConstraintCOP dihedral_3_cst = utility::pointer::make_shared< core::scoring::constraints::DihedralConstraint >( contact, metal_atom_id, other_contact, other_base, dihedral3func, core::scoring::metalbinding_constraint );
 					dihedral_3_csts.push_back( dihedral_3_cst );
 				}
 			}
-			core::scoring::constraints::ConstraintCOP dihedral_3_ambig_cst = core::scoring::constraints::ConstraintCOP( new core::scoring::constraints::AmbiguousConstraint( dihedral_3_csts ) );
+			core::scoring::constraints::ConstraintCOP dihedral_3_ambig_cst = utility::pointer::make_shared< core::scoring::constraints::AmbiguousConstraint >( dihedral_3_csts );
 			csts.push_back( dihedral_3_ambig_cst );
 		}
 

@@ -138,7 +138,7 @@ void
 PerNativeRRReporterHuman::set_native(
 	Pose const & native_pose) {
 	if ( !native_pose_  && !initialized_ ) {
-		native_pose_ = core::pose::PoseCOP( core::pose::PoseOP( new Pose( native_pose ) ) ); // deep copy please
+		native_pose_ = utility::pointer::make_shared< Pose >( native_pose ); // deep copy please
 	} else {
 		TR.Fatal << "Attempting to set the native pose in PerNativeRRReporterHuman after it has already been initialized." << endl;
 		utility_exit();

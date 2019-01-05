@@ -29,7 +29,7 @@ namespace protocols {
 namespace nonlocal {
 
 // XRW TEMP protocols::moves::MoverOP SingleFragmentMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new SingleFragmentMover() );
+// XRW TEMP  return utility::pointer::make_shared< SingleFragmentMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string SingleFragmentMoverCreator::keyname() const {

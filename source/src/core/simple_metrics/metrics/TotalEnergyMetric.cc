@@ -90,7 +90,7 @@ TotalEnergyMetric::TotalEnergyMetric( TotalEnergyMetric const & ) = default;
 
 core::simple_metrics::SimpleMetricOP
 TotalEnergyMetric::clone() const {
-	return SimpleMetricOP(new TotalEnergyMetric( *this ) );
+	return utility::pointer::make_shared< TotalEnergyMetric >( *this );
 
 }
 
@@ -232,7 +232,7 @@ TotalEnergyMetricCreator::keyname() const {
 
 core::simple_metrics::SimpleMetricOP
 TotalEnergyMetricCreator::create_simple_metric() const {
-	return core::simple_metrics::SimpleMetricOP( new TotalEnergyMetric );
+	return utility::pointer::make_shared< TotalEnergyMetric >();
 
 }
 

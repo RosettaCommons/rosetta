@@ -46,7 +46,7 @@ methods::EnergyMethodOP
 HybridVDW_EnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new HybridVDW_Energy );
+	return utility::pointer::make_shared< HybridVDW_Energy >();
 }
 
 ScoreTypes
@@ -61,7 +61,7 @@ Real const vdw_scale_factor( 0.8 );
 
 /// @details  C-TOR
 HybridVDW_Energy::HybridVDW_Energy() :
-	parent( methods::EnergyMethodCreatorOP( new HybridVDW_EnergyCreator ) ),
+	parent( utility::pointer::make_shared< HybridVDW_EnergyCreator >() ),
 	atom_vdw_( ScoringManager::get_instance()->get_AtomVDW( chemical::HYBRID_FA_STANDARD_CENTROID ) )
 {}
 
@@ -70,7 +70,7 @@ HybridVDW_Energy::HybridVDW_Energy() :
 EnergyMethodOP
 HybridVDW_Energy::clone() const
 {
-	return EnergyMethodOP( new HybridVDW_Energy( *this ) );
+	return utility::pointer::make_shared< HybridVDW_Energy >( *this );
 }
 
 /// @details  copy c-tor

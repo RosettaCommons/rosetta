@@ -79,13 +79,13 @@ FilterReportAsPoseExtraScoresMover::parse_my_tag(
 protocols::moves::MoverOP
 FilterReportAsPoseExtraScoresMover::clone() const
 {
-	return protocols::moves::MoverOP( new FilterReportAsPoseExtraScoresMover( *this ) );
+	return utility::pointer::make_shared< FilterReportAsPoseExtraScoresMover >( *this );
 }
 
 protocols::moves::MoverOP
 FilterReportAsPoseExtraScoresMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new FilterReportAsPoseExtraScoresMover );
+	return utility::pointer::make_shared< FilterReportAsPoseExtraScoresMover >();
 }
 
 // XRW TEMP std::string
@@ -139,7 +139,7 @@ void FilterReportAsPoseExtraScoresMover::set_report_as( std::string const & repo
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP FilterReportAsPoseExtraScoresMoverCreator::create_mover() const
 // XRW TEMP {
-// XRW TEMP  return protocols::moves::MoverOP( new FilterReportAsPoseExtraScoresMover );
+// XRW TEMP  return utility::pointer::make_shared< FilterReportAsPoseExtraScoresMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -176,7 +176,7 @@ std::string FilterReportAsPoseExtraScoresMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 FilterReportAsPoseExtraScoresMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new FilterReportAsPoseExtraScoresMover );
+	return utility::pointer::make_shared< FilterReportAsPoseExtraScoresMover >();
 }
 
 void FilterReportAsPoseExtraScoresMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

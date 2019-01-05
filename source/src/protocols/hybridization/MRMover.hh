@@ -46,8 +46,8 @@ public:
 	void apply( Pose & pose ) override;
 
 	std::string get_name() const override { return "MRMover"; }
-	protocols::moves::MoverOP clone() const override { return protocols::moves::MoverOP( new MRMover( *this ) ); }
-	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new MRMover ); }
+	protocols::moves::MoverOP clone() const override { return utility::pointer::make_shared< MRMover >( *this ); }
+	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< MRMover >(); }
 
 	// density weight
 	void set_centroid_density_weight( core::Real newval ) {

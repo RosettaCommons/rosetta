@@ -37,10 +37,10 @@ public:
 	void apply_helper( std::string name, core::pose::Pose const & pose, utility::vector1< bool > & use_all_residues ) const;
 	bool apply( core::pose::Pose const & pose ) const override;
 	filters::FilterOP clone() const override {
-		return filters::FilterOP( new EnergyPerResidueFilter( *this ) );
+		return utility::pointer::make_shared< EnergyPerResidueFilter >( *this );
 	}
 	filters::FilterOP fresh_instance() const override{
-		return filters::FilterOP( new EnergyPerResidueFilter() );
+		return utility::pointer::make_shared< EnergyPerResidueFilter >();
 	}
 
 	void report( std::ostream & out, core::pose::Pose const & pose ) const override;

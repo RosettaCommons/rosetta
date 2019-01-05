@@ -68,7 +68,7 @@ DockingLowResFilter::DockingLowResFilter() :
 		TR << "setting clash filter to 5.0" << std::endl;
 	}
 
-	filters_ = protocols::filters::FilterCollectionOP( new protocols::filters::FilterCollection() );
+	filters_ = utility::pointer::make_shared< protocols::filters::FilterCollection >();
 	filters_->add_filter( hascontacts );
 	filters_->add_filter( fewclashes );
 }
@@ -115,7 +115,7 @@ DockingHighResFilter::DockingHighResFilter( ) : Filter()
 	movable_jumps_ = utility::tools::make_vector1<core::Size>(1);
 	scorefunction_ = core::scoring::get_score_function();
 	score_margin_ = 0.0;
-	scorefilter_ = protocols::score_filters::ScoreCutoffFilterOP( new protocols::score_filters::ScoreCutoffFilter() );
+	scorefilter_ = utility::pointer::make_shared< protocols::score_filters::ScoreCutoffFilter >();
 	scorefilter_->set_score_type( core::scoring::total_score );
 	scorefilter_->set_cutoff( 1000000.0 );
 }
@@ -131,7 +131,7 @@ void DockingHighResFilter::set_score_margin( core::Real new_score_margin )
 }
 
 void DockingHighResFilter::set_scorefunction( core::scoring::ScoreFunctionOP const scorefunction ) { scorefunction_ = scorefunction; }
-protocols::filters::FilterOP DockingHighResFilter::clone() const { return protocols::filters::FilterOP( new DockingHighResFilter( *this ) ); }
+protocols::filters::FilterOP DockingHighResFilter::clone() const { return utility::pointer::make_shared< DockingHighResFilter >( *this ); }
 
 bool
 DockingHighResFilter::apply( core::pose::Pose const & pose ) const

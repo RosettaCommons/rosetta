@@ -137,7 +137,7 @@ RefineOneCDRLoop::~RefineOneCDRLoop() = default;
 
 //clone
 protocols::moves::MoverOP RefineOneCDRLoop::clone() const {
-	return( protocols::moves::MoverOP( new RefineOneCDRLoop() ) );
+	return( utility::pointer::make_shared< RefineOneCDRLoop >() );
 }
 
 

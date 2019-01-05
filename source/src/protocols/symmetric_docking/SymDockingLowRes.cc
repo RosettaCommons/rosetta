@@ -83,7 +83,7 @@ SymDockingLowRes::~SymDockingLowRes()= default;
 
 moves::MoverOP
 SymDockingLowRes::clone() const {
-	return moves::MoverOP( new SymDockingLowRes( *this ) );
+	return utility::pointer::make_shared< SymDockingLowRes >( *this );
 }
 
 void
@@ -128,13 +128,13 @@ SymDockingLowRes::get_mc() { return mc_; }
 void
 SymDockingLowRes::set_default_mc( pose::Pose & pose ) {
 	// create the monte carlo object and movemap
-	mc_ = moves::MonteCarloOP( new moves::MonteCarlo( pose, *scorefxn_, temperature_ ) );
+	mc_ = utility::pointer::make_shared< moves::MonteCarlo >( pose, *scorefxn_, temperature_ );
 }
 
 void SymDockingLowRes::set_default_move_map( pose::Pose & pose ) {
 	using namespace core::conformation::symmetry;
 
-	movemap_ = core::kinematics::MoveMapOP( new kinematics::MoveMap() );
+	movemap_ = utility::pointer::make_shared< kinematics::MoveMap >();
 	movemap_->set_bb( bb_ );
 	movemap_->set_chi( chi_ );
 	core::pose::symmetry::make_symmetric_movemap( pose, *movemap_ );
@@ -151,9 +151,9 @@ void SymDockingLowRes::set_default_protocol( pose::Pose & pose ){
 
 	std::map< Size, SymDof > dofs ( symm_conf.Symmetry_Info()->get_dofs() );
 
-	rb_mover_ = rigid::RigidBodyDofSeqPerturbMoverOP( new rigid::RigidBodyDofSeqPerturbMover( dofs , rot_magnitude_, trans_magnitude_ ) );
+	rb_mover_ = utility::pointer::make_shared< rigid::RigidBodyDofSeqPerturbMover >( dofs , rot_magnitude_, trans_magnitude_ );
 
-	docking_lowres_protocol_ = moves::SequenceMoverOP( new SequenceMover );
+	docking_lowres_protocol_ = utility::pointer::make_shared< SequenceMover >();
 	docking_lowres_protocol_->add_mover( rb_mover_ );
 
 	if ( basic::options::option[basic::options::OptionKeys::docking::multibody].user() ) {
@@ -161,7 +161,7 @@ void SymDockingLowRes::set_default_protocol( pose::Pose & pose ){
 		for ( Size ij = 1; ij <= symm_conf.Symmetry_Info()->get_njumps_subunit(); ++ij ) {
 			if ( mbjumps.size()==0 || std::find(mbjumps.begin(),mbjumps.end(),(int)ij)!=mbjumps.end() ) {
 				TR << "add subunit jump mover " << ij << std::endl;
-				docking_lowres_protocol_->add_mover( MoverOP( new rigid::RigidBodyPerturbMover(ij,rot_magnitude_,trans_magnitude_) ) );
+				docking_lowres_protocol_->add_mover( utility::pointer::make_shared< rigid::RigidBodyPerturbMover >(ij,rot_magnitude_,trans_magnitude_) );
 			}
 		}
 	}

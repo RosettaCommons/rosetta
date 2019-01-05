@@ -198,7 +198,7 @@ int universal_main(
 	if ( option[ in::file::native ].user() ) {
 		core::import_pose::pose_from_file( native_pose, option[ in::file::native ]() , core::import_pose::PDB_file);
 		// Set the native pose into the mover
-		mover.set_native_pose( PoseCOP( PoseOP( new core::pose::Pose(native_pose) ) ) );
+		mover.set_native_pose( utility::pointer::make_shared< core::pose::Pose >(native_pose) );
 #ifdef BOINC_GRAPHICS
 		// set native for graphics
 		boinc::Boinc::set_graphics_native_pose( native_pose );
@@ -328,13 +328,13 @@ int universal_main(
 			std::cerr << "Silent Output Mode " << std::endl;
 #endif
 			TR << "Silent Output Mode " << std::endl;
-			jobdist = BaseJobDistributorOP( new PlainSilentFileJobDistributor(input_jobs) );
+			jobdist = utility::pointer::make_shared< PlainSilentFileJobDistributor >(input_jobs);
 		} else {
 #ifdef BOINC
 			std::cerr << "PDB Output Mode " << std::endl;
 #endif
 			TR << "PDB Output Mode " << std::endl;
-			jobdist = BaseJobDistributorOP( new PlainPdbJobDistributor(input_jobs, "none") );
+			jobdist = utility::pointer::make_shared< PlainPdbJobDistributor >(input_jobs, "none");
 		}
 		if ( option[ out::nooutput ]() ) {
 			jobdist->disable_output();
@@ -397,7 +397,7 @@ int universal_main(
 				core::pose::PoseOP the_pose( new core::pose::Pose( input_pose ) );
 				if ( the_pose->is_fullatom() ) core::scoring::constraints::add_fa_constraints_from_cmdline_to_pose( *the_pose );
 				else                     core::scoring::constraints::add_constraints_from_cmdline_to_pose( *the_pose );
-				the_pose->data().set(core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG, DataCache_CacheableData::DataOP( new CacheableString(curr_job->output_tag(curr_nstruct)) ));
+				the_pose->data().set(core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG, utility::pointer::make_shared< CacheableString >(curr_job->output_tag(curr_nstruct)));
 
 				// Membrane protein specific scoring - only centroid score function here:
 				if ( option[ OptionKeys::score::weights ]() == "score_membrane" && option[in::file::spanfile].user() && option[ in::file::centroid_input ].user() ) {
@@ -502,10 +502,10 @@ int universal_main(
 		bool const silent_output = option[ out::file::silent ].user();
 		if ( silent_output ) {
 			TR << "Silent Output Mode " << std::endl;
-			jobdist = BaseJobDistributorOP( new PlainSilentFileJobDistributor(input_jobs) );
+			jobdist = utility::pointer::make_shared< PlainSilentFileJobDistributor >(input_jobs);
 		} else {
 			TR << "PDB Output Mode " << std::endl;
-			jobdist = BaseJobDistributorOP( new PlainPdbJobDistributor(input_jobs, "none") );
+			jobdist = utility::pointer::make_shared< PlainPdbJobDistributor >(input_jobs, "none");
 		}
 
 		if ( option[ out::nooutput ]() ) {
@@ -533,7 +533,7 @@ int universal_main(
 					core::import_pose::pose_from_file( native_pose, curr_job->native_tag() , core::import_pose::PDB_file);
 				}
 				// Set the native pose into the mover
-				mover.set_native_pose( PoseCOP( PoseOP( new core::pose::Pose(native_pose) ) ) );
+				mover.set_native_pose( utility::pointer::make_shared< core::pose::Pose >(native_pose) );
 #ifdef BOINC_GRAPHICS
 				// set native for graphics
 				boinc::Boinc::set_graphics_native_pose( native_pose );
@@ -548,7 +548,7 @@ int universal_main(
 
 			// we read each PDB just once to save on disk I/O
 			if ( curr_job.get() != prev_job.get() || input_pose.get() == nullptr ) {
-				input_pose = core::pose::PoseOP( new core::pose::Pose() );
+				input_pose = utility::pointer::make_shared< core::pose::Pose >();
 				if ( option[ in::file::centroid_input ].user() ) {
 					core::import_pose::centroid_pose_from_pdb( *input_pose, curr_job->input_tag() , core::import_pose::PDB_file);
 				} else {
@@ -565,7 +565,7 @@ int universal_main(
 			if ( the_pose->is_fullatom() ) core::scoring::constraints::add_fa_constraints_from_cmdline_to_pose( *the_pose );
 			else                          core::scoring::constraints::add_constraints_from_cmdline_to_pose( *the_pose );
 
-			the_pose->data().set(core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG, DataCache_CacheableData::DataOP( new CacheableString(curr_job->output_tag(curr_nstruct)) ));
+			the_pose->data().set(core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG, utility::pointer::make_shared< CacheableString >(curr_job->output_tag(curr_nstruct)));
 
 			// Membrane protein specific scoring - only centroid score function here:
 			if ( option[ OptionKeys::score::weights ]() == "score_membrane" && option[in::file::spanfile].user() && option[ in::file::centroid_input ].user() ) {
@@ -694,9 +694,9 @@ int main_plain_mover(
 	bool const is_raw = option[ out::file::raw ]();
 	bool const silent_output = option[ out::file::silent ].user();
 	if ( is_raw || silent_output ) {
-		jobdist = BaseJobDistributorOP( new PlainRawJobDistributor(input_jobs, ".out") );
+		jobdist = utility::pointer::make_shared< PlainRawJobDistributor >(input_jobs, ".out");
 	} else {
-		jobdist = BaseJobDistributorOP( new PlainPdbJobDistributor(input_jobs, "score") );
+		jobdist = utility::pointer::make_shared< PlainPdbJobDistributor >(input_jobs, "score");
 	}
 
 	if ( option[ out::nooutput ]() ) {
@@ -714,14 +714,14 @@ int main_plain_mover(
 
 		// we read each PDB just once to save on disk I/O
 		if ( curr_job.get() != prev_job.get() || input_pose.get() == nullptr ) {
-			input_pose = core::pose::PoseOP( new core::pose::Pose() );
+			input_pose = utility::pointer::make_shared< core::pose::Pose >();
 			if ( option[ in::file::centroid_input ].user() ) {
 				core::import_pose::centroid_pose_from_pdb( *input_pose, curr_job->input_tag() , core::import_pose::PDB_file);
-				native_pose = core::pose::PoseOP( new core::pose::Pose() );
+				native_pose = utility::pointer::make_shared< core::pose::Pose >();
 				core::import_pose::centroid_pose_from_pdb( *native_pose, curr_job->native_tag() , core::import_pose::PDB_file);
 			} else {
 				core::import_pose::pose_from_file( *input_pose, curr_job->input_tag() , core::import_pose::PDB_file);
-				native_pose = core::pose::PoseOP( new core::pose::Pose() );
+				native_pose = utility::pointer::make_shared< core::pose::Pose >();
 				core::import_pose::pose_from_file( *native_pose, curr_job->native_tag() , core::import_pose::PDB_file);
 			}
 		}
@@ -730,7 +730,7 @@ int main_plain_mover(
 
 		// Make a modifiable copy of the pose read from disk
 		core::pose::PoseOP the_pose( new core::pose::Pose( *input_pose ) );
-		the_pose->data().set(core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG, DataCache_CacheableData::DataOP( new CacheableString(curr_job->output_tag(curr_nstruct)) ));
+		the_pose->data().set(core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG, utility::pointer::make_shared< CacheableString >(curr_job->output_tag(curr_nstruct)));
 
 		mover.apply( *the_pose );
 
@@ -793,10 +793,10 @@ int main_plain_pdb_mover(
 	bool const silent_output = option[ out::file::silent ].user();
 	if ( silent_output ) {
 		TR << "Silent Output Mode " << std::endl;
-		jobdist = BaseJobDistributorOP( new PlainSilentFileJobDistributor(input_jobs) );
+		jobdist = utility::pointer::make_shared< PlainSilentFileJobDistributor >(input_jobs);
 	} else {
 		TR << "PDB Output Mode " << std::endl;
-		jobdist = BaseJobDistributorOP( new PlainPdbJobDistributor(input_jobs, "score") );
+		jobdist = utility::pointer::make_shared< PlainPdbJobDistributor >(input_jobs, "score");
 	}
 
 	if ( option[ out::nooutput ]() ) {
@@ -820,7 +820,7 @@ int main_plain_pdb_mover(
 
 		// we read each PDB just once to save on disk I/O
 		if ( curr_job.get() != prev_job.get() || input_pose.get() == nullptr ) {
-			input_pose = core::pose::PoseOP( new core::pose::Pose() );
+			input_pose = utility::pointer::make_shared< core::pose::Pose >();
 			if ( option[ in::file::centroid_input ].user() ) {
 				core::import_pose::centroid_pose_from_pdb( *input_pose, curr_job->input_tag() , core::import_pose::PDB_file);
 			} else {
@@ -830,7 +830,7 @@ int main_plain_pdb_mover(
 
 		// Make a modifiable copy of the pose read from disk
 		core::pose::PoseOP the_pose( new core::pose::Pose( *input_pose ) );
-		the_pose->data().set(core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG, DataCache_CacheableData::DataOP( new CacheableString(curr_job->output_tag(curr_nstruct)) ));
+		the_pose->data().set(core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG, utility::pointer::make_shared< CacheableString >(curr_job->output_tag(curr_nstruct)));
 
 		for ( int repeat = 0; repeat < int(option[ run::repeat ]()); ++repeat ) {
 			mover.apply( *the_pose );
@@ -908,13 +908,13 @@ int main_atom_tree_diff_mover(
 
 		// we read each PDB just once to save on disk I/O
 		if ( curr_job.get() != prev_job.get() || input_pose.get() == nullptr ) {
-			input_pose = core::pose::PoseOP( new core::pose::Pose() );
+			input_pose = utility::pointer::make_shared< core::pose::Pose >();
 			core::import_pose::pose_from_file( *input_pose, curr_job->input_tag() , core::import_pose::PDB_file);
 		}
 
 		// Make a modifiable copy of the pose read from disk
 		core::pose::PoseOP the_pose( new core::pose::Pose( *input_pose ) );
-		the_pose->data().set(core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG, DataCache_CacheableData::DataOP( new CacheableString(curr_job->output_tag(curr_nstruct)) ));
+		the_pose->data().set(core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG, utility::pointer::make_shared< CacheableString >(curr_job->output_tag(curr_nstruct)));
 		mover.apply( *the_pose );
 
 		// Score new structure and add to silent file

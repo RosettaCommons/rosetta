@@ -68,7 +68,7 @@ DisembodiedAssembly::DisembodiedAssembly():
 
 AssemblyOP
 DisembodiedAssembly::clone(){
-	return AssemblyOP(new DisembodiedAssembly(*this));
+	return utility::pointer::make_shared< DisembodiedAssembly >(*this);
 }
 
 

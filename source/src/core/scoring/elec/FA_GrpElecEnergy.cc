@@ -89,7 +89,7 @@ methods::EnergyMethodOP
 FA_GrpElecEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
-	return methods::EnergyMethodOP( new FA_GrpElecEnergy( options ) );
+	return utility::pointer::make_shared< FA_GrpElecEnergy >( options );
 }
 
 ScoreTypes
@@ -115,7 +115,7 @@ FAElecContextData::initialize( Size const nres )
 
 ////////////////////////////////////////////////////////////////////////////
 FA_GrpElecEnergy::FA_GrpElecEnergy( methods::EnergyMethodOptions const & options ):
-	parent( methods::EnergyMethodCreatorOP( new FA_GrpElecEnergyCreator ) ),
+	parent( utility::pointer::make_shared< FA_GrpElecEnergyCreator >() ),
 	coulomb_( options ),
 	groupelec_( options ),
 	exclude_protein_protein_( options.exclude_protein_protein_fa_elec() ),
@@ -167,7 +167,7 @@ FA_GrpElecEnergy::initialize() {
 methods::EnergyMethodOP
 FA_GrpElecEnergy::clone() const
 {
-	return methods::EnergyMethodOP( new FA_GrpElecEnergy( *this ) );
+	return utility::pointer::make_shared< FA_GrpElecEnergy >( *this );
 }
 
 void
@@ -193,7 +193,7 @@ FA_GrpElecEnergy::setup_for_minimizing(
 	NeighborListOP nblist;
 	Real const tolerated_motion = pose.energies().use_nblist_auto_update() ? option[ run::nblist_autoupdate_narrow ] : 1.5;
 	Real const XX = coulomb().max_dis() + 2 * tolerated_motion;
-	nblist = NeighborListOP( new NeighborList( min_map.domain_map(), XX*XX, XX*XX, XX*XX) );
+	nblist = utility::pointer::make_shared< NeighborList >( min_map.domain_map(), XX*XX, XX*XX, XX*XX);
 	if ( pose.energies().use_nblist_auto_update() ) {
 		nblist->set_auto_update( tolerated_motion );
 	}
@@ -230,7 +230,7 @@ FA_GrpElecEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & sc
 		data = utility::pointer::static_pointer_cast< FAElecContextData >
 			( pose.data().get_ptr( core::pose::datacache::CacheableDataType::FAELEC_CONTEXT_DATA ) );
 	} else {
-		data = FAElecContextDataOP( new FAElecContextData() );
+		data = utility::pointer::make_shared< FAElecContextData >();
 	}
 
 	precalc_context( pose, data );
@@ -701,7 +701,7 @@ FA_GrpElecEnergy::get_count_pair_function(
 {
 	using namespace etable::count_pair;
 	if ( res1 == res2 ) {
-		return etable::count_pair::CountPairFunctionCOP( etable::count_pair::CountPairFunctionOP( new CountPairNone ) );
+		return utility::pointer::make_shared< CountPairNone >();
 	}
 
 	conformation::Residue const & rsd1( pose.residue( res1 ) );
@@ -717,12 +717,12 @@ FA_GrpElecEnergy::get_count_pair_function(
 {
 	using namespace etable::count_pair;
 
-	if ( ! defines_score_for_residue_pair(rsd1, rsd2, true) ) return etable::count_pair::CountPairFunctionCOP( etable::count_pair::CountPairFunctionOP( new CountPairNone ) );
+	if ( ! defines_score_for_residue_pair(rsd1, rsd2, true) ) return utility::pointer::make_shared< CountPairNone >();
 
 	if ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) {
 		return CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
 	}
-	return etable::count_pair::CountPairFunctionCOP( etable::count_pair::CountPairFunctionOP( new CountPairAll ) );
+	return utility::pointer::make_shared< CountPairAll >();
 
 }
 

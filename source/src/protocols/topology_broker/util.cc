@@ -266,14 +266,14 @@ void add_cmdline_claims( TopologyBroker& broker, bool const do_I_need_frags ) {
 		simple_moves::ClassicFragmentMoverOP
 			bml( new ClassicFragmentMover(input_fragment.frags_small()) ),
 			bms( new ClassicFragmentMover(input_fragment.frags_small()) ),
-			sms( new SmoothFragmentMover (input_fragment.frags_small(), simple_moves::FragmentCostOP( new GunnCost ) ) );
+			sms( new SmoothFragmentMover (input_fragment.frags_small(), utility::pointer::make_shared< GunnCost >() ) );
 
-		broker.add( TopologyClaimerOP( new FragmentClaimer( bml, "LargeFrags", weights::AbinitioMoverWeightOP( new LargeFragWeight ), input_fragment.label(), input_fragment.frags_large() ) ) );
-		broker.add( TopologyClaimerOP( new FragmentClaimer( bms, "SmallFrags", weights::AbinitioMoverWeightOP( new SmallFragWeight ), input_fragment.label(), input_fragment.frags_small() ) ) );
-		broker.add( TopologyClaimerOP( new FragmentClaimer( sms, "SmoothFrags", weights::AbinitioMoverWeightOP( new SmoothFragWeight ), input_fragment.label(), input_fragment.frags_small() ) ) );
-		broker.add( TopologyClaimerOP( new LoopFragmentClaimer( input_fragment.frags_small(), input_fragment.label() ) ));
+		broker.add( utility::pointer::make_shared< FragmentClaimer >( bml, "LargeFrags", utility::pointer::make_shared< LargeFragWeight >(), input_fragment.label(), input_fragment.frags_large() ) );
+		broker.add( utility::pointer::make_shared< FragmentClaimer >( bms, "SmallFrags", utility::pointer::make_shared< SmallFragWeight >(), input_fragment.label(), input_fragment.frags_small() ) );
+		broker.add( utility::pointer::make_shared< FragmentClaimer >( sms, "SmoothFrags", utility::pointer::make_shared< SmoothFragWeight >(), input_fragment.label(), input_fragment.frags_small() ) );
+		broker.add( utility::pointer::make_shared< LoopFragmentClaimer >( input_fragment.frags_small(), input_fragment.label() ));
 		core::fragment::SecondaryStructureOP ss_def( new core::fragment::SecondaryStructure(*(input_fragment.frags_small()), false /*no JustUseCentralResidue */ ) );
-		broker.add( TopologyClaimerOP( new CutBiasClaimer( *ss_def, input_fragment.label() ) ) );
+		broker.add( utility::pointer::make_shared< CutBiasClaimer >( *ss_def, input_fragment.label() ) );
 
 		bms->set_end_bias( option[ OptionKeys::abinitio::end_bias ] ); //default is 30.0
 		bml->set_end_bias( option[ OptionKeys::abinitio::end_bias ] );
@@ -291,7 +291,7 @@ void add_cmdline_claims( TopologyBroker& broker, bool const do_I_need_frags ) {
 			std::string filename = option[ in::file::fasta ]()[1];
 			sequence = core::sequence::read_fasta_file( filename  )[1]->sequence();
 			// label = core::sequence::read_fasta_file( filename )[1]->id();
-			broker.add( TopologyClaimerOP( new SequenceClaimer ( sequence, "DEFAULT", core::chemical::CENTROID ) ) );
+			broker.add( utility::pointer::make_shared< SequenceClaimer > ( sequence, "DEFAULT", core::chemical::CENTROID ) );
 
 			tr.Debug << "Read command-line to instantiate a default SequenceClaimer. Read sequence is '"
 				<< sequence << "' from command-line (-in:file:fasta or similar) specified file "
@@ -302,7 +302,7 @@ void add_cmdline_claims( TopologyBroker& broker, bool const do_I_need_frags ) {
 			sequence = native_pose->annotated_sequence();
 			utility::vector1< core::pose::PoseOP > chain_poses = native_pose->split_by_chain();
 
-			broker.add( TopologyClaimerOP( new SequenceClaimer ( sequence, "DEFAULT", core::chemical::CENTROID ) ) );
+			broker.add( utility::pointer::make_shared< SequenceClaimer > ( sequence, "DEFAULT", core::chemical::CENTROID ) );
 
 		} else {
 			throw CREATE_EXCEPTION(utility::excn::BadInput, "Error: can't read sequence! Use -in::file::fasta sequence.fasta or -in::file::native native.pdb!");
@@ -313,11 +313,11 @@ void add_cmdline_claims( TopologyBroker& broker, bool const do_I_need_frags ) {
 
 	if ( !cmdline_data.b_has_constraint_claimer && basic::options::option[ constraints::cst_file ].user() ) {
 		tr.Info << "add ConstraintClaimer to account for cmd-line constraints" << std::endl;
-		broker.add( TopologyClaimerOP( new ConstraintClaimer( true /* read from cmd-line */ ) ) );
+		broker.add( utility::pointer::make_shared< ConstraintClaimer >( true /* read from cmd-line */ ) );
 	}
 	if ( !cmdline_data.b_has_constraint_claimer && basic::options::option[ constraints::cst_fa_file ].user() ) {
 		tr.Info << "add fa ConstraintClaimer to account for cmd-line constraints" << std::endl;
-		broker.add( TopologyClaimerOP( new ConstraintClaimer( true /* read from cmd-line */, false /*centroid*/, true /*true*/ ) ) );
+		broker.add( utility::pointer::make_shared< ConstraintClaimer >( true /* read from cmd-line */, false /*centroid*/, true /*true*/ ) );
 	}
 }
 

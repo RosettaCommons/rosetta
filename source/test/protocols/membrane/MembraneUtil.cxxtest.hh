@@ -80,13 +80,13 @@ public: // test functions
 		// 1. TM domain of the M2 proton channel (single helix)
 		//        PoseOP m2_pose ( new Pose() );
 		//        pose_from_file( *m2_pose, "protocols/membrane/1mp6_transformed.pdb" , core::import_pose::PDB_file);
-		//        AddMembraneMoverOP add_memb1 = AddMembraneMoverOP( new AddMembraneMover( "protocols/membrane/1mp6.span" ) );
+		//        AddMembraneMoverOP add_memb1 = utility::pointer::make_shared< AddMembraneMover >( "protocols/membrane/1mp6.span" );
 		//        add_memb1->apply( *m2_pose );
 		//
 		//        // 2. Glycophorin A (two helices, oriented 'somewhat' opposite one another)
 		//        PoseOP glpA_pose( new Pose() );
 		//        pose_from_file( *glpA_pose, "protocols/membrane/1AFO_AB.pdb" , core::import_pose::PDB_file);
-		//        AddMembraneMoverOP add_memb2 = AddMembraneMoverOP( new AddMembraneMover( "protocols/membrane/1AFO_AB.span" ) );
+		//        AddMembraneMoverOP add_memb2 = utility::pointer::make_shared< AddMembraneMover >( "protocols/membrane/1AFO_AB.span" );
 		//        add_memb2->apply( *glpA_pose );
 		//
 		//  // Test Cases for membrane rmsd calculations
@@ -115,13 +115,13 @@ public: // test functions
 		// 1. TM domain of the M2 proton channel (single helix)
 		PoseOP m2_pose ( new Pose() );
 		pose_from_file( *m2_pose, "protocols/membrane/1mp6_transformed.pdb" , core::import_pose::PDB_file);
-		AddMembraneMoverOP add_memb1 = AddMembraneMoverOP( new AddMembraneMover( "protocols/membrane/1mp6.span" ) );
+		AddMembraneMoverOP add_memb1 = utility::pointer::make_shared< AddMembraneMover >( "protocols/membrane/1mp6.span" );
 		add_memb1->apply( *m2_pose );
 
 		// 2. Glycophorin A (two helices, oriented 'somewhat' opposite one another)
 		PoseOP glpA_pose( new Pose() );
 		pose_from_file( *glpA_pose, "protocols/membrane/1AFO_AB.pdb" , core::import_pose::PDB_file);
-		AddMembraneMoverOP add_memb2 = AddMembraneMoverOP( new AddMembraneMover( "protocols/membrane/1AFO_AB.span" ) );
+		AddMembraneMoverOP add_memb2 = utility::pointer::make_shared< AddMembraneMover >( "protocols/membrane/1AFO_AB.span" );
 		add_memb2->apply( *glpA_pose );
 
 		// Calculate helix axis for each transembrane span
@@ -150,13 +150,13 @@ public: // test functions
 		// 1. TM domain of the M2 proton channel (single helix)
 		PoseOP m2_pose ( new Pose() );
 		pose_from_file( *m2_pose, "protocols/membrane/1mp6_transformed.pdb" , core::import_pose::PDB_file);
-		AddMembraneMoverOP add_memb1 = AddMembraneMoverOP( new AddMembraneMover( "protocols/membrane/1mp6.span" ) );
+		AddMembraneMoverOP add_memb1 = utility::pointer::make_shared< AddMembraneMover >( "protocols/membrane/1mp6.span" );
 		add_memb1->apply( *m2_pose );
 
 		// 2. Glycophorin A (two helices, oriented 'somewhat' opposite one another)
 		PoseOP glpA_pose( new Pose() );
 		pose_from_file( *glpA_pose, "protocols/membrane/1AFO_AB.pdb" , core::import_pose::PDB_file);
-		AddMembraneMoverOP add_memb2 = AddMembraneMoverOP( new AddMembraneMover( "protocols/membrane/1AFO_AB.span" ) );
+		AddMembraneMoverOP add_memb2 = utility::pointer::make_shared< AddMembraneMover >( "protocols/membrane/1AFO_AB.span" );
 		add_memb2->apply( *glpA_pose );
 
 		// Calculate helix tilt angles & compare
@@ -209,20 +209,20 @@ public: // test functions
 		// 1. TM domain of the M2 proton channel (single helix)
 		PoseOP m2_pose ( new Pose() );
 		pose_from_file( *m2_pose, "protocols/membrane/1mp6_transformed.pdb" , core::import_pose::PDB_file);
-		AddMembraneMoverOP add_memb1 = AddMembraneMoverOP( new AddMembraneMover( "protocols/membrane/1mp6.span" ) );
+		AddMembraneMoverOP add_memb1 = utility::pointer::make_shared< AddMembraneMover >( "protocols/membrane/1mp6.span" );
 		add_memb1->apply( *m2_pose );
 
 		// 2. Glycophorin A (two helices, oriented 'somewhat' opposite one another)
 		PoseOP glpA_pose( new Pose() );
 		pose_from_file( *glpA_pose, "protocols/membrane/1AFO_AB.pdb" , core::import_pose::PDB_file);
-		AddMembraneMoverOP add_memb2 = AddMembraneMoverOP( new AddMembraneMover( "protocols/membrane/1AFO_AB.span" ) );
+		AddMembraneMoverOP add_memb2 = utility::pointer::make_shared< AddMembraneMover >( "protocols/membrane/1AFO_AB.span" );
 		add_memb2->apply( *glpA_pose );
 
 		// Set up new foldtree for m2 rooted at the previous downstream residue
 		// of the membrane jump
 		Size m2_jump( m2_pose->conformation().membrane_info()->membrane_jump() );
 		Size m2_downstream( m2_pose->conformation().fold_tree().downstream_jump_residue( m2_jump ) );
-		FoldTreeOP m2_foldtree = FoldTreeOP( new FoldTree( m2_pose->conformation().fold_tree() ) );
+		FoldTreeOP m2_foldtree = utility::pointer::make_shared< FoldTree >( m2_pose->conformation().fold_tree() );
 		m2_foldtree->reorder( m2_downstream );
 		m2_pose->fold_tree( *m2_foldtree );
 		m2_foldtree->show( TR );
@@ -232,7 +232,7 @@ public: // test functions
 		// of the membrane jump
 		Size glpA_jump( glpA_pose->conformation().membrane_info()->membrane_jump() );
 		Size glpA_downstream( glpA_pose->conformation().fold_tree().downstream_jump_residue( glpA_jump ) );
-		FoldTreeOP glpA_foldtree = FoldTreeOP( new FoldTree( glpA_pose->conformation().fold_tree() ) );
+		FoldTreeOP glpA_foldtree = utility::pointer::make_shared< FoldTree >( glpA_pose->conformation().fold_tree() );
 		glpA_foldtree->reorder( glpA_downstream );
 		glpA_pose->fold_tree( *glpA_foldtree );
 		glpA_foldtree->show( TR );
@@ -247,13 +247,13 @@ public: // test functions
 		// 1. TM domain of the M2 proton channel (single helix)
 		PoseOP m2_pose ( new Pose() );
 		pose_from_file( *m2_pose, "protocols/membrane/1mp6_transformed.pdb" , core::import_pose::PDB_file);
-		AddMembraneMoverOP add_memb1 = AddMembraneMoverOP( new AddMembraneMover( "protocols/membrane/1mp6.span" ) );
+		AddMembraneMoverOP add_memb1 = utility::pointer::make_shared< AddMembraneMover >( "protocols/membrane/1mp6.span" );
 		add_memb1->apply( *m2_pose );
 
 		// 2. Glycophorin A (two helices, oriented 'somewhat' opposite one another)
 		PoseOP glpA_pose( new Pose() );
 		pose_from_file( *glpA_pose, "protocols/membrane/1AFO_AB.pdb" , core::import_pose::PDB_file);
-		AddMembraneMoverOP add_memb2 = AddMembraneMoverOP( new AddMembraneMover( "protocols/membrane/1AFO_AB.span" ) );
+		AddMembraneMoverOP add_memb2 = utility::pointer::make_shared< AddMembraneMover >( "protocols/membrane/1AFO_AB.span" );
 		add_memb2->apply( *glpA_pose );
 
 		// When the pose is loaded in via AddMembraneMover, by default the foldtree
@@ -270,13 +270,13 @@ public: // test functions
 		// 1. TM domain of the M2 proton channel (single helix)
 		PoseOP m2_pose ( new Pose() );
 		pose_from_file( *m2_pose, "protocols/membrane/1mp6_transformed.pdb" , core::import_pose::PDB_file);
-		AddMembraneMoverOP add_memb1 = AddMembraneMoverOP( new AddMembraneMover( "protocols/membrane/1mp6.span" ) );
+		AddMembraneMoverOP add_memb1 = utility::pointer::make_shared< AddMembraneMover >( "protocols/membrane/1mp6.span" );
 		add_memb1->apply( *m2_pose );
 
 		// 2. Glycophorin A (two helices, oriented 'somewhat' opposite one another)
 		PoseOP glpA_pose( new Pose() );
 		pose_from_file( *glpA_pose, "protocols/membrane/1AFO_AB.pdb" , core::import_pose::PDB_file);
-		AddMembraneMoverOP add_memb2 = AddMembraneMoverOP( new AddMembraneMover( "protocols/membrane/1AFO_AB.span" ) );
+		AddMembraneMoverOP add_memb2 = utility::pointer::make_shared< AddMembraneMover >( "protocols/membrane/1AFO_AB.span" );
 		add_memb2->apply( *glpA_pose );
 
 		TS_ASSERT( !is_membrane_moveable_by_itself( *m2_pose ) );
@@ -291,20 +291,20 @@ public: // test functions
 		// 1. TM domain of the M2 proton channel (single helix)
 		PoseOP m2_pose ( new Pose() );
 		pose_from_file( *m2_pose, "protocols/membrane/1mp6_transformed.pdb" , core::import_pose::PDB_file);
-		AddMembraneMoverOP add_memb1 = AddMembraneMoverOP( new AddMembraneMover( "protocols/membrane/1mp6.span" ) );
+		AddMembraneMoverOP add_memb1 = utility::pointer::make_shared< AddMembraneMover >( "protocols/membrane/1mp6.span" );
 		add_memb1->apply( *m2_pose );
 
 		// 2. Glycophorin A (two helices, oriented 'somewhat' opposite one another)
 		PoseOP glpA_pose( new Pose() );
 		pose_from_file( *glpA_pose, "protocols/membrane/1AFO_AB.pdb" , core::import_pose::PDB_file);
-		AddMembraneMoverOP add_memb2 = AddMembraneMoverOP( new AddMembraneMover( "protocols/membrane/1AFO_AB.span" ) );
+		AddMembraneMoverOP add_memb2 = utility::pointer::make_shared< AddMembraneMover >( "protocols/membrane/1AFO_AB.span" );
 		add_memb2->apply( *glpA_pose );
 
 		// Set up new foldtree for m2 rooted at the previous downstream residue
 		// of the membrane jump
 		Size m2_jump( m2_pose->conformation().membrane_info()->membrane_jump() );
 		Size m2_downstream( m2_pose->conformation().fold_tree().downstream_jump_residue( m2_jump ) );
-		FoldTreeOP m2_foldtree = FoldTreeOP( new FoldTree( m2_pose->conformation().fold_tree() ) );
+		FoldTreeOP m2_foldtree = utility::pointer::make_shared< FoldTree >( m2_pose->conformation().fold_tree() );
 		m2_foldtree->reorder( m2_downstream );
 		m2_pose->fold_tree( *m2_foldtree );
 		m2_foldtree->show( TR );
@@ -314,7 +314,7 @@ public: // test functions
 		// of the membrane jump
 		Size glpA_jump( glpA_pose->conformation().membrane_info()->membrane_jump() );
 		Size glpA_downstream( glpA_pose->conformation().fold_tree().downstream_jump_residue( glpA_jump ) );
-		FoldTreeOP glpA_foldtree = FoldTreeOP( new FoldTree( glpA_pose->conformation().fold_tree() ) );
+		FoldTreeOP glpA_foldtree = utility::pointer::make_shared< FoldTree >( glpA_pose->conformation().fold_tree() );
 		glpA_foldtree->reorder( glpA_downstream );
 		glpA_pose->fold_tree( *glpA_foldtree );
 		glpA_foldtree->show( TR );

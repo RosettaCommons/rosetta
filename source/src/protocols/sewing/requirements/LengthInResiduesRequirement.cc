@@ -54,7 +54,7 @@ LengthInResiduesRequirement::LengthInResiduesRequirement( LengthInResiduesRequir
 
 LengthInResiduesRequirementOP
 LengthInResiduesRequirement::clone() const {
-	return LengthInResiduesRequirementOP( new LengthInResiduesRequirement( *this ) );
+	return utility::pointer::make_shared< LengthInResiduesRequirement >( *this );
 }
 
 std::pair<bool,bool>
@@ -141,7 +141,7 @@ LengthInResiduesRequirementCreator::provide_xml_schema( utility::tag::XMLSchemaD
 
 AssemblyRequirementOP
 LengthInResiduesRequirementCreator::create_requirement() const{
-	return AssemblyRequirementOP( new LengthInResiduesRequirement() );
+	return utility::pointer::make_shared< LengthInResiduesRequirement >();
 }
 
 std::string

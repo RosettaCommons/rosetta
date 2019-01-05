@@ -164,7 +164,7 @@ public:
 			subset[ i ] = true;
 		}
 
-		ReturnResidueSubsetSelectorOP subset_selector = ReturnResidueSubsetSelectorOP( new ReturnResidueSubsetSelector(subset) );
+		ReturnResidueSubsetSelectorOP subset_selector = utility::pointer::make_shared< ReturnResidueSubsetSelector >(subset);
 
 		//pose.real_to_virtual(3);
 

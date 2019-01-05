@@ -47,7 +47,7 @@ methods::EnergyMethodOP
 DNA_BaseEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new DNA_BaseEnergy );
+	return utility::pointer::make_shared< DNA_BaseEnergy >();
 }
 
 ScoreTypes
@@ -66,7 +66,7 @@ using namespace dna; //////////////////// NOTE NOTE NOTE
 std::string const dna_deriv_atom( " C5 " );
 
 DNA_BaseEnergy::DNA_BaseEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new DNA_BaseEnergyCreator ) ),
+	parent( utility::pointer::make_shared< DNA_BaseEnergyCreator >() ),
 	potential_( ScoringManager::get_instance()->get_DNA_BasePotential() )
 {}
 
@@ -75,7 +75,7 @@ DNA_BaseEnergy::DNA_BaseEnergy() :
 EnergyMethodOP
 DNA_BaseEnergy::clone() const
 {
-	return EnergyMethodOP( new DNA_BaseEnergy() );
+	return utility::pointer::make_shared< DNA_BaseEnergy >();
 }
 
 /// are these really necessary??????????? move to scheme that doesnt depend on nbr calcn

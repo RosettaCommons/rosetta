@@ -39,7 +39,7 @@ namespace func {
 TopOutFunc::TopOutFunc( Real weight_in, Real x0_in, Real limit_in ) :
 	x0_( x0_in ), weight_( weight_in), limit_( limit_in ) {}
 
-FuncOP TopOutFunc::clone() const { return FuncOP( new TopOutFunc( *this ) ); }
+FuncOP TopOutFunc::clone() const { return utility::pointer::make_shared< TopOutFunc >( *this ); }
 
 bool TopOutFunc::operator == ( Func const & other ) const
 {

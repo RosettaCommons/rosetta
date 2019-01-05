@@ -28,7 +28,7 @@ namespace methods {
 /// specified options
 EnergyMethodOP
 LinearBranchEnergyCreator::create_energy_method(const EnergyMethodOptions& /*opt*/) const {
-	return EnergyMethodOP( new LinearBranchEnergy );
+	return utility::pointer::make_shared< LinearBranchEnergy >();
 }
 
 ScoreTypes

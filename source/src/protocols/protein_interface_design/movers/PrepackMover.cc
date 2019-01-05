@@ -70,7 +70,7 @@ static basic::Tracer TR( "protocols.protein_interface_design.movers.PrepackMover
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP PrepackMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new PrepackMover );
+// XRW TEMP  return utility::pointer::make_shared< PrepackMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -99,12 +99,12 @@ PrepackMover::PrepackMover(
 
 protocols::moves::MoverOP
 PrepackMover::clone() const {
-	return( protocols::moves::MoverOP( new PrepackMover( *this ) ) );
+	return( utility::pointer::make_shared< PrepackMover >( *this ) );
 }
 
 protocols::moves::MoverOP
 PrepackMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new PrepackMover );
+	return utility::pointer::make_shared< PrepackMover >();
 }
 
 PrepackMover::~PrepackMover() = default;
@@ -117,12 +117,12 @@ void PrepackMover::apply( pose::Pose & pose )
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
 	TaskFactoryOP tf;
-	if ( task_factory() ) tf = TaskFactoryOP( new TaskFactory( *task_factory() ) );
-	else tf = TaskFactoryOP( new TaskFactory );
-	tf->push_back( TaskOperationCOP( new operation::InitializeFromCommandline ) );
-	tf->push_back( TaskOperationCOP( new operation::IncludeCurrent ) );
-	tf->push_back( TaskOperationCOP( new operation::RestrictToRepacking ) );
-	tf->push_back( TaskOperationCOP( new operation::NoRepackDisulfides ) );
+	if ( task_factory() ) tf = utility::pointer::make_shared< TaskFactory >( *task_factory() );
+	else tf = utility::pointer::make_shared< TaskFactory >();
+	tf->push_back( utility::pointer::make_shared< operation::InitializeFromCommandline >() );
+	tf->push_back( utility::pointer::make_shared< operation::IncludeCurrent >() );
+	tf->push_back( utility::pointer::make_shared< operation::RestrictToRepacking >() );
+	tf->push_back( utility::pointer::make_shared< operation::NoRepackDisulfides >() );
 
 	// incorporating Ian's UnboundRotamer operation.
 	// note that nothing happens if unboundrot option is inactive!
@@ -133,12 +133,12 @@ void PrepackMover::apply( pose::Pose & pose )
 	core::pack::dunbrack::load_unboundrot(pose); // adds scoring bonuses for the "unbound" rotamers, if any
 
 	using namespace protocols::simple_task_operations;
-	if ( basic::options::option[ basic::options::OptionKeys::docking::norepack1 ]() ) tf->push_back( TaskOperationCOP( new DockingNoRepack1( jump_num_) ) );
-	if ( basic::options::option[ basic::options::OptionKeys::docking::norepack2 ]() ) tf->push_back( TaskOperationCOP( new DockingNoRepack2( jump_num_) ) );
+	if ( basic::options::option[ basic::options::OptionKeys::docking::norepack1 ]() ) tf->push_back( utility::pointer::make_shared< DockingNoRepack1 >( jump_num_) );
+	if ( basic::options::option[ basic::options::OptionKeys::docking::norepack2 ]() ) tf->push_back( utility::pointer::make_shared< DockingNoRepack2 >( jump_num_) );
 
 	//in case there is a resfile, information in this resfile overrides the computed task
 	if ( basic::options::option[basic::options::OptionKeys::packing::resfile].user() ) {
-		tf->push_back( TaskOperationCOP( new operation::ReadResfile ) );
+		tf->push_back( utility::pointer::make_shared< operation::ReadResfile >() );
 	}
 	PackerTaskOP task = tf->create_task_and_apply_taskoperations( pose );
 
@@ -158,7 +158,7 @@ void PrepackMover::apply( pose::Pose & pose )
 		protocols::minimization_packing::MinMover min_bb_mover( mm_general, scorefxn_, "lbfgs_armijo_nonmonotone", 1e-5, true/*nblist*/, false/*deriv_check*/  );
 		min_bb_mover.apply( pose );
 	} else {
-		mm_general = core::kinematics::MoveMapOP( new core::kinematics::MoveMap );
+		mm_general = utility::pointer::make_shared< core::kinematics::MoveMap >();
 		mm_general->clear();
 	}
 
@@ -166,7 +166,7 @@ void PrepackMover::apply( pose::Pose & pose )
 	protocols::rigid::RigidBodyTransMoverOP translate;
 	if ( (jump_num_ > 0) && (pose.conformation().num_chains() > 1) ) {
 		TR<<"Translating along jump #"<<jump_num_<<std::endl;
-		translate = protocols::rigid::RigidBodyTransMoverOP( new protocols::rigid::RigidBodyTransMover( pose, jump_num_ ) ) ;
+		translate = utility::pointer::make_shared< protocols::rigid::RigidBodyTransMover >( pose, jump_num_ ) ;
 		translate->step_size( 1000.0 );
 		translate->apply( pose );
 	}
@@ -285,7 +285,7 @@ std::string PrepackMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 PrepackMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new PrepackMover );
+	return utility::pointer::make_shared< PrepackMover >();
 }
 
 void PrepackMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

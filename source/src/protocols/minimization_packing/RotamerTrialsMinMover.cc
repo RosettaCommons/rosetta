@@ -160,7 +160,7 @@ RotamerTrialsMinMover::parse_my_tag(
 	core::pack::task::TaskFactoryOP new_task_factory( protocols::rosetta_scripts::parse_task_operations( tag, datamap ) );
 	if ( new_task_factory == nullptr ) {
 		TR << "Using default Task Operations for RotamerTrialsMinMover." << std::endl;
-		new_task_factory = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory );
+		new_task_factory = utility::pointer::make_shared< core::pack::task::TaskFactory >();
 	}
 	task_factory( new_task_factory );
 
@@ -176,14 +176,14 @@ RotamerTrialsMinMover::parse_my_tag(
 protocols::moves::MoverOP
 RotamerTrialsMinMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new RotamerTrialsMinMover );
+	return utility::pointer::make_shared< RotamerTrialsMinMover >();
 }
 
 /// @brief Return a copy of this mover instance (for RosettaScripts)
 protocols::moves::MoverOP
 RotamerTrialsMinMover::clone() const
 {
-	return protocols::moves::MoverOP( new protocols::minimization_packing::RotamerTrialsMinMover( *this ) );
+	return utility::pointer::make_shared< protocols::minimization_packing::RotamerTrialsMinMover >( *this );
 }
 
 // XRW TEMP std::string
@@ -195,7 +195,7 @@ RotamerTrialsMinMover::clone() const
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP RotamerTrialsMinMoverCreator::create_mover() const
 // XRW TEMP {
-// XRW TEMP  return protocols::moves::MoverOP( new RotamerTrialsMinMover );
+// XRW TEMP  return utility::pointer::make_shared< RotamerTrialsMinMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -231,7 +231,7 @@ std::string RotamerTrialsMinMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 RotamerTrialsMinMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new RotamerTrialsMinMover );
+	return utility::pointer::make_shared< RotamerTrialsMinMover >();
 }
 
 void RotamerTrialsMinMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

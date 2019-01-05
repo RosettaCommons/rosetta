@@ -133,7 +133,7 @@ std::string SpliceOutTailCreator::keyname() const {
 }
 
 protocols::moves::MoverOP SpliceOutTailCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SpliceOutTail );
+	return utility::pointer::make_shared< SpliceOutTail >();
 }
 
 std::string SpliceOutTailCreator::mover_name() {
@@ -189,7 +189,7 @@ void SpliceOutTail::abstract_parse_tag(TagCOP const tag){
 
 
 protocols::moves::MoverOP SpliceOutTail::clone() const {
-	return (protocols::moves::MoverOP(new SpliceOutTail(*this)));
+	return (utility::pointer::make_shared< SpliceOutTail >(*this));
 }
 
 

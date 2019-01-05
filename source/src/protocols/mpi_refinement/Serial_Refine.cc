@@ -107,7 +107,7 @@ Serial_Refine::init(){
 		core::import_pose::pose_from_file( native_pose_, *rsd_set, option[ in::file::native ]() , core::import_pose::PDB_file);
 	}
 
-	fobj_ = MultiObjectiveOP( new MultiObjective() );
+	fobj_ = utility::pointer::make_shared< MultiObjective >();
 }
 
 void
@@ -282,10 +282,10 @@ Serial_Refine::perturb( MethodParams const &params,
 	std::string movername( params.movertype );
 
 	if ( movername.compare("relax") == 0 ) {
-		new_wu = WorkUnit_SamplerOP( new WorkUnit_Relax( params.relax_type, params.score_type, params.nperrun, params.cstw ) );
+		new_wu = utility::pointer::make_shared< WorkUnit_Relax >( params.relax_type, params.score_type, params.nperrun, params.cstw );
 
 	} else if ( movername.compare("md") == 0 ) {
-		new_wu = WorkUnit_SamplerOP( new WorkUnit_MD( params.relax_type, params.score_type, params.nperrun, params.cstw ) );
+		new_wu = utility::pointer::make_shared< WorkUnit_MD >( params.relax_type, params.score_type, params.nperrun, params.cstw );
 
 	} else if ( movername.compare("partialabinitio") == 0 ) {
 		core::Size res1, res2;
@@ -293,7 +293,7 @@ Serial_Refine::perturb( MethodParams const &params,
 		get_loop_info( start_struct, res1, res2, is_terminus );
 		TR << "assigned loop: " << res1 << " " << res2 << std::endl;
 
-		new_wu = WorkUnit_SamplerOP( new WorkUnit_PartialAbinitio( params.nperrun, true ) );
+		new_wu = utility::pointer::make_shared< WorkUnit_PartialAbinitio >( params.nperrun, true );
 	}
 
 	// Execute mover

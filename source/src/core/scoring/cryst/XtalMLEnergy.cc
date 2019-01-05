@@ -78,18 +78,18 @@ ScoreTypes XtalMLEnergyCreator::score_types_for_method() const {
 }
 
 methods::EnergyMethodOP XtalMLEnergyCreator::create_energy_method( methods::EnergyMethodOptions const &) const {
-	return methods::EnergyMethodOP( new XtalMLEnergy() );
+	return utility::pointer::make_shared< XtalMLEnergy >();
 }
 
 XtalMLEnergy::XtalMLEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new XtalMLEnergyCreator ) ) {
+	parent( utility::pointer::make_shared< XtalMLEnergyCreator >() ) {
 	ml=0;
 	dml_dx.clear();
 }
 
 /// clone
 methods::EnergyMethodOP XtalMLEnergy::clone() const {
-	return methods::EnergyMethodOP( new XtalMLEnergy( *this ) );
+	return utility::pointer::make_shared< XtalMLEnergy >( *this );
 }
 
 void XtalMLEnergy::setup_for_scoring( pose::Pose & , ScoreFunction const & ) const {

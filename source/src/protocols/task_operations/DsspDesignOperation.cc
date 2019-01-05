@@ -66,7 +66,7 @@ DsspDesignOperation::~DsspDesignOperation() = default;
 TaskOperationOP
 DsspDesignOperation::clone() const
 {
-	return TaskOperationOP( new DsspDesignOperation( *this ) );
+	return utility::pointer::make_shared< DsspDesignOperation >( *this );
 }
 
 void
@@ -251,7 +251,7 @@ DsspDesignOperation::parse_tag( TagCOP tag , DataMap & )
 {
 	// get secondary structure definition from blueprint file
 	if ( tag->hasOption( "blueprint" ) ) {
-		blueprint_ = BluePrintOP( new BluePrint( tag->getOption< std::string >( "blueprint" ) ) );
+		blueprint_ = utility::pointer::make_shared< BluePrint >( tag->getOption< std::string >( "blueprint" ) );
 	}
 	if ( tag->hasOption( "pose_secstruct" ) ) {
 		pose_secstruct_ = tag->getOption< std::string >( "pose_secstruct" ) ;
@@ -366,7 +366,7 @@ void DsspDesignOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 TaskOperationOP
 DsspDesignOperationCreator::create_task_operation() const
 {
-	return TaskOperationOP( new DsspDesignOperation );
+	return utility::pointer::make_shared< DsspDesignOperation >();
 }
 
 void DsspDesignOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

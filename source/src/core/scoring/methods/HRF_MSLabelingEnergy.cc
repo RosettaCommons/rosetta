@@ -44,7 +44,7 @@ methods::EnergyMethodOP
 HRF_MSLabelingEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new HRF_MSLabelingEnergy );
+	return utility::pointer::make_shared< HRF_MSLabelingEnergy >();
 }
 
 ScoreTypes
@@ -64,7 +64,7 @@ HRF_MSLabelingEnergy::setup_for_scoring(
 
 // constructor
 HRF_MSLabelingEnergy::HRF_MSLabelingEnergy() :
-	methods::ContextDependentOneBodyEnergy( methods::EnergyMethodCreatorOP( new HRF_MSLabelingEnergyCreator ) )
+	methods::ContextDependentOneBodyEnergy( utility::pointer::make_shared< HRF_MSLabelingEnergyCreator >() )
 {
 	init_from_file();
 	dist_midpoint_ = basic::options::option[ basic::options::OptionKeys::score::ms_dist_midpoint ]();
@@ -78,7 +78,7 @@ HRF_MSLabelingEnergy::HRF_MSLabelingEnergy() :
 /// clone
 EnergyMethodOP
 HRF_MSLabelingEnergy::clone() const {
-	return EnergyMethodOP( new HRF_MSLabelingEnergy );
+	return utility::pointer::make_shared< HRF_MSLabelingEnergy >();
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -106,7 +106,7 @@ HRF_MSLabelingEnergy::residue_energy(
 					neighbor_count += 1.0/(1.0 + std::exp(dist_exponent_*(distance-dist_midpoint_)));
 				}
 			}
-			func::FuncOP hrf_ms_labeling_score_ (func::FuncOP(new func::FadeFunc(-fade_outer_, fade_outer_, fade_dist_, -1.0)));
+			func::FuncOP hrf_ms_labeling_score_ (utility::pointer::make_shared< func::FadeFunc >(-fade_outer_, fade_outer_, fade_dist_, -1.0));
 			core::Real const number_of_neighbors_difference (std::abs(neighbor_count - (slope_*lnPF_from_file + intercept_)));
 			core::Real const burial_score = hrf_ms_labeling_score_->func(number_of_neighbors_difference);
 			emap[hrf_ms_labeling] += burial_score;

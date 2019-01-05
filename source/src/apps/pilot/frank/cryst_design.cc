@@ -2708,25 +2708,25 @@ my_main( void* ) {
 	option[ basic::options::OptionKeys::symmetry::symmetry_definition ].value("dummy");  // get right rot type set for relax
 
 	if ( strategy == "fftdock" ) {
-		seq->add_mover( MoverOP(new CrystFFTDock()) );
+		seq->add_mover( utility::pointer::make_shared< CrystFFTDock >() );
 		option[ out::nooutput ].value(true);
 	} else if ( strategy == "cluster" ) {
-		seq->add_mover(  MoverOP(new CrystCluster()) );
+		seq->add_mover(  utility::pointer::make_shared< CrystCluster >() );
 		option[ out::nooutput ].value(true);
 	}  else if ( strategy == "design" ) {
-		seq->add_mover(  MoverOP(new CrystDesign(false)) );
+		seq->add_mover(  utility::pointer::make_shared< CrystDesign >(false) );
 	} else if ( strategy == "revert" ) {
-		seq->add_mover(  MoverOP(new CrystDesign(true)) );
+		seq->add_mover(  utility::pointer::make_shared< CrystDesign >(true) );
 	} else if ( strategy == "relax" ) {
-		seq->add_mover(  MoverOP(new CrystRelax()) );
+		seq->add_mover(  utility::pointer::make_shared< CrystRelax >() );
 	} else if ( strategy == "score" ) {
-		seq->add_mover(  MoverOP(new CrystRelax(false)) );
+		seq->add_mover(  utility::pointer::make_shared< CrystRelax >(false) );
 	} else if ( strategy == "rms" ) {
 		SilentFileJobOutputterOP jobout (new SilentFileJobOutputter);
 		jobout->set_write_no_structures();
 		jobout->set_write_separate_scorefile(true);
 		protocols::jd2::JobDistributor::get_instance()->set_job_outputter( JobDistributorFactory::create_job_outputter( jobout ));
-		seq->add_mover(  MoverOP(new CrystRMS()) );
+		seq->add_mover(  utility::pointer::make_shared< CrystRMS >() );
 	} else {
 		utility_exit_with_message( "Unknown mode:"+ option[ crystdock::mode ]() );
 	}

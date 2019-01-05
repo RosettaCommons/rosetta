@@ -45,7 +45,7 @@ namespace devel {
 namespace replica_docking {
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP IrmsdFilterCreator::create_filter() const { return protocols::filters::FilterOP( new IrmsdFilter ); }
+// XRW TEMP IrmsdFilterCreator::create_filter() const { return utility::pointer::make_shared< IrmsdFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP IrmsdFilterCreator::keyname() const { return "Irms"; }
@@ -111,12 +111,12 @@ IrmsdFilter::~IrmsdFilter() = default;
 
 protocols::filters::FilterOP
 IrmsdFilter::clone() const{
-	return protocols::filters::FilterOP( new IrmsdFilter( *this ) );
+	return utility::pointer::make_shared< IrmsdFilter >( *this );
 }
 
 protocols::filters::FilterOP
 IrmsdFilter::fresh_instance() const{
-	return protocols::filters::FilterOP( new IrmsdFilter );
+	return utility::pointer::make_shared< IrmsdFilter >();
 }
 
 void
@@ -209,7 +209,7 @@ std::string IrmsdFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 IrmsdFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new IrmsdFilter );
+	return utility::pointer::make_shared< IrmsdFilter >();
 }
 
 void IrmsdFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

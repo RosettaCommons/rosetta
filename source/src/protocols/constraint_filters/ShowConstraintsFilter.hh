@@ -47,11 +47,11 @@ public:
 	core::Real compute( core::pose::Pose const & pose ) const;
 
 	filters::FilterOP clone() const override {
-		return filters::FilterOP( new ShowConstraintsFilter( *this ) );
+		return utility::pointer::make_shared< ShowConstraintsFilter >( *this );
 	}
 
 	filters::FilterOP fresh_instance() const override {
-		return filters::FilterOP( new ShowConstraintsFilter() );
+		return utility::pointer::make_shared< ShowConstraintsFilter >();
 	}
 
 	virtual ~ShowConstraintsFilter();

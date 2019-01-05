@@ -49,10 +49,10 @@ FragSetCollection::~FragSetCollection() = default;
 FragSetCollection::FragSetCollection( FragSetCollection const & ) = default;
 
 FragSetOP FragSetCollection::clone() const {
-	return FragSetOP( new FragSetCollection( *this ) );
+	return utility::pointer::make_shared< FragSetCollection >( *this );
 }
 FragSetOP FragSetCollection::empty_clone() const {
-	return FragSetOP( new FragSetCollection() );
+	return utility::pointer::make_shared< FragSetCollection >();
 }
 
 

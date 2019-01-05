@@ -45,12 +45,12 @@ namespace rotamers {
 
 RotamerLibrarySpecificationOP
 StoredRotamerLibrarySpecificationCreator::create() const {
-	return RotamerLibrarySpecificationOP( new StoredRotamerLibrarySpecification );
+	return utility::pointer::make_shared< StoredRotamerLibrarySpecification >();
 }
 
 RotamerLibrarySpecificationOP
 StoredRotamerLibrarySpecificationCreator::create( std::istream & input ) const {
-	return RotamerLibrarySpecificationOP( new StoredRotamerLibrarySpecification( input ) );
+	return utility::pointer::make_shared< StoredRotamerLibrarySpecification >( input );
 }
 
 std::string

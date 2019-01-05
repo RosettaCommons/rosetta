@@ -45,7 +45,7 @@ namespace devel {
 namespace replica_docking {
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP FnatFilterCreator::create_filter() const { return protocols::filters::FilterOP( new FnatFilter ); }
+// XRW TEMP FnatFilterCreator::create_filter() const { return utility::pointer::make_shared< FnatFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP FnatFilterCreator::keyname() const { return "Fnat"; }
@@ -125,12 +125,12 @@ FnatFilter::~FnatFilter() = default;
 
 protocols::filters::FilterOP
 FnatFilter::clone() const{
-	return protocols::filters::FilterOP( new FnatFilter( *this ) );
+	return utility::pointer::make_shared< FnatFilter >( *this );
 }
 
 protocols::filters::FilterOP
 FnatFilter::fresh_instance() const{
-	return protocols::filters::FilterOP( new FnatFilter );
+	return utility::pointer::make_shared< FnatFilter >();
 }
 
 void
@@ -233,7 +233,7 @@ std::string FnatFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 FnatFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new FnatFilter );
+	return utility::pointer::make_shared< FnatFilter >();
 }
 
 void FnatFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

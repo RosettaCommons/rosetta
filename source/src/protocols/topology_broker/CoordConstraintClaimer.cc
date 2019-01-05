@@ -110,7 +110,7 @@ void CoordConstraintClaimer::new_decoy() {
 void CoordConstraintClaimer::new_decoy( core::pose::Pose const& pose ) {
 	if ( bRegenerateFromInputPose_ ) {
 		sequence_ = ""; //force new stealing
-		cst_pose_ = core::pose::PoseOP( new core::pose::Pose( pose ) );
+		cst_pose_ = utility::pointer::make_shared< core::pose::Pose >( pose );
 	}
 	if ( bSuperimpose_ ) {
 		sequence_ = ""; //force new superposition
@@ -130,7 +130,7 @@ void CoordConstraintClaimer::generate_claims( claims::DofClaims& new_claims ) {
 
 		if ( !constraints_ && bUseXYZ_in_cstfile_ ) {
 			//in this case we haven't been able to read the constraints file yet, since this is the first time a valid pose exists...
-			cst_pose_ = core::pose::PoseOP( new pose::Pose( broker().current_pose() ) );
+			cst_pose_ = utility::pointer::make_shared< pose::Pose >( broker().current_pose() );
 			read_constraints_from_file( *cst_pose_ );
 		}
 
@@ -141,11 +141,11 @@ void CoordConstraintClaimer::generate_claims( claims::DofClaims& new_claims ) {
 		}
 		runtime_assert( root_ != 0 );
 	}
-	if ( !bLocal_ ) new_claims.push_back( claims::DofClaimOP( new claims::LegacyRootClaim( get_self_weak_ptr(), root_, claims::DofClaim::NEED_TO_KNOW ) ) );
+	if ( !bLocal_ ) new_claims.push_back( utility::pointer::make_shared< claims::LegacyRootClaim >( get_self_weak_ptr(), root_, claims::DofClaim::NEED_TO_KNOW ) );
 }
 
 void CoordConstraintClaimer::read_cst_pose() {
-	cst_pose_ = core::pose::PoseOP( new core::pose::Pose );
+	cst_pose_ = utility::pointer::make_shared< core::pose::Pose >();
 	core::import_pose::pose_from_file( *cst_pose_,
 		*core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::CENTROID ),
 		filename_, core::import_pose::PDB_file);
@@ -221,7 +221,7 @@ void CoordConstraintClaimer::set_cst_root() {
 void CoordConstraintClaimer::generate_constraints( pose::Pose const& cst_pose ) const {
 
 	//empty constraint set
-	constraints_ = core::scoring::constraints::ConstraintSetOP( new ConstraintSet );
+	constraints_ = utility::pointer::make_shared< ConstraintSet >();
 
 	//make local copy of region-definition
 	loops::Loops rigid( rigid_ );
@@ -244,18 +244,18 @@ void CoordConstraintClaimer::generate_constraints( pose::Pose const& cst_pose ) 
 			);
 			Vector xyz( rsd.xyz( cst_atomID.atomno() ) + ai );
 			if ( bLocal_ ) {
-				constraints_->add_constraint( ConstraintCOP( ConstraintOP( new scoring::constraints::LocalCoordinateConstraint(
+				constraints_->add_constraint( ConstraintCOP( utility::pointer::make_shared< scoring::constraints::LocalCoordinateConstraint >(
 					cst_atomID,
 					cst_fix_stub_ID,
 					xyz,
-					cst_func_) ) ) );
+					cst_func_) ) );
 
 			} else {
-				constraints_->add_constraint( ConstraintCOP( ConstraintOP( new scoring::constraints::CoordinateConstraint(
+				constraints_->add_constraint( ConstraintCOP( utility::pointer::make_shared< scoring::constraints::CoordinateConstraint >(
 					cst_atomID,
 					id::AtomID( 1, root_ ) /*this is completely ignored! */,
 					xyz,
-					cst_func_) ) ) );
+					cst_func_) ) );
 			}
 		}
 
@@ -268,7 +268,7 @@ void CoordConstraintClaimer::generate_constraints( pose::Pose const& cst_pose ) 
 
 void CoordConstraintClaimer::read_constraints_from_file( pose::Pose const& cst_pose ) const {
 	constraints_ = ConstraintIO::get_instance()->read_constraints(
-		cst_filename_, ConstraintSetOP( new ConstraintSet ), cst_pose );
+		cst_filename_, utility::pointer::make_shared< ConstraintSet >(), cst_pose );
 
 	if ( tr.Debug.visible() ) {
 		tr.Debug << "CoordConstraintClaimer: have read constraints from file:" << std::endl;

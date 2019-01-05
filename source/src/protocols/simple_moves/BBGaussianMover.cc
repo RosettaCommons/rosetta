@@ -67,7 +67,7 @@ namespace simple_moves {
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP BBGaussianMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new BBGaussianMover );
+// XRW TEMP  return utility::pointer::make_shared< BBGaussianMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -283,7 +283,7 @@ core::kinematics::MoveMapCOP BBGaussianMover::movemap(core::pose::Pose const & p
 		return movemap_factory_->create_movemap_from_pose( pose );
 	} else {
 		// default fixes everything
-		return core::kinematics::MoveMapCOP( new core::kinematics::MoveMap );
+		return utility::pointer::make_shared< core::kinematics::MoveMap >();
 	}
 }
 
@@ -811,7 +811,7 @@ std::string BBGaussianMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 BBGaussianMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new BBGaussianMover );
+	return utility::pointer::make_shared< BBGaussianMover >();
 }
 
 void BBGaussianMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

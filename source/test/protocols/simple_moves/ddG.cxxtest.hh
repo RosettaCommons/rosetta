@@ -52,7 +52,7 @@ public:
 
 		test_dimer_pose_ = create_2res_1ten_2res_trp_cage_poseop(); //dimer structure
 		test_monomer_pose_ = create_twores_1ubq_poseop();
-		scorefxn_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction );
+		scorefxn_ = utility::pointer::make_shared< core::scoring::ScoreFunction >();
 	}
 
 	void tearDown() {

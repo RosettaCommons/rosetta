@@ -113,7 +113,7 @@ NonResidueTypeConstraint::remap_resid( core::id::SequenceMapping const &seqmap )
 {
 	core::Size newseqpos = seqmap[ seqpos_ ];
 	if ( newseqpos != 0 ) {
-		return ConstraintOP( new NonResidueTypeConstraint( newseqpos, AAname, rsd_type_name3_, favor_non_native_bonus_ ) );
+		return utility::pointer::make_shared< NonResidueTypeConstraint >( newseqpos, AAname, rsd_type_name3_, favor_non_native_bonus_ );
 	} else {
 		return nullptr;
 	}

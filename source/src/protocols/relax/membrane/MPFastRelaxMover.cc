@@ -119,13 +119,13 @@ MPFastRelaxMover::show_protocol( core::pose::Pose & pose ) {
 /// @brief Create a Clone of this mover
 protocols::moves::MoverOP
 MPFastRelaxMover::clone() const {
-	return ( protocols::moves::MoverOP( new MPFastRelaxMover() ) );
+	return ( utility::pointer::make_shared< MPFastRelaxMover >() );
 }
 
 /// @brief Create a Fresh Instance of this Mover
 protocols::moves::MoverOP
 MPFastRelaxMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new MPFastRelaxMover() );
+	return utility::pointer::make_shared< MPFastRelaxMover >();
 }
 
 /// @brief Pase Rosetta Scripts Options for this Mover
@@ -142,7 +142,7 @@ MPFastRelaxMover::parse_my_tag(
 /// @brief Create a new copy of this mover
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP MPFastRelaxMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new MPFastRelaxMover );
+// XRW TEMP  return utility::pointer::make_shared< MPFastRelaxMover >();
 // XRW TEMP }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)
@@ -293,7 +293,7 @@ std::string MPFastRelaxMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 MPFastRelaxMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MPFastRelaxMover );
+	return utility::pointer::make_shared< MPFastRelaxMover >();
 }
 
 void MPFastRelaxMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -105,7 +105,7 @@ std::string WriteFiltersToPose::get_name() const{
 
 protocols::moves::MoverOP
 WriteFiltersToPoseCreator::create_mover() const {
-	return protocols::moves::MoverOP( new WriteFiltersToPose );
+	return utility::pointer::make_shared< WriteFiltersToPose >();
 }
 std::string WriteFiltersToPoseCreator::keyname() const {
 	return WriteFiltersToPose::mover_name();

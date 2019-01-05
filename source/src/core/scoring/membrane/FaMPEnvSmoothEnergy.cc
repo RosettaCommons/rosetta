@@ -72,7 +72,7 @@ core::scoring::methods::EnergyMethodOP
 FaMPEnvSmoothEnergyCreator::create_energy_method(
 	core::scoring::methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new FaMPEnvSmoothEnergy );
+	return utility::pointer::make_shared< FaMPEnvSmoothEnergy >();
 }
 
 /// @brief Return relevant score types
@@ -86,7 +86,7 @@ FaMPEnvSmoothEnergyCreator::score_types_for_method() const {
 // Constructors /////////////////////////////////////////////
 
 FaMPEnvSmoothEnergy::FaMPEnvSmoothEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new FaMPEnvSmoothEnergyCreator ) )
+	parent( utility::pointer::make_shared< FaMPEnvSmoothEnergyCreator >() )
 {
 	Size const max_aa( 20 );
 	Size const env_log_table_cen10_bins( 40 );
@@ -117,7 +117,7 @@ FaMPEnvSmoothEnergy::FaMPEnvSmoothEnergy() :
 methods::EnergyMethodOP
 FaMPEnvSmoothEnergy::clone() const
 {
-	return methods::EnergyMethodOP( new FaMPEnvSmoothEnergy( *this ) );
+	return utility::pointer::make_shared< FaMPEnvSmoothEnergy >( *this );
 }
 
 // Scoring Methods ////////////////////////////////////////////////

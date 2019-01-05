@@ -160,7 +160,7 @@ public:
 
 	protocols::moves::MoverOP
 	fresh_instance() const override {
-		return protocols::moves::MoverOP( new JDmover );
+		return utility::pointer::make_shared< JDmover >();
 	}
 
 

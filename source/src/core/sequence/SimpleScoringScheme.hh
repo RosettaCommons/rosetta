@@ -48,12 +48,12 @@ public:
 	}
 
 	ScoringSchemeOP clone() const override {
-		return ScoringSchemeOP( new SimpleScoringScheme(
+		return utility::pointer::make_shared< SimpleScoringScheme >(
 			match_score(),
 			mismatch_score(),
 			gap_open(),
 			gap_extend()
-			) );
+		);
 	}
 
 	/// @brief dtor

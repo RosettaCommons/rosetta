@@ -199,7 +199,7 @@ std::string LeastNativeLike9merFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 LeastNativeLike9merFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new LeastNativeLike9merFilter );
+	return utility::pointer::make_shared< LeastNativeLike9merFilter >();
 }
 
 void LeastNativeLike9merFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

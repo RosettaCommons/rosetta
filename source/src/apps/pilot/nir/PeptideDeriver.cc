@@ -155,8 +155,8 @@ main( int argc, char * argv [] )
 			//  Residue const  & reside = orig_pose.residue( i ); // commented out to fix compilation error: unused variable 'reside' [-Werror=unused-variable] - Oriel
 			id::AtomID CAi ( orig_pose.residue(i).atom_index( " CA " ), i );
 			cst_set->add_constraint
-				(  ConstraintCOP( ConstraintOP( new CoordinateConstraint
-				( CAi, CAi, conformation.xyz( CAi ), spring ) ) )
+				(  ConstraintCOP( utility::pointer::make_shared< CoordinateConstraint >()
+				( CAi, CAi, conformation.xyz( CAi ), spring ) )
 			);
 		}
 		orig_pose.constraint_set( cst_set );
@@ -278,7 +278,7 @@ void derive(core::pose::Pose const & pose) {
 				TR <<  std::endl;
 				if ( isc < maxIsc ) {
 					maxIsc = isc;
-					best_pose = pose::PoseOP( new pose::Pose(*curr_pose) );
+					best_pose = utility::pointer::make_shared< pose::Pose >(*curr_pose);
 					best_posb=i;
 				}
 			}
@@ -317,7 +317,7 @@ void derive(core::pose::Pose const & pose) {
 				TR <<  std::endl;
 				if ( isc < maxIsc /*normalize by length - pep_length + 5 */ ) {
 					maxIsc = isc;
-					best_pose = pose::PoseOP( new pose::Pose(*curr_pose) );
+					best_pose = utility::pointer::make_shared< pose::Pose >(*curr_pose);
 					best_posa=i;
 				}
 			}
@@ -379,10 +379,10 @@ core::pose::PoseOP get_subPose(
 	pose::PoseOP other;
 
 	if ( pep_chain == 'A' ) {
-		pose = pose::PoseOP( new pose::Pose(*chainB) );
+		pose = utility::pointer::make_shared< pose::Pose >(*chainB);
 		other = chainA;
 	} else { //pep_chain == B
-		pose = pose::PoseOP( new pose::Pose(*chainA) );
+		pose = utility::pointer::make_shared< pose::Pose >(*chainA);
 		other = chainB;
 	}
 

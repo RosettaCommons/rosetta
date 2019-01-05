@@ -91,14 +91,14 @@ BBDihedralSamplerMover::parse_my_tag(
 
 protocols::moves::MoverOP
 BBDihedralSamplerMover::clone() const{
-	return protocols::moves::MoverOP( new BBDihedralSamplerMover( *this ) );
+	return utility::pointer::make_shared< BBDihedralSamplerMover >( *this );
 }
 
 
 moves::MoverOP
 BBDihedralSamplerMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new BBDihedralSamplerMover );
+	return utility::pointer::make_shared< BBDihedralSamplerMover >();
 }
 
 std::string
@@ -170,7 +170,7 @@ BBDihedralSamplerMover::setup_all_bb_residues( core::pose::Pose const & pose) {
 	}
 
 	utility::vector1< bool > subset( pose.total_residue(), true);
-	selector_ = ReturnResidueSubsetSelectorOP( new ReturnResidueSubsetSelector( subset ));
+	selector_ = utility::pointer::make_shared< ReturnResidueSubsetSelector >( subset );
 	bb_residues_ = core::select::residue_selector::selection_positions(subset);
 }
 
@@ -290,7 +290,7 @@ BBDihedralSamplerMover::apply( core::pose::Pose & pose ){
 
 protocols::moves::MoverOP
 BBDihedralSamplerMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new BBDihedralSamplerMover );
+	return utility::pointer::make_shared< BBDihedralSamplerMover >();
 }
 
 std::string

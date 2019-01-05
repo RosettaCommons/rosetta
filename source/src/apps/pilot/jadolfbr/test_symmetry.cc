@@ -107,7 +107,7 @@ main( int argc, char * argv [] )
 
 
 		NeighborhoodResidueSelector nbr_selector = NeighborhoodResidueSelector();
-		GlycanResidueSelectorOP glycan_selector = GlycanResidueSelectorOP( new GlycanResidueSelector() );
+		GlycanResidueSelectorOP glycan_selector = utility::pointer::make_shared< GlycanResidueSelector >();
 		SymmetricalResidueSelector symm_selector = SymmetricalResidueSelector();
 		core::scoring::ScoreFunctionOP score  = core::scoring::get_score_function();
 

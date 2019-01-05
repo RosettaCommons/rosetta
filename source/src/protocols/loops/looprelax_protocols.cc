@@ -112,7 +112,7 @@ LoopRebuild::~LoopRebuild() = default;
 /// @brief Clone this object
 protocols::moves::MoverOP
 LoopRebuild::clone() const {
-	return protocols::moves::MoverOP( new LoopRebuild(*this) );
+	return utility::pointer::make_shared< LoopRebuild >(*this);
 }
 
 
@@ -734,7 +734,7 @@ void LoopRebuild::build_loop_with_ccd_closure(
 					if ( ! option[OptionKeys::loops::skip_ccd_moves ]() ) {
 						loop_closure::ccd::CCDLoopClosureMover ccd_mover(
 							Loop( loop_begin, loop_end, cutpoint ),
-							MoveMapCOP( MoveMapOP( new MoveMap( mm_one_loop ) ) ) );
+							utility::pointer::make_shared< MoveMap >( mm_one_loop ) );
 						ccd_mover.max_cycles( 25 );  // Used to be 5 moves, which would result in 25 "tries" in the old code. ~Labonte
 						ccd_mover.apply( pose );
 					}
@@ -786,7 +786,7 @@ void LoopRebuild::fast_ccd_close_loops(
 	kinematics::MoveMap & mm )
 {
 	loop_closure::ccd::CCDLoopClosureMover ccd_loop_closure_mover(
-		Loop( loop_begin, loop_end, cutpoint ), kinematics::MoveMapCOP( kinematics::MoveMapOP( new kinematics::MoveMap( mm ) ) ) );
+		Loop( loop_begin, loop_end, cutpoint ), utility::pointer::make_shared< kinematics::MoveMap >( mm ) );
 	ccd_loop_closure_mover.check_rama_scores( false );
 	ccd_loop_closure_mover.apply( pose );
 
@@ -1309,7 +1309,7 @@ void LoopRebuild::set_default_settings(){
 void LoopRebuild::set_default_mc( core::pose::Pose & pose )
 {
 	m_Temperature_ = 2.0;
-	mc_ = protocols::moves::MonteCarloOP( new moves::MonteCarlo( pose, *scorefxn_, m_Temperature_ ) );
+	mc_ = utility::pointer::make_shared< moves::MonteCarlo >( pose, *scorefxn_, m_Temperature_ );
 }
 ///////////////////////////////////////////////////////////////////////
 /// @brief Full atom loop refinement
@@ -1333,7 +1333,7 @@ void LoopRefine::apply(
 
 	//protocols::loops::refine_loops_with_ccd( pose, pose, LoopsToRefine );
 	loop_mover::refine::LoopMover_Refine_CCD refine_ccd( LoopsToRefine );
-	refine_ccd.set_native_pose( core::pose::PoseCOP( core::pose::PoseOP( new pose::Pose ( pose ) ) ) );
+	refine_ccd.set_native_pose( core::pose::PoseCOP( utility::pointer::make_shared< pose::Pose > ( pose ) ) );
 	refine_ccd.apply( pose );
 
 }

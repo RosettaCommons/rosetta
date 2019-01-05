@@ -97,11 +97,11 @@ KICLoopCloser::KICLoopCloser() = default;
 
 protocols::moves::MoverOP
 KICLoopCloser::clone() const {
-	return( protocols::moves::MoverOP( new KICLoopCloser( *this ) ) );
+	return( utility::pointer::make_shared< KICLoopCloser >( *this ) );
 }
 protocols::moves::MoverOP
 KICLoopCloser::fresh_instance() const {
-	return protocols::moves::MoverOP( new KICLoopCloser );
+	return utility::pointer::make_shared< KICLoopCloser >();
 }
 
 std::string

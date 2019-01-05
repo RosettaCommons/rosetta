@@ -87,7 +87,7 @@ static basic::Tracer TR( "core.chemical.ResidueTypeSet" );
 ResidueTypeSet::ResidueTypeSet( TypeSetMode mode /*= INVALID_t*/ ) :
 	mode_( mode ),
 	merge_behavior_manager_( new MergeBehaviorManager ),
-	cache_( ResidueTypeSetCacheOP( new ResidueTypeSetCache( *this ) ) )
+	cache_( utility::pointer::make_shared< ResidueTypeSetCache >( *this ) )
 {}
 
 ResidueTypeSet::~ResidueTypeSet() = default;

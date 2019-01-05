@@ -81,7 +81,7 @@ static basic::Tracer TR( "protocols.protein_interface_design.movers.DockWithHots
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP DockWithHotspotMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new DockWithHotspotMover );
+// XRW TEMP  return utility::pointer::make_shared< DockWithHotspotMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -266,7 +266,7 @@ std::string DockWithHotspotMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 DockWithHotspotMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new DockWithHotspotMover );
+	return utility::pointer::make_shared< DockWithHotspotMover >();
 }
 
 void DockWithHotspotMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

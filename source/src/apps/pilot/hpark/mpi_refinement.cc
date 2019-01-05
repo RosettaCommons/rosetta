@@ -54,7 +54,7 @@ public:
 
 		core::pose::PoseOP native_pose_;
 		if ( option[ in::file::native ].user() ) {
-			native_pose_ = core::pose::PoseOP( new core::pose::Pose() );
+			native_pose_ = utility::pointer::make_shared< core::pose::Pose >();
 			core::import_pose::pose_from_file( *native_pose_, option[ in::file::native ]() , core::import_pose::PDB_file);
 			core::pose::set_ss_from_phipsi( *native_pose_ );
 			core::util::switch_to_residue_type_set( *native_pose_, core::chemical::CENTROID);
@@ -159,11 +159,11 @@ public:
 		}
 
 		if ( mpi_rank() == 0 ) {
-			wu_manager = WorkUnitManagerOP( new MPI_Refine_Emperor( ) );
+			wu_manager = utility::pointer::make_shared< MPI_Refine_Emperor >( );
 
 		} else if ( (int(mpi_rank()) > int(0)) && int(mpi_rank()) <= int(n_masters) ) {
 			core::Size master_rank =  mpi_rank() - 1; // master rank, just a serial number identifying the master
-			wu_manager = WorkUnitManagerOP( new MPI_Refine_Master( emperor_node , master_rank ) );
+			wu_manager = utility::pointer::make_shared< MPI_Refine_Master >( emperor_node , master_rank );
 
 		} else {
 			core::Size slave_master;
@@ -194,7 +194,7 @@ public:
 				slave_master = (mpi_rank() %n_masters)+1;  // which master does this slave belong to ?
 			}
 
-			wu_manager = WorkUnitManagerOP( new MPI_WorkUnitManager_Slave( slave_master ) );
+			wu_manager = utility::pointer::make_shared< MPI_WorkUnitManager_Slave >( slave_master );
 		}
 
 		// make sure all the necessary work unit have been properly initiated.

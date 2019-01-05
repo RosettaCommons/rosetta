@@ -55,7 +55,7 @@ namespace simple_moves {
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP SwitchChainOrderMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new SwitchChainOrderMover );
+// XRW TEMP  return utility::pointer::make_shared< SwitchChainOrderMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -112,7 +112,7 @@ SwitchChainOrderMover::apply( Pose & pose )
 	new_ft.reorder( 1 );
 	core::pose::create_subpose( pose, positions_in_new_pose, new_ft, new_pose );
 	new_pose.update_residue_neighbors();
-	new_pose.pdb_info( core::pose::PDBInfoOP( new core::pose::PDBInfo( new_pose, true ) ) ); //reinitialize the PDBInfo
+	new_pose.pdb_info( utility::pointer::make_shared< core::pose::PDBInfo >( new_pose, true ) ); //reinitialize the PDBInfo
 
 	// Salvage old PDBInfo information. Feel free to add anything else you need here.
 	for ( Size new_seqpos = 1; new_seqpos <= new_pose.size(); new_seqpos++ ) {
@@ -153,13 +153,13 @@ SwitchChainOrderMover::apply( Pose & pose )
 moves::MoverOP
 SwitchChainOrderMover::clone() const
 {
-	return moves::MoverOP( new SwitchChainOrderMover( *this ) );
+	return utility::pointer::make_shared< SwitchChainOrderMover >( *this );
 }
 
 moves::MoverOP
 SwitchChainOrderMover::fresh_instance() const
 {
-	return moves::MoverOP( new SwitchChainOrderMover );
+	return utility::pointer::make_shared< SwitchChainOrderMover >();
 }
 
 void
@@ -262,7 +262,7 @@ std::string SwitchChainOrderMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 SwitchChainOrderMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SwitchChainOrderMover );
+	return utility::pointer::make_shared< SwitchChainOrderMover >();
 }
 
 void SwitchChainOrderMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

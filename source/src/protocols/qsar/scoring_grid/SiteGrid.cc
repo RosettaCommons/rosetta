@@ -52,7 +52,7 @@ GridBaseOP SiteGridCreator::create_grid(utility::tag::TagCOP tag) const
 
 GridBaseOP SiteGridCreator::create_grid() const
 {
-	return GridBaseOP( new SiteGrid() );
+	return utility::pointer::make_shared< SiteGrid >();
 }
 
 void SiteGridCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -66,7 +66,7 @@ void SiteGridCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xs
 //}
 
 GridBaseOP SiteGrid::clone() const {
-	return GridBaseOP( new SiteGrid( *this ) );
+	return utility::pointer::make_shared< SiteGrid >( *this );
 }
 
 SiteGrid::SiteGrid() : SingleGrid("SiteGrid")

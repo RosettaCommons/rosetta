@@ -407,7 +407,7 @@ add_constraints_to_metal(
 
 		// Setting up distance constraints:
 		if ( distance_constraint_multiplier > 1.0e-10 ) {
-			FuncOP hfunc( new ScalarWeightedFunc( distance_constraint_multiplier, FuncOP(new HarmonicFunc( 0.0, 0.1 )) ));
+			FuncOP hfunc( new ScalarWeightedFunc( distance_constraint_multiplier, utility::pointer::make_shared< HarmonicFunc >( 0.0, 0.1 ) ));
 			//Atom pair constraint holding the virt at the position of the metal-binding atom.
 			NamedAtomPairConstraintOP pairconst(
 				new NamedAtomPairConstraint(virtID, otherID, hfunc, core::scoring::metalbinding_constraint) );
@@ -418,7 +418,7 @@ add_constraints_to_metal(
 		if ( angle_constraint_multiplier > 1.0e-10 ) {
 			core::Real const ang1 = numeric::angle_radians( pose.residue( metal_position ).xyz(1), pose.residue(conn_res).xyz(conn_res_atom),  pose.residue(conn_res).xyz(conn_res_atom_parent) ); //Angle between metal-bonding atom-bonding atom's parent.
 			//Circular harmonic function for constraining angles (works in RADIANS).
-			FuncOP circfunc1( new ScalarWeightedFunc( angle_constraint_multiplier, FuncOP(new CircularHarmonicFunc( ang1, 0.05 )) ));
+			FuncOP circfunc1( new ScalarWeightedFunc( angle_constraint_multiplier, utility::pointer::make_shared< CircularHarmonicFunc >( ang1, 0.05 ) ));
 			NamedAngleConstraintOP angleconst1(
 				new NamedAngleConstraint( metalID, otherID, otherparentID, circfunc1, core::scoring::metalbinding_constraint ) );
 			pose.add_constraint(angleconst1);
@@ -432,7 +432,7 @@ add_constraints_to_metal(
 			NamedAtomID virtID(ir_virt_names[jr], metal_position);
 			core::Real const mvdist =
 				(pose.residue(metal_position).xyz(ir_virt_atomnos[jr]) - pose.residue(metal_position).xyz(1)).length();
-			FuncOP mvfunc( new ScalarWeightedFunc( distance_constraint_multiplier, FuncOP(new HarmonicFunc( mvdist, 0.1 )) ));
+			FuncOP mvfunc( new ScalarWeightedFunc( distance_constraint_multiplier, utility::pointer::make_shared< HarmonicFunc >( mvdist, 0.1 ) ));
 			NamedAtomPairConstraintOP pairconst_mv(
 				new NamedAtomPairConstraint(metalID, virtID, mvfunc, core::scoring::metalbinding_constraint) );
 			pose.add_constraint(pairconst_mv);
@@ -441,7 +441,7 @@ add_constraints_to_metal(
 				NamedAtomID virtID_j(ir_virt_names[kr], metal_position);
 				core::Real const vvdist =
 					(pose.residue(metal_position).xyz(ir_virt_atomnos[jr]) - pose.residue(metal_position).xyz(ir_virt_atomnos[kr])).length();
-				FuncOP vvfunc( new ScalarWeightedFunc( distance_constraint_multiplier, FuncOP(new HarmonicFunc( vvdist, 0.1 )) ));
+				FuncOP vvfunc( new ScalarWeightedFunc( distance_constraint_multiplier, utility::pointer::make_shared< HarmonicFunc >( vvdist, 0.1 ) ));
 				NamedAtomPairConstraintOP pairconst_vv(
 					new NamedAtomPairConstraint(virtID, virtID_j, vvfunc, core::scoring::metalbinding_constraint) );
 				pose.add_constraint(pairconst_vv);
@@ -523,7 +523,7 @@ auto_setup_all_metal_constraints(
 
 		// Setting up distance constraints:
 		if ( distance_constraint_multiplier > 1.0e-10 ) {
-		FuncOP hfunc( new ScalarWeightedFunc( distance_constraint_multiplier, FuncOP(new HarmonicFunc( 0.0, 0.1 )) ));
+		FuncOP hfunc( new ScalarWeightedFunc( distance_constraint_multiplier, utility::pointer::make_shared< HarmonicFunc >( 0.0, 0.1 ) ));
 		//Atom pair constraint holding the virt at the position of the metal-binding atom.
 		NamedAtomPairConstraintOP pairconst(
 		new NamedAtomPairConstraint(virtID, otherID, hfunc, core::scoring::metalbinding_constraint) );
@@ -534,7 +534,7 @@ auto_setup_all_metal_constraints(
 		if ( angle_constraint_multiplier > 1.0e-10 ) {
 		core::Real const ang1 = numeric::angle_radians( pose.residue(ir).xyz(1), pose.residue(conn_res).xyz(conn_res_atom),  pose.residue(conn_res).xyz(conn_res_atom_parent) ); //Angle between metal-bonding atom-bonding atom's parent.
 		//Circular harmonic function for constraining angles (works in RADIANS).
-		FuncOP circfunc1( new ScalarWeightedFunc( angle_constraint_multiplier, FuncOP(new CircularHarmonicFunc( ang1, 0.05 )) ));
+		FuncOP circfunc1( new ScalarWeightedFunc( angle_constraint_multiplier, utility::pointer::make_shared< CircularHarmonicFunc >( ang1, 0.05 ) ));
 		NamedAngleConstraintOP angleconst1(
 		new NamedAngleConstraint( metalID, otherID, otherparentID, circfunc1, core::scoring::metalbinding_constraint ) );
 		pose.add_constraint(angleconst1);
@@ -548,7 +548,7 @@ auto_setup_all_metal_constraints(
 		NamedAtomID virtID(ir_virt_names[jr], ir);
 		core::Real const mvdist =
 		(pose.residue(ir).xyz(ir_virt_atomnos[jr]) - pose.residue(ir).xyz(1)).length();
-		FuncOP mvfunc( new ScalarWeightedFunc( distance_constraint_multiplier, FuncOP(new HarmonicFunc( mvdist, 0.1 )) ));
+		FuncOP mvfunc( new ScalarWeightedFunc( distance_constraint_multiplier, utility::pointer::make_shared< HarmonicFunc >( mvdist, 0.1 ) ));
 		NamedAtomPairConstraintOP pairconst_mv(
 		new NamedAtomPairConstraint(metalID, virtID, mvfunc, core::scoring::metalbinding_constraint) );
 		pose.add_constraint(pairconst_mv);
@@ -557,7 +557,7 @@ auto_setup_all_metal_constraints(
 		NamedAtomID virtID_j(ir_virt_names[kr], ir);
 		core::Real const vvdist =
 		(pose.residue(ir).xyz(ir_virt_atomnos[jr]) - pose.residue(ir).xyz(ir_virt_atomnos[kr])).length();
-		FuncOP vvfunc( new ScalarWeightedFunc( distance_constraint_multiplier, FuncOP(new HarmonicFunc( vvdist, 0.1 )) ));
+		FuncOP vvfunc( new ScalarWeightedFunc( distance_constraint_multiplier, utility::pointer::make_shared< HarmonicFunc >( vvdist, 0.1 ) ));
 		NamedAtomPairConstraintOP pairconst_vv(
 		new NamedAtomPairConstraint(virtID, virtID_j, vvfunc, core::scoring::metalbinding_constraint) );
 		pose.add_constraint(pairconst_vv);

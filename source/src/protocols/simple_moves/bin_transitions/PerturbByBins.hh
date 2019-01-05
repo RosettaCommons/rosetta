@@ -71,13 +71,13 @@ public:
 	/// @brief Clone -- i.e. create a new object copying this one and return an owning pointer to the copy.
 	///
 	protocols::moves::MoverOP clone() const override {
-		return (protocols::moves::MoverOP( new protocols::simple_moves::bin_transitions::PerturbByBins( *this ) ) );
+		return (utility::pointer::make_shared< protocols::simple_moves::bin_transitions::PerturbByBins >( *this ) );
 	}
 
 	/// @brief Get a new instance of this mover (NOT copying).
 	///
 	protocols::moves::MoverOP fresh_instance() const override {
-		return protocols::moves::MoverOP( new PerturbByBins );
+		return utility::pointer::make_shared< PerturbByBins >();
 	}
 
 	/// @brief Apply the mover to a pose.

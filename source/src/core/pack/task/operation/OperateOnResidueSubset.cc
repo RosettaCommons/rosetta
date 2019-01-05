@@ -86,7 +86,7 @@ OperateOnResidueSubset::~OperateOnResidueSubset() = default;
 
 TaskOperationOP OperateOnResidueSubset::clone() const
 {
-	return TaskOperationOP( new OperateOnResidueSubset( *this ) );
+	return utility::pointer::make_shared< OperateOnResidueSubset >( *this );
 }
 
 void
@@ -265,7 +265,7 @@ void OperateOnResidueSubset::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 
 TaskOperationOP OperateOnResidueSubsetCreator::create_task_operation() const
 {
-	return TaskOperationOP( new OperateOnResidueSubset );
+	return utility::pointer::make_shared< OperateOnResidueSubset >();
 }
 
 std::string OperateOnResidueSubsetCreator::keyname() const { return OperateOnResidueSubset::keyname(); }

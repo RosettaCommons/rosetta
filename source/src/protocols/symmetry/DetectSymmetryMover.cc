@@ -55,7 +55,7 @@ static basic::Tracer TR( "protocols.simple_moves.symmetry.DetectSymmetry" );
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP DetectSymmetryMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new DetectSymmetry );
+// XRW TEMP  return utility::pointer::make_shared< DetectSymmetry >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -221,7 +221,7 @@ std::string DetectSymmetryMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 DetectSymmetryMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new DetectSymmetry );
+	return utility::pointer::make_shared< DetectSymmetry >();
 }
 
 void DetectSymmetryMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

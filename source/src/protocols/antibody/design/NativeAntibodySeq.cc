@@ -67,7 +67,7 @@ NativeAntibodySeq::~NativeAntibodySeq() = default;
 
 basic::datacache::CacheableDataOP
 NativeAntibodySeq::clone() const {
-	return CacheableDataOP( new NativeAntibodySeq(*this) );
+	return utility::pointer::make_shared< NativeAntibodySeq >(*this);
 }
 
 void

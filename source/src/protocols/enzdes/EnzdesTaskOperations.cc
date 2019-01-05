@@ -185,7 +185,7 @@ void SetCatalyticResPackBehavior::provide_xml_schema( utility::tag::XMLSchemaDef
 core::pack::task::operation::TaskOperationOP
 SetCatalyticResPackBehaviorCreator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new SetCatalyticResPackBehavior );
+	return utility::pointer::make_shared< SetCatalyticResPackBehavior >();
 }
 
 void SetCatalyticResPackBehaviorCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -202,7 +202,7 @@ std::string SetCatalyticResPackBehaviorCreator::keyname() const
 core::pack::task::operation::TaskOperationOP
 DetectProteinLigandInterfaceOperationCreator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new DetectProteinLigandInterface );
+	return utility::pointer::make_shared< DetectProteinLigandInterface >();
 }
 
 void DetectProteinLigandInterfaceOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -218,7 +218,7 @@ std::string DetectProteinLigandInterfaceOperationCreator::keyname() const
 core::pack::task::operation::TaskOperationOP
 ProteinLigandInterfaceUpweighterOperationCreator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new ProteinLigandInterfaceUpweighter );
+	return utility::pointer::make_shared< ProteinLigandInterfaceUpweighter >();
 }
 
 void ProteinLigandInterfaceUpweighterOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -234,7 +234,7 @@ std::string ProteinLigandInterfaceUpweighterOperationCreator::keyname() const
 core::pack::task::operation::TaskOperationOP
 AddLigandMotifRotamersOperationCreator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new AddLigandMotifRotamers );
+	return utility::pointer::make_shared< AddLigandMotifRotamers >();
 }
 
 void AddLigandMotifRotamersOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -266,7 +266,7 @@ DetectProteinLigandInterface::~DetectProteinLigandInterface() = default;
 core::pack::task::operation::TaskOperationOP
 DetectProteinLigandInterface::clone() const
 {
-	return core::pack::task::operation::TaskOperationOP( new DetectProteinLigandInterface(*this) );
+	return utility::pointer::make_shared< DetectProteinLigandInterface >(*this);
 }
 
 /// @brief Initialize the class based on the command line options.
@@ -786,7 +786,7 @@ ProteinLigandInterfaceUpweighter::~ProteinLigandInterfaceUpweighter() = default;
 core::pack::task::operation::TaskOperationOP
 ProteinLigandInterfaceUpweighter::clone() const
 {
-	return core::pack::task::operation::TaskOperationOP( new ProteinLigandInterfaceUpweighter(*this) );
+	return utility::pointer::make_shared< ProteinLigandInterfaceUpweighter >(*this);
 }
 
 /// @brief Initialize the class based on the command line options.
@@ -853,7 +853,7 @@ ProteinLigandInterfaceUpweighter::register_options()
 core::pack::task::operation::TaskOperationOP
 AddRigidBodyLigandConfsCreator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new AddRigidBodyLigandConfs );
+	return utility::pointer::make_shared< AddRigidBodyLigandConfs >();
 }
 
 void AddRigidBodyLigandConfsCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -873,7 +873,7 @@ AddRigidBodyLigandConfs::~AddRigidBodyLigandConfs()= default;
 core::pack::task::operation::TaskOperationOP
 AddRigidBodyLigandConfs::clone() const
 {
-	return core::pack::task::operation::TaskOperationOP( new AddRigidBodyLigandConfs() );
+	return utility::pointer::make_shared< AddRigidBodyLigandConfs >();
 }
 
 /// @details doesn't do anything atm, because the operation right now
@@ -932,7 +932,7 @@ AddLigandMotifRotamers::~AddLigandMotifRotamers()= default;
 core::pack::task::operation::TaskOperationOP
 AddLigandMotifRotamers::clone() const
 {
-	return core::pack::task::operation::TaskOperationOP( new AddLigandMotifRotamers() );
+	return utility::pointer::make_shared< AddLigandMotifRotamers >();
 }
 
 void

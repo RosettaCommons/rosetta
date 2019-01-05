@@ -779,7 +779,7 @@ EnzdesScorefileFilter::EnzdesScorefileFilter()
 	native_comp_(/* NULL */),
 	reqfile_name_("")
 {
-	if ( native_comparison_ ) native_comp_ = DesignVsNativeComparisonOP( new protocols::enzdes::DesignVsNativeComparison() );
+	if ( native_comparison_ ) native_comp_ = utility::pointer::make_shared< protocols::enzdes::DesignVsNativeComparison >();
 	residue_calculators_.clear();
 	native_compare_calculators_.clear();
 	silent_Es_.clear();
@@ -1425,7 +1425,7 @@ ResidueConformerFilter::get_current_conformer( core::pose::Pose const & pose ) c
 
 
 // XRW TEMP filters::FilterOP
-// XRW TEMP DiffAtomSasaFilterCreator::create_filter() const { return filters::FilterOP( new DiffAtomSasaFilter ); }
+// XRW TEMP DiffAtomSasaFilterCreator::create_filter() const { return utility::pointer::make_shared< DiffAtomSasaFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP DiffAtomSasaFilterCreator::keyname() const { return "DiffAtomBurial"; }
@@ -1462,7 +1462,7 @@ std::string DiffAtomSasaFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 DiffAtomSasaFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new DiffAtomSasaFilter );
+	return utility::pointer::make_shared< DiffAtomSasaFilter >();
 }
 
 void DiffAtomSasaFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -1472,7 +1472,7 @@ void DiffAtomSasaFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefin
 
 
 // XRW TEMP filters::FilterOP
-// XRW TEMP EnzScoreFilterCreator::create_filter() const { return filters::FilterOP( new EnzScoreFilter ); }
+// XRW TEMP EnzScoreFilterCreator::create_filter() const { return utility::pointer::make_shared< EnzScoreFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP EnzScoreFilterCreator::keyname() const { return "EnzScore"; }
@@ -1510,7 +1510,7 @@ std::string EnzScoreFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 EnzScoreFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new EnzScoreFilter );
+	return utility::pointer::make_shared< EnzScoreFilter >();
 }
 
 void EnzScoreFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -1520,7 +1520,7 @@ void EnzScoreFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 
 
 // XRW TEMP filters::FilterOP
-// XRW TEMP LigBurialFilterCreator::create_filter() const { return filters::FilterOP( new LigBurialFilter ); }
+// XRW TEMP LigBurialFilterCreator::create_filter() const { return utility::pointer::make_shared< LigBurialFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP LigBurialFilterCreator::keyname() const { return "LigBurial"; }
@@ -1550,7 +1550,7 @@ std::string LigBurialFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 LigBurialFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new LigBurialFilter );
+	return utility::pointer::make_shared< LigBurialFilter >();
 }
 
 void LigBurialFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -1560,7 +1560,7 @@ void LigBurialFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 
 
 // XRW TEMP filters::FilterOP
-// XRW TEMP LigDSasaFilterCreator::create_filter() const { return filters::FilterOP( new LigDSasaFilter ); }
+// XRW TEMP LigDSasaFilterCreator::create_filter() const { return utility::pointer::make_shared< LigDSasaFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP LigDSasaFilterCreator::keyname() const { return "DSasa"; }
@@ -1589,7 +1589,7 @@ std::string LigDSasaFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 LigDSasaFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new LigDSasaFilter );
+	return utility::pointer::make_shared< LigDSasaFilter >();
 }
 
 void LigDSasaFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -1599,7 +1599,7 @@ void LigDSasaFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 
 
 // XRW TEMP filters::FilterOP
-// XRW TEMP LigInterfaceEnergyFilterCreator::create_filter() const { return filters::FilterOP( new LigInterfaceEnergyFilter ); }
+// XRW TEMP LigInterfaceEnergyFilterCreator::create_filter() const { return utility::pointer::make_shared< LigInterfaceEnergyFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP LigInterfaceEnergyFilterCreator::keyname() const { return "LigInterfaceEnergy"; }
@@ -1633,7 +1633,7 @@ std::string LigInterfaceEnergyFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 LigInterfaceEnergyFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new LigInterfaceEnergyFilter );
+	return utility::pointer::make_shared< LigInterfaceEnergyFilter >();
 }
 
 void LigInterfaceEnergyFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -1643,7 +1643,7 @@ void LigInterfaceEnergyFilterCreator::provide_xml_schema( utility::tag::XMLSchem
 
 
 // XRW TEMP filters::FilterOP
-// XRW TEMP RepackWithoutLigandFilterCreator::create_filter() const { return filters::FilterOP( new RepackWithoutLigandFilter ); }
+// XRW TEMP RepackWithoutLigandFilterCreator::create_filter() const { return utility::pointer::make_shared< RepackWithoutLigandFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP RepackWithoutLigandFilterCreator::keyname() const { return "RepackWithoutLigand"; }
@@ -1688,7 +1688,7 @@ std::string RepackWithoutLigandFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 RepackWithoutLigandFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new RepackWithoutLigandFilter );
+	return utility::pointer::make_shared< RepackWithoutLigandFilter >();
 }
 
 void RepackWithoutLigandFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -1698,7 +1698,7 @@ void RepackWithoutLigandFilterCreator::provide_xml_schema( utility::tag::XMLSche
 
 
 // XRW TEMP filters::FilterOP
-// XRW TEMP EnzdesScorefileFilterCreator::create_filter() const { return filters::FilterOP( new EnzdesScorefileFilter ); }
+// XRW TEMP EnzdesScorefileFilterCreator::create_filter() const { return utility::pointer::make_shared< EnzdesScorefileFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP EnzdesScorefileFilterCreator::keyname() const { return "EnzdesScorefileFilter"; }
@@ -1726,7 +1726,7 @@ std::string EnzdesScorefileFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 EnzdesScorefileFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new EnzdesScorefileFilter );
+	return utility::pointer::make_shared< EnzdesScorefileFilter >();
 }
 
 void EnzdesScorefileFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -1736,7 +1736,7 @@ void EnzdesScorefileFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDe
 
 
 // XRW TEMP filters::FilterOP
-// XRW TEMP ResidueConformerFilterCreator::create_filter() const { return filters::FilterOP( new ResidueConformerFilter ); }
+// XRW TEMP ResidueConformerFilterCreator::create_filter() const { return utility::pointer::make_shared< ResidueConformerFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP ResidueConformerFilterCreator::keyname() const { return "ResidueConformerFilter"; }
@@ -1768,7 +1768,7 @@ std::string ResidueConformerFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 ResidueConformerFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new ResidueConformerFilter );
+	return utility::pointer::make_shared< ResidueConformerFilter >();
 }
 
 void ResidueConformerFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -155,9 +155,9 @@ public:
 
 		utility::vector1< NodeManagerOP > managers;
 		managers.reserve( 3 );
-		managers.push_back( NodeManagerOP( new SimpleNodeManager( 0, num_jobs_for_node[ 1 ], num_results_to_keep_for_node[ 1 ] ) ) );
-		managers.push_back( NodeManagerOP( new SimpleNodeManager( num_jobs_for_node[ 1 ], num_jobs_for_node[ 2 ], num_results_to_keep_for_node[ 2 ] ) ) );
-		managers.push_back( NodeManagerOP( new SimpleNodeManager( num_jobs_for_node[ 1 ] + num_jobs_for_node[ 2 ], num_jobs_for_node[ 3 ], num_results_to_keep_for_node[ 3 ] ) ) );
+		managers.push_back( utility::pointer::make_shared< SimpleNodeManager >( 0, num_jobs_for_node[ 1 ], num_results_to_keep_for_node[ 1 ] ) );
+		managers.push_back( utility::pointer::make_shared< SimpleNodeManager >( num_jobs_for_node[ 1 ], num_jobs_for_node[ 2 ], num_results_to_keep_for_node[ 2 ] ) );
+		managers.push_back( utility::pointer::make_shared< SimpleNodeManager >( num_jobs_for_node[ 1 ] + num_jobs_for_node[ 2 ], num_jobs_for_node[ 3 ], num_results_to_keep_for_node[ 3 ] ) );
 
 		//Node 1 focuses on having multiple results per job
 		utility::vector1< utility::vector1< core::Real > > score_for_result_for_local_job_id_node1;

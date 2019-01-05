@@ -80,7 +80,7 @@ using namespace core;
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP SilentTrajectoryRecorderCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new SilentTrajectoryRecorder );
+// XRW TEMP  return utility::pointer::make_shared< SilentTrajectoryRecorder >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -106,13 +106,13 @@ SilentTrajectoryRecorder::SilentTrajectoryRecorder(
 protocols::moves::MoverOP
 SilentTrajectoryRecorder::clone() const
 {
-	return protocols::moves::MoverOP( new protocols::canonical_sampling::SilentTrajectoryRecorder( *this ) );
+	return utility::pointer::make_shared< protocols::canonical_sampling::SilentTrajectoryRecorder >( *this );
 }
 
 protocols::moves::MoverOP
 SilentTrajectoryRecorder::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new SilentTrajectoryRecorder );
+	return utility::pointer::make_shared< SilentTrajectoryRecorder >();
 }
 
 // XRW TEMP std::string
@@ -275,7 +275,7 @@ std::string SilentTrajectoryRecorderCreator::keyname() const {
 
 protocols::moves::MoverOP
 SilentTrajectoryRecorderCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SilentTrajectoryRecorder );
+	return utility::pointer::make_shared< SilentTrajectoryRecorder >();
 }
 
 void SilentTrajectoryRecorderCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

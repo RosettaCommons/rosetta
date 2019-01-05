@@ -61,7 +61,7 @@ static basic::Tracer TR( "protocols.simple_moves.FavorSequenceProfile" );
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP FavorSequenceProfileCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new FavorSequenceProfile );
+// XRW TEMP  return utility::pointer::make_shared< FavorSequenceProfile >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -90,7 +90,7 @@ FavorSequenceProfile::set_sequence( core::sequence::Sequence & seq, std::string 
 	if ( ref_profile_ ) {
 		TR.Warning << "Overwriting existing profile in FavorSequenceProfile." << std::endl;
 	}
-	ref_profile_ = core::sequence::SequenceProfileOP( new core::sequence::SequenceProfile );
+	ref_profile_ = utility::pointer::make_shared< core::sequence::SequenceProfile >();
 	ref_profile_->generate_from_sequence(seq, matrix);
 }
 
@@ -99,7 +99,7 @@ FavorSequenceProfile::set_profile( core::sequence::SequenceProfile & profile) {
 	if ( ref_profile_ ) {
 		TR.Warning << "Overwriting existing profile in FavorSequenceProfile." << std::endl;
 	}
-	ref_profile_ = core::sequence::SequenceProfileOP( new core::sequence::SequenceProfile( profile ) );
+	ref_profile_ = utility::pointer::make_shared< core::sequence::SequenceProfile >( profile );
 }
 
 void
@@ -116,11 +116,11 @@ FavorSequenceProfile::apply( core::pose::Pose & pose )
 	core::sequence::SequenceProfileOP profile;
 	if ( use_current_ ) {
 		core::sequence::Sequence seq(pose);
-		profile = core::sequence::SequenceProfileOP( new core::sequence::SequenceProfile );
+		profile = utility::pointer::make_shared< core::sequence::SequenceProfile >();
 		profile->generate_from_sequence(seq, matrix_);
 	} else {
 		runtime_assert( ref_profile_ != nullptr );
-		profile = core::sequence::SequenceProfileOP( new core::sequence::SequenceProfile( *ref_profile_) );
+		profile = utility::pointer::make_shared< core::sequence::SequenceProfile >( *ref_profile_);
 	}
 
 	if ( scaling_ == "prob" ) {
@@ -161,7 +161,7 @@ FavorSequenceProfile::apply( core::pose::Pose & pose )
 
 	for ( core::Size seqpos( start_seq ), end( stop_seq ); seqpos <= end; ++seqpos ) {
 		if ( use_all_residues[seqpos] ) {
-			pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new core::scoring::constraints::SequenceProfileConstraint( pose, seqpos, profile, smap ) ) ) );
+			pose.add_constraint( utility::pointer::make_shared< core::scoring::constraints::SequenceProfileConstraint >( pose, seqpos, profile, smap ) );
 		}
 	}
 }
@@ -238,7 +238,7 @@ FavorSequenceProfile::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::
 	}
 
 	if ( tag->hasOption("pssm") ) {
-		ref_profile_ = core::sequence::SequenceProfileOP( new core::sequence::SequenceProfile );
+		ref_profile_ = utility::pointer::make_shared< core::sequence::SequenceProfile >();
 		ref_profile_->read_from_file( tag->getOption< std::string >( "pssm" ) );
 	}
 
@@ -299,7 +299,7 @@ std::string FavorSequenceProfileCreator::keyname() const {
 
 protocols::moves::MoverOP
 FavorSequenceProfileCreator::create_mover() const {
-	return protocols::moves::MoverOP( new FavorSequenceProfile );
+	return utility::pointer::make_shared< FavorSequenceProfile >();
 }
 
 void FavorSequenceProfileCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

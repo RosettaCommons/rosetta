@@ -129,7 +129,7 @@ void calc_RF( const utility::vector1<core::pose::PoseOP> &pose_by_chain, core::R
 }
 
 void predict_AE( const core::pose::PoseOP &pose, core::Real &AE_pred, const std::string &interface, const core::Real &HSA_weight, const core::Real &NR_weight, const core::Real &RF_weight, const core::Real &RF, const core::Real &n_ints ) {
-	protocols::analysis::InterfaceAnalyzerMoverOP IAM = protocols::analysis::InterfaceAnalyzerMoverOP( new protocols::analysis::InterfaceAnalyzerMover(interface, true, core::scoring::ScoreFunctionFactory::create_score_function("ref2015")/*scorefxn_*/, false/*compute_packstat_*/, false/*pack_together_*/, false/*pack_separated_*/) );
+	protocols::analysis::InterfaceAnalyzerMoverOP IAM = utility::pointer::make_shared< protocols::analysis::InterfaceAnalyzerMover >(interface, true, core::scoring::ScoreFunctionFactory::create_score_function("ref2015")/*scorefxn_*/, false/*compute_packstat_*/, false/*pack_together_*/, false/*pack_separated_*/);
 
 	core::scoring::ScoreFunctionOP sfxn = core::scoring::get_score_function();
 

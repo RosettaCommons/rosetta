@@ -442,26 +442,26 @@ ErraserMinimizerMover::add_fixed_res_constraints(
 	// first base atom.
 	Size const atm_indexBase = chemical::rna::first_base_atom_index( rsd.type() );
 
-	cst_set->add_constraint( ConstraintCOP( new CoordinateConstraint(
+	cst_set->add_constraint( utility::pointer::make_shared< CoordinateConstraint >(
 		AtomID( atm_indexP, fixed_res_num ),
 		AtomID( 1, my_anchor ), rsd.xyz( atm_indexP ),
-		FuncOP( new HarmonicFunc( 0.0, coord_sdev ) ) ) ) );
-	cst_set->add_constraint( ConstraintCOP( new CoordinateConstraint(
+		utility::pointer::make_shared< HarmonicFunc >( 0.0, coord_sdev ) ) );
+	cst_set->add_constraint( utility::pointer::make_shared< CoordinateConstraint >(
 		AtomID( atm_indexO3, fixed_res_num ),
 		AtomID( 1, my_anchor ), rsd.xyz( atm_indexO3 ),
-		FuncOP( new HarmonicFunc ( 0.0, coord_sdev ) ) ) ) );
-	cst_set->add_constraint( ConstraintCOP( new CoordinateConstraint(
+		utility::pointer::make_shared< HarmonicFunc > ( 0.0, coord_sdev ) ) );
+	cst_set->add_constraint( utility::pointer::make_shared< CoordinateConstraint >(
 		AtomID( atm_indexBase, fixed_res_num ),
 		AtomID( 1, my_anchor ), rsd.xyz ( atm_indexBase ),
-		FuncOP( new HarmonicFunc ( 0.0, coord_sdev ) ) ) ) );
-	cst_set->add_constraint( ConstraintCOP( new CoordinateConstraint(
+		utility::pointer::make_shared< HarmonicFunc > ( 0.0, coord_sdev ) ) );
+	cst_set->add_constraint( utility::pointer::make_shared< CoordinateConstraint >(
 		AtomID( atm_indexC6, fixed_res_num ),
 		AtomID( 1, my_anchor ), rsd.xyz( atm_indexC6 ),
-		FuncOP( new HarmonicFunc( 0.0, coord_sdev ) ) ) ) );
-	cst_set->add_constraint( ConstraintCOP( new CoordinateConstraint(
+		utility::pointer::make_shared< HarmonicFunc >( 0.0, coord_sdev ) ) );
+	cst_set->add_constraint( utility::pointer::make_shared< CoordinateConstraint >(
 		AtomID( atm_indexOP2, fixed_res_num ),
 		AtomID( 1, my_anchor ), rsd.xyz( atm_indexOP2 ),
-		FuncOP( new HarmonicFunc( 0.0, coord_sdev ) ) ) ) );
+		utility::pointer::make_shared< HarmonicFunc >( 0.0, coord_sdev ) ) );
 
 	pose.constraint_set( cst_set );
 }
@@ -831,7 +831,7 @@ void load_checkpoint( Size const nstruct, utility::vector1< Size > & chunk_indic
 	read_checkpoint_log( chunk_indices, first_chunk, nstruct );
 
 	if ( first_chunk != 1 ) {
-		auto input = PoseInputStreamOP( new SilentFilePoseInputStream( min_checkpoint_namer( nstruct ) ) );
+		auto input = utility::pointer::make_shared< SilentFilePoseInputStream >( min_checkpoint_namer( nstruct ) );
 		if ( input->has_another_pose() ) { // safe against bad files
 			input->fill_pose( pose );
 		}
@@ -970,7 +970,6 @@ ErraserMinimizerMover::apply(
 	}
 
 
-
 	//Set the MoveMap, avoiding moving the virtual residue
 	TR << "Setting up movemap ..." << std::endl;
 	std::set< core::Size > cut_upper, cut_lower;
@@ -1020,10 +1019,10 @@ ErraserMinimizerMover::apply(
 			// P for RNA, CA for protein (if they sneak in)
 			if ( !rsd.has( "P" ) && !rsd.has( "CA" ) ) continue;
 			Size const atm_indexP = rsd.has( "P" ) ? rsd.atom_index( "P" ) : rsd.atom_index( "CA" );
-			cst_set->add_constraint( ConstraintCOP( new CoordinateConstraint(
+			cst_set->add_constraint( utility::pointer::make_shared< CoordinateConstraint >(
 				AtomID( atm_indexP, i ),
 				AtomID( 1, my_anchor ), rsd.xyz( atm_indexP ),
-				FuncOP( new HarmonicFunc( 0.0, coord_sdev ) ) ) ) );
+				utility::pointer::make_shared< HarmonicFunc >( 0.0, coord_sdev ) ) );
 		}
 		pose.constraint_set( cst_set );
 	}
@@ -1139,7 +1138,7 @@ ErraserMinimizerMover::apply(
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP ErraserMinimizerMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new ErraserMinimizerMover );
+// XRW TEMP  return utility::pointer::make_shared< ErraserMinimizerMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -1178,7 +1177,7 @@ std::string ErraserMinimizerMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 ErraserMinimizerMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ErraserMinimizerMover );
+	return utility::pointer::make_shared< ErraserMinimizerMover >();
 }
 
 void ErraserMinimizerMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -73,7 +73,7 @@ FilterStructs::FilterStructs( String const & name, Pose const & pose, Size const
 	filter_on_( true ),
 	ntrial_( ntrial ),
 	current_trial_( 0 ),
-	best_pose_( PoseOP( new Pose(pose) ) )
+	best_pose_( utility::pointer::make_shared< Pose >(pose) )
 {}
 
 /// @brief copy constructor
@@ -133,7 +133,7 @@ FilterStructs::initialize( Pose const & pose )
 {
 	set_filter_on();
 	current_trial_ = 0;
-	best_pose_ = PoseOP( new Pose( pose ) );
+	best_pose_ = utility::pointer::make_shared< Pose >( pose );
 }
 
 /// @brief set ntrial
@@ -158,7 +158,7 @@ FilterStructs::filter_is_over()
 void
 FilterStructs::set_bestpose( Pose const & pose )
 {
-	best_pose_ = PoseOP( new Pose( pose ) );
+	best_pose_ = utility::pointer::make_shared< Pose >( pose );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -183,13 +183,13 @@ FilterStructs_Packstat::~FilterStructs_Packstat()= default;
 /// @brief clone
 FilterStructsOP FilterStructs_Packstat::clone() const
 {
-	return FilterStructsOP( new FilterStructs_Packstat( *this ) );
+	return utility::pointer::make_shared< FilterStructs_Packstat >( *this );
 }
 
 /// @brief fresh instance
 FilterStructsOP FilterStructs_Packstat::fresh_instance() const
 {
-	return FilterStructsOP( new FilterStructs_Packstat() );
+	return utility::pointer::make_shared< FilterStructs_Packstat >();
 }
 
 /// @brief
@@ -239,13 +239,13 @@ FilterStructs_TotalCharge::~FilterStructs_TotalCharge() = default;
 /// @brief clone
 FilterStructsOP FilterStructs_TotalCharge::clone() const
 {
-	return FilterStructsOP( new FilterStructs_TotalCharge( *this ) );
+	return utility::pointer::make_shared< FilterStructs_TotalCharge >( *this );
 }
 
 /// @brief clone
 FilterStructsOP FilterStructs_TotalCharge::fresh_instance() const
 {
-	return FilterStructsOP( new FilterStructs_TotalCharge() );
+	return utility::pointer::make_shared< FilterStructs_TotalCharge >();
 }
 
 /// @brief

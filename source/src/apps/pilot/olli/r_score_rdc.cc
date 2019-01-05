@@ -129,7 +129,7 @@ void RDCToolMover::dump_averages() {
 void RDCToolMover::apply( core::pose::Pose &pose ) {
 
 	if ( !myRDCs_ ) {
-		myRDCs_ = ResidualDipolarCouplingOP( new ResidualDipolarCoupling );
+		myRDCs_ = utility::pointer::make_shared< ResidualDipolarCoupling >();
 		ResidualDipolarCoupling::RDC_lines data = myRDCs_->get_RDC_data();
 		if ( option[ average ].user() ) {
 			average_RDCs_.resize( data.size(), 0.0 );
@@ -160,7 +160,7 @@ void RDCToolMover::apply( core::pose::Pose &pose ) {
 					filtered.push_back( *it );
 				}
 			}
-			myRDCs_ = ResidualDipolarCouplingOP( new ResidualDipolarCoupling( filtered ) );
+			myRDCs_ = utility::pointer::make_shared< ResidualDipolarCoupling >( filtered );
 		} // end filter
 	} //end init myRDCs_
 	store_RDC_in_pose( myRDCs_, pose );
@@ -211,7 +211,7 @@ void run() {
 	}
 
 	RDCToolMoverOP cst_tool( new RDCToolMover );
-	protocols::jd2::JobDistributor::get_instance()->go( cst_tool, jd2::JobOutputterOP( new jd2::NoOutputJobOutputter ) );
+	protocols::jd2::JobDistributor::get_instance()->go( cst_tool, utility::pointer::make_shared< jd2::NoOutputJobOutputter >() );
 
 
 	if ( option[ average ].user() ) {

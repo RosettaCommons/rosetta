@@ -49,7 +49,7 @@ methods::EnergyMethodOP
 DNATorsionEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new DNATorsionEnergy );
+	return utility::pointer::make_shared< DNATorsionEnergy >();
 }
 
 ScoreTypes
@@ -64,7 +64,7 @@ DNATorsionEnergyCreator::score_types_for_method() const {
 
 /// ctor
 DNATorsionEnergy::DNATorsionEnergy():
-	parent( methods::EnergyMethodCreatorOP( new DNATorsionEnergyCreator ) ),
+	parent( utility::pointer::make_shared< DNATorsionEnergyCreator >() ),
 	dna_torsion_potential_( ScoringManager::get_instance()->get_DNATorsionPotential() ),
 	constraints_ready_( false ),
 	verbose_( false )
@@ -74,7 +74,7 @@ DNATorsionEnergy::DNATorsionEnergy():
 methods::EnergyMethodOP
 DNATorsionEnergy::clone() const
 {
-	return methods::EnergyMethodOP( new DNATorsionEnergy );
+	return utility::pointer::make_shared< DNATorsionEnergy >();
 }
 
 
@@ -108,7 +108,7 @@ dna_torsion_potential_.setup_constraints( pose, dna_torsion_constraints_, dna_su
 //If designing, can't implement sugar closure constraints, because one of them depends on the first base atom ...
 // whose name and location differ between bases! Luckily, sugar atoms and first base atom should not vary during design.
 // So clear these constraints...
-if ( task.design_any() ) dna_sugar_close_constraints_ = constraints::ConstraintSetOP( new constraints::ConstraintSet );
+if ( task.design_any() ) dna_sugar_close_constraints_ = utility::pointer::make_shared< constraints::ConstraintSet >();
 
 constraints_ready_ = true;
 }

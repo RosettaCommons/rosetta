@@ -64,13 +64,13 @@ StructureDataWithPose::~StructureDataWithPose()
 StructureDataOP
 StructureDataWithPose::fresh_instance() const
 {
-	return StructureDataOP( new StructureDataWithPose( id(), core::pose::Pose() ) );
+	return utility::pointer::make_shared< StructureDataWithPose >( id(), core::pose::Pose() );
 }
 
 StructureDataOP
 StructureDataWithPose::clone() const
 {
-	return StructureDataOP( new StructureDataWithPose( *this ) );
+	return utility::pointer::make_shared< StructureDataWithPose >( *this );
 }
 
 /// @brief just return the pose
@@ -471,7 +471,7 @@ StructureDataWithPose::detect_disulfides( core::scoring::ScoreFunctionOP sfx )
 
 	// fix HG of CYS to relieve clashes of any newly converted CYS
 	core::pack::task::TaskFactoryOP tf( new core::pack::task::TaskFactory() );
-	tf->push_back( core::pack::task::operation::TaskOperationOP( new core::pack::task::operation::OptCysHG() ) );
+	tf->push_back( utility::pointer::make_shared< core::pack::task::operation::OptCysHG >() );
 	core::pack::pack_rotamers( pose_nonconst(), *sfx, tf->create_task_and_apply_taskoperations( pose() ) );
 
 	// safety

@@ -153,7 +153,7 @@ void DockingEnsemble::recover_and_pack_conformer_sidechains( core::pose::Pose & 
 		using namespace basic::datacache;
 		pose.data().set(
 			CacheableDataType::ARBITRARY_FLOAT_DATA,
-			DataCache_CacheableData::DataOP( new basic::datacache::CacheableStringFloatMap() )
+			utility::pointer::make_shared< basic::datacache::CacheableStringFloatMap >()
 		);
 	}
 

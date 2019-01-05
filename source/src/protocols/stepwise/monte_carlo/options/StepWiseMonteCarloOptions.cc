@@ -109,7 +109,7 @@ StepWiseMonteCarloOptions::StepWiseMonteCarloOptions( StepWiseMonteCarloOptions 
 StepWiseMonteCarloOptionsOP
 StepWiseMonteCarloOptions::clone() const
 {
-	return StepWiseMonteCarloOptionsOP( new StepWiseMonteCarloOptions( *this ) );
+	return utility::pointer::make_shared< StepWiseMonteCarloOptions >( *this );
 }
 
 void

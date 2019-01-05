@@ -53,7 +53,7 @@ public:
 	virtual
 	methods::EnergyMethodOP
 	clone() const {
-		return methods::EnergyMethodOP( new HolesEnergy() );
+		return utility::pointer::make_shared< HolesEnergy >();
 	}
 
 

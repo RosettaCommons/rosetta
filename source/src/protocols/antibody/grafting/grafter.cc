@@ -256,7 +256,7 @@ core::pose::PoseOP graft_cdr_loops(AntibodySequence const &A, SCS_ResultSet cons
 
 		if (optimal_graft){
 
-			//AntibodyInfoOP scaffold_ab_info = AntibodyInfoOP( new AntibodyInfo( *result )); //Only needs AbInfo for on-the-fly numbering conversion.
+			//AntibodyInfoOP scaffold_ab_info = utility::pointer::make_shared< AntibodyInfo >( *result ); //Only needs AbInfo for on-the-fly numbering conversion.
 			AntibodyCDRGrafter grafter = AntibodyCDRGrafter();
 			CDRNameEnum cdr_to_graft = enum_manager.cdr_name_string_to_enum(g.name);
 			grafter.set_cdr_only(cdr_to_graft);
@@ -338,7 +338,7 @@ core::pose::PoseOP graft_cdr_loops(AntibodySequence const &A, SCS_ResultSet cons
 
 
 	// prior to dumping, restore proper sequence to CDRs as grafter copies over both structure and sequence from the template
-	AntibodyInfoOP ab_info = AntibodyInfoOP( new AntibodyInfo(*result) );
+	AntibodyInfoOP ab_info = utility::pointer::make_shared< AntibodyInfo >(*result);
 
 	struct{
 		string cdr_name; Size cdr_start; Size cdr_end; string cdr_seq;
@@ -376,7 +376,7 @@ core::pose::PoseOP graft_cdr_loops(AntibodySequence const &A, SCS_ResultSet cons
 
 		result->dump_pdb(prefix + "pre-model" + suffix + ".pdb");
 		TR << "Optimizing post-grafted CDRs including CDR4" << std::endl;
-		//AntibodyInfoOP ab_info = AntibodyInfoOP( new AntibodyInfo(*result));
+		//AntibodyInfoOP ab_info = utility::pointer::make_shared< AntibodyInfo >(*result);
 
 		constraints::CDRDihedralConstraintMover cst_mover = constraints::CDRDihedralConstraintMover(ab_info);
 		cst_mover.set_use_cluster_csts( false );

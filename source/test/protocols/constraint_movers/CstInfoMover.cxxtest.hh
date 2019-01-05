@@ -62,7 +62,7 @@ public:
 		TS_ASSERT( !hasPoseExtraScore( pose, "CST_1_measure" ) );
 		TS_ASSERT( !hasPoseExtraScore( pose, "CST_1_score" ) );
 		protocols::constraint_movers::CstInfoMover cim;
-		pose.add_constraint( ConstraintOP( new ConstantConstraint( FuncOP( new ConstantFunc( 5 ) ) ) ) );
+		pose.add_constraint( utility::pointer::make_shared< ConstantConstraint >( utility::pointer::make_shared< ConstantFunc >( 5 ) ) );
 		cim.apply( pose );
 		TS_ASSERT( hasPoseExtraScore( pose, "CST_1_measure" ) );
 		TS_ASSERT( hasPoseExtraScore( pose, "CST_1_score" ) );

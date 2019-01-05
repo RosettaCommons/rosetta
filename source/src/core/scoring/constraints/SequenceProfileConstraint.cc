@@ -263,7 +263,7 @@ SequenceProfileConstraint::remap_resid(
 		new_map->downstream_combine( *mapping_ ); // Combine new->old and old->profile into new->profile
 	}
 
-	return ConstraintOP( new core::scoring::constraints::SequenceProfileConstraint( newseqpos, sequence_profile_, new_map ) );
+	return utility::pointer::make_shared< core::scoring::constraints::SequenceProfileConstraint >( newseqpos, sequence_profile_, new_map );
 }
 
 ConstraintOP
@@ -289,12 +289,12 @@ SequenceProfileConstraint::remapped_clone(
 		new_map->downstream_combine( *mapping_ ); // Combine new->old and old->profile into new->profile
 	}
 
-	return ConstraintOP( new core::scoring::constraints::SequenceProfileConstraint(
+	return utility::pointer::make_shared< core::scoring::constraints::SequenceProfileConstraint >(
 		newseqpos,
 		sequence_profile_ ?
 		utility::pointer::dynamic_pointer_cast< sequence::SequenceProfile > ( sequence_profile_->clone() ) :
 		sequence_profile_,
-		new_map ) );
+		new_map );
 }
 
 
@@ -363,7 +363,7 @@ SequenceProfileConstraintCreator::~SequenceProfileConstraintCreator() = default;
 core::scoring::constraints::ConstraintOP
 SequenceProfileConstraintCreator::create_constraint() const
 {
-	return core::scoring::constraints::ConstraintOP( new SequenceProfileConstraint );
+	return utility::pointer::make_shared< SequenceProfileConstraint >();
 }
 
 std::string
@@ -387,7 +387,7 @@ SequenceProfileConstraint::SequenceProfileConstraint( SequenceProfileConstraint 
 	seqpos_( src.seqpos_ ),
 	sequence_profile_( src.sequence_profile_ ?
 	utility::pointer::dynamic_pointer_cast< SequenceProfile > ( src.sequence_profile_->clone() ) : src.sequence_profile_ ),
-	mapping_( src.mapping_ ? core::id::SequenceMappingCOP( new core::id::SequenceMapping( *src.mapping_ )) : src.mapping_ ),
+	mapping_( src.mapping_ ? utility::pointer::make_shared< core::id::SequenceMapping >( *src.mapping_ ) : src.mapping_ ),
 	weight_(src.weight_ )
 {}
 

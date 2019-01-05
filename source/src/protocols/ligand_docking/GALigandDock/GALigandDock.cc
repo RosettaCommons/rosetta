@@ -406,7 +406,7 @@ GALigandDock::final_exact_cartmin(
 	poses.resize( genes.size() );
 
 	for ( core::Size i = 1; i <= genes.size(); ++i ) {
-		poses[i] = core::pose::PoseOP( new core::pose::Pose );
+		poses[i] = utility::pointer::make_shared< core::pose::Pose >();
 		genes[i].to_pose( poses[i] );
 
 		// setup movemap
@@ -443,7 +443,7 @@ GALigandDock::final_exact_cartmin(
 
 							if ( dist > MAXDIST ) continue;
 							using namespace core::scoring::func;
-							FuncOP fx( new ScalarWeightedFunc( 1.0, FuncOP( new TopOutFunc( 0.25, dist, 2.0 ) ) ) );
+							FuncOP fx( new ScalarWeightedFunc( 1.0, utility::pointer::make_shared< TopOutFunc >( 0.25, dist, 2.0 ) ) );
 							poses[i]->add_constraint(
 								core::scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP(
 								new core::scoring::constraints::AtomPairConstraint(
@@ -486,7 +486,7 @@ GALigandDock::final_exact_scmin( LigandConformers & genes, utility::vector1< cor
 	poses.resize( genes.size() );
 
 	for ( core::Size i = 1; i <= genes.size(); ++i ) {
-		poses[i] = core::pose::PoseOP( new core::pose::Pose );
+		poses[i] = utility::pointer::make_shared< core::pose::Pose >();
 		genes[i].to_pose( poses[i] );
 
 		core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
@@ -532,7 +532,7 @@ GALigandDock::final_exact_rtmin(
 
 	poses.resize( genes.size() );
 	for ( core::Size i = 1; i <= genes.size(); ++i ) {
-		poses[i] = core::pose::PoseOP( new core::pose::Pose );
+		poses[i] = utility::pointer::make_shared< core::pose::Pose >();
 		genes[i].to_pose( poses[i] );
 
 		core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
@@ -546,8 +546,8 @@ GALigandDock::final_exact_rtmin(
 		core::pack::task::PackerTaskOP rtmin_task = core::pack::task::TaskFactory::create_packer_task( *poses[i] );
 
 		TaskFactoryOP local_tf( new TaskFactory() );
-		local_tf->push_back(TaskOperationCOP( new InitializeFromCommandline() ));
-		local_tf->push_back(TaskOperationCOP( new RestrictToRepacking() ));
+		local_tf->push_back(utility::pointer::make_shared< InitializeFromCommandline >());
+		local_tf->push_back(utility::pointer::make_shared< RestrictToRepacking >());
 		PreventRepackingOP turn_off_packing( new PreventRepacking() );
 		for ( core::Size pos = 0; pos <= (*poses[i]).size(); ++pos ) {
 			core::Size resid = (pos==0 ? genes[i].ligand_id() : pos);
@@ -559,7 +559,7 @@ GALigandDock::final_exact_rtmin(
 		}
 
 		local_tf->push_back(turn_off_packing);
-		local_tf->push_back(TaskOperationCOP( new IncludeCurrent() ));
+		local_tf->push_back(utility::pointer::make_shared< IncludeCurrent >());
 		core::pack::task::PackerTaskOP packer( local_tf->create_task_and_apply_taskoperations( *poses[i] ) );
 		//packer->task_factory(local_tf);
 		(*scfxn_)(*poses[i]); // Ensure scorefunction data is appropriately initialized
@@ -572,9 +572,9 @@ GALigandDock::final_exact_rtmin(
 		core::Real tolerance(0.01);
 		protocols::minimization_packing::MinMoverOP min_mover;
 		if ( core::pose::symmetry::is_symmetric( *poses[i] ) )  {
-			min_mover = protocols::minimization_packing::MinMoverOP( new minimization_packing::symmetry::SymMinMover( mm, scfxn_, "linmin", tolerance, true ) );
+			min_mover = utility::pointer::make_shared< minimization_packing::symmetry::SymMinMover >( mm, scfxn_, "linmin", tolerance, true );
 		} else {
-			min_mover = protocols::minimization_packing::MinMoverOP( new protocols::minimization_packing::MinMover( mm, scfxn_, "linmin", tolerance, true ) );
+			min_mover = utility::pointer::make_shared< protocols::minimization_packing::MinMover >( mm, scfxn_, "linmin", tolerance, true );
 		}
 
 		min_mover->cartesian( false );
@@ -954,12 +954,12 @@ void GALigandDock::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 
 protocols::moves::MoverOP
 GALigandDock::clone() const {
-	return( protocols::moves::MoverOP( new GALigandDock( *this ) ) );
+	return( utility::pointer::make_shared< GALigandDock >( *this ) );
 }
 
 protocols::moves::MoverOP
 GALigandDock::fresh_instance() const {
-	return protocols::moves::MoverOP( new GALigandDock );
+	return utility::pointer::make_shared< GALigandDock >();
 }
 
 std::string GALigandDockCreator::keyname() const {
@@ -968,7 +968,7 @@ std::string GALigandDockCreator::keyname() const {
 
 protocols::moves::MoverOP
 GALigandDockCreator::create_mover() const {
-	return protocols::moves::MoverOP( new GALigandDock );
+	return utility::pointer::make_shared< GALigandDock >();
 }
 
 void GALigandDockCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {

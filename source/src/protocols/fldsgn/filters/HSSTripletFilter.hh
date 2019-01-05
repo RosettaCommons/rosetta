@@ -88,10 +88,10 @@ public:// virtual constructor
 
 
 	// @brief make clone
-	FilterOP clone() const override { return FilterOP( new HSSTripletFilter( *this ) ); }
+	FilterOP clone() const override { return utility::pointer::make_shared< HSSTripletFilter >( *this ); }
 
 	// @brief make fresh instance
-	FilterOP fresh_instance() const override { return FilterOP( new HSSTripletFilter() ); }
+	FilterOP fresh_instance() const override { return utility::pointer::make_shared< HSSTripletFilter >(); }
 
 
 public:// mutator

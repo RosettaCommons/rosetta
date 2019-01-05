@@ -52,7 +52,7 @@ DisulfJumpClaimer::DisulfJumpClaimer() :
 DisulfJumpClaimer::~DisulfJumpClaimer() = default;
 
 TopologyClaimerOP DisulfJumpClaimer::clone() const {
-	return TopologyClaimerOP( new DisulfJumpClaimer( *this ) );
+	return utility::pointer::make_shared< DisulfJumpClaimer >( *this );
 }
 
 void DisulfJumpClaimer::new_decoy() {
@@ -62,7 +62,7 @@ void DisulfJumpClaimer::new_decoy() {
 	jump_frags->add( all_frames_ );
 
 	simple_moves::ClassicFragmentMoverOP mover;
-	mover = simple_moves::ClassicFragmentMoverOP( new simple_moves::ClassicFragmentMover( jump_frags, movemap_ ) );
+	mover = utility::pointer::make_shared< simple_moves::ClassicFragmentMover >( jump_frags, movemap_ );
 	mover->type( mover_tag() );
 	mover->set_check_ss( false ); // this doesn't make sense with jump fragments
 	mover->enable_end_bias_check( false ); //no sense for discontinuous fragments
@@ -196,10 +196,10 @@ void DisulfJumpClaimer::generate_claims( claims::DofClaims& new_claims ) {
 
 		all_jump_pairings_.push_back( dis_pair );
 
-		new_claims.push_back( claims::DofClaimOP( new claims::JumpClaim( get_self_weak_ptr(),
+		new_claims.push_back( utility::pointer::make_shared< claims::JumpClaim >( get_self_weak_ptr(),
 			claim->local_pos1(),
 			claim->local_pos2(),
-			claims::DofClaim::INIT ) ) );
+			claims::DofClaim::INIT ) );
 	}
 
 	// get flexible jumps ( beta-sheet stuff etc. )

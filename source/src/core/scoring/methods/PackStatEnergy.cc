@@ -37,7 +37,7 @@ methods::EnergyMethodOP
 PackStatEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new PackStatEnergy );
+	return utility::pointer::make_shared< PackStatEnergy >();
 }
 
 ScoreTypes
@@ -49,7 +49,7 @@ PackStatEnergyCreator::score_types_for_method() const {
 
 /// c-tor
 PackStatEnergy::PackStatEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new PackStatEnergyCreator ) )
+	parent( utility::pointer::make_shared< PackStatEnergyCreator >() )
 {}
 
 
@@ -57,7 +57,7 @@ PackStatEnergy::PackStatEnergy() :
 EnergyMethodOP
 PackStatEnergy::clone() const
 {
-	return EnergyMethodOP( new PackStatEnergy() );
+	return utility::pointer::make_shared< PackStatEnergy >();
 }
 
 

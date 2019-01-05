@@ -158,7 +158,7 @@ setup_ca_constraints(pose::Pose & pose, ScoreFunction & s, float const CA_cutoff
 					Real const CA_dist = (CA_i - CA_j).length();
 					if ( CA_dist < CA_cutoff ) {
 						TR << "c-alpha constraints added to residues " << i << " and " << j << " dist " << CA_dist << " and tol " << cst_tol << std::endl;
-						ConstraintCOP cst( ConstraintOP( new AtomPairConstraint( AtomID(atom_i,i),AtomID(atom_j,j),core::scoring::func::FuncOP(new core::scoring::func::HarmonicFunc(CA_dist, cst_tol))) ) );
+						ConstraintCOP cst( utility::pointer::make_shared< AtomPairConstraint >( AtomID(atom_i,i),AtomID(atom_j,j),utility::pointer::make_shared< core::scoring::func::HarmonicFunc >(CA_dist, cst_tol)) );
 						pose.add_constraint(cst);
 					}
 				}

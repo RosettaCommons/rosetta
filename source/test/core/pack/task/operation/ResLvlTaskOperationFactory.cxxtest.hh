@@ -73,7 +73,7 @@ public:
 	void setUp() {
 		if ( !dummy_initialized_ ) {
 			dummy_initialized_ = true;
-			ResLvlTaskOperationFactory::get_instance()->factory_register( ResLvlTaskOperationCreatorOP( new DummyRLTOCreator ));
+			ResLvlTaskOperationFactory::get_instance()->factory_register( utility::pointer::make_shared< DummyRLTOCreator >());
 		}
 		core_init();
 	}
@@ -109,7 +109,7 @@ public:
 	}
 
 	void test_res_lvl_task_op_factory_w_bad_xsd() {
-		ResLvlTaskOperationFactory::get_instance()->factory_register( ResLvlTaskOperationCreatorOP( new DummyRLTO2Creator ));
+		ResLvlTaskOperationFactory::get_instance()->factory_register( utility::pointer::make_shared< DummyRLTO2Creator >());
 		try {
 			XMLSchemaDefinition xsd;
 			ResLvlTaskOperationFactory::get_instance()->define_res_lvl_task_op_xml_schema( xsd );

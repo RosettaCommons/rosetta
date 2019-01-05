@@ -50,10 +50,10 @@ public:
 	ConstraintScoreCutoffFilter( core::Real cutoff_in );
 
 	filters::FilterOP clone() const override {
-		return filters::FilterOP( new ConstraintScoreCutoffFilter( *this ) ); }
+		return utility::pointer::make_shared< ConstraintScoreCutoffFilter >( *this ); }
 
 	filters::FilterOP fresh_instance() const override {
-		return filters::FilterOP( new ConstraintScoreCutoffFilter() ); }
+		return utility::pointer::make_shared< ConstraintScoreCutoffFilter >(); }
 
 	void report( std::ostream & ostr, core::pose::Pose const & pose ) const override;
 	void parse_my_tag(

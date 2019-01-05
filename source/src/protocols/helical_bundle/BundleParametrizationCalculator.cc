@@ -120,7 +120,7 @@ BundleParametrizationCalculator::~BundleParametrizationCalculator() {}
 /// @brief Copy this object ( allocate actual memory for it )
 core::conformation::parametric::ParametrizationCalculatorOP
 BundleParametrizationCalculator::clone() const {
-	return core::conformation::parametric::ParametrizationCalculatorOP( BundleParametrizationCalculatorOP( new BundleParametrizationCalculator(*this) ) );
+	return utility::pointer::make_shared< BundleParametrizationCalculator >(*this);
 }
 
 /// @brief Read a Crick params file and initialize this calculator.

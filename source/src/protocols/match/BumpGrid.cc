@@ -928,7 +928,7 @@ BumpGrid::BumpGrid() :
 	general_permit_overlap_( 0.0 )
 {
 	for ( Size ii = 1; ii <= n_probe_radii; ++ii ) {
-		grids_[ ii ] = protocols::match::Bool3DGridOP( new Bool3DGrid );
+		grids_[ ii ] = utility::pointer::make_shared< Bool3DGrid >();
 		pair_permit_overlap_[ ii ].resize( n_probe_radii );
 		std::fill ( pair_permit_overlap_[ ii ].begin(), pair_permit_overlap_[ ii ].end(), 0.0 );
 	}
@@ -959,7 +959,7 @@ BumpGrid::BumpGrid( BumpGrid const & rhs ) :
 	general_permit_overlap_( rhs.general_permit_overlap_ )
 {
 	for ( Size ii = 1; ii <= n_probe_radii; ++ii ) {
-		grids_[ ii ] = protocols::match::Bool3DGridOP( new Bool3DGrid( *rhs.grids_[ ii ] ) );
+		grids_[ ii ] = utility::pointer::make_shared< Bool3DGrid >( *rhs.grids_[ ii ] );
 	}
 }
 
@@ -968,7 +968,7 @@ BumpGrid::~BumpGrid() = default;
 BumpGrid & BumpGrid::operator = ( BumpGrid const & rhs )
 {
 	for ( Size ii = 1; ii <= n_probe_radii; ++ii ) {
-		grids_[ ii ] = protocols::match::Bool3DGridOP( new Bool3DGrid( *rhs.grids_[ ii ] ) );
+		grids_[ ii ] = utility::pointer::make_shared< Bool3DGrid >( *rhs.grids_[ ii ] );
 	}
 	pair_permit_overlap_ = rhs.pair_permit_overlap_;
 	general_permit_overlap_ = rhs.general_permit_overlap_;
@@ -990,7 +990,7 @@ void BumpGrid::set_bounding_box( BoundingBox const & bb )
 		lower.z() = static_cast< Real > ( static_cast< int > ( lower.z() ));
 		Vector upper = bb.upper() + probe_radius( (ProbeRadius) ii );
 		BoundingBox iibb( lower, upper );
-		grids_[ ii ] = protocols::match::Bool3DGridOP( new Bool3DGrid );
+		grids_[ ii ] = utility::pointer::make_shared< Bool3DGrid >();
 		grids_[ ii ]->set_bin_width( 0.25 ); /// HARD CODED HACK!
 		grids_[ ii ]->set_bounding_box( iibb );
 	}
@@ -1170,7 +1170,7 @@ bump_grid_to_enclose_pose( core::pose::Pose const & pose )
 	Real at1rad( 0.0 );
 
 	if ( pose.size() < 1 ) {
-		return BumpGridOP( new BumpGrid );
+		return utility::pointer::make_shared< BumpGrid >();
 	} else {
 		bool found_an_atom( false );
 		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
@@ -1183,7 +1183,7 @@ bump_grid_to_enclose_pose( core::pose::Pose const & pose )
 		}
 		if ( ! found_an_atom ) {
 			/// weird non-empty pose where each residue has 0 atoms?
-			return BumpGridOP( new BumpGrid );
+			return utility::pointer::make_shared< BumpGrid >();
 		}
 	}
 
@@ -1213,7 +1213,7 @@ BumpGridOP bump_grid_to_enclose_residue_backbone(
 	Vector first_xyz( 0 );
 
 	if ( residue.natoms() < 1 ) {
-		return BumpGridOP( new BumpGrid );
+		return utility::pointer::make_shared< BumpGrid >();
 	} else {
 		first_xyz = residue.xyz( 1 );
 	}
@@ -1243,7 +1243,7 @@ BumpGridOP bump_grid_to_enclose_residue(
 	Vector first_xyz( 0 );
 
 	if ( residue.natoms() < 1 ) {
-		return BumpGridOP( new BumpGrid );
+		return utility::pointer::make_shared< BumpGrid >();
 	} else {
 		first_xyz = residue.xyz( 1 );
 	}

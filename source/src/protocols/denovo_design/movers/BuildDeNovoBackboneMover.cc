@@ -148,14 +148,14 @@ BuildDeNovoBackboneMover::parse_my_tag(
 protocols::moves::MoverOP
 BuildDeNovoBackboneMover::clone() const
 {
-	return protocols::moves::MoverOP( new BuildDeNovoBackboneMover( *this ) );
+	return utility::pointer::make_shared< BuildDeNovoBackboneMover >( *this );
 }
 
 
 protocols::moves::MoverOP
 BuildDeNovoBackboneMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new BuildDeNovoBackboneMover );
+	return utility::pointer::make_shared< BuildDeNovoBackboneMover >();
 }
 
 // XRW TEMP std::string
@@ -764,11 +764,11 @@ BuildDeNovoBackboneMover::parse_folder( utility::tag::TagCOP tag, basic::datacac
 {
 	components::PoseFolderOP folder;
 	if ( tag->getName() == components::RemodelLoopMoverPoseFolder::class_name() ) {
-		folder = components::PoseFolderOP( new components::RemodelLoopMoverPoseFolder );
+		folder = utility::pointer::make_shared< components::RemodelLoopMoverPoseFolder >();
 	} else if ( tag->getName() == components::RandomTorsionPoseFolder::class_name() ) {
-		folder = components::PoseFolderOP( new components::RandomTorsionPoseFolder );
+		folder = utility::pointer::make_shared< components::RandomTorsionPoseFolder >();
 	} else if ( tag->getName() == components::NullPoseFolder::class_name() ) {
-		folder = components::PoseFolderOP( new components::NullPoseFolder );
+		folder = utility::pointer::make_shared< components::NullPoseFolder >();
 	} else {
 		std::stringstream msg;
 		msg << "BuildDeNovoBackboneMover::parse_folder(): Unknown folder type: "
@@ -836,7 +836,7 @@ BuildDeNovoBackboneMover::set_stop_segments( SegmentNameSet const & segments )
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP BuildDeNovoBackboneMoverCreator::create_mover() const
 // XRW TEMP {
-// XRW TEMP  return protocols::moves::MoverOP( new BuildDeNovoBackboneMover );
+// XRW TEMP  return utility::pointer::make_shared< BuildDeNovoBackboneMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -1182,7 +1182,7 @@ std::string BuildDeNovoBackboneMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 BuildDeNovoBackboneMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new BuildDeNovoBackboneMover );
+	return utility::pointer::make_shared< BuildDeNovoBackboneMover >();
 }
 
 void BuildDeNovoBackboneMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -1201,7 +1201,7 @@ SetPoseSecstructFromStructureDataMover::get_name() const
 protocols::moves::MoverOP
 SetPoseSecstructFromStructureDataMover::clone() const
 {
-	return protocols::moves::MoverOP( new SetPoseSecstructFromStructureDataMover(*this) );
+	return utility::pointer::make_shared< SetPoseSecstructFromStructureDataMover >(*this);
 }
 
 void

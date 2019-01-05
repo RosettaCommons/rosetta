@@ -127,7 +127,7 @@ HotspotStubSet::HotspotStubSet() :
 	target_resnum_(0),
 	target_distance_(15.0),
 	score_threshold_(-1.0),
-	filter_( protocols::filters::FilterCOP( protocols::filters::FilterOP( new protocols::filters::TrueFilter ) ) ),
+	filter_( utility::pointer::make_shared< protocols::filters::TrueFilter >() ),
 	hotspot_length_( 1 )
 { set_chain_to_design(); }
 
@@ -171,7 +171,7 @@ void HotspotStubSet::score_threshold( core::Real const threshold ) { score_thres
 HotspotStubSetOP HotspotStubSet::colonyE( ) {
 	HotspotStubSetOP new_set( new HotspotStubSet );
 	core::pose::PoseOP nonconstpose; // for making our new stubs.
-	if ( pose_ ) nonconstpose = core::pose::PoseOP( new core::pose::Pose( *pose_ ) );
+	if ( pose_ ) nonconstpose = utility::pointer::make_shared< core::pose::Pose >( *pose_ );
 
 	utility::vector1< std::string > amino_acids;
 	amino_acids.emplace_back( "ALA" );
@@ -214,7 +214,7 @@ HotspotStubSetOP HotspotStubSet::colonyE( ) {
 			}
 
 			stubi_E = 0-log( stubi_E );
-			HotspotStubCOP new_stub( HotspotStubOP( new HotspotStub( stubi->residue(), stubi_E, nonconstpose, chain_to_design_, filter_ ) ) );
+			HotspotStubCOP new_stub( utility::pointer::make_shared< HotspotStub >( stubi->residue(), stubi_E, nonconstpose, chain_to_design_, filter_ ) );
 			new_set->add_stub_( new_stub );
 		}
 	}
@@ -451,7 +451,7 @@ HotspotStubSet::get_best_energy_stub() const {
 		for ( const auto & hs_it : hs_map_it.second ) {
 			if ( min_energy > hs_it.first ) {
 				min_energy = hs_it.first;
-				ret = HotspotStubOP( new HotspotStub( *hs_it.second ) );
+				ret = utility::pointer::make_shared< HotspotStub >( *hs_it.second );
 			}
 		}
 	}
@@ -559,7 +559,7 @@ void HotspotStubSet::add_stub_( HotspotStubCOP stub ) {
 		stub_set_.insert( std::make_pair( resname, empty_set ) );
 		ss_iter = stub_set_.find( resname );
 	}
-	(ss_iter->second).insert( std::make_pair(stub->bonus_value(), HotspotStubOP( new HotspotStub( *stub ) ) ) );
+	(ss_iter->second).insert( std::make_pair(stub->bonus_value(), utility::pointer::make_shared< HotspotStub >( *stub ) ) );
 	handshake_stub_sets();
 }
 
@@ -593,8 +593,8 @@ void HotspotStubSet::read_data( std::string const & filename ) {
 		//{
 		// make a stub from the last residue on the pose (which should only have one residue) and add it to the set
 		//using namespace core::chemical;
-		core::conformation::ResidueCOP residue( core::conformation::ResidueOP( new core::conformation::Residue( pose.residue( pose.size() ) ) ) );
-		HotspotStubCOP stub( HotspotStubOP( new HotspotStub( residue, score, nonconstpose, chain_to_design_, filter_ ) ) );
+		core::conformation::ResidueCOP residue( utility::pointer::make_shared< core::conformation::Residue >( pose.residue( pose.size() ) ) );
+		HotspotStubCOP stub( utility::pointer::make_shared< HotspotStub >( residue, score, nonconstpose, chain_to_design_, filter_ ) );
 		add_stub_( stub );
 		//}
 	}
@@ -814,8 +814,8 @@ void HotspotStubSet::fill( core::pose::Pose const & reference_pose, core::scorin
 			TR << "Stub score: " << score;
 			// only keep stub if scores better than/eq a threshold (defaults to -1.0)
 			if ( score <= score_threshold_ ) {
-				core::conformation::ResidueCOP found_residue( core::conformation::ResidueOP( new core::conformation::Residue( pose.residue( placed_seqpos ) ) ) );
-				HotspotStubCOP stub( HotspotStubOP( new HotspotStub( found_residue, score, nonconstpose, chain_to_design_, filter_ ) ) );
+				core::conformation::ResidueCOP found_residue( utility::pointer::make_shared< core::conformation::Residue >( pose.residue( placed_seqpos ) ) );
+				HotspotStubCOP stub( utility::pointer::make_shared< HotspotStub >( found_residue, score, nonconstpose, chain_to_design_, filter_ ) );
 				add_stub_( stub );
 				TR << ". Accept." << std::endl;
 				//pose.dump_pdb( "placed_stub.pdb"); // debug pdb output
@@ -856,7 +856,7 @@ HotspotStubSet::rescore( core::pose::Pose const & pose, core::scoring::ScoreFunc
 			}
 			core::Real const score = get_residue_score_( working_pose, scorefxn, placed_seqpos );
 			TR << stub_it.first << " " << score << "\n";
-			HotspotStubCOP stub( HotspotStubOP( new HotspotStub( residue, score, nonconstpose, chain_to_design_, filter_ ) ) );
+			HotspotStubCOP stub( utility::pointer::make_shared< HotspotStub >( residue, score, nonconstpose, chain_to_design_, filter_ ) );
 			new_set->add_stub_( stub );
 		}
 	}
@@ -899,7 +899,7 @@ void HotspotStubSet::write_stub( utility::io::ozstream & outstream, HotspotStubC
 /// @brief set up scaffold_status_ for each stub included in this set
 void HotspotStubSet::pair_with_scaffold( core::pose::Pose const & pose, core::Size const partner, protocols::filters::FilterCOP filter )
 {
-	pose_ = core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose( pose ) ) );
+	pose_ = utility::pointer::make_shared< core::pose::Pose >( pose );
 	chain_to_design_ = partner;
 	filter_ = filter;
 	core::Size const chain_beg( pose_->conformation().chain_begin( chain_to_design_ ) );
@@ -1003,7 +1003,7 @@ void HotspotStubSet::create_hotspot_after_pose(core::pose::Pose & pose, std::str
 
 	// if we're targeting a residue, make a copy of it to get a nearby location (we'll switch identity later)
 	if ( target_resnum_ && target_distance_ ) {
-		residue = core::conformation::ResidueOP( new core::conformation::Residue( pose.residue(target_resnum_) ) );
+		residue = utility::pointer::make_shared< core::conformation::Residue >( pose.residue(target_resnum_) );
 		//residue->phi( -150 );
 		//residue->psi( 150 );
 		utility::vector1< core::Real > sheet_phipsi;
@@ -1288,7 +1288,7 @@ HotspotStubSet::add_hotspot_constraints_to_pose(
 	// *****associate the stub set with the unbound pose
 	// *****hotspot_stub_set->pair_with_scaffold( pose, partner );
 
-	protocols::filters::FilterCOP true_filter( protocols::filters::FilterOP( new protocols::filters::TrueFilter ) );
+	protocols::filters::FilterCOP true_filter( utility::pointer::make_shared< protocols::filters::TrueFilter >() );
 	for ( core::Size resnum=1; resnum <= pose.size(); ++resnum ) {
 		if ( packer_task->pack_residue(resnum) ) {
 			hotspot_stub_set->pair_with_scaffold( pose, pose.chain( resnum ), true_filter );
@@ -1361,10 +1361,10 @@ HotspotStubSet::add_hotspot_constraints_to_pose(
 					// Build a BackboneStubConstraint from this stub
 					if ( apply_ambiguous_constraints ) {
 						// Push it onto ambig_csts for this residue
-						ambig_csts.push_back( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::BackboneStubConstraint( pose, resnum, fixed_atom, *(hs_stub.second->residue()), stub_bonus_value, CB_force_constant ) ) );
+						ambig_csts.push_back( utility::pointer::make_shared< core::scoring::constraints::BackboneStubConstraint >( pose, resnum, fixed_atom, *(hs_stub.second->residue()), stub_bonus_value, CB_force_constant ) );
 					} else {
 						// Apply it directly
-						constraints_.push_back( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::BackboneStubConstraint( pose, resnum, fixed_atom, *(hs_stub.second->residue()), stub_bonus_value, CB_force_constant ) ) );
+						constraints_.push_back( utility::pointer::make_shared< core::scoring::constraints::BackboneStubConstraint >( pose, resnum, fixed_atom, *(hs_stub.second->residue()), stub_bonus_value, CB_force_constant ) );
 					}
 				} else hs_stub.second->set_scaffold_status( resnum, protocols::hotspot_hashing::reject );
 				//else TR << " FailSelfEnergy=" << stub_bonus_value << std::endl;
@@ -1375,7 +1375,7 @@ HotspotStubSet::add_hotspot_constraints_to_pose(
 
 		// Finally, add the constraint corresponding to this resnum to the main set
 		if ( ( apply_ambiguous_constraints ) && ( ambig_csts.size() > 0 ) ) {
-			constraints_.push_back( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::AmbiguousConstraint(ambig_csts) ) );
+			constraints_.push_back( utility::pointer::make_shared< core::scoring::constraints::AmbiguousConstraint >(ambig_csts) );
 		}
 	}
 
@@ -1461,7 +1461,7 @@ HotspotStubSet::add_hotspot_constraints_to_wholepose(
 	// *****associate the stub set with the unbound pose
 	// *****hotspot_stub_set->pair_with_scaffold( pose, partner );
 
-	protocols::filters::FilterCOP true_filter( protocols::filters::FilterOP( new protocols::filters::TrueFilter ) );
+	protocols::filters::FilterCOP true_filter( utility::pointer::make_shared< protocols::filters::TrueFilter >() );
 	for ( core::Size resnum=1; resnum <= pose.size(); ++resnum ) {
 		if ( packer_task->pack_residue(resnum) ) {
 			hotspot_stub_set->pair_with_scaffold( pose, pose.chain( resnum ), true_filter );
@@ -1534,10 +1534,10 @@ HotspotStubSet::add_hotspot_constraints_to_wholepose(
 					// Build a BackboneStubLinearConstraint from this stub
 					if ( apply_ambiguous_constraints ) {
 						// Push it onto ambig_csts for this residue
-						ambig_csts.push_back( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::BackboneStubLinearConstraint( pose, resnum, fixed_atom, *(hs_stub.second->residue()), stub_bonus_value, CB_force_constant ) ) );
+						ambig_csts.push_back( utility::pointer::make_shared< core::scoring::constraints::BackboneStubLinearConstraint >( pose, resnum, fixed_atom, *(hs_stub.second->residue()), stub_bonus_value, CB_force_constant ) );
 					} else {
 						// Apply it directly
-						constraints_.push_back( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::BackboneStubLinearConstraint( pose, resnum, fixed_atom, *(hs_stub.second->residue()), stub_bonus_value, CB_force_constant ) ) );
+						constraints_.push_back( utility::pointer::make_shared< core::scoring::constraints::BackboneStubLinearConstraint >( pose, resnum, fixed_atom, *(hs_stub.second->residue()), stub_bonus_value, CB_force_constant ) );
 					}
 				} else hs_stub.second->set_scaffold_status( resnum, protocols::hotspot_hashing::reject );
 				//else TR << " FailSelfEnergy=" << stub_bonus_value << std::endl;
@@ -1552,7 +1552,7 @@ HotspotStubSet::add_hotspot_constraints_to_wholepose(
 	if ( ( apply_ambiguous_constraints ) && ( ambig_csts.size() > 0 ) ) {
 		//TR << "Add ambiguous cst of size: " << ambig_csts.size() << std::endl;
 		//TR << "Add ambiguous cst of size for all stubs and all residues: " << ambig_csts.size() << std::endl;
-		constraints_.push_back( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::AmbiguousConstraint(ambig_csts) ) );
+		constraints_.push_back( utility::pointer::make_shared< core::scoring::constraints::AmbiguousConstraint >(ambig_csts) );
 	}
 
 	constraints_ = pose.add_constraints( constraints_ );

@@ -124,8 +124,8 @@ public:
 		nonzero_deriv_only_( false )
 	{}
 	inline void set_score_function( core::scoring::ScoreFunction const & sfxn ) { sfxn_ = sfxn.clone(); }
-	inline void set_pose( core::pose::Pose const & p ) { pose_ = core::pose::PoseOP( new core::pose::Pose( p ) ); }
-	inline void set_movemap( core::kinematics::MoveMap const & mm ) { move_map_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap( mm ) ); }
+	inline void set_pose( core::pose::Pose const & p ) { pose_ = utility::pointer::make_shared< core::pose::Pose >( p ); }
+	inline void set_movemap( core::kinematics::MoveMap const & mm ) { move_map_ = utility::pointer::make_shared< core::kinematics::MoveMap >( mm ); }
 	inline void set_nblist_auto_update( bool setting ) { auto_update_ = setting; }
 	inline void set_nonzero_deriv_only( bool setting ) { nonzero_deriv_only_ = setting; }
 	inline void add_res_for_deriv( core::Size resid ) { res_for_derivs_list_.push_back( resid ); }
@@ -440,7 +440,7 @@ public:
 		core::Real start_score = (*sfxn_)(*pose_);
 
 		/// BEGIN AtomTreeMinimizer setup block
-		min_map_ = core::optimization::MinimizerMapOP( new core::optimization::MinimizerMap );
+		min_map_ = utility::pointer::make_shared< core::optimization::MinimizerMap >();
 		min_map_->setup( *pose_, *move_map_ );
 
 		pose_->energies().set_use_nblist( *pose_, min_map_->domain_map(), auto_update_ );

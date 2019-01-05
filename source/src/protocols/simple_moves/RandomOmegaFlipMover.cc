@@ -66,7 +66,7 @@ RandomOmegaFlipMover::RandomOmegaFlipMover( RandomOmegaFlipMover const & other )
 	Mover("RandomOmegaFlipMover")
 {
 	if ( other.move_map_ ) {
-		move_map_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap( *other.move_map_ ) );
+		move_map_ = utility::pointer::make_shared< core::kinematics::MoveMap >( *other.move_map_ );
 	}
 }
 
@@ -138,13 +138,13 @@ RandomOmegaFlipMover::setup_torsion_list( core::pose::Pose & pose )
 protocols::moves::MoverOP
 RandomOmegaFlipMover::clone() const
 {
-	return protocols::moves::MoverOP( new protocols::simple_moves::RandomOmegaFlipMover( *this ) );
+	return utility::pointer::make_shared< protocols::simple_moves::RandomOmegaFlipMover >( *this );
 }
 
 protocols::moves::MoverOP
 RandomOmegaFlipMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new protocols::simple_moves::RandomOmegaFlipMover() );
+	return utility::pointer::make_shared< protocols::simple_moves::RandomOmegaFlipMover >();
 }
 
 void
@@ -170,7 +170,7 @@ RandomOmegaFlipMover::parse_my_tag(
 
 /// @brief RandomOmegaFlipMoverCreator interface, return a new instance
 // XRW TEMP protocols::moves::MoverOP RandomOmegaFlipMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new RandomOmegaFlipMover() );
+// XRW TEMP  return utility::pointer::make_shared< RandomOmegaFlipMover >();
 // XRW TEMP }
 
 std::string RandomOmegaFlipMover::get_name() const {
@@ -209,7 +209,7 @@ std::string RandomOmegaFlipMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 RandomOmegaFlipMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new RandomOmegaFlipMover );
+	return utility::pointer::make_shared< RandomOmegaFlipMover >();
 }
 
 void RandomOmegaFlipMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

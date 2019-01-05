@@ -90,10 +90,10 @@ RNA_DeNovoMasterMover::RNA_DeNovoMasterMover( core::import_pose::options::RNA_Fr
 	sfxn_( std::move( sfxn ) )
 {
 	RNA_Fragments const & all_rna_fragments_( RNA_LibraryManager::get_instance()->rna_fragment_library( options_->all_rna_fragments_file() ) );
-	rna_fragment_mover_ = RNA_FragmentMoverOP( new RNA_FragmentMover( all_rna_fragments_, atom_level_domain_map, options_->symm_hack_arity(), options_->exhaustive_fragment_insertion(), sfxn_ ) );
+	rna_fragment_mover_ = utility::pointer::make_shared< RNA_FragmentMover >( all_rna_fragments_, atom_level_domain_map, options_->symm_hack_arity(), options_->exhaustive_fragment_insertion(), sfxn_ );
 
-	rna_jump_mover_ = RNA_JumpMoverOP( new RNA_JumpMover( RNA_LibraryManager::get_instance()->rna_jump_library_cop( options_->jump_library_file() ),
-		atom_level_domain_map ) );
+	rna_jump_mover_ = utility::pointer::make_shared< RNA_JumpMover >( RNA_LibraryManager::get_instance()->rna_jump_library_cop( options_->jump_library_file() ),
+		atom_level_domain_map );
 	rna_jump_mover_->set_rna_pairing_list ( rna_base_pair_handler->rna_pairing_list() );
 	rna_jump_mover_->set_chain_connections( rna_base_pair_handler->chain_connections() );
 	jump_change_frequency_ = options_->jump_change_frequency(); // might get overwritten if rigid_body movement, tested later.
@@ -298,7 +298,7 @@ RNA_DeNovoMasterMover::setup_rigid_body_mover( pose::Pose const & pose,
 
 	if ( !rigid_body_moves ) return;
 
-	rigid_body_mover_ = protocols::rigid::RigidBodyPerturbMoverOP( new protocols::rigid::RigidBodyPerturbMover( pose, movemap, rot_mag, trans_mag, protocols::rigid::partner_upstream /*because virtual anchor should be root*/ ) );
+	rigid_body_mover_ = utility::pointer::make_shared< protocols::rigid::RigidBodyPerturbMover >( pose, movemap, rot_mag, trans_mag, protocols::rigid::partner_upstream /*because virtual anchor should be root*/ );
 	if ( options_->rna_protein_docking_freq() !=  0.4 /* default */ ) {
 		// if the user specified rna protein docking frequency
 		// then use this to set the jump change frequency, i.e. how
@@ -346,7 +346,7 @@ RNA_DeNovoMasterMover::setup_dock_into_density_mover( pose::Pose const & pose,
 		}
 	}
 
-	dock_into_density_mover_ = protocols::rigid::RigidBodyPerturbMoverOP( new protocols::rigid::RigidBodyPerturbMover( pose, movemap, rot_mag, trans_mag, protocols::rigid::partner_upstream /*because virtual anchor should be root*/ ) );
+	dock_into_density_mover_ = utility::pointer::make_shared< protocols::rigid::RigidBodyPerturbMover >( pose, movemap, rot_mag, trans_mag, protocols::rigid::partner_upstream /*because virtual anchor should be root*/ );
 
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -377,7 +377,7 @@ RNA_DeNovoMasterMover::setup_rna_protein_docking_mover( pose::Pose const & pose,
 			TR << "Set up RNP docking jump between residue " << up_res << " and " << down_res << std::endl;
 		}
 	}
-	rnp_docking_mover_ = protocols::rigid::RigidBodyPerturbMoverOP( new protocols::rigid::RigidBodyPerturbMover( pose, movemap, rot_mag, trans_mag, protocols::rigid::partner_upstream ) );
+	rnp_docking_mover_ = utility::pointer::make_shared< protocols::rigid::RigidBodyPerturbMover >( pose, movemap, rot_mag, trans_mag, protocols::rigid::partner_upstream );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -517,7 +517,7 @@ RNA_DeNovoMasterMover::search_rigid_body_orientation( pose::Pose & pose ){
 		// and the do a random perturbation
 		core::kinematics::MoveMap movemap;
 		movemap.set_jump( jump, true );
-		RigidBodyPerturbMoverOP random_perturb_mover = RigidBodyPerturbMoverOP( new RigidBodyPerturbMover( pose, movemap, rot_mag, trans_mag, protocols::rigid::partner_downstream ) );
+		RigidBodyPerturbMoverOP random_perturb_mover = utility::pointer::make_shared< RigidBodyPerturbMover >( pose, movemap, rot_mag, trans_mag, protocols::rigid::partner_downstream );
 
 		core::pose::Pose start_pose = pose;
 		for ( Size i = 1; i <= 200; ++i ) {

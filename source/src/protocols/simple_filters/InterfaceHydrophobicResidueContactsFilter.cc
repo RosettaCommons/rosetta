@@ -263,7 +263,7 @@ std::string InterfaceHydrophobicResidueContactsFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 InterfaceHydrophobicResidueContactsFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new InterfaceHydrophobicResidueContactsFilter );
+	return utility::pointer::make_shared< InterfaceHydrophobicResidueContactsFilter >();
 }
 
 void InterfaceHydrophobicResidueContactsFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

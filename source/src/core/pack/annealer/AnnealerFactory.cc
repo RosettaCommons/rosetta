@@ -55,26 +55,26 @@ AnnealerFactory::create_annealer(
 {
 	if ( task->rotamer_couplings_exist() ) {
 		TR.Debug << "Creating FixbbCoupledRotamerSimAnnealer" << std::endl;
-		return SimAnnealerBaseOP( new FixbbCoupledRotamerSimAnnealer(
+		return utility::pointer::make_shared< FixbbCoupledRotamerSimAnnealer >(
 			rot_to_pack, bestrotamer_at_seqpos, bestenergy, start_with_current, ig,
 			rotamer_sets, current_rot_index, calc_rot_freq, rot_freq,
-			task->rotamer_couplings() ) );
+			task->rotamer_couplings() );
 	} else if ( task->rotamer_links_exist() ) {
 		TR.Debug << "Creating FixbbLinkingRotamerSimAnnealer" << std::endl;
-		return SimAnnealerBaseOP( new FixbbLinkingRotamerSimAnnealer(
+		return utility::pointer::make_shared< FixbbLinkingRotamerSimAnnealer >(
 			rot_to_pack, bestrotamer_at_seqpos, bestenergy, start_with_current, ig,
 			rotamer_sets, current_rot_index, calc_rot_freq, rot_freq,
-			task->rotamer_links() ) );
+			task->rotamer_links() );
 	} else if ( task->multi_cool_annealer() ) {
 		TR.Debug << "Creating MultiCoolAnnealer" << std::endl;
-		return SimAnnealerBaseOP( new MultiCoolAnnealer(
+		return utility::pointer::make_shared< MultiCoolAnnealer >(
 			task, rot_to_pack, bestrotamer_at_seqpos, bestenergy, start_with_current, ig,
-			rotamer_sets, current_rot_index, calc_rot_freq, rot_freq ) );
+			rotamer_sets, current_rot_index, calc_rot_freq, rot_freq );
 	} else {
 		TR.Debug << "Creating FixbbSimAnnealer" << std::endl;
-		return SimAnnealerBaseOP( new FixbbSimAnnealer(
+		return utility::pointer::make_shared< FixbbSimAnnealer >(
 			rot_to_pack, bestrotamer_at_seqpos, bestenergy, start_with_current, ig,
-			rotamer_sets, current_rot_index, calc_rot_freq, rot_freq ) );
+			rotamer_sets, current_rot_index, calc_rot_freq, rot_freq );
 	}
 
 	// appease compiler

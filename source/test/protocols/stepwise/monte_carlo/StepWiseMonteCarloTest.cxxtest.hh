@@ -59,7 +59,7 @@ public:
 		pose = initialize_pose_and_other_poses_from_command_line( rsd_set );
 
 		ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( "stepwise/rna/rna_res_level_energy.wts" ); // RNA/protein.
-		stepwise_monte_carlo = StepWiseMonteCarloOP( new StepWiseMonteCarlo( scorefxn ) );
+		stepwise_monte_carlo = utility::pointer::make_shared< StepWiseMonteCarlo >( scorefxn );
 		StepWiseMonteCarloOptionsOP options( new StepWiseMonteCarloOptions );
 		options->set_skip_preminimize( true );
 		options->set_cycles( 0 ); // for bare bones run.

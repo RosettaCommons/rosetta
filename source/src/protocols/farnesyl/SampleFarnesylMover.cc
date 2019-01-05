@@ -117,15 +117,15 @@ SampleFarnesylMover::sample_farnesyl( core::pose::Pose & pose, Size const cys_id
 	StepWiseSamplerComb comb;
 	comb.set_random( !enumerate_ );
 	//comb.add_external_loop_rotamer( protocols::stepwise::sampler::StepWiseSamplerOneTorsion( TorsionID( cys_idx, CHI, 1 ), sp3_rots );
-	comb.add_external_loop_rotamer( StepWiseSamplerOneTorsionOP( new StepWiseSamplerOneTorsion( TorsionID( cys_idx, CHI, 2 ), sp3_rots ) ) );
-	comb.add_external_loop_rotamer( StepWiseSamplerOneTorsionOP( new StepWiseSamplerOneTorsion( TorsionID( dma_one_idx, BB, 4 ), sp3_rots ) ) );
-	comb.add_external_loop_rotamer( StepWiseSamplerOneTorsionOP( new StepWiseSamplerOneTorsion( TorsionID( dma_one_idx, BB, 3 ), sp3_rots ) ) );
-	comb.add_external_loop_rotamer( StepWiseSamplerOneTorsionOP( new StepWiseSamplerOneTorsion( TorsionID( dma_one_idx, BB, 1 ), sp3_rots ) ) );
-	comb.add_external_loop_rotamer( StepWiseSamplerOneTorsionOP( new StepWiseSamplerOneTorsion( TorsionID( dma_two_idx, BB, 4 ), sp3_rots ) ) );
-	comb.add_external_loop_rotamer( StepWiseSamplerOneTorsionOP( new StepWiseSamplerOneTorsion( TorsionID( dma_two_idx, BB, 3 ), sp3_rots ) ) );
-	comb.add_external_loop_rotamer( StepWiseSamplerOneTorsionOP( new StepWiseSamplerOneTorsion( TorsionID( dma_two_idx, BB, 1 ), sp3_rots ) ) );
-	comb.add_external_loop_rotamer( StepWiseSamplerOneTorsionOP( new StepWiseSamplerOneTorsion( TorsionID( dma_two_idx, BB, 4 ), sp3_rots ) ) );
-	comb.add_external_loop_rotamer( StepWiseSamplerOneTorsionOP( new StepWiseSamplerOneTorsion( TorsionID( dma_two_idx, BB, 3 ), sp3_rots ) ) );
+	comb.add_external_loop_rotamer( utility::pointer::make_shared< StepWiseSamplerOneTorsion >( TorsionID( cys_idx, CHI, 2 ), sp3_rots ) );
+	comb.add_external_loop_rotamer( utility::pointer::make_shared< StepWiseSamplerOneTorsion >( TorsionID( dma_one_idx, BB, 4 ), sp3_rots ) );
+	comb.add_external_loop_rotamer( utility::pointer::make_shared< StepWiseSamplerOneTorsion >( TorsionID( dma_one_idx, BB, 3 ), sp3_rots ) );
+	comb.add_external_loop_rotamer( utility::pointer::make_shared< StepWiseSamplerOneTorsion >( TorsionID( dma_one_idx, BB, 1 ), sp3_rots ) );
+	comb.add_external_loop_rotamer( utility::pointer::make_shared< StepWiseSamplerOneTorsion >( TorsionID( dma_two_idx, BB, 4 ), sp3_rots ) );
+	comb.add_external_loop_rotamer( utility::pointer::make_shared< StepWiseSamplerOneTorsion >( TorsionID( dma_two_idx, BB, 3 ), sp3_rots ) );
+	comb.add_external_loop_rotamer( utility::pointer::make_shared< StepWiseSamplerOneTorsion >( TorsionID( dma_two_idx, BB, 1 ), sp3_rots ) );
+	comb.add_external_loop_rotamer( utility::pointer::make_shared< StepWiseSamplerOneTorsion >( TorsionID( dma_two_idx, BB, 4 ), sp3_rots ) );
+	comb.add_external_loop_rotamer( utility::pointer::make_shared< StepWiseSamplerOneTorsion >( TorsionID( dma_two_idx, BB, 3 ), sp3_rots ) );
 	comb.init();
 
 	TR << "Initted comb. " << std::endl;
@@ -251,14 +251,14 @@ void SampleFarnesylMover::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 protocols::moves::MoverOP
 SampleFarnesylMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new SampleFarnesylMover );
+	return utility::pointer::make_shared< SampleFarnesylMover >();
 }
 
 /// @brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
 SampleFarnesylMover::clone() const
 {
-	return protocols::moves::MoverOP( new SampleFarnesylMover( *this ) );
+	return utility::pointer::make_shared< SampleFarnesylMover >( *this );
 }
 
 std::string SampleFarnesylMover::get_name() const {
@@ -276,7 +276,7 @@ std::string SampleFarnesylMover::mover_name() {
 protocols::moves::MoverOP
 SampleFarnesylMoverCreator::create_mover() const
 {
-	return protocols::moves::MoverOP( new SampleFarnesylMover );
+	return utility::pointer::make_shared< SampleFarnesylMover >();
 }
 
 std::string

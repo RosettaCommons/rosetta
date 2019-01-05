@@ -93,7 +93,7 @@ methods::EnergyMethodOP
 MPHelicalityEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new MPHelicalityEnergy );
+	return utility::pointer::make_shared< MPHelicalityEnergy >();
 }
 
 /// @brief Return relevant score types
@@ -107,7 +107,7 @@ MPHelicalityEnergyCreator::score_types_for_method() const {
 // Constructors /////////////////////////////////////////////
 
 MPHelicalityEnergy::MPHelicalityEnergy() :
-	parent( EnergyMethodCreatorOP( new MPHelicalityEnergyCreator ) )
+	parent( utility::pointer::make_shared< MPHelicalityEnergyCreator >() )
 {
 }
 
@@ -115,7 +115,7 @@ MPHelicalityEnergy::MPHelicalityEnergy() :
 EnergyMethodOP
 MPHelicalityEnergy::clone() const
 {
-	return EnergyMethodOP( new MPHelicalityEnergy( *this ) );
+	return utility::pointer::make_shared< MPHelicalityEnergy >( *this );
 }
 
 /// @details stores dScore/dNumNeighbors so that when neighbor atoms on adjacent

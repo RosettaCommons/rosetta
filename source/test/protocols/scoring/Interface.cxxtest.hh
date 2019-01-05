@@ -64,7 +64,7 @@ public:
 		// This accomplishes nothing...
 		residue_set = chemical::ChemicalManager::get_instance()->residue_type_set( chemical::CENTROID );
 
-		the_pose = PoseOP( new Pose );
+		the_pose = utility::pointer::make_shared< Pose >();
 		core::import_pose::centroid_pose_from_pdb( *the_pose, "protocols/scoring/dock_in.pdb" );
 	}
 

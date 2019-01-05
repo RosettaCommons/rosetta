@@ -74,7 +74,7 @@ public:
 	GenBornResidueInfoOP
 	clone() const
 	{
-		return GenBornResidueInfoOP( new GenBornResidueInfo( *this ) );
+		return utility::pointer::make_shared< GenBornResidueInfo >( *this );
 	}
 
 
@@ -174,7 +174,7 @@ public:
 	basic::datacache::CacheableDataOP
 	clone() const override
 	{
-		return basic::datacache::CacheableDataOP( new GenBornPoseInfo( *this ) );
+		return utility::pointer::make_shared< GenBornPoseInfo >( *this );
 	}
 
 
@@ -283,7 +283,7 @@ public:
 	basic::datacache::CacheableDataOP
 	clone() const override
 	{
-		return basic::datacache::CacheableDataOP( new GenBornRotamerSetInfo( *this ) );
+		return utility::pointer::make_shared< GenBornRotamerSetInfo >( *this );
 	}
 
 

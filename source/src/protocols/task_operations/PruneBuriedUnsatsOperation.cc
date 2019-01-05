@@ -74,7 +74,7 @@ PruneBuriedUnsats_RotamerSetsOperation::~PruneBuriedUnsats_RotamerSetsOperation(
 core::pack::rotamer_set::RotamerSetsOperationOP
 PruneBuriedUnsats_RotamerSetsOperation::clone() const
 {
-	return core::pack::rotamer_set::RotamerSetsOperationOP( new PruneBuriedUnsats_RotamerSetsOperation( *this ) );
+	return utility::pointer::make_shared< PruneBuriedUnsats_RotamerSetsOperation >( *this );
 }
 
 
@@ -344,7 +344,7 @@ PruneBuriedUnsats_RotamerSetsOperation::alter_rotamer_sets(
 core::pack::task::operation::TaskOperationOP
 PruneBuriedUnsatsOperationCreator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new PruneBuriedUnsatsOperation );
+	return utility::pointer::make_shared< PruneBuriedUnsatsOperation >();
 }
 
 void PruneBuriedUnsatsOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -418,7 +418,7 @@ PruneBuriedUnsatsOperation::operator=( PruneBuriedUnsatsOperation const & other 
 /// @brief clone
 core::pack::task::operation::TaskOperationOP
 PruneBuriedUnsatsOperation::clone() const {
-	return core::pack::task::operation::TaskOperationOP( new PruneBuriedUnsatsOperation( *this ) );
+	return utility::pointer::make_shared< PruneBuriedUnsatsOperation >( *this );
 }
 
 /// @brief

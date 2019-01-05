@@ -83,7 +83,7 @@ static basic::Tracer TR( "protocols.simple_moves.ScoreMover" );
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP ScoreMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new ScoreMover );
+// XRW TEMP  return utility::pointer::make_shared< ScoreMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -126,10 +126,10 @@ ScoreMover::ScoreMover( ScoreFunctionOP score_function_in ) :
 {}
 
 moves::MoverOP ScoreMover::clone() const {
-	return moves::MoverOP( new ScoreMover( *this ) );
+	return utility::pointer::make_shared< ScoreMover >( *this );
 }
 moves::MoverOP ScoreMover::fresh_instance() const {
-	return moves::MoverOP( new ScoreMover );
+	return utility::pointer::make_shared< ScoreMover >();
 }
 
 void
@@ -143,7 +143,7 @@ ScoreMover::apply( Pose & pose ) {
 		/// Now handled automatically.  score_function_->accumulate_residue_total_energies( pose );
 		using namespace basic::datacache;
 		core::io::raw_data::ScoreMap::nonzero_energies( score_map_, score_function_, pose );
-		pose.data().set(core::pose::datacache::CacheableDataType::SCORE_MAP, DataCache_CacheableData::DataOP( new basic::datacache::DiagnosticData(score_map_) ));
+		pose.data().set(core::pose::datacache::CacheableDataType::SCORE_MAP, utility::pointer::make_shared< basic::datacache::DiagnosticData >(score_map_));
 		pose.energies().show( TR );
 		core::io::raw_data::ScoreMap::print( score_map_, TR );
 
@@ -275,7 +275,7 @@ std::string ScoreMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 ScoreMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ScoreMover );
+	return utility::pointer::make_shared< ScoreMover >();
 }
 
 void ScoreMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -71,7 +71,7 @@ public:
 	virtual
 	protocols::moves::MoverOP
 	fresh_instance() const {
-		return protocols::moves::MoverOP( new MotifDock() );
+		return utility::pointer::make_shared< MotifDock >();
 	}
 
 	virtual
@@ -100,7 +100,7 @@ main( int argc, char * argv [] )
 		// initialize core
 		devel::init(argc, argv);
 
-		MotifDockOP motif_dock = MotifDockOP( new MotifDock );
+		MotifDockOP motif_dock = utility::pointer::make_shared< MotifDock >();
 		protocols::jd2::JobDistributor::get_instance()->go( motif_dock );
 
 	} catch ( utility::excn::Exception const & e ) {

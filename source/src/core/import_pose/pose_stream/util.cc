@@ -99,15 +99,15 @@ MetaPoseInputStream streams_from_cmd_line( bool const do_renumber_decoys ) {
 		} else {
 			SilentFilePoseInputStreamOP silent_input;
 			if ( option[ in::file::tags ].user() ) {
-				silent_input = SilentFilePoseInputStreamOP( new SilentFilePoseInputStream(
+				silent_input = utility::pointer::make_shared< SilentFilePoseInputStream >(
 					option[ in::file::silent ](),
 					option[ in::file::tags ](),
 					option[ in::file::silent_energy_cut ]()
-					) );
+				);
 			} else {
-				silent_input = SilentFilePoseInputStreamOP( new SilentFilePoseInputStream(
+				silent_input = utility::pointer::make_shared< SilentFilePoseInputStream >(
 					option[ in::file::silent ](), option[ in::file::silent_energy_cut ]()
-					) );
+				);
 			}
 			silent_input->renumber_decoys( do_renumber_decoys && option[ in::file::silent_renumber ]() );
 			input.add_pose_input_stream( silent_input );

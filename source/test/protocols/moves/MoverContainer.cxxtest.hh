@@ -171,7 +171,7 @@ public:
 
 		DummyMover::reset();
 		SequenceMover SM;
-		for ( Size i=0; i<N; i++ ) SM.add_mover(MoverOP( new DummyMover(i) ));
+		for ( Size i=0; i<N; i++ ) SM.add_mover(utility::pointer::make_shared< DummyMover >(i));
 
 		SM.apply(pose);
 
@@ -192,7 +192,7 @@ public:
 		pose::Pose pose;
 
 		CycleMover CM;
-		for ( Size i=0; i<N; i++ ) CM.add_mover(MoverOP( new DummyMover(i) ));
+		for ( Size i=0; i<N; i++ ) CM.add_mover(utility::pointer::make_shared< DummyMover >(i));
 
 		for ( Size s=0; s<NSteps; s++ ) {
 			DummyMover::reset();

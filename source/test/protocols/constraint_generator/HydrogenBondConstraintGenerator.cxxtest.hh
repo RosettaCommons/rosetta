@@ -70,8 +70,8 @@ public:
 		hb_gen.set_id( "ap_generator1" );
 		hb_gen.set_residue_selector1( selector1 );
 		hb_gen.set_residue_selector2( selector2 );
-		hb_gen.set_atom_pair_func( FuncOP( new FlatHarmonicFunc( 2.0, 0.5, 1.5 ) ) );
-		hb_gen.set_angle1_func( FuncOP( new FlatHarmonicFunc( 2.09, 0.5, 0.4 ) ) );
+		hb_gen.set_atom_pair_func( utility::pointer::make_shared< FlatHarmonicFunc >( 2.0, 0.5, 1.5 ) );
+		hb_gen.set_angle1_func( utility::pointer::make_shared< FlatHarmonicFunc >( 2.09, 0.5, 0.4 ) );
 		hb_gen.set_angle2_func( "FLAT_HARMONIC 1.90 0.5 0.4" );
 		hb_gen.set_bounded( true );
 		TS_ASSERT_EQUALS( hb_gen.class_name(), "HydrogenBondConstraintGenerator" );
@@ -118,9 +118,9 @@ public:
 		hb_gen.set_id( "ap_generator1" );
 		hb_gen.set_residue_selector1( selector1 );
 		hb_gen.set_residue_selector2( selector2 );
-		hb_gen.set_atom_pair_func( FuncOP( new FlatHarmonicFunc( 2.0, 0.5, 1.5 ) ) );
+		hb_gen.set_atom_pair_func( utility::pointer::make_shared< FlatHarmonicFunc >( 2.0, 0.5, 1.5 ) );
 		hb_gen.set_angle1_func( "FLAT_HARMONIC 2.09 0.5 0.4" );
-		hb_gen.set_angle2_func( FuncOP( new FlatHarmonicFunc( 1.90, 0.5, 0.4 ) ) );
+		hb_gen.set_angle2_func( utility::pointer::make_shared< FlatHarmonicFunc >( 1.90, 0.5, 0.4 ) );
 		hb_gen.set_atoms1( "OD2" );
 		hb_gen.set_atoms2( "NE,NH2" );
 		hb_gen.set_bounded( true );

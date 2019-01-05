@@ -77,7 +77,7 @@ PackRotamersMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 PackRotamersMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new PackRotamersMover );
+	return utility::pointer::make_shared< PackRotamersMover >();
 }
 
 void PackRotamersMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
@@ -273,14 +273,14 @@ PackRotamersMover::parse_task_operations(
 protocols::moves::MoverOP
 PackRotamersMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new PackRotamersMover );
+	return utility::pointer::make_shared< PackRotamersMover >();
 }
 
 /// @brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
 PackRotamersMover::clone() const
 {
-	return protocols::moves::MoverOP( new protocols::minimization_packing::PackRotamersMover( *this ) );
+	return utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >( *this );
 }
 
 /// @brief get rotamers, energies. Also performs lazy initialization of ScoreFunction, PackerTask.

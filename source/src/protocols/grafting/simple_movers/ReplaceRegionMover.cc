@@ -55,7 +55,7 @@ ReplaceRegionMover::ReplaceRegionMover(
 	span_(span),
 	copy_pdbinfo_(copy_pdbinfo)
 {
-	src_pose_ = core::pose::PoseOP( new core::pose::Pose(src_pose) );
+	src_pose_ = utility::pointer::make_shared< core::pose::Pose >(src_pose);
 }
 
 
@@ -89,7 +89,7 @@ ReplaceRegionMover::parse_my_tag(
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP ReplaceRegionMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new ReplaceRegionMover );
+// XRW TEMP  return utility::pointer::make_shared< ReplaceRegionMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -110,17 +110,17 @@ std::string const &  ReplaceRegionMover::target_pose_start() const { return targ
 
 void
 ReplaceRegionMover::src_pose(const core::pose::Pose& src_pose){
-	src_pose_ = core::pose::PoseCOP( new core::pose::Pose(src_pose) );
+	src_pose_ = utility::pointer::make_shared< core::pose::Pose >(src_pose);
 }
 
 protocols::moves::MoverOP
 ReplaceRegionMover::clone() const {
-	return protocols::moves::MoverOP( new ReplaceRegionMover(*this) );
+	return utility::pointer::make_shared< ReplaceRegionMover >(*this);
 }
 
 protocols::moves::MoverOP
 ReplaceRegionMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new ReplaceRegionMover );
+	return utility::pointer::make_shared< ReplaceRegionMover >();
 }
 
 void
@@ -169,7 +169,7 @@ std::string ReplaceRegionMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 ReplaceRegionMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ReplaceRegionMover );
+	return utility::pointer::make_shared< ReplaceRegionMover >();
 }
 
 void ReplaceRegionMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

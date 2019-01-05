@@ -82,12 +82,12 @@ public:
 
 	FragSetOP clone() const override
 	{
-		return FragSetOP( new ConstantLengthFragSet( *this ) );
+		return utility::pointer::make_shared< ConstantLengthFragSet >( *this );
 	}
 
 	FragSetOP empty_clone() const override
 	{
-		return FragSetOP( new ConstantLengthFragSet() );
+		return utility::pointer::make_shared< ConstantLengthFragSet >();
 	}
 
 	/// @brief Loads the contents of  <filename>  into the ConstantLengthFragSet

@@ -172,7 +172,7 @@ static basic::Tracer TR( "protocols.forge.remodel.RemodelMover" );
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP RemodelMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new RemodelMover );
+// XRW TEMP  return utility::pointer::make_shared< RemodelMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -267,7 +267,7 @@ RemodelMover::RemodelMover( RemodelMover const & rval )
 
 {
 	if ( rval.vlb_.get() ) {
-		vlb_ = VarLengthBuildOP( new VarLengthBuild( *rval.vlb_ ) );
+		vlb_ = utility::pointer::make_shared< VarLengthBuild >( *rval.vlb_ );
 	}
 }
 
@@ -337,25 +337,25 @@ void RemodelMover::register_user_options() {
 
 /// @brief clone for parser
 RemodelMover::MoverOP RemodelMover::clone() const {
-	return RemodelMover::MoverOP( new RemodelMover( *this ) );
+	return utility::pointer::make_shared< RemodelMover >( *this );
 }
 
 
 /// @brief fresh instance for parser
 RemodelMover::MoverOP RemodelMover::fresh_instance() const {
-	return RemodelMover::MoverOP( new RemodelMover() );
+	return utility::pointer::make_shared< RemodelMover >();
 }
 
 
 /// @brief clone this object
 RemodelMover::MoverOP RemodelMover::clone() {
-	return RemodelMover::MoverOP( new RemodelMover( *this ) );
+	return utility::pointer::make_shared< RemodelMover >( *this );
 }
 
 
 /// @brief create this type of object
 RemodelMover::MoverOP RemodelMover::fresh_instance() {
-	return RemodelMover::MoverOP( new RemodelMover() );
+	return utility::pointer::make_shared< RemodelMover >();
 }
 
 
@@ -510,7 +510,7 @@ void RemodelMover::apply( Pose & pose ) {
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "Remodel" );
 #endif
 	if ( !last_input_pose_  || !SamePose(*last_input_pose_, pose) || accumulator_.size() == 0 ) {
-		last_input_pose_ = core::pose::PoseOP( new core::pose::Pose(pose) );
+		last_input_pose_ = utility::pointer::make_shared< core::pose::Pose >(pose);
 
 
 		TR << "apply(): entered RemodelMover apply(). pose.size(): " << pose.size() << std::endl;
@@ -764,7 +764,7 @@ void RemodelMover::apply( Pose & pose ) {
 			// setup calculators
 			pose::metrics::CalculatorFactory::Instance().remove_calculator( neighborhood_calc_name() );
 			pose::metrics::CalculatorFactory::Instance().register_calculator( neighborhood_calc_name(),
-				PoseMetricCalculatorOP( new pose_metric_calculators::NeighborhoodByDistanceCalculator( manager_.union_of_intervals_containing_undefined_positions() ) ) );
+				utility::pointer::make_shared< pose_metric_calculators::NeighborhoodByDistanceCalculator >( manager_.union_of_intervals_containing_undefined_positions() ) );
 		}
 
 		/*
@@ -1235,7 +1235,7 @@ void RemodelMover::apply( Pose & pose ) {
 
 			//save remarks
 
-			pose.pdb_info( pose::PDBInfoOP( new core::pose::PDBInfo(pose) ));
+			pose.pdb_info( utility::pointer::make_shared< core::pose::PDBInfo >(pose));
 
 			pose::PDBInfoOP temp_pdbinfo = pose.pdb_info();
 
@@ -1349,7 +1349,7 @@ void RemodelMover::apply( Pose & pose ) {
 	// setup calculators
 	pose::metrics::CalculatorFactory::Instance().remove_calculator( neighborhood_calc_name() );
 	pose::metrics::CalculatorFactory::Instance().register_calculator( neighborhood_calc_name(),
-		PoseMetricCalculatorOP( new pose_metric_calculators::NeighborhoodByDistanceCalculator( manager_.union_of_intervals_containing_undefined_positions() ) ) );
+		utility::pointer::make_shared< pose_metric_calculators::NeighborhoodByDistanceCalculator >( manager_.union_of_intervals_containing_undefined_positions() ) );
 
 	// if we've gotten to this point, then the structure has been built properly
 	set_last_move_status( MS_SUCCESS );
@@ -1360,14 +1360,14 @@ void RemodelMover::apply( Pose & pose ) {
 
 	pose::metrics::CalculatorFactory::Instance().register_calculator(
 		loops_buns_polar_calc_name(),
-		PoseMetricCalculatorOP( new simple_pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator( "default", "default", manager_.union_of_intervals_containing_undefined_positions() ) )
+		utility::pointer::make_shared< simple_pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator >( "default", "default", manager_.union_of_intervals_containing_undefined_positions() )
 	);
 
 	basic::MetricValue< std::set< Size > > loops_neighborhood;
 	pose.metric( neighborhood_calc_name(), "neighbors", loops_neighborhood );
 	pose::metrics::CalculatorFactory::Instance().register_calculator(
 		neighborhood_buns_polar_calc_name(),
-		PoseMetricCalculatorOP( new simple_pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator( "default", "default", loops_neighborhood.value() ) )
+		utility::pointer::make_shared< simple_pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator >( "default", "default", loops_neighborhood.value() )
 	);
 
 }
@@ -1459,7 +1459,7 @@ bool RemodelMover::centroid_build( Pose & pose, protocols::forge::build::BuildMa
 				if ( loop_intervals.size() == 1 && (*(loop_intervals.begin())).left == 1 && (*(loop_intervals.begin())).right == remodel_data_.blueprint.size() ) {
 					loops->add_loop( Loop(1, remodel_data_.blueprint.size()+2, 0, 0, true) );
 				} else {
-					loops = LoopsOP( new Loops( intervals_to_loops( loop_intervals.begin(), loop_intervals.end() ) ));
+					loops = utility::pointer::make_shared< Loops >( intervals_to_loops( loop_intervals.begin(), loop_intervals.end() ) );
 				}
 
 				RemodelLoopMover RLM(loops);
@@ -1536,7 +1536,7 @@ bool RemodelMover::centroid_build( Pose & pose ) {
 	// run VLB to build the new section, if no segments have been added/deleted
 	// we use the same VLB so that fragment caching works properly
 	if ( !vlb_.get() ) {
-		vlb_ = VarLengthBuildOP( new VarLengthBuild( manager_ , remodel_data_ ) );
+		vlb_ = utility::pointer::make_shared< VarLengthBuild >( manager_ , remodel_data_ );
 	}
 	if ( !working_model_.abego.empty() ) {
 		//the following block simply packages the string to feed to vlb
@@ -1610,7 +1610,7 @@ bool RemodelMover::centroid_build( Pose & pose ) {
 			if ( loop_intervals.size() == 1 && (*(loop_intervals.begin())).left == 1 && (*(loop_intervals.begin())).right == remodel_data_.blueprint.size() ) {
 				loops->add_loop( Loop(1, remodel_data_.blueprint.size()+2, 0, 0, true) );
 			} else {
-				loops = LoopsOP( new Loops( intervals_to_loops( loop_intervals.begin(), loop_intervals.end() ) ) );
+				loops = utility::pointer::make_shared< Loops >( intervals_to_loops( loop_intervals.begin(), loop_intervals.end() ) );
 			}
 
 			RemodelLoopMover RLM(loops);
@@ -1704,7 +1704,7 @@ bool RemodelMover::design_refine_seq_relax( Pose & pose, RemodelDesignMover & de
 	scoring::constraints::ConstraintSetOP cst_set_post_built;
 	//if (option[OptionKeys::remodel::repeat_structure].user() ) {
 	// at this stage it should hold generic cstfile and res_type_linking constraints
-	cst_set_post_built = scoring::constraints::ConstraintSetOP( new scoring::constraints::ConstraintSet( *pose.constraint_set() ) );
+	cst_set_post_built = utility::pointer::make_shared< scoring::constraints::ConstraintSet >( *pose.constraint_set() );
 	//}
 
 	Size asym_length;
@@ -2038,8 +2038,8 @@ bool RemodelMover::design_refine( Pose & pose, RemodelDesignMover & designMover 
 
 	// setup the refine TaskFactory
 	pack::task::TaskFactoryOP refine_tf = generic_taskfactory();
-	refine_tf->push_back( TaskOperationCOP( new task_operations::RestrictToNeighborhoodOperation( neighborhood_calc_name() ) ) );
-	refine_tf->push_back( TaskOperationCOP( new pack::task::operation::RestrictToRepacking() ) );
+	refine_tf->push_back( utility::pointer::make_shared< task_operations::RestrictToNeighborhoodOperation >( neighborhood_calc_name() ) );
+	refine_tf->push_back( utility::pointer::make_shared< pack::task::operation::RestrictToRepacking >() );
 
 	// safety, clear the energies object
 	pose.energies().clear();
@@ -2082,7 +2082,7 @@ bool RemodelMover::design_refine( Pose & pose, RemodelDesignMover & designMover 
 
 			pack::task::operation::OperateOnCertainResiduesOP natroRes( new pack::task::operation::OperateOnCertainResidues );
 			natroRes->residue_indices( natroPositions );
-			natroRes->op( ResLvlTaskOperationCOP( new pack::task::operation::PreventRepackingRLT ) );
+			natroRes->op( utility::pointer::make_shared< pack::task::operation::PreventRepackingRLT >() );
 			refine_tf->push_back( natroRes );
 
 			refine->false_movemap( combined_mm );
@@ -2180,8 +2180,8 @@ bool RemodelMover::confirm_sequence( core::pose::Pose & pose ) {
 		// scramble_mover.randomize_stage(pose);
 
 		TaskFactoryOP refine_tf = generic_taskfactory();
-		refine_tf->push_back( TaskOperationCOP( new RestrictToNeighborhoodOperation( neighborhood_calc_name() ) ) );
-		refine_tf->push_back( TaskOperationCOP( new RestrictToRepacking() ) );
+		refine_tf->push_back( utility::pointer::make_shared< RestrictToNeighborhoodOperation >( neighborhood_calc_name() ) );
+		refine_tf->push_back( utility::pointer::make_shared< RestrictToRepacking >() );
 
 		loops::loop_mover::refine::LoopMover_Refine_CCD refine( confirmation_loops, fullatom_sfx_ );
 		kinematics::MoveMapOP combined_mm( new kinematics::MoveMap() );
@@ -2284,11 +2284,11 @@ RemodelMover::TaskFactoryOP RemodelMover::generic_taskfactory() {
 
 	TaskFactoryOP tf( new TaskFactory() );
 
-	tf->push_back( TaskOperationCOP( new InitializeFromCommandline() ) ); // also inits -ex options
-	tf->push_back( TaskOperationCOP( new IncludeCurrent() ) ); // enforce keeping of input sidechains
-	tf->push_back( TaskOperationCOP( new NoRepackDisulfides() ) );
+	tf->push_back( utility::pointer::make_shared< InitializeFromCommandline >() ); // also inits -ex options
+	tf->push_back( utility::pointer::make_shared< IncludeCurrent >() ); // enforce keeping of input sidechains
+	tf->push_back( utility::pointer::make_shared< NoRepackDisulfides >() );
 	if ( !option[OptionKeys::remodel::design::allow_rare_aro_chi]() ) {
-		tf->push_back( TaskOperationCOP( new LimitAromaChi2Operation() ) );
+		tf->push_back( utility::pointer::make_shared< LimitAromaChi2Operation >() );
 	}
 
 	return tf;
@@ -2319,7 +2319,7 @@ void RemodelMover::process_continuous_design_string( Interval const & original_i
 			break;
 		}
 
-		design_tf->push_back( TaskOperationCOP( new pack::task::operation::RestrictAbsentCanonicalAAS( i + offset, allowed_aa_types ) ) );
+		design_tf->push_back( utility::pointer::make_shared< pack::task::operation::RestrictAbsentCanonicalAAS >( i + offset, allowed_aa_types ) );
 	}
 }
 
@@ -2373,7 +2373,7 @@ void RemodelMover::process_insert_design_string( Interval const & original_inter
 			allowed_aa_types[ chemical::aa_from_oneletter_code( aa.at( i ) ) ] = true;
 		}
 
-		design_tf->push_back( TaskOperationCOP( new pack::task::operation::RestrictAbsentCanonicalAAS( i + left_offset, allowed_aa_types ) ) );
+		design_tf->push_back( utility::pointer::make_shared< pack::task::operation::RestrictAbsentCanonicalAAS >( i + left_offset, allowed_aa_types ) );
 	}
 
 	design_tf->push_back( repack_op );
@@ -2504,7 +2504,7 @@ std::string RemodelMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 RemodelMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new RemodelMover );
+	return utility::pointer::make_shared< RemodelMover >();
 }
 
 void RemodelMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

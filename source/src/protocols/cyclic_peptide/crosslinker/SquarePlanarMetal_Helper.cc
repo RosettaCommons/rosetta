@@ -183,7 +183,7 @@ SquarePlanarMetal_Helper::add_angle_constraints(
 	}
 	cststring << "END\n";
 
-	pose.add_constraints( core::scoring::constraints::ConstraintIO::get_instance()->read_constraints_new( cststring, core::scoring::constraints::ConstraintSetOP( new core::scoring::constraints::ConstraintSet ), pose, false )->get_all_constraints() );
+	pose.add_constraints( core::scoring::constraints::ConstraintIO::get_instance()->read_constraints_new( cststring, utility::pointer::make_shared< core::scoring::constraints::ConstraintSet >(), pose, false )->get_all_constraints() );
 }
 
 /// @brief Add improper dihedral constraints to keep the metal in the plane of the liganding atoms.
@@ -195,7 +195,7 @@ SquarePlanarMetal_Helper::add_dihedral_constraints(
 	std::stringstream cststring;
 	add_dihedral_constraint_to_stream(cststring, pose, res_indices);
 	//std::cout << "DIHEDRAL CST:\n" << cststring.str(); //DELETE ME -- FOR DEBUGGING ONLY
-	pose.add_constraints( core::scoring::constraints::ConstraintIO::get_instance()->read_constraints_new( cststring, core::scoring::constraints::ConstraintSetOP( new core::scoring::constraints::ConstraintSet ), pose, false )->get_all_constraints() );
+	pose.add_constraints( core::scoring::constraints::ConstraintIO::get_instance()->read_constraints_new( cststring, utility::pointer::make_shared< core::scoring::constraints::ConstraintSet >(), pose, false )->get_all_constraints() );
 }
 
 /// @brief Given a stringstream, a pose, and a four-residue selection, add dihedral constraints to the stringstream.

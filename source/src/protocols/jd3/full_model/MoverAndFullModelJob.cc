@@ -105,10 +105,10 @@ core::pose::PoseCOP MoverAndFullModelJob::pose() const {
 }
 
 FullModelJobResultOP
-MoverAndFullModelJob::create_job_result() { return FullModelJobResultOP( new FullModelJobResult ); }
+MoverAndFullModelJob::create_job_result() { return utility::pointer::make_shared< FullModelJobResult >(); }
 
 EnergyJobSummaryOP
-MoverAndFullModelJob::create_job_summary() { return EnergyJobSummaryOP( new EnergyJobSummary ); }
+MoverAndFullModelJob::create_job_summary() { return utility::pointer::make_shared< EnergyJobSummary >(); }
 
 
 void MoverAndFullModelJob::finalize_job_result( FullModelJobResultOP ) {}

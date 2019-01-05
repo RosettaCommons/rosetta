@@ -70,7 +70,7 @@ MolarMassFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataM
 }
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP MolarMassFilterCreator::create_filter() const { return protocols::filters::FilterOP( new MolarMassFilter ); }
+// XRW TEMP MolarMassFilterCreator::create_filter() const { return utility::pointer::make_shared< MolarMassFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP MolarMassFilterCreator::keyname() const { return "MolarMass"; }
@@ -100,7 +100,7 @@ std::string MolarMassFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 MolarMassFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new MolarMassFilter );
+	return utility::pointer::make_shared< MolarMassFilter >();
 }
 
 void MolarMassFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

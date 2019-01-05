@@ -51,7 +51,7 @@ using namespace utility::tag;
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP ResidueTypeConstraintMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new ResidueTypeConstraintMover );
+// XRW TEMP  return utility::pointer::make_shared< ResidueTypeConstraintMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -91,8 +91,8 @@ ResidueTypeConstraintMover::apply( Pose & pose )
 // XRW TEMP  return ResidueTypeConstraintMover::mover_name();
 // XRW TEMP }
 
-protocols::moves::MoverOP ResidueTypeConstraintMover::clone() const { return protocols::moves::MoverOP( new protocols::constraint_movers::ResidueTypeConstraintMover( *this ) ); }
-protocols::moves::MoverOP ResidueTypeConstraintMover::fresh_instance() const { return protocols::moves::MoverOP( new ResidueTypeConstraintMover ); }
+protocols::moves::MoverOP ResidueTypeConstraintMover::clone() const { return utility::pointer::make_shared< protocols::constraint_movers::ResidueTypeConstraintMover >( *this ); }
+protocols::moves::MoverOP ResidueTypeConstraintMover::fresh_instance() const { return utility::pointer::make_shared< ResidueTypeConstraintMover >(); }
 
 void
 ResidueTypeConstraintMover::parse_my_tag(
@@ -139,7 +139,7 @@ std::string ResidueTypeConstraintMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 ResidueTypeConstraintMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ResidueTypeConstraintMover );
+	return utility::pointer::make_shared< ResidueTypeConstraintMover >();
 }
 
 void ResidueTypeConstraintMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

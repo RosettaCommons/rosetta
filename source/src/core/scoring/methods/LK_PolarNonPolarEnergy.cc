@@ -89,8 +89,8 @@ methods::EnergyMethodOP
 LK_PolarNonPolarEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
-	return EnergyMethodOP( new LK_PolarNonPolarEnergy( *(ScoringManager::get_instance()->etable( options ).lock()),
-		options.analytic_etable_evaluation() ) );
+	return utility::pointer::make_shared< LK_PolarNonPolarEnergy >( *(ScoringManager::get_instance()->etable( options ).lock()),
+		options.analytic_etable_evaluation() );
 }
 
 ScoreTypes
@@ -106,15 +106,15 @@ LK_PolarNonPolarEnergyCreator::score_types_for_method() const {
 
 
 LK_PolarNonPolarEnergy::LK_PolarNonPolarEnergy( etable::Etable const & etable_in, bool const analytic_etable_evaluation ):
-	parent( methods::EnergyMethodCreatorOP( new LK_PolarNonPolarEnergyCreator ) ),
+	parent( utility::pointer::make_shared< LK_PolarNonPolarEnergyCreator >() ),
 	safe_max_dis2_( etable_in.get_safe_max_dis2() ),
 	max_dis_( etable_in.max_dis() ),
 	verbose_( false )
 {
 	if ( analytic_etable_evaluation ) {
-		etable_evaluator_ = etable::EtableEvaluatorOP( new etable::AnalyticEtableEvaluator( etable_in ) );
+		etable_evaluator_ = utility::pointer::make_shared< etable::AnalyticEtableEvaluator >( etable_in );
 	} else {
-		etable_evaluator_ = etable::EtableEvaluatorOP( new etable::TableLookupEvaluator( etable_in ) );
+		etable_evaluator_ = utility::pointer::make_shared< etable::TableLookupEvaluator >( etable_in );
 	}
 }
 
@@ -161,7 +161,7 @@ LK_PolarNonPolarEnergy::atomic_interaction_cutoff() const
 EnergyMethodOP
 LK_PolarNonPolarEnergy::clone() const
 {
-	return EnergyMethodOP( new LK_PolarNonPolarEnergy( *this ) );
+	return utility::pointer::make_shared< LK_PolarNonPolarEnergy >( *this );
 }
 
 
@@ -467,7 +467,7 @@ LK_PolarNonPolarEnergy::setup_for_minimizing(
 	NeighborListOP nblist;
 	Real const tolerated_motion = pose.energies().use_nblist_auto_update() ? option[ run::nblist_autoupdate_narrow ] : 1.5;
 	Real const XX = max_dis_ + 2 * tolerated_motion;
-	nblist = NeighborListOP( new NeighborList( min_map.domain_map(), XX*XX, XX*XX, XX*XX) );
+	nblist = utility::pointer::make_shared< NeighborList >( min_map.domain_map(), XX*XX, XX*XX, XX*XX);
 	if ( pose.energies().use_nblist_auto_update() ) {
 		//TR << "Using neighborlist auto-update..." << std::endl;
 		nblist->set_auto_update( tolerated_motion );
@@ -502,7 +502,7 @@ LK_PolarNonPolarEnergy::get_count_pair_function(
 {
 	using namespace etable::count_pair;
 	if ( res1 == res2 ) {
-		return etable::count_pair::CountPairFunctionCOP( etable::count_pair::CountPairFunctionOP( new CountPairNone ) );
+		return utility::pointer::make_shared< CountPairNone >();
 	}
 
 	conformation::Residue const & rsd1( pose.residue( res1 ) );
@@ -519,12 +519,12 @@ LK_PolarNonPolarEnergy::get_count_pair_function(
 {
 	using namespace etable::count_pair;
 
-	if ( ! defines_score_for_residue_pair(rsd1, rsd2, true) ) return etable::count_pair::CountPairFunctionCOP( etable::count_pair::CountPairFunctionOP( new CountPairNone ) );
+	if ( ! defines_score_for_residue_pair(rsd1, rsd2, true) ) return utility::pointer::make_shared< CountPairNone >();
 
 	if ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) {
 		return CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
 	}
-	return etable::count_pair::CountPairFunctionCOP( etable::count_pair::CountPairFunctionOP( new CountPairAll ) );
+	return utility::pointer::make_shared< CountPairAll >();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -567,7 +567,7 @@ LK_PolarNonPolarEnergy::setup_for_minimizing_for_residue_pair(
 
 	// update the existing nblist if it's already present in the min_data object
 	ResiduePairNeighborListOP nblist( utility::pointer::static_pointer_cast< core::scoring::ResiduePairNeighborList > ( pair_data.get_data( lk_PolarNonPolar_pair_nblist ) ));
-	if ( ! nblist ) nblist = ResiduePairNeighborListOP( new ResiduePairNeighborList );
+	if ( ! nblist ) nblist = utility::pointer::make_shared< ResiduePairNeighborList >();
 
 	/// STOLEN CODE!
 	Real const tolerated_narrow_nblist_motion = 0.75; //option[ run::nblist_autoupdate_narrow ];

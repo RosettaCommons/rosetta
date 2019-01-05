@@ -72,7 +72,7 @@ BooleanValuedParameter::~BooleanValuedParameter() {}
 ParameterOP
 BooleanValuedParameter::clone() const
 {
-	return ParameterOP( BooleanValuedParameterOP( new BooleanValuedParameter( *this ) ) );
+	return utility::pointer::make_shared< BooleanValuedParameter >( *this );
 }
 
 /// @brief Set the value of this parameter.

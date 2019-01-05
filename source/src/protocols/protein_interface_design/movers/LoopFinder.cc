@@ -71,7 +71,7 @@ static basic::Tracer TR( "protocols.protein_interface_design.movers.LoopFinder" 
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP LoopFinderCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new LoopFinder );
+// XRW TEMP  return utility::pointer::make_shared< LoopFinder >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -107,13 +107,13 @@ LoopFinder::LoopFinder(
 	ca_ca_distance_( ca_ca_distance ),
 	iface_cutoff_(iface_cutoff)
 {
-	loops_ = protocols::loops::LoopsOP( new protocols::loops::Loops( *loops ) );
+	loops_ = utility::pointer::make_shared< protocols::loops::Loops >( *loops );
 }
 
 LoopFinder::~LoopFinder() = default;
 
 protocols::moves::MoverOP LoopFinder::clone() const {
-	return( protocols::moves::MoverOP( new LoopFinder( *this ) ) );
+	return( utility::pointer::make_shared< LoopFinder >( *this ) );
 }
 
 void
@@ -144,7 +144,7 @@ LoopFinder::apply( core::pose::Pose & pose )
 
 	if ( all_loops->size() > 0 ) {
 		for ( auto it = all_loops->begin(); it != all_loops->end(); ++it ) {
-			LoopCOP loop( LoopOP( new Loop(*it) ) );
+			LoopCOP loop( utility::pointer::make_shared< Loop >(*it) );
 			if ( pose.residue( loop->start() ).is_upper_terminus() || pose.residue( loop->stop() ).is_lower_terminus() ) continue; // skip if terminal loop
 			if ( loop->size() < min_length_ || loop->size() > max_length_ ) continue; // skip this loop
 
@@ -222,7 +222,7 @@ LoopFinder::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, pr
 	if ( ! resnum_.empty() ) TR<<"distance cutoff from user defined residue is " << ca_ca_distance_ << std::endl;
 
 	// add loopsOP to the basic::datacache::DataMap
-	loops_ = protocols::loops::LoopsOP( new protocols::loops::Loops );
+	loops_ = utility::pointer::make_shared< protocols::loops::Loops >();
 	data.add( "loops", "found_loops", loops_ );
 
 	TR << "LoopFinder mover: interface="<<interface_<<" iface_cutoff="<<iface_cutoff_<<" ch1="<<ch1_<<" ch2="<<ch2_<<" min_length="<<min_length_<<
@@ -263,7 +263,7 @@ std::string LoopFinderCreator::keyname() const {
 
 protocols::moves::MoverOP
 LoopFinderCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LoopFinder );
+	return utility::pointer::make_shared< LoopFinder >();
 }
 
 void LoopFinderCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

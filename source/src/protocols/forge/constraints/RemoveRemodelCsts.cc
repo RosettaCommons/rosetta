@@ -48,7 +48,7 @@ namespace constraints {
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP RemoveRemodelCstsCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new RemoveRemodelCsts() );
+// XRW TEMP  return utility::pointer::make_shared< RemoveRemodelCsts >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -107,13 +107,13 @@ RemoveRemodelCsts::parse_my_tag( TagCOP const tag,
 protocols::moves::MoverOP
 RemoveRemodelCsts::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new RemoveRemodelCsts() );
+	return utility::pointer::make_shared< RemoveRemodelCsts >();
 }
 
 protocols::moves::MoverOP
 RemoveRemodelCsts::clone() const
 {
-	return protocols::moves::MoverOP( new RemoveRemodelCsts( *this ) );
+	return utility::pointer::make_shared< RemoveRemodelCsts >( *this );
 }
 
 void
@@ -164,7 +164,7 @@ std::string RemoveRemodelCstsCreator::keyname() const {
 
 protocols::moves::MoverOP
 RemoveRemodelCstsCreator::create_mover() const {
-	return protocols::moves::MoverOP( new RemoveRemodelCsts );
+	return utility::pointer::make_shared< RemoveRemodelCsts >();
 }
 
 void RemoveRemodelCstsCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

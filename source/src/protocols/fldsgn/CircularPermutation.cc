@@ -63,7 +63,7 @@ static basic::Tracer TR( "protocols.fldsgn.CircularPermutation" );
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP CircularPermutationCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new CircularPermutation );
+// XRW TEMP  return utility::pointer::make_shared< CircularPermutation >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -99,7 +99,7 @@ CircularPermutation::~CircularPermutation() = default;
 CircularPermutation::MoverOP
 CircularPermutation::clone() const
 {
-	return CircularPermutation::MoverOP( new CircularPermutation( *this ) );
+	return utility::pointer::make_shared< CircularPermutation >( *this );
 }
 
 
@@ -107,7 +107,7 @@ CircularPermutation::clone() const
 CircularPermutation::MoverOP
 CircularPermutation::fresh_instance() const
 {
-	return CircularPermutation::MoverOP( new CircularPermutation() );
+	return utility::pointer::make_shared< CircularPermutation >();
 }
 
 
@@ -266,7 +266,7 @@ void CircularPermutation::apply( Pose & pose )
 	MoveMap movemap;
 	Size nt = chain_end - ( new_terminal_pos_ - chain_begin ) + 1;
 	BuildManager manager;
-	manager.add( forge::build::BuildInstructionOP( new SegmentSwap( Interval( nt, nt+2 ), movemap, swap_in ) ) );
+	manager.add( utility::pointer::make_shared< SegmentSwap >( Interval( nt, nt+2 ), movemap, swap_in ) );
 	manager.modify( pose );
 
 	// delete the final residues added at the terminal of the chain
@@ -343,7 +343,7 @@ std::string CircularPermutationCreator::keyname() const {
 
 protocols::moves::MoverOP
 CircularPermutationCreator::create_mover() const {
-	return protocols::moves::MoverOP( new CircularPermutation );
+	return utility::pointer::make_shared< CircularPermutation >();
 }
 
 void CircularPermutationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

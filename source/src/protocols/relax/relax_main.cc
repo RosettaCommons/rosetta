@@ -88,7 +88,7 @@ Relax_main( bool ) {
 	// (potentially) dock map into density
 	if ( option[ OptionKeys::edensity::mapfile ].user() ) {
 		protocols::moves::SequenceMoverOP seqmov( new protocols::moves::SequenceMover );
-		seqmov->add_mover( MoverOP( new protocols::electron_density::SetupForDensityScoringMover ) );
+		seqmov->add_mover( utility::pointer::make_shared< protocols::electron_density::SetupForDensityScoringMover >() );
 		seqmov->add_mover( protocol );
 		protocol = seqmov;
 	}
@@ -97,7 +97,7 @@ Relax_main( bool ) {
 	//   to avoid adding extra VRTs
 	if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
 		protocols::moves::SequenceMoverOP seqmov( new protocols::moves::SequenceMover );
-		seqmov->add_mover( MoverOP( new protocols::symmetry::SetupForSymmetryMover ) );
+		seqmov->add_mover( utility::pointer::make_shared< protocols::symmetry::SetupForSymmetryMover >() );
 		seqmov->add_mover( protocol );
 		protocol = seqmov;
 	}

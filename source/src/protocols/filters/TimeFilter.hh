@@ -41,10 +41,10 @@ public:
 	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
 	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	FilterOP clone() const override {
-		return FilterOP( new TimeFilter( *this ) );
+		return utility::pointer::make_shared< TimeFilter >( *this );
 	}
 	FilterOP fresh_instance() const override{
-		return FilterOP( new TimeFilter() );
+		return utility::pointer::make_shared< TimeFilter >();
 	}
 
 	~TimeFilter() override;

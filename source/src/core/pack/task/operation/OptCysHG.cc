@@ -51,7 +51,7 @@ OptCysHG::~OptCysHG() = default;
 
 /// @brief clone this object
 OptCysHG::TaskOperationOP OptCysHG::clone() const {
-	return OptCysHG::TaskOperationOP( new OptCysHG( *this ) );
+	return utility::pointer::make_shared< OptCysHG >( *this );
 }
 
 
@@ -81,7 +81,7 @@ void OptCysHG::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 
 TaskOperationOP OptCysHGCreator::create_task_operation() const
 {
-	return TaskOperationOP( new OptCysHG );
+	return utility::pointer::make_shared< OptCysHG >();
 }
 
 std::string OptCysHGCreator::keyname() const { return OptCysHG::keyname(); }

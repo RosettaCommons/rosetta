@@ -33,7 +33,7 @@ class Burial_v2Energy : public WholeStructureEnergy {
 public:
 	typedef WholeStructureEnergy parent;
 
-	Burial_v2Energy() : WholeStructureEnergy( methods::EnergyMethodCreatorOP( new Burial_v2EnergyCreator ) ) {
+	Burial_v2Energy() : WholeStructureEnergy( utility::pointer::make_shared< Burial_v2EnergyCreator >() ) {
 		init_from_file();
 	}
 

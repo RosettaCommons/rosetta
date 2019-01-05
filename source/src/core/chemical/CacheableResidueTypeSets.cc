@@ -52,7 +52,7 @@ CacheableResidueTypeSets & CacheableResidueTypeSets::operator= (CacheableResidue
 
 basic::datacache::CacheableDataOP
 CacheableResidueTypeSets::clone() const {
-	return basic::datacache::CacheableDataOP( new CacheableResidueTypeSets( *this ) );
+	return utility::pointer::make_shared< CacheableResidueTypeSets >( *this );
 }
 
 void

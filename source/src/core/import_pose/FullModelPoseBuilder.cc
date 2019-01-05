@@ -142,7 +142,7 @@ FullModelPoseBuilder::initialize_full_model_parameters() {
 		//runtime_assert( pose_pointers.size() > 0 );
 		runtime_assert( input_poses_.size() > 0 );
 		vector1< Size > dummy;
-		full_model_parameters_ = FullModelParametersOP( new FullModelParameters( *input_poses_[1], dummy ) );
+		full_model_parameters_ = utility::pointer::make_shared< FullModelParameters >( *input_poses_[1], dummy );
 		if ( input_poses_.size() > 1 ) {
 			utility_exit_with_message( "Currently need to specify -fasta if dealing with multiple poses. Would not be hard to fix this, by merging resnum/chain across poses! Ask rhiju." );
 		}
@@ -234,7 +234,7 @@ PoseOP FullModelPoseBuilder::build() { // can't be const because it can change i
 		runtime_assert( input_res_count == input_res_list.size() );
 	}
 
-	if ( input_poses_.empty() ) input_poses_.push_back( core::pose::PoseOP( new Pose ) ); // just a blank pose for now.
+	if ( input_poses_.empty() ) input_poses_.push_back( utility::pointer::make_shared< Pose >() ); // just a blank pose for now.
 
 
 

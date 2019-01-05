@@ -70,7 +70,7 @@ public:
 	void setUp() {
 		core_init_with_additional_options( "-no_optH" );
 		residue_set = chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD );
-		rrop = pack::task::operation::ReadResfileOP( new ReadResfile( "core/pack/task/test_in.resfile" ) );
+		rrop = utility::pointer::make_shared< ReadResfile >( "core/pack/task/test_in.resfile" );
 	}
 
 	// Shared finalization goes here.

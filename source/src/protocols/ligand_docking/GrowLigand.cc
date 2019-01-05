@@ -64,7 +64,7 @@ static basic::Tracer grow_ligand_tracer( "protocols.ligand_docking.GrowLigand", 
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP GrowLigandCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new GrowLigand );
+// XRW TEMP  return utility::pointer::make_shared< GrowLigand >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -100,17 +100,17 @@ GrowLigand::set_fragments(){
 	grow_ligand_tracer<< fragment_types.size()<< " fragment_types"<< std::endl;
 
 	for ( core::chemical::ResidueTypeCOP fragment_type : fragment_types ) {
-		fragments_.push_back( core::conformation::ResidueCOP( core::conformation::ResidueOP( new core::conformation::Residue(*fragment_type, true) ) ) );
+		fragments_.push_back( utility::pointer::make_shared< core::conformation::Residue >(*fragment_type, true) );
 		grow_ligand_tracer<< "frag_name: "<< fragment_type->name()<< std::endl;
 	}
 }
 
 protocols::moves::MoverOP GrowLigand::clone() const {
-	return protocols::moves::MoverOP( new GrowLigand( *this ) );
+	return utility::pointer::make_shared< GrowLigand >( *this );
 }
 
 protocols::moves::MoverOP GrowLigand::fresh_instance() const {
-	return protocols::moves::MoverOP( new GrowLigand );
+	return utility::pointer::make_shared< GrowLigand >();
 }
 
 // XRW TEMP std::string GrowLigand::get_name() const{
@@ -208,7 +208,7 @@ std::string GrowLigandCreator::keyname() const {
 
 protocols::moves::MoverOP
 GrowLigandCreator::create_mover() const {
-	return protocols::moves::MoverOP( new GrowLigand );
+	return utility::pointer::make_shared< GrowLigand >();
 }
 
 void GrowLigandCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -40,9 +40,9 @@ ReferenceEnergyNoncanonicalCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
 	if ( options.has_method_weights( ref_nc ) ) {
-		return methods::EnergyMethodOP( new ReferenceEnergyNoncanonical( options.method_weights( ref_nc ) ) );
+		return utility::pointer::make_shared< ReferenceEnergyNoncanonical >( options.method_weights( ref_nc ) );
 	} else {
-		return methods::EnergyMethodOP( new ReferenceEnergyNoncanonical );
+		return utility::pointer::make_shared< ReferenceEnergyNoncanonical >();
 	}
 }
 
@@ -55,13 +55,13 @@ ReferenceEnergyNoncanonicalCreator::score_types_for_method() const {
 
 
 ReferenceEnergyNoncanonical::ReferenceEnergyNoncanonical() :
-	parent( EnergyMethodCreatorOP( new ReferenceEnergyNoncanonicalCreator ) )
+	parent( utility::pointer::make_shared< ReferenceEnergyNoncanonicalCreator >() )
 {
 	init_res_list();
 }
 
 ReferenceEnergyNoncanonical::ReferenceEnergyNoncanonical( utility::vector1< Real > const & weight_list ):
-	parent( EnergyMethodCreatorOP( new ReferenceEnergyNoncanonicalCreator ) ),
+	parent( utility::pointer::make_shared< ReferenceEnergyNoncanonicalCreator >() ),
 	weights_( weight_list )
 {
 	init_res_list();
@@ -73,7 +73,7 @@ ReferenceEnergyNoncanonical::~ReferenceEnergyNoncanonical() = default;
 EnergyMethodOP
 ReferenceEnergyNoncanonical::clone() const
 {
-	return EnergyMethodOP( new ReferenceEnergyNoncanonical( weights_ ) );
+	return utility::pointer::make_shared< ReferenceEnergyNoncanonical >( weights_ );
 }
 
 /// This is a terrible terrible terrible hack that will do for now.

@@ -63,7 +63,7 @@ EntityRandomizer::random_entity()
 	if ( entity_template_ ) {
 		entity = entity_template_->clone();
 	} else {
-		entity = EntityOP( new Entity );
+		entity = utility::pointer::make_shared< Entity >();
 	}
 	entity->set_traits_size( entity_length_ );
 	// temporarily increase mutation rate to 100%

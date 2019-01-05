@@ -48,7 +48,7 @@ methods::EnergyMethodOP
 CenHBEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new CenHBEnergy( ) );
+	return utility::pointer::make_shared< CenHBEnergy >( );
 }
 
 ScoreTypes
@@ -61,7 +61,7 @@ CenHBEnergyCreator::score_types_for_method() const {
 
 /// @details  C-TOR with method options object
 CenHBEnergy::CenHBEnergy( ):
-	parent( methods::EnergyMethodCreatorOP( new CenHBEnergyCreator ) ),
+	parent( utility::pointer::make_shared< CenHBEnergyCreator >() ),
 	potential_( ScoringManager::get_instance()->get_CenHBPotential( ) ),
 	soft_( false )
 {
@@ -76,7 +76,7 @@ CenHBEnergy::CenHBEnergy( ):
 /// clone
 EnergyMethodOP
 CenHBEnergy::clone() const {
-	return EnergyMethodOP( new CenHBEnergy( *this ) );
+	return utility::pointer::make_shared< CenHBEnergy >( *this );
 }
 
 /// @details  copy c-tor

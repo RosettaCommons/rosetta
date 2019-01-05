@@ -42,7 +42,7 @@ static basic::Tracer TR( "core.fragment.picking_old.vall.eval.EnergyEval" );
 EnergyEval::EnergyEval() :
 	Super(),
 	insert_position_( 0 ),
-	score_function_( ScoreFunctionOP( new core::scoring::ScoreFunction ) ),
+	score_function_( utility::pointer::make_shared< core::scoring::ScoreFunction >() ),
 	randomize_( false )
 {}
 
@@ -99,7 +99,7 @@ EnergyEval & EnergyEval::operator =( EnergyEval const & rval ) {
 
 /// @brief clone this object
 VallFragmentEvalOP EnergyEval::clone() const {
-	return VallFragmentEvalOP( new EnergyEval( *this ) );
+	return utility::pointer::make_shared< EnergyEval >( *this );
 }
 
 

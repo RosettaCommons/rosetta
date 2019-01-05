@@ -71,7 +71,7 @@ PerResidueEnergyMetric::PerResidueEnergyMetric( PerResidueEnergyMetric const &  
 
 core::simple_metrics::SimpleMetricOP
 PerResidueEnergyMetric::clone() const {
-	return core::simple_metrics::SimpleMetricOP(new PerResidueEnergyMetric( *this ) );
+	return utility::pointer::make_shared< PerResidueEnergyMetric >( *this );
 
 }
 
@@ -171,7 +171,7 @@ PerResidueEnergyMetric::calculate(const pose::Pose & pose) const {
 	core::pose::Pose local_pose = pose;
 	core::pose::PoseOP local_ref_pose;
 	if ( ref_pose_ ) {
-		local_ref_pose = core::pose::PoseOP( new core::pose::Pose( * ref_pose_));
+		local_ref_pose = utility::pointer::make_shared< core::pose::Pose >( * ref_pose_);
 	}
 	ScoreFunctionOP local_scorefxn;
 	if ( scorefxn_ == nullptr ) {
@@ -261,7 +261,7 @@ PerResidueEnergyMetricCreator::keyname() const {
 
 core::simple_metrics::SimpleMetricOP
 PerResidueEnergyMetricCreator::create_simple_metric() const {
-	return core::simple_metrics::SimpleMetricOP( new PerResidueEnergyMetric );
+	return utility::pointer::make_shared< PerResidueEnergyMetric >();
 
 }
 

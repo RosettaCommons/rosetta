@@ -398,7 +398,7 @@ void RepeatProteinRelax::apply(core::pose::Pose & pose) {
 	if ( modify_symmetry_and_exit_ && remove_symm_ ) {
 		pose::symmetry::make_asymmetric_pose(pose);
 		seal_jumps(pose);
-		pose.pdb_info( core::pose::PDBInfoOP( new core::pose::PDBInfo( pose, true ) ) );
+		pose.pdb_info( utility::pointer::make_shared< core::pose::PDBInfo >( pose, true ) );
 		add_residue_labels_back(pose,res_label_map,0);
 		return;
 	}
@@ -419,7 +419,7 @@ void RepeatProteinRelax::apply(core::pose::Pose & pose) {
 	}
 	pose::symmetry::make_asymmetric_pose(pose);
 	seal_jumps(pose);
-	pose.pdb_info( core::pose::PDBInfoOP( new core::pose::PDBInfo( pose, true ) ) );
+	pose.pdb_info( utility::pointer::make_shared< core::pose::PDBInfo >( pose, true ) );
 	add_residue_labels_back(pose,res_label_map,0);
 }
 
@@ -497,7 +497,7 @@ std::string RepeatProteinRelaxCreator::keyname() const {
 
 protocols::moves::MoverOP
 RepeatProteinRelaxCreator::create_mover() const {
-	return protocols::moves::MoverOP( new RepeatProteinRelax );
+	return utility::pointer::make_shared< RepeatProteinRelax >();
 }
 
 void RepeatProteinRelaxCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

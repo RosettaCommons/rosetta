@@ -54,10 +54,10 @@ OrderedFragSet::OrderedFragSet() = default;
 OrderedFragSet::~OrderedFragSet() = default;
 
 FragSetOP OrderedFragSet::clone() const {
-	return FragSetOP( new OrderedFragSet( *this ) );
+	return utility::pointer::make_shared< OrderedFragSet >( *this );
 }
 FragSetOP OrderedFragSet::empty_clone() const {
-	return FragSetOP( new OrderedFragSet() );
+	return utility::pointer::make_shared< OrderedFragSet >();
 }
 
 /// @brief get fragments that start somewhere between start and end

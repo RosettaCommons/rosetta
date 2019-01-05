@@ -122,11 +122,11 @@ void relax_model(core::pose::PoseOP &pose)
 	TaskFactoryOP task_factory( new TaskFactory() );
 
 	// I'm pretty sure that this is handled by FastRelax... Yet scary things happen when it is not included.
-	task_factory->push_back( operation::TaskOperationCOP( new operation::RestrictToRepacking ) ); // repack only, no design
-	task_factory->push_back( TaskOperationCOP( new ExtraRotamers( 0 /*all*/, 1 /*ex1*/, 1 /*level*/ ) ) );
-	task_factory->push_back( TaskOperationCOP( new ExtraRotamers( 0 /*all*/, 2 /*ex1*/, 1 /*level*/ ) ) );
+	task_factory->push_back( utility::pointer::make_shared< operation::RestrictToRepacking >() ); // repack only, no design
+	task_factory->push_back( utility::pointer::make_shared< ExtraRotamers >( 0 /*all*/, 1 /*ex1*/, 1 /*level*/ ) );
+	task_factory->push_back( utility::pointer::make_shared< ExtraRotamers >( 0 /*all*/, 2 /*ex1*/, 1 /*level*/ ) );
 
-	task_factory->push_back(TaskOperationCOP( new IncludeCurrent() ));
+	task_factory->push_back(utility::pointer::make_shared< IncludeCurrent >());
 
 	relax_protocol->set_task_factory( task_factory );
 
@@ -271,23 +271,23 @@ int antibody_main()
 		SCS_BlastPlusOP blast = n_templates == 1 ? utility::pointer::make_shared<SCS_BlastPlus>(report) : utility::pointer::make_shared<SCS_BlastPlus>();
 		blast->init_from_options();
 
-        // in the future we should limit the number of times we loop over the results
-        // by only applying filters that are actually set
-        // see the pdbid filter for example
-		blast->add_filter( SCS_FunctorCOP(new SCS_BlastFilter_by_sequence_length) );
-		blast->add_filter( SCS_FunctorCOP(new SCS_BlastFilter_by_alignment_length) );
+		// in the future we should limit the number of times we loop over the results
+		// by only applying filters that are actually set
+		// see the pdbid filter for example
+		blast->add_filter( utility::pointer::make_shared< SCS_BlastFilter_by_sequence_length >() );
+		blast->add_filter( utility::pointer::make_shared< SCS_BlastFilter_by_alignment_length >() );
 
-		blast->add_filter( SCS_FunctorCOP(new SCS_BlastFilter_by_sequence_identity) );
-		blast->add_filter( SCS_FunctorCOP(new SCS_BlastFilter_by_template_resolution) );
-		blast->add_filter( SCS_FunctorCOP(new SCS_BlastFilter_by_outlier) );
-		blast->add_filter( SCS_FunctorCOP(new SCS_BlastFilter_by_template_bfactor) );
-		blast->add_filter( SCS_FunctorCOP(new SCS_BlastFilter_by_OCD) );
+		blast->add_filter( utility::pointer::make_shared< SCS_BlastFilter_by_sequence_identity >() );
+		blast->add_filter( utility::pointer::make_shared< SCS_BlastFilter_by_template_resolution >() );
+		blast->add_filter( utility::pointer::make_shared< SCS_BlastFilter_by_outlier >() );
+		blast->add_filter( utility::pointer::make_shared< SCS_BlastFilter_by_template_bfactor >() );
+		blast->add_filter( utility::pointer::make_shared< SCS_BlastFilter_by_OCD >() );
 
-        if ( basic::options::option[ basic::options::OptionKeys::antibody::exclude_pdb ].user() ) {
-            blast->add_filter( SCS_FunctorCOP(new SCS_BlastFilter_by_pdbid) );
-        }
+		if ( basic::options::option[ basic::options::OptionKeys::antibody::exclude_pdb ].user() ) {
+			blast->add_filter( utility::pointer::make_shared< SCS_BlastFilter_by_pdbid >() );
+		}
 
-		blast->set_sorter( SCS_FunctorCOP(new SCS_BlastComparator_BitScore_Resolution) );
+		blast->set_sorter( utility::pointer::make_shared< SCS_BlastComparator_BitScore_Resolution >() );
 
 		SCS_BaseOP scs = n_templates == 1 ? blast : SCS_BaseOP(new SCS_MultiTemplate(blast, basic::options::option[basic::options::OptionKeys::multi_template_regions](), report) );
 

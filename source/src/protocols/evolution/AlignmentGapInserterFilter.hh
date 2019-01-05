@@ -38,10 +38,10 @@ public:
 	AlignmentGapInserter();
 	~AlignmentGapInserter() override;
 	filters::FilterOP clone() const override {
-		return filters::FilterOP( new AlignmentGapInserter( *this ) );
+		return utility::pointer::make_shared< AlignmentGapInserter >( *this );
 	}
 	filters::FilterOP fresh_instance() const override{
-		return filters::FilterOP( new AlignmentGapInserter() );
+		return utility::pointer::make_shared< AlignmentGapInserter >();
 	}
 
 	utility::vector0< core::Size > find_char_location_in_string(std::string const & string, char const findIt) const;

@@ -415,7 +415,7 @@ public:
 		while ( paramslist ) {
 			TR << "Rebuilding Icoord from xyz " << filename << std::endl;
 			core::chemical::ResidueTypeOP restype = read_topology_file("core/chemical/"+filename, rsd_types );
-			core::chemical::ResidueTypeCOP restype_ref( core::chemical::ResidueTypeOP( new core::chemical::ResidueType(*restype) ) );
+			core::chemical::ResidueTypeCOP restype_ref( utility::pointer::make_shared< core::chemical::ResidueType >(*restype) );
 			restype->name( restype_ref->name() + "_IcoorRedo"); // For debugging purposes.
 
 			restype->assign_internal_coordinates();

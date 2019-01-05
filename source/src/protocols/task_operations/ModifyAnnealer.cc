@@ -47,7 +47,7 @@ ModifyAnnealer::ModifyAnnealer(bool disallow_quench, core::Real high_temp, core:
 ModifyAnnealer::~ModifyAnnealer()= default;
 
 core::pack::task::operation::TaskOperationOP ModifyAnnealer::clone() const{
-	return core::pack::task::operation::TaskOperationOP( new ModifyAnnealer( *this ) );
+	return utility::pointer::make_shared< ModifyAnnealer >( *this );
 }
 
 void ModifyAnnealer::apply( core::pose::Pose const &, core::pack::task::PackerTask & task ) const{
@@ -87,7 +87,7 @@ void ModifyAnnealer::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 
 core::pack::task::operation::TaskOperationOP ModifyAnnealerCreator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new ModifyAnnealer );
+	return utility::pointer::make_shared< ModifyAnnealer >();
 }
 
 void ModifyAnnealerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

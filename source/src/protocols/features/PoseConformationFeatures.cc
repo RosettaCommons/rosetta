@@ -114,16 +114,16 @@ PoseConformationFeatures::write_schema_to_db(utility::sql_database::sessionOP db
 
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ), false /*not null*/, false /*don't autoincrement*/);
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >(), false /*not null*/, false /*don't autoincrement*/);
 
 	/******pose_conformations******/
 	Schema pose_conformations("pose_conformations");
 	pose_conformations.add_foreign_key(ForeignKey(struct_id, "structures", "struct_id", true /*defer*/));
 
-	pose_conformations.add_column( Column("annotated_sequence", DbDataTypeOP( new DbText() )) );
-	pose_conformations.add_column( Column("total_residue", DbDataTypeOP( new DbInteger() )) );
-	pose_conformations.add_column( Column("fullatom", DbDataTypeOP( new DbInteger() )) );
-	pose_conformations.add_column( Column("ideal", DbDataTypeOP( new DbInteger() )) ); // 0 if not ideal, 1 if ideal
+	pose_conformations.add_column( Column("annotated_sequence", utility::pointer::make_shared< DbText >()) );
+	pose_conformations.add_column( Column("total_residue", utility::pointer::make_shared< DbInteger >()) );
+	pose_conformations.add_column( Column("fullatom", utility::pointer::make_shared< DbInteger >()) );
+	pose_conformations.add_column( Column("ideal", utility::pointer::make_shared< DbInteger >()) ); // 0 if not ideal, 1 if ideal
 
 	pose_conformations.write(db_session);
 
@@ -131,38 +131,38 @@ PoseConformationFeatures::write_schema_to_db(utility::sql_database::sessionOP db
 	Schema fold_trees("fold_trees");
 	fold_trees.add_foreign_key(ForeignKey(struct_id, "structures", "struct_id", true /*defer*/));
 
-	fold_trees.add_column( Column("start_res", DbDataTypeOP( new DbInteger() )) );
-	fold_trees.add_column( Column("start_atom", DbDataTypeOP( new DbText() )) );
-	fold_trees.add_column( Column("stop_res", DbDataTypeOP( new DbInteger() )) );
-	fold_trees.add_column( Column("stop_atom", DbDataTypeOP( new DbText() )) );
-	fold_trees.add_column( Column("label", DbDataTypeOP( new DbInteger() )) );
-	fold_trees.add_column( Column("keep_stub_in_residue", DbDataTypeOP( new DbInteger() )) );
+	fold_trees.add_column( Column("start_res", utility::pointer::make_shared< DbInteger >()) );
+	fold_trees.add_column( Column("start_atom", utility::pointer::make_shared< DbText >()) );
+	fold_trees.add_column( Column("stop_res", utility::pointer::make_shared< DbInteger >()) );
+	fold_trees.add_column( Column("stop_atom", utility::pointer::make_shared< DbText >()) );
+	fold_trees.add_column( Column("label", utility::pointer::make_shared< DbInteger >()) );
+	fold_trees.add_column( Column("keep_stub_in_residue", utility::pointer::make_shared< DbInteger >()) );
 
 	fold_trees.write(db_session);
 
 	/******jumps******/
 	Schema jumps("jumps");
 	jumps.add_foreign_key(ForeignKey(struct_id, "structures", "struct_id", true /*defer*/));
-	jumps.add_column( Column("jump_id", DbDataTypeOP( new DbInteger() )) );
-	jumps.add_column( Column("xx", DbDataTypeOP( new DbDouble() )) );
-	jumps.add_column( Column("xy", DbDataTypeOP( new DbDouble() )) );
-	jumps.add_column( Column("xz", DbDataTypeOP( new DbDouble() )) );
-	jumps.add_column( Column("yx", DbDataTypeOP( new DbDouble() )) );
-	jumps.add_column( Column("yy", DbDataTypeOP( new DbDouble() )) );
-	jumps.add_column( Column("yz", DbDataTypeOP( new DbDouble() )) );
-	jumps.add_column( Column("zx", DbDataTypeOP( new DbDouble() )) );
-	jumps.add_column( Column("zy", DbDataTypeOP( new DbDouble() )) );
-	jumps.add_column( Column("zz", DbDataTypeOP( new DbDouble() )) );
-	jumps.add_column( Column("x", DbDataTypeOP( new DbDouble() )) );
-	jumps.add_column( Column("y", DbDataTypeOP( new DbDouble() )) );
-	jumps.add_column( Column("z", DbDataTypeOP( new DbDouble() )) );
+	jumps.add_column( Column("jump_id", utility::pointer::make_shared< DbInteger >()) );
+	jumps.add_column( Column("xx", utility::pointer::make_shared< DbDouble >()) );
+	jumps.add_column( Column("xy", utility::pointer::make_shared< DbDouble >()) );
+	jumps.add_column( Column("xz", utility::pointer::make_shared< DbDouble >()) );
+	jumps.add_column( Column("yx", utility::pointer::make_shared< DbDouble >()) );
+	jumps.add_column( Column("yy", utility::pointer::make_shared< DbDouble >()) );
+	jumps.add_column( Column("yz", utility::pointer::make_shared< DbDouble >()) );
+	jumps.add_column( Column("zx", utility::pointer::make_shared< DbDouble >()) );
+	jumps.add_column( Column("zy", utility::pointer::make_shared< DbDouble >()) );
+	jumps.add_column( Column("zz", utility::pointer::make_shared< DbDouble >()) );
+	jumps.add_column( Column("x", utility::pointer::make_shared< DbDouble >()) );
+	jumps.add_column( Column("y", utility::pointer::make_shared< DbDouble >()) );
+	jumps.add_column( Column("z", utility::pointer::make_shared< DbDouble >()) );
 
 	jumps.write(db_session);
 
 	/******chain_endings******/
 	Schema chain_endings("chain_endings");
 	chain_endings.add_foreign_key(ForeignKey(struct_id, "structures", "struct_id", true /*defer*/));
-	chain_endings.add_column( Column("end_pos", DbDataTypeOP( new DbInteger() )) );
+	chain_endings.add_column( Column("end_pos", utility::pointer::make_shared< DbInteger >()) );
 
 	chain_endings.write(db_session);
 }
@@ -602,7 +602,7 @@ std::string PoseConformationFeaturesCreator::type_name() const {
 
 protocols::features::FeaturesReporterOP
 PoseConformationFeaturesCreator::create_features_reporter() const {
-	return protocols::features::FeaturesReporterOP( new PoseConformationFeatures );
+	return utility::pointer::make_shared< PoseConformationFeatures >();
 }
 
 void PoseConformationFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

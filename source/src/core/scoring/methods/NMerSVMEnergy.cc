@@ -59,7 +59,7 @@ methods::EnergyMethodOP
 NMerSVMEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new NMerSVMEnergy );
+	return utility::pointer::make_shared< NMerSVMEnergy >();
 }
 
 ScoreTypes
@@ -134,7 +134,7 @@ NMerSVMEnergy::initialize_from_options()
 }
 
 NMerSVMEnergy::NMerSVMEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new NMerSVMEnergyCreator ) )
+	parent( utility::pointer::make_shared< NMerSVMEnergyCreator >() )
 {
 	NMerSVMEnergy::initialize_from_options();
 	read_nmer_svms_from_options();
@@ -142,7 +142,7 @@ NMerSVMEnergy::NMerSVMEnergy() :
 
 //init from scratch w/ a vecotr of libsvm model filenames
 NMerSVMEnergy::NMerSVMEnergy( utility::vector1< std::string > const & svm_fnames ):
-	parent( methods::EnergyMethodCreatorOP( new NMerSVMEnergyCreator ) )
+	parent( utility::pointer::make_shared< NMerSVMEnergyCreator >() )
 {
 	NMerSVMEnergy::initialize_from_options();
 
@@ -162,7 +162,7 @@ NMerSVMEnergy::NMerSVMEnergy(
 	utility::vector1< std::string > const & svm_fname_vec,
 	utility::vector1< std::string > const & pssm_fname_vec
 ) :
-	parent( methods::EnergyMethodCreatorOP( new NMerSVMEnergyCreator ) )
+	parent( utility::pointer::make_shared< NMerSVMEnergyCreator >() )
 {
 	NMerSVMEnergy::nmer_length( nmer_length  );
 	NMerSVMEnergy::gate_svm_scores( gate_svm_scores );
@@ -191,7 +191,7 @@ NMerSVMEnergy::NMerSVMEnergy(
 	utility::vector1< std::string > const & pssm_fname_vec,
 	std::string const & aa_matrix
 ) :
-	parent( methods::EnergyMethodCreatorOP( new NMerSVMEnergyCreator ) )
+	parent( utility::pointer::make_shared< NMerSVMEnergyCreator >() )
 {
 	NMerSVMEnergy::nmer_length( nmer_length  );
 	NMerSVMEnergy::gate_svm_scores( gate_svm_scores );
@@ -312,7 +312,7 @@ NMerSVMEnergy::read_aa_encoding_matrix( std::string const & fname ){
 EnergyMethodOP
 NMerSVMEnergy::clone() const
 {
-	return EnergyMethodOP( new NMerSVMEnergy( *this ) );
+	return utility::pointer::make_shared< NMerSVMEnergy >( *this );
 }
 
 //methods called by const methods must be const!
@@ -322,7 +322,7 @@ NMerSVMEnergy::get_svm_nodes( vector1< Real > const & feature_vals ) const
 	vector1< Svm_node_rosettaOP > features;
 	Size feature_idx( 1 );
 	for ( Size ival = 1; ival <= feature_vals.size(); ++ival ) {
-		features.push_back( Svm_node_rosettaOP( new Svm_node_rosetta( feature_idx, feature_vals[ ival ] ) ) );
+		features.push_back( utility::pointer::make_shared< Svm_node_rosetta >( feature_idx, feature_vals[ ival ] ) );
 		++feature_idx;
 	}
 	return features;

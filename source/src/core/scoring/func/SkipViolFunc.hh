@@ -46,7 +46,7 @@ public:
 	~SkipViolFunc() {};
 
 	FuncOP
-	clone() const { return FuncOP( new SkipViolFunc( *this ) ); }
+	clone() const { return utility::pointer::make_shared< SkipViolFunc >( *this ); }
 	virtual bool operator == ( Func const & other ) const;
 	virtual bool same_type_as_me( Func const & other ) const;
 

@@ -101,7 +101,7 @@ void devel::domain_assembly::DomainAssemblyJobInputter::fill_jobs( protocols::jd
 	protocols::jd2::InnerJobOP ijob( new protocols::jd2::InnerJob( option_filename, nstruct ) );
 
 	for ( core::Size index(1); index <= nstruct; ++index ) {
-		jobs.push_back( protocols::jd2::JobOP( new protocols::jd2::Job( ijob, index ) ) );
+		jobs.push_back( utility::pointer::make_shared< protocols::jd2::Job >( ijob, index ) );
 	}
 
 }//fill_jobs

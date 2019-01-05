@@ -89,13 +89,13 @@ PerturbBundle::~PerturbBundle() = default;
 
 /// @brief Clone operator to create a pointer to a fresh PerturbBundle object that copies this one.
 protocols::moves::MoverOP PerturbBundle::clone() const {
-	return protocols::moves::MoverOP( new PerturbBundle( *this ) );
+	return utility::pointer::make_shared< PerturbBundle >( *this );
 }
 
 
 /// @brief Fresh_instance operator to create a pointer to a fresh PerturbBundle object that does NOT copy this one.
 protocols::moves::MoverOP PerturbBundle::fresh_instance() const {
-	return protocols::moves::MoverOP( new PerturbBundle );
+	return utility::pointer::make_shared< PerturbBundle >();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -521,7 +521,7 @@ std::string PerturbBundleCreator::keyname() const {
 
 protocols::moves::MoverOP
 PerturbBundleCreator::create_mover() const {
-	return protocols::moves::MoverOP( new PerturbBundle );
+	return utility::pointer::make_shared< PerturbBundle >();
 }
 
 void PerturbBundleCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

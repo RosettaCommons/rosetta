@@ -160,7 +160,7 @@ public:
 		//Try to provide two embedded selectors
 		std::stringstream ss_two_embedded;
 		ss_two_embedded << "<SetupMetalsMover name=\"metal\" remove_hydrogens=\"false\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\"><Index resnums=\"154,155\" /><Chain chains=\"A\" /></SetupMetalsMover>" << std::endl;
-		tag = utility::tag::TagOP( new utility::tag::Tag() );
+		tag = utility::pointer::make_shared< utility::tag::Tag >();
 		tag->read( ss_two_embedded );
 		TR << "Tag with two embedded selectors" << std::endl;
 		TS_ASSERT_THROWS_ANYTHING( new_mover.parse_my_tag( tag, dm, fm, mm, *pose_ ) );
@@ -180,7 +180,7 @@ public:
 		//Confirm that the above tag would work once the selector was added
 		std::stringstream ss_good_selector;
 		ss_good_selector << "<SetupMetalsMover name=\"metal\" remove_hydrogens=\"false\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\" metal_residue_selector=\"dummy\" />" << std::endl;
-		tag = utility::tag::TagOP( new utility::tag::Tag() );
+		tag = utility::pointer::make_shared< utility::tag::Tag >();
 		tag->read( ss_good_selector );
 		TR << "Tag with defined residue selector" << std::endl;
 		TS_ASSERT_THROWS_NOTHING( new_mover.parse_my_tag( tag, dm, fm, mm, *pose_ ) );
@@ -188,7 +188,7 @@ public:
 		//Try to provide a selector string and an embedded selector
 		std::stringstream ss_selector_two_ways;
 		ss_selector_two_ways << "<SetupMetalsMover name=\"metal\" remove_hydrogens=\"false\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\" metal_residue_selector=\"dummy\" ><Index resnums=\"154,155\" /></SetupMetalsMover>" << std::endl;
-		tag = utility::tag::TagOP( new utility::tag::Tag() );
+		tag = utility::pointer::make_shared< utility::tag::Tag >();
 		tag->read( ss_selector_two_ways );
 		TR << "Tag with selector two ways" << std::endl;
 		TS_ASSERT_THROWS_ANYTHING( new_mover.parse_my_tag( tag, dm, fm, mm, *pose_ ) );
@@ -196,7 +196,7 @@ public:
 		//Try to provide a selector string and a resnum string
 		std::stringstream ss_select_string_and_resnum_string;
 		ss_select_string_and_resnum_string << "<SetupMetalsMover name=\"metal\" metal_resnums=\"154,155\" remove_hydrogens=\"false\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\" metal_residue_selector=\"dummy\" />" << std::endl;
-		tag = utility::tag::TagOP( new utility::tag::Tag() );
+		tag = utility::pointer::make_shared< utility::tag::Tag >();
 		tag->read( ss_select_string_and_resnum_string );
 		TR << "Tag with selector string and resnum string" << std::endl;
 		TS_ASSERT_THROWS_ANYTHING( new_mover.parse_my_tag( tag, dm, fm, mm, *pose_ ) );
@@ -273,7 +273,7 @@ public:
 		//This should behave like above except it should override default values, including command line options
 		std::stringstream ss_a;
 		ss_a << "<SetupMetalsMover name=\"metal\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\" metal_residue_selector=\"chain\" />" << std::endl;
-		tag = utility::tag::TagOP( new utility::tag::Tag() );
+		tag = utility::pointer::make_shared< utility::tag::Tag >();
 		tag->read( ss_a );
 		TR << "Tag with selector to select chain A" << std::endl;
 		TS_ASSERT_THROWS_NOTHING( new_mover.parse_my_tag( tag, dm, fm, mm, *pose_ ) );
@@ -315,7 +315,7 @@ public:
 		//This should behave like above except it should override default values, including command line options
 		std::stringstream ss_zn;
 		ss_zn << "<SetupMetalsMover name=\"metal\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\" metal_residue_selector=\"zinc\" />" << std::endl;
-		tag = utility::tag::TagOP( new utility::tag::Tag() );
+		tag = utility::pointer::make_shared< utility::tag::Tag >();
 		tag->read( ss_zn );
 		TR << "Tag with selector to select zinc ions" << std::endl;
 		TS_ASSERT_THROWS_NOTHING( new_mover.parse_my_tag( tag, dm, fm, mm, *pose_ ) );
@@ -358,7 +358,7 @@ public:
 		//This should behave like above except it should override default values, including command line options
 		std::stringstream ss_none;
 		ss_none << "<SetupMetalsMover name=\"metal\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\" metal_residue_selector=\"none\" />" << std::endl;
-		tag = utility::tag::TagOP( new utility::tag::Tag() );
+		tag = utility::pointer::make_shared< utility::tag::Tag >();
 		tag->read( ss_none );
 		TR << "Tag with selector that should not include any of the metal ions" << std::endl;
 		TS_ASSERT_THROWS_NOTHING( new_mover.parse_my_tag( tag, dm, fm, mm, *pose_ ) );
@@ -448,7 +448,7 @@ public:
 		//This should behave like above except it should override default values, including command line options
 		std::stringstream ss_a;
 		ss_a << "<SetupMetalsMover name=\"metal\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\" metal_resnums=\"1-155\" />" << std::endl;
-		tag = utility::tag::TagOP( new utility::tag::Tag() );
+		tag = utility::pointer::make_shared< utility::tag::Tag >();
 		tag->read( ss_a );
 		TR << "Tag with resnums to select chain A" << std::endl;
 		TS_ASSERT_THROWS_NOTHING( new_mover.parse_my_tag( tag, dm, fm, mm, *pose_ ) );
@@ -490,7 +490,7 @@ public:
 		//This should behave like above except it should override default values, including command line options
 		std::stringstream ss_zn;
 		ss_zn << "<SetupMetalsMover name=\"metal\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\" metal_resnums=\"155,310\" />" << std::endl;
-		tag = utility::tag::TagOP( new utility::tag::Tag() );
+		tag = utility::pointer::make_shared< utility::tag::Tag >();
 		tag->read( ss_zn );
 		TR << "Tag with resnums to select zinc ions" << std::endl;
 		TS_ASSERT_THROWS_NOTHING( new_mover.parse_my_tag( tag, dm, fm, mm, *pose_ ) );
@@ -533,7 +533,7 @@ public:
 		//This should behave like above except it should override default values, including command line options
 		std::stringstream ss_none;
 		ss_none << "<SetupMetalsMover name=\"metal\" metals_detection_LJ_multiplier=\"1.0\" metals_angle_constraint_multiplier=\"5.0\" metal_resnums=\"1,2,3\" />" << std::endl;
-		tag = utility::tag::TagOP( new utility::tag::Tag() );
+		tag = utility::pointer::make_shared< utility::tag::Tag >();
 		tag->read( ss_none );
 		TR << "Tag with selection that should not include any of the metal ions" << std::endl;
 		TS_ASSERT_THROWS_NOTHING( new_mover.parse_my_tag( tag, dm, fm, mm, *pose_ ) );

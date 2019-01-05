@@ -63,7 +63,7 @@ MiniRelax::~MiniRelax() = default;
 
 protocols::moves::MoverOP
 MiniRelax::clone() const {
-	return protocols::moves::MoverOP( new MiniRelax(*this) );
+	return utility::pointer::make_shared< MiniRelax >(*this);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -62,7 +62,7 @@ namespace simple_ddg {
 static basic::Tracer TR( "protocols.simple_filters.AlaScan" );
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP AlaScanFilterCreator::create_filter() const { return protocols::filters::FilterOP( new AlaScan ); }
+// XRW TEMP AlaScanFilterCreator::create_filter() const { return utility::pointer::make_shared< AlaScan >(); }
 
 // XRW TEMP std::string
 // XRW TEMP AlaScanFilterCreator::keyname() const { return "AlaScan"; }
@@ -317,7 +317,7 @@ std::string AlaScanFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 AlaScanFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new AlaScan );
+	return utility::pointer::make_shared< AlaScan >();
 }
 
 void AlaScanFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

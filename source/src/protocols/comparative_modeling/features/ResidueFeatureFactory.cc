@@ -53,8 +53,8 @@ ResidueFeatureFactory::get_residue_feature(
 ResidueFeatureFactory::ResidueFeatureFactory(void) {
 	// initialization of ResidueFeatures which this factory knows how to
 	// instantiate
-	add_type( ResidueFeatureOP( new SSFeature() ) );
-	add_type( ResidueFeatureOP( new TorsionFeature() ) );
+	add_type( utility::pointer::make_shared< SSFeature >() );
+	add_type( utility::pointer::make_shared< TorsionFeature >() );
 }
 
 } // namespace features

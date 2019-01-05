@@ -126,13 +126,13 @@ HighResEnsemble::HighResEnsemble(HighResEnsemble const & /*that*/) = default;
 HighResEnsemble::~HighResEnsemble() = default;
 
 protocols::moves::MoverOP HighResEnsemble::clone() const {
-	return protocols::moves::MoverOP( new HighResEnsemble( *this ) );
+	return utility::pointer::make_shared< HighResEnsemble >( *this );
 }
 
 bool HighResEnsemble::reinitialize_for_each_job() const { return true; }
 
 protocols::moves::MoverOP HighResEnsemble::fresh_instance() const {
-	return protocols::moves::MoverOP(new HighResEnsemble );
+	return utility::pointer::make_shared< HighResEnsemble >();
 }
 
 ///@brief parse XML (specifically in the context of the parser/scripting scheme)
@@ -522,7 +522,7 @@ HighResEnsembleCreator::keyname() const
 
 protocols::moves::MoverOP
 HighResEnsembleCreator::create_mover() const {
-	return protocols::moves::MoverOP( new HighResEnsemble );
+	return utility::pointer::make_shared< HighResEnsemble >();
 }
 
 std::string

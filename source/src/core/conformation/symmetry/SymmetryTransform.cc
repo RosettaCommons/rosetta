@@ -100,7 +100,7 @@ SymmetryTransform::~SymmetryTransform() = default;
 /// @details Copy this object and return an owning pointer to the copy.
 SymmetryTransformOP
 SymmetryTransform::clone() const {
-	return SymmetryTransformOP( new SymmetryTransform(*this) );
+	return utility::pointer::make_shared< SymmetryTransform >(*this);
 }
 
 /// @brief Set whether this HomogeneousTransform mirrors about the z-axis or not.

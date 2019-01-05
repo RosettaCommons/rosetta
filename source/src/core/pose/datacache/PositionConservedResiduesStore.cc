@@ -33,7 +33,7 @@ namespace datacache {
 PositionConservedResiduesStore::PositionConservedResiduesStore() = default;
 
 basic::datacache::CacheableDataOP PositionConservedResiduesStore::clone() const {
-	return basic::datacache::CacheableDataOP( new PositionConservedResiduesStore(*this) );
+	return utility::pointer::make_shared< PositionConservedResiduesStore >(*this);
 }
 
 bool PositionConservedResiduesStore::is_conserved(core::Size residue) const {

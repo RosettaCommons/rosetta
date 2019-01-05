@@ -150,7 +150,7 @@ utility::vector1<bool> LogicalSelector::select_poses(
 
 // Creator
 protocols::rosetta_scripts::PoseSelectorOP AndSelectorCreator::create_selector() const {
-	return protocols::rosetta_scripts::PoseSelectorOP( new AndSelector() );
+	return utility::pointer::make_shared< AndSelector >();
 }
 
 void
@@ -174,7 +174,7 @@ AndSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ){
 
 // Creator
 protocols::rosetta_scripts::PoseSelectorOP OrSelectorCreator::create_selector() const {
-	return protocols::rosetta_scripts::PoseSelectorOP( new OrSelector() );
+	return utility::pointer::make_shared< OrSelector >();
 }
 
 void
@@ -197,7 +197,7 @@ OrSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ){
 
 // Creator
 protocols::rosetta_scripts::PoseSelectorOP TopNByPropertyCreator::create_selector() const {
-	return protocols::rosetta_scripts::PoseSelectorOP( new TopNByProperty() );
+	return utility::pointer::make_shared< TopNByProperty >();
 }
 
 
@@ -337,7 +337,7 @@ utility::vector1<bool> TopNByProperty::select_poses(
 
 // Creator
 protocols::rosetta_scripts::PoseSelectorOP FilterCreator::create_selector() const {
-	return protocols::rosetta_scripts::PoseSelectorOP( new Filter() );
+	return utility::pointer::make_shared< Filter >();
 }
 
 

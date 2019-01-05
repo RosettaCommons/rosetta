@@ -105,7 +105,7 @@ main( int argc, char * argv [] )
 				// move the master (mpi_rank = 0) db to a nonpartitioned db name, and perform initial filtering
 				if( mpi_rank_ == 0) {
 					LoopHashLibraryOP old_master = loop_hash_library;
-					loop_hash_library = LoopHashLibraryOP( new LoopHashLibrary( loop_sizes, 1, 0) );
+					loop_hash_library = utility::pointer::make_shared< LoopHashLibrary >( loop_sizes, 1, 0);
 					loop_hash_library->merge( old_master, rms_cutoff );
 					old_master->delete_db();
 				}

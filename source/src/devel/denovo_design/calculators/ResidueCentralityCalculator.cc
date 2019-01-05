@@ -240,7 +240,7 @@ generate_nodes( core::pose::Pose const & pose )
 	for ( core::Size i=1; i<=pose.size(); i++ ) {
 		std::string resname = pose.residue( i ).name3() + boost::lexical_cast<std::string>( i );
 		TR.Debug << "Adding node " << resname << std::endl;
-		nodes.push_back( NodeOP( new Node( resname, i ) ) );
+		nodes.push_back( utility::pointer::make_shared< Node >( resname, i ) );
 	} // for each residue
 
 	TR << "nodes size=" << nodes.size() << ", computing edges..."; TR.flush();

@@ -54,7 +54,7 @@ using basic::Warning;
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP AddChainMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new AddChainMover );
+// XRW TEMP  return utility::pointer::make_shared< AddChainMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -116,7 +116,7 @@ void AddChainMover::add_new_chain( core::pose::Pose & pose ) const {// pose is p
 
 	(*scorefxn())( pose );
 	if ( update_PDBInfo_ ) {
-		pose.pdb_info( PDBInfoOP( new core::pose::PDBInfo( pose, true ) ) ); //reinitialize the PDBInfo
+		pose.pdb_info( utility::pointer::make_shared< core::pose::PDBInfo >( pose, true ) ); //reinitialize the PDBInfo
 	} else {
 		pose.pdb_info()->copy( *new_info, 1, new_len, old_len + 1 );
 	}
@@ -200,7 +200,7 @@ void AddChainMover::swap_chain( core::pose::Pose & pose ) const {
 	pose.conformation().detect_disulfides();
 	pose.update_residue_neighbors();
 	(*scorefxn())( pose );
-	pose.pdb_info( PDBInfoOP( new core::pose::PDBInfo( pose, true ) ) ); //reinitialize the PDBInfo
+	pose.pdb_info( utility::pointer::make_shared< core::pose::PDBInfo >( pose, true ) ); //reinitialize the PDBInfo
 	TR<<"After addchain, total residues: "<<pose.size()<<std::endl;
 }
 
@@ -223,13 +223,13 @@ AddChainMover::apply( Pose & pose )
 moves::MoverOP
 AddChainMover::clone() const
 {
-	return moves::MoverOP( new AddChainMover( *this ) );
+	return utility::pointer::make_shared< AddChainMover >( *this );
 }
 
 moves::MoverOP
 AddChainMover::fresh_instance() const
 {
-	return moves::MoverOP( new AddChainMover );
+	return utility::pointer::make_shared< AddChainMover >();
 }
 
 void
@@ -297,7 +297,7 @@ std::string AddChainMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 AddChainMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new AddChainMover );
+	return utility::pointer::make_shared< AddChainMover >();
 }
 
 void AddChainMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

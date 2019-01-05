@@ -44,10 +44,10 @@ public:
 	);
 	bool apply( core::pose::Pose const & pose ) const override;
 	filters::FilterOP clone() const override {
-		return filters::FilterOP( new ResidueSetChainEnergyFilter( *this ) );
+		return utility::pointer::make_shared< ResidueSetChainEnergyFilter >( *this );
 	}
 	filters::FilterOP fresh_instance() const override{
-		return filters::FilterOP( new ResidueSetChainEnergyFilter() );
+		return utility::pointer::make_shared< ResidueSetChainEnergyFilter >();
 	}
 
 	void report( std::ostream & out, core::pose::Pose const & pose ) const override;

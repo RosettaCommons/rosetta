@@ -92,7 +92,7 @@ public:
 
 	core::select::residue_selector::ResidueSelectorOP
 	clone() const override {
-		return core::select::residue_selector::ResidueSelectorOP( new CloseContactWithResidue( seqpos_ ));
+		return utility::pointer::make_shared< CloseContactWithResidue >( seqpos_ );
 	}
 
 	std::string get_name() const override { return "CloseContactWithResidue"; }
@@ -290,7 +290,7 @@ InterfaceDDGMutationTask::~InterfaceDDGMutationTask() = default;
 
 basic::datacache::CacheableDataOP
 InterfaceDDGMutationTask::clone() const {
-	return basic::datacache::CacheableDataOP( new InterfaceDDGMutationTask( *this ));
+	return utility::pointer::make_shared< InterfaceDDGMutationTask >( *this );
 }
 
 /// @brief should the complex be modeled or should it be separated?
@@ -425,7 +425,7 @@ InterfaceDDGBindJobInputter::pose_from_job( core::pose::Pose & pose, protocols::
 		if ( ! reference_job || ! reference_job->get_pose() ) {
 			utility::file::FileName const & fname( reference_job ? reference_job->input_pdb() : inner_job->input_pdb() );
 			core::import_pose::pose_from_file( pose, fname , core::import_pose::PDB_file);
-			core::pose::PoseCOP pose_cop( core::pose::PoseOP( new core::pose::Pose( pose ) ));
+			core::pose::PoseCOP pose_cop( utility::pointer::make_shared< core::pose::Pose >( pose ));
 			if ( reference_job ) {
 				protocols::jd2::JobOP dummy_job( new protocols::jd2::Job( reference_job, 1 ));
 				load_pose_into_job( pose_cop, dummy_job ); // point both inner_job and refernce_job at the same Pose
@@ -612,7 +612,7 @@ InterfaceDDGBindJobInputter::fill_jobs( protocols::jd2::JobsContainer & jobs )
 	for ( std::list< InterfaceDDGBindInnerJobOP >::const_iterator
 			iter = inner_jobs.begin(); iter != inner_jobs.end(); ++iter ) {
 		for ( core::Size ii = 1; ii <= nstruct; ++ii ) {
-			jobs.push_back( protocols::jd2::JobOP( new protocols::jd2::Job( *iter, ii )));
+			jobs.push_back( utility::pointer::make_shared< protocols::jd2::Job >( *iter, ii ));
 		}
 	}
 
@@ -645,7 +645,7 @@ void InterfaceDDGMover::apply( core::pose::Pose & pose ) {
 
 protocols::moves::MoverOP InterfaceDDGMover::clone() const
 {
-	return protocols::moves::MoverOP( new InterfaceDDGMover( *this ));
+	return utility::pointer::make_shared< InterfaceDDGMover >( *this );
 }
 
 std::string InterfaceDDGMover::get_name() const
@@ -655,7 +655,7 @@ std::string InterfaceDDGMover::get_name() const
 
 protocols::moves::MoverOP InterfaceDDGMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new InterfaceDDGMover );
+	return utility::pointer::make_shared< InterfaceDDGMover >();
 }
 
 void InterfaceDDGMover::sfxn( core::scoring::ScoreFunctionOP setting )
@@ -746,7 +746,7 @@ int main( int argc, char * argv [] )
 		InterfaceDDGMoverOP iddgm( new InterfaceDDGMover );
 		iddgm->sfxn( core::scoring::get_score_function() );
 
-		protocols::jd2::JobDistributor::get_instance()->go( iddgm, protocols::jd2::JobInputterOP( new InterfaceDDGBindJobInputter ));
+		protocols::jd2::JobDistributor::get_instance()->go( iddgm, utility::pointer::make_shared< InterfaceDDGBindJobInputter >());
 
 	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

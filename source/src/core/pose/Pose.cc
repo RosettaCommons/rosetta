@@ -111,22 +111,22 @@ void Pose::init(void)
 		if( !basic::was_init_called() ) utility_exit_with_message("Attempt to initialize Pose object before core::init was called detected… Have you forgot to call core::init?");
 #endif
 
-	conformation_ = ConformationOP( new Conformation() );
+	conformation_ = utility::pointer::make_shared< Conformation >();
 
 	// have the Pose observe it's Conformation for XYZ changes
 	// we discard the Link because we own the Conformation
 	conformation_->attach_xyz_obs( &Pose::on_conf_xyz_change, this );
 
-	energies_ = scoring::EnergiesOP( new scoring::Energies() );
+	energies_ = utility::pointer::make_shared< scoring::Energies >();
 	energies_->set_owner( this );
 
-	data_cache_ = BasicDataCacheOP( new BasicDataCache( datacache::CacheableDataType::num_cacheable_data_types ) );
+	data_cache_ = utility::pointer::make_shared< BasicDataCache >( datacache::CacheableDataType::num_cacheable_data_types );
 
-	constant_cache_ = ConstDataMapOP( new ConstDataMap );
+	constant_cache_ = utility::pointer::make_shared< ConstDataMap >();
 
-	observer_cache_ = ObserverCacheOP( new ObserverCache( datacache::CacheableObserverType::num_cacheable_data_types, *this ) );
+	observer_cache_ = utility::pointer::make_shared< ObserverCache >( datacache::CacheableObserverType::num_cacheable_data_types, *this );
 
-	metrics_ = metrics::PoseMetricContainerOP( new metrics::PoseMetricContainer );
+	metrics_ = utility::pointer::make_shared< metrics::PoseMetricContainer >();
 	metrics_->attach_to( *this );
 }
 
@@ -199,11 +199,11 @@ Pose::operator=( Pose const & src )
 	//std::cout << "Done copying energies, copying data cache" << std::endl;
 
 	// Deep copy of the data held in the non-constant cache
-	data_cache_ = BasicDataCacheOP( new BasicDataCache( datacache::CacheableDataType::num_cacheable_data_types ) );
+	data_cache_ = utility::pointer::make_shared< BasicDataCache >( datacache::CacheableDataType::num_cacheable_data_types );
 	*data_cache_ = *(src.data_cache_);
 
 	// Shallow copy of the data held in the constant cache
-	if ( ! constant_cache_ )  constant_cache_ = ConstDataMapOP( new ConstDataMap );
+	if ( ! constant_cache_ )  constant_cache_ = utility::pointer::make_shared< ConstDataMap >();
 	*constant_cache_ = *src.constant_cache_;
 
 	// Special observer case: Preserve our PyMOL Observer! (or lack there of)
@@ -220,7 +220,7 @@ Pose::operator=( Pose const & src )
 	}
 
 
-	observer_cache_ = ObserverCacheOP( new ObserverCache( datacache::CacheableObserverType::num_cacheable_data_types, *this ) );
+	observer_cache_ = utility::pointer::make_shared< ObserverCache >( datacache::CacheableObserverType::num_cacheable_data_types, *this );
 	*observer_cache_ = *src.observer_cache_;
 
 	// Restore PyMOLObserver state
@@ -229,7 +229,7 @@ Pose::operator=( Pose const & src )
 	this->pdb_info( src.pdb_info_ );
 	//std::cout << "Done pdb info" << std::endl;
 
-	metrics_ = metrics::PoseMetricContainerOP( new metrics::PoseMetricContainer( *src.metrics_ ) );
+	metrics_ = utility::pointer::make_shared< metrics::PoseMetricContainer >( *src.metrics_ );
 	metrics_->attach_to( *this );
 	//std::cout << "Done metrics" << std::endl;
 
@@ -324,7 +324,7 @@ Pose::detached_copy( Pose const & src ) {
 PoseOP
 Pose::clone() const
 {
-	return PoseOP( new Pose( *this ) );
+	return utility::pointer::make_shared< Pose >( *this );
 }
 
 /// @brief Returns the pose Conformation pointer (const access)
@@ -379,12 +379,12 @@ Pose::set_new_conformation( conformation::ConformationCOP new_conformation )
 	observer_cache_->detach();
 
 	// initialize new
-	energies_ = scoring::EnergiesOP( new scoring::Energies() );
+	energies_ = utility::pointer::make_shared< scoring::Energies >();
 	energies_->set_owner( this );
 
-	data_cache_ = BasicDataCacheOP( new BasicDataCache( datacache::CacheableDataType::num_cacheable_data_types ) );
+	data_cache_ = utility::pointer::make_shared< BasicDataCache >( datacache::CacheableDataType::num_cacheable_data_types );
 
-	metrics_ = metrics::PoseMetricContainerOP( new metrics::PoseMetricContainer );
+	metrics_ = utility::pointer::make_shared< metrics::PoseMetricContainer >();
 	metrics_->attach_to( *this );
 
 	/// clone and reassign the pointer
@@ -1977,7 +1977,7 @@ Pose::ConstraintSetCOP
 Pose::constraint_set() const
 {
 	if ( constraint_set_ == nullptr ) {
-		return Pose::ConstraintSetCOP( Pose::ConstraintSetOP( new scoring::constraints::ConstraintSet ) ); // create an empty constraint set
+		return utility::pointer::make_shared< scoring::constraints::ConstraintSet >(); // create an empty constraint set
 	}
 	return constraint_set_;
 }
@@ -1987,7 +1987,7 @@ Pose::add_constraint( scoring::constraints::ConstraintCOP cst )
 {
 	energies_->clear();
 	if ( constraint_set_ == nullptr ) {
-		constraint_set_ = ConstraintSetOP( new scoring::constraints::ConstraintSet ); // create an empty constraint set the first time it's asked for
+		constraint_set_ = utility::pointer::make_shared< scoring::constraints::ConstraintSet >(); // create an empty constraint set the first time it's asked for
 		constraint_set_->attach_to_conformation( ConformationAP( conformation_ ) );
 	}
 	scoring::constraints::ConstraintCOP new_cst( cst->clone() );
@@ -2000,7 +2000,7 @@ Pose::add_constraints( scoring::constraints::ConstraintCOPs csts )
 {
 	energies_->clear();
 	if ( constraint_set_ == nullptr ) {
-		constraint_set_ = ConstraintSetOP( new scoring::constraints::ConstraintSet ); // create an empty constraint set the first time it's asked for
+		constraint_set_ = utility::pointer::make_shared< scoring::constraints::ConstraintSet >(); // create an empty constraint set the first time it's asked for
 		constraint_set_->attach_to_conformation( ConformationAP( conformation_ ) );
 	}
 	using namespace scoring::constraints;
@@ -2081,7 +2081,7 @@ void Pose::transfer_constraint_set( const pose::Pose &pose ){
 /// @brief Create a new reference pose from the current state of the pose.
 /// @details If a ReferencePoseSet object does not exist, this function will create it.
 void Pose::reference_pose_from_current( std::string const &ref_pose_name, bool override_current ) {
-	if ( !reference_pose_set_ ) reference_pose_set_= core::pose::reference_pose::ReferencePoseSetOP(new core::pose::reference_pose::ReferencePoseSet); //Create a ReferencePoseSet if it doesn't already exist.
+	if ( !reference_pose_set_ ) reference_pose_set_= utility::pointer::make_shared< core::pose::reference_pose::ReferencePoseSet >(); //Create a ReferencePoseSet if it doesn't already exist.
 
 	reference_pose_set_->add_and_initialize_reference_pose( ref_pose_name, *this, override_current );
 	return;
@@ -2091,7 +2091,7 @@ void Pose::reference_pose_from_current( std::string const &ref_pose_name, bool o
 /// @details If a ReferencePoseSet object does not exist, this function will create it.
 core::pose::reference_pose::ReferencePoseSetOP Pose::reference_pose_set()
 {
-	if ( !reference_pose_set_ ) reference_pose_set_= core::pose::reference_pose::ReferencePoseSetOP(new core::pose::reference_pose::ReferencePoseSet); //Create a ReferencePoseSet if it doesn't already exist.
+	if ( !reference_pose_set_ ) reference_pose_set_= utility::pointer::make_shared< core::pose::reference_pose::ReferencePoseSet >(); //Create a ReferencePoseSet if it doesn't already exist.
 	return reference_pose_set_;
 }
 
@@ -2184,7 +2184,7 @@ Pose::pdb_info( PDBInfoOP new_info )
 	PDBInfoOP prior_pdb_info = pdb_info_;
 
 	if ( new_info ) {
-		pdb_info_ = PDBInfoOP( new PDBInfo( *new_info ) ); // make a copy
+		pdb_info_ = utility::pointer::make_shared< PDBInfo >( *new_info ); // make a copy
 		pdb_info_->attach_to( *conformation_ );
 	} else {
 		pdb_info_.reset(); // set to NULL
@@ -2325,7 +2325,7 @@ core::pose::Pose::save_with_options( Archive & arc, bool save_observers ) const 
 	if ( save_observers ) arc( CEREAL_NVP( observer_cache_ ) ); // ObserverCacheOP
 	// else {
 	//  Pose dummy_pose;
-	//  auto dummy_observer_cache = ObserverCacheOP( new ObserverCache( datacache::CacheableObserverType::num_cacheable_data_types, dummy_pose) );
+	//  auto dummy_observer_cache = utility::pointer::make_shared< ObserverCache >( datacache::CacheableObserverType::num_cacheable_data_types, dummy_pose);
 	//  arc( CEREAL_NVP( dummy_observer_cache ) );
 	// }
 
@@ -2374,7 +2374,7 @@ core::pose::Pose::load_with_options( Archive & arc, bool load_observers ) {
 	}
 	// else {
 	//  Pose dummy_pose;
-	//  auto dummy_observer_cache = ObserverCacheOP( new ObserverCache( datacache::CacheableObserverType::num_cacheable_data_types, dummy_pose) );
+	//  auto dummy_observer_cache = utility::pointer::make_shared< ObserverCache >( datacache::CacheableObserverType::num_cacheable_data_types, dummy_pose);
 	//  arc( dummy_observer_cache );
 	// }
 

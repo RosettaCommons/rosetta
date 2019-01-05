@@ -1180,7 +1180,7 @@ NestedEnergyTermDDGMutationOptEData::receive_from_node( int const source_node, i
 		for ( Size jj = 1; jj <= n_fixed; ++jj ) {
 			fixed_data_v[ jj ] = fixed_data[ ( ii - 1 ) * n_fixed + ( jj - 1 ) ];
 		}
-		wts_.push_back( SingleStructureDataOP( new SingleStructureData( free_data_v, fixed_data_v ) ) );
+		wts_.push_back( utility::pointer::make_shared< SingleStructureData >( free_data_v, fixed_data_v ) );
 	}
 
 
@@ -1204,7 +1204,7 @@ NestedEnergyTermDDGMutationOptEData::receive_from_node( int const source_node, i
 		for ( Size jj = 1; jj <= n_fixed; ++jj ) {
 			fixed_data_v[ jj ] = fixed_data[ ( ii - 1 ) * n_fixed + ( jj - 1 ) ];
 		}
-		muts_.push_back( SingleStructureDataOP( new SingleStructureData( free_data_v, fixed_data_v ) ) );
+		muts_.push_back( utility::pointer::make_shared< SingleStructureData >( free_data_v, fixed_data_v ) );
 	}
 
 	delete [] free_data;

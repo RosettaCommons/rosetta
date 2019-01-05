@@ -71,7 +71,7 @@ using namespace core;
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP SwapSegmentCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new SwapSegment() );
+// XRW TEMP  return utility::pointer::make_shared< SwapSegment >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -89,12 +89,12 @@ SwapSegment::SwapSegment():
 
 protocols::moves::MoverOP
 SwapSegment::clone() const {
-	return( protocols::moves::MoverOP( new SwapSegment( *this ) ) );
+	return( utility::pointer::make_shared< SwapSegment >( *this ) );
 }
 
 protocols::moves::MoverOP
 SwapSegment::fresh_instance() const {
-	return protocols::moves::MoverOP( new SwapSegment );
+	return utility::pointer::make_shared< SwapSegment >();
 }
 
 void
@@ -251,7 +251,7 @@ SwapSegment::parse_my_tag(
 
 	if ( tag->hasOption( "seeds_pdb" ) || tag->hasOption( "template_pdb" ) ) {
 		std::string const template_pdb_fname( tag->getOption< std::string >( "seeds_pdb" ));
-		seeds_pdb_ = core::pose::PoseOP( new core::pose::Pose ) ;
+		seeds_pdb_ = utility::pointer::make_shared< core::pose::Pose >() ;
 		core::import_pose::pose_from_file( *seeds_pdb_, template_pdb_fname , core::import_pose::PDB_file);
 		TR<<"read in a template pdb with " <<seeds_pdb_->size() <<"residues"<<std::endl;
 		seeds_presence_ = true;
@@ -344,7 +344,7 @@ std::string SwapSegmentCreator::keyname() const {
 
 protocols::moves::MoverOP
 SwapSegmentCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SwapSegment );
+	return utility::pointer::make_shared< SwapSegment >();
 }
 
 void SwapSegmentCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

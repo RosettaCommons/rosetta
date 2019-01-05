@@ -60,7 +60,7 @@ BetaSheetArchitect::~BetaSheetArchitect() = default;
 BetaSheetArchitect::DeNovoArchitectOP
 BetaSheetArchitect::clone() const
 {
-	return DeNovoArchitectOP( new BetaSheetArchitect( *this ) );
+	return utility::pointer::make_shared< BetaSheetArchitect >( *this );
 }
 
 std::string
@@ -153,7 +153,7 @@ BetaSheetArchitect::design( core::pose::Pose const &, core::Real & random ) cons
 	}
 	core::Size const idx = extract_int( random, 1, permutations_.size() );
 	TR << "Selected permutation " << idx << " of " << permutations_.size() << std::endl;
-	return StructureDataOP( new StructureData( *permutations_[ idx ] ) );
+	return utility::pointer::make_shared< StructureData >( *permutations_[ idx ] );
 }
 
 void
@@ -338,9 +338,9 @@ BetaSheetArchitect::add_pairings( components::StructureDataCOPs const & perms ) 
 		for ( StrandOrientation const & o1 : orientations_[ sidx - 1 ] ) {
 			for ( StrandOrientation const & o2 : orientations_[ sidx ] ) {
 				for ( RegisterShift const s : shifts_[ sidx ] ) {
-					pinfo.push_back( components::StrandPairingCOP( new components::StrandPairing(
+					pinfo.push_back( utility::pointer::make_shared< components::StrandPairing >(
 						strands_[ sidx - 1 ]->id(), strands_[ sidx ]->id(),
-						o1, o2, s ) ) );
+						o1, o2, s ) );
 				}
 			}
 		}
@@ -659,7 +659,7 @@ BetaSheetArchitectCreator::keyname() const
 DeNovoArchitectOP
 BetaSheetArchitectCreator::create_architect( std::string const & architect_id ) const
 {
-	return DeNovoArchitectOP( new BetaSheetArchitect( architect_id ) );
+	return utility::pointer::make_shared< BetaSheetArchitect >( architect_id );
 }
 
 } //protocols

@@ -89,7 +89,7 @@ dump_pdb(
 	pose::Pose const & pose,
 	std::ostream & out,
 	id::AtomID_Mask const & mask,
-	core::io::StructFileRepOptionsCOP options=core::io::StructFileRepOptionsCOP( new core::io::StructFileRepOptions )
+	core::io::StructFileRepOptionsCOP options=utility::pointer::make_shared< core::io::StructFileRepOptions >()
 );
 
 
@@ -99,7 +99,7 @@ dump_pdb(
 	core::pose::Pose const & pose,
 	std::ostream & out,
 	utility::vector1< core::Size > const & residue_indices,
-	core::io::StructFileRepOptionsCOP options=core::io::StructFileRepOptionsCOP( new core::io::StructFileRepOptions )
+	core::io::StructFileRepOptionsCOP options=utility::pointer::make_shared< core::io::StructFileRepOptions >()
 );
 
 
@@ -181,7 +181,7 @@ add_to_multimodel_pdb(
 std::string
 dump_pdb_residue(
 	conformation::Residue const & rsd,
-	core::io::StructFileRepOptionsCOP options=core::io::StructFileRepOptionsCOP( new core::io::StructFileRepOptions ),
+	core::io::StructFileRepOptionsCOP options=utility::pointer::make_shared< core::io::StructFileRepOptions >(),
 	core::Size start_atom_number = 1
 );
 
@@ -190,7 +190,7 @@ std::string
 dump_pdb_residue(
 	conformation::Residue const & rsd,
 	core::Size & atom_number,
-	core::io::StructFileRepOptionsCOP options=core::io::StructFileRepOptionsCOP( new core::io::StructFileRepOptions )
+	core::io::StructFileRepOptionsCOP options=utility::pointer::make_shared< core::io::StructFileRepOptions >()
 );
 
 
@@ -200,7 +200,7 @@ dump_pdb_residue(
 	conformation::Residue const & rsd,
 	core::Size & atom_number,
 	std::ostream & out,
-	core::io::StructFileRepOptionsCOP options=core::io::StructFileRepOptionsCOP( new core::io::StructFileRepOptions )
+	core::io::StructFileRepOptionsCOP options=utility::pointer::make_shared< core::io::StructFileRepOptions >()
 );
 
 /// @brief Writes pdb data for the given residue, beginning from the given atom number
@@ -209,13 +209,13 @@ dump_pdb_residue(
 	conformation::Residue const & rsd,
 	std::ostream & out,
 	core::Size start_atom_number = 1,
-	core::io::StructFileRepOptionsCOP options=core::io::StructFileRepOptionsCOP( new core::io::StructFileRepOptions )
+	core::io::StructFileRepOptionsCOP options=utility::pointer::make_shared< core::io::StructFileRepOptions >()
 );
 
 /// @brief Create a full .pdb as a string given a StructFileRep object.
 std::string create_pdb_contents_from_sfr(
 	StructFileRep const & sfr,
-	core::io::StructFileRepOptionsCOP options=core::io::StructFileRepOptionsCOP( new core::io::StructFileRepOptions )
+	core::io::StructFileRepOptionsCOP options=utility::pointer::make_shared< core::io::StructFileRepOptions >()
 );
 
 /// @brief Create a formatted line for .pdb output.
@@ -224,7 +224,7 @@ std::string create_pdb_line_from_record( Record const & record );
 /// @brief Create vector of records from given StructFileRep object.
 std::vector< Record > create_records_from_sfr(
 	StructFileRep const & sfr,
-	core::io::StructFileRepOptionsCOP options=core::io::StructFileRepOptionsCOP( new core::io::StructFileRepOptions )
+	core::io::StructFileRepOptionsCOP options=utility::pointer::make_shared< core::io::StructFileRepOptions >()
 );
 
 

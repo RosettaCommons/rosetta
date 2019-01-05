@@ -91,12 +91,12 @@ void MonteCarloUtil::parse_my_tag(
 
 protocols::moves::MoverOP MonteCarloUtil::clone() const
 {
-	return protocols::moves::MoverOP( new MonteCarloUtil(mc_) );
+	return utility::pointer::make_shared< MonteCarloUtil >(mc_);
 }
 
 protocols::moves::MoverOP MonteCarloUtil::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new MonteCarloUtil() );
+	return utility::pointer::make_shared< MonteCarloUtil >();
 }
 
 
@@ -207,13 +207,13 @@ TrialMover::get_name() const {
 protocols::moves::MoverOP
 TrialMover::clone() const
 {
-	return protocols::moves::MoverOP( new TrialMover(*this) );
+	return utility::pointer::make_shared< TrialMover >(*this);
 }
 
 protocols::moves::MoverOP
 TrialMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new TrialMover() );
+	return utility::pointer::make_shared< TrialMover >();
 }
 
 Real TrialMover::acceptance_rate() const

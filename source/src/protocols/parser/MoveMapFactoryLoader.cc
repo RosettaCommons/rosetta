@@ -93,7 +93,7 @@ void MoveMapFactoryLoader::provide_xml_schema( utility::tag::XMLSchemaDefinition
 
 
 DataLoaderOP
-MoveMapFactoryLoaderCreator::create_loader() const { return DataLoaderOP( new MoveMapFactoryLoader ); }
+MoveMapFactoryLoaderCreator::create_loader() const { return utility::pointer::make_shared< MoveMapFactoryLoader >(); }
 
 std::string
 MoveMapFactoryLoaderCreator::keyname() const { return MoveMapFactoryLoader::loader_name(); }

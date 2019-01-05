@@ -193,18 +193,18 @@ DesignableResiduesFilter::parse_my_tag( utility::tag::TagCOP tag,
 
 protocols::filters::FilterOP
 DesignableResiduesFilter::fresh_instance() const{
-	return protocols::filters::FilterOP( new DesignableResiduesFilter() );
+	return utility::pointer::make_shared< DesignableResiduesFilter >();
 }
 
 DesignableResiduesFilter::~DesignableResiduesFilter()= default;
 
 protocols::filters::FilterOP
 DesignableResiduesFilter::clone() const{
-	return protocols::filters::FilterOP( new DesignableResiduesFilter( *this ) );
+	return utility::pointer::make_shared< DesignableResiduesFilter >( *this );
 }
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP DesignableResiduesFilterCreator::create_filter() const { return protocols::filters::FilterOP( new DesignableResiduesFilter ); }
+// XRW TEMP DesignableResiduesFilterCreator::create_filter() const { return utility::pointer::make_shared< DesignableResiduesFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP DesignableResiduesFilterCreator::keyname() const { return "DesignableResidues"; }
@@ -236,7 +236,7 @@ std::string DesignableResiduesFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 DesignableResiduesFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new DesignableResiduesFilter );
+	return utility::pointer::make_shared< DesignableResiduesFilter >();
 }
 
 void DesignableResiduesFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

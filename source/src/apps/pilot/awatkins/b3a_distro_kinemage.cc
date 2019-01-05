@@ -160,7 +160,7 @@ main( int argc, char* argv[] )
 		std::string method = option[ b3a_distro::scoremethod ]();
 
 		core::pack::task::TaskFactoryOP task_factory( new core::pack::task::TaskFactory );
-		task_factory->push_back( core::pack::task::operation::TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
+		task_factory->push_back( utility::pointer::make_shared< core::pack::task::operation::InitializeFromCommandline >() );
 		//need these to keep pack_rotamers from redesigning the residue.
 		operation::RestrictToRepackingOP rtrop ( new operation::RestrictToRepacking );
 		task_factory->push_back( rtrop );

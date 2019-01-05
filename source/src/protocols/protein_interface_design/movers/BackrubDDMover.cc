@@ -107,7 +107,7 @@ using Pose = core::pose::Pose;
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP BackrubDDMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new BackrubDDMover() );
+// XRW TEMP  return utility::pointer::make_shared< BackrubDDMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -171,14 +171,14 @@ BackrubDDMover::BackrubDDMover
 	scorefxn_repack_->set_energy_method_options( emo );
 
 	using namespace core::select::residue_selector;
-	residues_ = ResidueSelectorOP( new ResidueIndexSelector( residues ) );
+	residues_ = utility::pointer::make_shared< ResidueIndexSelector >( residues );
 }
 
 BackrubDDMover::~BackrubDDMover() = default;
 
 protocols::moves::MoverOP
 BackrubDDMover::clone() const {
-	return( protocols::moves::MoverOP( new BackrubDDMover( *this ) ) );
+	return( utility::pointer::make_shared< BackrubDDMover >( *this ) );
 }
 
 void
@@ -219,7 +219,7 @@ BackrubDDMover::apply( Pose & pose )
 	// read known and unknown optimization parameters from the database
 	backrub_mover.branchopt().read_database();
 
-	core::pose::PoseCOP pose_copy( core::pose::PoseOP( new core::pose::Pose( pose ) ) );
+	core::pose::PoseCOP pose_copy( utility::pointer::make_shared< core::pose::Pose >( pose ) );
 	backrub_mover.set_input_pose( pose_copy );
 	backrub_mover.set_native_pose( pose_copy );
 	sidechain_mover.set_input_pose( pose_copy );
@@ -235,31 +235,31 @@ BackrubDDMover::apply( Pose & pose )
 	TaskFactoryOP main_task_factory;
 	TaskFactoryCOP ancestral_task( task_factory() );
 	if ( ancestral_task ) {
-		main_task_factory = TaskFactoryOP( new TaskFactory( *ancestral_task ) );
+		main_task_factory = utility::pointer::make_shared< TaskFactory >( *ancestral_task );
 	} else {
-		main_task_factory = TaskFactoryOP( new TaskFactory );
+		main_task_factory = utility::pointer::make_shared< TaskFactory >();
 	}
 	//RestrictToInterfaceOperationOP rtio = new RestrictToInterfaceOperation;
 	//rtio->interface_cutoff( 8.0 );
 	if ( prevent_repacking().size() ) {
 		operation::OperateOnCertainResiduesOP prevent_repacking_on_certain_res( new operation::OperateOnCertainResidues );
 		prevent_repacking_on_certain_res->residue_indices( prevent_repacking() );
-		prevent_repacking_on_certain_res->op( ResLvlTaskOperationCOP( new PreventRepackingRLT ) );
+		prevent_repacking_on_certain_res->op( utility::pointer::make_shared< PreventRepackingRLT >() );
 		main_task_factory->push_back( prevent_repacking_on_certain_res );
 	}
-	main_task_factory->push_back( TaskOperationCOP( new InitializeFromCommandline ) );
-	main_task_factory->push_back( TaskOperationCOP( new IncludeCurrent ) );
+	main_task_factory->push_back( utility::pointer::make_shared< InitializeFromCommandline >() );
+	main_task_factory->push_back( utility::pointer::make_shared< IncludeCurrent >() );
 	//main_task_factory->push_back( rtio );
-	main_task_factory->push_back( TaskOperationCOP( new RestrictToRepacking ) );
-	main_task_factory->push_back( TaskOperationCOP( new NoRepackDisulfides ) );
+	main_task_factory->push_back( utility::pointer::make_shared< RestrictToRepacking >() );
+	main_task_factory->push_back( utility::pointer::make_shared< NoRepackDisulfides >() );
 	if ( !backrub_partner1_ ) {
-		main_task_factory->push_back( TaskOperationCOP( new PreventChainFromRepackingOperation( 1 ) ) );
+		main_task_factory->push_back( utility::pointer::make_shared< PreventChainFromRepackingOperation >( 1 ) );
 	}
 	if ( !backrub_partner2_ ) {
-		main_task_factory->push_back( TaskOperationCOP( new PreventChainFromRepackingOperation( 2 ) ) );
+		main_task_factory->push_back( utility::pointer::make_shared< PreventChainFromRepackingOperation >( 2 ) );
 	}
 	if ( basic::options::option[ basic::options::OptionKeys::packing::resfile ].user() ) {
-		main_task_factory->push_back( TaskOperationCOP( new ReadResfile ) );
+		main_task_factory->push_back( utility::pointer::make_shared< ReadResfile >() );
 	}
 
 	using ObjexxFCL::FArray1D_bool;
@@ -331,7 +331,7 @@ BackrubDDMover::apply( Pose & pose )
 	}
 
 	// C-beta atoms should not be altered during packing because branching atoms are optimized
-	main_task_factory->push_back( TaskOperationCOP( new PreserveCBeta ) );
+	main_task_factory->push_back( utility::pointer::make_shared< PreserveCBeta >() );
 
 	// set up the SidechainMover
 	sidechain_mover.set_task_factory( main_task_factory );
@@ -497,7 +497,7 @@ std::string BackrubDDMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 BackrubDDMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new BackrubDDMover );
+	return utility::pointer::make_shared< BackrubDDMover >();
 }
 
 void BackrubDDMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

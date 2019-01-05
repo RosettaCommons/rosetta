@@ -77,7 +77,7 @@ namespace hbnet {
 core::select::residue_selector::ResidueSelectorOP
 UnsatSelectorCreator::create_residue_selector() const
 {
-	return core::select::residue_selector::ResidueSelectorOP( new UnsatSelector );
+	return utility::pointer::make_shared< UnsatSelector >();
 }
 
 
@@ -114,7 +114,7 @@ UnsatSelector::~UnsatSelector() = default;
 core::select::residue_selector::ResidueSelectorOP
 UnsatSelector::clone() const
 {
-	return core::select::residue_selector::ResidueSelectorOP( new UnsatSelector(*this) );
+	return utility::pointer::make_shared< UnsatSelector >(*this);
 }
 
 // ---------- APPLY FUNCTION --------------------

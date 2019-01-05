@@ -280,7 +280,7 @@ Residue::init_residue_from_other(
 	actcoord_ = src.actcoord_;
 	if ( src.data_cache_ != nullptr ) {
 		if ( data_cache_ != nullptr ) ( *data_cache_) = (*src.data_cache_);
-		else data_cache_ = basic::datacache::BasicDataCacheOP( new basic::datacache::BasicDataCache( *src.data_cache_) );
+		else data_cache_ = utility::pointer::make_shared< basic::datacache::BasicDataCache >( *src.data_cache_);
 	}
 	nonstandard_polymer_ = src.nonstandard_polymer_;
 	connect_map_ = src.connect_map_;
@@ -293,7 +293,7 @@ Residue::init_residue_from_other(
 ResidueOP
 Residue::clone() const
 {
-	return ResidueOP( new Residue( *this ) );
+	return utility::pointer::make_shared< Residue >( *this );
 }
 
 /// @brief Copy this residue( allocate actual memory for it ), keeping everything the same EXCEPT the type.
@@ -2075,7 +2075,7 @@ basic::datacache::BasicDataCacheOP
 Residue::nonconst_data_ptr()
 {
 	if ( data_cache_ == nullptr ) {
-		data_cache_ = basic::datacache::BasicDataCacheOP( new basic::datacache::BasicDataCache( residue_datacache::n_cacheable_types ) );
+		data_cache_ = utility::pointer::make_shared< basic::datacache::BasicDataCache >( residue_datacache::n_cacheable_types );
 	}
 	return data_cache_;
 }

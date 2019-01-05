@@ -92,7 +92,7 @@ using namespace core;
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP IdealizeHelicesMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new IdealizeHelicesMover );
+// XRW TEMP  return utility::pointer::make_shared< IdealizeHelicesMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -123,7 +123,7 @@ void IdealizeHelicesMover::apply( core::pose::Pose & pose ) {
 	bool fullatom_input = pose.is_fullatom();
 	protocols::moves::MoverOP restore_sc;
 	if ( fullatom_input ) {
-		restore_sc = protocols::moves::MoverOP( new protocols::simple_moves::ReturnSidechainMover( pose ) );
+		restore_sc = utility::pointer::make_shared< protocols::simple_moves::ReturnSidechainMover >( pose );
 		protocols::moves::MoverOP tocen( new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID ) );
 		tocen->apply( pose );
 	}
@@ -206,7 +206,7 @@ void IdealizeHelicesMover::apply( core::pose::Pose & pose ) {
 
 			// add CSTS
 			for ( Size iatom = 1; iatom <= 4; ++iatom ) {
-				ideal_pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new CoordinateConstraint( AtomID(iatom,resid), AtomID(1,vrt_index), x_j, core::scoring::func::FuncOP( new BoundFunc(0.0,cst_width_,1.0,"") ) ) ) ) );
+				ideal_pose.add_constraint( utility::pointer::make_shared< CoordinateConstraint >( AtomID(iatom,resid), AtomID(1,vrt_index), x_j, utility::pointer::make_shared< BoundFunc >(0.0,cst_width_,1.0,"") ) );
 			}
 
 			com2 += x_j;
@@ -397,7 +397,7 @@ std::string IdealizeHelicesMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 IdealizeHelicesMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new IdealizeHelicesMover );
+	return utility::pointer::make_shared< IdealizeHelicesMover >();
 }
 
 void IdealizeHelicesMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

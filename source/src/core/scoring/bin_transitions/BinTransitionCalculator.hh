@@ -277,7 +277,7 @@ private: //Private functions:
 	/// @details Each BinTransitionData object stores the BinTransition matrix for a particular i / i+1 pair.  For example,
 	/// there might be one matrix for i=L-amino acid, i+1=L-amino acid, and another for i=D-amino acid, i+1=D-amino acid.
 	BinTransitionDataOP add_bin_transition_data() {
-		bin_transition_data_.push_back( BinTransitionDataOP( new BinTransitionData ) );
+		bin_transition_data_.push_back( utility::pointer::make_shared< BinTransitionData >() );
 		return bin_transition_data_[bin_transition_data_.size()];
 	}
 

@@ -114,7 +114,7 @@ void StructPerturberCM::apply( core::pose::Pose& pose ){
 
 protocols::moves::MoverOP
 StructPerturberCM::clone() const {
-	return protocols::moves::MoverOP( new StructPerturberCM( *this ) );
+	return utility::pointer::make_shared< StructPerturberCM >( *this );
 }
 
 std::string StructPerturberCM::get_name() const {
@@ -150,7 +150,7 @@ std::string StructPerturberCMCreator::keyname() const {
 
 protocols::moves::MoverOP
 StructPerturberCMCreator::create_mover() const {
-	return protocols::moves::MoverOP( new StructPerturberCM );
+	return utility::pointer::make_shared< StructPerturberCM >();
 }
 
 void StructPerturberCMCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

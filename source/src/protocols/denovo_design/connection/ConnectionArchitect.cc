@@ -63,7 +63,7 @@ ConnectionArchitect::~ConnectionArchitect() = default;
 ConnectionArchitectOP
 ConnectionArchitect::clone() const
 {
-	return ConnectionArchitectOP( new ConnectionArchitect( *this ) );
+	return utility::pointer::make_shared< ConnectionArchitect >( *this );
 }
 
 std::string
@@ -557,7 +557,7 @@ ConnectionArchitect::motifs_for_pair(
 
 	// if list is empty, generate a 0-length motif
 	if ( all_motifs.empty() ) {
-		all_motifs.push_back( MotifOP( new Motif( id() ) ) );
+		all_motifs.push_back( utility::pointer::make_shared< Motif >( id() ) );
 	}
 
 	// attach lower and upper terminal segments

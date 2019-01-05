@@ -45,7 +45,7 @@ static basic::Tracer tr( "protocols.pack_interface.ProteinProteinInterfaceUpweig
 core::pack::task::operation::TaskOperationOP
 ProteinProteinInterfaceUpweighterTaskOperationCreator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new ProteinProteinInterfaceUpweighter );
+	return utility::pointer::make_shared< ProteinProteinInterfaceUpweighter >();
 }
 
 void ProteinProteinInterfaceUpweighterTaskOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -74,7 +74,7 @@ ProteinProteinInterfaceUpweighter::~ProteinProteinInterfaceUpweighter() = defaul
 core::pack::task::operation::TaskOperationOP
 ProteinProteinInterfaceUpweighter::clone() const
 {
-	return core::pack::task::operation::TaskOperationOP( new ProteinProteinInterfaceUpweighter(*this) );
+	return utility::pointer::make_shared< ProteinProteinInterfaceUpweighter >(*this);
 }
 
 void

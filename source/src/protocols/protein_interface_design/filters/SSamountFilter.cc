@@ -97,7 +97,7 @@ SSamountFilter::~SSamountFilter() = default;
 
 protocols::filters::FilterOP
 SSamountFilter::clone() const {
-	return protocols::filters::FilterOP( new SSamountFilter( *this ) );
+	return utility::pointer::make_shared< SSamountFilter >( *this );
 }
 
 static basic::Tracer TR( "protocols.protein_interface_design.filters.SSamountFilter" );
@@ -236,7 +236,7 @@ void SSamountFilter::parse_my_tag( utility::tag::TagCOP tag,
 }
 
 // XRW TEMP protocols::filters::FilterOP SSamountFilterCreator::create_filter() const {
-// XRW TEMP  return protocols::filters::FilterOP( new SSamountFilter );
+// XRW TEMP  return utility::pointer::make_shared< SSamountFilter >();
 // XRW TEMP }
 
 // XRW TEMP std::string SSamountFilterCreator::keyname() const {
@@ -270,7 +270,7 @@ std::string SSamountFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 SSamountFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new SSamountFilter );
+	return utility::pointer::make_shared< SSamountFilter >();
 }
 
 void SSamountFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -47,7 +47,7 @@ namespace calc_taskop_filters {
 
 ConservedPosMutationFilter::ConservedPosMutationFilter() :
 	parent("ConservedPosMutationFilter"),
-	conserved_pos_taskop_(task_operations::RestrictConservedLowDdgOperationOP( new task_operations::RestrictConservedLowDdgOperation() )),
+	conserved_pos_taskop_(utility::pointer::make_shared< task_operations::RestrictConservedLowDdgOperation >()),
 	max_allowed_conserved_pos_mutations_(0)
 {
 }
@@ -56,11 +56,11 @@ ConservedPosMutationFilter::~ConservedPosMutationFilter()= default;
 
 filters::FilterOP
 ConservedPosMutationFilter::clone() const {
-	return filters::FilterOP( new ConservedPosMutationFilter( *this ) ); }
+	return utility::pointer::make_shared< ConservedPosMutationFilter >( *this ); }
 
 filters::FilterOP
 ConservedPosMutationFilter::fresh_instance() const {
-	return filters::FilterOP( new ConservedPosMutationFilter() ); }
+	return utility::pointer::make_shared< ConservedPosMutationFilter >(); }
 
 
 bool
@@ -147,7 +147,7 @@ std::string ConservedPosMutationFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 ConservedPosMutationFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new ConservedPosMutationFilter );
+	return utility::pointer::make_shared< ConservedPosMutationFilter >();
 }
 
 void ConservedPosMutationFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

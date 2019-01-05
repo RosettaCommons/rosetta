@@ -208,14 +208,14 @@ AddHelixSequenceConstraintsMover::parse_my_tag(
 moves::MoverOP
 AddHelixSequenceConstraintsMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new AddHelixSequenceConstraintsMover );
+	return utility::pointer::make_shared< AddHelixSequenceConstraintsMover >();
 }
 
 /// @brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
 AddHelixSequenceConstraintsMover::clone() const
 {
-	return protocols::moves::MoverOP( new AddHelixSequenceConstraintsMover( *this ) );
+	return utility::pointer::make_shared< AddHelixSequenceConstraintsMover >( *this );
 }
 
 std::string AddHelixSequenceConstraintsMover::get_name() const {
@@ -719,7 +719,7 @@ AddHelixSequenceConstraintsMover::do_overall_or_alanine_constraints(
 protocols::moves::MoverOP
 AddHelixSequenceConstraintsMoverCreator::create_mover() const
 {
-	return protocols::moves::MoverOP( new AddHelixSequenceConstraintsMover );
+	return utility::pointer::make_shared< AddHelixSequenceConstraintsMover >();
 }
 
 std::string

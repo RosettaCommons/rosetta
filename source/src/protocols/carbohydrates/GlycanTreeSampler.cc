@@ -257,14 +257,14 @@ GlycanTreeSampler::GlycanTreeSampler( GlycanTreeSampler const & src ):
 	if ( src.scorefxn_ ) scorefxn_ = src.scorefxn_->clone();
 
 	if ( src.min_mover_ ) {
-		min_mover_ = protocols::minimization_packing::MinMoverOP( new protocols::minimization_packing::MinMover( *src.min_mover_));
+		min_mover_ = utility::pointer::make_shared< protocols::minimization_packing::MinMover >( *src.min_mover_);
 	}
 	if ( src.packer_ ) {
-		packer_ = PackRotamersMoverOP( new PackRotamersMover( * src.packer_));
+		packer_ = utility::pointer::make_shared< PackRotamersMover >( * src.packer_);
 	}
 
-	if ( src.linkage_mover_ ) linkage_mover_ = LinkageConformerMoverOP( new LinkageConformerMover( * src.linkage_mover_));
-	if ( src.weighted_random_mover_ ) weighted_random_mover_ = moves::RandomMoverOP( new moves::RandomMover( *src.weighted_random_mover_));
+	if ( src.linkage_mover_ ) linkage_mover_ = utility::pointer::make_shared< LinkageConformerMover >( * src.linkage_mover_);
+	if ( src.weighted_random_mover_ ) weighted_random_mover_ = utility::pointer::make_shared< moves::RandomMover >( *src.weighted_random_mover_);
 	if ( src.tf_ ) tf_ = src.tf_->clone();
 	if ( src.mc_ ) mc_ = src.mc_->clone();
 
@@ -276,7 +276,7 @@ GlycanTreeSampler::GlycanTreeSampler( GlycanTreeSampler const & src ):
 
 protocols::moves::MoverOP
 GlycanTreeSampler::clone() const{
-	return protocols::moves::MoverOP( new GlycanTreeSampler( *this ) );
+	return utility::pointer::make_shared< GlycanTreeSampler >( *this );
 }
 
 
@@ -286,7 +286,7 @@ GlycanTreeSampler::clone() const{
 moves::MoverOP
 GlycanTreeSampler::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new GlycanTreeSampler );
+	return utility::pointer::make_shared< GlycanTreeSampler >();
 }
 
 // XRW TEMP std::string
@@ -329,7 +329,7 @@ GlycanTreeSampler::setup_default_task_factory(utility::vector1< bool > const & g
 	using namespace core::pack::task::operation;
 	using namespace core::select::residue_selector;
 
-	TaskFactoryOP tf = TaskFactoryOP( new TaskFactory());
+	TaskFactoryOP tf = utility::pointer::make_shared< TaskFactory >();
 
 
 
@@ -339,13 +339,13 @@ GlycanTreeSampler::setup_default_task_factory(utility::vector1< bool > const & g
 
 		TR << "Setting up Tree-based packing." << std::endl;
 
-		tf->push_back(InitializeFromCommandlineOP( new InitializeFromCommandline));
-		RandomGlycanFoliageSelectorOP select_random_foliage= RandomGlycanFoliageSelectorOP( new RandomGlycanFoliageSelector(glycan_positions));
-		PreventRepackingRLTOP prevent_repacking = PreventRepackingRLTOP( new PreventRepackingRLT());
+		tf->push_back(utility::pointer::make_shared< InitializeFromCommandline >());
+		RandomGlycanFoliageSelectorOP select_random_foliage= utility::pointer::make_shared< RandomGlycanFoliageSelector >(glycan_positions);
+		PreventRepackingRLTOP prevent_repacking = utility::pointer::make_shared< PreventRepackingRLT >();
 
-		NeighborhoodResidueSelectorOP neighbor_selector = NeighborhoodResidueSelectorOP( new NeighborhoodResidueSelector(select_random_foliage, pack_distance_, true /* include focus */));
+		NeighborhoodResidueSelectorOP neighbor_selector = utility::pointer::make_shared< NeighborhoodResidueSelector >(select_random_foliage, pack_distance_, true /* include focus */);
 
-		OperateOnResidueSubsetOP subset_op = OperateOnResidueSubsetOP( new OperateOnResidueSubset( prevent_repacking, neighbor_selector, true /* flip */));
+		OperateOnResidueSubsetOP subset_op = utility::pointer::make_shared< OperateOnResidueSubset >( prevent_repacking, neighbor_selector, true /* flip */);
 
 
 		//Prevent repacking of virtual residues.  Not sure if they are actually repacked, so we make sure they are not here.
@@ -356,12 +356,12 @@ GlycanTreeSampler::setup_default_task_factory(utility::vector1< bool > const & g
 			}
 		}
 
-		ReturnResidueSubsetSelectorOP store_subset = ReturnResidueSubsetSelectorOP( new ReturnResidueSubsetSelector() );
+		ReturnResidueSubsetSelectorOP store_subset = utility::pointer::make_shared< ReturnResidueSubsetSelector >();
 		store_subset->set_residue_subset( virtual_residues );
-		OperateOnResidueSubsetOP operate_on_virt_subset = OperateOnResidueSubsetOP( new OperateOnResidueSubset( prevent_repacking, store_subset ));
+		OperateOnResidueSubsetOP operate_on_virt_subset = utility::pointer::make_shared< OperateOnResidueSubset >( prevent_repacking, store_subset );
 
 		tf->push_back( subset_op );
-		tf->push_back( RestrictToRepackingOP( new RestrictToRepacking()));
+		tf->push_back( utility::pointer::make_shared< RestrictToRepacking >());
 
 	} else {
 		tf = get_all_glycans_and_neighbor_res_task_factory( glycan_positions );
@@ -483,9 +483,9 @@ GlycanTreeSampler::setup_movers(
 	utility::vector1< bool > const & sugar_bb_subset,
 	utility::vector1< bool > const & subset)
 {
-	ReturnResidueSubsetSelectorOP return_subset_dihedral = ReturnResidueSubsetSelectorOP( new ReturnResidueSubsetSelector( dihedral_subset));
-	ReturnResidueSubsetSelectorOP return_subset_sugarbb =  ReturnResidueSubsetSelectorOP( new ReturnResidueSubsetSelector( sugar_bb_subset));
-	ReturnResidueSubsetSelectorOP return_subset = ReturnResidueSubsetSelectorOP( new ReturnResidueSubsetSelector(subset));
+	ReturnResidueSubsetSelectorOP return_subset_dihedral = utility::pointer::make_shared< ReturnResidueSubsetSelector >( dihedral_subset);
+	ReturnResidueSubsetSelectorOP return_subset_sugarbb =  utility::pointer::make_shared< ReturnResidueSubsetSelector >( sugar_bb_subset);
+	ReturnResidueSubsetSelectorOP return_subset = utility::pointer::make_shared< ReturnResidueSubsetSelector >(subset);
 	MoveMapOP min_mover_movemap = core::pose::carbohydrates::create_glycan_movemap_from_residue_selector(
 		pose,
 		return_subset,
@@ -514,12 +514,12 @@ GlycanTreeSampler::setup_movers(
 	}
 
 
-	weighted_random_mover_ = RandomMoverOP(new RandomMover);
+	weighted_random_mover_ = utility::pointer::make_shared< RandomMover >();
 
 	//////        //////
 	// Linkage Movers //
 	//////        //////
-	linkage_mover_ = LinkageConformerMoverOP( new LinkageConformerMover( return_subset_dihedral ));
+	linkage_mover_ = utility::pointer::make_shared< LinkageConformerMover >( return_subset_dihedral );
 	linkage_mover_->set_use_conformer_population_stats(population_based_conformer_sampling_); //Uniform sampling of conformers.
 	linkage_mover_->set_x_standard_deviations( conformer_sd_ );
 	linkage_mover_->set_prob_sd_sampling(! uniform_conformer_sd_sampling_);
@@ -531,10 +531,10 @@ GlycanTreeSampler::setup_movers(
 	//////        //////
 	core::Real sugar_bb_offset = 0;
 	if ( count_selected( sugar_bb_subset ) != 0 ) {
-		BBDihedralSamplerMoverOP sugar_sampler_mover = BBDihedralSamplerMoverOP( new BBDihedralSamplerMover );
-		SugarBBSamplerOP phi_sugar_sampler = SugarBBSamplerOP( new SugarBBSampler( core::id::phi_dihedral ) );
-		SugarBBSamplerOP psi_sugar_sampler = SugarBBSamplerOP( new SugarBBSampler( core::id::psi_dihedral ) );
-		SugarBBSamplerOP omega_sugar_sampler = SugarBBSamplerOP( new SugarBBSampler( core::id::omega_dihedral) );
+		BBDihedralSamplerMoverOP sugar_sampler_mover = utility::pointer::make_shared< BBDihedralSamplerMover >();
+		SugarBBSamplerOP phi_sugar_sampler = utility::pointer::make_shared< SugarBBSampler >( core::id::phi_dihedral );
+		SugarBBSamplerOP psi_sugar_sampler = utility::pointer::make_shared< SugarBBSampler >( core::id::psi_dihedral );
+		SugarBBSamplerOP omega_sugar_sampler = utility::pointer::make_shared< SugarBBSampler >( core::id::omega_dihedral);
 
 		sugar_sampler_mover->add_sampler( phi_sugar_sampler );
 		sugar_sampler_mover->add_sampler( psi_sugar_sampler );
@@ -562,9 +562,9 @@ GlycanTreeSampler::setup_movers(
 	//////        //////
 	// SmallBB Movers //
 	//////        //////
-	BBDihedralSamplerMoverOP glycan_small_mover = BBDihedralSamplerMoverOP( new BBDihedralSamplerMover() );
-	BBDihedralSamplerMoverOP glycan_medium_mover= BBDihedralSamplerMoverOP( new BBDihedralSamplerMover() );
-	BBDihedralSamplerMoverOP glycan_large_mover = BBDihedralSamplerMoverOP( new BBDihedralSamplerMover() );
+	BBDihedralSamplerMoverOP glycan_small_mover = utility::pointer::make_shared< BBDihedralSamplerMover >();
+	BBDihedralSamplerMoverOP glycan_medium_mover= utility::pointer::make_shared< BBDihedralSamplerMover >();
+	BBDihedralSamplerMoverOP glycan_large_mover = utility::pointer::make_shared< BBDihedralSamplerMover >();
 
 	glycan_small_mover->set_residue_selector(  return_subset_dihedral );
 	glycan_medium_mover->set_residue_selector(  return_subset_dihedral );
@@ -585,9 +585,9 @@ GlycanTreeSampler::setup_movers(
 	for ( core::Size i =1; i <= max_glycan_dihedrals; ++i ) {
 		auto dih_type = static_cast< core::id::MainchainTorsionType >( i );
 
-		SmallBBSamplerOP small_sampler = SmallBBSamplerOP( new SmallBBSampler( dih_type, 30 ) ); // +/- 15 degrees
-		SmallBBSamplerOP medium_sampler= SmallBBSamplerOP( new SmallBBSampler( dih_type, 90 ) ); // +/- 45 degrees
-		SmallBBSamplerOP large_sampler = SmallBBSamplerOP( new SmallBBSampler( dih_type, 180) ); // +/- 90 degrees
+		SmallBBSamplerOP small_sampler = utility::pointer::make_shared< SmallBBSampler >( dih_type, 30 ); // +/- 15 degrees
+		SmallBBSamplerOP medium_sampler= utility::pointer::make_shared< SmallBBSampler >( dih_type, 90 ); // +/- 45 degrees
+		SmallBBSamplerOP large_sampler = utility::pointer::make_shared< SmallBBSampler >( dih_type, 180); // +/- 90 degrees
 
 		glycan_small_mover->add_sampler( small_sampler );
 		glycan_medium_mover->add_sampler( medium_sampler );
@@ -600,7 +600,7 @@ GlycanTreeSampler::setup_movers(
 	//////    //////
 	// Min Movers //
 	//////    //////
-	min_mover_ = MinMoverOP( new MinMover( min_mover_movemap->clone(), scorefxn_, "dfpmin_armijo_nonmonotone", 0.01, true /* use_nblist*/ ) );
+	min_mover_ = utility::pointer::make_shared< MinMover >( min_mover_movemap->clone(), scorefxn_, "dfpmin_armijo_nonmonotone", 0.01, true /* use_nblist*/ );
 
 	if ( (! option [OptionKeys::run::nblist_autoupdate].user()) && (! option [OptionKeys::run::nblist_autoupdate]() ) ) {
 		min_mover_->min_options()->nblist_auto_update( true );
@@ -617,7 +617,7 @@ GlycanTreeSampler::setup_movers(
 	if ( tree_based_min_pack_ ) {
 		min_pack_weight = .10;
 
-		GlycanTreeMinMoverOP tree_min_mover = GlycanTreeMinMoverOP( new GlycanTreeMinMover() );
+		GlycanTreeMinMoverOP tree_min_mover = utility::pointer::make_shared< GlycanTreeMinMover >();
 		tree_min_mover->set_minmover(min_mover_);
 		tree_min_mover->set_min_rings(min_rings_);
 		tree_min_mover->set_residue_selector(return_subset);
@@ -642,8 +642,8 @@ GlycanTreeSampler::setup_packer(
 
 	//Setup pack rotamers mover, add it.
 	PackRotamersMoverOP tree_packer;
-	packer_     = PackRotamersMoverOP( new PackRotamersMover() );
-	tree_packer = PackRotamersMoverOP( new PackRotamersMover() );
+	packer_     = utility::pointer::make_shared< PackRotamersMover >();
+	tree_packer = utility::pointer::make_shared< PackRotamersMover >();
 	packer_->score_function(scorefxn_);
 	tree_packer->score_function(scorefxn_);
 
@@ -676,7 +676,7 @@ GlycanTreeSampler::init_objects(core::pose::Pose & pose ){
 	setup_score_function();
 	scorefxn_->score(pose);
 
-	if ( ! selector_ ) selector_ = GlycanResidueSelectorOP( new GlycanResidueSelector());
+	if ( ! selector_ ) selector_ = utility::pointer::make_shared< GlycanResidueSelector >();
 
 	// Make sure our selector is symmetrical.  We don't extra non-symmetric DOFs moving (BBSampler/SugarBBSampler/Conformer) machinery.
 	utility::vector1< bool > subset = selector_->apply(pose );
@@ -751,7 +751,7 @@ GlycanTreeSampler::apply( core::pose::Pose& pose ){
 	TR << "Total Rounds = "<< total_rounds << " ( " << total_glycan_residues_ << " glycans * " << rounds_ << " )"<<std::endl;
 
 	bool accepted = false;
-	mc_ = MonteCarloOP( new MonteCarlo(pose, *scorefxn_, kt_) );
+	mc_ = utility::pointer::make_shared< MonteCarlo >(pose, *scorefxn_, kt_);
 	mc_->set_last_accepted_pose(pose);
 	core::Real energy_pre_move = 0;
 
@@ -840,7 +840,7 @@ std::string GlycanTreeSamplerCreator::keyname() const {
 
 protocols::moves::MoverOP
 GlycanTreeSamplerCreator::create_mover() const {
-	return protocols::moves::MoverOP( new GlycanTreeSampler );
+	return utility::pointer::make_shared< GlycanTreeSampler >();
 }
 
 void GlycanTreeSamplerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

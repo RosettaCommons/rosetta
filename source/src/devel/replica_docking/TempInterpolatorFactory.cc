@@ -50,12 +50,12 @@ TempInterpolatorFactory::new_tempInterpolator( utility::tag::TagCOP tag, core::S
 	}
 	std::string curve = tag->getOption< std::string >( "curve" );
 	if ( curve == "const" ) {
-		return TempInterpolatorBaseOP( new TempFixValue( tag->getOption< core::Real >( "value" ) ) );
+		return utility::pointer::make_shared< TempFixValue >( tag->getOption< core::Real >( "value" ) );
 	} else {
 		if ( tag->hasOption( "start" ) && tag->hasOption( "end" ) ) {
 			auto start = tag->getOption< core::Real >( "start" );
 			auto end = tag->getOption< core::Real >( "end" );
-			return TempInterpolatorBaseOP( new TempInterpolator( n_levels, start, end, curve ) );
+			return utility::pointer::make_shared< TempInterpolator >( n_levels, start, end, curve );
 		} else {
 			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Error: start and end value must be given for linear and expotential interpolation !" );
 		}

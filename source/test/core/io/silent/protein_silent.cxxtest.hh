@@ -340,7 +340,7 @@ public:
 		TS_ASSERT( ss->has_energy( "short_key" ) );
 		TS_ASSERT_DELTA( ss->get_energy( "short_key" ), 0.0, 1e-5 );
 		// add checks for filling Pose here.
-		ss = SilentStructOP( new ProteinSilentStruct( opts, *start_pose, "tag", false ) );
+		ss = utility::pointer::make_shared< ProteinSilentStruct >( opts, *start_pose, "tag", false );
 
 		ss->add_comment( "comment", "tag" );
 		TS_ASSERT_EQUALS( ss->get_comment( "comment" ), "tag" );

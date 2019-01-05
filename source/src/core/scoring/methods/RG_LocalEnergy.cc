@@ -48,7 +48,7 @@ methods::EnergyMethodOP
 RG_LocalEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new RG_LocalEnergy );
+	return utility::pointer::make_shared< RG_LocalEnergy >();
 }
 
 ScoreTypes
@@ -62,7 +62,7 @@ RG_LocalEnergyCreator::score_types_for_method() const {
 /// was going to have this read in the blueprint. But core can't relly on something in protocols.
 //RG_LocalEnergy::RG_LocalEnergy():RG_Energy_Fast()
 RG_LocalEnergy::RG_LocalEnergy():
-	RG_Energy_Fast( EnergyMethodCreatorOP( new RG_LocalEnergyCreator ) )
+	RG_Energy_Fast( utility::pointer::make_shared< RG_LocalEnergyCreator >() )
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -90,7 +90,7 @@ RG_LocalEnergy::RG_LocalEnergy():
 EnergyMethodOP
 RG_LocalEnergy::clone() const
 {
-	return EnergyMethodOP( new RG_LocalEnergy() );
+	return utility::pointer::make_shared< RG_LocalEnergy >();
 }
 
 /////////////////////////////////////////////////////////////////////////////

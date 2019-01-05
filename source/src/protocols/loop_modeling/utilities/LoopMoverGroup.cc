@@ -51,7 +51,7 @@ LoopMoverOP LoopMoverGroup::add_mover(LoopMoverOP mover) { // {{{1
 }
 
 LoopMoverOP LoopMoverGroup::add_filter(protocols::filters::FilterOP filter) { // {{{1
-	return add_mover(LoopMoverOP( new utilities::LoopFilter(filter) ));
+	return add_mover(utility::pointer::make_shared< utilities::LoopFilter >(filter));
 }
 
 LoopMoverGroupOP LoopMoverGroup::add_mover_group() { // {{{1

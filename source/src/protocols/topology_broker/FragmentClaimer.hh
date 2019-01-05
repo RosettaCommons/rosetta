@@ -60,7 +60,7 @@ public:
 	FragmentClaimerOP shared_from_this() { return utility::pointer::dynamic_pointer_cast<FragmentClaimer>( TopologyClaimer::shared_from_this() ); }
 
 	TopologyClaimerOP clone() const override {
-		return TopologyClaimerOP( new FragmentClaimer( *this ) );
+		return utility::pointer::make_shared< FragmentClaimer >( *this );
 	}
 
 	void generate_claims( claims::DofClaims& ) override;

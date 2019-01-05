@@ -75,7 +75,7 @@ generate_sequence_binary_alphabet( core::Size length ){
 		}
 	}
 
-	return SequenceMetricOP( new SequenceMetric( sequence ) );
+	return utility::pointer::make_shared< SequenceMetric >( sequence );
 }
 
 

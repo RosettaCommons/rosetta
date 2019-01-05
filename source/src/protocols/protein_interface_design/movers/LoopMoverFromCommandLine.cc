@@ -82,7 +82,7 @@ static basic::Tracer TR_report( "protocols.moves.LoopRemodelFromCommandLine.REPO
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP LoopMoverFromCommandLineCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new LoopMoverFromCommandLine );
+// XRW TEMP  return utility::pointer::make_shared< LoopMoverFromCommandLine >();
 // XRW TEMP }
 
 // XRW TEMP std::string LoopMoverFromCommandLine::mover_name()
@@ -96,7 +96,7 @@ LoopMoverFromCommandLine::~LoopMoverFromCommandLine() = default;
 protocols::moves::MoverOP
 LoopMoverFromCommandLine::clone() const
 {
-	return( protocols::moves::MoverOP( new LoopMoverFromCommandLine( *this ) ) );
+	return( utility::pointer::make_shared< LoopMoverFromCommandLine >( *this ) );
 }
 
 
@@ -134,7 +134,7 @@ LoopMoverFromCommandLine::LoopMoverFromCommandLine(
 	hires_score_ = hires_score;
 	lores_score = lores_score->clone();
 	loop_file_name_= loop_file_name;
-	loops_ = protocols::loops::LoopsOP( new protocols::loops::Loops( *loops ) );
+	loops_ = utility::pointer::make_shared< protocols::loops::Loops >( *loops );
 	design(false);
 }
 
@@ -159,9 +159,9 @@ LoopMoverFromCommandLine::apply ( core::pose::Pose & pose)
 	}
 	if ( loops->size() > 0 ) {
 		core::pack::task::TaskFactoryOP task_factory( new core::pack::task::TaskFactory );
-		task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
-		task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::IncludeCurrent ) );
-		task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::NoRepackDisulfides ) );
+		task_factory->push_back( utility::pointer::make_shared< core::pack::task::operation::InitializeFromCommandline >() );
+		task_factory->push_back( utility::pointer::make_shared< core::pack::task::operation::IncludeCurrent >() );
+		task_factory->push_back( utility::pointer::make_shared< core::pack::task::operation::NoRepackDisulfides >() );
 		// set up temporary fold tree for loop closure
 		TR.Debug << "Original FoldTree " << pose.fold_tree() << std::endl;
 		core::kinematics::FoldTree old_ft( pose.fold_tree() );
@@ -197,7 +197,7 @@ LoopMoverFromCommandLine::apply ( core::pose::Pose & pose)
 			if ( protocol_ == "kinematic" ) {
 				if ( perturb_ ) {
 					protocols::loops::loop_mover::perturb::LoopMover_Perturb_KIC perturb(single_loop, lores_score_ );
-					perturb.set_native_pose( core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose ( native_pose ) ) ) );
+					perturb.set_native_pose( core::pose::PoseCOP( utility::pointer::make_shared< core::pose::Pose > ( native_pose ) ) );
 					perturb.apply( pose );
 				}
 				core::util::switch_to_residue_type_set( pose, core::chemical::FULL_ATOM_t );
@@ -205,7 +205,7 @@ LoopMoverFromCommandLine::apply ( core::pose::Pose & pose)
 				if ( refine_ ) {
 					protocols::loops::loop_mover::refine::LoopMover_Refine_KIC refine( single_loop, hires_score_ );
 					refine.set_redesign_loop(false); // design?
-					refine.set_native_pose( core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose ( native_pose ) ) ) );
+					refine.set_native_pose( core::pose::PoseCOP( utility::pointer::make_shared< core::pose::Pose > ( native_pose ) ) );
 					pose.update_residue_neighbors();
 					refine.apply( pose );
 				}
@@ -225,7 +225,7 @@ LoopMoverFromCommandLine::apply ( core::pose::Pose & pose)
 						perturb.add_fragments( frag_libs[i] );
 					}
 					perturb.set_strict_loops( true );
-					perturb.set_native_pose( core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose ( native_pose ) ) ) );
+					perturb.set_native_pose( core::pose::PoseCOP( utility::pointer::make_shared< core::pose::Pose > ( native_pose ) ) );
 					perturb.apply( pose );
 				}
 				core::util::switch_to_residue_type_set( pose, core::chemical::FULL_ATOM_t );
@@ -237,7 +237,7 @@ LoopMoverFromCommandLine::apply ( core::pose::Pose & pose)
 					}
 					//core::pack::task::PackerTaskOP task = task_factory->create_task_and_apply_taskoperations( pose );
 					refine.set_redesign_loop( false );
-					refine.set_native_pose( core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose ( native_pose ) ) ) );
+					refine.set_native_pose( core::pose::PoseCOP( utility::pointer::make_shared< core::pose::Pose > ( native_pose ) ) );
 					refine.apply( pose );
 				}//refine
 			}//ccd
@@ -314,7 +314,7 @@ std::string LoopMoverFromCommandLineCreator::keyname() const {
 
 protocols::moves::MoverOP
 LoopMoverFromCommandLineCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LoopMoverFromCommandLine );
+	return utility::pointer::make_shared< LoopMoverFromCommandLine >();
 }
 
 void LoopMoverFromCommandLineCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

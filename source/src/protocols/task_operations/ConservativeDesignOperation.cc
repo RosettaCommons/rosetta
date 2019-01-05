@@ -115,7 +115,7 @@ ConservativeDesignOperation::set_data_source( std::string const & data_source ) 
 core::pack::task::operation::TaskOperationOP
 ConservativeDesignOperation::clone() const
 {
-	return core::pack::task::operation::TaskOperationOP( new ConservativeDesignOperation( *this ) );
+	return utility::pointer::make_shared< ConservativeDesignOperation >( *this );
 }
 
 ConservativeDesignOperation::ConservativeDesignOperation(ConservativeDesignOperation const & rhs): core::pack::task::operation::TaskOperation(rhs)

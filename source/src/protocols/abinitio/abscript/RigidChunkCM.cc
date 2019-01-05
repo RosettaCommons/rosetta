@@ -87,7 +87,7 @@ using namespace protocols::environment;
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP RigidChunkCMCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new RigidChunkCM );
+// XRW TEMP  return utility::pointer::make_shared< RigidChunkCM >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -156,7 +156,7 @@ RigidChunkCM::RigidChunkCM(
 	core::pose::Pose const& template_pose
 ):
 	Parent(),
-	template_( core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose(template_pose) ) ) ),
+	template_( utility::pointer::make_shared< core::pose::Pose >(template_pose) ),
 	sim_selector_( selector ),
 	templ_selector_( selector ),
 	xml_name_("")
@@ -301,7 +301,7 @@ void RigidChunkCM::configure(
 
 	if ( !template_ ) {
 		tr.Debug << "Building template from broker-time pose." << std::endl;
-		template_ = core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose( in_p ) ) );
+		template_ = utility::pointer::make_shared< core::pose::Pose >( in_p );
 	}
 
 	utility::vector1< bool > templ_selection = templ_selector()->apply( templ() );
@@ -463,7 +463,7 @@ claims::EnvClaims RigidChunkCM::yield_claims( core::pose::Pose const& in_p,
 		tr.Debug << this->get_name() << ": built support XYZClaim for " << supp_region.first << "-" << supp_region.second
 			<< " in " << "BASE" << std::endl;
 
-		claims.push_back( protocols::environment::claims::EnvClaimOP( new CutBiasClaim( this_ptr, "BASE", excl_region, 0.0 ) ) );
+		claims.push_back( utility::pointer::make_shared< CutBiasClaim >( this_ptr, "BASE", excl_region, 0.0 ) );
 
 		if ( prev_region.first != 0 && prev_region.second != 0 ) {
 			core::Size const jump_start = prev_region.first + ( ( prev_region.second - prev_region.first ) / 2 );
@@ -882,7 +882,7 @@ void RigidChunkCM::passport_updated() {
 }
 
 moves::MoverOP RigidChunkCM::clone() const {
-	return moves::MoverOP( new RigidChunkCM( *this ) );
+	return utility::pointer::make_shared< RigidChunkCM >( *this );
 }
 
 std::string RigidChunkCM::get_name() const {
@@ -931,7 +931,7 @@ std::string RigidChunkCMCreator::keyname() const {
 
 protocols::moves::MoverOP
 RigidChunkCMCreator::create_mover() const {
-	return protocols::moves::MoverOP( new RigidChunkCM );
+	return utility::pointer::make_shared< RigidChunkCM >();
 }
 
 void RigidChunkCMCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

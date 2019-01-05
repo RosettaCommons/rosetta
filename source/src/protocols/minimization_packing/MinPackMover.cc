@@ -65,7 +65,7 @@ static basic::Tracer TR( "protocols.minimization_packing.MinPackMover" );
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP MinPackMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new MinPackMover );
+// XRW TEMP  return utility::pointer::make_shared< MinPackMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -243,14 +243,14 @@ MinPackMover::parse_task_operations(
 protocols::moves::MoverOP
 MinPackMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new MinPackMover );
+	return utility::pointer::make_shared< MinPackMover >();
 }
 
 /// @brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
 MinPackMover::clone() const
 {
-	return protocols::moves::MoverOP( new protocols::minimization_packing::MinPackMover( *this ) );
+	return utility::pointer::make_shared< protocols::minimization_packing::MinPackMover >( *this );
 }
 
 
@@ -320,7 +320,7 @@ std::string MinPackMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 MinPackMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MinPackMover );
+	return utility::pointer::make_shared< MinPackMover >();
 }
 
 void MinPackMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -50,7 +50,7 @@ void MMTOffRotamerPackingJob::setup()
 void MMTOffRotamerPackingJob::optimize()
 {
 
-	best_assignment_ = core::pack::scmin::SidechainStateAssignmentOP( new core::pack::scmin::SidechainStateAssignment( rotsets_->nmoltenres() ) );
+	best_assignment_ = utility::pointer::make_shared< core::pack::scmin::SidechainStateAssignment >( rotsets_->nmoltenres() );
 
 	core::pack::off_rotamer_pack_optimize( pose(), sfxn(), *rotsets_, atc_, *ig_, *best_assignment_ );
 

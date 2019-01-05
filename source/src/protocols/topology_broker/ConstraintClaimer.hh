@@ -61,7 +61,7 @@ public:
 	ConstraintClaimer( bool CmdFlag, bool centroid = true, bool fullatom = false );
 
 	TopologyClaimerOP clone() const override {
-		return TopologyClaimerOP( new ConstraintClaimer( *this ) );
+		return utility::pointer::make_shared< ConstraintClaimer >( *this );
 	}
 
 	void generate_claims( claims::DofClaims& ) override;

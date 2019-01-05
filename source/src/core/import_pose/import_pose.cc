@@ -927,7 +927,7 @@ initialize_pose_and_other_poses_from_options_and_input_poses(
 		runtime_assert( input_res_count == input_res_list.size() );
 	}
 
-	if ( input_poses.size() == 0 ) input_poses.push_back( core::pose::PoseOP( new Pose ) ); // just a blank pose for now.
+	if ( input_poses.size() == 0 ) input_poses.push_back( utility::pointer::make_shared< Pose >() ); // just a blank pose for now.
 
 	if ( options[ full_model::other_poses ].user() ) {
 		get_other_poses( input_poses, options[ full_model::other_poses ](), rsd_set );
@@ -1172,7 +1172,7 @@ setup_water_bank_for_magnesiums( std::map< Size, std::string > & non_standard_re
 		id << " w:" << extra_water_number;
 	}
 
-	fasta_sequences.push_back( SequenceOP( new Sequence( sequence, id.str() ) ) );
+	fasta_sequences.push_back( utility::pointer::make_shared< Sequence >( sequence, id.str() ) );
 }
 
 void
@@ -1232,7 +1232,7 @@ look_for_dna( vector1< core::sequence::SequenceOP > & fasta_sequences )
 				sequence_new.append( fullname_list_new[ k ] );
 				sequence_new.push_back( ']' );
 			}
-			fasta_sequences[ n ] = SequenceOP( new Sequence( sequence_new, id ) );
+			fasta_sequences[ n ] = utility::pointer::make_shared< Sequence >( sequence_new, id );
 		}
 	}
 }

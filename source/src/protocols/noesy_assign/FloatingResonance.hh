@@ -57,7 +57,7 @@ public:
 	~FloatingResonance() override;
 
 	ResonanceOP clone() override {
-		return ResonanceOP( new FloatingResonance( *this ) );
+		return utility::pointer::make_shared< FloatingResonance >( *this );
 	}
 
 	core::Real pmatch( core::Real peakfreq, core::Real error, FoldResonance const& folder ) const override;

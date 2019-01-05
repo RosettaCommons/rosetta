@@ -93,7 +93,7 @@ PerResidueDensityFitMetric::PerResidueDensityFitMetric( PerResidueDensityFitMetr
 
 core::simple_metrics::SimpleMetricOP
 PerResidueDensityFitMetric::clone() const {
-	return core::simple_metrics::SimpleMetricOP(new PerResidueDensityFitMetric( *this ) );
+	return utility::pointer::make_shared< PerResidueDensityFitMetric >( *this );
 
 }
 
@@ -332,7 +332,7 @@ PerResidueDensityFitMetricCreator::keyname() const {
 
 core::simple_metrics::SimpleMetricOP
 PerResidueDensityFitMetricCreator::create_simple_metric() const {
-	return core::simple_metrics::SimpleMetricOP( new PerResidueDensityFitMetric );
+	return utility::pointer::make_shared< PerResidueDensityFitMetric >();
 
 }
 

@@ -71,7 +71,7 @@ CompleteConnectionsFilter::parse_my_tag( utility::tag::TagCOP tag, basic::dataca
 }
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP CompleteConnectionsFilterCreator::create_filter() const { return protocols::filters::FilterOP( new CompleteConnectionsFilter ); }
+// XRW TEMP CompleteConnectionsFilterCreator::create_filter() const { return utility::pointer::make_shared< CompleteConnectionsFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP CompleteConnectionsFilterCreator::keyname() const { return "CompleteConnections"; }
@@ -100,7 +100,7 @@ std::string CompleteConnectionsFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 CompleteConnectionsFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new CompleteConnectionsFilter );
+	return utility::pointer::make_shared< CompleteConnectionsFilter >();
 }
 
 void CompleteConnectionsFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -65,7 +65,7 @@ PackingState::create_packer_data(
 )
 {
 	ptask_p_ = ptask;
-	rotamersets_p_ = core::pack::rotamer_set::RotamerSetsOP( new RotamerSets() );
+	rotamersets_p_ = utility::pointer::make_shared< RotamerSets >();
 	debug_assert( scorefxn && ptask_p_ && rotamersets_p_ );
 
 	AnnealableGraphBaseOP ig;

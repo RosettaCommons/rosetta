@@ -36,7 +36,7 @@ public:
 	FlatHarmonicFunc( Real const x0_in, Real const sd_in, Real const tol_in ): x0_( x0_in ), sd_( sd_in ), tol_( tol_in ){}
 
 	FuncOP
-	clone() const { return FuncOP( new FlatHarmonicFunc( *this ) ); }
+	clone() const { return utility::pointer::make_shared< FlatHarmonicFunc >( *this ); }
 
 	virtual bool operator == ( Func const & other ) const;
 	virtual bool same_type_as_me( Func const & other ) const;

@@ -101,7 +101,7 @@ methods::EnergyMethodOP
 NPDHBondEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
-	return methods::EnergyMethodOP( new NPDHBondEnergy( options.hbond_options() ) );
+	return utility::pointer::make_shared< NPDHBondEnergy >( options.hbond_options() );
 }
 
 ScoreTypes
@@ -119,8 +119,8 @@ NPDHBondEnergyCreator::score_types_for_method() const {
 
 /// ctor
 NPDHBondEnergy::NPDHBondEnergy( HBondOptions const & opts ):
-	parent( methods::EnergyMethodCreatorOP( methods::EnergyMethodCreatorOP( new NPDHBondEnergyCreator ) ) ),
-	options_( HBondOptionsCOP( HBondOptionsOP( new HBondOptions( opts ) ) )),
+	parent( utility::pointer::make_shared< NPDHBondEnergyCreator >() ),
+	options_( utility::pointer::make_shared< HBondOptions >( opts )),
 	database_( HBondDatabase::get_database(opts.params_database_tag()) )
 {
 }
@@ -128,7 +128,7 @@ NPDHBondEnergy::NPDHBondEnergy( HBondOptions const & opts ):
 /// copy ctor
 NPDHBondEnergy::NPDHBondEnergy( NPDHBondEnergy const & src ):
 	parent( src ),
-	options_( HBondOptionsCOP( HBondOptionsOP( new HBondOptions( *src.options_ ) ) )) ,
+	options_( utility::pointer::make_shared< HBondOptions >( *src.options_ )) ,
 	database_( src.database_)
 {
 }
@@ -139,7 +139,7 @@ NPDHBondEnergy::~NPDHBondEnergy() = default;
 methods::EnergyMethodOP
 NPDHBondEnergy::clone() const
 {
-	return methods::EnergyMethodOP( new NPDHBondEnergy( *this ) );
+	return utility::pointer::make_shared< NPDHBondEnergy >( *this );
 }
 
 void

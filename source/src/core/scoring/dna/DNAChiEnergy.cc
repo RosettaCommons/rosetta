@@ -41,7 +41,7 @@ methods::EnergyMethodOP
 DNAChiEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new DNAChiEnergy );
+	return utility::pointer::make_shared< DNAChiEnergy >();
 }
 
 ScoreTypes
@@ -53,7 +53,7 @@ DNAChiEnergyCreator::score_types_for_method() const {
 
 /// ctor
 DNAChiEnergy::DNAChiEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new DNAChiEnergyCreator ) ),
+	parent( utility::pointer::make_shared< DNAChiEnergyCreator >() ),
 	potential_( ScoringManager::get_instance()->get_DNABFormPotential() )
 {}
 
@@ -63,7 +63,7 @@ DNAChiEnergy::~DNAChiEnergy() = default;
 methods::EnergyMethodOP
 DNAChiEnergy::clone() const
 {
-	return methods::EnergyMethodOP( new DNAChiEnergy() );
+	return utility::pointer::make_shared< DNAChiEnergy >();
 }
 
 /////////////////////////////////////////////////////////////////////////////

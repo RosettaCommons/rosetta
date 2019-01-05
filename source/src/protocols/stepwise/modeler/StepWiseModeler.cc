@@ -98,7 +98,7 @@ StepWiseModeler::StepWiseModeler( StepWiseModeler const & src ):
 //////////////////////////////////////////////////////////////////////////////
 StepWiseModelerOP
 StepWiseModeler::clone_modeler() const {
-	return StepWiseModelerOP( new StepWiseModeler( *this ) );
+	return utility::pointer::make_shared< StepWiseModeler >( *this );
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -152,7 +152,7 @@ StepWiseModeler::initialize( pose::Pose & pose ) {
 void
 StepWiseModeler::do_prepacking( core::pose::Pose & pose ) {
 
-	master_packer_ = packer::StepWiseMasterPackerOP( new packer::StepWiseMasterPacker( working_parameters_, options_->get_sampler_options() ) );
+	master_packer_ = utility::pointer::make_shared< packer::StepWiseMasterPacker >( working_parameters_, options_->get_sampler_options() );
 	master_packer_->set_scorefxn( pack_scorefxn_ );
 	master_packer_->initialize( pose );
 
@@ -175,7 +175,7 @@ StepWiseModeler::initialize_constraints( core::pose::Pose & pose ) {
 	if ( pose.constraint_set() ) {
 		total_constraints = pose.constraint_set()->clone();
 	} else {
-		total_constraints = ConstraintSetOP( new core::scoring::constraints::ConstraintSet );
+		total_constraints = utility::pointer::make_shared< core::scoring::constraints::ConstraintSet >();
 	}
 
 	std::istringstream strm( core::pose::full_model_info::const_full_model_info( pose ).full_model_parameters()->cst_string() );

@@ -240,7 +240,7 @@ FilterScanFilter::single_substitution( core::pose::Pose & pose, core::Size const
 	}
 	TR<<"Mutating residue "<<pose.residue( resi ).name3()<<resi<<" to ";
 	protocols::minimization_packing::PackRotamersMoverOP pack;
-	pack = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover( scorefxn(), mutate_residue ) );
+	pack = utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >( scorefxn(), mutate_residue );
 	pack->apply( pose );
 	if ( rtmin() ) {
 		// definition/allocation of RTmin mover must flag dependant, as some scoreterms are incompatable with RTmin initilization
@@ -250,7 +250,7 @@ FilterScanFilter::single_substitution( core::pose::Pose & pose, core::Size const
 			rt.apply( pose );
 		} else {
 			protocols::minimization_packing::RotamerTrialsMinMoverOP rtmin;
-			rtmin = protocols::minimization_packing::RotamerTrialsMinMoverOP( new protocols::minimization_packing::RotamerTrialsMinMover( scorefxn(), *mutate_residue ) );
+			rtmin = utility::pointer::make_shared< protocols::minimization_packing::RotamerTrialsMinMover >( scorefxn(), *mutate_residue );
 			rtmin->apply(pose);
 		}
 	}
@@ -567,18 +567,18 @@ FilterScanFilter::scorefxn( core::scoring::ScoreFunctionOP scorefxn ){
 
 protocols::filters::FilterOP
 FilterScanFilter::fresh_instance() const{
-	return protocols::filters::FilterOP( new FilterScanFilter() );
+	return utility::pointer::make_shared< FilterScanFilter >();
 }
 
 FilterScanFilter::~FilterScanFilter()= default;
 
 protocols::filters::FilterOP
 FilterScanFilter::clone() const{
-	return protocols::filters::FilterOP( new FilterScanFilter( *this ) );
+	return utility::pointer::make_shared< FilterScanFilter >( *this );
 }
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP FilterScanFilterCreator::create_filter() const { return protocols::filters::FilterOP( new FilterScanFilter ); }
+// XRW TEMP FilterScanFilterCreator::create_filter() const { return utility::pointer::make_shared< FilterScanFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP FilterScanFilterCreator::keyname() const { return "FilterScan"; }
@@ -631,7 +631,7 @@ std::string FilterScanFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 FilterScanFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new FilterScanFilter );
+	return utility::pointer::make_shared< FilterScanFilter >();
 }
 
 void FilterScanFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

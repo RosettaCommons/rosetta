@@ -110,7 +110,7 @@ void SingleFragmentMover::apply(core::pose::Pose& pose) {
 		chunks_.clear();
 		probs_.clear();
 		initialize_chunks(current_tree, movable);
-		previous_tree_ = FoldTreeOP( new core::kinematics::FoldTree(current_tree) );
+		previous_tree_ = utility::pointer::make_shared< core::kinematics::FoldTree >(current_tree);
 	}
 
 	// randomly select the insertion position
@@ -137,11 +137,11 @@ void SingleFragmentMover::apply(core::pose::Pose& pose) {
 // XRW TEMP }
 
 protocols::moves::MoverOP SingleFragmentMover::clone() const {
-	return protocols::moves::MoverOP( new SingleFragmentMover(*this) );
+	return utility::pointer::make_shared< SingleFragmentMover >(*this);
 }
 
 protocols::moves::MoverOP SingleFragmentMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new SingleFragmentMover() );
+	return utility::pointer::make_shared< SingleFragmentMover >();
 }
 
 void SingleFragmentMover::parse_my_tag(const utility::tag::TagCOP tag,
@@ -332,7 +332,7 @@ std::string SingleFragmentMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 SingleFragmentMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SingleFragmentMover );
+	return utility::pointer::make_shared< SingleFragmentMover >();
 }
 
 void SingleFragmentMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

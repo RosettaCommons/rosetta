@@ -82,7 +82,7 @@ core::scoring::methods::EnergyMethodOP
 PcsEnergyCreator::create_energy_method(
 	core::scoring::methods::EnergyMethodOptions const &
 ) const {
-	return core::scoring::methods::EnergyMethodOP( new PcsEnergy );
+	return utility::pointer::make_shared< PcsEnergy >();
 }
 
 core::scoring::ScoreTypes
@@ -116,7 +116,7 @@ PcsEnergy::~PcsEnergy()= default;
 
 /// c-tor
 PcsEnergy::PcsEnergy() :
-	parent( core::scoring::methods::EnergyMethodCreatorOP( new PcsEnergyCreator ) )
+	parent( utility::pointer::make_shared< PcsEnergyCreator >() )
 {
 	// TR_PcsEnergy << "constructor called" << std::endl;
 }
@@ -125,7 +125,7 @@ PcsEnergy::PcsEnergy() :
 core::scoring::methods::EnergyMethodOP
 PcsEnergy::clone() const{
 	// TR_PcsEnergy << " clone called" << std::endl;
-	return core::scoring::methods::EnergyMethodOP( new PcsEnergy );
+	return utility::pointer::make_shared< PcsEnergy >();
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -191,7 +191,7 @@ PcsEnergy::PCS_multi_data_from_pose(core::pose::Pose & pose) const{
 
 	PcsDataCenterManagerOP pcs_d_c_m_OP;
 
-	pcs_d_c_m_OP = PcsDataCenterManagerOP( new PcsDataCenterManager() );
+	pcs_d_c_m_OP = utility::pointer::make_shared< PcsDataCenterManager >();
 
 	for ( i_multi_data = 1; i_multi_data <= n_multi_data; ++i_multi_data ) {
 
@@ -227,7 +227,7 @@ PcsEnergy::PCS_multi_data_from_pose(core::pose::Pose & pose) const{
 		//   PcsDataCenter pcs_d (pcs_i_c, exclude_residues);
 		//pcs_d = PcsDataCenter(pcs_i_c, exclude_residues);
 		//pcs_d = PcsDataCenter(pcs_i_c);
-		pcs_d_c_OP = PcsDataCenterOP( new PcsDataCenter(pcs_i_c, start, end, individual_scale) );
+		pcs_d_c_OP = utility::pointer::make_shared< PcsDataCenter >(pcs_i_c, start, end, individual_scale);
 
 		//(*pcs_d_c_m_OP).get_PCS_data_all().push_back(pcs_d);
 		(*pcs_d_c_m_OP).get_PCS_data_all().push_back(*pcs_d_c_OP);

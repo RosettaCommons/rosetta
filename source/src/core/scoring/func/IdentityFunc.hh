@@ -35,7 +35,7 @@ public:
 
 	FuncOP
 	clone() const {
-		return FuncOP( new IdentityFunc( *this ) );
+		return utility::pointer::make_shared< IdentityFunc >( *this );
 	}
 	virtual bool operator == ( Func const & other ) const;
 	virtual bool same_type_as_me( Func const & other ) const;

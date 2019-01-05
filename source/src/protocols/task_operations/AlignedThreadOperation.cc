@@ -57,7 +57,7 @@ AlignedThreadOperation::~AlignedThreadOperation() = default;
 core::pack::task::operation::TaskOperationOP
 AlignedThreadOperationCreator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new AlignedThreadOperation );
+	return utility::pointer::make_shared< AlignedThreadOperation >();
 }
 
 void AlignedThreadOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -72,7 +72,7 @@ std::string AlignedThreadOperationCreator::keyname() const
 
 core::pack::task::operation::TaskOperationOP AlignedThreadOperation::clone() const
 {
-	return core::pack::task::operation::TaskOperationOP( new AlignedThreadOperation( *this ) );
+	return utility::pointer::make_shared< AlignedThreadOperation >( *this );
 }
 
 void

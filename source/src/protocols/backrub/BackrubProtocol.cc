@@ -100,10 +100,10 @@ BackrubProtocol::BackrubProtocol():
 	Mover(),
 	scorefxn_(nullptr),
 	main_task_factory_(nullptr),
-	backrubmover_(BackrubMoverOP( new BackrubMover() )),
-	smallmover_(protocols::simple_moves::SmallMoverOP(new protocols::simple_moves::SmallMover())),
-	sidechainmover_(protocols::simple_moves::sidechain_moves::SidechainMoverOP(new protocols::simple_moves::sidechain_moves::SidechainMover())),
-	packrotamersmover_(protocols::minimization_packing::PackRotamersMoverOP(new protocols::minimization_packing::PackRotamersMover())),
+	backrubmover_(utility::pointer::make_shared< BackrubMover >()),
+	smallmover_(utility::pointer::make_shared< protocols::simple_moves::SmallMover >()),
+	sidechainmover_(utility::pointer::make_shared< protocols::simple_moves::sidechain_moves::SidechainMover >()),
+	packrotamersmover_(utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >()),
 	movemap_smallmover_(nullptr),
 	minimize_movemap_(nullptr),
 	packing_operation_(nullptr),
@@ -210,20 +210,20 @@ BackrubProtocol::read_cmd_line_options(){
 
 	core::kinematics::MoveMapOP minimize_movemap = nullptr;
 	if ( option[ OptionKeys::backrub::minimize_movemap ].user() ) {
-		minimize_movemap = core::kinematics::MoveMapOP( new core::kinematics::MoveMap );
+		minimize_movemap = utility::pointer::make_shared< core::kinematics::MoveMap >();
 		minimize_movemap->init_from_file(option[ OptionKeys::backrub::minimize_movemap ]);
 	}
 
 	core::pack::task::operation::TaskOperationCOP packing_operation = nullptr;
 	if ( option[ OptionKeys::packing::resfile ].user() ) {
-		packing_operation = core::pack::task::operation::TaskOperationCOP( new core::pack::task::operation::ReadResfile );
+		packing_operation = utility::pointer::make_shared< core::pack::task::operation::ReadResfile >();
 	}
 
 	core::Real sm_prob = option[ OptionKeys::backrub::sm_prob ];
 	core::kinematics::MoveMapOP movemap_smallmover = nullptr;
 	if ( sm_prob > 0 ) {
 		if ( ! movemap_smallmover_ ) {
-			movemap_smallmover = core::kinematics::MoveMapOP(new core::kinematics::MoveMap );
+			movemap_smallmover = utility::pointer::make_shared< core::kinematics::MoveMap >();
 			movemap_smallmover->init_from_file( basic::options::option[ basic::options::OptionKeys::in::file::movemap ] );
 		}
 	}
@@ -284,12 +284,12 @@ BackrubProtocol::set_scorefunction(core::scoring::ScoreFunctionCOP scorefxn){
 
 protocols::moves::MoverOP
 BackrubProtocol::clone() const {
-	return protocols::moves::MoverOP( new BackrubProtocol( *this ) );
+	return utility::pointer::make_shared< BackrubProtocol >( *this );
 }
 
 protocols::moves::MoverOP
 BackrubProtocol::fresh_instance() const {
-	return protocols::moves::MoverOP( new BackrubProtocol );
+	return utility::pointer::make_shared< BackrubProtocol >();
 }
 
 void BackrubProtocol::set_backrub_mover(BackrubMoverOP backrub_mover){
@@ -307,8 +307,8 @@ BackrubProtocol::finalize_setup(core::pose::Pose & pose){
 	using namespace core::pack::task::operation;
 
 	if ( ! main_task_factory_ ) {
-		main_task_factory_ = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory() );
-		main_task_factory_->push_back( TaskOperationCOP( new operation::InitializeFromCommandline ) );
+		main_task_factory_ = utility::pointer::make_shared< core::pack::task::TaskFactory >();
+		main_task_factory_->push_back( utility::pointer::make_shared< operation::InitializeFromCommandline >() );
 		if ( packing_operation_ ) {
 			main_task_factory_->push_back( packing_operation_ );
 		} else {
@@ -318,7 +318,7 @@ BackrubProtocol::finalize_setup(core::pose::Pose & pose){
 	}
 
 	// C-beta atoms should not be altered during packing because branching atoms are optimized
-	main_task_factory_->push_back( TaskOperationCOP( new operation::PreserveCBeta ) );
+	main_task_factory_->push_back( utility::pointer::make_shared< operation::PreserveCBeta >() );
 
 	// set up the score function and add the bond angle energy term
 
@@ -370,7 +370,7 @@ BackrubProtocol::finalize_setup(core::pose::Pose & pose){
 	backrubmover_->set_pivot_atoms( pivot_atoms_ );
 	backrubmover_->set_min_atoms( min_atoms_ );
 	backrubmover_->set_max_atoms( max_atoms_ );
-	backrubmover_->set_input_pose( core::pose::PoseOP( new core::pose::Pose( pose ) ) );
+	backrubmover_->set_input_pose( utility::pointer::make_shared< core::pose::Pose >( pose ) );
 	backrubmover_->add_mainchain_segments( pose );
 
 }
@@ -734,7 +734,7 @@ std::string BackrubProtocolCreator::keyname() const {
 
 protocols::moves::MoverOP
 BackrubProtocolCreator::create_mover() const {
-	return protocols::moves::MoverOP( new BackrubProtocol );
+	return utility::pointer::make_shared< BackrubProtocol >();
 }
 
 void BackrubProtocolCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -55,10 +55,10 @@ public:
 
 	bool apply( core::pose::Pose const & pose ) const override;
 	filters::FilterOP clone() const override {
-		return filters::FilterOP( new InterfaceHbondsFilter( *this ) );
+		return utility::pointer::make_shared< InterfaceHbondsFilter >( *this );
 	}
 	filters::FilterOP fresh_instance() const override{
-		return filters::FilterOP( new InterfaceHbondsFilter() );
+		return utility::pointer::make_shared< InterfaceHbondsFilter >();
 	}
 	InterfaceHbondsFilter &
 	operator=( InterfaceHbondsFilter const & ot ) {

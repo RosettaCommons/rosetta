@@ -69,7 +69,7 @@ methods::EnergyMethodOP
 OccludedHbondSolEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
-	return methods::EnergyMethodOP( new geometric_solvation::OccludedHbondSolEnergy( options ) );
+	return utility::pointer::make_shared< geometric_solvation::OccludedHbondSolEnergy >( options );
 }
 
 ScoreTypes
@@ -92,7 +92,7 @@ OccludedHbondSolEnergy::OccludedHbondSolEnergy(
 	methods::EnergyMethodOptions const & options,
 	bool const verbose )
 :
-	parent( methods::EnergyMethodCreatorOP( new OccludedHbondSolEnergyCreator ) ),
+	parent( utility::pointer::make_shared< OccludedHbondSolEnergyCreator >() ),
 	atom_type_set_ptr_( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ) ),
 	amp_scaling_factors_(atom_type_set_ptr_->n_atomtypes(), 0),
 	occ_hbond_sol_database_( ScoringManager::get_instance()->get_DatabaseOccSolEne( options.etable_type(), MIN_OCC_ENERGY ) ),
@@ -115,7 +115,7 @@ OccludedHbondSolEnergy::OccludedHbondSolEnergy( OccludedHbondSolEnergy const & s
 methods::EnergyMethodOP
 OccludedHbondSolEnergy::clone() const
 {
-	return methods::EnergyMethodOP( new OccludedHbondSolEnergy( *this ) );
+	return utility::pointer::make_shared< OccludedHbondSolEnergy >( *this );
 }
 
 ///

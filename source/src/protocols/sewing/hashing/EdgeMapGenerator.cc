@@ -86,7 +86,7 @@ EdgeMapGenerator::~EdgeMapGenerator(){}
 
 EdgeMapGeneratorOP
 EdgeMapGenerator::clone(){
-	return EdgeMapGeneratorOP( new EdgeMapGenerator( *this ) );
+	return utility::pointer::make_shared< EdgeMapGenerator >( *this );
 }
 
 
@@ -112,7 +112,7 @@ void EdgeMapGenerator::initialize_from_options(){
 void EdgeMapGenerator::set_private_data( std::string model_file_name, core::Size boxes_per_dimension, core::Size min_hash_score, core::Size max_clash_score, bool hash_opposite_termini ){
 
 	if ( model_file_name == "" ) {
-		segment_vector_ = SegmentVectorCOP( new SegmentVector );
+		segment_vector_ = utility::pointer::make_shared< SegmentVector >();
 	} else {
 		//Not actually sure what the name of this class/method will be, but let's go with this one
 		segment_vector_ = ModelFileReader::read_model_file( model_file_name );

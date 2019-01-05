@@ -91,7 +91,7 @@ get_loop_close_potential( pose::Pose const & pose,
 
 	// default mode -- derive a GaussianChainFunc that just depends on the distance between
 	//  takeoff atom and landing atom. No orientation dependence.
-	return GaussianChainFuncPotentialEvaluatorOP( new GaussianChainFuncPotentialEvaluator( loop_cycle, loop_fixed_cost, pose ) );
+	return utility::pointer::make_shared< GaussianChainFuncPotentialEvaluator >( loop_cycle, loop_fixed_cost, pose );
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -128,11 +128,11 @@ get_6D_trans_rot_potential_evaluator( LoopCycle const & loop_cycle,
 	}
 	if ( ScoringManager::get_instance()->get_LoopCloseSixDPotential( database_file ) == nullptr ) return nullptr;
 
-	return SixDTransRotPotentialEvaluatorCOP( new SixDTransRotPotentialEvaluator(
+	return utility::pointer::make_shared< SixDTransRotPotentialEvaluator >(
 		takeoff_pos, landing_pos,
 		pose /* needed to check if takeoff/landing of loop is in current pose */ ,
 		loop_fixed_cost,
-		*( ScoringManager::get_instance()->get_LoopCloseSixDPotential( database_file ) ) ) );
+		*( ScoringManager::get_instance()->get_LoopCloseSixDPotential( database_file ) ) );
 }
 
 

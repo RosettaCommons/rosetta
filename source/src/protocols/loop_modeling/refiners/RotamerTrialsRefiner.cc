@@ -38,7 +38,7 @@ using core::pack::task::TaskFactoryOP;
 using core::scoring::ScoreFunctionOP;
 
 // XRW TEMP protocols::moves::MoverOP RotamerTrialsRefinerCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new RotamerTrialsRefiner );
+// XRW TEMP  return utility::pointer::make_shared< RotamerTrialsRefiner >();
 // XRW TEMP }
 
 // XRW TEMP std::string RotamerTrialsRefinerCreator::keyname() const {
@@ -116,7 +116,7 @@ std::string RotamerTrialsRefinerCreator::keyname() const {
 
 protocols::moves::MoverOP
 RotamerTrialsRefinerCreator::create_mover() const {
-	return protocols::moves::MoverOP( new RotamerTrialsRefiner );
+	return utility::pointer::make_shared< RotamerTrialsRefiner >();
 }
 
 void RotamerTrialsRefinerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

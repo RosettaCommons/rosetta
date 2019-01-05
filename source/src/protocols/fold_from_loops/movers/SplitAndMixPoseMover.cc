@@ -119,7 +119,7 @@ SplitAndMixPoseMover::apply( core::pose::Pose & pose )
 			throw CREATE_EXCEPTION(utility::excn::Exception,  "Selector does not match with any residue of the provided pose" );
 		}
 	}
-	pose.pdb_info( core::pose::PDBInfoOP( new core::pose::PDBInfo( pose ) ) );
+	pose.pdb_info( utility::pointer::make_shared< core::pose::PDBInfo >( pose ) );
 	TR << pose.annotated_sequence() << std::endl;
 	TR << pose.fold_tree() << std::endl;
 }
@@ -342,7 +342,7 @@ SplitAndMixPoseMoverCreator::keyname() const {
 }
 protocols::moves::MoverOP
 SplitAndMixPoseMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SplitAndMixPoseMover );
+	return utility::pointer::make_shared< SplitAndMixPoseMover >();
 }
 void
 SplitAndMixPoseMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {

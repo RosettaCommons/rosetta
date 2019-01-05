@@ -37,7 +37,7 @@ static basic::Tracer TR( "protocols.simple_moves.AddJobPairData" );
 
 // XRW TEMP moves::MoverOP AddJobPairDataCreator::create_mover() const
 // XRW TEMP {
-// XRW TEMP  return moves::MoverOP( new AddJobPairData );
+// XRW TEMP  return utility::pointer::make_shared< AddJobPairData >();
 // XRW TEMP }
 
 // XRW TEMP std::string AddJobPairData::mover_name()
@@ -98,12 +98,12 @@ void AddJobPairData::apply( Pose & pose)
 
 moves::MoverOP AddJobPairData::clone() const
 {
-	return moves::MoverOP( new AddJobPairData(*this) );
+	return utility::pointer::make_shared< AddJobPairData >(*this);
 }
 
 moves::MoverOP AddJobPairData::fresh_instance() const
 {
-	return moves::MoverOP( new AddJobPairData );
+	return utility::pointer::make_shared< AddJobPairData >();
 }
 
 void AddJobPairData::parse_my_tag(
@@ -192,7 +192,7 @@ std::string AddJobPairDataCreator::keyname() const {
 
 protocols::moves::MoverOP
 AddJobPairDataCreator::create_mover() const {
-	return protocols::moves::MoverOP( new AddJobPairData );
+	return utility::pointer::make_shared< AddJobPairData >();
 }
 
 void AddJobPairDataCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

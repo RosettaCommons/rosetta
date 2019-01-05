@@ -50,7 +50,7 @@ static basic::Tracer TR( "protocols.forge.remodel.RemodelRotamerLinks", t_info )
 
 TaskOperationOP RemodelRotamerLinksCreator::create_task_operation() const
 {
-	return TaskOperationOP( new RemodelRotamerLinks );
+	return utility::pointer::make_shared< RemodelRotamerLinks >();
 }
 
 void RemodelRotamerLinksCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -67,7 +67,7 @@ RemodelRotamerLinks::~RemodelRotamerLinks() = default;
 
 TaskOperationOP RemodelRotamerLinks::clone() const
 {
-	return TaskOperationOP( new RemodelRotamerLinks( *this ) );
+	return utility::pointer::make_shared< RemodelRotamerLinks >( *this );
 }
 
 RemodelRotamerLinks::RemodelRotamerLinks() = default;

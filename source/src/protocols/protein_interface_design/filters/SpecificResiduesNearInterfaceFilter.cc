@@ -56,7 +56,7 @@ static basic::Tracer TR( "protocols.protein_interface_design.filters.SpecificRes
 ////////////  Creator ////////////////////////
 // XRW TEMP FilterOP
 // XRW TEMP SpecificResiduesNearInterfaceFilterCreator::create_filter() const {
-// XRW TEMP  return FilterOP( new SpecificResiduesNearInterfaceFilter );
+// XRW TEMP  return utility::pointer::make_shared< SpecificResiduesNearInterfaceFilter >();
 // XRW TEMP }
 
 // XRW TEMP string
@@ -84,12 +84,12 @@ SpecificResiduesNearInterfaceFilter::~SpecificResiduesNearInterfaceFilter()= def
 
 FilterOP
 SpecificResiduesNearInterfaceFilter::fresh_instance() const{
-	return FilterOP( new SpecificResiduesNearInterfaceFilter() );
+	return utility::pointer::make_shared< SpecificResiduesNearInterfaceFilter >();
 }
 
 FilterOP
 SpecificResiduesNearInterfaceFilter::clone() const{
-	return FilterOP( new SpecificResiduesNearInterfaceFilter( *this ) );
+	return utility::pointer::make_shared< SpecificResiduesNearInterfaceFilter >( *this );
 }
 
 
@@ -219,7 +219,7 @@ std::string SpecificResiduesNearInterfaceFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 SpecificResiduesNearInterfaceFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new SpecificResiduesNearInterfaceFilter );
+	return utility::pointer::make_shared< SpecificResiduesNearInterfaceFilter >();
 }
 
 void SpecificResiduesNearInterfaceFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

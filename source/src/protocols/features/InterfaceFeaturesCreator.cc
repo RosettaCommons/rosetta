@@ -28,7 +28,7 @@ namespace features {
 // XRW TEMP InterfaceFeaturesCreator::InterfaceFeaturesCreator() {}
 // XRW TEMP InterfaceFeaturesCreator::~InterfaceFeaturesCreator() = default;
 // XRW TEMP FeaturesReporterOP InterfaceFeaturesCreator::create_features_reporter() const {
-// XRW TEMP  return FeaturesReporterOP( new InterfaceFeatures );
+// XRW TEMP  return utility::pointer::make_shared< InterfaceFeatures >();
 // XRW TEMP }
 
 // XRW TEMP std::string InterfaceFeaturesCreator::type_name() const {

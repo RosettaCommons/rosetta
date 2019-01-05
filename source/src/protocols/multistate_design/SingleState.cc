@@ -27,7 +27,7 @@ SingleState::SingleState()
 : utility::pointer::ReferenceCount(),
 	pose_p_(/* 0 */), is_positive_state_(false), best_score_(0.), fitness_function_(nullptr)
 {
-	fitness_function_ = SingleStateFitnessFunctionCOP( SingleStateFitnessFunctionOP( new SingleStateFitnessFunction() ) );
+	fitness_function_ = utility::pointer::make_shared< SingleStateFitnessFunction >();
 }
 
 SingleState::~SingleState()= default;
@@ -36,15 +36,15 @@ SingleState::SingleState( core::pose::Pose const & pose, bool is_positive )
 : utility::pointer::ReferenceCount(),
 	pose_p_(/* 0 */), is_positive_state_( is_positive ), best_score_(0.), fitness_function_(nullptr)
 {
-	pose_p_ = core::pose::PoseOP( new core::pose::Pose );
+	pose_p_ = utility::pointer::make_shared< core::pose::Pose >();
 	*pose_p_ = pose;
-	fitness_function_ = SingleStateFitnessFunctionCOP( SingleStateFitnessFunctionOP( new SingleStateFitnessFunction() ) );
+	fitness_function_ = utility::pointer::make_shared< SingleStateFitnessFunction >();
 }
 
 SingleState::SingleState( SingleState const & other )
 : utility::pointer::ReferenceCount(), pose_p_(/* 0 */), is_positive_state_(false), best_score_(0.), fitness_function_(nullptr)
 {
-	pose_p_ = core::pose::PoseOP( new core::pose::Pose );
+	pose_p_ = utility::pointer::make_shared< core::pose::Pose >();
 	*pose_p_ = other.pose();
 	is_positive_state_ = other.is_positive_state();
 	best_score_ = other.best_score();

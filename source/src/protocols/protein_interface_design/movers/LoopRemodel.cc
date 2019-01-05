@@ -105,7 +105,7 @@ static basic::Tracer TR( "protocols.protein_interface_design.movers.LoopRemodel"
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP LoopRemodelCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new LoopRemodel );
+// XRW TEMP  return utility::pointer::make_shared< LoopRemodel >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -118,7 +118,7 @@ LoopRemodel::~LoopRemodel() = default;
 
 protocols::moves::MoverOP
 LoopRemodel::clone() const {
-	return( protocols::moves::MoverOP( new LoopRemodel( *this ) ) );
+	return( utility::pointer::make_shared< LoopRemodel >( *this ) );
 }
 
 LoopRemodel::LoopRemodel() :
@@ -152,11 +152,11 @@ LoopRemodel::LoopRemodel(
 	hires_score_ = hires_score;
 	lores_score_ = lores_score->clone();
 	if ( loops ) {
-		loops_ = protocols::loops::LoopsOP( new protocols::loops::Loops( *loops ) );
+		loops_ = utility::pointer::make_shared< protocols::loops::Loops >( *loops );
 	}
-	frag1_ = core::fragment::FragSetOP( new core::fragment::ConstantLengthFragSet( *frag1 ) );
-	frag3_ = core::fragment::FragSetOP( new core::fragment::ConstantLengthFragSet( *frag3 ) );
-	frag9_ = core::fragment::FragSetOP( new core::fragment::ConstantLengthFragSet( *frag9 ) );
+	frag1_ = utility::pointer::make_shared< core::fragment::ConstantLengthFragSet >( *frag1 );
+	frag3_ = utility::pointer::make_shared< core::fragment::ConstantLengthFragSet >( *frag3 );
+	frag9_ = utility::pointer::make_shared< core::fragment::ConstantLengthFragSet >( *frag9 );
 }
 
 void
@@ -169,7 +169,7 @@ LoopRemodel::apply( core::pose::Pose & pose )
 
 	LoopsOP loops;
 	if ( loops_ ) {
-		loops = LoopsOP( new protocols::loops::Loops( *loops_ ) ); // Make a copy
+		loops = utility::pointer::make_shared< protocols::loops::Loops >( *loops_ ); // Make a copy
 	} else if ( !loop_start_.empty() && !loop_end_.empty() ) {
 		core::Size loop_start = core::pose::parse_resnum( loop_start_, pose );
 		core::Size loop_end   = core::pose::parse_resnum( loop_end_, pose );
@@ -178,7 +178,7 @@ LoopRemodel::apply( core::pose::Pose & pose )
 		runtime_assert( loop_start > 1 );
 		runtime_assert( loop_end < pose.size() );
 		core::Size const cutpt = (loop_start+loop_end)/2; // put cutpoint in the middle of the loop
-		loops = protocols::loops::LoopsOP( new protocols::loops::Loops );
+		loops = utility::pointer::make_shared< protocols::loops::Loops >();
 		loops->add_loop( protocols::loops::Loop( loop_start, loop_end, cutpt ) );
 	} else {
 		utility_exit_with_message("In LoopRemodel mover - must specify either a Loops definition or a loop start and end.");
@@ -200,9 +200,9 @@ LoopRemodel::apply( core::pose::Pose & pose )
 		add_cutpoint_variants( pose );
 		core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
 		core::pack::task::TaskFactoryOP task_factory( new core::pack::task::TaskFactory );
-		task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
-		task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::IncludeCurrent ) );
-		task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::NoRepackDisulfides ) );
+		task_factory->push_back( utility::pointer::make_shared< core::pack::task::operation::InitializeFromCommandline >() );
+		task_factory->push_back( utility::pointer::make_shared< core::pack::task::operation::IncludeCurrent >() );
+		task_factory->push_back( utility::pointer::make_shared< core::pack::task::operation::NoRepackDisulfides >() );
 		// perturbation and closure
 		if ( hurry_ ) {
 			core::Real mc_kt( 1.0 );
@@ -249,14 +249,14 @@ LoopRemodel::apply( core::pose::Pose & pose )
 					using namespace core::pack::task::operation;
 					OperateOnCertainResiduesOP prevent_repacking_on_certain_res( new OperateOnCertainResidues );
 					prevent_repacking_on_certain_res->residue_indices( prevent_repacking() );
-					prevent_repacking_on_certain_res->op( ResLvlTaskOperationCOP( new PreventRepackingRLT ) );
+					prevent_repacking_on_certain_res->op( utility::pointer::make_shared< PreventRepackingRLT >() );
 					task_factory->push_back( prevent_repacking_on_certain_res );
 				}
 
 				if ( basic::options::option[ basic::options::OptionKeys::packing::resfile ].user() ) {
-					task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::ReadResfile ) );
+					task_factory->push_back( utility::pointer::make_shared< core::pack::task::operation::ReadResfile >() );
 				}
-				if ( !design() ) task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ) );
+				if ( !design() ) task_factory->push_back( utility::pointer::make_shared< core::pack::task::operation::RestrictToRepacking >() );
 				core::pack::task::PackerTaskOP task = task_factory->create_task_and_apply_taskoperations( pose );
 
 				if ( design() ) {
@@ -295,7 +295,7 @@ LoopRemodel::apply( core::pose::Pose & pose )
 						it->set_extended( true ); // set all loops to extended (needed for kinematic mover to really perturb)
 					}
 					protocols::loops::loop_mover::perturb::LoopMover_Perturb_KIC perturb( loops, lores_score_ );
-					perturb.set_native_pose( core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose ( native_pose ) ) ) );
+					perturb.set_native_pose( core::pose::PoseCOP( utility::pointer::make_shared< core::pose::Pose > ( native_pose ) ) );
 					perturb.apply( pose );
 				}
 				core::util::switch_to_residue_type_set( pose, core::chemical::FULL_ATOM_t );
@@ -304,7 +304,7 @@ LoopRemodel::apply( core::pose::Pose & pose )
 					protocols::loops::loop_mover::refine::LoopMover_Refine_KIC refine( loops, hires_score_ );
 					refine.set_redesign_loop( design() ); // design?
 					//if( task_factory() ) refine.set_task_factory( task_factory() ); // if we have a task factory set, then we should pass it to the loop mover
-					refine.set_native_pose( core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose ( native_pose ) ) ) );
+					refine.set_native_pose( core::pose::PoseCOP( utility::pointer::make_shared< core::pose::Pose > ( native_pose ) ) );
 					pose.update_residue_neighbors();
 					refine.apply( pose );
 				}
@@ -331,7 +331,7 @@ LoopRemodel::apply( core::pose::Pose & pose )
 					perturb.add_fragments( frag9_ );
 					//perturb.randomize_loop( true );
 					perturb.set_strict_loops( true );
-					perturb.set_native_pose( core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose ( native_pose ) ) ) );
+					perturb.set_native_pose( core::pose::PoseCOP( utility::pointer::make_shared< core::pose::Pose > ( native_pose ) ) );
 					perturb.apply( pose );
 				}
 				core::util::switch_to_residue_type_set( pose, core::chemical::FULL_ATOM_t );
@@ -343,7 +343,7 @@ LoopRemodel::apply( core::pose::Pose & pose )
 					refine.add_fragments( frag9_ );
 					refine.set_redesign_loop( design() );
 					//if( task_factory() ) refine.set_task_factory( task_factory() ); // if we have a task factory set, then we should pass it to the loop mover
-					refine.set_native_pose( core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose ( native_pose ) ) ) );
+					refine.set_native_pose( core::pose::PoseCOP( utility::pointer::make_shared< core::pose::Pose > ( native_pose ) ) );
 					refine.apply( pose );
 				}
 			} else if ( protocol_ == "remodel" ) { // protocol == ccd
@@ -365,7 +365,7 @@ LoopRemodel::apply( core::pose::Pose & pose )
 				remodel.add_fragments( frag1_ );
 				remodel.add_fragments( frag3_ );
 				remodel.add_fragments( frag9_ );
-				remodel.set_native_pose( core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose ( native_pose ) ) ) );
+				remodel.set_native_pose( core::pose::PoseCOP( utility::pointer::make_shared< core::pose::Pose > ( native_pose ) ) );
 				for ( core::Size i = 1; i <= cycles_; ++i ) {
 					remodel.apply( pose );
 					if ( (remodel.get_last_move_status() == protocols::moves::MS_SUCCESS) || (remodel.get_last_move_status() == protocols::moves::FAIL_DO_NOT_RETRY) ) break;
@@ -394,15 +394,15 @@ LoopRemodel::pick_loop_frags( protocols::loops::LoopsCOP loops_in, std::string c
 	using namespace core::fragment;
 	using namespace protocols::loops;
 
-	LoopsCOP loops( LoopsOP( new Loops( *loops_in ) ) );
+	LoopsCOP loops( utility::pointer::make_shared< Loops >( *loops_in ) );
 	for ( core::Size frag_length = 3; frag_length <= 9; frag_length+=6 ) { // frag3 and frag9
 		TR << "Finding " << frag_length <<"mer loop fragments..." << std::endl;
-		if ( frag_length == 3 ) frag3_ = core::fragment::FragSetOP( new ConstantLengthFragSet( frag_length ) );
-		else if ( frag_length == 9 ) frag9_ = core::fragment::FragSetOP( new ConstantLengthFragSet( frag_length ) );
+		if ( frag_length == 3 ) frag3_ = utility::pointer::make_shared< ConstantLengthFragSet >( frag_length );
+		else if ( frag_length == 9 ) frag9_ = utility::pointer::make_shared< ConstantLengthFragSet >( frag_length );
 
 		for ( auto const & it : *loops ) {
 			// make a temporary loop/loops set to use in this scope
-			LoopCOP loop( LoopOP( new Loop(it ) ) );
+			LoopCOP loop( utility::pointer::make_shared< Loop >(it ) );
 			if ( loop->size() < frag_length ) continue; // fragment extends past loop
 
 			for ( core::Size i=loop->start(); i <= loop->stop() - frag_length; ++i ) {
@@ -437,7 +437,7 @@ LoopRemodel::pick_loop_frags( protocols::loops::LoopsCOP loops_in, std::string c
 		} // for all loops
 	} // frag3 and frag9
 	if ( frag3_->size() ) {
-		frag1_ = core::fragment::FragSetOP( new ConstantLengthFragSet( 1 ) );
+		frag1_ = utility::pointer::make_shared< ConstantLengthFragSet >( 1 );
 		frag1_->add( *protocols::forge::methods::smallmer_from_largemer( frag3_->begin(), frag3_->end(), 1 ) );
 	}
 
@@ -541,7 +541,7 @@ std::string LoopRemodelCreator::keyname() const {
 
 protocols::moves::MoverOP
 LoopRemodelCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LoopRemodel );
+	return utility::pointer::make_shared< LoopRemodel >();
 }
 
 void LoopRemodelCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

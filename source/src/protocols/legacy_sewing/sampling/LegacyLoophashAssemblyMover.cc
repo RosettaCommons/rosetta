@@ -94,11 +94,11 @@ LegacyLoophashAssemblyMoverCreator::mover_name()
 
 protocols::moves::MoverOP
 LegacyLoophashAssemblyMover::clone() const {
-	return( protocols::moves::MoverOP( new LegacyLoophashAssemblyMover( *this ) ) );
+	return( utility::pointer::make_shared< LegacyLoophashAssemblyMover >( *this ) );
 }
 protocols::moves::MoverOP
 LegacyLoophashAssemblyMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new LegacyLoophashAssemblyMover );
+	return utility::pointer::make_shared< LegacyLoophashAssemblyMover >();
 }
 
 std::string

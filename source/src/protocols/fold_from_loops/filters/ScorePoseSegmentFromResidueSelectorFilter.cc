@@ -157,7 +157,7 @@ std::string ScorePoseSegmentFromResidueSelectorFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 ScorePoseSegmentFromResidueSelectorFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new ScorePoseSegmentFromResidueSelectorFilter );
+	return utility::pointer::make_shared< ScorePoseSegmentFromResidueSelectorFilter >();
 }
 
 void ScorePoseSegmentFromResidueSelectorFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

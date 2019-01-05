@@ -122,7 +122,7 @@ ResidueType::ResidueType(
 	first_sidechain_hydrogen_( 0 ),
 	disulfide_atom_name_( "NONE" ),
 	rotamer_library_specification_( nullptr ),
-	properties_( ResiduePropertiesOP( new ResidueProperties( this ) ) ),
+	properties_( utility::pointer::make_shared< ResidueProperties >( this ) ),
 	aa_( aa_unk ),
 	rotamer_aa_( aa_unk ),
 	backbone_aa_( aa_unk ),
@@ -254,7 +254,7 @@ ResidueType::operator=( ResidueType const & residue_type )
 	rotamer_library_specification_ = residue_type.rotamer_library_specification_;
 	lowest_ring_conformer_ = residue_type.lowest_ring_conformer_;
 	low_ring_conformers_ = residue_type.low_ring_conformers_;
-	properties_ = ResiduePropertiesOP( new ResidueProperties( *residue_type.properties_, this ) );
+	properties_ = utility::pointer::make_shared< ResidueProperties >( *residue_type.properties_, this );
 	aa_ = residue_type.aa_;
 	rotamer_aa_ = residue_type.rotamer_aa_;
 	backbone_aa_ = residue_type.backbone_aa_;
@@ -543,7 +543,7 @@ ResidueType::placeholder_clone() const
 	rsd->set_properties( properties );
 	// following would totally work, but needs atom_names -- might be a way to refactor?
 	// if ( properties->has_property( CARBOHYDRATE ) ) {
-	//  rsd->carbohydrate_info_ = carbohydrates::CarbohydrateInfoOP( new carbohydrates::CarbohydrateInfo( get_self_weak_ptr() ) );
+	//  rsd->carbohydrate_info_ = utility::pointer::make_shared< carbohydrates::CarbohydrateInfo >( get_self_weak_ptr() );
 	// }
 	return rsd;
 }
@@ -3726,8 +3726,8 @@ ResidueType::update_derived_data()
 	if ( properties_->has_property( CYCLIC ) ) {
 		conformer_sets_.resize( n_rings() );
 		for ( uint i( 1 ); i <= n_rings(); ++i ) {
-			conformer_sets_[ i ] = rings::RingConformerSetOP( new rings::RingConformerSet(
-				ring_atoms_[ i ].size(), lowest_ring_conformer_[ i ], low_ring_conformers_[ i ] ) );
+			conformer_sets_[ i ] = utility::pointer::make_shared< rings::RingConformerSet >(
+				ring_atoms_[ i ].size(), lowest_ring_conformer_[ i ], low_ring_conformers_[ i ] );
 		}
 	}
 
@@ -3736,7 +3736,7 @@ ResidueType::update_derived_data()
 	if ( properties_->has_property( RNA ) || properties_->has_property( TNA ) ) { //reinitialize and RNA derived data.
 		//Reinitialize rna_info_ object! This also make sure rna_info_ didn't inherit anything from the previous update!
 		//It appears that the rna_info_ is shared across multiple ResidueType object, if the rna_info_ is not reinitialized here!
-		rna_info_ = core::chemical::rna::RNA_InfoOP( new core::chemical::rna::RNA_Info );
+		rna_info_ = utility::pointer::make_shared< core::chemical::rna::RNA_Info >();
 		//update_last_controlling_chi is treated separately for RNA case. Parin Sripakdeevong, June 26, 2011
 		if ( nchi() >= 4 || properties_->has_property( TNA ) ) {
 			// safety against hypothetical RNA RTs without 4 chi AND vs.
@@ -3746,7 +3746,7 @@ ResidueType::update_derived_data()
 		}
 	} else if ( properties_->has_property( CARBOHYDRATE ) ) {
 		carbohydrate_info_ =
-			carbohydrates::CarbohydrateInfoOP( new carbohydrates::CarbohydrateInfo( get_self_weak_ptr() ) );
+			utility::pointer::make_shared< carbohydrates::CarbohydrateInfo >( get_self_weak_ptr() );
 		update_last_controlling_chi();
 	} else {
 		update_last_controlling_chi();

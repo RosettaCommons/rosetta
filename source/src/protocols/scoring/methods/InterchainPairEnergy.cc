@@ -47,7 +47,7 @@ core::scoring::methods::EnergyMethodOP
 InterchainPairEnergyCreator::create_energy_method(
 	core::scoring::methods::EnergyMethodOptions const &
 ) const {
-	return core::scoring::methods::EnergyMethodOP( new InterchainPairEnergy );
+	return utility::pointer::make_shared< InterchainPairEnergy >();
 }
 
 core::scoring::ScoreTypes
@@ -62,7 +62,7 @@ InterchainPairEnergyCreator::score_types_for_method() const {
 
 /// c-tor
 InterchainPairEnergy::InterchainPairEnergy() :
-	parent( core::scoring::methods::EnergyMethodCreatorOP( new InterchainPairEnergyCreator ) ),
+	parent( utility::pointer::make_shared< InterchainPairEnergyCreator >() ),
 	interchain_potential_( * InterchainPotential::get_instance() ),
 	env_potential_( core::scoring::ScoringManager::get_instance()->get_EnvPairPotential() )
 {}
@@ -72,7 +72,7 @@ InterchainPairEnergy::InterchainPairEnergy() :
 core::scoring::methods::EnergyMethodOP
 InterchainPairEnergy::clone() const
 {
-	return core::scoring::methods::EnergyMethodOP( new InterchainPairEnergy() );
+	return utility::pointer::make_shared< InterchainPairEnergy >();
 }
 
 

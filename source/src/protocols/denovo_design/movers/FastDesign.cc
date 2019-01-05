@@ -82,7 +82,7 @@ namespace movers {
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP FastDesignCreator::create_mover() const
 // XRW TEMP {
-// XRW TEMP  return protocols::moves::MoverOP( new FastDesign() );
+// XRW TEMP  return utility::pointer::make_shared< FastDesign >();
 // XRW TEMP }
 
 ///  ---------------------------------------------------------------------------------
@@ -135,14 +135,14 @@ FastDesign::~FastDesign() = default;
 protocols::moves::MoverOP
 FastDesign::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new FastDesign );
+	return utility::pointer::make_shared< FastDesign >();
 }
 
 /// Return a copy of ourselves
 protocols::moves::MoverOP
 FastDesign::clone() const
 {
-	return protocols::moves::MoverOP( new FastDesign(*this) );
+	return utility::pointer::make_shared< FastDesign >(*this);
 }
 
 /// @brief Create the default task factory.  Must be called before design can occur.
@@ -296,12 +296,12 @@ FastDesign::create_default_task_factory() const
 		local_tf = get_task_factory()->clone();
 	} else {
 		// add command line things
-		local_tf->push_back(TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline() ));
+		local_tf->push_back(utility::pointer::make_shared< core::pack::task::operation::InitializeFromCommandline >());
 
 		// add resfile if requested by flags
 		if ( basic::options::option[ basic::options::OptionKeys::relax::respect_resfile]() &&
 				basic::options::option[ basic::options::OptionKeys::packing::resfile].user() ) {
-			local_tf->push_back(TaskOperationCOP( new core::pack::task::operation::ReadResfile() ));
+			local_tf->push_back(utility::pointer::make_shared< core::pack::task::operation::ReadResfile >());
 			TR << "Using Resfile for packing step." << std::endl;
 		}
 
@@ -326,10 +326,10 @@ FastDesign::create_default_task_factory() const
 	}
 
 	//Include current rotamer by default - as before.
-	local_tf->push_back( TaskOperationCOP( new core::pack::task::operation::IncludeCurrent() ) );
+	local_tf->push_back( utility::pointer::make_shared< core::pack::task::operation::IncludeCurrent >() );
 
 	if ( limit_aroma_chi2() ) {
-		local_tf->push_back(TaskOperationCOP( new protocols::task_operations::LimitAromaChi2Operation() ));
+		local_tf->push_back(utility::pointer::make_shared< protocols::task_operations::LimitAromaChi2Operation >());
 	}
 
 	return local_tf;
@@ -376,7 +376,7 @@ std::string FastDesignCreator::keyname() const {
 
 protocols::moves::MoverOP
 FastDesignCreator::create_mover() const {
-	return protocols::moves::MoverOP( new FastDesign );
+	return utility::pointer::make_shared< FastDesign >();
 }
 
 void FastDesignCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

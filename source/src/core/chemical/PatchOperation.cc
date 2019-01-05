@@ -1318,7 +1318,7 @@ NCAARotLibPath::apply( ResidueType & rsd ) const
 				" when attempting to patch NCAA rotlib path." << std::endl;
 			utility_exit_with_message( "Cannot have multiple rotamer specifications." );
 		}
-		ncaa_libspec = NCAARotamerLibrarySpecificationOP( new NCAARotamerLibrarySpecification( *old_libspec ) );
+		ncaa_libspec = utility::pointer::make_shared< NCAARotamerLibrarySpecification >( *old_libspec );
 	} else {
 		ncaa_libspec = NCAARotamerLibrarySpecificationOP(
 			new core::chemical::rotamers::NCAARotamerLibrarySpecification );
@@ -1356,7 +1356,7 @@ NCAARotLibBBTorsions::apply( ResidueType & rsd ) const
 				" when attempting to patch NCAA rotlib path." << std::endl;
 			utility_exit_with_message( "Cannot have multiple rotamer specifications." );
 		}
-		ncaa_libspec = NCAARotamerLibrarySpecificationOP( new NCAARotamerLibrarySpecification( *old_libspec ) );
+		ncaa_libspec = utility::pointer::make_shared< NCAARotamerLibrarySpecification >( *old_libspec );
 	} else {
 		ncaa_libspec = NCAARotamerLibrarySpecificationOP(
 			new core::chemical::rotamers::NCAARotamerLibrarySpecification );
@@ -2620,14 +2620,14 @@ patch_operation_from_patch_file_line(
 			charge = atomic_charge_reassignments.find( ObjexxFCL::stripped( atom_name ) )->second;
 		}
 
-		return PatchOperationOP( new AddAtom( atom_name, atom_type_name, mm_atom_type_name, charge ) );
+		return utility::pointer::make_shared< AddAtom >( atom_name, atom_type_name, mm_atom_type_name, charge );
 	} else if ( tag == "DELETE_ATOM" ) {
 		l >> atom_name;
 		if ( l.fail() ) {
 			utility_exit_with_message( "Failed to parse DELETE_ATOM patch operation." );
 			return nullptr;
 		}
-		return PatchOperationOP( new DeleteAtom( atom_name ) );
+		return utility::pointer::make_shared< DeleteAtom >( atom_name );
 
 	} else if ( tag == "ADD_ATOM_ALIAS" ) {
 		std::string atom1,atom2 = "";
@@ -2638,7 +2638,7 @@ patch_operation_from_patch_file_line(
 			utility_exit_with_message( "Failed to parse ADD_ATOM_ALIAS patch operation." );
 			return nullptr;
 		}
-		return PatchOperationOP( new AddAtomAlias( atom_name, atom_alias, atom1, atom2 ) );
+		return utility::pointer::make_shared< AddAtomAlias >( atom_name, atom_alias, atom1, atom2 );
 
 	} else if ( tag == "SET_BACKBONE_HEAVYATOM" ) {
 		l >> atom_name;
@@ -2646,7 +2646,7 @@ patch_operation_from_patch_file_line(
 			utility_exit_with_message( "Failed to parse SET_BACKBONE_HEAVYATOM patch operation." );
 			return nullptr;
 		}
-		return PatchOperationOP( new SetBackboneHeavyatom( atom_name ) );
+		return utility::pointer::make_shared< SetBackboneHeavyatom >( atom_name );
 
 	} else if ( tag == "SET_DISULFIDE_ATOM_NAME" ) {
 		l >> atom_name;
@@ -2654,12 +2654,12 @@ patch_operation_from_patch_file_line(
 			utility_exit_with_message( "Failed to parse SET_DISULFIDE_ATOM_NAME patch operation." );
 			return nullptr;
 		}
-		return PatchOperationOP( new SetDisulfideAtomName( atom_name ) );
+		return utility::pointer::make_shared< SetDisulfideAtomName >( atom_name );
 
 	} else if ( tag == "SET_AA" ) { // 13 character tag
 		std::string aa;
 		l >> aa;
-		return PatchOperationOP( new Set_AA( aa ) );
+		return utility::pointer::make_shared< Set_AA >( aa );
 
 	} else if ( tag == "SET_IO_STRING" ) { // 13 character tag
 		// NOTE - USE FIXED WIDTH IO SINCE NAME3 CAN CONTAIN INTERNAL WHITESPACE (EG DNA,RNA)
@@ -2668,7 +2668,7 @@ patch_operation_from_patch_file_line(
 			return nullptr;
 		}
 		std::string const three_letter_code( line.substr(14,3) ), one_letter_code( line.substr(18,1) );
-		return PatchOperationOP( new SetIO_String( three_letter_code, one_letter_code[0] ) );
+		return utility::pointer::make_shared< SetIO_String >( three_letter_code, one_letter_code[0] );
 
 	} else if ( tag == "SET_INTERCHANGEABILITY_GROUP" ) {
 		std::string intgrp;
@@ -2677,7 +2677,7 @@ patch_operation_from_patch_file_line(
 			utility_exit_with_message( "Failed to parse SET_INTERCHANGEABILITY_GROUP patch operation." );
 			return nullptr;
 		}
-		return PatchOperationOP( new SetInterchangeabilityGroup_String( intgrp ) );
+		return utility::pointer::make_shared< SetInterchangeabilityGroup_String >( intgrp );
 
 	} else if ( tag == "NBR_ATOM" ) {
 		l >> atom_name;
@@ -2685,7 +2685,7 @@ patch_operation_from_patch_file_line(
 			utility_exit_with_message( "Failed to parse NBR_ATOM patch operation." );
 			return nullptr;
 		}
-		return PatchOperationOP( new SetNbrAtom( atom_name ) );
+		return utility::pointer::make_shared< SetNbrAtom >( atom_name );
 
 	} else if ( tag == "NBR_RADIUS" ) {
 		Real radius;
@@ -2694,7 +2694,7 @@ patch_operation_from_patch_file_line(
 			utility_exit_with_message( "Failed to parse NBR_RADIUS patch operation." );
 			return nullptr;
 		}
-		return PatchOperationOP( new SetNbrRadius( radius ) );
+		return utility::pointer::make_shared< SetNbrRadius >( radius );
 
 	} else if ( tag == "ADD_PROPERTY" ) {
 		l >> property;
@@ -2702,7 +2702,7 @@ patch_operation_from_patch_file_line(
 			utility_exit_with_message( "Failed to parse ADD_PROPERTY patch operation." );
 			return nullptr;
 		}
-		return PatchOperationOP( new AddProperty( property ) );
+		return utility::pointer::make_shared< AddProperty >( property );
 
 	} else if ( tag == "DELETE_PROPERTY" ) {
 		l >> property;
@@ -2710,7 +2710,7 @@ patch_operation_from_patch_file_line(
 			utility_exit_with_message( "Failed to parse DELETE_PROPERTY patch operation." );
 			return nullptr;
 		}
-		return PatchOperationOP( new DeleteProperty( property ) );
+		return utility::pointer::make_shared< DeleteProperty >( property );
 
 	} else if ( tag == "DELETE_VARIANT_TYPE" ) {
 		l >> variant;
@@ -2718,7 +2718,7 @@ patch_operation_from_patch_file_line(
 			utility_exit_with_message( "Failed to parse DELETE_VARIANT_TYPE patch operation." );
 			return nullptr;
 		}
-		return PatchOperationOP( new DeleteVariantType( variant ) );
+		return utility::pointer::make_shared< DeleteVariantType >( variant );
 
 		// Added by Andy M. Chen in June 2009
 		// This is needed for adding new side-chain torsions, which occurs in certain PTMs.
@@ -2729,14 +2729,14 @@ patch_operation_from_patch_file_line(
 				utility_exit_with_message( "Failed to parse ADD_CHI patch operation." );
 				return nullptr;
 			}
-			return PatchOperationOP( new AddChi(atom1, atom2, atom3, atom4) );
+			return utility::pointer::make_shared< AddChi >(atom1, atom2, atom3, atom4);
 		} else {
 			l >> chino >> atom1 >> atom2 >> atom3 >> atom4;
 			if ( l.fail() ) {
 				utility_exit_with_message( "Failed to parse ADD_CHI patch operation." );
 				return nullptr;
 			}
-			return PatchOperationOP( new AddChi(chino, atom1, atom2, atom3, atom4) );
+			return utility::pointer::make_shared< AddChi >(chino, atom1, atom2, atom3, atom4);
 		}
 
 		// Added by Andy M. Chen in June 2009
@@ -2761,7 +2761,7 @@ patch_operation_from_patch_file_line(
 			utility_exit_with_message( "Failed to parse ADD_PROTON_CHI patch operation." );
 			return nullptr;
 		}
-		return PatchOperationOP( new AddProtonChi( chino, samples, extra_samples ) );
+		return utility::pointer::make_shared< AddProtonChi >( chino, samples, extra_samples );
 
 		//Added by Andy M. Chen in June 2009
 		//    This is needed for PTM's
@@ -2771,10 +2771,10 @@ patch_operation_from_patch_file_line(
 			utility_exit_with_message( "Failed to parse REDEFINE_CHI patch operation." );
 			return nullptr;
 		}
-		return PatchOperationOP( new RedefineChi( chino, atom1, atom2, atom3, atom4 ) );
+		return utility::pointer::make_shared< RedefineChi >( chino, atom1, atom2, atom3, atom4 );
 
 	} else if ( tag == "DELETE_TERMINAL_CHI" ) {
-		return PatchOperationOP( new DeleteTerminalChi() );
+		return utility::pointer::make_shared< DeleteTerminalChi >();
 	} else if ( tag == "DELETE_METALBINDING_ATOM" ) {
 		std::string atom_name;
 		l >> atom_name;
@@ -2783,7 +2783,7 @@ patch_operation_from_patch_file_line(
 			return nullptr;
 		}
 
-		return PatchOperationOP( new DeleteMetalbindingAtom( atom_name ) );
+		return utility::pointer::make_shared< DeleteMetalbindingAtom >( atom_name );
 	} else if ( tag == "DELETE_ACT_COORD_ATOM" ) {
 		std::string atom_name;
 		l >> atom_name;
@@ -2792,7 +2792,7 @@ patch_operation_from_patch_file_line(
 			return nullptr;
 		}
 
-		return PatchOperationOP( new DeleteActCoordAtom( atom_name ) );
+		return utility::pointer::make_shared< DeleteActCoordAtom >( atom_name );
 
 		//Added by Andy M. Chen in June 2009
 		//    This is needed for PTM's
@@ -2803,14 +2803,14 @@ patch_operation_from_patch_file_line(
 				utility_exit_with_message( "Failed to parse ADD_CHI_ROTAMER patch operation." );
 				return nullptr;
 			}
-			return PatchOperationOP( new AddChiRotamer(mean, sdev) );
+			return utility::pointer::make_shared< AddChiRotamer >(mean, sdev);
 		} else {
 			l >> chino >> mean >> sdev;
 			if ( l.fail() ) {
 				utility_exit_with_message( "Failed to parse ADD_CHI_ROTAMER patch operation." );
 				return nullptr;
 			}
-			return PatchOperationOP( new AddChiRotamer(chino, mean, sdev) );
+			return utility::pointer::make_shared< AddChiRotamer >(chino, mean, sdev);
 		}
 
 	} else if ( tag == "CLEAR_CHI_ROTAMERS" ) {
@@ -2819,7 +2819,7 @@ patch_operation_from_patch_file_line(
 			utility_exit_with_message( "Failed to parse CLEAR_CHI_ROTAMERS patch operation." );
 			return nullptr;
 		}
-		return PatchOperationOP( new ClearChiRotamers( chino ) );
+		return utility::pointer::make_shared< ClearChiRotamers >( chino );
 
 		//Added by Andy M. Chen in June 2009
 		//    This is needed for PTM's
@@ -2829,7 +2829,7 @@ patch_operation_from_patch_file_line(
 			utility_exit_with_message( "Failed to parse ADD_BOND patch operation." );
 			return nullptr;
 		}
-		return PatchOperationOP( new AddBond( atom1, atom2 ) );
+		return utility::pointer::make_shared< AddBond >( atom1, atom2 );
 
 	} else if ( tag == "ADD_BOND_TYPE" ) {
 		l >> atom1 >> atom2 >> bond_type;
@@ -2837,7 +2837,7 @@ patch_operation_from_patch_file_line(
 			utility_exit_with_message( "Failed to parse ADD_BOND_TYPE patch operation." );
 			return nullptr;
 		}
-		return PatchOperationOP( new AddBondType( atom1, atom2, bond_type ) );
+		return utility::pointer::make_shared< AddBondType >( atom1, atom2, bond_type );
 
 	} else if ( tag == "CHANGE_BOND_TYPE" ) {
 		std::string old_bond_type;
@@ -2846,7 +2846,7 @@ patch_operation_from_patch_file_line(
 			utility_exit_with_message( "Failed to parse CHANGE_BOND_TYPE patch operation." );
 			return nullptr;
 		}
-		return PatchOperationOP( new ChangeBondType( atom1, atom2, old_bond_type, bond_type ) );
+		return utility::pointer::make_shared< ChangeBondType >( atom1, atom2, old_bond_type, bond_type );
 
 	} else if ( tag == "ADD_CONNECT" ) {
 		std::string connect_atom;
@@ -2857,8 +2857,8 @@ patch_operation_from_patch_file_line(
 		}
 		l >> tag;
 		if ( l.fail() ) {
-			return PatchOperationOP( new AddConnect(
-				connect_atom, 0.0, 0.0, 0.0, connect_atom, connect_atom, connect_atom ) );
+			return utility::pointer::make_shared< AddConnect >(
+				connect_atom, 0.0, 0.0, 0.0, connect_atom, connect_atom, connect_atom );
 		} else {
 			Real phi, theta, d;
 			std::string parent_atom, angle_atom, torsion_atom;
@@ -2866,20 +2866,20 @@ patch_operation_from_patch_file_line(
 			if ( l.fail() || tag != "ICOOR" ) {
 				utility_exit_with_message( "bad line in patchfile: "+line );
 			}
-			return PatchOperationOP( new AddConnect(
-				connect_atom, radians(phi), radians(theta), d, parent_atom, angle_atom, torsion_atom ) );
+			return utility::pointer::make_shared< AddConnect >(
+				connect_atom, radians(phi), radians(theta), d, parent_atom, angle_atom, torsion_atom );
 		}
 
 	} else if ( tag == "SET_ATOM_TYPE" ) {
 		l >> atom_name >> atom_type_name;
 		if ( l.fail() ) utility_exit_with_message( "bad SET_ATOM_TYPE line in patchfile: " + line );
-		return PatchOperationOP( new SetAtomType( atom_name, atom_type_name ) );
+		return utility::pointer::make_shared< SetAtomType >( atom_name, atom_type_name );
 
 	} else if ( tag == "SET_MM_ATOM_TYPE" ) {
 		runtime_assert( l.good() );
 		l >> atom_name >> mm_atom_type_name;
 		if ( l.fail() ) utility_exit_with_message( "bad SET_MM_ATOM_TYPE line in patchfile: " + line );
-		return PatchOperationOP( new SetMMAtomType( atom_name, mm_atom_type_name ) );
+		return utility::pointer::make_shared< SetMMAtomType >( atom_name, mm_atom_type_name );
 
 	} else if ( tag == "SET_FORMAL_CHARGE" ) {
 		l >> atom_name >> formal_charge;
@@ -2887,14 +2887,14 @@ patch_operation_from_patch_file_line(
 			utility_exit_with_message( "Failed to parse SET_FORMAL_CHARGE patch operation." );
 			return nullptr;
 		}
-		return PatchOperationOP( new SetFormalCharge( atom_name, formal_charge ) );
+		return utility::pointer::make_shared< SetFormalCharge >( atom_name, formal_charge );
 	} else if ( tag == "SET_NET_FORMAL_CHARGE" ) {
 		l >> net_formal_charge;
 		if ( l.fail() ) {
 			utility_exit_with_message( "Failed to parse SET_NET_FORMAL_CHARGE patch operation." );
 			return nullptr;
 		}
-		return PatchOperationOP( new SetNetFormalCharge( net_formal_charge ) );
+		return utility::pointer::make_shared< SetNetFormalCharge >( net_formal_charge );
 	} else if ( tag == "SET_ATOMIC_CHARGE" ) {
 		l >> atom_name >> charge;
 
@@ -2908,19 +2908,19 @@ patch_operation_from_patch_file_line(
 
 
 		if ( l.fail() ) utility_exit_with_message( "bad SET_ATOMIC_CHARGE line in patchfile: " + line );
-		return PatchOperationOP( new SetAtomicCharge( atom_name, charge ) );
+		return utility::pointer::make_shared< SetAtomicCharge >( atom_name, charge );
 
 	} else if ( tag == "SET_POLYMER_CONNECT" ) {
 		l >> tag >> atom_name; // tag should be "UPPER" or "LOWER"
 		if ( l.fail() ) utility_exit_with_message( "bad SET_POLYMER_CONNECT line in patchfile: " + line );
-		return PatchOperationOP( new SetPolymerConnectAtom( atom_name, tag ) );
+		return utility::pointer::make_shared< SetPolymerConnectAtom >( atom_name, tag );
 
 	} else if ( tag == "SET_ICOOR" ) {
 		Real phi,theta,d;
 		std::string stub1, stub2, stub3;
 		l >> atom_name >> phi >> theta >> d >> stub1 >> stub2 >> stub3;
 		if ( l.fail() ) utility_exit_with_message( "bad SET_ICOOR line in patchfile: " + line );
-		return PatchOperationOP( new SetICoor( atom_name, radians(phi), radians(theta), d, stub1, stub2, stub3 ) );
+		return utility::pointer::make_shared< SetICoor >( atom_name, radians(phi), radians(theta), d, stub1, stub2, stub3 );
 	} else if ( tag == "SET_ANCESTOR" ) {
 		std::string atom_name, which_anc, anc_atom_name;
 		Ancestor anc( anc_parent );
@@ -2936,49 +2936,49 @@ patch_operation_from_patch_file_line(
 			oss << "While reading the SET_ANCESTOR patch operation line, did not find PARENT, GRANDPARENT, or GREATGRANDPARENT as the third string on that line\n";
 			throw CREATE_EXCEPTION(utility::excn::Exception,  oss.str() );
 		}
-		return PatchOperationOP( new ChangeAncestory( atom_name, anc, anc_atom_name ));
+		return utility::pointer::make_shared< ChangeAncestory >( atom_name, anc, anc_atom_name );
 	} else if ( tag == "RESET_BOND_LENGTH" ) {
 		core::Distance d;
 		l >> atom_name >> d;
 		if ( l.fail() ) {
 			utility_exit_with_message( "bad RESET_BOND_LENGTH line in patchfile: " + line );
 		}
-		return PatchOperationOP( new ResetBondLength( atom_name, d ) );
+		return utility::pointer::make_shared< ResetBondLength >( atom_name, d );
 
 	} else if ( tag == "PREPEND_MAINCHAIN_ATOM" ) {
 		l >> atom_name;
 		if ( l.fail() ) utility_exit_with_message( "bad PREPEND_MAINCHAIN_ATOM line in patchfile: " + line );
-		return PatchOperationOP( new PrependMainchainAtom( atom_name ) );
+		return utility::pointer::make_shared< PrependMainchainAtom >( atom_name );
 
 	} else if ( tag == "APPEND_MAINCHAIN_ATOM" ) {
 		l >> atom_name;
 		if ( l.fail() ) utility_exit_with_message( "bad APPEND_MAINCHAIN_ATOM line in patchfile: " + line );
-		return PatchOperationOP( new AppendMainchainAtom( atom_name ) );
+		return utility::pointer::make_shared< AppendMainchainAtom >( atom_name );
 
 	}  else if ( tag == "REPLACE_MAINCHAIN_ATOM" ) {
 		std::string target, new_atom;
 		l >> target >> new_atom;
 		if ( l.fail() ) utility_exit_with_message( "bad REPLACE_MAINCHAIN_ATOM line in patchfile: " + line );
-		return PatchOperationOP( new ReplaceMainchainAtom( target, new_atom ) );
+		return utility::pointer::make_shared< ReplaceMainchainAtom >( target, new_atom );
 	} else if ( tag == "RAMA_PREPRO_FILENAME" ) {
 		std::string file1, file2;
 		l >> file1;
 		if ( l.fail() ) utility_exit_with_message( "bad RAMA_PREPRO_FILENAME line in patchfile: " + line );
 		l >> file2;
 		if ( l.fail() ) utility_exit_with_message( "bad RAMA_PREPRO_FILENAME line in patchfile: " + line );
-		return PatchOperationOP( new RamaPreproFilename( file1, file2 ) );
+		return utility::pointer::make_shared< RamaPreproFilename >( file1, file2 );
 	} else if ( tag == "RAMA_PREPRO_RESNAME" ) {
 		std::string name;
 		l >> name;
 		if ( l.fail() ) utility_exit_with_message( "bad RAMA_PREPRO_RESNAME line in patchfile: " + line );
-		return PatchOperationOP( new RamaPreproResname( name ) );
+		return utility::pointer::make_shared< RamaPreproResname >( name );
 	} else if ( tag == "REMOVE_ROTAMER_SPECIFICATIONS" ) {
-		return PatchOperationOP( new RemoveRotamerSpecifications() );
+		return utility::pointer::make_shared< RemoveRotamerSpecifications >();
 	} else if ( tag == "NCAA_ROTLIB_PATH" ) {
 		std::string path;
 		l >> path;
 		if ( l.fail() ) utility_exit_with_message( "bad NCAA_ROTLIB_PATH line in patchfile: " + line );
-		return PatchOperationOP( new NCAARotLibPath( path ) );
+		return utility::pointer::make_shared< NCAARotLibPath >( path );
 	} else if ( tag == "NCAA_ROTLIB_BB_TORSIONS" ) {
 		utility::vector1< core::Size > ncaa_rotlib_bb_torsions;
 		while ( !l.eof() ) {
@@ -2987,7 +2987,7 @@ patch_operation_from_patch_file_line(
 			if ( l.fail() ) utility_exit_with_message( "Bad NCAA_ROTLIB_BB_TORSIONS line in patchfile: " + line );
 			ncaa_rotlib_bb_torsions.push_back(index);
 		}
-		return PatchOperationOP( new NCAARotLibBBTorsions( ncaa_rotlib_bb_torsions ) );
+		return utility::pointer::make_shared< NCAARotLibBBTorsions >( ncaa_rotlib_bb_torsions );
 	} else if ( tag == "NCAA_ROTLIB_NUM_ROTAMER_BINS" ) {
 		core::Size n_rots(0);
 		utility::vector1<core::Size> n_bins_per_rot;
@@ -3000,96 +3000,96 @@ patch_operation_from_patch_file_line(
 			if ( l.fail() ) utility_exit_with_message( "bad NCAA_ROTLIB_NUM_ROTAMER_BINS line in patchfile: " + line );
 			n_bins_per_rot[i] = bin_size;
 		}
-		return PatchOperationOP( new NCAARotLibNumRotamerBins( n_bins_per_rot ) );
+		return utility::pointer::make_shared< NCAARotLibNumRotamerBins >( n_bins_per_rot );
 	} else if ( tag == "SET_NBR_ATOM" ) {
 		l >> atom_name;
 		if ( l.fail() ) utility_exit_with_message( "bad SET_NBR_ATOM line in patchfile: " + line );
-		return PatchOperationOP( new SetNbrAtom( atom_name ) );
+		return utility::pointer::make_shared< SetNbrAtom >( atom_name );
 
 	} else if ( tag == "SET_NBR_RADIUS" ) {
 		l >> radius;
 		if ( l.fail() ) utility_exit_with_message("bad SET_NBR_RADIUS line in patchfile: " + line );
-		return PatchOperationOP( new SetNbrRadius( radius ) );
+		return utility::pointer::make_shared< SetNbrRadius >( radius );
 
 	} else if ( tag == "SET_ORIENT_ATOM" ) {
 		l >> tag;
 		if ( l.fail() ) utility_exit_with_message("bad SET_ORIENT_ATOM line in patchfile: " +  line );
 		if ( tag == "NBR" ) {
-			return PatchOperationOP( new SetOrientAtom(true) );
+			return utility::pointer::make_shared< SetOrientAtom >(true);
 		} else if ( tag == "DEFAULT" ) {
-			return PatchOperationOP( new SetOrientAtom(false) );
+			return utility::pointer::make_shared< SetOrientAtom >(false);
 		} else {
 			tr.Warning << "Unknown SET_ORIENT ATOM tag: " << tag << std::endl;
 			return nullptr;
 		}
 	} else if ( tag == "SET_ALL_ATOMS_REPULSIVE" ) {
-		return PatchOperationOP( new SetAllAtomsRepulsive() );
+		return utility::pointer::make_shared< SetAllAtomsRepulsive >();
 	} else if ( tag == "CONNECT_SULFUR_AND_MAKE_VIRTUAL_PROTON" ) {
-		return PatchOperationOP( new ConnectSulfurAndMakeVirtualProton() );
+		return utility::pointer::make_shared< ConnectSulfurAndMakeVirtualProton >();
 	} else if ( tag == "REPLACE_PROTON_WITH_CHLORINE" ) {
 		l >> atom1;
 		if ( l.fail() ) utility_exit_with_message( "bad REPLACE_PROTON_WITH_CHLORINE line in patchfile: " + line );
-		return PatchOperationOP( new ReplaceProtonWithChlorine( atom1 ) );
+		return utility::pointer::make_shared< ReplaceProtonWithChlorine >( atom1 );
 	} else if ( tag == "REPLACE_PROTON_WITH_FLUORINE" ) {
 		l >> atom1;
 		if ( l.fail() ) utility_exit_with_message( "bad REPLACE_PROTON_WITH_FLUORINE line in patchfile: " + line );
-		return PatchOperationOP( new ReplaceProtonWithFluorine( atom1 ) );
+		return utility::pointer::make_shared< ReplaceProtonWithFluorine >( atom1 );
 	} else if ( tag == "REPLACE_PROTON_WITH_BROMINE" ) {
 		l >> atom1;
 		if ( l.fail() ) utility_exit_with_message( "bad REPLACE_PROTON_WITH_BROMINE line in patchfile: " + line );
-		return PatchOperationOP( new ReplaceProtonWithBromine( atom1 ) );
+		return utility::pointer::make_shared< ReplaceProtonWithBromine >( atom1 );
 	} else if ( tag == "REPLACE_PROTON_WITH_IODINE" ) {
 		l >> atom1;
 		if ( l.fail() ) utility_exit_with_message( "bad REPLACE_PROTON_WITH_IODINE line in patchfile: " + line );
-		return PatchOperationOP( new ReplaceProtonWithIodine( atom1 ) );
+		return utility::pointer::make_shared< ReplaceProtonWithIodine >( atom1 );
 	} else if ( tag == "REPLACE_PROTON_WITH_METHYL" ) {
 		l >> atom1;
 		if ( l.fail() ) utility_exit_with_message( "bad REPLACE_PROTON_WITH_METHYL line in patchfile: " + line );
-		return PatchOperationOP( new ReplaceProtonWithMethyl( atom1 ) );
+		return utility::pointer::make_shared< ReplaceProtonWithMethyl >( atom1 );
 	} else if ( tag == "REPLACE_PROTON_WITH_TRIFLUOROMETHYL" ) {
 		l >> atom1;
 		if ( l.fail() ) utility_exit_with_message( "bad REPLACE_PROTON_WITH_TRIFLUOROMETHYL line in patchfile: " + line );
-		return PatchOperationOP( new ReplaceProtonWithTrifluoromethyl( atom1 ) );
+		return utility::pointer::make_shared< ReplaceProtonWithTrifluoromethyl >( atom1 );
 	} else if ( tag == "REPLACE_PROTON_WITH_HYDROXYL" ) {
 		l >> atom1;
 		if ( l.fail() ) utility_exit_with_message( "bad REPLACE_PROTON_WITH_HYDROXYL line in patchfile: " + line );
-		return PatchOperationOP( new ReplaceProtonWithHydroxyl( atom1 ) );
+		return utility::pointer::make_shared< ReplaceProtonWithHydroxyl >( atom1 );
 	} else if ( tag == "REPLACE_PROTON_WITH_METHOXY" ) {
 		l >> atom1;
 		if ( l.fail() ) utility_exit_with_message( "bad REPLACE_PROTON_WITH_METHOXY line in patchfile: " + line );
-		return PatchOperationOP( new ReplaceProtonWithMethoxy( atom1 ) );
+		return utility::pointer::make_shared< ReplaceProtonWithMethoxy >( atom1 );
 	} else if ( tag == "REPLACE_PROTON_WITH_ETHYL" ) {
 		l >> atom1;
 		if ( l.fail() ) utility_exit_with_message( "bad REPLACE_PROTON_WITH_ETHYL line in patchfile: " + line );
-		return PatchOperationOP( new ReplaceProtonWithEthyl( atom1 ) );
+		return utility::pointer::make_shared< ReplaceProtonWithEthyl >( atom1 );
 	} else if ( tag == "ADD_CONNECT_AND_DELETE_CHILD_PROTON" ) {
 		l >> atom1;
 		if ( l.fail() ) utility_exit_with_message( "bad ADD_CONNECT_AND_DELETE_CHILD_PROTON line in patchfile: " + line );
-		return PatchOperationOP( new AddConnectDeleteChildProton( atom1 ) );
+		return utility::pointer::make_shared< AddConnectDeleteChildProton >( atom1 );
 	} else if ( tag == "DELETE_CHILD_PROTON" ) {
 		l >> atom1;
 		if ( l.fail() ) utility_exit_with_message( "bad DELETE_CHILD_PROTON line in patchfile: " + line );
-		return PatchOperationOP( new DeleteChildProton( atom1 ) );
+		return utility::pointer::make_shared< DeleteChildProton >( atom1 );
 	} else if ( tag == "ADD_CONNECT_AND_TRACKING_VIRT" ) {
 		l >> atom1;
 		if ( l.fail() ) utility_exit_with_message( "bad ADD_CONNECT_AND_TRACKING_VIRT line in patchfile: " + line );
-		return PatchOperationOP( new AddConnectAndTrackingVirt( atom1 ) );
+		return utility::pointer::make_shared< AddConnectAndTrackingVirt >( atom1 );
 	} else if ( tag == "CHIRAL_FLIP_NAMING" ) {
-		return PatchOperationOP( new ChiralFlipNaming );//( atom1, atom2 ) );
+		return utility::pointer::make_shared< ChiralFlipNaming >();//( atom1, atom2 ) );
 	} else if ( tag == "CHIRAL_FLIP_ATOMS" ) {
 		//std::string atom1, atom2;
 		//l >> atom1 >> atom2;
-		return PatchOperationOP( new ChiralFlipAtoms );//( atom1, atom2 ) );
+		return utility::pointer::make_shared< ChiralFlipAtoms >();//( atom1, atom2 ) );
 	} else if ( tag == "VIRTUALIZE_SIDECHAIN" ) {
-		return PatchOperationOP( new VirtualizeSidechain );//( atom1, atom2 ) );
+		return utility::pointer::make_shared< VirtualizeSidechain >();//( atom1, atom2 ) );
 	} else if ( tag == "VIRTUALIZE_ALL" ) {
-		return PatchOperationOP( new VirtualizeAll );//( atom1, atom2 ) );
+		return utility::pointer::make_shared< VirtualizeAll >();//( atom1, atom2 ) );
 	} else if ( tag == "SET_VIRTUAL_SHADOW" ) {
 		runtime_assert( l.good() );
 		std::string shadower, shadowee;
 		l >> shadower >> shadowee;
 		if ( l.fail() ) utility_exit_with_message( "bad SET_VIRTUAL_SHADOW line in patchfile: " + line );
-		return PatchOperationOP( new SetVirtualShadow( shadower, shadowee ) );
+		return utility::pointer::make_shared< SetVirtualShadow >( shadower, shadowee );
 	} else if ( tag == "RENAME_ATOM" ) {
 		runtime_assert( l.good() );
 		//std::string old_name, new_name;
@@ -3098,7 +3098,7 @@ patch_operation_from_patch_file_line(
 		std::string new_name = line.substr( 17, 4 );
 
 		if ( l.fail() ) utility_exit_with_message( "bad RENAME_ATOM line in patchfile: " + line );
-		return PatchOperationOP( new RenameAtom( old_name, new_name ) );
+		return utility::pointer::make_shared< RenameAtom >( old_name, new_name );
 	}
 	tr.Warning << "patch_operation_from_patch_file_line: bad line: " << line << std::endl;
 

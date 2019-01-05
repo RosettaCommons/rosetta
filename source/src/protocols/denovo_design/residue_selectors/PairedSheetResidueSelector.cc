@@ -64,13 +64,13 @@ PairedSheetResidueSelector::~PairedSheetResidueSelector() = default;
 PairedSheetResidueSelector::ResidueSelectorOP
 PairedSheetResidueSelector::clone() const
 {
-	return ResidueSelectorOP( new PairedSheetResidueSelector(*this) );
+	return utility::pointer::make_shared< PairedSheetResidueSelector >(*this);
 }
 
 PairedSheetResidueSelector::ResidueSelectorOP
 PairedSheetResidueSelectorCreator::create_residue_selector() const
 {
-	return PairedSheetResidueSelector::ResidueSelectorOP( new PairedSheetResidueSelector );
+	return utility::pointer::make_shared< PairedSheetResidueSelector >();
 }
 
 std::string

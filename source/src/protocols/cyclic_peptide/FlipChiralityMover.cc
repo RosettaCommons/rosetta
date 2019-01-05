@@ -59,7 +59,7 @@ namespace cyclic_peptide {
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP FlipChiralityMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new FlipChiralityMover );
+// XRW TEMP  return utility::pointer::make_shared< FlipChiralityMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -78,7 +78,7 @@ FlipChiralityMover::FlipChiralityMover() :
 	normal_assigned_ = false;
 	center_.zero();
 	normal_.zero();
-	//set_rosetta_scripts_tag( utility::tag::TagOP( new utility::tag::Tag() ) ); //do I need this?
+	//set_rosetta_scripts_tag( utility::pointer::make_shared< utility::tag::Tag >() ); //do I need this?
 }
 
 /// @brief Copy constructor for FlipChiralityMover mover.
@@ -101,14 +101,14 @@ FlipChiralityMover::~FlipChiralityMover()= default;
 /// @brief Clone operator to create a pointer to a fresh GeneralizedKIC object that copies this one.
 ///
 protocols::moves::MoverOP FlipChiralityMover::clone() const {
-	return protocols::moves::MoverOP( new FlipChiralityMover( *this ) );
+	return utility::pointer::make_shared< FlipChiralityMover >( *this );
 }
 
 
 /// @brief Fresh_instance operator to create a pointer to a fresh GeneralizedKIC object that does NOT copy this one.
 ///
 protocols::moves::MoverOP FlipChiralityMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new FlipChiralityMover );
+	return utility::pointer::make_shared< FlipChiralityMover >();
 }
 
 
@@ -337,7 +337,7 @@ std::string FlipChiralityMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 FlipChiralityMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new FlipChiralityMover );
+	return utility::pointer::make_shared< FlipChiralityMover >();
 }
 
 void FlipChiralityMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

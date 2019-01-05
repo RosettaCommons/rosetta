@@ -97,7 +97,7 @@ void ConstraintGeneratorLoader::provide_xml_schema( utility::tag::XMLSchemaDefin
 }
 
 DataLoaderOP
-ConstraintGeneratorLoaderCreator::create_loader() const { return DataLoaderOP( new ConstraintGeneratorLoader ); }
+ConstraintGeneratorLoaderCreator::create_loader() const { return utility::pointer::make_shared< ConstraintGeneratorLoader >(); }
 
 std::string
 ConstraintGeneratorLoaderCreator::keyname() const { return ConstraintGeneratorLoader::loader_name(); }

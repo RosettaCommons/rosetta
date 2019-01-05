@@ -100,12 +100,12 @@ Transform::~Transform() = default;
 
 protocols::moves::MoverOP Transform::clone() const
 {
-	return protocols::moves::MoverOP( new Transform (*this) );
+	return utility::pointer::make_shared< Transform > (*this);
 }
 
 protocols::moves::MoverOP Transform::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new Transform );
+	return utility::pointer::make_shared< Transform >();
 }
 
 void Transform::parse_my_tag
@@ -217,7 +217,7 @@ void Transform::apply(core::pose::Pose & pose)
 	//Setup constraints
 	if ( use_constraints_ ) {
 		cst_pose = pose.clone();
-		core::scoring::constraints::ConstraintSetOP cstset_ = core::scoring::constraints::ConstraintIO::get_instance()->read_constraints(cst_fa_file_, core::scoring::constraints::ConstraintSetOP( new core::scoring::constraints::ConstraintSet ), *cst_pose);
+		core::scoring::constraints::ConstraintSetOP cstset_ = core::scoring::constraints::ConstraintIO::get_instance()->read_constraints(cst_fa_file_, utility::pointer::make_shared< core::scoring::constraints::ConstraintSet >(), *cst_pose);
 		cst_pose->constraint_set( cstset_ );
 
 		cst_function->set_weight( core::scoring::atom_pair_constraint, cst_fa_weight_ );
@@ -514,11 +514,11 @@ void Transform::setup_conformers(core::pose::Pose & pose, core::Size begin)
 
 	ligand_conformers_.clear();
 	for ( core::conformation::ResidueOP const & conf: ligand_confs ) {
-		ligand_conformers_.push_back( UltraLightResidueOP( new UltraLightResidue( conf ) ) );
+		ligand_conformers_.push_back( utility::pointer::make_shared< UltraLightResidue >( conf ) );
 	}
 	if ( ligand_conformers_.empty() ) {
 		// Add the starting conformer, so we at least have the one.
-		ligand_conformers_.push_back( UltraLightResidueOP( new UltraLightResidue( pose.residue(begin).get_self_ptr() ) ) );
+		ligand_conformers_.push_back( utility::pointer::make_shared< UltraLightResidue >( pose.residue(begin).get_self_ptr() ) );
 	}
 	TR << "Considering " << ligand_conformers_.size() << " conformers during sampling" << std::endl;
 }
@@ -774,7 +774,7 @@ std::string TransformCreator::keyname() const {
 
 protocols::moves::MoverOP
 TransformCreator::create_mover() const {
-	return protocols::moves::MoverOP( new Transform );
+	return utility::pointer::make_shared< Transform >();
 }
 
 void TransformCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

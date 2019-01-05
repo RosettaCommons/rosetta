@@ -115,7 +115,7 @@ public:
 	NearNativeLoopCloser();
 	NearNativeLoopCloser(int resAdjustmentStartLow,int resAdjustmentStartHigh,int resAdjustmentStopLow,int resAdjustmentStopHigh,int resAdjustmentStartLow_sheet,int resAdjustmentStartHigh_sheet,int resAdjustmentStopLow_sheet,int resAdjustmentStopHigh_sheet,Size loopLengthRangeLow, Size loopLengthRangeHigh,Size resBeforeLoop,Size resAfterLoop,
 		char chainBeforeLoop, char chainAfterLoop,core::Real rmsThreshold, core::Real max_vdw_change, bool idealExtension,bool ideal, bool output_closed, std::string closure_type="lookback");
-	moves::MoverOP clone() const override { return moves::MoverOP( new NearNativeLoopCloser( *this ) ); }
+	moves::MoverOP clone() const override { return utility::pointer::make_shared< NearNativeLoopCloser >( *this ); }
 	core::Real close_loop(Pose & pose);
 	void apply( Pose & pose ) override;
 	void combine_chains(Pose & pose);

@@ -46,7 +46,7 @@ static basic::Tracer TR("core.pack.rotamers.SingleBasicRotamerLibrary");
 
 core::pack::rotamers::SingleResidueRotamerLibraryCOP
 SingleBasicRotamerLibraryCreator::create( core::chemical::ResidueType const & ) const {
-	return core::pack::rotamers::SingleResidueRotamerLibraryCOP( new SingleBasicRotamerLibrary );
+	return utility::pointer::make_shared< SingleBasicRotamerLibrary >();
 }
 
 std::string

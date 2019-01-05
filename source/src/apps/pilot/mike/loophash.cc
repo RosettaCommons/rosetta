@@ -117,7 +117,7 @@ public:
 	void apply( core::pose::Pose& pose ) override;
 
 	protocols::moves::MoverOP clone() const override {
-		return protocols::moves::MoverOP( new LoopHashRelax_Sampler( *this ) );
+		return utility::pointer::make_shared< LoopHashRelax_Sampler >( *this );
 	}
 
 
@@ -126,7 +126,7 @@ public:
 	}
 
 	protocols::moves::MoverOP fresh_instance() const override {
-		return protocols::moves::MoverOP( new LoopHashRelax_Sampler( library_ ) );
+		return utility::pointer::make_shared< LoopHashRelax_Sampler >( library_ );
 	}
 
 private:

@@ -49,7 +49,7 @@ namespace simple_moves {
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP PSSM2BfactorMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new PSSM2BfactorMover );
+// XRW TEMP  return utility::pointer::make_shared< PSSM2BfactorMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -149,13 +149,13 @@ PSSM2BfactorMover::apply( Pose & pose )
 moves::MoverOP
 PSSM2BfactorMover::clone() const
 {
-	return moves::MoverOP( new PSSM2BfactorMover( *this ) );
+	return utility::pointer::make_shared< PSSM2BfactorMover >( *this );
 }
 
 moves::MoverOP
 PSSM2BfactorMover::fresh_instance() const
 {
-	return moves::MoverOP( new PSSM2BfactorMover );
+	return utility::pointer::make_shared< PSSM2BfactorMover >();
 }
 
 void
@@ -197,7 +197,7 @@ std::string PSSM2BfactorMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 PSSM2BfactorMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new PSSM2BfactorMover );
+	return utility::pointer::make_shared< PSSM2BfactorMover >();
 }
 
 void PSSM2BfactorMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

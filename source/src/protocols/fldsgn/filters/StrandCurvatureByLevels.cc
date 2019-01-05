@@ -380,14 +380,14 @@ StrandCurvatureByLevels::parse_my_tag(
 protocols::filters::FilterOP
 StrandCurvatureByLevels::clone() const
 {
-	return protocols::filters::FilterOP( new StrandCurvatureByLevels( *this ) );
+	return utility::pointer::make_shared< StrandCurvatureByLevels >( *this );
 }
 
 
 protocols::filters::FilterOP
 StrandCurvatureByLevels::fresh_instance() const
 {
-	return protocols::filters::FilterOP( new StrandCurvatureByLevels );
+	return utility::pointer::make_shared< StrandCurvatureByLevels >();
 }
 
 core::Real
@@ -448,7 +448,7 @@ void StrandCurvatureByLevels::provide_xml_schema( utility::tag::XMLSchemaDefinit
 protocols::filters::FilterOP
 StrandCurvatureByLevelsCreator::create_filter() const
 {
-	return protocols::filters::FilterOP( new StrandCurvatureByLevels );
+	return utility::pointer::make_shared< StrandCurvatureByLevels >();
 }
 
 std::string

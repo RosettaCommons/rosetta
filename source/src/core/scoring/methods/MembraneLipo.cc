@@ -45,7 +45,7 @@ methods::EnergyMethodOP
 MembraneLipoCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new MembraneLipo );
+	return utility::pointer::make_shared< MembraneLipo >();
 }
 
 ScoreTypes
@@ -58,7 +58,7 @@ MembraneLipoCreator::score_types_for_method() const {
 
 /// c-tor
 MembraneLipo::MembraneLipo() :
-	parent( EnergyMethodCreatorOP( new MembraneLipoCreator ) ),
+	parent( utility::pointer::make_shared< MembraneLipoCreator >() ),
 	potential_( ScoringManager::get_instance()->get_MembranePotential() )
 {}
 
@@ -67,7 +67,7 @@ MembraneLipo::MembraneLipo() :
 EnergyMethodOP
 MembraneLipo::clone() const
 {
-	return EnergyMethodOP( new MembraneLipo() );
+	return utility::pointer::make_shared< MembraneLipo >();
 }
 
 

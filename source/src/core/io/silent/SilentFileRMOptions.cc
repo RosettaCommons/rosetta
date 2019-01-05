@@ -46,7 +46,7 @@ SilentFileRMOptionsCreator::~SilentFileRMOptionsCreator() = default;
 
 ResourceOptionsOP
 SilentFileRMOptionsCreator::create_options() const {
-	return ResourceOptionsOP( new SilentFileRMOptions );
+	return utility::pointer::make_shared< SilentFileRMOptions >();
 }
 
 string

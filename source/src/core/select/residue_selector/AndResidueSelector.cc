@@ -56,7 +56,7 @@ AndResidueSelector::AndResidueSelector( AndResidueSelector const &src) :
 
 /// @brief Clone operator.
 /// @details Copy this object and return an owning pointer to the new object.
-ResidueSelectorOP AndResidueSelector::clone() const { return ResidueSelectorOP( new AndResidueSelector(*this) ); }
+ResidueSelectorOP AndResidueSelector::clone() const { return utility::pointer::make_shared< AndResidueSelector >(*this); }
 
 AndResidueSelector::~AndResidueSelector() = default;
 
@@ -189,7 +189,7 @@ AndResidueSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd 
 
 ResidueSelectorOP
 AndResidueSelectorCreator::create_residue_selector() const {
-	return ResidueSelectorOP( new AndResidueSelector );
+	return utility::pointer::make_shared< AndResidueSelector >();
 }
 
 std::string

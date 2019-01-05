@@ -76,11 +76,11 @@ ScoreFunctionFactory::create_score_function(
 	// create a new scorefunction
 	ScoreFunctionOP scorefxn;
 	if ( options[ score::min_score_score ].user() ) {
-		scorefxn = ScoreFunctionOP( new MinScoreScoreFunction( options[ score::min_score_score ]() ) );
+		scorefxn = utility::pointer::make_shared< MinScoreScoreFunction >( options[ score::min_score_score ]() );
 	} else if ( options[ score::docking_interface_score ]() ) {
-		scorefxn = ScoreFunctionOP( new DockingScoreFunction );
+		scorefxn = utility::pointer::make_shared< DockingScoreFunction >();
 	} else {
-		scorefxn = ScoreFunctionOP( new ScoreFunction( options ) );
+		scorefxn = utility::pointer::make_shared< ScoreFunction >( options );
 	}
 
 	// Avoid loading the score12 patch if we're using
@@ -410,7 +410,7 @@ get_score_function(
 {
 	using namespace basic::options::OptionKeys;
 
-	if ( options[ score::empty ]() ) return core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction( options ) );
+	if ( options[ score::empty ]() ) return utility::pointer::make_shared< core::scoring::ScoreFunction >( options );
 
 	std::string weight_set = options[ score::weights ];
 	utility::vector1< std::string > patch_tags = options[ score::patch ]();

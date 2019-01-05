@@ -86,7 +86,7 @@ PartitionContactScreener::initialize_actual_rep_cutoff(){
 void
 PartitionContactScreener::initialize_evaluator( core::scoring::methods::EnergyMethodOptions const & options ){
 	core::scoring::etable::EtableCOP etable(core::scoring::ScoringManager::get_instance()->etable( options ) );
-	eval_ = core::scoring::etable::AnalyticEtableEvaluatorOP( new core::scoring::etable::AnalyticEtableEvaluator( *etable ) );
+	eval_ = utility::pointer::make_shared< core::scoring::etable::AnalyticEtableEvaluator >( *etable );
 }
 
 //////////////////////////////////////////////////////////////////////////////

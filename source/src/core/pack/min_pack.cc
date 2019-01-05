@@ -98,9 +98,9 @@ create_scmin_minimizer_map(
 	/// that each of the molten residues have color 0.
 	scmin::SCMinMinimizerMapOP scminmap;
 	if ( cartesian ) {
-		scminmap = scmin::SCMinMinimizerMapOP( new scmin::CartSCMinMinimizerMap() );
+		scminmap = utility::pointer::make_shared< scmin::CartSCMinMinimizerMap >();
 	} else {
-		scminmap = scmin::SCMinMinimizerMapOP( new scmin::AtomTreeSCMinMinimizerMap() );
+		scminmap = utility::pointer::make_shared< scmin::AtomTreeSCMinMinimizerMap >();
 	}
 
 	scminmap->set_total_residue( pose.size() );
@@ -796,7 +796,7 @@ min_pack_setup(
 	sfxn.setup_for_packing( pose, task->repacking_residues(), task->designing_residues() );
 	if ( option[ minpack_disable_bumpcheck ] ) task->set_bump_check( false );
 	utility::graph::GraphOP packer_neighbor_graph = create_packer_graph( pose, sfxn, task );
-	rotsets = rotamer_set::RotamerSetsOP( new rotamer_set::RotamerSets() );
+	rotsets = utility::pointer::make_shared< rotamer_set::RotamerSets >();
 	rotsets->set_task( task );
 	rotsets->build_rotamers( pose, sfxn, packer_neighbor_graph );
 	rotsets->prepare_sets_for_packing( pose, sfxn );
@@ -807,7 +807,7 @@ min_pack_setup(
 	mingraph = create_minimization_graph( pose, sfxn, *task, *packer_neighbor_graph, *scminmap );
 
 	/// 3.
-	atc = scmin::AtomTreeCollectionOP( new scmin::AtomTreeCollection( pose, *rotsets ) );
+	atc = utility::pointer::make_shared< scmin::AtomTreeCollection >( pose, *rotsets );
 
 	// true -- nblist, false -- deriv_check, false -- deriv_verbose
 	//optimization::MinimizerOptions min_options( "lbfgs_armijo_nonmonotone", 0.1, true, false, false );
@@ -820,7 +820,7 @@ min_pack_setup(
 		minimizer = "lbfgs_armijo_atol";
 		//max_iter = 25;                  // PTC - this doesn't give Cartesian enough time to converge
 	}
-	min_options = optimization::MinimizerOptionsOP( new optimization::MinimizerOptions( minimizer, 0.1, true, false, false ) );
+	min_options = utility::pointer::make_shared< optimization::MinimizerOptions >( minimizer, 0.1, true, false, false );
 	min_options->max_iter(max_iter);
 	min_options->silent(true);
 
@@ -1198,10 +1198,10 @@ off_rotamer_pack_setup(
 	sfxn.setup_for_packing( pose, task->repacking_residues(), task->designing_residues() );
 
 	// 1a
-	atc = scmin::AtomTreeCollectionOP( new scmin::AtomTreeCollection( pose, *task ) );
+	atc = utility::pointer::make_shared< scmin::AtomTreeCollection >( pose, *task );
 
 	// 1b
-	rotsets = rotamer_set::ContinuousRotamerSetsOP( new rotamer_set::ContinuousRotamerSets( pose, *task ) );
+	rotsets = utility::pointer::make_shared< rotamer_set::ContinuousRotamerSets >( pose, *task );
 
 	// 1c
 	if (
@@ -1210,9 +1210,9 @@ off_rotamer_pack_setup(
 			sfxn.weights()[ scoring::npd_hbond_bb_sc ] != 0 ||
 			sfxn.weights()[ scoring::npd_hbond_sc ] != 0 ||
 			sfxn.weights()[ scoring::npd_hbond ] != 0 ) {
-		ig = interaction_graph::SimpleInteractionGraphOP( new interaction_graph::NPDHBSimpleInteractionGraph );
+		ig = utility::pointer::make_shared< interaction_graph::NPDHBSimpleInteractionGraph >();
 	} else {
-		ig = interaction_graph::SimpleInteractionGraphOP( new interaction_graph::SimpleInteractionGraph );
+		ig = utility::pointer::make_shared< interaction_graph::SimpleInteractionGraph >();
 	}
 	ig->set_scorefunction( sfxn );
 	ig->initialize( pose, task ); // -- no, do not let the graph add its own edges

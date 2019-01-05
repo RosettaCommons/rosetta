@@ -133,7 +133,7 @@ RNP_HighResMover::initialize( core::pose::Pose const & pose ) {
 		docking_ = false;
 	} else {
 		docking_ = true;
-		rnp_docking_mover_ = protocols::rigid::RigidBodyPerturbMoverOP( new protocols::rigid::RigidBodyPerturbMover( pose, movemap, rot_mag, trans_mag, protocols::rigid::partner_upstream /*because virtual anchor should be root*/ ) );
+		rnp_docking_mover_ = utility::pointer::make_shared< protocols::rigid::RigidBodyPerturbMover >( pose, movemap, rot_mag, trans_mag, protocols::rigid::partner_upstream /*because virtual anchor should be root*/ );
 	}
 
 	is_init_ = true;

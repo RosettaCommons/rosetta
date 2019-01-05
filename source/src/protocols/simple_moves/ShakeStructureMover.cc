@@ -442,7 +442,7 @@ ShakeStructureMover::setup_ca_constraints(
 			Vector const CA_j(pose.residue(j).xyz(" CA "));
 			Real const CA_dist = (CA_i - CA_j).length();
 			if ( CA_dist < CA_cutoff ) {
-				ConstraintCOP cst( ConstraintOP( new AtomPairConstraint( AtomID(pose.residue(i).atom_index(" CA "),i),AtomID(pose.residue(j).atom_index(" CA "),j), core::scoring::func::FuncOP(new core::scoring::func::HarmonicFunc(CA_dist, cst_tol)) ) ) );
+				ConstraintCOP cst( utility::pointer::make_shared< AtomPairConstraint >( AtomID(pose.residue(i).atom_index(" CA "),i),AtomID(pose.residue(j).atom_index(" CA "),j), utility::pointer::make_shared< core::scoring::func::HarmonicFunc >(CA_dist, cst_tol) ) );
 				pose.add_constraint(cst);
 			}
 		}

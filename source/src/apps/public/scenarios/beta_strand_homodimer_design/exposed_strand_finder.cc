@@ -145,7 +145,7 @@ public:
 	virtual bool is_exposed( pose::Pose & pose, Size & resid, vector1< Real > sasa_values );
 
 	MoverOP clone() const override {
-		return MoverOP( new ExposedStrandMover( *this ) );
+		return utility::pointer::make_shared< ExposedStrandMover >( *this );
 	}
 
 	std::string get_name() const override{
@@ -676,7 +676,7 @@ main( int argc, char * argv [] )
 		// init
 		devel::init(argc, argv);
 
-		protocols::jd2::JobDistributor::get_instance()->go( protocols::moves::MoverOP( new ExposedStrandMover ) );
+		protocols::jd2::JobDistributor::get_instance()->go( utility::pointer::make_shared< ExposedStrandMover >() );
 
 		std::cout << "Done! -------------------------------"<< std::endl;
 	} catch (utility::excn::Exception const & e ) {

@@ -117,7 +117,7 @@ void protocols::jd2::EnsembleJobInputter::fill_jobs( JobsContainer & jobs ){
 		InnerJobOP ijob( new InnerJob( inputs[i], nstruct_for_inputs[i] ) );
 
 		for ( core::Size x = 1; x <= nstruct_for_inputs[i]; ++x ) {
-			jobs.push_back( JobOP( new Job( ijob, job_index ) ) );
+			jobs.push_back( utility::pointer::make_shared< Job >( ijob, job_index ) );
 			TR.Debug << "pushing " << inputs[i] << " nstruct index " << x << std::endl;
 			job_index+=1;
 
@@ -177,7 +177,7 @@ EnsembleJobInputterCreator::keyname() const
 
 protocols::jd2::JobInputterOP
 EnsembleJobInputterCreator::create_JobInputter() const {
-	return protocols::jd2::JobInputterOP( new EnsembleJobInputter );
+	return utility::pointer::make_shared< EnsembleJobInputter >();
 }
 
 

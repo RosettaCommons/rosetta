@@ -115,7 +115,7 @@ static basic::Tracer TR( "devel.motifs.MotifDnaPacker" );
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP MotifDnaPackerCreator::create_mover() const
 // XRW TEMP {
-// XRW TEMP  return protocols::moves::MoverOP( new MotifDnaPacker );
+// XRW TEMP  return utility::pointer::make_shared< MotifDnaPacker >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -163,10 +163,10 @@ MotifDnaPacker::MotifDnaPacker(
 {
 	init_options();
 	filename_root_ = filename_root;
-	dna_packer_ = protocols::dna::DnaInterfacePackerOP( new DnaInterfacePacker( scorefxn_in, minimize, filename_root ) );
+	dna_packer_ = utility::pointer::make_shared< DnaInterfacePacker >( scorefxn_in, minimize, filename_root );
 	protocols::motifs::MotifSearchOP motif_search( new protocols::motifs::MotifSearch );
 	motif_search_ = motif_search;
-	pdboutput_ = protocols::dna::PDBOutputOP( new PDBOutput );
+	pdboutput_ = utility::pointer::make_shared< PDBOutput >();
 }
 
 /// @brief destructor
@@ -176,14 +176,14 @@ MotifDnaPacker::~MotifDnaPacker()= default;
 protocols::moves::MoverOP
 MotifDnaPacker::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new MotifDnaPacker );
+	return utility::pointer::make_shared< MotifDnaPacker >();
 }
 
 /// @brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
 MotifDnaPacker::clone() const
 {
-	return protocols::moves::MoverOP( new MotifDnaPacker( *this ) );
+	return utility::pointer::make_shared< MotifDnaPacker >( *this );
 }
 
 // XRW TEMP std::string
@@ -200,9 +200,9 @@ MotifDnaPacker::apply( Pose & pose )
 	init_standard( pose );
 
 	TaskFactoryOP taskfactory( new TaskFactory );
-	taskfactory->push_back( TaskOperationCOP( new InitializeFromCommandline ) );
+	taskfactory->push_back( utility::pointer::make_shared< InitializeFromCommandline >() );
 	if ( option[ OptionKeys::packing::resfile ].user() ) {
-		taskfactory->push_back( TaskOperationCOP( new ReadResfile ) );
+		taskfactory->push_back( utility::pointer::make_shared< ReadResfile >() );
 	}
 
 	utility::vector1< core::Size > protein_positions, dna_positions, dna_design_positions, preventrepack;
@@ -314,7 +314,7 @@ MotifDnaPacker::apply( Pose & pose )
 			}
 			OperateOnCertainResiduesOP fixedDNA( new OperateOnCertainResidues );
 			fixedDNA->residue_indices( restricted_DNA );
-			fixedDNA->op( ResLvlTaskOperationCOP( new PreventRepackingRLT ) );
+			fixedDNA->op( utility::pointer::make_shared< PreventRepackingRLT >() );
 			WatsonCrickRotamerCouplingsOP wrc( new WatsonCrickRotamerCouplings );
 			taskfactory1->push_back( fixedDNA );
 			taskfactory1->push_back( wrc );
@@ -380,7 +380,7 @@ void
 MotifDnaPacker::init_standard( Pose & pose )
 {
 	//protocols::motifs::make_dna_mutations( pose );
-	starting_pose_ = core::pose::PoseCOP( core::pose::PoseOP( new pose::Pose( pose ) ) );
+	starting_pose_ = utility::pointer::make_shared< pose::Pose >( pose );
 	pdboutput_->reference_pose( *starting_pose_ );
 	if ( option[ OptionKeys::dna::design::dna_defs ].user() ) {
 		load_dna_design_defs_from_options( targeted_dna_ );
@@ -519,7 +519,7 @@ MotifDnaPacker::run_motifs(
 			if ( (! expand_motifs_) && (! aromatic_motifs_) ) {
 				protocols::toolbox::rotamer_set_operations::SpecialRotamerRSOOP ms_rsoop( new protocols::toolbox::rotamer_set_operations::SpecialRotamerRSO( design_positions[i] ) );
 				ms_rsoop->set_new_rots( variant_rotamers );
-				taskfactory->push_back( TaskOperationCOP( new AppendRotamerSet( ms_rsoop ) ) );
+				taskfactory->push_back( utility::pointer::make_shared< AppendRotamerSet >( ms_rsoop ) );
 			}
 		}
 		types_map[design_positions[i]] = name3set;
@@ -610,7 +610,7 @@ MotifDnaPacker::motif_expansion_inner_loop(
 	std::string tag("");
 	pose = *starting_pose_;
 	TaskFactoryOP my_tf2;
-	my_tf2 = TaskFactoryOP( new TaskFactory( *taskfactory ) );
+	my_tf2 = utility::pointer::make_shared< TaskFactory >( *taskfactory );
 	pack::rotamer_set::Rotamers restricted_rotamers;
 	pack::rotamer_set::Rotamers src_rotamers( it->second );
 	for ( core::Size rot2(1); rot2 <= src_rotamers.size(); ++rot2 ) {
@@ -619,10 +619,10 @@ MotifDnaPacker::motif_expansion_inner_loop(
 	}
 	utility::vector1< bool > keep_aas( num_canonical_aas, false );
 	keep_aas[ chemical::aa_from_name(*it2) ] = true;
-	my_tf2->push_back( TaskOperationCOP( new RestrictAbsentCanonicalAAS( it->first, keep_aas ) ) );
+	my_tf2->push_back( utility::pointer::make_shared< RestrictAbsentCanonicalAAS >( it->first, keep_aas ) );
 	protocols::toolbox::rotamer_set_operations::SpecialRotamerRSOOP ms_rsoop( new protocols::toolbox::rotamer_set_operations::SpecialRotamerRSO( it->first ) );
 	ms_rsoop->set_new_rots( restricted_rotamers );
-	my_tf2->push_back( TaskOperationCOP( new AppendRotamerSet( ms_rsoop ) ) );
+	my_tf2->push_back( utility::pointer::make_shared< AppendRotamerSet >( ms_rsoop ) );
 
 	for ( core::Size current_po : current_pos ) {
 		if ( rotamer_map[current_po].empty() ) continue;
@@ -632,7 +632,7 @@ MotifDnaPacker::motif_expansion_inner_loop(
 		}
 		protocols::toolbox::rotamer_set_operations::SpecialRotamerRSOOP ms_rsoop2( new protocols::toolbox::rotamer_set_operations::SpecialRotamerRSO( current_po ) );
 		ms_rsoop2->set_new_rots( other_rotamers );
-		my_tf2->push_back( TaskOperationCOP( new AppendRotamerSet( ms_rsoop2 ) ) );
+		my_tf2->push_back( utility::pointer::make_shared< AppendRotamerSet >( ms_rsoop2 ) );
 	}
 
 	std::stringstream mot_name;
@@ -746,7 +746,7 @@ std::string MotifDnaPackerCreator::keyname() const {
 
 protocols::moves::MoverOP
 MotifDnaPackerCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MotifDnaPacker );
+	return utility::pointer::make_shared< MotifDnaPacker >();
 }
 
 void MotifDnaPackerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -47,7 +47,7 @@ public:
 	virtual
 	EnergyMethodOP
 	clone() const {
-		return EnergyMethodOP( new CenPairMotifDegreeEnergy );
+		return utility::pointer::make_shared< CenPairMotifDegreeEnergy >();
 	}
 
 	/// @brief Called at the end of the energy evaluation.

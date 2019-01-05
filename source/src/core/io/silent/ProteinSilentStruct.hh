@@ -54,7 +54,7 @@ public:
 		fullatom_( fa )
 	{
 		bJumps_use_IntraResStub_ = false;
-		symminfo_ = core::conformation::symmetry::SymmetryInfoOP( new core::conformation::symmetry::SymmetryInfo() );
+		symminfo_ = utility::pointer::make_shared< core::conformation::symmetry::SymmetryInfo >();
 		symminfo_->set_use_symmetry(false);
 		fill_struct( pose, tag );
 	} // ProteinSilentStruct
@@ -83,7 +83,7 @@ public:
 		decoy_tag( "empty_tag" );
 		fullatom ( false );
 		bJumps_use_IntraResStub_ = false;
-		symminfo_ = core::conformation::symmetry::SymmetryInfoOP( new core::conformation::symmetry::SymmetryInfo() );
+		symminfo_ = utility::pointer::make_shared< core::conformation::symmetry::SymmetryInfo >();
 		symminfo_->set_use_symmetry(false);
 	}
 
@@ -96,7 +96,7 @@ public:
 	/// @brief Returns a new ProteinSilentStruct with a copy of the information
 	/// in this ProteinSilentStruct.
 	virtual SilentStructOP clone() const {
-		return SilentStructOP( new ProteinSilentStruct_Template<T>( *this ) );
+		return utility::pointer::make_shared< ProteinSilentStruct_Template<T> >( *this );
 	}
 
 	// destructor
@@ -240,7 +240,7 @@ public:
 	bool is_symmetric() const { return symminfo_->get_use_symmetry(); }
 
 	void symmetry_info( core::conformation::symmetry::SymmetryInfo & s ) {
-		symminfo_ = core::conformation::symmetry::SymmetryInfoOP( new core::conformation::symmetry::SymmetryInfo( s ) );
+		symminfo_ = utility::pointer::make_shared< core::conformation::symmetry::SymmetryInfo >( s );
 	}
 
 	core::conformation::symmetry::SymmetryInfoCOP symmetry_info( ) const {

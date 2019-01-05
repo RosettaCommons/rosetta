@@ -85,7 +85,7 @@ ResidueIndexSelector::ResidueIndexSelector( ResidueIndexSelector const & ) = def
 
 /// @brief Clone operator.
 /// @details Copy this object and return an owning pointer to the new object.
-ResidueSelectorOP ResidueIndexSelector::clone() const { return ResidueSelectorOP( new ResidueIndexSelector(*this) ); }
+ResidueSelectorOP ResidueIndexSelector::clone() const { return utility::pointer::make_shared< ResidueIndexSelector >(*this); }
 
 
 
@@ -225,7 +225,7 @@ ResidueIndexSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xs
 
 ResidueSelectorOP
 ResidueIndexSelectorCreator::create_residue_selector() const {
-	return ResidueSelectorOP( new ResidueIndexSelector );
+	return utility::pointer::make_shared< ResidueIndexSelector >();
 }
 
 std::string

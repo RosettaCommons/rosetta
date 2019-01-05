@@ -72,7 +72,7 @@ static basic::Tracer TR( "protocols.seeded_abinitio.SeedSetupMover" );
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP SeedSetupMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new SeedSetupMover );
+// XRW TEMP  return utility::pointer::make_shared< SeedSetupMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -104,12 +104,12 @@ SeedSetupMover::SeedSetupMover() :
 
 protocols::moves::MoverOP
 SeedSetupMover::clone() const {
-	return( protocols::moves::MoverOP( new SeedSetupMover( *this ) ) );
+	return( utility::pointer::make_shared< SeedSetupMover >( *this ) );
 }
 
 protocols::moves::MoverOP
 SeedSetupMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new SeedSetupMover );
+	return utility::pointer::make_shared< SeedSetupMover >();
 }
 
 void
@@ -357,7 +357,7 @@ SeedSetupMover::apply( core::pose::Pose & pose ){
 	if ( movemap_factory_ ) {
 		movemap = movemap_factory_->create_movemap_from_pose( pose );
 	} else {
-		movemap = core::kinematics::MoveMapOP( new core::kinematics::MoveMap );
+		movemap = utility::pointer::make_shared< core::kinematics::MoveMap >();
 	}
 	define_movemap_chains( pose , movemap , all_seeds_, chi_chain1_, chi_chain2_, interface_chi1_, interface_chi2_, interface_distance_cutoff_ );
 
@@ -512,7 +512,7 @@ std::string SeedSetupMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 SeedSetupMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SeedSetupMover );
+	return utility::pointer::make_shared< SeedSetupMover >();
 }
 
 void SeedSetupMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -25,7 +25,7 @@ using namespace protocols::features;
 
 // XRW TEMP FeaturesReporterOP
 // XRW TEMP CDRClusterFeaturesCreator::create_features_reporter() const {
-// XRW TEMP  return FeaturesReporterOP( new CDRClusterFeatures );
+// XRW TEMP  return utility::pointer::make_shared< CDRClusterFeatures >();
 // XRW TEMP }
 
 // XRW TEMP std::string

@@ -148,7 +148,7 @@ SegmentRebuild & SegmentRebuild::operator =( SegmentRebuild const & rval ) {
 
 /// @brief clone this object
 BuildInstructionOP SegmentRebuild::clone() const {
-	return BuildInstructionOP( new SegmentRebuild( *this ) );
+	return utility::pointer::make_shared< SegmentRebuild >( *this );
 }
 
 
@@ -909,7 +909,7 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 
 	// safety, make sure PDBInfo leaves obsolete
 	if ( pose.pdb_info().get() ) {
-		pose.pdb_info( core::pose::PDBInfoOP( new core::pose::PDBInfo( pose ) ) );
+		pose.pdb_info( utility::pointer::make_shared< core::pose::PDBInfo >( pose ) );
 		char const chain_id = 'A';
 		pose.pdb_info()->set_chains( chain_id );//set all chains to A at this stage, so design doesn't fail on chain
 		//pose.pdb_info()->obsolete( true );

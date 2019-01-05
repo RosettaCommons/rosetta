@@ -121,7 +121,7 @@ StructureData::class_name()
 StructureData::CacheableDataOP
 StructureData::clone() const
 {
-	return CacheableDataOP( new StructureData( *this ) );
+	return utility::pointer::make_shared< StructureData >( *this );
 }
 
 std::string
@@ -2425,7 +2425,7 @@ basic::datacache::WriteableCacheableDataOP
 StructureDataCreator::create_data( std::istream & in ) const
 {
 	StructureDataFactory const & factory = *StructureDataFactory::get_instance();
-	return basic::datacache::WriteableCacheableDataOP( new StructureData( factory.create_from_cacheable_data( in ) ) );
+	return utility::pointer::make_shared< StructureData >( factory.create_from_cacheable_data( in ) );
 }
 
 std::string

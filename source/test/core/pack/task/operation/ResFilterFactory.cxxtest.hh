@@ -73,7 +73,7 @@ public:
 	void setUp() {
 		if ( !dummy_initialized_ ) {
 			dummy_initialized_ = true;
-			ResFilterFactory::get_instance()->factory_register( ResFilterCreatorOP( new DummyFilterCreator ));
+			ResFilterFactory::get_instance()->factory_register( utility::pointer::make_shared< DummyFilterCreator >());
 		}
 		core_init();
 	}
@@ -110,7 +110,7 @@ public:
 
 
 	void test_res_filter_factory_w_bad_xsd() {
-		ResFilterFactory::get_instance()->factory_register( ResFilterCreatorOP( new DummyFilter2Creator ));
+		ResFilterFactory::get_instance()->factory_register( utility::pointer::make_shared< DummyFilter2Creator >());
 
 		try {
 			XMLSchemaDefinition xsd;

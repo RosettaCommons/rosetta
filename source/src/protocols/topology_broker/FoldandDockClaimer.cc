@@ -64,7 +64,7 @@ FoldandDockClaimer::FoldandDockClaimer( pose::Pose const& input_pose ) :
 //clone
 TopologyClaimerOP
 FoldandDockClaimer::clone() const {
-	return TopologyClaimerOP( new FoldandDockClaimer( *this ) );
+	return utility::pointer::make_shared< FoldandDockClaimer >( *this );
 }
 
 /// @brief type() is specifying the output name of the TopologyClaimer
@@ -147,8 +147,8 @@ void FoldandDockClaimer::generate_claims( claims::DofClaims& new_claims ) {
 	// Set all cuts to real cuts. We don't want to close any of them...
 	utility::vector1< int > cuts( input_pose_.conformation().fold_tree().cutpoints() );
 	for ( Size i = 1; i <= cuts.size(); ++i ) {
-		new_claims.push_back( claims::DofClaimOP( new claims::CutClaim( get_self_weak_ptr(), std::make_pair( Parent::label(), cuts[i]),
-			claims::DofClaim::INIT /* for now... eventually CAN_INIT ? */ ) ) );
+		new_claims.push_back( utility::pointer::make_shared< claims::CutClaim >( get_self_weak_ptr(), std::make_pair( Parent::label(), cuts[i]),
+			claims::DofClaim::INIT /* for now... eventually CAN_INIT ? */ ) );
 	}
 }
 

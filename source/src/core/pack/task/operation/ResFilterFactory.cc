@@ -64,7 +64,7 @@ ResFilterFactory::newResFilter(
 	std::string const & type
 ) const
 {
-	return newResFilter( type, TagCOP( TagOP( new Tag )));
+	return newResFilter( type, utility::pointer::make_shared< Tag >());
 }
 
 ResFilterOP

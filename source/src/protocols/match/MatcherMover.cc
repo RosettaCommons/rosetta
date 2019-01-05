@@ -74,7 +74,7 @@ static basic::Tracer tr( "protocols.match.MatcherMover" );
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP MatcherMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new MatcherMover );
+// XRW TEMP  return utility::pointer::make_shared< MatcherMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -102,13 +102,13 @@ MatcherMover::MatcherMover( MatcherMover const & ) = default;
 /// @brief clone this object
 MatcherMover::MoverOP MatcherMover::clone() const
 {
-	return MatcherMover::MoverOP( new MatcherMover( *this ) );
+	return utility::pointer::make_shared< MatcherMover >( *this );
 }
 
 /// @brief create this type of object
 MatcherMover::MoverOP MatcherMover::fresh_instance() const
 {
-	return MatcherMover::MoverOP( new MatcherMover() );
+	return utility::pointer::make_shared< MatcherMover >();
 }
 
 void
@@ -121,7 +121,7 @@ void
 MatcherMover::apply( core::pose::Pose & pose )
 {
 	if ( !pose.pdb_info() ) {
-		pose.pdb_info( core::pose::PDBInfoOP( new core::pose::PDBInfo( pose ) ) );
+		pose.pdb_info( utility::pointer::make_shared< core::pose::PDBInfo >( pose ) );
 	}
 	protocols::rosetta_scripts::MultiplePoseMover::apply( pose );
 }
@@ -234,7 +234,7 @@ MatcherMover::process_pose( core::pose::Pose & pose, utility::vector1 < core::po
 			} else {
 				core::pose::PoseOP matchedpose = origpose.clone();
 				if ( origpose.pdb_info() ) {
-					matchedpose->pdb_info( core::pose::PDBInfoOP( new core::pose::PDBInfo( *origpose.pdb_info() ) ) );
+					matchedpose->pdb_info( utility::pointer::make_shared< core::pose::PDBInfo >( *origpose.pdb_info() ) );
 				}
 				outputter->insert_match_into_pose( *matchedpose, mgroup );
 				poselist.push_back( matchedpose );
@@ -275,7 +275,7 @@ void
 MatcherMover::set_ligres(
 	core::conformation::ResidueCOP ligres )
 {
-	ligres_ = core::conformation::ResidueCOP( core::conformation::ResidueOP( new core::conformation::Residue(*ligres) ) );
+	ligres_ = utility::pointer::make_shared< core::conformation::Residue >(*ligres);
 }
 
 void
@@ -398,7 +398,7 @@ std::string MatcherMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 MatcherMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MatcherMover );
+	return utility::pointer::make_shared< MatcherMover >();
 }
 
 void MatcherMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

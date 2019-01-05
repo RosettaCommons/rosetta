@@ -199,7 +199,7 @@ methods::EnergyMethodOP
 FA_ElecEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
-	return methods::EnergyMethodOP( new FA_ElecEnergy( options ) );
+	return utility::pointer::make_shared< FA_ElecEnergy >( options );
 }
 
 ScoreTypes
@@ -214,7 +214,7 @@ FA_ElecEnergyCreator::score_types_for_method() const {
 }
 ////////////////////////////////////////////////////////////////////////////
 FA_ElecEnergy::FA_ElecEnergy( methods::EnergyMethodOptions const & options ):
-	parent( methods::EnergyMethodCreatorOP( new FA_ElecEnergyCreator ) ),
+	parent( utility::pointer::make_shared< FA_ElecEnergyCreator >() ),
 	coulomb_( options ),
 	exclude_protein_protein_( options.exclude_protein_protein_fa_elec() ),
 	exclude_RNA_RNA_( options.exclude_RNA_RNA_fa_elec() ),
@@ -283,7 +283,7 @@ FA_ElecEnergy::get_countpair_representative_atom(
 methods::EnergyMethodOP
 FA_ElecEnergy::clone() const
 {
-	return methods::EnergyMethodOP( new FA_ElecEnergy( *this ) );
+	return utility::pointer::make_shared< FA_ElecEnergy >( *this );
 }
 
 void
@@ -307,7 +307,7 @@ FA_ElecEnergy::setup_for_minimizing(
 	NeighborListOP nblist;
 	Real const tolerated_motion = pose.energies().use_nblist_auto_update() ? option[ run::nblist_autoupdate_narrow ] : 1.5;
 	Real const XX = coulomb().max_dis() + 2 * tolerated_motion;
-	nblist = NeighborListOP( new NeighborList( min_map.domain_map(), XX*XX, XX*XX, XX*XX) );
+	nblist = utility::pointer::make_shared< NeighborList >( min_map.domain_map(), XX*XX, XX*XX, XX*XX);
 	if ( pose.energies().use_nblist_auto_update() ) {
 		nblist->set_auto_update( tolerated_motion );
 	}
@@ -681,7 +681,7 @@ FA_ElecEnergy::setup_for_minimizing_for_residue_pair(
 	// update the existing nblist if it's already present in the min_data object
 	ResiduePairNeighborListOP nblist(
 		utility::pointer::static_pointer_cast< core::scoring::ResiduePairNeighborList > ( pair_data.get_data( elec_pair_nblist ) ));
-	if ( ! nblist ) nblist = ResiduePairNeighborListOP( new ResiduePairNeighborList );
+	if ( ! nblist ) nblist = utility::pointer::make_shared< ResiduePairNeighborList >();
 
 	Real const tolerated_narrow_nblist_motion = 0.75; //option[ run::nblist_autoupdate_narrow ];
 	Real const XX2 = std::pow( coulomb().max_dis() + 2*tolerated_narrow_nblist_motion, 2 );
@@ -1389,7 +1389,7 @@ FA_ElecEnergy::get_intrares_countpair(
 		CountPairFactory::create_intrares_count_pair_function( res, CP_CROSSOVER_3FULL ) :
 		CountPairFactory::create_intrares_count_pair_function( res, CP_CROSSOVER_4 );
 	if ( use_cp_rep_ ) {
-		return etable::count_pair::CountPairFunctionCOP( new CountPairRepresentative( *this, res, res, reg_cpfxn ));
+		return utility::pointer::make_shared< CountPairRepresentative >( *this, res, res, reg_cpfxn );
 	} else {
 		return reg_cpfxn;
 	}
@@ -1410,14 +1410,14 @@ FA_ElecEnergy::get_count_pair_function(
 
 	//fd not sure if this is necessary....
 	//if ( res1 == res2 ) {
-	// return etable::count_pair::CountPairFunctionCOP( etable::count_pair::CountPairFunctionOP( new CountPairNone ) );
+	// return utility::pointer::make_shared< CountPairNone >();
 	//}
 
 	conformation::Residue const & rsd1( pose.residue( res1 ) );
 	conformation::Residue const & rsd2( pose.residue( res2 ) );
 	etable::count_pair::CountPairFunctionCOP reg_cpfxn= get_count_pair_function( rsd1, rsd2 );
 	if ( use_cp_rep_ ) {
-		return etable::count_pair::CountPairFunctionCOP( new CountPairRepresentative( *this, rsd1, rsd2, reg_cpfxn ));
+		return utility::pointer::make_shared< CountPairRepresentative >( *this, rsd1, rsd2, reg_cpfxn );
 	} else {
 		return reg_cpfxn;
 	}
@@ -1432,12 +1432,12 @@ FA_ElecEnergy::get_count_pair_function(
 {
 	using namespace etable::count_pair;
 
-	if ( ! defines_score_for_residue_pair(rsd1, rsd2, true) ) return etable::count_pair::CountPairFunctionCOP( etable::count_pair::CountPairFunctionOP( new CountPairNone ) );
+	if ( ! defines_score_for_residue_pair(rsd1, rsd2, true) ) return utility::pointer::make_shared< CountPairNone >();
 
 	if ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) {
 		return CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
 	}
-	return etable::count_pair::CountPairFunctionCOP( etable::count_pair::CountPairFunctionOP( new CountPairAll ) );
+	return utility::pointer::make_shared< CountPairAll >();
 
 }
 
@@ -1539,7 +1539,7 @@ FA_ElecEnergy::create_rotamer_trie(
 			rotamer_descriptors[ ii ].rotamer_id( ii );
 		}
 		sort( rotamer_descriptors.begin(), rotamer_descriptors.end() );
-		retval = electrie::ElecRotamerTrieOP( new RotamerTrie< electrie::ElecAtom, CountPairDataGeneric >( rotamer_descriptors, atomic_interaction_cutoff()) );
+		retval = utility::pointer::make_shared< RotamerTrie< electrie::ElecAtom, CountPairDataGeneric > >( rotamer_descriptors, atomic_interaction_cutoff());
 	} else if ( cpdata_map.n_entries() == 1 || cpdata_map.n_entries() == 0 /* HACK! */ ) {
 		utility::vector1< RotamerDescriptor< ElecAtom, CountPairData_1_1 > > rotamer_descriptors( rotset.num_rotamers() );
 		for ( Size ii = 1; ii <= rotset.num_rotamers(); ++ii ) {
@@ -1547,7 +1547,7 @@ FA_ElecEnergy::create_rotamer_trie(
 			rotamer_descriptors[ ii ].rotamer_id( ii );
 		}
 		sort( rotamer_descriptors.begin(), rotamer_descriptors.end() );
-		retval = electrie::ElecRotamerTrieOP( new RotamerTrie< electrie::ElecAtom, CountPairData_1_1 >( rotamer_descriptors, atomic_interaction_cutoff()) );
+		retval = utility::pointer::make_shared< RotamerTrie< electrie::ElecAtom, CountPairData_1_1 > >( rotamer_descriptors, atomic_interaction_cutoff());
 	} else if ( cpdata_map.n_entries() == 2 ) {
 		utility::vector1< RotamerDescriptor< ElecAtom, CountPairData_1_2 > > rotamer_descriptors( rotset.num_rotamers() );
 		for ( Size ii = 1; ii <= rotset.num_rotamers(); ++ii ) {
@@ -1555,7 +1555,7 @@ FA_ElecEnergy::create_rotamer_trie(
 			rotamer_descriptors[ ii ].rotamer_id( ii );
 		}
 		sort( rotamer_descriptors.begin(), rotamer_descriptors.end() );
-		retval = electrie::ElecRotamerTrieOP( new RotamerTrie< electrie::ElecAtom, CountPairData_1_2 >( rotamer_descriptors, atomic_interaction_cutoff()) );
+		retval = utility::pointer::make_shared< RotamerTrie< electrie::ElecAtom, CountPairData_1_2 > >( rotamer_descriptors, atomic_interaction_cutoff());
 	} else if ( cpdata_map.n_entries() == 3 ) {
 		utility::vector1< RotamerDescriptor< ElecAtom, CountPairData_1_3 > > rotamer_descriptors( rotset.num_rotamers() );
 		for ( Size ii = 1; ii <= rotset.num_rotamers(); ++ii ) {
@@ -1563,7 +1563,7 @@ FA_ElecEnergy::create_rotamer_trie(
 			rotamer_descriptors[ ii ].rotamer_id( ii );
 		}
 		sort( rotamer_descriptors.begin(), rotamer_descriptors.end() );
-		retval = electrie::ElecRotamerTrieOP( new RotamerTrie< electrie::ElecAtom, CountPairData_1_3 >( rotamer_descriptors, atomic_interaction_cutoff()) );
+		retval = utility::pointer::make_shared< RotamerTrie< electrie::ElecAtom, CountPairData_1_3 > >( rotamer_descriptors, atomic_interaction_cutoff());
 	} else {
 		utility_exit_with_message( "Unknown residue connection in FA_ElecEnergy::create_rotamer_trie");
 	}
@@ -1594,22 +1594,22 @@ FA_ElecEnergy::create_rotamer_trie(
 		utility::vector1< RotamerDescriptor< ElecAtom, CountPairDataGeneric > > rotamer_descriptors( 1 );
 		create_rotamer_descriptor( res, cpdata_map, *cp_rep_map_, rotamer_descriptors[ 1 ] );
 		rotamer_descriptors[ 1 ].rotamer_id( 1 );
-		retval = electrie::ElecRotamerTrieOP( new RotamerTrie< ElecAtom, CountPairDataGeneric >( rotamer_descriptors, atomic_interaction_cutoff()) );
+		retval = utility::pointer::make_shared< RotamerTrie< ElecAtom, CountPairDataGeneric > >( rotamer_descriptors, atomic_interaction_cutoff());
 	} else if ( cpdata_map.n_entries() == 1 || cpdata_map.n_entries() == 0 /* HACK! */ ) {
 		utility::vector1< RotamerDescriptor< ElecAtom, CountPairData_1_1 > > rotamer_descriptors( 1 );
 		create_rotamer_descriptor( res, cpdata_map, *cp_rep_map_, rotamer_descriptors[ 1 ] );
 		rotamer_descriptors[ 1 ].rotamer_id( 1 );
-		retval = electrie::ElecRotamerTrieOP( new RotamerTrie< ElecAtom, CountPairData_1_1 >( rotamer_descriptors, atomic_interaction_cutoff()) );
+		retval = utility::pointer::make_shared< RotamerTrie< ElecAtom, CountPairData_1_1 > >( rotamer_descriptors, atomic_interaction_cutoff());
 	} else if ( cpdata_map.n_entries() == 2 ) {
 		utility::vector1< RotamerDescriptor< ElecAtom, CountPairData_1_2 > > rotamer_descriptors( 1 );
 		create_rotamer_descriptor( res, cpdata_map, *cp_rep_map_, rotamer_descriptors[ 1 ] );
 		rotamer_descriptors[ 1 ].rotamer_id( 1 );
-		retval = electrie::ElecRotamerTrieOP( new RotamerTrie< ElecAtom, CountPairData_1_2 >( rotamer_descriptors, atomic_interaction_cutoff()) );
+		retval = utility::pointer::make_shared< RotamerTrie< ElecAtom, CountPairData_1_2 > >( rotamer_descriptors, atomic_interaction_cutoff());
 	} else if ( cpdata_map.n_entries() == 3 ) {
 		utility::vector1< RotamerDescriptor< ElecAtom, CountPairData_1_3 > > rotamer_descriptors( 1 );
 		create_rotamer_descriptor( res, cpdata_map, *cp_rep_map_, rotamer_descriptors[ 1 ] );
 		rotamer_descriptors[ 1 ].rotamer_id( 1 );
-		retval = electrie::ElecRotamerTrieOP( new RotamerTrie< ElecAtom, CountPairData_1_3 >( rotamer_descriptors, atomic_interaction_cutoff()) );
+		retval = utility::pointer::make_shared< RotamerTrie< ElecAtom, CountPairData_1_3 > >( rotamer_descriptors, atomic_interaction_cutoff());
 	} else {
 		utility_exit_with_message( "Unknown residue connection in FA_ElecEnergy::create_rotamer_trie");
 	}
@@ -1657,7 +1657,7 @@ FA_ElecEnergy::get_count_pair_function_trie(
 	using namespace etable::etrie;
 
 	TrieCountPairBaseOP tcpfxn;
-	if ( ! defines_score_for_residue_pair(res1, res2, true) ) return trie::TrieCountPairBaseOP( new TrieCountPairNone() );
+	if ( ! defines_score_for_residue_pair(res1, res2, true) ) return utility::pointer::make_shared< TrieCountPairNone >();
 
 	/// code needs to be added here to deal with multiple bonds (and psuedubonds!) between residues,
 	/// but ultimately, this code is incompatible with designing both disulfides and non-disulfies
@@ -1667,11 +1667,11 @@ FA_ElecEnergy::get_count_pair_function_trie(
 	Size conn2 = trie2->get_count_pair_data_for_residue( res1.seqpos() );
 
 	if ( connection == CP_ONE_BOND ) {
-		tcpfxn = TrieCountPairBaseOP( new TrieCountPair1BC4( conn1, conn2 ) );
+		tcpfxn = utility::pointer::make_shared< TrieCountPair1BC4 >( conn1, conn2 );
 	} else if ( connection == CP_NO_BONDS ) {
-		tcpfxn = TrieCountPairBaseOP( new TrieCountPairAll );
+		tcpfxn = utility::pointer::make_shared< TrieCountPairAll >();
 	} else {
-		tcpfxn = TrieCountPairBaseOP( new TrieCountPairGeneric( res1, res2, conn1, conn2 ) );
+		tcpfxn = utility::pointer::make_shared< TrieCountPairGeneric >( res1, res2, conn1, conn2 );
 	}
 	return tcpfxn;
 

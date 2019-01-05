@@ -214,7 +214,7 @@ void LoopRefineInnerCycle::set_task_factory( core::pack::task::TaskFactoryOP tf 
 core::kinematics::MoveMapOP LoopRefineInnerCycle::movemap() const
 {
 	// Lazily instantiate a movemap
-	if ( ! movemap_ ) { movemap_ = core::kinematics::MoveMapOP( new kinematics::MoveMap ); }
+	if ( ! movemap_ ) { movemap_ = utility::pointer::make_shared< kinematics::MoveMap >(); }
 	return movemap_;
 }
 

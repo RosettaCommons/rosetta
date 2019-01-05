@@ -80,10 +80,10 @@ public:// virtual constructor
 
 
 	// @brief make clone
-	FilterOP clone() const override { return FilterOP( new CoreDunbrackFilter( *this ) ); }
+	FilterOP clone() const override { return utility::pointer::make_shared< CoreDunbrackFilter >( *this ); }
 
 	// @brief make fresh instance
-	FilterOP fresh_instance() const override { return FilterOP( new CoreDunbrackFilter() ); }
+	FilterOP fresh_instance() const override { return utility::pointer::make_shared< CoreDunbrackFilter >(); }
 
 
 public:// mutator

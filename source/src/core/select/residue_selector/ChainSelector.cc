@@ -65,7 +65,7 @@ ChainSelector::~ChainSelector() = default;
 
 /// @brief Clone operator.
 /// @details Copy this object and return an owning pointer to the new object.
-ResidueSelectorOP ChainSelector::clone() const { return ResidueSelectorOP( new ChainSelector(*this) ); }
+ResidueSelectorOP ChainSelector::clone() const { return utility::pointer::make_shared< ChainSelector >(*this); }
 
 ResidueSubset
 ChainSelector::apply(
@@ -181,7 +181,7 @@ void ChainSelector::select_chain_by_pdb_chain_char(
 
 ResidueSelectorOP
 ChainSelectorCreator::create_residue_selector() const {
-	return ResidueSelectorOP( new ChainSelector );
+	return utility::pointer::make_shared< ChainSelector >();
 }
 
 std::string

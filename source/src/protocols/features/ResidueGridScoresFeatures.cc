@@ -50,7 +50,7 @@ namespace features {
 
 // XRW TEMP protocols::features::FeaturesReporterOP ResidueGridScoresFeaturesCreator::create_features_reporter() const
 // XRW TEMP {
-// XRW TEMP  return protocols::features::FeaturesReporterOP( new ResidueGridScoresFeatures );
+// XRW TEMP  return utility::pointer::make_shared< ResidueGridScoresFeatures >();
 // XRW TEMP }
 
 // XRW TEMP std::string ResidueGridScoresFeaturesCreator::type_name() const
@@ -76,11 +76,11 @@ ResidueGridScoresFeatures::~ResidueGridScoresFeatures() = default;
 void ResidueGridScoresFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const
 {
 	using namespace basic::database::schema_generator;
-	Column struct_id("struct_id",DbDataTypeOP( new DbBigInt() ));
-	Column grid_name("grid_name",DbDataTypeOP( new DbTextKey() ));
-	Column seqpos("seqpos",DbDataTypeOP( new DbInteger() ));
-	Column atomno("atomno",DbDataTypeOP( new DbInteger() ));
-	Column score("score",DbDataTypeOP( new DbReal() ));
+	Column struct_id("struct_id",utility::pointer::make_shared< DbBigInt >());
+	Column grid_name("grid_name",utility::pointer::make_shared< DbTextKey >());
+	Column seqpos("seqpos",utility::pointer::make_shared< DbInteger >());
+	Column atomno("atomno",utility::pointer::make_shared< DbInteger >());
+	Column score("score",utility::pointer::make_shared< DbReal >());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -214,7 +214,7 @@ std::string ResidueGridScoresFeaturesCreator::type_name() const {
 
 protocols::features::FeaturesReporterOP
 ResidueGridScoresFeaturesCreator::create_features_reporter() const {
-	return protocols::features::FeaturesReporterOP( new ResidueGridScoresFeatures );
+	return utility::pointer::make_shared< ResidueGridScoresFeatures >();
 }
 
 void ResidueGridScoresFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

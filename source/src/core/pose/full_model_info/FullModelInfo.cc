@@ -107,7 +107,7 @@ FullModelInfo::FullModelInfo(
 	utility::vector1< Size > const & res_numbers_in_pose ):
 	CacheableData(),
 	res_list_( res_numbers_in_pose ),
-	full_model_parameters_( FullModelParametersCOP( FullModelParametersOP( new FullModelParameters( full_sequence, cutpoint_open_in_full_model, res_numbers_in_pose ) ) )  )
+	full_model_parameters_( utility::pointer::make_shared< FullModelParameters >( full_sequence, cutpoint_open_in_full_model, res_numbers_in_pose )  )
 {
 }
 
@@ -122,7 +122,7 @@ FullModelInfo::FullModelInfo( FullModelParametersCOP full_model_parameters ):
 FullModelInfo::FullModelInfo( pose::Pose & pose ) :
 	CacheableData()
 {
-	full_model_parameters_ = FullModelParametersCOP( FullModelParametersOP( new FullModelParameters( pose, res_list_ ) ) );
+	full_model_parameters_ = utility::pointer::make_shared< FullModelParameters >( pose, res_list_ );
 }
 
 
@@ -547,7 +547,7 @@ FullModelInfo::add_submotif_info(
 	std::string const & tag,
 	bool const & seed /*= false*/  )
 {
-	add_submotif_info( SubMotifInfoOP( new SubMotifInfo( res_list, tag, seed ) ) );
+	add_submotif_info( utility::pointer::make_shared< SubMotifInfo >( res_list, tag, seed ) );
 }
 
 
@@ -582,7 +582,7 @@ FullModelInfo::delete_submotif_info(
 	std::string const & tag,
 	bool const & seed /*= false*/  )
 {
-	delete_submotif_info( SubMotifInfoOP( new SubMotifInfo( res_list, tag, seed ) ) );
+	delete_submotif_info( utility::pointer::make_shared< SubMotifInfo >( res_list, tag, seed ) );
 }
 
 

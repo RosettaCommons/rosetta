@@ -124,14 +124,14 @@ SegmentHybridizer::SegmentHybridizer() :
 
 SegmentHybridizer::~SegmentHybridizer() = default;
 
-protocols::moves::MoverOP SegmentHybridizer::clone() const { return protocols::moves::MoverOP( new SegmentHybridizer( *this ) ); }
-protocols::moves::MoverOP SegmentHybridizer::fresh_instance() const { return protocols::moves::MoverOP( new SegmentHybridizer ); }
+protocols::moves::MoverOP SegmentHybridizer::clone() const { return utility::pointer::make_shared< SegmentHybridizer >( *this ); }
+protocols::moves::MoverOP SegmentHybridizer::fresh_instance() const { return utility::pointer::make_shared< SegmentHybridizer >(); }
 
 
 void
 SegmentHybridizer::init() {
-	fragments_big_ = core::fragment::FragSetOP( new core::fragment::ConstantLengthFragSet( big_ ) );
-	fragments_small_ = core::fragment::FragSetOP( new core::fragment::ConstantLengthFragSet( small_ ) );
+	fragments_big_ = utility::pointer::make_shared< core::fragment::ConstantLengthFragSet >( big_ );
+	fragments_small_ = utility::pointer::make_shared< core::fragment::ConstantLengthFragSet >( small_ );
 
 	// default scorefunction
 	set_scorefunction ( core::scoring::ScoreFunctionFactory::create_score_function( "score4_smooth_cart" ) );
@@ -419,7 +419,7 @@ SegmentHybridizer::apply( core::pose::Pose & pose ){
 
 		/// 3.a. define and set movemap
 
-		extended_mm_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap );
+		extended_mm_ = utility::pointer::make_shared< core::kinematics::MoveMap >();
 		extended_mm_->set_bb  ( false );
 		extended_mm_->set_chi ( false );
 		extended_mm_->set_jump( true );
@@ -711,7 +711,7 @@ std::string SegmentHybridizerCreator::keyname() const {
 
 protocols::moves::MoverOP
 SegmentHybridizerCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SegmentHybridizer );
+	return utility::pointer::make_shared< SegmentHybridizer >();
 }
 
 void SegmentHybridizerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -52,7 +52,7 @@ using namespace std;
 core::pack::task::operation::TaskOperationOP
 DatabaseThreadCreator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new DatabaseThread );
+	return utility::pointer::make_shared< DatabaseThread >();
 }
 
 void DatabaseThreadCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -82,7 +82,7 @@ DatabaseThread::~DatabaseThread() = default;
 
 core::pack::task::operation::TaskOperationOP DatabaseThread::clone() const
 {
-	return core::pack::task::operation::TaskOperationOP( new DatabaseThread( *this ) );
+	return utility::pointer::make_shared< DatabaseThread >( *this );
 }
 
 
@@ -190,7 +190,7 @@ DatabaseThread::parse_tag(TagCOP tag, DataMap &)
 {
 	target_sequence( tag->getOption< std::string >( "target_sequence","" ) );
 	template_file( tag->getOption< std::string >( "template_file","") );
-	template_pose_ = core::pose::PoseOP( new core::pose::Pose );
+	template_pose_ = utility::pointer::make_shared< core::pose::Pose >();
 	if ( template_file()!="" ) {
 		core::import_pose::pose_from_file( *template_pose_, template_file_ , core::import_pose::PDB_file);
 	}

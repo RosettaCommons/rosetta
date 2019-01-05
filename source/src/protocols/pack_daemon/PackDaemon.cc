@@ -91,7 +91,7 @@ PackDaemon::~PackDaemon() = default;
 // calling setup().
 void PackDaemon::set_pose_and_task( Pose const & pose, PackerTask const & task )
 {
-	pose_ = PoseOP( new Pose( pose ) );
+	pose_ = utility::pointer::make_shared< Pose >( pose );
 	task_ = task.clone();
 	for ( Size ii = 1; ii <= task.total_residue(); ++ii ) {
 		task_->nonconst_residue_task( ii ).and_extrachi_cutoff( 1 );
@@ -116,7 +116,7 @@ void PackDaemon::set_entity_correspondence( EntityCorrespondence const &  ec )
 		utility_exit_with_message( "Num residue disgreement between input EntityCorrespondence and existing pose_" );
 	}
 	if ( ! correspondence_ ) {
-		correspondence_ = EntityCorrespondenceOP( new EntityCorrespondence( ec ) );
+		correspondence_ = utility::pointer::make_shared< EntityCorrespondence >( ec );
 		setup_complete_ = false;
 	}
 	correspondence_->set_pose( pose_ ); // discard the pose that's already being pointed to by the ec
@@ -148,7 +148,7 @@ void PackDaemon::setup()
 	}
 	TR << "PackDaemon::setup()" << std::endl;
 
-	rot_sets_ = RotamerSetsOP( new RotamerSets );
+	rot_sets_ = utility::pointer::make_shared< RotamerSets >();
 	core::pack::interaction_graph::AnnealableGraphBaseOP ig;
 	core::pack::pack_rotamers_setup( *pose_, *score_function_, task_, rot_sets_, ig );
 
@@ -455,7 +455,7 @@ void PackDaemon::calculate_background_energies()
 
 DaemonSet::DaemonSet() :
 	num_entities_( 0 ),
-	task_factory_( core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory ) ),
+	task_factory_( utility::pointer::make_shared< core::pack::task::TaskFactory >() ),
 	include_background_energies_( true ),
 	limit_dlig_mem_usage_( false ),
 	dlig_nmeg_limit_( 0 ),
@@ -580,7 +580,7 @@ DaemonSet::add_pack_daemon(
 
 	/// Read the correspondence file
 	EntityCorrespondenceOP ec( new EntityCorrespondence );
-	ec->set_pose( core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose( pose ) ) ));
+	ec->set_pose( utility::pointer::make_shared< core::pose::Pose >( pose ));
 	ec->set_num_entities( num_entities_ );
 	ec->initialize_from_correspondence_file( correspondence_file );
 
@@ -687,7 +687,7 @@ DaemonSet::add_pack_daemon(
 	}
 
 	daemons_.push_back( std::make_pair( daemon_index, daemon ));
-	daemon_poses_.push_back( core::pose::PoseOP( new core::pose::Pose( pose ) ));
+	daemon_poses_.push_back( utility::pointer::make_shared< core::pose::Pose >( pose ));
 	daemon_tasks_.push_back( task );
 	npd_calcs_for_poses_.resize( daemon_tasks_.size() );
 	++ndaemons_;
@@ -1169,7 +1169,7 @@ RotamerSubsetRepacker::create_rotamer_subsets_from_rot_to_pack(
 	utility::vector0< int > const & rot_to_pack
 )
 {
-	return RotamerSubsetRepacker::RotamerSubsetsOP( new core::pack::rotamer_set::RotamerSubsets( *rot_sets(), rot_to_pack ) );
+	return utility::pointer::make_shared< core::pack::rotamer_set::RotamerSubsets >( *rot_sets(), rot_to_pack );
 }
 
 

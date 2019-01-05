@@ -287,7 +287,7 @@ HSSTripletSet::HSSTripletSet( String const & s )
 
 	utility::vector1< String > hsss( utility::string_split( s, ';' ) );
 	for ( utility::vector1< String >::const_iterator iter = hsss.begin(); iter != hsss.end() ; ++iter ) {
-		push_back( HSSTripletOP( new HSSTriplet( *iter ) ) );
+		push_back( utility::pointer::make_shared< HSSTriplet >( *iter ) );
 	}
 }
 

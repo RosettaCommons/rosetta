@@ -444,7 +444,7 @@ using AtomMemoOP = utility::pointer::shared_ptr<AtomMemo>;
 
 void pretty_print_atomicoor(std::ostream & out, AtomICoor const & start, ResidueType const & rsd_type, core::Size indent, AtomMemoOP memo ) {
 	if ( ! memo ) {
-		memo = AtomMemoOP( new AtomMemo );
+		memo = utility::pointer::make_shared< AtomMemo >();
 	}
 	for ( core::Size ii(1); ii <= indent; ++ii ) {
 		out << "   ";

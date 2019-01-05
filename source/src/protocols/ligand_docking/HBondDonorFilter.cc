@@ -69,7 +69,7 @@ HBondDonorFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::Data
 }
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP HBondDonorFilterCreator::create_filter() const { return protocols::filters::FilterOP( new HBondDonorFilter ); }
+// XRW TEMP HBondDonorFilterCreator::create_filter() const { return utility::pointer::make_shared< HBondDonorFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP HBondDonorFilterCreator::keyname() const { return "HBondDonor"; }
@@ -99,7 +99,7 @@ std::string HBondDonorFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 HBondDonorFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new HBondDonorFilter );
+	return utility::pointer::make_shared< HBondDonorFilter >();
 }
 
 void HBondDonorFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

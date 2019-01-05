@@ -64,7 +64,7 @@ ParatopeSiteConstraintMover::ParatopeSiteConstraintMover( ParatopeSiteConstraint
 	interface_distance_( src.interface_distance_ )
 
 {
-	if ( src.ab_info_ ) ab_info_ =  AntibodyInfoOP( new AntibodyInfo( *src.ab_info_));
+	if ( src.ab_info_ ) ab_info_ =  utility::pointer::make_shared< AntibodyInfo >( *src.ab_info_);
 	if ( src.current_func_ ) current_func_ = current_func_->clone();
 }
 
@@ -210,7 +210,7 @@ ParatopeSiteConstraintMover::apply(core::pose::Pose& pose){
 	using namespace core::scoring::constraints;
 
 	if ( ! ab_info_ ) {
-		ab_info_ = AntibodyInfoCOP( AntibodyInfoOP( new AntibodyInfo(pose) ) );
+		ab_info_ = utility::pointer::make_shared< AntibodyInfo >(pose);
 	}
 	//Check if antigen is present
 	if ( ! ab_info_->antigen_present() ) {
@@ -235,7 +235,7 @@ ParatopeSiteConstraintMover::apply(core::pose::Pose& pose){
 	}
 	//Check any set function
 	if ( ! current_func_ ) {
-		current_func_ = core::scoring::func::FuncOP( new core::scoring::func::FlatHarmonicFunc(0, 1, interface_distance_) );
+		current_func_ = utility::pointer::make_shared< core::scoring::func::FlatHarmonicFunc >(0, 1, interface_distance_);
 	}
 
 	debug_assert(paratope_residues_.size() == pose.size());
@@ -336,7 +336,7 @@ std::string ParatopeSiteConstraintMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 ParatopeSiteConstraintMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ParatopeSiteConstraintMover );
+	return utility::pointer::make_shared< ParatopeSiteConstraintMover >();
 }
 
 void ParatopeSiteConstraintMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

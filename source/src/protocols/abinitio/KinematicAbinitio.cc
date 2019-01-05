@@ -419,7 +419,7 @@ KinematicAbinitio::apply( core::pose::Pose& pose ) {
 
 	ConstraintCOPs skipped_list;
 	if ( pose.constraint_set()->has_residue_pair_constraints() ) {
-		evaluator()->add_evaluation( evaluation::PoseEvaluatorOP( new constraints_additional::ConstraintEvaluator( "total_cst", *pose.constraint_set() ) ) );
+		evaluator()->add_evaluation( utility::pointer::make_shared< constraints_additional::ConstraintEvaluator >( "total_cst", *pose.constraint_set() ) );
 		if ( option[ fold_cst::constraint_skip_rate ].user() ) {
 			orig_constraints = pose.constraint_set()->clone();
 			Real const skip_rate( option[ fold_cst::constraint_skip_rate ]() );
@@ -586,9 +586,9 @@ moves::MoverOP KinematicAbinitio::create_bb_moves(
 	if ( !option[ jumps::no_wobble ]() ) {
 		// and why not throwing in a wobble ?!
 		if ( bLargeWobble ) {
-			cycle->add_mover( moves::MoverOP( new simple_moves::WobbleMover( brute_move_large()->fragments(), movemap() ) ) );
+			cycle->add_mover( utility::pointer::make_shared< simple_moves::WobbleMover >( brute_move_large()->fragments(), movemap() ) );
 		} else {
-			cycle->add_mover( moves::MoverOP( new simple_moves::WobbleMover( brute_move_small()->fragments(), movemap() ) ) );
+			cycle->add_mover( utility::pointer::make_shared< simple_moves::WobbleMover >( brute_move_small()->fragments(), movemap() ) );
 		}
 	}
 	return cycle;
@@ -596,14 +596,14 @@ moves::MoverOP KinematicAbinitio::create_bb_moves(
 
 moves::TrialMoverOP KinematicAbinitio::stage1_mover( pose::Pose &, moves::TrialMoverOP trials ) {
 	if ( kinematics().jump_mover() ) {
-		return moves::TrialMoverOP( new moves::TrialMover( create_jump_moves( trials->mover() ), mc_ptr() ) );
+		return utility::pointer::make_shared< moves::TrialMover >( create_jump_moves( trials->mover() ), mc_ptr() );
 	} else return trials;
 }
 
 
 moves::TrialMoverOP KinematicAbinitio::stage2_mover( pose::Pose &, moves::TrialMoverOP trials ) {
 	if ( kinematics().jump_mover() ) {
-		return moves::TrialMoverOP( new moves::TrialMover( create_jump_moves( trials->mover() ), mc_ptr() ) );
+		return utility::pointer::make_shared< moves::TrialMover >( create_jump_moves( trials->mover() ), mc_ptr() );
 	} else return trials;
 }
 
@@ -644,7 +644,7 @@ moves::TrialMoverOP KinematicAbinitio::stage4_mover( pose::Pose &pose, int kk, m
 		Real crank_up_angle = 5.0; //factor to make the small_moves larger: after-all we are in centroid mode
 		moves = create_bb_moves( pose, moves, bLargeWobble, crank_up_angle );
 	}
-	return moves::TrialMoverOP( new moves::TrialMover( moves, mc_ptr() ) );
+	return utility::pointer::make_shared< moves::TrialMover >( moves, mc_ptr() );
 }
 
 

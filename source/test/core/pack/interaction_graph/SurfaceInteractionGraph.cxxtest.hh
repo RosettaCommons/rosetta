@@ -206,7 +206,7 @@ public:
 		scorefxn->setup_for_packing( pose, designtask->repacking_residues(), designtask->designing_residues() );
 
 		// --- RotamerSets ---
-		rotsets = rotamer_set::RotamerSetsOP( new rotamer_set::RotamerSets() );
+		rotsets = utility::pointer::make_shared< rotamer_set::RotamerSets >();
 		rotsets->set_task( designtask ); // sets the moltenres_2_resid and resid_2_moltenres arrays
 		//TR << "Building rotamers..." << std::endl;
 		packer_neighbor_graph = create_packer_graph( pose, *scorefxn, designtask );
@@ -224,7 +224,7 @@ public:
 
 		// --- InteractionGraph ---
 		//TR << "Instantiating PDSurfaceInteractionGraph..." << std::endl;
-		pdsig = interaction_graph::PDSurfaceInteractionGraphOP( new interaction_graph::PDSurfaceInteractionGraph( designtask->num_to_be_packed() ) );
+		pdsig = utility::pointer::make_shared< interaction_graph::PDSurfaceInteractionGraph >( designtask->num_to_be_packed() );
 		pdsig->set_pose( pose );
 		pdsig->set_packer_task( *designtask );
 		pdsig->set_rotamer_sets( *rotsets );
@@ -560,7 +560,7 @@ public:
 		// for this test, we don't want to use the PDIG that's created in the fixture
 
 		// TR << "Instantiating LinearMemorySurfaceInteractionGraph..." << std::endl;
-		lmsolig = interaction_graph::LinearMemorySurfaceInteractionGraphOP( new interaction_graph::LinearMemorySurfaceInteractionGraph( designtask->num_to_be_packed() ) );
+		lmsolig = utility::pointer::make_shared< interaction_graph::LinearMemorySurfaceInteractionGraph >( designtask->num_to_be_packed() );
 		lmsolig->set_pose( pose );
 		lmsolig->set_packer_task( *designtask );
 		lmsolig->set_score_function( *scorefxn );

@@ -71,8 +71,8 @@ namespace monte_carlo {
 //Constructor
 StepWiseMonteCarlo::StepWiseMonteCarlo( core::scoring::ScoreFunctionCOP scorefxn_input ):
 	scorefxn_input_( scorefxn_input ),
-	options_( StepWiseMonteCarloOptionsCOP( new StepWiseMonteCarloOptions ) ), // can be replaced later
-	master_mover_( StepWiseMasterMoverOP( new StepWiseMasterMover( scorefxn_input_, options_ ) ) ),
+	options_( utility::pointer::make_shared< StepWiseMonteCarloOptions >() ), // can be replaced later
+	master_mover_( utility::pointer::make_shared< StepWiseMasterMover >( scorefxn_input_, options_ ) ),
 	max_missing_weight_( scorefxn_input->get_weight( scoring::missing_res ) ), // for annealing
 	missing_weight_interval_( 0.0 ), // updated below
 	missing_weight_( 0.0 ), // can change during run.
@@ -266,7 +266,7 @@ StepWiseMonteCarlo::pose_from_checkpoint_file() const {
 	core::pose::Pose pose;
 	std::string const checkpoint_file = checkpoint_file_name();
 	core::io::silent::SilentFileOptions opts;
-	auto sfd = core::io::silent::SilentFileDataOP( new core::io::silent::SilentFileData( opts ) );
+	auto sfd = utility::pointer::make_shared< core::io::silent::SilentFileData >( opts );
 	debug_assert( checkpoint_file_exists() );
 	sfd->read_file( checkpoint_file );
 
@@ -281,7 +281,7 @@ StepWiseMonteCarlo::pose_from_checkpoint_file_low() const {
 	core::pose::Pose pose;
 	std::string const checkpoint_file = checkpoint_file_name_low();
 	core::io::silent::SilentFileOptions opts;
-	auto sfd = core::io::silent::SilentFileDataOP( new core::io::silent::SilentFileData( opts ) );
+	auto sfd = utility::pointer::make_shared< core::io::silent::SilentFileData >( opts );
 	debug_assert( checkpoint_file_exists() );
 	sfd->read_file( checkpoint_file );
 

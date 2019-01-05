@@ -56,7 +56,7 @@ methods::EnergyMethodOP
 WaterSpecificEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new WaterSpecificEnergy );
+	return utility::pointer::make_shared< WaterSpecificEnergy >();
 }
 
 ScoreTypes
@@ -69,7 +69,7 @@ WaterSpecificEnergyCreator::score_types_for_method() const {
 
 /// ctor
 WaterSpecificEnergy::WaterSpecificEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new WaterSpecificEnergyCreator ) )
+	parent( utility::pointer::make_shared< WaterSpecificEnergyCreator >() )
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys::hydrate;
@@ -90,7 +90,7 @@ WaterSpecificEnergy::WaterSpecificEnergy() :
 /// clone
 EnergyMethodOP
 WaterSpecificEnergy::clone() const {
-	return EnergyMethodOP( new WaterSpecificEnergy( *this ) );
+	return utility::pointer::make_shared< WaterSpecificEnergy >( *this );
 }
 
 /////////////////////////////////////////////////////////////////////////////

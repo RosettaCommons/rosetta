@@ -222,9 +222,9 @@ pack_sidechains(
 	// Set up packer tasks and move map
 	pack_sc << "restrict to packing!!!  no design!" << std::endl;
 	TaskFactoryOP tf( new TaskFactory() );
-	tf->push_back( TaskOperationCOP( new InitializeFromCommandline() )); // get extra rotamer flags from command line
-	tf->push_back( TaskOperationCOP( new operation::IncludeCurrent )); // include current rotamer by default
-	tf->push_back( TaskOperationCOP( new RestrictToRepacking() )); // do not design
+	tf->push_back( utility::pointer::make_shared< InitializeFromCommandline >()); // get extra rotamer flags from command line
+	tf->push_back( utility::pointer::make_shared< operation::IncludeCurrent >()); // include current rotamer by default
+	tf->push_back( utility::pointer::make_shared< RestrictToRepacking >()); // do not design
 
 	// set move map to allow sc minimization
 	core::kinematics::MoveMapOP repack_movemap( new core::kinematics::MoveMap() );

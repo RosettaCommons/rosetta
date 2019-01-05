@@ -25,11 +25,11 @@
 namespace utility {
 namespace pointer {
 
-	using boost::dynamic_pointer_cast;
-	using boost::static_pointer_cast;
-	using boost::const_pointer_cast;
-	using boost::enable_shared_from_this;
-
+using boost::dynamic_pointer_cast;
+using boost::static_pointer_cast;
+using boost::const_pointer_cast;
+using boost::enable_shared_from_this;
+using boost::make_shared;
 }
 }
 

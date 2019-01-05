@@ -52,13 +52,13 @@ public:
 	//virtual
 	//protocols::moves::MoverOP
 	//fresh_instance() const {
-	//	return new GraftDesignCDRs;;
+	// return new GraftDesignCDRs;;
 	//}
 
 	void
 	apply(core::pose::Pose & pose){
 
-		if (! protocols::antibody::clusters::check_if_pose_renumbered_for_clusters(pose)){
+		if ( ! protocols::antibody::clusters::check_if_pose_renumbered_for_clusters(pose) ) {
 			utility_exit_with_message("PDB must be numbered correctly to identify North CDR clusters.  Please see Antibody Design documentation.");
 		}
 
@@ -73,7 +73,7 @@ public:
 
 		protocols::jd2::JobOP current_job( protocols::jd2::JobDistributor::get_instance()->current_job());
 
-		for (core::Size i=2; i<=result_poses.size(); ++i){
+		for ( core::Size i=2; i<=result_poses.size(); ++i ) {
 			std::string tag = "graft_ensemble_"+utility::to_string(i)+"_";
 			//Need to have it obey path_.  Make this change AFTER tests.
 
@@ -82,11 +82,11 @@ public:
 			//Add information for other poses to be output.
 			//ab_info->setup_CDR_clusters(*(result_poses[i]));
 			//for (core::Size i = 1; i<=CDRNameEnum_total; ++i){
-			//	CDRNameEnum cdr_name = static_cast<CDRNameEnum>(i);
-			//	std::pair<CDRClusterEnum, core::Real> result = ab_info->get_CDR_cluster(cdr_name);
-			//	std::string output = "REMARK CLUSTER "+ ab_info->get_cluster_name(result.first) +" "+utility::to_string(result.second);
+			// CDRNameEnum cdr_name = static_cast<CDRNameEnum>(i);
+			// std::pair<CDRClusterEnum, core::Real> result = ab_info->get_CDR_cluster(cdr_name);
+			// std::string output = "REMARK CLUSTER "+ ab_info->get_cluster_name(result.first) +" "+utility::to_string(result.second);
 			//std::cout << output;
-			//	protocols::jd2::JobDistributor::get_instance()->current_job()->add_string(output);
+			// protocols::jd2::JobDistributor::get_instance()->current_job()->add_string(output);
 			//}
 
 			protocols::jd2::JobDistributor::get_instance()->job_outputter()->other_pose(current_job, *(result_poses[i]), tag);
@@ -94,7 +94,7 @@ public:
 
 		//Add information to final pose
 		//ab_info->setup_CDR_clusters(pose);
-		for (core::Size i = 1; i<=CDRNameEnum_total; ++i){
+		for ( core::Size i = 1; i<=CDRNameEnum_total; ++i ) {
 			CDRNameEnum cdr_name = static_cast<CDRNameEnum>(i);
 			CDRClusterCOP result = ab_info->get_CDR_cluster(cdr_name);
 			std::string output = "REMARK CLUSTER "+ ab_info->get_cluster_name(result->cluster()) +" "+utility::to_string(result->distance());
@@ -111,7 +111,7 @@ int main(int argc, char* argv[]){
 		devel::init(argc, argv);
 
 
-		protocols::jd2::JobDistributor::get_instance()->go(protocols::moves::MoverOP( new GraftDesignCDRs ));
+		protocols::jd2::JobDistributor::get_instance()->go(utility::pointer::make_shared< GraftDesignCDRs >());
 	} catch (utility::excn::Exception& excn ) {
 		std::cout << "Exception: " << std::endl;
 		excn.show( std::cerr );

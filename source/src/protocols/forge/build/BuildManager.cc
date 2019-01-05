@@ -117,13 +117,13 @@ BuildManager & BuildManager::operator =( BuildManager const & rval ) {
 
 /// @brief clone this object
 BuildManagerOP BuildManager::clone() const {
-	return BuildManagerOP( new BuildManager( *this ) );
+	return utility::pointer::make_shared< BuildManager >( *this );
 }
 
 
 /// @brief create a new instance of this type of object
 BuildManagerOP BuildManager::create() const {
-	return BuildManagerOP( new BuildManager() );
+	return utility::pointer::make_shared< BuildManager >();
 }
 
 
@@ -370,7 +370,7 @@ BuildManager::Original2Modified BuildManager::modify( Pose & pose ) {
 
 	// create the new SequenceMapping consisting of oldnew() plus
 	// old2new_region_endpoints() information
-	seqmap_ = SequenceMappingOP( new SequenceMapping() );
+	seqmap_ = utility::pointer::make_shared< SequenceMapping >();
 	for ( Size r = 1; r <= old_nres; ++r ) {
 		Original2Modified::const_iterator i = original2modified_.find( r );
 		if ( i != original2modified_.end() ) {

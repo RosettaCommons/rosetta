@@ -105,13 +105,13 @@ MakeBundle::~MakeBundle() = default;
 
 /// @brief Clone operator to create a pointer to a fresh MakeBundle object that copies this one.
 protocols::moves::MoverOP MakeBundle::clone() const {
-	return protocols::moves::MoverOP( new MakeBundle( *this ) );
+	return utility::pointer::make_shared< MakeBundle >( *this );
 }
 
 
 /// @brief Fresh_instance operator to create a pointer to a fresh MakeBundle object that does NOT copy this one.
 protocols::moves::MoverOP MakeBundle::fresh_instance() const {
-	return protocols::moves::MoverOP( new MakeBundle );
+	return utility::pointer::make_shared< MakeBundle >();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -134,7 +134,7 @@ void MakeBundle::apply (core::pose::Pose & pose)
 	core::Real delta_omega0_offset(0.0);
 
 	//The BundleParametersSet object that will hold the Crick parameters and will be passed into the Conformation object of the pose on which we will be operating.
-	BundleParametersSetOP output_parameters_set(BundleParametersSetOP( new BundleParametersSet ));
+	BundleParametersSetOP output_parameters_set(utility::pointer::make_shared< BundleParametersSet >());
 	output_parameters_set->set_bundle_symmetry( symmetry() ); //Store the symmetry of this bundle.
 	output_parameters_set->set_bundle_symmetry_copies( symmetry_copies() ); //Store the number of symmetry copies to actually generate.
 	output_parameters_set->set_n_helices( n_helices() ); //Store the number of helices that are defined for each symmetry repeat.
@@ -364,7 +364,7 @@ void MakeBundle::set_symmetry_options_from_tag( utility::tag::TagCOP tag )
 void MakeBundle::add_helix() {
 	defaults_set_ = true; //At this point, we assume that defaults are set.  Setting this to true prevents defaults from being set later.
 
-	make_bundle_helix_movers_.push_back( protocols::helical_bundle::MakeBundleHelixOP(new protocols::helical_bundle::MakeBundleHelix( default_calculator_ )) );
+	make_bundle_helix_movers_.push_back( utility::pointer::make_shared< protocols::helical_bundle::MakeBundleHelix >( default_calculator_ ) );
 
 	core::Size const newindex( make_bundle_helix_movers_.size() );
 	helix(newindex)->set_residue_name( default_residue_name() );
@@ -534,7 +534,7 @@ std::string MakeBundleCreator::keyname() const {
 
 protocols::moves::MoverOP
 MakeBundleCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MakeBundle );
+	return utility::pointer::make_shared< MakeBundle >();
 }
 
 void MakeBundleCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

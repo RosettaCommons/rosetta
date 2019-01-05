@@ -58,7 +58,7 @@ void MMTMinPackingJob::setup()
 void MMTMinPackingJob::optimize()
 {
 
-	best_assignment_ = core::pack::scmin::SidechainStateAssignmentOP( new core::pack::scmin::SidechainStateAssignment( rotsets_->nmoltenres() ) );
+	best_assignment_ = utility::pointer::make_shared< core::pack::scmin::SidechainStateAssignment >( rotsets_->nmoltenres() );
 
 	core::pack::min_pack_optimize(
 		pose(), sfxn(), task(), rotsets_, scminmap_,

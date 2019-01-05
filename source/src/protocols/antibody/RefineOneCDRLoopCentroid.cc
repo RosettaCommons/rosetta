@@ -160,7 +160,7 @@ void RefineOneCDRLoopCentroid::loop_centroid_relax(
 
 	//setting MoveMap
 	kinematics::MoveMapOP loop_map;
-	loop_map = kinematics::MoveMapOP( new kinematics::MoveMap() );
+	loop_map = utility::pointer::make_shared< kinematics::MoveMap >();
 	loop_map->clear();
 	loop_map->set_chi( false );
 	loop_map->set_bb( false );
@@ -240,7 +240,7 @@ void RefineOneCDRLoopCentroid::loop_centroid_relax(
 	Real temperature = init_temp;
 
 	MonteCarloOP mc;
-	mc = MonteCarloOP( new protocols::moves::MonteCarlo( pose_in, *lowres_scorefxn_, temperature ) );
+	mc = utility::pointer::make_shared< protocols::moves::MonteCarlo >( pose_in, *lowres_scorefxn_, temperature );
 	mc->reset( pose_in ); // monte carlo reset
 
 	// outer cycle

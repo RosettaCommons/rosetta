@@ -92,15 +92,15 @@ LoopBuilder::LoopBuilder() {
 	solution_picker->dont_check_rama();
 	solution_picker->be_lenient();
 
-	kic_mover_ = add_child( KicMoverOP( new KicMover ) );
-	kic_mover_->add_perturber( PerturberOP( new IdealizeNonPhiPsi ) );
-	kic_mover_->add_perturber( PerturberOP( new Rama2bPerturber ) );
-	kic_mover_->set_pivot_picker( PivotPickerOP( new LoopPivots ) );
+	kic_mover_ = add_child( utility::pointer::make_shared< KicMover >() );
+	kic_mover_->add_perturber( utility::pointer::make_shared< IdealizeNonPhiPsi >() );
+	kic_mover_->add_perturber( utility::pointer::make_shared< Rama2bPerturber >() );
+	kic_mover_->set_pivot_picker( utility::pointer::make_shared< LoopPivots >() );
 	kic_mover_->set_solution_picker( solution_picker );
 
-	minimizer_ = add_child( MinimizationRefinerOP( new MinimizationRefiner ) );
+	minimizer_ = add_child( utility::pointer::make_shared< MinimizationRefiner >() );
 
-	logger_ = TrajectoryLoggerOP( new TrajectoryLogger );
+	logger_ = utility::pointer::make_shared< TrajectoryLogger >();
 }
 
 LoopBuilder::~LoopBuilder() = default;
@@ -139,9 +139,9 @@ void LoopBuilder::use_fragments(
 	// algorithm in the production runs as in the benchmark runs.
 
 	kic_mover_->clear_perturbers();
-	kic_mover_->add_perturber(PerturberOP( new IdealizeNonPhiPsi ));
-	kic_mover_->add_perturber(PerturberOP( new Rama2bPerturber ));
-	kic_mover_->add_perturber(PerturberOP( new FragmentPerturber(frag_libs) ));
+	kic_mover_->add_perturber(utility::pointer::make_shared< IdealizeNonPhiPsi >());
+	kic_mover_->add_perturber(utility::pointer::make_shared< Rama2bPerturber >());
+	kic_mover_->add_perturber(utility::pointer::make_shared< FragmentPerturber >(frag_libs));
 }
 
 bool LoopBuilder::do_apply(Pose & pose, Loop const & loop) {
@@ -247,7 +247,7 @@ std::string LoopBuilderCreator::keyname() const {
 
 protocols::moves::MoverOP
 LoopBuilderCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LoopBuilder );
+	return utility::pointer::make_shared< LoopBuilder >();
 }
 
 void LoopBuilderCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

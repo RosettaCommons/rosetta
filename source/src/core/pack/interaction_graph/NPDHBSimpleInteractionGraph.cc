@@ -504,10 +504,10 @@ NPDHBSimpleInteractionGraph::set_pose_no_initialize( pose::Pose const & pose )
 
 	npd_hbond_set_ = utility::pointer::static_pointer_cast< NPDHBondSet const > ( pose.energies().data().get_const_ptr( NPD_HBOND_SET ) );
 	if ( ! npd_hbond_set_ ) {
-		npd_hbond_set_ = NPDHBondSetOP( new NPDHBondSet );
+		npd_hbond_set_ = utility::pointer::make_shared< NPDHBondSet >();
 	}
 
-	hbond_options_ = HBondOptionsOP( new HBondOptions( npd_hbond_set_->hbond_options() ));
+	hbond_options_ = utility::pointer::make_shared< HBondOptions >( npd_hbond_set_->hbond_options() );
 	hbond_database_ = HBondDatabase::get_database(hbond_options_->params_database_tag());
 
 	parent::set_pose_no_initialize( pose );
@@ -589,7 +589,7 @@ utility::vector1< char > & NPDHBSimpleInteractionGraph::hbonding_to_res()
 NPDHBondOP NPDHBSimpleInteractionGraph::unused_hbond()
 {
 	if ( hbonds_queue_.empty() ) {
-		return NPDHBondOP( new NPDHBond );
+		return utility::pointer::make_shared< NPDHBond >();
 	}
 	NPDHBondOP next = hbonds_queue_.front();
 	hbonds_queue_.pop_front();

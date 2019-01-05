@@ -165,7 +165,7 @@ MoverOP Mover::fresh_instance() const
 {
 	utility_exit_with_message("fresh_instance has been called on a Mover which has not overridden the base class implementation.  Probably you tried to pass a Mover to the job distributor which does not have fresh_instance implemented.  Implement the function and try again.\n");
 	return MoverOP(nullptr);
-	//return MoverOP( new Mover ); //this is what your Mover should return - it's illegal here because Mover does not define the pure virtual function apply().
+	//return utility::pointer::make_shared< Mover >(); //this is what your Mover should return - it's illegal here because Mover does not define the pure virtual function apply().
 }
 
 /// @details clone is meant to return an OP'ed deep copy of this object.  This really should be a pure virtual in the base class, but adding pure virtuals to Mover would massively disrupt the code.  This default implementation crashes at runtime instead of compiletime if you try to call it.  If this code is causing you problems, your Mover needs to override this function.

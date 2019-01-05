@@ -112,7 +112,7 @@ private:
 	//Each thread will need its own Hasher object with shared HasherSettings
 	core::Size version_=0;
 	//utility::pointer::shared_ptr< std::map< int, Model > > model_map_;
-	EdgeMapOP edges_ = EdgeMapOP( new EdgeMap );
+	EdgeMapOP edges_ = utility::pointer::make_shared< EdgeMap >();
 
 	SegmentVectorCOP segment_vector_;
 	std::string edge_file_name_;

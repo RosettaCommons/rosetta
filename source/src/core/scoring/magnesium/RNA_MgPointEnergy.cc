@@ -74,7 +74,7 @@ methods::EnergyMethodOP
 RNA_MgPointEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new RNA_MgPointEnergy );
+	return utility::pointer::make_shared< RNA_MgPointEnergy >();
 }
 
 ScoreTypes
@@ -87,8 +87,8 @@ RNA_MgPointEnergyCreator::score_types_for_method() const {
 
 
 RNA_MgPointEnergy::RNA_MgPointEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new RNA_MgPointEnergyCreator ) ),
-	rna_mg_knowledge_based_potential_( MgKnowledgeBasedPotentialOP( new MgKnowledgeBasedPotential ) ),
+	parent( utility::pointer::make_shared< RNA_MgPointEnergyCreator >() ),
+	rna_mg_knowledge_based_potential_( utility::pointer::make_shared< MgKnowledgeBasedPotential >() ),
 	verbose_( basic::options::option[ basic::options::OptionKeys::rescore::verbose ]() )
 {}
 
@@ -97,7 +97,7 @@ RNA_MgPointEnergy::RNA_MgPointEnergy() :
 methods::EnergyMethodOP
 RNA_MgPointEnergy::clone() const
 {
-	return methods::EnergyMethodOP( new RNA_MgPointEnergy );
+	return utility::pointer::make_shared< RNA_MgPointEnergy >();
 }
 
 /////////////////////////////////////////////////////////////////////////////

@@ -122,7 +122,7 @@ ConstraintSet::ConstraintSet(
 ConstraintSet::~ConstraintSet() { this->detach_from_conformation(); }
 
 ConstraintSetOP ConstraintSet::clone() const {
-	return ConstraintSetOP( new ConstraintSet( *this ) );
+	return utility::pointer::make_shared< ConstraintSet >( *this );
 }
 
 /// @details This can be called by derived classes to make sure
@@ -145,7 +145,7 @@ ConstraintSet::operator = ( ConstraintSet const & rhs ) {
 			mark_revision_id_expired();
 			continue;
 		} else if ( ! residue_pair_constraints_[ ii ] ) {
-			residue_pair_constraints_[ ii ] = ResidueConstraintsOP( new ResidueConstraints );
+			residue_pair_constraints_[ ii ] = utility::pointer::make_shared< ResidueConstraints >();
 			mark_revision_id_expired();
 		}
 
@@ -338,7 +338,7 @@ ConstraintSet::setup_for_minimizing_for_residue(
 {
 	auto iter = intra_residue_constraints_.find( rsd.seqpos() );
 	if ( iter != intra_residue_constraints_.end() ) {
-		res_data_cache.set_data( cst_res_data, basic::datacache::CacheableDataOP( new CstMinimizationData( iter->second ) ) );
+		res_data_cache.set_data( cst_res_data, utility::pointer::make_shared< CstMinimizationData >( iter->second ) );
 	}
 }
 
@@ -361,7 +361,7 @@ ConstraintSet::setup_for_minimizing_for_residue_pair(
 	if ( ! residue_pair_constraints_[ resno1 ] ) return;
 	ResidueConstraints::const_iterator iter = residue_pair_constraints_[ resno1 ]->find( resno2 );
 	if ( iter != residue_pair_constraints_[ resno1 ]->end() ) {
-		respair_data_cache.set_data( cst_respair_data, CacheableDataOP( new CstMinimizationData( iter->second ) )  );
+		respair_data_cache.set_data( cst_respair_data, utility::pointer::make_shared< CstMinimizationData >( iter->second )  );
 	}
 }
 
@@ -576,8 +576,8 @@ add_constraint_to_residue_constraints(
 )
 {
 	if ( !residue_constraints.has( seqpos ) ) {
-		residue_constraints.insert( seqpos, ConstraintsOP( new Constraints() ) );
-		//residue_constraints.insert( std::make_pair( seqpos, ConstraintsOP( new Constraints() ) ) );
+		residue_constraints.insert( seqpos, utility::pointer::make_shared< Constraints >() );
+		//residue_constraints.insert( std::make_pair( seqpos, utility::pointer::make_shared< Constraints >() ) );
 	}
 	residue_constraints.find( seqpos )->second->add_constraint( cst );
 }
@@ -588,7 +588,7 @@ ConstraintSet::add_residue_pair_constraint( Size const pos1, Size const pos2, Co
 	if (  total_residue_ < pos1 ) total_residue_ = pos1;
 	if (  total_residue_ < pos2 ) total_residue_ = pos2;
 	if (  residue_pair_constraints_.size() < pos1 ) residue_pair_constraints_.resize( pos1, nullptr );
-	if ( !residue_pair_constraints_[ pos1 ] ) residue_pair_constraints_[ pos1 ] = ResidueConstraintsOP( new ResidueConstraints() );
+	if ( !residue_pair_constraints_[ pos1 ] ) residue_pair_constraints_[ pos1 ] = utility::pointer::make_shared< ResidueConstraints >();
 
 	add_constraint_to_residue_constraints( pos2, cst, *(residue_pair_constraints_[ pos1 ] ) );
 }
@@ -756,7 +756,7 @@ void
 ConstraintSet::add_dof_constraint( DOF_ID const & id, func::FuncOP func, ScoreType const & t )
 {
 	mark_revision_id_expired();
-	dof_constraints_.push_back( DOF_ConstraintOP( new DOF_Constraint( id, func, t ) ) );
+	dof_constraints_.push_back( utility::pointer::make_shared< DOF_Constraint >( id, func, t ) );
 }
 
 
@@ -1214,7 +1214,7 @@ void ConstraintSet::shallow_copy(
 			}
 
 			if ( first_insert ) {
-				residue_pair_constraints_[ ii ] = ResidueConstraintsOP( new ResidueConstraints );
+				residue_pair_constraints_[ ii ] = utility::pointer::make_shared< ResidueConstraints >();
 				first_insert = false;
 			}
 			// Shallow copy of the Constraint objects all held in a single Constraints object

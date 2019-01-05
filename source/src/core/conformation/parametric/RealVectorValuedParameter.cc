@@ -72,7 +72,7 @@ RealVectorValuedParameter::~RealVectorValuedParameter() {}
 ParameterOP
 RealVectorValuedParameter::clone() const
 {
-	return ParameterOP( RealVectorValuedParameterOP( new RealVectorValuedParameter( *this ) ) );
+	return utility::pointer::make_shared< RealVectorValuedParameter >( *this );
 }
 
 /// @brief Set the value of this parameter.

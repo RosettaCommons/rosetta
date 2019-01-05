@@ -139,7 +139,7 @@ ReplicateFilter::parse_my_tag( utility::tag::TagCOP tag_ptr,
 }
 
 // XRW TEMP FilterOP
-// XRW TEMP ReplicateFilterCreator::create_filter() const { return FilterOP( new ReplicateFilter ); }
+// XRW TEMP ReplicateFilterCreator::create_filter() const { return utility::pointer::make_shared< ReplicateFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP ReplicateFilterCreator::keyname() const { return "ReplicateFilter"; }
@@ -193,7 +193,7 @@ std::string ReplicateFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 ReplicateFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new ReplicateFilter );
+	return utility::pointer::make_shared< ReplicateFilter >();
 }
 
 void ReplicateFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

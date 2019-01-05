@@ -43,7 +43,7 @@ NonTerminalStartingSegmentRequirement::NonTerminalStartingSegmentRequirement( No
 
 NonTerminalStartingSegmentRequirementOP
 NonTerminalStartingSegmentRequirement::clone() const {
-	return NonTerminalStartingSegmentRequirementOP( new NonTerminalStartingSegmentRequirement( *this ) );
+	return utility::pointer::make_shared< NonTerminalStartingSegmentRequirement >( *this );
 }
 std::pair<bool,bool>
 NonTerminalStartingSegmentRequirement::test(data_storage::SmartAssemblyOP assembly) {
@@ -96,7 +96,7 @@ NonTerminalStartingSegmentRequirementCreator::provide_xml_schema( utility::tag::
 
 AssemblyRequirementOP
 NonTerminalStartingSegmentRequirementCreator::create_requirement() const{
-	return AssemblyRequirementOP( new NonTerminalStartingSegmentRequirement() );
+	return utility::pointer::make_shared< NonTerminalStartingSegmentRequirement >();
 }
 
 std::string

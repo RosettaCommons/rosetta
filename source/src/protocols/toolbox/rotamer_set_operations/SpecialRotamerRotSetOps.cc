@@ -45,7 +45,7 @@ SpecialRotamerRSO::~SpecialRotamerRSO()= default;
 
 core::pack::rotamer_set::RotamerSetOperationOP
 SpecialRotamerRSO::clone() const{
-	return core::pack::rotamer_set::RotamerSetOperationOP( new SpecialRotamerRSO( *this ) );
+	return utility::pointer::make_shared< SpecialRotamerRSO >( *this );
 }
 
 

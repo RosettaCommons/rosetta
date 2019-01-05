@@ -61,7 +61,7 @@ methods::EnergyMethodOP
 GoapEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
-	return methods::EnergyMethodOP( new GoapEnergy( options ) );
+	return utility::pointer::make_shared< GoapEnergy >( options );
 }
 
 ScoreTypes
@@ -158,7 +158,7 @@ GoapEnergy::GoapEnergy( GoapEnergy const & src ):
 }
 
 GoapEnergy::GoapEnergy( EnergyMethodOptions const & ):
-	parent( methods::EnergyMethodCreatorOP( new GoapEnergyCreator ) ),
+	parent( utility::pointer::make_shared< GoapEnergyCreator >() ),
 	continuous_ ( false )
 {
 	set_default();

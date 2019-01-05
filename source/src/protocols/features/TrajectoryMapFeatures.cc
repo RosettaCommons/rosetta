@@ -89,8 +89,8 @@ void
 TrajectoryMapFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ), false);
-	Column step("step", DbDataTypeOP( new DbInteger() ), false); // referred to as "cycle" in code
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >(), false);
+	Column step("step", utility::pointer::make_shared< DbInteger >(), false); // referred to as "cycle" in code
 
 	utility::vector1<Column> pkey_cols;
 	pkey_cols.push_back(struct_id);
@@ -176,7 +176,7 @@ std::string TrajectoryMapFeaturesCreator::type_name() const {
 
 protocols::features::FeaturesReporterOP
 TrajectoryMapFeaturesCreator::create_features_reporter() const {
-	return protocols::features::FeaturesReporterOP( new TrajectoryMapFeatures );
+	return utility::pointer::make_shared< TrajectoryMapFeatures >();
 }
 
 void TrajectoryMapFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

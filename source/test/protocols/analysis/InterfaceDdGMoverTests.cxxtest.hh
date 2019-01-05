@@ -54,10 +54,10 @@ public:
 		prime_Filters( filters_ ); // Adds true_filter, false_filter
 
 		// Create dummy "commandline" score function
-		core::scoring::ScoreFunctionOP dummy_commandline_sfxn = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() );
+		core::scoring::ScoreFunctionOP dummy_commandline_sfxn = utility::pointer::make_shared< core::scoring::ScoreFunction >();
 		data_.add( "scorefxns", "commandline", dummy_commandline_sfxn );
 
-		test_instantiation_ = InterfaceDdGMoverOP( new InterfaceDdGMover() );
+		test_instantiation_ = utility::pointer::make_shared< InterfaceDdGMover >();
 		test_8mer_pose_ = pdb3fod_poseop();
 		test_dimer_pose_ = create_2res_1ten_2res_trp_cage_poseop();
 	}
@@ -201,7 +201,7 @@ public:
 			test_8mer_pose_->dump_pdb("8mer_unbound_" + utility::to_string( outer_chain ) + ".pdb");
 
 			// Run only necessary bits of setUp each time through the for loop
-			test_instantiation_ = protocols::features::InterfaceDdGMoverOP( new protocols::features::InterfaceDdGMover() );
+			test_instantiation_ = utility::pointer::make_shared< protocols::features::InterfaceDdGMover >();
 			test_8mer_pose_ = pdb3fod_poseop();
 		}
 	}

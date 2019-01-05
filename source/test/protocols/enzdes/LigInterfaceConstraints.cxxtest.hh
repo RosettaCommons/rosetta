@@ -104,7 +104,7 @@ public:
 		basic::options::option[basic::options::OptionKeys::run::preserve_header ].value(true);
 		*/
 
-		enz_io = protocols::toolbox::match_enzdes_util::EnzConstraintIOOP( new protocols::toolbox::match_enzdes_util::EnzConstraintIO(const_residue_set) );
+		enz_io = utility::pointer::make_shared< protocols::toolbox::match_enzdes_util::EnzConstraintIO >(const_residue_set);
 	}
 
 	// Shared finalization goes here.
@@ -132,22 +132,22 @@ public:
 
 		//couple of constraints
 		core::scoring::func::FuncOP his_lig_dist( new core::scoring::constraints::BoundFunc((2.00-0.30),(2.00+0.30), sqrt(1.0/180.0), "dis") );
-		test_cst_set->add_constraint( ConstraintCOP( new AtomPairConstraint( AtomID(test_pose.residue_type(107).atom_index("C6"),107), AtomID(test_pose.residue_type(45).atom_index("ND1"),45), his_lig_dist) ) );
+		test_cst_set->add_constraint( utility::pointer::make_shared< AtomPairConstraint >( AtomID(test_pose.residue_type(107).atom_index("C6"),107), AtomID(test_pose.residue_type(45).atom_index("ND1"),45), his_lig_dist) );
 		TR << "Adding constraint between res " << test_pose.residue_type(45).name3() << "45 and " << test_pose.residue_type(107).name3() <<"107." << std::endl;
 
 		core::scoring::func::FuncOP his_lig_ang( new core::scoring::constraints::BoundFunc( (105.10*rad_per_deg - 6.00*rad_per_deg), (105.10*rad_per_deg + 6.00*rad_per_deg), sqrt(1.0/100.0),"angA") );
-		test_cst_set->add_constraint( ConstraintCOP( new AngleConstraint( AtomID(test_pose.residue_type(107).atom_index("O4"),107), AtomID(test_pose.residue_type(107).atom_index("C6"),107), AtomID(test_pose.residue_type(45).atom_index("ND1"),45), his_lig_ang) ) );
+		test_cst_set->add_constraint( utility::pointer::make_shared< AngleConstraint >( AtomID(test_pose.residue_type(107).atom_index("O4"),107), AtomID(test_pose.residue_type(107).atom_index("C6"),107), AtomID(test_pose.residue_type(45).atom_index("ND1"),45), his_lig_ang) );
 
 
 		core::scoring::func::FuncOP ser_lig_ang( new core::scoring::constraints::BoundFunc( (109.00*rad_per_deg - 15.00*rad_per_deg), (109.00*rad_per_deg + 15.00*rad_per_deg), sqrt(1.0/20.0),"angB") );
-		test_cst_set->add_constraint( ConstraintCOP( new AngleConstraint( AtomID(test_pose.residue_type(107).atom_index("O4"),107), AtomID(test_pose.residue_type(68).atom_index("OG"),68), AtomID(test_pose.residue_type(68).atom_index("CB"),68), ser_lig_ang) ) );
+		test_cst_set->add_constraint( utility::pointer::make_shared< AngleConstraint >( AtomID(test_pose.residue_type(107).atom_index("O4"),107), AtomID(test_pose.residue_type(68).atom_index("OG"),68), AtomID(test_pose.residue_type(68).atom_index("CB"),68), ser_lig_ang) );
 
 		core::scoring::func::FuncOP gln_lig_dist( new core::scoring::constraints::BoundFunc( (3.00-0.20),(3.00 + 0.20), sqrt(1.0/20.0), "dis") );
-		test_cst_set->add_constraint( ConstraintCOP( new AtomPairConstraint( AtomID(test_pose.residue_type(107).atom_index("O4"),107), AtomID(test_pose.residue_type(51).atom_index("NE2"),51), gln_lig_dist) ) );
+		test_cst_set->add_constraint( utility::pointer::make_shared< AtomPairConstraint >( AtomID(test_pose.residue_type(107).atom_index("O4"),107), AtomID(test_pose.residue_type(51).atom_index("NE2"),51), gln_lig_dist) );
 
 
 		core::scoring::func::FuncOP gln_lig_dih( new core::scoring::constraints::PeriodicBoundFunc( (180.00*rad_per_deg - 15.00*rad_per_deg),(180.00*rad_per_deg + 15.00*rad_per_deg), sqrt(1.0/25.0), "dis", 180.00*rad_per_deg) );
-		test_cst_set->add_constraint( ConstraintCOP( new DihedralConstraint( AtomID(test_pose.residue_type(107).atom_index("O4"),107), AtomID(test_pose.residue_type(51).atom_index("NE2"),51), AtomID(test_pose.residue_type(51).atom_index("CD"),51), AtomID(test_pose.residue_type(51).atom_index("CG"),51), gln_lig_dih) ) );
+		test_cst_set->add_constraint( utility::pointer::make_shared< DihedralConstraint >( AtomID(test_pose.residue_type(107).atom_index("O4"),107), AtomID(test_pose.residue_type(51).atom_index("NE2"),51), AtomID(test_pose.residue_type(51).atom_index("CD"),51), AtomID(test_pose.residue_type(51).atom_index("CG"),51), gln_lig_dih) );
 		// all constraints defined
 
 		//test_cst_set->show(TR);

@@ -99,15 +99,15 @@ main( int argc, char * argv [])
 		protocols::enzdes::EnzdesBaseProtocolOP enzdes_protocol;
 		protocols::enzdes::EnzdesScorefileFilterOP enz_scofile;
 
-		if ( option[ OptionKeys::enzdes::flexbb_protocol ] ) enzdes_protocol = protocols::enzdes::EnzdesBaseProtocolOP( new protocols::enzdes::EnzdesFlexBBProtocol() );
+		if ( option[ OptionKeys::enzdes::flexbb_protocol ] ) enzdes_protocol = utility::pointer::make_shared< protocols::enzdes::EnzdesFlexBBProtocol >();
 		//else if( option[ OptionKeys::enzdes::remodel_protocol ] ) enzdes_protocol = new devel::enzdes::EnzdesRemodelProtocol();
-		else enzdes_protocol = protocols::enzdes::EnzdesBaseProtocolOP( new protocols::enzdes::EnzdesFixBBProtocol() );
+		else enzdes_protocol = utility::pointer::make_shared< protocols::enzdes::EnzdesFixBBProtocol >();
 
 		std::string scorefile_name("");
 
 		if ( option[ OptionKeys::out::file::o ].user() ) {
 			scorefile_name = option[ OptionKeys::out::file::o ]();
-			enz_scofile = protocols::enzdes::EnzdesScorefileFilterOP( new protocols::enzdes::EnzdesScorefileFilter() );
+			enz_scofile = utility::pointer::make_shared< protocols::enzdes::EnzdesScorefileFilter >();
 			//enz_scofile->set_cstio( enzdes_protocol->cst_io() );
 			if ( option[ OptionKeys::out::overwrite ].user() ) {
 				if ( utility::file::file_exists( scorefile_name ) ) utility::file::file_delete( scorefile_name );
@@ -136,7 +136,7 @@ main( int argc, char * argv [])
 
 			// we read each PDB just once to save on disk I/O
 			if ( curr_job.get() != prev_job.get() || input_pose.get() == nullptr ) {
-				input_pose = core::pose::PoseOP( new core::pose::Pose() );
+				input_pose = utility::pointer::make_shared< core::pose::Pose >();
 				//core::import_pose::pose_from_file( *input_pose, curr_job->input_tag() , core::import_pose::PDB_file);
 				protocols::enzdes::enzutil::read_pose_from_file(  *input_pose, curr_job->input_tag() );
 			}
@@ -175,7 +175,7 @@ main( int argc, char * argv [])
 				}
 
 				using namespace basic::datacache;
-				(poses_to_process[ pose_count ])->data().set(core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG, DataCache_CacheableData::DataOP( new basic::datacache::CacheableString( outtag ) ) );
+				(poses_to_process[ pose_count ])->data().set(core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG, utility::pointer::make_shared< basic::datacache::CacheableString >( outtag ) );
 				enzdes_protocol->apply( *(poses_to_process[ pose_count ]) );
 
 				//in case we're only interested in scoring and there is an output

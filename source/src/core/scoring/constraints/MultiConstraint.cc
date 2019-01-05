@@ -70,7 +70,7 @@ MultiConstraint::clone() const {
 
 MultiConstraintOP
 MultiConstraint::empty_clone() const {
-	return MultiConstraintOP( new MultiConstraint );
+	return utility::pointer::make_shared< MultiConstraint >();
 }
 
 /// @brief number of atoms involved in this MultiConstraint container
@@ -199,7 +199,7 @@ MultiConstraint::remap_resid( core::id::SequenceMapping const &seqmap ) const
 		if ( new_cst ) new_csts.push_back( new_cst );
 	}
 	if ( new_csts.size() > 0 ) {
-		return ConstraintOP( new MultiConstraint( new_csts ) );
+		return utility::pointer::make_shared< MultiConstraint >( new_csts );
 	} else return nullptr;
 }
 

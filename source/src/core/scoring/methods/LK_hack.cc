@@ -54,7 +54,7 @@ LK_hackCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
 	etable::EtableCOP etable( ScoringManager::get_instance()->etable( options ) );
-	return methods::EnergyMethodOP( new LK_hack( *etable ) );
+	return utility::pointer::make_shared< LK_hack >( *etable );
 }
 
 ScoreTypes
@@ -101,7 +101,7 @@ Real const LK_SigmoidalFunc::cos_flipped_ANGLE_CUTOFF_LOW(  std::cos( pi - LK_Si
 
 LK_SigmoidalFunc::LK_SigmoidalFunc() = default;
 
-core::scoring::func::FuncOP LK_SigmoidalFunc::clone() const { return core::scoring::func::FuncOP( new LK_SigmoidalFunc ); }
+core::scoring::func::FuncOP LK_SigmoidalFunc::clone() const { return utility::pointer::make_shared< LK_SigmoidalFunc >(); }
 
 bool
 LK_SigmoidalFunc::operator == ( func::Func const & rhs ) const {
@@ -149,7 +149,7 @@ LK_SigmoidalFunc::dfunc( Real const x ) const
 }
 
 LK_hack::LK_hack( etable::Etable const & etable_in ) :
-	parent( EnergyMethodCreatorOP( new LK_hackCreator ) ),
+	parent( utility::pointer::make_shared< LK_hackCreator >() ),
 	etable_(etable_in),
 	solv1_(etable_in.solv1()),
 	solv2_(etable_in.solv2()),
@@ -168,7 +168,7 @@ LK_hack::atomic_interaction_cutoff() const
 EnergyMethodOP
 LK_hack::clone() const
 {
-	return EnergyMethodOP( new LK_hack( *this ) );
+	return utility::pointer::make_shared< LK_hack >( *this );
 }
 
 LK_hack::LK_hack( LK_hack const & src ):

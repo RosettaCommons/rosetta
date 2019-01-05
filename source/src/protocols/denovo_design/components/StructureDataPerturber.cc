@@ -84,13 +84,13 @@ StructureDataPerturber::create( utility::tag::Tag const & tag, basic::datacache:
 {
 	StructureDataPerturberOP perturber;
 	if ( tag.getName() == ConnectionPerturber::class_name() ) {
-		perturber = StructureDataPerturberOP( new ConnectionPerturber );
+		perturber = utility::pointer::make_shared< ConnectionPerturber >();
 		perturber->parse_my_tag( tag, data );
 	} else if ( tag.getName() == HelixPerturber::class_name() ) {
-		perturber = StructureDataPerturberOP( new HelixPerturber );
+		perturber = utility::pointer::make_shared< HelixPerturber >();
 		perturber->parse_my_tag( tag, data );
 	} else if ( tag.getName() == CompoundPerturber::class_name() ) {
-		perturber = StructureDataPerturberOP( new CompoundPerturber );
+		perturber = utility::pointer::make_shared< CompoundPerturber >();
 		perturber->parse_my_tag( tag, data );
 	} else {
 		std::stringstream msg;
@@ -158,7 +158,7 @@ NullPerturber::~NullPerturber() = default;
 StructureDataPerturberOP
 NullPerturber::clone() const
 {
-	return StructureDataPerturberOP( new NullPerturber( *this ) );
+	return utility::pointer::make_shared< NullPerturber >( *this );
 }
 
 StructureDataPerturber::Permutations
@@ -184,7 +184,7 @@ ConnectionPerturber::~ConnectionPerturber() = default;
 StructureDataPerturberOP
 ConnectionPerturber::clone() const
 {
-	return StructureDataPerturberOP( new ConnectionPerturber( *this ) );
+	return utility::pointer::make_shared< ConnectionPerturber >( *this );
 }
 
 void
@@ -242,7 +242,7 @@ HelixPerturber::~HelixPerturber() = default;
 StructureDataPerturberOP
 HelixPerturber::clone() const
 {
-	return StructureDataPerturberOP( new HelixPerturber( *this ) );
+	return utility::pointer::make_shared< HelixPerturber >( *this );
 }
 
 void
@@ -314,7 +314,7 @@ CompoundPerturber::~CompoundPerturber() = default;
 StructureDataPerturberOP
 CompoundPerturber::clone() const
 {
-	return StructureDataPerturberOP( new CompoundPerturber( *this ) );
+	return utility::pointer::make_shared< CompoundPerturber >( *this );
 }
 
 void

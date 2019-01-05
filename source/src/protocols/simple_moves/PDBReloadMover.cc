@@ -54,7 +54,7 @@ static basic::Tracer TR( "protocols.simple_moves.PDBReloadMover" );
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP PDBReloadMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new PDBReloadMover );
+// XRW TEMP  return utility::pointer::make_shared< PDBReloadMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -72,13 +72,13 @@ PDBReloadMover::~PDBReloadMover() = default;
 protocols::moves::MoverOP
 PDBReloadMover::clone() const
 {
-	return protocols::moves::MoverOP( new PDBReloadMover( *this ) );
+	return utility::pointer::make_shared< PDBReloadMover >( *this );
 }
 
 protocols::moves::MoverOP
 PDBReloadMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new PDBReloadMover() );
+	return utility::pointer::make_shared< PDBReloadMover >();
 }
 
 void
@@ -125,7 +125,7 @@ std::string PDBReloadMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 PDBReloadMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new PDBReloadMover );
+	return utility::pointer::make_shared< PDBReloadMover >();
 }
 
 void PDBReloadMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

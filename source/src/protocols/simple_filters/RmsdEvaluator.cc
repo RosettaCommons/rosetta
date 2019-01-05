@@ -143,7 +143,7 @@ SelectRmsdEvaluator::SelectRmsdEvaluator( core::pose::PoseCOP pose, std::string 
 
 SelectRmsdEvaluator::SelectRmsdEvaluator( core::pose::Pose const& pose, std::string tag, bool CAonly  )
 : evaluation::SingleValuePoseEvaluator< Real >( "rms"+tag ),
-	rmsd_pose_( core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose( pose ) ) ) ),
+	rmsd_pose_( utility::pointer::make_shared< core::pose::Pose >( pose ) ),
 	tag_( tag ),
 	CAonly_( CAonly )
 {
@@ -202,7 +202,7 @@ SelectGdtEvaluator::SelectGdtEvaluator( core::pose::PoseCOP pose, std::string ta
 
 SelectGdtEvaluator::SelectGdtEvaluator( core::pose::Pose const& pose, std::string tag )
 : evaluation::SingleValuePoseEvaluator< Real >( "gdtmm"+tag ),
-	rmsd_pose_( core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose( pose ) ) ) ),
+	rmsd_pose_( utility::pointer::make_shared< core::pose::Pose >( pose ) ),
 	tag_( tag )
 {
 	evaluation::find_existing_residues( rmsd_pose_, tag, selection_ );
@@ -255,7 +255,7 @@ SelectMaxsubEvaluator::SelectMaxsubEvaluator( core::pose::PoseCOP pose, std::str
 
 SelectMaxsubEvaluator::SelectMaxsubEvaluator( core::pose::Pose const& pose, std::string tag, core::Real rmsd_threshold )
 : evaluation::SingleValuePoseEvaluator< Real >( "maxsub"+tag ),
-	rmsd_pose_( core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose( pose ) ) ) ),
+	rmsd_pose_( utility::pointer::make_shared< core::pose::Pose >( pose ) ),
 	tag_( tag ),
 	rmsd_threshold_( rmsd_threshold )
 {

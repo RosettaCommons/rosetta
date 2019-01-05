@@ -42,12 +42,12 @@ ClearConstraintsMover::parse_my_tag(
 {
 }
 
-moves::MoverOP ClearConstraintsMover::clone() const { return moves::MoverOP( new ClearConstraintsMover( *this ) ); }
-moves::MoverOP ClearConstraintsMover::fresh_instance() const { return moves::MoverOP( new ClearConstraintsMover ); }
+moves::MoverOP ClearConstraintsMover::clone() const { return utility::pointer::make_shared< ClearConstraintsMover >( *this ); }
+moves::MoverOP ClearConstraintsMover::fresh_instance() const { return utility::pointer::make_shared< ClearConstraintsMover >(); }
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP ClearConstraintsMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new ClearConstraintsMover );
+// XRW TEMP  return utility::pointer::make_shared< ClearConstraintsMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -89,7 +89,7 @@ std::string ClearConstraintsMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 ClearConstraintsMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ClearConstraintsMover );
+	return utility::pointer::make_shared< ClearConstraintsMover >();
 }
 
 void ClearConstraintsMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

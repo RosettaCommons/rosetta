@@ -51,7 +51,7 @@ NotJumpSelector::NotJumpSelector( NotJumpSelector const &src) :
 
 /// @brief Clone operator.
 /// @details Copy this object and return an owning pointer to the new object.
-JumpSelectorOP NotJumpSelector::clone() const { return JumpSelectorOP( new NotJumpSelector(*this) ); }
+JumpSelectorOP NotJumpSelector::clone() const { return utility::pointer::make_shared< NotJumpSelector >(*this); }
 
 NotJumpSelector::NotJumpSelector( JumpSelectorCOP selector )
 {
@@ -143,7 +143,7 @@ NotJumpSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 
 JumpSelectorOP
 NotJumpSelectorCreator::create_jump_selector() const {
-	return JumpSelectorOP( new NotJumpSelector );
+	return utility::pointer::make_shared< NotJumpSelector >();
 }
 
 std::string

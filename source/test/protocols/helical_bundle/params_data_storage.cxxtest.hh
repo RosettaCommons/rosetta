@@ -50,7 +50,7 @@ public:
 
 	void setUp() {
 		core_init();
-		testpose_ = core::pose::PoseOP( new core::pose::Pose );
+		testpose_ = utility::pointer::make_shared< core::pose::Pose >();
 		scorefxn_ = core::scoring::get_score_function();
 	}
 

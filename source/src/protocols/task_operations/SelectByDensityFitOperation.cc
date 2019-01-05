@@ -68,7 +68,7 @@ using namespace protocols;
 core::pack::task::operation::TaskOperationOP
 SelectByDensityFitOperationCreator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new SelectByDensityFitOperation );
+	return utility::pointer::make_shared< SelectByDensityFitOperation >();
 }
 
 void SelectByDensityFitOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -90,7 +90,7 @@ SelectByDensityFitOperation::~SelectByDensityFitOperation() = default;
 
 core::pack::task::operation::TaskOperationOP SelectByDensityFitOperation::clone() const
 {
-	return core::pack::task::operation::TaskOperationOP( new SelectByDensityFitOperation( *this ) );
+	return utility::pointer::make_shared< SelectByDensityFitOperation >( *this );
 }
 
 void

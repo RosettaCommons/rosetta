@@ -47,7 +47,7 @@ ScoreTermValueBasedSelector::~ScoreTermValueBasedSelector() = default;
 
 ResidueSelectorOP
 ScoreTermValueBasedSelector::clone() const {
-	return ResidueSelectorOP( utility::pointer::dynamic_pointer_cast<ResidueSelector>( ScoreTermValueBasedSelectorOP( new ScoreTermValueBasedSelector(*this) ) ) );
+	return ResidueSelectorOP( utility::pointer::dynamic_pointer_cast<ResidueSelector>( utility::pointer::make_shared< ScoreTermValueBasedSelector >(*this) ) );
 }
 
 ResidueSubset ScoreTermValueBasedSelector::apply(const core::pose::Pose &pose) const
@@ -181,7 +181,7 @@ void ScoreTermValueBasedSelector::provide_xml_schema( utility::tag::XMLSchemaDef
 
 ResidueSelectorOP
 ScoreTermValueBasedSelectorCreator::create_residue_selector() const {
-	return ResidueSelectorOP( new ScoreTermValueBasedSelector );
+	return utility::pointer::make_shared< ScoreTermValueBasedSelector >();
 }
 
 std::string

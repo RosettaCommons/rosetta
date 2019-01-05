@@ -165,11 +165,11 @@ core::pack::task::TaskFactoryOP setup_packer_task(pose::Pose & pose_in ) {
 	core::pack::task::TaskFactoryOP tf( new TaskFactory );
 	tf->clear();
 
-	tf->push_back(TaskOperationCOP( new OperateOnCertainResidues(ResLvlTaskOperationOP(new PreventRepackingRLT), ResFilterOP(new ResidueLacksProperty("PROTEIN")) ) ));
-	tf->push_back(TaskOperationCOP( new InitializeFromCommandline ) );
-	tf->push_back(TaskOperationCOP( new IncludeCurrent ) );
-	tf->push_back(TaskOperationCOP( new RestrictToRepacking ) );
-	tf->push_back(TaskOperationCOP( new NoRepackDisulfides ) );
+	tf->push_back(utility::pointer::make_shared< OperateOnCertainResidues >(utility::pointer::make_shared< PreventRepackingRLT >(), utility::pointer::make_shared< ResidueLacksProperty >("PROTEIN") ));
+	tf->push_back(utility::pointer::make_shared< InitializeFromCommandline >() );
+	tf->push_back(utility::pointer::make_shared< IncludeCurrent >() );
+	tf->push_back(utility::pointer::make_shared< RestrictToRepacking >() );
+	tf->push_back(utility::pointer::make_shared< NoRepackDisulfides >() );
 
 	// incorporating Ian's UnboundRotamer operation.
 	// note that nothing happens if unboundrot option is inactive!

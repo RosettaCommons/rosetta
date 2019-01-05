@@ -149,13 +149,13 @@ RangeRelaxMover::~RangeRelaxMover() = default;
 /// @brief Create a Clone of this mover
 //protocols::moves::MoverOP
 //RangeRelaxMover::clone() const {
-// return ( protocols::moves::MoverOP( new RangeRelaxMover( *this ) ) );
+// return ( utility::pointer::make_shared< RangeRelaxMover >( *this ) );
 //}
 //
 // /// @brief Create a Fresh Instance of this Mover
 //protocols::moves::MoverOP
 //RangeRelaxMover::fresh_instance() const {
-// return protocols::moves::MoverOP( new RangeRelaxMover() );
+// return utility::pointer::make_shared< RangeRelaxMover >();
 //}
 //
 // /// @brief Pase Rosetta Scripts Options for this Mover
@@ -175,7 +175,7 @@ RangeRelaxMover::~RangeRelaxMover() = default;
 // /// @brief Create a new copy of this mover
 //protocols::moves::MoverOP
 //RangeRelaxMoverCreator::create_mover() const {
-// return protocols::moves::MoverOP( new RangeRelaxMover() );
+// return utility::pointer::make_shared< RangeRelaxMover >();
 //}
 //
 // /// @brief Return the Name of this mover (as seen by Rscripts)
@@ -623,7 +623,7 @@ core::kinematics::FoldTree RangeRelaxMover::finalize_setup( Pose & pose ) {
 	if ( cst_file_.size() > 0 && cst_weight_ > 0 ) {
 
 		TR << "Adding constraints to the pose and scorefunction." << std::endl;
-		ConstraintSetOP cst( ConstraintIO::get_instance()->read_constraints( cst_file_, ConstraintSetOP( new ConstraintSet() ), pose ) );
+		ConstraintSetOP cst( ConstraintIO::get_instance()->read_constraints( cst_file_, utility::pointer::make_shared< ConstraintSet >(), pose ) );
 		pose.constraint_set( cst );
 		pose.constraint_set()->show_definition( TR, pose );
 
@@ -702,7 +702,7 @@ void RangeRelaxMover::constrain_to_reference( Pose & pose, Pose & ref_pose ) {
 		FuncOP harmonic( new HarmonicFunc( 0.0, 1.0 ) );
 
 		// add constraint to pose
-		pose.add_constraint( ConstraintCOP( ConstraintOP( new CoordinateConstraint( aid, aid_fixed, coord, harmonic ) ) ) );
+		pose.add_constraint( utility::pointer::make_shared< CoordinateConstraint >( aid, aid_fixed, coord, harmonic ) );
 
 	}
 

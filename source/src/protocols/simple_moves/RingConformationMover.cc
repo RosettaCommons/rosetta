@@ -146,13 +146,13 @@ RingConformationMover::mover_name() {
 protocols::moves::MoverOP
 RingConformationMover::clone() const
 {
-	return protocols::moves::MoverOP( new RingConformationMover( *this ) );
+	return utility::pointer::make_shared< RingConformationMover >( *this );
 }
 
 protocols::moves::MoverOP
 RingConformationMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new RingConformationMover() );
+	return utility::pointer::make_shared< RingConformationMover >();
 }
 
 void
@@ -268,7 +268,7 @@ RingConformationMover::movemap( core::pose::Pose const & pose )
 		if ( movemap_factory_ ) {
 			movemap_ = movemap_factory_->create_movemap_from_pose( pose );
 		} else {
-			movemap_ = MoveMapOP( new MoveMap );
+			movemap_ = utility::pointer::make_shared< MoveMap >();
 			movemap_->set_nu( true );
 		}
 	}
@@ -357,7 +357,7 @@ RingConformationMoverCreator::keyname() const
 protocols::moves::MoverOP
 RingConformationMoverCreator::create_mover() const
 {
-	return protocols::moves::MoverOP( new RingConformationMover );
+	return utility::pointer::make_shared< RingConformationMover >();
 }
 
 void

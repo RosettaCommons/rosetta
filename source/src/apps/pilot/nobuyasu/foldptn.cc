@@ -121,10 +121,10 @@ public: // constructor/deconstructor
 		ssinput_ = false;
 		if ( option[ blue ].user() ) {
 			BluePrintOP blueprint( new BluePrint( option[ blue ]() ) );
-			ssinfo_ = protocols::fldsgn::topology::SS_Info2_OP( new SS_Info2( blueprint->secstruct() ) );
+			ssinfo_ = utility::pointer::make_shared< SS_Info2 >( blueprint->secstruct() );
 			ssinput_ = true;
 		} else {
-			ssinfo_ = protocols::fldsgn::topology::SS_Info2_OP( new SS_Info2 );
+			ssinfo_ = utility::pointer::make_shared< SS_Info2 >();
 		}
 
 		// set scorefxn
@@ -159,7 +159,7 @@ public: // constructor/deconstructor
 	protocols::moves::MoverOP
 	fresh_instance() const override
 	{
-		return protocols::moves::MoverOP( new Foldptn );
+		return utility::pointer::make_shared< Foldptn >();
 	}
 
 
@@ -291,7 +291,7 @@ main( int argc, char * argv [] )
 
 		// mover
 		protocols::moves::MoverOP protocol;
-		protocol = protocols::moves::MoverOP( new Foldptn() );
+		protocol = utility::pointer::make_shared< Foldptn >();
 
 		// run
 		protocols::jd2::JobDistributor::get_instance()->go( protocol );

@@ -46,7 +46,7 @@ methods::EnergyMethodOP
 CenPairEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new methods::CenPairEnergy );
+	return utility::pointer::make_shared< methods::CenPairEnergy >();
 }
 
 /// @brief Return the set of score types claimed by the EnergyMethod
@@ -62,7 +62,7 @@ CenPairEnergyCreator::score_types_for_method() const {
 
 /// c-tor
 CenPairEnergy::CenPairEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new CenPairEnergyCreator ) ),
+	parent( utility::pointer::make_shared< CenPairEnergyCreator >() ),
 	potential_( ScoringManager::get_instance()->get_EnvPairPotential() )
 {}
 
@@ -71,7 +71,7 @@ CenPairEnergy::CenPairEnergy() :
 EnergyMethodOP
 CenPairEnergy::clone() const
 {
-	return EnergyMethodOP( new CenPairEnergy() );
+	return utility::pointer::make_shared< CenPairEnergy >();
 }
 
 

@@ -129,7 +129,7 @@ SymmData::SymmData( SymmData const & src ) :
 SymmDataOP
 SymmData::clone() const
 {
-	return SymmDataOP( new SymmData( *this ) );
+	return utility::pointer::make_shared< SymmData >( *this );
 }
 
 // Accessor functions

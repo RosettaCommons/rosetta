@@ -62,13 +62,13 @@ CentroidRelaxMover::~CentroidRelaxMover() = default;
 protocols::moves::MoverOP
 CentroidRelaxMover::clone() const
 {
-	return protocols::moves::MoverOP( new CentroidRelaxMover(*this) );
+	return utility::pointer::make_shared< CentroidRelaxMover >(*this);
 }
 
 protocols::moves::MoverOP
 CentroidRelaxMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new CentroidRelaxMover() );
+	return utility::pointer::make_shared< CentroidRelaxMover >();
 }
 
 void CentroidRelaxMover::show(std::ostream & output) const
@@ -131,13 +131,13 @@ void CentroidRelaxMover::setup_movers( const core::pose::Pose & pose)
 	// To init the final part of min_trial_small & mini_trial_shear mover
 	// Creating a global mc object that can be used by both
 	// small_min_trial_mover() and shear_min_trial_mover()
-	monte_carlo_ = moves::MonteCarloOP( new moves::MonteCarlo(pose,*score_low_res_,kT_) );
+	monte_carlo_ = utility::pointer::make_shared< moves::MonteCarlo >(pose,*score_low_res_,kT_);
 	//smallTrialMover
 	TR << "Finalizing small Movers" << std::endl;
-	small_trial_min_mover_ = moves::TrialMoverOP( new moves::TrialMover(small_sequence_mover ,monte_carlo_) );
+	small_trial_min_mover_ = utility::pointer::make_shared< moves::TrialMover >(small_sequence_mover ,monte_carlo_);
 	//shearTrialMover
 	TR << "Finalizing shear Movers" << std::endl;
-	shear_trial_min_mover_ = moves::TrialMoverOP( new moves::TrialMover(shear_sequence_mover ,monte_carlo_) );
+	shear_trial_min_mover_ = utility::pointer::make_shared< moves::TrialMover >(shear_sequence_mover ,monte_carlo_);
 }
 
 void CentroidRelaxMover::apply(pose::Pose & pose)

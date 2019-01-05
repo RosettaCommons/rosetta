@@ -182,9 +182,9 @@ public:
 
 		core::import_pose::pose_from_file( pose_, "protocols/abinitio/2GB3.pdb" , core::import_pose::PDB_file);
 
-		fragset3mer_ = ConstantLengthFragSetOP( new ConstantLengthFragSet( 3 ) );
+		fragset3mer_ = utility::pointer::make_shared< ConstantLengthFragSet >( 3 );
 		fragset3mer_->read_fragment_file( "protocols/abinitio/mfr_aa2GB3_03_05.200_v1_3" );
-		fragset9mer_ = ConstantLengthFragSetOP( new ConstantLengthFragSet( 9 ) );
+		fragset9mer_ = utility::pointer::make_shared< ConstantLengthFragSet >( 9 );
 		fragset9mer_->read_fragment_file( "protocols/abinitio/mfr_aa2GB3_09_05.200_v1_3" );
 
 		//generate_random_pose();

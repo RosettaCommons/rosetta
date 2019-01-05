@@ -48,7 +48,7 @@ public:
 		InterfaceDefinitionCalculator(chain1_letter, chain2_letter) {}
 
 	core::pose::metrics::PoseMetricCalculatorOP clone() const
-	{ return core::pose::metrics::PoseMetricCalculatorOP( new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator( chain1_number_, chain2_number_ ) ); }
+	{ return utility::pointer::make_shared< core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator >( chain1_number_, chain2_number_ ); }
 
 protected:
 

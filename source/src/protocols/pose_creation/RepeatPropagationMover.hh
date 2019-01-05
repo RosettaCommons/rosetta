@@ -41,7 +41,7 @@ public:
 	RepeatPropagationMover();
 	RepeatPropagationMover(core::Size numb_repeats);
 	void apply( core::pose::Pose & pose ) override;
-	moves::MoverOP clone() const override { return moves::MoverOP( new RepeatPropagationMover( *this ) ); }
+	moves::MoverOP clone() const override { return utility::pointer::make_shared< RepeatPropagationMover >( *this ); }
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 	std::string get_name() const override;
 	static std::string mover_name();

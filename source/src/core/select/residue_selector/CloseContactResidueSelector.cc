@@ -68,7 +68,7 @@ CloseContactResidueSelector::CloseContactResidueSelector(CloseContactResidueSele
 /// @details Copy this object and return owning pointer to the copy (created on the heap).
 CloseContactResidueSelector::ResidueSelectorOP
 CloseContactResidueSelector::clone() const {
-	return ResidueSelectorOP( new CloseContactResidueSelector(*this) );
+	return utility::pointer::make_shared< CloseContactResidueSelector >(*this);
 }
 
 /// @brief "Apply" function.
@@ -241,7 +241,7 @@ void CloseContactResidueSelector::provide_xml_schema( utility::tag::XMLSchemaDef
 
 CloseContactResidueSelector::ResidueSelectorOP
 CloseContactResidueSelectorCreator::create_residue_selector() const {
-	return CloseContactResidueSelector::ResidueSelectorOP( new CloseContactResidueSelector );
+	return utility::pointer::make_shared< CloseContactResidueSelector >();
 }
 
 std::string

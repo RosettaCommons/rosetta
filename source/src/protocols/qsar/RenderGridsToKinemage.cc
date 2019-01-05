@@ -53,7 +53,7 @@ static basic::Tracer TR( "protocols.qsar.RenderGridsToKinemage" );
 
 // XRW TEMP moves::MoverOP RenderGridsToKinemageCreator::create_mover() const
 // XRW TEMP {
-// XRW TEMP  return moves::MoverOP( new RenderGridsToKinemage );
+// XRW TEMP  return utility::pointer::make_shared< RenderGridsToKinemage >();
 // XRW TEMP }
 
 // XRW TEMP std::string RenderGridsToKinemage::mover_name()
@@ -91,7 +91,7 @@ RenderGridsToKinemage::~RenderGridsToKinemage() = default;
 
 protocols::moves::MoverOP RenderGridsToKinemage::clone() const
 {
-	return protocols::moves::MoverOP( new RenderGridsToKinemage(*this) );
+	return utility::pointer::make_shared< RenderGridsToKinemage >(*this);
 }
 
 // XRW TEMP std::string RenderGridsToKinemage::get_name() const
@@ -391,7 +391,7 @@ std::string RenderGridsToKinemageCreator::keyname() const {
 
 protocols::moves::MoverOP
 RenderGridsToKinemageCreator::create_mover() const {
-	return protocols::moves::MoverOP( new RenderGridsToKinemage );
+	return utility::pointer::make_shared< RenderGridsToKinemage >();
 }
 
 void RenderGridsToKinemageCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

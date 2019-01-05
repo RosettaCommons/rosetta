@@ -46,7 +46,7 @@ MC_RNA_Sugar::MC_RNA_Sugar(
 	stored_pucker_state_( init_pucker ),
 	active_pucker_state_( init_pucker ),
 	flip_rate_( flip_rate ),
-	sugar_rotamer_( RNA_SugarStepWiseSamplerOP( new RNA_SugarStepWiseSampler( rsd_id, ANY_PUCKER ) ) )
+	sugar_rotamer_( utility::pointer::make_shared< RNA_SugarStepWiseSampler >( rsd_id, ANY_PUCKER ) )
 {}
 ///////////////////////////////////////////////////////////////////////////
 void MC_RNA_Sugar::init() {

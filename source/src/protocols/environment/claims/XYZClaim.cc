@@ -67,7 +67,7 @@ XYZClaim::XYZClaim( ClientMoverOP owner,
 		selector_ = datamap.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", tag->getOption<std::string>( "selection" ) );
 	} else {
 		tr.Debug << "Instantiating EnvLabelSelector for selection '" << selection << "' in " << *this << std::endl;
-		selector_ = ResidueSelectorCOP( ResidueSelectorOP( new EnvLabelSelector( LocalPosition( selection ) ) ) );
+		selector_ = utility::pointer::make_shared< EnvLabelSelector >( LocalPosition( selection ) );
 	}
 }
 
@@ -77,7 +77,7 @@ XYZClaim::XYZClaim(
 	LocalPosition const& local_pos
 ):
 	EnvClaim( owner ),
-	selector_( ResidueSelectorCOP( ResidueSelectorOP( new EnvLabelSelector( local_pos ) ) ) ),
+	selector_( utility::pointer::make_shared< EnvLabelSelector >( local_pos ) ),
 	c_str_( DOES_NOT_CONTROL ),
 	i_str_( DOES_NOT_CONTROL ),
 	bRelative_( false )
@@ -90,7 +90,7 @@ XYZClaim::XYZClaim(
 	std::pair< core::Size, core::Size > const& range
 ):
 	EnvClaim( owner ),
-	selector_( ResidueSelectorCOP( ResidueSelectorOP( new EnvLabelSelector( label, range ) ) ) ),
+	selector_( utility::pointer::make_shared< EnvLabelSelector >( label, range ) ),
 	c_str_( DOES_NOT_CONTROL ),
 	i_str_( DOES_NOT_CONTROL ),
 	bRelative_( false )
@@ -194,7 +194,7 @@ void XYZClaim::strength( ControlStrength const& c_str, ControlStrength const& i_
 }
 
 EnvClaimOP XYZClaim::clone() const {
-	return EnvClaimOP( new XYZClaim( *this ) );
+	return utility::pointer::make_shared< XYZClaim >( *this );
 }
 
 

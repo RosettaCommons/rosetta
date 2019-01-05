@@ -73,7 +73,7 @@ namespace simple_filters {
 static basic::Tracer TR( "protocols.simple_filters.SpanTopologyMatchPoseFilter" );
 
 protocols::filters::FilterOP
-SpanTopologyMatchPoseFilterCreator::create_filter() const { return protocols::filters::FilterOP( new SpanTopologyMatchPoseFilter ); }
+SpanTopologyMatchPoseFilterCreator::create_filter() const { return utility::pointer::make_shared< SpanTopologyMatchPoseFilter >(); }
 
 std::string
 SpanTopologyMatchPoseFilterCreator::keyname() const { return "SpanTopologyMatchPose"; }

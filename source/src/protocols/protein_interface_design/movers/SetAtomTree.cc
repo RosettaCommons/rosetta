@@ -66,7 +66,7 @@ static basic::Tracer TR( "protocols.protein_interface_design.movers.SetAtomTree"
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP SetAtomTreeCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new SetAtomTree );
+// XRW TEMP  return utility::pointer::make_shared< SetAtomTree >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -103,7 +103,7 @@ SetAtomTree::~SetAtomTree() = default;
 
 protocols::moves::MoverOP
 SetAtomTree::clone() const {
-	return (protocols::moves::MoverOP( new SetAtomTree( *this ) ) );
+	return (utility::pointer::make_shared< SetAtomTree >( *this ) );
 }
 
 void
@@ -130,7 +130,7 @@ SetAtomTree::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, protoc
 		if ( !data ) {
 			utility_exit_with_message( "failed to open file " + ft_name );
 		}
-		fold_tree_ = core::kinematics::FoldTreeOP( new core::kinematics::FoldTree );
+		fold_tree_ = utility::pointer::make_shared< core::kinematics::FoldTree >();
 		data >> *fold_tree_;
 		TR<<"Read fold tree from file: "<<*fold_tree_<<std::endl;
 		runtime_assert( fold_tree_->check_fold_tree() );
@@ -293,7 +293,7 @@ SetAtomTree::apply( core::pose::Pose & pose )
 		runtime_assert( remark_tree != "" );
 		TR << "READ: " << remark_tree << std::endl;
 		std::istringstream data(remark_tree);
-		fold_tree_ = core::kinematics::FoldTreeOP( new core::kinematics::FoldTree );
+		fold_tree_ = utility::pointer::make_shared< core::kinematics::FoldTree >();
 		data >> *fold_tree_;
 		TR << "Read fold tree from remark: " << *fold_tree_ << std::endl;
 		runtime_assert( fold_tree_->check_fold_tree() );
@@ -538,7 +538,7 @@ std::string SetAtomTreeCreator::keyname() const {
 
 protocols::moves::MoverOP
 SetAtomTreeCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SetAtomTree );
+	return utility::pointer::make_shared< SetAtomTree >();
 }
 
 void SetAtomTreeCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -126,7 +126,7 @@ BindingStrainFilter::compute( core::pose::Pose const & p ) const{
 	core::Real const energy_before_pack( stf.compute( pose ));
 
 	protocols::minimization_packing::PackRotamersMoverOP prm;
-	prm = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover( scorefxn(), pack ) );
+	prm = utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >( scorefxn(), pack );
 	prm->apply( pose );
 	core::Real const energy_after_pack( stf.compute( pose ) );
 	return( energy_before_pack - energy_after_pack );
@@ -165,18 +165,18 @@ BindingStrainFilter::parse_my_tag( utility::tag::TagCOP tag,
 
 protocols::filters::FilterOP
 BindingStrainFilter::fresh_instance() const{
-	return protocols::filters::FilterOP( new BindingStrainFilter() );
+	return utility::pointer::make_shared< BindingStrainFilter >();
 }
 
 BindingStrainFilter::~BindingStrainFilter()= default;
 
 protocols::filters::FilterOP
 BindingStrainFilter::clone() const{
-	return protocols::filters::FilterOP( new BindingStrainFilter( *this ) );
+	return utility::pointer::make_shared< BindingStrainFilter >( *this );
 }
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP BindingStrainFilterCreator::create_filter() const { return protocols::filters::FilterOP( new BindingStrainFilter ); }
+// XRW TEMP BindingStrainFilterCreator::create_filter() const { return utility::pointer::make_shared< BindingStrainFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP BindingStrainFilterCreator::keyname() const { return "BindingStrain"; }
@@ -218,7 +218,7 @@ std::string BindingStrainFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 BindingStrainFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new BindingStrainFilter );
+	return utility::pointer::make_shared< BindingStrainFilter >();
 }
 
 void BindingStrainFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

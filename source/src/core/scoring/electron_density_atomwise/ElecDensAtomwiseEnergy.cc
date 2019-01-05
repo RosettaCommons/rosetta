@@ -56,7 +56,7 @@ methods::EnergyMethodOP
 ElecDensAtomwiseEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new ElecDensAtomwiseEnergy );
+	return utility::pointer::make_shared< ElecDensAtomwiseEnergy >();
 }
 
 ScoreTypes
@@ -72,7 +72,7 @@ ElecDensAtomwiseEnergy::long_range_type() const {
 }
 
 ElecDensAtomwiseEnergy::ElecDensAtomwiseEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new ElecDensAtomwiseEnergyCreator ) ) {
+	parent( utility::pointer::make_shared< ElecDensAtomwiseEnergyCreator >() ) {
 	//Load map
 	get_density_map();
 }
@@ -81,7 +81,7 @@ ElecDensAtomwiseEnergy::~ElecDensAtomwiseEnergy() = default;
 
 /// clone
 methods::EnergyMethodOP ElecDensAtomwiseEnergy::clone() const {
-	return methods::EnergyMethodOP( new ElecDensAtomwiseEnergy( *this ) );
+	return utility::pointer::make_shared< ElecDensAtomwiseEnergy >( *this );
 }
 
 

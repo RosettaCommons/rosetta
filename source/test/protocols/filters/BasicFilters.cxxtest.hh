@@ -245,12 +245,12 @@ public:
 		Filters_map filters;
 		Movers_map movers;
 
-		filters["sfF1"] = protocols::filters::FilterOP( new StubFilter( false, 1 ) );
-		filters["sfF2"] = protocols::filters::FilterOP( new StubFilter( false, 2 ) );
-		filters["sfF3"] = protocols::filters::FilterOP( new StubFilter( false, 3 ) );
-		filters["sfT10"] = protocols::filters::FilterOP( new StubFilter( true, 10 ) );
-		filters["sfT20"] = protocols::filters::FilterOP( new StubFilter( true, 20 ) );
-		filters["sfT99"] = protocols::filters::FilterOP( new StubFilter( true, 99 ) );
+		filters["sfF1"] = utility::pointer::make_shared< StubFilter >( false, 1 );
+		filters["sfF2"] = utility::pointer::make_shared< StubFilter >( false, 2 );
+		filters["sfF3"] = utility::pointer::make_shared< StubFilter >( false, 3 );
+		filters["sfT10"] = utility::pointer::make_shared< StubFilter >( true, 10 );
+		filters["sfT20"] = utility::pointer::make_shared< StubFilter >( true, 20 );
+		filters["sfT99"] = utility::pointer::make_shared< StubFilter >( true, 99 );
 
 		protocols::filters::IfThenFilter  testfilter;
 		TagCOP tag = tagptr_from_string("<IfThenFilter name=test threshold=0 >\n"
@@ -328,12 +328,12 @@ public:
 		Filters_map filters;
 		Movers_map movers;
 
-		filters["sfF1"] = protocols::filters::FilterOP( new StubFilter( false, 1 ) );
-		filters["sfF2"] = protocols::filters::FilterOP( new StubFilter( false, 2 ) );
-		filters["sfF3"] = protocols::filters::FilterOP( new StubFilter( false, 3 ) );
-		filters["sfT10"] = protocols::filters::FilterOP( new StubFilter( true, 10 ) );
-		filters["sfT20"] = protocols::filters::FilterOP( new StubFilter( true, 20 ) );
-		filters["sfT99"] = protocols::filters::FilterOP( new StubFilter( true, 99 ) );
+		filters["sfF1"] = utility::pointer::make_shared< StubFilter >( false, 1 );
+		filters["sfF2"] = utility::pointer::make_shared< StubFilter >( false, 2 );
+		filters["sfF3"] = utility::pointer::make_shared< StubFilter >( false, 3 );
+		filters["sfT10"] = utility::pointer::make_shared< StubFilter >( true, 10 );
+		filters["sfT20"] = utility::pointer::make_shared< StubFilter >( true, 20 );
+		filters["sfT99"] = utility::pointer::make_shared< StubFilter >( true, 99 );
 
 		protocols::filters::IfThenFilter  testfilter;
 		TagCOP tag = tagptr_from_string("<IfThenFilter name=test threshold=2 lower_threshold=1>\n"

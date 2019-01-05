@@ -51,7 +51,7 @@ public:
 	SOGFunc( core::Real mean, core::Real sdev );
 
 	/// @brief returns a clone of this SOGFunc
-	FuncOP clone() const { return FuncOP( new SOGFunc( *this ) ); }
+	FuncOP clone() const { return utility::pointer::make_shared< SOGFunc >( *this ); }
 
 	virtual bool operator == ( Func const & other ) const;
 	virtual bool same_type_as_me( Func const & other ) const;

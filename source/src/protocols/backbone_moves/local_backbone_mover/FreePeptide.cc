@@ -156,7 +156,7 @@ FreePeptide::~FreePeptide()= default;
 
 FreePeptideOP
 FreePeptide::clone() const {
-	return FreePeptideOP( new FreePeptide( *this ) );
+	return utility::pointer::make_shared< FreePeptide >( *this );
 }
 
 void

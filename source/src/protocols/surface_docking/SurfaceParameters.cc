@@ -69,7 +69,7 @@ SurfaceParameters::SurfaceParameters( SurfaceParameters const & src ):
 
 SurfaceParametersOP SurfaceParameters::clone() const
 {
-	return SurfaceParametersOP( new SurfaceParameters( *this ) );
+	return utility::pointer::make_shared< SurfaceParameters >( *this );
 }
 
 SurfaceParameters::~SurfaceParameters()= default;

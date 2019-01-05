@@ -190,7 +190,7 @@ Entity::operator = ( Entity const & rhs ) {
 
 Entity::~Entity()= default;
 
-Entity::OP Entity::clone() const { return Entity::OP( new Entity(*this) ); }
+Entity::OP Entity::clone() const { return utility::pointer::make_shared< Entity >(*this); }
 
 void Entity::set_traits_size(
 	core::Size size/*,

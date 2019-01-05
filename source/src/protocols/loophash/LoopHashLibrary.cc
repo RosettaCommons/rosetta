@@ -83,8 +83,8 @@ LoopHashLibrary::LoopHashLibrary(
 	const core::Size num_partitions,
 	const core::Size assigned_num
 ) :
-	scorefxn_rama_cst_( core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction ) ),
-	scorefxn_cen_cst_( core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction ) ),
+	scorefxn_rama_cst_( utility::pointer::make_shared< core::scoring::ScoreFunction >() ),
+	scorefxn_cen_cst_( utility::pointer::make_shared< core::scoring::ScoreFunction >() ),
 	options_( "dfpmin", 0.2, true , false ),
 	options2_( "dfpmin", 0.02, true , false )
 {

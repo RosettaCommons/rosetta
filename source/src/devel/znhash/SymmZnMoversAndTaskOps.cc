@@ -167,7 +167,7 @@ void InitializeZNCoordinationConstraintMover::set_match_pdb_listfilename( std::s
 
 InitializeZNCoordinationConstraintMover::MoverOP
 InitializeZNCoordinationConstraintMover::clone() const {
-	return InitializeZNCoordinationConstraintMover::MoverOP( new InitializeZNCoordinationConstraintMover( *this ) );
+	return utility::pointer::make_shared< InitializeZNCoordinationConstraintMover >( *this );
 }
 
 std::string
@@ -178,9 +178,9 @@ InitializeZNCoordinationConstraintMover::get_name() const
 
 void InitializeZNCoordinationConstraintMover::apply( core::pose::Pose & p )
 {
-	recover_sidechains_ = protocols::simple_moves::ReturnSidechainMoverOP( new protocols::simple_moves::ReturnSidechainMover( p ) );
+	recover_sidechains_ = utility::pointer::make_shared< protocols::simple_moves::ReturnSidechainMover >( p );
 	if ( zn_score_ == nullptr ) {
-		zn_score_ = ZnCoordinationScorerOP( new devel::znhash::ZnCoordinationScorer );
+		zn_score_ = utility::pointer::make_shared< devel::znhash::ZnCoordinationScorer >();
 
 		zn_score_->set_zn_reach( znreach_ );
 		zn_score_->set_orbital_dist( orbital_dist_ );
@@ -258,7 +258,7 @@ ZNCoordinationConstraintReporterMover::ZNCoordinationConstraintReporterMover(
 
 ZNCoordinationConstraintReporterMover::MoverOP
 ZNCoordinationConstraintReporterMover::clone() const {
-	return ZNCoordinationConstraintReporterMover::MoverOP( new ZNCoordinationConstraintReporterMover( init_zn_ ) );
+	return utility::pointer::make_shared< ZNCoordinationConstraintReporterMover >( init_zn_ );
 }
 
 std::string
@@ -404,7 +404,7 @@ add_znx_coordination_remark_lines_to_pose(
 	}
 	TR << std::endl;
 	core::pose::PDBInfoOP info = p.pdb_info();
-	if ( ! info ) { info = core::pose::PDBInfoOP( new core::pose::PDBInfo ); }
+	if ( ! info ) { info = utility::pointer::make_shared< core::pose::PDBInfo >(); }
 	info->remarks() = match_remarks;
 	p.pdb_info( info );
 
@@ -437,7 +437,7 @@ void ZNCoordinationConstraintPlacerMover::set_four_residue_cst_fname(
 ZNCoordinationConstraintPlacerMover::MoverOP
 ZNCoordinationConstraintPlacerMover::clone() const
 {
-	return ZNCoordinationConstraintPlacerMover::MoverOP( new ZNCoordinationConstraintPlacerMover( init_zn_ ) );
+	return utility::pointer::make_shared< ZNCoordinationConstraintPlacerMover >( init_zn_ );
 }
 
 std::string
@@ -449,7 +449,7 @@ void ZNCoordinationConstraintPlacerMover::apply( core::pose::Pose & p )
 {
 
 	// remove the existing ZnHash constraint from the Pose.
-	p.constraint_set( core::scoring::constraints::ConstraintSetOP( new core::scoring::constraints::ConstraintSet ) );
+	p.constraint_set( utility::pointer::make_shared< core::scoring::constraints::ConstraintSet >() );
 
 	// Record which residues have been identified by the zncoordcst as best for coordinating zinc
 	// devel::znhash::ZnCoordinationScorerOP zn_score = init_zn_->zn_score();
@@ -954,7 +954,7 @@ FindZnCoordinatingResidues::closest_distance_to_desired_vrt(
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP InsertZincCoordinationRemarkLinesCreator::create_mover() const
 // XRW TEMP {
-// XRW TEMP  return protocols::moves::MoverOP( new InsertZincCoordinationRemarkLines );
+// XRW TEMP  return utility::pointer::make_shared< InsertZincCoordinationRemarkLines >();
 // XRW TEMP }
 
 // XRW TEMP std::string InsertZincCoordinationRemarkLinesCreator::keyname() const
@@ -969,7 +969,7 @@ InsertZincCoordinationRemarkLines::InsertZincCoordinationRemarkLines() = default
 InsertZincCoordinationRemarkLines::~InsertZincCoordinationRemarkLines() = default;
 
 protocols::moves::MoverOP
-InsertZincCoordinationRemarkLines::clone() const { return protocols::moves::MoverOP( new InsertZincCoordinationRemarkLines ); }
+InsertZincCoordinationRemarkLines::clone() const { return utility::pointer::make_shared< InsertZincCoordinationRemarkLines >(); }
 
 // XRW TEMP std::string
 // XRW TEMP InsertZincCoordinationRemarkLines::get_name() const { return "InsertZincCoordinationRemarkLines"; }
@@ -1057,7 +1057,7 @@ std::string InsertZincCoordinationRemarkLinesCreator::keyname() const {
 
 protocols::moves::MoverOP
 InsertZincCoordinationRemarkLinesCreator::create_mover() const {
-	return protocols::moves::MoverOP( new InsertZincCoordinationRemarkLines );
+	return utility::pointer::make_shared< InsertZincCoordinationRemarkLines >();
 }
 
 void InsertZincCoordinationRemarkLinesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -1072,7 +1072,7 @@ void InsertZincCoordinationRemarkLinesCreator::provide_xml_schema( utility::tag:
 core::pack::task::operation::TaskOperationOP
 DisableZnCoordinationResiduesTaskOpCreator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new DisableZnCoordinationResiduesTaskOp );
+	return utility::pointer::make_shared< DisableZnCoordinationResiduesTaskOp >();
 }
 
 void DisableZnCoordinationResiduesTaskOpCreator::provide_xml_schema(
@@ -1093,7 +1093,7 @@ DisableZnCoordinationResiduesTaskOp::~DisableZnCoordinationResiduesTaskOp() = de
 DisableZnCoordinationResiduesTaskOp::TaskOperationOP
 DisableZnCoordinationResiduesTaskOp::clone() const
 {
-	return DisableZnCoordinationResiduesTaskOp::TaskOperationOP( new DisableZnCoordinationResiduesTaskOp );
+	return utility::pointer::make_shared< DisableZnCoordinationResiduesTaskOp >();
 }
 
 void DisableZnCoordinationResiduesTaskOp::apply(
@@ -1165,7 +1165,7 @@ ZnCoordNumHbondCalculator::ZnCoordNumHbondCalculator()
 
 core::pose::metrics::PoseMetricCalculatorOP
 ZnCoordNumHbondCalculator::clone() const {
-	return core::pose::metrics::PoseMetricCalculatorOP( new ZnCoordNumHbondCalculator );
+	return utility::pointer::make_shared< ZnCoordNumHbondCalculator >();
 }
 
 void ZnCoordNumHbondCalculator::notify_structure_change() {
@@ -1249,7 +1249,7 @@ ZnCoordNumHbondCalculator::recompute( core::pose::Pose const & this_pose )
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP LoadZnCoordNumHbondCalculatorMoverCreator::create_mover() const
 // XRW TEMP {
-// XRW TEMP  return protocols::moves::MoverOP( new LoadZnCoordNumHbondCalculatorMover );
+// XRW TEMP  return utility::pointer::make_shared< LoadZnCoordNumHbondCalculatorMover >();
 // XRW TEMP }
 // XRW TEMP std::string LoadZnCoordNumHbondCalculatorMoverCreator::keyname() const
 // XRW TEMP {
@@ -1266,7 +1266,7 @@ LoadZnCoordNumHbondCalculatorMover::~LoadZnCoordNumHbondCalculatorMover() = defa
 
 protocols::moves::MoverOP
 LoadZnCoordNumHbondCalculatorMover::clone() const {
-	return protocols::moves::MoverOP( new LoadZnCoordNumHbondCalculatorMover );
+	return utility::pointer::make_shared< LoadZnCoordNumHbondCalculatorMover >();
 }
 
 // XRW TEMP std::string
@@ -1280,7 +1280,7 @@ LoadZnCoordNumHbondCalculatorMover::apply( core::pose::Pose & )
 	if ( CalculatorFactory::Instance().check_calculator_exists( "bur_unsat_calc_default_hbond_calc" ) ) {
 		CalculatorFactory::Instance().remove_calculator( "bur_unsat_calc_default_hbond_calc" );
 	}
-	CalculatorFactory::Instance().register_calculator( "bur_unsat_calc_default_hbond_calc", core::pose::metrics::PoseMetricCalculatorOP( new ZnCoordNumHbondCalculator ) );
+	CalculatorFactory::Instance().register_calculator( "bur_unsat_calc_default_hbond_calc", utility::pointer::make_shared< ZnCoordNumHbondCalculator >() );
 }
 
 /// @brief parse XML (specifically in the context of the parser/scripting scheme)
@@ -1313,7 +1313,7 @@ std::string LoadZnCoordNumHbondCalculatorMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 LoadZnCoordNumHbondCalculatorMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LoadZnCoordNumHbondCalculatorMover );
+	return utility::pointer::make_shared< LoadZnCoordNumHbondCalculatorMover >();
 }
 
 void LoadZnCoordNumHbondCalculatorMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

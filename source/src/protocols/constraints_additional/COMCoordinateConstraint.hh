@@ -73,7 +73,7 @@ public:
 	);
 
 	core::scoring::constraints::ConstraintOP clone() const override {
-		return core::scoring::constraints::ConstraintOP( new COMCoordinateConstraint( atms_, COM_target_, stdv_, interval_ ) );
+		return utility::pointer::make_shared< COMCoordinateConstraint >( atms_, COM_target_, stdv_, interval_ );
 	}
 
 	core::scoring::constraints::ConstraintOP remapped_clone(

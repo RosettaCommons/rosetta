@@ -150,7 +150,7 @@ std::string ConstraintFulfilmentFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 ConstraintFulfilmentFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new ConstraintFulfilmentFilter );
+	return utility::pointer::make_shared< ConstraintFulfilmentFilter >();
 }
 
 void ConstraintFulfilmentFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

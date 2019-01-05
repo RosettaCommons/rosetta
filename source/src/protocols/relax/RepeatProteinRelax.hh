@@ -51,7 +51,7 @@ public:
 	void seal_jumps(core::pose::Pose & pose);
 	void add_residue_labels_back(core::pose::Pose & pose, std::map<core::Size, utility::vector1<std::string> > res_label_map,int symmetry_resid_offset);
 	void apply(core::pose::Pose & pose ) override;
-	moves::MoverOP clone() const override { return moves::MoverOP( new RepeatProteinRelax( *this ) ); }
+	moves::MoverOP clone() const override { return utility::pointer::make_shared< RepeatProteinRelax >( *this ); }
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &) override;
 	std::string get_name() const override;
 	static std::string mover_name();

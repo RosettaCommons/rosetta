@@ -54,7 +54,7 @@ methods::EnergyMethodOP
 IntermolEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new IntermolEnergy );
+	return utility::pointer::make_shared< IntermolEnergy >();
 }
 
 ScoreTypes
@@ -67,7 +67,7 @@ IntermolEnergyCreator::score_types_for_method() const {
 
 /// c-tor
 IntermolEnergy::IntermolEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new IntermolEnergyCreator ) ),
+	parent( utility::pointer::make_shared< IntermolEnergyCreator >() ),
 	penalty_at_1M_( 2.30 ), // calibrated outside.
 	log_conc_( std::log( basic::options::option[ basic::options::OptionKeys::score::conc ]() ) ) // in kT
 {}
@@ -76,7 +76,7 @@ IntermolEnergy::IntermolEnergy() :
 methods::EnergyMethodOP
 IntermolEnergy::clone() const
 {
-	return methods::EnergyMethodOP( new IntermolEnergy );
+	return utility::pointer::make_shared< IntermolEnergy >();
 }
 
 

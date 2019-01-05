@@ -72,7 +72,7 @@ namespace simple_filters {
 static basic::Tracer TR( "protocols.simple_filters.TMsAACompFilter" );
 
 protocols::filters::FilterOP
-TMsAACompFilterCreator::create_filter() const { return protocols::filters::FilterOP( new TMsAACompFilter ); }
+TMsAACompFilterCreator::create_filter() const { return utility::pointer::make_shared< TMsAACompFilter >(); }
 
 std::string
 TMsAACompFilterCreator::keyname() const { return "TMsAAComp"; }

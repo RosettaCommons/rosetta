@@ -96,7 +96,7 @@ BDR::BDR( BDR const & rval ) :
 	fullatom_sfx_( rval.fullatom_sfx_->clone() )
 {
 	if ( rval.vlb_.get() ) {
-		vlb_ = VarLengthBuildOP( new VarLengthBuild( *rval.vlb_ ) );
+		vlb_ = utility::pointer::make_shared< VarLengthBuild >( *rval.vlb_ );
 	}
 }
 
@@ -107,13 +107,13 @@ BDR::~BDR() = default;
 
 /// @brief clone this object
 BDR::MoverOP BDR::clone() const {
-	return BDR::MoverOP( new BDR( *this ) );
+	return utility::pointer::make_shared< BDR >( *this );
 }
 
 
 /// @brief create this type of object
 BDR::MoverOP BDR::fresh_instance() const {
-	return BDR::MoverOP( new BDR() );
+	return utility::pointer::make_shared< BDR >();
 }
 
 
@@ -211,7 +211,7 @@ void BDR::apply( Pose & pose ) {
 	CalculatorFactory::Instance().remove_calculator( neighborhood_calc_name() );
 	CalculatorFactory::Instance().register_calculator(
 		neighborhood_calc_name(),
-		PoseMetricCalculatorOP( new NeighborhoodByDistanceCalculator( manager_.union_of_intervals_containing_undefined_positions() ) )
+		utility::pointer::make_shared< NeighborhoodByDistanceCalculator >( manager_.union_of_intervals_containing_undefined_positions() )
 	);
 
 	// do design-refine iteration
@@ -235,22 +235,22 @@ void BDR::apply( Pose & pose ) {
 
 	CalculatorFactory::Instance().register_calculator(
 		loops_buns_polar_calc_name(),
-		PoseMetricCalculatorOP( new BuriedUnsatisfiedPolarsCalculator(
+		utility::pointer::make_shared< BuriedUnsatisfiedPolarsCalculator >(
 		"default",
 		"default",
 		manager_.union_of_intervals_containing_undefined_positions()
-		) )
+		)
 	);
 
 	MetricValue< std::set< Size > > loops_neighborhood;
 	pose.metric( neighborhood_calc_name(), "neighbors", loops_neighborhood );
 	CalculatorFactory::Instance().register_calculator(
 		neighborhood_buns_polar_calc_name(),
-		PoseMetricCalculatorOP( new BuriedUnsatisfiedPolarsCalculator(
+		utility::pointer::make_shared< BuriedUnsatisfiedPolarsCalculator >(
 		"default",
 		"default",
 		loops_neighborhood.value()
-		) )
+		)
 	);
 }
 
@@ -305,7 +305,7 @@ bool BDR::centroid_build(
 	// run VLB to build the new section, if no segments have been added/deleted
 	// we use the same VLB so that fragment caching works properly
 	if ( !vlb_.get() ) {
-		vlb_ = VarLengthBuildOP( new VarLengthBuild( manager_ ) );
+		vlb_ = utility::pointer::make_shared< VarLengthBuild >( manager_ );
 	}
 
 	vlb_->scorefunction( centroid_sfx_ );
@@ -395,7 +395,7 @@ bool BDR::design_refine(
 
 	// setup the design TaskFactory
 	TaskFactoryOP design_tf = generic_taskfactory();
-	design_tf->push_back( TaskOperationCOP( new RestrictToNeighborhoodOperation( neighborhood_calc_name() ) ) );
+	design_tf->push_back( utility::pointer::make_shared< RestrictToNeighborhoodOperation >( neighborhood_calc_name() ) );
 
 	if ( !redesign_loop_neighborhood_ ) {
 		// set repack only for non-loop positions
@@ -428,8 +428,8 @@ bool BDR::design_refine(
 
 	// setup the refine TaskFactory
 	TaskFactoryOP refine_tf = generic_taskfactory();
-	refine_tf->push_back( TaskOperationCOP( new RestrictToNeighborhoodOperation( neighborhood_calc_name() ) ) );
-	refine_tf->push_back( TaskOperationCOP( new RestrictToRepacking() ) );
+	refine_tf->push_back( utility::pointer::make_shared< RestrictToNeighborhoodOperation >( neighborhood_calc_name() ) );
+	refine_tf->push_back( utility::pointer::make_shared< RestrictToRepacking >() );
 
 	// safety, clear the energies object
 	pose.energies().clear();
@@ -491,9 +491,9 @@ BDR::TaskFactoryOP BDR::generic_taskfactory() {
 
 	TaskFactoryOP tf( new TaskFactory() );
 
-	tf->push_back( TaskOperationCOP( new InitializeFromCommandline() ) ); // also inits -ex options
-	tf->push_back( TaskOperationCOP( new IncludeCurrent() ) ); // enforce keeping of input sidechains
-	tf->push_back( TaskOperationCOP( new NoRepackDisulfides() ) );
+	tf->push_back( utility::pointer::make_shared< InitializeFromCommandline >() ); // also inits -ex options
+	tf->push_back( utility::pointer::make_shared< IncludeCurrent >() ); // enforce keeping of input sidechains
+	tf->push_back( utility::pointer::make_shared< NoRepackDisulfides >() );
 
 	// load resfile op only if requested
 	if ( !resfile_.empty() ) {
@@ -534,7 +534,7 @@ void BDR::process_continuous_design_string(
 			break;
 		}
 
-		design_tf->push_back( TaskOperationCOP( new RestrictAbsentCanonicalAAS( i + offset, allowed_aa_types ) ) );
+		design_tf->push_back( utility::pointer::make_shared< RestrictAbsentCanonicalAAS >( i + offset, allowed_aa_types ) );
 	}
 }
 
@@ -594,7 +594,7 @@ void BDR::process_insert_design_string(
 			allowed_aa_types[ aa_from_oneletter_code( aa.at( i ) ) ] = true;
 		}
 
-		design_tf->push_back( TaskOperationCOP( new RestrictAbsentCanonicalAAS( i + left_offset, allowed_aa_types ) ) );
+		design_tf->push_back( utility::pointer::make_shared< RestrictAbsentCanonicalAAS >( i + left_offset, allowed_aa_types ) );
 	}
 
 	design_tf->push_back( repack_op );

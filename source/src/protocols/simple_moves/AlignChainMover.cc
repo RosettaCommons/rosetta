@@ -41,7 +41,7 @@ namespace simple_moves {
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP AlignChainMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new AlignChainMover );
+// XRW TEMP  return utility::pointer::make_shared< AlignChainMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -120,13 +120,13 @@ AlignChainMover::apply( Pose & in_pose )
 moves::MoverOP
 AlignChainMover::clone() const
 {
-	return moves::MoverOP( new AlignChainMover( *this ) );
+	return utility::pointer::make_shared< AlignChainMover >( *this );
 }
 
 moves::MoverOP
 AlignChainMover::fresh_instance() const
 {
-	return moves::MoverOP( new AlignChainMover );
+	return utility::pointer::make_shared< AlignChainMover >();
 }
 
 void
@@ -189,7 +189,7 @@ std::string AlignChainMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 AlignChainMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new AlignChainMover );
+	return utility::pointer::make_shared< AlignChainMover >();
 }
 
 void AlignChainMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

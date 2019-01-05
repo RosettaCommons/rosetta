@@ -49,7 +49,7 @@ namespace sspot {
 NatbiasSecondaryStructureEnergyCreator::EnergyMethodOP
 NatbiasSecondaryStructureEnergyCreator::create_energy_method( EnergyMethodOptions const & ) const
 {
-	return NatbiasSecondaryStructureEnergyCreator::EnergyMethodOP( new NatbiasSecondaryStructureEnergy );
+	return utility::pointer::make_shared< NatbiasSecondaryStructureEnergy >();
 }
 
 NatbiasSecondaryStructureEnergyCreator::ScoreTypes
@@ -66,7 +66,7 @@ NatbiasSecondaryStructureEnergyCreator::score_types_for_method() const
 
 /// @brief default constructor
 NatbiasSecondaryStructureEnergy::NatbiasSecondaryStructureEnergy() :
-	parent( core::scoring::methods::EnergyMethodCreatorOP( new NatbiasSecondaryStructureEnergyCreator ) ),
+	parent( utility::pointer::make_shared< NatbiasSecondaryStructureEnergyCreator >() ),
 	native_secstruct_( "" ),
 	use_sspot_( false ),
 	use_hhpot_( false ),
@@ -86,7 +86,7 @@ NatbiasSecondaryStructureEnergy::NatbiasSecondaryStructureEnergy( NatbiasSeconda
 NatbiasSecondaryStructureEnergy::EnergyMethodOP
 NatbiasSecondaryStructureEnergy::clone() const
 {
-	return NatbiasSecondaryStructureEnergy::EnergyMethodOP( new NatbiasSecondaryStructureEnergy( *this ) );
+	return utility::pointer::make_shared< NatbiasSecondaryStructureEnergy >( *this );
 }
 
 /// @brief set native secondary structure
@@ -102,7 +102,7 @@ NatbiasSecondaryStructureEnergy::set_natbias_spairpot( StrandPairingSetOP const 
 {
 	using protocols::fldsgn::potentials::sspot::NatbiasStrandPairPotential;
 	use_sspot_ = true;
-	sspot_ = NatbiasStrandPairPotentialOP( new NatbiasStrandPairPotential( spairset ) );
+	sspot_ = utility::pointer::make_shared< NatbiasStrandPairPotential >( spairset );
 }
 
 
@@ -112,7 +112,7 @@ NatbiasSecondaryStructureEnergy::set_natbias_hpairpot( HelixPairingSetOP const h
 {
 	using protocols::fldsgn::potentials::sspot::NatbiasHelixPairPotential;
 	use_hhpot_ = true;
-	hhpot_ = NatbiasHelixPairPotentialOP( new NatbiasHelixPairPotential( hpairset ) );
+	hhpot_ = utility::pointer::make_shared< NatbiasHelixPairPotential >( hpairset );
 }
 
 /// @brief set HelicesSheetPotential
@@ -121,7 +121,7 @@ NatbiasSecondaryStructureEnergy::set_natbias_helices_sheet_pot( HSSTripletSetOP 
 {
 	using protocols::fldsgn::potentials::sspot::NatbiasHelicesSheetPotential;
 	use_hspot_ = true;
-	hspot_ = NatbiasHelicesSheetPotentialOP( new NatbiasHelicesSheetPotential( hss3set ) );
+	hspot_ = utility::pointer::make_shared< NatbiasHelicesSheetPotential >( hss3set );
 }
 
 

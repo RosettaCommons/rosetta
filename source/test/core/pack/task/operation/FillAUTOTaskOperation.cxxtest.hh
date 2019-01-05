@@ -54,7 +54,7 @@ public:
 	void test_noAUTO() {
 
 		core::pack::task::TaskFactory tf;
-		//tf.push_back(core::pack::task::operation::TaskOperationCOP( new core::pack::task::operation::FillAUTOTaskOperation() ) );
+		//tf.push_back(utility::pointer::make_shared< core::pack::task::operation::FillAUTOTaskOperation >() );
 
 		core::pack::task::PackerTaskOP task( tf.create_task_and_apply_taskoperations( *poseop ) );
 
@@ -66,7 +66,7 @@ public:
 	void test_FillAUTO() {
 
 		core::pack::task::TaskFactory tf;
-		tf.push_back(core::pack::task::operation::TaskOperationCOP( new core::pack::task::operation::FillAUTOTaskOperation() ) );
+		tf.push_back(utility::pointer::make_shared< core::pack::task::operation::FillAUTOTaskOperation >() );
 
 		core::pack::task::PackerTaskOP task( tf.create_task_and_apply_taskoperations( *poseop ) );
 

@@ -132,8 +132,8 @@ ConstrainToIdealMover::get_name() const {
 	return "ConstrainToIdealMover"; //ConstrainToIdealMoverCreator::mover_name();
 }
 
-protocols::moves::MoverOP ConstrainToIdealMover::fresh_instance() const { return protocols::moves::MoverOP( new ConstrainToIdealMover ); }
-protocols::moves::MoverOP ConstrainToIdealMover::clone() const { return protocols::moves::MoverOP( new ConstrainToIdealMover( *this ) ); }
+protocols::moves::MoverOP ConstrainToIdealMover::fresh_instance() const { return utility::pointer::make_shared< ConstrainToIdealMover >(); }
+protocols::moves::MoverOP ConstrainToIdealMover::clone() const { return utility::pointer::make_shared< ConstrainToIdealMover >( *this ); }
 
 /// @brief setter for AtomLevelDomainMap; shallow copy
 void ConstrainToIdealMover::set_atom_level_domain_map( core::pose::toolbox::AtomLevelDomainMapCOP atom_level_domain_map ) { atom_level_domain_map_ = atom_level_domain_map; }
@@ -147,7 +147,7 @@ void ConstrainToIdealMover::apply( core::pose::Pose & pose ){
 	//this is not a clear() operation in case someone is still sharing the old pointer
 	core::kinematics::MoveMap mm;
 	apply( pose, mm );
-	if ( !atom_level_domain_map_ ) atom_level_domain_map_ = core::pose::toolbox::AtomLevelDomainMapOP( new core::pose::toolbox::AtomLevelDomainMap( pose ) );
+	if ( !atom_level_domain_map_ ) atom_level_domain_map_ = utility::pointer::make_shared< core::pose::toolbox::AtomLevelDomainMap >( pose );
 } //apply
 
 
@@ -232,10 +232,10 @@ ConstrainToIdealMover::add_bond_length_constraint(
 
 		core::scoring::func::FuncOP dist_harm_func_( new core::scoring::func::HarmonicFunc( bond_length, bond_length_sd ) );
 
-		cst_set->add_constraint( ConstraintCOP( ConstraintOP( new AtomPairConstraint( atom_id1,
+		cst_set->add_constraint( ConstraintCOP( utility::pointer::make_shared< AtomPairConstraint >( atom_id1,
 			atom_id2,
 			dist_harm_func_,
-			score_type_ ) ) ) );
+			score_type_ ) ) );
 		if ( verbose_ ) {
 			TR << "PUTTING CONSTRAINT ON DISTANCE: " <<
 				atom_id2.rsd() << " " << atom_name1 << "; "  <<
@@ -299,8 +299,8 @@ ConstrainToIdealMover::add_bond_angle_constraint(
 		}
 
 		core::scoring::func::FuncOP angle_harm_func_( new core::scoring::func::HarmonicFunc( bond_angle, bond_angle_sd ) );
-		cst_set->add_constraint(ConstraintCOP( ConstraintOP( new AngleConstraint(
-			atom_id2, atom_id1, atom_id3, angle_harm_func_, score_type_ ) ) ) );
+		cst_set->add_constraint(ConstraintCOP( utility::pointer::make_shared< AngleConstraint >(
+			atom_id2, atom_id1, atom_id3, angle_harm_func_, score_type_ ) ) );
 
 		if ( verbose_ ) {
 			TR << "PUTTING CONSTRAINT ON ANGLE: " <<
@@ -367,8 +367,8 @@ ConstrainToIdealMover::add_bond_dihedral_constraint(
 	}
 
 	core::scoring::func::FuncOP angle_harm_func_( new core::scoring::func::CircularHarmonicFunc( bond_torsion, bond_torsion_sd ) );
-	cst_set->add_constraint( DihedralConstraintOP( new DihedralConstraint(
-		atom_id1, atom_id2, atom_id3, atom_id4, angle_harm_func_, score_type_ ) ) );
+	cst_set->add_constraint( utility::pointer::make_shared< DihedralConstraint >(
+		atom_id1, atom_id2, atom_id3, atom_id4, angle_harm_func_, score_type_ ) );
 
 	if ( verbose_ ) {
 		TR << "PUTTING CONSTRAINT ON TORSION: " <<

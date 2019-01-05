@@ -110,7 +110,7 @@ FragmentReader::parse_tag( TagCOP const & tag )
 		// read from blueprint
 		String const blueprint( tag->getOption<String>( "blueprint", "" ) );
 		if ( blueprint != "" ) {
-			blueprint_ = protocols::parser::BluePrintOP( new protocols::parser::BluePrint( blueprint ) );
+			blueprint_ = utility::pointer::make_shared< protocols::parser::BluePrint >( blueprint );
 			ss_ = blueprint_->secstruct();
 			// pick fragment using sequence information (default false)
 			bool use_sequence_bias( tag->getOption<bool>( "use_sequence_bias", false ) );
@@ -209,9 +209,9 @@ FragmentReader::set_fragments( Pose const & pose_in, FragSetOP const & fragset )
 	using namespace core::fragment;
 
 	if ( begin_ == 0 ) {
-		core::fragment::steal_frag_set_from_pose( pose_in, *fragset, core::fragment::FragDataCOP( core::fragment::FragDataOP( new FragData( SingleResidueFragDataOP( new IndependentBBTorsionSRFD ), frag_size_ ) ) ) );
+		core::fragment::steal_frag_set_from_pose( pose_in, *fragset, utility::pointer::make_shared< FragData >( utility::pointer::make_shared< IndependentBBTorsionSRFD >(), frag_size_ ) );
 	} else {
-		core::fragment::steal_frag_set_from_pose( pose_in, begin_, end_ , *fragset, core::fragment::FragDataCOP( core::fragment::FragDataOP( new FragData( SingleResidueFragDataOP( new IndependentBBTorsionSRFD ), frag_size_ ) ) ) );
+		core::fragment::steal_frag_set_from_pose( pose_in, begin_, end_ , *fragset, utility::pointer::make_shared< FragData >( utility::pointer::make_shared< IndependentBBTorsionSRFD >(), frag_size_ ) );
 	}
 }
 
@@ -271,11 +271,11 @@ FragmentReader::apply( FragSetOP & fragset )
 		FrameList frames;
 		if ( cf.get() != nullptr && of.get() == nullptr ) {
 			for ( ConstFrameIterator it=cf->begin(), end( cf->end() ); it!=end; ++it ) {
-				frames.push_back( core::fragment::FrameOP( new Frame( **it ) ) );
+				frames.push_back( utility::pointer::make_shared< Frame >( **it ) );
 			}
 		} else if ( of.get() != nullptr && cf.get() == nullptr ) {
 			for ( ConstFrameIterator it=of->begin(), end( of->end() ); it!=end; ++it ) {
-				frames.push_back( core::fragment::FrameOP( new Frame( **it ) ) );
+				frames.push_back( utility::pointer::make_shared< Frame >( **it ) );
 			}
 		} else {
 			TR.Error << "FragmentIO returned not proper fragset. See the code." << std::endl;

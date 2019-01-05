@@ -74,7 +74,7 @@ static basic::Tracer TR_debug( "CoordinateCst.Debug" );
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP CoordinateCstCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new CoordinateCst );
+// XRW TEMP  return utility::pointer::make_shared< CoordinateCst >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -100,12 +100,12 @@ CoordinateCst::CoordinateCst() :
 
 protocols::moves::MoverOP
 CoordinateCst::clone() const {
-	return( protocols::moves::MoverOP( new CoordinateCst( *this ) ) );
+	return( utility::pointer::make_shared< CoordinateCst >( *this ) );
 }
 
 protocols::moves::MoverOP
 CoordinateCst::fresh_instance() const {
-	return protocols::moves::MoverOP( new CoordinateCst );
+	return utility::pointer::make_shared< CoordinateCst >();
 }
 
 ///parse residues at run time, in case there was a lenght change
@@ -199,7 +199,7 @@ void add_coordinate_constraints(
 	core::id::AtomID const anchor_atom( core::id::AtomID( pose.residue( anchor_resnum ).atom_index( anchor_atom_name ), anchor_resnum ) );
 
 	if ( !coord_cst_func ) {
-		coord_cst_func = core::scoring::func::HarmonicFuncOP( new core::scoring::func::HarmonicFunc( 0.0, 0.0 ) );
+		coord_cst_func = utility::pointer::make_shared< core::scoring::func::HarmonicFunc >( 0.0, 0.0 );
 	}
 	coord_cst_func->sd( coord_sdev );
 
@@ -212,11 +212,11 @@ void add_coordinate_constraints(
 		TR<<"Coordinate-constraining residue " << pose.residue( res ).name() << " " << res <<std::endl;
 		///core::chemical::ResidueType rsd_type( pose.residue( res ).type() );
 		Size atomindex =  pose.residue( res ).atom_index( atom_name );
-		cst.push_back( core::scoring::constraints::ConstraintOP( new CoordinateConstraint(
+		cst.push_back( utility::pointer::make_shared< CoordinateConstraint >(
 			core::id::AtomID( atomindex, res ),
 			anchor_atom,
 			pose.residue( res ).xyz( atomindex ),
-			coord_cst_func) ));
+			coord_cst_func));
 		cst = pose.add_constraints( cst );
 	}
 }
@@ -389,7 +389,7 @@ std::string CoordinateCstCreator::keyname() const {
 
 protocols::moves::MoverOP
 CoordinateCstCreator::create_mover() const {
-	return protocols::moves::MoverOP( new CoordinateCst );
+	return utility::pointer::make_shared< CoordinateCst >();
 }
 
 void CoordinateCstCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

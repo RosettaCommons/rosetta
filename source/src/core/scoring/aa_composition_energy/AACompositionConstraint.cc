@@ -75,7 +75,7 @@ AACompositionConstraint::~AACompositionConstraint() = default;
 /// @brief Clone operator
 ///
 core::scoring::constraints::ConstraintOP
-AACompositionConstraint::clone() const { return core::scoring::constraints::ConstraintOP( new AACompositionConstraint( *this ) ); }
+AACompositionConstraint::clone() const { return utility::pointer::make_shared< AACompositionConstraint >( *this ); }
 
 bool AACompositionConstraint::operator == ( Constraint const & other ) const
 {

@@ -48,7 +48,7 @@ ConstraintsMap::~ConstraintsMap() = default;
 basic::datacache::CacheableDataOP
 ConstraintsMap::clone() const
 {
-	return basic::datacache::CacheableDataOP( new ConstraintsMap( *this ) );
+	return utility::pointer::make_shared< ConstraintsMap >( *this );
 }
 
 /// @brief Insert csts into the ConstraintsMap under the name given.

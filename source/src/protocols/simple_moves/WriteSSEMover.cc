@@ -88,7 +88,7 @@ void WriteSSEMover::parse_my_tag(
 void WriteSSEMover::cmd( std::string const & cmd ) {
 	cmd_ = cmd;
 	if ( cmd_ != "" ) {
-		psipred_interface_ = core::io::external::PsiPredInterfaceOP( new core::io::external::PsiPredInterface( cmd_ ) );
+		psipred_interface_ = utility::pointer::make_shared< core::io::external::PsiPredInterface >( cmd_ );
 	}
 }
 
@@ -98,7 +98,7 @@ std::string WriteSSEMover::get_name() const{
 
 protocols::moves::MoverOP
 WriteSSEMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new WriteSSEMover );
+	return utility::pointer::make_shared< WriteSSEMover >();
 }
 std::string WriteSSEMoverCreator::keyname() const {
 	return WriteSSEMover::mover_name();

@@ -62,7 +62,7 @@ GraftedStemOptimizer::init() {
 
 	stem_size_        = 4;
 	deep_optimization_ = true;
-	cdr_loop_ = loops::LoopOP( new loops::Loop( ab_info_->get_CDR_loop(cdr_name_) ) );
+	cdr_loop_ = utility::pointer::make_shared< loops::Loop >( ab_info_->get_CDR_loop(cdr_name_) );
 }
 
 
@@ -135,7 +135,7 @@ GraftedStemOptimizer::setup_protocol(pose::Pose & pose) {
 	MinMoverOP min_mover( new MinMover( get_stem_movemap(pose, "NC"), scorefxn_, "lbfgs_armijo_nonmonotone", 0.001, true ) );
 
 	/// Sequence_Mover
-	optimize_stems_ = moves::SequenceMoverOP( new moves::SequenceMover() );
+	optimize_stems_ = utility::pointer::make_shared< moves::SequenceMover >();
 
 	if ( deep_optimization_ ) {
 		optimize_stems_ -> add_mover(small_mover);
@@ -197,7 +197,7 @@ GraftedStemOptimizer::apply( pose::Pose & pose ) {
 	Real const gamma = std::pow( (last_temp/init_temp), (1.0/inner_cycles));
 	Real temperature = init_temp;
 
-	mc_ = moves::MonteCarloOP( new moves::MonteCarlo( pose, *scorefxn_, temperature ) );
+	mc_ = utility::pointer::make_shared< moves::MonteCarlo >( pose, *scorefxn_, temperature );
 	mc_->reset( pose ); // monte carlo reset
 	moves::TrialMoverOP optimize_trial( new moves::TrialMover(optimize_stems_, mc_) );
 
@@ -398,7 +398,7 @@ GraftedStemOptimizer::get_stem_taskfactory( pose::Pose & pose, std::string const
 
 	using namespace protocols::simple_task_operations;
 	using namespace core::pack::task::operation;
-	tf->push_back( TaskOperationCOP( new RestrictToInterface(sc_is_packable) ) );
+	tf->push_back( utility::pointer::make_shared< RestrictToInterface >(sc_is_packable) );
 
 	//tf->create_task_and_apply_taskoperations(pose);
 	//pack::task::PackerTaskOP my_task(tf->create_task_and_apply_taskoperations(pose));

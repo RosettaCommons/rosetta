@@ -82,12 +82,12 @@ SaveResfileToDiskFilter::~SaveResfileToDiskFilter() = default;
 
 protocols::filters::FilterOP
 SaveResfileToDiskFilter::fresh_instance() const{
-	return protocols::filters::FilterOP( new SaveResfileToDiskFilter() );
+	return utility::pointer::make_shared< SaveResfileToDiskFilter >();
 }
 
 protocols::filters::FilterOP
 SaveResfileToDiskFilter::clone() const{
-	return protocols::filters::FilterOP( new SaveResfileToDiskFilter( *this ) );
+	return utility::pointer::make_shared< SaveResfileToDiskFilter >( *this );
 }
 
 // @brief getters
@@ -223,7 +223,7 @@ out << "SaveResfileToDiskFilter returns " << compute( pose ) << std::endl;
 }
 */
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP SaveResfileToDiskFilterCreator::create_filter() const { return protocols::filters::FilterOP( new SaveResfileToDiskFilter ); }
+// XRW TEMP SaveResfileToDiskFilterCreator::create_filter() const { return utility::pointer::make_shared< SaveResfileToDiskFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP SaveResfileToDiskFilterCreator::keyname() const { return "SaveResfileToDisk"; }
@@ -260,7 +260,7 @@ std::string SaveResfileToDiskFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 SaveResfileToDiskFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new SaveResfileToDiskFilter );
+	return utility::pointer::make_shared< SaveResfileToDiskFilter >();
 }
 
 void SaveResfileToDiskFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

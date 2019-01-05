@@ -307,11 +307,11 @@ PDBWriter::create_output_upstream_pose(
 	core::pose::PoseOP outpose;
 
 	if ( write_matchres_only_ ) {
-		outpose = core::pose::PoseOP( new core::pose::Pose() );
+		outpose = utility::pointer::make_shared< core::pose::Pose >();
 
 		core::pose::PDBInfoOP pdbinf( new core::pose::PDBInfo( *outpose ) );
 		outpose->pdb_info( pdbinf );
-	} else outpose = core::pose::PoseOP( new core::pose::Pose( *orig_upstream_pose_ ) );
+	} else outpose = utility::pointer::make_shared< core::pose::Pose >( *orig_upstream_pose_ );
 
 	for ( core::Size i = 1, count_non_redundant = 1; i <= upstream_matchres.size(); ++i ) {
 		if ( redundant_upstream_res.find( i ) != redundant_upstream_res.end() ) continue;

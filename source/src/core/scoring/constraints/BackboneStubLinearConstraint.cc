@@ -113,7 +113,7 @@ BackboneStubLinearConstraint::BackboneStubLinearConstraint(
 	//if ( ang_cst_ == 0 ) {
 	// // note: PeriodicFunc has functional form y = ( k * cos(n * (x - x0) ) ) + C
 	// func::FuncOP cos_func( new func::PeriodicFunc(0., 1., 1., 0.) );
-	// ang_cst_ = AngleConstraintOP( new AngleConstraint( cos_func ) );
+	// ang_cst_ = utility::pointer::make_shared< AngleConstraint >( cos_func );
 	//}
 }
 
@@ -492,7 +492,7 @@ ConstraintOP BackboneStubLinearConstraint::remapped_clone( pose::Pose const& /*s
 	ala->set_xyz("C",C_target_);
 	ala->set_xyz("N",N_target_);
 
-	return ConstraintOP( new BackboneStubLinearConstraint(dest, new_seqpos, new_fixed_atom_id, *ala, superposition_bonus_, CB_force_constant_ ) );
+	return utility::pointer::make_shared< BackboneStubLinearConstraint >(dest, new_seqpos, new_fixed_atom_id, *ala, superposition_bonus_, CB_force_constant_ );
 }
 
 } // namespace constraints

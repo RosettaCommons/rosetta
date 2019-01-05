@@ -46,7 +46,7 @@ namespace constraint_generator {
 protocols::constraint_generator::ConstraintGeneratorOP
 CoordinateConstraintGeneratorCreator::create_constraint_generator() const
 {
-	return protocols::constraint_generator::ConstraintGeneratorOP( new CoordinateConstraintGenerator );
+	return utility::pointer::make_shared< CoordinateConstraintGenerator >();
 }
 
 std::string
@@ -74,7 +74,7 @@ CoordinateConstraintGenerator::~CoordinateConstraintGenerator() = default;
 ConstraintGeneratorOP
 CoordinateConstraintGenerator::clone() const
 {
-	return ConstraintGeneratorOP( new CoordinateConstraintGenerator( *this ) );
+	return utility::pointer::make_shared< CoordinateConstraintGenerator >( *this );
 }
 
 void
@@ -216,9 +216,9 @@ core::scoring::func::FuncOP
 CoordinateConstraintGenerator::create_function() const
 {
 	if ( bounded_ ) {
-		return core::scoring::func::FuncOP( new core::scoring::constraints::BoundFunc( 0, bounded_width_, sd_, "xyz" ) );
+		return utility::pointer::make_shared< core::scoring::constraints::BoundFunc >( 0, bounded_width_, sd_, "xyz" );
 	} else {
-		return core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc( 0.0, sd_ ) );
+		return utility::pointer::make_shared< core::scoring::func::HarmonicFunc >( 0.0, sd_ );
 	}
 }
 
@@ -229,7 +229,7 @@ CoordinateConstraintGenerator::create_coordinate_constraint(
 	core::id::AtomID const & root_atom,
 	core::conformation::Residue const & ref_rsd ) const
 {
-	return core::scoring::constraints::ConstraintOP( new core::scoring::constraints::CoordinateConstraint( pose_atomid, root_atom, ref_rsd.xyz( ref_atom.atomno() ), create_function() ) );
+	return utility::pointer::make_shared< core::scoring::constraints::CoordinateConstraint >( pose_atomid, root_atom, ref_rsd.xyz( ref_atom.atomno() ), create_function() );
 }
 
 core::scoring::constraints::ConstraintOP

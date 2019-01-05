@@ -117,7 +117,7 @@ ResidueTypeConstraint::remap_resid( core::id::SequenceMapping const &seqmap ) co
 {
 	core::Size newseqpos = seqmap[ seqpos_ ];
 	if ( newseqpos != 0 ) {
-		return ConstraintOP( new ResidueTypeConstraint( newseqpos, AAname, rsd_type_name3_, favor_native_bonus_ ) );
+		return utility::pointer::make_shared< ResidueTypeConstraint >( newseqpos, AAname, rsd_type_name3_, favor_native_bonus_ );
 	} else {
 		return nullptr;
 	}
@@ -155,7 +155,7 @@ ResidueTypeConstraint::remapped_clone( pose::Pose const&, pose::Pose const&, id:
 		if ( newseqpos == 0 ) return nullptr;
 	}
 
-	return ConstraintOP( new ResidueTypeConstraint(newseqpos, AAname, rsd_type_name3_, favor_native_bonus_) );
+	return utility::pointer::make_shared< ResidueTypeConstraint >(newseqpos, AAname, rsd_type_name3_, favor_native_bonus_);
 }
 
 

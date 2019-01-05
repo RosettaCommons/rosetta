@@ -140,9 +140,9 @@ main( int argc, char * argv [] ) {
 
 		if ( option[ basic::options::OptionKeys::cluster::loops ]() ) {
 			loops::Loops loops( true );
-			clustering = ClusterPhilStyleOP( new ClusterPhilStyle_Loop(loops ) );
+			clustering = utility::pointer::make_shared< ClusterPhilStyle_Loop >(loops );
 		} else {
-			clustering = ClusterPhilStyleOP( new ClusterPhilStyle() );
+			clustering = utility::pointer::make_shared< ClusterPhilStyle >();
 		}
 
 		clustering->set_score_function( sfxn );

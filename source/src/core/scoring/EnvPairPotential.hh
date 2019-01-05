@@ -62,7 +62,7 @@ public:
 	basic::datacache::CacheableDataOP
 	clone() const override
 	{
-		return basic::datacache::CacheableDataOP( new CenListInfo( *this ) );
+		return utility::pointer::make_shared< CenListInfo >( *this );
 	}
 
 	Size

@@ -67,7 +67,7 @@ RigidLigandBuilder::RigidLigandBuilder( RigidLigandBuilder const & other ) :
 	min_sep_d2_from_upstream_atoms_( other.min_sep_d2_from_upstream_atoms_ )
 {
 	for ( Size ii = 1; ii <= lig_conformers_.size(); ++ii ) {
-		lig_conformers_[ ii ] = toolbox::match_enzdes_util::LigandConformerOP( new toolbox::match_enzdes_util::LigandConformer( * other.lig_conformers_[ ii ] ) );
+		lig_conformers_[ ii ] = utility::pointer::make_shared< toolbox::match_enzdes_util::LigandConformer >( * other.lig_conformers_[ ii ] );
 	}
 }
 
@@ -95,7 +95,7 @@ RigidLigandBuilder::~RigidLigandBuilder() = default;
 DownstreamBuilderOP
 RigidLigandBuilder::clone() const
 {
-	return DownstreamBuilderOP( new RigidLigandBuilder( *this ) );
+	return utility::pointer::make_shared< RigidLigandBuilder >( *this );
 }
 
 
@@ -389,7 +389,7 @@ RigidLigandBuilder::initialize_from_residue(
 		atom_radii_[ ii ] = probe_radius_for_atom_type( residue.atom( ii ).type() );
 	}
 
-	lig_conformers_.push_back( toolbox::match_enzdes_util::LigandConformerOP( new toolbox::match_enzdes_util::LigandConformer ) );
+	lig_conformers_.push_back( utility::pointer::make_shared< toolbox::match_enzdes_util::LigandConformer >() );
 	lig_conformers_[1]->ignore_h_collisions( ignore_h_collisions_ );
 	lig_conformers_[1]->initialize_from_residue( atom1, atom2, atom3,
 		orientation_atom1, orientation_atom2, orientation_atom3, residue );

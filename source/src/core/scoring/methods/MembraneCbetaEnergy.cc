@@ -48,7 +48,7 @@ methods::EnergyMethodOP
 MembraneCbetaEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new MembraneCbetaEnergy );
+	return utility::pointer::make_shared< MembraneCbetaEnergy >();
 }
 
 ScoreTypes
@@ -61,7 +61,7 @@ MembraneCbetaEnergyCreator::score_types_for_method() const {
 
 /// c-tor
 MembraneCbetaEnergy::MembraneCbetaEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new MembraneCbetaEnergyCreator ) ),
+	parent( utility::pointer::make_shared< MembraneCbetaEnergyCreator >() ),
 	potential_( ScoringManager::get_instance()->get_MembranePotential() )
 {}
 
@@ -70,7 +70,7 @@ MembraneCbetaEnergy::MembraneCbetaEnergy() :
 EnergyMethodOP
 MembraneCbetaEnergy::clone() const
 {
-	return EnergyMethodOP( new MembraneCbetaEnergy );
+	return utility::pointer::make_shared< MembraneCbetaEnergy >();
 }
 
 

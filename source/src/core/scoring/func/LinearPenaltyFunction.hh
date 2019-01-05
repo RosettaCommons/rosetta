@@ -40,7 +40,7 @@ public:
 		x_middle_( x_middle ), well_depth_( well_depth ), half_width_ ( half_width ), slope_ ( slope ) {}
 
 	FuncOP
-	clone() const { return FuncOP( new LinearPenaltyFunction( *this ) ); }
+	clone() const { return utility::pointer::make_shared< LinearPenaltyFunction >( *this ); }
 
 	virtual bool operator == ( Func const & other ) const;
 	virtual bool same_type_as_me( Func const & other ) const;

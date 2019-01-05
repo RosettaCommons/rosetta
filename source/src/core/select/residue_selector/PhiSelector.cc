@@ -69,7 +69,7 @@ PhiSelector::~PhiSelector() = default;
 /// @details Copy this object and return owning pointer to the copy (created on the heap).
 ResidueSelectorOP
 PhiSelector::clone() const {
-	return ResidueSelectorOP( utility::pointer::dynamic_pointer_cast<ResidueSelector>( PhiSelectorOP( new PhiSelector(*this) ) ) );
+	return ResidueSelectorOP( utility::pointer::dynamic_pointer_cast<ResidueSelector>( utility::pointer::make_shared< PhiSelector >(*this) ) );
 }
 
 /// @brief "Apply" function.
@@ -179,7 +179,7 @@ PhiSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 
 ResidueSelectorOP
 PhiSelectorCreator::create_residue_selector() const {
-	return ResidueSelectorOP( utility::pointer::dynamic_pointer_cast<ResidueSelector>( PhiSelectorOP( new PhiSelector ) ) );
+	return ResidueSelectorOP( utility::pointer::dynamic_pointer_cast<ResidueSelector>( utility::pointer::make_shared< PhiSelector >() ) );
 }
 
 std::string

@@ -63,7 +63,7 @@ public:
 	// Shared initialization goes here.
 	void setUp() {
 		core_init();
-		pose_ = core::pose::PoseOP( new core::pose::Pose);
+		pose_ = utility::pointer::make_shared< core::pose::Pose >();
 		core::import_pose::pose_from_file( *pose_, "core/conformation/test_in.pdb" , core::import_pose::PDB_file);
 
 		startmap_.clear();

@@ -138,13 +138,13 @@ SampleTiltAngles::parse_my_tag(
 
 protocols::moves::MoverOP
 SampleTiltAngles::clone() const{
-	return protocols::moves::MoverOP( new SampleTiltAngles( *this ) );
+	return utility::pointer::make_shared< SampleTiltAngles >( *this );
 }
 
 moves::MoverOP
 SampleTiltAngles::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new SampleTiltAngles );
+	return utility::pointer::make_shared< SampleTiltAngles >();
 }
 
 // XRW TEMP std::string
@@ -280,7 +280,7 @@ SampleTiltAngles::write_score_to_outfiles(
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP SampleTiltAnglesCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new SampleTiltAngles );
+// XRW TEMP  return utility::pointer::make_shared< SampleTiltAngles >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -319,7 +319,7 @@ std::string SampleTiltAnglesCreator::keyname() const {
 
 protocols::moves::MoverOP
 SampleTiltAnglesCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SampleTiltAngles );
+	return utility::pointer::make_shared< SampleTiltAngles >();
 }
 
 void SampleTiltAnglesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

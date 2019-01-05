@@ -45,7 +45,7 @@ namespace constraints {
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP NtoCConstraintGeneratorCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new NtoCConstraintGenerator() );
+// XRW TEMP  return utility::pointer::make_shared< NtoCConstraintGenerator >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -94,13 +94,13 @@ NtoCConstraintGenerator::parse_my_tag( TagCOP const tag,
 protocols::moves::MoverOP
 NtoCConstraintGenerator::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new NtoCConstraintGenerator() );
+	return utility::pointer::make_shared< NtoCConstraintGenerator >();
 }
 
 protocols::moves::MoverOP
 NtoCConstraintGenerator::clone() const
 {
-	return protocols::moves::MoverOP( new NtoCConstraintGenerator( *this ) );
+	return utility::pointer::make_shared< NtoCConstraintGenerator >( *this );
 }
 
 /*
@@ -153,7 +153,7 @@ std::string NtoCConstraintGeneratorCreator::keyname() const {
 
 protocols::moves::MoverOP
 NtoCConstraintGeneratorCreator::create_mover() const {
-	return protocols::moves::MoverOP( new NtoCConstraintGenerator );
+	return utility::pointer::make_shared< NtoCConstraintGenerator >();
 }
 
 void NtoCConstraintGeneratorCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

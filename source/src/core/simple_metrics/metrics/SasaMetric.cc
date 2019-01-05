@@ -113,7 +113,7 @@ SasaMetric::parse_my_tag(
 
 SimpleMetricOP
 SasaMetric::clone() const {
-	return SimpleMetricOP(new SasaMetric( *this ) );
+	return utility::pointer::make_shared< SasaMetric >( *this );
 
 }
 
@@ -144,7 +144,7 @@ SasaMetricCreator::keyname() const {
 
 SimpleMetricOP
 SasaMetricCreator::create_simple_metric() const {
-	return SimpleMetricOP( new SasaMetric );
+	return utility::pointer::make_shared< SasaMetric >();
 
 }
 

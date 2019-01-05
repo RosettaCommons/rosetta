@@ -62,7 +62,7 @@ public:
 
 	/// @brief TMHTopologySamplerClaimer has virtual functions... use this to obtain a new instance
 	TopologyClaimerOP clone() const override {
-		return TopologyClaimerOP( new TMHTopologySamplerClaimer( *this ) );
+		return utility::pointer::make_shared< TMHTopologySamplerClaimer >( *this );
 	}
 
 	/// @brief type() is specifying the output name of the TopologyClaimer

@@ -108,7 +108,7 @@ StructFileRepOP create_sfr_from_cif_file_op( CifFileOP cifFile, StructFileReader
 	bool modeltags_present = false;
 
 
-	sfr->header() = HeaderInformationOP( new HeaderInformation() );
+	sfr->header() = utility::pointer::make_shared< HeaderInformation >();
 
 	bool read_pdb_header = options.read_pdb_header();
 

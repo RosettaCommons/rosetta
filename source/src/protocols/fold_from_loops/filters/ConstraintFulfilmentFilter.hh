@@ -40,10 +40,10 @@ public:
 	~ConstraintFulfilmentFilter() override;
 
 	inline protocols::filters::FilterOP clone() const override {
-		return protocols::filters::FilterOP( new ConstraintFulfilmentFilter( *this ) );
+		return utility::pointer::make_shared< ConstraintFulfilmentFilter >( *this );
 	};
 	inline protocols::filters::FilterOP fresh_instance() const override {
-		return protocols::filters::FilterOP( new ConstraintFulfilmentFilter() );
+		return utility::pointer::make_shared< ConstraintFulfilmentFilter >();
 	};
 
 	bool distance() const { return distance_;}
@@ -80,7 +80,7 @@ public:
 
 private:
 	inline static core::select::residue_selector::ResidueSelectorCOP default_selector() {
-		return core::select::residue_selector::ResidueSelectorCOP( new core::select::residue_selector::TrueResidueSelector );
+		return utility::pointer::make_shared< core::select::residue_selector::TrueResidueSelector >();
 	}
 	inline static core::scoring::ScoreFunctionOP default_scorefxn() { return core::scoring::get_score_function(); }
 

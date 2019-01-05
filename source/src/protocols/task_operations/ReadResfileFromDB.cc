@@ -67,7 +67,7 @@ using utility::sql_database::sessionOP;
 using utility::tag::TagCOP;
 
 TaskOperationOP ReadResfileFromDBCreator::create_task_operation() const {
-	return TaskOperationOP( new ReadResfileFromDB );
+	return utility::pointer::make_shared< ReadResfileFromDB >();
 }
 
 void ReadResfileFromDBCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -99,7 +99,7 @@ ReadResfileFromDB::ReadResfileFromDB(ReadResfileFromDB const & /*src*/) = defaul
 ReadResfileFromDB::~ReadResfileFromDB() = default;
 
 TaskOperationOP ReadResfileFromDB::clone() const {
-	return TaskOperationOP( new ReadResfileFromDB( *this ) );
+	return utility::pointer::make_shared< ReadResfileFromDB >( *this );
 }
 
 void

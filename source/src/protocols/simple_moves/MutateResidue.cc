@@ -304,7 +304,7 @@ std::string MutateResidueCreator::keyname() const {
 
 protocols::moves::MoverOP
 MutateResidueCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MutateResidue );
+	return utility::pointer::make_shared< MutateResidue >();
 }
 
 void MutateResidueCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -59,7 +59,7 @@ static basic::Tracer TR( "devel.loop_creation.CCDLoopCloser" );
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP CCDLoopCloserCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new CCDLoopCloser );
+// XRW TEMP  return utility::pointer::make_shared< CCDLoopCloser >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -111,11 +111,11 @@ CCDLoopCloser::CCDLoopCloser(
 
 protocols::moves::MoverOP
 CCDLoopCloser::clone() const {
-	return( protocols::moves::MoverOP( new CCDLoopCloser( *this ) ) );
+	return( utility::pointer::make_shared< CCDLoopCloser >( *this ) );
 }
 protocols::moves::MoverOP
 CCDLoopCloser::fresh_instance() const {
-	return protocols::moves::MoverOP( new CCDLoopCloser );
+	return utility::pointer::make_shared< CCDLoopCloser >();
 }
 
 // XRW TEMP std::string
@@ -311,7 +311,7 @@ std::string CCDLoopCloserCreator::keyname() const {
 
 protocols::moves::MoverOP
 CCDLoopCloserCreator::create_mover() const {
-	return protocols::moves::MoverOP( new CCDLoopCloser );
+	return utility::pointer::make_shared< CCDLoopCloser >();
 }
 
 void CCDLoopCloserCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

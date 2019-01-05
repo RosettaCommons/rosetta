@@ -102,11 +102,11 @@ void ExtendedPoseMover::residue_type_set(const std::string& residue_type_set) {
 }
 
 protocols::moves::MoverOP ExtendedPoseMover::clone() const {
-	return protocols::moves::MoverOP( new protocols::pose_creation::ExtendedPoseMover(*this) );
+	return utility::pointer::make_shared< protocols::pose_creation::ExtendedPoseMover >(*this);
 }
 
 protocols::moves::MoverOP ExtendedPoseMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new protocols::pose_creation::ExtendedPoseMover() );
+	return utility::pointer::make_shared< protocols::pose_creation::ExtendedPoseMover >();
 }
 
 void ExtendedPoseMover::parse_my_tag(const utility::tag::TagCOP tag,
@@ -175,7 +175,7 @@ std::string ExtendedPoseMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 ExtendedPoseMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ExtendedPoseMover );
+	return utility::pointer::make_shared< ExtendedPoseMover >();
 }
 
 void ExtendedPoseMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

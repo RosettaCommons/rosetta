@@ -73,7 +73,7 @@ SecondaryStructureMetric::SecondaryStructureMetric( SecondaryStructureMetric con
 
 core::simple_metrics::SimpleMetricOP
 SecondaryStructureMetric::clone() const {
-	return core::simple_metrics::SimpleMetricOP(new SecondaryStructureMetric( *this ) );
+	return utility::pointer::make_shared< SecondaryStructureMetric >( *this );
 
 }
 
@@ -165,7 +165,7 @@ SecondaryStructureMetricCreator::keyname() const {
 
 core::simple_metrics::SimpleMetricOP
 SecondaryStructureMetricCreator::create_simple_metric() const {
-	return core::simple_metrics::SimpleMetricOP( new SecondaryStructureMetric );
+	return utility::pointer::make_shared< SecondaryStructureMetric >();
 
 }
 

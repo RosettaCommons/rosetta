@@ -128,7 +128,7 @@ RNA_SuitePotential::RNA_SuitePotential( bool const calculate_suiteness_bonus /* 
 	if ( calculate_suiteness_bonus_ ) {
 		// RNA_SuiteName contains info on half_widths for regular, dominant, and satellite half widths.
 		// It will be used to actually calculate suiteness.
-		rna_suite_name_ = pose::rna::RNA_SuiteNameOP( new pose::rna::RNA_SuiteName );
+		rna_suite_name_ = utility::pointer::make_shared< pose::rna::RNA_SuiteName >();
 
 		// But need to update Suite centers if user has specified differently in suite_bonus file. Do this based on *tags*.
 		// have to convert from ublas::vector to utility::vector1

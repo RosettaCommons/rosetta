@@ -55,7 +55,7 @@ static basic::Tracer TR( "protocols.simple_moves.AddPDBInfoMover" );
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP AddPDBInfoMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new AddPDBInfoMover );
+// XRW TEMP  return utility::pointer::make_shared< AddPDBInfoMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -73,7 +73,7 @@ AddPDBInfoMover::~AddPDBInfoMover() = default;
 void AddPDBInfoMover::apply( core::pose::Pose & pose ) {
 	//core::pose::PDBInfoOP pdb_info = new core::pose::PDBInfo(pose, true);
 	//pose.pdb_info( pdb_info );
-	pose.pdb_info( core::pose::PDBInfoOP( new core::pose::PDBInfo( pose, true ) ) );
+	pose.pdb_info( utility::pointer::make_shared< core::pose::PDBInfo >( pose, true ) );
 	//TR << "set PDBInfo to " << std::endl << pose.pdb_info()->show( std::ostream & output=std::cout ) << std::endl;
 }
 
@@ -84,12 +84,12 @@ AddPDBInfoMover::parse_my_tag( TagCOP const, basic::datacache::DataMap &, protoc
 
 protocols::moves::MoverOP
 AddPDBInfoMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new AddPDBInfoMover );
+	return utility::pointer::make_shared< AddPDBInfoMover >();
 }
 
 protocols::moves::MoverOP
 AddPDBInfoMover::clone() const {
-	return( protocols::moves::MoverOP( new AddPDBInfoMover( *this ) ) );
+	return( utility::pointer::make_shared< AddPDBInfoMover >( *this ) );
 }
 // XRW TEMP std::string
 // XRW TEMP AddPDBInfoMover::get_name() const {
@@ -122,7 +122,7 @@ std::string AddPDBInfoMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 AddPDBInfoMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new AddPDBInfoMover );
+	return utility::pointer::make_shared< AddPDBInfoMover >();
 }
 
 void AddPDBInfoMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

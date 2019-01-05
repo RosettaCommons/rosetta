@@ -218,7 +218,7 @@ rebuild_test()
 		fa_scorefxn->set_weight( fa_rep, 1.0 );
 		//fa_scorefxn->set_weight( fa_elec, 1.0 );
 
-		kinematics::MoveMapOP movemap = kinematics::MoveMapOP( new kinematics::MoveMap );
+		kinematics::MoveMapOP movemap = utility::pointer::make_shared< kinematics::MoveMap >();
 		movemap->set_bb ( true );
 		movemap->set_chi( true );
 		movemap->set_bb ( pose.size(), false );
@@ -240,7 +240,7 @@ rebuild_test()
 	{
 		protocols::relax::FastRelax fastrelax( fa_scorefxn, 0 );
 
-		kinematics::MoveMapOP movemap = kinematics::MoveMapOP( new kinematics::MoveMap );
+		kinematics::MoveMapOP movemap = utility::pointer::make_shared< kinematics::MoveMap >();
 		movemap->set_bb ( true );
 		movemap->set_chi( true );
 		movemap->set_bb ( pose.size(), false );

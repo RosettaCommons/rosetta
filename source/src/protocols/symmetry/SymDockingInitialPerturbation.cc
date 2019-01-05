@@ -232,7 +232,7 @@ FaSymDockingSlideTogether::FaSymDockingSlideTogether(
 	tolerance_(0.2)
 {
 	protocols::moves::Mover::type( "FaSymDockingSlideTogether" );
-	scorefxn_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() );
+	scorefxn_ = utility::pointer::make_shared< core::scoring::ScoreFunction >();
 	scorefxn_->set_weight( core::scoring::fa_rep, 1.0 );
 }
 
@@ -312,7 +312,7 @@ SymmetrySlider::SymmetrySlider(
 	if ( SlideCriteriaType_ == CEN_DOCK_SCORE ) {
 		scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::CENTROID_WTS, core::scoring::DOCK_LOW_PATCH );
 	} else if ( SlideCriteriaType_ == FA_REP_SCORE  ) {
-		scorefxn_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() );
+		scorefxn_ = utility::pointer::make_shared< core::scoring::ScoreFunction >();
 		scorefxn_->set_weight( core::scoring::fa_rep, 1.0 );
 		(*scorefxn_)( pose );
 		core::Real const initial_fa_rep = pose.energies().total_energies()[ core::scoring::fa_rep ];

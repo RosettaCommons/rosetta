@@ -73,11 +73,11 @@ ScoreTypes FiberDiffractionEnergyGpuCreator::score_types_for_method() const {
 }
 
 methods::EnergyMethodOP FiberDiffractionEnergyGpuCreator::create_energy_method( methods::EnergyMethodOptions const &) const {
-	return methods::EnergyMethodOP(new FiberDiffractionEnergyGpu() );
+	return utility::pointer::make_shared< FiberDiffractionEnergyGpu >();
 }
 
 FiberDiffractionEnergyGpu::FiberDiffractionEnergyGpu() :
-	parent( methods::EnergyMethodCreatorOP( new FiberDiffractionEnergyGpuCreator ) ) {
+	parent( utility::pointer::make_shared< FiberDiffractionEnergyGpuCreator >() ) {
 	chi2_=0;
 	dchi2_d.clear();
 	dchi2_d_cross_R.clear();
@@ -85,7 +85,7 @@ FiberDiffractionEnergyGpu::FiberDiffractionEnergyGpu() :
 
 /// clone
 methods::EnergyMethodOP FiberDiffractionEnergyGpu::clone() const {
-	return methods::EnergyMethodOP( new FiberDiffractionEnergyGpu( *this ) );
+	return utility::pointer::make_shared< FiberDiffractionEnergyGpu >( *this );
 }
 
 void FiberDiffractionEnergyGpu::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const {

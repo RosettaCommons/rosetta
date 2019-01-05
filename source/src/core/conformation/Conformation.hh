@@ -895,7 +895,7 @@ public: // Access to the ParametersSets -- Vikram K. Mulligan (vmullig@uw.edu), 
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	virtual
 	void create_new_parameters_set() {
-		parameters_set_.push_back( ParametersSetOP( new ParametersSet ) );
+		parameters_set_.push_back( utility::pointer::make_shared< ParametersSet >() );
 		return;
 	}
 

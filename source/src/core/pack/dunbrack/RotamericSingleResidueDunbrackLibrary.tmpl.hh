@@ -1312,7 +1312,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::create_rotamers_from_chisets(
 					utility::vector1< chemical::rings::RingConformer > confs = rotamer->type().ring_conformer_set( rn )->get_local_min_conformers();
 					for ( Size i = 1; i <= confs.size(); ++i ) {
 
-						conformation::ResidueOP conformer = conformation::ResidueOP( new conformation::Residue( *rotamer ) );
+						conformation::ResidueOP conformer = utility::pointer::make_shared< conformation::Residue >( *rotamer );
 
 						//conformer->set_all_nu( confs[ i ].nu_angles, confs[ i ].tau_angles );
 						conformer->set_all_ring_nu( first_nu_for_ring, last_nu_for_ring, confs[ i ].nu_angles, confs[ i ].tau_angles );

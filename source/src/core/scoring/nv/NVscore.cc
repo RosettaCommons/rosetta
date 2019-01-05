@@ -49,7 +49,7 @@ methods::EnergyMethodOP
 NVscoreCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new NVscore );
+	return utility::pointer::make_shared< NVscore >();
 }
 
 ScoreTypes
@@ -66,7 +66,7 @@ static basic::Tracer TR( "core.scoring.NVscore" );
 
 
 NVscore::NVscore() :
-	parent( methods::EnergyMethodCreatorOP( new NVscoreCreator ) ),
+	parent( utility::pointer::make_shared< NVscoreCreator >() ),
 	lookup_table_(ScoringManager::get_instance()->get_NVLookupTable() )
 {
 	//lbound defaults to 3.3 and ubound defaults to 11.1.  If you change these values the lookup table may no longer be accurate
@@ -80,7 +80,7 @@ NVscore::NVscore() :
 
 methods::EnergyMethodOP NVscore::clone() const
 {
-	return methods::EnergyMethodOP( new NVscore(*this) );
+	return utility::pointer::make_shared< NVscore >(*this);
 }
 
 

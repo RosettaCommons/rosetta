@@ -74,7 +74,7 @@ using namespace core;
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP SeedFoldTreeCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new SeedFoldTree );
+// XRW TEMP  return utility::pointer::make_shared< SeedFoldTree >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -111,12 +111,12 @@ SeedFoldTree::SeedFoldTree( core::kinematics::FoldTreeOP ft ) :
 
 protocols::moves::MoverOP
 SeedFoldTree::clone() const {
-	return( protocols::moves::MoverOP( new SeedFoldTree( *this ) ) );
+	return( utility::pointer::make_shared< SeedFoldTree >( *this ) );
 }
 
 protocols::moves::MoverOP
 SeedFoldTree::fresh_instance() const {
-	return protocols::moves::MoverOP( new SeedFoldTree );
+	return utility::pointer::make_shared< SeedFoldTree >();
 }
 
 void
@@ -344,7 +344,7 @@ SeedFoldTree::set_foldtree(
 	using namespace kinematics;
 	using namespace protocols::seeded_abinitio;
 
-	fold_tree_ = core::kinematics::FoldTreeOP( new core::kinematics::FoldTree );
+	fold_tree_ = utility::pointer::make_shared< core::kinematics::FoldTree >();
 	fold_tree_->clear();
 	Size seed_num = loops.size();
 
@@ -778,7 +778,7 @@ SeedFoldTree::parse_my_tag( TagCOP const tag,
 	}//end b-tags
 
 	std::string const template_pdb_fname( tag->getOption< std::string >( "template_pdb" ));
-	template_pdb_ = core::pose::PoseOP( new core::pose::Pose ) ;
+	template_pdb_ = utility::pointer::make_shared< core::pose::Pose >() ;
 	core::import_pose::pose_from_file( *template_pdb_, template_pdb_fname , core::import_pose::PDB_file);
 
 }//end parse my tag
@@ -825,7 +825,7 @@ std::string SeedFoldTreeCreator::keyname() const {
 
 protocols::moves::MoverOP
 SeedFoldTreeCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SeedFoldTree );
+	return utility::pointer::make_shared< SeedFoldTree >();
 }
 
 void SeedFoldTreeCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -96,7 +96,7 @@ methods::EnergyMethodOP
 MPResidueLipophilicityEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new MPResidueLipophilicityEnergy );
+	return utility::pointer::make_shared< MPResidueLipophilicityEnergy >();
 }
 
 /// @brief Return relevant score types
@@ -110,7 +110,7 @@ MPResidueLipophilicityEnergyCreator::score_types_for_method() const {
 // Constructors /////////////////////////////////////////////
 
 MPResidueLipophilicityEnergy::MPResidueLipophilicityEnergy() :
-	parent( EnergyMethodCreatorOP( new MPResidueLipophilicityEnergyCreator ) )
+	parent( utility::pointer::make_shared< MPResidueLipophilicityEnergyCreator >() )
 {
 	//parse_elazar_polynom_table();
 	parse_elazar_spline_table();
@@ -120,7 +120,7 @@ MPResidueLipophilicityEnergy::MPResidueLipophilicityEnergy() :
 EnergyMethodOP
 MPResidueLipophilicityEnergy::clone() const
 {
-	return EnergyMethodOP( new MPResidueLipophilicityEnergy( *this ) );
+	return utility::pointer::make_shared< MPResidueLipophilicityEnergy >( *this );
 }
 
 /// @details stores dScore/dNumNeighbors so that when neighbor atoms on adjacent

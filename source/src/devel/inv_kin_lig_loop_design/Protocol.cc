@@ -496,14 +496,14 @@ void Protocol::phase_hires() {
 
 void Protocol::apply(core::pose::PoseOP pose_) {
 	pose = pose_;
-	move_map = core::kinematics::MoveMapOP( new core::kinematics::MoveMap( get_move_map(pose->size(),loops) ) );
+	move_map = utility::pointer::make_shared< core::kinematics::MoveMap >( get_move_map(pose->size(),loops) );
 
 	const double CHAINBREAK_WEIGHT = 10;
 	const double RAMA_WEIGHT       = 10;
 	const double DUNBRACK_WEIGHT   = 1;
 	const double LORES_REP_WEIGHT  = 0.001;
 
-	score_fxn_lores = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction );
+	score_fxn_lores = utility::pointer::make_shared< core::scoring::ScoreFunction >();
 	score_fxn_lores->set_weight( core::scoring::chainbreak, CHAINBREAK_WEIGHT );
 	score_fxn_lores->set_weight( core::scoring::rama,       RAMA_WEIGHT       );
 	score_fxn_lores->set_weight( core::scoring::fa_dun,     DUNBRACK_WEIGHT   );

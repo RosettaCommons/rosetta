@@ -46,7 +46,7 @@ methods::EnergyMethodOP
 MembraneEnvEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new MembraneEnvEnergy );
+	return utility::pointer::make_shared< MembraneEnvEnergy >();
 }
 
 ScoreTypes
@@ -59,7 +59,7 @@ MembraneEnvEnergyCreator::score_types_for_method() const {
 
 /// c-tor
 MembraneEnvEnergy::MembraneEnvEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new MembraneEnvEnergyCreator ) ),
+	parent( utility::pointer::make_shared< MembraneEnvEnergyCreator >() ),
 	potential_( ScoringManager::get_instance()->get_MembranePotential() )
 {}
 
@@ -68,7 +68,7 @@ MembraneEnvEnergy::MembraneEnvEnergy() :
 EnergyMethodOP
 MembraneEnvEnergy::clone() const
 {
-	return EnergyMethodOP( new MembraneEnvEnergy );
+	return utility::pointer::make_shared< MembraneEnvEnergy >();
 }
 
 

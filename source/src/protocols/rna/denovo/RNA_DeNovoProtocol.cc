@@ -129,9 +129,9 @@ RNA_DeNovoProtocol::RNA_DeNovoProtocol( core::import_pose::options::RNA_DeNovoPr
 {
 	if ( rna_params_ == nullptr ) {
 		if ( !options_->rna_params_file().empty() ) {
-			rna_params_ = core::import_pose::RNA_DeNovoParametersCOP( new core::import_pose::RNA_DeNovoParameters( options_->rna_params_file() ) );
+			rna_params_ = utility::pointer::make_shared< core::import_pose::RNA_DeNovoParameters >( options_->rna_params_file() );
 		} else {
-			rna_params_ = core::import_pose::RNA_DeNovoParametersCOP( new core::import_pose::RNA_DeNovoParameters );
+			rna_params_ = utility::pointer::make_shared< core::import_pose::RNA_DeNovoParameters >();
 		}
 	}
 	Mover::type("RNA_DeNovoProtocol");
@@ -139,7 +139,7 @@ RNA_DeNovoProtocol::RNA_DeNovoProtocol( core::import_pose::options::RNA_DeNovoPr
 
 /// @brief Clone this object
 protocols::moves::MoverOP RNA_DeNovoProtocol::clone() const {
-	return protocols::moves::MoverOP( new RNA_DeNovoProtocol(*this) );
+	return utility::pointer::make_shared< RNA_DeNovoProtocol >(*this);
 }
 
 //////////////////////////////////////////////////
@@ -164,7 +164,7 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose ) {
 	// requires further setup later (once user input fragments have been inserted in the pose)
 	if ( options_->filter_vdw() ) {
 		protocols::scoring::fill_vdw_cached_rep_screen_info_from_command_line( pose );
-		vdw_grid_ = protocols::stepwise::modeler::rna::checker::RNA_VDW_BinCheckerOP( new protocols::stepwise::modeler::rna::checker::RNA_VDW_BinChecker( pose ) );
+		vdw_grid_ = utility::pointer::make_shared< protocols::stepwise::modeler::rna::checker::RNA_VDW_BinChecker >( pose );
 	}
 
 	// RNA score function (both low-res and high-res).
@@ -208,7 +208,7 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose ) {
 	RNA_BasePairHandlerOP rna_base_pair_handler( refine_pose ? new RNA_BasePairHandler( pose ) : new RNA_BasePairHandler( *rna_params_ ) );
 
 	// main loop
-	rna_fragment_monte_carlo_ = RNA_FragmentMonteCarloOP( new RNA_FragmentMonteCarlo( options_ ) );
+	rna_fragment_monte_carlo_ = utility::pointer::make_shared< RNA_FragmentMonteCarlo >( options_ );
 
 	rna_fragment_monte_carlo_->set_user_input_chunk_library( user_input_chunk_library );
 
@@ -229,19 +229,19 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose ) {
 
 	protocols::rna::setup::RNA_JobDistributorOP denovo_job_distributor;
 	if ( option[ csa::csa_bank_size ].user() ) {
-		denovo_job_distributor = protocols::rna::setup::RNA_JobDistributorOP( new protocols::rna::setup::RNA_CSA_JobDistributor(
+		denovo_job_distributor = utility::pointer::make_shared< protocols::rna::setup::RNA_CSA_JobDistributor >(
 			rna_fragment_monte_carlo_,
 			silent_file,
 			option[ out::nstruct ](),
 			option[ csa::csa_bank_size ](),
 			option[ csa::csa_rmsd ](),
 			option[ csa::csa_output_rounds ](),
-			option[ csa::annealing ]() ) );
+			option[ csa::annealing ]() );
 	} else {
-		denovo_job_distributor = protocols::rna::setup::RNA_JobDistributorOP( new protocols::rna::setup::RNA_MonteCarloJobDistributor(
+		denovo_job_distributor = utility::pointer::make_shared< protocols::rna::setup::RNA_MonteCarloJobDistributor >(
 			rna_fragment_monte_carlo_,
 			silent_file,
-			options_->nstruct() ) );
+			options_->nstruct() );
 	}
 	denovo_job_distributor->set_native_pose( get_native_pose() );
 	denovo_job_distributor->set_superimpose_over_all( option[ OptionKeys::stepwise::superimpose_over_all ]() );
@@ -486,8 +486,9 @@ RNA_DeNovoProtocol::output_to_silent_file(
 	// Why do I need to supply the damn file name? That seems silly.
 	TR << "Making silent struct for " << out_file_tag << std::endl;
 
-	SilentStructOP s = ( options_->binary_rna_output() ) ? SilentStructOP( new BinarySilentStruct( opts, pose, out_file_tag ) ) :
-		SilentStructOP( new RNA_SilentStruct( opts, pose, out_file_tag ) );
+	SilentStructOP s = ( options_->binary_rna_output() ) ?
+		SilentStructOP( utility::pointer::make_shared< BinarySilentStruct >( opts, pose, out_file_tag ) ) :
+		SilentStructOP( utility::pointer::make_shared< RNA_SilentStruct >( opts, pose, out_file_tag ) );
 
 	if ( options_->use_chem_shift_data() ) add_chem_shift_info( *s, pose);
 

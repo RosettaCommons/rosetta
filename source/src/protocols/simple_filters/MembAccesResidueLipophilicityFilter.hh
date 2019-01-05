@@ -50,10 +50,10 @@ public:
 	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	core::Real compute( core::pose::Pose const & pose ) const;
 	filters::FilterOP clone() const  override {
-		return filters::FilterOP( new MembAccesResidueLipophilicityFilter( *this ) );
+		return utility::pointer::make_shared< MembAccesResidueLipophilicityFilter >( *this );
 	}
 	filters::FilterOP fresh_instance() const override {
-		return filters::FilterOP( new MembAccesResidueLipophilicityFilter() );
+		return utility::pointer::make_shared< MembAccesResidueLipophilicityFilter >();
 	}
 
 	virtual ~MembAccesResidueLipophilicityFilter();

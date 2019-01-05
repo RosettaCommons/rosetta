@@ -107,7 +107,7 @@ GeneralizedKICfilter::~GeneralizedKICfilter() = default;
 /// @brief Clone operator to create a pointer to a fresh GeneralizedKICfilter object that copies this one.
 ///
 GeneralizedKICfilterOP GeneralizedKICfilter::clone() const {
-	return GeneralizedKICfilterOP( new GeneralizedKICfilter( *this ) );
+	return utility::pointer::make_shared< GeneralizedKICfilter >( *this );
 }
 
 /// @brief Returns the name of this class ("GeneralizedKICfilter").
@@ -295,7 +295,7 @@ void GeneralizedKICfilter::load_bin_params(
 	//Create the object, if it doesn't exist.
 	if ( !bin_transition_calculator_ ) {
 		if ( TR.visible() ) TR << "Creating BinTransitionCalculator." << std::endl;
-		bin_transition_calculator_=BinTransitionCalculatorOP( new BinTransitionCalculator );
+		bin_transition_calculator_=utility::pointer::make_shared< BinTransitionCalculator >();
 	}
 
 	if ( TR.visible() ) TR << "Loading bin_params file " << bin_params_file << "." << std::endl;

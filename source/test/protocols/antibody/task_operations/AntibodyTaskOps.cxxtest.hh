@@ -88,8 +88,8 @@ public:
 		inpath_ = "protocols/antibody/task_operations";
 		first_run_outpath_ = "/Users/jadolfbr/Documents/Rosetta/main/source/test/ut_files";
 		first_run_ = false;
-		ab_info_ = AntibodyInfoOP( new AntibodyInfo(pose_, AHO_Scheme, North) );
-		ab_info_chothia_ = AntibodyInfoOP( new AntibodyInfo(pose_chothia_));
+		ab_info_ = utility::pointer::make_shared< AntibodyInfo >(pose_, AHO_Scheme, North);
+		ab_info_chothia_ = utility::pointer::make_shared< AntibodyInfo >(pose_chothia_);
 
 	}
 	void test_DisableCDRsOperation(){
@@ -149,34 +149,34 @@ public:
 	void test_DisableAntibodyRegionOperation(){
 
 
-		DisableAntibodyRegionOperationOP default_op = DisableAntibodyRegionOperationOP( new DisableAntibodyRegionOperation());
-		TaskFactoryOP task = TaskFactoryOP( new TaskFactory());
+		DisableAntibodyRegionOperationOP default_op = utility::pointer::make_shared< DisableAntibodyRegionOperation >();
+		TaskFactoryOP task = utility::pointer::make_shared< TaskFactory >();
 		task->push_back(default_op);
 		assert_region_packing_is_disabled(pose_chothia_, task->create_task_and_apply_taskoperations(pose_chothia_), ab_info_chothia_, cdr_region);
 
-		DisableAntibodyRegionOperationOP default_ab_info = DisableAntibodyRegionOperationOP( new DisableAntibodyRegionOperation(ab_info_));
-		DisableAntibodyRegionOperationOP default_region = DisableAntibodyRegionOperationOP( new DisableAntibodyRegionOperation(ab_info_, cdr_region));
+		DisableAntibodyRegionOperationOP default_ab_info = utility::pointer::make_shared< DisableAntibodyRegionOperation >(ab_info_);
+		DisableAntibodyRegionOperationOP default_region = utility::pointer::make_shared< DisableAntibodyRegionOperation >(ab_info_, cdr_region);
 
 		utility::vector1<DisableAntibodyRegionOperationOP> default_ops;
 		default_ops.push_back(default_ab_info);
 		default_ops.push_back(default_region);
 
 		for ( core::Size i = 1; i <= default_ops.size(); ++i ) {
-			TaskFactoryOP task2 = TaskFactoryOP( new TaskFactory());
+			TaskFactoryOP task2 = utility::pointer::make_shared< TaskFactory >();
 			task2->push_back(default_ops[ i ]);
 			assert_region_packing_is_disabled(pose_, task2->create_task_and_apply_taskoperations(pose_), ab_info_, cdr_region);
 		}
 
 		//Test disabling only design.
-		DisableAntibodyRegionOperationOP default_pack_only= DisableAntibodyRegionOperationOP( new DisableAntibodyRegionOperation(ab_info_, cdr_region, false));
-		DisableAntibodyRegionOperationOP default_pack_only2 = DisableAntibodyRegionOperationOP( new DisableAntibodyRegionOperation(ab_info_, cdr_region));
+		DisableAntibodyRegionOperationOP default_pack_only= utility::pointer::make_shared< DisableAntibodyRegionOperation >(ab_info_, cdr_region, false);
+		DisableAntibodyRegionOperationOP default_pack_only2 = utility::pointer::make_shared< DisableAntibodyRegionOperation >(ab_info_, cdr_region);
 		default_pack_only2->set_disable_packing_and_design(false);
 
 		utility::vector1<DisableAntibodyRegionOperationOP> default_designs;
 		default_designs.push_back(default_pack_only);
 		default_designs.push_back(default_pack_only2);
 		for ( core::Size i = 1; i <= default_designs.size(); ++i ) {
-			TaskFactoryOP task2 = TaskFactoryOP( new TaskFactory());
+			TaskFactoryOP task2 = utility::pointer::make_shared< TaskFactory >();
 			task2->push_back( default_designs[ i ]);
 			assert_region_design_is_disabled(pose_, task2->create_task_and_apply_taskoperations(pose_), ab_info_, cdr_region);
 		}
@@ -204,22 +204,22 @@ public:
 		all_cdrs[ h4 ] = false;
 
 		//UTracer 1
-		RestrictToCDRsAndNeighborsOP default_op = RestrictToCDRsAndNeighborsOP( new RestrictToCDRsAndNeighbors());
-		TaskFactoryOP task = TaskFactoryOP( new TaskFactory());
+		RestrictToCDRsAndNeighborsOP default_op = utility::pointer::make_shared< RestrictToCDRsAndNeighbors >();
+		TaskFactoryOP task = utility::pointer::make_shared< TaskFactory >();
 		task->push_back(default_op);
 		output_or_test(task, pose_chothia_, first_run_, "RestrictCDRsOperation_UTracer1",  inpath_, first_run_outpath_);
 
 		//UTracer2
-		RestrictToCDRsAndNeighborsOP default_ab_info = RestrictToCDRsAndNeighborsOP( new RestrictToCDRsAndNeighbors(ab_info_));
+		RestrictToCDRsAndNeighborsOP default_ab_info = utility::pointer::make_shared< RestrictToCDRsAndNeighbors >(ab_info_);
 		default_ab_info->set_cdrs(cdrs);
-		RestrictToCDRsAndNeighborsOP default_cdrs = RestrictToCDRsAndNeighborsOP( new RestrictToCDRsAndNeighbors(ab_info_, cdrs));
+		RestrictToCDRsAndNeighborsOP default_cdrs = utility::pointer::make_shared< RestrictToCDRsAndNeighbors >(ab_info_, cdrs);
 
 		task->clear();
 		task->push_back(default_ab_info);
 		output_or_test(task, pose_, first_run_, "RestrictCDRsOperation_UTracer2",  inpath_, first_run_outpath_);
 
 		//UTracer 3
-		RestrictToCDRsAndNeighborsOP default_cdr_design = RestrictToCDRsAndNeighborsOP( new RestrictToCDRsAndNeighbors( ab_info_, all_cdrs, true));
+		RestrictToCDRsAndNeighborsOP default_cdr_design = utility::pointer::make_shared< RestrictToCDRsAndNeighbors >( ab_info_, all_cdrs, true);
 
 		task->clear();
 		task->push_back(default_cdr_design);
@@ -237,7 +237,7 @@ public:
 		output_or_test(task, pose_, first_run_, "RestrictCDRsOperation_UTracer4",  inpath_, first_run_outpath_);
 
 		//No Neighbors
-		RestrictToCDRsAndNeighborsOP no_neighbors = RestrictToCDRsAndNeighborsOP( new RestrictToCDRsAndNeighbors(ab_info_, cdrs, false));
+		RestrictToCDRsAndNeighborsOP no_neighbors = utility::pointer::make_shared< RestrictToCDRsAndNeighbors >(ab_info_, cdrs, false);
 		no_neighbors->set_neighbor_distance(0);
 
 		task->clear();
@@ -261,7 +261,7 @@ public:
 		default_op->set_ignore_light_chain(true);
 		default_op->set_no_probability(true);
 
-		TaskFactoryOP task = TaskFactoryOP( new TaskFactory());
+		TaskFactoryOP task = utility::pointer::make_shared< TaskFactory >();
 		task->push_back(default_op);
 		output_or_test(task, pose_chothia_, first_run_, "AddCDRProfilesOperation_UTracer1",  inpath_, first_run_outpath_);
 
@@ -272,7 +272,7 @@ public:
 
 		default_ab_info->set_cdrs(cdrs);
 
-		AddCDRProfilesOperationOP default_cdrs = AddCDRProfilesOperationOP( new AddCDRProfilesOperation(ab_info_, cdrs));
+		AddCDRProfilesOperationOP default_cdrs = utility::pointer::make_shared< AddCDRProfilesOperation >(ab_info_, cdrs);
 		default_cdrs->set_force_north_paper_db(true);
 		default_cdrs->set_ignore_light_chain(true);
 		default_cdrs->set_no_probability(true);
@@ -282,7 +282,7 @@ public:
 		output_or_test(task, pose_, first_run_, "AddCDRProfilesOperation_UTracer2",  inpath_, first_run_outpath_);
 
 		//// Fallback as none
-		AddCDRProfilesOperationOP no_fallback = AddCDRProfilesOperationOP( new AddCDRProfilesOperation(ab_info_));
+		AddCDRProfilesOperationOP no_fallback = utility::pointer::make_shared< AddCDRProfilesOperation >(ab_info_);
 		no_fallback->set_force_north_paper_db(true);
 		no_fallback->set_ignore_light_chain(true);
 		no_fallback->set_no_probability(true);
@@ -294,7 +294,7 @@ public:
 		output_or_test(task, pose_, first_run_, "AddCDRProfilesOperation_UTracer3",  inpath_, first_run_outpath_);
 
 		/// Force Fallback
-		AddCDRProfilesOperationOP forced_fallback = AddCDRProfilesOperationOP( new AddCDRProfilesOperation(ab_info_));
+		AddCDRProfilesOperationOP forced_fallback = utility::pointer::make_shared< AddCDRProfilesOperation >(ab_info_);
 		forced_fallback->set_force_north_paper_db(true);
 		forced_fallback->set_ignore_light_chain(true);
 		forced_fallback->set_no_probability(true);
@@ -306,7 +306,7 @@ public:
 		output_or_test(task, pose_, first_run_, "AddCDRProfilesOperation_UTracer4",  inpath_, first_run_outpath_);
 
 		/// Test Pre-load of data
-		AddCDRProfilesOperationOP pre_loaded_data = AddCDRProfilesOperationOP( new AddCDRProfilesOperation(ab_info_, cdrs));
+		AddCDRProfilesOperationOP pre_loaded_data = utility::pointer::make_shared< AddCDRProfilesOperation >(ab_info_, cdrs);
 		pre_loaded_data->set_force_north_paper_db(true);
 		pre_loaded_data->set_ignore_light_chain(true);
 		pre_loaded_data->set_no_probability(true);
@@ -317,7 +317,7 @@ public:
 		output_or_test(task, pose_, first_run_, "AddCDRProfilesOperation_UTracer5",  inpath_, first_run_outpath_);
 
 		// Test Pre-load with profile sets.
-		AddCDRProfilesOperationOP pre_loaded_sets = AddCDRProfilesOperationOP( new AddCDRProfilesOperation(ab_info_));
+		AddCDRProfilesOperationOP pre_loaded_sets = utility::pointer::make_shared< AddCDRProfilesOperation >(ab_info_);
 		pre_loaded_sets->set_force_north_paper_db(true);
 		pre_loaded_sets->set_ignore_light_chain( true );
 		pre_loaded_sets->set_no_probability(true);
@@ -329,7 +329,7 @@ public:
 		TS_ASSERT_THROWS_NOTHING(task->create_task_and_apply_taskoperations(pose_));
 
 		// Test Pre-load with profile sets and profiles.
-		AddCDRProfilesOperationOP pre_loaded_combined = AddCDRProfilesOperationOP( new AddCDRProfilesOperation(ab_info_));
+		AddCDRProfilesOperationOP pre_loaded_combined = utility::pointer::make_shared< AddCDRProfilesOperation >(ab_info_);
 		pre_loaded_combined->set_force_north_paper_db(true);
 		pre_loaded_combined->set_ignore_light_chain( true );
 		pre_loaded_combined->set_no_probability(true);
@@ -347,9 +347,9 @@ public:
 		all_cdrs[ l4 ] = false;
 		all_cdrs[ h4 ] = false;
 
-		TaskFactoryOP task = TaskFactoryOP( new TaskFactory());
+		TaskFactoryOP task = utility::pointer::make_shared< TaskFactory >();
 
-		AddCDRProfileSetsOperationOP default_ab_info = AddCDRProfileSetsOperationOP( new AddCDRProfileSetsOperation(ab_info_));
+		AddCDRProfileSetsOperationOP default_ab_info = utility::pointer::make_shared< AddCDRProfileSetsOperation >(ab_info_);
 		default_ab_info->set_cdrs(cdrs);
 		default_ab_info->set_force_north_paper_db( true );
 		default_ab_info->set_ignore_light_chain( true );
@@ -358,7 +358,7 @@ public:
 		task->push_back(default_ab_info);
 		TS_ASSERT_THROWS_NOTHING(task->create_task_and_apply_taskoperations(pose_));
 
-		AddCDRProfileSetsOperationOP default_op = AddCDRProfileSetsOperationOP( new AddCDRProfileSetsOperation());
+		AddCDRProfileSetsOperationOP default_op = utility::pointer::make_shared< AddCDRProfileSetsOperation >();
 		default_op->set_picking_rounds(5); //Should then sample multiple CDRs
 		default_op->set_force_north_paper_db( true );
 		default_op->set_ignore_light_chain( true );
@@ -367,7 +367,7 @@ public:
 		task->push_back(default_op);
 		TS_ASSERT_THROWS_NOTHING(task->create_task_and_apply_taskoperations(pose_chothia_));
 
-		AddCDRProfileSetsOperationOP pick_op = AddCDRProfileSetsOperationOP( new AddCDRProfileSetsOperation(ab_info_, cdrs));
+		AddCDRProfileSetsOperationOP pick_op = utility::pointer::make_shared< AddCDRProfileSetsOperation >(ab_info_, cdrs);
 		pick_op->set_force_north_paper_db( true );
 		pick_op->set_cutoff(10);
 		pick_op->set_picking_rounds( 5 );
@@ -377,7 +377,7 @@ public:
 		task->push_back(pick_op);
 		TS_ASSERT_THROWS_NOTHING(task->create_task_and_apply_taskoperations(pose_));
 
-		AddCDRProfileSetsOperationOP length_op = AddCDRProfileSetsOperationOP( new AddCDRProfileSetsOperation(ab_info_, cdrs, true));
+		AddCDRProfileSetsOperationOP length_op = utility::pointer::make_shared< AddCDRProfileSetsOperation >(ab_info_, cdrs, true);
 		length_op->set_force_north_paper_db( true );
 		length_op->set_ignore_light_chain( true );
 		length_op->set_include_native_type( false );

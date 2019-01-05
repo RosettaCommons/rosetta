@@ -37,8 +37,8 @@ namespace symmetry {
 
 SymPackRotamersMover::~SymPackRotamersMover() = default;
 
-protocols::moves::MoverOP SymPackRotamersMover::clone() const { return protocols::moves::MoverOP( new  SymPackRotamersMover( *this ) ); }
-protocols::moves::MoverOP SymPackRotamersMover::fresh_instance() const { return protocols::moves::MoverOP( new  SymPackRotamersMover ); }
+protocols::moves::MoverOP SymPackRotamersMover::clone() const { return utility::pointer::make_shared< SymPackRotamersMover >( *this ); }
+protocols::moves::MoverOP SymPackRotamersMover::fresh_instance() const { return utility::pointer::make_shared< SymPackRotamersMover >(); }
 
 std::string SymPackRotamersMover::get_name() const {
 	return mover_name();
@@ -67,7 +67,7 @@ std::string SymPackRotamersMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 SymPackRotamersMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SymPackRotamersMover );
+	return utility::pointer::make_shared< SymPackRotamersMover >();
 }
 
 void SymPackRotamersMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

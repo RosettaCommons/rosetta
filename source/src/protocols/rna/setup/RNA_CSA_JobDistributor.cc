@@ -312,7 +312,7 @@ void
 RNA_CSA_JobDistributor::read_in_silent_file(){
 
 	core::io::silent::SilentFileOptions opts;
-	sfd_ = SilentFileDataOP( new SilentFileData(opts) );
+	sfd_ = utility::pointer::make_shared< SilentFileData >(opts);
 	total_updates_so_far_ = 0;
 	if ( !utility::file::file_exists( silent_file_ ) ) return;
 

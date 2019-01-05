@@ -146,13 +146,13 @@ MPQuickRelaxMover::~MPQuickRelaxMover() = default;
 /// @brief Create a Clone of this mover
 protocols::moves::MoverOP
 MPQuickRelaxMover::clone() const {
-	return ( protocols::moves::MoverOP( new MPQuickRelaxMover( *this ) ) );
+	return ( utility::pointer::make_shared< MPQuickRelaxMover >( *this ) );
 }
 
 /// @brief Create a Fresh Instance of this Mover
 protocols::moves::MoverOP
 MPQuickRelaxMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new MPQuickRelaxMover() );
+	return utility::pointer::make_shared< MPQuickRelaxMover >();
 }
 
 /// @brief Pase Rosetta Scripts Options for this Mover
@@ -172,7 +172,7 @@ MPQuickRelaxMover::parse_my_tag(
 /// @brief Create a new copy of this mover
 protocols::moves::MoverOP
 MPQuickRelaxMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MPQuickRelaxMover() );
+	return utility::pointer::make_shared< MPQuickRelaxMover >();
 }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)
@@ -248,7 +248,7 @@ void MPQuickRelaxMover::apply( core::pose::Pose & pose ) {
 	// creating constraint set
 	if ( cst_file_.size() > 0 && cst_weight_ > 0 ) {
 
-		ConstraintSetOP cst( ConstraintIO::get_instance()->read_constraints( cst_file_, ConstraintSetOP( new ConstraintSet() ), pose ) );
+		ConstraintSetOP cst( ConstraintIO::get_instance()->read_constraints( cst_file_, utility::pointer::make_shared< ConstraintSet >(), pose ) );
 		pose.constraint_set( cst );
 
 		// set constraints in scorefunction

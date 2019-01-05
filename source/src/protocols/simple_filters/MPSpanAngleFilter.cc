@@ -69,7 +69,7 @@ namespace simple_filters {
 static basic::Tracer TR( "protocols.simple_filters.MPSpanAngleFilter" );
 
 protocols::filters::FilterOP
-MPSpanAngleFilterCreator::create_filter() const { return protocols::filters::FilterOP( new MPSpanAngleFilter ); }
+MPSpanAngleFilterCreator::create_filter() const { return utility::pointer::make_shared< MPSpanAngleFilter >(); }
 
 std::string
 MPSpanAngleFilterCreator::keyname() const { return "MPSpanAngle"; }

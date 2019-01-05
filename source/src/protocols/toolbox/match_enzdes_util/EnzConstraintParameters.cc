@@ -203,8 +203,8 @@ void EnzConstraintParameters::init(
 }
 
 void EnzConstraintParameters::init() {
-	resA_ = EnzCstTemplateResOP( new EnzCstTemplateRes(restype_set_, get_self_weak_ptr()) );
-	resB_ = EnzCstTemplateResOP( new EnzCstTemplateRes(restype_set_, get_self_weak_ptr()) );
+	resA_ = utility::pointer::make_shared< EnzCstTemplateRes >(restype_set_, get_self_weak_ptr());
+	resB_ = utility::pointer::make_shared< EnzCstTemplateRes >(restype_set_, get_self_weak_ptr());
 }
 
 /// @brief copy constructor
@@ -242,9 +242,9 @@ EnzConstraintParameters::set_mcfi(
 
 	mcfi_ = mcfi;
 
-	resA_ = EnzCstTemplateResOP( new EnzCstTemplateRes( mcfi_->enz_cst_template_res( 1 ), get_self_weak_ptr() ) );
+	resA_ = utility::pointer::make_shared< EnzCstTemplateRes >( mcfi_->enz_cst_template_res( 1 ), get_self_weak_ptr() );
 	resA_->set_param_index( 1 );
-	resB_ = EnzCstTemplateResOP( new EnzCstTemplateRes( mcfi_->enz_cst_template_res( 2 ), get_self_weak_ptr() ) );
+	resB_ = utility::pointer::make_shared< EnzCstTemplateRes >( mcfi_->enz_cst_template_res( 2 ), get_self_weak_ptr() );
 	resB_->set_param_index( 2 );
 	resA_->identical_info_consistency_check();
 	resB_->identical_info_consistency_check();
@@ -269,8 +269,8 @@ EnzConstraintParameters::set_mcfi(
 		core::Real max_dis = ndisAB_ + constraint.dis_U1D1->tolerance();
 		core::Real force_k_dis = constraint.dis_U1D1->force_const();
 
-		disAB_ = core::scoring::func::FuncOP( new core::scoring::constraints::BoundFunc(
-			min_dis, max_dis, sqrt(1/ force_k_dis), "dis") );
+		disAB_ = utility::pointer::make_shared< core::scoring::constraints::BoundFunc >(
+			min_dis, max_dis, sqrt(1/ force_k_dis), "dis");
 
 		//if( mcfi_->dis_U1D1()->periodicity() == 1.0 ) is_covalent_ = true;
 		if ( mcfi->is_covalent() ) is_covalent_ = true;
@@ -313,10 +313,10 @@ EnzConstraintParameters::convert_GeomSampleInfo_to_FuncOP(
 			tr.Warning << "Constraint specified for tag " << gsi->tag() << " requests a periodic function. Standard-Deviation/tolerance is meaningless in this case. The tolerance value of " << gsi->tolerance() << " that you specified will be ignored!" << std::endl;
 		}
 
-		to_return = core::scoring::func::FuncOP( new core::scoring::func::CharmmPeriodicFunc(x0, gsi->force_const(), twopi/period_rad) );
+		to_return = utility::pointer::make_shared< core::scoring::func::CharmmPeriodicFunc >(x0, gsi->force_const(), twopi/period_rad);
 
 	} else {
-		to_return = core::scoring::func::FuncOP( new core::scoring::constraints::OffsetPeriodicBoundFunc(-x_sd,x_sd, sqrt( 1/gsi->force_const() ), "offsetperiodicbound", period_rad, x0) );
+		to_return = utility::pointer::make_shared< core::scoring::constraints::OffsetPeriodicBoundFunc >(-x_sd,x_sd, sqrt( 1/gsi->force_const() ), "offsetperiodicbound", period_rad, x0);
 	}
 
 	return to_return;
@@ -370,7 +370,7 @@ EnzConstraintParameters::generate_active_pose_constraints(
 
 					if ( disAB_ != nullptr ) {
 						all_constraints_empty = false;
-						this_pair_csts.push_back( core::scoring::constraints::ConstraintOP( new AtomPairConstraint( resApos_it->second->atom1_[ambig_resA_count], resBpos_it->second->atom1_[ambig_resB_count], disAB_) ) );
+						this_pair_csts.push_back( utility::pointer::make_shared< AtomPairConstraint >( resApos_it->second->atom1_[ambig_resA_count], resBpos_it->second->atom1_[ambig_resB_count], disAB_) );
 						number_constraints_added++;
 
 						if ( basic::options::option[basic::options::OptionKeys::enzdes::enz_debug] ) {
@@ -383,7 +383,7 @@ EnzConstraintParameters::generate_active_pose_constraints(
 
 					if ( angleA_ != nullptr ) {
 						all_constraints_empty = false;
-						this_pair_csts.push_back( core::scoring::constraints::ConstraintOP( new AngleConstraint( resApos_it->second->atom2_[ambig_resA_count], resApos_it->second->atom1_[ambig_resA_count], resBpos_it->second->atom1_[ambig_resB_count], angleA_) ) );
+						this_pair_csts.push_back( utility::pointer::make_shared< AngleConstraint >( resApos_it->second->atom2_[ambig_resA_count], resApos_it->second->atom1_[ambig_resA_count], resBpos_it->second->atom1_[ambig_resB_count], angleA_) );
 						number_constraints_added++;
 
 						//debug stuff
@@ -398,7 +398,7 @@ EnzConstraintParameters::generate_active_pose_constraints(
 
 					if ( angleB_ != nullptr ) {
 						all_constraints_empty = false;
-						this_pair_csts.push_back( core::scoring::constraints::ConstraintOP( new AngleConstraint( resApos_it->second->atom1_[ambig_resA_count], resBpos_it->second->atom1_[ambig_resB_count], resBpos_it->second->atom2_[ambig_resB_count], angleB_) ) );
+						this_pair_csts.push_back( utility::pointer::make_shared< AngleConstraint >( resApos_it->second->atom1_[ambig_resA_count], resBpos_it->second->atom1_[ambig_resB_count], resBpos_it->second->atom2_[ambig_resB_count], angleB_) );
 						number_constraints_added++;
 
 						//debug stuff
@@ -414,7 +414,7 @@ EnzConstraintParameters::generate_active_pose_constraints(
 
 					if ( torsionA_ != nullptr ) {
 						all_constraints_empty = false;
-						this_pair_csts.push_back( core::scoring::constraints::ConstraintOP( new DihedralConstraint( resApos_it->second->atom3_[ambig_resA_count], resApos_it->second->atom2_[ambig_resA_count], resApos_it->second->atom1_[ambig_resA_count], resBpos_it->second->atom1_[ambig_resB_count], torsionA_) ) );
+						this_pair_csts.push_back( utility::pointer::make_shared< DihedralConstraint >( resApos_it->second->atom3_[ambig_resA_count], resApos_it->second->atom2_[ambig_resA_count], resApos_it->second->atom1_[ambig_resA_count], resBpos_it->second->atom1_[ambig_resB_count], torsionA_) );
 						number_constraints_added++;
 
 						//debug stuff
@@ -431,7 +431,7 @@ EnzConstraintParameters::generate_active_pose_constraints(
 
 					if ( torsionB_ != nullptr ) {
 						all_constraints_empty = false;
-						this_pair_csts.push_back( core::scoring::constraints::ConstraintOP( new DihedralConstraint( resApos_it->second->atom1_[ambig_resA_count], resBpos_it->second->atom1_[ambig_resB_count], resBpos_it->second->atom2_[ambig_resB_count], resBpos_it->second->atom3_[ambig_resB_count], torsionB_) ) );
+						this_pair_csts.push_back( utility::pointer::make_shared< DihedralConstraint >( resApos_it->second->atom1_[ambig_resA_count], resBpos_it->second->atom1_[ambig_resB_count], resBpos_it->second->atom2_[ambig_resB_count], resBpos_it->second->atom3_[ambig_resB_count], torsionB_) );
 						number_constraints_added++;
 
 						//debug stuff
@@ -447,15 +447,15 @@ EnzConstraintParameters::generate_active_pose_constraints(
 
 					if ( torsionAB_ != nullptr ) {
 						all_constraints_empty = false;
-						this_pair_csts.push_back( core::scoring::constraints::ConstraintOP( new DihedralConstraint( resApos_it->second->atom2_[ambig_resA_count], resApos_it->second->atom1_[ambig_resA_count], resBpos_it->second->atom1_[ambig_resB_count], resBpos_it->second->atom2_[ambig_resB_count], torsionAB_) ) );
+						this_pair_csts.push_back( utility::pointer::make_shared< DihedralConstraint >( resApos_it->second->atom2_[ambig_resA_count], resApos_it->second->atom1_[ambig_resA_count], resBpos_it->second->atom1_[ambig_resB_count], resBpos_it->second->atom2_[ambig_resB_count], torsionAB_) );
 						number_constraints_added++;
 					}
 
 					if ( (this_pair_csts.size() > 0 ) && ( number_ambiguous_constraints == 1) ) {
 
-						param_cache->active_pose_constraints_.push_back( core::scoring::constraints::ConstraintOP( new MultiConstraint(this_pair_csts) ) );
+						param_cache->active_pose_constraints_.push_back( utility::pointer::make_shared< MultiConstraint >(this_pair_csts) );
 					} else if ( (this_pair_csts.size() > 0) && ( number_ambiguous_constraints > 1) ) {
-						ambig_csts.push_back( core::scoring::constraints::ConstraintOP( new MultiConstraint(this_pair_csts) ) );
+						ambig_csts.push_back( utility::pointer::make_shared< MultiConstraint >(this_pair_csts) );
 					}
 				} //ambig_resB_count
 			} //ambig_resA_count
@@ -492,7 +492,7 @@ EnzConstraintParameters::generate_active_pose_constraints(
 					if ( basic::options::option[basic::options::OptionKeys::enzdes::enz_debug] ) {
 						tr.Info << "Adding an ambiguous constraint containing " << ambig_csts.size() << "constraints." << std::endl;
 					}
-					param_cache->active_pose_constraints_.push_back( core::scoring::constraints::ConstraintOP( new AmbiguousConstraint(ambig_csts) ) );
+					param_cache->active_pose_constraints_.push_back( utility::pointer::make_shared< AmbiguousConstraint >(ambig_csts) );
 				}
 			} else if ( is_covalent_ ) {
 				make_constraint_covalent( pose, resApos_it->first, resBpos_it->first, 0, 0);
@@ -550,7 +550,7 @@ EnzConstraintParameters::make_constraint_covalent(
 	);
 	EnzdesCstParamCacheOP param_cache( get_enzdes_observer( pose )->cst_cache()->param_cache( cst_block_ ) );
 
-	param_cache->covalent_connections_.push_back( CovalentConnectionReplaceInfoOP( new CovalentConnectionReplaceInfo(resA_base, resB_base, resA_var, resB_var, resA_pos, resB_pos, restype_set_ ) ) ); //new
+	param_cache->covalent_connections_.push_back( utility::pointer::make_shared< CovalentConnectionReplaceInfo >(resA_base, resB_base, resA_var, resB_var, resA_pos, resB_pos, restype_set_ ) ); //new
 
 } //make_constraint_covalent
 

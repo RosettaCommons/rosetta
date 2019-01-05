@@ -358,7 +358,7 @@ SheetDB::load_sheetlist_from_file( core::Size const nstrands, std::string const 
 	// create sheetlist from file
 	SheetList retval;
 	for ( core::io::silent::SilentFileData::iterator s = sfd.begin(), end = sfd.end(); s != end; ++s ) {
-		core::pose::PoseOP pose = core::pose::PoseOP( new core::pose::Pose() );
+		core::pose::PoseOP pose = utility::pointer::make_shared< core::pose::Pose >();
 		s->fill_pose( *pose );
 		retval.push_back( pose );
 	}
@@ -520,7 +520,7 @@ SheetDB::add_sheets_from_pose( core::pose::Pose & pose )
 	protocols::toolbox::pose_manipulation::construct_poly_XXX_pose( "ALA", pose, positions, restype_set, false, false, false );
 	protocols::moves::DsspMover dssp;
 	dssp.apply( pose );
-	SS_Info2_OP ssinfo = SS_Info2_OP( new SS_Info2( pose ) );
+	SS_Info2_OP ssinfo = utility::pointer::make_shared< SS_Info2 >( pose );
 	StrandPairingSet spairs = calc_strand_pairing_set( pose, ssinfo );
 	TR << spairs << std::endl;
 	return add_sheets_from_spairs( pose, spairs, *ssinfo );
@@ -673,7 +673,7 @@ extract_sheets_from_strandlist(
 {
 	utility::vector1< core::pose::PoseOP > poses;
 	for ( core::Size stop_strand = nstrands; stop_strand <= strands.size(); ++stop_strand ) {
-		core::pose::PoseOP pose = core::pose::PoseOP( new core::pose::Pose() );
+		core::pose::PoseOP pose = utility::pointer::make_shared< core::pose::Pose >();
 		for ( core::Size i=nstrands; i>=1; --i ) {
 			if ( pose->size() ) {
 				pose->conformation().insert_conformation_by_jump( strands[stop_strand-i+1]->conformation(),
@@ -698,7 +698,7 @@ reorder_chains( core::pose::Pose & pose )
 	using namespace protocols::fldsgn::topology;
 	protocols::moves::DsspMover dssp;
 	dssp.apply( pose );
-	SS_Info2_OP ss_info = SS_Info2_OP( new SS_Info2( pose, pose.secstruct() ) );
+	SS_Info2_OP ss_info = utility::pointer::make_shared< SS_Info2 >( pose, pose.secstruct() );
 	StrandPairingSet spairset = calc_strand_pairing_set( pose, ss_info );
 	TR << "After ssinfo " << spairset << std::endl;
 	core::Size const nstrands = pose.conformation().num_chains();
@@ -787,7 +787,7 @@ extract_sheets_from_pose(
 		std::stack< core::Size > nodes;
 		std::set< core::Size > visited;
 		nodes.push( connected_sheets[i].first );
-		core::pose::PoseOP newpose = core::pose::PoseOP( new core::pose::Pose() );
+		core::pose::PoseOP newpose = utility::pointer::make_shared< core::pose::Pose >();
 		while ( nodes.size() ) {
 			core::Size const nodenum = nodes.top();
 			nodes.pop();
@@ -999,7 +999,7 @@ prune_unpaired_residues( core::pose::Pose & pose )
 	using namespace protocols::fldsgn::topology;
 	protocols::moves::DsspMover dssp;
 	dssp.apply( pose );
-	SS_Info2_OP ss_info = SS_Info2_OP( new SS_Info2( pose, pose.secstruct() ) );
+	SS_Info2_OP ss_info = utility::pointer::make_shared< SS_Info2 >( pose, pose.secstruct() );
 	StrandPairingSet spairs = calc_strand_pairing_set( pose, ss_info );
 
 	utility::vector1< bool > paired = calc_paired_residues( pose, spairs );
@@ -1007,7 +1007,7 @@ prune_unpaired_residues( core::pose::Pose & pose )
 	StrandOrientations orients( pose.conformation().num_chains(), UP );
 	core::Size prevchain_start = 0;
 	// determine which residues to copy from each chain
-	core::pose::PoseOP newpose = core::pose::PoseOP( new core::pose::Pose() );
+	core::pose::PoseOP newpose = utility::pointer::make_shared< core::pose::Pose >();
 	for ( core::Size c=1; c<=pose.conformation().num_chains(); ++c ) {
 		if ( prevchain_start >= pose.conformation().chain_begin(c) ) {
 			TR.Error << " chain " << c << " starts at res " << pose.conformation().chain_begin(c) << " but previous chain began at res " << prevchain_start << std::endl;
@@ -1139,7 +1139,7 @@ find_orientations_and_lengths( core::pose::Pose const & pose )
 	std::string const ss = pose.secstruct();
 	debug_assert( ss.size() && ( ss[0] != ' ' ) );
 	protocols::fldsgn::topology::SS_Info2_OP sheet_ss_info =
-		protocols::fldsgn::topology::SS_Info2_OP( new protocols::fldsgn::topology::SS_Info2( pose, ss ) );
+		utility::pointer::make_shared< protocols::fldsgn::topology::SS_Info2 >( pose, ss );
 	protocols::fldsgn::topology::StrandPairingSet pairs = protocols::fldsgn::topology::calc_strand_pairing_set( pose, sheet_ss_info );
 	if ( pairs.size() == 0 ) {
 		return std::make_pair( "", "" );

@@ -302,7 +302,7 @@ initialize_native_pose( core::pose::PoseOP & native_pose, core::chemical::Residu
 
 	if ( !option[ in::file::native ].user() ) return;
 
-	native_pose = core::pose::PoseOP( new Pose );
+	native_pose = utility::pointer::make_shared< Pose >();
 
 	std::string native_pdb_file  = option[ in::file::native ];
 	import_pose::pose_from_file( *native_pose, *rsd_set.lock(), native_pdb_file , core::import_pose::PDB_file);
@@ -381,7 +381,7 @@ calc_rms_test(){
 	utility::vector1< std::string > const silent_files_in( option[ in::file::silent ]() );
 	SilentFilePoseInputStreamOP input( new SilentFilePoseInputStream( silent_files_in ) );
 
-	native_pose = PoseOP( new Pose );
+	native_pose = utility::pointer::make_shared< Pose >();
 	std::string native_pdb_file  = option[ in::file::native ];
 	import_pose::pose_from_file( *native_pose, *rsd_set.lock(), native_pdb_file , core::import_pose::PDB_file);
 

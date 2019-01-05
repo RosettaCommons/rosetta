@@ -50,10 +50,10 @@ public:
 	ScoreCutoffFilter( core::Real cutoff_in );
 
 	filters::FilterOP clone() const override {
-		return filters::FilterOP( new ScoreCutoffFilter( *this ) ); }
+		return utility::pointer::make_shared< ScoreCutoffFilter >( *this ); }
 
 	filters::FilterOP fresh_instance() const override {
-		return filters::FilterOP( new ScoreCutoffFilter() ); }
+		return utility::pointer::make_shared< ScoreCutoffFilter >(); }
 
 	void report( std::ostream & ostr, core::pose::Pose const & pose ) const override;
 

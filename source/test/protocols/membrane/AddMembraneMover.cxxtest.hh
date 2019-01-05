@@ -63,31 +63,31 @@ public: // test functions
 		core_init();
 
 		// Load in poses from pdb (general case)
-		pose_ = core::pose::PoseOP( new Pose() );
+		pose_ = utility::pointer::make_shared< Pose >();
 		pose_from_file( *pose_, "protocols/membrane/1C3W_TR_A.pdb" , core::import_pose::PDB_file);
 
 		// Load in pose from pdb for specific anchor point case
-		anchored_pose_ = core::pose::PoseOP( new Pose() );
+		anchored_pose_ = utility::pointer::make_shared< Pose >();
 		pose_from_file( *anchored_pose_, "protocols/membrane/1C3W_TR_A.pdb" , core::import_pose::PDB_file);
 
 		// Load in pose from pdb for specific anchor point case
-		positioned_pose_ = core::pose::PoseOP( new Pose() );
+		positioned_pose_ = utility::pointer::make_shared< Pose >();
 		pose_from_file( *positioned_pose_, "protocols/membrane/1C3W_TR_A.pdb" , core::import_pose::PDB_file);
 
 		// Load in pose from PDB containing a membrane residue with non-default position (for case 4)
-		specially_positioned_pose1_ = core::pose::PoseOP( new Pose() );
+		specially_positioned_pose1_ = utility::pointer::make_shared< Pose >();
 		pose_from_file( *specially_positioned_pose1_, "protocols/membrane/2zup_model.pdb" , core::import_pose::PDB_file);
 
 		// Load in pose from PDB containing a membrane residue with non-default position (for case 5)
-		specially_positioned_pose2_ = core::pose::PoseOP( new Pose() );
+		specially_positioned_pose2_ = utility::pointer::make_shared< Pose >();
 		pose_from_file( *specially_positioned_pose2_, "protocols/membrane/2zup_model.pdb" , core::import_pose::PDB_file);
 
 		// Load in a pose from PDB containing multiple membrane residues - not allowed!
-		multi_mem_pose_ = core::pose::PoseOP( new Pose() );
+		multi_mem_pose_ = utility::pointer::make_shared< Pose >();
 		pose_from_file( *multi_mem_pose_, "protocols/membrane/1AFO_AB_multi.pdb" , core::import_pose::PDB_file);
 
 		// Load in a pose that contains a single TM span
-		single_tm_pose_ = core::pose::PoseOP( new Pose() );
+		single_tm_pose_ = utility::pointer::make_shared< Pose >();
 		pose_from_file( *single_tm_pose_, "protocols/membrane/1A11_native.pdb", core::import_pose::PDB_file );
 
 		// Initialize Spans from spanfile

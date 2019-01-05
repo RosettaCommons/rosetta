@@ -38,7 +38,7 @@ public:
 
 	void apply(Pose & pose) override;
 
-	moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new DetectSymmetry( *this ) ) ); }
+	moves::MoverOP clone() const override { return( utility::pointer::make_shared< DetectSymmetry >( *this ) ); }
 
 	void
 	parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, Pose const & ) override;

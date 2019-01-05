@@ -42,7 +42,7 @@ thread_sequence_on_pose(core::pose::Pose & pose, std::string const & thread_seq,
 	tso->allow_design_around(false);
 
 	TaskFactoryOP tf;
-	tf = TaskFactoryOP( new TaskFactory );
+	tf = utility::pointer::make_shared< TaskFactory >();
 	tf->push_back(tso);
 	PackerTaskOP ptask = tf->create_task_and_apply_taskoperations(pose);
 
@@ -50,7 +50,7 @@ thread_sequence_on_pose(core::pose::Pose & pose, std::string const & thread_seq,
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		utility_exit_with_message("Not developed for symmetry!");
 	} else {
-		pack = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover( scorefxn, ptask ) );
+		pack = utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >( scorefxn, ptask );
 	}
 	pack->apply( pose );
 	(*scorefxn)(pose);

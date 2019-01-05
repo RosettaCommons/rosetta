@@ -77,7 +77,7 @@ RamaMutationSelector::RamaMutationSelector(RamaMutationSelector const & /*src*/)
 /// @details Copy this object and return owning pointer to the copy (created on the heap).
 core::select::residue_selector::ResidueSelectorOP
 RamaMutationSelector::clone() const {
-	return core::select::residue_selector::ResidueSelectorOP( new RamaMutationSelector(*this) );
+	return utility::pointer::make_shared< RamaMutationSelector >(*this);
 }
 
 /// @brief "Apply" function.
@@ -227,7 +227,7 @@ RamaMutationSelector::set_rama_prepro_multiplier(
 
 core::select::residue_selector::ResidueSelectorOP
 RamaMutationSelectorCreator::create_residue_selector() const {
-	return core::select::residue_selector::ResidueSelectorOP( new RamaMutationSelector );
+	return utility::pointer::make_shared< RamaMutationSelector >();
 }
 
 /// @brief Is a position in a pose a terminal position?

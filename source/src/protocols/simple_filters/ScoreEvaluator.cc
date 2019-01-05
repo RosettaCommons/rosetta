@@ -125,7 +125,7 @@ TruncatedScoreEvaluator::TruncatedScoreEvaluator(
 		tr.Trace << std::endl;
 	}
 	if ( !rdcs_ && scorefxn->get_weight( scoring::rdc ) > 0.0 && basic::options::option[ basic::options::OptionKeys::in::file::rdc ].user() ) {
-		rdcs_ = SelectRDC_EvaluatorOP( new SelectRDC_Evaluator( selection_, "none") );
+		rdcs_ = utility::pointer::make_shared< SelectRDC_Evaluator >( selection_, "none");
 	}
 }
 

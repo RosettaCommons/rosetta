@@ -101,9 +101,9 @@ void add_constraints(core::pose::Pose & pose, Size rsd1, Size rsd2) {
 
 			core::Real COORDDEV = 1.0;
 			core::Real dist = pose.residue(ires).xyz(2).distance( pose.residue(jres).xyz(2) );
-			FuncOP fx( new ScalarWeightedFunc( 1.0, FuncOP( new USOGFunc( dist, COORDDEV ) ) ) );
+			FuncOP fx( new ScalarWeightedFunc( 1.0, utility::pointer::make_shared< USOGFunc >( dist, COORDDEV ) ) );
 			pose.add_constraint(
-				scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new core::scoring::constraints::AtomPairConstraint( core::id::AtomID(2,ires), core::id::AtomID(2,jres), fx ) ) )
+				utility::pointer::make_shared< core::scoring::constraints::AtomPairConstraint >( core::id::AtomID(2,ires), core::id::AtomID(2,jres), fx )
 			);
 		}
 	}
@@ -111,7 +111,7 @@ void add_constraints(core::pose::Pose & pose, Size rsd1, Size rsd2) {
 
 void optimize(core::pose::Pose & pose, Size rsd1, Size rsd2, core::scoring::ScoreFunctionOP scorefxn, Size ncycles, core::Real max_delta_torsion) {
 	protocols::moves::MonteCarloOP mc;
-	mc = protocols::moves::MonteCarloOP( new protocols::moves::MonteCarlo( pose, *scorefxn, 2 ) );
+	mc = utility::pointer::make_shared< protocols::moves::MonteCarlo >( pose, *scorefxn, 2 );
 
 	for ( Size icycle=1; icycle<=ncycles; ++ icycle ) {
 		Size ires = numeric::random::rg().random_range(rsd1, rsd2);
@@ -263,7 +263,7 @@ void BackboneTorsionPerturbation::apply( core::pose::Pose & pose ) {
 		task = core::pack::task::TaskFactory::create_packer_task( pose );
 		task->initialize_from_command_line().restrict_to_repacking();
 	}
-	pack_full_repack_ = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover( scorefxn_, task ) );
+	pack_full_repack_ = utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >( scorefxn_, task );
 	//task->show_all_residue_tasks();
 
 	pose.conformation().detect_disulfides();
@@ -274,13 +274,13 @@ void BackboneTorsionPerturbation::apply( core::pose::Pose & pose ) {
 	core::Size counters(0);
 
 	perturbed_res_ = 0;
-	mc = protocols::moves::MonteCarloOP( new protocols::moves::MonteCarlo( pose, *scorefxn_, temperature_ ) );
+	mc = utility::pointer::make_shared< protocols::moves::MonteCarlo >( pose, *scorefxn_, temperature_ );
 	mc->set_autotemp( false, temperature_ );
 	ncycles = pose.size() * increase_cycles_;
 
-	minimizer_ = core::optimization::AtomTreeMinimizerOP( new core::optimization::AtomTreeMinimizer() );
+	minimizer_ = utility::pointer::make_shared< core::optimization::AtomTreeMinimizer >();
 	//minimizer_ = new core::optimization::CartesianMinimizer();
-	options_ = core::optimization::MinimizerOptionsOP( new core::optimization::MinimizerOptions( "lbfgs_armijo_nonmonotone", 0.01, true, false, false ) );
+	options_ = utility::pointer::make_shared< core::optimization::MinimizerOptions >( "lbfgs_armijo_nonmonotone", 0.01, true, false, false );
 
 	options_->max_iter(20);
 	mm_.set_bb  ( true );
@@ -361,7 +361,7 @@ BackboneTorsionPerturbation::parse_my_tag(
 		residue_list_.push_back(ires);
 	}
 	if ( tag->hasOption( "native") ) {
-		native_ = core::pose::PoseOP( new core::pose::Pose );
+		native_ = utility::pointer::make_shared< core::pose::Pose >();
 		core::import_pose::pose_from_file( *native_, tag->getOption< std::string >( "native" ) , core::import_pose::PDB_file);
 	}
 
@@ -394,10 +394,10 @@ BackboneTorsionPerturbation::parse_my_tag(
 }
 
 moves::MoverOP BackboneTorsionPerturbation::clone() const {
-	return moves::MoverOP( new BackboneTorsionPerturbation( *this ) );
+	return utility::pointer::make_shared< BackboneTorsionPerturbation >( *this );
 }
 moves::MoverOP BackboneTorsionPerturbation::fresh_instance() const {
-	return moves::MoverOP( new BackboneTorsionPerturbation );
+	return utility::pointer::make_shared< BackboneTorsionPerturbation >();
 }
 
 // XRW TEMP std::string
@@ -407,7 +407,7 @@ moves::MoverOP BackboneTorsionPerturbation::fresh_instance() const {
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP BackboneTorsionPerturbationCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new BackboneTorsionPerturbation );
+// XRW TEMP  return utility::pointer::make_shared< BackboneTorsionPerturbation >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -461,7 +461,7 @@ std::string BackboneTorsionPerturbationCreator::keyname() const {
 
 protocols::moves::MoverOP
 BackboneTorsionPerturbationCreator::create_mover() const {
-	return protocols::moves::MoverOP( new BackboneTorsionPerturbation );
+	return utility::pointer::make_shared< BackboneTorsionPerturbation >();
 }
 
 void BackboneTorsionPerturbationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

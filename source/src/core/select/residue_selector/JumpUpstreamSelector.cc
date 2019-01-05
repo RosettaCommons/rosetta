@@ -60,7 +60,7 @@ JumpUpstreamSelector::JumpUpstreamSelector( JumpUpstreamSelector const &src) :
 
 /// @brief Clone operator.
 /// @details Copy this object and return an owning pointer to the new object.
-ResidueSelectorOP JumpUpstreamSelector::clone() const { return ResidueSelectorOP( new JumpUpstreamSelector(*this) ); }
+ResidueSelectorOP JumpUpstreamSelector::clone() const { return utility::pointer::make_shared< JumpUpstreamSelector >(*this); }
 
 JumpUpstreamSelector::JumpUpstreamSelector( int jump )
 {
@@ -135,7 +135,7 @@ JumpUpstreamSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xs
 
 ResidueSelectorOP
 JumpUpstreamSelectorCreator::create_residue_selector() const {
-	return ResidueSelectorOP( new JumpUpstreamSelector );
+	return utility::pointer::make_shared< JumpUpstreamSelector >();
 }
 
 std::string

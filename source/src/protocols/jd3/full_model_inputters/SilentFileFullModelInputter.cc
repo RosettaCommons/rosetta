@@ -218,10 +218,10 @@ SilentFileFullModelInputter::initialize_sfd_from_options_and_tag(
 	using namespace core::io::silent;
 	using namespace basic::options::OptionKeys;
 
-	sf_opts_ = SilentFileOptionsOP( new SilentFileOptions( options ) );
+	sf_opts_ = utility::pointer::make_shared< SilentFileOptions >( options );
 	if ( tag ) sf_opts_->read_from_tag( tag );
 
-	sfd_ = SilentFileDataOP( new SilentFileData( *sf_opts_ ));
+	sfd_ = utility::pointer::make_shared< SilentFileData >( *sf_opts_ );
 	sfd_->set_record_source( true );
 
 	utility::vector1< utility::file::FileName > silent_files;
@@ -285,7 +285,7 @@ SilentFileFullModelInputter::initialize_sfd_from_files_and_tags(
 
 protocols::jd3::full_model_inputters::FullModelInputterOP
 SilentFileFullModelInputterCreator::create_inputter() const {
-	return FullModelInputterOP( new SilentFileFullModelInputter );
+	return utility::pointer::make_shared< SilentFileFullModelInputter >();
 }
 
 std::string

@@ -109,13 +109,13 @@ LabelPoseFromResidueSelectorMover::parse_my_tag(
 protocols::moves::MoverOP
 LabelPoseFromResidueSelectorMover::clone() const
 {
-	return protocols::moves::MoverOP( new LabelPoseFromResidueSelectorMover( *this ) );
+	return utility::pointer::make_shared< LabelPoseFromResidueSelectorMover >( *this );
 }
 
 protocols::moves::MoverOP
 LabelPoseFromResidueSelectorMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new LabelPoseFromResidueSelectorMover );
+	return utility::pointer::make_shared< LabelPoseFromResidueSelectorMover >();
 }
 
 void
@@ -278,7 +278,7 @@ std::string LabelPoseFromResidueSelectorMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 LabelPoseFromResidueSelectorMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LabelPoseFromResidueSelectorMover );
+	return utility::pointer::make_shared< LabelPoseFromResidueSelectorMover >();
 }
 
 void LabelPoseFromResidueSelectorMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

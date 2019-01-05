@@ -138,11 +138,11 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn);
 
 	MoverOP clone() const override {
-		return MoverOP( new HDdesignMover( *this ) );
+		return utility::pointer::make_shared< HDdesignMover >( *this );
 	}
 
 	MoverOP fresh_instance() const override {
-		return MoverOP( new HDdesignMover );
+		return utility::pointer::make_shared< HDdesignMover >();
 	}
 
 	std::string
@@ -179,7 +179,7 @@ HDdesignMover::HDdesignMover() {
 	// variable definitions
 	scorefxn_a = core::scoring::get_score_function();
 	scorefxn_ = scorefxn_a->clone();
-	tf_design_ = TaskFactoryOP( new TaskFactory() );
+	tf_design_ = utility::pointer::make_shared< TaskFactory >();
 	//movemap_ = new core::kinematics::MoveMap();
 	//options
 	ala_interface_ = option[ make_ala_interface];
@@ -231,7 +231,7 @@ void HDdesignMover::register_calculators(){
 	} else {
 		CalculatorFactory::Instance().register_calculator(
 			InterfaceNeighborDefinition_,
-			PoseMetricCalculatorOP( new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator(chain1, chain2) ));
+			utility::pointer::make_shared< core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator >(chain1, chain2));
 		//TR<<"Registering calculator " << InterfaceNeighborDefinition_ << std::endl;
 	}
 }//end register_calculators
@@ -241,12 +241,12 @@ void HDdesignMover::task_constraint_setup( pose::Pose & pose ){
 	//allowed_aas_[ chemical::aa_cys ] = false;
 	//task factory setup
 	tf_design_->clear();
-	tf_design_->push_back(  TaskOperationCOP( new InitializeFromCommandline() ) );
-	tf_design_->push_back( TaskOperationCOP( new operation::IncludeCurrent ) );
+	tf_design_->push_back(  utility::pointer::make_shared< InitializeFromCommandline >() );
+	tf_design_->push_back( utility::pointer::make_shared< operation::IncludeCurrent >() );
 	//if using a resfile ignore all other task restrictions
 	if ( basic::options::option[basic::options::OptionKeys::packing::resfile].user() ) {
 		TR << "Using resfile, ignoring all other task info" << std::endl;
-		tf_design_->push_back( TaskOperationCOP( new operation::ReadResfile() ) );
+		tf_design_->push_back( utility::pointer::make_shared< operation::ReadResfile >() );
 	} else {
 		if ( option[ disallow_res ].user() ) {
 			TR << "Not allowing residues: " << disallow_res_ << " unless native" << std::endl;
@@ -256,7 +256,7 @@ void HDdesignMover::task_constraint_setup( pose::Pose & pose ){
 		}
 
 		//restrict to interface
-		tf_design_->push_back( TaskOperationCOP( new protocols::task_operations::RestrictToInterfaceOperation( InterfaceNeighborDefinition_ ) ) );
+		tf_design_->push_back( utility::pointer::make_shared< protocols::task_operations::RestrictToInterfaceOperation >( InterfaceNeighborDefinition_ ) );
 	}
 
 
@@ -354,8 +354,8 @@ void HDdesignMover::sym_repack_minimize( pose::Pose & pose ){
 
 //mutate the interface to all alanine if needed
 void HDdesignMover::ala_interface(core::pose::Pose & pose ){
-	build_ala_mover_ = protocols::protein_interface_design::movers::BuildAlaPoseOP( new protocols::protein_interface_design::movers::BuildAlaPose( true, true, 8.0) ) ;
-	get_sidechains_mover_ = protocols::protein_interface_design::movers::SaveAndRetrieveSidechainsOP( new protocols::protein_interface_design::movers::SaveAndRetrieveSidechains(pose) );
+	build_ala_mover_ = utility::pointer::make_shared< protocols::protein_interface_design::movers::BuildAlaPose >( true, true, 8.0) ;
+	get_sidechains_mover_ = utility::pointer::make_shared< protocols::protein_interface_design::movers::SaveAndRetrieveSidechains >(pose);
 	build_ala_mover_->apply( pose );
 }  //end ala _interface
 
@@ -475,8 +475,8 @@ void HDdesignMover::apply (pose::Pose & pose ) {
 		//Symmetric dock messes something up when it does centroid mode, repack whole protein if need be
 		//if( !option[ OptionKeys::docking::docking_local_refine ]() ){
 		TaskFactoryOP  tf_nataa( new TaskFactory() );
-		tf_nataa->push_back(  TaskOperationCOP( new InitializeFromCommandline() ) );
-		tf_nataa->push_back( TaskOperationCOP( new operation::IncludeCurrent ) );
+		tf_nataa->push_back(  utility::pointer::make_shared< InitializeFromCommandline >() );
+		tf_nataa->push_back( utility::pointer::make_shared< operation::IncludeCurrent >() );
 		//want to just repack the wt pose, NO design
 		RestrictResidueToRepackingOP repack_op( new RestrictResidueToRepacking() );
 		for ( Size ii = 1; ii<= pose.size(); ++ii ) {
@@ -567,7 +567,7 @@ main( int argc, char * argv [] )
 		// init
 		devel::init(argc, argv);
 
-		protocols::jd2::JobDistributor::get_instance()->go( protocols::moves::MoverOP( new HDdesignMover ) );
+		protocols::jd2::JobDistributor::get_instance()->go( utility::pointer::make_shared< HDdesignMover >() );
 
 		std::cout << "Done! -------------------------------"<< std::endl;
 	} catch (utility::excn::Exception const & e ) {

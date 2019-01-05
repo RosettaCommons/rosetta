@@ -68,7 +68,7 @@ CDRGraftDesignOptions::~CDRGraftDesignOptions() = default;
 
 CDRGraftDesignOptionsOP
 CDRGraftDesignOptions::clone() const {
-	return CDRGraftDesignOptionsOP( new CDRGraftDesignOptions(*this) );
+	return utility::pointer::make_shared< CDRGraftDesignOptions >(*this);
 }
 
 void
@@ -141,7 +141,7 @@ CDRGraftDesignOptionsParser::CDRGraftDesignOptionsParser():
 	utility::pointer::ReferenceCount(),
 	default_and_user_(false)
 {
-	ab_manager_ = AntibodyEnumManagerOP( new AntibodyEnumManager() );
+	ab_manager_ = utility::pointer::make_shared< AntibodyEnumManager >();
 }
 
 CDRGraftDesignOptionsParser::~CDRGraftDesignOptionsParser() = default;
@@ -151,14 +151,14 @@ CDRGraftDesignOptionsParser::CDRGraftDesignOptionsParser( CDRGraftDesignOptionsP
 	default_and_user_( src.default_and_user_ )
 
 {
-	if ( src.ab_manager_ ) ab_manager_ = AntibodyEnumManagerOP( new AntibodyEnumManager( *src.ab_manager_ ));
-	if ( src.cdr_options_ ) cdr_options_ = CDRGraftDesignOptionsOP( new CDRGraftDesignOptions( *src.cdr_options_ ));
+	if ( src.ab_manager_ ) ab_manager_ = utility::pointer::make_shared< AntibodyEnumManager >( *src.ab_manager_ );
+	if ( src.cdr_options_ ) cdr_options_ = utility::pointer::make_shared< CDRGraftDesignOptions >( *src.cdr_options_ );
 
 }
 
 CDRGraftDesignOptionsParserOP
 CDRGraftDesignOptionsParser::clone() const {
-	return CDRGraftDesignOptionsParserOP( new CDRGraftDesignOptionsParser( *this ));
+	return utility::pointer::make_shared< CDRGraftDesignOptionsParser >( *this );
 }
 
 
@@ -175,7 +175,7 @@ CDRGraftDesignOptionsParser::parse_default_and_user_options(std::string const & 
 CDRGraftDesignOptionsOP
 CDRGraftDesignOptionsParser::parse_default_and_user_options(CDRNameEnum cdr, std::string const & filename) {
 
-	cdr_options_ = CDRGraftDesignOptionsOP( new CDRGraftDesignOptions(cdr) );
+	cdr_options_ = utility::pointer::make_shared< CDRGraftDesignOptions >(cdr);
 	std::string path = basic::options::option [basic::options::OptionKeys::antibody::design::base_cdr_instructions]();
 	default_and_user_ = true;
 	parse_options(cdr, path);
@@ -204,7 +204,7 @@ CDRGraftDesignOptionsParser::parse_options(CDRNameEnum cdr, std::string const & 
 	if ( default_and_user_ ) {
 		cdr_options_->set_cdr(cdr);
 	} else {
-		cdr_options_ = CDRGraftDesignOptionsOP( new CDRGraftDesignOptions(cdr) );
+		cdr_options_ = utility::pointer::make_shared< CDRGraftDesignOptions >(cdr);
 	}
 
 	instructions_path_ = path;

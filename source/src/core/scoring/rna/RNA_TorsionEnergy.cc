@@ -44,7 +44,7 @@ methods::EnergyMethodOP
 RNA_TorsionEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
-	return methods::EnergyMethodOP( new RNA_TorsionEnergy( options.rna_options() ) );
+	return utility::pointer::make_shared< RNA_TorsionEnergy >( options.rna_options() );
 }
 
 ScoreTypes
@@ -59,18 +59,18 @@ RNA_TorsionEnergyCreator::score_types_for_method() const {
 /// ctor
 RNA_TorsionEnergy::RNA_TorsionEnergy( RNA_EnergyMethodOptions const & options,
 	RNA_TorsionPotentialOP rna_torsion_potential /* = 0 */ ) :
-	parent( methods::EnergyMethodCreatorOP( new RNA_TorsionEnergyCreator ) ),
+	parent( utility::pointer::make_shared< RNA_TorsionEnergyCreator >() ),
 	options_( options ),
 	rna_torsion_potential_(std::move( rna_torsion_potential ))
 {
-	if ( rna_torsion_potential_ == nullptr ) rna_torsion_potential_ = RNA_TorsionPotentialOP( new RNA_TorsionPotential( options ) );
+	if ( rna_torsion_potential_ == nullptr ) rna_torsion_potential_ = utility::pointer::make_shared< RNA_TorsionPotential >( options );
 }
 
 /// clone
 methods::EnergyMethodOP
 RNA_TorsionEnergy::clone() const
 {
-	return methods::EnergyMethodOP( new RNA_TorsionEnergy( options_, rna_torsion_potential_ ) );
+	return utility::pointer::make_shared< RNA_TorsionEnergy >( options_, rna_torsion_potential_ );
 }
 
 

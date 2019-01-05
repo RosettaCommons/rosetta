@@ -63,7 +63,7 @@ using namespace protocols::environment;
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP ScriptCMCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new ScriptCM );
+// XRW TEMP  return utility::pointer::make_shared< ScriptCM >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -165,11 +165,11 @@ claims::EnvClaims ScriptCM::yield_claims( core::pose::Pose const&,
 // XRW TEMP }
 
 moves::MoverOP ScriptCM::fresh_instance() const {
-	return ClientMoverOP( new ScriptCM() );
+	return utility::pointer::make_shared< ScriptCM >();
 }
 
 moves::MoverOP ScriptCM::clone() const{
-	return ClientMoverOP( new ScriptCM( *this ) );
+	return utility::pointer::make_shared< ScriptCM >( *this );
 }
 
 std::string ScriptCM::get_name() const {
@@ -260,7 +260,7 @@ std::string ScriptCMCreator::keyname() const {
 
 protocols::moves::MoverOP
 ScriptCMCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ScriptCM );
+	return utility::pointer::make_shared< ScriptCM >();
 }
 
 void ScriptCMCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

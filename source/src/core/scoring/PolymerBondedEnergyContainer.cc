@@ -224,7 +224,7 @@ bool PolymerBondedNeighborConstIterator::energy_computed() const {
 PolymerBondedEnergyContainer::~PolymerBondedEnergyContainer() = default;
 
 LREnergyContainerOP PolymerBondedEnergyContainer::clone() const {
-	return LREnergyContainerOP( new PolymerBondedEnergyContainer( *this ) );
+	return utility::pointer::make_shared< PolymerBondedEnergyContainer >( *this );
 }
 
 /// @brief Pose constructor.
@@ -286,12 +286,12 @@ PolymerBondedEnergyContainer::const_neighbor_iterator_begin( int resid ) const {
 		neighbors.push_back(p->second);
 	}
 
-	return ResidueNeighborConstIteratorOP( new PolymerBondedNeighborConstIterator( resid, neighbors, *this ) );
+	return utility::pointer::make_shared< PolymerBondedNeighborConstIterator >( resid, neighbors, *this );
 }
 
 ResidueNeighborConstIteratorOP
 PolymerBondedEnergyContainer::const_neighbor_iterator_end( int resid ) const {
-	return ResidueNeighborConstIteratorOP( new PolymerBondedNeighborConstIterator( resid, utility::vector1<core::Size>(), *this ) );
+	return utility::pointer::make_shared< PolymerBondedNeighborConstIterator >( resid, utility::vector1<core::Size>(), *this );
 }
 
 ResidueNeighborConstIteratorOP
@@ -307,7 +307,7 @@ PolymerBondedEnergyContainer::const_upper_neighbor_iterator_begin( int resid ) c
 		}
 	}
 
-	return ResidueNeighborConstIteratorOP( new PolymerBondedNeighborConstIterator( resid, neighbors, *this ) );
+	return utility::pointer::make_shared< PolymerBondedNeighborConstIterator >( resid, neighbors, *this );
 }
 
 ResidueNeighborConstIteratorOP
@@ -326,12 +326,12 @@ PolymerBondedEnergyContainer::neighbor_iterator_begin( int resid ) {
 		neighbors.push_back(p->second);
 	}
 
-	return ResidueNeighborIteratorOP( new PolymerBondedNeighborIterator( resid, neighbors, *this ) );
+	return utility::pointer::make_shared< PolymerBondedNeighborIterator >( resid, neighbors, *this );
 }
 
 ResidueNeighborIteratorOP
 PolymerBondedEnergyContainer::neighbor_iterator_end( int resid ) {
-	return ResidueNeighborIteratorOP( new PolymerBondedNeighborIterator( resid, utility::vector1<core::Size>(), *this ) );
+	return utility::pointer::make_shared< PolymerBondedNeighborIterator >( resid, utility::vector1<core::Size>(), *this );
 }
 
 ResidueNeighborIteratorOP
@@ -348,7 +348,7 @@ PolymerBondedEnergyContainer::upper_neighbor_iterator_begin( int resid )
 		}
 	}
 
-	return ResidueNeighborIteratorOP( new PolymerBondedNeighborIterator( resid, neighbors, *this ) );
+	return utility::pointer::make_shared< PolymerBondedNeighborIterator >( resid, neighbors, *this );
 }
 
 ResidueNeighborIteratorOP

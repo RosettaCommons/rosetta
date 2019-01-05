@@ -181,7 +181,7 @@ my_main( void* ) {
 	using namespace protocols::symmetry;
 
 	try{
-		protocols::jd2::JobDistributor::get_instance()->go( protocols::moves::MoverOP( new MirrorSymmTest() ) );
+		protocols::jd2::JobDistributor::get_instance()->go( utility::pointer::make_shared< MirrorSymmTest >() );
 	} catch (utility::excn::Exception& excn ) {
 		std::cerr << "Exception: " << std::endl;
 		excn.show( std::cerr );

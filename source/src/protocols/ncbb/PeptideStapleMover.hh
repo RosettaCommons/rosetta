@@ -42,7 +42,7 @@ public:
 	void apply( core::pose::Pose & pose ) override;
 	std::string get_name() const override;
 	protocols::moves::MoverOP clone() const override {
-		return( protocols::moves::MoverOP( new protocols::simple_moves::PeptideStapleMover( seqpos_, staple_gap_ ) ) );
+		return( utility::pointer::make_shared< protocols::simple_moves::PeptideStapleMover >( seqpos_, staple_gap_ ) );
 	}
 
 private:

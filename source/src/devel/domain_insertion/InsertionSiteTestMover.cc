@@ -78,7 +78,7 @@ InsertionSiteTestMover::InsertionSiteTestMover()
 	test_insert_ss_("LLLLLLLL"), insert_allowed_score_increase_(10.0),
 	insert_attempt_sasa_cutoff_(30.0),
 	length_of_insert_(test_insert_ss_.size() ), num_repeats_(5), pdb_numbering_(true),
-	enz_flexbb_prot_( protocols::enzdes::EnzdesFlexBBProtocolOP( new protocols::enzdes::EnzdesFlexBBProtocol() ) ),
+	enz_flexbb_prot_( utility::pointer::make_shared< protocols::enzdes::EnzdesFlexBBProtocol >() ),
 	insert_seqmap_(/* NULL */)
 	//mostly arbitrary numbers, but can be modified through RS tag
 {
@@ -91,7 +91,7 @@ InsertionSiteTestMover::InsertionSiteTestMover( InsertionSiteTestMover const & o
 	insert_allowed_score_increase_(other.insert_allowed_score_increase_),
 	insert_attempt_sasa_cutoff_(other.insert_attempt_sasa_cutoff_), length_of_insert_(other.length_of_insert_),
 	num_repeats_(other.num_repeats_), pdb_numbering_(other.pdb_numbering_),
-	enz_flexbb_prot_( protocols::enzdes::EnzdesFlexBBProtocolOP( new protocols::enzdes::EnzdesFlexBBProtocol() ) ), insert_seqmap_(other.insert_seqmap_)
+	enz_flexbb_prot_( utility::pointer::make_shared< protocols::enzdes::EnzdesFlexBBProtocol >() ), insert_seqmap_(other.insert_seqmap_)
 {
 	if ( other.insert_test_pos_ ) {
 		insert_test_pos_ = other.insert_test_pos_->clone(); // Because we modify it for adding spans.
@@ -103,7 +103,7 @@ InsertionSiteTestMover::~InsertionSiteTestMover() = default;
 
 protocols::moves::MoverOP
 InsertionSiteTestMover::clone() const{
-	return protocols::moves::MoverOP( new InsertionSiteTestMover( *this ) );
+	return utility::pointer::make_shared< InsertionSiteTestMover >( *this );
 }
 
 
@@ -352,9 +352,9 @@ InsertionSiteTestMover::relax_raw_insert_pose(
 	}
 
 	core::pack::task::TaskFactoryOP taskf( new core::pack::task::TaskFactory() );
-	taskf->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline() ) );
-	taskf->push_back( TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking() ) );
-	taskf->push_back( TaskOperationCOP( new protocols::task_operations::PreventResiduesFromRepackingOperation( prevent_repack ) ) );
+	taskf->push_back( utility::pointer::make_shared< core::pack::task::operation::InitializeFromCommandline >() );
+	taskf->push_back( utility::pointer::make_shared< core::pack::task::operation::RestrictToRepacking >() );
+	taskf->push_back( utility::pointer::make_shared< protocols::task_operations::PreventResiduesFromRepackingOperation >( prevent_repack ) );
 
 	frelax->set_task_factory( taskf );
 	frelax->set_movemap( mm );
@@ -510,7 +510,7 @@ InsertionSiteTestMover::evaluate_insert_pose(
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP InsertionSiteTestMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new InsertionSiteTestMover );
+// XRW TEMP  return utility::pointer::make_shared< InsertionSiteTestMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -554,7 +554,7 @@ std::string InsertionSiteTestMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 InsertionSiteTestMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new InsertionSiteTestMover );
+	return utility::pointer::make_shared< InsertionSiteTestMover >();
 }
 
 void InsertionSiteTestMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -73,11 +73,11 @@ ProteinBackboneTorsionAngleFeatures::write_protein_backbone_torsion_angles_table
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
-	Column resNum("resNum", DbDataTypeOP( new DbInteger() ));
-	Column phi("phi", DbDataTypeOP( new DbReal() ));
-	Column psi("psi", DbDataTypeOP( new DbReal() ));
-	Column omega("omega", DbDataTypeOP( new DbReal() ));
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >());
+	Column resNum("resNum", utility::pointer::make_shared< DbInteger >());
+	Column phi("phi", utility::pointer::make_shared< DbReal >());
+	Column psi("psi", utility::pointer::make_shared< DbReal >());
+	Column omega("omega", utility::pointer::make_shared< DbReal >());
 
 
 	Columns primary_key_columns;
@@ -162,7 +162,7 @@ std::string ProteinBackboneTorsionAngleFeaturesCreator::type_name() const {
 
 protocols::features::FeaturesReporterOP
 ProteinBackboneTorsionAngleFeaturesCreator::create_features_reporter() const {
-	return protocols::features::FeaturesReporterOP( new ProteinBackboneTorsionAngleFeatures );
+	return utility::pointer::make_shared< ProteinBackboneTorsionAngleFeatures >();
 }
 
 void ProteinBackboneTorsionAngleFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

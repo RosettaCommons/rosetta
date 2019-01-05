@@ -39,7 +39,7 @@ string ProgressBarObserverCreator::keyname() const { // {{{1
 }
 
 MoverOP ProgressBarObserverCreator::create_mover() const { // {{{1
-	return MoverOP( new ProgressBarObserver );
+	return utility::pointer::make_shared< ProgressBarObserver >();
 }
 
 string ProgressBarObserverCreator::mover_name() { // {{{1
@@ -55,7 +55,7 @@ ProgressBarObserver::ProgressBarObserver( ProgressBarObserver const & ) = defaul
 ProgressBarObserver::~ProgressBarObserver() = default; // {{{1
 
 MoverOP ProgressBarObserver::clone() const { // {{{1
-	return MoverOP( new ProgressBarObserver( *this ) );
+	return utility::pointer::make_shared< ProgressBarObserver >( *this );
 }
 
 void ProgressBarObserver::observe_after_metropolis( // {{{1

@@ -60,7 +60,7 @@ RNA_FragmentMonteCarloOptions::RNA_FragmentMonteCarloOptions( RNA_FragmentMonteC
 RNA_FragmentMonteCarloOptionsOP
 RNA_FragmentMonteCarloOptions::clone() const
 {
-	return RNA_FragmentMonteCarloOptionsOP( new RNA_FragmentMonteCarloOptions( *this ) );
+	return utility::pointer::make_shared< RNA_FragmentMonteCarloOptions >( *this );
 }
 
 ///////////////////////////////////////////////////////////////////

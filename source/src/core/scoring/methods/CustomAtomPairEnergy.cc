@@ -59,7 +59,7 @@ methods::EnergyMethodOP
 CustomAtomPairEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & opts
 ) const {
-	return methods::EnergyMethodOP( new CustomAtomPairEnergy( opts.cst_max_seq_sep() ) );
+	return utility::pointer::make_shared< CustomAtomPairEnergy >( opts.cst_max_seq_sep() );
 }
 
 ScoreTypes
@@ -70,7 +70,7 @@ CustomAtomPairEnergyCreator::score_types_for_method() const {
 }
 
 CustomAtomPairEnergy::CustomAtomPairEnergy( Size const max_cst_seq_sep ) :
-	parent( methods::EnergyMethodCreatorOP( new CustomAtomPairEnergyCreator ) ),
+	parent( utility::pointer::make_shared< CustomAtomPairEnergyCreator >() ),
 	max_cst_seq_sep_( max_cst_seq_sep )
 {}
 
@@ -78,7 +78,7 @@ CustomAtomPairEnergy::CustomAtomPairEnergy( Size const max_cst_seq_sep ) :
 EnergyMethodOP
 CustomAtomPairEnergy::clone() const
 {
-	return EnergyMethodOP( new CustomAtomPairEnergy(max_cst_seq_sep_) );
+	return utility::pointer::make_shared< CustomAtomPairEnergy >(max_cst_seq_sep_);
 }
 
 

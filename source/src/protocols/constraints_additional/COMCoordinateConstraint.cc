@@ -286,7 +286,7 @@ scoring::constraints::ConstraintOP COMCoordinateConstraint::remapped_clone(
 	if ( !validity ) {
 		return nullptr;
 	} else {
-		return scoring::constraints::ConstraintOP( new COMCoordinateConstraint( map_atom, COM_target_, stdv_, interval_ ) );
+		return utility::pointer::make_shared< COMCoordinateConstraint >( map_atom, COM_target_, stdv_, interval_ );
 	}
 }
 

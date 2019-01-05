@@ -45,7 +45,7 @@ static basic::Tracer TR( "protocols.protein_interface_design.movers.PatchdockTra
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP PatchdockTransformCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new PatchdockTransform );
+// XRW TEMP  return utility::pointer::make_shared< PatchdockTransform >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -57,7 +57,7 @@ static basic::Tracer TR( "protocols.protein_interface_design.movers.PatchdockTra
 PatchdockTransform::PatchdockTransform() :
 	Mover()
 {
-	pd_reader_ = PatchdockReaderOP( new protocols::protein_interface_design::PatchdockReader ); // initialize the patchdock reader object
+	pd_reader_ = utility::pointer::make_shared< protocols::protein_interface_design::PatchdockReader >(); // initialize the patchdock reader object
 }
 
 PatchdockTransform::~PatchdockTransform() = default;
@@ -100,7 +100,7 @@ PatchdockTransform::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &,
 
 protocols::moves::MoverOP
 PatchdockTransform::clone() const {
-	return( protocols::moves::MoverOP( new PatchdockTransform( *this ) ));
+	return( utility::pointer::make_shared< PatchdockTransform >( *this ));
 }
 
 PatchdockReaderOP
@@ -140,7 +140,7 @@ std::string PatchdockTransformCreator::keyname() const {
 
 protocols::moves::MoverOP
 PatchdockTransformCreator::create_mover() const {
-	return protocols::moves::MoverOP( new PatchdockTransform );
+	return utility::pointer::make_shared< PatchdockTransform >();
 }
 
 void PatchdockTransformCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

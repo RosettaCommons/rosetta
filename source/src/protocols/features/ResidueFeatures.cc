@@ -85,10 +85,10 @@ void
 ResidueFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ), false);
-	Column resNum("resNum", DbDataTypeOP( new DbInteger() ), false);
-	Column name3("name3", DbDataTypeOP( new DbText() ), false);
-	Column res_type("res_type", DbDataTypeOP( new DbText() ), false);
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >(), false);
+	Column resNum("resNum", utility::pointer::make_shared< DbInteger >(), false);
+	Column name3("name3", utility::pointer::make_shared< DbText >(), false);
+	Column res_type("res_type", utility::pointer::make_shared< DbText >(), false);
 
 	utility::vector1<Column> residues_pkey_cols;
 	residues_pkey_cols.push_back(struct_id);
@@ -190,7 +190,7 @@ std::string ResidueFeaturesCreator::type_name() const {
 
 protocols::features::FeaturesReporterOP
 ResidueFeaturesCreator::create_features_reporter() const {
-	return protocols::features::FeaturesReporterOP( new ResidueFeatures );
+	return utility::pointer::make_shared< ResidueFeatures >();
 }
 
 void ResidueFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

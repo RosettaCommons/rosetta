@@ -148,7 +148,7 @@ SecondaryMatchProtocol::do_matching(
 	//this might be a little iffy, come back to this if it causes problems
 	poses_to_process.push_back( start_pose.get_self_ptr() );
 
-	core::pose::PoseCOP ref_pose( core::pose::PoseOP( new core::pose::Pose( start_pose ) ) );
+	core::pose::PoseCOP ref_pose( utility::pointer::make_shared< core::pose::Pose >( start_pose ) );
 	//core::pose::Pose ref_pose = start_pose;
 
 	//clear_catalytic_res(); //make sure this gets done first thing
@@ -422,9 +422,9 @@ SecondaryMatchProtocol::generate_and_dump_pose_found_residues_combinations( core
 
 	//process_poses.push_back( ref_poseCOP );
 
-	process_combos.push_back( protocols::enzdes::PoseFoundResiduesCombinationOP( new PoseFoundResiduesCombination( ref_poseCOP,
+	process_combos.push_back( utility::pointer::make_shared< PoseFoundResiduesCombination >( ref_poseCOP,
 		SecondaryMatchProtocolCAP( utility::pointer::dynamic_pointer_cast< SecondaryMatchProtocol const >( get_self_ptr() ) )
-		) ) );
+		) );
 
 
 	for ( auto & found_resi : found_resis_ ) {

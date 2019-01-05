@@ -118,7 +118,7 @@ Mover_LoopHashRefine::apply( core::pose::Pose& pose )
 	protocols::relax::FastRelax relax( fascorefxn,  option[ OptionKeys::relax::sequence_file ]() );
 	core::pose::PoseOP native_pose;
 	if (  option[ in::file::native ].user() ) {
-		native_pose = core::pose::PoseOP( new Pose );
+		native_pose = utility::pointer::make_shared< Pose >();
 		core::import_pose::pose_from_file( *native_pose, option[ in::file::native ]() , core::import_pose::PDB_file);
 		relax.set_native_pose( native_pose );
 	}

@@ -79,7 +79,7 @@ AtomTree::AtomTree(
 	internal_coords_need_updating_( false ),
 	xyz_coords_need_updating_( false ),
 	topological_match_to_( /* 0 */ ),
-	external_coordinate_residues_changed_( ResidueCoordinateChangeListOP( new ResidueCoordinateChangeList ) )
+	external_coordinate_residues_changed_( utility::pointer::make_shared< ResidueCoordinateChangeList >() )
 {
 	replace_tree( new_atom_pointer, from_xyz );
 	external_coordinate_residues_changed_->total_residue( new_atom_pointer.size() );
@@ -92,7 +92,7 @@ AtomTree::AtomTree():
 	internal_coords_need_updating_( false ),
 	xyz_coords_need_updating_( false ),
 	topological_match_to_( /* 0 */ ),
-	external_coordinate_residues_changed_( ResidueCoordinateChangeListOP( new ResidueCoordinateChangeList ) )
+	external_coordinate_residues_changed_( utility::pointer::make_shared< ResidueCoordinateChangeList >() )
 {}
 
 /// @brief Destructor
@@ -113,7 +113,7 @@ AtomTree::AtomTree( AtomTree const & src ) :
 	internal_coords_need_updating_( false ),
 	xyz_coords_need_updating_( false ),
 	topological_match_to_( /* 0 */ ),
-	external_coordinate_residues_changed_( ResidueCoordinateChangeListOP( new ResidueCoordinateChangeList ) )
+	external_coordinate_residues_changed_( utility::pointer::make_shared< ResidueCoordinateChangeList >() )
 {
 	*this = src;
 }

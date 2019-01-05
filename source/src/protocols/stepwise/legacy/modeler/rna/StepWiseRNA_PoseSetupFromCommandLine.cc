@@ -186,7 +186,7 @@ void apply_chi_cst( core::pose::Pose & pose, core::pose::Pose const & ref_pose )
 			AtomID const atom2( res.atom_index( "C1'" ), i );
 			AtomID const atom3( res.is_purine() ? res.atom_index( "N9" ) : res.atom_index( "N1" ), i );
 			AtomID const atom4( res.is_purine() ? res.atom_index( "C4" ) : res.atom_index( "C2" ), i );
-			cst_set->add_constraint( ConstraintCOP( ConstraintOP( new DihedralConstraint( atom1, atom2, atom3, atom4, chi_cst_func ) ) ) );
+			cst_set->add_constraint( utility::pointer::make_shared< DihedralConstraint >( atom1, atom2, atom3, atom4, chi_cst_func ) );
 		}
 	}
 	pose.constraint_set( cst_set );
@@ -583,7 +583,7 @@ setup_simple_full_length_rna_working_parameters(){
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////
 	PoseOP native_pose_OP;
 	if ( option[ in::file::native ].user() ) {
-		native_pose_OP = PoseOP( new Pose );
+		native_pose_OP = utility::pointer::make_shared< Pose >();
 		import_pose::pose_from_file( *native_pose_OP, *rsd_set, option[ in::file::native ](), core::import_pose::PDB_file );
 		core::pose::rna::make_phosphate_nomenclature_matches_mini( *native_pose_OP );
 
@@ -844,7 +844,7 @@ setup_pose_setup_class( stepwise::modeler::working_parameters::StepWiseWorkingPa
 	// Read in native_pose.
 	PoseOP native_pose;
 	if ( option[ in::file::native ].user() ) {
-		native_pose = PoseOP( new Pose );
+		native_pose = utility::pointer::make_shared< Pose >();
 		import_pose::pose_from_file( *native_pose, *rsd_set, option[ in::file::native ]() , core::import_pose::PDB_file);
 		TR.Debug << "native_pose->fold_tree(): " << native_pose->fold_tree();
 		TR.Debug << "native_pose->annotated_sequence( true ): " << native_pose->annotated_sequence( true ) << std::endl;

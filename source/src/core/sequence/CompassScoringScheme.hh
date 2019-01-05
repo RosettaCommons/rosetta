@@ -38,10 +38,10 @@ public:
 	}
 
 	ScoringSchemeOP clone() const override {
-		return ScoringSchemeOP( new CompassScoringScheme(
+		return utility::pointer::make_shared< CompassScoringScheme >(
 			gap_open(),
 			gap_extend()
-			) );
+		);
 	}
 
 	/// @brief dtor

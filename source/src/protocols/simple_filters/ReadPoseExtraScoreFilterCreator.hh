@@ -32,7 +32,7 @@ class ReadPoseExtraScoreFilterCreator : public filters::FilterCreator
 {
 public:
 	filters::FilterOP create_filter() const override {
-		return protocols::filters::FilterOP( new ReadPoseExtraScoreFilter );
+		return utility::pointer::make_shared< ReadPoseExtraScoreFilter >();
 	}
 
 	std::string keyname() const override {

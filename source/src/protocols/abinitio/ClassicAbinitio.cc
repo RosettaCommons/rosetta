@@ -181,18 +181,18 @@ ClassicAbinitio::ClassicAbinitio(
 	using simple_moves::GunnCost;
 	if ( option[ OptionKeys::abinitio::log_frags ].user() ) {
 		if ( !option[ OptionKeys::abinitio::debug ] ) utility_exit_with_message( "apply option abinitio::log_frags always together with abinitio::debug!!!");
-		bms = simple_moves::ClassicFragmentMoverOP( new simple_moves::LoggedFragmentMover( fragset_small, movemap ) );
-		bml = simple_moves::ClassicFragmentMoverOP( new simple_moves::LoggedFragmentMover( fragset_large, movemap ) );
-		sms = simple_moves::ClassicFragmentMoverOP( new SmoothFragmentMover( fragset_small, movemap, FragmentCostOP( new GunnCost ) ) );
+		bms = utility::pointer::make_shared< simple_moves::LoggedFragmentMover >( fragset_small, movemap );
+		bml = utility::pointer::make_shared< simple_moves::LoggedFragmentMover >( fragset_large, movemap );
+		sms = utility::pointer::make_shared< SmoothFragmentMover >( fragset_small, movemap, utility::pointer::make_shared< GunnCost >() );
 	} else if ( option[ OptionKeys::abinitio::symmetry_residue ].user() ) {
 		Size const sr (  option[ OptionKeys::abinitio::symmetry_residue ] );
-		bms = simple_moves::ClassicFragmentMoverOP( new SymmetricFragmentMover( fragset_small, movemap, sr ) );
-		bml = simple_moves::ClassicFragmentMoverOP( new SymmetricFragmentMover( fragset_large, movemap, sr ) );
-		sms = simple_moves::ClassicFragmentMoverOP( new SmoothSymmetricFragmentMover( fragset_small, movemap, FragmentCostOP( new GunnCost ), sr ) );
+		bms = utility::pointer::make_shared< SymmetricFragmentMover >( fragset_small, movemap, sr );
+		bml = utility::pointer::make_shared< SymmetricFragmentMover >( fragset_large, movemap, sr );
+		sms = utility::pointer::make_shared< SmoothSymmetricFragmentMover >( fragset_small, movemap, utility::pointer::make_shared< GunnCost >(), sr );
 	} else {
-		bms = simple_moves::ClassicFragmentMoverOP( new ClassicFragmentMover( fragset_small, movemap ) );
-		bml = simple_moves::ClassicFragmentMoverOP( new ClassicFragmentMover( fragset_large, movemap ) );
-		sms = simple_moves::ClassicFragmentMoverOP( new SmoothFragmentMover ( fragset_small, movemap, FragmentCostOP( new GunnCost ) ) );
+		bms = utility::pointer::make_shared< ClassicFragmentMover >( fragset_small, movemap );
+		bml = utility::pointer::make_shared< ClassicFragmentMover >( fragset_large, movemap );
+		sms = utility::pointer::make_shared< SmoothFragmentMover > ( fragset_small, movemap, utility::pointer::make_shared< GunnCost >() );
 	}
 
 	bms->set_end_bias( option[ OptionKeys::abinitio::end_bias ] ); //default is 30.0
@@ -205,9 +205,9 @@ ClassicAbinitio::ClassicAbinitio(
 
 	using namespace core::pack::task;
 	//init the packer
-	pack_rotamers_ = minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover() );
+	pack_rotamers_ = utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >();
 	TaskFactoryOP main_task_factory( new TaskFactory );
-	main_task_factory->push_back( operation::TaskOperationCOP( new operation::RestrictToRepacking ) );
+	main_task_factory->push_back( utility::pointer::make_shared< operation::RestrictToRepacking >() );
 	//main_task_factory->push_back( new operation::PreserveCBeta );
 	pack_rotamers_->task_factory(main_task_factory);
 
@@ -281,7 +281,7 @@ ClassicAbinitio::init( core::pose::Pose const& pose ) {
 moves::MoverOP
 ClassicAbinitio::clone() const
 {
-	return moves::MoverOP( new ClassicAbinitio( *this ) );
+	return utility::pointer::make_shared< ClassicAbinitio >( *this );
 }
 
 void ClassicAbinitio::apply( pose::Pose & pose ) {
@@ -613,17 +613,17 @@ void ClassicAbinitio::update_moves() {
 void ClassicAbinitio::set_trials() {
 	// setup loop1
 	runtime_assert( brute_move_large_ != nullptr );
-	trial_large_ = moves::TrialMoverOP( new moves::TrialMover( brute_move_large_, mc_ ) );
+	trial_large_ = utility::pointer::make_shared< moves::TrialMover >( brute_move_large_, mc_ );
 	//trial_large_->set_keep_stats( true );
 	trial_large_->keep_stats_type( moves::accept_reject );
 
 	runtime_assert( brute_move_small_ != nullptr );
-	trial_small_ = moves::TrialMoverOP( new moves::TrialMover( brute_move_small_, mc_ ) );
+	trial_small_ = utility::pointer::make_shared< moves::TrialMover >( brute_move_small_, mc_ );
 	//trial_small_->set_keep_stats( true );
 	trial_small_->keep_stats_type( moves::accept_reject );
 
 	runtime_assert( smooth_move_small_ != nullptr );
-	smooth_trial_small_ = moves::TrialMoverOP( new moves::TrialMover( smooth_move_small_, mc_ ) );
+	smooth_trial_small_ = utility::pointer::make_shared< moves::TrialMover >( smooth_move_small_, mc_ );
 	//smooth_trial_small_->set_keep_stats( true );
 	smooth_trial_small_->keep_stats_type( moves::accept_reject );
 
@@ -631,11 +631,11 @@ void ClassicAbinitio::set_trials() {
 	moves::SequenceMoverOP combo_small( new moves::SequenceMover() );
 	combo_small->add_mover(brute_move_small_);
 	combo_small->add_mover(pack_rotamers_);
-	trial_small_pack_ = moves::TrialMoverOP( new moves::TrialMover(combo_small, mc_) );
+	trial_small_pack_ = utility::pointer::make_shared< moves::TrialMover >(combo_small, mc_);
 	moves::SequenceMoverOP combo_smooth( new moves::SequenceMover() );
 	combo_smooth->add_mover(smooth_move_small_);
 	combo_smooth->add_mover(pack_rotamers_);
-	smooth_trial_small_pack_ = moves::TrialMoverOP( new moves::TrialMover(combo_smooth, mc_) );
+	smooth_trial_small_pack_ = utility::pointer::make_shared< moves::TrialMover >(combo_smooth, mc_);
 }
 
 //@detail sets Monto-Carlo object to default
@@ -643,7 +643,7 @@ void ClassicAbinitio::set_default_mc(
 	pose::Pose const & pose,
 	scoring::ScoreFunction const & scorefxn
 ) {
-	set_mc( moves::MonteCarloOP( new moves::MonteCarlo( pose, scorefxn, temperature_ ) ) );
+	set_mc( utility::pointer::make_shared< moves::MonteCarlo >( pose, scorefxn, temperature_ ) );
 }
 
 //@detail sets Monto-Carlo object
@@ -932,7 +932,7 @@ bool ClassicAbinitio::do_stage3_cycles( pose::Pose &pose ) {
 
 	hConvergenceCheckOP convergence_checker ( nullptr );
 	if ( !option[ basic::options::OptionKeys::abinitio::skip_convergence_check ] ) {
-		convergence_checker = hConvergenceCheckOP( new hConvergenceCheck );
+		convergence_checker = utility::pointer::make_shared< hConvergenceCheck >();
 	}
 
 	moves::TrialMoverOP trials = trial_large();

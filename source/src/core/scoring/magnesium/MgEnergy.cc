@@ -105,7 +105,7 @@ methods::EnergyMethodOP
 MgEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new MgEnergy );
+	return utility::pointer::make_shared< MgEnergy >();
 }
 
 ScoreTypes
@@ -121,9 +121,9 @@ MgEnergyCreator::score_types_for_method() const {
 
 
 MgEnergy::MgEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new MgEnergyCreator ) ),
+	parent( utility::pointer::make_shared< MgEnergyCreator >() ),
 	// following are for mg_lig term.
-	mg_lig_knowledge_based_potential_( MgKnowledgeBasedPotentialOP( new MgKnowledgeBasedPotential ) ),
+	mg_lig_knowledge_based_potential_( utility::pointer::make_shared< MgKnowledgeBasedPotential >() ),
 	mg_lig_interaction_cutoff_( 4.0 ),
 	v_angle_width_( mg_lig_knowledge_based_potential_->v_angle_width() ),
 	v_angle_width2_( v_angle_width_ * v_angle_width_ ),
@@ -143,7 +143,7 @@ MgEnergy::MgEnergy() :
 	// fading solvation
 	mg_sol_interaction_cutoff_( 6.0 ),
 	mg_sol_fade_zone_( 0.1 ), // turn off mg_sol smoothly between 5.9 and 6.0.
-	mg_sol_fade_func_( func::FuncOP( new func::FadeFunc( -10.0, mg_sol_interaction_cutoff_, mg_sol_fade_zone_, 1.0 ) ) )
+	mg_sol_fade_func_( utility::pointer::make_shared< func::FadeFunc >( -10.0, mg_sol_interaction_cutoff_, mg_sol_fade_zone_, 1.0 ) )
 {}
 
 
@@ -151,7 +151,7 @@ MgEnergy::MgEnergy() :
 methods::EnergyMethodOP
 MgEnergy::clone() const
 {
-	return methods::EnergyMethodOP( new MgEnergy );
+	return utility::pointer::make_shared< MgEnergy >();
 }
 
 void
@@ -529,11 +529,11 @@ MgEnergy::setup_for_minimizing_for_residue_pair(
 ) const
 {
 	using namespace etable::count_pair;
-	CountPairFunctionCOP count_pair( CountPairFunctionOP( new CountPairAll ) );
+	CountPairFunctionCOP count_pair( utility::pointer::make_shared< CountPairAll >() );
 
 	// update the existing nblist if it's already present in the min_data object
 	ResiduePairNeighborListOP nblist( utility::pointer::static_pointer_cast< core::scoring::ResiduePairNeighborList > ( pair_data.get_data( mg_pair_nblist ) ));
-	if ( ! nblist ) nblist = ResiduePairNeighborListOP( new ResiduePairNeighborList );
+	if ( ! nblist ) nblist = utility::pointer::make_shared< ResiduePairNeighborList >();
 
 	/// STOLEN CODE!
 	Real const tolerated_narrow_nblist_motion = 0.75; //option[ run::nblist_autoupdate_narrow ];

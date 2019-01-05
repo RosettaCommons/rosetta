@@ -45,10 +45,10 @@ public:
 
 		FuncOP some_func( new HarmonicFunc( 1, 2 ));
 		ConstraintCOPs csts;
-		csts.push_back( ConstraintCOP( new AtomPairConstraint( AtomID( 1, 2 ), AtomID( 2, 3 ), some_func )));
-		csts.push_back( ConstraintCOP( new AtomPairConstraint( AtomID( 3, 4 ), AtomID( 4, 5 ), some_func )));
-		csts.push_back( ConstraintCOP( new AtomPairConstraint( AtomID( 4, 5 ), AtomID( 5, 6 ), some_func )));
-		csts.push_back( ConstraintCOP( new AtomPairConstraint( AtomID( 6, 7 ), AtomID( 7, 8 ), some_func )));
+		csts.push_back( utility::pointer::make_shared< AtomPairConstraint >( AtomID( 1, 2 ), AtomID( 2, 3 ), some_func ));
+		csts.push_back( utility::pointer::make_shared< AtomPairConstraint >( AtomID( 3, 4 ), AtomID( 4, 5 ), some_func ));
+		csts.push_back( utility::pointer::make_shared< AtomPairConstraint >( AtomID( 4, 5 ), AtomID( 5, 6 ), some_func ));
+		csts.push_back( utility::pointer::make_shared< AtomPairConstraint >( AtomID( 6, 7 ), AtomID( 7, 8 ), some_func ));
 		ConstraintOP instance( new KofNConstraint( csts, 2 ) ); // serialize this through a pointer to the base class
 
 		std::ostringstream oss;

@@ -142,7 +142,7 @@ HitHasher::initialize()
 
 		BoundingBox bb( xyz_lower, bb_.upper() );
 
-		hit_hashes_[ count ].first = numeric::geometry::hashing::SixDCoordinateBinnerOP( new numeric::geometry::hashing::SixDCoordinateBinner( bb, euler_offsets, bin_widths ) );
+		hit_hashes_[ count ].first = utility::pointer::make_shared< numeric::geometry::hashing::SixDCoordinateBinner >( bb, euler_offsets, bin_widths );
 		++lex;
 		++count;
 	}
@@ -320,7 +320,7 @@ HitNeighborFinder::initialize()
 	bin_widths[ 1 ] = xyz_bin_widths_[ 1 ];   bin_widths[ 2 ] = xyz_bin_widths_[ 2 ];   bin_widths[ 3 ] = xyz_bin_widths_[ 3 ];
 	bin_widths[ 4 ] = euler_bin_widths_[ 1 ]; bin_widths[ 5 ] = euler_bin_widths_[ 2 ]; bin_widths[ 6 ] = euler_bin_widths_[ 3 ];
 
-	binner_ = numeric::geometry::hashing::SixDCoordinateBinnerOP( new numeric::geometry::hashing::SixDCoordinateBinner( bb_, euler_offsets, bin_widths ) );
+	binner_ = utility::pointer::make_shared< numeric::geometry::hashing::SixDCoordinateBinner >( bb_, euler_offsets, bin_widths );
 
 }
 
@@ -736,7 +736,7 @@ MatchCounter::initialize()
 
 	for ( Size ii = 1; ii <=6; ++ii ) bin_widths[ ii ] *= 0.5;
 
-	binner_ = numeric::geometry::hashing::SixDCoordinateBinnerOP( new numeric::geometry::hashing::SixDCoordinateBinner( bb_, euler_offsets, bin_widths ) );
+	binner_ = utility::pointer::make_shared< numeric::geometry::hashing::SixDCoordinateBinner >( bb_, euler_offsets, bin_widths );
 
 }
 

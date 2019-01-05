@@ -70,32 +70,32 @@ FuncOP FuncFactory::new_func( std::string const& type ) const {
 
 // initialization of functions which this factory knows how to instantiate
 FuncFactory::FuncFactory(void) {
-	FuncFactory::add_type( "HARMONIC", FuncOP( new HarmonicFunc(0,0) ) );
-	FuncFactory::add_type( "SIGMOID", FuncOP( new SigmoidFunc(0,1) ) );
-	FuncFactory::add_type( "AMBERPERIODIC", FuncOP( new AmberPeriodicFunc(0.0, 0.5, 1.0) ) );
-	FuncFactory::add_type( "CIRCULARHARMONIC", FuncOP( new CircularHarmonicFunc(0,0) ) );
-	FuncFactory::add_type( "MIXTUREFUNC", FuncOP( new MixtureFunc(0,0,0,0,0,0) ) );
-	FuncFactory::add_type( "SCALARWEIGHTEDFUNC", FuncOP( new ScalarWeightedFunc(0,nullptr) ) );
-	FuncFactory::add_type( "COUNTVIOLFUNC", FuncOP( new CountViolFunc(0,nullptr) ) );
-	FuncFactory::add_type( "SKIPVIOLFUNC", FuncOP( new SkipViolFunc(0,nullptr) ) );
-	FuncFactory::add_type( "GAUSSIANFUNC", FuncOP( new GaussianFunc(0,0) ) );
-	FuncFactory::add_type( "CONSTANTFUNC", FuncOP( new ConstantFunc(0.) ) );
-	FuncFactory::add_type( "BOUNDED", FuncOP( new BoundFunc(0,0,0,"dummy") ) );
-	FuncFactory::add_type( "PERIODICBOUNDED", FuncOP( new PeriodicBoundFunc(0,0,0,"dummy",6.28) ) );
-	FuncFactory::add_type( "OFFSETPERIODICBOUNDED", FuncOP( new OffsetPeriodicBoundFunc(0,0,0,"dummy",6.28,0.0) ) );
-	FuncFactory::add_type( "SUMFUNC", FuncOP( new SumFunc() ) );
-	FuncFactory::add_type( "SOGFUNC", FuncOP( new SOGFunc() ) );
-	FuncFactory::add_type( "USOGFUNC", FuncOP( new USOGFunc() ) );
-	FuncFactory::add_type( "SOEDINGFUNC", FuncOP( new SoedingFunc() ) );
-	FuncFactory::add_type( "SPLINE", FuncOP( new SplineFunc() ) );
-	FuncFactory::add_type( "SQUARE_WELL", FuncOP( new SquareWellFunc(0,0) ) );
-	FuncFactory::add_type( "SQUARE_WELL2", FuncOP( new SquareWell2Func(0,0,0) ) );
-	FuncFactory::add_type( "FADE", FuncOP( new FadeFunc(0,0,0) ) );
-	FuncFactory::add_type( "LINEAR_PENALTY", FuncOP( new LinearPenaltyFunction(0,0,0,0) ) );
-	FuncFactory::add_type( "KARPLUS", FuncOP( new KarplusFunc(6.98,-1.38,1.72,-1.05,0,0,0) ));
-	FuncFactory::add_type( "IDENTITY", FuncOP( new IdentityFunc() ) );
-	FuncFactory::add_type( "FLAT_HARMONIC", FuncOP( new FlatHarmonicFunc( 0, 0, 0 ) ) );
-	FuncFactory::add_type( "TOPOUT", FuncOP( new TopOutFunc( 0, 0, 0 ) ) );
+	FuncFactory::add_type( "HARMONIC", utility::pointer::make_shared< HarmonicFunc >(0,0) );
+	FuncFactory::add_type( "SIGMOID", utility::pointer::make_shared< SigmoidFunc >(0,1) );
+	FuncFactory::add_type( "AMBERPERIODIC", utility::pointer::make_shared< AmberPeriodicFunc >(0.0, 0.5, 1.0) );
+	FuncFactory::add_type( "CIRCULARHARMONIC", utility::pointer::make_shared< CircularHarmonicFunc >(0,0) );
+	FuncFactory::add_type( "MIXTUREFUNC", utility::pointer::make_shared< MixtureFunc >(0,0,0,0,0,0) );
+	FuncFactory::add_type( "SCALARWEIGHTEDFUNC", utility::pointer::make_shared< ScalarWeightedFunc >(0,nullptr) );
+	FuncFactory::add_type( "COUNTVIOLFUNC", utility::pointer::make_shared< CountViolFunc >(0,nullptr) );
+	FuncFactory::add_type( "SKIPVIOLFUNC", utility::pointer::make_shared< SkipViolFunc >(0,nullptr) );
+	FuncFactory::add_type( "GAUSSIANFUNC", utility::pointer::make_shared< GaussianFunc >(0,0) );
+	FuncFactory::add_type( "CONSTANTFUNC", utility::pointer::make_shared< ConstantFunc >(0.) );
+	FuncFactory::add_type( "BOUNDED", utility::pointer::make_shared< BoundFunc >(0,0,0,"dummy") );
+	FuncFactory::add_type( "PERIODICBOUNDED", utility::pointer::make_shared< PeriodicBoundFunc >(0,0,0,"dummy",6.28) );
+	FuncFactory::add_type( "OFFSETPERIODICBOUNDED", utility::pointer::make_shared< OffsetPeriodicBoundFunc >(0,0,0,"dummy",6.28,0.0) );
+	FuncFactory::add_type( "SUMFUNC", utility::pointer::make_shared< SumFunc >() );
+	FuncFactory::add_type( "SOGFUNC", utility::pointer::make_shared< SOGFunc >() );
+	FuncFactory::add_type( "USOGFUNC", utility::pointer::make_shared< USOGFunc >() );
+	FuncFactory::add_type( "SOEDINGFUNC", utility::pointer::make_shared< SoedingFunc >() );
+	FuncFactory::add_type( "SPLINE", utility::pointer::make_shared< SplineFunc >() );
+	FuncFactory::add_type( "SQUARE_WELL", utility::pointer::make_shared< SquareWellFunc >(0,0) );
+	FuncFactory::add_type( "SQUARE_WELL2", utility::pointer::make_shared< SquareWell2Func >(0,0,0) );
+	FuncFactory::add_type( "FADE", utility::pointer::make_shared< FadeFunc >(0,0,0) );
+	FuncFactory::add_type( "LINEAR_PENALTY", utility::pointer::make_shared< LinearPenaltyFunction >(0,0,0,0) );
+	FuncFactory::add_type( "KARPLUS", utility::pointer::make_shared< KarplusFunc >(6.98,-1.38,1.72,-1.05,0,0,0));
+	FuncFactory::add_type( "IDENTITY", utility::pointer::make_shared< IdentityFunc >() );
+	FuncFactory::add_type( "FLAT_HARMONIC", utility::pointer::make_shared< FlatHarmonicFunc >( 0, 0, 0 ) );
+	FuncFactory::add_type( "TOPOUT", utility::pointer::make_shared< TopOutFunc >( 0, 0, 0 ) );
 }
 
 } //constraints

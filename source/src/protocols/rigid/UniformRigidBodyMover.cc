@@ -53,7 +53,7 @@ using namespace protocols::environment;
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP UniformRigidBodyMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new UniformRigidBodyMover );
+// XRW TEMP  return utility::pointer::make_shared< UniformRigidBodyMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -136,11 +136,11 @@ UniformRigidBodyMover::torsion_id_ranges( core::pose::Pose & ) {
 }
 
 moves::MoverOP UniformRigidBodyMover::fresh_instance() const {
-	return moves::MoverOP( new UniformRigidBodyMover() );
+	return utility::pointer::make_shared< UniformRigidBodyMover >();
 }
 
 moves::MoverOP UniformRigidBodyMover::clone() const{
-	return moves::MoverOP( new UniformRigidBodyMover( *this ) );
+	return utility::pointer::make_shared< UniformRigidBodyMover >( *this );
 }
 
 std::string UniformRigidBodyMover::get_name() const {
@@ -201,7 +201,7 @@ std::string UniformRigidBodyMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 UniformRigidBodyMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new UniformRigidBodyMover );
+	return utility::pointer::make_shared< UniformRigidBodyMover >();
 }
 
 void UniformRigidBodyMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

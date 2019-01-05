@@ -54,14 +54,14 @@ void setup_convergence_checks_from_cmdline( moves::MonteCarlo& mc ) {
 			pool_ptr->set_excluded_residues( option[ OptionKeys::mc::excluded_residues_from_rmsd ]() );
 		}
 
-		mc.push_back( moves::MonteCarloExceptionConvergeOP( new Pool_ConvergenceCheck( pool_ptr, option[ OptionKeys::mc::max_rmsd_against_known_structures ]()  ) ));
-		protocols::jd2::JobDistributor::get_instance()->job_outputter()->add_evaluation( evaluation::PoseEvaluatorOP( new Pool_Evaluator( pool_ptr ) ) );
+		mc.push_back( utility::pointer::make_shared< Pool_ConvergenceCheck >( pool_ptr, option[ OptionKeys::mc::max_rmsd_against_known_structures ]()  ));
+		protocols::jd2::JobDistributor::get_instance()->job_outputter()->add_evaluation( utility::pointer::make_shared< Pool_Evaluator >( pool_ptr ) );
 
 	}
 
 	/* other convergence checker */
 	if ( option[ basic::options::OptionKeys::mc::heat_convergence_check ].user() ) {
-		mc.push_back( moves::MonteCarloExceptionConvergeOP( new Heat_ConvergenceCheck() ) );
+		mc.push_back( utility::pointer::make_shared< Heat_ConvergenceCheck >() );
 		mc.set_heat_after_cycles( option[ basic::options::OptionKeys::mc::heat_convergence_check ] );
 	}
 

@@ -40,7 +40,7 @@ methods::EnergyMethodOP
 SecondaryStructureEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new SecondaryStructureEnergy );
+	return utility::pointer::make_shared< SecondaryStructureEnergy >();
 }
 
 ScoreTypes
@@ -56,7 +56,7 @@ SecondaryStructureEnergyCreator::score_types_for_method() const {
 
 /// c-tor
 SecondaryStructureEnergy::SecondaryStructureEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new SecondaryStructureEnergyCreator ) ),
+	parent( utility::pointer::make_shared< SecondaryStructureEnergyCreator >() ),
 	potential_( ScoringManager::get_instance()->get_SecondaryStructurePotential() )
 {}
 
@@ -69,7 +69,7 @@ SecondaryStructureEnergy::SecondaryStructureEnergy( SecondaryStructureEnergy con
 EnergyMethodOP
 SecondaryStructureEnergy::clone() const
 {
-	return EnergyMethodOP( new SecondaryStructureEnergy( *this ) );
+	return utility::pointer::make_shared< SecondaryStructureEnergy >( *this );
 }
 
 

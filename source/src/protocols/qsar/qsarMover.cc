@@ -47,7 +47,7 @@ qsarCreator::keyname() const
 
 protocols::moves::MoverOP
 qsarCreator::create_mover() const {
-	return protocols::moves::MoverOP( new qsarMover );
+	return utility::pointer::make_shared< qsarMover >();
 }
 
 std::string
@@ -104,7 +104,7 @@ void qsarMover::apply(core::pose::Pose & pose)
 
 	if ( qsar_map_ == nullptr ) {
 
-		qsar_map_ = qsarMapOP( new qsarMap("default", residue) );
+		qsar_map_ = utility::pointer::make_shared< qsarMap >("default", residue);
 
 		qsar_map_->fill_with_value(1,grids_to_use_);
 

@@ -97,7 +97,7 @@ AntibodyModelerProtocol::~AntibodyModelerProtocol() = default;
 //clone
 protocols::moves::MoverOP
 AntibodyModelerProtocol::clone() const {
-	return( protocols::moves::MoverOP( new AntibodyModelerProtocol() ) );
+	return( utility::pointer::make_shared< AntibodyModelerProtocol >() );
 }
 
 
@@ -342,16 +342,16 @@ void AntibodyModelerProtocol::finalize_setup( pose::Pose & pose ) {
 		TR << "Danger Will Robinson! Native is an impostor!" << std::endl;
 		TR << "   'native_pose' is just a copy of the 'input_pose'    " << std::endl;
 		TR << "    since you didn't sepcifiy the native pdb name"<<std::endl;
-		native_pose = pose::PoseOP( new pose::Pose(pose) );
+		native_pose = utility::pointer::make_shared< pose::Pose >(pose);
 	} else {
-		native_pose = pose::PoseOP( new pose::Pose( *get_native_pose() ) );
+		native_pose = utility::pointer::make_shared< pose::Pose >( *get_native_pose() );
 	}
 
 	pose::set_ss_from_phipsi( *native_pose ); // JQX: this is the secondary structure from the native pose
 
 	set_native_pose( native_pose ); // pass the native pose to the mover.native_pose_
 
-	ab_info_ = AntibodyInfoOP( new AntibodyInfo(pose) );
+	ab_info_ = utility::pointer::make_shared< AntibodyInfo >(pose);
 
 	pose.fold_tree( * ab_info_->get_FoldTree_AllCDRs(pose) ) ;
 	TR<<*ab_info_<<std::endl;
@@ -410,7 +410,7 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 		TR<<"Centroid cst_weight: "<<cst_weight_<<std::endl;
 		if (  cst_weight_ != 0.0  ) {
 			if ( ! auto_constraint_ ) {
-				cdr_constraint_ = protocols::constraint_movers::ConstraintSetMoverOP( new constraint_movers::ConstraintSetMover() );
+				cdr_constraint_ = utility::pointer::make_shared< constraint_movers::ConstraintSetMover >();
 				cdr_constraint_->apply( pose );
 			} else {
 				// Create constraints on-the-fly here.
@@ -453,7 +453,7 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 	// call ConstraintSetMover
 	TR << "Full-atom cst_weight: " << cst_weight_ << std::endl;
 	if (  cst_weight_ != 0.0 && ! auto_constraint_ ) {
-		cdr_constraint_ = protocols::constraint_movers::ConstraintSetMoverOP( new constraint_movers::ConstraintSetMover() );
+		cdr_constraint_ = utility::pointer::make_shared< constraint_movers::ConstraintSetMover >();
 		cdr_constraint_->apply( pose );
 	}
 

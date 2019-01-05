@@ -48,7 +48,7 @@ MC_RNA_OneJump::MC_RNA_OneJump( core::pose::Pose const & pose,
 	using namespace core::kinematics;
 
 	// just get out the two residues connected by the jump from the pose...
-	scratch_pose_ = PoseOP( new Pose );
+	scratch_pose_ = utility::pointer::make_shared< Pose >();
 	FoldTree const & f( pose.fold_tree() );
 	scratch_pose_->append_residue_by_bond( *( pose.residue( f.upstream_jump_residue( jump_num ) ).clone() ) );
 	scratch_pose_->append_residue_by_jump( *( pose.residue( f.downstream_jump_residue( jump_num ) ).clone() ), 1,

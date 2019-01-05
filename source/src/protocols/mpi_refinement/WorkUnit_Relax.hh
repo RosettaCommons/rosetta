@@ -34,7 +34,7 @@ public:
 		bool const on_defined_segment = false );
 
 	protocols::wum::WorkUnitBaseOP clone() const override {
-		return protocols::wum::WorkUnitBaseOP( new WorkUnit_bbGauss( *this ) );
+		return utility::pointer::make_shared< WorkUnit_bbGauss >( *this );
 	}
 
 	// Pure virtual functions
@@ -72,7 +72,7 @@ public:
 		bool const looponly = false );
 
 	protocols::wum::WorkUnitBaseOP clone() const override {
-		return protocols::wum::WorkUnitBaseOP( new WorkUnit_MD( *this ) );
+		return utility::pointer::make_shared< WorkUnit_MD >( *this );
 	}
 
 	// Pure virtual functions
@@ -110,7 +110,7 @@ public:
 		core::Real const cstweight = 0.0 );
 
 	protocols::wum::WorkUnitBaseOP clone() const override {
-		return protocols::wum::WorkUnitBaseOP( new WorkUnit_Relax( *this ) );
+		return utility::pointer::make_shared< WorkUnit_Relax >( *this );
 	}
 
 	// Pure virtual functions

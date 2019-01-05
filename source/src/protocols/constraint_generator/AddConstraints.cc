@@ -87,13 +87,13 @@ AddConstraints::parse_my_tag(
 protocols::moves::MoverOP
 AddConstraints::clone() const
 {
-	return protocols::moves::MoverOP( new AddConstraints( *this ) );
+	return utility::pointer::make_shared< AddConstraints >( *this );
 }
 
 protocols::moves::MoverOP
 AddConstraints::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new AddConstraints );
+	return utility::pointer::make_shared< AddConstraints >();
 }
 
 // XRW TEMP std::string
@@ -137,7 +137,7 @@ AddConstraints::add_generator( ConstraintGeneratorCOP cst_generator )
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP AddConstraintsCreator::create_mover() const
 // XRW TEMP {
-// XRW TEMP  return protocols::moves::MoverOP( new AddConstraints );
+// XRW TEMP  return utility::pointer::make_shared< AddConstraints >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -173,7 +173,7 @@ std::string AddConstraintsCreator::keyname() const {
 
 protocols::moves::MoverOP
 AddConstraintsCreator::create_mover() const {
-	return protocols::moves::MoverOP( new AddConstraints );
+	return utility::pointer::make_shared< AddConstraints >();
 }
 
 void AddConstraintsCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

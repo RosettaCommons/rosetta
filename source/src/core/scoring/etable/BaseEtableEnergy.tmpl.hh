@@ -413,7 +413,7 @@ BaseEtableEnergy< Derived >::setup_for_minimizing(
 			HH2 = etable_.nblist_dis2_cutoff_HH();
 		}
 
-		nblist = NeighborListOP( new NeighborList( min_map.domain_map(), XX2, XH2, HH2 ) );
+		nblist = utility::pointer::make_shared< NeighborList >( min_map.domain_map(), XX2, XH2, HH2 );
 		nblist->set_auto_update( tolerated_narrow_nblist_motion );
 
 		// this partially becomes the EtableEnergy classes's responsibility
@@ -557,7 +557,7 @@ BaseEtableEnergy< Derived >::get_count_pair_function(
 	using namespace count_pair;
 
 	if ( !calculate_interres( res1, res2 ) ) {
-		return count_pair::CountPairFunctionCOP( count_pair::CountPairFunctionOP( new CountPairNone ) );
+		return utility::pointer::make_shared< CountPairNone >();
 	}
 
 	count_pair::CPCrossoverBehavior crossover = determine_crossover_behavior( res1, res2, pose, sfxn );
@@ -576,7 +576,7 @@ BaseEtableEnergy< Derived >::get_intrares_countpair(
 	using namespace count_pair;
 
 	if ( !calculate_intrares( res ) ) {
-		return count_pair::CountPairFunctionOP( new CountPairNone );
+		return utility::pointer::make_shared< CountPairNone >();
 	}
 
 	CPCrossoverBehavior crossover = determine_crossover_behavior( res, res, pose, sfxn );
@@ -623,7 +623,7 @@ BaseEtableEnergy< Derived >::get_count_pair_function_trie(
 
 	TrieCountPairBaseOP tcpfxn;
 	if ( !calculate_interres( res1, res2 ) ) {
-		tcpfxn = TrieCountPairBaseOP( new TrieCountPairNone() );
+		tcpfxn = utility::pointer::make_shared< TrieCountPairNone >();
 		return tcpfxn;
 	}
 
@@ -635,10 +635,10 @@ BaseEtableEnergy< Derived >::get_count_pair_function_trie(
 		CPCrossoverBehavior crossover = determine_crossover_behavior( res1, res2, pose, sfxn );
 		switch ( crossover ) {
 		case CP_CROSSOVER_3 :
-			tcpfxn = TrieCountPairBaseOP( new TrieCountPair1BC3( conn1, conn2 ) );
+			tcpfxn = utility::pointer::make_shared< TrieCountPair1BC3 >( conn1, conn2 );
 			break;
 		case CP_CROSSOVER_4 :
-			tcpfxn = TrieCountPairBaseOP( new TrieCountPair1BC4( conn1, conn2 ) );
+			tcpfxn = utility::pointer::make_shared< TrieCountPair1BC4 >( conn1, conn2 );
 			break;
 		default :
 			utility_exit_with_message("Data consistency error in BaseEtableEnergy");
@@ -658,7 +658,7 @@ BaseEtableEnergy< Derived >::get_count_pair_function_trie(
 		cpgen->hard_crossover( false );
 		tcpfxn = cpgen;
 	} else {
-		tcpfxn = TrieCountPairBaseOP( new TrieCountPairAll );
+		tcpfxn = utility::pointer::make_shared< TrieCountPairAll >();
 	}
 	return tcpfxn;
 
@@ -818,7 +818,7 @@ BaseEtableEnergy< Derived >::setup_for_minimizing_for_residue_pair(
 
 	// update the existing nblist if it's already present in the min_data object
 	ResiduePairNeighborListOP nblist( utility::pointer::static_pointer_cast< core::scoring::ResiduePairNeighborList > ( pair_data.get_data( min_pair_data_type() ) ));
-	if ( ! nblist ) nblist = ResiduePairNeighborListOP( new ResiduePairNeighborList );
+	if ( ! nblist ) nblist = utility::pointer::make_shared< ResiduePairNeighborList >();
 
 	Real const XX2 = etable_.nblist_dis2_cutoff_XX();
 	Real const XH2 = etable_.nblist_dis2_cutoff_XH();
@@ -1319,7 +1319,7 @@ BaseEtableEnergy< Derived >::setup_for_minimizing_for_residue(
 
 		// update the existing nblist if it's already present in the min_data object
 		ResidueNblistDataOP nbdata( utility::pointer::static_pointer_cast< core::scoring::ResidueNblistData > ( min_data.get_data( min_single_data_type() ) ));
-		if ( ! nbdata ) nbdata = ResidueNblistDataOP( new ResidueNblistData );
+		if ( ! nbdata ) nbdata = utility::pointer::make_shared< ResidueNblistData >();
 
 		Real const XX2 = etable_.nblist_dis2_cutoff_XX();
 		Real const XH2 = etable_.nblist_dis2_cutoff_XH();

@@ -79,7 +79,7 @@ string DbTrajectoryRecorderCreator::keyname() const { // {{{1
 }
 
 MoverOP DbTrajectoryRecorderCreator::create_mover() const { // {{{1
-	return MoverOP( new DbTrajectoryRecorder );
+	return utility::pointer::make_shared< DbTrajectoryRecorder >();
 }
 
 string DbTrajectoryRecorderCreator::mover_name() { // {{{1
@@ -98,11 +98,11 @@ DbTrajectoryRecorder::DbTrajectoryRecorder(Size job_id) // {{{1
 DbTrajectoryRecorder::DbTrajectoryRecorder( DbTrajectoryRecorder const & ) = default;
 
 MoverOP DbTrajectoryRecorder::clone() const { // {{{1
-	return MoverOP( new protocols::canonical_sampling::DbTrajectoryRecorder( *this ) );
+	return utility::pointer::make_shared< protocols::canonical_sampling::DbTrajectoryRecorder >( *this );
 }
 
 MoverOP DbTrajectoryRecorder::fresh_instance() const { // {{{1
-	return MoverOP( new DbTrajectoryRecorder );
+	return utility::pointer::make_shared< DbTrajectoryRecorder >();
 }
 
 string DbTrajectoryRecorder::get_name() const { // {{{1
@@ -155,10 +155,10 @@ void DbTrajectoryRecorder::write_schema_to_db() const { // {{{1
 
 	sessionOP db_session = basic::database::get_db_session();
 
-	Column job_id("job_id", DbDataTypeOP( new DbBigInt() ), false);
-	Column iteration("iteration", DbDataTypeOP( new DbBigInt() ), false);
-	Column score("score", DbDataTypeOP( new DbReal() ), false);
-	Column silent_pose("silent_pose", DbDataTypeOP( new DbText() ), false);
+	Column job_id("job_id", utility::pointer::make_shared< DbBigInt >(), false);
+	Column iteration("iteration", utility::pointer::make_shared< DbBigInt >(), false);
+	Column score("score", utility::pointer::make_shared< DbReal >(), false);
+	Column silent_pose("silent_pose", utility::pointer::make_shared< DbText >(), false);
 
 	PrimaryKey composite_key(make_vector1(job_id, iteration));
 	Schema trajectories("trajectories", composite_key);

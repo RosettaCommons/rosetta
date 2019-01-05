@@ -47,7 +47,7 @@ typedef std::map< Size, AAProbabilities > PerResidueAAProbSet; //Amino acid prob
 core::pack::task::operation::TaskOperationOP
 ResidueProbDesignOperationCreator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new ResidueProbDesignOperation );
+	return utility::pointer::make_shared< ResidueProbDesignOperation >();
 }
 
 void ResidueProbDesignOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -89,7 +89,7 @@ ResidueProbDesignOperation::ResidueProbDesignOperation(ResidueProbDesignOperatio
 core::pack::task::operation::TaskOperationOP
 ResidueProbDesignOperation::clone() const
 {
-	return core::pack::task::operation::TaskOperationOP( new ResidueProbDesignOperation( *this ) );
+	return utility::pointer::make_shared< ResidueProbDesignOperation >( *this );
 }
 
 /*

@@ -46,7 +46,7 @@ utility::pointer::ReferenceCountOP
 AntibodyInfoRMLoader::create_resource(
 	basic::resource_manager::ResourceOptions const &,
 	basic::resource_manager::LocatorID const & locator_id,
-	std::istream & 
+	std::istream &
 ) const
 {
 	using boost::lexical_cast;
@@ -58,25 +58,23 @@ AntibodyInfoRMLoader::create_resource(
 	using utility::excn::Exception;
 	using utility::split;
 	using utility::vector1;
-	
+
 	Size const number_of_points(3);
 	Size const number_of_dimensions(3);
-	
+
 	Size lines_read(0);
 	vector1< xyzVector<Real> > surf_coords(number_of_points);
 
 	string line;
-	while (getline( istream, line ))
-	{
+	while ( getline( istream, line ) )
+			{
 		++lines_read;
-		if (lines_read > number_of_points)
-		{
+		if ( lines_read > number_of_points ) {
 			break;
 		}
-		
+
 		vector1< string > point_coords ( split( line ) );
-		if (point_coords.size() != number_of_dimensions)
-		{
+		if ( point_coords.size() != number_of_dimensions ) {
 			std::ostringstream err;
 			err << "The input coordinates must specify a point in three-dimensional space, but the point on line ";
 			err << lines_read << " of " << locator_id << " has " << point_coords.size() << " coordinates listed.";
@@ -85,31 +83,27 @@ AntibodyInfoRMLoader::create_resource(
 		surf_coords[lines_read] = xyzVector<Real>(lexical_cast<Real>(point_coords[1]),lexical_cast<Real>(point_coords[2]),
 			lexical_cast<Real>(point_coords[3]));
 	}
-	
-	if (lines_read > number_of_points)
-	{
+
+	if ( lines_read > number_of_points ) {
 		throw CREATE_EXCEPTION(Exception,  "AntibodyInfoRMLoader expected to be given exactly three points to " \
 			"define the periodicity of the surface, but more than three points were provided in "  + locator_id + ".");
-	}
-	
-	else if (lines_read < number_of_points)
-	{
+	} else if ( lines_read < number_of_points ) {
 		throw CREATE_EXCEPTION(Exception,  "AntibodyInfoRMLoader expected to be given exactly three points to " \
 			"define the periodicity of the surface, but less than three points were provided in "  + locator_id + ".");
 	}
-	
-	return utility::pointer::ReferenceCountOP( new SurfaceParameters(surf_coords[1], surf_coords[2], surf_coords[3]) );
+
+	return utility::pointer::make_shared< SurfaceParameters >(surf_coords[1], surf_coords[2], surf_coords[3]);
 }
 
 basic::resource_manager::ResourceOptionsOP
 AntibodyInfoRMLoader::default_options() const
 {
-	return basic::resource_manager::ResourceOptionsOP( new SurfaceVectorOptions() );
+	return utility::pointer::make_shared< SurfaceVectorOptions >();
 }
 
 basic::resource_manager::ResourceLoaderOP AntibodyInfoRMLoaderCreator::create_resource_loader() const
 {
-	return basic::resource_manager::ResourceLoaderOP( new AntibodyInfoRMLoader() );
+	return utility::pointer::make_shared< AntibodyInfoRMLoader >();
 }
 
 std::string AntibodyInfoRMLoaderCreator::loader_type() const

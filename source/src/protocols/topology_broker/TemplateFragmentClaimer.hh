@@ -62,7 +62,7 @@ public:
 	TemplateFragmentClaimer( std::string config_file, core::Size fragsize, weights::AbinitioMoverWeightOP weight = nullptr );
 
 	TopologyClaimerOP clone() const override {
-		return TopologyClaimerOP( new TemplateFragmentClaimer( *this ) );
+		return utility::pointer::make_shared< TemplateFragmentClaimer >( *this );
 	}
 
 	void read_config_file( std::string const& file );

@@ -76,13 +76,13 @@ FullatomRelaxMover::~FullatomRelaxMover() = default;
 protocols::moves::MoverOP
 FullatomRelaxMover::clone() const
 {
-	return protocols::moves::MoverOP( new FullatomRelaxMover(*this) );
+	return utility::pointer::make_shared< FullatomRelaxMover >(*this);
 }
 
 protocols::moves::MoverOP
 FullatomRelaxMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new FullatomRelaxMover() );
+	return utility::pointer::make_shared< FullatomRelaxMover >();
 }
 
 void FullatomRelaxMover::setup_defaults()
@@ -117,36 +117,36 @@ void FullatomRelaxMover::setup_movers( const core::pose::Pose & pose )
 	// Setting Common Parameters for movers
 	Size const first_protein_residue = pose.num_jump() + 1;
 
-	move_map_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap() );
+	move_map_ = utility::pointer::make_shared< core::kinematics::MoveMap >();
 	move_map_->set_bb_true_range(first_protein_residue , pose.size());
 	move_map_->set_chi_true_range( first_protein_residue , pose.size() );
 	move_map_->set_jump(pose.num_jump(),false);
 
 	Real tolerance=0.001;
-	small_mover_ = simple_moves::SmallMoverOP( new simple_moves::SmallMover(move_map_,kT_,nmoves_) );
-	small_min_mover_ = minimization_packing::MinMoverOP( new minimization_packing::MinMover(move_map_,
-		score_high_res_,small_min_type_,tolerance,true,false,false) );
+	small_mover_ = utility::pointer::make_shared< simple_moves::SmallMover >(move_map_,kT_,nmoves_);
+	small_min_mover_ = utility::pointer::make_shared< minimization_packing::MinMover >(move_map_,
+		score_high_res_,small_min_type_,tolerance,true,false,false);
 
-	small_sequence_mover_ = moves::SequenceMoverOP( new moves::SequenceMover() );
+	small_sequence_mover_ = utility::pointer::make_shared< moves::SequenceMover >();
 	small_sequence_mover_->add_mover(small_mover_);
 	small_sequence_mover_->add_mover(small_min_mover_);
 
 
-	shear_mover_ = simple_moves::ShearMoverOP( new simple_moves::ShearMover(move_map_,kT_,nmoves_/2) );
+	shear_mover_ = utility::pointer::make_shared< simple_moves::ShearMover >(move_map_,kT_,nmoves_/2);
 
-	shear_min_mover_ = minimization_packing::MinMoverOP( new minimization_packing::MinMover(move_map_,score_high_res_,
-		shear_min_type_,tolerance,true,false,false) );
+	shear_min_mover_ = utility::pointer::make_shared< minimization_packing::MinMover >(move_map_,score_high_res_,
+		shear_min_type_,tolerance,true,false,false);
 
-	shear_sequence_mover_ = moves::SequenceMoverOP( new moves::SequenceMover() );
+	shear_sequence_mover_ = utility::pointer::make_shared< moves::SequenceMover >();
 	shear_sequence_mover_->add_mover(shear_mover_);
 	shear_sequence_mover_->add_mover(shear_min_mover_);
 
-	monte_carlo_ = moves::MonteCarloOP( new moves::MonteCarlo(pose,*score_high_res_,kT_) );
+	monte_carlo_ = utility::pointer::make_shared< moves::MonteCarlo >(pose,*score_high_res_,kT_);
 	//smallTrialMover
-	small_trial_min_mover_ = moves::TrialMoverOP( new moves::TrialMover(small_sequence_mover_,monte_carlo_) );
+	small_trial_min_mover_ = utility::pointer::make_shared< moves::TrialMover >(small_sequence_mover_,monte_carlo_);
 	//shearTrialMover
-	shear_trial_min_mover_ = moves::TrialMoverOP( new moves::TrialMover(shear_sequence_mover_,monte_carlo_) );
-	dock_mcm_ = docking::DockMCMProtocolOP( new docking::DockMCMProtocol(pose.num_jump()) );
+	shear_trial_min_mover_ = utility::pointer::make_shared< moves::TrialMover >(shear_sequence_mover_,monte_carlo_);
+	dock_mcm_ = utility::pointer::make_shared< docking::DockMCMProtocol >(pose.num_jump());
 }
 
 void FullatomRelaxMover::set_smallmovesize(Size scale){

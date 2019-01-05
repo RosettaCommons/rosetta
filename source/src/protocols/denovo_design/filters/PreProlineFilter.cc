@@ -58,7 +58,7 @@ namespace filters {
 
 // XRW TEMP protocols::filters::FilterOP
 // XRW TEMP PreProlineFilterCreator::create_filter() const {
-// XRW TEMP  return protocols::filters::FilterOP( new PreProlineFilter() );
+// XRW TEMP  return utility::pointer::make_shared< PreProlineFilter >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -89,13 +89,13 @@ PreProlineFilter::~PreProlineFilter() = default;
 protocols::filters::FilterOP
 PreProlineFilter::clone() const
 {
-	return protocols::filters::FilterOP( new PreProlineFilter(*this) );
+	return utility::pointer::make_shared< PreProlineFilter >(*this);
 }
 
 protocols::filters::FilterOP
 PreProlineFilter::fresh_instance() const
 {
-	return protocols::filters::FilterOP( new PreProlineFilter() );
+	return utility::pointer::make_shared< PreProlineFilter >();
 }
 
 void
@@ -357,7 +357,7 @@ std::string PreProlineFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 PreProlineFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new PreProlineFilter );
+	return utility::pointer::make_shared< PreProlineFilter >();
 }
 
 void PreProlineFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -158,7 +158,7 @@ make_symmetric_pose(
 
 	//fpd if the input pdb info is valid copy it
 	if ( pose.pdb_info() && pose.pdb_info()->nres() == pose.size() ) {
-		pdb_info = pose::PDBInfoOP( new pose::PDBInfo( *(pose.pdb_info()) ) );
+		pdb_info = utility::pointer::make_shared< pose::PDBInfo >( *(pose.pdb_info()) );
 	}
 	pose.pdb_info( pdb_info );
 
@@ -184,7 +184,7 @@ make_symmetric_pose(
 
 	pose::PDBInfoOP pdb_info_src( pose.pdb_info() );
 	if ( !pose.pdb_info() ) {
-		pdb_info_src = pose::PDBInfoOP( new pose::PDBInfo( pose, true ) );
+		pdb_info_src = utility::pointer::make_shared< pose::PDBInfo >( pose, true );
 	}
 
 	conformation::symmetry::SymmetricConformationOP symm_conf
@@ -336,7 +336,7 @@ void extract_asymmetric_unit(
 
 	pose::PDBInfoCOP pdb_info_src ( pose_in.pdb_info() );
 	if ( !pose_in.pdb_info() ) {
-		pdb_info_src = pose::PDBInfoCOP( pose::PDBInfoOP( new pose::PDBInfo( pose_in, true ) ) );
+		pdb_info_src = utility::pointer::make_shared< pose::PDBInfo >( pose_in, true );
 	}
 
 	core::pose::symmetry::extract_asymmetric_unit_pdb_info( pose_in, pdb_info_src, pdb_info );
@@ -525,7 +525,7 @@ make_symmetric_pdb_info(
 
 	// copy header and remark lines
 	if ( pdb_info_src->header_information() ) {
-		pdb_info_target->header_information( io::HeaderInformationOP( new io::HeaderInformation(*pdb_info_src->header_information()) ));
+		pdb_info_target->header_information( utility::pointer::make_shared< io::HeaderInformation >(*pdb_info_src->header_information()));
 	}
 	pdb_info_target->remarks( pdb_info_src->remarks() );
 }
@@ -540,7 +540,7 @@ extract_asymmetric_unit_pdb_info(
 	using namespace core::conformation::symmetry;
 
 	if ( !is_symmetric(pose) ) {
-		pdb_info_target = pose::PDBInfoOP( new pose::PDBInfo( *pdb_info_src ) );
+		pdb_info_target = utility::pointer::make_shared< pose::PDBInfo >( *pdb_info_src );
 		return;
 	}
 
@@ -587,7 +587,7 @@ extract_asymmetric_unit_pdb_info(
 
 	// copy header and remark lines
 	if ( pdb_info_src->header_information() ) {
-		pdb_info_target->header_information( io::HeaderInformationOP( new io::HeaderInformation(*pdb_info_src->header_information() ) ));
+		pdb_info_target->header_information( utility::pointer::make_shared< io::HeaderInformation >(*pdb_info_src->header_information() ));
 	}
 	pdb_info_target->remarks( pdb_info_src->remarks() );
 }

@@ -98,12 +98,12 @@ OligomericAverageDegreeFilter::~OligomericAverageDegreeFilter() = default;
 
 protocols::filters::FilterOP
 OligomericAverageDegreeFilter::fresh_instance() const{
-	return protocols::filters::FilterOP( new OligomericAverageDegreeFilter() );
+	return utility::pointer::make_shared< OligomericAverageDegreeFilter >();
 }
 
 protocols::filters::FilterOP
 OligomericAverageDegreeFilter::clone() const{
-	return protocols::filters::FilterOP( new OligomericAverageDegreeFilter( *this ) );
+	return utility::pointer::make_shared< OligomericAverageDegreeFilter >( *this );
 }
 
 // @brief getters
@@ -283,7 +283,7 @@ OligomericAverageDegreeFilter::report( std::ostream & out, core::pose::Pose cons
 }
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP OligomericAverageDegreeFilterCreator::create_filter() const { return protocols::filters::FilterOP( new OligomericAverageDegreeFilter ); }
+// XRW TEMP OligomericAverageDegreeFilterCreator::create_filter() const { return utility::pointer::make_shared< OligomericAverageDegreeFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP OligomericAverageDegreeFilterCreator::keyname() const { return "OligomericAverageDegree"; }
@@ -319,7 +319,7 @@ std::string OligomericAverageDegreeFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 OligomericAverageDegreeFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new OligomericAverageDegreeFilter );
+	return utility::pointer::make_shared< OligomericAverageDegreeFilter >();
 }
 
 void OligomericAverageDegreeFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

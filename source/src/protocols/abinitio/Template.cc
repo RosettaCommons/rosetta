@@ -170,7 +170,7 @@ Template::Template(
 	reverse_mapping_.reverse();
 
 	// get strand pairings
-	strand_pairings_ = core::scoring::dssp::StrandPairingSetOP( new core::scoring::dssp::StrandPairingSet( *pose_ ) );
+	strand_pairings_ = utility::pointer::make_shared< core::scoring::dssp::StrandPairingSet >( *pose_ );
 	tr.Info << "strand pairings \n" << *strand_pairings_;
 
 	// for shits and giggles -- write out the pairings for the target
@@ -249,7 +249,7 @@ Template::pick_large_frags( FragSet& frag_set, core::fragment::SingleResidueFrag
 			Size const size( max_size - shrink );
 
 			// a fragment of requested size
-			FragDataCOP frag_type( FragDataOP( new AnnotatedFragData( name(), pos, FragData( srfd_type, size )) ) );
+			FragDataCOP frag_type( utility::pointer::make_shared< AnnotatedFragData >( name(), pos, FragData( srfd_type, size )) );
 
 			// pick this fragment for different frame positions and add to template_frames.
 			for ( Size offset = min_padding; offset <= max_size - size; offset+=pos_step ) {
@@ -367,7 +367,7 @@ void Template::read_constraints( std::string const& cst_file ) {
 }
 
 void Template::_read_constraints( std::string const& cst_file ) const {
-	ConstraintSetOP cstset = ConstraintIO::get_instance()->read_constraints( cst_file, ConstraintSetOP( new ConstraintSet ), *pose_ );
+	ConstraintSetOP cstset = ConstraintIO::get_instance()->read_constraints( cst_file, utility::pointer::make_shared< ConstraintSet >(), *pose_ );
 	using FlatList = utility::vector1<ConstraintCOP>;
 	FlatList all_cst = cstset->get_all_constraints();
 	for ( FlatList::const_iterator it = all_cst.begin(),
@@ -376,7 +376,7 @@ void Template::_read_constraints( std::string const& cst_file ) const {
 		AtomPairConstraintCOP ptr2 = utility::pointer::dynamic_pointer_cast< core::scoring::constraints::AtomPairConstraint const > ( ptr );
 		if ( ptr2 ) {
 			AtomPairConstraintOP valued_cst = utility::pointer::const_pointer_cast< AtomPairConstraint >(ptr2);
-			cstset_.push_back( core::scoring::constraints::Obsolet_NamedAtomPairConstraintOP( new Obsolet_NamedAtomPairConstraint( valued_cst, *pose_ ) ) );
+			cstset_.push_back( utility::pointer::make_shared< Obsolet_NamedAtomPairConstraint >( valued_cst, *pose_ ) );
 		} else {
 			tr.Warning << "constraint found that is not AtomPairConstraint... will be ignored by Template" << std::endl;
 		}

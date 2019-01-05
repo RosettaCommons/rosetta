@@ -302,7 +302,7 @@ void CA_cst_generator(core::pose::Pose & pose,
 								TR <<pos_2 <<" "<< pos << " "<<d <<std::endl;
 
 
-								cst->add_constraint( ConstraintCOP( ConstraintOP( new AtomPairConstraint ( AtomID(res_pos.atom_index("CA"),pos), AtomID(res_pos_2.atom_index("CA"),pos_2), core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc( d, sd ) ) ) ) ) );
+								cst->add_constraint( ConstraintCOP( utility::pointer::make_shared< AtomPairConstraint > ( AtomID(res_pos.atom_index("CA"),pos), AtomID(res_pos_2.atom_index("CA"),pos_2), utility::pointer::make_shared< core::scoring::func::HarmonicFunc >( d, sd ) ) ) );
 							}
 						}
 					}
@@ -394,7 +394,7 @@ void CA_cst_generator(core::pose::Pose & pose,
 							TR <<pos_2 <<" "<< pos << " "<<d <<std::endl;
 
 
-							cst->add_constraint( ConstraintCOP( ConstraintOP( new AtomPairConstraint ( AtomID(res_pos.atom_index("CA"),pos), AtomID(res_pos_2.atom_index("CA"),pos_2), core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc( d, sd ) ) ) ) ) );
+							cst->add_constraint( ConstraintCOP( utility::pointer::make_shared< AtomPairConstraint > ( AtomID(res_pos.atom_index("CA"),pos), AtomID(res_pos_2.atom_index("CA"),pos_2), utility::pointer::make_shared< core::scoring::func::HarmonicFunc >( d, sd ) ) ) );
 
 						}
 					}

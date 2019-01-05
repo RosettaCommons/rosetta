@@ -74,7 +74,7 @@ SizeVectorValuedParameter::~SizeVectorValuedParameter() {}
 ParameterOP
 SizeVectorValuedParameter::clone() const
 {
-	return ParameterOP( SizeVectorValuedParameterOP( new SizeVectorValuedParameter( *this ) ) );
+	return utility::pointer::make_shared< SizeVectorValuedParameter >( *this );
 }
 
 /// @brief Set the value of this parameter.

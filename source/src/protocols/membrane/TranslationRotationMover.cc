@@ -123,13 +123,13 @@ TranslationMover::~TranslationMover() = default;
 /// @brief Create a Clone of this mover
 protocols::moves::MoverOP
 TranslationMover::clone() const {
-	return ( protocols::moves::MoverOP( new TranslationMover( *this ) ) );
+	return ( utility::pointer::make_shared< TranslationMover >( *this ) );
 }
 
 /// @brief Create a Fresh Instance of this Mover
 protocols::moves::MoverOP
 TranslationMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new TranslationMover() );
+	return utility::pointer::make_shared< TranslationMover >();
 }
 
 /// @brief Pase Rosetta Scripts Options for this Mover
@@ -160,7 +160,7 @@ TranslationMover::parse_my_tag(
 /// @brief Create a new copy of this mover
 protocols::moves::MoverOP
 TranslationMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new TranslationMover() );
+	return utility::pointer::make_shared< TranslationMover >();
 }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)
@@ -338,13 +338,13 @@ RotationMover::~RotationMover() = default;
 /// @brief Create a Clone of this mover
 protocols::moves::MoverOP
 RotationMover::clone() const {
-	return ( protocols::moves::MoverOP( new RotationMover( *this ) ) );
+	return ( utility::pointer::make_shared< RotationMover >( *this ) );
 }
 
 /// @brief Create a Fresh Instance of this Mover
 protocols::moves::MoverOP
 RotationMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new RotationMover() );
+	return utility::pointer::make_shared< RotationMover >();
 }
 
 /// @brief Pase Rosetta Scripts Options for this Mover
@@ -365,7 +365,7 @@ RotationMover::parse_my_tag(
 /// @brief Create a new copy of this mover
 protocols::moves::MoverOP
 RotationMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new RotationMover() );
+	return utility::pointer::make_shared< RotationMover >();
 }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)
@@ -548,13 +548,13 @@ TranslationRotationMover::~TranslationRotationMover() = default;
 /// @brief Create a Clone of this mover
 protocols::moves::MoverOP
 TranslationRotationMover::clone() const {
-	return ( protocols::moves::MoverOP( new TranslationRotationMover( *this ) ) );
+	return ( utility::pointer::make_shared< TranslationRotationMover >( *this ) );
 }
 
 /// @brief Create a Fresh Instance of this Mover
 protocols::moves::MoverOP
 TranslationRotationMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new TranslationRotationMover() );
+	return utility::pointer::make_shared< TranslationRotationMover >();
 }
 
 /// @brief Pase Rosetta Scripts Options for this Mover
@@ -575,7 +575,7 @@ TranslationRotationMover::parse_my_tag(
 /// @brief Create a new copy of this mover
 protocols::moves::MoverOP
 TranslationRotationMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new TranslationRotationMover() );
+	return utility::pointer::make_shared< TranslationRotationMover >();
 }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)

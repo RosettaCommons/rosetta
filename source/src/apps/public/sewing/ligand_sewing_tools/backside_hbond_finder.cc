@@ -160,14 +160,14 @@ BacksideHbondFinderMover::BacksideHbondFinderMover(){
 	//core::scoring::etable::Etable etable( * (core::scoring::ScoringManager::get_instance()->etable( options ).lock() ) );
 	//van der Waals terms (fa_rep, fa_atr, fa_sol)
 	if ( options.analytic_etable_evaluation() ) {
-		vdw_energy_= core::scoring::methods::EnergyMethodOP( new core::scoring::etable::AnalyticEtableEnergy(  * (core::scoring::ScoringManager::get_instance()->etable( options ).lock() ), options, false ) );
+		vdw_energy_= utility::pointer::make_shared< core::scoring::etable::AnalyticEtableEnergy >(  * (core::scoring::ScoringManager::get_instance()->etable( options ).lock() ), options, false );
 	} else {
-		vdw_energy_ = core::scoring::methods::EnergyMethodOP( new core::scoring::etable::TableLookupEtableEnergy(  * (core::scoring::ScoringManager::get_instance()->etable( options ).lock() ), options, false ) );
+		vdw_energy_ = utility::pointer::make_shared< core::scoring::etable::TableLookupEtableEnergy >(  * (core::scoring::ScoringManager::get_instance()->etable( options ).lock() ), options, false );
 	}
 	//lk_ball energy
 	//core::scoring::lkball::LK_BallEnergyOP lk_ball( new core::scoring::lkball::LK_BallEnergy(options ) );
 	//hbond energy
-	hbond_ = core::scoring::hbonds::HBondEnergyOP( new core::scoring::hbonds::HBondEnergy( options.hbond_options() ) );
+	hbond_ = utility::pointer::make_shared< core::scoring::hbonds::HBondEnergy >( options.hbond_options() );
 	off_limits_residues_.clear();
 }
 
@@ -179,10 +179,10 @@ BacksideHbondFinderMover::~BacksideHbondFinderMover(){}
 
 //Virtual methods
 protocols::moves::MoverOP BacksideHbondFinderMover::clone() const{
-	return protocols::moves::MoverOP( new BacksideHbondFinderMover(*this) );
+	return utility::pointer::make_shared< BacksideHbondFinderMover >(*this);
 }
 protocols::moves::MoverOP BacksideHbondFinderMover::fresh_instance() const{
-	return protocols::moves::MoverOP( new BacksideHbondFinderMover);
+	return utility::pointer::make_shared< BacksideHbondFinderMover >();
 }
 std::string BacksideHbondFinderMover::get_name() const{
 	return "BacksideHbondFinderMover";

@@ -71,13 +71,13 @@ main( int argc, char * argv [] ) {
 		get_score_function();
 
 		// docking
-		container->add_mover( MoverOP( new AddAssemblyConstraints ) );
-		container->add_mover( MoverOP( new SaneDockingProtocol ) );
+		container->add_mover( utility::pointer::make_shared< AddAssemblyConstraints >() );
+		container->add_mover( utility::pointer::make_shared< SaneDockingProtocol >() );
 
 		// container->add_mover( new CombineChainsMover() );
 
 		// scoring
-		container->add_mover( MoverOP( new PostDockAssemblyScorer("pre_rebuild_dist") ) );
+		container->add_mover( utility::pointer::make_shared< PostDockAssemblyScorer >("pre_rebuild_dist") );
 
 		// loop remodeling
 		if ( option[ OptionKeys::loops::frag_files ].user() ) {
@@ -87,8 +87,8 @@ main( int argc, char * argv [] ) {
 			protocols::loops::read_loop_fragments( frag_libs );
 			MoverOP builder( new AssembleLinkerMover( "quick_ccd", min_loop_size, frag_libs ) );
 			container->add_mover(builder);
-			container->add_mover( MoverOP( new FastRelax( get_score_function() ) ) );
-			container->add_mover( MoverOP( new PostDockAssemblyScorer( "post_rebuild_dist" ) ) );
+			container->add_mover( utility::pointer::make_shared< FastRelax >( get_score_function() ) );
+			container->add_mover( utility::pointer::make_shared< PostDockAssemblyScorer >( "post_rebuild_dist" ) );
 		}
 
 		// execution

@@ -88,7 +88,7 @@ InterGroupInterfaceByVectorSelector::InterGroupInterfaceByVectorSelector(
 
 /// @brief Clone operator.
 /// @details Copy this object and return an owning pointer to the new object.
-ResidueSelectorOP InterGroupInterfaceByVectorSelector::clone() const { return ResidueSelectorOP( new InterGroupInterfaceByVectorSelector(*this) ); }
+ResidueSelectorOP InterGroupInterfaceByVectorSelector::clone() const { return utility::pointer::make_shared< InterGroupInterfaceByVectorSelector >(*this); }
 
 InterGroupInterfaceByVectorSelector::~InterGroupInterfaceByVectorSelector() = default;
 
@@ -329,7 +329,7 @@ InterGroupInterfaceByVectorSelector::set_from_residue_list_string(
 
 ResidueSelectorOP
 InterGroupInterfaceByVectorSelectorCreator::create_residue_selector() const {
-	return ResidueSelectorOP( new InterGroupInterfaceByVectorSelector );
+	return utility::pointer::make_shared< InterGroupInterfaceByVectorSelector >();
 }
 
 std::string

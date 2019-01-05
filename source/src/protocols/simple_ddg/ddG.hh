@@ -62,7 +62,7 @@ public :
 	void translate_by( core::Real translate_by ) { translate_by_ = translate_by; }
 	utility::vector1<core::Size> chain_ids() const { return chain_ids_; }
 	~ddG() override;
-	protocols::moves::MoverOP fresh_instance() const override { return (protocols::moves::MoverOP) protocols::moves::MoverOP( new ddG ); }
+	protocols::moves::MoverOP fresh_instance() const override { return (protocols::moves::MoverOP) utility::pointer::make_shared< ddG >(); }
 	protocols::moves::MoverOP clone() const override;
 	void parse_my_tag(  utility::tag::TagCOP, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const& ) override;
 

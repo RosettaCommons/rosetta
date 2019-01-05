@@ -36,7 +36,7 @@ class WidgetRegistrator
 public:
 
 	WidgetRegistrator() {
-		FACTORY::get_instance()->factory_register( CREATOROP( new CREATOR ) );
+		FACTORY::get_instance()->factory_register( utility::pointer::make_shared< CREATOR >() );
 	}
 
 };

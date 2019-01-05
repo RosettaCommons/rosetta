@@ -69,7 +69,7 @@ ProteinBondGeometryFeatures::ProteinBondGeometryFeatures(){
 		basic::options::option[ basic::options::OptionKeys::score::linear_bonded_potential ]();
 
 	// initialize databases
-	db_ = core::scoring::methods::IdealParametersDatabaseOP( new core::scoring::methods::IdealParametersDatabase(-1.0,-1.0,-1.0,-1.0,-1.0) );
+	db_ = utility::pointer::make_shared< core::scoring::methods::IdealParametersDatabase >(-1.0,-1.0,-1.0,-1.0,-1.0);
 }
 
 ProteinBondGeometryFeatures::ProteinBondGeometryFeatures( ProteinBondGeometryFeatures const & ) :
@@ -99,18 +99,18 @@ ProteinBondGeometryFeatures::write_bond_intrares_angles_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ), false);
-	Column resNum("resNum", DbDataTypeOP( new DbInteger() ), false);
-	Column cenAtmNum("cenAtmNum", DbDataTypeOP( new DbInteger() ), false);
-	Column outAtm1Num("outAtm1Num", DbDataTypeOP( new DbInteger() ), false);
-	Column outAtm2Num("outAtm2Num", DbDataTypeOP( new DbInteger() ), false);
-	Column cenAtmName("cenAtmName", DbDataTypeOP( new DbText() ), false);
-	Column outAtm1Name("outAtm1Name", DbDataTypeOP( new DbText() ), false);
-	Column outAtm2Name("outAtm2Name", DbDataTypeOP( new DbText() ), false);
-	Column ideal("ideal", DbDataTypeOP( new DbReal() ));
-	Column observed("observed", DbDataTypeOP( new DbReal() ));
-	Column difference("difference", DbDataTypeOP( new DbReal() ));
-	Column energy("energy", DbDataTypeOP( new DbReal() ));
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >(), false);
+	Column resNum("resNum", utility::pointer::make_shared< DbInteger >(), false);
+	Column cenAtmNum("cenAtmNum", utility::pointer::make_shared< DbInteger >(), false);
+	Column outAtm1Num("outAtm1Num", utility::pointer::make_shared< DbInteger >(), false);
+	Column outAtm2Num("outAtm2Num", utility::pointer::make_shared< DbInteger >(), false);
+	Column cenAtmName("cenAtmName", utility::pointer::make_shared< DbText >(), false);
+	Column outAtm1Name("outAtm1Name", utility::pointer::make_shared< DbText >(), false);
+	Column outAtm2Name("outAtm2Name", utility::pointer::make_shared< DbText >(), false);
+	Column ideal("ideal", utility::pointer::make_shared< DbReal >());
+	Column observed("observed", utility::pointer::make_shared< DbReal >());
+	Column difference("difference", utility::pointer::make_shared< DbReal >());
+	Column energy("energy", utility::pointer::make_shared< DbReal >());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -147,19 +147,19 @@ ProteinBondGeometryFeatures::write_bond_interres_angles_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ), false);
-	Column cenResNum("cenresNum", DbDataTypeOP( new DbInteger() ), false);
-	Column connResNum("connResNum", DbDataTypeOP( new DbInteger() ), false);
-	Column cenAtmNum("cenAtmNum", DbDataTypeOP( new DbInteger() ), false);
-	Column outAtmCenNum("outAtmCenNum", DbDataTypeOP( new DbInteger() ), false);
-	Column outAtmConnNum("outAtmConnNum", DbDataTypeOP( new DbInteger() ), false);
-	Column cenAtmName("cenAtmName", DbDataTypeOP( new DbText() ), false);
-	Column outAtmCenName("outAtmCenName", DbDataTypeOP( new DbText() ), false);
-	Column outAtmConnName("outAtmConnName", DbDataTypeOP( new DbText() ), false);
-	Column ideal("ideal", DbDataTypeOP( new DbReal() ));
-	Column observed("observed", DbDataTypeOP( new DbReal() ));
-	Column difference("difference", DbDataTypeOP( new DbReal() ));
-	Column energy("energy", DbDataTypeOP( new DbReal() ));
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >(), false);
+	Column cenResNum("cenresNum", utility::pointer::make_shared< DbInteger >(), false);
+	Column connResNum("connResNum", utility::pointer::make_shared< DbInteger >(), false);
+	Column cenAtmNum("cenAtmNum", utility::pointer::make_shared< DbInteger >(), false);
+	Column outAtmCenNum("outAtmCenNum", utility::pointer::make_shared< DbInteger >(), false);
+	Column outAtmConnNum("outAtmConnNum", utility::pointer::make_shared< DbInteger >(), false);
+	Column cenAtmName("cenAtmName", utility::pointer::make_shared< DbText >(), false);
+	Column outAtmCenName("outAtmCenName", utility::pointer::make_shared< DbText >(), false);
+	Column outAtmConnName("outAtmConnName", utility::pointer::make_shared< DbText >(), false);
+	Column ideal("ideal", utility::pointer::make_shared< DbReal >());
+	Column observed("observed", utility::pointer::make_shared< DbReal >());
+	Column difference("difference", utility::pointer::make_shared< DbReal >());
+	Column energy("energy", utility::pointer::make_shared< DbReal >());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -197,16 +197,16 @@ ProteinBondGeometryFeatures::write_bond_intrares_lengths_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ), false);
-	Column resNum("resNum", DbDataTypeOP( new DbInteger() ), false);
-	Column atm1Num("atm1Num", DbDataTypeOP( new DbInteger() ), false);
-	Column atm2Num("atm2Num", DbDataTypeOP( new DbInteger() ), false);
-	Column atm1Name("atm1Name", DbDataTypeOP( new DbText() ), false);
-	Column atm2Name("atm2Name", DbDataTypeOP( new DbText() ), false);
-	Column ideal("ideal", DbDataTypeOP( new DbReal() ));
-	Column observed("observed", DbDataTypeOP( new DbReal() ));
-	Column difference("difference", DbDataTypeOP( new DbReal() ));
-	Column energy("energy", DbDataTypeOP( new DbReal() ));
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >(), false);
+	Column resNum("resNum", utility::pointer::make_shared< DbInteger >(), false);
+	Column atm1Num("atm1Num", utility::pointer::make_shared< DbInteger >(), false);
+	Column atm2Num("atm2Num", utility::pointer::make_shared< DbInteger >(), false);
+	Column atm1Name("atm1Name", utility::pointer::make_shared< DbText >(), false);
+	Column atm2Name("atm2Name", utility::pointer::make_shared< DbText >(), false);
+	Column ideal("ideal", utility::pointer::make_shared< DbReal >());
+	Column observed("observed", utility::pointer::make_shared< DbReal >());
+	Column difference("difference", utility::pointer::make_shared< DbReal >());
+	Column energy("energy", utility::pointer::make_shared< DbReal >());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -241,17 +241,17 @@ ProteinBondGeometryFeatures::write_bond_interres_lengths_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ), false);
-	Column res1Num("res1Num", DbDataTypeOP( new DbInteger() ), false);
-	Column res2Num("res2Num", DbDataTypeOP( new DbInteger() ), false);
-	Column atm1Num("atm1Num", DbDataTypeOP( new DbInteger() ), false);
-	Column atm2Num("atm2Num", DbDataTypeOP( new DbInteger() ), false);
-	Column atm1Name("atm1Name", DbDataTypeOP( new DbText() ), false);
-	Column atm2Name("atm2Name", DbDataTypeOP( new DbText() ), false);
-	Column ideal("ideal", DbDataTypeOP( new DbReal() ));
-	Column observed("observed", DbDataTypeOP( new DbReal() ));
-	Column difference("difference", DbDataTypeOP( new DbReal() ));
-	Column energy("energy", DbDataTypeOP( new DbReal() ));
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >(), false);
+	Column res1Num("res1Num", utility::pointer::make_shared< DbInteger >(), false);
+	Column res2Num("res2Num", utility::pointer::make_shared< DbInteger >(), false);
+	Column atm1Num("atm1Num", utility::pointer::make_shared< DbInteger >(), false);
+	Column atm2Num("atm2Num", utility::pointer::make_shared< DbInteger >(), false);
+	Column atm1Name("atm1Name", utility::pointer::make_shared< DbText >(), false);
+	Column atm2Name("atm2Name", utility::pointer::make_shared< DbText >(), false);
+	Column ideal("ideal", utility::pointer::make_shared< DbReal >());
+	Column observed("observed", utility::pointer::make_shared< DbReal >());
+	Column difference("difference", utility::pointer::make_shared< DbReal >());
+	Column energy("energy", utility::pointer::make_shared< DbReal >());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -296,20 +296,20 @@ ProteinBondGeometryFeatures::write_bond_intrares_torsions_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ), false);
-	Column resNum("resNum", DbDataTypeOP( new DbInteger() ), false);
-	Column atm1Num("atm1Num", DbDataTypeOP( new DbInteger() ), false);
-	Column atm2Num("atm2Num", DbDataTypeOP( new DbInteger() ), false);
-	Column atm3Num("atm3Num", DbDataTypeOP( new DbInteger() ), false);
-	Column atm4Num("atm4Num", DbDataTypeOP( new DbInteger() ), false);
-	Column atm1Name("atm1Name", DbDataTypeOP( new DbText() ), false);
-	Column atm2Name("atm2Name", DbDataTypeOP( new DbText() ), false);
-	Column atm3Name("atm3Name", DbDataTypeOP( new DbText() ), false);
-	Column atm4Name("atm4Name", DbDataTypeOP( new DbText() ), false);
-	Column ideal("ideal", DbDataTypeOP( new DbReal() ), false);
-	Column observed("observed", DbDataTypeOP( new DbReal() ), false);
-	Column difference("difference", DbDataTypeOP( new DbReal() ), false);
-	Column energy("energy", DbDataTypeOP( new DbReal() ), false);
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >(), false);
+	Column resNum("resNum", utility::pointer::make_shared< DbInteger >(), false);
+	Column atm1Num("atm1Num", utility::pointer::make_shared< DbInteger >(), false);
+	Column atm2Num("atm2Num", utility::pointer::make_shared< DbInteger >(), false);
+	Column atm3Num("atm3Num", utility::pointer::make_shared< DbInteger >(), false);
+	Column atm4Num("atm4Num", utility::pointer::make_shared< DbInteger >(), false);
+	Column atm1Name("atm1Name", utility::pointer::make_shared< DbText >(), false);
+	Column atm2Name("atm2Name", utility::pointer::make_shared< DbText >(), false);
+	Column atm3Name("atm3Name", utility::pointer::make_shared< DbText >(), false);
+	Column atm4Name("atm4Name", utility::pointer::make_shared< DbText >(), false);
+	Column ideal("ideal", utility::pointer::make_shared< DbReal >(), false);
+	Column observed("observed", utility::pointer::make_shared< DbReal >(), false);
+	Column difference("difference", utility::pointer::make_shared< DbReal >(), false);
+	Column energy("energy", utility::pointer::make_shared< DbReal >(), false);
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -814,7 +814,7 @@ std::string ProteinBondGeometryFeaturesCreator::type_name() const {
 
 protocols::features::FeaturesReporterOP
 ProteinBondGeometryFeaturesCreator::create_features_reporter() const {
-	return protocols::features::FeaturesReporterOP( new ProteinBondGeometryFeatures );
+	return utility::pointer::make_shared< ProteinBondGeometryFeatures >();
 }
 
 void ProteinBondGeometryFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

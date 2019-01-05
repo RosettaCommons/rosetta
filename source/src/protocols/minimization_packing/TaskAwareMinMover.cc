@@ -62,7 +62,7 @@ namespace minimization_packing {
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP TaskAwareMinMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new TaskAwareMinMover );
+// XRW TEMP  return utility::pointer::make_shared< TaskAwareMinMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -113,7 +113,7 @@ void TaskAwareMinMover::apply( core::pose::Pose & pose ){
 	if ( base_movemap_ ) {
 		mm = base_movemap_->clone();
 	} else {
-		mm = MoveMapOP( new MoveMap );
+		mm = utility::pointer::make_shared< MoveMap >();
 	}
 
 	//generate task
@@ -151,8 +151,8 @@ void TaskAwareMinMover::apply( core::pose::Pose & pose ){
 // XRW TEMP  return TaskAwareMinMover::mover_name();
 // XRW TEMP }
 
-protocols::moves::MoverOP TaskAwareMinMover::fresh_instance() const { return protocols::moves::MoverOP( new TaskAwareMinMover ); }
-protocols::moves::MoverOP TaskAwareMinMover::clone() const { return protocols::moves::MoverOP( new protocols::minimization_packing::TaskAwareMinMover( *this ) ); }
+protocols::moves::MoverOP TaskAwareMinMover::fresh_instance() const { return utility::pointer::make_shared< TaskAwareMinMover >(); }
+protocols::moves::MoverOP TaskAwareMinMover::clone() const { return utility::pointer::make_shared< protocols::minimization_packing::TaskAwareMinMover >( *this ); }
 
 /// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void
@@ -173,7 +173,7 @@ TaskAwareMinMover::parse_my_tag(
 		}
 	}
 	jump_ = tag->getOption< bool >( "jump", false );
-	minmover_ = protocols::minimization_packing::MinMoverOP( new MinMover );
+	minmover_ = utility::pointer::make_shared< MinMover >();
 	// call to MinMover::parse_my_tag avoided here to prevent collision of movemap tag options
 	minmover_->parse_opts( tag, datamap, filters, movers );
 	parse_task_operations( tag, datamap, filters, movers, pose );
@@ -235,7 +235,7 @@ std::string TaskAwareMinMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 TaskAwareMinMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new TaskAwareMinMover );
+	return utility::pointer::make_shared< TaskAwareMinMover >();
 }
 
 void TaskAwareMinMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

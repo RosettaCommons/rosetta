@@ -74,7 +74,7 @@ void RestrictToInterfaceOperation::make_calculator( core::Size upper_chain, core
 			<< " already exists, this is hopefully correct for your purposes" << std::endl;
 	} else {
 		using core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator;
-		CalculatorFactory::Instance().register_calculator( calculator_name_, PoseMetricCalculatorOP( new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator( upper_chain, lower_chain ) ) );
+		CalculatorFactory::Instance().register_calculator( calculator_name_, utility::pointer::make_shared< core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator >( upper_chain, lower_chain ) );
 	}
 }
 
@@ -89,7 +89,7 @@ RestrictToInterfaceOperation::~RestrictToInterfaceOperation() = default;
 /// @details be warned if you use clone that you'll not get a new interface calculator
 core::pack::task::operation::TaskOperationOP RestrictToInterfaceOperation::clone() const
 {
-	return core::pack::task::operation::TaskOperationOP( new RestrictToInterfaceOperation( *this ) );
+	return utility::pointer::make_shared< RestrictToInterfaceOperation >( *this );
 }
 
 void
@@ -111,7 +111,7 @@ void RestrictToInterfaceOperation::provide_xml_schema( utility::tag::XMLSchemaDe
 core::pack::task::operation::TaskOperationOP
 RestrictToInterfaceOperationCreator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new RestrictToInterfaceOperation );
+	return utility::pointer::make_shared< RestrictToInterfaceOperation >();
 }
 
 void RestrictToInterfaceOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

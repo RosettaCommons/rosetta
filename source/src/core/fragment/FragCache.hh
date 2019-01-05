@@ -48,7 +48,7 @@ class MapCacheUnit : public core::fragment::BaseCacheUnit {
 	typedef std::map< core::Size, T > TMap;
 public:
 	BaseCacheUnitOP clone() const override {
-		return BaseCacheUnitOP( new MapCacheUnit<T> );
+		return utility::pointer::make_shared< MapCacheUnit<T> >();
 	};
 
 	void remap_value( BaseCacheUnit const& source, Size source_id, Size new_id ) override {
@@ -86,7 +86,7 @@ class VectorCacheUnit : public core::fragment::BaseCacheUnit {
 	typedef utility::vector1< T > TVector;
 public:
 	BaseCacheUnitOP clone() const override {
-		return BaseCacheUnitOP( new VectorCacheUnit<T> );
+		return utility::pointer::make_shared< VectorCacheUnit<T> >();
 	}
 
 	void remap_value( BaseCacheUnit const& source, Size source_id, Size new_id ) override {

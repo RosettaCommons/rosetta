@@ -149,7 +149,7 @@ MembraneSpanTermZConstraint::same_type_as_me( Constraint const & other ) const
 
 ConstraintOP
 MembraneSpanTermZConstraint::remapped_clone( pose::Pose const& pose, pose::Pose const&, id::SequenceMappingCOP ) const {
-	return ConstraintOP( new MembraneSpanTermZConstraint( pose ) );
+	return utility::pointer::make_shared< MembraneSpanTermZConstraint >( pose );
 }
 
 

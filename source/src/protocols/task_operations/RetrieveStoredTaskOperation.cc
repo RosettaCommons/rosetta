@@ -64,7 +64,7 @@ using namespace utility::tag;
 core::pack::task::operation::TaskOperationOP
 RetrieveStoredTaskOperationCreator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new RetrieveStoredTaskOperation );
+	return utility::pointer::make_shared< RetrieveStoredTaskOperation >();
 }
 
 void RetrieveStoredTaskOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -86,7 +86,7 @@ RetrieveStoredTaskOperation::~RetrieveStoredTaskOperation() = default;
 // @brief copy constructor
 core::pack::task::operation::TaskOperationOP RetrieveStoredTaskOperation::clone() const
 {
-	return core::pack::task::operation::TaskOperationOP( new RetrieveStoredTaskOperation( *this ) );
+	return utility::pointer::make_shared< RetrieveStoredTaskOperation >( *this );
 }
 
 // @brief apply function

@@ -177,7 +177,7 @@ PDBPoseInputter::list_options_read(
 
 PoseInputterOP PDBPoseInputterCreator::create_inputter() const
 {
-	return PoseInputterOP( new PDBPoseInputter );
+	return utility::pointer::make_shared< PDBPoseInputter >();
 }
 
 std::string PDBPoseInputterCreator::keyname() const

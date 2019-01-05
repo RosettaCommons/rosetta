@@ -42,7 +42,7 @@ methods::EnergyMethodOP
 WaterAdductHBondEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new WaterAdductHBondEnergy );
+	return utility::pointer::make_shared< WaterAdductHBondEnergy >();
 }
 
 ScoreTypes
@@ -54,7 +54,7 @@ WaterAdductHBondEnergyCreator::score_types_for_method() const {
 
 
 WaterAdductHBondEnergy::WaterAdductHBondEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new WaterAdductHBondEnergyCreator ) ),
+	parent( utility::pointer::make_shared< WaterAdductHBondEnergyCreator >() ),
 	potential_( ScoringManager::get_instance()->get_WaterAdductHBondPotential() )
 {}
 
@@ -63,7 +63,7 @@ WaterAdductHBondEnergy::WaterAdductHBondEnergy() :
 EnergyMethodOP
 WaterAdductHBondEnergy::clone() const
 {
-	return EnergyMethodOP( new WaterAdductHBondEnergy() );
+	return utility::pointer::make_shared< WaterAdductHBondEnergy >();
 }
 
 

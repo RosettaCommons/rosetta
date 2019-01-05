@@ -183,7 +183,7 @@ rebuild_disulfide( core::pose::Pose & pose,
 		packer_score = scoring::get_score_function();
 	}
 	if ( !mm ) {
-		mm = MoveMapOP( new MoveMap );
+		mm = utility::pointer::make_shared< MoveMap >();
 		mm->set_bb( true );
 		mm->set_chi( true );
 	}

@@ -126,7 +126,7 @@ RemodelDesignMover::RemodelDesignMover( RemodelData const & remodel_data,
 		TR.Warning << "union_of_intervals_containing_undefined_positions() returned empty set. NeighborhoodByDistanceCalculator could return undefined results." << std::endl;
 	}
 
-	CalculatorFactory::Instance().register_calculator( "neighborhood_calc", PoseMetricCalculatorOP( new NeighborhoodByDistanceCalculator( und_pos ) ) );
+	CalculatorFactory::Instance().register_calculator( "neighborhood_calc", utility::pointer::make_shared< NeighborhoodByDistanceCalculator >( und_pos ) );
 
 }
 
@@ -135,12 +135,12 @@ RemodelDesignMover::~RemodelDesignMover()= default;
 
 /// @brief clone this object
 RemodelDesignMover::MoverOP RemodelDesignMover::clone() const {
-	return RemodelDesignMover::MoverOP( new RemodelDesignMover( *this ) );
+	return utility::pointer::make_shared< RemodelDesignMover >( *this );
 }
 
 /// @brief create this type of object
 RemodelDesignMover::MoverOP RemodelDesignMover::fresh_instance() const {
-	return RemodelDesignMover::MoverOP( new RemodelDesignMover() );
+	return utility::pointer::make_shared< RemodelDesignMover >();
 }
 
 /// @brief packer task accessor
@@ -323,7 +323,7 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
 
 	CalculatorFactory::Instance().register_calculator(
 		"reducetask_calc",
-		PoseMetricCalculatorOP( new NeighborhoodByDistanceCalculator( positionList ) )
+		utility::pointer::make_shared< NeighborhoodByDistanceCalculator >( positionList )
 	);
 
 	//compute the bsasa values for each position
@@ -567,7 +567,7 @@ core::Real build_and_score_disulfide(core::pose::Pose & blank_pose, core::scorin
 	core::conformation::Residue old_res1 = blank_pose.residue(res1);
 	core::conformation::Residue old_res2 = blank_pose.residue(res2);
 
-	core::kinematics::MoveMapOP mm = core::kinematics::MoveMapOP( new core::kinematics::MoveMap());
+	core::kinematics::MoveMapOP mm = utility::pointer::make_shared< core::kinematics::MoveMap >();
 	mm->set_bb(relax_bb);
 	mm->set_chi(true);
 	//utility::vector1<std::pair<core::Size, core::Size> > disulf;
@@ -699,7 +699,7 @@ bool RemodelDesignMover::find_disulfides_in_the_neighborhood(Pose & pose, utilit
 			TR << "Mutating residue " << i << " to ALA" << std::endl;
 		}
 	}
-	core::scoring::ScoreFunctionOP sfxn_disulfide_only = core::scoring::ScoreFunctionOP(new core::scoring::ScoreFunction());
+	core::scoring::ScoreFunctionOP sfxn_disulfide_only = utility::pointer::make_shared< core::scoring::ScoreFunction >();
 	sfxn_disulfide_only->set_weight(core::scoring::dslf_fa13, 1.0);
 
 
@@ -853,7 +853,7 @@ void RemodelDesignMover::mode1_packertask(Pose & pose){ // auto loop only
 	if (!option[OptionKeys::remodel::boundary_cutoff].user()){  // set default values if not set by user -- need to overwrite the default switch from neighbor counts to SASA
 	option[OptionKeys::remodel::boundary_cutoff].value(40);
 	}
-	TF->push_back( core::pack::task::operation::TaskOperationCOP( new protocols::flxbb::LayerDesignOperation( true, true, true, true, true, Real( option[OptionKeys::remodel::core_cutoff]() ), Real( option[OptionKeys::remodel::boundary_cutoff]() ), std::string( option[OptionKeys::remodel::coreAA]() ), std::string( option[OptionKeys::remodel::boundaryAA]() ), std::string( option[OptionKeys::remodel::surfaceAA]() ) )));
+	TF->push_back( utility::pointer::make_shared< protocols::flxbb::LayerDesignOperation >( true, true, true, true, true, Real( option[OptionKeys::remodel::core_cutoff]() ), Real( option[OptionKeys::remodel::boundary_cutoff]() ), std::string( option[OptionKeys::remodel::coreAA]() ), std::string( option[OptionKeys::remodel::boundaryAA]() ), std::string( option[OptionKeys::remodel::surfaceAA]() ) ));
 	}
 	*/
 	//create the real task
@@ -885,7 +885,7 @@ void RemodelDesignMover::mode1_1_packertask(Pose & pose){ // auto loop only
 	if (!option[OptionKeys::remodel::boundary_cutoff].user()){  // set default values if not set by user -- need to overwrite the default switch from neighbor counts to SASA
 	option[OptionKeys::remodel::boundary_cutoff].value(40);
 	}
-	TF->push_back( core::pack::task::operation::TaskOperationCOP( new protocols::flxbb::LayerDesignOperation( true, true, true, true, true, Real( option[OptionKeys::remodel::core_cutoff]() ), Real( option[OptionKeys::remodel::boundary_cutoff]() ), std::string( option[OptionKeys::remodel::coreAA]() ), std::string( option[OptionKeys::remodel::boundaryAA]() ), std::string( option[OptionKeys::remodel::surfaceAA]() ) )));
+	TF->push_back( utility::pointer::make_shared< protocols::flxbb::LayerDesignOperation >( true, true, true, true, true, Real( option[OptionKeys::remodel::core_cutoff]() ), Real( option[OptionKeys::remodel::boundary_cutoff]() ), std::string( option[OptionKeys::remodel::coreAA]() ), std::string( option[OptionKeys::remodel::boundaryAA]() ), std::string( option[OptionKeys::remodel::surfaceAA]() ) ));
 	}
 	*/
 	//create the real task
@@ -917,7 +917,7 @@ void RemodelDesignMover::mode2_packertask(Pose & pose){ // auto loop with design
 	if (!option[OptionKeys::remodel::boundary_cutoff].user()){  // set default values if not set by user -- need to overwrite the default switch from neighbor counts to SASA
 	option[OptionKeys::remodel::boundary_cutoff].value(40);
 	}
-	TF->push_back( core::pack::task::operation::TaskOperationCOP( new protocols::flxbb::LayerDesignOperation( true, true, true, true, true, Real( option[OptionKeys::remodel::core_cutoff]() ), Real( option[OptionKeys::remodel::boundary_cutoff]() ), std::string( option[OptionKeys::remodel::coreAA]() ), std::string( option[OptionKeys::remodel::boundaryAA]() ), std::string( option[OptionKeys::remodel::surfaceAA]() ) )));
+	TF->push_back( utility::pointer::make_shared< protocols::flxbb::LayerDesignOperation >( true, true, true, true, true, Real( option[OptionKeys::remodel::core_cutoff]() ), Real( option[OptionKeys::remodel::boundary_cutoff]() ), std::string( option[OptionKeys::remodel::coreAA]() ), std::string( option[OptionKeys::remodel::boundaryAA]() ), std::string( option[OptionKeys::remodel::surfaceAA]() ) ));
 	}
 	*/
 	//create the real task
@@ -948,7 +948,7 @@ void RemodelDesignMover::mode3_packertask(Pose & pose){ // auto loop with repack
 	if (!option[OptionKeys::remodel::boundary_cutoff].user()){  // set default values if not set by user -- need to overwrite the default switch from neighbor counts to SASA
 	option[OptionKeys::remodel::boundary_cutoff].value(40);
 	}
-	TF->push_back( core::pack::task::operation::TaskOperationCOP( new protocols::flxbb::LayerDesignOperation( true, true, true, true, true, Real( option[OptionKeys::remodel::core_cutoff]() ), Real( option[OptionKeys::remodel::boundary_cutoff]() ), std::string( option[OptionKeys::remodel::coreAA]() ), std::string( option[OptionKeys::remodel::boundaryAA]() ), std::string( option[OptionKeys::remodel::surfaceAA]() ) )));
+	TF->push_back( utility::pointer::make_shared< protocols::flxbb::LayerDesignOperation >( true, true, true, true, true, Real( option[OptionKeys::remodel::core_cutoff]() ), Real( option[OptionKeys::remodel::boundary_cutoff]() ), std::string( option[OptionKeys::remodel::coreAA]() ), std::string( option[OptionKeys::remodel::boundaryAA]() ), std::string( option[OptionKeys::remodel::surfaceAA]() ) ));
 	}
 	*/
 	//create the real task
@@ -1037,11 +1037,11 @@ void RemodelDesignMover::mode5_packertask(Pose & pose){ // manual with auto desi
 	if ( option[OptionKeys::remodel::design_around_ligand].user() ) {
 		//find the ligand position
 		ligand_positions.insert(asym_length);
-		CalculatorFactory::Instance().register_calculator( "neighborhood_calc", PoseMetricCalculatorOP( new NeighborhoodByDistanceCalculator( ligand_positions ) ));
+		CalculatorFactory::Instance().register_calculator( "neighborhood_calc", utility::pointer::make_shared< NeighborhoodByDistanceCalculator >( ligand_positions ));
 		//debug run_calculator(pose, "neighborhood_calc", "central_residues", additional_sites);
 		run_calculator(pose, "neighborhood_calc", "neighbors", additional_sites);
 	} else {
-		CalculatorFactory::Instance().register_calculator( "neighborhood_calc", PoseMetricCalculatorOP( new NeighborhoodByDistanceCalculator( manual_positions ) ));
+		CalculatorFactory::Instance().register_calculator( "neighborhood_calc", utility::pointer::make_shared< NeighborhoodByDistanceCalculator >( manual_positions ));
 		//debug run_calculator(pose, "neighborhood_calc", "central_residues", additional_sites);
 		run_calculator(pose, "neighborhood_calc", "neighbors", additional_sites);
 	}

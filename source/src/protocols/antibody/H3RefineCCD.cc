@@ -165,7 +165,7 @@ H3RefineCCD::~H3RefineCCD() = default;
 
 //clone
 protocols::moves::MoverOP H3RefineCCD::clone() const {
-	return( protocols::moves::MoverOP( new H3RefineCCD() ) );
+	return( utility::pointer::make_shared< H3RefineCCD >() );
 }
 
 
@@ -199,7 +199,7 @@ void H3RefineCCD::finalize_setup( core::pose::Pose & pose ) {
 	}
 
 	// the movemap of the h3 loop, if flank_relax_=false, flank_cdrh3_map_=cdrh3_map_
-	cdrh3_map_ = core::kinematics::MoveMapOP( new kinematics::MoveMap() );
+	cdrh3_map_ = utility::pointer::make_shared< kinematics::MoveMap >();
 	cdrh3_map_->set_jump( 1, false );
 	cdrh3_map_->set_bb( allow_bb_move );
 	cdrh3_map_->set_chi( allow_repack_ );
@@ -212,7 +212,7 @@ void H3RefineCCD::finalize_setup( core::pose::Pose & pose ) {
 			}
 		}
 
-		flank_cdrh3_map_ = core::kinematics::MoveMapOP( new kinematics::MoveMap() );
+		flank_cdrh3_map_ = utility::pointer::make_shared< kinematics::MoveMap >();
 		flank_cdrh3_map_->set_jump( 1, false );
 		flank_cdrh3_map_->set_bb( flank_allow_bb_move );
 		flank_cdrh3_map_->set_chi( allow_repack_ );
@@ -236,18 +236,18 @@ void H3RefineCCD::finalize_setup( core::pose::Pose & pose ) {
 
 
 	// the Monte Carlo mover
-	mc_ = moves::MonteCarloOP( new protocols::moves::MonteCarlo( pose, *highres_scorefxn_, init_temp_ ) );
+	mc_ = utility::pointer::make_shared< protocols::moves::MonteCarlo >( pose, *highres_scorefxn_, init_temp_ );
 
 
 	// setup some easy objects to change the fold trees
 	// if not flank_relax =false, then   change_FT_to_flankloop_ = change_FT_to_simpleloop_
 	simple_fold_tree( pose, loop_begin_ - 1, cutpoint_, loop_end_ + 1 );
-	change_FT_to_simpleloop_ = moves::ChangeFoldTreeMoverOP( new ChangeFoldTreeMover( pose.fold_tree() ) );
+	change_FT_to_simpleloop_ = utility::pointer::make_shared< ChangeFoldTreeMover >( pose.fold_tree() );
 
 	if ( flank_relax_ ) {
 		simple_fold_tree( pose, loop_begin_ - flank_size_ - 1, cutpoint_, loop_end_ + flank_size_ + 1 );
 	}
-	change_FT_to_flankloop_ = moves::ChangeFoldTreeMoverOP( new ChangeFoldTreeMover( pose.fold_tree() ) );
+	change_FT_to_flankloop_ = utility::pointer::make_shared< ChangeFoldTreeMover >( pose.fold_tree() );
 
 	// cut points variants for chain-break scoring
 	loops::remove_cutpoint_variants( pose, true ); //remove first
@@ -255,10 +255,10 @@ void H3RefineCCD::finalize_setup( core::pose::Pose & pose ) {
 
 
 	// pack the loop and its neighboring residues
-	loop_repack_ = minimization_packing::PackRotamersMoverOP( new PackRotamersMover(highres_scorefxn_) );
+	loop_repack_ = utility::pointer::make_shared< PackRotamersMover >(highres_scorefxn_);
 	tf_ = setup_packer_task( start_pose_);
 	( *highres_scorefxn_ )( pose );
-	tf_->push_back( TaskOperationCOP( new RestrictToInterface( allow_repack_ ) ) );
+	tf_->push_back( utility::pointer::make_shared< RestrictToInterface >( allow_repack_ ) );
 	loop_repack_->task_factory(tf_);
 	//loop_repack_->apply( pose_in );
 
@@ -282,11 +282,11 @@ void H3RefineCCD::finalize_setup( core::pose::Pose & pose ) {
 
 
 	// minimization mover
-	loop_min_mover_ = minimization_packing::MinMoverOP( new MinMover( flank_cdrh3_map_, highres_scorefxn_, minimization_type_, min_tolerance_, true /*nb_list*/ ) );
+	loop_min_mover_ = utility::pointer::make_shared< MinMover >( flank_cdrh3_map_, highres_scorefxn_, minimization_type_, min_tolerance_, true /*nb_list*/ );
 
 
 	// put everything into a sequence mover
-	wiggle_cdr_h3_ = moves::SequenceMoverOP( new SequenceMover() ) ;
+	wiggle_cdr_h3_ = utility::pointer::make_shared< SequenceMover >() ;
 	wiggle_cdr_h3_->add_mover( change_FT_to_simpleloop_ );
 	wiggle_cdr_h3_->add_mover( small_mover );
 	wiggle_cdr_h3_->add_mover( shear_mover );
@@ -330,7 +330,7 @@ void H3RefineCCD::apply( pose::Pose & pose ) {
 		select_loop_residues( pose, the_loop_, include_neighbors_, allow_repack_, neighbor_dist_);
 		tf_ = setup_packer_task( start_pose_ );
 		( *highres_scorefxn_ )( pose );
-		tf_->push_back( TaskOperationCOP( new RestrictToInterface( allow_repack_ ) ) );
+		tf_->push_back( utility::pointer::make_shared< RestrictToInterface >( allow_repack_ ) );
 		RotamerTrialsMoverOP pack_rottrial( new RotamerTrialsMover( highres_scorefxn_, tf_ ) );
 		pack_rottrial->apply( pose );
 
@@ -358,7 +358,7 @@ void H3RefineCCD::apply( pose::Pose & pose ) {
 				select_loop_residues( pose, the_loop_, include_neighbors_, allow_repack_, neighbor_dist_);
 				tf_ = setup_packer_task( start_pose_);
 				( *highres_scorefxn_ )( pose );
-				tf_->push_back( TaskOperationCOP( new RestrictToInterface( allow_repack_ ) ) );
+				tf_->push_back( utility::pointer::make_shared< RestrictToInterface >( allow_repack_ ) );
 				pack_rottrial->task_factory(tf_);
 				pack_rottrial->apply( pose );
 
@@ -400,10 +400,10 @@ void H3RefineCCD::apply( pose::Pose & pose ) {
 
 				if ( numeric::mod(j,Size(20))==0 || j==inner_cycles_ ) {
 					// repack trial
-					loop_repack_ = minimization_packing::PackRotamersMoverOP( new PackRotamersMover( highres_scorefxn_ ) );
+					loop_repack_ = utility::pointer::make_shared< PackRotamersMover >( highres_scorefxn_ );
 					tf_ = setup_packer_task( start_pose_);
 					( *highres_scorefxn_ )( pose );
-					tf_->push_back( TaskOperationCOP( new RestrictToInterface( allow_repack_ ) ) );
+					tf_->push_back( utility::pointer::make_shared< RestrictToInterface >( allow_repack_ ) );
 					loop_repack_->task_factory( tf_ );
 					loop_repack_->apply( pose );
 					mc_->boltzmann( pose );
@@ -431,7 +431,7 @@ void H3RefineCCD::apply( pose::Pose & pose ) {
 
 
 void H3RefineCCD::set_task_factory(pack::task::TaskFactoryCOP tf) {
-	tf_ = core::pack::task::TaskFactoryOP( new pack::task::TaskFactory(*tf) );
+	tf_ = utility::pointer::make_shared< pack::task::TaskFactory >(*tf);
 }
 
 

@@ -37,12 +37,12 @@ public:
 	void setUp(){
 		core_init();
 		segment_vector_ = hashing::ModelFileReader::read_model_file( "protocols/sewing/inputs/test.segments" );
-		assembly_ = data_storage::SmartAssemblyOP( new data_storage::SmartAssembly( segment_vector_ ) );
+		assembly_ = utility::pointer::make_shared< data_storage::SmartAssembly >( segment_vector_ );
 		core::pose::Pose pose_;
 		core::import_pose::pose_from_file( pose_, "protocols/sewing/inputs/helix_with_zinc.pdb" );
 	}
 	void tearDown(){
-		assembly_ = data_storage::SmartAssemblyOP( new data_storage::SmartAssembly( segment_vector_ ) );
+		assembly_ = utility::pointer::make_shared< data_storage::SmartAssembly >( segment_vector_ );
 	}
 
 	void test_ligand_assembly_scorer(){

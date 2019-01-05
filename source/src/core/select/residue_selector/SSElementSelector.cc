@@ -60,7 +60,7 @@ SSElementSelector::~SSElementSelector() = default;
 
 SSElementSelector::SSElementSelector( SSElementSelector const &) = default;
 
-ResidueSelectorOP SSElementSelector::clone() const { return ResidueSelectorOP( new SSElementSelector(*this) ); }
+ResidueSelectorOP SSElementSelector::clone() const { return utility::pointer::make_shared< SSElementSelector >(*this); }
 
 utility::vector1<SSElementSelector::SSElement> SSElementSelector::parse_ss(core::pose::Pose const & pose) const{
 	utility::vector1<SSElementSelector::SSElement> ss_elements;
@@ -306,7 +306,7 @@ SSElementSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 
 ResidueSelectorOP
 SSElementSelectorCreator::create_residue_selector() const {
-	return ResidueSelectorOP( new SSElementSelector );
+	return utility::pointer::make_shared< SSElementSelector >();
 }
 
 std::string

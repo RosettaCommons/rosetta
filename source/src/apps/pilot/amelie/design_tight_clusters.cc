@@ -671,9 +671,9 @@ int main( int argc, char * argv [] )
 
 		// read in a resfile, if specified -- with this the user may disable regions from cluster detection, e.g. those that are too close to a HETATM (which may not be visible in runs with -ignore_unrecognized_res)
 		core::pack::task::TaskFactoryOP input_task_factory( new core::pack::task::TaskFactory );
-		input_task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
+		input_task_factory->push_back( utility::pointer::make_shared< core::pack::task::operation::InitializeFromCommandline >() );
 		if ( option[ packing::resfile ].user() ) {
-			input_task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::ReadResfile ) );
+			input_task_factory->push_back( utility::pointer::make_shared< core::pack::task::operation::ReadResfile >() );
 		} else {
 			core::pack::task::operation::RestrictToRepackingOP rtrop( new core::pack::task::operation::RestrictToRepacking ); // make sure that by default everything is allowed to be repacked
 			input_task_factory->push_back( rtrop );

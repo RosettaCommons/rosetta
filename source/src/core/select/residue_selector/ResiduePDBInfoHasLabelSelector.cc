@@ -52,7 +52,7 @@ ResiduePDBInfoHasLabelSelector::ResiduePDBInfoHasLabelSelector( ResiduePDBInfoHa
 
 /// @brief Clone operator.
 /// @details Copy this object and return an owning pointer to the new object.
-ResidueSelectorOP ResiduePDBInfoHasLabelSelector::clone() const { return ResidueSelectorOP( new ResiduePDBInfoHasLabelSelector(*this) ); }
+ResidueSelectorOP ResiduePDBInfoHasLabelSelector::clone() const { return utility::pointer::make_shared< ResiduePDBInfoHasLabelSelector >(*this); }
 
 ResiduePDBInfoHasLabelSelector::ResiduePDBInfoHasLabelSelector( std::string const & label_str ):
 	ResidueSelector(),
@@ -134,7 +134,7 @@ ResiduePDBInfoHasLabelSelector::provide_xml_schema( utility::tag::XMLSchemaDefin
 
 ResidueSelectorOP
 ResiduePDBInfoHasLabelSelectorCreator::create_residue_selector() const {
-	return ResidueSelectorOP( new ResiduePDBInfoHasLabelSelector );
+	return utility::pointer::make_shared< ResiduePDBInfoHasLabelSelector >();
 }
 
 std::string

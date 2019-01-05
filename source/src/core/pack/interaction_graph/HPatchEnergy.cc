@@ -40,7 +40,7 @@ namespace interaction_graph {
 /// @details This must return a fresh instance of the HPatchEnergy class, never an instance already in use
 scoring::methods::EnergyMethodOP
 HPatchEnergyCreator::create_energy_method( scoring::methods::EnergyMethodOptions const & ) const {
-	return scoring::methods::EnergyMethodOP( new HPatchEnergy );
+	return utility::pointer::make_shared< HPatchEnergy >();
 }
 
 scoring::ScoreTypes
@@ -52,13 +52,13 @@ HPatchEnergyCreator::score_types_for_method() const {
 
 
 HPatchEnergy::HPatchEnergy() :
-	parent( scoring::methods::EnergyMethodCreatorOP( new HPatchEnergyCreator ) )
+	parent( utility::pointer::make_shared< HPatchEnergyCreator >() )
 {}
 
 
 scoring::methods::EnergyMethodOP
 HPatchEnergy::clone() const {
-	return scoring::methods::EnergyMethodOP( new HPatchEnergy() );
+	return utility::pointer::make_shared< HPatchEnergy >();
 }
 
 

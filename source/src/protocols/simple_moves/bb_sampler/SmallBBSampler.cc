@@ -118,7 +118,7 @@ SmallBBSampler::set_torsion_to_pose(core::pose::Pose &pose, core::Size resnum) c
 
 SmallBBSamplerOP
 SmallBBSampler::clone() const {
-	return SmallBBSamplerOP( new SmallBBSampler( *this ) );
+	return utility::pointer::make_shared< SmallBBSampler >( *this );
 }
 
 

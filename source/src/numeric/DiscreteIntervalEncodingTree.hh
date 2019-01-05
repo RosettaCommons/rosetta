@@ -149,7 +149,7 @@ public:
 			if ( new_val + 1 == lower_ ) {
 				join_left( new_val );
 			} else if ( ! left_ ) {
-				left_ = DietNodeOP( new DietNode( new_val ) );
+				left_ = utility::pointer::make_shared< DietNode >( new_val );
 			} else {
 				left_->insert( new_val );
 			}
@@ -159,7 +159,7 @@ public:
 			if ( upper_ + 1 == new_val ) {
 				join_right( new_val );
 			} else if ( ! right_ ) {
-				right_ = DietNodeOP( new DietNode( new_val ) );
+				right_ = utility::pointer::make_shared< DietNode >( new_val );
 			} else {
 				right_->insert( new_val );
 			}
@@ -228,7 +228,7 @@ public:
 
 	void
 	insert( Value val ) {
-		if ( ! root_ ) root_ = DietNodeOP( new DietNode< Value >( val ) );
+		if ( ! root_ ) root_ = utility::pointer::make_shared< DietNode< Value > >( val );
 		root_->insert( val );
 	}
 

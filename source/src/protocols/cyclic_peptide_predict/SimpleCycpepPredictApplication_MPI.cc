@@ -923,7 +923,7 @@ SimpleCycpepPredictApplication_MPI::receive_and_sort_job_summaries(
 	MPI_Recv( cispepbondbuf, sizebuf, MPI_UNSIGNED_LONG, originating_node, static_cast<int>(RESULTS_SUMMARY_UPWARD), MPI_COMM_WORLD, &status ); //Receive the cis-peptide bond counts.
 
 	for(core::Size i=1, imax=static_cast<core::Size>(sizebuf); i<=imax; ++i) {
-		summary_list.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary ) );
+		summary_list.push_back( utility::pointer::make_shared< SimpleCycpepPredictApplication_MPI_JobResultsSummary >() );
 
 		summary_list[i]->set_originating_node_MPI_rank( procbuf[i-1] );
 		summary_list[i]->set_jobindex_on_originating_node( static_cast<core::Size>(jobindexbuf[i-1]) );
@@ -1540,7 +1540,7 @@ SimpleCycpepPredictApplication_MPI::run_slave() const {
 				for(core::Size i(1); i<threads_per_slave_proc_; ++i) { //Note that one thread (this one) is the MPI communication thread.  There are N-1 worker threads.
 					core::pose::PoseOP native_copy;
 					if( native_ != nullptr ) {
-						native_copy = core::pose::PoseOP( new core::pose::Pose );
+						native_copy = utility::pointer::make_shared< core::pose::Pose >();
 						native_copy->detached_copy(*native_);
 					}
 

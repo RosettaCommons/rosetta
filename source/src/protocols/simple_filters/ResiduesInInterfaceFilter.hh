@@ -35,10 +35,10 @@ public:
 	}
 	bool apply( core::pose::Pose const & pose ) const override;
 	filters::FilterOP clone() const override {
-		return filters::FilterOP( new ResiduesInInterfaceFilter( *this ) );
+		return utility::pointer::make_shared< ResiduesInInterfaceFilter >( *this );
 	}
 	filters::FilterOP fresh_instance() const override{
-		return filters::FilterOP( new ResiduesInInterfaceFilter() );
+		return utility::pointer::make_shared< ResiduesInInterfaceFilter >();
 	}
 	ResiduesInInterfaceFilter( ResiduesInInterfaceFilter const & init ) :
 		//utility::pointer::ReferenceCount(),

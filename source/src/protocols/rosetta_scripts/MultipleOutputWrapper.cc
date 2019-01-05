@@ -72,7 +72,7 @@ using namespace protocols::moves;
 
 // XRW TEMP MoverOP MultipleOutputWrapperCreator::create_mover() const
 // XRW TEMP {
-// XRW TEMP  return MoverOP( new MultipleOutputWrapper() );
+// XRW TEMP  return utility::pointer::make_shared< MultipleOutputWrapper >();
 // XRW TEMP }
 
 ////////////////////////////////////////////////////////////////////////
@@ -98,7 +98,7 @@ MultipleOutputWrapper::MultipleOutputWrapper() :
 /// @brief Process all input poses (provided pose and from previous mover)
 void MultipleOutputWrapper::apply(core::pose::Pose& pose)
 {
-	reference_pose_ = core::pose::PoseOP( new core::pose::Pose(pose) );
+	reference_pose_ = utility::pointer::make_shared< core::pose::Pose >(pose);
 	generate_pose(pose);
 }
 
@@ -163,7 +163,7 @@ bool MultipleOutputWrapper::generate_pose(core::pose::Pose & pose)
 			tag << name_ << "_" << std::setw(4) << std::setfill('0') << (n_poses_+1);
 			pose.data().set(
 				core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG,
-				DataCache_CacheableData::DataOP( new basic::datacache::CacheableString( tag.str() ) )
+				utility::pointer::make_shared< basic::datacache::CacheableString >( tag.str() )
 			);
 		}
 
@@ -279,7 +279,7 @@ std::string MultipleOutputWrapperCreator::keyname() const {
 
 protocols::moves::MoverOP
 MultipleOutputWrapperCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MultipleOutputWrapper );
+	return utility::pointer::make_shared< MultipleOutputWrapper >();
 }
 
 void MultipleOutputWrapperCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -107,12 +107,12 @@ setup_design_res( pose::Pose & pose ){
 	FullModelInfo & full_model_info = nonconst_full_model_info( pose );
 	std::string full_sequence = full_model_info.full_sequence();
 
-	for ( Size i = 1; i <= design_res_.size(); i++ ){
+	for ( Size i = 1; i <= design_res_.size(); i++ ) {
 		full_sequence[ design_res_[ i ] - 1 ] = 'n';
 	}
 
 	full_model_info.set_full_sequence( full_sequence );
-	//	std::cout << "NEW SEQUENCE: " << const_full_model_info( pose ).full_sequence();
+	// std::cout << "NEW SEQUENCE: " << const_full_model_info( pose ).full_sequence();
 
 }
 
@@ -121,13 +121,13 @@ void
 erraser_monte_carlo()
 {
 
-  using namespace core::pose;
-  using namespace core::chemical;
-  using namespace core::kinematics;
-  using namespace core::scoring;
-  using namespace core::io::silent;
-  using namespace core::optimization;
-  using namespace core::import_pose;
+	using namespace core::pose;
+	using namespace core::chemical;
+	using namespace core::kinematics;
+	using namespace core::scoring;
+	using namespace core::io::silent;
+	using namespace core::optimization;
+	using namespace core::import_pose;
 	using namespace protocols::stepwise;
 	using namespace protocols::stepwise::modeler::rna;
 	using namespace protocols::stepwise::monte_carlo::rna;
@@ -147,8 +147,8 @@ erraser_monte_carlo()
 	protocols::viewer::add_conformation_viewer ( pose.conformation(), "current", 400, 400 );
 
 	PoseOP native_pose;
-	if (option[ in::file::native ].user() ) {
-		native_pose = PoseOP( new Pose );
+	if ( option[ in::file::native ].user() ) {
+		native_pose = utility::pointer::make_shared< Pose >();
 		import_pose::pose_from_file( *native_pose, *rsd_set, option[ in::file::native ]() , core::import_pose::PDB_file);
 	}
 
@@ -172,7 +172,7 @@ erraser_monte_carlo()
 	figure_out_stepwise_rna_movemap( move_map, pose, sample_res_list );
 
 	// encapsulate this:
-	if ( cart_min_ ){
+	if ( cart_min_ ) {
 		std::cout << "BEFORE CARTESIAN MINIMIZE" << std::endl;
 		scorefxn->show( std::cout, pose );
 		cartesian_minimizer.run( pose, move_map, *scorefxn, options );
@@ -184,7 +184,7 @@ erraser_monte_carlo()
 	// monte carlo setup.
 	MonteCarloOP monte_carlo_ = new MonteCarlo( pose, *scorefxn, option[ temperature]() );
 
-	for ( Size n = 1; n <= Size( option[ cycles ]() ); n++ ){
+	for ( Size n = 1; n <= Size( option[ cycles ]() ); n++ ) {
 
 		Size const erraser_res = numeric::random::rg().random_element( sample_res_list );
 		bool const did_mutation = mutate_res_if_allowed( pose, erraser_res );
@@ -214,7 +214,7 @@ erraser_monte_carlo()
 		std::cout << "After ERRASER move and formally remove cutpoint" << std::endl;
 		scorefxn->show( std::cout, pose );
 
-		if ( cart_min_ ){
+		if ( cart_min_ ) {
 			cartesian_minimizer.run( pose, move_map, *scorefxn, options );
 			std::cout << "After Cartesian Minimizer" << std::endl;
 			scorefxn->show( std::cout, pose );
@@ -248,7 +248,7 @@ my_main( void* )
 
 	std::cout << "Total time to run " << static_cast<Real>( clock() - my_main_time_start ) / CLOCKS_PER_SEC << " seconds." << std::endl;
 
-  exit( 0 );
+	exit( 0 );
 
 }
 
@@ -260,28 +260,28 @@ main( int argc, char * argv [] )
 
 	try {
 
-  using namespace basic::options;
-	utility::vector1< Size > blank_size_vector;
-	utility::vector1< std::string > blank_string_vector;
+		using namespace basic::options;
+		utility::vector1< Size > blank_size_vector;
+		utility::vector1< std::string > blank_string_vector;
 
-	NEW_OPT( sample_res, "residues to build", blank_size_vector );
-	NEW_OPT( design_res, "residues to re-design", blank_size_vector );
-	NEW_OPT( cycles, "Number of Monte Carlo cycles", 50 );
-	NEW_OPT( temperature, "Monte Carlo temperature", 1.0 );
-	NEW_OPT( cart_min, "Do Cartesian minimizations", false );
-	NEW_OPT( minimize_single_res, "Minimize the residue that just got rebuilt, instead of all", false );
-	NEW_OPT( num_random_samples, "Number of samples from swa residue sampler before minimizing best", 1 );
+		NEW_OPT( sample_res, "residues to build", blank_size_vector );
+		NEW_OPT( design_res, "residues to re-design", blank_size_vector );
+		NEW_OPT( cycles, "Number of Monte Carlo cycles", 50 );
+		NEW_OPT( temperature, "Monte Carlo temperature", 1.0 );
+		NEW_OPT( cart_min, "Do Cartesian minimizations", false );
+		NEW_OPT( minimize_single_res, "Minimize the residue that just got rebuilt, instead of all", false );
+		NEW_OPT( num_random_samples, "Number of samples from swa residue sampler before minimizing best", 1 );
 
-  ////////////////////////////////////////////////////////////////////////////
-  // setup
-  ////////////////////////////////////////////////////////////////////////////
-  devel::init(argc, argv);
+		////////////////////////////////////////////////////////////////////////////
+		// setup
+		////////////////////////////////////////////////////////////////////////////
+		devel::init(argc, argv);
 
 
-  ////////////////////////////////////////////////////////////////////////////
-  // end of setup
-  ////////////////////////////////////////////////////////////////////////////
-  protocols::viewer::viewer_main( my_main );
+		////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		////////////////////////////////////////////////////////////////////////////
+		protocols::viewer::viewer_main( my_main );
 
 
 	} catch (utility::excn::Exception const & e ) {

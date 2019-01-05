@@ -47,7 +47,7 @@ BuriedUnsatPenaltyGraphOptions::~BuriedUnsatPenaltyGraphOptions(){}
 /// @brief Clone method: return a copy of the original object, by owning pointer.
 BuriedUnsatPenaltyGraphOptionsOP
 BuriedUnsatPenaltyGraphOptions::clone() const {
-	return BuriedUnsatPenaltyGraphOptionsOP( new BuriedUnsatPenaltyGraphOptions( *this ) );
+	return utility::pointer::make_shared< BuriedUnsatPenaltyGraphOptions >( *this );
 }
 
 /// @brief Print information about this object.

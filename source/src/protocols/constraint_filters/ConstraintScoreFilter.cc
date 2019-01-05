@@ -68,14 +68,14 @@ ConstraintScoreFilter::parse_my_tag(
 protocols::filters::FilterOP
 ConstraintScoreFilter::clone() const
 {
-	return protocols::filters::FilterOP( new ConstraintScoreFilter( *this ) );
+	return utility::pointer::make_shared< ConstraintScoreFilter >( *this );
 }
 
 
 protocols::filters::FilterOP
 ConstraintScoreFilter::fresh_instance() const
 {
-	return protocols::filters::FilterOP( new ConstraintScoreFilter );
+	return utility::pointer::make_shared< ConstraintScoreFilter >();
 }
 
 std::string
@@ -122,7 +122,7 @@ ConstraintScoreFilter::report( std::ostream &, core::pose::Pose const & ) const
 // XRW TEMP protocols::filters::FilterOP
 // XRW TEMP ConstraintScoreFilterCreator::create_filter() const
 // XRW TEMP {
-// XRW TEMP  return protocols::filters::FilterOP( new ConstraintScoreFilter );
+// XRW TEMP  return utility::pointer::make_shared< ConstraintScoreFilter >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -162,7 +162,7 @@ std::string ConstraintScoreFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 ConstraintScoreFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new ConstraintScoreFilter );
+	return utility::pointer::make_shared< ConstraintScoreFilter >();
 }
 
 void ConstraintScoreFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

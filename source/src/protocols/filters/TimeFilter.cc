@@ -82,7 +82,7 @@ TimeFilter::apply( core::pose::Pose const & p ) const{
 }
 
 // XRW TEMP FilterOP
-// XRW TEMP TimeFilterCreator::create_filter() const { return FilterOP( new TimeFilter ); }
+// XRW TEMP TimeFilterCreator::create_filter() const { return utility::pointer::make_shared< TimeFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP TimeFilterCreator::keyname() const { return "Time"; }
@@ -115,7 +115,7 @@ std::string TimeFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 TimeFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new TimeFilter );
+	return utility::pointer::make_shared< TimeFilter >();
 }
 
 void TimeFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

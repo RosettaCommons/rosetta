@@ -58,7 +58,7 @@ RotamerRecoveryFactory::~RotamerRecoveryFactory() = default;
 20140630: Additional factory_register() methods disabled because of ambiguouity below.
 
 src/utility/factory/WidgetRegistrator.hh:37:28: error: call to member function 'factory_register' is ambiguous
-FACTORY::get_instance()->factory_register( CREATOROP( new CREATOR ) );
+FACTORY::get_instance()->factory_register( utility::pointer::make_shared< CREATOR >() );
 ~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~
 src/protocols/rotamer_recovery/RotamerRecoveryFactory.hh:122:33: note: in instantiation of member function
 'utility::factory::WidgetRegistrator<protocols::rotamer_recovery::RotamerRecoveryFactory, protocols::rotamer_recovery::RRReporterHumanCreator>::WidgetRegistrator' requested here
@@ -211,10 +211,10 @@ RotamerRecoveryFactory::get_rotamer_recovery(
 	string const & comparer_name,
 	string const & reporter_name
 ) {
-	return RotamerRecoveryOP( new RotamerRecovery(
+	return utility::pointer::make_shared< RotamerRecovery >(
 		get_rotamer_recovery_protocol(protocol_name),
 		get_rotamer_recovery_comparer(comparer_name),
-		get_rotamer_recovery_reporter(reporter_name)) );
+		get_rotamer_recovery_reporter(reporter_name));
 }
 
 void

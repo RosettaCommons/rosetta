@@ -202,7 +202,7 @@ SubsetPartnerMotifScorerCreator::provide_xml_schema( utility::tag::XMLSchemaDefi
 
 AssemblyScorerOP
 SubsetPartnerMotifScorerCreator::create_assembly_scorer() const{
-	return AssemblyScorerOP( new SubsetPartnerMotifScorer() );
+	return utility::pointer::make_shared< SubsetPartnerMotifScorer >();
 }
 
 std::string

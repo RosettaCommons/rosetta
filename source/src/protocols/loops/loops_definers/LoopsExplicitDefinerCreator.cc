@@ -27,7 +27,7 @@ LoopsExplicitDefinerCreator::~LoopsExplicitDefinerCreator() = default;
 
 LoopsDefinerOP
 LoopsExplicitDefinerCreator::create_loops_definer() const {
-	return LoopsDefinerOP( new LoopsExplicitDefiner );
+	return utility::pointer::make_shared< LoopsExplicitDefiner >();
 }
 
 string

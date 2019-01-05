@@ -91,8 +91,8 @@ public:
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &
 	) override;
-	protocols::moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new LoopHashDiversifier( *this ) ) ); }
-	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new LoopHashDiversifier ); }
+	protocols::moves::MoverOP clone() const override { return( utility::pointer::make_shared< LoopHashDiversifier >( *this ) ); }
+	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< LoopHashDiversifier >(); }
 	~LoopHashDiversifier() override;
 
 	core::Real min_inter_ss_bbrms() const;

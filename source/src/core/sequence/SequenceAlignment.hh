@@ -54,7 +54,7 @@ public:
 	//  }
 
 	SequenceAlignmentOP clone() const {
-		return SequenceAlignmentOP( new SequenceAlignment( *this ) );
+		return utility::pointer::make_shared< SequenceAlignment >( *this );
 	}
 
 	void clear() {

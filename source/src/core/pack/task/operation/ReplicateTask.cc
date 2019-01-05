@@ -52,7 +52,7 @@ ReplicateTask::~ReplicateTask()= default;
 
 task::operation::TaskOperationOP ReplicateTask::clone() const
 {
-	return task::operation::TaskOperationOP( new ReplicateTask( *this ) );
+	return utility::pointer::make_shared< ReplicateTask >( *this );
 }
 
 void

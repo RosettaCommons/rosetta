@@ -102,10 +102,10 @@ AntibodySeqDesignTFCreator::AntibodySeqDesignTFCreator( AntibodySeqDesignTFCreat
 
 
 {
-	if ( src.ab_info_ ) ab_info_ = AntibodyInfoOP( new AntibodyInfo( *src.ab_info_ ));
+	if ( src.ab_info_ ) ab_info_ = utility::pointer::make_shared< AntibodyInfo >( *src.ab_info_ );
 	cdr_design_options_.clear();
 	for ( CDRSeqDesignOptionsOP opt : src.cdr_design_options_ ) {
-		CDRSeqDesignOptionsOP new_opt = CDRSeqDesignOptionsOP( new CDRSeqDesignOptions( *opt ));
+		CDRSeqDesignOptionsOP new_opt = utility::pointer::make_shared< CDRSeqDesignOptions >( *opt );
 		cdr_design_options_.push_back( new_opt );
 	}
 }
@@ -113,7 +113,7 @@ AntibodySeqDesignTFCreator::AntibodySeqDesignTFCreator( AntibodySeqDesignTFCreat
 AntibodySeqDesignTFCreatorOP
 AntibodySeqDesignTFCreator::clone() const
 {
-	return AntibodySeqDesignTFCreatorOP( new AntibodySeqDesignTFCreator( *this ));
+	return utility::pointer::make_shared< AntibodySeqDesignTFCreator >( *this );
 }
 
 
@@ -247,12 +247,12 @@ AntibodySeqDesignTFCreator::generate_tf_seq_design( const core::pose::Pose & pos
 	TaskFactoryOP tf( new TaskFactory() );
 
 	//Setup Basic TaskOP
-	tf->push_back( TaskOperationCOP( new InitializeFromCommandline() ) );
+	tf->push_back( utility::pointer::make_shared< InitializeFromCommandline >() );
 
 	//Enable extra-limiting through a read-resfile.  Note that this CANNOT turn things back on (packing/design/aa), but it
 	/// will enable you to limit what you want, especially in combination with basic design.
 	/// Requested.
-	ReadResfileOP read_resfile = ReadResfileOP( new ReadResfile() );
+	ReadResfileOP read_resfile = utility::pointer::make_shared< ReadResfile >();
 	tf->push_back( read_resfile );
 
 	add_extra_restrict_operations(tf, pose);
@@ -304,12 +304,12 @@ AntibodySeqDesignTFCreator::generate_tf_seq_design_graft_design(
 
 
 	//Setup Basic TaskOP
-	tf->push_back( TaskOperationCOP( new InitializeFromCommandline() ) );
+	tf->push_back( utility::pointer::make_shared< InitializeFromCommandline >() );
 
 	//Enable extra-limiting through a read-resfile.  Note that this CANNOT turn things back on (packing/design/aa), but it
 	/// will enable you to limit what you want, especially in combination with basic design.
 	/// Requested.
-	ReadResfileOP read_resfile = ReadResfileOP( new ReadResfile() );
+	ReadResfileOP read_resfile = utility::pointer::make_shared< ReadResfile >();
 	tf->push_back( read_resfile );
 
 
@@ -362,7 +362,7 @@ AntibodySeqDesignTFCreator::generate_tf_seq_design_graft_design(
 AddCDRProfilesOperationOP
 AntibodySeqDesignTFCreator::generate_task_op_cdr_profiles(core::pose::Pose const & pose){
 
-	AddCDRProfilesOperationOP profile_op = AddCDRProfilesOperationOP(new AddCDRProfilesOperation(ab_info_));
+	AddCDRProfilesOperationOP profile_op = utility::pointer::make_shared< AddCDRProfilesOperation >(ab_info_);
 	profile_op->set_use_outliers(use_outliers_);
 	profile_op->set_stats_cutoff(prob_cutoff_);
 	profile_op->set_picking_rounds(profile_picking_rounds_);
@@ -449,7 +449,7 @@ AntibodySeqDesignTFCreator::disable_disallowed_aa(core::pack::task::TaskFactoryO
 			allowed_aminos[ amino ] = false;
 		}
 
-		RestrictAbsentCanonicalAASOP restrict_aas = RestrictAbsentCanonicalAASOP( new RestrictAbsentCanonicalAAS() );
+		RestrictAbsentCanonicalAASOP restrict_aas = utility::pointer::make_shared< RestrictAbsentCanonicalAAS >();
 		restrict_aas->keep_aas( allowed_aminos );
 		return;
 	}
@@ -470,10 +470,10 @@ AntibodySeqDesignTFCreator::disable_disallowed_aa(core::pack::task::TaskFactoryO
 
 			}
 
-			RestrictAbsentCanonicalAASRLTOP restrict_rlt = RestrictAbsentCanonicalAASRLTOP( new RestrictAbsentCanonicalAASRLT );
+			RestrictAbsentCanonicalAASRLTOP restrict_rlt = utility::pointer::make_shared< RestrictAbsentCanonicalAASRLT >();
 			restrict_rlt->aas_to_keep( allowed_aminos );
 
-			OperateOnCertainResiduesOP restrict_task = OperateOnCertainResiduesOP( new OperateOnCertainResidues());
+			OperateOnCertainResiduesOP restrict_task = utility::pointer::make_shared< OperateOnCertainResidues >();
 			restrict_task->residue_indices( residues_to_restrict );
 			restrict_task->op( restrict_rlt );
 			tf->push_back( restrict_task );
@@ -575,7 +575,7 @@ AntibodySeqDesignTFCreator::add_extra_restrict_operations(core::pack::task::Task
 		tf->push_back( restrict_h3_stem );
 	}
 
-	tf->push_back(TaskOperationCOP( new operation::NoRepackDisulfides() ));
+	tf->push_back(utility::pointer::make_shared< operation::NoRepackDisulfides >());
 
 	//Optionally disable Proline design
 	if ( !design_proline_ ) {

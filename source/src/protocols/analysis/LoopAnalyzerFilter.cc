@@ -48,7 +48,7 @@ LoopAnalyzerFilter::LoopAnalyzerFilter():
 
 LoopAnalyzerFilter::LoopAnalyzerFilter( protocols::loops::Loops const & loops, bool const tracer ) :
 	protocols::filters::Filter( "LoopAnalyzerFilter" ),
-	loops_(protocols::loops::LoopsCOP( new protocols::loops::Loops(loops) ) ),
+	loops_(utility::pointer::make_shared< protocols::loops::Loops >(loops) ),
 	tracer_(tracer)
 {}
 
@@ -57,7 +57,7 @@ LoopAnalyzerFilter::~LoopAnalyzerFilter() = default;
 LoopAnalyzerFilter::LoopAnalyzerFilter( LoopAnalyzerFilter const & rhs ) :
 	//utility::pointer::ReferenceCount(),
 	Filter(),
-	loops_(protocols::loops::LoopsCOP( new protocols::loops::Loops(*(rhs.loops_)) ) ),
+	loops_(utility::pointer::make_shared< protocols::loops::Loops >(*(rhs.loops_)) ),
 	tracer_(rhs.tracer_)
 {}
 
@@ -76,14 +76,14 @@ LoopAnalyzerFilter::parse_my_tag(
 protocols::filters::FilterOP
 LoopAnalyzerFilter::clone() const
 {
-	return protocols::filters::FilterOP( new LoopAnalyzerFilter( *this ) );
+	return utility::pointer::make_shared< LoopAnalyzerFilter >( *this );
 }
 
 
 protocols::filters::FilterOP
 LoopAnalyzerFilter::fresh_instance() const
 {
-	return protocols::filters::FilterOP( new LoopAnalyzerFilter );
+	return utility::pointer::make_shared< LoopAnalyzerFilter >();
 }
 
 std::string
@@ -141,7 +141,7 @@ protocols::loops::LoopsCOP const & LoopAnalyzerFilter::get_loops( void ) const {
 // XRW TEMP protocols::filters::FilterOP
 // XRW TEMP LoopAnalyzerFilterCreator::create_filter() const
 // XRW TEMP {
-// XRW TEMP  return protocols::filters::FilterOP( new LoopAnalyzerFilter );
+// XRW TEMP  return utility::pointer::make_shared< LoopAnalyzerFilter >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -191,7 +191,7 @@ std::string LoopAnalyzerFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 LoopAnalyzerFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new LoopAnalyzerFilter );
+	return utility::pointer::make_shared< LoopAnalyzerFilter >();
 }
 
 void LoopAnalyzerFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

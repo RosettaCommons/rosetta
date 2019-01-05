@@ -49,9 +49,9 @@ get_gaussian_chain_func( vector1< Distance > const & dists,
 	}
 	FuncOP func;
 	if ( force_use_general ) {
-		func = FuncOP( new GaussianChainGeneralFunc( gaussian_variance, loop_fixed_cost, other_dists ) );
+		func = utility::pointer::make_shared< GaussianChainGeneralFunc >( gaussian_variance, loop_fixed_cost, other_dists );
 	} else {
-		func = FuncOP( new GaussianChainFunc( gaussian_variance, loop_fixed_cost, other_dists ) );
+		func = utility::pointer::make_shared< GaussianChainFunc >( gaussian_variance, loop_fixed_cost, other_dists );
 	}
 
 	// test derivs.

@@ -101,7 +101,7 @@ SingleResidueRotamerLibraryFactory::get( core::chemical::ResidueType const & res
 	if ( type == "" ) {
 		// A null pointer means that there isn't a rotamer library
 		if ( forcebasic ) {
-			return SingleResidueRotamerLibraryCOP( new SingleBasicRotamerLibrary );
+			return utility::pointer::make_shared< SingleBasicRotamerLibrary >();
 		} else {
 			return SingleResidueRotamerLibraryCOP(nullptr);
 		}
@@ -116,7 +116,7 @@ SingleResidueRotamerLibraryFactory::get( core::chemical::ResidueType const & res
 #endif
 			if ( cache_.count( cachepair ) ) {
 				if ( ! cache_[ cachepair ] && forcebasic ) {
-					return SingleResidueRotamerLibraryCOP( new SingleBasicRotamerLibrary );
+					return utility::pointer::make_shared< SingleBasicRotamerLibrary >();
 				} else {
 					return cache_[ cachepair ];
 				}
@@ -132,7 +132,7 @@ SingleResidueRotamerLibraryFactory::get( core::chemical::ResidueType const & res
 			//Check again -- creation might have happened between read guard release and write guard acquire:
 			if ( cache_.count( cachepair ) ) {
 				if ( ! cache_[ cachepair ] && forcebasic ) {
-					return SingleResidueRotamerLibraryCOP( new SingleBasicRotamerLibrary );
+					return utility::pointer::make_shared< SingleBasicRotamerLibrary >();
 				} else {
 					return cache_[ cachepair ];
 				}
@@ -149,7 +149,7 @@ SingleResidueRotamerLibraryFactory::get( core::chemical::ResidueType const & res
 			}
 
 			if ( ! library && forcebasic ) {
-				return SingleResidueRotamerLibraryCOP( new SingleBasicRotamerLibrary );
+				return utility::pointer::make_shared< SingleBasicRotamerLibrary >();
 			} else {
 				return library;
 			}
@@ -160,7 +160,7 @@ SingleResidueRotamerLibraryFactory::get( core::chemical::ResidueType const & res
 		core::pack::rotamers::SingleResidueRotamerLibraryCOP library( entry->second->create( restype ) );
 
 		if ( ! library && forcebasic ) {
-			return SingleResidueRotamerLibraryCOP( new SingleBasicRotamerLibrary );
+			return utility::pointer::make_shared< SingleBasicRotamerLibrary >();
 		} else {
 			return library;
 		}

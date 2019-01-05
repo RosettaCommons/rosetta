@@ -101,7 +101,7 @@ BranchAngleOptimizer::bond_angle_residue_type_param_set(
 	core::scoring::mm::MMBondAngleResidueTypeParamSetCOP param_set
 )
 {
-	bond_angle_residue_type_param_set_ = core::scoring::mm::MMBondAngleResidueTypeParamSetOP( new core::scoring::mm::MMBondAngleResidueTypeParamSet( *param_set ) );
+	bond_angle_residue_type_param_set_ = utility::pointer::make_shared< core::scoring::mm::MMBondAngleResidueTypeParamSet >( *param_set );
 }
 
 /// @details

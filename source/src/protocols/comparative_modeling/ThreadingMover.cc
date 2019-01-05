@@ -399,13 +399,13 @@ ThreadingMover::get_name() const {
 protocols::moves::MoverOP
 ThreadingMover::clone() const
 {
-	return protocols::moves::MoverOP( new ThreadingMover(*this) );
+	return utility::pointer::make_shared< ThreadingMover >(*this);
 }
 
 protocols::moves::MoverOP
 ThreadingMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new ThreadingMover() );
+	return utility::pointer::make_shared< ThreadingMover >();
 }
 
 } // comparative_modeling

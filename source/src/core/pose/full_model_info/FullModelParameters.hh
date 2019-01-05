@@ -93,7 +93,7 @@ public:
 	FullModelParametersOP
 	clone() const
 	{
-		return FullModelParametersOP( new FullModelParameters( *this ) );
+		return utility::pointer::make_shared< FullModelParameters >( *this );
 	}
 
 	FullModelParametersOP

@@ -52,7 +52,7 @@ GridBaseOP HbdGridCreator::create_grid(utility::tag::TagCOP tag) const
 
 GridBaseOP HbdGridCreator::create_grid() const
 {
-	return GridBaseOP( new HbdGrid() );
+	return utility::pointer::make_shared< HbdGrid >();
 }
 
 void HbdGridCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -76,7 +76,7 @@ HbdGrid::HbdGrid(): SingleGrid ("HbdGrid")
 HbdGrid::~HbdGrid() = default;
 
 GridBaseOP HbdGrid::clone() const {
-	return GridBaseOP( new HbdGrid( *this ) );
+	return utility::pointer::make_shared< HbdGrid >( *this );
 }
 
 utility::json_spirit::Value HbdGrid::serialize() const

@@ -67,7 +67,7 @@ HBondSelector::HBondSelector():
 	//Set default score function
 	scorefxn_ = core::scoring::get_score_function();
 	//If the input set is not defined, then we'll use all residues
-	input_set_selector_ = core::select::residue_selector::ResidueSelectorCOP( new core::select::residue_selector::TrueResidueSelector );
+	input_set_selector_ = utility::pointer::make_shared< core::select::residue_selector::TrueResidueSelector >();
 }
 
 HBondSelector::HBondSelector( HBondSelector const & src ){
@@ -85,7 +85,7 @@ HBondSelector::~HBondSelector()= default;
 
 core::select::residue_selector::ResidueSelectorOP
 HBondSelector::clone() const{
-	return core::select::residue_selector::ResidueSelectorOP( new HBondSelector( *this ) );
+	return utility::pointer::make_shared< HBondSelector >( *this );
 }
 
 core::select::residue_selector::ResidueSubset
@@ -197,7 +197,7 @@ HBondSelector::parse_my_tag(
 	if ( !input_set_defined_ ) {
 		//Okay, so I can't actually do this in the apply method--what now?
 		use_input_set_selector_ = true;
-		input_set_selector_ = core::select::residue_selector::ResidueSelectorCOP( new core::select::residue_selector::TrueResidueSelector );
+		input_set_selector_ = utility::pointer::make_shared< core::select::residue_selector::TrueResidueSelector >();
 	}
 
 }
@@ -318,7 +318,7 @@ HBondSelector::compute_input_set( core::pose::Pose const & pose, std::set< core:
 //CREATOR METHODS
 core::select::residue_selector::ResidueSelectorOP
 HBondSelectorCreator::create_residue_selector() const{
-	return core::select::residue_selector::ResidueSelectorOP( new HBondSelector );
+	return utility::pointer::make_shared< HBondSelector >();
 }
 
 std::string

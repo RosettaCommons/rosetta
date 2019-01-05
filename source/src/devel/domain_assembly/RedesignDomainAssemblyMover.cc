@@ -116,13 +116,13 @@ RedesignDomainAssemblyMover::apply( core::pose::Pose & pose )
 protocols::moves::MoverOP
 RedesignDomainAssemblyMover::clone() const
 {
-	return protocols::moves::MoverOP( new RedesignDomainAssemblyMover( *this ) );
+	return utility::pointer::make_shared< RedesignDomainAssemblyMover >( *this );
 }
 
 protocols::moves::MoverOP
 RedesignDomainAssemblyMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new RedesignDomainAssemblyMover );
+	return utility::pointer::make_shared< RedesignDomainAssemblyMover >();
 }
 
 std::string
@@ -169,9 +169,9 @@ RedesignDomainAssemblyMover::run_fullatom_stage( core::pose::Pose & pose )
 		}
 	}
 
-	or_rs->add_residue_selector( ResidueSelectorCOP( ResidueSelectorOP( new core::select::residue_selector::ResidueIndexSelector( get_linker_definition( pose ) ) ) ) );
+	or_rs->add_residue_selector( utility::pointer::make_shared< core::select::residue_selector::ResidueIndexSelector >( get_linker_definition( pose ) ) );
 	not_rs->set_residue_selector( or_rs );
-	operation::OperateOnResidueSubsetOP repack_operation( new operation::OperateOnResidueSubset( ResLvlTaskOperationOP( new operation::PreventRepackingRLT() ), not_rs ) );
+	operation::OperateOnResidueSubsetOP repack_operation( new operation::OperateOnResidueSubset( utility::pointer::make_shared< operation::PreventRepackingRLT >(), not_rs ) );
 
 	// global repack of the side chains
 	core::pack::task::PackerTaskOP base_packer_task( core::pack::task::TaskFactory::create_packer_task( pose ));
@@ -273,12 +273,12 @@ void RedesignDomainAssemblyMover::run_fullatom_relax( core::pose::Pose & pose ) 
 		}
 	}
 
-	interface_or_linker_rs->add_residue_selector( ResidueSelectorCOP( ResidueSelectorOP( new core::select::residue_selector::ResidueIndexSelector( get_linker_definition( pose ) ) ) ) );
+	interface_or_linker_rs->add_residue_selector( utility::pointer::make_shared< core::select::residue_selector::ResidueIndexSelector >( get_linker_definition( pose ) ) );
 	not_interface_or_linker_rs->set_residue_selector( interface_or_linker_rs );
-	operation::OperateOnResidueSubsetOP block_outside_interface_operation( new operation::OperateOnResidueSubset( ResLvlTaskOperationOP( new operation::PreventRepackingRLT() ), not_interface_or_linker_rs ) );
+	operation::OperateOnResidueSubsetOP block_outside_interface_operation( new operation::OperateOnResidueSubset( utility::pointer::make_shared< operation::PreventRepackingRLT >(), not_interface_or_linker_rs ) );
 
 	core::select::residue_selector::ResidueIndexSelectorOP repack_only_rs( new core::select::residue_selector::ResidueIndexSelector( residues_to_repack_only_ ) );
-	operation::OperateOnResidueSubsetOP block_design_operation( new operation::OperateOnResidueSubset( ResLvlTaskOperationOP( new operation::RestrictToRepackingRLT() ), repack_only_rs ) );
+	operation::OperateOnResidueSubsetOP block_design_operation( new operation::OperateOnResidueSubset( utility::pointer::make_shared< operation::RestrictToRepackingRLT >(), repack_only_rs ) );
 
 	// global repack of the side chains
 	core::pack::task::PackerTaskOP base_packer_task( core::pack::task::TaskFactory::create_packer_task( pose ));

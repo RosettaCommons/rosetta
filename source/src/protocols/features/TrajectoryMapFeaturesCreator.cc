@@ -28,7 +28,7 @@ namespace features {
 // XRW TEMP TrajectoryMapFeaturesCreator::TrajectoryMapFeaturesCreator() {}
 // XRW TEMP TrajectoryMapFeaturesCreator::~TrajectoryMapFeaturesCreator() = default;
 // XRW TEMP FeaturesReporterOP TrajectoryMapFeaturesCreator::create_features_reporter() const {
-// XRW TEMP  return FeaturesReporterOP( new TrajectoryMapFeatures );
+// XRW TEMP  return utility::pointer::make_shared< TrajectoryMapFeatures >();
 // XRW TEMP }
 
 // XRW TEMP std::string TrajectoryMapFeaturesCreator::type_name() const {

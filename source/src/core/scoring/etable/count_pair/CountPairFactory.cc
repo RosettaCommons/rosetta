@@ -69,16 +69,16 @@ CountPairFactory::create_count_pair_function(
 			Size res2connat = res2.residue_connection( res2.connections_to_residue( res1 )[ 1 ] ).atomno();
 			switch ( crossover ) {
 			case CP_CROSSOVER_3 :
-				cpfxn = CountPairFunctionOP( new CountPair1B< CountPairCrossover3 >( res1, res1connat, res2, res2connat ) );
+				cpfxn = utility::pointer::make_shared< CountPair1B< CountPairCrossover3 > >( res1, res1connat, res2, res2connat );
 				break;
 			case CP_CROSSOVER_3FULL :
-				cpfxn = CountPairFunctionOP( new CountPair1B< CountPairCrossover3full >( res1, res1connat, res2, res2connat ) );
+				cpfxn = utility::pointer::make_shared< CountPair1B< CountPairCrossover3full > >( res1, res1connat, res2, res2connat );
 				break;
 			case CP_CROSSOVER_4 :
-				cpfxn = CountPairFunctionOP( new CountPair1B< CountPairCrossover4 >( res1, res1connat, res2, res2connat ) );
+				cpfxn = utility::pointer::make_shared< CountPair1B< CountPairCrossover4 > >( res1, res1connat, res2, res2connat );
 				break;
 			case CP_CROSSOVER_34 :
-				cpfxn = CountPairFunctionOP( new CountPair1B< CountPairCrossover34 >( res1, res1connat, res2, res2connat ) );
+				cpfxn = utility::pointer::make_shared< CountPair1B< CountPairCrossover34 > >( res1, res1connat, res2, res2connat );
 				break;
 			}
 		}
@@ -110,9 +110,9 @@ CountPairFactory::create_count_pair_function(
 
 		Size res1connat = res1.residue_connection( res1.connections_to_residue( midway )[ 1 ] ).atomno();
 		Size res2connat = res2.residue_connection( res2.connections_to_residue( midway )[ 1 ] ).atomno();
-		cpfxn = CountPairFunctionOP( new CountPair2B< CountPairCrossover34 >( res1, res1connat, res2, res2connat ) );
+		cpfxn = utility::pointer::make_shared< CountPair2B< CountPairCrossover34 > >( res1, res1connat, res2, res2connat );
 	} else {
-		cpfxn = CountPairFunctionOP( new CountPairAll );
+		cpfxn = utility::pointer::make_shared< CountPairAll >();
 	}
 	return cpfxn;
 }
@@ -237,16 +237,16 @@ CountPairFactory::create_intrares_count_pair_function(
 
 	switch ( crossover ) {
 	case CP_CROSSOVER_3FULL :
-		cpfxn = CountPairFunctionOP( new CountPairIntraRes< CountPairCrossover3full >( res ) );
+		cpfxn = utility::pointer::make_shared< CountPairIntraRes< CountPairCrossover3full > >( res );
 		break;
 	case CP_CROSSOVER_3 :
-		cpfxn = CountPairFunctionOP( new CountPairIntraRes< CountPairCrossover3 >( res ) );
+		cpfxn = utility::pointer::make_shared< CountPairIntraRes< CountPairCrossover3 > >( res );
 		break;
 	case CP_CROSSOVER_4 :
-		cpfxn = CountPairFunctionOP( new CountPairIntraRes< CountPairCrossover4 >( res ) );
+		cpfxn = utility::pointer::make_shared< CountPairIntraRes< CountPairCrossover4 > >( res );
 		break;
 	case CP_CROSSOVER_34 :
-		cpfxn = CountPairFunctionOP( new CountPairIntraRes< CountPairCrossover34 >( res ) );
+		cpfxn = utility::pointer::make_shared< CountPairIntraRes< CountPairCrossover34 > >( res );
 		break;
 	}
 

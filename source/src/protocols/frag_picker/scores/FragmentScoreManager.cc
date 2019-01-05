@@ -89,7 +89,7 @@ FragmentScoreManager::~FragmentScoreManager() = default;
 /// what is the correct size of the map i.e. how many scoring terms have been registered.
 FragmentScoreMapOP FragmentScoreManager::create_empty_map() {
 
-	return FragmentScoreMapOP( new FragmentScoreMap(score_weights_.size()) );
+	return utility::pointer::make_shared< FragmentScoreMap >(score_weights_.size());
 }
 
 
@@ -304,49 +304,49 @@ FragmentScoreManager::FragmentScoreManager() {
 	default_width_ = 6;
 	zeros_score_later_ = true;
 
-	register_score_maker(MakeFragmentScoringMethodOP( new MakeSecondaryIdentity() ));
-	register_score_maker(MakeFragmentScoringMethodOP( new MakeSequenceIdentity() ));
-	register_score_maker(MakeFragmentScoringMethodOP( new MakeBFactor() ));
-	register_score_maker(MakeFragmentScoringMethodOP( new MakeDisulfideIdentity() ));
-	register_score_maker(MakeFragmentScoringMethodOP( new MakeDisulfideDistance() ));
-	register_score_maker(MakeFragmentScoringMethodOP( new MakePCS_FragDistance() ));
-	register_score_maker(MakeFragmentScoringMethodOP( new MakeProlinePhiScore() ));
-	register_score_maker(MakeFragmentScoringMethodOP( new MakeRamaScore() ));
-	register_score_maker(MakeFragmentScoringMethodOP( new MakeRDCScore() ));
-	register_score_maker(MakeFragmentScoringMethodOP( new MakeProfileScore() ));
-	register_score_maker(MakeFragmentScoringMethodOP( new MakeProfileScoreL1() ));
-	register_score_maker(MakeFragmentScoringMethodOP( new MakeProfileScoreBlosum62() ));
-	register_score_maker(MakeFragmentScoringMethodOP( new MakeProfileScoreSubMatrix() ));
-	register_score_maker(MakeFragmentScoringMethodOP( new MakeProfileScoreDistWeight() ));
-	register_score_maker(MakeFragmentScoringMethodOP( new MakeSecondarySimilarity() ));
-	register_score_maker(MakeFragmentScoringMethodOP( new MakeTalosSSSimilarity() ));
-	register_score_maker(MakeFragmentScoringMethodOP( new MakePartialSecondarySimilarity() ));
-	register_score_maker(MakeFragmentScoringMethodOP( new MakeTorsionBinSimilarity() ));
-	register_score_maker(MakeFragmentScoringMethodOP( new MakeFragmentCrmsd() ));
-	register_score_maker(MakeFragmentScoringMethodOP( new MakeFragmentChunkCrms() ));
-	register_score_maker(MakeFragmentScoringMethodOP( new MakeMidPhiOut() ));
-	register_score_maker(MakeFragmentScoringMethodOP( new MakeMidPsiOut() ));
-	register_score_maker(MakeFragmentScoringMethodOP( new MakePhiPsiRmsd() ));
-	register_score_maker(MakeFragmentScoringMethodOP( new MakePhiPsiSquareWell() ));
-	register_score_maker(MakeFragmentScoringMethodOP( new MakeJCoupling() ));
-	register_score_maker(MakeFragmentScoringMethodOP( new MakeAtomPairConstraintsScore() ));
-	register_score_maker(MakeFragmentScoringMethodOP( new MakeDihedralConstraintsScore() ));
-	register_score_maker(MakeFragmentScoringMethodOP( new MakeCSScore() ));
-	register_score_maker(MakeFragmentScoringMethodOP( new MakeAmbigCSScore() ));
-	register_score_maker(MakeFragmentScoringMethodOP( new MakeTorsionBinSimilarity() ));
-	register_score_maker(MakeFragmentScoringMethodOP( new MakeInterbondAngleScore() ));
-	register_score_maker(MakeFragmentScoringMethodOP( new MakeGunnCostScore() ));
-	register_score_maker(MakeFragmentScoringMethodOP( new MakeABEGO_SS_Score() ));
-	register_score_maker(MakeFragmentScoringMethodOP( new MakeFragmentAllAtomCrmsd() ));
-	register_score_maker(MakeFragmentScoringMethodOP( new MakeConstScore() ));
-	register_score_maker(MakeFragmentScoringMethodOP( new MakeFragmentDME() ));
-	register_score_maker(MakeFragmentScoringMethodOP( new MakeHydrophobicitySimilarity() ));
-	register_score_maker(MakeFragmentScoringMethodOP( new MakeHydrophobicityProfileSimilarity() ));
-	register_score_maker(MakeFragmentScoringMethodOP( new MakeSolventAccessibility() ));
-	register_score_maker(MakeFragmentScoringMethodOP( new MakePhi() ));
-	register_score_maker(MakeFragmentScoringMethodOP( new MakePsi() ));
-	register_score_maker(MakeFragmentScoringMethodOP( new MakeProfileScoreStructL1() ));
-	register_score_maker(MakeFragmentScoringMethodOP( new MakeFragmentCrmsdResDepth() ));
+	register_score_maker(utility::pointer::make_shared< MakeSecondaryIdentity >());
+	register_score_maker(utility::pointer::make_shared< MakeSequenceIdentity >());
+	register_score_maker(utility::pointer::make_shared< MakeBFactor >());
+	register_score_maker(utility::pointer::make_shared< MakeDisulfideIdentity >());
+	register_score_maker(utility::pointer::make_shared< MakeDisulfideDistance >());
+	register_score_maker(utility::pointer::make_shared< MakePCS_FragDistance >());
+	register_score_maker(utility::pointer::make_shared< MakeProlinePhiScore >());
+	register_score_maker(utility::pointer::make_shared< MakeRamaScore >());
+	register_score_maker(utility::pointer::make_shared< MakeRDCScore >());
+	register_score_maker(utility::pointer::make_shared< MakeProfileScore >());
+	register_score_maker(utility::pointer::make_shared< MakeProfileScoreL1 >());
+	register_score_maker(utility::pointer::make_shared< MakeProfileScoreBlosum62 >());
+	register_score_maker(utility::pointer::make_shared< MakeProfileScoreSubMatrix >());
+	register_score_maker(utility::pointer::make_shared< MakeProfileScoreDistWeight >());
+	register_score_maker(utility::pointer::make_shared< MakeSecondarySimilarity >());
+	register_score_maker(utility::pointer::make_shared< MakeTalosSSSimilarity >());
+	register_score_maker(utility::pointer::make_shared< MakePartialSecondarySimilarity >());
+	register_score_maker(utility::pointer::make_shared< MakeTorsionBinSimilarity >());
+	register_score_maker(utility::pointer::make_shared< MakeFragmentCrmsd >());
+	register_score_maker(utility::pointer::make_shared< MakeFragmentChunkCrms >());
+	register_score_maker(utility::pointer::make_shared< MakeMidPhiOut >());
+	register_score_maker(utility::pointer::make_shared< MakeMidPsiOut >());
+	register_score_maker(utility::pointer::make_shared< MakePhiPsiRmsd >());
+	register_score_maker(utility::pointer::make_shared< MakePhiPsiSquareWell >());
+	register_score_maker(utility::pointer::make_shared< MakeJCoupling >());
+	register_score_maker(utility::pointer::make_shared< MakeAtomPairConstraintsScore >());
+	register_score_maker(utility::pointer::make_shared< MakeDihedralConstraintsScore >());
+	register_score_maker(utility::pointer::make_shared< MakeCSScore >());
+	register_score_maker(utility::pointer::make_shared< MakeAmbigCSScore >());
+	register_score_maker(utility::pointer::make_shared< MakeTorsionBinSimilarity >());
+	register_score_maker(utility::pointer::make_shared< MakeInterbondAngleScore >());
+	register_score_maker(utility::pointer::make_shared< MakeGunnCostScore >());
+	register_score_maker(utility::pointer::make_shared< MakeABEGO_SS_Score >());
+	register_score_maker(utility::pointer::make_shared< MakeFragmentAllAtomCrmsd >());
+	register_score_maker(utility::pointer::make_shared< MakeConstScore >());
+	register_score_maker(utility::pointer::make_shared< MakeFragmentDME >());
+	register_score_maker(utility::pointer::make_shared< MakeHydrophobicitySimilarity >());
+	register_score_maker(utility::pointer::make_shared< MakeHydrophobicityProfileSimilarity >());
+	register_score_maker(utility::pointer::make_shared< MakeSolventAccessibility >());
+	register_score_maker(utility::pointer::make_shared< MakePhi >());
+	register_score_maker(utility::pointer::make_shared< MakePsi >());
+	register_score_maker(utility::pointer::make_shared< MakeProfileScoreStructL1 >());
+	register_score_maker(utility::pointer::make_shared< MakeFragmentCrmsdResDepth >());
 
 }
 

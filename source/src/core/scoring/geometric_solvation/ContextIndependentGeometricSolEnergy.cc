@@ -69,7 +69,7 @@ methods::EnergyMethodOP
 ContextIndependentGeometricSolEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
-	return methods::EnergyMethodOP( new ContextIndependentGeometricSolEnergy( options ) );
+	return utility::pointer::make_shared< ContextIndependentGeometricSolEnergy >( options );
 }
 
 ScoreTypes
@@ -82,9 +82,9 @@ ContextIndependentGeometricSolEnergyCreator::score_types_for_method() const {
 
 /// @brief copy c-tor
 ContextIndependentGeometricSolEnergy::ContextIndependentGeometricSolEnergy( methods::EnergyMethodOptions const & opts) :
-	parent( methods::EnergyMethodCreatorOP( new ContextIndependentGeometricSolEnergyCreator ) ),
+	parent( utility::pointer::make_shared< ContextIndependentGeometricSolEnergyCreator >() ),
 	options_( opts ),
-	evaluator_( GeometricSolEnergyEvaluatorOP( new GeometricSolEnergyEvaluator( opts ) ) ),
+	evaluator_( utility::pointer::make_shared< GeometricSolEnergyEvaluator >( opts ) ),
 	precalculated_bb_bb_energy_(0.0f),
 	using_extended_method_(false)
 {
@@ -100,7 +100,7 @@ ContextIndependentGeometricSolEnergy::ContextIndependentGeometricSolEnergy( Cont
 methods::EnergyMethodOP
 ContextIndependentGeometricSolEnergy::clone() const
 {
-	return methods::EnergyMethodOP( new ContextIndependentGeometricSolEnergy( *this ) );
+	return utility::pointer::make_shared< ContextIndependentGeometricSolEnergy >( *this );
 }
 
 

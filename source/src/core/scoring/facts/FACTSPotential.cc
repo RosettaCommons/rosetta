@@ -163,7 +163,7 @@ void FACTSPotential::setup_for_scoring(pose::Pose & pose, bool const & packing) 
 		// commenting out below would always set whole residues as enumeration_shell
 		//facts_info->update_enumeration_shell( pose, true );
 	} else {
-		facts_info = FACTSPoseInfoOP( new FACTSPoseInfo() );
+		facts_info = utility::pointer::make_shared< FACTSPoseInfo >();
 	}
 
 	facts_info->initialize( pose, FACTSrsdtypemap_ );
@@ -1175,7 +1175,7 @@ void FACTSPotential::setup_for_derivatives( pose::Pose & pose ) const
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::FACTS_POSE_INFO ) ) {
 		facts_info = utility::pointer::static_pointer_cast< core::scoring::FACTSPoseInfo > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::FACTS_POSE_INFO ) );
 	} else {
-		facts_info = FACTSPoseInfoOP( new FACTSPoseInfo() );
+		facts_info = utility::pointer::make_shared< FACTSPoseInfo >();
 	}
 
 	// Check whether information is changed from the given pose - if changed, call setup_for_scoring again
@@ -1522,7 +1522,7 @@ void FACTSPotential::setup_for_packing(
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::FACTS_POSE_INFO ) ) {
 		facts_info = utility::pointer::static_pointer_cast< core::scoring::FACTSPoseInfo > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::FACTS_POSE_INFO ) );
 	} else {
-		facts_info = FACTSPoseInfoOP( new FACTSPoseInfo() );
+		facts_info = utility::pointer::make_shared< FACTSPoseInfo >();
 		setup_for_scoring( pose, true );
 	}
 

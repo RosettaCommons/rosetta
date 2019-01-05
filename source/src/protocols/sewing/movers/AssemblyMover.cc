@@ -101,8 +101,8 @@ AssemblyMover::AssemblyMover( AssemblyMover const & src ):
 void
 AssemblyMover::set_up_hashing(){
 	if ( hashed_ ) {
-		edge_map_generator_ = hashing::EdgeMapGeneratorOP(new hashing::EdgeMapGenerator(edge_file_name_));
-		basis_map_generator_ = hashing::BasisMapGeneratorOP( new hashing::BasisMapGenerator );
+		edge_map_generator_ = utility::pointer::make_shared< hashing::EdgeMapGenerator >(edge_file_name_);
+		basis_map_generator_ = utility::pointer::make_shared< hashing::BasisMapGenerator >();
 		basis_map_generator_->segment_vector( segment_vector_ );
 		basis_map_generator_->set_edge_file_reader( edge_map_generator_ );
 
@@ -154,7 +154,7 @@ AssemblyMover::set_up_assembly( core::pose::Pose &){
 		hashed_assembly->set_basis_map_generator( basis_map_generator_->clone() );
 		assembly = hashed_assembly;
 	} else {
-		assembly = data_storage::SmartAssemblyOP( new data_storage::SmartAssembly( segment_vector_, window_width_ ) );
+		assembly = utility::pointer::make_shared< data_storage::SmartAssembly >( segment_vector_, window_width_ );
 	}
 	assembly->pick_random_starting_segment();
 	return assembly;
@@ -288,7 +288,7 @@ AssemblyMover::generate_assembly(data_storage::SmartAssemblyOP assembly, core::p
 					// lowest_scoring_assembly_ = assembly->get_abbreviated_assembly();
 					// lowest_score_ = score_;
 					lowest_score_ = score_;
-					best_assembly_ = data_storage::SmartAssemblyOP( new data_storage::SmartAssembly(*assembly));
+					best_assembly_ = utility::pointer::make_shared< data_storage::SmartAssembly >(*assembly);
 				}
 			}
 		}
@@ -520,14 +520,14 @@ AssemblyMover::set_default_requirements()
 protocols::moves::MoverOP
 AssemblyMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new AssemblyMover );
+	return utility::pointer::make_shared< AssemblyMover >();
 }
 
 /// @brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
 AssemblyMover::clone() const
 {
-	return protocols::moves::MoverOP( new AssemblyMover( *this ) );
+	return utility::pointer::make_shared< AssemblyMover >( *this );
 }
 
 ///@brief Add requirements to the mover from the outside (not sure if we'll need this?
@@ -586,7 +586,7 @@ operator<<( std::ostream & os, AssemblyMover const & mover )
 protocols::moves::MoverOP
 AssemblyMoverCreator::create_mover() const
 {
-	return protocols::moves::MoverOP( new AssemblyMover );
+	return utility::pointer::make_shared< AssemblyMover >();
 }
 
 std::string

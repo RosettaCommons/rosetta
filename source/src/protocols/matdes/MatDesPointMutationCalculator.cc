@@ -185,7 +185,7 @@ MatDesPointMutationCalculator::~MatDesPointMutationCalculator()= default;
 //creators
 protocols::matdes::MatDesPointMutationCalculatorOP
 MatDesPointMutationCalculator::clone() const{
-	return protocols::matdes::MatDesPointMutationCalculatorOP( new MatDesPointMutationCalculator( *this ) );
+	return utility::pointer::make_shared< MatDesPointMutationCalculator >( *this );
 }
 
 // setter - getter pairs
@@ -395,7 +395,7 @@ MatDesPointMutationCalculator::mutate_and_relax(
 		}
 		OperateOnCertainResiduesOP oocr_prevent_repacking_op( new OperateOnCertainResidues );
 		oocr_prevent_repacking_op->residue_indices( prevent_repacking_residues );
-		oocr_prevent_repacking_op->op( ResLvlTaskOperationCOP( new PreventRepackingRLT ) );
+		oocr_prevent_repacking_op->op( utility::pointer::make_shared< PreventRepackingRLT >() );
 		new_task_factory->push_back(oocr_prevent_repacking_op);
 		set_task_for_filters_[ifilt]->task_factory(new_task_factory);
 	}
@@ -444,14 +444,14 @@ MatDesPointMutationCalculator::mutate_and_relax(
 		if ( core::pose::symmetry::is_symmetric( pose ) ) {
 			mutate_residue->request_symmetrize_by_union();
 		}
-		pack = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover( scorefxn(), mutate_residue ) );
+		pack = utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >( scorefxn(), mutate_residue );
 		pack->apply( pose );
 		if ( rtmin ) {
 			// definition/allocation of RTmin mover must flag dependant, as some scoreterms are incompatable with RTmin initilization
 			if ( core::pose::symmetry::is_symmetric( pose ) ) {
 				utility_exit_with_message("Cannot currently use MatDesPointMutationCalculator (GreedyOptMutation/ParetoOptMutation) with rtmin on a symmetric pose!");
 			}
-			rtmin = protocols::minimization_packing::RotamerTrialsMinMoverOP( new protocols::minimization_packing::RotamerTrialsMinMover( scorefxn(), *mutate_residue ) );
+			rtmin = utility::pointer::make_shared< protocols::minimization_packing::RotamerTrialsMinMover >( scorefxn(), *mutate_residue );
 			rtmin->apply( pose );
 			TR<<"Finished rtmin"<<std::endl;
 		}

@@ -134,7 +134,7 @@ std::string SpliceOutAntibodyCreator::keyname() const {
 }
 
 protocols::moves::MoverOP SpliceOutAntibodyCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SpliceOutAntibody );
+	return utility::pointer::make_shared< SpliceOutAntibody >();
 }
 
 std::string SpliceOutAntibodyCreator::mover_name() {
@@ -321,7 +321,7 @@ void SpliceOutAntibody::parse_my_tag(TagCOP const tag, basic::datacache::DataMap
 }
 
 protocols::moves::MoverOP SpliceOutAntibody::clone() const {
-	return (protocols::moves::MoverOP(new SpliceOutAntibody(*this)));
+	return (utility::pointer::make_shared< SpliceOutAntibody >(*this));
 }
 
 void SpliceOutAntibody::find_disulfide_postions(core::pose::Pose const & pose,utility::vector1<core::Size> & cys_pos) {

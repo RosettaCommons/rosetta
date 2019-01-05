@@ -170,7 +170,7 @@ Templates::Templates( std::string const& config_file, pose::PoseCOP native ) :
 			if ( !pose_store.has( pdb ) ) pose_store.add( pdb );
 			tr.Info << "template  " << name << " read template structure " << pdb << " with offset " << offset << std::endl;
 
-			theTemplate = TemplateOP( new Template( name, pose_store[pdb], align, offset, score ) );
+			theTemplate = utility::pointer::make_shared< Template >( name, pose_store[pdb], align, offset, score );
 			if ( !theTemplate->is_good() ) {
 				good_ = false;
 				continue;
@@ -437,8 +437,8 @@ TemplateJumpSetupOP Templates::create_jump_def( core::fragment::SecondaryStructu
 		using namespace fragment;
 		tr.Info << "TemplateJumpSetup will be initialized with secondary structure from homologs " << std::endl;
 		ConstantLengthFragSet fragset;
-		pick_frags( fragset, core::fragment::FragDataCOP( core::fragment::FragDataOP( new FragData( SingleResidueFragDataOP( new SecstructSRFD ), 1 ) ) ) ); //for ss-structure 1mers are enough
-		ss_def = core::fragment::SecondaryStructureCOP( core::fragment::SecondaryStructureOP( new core::fragment::SecondaryStructure( fragset, target_total_residue() ) ) );
+		pick_frags( fragset, utility::pointer::make_shared< FragData >( utility::pointer::make_shared< SecstructSRFD >(), 1 ) ); //for ss-structure 1mers are enough
+		ss_def = utility::pointer::make_shared< core::fragment::SecondaryStructure >( fragset, target_total_residue() );
 	}
 	//  utility::io::ozstream dump("ss_def_for_jumps");
 	//  for ( Size i = 1; i<=ss_def->size(); i++ ) {
@@ -446,7 +446,7 @@ TemplateJumpSetupOP Templates::create_jump_def( core::fragment::SecondaryStructu
 	//  }
 	core::scoring::dssp::PairingsList helix_pairings;
 	if ( option[ templates::helix_pairings ].user() ) read_pairings( option[ templates::helix_pairings ], helix_pairings );
-	return TemplateJumpSetupOP( new TemplateJumpSetup( get_self_ptr(), ss_def, strand_stats_, helix_pairings ) );
+	return utility::pointer::make_shared< TemplateJumpSetup >( get_self_ptr(), ss_def, strand_stats_, helix_pairings );
 }
 
 

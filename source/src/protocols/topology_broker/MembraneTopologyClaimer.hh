@@ -47,7 +47,7 @@ public:
 
 	//clone
 	TopologyClaimerOP clone() const override {
-		return TopologyClaimerOP( new MembraneTopologyClaimer( *this ) );
+		return utility::pointer::make_shared< MembraneTopologyClaimer >( *this );
 	}
 
 	/// @brief type() is specifying the output name of the TopologyClaimer

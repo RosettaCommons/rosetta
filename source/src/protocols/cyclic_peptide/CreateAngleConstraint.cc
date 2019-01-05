@@ -91,9 +91,9 @@ void CreateAngleConstraint::apply( core::pose::Pose & pose )
 			Size atomno1 = pose.residue_type(res1_[i_cst]).atom_index(atom1_[i_cst]);
 			Size atomno2 = pose.residue_type(res2_[i_cst]).atom_index(atom2_[i_cst]);
 			pose.add_constraint(
-				core::scoring::constraints::ConstraintCOP( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::AngleConstraint( core::id::AtomID(atomno1,res1_[i_cst]),
+				core::scoring::constraints::ConstraintCOP( utility::pointer::make_shared< core::scoring::constraints::AngleConstraint >( core::id::AtomID(atomno1,res1_[i_cst]),
 				core::id::AtomID(atomno0,res_center_[i_cst]),
-				core::id::AtomID(atomno2,res2_[i_cst]), func ) ) ) );
+				core::id::AtomID(atomno2,res2_[i_cst]), func ) ) );
 		}
 	}
 }
@@ -123,12 +123,12 @@ CreateAngleConstraint::parse_my_tag(
 	}
 }
 
-moves::MoverOP CreateAngleConstraint::clone() const { return moves::MoverOP( new CreateAngleConstraint( *this ) ); }
-moves::MoverOP CreateAngleConstraint::fresh_instance() const { return moves::MoverOP( new CreateAngleConstraint ); }
+moves::MoverOP CreateAngleConstraint::clone() const { return utility::pointer::make_shared< CreateAngleConstraint >( *this ); }
+moves::MoverOP CreateAngleConstraint::fresh_instance() const { return utility::pointer::make_shared< CreateAngleConstraint >(); }
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP CreateAngleConstraintCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new CreateAngleConstraint );
+// XRW TEMP  return utility::pointer::make_shared< CreateAngleConstraint >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -181,7 +181,7 @@ std::string CreateAngleConstraintCreator::keyname() const {
 
 protocols::moves::MoverOP
 CreateAngleConstraintCreator::create_mover() const {
-	return protocols::moves::MoverOP( new CreateAngleConstraint );
+	return utility::pointer::make_shared< CreateAngleConstraint >();
 }
 
 void CreateAngleConstraintCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

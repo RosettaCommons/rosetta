@@ -58,9 +58,9 @@ public:
 	// @brief copy constructor
 	BuriedUnsatHbondFilter( BuriedUnsatHbondFilter const & rval );
 	// @brief make clone
-	filters::FilterOP clone() const override { return filters::FilterOP( new BuriedUnsatHbondFilter( *this ) ); }
+	filters::FilterOP clone() const override { return utility::pointer::make_shared< BuriedUnsatHbondFilter >( *this ); }
 	// @brief make fresh instance
-	filters::FilterOP fresh_instance() const override { return filters::FilterOP( new BuriedUnsatHbondFilter() ); }
+	filters::FilterOP fresh_instance() const override { return utility::pointer::make_shared< BuriedUnsatHbondFilter >(); }
 	bool apply( core::pose::Pose const & pose ) const override;
 	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
 	core::Real report_sm( core::pose::Pose const & pose ) const override;

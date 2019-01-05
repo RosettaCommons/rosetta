@@ -224,18 +224,18 @@ BoltzmannFilter::parse_my_tag( utility::tag::TagCOP tag,
 
 protocols::filters::FilterOP
 BoltzmannFilter::fresh_instance() const{
-	return protocols::filters::FilterOP( new BoltzmannFilter() );
+	return utility::pointer::make_shared< BoltzmannFilter >();
 }
 
 BoltzmannFilter::~BoltzmannFilter()= default;
 
 protocols::filters::FilterOP
 BoltzmannFilter::clone() const{
-	return protocols::filters::FilterOP( new BoltzmannFilter( *this ) );
+	return utility::pointer::make_shared< BoltzmannFilter >( *this );
 }
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP BoltzmannFilterCreator::create_filter() const { return protocols::filters::FilterOP( new BoltzmannFilter ); }
+// XRW TEMP BoltzmannFilterCreator::create_filter() const { return utility::pointer::make_shared< BoltzmannFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP BoltzmannFilterCreator::keyname() const { return "Boltzmann"; }
@@ -269,7 +269,7 @@ std::string BoltzmannFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 BoltzmannFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new BoltzmannFilter );
+	return utility::pointer::make_shared< BoltzmannFilter >();
 }
 
 void BoltzmannFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

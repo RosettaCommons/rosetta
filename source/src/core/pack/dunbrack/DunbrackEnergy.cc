@@ -52,7 +52,7 @@ scoring::methods::EnergyMethodOP
 DunbrackEnergyCreator::create_energy_method(
 	scoring::methods::EnergyMethodOptions const &
 ) const {
-	return scoring::methods::EnergyMethodOP( new DunbrackEnergy );
+	return utility::pointer::make_shared< DunbrackEnergy >();
 }
 
 scoring::ScoreTypes
@@ -67,7 +67,7 @@ DunbrackEnergyCreator::score_types_for_method() const {
 
 /// ctor
 DunbrackEnergy::DunbrackEnergy() :
-	parent( EnergyMethodCreatorOP( new DunbrackEnergyCreator ) )
+	parent( utility::pointer::make_shared< DunbrackEnergyCreator >() )
 {}
 
 DunbrackEnergy::~DunbrackEnergy() = default;
@@ -76,7 +76,7 @@ DunbrackEnergy::~DunbrackEnergy() = default;
 EnergyMethodOP
 DunbrackEnergy::clone() const
 {
-	return EnergyMethodOP( new DunbrackEnergy );
+	return utility::pointer::make_shared< DunbrackEnergy >();
 }
 
 /////////////////////////////////////////////////////////////////////////////

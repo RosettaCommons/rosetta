@@ -119,7 +119,7 @@ Bridge & Bridge::operator =( Bridge const & rval ) {
 
 /// @brief clone this object
 BuildInstructionOP Bridge::clone() const {
-	return BuildInstructionOP( new Bridge( *this ) );
+	return utility::pointer::make_shared< Bridge >( *this );
 }
 
 

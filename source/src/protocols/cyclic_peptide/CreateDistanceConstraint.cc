@@ -100,7 +100,7 @@ void CreateDistanceConstraint::apply( core::pose::Pose & pose )
 			Size atomno1 = pose.residue_type(res1_[i_cst]).atom_index(atom1_[i_cst]);
 			Size atomno2 = pose.residue_type(res2_[i_cst]).atom_index(atom2_[i_cst]);
 			pose.add_constraint(
-				core::scoring::constraints::ConstraintCOP( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::AtomPairConstraint( core::id::AtomID(atomno1,res1_[i_cst]), core::id::AtomID(atomno2,res2_[i_cst]), func ) ) )
+				utility::pointer::make_shared< core::scoring::constraints::AtomPairConstraint >( core::id::AtomID(atomno1,res1_[i_cst]), core::id::AtomID(atomno2,res2_[i_cst]), func )
 			);
 		}
 	}
@@ -131,12 +131,12 @@ CreateDistanceConstraint::parse_my_tag(
 	return;
 }
 
-moves::MoverOP CreateDistanceConstraint::clone() const { return moves::MoverOP( new CreateDistanceConstraint( *this ) ); }
-moves::MoverOP CreateDistanceConstraint::fresh_instance() const { return moves::MoverOP( new CreateDistanceConstraint ); }
+moves::MoverOP CreateDistanceConstraint::clone() const { return utility::pointer::make_shared< CreateDistanceConstraint >( *this ); }
+moves::MoverOP CreateDistanceConstraint::fresh_instance() const { return utility::pointer::make_shared< CreateDistanceConstraint >(); }
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP CreateDistanceConstraintCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new CreateDistanceConstraint );
+// XRW TEMP  return utility::pointer::make_shared< CreateDistanceConstraint >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -187,7 +187,7 @@ std::string CreateDistanceConstraintCreator::keyname() const {
 
 protocols::moves::MoverOP
 CreateDistanceConstraintCreator::create_mover() const {
-	return protocols::moves::MoverOP( new CreateDistanceConstraint );
+	return utility::pointer::make_shared< CreateDistanceConstraint >();
 }
 
 void CreateDistanceConstraintCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -72,7 +72,7 @@ MutationSetDesignOperation::MutationSetDesignOperation(MutationSetDesignOperatio
 
 TaskOperationOP
 MutationSetDesignOperation::clone() const{
-	return TaskOperationOP(new MutationSetDesignOperation( *this));
+	return utility::pointer::make_shared< MutationSetDesignOperation >( *this);
 }
 
 void

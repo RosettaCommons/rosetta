@@ -66,7 +66,7 @@ OmegaBundleParameter::~OmegaBundleParameter() = default;
 /// @details Make a copy of this object and return a smart pointer to the copy.
 core::conformation::parametric::ParameterOP
 OmegaBundleParameter::clone() const {
-	return core::conformation::parametric::ParameterOP( OmegaBundleParameterOP( new OmegaBundleParameter( *this ) ) );
+	return utility::pointer::make_shared< OmegaBundleParameter >( *this );
 }
 
 /// @brief Given another parameter of the same type, copy its value.  This does *not* set value_set_ to true.

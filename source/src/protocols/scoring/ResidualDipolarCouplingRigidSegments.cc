@@ -254,7 +254,7 @@ void ResidualDipolarCouplingRigidSegments::sort_into_segments(RDC_lines all_rdcs
 
 	//create new RDC objects for all Segments
 	for ( auto & it : rdc_segm_data ) {
-		rdc_segments_.push_back( core::scoring::ResidualDipolarCouplingOP( new core::scoring::ResidualDipolarCoupling( it ) ) );
+		rdc_segments_.push_back( utility::pointer::make_shared< core::scoring::ResidualDipolarCoupling >( it ) );
 	}
 }
 

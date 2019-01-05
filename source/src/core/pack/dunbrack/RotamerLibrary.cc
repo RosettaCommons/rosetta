@@ -1622,23 +1622,23 @@ RotamerLibrary::create_rotameric_dunlib(
 	case 1 : {
 		switch ( n_bb ) {
 		case 1 : {
-			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< ONE, ONE >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library ) );
+			rotlib = utility::pointer::make_shared< RotamericSingleResidueDunbrackLibrary< ONE, ONE > >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library );
 			break;
 		}
 		case 2 : {
-			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< ONE, TWO >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library ) );
+			rotlib = utility::pointer::make_shared< RotamericSingleResidueDunbrackLibrary< ONE, TWO > >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library );
 			break;
 		}
 		case 3 : {
-			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< ONE, THREE >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library ) );
+			rotlib = utility::pointer::make_shared< RotamericSingleResidueDunbrackLibrary< ONE, THREE > >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library );
 			break;
 		}
 		case 4 : {
-			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< ONE, FOUR >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library ) );
+			rotlib = utility::pointer::make_shared< RotamericSingleResidueDunbrackLibrary< ONE, FOUR > >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library );
 			break;
 		}
 		case 5 : {
-			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< ONE, FIVE >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library ) );
+			rotlib = utility::pointer::make_shared< RotamericSingleResidueDunbrackLibrary< ONE, FIVE > >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library );
 			break;
 		}
 		default :
@@ -1649,23 +1649,23 @@ RotamerLibrary::create_rotameric_dunlib(
 	case 2 : {
 		switch ( n_bb ) {
 		case 1 : {
-			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< TWO, ONE >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library  ) );
+			rotlib = utility::pointer::make_shared< RotamericSingleResidueDunbrackLibrary< TWO, ONE > >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library  );
 			break;
 		}
 		case 2 : {
-			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< TWO, TWO >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library ) );
+			rotlib = utility::pointer::make_shared< RotamericSingleResidueDunbrackLibrary< TWO, TWO > >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library );
 			break;
 		}
 		case 3 : {
-			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< TWO, THREE >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library ) );
+			rotlib = utility::pointer::make_shared< RotamericSingleResidueDunbrackLibrary< TWO, THREE > >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library );
 			break;
 		}
 		case 4 : {
-			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< TWO, FOUR >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library ) );
+			rotlib = utility::pointer::make_shared< RotamericSingleResidueDunbrackLibrary< TWO, FOUR > >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library );
 			break;
 		}
 		case 5 : {
-			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< TWO, FIVE >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library ) );
+			rotlib = utility::pointer::make_shared< RotamericSingleResidueDunbrackLibrary< TWO, FIVE > >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library );
 			break;
 		}
 		default :
@@ -1676,23 +1676,23 @@ RotamerLibrary::create_rotameric_dunlib(
 	case 3 : {
 		switch ( n_bb ) {
 		case 1 : {
-			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< THREE, ONE >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library ) );
+			rotlib = utility::pointer::make_shared< RotamericSingleResidueDunbrackLibrary< THREE, ONE > >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library );
 			break;
 		}
 		case 2 : {
-			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< THREE, TWO >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library ) );
+			rotlib = utility::pointer::make_shared< RotamericSingleResidueDunbrackLibrary< THREE, TWO > >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library );
 			break;
 		}
 		case 3 : {
-			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< THREE, THREE >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library ) );
+			rotlib = utility::pointer::make_shared< RotamericSingleResidueDunbrackLibrary< THREE, THREE > >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library );
 			break;
 		}
 		case 4 : {
-			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< THREE, FOUR >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library ) );
+			rotlib = utility::pointer::make_shared< RotamericSingleResidueDunbrackLibrary< THREE, FOUR > >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library );
 			break;
 		}
 		case 5 : {
-			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< THREE, FIVE >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library ) );
+			rotlib = utility::pointer::make_shared< RotamericSingleResidueDunbrackLibrary< THREE, FIVE > >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library );
 			break;
 		}
 		default :
@@ -1703,23 +1703,23 @@ RotamerLibrary::create_rotameric_dunlib(
 	case 4 : {
 		switch ( n_bb ) {
 		case 1 : {
-			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< FOUR, ONE >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library ) );
+			rotlib = utility::pointer::make_shared< RotamericSingleResidueDunbrackLibrary< FOUR, ONE > >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library );
 			break;
 		}
 		case 2 : {
-			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< FOUR, TWO >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library ) );
+			rotlib = utility::pointer::make_shared< RotamericSingleResidueDunbrackLibrary< FOUR, TWO > >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library );
 			break;
 		}
 		case 3 : {
-			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< FOUR, THREE >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library ) );
+			rotlib = utility::pointer::make_shared< RotamericSingleResidueDunbrackLibrary< FOUR, THREE > >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library );
 			break;
 		}
 		case 4 : {
-			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< FOUR, FOUR >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library ) );
+			rotlib = utility::pointer::make_shared< RotamericSingleResidueDunbrackLibrary< FOUR, FOUR > >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library );
 			break;
 		}
 		case 5 : {
-			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< FOUR, FIVE >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library ) );
+			rotlib = utility::pointer::make_shared< RotamericSingleResidueDunbrackLibrary< FOUR, FIVE > >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library );
 			break;
 		}
 		default :
@@ -1730,23 +1730,23 @@ RotamerLibrary::create_rotameric_dunlib(
 	case 5 : {
 		switch ( n_bb ) {
 		case 1 : {
-			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< FIVE, ONE >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library ) );
+			rotlib = utility::pointer::make_shared< RotamericSingleResidueDunbrackLibrary< FIVE, ONE > >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library );
 			break;
 		}
 		case 2 : {
-			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< FIVE, TWO >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library ) );
+			rotlib = utility::pointer::make_shared< RotamericSingleResidueDunbrackLibrary< FIVE, TWO > >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library );
 			break;
 		}
 		case 3 : {
-			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< FIVE, THREE >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library ) );
+			rotlib = utility::pointer::make_shared< RotamericSingleResidueDunbrackLibrary< FIVE, THREE > >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library );
 			break;
 		}
 		case 4 : {
-			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< FIVE, FOUR >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library ) );
+			rotlib = utility::pointer::make_shared< RotamericSingleResidueDunbrackLibrary< FIVE, FOUR > >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library );
 			break;
 		}
 		case 5 : {
-			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< FIVE, FIVE >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library ) );
+			rotlib = utility::pointer::make_shared< RotamericSingleResidueDunbrackLibrary< FIVE, FIVE > >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library );
 			break;
 		}
 		default :

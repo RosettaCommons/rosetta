@@ -102,7 +102,7 @@ StructureFeatures::write_schema_to_db(
 
 	TR.Debug << "Writing StructureFeatures schema." << std::endl;
 
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ), false /*not null*/, true);
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >(), false /*not null*/, true);
 
 	if ( db_session->is_db_partitioned() ) {
 		// If database is partitioned struct_id prefix (32 high bits in structure id) should be
@@ -116,12 +116,12 @@ StructureFeatures::write_schema_to_db(
 
 		TR.Debug << "Setting struct_id autoincrement prefix for partitioned DB. Partition: " << db_session->get_db_partition() << " Prefix: " << structure_prefix << std::endl;
 
-		struct_id = Column("struct_id", DbDataTypeOP( new DbBigInt() ), false /*not null*/, true, structure_prefix + 1);
+		struct_id = Column("struct_id", utility::pointer::make_shared< DbBigInt >(), false /*not null*/, true, structure_prefix + 1);
 	}
 
-	Column batch_id("batch_id", DbDataTypeOP( new DbInteger() ));
-	Column tag("tag", DbDataTypeOP( new DbText(255) ));
-	Column input_tag("input_tag", DbDataTypeOP( new DbText() ));
+	Column batch_id("batch_id", utility::pointer::make_shared< DbInteger >());
+	Column tag("tag", utility::pointer::make_shared< DbText >(255));
+	Column input_tag("input_tag", utility::pointer::make_shared< DbText >());
 
 	/***structures***/
 	Schema structures("structures", PrimaryKey(struct_id));
@@ -142,7 +142,7 @@ StructureFeatures::write_schema_to_db(
 	utility::vector1<Column> unique_cols;
 	unique_cols.push_back(tag);
 	unique_cols.push_back(batch_id);
-	sampled_structures.add_constraint(ConstraintOP( new UniqueConstraint(unique_cols) ));
+	sampled_structures.add_constraint(utility::pointer::make_shared< UniqueConstraint >(unique_cols));
 
 	sampled_structures.write(db_session);
 }
@@ -313,7 +313,7 @@ std::string StructureFeaturesCreator::type_name() const {
 
 protocols::features::FeaturesReporterOP
 StructureFeaturesCreator::create_features_reporter() const {
-	return protocols::features::FeaturesReporterOP( new StructureFeatures );
+	return utility::pointer::make_shared< StructureFeatures >();
 }
 
 void StructureFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

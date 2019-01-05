@@ -463,7 +463,7 @@ public: // Utility methods
 			"X[VRT]/A[ALA:NtermProteinFull]CD/Z[MG]/F[PHE:NtermProteinFull]GHIKL[LEU:CtermProteinFull]/Z[MG]/Z[MG]/NPR[ARG:CtermProteinFull]/X[VRT]/Z[MG]",
 			*core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )
 		);
-		if ( ! pose->pdb_info() ) { pose->pdb_info( core::pose::PDBInfoOP( new core::pose::PDBInfo( *pose ) ) ); }
+		if ( ! pose->pdb_info() ) { pose->pdb_info( utility::pointer::make_shared< core::pose::PDBInfo >( *pose ) ); }
 		pose->pdb_info()->set_chains( std::string( "XAAAMBBBBCBMMAAAXM" ) );
 		// Strap in: pos 1 is a virtual root, which has jumps to chain A, B, and the virtual root for the metals
 		// Chain A is discontinous, and is connected by a jump in the middle

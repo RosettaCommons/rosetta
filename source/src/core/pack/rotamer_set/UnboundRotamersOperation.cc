@@ -60,7 +60,7 @@ UnboundRotamersOperation::~UnboundRotamersOperation() = default;
 core::pack::rotamer_set::RotamerSetOperationOP
 UnboundRotamersOperation::clone() const
 {
-	return core::pack::rotamer_set::RotamerSetOperationOP( new UnboundRotamersOperation( *this ) );
+	return utility::pointer::make_shared< UnboundRotamersOperation >( *this );
 }
 
 

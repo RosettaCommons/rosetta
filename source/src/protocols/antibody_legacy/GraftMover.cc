@@ -354,7 +354,7 @@ void GraftMover::set_packer_default(
 	task = pack::task::TaskFactory::create_packer_task( pose_in );
 	task->restrict_to_repacking();
 	task->or_include_current( include_current );
-	GraftMover::packer_ = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover( scorefxn, task ) );
+	GraftMover::packer_ = utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >( scorefxn, task );
 
 } // GraftMover set_packer_default
 
@@ -586,7 +586,7 @@ void CloseOneMover::close_one_loop_stem (
 
 	//setting MoveMap
 	kinematics::MoveMapOP loop_map;
-	loop_map = kinematics::MoveMapOP( new kinematics::MoveMap() );
+	loop_map = utility::pointer::make_shared< kinematics::MoveMap >();
 	loop_map->clear();
 	loop_map->set_chi( false );
 	loop_map->set_bb( false );
@@ -631,7 +631,7 @@ void CloseOneMover::close_one_loop_stem (
 
 	//setting MoveMap
 	kinematics::MoveMapOP loop_map;
-	loop_map = kinematics::MoveMapOP( new kinematics::MoveMap() );
+	loop_map = utility::pointer::make_shared< kinematics::MoveMap >();
 	loop_map->clear();
 	loop_map->set_chi( false );
 	loop_map->set_bb( false );
@@ -738,7 +738,7 @@ CloseOneMover::close_one_loop_stem_helper(
 	Real temperature = init_temp;
 
 	MonteCarloOP mc;
-	mc = MonteCarloOP( new moves::MonteCarlo( pose_in, *lowres_scorefxn, temperature ) );
+	mc = utility::pointer::make_shared< moves::MonteCarlo >( pose_in, *lowres_scorefxn, temperature );
 	mc->reset( pose_in ); // monte carlo reset
 
 	// outer cycle
@@ -826,7 +826,7 @@ void LoopRlxMover::apply( pose::Pose & pose_in ) {
 
 	//setting MoveMap
 	kinematics::MoveMapOP loop_map;
-	loop_map = kinematics::MoveMapOP( new kinematics::MoveMap() );
+	loop_map = utility::pointer::make_shared< kinematics::MoveMap >();
 	loop_map->clear();
 	loop_map->set_chi( false );
 	loop_map->set_bb( false );
@@ -872,7 +872,7 @@ void LoopRlxMover::apply( pose::Pose & pose_in ) {
 	protocols::minimization_packing::PackRotamersMoverOP loop_repack( new protocols::minimization_packing::PackRotamersMover(highres_scorefxn_) );
 	setup_packer_task( pose_in );
 	( *highres_scorefxn_ )( pose_in );
-	tf_->push_back( TaskOperationCOP( new protocols::simple_task_operations::RestrictToInterface( allow_repack ) ) );
+	tf_->push_back( utility::pointer::make_shared< protocols::simple_task_operations::RestrictToInterface >( allow_repack ) );
 	loop_repack->task_factory(tf_);
 	loop_repack->apply( pose_in );
 
@@ -922,7 +922,7 @@ void LoopRlxMover::apply( pose::Pose & pose_in ) {
 	loop_map->set_chi( allow_repack );
 	setup_packer_task( pose_in );
 	( *highres_scorefxn_ )( pose_in );
-	tf_->push_back( TaskOperationCOP( new protocols::simple_task_operations::RestrictToInterface( allow_repack ) ) );
+	tf_->push_back( utility::pointer::make_shared< protocols::simple_task_operations::RestrictToInterface >( allow_repack ) );
 	protocols::minimization_packing::RotamerTrialsMoverOP pack_rottrial( new protocols::minimization_packing::RotamerTrialsMover(
 		highres_scorefxn_, tf_ ) );
 
@@ -935,7 +935,7 @@ void LoopRlxMover::apply( pose::Pose & pose_in ) {
 	Real temperature = init_temp;
 
 	MonteCarloOP mc;
-	mc = MonteCarloOP( new moves::MonteCarlo( pose_in, *highres_scorefxn_, temperature ) );
+	mc = utility::pointer::make_shared< moves::MonteCarlo >( pose_in, *highres_scorefxn_, temperature );
 	mc->reset( pose_in ); // monte carlo reset
 
 	// outer cycle
@@ -955,7 +955,7 @@ void LoopRlxMover::apply( pose::Pose & pose_in ) {
 			loop_map->set_chi( allow_repack );
 			setup_packer_task( pose_in );
 			( *highres_scorefxn_ )( pose_in );
-			tf_->push_back( TaskOperationCOP( new protocols::simple_task_operations::RestrictToInterface( allow_repack ) ) );
+			tf_->push_back( utility::pointer::make_shared< protocols::simple_task_operations::RestrictToInterface >( allow_repack ) );
 			protocols::minimization_packing::RotamerTrialsMoverOP pack_rottrial( new protocols::minimization_packing::RotamerTrialsMover(
 				highres_scorefxn_, tf_ ) );
 			pack_rottrial->apply( pose_in );
@@ -965,10 +965,10 @@ void LoopRlxMover::apply( pose::Pose & pose_in ) {
 
 			if ( numeric::mod(j,Size(20))==0 || j==inner_cycles ) {
 				// repack trial
-				loop_repack = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover( highres_scorefxn_ ) );
+				loop_repack = utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >( highres_scorefxn_ );
 				setup_packer_task( pose_in );
 				( *highres_scorefxn_ )( pose_in );
-				tf_->push_back( TaskOperationCOP( new protocols::simple_task_operations::RestrictToInterface( allow_repack ) ) );
+				tf_->push_back( utility::pointer::make_shared< protocols::simple_task_operations::RestrictToInterface >( allow_repack ) );
 				loop_repack->task_factory( tf_ );
 				loop_repack->apply( pose_in );
 				mc->boltzmann( pose_in );
@@ -1003,20 +1003,20 @@ LoopRlxMover::setup_packer_task(
 	using namespace pack::task::operation;
 
 	if ( init_task_factory_ ) {
-		tf_ = core::pack::task::TaskFactoryOP( new TaskFactory( *init_task_factory_ ) );
+		tf_ = utility::pointer::make_shared< TaskFactory >( *init_task_factory_ );
 		TR << "LoopRlxMover Reinitializing Packer Task" << std::endl;
 		return;
 	} else {
-		tf_ = core::pack::task::TaskFactoryOP( new TaskFactory );
+		tf_ = utility::pointer::make_shared< TaskFactory >();
 	}
 
 	TR << "LoopRlxMover Setting Up Packer Task" << std::endl;
 
-	tf_->push_back( TaskOperationCOP( new OperateOnCertainResidues( ResLvlTaskOperationOP( new PreventRepackingRLT ), ResFilterOP( new ResidueLacksProperty("PROTEIN") ) ) ) );
-	tf_->push_back( TaskOperationCOP( new InitializeFromCommandline ) );
-	tf_->push_back( TaskOperationCOP( new IncludeCurrent ) );
-	tf_->push_back( TaskOperationCOP( new RestrictToRepacking ) );
-	tf_->push_back( TaskOperationCOP( new NoRepackDisulfides ) );
+	tf_->push_back( utility::pointer::make_shared< OperateOnCertainResidues >( utility::pointer::make_shared< PreventRepackingRLT >(), utility::pointer::make_shared< ResidueLacksProperty >("PROTEIN") ) );
+	tf_->push_back( utility::pointer::make_shared< InitializeFromCommandline >() );
+	tf_->push_back( utility::pointer::make_shared< IncludeCurrent >() );
+	tf_->push_back( utility::pointer::make_shared< RestrictToRepacking >() );
+	tf_->push_back( utility::pointer::make_shared< NoRepackDisulfides >() );
 
 	// incorporating Ian's UnboundRotamer operation.
 	// note that nothing happens if unboundrot option is inactive!

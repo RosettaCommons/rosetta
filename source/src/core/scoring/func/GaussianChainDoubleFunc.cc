@@ -54,7 +54,7 @@ GaussianChainDoubleFunc::GaussianChainDoubleFunc( Real const gaussian_variance,
 FuncOP
 GaussianChainDoubleFunc::clone() const
 {
-	return FuncOP( new GaussianChainDoubleFunc( gaussian_variance_, loop_fixed_cost_, D2_ ) );
+	return utility::pointer::make_shared< GaussianChainDoubleFunc >( gaussian_variance_, loop_fixed_cost_, D2_ );
 }
 
 bool GaussianChainDoubleFunc::operator == ( Func const & other ) const

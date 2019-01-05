@@ -97,17 +97,17 @@ void
 PdbDataFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ), false);
-	Column residue_number("residue_number", DbDataTypeOP( new DbInteger() ), false);
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >(), false);
+	Column residue_number("residue_number", utility::pointer::make_shared< DbInteger >(), false);
 
 	utility::vector1<Column> pkey_cols;
 	pkey_cols.push_back(struct_id);
 	pkey_cols.push_back(residue_number);
 
 	//******residue_pdb_identification******//
-	Column chain_id("chain_id", DbDataTypeOP( new DbText() ), false);
-	Column insertion_code("insertion_code", DbDataTypeOP( new DbText() ), false);
-	Column pdb_residue_number("pdb_residue_number", DbDataTypeOP( new DbInteger() ), false);
+	Column chain_id("chain_id", utility::pointer::make_shared< DbText >(), false);
+	Column insertion_code("insertion_code", utility::pointer::make_shared< DbText >(), false);
+	Column pdb_residue_number("pdb_residue_number", utility::pointer::make_shared< DbInteger >(), false);
 
 	utility::vector1<std::string> fkey_reference_cols;
 	fkey_reference_cols.push_back("struct_id");
@@ -126,12 +126,12 @@ PdbDataFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session)
 
 
 	//******residue_pdb_confidence******//
-	Column max_temperature("max_temperature", DbDataTypeOP( new DbReal() ), false);
-	Column max_bb_temperature("max_bb_temperature", DbDataTypeOP( new DbReal() ), false);
-	Column max_sc_temperature("max_sc_temperature", DbDataTypeOP( new DbReal() ), false);
-	Column min_occupancy("min_occupancy", DbDataTypeOP( new DbReal() ), false);
-	Column min_bb_occupancy("min_bb_occupancy", DbDataTypeOP( new DbReal() ), false);
-	Column min_sc_occupancy("min_sc_occupancy", DbDataTypeOP( new DbReal() ), false);
+	Column max_temperature("max_temperature", utility::pointer::make_shared< DbReal >(), false);
+	Column max_bb_temperature("max_bb_temperature", utility::pointer::make_shared< DbReal >(), false);
+	Column max_sc_temperature("max_sc_temperature", utility::pointer::make_shared< DbReal >(), false);
+	Column min_occupancy("min_occupancy", utility::pointer::make_shared< DbReal >(), false);
+	Column min_bb_occupancy("min_bb_occupancy", utility::pointer::make_shared< DbReal >(), false);
+	Column min_sc_occupancy("min_sc_occupancy", utility::pointer::make_shared< DbReal >(), false);
 
 	utility::vector1<Column> pdb_ident_pkeys;
 	pdb_ident_pkeys.push_back(struct_id);
@@ -252,7 +252,7 @@ void PdbDataFeatures::load_residue_pdb_identification(
 	}
 
 	if ( !pose.pdb_info() ) {
-		pose.pdb_info(PDBInfoOP( new PDBInfo(pose.size()) ));
+		pose.pdb_info(utility::pointer::make_shared< PDBInfo >(pose.size()));
 	}
 
 	pose.pdb_info()->set_numbering(pdb_numbers);
@@ -306,7 +306,7 @@ void PdbDataFeatures::load_residue_pdb_confidence(
 	if ( !table_exists(db_session, "residue_pdb_confidence") ) return;
 
 	if ( !pose.pdb_info() ) {
-		pose.pdb_info(PDBInfoOP( new PDBInfo(pose.size()) ));
+		pose.pdb_info(utility::pointer::make_shared< PDBInfo >(pose.size()));
 	}
 
 	std::string statement_string =
@@ -469,7 +469,7 @@ std::string PdbDataFeaturesCreator::type_name() const {
 
 protocols::features::FeaturesReporterOP
 PdbDataFeaturesCreator::create_features_reporter() const {
-	return protocols::features::FeaturesReporterOP( new PdbDataFeatures );
+	return utility::pointer::make_shared< PdbDataFeatures >();
 }
 
 void PdbDataFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

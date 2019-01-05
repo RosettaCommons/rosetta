@@ -40,7 +40,7 @@ methods::EnergyMethodOP
 PeptideBondEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new PeptideBondEnergy );
+	return utility::pointer::make_shared< PeptideBondEnergy >();
 }
 
 ScoreTypes
@@ -51,7 +51,7 @@ PeptideBondEnergyCreator::score_types_for_method() const {
 }
 
 
-PeptideBondEnergy::PeptideBondEnergy() : parent( methods::EnergyMethodCreatorOP( new PeptideBondEnergyCreator ) ) {}
+PeptideBondEnergy::PeptideBondEnergy() : parent( utility::pointer::make_shared< PeptideBondEnergyCreator >() ) {}
 
 void
 PeptideBondEnergy::residue_pair_energy(

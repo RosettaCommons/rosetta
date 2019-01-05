@@ -55,7 +55,7 @@ methods::EnergyMethodOP
 D2H_SA_EnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new D2H_SA_Energy );
+	return utility::pointer::make_shared< D2H_SA_Energy >();
 }
 
 ScoreTypes
@@ -67,7 +67,7 @@ D2H_SA_EnergyCreator::score_types_for_method() const {
 
 /// c-tor
 D2H_SA_Energy::D2H_SA_Energy() :
-	parent( methods::EnergyMethodCreatorOP( new D2H_SA_EnergyCreator ) )
+	parent( utility::pointer::make_shared< D2H_SA_EnergyCreator >() )
 {
 	HDX_data_defined_=false;
 	chain_=0;
@@ -141,7 +141,7 @@ D2H_SA_Energy::D2H_SA_Energy() :
 EnergyMethodOP
 D2H_SA_Energy::clone() const
 {
-	return EnergyMethodOP( new D2H_SA_Energy );
+	return utility::pointer::make_shared< D2H_SA_Energy >();
 }
 
 /////////////////////////////////////////////////////////////////////////////

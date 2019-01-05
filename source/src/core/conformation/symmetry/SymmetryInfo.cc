@@ -434,7 +434,7 @@ SymmetryInfo::SymmetryInfo(
 SymmetryInfoOP
 SymmetryInfo::clone() const
 {
-	return SymmetryInfoOP( new SymmetryInfo( *this ) );
+	return utility::pointer::make_shared< SymmetryInfo >( *this );
 }
 
 // Initialize from "de-novo-style" symmdef files (as from make_symmdef_denovo.py)

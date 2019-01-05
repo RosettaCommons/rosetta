@@ -93,9 +93,9 @@ int main ( int argc, char* argv[] )
 
 		//now do initialization stuff.
 		TaskFactoryOP task_factory( new TaskFactory );
-		task_factory->push_back( operation::TaskOperationCOP( new operation::InitializeFromCommandline ) );
+		task_factory->push_back( utility::pointer::make_shared< operation::InitializeFromCommandline >() );
 		//need these to keep pack_rotamers from redesigning the residue.
-		operation::RestrictToRepackingOP rtrop = operation::RestrictToRepackingOP( new operation::RestrictToRepacking );
+		operation::RestrictToRepackingOP rtrop = utility::pointer::make_shared< operation::RestrictToRepacking >();
 		task_factory->push_back( rtrop );
 
 		//ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( "mm_std_fa_elec_dslf_fa13_split_unfolded" );
@@ -165,19 +165,19 @@ int main ( int argc, char* argv[] )
 			if ( pose.residue_type( ii ).is_beta_aa() ) {
 				ca = "CM";
 			}
-			pose.add_constraint( DihedralConstraintOP( new DihedralConstraint(
+			pose.add_constraint( utility::pointer::make_shared< DihedralConstraint >(
 				*new AtomID( pose.residue(  ii  ).atom_index(  ca  ), ii ),
 				*new AtomID( pose.residue(  ii  ).atom_index( "C" ), ii ),
 				*new AtomID( pose.residue(  ii+1  ).atom_index( "N" ), ii+1 ),
 				*new AtomID( pose.residue(  ii+1  ).atom_index( "CA" ), ii+1 ),
-				CircularHarmonicFuncOP( new CircularHarmonicFunc( 3.14159, 0.01 ) )
-				) ) );
+				utility::pointer::make_shared< CircularHarmonicFunc >( 3.14159, 0.01 )
+				) );
 
 
-			pose.add_constraint( AtomPairConstraintOP( new AtomPairConstraint(
+			pose.add_constraint( utility::pointer::make_shared< AtomPairConstraint >(
 				*new AtomID( pose.residue(  ii  ).atom_index( "O" ), ii ),
 				*new AtomID( pose.residue( ii+4 ).atom_index( "H" ), ii ),
-				HarmonicFuncOP( new HarmonicFunc( 1.8, 0.2 ) ) ) ) );
+				utility::pointer::make_shared< HarmonicFunc >( 1.8, 0.2 ) ) );
 		}
 
 		movemap->set_bb( true );

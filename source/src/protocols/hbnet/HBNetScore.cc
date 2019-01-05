@@ -128,7 +128,7 @@ std::string HBNetScoreFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 HBNetScoreFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new HBNetScore );
+	return utility::pointer::make_shared< HBNetScore >();
 }
 
 void HBNetScoreFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

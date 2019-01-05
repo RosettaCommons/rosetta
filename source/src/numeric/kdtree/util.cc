@@ -56,9 +56,9 @@ HyperRectangleOP get_percentile_bounds(
 		}
 	} // rows
 
-	return HyperRectangleOP( new HyperRectangle(
+	return utility::pointer::make_shared< HyperRectangle >(
 		upper, lower
-		) );
+	);
 }
 
 void transform_percentile_single_pt(

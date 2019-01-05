@@ -79,7 +79,7 @@ static basic::Tracer TR( "protocols.protein_interface_design.movers.MapHotspot" 
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP MapHotspotCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new MapHotspot );
+// XRW TEMP  return utility::pointer::make_shared< MapHotspot >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -408,7 +408,7 @@ std::string MapHotspotCreator::keyname() const {
 
 protocols::moves::MoverOP
 MapHotspotCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MapHotspot );
+	return utility::pointer::make_shared< MapHotspot >();
 }
 
 void MapHotspotCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

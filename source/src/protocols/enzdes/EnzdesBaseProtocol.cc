@@ -301,14 +301,14 @@ EnzdesBaseProtocol::create_enzdes_pack_task(
 		detect_enzdes_interface->set_design_target_res( design_targets_ );
 	}
 	TaskFactory taskfactory;
-	taskfactory.push_back( TaskOperationCOP( new operation::InitializeFromCommandline ) );
+	taskfactory.push_back( utility::pointer::make_shared< operation::InitializeFromCommandline >() );
 	taskfactory.push_back( detect_enzdes_interface);
 	if ( design ) { // upweight ligand interactions and remove bad aromatic rotamers during design only
-		taskfactory.push_back( TaskOperationCOP( new ProteinLigandInterfaceUpweighter() ) );
-		taskfactory.push_back( TaskOperationCOP( new task_operations::LimitAromaChi2Operation() ) );
+		taskfactory.push_back( utility::pointer::make_shared< ProteinLigandInterfaceUpweighter >() );
+		taskfactory.push_back( utility::pointer::make_shared< task_operations::LimitAromaChi2Operation >() );
 	}
 	if ( toolbox::match_enzdes_util::get_enzdes_observer( pose ) ) {
-		taskfactory.push_back( TaskOperationCOP( new AddRigidBodyLigandConfs() ) );
+		taskfactory.push_back( utility::pointer::make_shared< AddRigidBodyLigandConfs >() );
 	}
 	if ( basic::options::option[basic::options::OptionKeys::enzdes::detect_design_interface].user() ) {
 		SetCatalyticResPackBehaviorOP catpack( new SetCatalyticResPackBehavior() );
@@ -316,7 +316,7 @@ EnzdesBaseProtocol::create_enzdes_pack_task(
 		taskfactory.push_back( catpack );
 	}
 	if ( basic::options::option[basic::options::OptionKeys::enzdes::run_ligand_motifs].user() ) {
-		taskfactory.push_back( TaskOperationCOP( new AddLigandMotifRotamers() ) );
+		taskfactory.push_back( utility::pointer::make_shared< AddLigandMotifRotamers >() );
 	}
 
 	PackerTaskOP task = taskfactory.create_task_and_apply_taskoperations( pose );
@@ -338,7 +338,7 @@ EnzdesBaseProtocol::setup_sequence_recovery_cache(
 	//that the wt sequence gets initiated
 	if ( ! toolbox::match_enzdes_util::get_enzdes_observer( pose ) -> get_seq_recovery_cache() ) {
 		using namespace toolbox::match_enzdes_util;
-		toolbox::match_enzdes_util::get_enzdes_observer( pose ) -> set_seq_recovery_cache( EnzdesSeqRecoveryCacheOP( new EnzdesSeqRecoveryCache ) );
+		toolbox::match_enzdes_util::get_enzdes_observer( pose ) -> set_seq_recovery_cache( utility::pointer::make_shared< EnzdesSeqRecoveryCache >() );
 		toolbox::match_enzdes_util::get_enzdes_observer( pose ) -> get_seq_recovery_cache() -> set_sequence( pose );
 	}
 

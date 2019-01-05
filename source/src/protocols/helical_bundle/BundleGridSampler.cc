@@ -126,13 +126,13 @@ BundleGridSampler::~BundleGridSampler() = default;
 
 /// @brief Clone operator to create a pointer to a fresh BundleGridSampler object that copies this one.
 protocols::moves::MoverOP BundleGridSampler::clone() const {
-	return protocols::moves::MoverOP( new BundleGridSampler( *this ) );
+	return utility::pointer::make_shared< BundleGridSampler >( *this );
 }
 
 
 /// @brief Fresh_instance operator to create a pointer to a fresh BundleGridSampler object that does NOT copy this one.
 protocols::moves::MoverOP BundleGridSampler::fresh_instance() const {
-	return protocols::moves::MoverOP( new BundleGridSampler );
+	return utility::pointer::make_shared< BundleGridSampler >();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -748,7 +748,7 @@ std::string BundleGridSamplerCreator::keyname() const {
 
 protocols::moves::MoverOP
 BundleGridSamplerCreator::create_mover() const {
-	return protocols::moves::MoverOP( new BundleGridSampler );
+	return utility::pointer::make_shared< BundleGridSampler >();
 }
 
 void BundleGridSamplerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

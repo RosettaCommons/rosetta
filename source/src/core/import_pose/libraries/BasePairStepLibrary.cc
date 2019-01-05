@@ -177,7 +177,7 @@ BasePairStepLibrary::initialize_data( BasePairStepSequence const & base_pair_ste
 
 		utility::vector1< pose::MiniPoseOP > mini_pose_list;
 		for ( auto const & pose : pose_list ) {
-			mini_pose_list.push_back( pose::MiniPoseOP( new core::pose::MiniPose( *pose ) ) );
+			mini_pose_list.push_back( utility::pointer::make_shared< core::pose::MiniPose >( *pose ) );
 		}
 
 		// potential problem -- what if all poses are bad?

@@ -35,7 +35,7 @@ class OptimizeThreadingMover : public moves::Mover {
 public:
 	OptimizeThreadingMover() : Mover(),
 		nsteps_(1000), rebuild_cycles_(200), max_shift_(4), weight_(0.1), temperature_(2.0), recover_low_(true), step_penalty_(false), greedy_(false), native_(/* NULL */) {
-		scorefxn_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() );
+		scorefxn_ = utility::pointer::make_shared< core::scoring::ScoreFunction >();
 		scorefxn_->set_weight( core::scoring::atom_pair_constraint , 1.0 );
 		scorefxn_sampling_ = core::scoring::ScoreFunctionFactory::create_score_function("score4_smooth");
 		if ( scorefxn_sampling_->get_weight(core::scoring::atom_pair_constraint) == 0 ) {
@@ -45,10 +45,10 @@ public:
 			scorefxn_sampling_->set_weight( core::scoring::dihedral_constraint , 1.0 );
 		}
 
-		loops_ = protocols::loops::LoopsOP( new protocols::loops::Loops );
+		loops_ = utility::pointer::make_shared< protocols::loops::Loops >();
 	}
 
-	moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new OptimizeThreadingMover( *this ) ) ); }
+	moves::MoverOP clone() const override { return( utility::pointer::make_shared< OptimizeThreadingMover >( *this ) ); }
 
 	void apply( core::pose::Pose & pose ) override;
 

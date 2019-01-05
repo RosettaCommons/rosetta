@@ -153,7 +153,7 @@ AppendAssemblyMover::set_up_assembly( core::pose::Pose & pose){
 		}
 
 	} else {
-		assembly = data_storage::SmartAssemblyOP( new data_storage::SmartAssembly( this->get_segment_vector(), this->get_window_width() ) );
+		assembly = utility::pointer::make_shared< data_storage::SmartAssembly >( this->get_segment_vector(), this->get_window_width() );
 		std::map< core::Size, data_storage::SmartSegmentOP > pdbsegs;
 		pdbsegs.clear();
 
@@ -414,14 +414,14 @@ AppendAssemblyMover::parse_my_tag(
 protocols::moves::MoverOP
 AppendAssemblyMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new AppendAssemblyMover );
+	return utility::pointer::make_shared< AppendAssemblyMover >();
 }
 
 /// @brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
 AppendAssemblyMover::clone() const
 {
-	return protocols::moves::MoverOP( new AppendAssemblyMover( *this ) );
+	return utility::pointer::make_shared< AppendAssemblyMover >( *this );
 }
 
 std::string
@@ -441,7 +441,7 @@ AppendAssemblyMover::class_name()
 protocols::moves::MoverOP
 AppendAssemblyMoverCreator::create_mover() const
 {
-	return protocols::moves::MoverOP( new AppendAssemblyMover );
+	return utility::pointer::make_shared< AppendAssemblyMover >();
 }
 
 std::string

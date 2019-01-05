@@ -123,7 +123,7 @@ Tumble::parse_my_tag(
 ) {
 	if ( tag->hasOption( "chain_number" ) ) {
 		auto chain = tag->getOption< std::string >( "chain_number" );
-		residue_list_ = core::select::residue_selector::ResidueSelectorCOP( new core::select::residue_selector::ChainSelector( chain ) );
+		residue_list_ = utility::pointer::make_shared< core::select::residue_selector::ChainSelector >( chain );
 	} else {
 		core::pose::ResidueIndexDescriptionCOP start_res;
 		core::pose::ResidueIndexDescriptionCOP stop_res;
@@ -137,18 +137,18 @@ Tumble::parse_my_tag(
 		if ( tag->hasOption( "stop_res" ) ) {
 			stop_res = core::pose::parse_resnum( tag->getOption< std::string >( "stop_res" ) );
 		} else {
-			stop_res = core::pose::ResidueIndexDescriptionCOP( new core::pose::ResidueIndexDescriptionLastResidue );
+			stop_res = utility::pointer::make_shared< core::pose::ResidueIndexDescriptionLastResidue >();
 		}
 
-		residue_list_ = core::select::residue_selector::ResidueSelectorCOP( new core::select::residue_selector::ResidueSpanSelector( stop_res, start_res ) );
+		residue_list_ = utility::pointer::make_shared< core::select::residue_selector::ResidueSpanSelector >( stop_res, start_res );
 	}
 }
 
 moves::MoverOP Tumble::clone() const {
-	return moves::MoverOP( new Tumble( *this ) );
+	return utility::pointer::make_shared< Tumble >( *this );
 }
 moves::MoverOP Tumble::fresh_instance() const {
-	return moves::MoverOP( new Tumble );
+	return utility::pointer::make_shared< Tumble >();
 }
 
 std::string Tumble::get_name() const {
@@ -182,7 +182,7 @@ std::string TumbleCreator::keyname() const {
 
 protocols::moves::MoverOP
 TumbleCreator::create_mover() const {
-	return protocols::moves::MoverOP( new Tumble );
+	return utility::pointer::make_shared< Tumble >();
 }
 
 void TumbleCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

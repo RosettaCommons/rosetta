@@ -68,7 +68,7 @@ void H3CterInsert::init(core::pose::Pose const & pose) {
 	Mover::type( "H3CterInsert" );
 
 	if ( ! ab_info_ ) {
-		ab_info_ = AntibodyInfoOP( new AntibodyInfo( pose ));
+		ab_info_ = utility::pointer::make_shared< AntibodyInfo >( pose );
 	}
 
 	set_default();

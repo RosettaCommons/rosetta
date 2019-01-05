@@ -47,7 +47,7 @@ using namespace std;
 core::pack::task::operation::TaskOperationOP
 FindEndpointsOperationCreator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new FindEndpointsOperation );
+	return utility::pointer::make_shared< FindEndpointsOperation >();
 }
 
 void FindEndpointsOperationCreator::provide_xml_schema(
@@ -76,7 +76,7 @@ FindEndpointsOperation::~FindEndpointsOperation() = default;
 
 core::pack::task::operation::TaskOperationOP FindEndpointsOperation::clone() const
 {
-	return core::pack::task::operation::TaskOperationOP( new FindEndpointsOperation( *this ) );
+	return utility::pointer::make_shared< FindEndpointsOperation >( *this );
 }
 
 /// @brief compute the number of residue neighbours target_res has within neighbours vector

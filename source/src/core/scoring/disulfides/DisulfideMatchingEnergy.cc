@@ -45,7 +45,7 @@ methods::EnergyMethodOP
 DisulfideMatchingEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new DisulfideMatchingEnergy( ScoringManager::get_instance()->get_DisulfideMatchingPotential() ) );
+	return utility::pointer::make_shared< DisulfideMatchingEnergy >( ScoringManager::get_instance()->get_DisulfideMatchingPotential() );
 }
 
 ScoreTypes
@@ -64,7 +64,7 @@ static basic::Tracer TR( "core.scoring.disulfides.DisulfideMatchingEnergy" );
 DisulfideMatchingEnergy::DisulfideMatchingEnergy(
 	DisulfideMatchingPotential const & potential
 ) :
-	parent( methods::EnergyMethodCreatorOP( methods::EnergyMethodCreatorOP( new DisulfideMatchingEnergyCreator ) ) ),
+	parent( utility::pointer::make_shared< DisulfideMatchingEnergyCreator >() ),
 	potential_( potential )
 {}
 
@@ -74,7 +74,7 @@ DisulfideMatchingEnergy::~DisulfideMatchingEnergy() = default;
 
 methods::EnergyMethodOP DisulfideMatchingEnergy::clone() const
 {
-	return methods::EnergyMethodOP( new DisulfideMatchingEnergy( potential_ ) );
+	return utility::pointer::make_shared< DisulfideMatchingEnergy >( potential_ );
 }
 
 

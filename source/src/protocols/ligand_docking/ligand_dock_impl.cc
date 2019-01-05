@@ -61,7 +61,7 @@ public:
 		LigandDockProtocol()
 	{
 		if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
-			native_ = core::pose::PoseOP( new core::pose::Pose() );
+			native_ = utility::pointer::make_shared< core::pose::Pose >();
 			core::import_pose::pose_from_file( *native_, basic::options::option[ basic::options::OptionKeys::in::file::native ]().name() , core::import_pose::PDB_file);
 		}
 
@@ -69,7 +69,7 @@ public:
 			//we need the residue type set, assuming FA standard is used
 			core::chemical::ResidueTypeSetCOP restype_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 			basic::options::option[ basic::options::OptionKeys::run::preserve_header ].value(true);
-			constraints_ = protocols::toolbox::match_enzdes_util::EnzConstraintIOOP( new protocols::toolbox::match_enzdes_util::EnzConstraintIO( restype_set ) );
+			constraints_ = utility::pointer::make_shared< protocols::toolbox::match_enzdes_util::EnzConstraintIO >( restype_set );
 			constraints_->read_enzyme_cstfile( basic::options::option[ basic::options::OptionKeys::enzdes::cstfile ] );
 
 			core::scoring::ScoreFunctionOP scorefunc = this->get_scorefxn();
@@ -135,7 +135,7 @@ public:
 
 	protocols::moves::MoverOP
 	fresh_instance() const override {
-		return protocols::moves::MoverOP( new LigandDockMain );
+		return utility::pointer::make_shared< LigandDockMain >();
 	}
 
 

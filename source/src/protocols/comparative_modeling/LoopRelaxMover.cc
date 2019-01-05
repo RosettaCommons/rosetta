@@ -152,7 +152,7 @@ static basic::Tracer TR( "protocols.looprelax" );
 
 //constructors
 LoopRelaxMover::LoopRelaxMover() : moves::Mover(),
-	guarded_loops_( loops::GuardedLoopsFromFileOP( new loops::GuardedLoopsFromFile ) )
+	guarded_loops_( utility::pointer::make_shared< loops::GuardedLoopsFromFile >() )
 {
 	set_defaults_();
 }
@@ -175,7 +175,7 @@ LoopRelaxMover::LoopRelaxMover(
 	intermedrelax_( intermedrelax ),
 	refine_( refine ),
 	relax_( relax ),
-	guarded_loops_( loops::GuardedLoopsFromFileOP( new loops::GuardedLoopsFromFile( loops ) ))
+	guarded_loops_( utility::pointer::make_shared< loops::GuardedLoopsFromFile >( loops ))
 {}
 
 // BE WARNED: THIS CONSTRUCTOR DOES NOT CALL SET_DEFAULTS().
@@ -196,7 +196,7 @@ LoopRelaxMover::LoopRelaxMover(
 	intermedrelax_( intermedrelax ),
 	refine_( refine ),
 	relax_( relax ),
-	guarded_loops_( loops::GuardedLoopsFromFileOP( new loops::GuardedLoopsFromFile( loops_from_file ) ))
+	guarded_loops_( utility::pointer::make_shared< loops::GuardedLoopsFromFile >( loops_from_file ))
 {}
 
 LoopRelaxMover::LoopRelaxMover(
@@ -347,7 +347,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 	evaluation::MetaPoseEvaluatorOP evaluator( new evaluation::MetaPoseEvaluator );
 	evaluation::EvaluatorFactory::get_instance()->add_all_evaluators( *evaluator );
 	evaluator->add_evaluation(
-		PoseEvaluatorOP( new simple_filters::SelectRmsdEvaluator( native_pose, "_native" ) )
+		utility::pointer::make_shared< simple_filters::SelectRmsdEvaluator >( native_pose, "_native" )
 	);
 
 #ifdef BOINC_GRAPHICS
@@ -471,7 +471,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 
 			quick_ccd.get_checkpoints()->set_type("InitialBuild");
 			quick_ccd.set_current_tag( curr_job_tag );
-			quick_ccd.set_native_pose( PoseCOP( PoseOP( new core::pose::Pose ( native_pose ) ) ) );
+			quick_ccd.set_native_pose( PoseCOP( utility::pointer::make_shared< core::pose::Pose > ( native_pose ) ) );
 			quick_ccd.set_scorefxn( cen_scorefxn_ );
 			quick_ccd.set_build_attempts_( 1 );
 			quick_ccd.set_grow_attempts_( 0 );
@@ -620,7 +620,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 
 						remodel_mover->get_checkpoints()->set_type("Remodel");
 						remodel_mover->set_current_tag( curr_job_tag );
-						remodel_mover->set_native_pose( PoseCOP( PoseOP( new Pose( native_pose ) ) ) );
+						remodel_mover->set_native_pose( utility::pointer::make_shared< Pose >( native_pose ) );
 						remodel_mover->apply( pose );
 
 						if ( remodel_mover->get_last_move_status() != protocols::moves::MS_SUCCESS ) {
@@ -653,11 +653,11 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 
 						KicMoverOP kic_mover( new KicMover );
 						kic_mover->clear_perturbers();
-						kic_mover->add_perturber(kinematic_closure::perturbers::PerturberOP( new RamaPerturber ));//to emulate legacy KIC behavior
+						kic_mover->add_perturber(utility::pointer::make_shared< RamaPerturber >());//to emulate legacy KIC behavior
 
 						if ( kic_with_fragments ) {
 							kic_mover->clear_perturbers();
-							kic_mover->add_perturber(kinematic_closure::perturbers::PerturberOP( new FragmentPerturber(frag_libs()) ));
+							kic_mover->add_perturber(utility::pointer::make_shared< FragmentPerturber >(frag_libs()));
 						}
 
 						if ( option[OptionKeys::loops::ramp_rama].user() ) {
@@ -673,7 +673,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 						protocol->set_temp_cycles(temp_cycles);
 						protocol->set_mover_cycles(1);
 						protocol->add_mover(kic_mover);
-						protocol->add_mover(LoopMoverOP( new MinimizationRefiner ));
+						protocol->add_mover(utility::pointer::make_shared< MinimizationRefiner >());
 						protocol->apply(pose);
 					}
 
@@ -721,7 +721,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 					}
 					remodel_mover->get_checkpoints()->set_type("Remodel");
 					remodel_mover->set_current_tag( curr_job_tag );
-					remodel_mover->set_native_pose( PoseCOP( PoseOP( new Pose( native_pose ) ) ) );
+					remodel_mover->set_native_pose( utility::pointer::make_shared< Pose >( native_pose ) );
 					remodel_mover->apply( pose );
 
 					if ( remodel() == "perturb_kic" ) { //DJM: skip this struct if initial closure fails
@@ -915,7 +915,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 						Residue const & nat_i_rsd( constraint_target_pose.residue(i) );
 						for ( Size ii = 1; ii<=nat_i_rsd.last_backbone_atom(); ++ii ) {
 							core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, coord_sdev ) );
-							pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new CoordinateConstraint( AtomID(ii,i), AtomID(1,rootres), nat_i_rsd.xyz( ii ), fx ) ) ) );
+							pose.add_constraint( utility::pointer::make_shared< CoordinateConstraint >( AtomID(ii,i), AtomID(1,rootres), nat_i_rsd.xyz( ii ), fx ) );
 						}
 
 						// now cst symmetry mates
@@ -939,7 +939,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 						Residue const & nat_i_rsd( constraint_target_pose.residue(i) );
 						for ( Size ii = 1; ii<= nat_i_rsd.last_backbone_atom(); ++ii ) {
 							core::scoring::func::FuncOP fx( new BoundFunc( 0, cst_width, coord_sdev, "xyz" ) );
-							pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new CoordinateConstraint( AtomID(ii,i), AtomID(1,rootres), nat_i_rsd.xyz( ii ), fx ) ) ) );
+							pose.add_constraint( utility::pointer::make_shared< CoordinateConstraint >( AtomID(ii,i), AtomID(1,rootres), nat_i_rsd.xyz( ii ), fx ) );
 						}
 						// now cst symmetry mates
 						// if (symm_info) {
@@ -978,10 +978,10 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 			using namespace core::pack::task;
 			using namespace core::pack::task::operation;
 			TaskFactoryOP tf( new TaskFactory );
-			tf->push_back( TaskOperationCOP( new NoRepackDisulfides ) );
-			tf->push_back( TaskOperationCOP( new InitializeFromCommandline ) );
-			tf->push_back( TaskOperationCOP( new IncludeCurrent ) );
-			tf->push_back( TaskOperationCOP( new RestrictToRepacking ) );
+			tf->push_back( utility::pointer::make_shared< NoRepackDisulfides >() );
+			tf->push_back( utility::pointer::make_shared< InitializeFromCommandline >() );
+			tf->push_back( utility::pointer::make_shared< IncludeCurrent >() );
+			tf->push_back( utility::pointer::make_shared< RestrictToRepacking >() );
 			PackerTaskOP taskstd = tf->create_task_and_apply_taskoperations( pose );
 			core::pose::symmetry::make_residue_mask_symmetric( pose, needToRepack );
 			// does nothing if pose is not symm
@@ -1136,12 +1136,12 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 			if ( refine() == "refine_ccd" ) {
 				// heap allocation needed for internal shared_from_this call.
 				moves::MoverOP refine_ccd( new loops::loop_mover::refine::LoopMover_Refine_CCD( loops, fa_scorefxn_ ) );
-				refine_ccd->set_native_pose( PoseCOP( PoseOP( new core::pose::Pose ( native_pose ) ) ) );
+				refine_ccd->set_native_pose( PoseCOP( utility::pointer::make_shared< core::pose::Pose > ( native_pose ) ) );
 				refine_ccd->apply( pose );
 			} else if ( refine() == "refine_kic" ) {
 				//loops.remove_terminal_loops( pose );
 				moves::MoverOP refine_kic( new loops::loop_mover::refine::LoopMover_Refine_KIC( loops, fa_scorefxn_ ) );
-				refine_kic->set_native_pose( PoseCOP( PoseOP( new core::pose::Pose ( native_pose ) ) ) );
+				refine_kic->set_native_pose( PoseCOP( utility::pointer::make_shared< core::pose::Pose > ( native_pose ) ) );
 				refine_kic->apply( pose );
 			} else if ( refine() == "refine_kic_refactor" || refine() == "refine_kic_with_fragments" ) {
 				using namespace std;
@@ -1188,11 +1188,11 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 				LoopProtocolOP protocol( new LoopProtocol );
 				KicMoverOP kic_mover( new KicMover );
 				kic_mover->clear_perturbers();
-				kic_mover->add_perturber(kinematic_closure::perturbers::PerturberOP( new RamaPerturber ));//to emulate legacy KIC behavior
+				kic_mover->add_perturber(utility::pointer::make_shared< RamaPerturber >());//to emulate legacy KIC behavior
 
 				if ( kic_with_fragments ) {
 					kic_mover->clear_perturbers();
-					kic_mover->add_perturber(kinematic_closure::perturbers::PerturberOP( new FragmentPerturber(frag_libs()) ));
+					kic_mover->add_perturber(utility::pointer::make_shared< FragmentPerturber >(frag_libs()));
 				}
 
 				if ( option[OptionKeys::loops::ramp_rama].user() ) {
@@ -1208,9 +1208,9 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 				protocol->set_temp_cycles(temp_cycles);
 				protocol->set_mover_cycles(2);
 				protocol->add_mover(kic_mover);
-				protocol->add_mover(LoopMoverOP( new RepackingRefiner(repack_period) ));
-				protocol->add_mover(LoopMoverOP( new RotamerTrialsRefiner ));
-				protocol->add_mover(LoopMoverOP( new MinimizationRefiner ));
+				protocol->add_mover(utility::pointer::make_shared< RepackingRefiner >(repack_period));
+				protocol->add_mover(utility::pointer::make_shared< RotamerTrialsRefiner >());
+				protocol->add_mover(utility::pointer::make_shared< MinimizationRefiner >());
 				protocol->apply(pose);
 			}
 
@@ -1518,7 +1518,7 @@ LoopRelaxMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data,
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP LoopRelaxMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new LoopRelaxMover );
+// XRW TEMP  return utility::pointer::make_shared< LoopRelaxMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -1528,10 +1528,10 @@ LoopRelaxMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data,
 // XRW TEMP }
 
 protocols::moves::MoverOP
-LoopRelaxMover::fresh_instance() const{ return protocols::moves::MoverOP( new LoopRelaxMover() ); }
+LoopRelaxMover::fresh_instance() const{ return utility::pointer::make_shared< LoopRelaxMover >(); }
 
 protocols::moves::MoverOP
-LoopRelaxMover::clone() const{ return protocols::moves::MoverOP( new LoopRelaxMover( *this ) ); }
+LoopRelaxMover::clone() const{ return utility::pointer::make_shared< LoopRelaxMover >( *this ); }
 
 std::string LoopRelaxMover::get_name() const {
 	return mover_name();
@@ -1570,7 +1570,7 @@ std::string LoopRelaxMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 LoopRelaxMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LoopRelaxMover );
+	return utility::pointer::make_shared< LoopRelaxMover >();
 }
 
 void LoopRelaxMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

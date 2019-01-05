@@ -431,7 +431,7 @@ StandardJobQueen::initial_job_dag()
 		preliminary_job_nodes_complete_[ ii ] = 0;
 	}
 	// create a DAG with as many nodes in it as there are preliminary larval jobs
-	job_graph_ = JobDigraphOP( new JobDigraph( preliminary_larval_jobs_.size() ) );
+	job_graph_ = utility::pointer::make_shared< JobDigraph >( preliminary_larval_jobs_.size() );
 	return job_graph_;
 }
 
@@ -1006,13 +1006,13 @@ StandardJobQueen::create_larval_job(
 	core::Size larval_job_index
 )
 {
-	return LarvalJobOP( new LarvalJob( job, nstruct_index, larval_job_index ));
+	return utility::pointer::make_shared< LarvalJob >( job, nstruct_index, larval_job_index );
 }
 
 JobOP
 StandardJobQueen::create_job( LarvalJobCOP ) const
 {
-	return JobOP( new MoverAndPoseJob );
+	return utility::pointer::make_shared< MoverAndPoseJob >();
 }
 
 LarvalJobs
@@ -1938,7 +1938,7 @@ StandardJobQueen::get_outputter_from_job_tag( utility::tag::TagCOP tag ) const
 					outputter = default_outputter_creator_->create_outputter();
 				} else {
 					runtime_assert( outputter_creators_.count( pose_outputters::PDBPoseOutputter::keyname() ) );
-					outputter = pose_outputters::PoseOutputterOP( new pose_outputters::PDBPoseOutputter );
+					outputter = utility::pointer::make_shared< pose_outputters::PDBPoseOutputter >();
 				}
 			}
 		}

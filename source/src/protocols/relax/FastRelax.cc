@@ -250,7 +250,7 @@ using namespace ObjexxFCL;
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP FastRelaxCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new FastRelax() );
+// XRW TEMP  return utility::pointer::make_shared< FastRelax >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -328,7 +328,7 @@ FastRelax::~FastRelax() = default;
 /// Return a copy of ourselves
 protocols::moves::MoverOP
 FastRelax::clone() const {
-	return protocols::moves::MoverOP( new FastRelax(*this) );
+	return utility::pointer::make_shared< FastRelax >(*this);
 }
 
 void
@@ -362,7 +362,7 @@ FastRelax::parse_my_tag(
 	core::pack::task::TaskFactoryOP tf = protocols::rosetta_scripts::parse_task_operations( tag, data );
 	if ( tf->size() > 0 ) {
 		if ( !enable_design_ ) {
-			tf->push_back(TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ));
+			tf->push_back(utility::pointer::make_shared< core::pack::task::operation::RestrictToRepacking >());
 		}
 		set_task_factory( tf );
 	}
@@ -531,7 +531,7 @@ void FastRelax::do_minimize(
 
 	//Why create a new min_mover every time we minimize?
 	protocols::minimization_packing::MinMoverOP min_mover;
-	min_mover = protocols::minimization_packing::MinMoverOP( new protocols::minimization_packing::MinMover( local_movemap, local_scorefxn, min_type(), tolerance, true ) );
+	min_mover = utility::pointer::make_shared< protocols::minimization_packing::MinMover >( local_movemap, local_scorefxn, min_type(), tolerance, true );
 
 	min_mover->cartesian( cartesian() );
 	if ( max_iter() > 0 ) min_mover->max_iter( max_iter() );
@@ -644,15 +644,15 @@ void FastRelax::apply( core::pose::Pose & pose ){
 	if ( get_task_factory() ) {
 		local_tf = get_task_factory()->clone();
 	} else {
-		local_tf->push_back(TaskOperationCOP( new InitializeFromCommandline() ));
+		local_tf->push_back(utility::pointer::make_shared< InitializeFromCommandline >());
 		if ( option[ OptionKeys::relax::respect_resfile]() && option[ OptionKeys::packing::resfile].user() ) {
-			local_tf->push_back(TaskOperationCOP( new ReadResfile() ));
+			local_tf->push_back(utility::pointer::make_shared< ReadResfile >());
 			TR << "Using Resfile for packing step. " <<std::endl;
 		} else {
 			//Keep the same behavior as before if no resfile given for design.
 			//Though, as mentioned in the doc, movemap now overrides chi_move as it was supposed to.
 
-			local_tf->push_back(TaskOperationCOP( new RestrictToRepacking() ));
+			local_tf->push_back(utility::pointer::make_shared< RestrictToRepacking >());
 			PreventRepackingOP turn_off_packing( new PreventRepacking() );
 			for ( Size pos = 1; pos <= pose.size(); ++pos ) {
 				if ( ! local_movemap->get_chi(pos) ) {
@@ -663,10 +663,10 @@ void FastRelax::apply( core::pose::Pose & pose ){
 		}
 	}
 	//Include current rotamer by default - as before.
-	local_tf->push_back(TaskOperationCOP( new IncludeCurrent() ));
+	local_tf->push_back(utility::pointer::make_shared< IncludeCurrent >());
 
 	if ( limit_aroma_chi2() ) {
-		local_tf->push_back(TaskOperationCOP( new task_operations::LimitAromaChi2Operation() ));
+		local_tf->push_back(utility::pointer::make_shared< task_operations::LimitAromaChi2Operation >());
 	}
 
 	protocols::minimization_packing::PackRotamersMoverOP pack_full_repack_( new protocols::minimization_packing::PackRotamersMover( local_scorefxn ) );
@@ -695,7 +695,7 @@ void FastRelax::apply( core::pose::Pose & pose ){
 
 
 	// Obtain the native pose
-	if ( !get_native_pose() ) set_native_pose( core::pose::PoseCOP( core::pose::PoseOP( new Pose( start_pose ) ) ) );
+	if ( !get_native_pose() ) set_native_pose( utility::pointer::make_shared< Pose >( start_pose ) );
 
 	// Statistic information
 	std::vector< core::Real > best_score_log;
@@ -1325,7 +1325,7 @@ void FastRelax::batch_apply(
 		// 453 mb
 		if ( i == 0 ) {
 			if ( get_task_factory() ) {
-				pack_full_repack_ = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover() );
+				pack_full_repack_ = utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >();
 				pack_full_repack_->score_function(local_scorefxn);
 				pack_full_repack_->task_factory(get_task_factory());
 			} else {
@@ -1341,7 +1341,7 @@ void FastRelax::batch_apply(
 				}
 				task_->initialize_from_command_line().restrict_to_repacking().restrict_to_residues(allow_repack);
 				task_->or_include_current( true );
-				pack_full_repack_ = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover( local_scorefxn, task_ ) );
+				pack_full_repack_ = utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >( local_scorefxn, task_ );
 			}
 
 			// Make sure we only allow symmetrical degrees of freedom to move
@@ -1772,7 +1772,7 @@ std::string FastRelaxCreator::keyname() const {
 
 protocols::moves::MoverOP
 FastRelaxCreator::create_mover() const {
-	return protocols::moves::MoverOP( new FastRelax );
+	return utility::pointer::make_shared< FastRelax >();
 }
 
 void FastRelaxCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

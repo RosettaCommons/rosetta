@@ -66,7 +66,7 @@ static basic::Tracer TR( "protocols.dna.DnaInterfaceMinMover", t_info );
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP DnaInterfaceMinMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new DnaInterfaceMinMover );
+// XRW TEMP  return utility::pointer::make_shared< DnaInterfaceMinMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -147,7 +147,7 @@ void
 DnaInterfaceMinMover::apply( pose::Pose & pose )
 {
 	if ( ! interface_ ) {
-		interface_ = DnaInterfaceFinderOP( new DnaInterfaceFinder );
+		interface_ = utility::pointer::make_shared< DnaInterfaceFinder >();
 		interface_->determine_protein_interface( pose );
 		reset_from_interface();
 	}
@@ -194,14 +194,14 @@ DnaInterfaceMinMover::parse_my_tag(
 MoverOP
 DnaInterfaceMinMover::fresh_instance() const
 {
-	return MoverOP( new DnaInterfaceMinMover );
+	return utility::pointer::make_shared< DnaInterfaceMinMover >();
 }
 
 /// @brief required in the context of the parser/scripting scheme
 MoverOP
 DnaInterfaceMinMover::clone() const
 {
-	return MoverOP( new DnaInterfaceMinMover( *this ) );
+	return utility::pointer::make_shared< DnaInterfaceMinMover >( *this );
 }
 
 std::string DnaInterfaceMinMover::get_name() const {
@@ -245,7 +245,7 @@ std::string DnaInterfaceMinMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 DnaInterfaceMinMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new DnaInterfaceMinMover );
+	return utility::pointer::make_shared< DnaInterfaceMinMover >();
 }
 
 void DnaInterfaceMinMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

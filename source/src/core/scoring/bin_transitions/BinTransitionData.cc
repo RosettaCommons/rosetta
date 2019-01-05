@@ -129,7 +129,7 @@ BinTransitionData::~BinTransitionData() = default;
 /// @brief Clone operation for BinTransitionData.
 /// @details Returns an owning pointer to a copy of this object.
 BinTransitionDataOP BinTransitionData::clone() const
-{ return BinTransitionDataOP( new BinTransitionData( *this ) ); }
+{ return utility::pointer::make_shared< BinTransitionData >( *this ); }
 
 /// @brief Set up the sub-bins and their cumulative probability distributions (if appropriate).
 ///

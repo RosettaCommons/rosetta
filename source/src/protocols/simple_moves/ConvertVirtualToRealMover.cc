@@ -102,13 +102,13 @@ ConvertVirtualToRealMover::provide_xml_schema( utility::tag::XMLSchemaDefinition
 protocols::moves::MoverOP
 ConvertVirtualToRealMover::clone() const
 {
-	return protocols::moves::MoverOP( new ConvertVirtualToRealMover( *this ) );
+	return utility::pointer::make_shared< ConvertVirtualToRealMover >( *this );
 }
 
 protocols::moves::MoverOP
 ConvertVirtualToRealMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new ConvertVirtualToRealMover );
+	return utility::pointer::make_shared< ConvertVirtualToRealMover >();
 }
 
 std::string
@@ -162,7 +162,7 @@ ConvertVirtualToRealMover::apply( core::pose::Pose & pose)
 protocols::moves::MoverOP
 ConvertVirtualToRealMoverCreator::create_mover() const
 {
-	return protocols::moves::MoverOP( new ConvertVirtualToRealMover );
+	return utility::pointer::make_shared< ConvertVirtualToRealMover >();
 }
 
 

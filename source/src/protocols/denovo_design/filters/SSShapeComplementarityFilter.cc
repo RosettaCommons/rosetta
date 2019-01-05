@@ -62,7 +62,7 @@ namespace filters {
 
 // XRW TEMP protocols::filters::FilterOP
 // XRW TEMP SSShapeComplementarityFilterCreator::create_filter() const {
-// XRW TEMP  return protocols::filters::FilterOP( new SSShapeComplementarityFilter() );
+// XRW TEMP  return utility::pointer::make_shared< SSShapeComplementarityFilter >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -82,7 +82,7 @@ SSShapeComplementarityFilter::SSShapeComplementarityFilter() :
 	rejection_thresh_(0),
 	secstruct_( "" ),
 	selector_(),
-	scc_( core::scoring::sc::ShapeComplementarityCalculatorOP( new core::scoring::sc::ShapeComplementarityCalculator() ) )
+	scc_( utility::pointer::make_shared< core::scoring::sc::ShapeComplementarityCalculator >() )
 {
 }
 
@@ -94,13 +94,13 @@ SSShapeComplementarityFilter::~SSShapeComplementarityFilter() = default;
 protocols::filters::FilterOP
 SSShapeComplementarityFilter::clone() const
 {
-	return protocols::filters::FilterOP( new SSShapeComplementarityFilter(*this) );
+	return utility::pointer::make_shared< SSShapeComplementarityFilter >(*this);
 }
 
 protocols::filters::FilterOP
 SSShapeComplementarityFilter::fresh_instance() const
 {
-	return protocols::filters::FilterOP( new SSShapeComplementarityFilter() );
+	return utility::pointer::make_shared< SSShapeComplementarityFilter >();
 }
 
 void
@@ -235,9 +235,9 @@ SSShapeComplementarityFilter::compute_from_ss_info( core::pose::Pose const & pos
 	protocols::fldsgn::topology::SS_Info2_OP ss_info;
 	if ( secstruct_.empty() ) {
 		core::scoring::dssp::Dssp dssp( pose );
-		ss_info = protocols::fldsgn::topology::SS_Info2_OP( new protocols::fldsgn::topology::SS_Info2( pose, dssp.get_dssp_secstruct() ) );
+		ss_info = utility::pointer::make_shared< protocols::fldsgn::topology::SS_Info2 >( pose, dssp.get_dssp_secstruct() );
 	} else {
-		ss_info = protocols::fldsgn::topology::SS_Info2_OP( new protocols::fldsgn::topology::SS_Info2( pose, secstruct_ ) );
+		ss_info = utility::pointer::make_shared< protocols::fldsgn::topology::SS_Info2 >( pose, secstruct_ );
 	}
 
 	// we will average out the shape complementarity from HSS triplets and Helix-Helix pairings
@@ -571,7 +571,7 @@ std::string SSShapeComplementarityFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 SSShapeComplementarityFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new SSShapeComplementarityFilter );
+	return utility::pointer::make_shared< SSShapeComplementarityFilter >();
 }
 
 void SSShapeComplementarityFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -61,7 +61,7 @@ static basic::Tracer TR( "protocols.simple_moves.bin_transitions.PerturbByBins" 
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP PerturbByBinsCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new PerturbByBins );
+// XRW TEMP  return utility::pointer::make_shared< PerturbByBins >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -275,7 +275,7 @@ std::string PerturbByBinsCreator::keyname() const {
 
 protocols::moves::MoverOP
 PerturbByBinsCreator::create_mover() const {
-	return protocols::moves::MoverOP( new PerturbByBins );
+	return utility::pointer::make_shared< PerturbByBins >();
 }
 
 void PerturbByBinsCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -32,7 +32,7 @@ namespace simple_filters {
 static basic::Tracer neighbor_type_filter_tracer( "protocols.simple_filters.NeighborTypeFilter" );
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP NeighborTypeFilterCreator::create_filter() const { return protocols::filters::FilterOP( new NeighborTypeFilter ); }
+// XRW TEMP NeighborTypeFilterCreator::create_filter() const { return utility::pointer::make_shared< NeighborTypeFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP NeighborTypeFilterCreator::keyname() const { return "NeighborType"; }
@@ -133,7 +133,7 @@ std::string NeighborTypeFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 NeighborTypeFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new NeighborTypeFilter );
+	return utility::pointer::make_shared< NeighborTypeFilter >();
 }
 
 void NeighborTypeFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

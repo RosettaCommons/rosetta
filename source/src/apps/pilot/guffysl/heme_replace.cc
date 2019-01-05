@@ -63,7 +63,7 @@ public:
 		//Set up the score function
 		score_function_ = core::scoring::get_score_function();
 		//Set up FastRelax
-		fast_relax_ = protocols::relax::FastRelaxOP( new protocols::relax::FastRelax(score_function_) ); //Will set up other options from command line and defaults
+		fast_relax_ = utility::pointer::make_shared< protocols::relax::FastRelax >(score_function_); //Will set up other options from command line and defaults
 		//Set native pose for fast_relax_
 		if ( basic::options::option [ basic::options::OptionKeys::in::file::native ] .user() ) {
 			//If a native pose was given, set it
@@ -77,9 +77,9 @@ public:
 		//Set up the mover for initial repacking
 		core::pack::task::TaskFactoryOP initial_repack_tf (new core::pack::task::TaskFactory );
 		initial_repack_tf->push_back(new core::pack::task::operation::InitializeFromCommandline);
-		initial_repack_mover_ = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover(score_function_) );
+		initial_repack_mover_ = utility::pointer::make_shared< protocols::simple_moves::PackRotamersMover >(score_function_);
 		initial_repack_mover_->task_factory(initial_repack_tf);
-		restricted_repack_mover_ = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover(score_function_) );//Its tf will be set later
+		restricted_repack_mover_ = utility::pointer::make_shared< protocols::simple_moves::PackRotamersMover >(score_function_);//Its tf will be set later
 	}
 	virtual ~HemeReplace(){
 	}

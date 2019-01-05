@@ -142,7 +142,7 @@ public:
 
 	protocols::moves::MoverOP
 	fresh_instance() const override {
-		return protocols::moves::MoverOP( new ConstraintToolMover() );
+		return utility::pointer::make_shared< ConstraintToolMover >();
 	}
 
 	std::string get_name() const override { return "ConstraintToolMover"; }
@@ -163,7 +163,7 @@ void ConstraintToolMover::apply( core::pose::Pose &pose ) {
 	if ( !cstset_ && option[ OptionKeys::constraints::cst_file ].user() ) {
 		// reads and sets constraints
 		tr.Info << "read constraints... : " << std::endl;
-		cstset_ = ConstraintIO::get_instance()->read_constraints( option[ OptionKeys::constraints::cst_file ]()[1], ConstraintSetOP( new ConstraintSet ), pose );
+		cstset_ = ConstraintIO::get_instance()->read_constraints( option[ OptionKeys::constraints::cst_file ]()[1], utility::pointer::make_shared< ConstraintSet >(), pose );
 		ConstraintCOPs added_constraints = cstset_->get_all_constraints();
 		utility::vector1< bool > exclude_res;
 		//if ( option[ OptionKeys::constraints::combine_exclude_region ].user() ) {
@@ -177,7 +177,7 @@ void ConstraintToolMover::apply( core::pose::Pose &pose ) {
 
 		core::kinematics::ShortestPathInFoldTree sp( pose.fold_tree() );
 		combine_constraints( added_constraints, option[ OptionKeys::constraints::combine ](), exclude_res, sp ); // if combine_ratio_ > 1 this will randomly combine constraints into multipletts w
-		cstset_ = ConstraintSetOP( new ConstraintSet );
+		cstset_ = utility::pointer::make_shared< ConstraintSet >();
 		cstset_->add_constraints( added_constraints );
 		reference_pose_ = pose;
 	}
@@ -188,7 +188,7 @@ void ConstraintToolMover::apply( core::pose::Pose &pose ) {
 		is >> *ps;
 		tr.Info << *ps << std::endl;
 		my_strand_cst = StrandConstraints( *ps ).build_constraints( pose );
-		cstset_ = ConstraintSetOP( new ConstraintSet );
+		cstset_ = utility::pointer::make_shared< ConstraintSet >();
 		cstset_->add_constraints( my_strand_cst );
 		reference_pose_ = pose;
 	}
@@ -230,17 +230,17 @@ void run() {
 
 	if ( option[ OptionKeys::constraints::no_linearize_bounded ] ) {
 		tr.Info << "use fully harmonic potential for BOUNDED " << std::endl;
-		ConstraintIO::get_func_factory().add_type("BOUNDED", scoring::func::FuncOP( new scoring::constraints::BoundFunc(0,0,0,1000,"dummy") ) );
+		ConstraintIO::get_func_factory().add_type("BOUNDED", utility::pointer::make_shared< scoring::constraints::BoundFunc >(0,0,0,1000,"dummy") );
 	}
 	if ( option[ OptionKeys::constraints::named ] ) {
 		tr.Info << "use named constraints in AtomPairConstraint to avoid problems with cutpoint-variants " << std::endl;
 		//ConstraintIO::get_cst_factory().add_type( new scoring::constraints::NamedAtomPairConstraint( id::NamedAtomID(), id::NamedAtomID(), NULL) );
 		/// WARNING WARNING WARNING. THREAD UNSAFE. DO NOT USE SINGLETONS THIS WAY.
-		core::scoring::constraints::ConstraintFactory::get_instance()->replace_creator( ConstraintCreatorCOP( ConstraintCreatorOP( new constraints_additional::NamedAtomPairConstraintCreator ) ) );
+		core::scoring::constraints::ConstraintFactory::get_instance()->replace_creator( utility::pointer::make_shared< constraints_additional::NamedAtomPairConstraintCreator >() );
 	}
 
 	ConstraintToolMoverOP cst_tool( new ConstraintToolMover );
-	protocols::jd2::JobDistributor::get_instance()->go( cst_tool, jd2::JobOutputterOP( new jd2::NoOutputJobOutputter ) );
+	protocols::jd2::JobDistributor::get_instance()->go( cst_tool, utility::pointer::make_shared< jd2::NoOutputJobOutputter >() );
 
 
 	if ( option[ out::cst ].user() ) {

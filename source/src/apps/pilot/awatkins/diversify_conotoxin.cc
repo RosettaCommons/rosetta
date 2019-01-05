@@ -217,17 +217,17 @@ main( int argc, char* argv[] )
 						Size resi = thiol_options[ ii ][ jj ];
 						if ( resi > 1 ) {
 							copy_pose.add_constraint(
-								AtomPairConstraintOP( new AtomPairConstraint(
+								utility::pointer::make_shared< AtomPairConstraint >(
 								*new AtomID( copy_pose.residue( resi-1 ).atom_index( "C" ), resi-1 ),
 								*new AtomID( copy_pose.residue( resi   ).atom_index( "N" ), resi   ),
-								TopOutFuncOP( new TopOutFunc( 100, 1.33, 5 ) ) ) ) );
+								utility::pointer::make_shared< TopOutFunc >( 100, 1.33, 5 ) ) );
 						}
 						if ( resi < copy_pose.size() ) {
 							copy_pose.add_constraint(
-								AtomPairConstraintOP( new AtomPairConstraint(
+								utility::pointer::make_shared< AtomPairConstraint >(
 								*new AtomID( copy_pose.residue( resi+1 ).atom_index( "N" ), resi+1 ),
 								*new AtomID( copy_pose.residue( resi   ).atom_index( "C" ), resi   ),
-								TopOutFuncOP( new TopOutFunc( 100, 1.33, 5 ) ) ) ) );
+								utility::pointer::make_shared< TopOutFunc >( 100, 1.33, 5 ) ) );
 						}
 					}
 
@@ -294,21 +294,21 @@ main( int argc, char* argv[] )
 				if ( thiol_nm == "B3C" ) {
 					for ( Size jj = 1; jj <= thiol_positions.size()/2; ++jj ) {
 						copy_pose.add_constraint(
-							AtomPairConstraintOP( new AtomPairConstraint(
+							utility::pointer::make_shared< AtomPairConstraint >(
 							*new AtomID( copy_pose.residue( thiol_positions[ jj ] ).atom_index(copy_pose.residue( thiol_positions[ jj ] ).type().get_disulfide_atom_name()), thiol_positions[ jj ] ),
 							*new AtomID( copy_pose.residue( thiol_partners[ jj ]  ).atom_index(copy_pose.residue( thiol_partners[ jj ]  ).type().get_disulfide_atom_name()), thiol_partners[ jj ]  ),
-							//HarmonicFuncOP( new HarmonicFunc( 2.02, 0.02 ) ) ) ) );
-							TopOutFuncOP( new TopOutFunc( 100, 2.02, 5 ) ) ) ) );
+							//utility::pointer::make_shared< HarmonicFunc >( 2.02, 0.02 ) ) );
+							utility::pointer::make_shared< TopOutFunc >( 100, 2.02, 5 ) ) );
 					}
 				} else {
 
 					for ( Size jj = 1; jj <= thiol_positions.size()/2; ++jj ) {
 						copy_pose.add_constraint(
-							AtomPairConstraintOP( new AtomPairConstraint(
+							utility::pointer::make_shared< AtomPairConstraint >(
 							*new AtomID( copy_pose.residue( copy_pose.pdb_info()->pdb2pose( 'F', thiol_positions[ jj ] ) ).atom_index(copy_pose.residue( copy_pose.pdb_info()->pdb2pose( 'F', thiol_positions[ jj ] ) ).type().get_disulfide_atom_name()), thiol_positions[ jj ] ),
 							*new AtomID( copy_pose.residue( copy_pose.pdb_info()->pdb2pose( 'F', thiol_partners[ jj ]  ) ).atom_index(copy_pose.residue( copy_pose.pdb_info()->pdb2pose( 'F', thiol_partners[ jj ]  ) ).type().get_disulfide_atom_name()), thiol_partners[ jj ]  ),
-							//HarmonicFuncOP( new HarmonicFunc( 2.02, 0.02 ) ) ) ) );
-							TopOutFuncOP( new TopOutFunc( 100, 2.02, 5 ) ) ) ) );
+							//utility::pointer::make_shared< HarmonicFunc >( 2.02, 0.02 ) ) );
+							utility::pointer::make_shared< TopOutFunc >( 100, 2.02, 5 ) ) );
 					}
 				}
 				TR << "constraints added" << std::endl;

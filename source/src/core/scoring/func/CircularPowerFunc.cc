@@ -50,7 +50,7 @@ CircularPowerFunc::CircularPowerFunc(
 
 FuncOP
 CircularPowerFunc::clone() const {
-	return FuncOP( new CircularPowerFunc( *this ) );
+	return utility::pointer::make_shared< CircularPowerFunc >( *this );
 }
 
 bool CircularPowerFunc::operator == ( Func const & other ) const

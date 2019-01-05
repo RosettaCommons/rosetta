@@ -58,7 +58,7 @@ public:
 	core::pose::metrics::PoseMetricCalculatorOP clone()
 	const override
 	{
-		return core::pose::metrics::PoseMetricCalculatorOP( new BuriedUnsatisfiedPolarsCalculator2( name_of_weak_bunsat_calc_ ) );
+		return utility::pointer::make_shared< BuriedUnsatisfiedPolarsCalculator2 >( name_of_weak_bunsat_calc_ );
 	};
 
 	std::string const & name_of_weak_bunsat_calc()

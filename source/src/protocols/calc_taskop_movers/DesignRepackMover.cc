@@ -391,7 +391,7 @@ DesignRepackMover::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::Dat
 		}
 	}
 	if ( target_res_vec.size() ) {
-		target_residues( core::select::residue_selector::ResidueSelectorOP( new core::select::residue_selector::ResidueIndexSelector( utility::join(target_res_vec,",") ) ) );
+		target_residues( utility::pointer::make_shared< core::select::residue_selector::ResidueIndexSelector >( utility::join(target_res_vec,",") ) );
 	}
 
 	repack_non_ala_ = tag->getOption<bool>( "repack_non_ala", true );

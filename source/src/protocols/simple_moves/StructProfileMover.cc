@@ -115,7 +115,7 @@ StructProfileMover::StructProfileMover(Real rmsThreshold,Size consider_topN_frag
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP StructProfileMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new StructProfileMover );
+// XRW TEMP  return utility::pointer::make_shared< StructProfileMover >();
 // XRW TEMP }
 
 
@@ -399,13 +399,13 @@ void StructProfileMover::save_MSAcst_file(vector1<vector1<Real> > profile_score,
 
 void StructProfileMover::add_MSAcst_to_pose(vector1<vector1<Real> > profile_score,core::pose::Pose & pose){
 	using namespace core::sequence;
-	SequenceProfileOP profileOP = SequenceProfileOP(new SequenceProfile( profile_score, pose.sequence(), "structProfile" ));
+	SequenceProfileOP profileOP = utility::pointer::make_shared< SequenceProfile >( profile_score, pose.sequence(), "structProfile" );
 	Size nres1 = pose.size();
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		nres1 = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
 	}
 	for ( core::Size seqpos( 1 ), end( nres1 ); seqpos <= end; ++seqpos ) {
-		pose.add_constraint( core::scoring::constraints::ConstraintCOP( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::SequenceProfileConstraint( pose, seqpos, profileOP ) ) ) );
+		pose.add_constraint( utility::pointer::make_shared< core::scoring::constraints::SequenceProfileConstraint >( pose, seqpos, profileOP ) );
 	}
 }
 
@@ -530,7 +530,7 @@ std::string StructProfileMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 StructProfileMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new StructProfileMover );
+	return utility::pointer::make_shared< StructProfileMover >();
 }
 
 void StructProfileMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

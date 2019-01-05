@@ -203,10 +203,10 @@ void AlternativePairings::build_constraints( pose::Pose const& pose, scoring::co
 
 						//make the constraint
 						tr.Debug << " add constraint for " << pos << "->" << pair << " " << pairing.pairing().get_pleating( pos ) << std::endl;
-						constraints.push_back( core::scoring::constraints::ConstraintOP( new AtomPairConstraint(
+						constraints.push_back( utility::pointer::make_shared< AtomPairConstraint >(
 							core::pose::named_atom_id_to_atom_id( atom1, pose),
 							core::pose::named_atom_id_to_atom_id( atom2, pose),
-							myfunc ) ) );
+							myfunc ) );
 
 					}
 				}// if ( pair )
@@ -214,7 +214,7 @@ void AlternativePairings::build_constraints( pose::Pose const& pose, scoring::co
 			//      AmbiguousConstraint test_cst( constraints );
 			//      test_cst.show_def( tr.Info, pose );
 
-			pairing_csts.push_back( core::scoring::constraints::ConstraintOP( new AmbiguousConstraint( constraints ) ) );
+			pairing_csts.push_back( utility::pointer::make_shared< AmbiguousConstraint >( constraints ) );
 		} // if freq == max_freq
 	} // for each start position
 }

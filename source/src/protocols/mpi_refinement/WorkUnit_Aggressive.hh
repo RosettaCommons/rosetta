@@ -36,7 +36,7 @@ public:
 		bool const cartesian = false );
 
 	protocols::wum::WorkUnitBaseOP clone() const override {
-		return protocols::wum::WorkUnitBaseOP( new WorkUnit_CombinePose( *this ) );
+		return utility::pointer::make_shared< WorkUnit_CombinePose >( *this );
 	}
 
 	// Pure virtual functions
@@ -76,7 +76,7 @@ public:
 	);
 
 	protocols::wum::WorkUnitBaseOP clone() const override {
-		return protocols::wum::WorkUnitBaseOP( new WorkUnit_NormalMode( *this ) );
+		return utility::pointer::make_shared< WorkUnit_NormalMode >( *this );
 	}
 
 	// Pure virtual functions
@@ -134,7 +134,7 @@ public:
 		core::Real const kT = 0.0
 	);
 	protocols::wum::WorkUnitBaseOP clone() const override {
-		return protocols::wum::WorkUnitBaseOP( new WorkUnit_RamaPerturber( *this ) );
+		return utility::pointer::make_shared< WorkUnit_RamaPerturber >( *this );
 	}
 
 	// Pure virtual functions

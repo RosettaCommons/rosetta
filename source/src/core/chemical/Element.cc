@@ -102,7 +102,7 @@ Element::Element
 //! @brief virtual copy constructor
 ElementOP Element::Clone() const
 {
-	return ElementOP( new Element( *this ) );
+	return utility::pointer::make_shared< Element >( *this );
 }
 
 

@@ -67,10 +67,10 @@ MinimalFragSet::MinimalFragSet() = default;
 MinimalFragSet::~MinimalFragSet() = default;
 
 FragSetOP MinimalFragSet::clone() const {
-	return FragSetOP( new MinimalFragSet( *this ) );
+	return utility::pointer::make_shared< MinimalFragSet >( *this );
 }
 FragSetOP MinimalFragSet::empty_clone() const {
-	return FragSetOP( new MinimalFragSet() );
+	return utility::pointer::make_shared< MinimalFragSet >();
 }
 
 /// @brief get fragments that start somewhere between start and end
@@ -178,7 +178,7 @@ void MinimalFragSet::read_fragment_stream( std::string const & filename, std::st
 			Size vall_residue_key;
 			Size fraglen;
 			FragDataOP current_fragment( nullptr );
-			current_fragment = FragDataOP( new FragData );
+			current_fragment = utility::pointer::make_shared< FragData >();
 			in >> vall_residue_key >> fraglen;
 			if ( vall_residue_key == 0 ) { // read torsions from fragment file
 				for ( Size i = 1; i <= fraglen; i++ ) {
@@ -211,7 +211,7 @@ void MinimalFragSet::read_fragment_stream( std::string const & filename, std::st
 			current_fragment->set_valid();
 			std::pair<Size,Size> p(insertion_pos,fraglen);
 			if ( !top25 || frame_counts[p] < top25*ncopies ) {
-				FrameOP frame = FrameOP( new Frame( insertion_pos ) );
+				FrameOP frame = utility::pointer::make_shared< Frame >( insertion_pos );
 				if ( !frame->add_fragment( current_fragment ) ) {
 					tr.Fatal << "Incompatible Fragment in file: " << filename << endl;
 					utility::exit( EXIT_FAILURE, __FILE__, __LINE__);

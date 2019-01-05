@@ -90,8 +90,8 @@ public:
 	void apply( core::pose::Pose & ) override;
 
 
-	moves::MoverOP clone() const override { return moves::MoverOP( new BfactorFittingMover( *this ) ); }
-	moves::MoverOP fresh_instance() const override { return moves::MoverOP( new BfactorFittingMover ); }
+	moves::MoverOP clone() const override { return utility::pointer::make_shared< BfactorFittingMover >( *this ); }
+	moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< BfactorFittingMover >(); }
 
 	void
 	parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, moves::Movers_map const &, Pose const & ) override;

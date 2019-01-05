@@ -90,7 +90,7 @@ AntibodyDesignMoverGenerator::AntibodyDesignMoverGenerator():
 	mover_( /* NULL */ ),
 	set_tf_( /* NULL */ )
 {
-	ft_mover_ = protocols::moves::ChangeFoldTreeMoverOP( new protocols::moves::ChangeFoldTreeMover() );
+	ft_mover_ = utility::pointer::make_shared< protocols::moves::ChangeFoldTreeMover >();
 	set_defaults();
 	read_command_line_options();
 	setup_scorefxns();
@@ -104,7 +104,7 @@ AntibodyDesignMoverGenerator::AntibodyDesignMoverGenerator(AntibodyInfoCOP ab_in
 	mover_( /* NULL */ ),
 	set_tf_( /* NULL */ )
 {
-	ft_mover_ = protocols::moves::ChangeFoldTreeMoverOP( new protocols::moves::ChangeFoldTreeMover() );
+	ft_mover_ = utility::pointer::make_shared< protocols::moves::ChangeFoldTreeMover >();
 	set_defaults();
 	read_command_line_options();
 	setup_scorefxns();
@@ -150,7 +150,7 @@ AntibodyDesignMoverGenerator::apply( core::pose::Pose & pose ){
 
 	//Regenerate the FT mover.  Should be a better way than this...
 	if ( !ft_mover_ ) {
-		ft_mover_ = protocols::moves::ChangeFoldTreeMoverOP( new protocols::moves::ChangeFoldTreeMover() );
+		ft_mover_ = utility::pointer::make_shared< protocols::moves::ChangeFoldTreeMover >();
 	}
 }
 
@@ -199,15 +199,15 @@ AntibodyDesignMoverGenerator::setup_scorefxns(){
 void
 AntibodyDesignMoverGenerator::setup_task_operations(){
 
-	cmd_line_operation_ = core::pack::task::operation::InitializeFromCommandlineOP( new core::pack::task::operation::InitializeFromCommandline() );
-	restrict_design_operation_ = core::pack::task::operation::RestrictToRepackingOP( new core::pack::task::operation::RestrictToRepacking() );
-	loops_operation_ = protocols::simple_task_operations::RestrictToLoopsAndNeighborsOP( new RestrictToLoopsAndNeighbors() );
+	cmd_line_operation_ = utility::pointer::make_shared< core::pack::task::operation::InitializeFromCommandline >();
+	restrict_design_operation_ = utility::pointer::make_shared< core::pack::task::operation::RestrictToRepacking >();
+	loops_operation_ = utility::pointer::make_shared< RestrictToLoopsAndNeighbors >();
 
-	tf_ = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory() );
-	interface_tf_ = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory() );
+	tf_ = utility::pointer::make_shared< core::pack::task::TaskFactory >();
+	interface_tf_ = utility::pointer::make_shared< core::pack::task::TaskFactory >();
 	interface_tf_->push_back(cmd_line_operation_);
 	interface_tf_->push_back( restrict_design_operation_); // For now.
-	interface_tf_->push_back(TaskOperationCOP( new RestrictToInterface(1, interface_dis_/*Distance*/) ));
+	interface_tf_->push_back(utility::pointer::make_shared< RestrictToInterface >(1, interface_dis_/*Distance*/));
 }
 
 core::pack::task::TaskFactoryOP
@@ -215,7 +215,7 @@ AntibodyDesignMoverGenerator::get_dock_tf() {
 	core::pack::task::TaskFactoryOP tf( new core::pack::task::TaskFactory() );
 	tf->push_back(cmd_line_operation_);
 	tf->push_back( restrict_design_operation_);
-	tf->push_back(TaskOperationCOP( new RestrictToInterface(1, interface_dis_) ));
+	tf->push_back(utility::pointer::make_shared< RestrictToInterface >(1, interface_dis_));
 	return tf;
 }
 

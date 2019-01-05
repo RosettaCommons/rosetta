@@ -32,10 +32,10 @@ public:
 	Operator();
 	~Operator() override;
 	filters::FilterOP clone() const override {
-		return filters::FilterOP( new Operator( *this ) );
+		return utility::pointer::make_shared< Operator >( *this );
 	}
 	filters::FilterOP fresh_instance() const override{
-		return filters::FilterOP( new Operator() );
+		return utility::pointer::make_shared< Operator >();
 	}
 
 	bool apply( core::pose::Pose const & pose ) const override;

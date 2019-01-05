@@ -55,7 +55,7 @@ public:
 
 		Pose pose;
 
-		pose.add_constraint( ConstraintOP( new ConstantConstraint( FuncOP( new ConstantFunc( 5 ) ) ) ) );
+		pose.add_constraint( utility::pointer::make_shared< ConstantConstraint >( utility::pointer::make_shared< ConstantFunc >( 5 ) ) );
 		protocols::constraint_filters::ShowConstraintsFilter scf;
 		TS_ASSERT( scf.apply( pose ) );
 	}

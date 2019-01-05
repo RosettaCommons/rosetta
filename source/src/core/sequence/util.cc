@@ -426,7 +426,7 @@ utility::vector1< SequenceAlignment > read_general_aln(
 			//}
 		} else if ( line.substr(0,2) == "--" ) {
 			if ( current->size() > 0 ) alignments.push_back( *current );
-			current = SequenceAlignmentOP( new SequenceAlignment );
+			current = utility::pointer::make_shared< SequenceAlignment >();
 		} else if ( line.substr(0,1) == "#" ) {
 			// do nothing. eventually add a comment here.
 		} else {
@@ -474,7 +474,7 @@ utility::vector1< SequenceAlignment > read_grishin_aln_file(
 			if ( current->size() > 0 ) {
 				alignments.push_back( *current );
 			}
-			current = SequenceAlignmentOP( new SequenceAlignment );
+			current = utility::pointer::make_shared< SequenceAlignment >();
 		} else if ( line.substr(0,2) == "##" ) {
 			std::istringstream line_input( line );
 			line_input >> dummy >> id1 >> id2;

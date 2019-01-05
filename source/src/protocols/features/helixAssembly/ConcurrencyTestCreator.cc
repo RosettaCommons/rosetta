@@ -30,7 +30,7 @@ namespace helixAssembly {
 // XRW TEMP ConcurrencyTestCreator::ConcurrencyTestCreator() {}
 // XRW TEMP ConcurrencyTestCreator::~ConcurrencyTestCreator() {}
 // XRW TEMP FeaturesReporterOP ConcurrencyTestCreator::create_features_reporter() const {
-// XRW TEMP  return FeaturesReporterOP( new ConcurrencyTest );
+// XRW TEMP  return utility::pointer::make_shared< ConcurrencyTest >();
 // XRW TEMP }
 
 // XRW TEMP std::string ConcurrencyTestCreator::type_name() const {

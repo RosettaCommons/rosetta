@@ -139,8 +139,8 @@ NEW_OPT(coupled_moves::output_prefix, "prefix for output files", "");
 */
 
 CoupledMovesProtocol::CoupledMovesProtocol(): Mover(),
-	score_fxn_(core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() )),
-	main_task_factory_(core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory() ))
+	score_fxn_(utility::pointer::make_shared< core::scoring::ScoreFunction >()),
+	main_task_factory_(utility::pointer::make_shared< core::pack::task::TaskFactory >())
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -148,10 +148,10 @@ CoupledMovesProtocol::CoupledMovesProtocol(): Mover(),
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
 
-	main_task_factory_->push_back( TaskOperationCOP( new operation::InitializeFromCommandline ) );
-	main_task_factory_->push_back( TaskOperationCOP( TaskOperationCOP( new IncludeCurrent ) ) );
+	main_task_factory_->push_back( utility::pointer::make_shared< operation::InitializeFromCommandline >() );
+	main_task_factory_->push_back( utility::pointer::make_shared< IncludeCurrent >() );
 	if ( option[ packing::resfile ].user() ) {
-		main_task_factory_->push_back( TaskOperationCOP( new operation::ReadResfile ) );
+		main_task_factory_->push_back( utility::pointer::make_shared< operation::ReadResfile >() );
 	} else {
 		operation::RestrictToRepackingOP rtrop( new operation::RestrictToRepacking );
 		main_task_factory_->push_back( rtrop );
@@ -254,7 +254,7 @@ protocols::simple_moves::CoupledMoverOP CoupledMovesProtocol::setup_coupled_move
 	if ( ligand_mode_ ) {
 		coupled_mover = setup_coupled_mover_for_ligand( pose_copy, task, coupled_mover ) ;
 	} else {
-		coupled_mover = protocols::simple_moves::CoupledMoverOP( new protocols::simple_moves::CoupledMover(pose_copy, score_fxn_, task) );
+		coupled_mover = utility::pointer::make_shared< protocols::simple_moves::CoupledMover >(pose_copy, score_fxn_, task);
 	}
 	if ( backbone_mover_ == "backrub" ) {
 		coupled_mover->set_backbone_mover( backbone_mover_ );
@@ -527,13 +527,13 @@ void CoupledMovesProtocol::apply( core::pose::Pose & pose ){
 
 // additional methods for RosettaScripts
 protocols::moves::MoverOP CoupledMovesProtocolCreator::create_mover() const {
-	return protocols::moves::MoverOP( new CoupledMovesProtocol ); }
+	return utility::pointer::make_shared< CoupledMovesProtocol >(); }
 std::string CoupledMovesProtocolCreator::keyname() const {
 	return CoupledMovesProtocol::mover_name(); }
 protocols::moves::MoverOP CoupledMovesProtocol::clone() const {
-	return protocols::moves::MoverOP( new CoupledMovesProtocol( *this ) ); }
+	return utility::pointer::make_shared< CoupledMovesProtocol >( *this ); }
 protocols::moves::MoverOP CoupledMovesProtocol::fresh_instance() const {
-	return protocols::moves::MoverOP( new CoupledMovesProtocol ); }
+	return utility::pointer::make_shared< CoupledMovesProtocol >(); }
 std::string CoupledMovesProtocol::get_name() const {
 	return mover_name(); }
 std::string CoupledMovesProtocol::mover_name() {
@@ -569,7 +569,7 @@ CoupledMovesProtocol::parse_my_tag(
 				if ( ( option[ basic::options::OptionKeys::loops::frag_files ].user() ) && ( option[ basic::options::OptionKeys::loops::frag_sizes ].user() ) ) {
 					utility::vector1<core::fragment::FragSetOP> frag_libs;
 					protocols::loops::read_loop_fragments(frag_libs); // this function uses OptionKeys::loops::frag_sizes and OptionKeys::loops::frag_files to fill the frag_libs object, which is then used as an argument for the FragmentPerturber constructor.
-					set_perturber( kinematic_closure::perturbers::PerturberOP( new protocols::kinematic_closure::perturbers::FragmentPerturber(frag_libs) ) );
+					set_perturber( utility::pointer::make_shared< protocols::kinematic_closure::perturbers::FragmentPerturber >(frag_libs) );
 				} else {
 					std::stringstream message;
 					message << "[ ERROR - fragments ] Must specify the -loops:frag_sizes and -loops:frag_files " << std::endl;
@@ -578,7 +578,7 @@ CoupledMovesProtocol::parse_my_tag(
 				}
 
 			} else if ( kic_perturber == "walking" ) {
-				set_perturber( kinematic_closure::perturbers::PerturberOP( new protocols::kinematic_closure::perturbers::WalkingPerturber( tag->getOption<core::Real>( "walking_perturber_magnitude", 2 ) ) ) );
+				set_perturber( utility::pointer::make_shared< protocols::kinematic_closure::perturbers::WalkingPerturber >( tag->getOption<core::Real>( "walking_perturber_magnitude", 2 ) ) );
 			}
 		} else if ( ( backbone_mover == "backrub" ) || ( backbone_mover == "" ) ) {
 			set_backbone_mover( backbone_mover );

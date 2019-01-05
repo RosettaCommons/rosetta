@@ -46,7 +46,7 @@ methods::EnergyMethodOP
 DirectReadoutEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new DirectReadoutEnergy );
+	return utility::pointer::make_shared< DirectReadoutEnergy >();
 }
 
 ScoreTypes
@@ -59,7 +59,7 @@ DirectReadoutEnergyCreator::score_types_for_method() const {
 
 /// @details  C-TOR
 DirectReadoutEnergy::DirectReadoutEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new DirectReadoutEnergyCreator ) ),
+	parent( utility::pointer::make_shared< DirectReadoutEnergyCreator >() ),
 	potential_( ScoringManager::get_instance()->get_DirectReadoutPotential() )
 {}
 
@@ -68,7 +68,7 @@ DirectReadoutEnergy::DirectReadoutEnergy() :
 EnergyMethodOP
 DirectReadoutEnergy::clone() const
 {
-	return EnergyMethodOP( new DirectReadoutEnergy() );
+	return utility::pointer::make_shared< DirectReadoutEnergy >();
 }
 
 /// @details  Totally inefficient implementation to avoid defining nbr-ness

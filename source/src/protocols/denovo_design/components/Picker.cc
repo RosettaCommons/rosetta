@@ -192,7 +192,7 @@ Picker::pick_and_cache_fragments(
 	core::Size const frag_length )
 {
 	core::fragment::ConstantLengthFragSetOP fragset =
-		core::fragment::ConstantLengthFragSetOP( new core::fragment::ConstantLengthFragSet( frag_length ) );
+		utility::pointer::make_shared< core::fragment::ConstantLengthFragSet >( frag_length );
 
 	fragset->add( get_framelist( "", complete_ss, complete_abego, chain_endings, start_res, end_res, frag_length ) );
 	return fragset;
@@ -209,7 +209,7 @@ Picker::pick_and_cache_fragments(
 	core::Size const frag_length )
 {
 	core::fragment::ConstantLengthFragSetOP fragset =
-		core::fragment::ConstantLengthFragSetOP( new core::fragment::ConstantLengthFragSet( frag_length ) );
+		utility::pointer::make_shared< core::fragment::ConstantLengthFragSet >( frag_length );
 
 	fragset->add( get_framelist( complete_aa, complete_ss, complete_abego, chain_endings, start_res, end_res, frag_length ) );
 	return fragset;
@@ -228,7 +228,7 @@ Picker::pick_and_cache_fragments(
 	utility::vector1< std::string > const abegovec = abego_vector( abego );
 
 	core::fragment::ConstantLengthFragSetOP fragset =
-		core::fragment::ConstantLengthFragSetOP( new core::fragment::ConstantLengthFragSet( frag_length ) );
+		utility::pointer::make_shared< core::fragment::ConstantLengthFragSet >( frag_length );
 
 	for ( auto const & loop : loops ) {
 		fragset->add( get_framelist( "", ss, abegovec, chain_endings, loop.start(), loop.stop(), frag_length ) );
@@ -245,7 +245,7 @@ Picker::fragments_for_permutation(
 	core::Size const frag_length )
 {
 	core::fragment::ConstantLengthFragSetOP fragset =
-		core::fragment::ConstantLengthFragSetOP( new core::fragment::ConstantLengthFragSet( frag_length ) );
+		utility::pointer::make_shared< core::fragment::ConstantLengthFragSet >( frag_length );
 
 	utility::vector1< core::Size > chain_endings;
 	for ( auto s=perm.segments_begin(); s!=perm.segments_end(); ++s ) {
@@ -273,7 +273,7 @@ Picker::fragments_for_permutation_take_X_from_pose(
 	core::Size const frag_length )
 {
 	core::fragment::ConstantLengthFragSetOP fragset =
-		core::fragment::ConstantLengthFragSetOP( new core::fragment::ConstantLengthFragSet( frag_length ) );
+		utility::pointer::make_shared< core::fragment::ConstantLengthFragSet >( frag_length );
 
 	//utility::vector1< std::string > complete_abego = core::sequence::ABEGOManager().get_symbols( *(perm.pose()), 1 );
 

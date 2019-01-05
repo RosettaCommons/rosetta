@@ -96,7 +96,7 @@ LigandBaseProtocol::LigandBaseProtocol():
 {
 	Mover::type( "LigandBaseProtocol" );
 
-	unboundrot_ = core::pack::rotamer_set::UnboundRotamersOperationOP( new core::pack::rotamer_set::UnboundRotamersOperation() );
+	unboundrot_ = utility::pointer::make_shared< core::pack::rotamer_set::UnboundRotamersOperation >();
 	unboundrot_->initialize_from_command_line();
 
 	using namespace basic::options;

@@ -44,7 +44,7 @@ CellOP
 DP_Matrix::operator ()( Size row, Size col ) const {
 	// matrix is implicitly surrounded by 0's
 	if ( row < 1 || row > rows() || col < 1 || col > cols() ) {
-		return CellOP( new Cell( 0 ) );
+		return utility::pointer::make_shared< Cell >( 0 );
 	}
 
 	return scoring_matrix_[ row ][ col ];

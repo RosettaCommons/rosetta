@@ -300,13 +300,13 @@ AddMembraneMover::~AddMembraneMover() = default;
 /// @brief Create a Clone of this mover
 protocols::moves::MoverOP
 AddMembraneMover::clone() const {
-	return ( protocols::moves::MoverOP( new AddMembraneMover( *this ) ) );
+	return ( utility::pointer::make_shared< AddMembraneMover >( *this ) );
 }
 
 /// @brief Create a Fresh Instance of this Mover
 protocols::moves::MoverOP
 AddMembraneMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new AddMembraneMover() );
+	return utility::pointer::make_shared< AddMembraneMover >();
 }
 
 /// @brief Pase Rosetta Scripts Options for this Mover
@@ -440,7 +440,7 @@ AddMembraneMover::parse_my_tag(
 /// @brief Create a new copy of this mover
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP AddMembraneMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new AddMembraneMover );
+// XRW TEMP  return utility::pointer::make_shared< AddMembraneMover >();
 // XRW TEMP }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)
@@ -515,7 +515,7 @@ AddMembraneMover::apply( Pose & pose ) {
 		if ( spanfile_ == "single_TM_mode" ) {
 			TR << "Single TM Mode: Defining a single TM helix from the length of the input pose" << std::endl;
 			// Define teh span as teh whole helix, excluding the membrane residue
-			SpanCOP single_TM_span = SpanCOP( new Span(  1, pose.size()-1 ) );
+			SpanCOP single_TM_span = utility::pointer::make_shared< Span >(  1, pose.size()-1 );
 			topology_->add_span( *single_TM_span );
 		} else if ( spanfile_ != "from_structure" ) {
 			// now supports PDB numbering also
@@ -564,7 +564,7 @@ AddMembraneMover::apply( Pose & pose ) {
 	}
 
 	// Step 5: Update the membrane position and orientation based on user settings
-	SetMembranePositionMoverOP set_position = SetMembranePositionMoverOP( new SetMembranePositionMover( center_, normal_ ) );
+	SetMembranePositionMoverOP set_position = utility::pointer::make_shared< SetMembranePositionMover >( center_, normal_ );
 	set_position->apply( pose );
 
 	// Print Out Final FoldTree
@@ -813,7 +813,7 @@ std::string AddMembraneMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 AddMembraneMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new AddMembraneMover );
+	return utility::pointer::make_shared< AddMembraneMover >();
 }
 
 void AddMembraneMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -102,8 +102,8 @@ FragmentScoringMethodOP MakeMidPhiOut::make(core::Size priority,
 	core::Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP //picker
 	, std::string ) {
 
-	return (FragmentScoringMethodOP) FragmentScoringMethodOP( new MidPhiOut(priority,
-		lowest_acceptable_value, use_lowest) );
+	return (FragmentScoringMethodOP) utility::pointer::make_shared< MidPhiOut >(priority,
+		lowest_acceptable_value, use_lowest);
 }
 
 } // scores

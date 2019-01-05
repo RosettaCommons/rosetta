@@ -127,7 +127,7 @@ core::sequence::SequenceProfileOP VallProvider::cache_profile(VallChunkOP source
 	cached_profile_id_.assign(key);
 
 	if ( cached_profile_ == nullptr ) {
-		cached_profile_ = core::sequence::SequenceProfileOP( new core::sequence::SequenceProfile() );
+		cached_profile_ = utility::pointer::make_shared< core::sequence::SequenceProfile >();
 	}
 	cached_profile_->profile(prof);
 	cached_profile_->sequence(source_chunk->get_sequence());
@@ -270,7 +270,7 @@ core::Size VallProvider::vallChunksFromLibrary(std::string const & filename, cor
 				<< " having " << current_section->size() << " residues "
 				<< " at index " << size() << ". The largest chunk's size is: "
 				<<largest_chunk_size_<<std::endl;
-			current_section = VallChunkOP( new VallChunk(get_self_weak_ptr()) );
+			current_section = utility::pointer::make_shared< VallChunk >(get_self_weak_ptr());
 			current_section->vall_key(vall_keys_.size());
 			prior_id = current_residue->id();
 		}
@@ -310,7 +310,7 @@ core::Size VallProvider::vallChunksFromLibrary(std::string const & filename, cor
 
 	// create cached pose
 	for ( core::Size i = 1; i <= largest_chunk_size_; i++ ) poly_A_seq_ += "A";
-	cached_pose_ = core::pose::PoseOP( new core::pose::Pose() );
+	cached_pose_ = utility::pointer::make_shared< core::pose::Pose >();
 	core::pose::make_pose_from_sequence(*cached_pose_, poly_A_seq_,
 		*(chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard")));
 	TR.flush();

@@ -29,7 +29,7 @@ namespace strand_assembly {
 // XRW TEMP StrandBundleFeaturesCreator::StrandBundleFeaturesCreator() {}
 // XRW TEMP StrandBundleFeaturesCreator::~StrandBundleFeaturesCreator() {}
 // XRW TEMP FeaturesReporterOP StrandBundleFeaturesCreator::create_features_reporter() const {
-// XRW TEMP  return FeaturesReporterOP( new StrandBundleFeatures );
+// XRW TEMP  return utility::pointer::make_shared< StrandBundleFeatures >();
 // XRW TEMP }
 
 // XRW TEMP std::string StrandBundleFeaturesCreator::type_name() const {

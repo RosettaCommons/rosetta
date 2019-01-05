@@ -177,7 +177,7 @@ PDBInfo::operator =( PDBInfo const & info )
 		modeltag_ = info.modeltag_;
 		remarks_ = info.remarks_;
 		if ( info.header_information_ ) {
-			header_information_ = io::HeaderInformationOP( new io::HeaderInformation(*info.header_information_) );
+			header_information_ = utility::pointer::make_shared< io::HeaderInformation >(*info.header_information_);
 		}
 
 		chain_sequences_ = info.chain_sequences_;

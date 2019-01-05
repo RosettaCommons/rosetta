@@ -39,7 +39,7 @@ public:
 	TemplateHistory( core::pose::Pose &pose );
 
 	basic::datacache::CacheableDataOP clone() const override {
-		return basic::datacache::CacheableDataOP( new TemplateHistory(*this) );
+		return utility::pointer::make_shared< TemplateHistory >(*this);
 	}
 
 	void setall( int template_id );

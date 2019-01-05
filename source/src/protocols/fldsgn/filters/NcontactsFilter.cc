@@ -121,7 +121,7 @@ NcontactsFilter::parse_my_tag(
 }
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP NcontactsFilterCreator::create_filter() const { return protocols::filters::FilterOP( new NcontactsFilter ); }
+// XRW TEMP NcontactsFilterCreator::create_filter() const { return utility::pointer::make_shared< NcontactsFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP NcontactsFilterCreator::keyname() const { return "Ncontacts"; }
@@ -160,7 +160,7 @@ std::string NcontactsFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 NcontactsFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new NcontactsFilter );
+	return utility::pointer::make_shared< NcontactsFilter >();
 }
 
 void NcontactsFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

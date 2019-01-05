@@ -60,7 +60,7 @@ StubScoreLoopsFilter::parse_my_tag( utility::tag::TagCOP tag,
 	tr.Info << "StubScoreLoopsFilter"<<std::endl;
 	cb_force_ = tag->getOption< core::Real >( "cb_force", 0.5 );
 	runtime_assert( cb_force_ > 0.00001 );
-	stub_set_ = hotspot_hashing::HotspotStubSetOP( new hotspot_hashing::HotspotStubSet );
+	stub_set_ = utility::pointer::make_shared< hotspot_hashing::HotspotStubSet >();
 	stub_set_->read_data( tag->getOption< std::string >("stubfile") );
 	loop_start_ = tag->getOption<Size>("start", 0 );
 	loop_stop_ = tag->getOption<Size>("stop", 0 );
@@ -87,17 +87,17 @@ StubScoreLoopsFilter::get_score( core::pose::Pose const & pose ) const {
 
 protocols::filters::FilterOP
 StubScoreLoopsFilter::fresh_instance() const{
-	return protocols::filters::FilterOP( new StubScoreLoopsFilter() );
+	return utility::pointer::make_shared< StubScoreLoopsFilter >();
 }
 
 
 protocols::filters::FilterOP
 StubScoreLoopsFilter::clone() const{
-	return protocols::filters::FilterOP( new StubScoreLoopsFilter( *this ) );
+	return utility::pointer::make_shared< StubScoreLoopsFilter >( *this );
 }
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP StubScoreLoopsFilterCreator::create_filter() const { return protocols::filters::FilterOP( new StubScoreLoopsFilter ); }
+// XRW TEMP StubScoreLoopsFilterCreator::create_filter() const { return utility::pointer::make_shared< StubScoreLoopsFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP StubScoreLoopsFilterCreator::keyname() const { return "StubScoreLoops"; }
@@ -130,7 +130,7 @@ std::string StubScoreLoopsFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 StubScoreLoopsFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new StubScoreLoopsFilter );
+	return utility::pointer::make_shared< StubScoreLoopsFilter >();
 }
 
 void StubScoreLoopsFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

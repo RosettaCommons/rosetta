@@ -236,14 +236,14 @@ using namespace protocols::membrane;
 //protocols::moves::MoverOP
 //MPLipidAccessibility::fresh_instance() const
 //{
-// return protocols::moves::MoverOP( new MPLipidAccessibility );
+// return utility::pointer::make_shared< MPLipidAccessibility >();
 //}
 //
 ///// @brief required in the context of the parser/scripting scheme
 //protocols::moves::MoverOP
 //MPLipidAccessibility::clone() const
 //{
-// return protocols::moves::MoverOP( new MPLipidAccessibility( *this ) );
+// return utility::pointer::make_shared< MPLipidAccessibility >( *this );
 //}
 //
 //std::ostream &

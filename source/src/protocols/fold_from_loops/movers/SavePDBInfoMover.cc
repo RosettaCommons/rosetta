@@ -57,7 +57,7 @@ SavePDBInfoMover::parse_my_tag(
 	std::string refinfo_name(tag->getOption<std::string>( "reference_info_name" ) );
 
 	if ( !data.has("spm_ref_info", refinfo_name ) ) {
-		refinfo = core::pose::PDBInfoOP( new core::pose::PDBInfo() );
+		refinfo = utility::pointer::make_shared< core::pose::PDBInfo >();
 		data.add("spm_ref_info", refinfo_name, refinfo );
 	} else refinfo = data.get_ptr<core::pose::PDBInfo>("spm_ref_info", refinfo_name );
 
@@ -70,13 +70,13 @@ SavePDBInfoMover::parse_my_tag(
 protocols::moves::MoverOP
 SavePDBInfoMover::clone() const
 {
-	return protocols::moves::MoverOP( new SavePDBInfoMover( *this ) );
+	return utility::pointer::make_shared< SavePDBInfoMover >( *this );
 }
 
 protocols::moves::MoverOP
 SavePDBInfoMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new SavePDBInfoMover );
+	return utility::pointer::make_shared< SavePDBInfoMover >();
 }
 
 void
@@ -126,7 +126,7 @@ std::string SavePDBInfoMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 SavePDBInfoMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SavePDBInfoMover );
+	return utility::pointer::make_shared< SavePDBInfoMover >();
 }
 
 void SavePDBInfoMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

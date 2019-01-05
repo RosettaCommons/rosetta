@@ -48,7 +48,7 @@ public:
 	RG_MinData(): com(0.0,0.0,0.0), rg(0), nres_scored(0) {}
 
 	basic::datacache::CacheableDataOP clone() const {
-		return basic::datacache::CacheableDataOP( new RG_MinData(*this) );
+		return utility::pointer::make_shared< RG_MinData >(*this);
 	}
 
 	numeric::xyzVector< core::Real > com;

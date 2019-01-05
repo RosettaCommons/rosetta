@@ -79,12 +79,12 @@ SavePoseMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data_
 
 protocols::moves::MoverOP
 SavePoseMover::clone() const{
-	return protocols::moves::MoverOP( new SavePoseMover( *this ) );
+	return utility::pointer::make_shared< SavePoseMover >( *this );
 }
 
 protocols::moves::MoverOP
 SavePoseMover::fresh_instance() const{
-	return protocols::moves::MoverOP( new SavePoseMover );
+	return utility::pointer::make_shared< SavePoseMover >();
 }
 
 core::pose::PoseOP
@@ -120,7 +120,7 @@ std::string SavePoseMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 SavePoseMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SavePoseMover );
+	return utility::pointer::make_shared< SavePoseMover >();
 }
 
 void SavePoseMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

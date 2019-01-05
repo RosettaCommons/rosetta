@@ -375,7 +375,7 @@ void setPoseExtraScore(
 	if ( !pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) ) {
 		pose.data().set(
 			core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA,
-			DataCache_CacheableData::DataOP( new CacheableStringFloatMap() )
+			utility::pointer::make_shared< CacheableStringFloatMap >()
 
 		);
 	}
@@ -402,7 +402,7 @@ void setPoseExtraScore(
 	if ( !pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA ) ) {
 		pose.data().set(
 			core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA,
-			DataCache_CacheableData::DataOP( new CacheableStringMap() )
+			utility::pointer::make_shared< CacheableStringMap >()
 		);
 	}
 
@@ -427,7 +427,7 @@ void add_comment(
 	if ( !pose.data().has( core::pose::datacache::CacheableDataType::STRING_MAP ) ) {
 		pose.data().set(
 			core::pose::datacache::CacheableDataType::STRING_MAP,
-			DataCache_CacheableData::DataOP( new CacheableStringMap() )
+			utility::pointer::make_shared< CacheableStringMap >()
 
 		);
 	}
@@ -453,7 +453,7 @@ void add_score_line_string(
 	if ( !pose.data().has( core::pose::datacache::CacheableDataType::SCORE_LINE_STRINGS ) ) {
 		pose.data().set(
 			core::pose::datacache::CacheableDataType::SCORE_LINE_STRINGS,
-			DataCache_CacheableData::DataOP( new CacheableStringMap() )
+			utility::pointer::make_shared< CacheableStringMap >()
 		);
 	}
 
@@ -475,7 +475,7 @@ void clearPoseExtraScores(
 		using basic::datacache::CacheableStringFloatMap;
 		pose.data().set(
 			core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA,
-			DataCache_CacheableData::DataOP( new CacheableStringFloatMap() )
+			utility::pointer::make_shared< CacheableStringFloatMap >()
 		);
 	}
 
@@ -483,7 +483,7 @@ void clearPoseExtraScores(
 		using basic::datacache::CacheableStringMap;
 		pose.data().set(
 			core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA,
-			DataCache_CacheableData::DataOP( new CacheableStringMap() )
+			utility::pointer::make_shared< CacheableStringMap >()
 		);
 	}
 
@@ -491,7 +491,7 @@ void clearPoseExtraScores(
 		using basic::datacache::CacheableStringMap;
 		pose.data().set(
 			core::pose::datacache::CacheableDataType::STRING_MAP,
-			DataCache_CacheableData::DataOP( new CacheableStringMap() )
+			utility::pointer::make_shared< CacheableStringMap >()
 
 		);
 	}
@@ -500,7 +500,7 @@ void clearPoseExtraScores(
 		using basic::datacache::CacheableStringMap;
 		pose.data().set(
 			core::pose::datacache::CacheableDataType::SCORE_LINE_STRINGS,
-			DataCache_CacheableData::DataOP( new CacheableStringMap() )
+			utility::pointer::make_shared< CacheableStringMap >()
 
 		);
 	}
@@ -713,7 +713,7 @@ void tag_into_pose( core::pose::Pose & pose, std::string const & tag ) {
 	using basic::datacache::DataCache_CacheableData;
 	pose.data().set(
 		core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG,
-		DataCache_CacheableData::DataOP( new CacheableString(tag) )
+		utility::pointer::make_shared< CacheableString >(tag)
 	);
 }
 

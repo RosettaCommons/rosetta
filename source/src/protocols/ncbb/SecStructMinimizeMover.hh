@@ -51,11 +51,11 @@ public:
 	//destructor
 	~SecStructMinimizeMover() override;
 
-	protocols::moves::MoverOP fresh_instance() const override { return SecStructMinimizeMoverOP( new SecStructMinimizeMover ); }
-	protocols::moves::MoverOP clone() const override { return protocols::moves::MoverOP( new SecStructMinimizeMover(
+	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< SecStructMinimizeMover >(); }
+	protocols::moves::MoverOP clone() const override { return utility::pointer::make_shared< SecStructMinimizeMover >(
 		score_fxn_,
 		dihedral_pattern_,
-		alpha_beta_pattern_ ) ); }
+		alpha_beta_pattern_ ); }
 
 	void add_dihedral_constraints_to_pose( Pose & pose, Size number_dihedral_sets, utility::vector1< char > uniqs );
 

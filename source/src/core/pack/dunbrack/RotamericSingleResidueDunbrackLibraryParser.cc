@@ -94,7 +94,7 @@ RotamericSingleResidueDunbrackLibraryParser::RotamericSingleResidueDunbrackLibra
 
 RotamericSingleResidueDunbrackLibraryParserOP
 RotamericSingleResidueDunbrackLibraryParser::clone() const {
-	return RotamericSingleResidueDunbrackLibraryParserOP( new RotamericSingleResidueDunbrackLibraryParser( *this ) );
+	return utility::pointer::make_shared< RotamericSingleResidueDunbrackLibraryParser >( *this );
 }
 
 /// @brief Clear all of the data read from a file.

@@ -52,7 +52,7 @@ Basis::Basis( Basis const & src ) {
 
 BasisOP
 Basis::clone() const {
-	return BasisOP( new Basis( *this ) );
+	return utility::pointer::make_shared< Basis >( *this );
 }
 
 bool

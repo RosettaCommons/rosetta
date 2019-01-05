@@ -57,20 +57,20 @@ public:
 		using namespace basic::options::OptionKeys;
 		using namespace core::pack::task;
 		using namespace core::pack::task::operation;
-		main_task_factory = core::pack::task::TaskFactoryOP( new TaskFactory );
-		main_task_factory->push_back( TaskOperationCOP( new operation::InitializeFromCommandline ) );
+		main_task_factory = utility::pointer::make_shared< TaskFactory >();
+		main_task_factory->push_back( utility::pointer::make_shared< operation::InitializeFromCommandline >() );
 		if ( option[ packing::resfile ].user() ) {
-			main_task_factory->push_back( TaskOperationCOP( new operation::ReadResfile ) );
+			main_task_factory->push_back( utility::pointer::make_shared< operation::ReadResfile >() );
 		}
 
 		score_fxn = core::scoring::get_score_function();
 
-		pack_mover = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover );
+		pack_mover = utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >();
 		pack_mover->task_factory( main_task_factory );
 		pack_mover->score_function( score_fxn );
 
 		//set up another mover
-		sc_mover = protocols::simple_moves::sidechain_moves::SidechainMoverOP( new protocols::simple_moves::sidechain_moves::SidechainMover() );
+		sc_mover = utility::pointer::make_shared< protocols::simple_moves::sidechain_moves::SidechainMover >();
 		sc_mover->set_task_factory( main_task_factory );
 
 		set_fail_no_retry_ = false;
@@ -158,7 +158,7 @@ public:
 
 	protocols::moves::MoverOP
 	fresh_instance() const override {
-		return protocols::moves::MoverOP( new JDtestmover );
+		return utility::pointer::make_shared< JDtestmover >();
 	}
 
 

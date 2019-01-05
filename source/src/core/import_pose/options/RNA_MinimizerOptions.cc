@@ -66,7 +66,7 @@ RNA_MinimizerOptions::RNA_MinimizerOptions( RNA_MinimizerOptions const & src ) :
 RNA_MinimizerOptionsOP
 RNA_MinimizerOptions::clone() const
 {
-	return RNA_MinimizerOptionsOP( new RNA_MinimizerOptions( *this ) );
+	return utility::pointer::make_shared< RNA_MinimizerOptions >( *this );
 }
 
 ///////////////////////////////////////////////////////////////////

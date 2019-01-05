@@ -75,7 +75,7 @@ static basic::Tracer TR( "protocols.ligand_docking.StartFrom" );
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP StartFromCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new StartFrom );
+// XRW TEMP  return utility::pointer::make_shared< StartFrom >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -98,11 +98,11 @@ StartFrom::StartFrom(StartFrom const & )= default;
 StartFrom::~StartFrom() = default;
 
 protocols::moves::MoverOP StartFrom::clone() const {
-	return protocols::moves::MoverOP( new StartFrom( *this ) );
+	return utility::pointer::make_shared< StartFrom >( *this );
 }
 
 protocols::moves::MoverOP StartFrom::fresh_instance() const {
-	return protocols::moves::MoverOP( new StartFrom );
+	return utility::pointer::make_shared< StartFrom >();
 }
 
 // XRW TEMP std::string StartFrom::get_name() const{
@@ -419,7 +419,7 @@ std::string StartFromCreator::keyname() const {
 
 protocols::moves::MoverOP
 StartFromCreator::create_mover() const {
-	return protocols::moves::MoverOP( new StartFrom );
+	return utility::pointer::make_shared< StartFrom >();
 }
 
 void StartFromCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

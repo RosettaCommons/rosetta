@@ -96,9 +96,9 @@ int main ( int argc, char* argv[] )
 
 		//now do initialization stuff.
 		TaskFactoryOP task_factory( new TaskFactory );
-		task_factory->push_back( operation::TaskOperationCOP( new operation::InitializeFromCommandline ) );
+		task_factory->push_back( utility::pointer::make_shared< operation::InitializeFromCommandline >() );
 		//need these to keep pack_rotamers from redesigning the residue.
-		operation::RestrictToRepackingOP rtrop = operation::RestrictToRepackingOP( new operation::RestrictToRepacking );
+		operation::RestrictToRepackingOP rtrop = utility::pointer::make_shared< operation::RestrictToRepacking >();
 		task_factory->push_back( rtrop );
 
 		//ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( "r" );

@@ -127,13 +127,13 @@ TiltMover::~TiltMover() = default;
 /// @brief Create a Clone of this mover
 protocols::moves::MoverOP
 TiltMover::clone() const {
-	return ( protocols::moves::MoverOP( new TiltMover( *this ) ) );
+	return ( utility::pointer::make_shared< TiltMover >( *this ) );
 }
 
 /// @brief Create a Fresh Instance of this Mover
 protocols::moves::MoverOP
 TiltMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new TiltMover() );
+	return utility::pointer::make_shared< TiltMover >();
 }
 
 /// @brief Parse Rosetta Scripts Options for this Mover
@@ -163,7 +163,7 @@ TiltMover::parse_my_tag(
 /// @brief Create a new copy of this mover
 protocols::moves::MoverOP
 TiltMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new TiltMover() );
+	return utility::pointer::make_shared< TiltMover >();
 }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)

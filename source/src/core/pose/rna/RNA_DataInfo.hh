@@ -136,7 +136,7 @@ public:
 	RNA_DataInfoOP
 	clone() const
 	{
-		return RNA_DataInfoOP( new RNA_DataInfo( *this ) );
+		return utility::pointer::make_shared< RNA_DataInfo >( *this );
 	}
 
 

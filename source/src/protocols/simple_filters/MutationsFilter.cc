@@ -91,7 +91,7 @@ MutationsFilter::reference_pose( core::pose::PoseCOP pose )
 void
 MutationsFilter::reference_pose( core::pose::Pose const & pose )
 {
-	reference_pose_ = core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose( pose ) ) );
+	reference_pose_ = utility::pointer::make_shared< core::pose::Pose >( pose );
 }
 
 core::Size
@@ -319,7 +319,7 @@ MutationsFilter::parse_my_tag( utility::tag::TagCOP tag,
 
 protocols::filters::FilterOP
 MutationsFilter::fresh_instance() const{
-	return protocols::filters::FilterOP( new MutationsFilter() );
+	return utility::pointer::make_shared< MutationsFilter >();
 }
 
 MutationsFilter::~MutationsFilter()= default;
@@ -327,11 +327,11 @@ MutationsFilter::~MutationsFilter()= default;
 
 protocols::filters::FilterOP
 MutationsFilter::clone() const{
-	return protocols::filters::FilterOP( new MutationsFilter( *this ) );
+	return utility::pointer::make_shared< MutationsFilter >( *this );
 }
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP MutationsFilterCreator::create_filter() const { return protocols::filters::FilterOP( new MutationsFilter ); }
+// XRW TEMP MutationsFilterCreator::create_filter() const { return utility::pointer::make_shared< MutationsFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP MutationsFilterCreator::keyname() const { return "Mutations"; }
@@ -367,7 +367,7 @@ std::string MutationsFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 MutationsFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new MutationsFilter );
+	return utility::pointer::make_shared< MutationsFilter >();
 }
 
 void MutationsFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

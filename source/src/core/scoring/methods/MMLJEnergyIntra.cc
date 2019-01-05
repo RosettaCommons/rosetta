@@ -64,7 +64,7 @@ methods::EnergyMethodOP
 MMLJEnergyIntraCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new MMLJEnergyIntra );
+	return utility::pointer::make_shared< MMLJEnergyIntra >();
 }
 
 ScoreTypes
@@ -76,7 +76,7 @@ MMLJEnergyIntraCreator::score_types_for_method() const {
 }
 
 MMLJEnergyIntra::MMLJEnergyIntra() :
-	parent( EnergyMethodCreatorOP( new MMLJEnergyIntraCreator ) ),
+	parent( utility::pointer::make_shared< MMLJEnergyIntraCreator >() ),
 	potential_( scoring::ScoringManager::get_instance()->get_MMLJEnergyTable() )
 {}
 
@@ -84,7 +84,7 @@ MMLJEnergyIntra::MMLJEnergyIntra() :
 EnergyMethodOP
 MMLJEnergyIntra::clone() const
 {
-	return EnergyMethodOP( new MMLJEnergyIntra() );
+	return utility::pointer::make_shared< MMLJEnergyIntra >();
 }
 
 void
@@ -103,7 +103,7 @@ MMLJEnergyIntra::setup_for_minimizing_for_residue(
 
 	// update the existing nblist if it's already present in the res_data_cache object
 	core::scoring::ResidueNblistDataOP nbdata( utility::pointer::static_pointer_cast< core::scoring::ResidueNblistData > ( res_data_cache.get_data( mm_lj_intra_nblist ) ) );
-	if ( ! nbdata ) nbdata = ResidueNblistDataOP( new ResidueNblistData );
+	if ( ! nbdata ) nbdata = utility::pointer::make_shared< ResidueNblistData >();
 
 	// get a reference to the MMLJLibrary we are using
 	core::scoring::mm::MMLJLibrary const & library = potential_.mm_lj_score().mm_lj_library();

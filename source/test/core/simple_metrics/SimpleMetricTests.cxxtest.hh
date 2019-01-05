@@ -205,7 +205,7 @@ public:
 
 	void test_per_residue_real_metric() {
 		using namespace core::select::residue_selector;
-		GlycanResidueSelectorOP selector = GlycanResidueSelectorOP( new GlycanResidueSelector());
+		GlycanResidueSelectorOP selector = utility::pointer::make_shared< GlycanResidueSelector >();
 
 		TestPerResidueRealMetric tester = TestPerResidueRealMetric();
 		tester.set_residue_selector(selector); //Test setting the residue selector.
@@ -237,7 +237,7 @@ public:
 
 	void test_per_residue_string_metric() {
 		using namespace core::select::residue_selector;
-		GlycanResidueSelectorOP selector = GlycanResidueSelectorOP( new GlycanResidueSelector());
+		GlycanResidueSelectorOP selector = utility::pointer::make_shared< GlycanResidueSelector >();
 
 		TestPerResidueStringMetric tester = TestPerResidueStringMetric();
 		tester.set_residue_selector(selector); //Test setting the residue selector.
@@ -270,8 +270,8 @@ public:
 
 	void test_utility_metrics() {
 		core::import_pose::pose_from_file(ab_pose, "core/simple_metrics/2r0l_1_1.pdb", core::import_pose::PDB_file);
-		AntibodyInfoOP ab_info =  AntibodyInfoOP( new AntibodyInfo(ab_pose, AHO_Scheme, North));
-		CDRResidueSelectorOP cdr_selector = CDRResidueSelectorOP( new CDRResidueSelector( ab_info));
+		AntibodyInfoOP ab_info =  utility::pointer::make_shared< AntibodyInfo >(ab_pose, AHO_Scheme, North);
+		CDRResidueSelectorOP cdr_selector = utility::pointer::make_shared< CDRResidueSelector >( ab_info);
 		cdr_selector->set_cdr( l1 );
 
 		//SelectedResidues
@@ -301,8 +301,8 @@ public:
 
 	void test_ss_metric() {
 		core::import_pose::pose_from_file(ab_pose, "core/simple_metrics/2r0l_1_1.pdb", core::import_pose::PDB_file);
-		AntibodyInfoOP ab_info =  AntibodyInfoOP( new AntibodyInfo(ab_pose, AHO_Scheme, North));
-		CDRResidueSelectorOP cdr_selector = CDRResidueSelectorOP( new CDRResidueSelector( ab_info));
+		AntibodyInfoOP ab_info =  utility::pointer::make_shared< AntibodyInfo >(ab_pose, AHO_Scheme, North);
+		CDRResidueSelectorOP cdr_selector = utility::pointer::make_shared< CDRResidueSelector >( ab_info);
 		cdr_selector->set_cdr( l1 );
 
 		SecondaryStructureMetric ss_metric = SecondaryStructureMetric( cdr_selector );
@@ -313,8 +313,8 @@ public:
 
 	void test_seq_metric() {
 		core::import_pose::pose_from_file(ab_pose, "core/simple_metrics/2r0l_1_1.pdb", core::import_pose::PDB_file);
-		AntibodyInfoOP ab_info =  AntibodyInfoOP( new AntibodyInfo(ab_pose, AHO_Scheme, North));
-		CDRResidueSelectorOP cdr_selector = CDRResidueSelectorOP( new CDRResidueSelector( ab_info));
+		AntibodyInfoOP ab_info =  utility::pointer::make_shared< AntibodyInfo >(ab_pose, AHO_Scheme, North);
+		CDRResidueSelectorOP cdr_selector = utility::pointer::make_shared< CDRResidueSelector >( ab_info);
 		cdr_selector->set_cdr( l1 );
 
 		SequenceMetric seq_metric = SequenceMetric( cdr_selector );
@@ -325,8 +325,8 @@ public:
 
 	void test_sasa_metric() {
 		core::import_pose::pose_from_file(ab_pose, "core/simple_metrics/2r0l_1_1.pdb", core::import_pose::PDB_file);
-		AntibodyInfoOP ab_info =  AntibodyInfoOP( new AntibodyInfo(ab_pose, AHO_Scheme, North));
-		CDRResidueSelectorOP cdr_selector = CDRResidueSelectorOP( new CDRResidueSelector( ab_info));
+		AntibodyInfoOP ab_info =  utility::pointer::make_shared< AntibodyInfo >(ab_pose, AHO_Scheme, North);
+		CDRResidueSelectorOP cdr_selector = utility::pointer::make_shared< CDRResidueSelector >( ab_info);
 		cdr_selector->set_cdr( l1 );
 
 		SasaMetric sasa_metric = SasaMetric ( );

@@ -46,7 +46,7 @@ struct RelativeSequencePosition : public utility::pointer::ReferenceCount {
 struct CountFromLeft : public RelativeSequencePosition {
 	inline
 	virtual RelativeSequencePositionOP clone() const {
-		return RelativeSequencePositionOP( new CountFromLeft( *this ) );
+		return utility::pointer::make_shared< CountFromLeft >( *this );
 	}
 
 	inline

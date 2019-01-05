@@ -44,10 +44,10 @@ public:
 	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	utility::vector1 < core::Real > compute( core::pose::Pose const & pose ) const;
 	filters::FilterOP clone() const  override {
-		return filters::FilterOP( new MPSpanAngleFilter( *this ) );
+		return utility::pointer::make_shared< MPSpanAngleFilter >( *this );
 	}
 	filters::FilterOP fresh_instance() const override {
-		return filters::FilterOP( new MPSpanAngleFilter() );
+		return utility::pointer::make_shared< MPSpanAngleFilter >();
 	}
 
 	virtual ~MPSpanAngleFilter();

@@ -49,7 +49,7 @@ namespace constraints {
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP InvrotTreeCstGeneratorCreator::create_mover() const
 // XRW TEMP {
-// XRW TEMP  return protocols::moves::MoverOP( new InvrotTreeRCG() );
+// XRW TEMP  return utility::pointer::make_shared< InvrotTreeRCG >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -120,13 +120,13 @@ InvrotTreeRCG::parse_my_tag( TagCOP const tag,
 protocols::moves::MoverOP
 InvrotTreeRCG::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new InvrotTreeRCG() );
+	return utility::pointer::make_shared< InvrotTreeRCG >();
 }
 
 protocols::moves::MoverOP
 InvrotTreeRCG::clone() const
 {
-	return protocols::moves::MoverOP( new InvrotTreeRCG( *this ) );
+	return utility::pointer::make_shared< InvrotTreeRCG >( *this );
 }
 
 void
@@ -177,7 +177,7 @@ InvrotTreeRCG::set_cstfile( std::string const & cstfilename )
 {
 	toolbox::match_enzdes_util::EnzConstraintIOOP enzcst_io( new toolbox::match_enzdes_util::EnzConstraintIO( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) ) );
 	enzcst_io->read_enzyme_cstfile( cstfilename );
-	invrot_tree_ = toolbox::match_enzdes_util::InvrotTreeOP( new protocols::toolbox::match_enzdes_util::TheozymeInvrotTree( enzcst_io ) );
+	invrot_tree_ = utility::pointer::make_shared< protocols::toolbox::match_enzdes_util::TheozymeInvrotTree >( enzcst_io );
 	invrot_tree_->generate_targets_and_inverse_rotamers();
 	enzcst_io_ = enzcst_io;
 } //set_cstfile()
@@ -188,7 +188,7 @@ InvrotTreeRCG::init( core::pose::Pose const & pose )
 {
 	// this function is invoked from BluePrintBDR after the VLB object is attached, but before we enter centroid mode
 	// it is also invoked when the mover is applied, if it is called from somewhere else
-	geomcst_seqpos_ = toolbox::match_enzdes_util::AllowedSeqposForGeomCstOP( new protocols::toolbox::match_enzdes_util::AllowedSeqposForGeomCst() );
+	geomcst_seqpos_ = utility::pointer::make_shared< protocols::toolbox::match_enzdes_util::AllowedSeqposForGeomCst >();
 	//stupid: apparently we have to make a copy of the pose on the heap for
 	//the initialization of allowed_seqpos to work
 	core::pose::PoseOP posecopy( new core::pose::Pose( pose ) );
@@ -196,12 +196,12 @@ InvrotTreeRCG::init( core::pose::Pose const & pose )
 
 	// setup the align_pose movers
 	// this one is called once before adding constraints
-	setup_align_pose_ = toolbox::match_enzdes_util::AlignPoseToInvrotTreeMoverOP( new toolbox::match_enzdes_util::AlignPoseToInvrotTreeMover( invrot_tree_, geomcst_seqpos_ ) );
+	setup_align_pose_ = utility::pointer::make_shared< toolbox::match_enzdes_util::AlignPoseToInvrotTreeMover >( invrot_tree_, geomcst_seqpos_ );
 	setup_align_pose_->set_add_target_to_pose( add_ligand_to_pose_ );
 	setup_align_pose_->set_geomcst_for_superposition_from_enz_io( enzcst_io_ );
 
 	// if a VLB is going on, this one can be called as a user-provided mover
-	run_align_pose_ = toolbox::match_enzdes_util::AlignPoseToInvrotTreeMoverOP( new toolbox::match_enzdes_util::AlignPoseToInvrotTreeMover( invrot_tree_, geomcst_seqpos_ ) );
+	run_align_pose_ = utility::pointer::make_shared< toolbox::match_enzdes_util::AlignPoseToInvrotTreeMover >( invrot_tree_, geomcst_seqpos_ );
 	run_align_pose_->set_geomcst_for_superposition_from_enz_io( enzcst_io_ );
 
 	protocols::forge::components::VarLengthBuildOP vlbop = vlb().lock();
@@ -238,7 +238,7 @@ std::string InvrotTreeCstGeneratorCreator::keyname() const {
 
 protocols::moves::MoverOP
 InvrotTreeCstGeneratorCreator::create_mover() const {
-	return protocols::moves::MoverOP( new InvrotTreeRCG );
+	return utility::pointer::make_shared< InvrotTreeRCG >();
 }
 
 void InvrotTreeCstGeneratorCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

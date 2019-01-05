@@ -142,7 +142,7 @@ PoseOutputterFactory::pose_outputter_from_command_line() const
 	}
 	// having reached here, no pose outputter is explicity set on the command line, and so
 	// the default outputter -- the PDBPoseOutputter -- should be returned
-	return PoseOutputterOP( new PDBPoseOutputter );
+	return utility::pointer::make_shared< PDBPoseOutputter >();
 }
 
 /// @details In the event that there are multiple PoseOutputters specified on the command line,

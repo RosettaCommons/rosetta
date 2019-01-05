@@ -48,7 +48,7 @@ GridBaseOP AtrGridCreator::create_grid(utility::tag::TagCOP tag) const
 GridBaseOP AtrGridCreator::create_grid() const
 {
 
-	return GridBaseOP( new AtrGrid() );
+	return utility::pointer::make_shared< AtrGrid >();
 }
 
 void AtrGridCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -69,7 +69,7 @@ AtrGrid::AtrGrid() :
 }
 
 GridBaseOP AtrGrid::clone() const {
-	return GridBaseOP( new AtrGrid( *this ) );
+	return utility::pointer::make_shared< AtrGrid >( *this );
 }
 
 void

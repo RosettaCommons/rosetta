@@ -94,7 +94,7 @@ namespace canonical_sampling {
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP MetropolisHastingsMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new MetropolisHastingsMover );
+// XRW TEMP  return utility::pointer::make_shared< MetropolisHastingsMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -160,7 +160,7 @@ MetropolisHastingsMover::prepare_simulation( core::pose::Pose & pose ) {
 	if ( !tempering_ ) {
 		//get this done before "initialize_simulation" is called no movers and observers
 		tr.Info << "no temperature controller in MetropolisHastings defined... generating FixedTemperatureController" << std::endl;
-		tempering_ = TemperatureControllerOP( new protocols::canonical_sampling::FixedTemperatureController( monte_carlo_->temperature() ) );
+		tempering_ = utility::pointer::make_shared< protocols::canonical_sampling::FixedTemperatureController >( monte_carlo_->temperature() );
 		tempering_->set_monte_carlo( monte_carlo_ ); // MonteCarlo required for tempering_->observe_after_metropolis();
 	}
 	using namespace core;
@@ -433,13 +433,13 @@ MetropolisHastingsMover::wind_down_simulation( core::pose::Pose& pose) {
 protocols::moves::MoverOP
 MetropolisHastingsMover::clone() const
 {
-	return protocols::moves::MoverOP( new protocols::canonical_sampling::MetropolisHastingsMover(*this) );
+	return utility::pointer::make_shared< protocols::canonical_sampling::MetropolisHastingsMover >(*this);
 }
 
 protocols::moves::MoverOP
 MetropolisHastingsMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new MetropolisHastingsMover );
+	return utility::pointer::make_shared< MetropolisHastingsMover >();
 }
 
 bool
@@ -475,9 +475,9 @@ MetropolisHastingsMover::parse_my_tag(
 		BiasEnergyOP bias_energy( new WTEBiasEnergy() ); // stride, omega, gamma );
 		bias_energy->parse_my_tag( tag, data, filters, movers, pose );
 		add_observer( bias_energy );
-		monte_carlo_ = protocols::moves::MonteCarloOP( new BiasedMonteCarlo( *score_fxn, temperature, bias_energy ) );
+		monte_carlo_ = utility::pointer::make_shared< BiasedMonteCarlo >( *score_fxn, temperature, bias_energy );
 	} else {
-		monte_carlo_ = protocols::moves::MonteCarloOP( new protocols::moves::MonteCarlo( *score_fxn, temperature ) );
+		monte_carlo_ = utility::pointer::make_shared< protocols::moves::MonteCarlo >( *score_fxn, temperature );
 	}
 
 	//add movers and observers
@@ -752,13 +752,13 @@ MetropolisHastingsMover::add_sidechain_mover(
 	using core::pack::task::operation::TaskOperationCOP;
 
 	core::pack::task::TaskFactoryOP main_task_factory( new core::pack::task::TaskFactory );
-	main_task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
+	main_task_factory->push_back( utility::pointer::make_shared< core::pack::task::operation::InitializeFromCommandline >() );
 	if ( option[ packing::resfile ].user() ) {
-		main_task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::ReadResfile ) );
+		main_task_factory->push_back( utility::pointer::make_shared< core::pack::task::operation::ReadResfile >() );
 	} else {
-		main_task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ) );
+		main_task_factory->push_back( utility::pointer::make_shared< core::pack::task::operation::RestrictToRepacking >() );
 	}
-	if ( preserve_cbeta ) main_task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::PreserveCBeta ) );
+	if ( preserve_cbeta ) main_task_factory->push_back( utility::pointer::make_shared< core::pack::task::operation::PreserveCBeta >() );
 
 	protocols::simple_moves::sidechain_moves::SidechainMoverOP sidechain_mover( new protocols::simple_moves::sidechain_moves::SidechainMover );
 	sidechain_mover->set_task_factory(main_task_factory);
@@ -784,13 +784,13 @@ MetropolisHastingsMover::add_sidechain_mc_mover(
 	using core::pack::task::operation::TaskOperationCOP;
 
 	core::pack::task::TaskFactoryOP main_task_factory( new core::pack::task::TaskFactory );
-	main_task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
+	main_task_factory->push_back( utility::pointer::make_shared< core::pack::task::operation::InitializeFromCommandline >() );
 	if ( option[ packing::resfile ].user() ) {
-		main_task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::ReadResfile ) );
+		main_task_factory->push_back( utility::pointer::make_shared< core::pack::task::operation::ReadResfile >() );
 	} else {
-		main_task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ) );
+		main_task_factory->push_back( utility::pointer::make_shared< core::pack::task::operation::RestrictToRepacking >() );
 	}
-	if ( preserve_cbeta ) main_task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::PreserveCBeta ) );
+	if ( preserve_cbeta ) main_task_factory->push_back( utility::pointer::make_shared< core::pack::task::operation::PreserveCBeta >() );
 
 	protocols::simple_moves::sidechain_moves::SidechainMCMoverOP sidechain_mc_mover( new protocols::simple_moves::sidechain_moves::SidechainMCMover );
 	sidechain_mc_mover->set_task_factory(main_task_factory);
@@ -900,7 +900,7 @@ std::string MetropolisHastingsMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 MetropolisHastingsMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MetropolisHastingsMover );
+	return utility::pointer::make_shared< MetropolisHastingsMover >();
 }
 
 void MetropolisHastingsMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

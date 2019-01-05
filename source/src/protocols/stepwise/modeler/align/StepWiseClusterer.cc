@@ -188,7 +188,7 @@ StepWiseClusterer::check_for_closeness( pose::Pose const & pose1, pose::Pose con
 	bool set_rmsd( false );
 	if ( assume_atom_ids_invariant_ ) {
 		if ( pose_aligner_ == nullptr ) {
-			pose_aligner_ = StepWisePoseAlignerOP( new StepWisePoseAligner( pose2 ) );
+			pose_aligner_ = utility::pointer::make_shared< StepWisePoseAligner >( pose2 );
 			pose_aligner_->set_user_defined_calc_rms_res( calc_rms_res_ );
 			pose_aligner_->set_root_partition_res( figure_out_root_partition_res( pose2, calc_rms_res_ ) );
 			pose_aligner_->initialize( pose1 );

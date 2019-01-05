@@ -45,7 +45,7 @@ public:
 	SmoothStepFunc( Real const low, Real const high ): low_( low ), high_( high ){}
 
 	/// @brief returns a clone of this SmoothStepFunc
-	FuncOP clone() const { return FuncOP( new SmoothStepFunc( *this ) ); }
+	FuncOP clone() const { return utility::pointer::make_shared< SmoothStepFunc >( *this ); }
 
 	virtual bool operator == ( Func const & other ) const;
 	virtual bool same_type_as_me( Func const & other ) const;

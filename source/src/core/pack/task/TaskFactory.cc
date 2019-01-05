@@ -47,7 +47,7 @@ TaskFactory::TaskFactory( TaskFactory const & src)
 
 TaskFactoryOP TaskFactory::clone() const
 {
-	return TaskFactoryOP( new TaskFactory(*this) );
+	return utility::pointer::make_shared< TaskFactory >(*this);
 }
 
 TaskFactory::~TaskFactory() = default;
@@ -108,7 +108,7 @@ TaskFactory::create_packer_task(
 	pose::Pose const & pose
 )
 {
-	return PackerTaskOP( new PackerTask_( pose ) );
+	return utility::pointer::make_shared< PackerTask_ >( pose );
 }
 
 void

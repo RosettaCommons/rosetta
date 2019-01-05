@@ -47,7 +47,7 @@ using protocols::loop_modeling::IndexList;
 
 class KicSandbox : public ReferenceCount {
 
-public: 
+public:
 	KicSandbox(int argc, char *argv[]);
 
 public:
@@ -87,15 +87,15 @@ KicSandbox::KicSandbox(int argc, char *argv[]) {
 
 	devel::init(argc, argv);
 
-	if (option[OptionKeys::kale::algorithm].active() == false) {
+	if ( option[OptionKeys::kale::algorithm].active() == false ) {
 		utility_exit_with_message("No sampling algorithm specified.");
 	}
 
-	if (option[OptionKeys::kale::structure].user() == false) {
+	if ( option[OptionKeys::kale::structure].user() == false ) {
 		utility_exit_with_message("No input PDB file specified.");
 	}
 
-	if (option[OptionKeys::kale::loop].user() == false) {
+	if ( option[OptionKeys::kale::loop].user() == false ) {
 		utility_exit_with_message("No loop region specified.");
 	}
 
@@ -107,14 +107,14 @@ KicSandbox::KicSandbox(int argc, char *argv[]) {
 	cout << "Algorithm:     " << algorithm << endl;
 	cout << "Structure:     " << pdb_path << endl;
 	cout << "Loop Indices:  " << loop_indices[1] << " to "
-	                          << loop_indices[2] << endl;
+		<< loop_indices[2] << endl;
 	cout << "Random Seed:   " << numeric::random::rg().get_seed() << endl;
 	cout << "Iterations:    " << iterations[1] << "/"
-	                          << iterations[2] << "/"
-	                          << iterations[3] << endl;
+		<< iterations[2] << "/"
+		<< iterations[3] << endl;
 	// }}}1
 
-	protocol = LoopProtocolOP( new LoopProtocol );
+	protocol = utility::pointer::make_shared< LoopProtocol >();
 
 	// Configure the pose {{{1
 
@@ -125,17 +125,15 @@ KicSandbox::KicSandbox(int argc, char *argv[]) {
 	loop = Loop(loop_indices[1], loop_indices[2], loop_indices[2]);
 
 	// Configure the sampling algorithm {{{1
-	
-	if (algorithm == "refactor") {
-		protocol->add_mover(LoopMoverOP( new KicMover ));
-		protocol->add_mover(LoopMoverOP( new RepackingRefiner(20) ));
-		protocol->add_mover(LoopMoverOP( new RotamerTrialsRefiner ));
-		protocol->add_mover(LoopMoverOP( new MinimizationRefiner ));
-	}
-	else if (algorithm == "refactor-only") {
-		protocol->add_mover(LoopMoverOP( new KicMover ));
-	}
-	else {
+
+	if ( algorithm == "refactor" ) {
+		protocol->add_mover(utility::pointer::make_shared< KicMover >());
+		protocol->add_mover(utility::pointer::make_shared< RepackingRefiner >(20));
+		protocol->add_mover(utility::pointer::make_shared< RotamerTrialsRefiner >());
+		protocol->add_mover(utility::pointer::make_shared< MinimizationRefiner >());
+	} else if ( algorithm == "refactor-only" ) {
+		protocol->add_mover(utility::pointer::make_shared< KicMover >());
+	} else {
 		utility_exit_with_message("Unknown algorithm: " + algorithm);
 	}
 
@@ -143,7 +141,7 @@ KicSandbox::KicSandbox(int argc, char *argv[]) {
 
 	protocol->set_loop(loop);
 	//protocol->set_iterations(iterations);
-	
+
 	// }}}1
 }
 

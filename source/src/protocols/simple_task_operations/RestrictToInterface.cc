@@ -106,7 +106,7 @@ DockingNoRepack1::~DockingNoRepack1()= default;
 
 core::pack::task::operation::TaskOperationOP DockingNoRepack1::clone() const
 {
-	return core::pack::task::operation::TaskOperationOP( new DockingNoRepack1( *this ) );
+	return utility::pointer::make_shared< DockingNoRepack1 >( *this );
 }
 
 void DockingNoRepack1::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
@@ -156,7 +156,7 @@ DockingNoRepack2::provide_xml_schema( xsd );
 
 core::pack::task::operation::TaskOperationOP DockingNoRepack2::clone() const
 {
-	return core::pack::task::operation::TaskOperationOP( new DockingNoRepack2( *this ) );
+	return utility::pointer::make_shared< DockingNoRepack2 >( *this );
 }
 
 void
@@ -187,7 +187,7 @@ RestrictToInterface::RestrictToInterface(utility::vector1<bool> loop_residues):
 
 core::pack::task::operation::TaskOperationOP RestrictToInterfaceCreator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new RestrictToInterface );
+	return utility::pointer::make_shared< RestrictToInterface >();
 }
 
 void RestrictToInterfaceCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -202,7 +202,7 @@ std::string RestrictToInterfaceCreator::keyname() const
 
 core::pack::task::operation::TaskOperationOP RestrictToInterface::clone() const
 {
-	return core::pack::task::operation::TaskOperationOP( new RestrictToInterface( *this ) );
+	return utility::pointer::make_shared< RestrictToInterface >( *this );
 }
 
 void

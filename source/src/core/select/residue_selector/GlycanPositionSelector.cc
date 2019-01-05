@@ -67,7 +67,7 @@ core::select::residue_selector::ResidueSelectorOP
 GlycanPositionSelector::clone() const {
 	return core::select::residue_selector::ResidueSelectorOP(
 		utility::pointer::dynamic_pointer_cast<core::select::residue_selector::ResidueSelector>(
-		GlycanPositionSelectorOP( new GlycanPositionSelector(*this) )
+		utility::pointer::make_shared< GlycanPositionSelector >(*this)
 		)
 	);
 }
@@ -76,7 +76,7 @@ ResidueSelectorOP
 GlycanPositionSelectorCreator::create_residue_selector() const {
 	return core::select::residue_selector::ResidueSelectorOP(
 		utility::pointer::dynamic_pointer_cast< core::select::residue_selector::ResidueSelector > (
-		GlycanPositionSelectorOP( new GlycanPositionSelector )
+		utility::pointer::make_shared< GlycanPositionSelector >()
 		)
 	);
 }

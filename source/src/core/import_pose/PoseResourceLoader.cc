@@ -154,7 +154,7 @@ PoseResourceLoader::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd 
 
 basic::resource_manager::ResourceLoaderOP PoseResourceLoaderCreator::create_resource_loader() const
 {
-	return basic::resource_manager::ResourceLoaderOP( new PoseResourceLoader() );
+	return utility::pointer::make_shared< PoseResourceLoader >();
 }
 
 std::string PoseResourceLoaderCreator::loader_type() const

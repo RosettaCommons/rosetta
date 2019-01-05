@@ -55,7 +55,7 @@ static basic::Tracer TR( "protocols.protein_interface_design.movers.BestHotspotC
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP BestHotspotCstMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new BestHotspotCstMover );
+// XRW TEMP  return utility::pointer::make_shared< BestHotspotCstMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -78,7 +78,7 @@ BestHotspotCstMover::BestHotspotCstMover(
 	host_chain_( host_chain ),
 	n_resi_( n_resi )
 {
-	if ( stub_set ) stub_set_ = protocols::hotspot_hashing::HotspotStubSetOP( new protocols::hotspot_hashing::HotspotStubSet( *stub_set ) );
+	if ( stub_set ) stub_set_ = utility::pointer::make_shared< protocols::hotspot_hashing::HotspotStubSet >( *stub_set );
 }
 
 BestHotspotCstMover::BestHotspotCstMover( BestHotspotCstMover const & init ) :
@@ -86,7 +86,7 @@ BestHotspotCstMover::BestHotspotCstMover( BestHotspotCstMover const & init ) :
 	protocols::moves::Mover( init ),
 	host_chain_(init.host_chain_), n_resi_( init.n_resi_ )
 {
-	if ( init.stub_set_ ) stub_set_ = protocols::hotspot_hashing::HotspotStubSetOP( new protocols::hotspot_hashing::HotspotStubSet( *init.stub_set_ ) );
+	if ( init.stub_set_ ) stub_set_ = utility::pointer::make_shared< protocols::hotspot_hashing::HotspotStubSet >( *init.stub_set_ );
 }
 
 BestHotspotCstMover::~BestHotspotCstMover() = default;
@@ -181,7 +181,7 @@ std::string BestHotspotCstMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 BestHotspotCstMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new BestHotspotCstMover );
+	return utility::pointer::make_shared< BestHotspotCstMover >();
 }
 
 void BestHotspotCstMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

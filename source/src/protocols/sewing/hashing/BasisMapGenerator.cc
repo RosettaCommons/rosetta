@@ -139,7 +139,7 @@ BasisMapGenerator::set_model_file( std::string model_file_name ){
 
 void
 BasisMapGenerator::set_edge_file( std::string edge_file_name ){
-	EdgeMapGeneratorOP edge_file_reader = EdgeMapGeneratorOP( new EdgeMapGenerator( edge_file_name ) );
+	EdgeMapGeneratorOP edge_file_reader = utility::pointer::make_shared< EdgeMapGenerator >( edge_file_name );
 	edge_file_reader->segment_vector( segment_vector_ );
 	set_edge_file_reader( edge_file_reader );
 
@@ -157,7 +157,7 @@ BasisMapGenerator::set_edge_file_reader( EdgeMapGeneratorOP edge_file_reader ){
 	}
 	//Assign data from edge file
 	hasher_settings_ = edge_file_reader_->hasher_settings();
-	alignment_generator_ = AlignmentGeneratorOP( new AlignmentGenerator( hasher_settings_, segment_vector_, pdb_segments_ ) );
+	alignment_generator_ = utility::pointer::make_shared< AlignmentGenerator >( hasher_settings_, segment_vector_, pdb_segments_ );
 }
 
 void
@@ -230,7 +230,7 @@ BasisMapGenerator::BasisMapGenerator( BasisMapGenerator const & src )
 
 BasisMapGeneratorOP
 BasisMapGenerator::clone() const{
-	return BasisMapGeneratorOP( new BasisMapGenerator( *this ) );
+	return utility::pointer::make_shared< BasisMapGenerator >( *this );
 }
 
 

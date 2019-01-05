@@ -68,12 +68,12 @@ using utility::tag::TagCOP;
 using cppdb::statement;
 
 RotamerBoltzmannWeightFeatures::RotamerBoltzmannWeightFeatures() :
-	rotamer_boltzmann_weight_(protocols::calc_taskop_filters::RotamerBoltzmannWeightFilterOP( new RotamerBoltzmannWeight() ))
+	rotamer_boltzmann_weight_(utility::pointer::make_shared< RotamerBoltzmannWeight >())
 {}
 
 RotamerBoltzmannWeightFeatures::RotamerBoltzmannWeightFeatures(
 	ScoreFunctionOP scfxn) :
-	rotamer_boltzmann_weight_(protocols::calc_taskop_filters::RotamerBoltzmannWeightFilterOP( new RotamerBoltzmannWeight() ))
+	rotamer_boltzmann_weight_(utility::pointer::make_shared< RotamerBoltzmannWeight >())
 {
 	rotamer_boltzmann_weight_->scorefxn(scfxn);
 	rotamer_boltzmann_weight_->type("monomer");
@@ -102,9 +102,9 @@ RotamerBoltzmannWeightFeatures::write_rotamer_boltzmann_weight_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
-	Column resNum("resNum", DbDataTypeOP( new DbInteger() ));
-	Column boltzmann_weight("boltzmann_weight", DbDataTypeOP( new DbReal() ));
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >());
+	Column resNum("resNum", utility::pointer::make_shared< DbInteger >());
+	Column boltzmann_weight("boltzmann_weight", utility::pointer::make_shared< DbReal >());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -208,7 +208,7 @@ std::string RotamerBoltzmannWeightFeaturesCreator::type_name() const {
 
 protocols::features::FeaturesReporterOP
 RotamerBoltzmannWeightFeaturesCreator::create_features_reporter() const {
-	return protocols::features::FeaturesReporterOP( new RotamerBoltzmannWeightFeatures );
+	return utility::pointer::make_shared< RotamerBoltzmannWeightFeatures >();
 }
 
 void RotamerBoltzmannWeightFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

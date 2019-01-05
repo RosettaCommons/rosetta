@@ -205,14 +205,14 @@ void common_setup() {
 
 	if ( option[ constraints::no_linearize_bounded ] ) {
 		tr.Info << "use fully harmonic potential for BOUNDED " << std::endl;
-		ConstraintIO::get_func_factory().add_type("BOUNDED", FuncOP( new BoundFunc(0,0,0,1000,"dummy") ) );
+		ConstraintIO::get_func_factory().add_type("BOUNDED", utility::pointer::make_shared< BoundFunc >(0,0,0,1000,"dummy") );
 	}
 
 	if ( option[ constraints::named ] ) {
 		tr.Info << "use named constraints in AtomPairConstraint to avoid problems with cutpoint-variants " << std::endl;
 		/// WARNING WARNING WARNING. THREAD UNSAFE. DO NOT USE SINGLETONS THIS WAY.
 		ConstraintFactory::get_instance()->replace_creator(
-			ConstraintCreatorCOP( ConstraintCreatorOP( new NamedAtomPairConstraintCreator() ) ));
+			utility::pointer::make_shared< NamedAtomPairConstraintCreator >());
 	}
 }
 
@@ -223,7 +223,7 @@ void Broker_main() {
 	protocols::jd2::JobDistributor* jd2( protocols::jd2::JobDistributor::get_instance() );
 	auto* archive_jd = dynamic_cast< protocols::jd2::archive::MPIArchiveJobDistributor* >( jd2 );
 	if ( archive_jd && archive_jd->is_archive_rank() ) {
-		archive_jd->set_archive( protocols::jd2::archive::ArchiveBaseOP( new IterativeAbrelax ) );
+		archive_jd->set_archive( utility::pointer::make_shared< IterativeAbrelax >() );
 	}
 	protocols::jd2::JobDistributor::get_instance()->go(m);
 }

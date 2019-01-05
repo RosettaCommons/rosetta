@@ -59,10 +59,10 @@ public:
 	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	core::Real compute( core::pose::Pose const & pose ) const;
 	FilterOP clone() const override {
-		return FilterOP( new LigDSasaFilter( *this ) );
+		return utility::pointer::make_shared< LigDSasaFilter >( *this );
 	}
 	FilterOP fresh_instance() const override{
-		return FilterOP( new LigDSasaFilter() );
+		return utility::pointer::make_shared< LigDSasaFilter >();
 	}
 
 	~LigDSasaFilter() override;
@@ -100,10 +100,10 @@ public:
 	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	core::Size compute( core::pose::Pose const & pose ) const;
 	FilterOP clone() const override {
-		return FilterOP( new LigBurialFilter( *this ) );
+		return utility::pointer::make_shared< LigBurialFilter >( *this );
 	}
 	FilterOP fresh_instance() const override{
-		return FilterOP( new LigBurialFilter() );
+		return utility::pointer::make_shared< LigBurialFilter >();
 	}
 
 	~LigBurialFilter() override;
@@ -145,10 +145,10 @@ public:
 	LigInterfaceEnergyFilter( LigInterfaceEnergyFilter const &init );
 	bool apply( core::pose::Pose const & pose ) const override;
 	FilterOP clone() const override {
-		return FilterOP( new LigInterfaceEnergyFilter( *this ) );
+		return utility::pointer::make_shared< LigInterfaceEnergyFilter >( *this );
 	}
 	FilterOP fresh_instance() const override{
-		return FilterOP( new LigInterfaceEnergyFilter() );
+		return utility::pointer::make_shared< LigInterfaceEnergyFilter >();
 	}
 
 	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
@@ -200,10 +200,10 @@ public:
 	EnzScoreFilter( EnzScoreFilter const &init );
 	bool apply( core::pose::Pose const & pose ) const override;
 	FilterOP clone() const override {
-		return FilterOP( new EnzScoreFilter( *this ) );
+		return utility::pointer::make_shared< EnzScoreFilter >( *this );
 	}
 	FilterOP fresh_instance() const override{
-		return FilterOP( new EnzScoreFilter() );
+		return utility::pointer::make_shared< EnzScoreFilter >();
 	}
 
 	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
@@ -291,10 +291,10 @@ public:
 	//DiffAtomSasaFilter( DiffAtomSasaFilter const &init );
 	bool apply( core::pose::Pose const & pose ) const override;
 	FilterOP clone() const override {
-		return FilterOP( new DiffAtomSasaFilter( *this ) );
+		return utility::pointer::make_shared< DiffAtomSasaFilter >( *this );
 	}
 	FilterOP fresh_instance() const override{
-		return FilterOP( new DiffAtomSasaFilter() );
+		return utility::pointer::make_shared< DiffAtomSasaFilter >();
 	}
 
 	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
@@ -333,10 +333,10 @@ public:
 	RepackWithoutLigandFilter( core::scoring::ScoreFunctionOP scorefxn, core::Real rms_thresh, core::Real energy_thresh, core::select::residue_selector::ResidueSelectorCOP rms_target_res  );
 	bool apply( core::pose::Pose const & pose ) const override;
 	FilterOP clone() const override {
-		return FilterOP( new RepackWithoutLigandFilter( *this ) );
+		return utility::pointer::make_shared< RepackWithoutLigandFilter >( *this );
 	}
 	FilterOP fresh_instance() const override{
-		return FilterOP( new RepackWithoutLigandFilter() );
+		return utility::pointer::make_shared< RepackWithoutLigandFilter >();
 	}
 
 	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
@@ -410,11 +410,11 @@ public:
 	bool apply( core::pose::Pose const & pose ) const override;
 
 	FilterOP clone() const override {
-		return FilterOP( new EnzdesScorefileFilter( *this ) );
+		return utility::pointer::make_shared< EnzdesScorefileFilter >( *this );
 	}
 
 	FilterOP fresh_instance() const override{
-		return FilterOP( new EnzdesScorefileFilter() );
+		return utility::pointer::make_shared< EnzdesScorefileFilter >();
 	}
 
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &pose ) override;
@@ -514,11 +514,11 @@ public:
 	bool apply( core::pose::Pose const & pose ) const override;
 
 	FilterOP clone() const override {
-		return FilterOP( new ResidueConformerFilter( *this ) );
+		return utility::pointer::make_shared< ResidueConformerFilter >( *this );
 	}
 
 	FilterOP fresh_instance() const override{
-		return FilterOP( new ResidueConformerFilter() );
+		return utility::pointer::make_shared< ResidueConformerFilter >();
 	}
 
 	void report( std::ostream &, core::pose::Pose const & pose ) const override;

@@ -53,7 +53,7 @@ static basic::Tracer TR("core.scoring.methods.AARepeatEnergy");
 methods::EnergyMethodOP
 AARepeatEnergyCreator::create_energy_method( methods::EnergyMethodOptions const & ) const
 {
-	return methods::EnergyMethodOP( new AARepeatEnergy );
+	return utility::pointer::make_shared< AARepeatEnergy >();
 }
 
 /// @brief Defines the score types that this energy method calculates.
@@ -69,7 +69,7 @@ AARepeatEnergyCreator::score_types_for_method() const
 /// @brief Default constructor.
 ///
 AARepeatEnergy::AARepeatEnergy() :
-	parent1( methods::EnergyMethodCreatorOP( new AARepeatEnergyCreator ) ),
+	parent1( utility::pointer::make_shared< AARepeatEnergyCreator >() ),
 	parent2(),
 	penalties_()
 {
@@ -80,7 +80,7 @@ AARepeatEnergy::AARepeatEnergy() :
 /// @brief Copy constructor.
 ///
 AARepeatEnergy::AARepeatEnergy( AARepeatEnergy const &src ) :
-	parent1( methods::EnergyMethodCreatorOP( new AARepeatEnergyCreator ) ),
+	parent1( utility::pointer::make_shared< AARepeatEnergyCreator >() ),
 	parent2( src ),
 	penalties_(src.penalties_)
 {
@@ -93,7 +93,7 @@ AARepeatEnergy::~AARepeatEnergy() = default;
 /// @brief Clone: create a copy of this object, and return an owning pointer
 /// to the copy.
 EnergyMethodOP AARepeatEnergy::clone() const {
-	return EnergyMethodOP( new AARepeatEnergy(*this) );
+	return utility::pointer::make_shared< AARepeatEnergy >(*this);
 }
 
 /// @brief AARepeatEnergy is context-independent and thus indicates that no context graphs need to be maintained by

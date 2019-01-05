@@ -36,7 +36,7 @@ static basic::Tracer TR( "protocols.simple_moves.FavorSymmetricSequence" );
 
 // XRW TEMP protocols::moves::MoverOP FavorSymmetricSequenceCreator::create_mover() const
 // XRW TEMP {
-// XRW TEMP  return protocols::moves::MoverOP( new FavorSymmetricSequence );
+// XRW TEMP  return utility::pointer::make_shared< FavorSymmetricSequence >();
 // XRW TEMP }
 
 // XRW TEMP std::string FavorSymmetricSequence::mover_name()
@@ -58,7 +58,7 @@ FavorSymmetricSequence::FavorSymmetricSequence(FavorSymmetricSequence const & ) 
 
 protocols::moves::MoverOP FavorSymmetricSequence::clone() const
 {
-	return protocols::moves::MoverOP( new FavorSymmetricSequence(*this) );
+	return utility::pointer::make_shared< FavorSymmetricSequence >(*this);
 }
 
 void FavorSymmetricSequence::apply(core::pose::Pose & pose)
@@ -68,7 +68,7 @@ void FavorSymmetricSequence::apply(core::pose::Pose & pose)
 	for ( core::Size rsd1_index = 1; rsd1_index <= residue_count; ++rsd1_index ) {
 		for ( core::Size rsd2_index = rsd1_index; rsd2_index <= residue_count; ++rsd2_index ) {
 			if ( rsd1_index % (residue_count/symmetric_units_) == rsd2_index % (residue_count/symmetric_units_) && rsd1_index != rsd2_index ) {
-				pose.add_constraint(core::scoring::constraints::ConstraintCOP( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::ResidueTypeLinkingConstraint(pose,rsd1_index,rsd2_index,penalty_) ) ));
+				pose.add_constraint(utility::pointer::make_shared< core::scoring::constraints::ResidueTypeLinkingConstraint >(pose,rsd1_index,rsd2_index,penalty_));
 				if ( TR.visible(basic::t_debug) ) {
 					TR.Debug << "Enforcing Sequence Symmetry between residues: " << rsd1_index << " and " << rsd2_index << std::endl;
 				}
@@ -136,7 +136,7 @@ std::string FavorSymmetricSequenceCreator::keyname() const {
 
 protocols::moves::MoverOP
 FavorSymmetricSequenceCreator::create_mover() const {
-	return protocols::moves::MoverOP( new FavorSymmetricSequence );
+	return utility::pointer::make_shared< FavorSymmetricSequence >();
 }
 
 void FavorSymmetricSequenceCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

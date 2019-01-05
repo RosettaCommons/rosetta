@@ -52,7 +52,7 @@ GaussianChainSingleFunc::GaussianChainSingleFunc( Real const gaussian_variance,
 FuncOP
 GaussianChainSingleFunc::clone() const
 {
-	return FuncOP( new GaussianChainSingleFunc( gaussian_variance_, loop_fixed_cost_ ) );
+	return utility::pointer::make_shared< GaussianChainSingleFunc >( gaussian_variance_, loop_fixed_cost_ );
 }
 
 bool GaussianChainSingleFunc::operator == ( Func const & other ) const

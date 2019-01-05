@@ -55,7 +55,7 @@ methods::EnergyMethodOP
 GenericBondedEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
-	return methods::EnergyMethodOP( new GenericBondedEnergy( options ) );
+	return utility::pointer::make_shared< GenericBondedEnergy >( options );
 }
 
 ScoreTypes
@@ -76,7 +76,7 @@ GenericBondedEnergy::GenericBondedEnergy( GenericBondedEnergy const & src ) :
 {}
 
 GenericBondedEnergy::GenericBondedEnergy( EnergyMethodOptions const & ):
-	parent( methods::EnergyMethodCreatorOP( new GenericBondedEnergyCreator ) ),
+	parent( utility::pointer::make_shared< GenericBondedEnergyCreator >() ),
 	potential_( ScoringManager::get_instance()->get_GenericBondedPotential() )
 {}
 
@@ -84,7 +84,7 @@ GenericBondedEnergy::GenericBondedEnergy( EnergyMethodOptions const & ):
 EnergyMethodOP
 GenericBondedEnergy::clone() const
 {
-	return EnergyMethodOP( new GenericBondedEnergy( *this ) );
+	return utility::pointer::make_shared< GenericBondedEnergy >( *this );
 }
 
 void

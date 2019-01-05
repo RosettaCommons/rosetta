@@ -94,7 +94,7 @@ SelectRDC_Evaluator::SelectRDC_Evaluator( core::pose::Pose const& pose, std::str
 : evaluation::SingleValuePoseEvaluator< Real >( "rdc"+tag ),
 	tag_( tag )
 {
-	evaluation::find_existing_residues( core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose( pose ) ) ), tag, selection_ );
+	evaluation::find_existing_residues( utility::pointer::make_shared< core::pose::Pose >( pose ), tag, selection_ );
 	init_rdcs();
 }
 
@@ -117,9 +117,9 @@ SelectRDC_Evaluator::init_rdcs() {
 				filtered.push_back( rdc );
 			}
 		}
-		rdc_data_ = core::scoring::ResidualDipolarCouplingOP( new ResidualDipolarCoupling( filtered ) );
+		rdc_data_ = utility::pointer::make_shared< ResidualDipolarCoupling >( filtered );
 	} else {
-		rdc_data_ = core::scoring::ResidualDipolarCouplingOP( new ResidualDipolarCoupling( rdcs ) );
+		rdc_data_ = utility::pointer::make_shared< ResidualDipolarCoupling >( rdcs );
 	}
 }
 }

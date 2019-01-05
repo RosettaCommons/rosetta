@@ -141,7 +141,7 @@ GenericMonteCarloMover::~GenericMonteCarloMover()= default;
 GenericMonteCarloMover::MoverOP
 GenericMonteCarloMover::clone() const
 {
-	return GenericMonteCarloMover::MoverOP( new GenericMonteCarloMover( *this ) );
+	return utility::pointer::make_shared< GenericMonteCarloMover >( *this );
 }
 
 void GenericMonteCarloMover::task_factory( core::pack::task::TaskFactoryOP tf ) { factory_ = tf; }
@@ -150,7 +150,7 @@ void GenericMonteCarloMover::task_factory( core::pack::task::TaskFactoryOP tf ) 
 GenericMonteCarloMover::MoverOP
 GenericMonteCarloMover::fresh_instance() const
 {
-	return GenericMonteCarloMover::MoverOP( new GenericMonteCarloMover() );
+	return utility::pointer::make_shared< GenericMonteCarloMover >();
 }
 
 /// @brief initialize
@@ -434,8 +434,8 @@ GenericMonteCarloMover::reset( Pose & pose )
 		lowest_score_ = ranking_score;
 	}// fi filters_.size()
 
-	lowest_score_pose_ = PoseOP( new Pose( pose ) );
-	last_accepted_pose_ = PoseOP( new Pose( pose ) );
+	lowest_score_pose_ = utility::pointer::make_shared< Pose >( pose );
+	last_accepted_pose_ = utility::pointer::make_shared< Pose >( pose );
 	last_accepted_score_ = lowest_score_;
 
 	trial_counter_ = 0;
@@ -1388,7 +1388,7 @@ std::string GenericMonteCarloMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 GenericMonteCarloMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new GenericMonteCarloMover );
+	return utility::pointer::make_shared< GenericMonteCarloMover >();
 }
 
 void GenericMonteCarloMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

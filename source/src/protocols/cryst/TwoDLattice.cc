@@ -126,7 +126,7 @@ using namespace conformation::symmetry;
 // XRW TEMP MakeLayerMoverCreator::keyname() const { return MakeLayerMover::mover_name(); }
 
 // XRW TEMP protocols::moves::MoverOP
-// XRW TEMP MakeLayerMoverCreator::create_mover() const { return protocols::moves::MoverOP(new MakeLayerMover); }
+// XRW TEMP MakeLayerMoverCreator::create_mover() const { return utility::pointer::make_shared< MakeLayerMover >(); }
 
 // XRW TEMP std::string
 // XRW TEMP MakeLayerMover::mover_name() { return "MakeLayerMover"; }
@@ -174,7 +174,7 @@ MakeLayerMover::apply( core::pose::Pose & pose ) {
 	pose::symmetry::make_symmetric_pose( pose, syminfo );
 	basic::options::option[ basic::options::OptionKeys::symmetry::detect_bonds ].value(symmdetectdiulf);
 
-	pdbinfo_new = pose::PDBInfoOP( new pose::PDBInfo( pose, true ) );
+	pdbinfo_new = utility::pointer::make_shared< pose::PDBInfo >( pose, true );
 	core::pose::symmetry::make_symmetric_pdb_info( pose, pdbinfo_old, pdbinfo_new );
 	pdbinfo_new->set_crystinfo(ci);
 	pose.pdb_info( pdbinfo_new );
@@ -590,7 +590,7 @@ std::string MakeLayerMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 MakeLayerMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MakeLayerMover );
+	return utility::pointer::make_shared< MakeLayerMover >();
 }
 
 void MakeLayerMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

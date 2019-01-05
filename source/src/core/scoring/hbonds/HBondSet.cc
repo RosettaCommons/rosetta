@@ -457,14 +457,14 @@ operator==(HBond const & a, HBond const & b)
 
 
 HBondSet::HBondSet():
-	options_( HBondOptionsCOP( HBondOptionsOP( new HBondOptions() ) ) ),
+	options_( utility::pointer::make_shared< HBondOptions >() ),
 	atom_map_init_( false )
 {}
 
 HBondSet::~HBondSet() = default;
 
 HBondSet::HBondSet( Size const nres ):
-	options_( HBondOptionsCOP( HBondOptionsOP( new HBondOptions() ) ) ),
+	options_( utility::pointer::make_shared< HBondOptions >() ),
 	atom_map_init_( false )
 {
 	resize_bb_donor_acceptor_arrays( nres );
@@ -476,12 +476,12 @@ HBondSet::HBondSet( Size const nres ):
 // above constructor takes a Size, automatic casting would
 // ambiguous.
 HBondSet::HBondSet( HBondOptions const & opts ):
-	options_( HBondOptionsCOP( HBondOptionsOP( new HBondOptions( opts ) ) ) ),
+	options_( utility::pointer::make_shared< HBondOptions >( opts ) ),
 	atom_map_init_( false )
 {}
 
 HBondSet::HBondSet( HBondOptions const & opts, Size const nres):
-	options_( HBondOptionsCOP( HBondOptionsOP( new HBondOptions( opts ) ) ) ),
+	options_( utility::pointer::make_shared< HBondOptions >( opts ) ),
 	atom_map_init_( false )
 {
 	resize_bb_donor_acceptor_arrays( nres );
@@ -495,7 +495,7 @@ HBondSet::HBondSet( HBondOptions const & opts, Size const nres):
 HBondSet::HBondSet(
 	pose::Pose & pose,
 	bool const bb_only /*true*/) :
-	options_(HBondOptionsCOP( HBondOptionsOP( new HBondOptions() ) )),
+	options_(utility::pointer::make_shared< HBondOptions >()),
 	atom_map_init_(false)
 {
 	pose.update_residue_neighbors();
@@ -511,7 +511,7 @@ HBondSet::HBondSet(
 	HBondOptions const & opts,
 	pose::Pose & pose,
 	bool const bb_only /*true*/) :
-	options_( HBondOptionsCOP( HBondOptionsOP( new HBondOptions(opts) ) )),
+	options_( utility::pointer::make_shared< HBondOptions >(opts)),
 	atom_map_init_(false)
 {
 	pose.update_residue_neighbors();
@@ -526,7 +526,7 @@ HBondSet::HBondSet(
 	core::conformation::Residue const &res2,
 	core::scoring::hbonds::HBondDatabase const &database
 ) :
-	options_(HBondOptionsCOP( HBondOptionsOP( new HBondOptions() ) )),
+	options_(utility::pointer::make_shared< HBondOptions >()),
 	atom_map_init_(false)
 {
 	core::scoring::hbonds::identify_hbonds_1way( database, res1, res2, 1, 1, false, false, false, false, false, *this );
@@ -542,7 +542,7 @@ HBondSet::HBondSet(
 	core::conformation::Residue const &res2,
 	core::scoring::hbonds::HBondDatabase const &database
 ) :
-	options_( HBondOptionsCOP( HBondOptionsOP( new HBondOptions(options) ) ) ),
+	options_( utility::pointer::make_shared< HBondOptions >(options) ),
 	atom_map_init_(false)
 {
 	core::scoring::hbonds::identify_hbonds_1way( database, res1, res2, 1, 1, false, false, false, false, false, *this );
@@ -553,10 +553,10 @@ HBondSet::HBondSet(
 /// copy ctor
 HBondSet::HBondSet( HBondSet const & src ):
 	basic::datacache::CacheableData(),
-	options_( HBondOptionsCOP( HBondOptionsOP( new HBondOptions( *src.options_ ) ) ))
+	options_( utility::pointer::make_shared< HBondOptions >( *src.options_ ))
 {
 	for ( Size i=1; i<= src.hbonds_.size(); ++i ) {
-		hbonds_.push_back( HBondOP( new HBond( *src.hbonds_[i] ) ) );
+		hbonds_.push_back( utility::pointer::make_shared< HBond >( *src.hbonds_[i] ) );
 	}
 	backbone_backbone_donor_ = src.backbone_backbone_donor_;
 	backbone_backbone_acceptor_ = src.backbone_backbone_acceptor_;
@@ -568,7 +568,7 @@ HBondSet::HBondSet( HBondSet const & src ):
 /// copy ctor
 HBondSet::HBondSet( HBondSet const & src, utility::vector1< core::Size > exclude_list ):
 	basic::datacache::CacheableData(),
-	options_( HBondOptionsCOP( HBondOptionsOP( new HBondOptions( *src.options_ ) ) ))
+	options_( utility::pointer::make_shared< HBondOptions >( *src.options_ ))
 {
 	//bool exclude=false;
 	for ( Size i=1; i<= src.nhbonds(); ++i ) {
@@ -582,7 +582,7 @@ HBondSet::HBondSet( HBondSet const & src, utility::vector1< core::Size > exclude
 		}
 		if ( exclude ) continue;
 
-		hbonds_.push_back( HBondOP( new HBond( *src.hbonds_[i] ) ) );
+		hbonds_.push_back( utility::pointer::make_shared< HBond >( *src.hbonds_[i] ) );
 	}
 	backbone_backbone_donor_ = src.backbone_backbone_donor_;
 	backbone_backbone_acceptor_ = src.backbone_backbone_acceptor_;
@@ -594,13 +594,13 @@ HBondSet::HBondSet( HBondSet const & src, utility::vector1< core::Size > exclude
 /// copy ctor
 HBondSet::HBondSet( HBondSet const & src, utility::vector1< bool > residue_mask ):
 	basic::datacache::CacheableData(),
-	options_( HBondOptionsCOP( HBondOptionsOP( new HBondOptions( *src.options_ ) ) ))
+	options_( utility::pointer::make_shared< HBondOptions >( *src.options_ ))
 {
 	//bool exclude=false;
 	for ( Size i=1; i<= src.nhbonds(); ++i ) {
 		HBond const & hbond(src.hbond(i));
 		if ( residue_mask[hbond.don_res()] & residue_mask[hbond.acc_res()] ) {
-			hbonds_.push_back( HBondOP( new HBond( *src.hbonds_[i] ) ) );
+			hbonds_.push_back( utility::pointer::make_shared< HBond >( *src.hbonds_[i] ) );
 		}
 	}
 	backbone_backbone_donor_ = src.backbone_backbone_donor_;
@@ -617,12 +617,12 @@ HBondSet::HBondSet(
 	Size seqpos
 ):
 	basic::datacache::CacheableData(),
-	options_( HBondOptionsCOP( HBondOptionsOP( new HBondOptions( *src.options_ ) ) ))
+	options_( utility::pointer::make_shared< HBondOptions >( *src.options_ ))
 {
 	for ( Size i=1; i<= src.nhbonds(); ++i ) {
 		HBond const & hbond(src.hbond(i));
 		if ( hbond.don_res() == seqpos || hbond.acc_res() == seqpos ) {
-			hbonds_.push_back( HBondOP( new HBond( *src.hbonds_[i] ) ));
+			hbonds_.push_back( utility::pointer::make_shared< HBond >( *src.hbonds_[i] ));
 		}
 	}
 	backbone_backbone_donor_ = src.backbone_backbone_donor_;
@@ -637,7 +637,7 @@ HBondSet::HBondSet(
 basic::datacache::CacheableDataOP
 HBondSet::clone() const
 {
-	return basic::datacache::CacheableDataOP( new HBondSet( *this ) );
+	return utility::pointer::make_shared< HBondSet >( *this );
 }
 
 
@@ -698,12 +698,12 @@ HBondSet::append_hbond(
 	Size const don_pos( don_rsd.seqpos() );
 	Size const acc_pos( acc_rsd.seqpos() );
 
-	hbonds_.push_back( HBondOP( new HBond(
+	hbonds_.push_back( utility::pointer::make_shared< HBond >(
 		dhatm, dhatm_is_protein_backbone, don_rsd.is_protein(), don_rsd.is_DNA(),
 		dhatm_is_backbone, don_pos,
 		aatm , aatm_is_protein_backbone, acc_rsd.is_protein(),
 		acc_rsd.is_DNA(), aatm_is_backbone, acc_pos,
-		hbe_tuple, energy, weight, derivs ) ) );
+		hbe_tuple, energy, weight, derivs ) );
 	hbonds_[ hbonds_.size() ]->index( hbonds_.size() );
 
 	// update hbcheck
@@ -958,7 +958,7 @@ HBondSet::hbond_options() const {
 void HBondSet::set_hbond_options( HBondOptions const & options )
 {
 	clear();
-	options_ = HBondOptionsCOP( HBondOptionsOP( new HBondOptions( options ) ) ); // make a copy of the input to guarantee its integrity
+	options_ = utility::pointer::make_shared< HBondOptions >( options ); // make a copy of the input to guarantee its integrity
 }
 
 std::ostream &

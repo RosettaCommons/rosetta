@@ -171,7 +171,7 @@ void MotifGraftMover::apply(core::pose::Pose & pose)
 	} else if ( motif_match_results_.size() > 1 ) {
 		TR.Info << "Generated " << motif_match_results_.size() << " results." << std::endl;
 		//Create copy of input pose to support result interation
-		gp_p_target_pose_ = core::pose::PoseOP( new Pose(pose) );
+		gp_p_target_pose_ = utility::pointer::make_shared< Pose >(pose);
 	}
 
 	MotifMatch match = motif_match_results_.top();
@@ -194,7 +194,7 @@ core::pose::PoseOP MotifGraftMover::get_additional_output()
 		work_pose = gp_p_target_pose_;
 	} else {
 		// May produce additional output poses, create a copy of the target pose
-		work_pose = core::pose::PoseOP( new Pose(*gp_p_target_pose_) );
+		work_pose = utility::pointer::make_shared< Pose >(*gp_p_target_pose_);
 	}
 
 	TR.Debug << "Returning additional output. " << motif_match_results_.size() << " remaining." << std::endl;
@@ -745,7 +745,7 @@ core::pose::Pose MotifGraftMover::stich_motif_in_scaffold_by_indexes_rotation_an
 	//Will store the stitched pose
 	core::pose::Pose p_result;
 	//Create PDB info for the p_result pose
-	p_result.pdb_info( core::pose::PDBInfoOP( new core::pose::PDBInfo(p_result, true) ) );
+	p_result.pdb_info( utility::pointer::make_shared< core::pose::PDBInfo >(p_result, true) );
 
 	//Get a copy of the scaffold rotated to the final position
 	core::pose::Pose p_scaffold_rotated = get_rotated_and_translated_pose(p_scaffold, m2s_dat.RotM, m2s_dat.TvecA, m2s_dat.TvecB);
@@ -1933,7 +1933,7 @@ void MotifGraftMover::parse_my_tag(
 /**@brief Function used by roseta to create clones of movers**/
 protocols::moves::MoverOP MotifGraftMover::clone() const
 {
-	return protocols::moves::MoverOP( new MotifGraftMover( *this ) );
+	return utility::pointer::make_shared< MotifGraftMover >( *this );
 }
 
 std::string MotifGraftMover::get_name() const {
@@ -2088,7 +2088,7 @@ std::string MotifGraftCreator::keyname() const {
 
 protocols::moves::MoverOP
 MotifGraftCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MotifGraftMover );
+	return utility::pointer::make_shared< MotifGraftMover >();
 }
 
 void MotifGraftCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

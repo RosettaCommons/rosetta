@@ -111,7 +111,7 @@ GaussianChainFuncPotentialEvaluator::initialize( LoopCycle const & loop_cycle,
 	}
 
 	// Note loop_fixed_cost_ needs to be my current loop_fixed_cost_ but corrected by 1.5 * k_B_T_ * log( rna_persistence_length2_ )
-	func_ = FuncOP( new GaussianChainFunc( total_gaussian_variance, loop_fixed_cost(), other_distances ) );
+	func_ = utility::pointer::make_shared< GaussianChainFunc >( total_gaussian_variance, loop_fixed_cost(), other_distances );
 
 	if ( main_distance > 5000 ) {
 		// AMW: currently coming up in integration test "swm_dna_loop"

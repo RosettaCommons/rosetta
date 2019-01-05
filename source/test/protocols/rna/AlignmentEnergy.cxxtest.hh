@@ -130,7 +130,7 @@ public:
 			Pose pose = *core::import_pose::get_pdb_and_cleanup( "protocols/rna/srl_fixed_START1_1q9a_RNA.pdb" );
 			update_full_model_info_from_pose( pose );
 
-			PoseOP align_pose = PoseOP( new Pose( pose ) );
+			PoseOP align_pose = utility::pointer::make_shared< Pose >( pose );
 			update_full_model_info_from_pose( *align_pose );
 
 			// Shift all align_pose by one angstrom +x
@@ -163,7 +163,7 @@ public:
 			Pose pose = *core::import_pose::get_pdb_and_cleanup( "protocols/rna/srl_fixed_START1_1q9a_RNA.pdb" );
 			update_full_model_info_from_pose( pose );
 
-			PoseOP align_pose = PoseOP( new Pose( pose ) );
+			PoseOP align_pose = utility::pointer::make_shared< Pose >( pose );
 			update_full_model_info_from_pose( *align_pose );
 
 			// Shift all align_pose by one angstrom +x

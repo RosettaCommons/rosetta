@@ -175,7 +175,7 @@ public:
 		// Repeat the raw xform, but with a larger offset that exceeds the score.  xform should return 0.
 		raw_offset = 10.0;
 		xform_raw = "method matrix propred8\nalleles *\nthreshold 5\nxform raw " + std::to_string(raw_offset);
-		mhc_raw_xform = MHCEpitopeEnergySetupOP( new MHCEpitopeEnergySetup() );
+		mhc_raw_xform = utility::pointer::make_shared< MHCEpitopeEnergySetup >();
 		mhc_raw_xform->initialize_from_file_contents( xform_raw );
 
 		// Calculate the raw score with this predictor, which doesn't include the offset.

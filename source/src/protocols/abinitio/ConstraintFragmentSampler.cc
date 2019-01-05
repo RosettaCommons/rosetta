@@ -105,7 +105,7 @@ ConstraintFragmentSampler::ConstraintFragmentSampler(topology_broker::TopologyBr
 
 /// @brief ConstraintFragmentSampler has virtual functions... use this to obtain a new instance
 moves::MoverOP ConstraintFragmentSampler::clone() const {
-	return moves::MoverOP( new ConstraintFragmentSampler( *this ) );
+	return utility::pointer::make_shared< ConstraintFragmentSampler >( *this );
 }
 
 //@detail read cmd_line options and set default versions for many protocol members: trials/moves, score-functions, Monte-Carlo
@@ -369,7 +369,7 @@ void ConstraintFragmentSampler::apply(core::pose::Pose& pose) {
 	orig_constraints = pose.constraint_set()->clone();
 
 	// initialize a MaxSeqSepConstraintSet with the current set of constraints
-	constraints_ = constraints_additional::MaxSeqSepConstraintSetOP( new constraints_additional::MaxSeqSepConstraintSet(*orig_constraints, pose.fold_tree()) );
+	constraints_ = utility::pointer::make_shared< constraints_additional::MaxSeqSepConstraintSet >(*orig_constraints, pose.fold_tree());
 	constraints_->set_max_seq_sep(pose.size()); // so it is prepared for stage4.
 
 	// replace <pose>'s ConstraintSet with our newly initialized MaxSeqSepConstraintSet

@@ -97,11 +97,11 @@ void SymSidechainMinMover::set_minmover( protocols::minimization_packing::MinMov
 void SymSidechainMinMover::set_default_options()
 {
 	if ( update_movemap_ ) {
-		movemap_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap() );
+		movemap_ = utility::pointer::make_shared< core::kinematics::MoveMap >();
 		movemap_->set_chi( true );
 	}
 	scorefxn_ = core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
-	minmover_ = protocols::minimization_packing::MinMoverOP( new minimization_packing::MinMover(movemap_, scorefxn_, "lbfgs_armijo_nonmonotone", 0.01, true/*nblist*/, false/*deriv_check*/  ) );
+	minmover_ = utility::pointer::make_shared< minimization_packing::MinMover >(movemap_, scorefxn_, "lbfgs_armijo_nonmonotone", 0.01, true/*nblist*/, false/*deriv_check*/  );
 }
 
 std::string
@@ -159,7 +159,7 @@ void SymInterfaceSidechainMinMover::set_interface_dist( core::Real interface_dis
 void
 SymInterfaceSidechainMinMover::set_default_options()
 {
-	interface_ = protocols::scoring::InterfaceOP( new protocols::scoring::Interface( 1 ) );
+	interface_ = utility::pointer::make_shared< protocols::scoring::Interface >( 1 );
 
 }
 

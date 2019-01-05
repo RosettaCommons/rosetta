@@ -245,7 +245,7 @@ HelixKinkFilter::parse_my_tag(
 }
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP HelixKinkFilterCreator::create_filter() const { return protocols::filters::FilterOP( new HelixKinkFilter ); }
+// XRW TEMP HelixKinkFilterCreator::create_filter() const { return utility::pointer::make_shared< HelixKinkFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP HelixKinkFilterCreator::keyname() const { return "HelixKink"; }
@@ -279,7 +279,7 @@ std::string HelixKinkFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 HelixKinkFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new HelixKinkFilter );
+	return utility::pointer::make_shared< HelixKinkFilter >();
 }
 
 void HelixKinkFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -71,11 +71,11 @@ PosType::PosType( std::string word ) : parent( word ), type_( core::chemical::aa
 
 PosType::EntityElementOP
 PosType::clone() {
-	return PosType::EntityElementOP( new PosType( *this ) );
+	return utility::pointer::make_shared< PosType >( *this );
 }
 
 PosType::EntityElementOP PosType::fresh_instance() {
-	return PosType::EntityElementOP( new PosType );
+	return utility::pointer::make_shared< PosType >();
 }
 
 Size PosType::hash() const {
@@ -150,7 +150,7 @@ std::string PosTypeCreator::widget_name() const { return "AA"; }
 PosTypeCreator::EntityElementOP
 PosTypeCreator::new_entity( std::string const & word )
 {
-	return PosTypeCreator::EntityElementOP( new PosType( word ) );
+	return utility::pointer::make_shared< PosType >( word );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

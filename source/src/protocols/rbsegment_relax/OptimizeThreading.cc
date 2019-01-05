@@ -89,7 +89,7 @@ using namespace core;
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP OptimizeThreadingMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new OptimizeThreadingMover );
+// XRW TEMP  return utility::pointer::make_shared< OptimizeThreadingMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -508,7 +508,7 @@ void OptimizeThreadingMover::parse_my_tag(
 
 	if ( tag->hasOption( "native" ) ) {
 		std::string ref_model_pdb = tag->getOption<std::string>( "native" );
-		native_ = core::pose::PoseOP( new core::pose::Pose );
+		native_ = utility::pointer::make_shared< core::pose::Pose >();
 		core::import_pose::pose_from_file( *native_, ref_model_pdb , core::import_pose::PDB_file);
 	}
 
@@ -575,7 +575,7 @@ std::string OptimizeThreadingMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 OptimizeThreadingMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new OptimizeThreadingMover );
+	return utility::pointer::make_shared< OptimizeThreadingMover >();
 }
 
 void OptimizeThreadingMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

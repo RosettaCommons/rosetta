@@ -46,7 +46,7 @@ namespace constraints {
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP InverseRotamersCstGeneratorCreator::create_mover() const
 // XRW TEMP {
-// XRW TEMP  return protocols::moves::MoverOP( new InverseRotamersRCG() );
+// XRW TEMP  return utility::pointer::make_shared< InverseRotamersRCG >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -107,13 +107,13 @@ InverseRotamersRCG::parse_my_tag( TagCOP const tag,
 protocols::moves::MoverOP
 InverseRotamersRCG::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new InverseRotamersRCG() );
+	return utility::pointer::make_shared< InverseRotamersRCG >();
 }
 
 protocols::moves::MoverOP
 InverseRotamersRCG::clone() const
 {
-	return protocols::moves::MoverOP( new InverseRotamersRCG( *this ) );
+	return utility::pointer::make_shared< InverseRotamersRCG >( *this );
 }
 
 void
@@ -129,7 +129,7 @@ InverseRotamersRCG::generate_remodel_constraints( core::pose::Pose const & pose 
 
 	//if no constraint func has been set, we'll create a default one
 	if ( !constraint_func_ ) {
-		constraint_func_ = core::scoring::func::FuncOP( new core::scoring::constraints::BoundFunc( 0, 0.05, func_sd_, "invrot") );
+		constraint_func_ = utility::pointer::make_shared< core::scoring::constraints::BoundFunc >( 0, 0.05, func_sd_, "invrot");
 	}
 	utility::vector1< core::Size > seqpos;
 	for ( core::Size i(1); i <= intervals_.size(); ++i ) {
@@ -201,7 +201,7 @@ std::string InverseRotamersCstGeneratorCreator::keyname() const {
 
 protocols::moves::MoverOP
 InverseRotamersCstGeneratorCreator::create_mover() const {
-	return protocols::moves::MoverOP( new InverseRotamersRCG );
+	return utility::pointer::make_shared< InverseRotamersRCG >();
 }
 
 void InverseRotamersCstGeneratorCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -73,7 +73,7 @@ static basic::Tracer TR( "protocols.protein_interface_design.movers.TopologyBrok
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP TopologyBrokerMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new TopologyBrokerMover );
+// XRW TEMP  return utility::pointer::make_shared< TopologyBrokerMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -179,7 +179,7 @@ TopologyBrokerMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &
 
 protocols::moves::MoverOP
 TopologyBrokerMover::clone() const {
-	return( protocols::moves::MoverOP( new TopologyBrokerMover( *this ) ));
+	return( utility::pointer::make_shared< TopologyBrokerMover >( *this ));
 }
 
 std::string TopologyBrokerMover::get_name() const {
@@ -207,7 +207,7 @@ std::string TopologyBrokerMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 TopologyBrokerMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new TopologyBrokerMover );
+	return utility::pointer::make_shared< TopologyBrokerMover >();
 }
 
 void TopologyBrokerMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

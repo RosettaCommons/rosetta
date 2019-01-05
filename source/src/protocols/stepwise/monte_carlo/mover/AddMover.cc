@@ -81,7 +81,7 @@ namespace mover {
 //constructor!
 AddMover::AddMover( scoring::ScoreFunctionCOP scorefxn ):
 	scorefxn_(std::move( scorefxn )),
-	rna_torsion_mover_( rna::RNA_TorsionMoverOP( new rna::RNA_TorsionMover ) )
+	rna_torsion_mover_( utility::pointer::make_shared< rna::RNA_TorsionMover >() )
 {}
 
 //////////////////////////////////////////////////////////////////////////
@@ -103,7 +103,7 @@ AddMover::apply( core::pose::Pose & pose  )
 
 protocols::moves::MoverOP
 AddMover::clone() const {
-	return AddMoverOP( new AddMover( *this ) );
+	return utility::pointer::make_shared< AddMover >( *this );
 }
 
 void
@@ -707,7 +707,7 @@ std::string AddMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 AddMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new AddMover );
+	return utility::pointer::make_shared< AddMover >();
 }
 
 void AddMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

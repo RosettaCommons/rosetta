@@ -70,7 +70,7 @@ InnerJob::~InnerJob()= default;
 /// @brief Return an owning pointer to a copy of this object.
 ///
 InnerJobOP InnerJob::clone() const {
-	return InnerJobOP( new InnerJob(*this) );
+	return utility::pointer::make_shared< InnerJob >(*this);
 }
 
 std::string const & InnerJob::input_tag() const { return input_tag_; }

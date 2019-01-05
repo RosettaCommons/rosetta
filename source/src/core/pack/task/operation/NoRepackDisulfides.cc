@@ -61,7 +61,7 @@ NoRepackDisulfides::~NoRepackDisulfides() = default;
 
 /// @brief clone this object
 NoRepackDisulfides::TaskOperationOP NoRepackDisulfides::clone() const {
-	return NoRepackDisulfides::TaskOperationOP( new NoRepackDisulfides( *this ) );
+	return utility::pointer::make_shared< NoRepackDisulfides >( *this );
 }
 
 /// @brief apply operations to PackerTask
@@ -119,7 +119,7 @@ void NoRepackDisulfides::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 
 TaskOperationOP NoRepackDisulfidesCreator::create_task_operation() const
 {
-	return TaskOperationOP( new NoRepackDisulfides );
+	return utility::pointer::make_shared< NoRepackDisulfides >();
 }
 
 std::string NoRepackDisulfidesCreator::keyname() const { return NoRepackDisulfides::keyname(); }

@@ -58,7 +58,7 @@ public:
 	basic::datacache::CacheableDataOP
 	clone() const
 	{
-		return basic::datacache::CacheableDataOP( new RNA_SecStructLegacyInfo( *this ) );
+		return utility::pointer::make_shared< RNA_SecStructLegacyInfo >( *this );
 	}
 
 	Size

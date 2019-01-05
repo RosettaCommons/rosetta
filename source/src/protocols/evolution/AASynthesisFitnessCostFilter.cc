@@ -34,7 +34,7 @@ namespace evolution {
 static basic::Tracer TR( "protocols.evolution.AASynthesisFitnessCost" );
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP AASynthesisFitnessCostFilterCreator::create_filter() const { return protocols::filters::FilterOP( new AASynthesisFitnessCost ); }
+// XRW TEMP AASynthesisFitnessCostFilterCreator::create_filter() const { return utility::pointer::make_shared< AASynthesisFitnessCost >(); }
 
 // XRW TEMP std::string
 // XRW TEMP AASynthesisFitnessCostFilterCreator::keyname() const { return "AASynthesisFitnessCost"; }
@@ -138,7 +138,7 @@ std::string AASynthesisFitnessCostFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 AASynthesisFitnessCostFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new AASynthesisFitnessCost );
+	return utility::pointer::make_shared< AASynthesisFitnessCost >();
 }
 
 void AASynthesisFitnessCostFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

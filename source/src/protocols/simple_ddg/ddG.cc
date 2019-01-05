@@ -625,7 +625,7 @@ ddG::duplicate_waters_across_jump( Pose & pose, Size jumpnum ) const {
 			}
 
 			if ( mindist<5.0 ) {
-				core::conformation::ResidueOP new_res = core::conformation::ResidueOP( new core::conformation::Residue( *vrt_wat ) );
+				core::conformation::ResidueOP new_res = utility::pointer::make_shared< core::conformation::Residue >( *vrt_wat );
 				new_res->set_xyz(  "O", res.atom("O").xyz() );
 				new_res->set_xyz( "H1", res.atom("H1").xyz() );
 				new_res->set_xyz( "H2", res.atom("H2").xyz() );
@@ -722,7 +722,7 @@ ddG::filter() const {
 
 protocols::moves::MoverOP
 ddG::clone() const {
-	return (protocols::moves::MoverOP) protocols::moves::MoverOP( new ddG( *this ) );
+	return (protocols::moves::MoverOP) utility::pointer::make_shared< ddG >( *this );
 }
 
 std::string ddG::get_name() const {
@@ -827,7 +827,7 @@ std::string ddGCreator::keyname() const {
 
 protocols::moves::MoverOP
 ddGCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ddG );
+	return utility::pointer::make_shared< ddG >();
 }
 
 void ddGCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

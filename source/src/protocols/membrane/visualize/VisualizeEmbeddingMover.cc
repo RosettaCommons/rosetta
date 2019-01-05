@@ -109,19 +109,19 @@ VisualizeEmbeddingMover::~VisualizeEmbeddingMover() = default;
 /// @brief Create a Clone of this mover
 protocols::moves::MoverOP
 VisualizeEmbeddingMover::clone() const {
-	return ( protocols::moves::MoverOP( new VisualizeEmbeddingMover( *this ) ) );
+	return ( utility::pointer::make_shared< VisualizeEmbeddingMover >( *this ) );
 }
 
 /// @brief Create a Fresh Instance of this Mover
 protocols::moves::MoverOP
 VisualizeEmbeddingMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new VisualizeEmbeddingMover() );
+	return utility::pointer::make_shared< VisualizeEmbeddingMover >();
 }
 
 /// @brief Create a new copy of this mover
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP VisualizeEmbeddingMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new VisualizeEmbeddingMover() );
+// XRW TEMP  return utility::pointer::make_shared< VisualizeEmbeddingMover >();
 // XRW TEMP }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)
@@ -285,7 +285,7 @@ std::string VisualizeEmbeddingMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 VisualizeEmbeddingMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new VisualizeEmbeddingMover );
+	return utility::pointer::make_shared< VisualizeEmbeddingMover >();
 }
 
 void VisualizeEmbeddingMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -51,7 +51,7 @@ public:
 	EnergyMethodOP
 	clone() const
 	{
-		return EnergyMethodOP( new DistanceChainbreakEnergy );
+		return utility::pointer::make_shared< DistanceChainbreakEnergy >();
 	}
 
 	/// called at the end of energy evaluation

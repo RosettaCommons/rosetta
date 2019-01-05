@@ -70,13 +70,13 @@ public:
 	VdWTinkerResidueInfoOP
 	copy_clone() const
 	{
-		return core::scoring::VdWTinkerResidueInfoOP( new VdWTinkerResidueInfo( *this ) );
+		return utility::pointer::make_shared< VdWTinkerResidueInfo >( *this );
 	}
 
 	basic::datacache::CacheableDataOP
 	clone() const override
 	{
-		return basic::datacache::CacheableDataOP( new VdWTinkerResidueInfo( *this ) );
+		return utility::pointer::make_shared< VdWTinkerResidueInfo >( *this );
 	}
 
 	///
@@ -133,7 +133,7 @@ public:
 	basic::datacache::CacheableDataOP
 	clone() const override
 	{
-		return basic::datacache::CacheableDataOP( new VdWTinkerPoseInfo( *this ) );
+		return utility::pointer::make_shared< VdWTinkerPoseInfo >( *this );
 	}
 
 	///
@@ -238,7 +238,7 @@ public:
 	basic::datacache::CacheableDataOP
 	clone() const override
 	{
-		return basic::datacache::CacheableDataOP( new VdWTinkerRotamerSetInfo( *this ) );
+		return utility::pointer::make_shared< VdWTinkerRotamerSetInfo >( *this );
 	}
 
 	///

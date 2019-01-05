@@ -167,7 +167,7 @@ ConstraintOP CoordinateConstraint::remapped_clone( pose::Pose const& src, pose::
 	// if ( atom(1) != id1 ) tr << "REMAPPING: " << atom(1) << " to " << id1 << std::endl;
 
 	if ( id1.valid() && id2.valid() ) {
-		return ConstraintOP( new CoordinateConstraint( id1, id2, xyz_target_, func_, score_type() ) );
+		return utility::pointer::make_shared< CoordinateConstraint >( id1, id2, xyz_target_, func_, score_type() );
 	} else {
 		return nullptr;
 	}
@@ -250,7 +250,7 @@ CoordinateConstraint::remap_resid( core::id::SequenceMapping const &seqmap ) con
 	if ( seqmap[atom_.rsd()] != 0 && seqmap[fixed_atom_.rsd()] != 0 ) {
 		AtomID remap_a( atom_.atomno(), seqmap[atom_.rsd()] ),
 			remap_fa( fixed_atom_.atomno(), seqmap[fixed_atom_.rsd()] );
-		return ConstraintOP( new CoordinateConstraint( remap_a, remap_fa, xyz_target_, this->func_, score_type() ) );
+		return utility::pointer::make_shared< CoordinateConstraint >( remap_a, remap_fa, xyz_target_, this->func_, score_type() );
 	} else {
 		return nullptr;
 	}

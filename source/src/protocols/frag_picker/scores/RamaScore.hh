@@ -97,8 +97,8 @@ public:
 
 			//   std::cout << "CO_PREDICTION_ID " << prediction_id << std::endl;
 			std::string default_prediction_name("uniform_default");
-			return (FragmentScoringMethodOP) FragmentScoringMethodOP( new RamaScore(priority,
-				lowest_acceptable_value, use_lowest, picker->get_query_seq_string(), default_ss,default_prediction_name) );
+			return (FragmentScoringMethodOP) utility::pointer::make_shared< RamaScore >(priority,
+				lowest_acceptable_value, use_lowest, picker->get_query_seq_string(), default_ss,default_prediction_name);
 		} else {
 
 			//std::cout << "PREDICTION_ID " << prediction_id << std::endl;
@@ -106,8 +106,8 @@ public:
 			if ( ! query_prediction ) {
 				utility_exit_with_message( "Unable to find secondary structure prediction for " + prediction_id );
 			}
-			return (FragmentScoringMethodOP) FragmentScoringMethodOP( new RamaScore(priority,
-				lowest_acceptable_value, use_lowest, picker->get_query_seq_string(), query_prediction,prediction_id) );
+			return (FragmentScoringMethodOP) utility::pointer::make_shared< RamaScore >(priority,
+				lowest_acceptable_value, use_lowest, picker->get_query_seq_string(), query_prediction,prediction_id);
 		}
 	}
 };

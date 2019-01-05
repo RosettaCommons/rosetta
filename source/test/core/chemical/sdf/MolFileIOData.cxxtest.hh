@@ -668,8 +668,8 @@ public:
 						core::chemical::sdf::MolWriter write;
 						write.output_residue( rsd1.name() + "_rsd1.sdf", rsd1 );
 						write.output_residue( rsd2.name() + "_rsd2.sdf", rsd2 );
-						core::conformation::ResidueCOP residue1( core::conformation::ResidueOP( new core::conformation::Residue( rsd1, true ) ) );
-						core::conformation::ResidueCOP residue2( core::conformation::ResidueOP( new core::conformation::Residue( rsd2, true ) ) );
+						core::conformation::ResidueCOP residue1( utility::pointer::make_shared< core::conformation::Residue >( rsd1, true ) );
+						core::conformation::ResidueCOP residue2( utility::pointer::make_shared< core::conformation::Residue >( rsd2, true ) );
 						core::pose::Pose test_pose;
 						test_pose.append_residue_by_jump( *residue1, 1 );
 						test_pose.dump_pdb( rsd1.name() + "_rsd1.pdb" );

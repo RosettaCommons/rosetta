@@ -581,14 +581,14 @@ core::Real FragmentScoreFilter::compute( core::pose::Pose const pose ) const
 protocols::filters::FilterOP
 FragmentScoreFilter::clone() const
 {
-	return protocols::filters::FilterOP( new FragmentScoreFilter( *this ) );
+	return utility::pointer::make_shared< FragmentScoreFilter >( *this );
 }
 
 
 protocols::filters::FilterOP
 FragmentScoreFilter::fresh_instance() const
 {
-	return protocols::filters::FilterOP( new FragmentScoreFilter );
+	return utility::pointer::make_shared< FragmentScoreFilter >();
 }
 
 /// @brief Given a list of scores, find the one the user is interested in.
@@ -687,7 +687,7 @@ void FragmentScoreFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 protocols::filters::FilterOP
 FragmentScoreFilterCreator::create_filter() const
 {
-	return protocols::filters::FilterOP( new FragmentScoreFilter );
+	return utility::pointer::make_shared< FragmentScoreFilter >();
 }
 
 std::string

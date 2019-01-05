@@ -93,7 +93,7 @@ DatabaseSessionLoader::provide_xml_schema( utility::tag::XMLSchemaDefinition & x
 }
 
 DataLoaderOP
-DatabaseSessionLoaderCreator::create_loader() const { return DataLoaderOP( new DatabaseSessionLoader ); }
+DatabaseSessionLoaderCreator::create_loader() const { return utility::pointer::make_shared< DatabaseSessionLoader >(); }
 
 std::string
 DatabaseSessionLoaderCreator::keyname() const { return DatabaseSessionLoader::loader_name(); }

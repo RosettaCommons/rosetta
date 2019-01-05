@@ -256,12 +256,12 @@ core::Size load_loops_from_file(
 			use_sequence_biased_fragments |= !aa_during_build.empty();
 
 			bdr.add_instruction(
-				BuildInstructionOP( new SegmentRebuild(
+				utility::pointer::make_shared< SegmentRebuild >(
 				Interval( left, right ),
 				ss, aa_during_build,
 				core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ),
 				option[ ufv::keep_junction_torsions ]
-				) ),
+				),
 				aa_during_design_refine
 			);
 
@@ -359,7 +359,7 @@ void setup_segment_insert( protocols::forge::components::BDR & bdr ) {
 		cfl->p = insert_jump_pos;
 		cfl->left_skip = option[ ufv::ss ].value().find( SegmentInsert::insertion_char() );
 
-		rcr = RelativeConnectRightOP( new RelativeConnectRight( cfl, attached_jump_pos, attached ) );
+		rcr = utility::pointer::make_shared< RelativeConnectRight >( cfl, attached_jump_pos, attached );
 		rcr->extract_rt( insert_plus_attached, insert_jump_pos, shifted_attached_jump_pos );
 		rcr->use_rt( true );
 	}

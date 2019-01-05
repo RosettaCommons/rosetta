@@ -296,7 +296,7 @@ my_main( void* ) {
 	using namespace basic::options::OptionKeys;
 
 	try{
-		protocols::jd2::JobDistributor::get_instance()->go( protocols::moves::MoverOP( new FaSolReporter() ) );
+		protocols::jd2::JobDistributor::get_instance()->go( utility::pointer::make_shared< FaSolReporter >() );
 	} catch (utility::excn::Exception& excn ) {
 		std::cerr << "Exception: " << std::endl;
 		excn.show( std::cerr );

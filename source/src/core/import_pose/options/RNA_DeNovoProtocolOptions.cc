@@ -65,7 +65,7 @@ RNA_DeNovoProtocolOptions::RNA_DeNovoProtocolOptions( RNA_DeNovoProtocolOptions 
 RNA_DeNovoProtocolOptionsOP
 RNA_DeNovoProtocolOptions::clone() const
 {
-	return RNA_DeNovoProtocolOptionsOP( new RNA_DeNovoProtocolOptions( *this ) );
+	return utility::pointer::make_shared< RNA_DeNovoProtocolOptions >( *this );
 }
 
 ///////////////////////////////////////////////////////////////////

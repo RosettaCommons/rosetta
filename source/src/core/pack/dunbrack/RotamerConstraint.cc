@@ -200,7 +200,7 @@ RotamerConstraint::add_residue( conformation::Residue const & rsd )
 
 scoring::constraints::ConstraintOP
 RotamerConstraint::clone() const {
-	return scoring::constraints::ConstraintOP( new RotamerConstraint( *this ) );
+	return utility::pointer::make_shared< RotamerConstraint >( *this );
 }
 
 

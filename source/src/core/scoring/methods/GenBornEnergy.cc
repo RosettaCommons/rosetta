@@ -67,7 +67,7 @@ methods::EnergyMethodOP
 GenBornEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
-	return methods::EnergyMethodOP( new GenBornEnergy( options ) );
+	return utility::pointer::make_shared< GenBornEnergy >( options );
 }
 
 ScoreTypes
@@ -82,7 +82,7 @@ GenBornEnergy::GenBornEnergy( GenBornEnergy const & /*src*/ ) = default;
 
 
 GenBornEnergy::GenBornEnergy( EnergyMethodOptions const & options ):
-	parent( methods::EnergyMethodCreatorOP( new GenBornEnergyCreator ) ),
+	parent( utility::pointer::make_shared< GenBornEnergyCreator >() ),
 	potential_( ScoringManager::get_instance()->get_GenBornPotential() ),
 	exclude_DNA_DNA_( options.exclude_DNA_DNA() )
 {}
@@ -92,7 +92,7 @@ GenBornEnergy::GenBornEnergy( EnergyMethodOptions const & options ):
 EnergyMethodOP
 GenBornEnergy::clone() const
 {
-	return EnergyMethodOP( new GenBornEnergy( *this ) );
+	return utility::pointer::make_shared< GenBornEnergy >( *this );
 }
 
 bool

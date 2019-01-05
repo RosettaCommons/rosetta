@@ -66,7 +66,7 @@ namespace canonical_sampling {
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP MetricRecorderCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new MetricRecorder );
+// XRW TEMP  return utility::pointer::make_shared< MetricRecorder >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -102,13 +102,13 @@ MetricRecorder::MetricRecorder(
 protocols::moves::MoverOP
 MetricRecorder::clone() const
 {
-	return protocols::moves::MoverOP( new protocols::canonical_sampling::MetricRecorder( *this ) );
+	return utility::pointer::make_shared< protocols::canonical_sampling::MetricRecorder >( *this );
 }
 
 protocols::moves::MoverOP
 MetricRecorder::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new MetricRecorder );
+	return utility::pointer::make_shared< MetricRecorder >();
 }
 
 // XRW TEMP std::string
@@ -471,7 +471,7 @@ std::string MetricRecorderCreator::keyname() const {
 
 protocols::moves::MoverOP
 MetricRecorderCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MetricRecorder );
+	return utility::pointer::make_shared< MetricRecorder >();
 }
 
 void MetricRecorderCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

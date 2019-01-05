@@ -97,7 +97,7 @@ public:
 		// 1UAD.wt_complex.pdb   1UADA.E38A.mut_complex.pdb   1UAD.wt_unbounded.pdb   1UADA.E38A.mut_unbounded.pdb   1.99
 		// this isn't what the input file actually looks like, but it's close enough
 		TR << "creating OptEData object" << std::endl;
-		ddg_bind_position_data = protocols::optimize_weights::DDGBindOptEDataOP( new DDGBindOptEData );
+		ddg_bind_position_data = utility::pointer::make_shared< DDGBindOptEData >();
 
 		// save the experimental ddg for this mutant
 		ddg_bind_position_data->set_experimental_ddg_bind( 1.99 );
@@ -200,7 +200,7 @@ public:
 			fixed_data[ kk ] = wt_complex.energies().total_energies()[ fixed_score_list[ kk ] ];
 		}
 
-		ssd = SingleStructureDataOP( new SingleStructureData( free_data, fixed_data ) );
+		ssd = utility::pointer::make_shared< SingleStructureData >( free_data, fixed_data );
 		ddg_bind_position_data->add_wt_complex( ssd );
 		free_data.clear(); fixed_data.clear(); ssd = NULL;
 
@@ -214,7 +214,7 @@ public:
 			fixed_data[ kk ] = mut_complex.energies().total_energies()[ fixed_score_list[ kk ] ];
 		}
 
-		ssd = SingleStructureDataOP( new SingleStructureData( free_data, fixed_data ) );
+		ssd = utility::pointer::make_shared< SingleStructureData >( free_data, fixed_data );
 		ddg_bind_position_data->add_mutant_complex( ssd );
 		free_data.clear(); fixed_data.clear(); ssd = NULL;
 
@@ -229,7 +229,7 @@ public:
 			fixed_data[ kk ] = wt_unbounded.energies().total_energies()[ fixed_score_list[ kk ] ];
 		}
 
-		ssd = SingleStructureDataOP( new SingleStructureData( free_data, fixed_data ) );
+		ssd = utility::pointer::make_shared< SingleStructureData >( free_data, fixed_data );
 		ddg_bind_position_data->add_wt_unbounds( ssd );
 		free_data.clear(); fixed_data.clear(); ssd = NULL;
 
@@ -244,7 +244,7 @@ public:
 			fixed_data[ kk ] = mut_unbounded.energies().total_energies()[ fixed_score_list[ kk ] ];
 		}
 
-		ssd = SingleStructureDataOP( new SingleStructureData( free_data, fixed_data ) );
+		ssd = utility::pointer::make_shared< SingleStructureData >( free_data, fixed_data );
 		ddg_bind_position_data->add_mutant_unbounds( ssd );
 		free_data.clear(); fixed_data.clear(); ssd = NULL;
 

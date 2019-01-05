@@ -52,10 +52,10 @@ public:
 
 	// Functions necessary for RosettaScripts
 	/// @brief Create clone of this mover
-	inline protocols::moves::MoverOP clone() const { return protocols::moves::MoverOP( new StructFragmentMover( *this ) ); };
+	inline protocols::moves::MoverOP clone() const { return utility::pointer::make_shared< StructFragmentMover >( *this ); };
 
 	/// @brief Create a fresh instance of this mover
-	inline protocols::moves::MoverOP fresh_instance() const{ return protocols::moves::MoverOP( new StructFragmentMover() ); };
+	inline protocols::moves::MoverOP fresh_instance() const{ return utility::pointer::make_shared< StructFragmentMover >(); };
 
 	/// @brief Parse RosettaScripts options for this mover
 	void parse_my_tag(

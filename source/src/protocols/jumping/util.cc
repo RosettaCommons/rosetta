@@ -315,8 +315,8 @@ core::fragment::JumpingFrameOP generate_jump_frame( Size startpos, Size endpos, 
 		BBTorsionSRFDOP start( new BBTorsionSRFD( 3, 'E', 'X' ) );
 		frag_data->add_residue( start );
 	}
-	frag_data->add_residue( SingleResidueFragDataOP( new UpJumpSRFD ) );
-	frag_data->add_residue( SingleResidueFragDataOP( new DownJumpSRFD ) );
+	frag_data->add_residue( utility::pointer::make_shared< UpJumpSRFD >() );
+	frag_data->add_residue( utility::pointer::make_shared< DownJumpSRFD >() );
 
 	if ( bWithTorsion ) {
 		BBTorsionSRFDOP stop( new BBTorsionSRFD( 3, 'E', 'X' ) );

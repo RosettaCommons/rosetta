@@ -2692,7 +2692,7 @@ HPatchInteractionGraph<V, E, G>::set_pose( pose::Pose const & pose ) {
 		dynamic_cast<pack::interaction_graph::LinearMemoryInteractionGraph*>(this)->set_pose( pose );
 	}
 
-	pose_ = pose::PoseOP( new pose::Pose( pose ) );
+	pose_ = utility::pointer::make_shared< pose::Pose >( pose );
 }
 
 ///
@@ -2715,7 +2715,7 @@ HPatchInteractionGraph<V, E, G>::set_packer_task( task::PackerTask const & the_t
 template < typename V, typename E, typename G >
 void
 HPatchInteractionGraph<V, E, G>::set_rotamer_sets( rotamer_set::RotamerSets const & rotsets ) {
-	rotamer_sets_ = rotamer_set::RotamerSetsOP( new rotamer_set::RotamerSets( rotsets ) );
+	rotamer_sets_ = utility::pointer::make_shared< rotamer_set::RotamerSets >( rotsets );
 }
 
 ///

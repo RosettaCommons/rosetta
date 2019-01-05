@@ -51,7 +51,7 @@ using namespace utility::tag;
 core::pack::task::operation::TaskOperationOP
 RestrictInterGroupVectorOperationCreator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new RestrictInterGroupVectorOperation );
+	return utility::pointer::make_shared< RestrictInterGroupVectorOperation >();
 }
 
 void RestrictInterGroupVectorOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -114,7 +114,7 @@ RestrictInterGroupVectorOperation::~RestrictInterGroupVectorOperation() = defaul
 /// @details be warned if you use clone that you'll not get a new interface calculator
 core::pack::task::operation::TaskOperationOP RestrictInterGroupVectorOperation::clone() const
 {
-	return core::pack::task::operation::TaskOperationOP( new RestrictInterGroupVectorOperation( *this ) );
+	return utility::pointer::make_shared< RestrictInterGroupVectorOperation >( *this );
 }
 
 /// @details setters

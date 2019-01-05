@@ -52,7 +52,7 @@ methods::EnergyMethodOP
 NMerRefEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new NMerRefEnergy );
+	return utility::pointer::make_shared< NMerRefEnergy >();
 }
 
 ScoreTypes
@@ -83,14 +83,14 @@ NMerRefEnergy::initialize_from_options()
 }
 
 NMerRefEnergy::NMerRefEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new NMerRefEnergyCreator ) )
+	parent( utility::pointer::make_shared< NMerRefEnergyCreator >() )
 {
 	NMerRefEnergy::initialize_from_options();
 	read_nmer_tables_from_options();
 }
 
 NMerRefEnergy::NMerRefEnergy( utility::vector1< std::map< std::string, core::Real > > const & nmer_ref_energies_in ):
-	parent( methods::EnergyMethodCreatorOP( new NMerRefEnergyCreator ) )
+	parent( utility::pointer::make_shared< NMerRefEnergyCreator >() )
 {
 	NMerRefEnergy::initialize_from_options();
 
@@ -104,7 +104,7 @@ NMerRefEnergy::NMerRefEnergy(
 	core::Size const nmer_length,
 	utility::vector1< std::string > const & fname_vec
 ) :
-	parent( methods::EnergyMethodCreatorOP( new NMerRefEnergyCreator ) )
+	parent( utility::pointer::make_shared< NMerRefEnergyCreator >() )
 {
 	NMerRefEnergy::nmer_length( nmer_length  );
 	NMerRefEnergy::read_nmer_fname_vector( fname_vec );
@@ -216,7 +216,7 @@ void NMerRefEnergy::read_nmer_table( std::string const & ref_fname ) {
 EnergyMethodOP
 NMerRefEnergy::clone() const
 {
-	return EnergyMethodOP( new NMerRefEnergy( nmer_ref_energies_ ) );
+	return utility::pointer::make_shared< NMerRefEnergy >( nmer_ref_energies_ );
 }
 
 void

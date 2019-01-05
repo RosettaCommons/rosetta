@@ -148,13 +148,13 @@ AsymFoldandDockRbTrialMover::apply( core::pose::Pose & pose )
 moves::MoverOP
 AsymFoldandDockRbTrialMover::clone() const
 {
-	return moves::MoverOP( new AsymFoldandDockRbTrialMover( *this ) );
+	return utility::pointer::make_shared< AsymFoldandDockRbTrialMover >( *this );
 }
 
 moves::MoverOP
 AsymFoldandDockRbTrialMover::fresh_instance() const
 {
-	return moves::MoverOP( new AsymFoldandDockRbTrialMover  );
+	return utility::pointer::make_shared< AsymFoldandDockRbTrialMover >();
 }
 
 void
@@ -204,7 +204,7 @@ std::string AsymFoldandDockRbTrialMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 AsymFoldandDockRbTrialMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new AsymFoldandDockRbTrialMover );
+	return utility::pointer::make_shared< AsymFoldandDockRbTrialMover >();
 }
 
 void AsymFoldandDockRbTrialMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

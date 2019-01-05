@@ -62,7 +62,7 @@ ResidueInMembraneSelector::ResidueInMembraneSelector( ResidueInMembraneSelector 
 
 /// @brief Clone operator.
 /// @details Copy this object and return an owning pointer to the new object.
-ResidueSelectorOP ResidueInMembraneSelector::clone() const { return ResidueSelectorOP( new ResidueInMembraneSelector(*this) ); }
+ResidueSelectorOP ResidueInMembraneSelector::clone() const { return utility::pointer::make_shared< ResidueInMembraneSelector >(*this); }
 
 
 ResidueInMembraneSelector::~ResidueInMembraneSelector() {}
@@ -139,7 +139,7 @@ ResidueInMembraneSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition
 
 ResidueSelectorOP
 ResidueInMembraneSelectorCreator::create_residue_selector() const {
-	return ResidueSelectorOP( new ResidueInMembraneSelector );
+	return utility::pointer::make_shared< ResidueInMembraneSelector >();
 }
 
 std::string

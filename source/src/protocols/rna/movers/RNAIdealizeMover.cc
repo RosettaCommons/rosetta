@@ -107,13 +107,13 @@ RNAIdealizeMover::parse_my_tag(
 protocols::moves::MoverOP
 RNAIdealizeMover::clone() const
 {
-	return protocols::moves::MoverOP( new RNAIdealizeMover( *this ) );
+	return utility::pointer::make_shared< RNAIdealizeMover >( *this );
 }
 
 protocols::moves::MoverOP
 RNAIdealizeMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new RNAIdealizeMover );
+	return utility::pointer::make_shared< RNAIdealizeMover >();
 }
 
 // XRW TEMP std::string
@@ -192,7 +192,7 @@ RNAIdealizeMover::add_bond_constraint(
 		ref_pose_.residue( atom_id2.rsd() ).xyz( atom_name2 ) ).length();
 	Real const bond_tol = 0.02;
 	func::FuncOP dist_harm_func( new core::scoring::func::FlatHarmonicFunc( bond_length, bond_length_sd, bond_tol ) );
-	pose.add_constraint( ConstraintCOP( new AtomPairConstraint( atom_id1, atom_id2, dist_harm_func, atom_pair_constraint ) ) );
+	pose.add_constraint( utility::pointer::make_shared< AtomPairConstraint >( atom_id1, atom_id2, dist_harm_func, atom_pair_constraint ) );
 
 	TR.Trace << "PUTTING CONSTRAINT ON DISTANCE: " <<
 		atom_id2.rsd() << " " << atom_name1 << "; "  <<
@@ -229,11 +229,11 @@ RNAIdealizeMover::add_bond_angle_constraint(
 	Real const bond_angle_tol( radians( 4.0 ) );
 	if ( bond_angle < 0.001 ) TR.Warning << "WHAT THE HELL????????? " << std::endl;
 
-	pose.add_constraint( ConstraintCOP( new AngleConstraint(
+	pose.add_constraint( utility::pointer::make_shared< AngleConstraint >(
 		atom_id2, atom_id1, atom_id3,
-		//FuncOP( new CircularHarmonicFunc( bond_angle, bond_angle_sd_ ) ),
-		FuncOP( new FlatHarmonicFunc( bond_angle, bond_angle_sd_, bond_angle_tol ) ),
-		angle_constraint ) ) );
+		//utility::pointer::make_shared< CircularHarmonicFunc >( bond_angle, bond_angle_sd_ ),
+		utility::pointer::make_shared< FlatHarmonicFunc >( bond_angle, bond_angle_sd_, bond_angle_tol ),
+		angle_constraint ) );
 
 	TR.Trace << "PUTTING CONSTRAINT ON ANGLE: "
 		<< atom_id2.rsd() << " " << atom_name2 << "; "
@@ -352,34 +352,34 @@ RNAIdealizeMover::apply( pose::Pose & pose )
 				AtomID aid1, aid2, aid3, aid4;
 				if ( ii > 1 ) {
 					pose.conformation().get_torsion_angle_atom_ids( TorsionID( ii - 1, id::BB, DELTA ), aid1, aid2, aid3, aid4 );
-					pose.add_constraint( ConstraintCOP( new DihedralConstraint(
+					pose.add_constraint( utility::pointer::make_shared< DihedralConstraint >(
 						aid1, aid2, aid3, aid4,
-						FuncOP( new CircularHarmonicFunc( closest_suite.torsion[1], 0.3 ) ) ) ) );
+						utility::pointer::make_shared< CircularHarmonicFunc >( closest_suite.torsion[1], 0.3 ) ) );
 					pose.conformation().get_torsion_angle_atom_ids( TorsionID( ii - 1, id::BB, EPSILON ), aid1, aid2, aid3, aid4 );
-					pose.add_constraint( ConstraintCOP( new DihedralConstraint(
+					pose.add_constraint( utility::pointer::make_shared< DihedralConstraint >(
 						aid1, aid2, aid3, aid4,
-						FuncOP( new CircularHarmonicFunc( closest_suite.torsion[2], 0.3 ) ) ) ) );
+						utility::pointer::make_shared< CircularHarmonicFunc >( closest_suite.torsion[2], 0.3 ) ) );
 					pose.conformation().get_torsion_angle_atom_ids( TorsionID( ii - 1, id::BB, ZETA ), aid1, aid2, aid3, aid4 );
-					pose.add_constraint( ConstraintCOP( new DihedralConstraint(
+					pose.add_constraint( utility::pointer::make_shared< DihedralConstraint >(
 						aid1, aid2, aid3, aid4,
-						FuncOP( new CircularHarmonicFunc( closest_suite.torsion[3], 0.3 ) ) ) ) );
+						utility::pointer::make_shared< CircularHarmonicFunc >( closest_suite.torsion[3], 0.3 ) ) );
 				}
 				pose.conformation().get_torsion_angle_atom_ids( TorsionID( ii, id::BB, ALPHA ), aid1, aid2, aid3, aid4 );
-				pose.add_constraint( ConstraintCOP( new DihedralConstraint(
+				pose.add_constraint( utility::pointer::make_shared< DihedralConstraint >(
 					aid1, aid2, aid3, aid4,
-					FuncOP( new CircularHarmonicFunc( closest_suite.torsion[4], 0.3 ) ) ) ) );
+					utility::pointer::make_shared< CircularHarmonicFunc >( closest_suite.torsion[4], 0.3 ) ) );
 				pose.conformation().get_torsion_angle_atom_ids( TorsionID( ii, id::BB, BETA ), aid1, aid2, aid3, aid4 );
-				pose.add_constraint( ConstraintCOP( new DihedralConstraint(
+				pose.add_constraint( utility::pointer::make_shared< DihedralConstraint >(
 					aid1, aid2, aid3, aid4,
-					FuncOP( new CircularHarmonicFunc( closest_suite.torsion[5], 0.3 ) ) ) ) );
+					utility::pointer::make_shared< CircularHarmonicFunc >( closest_suite.torsion[5], 0.3 ) ) );
 				pose.conformation().get_torsion_angle_atom_ids( TorsionID( ii, id::BB, GAMMA ), aid1, aid2, aid3, aid4 );
-				pose.add_constraint( ConstraintCOP( new DihedralConstraint(
+				pose.add_constraint( utility::pointer::make_shared< DihedralConstraint >(
 					aid1, aid2, aid3, aid4,
-					FuncOP( new CircularHarmonicFunc( closest_suite.torsion[6], 0.3 ) ) ) ) );
+					utility::pointer::make_shared< CircularHarmonicFunc >( closest_suite.torsion[6], 0.3 ) ) );
 				pose.conformation().get_torsion_angle_atom_ids( TorsionID( ii, id::BB, DELTA ), aid1, aid2, aid3, aid4 );
-				pose.add_constraint( ConstraintCOP( new DihedralConstraint(
+				pose.add_constraint( utility::pointer::make_shared< DihedralConstraint >(
 					aid1, aid2, aid3, aid4,
-					FuncOP( new CircularHarmonicFunc( closest_suite.torsion[7], 0.3 ) ) ) ) );
+					utility::pointer::make_shared< CircularHarmonicFunc >( closest_suite.torsion[7], 0.3 ) ) );
 
 				// Resample
 
@@ -389,8 +389,8 @@ RNAIdealizeMover::apply( pose::Pose & pose )
 					tch.put_in_cutpoints( pose );
 				}
 
-				//protocols::recces::sampler::rna::MC_RNA_KIC_Sampler sampler( PoseCOP( new Pose( pose ) ), ii - 1, ii, true );
-				protocols::stepwise::sampler::rna::RNA_KIC_Sampler sampler( core::pose::PoseOP( new Pose( pose ) ), ii - 1, ii );
+				//protocols::recces::sampler::rna::MC_RNA_KIC_Sampler sampler( utility::pointer::make_shared< Pose >( pose ), ii - 1, ii, true );
+				protocols::stepwise::sampler::rna::RNA_KIC_Sampler sampler( utility::pointer::make_shared< Pose >( pose ), ii - 1, ii );
 				sampler.init();
 				++sampler;
 				sampler.apply( pose );
@@ -502,10 +502,10 @@ RNAIdealizeMover::apply( pose::Pose & pose )
 
 		// All coord cst
 		for ( Size jj = 1; jj <= pose.residue_type( ii ).nheavyatoms(); ++jj ) {
-			pose.add_constraint( ConstraintCOP( new CoordinateConstraint(
+			pose.add_constraint( utility::pointer::make_shared< CoordinateConstraint >(
 				AtomID( jj, ii ),
 				AtomID( 1, my_anchor ), rsd.xyz( jj ),
-				FuncOP( new FlatHarmonicFunc( 0.0, coord_sdev, coord_tol ) ) ) ) );
+				utility::pointer::make_shared< FlatHarmonicFunc >( 0.0, coord_sdev, coord_tol ) ) );
 		}
 	}
 
@@ -658,7 +658,7 @@ RNAIdealizeMover::apply( pose::Pose & pose )
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP RNAIdealizeMoverCreator::create_mover() const
 // XRW TEMP {
-// XRW TEMP  return protocols::moves::MoverOP( new RNAIdealizeMover );
+// XRW TEMP  return utility::pointer::make_shared< RNAIdealizeMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -693,7 +693,7 @@ std::string RNAIdealizeMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 RNAIdealizeMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new RNAIdealizeMover );
+	return utility::pointer::make_shared< RNAIdealizeMover >();
 }
 
 void RNAIdealizeMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

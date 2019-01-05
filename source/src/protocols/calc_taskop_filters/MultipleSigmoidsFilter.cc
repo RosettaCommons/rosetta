@@ -39,7 +39,7 @@ static basic::Tracer TR( "protocols.calc_taskop_filters.MultipleSigmoids" );
 using namespace protocols::filters;
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP MultipleSigmoidsFilterCreator::create_filter() const { return protocols::filters::FilterOP( new MultipleSigmoids ); }
+// XRW TEMP MultipleSigmoidsFilterCreator::create_filter() const { return utility::pointer::make_shared< MultipleSigmoids >(); }
 
 // XRW TEMP std::string
 // XRW TEMP MultipleSigmoidsFilterCreator::keyname() const { return "MultipleSigmoids"; }
@@ -83,7 +83,7 @@ MultipleSigmoids::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::Data
 {
 	threshold( tag->getOption< core::Real >( "threshold", 0 ) );
 	utility::vector1< std::string > const pdb_names( utility::string_split( tag->getOption< std::string >( "file_names" ), ',' ) ); //split file names
-	operatorF_ = OperatorOP( new protocols::calc_taskop_filters::Operator );
+	operatorF_ = utility::pointer::make_shared< protocols::calc_taskop_filters::Operator >();
 	utility::vector1< utility::tag::TagCOP > const sub_tags( tag->getTags() ); //tags
 	for ( utility::tag::TagCOP sub_tag : sub_tags ) {
 		if ( sub_tag->getName() == "Operator" ) {
@@ -94,12 +94,12 @@ MultipleSigmoids::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::Data
 	for ( std::string const & fname : pdb_names ) {
 		for ( utility::tag::TagCOP sub_tag : sub_tags ) {
 			if ( sub_tag->getName() == "RelativePose" ) {
-				r_pose_ = RelativePoseFilterOP( new RelativePoseFilter );
+				r_pose_ = utility::pointer::make_shared< RelativePoseFilter >();
 				TR<<"I'm now reading from RelativePose filter"<<std::endl;
 				r_pose_->pdb_name(fname);
 				r_pose_->parse_my_tag(sub_tag, data, filters, movers, pose);
 			} else if ( sub_tag->getName() == "Sigmoid" ) {
-				sig_ = SigmoidOP( new Sigmoid );
+				sig_ = utility::pointer::make_shared< Sigmoid >();
 				TR<<"I'm now reading from Sigmoid filter for fname "<<fname<<std::endl;
 				sig_->set_user_defined_name( fname );
 				sig_->filter(r_pose_);
@@ -141,12 +141,12 @@ MultipleSigmoids::compute(
 
 protocols::filters::FilterOP
 MultipleSigmoids::clone() const{
-	return protocols::filters::FilterOP( new MultipleSigmoids( *this ) );
+	return utility::pointer::make_shared< MultipleSigmoids >( *this );
 }
 
 protocols::filters::FilterOP
 MultipleSigmoids::fresh_instance() const{
-	return protocols::filters::FilterOP( new MultipleSigmoids() );
+	return utility::pointer::make_shared< MultipleSigmoids >();
 }
 
 std::string MultipleSigmoids::name() const {
@@ -192,7 +192,7 @@ std::string MultipleSigmoidsFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 MultipleSigmoidsFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new MultipleSigmoids );
+	return utility::pointer::make_shared< MultipleSigmoids >();
 }
 
 void MultipleSigmoidsFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

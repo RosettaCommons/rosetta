@@ -43,7 +43,7 @@ namespace func {
 FuncOP
 HarmonicFunc::clone() const
 {
-	return FuncOP( new HarmonicFunc( x0_, sd_ ) );
+	return utility::pointer::make_shared< HarmonicFunc >( x0_, sd_ );
 }
 
 bool HarmonicFunc::operator == ( Func const & other ) const

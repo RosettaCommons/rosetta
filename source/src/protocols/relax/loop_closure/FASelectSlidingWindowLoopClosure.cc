@@ -178,7 +178,7 @@ FASelectSlidingWindowLoopClosure::select_final_loop( Pose& more_cut, Pose& less_
 		if ( tr.Trace.visible() ) fa_pose.dump_pdb("set_fold_tree_fa_pose.pdb");
 
 
-		FrameOP fa_frame_( new Frame( loop_.start(), FragDataCOP( FragDataOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), loop_.size() ) ) ) ) );
+		FrameOP fa_frame_( new Frame( loop_.start(), utility::pointer::make_shared< FragData >( utility::pointer::make_shared< BBTorsionSRFD >(), loop_.size() ) ) );
 		fa_frame_->steal( centroid_pose );
 		fa_frame_->apply( 1, fa_pose );
 
@@ -265,7 +265,7 @@ core::Real FASelectSlidingWindowLoopClosure::fascore( Pose& pose ) const {
 }
 
 void FASelectSlidingWindowLoopClosure::set_fullatom_pose( core::pose::Pose& fa_pose ) {
-	fa_pose_ = core::pose::PoseOP( new core::pose::Pose( fa_pose ) );
+	fa_pose_ = utility::pointer::make_shared< core::pose::Pose >( fa_pose );
 }
 
 } // namespace ccd

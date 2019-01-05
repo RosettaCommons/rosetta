@@ -60,7 +60,7 @@ public:
 
 	~DnaInterfaceFinder() override= default;
 
-	DnaInterfaceFinderOP clone() const { return DnaInterfaceFinderOP( new DnaInterfaceFinder(*this) ); }
+	DnaInterfaceFinderOP clone() const { return utility::pointer::make_shared< DnaInterfaceFinder >(*this); }
 
 	void determine_protein_interface( core::pose::Pose const & pose );
 

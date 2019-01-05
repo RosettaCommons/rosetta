@@ -48,7 +48,7 @@ public:
 	);
 
 	virtual SilentStructOP clone() const {
-		return SilentStructOP( new ScoreFileSilentStruct( *this ) );
+		return utility::pointer::make_shared< ScoreFileSilentStruct >( *this );
 	}
 
 	/// @brief Re-dimension the storage capacity of this ScoreFileSilentStruct to the given number of

@@ -82,7 +82,7 @@ public:
 
 	/// clone
 	virtual EnergyMethodOP clone() const {
-		return EnergyMethodOP( new LinearChainbreakEnergy(*this) );
+		return utility::pointer::make_shared< LinearChainbreakEnergy >(*this);
 	}
 
 	/// called at the end of energy evaluation

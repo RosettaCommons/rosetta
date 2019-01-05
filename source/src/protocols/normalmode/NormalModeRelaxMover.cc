@@ -80,7 +80,7 @@ using namespace core;
 // Creator stuffs first
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP NormalModeRelaxMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new NormalModeRelaxMover );
+// XRW TEMP  return utility::pointer::make_shared< NormalModeRelaxMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -172,7 +172,7 @@ NormalModeRelaxMover::set_default()
 {
 	relaxmode_ = "relax";
 	cartesian_ = true;
-	minoption_ = optimization::MinimizerOptionsCOP( optimization::MinimizerOptionsOP( new optimization::MinimizerOptions( "lbfgs_armijo_nonmonotone", 0.02, true, false, false ) ) );
+	minoption_ = utility::pointer::make_shared< optimization::MinimizerOptions >( "lbfgs_armijo_nonmonotone", 0.02, true, false, false );
 	//minoption_->
 
 	sfxn_ = scoring::ScoreFunctionFactory::create_score_function( "talaris2013_cart" );
@@ -193,7 +193,7 @@ NormalModeRelaxMover::apply( pose::Pose &pose )
 	} else if ( mmf_ ) {
 		mm = mmf_->create_movemap_from_pose( pose );
 	} else {
-		mm = kinematics::MoveMapOP( new core::kinematics::MoveMap );
+		mm = utility::pointer::make_shared< core::kinematics::MoveMap >();
 		mm->set_bb( true );
 		mm->set_chi( true );
 		mm->set_jump( true );
@@ -463,16 +463,16 @@ NormalModeRelaxMover::gen_coord_constraint( pose::Pose &pose,
 	for ( Size i_atm = 1; i_atm <= NM().natm(); ++i_atm ) {
 		if ( cartesian_ ) {
 			pose.add_constraint(
-				scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new core::scoring::constraints::CoordinateConstraint
-				( NM().get_atomID()[i_atm], NM().get_atomID()[i_atm], excrd[ i_atm ], fx ) ) ) );
+				scoring::constraints::ConstraintCOP( utility::pointer::make_shared< core::scoring::constraints::CoordinateConstraint >
+				( NM().get_atomID()[i_atm], NM().get_atomID()[i_atm], excrd[ i_atm ], fx ) ) );
 		} else {
 			Size resno( NM().get_atomID()[i_atm].rsd() );
 			Size atmno( NM().get_atomID()[i_atm].atomno() );
 
 			pose.add_constraint(
-				scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new core::scoring::constraints::CoordinateConstraint
+				scoring::constraints::ConstraintCOP( utility::pointer::make_shared< core::scoring::constraints::CoordinateConstraint >
 				( NM().get_atomID()[i_atm], NM().get_atomID()[i_atm],
-				pose.residue(resno).xyz(atmno), fx ) ) ) );
+				pose.residue(resno).xyz(atmno), fx ) ) );
 		}
 	}
 }
@@ -762,7 +762,7 @@ std::string NormalModeRelaxMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 NormalModeRelaxMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new NormalModeRelaxMover );
+	return utility::pointer::make_shared< NormalModeRelaxMover >();
 }
 
 void NormalModeRelaxMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

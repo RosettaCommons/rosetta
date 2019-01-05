@@ -41,7 +41,7 @@ namespace denovo_design {
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP ConnectJumpsCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new ConnectJumps() );
+// XRW TEMP  return utility::pointer::make_shared< ConnectJumps >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -68,7 +68,7 @@ ConnectJumps::~ConnectJumps() = default;
 protocols::moves::MoverOP
 ConnectJumps::clone() const
 {
-	return protocols::moves::MoverOP( new ConnectJumps(*this) );
+	return utility::pointer::make_shared< ConnectJumps >(*this);
 }
 
 // XRW TEMP std::string
@@ -108,7 +108,7 @@ std::string ConnectJumpsCreator::keyname() const {
 
 protocols::moves::MoverOP
 ConnectJumpsCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ConnectJumps );
+	return utility::pointer::make_shared< ConnectJumps >();
 }
 
 void ConnectJumpsCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -55,7 +55,7 @@ methods::EnergyMethodOP
 ProClosureEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new ProClosureEnergy );
+	return utility::pointer::make_shared< ProClosureEnergy >();
 }
 
 ScoreTypes
@@ -71,7 +71,7 @@ using namespace numeric::constants::d;
 
 /// ctor
 ProClosureEnergy::ProClosureEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new ProClosureEnergyCreator ) ),
+	parent( utility::pointer::make_shared< ProClosureEnergyCreator >() ),
 	skip_ring_closure_(false),
 	n_nv_dist_sd_( pow(basic::options::option[ basic::options::OptionKeys::score::pro_close_planar_constraint ], 2) ), // Totally fictional value.  Everywhere this is used, it's actually the square that's used.  Let's calculate the square once and only once.
 	ca_cav_dist_sd_( pow(basic::options::option[ basic::options::OptionKeys::score::pro_close_planar_constraint ], 2) ), // needed for N-terminal prolines
@@ -99,7 +99,7 @@ ProClosureEnergy::~ProClosureEnergy() = default;
 EnergyMethodOP
 ProClosureEnergy::clone() const
 {
-	return EnergyMethodOP( new ProClosureEnergy );
+	return utility::pointer::make_shared< ProClosureEnergy >();
 }
 
 /////////////////////////////////////////////////////////////////////////////

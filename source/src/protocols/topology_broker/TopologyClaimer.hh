@@ -71,7 +71,7 @@ public:
 	~TopologyClaimer() override= default;
 
 	TopologyClaimer() :
-		abinitio_mover_weight_ ( weights::AbinitioMoverWeightOP( new weights::ConstAbinitioMoverWeight( 1.0 ) ) ),
+		abinitio_mover_weight_ ( utility::pointer::make_shared< weights::ConstAbinitioMoverWeight >( 1.0 ) ),
 		label_( "NO_LABEL" )
 	{};
 
@@ -80,7 +80,7 @@ public:
 		abinitio_mover_weight_ ( weight ),
 		label_( "NO_LABEL" )
 	{
-		if ( !weight ) abinitio_mover_weight_ = weights::AbinitioMoverWeightOP( new weights::ConstAbinitioMoverWeight( 1.0 ) );
+		if ( !weight ) abinitio_mover_weight_ = utility::pointer::make_shared< weights::ConstAbinitioMoverWeight >( 1.0 );
 	};
 
 	/// self pointers

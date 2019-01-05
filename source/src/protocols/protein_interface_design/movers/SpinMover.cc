@@ -50,7 +50,7 @@ static basic::Tracer TR( "protocols.protein_interface_design.movers.SpinMover" )
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP SpinMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new SpinMover );
+// XRW TEMP  return utility::pointer::make_shared< SpinMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -136,7 +136,7 @@ std::string SpinMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 SpinMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SpinMover );
+	return utility::pointer::make_shared< SpinMover >();
 }
 
 void SpinMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

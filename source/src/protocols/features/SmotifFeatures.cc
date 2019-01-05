@@ -85,23 +85,23 @@ SmotifFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) 
 	using namespace utility;
 
 	//******smotifs******//
-	Column smotif_id("smotif_id", DbDataTypeOP(new DbInteger()), true);
-	Column struct_id("struct_id", DbDataTypeOP(new DbBigInt()), false);
-	Column ss1("secondary_struct_segment_id_1", DbDataTypeOP(new DbInteger()), false);
-	Column ss2("secondary_struct_segment_id_2", DbDataTypeOP(new DbInteger()), false);
-	Column loop("loop_segment_id", DbDataTypeOP(new DbInteger()), false);
+	Column smotif_id("smotif_id", utility::pointer::make_shared< DbInteger >(), true);
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >(), false);
+	Column ss1("secondary_struct_segment_id_1", utility::pointer::make_shared< DbInteger >(), false);
+	Column ss2("secondary_struct_segment_id_2", utility::pointer::make_shared< DbInteger >(), false);
+	Column loop("loop_segment_id", utility::pointer::make_shared< DbInteger >(), false);
 
 	//Distance, in angstroms, between C-term of SS1 (P1) and N term of SS2 (P2)
-	Column distance("distance", DbDataTypeOP(new DbReal()), false);
+	Column distance("distance", utility::pointer::make_shared< DbReal >(), false);
 
 	//Angle between L (vector between P1 and P2) and M1 (principal moment of inertia for SS1)
-	Column hoist("hoist", DbDataTypeOP(new DbReal()), false);
+	Column hoist("hoist", utility::pointer::make_shared< DbReal >(), false);
 
 	//Angle between M1 and M2 (principal moment of inertia for SS1 and SS2)
-	Column packing("packing", DbDataTypeOP(new DbReal()), false);
+	Column packing("packing", utility::pointer::make_shared< DbReal >(), false);
 
 	//Angle between M2 and Gamma (defined by M1 and normal to plane Pie, which is defined
-	Column meridian("meridian", DbDataTypeOP(new DbReal()), false);
+	Column meridian("meridian", utility::pointer::make_shared< DbReal >(), false);
 
 	Columns foreign_key_columns1;
 	foreign_key_columns1.push_back(struct_id);
@@ -345,7 +345,7 @@ std::string SmotifFeaturesCreator::type_name() const {
 
 protocols::features::FeaturesReporterOP
 SmotifFeaturesCreator::create_features_reporter() const {
-	return protocols::features::FeaturesReporterOP( new SmotifFeatures );
+	return utility::pointer::make_shared< SmotifFeatures >();
 }
 
 void SmotifFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

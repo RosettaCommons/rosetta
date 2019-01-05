@@ -36,7 +36,7 @@ public:
 	SigmoidFunc( Real const x0_in, Real const slope_in ): x0_( x0_in ), slope_( slope_in ){}
 
 	FuncOP
-	clone() const { return FuncOP( new SigmoidFunc( *this ) ); }
+	clone() const { return utility::pointer::make_shared< SigmoidFunc >( *this ); }
 	virtual bool operator == ( Func const & other ) const;
 	virtual bool same_type_as_me( Func const & other ) const;
 

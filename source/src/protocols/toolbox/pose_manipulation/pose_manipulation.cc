@@ -379,9 +379,9 @@ repack_this_residue(
 
 	core::pack::task::TaskFactoryOP local_tf( new core::pack::task::TaskFactory() );
 
-	local_tf->push_back( TaskOperationCOP( new InitializeFromCommandline() ) );
+	local_tf->push_back( utility::pointer::make_shared< InitializeFromCommandline >() );
 	if ( include_current ) {
-		local_tf->push_back( TaskOperationCOP( new IncludeCurrent() ) );
+		local_tf->push_back( utility::pointer::make_shared< IncludeCurrent >() );
 	}
 	if ( name1s_if_design.length() > 0 ) {
 		RestrictAbsentCanonicalAASOP restrict_absent( new RestrictAbsentCanonicalAAS() );
@@ -389,7 +389,7 @@ repack_this_residue(
 		restrict_absent->include_residue( 0 ); // 0 means apply to all
 		local_tf->push_back( restrict_absent );
 	} else {
-		local_tf->push_back( TaskOperationCOP( new RestrictToRepacking() ) );
+		local_tf->push_back( utility::pointer::make_shared< RestrictToRepacking >() );
 	}
 
 	ResidueSelectorOP the_residue( new ResidueIndexSelector( utility::to_string( seq_pos ) ) );
@@ -419,9 +419,9 @@ repack_these_residues(
 
 	core::pack::task::TaskFactoryOP local_tf( new core::pack::task::TaskFactory() );
 
-	local_tf->push_back( TaskOperationCOP( new InitializeFromCommandline() ) );
+	local_tf->push_back( utility::pointer::make_shared< InitializeFromCommandline >() );
 	if ( include_current ) {
-		local_tf->push_back( TaskOperationCOP( new IncludeCurrent() ) );
+		local_tf->push_back( utility::pointer::make_shared< IncludeCurrent >() );
 	}
 	if ( name1s_if_design.length() > 0 ) {
 		RestrictAbsentCanonicalAASOP restrict_absent( new RestrictAbsentCanonicalAAS() );
@@ -429,7 +429,7 @@ repack_these_residues(
 		restrict_absent->include_residue( 0 ); // 0 means apply to all
 		local_tf->push_back( restrict_absent );
 	} else {
-		local_tf->push_back( TaskOperationCOP( new RestrictToRepacking() ) );
+		local_tf->push_back( utility::pointer::make_shared< RestrictToRepacking >() );
 	}
 
 	ResidueSelectorCOP these_residues( core::select::get_residue_selector_from_subset( subset ) );

@@ -1353,7 +1353,7 @@ GeometricSolEnergyEvaluator::get_count_pair_function(
 ) const
 {
 	using namespace etable::count_pair;
-	if ( res1 == res2 ) return etable::count_pair::CountPairFunctionCOP( etable::count_pair::CountPairFunctionOP( new CountPairNone ) );
+	if ( res1 == res2 ) return utility::pointer::make_shared< CountPairNone >();
 
 	conformation::Residue const & rsd1( pose.residue( res1 ) );
 	conformation::Residue const & rsd2( pose.residue( res2 ) );
@@ -1368,13 +1368,13 @@ GeometricSolEnergyEvaluator::get_count_pair_function(
 {
 	using namespace etable::count_pair;
 
-	if ( ! defines_score_for_residue_pair(rsd1, rsd2, true) ) return etable::count_pair::CountPairFunctionCOP( etable::count_pair::CountPairFunctionOP( new CountPairNone ) );
+	if ( ! defines_score_for_residue_pair(rsd1, rsd2, true) ) return utility::pointer::make_shared< CountPairNone >();
 
 	// PUT THIS IN PROPERLY LATER.
 	if ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) {
 		//  return CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
 	}
-	return etable::count_pair::CountPairFunctionCOP( etable::count_pair::CountPairFunctionOP( new CountPairAll ) );
+	return utility::pointer::make_shared< CountPairAll >();
 }
 
 etable::count_pair::CountPairFunctionCOP
@@ -1397,7 +1397,7 @@ GeometricSolEnergyEvaluator::setup_for_minimizing_for_residue_pair(
 
 	// update the existing nblist if it's already present in the min_data object
 	ResiduePairNeighborListOP nblist( utility::pointer::static_pointer_cast< core::scoring::ResiduePairNeighborList > ( pair_data.get_data( geom_solv_pair_nblist ) ));
-	if ( ! nblist ) nblist = ResiduePairNeighborListOP( new ResiduePairNeighborList );
+	if ( ! nblist ) nblist = utility::pointer::make_shared< ResiduePairNeighborList >();
 
 	/// STOLEN CODE!
 	Real const tolerated_narrow_nblist_motion = 0.75; //option[ run::nblist_autoupdate_narrow ];

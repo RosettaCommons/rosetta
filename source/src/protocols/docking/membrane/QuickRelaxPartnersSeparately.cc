@@ -101,13 +101,13 @@ QuickRelaxPartnersSeparately::~QuickRelaxPartnersSeparately() = default;
 /// @brief Create a Clone of this mover
 protocols::moves::MoverOP
 QuickRelaxPartnersSeparately::clone() const {
-	return ( protocols::moves::MoverOP( new QuickRelaxPartnersSeparately( *this ) ) );
+	return ( utility::pointer::make_shared< QuickRelaxPartnersSeparately >( *this ) );
 }
 
 /// @brief Create a Fresh Instance of this Mover
 protocols::moves::MoverOP
 QuickRelaxPartnersSeparately::fresh_instance() const {
-	return protocols::moves::MoverOP( new QuickRelaxPartnersSeparately() );
+	return utility::pointer::make_shared< QuickRelaxPartnersSeparately >();
 }
 
 /// @brief Parse Rosetta Scripts Options for this Mover
@@ -132,7 +132,7 @@ QuickRelaxPartnersSeparately::parse_my_tag(
 /// @brief Create a new copy of this mover
 protocols::moves::MoverOP
 QuickRelaxPartnersSeparatelyCreator::create_mover() const {
-	return protocols::moves::MoverOP( new QuickRelaxPartnersSeparately() );
+	return utility::pointer::make_shared< QuickRelaxPartnersSeparately >();
 }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)

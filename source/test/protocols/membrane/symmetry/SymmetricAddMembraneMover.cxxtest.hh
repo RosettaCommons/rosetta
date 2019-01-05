@@ -74,20 +74,20 @@ public: // test functions
 		core_init();
 
 		// Load in poses from pdb (general case)
-		symmetric_pose_ = core::pose::PoseOP( new Pose() );
+		symmetric_pose_ = utility::pointer::make_shared< Pose >();
 		pose_from_file( *symmetric_pose_, "protocols/membrane/symmetry/1afo_tr_input.pdb" , core::import_pose::PDB_file);
 
 		// Load symmdata object from symmetry definition file
-		SymmDataOP symm_data = SymmDataOP( new SymmData() );
+		SymmDataOP symm_data = utility::pointer::make_shared< SymmData >();
 		symm_data->read_symmetry_data_from_file( "protocols/membrane/symmetry/1afo_tr.c2.symm" );
 
 		// Create asymmetric pose from symmetry data object
-		SetupForSymmetryMoverOP setup_for_symm = SetupForSymmetryMoverOP( new SetupForSymmetryMover( symm_data ) );
+		SetupForSymmetryMoverOP setup_for_symm = utility::pointer::make_shared< SetupForSymmetryMover >( symm_data );
 		setup_for_symm->apply( *symmetric_pose_ );
 
 		// Store path to spanfile and do symmetric add membrane
 		std::string spanfile = "protocols/membrane/symmetry/1afo_tr.span";
-		SymmetricAddMembraneMoverOP symm_add = SymmetricAddMembraneMoverOP( new SymmetricAddMembraneMover( spanfile ) );
+		SymmetricAddMembraneMoverOP symm_add = utility::pointer::make_shared< SymmetricAddMembraneMover >( spanfile );
 		symm_add->apply( *symmetric_pose_ );
 
 	}

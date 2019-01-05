@@ -244,7 +244,7 @@ DenseEnergyContainer::~DenseEnergyContainer() = default;
 LREnergyContainerOP
 DenseEnergyContainer::clone() const
 {
-	return LREnergyContainerOP( new DenseEnergyContainer( *this ) );
+	return utility::pointer::make_shared< DenseEnergyContainer >( *this );
 }
 
 DenseEnergyContainer::DenseEnergyContainer( Size const size_in, ScoreType const score_type_in ):
@@ -289,19 +289,19 @@ DenseEnergyContainer::size() const
 ResidueNeighborConstIteratorOP
 DenseEnergyContainer::const_neighbor_iterator_begin( int resid ) const
 {
-	return ResidueNeighborConstIteratorOP( new DenseNeighborConstIterator( resid, resid==1 ? 2 : 1, score_type_, &table_, &computed_ ) );
+	return utility::pointer::make_shared< DenseNeighborConstIterator >( resid, resid==1 ? 2 : 1, score_type_, &table_, &computed_ );
 }
 
 ResidueNeighborConstIteratorOP
 DenseEnergyContainer::const_neighbor_iterator_end( int resid ) const
 {
-	return ResidueNeighborConstIteratorOP( new DenseNeighborConstIterator( resid, size_ + 1, score_type_, &table_, &computed_ ) );
+	return utility::pointer::make_shared< DenseNeighborConstIterator >( resid, size_ + 1, score_type_, &table_, &computed_ );
 }
 
 ResidueNeighborConstIteratorOP
 DenseEnergyContainer::const_upper_neighbor_iterator_begin( int resid ) const
 {
-	return ResidueNeighborConstIteratorOP( new DenseNeighborConstIterator( resid, resid+1, score_type_, &table_, &computed_ ) );
+	return utility::pointer::make_shared< DenseNeighborConstIterator >( resid, resid+1, score_type_, &table_, &computed_ );
 }
 
 ResidueNeighborConstIteratorOP
@@ -315,19 +315,19 @@ DenseEnergyContainer::const_upper_neighbor_iterator_end( int resid ) const
 ResidueNeighborIteratorOP
 DenseEnergyContainer::neighbor_iterator_begin( int resid )
 {
-	return ResidueNeighborIteratorOP( new DenseNeighborIterator( resid, 1, score_type_, &table_, &computed_ ) );
+	return utility::pointer::make_shared< DenseNeighborIterator >( resid, 1, score_type_, &table_, &computed_ );
 }
 
 ResidueNeighborIteratorOP
 DenseEnergyContainer::neighbor_iterator_end( int resid )
 {
-	return ResidueNeighborIteratorOP( new DenseNeighborIterator( resid, size_ + 1, score_type_, &table_, &computed_ ) );
+	return utility::pointer::make_shared< DenseNeighborIterator >( resid, size_ + 1, score_type_, &table_, &computed_ );
 }
 
 ResidueNeighborIteratorOP
 DenseEnergyContainer::upper_neighbor_iterator_begin( int resid )
 {
-	return ResidueNeighborIteratorOP( new DenseNeighborIterator( resid, resid+1, score_type_, &table_, &computed_ ) );
+	return utility::pointer::make_shared< DenseNeighborIterator >( resid, resid+1, score_type_, &table_, &computed_ );
 }
 
 ResidueNeighborIteratorOP

@@ -70,7 +70,7 @@ HeavyAtomFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataM
 }
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP HeavyAtomFilterCreator::create_filter() const { return protocols::filters::FilterOP( new HeavyAtomFilter ); }
+// XRW TEMP HeavyAtomFilterCreator::create_filter() const { return utility::pointer::make_shared< HeavyAtomFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP HeavyAtomFilterCreator::keyname() const { return "HeavyAtom"; }
@@ -100,7 +100,7 @@ std::string HeavyAtomFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 HeavyAtomFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new HeavyAtomFilter );
+	return utility::pointer::make_shared< HeavyAtomFilter >();
 }
 
 void HeavyAtomFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

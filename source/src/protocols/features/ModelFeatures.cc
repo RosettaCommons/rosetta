@@ -74,7 +74,7 @@ namespace features {
 // XRW TEMP ModelFeaturesCreator::ModelFeaturesCreator() {}
 // XRW TEMP ModelFeaturesCreator::~ModelFeaturesCreator() = default;
 // XRW TEMP protocols::features::FeaturesReporterOP ModelFeaturesCreator::create_features_reporter() const {
-// XRW TEMP  return ModelFeaturesOP( new ModelFeatures );
+// XRW TEMP  return utility::pointer::make_shared< ModelFeatures >();
 // XRW TEMP }
 
 // XRW TEMP std::string ModelFeaturesCreator::type_name() const {
@@ -114,8 +114,8 @@ ModelFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) c
 	///////Sewing Models Table//////////
 	////////////////////////////////////
 	Column struct_id("struct_id", DbDataTypeOP (new DbBigInt()), false /*not null*/, false /*don't autoincrement*/);
-	Column model_id("model_id", DbDataTypeOP(new DbInteger()), false /*not null*/, true /*autoincrement*/);
-	Column num_segments("num_segments", DbDataTypeOP(new DbInteger()), false /*not null*/, false /*autoincrement*/);
+	Column model_id("model_id", utility::pointer::make_shared< DbInteger >(), false /*not null*/, true /*autoincrement*/);
+	Column num_segments("num_segments", utility::pointer::make_shared< DbInteger >(), false /*not null*/, false /*autoincrement*/);
 
 	Schema sewing_models("sewing_models", model_id);
 	sewing_models.add_foreign_key(ForeignKey(struct_id, "structures", "struct_id", false /*defer*/));
@@ -125,8 +125,8 @@ ModelFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) c
 	////////////////////////////////////
 	//////Model Segments Table//////////
 	////////////////////////////////////
-	Column model_id_fkey("model_id", DbDataTypeOP(new DbInteger()), false /*not null*/, false /*autoincrement*/);
-	Column segment_id_fkey("segment_id", DbDataTypeOP(new DbInteger()), false /*not null*/, false /*autoincrement*/);
+	Column model_id_fkey("model_id", utility::pointer::make_shared< DbInteger >(), false /*not null*/, false /*autoincrement*/);
+	Column segment_id_fkey("segment_id", utility::pointer::make_shared< DbInteger >(), false /*not null*/, false /*autoincrement*/);
 
 	utility::vector1<Column> pkey_cols;
 	pkey_cols.push_back(model_id_fkey);
@@ -466,7 +466,7 @@ std::string ModelFeaturesCreator::type_name() const {
 
 protocols::features::FeaturesReporterOP
 ModelFeaturesCreator::create_features_reporter() const {
-	return protocols::features::FeaturesReporterOP( new ModelFeatures );
+	return utility::pointer::make_shared< ModelFeatures >();
 }
 
 void ModelFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

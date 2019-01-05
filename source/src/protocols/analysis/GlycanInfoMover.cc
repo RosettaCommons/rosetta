@@ -178,14 +178,14 @@ void GlycanInfoMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xs
 protocols::moves::MoverOP
 GlycanInfoMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new GlycanInfoMover );
+	return utility::pointer::make_shared< GlycanInfoMover >();
 }
 
 /// @brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
 GlycanInfoMover::clone() const
 {
-	return protocols::moves::MoverOP( new GlycanInfoMover( *this ) );
+	return utility::pointer::make_shared< GlycanInfoMover >( *this );
 }
 
 std::string GlycanInfoMover::get_name() const {
@@ -203,7 +203,7 @@ std::string GlycanInfoMover::mover_name() {
 protocols::moves::MoverOP
 GlycanInfoMoverCreator::create_mover() const
 {
-	return protocols::moves::MoverOP( new GlycanInfoMover );
+	return utility::pointer::make_shared< GlycanInfoMover >();
 }
 
 std::string

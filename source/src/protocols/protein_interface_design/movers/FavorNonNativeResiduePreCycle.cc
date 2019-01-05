@@ -42,7 +42,7 @@ static basic::Tracer favor_nonnative_residue_tracer( "protocols.protein_interfac
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP FavorNonNativeResiduePreCycleCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new FavorNonNativeResiduePreCycle );
+// XRW TEMP  return utility::pointer::make_shared< FavorNonNativeResiduePreCycle >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -104,7 +104,7 @@ std::string FavorNonNativeResiduePreCycleCreator::keyname() const {
 
 protocols::moves::MoverOP
 FavorNonNativeResiduePreCycleCreator::create_mover() const {
-	return protocols::moves::MoverOP( new FavorNonNativeResiduePreCycle );
+	return utility::pointer::make_shared< FavorNonNativeResiduePreCycle >();
 }
 
 void FavorNonNativeResiduePreCycleCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

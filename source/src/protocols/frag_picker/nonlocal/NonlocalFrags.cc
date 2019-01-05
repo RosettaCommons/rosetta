@@ -265,7 +265,7 @@ void NonlocalFrags::apply(pose::Pose& pose) {
 	// clear the evaluators or else different input pdbs may cause a runtime error
 	// when doing rmsd evaluations
 	jd->job_outputter()->clear_evaluators();
-	jd->job_outputter()->add_evaluation( evaluation::PoseEvaluatorOP( new simple_filters::RmsdEvaluator( pose::PoseOP( new pose::Pose( unmodified_pose ) ), "" ) ) );
+	jd->job_outputter()->add_evaluation( utility::pointer::make_shared< simple_filters::RmsdEvaluator >( utility::pointer::make_shared< pose::Pose >( unmodified_pose ), "" ) );
 
 	//scoring::ScoreFunctionOP scorefxn = scoring::get_score_function();
 	scoring::ScoreFunctionOP scorefxn = scoring::get_score_function();
@@ -595,11 +595,11 @@ std::string NonlocalFrags::get_name() const {
 }
 
 protocols::moves::MoverOP NonlocalFrags::clone() const {
-	return protocols::moves::MoverOP( new NonlocalFrags(*this) );
+	return utility::pointer::make_shared< NonlocalFrags >(*this);
 }
 
 protocols::moves::MoverOP NonlocalFrags::fresh_instance() const {
-	return protocols::moves::MoverOP( new NonlocalFrags() );
+	return utility::pointer::make_shared< NonlocalFrags >();
 }
 
 

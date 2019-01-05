@@ -69,13 +69,13 @@ StochasticFilter::StochasticFilter( core::Real const confidence, FilterOP subfil
 FilterOP
 StochasticFilter::clone() const
 {
-	return FilterOP( new StochasticFilter( *this ) );
+	return utility::pointer::make_shared< StochasticFilter >( *this );
 }
 
 FilterOP
 StochasticFilter::fresh_instance() const
 {
-	return FilterOP( new StochasticFilter() );
+	return utility::pointer::make_shared< StochasticFilter >();
 }
 
 bool
@@ -160,13 +160,13 @@ CompoundFilter::apply( Pose const & pose ) const
 FilterOP
 CompoundFilter::clone() const
 {
-	return FilterOP( new CompoundFilter( *this ) );
+	return utility::pointer::make_shared< CompoundFilter >( *this );
 }
 
 FilterOP
 CompoundFilter::fresh_instance() const
 {
-	return FilterOP( new CompoundFilter() );
+	return utility::pointer::make_shared< CompoundFilter >();
 }
 
 void
@@ -343,7 +343,7 @@ CompoundFilter::parse_my_tag(
 			filter_pair.first = find_filter->second->clone();
 		} else {
 			TR<<"***WARNING WARNING! Filter defined for CompoundStatement not found in filter_list!!!! Defaulting to truefilter***"<<std::endl;
-			filter_pair.first = FilterOP( new filters::TrueFilter );
+			filter_pair.first = utility::pointer::make_shared< filters::TrueFilter >();
 		}
 		runtime_assert( filter_found );
 		compound_statement_.push_back( filter_pair );
@@ -367,13 +367,13 @@ CombinedFilter::apply( core::pose::Pose const & pose ) const
 FilterOP
 CombinedFilter::clone() const
 {
-	return FilterOP( new CombinedFilter( *this ) );
+	return utility::pointer::make_shared< CombinedFilter >( *this );
 }
 
 FilterOP
 CombinedFilter::fresh_instance() const
 {
-	return FilterOP( new CombinedFilter() );
+	return utility::pointer::make_shared< CombinedFilter >();
 }
 
 void
@@ -482,13 +482,13 @@ MoveBeforeFilter::apply( core::pose::Pose const & pose ) const
 FilterOP
 MoveBeforeFilter::clone() const
 {
-	return FilterOP( new MoveBeforeFilter( *this ) );
+	return utility::pointer::make_shared< MoveBeforeFilter >( *this );
 }
 
 FilterOP
 MoveBeforeFilter::fresh_instance() const
 {
-	return FilterOP( new MoveBeforeFilter() );
+	return utility::pointer::make_shared< MoveBeforeFilter >();
 }
 
 void
@@ -590,13 +590,13 @@ IfThenFilter::apply( core::pose::Pose const & pose ) const
 FilterOP
 IfThenFilter::clone() const
 {
-	return FilterOP( new IfThenFilter( *this ) );
+	return utility::pointer::make_shared< IfThenFilter >( *this );
 }
 
 FilterOP
 IfThenFilter::fresh_instance() const
 {
-	return FilterOP( new IfThenFilter() );
+	return utility::pointer::make_shared< IfThenFilter >();
 }
 
 void
@@ -692,7 +692,7 @@ IfThenFilter::parse_my_tag(
 // @brief FilterCreator methods
 
 FilterOP
-TrueFilterCreator::create_filter() const { return FilterOP( new TrueFilter ); }
+TrueFilterCreator::create_filter() const { return utility::pointer::make_shared< TrueFilter >(); }
 
 std::string
 TrueFilterCreator::keyname() const { return "TrueFilter"; }
@@ -740,7 +740,7 @@ std::string FalseFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 FalseFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new FalseFilter );
+	return utility::pointer::make_shared< FalseFilter >();
 }
 
 void FalseFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -749,7 +749,7 @@ void FalseFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 }
 
 
-// XRW TEMP StochasticFilterCreator::create_filter() const { return FilterOP( new StochasticFilter ); }
+// XRW TEMP StochasticFilterCreator::create_filter() const { return utility::pointer::make_shared< StochasticFilter >(); }
 
 
 std::string StochasticFilter::name() const {
@@ -776,7 +776,7 @@ std::string StochasticFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 StochasticFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new StochasticFilter );
+	return utility::pointer::make_shared< StochasticFilter >();
 }
 
 void StochasticFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -786,7 +786,7 @@ void StochasticFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinit
 
 
 // XRW TEMP FilterOP
-// XRW TEMP CompoundFilterCreator::create_filter() const { return FilterOP( new CompoundFilter ); }
+// XRW TEMP CompoundFilterCreator::create_filter() const { return utility::pointer::make_shared< CompoundFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP CompoundFilterCreator::keyname() const { return "CompoundStatement"; }
@@ -828,7 +828,7 @@ std::string CompoundFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 CompoundFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new CompoundFilter );
+	return utility::pointer::make_shared< CompoundFilter >();
 }
 
 void CompoundFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -838,7 +838,7 @@ void CompoundFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 
 
 // XRW TEMP FilterOP
-// XRW TEMP CombinedFilterCreator::create_filter() const { return FilterOP( new CombinedFilter ); }
+// XRW TEMP CombinedFilterCreator::create_filter() const { return utility::pointer::make_shared< CombinedFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP CombinedFilterCreator::keyname() const { return "CombinedValue"; }
@@ -876,7 +876,7 @@ std::string CombinedFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 CombinedFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new CombinedFilter );
+	return utility::pointer::make_shared< CombinedFilter >();
 }
 
 void CombinedFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -886,7 +886,7 @@ void CombinedFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 
 
 // XRW TEMP FilterOP
-// XRW TEMP MoveBeforeFilterCreator::create_filter() const { return FilterOP( new MoveBeforeFilter ); }
+// XRW TEMP MoveBeforeFilterCreator::create_filter() const { return utility::pointer::make_shared< MoveBeforeFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP MoveBeforeFilterCreator::keyname() const { return "MoveBeforeFilter"; }
@@ -932,7 +932,7 @@ std::string MoveBeforeFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 MoveBeforeFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new MoveBeforeFilter );
+	return utility::pointer::make_shared< MoveBeforeFilter >();
 }
 
 void MoveBeforeFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -942,7 +942,7 @@ void MoveBeforeFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinit
 
 
 // XRW TEMP FilterOP
-// XRW TEMP IfThenFilterCreator::create_filter() const { return FilterOP( new IfThenFilter ); }
+// XRW TEMP IfThenFilterCreator::create_filter() const { return utility::pointer::make_shared< IfThenFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP IfThenFilterCreator::keyname() const { return "IfThenFilter"; }
@@ -1031,7 +1031,7 @@ std::string IfThenFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 IfThenFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new IfThenFilter );
+	return utility::pointer::make_shared< IfThenFilter >();
 }
 
 void IfThenFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

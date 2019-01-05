@@ -84,14 +84,14 @@ LoopRefineInnerCycleContainer::~LoopRefineInnerCycleContainer() = default;
 protocols::moves::MoverOP
 LoopRefineInnerCycleContainer::clone() const
 {
-	return protocols::moves::MoverOP( new LoopRefineInnerCycleContainer( *this ) );
+	return utility::pointer::make_shared< LoopRefineInnerCycleContainer >( *this );
 }
 
 /// @brief fresh_instance returns a default-constructed object for JD2
 protocols::moves::MoverOP
 LoopRefineInnerCycleContainer::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new LoopRefineInnerCycleContainer() );
+	return utility::pointer::make_shared< LoopRefineInnerCycleContainer >();
 }
 
 /// @brief This mover retains state such that a fresh version is needed if the input Pose is about to change
@@ -133,7 +133,7 @@ void LoopRefineInnerCycleContainer::init()
 {
 	type( "LoopRefineInnerCycleContainer" );
 	inner_cycle_list_  = InnerCycleList();
-	inner_cycle_steps_ = moves::SequenceMoverOP( new moves::SequenceMover );
+	inner_cycle_steps_ = utility::pointer::make_shared< moves::SequenceMover >();
 
 	init_options();
 }
@@ -231,7 +231,7 @@ std::ostream & operator<<(std::ostream& out, LoopRefineInnerCycleContainer const
 // XRW TEMP LoopRefineInnerCycleContainerCreator::~LoopRefineInnerCycleContainerCreator() {}
 
 // XRW TEMP moves::MoverOP LoopRefineInnerCycleContainerCreator::create_mover() const {
-// XRW TEMP  return moves::MoverOP( new LoopRefineInnerCycleContainer() );
+// XRW TEMP  return utility::pointer::make_shared< LoopRefineInnerCycleContainer >();
 // XRW TEMP }
 
 // XRW TEMP std::string LoopRefineInnerCycleContainerCreator::keyname() const {
@@ -263,7 +263,7 @@ std::string LoopRefineInnerCycleContainerCreator::keyname() const {
 
 protocols::moves::MoverOP
 LoopRefineInnerCycleContainerCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LoopRefineInnerCycleContainer );
+	return utility::pointer::make_shared< LoopRefineInnerCycleContainer >();
 }
 
 void LoopRefineInnerCycleContainerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -28,7 +28,7 @@ namespace features {
 // XRW TEMP ResidueTypesFeaturesCreator::ResidueTypesFeaturesCreator() {}
 // XRW TEMP ResidueTypesFeaturesCreator::~ResidueTypesFeaturesCreator() = default;
 // XRW TEMP FeaturesReporterOP ResidueTypesFeaturesCreator::create_features_reporter() const {
-// XRW TEMP  return FeaturesReporterOP( new ResidueTypesFeatures );
+// XRW TEMP  return utility::pointer::make_shared< ResidueTypesFeatures >();
 // XRW TEMP }
 
 // XRW TEMP std::string ResidueTypesFeaturesCreator::type_name() const {

@@ -148,7 +148,7 @@ void DisulfideFilter::parse_my_tag( utility::tag::TagCOP tag,
 }
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP DisulfideFilterCreator::create_filter() const { return protocols::filters::FilterOP( new DisulfideFilter ); }
+// XRW TEMP DisulfideFilterCreator::create_filter() const { return utility::pointer::make_shared< DisulfideFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP DisulfideFilterCreator::keyname() const { return "DisulfideFilter"; }
@@ -176,7 +176,7 @@ std::string DisulfideFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 DisulfideFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new DisulfideFilter );
+	return utility::pointer::make_shared< DisulfideFilter >();
 }
 
 void DisulfideFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

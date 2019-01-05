@@ -66,14 +66,14 @@ public:
 		std::set< std::string > names;
 
 		// Already named - should be no changes.
-		rsd = ResidueTypeOP( new ResidueType( *rsd_ref ) );
+		rsd = utility::pointer::make_shared< ResidueType >( *rsd_ref );
 		rename_atoms( *rsd, /*preserve=*/true);
 		for ( core::Size ii(1); ii <= rsd->natoms(); ++ii ) {
 			TS_ASSERT_EQUALS( rsd->atom(ii).name(), rsd_ref->atom(ii).name() );
 		}
 
 		// Force renaming.
-		rsd = ResidueTypeOP( new ResidueType( *rsd_ref ) );
+		rsd = utility::pointer::make_shared< ResidueType >( *rsd_ref );
 		names.clear();
 		rename_atoms( *rsd, /*preserve=*/false);
 		for ( core::Size ii(1); ii <= rsd->natoms(); ++ii ) {
@@ -94,7 +94,7 @@ public:
 		TS_ASSERT_EQUALS( names.count( " H14" ), 0 );
 
 		// Partial renaming.
-		rsd = ResidueTypeOP( new ResidueType( *rsd_ref ) );
+		rsd = utility::pointer::make_shared< ResidueType >( *rsd_ref );
 		rsd->atom(" NZ ").name(" N  ");
 		rsd->atom("1HB ").name("");
 		rsd->atom("2HB ").name("");
@@ -384,7 +384,7 @@ public:
 
 		TR << "Testing that virtual atoms aren't recharged and aren't counted during recharge" << std::endl;
 
-		rsd = ResidueTypeOP( new ResidueType( rsd_types->name_map("PRO") ) );
+		rsd = utility::pointer::make_shared< ResidueType >( rsd_types->name_map("PRO") );
 
 		for ( core::Size ii(1); ii <= rsd->natoms(); ++ii ) {
 			rsd->atom(ii).formal_charge( 0.0 );

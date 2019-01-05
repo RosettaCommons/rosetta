@@ -275,7 +275,7 @@ void SecondaryStructureCountFilter::report( std::ostream & out, core::pose::Pose
 }
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP SecondaryStructureCountFilterCreator::create_filter() const { return protocols::filters::FilterOP( new SecondaryStructureCountFilter ); }
+// XRW TEMP SecondaryStructureCountFilterCreator::create_filter() const { return utility::pointer::make_shared< SecondaryStructureCountFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP SecondaryStructureCountFilterCreator::keyname() const { return "SecondaryStructureCount"; }
@@ -319,7 +319,7 @@ std::string SecondaryStructureCountFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 SecondaryStructureCountFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new SecondaryStructureCountFilter );
+	return utility::pointer::make_shared< SecondaryStructureCountFilter >();
 }
 
 void SecondaryStructureCountFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

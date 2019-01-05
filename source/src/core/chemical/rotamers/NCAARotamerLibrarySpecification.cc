@@ -41,12 +41,12 @@ static basic::Tracer TR("core.chemical.rotamers.NCAARotamerLibrarySpecification"
 
 RotamerLibrarySpecificationOP
 NCAARotamerLibrarySpecificationCreator::create() const {
-	return RotamerLibrarySpecificationOP( new NCAARotamerLibrarySpecification );
+	return utility::pointer::make_shared< NCAARotamerLibrarySpecification >();
 }
 
 RotamerLibrarySpecificationOP
 NCAARotamerLibrarySpecificationCreator::create( std::istream & input ) const {
-	return RotamerLibrarySpecificationOP( new NCAARotamerLibrarySpecification( input ) );
+	return utility::pointer::make_shared< NCAARotamerLibrarySpecification >( input );
 }
 
 std::string

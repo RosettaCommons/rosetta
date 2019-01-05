@@ -63,7 +63,7 @@ USOGFunc::USOGFunc(core::Real mean, core::Real std_dev, core::Real weight) {
 }
 
 FuncOP USOGFunc::clone() const {
-	return FuncOP( new USOGFunc(*this) );
+	return utility::pointer::make_shared< USOGFunc >(*this);
 }
 
 bool USOGFunc::operator == ( Func const & other ) const

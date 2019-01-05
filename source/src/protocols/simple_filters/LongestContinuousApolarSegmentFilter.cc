@@ -47,13 +47,13 @@ LongestContinuousApolarSegmentFilter::~LongestContinuousApolarSegmentFilter() = 
 protocols::filters::FilterOP
 LongestContinuousApolarSegmentFilter::clone() const
 {
-	return protocols::filters::FilterOP( new LongestContinuousApolarSegmentFilter( *this ) );
+	return utility::pointer::make_shared< LongestContinuousApolarSegmentFilter >( *this );
 }
 
 protocols::filters::FilterOP
 LongestContinuousApolarSegmentFilter::fresh_instance() const
 {
-	return protocols::filters::FilterOP( new LongestContinuousApolarSegmentFilter );
+	return utility::pointer::make_shared< LongestContinuousApolarSegmentFilter >();
 }
 
 std::string LongestContinuousApolarSegmentFilter::name() const {
@@ -104,7 +104,7 @@ LongestContinuousApolarSegmentFilter::counted_residue_description() const {
 protocols::filters::FilterOP
 LongestContinuousApolarSegmentFilterCreator::create_filter() const
 {
-	return protocols::filters::FilterOP( new LongestContinuousApolarSegmentFilter );
+	return utility::pointer::make_shared< LongestContinuousApolarSegmentFilter >();
 }
 
 std::string

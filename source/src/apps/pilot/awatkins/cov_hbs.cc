@@ -249,7 +249,7 @@ CovalentPeptidomimeticDockDesign::apply(
 	moves::MonteCarloOP pert_mc( new moves::MonteCarlo( pose, *scorefxn, 1 ) );
 	// create a task factory and task operations
 	//TaskFactoryOP pert_tf(new TaskFactory());
-	//pert_tf->push_back( operation::TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
+	//pert_tf->push_back( utility::pointer::make_shared< core::pack::task::operation::InitializeFromCommandline >() );
 	//operation::ReadResfileOP pert_rrop( new operation::ReadResfile() );
 	//pert_rrop->filename("two.res");
 	//pert_tf->push_back( pert_rrop );

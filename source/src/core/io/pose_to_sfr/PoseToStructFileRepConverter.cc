@@ -107,7 +107,7 @@ PoseToStructFileRepConverter::PoseToStructFileRepConverter( StructFileRepOptions
 core::io::StructFileRepOP
 PoseToStructFileRepConverter::new_sfr() {
 	atom_indices_initialized_ = false;
-	sfr_ = StructFileRepOP( new core::io::StructFileRep() );
+	sfr_ = utility::pointer::make_shared< core::io::StructFileRep >();
 	return sfr_;
 }
 
@@ -215,12 +215,12 @@ PoseToStructFileRepConverter::init_from_pose(
 		*(sfr_->remarks()) = input_pose.pdb_info()->remarks();  // Get OP to PDBInfo object for remarks.
 		if ( input_pose.pdb_info()->header_information() ) {
 			sfr_->header() =
-				io::HeaderInformationOP( new io::HeaderInformation( *( input_pose.pdb_info()->header_information() ) ) );
+				utility::pointer::make_shared< io::HeaderInformation >( *( input_pose.pdb_info()->header_information() ) );
 		} else {
-			sfr_->header() = io::HeaderInformationOP( new io::HeaderInformation() );
+			sfr_->header() = utility::pointer::make_shared< io::HeaderInformation >();
 		}
 	} else {
-		sfr_->header() = io::HeaderInformationOP( new io::HeaderInformation() );
+		sfr_->header() = utility::pointer::make_shared< io::HeaderInformation >();
 	}
 
 	// Get parametric information
@@ -271,7 +271,7 @@ PoseToStructFileRepConverter::init_from_pose(
 
 	pose::PDBInfoOP fresh_pdb_info = nullptr;
 	if ( !pose.pdb_info() ) {
-		fresh_pdb_info = pose::PDBInfoOP( new pose::PDBInfo( pose ) );
+		fresh_pdb_info = utility::pointer::make_shared< pose::PDBInfo >( pose );
 	}
 
 	utility::vector1< char > new_chainIDs;

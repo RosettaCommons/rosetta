@@ -299,8 +299,8 @@ FragmentScoringMethodOP MakePhiPsiSquareWell::make(core::Size priority,
 			tr.Debug << "its sequence is:\n"
 				<< nativePose->sequence() << std::endl;
 
-			return (FragmentScoringMethodOP) FragmentScoringMethodOP( new PhiPsiSquareWell(priority,
-				lowest_acceptable_value, use_lowest, nativePose) );
+			return (FragmentScoringMethodOP) utility::pointer::make_shared< PhiPsiSquareWell >(priority,
+				lowest_acceptable_value, use_lowest, nativePose);
 		}
 		pos = input_file.find(".tab");
 		if ( pos != std::string::npos ) {
@@ -309,8 +309,8 @@ FragmentScoringMethodOP MakePhiPsiSquareWell::make(core::Size priority,
 				<< input_file << std::endl;
 			PhiPsiTalosIO in(input_file);
 			in.write(tr.Debug);
-			return (FragmentScoringMethodOP) FragmentScoringMethodOP( new PhiPsiSquareWell(priority,
-				lowest_acceptable_value, use_lowest, in) );
+			return (FragmentScoringMethodOP) utility::pointer::make_shared< PhiPsiSquareWell >(priority,
+				lowest_acceptable_value, use_lowest, in);
 		}
 	}
 
@@ -320,8 +320,8 @@ FragmentScoringMethodOP MakePhiPsiSquareWell::make(core::Size priority,
 			<< input_file << std::endl;
 		PhiPsiTalosIO in(option[in::file::talos_phi_psi]());
 		in.write(tr.Debug);
-		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new PhiPsiSquareWell(priority,
-			lowest_acceptable_value, use_lowest, in) );
+		return (FragmentScoringMethodOP) utility::pointer::make_shared< PhiPsiSquareWell >(priority,
+			lowest_acceptable_value, use_lowest, in);
 	}
 	if ( option[in::file::s].user() ) {
 		core::pose::PoseOP nativePose( new core::pose::Pose );
@@ -331,8 +331,8 @@ FragmentScoringMethodOP MakePhiPsiSquareWell::make(core::Size priority,
 		tr.Debug << "its sequence is:\n"
 			<< nativePose->sequence() << std::endl;
 
-		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new PhiPsiSquareWell(priority,
-			lowest_acceptable_value, use_lowest, nativePose) );
+		return (FragmentScoringMethodOP) utility::pointer::make_shared< PhiPsiSquareWell >(priority,
+			lowest_acceptable_value, use_lowest, nativePose);
 	}
 	if ( option[in::file::native].user() ) {
 		core::pose::PoseOP nativePose( new core::pose::Pose );
@@ -342,8 +342,8 @@ FragmentScoringMethodOP MakePhiPsiSquareWell::make(core::Size priority,
 		tr.Debug << "its sequence is:\n"
 			<< nativePose->sequence() << std::endl;
 
-		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new PhiPsiSquareWell(priority,
-			lowest_acceptable_value, use_lowest, nativePose) );
+		return (FragmentScoringMethodOP) utility::pointer::make_shared< PhiPsiSquareWell >(priority,
+			lowest_acceptable_value, use_lowest, nativePose);
 	}
 
 	utility_exit_with_message(

@@ -114,7 +114,7 @@ StepWiseRNA_Clusterer::~StepWiseRNA_Clusterer() = default;
 //////////////////////////////////////////////////////////////////////////
 void
 StepWiseRNA_Clusterer::initialize_parameters_and_input(){
-	input_ = core::import_pose::pose_stream::SilentFilePoseInputStreamOP( new core::import_pose::pose_stream::SilentFilePoseInputStream() );
+	input_ = utility::pointer::make_shared< core::import_pose::pose_stream::SilentFilePoseInputStream >();
 	input_->set_order_by_energy( true );
 
 	//max_decoys_ = 9999999999; Feb 02, 2012; This lead to server-test error at R47198

@@ -234,7 +234,7 @@ AtomTreeDiffJobOutputterCreator::keyname() const
 
 protocols::jd2::JobOutputterOP
 AtomTreeDiffJobOutputterCreator::create_JobOutputter() const {
-	return protocols::jd2::JobOutputterOP( new AtomTreeDiffJobOutputter );
+	return utility::pointer::make_shared< AtomTreeDiffJobOutputter >();
 }
 
 }//jd2

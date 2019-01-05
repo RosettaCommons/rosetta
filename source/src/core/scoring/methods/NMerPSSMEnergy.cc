@@ -52,7 +52,7 @@ methods::EnergyMethodOP
 NMerPSSMEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new NMerPSSMEnergy );
+	return utility::pointer::make_shared< NMerPSSMEnergy >();
 }
 
 ScoreTypes
@@ -89,14 +89,14 @@ NMerPSSMEnergy::initialize_from_options()
 }
 
 NMerPSSMEnergy::NMerPSSMEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new NMerPSSMEnergyCreator ) )
+	parent( utility::pointer::make_shared< NMerPSSMEnergyCreator >() )
 {
 	NMerPSSMEnergy::initialize_from_options();
 	read_nmer_pssms_from_options();
 }
 
 NMerPSSMEnergy::NMerPSSMEnergy( utility::vector1< std::map< chemical::AA, utility::vector1< core::Real > > > const & all_nmer_pssms_in ):
-	parent( methods::EnergyMethodCreatorOP( new NMerPSSMEnergyCreator ) )
+	parent( utility::pointer::make_shared< NMerPSSMEnergyCreator >() )
 {
 	//TODO: make this an argument of the function call
 	NMerPSSMEnergy::initialize_from_options();
@@ -121,7 +121,7 @@ NMerPSSMEnergy::NMerPSSMEnergy(
 	core::Real const nmer_pssm_scorecut,
 	utility::vector1< std::string > const & pssm_fname_vec
 ) :
-	parent( methods::EnergyMethodCreatorOP( new NMerPSSMEnergyCreator ) )
+	parent( utility::pointer::make_shared< NMerPSSMEnergyCreator >() )
 {
 	NMerPSSMEnergy::nmer_length( nmer_length  );
 	NMerPSSMEnergy::gate_pssm_scores( gate_pssm_scores );
@@ -225,7 +225,7 @@ void NMerPSSMEnergy::read_nmer_pssm( std::string pssm_fname ) {
 EnergyMethodOP
 NMerPSSMEnergy::clone() const
 {
-	return EnergyMethodOP( new NMerPSSMEnergy( *this ) );
+	return utility::pointer::make_shared< NMerPSSMEnergy >( *this );
 }
 
 core::Size

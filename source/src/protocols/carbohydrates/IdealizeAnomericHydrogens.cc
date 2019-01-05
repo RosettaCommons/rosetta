@@ -66,13 +66,13 @@ IdealizeAnomericHydrogens::~IdealizeAnomericHydrogens()= default;
 
 protocols::moves::MoverOP
 IdealizeAnomericHydrogens::clone() const{
-	return protocols::moves::MoverOP( new IdealizeAnomericHydrogens( *this ) );
+	return utility::pointer::make_shared< IdealizeAnomericHydrogens >( *this );
 }
 
 moves::MoverOP
 IdealizeAnomericHydrogens::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new IdealizeAnomericHydrogens );
+	return utility::pointer::make_shared< IdealizeAnomericHydrogens >();
 }
 
 // XRW TEMP std::string
@@ -113,7 +113,7 @@ IdealizeAnomericHydrogens::apply( core::pose::Pose & pose )
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP IdealizeAnomericHydrogensCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new IdealizeAnomericHydrogens );
+// XRW TEMP  return utility::pointer::make_shared< IdealizeAnomericHydrogens >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -148,7 +148,7 @@ std::string IdealizeAnomericHydrogensCreator::keyname() const {
 
 protocols::moves::MoverOP
 IdealizeAnomericHydrogensCreator::create_mover() const {
-	return protocols::moves::MoverOP( new IdealizeAnomericHydrogens );
+	return utility::pointer::make_shared< IdealizeAnomericHydrogens >();
 }
 
 void IdealizeAnomericHydrogensCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

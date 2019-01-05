@@ -61,7 +61,7 @@ public:
 
 	/// @brief Clone this object
 	protocols::moves::MoverOP clone() const override {
-		return protocols::moves::MoverOP( new LoopMover_Refine_Backrub(*this) ); // <--- TaskFactory.hh has to be #included here because this class's copy constructor is undefined, and this function is being invoked in the header
+		return utility::pointer::make_shared< LoopMover_Refine_Backrub >(*this); // <--- TaskFactory.hh has to be #included here because this class's copy constructor is undefined, and this function is being invoked in the header
 	}
 
 	void apply( core::pose::Pose & pose ) override;

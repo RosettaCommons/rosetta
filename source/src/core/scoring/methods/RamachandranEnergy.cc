@@ -49,7 +49,7 @@ methods::EnergyMethodOP
 RamachandranEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new RamachandranEnergy );
+	return utility::pointer::make_shared< RamachandranEnergy >();
 }
 
 ScoreTypes
@@ -62,7 +62,7 @@ RamachandranEnergyCreator::score_types_for_method() const {
 
 /// ctor
 RamachandranEnergy::RamachandranEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new RamachandranEnergyCreator ) ),
+	parent( utility::pointer::make_shared< RamachandranEnergyCreator >() ),
 	potential_( ScoringManager::get_instance()->get_Ramachandran() )
 {}
 
@@ -70,7 +70,7 @@ RamachandranEnergy::RamachandranEnergy() :
 EnergyMethodOP
 RamachandranEnergy::clone() const
 {
-	return EnergyMethodOP( new RamachandranEnergy );
+	return utility::pointer::make_shared< RamachandranEnergy >();
 }
 
 /////////////////////////////////////////////////////////////////////////////

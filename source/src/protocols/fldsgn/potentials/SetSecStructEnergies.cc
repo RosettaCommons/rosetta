@@ -67,7 +67,7 @@ namespace potentials {
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP SetSecStructEnergiesCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new SetSecStructEnergies );
+// XRW TEMP  return utility::pointer::make_shared< SetSecStructEnergies >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -95,8 +95,8 @@ SetSecStructEnergies::SetSecStructEnergies() :
 	ss_pair_weight_( 0.0 ),
 	rsigma_weight_( 0.0 ),
 	add_symmetry_( false ),
-	hpairpot_( NatbiasHelixPairPotentialOP( new NatbiasHelixPairPotential ) ),
-	hspot_( NatbiasHelicesSheetPotentialOP( new NatbiasHelicesSheetPotential ) )
+	hpairpot_( utility::pointer::make_shared< NatbiasHelixPairPotential >() ),
+	hspot_( utility::pointer::make_shared< NatbiasHelicesSheetPotential >() )
 {}
 
 /// @brief value constructor
@@ -117,8 +117,8 @@ SetSecStructEnergies::SetSecStructEnergies( ScoreFunctionOP const sfx, String co
 	ss_pair_weight_( 0.0 ),
 	rsigma_weight_( 0.0 ),
 	add_symmetry_( false ),
-	hpairpot_( NatbiasHelixPairPotentialOP( new NatbiasHelixPairPotential ) ),
-	hspot_( NatbiasHelicesSheetPotentialOP( new NatbiasHelicesSheetPotential ) )
+	hpairpot_( utility::pointer::make_shared< NatbiasHelixPairPotential >() ),
+	hspot_( utility::pointer::make_shared< NatbiasHelicesSheetPotential >() )
 {
 	protocols::parser::BluePrint bp( filename );
 	init_from_blueprint( bp, ss_from_blueprint );
@@ -142,8 +142,8 @@ SetSecStructEnergies::SetSecStructEnergies( ScoreFunctionOP const sfx, BluePrint
 	ss_pair_weight_( 0.0 ),
 	rsigma_weight_( 0.0 ),
 	add_symmetry_( false ),
-	hpairpot_( NatbiasHelixPairPotentialOP( new NatbiasHelixPairPotential ) ),
-	hspot_( NatbiasHelicesSheetPotentialOP( new NatbiasHelicesSheetPotential ) )
+	hpairpot_( utility::pointer::make_shared< NatbiasHelixPairPotential >() ),
+	hspot_( utility::pointer::make_shared< NatbiasHelicesSheetPotential >() )
 {
 	init_from_blueprint( *blueprintOP, ss_from_blueprint );
 }
@@ -155,14 +155,14 @@ SetSecStructEnergies::~SetSecStructEnergies() = default;
 SetSecStructEnergies::MoverOP
 SetSecStructEnergies::clone() const
 {
-	return SetSecStructEnergies::MoverOP( new SetSecStructEnergies( *this ) );
+	return utility::pointer::make_shared< SetSecStructEnergies >( *this );
 }
 
 /// @brief create this type of object
 SetSecStructEnergies::MoverOP
 SetSecStructEnergies::fresh_instance() const
 {
-	return SetSecStructEnergies::MoverOP( new SetSecStructEnergies() );
+	return utility::pointer::make_shared< SetSecStructEnergies >();
 }
 
 /// @brief access ptr to the modified score function
@@ -525,7 +525,7 @@ std::string SetSecStructEnergiesCreator::keyname() const {
 
 protocols::moves::MoverOP
 SetSecStructEnergiesCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SetSecStructEnergies );
+	return utility::pointer::make_shared< SetSecStructEnergies >();
 }
 
 void SetSecStructEnergiesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

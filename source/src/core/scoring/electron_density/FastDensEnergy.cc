@@ -68,7 +68,7 @@ methods::EnergyMethodOP
 FastDensEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & opts
 ) const {
-	return methods::EnergyMethodOP( new FastDensEnergy(opts) );
+	return utility::pointer::make_shared< FastDensEnergy >(opts);
 }
 
 ScoreTypes
@@ -91,7 +91,7 @@ FastDensEnergy::long_range_type() const { return elec_dens_fast_energy; }
 
 /// c-tor
 FastDensEnergy::FastDensEnergy( methods::EnergyMethodOptions const & opts)
-: parent( methods::EnergyMethodCreatorOP( new FastDensEnergyCreator ) ) {
+: parent( utility::pointer::make_shared< FastDensEnergyCreator >() ) {
 	scoreSymmComplex_ = basic::options::option[ basic::options::OptionKeys::edensity::score_symm_complex ]();
 
 	sc_scale_byres_ = opts.get_density_sc_scale_byres();
@@ -103,7 +103,7 @@ FastDensEnergy::FastDensEnergy( methods::EnergyMethodOptions const & opts)
 
 /// clone
 EnergyMethodOP FastDensEnergy::clone() const {
-	return EnergyMethodOP( new FastDensEnergy( *this ) );
+	return utility::pointer::make_shared< FastDensEnergy >( *this );
 }
 
 bool

@@ -714,7 +714,7 @@ VarSolDistSasaCalculator::VarSolDistSasaCalculator():
 
 core::pose::metrics::PoseMetricCalculatorOP
 VarSolDistSasaCalculator::clone() const{
-	return VarSolDistSasaCalculatorOP( new VarSolDistSasaCalculator() );
+	return utility::pointer::make_shared< VarSolDistSasaCalculator >();
 }
 
 void VarSolDistSasaCalculator::set_atom_type_radii(std::string atype_name, Real coll_radius, Real int_radius, Size nshells) {
@@ -815,9 +815,9 @@ VarSolDistSasaCalculator::recompute( core::pose::Pose const & this_pose )
 	residue_sasa_.resize( this_pose.size() );
 	// TR << "Initializing vSASA arrays with probe radius = " << probe_radius_ << " and wobble = " << wobble_ << std::endl;
 	for ( Size ii = 1; ii <= this_pose.size(); ++ii ) {
-		rotamer_dots_vec_[ ii ] = VarSolDRotamerDotsOP( new VarSolDRotamerDots(
-			core::conformation::ResidueOP( new core::conformation::Residue( this_pose.residue( ii ) ) ),
-			get_self_ptr() ) );
+		rotamer_dots_vec_[ ii ] = utility::pointer::make_shared< VarSolDRotamerDots >(
+			utility::pointer::make_shared< core::conformation::Residue >( this_pose.residue( ii ) ),
+			get_self_ptr() );
 		rotamer_dots_vec_[ ii ]->increment_self_overlap();
 	}
 	core::scoring::EnergyGraph const & energy_graph( this_pose.energies().energy_graph() );
@@ -843,7 +843,7 @@ VarSolDistSasaCalculator::recompute( core::pose::Pose const & this_pose )
 protocols::moves::MoverOP
 LoadVarSolDistSasaCalculatorMoverCreator::create_mover() const
 {
-	return protocols::moves::MoverOP( new LoadVarSolDistSasaCalculatorMover );
+	return utility::pointer::make_shared< LoadVarSolDistSasaCalculatorMover >();
 }
 void
 LoadVarSolDistSasaCalculatorMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -866,7 +866,7 @@ LoadVarSolDistSasaCalculatorMover::~LoadVarSolDistSasaCalculatorMover() = defaul
 
 protocols::moves::MoverOP
 LoadVarSolDistSasaCalculatorMover::clone() const {
-	return protocols::moves::MoverOP( new LoadVarSolDistSasaCalculatorMover );
+	return utility::pointer::make_shared< LoadVarSolDistSasaCalculatorMover >();
 }
 
 std::string
@@ -891,7 +891,7 @@ LoadVarSolDistSasaCalculatorMover::apply( core::pose::Pose & )
 	if ( CalculatorFactory::Instance().check_calculator_exists( "bur_unsat_calc_default_sasa_calc" ) ) {
 		CalculatorFactory::Instance().remove_calculator( "bur_unsat_calc_default_sasa_calc" );
 	}
-	CalculatorFactory::Instance().register_calculator( "bur_unsat_calc_default_sasa_calc", VarSolDistSasaCalculatorOP( new VarSolDistSasaCalculator() ) );
+	CalculatorFactory::Instance().register_calculator( "bur_unsat_calc_default_sasa_calc", utility::pointer::make_shared< VarSolDistSasaCalculator >() );
 }
 
 /// @brief parse XML (specifically in the context of the parser/scripting scheme)

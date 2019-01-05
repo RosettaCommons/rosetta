@@ -48,7 +48,7 @@ methods::EnergyMethodOP
 MMTorsionEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new MMTorsionEnergy );
+	return utility::pointer::make_shared< MMTorsionEnergy >();
 }
 
 ScoreTypes
@@ -66,14 +66,14 @@ typedef std::pair< mm::mm_torsion_atom_quad, core::Real > mm_torsion_atom_quad_a
 using mmtaqap_iter = utility::vector1<mm_torsion_atom_quad_angle_pair>::const_iterator;
 
 MMTorsionEnergy::MMTorsionEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new MMTorsionEnergyCreator ) )
+	parent( utility::pointer::make_shared< MMTorsionEnergyCreator >() )
 {}
 
 /// clone
 EnergyMethodOP
 MMTorsionEnergy::clone() const
 {
-	return EnergyMethodOP( new MMTorsionEnergy );
+	return utility::pointer::make_shared< MMTorsionEnergy >();
 }
 
 

@@ -81,13 +81,13 @@ MembranePositionFromTopologyMover::~MembranePositionFromTopologyMover() = defaul
 /// @brief Create a Clone of this mover
 protocols::moves::MoverOP
 MembranePositionFromTopologyMover::clone() const {
-	return ( protocols::moves::MoverOP( new MembranePositionFromTopologyMover( *this ) ) );
+	return ( utility::pointer::make_shared< MembranePositionFromTopologyMover >( *this ) );
 }
 
 /// @brief Create a Fresh Instance of this Mover
 protocols::moves::MoverOP
 MembranePositionFromTopologyMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new MembranePositionFromTopologyMover() );
+	return utility::pointer::make_shared< MembranePositionFromTopologyMover >();
 }
 
 /// @brief Pase Rosetta Scripts Options for this Mover
@@ -109,7 +109,7 @@ MembranePositionFromTopologyMover::parse_my_tag(
 /// @brief Create a new copy of this mover
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP MembranePositionFromTopologyMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new MembranePositionFromTopologyMover );
+// XRW TEMP  return utility::pointer::make_shared< MembranePositionFromTopologyMover >();
 // XRW TEMP }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)
@@ -224,7 +224,7 @@ std::string MembranePositionFromTopologyMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 MembranePositionFromTopologyMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MembranePositionFromTopologyMover );
+	return utility::pointer::make_shared< MembranePositionFromTopologyMover >();
 }
 
 void MembranePositionFromTopologyMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -39,7 +39,7 @@ public:
 	~HPatchCalculator();
 
 public:
-	core::pose::metrics::PoseMetricCalculatorOP clone() const { return core::pose::metrics::PoseMetricCalculatorOP( new HPatchCalculator( remove_nonprotein_res_ ) ); };
+	core::pose::metrics::PoseMetricCalculatorOP clone() const { return utility::pointer::make_shared< HPatchCalculator >( remove_nonprotein_res_ ); };
 
 protected:
 	virtual void lookup( std::string const & key, basic::MetricValueBase* valptr ) const;

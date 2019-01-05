@@ -66,7 +66,7 @@ SymmDataLoader::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 basic::resource_manager::ResourceLoaderOP
 SymmDataLoaderCreator::create_resource_loader() const
 {
-	return basic::resource_manager::ResourceLoaderOP( new SymmDataLoader() );
+	return utility::pointer::make_shared< SymmDataLoader >();
 }
 
 std::string SymmDataLoaderCreator::loader_type() const

@@ -85,7 +85,7 @@ public:
 		core::fragment::FragmentIO frag_io( 1, 1, true );
 
 
-		protocols::abinitio::abscript::FragmentCMOP fragmover( new protocols::abinitio::abscript::FragmentCM( protocols::simple_moves::FragmentMoverOP( new protocols::simple_moves::ClassicFragmentMover( frag_io.read_data( FRAGFILE_LOCATION ) ) ) ) );
+		protocols::abinitio::abscript::FragmentCMOP fragmover( new protocols::abinitio::abscript::FragmentCM( utility::pointer::make_shared< protocols::simple_moves::ClassicFragmentMover >( frag_io.read_data( FRAGFILE_LOCATION ) ) ) );
 
 		EnvironmentOP env_op( new Environment( "env" ) );
 		Environment & env = *env_op;
@@ -123,7 +123,7 @@ public:
 
 		core::fragment::FragmentIO frag_io( 1, 1, true );
 
-		protocols::abinitio::abscript::FragmentCMOP fragmover( new protocols::abinitio::abscript::FragmentCM( protocols::simple_moves::FragmentMoverOP( new protocols::simple_moves::ClassicFragmentMover( frag_io.read_data( "protocols/abinitio/abscript/one_frag3_per_pos" ) ) ) ) );
+		protocols::abinitio::abscript::FragmentCMOP fragmover( new protocols::abinitio::abscript::FragmentCM( utility::pointer::make_shared< protocols::simple_moves::ClassicFragmentMover >( frag_io.read_data( "protocols/abinitio/abscript/one_frag3_per_pos" ) ) ) );
 
 		fragmover->set_selector( selector );
 
@@ -192,7 +192,7 @@ public:
 
 		protocols::abinitio::abscript::FragmentCMOP fragmover(
 			new protocols::abinitio::abscript::FragmentCM(
-			protocols::simple_moves::FragmentMoverOP( new protocols::simple_moves::ClassicFragmentMover( onefrag_fragset ) ) ) );
+			utility::pointer::make_shared< protocols::simple_moves::ClassicFragmentMover >( onefrag_fragset ) ) );
 		TS_ASSERT_THROWS_NOTHING( fragmover->initialize( false ) );
 
 		protocols::environment::Environment env( "env" );
@@ -238,7 +238,7 @@ public:
 
 		datamap.add( "ResidueSelector",
 			SELECTOR,
-			core::select::residue_selector::ResidueSelectorOP( new core::select::residue_selector::ResidueIndexSelector( "1-10" ) ) );
+			utility::pointer::make_shared< core::select::residue_selector::ResidueIndexSelector >( "1-10" ) );
 
 		std::stringstream ss;
 		ss << "<FragmentCM selector=\"" << SELECTOR << "\" fragments=\""

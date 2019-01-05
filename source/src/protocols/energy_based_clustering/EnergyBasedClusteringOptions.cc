@@ -61,7 +61,7 @@ EnergyBasedClusteringOptions::~EnergyBasedClusteringOptions() = default;
 
 EnergyBasedClusteringOptionsOP
 EnergyBasedClusteringOptions::clone() const {
-	return EnergyBasedClusteringOptionsOP( new EnergyBasedClusteringOptions( *this ) );
+	return utility::pointer::make_shared< EnergyBasedClusteringOptions >( *this );
 }
 
 /// @brief Initialize this option from the global options system.

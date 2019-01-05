@@ -110,7 +110,7 @@ boost::assign::list_of ("all")("Helix")("HelixCapping")("HelixStart")("Loop")("S
 TaskOperationOP
 LayerDesignOperationCreator::create_task_operation() const
 {
-	return TaskOperationOP( new LayerDesignOperation );
+	return utility::pointer::make_shared< LayerDesignOperation >();
 }
 
 void LayerDesignOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -147,7 +147,7 @@ LayerDesignOperation::LayerDesignOperation():
 	restrict_restypes_( true ),
 	make_pymol_script_( false ),
 	ignore_pikaa_natro_( false ),
-	srbl_( core::select::util::SelectResiduesByLayerOP( new core::select::util::SelectResiduesByLayer ) ),
+	srbl_( utility::pointer::make_shared< core::select::util::SelectResiduesByLayer >() ),
 	blueprint_( /* NULL */ ),
 	use_symmetry_(true)
 {
@@ -165,7 +165,7 @@ LayerDesignOperation::LayerDesignOperation( bool dsgn_core, bool dsgn_boundary, 
 	restrict_restypes_( true ),
 	make_pymol_script_( false ),
 	ignore_pikaa_natro_( false ),
-	srbl_( core::select::util::SelectResiduesByLayerOP( new core::select::util::SelectResiduesByLayer ) ),
+	srbl_( utility::pointer::make_shared< core::select::util::SelectResiduesByLayer >() ),
 	blueprint_( /* NULL */ ),
 	use_symmetry_(true)
 {
@@ -187,7 +187,7 @@ LayerDesignOperation::LayerDesignOperation( bool dsgn_core, bool dsgn_boundary, 
 	verbose_( false ),
 	restrict_restypes_( true ),
 	make_pymol_script_( false ),
-	srbl_( core::select::util::SelectResiduesByLayerOP( new core::select::util::SelectResiduesByLayer ) ),
+	srbl_( utility::pointer::make_shared< core::select::util::SelectResiduesByLayer >() ),
 	blueprint_( nullptr ),
 	use_symmetry_(true)
 {
@@ -249,7 +249,7 @@ LayerDesignOperation::~LayerDesignOperation() = default;
 /// @brief clone
 core::pack::task::operation::TaskOperationOP
 LayerDesignOperation::clone() const {
-	return core::pack::task::operation::TaskOperationOP( new LayerDesignOperation( *this ) );
+	return utility::pointer::make_shared< LayerDesignOperation >( *this );
 }
 
 /// @brief layer to be designed
@@ -1031,7 +1031,7 @@ LayerDesignOperation::parse_tag( TagCOP tag , DataMap & datamap )
 	}
 
 	if ( tag->hasOption( "blueprint" ) ) {
-		blueprint_ = protocols::parser::BluePrintOP( new protocols::parser::BluePrint( tag->getOption< std::string >("blueprint") ) );
+		blueprint_ = utility::pointer::make_shared< protocols::parser::BluePrint >( tag->getOption< std::string >("blueprint") );
 	}
 
 	set_use_symmetry( tag->getOption<bool>("use_symmetry", true) );

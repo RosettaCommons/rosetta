@@ -83,9 +83,9 @@ int main( int argc, char * argv [] )
 		for ( Size i=1; i<=NRES; ++i ) {
 			core::conformation::Residue const& rsd(ps.residue(i));
 			for ( Size ii=1; ii<=rsd.nheavyatoms(); ++ii ) {
-				ps.add_constraint(core::scoring::constraints::ConstraintCOP( new core::scoring::constraints::CoordinateConstraint(
+				ps.add_constraint(utility::pointer::make_shared< core::scoring::constraints::CoordinateConstraint >(
 					core::id::AtomID(ii,i), core::id::AtomID(1,ANCHOR), rsd.xyz(ii),
-					core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc(0.0, COORD_SDV) ))));
+					utility::pointer::make_shared< core::scoring::func::HarmonicFunc >(0.0, COORD_SDV)));
 			}
 		}
 

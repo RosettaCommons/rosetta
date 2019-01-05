@@ -100,7 +100,7 @@ IndelOptimizationMover::apply(
 	HarmonicFuncOP harm_func( new HarmonicFunc( 1.33, .02 ) );
 	AtomID aidC( pose.residue( resnum-1 ).atom_index("C"), resnum-1 );
 	AtomID aidN( pose.residue( resnum ).atom_index("N"), resnum );
-	ConstraintCOP atompair( ConstraintOP( new AtomPairConstraint( aidC, aidN, harm_func ) ) );
+	ConstraintCOP atompair( utility::pointer::make_shared< AtomPairConstraint >( aidC, aidN, harm_func ) );
 	pose.add_constraint( atompair );
 	score_fxn->set_weight( atom_pair_constraint, 1 );
 	}*/

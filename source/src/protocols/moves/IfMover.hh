@@ -43,11 +43,11 @@ public:
 	~IfMover() override = default;
 
 	protocols::moves::MoverOP clone() const override {
-		return protocols::moves::MoverOP( new IfMover(*this) );
+		return utility::pointer::make_shared< IfMover >(*this);
 	}
 
 	protocols::moves::MoverOP fresh_instance() const override {
-		return protocols::moves::MoverOP( new IfMover() );
+		return utility::pointer::make_shared< IfMover >();
 	}
 
 	void apply(core::pose::Pose& pose) override;

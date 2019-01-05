@@ -35,7 +35,7 @@ static basic::Tracer TR("protocols.legacy_sewing.sampling.requirements.LegacySeg
 //////Creator methods/////
 LegacyIntraSegmentRequirementOP
 LegacySegmentDsspRequirementCreator::create_requirement() const{
-	return LegacyIntraSegmentRequirementOP( new LegacySegmentDsspRequirement() );
+	return utility::pointer::make_shared< LegacySegmentDsspRequirement >();
 }
 
 std::string

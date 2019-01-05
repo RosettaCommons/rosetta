@@ -42,9 +42,9 @@ public:
 		BestHotspotCstMover const & init
 	);
 	protocols::moves::MoverOP clone() const override {
-		return( protocols::moves::MoverOP( new BestHotspotCstMover( *this ) ) );
+		return( utility::pointer::make_shared< BestHotspotCstMover >( *this ) );
 	}
-	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new BestHotspotCstMover ); }
+	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< BestHotspotCstMover >(); }
 	void apply( core::pose::Pose & pose ) override;
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 	virtual ~BestHotspotCstMover();

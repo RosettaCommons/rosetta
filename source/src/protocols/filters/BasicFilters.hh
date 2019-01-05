@@ -43,8 +43,8 @@ class TrueFilter : public Filter {
 public:
 	TrueFilter() : Filter( "TrueFilter" ) {}
 	bool apply( core::pose::Pose const & ) const override { return true; }
-	FilterOP clone() const override { return FilterOP( new TrueFilter ); }
-	FilterOP fresh_instance() const override { return FilterOP( new TrueFilter ); }
+	FilterOP clone() const override { return utility::pointer::make_shared< TrueFilter >(); }
+	FilterOP fresh_instance() const override { return utility::pointer::make_shared< TrueFilter >(); }
 
 	std::string
 	name() const override;
@@ -63,8 +63,8 @@ class FalseFilter : public Filter {
 public:
 	FalseFilter() : Filter( "FalseFilter" ) {}
 	bool apply( core::pose::Pose const & ) const override { return false; }
-	FilterOP clone() const override { return FilterOP( new FalseFilter ); }
-	FilterOP fresh_instance() const override { return FilterOP( new FalseFilter ); }
+	FilterOP clone() const override { return utility::pointer::make_shared< FalseFilter >(); }
+	FilterOP fresh_instance() const override { return utility::pointer::make_shared< FalseFilter >(); }
 
 	std::string
 	name() const override;

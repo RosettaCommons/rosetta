@@ -46,7 +46,7 @@ public:
 
 	void setUp() {
 		core_init();
-		pose_ = core::pose::PoseOP( new core::pose::Pose );
+		pose_ = utility::pointer::make_shared< core::pose::Pose >();
 		core::pose::make_pose_from_sequence(*pose_, "AAAAGAPAGPAA", "fa_standard", false);
 	}
 

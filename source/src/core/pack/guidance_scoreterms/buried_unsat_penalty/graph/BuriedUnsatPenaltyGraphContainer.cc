@@ -43,7 +43,7 @@ BuriedUnsatPenaltyGraphContainer::BuriedUnsatPenaltyGraphContainer( BuriedUnsatP
 /// @brief Copy this object and return an owning pointer to the copy.
 basic::datacache::CacheableDataOP
 BuriedUnsatPenaltyGraphContainer::clone() const {
-	return basic::datacache::CacheableDataOP( BuriedUnsatPenaltyGraphContainerOP( new BuriedUnsatPenaltyGraphContainer( *this ) ) );
+	return utility::pointer::make_shared< BuriedUnsatPenaltyGraphContainer >( *this );
 }
 
 } //core

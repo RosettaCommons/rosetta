@@ -126,7 +126,7 @@ void H3PerturbCCD::set_default() {
 
 //clone
 protocols::moves::MoverOP H3PerturbCCD::clone() const {
-	return( protocols::moves::MoverOP( new H3PerturbCCD() ) );
+	return( utility::pointer::make_shared< H3PerturbCCD >() );
 }
 
 
@@ -134,8 +134,8 @@ void H3PerturbCCD::finalize_setup( pose::Pose & pose_in ) {
 
 	read_and_store_fragments(  );
 
-	mc_ = protocols::moves::MonteCarloOP( new protocols::moves::MonteCarlo( pose_in, *lowres_scorefxn_, Temperature_ ) );
-	outer_mc_ = protocols::moves::MonteCarloOP( new protocols::moves::MonteCarlo( pose_in, *lowres_scorefxn_, Temperature_ ) );
+	mc_ = utility::pointer::make_shared< protocols::moves::MonteCarlo >( pose_in, *lowres_scorefxn_, Temperature_ );
+	outer_mc_ = utility::pointer::make_shared< protocols::moves::MonteCarlo >( pose_in, *lowres_scorefxn_, Temperature_ );
 
 }
 
@@ -206,7 +206,7 @@ void H3PerturbCCD::apply( pose::Pose & pose_in ) {
 	//JQX: all the chi angles of all the side chains are flexible
 	//     only the backbone of the trimmed_cdr_h3 is flexible
 	kinematics::MoveMapOP cdrh3_map;
-	cdrh3_map = kinematics::MoveMapOP( new kinematics::MoveMap() );
+	cdrh3_map = utility::pointer::make_shared< kinematics::MoveMap >();
 	cdrh3_map->clear();
 	cdrh3_map->set_chi(true );
 	cdrh3_map->set_bb (false);
@@ -282,10 +282,10 @@ void H3PerturbCCD::apply( pose::Pose & pose_in ) {
 				CCDLoopClosureMoverOP ccd_moves( new CCDLoopClosureMover( trimmed_cdr_h3, cdrh3_map ) );
 				protocols::moves::RepeatMoverOP ccd_cycle;
 				if ( trimmed_cdr_h3.size() <= 5 ) {
-					ccd_cycle = protocols::moves::RepeatMoverOP( new protocols::moves::RepeatMover(ccd_moves,500*trimmed_cdr_h3.size()) );
+					ccd_cycle = utility::pointer::make_shared< protocols::moves::RepeatMover >(ccd_moves,500*trimmed_cdr_h3.size());
 					ccd_cycle->apply( pose_in );
 				} else {
-					ccd_cycle = protocols::moves::RepeatMoverOP( new protocols::moves::RepeatMover(ccd_moves, 10*trimmed_cdr_h3.size()) );
+					ccd_cycle = utility::pointer::make_shared< protocols::moves::RepeatMover >(ccd_moves, 10*trimmed_cdr_h3.size());
 					ccd_cycle->apply( pose_in );
 				}
 				mc_->boltzmann( pose_in );

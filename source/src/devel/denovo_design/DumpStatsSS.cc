@@ -55,7 +55,7 @@ static basic::Tracer TR( "devel/denovo_design/movers/DumpStatsSS" );
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP DumpStatsSSCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new DumpStatsSS );
+// XRW TEMP  return utility::pointer::make_shared< DumpStatsSS >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -153,12 +153,12 @@ DumpStatsSS::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &
 		scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data );
 	}
 	psipred_cmd_ = tag->getOption<std:: string > ("cmd", "");
-	psipred_interface_ = core::io::external::PsiPredInterfaceOP( new core::io::external::PsiPredInterface( psipred_cmd_ ) );
-	ss_predictor_ = protocols::ss_prediction::SS_predictorOP( new protocols::ss_prediction::SS_predictor( "HLE" ) );
+	psipred_interface_ = utility::pointer::make_shared< core::io::external::PsiPredInterface >( psipred_cmd_ );
+	ss_predictor_ = utility::pointer::make_shared< protocols::ss_prediction::SS_predictor >( "HLE" );
 	std::string blueprint_file = tag->getOption< std::string >( "blueprint", "" );
 	if ( blueprint_file != "" ) {
 		TR << "Dssp-derived secondary structure will be overridden by user specified blueprint file." << std::endl;
-		blueprint_ = protocols::parser::BluePrintOP( new protocols::parser::BluePrint( blueprint_file ) );
+		blueprint_ = utility::pointer::make_shared< protocols::parser::BluePrint >( blueprint_file );
 		if ( ! blueprint_ ) {
 			utility_exit_with_message("There was an error getting the blueprint file   loaded.");
 		}
@@ -200,7 +200,7 @@ std::string DumpStatsSSCreator::keyname() const {
 
 protocols::moves::MoverOP
 DumpStatsSSCreator::create_mover() const {
-	return protocols::moves::MoverOP( new DumpStatsSS );
+	return utility::pointer::make_shared< DumpStatsSS >();
 }
 
 void DumpStatsSSCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

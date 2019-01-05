@@ -74,14 +74,14 @@ SimpleMetricFilter::~SimpleMetricFilter()
 protocols::filters::FilterOP
 SimpleMetricFilter::clone() const
 {
-	return protocols::filters::FilterOP( new SimpleMetricFilter( *this ) );
+	return utility::pointer::make_shared< SimpleMetricFilter >( *this );
 }
 
 
 protocols::filters::FilterOP
 SimpleMetricFilter::fresh_instance() const
 {
-	return protocols::filters::FilterOP( new SimpleMetricFilter );
+	return utility::pointer::make_shared< SimpleMetricFilter >();
 }
 
 core::Real
@@ -510,7 +510,7 @@ SimpleMetricFilter::apply( core::pose::Pose const & pose) const
 protocols::filters::FilterOP
 SimpleMetricFilterCreator::create_filter() const
 {
-	return protocols::filters::FilterOP( new SimpleMetricFilter );
+	return utility::pointer::make_shared< SimpleMetricFilter >();
 }
 
 std::string

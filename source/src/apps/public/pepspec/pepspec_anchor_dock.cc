@@ -216,7 +216,7 @@ set_pep_cst(
 	pep_cst_vector.x( pep_cst.x );
 	pep_cst_vector.y( pep_cst.y );
 	pep_cst_vector.z( pep_cst.z );
-	ConstraintCOP this_cst( ConstraintOP( new CoordinateConstraint( id::AtomID( pose.residue( seqpos ).atom_index( pep_cst.atom_name ), seqpos ), id::AtomID( pose.residue( prot_anchor ).atom_index( "CA" ), prot_anchor ), pep_cst_vector, core::scoring::func::FuncOP( new core::scoring::func::FlatHarmonicFunc( pep_cst.x0, pep_cst.sd, pep_cst.tol ) ) ) ) );
+	ConstraintCOP this_cst( utility::pointer::make_shared< CoordinateConstraint >( id::AtomID( pose.residue( seqpos ).atom_index( pep_cst.atom_name ), seqpos ), id::AtomID( pose.residue( prot_anchor ).atom_index( "CA" ), prot_anchor ), pep_cst_vector, utility::pointer::make_shared< core::scoring::func::FlatHarmonicFunc >( pep_cst.x0, pep_cst.sd, pep_cst.tol ) ) );
 	pose.add_constraint( this_cst );
 }
 
@@ -597,9 +597,9 @@ run_pep_prep()
 
 			using pack::task::operation::TaskOperationCOP;
 			pack::task::TaskFactoryOP prepack_task_factory( new pack::task::TaskFactory );
-			prepack_task_factory->push_back( TaskOperationCOP( new pack::task::operation::InitializeFromCommandline() ) );
-			prepack_task_factory->push_back( TaskOperationCOP( new pack::task::operation::IncludeCurrent() ) );
-			prepack_task_factory->push_back( TaskOperationCOP( new pack::task::operation::RestrictToRepacking() ) );
+			prepack_task_factory->push_back( utility::pointer::make_shared< pack::task::operation::InitializeFromCommandline >() );
+			prepack_task_factory->push_back( utility::pointer::make_shared< pack::task::operation::IncludeCurrent >() );
+			prepack_task_factory->push_back( utility::pointer::make_shared< pack::task::operation::RestrictToRepacking >() );
 			protocols::minimization_packing::RotamerTrialsMoverOP prepack_rottrial( new protocols::minimization_packing::RotamerTrialsMover( soft_scorefxn, prepack_task_factory ) );
 			prepack_rottrial->apply( pose );
 

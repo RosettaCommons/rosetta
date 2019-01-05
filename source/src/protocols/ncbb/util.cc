@@ -314,7 +314,7 @@ calculate_statistics( core::pose::Pose const & pose, core::scoring::ScoreFunctio
 
 	//kdrew: probably should repack and minimize here after separation
 	TaskFactoryOP tf( new TaskFactory() );
-	tf->push_back( operation::TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
+	tf->push_back( utility::pointer::make_shared< core::pack::task::operation::InitializeFromCommandline >() );
 	//kdrew: do not do design, makes NATAA if res file is not specified
 	operation::RestrictToRepackingOP rtrp( new operation::RestrictToRepacking() );
 	tf->push_back( rtrp );

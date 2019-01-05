@@ -34,12 +34,12 @@ namespace rotamers {
 
 RotamerLibrarySpecificationOP
 CenrotRotamerLibrarySpecificationCreator::create() const {
-	return RotamerLibrarySpecificationOP( new CenrotRotamerLibrarySpecification );
+	return utility::pointer::make_shared< CenrotRotamerLibrarySpecification >();
 }
 
 RotamerLibrarySpecificationOP
 CenrotRotamerLibrarySpecificationCreator::create( std::istream & input ) const {
-	return RotamerLibrarySpecificationOP( new CenrotRotamerLibrarySpecification( input ) );
+	return utility::pointer::make_shared< CenrotRotamerLibrarySpecification >( input );
 }
 
 std::string

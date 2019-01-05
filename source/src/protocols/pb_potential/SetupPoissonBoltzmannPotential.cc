@@ -95,7 +95,7 @@ SetupPoissonBoltzmannPotential::apply(core::pose::Pose & pose ) {
 
 protocols::moves::MoverOP
 SetupPoissonBoltzmannPotential::clone() const {
-	return protocols::moves::MoverOP( new SetupPoissonBoltzmannPotential( *this ) );
+	return utility::pointer::make_shared< SetupPoissonBoltzmannPotential >( *this );
 }
 
 void
@@ -172,7 +172,7 @@ SetupPoissonBoltzmannPotential::parse_my_tag( utility::tag::TagCOP tag,
 	//-------------------------------------------------------------------------
 	// Initialize DDG for pre-scoring, which compute bound & unbound energies.
 	//-------------------------------------------------------------------------
-	ddg_ = protocols::simple_ddg::ddGOP( new protocols::simple_ddg::ddG() );
+	ddg_ = utility::pointer::make_shared< protocols::simple_ddg::ddG >();
 
 	// Must turn this ON to enable caculation of bound/unbound states. <-- comment from mystery original author
 
@@ -200,7 +200,7 @@ SetupPoissonBoltzmannPotential::parse_my_tag( utility::tag::TagCOP tag,
 protocols::moves::MoverOP
 SetupPoissonBoltzmannPotential::fresh_instance() const {
 
-	return protocols::moves::MoverOP( new SetupPoissonBoltzmannPotential() );
+	return utility::pointer::make_shared< SetupPoissonBoltzmannPotential >();
 }
 
 std::string SetupPoissonBoltzmannPotential::get_name() const {
@@ -263,7 +263,7 @@ std::string SetupPoissonBoltzmannPotentialCreator::keyname() const {
 
 protocols::moves::MoverOP
 SetupPoissonBoltzmannPotentialCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SetupPoissonBoltzmannPotential );
+	return utility::pointer::make_shared< SetupPoissonBoltzmannPotential >();
 }
 
 void SetupPoissonBoltzmannPotentialCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

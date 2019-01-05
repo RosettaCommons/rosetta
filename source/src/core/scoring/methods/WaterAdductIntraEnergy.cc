@@ -38,7 +38,7 @@ methods::EnergyMethodOP
 WaterAdductIntraEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new WaterAdductIntraEnergy );
+	return utility::pointer::make_shared< WaterAdductIntraEnergy >();
 }
 
 ScoreTypes
@@ -51,14 +51,14 @@ WaterAdductIntraEnergyCreator::score_types_for_method() const {
 
 /// ctor
 WaterAdductIntraEnergy::WaterAdductIntraEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new WaterAdductIntraEnergyCreator ) )
+	parent( utility::pointer::make_shared< WaterAdductIntraEnergyCreator >() )
 {}
 
 /// clone
 EnergyMethodOP
 WaterAdductIntraEnergy::clone() const
 {
-	return EnergyMethodOP( new WaterAdductIntraEnergy );
+	return utility::pointer::make_shared< WaterAdductIntraEnergy >();
 }
 
 /////////////////////////////////////////////////////////////////////////////

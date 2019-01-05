@@ -42,7 +42,7 @@ namespace simple_filters {
 static basic::Tracer TR( "protocols.simple_filters.TotalSasaFilter" );
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP TotalSasaFilterCreator::create_filter() const { return protocols::filters::FilterOP( new TotalSasaFilter ); }
+// XRW TEMP TotalSasaFilterCreator::create_filter() const { return utility::pointer::make_shared< TotalSasaFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP TotalSasaFilterCreator::keyname() const { return "TotalSasa"; }
@@ -70,12 +70,12 @@ TotalSasaFilter::~TotalSasaFilter()= default;
 
 filters::FilterOP
 TotalSasaFilter::clone() const{
-	return filters::FilterOP( new TotalSasaFilter( *this ) );
+	return utility::pointer::make_shared< TotalSasaFilter >( *this );
 }
 
 filters::FilterOP
 TotalSasaFilter::fresh_instance() const{
-	return filters::FilterOP( new TotalSasaFilter );
+	return utility::pointer::make_shared< TotalSasaFilter >();
 }
 
 core::pack::task::TaskFactoryOP
@@ -276,7 +276,7 @@ std::string TotalSasaFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 TotalSasaFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new TotalSasaFilter );
+	return utility::pointer::make_shared< TotalSasaFilter >();
 }
 
 void TotalSasaFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

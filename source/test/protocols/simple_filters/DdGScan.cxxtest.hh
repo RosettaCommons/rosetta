@@ -47,7 +47,7 @@ class MockddG : public protocols::simple_ddg::ddG {
 
 public:
 	MockddG() {
-		sf_ = StubMultiFilterOP( new StubMultiFilter( false ) );
+		sf_ = utility::pointer::make_shared< StubMultiFilter >( false );
 		sf_->push_back( 7.0 );
 		sf_->push_back( 107.0 );
 	}
@@ -90,12 +90,12 @@ public:
 		// test_monomer_pose_ = create_twores_1ubq_poseop();
 		scorefxn_ = scorefxn_ = core::scoring::get_score_function();
 
-		ddg_mover_ = protocols::simple_ddg::ddGOP( new MockddG() );
-		ddg_scan_mover_ = protocols::simple_ddg::DdGScanOP( new protocols::simple_ddg::DdGScan() );
+		ddg_mover_ = utility::pointer::make_shared< MockddG >();
+		ddg_scan_mover_ = utility::pointer::make_shared< protocols::simple_ddg::DdGScan >();
 		ddg_scan_mover_->scorefxn( scorefxn_ );
 		ddg_scan_mover_->repeats( 1 );
 
-		tf_ = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory );
+		tf_ = utility::pointer::make_shared< core::pack::task::TaskFactory >();
 
 		core::pack::task::operation::PreventRepackingOP prevent_repack_taskop(
 			new core::pack::task::operation::PreventRepacking()

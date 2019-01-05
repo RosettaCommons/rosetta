@@ -218,7 +218,7 @@ SecStructMinimizeMover::parse_my_tag(
 
 // MoverCreator
 // XRW TEMP moves::MoverOP SecStructMinimizeMoverCreator::create_mover() const {
-// XRW TEMP  return moves::MoverOP( new SecStructMinimizeMover() );
+// XRW TEMP  return utility::pointer::make_shared< SecStructMinimizeMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string SecStructMinimizeMoverCreator::keyname() const {
@@ -255,7 +255,7 @@ std::string SecStructMinimizeMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 SecStructMinimizeMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SecStructMinimizeMover );
+	return utility::pointer::make_shared< SecStructMinimizeMover >();
 }
 
 void SecStructMinimizeMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

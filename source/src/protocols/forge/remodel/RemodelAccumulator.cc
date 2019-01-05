@@ -82,13 +82,13 @@ RemodelAccumulator::~RemodelAccumulator()= default;
 
 /// @brief clone this object
 RemodelAccumulator::MoverOP RemodelAccumulator::clone() const {
-	return RemodelAccumulator::MoverOP( new RemodelAccumulator( *this ) );
+	return utility::pointer::make_shared< RemodelAccumulator >( *this );
 }
 
 
 /// @brief create this type of object
 RemodelAccumulator::MoverOP RemodelAccumulator::fresh_instance() const {
-	return RemodelAccumulator::MoverOP( new RemodelAccumulator() );
+	return utility::pointer::make_shared< RemodelAccumulator >();
 }
 
 
@@ -274,7 +274,7 @@ core::Size RemodelAccumulator::recover_checkpoint()
 			Size segment_length = (dummyPose.size())/repeat_number;
 			for ( Size rep = 1; rep < repeat_number; rep++ ) { // from 1 since first segment don't need self-linking
 				for ( Size res = 1; res <= segment_length; res++ ) {
-					dummyPose.add_constraint( core::scoring::constraints::ConstraintCOP( core::scoring::constraints::ConstraintOP( new ResidueTypeLinkingConstraint(dummyPose, res, res+(segment_length*rep), bonus) ) ) );
+					dummyPose.add_constraint( utility::pointer::make_shared< ResidueTypeLinkingConstraint >(dummyPose, res, res+(segment_length*rep), bonus) );
 					count++;
 				}
 			}
@@ -308,13 +308,13 @@ core::Size RemodelAccumulator::recover_checkpoint()
 
 void RemodelAccumulator::cluster_pose(){
 	runtime_assert(cluster_switch_);
-	cluster_ = ClusterPhilStyleOP( new protocols::cluster::ClusterPhilStyle() );
+	cluster_ = utility::pointer::make_shared< protocols::cluster::ClusterPhilStyle >();
 	run_cluster();
 }
 
 void RemodelAccumulator::cluster_loop(){
 	runtime_assert(cluster_switch_);
-	cluster_ = ClusterPhilStyleOP( new protocols::cluster::ClusterPhilStyle_Loop(working_model_.loops) );
+	cluster_ = utility::pointer::make_shared< protocols::cluster::ClusterPhilStyle_Loop >(working_model_.loops);
 	//debug
 	TR << "loops to build " << working_model_.loops << std::endl;
 	run_cluster();

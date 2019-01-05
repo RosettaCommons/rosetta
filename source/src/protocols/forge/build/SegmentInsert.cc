@@ -209,7 +209,7 @@ SegmentInsert & SegmentInsert::operator =( SegmentInsert const & rval ) {
 
 /// @brief clone this object
 BuildInstructionOP SegmentInsert::clone() const {
-	return BuildInstructionOP( new SegmentInsert( *this ) );
+	return utility::pointer::make_shared< SegmentInsert >( *this );
 }
 
 

@@ -433,7 +433,7 @@ AtomLevelDomainMap::initialize( core::pose::Pose const & pose,
 	using namespace core::pose::full_model_info;
 
 	// need a map to a reference pose without variants.
-	atom_id_mapper_ = AtomID_MapperCOP( new AtomID_Mapper( pose, map_to_vanilla_pose ) );
+	atom_id_mapper_ = utility::pointer::make_shared< AtomID_Mapper >( pose, map_to_vanilla_pose );
 
 	utility::vector1< Size > fixed_domain( pose.size(), 0 );
 	if ( full_model_info_defined( pose ) ) {

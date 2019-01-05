@@ -38,7 +38,7 @@ WriteableCacheableMap::WriteableCacheableMap( WriteableCacheableMap const& )= de
 WriteableCacheableMap::~WriteableCacheableMap() = default;
 
 CacheableDataOP WriteableCacheableMap::clone() const {
-	return CacheableDataOP( new WriteableCacheableMap(*this) );
+	return utility::pointer::make_shared< WriteableCacheableMap >(*this);
 }
 
 WriteableCacheableMap::DataMap & WriteableCacheableMap::map() {

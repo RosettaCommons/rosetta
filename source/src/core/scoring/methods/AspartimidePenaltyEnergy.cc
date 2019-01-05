@@ -80,7 +80,7 @@ methods::EnergyMethodOP
 AspartimidePenaltyEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
-	return methods::EnergyMethodOP( new AspartimidePenaltyEnergy( options.aspartimide_penalty_value() ) );
+	return utility::pointer::make_shared< AspartimidePenaltyEnergy >( options.aspartimide_penalty_value() );
 }
 
 ScoreTypes
@@ -93,7 +93,7 @@ AspartimidePenaltyEnergyCreator::score_types_for_method() const {
 /// @brief Constructor.
 ///
 AspartimidePenaltyEnergy::AspartimidePenaltyEnergy( ) :
-	parent( methods::EnergyMethodCreatorOP( new AspartimidePenaltyEnergyCreator ) ),
+	parent( utility::pointer::make_shared< AspartimidePenaltyEnergyCreator >() ),
 	aspartimide_penalty_value_( 25.0 )
 {}
 
@@ -101,7 +101,7 @@ AspartimidePenaltyEnergy::AspartimidePenaltyEnergy( ) :
 /// @details The penalty value is the energetic hit for each aspartimide in the
 /// sequence (which will be multiplied by the score function's weight, of course).
 AspartimidePenaltyEnergy::AspartimidePenaltyEnergy( core::Real const &penalty_value ) :
-	parent( methods::EnergyMethodCreatorOP( new AspartimidePenaltyEnergyCreator ) ),
+	parent( utility::pointer::make_shared< AspartimidePenaltyEnergyCreator >() ),
 	aspartimide_penalty_value_( penalty_value )
 {}
 
@@ -113,7 +113,7 @@ AspartimidePenaltyEnergy::~AspartimidePenaltyEnergy( ) = default;
 ///
 EnergyMethodOP
 AspartimidePenaltyEnergy::clone() const {
-	return EnergyMethodOP( new AspartimidePenaltyEnergy( *this ) );
+	return utility::pointer::make_shared< AspartimidePenaltyEnergy >( *this );
 }
 
 /// @brief Method called before scoring a pose.

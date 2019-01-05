@@ -80,12 +80,12 @@ PoseFromPDBLoader::create_resource(
 basic::resource_manager::ResourceOptionsOP
 PoseFromPDBLoader::default_options() const
 {
-	return basic::resource_manager::ResourceOptionsOP( new ImportPoseOptions() );
+	return utility::pointer::make_shared< ImportPoseOptions >();
 }
 
 basic::resource_manager::ResourceLoaderOP PoseFromPDBLoaderCreator::create_resource_loader() const
 {
-	return basic::resource_manager::ResourceLoaderOP( new PoseFromPDBLoader() );
+	return utility::pointer::make_shared< PoseFromPDBLoader >();
 }
 
 std::string PoseFromPDBLoaderCreator::loader_type() const

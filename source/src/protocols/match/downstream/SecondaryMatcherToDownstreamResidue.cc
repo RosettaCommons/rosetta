@@ -70,7 +70,7 @@ SecondaryMatcherToDownstreamResidue::~SecondaryMatcherToDownstreamResidue() = de
 DownstreamAlgorithmOP
 SecondaryMatcherToDownstreamResidue::clone() const
 {
-	return DownstreamAlgorithmOP( new SecondaryMatcherToDownstreamResidue( *this ) );
+	return utility::pointer::make_shared< SecondaryMatcherToDownstreamResidue >( *this );
 }
 
 
@@ -329,7 +329,7 @@ SecondaryMatcherToDownstreamResidue::prepare_for_hit_generation(
 	TR << "Preparing for hit generation" << std::endl;
 
 	/// Initialize the target_geomcst_coords_ object;
-	target_downstream_coords_ = TargetRotamerCoordsOP( new TargetRotamerCoords );
+	target_downstream_coords_ = utility::pointer::make_shared< TargetRotamerCoords >();
 	Size n_target_restypes = 1;
 	target_downstream_coords_->set_num_restypes( n_target_restypes );
 	target_downstream_coords_->set_restype( n_target_restypes, downstream_restype_ );

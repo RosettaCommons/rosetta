@@ -81,14 +81,14 @@ Job::~Job()= default;
 
 /// @brief returns a copy of this object whose "output fields" are zeroed out.  Used by the JobDistributor in cases where the job fails and must be retried to prevent accumulation of Job state after a failure.  This implementation was chosen over a clear_all_output function to prevent mover A from deleting mover B's hard work!  You probably should not be trying to call this function.
 JobOP Job::copy_without_output() const{
-	return JobOP( new Job(inner_job_, nstruct_index_) );
+	return utility::pointer::make_shared< Job >(inner_job_, nstruct_index_);
 }
 
 /// @brief Return an owning pointer to a copy of this object.
 ///
 JobOP Job::clone() const
 {
-	return JobOP( new Job( *this ) );
+	return utility::pointer::make_shared< Job >( *this );
 }
 
 InnerJobCOP Job::inner_job() const { return inner_job_; }
@@ -263,7 +263,7 @@ void Job::call_output_observers( core::pose::Pose const & pose )
 }
 
 
-JobCOP const JD2_BOGUS_JOB(  JobOP( new Job( InnerJobOP( new InnerJob("EMPTY_JOB_use_jd2", 0)), 0 ) ) );
+JobCOP const JD2_BOGUS_JOB(  utility::pointer::make_shared< Job >( utility::pointer::make_shared< InnerJob >("EMPTY_JOB_use_jd2", 0), 0 ) );
 
 bool
 operator==(

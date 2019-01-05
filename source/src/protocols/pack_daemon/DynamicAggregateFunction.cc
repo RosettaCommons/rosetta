@@ -582,7 +582,7 @@ SurrogateVariableExpression::differentiate( std::string const & varname ) const
 
 DynamicAggregateFunction::DynamicAggregateFunction() :
 	num_entity_elements_( 0 ),
-	file_contents_( utility::io::FileContentsMapOP( new utility::io::FileContentsMap ) )
+	file_contents_( utility::pointer::make_shared< utility::io::FileContentsMap >() )
 {}
 
 DynamicAggregateFunction::~DynamicAggregateFunction() = default;
@@ -760,79 +760,79 @@ DynamicAggregateFunction::function_expression(
 	std::string const fname = function->name();
 	if ( fname == "mean" ) {
 		utility::vector1< VectorExpressionCOP > vector_expressions = verify_vector_arguments( fname, args, 1 );
-		return ExpressionCOP( ExpressionOP( new Mean( vector_expressions[1] ) ) );
+		return utility::pointer::make_shared< Mean >( vector_expressions[1] );
 	} else if ( fname == "vmax" ) {
 		utility::vector1< VectorExpressionCOP > vector_expressions = verify_vector_arguments( fname, args, 1 );
-		return ExpressionCOP( ExpressionOP( new VMax( vector_expressions[1] ) ) );
+		return utility::pointer::make_shared< VMax >( vector_expressions[1] );
 	} else if ( fname == "vmin" ) {
 		utility::vector1< VectorExpressionCOP > vector_expressions = verify_vector_arguments( fname, args, 1 );
-		return ExpressionCOP( ExpressionOP( new VMin( vector_expressions[1] ) ) );
+		return utility::pointer::make_shared< VMin >( vector_expressions[1] );
 	} else if ( fname == "vmax_by" ) {
 		utility::vector1< VectorExpressionCOP > vector_expressions = verify_vector_arguments( fname, args, 2 );
-		return ExpressionCOP( ExpressionOP( new VMaxBy( vector_expressions[1], vector_expressions[2] ) ) );
+		return utility::pointer::make_shared< VMaxBy >( vector_expressions[1], vector_expressions[2] );
 	} else if ( fname == "vmin_by" ) {
 		utility::vector1< VectorExpressionCOP > vector_expressions = verify_vector_arguments( fname, args, 2 );
-		return ExpressionCOP( ExpressionOP( new VMinBy( vector_expressions[1], vector_expressions[2] ) ) );
+		return utility::pointer::make_shared< VMinBy >( vector_expressions[1], vector_expressions[2] );
 	} else if ( fname == "exp" ) {
 		if ( args.size() != 1 ) {
 			throw CREATE_EXCEPTION(utility::excn::Exception,  "exp expression construction requested with more than one argument: " + utility::to_string( args.size() )  );
 		}
-		return ExpressionCOP( ExpressionOP( new ExpExpression( args[ 1 ] ) ) );
+		return utility::pointer::make_shared< ExpExpression >( args[ 1 ] );
 	} else if ( fname == "ln" ) {
 		if ( args.size() != 1 ) {
 			throw CREATE_EXCEPTION(utility::excn::Exception,  "ln expression construction requested with more than one argument: " + utility::to_string( args.size() )  );
 		}
-		return ExpressionCOP( ExpressionOP( new LnExpression( args[ 1 ] ) ) );
+		return utility::pointer::make_shared< LnExpression >( args[ 1 ] );
 	} else if ( fname == "pow" ) {
 		if ( args.size() != 2 ) {
 			throw CREATE_EXCEPTION(utility::excn::Exception,  "pow expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return ExpressionCOP( ExpressionOP( new PowExpression( args[ 1 ], args[ 2 ] ) ) );
+		return utility::pointer::make_shared< PowExpression >( args[ 1 ], args[ 2 ] );
 	} else if ( fname == "ite" ) {
 		if ( args.size() != 3 ) {
 			throw CREATE_EXCEPTION(utility::excn::Exception,  "ite expression construction requested with nargs != 3. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return ExpressionCOP( ExpressionOP( new ITEExpression( args[ 1 ], args[ 2 ], args[ 3 ] ) ) );
+		return utility::pointer::make_shared< ITEExpression >( args[ 1 ], args[ 2 ], args[ 3 ] );
 	} else if ( fname == "abs" ) {
 		if ( args.size() != 1 ) {
 			throw CREATE_EXCEPTION(utility::excn::Exception,  "abs expression construction requested with nargs != 1. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return ExpressionCOP( ExpressionOP( new AbsoluteValueExpression( args[ 1 ] ) ) );
+		return utility::pointer::make_shared< AbsoluteValueExpression >( args[ 1 ] );
 	} else if ( fname == "gt" ) {
 		if ( args.size() != 2 ) {
 			throw CREATE_EXCEPTION(utility::excn::Exception,  "gt expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return ExpressionCOP( ExpressionOP( new GT_Expression( args[ 1 ], args[ 2 ] ) ) );
+		return utility::pointer::make_shared< GT_Expression >( args[ 1 ], args[ 2 ] );
 	} else if ( fname == "lt" ) {
 		if ( args.size() != 2 ) {
 			throw CREATE_EXCEPTION(utility::excn::Exception,  "lt expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return ExpressionCOP( ExpressionOP( new LT_Expression( args[ 1 ], args[ 2 ] ) ) );
+		return utility::pointer::make_shared< LT_Expression >( args[ 1 ], args[ 2 ] );
 	} else if ( fname == "gte" ) {
 		if ( args.size() != 2 ) {
 			throw CREATE_EXCEPTION(utility::excn::Exception,  "gte expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return ExpressionCOP( ExpressionOP( new GTE_Expression( args[ 1 ], args[ 2 ] ) ) );
+		return utility::pointer::make_shared< GTE_Expression >( args[ 1 ], args[ 2 ] );
 	} else if ( fname == "lte" ) {
 		if ( args.size() != 2 ) {
 			throw CREATE_EXCEPTION(utility::excn::Exception,  "lte expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return ExpressionCOP( ExpressionOP( new LTE_Expression( args[ 1 ], args[ 2 ] ) ) );
+		return utility::pointer::make_shared< LTE_Expression >( args[ 1 ], args[ 2 ] );
 	} else if ( fname == "and" ) {
 		if ( args.size() != 2 ) {
 			throw CREATE_EXCEPTION(utility::excn::Exception,  "and expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return ExpressionCOP( ExpressionOP( new AndExpression( args[ 1 ], args[ 2 ] ) ) );
+		return utility::pointer::make_shared< AndExpression >( args[ 1 ], args[ 2 ] );
 	} else if ( fname == "or" ) {
 		if ( args.size() != 2 ) {
 			throw CREATE_EXCEPTION(utility::excn::Exception,  "or expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return ExpressionCOP( ExpressionOP( new OrExpression( args[ 1 ], args[ 2 ] ) ) );
+		return utility::pointer::make_shared< OrExpression >( args[ 1 ], args[ 2 ] );
 	} else if ( fname == "not" ) {
 		if ( args.size() != 1 ) {
 			throw CREATE_EXCEPTION(utility::excn::Exception,  "not expression construction requested with nargs != 1. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return ExpressionCOP( ExpressionOP( new NotExpression( args[ 1 ] ) ) );
+		return utility::pointer::make_shared< NotExpression >( args[ 1 ] );
 	}
 	throw CREATE_EXCEPTION(utility::excn::Exception,  "Unrecognized function requested of DynamicAggregateFunction: " + fname );
 	return nullptr;
@@ -991,7 +991,7 @@ DynamicAggregateFunction::npd_variable_indices_for_state_end( core::Size state_i
 void
 DynamicAggregateFunction::initialize_scanner()
 {
-	scanner_ = numeric::expression_parser::ArithmeticScannerOP( new ArithmeticScanner( false ) ); /// constructor without adding the "standard" functions
+	scanner_ = utility::pointer::make_shared< ArithmeticScanner >( false ); /// constructor without adding the "standard" functions
 	scanner_->add_function( "sqrt", 1 ); // neiter min nor max are allowed functions.
 	scanner_->add_function( "mean", 1 );
 	scanner_->add_function( "vmax", 1 );
@@ -1189,7 +1189,7 @@ DynamicAggregateFunction::process_POSE_ENERGY_line(
 	// ok -- go ahead and score the pose
 	TR << "  Scoring pose from pdb file '" << pdb_name << "'" << std::endl;
 	core::Real score = (*sfxn_)( pose );
-	scalar_expression_map_[ varname ] = numeric::expression_parser::VariableExpressionCOP( numeric::expression_parser::VariableExpressionOP( new VariableExpression( varname, score ) ) );
+	scalar_expression_map_[ varname ] = utility::pointer::make_shared< VariableExpression >( varname, score );
 	save_scalar_variable( varname, line_number );
 
 	TR << "Saving POSE_ENERGY of " << score << " in variable " << varname << std::endl;
@@ -1277,11 +1277,11 @@ DynamicAggregateFunction::process_POSE_ENERGY_VECTOR_line(
 		core::Real score = (*sfxn_)( pose );
 		std::string newvar = varname + "_" + *iter;
 		TR << "  Saving score of " << score << " in variable " << newvar << std::endl;
-		pose_energy_variables[ count_pdbs ] = numeric::expression_parser::VariableExpressionOP( new VariableExpression( newvar, score ) );
+		pose_energy_variables[ count_pdbs ] = utility::pointer::make_shared< VariableExpression >( newvar, score );
 	}
 
 	save_vector_variable( varname, line_number );
-	vector_expression_map_[ varname ] = protocols::pack_daemon::VectorExpressionCOP( protocols::pack_daemon::VectorExpressionOP( new VariableVectorExpression( varname, pose_energy_variables ) ) );
+	vector_expression_map_[ varname ] = utility::pointer::make_shared< VariableVectorExpression >( varname, pose_energy_variables );
 
 
 }
@@ -1673,7 +1673,7 @@ DynamicAggregateFunction::process_ENTITY_FUNCTION_line(
 	entfunc->initialize_from_input_file( iss );
 
 	save_scalar_variable( entityfunc_name, line_number );
-	entity_funcs_[ entityfunc_name ] = std::make_pair( entfunc, SurrogateVariableExpressionOP( new SurrogateVariableExpression( entityfunc_name ) ) );
+	entity_funcs_[ entityfunc_name ] = std::make_pair( entfunc, utility::pointer::make_shared< SurrogateVariableExpression >( entityfunc_name ) );
 	entity_funcs_dec_line_[ entityfunc_name ] = line_number;
 }
 
@@ -1704,7 +1704,7 @@ DynamicAggregateFunction::process_FITNESS_line(
 	TR << "On line " << line_number << ", attempting to tokenize FITNESS expression: " << rest_of_line << std::endl;
 	TokenSetOP tokens = scanner_->scan( rest_of_line );
 	TR << "On line " << line_number << ", attempting to parse expression: " << rest_of_line << std::endl;
-	fitness_expression_ast = ArithmeticASTExpressionOP( new ArithmeticASTExpression );
+	fitness_expression_ast = utility::pointer::make_shared< ArithmeticASTExpression >();
 	fitness_expression_ast->parse( *tokens );
 	TR << "FITNESS on line " << line_number << " successfully parsed" << std::endl;
 }
@@ -1821,7 +1821,7 @@ DynamicAggregateFunction::create_state_variable_expressions(
 			iter != iter_end; ++iter ) {
 		++count_state;
 		++count_variable_index;
-		variable_expressions_for_states_[ count_state ] = numeric::expression_parser::VariableExpressionOP( new VariableExpression( iter->first, 0.0 ) );
+		variable_expressions_for_states_[ count_state ] = utility::pointer::make_shared< VariableExpression >( iter->first, 0.0 );
 		variable_expressions_[ count_variable_index ] = variable_expressions_for_states_[ count_state ];
 		files_for_state_[ count_state ] = iter->second;
 		named_state_expression_map_[ iter->first ] = variable_expressions_for_states_[ count_state ];
@@ -1879,7 +1879,7 @@ DynamicAggregateFunction::create_variable_vector_expressions(
 			++count_variable_index;
 			std::string ii_varname( iter->first + "_" + utility::to_string( ii ) );
 			TR << "Adding state " << ii_varname << " with state index " << count_state << std::endl;
-			variable_expressions_for_states_[ count_state ] = numeric::expression_parser::VariableExpressionOP( new VariableExpression( ii_varname, 0.0 ) );
+			variable_expressions_for_states_[ count_state ] = utility::pointer::make_shared< VariableExpression >( ii_varname, 0.0 );
 			indices[ ii ] = count_state;
 			variable_expressions_[ count_variable_index ] = variable_expressions_for_states_[ count_state ];
 			files_for_state_[ count_state ] = iter->second[ ii ];
@@ -1904,13 +1904,13 @@ DynamicAggregateFunction::create_variable_vector_expressions(
 				}
 			}
 		}
-		vector_expression_map_[ iter->first ] = state_vector_variables_[ iter->first ] = protocols::pack_daemon::VariableVectorExpressionOP( new VariableVectorExpression( iter->first, variables ) );
+		vector_expression_map_[ iter->first ] = state_vector_variables_[ iter->first ] = utility::pointer::make_shared< VariableVectorExpression >( iter->first, variables );
 		if ( has_npd_properties ) {
 			std::list< std::pair< std::string, std::string > > const & npdlist( npd_properties_for_state_variables_[ iter->first ]);
 			for ( auto const & npditer : npdlist ) {
 				//std::string ii_npd_varname = npditer->second + "_" + utility::to_string( ii );
 				//npd_property_variables[ npditer->first ].push_back( new VariableExpressin( ii_npd_varname, 0.0 ) );
-				vector_expression_map_[ npditer.second ] = protocols::pack_daemon::VectorExpressionCOP( protocols::pack_daemon::VectorExpressionOP( new VariableVectorExpression( npditer.second, npd_property_variables[ npditer.first ] ) ) );
+				vector_expression_map_[ npditer.second ] = utility::pointer::make_shared< VariableVectorExpression >( npditer.second, npd_property_variables[ npditer.first ] );
 			}
 		}
 		state_indices_for_state_vector_[ iter->first ] = indices;
@@ -1951,7 +1951,7 @@ DynamicAggregateFunction::create_scalar_and_vector_expression_variable_expressio
 			}
 			variables.push_back( scvar->second );
 		}
-		vector_expression_map_[ vector_variable.first ] = protocols::pack_daemon::VectorExpressionCOP( protocols::pack_daemon::VectorExpressionOP( new VariableVectorExpression( vector_variable.first, variables ) ) );
+		vector_expression_map_[ vector_variable.first ] = utility::pointer::make_shared< VariableVectorExpression >( vector_variable.first, variables );
 	}
 }
 
@@ -2552,74 +2552,74 @@ EntityFunc::function_expression(
 {
 	std::string const fname = function->name();
 	if ( fname == "max" ) {
-		return ExpressionCOP( ExpressionOP( new MaxExpression( args[ 1 ], args[ 2 ] ) ) );
+		return utility::pointer::make_shared< MaxExpression >( args[ 1 ], args[ 2 ] );
 	} else if ( fname == "min" ) {
-		return ExpressionCOP( ExpressionOP( new MinExpression( args[ 1 ], args[ 2 ] ) ) );
+		return utility::pointer::make_shared< MinExpression >( args[ 1 ], args[ 2 ] );
 	} else if ( fname == "exp" ) {
 		if ( args.size() != 1 ) {
 			throw CREATE_EXCEPTION(utility::excn::Exception,  "exp expression construction requested with more than one argument: " + utility::to_string( args.size() )  );
 		}
-		return ExpressionCOP( ExpressionOP( new ExpExpression( args[ 1 ] ) ) );
+		return utility::pointer::make_shared< ExpExpression >( args[ 1 ] );
 	} else if ( fname == "ln" ) {
 		if ( args.size() != 1 ) {
 			throw CREATE_EXCEPTION(utility::excn::Exception,  "ln expression construction requested with more than one argument: " + utility::to_string( args.size() )  );
 		}
-		return ExpressionCOP( ExpressionOP( new LnExpression( args[ 1 ] ) ) );
+		return utility::pointer::make_shared< LnExpression >( args[ 1 ] );
 	} else if ( fname == "pow" ) {
 		if ( args.size() != 2 ) {
 			throw CREATE_EXCEPTION(utility::excn::Exception,  "pow expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return ExpressionCOP( ExpressionOP( new PowExpression( args[ 1 ], args[ 2 ] ) ) );
+		return utility::pointer::make_shared< PowExpression >( args[ 1 ], args[ 2 ] );
 	} else if ( fname == "ite" ) {
 		if ( args.size() != 3 ) {
 			throw CREATE_EXCEPTION(utility::excn::Exception,  "ite expression construction requested with nargs != 3. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return ExpressionCOP( ExpressionOP( new ITEExpression( args[ 1 ], args[ 2 ], args[ 3 ] ) ) );
+		return utility::pointer::make_shared< ITEExpression >( args[ 1 ], args[ 2 ], args[ 3 ] );
 	} else if ( fname == "abs" ) {
 		if ( args.size() != 1 ) {
 			throw CREATE_EXCEPTION(utility::excn::Exception,  "abs expression construction requested with nargs != 1. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return ExpressionCOP( ExpressionOP( new AbsoluteValueExpression( args[ 1 ] ) ) );
+		return utility::pointer::make_shared< AbsoluteValueExpression >( args[ 1 ] );
 	} else if ( fname == "gt" ) {
 		if ( args.size() != 2 ) {
 			throw CREATE_EXCEPTION(utility::excn::Exception,  "gt expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return ExpressionCOP( ExpressionOP( new GT_Expression( args[ 1 ], args[ 2 ] ) ) );
+		return utility::pointer::make_shared< GT_Expression >( args[ 1 ], args[ 2 ] );
 	} else if ( fname == "lt" ) {
 		if ( args.size() != 2 ) {
 			throw CREATE_EXCEPTION(utility::excn::Exception,  "lt expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return ExpressionCOP( ExpressionOP( new LT_Expression( args[ 1 ], args[ 2 ] ) ) );
+		return utility::pointer::make_shared< LT_Expression >( args[ 1 ], args[ 2 ] );
 	} else if ( fname == "gte" ) {
 		if ( args.size() != 2 ) {
 			throw CREATE_EXCEPTION(utility::excn::Exception,  "gte expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return ExpressionCOP( ExpressionOP( new GTE_Expression( args[ 1 ], args[ 2 ] ) ) );
+		return utility::pointer::make_shared< GTE_Expression >( args[ 1 ], args[ 2 ] );
 	} else if ( fname == "lte" ) {
 		if ( args.size() != 2 ) {
 			throw CREATE_EXCEPTION(utility::excn::Exception,  "lte expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return ExpressionCOP( ExpressionOP( new LTE_Expression( args[ 1 ], args[ 2 ] ) ) );
+		return utility::pointer::make_shared< LTE_Expression >( args[ 1 ], args[ 2 ] );
 	} else if ( fname == "eq" ) {
 		if ( args.size() != 2 ) {
 			throw CREATE_EXCEPTION(utility::excn::Exception,  "eq expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return ExpressionCOP( ExpressionOP( new EqualsExpression( args[ 1 ], args[ 2 ] ) ) );
+		return utility::pointer::make_shared< EqualsExpression >( args[ 1 ], args[ 2 ] );
 	} else if ( fname == "and" ) {
 		if ( args.size() != 2 ) {
 			throw CREATE_EXCEPTION(utility::excn::Exception,  "and expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return ExpressionCOP( ExpressionOP( new AndExpression( args[ 1 ], args[ 2 ] ) ) );
+		return utility::pointer::make_shared< AndExpression >( args[ 1 ], args[ 2 ] );
 	} else if ( fname == "or" ) {
 		if ( args.size() != 2 ) {
 			throw CREATE_EXCEPTION(utility::excn::Exception,  "or expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return ExpressionCOP( ExpressionOP( new OrExpression( args[ 1 ], args[ 2 ] ) ) );
+		return utility::pointer::make_shared< OrExpression >( args[ 1 ], args[ 2 ] );
 	} else if ( fname == "not" ) {
 		if ( args.size() != 1 ) {
 			throw CREATE_EXCEPTION(utility::excn::Exception,  "not expression construction requested with nargs != 1. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return ExpressionCOP( ExpressionOP( new NotExpression( args[ 1 ] ) ) );
+		return utility::pointer::make_shared< NotExpression >( args[ 1 ] );
 	}
 
 	throw CREATE_EXCEPTION(utility::excn::Exception,  "Unable to find function with name " + fname + " in"
@@ -2632,7 +2632,7 @@ EntityFunc::function_expression(
 void
 EntityFunc::initialize_scanner_and_function_names()
 {
-	scanner_ = numeric::expression_parser::ArithmeticScannerOP( new ArithmeticScanner( false ) );
+	scanner_ = utility::pointer::make_shared< ArithmeticScanner >( false );
 	scanner_->add_function( "sqrt", 1 );
 	scanner_->add_function( "max", 2 );
 	scanner_->add_function( "min", 2 );
@@ -3115,7 +3115,7 @@ EntityFunc::process_SCORE_line(
 	TR << "On line " << line_number << ", attempting to tokenize score expression: " << rest_of_line << std::endl;
 	TokenSetOP tokens = scanner_->scan( rest_of_line );
 	TR << "On line " << line_number << ", attempting to parse score expression: " << rest_of_line << std::endl;
-	score_expression_ast = ArithmeticASTExpressionOP( new ArithmeticASTExpression );
+	score_expression_ast = utility::pointer::make_shared< ArithmeticASTExpression >();
 	score_expression_ast->parse( *tokens );
 
 }

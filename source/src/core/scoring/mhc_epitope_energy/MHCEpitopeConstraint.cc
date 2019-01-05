@@ -76,7 +76,7 @@ MHCEpitopeConstraint::~MHCEpitopeConstraint() = default;
 /// @brief Clone operator
 ///
 core::scoring::constraints::ConstraintOP
-MHCEpitopeConstraint::clone() const { return core::scoring::constraints::ConstraintOP( new MHCEpitopeConstraint( *this ) ); }
+MHCEpitopeConstraint::clone() const { return utility::pointer::make_shared< MHCEpitopeConstraint >( *this ); }
 
 bool MHCEpitopeConstraint::operator == ( Constraint const & other ) const
 {

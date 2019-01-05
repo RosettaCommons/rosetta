@@ -45,7 +45,7 @@ BlueprintArchitect::~BlueprintArchitect() = default;
 DeNovoArchitectOP
 BlueprintArchitect::clone() const
 {
-	return DeNovoArchitectOP( new BlueprintArchitect( *this ) );
+	return utility::pointer::make_shared< BlueprintArchitect >( *this );
 }
 
 std::string
@@ -109,7 +109,7 @@ BlueprintArchitect::design( core::pose::Pose const & pose, core::Real & ) const
 void
 BlueprintArchitect::set_blueprint( protocols::parser::BluePrint const & bp )
 {
-	blueprint_ = protocols::parser::BluePrintCOP( new protocols::parser::BluePrint( bp ) );
+	blueprint_ = utility::pointer::make_shared< protocols::parser::BluePrint >( bp );
 }
 
 /// @brief Adds helix pairings to the given SD using the HHPAIR line of the blueprint
@@ -245,7 +245,7 @@ BlueprintArchitect::get_template_segments( StructureData const & sd ) const
 DeNovoArchitectOP
 BlueprintArchitectCreator::create_architect( std::string const & architect_id ) const
 {
-	return DeNovoArchitectOP( new BlueprintArchitect( architect_id ) );
+	return utility::pointer::make_shared< BlueprintArchitect >( architect_id );
 }
 
 std::string

@@ -60,7 +60,7 @@ void
 ScoringSecMatchRPE::setPose(
 	core::pose::Pose const & ref_pose )
 {
-	ref_pose_ = core::pose::PoseOP( new core::pose::Pose(ref_pose) );
+	ref_pose_ = utility::pointer::make_shared< core::pose::Pose >(ref_pose);
 }
 
 /*
@@ -82,13 +82,13 @@ ScoringSecMatchRPE::ScoringSecMatchRPE(
 	std::string const & s_in, core::pose::Pose const & ref_pose)
 {
 	//cd_2b_pose_ = new core::pose::Pose ();
-	cd_2b_pose_ = core::pose::PoseOP( new core::pose::Pose(ref_pose) );
+	cd_2b_pose_ = utility::pointer::make_shared< core::pose::Pose >(ref_pose);
 
 	//scoringEval_counter = 0;
 	secmatch_scotypes_cutoff_.clear();
 	secmatch_value_cutoff_.clear();
-	ref_pose_ = core::pose::PoseOP( new core::pose::Pose(ref_pose) );
-	sfxn_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() );
+	ref_pose_ = utility::pointer::make_shared< core::pose::Pose >(ref_pose);
+	sfxn_ = utility::pointer::make_shared< core::scoring::ScoreFunction >();
 	cutoff_flag_ = false;
 	cutoff_scoreType_flag_ = false;
 	longRange_ = false;

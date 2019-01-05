@@ -50,7 +50,7 @@ ABEGOEval::ABEGOEval() :
 	randomize_( true )
 {
 	abego_.clear();
-	am_ = ABEGOManagerOP( new ABEGOManager );
+	am_ = utility::pointer::make_shared< ABEGOManager >();
 }
 
 
@@ -66,7 +66,7 @@ ABEGOEval::ABEGOEval(
 	penalty_( penalty ),
 	randomize_( randomize )
 {
-	am_ = ABEGOManagerOP( new ABEGOManager );
+	am_ = utility::pointer::make_shared< ABEGOManager >();
 }
 
 
@@ -93,7 +93,7 @@ ABEGOEval & ABEGOEval::operator =( ABEGOEval const & rval ) {
 
 /// @brief clone this object
 VallFragmentEvalOP ABEGOEval::clone() const {
-	return VallFragmentEvalOP( new ABEGOEval( *this ) );
+	return utility::pointer::make_shared< ABEGOEval >( *this );
 }
 
 

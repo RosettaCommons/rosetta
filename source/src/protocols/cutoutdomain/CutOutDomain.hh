@@ -34,9 +34,9 @@ public:
 	~CutOutDomain() override;
 	void apply( core::pose::Pose & pose ) override;
 	protocols::moves::MoverOP clone() const override {
-		return( protocols::moves::MoverOP( new CutOutDomain( *this ) ) );
+		return( utility::pointer::make_shared< CutOutDomain >( *this ) );
 	}
-	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new CutOutDomain ); }
+	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< CutOutDomain >(); }
 
 	void start_res(core::Size s) {start_res_ = s;}
 	void start_end(core::Size e) {end_res_ = e;}

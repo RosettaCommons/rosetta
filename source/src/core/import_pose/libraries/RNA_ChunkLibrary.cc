@@ -149,7 +149,7 @@ RNA_ChunkLibrary::initialize_rna_chunk_library(
 	// atom_level_domain_map keeps track of where chunks are placed -- only allow
 	// fragment insertions *outside* these regions.
 	if ( atom_level_domain_map_ == nullptr ) {
-		atom_level_domain_map_ = core::pose::toolbox::AtomLevelDomainMapOP( new core::pose::toolbox::AtomLevelDomainMap( pose, true /*map_to_vanilla*/, allow_insert_res ) );
+		atom_level_domain_map_ = utility::pointer::make_shared< core::pose::toolbox::AtomLevelDomainMap >( pose, true /*map_to_vanilla*/, allow_insert_res );
 	}
 	covered_by_chunk_.dimension( sequence_of_big_pose.size(), false );
 

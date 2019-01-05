@@ -285,7 +285,7 @@ std::string UpdateCrystInfoCreator::keyname() const {
 
 protocols::moves::MoverOP
 UpdateCrystInfoCreator::create_mover() const {
-	return protocols::moves::MoverOP( new UpdateCrystInfo );
+	return utility::pointer::make_shared< UpdateCrystInfo >();
 }
 
 void UpdateCrystInfoCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -301,7 +301,7 @@ CrystRMS::CrystRMS() {
 	using namespace basic::options::OptionKeys;
 
 	if ( option[ in::file::native ].user() ) {
-		native_ = core::pose::PoseOP( new core::pose::Pose );
+		native_ = utility::pointer::make_shared< core::pose::Pose >();
 		core::import_pose::pose_from_file( *native_, option[ in::file::native ]() , core::import_pose::PDB_file);
 		MakeLatticeMover make_lattice;
 		make_lattice.set_refinable_lattice( true );
@@ -382,7 +382,7 @@ std::string CrystRMSCreator::keyname() const {
 
 protocols::moves::MoverOP
 CrystRMSCreator::create_mover() const {
-	return protocols::moves::MoverOP( new CrystRMS );
+	return utility::pointer::make_shared< CrystRMS >();
 }
 
 void CrystRMSCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -427,7 +427,7 @@ DockLatticeMover::set_defaults() {
 	recover_low_ = true;
 
 	if ( option[ in::file::native ].user() ) {
-		native_ = core::pose::PoseOP( new core::pose::Pose );
+		native_ = utility::pointer::make_shared< core::pose::Pose >();
 		core::import_pose::pose_from_file( *native_, option[ in::file::native ]() , core::import_pose::PDB_file);
 		MakeLatticeMover make_lattice;
 		make_lattice.set_refinable_lattice( true );
@@ -755,11 +755,11 @@ DockLatticeMover::repack( core::pose::Pose & pose, bool rottrials ) {
 	using namespace protocols::simple_task_operations;
 
 	TaskFactoryOP tf (new TaskFactory);
-	tf->push_back( TaskOperationCOP(new InitializeFromCommandline) );
-	tf->push_back( TaskOperationCOP(new IncludeCurrent) );
-	tf->push_back( TaskOperationCOP(new RestrictToRepacking) );
-	tf->push_back( TaskOperationCOP(new NoRepackDisulfides) );
-	tf->push_back( TaskOperationCOP(new RestrictToInterface( SUBjump_ ) ) );
+	tf->push_back( utility::pointer::make_shared< InitializeFromCommandline >() );
+	tf->push_back( utility::pointer::make_shared< IncludeCurrent >() );
+	tf->push_back( utility::pointer::make_shared< RestrictToRepacking >() );
+	tf->push_back( utility::pointer::make_shared< NoRepackDisulfides >() );
+	tf->push_back( utility::pointer::make_shared< RestrictToInterface >( SUBjump_ ) );
 
 	if ( rottrials ) {
 		protocols::minimization_packing::RotamerTrialsMoverOP pack_interface_rtrials( new protocols::minimization_packing::RotamerTrialsMover( sf_, tf ) );
@@ -1016,7 +1016,7 @@ std::string DockLatticeMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 DockLatticeMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new DockLatticeMover );
+	return utility::pointer::make_shared< DockLatticeMover >();
 }
 
 void DockLatticeMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -1102,7 +1102,7 @@ MakeLatticeMover::apply( core::pose::Pose & pose ) {
 	pose::symmetry::make_symmetric_pose( pose, syminfo );
 	basic::options::option[ basic::options::OptionKeys::symmetry::detect_bonds ].value(symmdetectdisulf);
 
-	pdbinfo_new = pose::PDBInfoOP( new pose::PDBInfo( pose, true ) );
+	pdbinfo_new = utility::pointer::make_shared< pose::PDBInfo >( pose, true );
 	core::pose::symmetry::make_symmetric_pdb_info( pose, pdbinfo_old, pdbinfo_new );
 	pdbinfo_new->set_crystinfo(ci);
 	pose.pdb_info( pdbinfo_new );
@@ -1617,7 +1617,7 @@ std::string MakeLatticeMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 MakeLatticeMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MakeLatticeMover );
+	return utility::pointer::make_shared< MakeLatticeMover >();
 }
 
 void MakeLatticeMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

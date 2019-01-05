@@ -59,7 +59,7 @@ public:
 	//   protocols::moves::MoverOP submover, bool write_to_database);
 	virtual std::string get_name() const override;
 	protocols::moves::MoverOP clone() const override;
-	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new SpliceOutTail ); }
+	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< SpliceOutTail >(); }
 	virtual ~SpliceOutTail();
 	virtual void set_source_from_to_res() override;
 	core::Size set_anchor_res() override;

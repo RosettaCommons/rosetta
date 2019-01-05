@@ -390,9 +390,9 @@ DisulfideMatchingEnergyContainer::const_neighbor_iterator_begin( int resid ) con
 {
 	debug_assert( !empty() );
 	if ( resid_2_disulfide_index_[ resid ] != NO_DISULFIDE ) {
-		return ResidueNeighborConstIteratorOP( new DisulfideMatchingNeighborConstIterator( this, resid, resid_2_disulfide_index_[ resid ]  ) );
+		return utility::pointer::make_shared< DisulfideMatchingNeighborConstIterator >( this, resid, resid_2_disulfide_index_[ resid ]  );
 	} else {
-		return ResidueNeighborConstIteratorOP( new DisulfideMatchingNeighborConstIterator( this ) );
+		return utility::pointer::make_shared< DisulfideMatchingNeighborConstIterator >( this );
 	}
 }
 
@@ -400,7 +400,7 @@ ResidueNeighborConstIteratorOP
 DisulfideMatchingEnergyContainer::const_neighbor_iterator_end( int ) const
 {
 	debug_assert( !empty() );
-	return ResidueNeighborConstIteratorOP( new DisulfideMatchingNeighborConstIterator( this ) );
+	return utility::pointer::make_shared< DisulfideMatchingNeighborConstIterator >( this );
 }
 
 ResidueNeighborConstIteratorOP
@@ -413,9 +413,9 @@ DisulfideMatchingEnergyContainer::const_upper_neighbor_iterator_begin( int resid
 			Size( resid ) <= resid_2_disulfide_index_.size() &&
 			resid_2_disulfide_index_[ resid ] != NO_DISULFIDE &&
 			(Size) resid < other_neighbor_id( resid_2_disulfide_index_[ resid ], resid ) ) {
-		return ResidueNeighborConstIteratorOP( new DisulfideMatchingNeighborConstIterator( this, resid, resid_2_disulfide_index_[ resid ]  ) );
+		return utility::pointer::make_shared< DisulfideMatchingNeighborConstIterator >( this, resid, resid_2_disulfide_index_[ resid ]  );
 	} else {
-		return ResidueNeighborConstIteratorOP( new DisulfideMatchingNeighborConstIterator( this ) );
+		return utility::pointer::make_shared< DisulfideMatchingNeighborConstIterator >( this );
 	}
 }
 
@@ -423,7 +423,7 @@ ResidueNeighborConstIteratorOP
 DisulfideMatchingEnergyContainer::const_upper_neighbor_iterator_end( int ) const
 {
 	debug_assert( !empty() );
-	return ResidueNeighborConstIteratorOP( new DisulfideMatchingNeighborConstIterator( this ) );
+	return utility::pointer::make_shared< DisulfideMatchingNeighborConstIterator >( this );
 }
 
 ResidueNeighborIteratorOP
@@ -431,9 +431,9 @@ DisulfideMatchingEnergyContainer::neighbor_iterator_begin( int resid )
 {
 	debug_assert( !empty() );
 	if ( resid_2_disulfide_index_[ resid ] != NO_DISULFIDE ) {
-		return ResidueNeighborIteratorOP( new DisulfideMatchingNeighborIterator( this, resid, resid_2_disulfide_index_[ resid ]  ) );
+		return utility::pointer::make_shared< DisulfideMatchingNeighborIterator >( this, resid, resid_2_disulfide_index_[ resid ]  );
 	} else {
-		return ResidueNeighborIteratorOP( new DisulfideMatchingNeighborIterator( this ) );
+		return utility::pointer::make_shared< DisulfideMatchingNeighborIterator >( this );
 	}
 }
 
@@ -441,7 +441,7 @@ ResidueNeighborIteratorOP
 DisulfideMatchingEnergyContainer::neighbor_iterator_end( int )
 {
 	debug_assert( !empty() );
-	return ResidueNeighborIteratorOP( new DisulfideMatchingNeighborIterator( this ) );
+	return utility::pointer::make_shared< DisulfideMatchingNeighborIterator >( this );
 }
 
 ResidueNeighborIteratorOP
@@ -452,9 +452,9 @@ DisulfideMatchingEnergyContainer::upper_neighbor_iterator_begin( int resid )
 			Size( resid ) <= resid_2_disulfide_index_.size() &&
 			resid_2_disulfide_index_[ resid ] != NO_DISULFIDE &&
 			(Size) resid < other_neighbor_id( resid_2_disulfide_index_[ resid ], resid ) ) {
-		return ResidueNeighborIteratorOP( new DisulfideMatchingNeighborIterator( this, resid, resid_2_disulfide_index_[ resid ]  ) );
+		return utility::pointer::make_shared< DisulfideMatchingNeighborIterator >( this, resid, resid_2_disulfide_index_[ resid ]  );
 	} else {
-		return ResidueNeighborIteratorOP( new DisulfideMatchingNeighborIterator( this ) );
+		return utility::pointer::make_shared< DisulfideMatchingNeighborIterator >( this );
 	}
 }
 
@@ -462,7 +462,7 @@ ResidueNeighborIteratorOP
 DisulfideMatchingEnergyContainer::upper_neighbor_iterator_end( int )
 {
 	debug_assert( !empty() );
-	return ResidueNeighborIteratorOP( new DisulfideMatchingNeighborIterator( this ) );
+	return utility::pointer::make_shared< DisulfideMatchingNeighborIterator >( this );
 }
 
 bool

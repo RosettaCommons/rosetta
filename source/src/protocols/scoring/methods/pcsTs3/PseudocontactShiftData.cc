@@ -146,7 +146,7 @@ PCS_data_Ts3::PCS_data_Ts3(PCS_data_Ts3 const &other):
 
 basic::datacache::CacheableDataOP
 PCS_data_Ts3::clone() const {
-	return basic::datacache::CacheableDataOP( new PCS_data_Ts3( *this ) );
+	return utility::pointer::make_shared< PCS_data_Ts3 >( *this );
 }
 
 void

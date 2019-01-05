@@ -67,9 +67,9 @@ public:
 	{}
 
 	virtual void setUp() {
-		pose_ = core::pose::PoseOP( new core::pose::Pose );
+		pose_ = utility::pointer::make_shared< core::pose::Pose >();
 		core::import_pose::pose_from_file(*pose_, "test_in2.pdb", core::import_pose::PDB_file);
-		scorefxn_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction );
+		scorefxn_ = utility::pointer::make_shared< core::scoring::ScoreFunction >();
 		switch ( benchtype_ ) {
 		case interaction_graph_perfbench_linmemig_score12 :
 			setup_for_score12();
@@ -343,7 +343,7 @@ public:
 			task_->designing_residues()
 		);
 		packer_neighbor_graph_ = create_packer_graph( *pose_, *scorefxn_, task_ );
-		rotsets_ = core::pack::rotamer_set::RotamerSetsOP( new RotamerSets );
+		rotsets_ = utility::pointer::make_shared< RotamerSets >();
 		rotsets_->set_task( task_ );
 		rotsets_->build_rotamers( *pose_, *scorefxn_, packer_neighbor_graph_ );
 		rotsets_->prepare_sets_for_packing( *pose_, *scorefxn_ );
@@ -366,7 +366,7 @@ public:
 		using namespace core::pack::interaction_graph;
 		task_ = redesign_20();
 		prepare_rotamer_sets();
-		ig_ = core::pack::interaction_graph::InteractionGraphBaseOP( new PDInteractionGraph( task_->num_to_be_packed() ) );
+		ig_ = utility::pointer::make_shared< PDInteractionGraph >( task_->num_to_be_packed() );
 		rotsets_->compute_energies( *pose_, *scorefxn_, packer_neighbor_graph_, ig_ );
 	}
 
@@ -376,7 +376,7 @@ public:
 		task_ = redesign_20();
 		for ( Size ii = 1; ii <= 20; ++ii ) task_->nonconst_residue_task( ii ).restrict_to_repacking();
 		prepare_rotamer_sets();
-		ig_ = core::pack::interaction_graph::InteractionGraphBaseOP( new DensePDInteractionGraph( task_->num_to_be_packed() ) );
+		ig_ = utility::pointer::make_shared< DensePDInteractionGraph >( task_->num_to_be_packed() );
 		rotsets_->compute_energies( *pose_, *scorefxn_, packer_neighbor_graph_, ig_ );
 
 	}

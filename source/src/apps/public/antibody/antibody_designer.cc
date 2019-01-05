@@ -30,7 +30,7 @@ using namespace basic::options;
 void*
 my_main( void *)
 {
-	protocols::jd2::JobDistributor::get_instance()->go(protocols::moves::MoverOP( new AntibodyDesignProtocol ));
+	protocols::jd2::JobDistributor::get_instance()->go(utility::pointer::make_shared< AntibodyDesignProtocol >());
 	return nullptr ;
 }
 
@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
 		if ( option [ OptionKeys::antibody::design::view ]() ) {
 			protocols::viewer::viewer_main( my_main );
 		} else {
-			protocols::jd2::JobDistributor::get_instance()->go(protocols::moves::MoverOP( new AntibodyDesignProtocol ));
+			protocols::jd2::JobDistributor::get_instance()->go(utility::pointer::make_shared< AntibodyDesignProtocol >());
 		}
 
 	} catch (utility::excn::Exception& excn ) {

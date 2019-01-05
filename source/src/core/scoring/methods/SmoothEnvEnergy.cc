@@ -47,7 +47,7 @@ methods::EnergyMethodOP
 SmoothEnvEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new SmoothEnvEnergy );
+	return utility::pointer::make_shared< SmoothEnvEnergy >();
 }
 
 ScoreTypes
@@ -61,7 +61,7 @@ SmoothEnvEnergyCreator::score_types_for_method() const {
 
 /// c-tor
 SmoothEnvEnergy::SmoothEnvEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new SmoothEnvEnergyCreator ) ),
+	parent( utility::pointer::make_shared< SmoothEnvEnergyCreator >() ),
 	potential_( ScoringManager::get_instance()->get_SmoothEnvPairPotential() )
 {}
 
@@ -69,7 +69,7 @@ SmoothEnvEnergy::SmoothEnvEnergy() :
 /// clone
 EnergyMethodOP
 SmoothEnvEnergy::clone() const {
-	return EnergyMethodOP( new SmoothEnvEnergy );
+	return utility::pointer::make_shared< SmoothEnvEnergy >();
 }
 
 

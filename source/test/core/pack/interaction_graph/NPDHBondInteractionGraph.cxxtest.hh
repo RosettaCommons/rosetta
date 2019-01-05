@@ -1372,7 +1372,7 @@ public:
 		//  (*sfxn)(*trpcage);
 		//  sfxn->setup_for_packing( *trpcage, task->repacking_residues(), task->designing_residues() );
 		//  neighbors = create_packer_graph( *trpcage, *sfxn, task );
-		//  ig = LinearMemoryNPDHBondInteractionGraphOP( new LinearMemoryNPDHBondInteractionGraph( task->num_to_be_packed() ));
+		//  ig = utility::pointer::make_shared< LinearMemoryNPDHBondInteractionGraph >( task->num_to_be_packed() );
 		//  ig->set_pose( *trpcage );
 		//  ig->set_packer_neighbor_graph( *neighbors );
 		//  ig->set_score_function( *sfxn );

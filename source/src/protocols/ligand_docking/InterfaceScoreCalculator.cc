@@ -70,11 +70,11 @@ InterfaceScoreCalculator::InterfaceScoreCalculator(InterfaceScoreCalculator cons
 InterfaceScoreCalculator::~InterfaceScoreCalculator() = default;
 
 protocols::moves::MoverOP InterfaceScoreCalculator::clone() const {
-	return protocols::moves::MoverOP( new InterfaceScoreCalculator( *this ) );
+	return utility::pointer::make_shared< InterfaceScoreCalculator >( *this );
 }
 
 protocols::moves::MoverOP InterfaceScoreCalculator::fresh_instance() const {
-	return protocols::moves::MoverOP( new InterfaceScoreCalculator );
+	return utility::pointer::make_shared< InterfaceScoreCalculator >();
 }
 
 void InterfaceScoreCalculator::chains(std::vector<std::string> const & chains)
@@ -124,11 +124,11 @@ InterfaceScoreCalculator::parse_my_tag(
 		utility::vector1<std::string> natives_strs= utility::string_split(native_str, ',');
 		std::string natives_str = utility::join(natives_strs, " ");
 
-		native_ = core::pose::PoseOP( new core::pose::Pose );
+		native_ = utility::pointer::make_shared< core::pose::Pose >();
 		core::import_pose::pose_from_file(*native_, natives_str, core::import_pose::PDB_file);
 	} else if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
 		std::string const & native_str= basic::options::option[ basic::options::OptionKeys::in::file::native ]().name();
-		native_ = core::pose::PoseOP( new core::pose::Pose );
+		native_ = utility::pointer::make_shared< core::pose::Pose >();
 		core::import_pose::pose_from_file(*native_, native_str, core::import_pose::PDB_file);
 	}
 
@@ -162,7 +162,7 @@ void InterfaceScoreCalculator::apply(core::pose::Pose & pose) {
 	std::map< std::string, std::string > string_string_pairs( protocols::jd2::get_string_string_pairs_from_current_job() );
 	if ( string_string_pairs.find("native_path") != string_string_pairs.end() ) {
 		std::string native_string(string_string_pairs.find("native_path")->second);
-		native_ = core::pose::PoseOP( new core::pose::Pose );
+		native_ = utility::pointer::make_shared< core::pose::Pose >();
 		core::import_pose::pose_from_file(*native_,native_string, core::import_pose::PDB_file);
 	}
 
@@ -306,7 +306,7 @@ std::string InterfaceScoreCalculatorCreator::keyname() const {
 
 protocols::moves::MoverOP
 InterfaceScoreCalculatorCreator::create_mover() const {
-	return protocols::moves::MoverOP( new InterfaceScoreCalculator );
+	return utility::pointer::make_shared< InterfaceScoreCalculator >();
 }
 
 void InterfaceScoreCalculatorCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

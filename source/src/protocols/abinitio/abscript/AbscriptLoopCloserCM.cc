@@ -90,7 +90,7 @@ using namespace protocols::environment;
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP AbscriptLoopCloserCMCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new AbscriptLoopCloserCM );
+// XRW TEMP  return utility::pointer::make_shared< AbscriptLoopCloserCM >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -232,9 +232,9 @@ bool AbscriptLoopCloserCM::attempt_ccd( core::pose::Pose& pose ){
 	try {
 		checkpoint::CheckPointer checkpointer( "AbscriptLoopCloserCM" );
 		SlidingWindowLoopClosureOP closing_protocol;
-		closing_protocol = SlidingWindowLoopClosureOP( new WidthFirstSlidingWindowLoopClosure( fragset_,
+		closing_protocol = utility::pointer::make_shared< WidthFirstSlidingWindowLoopClosure >( fragset_,
 			scorefxn_,
-			movemap_ ) );
+			movemap_ );
 
 		jumping::close_chainbreaks( closing_protocol,
 			pose,
@@ -263,7 +263,7 @@ void AbscriptLoopCloserCM::parse_my_tag( utility::tag::TagCOP tag,
 	if ( tag->hasOption( "selector" ) ) {
 		set_selector( datamap.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", tag->getOption<std::string>( "selector" ) ) );
 	} else {
-		set_selector( core::select::residue_selector::ResidueSelectorCOP( new core::select::residue_selector::TrueResidueSelector() ) );
+		set_selector( utility::pointer::make_shared< core::select::residue_selector::TrueResidueSelector >() );
 	}
 
 	std::string fragfile;
@@ -345,7 +345,7 @@ void AbscriptLoopCloserCM::passport_updated() {
 	if ( has_passport() ) {
 		movemap_ = passport()->render_movemap();
 	} else {
-		movemap_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap() );
+		movemap_ = utility::pointer::make_shared< core::kinematics::MoveMap >();
 		movemap_->set_bb( true );
 	}
 }
@@ -362,7 +362,7 @@ void AbscriptLoopCloserCM::broking_finished( EnvClaimBroker::BrokerResult const&
 // XRW TEMP }
 
 moves::MoverOP AbscriptLoopCloserCM::clone() const {
-	return moves::MoverOP( new AbscriptLoopCloserCM( *this ) );
+	return utility::pointer::make_shared< AbscriptLoopCloserCM >( *this );
 }
 
 std::string AbscriptLoopCloserCM::get_name() const {
@@ -397,7 +397,7 @@ std::string AbscriptLoopCloserCMCreator::keyname() const {
 
 protocols::moves::MoverOP
 AbscriptLoopCloserCMCreator::create_mover() const {
-	return protocols::moves::MoverOP( new AbscriptLoopCloserCM );
+	return utility::pointer::make_shared< AbscriptLoopCloserCM >();
 }
 
 void AbscriptLoopCloserCMCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -60,7 +60,7 @@ WorkUnit_BatchRelax::~WorkUnit_BatchRelax() = default;
 
 protocols::wum::WorkUnitBaseOP
 WorkUnit_BatchRelax::clone() const {
-	return protocols::wum::WorkUnitBaseOP( new WorkUnit_BatchRelax( *this ) );
+	return utility::pointer::make_shared< WorkUnit_BatchRelax >( *this );
 }
 
 
@@ -90,7 +90,7 @@ WorkUnit_BatchRelax::run(){
 		core::io::silent::SilentStructOP ss = decoys().get_struct(0);
 		ss->fill_pose( pose );
 		using namespace core::scoring::constraints;
-		ConstraintSetOP cstset = ConstraintIO::get_instance()->read_constraints( get_cst_fa_file_option(), ConstraintSetOP( new ConstraintSet ), pose  );
+		ConstraintSetOP cstset = ConstraintIO::get_instance()->read_constraints( get_cst_fa_file_option(), utility::pointer::make_shared< ConstraintSet >(), pose  );
 		relax.batch_apply( decoys().store(), cstset );
 	} else {
 		relax.batch_apply( decoys().store() );
@@ -158,7 +158,7 @@ WorkUnit_BatchRelax_and_PostRescore::~WorkUnit_BatchRelax_and_PostRescore()= def
 protocols::wum::WorkUnitBaseOP
 WorkUnit_BatchRelax_and_PostRescore::clone() const
 {
-	return protocols::wum::WorkUnitBaseOP( new WorkUnit_BatchRelax_and_PostRescore( *this ) );
+	return utility::pointer::make_shared< WorkUnit_BatchRelax_and_PostRescore >( *this );
 }
 
 

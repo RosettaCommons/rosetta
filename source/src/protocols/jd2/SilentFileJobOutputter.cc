@@ -87,7 +87,7 @@ void SilentFileJobOutputter::write_all_structs() {
 			//tr.Debug << "writing struct " << (*it->first)->decoy_tag() << std::endl;
 			//SilentStructOP ss = it->first;
 			if ( sfds.count( saved_struct.second ) == 0 ) {
-				sfds[ saved_struct.second ] = SilentFileDataOP( new SilentFileData( opts ) );
+				sfds[ saved_struct.second ] = utility::pointer::make_shared< SilentFileData >( opts );
 			}
 			sfds[ saved_struct.second ]->add_structure( (*saved_struct.first) );
 		}
@@ -385,7 +385,7 @@ SilentFileJobOutputterCreator::keyname() const
 
 protocols::jd2::JobOutputterOP
 SilentFileJobOutputterCreator::create_JobOutputter() const {
-	return protocols::jd2::JobOutputterOP( new SilentFileJobOutputter );
+	return utility::pointer::make_shared< SilentFileJobOutputter >();
 }
 
 } //jd2

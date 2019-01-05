@@ -52,7 +52,7 @@ public:
 
 		// Want to read the properties file in only once for all the tests in this suite
 		// so do it in the constructor for the test suite.
-		mmatomtypeset = MMAtomTypeSetOP( new MMAtomTypeSet() );
+		mmatomtypeset = utility::pointer::make_shared< MMAtomTypeSet >();
 		mmatomtypeset->read_file( "core/chemical/mm_atom_properties.txt" );
 	}
 

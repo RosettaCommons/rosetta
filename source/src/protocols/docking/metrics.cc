@@ -140,10 +140,10 @@ calc_interaction_energy( const core::pose::Pose & pose, const core::scoring::Sco
 			TR << "trans_axis: " << trans_axis.to_string() << std::endl;
 
 			// create new translation mover
-			translate_away = rigid::RigidBodyTransMoverOP( new rigid::RigidBodyTransMover(trans_axis, rb_jump) );
+			translate_away = utility::pointer::make_shared< rigid::RigidBodyTransMover >(trans_axis, rb_jump);
 		} else {
 			// for non-membrane proteins
-			translate_away = rigid::RigidBodyTransMoverOP( new rigid::RigidBodyTransMover( unbound_pose, rb_jump ) );
+			translate_away = utility::pointer::make_shared< rigid::RigidBodyTransMover >( unbound_pose, rb_jump );
 		}
 
 		// set translation magnitude and translate away

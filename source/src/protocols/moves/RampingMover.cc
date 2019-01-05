@@ -128,7 +128,7 @@ InvGeometricFunc::func( Real x ) const
 	return std::exp( -1 * ( 1 - x ) * inv_one_minus_xval_at_0p5_ * ln_0p5 );
 }
 
-// XRW TEMP MoverOP RampingMoverCreator::create_mover() const { return MoverOP( new RampingMover ); }
+// XRW TEMP MoverOP RampingMoverCreator::create_mover() const { return utility::pointer::make_shared< RampingMover >(); }
 // XRW TEMP std::string RampingMoverCreator::keyname() const { return RampingMover::mover_name(); }
 // XRW TEMP std::string RampingMover::mover_name() { return "RampingMover"; }
 
@@ -146,7 +146,7 @@ RampingMover::RampingMover() :
 	inner_cycles_( 0 ),
 	mc_( /* 0 */ )
 {
-	ramping_funcs_for_weights_[ score_type_ ] = protocols::moves::RampingFuncOP( new LinearFunc );
+	ramping_funcs_for_weights_[ score_type_ ] = utility::pointer::make_shared< LinearFunc >();
 }
 
 RampingMover::RampingMover(
@@ -198,7 +198,7 @@ RampingMover::RampingMover(
 	for ( Size ii = 1; ii <= core::scoring::n_score_types; ++ii ) {
 		auto iist = (core::scoring::ScoreType) ii;
 		if ( start_weights_[ iist ] != end_weights_[ iist ] ) {
-			ramping_funcs_for_weights_[ iist ] = protocols::moves::RampingFuncCOP( protocols::moves::RampingFuncOP( new LinearFunc ) );
+			ramping_funcs_for_weights_[ iist ] = utility::pointer::make_shared< LinearFunc >();
 		}
 	}
 }
@@ -207,7 +207,7 @@ RampingMover::~RampingMover() = default;
 
 MoverOP RampingMover::clone() const
 {
-	return MoverOP( new RampingMover(*this) );
+	return utility::pointer::make_shared< RampingMover >(*this);
 }
 
 void
@@ -442,21 +442,21 @@ RampingMover::instantiate_rampfunc(
 
 	if ( func_name == "geometric" ) {
 		auto xval_at_0p5 = tag_ptr->getOption< core::Real >( "xval_at_0p5", 0.75 );
-		return RampingFuncOP( new GeometricFunc( xval_at_0p5 ) );
+		return utility::pointer::make_shared< GeometricFunc >( xval_at_0p5 );
 	} else if ( func_name == "linear" ) {
-		return RampingFuncOP( new LinearFunc );
+		return utility::pointer::make_shared< LinearFunc >();
 	} else if ( func_name == "fast_linear" ) {
 		auto xval_start_ramp = tag_ptr->getOption<core::Real>("xval_start_ramp",0.0);
 		auto xval_end_ramp = tag_ptr->getOption<core::Real>("xval_end_ramp",1.0);
-		return RampingFuncOP( new FastLinearFunc( xval_start_ramp, xval_end_ramp ) );
+		return utility::pointer::make_shared< FastLinearFunc >( xval_start_ramp, xval_end_ramp );
 	} else if ( func_name == "inverse_geometric" ) {
 		auto xval_at_0p5 = tag_ptr->getOption<core::Real>("xval_at_0p5",0.75);
-		return RampingFuncOP( new InvGeometricFunc( xval_at_0p5 ) );
+		return utility::pointer::make_shared< InvGeometricFunc >( xval_at_0p5 );
 	} else {
 		utility_exit_with_message("option ramping_func in RampingMover must be: geometric, linear, fast_linear, or inverse_geometric");
 	}
 
-	return RampingFuncOP( new LinearFunc ); // appease compiler.
+	return utility::pointer::make_shared< LinearFunc >(); // appease compiler.
 }
 
 std::string RampingMover::get_name() const {
@@ -523,7 +523,7 @@ std::string RampingMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 RampingMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new RampingMover );
+	return utility::pointer::make_shared< RampingMover >();
 }
 
 void RampingMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

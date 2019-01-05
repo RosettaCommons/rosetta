@@ -89,7 +89,7 @@ BinarySilentStruct::BinarySilentStruct( SilentFileOptions const & opts, Size con
 	bJumps_use_IntraResStub_ = false;
 	nres  ( nres_in );
 	resize( nres_in );
-	symminfo_ = core::conformation::symmetry::SymmetryInfoOP( new core::conformation::symmetry::SymmetryInfo() );
+	symminfo_ = utility::pointer::make_shared< core::conformation::symmetry::SymmetryInfo >();
 	symminfo_->set_use_symmetry(false);
 }
 
@@ -101,7 +101,7 @@ BinarySilentStruct::BinarySilentStruct( SilentFileOptions const & opts ) :
 	bJumps_use_IntraResStub_ = false;
 	nres( 0 );
 	decoy_tag( "empty" );
-	symminfo_ = core::conformation::symmetry::SymmetryInfoOP( new core::conformation::symmetry::SymmetryInfo() );
+	symminfo_ = utility::pointer::make_shared< core::conformation::symmetry::SymmetryInfo >();
 	symminfo_->set_use_symmetry(false);
 }
 
@@ -114,7 +114,7 @@ BinarySilentStruct::BinarySilentStruct(
 	Parent( opts )
 {
 	bJumps_use_IntraResStub_ = false;
-	symminfo_ = core::conformation::symmetry::SymmetryInfoOP( new core::conformation::symmetry::SymmetryInfo() );
+	symminfo_ = utility::pointer::make_shared< core::conformation::symmetry::SymmetryInfo >();
 	symminfo_->set_use_symmetry(false);
 	fill_struct( pose, tag );
 } // BinarySilentStruct

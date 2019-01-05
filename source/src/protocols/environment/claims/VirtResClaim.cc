@@ -183,7 +183,7 @@ VirtResClaim::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ){
 
 
 EnvClaimOP VirtResClaim::clone() const {
-	return EnvClaimOP( new VirtResClaim( *this ) );
+	return utility::pointer::make_shared< VirtResClaim >( *this );
 }
 
 std::string const& VirtResClaim::vrt_label() const {

@@ -27,7 +27,7 @@ return *this;
 
 
 void B1::set_default_A() {
-	a_pointer_ = AOP( new A );
+	a_pointer_ = utility::pointer::make_shared< A >();
 }
 
 

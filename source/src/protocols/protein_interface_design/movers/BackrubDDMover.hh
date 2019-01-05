@@ -51,7 +51,7 @@ public:
 		utility::vector1< core::Size > const & residues );
 	void apply( Pose & pose ) override;
 	protocols::moves::MoverOP clone() const override;
-	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new BackrubDDMover ); }
+	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< BackrubDDMover >(); }
 	virtual ~BackrubDDMover();
 
 	std::string

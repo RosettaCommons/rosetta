@@ -99,14 +99,14 @@ SmallMinCCDTrial::~SmallMinCCDTrial() = default;
 protocols::moves::MoverOP
 SmallMinCCDTrial::clone() const
 {
-	return protocols::moves::MoverOP( new SmallMinCCDTrial( *this ) );
+	return utility::pointer::make_shared< SmallMinCCDTrial >( *this );
 }
 
 /// @brief fresh_instance returns a default-constructed object for JD2
 protocols::moves::MoverOP
 SmallMinCCDTrial::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new SmallMinCCDTrial() );
+	return utility::pointer::make_shared< SmallMinCCDTrial >();
 }
 
 /// @brief This mover retains state such that a fresh version is needed if the input Pose is about to change
@@ -214,7 +214,7 @@ void SmallMinCCDTrial::init()
 	type( "SmallMinCCDTrial" );
 
 	nmoves_ = 1;
-	minimizer_options_ = core::optimization::MinimizerOptionsOP( new MinimizerOptions( "lbfgs_armijo_nonmonotone", 0.001, true /*use_nblist*/, false /*deriv_check*/ ) );
+	minimizer_options_ = utility::pointer::make_shared< MinimizerOptions >( "lbfgs_armijo_nonmonotone", 0.001, true /*use_nblist*/, false /*deriv_check*/ );
 	init_options();
 }
 
@@ -242,9 +242,9 @@ core::optimization::AtomTreeMinimizerOP SmallMinCCDTrial::minimizer( core::pose:
 	if ( ! minimizer_ ) {
 		if ( core::pose::symmetry::is_symmetric( pose ) ) {
 			// minimizer_ = dynamic_cast<core::optimization::AtomTreeMinimizer>( new core::optimization::symmetry::SymAtomTreeMinimizer );
-			minimizer_ = core::optimization::AtomTreeMinimizerOP( new core::optimization::symmetry::SymAtomTreeMinimizer );
+			minimizer_ = utility::pointer::make_shared< core::optimization::symmetry::SymAtomTreeMinimizer >();
 		} else {
-			minimizer_ = core::optimization::AtomTreeMinimizerOP( new core::optimization::AtomTreeMinimizer );
+			minimizer_ = utility::pointer::make_shared< core::optimization::AtomTreeMinimizer >();
 		}
 	}
 	return minimizer_;
@@ -367,7 +367,7 @@ void SmallMinCCDTrial::debug_five( Pose & pose )
 // XRW TEMP SmallMinCCDTrialCreator::~SmallMinCCDTrialCreator() {}
 
 // XRW TEMP moves::MoverOP SmallMinCCDTrialCreator::create_mover() const {
-// XRW TEMP  return moves::MoverOP( new SmallMinCCDTrial() );
+// XRW TEMP  return utility::pointer::make_shared< SmallMinCCDTrial >();
 // XRW TEMP }
 
 // XRW TEMP std::string SmallMinCCDTrialCreator::keyname() const {
@@ -396,7 +396,7 @@ std::string SmallMinCCDTrialCreator::keyname() const {
 
 protocols::moves::MoverOP
 SmallMinCCDTrialCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SmallMinCCDTrial );
+	return utility::pointer::make_shared< SmallMinCCDTrial >();
 }
 
 void SmallMinCCDTrialCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

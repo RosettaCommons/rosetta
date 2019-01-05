@@ -154,8 +154,8 @@ OPT_KEY ( Boolean, PBP_clustering_at_chain_closure )
 OPT_KEY ( Boolean, clusterer_two_stage_clustering )
 OPT_KEY ( Boolean, clusterer_keep_pose_in_memory )
 OPT_KEY ( Boolean, finer_sampling_at_chain_closure )
-OPT_KEY ( StringVector, 	VDW_rep_screen_info )
-OPT_KEY ( Real, 	VDW_rep_alignment_RMSD_CUTOFF )
+OPT_KEY ( StringVector,  VDW_rep_screen_info )
+OPT_KEY ( Real,  VDW_rep_alignment_RMSD_CUTOFF )
 OPT_KEY ( Boolean, graphic )
 OPT_KEY ( Real, Real_parameter_one )
 OPT_KEY ( Boolean, clusterer_quick_alignment )
@@ -199,8 +199,8 @@ OPT_KEY ( Real, score_diff_min )
 OPT_KEY ( Real, score_diff_cut )
 OPT_KEY ( Real, score_diff_cut_tier_two )
 OPT_KEY ( Real, score_diff_cut_tier_three )
-OPT_KEY ( String, 	algorithm )
-OPT_KEY ( String, 	cluster_type )
+OPT_KEY ( String,  algorithm )
+OPT_KEY ( String,  cluster_type )
 OPT_KEY ( Integer, sampler_num_pose_kept )
 OPT_KEY ( StringVector, input_tag_list )
 OPT_KEY ( Boolean, recreate_silent_struct )
@@ -418,7 +418,7 @@ create_scorefxn() {
 	}
 
 
-	if(num_score_weight_file==0){
+	if ( num_score_weight_file==0 ) {
 		//rna_loop_hires_04092010.wts is same as 5X_linear_quarter_fa_stack_and_adjust_bulge_ss_benchmark.wts
 		//change default from single_strand_benchmark to 5X_linear_chainbreak_single_strand_benchmark on May 24, 2010
 		//change default to 5X_linear_quarter_fa_stack_and_adjust_bulge_ss_benchmark.wts" on April 9th, 2011
@@ -426,7 +426,7 @@ create_scorefxn() {
 		utility_exit_with_message("User to need to pass in score:weights"); //Remove the default weight on Sept 28, 2011 Parin S.
 	}
 
-	if(num_score_weight_file>1){
+	if ( num_score_weight_file>1 ) {
 		std::cout << "num_score_weight_file (inputted by user)=" << num_score_weight_file << std::endl;
 		utility_exit_with_message("num_score_weight_file>1");
 	}
@@ -434,10 +434,10 @@ create_scorefxn() {
 	core::scoring::ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( score_weight_file );
 
 
-	if(option[minimize_and_score_sugar]()==false){
+	if ( option[minimize_and_score_sugar]()==false ) {
 		std::cout << "WARNING minimize_and_score_sugar is false, SET rna_sugar_close weight to 0.0 " << std::endl;
-    scorefxn->set_weight( rna_sugar_close, 0.000000000000 );
- 	}
+		scorefxn->set_weight( rna_sugar_close, 0.000000000000 );
+	}
 
 	std::cout << "---------score function weights----------" << std::endl;
 	scorefxn->show(std::cout);
@@ -464,11 +464,11 @@ setup_rna_working_parameters ( bool check_for_previously_closed_cutpoint_with_in
 
 	/////////////////////////////////////////////////////
 	StepWiseWorkingParametersSetup stepwise_rna_working_parameters_setup ( option[ sample_res ](), /*the first element of moving_res_list is the sampling_res*/
-	    full_sequence,
-	    get_input_res ( nres, "1" ),
-	    get_input_res ( nres, "2" ),
-	    option[ cutpoint_open ](),
-	    option[ cutpoint_closed ]() );
+		full_sequence,
+		get_input_res ( nres, "1" ),
+		get_input_res ( nres, "2" ),
+		option[ cutpoint_open ](),
+		option[ cutpoint_closed ]() );
 	stepwise_rna_working_parameters_setup.set_add_virt_res_as_root ( option[ add_virt_root]() );
 	stepwise_rna_working_parameters_setup.set_allow_fixed_res_at_moving_res ( option[ allow_fixed_res_at_moving_res ]() ); //Hacky just to get Hermann Duplex working. Need to called before set_fixed_res
 	stepwise_rna_working_parameters_setup.set_fixed_res ( get_fixed_res ( nres ) );
@@ -526,7 +526,7 @@ setup_copy_DOF_input ( protocols::stepwise::sampling::rna::StepWiseRNA_PoseSetup
 
 	if ( option[ in::file::s ].user() ) {
 		// Then any pdbs that need to be read in from disk.
-		utility::vector1< std::string > const	pdb_tags_from_disk ( option[ in::file::s ]() );
+		utility::vector1< std::string > const pdb_tags_from_disk ( option[ in::file::s ]() );
 
 		for ( Size n = 1; n <= pdb_tags_from_disk.size(); n++ ) {
 			input_tags.push_back ( pdb_tags_from_disk[ n ] );
@@ -555,10 +555,10 @@ setup_copy_DOF_input ( protocols::stepwise::sampling::rna::StepWiseRNA_PoseSetup
 protocols::stepwise::sampling::rna::StepWiseRNA_PoseSetupOP
 setup_pose_setup_class(protocols::stepwise::sampling::rna::working_parameters::StepWiseWorkingParametersOP & working_parameters, bool const copy_DOF=true){
 
-  using namespace core::pose;
-  using namespace core::chemical;
-  using namespace core::kinematics;
-  using namespace core::scoring;
+	using namespace core::pose;
+	using namespace core::chemical;
+	using namespace core::kinematics;
+	using namespace core::scoring;
 	using namespace protocols::stepwise::sampling::rna;
 
 	ResidueTypeSetCAP rsd_set;
@@ -566,8 +566,8 @@ setup_pose_setup_class(protocols::stepwise::sampling::rna::working_parameters::S
 
 	// Read in native_pose.
 	PoseOP native_pose;
-	if (option[ in::file::native ].user() ) {
-		native_pose = PoseOP( new Pose );
+	if ( option[ in::file::native ].user() ) {
+		native_pose = utility::pointer::make_shared< Pose >();
 		import_pose::pose_from_file( *native_pose, *rsd_set, option[ in::file::native ]() , core::import_pose::PDB_file);
 		std::cout << "native_pose->fold_tree(): " << native_pose->fold_tree();
 		std::cout << "native_pose->annotated_sequence(true): " << native_pose->annotated_sequence( true ) << std::endl;
@@ -575,12 +575,12 @@ setup_pose_setup_class(protocols::stepwise::sampling::rna::working_parameters::S
 	}
 
 
-//	StepWiseRNA_PoseSetup stepwise_rna_pose_setup( pdb_tags, silent_files_in, working_parameters);
+	// StepWiseRNA_PoseSetup stepwise_rna_pose_setup( pdb_tags, silent_files_in, working_parameters);
 
 	StepWiseRNA_PoseSetupOP stepwise_rna_pose_setup = new StepWiseRNA_PoseSetup( working_parameters);
 	stepwise_rna_pose_setup->set_copy_DOF(copy_DOF);
 
-	if(copy_DOF==true){
+	if ( copy_DOF==true ) {
 		setup_copy_DOF_input(stepwise_rna_pose_setup);
 	}
 
@@ -610,7 +610,7 @@ rna_resample_test() {
 	}
 
 	///////////////////////////////
-	working_parameters::StepWiseWorkingParametersOP	working_parameters = setup_rna_working_parameters ( true  /*check_for_previously_closed_cutpoint_with_input_pose */ );
+	working_parameters::StepWiseWorkingParametersOP working_parameters = setup_rna_working_parameters ( true  /*check_for_previously_closed_cutpoint_with_input_pose */ );
 	working_parameters::StepWiseWorkingParametersCOP working_parameters_COP ( working_parameters );
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	StepWiseRNA_PoseSetupOP stepwise_rna_pose_setup = setup_pose_setup_class ( working_parameters );
@@ -646,7 +646,7 @@ rna_resample_test() {
 	stepwise_rna_residue_sampler.set_native_screen_rmsd_cutoff ( option[ sampler_native_screen_rmsd_cutoff ]() );
 	stepwise_rna_residue_sampler.set_o2prime_screen ( option[ sampler_perform_o2prime_pack ]() );
 	stepwise_rna_residue_sampler.set_verbose ( option[ VERBOSE ]() );
-	stepwise_rna_residue_sampler.set_cluster_rmsd (	option[ sampler_cluster_rmsd ]()	);
+	stepwise_rna_residue_sampler.set_cluster_rmsd ( option[ sampler_cluster_rmsd ]() );
 	stepwise_rna_residue_sampler.set_distinguish_pucker ( option[ distinguish_pucker]() );
 	stepwise_rna_residue_sampler.set_finer_sampling_at_chain_closure ( option[ finer_sampling_at_chain_closure]() );
 	stepwise_rna_residue_sampler.set_PBP_clustering_at_chain_closure ( option[ PBP_clustering_at_chain_closure]() );
@@ -688,7 +688,7 @@ rna_resample_test() {
 	stepwise_rna_minimizer.set_native_edensity_score_cutoff ( option[native_edensity_score_cutoff]() );
 	stepwise_rna_minimizer.set_native_screen_rmsd_cutoff ( option[ sampler_native_screen_rmsd_cutoff ]() + 1 ); //+1 for leniency Sept 20, 2010
 
-	if ( option[num_pose_minimize].user() ) 	stepwise_rna_minimizer.set_num_pose_minimize ( option[ num_pose_minimize ]() );
+	if ( option[num_pose_minimize].user() )  stepwise_rna_minimizer.set_num_pose_minimize ( option[ num_pose_minimize ]() );
 
 	stepwise_rna_minimizer.set_minimize_and_score_sugar ( option[  minimize_and_score_sugar ]() );
 	stepwise_rna_minimizer.set_user_input_VDW_bin_screener ( user_input_VDW_bin_screener );
@@ -708,95 +708,95 @@ my_main ( void* ) {
 ///////////////////////////////////////////////////////////////////////////////
 int
 main ( int argc, char * argv [] ) {
-    try {
-    utility::vector1< Size > blank_size_vector;
-	utility::vector1< std::string > blank_string_vector;
-	NEW_OPT ( add_virt_root, "add_virt_root", false );
-	NEW_OPT ( job_queue_ID, " rna_resample_test()/combine_long_loop mode: Specify the tag pair in filter_output_filename to be read in and imported (start from 0!)" , 0 );
-	NEW_OPT ( filter_output_filename, "CombineLongLoopFilterer: filter_output_filename", "filter_struct.txt" ); //Sept 12, 2010
-	NEW_OPT ( filter_for_previous_contact, "CombineLongLoopFilterer: filter_for_previous_contact", false ); //Sept 12, 2010
-	NEW_OPT ( filter_for_previous_clash, "CombineLongLoopFilterer: filter_for_previous_clash", false ); //Sept 12, 2010
-//New option Aug 15 2010 //Reinitialize_CCD_torsion to zero before every CCD chain closure
-	NEW_OPT ( minimize_and_score_native_pose, "minimize_and_score_native_pose ", false ); //Sept 15, 2010
-	NEW_OPT ( minimize_and_score_sugar, "minimize and sugar torsion+angle? and include the rna_sugar_close_score_term ", true ); //Sept 15, 2010
-	NEW_OPT ( sampler_extra_syn_chi_rotamer, "Samplerer: extra_chi_rotamer", false );
-	NEW_OPT ( sampler_extra_anti_chi_rotamer, "Samplerer: extra_chi_rotamer", false );
-	NEW_OPT ( PBP_clustering_at_chain_closure, "Samplerer: PBP_clustering_at_chain_closure", false );
-	NEW_OPT ( clusterer_two_stage_clustering, "Cluster is two stage..using triangle inequaility to speed up clustering", true ); //Change to true on Oct 10, 2010
-	NEW_OPT ( clusterer_keep_pose_in_memory, "reduce memory usage for the clusterer", true ); //Aug 6, 2010
-	NEW_OPT ( finer_sampling_at_chain_closure, "Samplerer: finer_sampling_at_chain_closure", false ); //Jun 9, 2010
-	NEW_OPT ( VDW_rep_screen_info, "VDW_rep_screen_info to create VDW_rep_screen_bin (useful when building loop from large poses)", blank_string_vector ); //Jun 9, 2010
-	NEW_OPT ( VDW_rep_alignment_RMSD_CUTOFF, "use with VDW_rep_screen_info", 0.001 ); //Nov 12, 2010
-	NEW_OPT ( graphic, "Turn graphic on/off", true ); //May 5, 2010
-	NEW_OPT ( recreate_silent_struct, "Special mode to recreate_silent_struct for clusterer output...for analysis purposes", false ); //May 5, 2010
-	NEW_OPT ( Real_parameter_one, "free_variable for testing purposes ", 0.0 );
-	NEW_OPT ( clusterer_quick_alignment, "quick alignment during clusterer...only work if the alignment residues are fixed ", false );
-	NEW_OPT ( clusterer_optimize_memory_usage, "clusterer_optimize_memory_usage ", false );
-	NEW_OPT ( clusterer_min_struct, "clusterer_min_struct ", 400 ); //Oct 13, 2010
-	NEW_OPT ( clusterer_write_score_only, "clusterer_write_score_only/ only effect recreate_silent_struct mode  ", false ); //Oct 20, 2010
-	NEW_OPT ( add_lead_zero_to_tag, "Add lead zero to clusterer output tag ", false );
-	NEW_OPT ( distinguish_pucker, "distinguish pucker when cluster:both in sampler and clusterer", true );
-	NEW_OPT ( input_tag_list, "input_tag_list", blank_string_vector );
-	NEW_OPT ( native_virtual_res , " native_virtual_res ", blank_size_vector );
-	NEW_OPT ( suite_cluster_radius , " individual_suite_cluster_radius ", 999.99 ); //IMPORTANT DO NOT CHANGE
-	NEW_OPT ( loop_cluster_radius , " loop_cluster_radius ", 999.99 ); //IMPORTANT DO NOT CHANGE
-	NEW_OPT ( alignment_res , " align_res_list ", blank_string_vector );
-	NEW_OPT ( native_alignment_res , " native_alignment_res ", blank_size_vector );
-	NEW_OPT ( jump_point_pairs , " jump_point_pairs ", blank_string_vector );
-	NEW_OPT ( sample_res, "residues to build, the first element is the actual sample res while the other are the bulge residues", blank_size_vector );
-	NEW_OPT ( prepend , "prepend ", true );
-	// Note that this could be specified in a PDB INFO file -- but how about for silent files?
-	NEW_OPT ( cluster_type, "cluster_type", "all_atom" );
-	NEW_OPT ( input_res, "Residues already present in starting pose_1", blank_size_vector );
-	NEW_OPT ( input_res2, "Residues already present in starting  pose_2", blank_size_vector );
-	NEW_OPT ( missing_res, "Residues missing in starting pose_1, alternative to input_res", blank_size_vector );
-	NEW_OPT ( missing_res2, "Residues missing in starting pose_2, alternative to input_res2", blank_size_vector );
-	NEW_OPT ( cutpoint_open, "optional: chainbreak in full sequence", blank_size_vector );
-	NEW_OPT ( cutpoint_closed, "optional: cutpoint at which to apply chain closure", 0 );
-	NEW_OPT ( fixed_res, "optional: residues to be held fixed in minimizer", blank_size_vector );
-	NEW_OPT ( minimize_res, "optional: residues to be minimize in minimizer, alternative to fixed_res", blank_size_vector );
-	NEW_OPT ( virtual_res, "optional: residues to be made virtual", blank_size_vector );
-	NEW_OPT ( num_pose_minimize, "optional: set_num_pose_minimize by Minimizer", 99999 );
-	NEW_OPT ( sampler_num_pose_kept, "optional: set_num_pose_kept by ResidueSampler", 108 );
-	NEW_OPT ( terminal_res, "optional: residues that are not allowed to stack during sampling", blank_size_vector );
-	NEW_OPT ( rmsd_res, "optional: residues that will be use to calculate rmsd", blank_size_vector );
-	NEW_OPT ( bulge_res, "optional: residues to be turned into a bulge variant", blank_size_vector );
-	NEW_OPT ( centroid_screen, "centroid_screen", true );
-	NEW_OPT ( VDW_atr_rep_screen, "classic VDW_atr_rep_screen", true );
-	NEW_OPT ( sampler_perform_o2prime_pack, "perform O2' hydrogen packing inside StepWiseRNA_ResidueSampler", true );
-	NEW_OPT ( fast, "quick runthrough for debugging", false );
-	NEW_OPT ( medium_fast, "quick runthrough for debugging (keep more poses and not as fast as fast option)", false );
-	NEW_OPT ( VERBOSE, "VERBOSE", false );
-	NEW_OPT ( sampler_native_rmsd_screen, "native_rmsd_screen ResidueSampler", false );
-	NEW_OPT ( sampler_native_screen_rmsd_cutoff, "sampler_native_screen_rmsd_cutoff", 2.0 );
-	NEW_OPT ( native_edensity_score_cutoff, "native_edensity_score_cutoff", -1 );
-	NEW_OPT ( auto_tune, "autotune rmsd for clustering between 0.1A up to 2.0A", false );
-	NEW_OPT ( skip_minimize, "no minimize step in rna_swa residue sampling", false );
-	NEW_OPT ( skip_sampling, "no sampling step in rna_swa residue sampling", false );
-	NEW_OPT ( skip_clustering, "keep every pose, no clustering", false );
-	NEW_OPT ( score_diff_min, "minimum score_diff before max_decoy_ condition applies", 0.0 ); //Oct 3, 2010
-	NEW_OPT ( score_diff_cut, "score difference cut for clustering", 1000000.0 );
-	NEW_OPT ( score_diff_cut_tier_two, "score_tier_two difference cut for clustering", 0.0 ); //Sept 24, 2010
-	NEW_OPT ( score_diff_cut_tier_three, "score_tier_three difference cut for clustering", 0.0 ); //Sept 24, 2010
-	NEW_OPT ( algorithm, "Specify algorithm to execute", "" );
-	NEW_OPT ( FARFAR_start_pdb, "if pass in name, then create pdb with input chunks and the less with idealize bond length and angle residue", "" ); //Oct 16, 2010
-	NEW_OPT ( allow_chain_boundary_jump_partner_right_at_fixed_BP, "allow_chain_boundary_jump_partner_right_at_fixed_BP, mainly just to get SQUARE RNA working", false ); //Nov 6, 2010
-	NEW_OPT ( allow_fixed_res_at_moving_res, "allow_fixed_res_at_moving_res, mainly just to get Hermann Duplex working", false ); //Nov 15, 2010
-	NEW_OPT( sampler_cluster_rmsd, " Clustering rmsd of conformations in the sampler", 0.5); //DO NOT CHANGE THIS!
-	NEW_OPT( output_pdb, "output_pdb: If true, then will dump the pose into a PDB file at different stages of the stepwise assembly process.", false); //Sept 24, 2011
-	////////////////////////////////////////////////////////////////////////////
-	// setup
-	////////////////////////////////////////////////////////////////////////////
-	devel::init ( argc, argv );
-	////////////////////////////////////////////////////////////////////////////
-	// end of setup
-	////////////////////////////////////////////////////////////////////////////
-	protocols::viewer::viewer_main ( my_main );
-    } catch (utility::excn::Exception const & e ) {
-                              std::cout << "caught exception " << e.msg() << std::endl;
+	try {
+		utility::vector1< Size > blank_size_vector;
+		utility::vector1< std::string > blank_string_vector;
+		NEW_OPT ( add_virt_root, "add_virt_root", false );
+		NEW_OPT ( job_queue_ID, " rna_resample_test()/combine_long_loop mode: Specify the tag pair in filter_output_filename to be read in and imported (start from 0!)" , 0 );
+		NEW_OPT ( filter_output_filename, "CombineLongLoopFilterer: filter_output_filename", "filter_struct.txt" ); //Sept 12, 2010
+		NEW_OPT ( filter_for_previous_contact, "CombineLongLoopFilterer: filter_for_previous_contact", false ); //Sept 12, 2010
+		NEW_OPT ( filter_for_previous_clash, "CombineLongLoopFilterer: filter_for_previous_clash", false ); //Sept 12, 2010
+		//New option Aug 15 2010 //Reinitialize_CCD_torsion to zero before every CCD chain closure
+		NEW_OPT ( minimize_and_score_native_pose, "minimize_and_score_native_pose ", false ); //Sept 15, 2010
+		NEW_OPT ( minimize_and_score_sugar, "minimize and sugar torsion+angle? and include the rna_sugar_close_score_term ", true ); //Sept 15, 2010
+		NEW_OPT ( sampler_extra_syn_chi_rotamer, "Samplerer: extra_chi_rotamer", false );
+		NEW_OPT ( sampler_extra_anti_chi_rotamer, "Samplerer: extra_chi_rotamer", false );
+		NEW_OPT ( PBP_clustering_at_chain_closure, "Samplerer: PBP_clustering_at_chain_closure", false );
+		NEW_OPT ( clusterer_two_stage_clustering, "Cluster is two stage..using triangle inequaility to speed up clustering", true ); //Change to true on Oct 10, 2010
+		NEW_OPT ( clusterer_keep_pose_in_memory, "reduce memory usage for the clusterer", true ); //Aug 6, 2010
+		NEW_OPT ( finer_sampling_at_chain_closure, "Samplerer: finer_sampling_at_chain_closure", false ); //Jun 9, 2010
+		NEW_OPT ( VDW_rep_screen_info, "VDW_rep_screen_info to create VDW_rep_screen_bin (useful when building loop from large poses)", blank_string_vector ); //Jun 9, 2010
+		NEW_OPT ( VDW_rep_alignment_RMSD_CUTOFF, "use with VDW_rep_screen_info", 0.001 ); //Nov 12, 2010
+		NEW_OPT ( graphic, "Turn graphic on/off", true ); //May 5, 2010
+		NEW_OPT ( recreate_silent_struct, "Special mode to recreate_silent_struct for clusterer output...for analysis purposes", false ); //May 5, 2010
+		NEW_OPT ( Real_parameter_one, "free_variable for testing purposes ", 0.0 );
+		NEW_OPT ( clusterer_quick_alignment, "quick alignment during clusterer...only work if the alignment residues are fixed ", false );
+		NEW_OPT ( clusterer_optimize_memory_usage, "clusterer_optimize_memory_usage ", false );
+		NEW_OPT ( clusterer_min_struct, "clusterer_min_struct ", 400 ); //Oct 13, 2010
+		NEW_OPT ( clusterer_write_score_only, "clusterer_write_score_only/ only effect recreate_silent_struct mode  ", false ); //Oct 20, 2010
+		NEW_OPT ( add_lead_zero_to_tag, "Add lead zero to clusterer output tag ", false );
+		NEW_OPT ( distinguish_pucker, "distinguish pucker when cluster:both in sampler and clusterer", true );
+		NEW_OPT ( input_tag_list, "input_tag_list", blank_string_vector );
+		NEW_OPT ( native_virtual_res , " native_virtual_res ", blank_size_vector );
+		NEW_OPT ( suite_cluster_radius , " individual_suite_cluster_radius ", 999.99 ); //IMPORTANT DO NOT CHANGE
+		NEW_OPT ( loop_cluster_radius , " loop_cluster_radius ", 999.99 ); //IMPORTANT DO NOT CHANGE
+		NEW_OPT ( alignment_res , " align_res_list ", blank_string_vector );
+		NEW_OPT ( native_alignment_res , " native_alignment_res ", blank_size_vector );
+		NEW_OPT ( jump_point_pairs , " jump_point_pairs ", blank_string_vector );
+		NEW_OPT ( sample_res, "residues to build, the first element is the actual sample res while the other are the bulge residues", blank_size_vector );
+		NEW_OPT ( prepend , "prepend ", true );
+		// Note that this could be specified in a PDB INFO file -- but how about for silent files?
+		NEW_OPT ( cluster_type, "cluster_type", "all_atom" );
+		NEW_OPT ( input_res, "Residues already present in starting pose_1", blank_size_vector );
+		NEW_OPT ( input_res2, "Residues already present in starting  pose_2", blank_size_vector );
+		NEW_OPT ( missing_res, "Residues missing in starting pose_1, alternative to input_res", blank_size_vector );
+		NEW_OPT ( missing_res2, "Residues missing in starting pose_2, alternative to input_res2", blank_size_vector );
+		NEW_OPT ( cutpoint_open, "optional: chainbreak in full sequence", blank_size_vector );
+		NEW_OPT ( cutpoint_closed, "optional: cutpoint at which to apply chain closure", 0 );
+		NEW_OPT ( fixed_res, "optional: residues to be held fixed in minimizer", blank_size_vector );
+		NEW_OPT ( minimize_res, "optional: residues to be minimize in minimizer, alternative to fixed_res", blank_size_vector );
+		NEW_OPT ( virtual_res, "optional: residues to be made virtual", blank_size_vector );
+		NEW_OPT ( num_pose_minimize, "optional: set_num_pose_minimize by Minimizer", 99999 );
+		NEW_OPT ( sampler_num_pose_kept, "optional: set_num_pose_kept by ResidueSampler", 108 );
+		NEW_OPT ( terminal_res, "optional: residues that are not allowed to stack during sampling", blank_size_vector );
+		NEW_OPT ( rmsd_res, "optional: residues that will be use to calculate rmsd", blank_size_vector );
+		NEW_OPT ( bulge_res, "optional: residues to be turned into a bulge variant", blank_size_vector );
+		NEW_OPT ( centroid_screen, "centroid_screen", true );
+		NEW_OPT ( VDW_atr_rep_screen, "classic VDW_atr_rep_screen", true );
+		NEW_OPT ( sampler_perform_o2prime_pack, "perform O2' hydrogen packing inside StepWiseRNA_ResidueSampler", true );
+		NEW_OPT ( fast, "quick runthrough for debugging", false );
+		NEW_OPT ( medium_fast, "quick runthrough for debugging (keep more poses and not as fast as fast option)", false );
+		NEW_OPT ( VERBOSE, "VERBOSE", false );
+		NEW_OPT ( sampler_native_rmsd_screen, "native_rmsd_screen ResidueSampler", false );
+		NEW_OPT ( sampler_native_screen_rmsd_cutoff, "sampler_native_screen_rmsd_cutoff", 2.0 );
+		NEW_OPT ( native_edensity_score_cutoff, "native_edensity_score_cutoff", -1 );
+		NEW_OPT ( auto_tune, "autotune rmsd for clustering between 0.1A up to 2.0A", false );
+		NEW_OPT ( skip_minimize, "no minimize step in rna_swa residue sampling", false );
+		NEW_OPT ( skip_sampling, "no sampling step in rna_swa residue sampling", false );
+		NEW_OPT ( skip_clustering, "keep every pose, no clustering", false );
+		NEW_OPT ( score_diff_min, "minimum score_diff before max_decoy_ condition applies", 0.0 ); //Oct 3, 2010
+		NEW_OPT ( score_diff_cut, "score difference cut for clustering", 1000000.0 );
+		NEW_OPT ( score_diff_cut_tier_two, "score_tier_two difference cut for clustering", 0.0 ); //Sept 24, 2010
+		NEW_OPT ( score_diff_cut_tier_three, "score_tier_three difference cut for clustering", 0.0 ); //Sept 24, 2010
+		NEW_OPT ( algorithm, "Specify algorithm to execute", "" );
+		NEW_OPT ( FARFAR_start_pdb, "if pass in name, then create pdb with input chunks and the less with idealize bond length and angle residue", "" ); //Oct 16, 2010
+		NEW_OPT ( allow_chain_boundary_jump_partner_right_at_fixed_BP, "allow_chain_boundary_jump_partner_right_at_fixed_BP, mainly just to get SQUARE RNA working", false ); //Nov 6, 2010
+		NEW_OPT ( allow_fixed_res_at_moving_res, "allow_fixed_res_at_moving_res, mainly just to get Hermann Duplex working", false ); //Nov 15, 2010
+		NEW_OPT( sampler_cluster_rmsd, " Clustering rmsd of conformations in the sampler", 0.5); //DO NOT CHANGE THIS!
+		NEW_OPT( output_pdb, "output_pdb: If true, then will dump the pose into a PDB file at different stages of the stepwise assembly process.", false); //Sept 24, 2011
+		////////////////////////////////////////////////////////////////////////////
+		// setup
+		////////////////////////////////////////////////////////////////////////////
+		devel::init ( argc, argv );
+		////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		////////////////////////////////////////////////////////////////////////////
+		protocols::viewer::viewer_main ( my_main );
+	} catch (utility::excn::Exception const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
-                                  }
-        return 0;
+	}
+	return 0;
 }
 
 

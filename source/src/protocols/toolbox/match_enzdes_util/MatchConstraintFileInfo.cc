@@ -510,7 +510,7 @@ MatchConstraintFileInfo::read_data( utility::io::izstream & data )
 
 				if ( map_it == enz_template_res_.end() ) {
 
-					std::pair< core::Size, EnzCstTemplateResOP > to_insert( map_id, EnzCstTemplateResOP( new EnzCstTemplateRes( restype_set_ ) ) );
+					std::pair< core::Size, EnzCstTemplateResOP > to_insert( map_id, utility::pointer::make_shared< EnzCstTemplateRes >( restype_set_ ) );
 
 					enz_template_res_.insert( to_insert );
 

@@ -60,7 +60,7 @@ public:
 		//Trying to give two embedded selectors
 		std::stringstream ss_two_embedded;
 		ss_two_embedded << "<LigandMetalContactSelector name=\"metal\"><Index resnums=\"154,155\" /><Chain chains=\"A\" /></LigandMetalContactSelector>" << std::endl;
-		tag = utility::tag::TagOP( new utility::tag::Tag() );
+		tag = utility::pointer::make_shared< utility::tag::Tag >();
 		tag->read( ss_two_embedded );
 		TR << "Tag with two embedded selectors" << std::endl;
 		TS_ASSERT_THROWS_ANYTHING( selector.parse_my_tag(tag, datamap));
@@ -68,7 +68,7 @@ public:
 		//Provide a selector that isn't in the data map
 		std::stringstream ss_bad_selector;
 		ss_bad_selector << "<LigandMetalContactSelector name=\"metal\" residue_selector=\"dummy\" />" << std::endl;
-		tag = utility::tag::TagOP( new utility::tag::Tag() );
+		tag = utility::pointer::make_shared< utility::tag::Tag >();
 		tag->read( ss_bad_selector );
 		TR << "Tag with undefined residue selector" << std::endl;
 		TS_ASSERT_THROWS_ANYTHING( selector.parse_my_tag( tag, datamap) );
@@ -80,21 +80,21 @@ public:
 		//Confirm that the above tag would work once the selector was added
 		std::stringstream ss_good_selector;
 		ss_good_selector << "<LigandMetalContactSelector name=\"metal\" residue_selector=\"dummy\" />" << std::endl;
-		tag = utility::tag::TagOP( new utility::tag::Tag() );
+		tag = utility::pointer::make_shared< utility::tag::Tag >();
 		tag->read( ss_good_selector );
 		TR << "Tag with defined residue selector" << std::endl;
 		TS_ASSERT_THROWS_NOTHING( selector.parse_my_tag( tag, datamap) );
 		//Try to provide a selector string and an embedded selector
 		std::stringstream ss_selector_two_ways;
 		ss_selector_two_ways << "<LigandMetalContactSelector name=\"metal\" residue_selector=\"dummy\" ><Index resnums=\"154,155\" /></LigandMetalContactSelector>" << std::endl;
-		tag = utility::tag::TagOP( new utility::tag::Tag() );
+		tag = utility::pointer::make_shared< utility::tag::Tag >();
 		tag->read( ss_selector_two_ways );
 		TR << "Tag with selector two ways" << std::endl;
 		TS_ASSERT_THROWS_ANYTHING( selector.parse_my_tag( tag, datamap ) );
 		//Try to provide a selector string and a resnum string
 		std::stringstream ss_select_string_and_resnum_string;
 		ss_select_string_and_resnum_string << "<LigandMetalContactSelector name=\"metal\" resnums=\"154,155\" residue_selector=\"dummy\" />" << std::endl;
-		tag = utility::tag::TagOP( new utility::tag::Tag() );
+		tag = utility::pointer::make_shared< utility::tag::Tag >();
 		tag->read( ss_select_string_and_resnum_string );
 		TR << "Tag with selector string and resnum string" << std::endl;
 		TS_ASSERT_THROWS_ANYTHING( selector.parse_my_tag( tag, datamap) );
@@ -140,7 +140,7 @@ public:
 		//This should behave like above except it should override default values, including command line options
 		std::stringstream ss_a;
 		ss_a << "<LigandMetalContactSelector name=\"metal\"  ><Chain chains=\"A\" /></LigandMetalContactSelector>" << std::endl;
-		tag = utility::tag::TagOP( new utility::tag::Tag() );
+		tag = utility::pointer::make_shared< utility::tag::Tag >();
 		tag->read( ss_a );
 		TR << "Tag with embedded selector to select chain A" << std::endl;
 		TS_ASSERT_THROWS_NOTHING( selector.parse_my_tag( tag, datamap ) );
@@ -173,7 +173,7 @@ public:
 		//This should behave like above except it should override default values, including command line options
 		std::stringstream ss_zn;
 		ss_zn << "<LigandMetalContactSelector name=\"metal\" ><ResidueName residue_name3=\" ZN\" /></LigandMetalContactSelector>" << std::endl;
-		tag = utility::tag::TagOP( new utility::tag::Tag() );
+		tag = utility::pointer::make_shared< utility::tag::Tag >();
 		tag->read( ss_zn );
 		TR << "Tag with embedded selector to select zinc ions" << std::endl;
 		TS_ASSERT_THROWS_NOTHING( selector.parse_my_tag( tag, datamap) );
@@ -206,7 +206,7 @@ public:
 		//This should behave like above except it should override default values, including command line options
 		std::stringstream ss_none;
 		ss_none << "<LigandMetalContactSelector name=\"metal\" ><Index resnums=\"1,2,3\" /></LigandMetalContactSelector>" << std::endl;
-		tag = utility::tag::TagOP( new utility::tag::Tag() );
+		tag = utility::pointer::make_shared< utility::tag::Tag >();
 		tag->read( ss_none );
 		TR << "Tag with embedded selector that should not include any of the metal ions" << std::endl;
 		TS_ASSERT_THROWS_NOTHING( selector.parse_my_tag( tag, datamap) );
@@ -294,7 +294,7 @@ public:
 		//This should behave like above except it should override default values, including command line options
 		std::stringstream ss_a;
 		ss_a << "<LigandMetalContactSelector name=\"metal\" residue_selector=\"chain\" />" << std::endl;
-		tag = utility::tag::TagOP( new utility::tag::Tag() );
+		tag = utility::pointer::make_shared< utility::tag::Tag >();
 		tag->read( ss_a );
 		TR << "Tag with embedded selector to select chain A" << std::endl;
 		TS_ASSERT_THROWS_NOTHING( new_selector.parse_my_tag( tag, datamap ) );
@@ -327,7 +327,7 @@ public:
 		//This should behave like above except it should override default values, including command line options
 		std::stringstream ss_zn;
 		ss_zn << "<LigandMetalContactSelector name=\"metal\" residue_selector=\"zinc\" />" << std::endl;
-		tag = utility::tag::TagOP( new utility::tag::Tag() );
+		tag = utility::pointer::make_shared< utility::tag::Tag >();
 		tag->read( ss_zn );
 		TR << "Tag with embedded selector to select zinc ions" << std::endl;
 		TS_ASSERT_THROWS_NOTHING( new_selector.parse_my_tag( tag, datamap ) );
@@ -360,7 +360,7 @@ public:
 		//This should behave like above except it should override default values, including command line options
 		std::stringstream ss_none;
 		ss_none << "<LigandMetalContactSelector name=\"metal\" residue_selector=\"none\" />" << std::endl;
-		tag = utility::tag::TagOP( new utility::tag::Tag() );
+		tag = utility::pointer::make_shared< utility::tag::Tag >();
 		tag->read( ss_none );
 		TR << "Tag with embedded selector that should not include any of the metal ions" << std::endl;
 		TS_ASSERT_THROWS_NOTHING( new_selector.parse_my_tag( tag, datamap) );
@@ -429,7 +429,7 @@ public:
 		//This should behave like above except it should override default values, including command line options
 		std::stringstream ss_a;
 		ss_a << "<LigandMetalContactSelector name=\"metal\" resnums=\"1-155\" />" << std::endl;
-		tag = utility::tag::TagOP( new utility::tag::Tag() );
+		tag = utility::pointer::make_shared< utility::tag::Tag >();
 		tag->read( ss_a );
 		TR << "Tag with embedded selector to select chain A" << std::endl;
 		TS_ASSERT_THROWS_NOTHING( new_selector.parse_my_tag( tag, datamap) );
@@ -462,7 +462,7 @@ public:
 		//This should behave like above except it should override default values, including command line options
 		std::stringstream ss_zn;
 		ss_zn << "<LigandMetalContactSelector name=\"metal\" resnums=\"155,310\" />" << std::endl;
-		tag = utility::tag::TagOP( new utility::tag::Tag() );
+		tag = utility::pointer::make_shared< utility::tag::Tag >();
 		tag->read( ss_zn );
 		TR << "Tag with embedded selector to select zinc ions" << std::endl;
 		TS_ASSERT_THROWS_NOTHING( new_selector.parse_my_tag( tag, datamap ) );
@@ -495,7 +495,7 @@ public:
 		//This should behave like above except it should override default values, including command line options
 		std::stringstream ss_none;
 		ss_none << "<LigandMetalContactSelector name=\"metal\"  resnums=\"1,2,3\" />" << std::endl;
-		tag = utility::tag::TagOP( new utility::tag::Tag() );
+		tag = utility::pointer::make_shared< utility::tag::Tag >();
 		tag->read( ss_none );
 		TR << "Tag with embedded selector that should not include any of the metal ions" << std::endl;
 		TS_ASSERT_THROWS_NOTHING( new_selector.parse_my_tag( tag, datamap) );
@@ -533,7 +533,7 @@ public:
 		//This should behave like above except it should override default values, including command line options
 		std::stringstream ss_none;
 		ss_none << "<LigandMetalContactSelector name=\"metal\" resnums=\"1,2,3\" dist_cutoff_multiplier=\"3\" />" << std::endl;
-		utility::tag::TagOP tag = utility::tag::TagOP( new utility::tag::Tag() );
+		utility::tag::TagOP tag = utility::pointer::make_shared< utility::tag::Tag >();
 		tag->read( ss_none );
 		TR << "Tag with embedded selector that should not include any of the metal ions" << std::endl;
 		TS_ASSERT_THROWS_NOTHING( new_selector.parse_my_tag( tag, datamap) );
@@ -547,7 +547,7 @@ public:
 		//This should behave like above except it should override default values, including command line options
 		std::stringstream ss_none2;
 		ss_none2 << "<LigandMetalContactSelector name=\"metal\" resnums=\"1,2,3\" />" << std::endl;
-		tag = utility::tag::TagOP( new utility::tag::Tag() );
+		tag = utility::pointer::make_shared< utility::tag::Tag >();
 		tag->read( ss_none2 );
 		TR << "Tag with embedded selector that should not include any of the metal ions" << std::endl;
 		TS_ASSERT_THROWS_NOTHING( new_selector.parse_my_tag( tag, datamap) );

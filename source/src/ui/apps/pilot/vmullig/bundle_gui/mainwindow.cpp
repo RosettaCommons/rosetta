@@ -576,7 +576,7 @@ void MainWindow::on_importPDB_button_clicked()
 
 	std::string pdb_filename( filename.toStdString() );
 
-	nonparametric_pose_ = core::pose::PoseOP( new core::pose::Pose );
+	nonparametric_pose_ = utility::pointer::make_shared< core::pose::Pose >();
 	core::import_pose::pose_from_file( *nonparametric_pose_, pdb_filename, false, core::import_pose::PDB_file );
 
 	nonparametric_pose_offset_.x( 0.0 );

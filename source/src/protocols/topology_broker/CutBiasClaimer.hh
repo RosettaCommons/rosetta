@@ -62,7 +62,7 @@ public:
 	CutBiasClaimerOP shared_from_this() { return utility::pointer::dynamic_pointer_cast<CutBiasClaimer>( TopologyClaimer::shared_from_this() ); }
 
 	TopologyClaimerOP clone() const override {
-		return TopologyClaimerOP( new CutBiasClaimer( *this ) );
+		return utility::pointer::make_shared< CutBiasClaimer >( *this );
 	}
 
 	void generate_claims( claims::DofClaims& ) override {};

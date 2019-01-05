@@ -81,7 +81,7 @@ static basic::Tracer TR( "protocols.protein_interface_design.movers.PlaceOnLoop"
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP PlaceOnLoopCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new PlaceOnLoop );
+// XRW TEMP  return utility::pointer::make_shared< PlaceOnLoop >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -98,19 +98,19 @@ PlaceOnLoop::PlaceOnLoop() :
 {
 	delta_length_.clear();
 	delta_length_.push_back( 0 );
-	kinematic_mover_ = protocols::loops::loop_closure::kinematic_closure::KinematicMoverOP( new protocols::loops::loop_closure::kinematic_closure::KinematicMover );
+	kinematic_mover_ = utility::pointer::make_shared< protocols::loops::loop_closure::kinematic_closure::KinematicMover >();
 	set_kinematic_defaults();
 }
 
 PlaceOnLoop::~PlaceOnLoop() = default;
 
 MoverOP PlaceOnLoop::fresh_instance() const {
-	return MoverOP( new PlaceOnLoop );
+	return utility::pointer::make_shared< PlaceOnLoop >();
 }
 
 protocols::moves::MoverOP
 PlaceOnLoop::clone() const {
-	return( MoverOP( new PlaceOnLoop( *this ) ));
+	return( utility::pointer::make_shared< PlaceOnLoop >( *this ));
 }
 
 bool
@@ -139,9 +139,9 @@ PlaceOnLoop::minimize_toward_stub( core::pose::Pose & pose ) const
 	using namespace protocols::task_operations;
 	using core::pack::task::operation::TaskOperationCOP;
 	core::pack::task::TaskFactoryOP tf( new TaskFactory );
-	tf->push_back( TaskOperationCOP( new ProteinInterfaceDesignOperation ) );
-	tf->push_back( TaskOperationCOP( new RestrictChainToRepackingOperation( 1 ) ) );
-	tf->push_back( TaskOperationCOP( new RestrictChainToRepackingOperation( 2 ) ) );
+	tf->push_back( utility::pointer::make_shared< ProteinInterfaceDesignOperation >() );
+	tf->push_back( utility::pointer::make_shared< RestrictChainToRepackingOperation >( 1 ) );
+	tf->push_back( utility::pointer::make_shared< RestrictChainToRepackingOperation >( 2 ) );
 	refine.set_task_factory( tf );
 	refine.apply( pose );
 
@@ -170,7 +170,7 @@ PlaceOnLoop::add_bb_csts_to_loop( core::pose::Pose & pose ) const
 			ptask->nonconst_residue_task( i ).prevent_repacking();
 		}
 	}
-	stub_set_->pair_with_scaffold( pose, host_chain_, protocols::filters::FilterCOP( protocols::filters::FilterOP( new protocols::filters::TrueFilter ) ) );
+	stub_set_->pair_with_scaffold( pose, host_chain_, utility::pointer::make_shared< protocols::filters::TrueFilter >() );
 	core::Size fixed_res(1);
 	if ( host_chain_ == 1 ) fixed_res = pose.size();
 	core::id::AtomID const fixed_atom_id = core::id::AtomID( pose.residue(fixed_res).atom_index("CA"), fixed_res );
@@ -287,7 +287,7 @@ PlaceOnLoop::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, pr
 	minimize_toward_stub_ = tag->getOption< bool >( "minimize_toward_stub", true );
 	if ( tag->hasOption( "stubfile" ) ) {
 		std::string const stub_fname = tag->getOption< std::string >( "stubfile" );
-		stub_set_ = protocols::hotspot_hashing::HotspotStubSetOP( new protocols::hotspot_hashing::HotspotStubSet );
+		stub_set_ = utility::pointer::make_shared< protocols::hotspot_hashing::HotspotStubSet >();
 		stub_set_->read_data( stub_fname );
 	}
 
@@ -363,7 +363,7 @@ std::string PlaceOnLoopCreator::keyname() const {
 
 protocols::moves::MoverOP
 PlaceOnLoopCreator::create_mover() const {
-	return protocols::moves::MoverOP( new PlaceOnLoop );
+	return utility::pointer::make_shared< PlaceOnLoop >();
 }
 
 void PlaceOnLoopCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

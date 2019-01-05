@@ -53,7 +53,7 @@ namespace methods {
 methods::EnergyMethodOP FACTSEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
-	return methods::EnergyMethodOP( new FACTSEnergy( options ) );
+	return utility::pointer::make_shared< FACTSEnergy >( options );
 }
 
 ScoreTypes FACTSEnergyCreator::score_types_for_method() const {
@@ -69,7 +69,7 @@ ScoreTypes FACTSEnergyCreator::score_types_for_method() const {
 FACTSEnergy::FACTSEnergy( FACTSEnergy const & /*src*/ ) = default;
 
 FACTSEnergy::FACTSEnergy( EnergyMethodOptions const & options ):
-	parent( methods::EnergyMethodCreatorOP( new FACTSEnergyCreator ) ),
+	parent( utility::pointer::make_shared< FACTSEnergyCreator >() ),
 	potential_( ScoringManager::get_instance()->get_FACTSPotential() ),
 	exclude_DNA_DNA_( options.exclude_DNA_DNA() ) {
 	//fpd  this should be in energymethodoptions

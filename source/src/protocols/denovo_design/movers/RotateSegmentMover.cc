@@ -73,14 +73,14 @@ RotateSegmentMover::parse_my_tag(
 protocols::moves::MoverOP
 RotateSegmentMover::clone() const
 {
-	return protocols::moves::MoverOP( new RotateSegmentMover( *this ) );
+	return utility::pointer::make_shared< RotateSegmentMover >( *this );
 }
 
 
 moves::MoverOP
 RotateSegmentMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new RotateSegmentMover );
+	return utility::pointer::make_shared< RotateSegmentMover >();
 }
 
 std::string
@@ -270,7 +270,7 @@ calc_dihedral(
 protocols::moves::MoverOP
 RotateSegmentMoverCreator::create_mover() const
 {
-	return protocols::moves::MoverOP( new RotateSegmentMover );
+	return utility::pointer::make_shared< RotateSegmentMover >();
 }
 
 std::string

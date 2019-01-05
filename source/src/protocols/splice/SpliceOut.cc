@@ -124,7 +124,7 @@ std::string SpliceOutCreator::keyname() const {
 }
 
 protocols::moves::MoverOP SpliceOutCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SpliceOut );
+	return utility::pointer::make_shared< SpliceOut >();
 }
 
 std::string SpliceOutCreator::mover_name() {
@@ -224,9 +224,9 @@ void SpliceOut::apply(core::pose::Pose & pose) {
 	///Apply user defined design shell and repack shell around spliced segment
 	core::pack::task::TaskFactoryOP tf;
 	if ( splicemanager.task_factory() == nullptr ) {
-		tf = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory );
+		tf = utility::pointer::make_shared< core::pack::task::TaskFactory >();
 	} else {
-		tf = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory(*splicemanager.task_factory()) );
+		tf = utility::pointer::make_shared< core::pack::task::TaskFactory >(*splicemanager.task_factory());
 	}
 	using namespace protocols::task_operations;
 	DesignAroundOperationOP dao( new DesignAroundOperation );
@@ -248,7 +248,7 @@ void SpliceOut::apply(core::pose::Pose & pose) {
 	acb.apply(pose);
 	////////////////////////////////////////////////////////////////////////////////////////////
 	core::kinematics::MoveMapOP mm;
-	mm = core::kinematics::MoveMapOP( new core::kinematics::MoveMap );
+	mm = utility::pointer::make_shared< core::kinematics::MoveMap >();
 	mm->set_chi(false);
 	mm->set_bb(false);
 	mm->set_jump(false);
@@ -327,7 +327,7 @@ void SpliceOut::apply(core::pose::Pose & pose) {
 	write_database_to_file(pose);
 	//TR<<core::pose::get_all_comments(pose)<<std::endl;
 	// remove_hairpin( pose );
-	saved_fold_tree_ = core::kinematics::FoldTreeOP( new core::kinematics::FoldTree(pose.fold_tree()) );
+	saved_fold_tree_ = utility::pointer::make_shared< core::kinematics::FoldTree >(pose.fold_tree());
 	//retrieve_values();
 
 }//apply
@@ -402,7 +402,7 @@ void SpliceOut::parse_SpliceOut_tags(TagCOP const tag,protocols::moves::Movers_m
 	handle_mover_tag(tag,movers);
 	if ( tag->hasOption("source_pdb") ) {
 		source_pdb(tag->getOption<std::string>("source_pdb"));
-		source_pose_ = core::pose::PoseOP( new core::pose::Pose );
+		source_pose_ = utility::pointer::make_shared< core::pose::Pose >();
 		source_pose_ = core::import_pose::pose_from_file( source_pdb_);
 	}
 
@@ -447,7 +447,7 @@ void SpliceOut::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &data, 
 }
 
 protocols::moves::MoverOP SpliceOut::clone() const {
-	return (protocols::moves::MoverOP(new SpliceOut(*this)));
+	return (utility::pointer::make_shared< SpliceOut >(*this));
 }
 
 void SpliceOut::scorefxn(core::scoring::ScoreFunctionOP sf) {
@@ -685,7 +685,7 @@ void SpliceOut::ccd_mover( core::pose::Pose & pose,core::kinematics::MoveMapOP m
 	ccd_mover->loops(loops);
 	TR_ccd<<"fold tree before ccd"<<pose.fold_tree()<<std::endl;
 	core::pack::task::TaskFactoryOP tf;
-	tf = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory(*splicemanager.task_factory()) );
+	tf = utility::pointer::make_shared< core::pack::task::TaskFactory >(*splicemanager.task_factory());
 	ccd_mover->set_task_factory(tf);
 	ccd_mover->move_map(mm);
 	//ccd_mover->set_scorefxn(scorefxn());
@@ -728,7 +728,7 @@ void SpliceOut::tail_mover( core::pose::Pose & pose,core::kinematics::MoveMapOP 
 		pose.dump_pdb(splicemanager.mover_name()+"_before_tailmover.pdb");
 	}
 	core::pack::task::TaskFactoryOP tf;
-	tf = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory(*splicemanager.task_factory()) );
+	tf = utility::pointer::make_shared< core::pack::task::TaskFactory >(*splicemanager.task_factory());
 	tail_mover->set_task_factory(tf);
 	//tail_mover->set_fa_scorefxn(scorefxn());
 	tail_mover->get_scorefunction();

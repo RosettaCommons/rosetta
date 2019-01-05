@@ -60,7 +60,7 @@ StructFileRepOptions::~StructFileRepOptions() = default;
 /// @brief Copy this object and return an owning pointer to the copy.
 StructFileRepOptionsOP
 StructFileRepOptions::clone() const {
-	return StructFileRepOptionsOP( new StructFileRepOptions(*this) );
+	return utility::pointer::make_shared< StructFileRepOptions >(*this);
 }
 
 

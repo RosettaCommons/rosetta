@@ -365,7 +365,7 @@ public:
 	/// @brief apply
 	void apply( Pose const & pose, core::pack::task::PackerTask & task ) const override;
 	/// @brief make clone
-	TaskOperationOP clone() const override { return TaskOperationOP( new CombinedTaskOperation( *this ) ); }
+	TaskOperationOP clone() const override { return utility::pointer::make_shared< CombinedTaskOperation >( *this ); }
 
 private:
 	VecTaskOP task_operations_;

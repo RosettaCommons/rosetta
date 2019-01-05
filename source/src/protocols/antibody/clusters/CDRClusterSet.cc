@@ -38,7 +38,7 @@ using namespace basic::datacache;
 
 CDRClusterSet::CDRClusterSet(AntibodyInfo * ab_info){
 	ab_info_ = ab_info;
-	cluster_matcher_ = CDRClusterMatcherOP( new CDRClusterMatcher() );
+	cluster_matcher_ = utility::pointer::make_shared< CDRClusterMatcher >();
 	clear();
 }
 
@@ -108,14 +108,14 @@ CDRClusterSet::empty() const {
 BasicCDRClusterSetOP
 CDRClusterSet::get_cacheable_cluster_data() const {
 	//Make sure we are cop
-	return BasicCDRClusterSetOP( new BasicCDRClusterSet(clusters_) );
+	return utility::pointer::make_shared< BasicCDRClusterSet >(clusters_);
 }
 
 void
 CDRClusterSet::set_cacheable_cluster_data_to_pose(core::pose::Pose& pose) const {
 	using basic::datacache::DataCache_CacheableData;
 	TR<< "Adding cacheable cluster data to pose"<<std::endl;
-	pose.data().set(core::pose::datacache::CacheableDataType::CDR_CLUSTER_INFO, DataCache_CacheableData::DataOP( new BasicCDRClusterSet(clusters_) ));
+	pose.data().set(core::pose::datacache::CacheableDataType::CDR_CLUSTER_INFO, utility::pointer::make_shared< BasicCDRClusterSet >(clusters_));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -144,7 +144,7 @@ BasicCDRClusterSet::~BasicCDRClusterSet()= default;
 
 CacheableDataOP
 BasicCDRClusterSet::clone() const{
-	return CacheableDataOP( new BasicCDRClusterSet(*this) );
+	return utility::pointer::make_shared< BasicCDRClusterSet >(*this);
 }
 
 void

@@ -69,7 +69,7 @@ namespace simple_filters {
 static basic::Tracer TR( "protocols.simple_filters.ResidueChiralityFilter" );
 
 protocols::filters::FilterOP
-ResidueChiralityFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ResidueChiralityFilter ); }
+ResidueChiralityFilterCreator::create_filter() const { return utility::pointer::make_shared< ResidueChiralityFilter >(); }
 
 std::string
 ResidueChiralityFilterCreator::keyname() const { return "ResidueChirality"; }

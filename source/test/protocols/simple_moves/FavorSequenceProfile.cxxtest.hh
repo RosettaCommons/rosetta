@@ -50,7 +50,7 @@ public:
 	void setUp() {
 		core_init();
 
-		scorefxn_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction );
+		scorefxn_ = utility::pointer::make_shared< core::scoring::ScoreFunction >();
 		scorefxn_->set_weight(core::scoring::res_type_constraint, 1.0);
 	}
 

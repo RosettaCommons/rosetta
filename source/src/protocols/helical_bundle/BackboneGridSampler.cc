@@ -71,7 +71,7 @@ static basic::Tracer TR_Results("protocols.helical_bundle.BackboneGridSampler.Re
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP BackboneGridSamplerCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new BackboneGridSampler );
+// XRW TEMP  return utility::pointer::make_shared< BackboneGridSampler >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -144,13 +144,13 @@ BackboneGridSampler::~BackboneGridSampler() = default;
 ///
 /// @brief Clone operator to create a pointer to a fresh BackboneGridSampler object that copies this one.
 protocols::moves::MoverOP BackboneGridSampler::clone() const {
-	return protocols::moves::MoverOP( new BackboneGridSampler( *this ) );
+	return utility::pointer::make_shared< BackboneGridSampler >( *this );
 }
 
 ///
 /// @brief Fresh_instance operator to create a pointer to a fresh BackboneGridSampler object that does NOT copy this one.
 protocols::moves::MoverOP BackboneGridSampler::fresh_instance() const {
-	return protocols::moves::MoverOP( new BackboneGridSampler );
+	return utility::pointer::make_shared< BackboneGridSampler >();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -833,7 +833,7 @@ std::string BackboneGridSamplerCreator::keyname() const {
 
 protocols::moves::MoverOP
 BackboneGridSamplerCreator::create_mover() const {
-	return protocols::moves::MoverOP( new BackboneGridSampler );
+	return utility::pointer::make_shared< BackboneGridSampler >();
 }
 
 void BackboneGridSamplerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

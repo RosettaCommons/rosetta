@@ -40,7 +40,7 @@ namespace replica_docking {
 static basic::Tracer TR( "devel.replica_docking.InteractionScoreFilter" );
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP InteractionScoreFilterCreator::create_filter() const { return protocols::filters::FilterOP( new InteractionScoreFilter ); }
+// XRW TEMP InteractionScoreFilterCreator::create_filter() const { return utility::pointer::make_shared< InteractionScoreFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP InteractionScoreFilterCreator::keyname() const { return "I_sc"; }
@@ -79,12 +79,12 @@ InteractionScoreFilter::~InteractionScoreFilter() = default;
 
 protocols::filters::FilterOP
 InteractionScoreFilter::clone() const{
-	return protocols::filters::FilterOP( new InteractionScoreFilter( *this ) );
+	return utility::pointer::make_shared< InteractionScoreFilter >( *this );
 }
 
 protocols::filters::FilterOP
 InteractionScoreFilter::fresh_instance() const{
-	return protocols::filters::FilterOP( new InteractionScoreFilter );
+	return utility::pointer::make_shared< InteractionScoreFilter >();
 }
 
 void
@@ -196,7 +196,7 @@ std::string InteractionScoreFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 InteractionScoreFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new InteractionScoreFilter );
+	return utility::pointer::make_shared< InteractionScoreFilter >();
 }
 
 void InteractionScoreFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

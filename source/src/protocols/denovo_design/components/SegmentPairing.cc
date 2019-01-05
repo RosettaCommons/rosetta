@@ -52,9 +52,9 @@ SegmentPairing::type_to_str( PairingType const & type )
 SegmentPairingOP
 SegmentPairing::create( std::string const & type_name )
 {
-	if ( type_name == StrandPairing::class_name() ) return StrandPairingOP( new StrandPairing );
-	if ( type_name == HelixPairing::class_name() ) return HelixPairingOP( new HelixPairing );
-	if ( type_name == HelixSheetPairing::class_name() ) return HelixSheetPairingOP( new HelixSheetPairing );
+	if ( type_name == StrandPairing::class_name() ) return utility::pointer::make_shared< StrandPairing >();
+	if ( type_name == HelixPairing::class_name() ) return utility::pointer::make_shared< HelixPairing >();
+	if ( type_name == HelixSheetPairing::class_name() ) return utility::pointer::make_shared< HelixSheetPairing >();
 	std::stringstream msg;
 	msg << "Unknown pairing type: " << type_name << std::endl;
 	utility_exit_with_message( msg.str() );
@@ -319,7 +319,7 @@ HelixPairing::HelixPairing( SegmentName const & h1, SegmentName const & h2, bool
 SegmentPairingOP
 HelixPairing::clone() const
 {
-	return SegmentPairingOP( new HelixPairing( *this ) );
+	return utility::pointer::make_shared< HelixPairing >( *this );
 }
 
 void
@@ -400,7 +400,7 @@ StrandPairing::StrandPairing(
 SegmentPairingOP
 StrandPairing::clone() const
 {
-	return SegmentPairingOP( new StrandPairing( *this ) );
+	return utility::pointer::make_shared< StrandPairing >( *this );
 }
 
 void
@@ -551,7 +551,7 @@ HelixSheetPairing::HelixSheetPairing(
 SegmentPairingOP
 HelixSheetPairing::clone() const
 {
-	return SegmentPairingOP( new HelixSheetPairing( *this ) );
+	return utility::pointer::make_shared< HelixSheetPairing >( *this );
 }
 
 void

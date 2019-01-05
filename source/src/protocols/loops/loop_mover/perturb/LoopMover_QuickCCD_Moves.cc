@@ -191,9 +191,9 @@ LoopResult LoopMover_Perturb_QuickCCD_Moves::model_loop(
 	bool const use_nblist( true ), deriv_check( false ); // true ); // false );
 	MinimizerOptions options( "linmin", dummy_tol, use_nblist, deriv_check);
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
-		mzr = AtomTreeMinimizerOP( new core::optimization::symmetry::SymAtomTreeMinimizer );
+		mzr = utility::pointer::make_shared< core::optimization::symmetry::SymAtomTreeMinimizer >();
 	} else {
-		mzr = AtomTreeMinimizerOP( new core::optimization::AtomTreeMinimizer );
+		mzr = utility::pointer::make_shared< core::optimization::AtomTreeMinimizer >();
 	}
 
 
@@ -318,7 +318,7 @@ basic::Tracer & LoopMover_Perturb_QuickCCD_Moves::tr() const
 
 
 // XRW TEMP moves::MoverOP LoopMover_Perturb_QuickCCD_MovesCreator::create_mover() const {
-// XRW TEMP  return moves::MoverOP( new LoopMover_Perturb_QuickCCD_Moves() );
+// XRW TEMP  return utility::pointer::make_shared< LoopMover_Perturb_QuickCCD_Moves >();
 // XRW TEMP }
 
 // XRW TEMP std::string LoopMover_Perturb_QuickCCD_MovesCreator::keyname() const {
@@ -346,7 +346,7 @@ std::string LoopMover_Perturb_QuickCCD_MovesCreator::keyname() const {
 
 protocols::moves::MoverOP
 LoopMover_Perturb_QuickCCD_MovesCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LoopMover_Perturb_QuickCCD_Moves );
+	return utility::pointer::make_shared< LoopMover_Perturb_QuickCCD_Moves >();
 }
 
 void LoopMover_Perturb_QuickCCD_MovesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

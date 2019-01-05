@@ -45,7 +45,7 @@ public:
 
 	void setUp(){
 		core_init();
-		test_instantiation_ = protocols::backrub::BackrubProtocolOP( new protocols::backrub::BackrubProtocol() );
+		test_instantiation_ = utility::pointer::make_shared< protocols::backrub::BackrubProtocol >();
 	}
 
 	void tearDown(){
@@ -57,7 +57,7 @@ public:
 		prime_Filters( filters_ ); // Adds true_filter, false_filter
 
 		// Create dummy "commandline" score function
-		core::scoring::ScoreFunctionOP dummy_commandline_sfxn = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() );
+		core::scoring::ScoreFunctionOP dummy_commandline_sfxn = utility::pointer::make_shared< core::scoring::ScoreFunction >();
 		data_.add( "scorefxns", "commandline", dummy_commandline_sfxn );
 	}
 

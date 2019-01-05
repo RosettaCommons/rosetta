@@ -89,7 +89,7 @@ Energies::Energies()
 : utility::pointer::ReferenceCount(),
 	size_(0),
 	owner_( nullptr ),
-	energy_graph_( EnergyGraphOP( new EnergyGraph ) ),
+	energy_graph_( utility::pointer::make_shared< EnergyGraph >() ),
 	context_graphs_( scoring::num_context_graph_types, nullptr ),
 	externally_required_context_graphs_( scoring::num_context_graph_types, false ),
 	required_context_graphs_( scoring::num_context_graph_types, false ),
@@ -101,7 +101,7 @@ Energies::Energies()
 	residue_total_energies_uptodate_( false ),
 	residue_total_energy_uptodate_( false ),
 	total_energy_( 0.0 ),
-	scorefxn_info_( scoring::ScoreFunctionInfoOP( new ScoreFunctionInfo ) ),
+	scorefxn_info_( utility::pointer::make_shared< ScoreFunctionInfo >() ),
 	scorefxn_weights_(),
 	scoring_(false),
 	energy_state_( BAD ),
@@ -116,7 +116,7 @@ Energies::Energies( Energies const & other )
 : utility::pointer::ReferenceCount(),
 	size_( other.size_ ),
 	owner_( nullptr ),
-	energy_graph_( EnergyGraphOP( new EnergyGraph( *other.energy_graph_ ) ) ),
+	energy_graph_( utility::pointer::make_shared< EnergyGraph >( *other.energy_graph_ ) ),
 	context_graphs_( scoring::num_context_graph_types, nullptr ),
 	externally_required_context_graphs_( other.externally_required_context_graphs_ ),
 	required_context_graphs_( other.required_context_graphs_ ),
@@ -133,7 +133,7 @@ Energies::Energies( Energies const & other )
 	total_energies_( other.total_energies_ ),
 	total_energy_( other.total_energy_ ),
 	finalized_energies_( other.finalized_energies_ ),
-	scorefxn_info_( scoring::ScoreFunctionInfoOP( new ScoreFunctionInfo( *(other.scorefxn_info_) ) )),
+	scorefxn_info_( utility::pointer::make_shared< ScoreFunctionInfo >( *(other.scorefxn_info_) )),
 	scorefxn_weights_( other.scorefxn_weights_ ),
 	domain_map_( other.domain_map_ ),
 	scoring_( other.scoring_ ),
@@ -169,7 +169,7 @@ Energies::operator = ( Energies const & rhs )
 	if ( *scorefxn_info_ == *rhs.scorefxn_info_ ) {
 		// noop; sfxn info matches, so no need to duplicate the score function.
 	} else {
-		scorefxn_info_ = scoring::ScoreFunctionInfoOP( new ScoreFunctionInfo( *(rhs.scorefxn_info_)) );
+		scorefxn_info_ = utility::pointer::make_shared< ScoreFunctionInfo >( *(rhs.scorefxn_info_));
 	}
 	scorefxn_weights_ = rhs.scorefxn_weights_;
 	domain_map_ =  rhs.domain_map_;
@@ -210,7 +210,7 @@ Energies::~Energies()
 EnergiesOP
 Energies::clone() const
 {
-	return EnergiesOP( new Energies( *this ) );
+	return utility::pointer::make_shared< Energies >( *this );
 }
 
 
@@ -800,7 +800,7 @@ Energies::clear()
 	domain_map_.clear();
 	size_ = 0;
 
-	set_scorefxn_info( scoring::ScoreFunctionInfoOP( new ScoreFunctionInfo ) );
+	set_scorefxn_info( utility::pointer::make_shared< ScoreFunctionInfo >() );
 	scorefxn_weights_.zero();
 	return;
 }
@@ -1174,7 +1174,7 @@ Energies::update_neighbor_links(
 	// std::endl;
 
 	if ( point_graph_ == nullptr ) {
-		point_graph_ = conformation::PointGraphOP( new core::conformation::PointGraph );
+		point_graph_ = utility::pointer::make_shared< core::conformation::PointGraph >();
 	}
 	fill_point_graph( pose, point_graph_ );
 

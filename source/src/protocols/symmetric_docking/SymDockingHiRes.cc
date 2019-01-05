@@ -117,7 +117,7 @@ SymDockingHiRes::~SymDockingHiRes() = default;
 
 //clone
 protocols::moves::MoverOP SymDockingHiRes::clone() const {
-	return protocols::moves::MoverOP( new SymDockingHiRes(*this) );
+	return utility::pointer::make_shared< SymDockingHiRes >(*this);
 }
 // what type of minimization is used?
 void SymDockingHiRes::set_min_type( std::string min_type_in ) { min_type_ = min_type_in;}
@@ -171,12 +171,12 @@ void SymDockingHiRes::set_default( core::pose::Pose & pose ) {
 	repack_period_ = 8;
 
 	//sets up MC object
-	mc_ = moves::MonteCarloOP( new moves::MonteCarlo( pose, *scorefxn_, temperature_ ) );
+	mc_ = utility::pointer::make_shared< moves::MonteCarlo >( pose, *scorefxn_, temperature_ );
 
 	//sets up default movemap
 	bb_ = false;
 	chi_ = false;
-	movemap_ = core::kinematics::MoveMapOP( new kinematics::MoveMap() );
+	movemap_ = utility::pointer::make_shared< kinematics::MoveMap >();
 	movemap_->set_chi( chi_ );
 	movemap_->set_bb( bb_ );
 	core::pose::symmetry::make_symmetric_movemap( pose, *movemap_ );
@@ -351,7 +351,7 @@ void SymDockingHiRes::set_dock_min_protocol() {
 
 	protocols::minimization_packing::MinMoverOP min_mover( new minimization_packing::MinMover( movemap_, scorefxn_, min_type_, min_tolerance_, nb_list_ ) );
 	TrialMoverOP minimize_trial( new TrialMover( min_mover, mc_ ) );
-	docking_highres_protocol_mover_ = moves::SequenceMoverOP( new SequenceMover );
+	docking_highres_protocol_mover_ = utility::pointer::make_shared< SequenceMover >();
 	docking_highres_protocol_mover_->add_mover( minimize_trial );
 }
 
@@ -401,7 +401,7 @@ void SymDockingHiRes::set_dock_mcm_protocol( core::pose::Pose & pose ) {
 	for ( auto & dof : dofs ) {
 		movable_jumps.push_back( dof.first );
 	}
-	tf_->push_back( TaskOperationCOP( new RestrictToInterface( movable_jumps ) ) );
+	tf_->push_back( utility::pointer::make_shared< RestrictToInterface >( movable_jumps ) );
 
 	protocols::minimization_packing::RotamerTrialsMoverOP pack_rottrial( new minimization_packing::RotamerTrialsMover( scorefxn_pack_, tf_ ) );
 
@@ -483,7 +483,7 @@ void SymDockingHiRes::set_dock_mcm_protocol( core::pose::Pose & pose ) {
 	//set up protocol mover
 	TR << "::::::::::::::::::DOCK_MCM:::::::::::::::::::" << std::endl;
 
-	docking_highres_protocol_mover_ = moves::SequenceMoverOP( new SequenceMover );
+	docking_highres_protocol_mover_ = utility::pointer::make_shared< SequenceMover >();
 	if ( repack_switch_ ) docking_highres_protocol_mover_->add_mover( initial_repack );
 	docking_highres_protocol_mover_->add_mover( minimize_trial );
 	docking_highres_protocol_mover_->add_mover( mcm_four_cycles );
@@ -499,21 +499,21 @@ void SymDockingHiRes::setup_packing( core::pose::Pose & pose ) {
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
 	//set upconstructor packer options
-	tf_ = core::pack::task::TaskFactoryOP( new TaskFactory );
+	tf_ = utility::pointer::make_shared< TaskFactory >();
 	if ( init_task_factory_ ) {
 		TR << "Using user-defined TaskFactory." << std::endl;
-		tf_ = core::pack::task::TaskFactoryOP( new TaskFactory( *init_task_factory_ ) );
+		tf_ = utility::pointer::make_shared< TaskFactory >( *init_task_factory_ );
 	}
 	if ( design_ ) {
 		TR << "Designing during docking" << std::endl;
 	} else { // default case -- restrict everything to repacking.
-		tf_->push_back( TaskOperationCOP( new RestrictToRepacking ) );
+		tf_->push_back( utility::pointer::make_shared< RestrictToRepacking >() );
 	}
 	// tf_->push_back( new OperateOnCertainResidues( new PreventRepackingRLT, new ResidueLacksProperty("PROTEIN") ) );
-	tf_->push_back( TaskOperationCOP( new InitializeFromCommandline ) );
-	tf_->push_back( TaskOperationCOP( new IncludeCurrent ) );
-	tf_->push_back( TaskOperationCOP( new NoRepackDisulfides ) );
-	if ( option[OptionKeys::packing::resfile].user() ) tf_->push_back( TaskOperationCOP( new ReadResfile ) );
+	tf_->push_back( utility::pointer::make_shared< InitializeFromCommandline >() );
+	tf_->push_back( utility::pointer::make_shared< IncludeCurrent >() );
+	tf_->push_back( utility::pointer::make_shared< NoRepackDisulfides >() );
+	if ( option[OptionKeys::packing::resfile].user() ) tf_->push_back( utility::pointer::make_shared< ReadResfile >() );
 
 	// incorporating Ian's UnboundRotamer operation.
 	// note that nothing happens if unboundrot option is inactive!
@@ -556,7 +556,7 @@ void SymDockingHiRes::set_dock_ppk_protocol( core::pose::Pose & pose ) {
 	SymSidechainMinMoverOP scmin_mover( new SymSidechainMinMover(scorefxn_pack_, task) );
 
 	// set up protocol
-	docking_highres_protocol_mover_ = moves::SequenceMoverOP( new SequenceMover );
+	docking_highres_protocol_mover_ = utility::pointer::make_shared< SequenceMover >();
 	if ( scmin_ ) docking_highres_protocol_mover_->add_mover( scmin_mover );
 	docking_highres_protocol_mover_->add_mover( translate_away );
 	docking_highres_protocol_mover_->add_mover( prepack_full_repack );

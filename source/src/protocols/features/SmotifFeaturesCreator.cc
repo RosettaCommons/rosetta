@@ -27,7 +27,7 @@ namespace features {
 // XRW TEMP SmotifFeaturesCreator::SmotifFeaturesCreator() {}
 // XRW TEMP SmotifFeaturesCreator::~SmotifFeaturesCreator() = default;
 // XRW TEMP FeaturesReporterOP SmotifFeaturesCreator::create_features_reporter() const {
-// XRW TEMP  return FeaturesReporterOP( new SmotifFeatures );
+// XRW TEMP  return utility::pointer::make_shared< SmotifFeatures >();
 // XRW TEMP }
 
 // XRW TEMP std::string SmotifFeaturesCreator::type_name() const {

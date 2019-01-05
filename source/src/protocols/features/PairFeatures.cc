@@ -83,13 +83,13 @@ PairFeatures::write_residue_pairs_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
-	Column resNum1("resNum1", DbDataTypeOP( new DbInteger() ));
-	Column resNum2("resNum2", DbDataTypeOP( new DbInteger() ));
-	Column res1_10A_neighbors("res1_10A_neighbors", DbDataTypeOP( new DbInteger() ));
-	Column res2_10A_neighbors("res2_10A_neighbors", DbDataTypeOP( new DbInteger() ));
-	Column actcoord_dist("actcoord_dist", DbDataTypeOP( new DbReal() ));
-	Column polymeric_sequence_dist("polymeric_sequence_dist", DbDataTypeOP( new DbInteger() ));
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >());
+	Column resNum1("resNum1", utility::pointer::make_shared< DbInteger >());
+	Column resNum2("resNum2", utility::pointer::make_shared< DbInteger >());
+	Column res1_10A_neighbors("res1_10A_neighbors", utility::pointer::make_shared< DbInteger >());
+	Column res2_10A_neighbors("res2_10A_neighbors", utility::pointer::make_shared< DbInteger >());
+	Column actcoord_dist("actcoord_dist", utility::pointer::make_shared< DbReal >());
+	Column polymeric_sequence_dist("polymeric_sequence_dist", utility::pointer::make_shared< DbInteger >());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -226,7 +226,7 @@ std::string PairFeaturesCreator::type_name() const {
 
 protocols::features::FeaturesReporterOP
 PairFeaturesCreator::create_features_reporter() const {
-	return protocols::features::FeaturesReporterOP( new PairFeatures );
+	return utility::pointer::make_shared< PairFeatures >();
 }
 
 void PairFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

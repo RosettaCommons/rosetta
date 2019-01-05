@@ -53,7 +53,7 @@ using namespace ObjexxFCL::format;
 static basic::Tracer TR( "protocols.simple_filters.NMerPSSMEnergyFilter" );
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP NMerPSSMEnergyFilterCreator::create_filter() const { return protocols::filters::FilterOP( new NMerPSSMEnergyFilter ); }
+// XRW TEMP NMerPSSMEnergyFilterCreator::create_filter() const { return utility::pointer::make_shared< NMerPSSMEnergyFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP NMerPSSMEnergyFilterCreator::keyname() const { return "NMerPSSMEnergy"; }
@@ -179,7 +179,7 @@ std::string NMerPSSMEnergyFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 NMerPSSMEnergyFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new NMerPSSMEnergyFilter );
+	return utility::pointer::make_shared< NMerPSSMEnergyFilter >();
 }
 
 void NMerPSSMEnergyFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

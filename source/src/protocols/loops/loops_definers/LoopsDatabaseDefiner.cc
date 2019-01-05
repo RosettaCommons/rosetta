@@ -68,7 +68,7 @@ LoopsDatabaseDefiner::LoopsDatabaseDefiner(LoopsDatabaseDefiner const & /*src*/)
 LoopsDefinerOP
 LoopsDatabaseDefiner::clone(
 ) const {
-	return LoopsDefinerOP( new LoopsDatabaseDefiner(*this) );
+	return utility::pointer::make_shared< LoopsDatabaseDefiner >(*this);
 }
 
 /// @brief Used to parse an xml-like tag to load parameters and properties.

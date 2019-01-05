@@ -68,7 +68,7 @@ SecondaryStructureSelector::SecondaryStructureSelector() :
 
 /// @brief Clone operator.
 /// @details Copy this object and return an owning pointer to the new object.
-ResidueSelectorOP SecondaryStructureSelector::clone() const { return ResidueSelectorOP( new SecondaryStructureSelector(*this) ); }
+ResidueSelectorOP SecondaryStructureSelector::clone() const { return utility::pointer::make_shared< SecondaryStructureSelector >(*this); }
 
 SecondaryStructureSelector::SecondaryStructureSelector( std::string const & selected ) :
 	ResidueSelector(),
@@ -402,7 +402,7 @@ SecondaryStructureSelector::set_include_terminal_loops( bool const inc_term )
 ResidueSelectorOP
 SecondaryStructureSelectorCreator::create_residue_selector() const
 {
-	return ResidueSelectorOP( new SecondaryStructureSelector );
+	return utility::pointer::make_shared< SecondaryStructureSelector >();
 }
 
 std::string

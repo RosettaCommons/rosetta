@@ -60,7 +60,7 @@ static basic::Tracer TR("core.scoring.aa_composition_energy.AACompositionEnergy"
 core::scoring::methods::EnergyMethodOP
 AACompositionEnergyCreator::create_energy_method( core::scoring::methods::EnergyMethodOptions const &options ) const
 {
-	return core::scoring::methods::EnergyMethodOP( new AACompositionEnergy( options ) );
+	return utility::pointer::make_shared< AACompositionEnergy >( options );
 }
 
 /// @brief Defines the score types that this energy method calculates.
@@ -76,7 +76,7 @@ AACompositionEnergyCreator::score_types_for_method() const
 /// @brief Options constructor.
 ///
 AACompositionEnergy::AACompositionEnergy ( core::scoring::methods::EnergyMethodOptions const &options ) :
-	parent1( core::scoring::methods::EnergyMethodCreatorOP( new AACompositionEnergyCreator ) ),
+	parent1( utility::pointer::make_shared< AACompositionEnergyCreator >() ),
 	parent2( ),
 	disabled_(false),
 	setup_helpers_(),
@@ -91,7 +91,7 @@ AACompositionEnergy::AACompositionEnergy ( core::scoring::methods::EnergyMethodO
 /// @brief Copy constructor.
 /// @details Note that there's no deep-copying here.
 AACompositionEnergy::AACompositionEnergy( AACompositionEnergy const &src ) :
-	parent1( core::scoring::methods::EnergyMethodCreatorOP( new AACompositionEnergyCreator ) ),
+	parent1( utility::pointer::make_shared< AACompositionEnergyCreator >() ),
 	parent2( src ),
 	disabled_( src.disabled_ ),
 	setup_helpers_( src.setup_helpers_ ),
@@ -106,7 +106,7 @@ AACompositionEnergy::~AACompositionEnergy() = default;
 /// @brief Clone: create a copy of this object, and return an owning pointer
 /// to the copy.
 core::scoring::methods::EnergyMethodOP AACompositionEnergy::clone() const {
-	return core::scoring::methods::EnergyMethodOP( new AACompositionEnergy(*this) );
+	return utility::pointer::make_shared< AACompositionEnergy >(*this);
 }
 
 /// @brief AACompositionEnergy is context-independent and thus indicates that no context graphs need to be maintained by

@@ -169,8 +169,8 @@ utility::vector1< cf::FragSetOP > StructFragmentMover::get_fragments( cp::Pose c
 
 	// Compute new frag files
 	// Declare empty fragment sets for small and large fragments
-	cf::FragSetOP mfrag = cf::FragSetOP( new cf::ConstantLengthFragSet( small_frag_size_ ) );
-	cf::FragSetOP Mfrag = cf::FragSetOP( new cf::ConstantLengthFragSet( large_frag_size_ ) );
+	cf::FragSetOP mfrag = utility::pointer::make_shared< cf::ConstantLengthFragSet >( small_frag_size_ );
+	cf::FragSetOP Mfrag = utility::pointer::make_shared< cf::ConstantLengthFragSet >( large_frag_size_ );
 
 	TR.Debug << "Calculating new fragments." << std::endl;
 	if ( not ( steal_small_frags_ && steal_large_frags_ ) && vall_file_.empty() ) {
@@ -229,11 +229,11 @@ utility::vector1< cf::FragSetOP > StructFragmentMover::steal_fragments( cp::Pose
 
 cf::FragSetOP StructFragmentMover::steal_fragments_by_size( cp::Pose const & pose, cf::FragSetOP fset, core::Size size ) {
 	TR.Debug << TR.Underline << "Stealing fragments of size " << size << TR.Reset << std::endl;
-	cf::SingleResidueFragDataOP rfdata = cf::SingleResidueFragDataOP( new cf::BBTorsionSRFD );
-	cf::FragDataCOP fdata = cf::FragDataCOP( cf::FragDataOP( new cf::FragData( rfdata, size ) ) );
+	cf::SingleResidueFragDataOP rfdata = utility::pointer::make_shared< cf::BBTorsionSRFD >();
+	cf::FragDataCOP fdata = utility::pointer::make_shared< cf::FragData >( rfdata, size );
 	cf::FrameOP frame;
 	for ( core::Size pos = 1; pos <= pose.total_residue() - size + 1; ++pos ) {
-		frame = cf::FrameOP( new cf::Frame( pos, fdata ) );
+		frame = utility::pointer::make_shared< cf::Frame >( pos, fdata );
 		frame->steal( pose );
 		fset->add( frame );
 	}
@@ -335,7 +335,7 @@ void StructFragmentMover::collector_to_picker( pfp::FragmentPickerOP pickIt, cor
 
 cf::FragSetOP StructFragmentMover::get_fragset ( pfp::FragmentPickerOP pickIt, core::Size position, core::Size size ) {
 	core::Size residueInPose = position;
-	cf::FragSetOP myFragSet  = cf::FragSetOP( new cf::ConstantLengthFragSet( size ) );
+	cf::FragSetOP myFragSet  = utility::pointer::make_shared< cf::ConstantLengthFragSet >( size );
 	pfp::CandidatesCollectorOP storage = pickIt->get_candidates_collector( size );
 	for ( core::Size qPos = 1; qPos <= pickIt->size_of_query(); ++qPos ) {
 		if ( storage->get_candidates( qPos ).size() == 0 ) continue;
@@ -356,7 +356,7 @@ cf::FragSetOP StructFragmentMover::get_fragset ( pfp::FragmentPickerOP pickIt, c
 				core::Real omega     = r->omega();
 
 				if ( i == 1 ) {
-					current_fragment = cf::FragDataOP( new cf::AnnotatedFragData( pdbid, index ) );
+					current_fragment = utility::pointer::make_shared< cf::AnnotatedFragData >( pdbid, index );
 				}
 
 				cf::BBTorsionSRFDOP res_torsions( new cf::BBTorsionSRFD(3,ss,aa) );
@@ -420,7 +420,7 @@ std::string StructFragmentMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 StructFragmentMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new StructFragmentMover );
+	return utility::pointer::make_shared< StructFragmentMover >();
 }
 
 /// @brief returns secondary structure to be used in this constraint generator
@@ -500,8 +500,8 @@ StructFragmentMover::parse_my_tag(
 	frag_weight_file_ = tag->getOption< std::string >( "frag_weight_file", default_value_for_empty_file() );
 	sequence_profile_ = tag->getOption< std::string >( "sequence_profile", default_value_for_empty_file() );
 
-	smallF_ = core::fragment::FragSetOP(new core::fragment::ConstantLengthFragSet );
-	largeF_ = core::fragment::FragSetOP(new core::fragment::ConstantLengthFragSet );
+	smallF_ = utility::pointer::make_shared< core::fragment::ConstantLengthFragSet >();
+	largeF_ = utility::pointer::make_shared< core::fragment::ConstantLengthFragSet >();
 
 	if ( !data.has( "FragSet", structPicker_->prefix_ + "small" ) && !data.has( "FragSet", structPicker_->prefix_ + "large" ) ) {
 		data.add( "FragSet", structPicker_->prefix_ + "small", smallF_ );

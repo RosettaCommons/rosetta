@@ -117,7 +117,7 @@ GaussianChainFunc::initialize_parameters(){
 FuncOP
 GaussianChainFunc::clone() const
 {
-	return FuncOP( new GaussianChainFunc( gaussian_variance_, loop_fixed_cost_, other_distances_ ) );
+	return utility::pointer::make_shared< GaussianChainFunc >( gaussian_variance_, loop_fixed_cost_, other_distances_ );
 }
 
 bool GaussianChainFunc::operator == ( Func const & other ) const
@@ -149,15 +149,15 @@ GaussianChainFunc::initialize_func(){
 
 	if ( !force_combined_gaussian_approximation_ ) {
 		if ( other_distances_.size() == 0 ) {
-			func_ = FuncOP( new GaussianChainSingleFunc( gaussian_variance_, loop_fixed_cost_ ) );
+			func_ = utility::pointer::make_shared< GaussianChainSingleFunc >( gaussian_variance_, loop_fixed_cost_ );
 		} else if ( other_distances_.size() == 1 ) {
-			func_ = FuncOP( new GaussianChainDoubleFunc( gaussian_variance_, loop_fixed_cost_, other_distances_[1] ) );
+			func_ = utility::pointer::make_shared< GaussianChainDoubleFunc >( gaussian_variance_, loop_fixed_cost_, other_distances_[1] );
 		} else if ( other_distances_.size() == 2 ) {
-			func_ = FuncOP( new GaussianChainTripleFunc( gaussian_variance_, loop_fixed_cost_, other_distances_[1], other_distances_[2] ) );
+			func_ = utility::pointer::make_shared< GaussianChainTripleFunc >( gaussian_variance_, loop_fixed_cost_, other_distances_[1], other_distances_[2] );
 		} else if ( other_distances_.size() == 3 ) {
-			func_ = FuncOP( new GaussianChainQuadrupleFunc( gaussian_variance_, loop_fixed_cost_, other_distances_[1], other_distances_[2], other_distances_[3] ) );
+			func_ = utility::pointer::make_shared< GaussianChainQuadrupleFunc >( gaussian_variance_, loop_fixed_cost_, other_distances_[1], other_distances_[2], other_distances_[3] );
 		} else {
-			func_ = FuncOP( new GaussianChainGeneralFunc( gaussian_variance_, loop_fixed_cost_, other_distances_ ) );
+			func_ = utility::pointer::make_shared< GaussianChainGeneralFunc >( gaussian_variance_, loop_fixed_cost_, other_distances_ );
 		}
 	}
 
@@ -169,7 +169,7 @@ GaussianChainFunc::initialize_func(){
 			// Note that the radius of gyration is sqrt( 3 ) * gaussian_variance.
 			gaussian_variance_total += (other_distances_[ n ] * other_distances_[ n ] / 3.0);
 		}
-		func_ = FuncOP( new GaussianChainSingleFunc( gaussian_variance_total,  loop_fixed_cost_ ) );
+		func_ = utility::pointer::make_shared< GaussianChainSingleFunc >( gaussian_variance_total,  loop_fixed_cost_ );
 	}
 
 	runtime_assert( func_.get() != nullptr );

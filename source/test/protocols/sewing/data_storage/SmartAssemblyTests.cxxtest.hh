@@ -51,7 +51,7 @@ public:
 	void setUp(){
 		protocols_init_with_additional_options( "-in:auto_setup_metals" );
 		segment_vector_ = hashing::ModelFileReader::read_model_file( "protocols/sewing/inputs/test.segments" );
-		assembly_ = data_storage::SmartAssemblyOP( new data_storage::SmartAssembly( segment_vector_ ) );
+		assembly_ = utility::pointer::make_shared< data_storage::SmartAssembly >( segment_vector_ );
 		core::pose::Pose pose_;
 		core::import_pose::pose_from_file( pose_, "protocols/sewing/inputs/single_helix.pdb" );
 		//SEGMENT 31 IS A SINGLE HELIX
@@ -59,7 +59,7 @@ public:
 	}
 
 	void tearDown(){
-		assembly_ = data_storage::SmartAssemblyOP( new data_storage::SmartAssembly( segment_vector_ ) );
+		assembly_ = utility::pointer::make_shared< data_storage::SmartAssembly >( segment_vector_ );
 	}
 
 	void test_set_starting_segment(){
@@ -1050,10 +1050,10 @@ public:
 		TR << "Begin assemblies_are_continuous" << std::endl;
 		assembly_ = sewing_testing::make_double_chimaera_nterm_first( assembly_ );
 		TS_ASSERT( assembly_->is_continuous() );
-		assembly_ = data_storage::SmartAssemblyOP( new data_storage::SmartAssembly( segment_vector_ ) );
+		assembly_ = utility::pointer::make_shared< data_storage::SmartAssembly >( segment_vector_ );
 		assembly_ = sewing_testing::make_double_chimaera_cterm_first( assembly_ );
 		TS_ASSERT( assembly_->is_continuous() );
-		assembly_ = data_storage::SmartAssemblyOP( new data_storage::SmartAssembly( segment_vector_ ) );
+		assembly_ = utility::pointer::make_shared< data_storage::SmartAssembly >( segment_vector_ );
 		assembly_ = sewing_testing::create_simple_assembly( assembly_ );
 		TS_ASSERT( assembly_->is_continuous() );
 	}

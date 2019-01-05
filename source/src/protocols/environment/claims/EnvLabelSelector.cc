@@ -59,7 +59,7 @@ EnvLabelSelector::EnvLabelSelector( EnvLabelSelector const &src) :
 /// @details Copy this object and return an owning pointer to the new object.
 core::select::residue_selector::ResidueSelectorOP
 EnvLabelSelector::clone() const {
-	return core::select::residue_selector::ResidueSelectorOP( new EnvLabelSelector(*this) );
+	return utility::pointer::make_shared< EnvLabelSelector >(*this);
 }
 
 EnvLabelSelector::EnvLabelSelector( LocalPositions const& positions_in ) {
@@ -68,7 +68,7 @@ EnvLabelSelector::EnvLabelSelector( LocalPositions const& positions_in ) {
 
 EnvLabelSelector::EnvLabelSelector( LocalPosition const& local_pos ) {
 	LocalPositions local_positions = LocalPositions();
-	local_positions.push_back( core::environment::LocalPositionOP( new LocalPosition( local_pos ) ) );
+	local_positions.push_back( utility::pointer::make_shared< LocalPosition >( local_pos ) );
 
 	this->set_local_positions( local_positions );
 }
@@ -78,7 +78,7 @@ EnvLabelSelector::EnvLabelSelector( std::string const& label,
 	LocalPositions local_positions = LocalPositions();
 
 	for ( Size i = range.first; i <= range.second; ++i ) {
-		local_positions.push_back( core::environment::LocalPositionOP( new LocalPosition( label, i ) ) );
+		local_positions.push_back( utility::pointer::make_shared< LocalPosition >( label, i ) );
 	}
 
 	this->set_local_positions( local_positions );
@@ -118,7 +118,7 @@ void EnvLabelSelector::set_local_positions( LocalPositions const& positions_in )
 	using namespace core::environment;
 
 	for ( LocalPositionOP pos : positions_in ) {
-		positions_.push_back( core::environment::LocalPositionOP( new LocalPosition( *pos ) ) );
+		positions_.push_back( utility::pointer::make_shared< LocalPosition >( *pos ) );
 	}
 }
 

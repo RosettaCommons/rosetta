@@ -45,7 +45,7 @@ class FixAllLoopsMover : public protocols::moves::Mover {
 public:
 	FixAllLoopsMover();
 	void apply( Pose & pose ) override;
-	moves::MoverOP clone() const override { return moves::MoverOP( new FixAllLoopsMover( *this ) ); }
+	moves::MoverOP clone() const override { return utility::pointer::make_shared< FixAllLoopsMover >( *this ); }
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 
 	std::string

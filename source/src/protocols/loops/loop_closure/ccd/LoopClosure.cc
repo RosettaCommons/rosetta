@@ -114,17 +114,17 @@ void LoopClosure::init() {
 	set_movemap( loop_movemap );
 
 	simple_moves::ClassicFragmentMoverOP ptr;
-	frag_mover_ = ptr = simple_moves::ClassicFragmentMoverOP( new simple_moves::ClassicFragmentMover( fragset_, movemap_ ) );
+	frag_mover_ = ptr = utility::pointer::make_shared< simple_moves::ClassicFragmentMover >( fragset_, movemap_ );
 	ptr->enable_end_bias_check( false ); //uniform sampling
 	ptr->set_check_ss( false );
 	if ( bEnableCcdMoves_ ) {
-		ccd_mover_ = moves::MoverOP( new CCDLoopClosureMover( loop_, movemap_ ) );
+		ccd_mover_ = utility::pointer::make_shared< CCDLoopClosureMover >( loop_, movemap_ );
 	}
 	runtime_assert( loop_.size() > 0 );
 	init_mc();
 	// put a template frame at top of list -- will always catch the fragments according to closure_frames.front()
 	using namespace fragment;
-	closure_frame_ = core::fragment::FrameOP( new Frame( loop_.start(), FragDataCOP( FragDataOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), loop_.size() ) ) ) ) );
+	closure_frame_ = utility::pointer::make_shared< Frame >( loop_.start(), utility::pointer::make_shared< FragData >( utility::pointer::make_shared< BBTorsionSRFD >(), loop_.size() ) );
 }
 
 LoopClosure::~LoopClosure() = default;
@@ -139,7 +139,7 @@ void LoopClosure::set_nr_fragments( core::Size nr_fragments ) {
 }
 
 void LoopClosure::init_mc() {
-	mc_ = moves::MonteCarloOP( new moves::MonteCarlo( *scorefxn_, temperature_ ) );
+	mc_ = utility::pointer::make_shared< moves::MonteCarlo >( *scorefxn_, temperature_ );
 	final_weight_linear_chainbreak_ = scorefxn_->get_weight( scoring::linear_chainbreak );
 	final_weight_overlap_chainbreak_ = scorefxn_->get_weight( scoring::overlap_chainbreak );
 }
@@ -210,7 +210,7 @@ LoopClosure::do_frag_cycles( pose::Pose &pose ) const {
 	moves::TrialMover frag_trial( frag_mover_, mc_ );
 
 	moves::TrialMoverOP ccd_trial;
-	if ( ccd_mover_ ) ccd_trial = moves::TrialMoverOP( new moves::TrialMover( ccd_mover_, mc_ ) );
+	if ( ccd_mover_ ) ccd_trial = utility::pointer::make_shared< moves::TrialMover >( ccd_mover_, mc_ );
 	if ( bRampChainbreak_ ) ramp_chainbreak( Size(1), cycles_ );
 	for ( Size i = 1; i <= cycles_; i++ ) {
 		frag_trial.apply( pose );

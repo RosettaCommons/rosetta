@@ -36,7 +36,7 @@ core::scoring::methods::EnergyMethodOP
 SpecialRotamerEnergyCreator::create_energy_method(
 	core::scoring::methods::EnergyMethodOptions const &
 ) const {
-	return core::scoring::methods::EnergyMethodOP( new SpecialRotamerEnergy );
+	return utility::pointer::make_shared< SpecialRotamerEnergy >();
 }
 
 core::scoring::ScoreTypes
@@ -49,14 +49,14 @@ SpecialRotamerEnergyCreator::score_types_for_method() const {
 
 /// ctor
 SpecialRotamerEnergy::SpecialRotamerEnergy() :
-	parent( core::scoring::methods::EnergyMethodCreatorOP( new SpecialRotamerEnergyCreator ) )
+	parent( utility::pointer::make_shared< SpecialRotamerEnergyCreator >() )
 {}
 
 /// clone
 core::scoring::methods::EnergyMethodOP
 SpecialRotamerEnergy::clone() const
 {
-	return core::scoring::methods::EnergyMethodOP( new SpecialRotamerEnergy );
+	return utility::pointer::make_shared< SpecialRotamerEnergy >();
 }
 
 /////////////////////////////////////////////////////////////////////////////

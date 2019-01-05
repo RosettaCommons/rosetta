@@ -84,7 +84,7 @@ RNA_AnalyticLoopCloser::RNA_AnalyticLoopCloser ( Size const moving_suite, Size c
 
 /// @brief Clone this object
 protocols::moves::MoverOP RNA_AnalyticLoopCloser::clone() const {
-	return protocols::moves::MoverOP( new RNA_AnalyticLoopCloser ( *this ) );
+	return utility::pointer::make_shared< RNA_AnalyticLoopCloser > ( *this );
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////

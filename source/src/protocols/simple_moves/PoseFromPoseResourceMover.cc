@@ -105,14 +105,14 @@ PoseFromPoseResourceMover::parse_my_tag(
 protocols::moves::MoverOP
 PoseFromPoseResourceMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new PoseFromPoseResourceMover );
+	return utility::pointer::make_shared< PoseFromPoseResourceMover >();
 }
 
 /// @brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
 PoseFromPoseResourceMover::clone() const
 {
-	return protocols::moves::MoverOP( new PoseFromPoseResourceMover( *this ) );
+	return utility::pointer::make_shared< PoseFromPoseResourceMover >( *this );
 }
 
 std::string PoseFromPoseResourceMover::get_name() const {
@@ -150,7 +150,7 @@ void PoseFromPoseResourceMover::provide_xml_schema( utility::tag::XMLSchemaDefin
 protocols::moves::MoverOP
 PoseFromPoseResourceMoverCreator::create_mover() const
 {
-	return protocols::moves::MoverOP( new PoseFromPoseResourceMover );
+	return utility::pointer::make_shared< PoseFromPoseResourceMover >();
 }
 
 std::string

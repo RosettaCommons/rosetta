@@ -38,7 +38,7 @@ NullPoseFolder::~NullPoseFolder() = default;
 NullPoseFolder::PoseFolderOP
 NullPoseFolder::clone() const
 {
-	return NullPoseFolder::PoseFolderOP( new NullPoseFolder( *this ) );
+	return utility::pointer::make_shared< NullPoseFolder >( *this );
 }
 
 std::string

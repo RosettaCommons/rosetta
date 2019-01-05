@@ -112,7 +112,7 @@ public:
 	~HBondResidueMinData() override = default;
 
 	basic::datacache::CacheableDataOP clone() const override
-	{ return basic::datacache::CacheableDataOP( new HBondResidueMinData( *this ) ); }
+	{ return utility::pointer::make_shared< HBondResidueMinData >( *this ); }
 
 	void set_bb_don_avail( bool setting ) { bb_don_avail_ = setting; }
 	void set_bb_acc_avail( bool setting ) { bb_acc_avail_ = setting; }
@@ -140,7 +140,7 @@ public:
 	HBondResPairMinData();
 	~HBondResPairMinData() override = default;
 	basic::datacache::CacheableDataOP clone() const override
-	{ return basic::datacache::CacheableDataOP( new HBondResPairMinData( *this ) ); }
+	{ return utility::pointer::make_shared< HBondResPairMinData >( *this ); }
 
 	void set_res1_data( HBondResidueMinDataCOP );
 	void set_res2_data( HBondResidueMinDataCOP );
@@ -172,7 +172,7 @@ methods::EnergyMethodOP
 HBondEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
-	return methods::EnergyMethodOP( new HBondEnergy( options.hbond_options() ) );
+	return utility::pointer::make_shared< HBondEnergy >( options.hbond_options() );
 }
 
 ScoreTypes
@@ -194,15 +194,15 @@ HBondEnergyCreator::score_types_for_method() const {
 
 /// ctor
 HBondEnergy::HBondEnergy( HBondOptions const & opts ):
-	parent( methods::EnergyMethodCreatorOP( methods::EnergyMethodCreatorOP( new HBondEnergyCreator ) ) ),
-	options_( HBondOptionsCOP( HBondOptionsOP( new HBondOptions( opts ) ) )),
+	parent( utility::pointer::make_shared< HBondEnergyCreator >() ),
+	options_( utility::pointer::make_shared< HBondOptions >( opts )),
 	database_( HBondDatabase::get_database(opts.params_database_tag()) )
 {}
 
 /// copy ctor
 HBondEnergy::HBondEnergy( HBondEnergy const & src ):
 	parent( src ),
-	options_( HBondOptionsCOP( HBondOptionsOP( new HBondOptions( *src.options_) ) )) ,
+	options_( utility::pointer::make_shared< HBondOptions >( *src.options_)) ,
 	database_( src.database_)
 {}
 
@@ -212,7 +212,7 @@ HBondEnergy::~HBondEnergy() = default;
 methods::EnergyMethodOP
 HBondEnergy::clone() const
 {
-	return methods::EnergyMethodOP( new HBondEnergy( *this ) );
+	return utility::pointer::make_shared< HBondEnergy >( *this );
 }
 
 
@@ -628,7 +628,7 @@ HBondEnergy::setup_for_minimizing_for_residue(
 		hbresdata = utility::pointer::static_pointer_cast< core::scoring::hbonds::HBondResidueMinData > ( res_data_cache.get_data( hbond_res_data ) );
 		// assume that bb-don-avail and bb-acc-avail are already initialized
 	} else {
-		hbresdata = HBondResidueMinDataOP( new HBondResidueMinData );
+		hbresdata = utility::pointer::make_shared< HBondResidueMinData >();
 		hbresdata->set_nneighbors( hbondset.nbrs( rsd.seqpos() ) );
 		if ( rsd.is_protein() ) {
 			hbresdata->set_bb_don_avail( options_->bb_donor_acceptor_check() ? ! hbondset.don_bbg_in_bb_bb_hbond( rsd.seqpos() ) : true );
@@ -662,7 +662,7 @@ HBondEnergy::setup_for_minimizing_for_residue_pair(
 		debug_assert( utility::pointer::dynamic_pointer_cast< HBondResidueMinData const > ( res1_data_cache.get_data( hbond_res_data ) ));
 		debug_assert( utility::pointer::dynamic_pointer_cast< HBondResidueMinData const > ( res2_data_cache.get_data( hbond_res_data ) ));
 
-		hbpairdat = HBondResPairMinDataOP( new HBondResPairMinData );
+		hbpairdat = utility::pointer::make_shared< HBondResPairMinData >();
 		hbpairdat->set_res1_data( utility::pointer::static_pointer_cast< core::scoring::hbonds::HBondResidueMinData const > ( res1_data_cache.get_data( hbond_res_data ) ));
 		hbpairdat->set_res2_data( utility::pointer::static_pointer_cast< core::scoring::hbonds::HBondResidueMinData const > ( res2_data_cache.get_data( hbond_res_data ) ));
 		data_cache.set_data( hbond_respair_data, hbpairdat );
@@ -1479,7 +1479,7 @@ HBondEnergy::create_rotamer_trie(
 
 	sort( rotamer_descriptors.begin(), rotamer_descriptors.end() );
 
-	return hbtrie::HBondRotamerTrieOP( new RotamerTrie< HBAtom, HBCPData >( rotamer_descriptors, atomic_interaction_cutoff()) );
+	return utility::pointer::make_shared< RotamerTrie< HBAtom, HBCPData > >( rotamer_descriptors, atomic_interaction_cutoff());
 }
 
 hbtrie::HBondRotamerTrieOP
@@ -1517,7 +1517,7 @@ HBondEnergy::create_rotamer_trie(
 	create_rotamer_descriptor( res, *options_, hbond_set, rotamer_descriptors[ 1 ], near_wat, is_wat );
 	rotamer_descriptors[ 1 ].rotamer_id( 1 );
 
-	return hbtrie::HBondRotamerTrieOP( new RotamerTrie< HBAtom, HBCPData >( rotamer_descriptors, atomic_interaction_cutoff()) );
+	return utility::pointer::make_shared< RotamerTrie< HBAtom, HBCPData > >( rotamer_descriptors, atomic_interaction_cutoff());
 }
 
 

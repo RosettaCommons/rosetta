@@ -67,11 +67,11 @@ core::scoring::ScoreTypes PDDFEnergyCreator::score_types_for_method() const {
 
 core::scoring::methods::EnergyMethodOP PDDFEnergyCreator::create_energy_method( core::scoring::methods::EnergyMethodOptions const &) const {
 
-	return core::scoring::methods::EnergyMethodOP( new PDDFEnergy() );
+	return utility::pointer::make_shared< PDDFEnergy >();
 }
 
 /// c-tors
-PDDFEnergy::PDDFEnergy(utility::vector1<core::Real> const & reference_d,utility::vector1<core::Real> const & reference_pddf) : WholeStructureEnergy( core::scoring::methods::EnergyMethodCreatorOP( new PDDFEnergyCreator ) ) {
+PDDFEnergy::PDDFEnergy(utility::vector1<core::Real> const & reference_d,utility::vector1<core::Real> const & reference_pddf) : WholeStructureEnergy( utility::pointer::make_shared< PDDFEnergyCreator >() ) {
 
 	if_fit_area_ = false;
 	d_.clear();
@@ -89,7 +89,7 @@ PDDFEnergy::PDDFEnergy(utility::vector1<core::Real> const & reference_d,utility:
 	}
 }
 
-PDDFEnergy::PDDFEnergy() : WholeStructureEnergy( core::scoring::methods::EnergyMethodCreatorOP( new PDDFEnergyCreator ) ) {
+PDDFEnergy::PDDFEnergy() : WholeStructureEnergy( utility::pointer::make_shared< PDDFEnergyCreator >() ) {
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;

@@ -45,10 +45,10 @@ public:
 	~RGFilter() override = default;
 
 	filters::FilterOP clone() const override {
-		return filters::FilterOP( new RGFilter( *this ) ); }
+		return utility::pointer::make_shared< RGFilter >( *this ); }
 
 	filters::FilterOP fresh_instance() const override{
-		return filters::FilterOP( new RGFilter() ); }
+		return utility::pointer::make_shared< RGFilter >(); }
 
 
 	/// @brief Returns true if the given pose passes the filter, false otherwise.

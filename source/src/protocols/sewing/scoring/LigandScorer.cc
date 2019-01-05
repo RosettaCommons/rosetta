@@ -53,7 +53,7 @@ LigandScorer::LigandScorer():
 {
 	core::Real k = 0.5;
 	core::Real n_period = ( 5.0 / 4.0 );
-	func_ = core::scoring::func::FuncOP( new core::scoring::func::AmberPeriodicFunc( cutoff_angle_, k, n_period ) );
+	func_ = utility::pointer::make_shared< core::scoring::func::AmberPeriodicFunc >( cutoff_angle_, k, n_period );
 }
 
 LigandScorer::LigandScorer( LigandScorer const & src ):
@@ -252,7 +252,7 @@ LigandScorerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 
 AssemblyScorerOP
 LigandScorerCreator::create_assembly_scorer() const{
-	return AssemblyScorerOP( new LigandScorer() );
+	return utility::pointer::make_shared< LigandScorer >();
 }
 
 std::string

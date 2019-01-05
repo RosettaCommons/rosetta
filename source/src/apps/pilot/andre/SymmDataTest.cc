@@ -151,7 +151,7 @@ SymmDataTest()
 	scorefxn_sym->show(std::cout, pose );
 
 	//  protocols::rigid::RigidBodySymDofPerturbMoverOP rb_mover = new protocols::rigid::RigidBodySymDofPerturbMover( 1 , dof, 3, 8 );
-	// protocols::symmetry::SymmTranslateMoverOP trnsMoverOP( new protocols::symmetry::SymmTranslateMover() );
+	// protocols::symmetry::SymmTranslateMoverOP utility::pointer::make_shared< protocols::symmetry::SymmTranslateMover >();
 	//  rb_mover->apply( pose );
 
 	pose.dump_pdb("test2.pdb");

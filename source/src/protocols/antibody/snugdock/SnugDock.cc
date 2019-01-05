@@ -101,13 +101,13 @@ SnugDock::~SnugDock() = default;
 //@brief clone operator, calls the copy constructor
 protocols::moves::MoverOP
 SnugDock::clone() const {
-	return protocols::moves::MoverOP( new SnugDock( *this ) );
+	return utility::pointer::make_shared< SnugDock >( *this );
 }
 
 /// @brief fresh_instance returns a default-constructed object for JD2
 protocols::moves::MoverOP
 SnugDock::fresh_instance() const {
-	return protocols::moves::MoverOP( new SnugDock() );
+	return utility::pointer::make_shared< SnugDock >();
 }
 
 /// @brief This mover retains state such that a fresh version is needed if the input Pose is about to change
@@ -296,7 +296,7 @@ void SnugDock::setup_objects( Pose const & pose ) {
 	CDR_movemap->set_chi( sc_is_flexible );
 
 	// use the non-AntibodyInfo dependent CDRsMinPackMin (set TF later)
-	pre_minimization_ = antibody::CDRsMinPackMinOP( new CDRsMinPackMin() );
+	pre_minimization_ = utility::pointer::make_shared< CDRsMinPackMin >();
 	pre_minimization_->set_alter_foldtree( false );
 	pre_minimization_->set_move_map( CDR_movemap );
 
@@ -308,7 +308,7 @@ void SnugDock::setup_objects( Pose const & pose ) {
 	if ( ab_has_light_chain_ ) {
 		// when specifying a jump for docking, the sfxn has to be specified
 		// for both docking packing -- no idea why, so I'm using the defaults
-		vh_vl_dock_cycle = DockMCMCycleOP( new DockMCMCycle(vh_vl_jump_, core::scoring::ScoreFunctionFactory::create_score_function("docking", "docking_min"), core::scoring::get_score_function_legacy(core::scoring::PRE_TALARIS_2013_STANDARD_WTS)) );
+		vh_vl_dock_cycle = utility::pointer::make_shared< DockMCMCycle >(vh_vl_jump_, core::scoring::ScoreFunctionFactory::create_score_function("docking", "docking_min"), core::scoring::get_score_function_legacy(core::scoring::PRE_TALARIS_2013_STANDARD_WTS));
 		vh_vl_dock_cycle->set_task_factory( tf_ );
 	}
 
@@ -348,22 +348,22 @@ void SnugDock::setup_objects( Pose const & pose ) {
 	/// This is a very succinct description of what this mover does.  For a description in words, see the implementation
 	/// of the streaming operator.
 	if ( debug_ ) {
-		high_resolution_step_ = moves::MoverContainerOP( new SequenceMover );
-		//high_resolution_step_->add_mover( moves::MoverOP(new simple_moves::DumpPdb("pre_highres.pdb")) );
+		high_resolution_step_ = utility::pointer::make_shared< SequenceMover >();
+		//high_resolution_step_->add_mover( utility::pointer::make_shared< simple_moves::DumpPdb >("pre_highres.pdb") );
 		high_resolution_step_->add_mover( ab_ag_dock_cycle );
-		//high_resolution_step_->add_mover( moves::MoverOP(new simple_moves::DumpPdb("ab_ag_dock.pdb")) );
+		//high_resolution_step_->add_mover( utility::pointer::make_shared< simple_moves::DumpPdb >("ab_ag_dock.pdb") );
 		if ( ab_has_light_chain_ ) {
 			high_resolution_step_->add_mover( vh_vl_dock_cycle );
-			//high_resolution_step_->add_mover( moves::MoverOP(new simple_moves::DumpPdb("vh_vl_dock.pdb")) );
+			//high_resolution_step_->add_mover( utility::pointer::make_shared< simple_moves::DumpPdb >("vh_vl_dock.pdb") );
 		}
 		high_resolution_step_->add_mover( minimize_all_cdr_loops );
-		//high_resolution_step_->add_mover( moves::MoverOP(new simple_moves::DumpPdb("min_all_cdrs.pdb")) );
+		//high_resolution_step_->add_mover( utility::pointer::make_shared< simple_moves::DumpPdb >("min_all_cdrs.pdb") );
 		high_resolution_step_->add_mover( refine_cdr_h2 );
-		//high_resolution_step_->add_mover( moves::MoverOP(new simple_moves::DumpPdb("refine_h2.pdb")) );
+		//high_resolution_step_->add_mover( utility::pointer::make_shared< simple_moves::DumpPdb >("refine_h2.pdb") );
 		high_resolution_step_->add_mover( refine_cdr_h3 );
-		//high_resolution_step_->add_mover( moves::MoverOP(new simple_moves::DumpPdb("refine_h3.pdb")) );
+		//high_resolution_step_->add_mover( utility::pointer::make_shared< simple_moves::DumpPdb >("refine_h3.pdb") );
 	} else {
-		high_resolution_step_ = moves::MoverContainerOP( new RandomMover );
+		high_resolution_step_ = utility::pointer::make_shared< RandomMover >();
 		high_resolution_step_->add_mover( ab_ag_dock_cycle, 0.4 );
 		if ( ab_has_light_chain_ ) { high_resolution_step_->add_mover( vh_vl_dock_cycle, 0.4 ); }
 		high_resolution_step_->add_mover( minimize_all_cdr_loops, 0.1 );
@@ -435,7 +435,7 @@ std::string SnugDockCreator::keyname() const {
 
 protocols::moves::MoverOP
 SnugDockCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SnugDock );
+	return utility::pointer::make_shared< SnugDock >();
 }
 
 void SnugDockCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -81,7 +81,7 @@ int main(int argc, char* argv[]){
 		//Make option for centroid or not.
 		devel::init(argc, argv);
 
-		protocols::jd2::JobDistributor::get_instance()->go( protocols::moves::MoverOP( new RelaxCDRsMover ) );
+		protocols::jd2::JobDistributor::get_instance()->go( utility::pointer::make_shared< RelaxCDRsMover >() );
 
 		std::cout << "Done! -------------------------------\n";
 

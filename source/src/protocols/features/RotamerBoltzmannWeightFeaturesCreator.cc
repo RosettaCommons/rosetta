@@ -28,7 +28,7 @@ namespace features {
 // XRW TEMP RotamerBoltzmannWeightFeaturesCreator::RotamerBoltzmannWeightFeaturesCreator() {}
 // XRW TEMP RotamerBoltzmannWeightFeaturesCreator::~RotamerBoltzmannWeightFeaturesCreator() = default;
 // XRW TEMP FeaturesReporterOP RotamerBoltzmannWeightFeaturesCreator::create_features_reporter() const {
-// XRW TEMP  return FeaturesReporterOP( new RotamerBoltzmannWeightFeatures );
+// XRW TEMP  return utility::pointer::make_shared< RotamerBoltzmannWeightFeatures >();
 // XRW TEMP }
 
 // XRW TEMP std::string RotamerBoltzmannWeightFeaturesCreator::type_name() const {

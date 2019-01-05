@@ -130,13 +130,13 @@ PackRotamersMoverPartGreedy::parse_my_tag(
 protocols::moves::MoverOP
 PackRotamersMoverPartGreedy::clone() const
 {
-	return protocols::moves::MoverOP( new PackRotamersMoverPartGreedy( *this ) );
+	return utility::pointer::make_shared< PackRotamersMoverPartGreedy >( *this );
 }
 
 protocols::moves::MoverOP
 PackRotamersMoverPartGreedy::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new PackRotamersMoverPartGreedy );
+	return utility::pointer::make_shared< PackRotamersMoverPartGreedy >();
 }
 
 
@@ -148,7 +148,7 @@ PackRotamersMoverPartGreedy::apply( Pose & pose )
 	core::pose::Pose greedy_pose = pose;
 	TR<<"Creating packer task based on specified task operations..."<< std::endl;
 	if ( task_factory_ !=nullptr ) {
-		task_factory_->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
+		task_factory_->push_back( utility::pointer::make_shared< core::pack::task::operation::InitializeFromCommandline >() );
 		task_ = task_factory_->create_task_and_apply_taskoperations( greedy_pose );
 	} else {
 		core::pack::task::TaskFactoryOP tf( new core::pack::task::TaskFactory() );
@@ -445,7 +445,7 @@ std::string PackRotamersMoverPartGreedyCreator::keyname() const {
 
 protocols::moves::MoverOP
 PackRotamersMoverPartGreedyCreator::create_mover() const {
-	return protocols::moves::MoverOP( new PackRotamersMoverPartGreedy );
+	return utility::pointer::make_shared< PackRotamersMoverPartGreedy >();
 }
 
 void PackRotamersMoverPartGreedyCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

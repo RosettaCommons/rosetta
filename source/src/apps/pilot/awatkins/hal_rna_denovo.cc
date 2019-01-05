@@ -110,7 +110,7 @@ core::pose::Pose single_loop_modeling(string const & pdb_fname, string const & f
 //  TR << "Rosetta: executing command: " << command[_f_name_] << std::endl;
 
 //  //core::pose::PoseOP pose = protocols::network::bytes_to_pose(command[_f_arguments_][_f_pose_]);
-//  core::pose::PoseOP pose = core::pose::PoseOP( new core::pose::Pose );
+//  core::pose::PoseOP pose = utility::pointer::make_shared< core::pose::Pose >();
 
 //  string name;
 //  if ( extract_value_if_present(command, _f_name_, name) ) {

@@ -45,7 +45,7 @@ methods::EnergyMethodOP
 LoopCloseEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
-	return methods::EnergyMethodOP( new LoopCloseEnergy( options ) );
+	return utility::pointer::make_shared< LoopCloseEnergy >( options );
 }
 
 ScoreTypes
@@ -58,7 +58,7 @@ LoopCloseEnergyCreator::score_types_for_method() const {
 
 /// c-tor
 LoopCloseEnergy::LoopCloseEnergy( methods::EnergyMethodOptions const & options ) :
-	parent( methods::EnergyMethodCreatorOP( new LoopCloseEnergyCreator ) ),
+	parent( utility::pointer::make_shared< LoopCloseEnergyCreator >() ),
 	options_( options )
 {}
 
@@ -72,7 +72,7 @@ LoopCloseEnergy::LoopCloseEnergy( LoopCloseEnergy const & src ):
 methods::EnergyMethodOP
 LoopCloseEnergy::clone() const
 {
-	return methods::EnergyMethodOP( new LoopCloseEnergy( *this ) );
+	return utility::pointer::make_shared< LoopCloseEnergy >( *this );
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -94,7 +94,7 @@ LoopCloseEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const &
 /////////////////////////////////////////////////////////////////////////////
 void
 LoopCloseEnergy::update_loop_atoms_and_lengths( pose::Pose & pose ) const {
-	if ( !loop_graph_ ) loop_graph_ = core::scoring::loop_graph::LoopGraphOP( new scoring::loop_graph::LoopGraph );
+	if ( !loop_graph_ ) loop_graph_ = utility::pointer::make_shared< scoring::loop_graph::LoopGraph >();
 	loop_graph_->set_use_6D_potential( options_.loop_close_use_6D_potential() );
 	loop_graph_->update( pose );
 }

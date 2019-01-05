@@ -148,12 +148,12 @@ CoupledSidechainProtocol::CoupledSidechainProtocol()  : protocols::moves::Mover(
 
 protocols::moves::MoverOP
 CoupledSidechainProtocol::clone() const {
-	return( protocols::moves::MoverOP( new CoupledSidechainProtocol( *this ) ) );
+	return( utility::pointer::make_shared< CoupledSidechainProtocol >( *this ) );
 }
 
 protocols::moves::MoverOP
 CoupledSidechainProtocol::fresh_instance() const {
-	return (protocols::moves::MoverOP( new CoupledSidechainProtocol ));
+	return (utility::pointer::make_shared< CoupledSidechainProtocol >());
 }
 
 void
@@ -182,16 +182,16 @@ CoupledSidechainProtocol::setup_objects() {
 	scoring::ScoreFunctionOP scorefunction( core::scoring::get_score_function() );
 
 	core::pack::task::TaskFactoryOP task_factory( new core::pack::task::TaskFactory );
-	task_factory->push_back( core::pack::task::operation::TaskOperationOP( new core::pack::task::operation::RestrictToRepacking ) );
+	task_factory->push_back( utility::pointer::make_shared< core::pack::task::operation::RestrictToRepacking >() );
 
 	protocols::canonical_sampling::SimulatedTemperingOP tempering( new protocols::canonical_sampling::SimulatedTempering() );
 	moves::MonteCarloOP mc_object( new moves::MonteCarlo( *scorefunction, 0.6 ) );
 	tempering->set_monte_carlo( mc_object );
 
-	sampler_ = protocols::canonical_sampling::MetropolisHastingsMoverOP( new protocols::canonical_sampling::SidechainMetropolisHastingsMover( stride_ ) );
+	sampler_ = utility::pointer::make_shared< protocols::canonical_sampling::SidechainMetropolisHastingsMover >( stride_ );
 	sampler_->set_monte_carlo( mc_object );
 	sampler_->set_tempering( tempering );
-	sampler_->add_observer( protocols::canonical_sampling::ThermodynamicObserverOP( new protocols::canonical_sampling::SilentTrajectoryRecorder ) );
+	sampler_->add_observer( utility::pointer::make_shared< protocols::canonical_sampling::SilentTrajectoryRecorder >() );
 	sampler_->set_ntrials( ntrials_ );
 	if ( prob_withinrot_ > 0.0 ) {
 		protocols::simple_moves::sidechain_moves::SidechainMoverBaseOP mover( new protocols::simple_moves::sidechain_moves::PerturbRotamerSidechainMover );

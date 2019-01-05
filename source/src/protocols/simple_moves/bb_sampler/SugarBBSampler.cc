@@ -76,7 +76,7 @@ SugarBBSampler::SugarBBSampler( SugarBBSampler const & /*src*/ ) = default;
 
 SugarBBSamplerOP
 SugarBBSampler::clone() const {
-	return SugarBBSamplerOP( new SugarBBSampler( *this ) );
+	return utility::pointer::make_shared< SugarBBSampler >( *this );
 }
 
 

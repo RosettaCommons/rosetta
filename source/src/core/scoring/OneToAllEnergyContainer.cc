@@ -223,7 +223,7 @@ OneToAllEnergyContainer::~OneToAllEnergyContainer() = default;
 
 LREnergyContainerOP OneToAllEnergyContainer::clone() const
 {
-	return LREnergyContainerOP( new OneToAllEnergyContainer( *this ) );
+	return utility::pointer::make_shared< OneToAllEnergyContainer >( *this );
 }
 
 OneToAllEnergyContainer::OneToAllEnergyContainer( int const fixed_res_idx, Size const size_in, ScoreType const score_type_in ):
@@ -274,11 +274,11 @@ OneToAllEnergyContainer::const_neighbor_iterator_begin( int resid ) const
 {
 	if ( resid == fixed_ ) {
 		// loop over ALL tgts
-		return ResidueNeighborConstIteratorOP( new OneToAllNeighborConstIterator( fixed_, 1, true, score_type_, &table_, &computed_ ) );
+		return utility::pointer::make_shared< OneToAllNeighborConstIterator >( fixed_, 1, true, score_type_, &table_, &computed_ );
 	} else {
 		// loop over fixed only
 		//std::cerr << "START fixed " << fixed_ << " , resid " << resid << std::endl;
-		return ResidueNeighborConstIteratorOP( new OneToAllNeighborConstIterator( fixed_, resid, false, score_type_, &table_, &computed_ ) );
+		return utility::pointer::make_shared< OneToAllNeighborConstIterator >( fixed_, resid, false, score_type_, &table_, &computed_ );
 	}
 }
 
@@ -287,15 +287,15 @@ OneToAllEnergyContainer::const_neighbor_iterator_end( int resid ) const
 {
 	if ( resid == fixed_ ) {
 		// loop over ALL tgts
-		return ResidueNeighborConstIteratorOP( new OneToAllNeighborConstIterator( fixed_, size_ + 1, true, score_type_, &table_, &computed_ ) );
+		return utility::pointer::make_shared< OneToAllNeighborConstIterator >( fixed_, size_ + 1, true, score_type_, &table_, &computed_ );
 	} else {
 		// loop over fixed only
 		if ( resid+1 == fixed_ ) {
 			//std::cerr << "END fixed " << fixed_ << " , resid " << resid+2 << std::endl;
-			return ResidueNeighborConstIteratorOP( new OneToAllNeighborConstIterator( fixed_, resid + 2, false, score_type_, &table_, &computed_ ) );
+			return utility::pointer::make_shared< OneToAllNeighborConstIterator >( fixed_, resid + 2, false, score_type_, &table_, &computed_ );
 		} else  {
 			//std::cerr << "END fixed " << fixed_ << " , resid " << resid+1 << std::endl;
-			return ResidueNeighborConstIteratorOP( new OneToAllNeighborConstIterator( fixed_, resid + 1, false, score_type_, &table_, &computed_ ) );
+			return utility::pointer::make_shared< OneToAllNeighborConstIterator >( fixed_, resid + 1, false, score_type_, &table_, &computed_ );
 		}
 	}
 }
@@ -305,10 +305,10 @@ OneToAllEnergyContainer::const_upper_neighbor_iterator_begin( int resid ) const
 {
 	if ( resid == fixed_ ) {
 		// loop over NOTHING
-		return ResidueNeighborConstIteratorOP( new OneToAllNeighborConstIterator( fixed_, size_ + 1, true, score_type_, &table_, &computed_ ) );
+		return utility::pointer::make_shared< OneToAllNeighborConstIterator >( fixed_, size_ + 1, true, score_type_, &table_, &computed_ );
 	} else {
 		// loop over fixed only
-		return ResidueNeighborConstIteratorOP( new OneToAllNeighborConstIterator( fixed_, resid, false, score_type_, &table_, &computed_ ) );
+		return utility::pointer::make_shared< OneToAllNeighborConstIterator >( fixed_, resid, false, score_type_, &table_, &computed_ );
 	}
 }
 
@@ -324,10 +324,10 @@ OneToAllEnergyContainer::neighbor_iterator_begin( int resid )
 {
 	if ( resid == fixed_ ) {
 		// loop over ALL tgts
-		return ResidueNeighborIteratorOP( new OneToAllNeighborIterator( fixed_, 1, true, score_type_, &table_, &computed_ ) );
+		return utility::pointer::make_shared< OneToAllNeighborIterator >( fixed_, 1, true, score_type_, &table_, &computed_ );
 	} else {
 		// loop over fixed only
-		return ResidueNeighborIteratorOP( new OneToAllNeighborIterator( fixed_, resid, false, score_type_, &table_, &computed_ ) );
+		return utility::pointer::make_shared< OneToAllNeighborIterator >( fixed_, resid, false, score_type_, &table_, &computed_ );
 	}
 }
 
@@ -336,13 +336,13 @@ OneToAllEnergyContainer::neighbor_iterator_end( int resid )
 {
 	if ( resid == fixed_ ) {
 		// loop over ALL tgts
-		return ResidueNeighborIteratorOP( new OneToAllNeighborIterator( fixed_, size_ + 1, true, score_type_, &table_, &computed_ ) );
+		return utility::pointer::make_shared< OneToAllNeighborIterator >( fixed_, size_ + 1, true, score_type_, &table_, &computed_ );
 	} else {
 		// loop over fixed only
 		if ( resid+1 == fixed_ ) {
-			return ResidueNeighborIteratorOP( new OneToAllNeighborIterator( fixed_, resid + 2, false, score_type_, &table_, &computed_ ) );
+			return utility::pointer::make_shared< OneToAllNeighborIterator >( fixed_, resid + 2, false, score_type_, &table_, &computed_ );
 		} else {
-			return ResidueNeighborIteratorOP( new OneToAllNeighborIterator( fixed_, resid + 1, false, score_type_, &table_, &computed_ ) );
+			return utility::pointer::make_shared< OneToAllNeighborIterator >( fixed_, resid + 1, false, score_type_, &table_, &computed_ );
 		}
 	}
 }
@@ -352,10 +352,10 @@ OneToAllEnergyContainer::upper_neighbor_iterator_begin( int resid )
 {
 	if ( resid == fixed_ ) {
 		// loop over NOTHING
-		return ResidueNeighborIteratorOP( new OneToAllNeighborIterator( fixed_, size_ + 1, true, score_type_, &table_, &computed_ ) );
+		return utility::pointer::make_shared< OneToAllNeighborIterator >( fixed_, size_ + 1, true, score_type_, &table_, &computed_ );
 	} else {
 		// loop over fixed only
-		return ResidueNeighborIteratorOP( new OneToAllNeighborIterator( fixed_, resid, false, score_type_, &table_, &computed_ ) );
+		return utility::pointer::make_shared< OneToAllNeighborIterator >( fixed_, resid, false, score_type_, &table_, &computed_ );
 	}
 }
 

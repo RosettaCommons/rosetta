@@ -96,8 +96,8 @@ protocols::anchored_design::AnchorMoversData::AnchorMoversData() :
 	utility::pointer::ReferenceCount(),
 	anchor_( /* 0 */ ),
 	anchor_loop_index_( 0 ),
-	movemap_fa_all_( core::kinematics::MoveMapOP( new core::kinematics::MoveMap() ) ),
-	movemap_cen_all_( core::kinematics::MoveMapOP( new core::kinematics::MoveMap() ) ),
+	movemap_fa_all_( utility::pointer::make_shared< core::kinematics::MoveMap >() ),
+	movemap_cen_all_( utility::pointer::make_shared< core::kinematics::MoveMap >() ),
 	//loops_and_fa_mms_( ), //er, not really possible to initialize
 	//loops_and_cen_mms_( ),
 	//loops_( ),
@@ -132,8 +132,8 @@ protocols::anchored_design::AnchorMoversData::AnchorMoversData(
 	utility::pointer::ReferenceCount(),
 	anchor_(anchor), //redundant, given that set_loops_and_anchor takes care of it
 	anchor_loop_index_( 0 ),
-	movemap_fa_all_( core::kinematics::MoveMapOP( new core::kinematics::MoveMap() ) ),
-	movemap_cen_all_( core::kinematics::MoveMapOP( new core::kinematics::MoveMap() ) ),
+	movemap_fa_all_( utility::pointer::make_shared< core::kinematics::MoveMap >() ),
+	movemap_cen_all_( utility::pointer::make_shared< core::kinematics::MoveMap >() ),
 	//loops_and_fa_mms_( ), //er, not really possible to initialize
 	//loops_and_cen_mms_( ),
 	//loops_( ),
@@ -177,8 +177,8 @@ protocols::anchored_design::AnchorMoversData::AnchorMoversData( core::pose::Pose
 	utility::pointer::ReferenceCount(),
 	anchor_( /* 0 */ ),
 	anchor_loop_index_( 0 ),
-	movemap_fa_all_( core::kinematics::MoveMapOP( new core::kinematics::MoveMap() ) ),
-	movemap_cen_all_( core::kinematics::MoveMapOP( new core::kinematics::MoveMap() ) ),
+	movemap_fa_all_( utility::pointer::make_shared< core::kinematics::MoveMap >() ),
+	movemap_cen_all_( utility::pointer::make_shared< core::kinematics::MoveMap >() ),
 	//loops_and_fa_mms_( ), //er, not really possible to initialize
 	//loops_and_cen_mms_( ),
 	//loops_( ),
@@ -213,7 +213,7 @@ protocols::anchored_design::AnchorMoversData::AnchorMoversData( core::pose::Pose
 	//set up loops and anchor internal data
 
 	// read anchor file - automatically reads anchor file name from options system
-	anchor_ = protocols::anchored_design::AnchorCOP( protocols::anchored_design::AnchorOP( new protocols::anchored_design::Anchor(pose) ) );
+	anchor_ = utility::pointer::make_shared< protocols::anchored_design::Anchor >(pose);
 
 	// read loops file
 	loops_ = protocols::loops::Loops( loop_file_ );
@@ -257,8 +257,8 @@ AnchorMoversData & AnchorMoversData::operator=( AnchorMoversData const & rhs ){
 	//loops_and_cen_mms_ = rhs.loops_and_cen_mms_.clone();
 	//loops_ = rhs.loops(); //returns by value
 	fragset_ = rhs.get_frags()->clone();
-	task_factory_ = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory(*(rhs.get_task_factory())) );
-	late_factory_ = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory(*(rhs.get_late_factory())) );
+	task_factory_ = utility::pointer::make_shared< core::pack::task::TaskFactory >(*(rhs.get_task_factory()));
+	late_factory_ = utility::pointer::make_shared< core::pack::task::TaskFactory >(*(rhs.get_late_factory()));
 	fullatom_scorefunction_ = rhs.get_fullatom_scorefunction()->clone();
 	centroid_scorefunction_ = rhs.get_centroid_scorefunction()->clone();
 	centroid_scorefunction_min_ = rhs.get_centroid_scorefunction_min()->clone();
@@ -282,7 +282,7 @@ AnchorMoversData & AnchorMoversData::operator=( AnchorMoversData const & rhs ){
 }
 
 protocols::anchored_design::AnchorMoversDataOP protocols::anchored_design::AnchorMoversData::clone() const {
-	return protocols::anchored_design::AnchorMoversDataOP( new AnchorMoversData(*this) );
+	return utility::pointer::make_shared< AnchorMoversData >(*this);
 }
 
 /// @brief randomly reset loop cutpoints.  Useful only when starting structure is well-closed.  Best for MPI-style runs
@@ -420,14 +420,14 @@ void protocols::anchored_design::AnchorMoversData::input_loops_into_tuples(proto
 		//instantiate tuple
 		loops_and_fa_mms_.push_back( Loop_mm_tuple(
 			loop,
-			core::kinematics::MoveMapOP( new core::kinematics::MoveMap() ),
-			core::kinematics::MoveMapOP( new core::kinematics::MoveMap() )
+			utility::pointer::make_shared< core::kinematics::MoveMap >(),
+			utility::pointer::make_shared< core::kinematics::MoveMap >()
 			) );
 
 		loops_and_cen_mms_.push_back( Loop_mm_tuple(
 			loop,
-			core::kinematics::MoveMapOP( new core::kinematics::MoveMap() ),
-			core::kinematics::MoveMapOP( new core::kinematics::MoveMap() )
+			utility::pointer::make_shared< core::kinematics::MoveMap >(),
+			utility::pointer::make_shared< core::kinematics::MoveMap >()
 			) );
 	}
 }
@@ -547,7 +547,7 @@ void protocols::anchored_design::AnchorMoversData::set_unset_scorefunctions()
 	using namespace core::scoring;
 
 	//handle centroid scorefunction
-	centroid_scorefunction_ = core::scoring::ScoreFunctionOP( new ScoreFunction );
+	centroid_scorefunction_ = utility::pointer::make_shared< ScoreFunction >();
 	centroid_scorefunction_->set_weight( env,         1.0 ); //no derivative
 	centroid_scorefunction_->set_weight( cbeta,       1.0 ); //no derivative
 	centroid_scorefunction_->set_weight( vdw,         VDW_weight_ ); //defines eval_atom_derivative
@@ -602,13 +602,13 @@ void protocols::anchored_design::AnchorMoversData::set_unset_packertask_factory(
 		Warning() << "In AnchoredDesign, calculator " << interface_calc_ << " already exists.  "
 			<< "Given the two-chain restriction, this is hopefully correct for your purposes" << std::endl;
 	} else {
-		core::pose::metrics::CalculatorFactory::Instance().register_calculator( interface_calc_, PoseMetricCalculatorOP( new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator( core::Size(1), core::Size(2) ) ) );
+		core::pose::metrics::CalculatorFactory::Instance().register_calculator( interface_calc_, utility::pointer::make_shared< core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator >( core::Size(1), core::Size(2) ) );
 	}
 
 	if ( core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists( neighborhood_calc_ ) ) {
 		Warning() << "In AnchoredDesign, calculator " << neighborhood_calc_ << " already exists.  If you have multiple instances of AnchoredDesign with different loops coexisting in the same program, this is going to cause problems, because you will have the wrong loop definitions for determining what residues to pack" << std::endl;
 	} else {
-		core::pose::metrics::CalculatorFactory::Instance().register_calculator( neighborhood_calc_, PoseMetricCalculatorOP( new protocols::pose_metric_calculators::NeighborhoodByDistanceCalculator( loop_posns ) ) );
+		core::pose::metrics::CalculatorFactory::Instance().register_calculator( neighborhood_calc_, utility::pointer::make_shared< protocols::pose_metric_calculators::NeighborhoodByDistanceCalculator >( loop_posns ) );
 	}
 
 	//this is the constructor parameter for the calculator - pairs of calculators and calculations to perform
@@ -632,7 +632,7 @@ void protocols::anchored_design::AnchorMoversData::set_unset_packertask_factory(
 	}
 
 	//'early' Factory
-	task_factory_ = core::pack::task::TaskFactoryOP( new TaskFactory() );
+	task_factory_ = utility::pointer::make_shared< TaskFactory >();
 	//resfile operation
 	if ( resfile_1_ != EMPTY_STRING ) {
 		operation::ReadResfileOP rrop1( new operation::ReadResfile );
@@ -647,7 +647,7 @@ void protocols::anchored_design::AnchorMoversData::set_unset_packertask_factory(
 
 	//'late' factory
 	if ( (resfile_2_ != EMPTY_STRING) ) {
-		late_factory_ = core::pack::task::TaskFactoryOP( new TaskFactory() );
+		late_factory_ = utility::pointer::make_shared< TaskFactory >();
 		operation::ReadResfileOP rrop2( new operation::ReadResfile );
 		rrop2->filename( resfile_2_ );//second resfile
 		late_factory_->push_back( rrop2 );
@@ -683,7 +683,7 @@ core::fragment::FragSetCOP protocols::anchored_design::AnchorMoversData::autogen
 			if ( !( (j >anchor_->start() - frags_length) && (j <= anchor_->end()) ) ) {
 				TR << "adding frame, start at " << j << " go for " << frags_length << " to " << j+frags_length << std::endl;
 				core::fragment::FrameOP frame;
-				frame = core::fragment::FrameOP( new core::fragment::Frame( j ) );
+				frame = utility::pointer::make_shared< core::fragment::Frame >( j );
 				frame->add_fragment( list );
 				fragset->add( frame );
 			}//not in anchor
@@ -718,7 +718,7 @@ core::fragment::FragSetCOP protocols::anchored_design::AnchorMoversData::autogen
 				list =  core::fragment::picking_old::vall::pick_fragments_by_ss_plus_aa( ss_string, seqsubstr, 200, false ); //magic number: 200 fragments per position (not duplicated - this will be like robetta server fragments)
 
 				core::fragment::FrameOP frame;
-				frame = core::fragment::FrameOP( new core::fragment::Frame( j ) );
+				frame = utility::pointer::make_shared< core::fragment::Frame >( j );
 				frame->add_fragment( list );
 				fragset->add( frame );
 			}//not in anchor
@@ -744,7 +744,7 @@ void protocols::anchored_design::AnchorMoversData::autogenerate_frags( core::pos
 		utility_exit_with_message("you've specified a fragments file and requested no_frags - please choose only one");
 	} else if ( frags_file ) {
 		TR << "reading from fragments file " << frag3_ << std::endl;
-		fragset3mer = core::fragment::ConstantLengthFragSetOP( new core::fragment::ConstantLengthFragSet( 3 ) );
+		fragset3mer = utility::pointer::make_shared< core::fragment::ConstantLengthFragSet >( 3 );
 		fragset3mer->read_fragment_file( frag3_ );//basic::options::option[ basic::options::OptionKeys::in::file::frag3].value() );
 		set_frags( fragset3mer );
 	} else if ( !no_frags_ ) {
@@ -928,7 +928,7 @@ void protocols::anchored_design::AnchorMoversData::anchor_noise_constraints_setu
 
 		TR << "anchor_noise_constraints constraint, opp_CA, center, sd: " << opp_CA->second << " " << opp_CA->first << " " << sd << std::endl;
 
-		pose.add_constraint(core::scoring::constraints::ConstraintCOP( core::scoring::constraints::ConstraintOP( new AtomPairConstraint(anchor_ID, opp_CA->second, anchor_func) ) ));
+		pose.add_constraint(utility::pointer::make_shared< AtomPairConstraint >(anchor_ID, opp_CA->second, anchor_func));
 		//++opp_CA;
 	}
 

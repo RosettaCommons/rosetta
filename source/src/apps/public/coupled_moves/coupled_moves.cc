@@ -117,7 +117,7 @@ my_main( void* )
 				if ( ( option[ basic::options::OptionKeys::loops::frag_files ].user() ) && ( option[ basic::options::OptionKeys::loops::frag_sizes ].user() ) ) {
 					utility::vector1<core::fragment::FragSetOP> frag_libs;
 					protocols::loops::read_loop_fragments(frag_libs); // this function uses OptionKeys::loops::frag_sizes and OptionKeys::loops::frag_files to fill the frag_libs object, which is then used as an argument for the FragmentPerturber constructor.
-					coupled_moves->set_perturber( protocols::kinematic_closure::perturbers::PerturberOP( new protocols::kinematic_closure::perturbers::FragmentPerturber(frag_libs) ) );
+					coupled_moves->set_perturber( utility::pointer::make_shared< protocols::kinematic_closure::perturbers::FragmentPerturber >(frag_libs) );
 				} else {
 					std::stringstream message;
 					message << "[ ERROR - fragments ] Must specify the -loops:frag_sizes and -loops:frag_files " << std::endl;
@@ -125,7 +125,7 @@ my_main( void* )
 					throw CREATE_EXCEPTION(utility::excn::Exception, message.str());
 				}
 			} else if ( kic_perturber == "walking" ) {
-				coupled_moves->set_perturber( protocols::kinematic_closure::perturbers::PerturberOP( new protocols::kinematic_closure::perturbers::WalkingPerturber( option[ basic::options::OptionKeys::coupled_moves::walking_perturber_magnitude ] ) ) );
+				coupled_moves->set_perturber( utility::pointer::make_shared< protocols::kinematic_closure::perturbers::WalkingPerturber >( option[ basic::options::OptionKeys::coupled_moves::walking_perturber_magnitude ] ) );
 			}
 			// Set kic loop size
 			if ( !option[ basic::options::OptionKeys::coupled_moves::kic_loop_size ].user() ) {

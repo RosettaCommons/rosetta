@@ -144,50 +144,50 @@ main( int argc, char* argv[] )
 		for ( Size i = 1; i <= pose.size(); ++i ) {
 
 			if ( i  < pose.size() - 3 ) {
-				pose.add_constraint( AtomPairConstraintOP( new AtomPairConstraint( AtomID( pose.residue( i ).atom_index( "O" ), i ),
+				pose.add_constraint( utility::pointer::make_shared< AtomPairConstraint >( AtomID( pose.residue( i ).atom_index( "O" ), i ),
 					AtomID( pose.residue( i+4 ).atom_index( "H" ), i+4 ),
-					HarmonicFuncOP( new HarmonicFunc( 1.8, 0.1 ) ) ) ) );
+					utility::pointer::make_shared< HarmonicFunc >( 1.8, 0.1 ) ) );
 			}
 			// constrain non pre-peptoid omega
 			if ( i < pose.size() && !pose.residue(i+1).type().is_peptoid() ) {
-				pose.add_constraint( DihedralConstraintOP( new DihedralConstraint( AtomID( pose.residue( i ).atom_index( "CA" ), i ),
+				pose.add_constraint( utility::pointer::make_shared< DihedralConstraint >( AtomID( pose.residue( i ).atom_index( "CA" ), i ),
 					AtomID( pose.residue( i ).atom_index( "C"  ), i ),
 					AtomID( pose.residue( i+1 ).atom_index( "N"  ), i+1 ),
 					AtomID( pose.residue( i+1 ).atom_index( "CA"  ), i+1 ),
-					CircularHarmonicFuncOP( new CircularHarmonicFunc( 3.14159, 0.04 ) ) ) ) );
+					utility::pointer::make_shared< CircularHarmonicFunc >( 3.14159, 0.04 ) ) );
 			}
 
 
 			// super loose dihedral constraints non pre-peptoid omega
 			if ( i > 1 && i < pose.size() ) {
-				pose.add_constraint( DihedralConstraintOP( new DihedralConstraint( AtomID( pose.residue( i ).atom_index( "N" ), i ),
+				pose.add_constraint( utility::pointer::make_shared< DihedralConstraint >( AtomID( pose.residue( i ).atom_index( "N" ), i ),
 					AtomID( pose.residue( i ).atom_index( "CA"  ), i ),
 					AtomID( pose.residue( i ).atom_index( "C"  ), i ),
 					AtomID( pose.residue( i+1 ).atom_index( "N"  ), i+1 ),
-					CircularHarmonicFuncOP( new CircularHarmonicFunc( -45.0*3.14159/180, 0.2 ) ) ) ) );
+					utility::pointer::make_shared< CircularHarmonicFunc >( -45.0*3.14159/180, 0.2 ) ) );
 			}
 
 			if ( i > 1 ) {
-				pose.add_constraint( DihedralConstraintOP( new DihedralConstraint( AtomID( pose.residue( i-1 ).atom_index( "C" ), i-1 ),
+				pose.add_constraint( utility::pointer::make_shared< DihedralConstraint >( AtomID( pose.residue( i-1 ).atom_index( "C" ), i-1 ),
 					AtomID( pose.residue( i ).atom_index( "N"  ), i ),
 					AtomID( pose.residue( i ).atom_index( "CA"  ), i ),
 					AtomID( pose.residue( i ).atom_index( "C"  ), i ),
-					CircularHarmonicFuncOP( new CircularHarmonicFunc( -65.0*3.14159/180, 0.2 ) ) ) ) );
+					utility::pointer::make_shared< CircularHarmonicFunc >( -65.0*3.14159/180, 0.2 ) ) );
 			}
 
 			pose.set_phi( i, -65 );
 			pose.set_psi( i, -45 );
 			pose.set_omega( i, 180 );
 		}
-		pose.add_constraint( AtomPairConstraintOP( new AtomPairConstraint( AtomID( pose.residue( pose.size() - 3 ).atom_index( "O" ), pose.size() - 3 ),
+		pose.add_constraint( utility::pointer::make_shared< AtomPairConstraint >( AtomID( pose.residue( pose.size() - 3 ).atom_index( "O" ), pose.size() - 3 ),
 			AtomID( pose.residue( pose.size() ).atom_index( "HM" ), pose.size() ),
-			HarmonicFuncOP( new HarmonicFunc( 1.8, 0.1 ) ) ) ) );
+			utility::pointer::make_shared< HarmonicFunc >( 1.8, 0.1 ) ) );
 
-		pose.add_constraint( DihedralConstraintOP( new DihedralConstraint( AtomID( pose.residue( pose.size() ).atom_index( "N" ), pose.size() ),
+		pose.add_constraint( utility::pointer::make_shared< DihedralConstraint >( AtomID( pose.residue( pose.size() ).atom_index( "N" ), pose.size() ),
 			AtomID( pose.residue( pose.size() ).atom_index( "CA"  ), pose.size() ),
 			AtomID( pose.residue( pose.size() ).atom_index( "C"  ), pose.size() ),
 			AtomID( pose.residue( pose.size() ).atom_index( "NM"  ), pose.size() ),
-			CircularHarmonicFuncOP( new CircularHarmonicFunc( -45.0*3.14159/180, 0.2 ) ) ) ) );
+			utility::pointer::make_shared< CircularHarmonicFunc >( -45.0*3.14159/180, 0.2 ) ) );
 
 		pose.dump_pdb( "first.pdb");
 

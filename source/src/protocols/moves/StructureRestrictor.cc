@@ -70,11 +70,11 @@ StructureRestrictor::StructureRestrictor( StructureRestrictor const & src):
 
 StructureRestrictor::~StructureRestrictor()= default;
 
-MoverOP StructureRestrictor::fresh_instance() const { return MoverOP( new StructureRestrictor ); }
+MoverOP StructureRestrictor::fresh_instance() const { return utility::pointer::make_shared< StructureRestrictor >(); }
 
 MoverOP StructureRestrictor::clone() const
 {
-	return MoverOP( new StructureRestrictor( *this ) );
+	return utility::pointer::make_shared< StructureRestrictor >( *this );
 }
 
 

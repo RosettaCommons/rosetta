@@ -640,7 +640,7 @@ void WrapperOptEMultifunc::init(
 				std::string iiname = ScoreTypeManager::name_from_score_type( free_score_list_[ ii ] );
 				OptEVariableExpressionOP varexp;
 				if ( dof_variables_.find( iiname ) == dof_variables_.end() ) {
-					varexp = OptEVariableExpressionOP( new OptEVariableExpression( iiname ) );
+					varexp = utility::pointer::make_shared< OptEVariableExpression >( iiname );
 					dof_variables_[ iiname ] = varexp;
 				} else {
 					varexp = (dof_variables_.find( iiname ))->second;

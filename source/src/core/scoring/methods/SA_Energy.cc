@@ -34,7 +34,7 @@ methods::EnergyMethodOP
 SA_EnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new SA_Energy );
+	return utility::pointer::make_shared< SA_Energy >();
 }
 
 ScoreTypes
@@ -46,7 +46,7 @@ SA_EnergyCreator::score_types_for_method() const {
 
 /// c-tor
 SA_Energy::SA_Energy() :
-	parent( methods::EnergyMethodCreatorOP( new SA_EnergyCreator ) )
+	parent( utility::pointer::make_shared< SA_EnergyCreator >() )
 {}
 
 
@@ -54,7 +54,7 @@ SA_Energy::SA_Energy() :
 EnergyMethodOP
 SA_Energy::clone() const
 {
-	return EnergyMethodOP( new SA_Energy );
+	return utility::pointer::make_shared< SA_Energy >();
 }
 
 /////////////////////////////////////////////////////////////////////////////

@@ -91,7 +91,7 @@ void TaskOperationLoader::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 
 
 DataLoaderOP
-TaskOperationLoaderCreator::create_loader() const { return DataLoaderOP( new TaskOperationLoader ); }
+TaskOperationLoaderCreator::create_loader() const { return utility::pointer::make_shared< TaskOperationLoader >(); }
 
 std::string
 TaskOperationLoaderCreator::keyname() const { return TaskOperationLoader::loader_name(); }

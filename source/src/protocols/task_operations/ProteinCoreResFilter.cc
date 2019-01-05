@@ -88,7 +88,7 @@ void ProteinCore::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 
 core::pack::task::operation::ResFilterOP
 ProteinCoreFilterCreator::create_res_filter() const{
-	return core::pack::task::operation::ResFilterOP( new ProteinCore );
+	return utility::pointer::make_shared< ProteinCore >();
 }
 
 std::string ProteinCoreFilterCreator::keyname() const

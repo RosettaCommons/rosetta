@@ -57,11 +57,11 @@ public:
 
 	/// @brief clone has to be overridden only if clone invocation is expected.
 	moves::MoverOP clone() const override {
-		return moves::MoverOP( new IdealizeMover( *this ) );
+		return utility::pointer::make_shared< IdealizeMover >( *this );
 	}
 
 	moves::MoverOP fresh_instance() const override {
-		return moves::MoverOP( new IdealizeMover );
+		return utility::pointer::make_shared< IdealizeMover >();
 	}
 
 	IdealizeMover &

@@ -114,7 +114,7 @@ GeneralizedKICperturber::~GeneralizedKICperturber() = default;
 /// @details Returns an owning pointer to a copy of this perturber.
 GeneralizedKICperturberOP GeneralizedKICperturber::clone() const
 {
-	return GeneralizedKICperturberOP( new GeneralizedKICperturber(*this) );
+	return utility::pointer::make_shared< GeneralizedKICperturber >(*this);
 }
 
 /// @brief Returns the name of this class ("GeneralizedKICperturber").
@@ -225,7 +225,7 @@ void GeneralizedKICperturber::load_bin_params( std::string const &bin_params_fil
 	//Create the object, if it doesn't exist.
 	if ( !bin_transition_calculator_ ) {
 		if ( TR.visible() ) TR << "Creating BinTransitionCalculator." << std::endl;
-		bin_transition_calculator_=BinTransitionCalculatorOP( new BinTransitionCalculator );
+		bin_transition_calculator_=utility::pointer::make_shared< BinTransitionCalculator >();
 	}
 
 	if ( TR.visible() ) TR << "Loading bin_params file " << bin_params_file << "." << std::endl;
@@ -477,7 +477,7 @@ void GeneralizedKICperturber::init_bbgmover(
 	utility::vector1< std::pair< core::Size, core::Size > > const &residue_map
 ) {
 	if ( !bbgmover_ ) {
-		bbgmover_ = simple_moves::BBGaussianMoverOP( new simple_moves::BBGaussianMover() );
+		bbgmover_ = utility::pointer::make_shared< simple_moves::BBGaussianMover >();
 
 		Size looplength = loop_pose.size();
 		//reset movemap, default is empty (no move)

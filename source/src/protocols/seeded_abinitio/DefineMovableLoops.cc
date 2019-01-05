@@ -73,7 +73,7 @@ using namespace core;
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP DefineMovableLoopsCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new DefineMovableLoops() );
+// XRW TEMP  return utility::pointer::make_shared< DefineMovableLoops >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -286,7 +286,7 @@ DefineMovableLoops::parse_my_tag(
 	TR<<"DefineMovableLoops has been instantiated"<<std::endl;
 
 	//adding the LoopOP to the data map
-	loops_ = protocols::loops::LoopsOP( new protocols::loops::Loops() );
+	loops_ = utility::pointer::make_shared< protocols::loops::Loops >();
 	data.add( "loops", "found_loops", loops_ );
 
 	chainbreakweights_ = tag->getOption< bool >("add_chainbreakterm" , true );
@@ -305,7 +305,7 @@ DefineMovableLoops::parse_my_tag(
 
 	if ( tag->hasOption( "template_pdb" ) ) {
 		std::string const template_pdb_fname( tag->getOption< std::string >( "template_pdb" ));
-		template_pdb_ = core::pose::PoseOP( new core::pose::Pose ) ;
+		template_pdb_ = utility::pointer::make_shared< core::pose::Pose >() ;
 		core::import_pose::pose_from_file( *template_pdb_, template_pdb_fname , core::import_pose::PDB_file);
 		TR<<"read in a template pdb with " <<template_pdb_->size() <<"residues"<<std::endl;
 		core::scoring::dssp::Dssp dssp( *template_pdb_ );
@@ -390,7 +390,7 @@ std::string DefineMovableLoopsCreator::keyname() const {
 
 protocols::moves::MoverOP
 DefineMovableLoopsCreator::create_mover() const {
-	return protocols::moves::MoverOP( new DefineMovableLoops );
+	return utility::pointer::make_shared< DefineMovableLoops >();
 }
 
 void DefineMovableLoopsCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

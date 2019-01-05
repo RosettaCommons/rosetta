@@ -106,19 +106,19 @@ model_cdrs(core::pose::Pose & pose, AntibodyInfoCOP ab_info){
 	sequences[ h2 ] = option [ ab::H2_seq ]();
 	sequences[ h3 ] = option [ ab::H3_seq ]();
 
-	for (core::Size i = 1; i <= 6; ++i){
+	for ( core::Size i = 1; i <= 6; ++i ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 
 		//Graft CDR?
-		if (pdbfiles[ i ] != "" ){
+		if ( pdbfiles[ i ] != "" ) {
 
 			core::pose::PoseOP cdr_pose = pose_from_file(pdbfiles[ i ], core::import_pose::PDB_file);
 			keep_cdr(*cdr_pose, *ab_info, cdr)
-			graft_in_cdr(pose, *ab_info, cdr, cdr_pose);
+				graft_in_cdr(pose, *ab_info, cdr, cdr_pose);
 		}
 
 		//Copy a new sequence?
-		if (sequences[ i ] != "" ){
+		if ( sequences[ i ] != "" ) {
 			copy_in_seq(pose, *ab_info, cdr, sequences[ i ]);
 
 		}
@@ -141,7 +141,7 @@ model_cdrs(core::pose::Pose & pose, AntibodyInfoCOP ab_info){
 
 	//Add dihedral constraints so we don't screw up the CDRs too much.  Have a bit more give sense they could be wrong for the sequence.
 	//Add 10 degrees to phi/psi sd.
-	for (core::Size i = 1; i <= 6; ++i ){
+	for ( core::Size i = 1; i <= 6; ++i ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 		add_harmonic_dihedral_cst_general(ab_info, pose, cdr, 30, 40);
 	}
@@ -149,7 +149,7 @@ model_cdrs(core::pose::Pose & pose, AntibodyInfoCOP ab_info){
 
 
 	//Optionally Run Relax on CDRs with dihedral csts
-	if (option [ ab::relax_cdrs ] ){
+	if ( option [ ab::relax_cdrs ] ) {
 		//Output other pose for before relax - CMD line can control dualspace and nonideal here.
 		generator.generate_relax(pose);
 		generator.apply(pose);
@@ -163,7 +163,7 @@ model_cdrs(core::pose::Pose & pose, AntibodyInfoCOP ab_info){
 
 	//Optionally Run SnugDock
 	//if (option [ ab::snugdock] ) {
-		//output other pose for snugdock
+	//output other pose for snugdock
 	//}
 
 
@@ -195,7 +195,7 @@ copy_in_seq(core::pose::Pose & pose, AntibodyInfo & ab_info, CDRNameEnum cdr, st
 
 
 
-	} //antibody
+} //antibody
 } //protocols
 
 
@@ -252,7 +252,7 @@ int main(int argc, char* argv[])
 
 		AntibodyInfoOP ab_info( new AntibodyInfoOP(pose));
 
-		//protocols::jd2::JobDistributor::get_instance()->go(protocols::moves::MoverOP( new AntibodyDesignProtocol ));
+		//protocols::jd2::JobDistributor::get_instance()->go(utility::pointer::make_shared< AntibodyDesignProtocol >());
 	}catch (utility::excn::Exception & excn){
 		std::cout << "Exception: "<<std::endl;
 		excn.show(std::cerr);
@@ -260,4 +260,5 @@ int main(int argc, char* argv[])
 	}
 
 	return(0);
+}
 

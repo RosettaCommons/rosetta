@@ -61,7 +61,7 @@ public:
 		protocols::jd2::JobOP job( protocols::jd2::JobDistributor::get_instance()->current_job() );
 
 		antibody::AntibodyInfoCOP ab_info_ = antibody::AntibodyInfoCOP ( new AntibodyInfo( pose_in ) );
-		PoseCOP new_pose = PoseOP( new Pose( pose_in ) );
+		PoseCOP new_pose = utility::pointer::make_shared< Pose >( pose_in );
 
 		vector1< Real > orientation_coords_ = vl_vh_orientation_coords( *new_pose , *ab_info_ );
 
@@ -86,7 +86,7 @@ public:
 
 	protocols::moves::MoverOP
 	fresh_instance() const override {
-		return protocols::moves::MoverOP( new PackingAngle() );
+		return utility::pointer::make_shared< PackingAngle >();
 	}
 
 
@@ -115,7 +115,7 @@ main( int argc, char * argv [] )
 		// initialize core
 		devel::init(argc, argv);
 
-		PackingAngleOP packing_angle = PackingAngleOP( new PackingAngle );
+		PackingAngleOP packing_angle = utility::pointer::make_shared< PackingAngle >();
 		protocols::jd2::JobDistributor::get_instance()->go( packing_angle );
 
 	} catch (utility::excn::Exception const & e ) {

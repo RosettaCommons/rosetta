@@ -236,7 +236,7 @@ HotspotPlacementMover::apply(
 	//kdrew: packer used before final scoring of scaffold placement
 	using core::pack::task::operation::TaskOperationCOP;
 	core::pack::task::TaskFactoryOP tf( new core::pack::task::TaskFactory() );
-	tf->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
+	tf->push_back( utility::pointer::make_shared< core::pack::task::operation::InitializeFromCommandline >() );
 	//kdrew: do not do design, makes NATAA if res file is not specified
 	core::pack::task::operation::RestrictToRepackingOP rtrp( new core::pack::task::operation::RestrictToRepacking() );
 	tf->push_back( rtrp );
@@ -323,10 +323,10 @@ HotspotPlacementMover::apply(
 				core::id::AtomID aid_scaffold_C( pose.residue( resnum ).atom_index("C"), resnum );
 				core::id::AtomID aid_scaffold_N( pose.residue( resnum ).atom_index("N"), resnum );
 
-				core::scoring::constraints::ConstraintCOP coord_CA_cst( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::CoordinateConstraint( aid_scaffold_CA, fixed_atom, hs_stub.second->residue()->xyz( hs_stub.second->residue()->atom_index("CA") ), harm_func ) ) );
-				core::scoring::constraints::ConstraintCOP coord_CB_cst( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::CoordinateConstraint( aid_scaffold_CB, fixed_atom, hs_stub.second->residue()->xyz( hs_stub.second->residue()->atom_index("CB") ), harm_func ) ) );
-				core::scoring::constraints::ConstraintCOP coord_C_cst( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::CoordinateConstraint( aid_scaffold_C, fixed_atom, hs_stub.second->residue()->xyz( hs_stub.second->residue()->atom_index("C") ), harm_func ) ) );
-				core::scoring::constraints::ConstraintCOP coord_N_cst( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::CoordinateConstraint( aid_scaffold_N, fixed_atom, hs_stub.second->residue()->xyz( hs_stub.second->residue()->atom_index("N") ), harm_func ) ) );
+				core::scoring::constraints::ConstraintCOP coord_CA_cst( utility::pointer::make_shared< core::scoring::constraints::CoordinateConstraint >( aid_scaffold_CA, fixed_atom, hs_stub.second->residue()->xyz( hs_stub.second->residue()->atom_index("CA") ), harm_func ) );
+				core::scoring::constraints::ConstraintCOP coord_CB_cst( utility::pointer::make_shared< core::scoring::constraints::CoordinateConstraint >( aid_scaffold_CB, fixed_atom, hs_stub.second->residue()->xyz( hs_stub.second->residue()->atom_index("CB") ), harm_func ) );
+				core::scoring::constraints::ConstraintCOP coord_C_cst( utility::pointer::make_shared< core::scoring::constraints::CoordinateConstraint >( aid_scaffold_C, fixed_atom, hs_stub.second->residue()->xyz( hs_stub.second->residue()->atom_index("C") ), harm_func ) );
+				core::scoring::constraints::ConstraintCOP coord_N_cst( utility::pointer::make_shared< core::scoring::constraints::CoordinateConstraint >( aid_scaffold_N, fixed_atom, hs_stub.second->residue()->xyz( hs_stub.second->residue()->atom_index("N") ), harm_func ) );
 
 				pose.add_constraint( coord_CA_cst );
 				pose.add_constraint( coord_CB_cst );
@@ -378,7 +378,7 @@ HotspotPlacementMover::apply(
 				//kdrew: TODO: make target_residue a pose
 				core::pose::Pose stub_pose = core::pose::Pose();
 				stub_pose.append_residue_by_bond( *(hs_stub.second->residue()) );
-				core::scoring::constraints::ConstraintCOP bbstub_cst( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::BackboneStubConstraint( pose, resnum, fixed_atom, stub_pose, 1, stub_bonus_value, force_constant) ) );
+				core::scoring::constraints::ConstraintCOP bbstub_cst( utility::pointer::make_shared< core::scoring::constraints::BackboneStubConstraint >( pose, resnum, fixed_atom, stub_pose, 1, stub_bonus_value, force_constant) );
 
 				pose.add_constraint( bbstub_cst );
 
@@ -406,20 +406,20 @@ HotspotPlacementMover::apply(
 									stub2_pose.append_residue_by_bond( *(hs_stub2.second->residue()) );
 									core::Real stub_bonus_value2 = hs_stub2.second->bonus_value();
 									ambig_csts.push_back(
-										core::scoring::constraints::ConstraintCOP( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::BackboneStubConstraint( pose,
+										core::scoring::constraints::ConstraintCOP( utility::pointer::make_shared< core::scoring::constraints::BackboneStubConstraint >( pose,
 										resnum2,
 										fixed_atom,
 										stub2_pose,
 										1, //kdrew: assuming stub is in pose with only one residue, change for peptoids
 										stub_bonus_value2,
-										force_constant ) ) )
+										force_constant ) )
 									);
 								}
 							}
 						}
 						if ( ambig_csts.size() > 0 ) {
 							TR << "adding ambiguous constraints to resnum: "<<resnum2<<std::endl;
-							additional_hs_constraints.push_back( core::scoring::constraints::ConstraintCOP( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::AmbiguousConstraint(ambig_csts) ) ) );
+							additional_hs_constraints.push_back( utility::pointer::make_shared< core::scoring::constraints::AmbiguousConstraint >(ambig_csts) );
 						}
 					}
 				}

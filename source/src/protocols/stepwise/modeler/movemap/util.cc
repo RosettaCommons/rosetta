@@ -76,7 +76,7 @@ figure_out_stepwise_movemap( core::kinematics::MoveMap & mm,
 	for ( Size n = 1; n <= pose.size(); n++ ) {
 		if ( !working_fixed_res.has_value( n ) || working_extra_minimize_res.has_value( n ) ) working_minimize_res.push_back( n );
 	}
-	atom_level_domain_map = core::pose::toolbox::AtomLevelDomainMapOP( new core::pose::toolbox::AtomLevelDomainMap( pose ) );
+	atom_level_domain_map = utility::pointer::make_shared< core::pose::toolbox::AtomLevelDomainMap >( pose );
 	figure_out_stepwise_movemap( mm, atom_level_domain_map, pose, working_minimize_res, move_takeoff_torsions );
 }
 

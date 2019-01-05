@@ -1241,8 +1241,8 @@ calc_scores() {
 
 	// packing stuff
 	core::pack::task::TaskFactoryOP tf (new core::pack::task::TaskFactory());
-	tf->push_back( core::pack::task::operation::TaskOperationOP(new core::pack::task::operation::InitializeFromCommandline) );
-	tf->push_back( core::pack::task::operation::TaskOperationOP(new core::pack::task::operation::RestrictToRepacking) );
+	tf->push_back( utility::pointer::make_shared< core::pack::task::operation::InitializeFromCommandline >() );
+	tf->push_back( utility::pointer::make_shared< core::pack::task::operation::RestrictToRepacking >() );
 
 	std::ofstream outscore( option[ tors::scorefile ]().c_str(), std::ofstream::out );
 

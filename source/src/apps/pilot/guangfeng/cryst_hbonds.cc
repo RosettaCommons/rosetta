@@ -114,8 +114,8 @@ main( int argc, char * argv [] ) {
 
 		SequenceMoverOP seq( new SequenceMover() );
 
-		seq->add_mover( MoverOP(new SetupForSymmetryMover()) );
-		seq->add_mover( MoverOP(new CrystHbondsReporter()) );
+		seq->add_mover( utility::pointer::make_shared< SetupForSymmetryMover >() );
+		seq->add_mover( utility::pointer::make_shared< CrystHbondsReporter >() );
 
 		protocols::jd2::JobDistributor::get_instance()->go( seq );
 	} catch (utility::excn::Exception const & e ) {

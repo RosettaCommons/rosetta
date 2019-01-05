@@ -91,7 +91,7 @@ SequenceMetric::SequenceMetric( SequenceMetric const & src ):
 
 core::simple_metrics::SimpleMetricOP
 SequenceMetric::clone() const {
-	return core::simple_metrics::SimpleMetricOP(new SequenceMetric( *this ) );
+	return utility::pointer::make_shared< SequenceMetric >( *this );
 
 }
 
@@ -287,7 +287,7 @@ SequenceMetricCreator::keyname() const {
 
 core::simple_metrics::SimpleMetricOP
 SequenceMetricCreator::create_simple_metric() const {
-	return core::simple_metrics::SimpleMetricOP( new SequenceMetric );
+	return utility::pointer::make_shared< SequenceMetric >();
 
 }
 

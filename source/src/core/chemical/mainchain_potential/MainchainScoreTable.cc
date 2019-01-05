@@ -775,7 +775,7 @@ MainchainScoreTable::initialize_tensors(
 		energies_ = MathNTensorBaseOP< core::Real >( new MathNTensor< core::Real, 1 >(dimensions, 0.0) );
 		probabilities_ = MathNTensorBaseOP< core::Real >( new MathNTensor< core::Real, 1 >(dimensions, 0.0) );
 		cdf_ = MathNTensorBaseOP< core::Real >( new MathNTensor< core::Real, 1 >(dimensions, 0.0) );
-		energies_spline_1D_ = CubicSplineOP( new CubicSpline );
+		energies_spline_1D_ = utility::pointer::make_shared< CubicSpline >();
 	}
 		break;
 	case 2 :
@@ -785,7 +785,7 @@ MainchainScoreTable::initialize_tensors(
 		energies_ = MathNTensorBaseOP< core::Real >( new MathNTensor< core::Real, 2 >(dimensions, 0.0) );
 		probabilities_ = MathNTensorBaseOP< core::Real >( new MathNTensor< core::Real, 2 >(dimensions, 0.0) );
 		cdf_ = MathNTensorBaseOP< core::Real >( new MathNTensor< core::Real, 2 >(dimensions, 0.0) );
-		energies_spline_2D_ = BicubicSplineOP( new BicubicSpline );
+		energies_spline_2D_ = utility::pointer::make_shared< BicubicSpline >();
 	}
 		break;
 	case 3 :
@@ -795,7 +795,7 @@ MainchainScoreTable::initialize_tensors(
 		energies_ = MathNTensorBaseOP< core::Real >( new MathNTensor< core::Real, 3 >(dimensions, 0.0) );
 		probabilities_ = MathNTensorBaseOP< core::Real >( new MathNTensor< core::Real, 3 >(dimensions, 0.0) );
 		cdf_ = MathNTensorBaseOP< core::Real >( new MathNTensor< core::Real, 3 >(dimensions, 0.0) );
-		energies_spline_ND_ = PolycubicSplineBaseOP( new PolycubicSpline<3> );
+		energies_spline_ND_ = utility::pointer::make_shared< PolycubicSpline<3> >();
 	}
 		break;
 	case 4 :
@@ -805,7 +805,7 @@ MainchainScoreTable::initialize_tensors(
 		energies_ = MathNTensorBaseOP< core::Real >( new MathNTensor< core::Real, 4 >(dimensions, 0.0) );
 		probabilities_ = MathNTensorBaseOP< core::Real >( new MathNTensor< core::Real, 4 >(dimensions, 0.0) );
 		cdf_ = MathNTensorBaseOP< core::Real >( new MathNTensor< core::Real, 4 >(dimensions, 0.0) );
-		energies_spline_ND_ = PolycubicSplineBaseOP( new PolycubicSpline<4> );
+		energies_spline_ND_ = utility::pointer::make_shared< PolycubicSpline<4> >();
 	}
 		break;
 	case 5 :
@@ -815,7 +815,7 @@ MainchainScoreTable::initialize_tensors(
 		energies_ = MathNTensorBaseOP< core::Real >( new MathNTensor< core::Real, 5 >(dimensions, 0.0) );
 		probabilities_ = MathNTensorBaseOP< core::Real >( new MathNTensor< core::Real, 5 >(dimensions, 0.0) );
 		cdf_ = MathNTensorBaseOP< core::Real >( new MathNTensor< core::Real, 5 >(dimensions, 0.0) );
-		energies_spline_ND_ = PolycubicSplineBaseOP( new PolycubicSpline<5> );
+		energies_spline_ND_ = utility::pointer::make_shared< PolycubicSpline<5> >();
 	}
 		break;
 	case 6 :
@@ -825,7 +825,7 @@ MainchainScoreTable::initialize_tensors(
 		energies_ = MathNTensorBaseOP< core::Real >( new MathNTensor< core::Real, 6 >(dimensions, 0.0) );
 		probabilities_ = MathNTensorBaseOP< core::Real >( new MathNTensor< core::Real, 6 >(dimensions, 0.0) );
 		cdf_ = MathNTensorBaseOP< core::Real >( new MathNTensor< core::Real, 6 >(dimensions, 0.0) );
-		energies_spline_ND_ = PolycubicSplineBaseOP( new PolycubicSpline<6> );
+		energies_spline_ND_ = utility::pointer::make_shared< PolycubicSpline<6> >();
 	}
 		break;
 	case 7 :
@@ -835,7 +835,7 @@ MainchainScoreTable::initialize_tensors(
 		energies_ = MathNTensorBaseOP< core::Real >( new MathNTensor< core::Real, 7 >(dimensions, 0.0) );
 		probabilities_ = MathNTensorBaseOP< core::Real >( new MathNTensor< core::Real, 7 >(dimensions, 0.0) );
 		cdf_ = MathNTensorBaseOP< core::Real >( new MathNTensor< core::Real, 7 >(dimensions, 0.0) );
-		energies_spline_ND_ = PolycubicSplineBaseOP( new PolycubicSpline<7> );
+		energies_spline_ND_ = utility::pointer::make_shared< PolycubicSpline<7> >();
 	}
 		break;
 	case 8 :
@@ -845,7 +845,7 @@ MainchainScoreTable::initialize_tensors(
 		energies_ = MathNTensorBaseOP< core::Real >( new MathNTensor< core::Real, 8 >(dimensions, 0.0) );
 		probabilities_ = MathNTensorBaseOP< core::Real >( new MathNTensor< core::Real, 8 >(dimensions, 0.0) );
 		cdf_ = MathNTensorBaseOP< core::Real >( new MathNTensor< core::Real, 8 >(dimensions, 0.0) );
-		energies_spline_ND_ = PolycubicSplineBaseOP( new PolycubicSpline<8> );
+		energies_spline_ND_ = utility::pointer::make_shared< PolycubicSpline<8> >();
 	}
 		break;
 	case 9 :
@@ -855,7 +855,7 @@ MainchainScoreTable::initialize_tensors(
 		energies_ = MathNTensorBaseOP< core::Real >( new MathNTensor< core::Real, 9 >(dimensions, 0.0) );
 		probabilities_ = MathNTensorBaseOP< core::Real >( new MathNTensor< core::Real, 9 >(dimensions, 0.0) );
 		cdf_ = MathNTensorBaseOP< core::Real >( new MathNTensor< core::Real, 9 >(dimensions, 0.0) );
-		energies_spline_ND_ = PolycubicSplineBaseOP( new PolycubicSpline<9> );
+		energies_spline_ND_ = utility::pointer::make_shared< PolycubicSpline<9> >();
 	}
 		break;
 	default :
@@ -959,7 +959,7 @@ MainchainScoreTable::set_up_polycubic_interpolation(
 			deltas_array[i] = 360.0 / static_cast< core::Real >( dimensions[i+1] );
 			unused_array[i] = std::pair<core::Real, core::Real>( 0.0, 0.0 );
 		}
-		energies_spline_2D_ = BicubicSplineOP( new BicubicSpline );
+		energies_spline_2D_ = utility::pointer::make_shared< BicubicSpline >();
 		debug_assert( energies_spline_2D_ );
 		energies_spline_2D_->train( borderflags_array, offset_array, deltas_array, energies_matrix, lincont_array, unused_array );
 	}

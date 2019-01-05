@@ -236,15 +236,15 @@ my_main( void* )
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
 	TaskFactoryOP main_task_factory( new TaskFactory );
-	main_task_factory->push_back( TaskOperationCOP( new operation::InitializeFromCommandline ) );
+	main_task_factory->push_back( utility::pointer::make_shared< operation::InitializeFromCommandline >() );
 	if ( option[ packing::resfile ].user() ) {
-		main_task_factory->push_back( TaskOperationCOP( new operation::ReadResfile ) );
+		main_task_factory->push_back( utility::pointer::make_shared< operation::ReadResfile >() );
 	} else {
 		operation::RestrictToRepackingOP rtrop( new operation::RestrictToRepacking );
 		main_task_factory->push_back( rtrop );
 	}
 	// C-beta atoms should not be altered during packing because branching atoms are optimized
-	main_task_factory->push_back( TaskOperationCOP( new operation::PreserveCBeta ) );
+	main_task_factory->push_back( utility::pointer::make_shared< operation::PreserveCBeta >() );
 
 	// set up the score function and add the bond angle energy term
 	core::scoring::ScoreFunctionOP score_fxn = core::scoring::get_score_function();
@@ -259,7 +259,7 @@ my_main( void* )
 		core::scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn(*score_fxn);
 	}
 	// use an empty score function if testing detailed balance
-	if ( option[ backrub::test_detailed_balance ] ) score_fxn = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() );
+	if ( option[ backrub::test_detailed_balance ] ) score_fxn = utility::pointer::make_shared< core::scoring::ScoreFunction >();
 
 	// set up the BackrubMover
 	protocols::backrub::BackrubMover backrubmover;

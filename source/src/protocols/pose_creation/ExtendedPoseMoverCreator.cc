@@ -27,7 +27,7 @@ namespace protocols {
 namespace pose_creation {
 
 // XRW TEMP protocols::moves::MoverOP ExtendedPoseMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new protocols::pose_creation::ExtendedPoseMover() );
+// XRW TEMP  return utility::pointer::make_shared< protocols::pose_creation::ExtendedPoseMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string ExtendedPoseMoverCreator::keyname() const {

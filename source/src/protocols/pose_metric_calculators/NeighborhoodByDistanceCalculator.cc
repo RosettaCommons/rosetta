@@ -74,7 +74,7 @@ NeighborhoodByDistanceCalculator::NeighborhoodByDistanceCalculator( Neighborhood
 {}
 
 core::pose::metrics::PoseMetricCalculatorOP NeighborhoodByDistanceCalculator::clone() const
-{ return core::pose::metrics::PoseMetricCalculatorOP( new NeighborhoodByDistanceCalculator(*this) ); }
+{ return utility::pointer::make_shared< NeighborhoodByDistanceCalculator >(*this); }
 
 void
 NeighborhoodByDistanceCalculator::lookup(

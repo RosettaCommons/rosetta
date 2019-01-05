@@ -217,7 +217,7 @@ SequenceSimilarityMetricCreator::keyname() const {
 
 SimpleMetricOP
 SequenceSimilarityMetricCreator::create_simple_metric() const {
-	return SimpleMetricOP( new SequenceSimilarityMetric );
+	return utility::pointer::make_shared< SequenceSimilarityMetric >();
 
 }
 

@@ -161,7 +161,7 @@ SmartAssembly::SmartAssembly( SmartAssembly const & other) {
 
 SmartAssemblyOP
 SmartAssembly::clone() const {
-	return SmartAssemblyOP( new SmartAssembly( *this ) );
+	return utility::pointer::make_shared< SmartAssembly >( *this );
 }
 
 void
@@ -1829,7 +1829,7 @@ SmartAssembly::to_pose(std::string residue_type_set) {
 	}
 	//Now add the resfile to the remarks
 	//std::string vital_residues_string = "VITAL_RESIDUES:";
-	core::pose::PDBInfoOP new_info = core::pose::PDBInfoOP(new core::pose::PDBInfo(model_pose,true));
+	core::pose::PDBInfoOP new_info = utility::pointer::make_shared< core::pose::PDBInfo >(model_pose,true);
 	model_pose.pdb_info(new_info);
 	for ( core::Size vital_residue : all_vital_residues ) {
 		TR.Debug << "Adding tag for residue " << vital_residue << std::endl;
@@ -1840,7 +1840,7 @@ SmartAssembly::to_pose(std::string residue_type_set) {
 	//core::io::RemarkInfo new_vital;
 	//new_vital.value = vital_residues_string;
 	//new_vital.num=0;
-	//core::io::RemarksCOP new_remarks = core::io::RemarksCOP(new core::io::Remarks());
+	//core::io::RemarksCOP new_remarks = utility::pointer::make_shared< core::io::Remarks >();
 	//model_pose.pdb_info()->remarks(*new_remarks);
 	//model_pose.pdb_info()->remarks().push_back(new_vital);
 	//TR << model_pose.pdb_info()->remarks().at(0).value << std::endl;
@@ -1906,7 +1906,7 @@ SmartAssembly::chimerize(BasisPair basis_pair, bool n_terminus ){
 		}
 		new_chimaera = SmartSegmentOP( ligseg );
 	} else {
-		new_chimaera = SmartSegmentOP(new SmartSegment());
+		new_chimaera = utility::pointer::make_shared< SmartSegment >();
 	}
 	new_chimaera->set_basis_pair( std::make_pair(  basis_pair.first, basis_pair.second ) );
 	new_chimaera->set_const_reference_segment( new_chimaera ); //Just in case they check for it

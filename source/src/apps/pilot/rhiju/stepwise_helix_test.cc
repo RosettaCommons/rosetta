@@ -107,9 +107,9 @@ OPT_KEY( String, base )
 ///////////////////////////////////////////////////////////////////////
 void
 get_moment_of_inertia( pose::Pose const & pose,
-											 Vector & center_of_mass,
-											 Matrix & moment_of_inertia,
-											 utility::vector1< Size > const & moving_res ){
+	Vector & center_of_mass,
+	Matrix & moment_of_inertia,
+	utility::vector1< Size > const & moving_res ){
 
 	center_of_mass = Vector( 0.0 );
 	Size natoms( 0 );
@@ -149,7 +149,7 @@ get_moment_of_inertia( pose::Pose const & pose,
 
 		for ( Size m = 1; m < pose.residue_type( i ).first_sidechain_atom(); m++ ) {
 			Vector pos_recenter = pose.residue( i ).xyz( m ) - center_of_mass;
-			for ( Size j = 1; j <= 3; j++ ){
+			for ( Size j = 1; j <= 3; j++ ) {
 				diagonal_term += pos_recenter( j ) * pos_recenter( j );
 			}
 		}
@@ -161,20 +161,20 @@ get_moment_of_inertia( pose::Pose const & pose,
 
 	moment_of_inertia /= natoms;
 
-	//	std::cout << M << std::endl;
-	//	std::cout << center_of_mass << std::endl;
+	// std::cout << M << std::endl;
+	// std::cout << center_of_mass << std::endl;
 }
 
 
 ///////////////////////////////////////////////////////////////////////
 void
 get_euler_axes( Matrix const moment_of_inertia,
-								Vector & axis1,
-								Vector & axis2,
-								Vector & axis3,
-								Real & m1, Real & m2, Real & m3,
-								Matrix & M
-								)
+	Vector & axis1,
+	Vector & axis2,
+	Vector & axis3,
+	Real & m1, Real & m2, Real & m3,
+	Matrix & M
+)
 {
 
 	Vector xyz_w_w;
@@ -185,8 +185,8 @@ get_euler_axes( Matrix const moment_of_inertia,
 
 	xyz_eVec.transpose();
 
-	//	std::cout << "EIGENVALUES: " << xyz_w_w << std::endl;
-	//	std::cout << "EIGENVECTORS: " << xyz_eVec << std::endl;
+	// std::cout << "EIGENVALUES: " << xyz_w_w << std::endl;
+	// std::cout << "EIGENVECTORS: " << xyz_eVec << std::endl;
 
 	utility::vector1< Vector > axes;
 	axes.push_back( xyz_eVec.row_x() );
@@ -195,7 +195,7 @@ get_euler_axes( Matrix const moment_of_inertia,
 
 	// Sort by order of eigenvalue. Silly lists.
 	std::list < std::pair< Real, Size > > moments;
-	for ( Size k = 1; k <= 3; k++ )	moments.push_back(   std::make_pair( xyz_w_w(k), k ) );
+	for ( Size k = 1; k <= 3; k++ ) moments.push_back(   std::make_pair( xyz_w_w(k), k ) );
 	moments.sort();
 	moments.reverse();
 
@@ -217,7 +217,7 @@ get_euler_axes( Matrix const moment_of_inertia,
 	axis3 = axes[ eval_pair.second ];
 
 	// This is silly, but I can't get the matrix constructor from column vectors to work properly
-	for ( Size k = 1; k <= 3; k++ ){
+	for ( Size k = 1; k <= 3; k++ ) {
 		M(k,1) = axis1(k);
 		M(k,2) = axis2(k);
 		M(k,3) = axis3(k);
@@ -230,10 +230,10 @@ get_euler_axes( Matrix const moment_of_inertia,
 ///////////////////////////////////////////////////////////////////////
 void
 get_euler_axes( Matrix const moment_of_inertia,
-								Vector & axis1,
-								Vector & axis2,
-								Vector & axis3,
-								Real & m1, Real & m2, Real & m3 ){
+	Vector & axis1,
+	Vector & axis2,
+	Vector & axis3,
+	Real & m1, Real & m2, Real & m3 ){
 
 	Matrix M;
 	get_euler_axes( moment_of_inertia, axis1, axis2, axis3, m1, m2, m3, M );
@@ -245,19 +245,19 @@ get_euler_axes( Matrix const moment_of_inertia,
 // Real
 // get_backbone_rmsd_no_super( pose::Pose const & pose, pose::Pose const & ref_pose ){
 
-// 	using namespace core::id;
+//  using namespace core::id;
 
-// 	Real dev2( 0.0 );
-// 	Size natoms( 0 );
+//  Real dev2( 0.0 );
+//  Size natoms( 0 );
 
-// 	for ( Size i = 1; i <= pose.size(); i++ ) {
-// 		for ( Size j = 1; j <= pose.residue_type( i ).first_sidechain_atom(); j++ ) {
-// 			dev2 += ( pose.xyz( AtomID(j,i) ) - ref_pose.xyz( AtomID(j,i) ) ).length_squared();
-// 			natoms++;
-// 		}
-// 	}
-// 	dev2 /= natoms;
-// 	return std::sqrt( dev2 );
+//  for ( Size i = 1; i <= pose.size(); i++ ) {
+//   for ( Size j = 1; j <= pose.residue_type( i ).first_sidechain_atom(); j++ ) {
+//    dev2 += ( pose.xyz( AtomID(j,i) ) - ref_pose.xyz( AtomID(j,i) ) ).length_squared();
+//    natoms++;
+//   }
+//  }
+//  dev2 /= natoms;
+//  return std::sqrt( dev2 );
 
 // }
 
@@ -265,13 +265,13 @@ get_euler_axes( Matrix const moment_of_inertia,
 // void
 // check_rmsd_to_native_pose( pose::Pose const & pose_translate, pose::PoseCOP native_pose, Real & rmsd_min, pose::Pose & best_pose ) {
 
-// 	if ( native_pose ){
-// 		Real const rmsd = get_backbone_rmsd_no_super( pose_translate, *native_pose );
-// 		if ( rmsd < rmsd_min ){
-// 			rmsd_min = rmsd;
-// 			best_pose = pose_translate;
-// 		}
-// 	}
+//  if ( native_pose ){
+//   Real const rmsd = get_backbone_rmsd_no_super( pose_translate, *native_pose );
+//   if ( rmsd < rmsd_min ){
+//    rmsd_min = rmsd;
+//    best_pose = pose_translate;
+//   }
+//  }
 
 // }
 
@@ -286,7 +286,7 @@ bool
 check_hydrophobic( chemical::AA aa ){
 	using namespace chemical;
 	if ( aa == aa_ala ) return true;
-	//	if ( aa == aa_cys ) return true;
+	// if ( aa == aa_cys ) return true;
 	if ( aa == aa_phe ) return true;
 	if ( aa == aa_ile ) return true;
 	if ( aa == aa_leu ) return true;
@@ -300,8 +300,8 @@ check_hydrophobic( chemical::AA aa ){
 ///////////////////////////////////////////////////////////////////////
 void
 setup_hydrophobic_cbetas( pose::Pose const & pose,
-													utility::vector1< Vector > & pose_hydrophobic_cbetas,
-													utility::vector1< Size > const & subset_res ){
+	utility::vector1< Vector > & pose_hydrophobic_cbetas,
+	utility::vector1< Size > const & subset_res ){
 
 	pose_hydrophobic_cbetas.clear();
 
@@ -317,8 +317,8 @@ setup_hydrophobic_cbetas( pose::Pose const & pose,
 
 ///////////////////////////////////////////////////////////////////////
 void
-setup_backbone_atoms( pose::Pose const & pose, 	utility::vector1< Vector > & backbone_atoms,
-										utility::vector1< Size > const & subset_res ){
+setup_backbone_atoms( pose::Pose const & pose,  utility::vector1< Vector > & backbone_atoms,
+	utility::vector1< Size > const & subset_res ){
 
 
 	backbone_atoms.clear();
@@ -328,7 +328,7 @@ setup_backbone_atoms( pose::Pose const & pose, 	utility::vector1< Vector > & bac
 
 		if ( pose.residue_type( i ).has_variant_type( core::chemical::VIRTUAL_RESIDUE_VARIANT ) ) continue;
 
-		for ( Size j = 1; j <= pose.residue_type( i ).first_sidechain_atom(); j++ ){
+		for ( Size j = 1; j <= pose.residue_type( i ).first_sidechain_atom(); j++ ) {
 
 			if ( pose.residue( i ).is_virtual( j ) ) continue;
 			backbone_atoms.push_back( pose.xyz( id::AtomID( j, i ) ) );
@@ -342,9 +342,9 @@ setup_backbone_atoms( pose::Pose const & pose, 	utility::vector1< Vector > & bac
 ///////////////////////////////////////////////////////////////////////
 bool
 check_hydrophobic_contact( Vector const & translation,
-													 utility::vector1< Vector > const & moving_pose_cbetas,
-													 utility::vector1< Vector > const & partner_pose_cbetas
-													 ){
+	utility::vector1< Vector > const & moving_pose_cbetas,
+	utility::vector1< Vector > const & partner_pose_cbetas
+){
 
 	static Distance const DIST_CUTOFF = option[ hydrophobic_cbeta_dist_cutoff ]();
 	static Real const DIST_CUTOFF_squared = DIST_CUTOFF * DIST_CUTOFF;
@@ -373,9 +373,9 @@ check_hydrophobic_contact( Vector const & translation,
 ///////////////////////////////////////////////////////////////////////
 bool
 check_steric_overlap( Vector const & translation,
-											utility::vector1< Vector > const & moving_pose_backbone_atoms,
-											utility::vector1< Vector > const & partner_pose_backbone_atoms
-											){
+	utility::vector1< Vector > const & moving_pose_backbone_atoms,
+	utility::vector1< Vector > const & partner_pose_backbone_atoms
+){
 
 	static Distance const DIST_CUTOFF = option[ steric_dist_cutoff ]();
 	static Real const DIST_CUTOFF_squared = DIST_CUTOFF * DIST_CUTOFF;
@@ -397,9 +397,9 @@ check_steric_overlap( Vector const & translation,
 ///////////////////////////////////////////////////////////////////////
 Real
 check_rmsd( Vector const & translation,
-						utility::vector1< Vector > const & moving_pose_backbone_atoms,
-						utility::vector1< Vector > const & native_pose_backbone_atoms
-						){
+	utility::vector1< Vector > const & moving_pose_backbone_atoms,
+	utility::vector1< Vector > const & native_pose_backbone_atoms
+){
 
 	Real dev2( 0.0 );
 	Size natoms( 0 );
@@ -420,10 +420,10 @@ check_rmsd( Vector const & translation,
 ///////////////////////////////////////////////////////////////////////
 bool
 check_filter_rmsd( Vector const & translation,
-									 utility::vector1< Vector > const & moving_pose_backbone_atoms,
-									 utility::vector1< Vector > const & native_pose_backbone_atoms,
-									 Real const & filter_rmsd
-									 ){
+	utility::vector1< Vector > const & moving_pose_backbone_atoms,
+	utility::vector1< Vector > const & native_pose_backbone_atoms,
+	Real const & filter_rmsd
+){
 
 	Real dev2( 0.0 );
 	Real const max_dev2 = filter_rmsd * filter_rmsd * moving_pose_backbone_atoms.size();
@@ -433,7 +433,7 @@ check_filter_rmsd( Vector const & translation,
 		Vector const test_atom = moving_pose_backbone_atoms[ i ] + translation;
 		Vector const & native_atom = native_pose_backbone_atoms[ i ];
 		dev2 += ( test_atom - native_atom ).length_squared();
-		//		std::cout << natoms++ << " " << dev2 << " " << test_atom( 1) << " " << native_atom( 1) << " " << (test_atom -native_atom).length_squared() << std::endl;
+		//  std::cout << natoms++ << " " << dev2 << " " << test_atom( 1) << " " << native_atom( 1) << " " << (test_atom -native_atom).length_squared() << std::endl;
 		if ( dev2 > max_dev2 ) return false;
 	}
 
@@ -445,19 +445,19 @@ check_filter_rmsd( Vector const & translation,
 ///////////////////////////////////////////////////////////////////////
 bool
 search_translations( pose::Pose & pose,
-										 pose::Pose const & pose_to_translate,
-										 utility::vector1< Size > const & moving_res,
-										 utility::vector1< Size > const & partner_res,
-										 id::AtomID const & tether_atom_id,
-										 Vector const & tether_xyz,
-										 Real const & tether_radius,
-										 Real const filter_rmsd,
-										 Size & count,
-										 bool const do_steric_check,
-										 std::string const & silent_file,
-										 pose::PoseCOP native_pose,
-										 Real & rmsd_min,
-										 pose::Pose & best_pose ){
+	pose::Pose const & pose_to_translate,
+	utility::vector1< Size > const & moving_res,
+	utility::vector1< Size > const & partner_res,
+	id::AtomID const & tether_atom_id,
+	Vector const & tether_xyz,
+	Real const & tether_radius,
+	Real const filter_rmsd,
+	Size & count,
+	bool const do_steric_check,
+	std::string const & silent_file,
+	pose::PoseCOP native_pose,
+	Real & rmsd_min,
+	pose::Pose & best_pose ){
 
 	using namespace core::io::silent;
 	using namespace protocols::swa;
@@ -466,8 +466,8 @@ search_translations( pose::Pose & pose,
 
 	// short circuit for debugging
 	//translate( pose, translation_to_tether, pose_to_translate );
-	//	check_rmsd_to_native_pose( pose, native_pose, rmsd_min, best_pose );
-	//	return;
+	// check_rmsd_to_native_pose( pose, native_pose, rmsd_min, best_pose );
+	// return;
 
 	Real const xyz_increment = option[ xyz_sample ]();
 	Size const N_SAMPLE_TRANSLATE  = 2 * static_cast< Size >( (tether_radius/xyz_increment) + 0.5 ) + 1;
@@ -479,7 +479,7 @@ search_translations( pose::Pose & pose,
 	setup_hydrophobic_cbetas( pose_to_translate, moving_pose_hydrophobic_cbetas , moving_res );
 	setup_hydrophobic_cbetas( pose_to_translate, partner_pose_hydrophobic_cbetas, partner_res );
 
-	//	std::cout << "NUM CBETAs " << partner_pose_hydrophobic_cbetas.size() << " " << moving_pose_hydrophobic_cbetas.size() << std::endl;
+	// std::cout << "NUM CBETAs " << partner_pose_hydrophobic_cbetas.size() << " " << moving_pose_hydrophobic_cbetas.size() << std::endl;
 	static SilentFileData sfd;
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
@@ -487,7 +487,7 @@ search_translations( pose::Pose & pose,
 	setup_backbone_atoms( pose_to_translate, moving_pose_backbone_atoms,  moving_res  );
 	setup_backbone_atoms( pose_to_translate, partner_pose_backbone_atoms, partner_res );
 	setup_backbone_atoms( *native_pose,      native_pose_backbone_atoms,  moving_res  );
-	//	std::cout << "NUM STERIC ATOMS " << partner_pose_backbone_atoms.size() << " " << moving_pose_backbone_atoms.size() << " " << native_pose_backbone_atoms.size() << std::endl;
+	// std::cout << "NUM STERIC ATOMS " << partner_pose_backbone_atoms.size() << " " << moving_pose_backbone_atoms.size() << " " << native_pose_backbone_atoms.size() << std::endl;
 
 	bool found_better_orientation( false );
 
@@ -505,7 +505,7 @@ search_translations( pose::Pose & pose,
 
 				Vector translation = translation_to_tether + shift_from_tether;
 
-				//				std::cout << "TRNASLATION " << xyz_increment() << " " << translation(1) << " " << translation_to_tether(1) << " " << shift_from_tether(1) << " " << moving_pose_backbone_atoms[1](1) << std::endl;
+				//    std::cout << "TRNASLATION " << xyz_increment() << " " << translation(1) << " " << translation_to_tether(1) << " " << shift_from_tether(1) << " " << moving_pose_backbone_atoms[1](1) << std::endl;
 
 				if ( filter_rmsd > 0.0 && !check_filter_rmsd( translation, moving_pose_backbone_atoms, native_pose_backbone_atoms, filter_rmsd ) ) continue;
 				//std::cout << "Made it past filter_rmsd" << std::endl;
@@ -513,13 +513,13 @@ search_translations( pose::Pose & pose,
 				if ( !check_hydrophobic_contact( translation, moving_pose_hydrophobic_cbetas, partner_pose_hydrophobic_cbetas ) ) continue;
 
 				// This could be sped up to O( N ) with a grid-index.
-				if ( do_steric_check && !check_steric_overlap( translation, moving_pose_backbone_atoms, partner_pose_backbone_atoms ) )	continue;
+				if ( do_steric_check && !check_steric_overlap( translation, moving_pose_backbone_atoms, partner_pose_backbone_atoms ) ) continue;
 
 				count++;
 
 				std::string const tag = "S_" + ObjexxFCL::lead_zero_string_of( count, 6 );
 
-				if ( silent_file.size() > 0 ){
+				if ( silent_file.size() > 0 ) {
 					Real const rmsd = check_rmsd( translation, moving_pose_backbone_atoms, native_pose_backbone_atoms );
 					translate( pose, translation, pose_to_translate, moving_res );
 					BinarySilentStruct s( pose, tag );
@@ -528,13 +528,13 @@ search_translations( pose::Pose & pose,
 				}
 
 				// short cut for figuring out parameters -- no pose.
-				if( native_pose ){
+				if ( native_pose ) {
 					Real const rmsd = check_rmsd( translation, moving_pose_backbone_atoms, native_pose_backbone_atoms );
 
 					if ( rmsd < rmsd_min ) {
-						//						std::cout << rmsd << std::endl;
+						//      std::cout << rmsd << std::endl;
 						translate( pose, translation, pose_to_translate, moving_res );
-						//						pose.dump_pdb( tag + ".pdb" );
+						//      pose.dump_pdb( tag + ".pdb" );
 						best_pose = pose;
 						rmsd_min = rmsd;
 						found_better_orientation = true;
@@ -563,7 +563,7 @@ pack_it( pose::Pose & pose ){
 	PackerTaskOP pack_task_ = pack::task::TaskFactory::create_packer_task( pose );
 
 	pack_task_->restrict_to_repacking();
-	for (Size i = 1; i <= pose.size(); i++) {
+	for ( Size i = 1; i <= pose.size(); i++ ) {
 		if ( !pose.residue(i).is_protein() ) continue;
 		pack_task_->nonconst_residue_task(i).and_extrachi_cutoff( 0 );
 		pack_task_->nonconst_residue_task(i).or_ex1( true );
@@ -582,12 +582,12 @@ pack_it( pose::Pose & pose ){
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 figure_out_best_alpha_beta_gamma(
-          pose::Pose const & pose1,
-					pose::Pose const & pose2,
-					utility::vector1< Size > const & moving_res )
+	pose::Pose const & pose1,
+	pose::Pose const & pose2,
+	utility::vector1< Size > const & moving_res )
 {
 
-  Vector center_of_mass1, center_of_mass2;
+	Vector center_of_mass1, center_of_mass2;
 	Matrix moment_of_inertia1, moment_of_inertia2;
 
 	Vector xaxis1,yaxis1,zaxis1;
@@ -640,8 +640,8 @@ spinner_test(){
 
 	/////////////////////////////////////////////////////////////////
 	PoseOP native_pose;
-	if (option[ in::file::native ].user() ) {
-		native_pose = PoseOP( new Pose );
+	if ( option[ in::file::native ].user() ) {
+		native_pose = utility::pointer::make_shared< Pose >();
 		std::string native_pdb_file  = option[ in::file::native ];
 		io::pdb::pose_from_file( *native_pose, *rsd_set, native_pdb_file , core::import_pose::PDB_file);
 		native_pose->dump_pdb( "native.pdb" );
@@ -656,7 +656,7 @@ spinner_test(){
 	/////////////////////////////////////////////////////////////////
 	// Find center of mass, move to origin.
 
-  Vector center_of_mass( 0.0 );
+	Vector center_of_mass( 0.0 );
 	Matrix moment_of_inertia( 0.0 );
 	get_moment_of_inertia( pose, center_of_mass, moment_of_inertia, moving_res );
 	translate( pose, -1.0 * center_of_mass, pose, moving_res );
@@ -665,7 +665,7 @@ spinner_test(){
 
 	// sanity check
 	//get_moment_of_inertia( pose, center_of_mass, moment_of_inertia );
-	//	std::cout << center_of_mass( 1 ) << std::endl;
+	// std::cout << center_of_mass( 1 ) << std::endl;
 
 	// Find moments of inertia, x, y, z vectors.
 	// How much to rotate?
@@ -682,7 +682,7 @@ spinner_test(){
 
 	Real cos_beta_increment = radians( alpha_increment );
 	Size N_SAMPLE_COSBETA = 2.0 / cos_beta_increment;
-	if ( option[ n_sample_beta ].user() ){ //override default
+	if ( option[ n_sample_beta ].user() ) { //override default
 		N_SAMPLE_COSBETA = option[ n_sample_beta ]();
 		cos_beta_increment = 2.0 / N_SAMPLE_COSBETA;
 	}
@@ -712,7 +712,7 @@ spinner_test(){
 	kinematics::FoldTree f( pose.size() );
 	utility::vector1< Size > partner_res;
 
-	if ( prepend_ ){
+	if ( prepend_ ) {
 
 		if ( moving_res_start != 1 ) utility_exit_with_message( "If prepend, start moving_res must be 1" );
 
@@ -751,7 +751,7 @@ spinner_test(){
 	}
 
 	//prepack? convenient for testing later steps.
-	if ( option[ prepack ]() ){
+	if ( option[ prepack ]() ) {
 		translate( pose, Vector( 1000.0, 1000.0, 1000.0),    pose, moving_res );
 		pack_it( pose );
 		translate( pose, Vector( -1000.0, -1000.0, -1000.0), pose, moving_res );
@@ -771,15 +771,15 @@ spinner_test(){
 	Real const filter_rmsd = option[ filter_rms ]();
 	clock_t const time_start( clock() );
 
-	for ( Size i = 1; i <= N_SAMPLE; i++ ){
+	for ( Size i = 1; i <= N_SAMPLE; i++ ) {
 		Real const alpha = static_cast<Real>( i ) * alpha_increment + 0.01;
 		std::cout << i << " out of " << N_SAMPLE << std::endl;
 
-		for ( Size j = 1; j <= N_SAMPLE_COSBETA; j++ ){
+		for ( Size j = 1; j <= N_SAMPLE_COSBETA; j++ ) {
 			Real const cos_beta = -1.0 + static_cast< Real >( j ) * cos_beta_increment - 0.01;
 			Real const beta = degrees( std::acos( cos_beta ) );
 
-			for ( Size k = 1; k <= N_SAMPLE; k++ ){
+			for ( Size k = 1; k <= N_SAMPLE; k++ ) {
 				Real const gamma = static_cast< Real >( k ) * gamma_increment + 0.01;
 
 				protocols::stepwise::create_euler_rotation( M, alpha, beta, gamma, axis1, axis2, axis3 );
@@ -788,22 +788,22 @@ spinner_test(){
 
 				Pose pose_to_translate = pose;
 
-				bool found_better_orientation =	 search_translations( pose,
-																															pose_to_translate,
-																															moving_res,
-																															partner_res,
-																															tether_atom_id,
-																															tether_xyz,
-																															tether_radius,
-																															filter_rmsd,
-																															count,
-																															do_steric_check,
-																															silent_file,
-																															native_pose,
-																															rmsd_min,
-																															best_pose );
+				bool found_better_orientation =  search_translations( pose,
+					pose_to_translate,
+					moving_res,
+					partner_res,
+					tether_atom_id,
+					tether_xyz,
+					tether_radius,
+					filter_rmsd,
+					count,
+					do_steric_check,
+					silent_file,
+					native_pose,
+					rmsd_min,
+					best_pose );
 
-				if ( found_better_orientation ){
+				if ( found_better_orientation ) {
 					std::cout << "found better orientation. alpha, cos_beta, gamma: " << alpha << " " << cos_beta << " " << gamma << std::endl;
 				}
 
@@ -815,8 +815,8 @@ spinner_test(){
 
 	std::cout << "Minimum rmsd: " << rmsd_min << std::endl;
 
-	//	Real const rmsd = get_backbone_rmsd_no_super( best_pose, *native_pose );
-	//	std::cout << "Check rmsd: " << rmsd << std::endl;
+	// Real const rmsd = get_backbone_rmsd_no_super( best_pose, *native_pose );
+	// std::cout << "Check rmsd: " << rmsd << std::endl;
 	best_pose.dump_pdb( "best.pdb" );
 
 
@@ -833,7 +833,7 @@ my_main( void* )
 
 	using namespace core::options;
 
-	if ( option[ spinner ] ){
+	if ( option[ spinner ] ) {
 		spinner_test();
 	}
 
@@ -849,43 +849,43 @@ main( int argc, char * argv [] )
 
 	try {
 
-	using namespace core::options;
+		using namespace core::options;
 
-	utility::vector1< Size > blank_size_vector;
-	utility::vector1< std::string > blank_string_vector;
+		utility::vector1< Size > blank_size_vector;
+		utility::vector1< std::string > blank_string_vector;
 
-	NEW_OPT( spinner, "spinner", false );
-	NEW_OPT( prepend, "prepend", false );
-	NEW_OPT( append, "append", false );
-	NEW_OPT( prepack, "prepack", false );
-	NEW_OPT( sample_res, "sample residues", blank_size_vector );
-	NEW_OPT( n_sample, "number of samples per torsion angle", 18 );
-	NEW_OPT( n_sample_beta, "number of samples in tilt angle beta", 18 );
-	NEW_OPT( xyz_sample, "spacing in xyz search, in Angstroms", 1.0 );
-	NEW_OPT( filter_rms, "rmsd cut on moving segment", 0.0 );
-	NEW_OPT( hydrophobic_cbeta_dist_cutoff, "how close cbetas need to be to define contact", 6.0 );
-	NEW_OPT( steric_dist_cutoff, "how close cbetas need to be to define contact", 6.0 );
-	NEW_OPT( num_loop_res, "number of intervening loop residues", 0 );
-	NEW_OPT( min_hydrophobic_contacts, "minimum number of contacts", 2 );
-	NEW_OPT( base, "pdb file for base pose", "" );
+		NEW_OPT( spinner, "spinner", false );
+		NEW_OPT( prepend, "prepend", false );
+		NEW_OPT( append, "append", false );
+		NEW_OPT( prepack, "prepack", false );
+		NEW_OPT( sample_res, "sample residues", blank_size_vector );
+		NEW_OPT( n_sample, "number of samples per torsion angle", 18 );
+		NEW_OPT( n_sample_beta, "number of samples in tilt angle beta", 18 );
+		NEW_OPT( xyz_sample, "spacing in xyz search, in Angstroms", 1.0 );
+		NEW_OPT( filter_rms, "rmsd cut on moving segment", 0.0 );
+		NEW_OPT( hydrophobic_cbeta_dist_cutoff, "how close cbetas need to be to define contact", 6.0 );
+		NEW_OPT( steric_dist_cutoff, "how close cbetas need to be to define contact", 6.0 );
+		NEW_OPT( num_loop_res, "number of intervening loop residues", 0 );
+		NEW_OPT( min_hydrophobic_contacts, "minimum number of contacts", 2 );
+		NEW_OPT( base, "pdb file for base pose", "" );
 
-	////////////////////////////////////////////////////////////////////////////
-	// setup
-	////////////////////////////////////////////////////////////////////////////
-	devel::init(argc, argv);
+		////////////////////////////////////////////////////////////////////////////
+		// setup
+		////////////////////////////////////////////////////////////////////////////
+		devel::init(argc, argv);
 
 
-	////////////////////////////////////////////////////////////////////////////
-	// end of setup
-	////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		////////////////////////////////////////////////////////////////////////////
 
-	protocols::viewer::viewer_main( my_main );
+		protocols::viewer::viewer_main( my_main );
 
-	exit( 0 );
+		exit( 0 );
 
-	////////////////////////////////////////////////////////////////////////////
-	// end of setup
-	////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		////////////////////////////////////////////////////////////////////////////
 
 	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

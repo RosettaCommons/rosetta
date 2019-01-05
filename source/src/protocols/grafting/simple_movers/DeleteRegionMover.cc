@@ -81,7 +81,7 @@ DeleteRegionMover::region( std::string const & res_start, std::string const & re
 {
 	std::stringstream residues;
 	residues << res_start << "-" << res_end;
-	selector_ = core::select::residue_selector::ResidueIndexSelectorCOP( new core::select::residue_selector::ResidueIndexSelector( residues.str() ) );
+	selector_ = utility::pointer::make_shared< core::select::residue_selector::ResidueIndexSelector >( residues.str() );
 }
 
 void
@@ -91,17 +91,17 @@ DeleteRegionMover::set_residue_selector( core::select::residue_selector::Residue
 
 protocols::moves::MoverOP
 DeleteRegionMover::clone() const {
-	return protocols::moves::MoverOP( new DeleteRegionMover(*this) );
+	return utility::pointer::make_shared< DeleteRegionMover >(*this);
 }
 
 protocols::moves::MoverOP
 DeleteRegionMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new DeleteRegionMover );
+	return utility::pointer::make_shared< DeleteRegionMover >();
 }
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP DeleteRegionMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new DeleteRegionMover );
+// XRW TEMP  return utility::pointer::make_shared< DeleteRegionMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -217,7 +217,7 @@ std::string DeleteRegionMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 DeleteRegionMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new DeleteRegionMover );
+	return utility::pointer::make_shared< DeleteRegionMover >();
 }
 
 void DeleteRegionMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

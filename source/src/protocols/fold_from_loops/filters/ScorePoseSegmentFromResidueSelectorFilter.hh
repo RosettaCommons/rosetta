@@ -40,10 +40,10 @@ public:
 	~ScorePoseSegmentFromResidueSelectorFilter() override;
 
 	inline protocols::filters::FilterOP clone() const override {
-		return protocols::filters::FilterOP( new ScorePoseSegmentFromResidueSelectorFilter( *this ) );
+		return utility::pointer::make_shared< ScorePoseSegmentFromResidueSelectorFilter >( *this );
 	};
 	inline protocols::filters::FilterOP fresh_instance() const override {
-		return protocols::filters::FilterOP( new ScorePoseSegmentFromResidueSelectorFilter() );
+		return utility::pointer::make_shared< ScorePoseSegmentFromResidueSelectorFilter >();
 	};
 
 	void residue_selector( core::select::residue_selector::ResidueSelectorCOP const &  select ) { residue_select_ = select; }
@@ -79,7 +79,7 @@ public:
 
 private:
 	inline static core::select::residue_selector::ResidueSelectorCOP default_selector() {
-		return core::select::residue_selector::ResidueSelectorCOP( new core::select::residue_selector::TrueResidueSelector );
+		return utility::pointer::make_shared< core::select::residue_selector::TrueResidueSelector >();
 	}
 	inline static core::scoring::ScoreFunctionOP default_scorefxn() { return core::scoring::get_score_function(); }
 

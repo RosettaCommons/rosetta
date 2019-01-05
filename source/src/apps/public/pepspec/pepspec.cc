@@ -928,7 +928,7 @@ set_pep_csts(
 		pep_cst_vector.x( pep_cst.x );
 		pep_cst_vector.y( pep_cst.y );
 		pep_cst_vector.z( pep_cst.z );
-		ConstraintCOP this_cst( ConstraintOP( new CoordinateConstraint( AtomID( pose.residue( seqpos ).atom_index( pep_cst.atom_name ), seqpos ), AtomID( pose.residue( prot_anchor ).atom_index( "CA" ), prot_anchor ), pep_cst_vector, core::scoring::func::FuncOP( new core::scoring::func::FlatHarmonicFunc( pep_cst.x0, pep_cst.sd, pep_cst.tol ) ) ) ) );
+		ConstraintCOP this_cst( utility::pointer::make_shared< CoordinateConstraint >( AtomID( pose.residue( seqpos ).atom_index( pep_cst.atom_name ), seqpos ), AtomID( pose.residue( prot_anchor ).atom_index( "CA" ), prot_anchor ), pep_cst_vector, utility::pointer::make_shared< core::scoring::func::FlatHarmonicFunc >( pep_cst.x0, pep_cst.sd, pep_cst.tol ) ) );
 		//  ConstraintCOP cst( new CoordinateConstraint( AtomID( pose.residue( i ).atom_index( "CA" ), i ), AtomID( pose.residue( pep_anchor ).atom_index( "CA" ), pep_anchor ), pose.residue( i ).xyz( "CA" ), new FlatHarmonicFunc( 0.0, 0.1, 2.0 ) ) );
 		pose.add_constraint( this_cst );
 	}
@@ -989,7 +989,7 @@ make_frags(
 		std::string const seqsubstr( seq, j-1, frags_length ); //j-1 accounts for string [] from 0
 		list =  core::fragment::picking_old::vall::pick_fragments_by_ss_plus_aa( ss_string, seqsubstr, 200, false ); //magic number: 200 fragments per position (not duplicated - this will be like robetta server fragments)
 		core::fragment::FrameOP frame;
-		frame = core::fragment::FrameOP( new core::fragment::Frame( j ) );
+		frame = utility::pointer::make_shared< core::fragment::Frame >( j );
 		frame->add_fragment( list );
 		fragset->add( frame );
 	}
@@ -1025,7 +1025,7 @@ make_1mer_frags(
 			list =  core::fragment::picking_old::vall::pick_fragments_by_ss_plus_aa( ss_string, seqsubstr, nfrags, true );
 		} else list =  core::fragment::picking_old::vall::pick_fragments_by_ss( ss_string, nfrags, true );
 		core::fragment::FrameOP frame;
-		frame = core::fragment::FrameOP( new core::fragment::Frame( j ) );
+		frame = utility::pointer::make_shared< core::fragment::Frame >( j );
 		frame->add_fragment( list );
 		fragset->add( frame );
 	}
@@ -1233,7 +1233,7 @@ gen_pep_bb_sequential(
 					if ( repack_this[ i ] ) restrict_to_repack_taskop->include_residue( i );
 					else prevent_repack_taskop->include_residue( i );
 				}
-				rp_task_factory->push_back( TaskOperationCOP( new pack::task::operation::IncludeCurrent() ) );
+				rp_task_factory->push_back( utility::pointer::make_shared< pack::task::operation::IncludeCurrent >() );
 				rp_task_factory->push_back( restrict_to_repack_taskop );
 				rp_task_factory->push_back( prevent_repack_taskop );
 				protocols::minimization_packing::RotamerTrialsMoverOP dz_rottrial( new protocols::minimization_packing::RotamerTrialsMover( cen_scorefxn, rp_task_factory ) );
@@ -1334,7 +1334,7 @@ mutate_random_residue(
 			if ( i == seqpos ) restrict_to_repack_taskop->include_residue( i );
 			else prevent_repack_taskop->include_residue( i );
 		}
-		mut_task_factory->push_back( TaskOperationCOP( new pack::task::operation::InitializeFromCommandline() ) );
+		mut_task_factory->push_back( utility::pointer::make_shared< pack::task::operation::InitializeFromCommandline >() );
 		mut_task_factory->push_back( restrict_to_repack_taskop );
 		mut_task_factory->push_back( prevent_repack_taskop );
 	}
@@ -1361,8 +1361,8 @@ mutate_random_residue(
 			if ( ( i == seqpos || is_nbr[ i ] ) && i != pep_anchor ) restrict_to_repack_taskop->include_residue( i );
 			else prevent_repack_taskop->include_residue( i );
 		}
-		rp_task_factory->push_back( TaskOperationCOP( new pack::task::operation::InitializeFromCommandline() ) );
-		rp_task_factory->push_back( TaskOperationCOP( new pack::task::operation::IncludeCurrent() ) );
+		rp_task_factory->push_back( utility::pointer::make_shared< pack::task::operation::InitializeFromCommandline >() );
+		rp_task_factory->push_back( utility::pointer::make_shared< pack::task::operation::IncludeCurrent >() );
 		rp_task_factory->push_back( restrict_to_repack_taskop );
 		rp_task_factory->push_back( prevent_repack_taskop );
 	}
@@ -1876,8 +1876,8 @@ RunPepSpec()
 					}
 				}
 				using core::pack::task::operation::TaskOperationCOP;
-				if ( !option[ pepspec::diversify_pep_seqs ].user() ) dz_task_factory->push_back( TaskOperationCOP( new pack::task::operation::InitializeFromCommandline() ) );
-				dz_task_factory->push_back( TaskOperationCOP( new pack::task::operation::IncludeCurrent() ) );
+				if ( !option[ pepspec::diversify_pep_seqs ].user() ) dz_task_factory->push_back( utility::pointer::make_shared< pack::task::operation::InitializeFromCommandline >() );
+				dz_task_factory->push_back( utility::pointer::make_shared< pack::task::operation::IncludeCurrent >() );
 				dz_task_factory->push_back( restrict_to_repack_taskop );
 				dz_task_factory->push_back( prevent_repack_taskop );
 			}

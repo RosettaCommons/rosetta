@@ -131,19 +131,19 @@ StoreResidueSubsetMover::parse_my_tag( TagCOP const tag, basic::datacache::DataM
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP StoreResidueSubsetMoverCreator::create_mover() const
 // XRW TEMP {
-// XRW TEMP  return protocols::moves::MoverOP( new StoreResidueSubsetMover );
+// XRW TEMP  return utility::pointer::make_shared< StoreResidueSubsetMover >();
 // XRW TEMP }
 
 protocols::moves::MoverOP
 StoreResidueSubsetMover::clone() const
 {
-	return protocols::moves::MoverOP( new StoreResidueSubsetMover( *this ) );
+	return utility::pointer::make_shared< StoreResidueSubsetMover >( *this );
 }
 
 protocols::moves::MoverOP
 StoreResidueSubsetMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new StoreResidueSubsetMover );
+	return utility::pointer::make_shared< StoreResidueSubsetMover >();
 }
 
 std::string StoreResidueSubsetMover::get_name() const {
@@ -172,7 +172,7 @@ std::string StoreResidueSubsetMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 StoreResidueSubsetMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new StoreResidueSubsetMover );
+	return utility::pointer::make_shared< StoreResidueSubsetMover >();
 }
 
 void StoreResidueSubsetMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

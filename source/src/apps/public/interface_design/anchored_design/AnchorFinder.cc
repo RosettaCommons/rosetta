@@ -205,7 +205,7 @@ public:
 
 	protocols::moves::MoverOP
 	fresh_instance() const override {
-		return protocols::moves::MoverOP( new AnchorFinderMover );
+		return utility::pointer::make_shared< AnchorFinderMover >();
 	}
 
 
@@ -239,7 +239,7 @@ int main( int argc, char* argv[] )
 		option.add( bestoutfile, "file to print best loops in (ALL windows printed to tracer" ).def( "goodfile.out" );
 		devel::init( argc, argv );
 
-		protocols::jd2::JobDistributor::get_instance()->go(protocols::moves::MoverOP( new AnchorFinderMover ) );
+		protocols::jd2::JobDistributor::get_instance()->go(utility::pointer::make_shared< AnchorFinderMover >() );
 
 		TR << "************************d**o**n**e**************************************" << std::endl;
 	}

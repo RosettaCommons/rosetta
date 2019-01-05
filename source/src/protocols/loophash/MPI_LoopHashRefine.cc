@@ -147,7 +147,7 @@ MPI_LoopHashRefine::load_structures_from_cmdline_into_library( core::Size struct
 		input.fill_pose( pose, *rsd_set );
 
 		if ( option[ OptionKeys::constraints::cst_fa_file ].user() ) {
-			core::scoring::constraints::ConstraintSetOP cstset( core::scoring::constraints::ConstraintIO::get_instance()->read_constraints( core::scoring::constraints::get_cst_fa_file_option(), core::scoring::constraints::ConstraintSetOP( new core::scoring::constraints::ConstraintSet ), pose  ) );
+			core::scoring::constraints::ConstraintSetOP cstset( core::scoring::constraints::ConstraintIO::get_instance()->read_constraints( core::scoring::constraints::get_cst_fa_file_option(), utility::pointer::make_shared< core::scoring::constraints::ConstraintSet >(), pose  ) );
 			TR << "Read constraints: " << ( cstset->has_constraints() ? "YES" : "NONE" ) << std::endl;
 			pose.constraint_set( cstset );
 		}

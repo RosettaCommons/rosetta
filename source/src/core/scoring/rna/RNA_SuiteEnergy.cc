@@ -77,7 +77,7 @@ using namespace core::chemical;
 methods::EnergyMethodOP
 RNA_SuiteEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
-) const { return methods::EnergyMethodOP( new RNA_SuiteEnergy( options.rna_options() ) ); }
+) const { return utility::pointer::make_shared< RNA_SuiteEnergy >( options.rna_options() ); }
 
 ScoreTypes
 RNA_SuiteEnergyCreator::score_types_for_method() const {
@@ -89,10 +89,10 @@ RNA_SuiteEnergyCreator::score_types_for_method() const {
 
 /// ctor
 RNA_SuiteEnergy::RNA_SuiteEnergy( RNA_EnergyMethodOptions const & options ) :
-	parent( methods::EnergyMethodCreatorOP( new RNA_SuiteEnergyCreator ) ),
+	parent( utility::pointer::make_shared< RNA_SuiteEnergyCreator >() ),
 	options_( options ),
-	rna_suite_potential_( RNA_SuitePotentialOP( new RNA_SuitePotential( false ) ) ),
-	rna_suite_potential_for_suiteness_bonus_(  RNA_SuitePotentialOP( new RNA_SuitePotential( true, options.suiteness_bonus() ) ) )
+	rna_suite_potential_( utility::pointer::make_shared< RNA_SuitePotential >( false ) ),
+	rna_suite_potential_for_suiteness_bonus_(  utility::pointer::make_shared< RNA_SuitePotential >( true, options.suiteness_bonus() ) )
 {}
 ///////////////////////////////////////////////////////////////////////////////
 

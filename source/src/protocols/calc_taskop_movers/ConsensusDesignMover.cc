@@ -70,7 +70,7 @@ namespace calc_taskop_movers {
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP ConsensusDesignMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new ConsensusDesignMover );
+// XRW TEMP  return utility::pointer::make_shared< ConsensusDesignMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -102,13 +102,13 @@ ConsensusDesignMover::~ConsensusDesignMover()= default;
 protocols::moves::MoverOP
 ConsensusDesignMover::clone() const
 {
-	return protocols::moves::MoverOP( new ConsensusDesignMover( *this ) );
+	return utility::pointer::make_shared< ConsensusDesignMover >( *this );
 }
 
 protocols::moves::MoverOP
 ConsensusDesignMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new ConsensusDesignMover() );
+	return utility::pointer::make_shared< ConsensusDesignMover >();
 }
 
 /// @details this mover is allowed to touch all residues specified
@@ -158,7 +158,7 @@ ConsensusDesignMover::create_consensus_design_task(
 	if ( !ptask_ ) {
 		if ( task_factory_ ) ptask_ = task_factory_->create_task_and_apply_taskoperations( pose );
 		else {
-			ptask_ = core::pack::task::PackerTaskCOP( core::pack::task::PackerTaskOP( new core::pack::task::PackerTask_( pose ) ) );
+			ptask_ = utility::pointer::make_shared< core::pack::task::PackerTask_ >( pose );
 			if ( invert_task_ ) utility_exit_with_message("invert_task_ set to true even though no task or task_factory was passed in. something probably unclean somewhere.");
 		}
 	}
@@ -215,7 +215,7 @@ ConsensusDesignMover::create_sequence_profile_constraints(
 	core::sequence::SequenceProfileOP temp_sp( new core::sequence::SequenceProfile(*seqprof_) ); //dumb nonconstness of seqprofile in SequenceProfileConstraint makes this necessary :(
 	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( pose.residue_type(i).is_protein() && task.residue_task(i).being_designed() ) {
-			csts.push_back( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::SequenceProfileConstraint( pose, i, temp_sp ) ) );
+			csts.push_back( utility::pointer::make_shared< core::scoring::constraints::SequenceProfileConstraint >( pose, i, temp_sp ) );
 		}
 	}
 	return csts;
@@ -270,7 +270,7 @@ std::string ConsensusDesignMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 ConsensusDesignMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ConsensusDesignMover );
+	return utility::pointer::make_shared< ConsensusDesignMover >();
 }
 
 void ConsensusDesignMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

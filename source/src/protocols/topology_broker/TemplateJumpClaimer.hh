@@ -66,7 +66,7 @@ public:
 	TemplateJumpClaimer( std::string config_file,  weights::AbinitioMoverWeightOP weight = nullptr );
 
 	TopologyClaimerOP clone() const override {
-		return TopologyClaimerOP( new TemplateJumpClaimer( *this ) );
+		return utility::pointer::make_shared< TemplateJumpClaimer >( *this );
 	}
 
 	void read_config_file( std::string const& file );

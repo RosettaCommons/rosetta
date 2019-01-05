@@ -49,7 +49,7 @@ methods::EnergyMethodOP
 MMBondLengthEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
-	return methods::EnergyMethodOP( new MMBondLengthEnergy( options ) );
+	return utility::pointer::make_shared< MMBondLengthEnergy >( options );
 }
 
 ScoreTypes
@@ -63,7 +63,7 @@ MMBondLengthEnergyCreator::score_types_for_method() const {
 static basic::Tracer TR( "core.mm.MMBondLengthEnergy" );
 
 MMBondLengthEnergy::MMBondLengthEnergy( methods::EnergyMethodOptions const & /*options*/):
-	parent( methods::EnergyMethodCreatorOP( new MMBondLengthEnergyCreator ) )
+	parent( utility::pointer::make_shared< MMBondLengthEnergyCreator >() )
 {}
 
 MMBondLengthEnergy::MMBondLengthEnergy( MMBondLengthEnergy const & src ):
@@ -77,7 +77,7 @@ MMBondLengthEnergy::~MMBondLengthEnergy() = default;
 EnergyMethodOP
 MMBondLengthEnergy::clone() const
 {
-	return EnergyMethodOP( new MMBondLengthEnergy( *this ) );
+	return utility::pointer::make_shared< MMBondLengthEnergy >( *this );
 }
 
 

@@ -53,7 +53,7 @@ public:
 	EnergyMethodOP
 	clone() const
 	{
-		return EnergyMethodOP( new PeptideBondEnergy );
+		return utility::pointer::make_shared< PeptideBondEnergy >();
 	}
 
 	/// called at the end of energy evaluation

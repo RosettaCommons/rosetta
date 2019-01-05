@@ -369,7 +369,7 @@ RigidBodyPerturbNoCenterMover::parse_my_tag(
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP RigidBodyPerturbNoCenterMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new RigidBodyPerturbNoCenterMover );
+// XRW TEMP  return utility::pointer::make_shared< RigidBodyPerturbNoCenterMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -379,7 +379,7 @@ RigidBodyPerturbNoCenterMover::parse_my_tag(
 
 moves::MoverOP
 RigidBodyPerturbNoCenterMover::clone() const {
-	return moves::MoverOP( new RigidBodyPerturbNoCenterMover(*this) );
+	return utility::pointer::make_shared< RigidBodyPerturbNoCenterMover >(*this);
 }
 
 RigidBodyPerturbNoCenterMover::RigidBodyPerturbNoCenterMover() :
@@ -495,7 +495,7 @@ std::string RigidBodyPerturbNoCenterMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 RigidBodyPerturbNoCenterMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new RigidBodyPerturbNoCenterMover );
+	return utility::pointer::make_shared< RigidBodyPerturbNoCenterMover >();
 }
 
 void RigidBodyPerturbNoCenterMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -930,12 +930,12 @@ RigidBodyTiltMover::parse_my_tag( utility::tag::TagCOP tag,
 
 moves::MoverOP
 RigidBodyTiltMover::clone() const {
-	return moves::MoverOP( new RigidBodyTiltMover(*this) );
+	return utility::pointer::make_shared< RigidBodyTiltMover >(*this);
 }
 
 moves::MoverOP
 RigidBodyTiltMover::fresh_instance() const {
-	return moves::MoverOP( new RigidBodyTiltMover );
+	return utility::pointer::make_shared< RigidBodyTiltMover >();
 }
 
 // XRW TEMP std::string
@@ -945,7 +945,7 @@ RigidBodyTiltMover::fresh_instance() const {
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP RigidBodyTiltMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new RigidBodyTiltMover );
+// XRW TEMP  return utility::pointer::make_shared< RigidBodyTiltMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -984,7 +984,7 @@ std::string RigidBodyTiltMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 RigidBodyTiltMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new RigidBodyTiltMover );
+	return utility::pointer::make_shared< RigidBodyTiltMover >();
 }
 
 void RigidBodyTiltMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -1099,12 +1099,12 @@ RigidBodyTransMover::parse_my_tag( utility::tag::TagCOP tag,
 
 moves::MoverOP
 RigidBodyTransMover::clone() const {
-	return moves::MoverOP( new RigidBodyTransMover(*this) );
+	return utility::pointer::make_shared< RigidBodyTransMover >(*this);
 }
 
 moves::MoverOP
 RigidBodyTransMover::fresh_instance() const {
-	return moves::MoverOP( new RigidBodyTransMover );
+	return utility::pointer::make_shared< RigidBodyTransMover >();
 }
 
 // XRW TEMP std::string
@@ -1114,7 +1114,7 @@ RigidBodyTransMover::fresh_instance() const {
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP RigidBodyTransMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new RigidBodyTransMover );
+// XRW TEMP  return utility::pointer::make_shared< RigidBodyTransMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -1151,7 +1151,7 @@ std::string RigidBodyTransMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 RigidBodyTransMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new RigidBodyTransMover );
+	return utility::pointer::make_shared< RigidBodyTransMover >();
 }
 
 void RigidBodyTransMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

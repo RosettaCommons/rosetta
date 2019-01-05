@@ -42,12 +42,12 @@ NullMover::get_name() const {
 
 protocols::moves::MoverOP
 NullMover::clone() const{
-	return protocols::moves::MoverOP( new NullMover( *this ) );
+	return utility::pointer::make_shared< NullMover >( *this );
 }
 
 protocols::moves::MoverOP
 NullMover::fresh_instance() const{
-	return protocols::moves::MoverOP( new NullMover );
+	return utility::pointer::make_shared< NullMover >();
 }
 
 

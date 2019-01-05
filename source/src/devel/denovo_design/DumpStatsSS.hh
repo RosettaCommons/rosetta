@@ -45,9 +45,9 @@ public:
 	~DumpStatsSS() override;
 	void apply( core::pose::Pose & pose ) override;
 	protocols::moves::MoverOP clone() const override {
-		return( protocols::moves::MoverOP( new DumpStatsSS( *this ) ) );
+		return( utility::pointer::make_shared< DumpStatsSS >( *this ) );
 	}
-	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new DumpStatsSS ); }
+	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< DumpStatsSS >(); }
 	core::Real compute_boltz_sum( utility::vector1< core::Real > const & probabilities ) const;
 	core::Real compute_svm_prob(std::string sequence, std::string wanted_ss);
 	core::Real compute_psipred_prob(core::pose::Pose & pose , std::string wanted_ss);

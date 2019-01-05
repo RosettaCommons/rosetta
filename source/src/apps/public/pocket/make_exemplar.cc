@@ -129,11 +129,11 @@ ExemplarMover::ExemplarMover() :
 ExemplarMover::~ExemplarMover() = default;
 
 MoverOP ExemplarMover::clone() const {
-	return MoverOP( new ExemplarMover( *this ) );
+	return utility::pointer::make_shared< ExemplarMover >( *this );
 }
 
 MoverOP ExemplarMover::fresh_instance() const {
-	return MoverOP( new ExemplarMover );
+	return utility::pointer::make_shared< ExemplarMover >();
 }
 
 void ExemplarMover::apply( Pose & pose ) {
@@ -191,7 +191,7 @@ int main( int argc, char * argv [] ) {
 		devel::init(argc, argv);
 
 		MoverOP protocol( new ExemplarMover() );
-		protocols::jd2::JobDistributor::get_instance()->go( protocol,  jd2::JobOutputterOP( new jd2::NoOutputJobOutputter ) );
+		protocols::jd2::JobDistributor::get_instance()->go( protocol,  utility::pointer::make_shared< jd2::NoOutputJobOutputter >() );
 
 	}
 catch (utility::excn::Exception const & e ) {

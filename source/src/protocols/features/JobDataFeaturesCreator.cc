@@ -28,7 +28,7 @@ namespace features {
 // XRW TEMP JobDataFeaturesCreator::JobDataFeaturesCreator() {}
 // XRW TEMP JobDataFeaturesCreator::~JobDataFeaturesCreator() = default;
 // XRW TEMP FeaturesReporterOP JobDataFeaturesCreator::create_features_reporter() const {
-// XRW TEMP  return FeaturesReporterOP( new JobDataFeatures );
+// XRW TEMP  return utility::pointer::make_shared< JobDataFeatures >();
 // XRW TEMP }
 
 // XRW TEMP std::string JobDataFeaturesCreator::type_name() const {

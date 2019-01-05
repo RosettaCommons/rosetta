@@ -63,7 +63,7 @@ using namespace utility;
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP TaskAwareSymMinMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new TaskAwareSymMinMover );
+// XRW TEMP  return utility::pointer::make_shared< TaskAwareSymMinMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -117,12 +117,12 @@ TaskAwareSymMinMover::TaskAwareSymMinMover(const TaskAwareSymMinMover& rval) :
 
 protocols::moves::MoverOP
 TaskAwareSymMinMover::clone() const {
-	return protocols::moves::MoverOP( new TaskAwareSymMinMover( *this ) );
+	return utility::pointer::make_shared< TaskAwareSymMinMover >( *this );
 }
 
 protocols::moves::MoverOP
 TaskAwareSymMinMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new TaskAwareSymMinMover() );
+	return utility::pointer::make_shared< TaskAwareSymMinMover >();
 }
 
 
@@ -227,7 +227,7 @@ std::string TaskAwareSymMinMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 TaskAwareSymMinMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new TaskAwareSymMinMover );
+	return utility::pointer::make_shared< TaskAwareSymMinMover >();
 }
 
 void TaskAwareSymMinMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

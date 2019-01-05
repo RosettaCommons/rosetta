@@ -54,7 +54,7 @@ static basic::Tracer TR( "protocols.protein_interface_design.movers.AddChainBrea
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP AddChainBreakCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new AddChainBreak );
+// XRW TEMP  return utility::pointer::make_shared< AddChainBreak >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -77,7 +77,7 @@ AddChainBreak::~AddChainBreak() = default;
 
 protocols::moves::MoverOP
 AddChainBreak::clone() const {
-	return (protocols::moves::MoverOP( new AddChainBreak( *this ) ) );
+	return (utility::pointer::make_shared< AddChainBreak >( *this ) );
 }
 
 void
@@ -195,7 +195,7 @@ std::string AddChainBreakCreator::keyname() const {
 
 protocols::moves::MoverOP
 AddChainBreakCreator::create_mover() const {
-	return protocols::moves::MoverOP( new AddChainBreak );
+	return utility::pointer::make_shared< AddChainBreak >();
 }
 
 void AddChainBreakCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

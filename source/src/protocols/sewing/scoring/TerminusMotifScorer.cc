@@ -212,7 +212,7 @@ TerminusMotifScorerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 
 AssemblyScorerOP
 TerminusMotifScorerCreator::create_assembly_scorer() const{
-	return AssemblyScorerOP( new TerminusMotifScorer() );
+	return utility::pointer::make_shared< TerminusMotifScorer >();
 }
 
 std::string

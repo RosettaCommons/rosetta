@@ -105,11 +105,11 @@ DdGScan::DdGScan( DdGScan const & )= default;
 DdGScan::~DdGScan() = default;
 
 void DdGScan::initialize() {
-	ddG_mover( protocols::simple_ddg::ddGOP( new protocols::simple_ddg::ddG() ) );
+	ddG_mover( utility::pointer::make_shared< protocols::simple_ddg::ddG >() );
 }
 
-protocols::filters::FilterOP DdGScan::clone() const { return protocols::filters::FilterOP( new DdGScan( *this ) ); }
-protocols::filters::FilterOP DdGScan::fresh_instance() const { return protocols::filters::FilterOP( new DdGScan() ); }
+protocols::filters::FilterOP DdGScan::clone() const { return utility::pointer::make_shared< DdGScan >( *this ); }
+protocols::filters::FilterOP DdGScan::fresh_instance() const { return utility::pointer::make_shared< DdGScan >(); }
 
 // setters
 void DdGScan::task_factory( core::pack::task::TaskFactoryOP task_factory ) { task_factory_ = task_factory; }
@@ -291,7 +291,7 @@ void DdGScan::write_to_pdb(
 }
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP DdGScanCreator::create_filter() const { return protocols::filters::FilterOP( new DdGScan ); }
+// XRW TEMP DdGScanCreator::create_filter() const { return utility::pointer::make_shared< DdGScan >(); }
 
 // XRW TEMP std::string
 // XRW TEMP DdGScanCreator::keyname() const { return "DdGScan"; }
@@ -327,7 +327,7 @@ std::string DdGScanCreator::keyname() const {
 
 protocols::filters::FilterOP
 DdGScanCreator::create_filter() const {
-	return protocols::filters::FilterOP( new DdGScan );
+	return utility::pointer::make_shared< DdGScan >();
 }
 
 void DdGScanCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -40,7 +40,7 @@ public:
 	RNA_SuiteEnergy( RNA_EnergyMethodOptions const & options );
 
 	// clone
-	virtual methods::EnergyMethodOP clone() const { return methods::EnergyMethodOP( new RNA_SuiteEnergy( options_ ) ); }
+	virtual methods::EnergyMethodOP clone() const { return utility::pointer::make_shared< RNA_SuiteEnergy >( options_ ); }
 
 	virtual void
 	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;

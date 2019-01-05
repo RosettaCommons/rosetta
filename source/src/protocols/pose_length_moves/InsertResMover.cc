@@ -82,7 +82,7 @@ InsertResMover::InsertResMover():moves::Mover("InsertResMover"){}
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP InsertResMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new InsertResMover );
+// XRW TEMP  return utility::pointer::make_shared< InsertResMover >();
 // XRW TEMP }
 
 numeric::xyzVector<core::Real>
@@ -328,7 +328,7 @@ std::string InsertResMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 InsertResMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new InsertResMover );
+	return utility::pointer::make_shared< InsertResMover >();
 }
 
 void InsertResMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

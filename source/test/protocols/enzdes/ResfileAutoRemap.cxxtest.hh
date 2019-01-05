@@ -83,7 +83,7 @@ public:
 		basic::options::option[basic::options::OptionKeys::run::preserve_header ].value(true);
 		*/
 
-		enz_io = protocols::toolbox::match_enzdes_util::EnzConstraintIOOP( new protocols::toolbox::match_enzdes_util::EnzConstraintIO(const_residue_set) );
+		enz_io = utility::pointer::make_shared< protocols::toolbox::match_enzdes_util::EnzConstraintIO >(const_residue_set);
 	}
 
 	// Shared finalization goes here.
@@ -118,7 +118,7 @@ public:
 		(*scorefxn)(test_pose);
 
 		//muck around with the pose
-		test_pose.observer_cache().set( core::pose::datacache::CacheableObserverType::LENGTH_EVENT_COLLECTOR, CacheableObserverOP( new core::pose::datacache::LengthEventCollector() ) );
+		test_pose.observer_cache().set( core::pose::datacache::CacheableObserverType::LENGTH_EVENT_COLLECTOR, utility::pointer::make_shared< core::pose::datacache::LengthEventCollector >() );
 		test_pose.delete_polymer_residue( 67 );
 		test_pose.delete_polymer_residue( 78 );
 		(*scorefxn)(test_pose);
@@ -126,14 +126,14 @@ public:
 		//protocols::enzdes::DetectProteinLigandInterfaceOP interface_op = new protocols::enzdes::DetectProteinLigandInterface;
 
 		//task_factory.push_back( interface_op );
-		task_factory.push_back( TaskOperationCOP( new protocols::enzdes::SetCatalyticResPackBehavior ) );
-		task_factory.push_back( TaskOperationCOP( new core::pack::task::operation::ReadResfileAndObeyLengthEvents( "protocols/enzdes/resfile_remap.resfile") ) );
+		task_factory.push_back( utility::pointer::make_shared< protocols::enzdes::SetCatalyticResPackBehavior >() );
+		task_factory.push_back( utility::pointer::make_shared< core::pack::task::operation::ReadResfileAndObeyLengthEvents >( "protocols/enzdes/resfile_remap.resfile") );
 
 		//task_factory_compare.push_back( interface_op );
-		task_factory_compare.push_back( TaskOperationCOP( new protocols::enzdes::SetCatalyticResPackBehavior ) );
-		task_factory_compare.push_back( TaskOperationCOP( new core::pack::task::operation::ReadResfile( "protocols/enzdes/resfile_remap.resfile") ) );
+		task_factory_compare.push_back( utility::pointer::make_shared< protocols::enzdes::SetCatalyticResPackBehavior >() );
+		task_factory_compare.push_back( utility::pointer::make_shared< core::pack::task::operation::ReadResfile >( "protocols/enzdes/resfile_remap.resfile") );
 		//have to wipe out pdbinfo, this test is testing non-pdbinfo remapping functionality
-		test_pose.pdb_info( PDBInfoOP( new core::pose::PDBInfo( test_pose ) ));
+		test_pose.pdb_info( utility::pointer::make_shared< core::pose::PDBInfo >( test_pose ));
 		core::pack::task::PackerTaskOP ptask( task_factory.create_task_and_apply_taskoperations( test_pose ) );
 		core::pack::task::PackerTaskOP ptask_compare( task_factory_compare.create_task_and_apply_taskoperations( compare_pose ) );
 
@@ -153,7 +153,7 @@ public:
 		test_pose.append_polymer_residue_after_seqpos( *dummyres, 57, true );
 		test_pose.append_polymer_residue_after_seqpos( *dummyres, 95, true );
 		(*scorefxn)(test_pose);
-		test_pose.pdb_info( PDBInfoOP( new core::pose::PDBInfo( test_pose ) ));
+		test_pose.pdb_info( utility::pointer::make_shared< core::pose::PDBInfo >( test_pose ));
 
 		//compare the tasks a bit more
 		core::pack::task::PackerTaskOP ptask2( task_factory.create_task_and_apply_taskoperations( test_pose ) );

@@ -108,7 +108,7 @@ NumberHBondsCalculator::NumberHBondsCalculator( bool const generous, std::set< c
 // desctructor
 NumberHBondsCalculator::~NumberHBondsCalculator(){}
 
-//core::pose::metrics::PoseMetricCalculatorOP NumberHBondsCalculator::clone() const { return core::pose::metrics::PoseMetricCalculatorOP( new NumberHBondsCalculator() ); }
+//core::pose::metrics::PoseMetricCalculatorOP NumberHBondsCalculator::clone() const { return utility::pointer::make_shared< NumberHBondsCalculator >(); }
 
 void
 NumberHBondsCalculator::lookup(

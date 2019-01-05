@@ -80,14 +80,14 @@ AtomTypeDatabaseIO::write_atom_types_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column atom_type_set_name("atom_type_set_name", DbDataTypeOP( new DbText(64) ));
-	Column name("name", DbDataTypeOP( new DbText(32) ));
-	Column element("element", DbDataTypeOP( new DbText(2) ));
-	Column lennard_jones_radius("lennard_jones_radius", DbDataTypeOP( new DbReal() ));
-	Column lennard_jones_well_depth("lennard_jones_well_depth", DbDataTypeOP( new DbReal() ));
-	Column lazaridis_karplus_lambda("lazaridis_karplus_lambda", DbDataTypeOP( new DbReal() ));
-	Column lazaridis_karplus_degrees_of_freedom("lazaridis_karplus_degrees_of_freedom", DbDataTypeOP( new DbReal() ));
-	Column lazaridis_karplus_volume("lazaridis_karplus_volume", DbDataTypeOP( new DbReal() ));
+	Column atom_type_set_name("atom_type_set_name", utility::pointer::make_shared< DbText >(64));
+	Column name("name", utility::pointer::make_shared< DbText >(32));
+	Column element("element", utility::pointer::make_shared< DbText >(2));
+	Column lennard_jones_radius("lennard_jones_radius", utility::pointer::make_shared< DbReal >());
+	Column lennard_jones_well_depth("lennard_jones_well_depth", utility::pointer::make_shared< DbReal >());
+	Column lazaridis_karplus_lambda("lazaridis_karplus_lambda", utility::pointer::make_shared< DbReal >());
+	Column lazaridis_karplus_degrees_of_freedom("lazaridis_karplus_degrees_of_freedom", utility::pointer::make_shared< DbReal >());
+	Column lazaridis_karplus_volume("lazaridis_karplus_volume", utility::pointer::make_shared< DbReal >());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(atom_type_set_name);
@@ -113,7 +113,7 @@ AtomTypeDatabaseIO::write_atom_type_property_values_table_schema(
 	using namespace basic::database;
 	using namespace boost::assign;
 
-	Column property("property", DbDataTypeOP( new DbText(32) ));
+	Column property("property", utility::pointer::make_shared< DbText >(32));
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(property);
@@ -147,9 +147,9 @@ AtomTypeDatabaseIO::write_atom_type_properties_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column atom_type_set_name("atom_type_set_name", DbDataTypeOP( new DbText(64) ));
-	Column name("name", DbDataTypeOP( new DbText(4) ));
-	Column property("property", DbDataTypeOP( new DbText(32) ));
+	Column atom_type_set_name("atom_type_set_name", utility::pointer::make_shared< DbText >(64));
+	Column name("name", utility::pointer::make_shared< DbText >(4));
+	Column property("property", utility::pointer::make_shared< DbText >(32));
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(atom_type_set_name);
@@ -186,10 +186,10 @@ AtomTypeDatabaseIO::write_atom_type_extra_parameters_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column atom_type_set_name("atom_type_set_name", DbDataTypeOP( new DbText(64) ));
-	Column name("name", DbDataTypeOP( new DbText(32) ));
-	Column parameter("parameter", DbDataTypeOP( new DbText(32) ));
-	Column value("value", DbDataTypeOP( new DbReal() ));
+	Column atom_type_set_name("atom_type_set_name", utility::pointer::make_shared< DbText >(64));
+	Column name("name", utility::pointer::make_shared< DbText >(32));
+	Column parameter("parameter", utility::pointer::make_shared< DbText >(32));
+	Column value("value", utility::pointer::make_shared< DbReal >());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(atom_type_set_name);

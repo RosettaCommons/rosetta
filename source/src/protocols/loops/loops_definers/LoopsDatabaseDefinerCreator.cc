@@ -26,7 +26,7 @@ LoopsDatabaseDefinerCreator::~LoopsDatabaseDefinerCreator() = default;
 
 LoopsDefinerOP
 LoopsDatabaseDefinerCreator::create_loops_definer() const {
-	return LoopsDefinerOP( new LoopsDatabaseDefiner );
+	return utility::pointer::make_shared< LoopsDatabaseDefiner >();
 }
 
 string

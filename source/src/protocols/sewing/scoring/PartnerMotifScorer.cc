@@ -161,7 +161,7 @@ PartnerMotifScorerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition
 
 AssemblyScorerOP
 PartnerMotifScorerCreator::create_assembly_scorer() const{
-	return AssemblyScorerOP( new PartnerMotifScorer() );
+	return utility::pointer::make_shared< PartnerMotifScorer >();
 }
 
 std::string

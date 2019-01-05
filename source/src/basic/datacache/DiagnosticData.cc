@@ -31,7 +31,7 @@ namespace datacache {
 
 DiagnosticData::DiagnosticData( std::map < std::string, double > const & data_in ) : CacheableData(), data_(data_in) {}
 DiagnosticData::~DiagnosticData() = default;
-CacheableDataOP DiagnosticData::clone() const { return CacheableDataOP( new DiagnosticData(*this) ); }
+CacheableDataOP DiagnosticData::clone() const { return utility::pointer::make_shared< DiagnosticData >(*this); }
 std::map < std::string, double > const & DiagnosticData::data() const { return data_; }
 
 DiagnosticDataOP DiagnosticData::shared_from_this() { return utility::pointer::static_pointer_cast<DiagnosticData>( CacheableData::shared_from_this() ); }

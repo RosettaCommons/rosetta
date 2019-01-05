@@ -303,9 +303,9 @@ MultipleDomainMover::initialize_rigid_body_movers(){
 
 	std::cout << "NUM_DOMAINS: " << num_domains_ << std::endl;
 	for ( Size n = 1; n <= num_domains_; n++ ) {
-		rb_movers_.push_back( protocols::rigid::RigidBodyPerturbMoverOP( new rigid::RigidBodyPerturbMover( jump_numbers_[ n ],
+		rb_movers_.push_back( utility::pointer::make_shared< rigid::RigidBodyPerturbMover >( jump_numbers_[ n ],
 			rot_mag_, trans_mag_,
-			partner_[ n ], ok_for_centroid_calculation_ ) ) );
+			partner_[ n ], ok_for_centroid_calculation_ ) );
 	}
 
 }

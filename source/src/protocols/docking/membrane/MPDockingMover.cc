@@ -132,13 +132,13 @@ MPDockingMover::~MPDockingMover() = default;
 /// @brief Create a Clone of this mover
 protocols::moves::MoverOP
 MPDockingMover::clone() const {
-	return ( protocols::moves::MoverOP( new MPDockingMover( *this ) ) );
+	return ( utility::pointer::make_shared< MPDockingMover >( *this ) );
 }
 
 /// @brief Create a Fresh Instance of this Mover
 protocols::moves::MoverOP
 MPDockingMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new MPDockingMover() );
+	return utility::pointer::make_shared< MPDockingMover >();
 }
 
 /// @brief Pase Rosetta Scripts Options for this Mover
@@ -199,7 +199,7 @@ MPDockingMover::parse_my_tag(
 /// @brief Create a new copy of this mover
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP MPDockingMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new MPDockingMover );
+// XRW TEMP  return utility::pointer::make_shared< MPDockingMover >();
 // XRW TEMP }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)
@@ -240,7 +240,7 @@ void MPDockingMover::set_cycles_outer( Size cycles_outer ) {
 void MPDockingMover::set_defaults( const Pose & pose ){
 
 	// set AddMembraneMover in protocol
-	// add_membrane_mover_ = AddMembraneMoverOP( new AddMembraneMover() );
+	// add_membrane_mover_ = utility::pointer::make_shared< AddMembraneMover >();
 
 	// create scorefunctions for lowres and highres
 	// the ones I took were:
@@ -252,17 +252,17 @@ void MPDockingMover::set_defaults( const Pose & pose ){
 
 	// set docking protocol
 	if ( lowres_ && highres_ ) {
-		docking_protocol_ = DockingProtocolOP( new DockingProtocol( jump_num_, false, false, false, lowres_scorefxn_, highres_scorefxn_ ) );
+		docking_protocol_ = utility::pointer::make_shared< DockingProtocol >( jump_num_, false, false, false, lowres_scorefxn_, highres_scorefxn_ );
 	} else if ( lowres_ && ! highres_ ) {
-		docking_protocol_ = DockingProtocolOP( new DockingProtocol( jump_num_, true, false, false, lowres_scorefxn_, highres_scorefxn_ ) );
+		docking_protocol_ = utility::pointer::make_shared< DockingProtocol >( jump_num_, true, false, false, lowres_scorefxn_, highres_scorefxn_ );
 	} else if ( ! lowres_ && highres_ ) {
-		docking_protocol_ = DockingProtocolOP( new DockingProtocol( jump_num_, false, true, false, lowres_scorefxn_, highres_scorefxn_ ) );
+		docking_protocol_ = utility::pointer::make_shared< DockingProtocol >( jump_num_, false, true, false, lowres_scorefxn_, highres_scorefxn_ );
 	} else {
 		utility_exit_with_message( "You want to run the docking protocol neither in lowres nor in highres??? Quitting..." );
 	}
 
 	// set native to pose, can be overwritten by flag -in:file:native
-	native_ = PoseOP( new Pose( pose ) );
+	native_ = utility::pointer::make_shared< Pose >( pose );
 
 }// set defaults
 
@@ -290,7 +290,7 @@ void MPDockingMover::init_from_cmd(){
 	// if local_refine flag on, only do high-res
 	if ( option[OptionKeys::docking::docking_local_refine].user() ) {
 		TR << "Running highres refinement only using flag -docking_local_refine" << std::endl;
-		docking_protocol_ = DockingProtocolOP( new DockingProtocol( jump_num_, false, true, false, lowres_scorefxn_, highres_scorefxn_ ) );
+		docking_protocol_ = utility::pointer::make_shared< DockingProtocol >( jump_num_, false, true, false, lowres_scorefxn_, highres_scorefxn_ );
 	}
 
 	// read low-res weights
@@ -416,7 +416,7 @@ std::string MPDockingMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 MPDockingMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MPDockingMover );
+	return utility::pointer::make_shared< MPDockingMover >();
 }
 
 void MPDockingMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

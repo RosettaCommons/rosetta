@@ -34,7 +34,7 @@ CacheableStringIntegerMap::CacheableStringIntegerMap() : CacheableData() {}
 CacheableStringIntegerMap::~CacheableStringIntegerMap() = default;
 
 CacheableDataOP
-CacheableStringIntegerMap::clone() const { return CacheableDataOP( new CacheableStringIntegerMap(*this) ); }
+CacheableStringIntegerMap::clone() const { return utility::pointer::make_shared< CacheableStringIntegerMap >(*this); }
 
 CacheableStringIntegerMapOP
 CacheableStringIntegerMap::shared_from_this() { return utility::pointer::static_pointer_cast<CacheableStringIntegerMap>( CacheableData::shared_from_this() ); }

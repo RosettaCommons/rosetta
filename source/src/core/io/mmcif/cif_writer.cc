@@ -150,7 +150,7 @@ dump_cif(
 	utility::io::ozstream & out)
 
 {
-	StructFileRepOptionsOP options =  StructFileRepOptionsOP( new StructFileRepOptions );
+	StructFileRepOptionsOP options =  utility::pointer::make_shared< StructFileRepOptions >();
 	core::io::pose_to_sfr::PoseToStructFileRepConverter converter = core::io::pose_to_sfr::PoseToStructFileRepConverter();
 
 	converter.init_from_pose( pose );

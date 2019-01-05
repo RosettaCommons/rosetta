@@ -52,7 +52,7 @@ public:
 	PseudocontactShiftEnergyController_Ts2(); //for factory
 
 	TopologyClaimerOP clone() const override {
-		return TopologyClaimerOP( new PseudocontactShiftEnergyController_Ts2( *this ) );
+		return utility::pointer::make_shared< PseudocontactShiftEnergyController_Ts2 >( *this );
 	}
 
 	/// @brief type() is specifying the output name of the TopologyClaimer

@@ -105,9 +105,9 @@ int main(int argc, char * argv[]) {
 		//---------- Set up a picker.
 		FragmentPickerOP pickIt;
 		if ( option[frags::p_value_selection]() == true ) {
-			pickIt = FragmentPickerOP( new FragmentPicker("PValuedFragmentScoreManager") );
+			pickIt = utility::pointer::make_shared< FragmentPicker >("PValuedFragmentScoreManager");
 		} else {
-			pickIt = FragmentPickerOP( new FragmentPicker() );
+			pickIt = utility::pointer::make_shared< FragmentPicker >();
 		}
 		pickIt->parse_command_line();
 		trace << "After setup; size of a query is: " << pickIt->size_of_query() << std::endl;

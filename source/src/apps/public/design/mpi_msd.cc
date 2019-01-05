@@ -178,7 +178,7 @@ read_native_sequence_for_entity_elements( core::Size n_designed_positions )
 	}
 
 	EntityCorrespondenceOP ec( new EntityCorrespondence );
-	ec->set_pose( core::pose::PoseCOP( core::pose::PoseOP( new pose::Pose( pose ) ) ));
+	ec->set_pose( utility::pointer::make_shared< pose::Pose >( pose ));
 	ec->set_num_entities( n_designed_positions );
 	ec->initialize_from_correspondence_file( correspondence_file );
 
@@ -230,7 +230,7 @@ class HPatchNPDCalculatorCreator : public protocols::pack_daemon::NPDPropCalcula
 
 
 	protocols::pack_daemon::NPDPropCalculatorOP
-	new_calculator() const override { return protocols::pack_daemon::NPDPropCalculatorOP( new HPatchNPDCalculator ); }
+	new_calculator() const override { return utility::pointer::make_shared< HPatchNPDCalculator >(); }
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -291,7 +291,7 @@ class HPatchByChainNPDCalculatorCreator : public protocols::pack_daemon::NPDProp
 
 
 	protocols::pack_daemon::NPDPropCalculatorOP
-	new_calculator() const override { return protocols::pack_daemon::NPDPropCalculatorOP( new HPatchByChainNPDCalculator ); }
+	new_calculator() const override { return utility::pointer::make_shared< HPatchByChainNPDCalculator >(); }
 };
 
 
@@ -308,7 +308,7 @@ public:
 		core::pose::Pose const & pose,
 		core::pack::task::PackerTask const & task
 	) override{
-		pose_ = core::pose::PoseOP( new core::pose::Pose( pose ) );
+		pose_ = utility::pointer::make_shared< core::pose::Pose >( pose );
 		task_ = task.clone();
 		sfxn_ = core::scoring::get_score_function();
 
@@ -363,7 +363,7 @@ class NBuriedUnsatsCalcultorCreator : public protocols::pack_daemon::NPDPropCalc
 
 
 	protocols::pack_daemon::NPDPropCalculatorOP
-	new_calculator() const override { return protocols::pack_daemon::NPDPropCalculatorOP( new NBuriedUnsatsCalcultor ); }
+	new_calculator() const override { return utility::pointer::make_shared< NBuriedUnsatsCalcultor >(); }
 };
 
 
@@ -414,9 +414,9 @@ int main( int argc, char ** argv )
 		std::string daf_filename( option[ msd::fitness_file ] );
 
 		DaemonSetOP ds( new DaemonSet );
-		ds->add_npdpro_calculator_creator( NPDPropCalculatorCreatorOP( new HPatchNPDCalculatorCreator ) );
-		ds->add_npdpro_calculator_creator( NPDPropCalculatorCreatorOP( new HPatchByChainNPDCalculatorCreator ) );
-		ds->add_npdpro_calculator_creator( NPDPropCalculatorCreatorOP( new NBuriedUnsatsCalcultorCreator ) );
+		ds->add_npdpro_calculator_creator( utility::pointer::make_shared< HPatchNPDCalculatorCreator >() );
+		ds->add_npdpro_calculator_creator( utility::pointer::make_shared< HPatchByChainNPDCalculatorCreator >() );
+		ds->add_npdpro_calculator_creator( utility::pointer::make_shared< NBuriedUnsatsCalcultorCreator >() );
 
 		core::scoring::ScoreFunctionOP sfxn = core::scoring::get_score_function();
 
@@ -572,7 +572,7 @@ int main( int argc, char ** argv )
 				//break;
 				*/
 
-				StructFileRepOptionsOP sfr_options = StructFileRepOptionsOP(new StructFileRepOptions() );
+				StructFileRepOptionsOP sfr_options = utility::pointer::make_shared< StructFileRepOptions >();
 				sfr_options->set_output_pose_cache_data( false );
 
 				for ( SizePosePairList::const_iterator iter = pose_list.begin(), iter_end = pose_list.end();

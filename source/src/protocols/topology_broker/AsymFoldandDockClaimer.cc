@@ -65,7 +65,7 @@ AsymFoldandDockClaimer::AsymFoldandDockClaimer( pose::Pose const& input_pose ) :
 //clone
 TopologyClaimerOP
 AsymFoldandDockClaimer::clone() const {
-	return TopologyClaimerOP( new AsymFoldandDockClaimer( *this ) );
+	return utility::pointer::make_shared< AsymFoldandDockClaimer >( *this );
 }
 
 /// @brief type() is specifying the output name of the TopologyClaimer
@@ -205,9 +205,9 @@ void AsymFoldandDockClaimer::generate_claims( claims::DofClaims& new_claims ) {
 	utility::vector1< int > cuts( input_pose_.conformation().fold_tree().cutpoints() );
 	for ( Size i = 1; i <= cuts.size(); ++i ) {
 
-		new_claims.push_back( claims::DofClaimOP( new claims::CutClaim( get_self_weak_ptr(), std::make_pair( Parent::label(), cuts[i]),
+		new_claims.push_back( utility::pointer::make_shared< claims::CutClaim >( get_self_weak_ptr(), std::make_pair( Parent::label(), cuts[i]),
 			claims::DofClaim::INIT // for now... eventually CAN_INIT ?
-			) ) );
+			) );
 	}
 }
 

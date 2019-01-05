@@ -64,7 +64,7 @@ methods::EnergyMethodOP
 RG_Energy_FastCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new RG_Energy_Fast );
+	return utility::pointer::make_shared< RG_Energy_Fast >();
 }
 
 ScoreTypes
@@ -76,7 +76,7 @@ RG_Energy_FastCreator::score_types_for_method() const {
 
 /// c-tor
 RG_Energy_Fast::RG_Energy_Fast() :
-	parent( EnergyMethodCreatorOP( new RG_Energy_FastCreator ) )
+	parent( utility::pointer::make_shared< RG_Energy_FastCreator >() )
 {}
 
 /// c-tor
@@ -88,7 +88,7 @@ RG_Energy_Fast::RG_Energy_Fast( EnergyMethodCreatorOP CreatorOP ) :
 EnergyMethodOP
 RG_Energy_Fast::clone() const
 {
-	return EnergyMethodOP( new RG_Energy_Fast );
+	return utility::pointer::make_shared< RG_Energy_Fast >();
 }
 
 /////////////////////////////////////////////////////////////////////////////

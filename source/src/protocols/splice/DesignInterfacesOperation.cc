@@ -75,7 +75,7 @@ DesignInterfacesOperation::~DesignInterfacesOperation() = default;
 core::pack::task::operation::TaskOperationOP
 DesignInterfacesOperationCreator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new DesignInterfacesOperation );
+	return utility::pointer::make_shared< DesignInterfacesOperation >();
 }
 
 void DesignInterfacesOperationCreator::provide_xml_schema(
@@ -102,7 +102,7 @@ void DesignInterfacesOperation::provide_xml_schema(
 
 core::pack::task::operation::TaskOperationOP DesignInterfacesOperation::clone() const
 {
-	return core::pack::task::operation::TaskOperationOP( new DesignInterfacesOperation( *this ) );
+	return utility::pointer::make_shared< DesignInterfacesOperation >( *this );
 }
 /// @brief restricts to repacking all residues outside of design_shell_ around each residue
 void

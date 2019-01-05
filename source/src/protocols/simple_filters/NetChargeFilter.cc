@@ -58,7 +58,7 @@ NetChargeFilter::NetChargeFilter() :
 	task_factory_( /* NULL */ ) {}
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP NetChargeFilterCreator::create_filter() const { return protocols::filters::FilterOP( new NetChargeFilter ); }
+// XRW TEMP NetChargeFilterCreator::create_filter() const { return utility::pointer::make_shared< NetChargeFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP NetChargeFilterCreator::keyname() const { return "NetCharge"; }
@@ -199,7 +199,7 @@ std::string NetChargeFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 NetChargeFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new NetChargeFilter );
+	return utility::pointer::make_shared< NetChargeFilter >();
 }
 
 void NetChargeFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -343,8 +343,8 @@ RotamerBoltzmannWeight::compute_Boltzmann_weight( core::pose::Pose const & const
 	RotamerSetOP rotset = RotamerSetFactory::create_rotamer_set( pose );
 	rotset->set_resid( resi );
 	TaskFactoryOP tf( new core::pack::task::TaskFactory );
-	tf->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ));
-	tf->push_back( TaskOperationCOP( new core::pack::task::operation::IncludeCurrent ) );
+	tf->push_back( utility::pointer::make_shared< core::pack::task::operation::InitializeFromCommandline >());
+	tf->push_back( utility::pointer::make_shared< core::pack::task::operation::IncludeCurrent >() );
 	PackerTaskOP ptask( tf->create_task_and_apply_taskoperations( pose ) );
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		core::pack::make_symmetric_PackerTask_by_truncation(pose, ptask); // NK 110621
@@ -388,7 +388,7 @@ RotamerBoltzmannWeight::compute_Boltzmann_weight( core::pose::Pose const & const
 	task->nonconst_residue_task( resi ).prevent_repacking();
 	core::pack::pack_rotamers( pose, *scorefxn_, task );
 	protocols::moves::MoverOP min_mover;
-	min_mover = protocols::moves::MoverOP( new protocols::minimization_packing::MinMover( mm, scorefxn_, "lbfgs_armijo_nonmonotone", 0.01, true, false, false ) ); // NK 110621
+	min_mover = utility::pointer::make_shared< protocols::minimization_packing::MinMover >( mm, scorefxn_, "lbfgs_armijo_nonmonotone", 0.01, true, false, false ); // NK 110621
 	min_mover->apply( pose );
 	core::pose::Pose const const_min_pose( pose );
 	core::Real const init_score( ( *scorefxn_ )( pose ) );
@@ -538,14 +538,14 @@ void RotamerBoltzmannWeight::write_to_pdb( core::Size const residue, std::string
 
 protocols::filters::FilterOP
 RotamerBoltzmannWeight::fresh_instance() const{
-	return protocols::filters::FilterOP( new RotamerBoltzmannWeight() );
+	return utility::pointer::make_shared< RotamerBoltzmannWeight >();
 }
 
 RotamerBoltzmannWeight::~RotamerBoltzmannWeight()= default;
 
 protocols::filters::FilterOP
 RotamerBoltzmannWeight::clone() const{
-	return protocols::filters::FilterOP( new RotamerBoltzmannWeight( *this ) );
+	return utility::pointer::make_shared< RotamerBoltzmannWeight >( *this );
 }
 
 void
@@ -579,7 +579,7 @@ RotamerBoltzmannWeight::compute_entropy_reduction( bool const cer ){
 }
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP RotamerBoltzmannWeightFilterCreator::create_filter() const { return protocols::filters::FilterOP( new RotamerBoltzmannWeight ); }
+// XRW TEMP RotamerBoltzmannWeightFilterCreator::create_filter() const { return utility::pointer::make_shared< RotamerBoltzmannWeight >(); }
 
 // XRW TEMP std::string
 // XRW TEMP RotamerBoltzmannWeightFilterCreator::keyname() const { return "RotamerBoltzmannWeight"; }
@@ -733,7 +733,7 @@ std::string RotamerBoltzmannWeightFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 RotamerBoltzmannWeightFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new RotamerBoltzmannWeight );
+	return utility::pointer::make_shared< RotamerBoltzmannWeight >();
 }
 
 void RotamerBoltzmannWeightFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -47,7 +47,7 @@ namespace constraint_generator {
 protocols::constraint_generator::ConstraintGeneratorOP
 SegmentedAtomPairConstraintGeneratorCreator::create_constraint_generator() const
 {
-	return protocols::constraint_generator::ConstraintGeneratorOP( new SegmentedAtomPairConstraintGenerator );
+	return utility::pointer::make_shared< SegmentedAtomPairConstraintGenerator >();
 }
 
 std::string
@@ -71,7 +71,7 @@ SegmentedAtomPairConstraintGenerator::~SegmentedAtomPairConstraintGenerator() = 
 protocols::constraint_generator::ConstraintGeneratorOP
 SegmentedAtomPairConstraintGenerator::clone() const
 {
-	return SegmentedAtomPairConstraintGeneratorOP( new SegmentedAtomPairConstraintGenerator( *this ) );
+	return utility::pointer::make_shared< SegmentedAtomPairConstraintGenerator >( *this );
 }
 
 void

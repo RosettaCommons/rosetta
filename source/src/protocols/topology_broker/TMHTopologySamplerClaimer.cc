@@ -150,7 +150,7 @@ TMHTopologySamplerClaimer::get_membrane_embed(core::pose::Pose& pose)
 core::pose::PoseOP
 TMHTopologySamplerClaimer::get_pose_from_claimer()
 {
-	return core::pose::PoseOP( new core::pose::Pose(current_pose_) );
+	return utility::pointer::make_shared< core::pose::Pose >(current_pose_);
 }
 
 /// @brief the broker checks if the claimer builds its own fold tree to figure out if needs to build one itself
@@ -379,7 +379,7 @@ TMHTopologySamplerClaimer::build_fold_tree(core::pose::Pose& pose, core::kinemat
 core::kinematics::FoldTreeOP
 TMHTopologySamplerClaimer::get_fold_tree(core::pose::Pose& pose)
 {
-	return core::kinematics::FoldTreeOP( new core::kinematics::FoldTree(pose.fold_tree()) );
+	return utility::pointer::make_shared< core::kinematics::FoldTree >(pose.fold_tree());
 }
 
 /// @brief generate DoF Claims to be read in by broker
@@ -387,16 +387,16 @@ void
 TMHTopologySamplerClaimer::generate_claims(claims::DofClaims &dof_claims)
 {
 	for ( Size jump_num = 1; jump_num <= njumps_; ++jump_num ) {
-		dof_claims.push_back( claims::DofClaimOP( new claims::JumpClaim(get_self_weak_ptr(),jump_array_(1,jump_num),jump_array_(2,jump_num),claims::DofClaim::CAN_INIT) ) );
+		dof_claims.push_back( utility::pointer::make_shared< claims::JumpClaim >(get_self_weak_ptr(),jump_array_(1,jump_num),jump_array_(2,jump_num),claims::DofClaim::CAN_INIT) );
 	}
 	for ( core::Size i=1; i<=nres_; ++i ) {
 		for ( core::Size cut_index = 1; cut_index <= cuts_.size(); ++cut_index ) {
 			if ( cuts_(cut_index)==i ) {
-				dof_claims.push_back( claims::DofClaimOP( new claims::CutClaim(get_self_weak_ptr(),std::make_pair(TopologyClaimer::label(),i),claims::DofClaim::CAN_INIT) ) );
+				dof_claims.push_back( utility::pointer::make_shared< claims::CutClaim >(get_self_weak_ptr(),std::make_pair(TopologyClaimer::label(),i),claims::DofClaim::CAN_INIT) );
 			}
 			if ( i == topology_root_res_ ) {
-				dof_claims.push_back( claims::DofClaimOP( new claims::BBClaim(get_self_weak_ptr(),i,claims::DofClaim::CAN_INIT) ) );
-				dof_claims.push_back( claims::DofClaimOP( new claims::LegacyRootClaim(get_self_weak_ptr(),i,claims::DofClaim::CAN_INIT) ) );
+				dof_claims.push_back( utility::pointer::make_shared< claims::BBClaim >(get_self_weak_ptr(),i,claims::DofClaim::CAN_INIT) );
+				dof_claims.push_back( utility::pointer::make_shared< claims::LegacyRootClaim >(get_self_weak_ptr(),i,claims::DofClaim::CAN_INIT) );
 			}
 		}
 	}

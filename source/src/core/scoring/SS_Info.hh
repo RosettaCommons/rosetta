@@ -257,7 +257,7 @@ public:
 	basic::datacache::CacheableDataOP
 	clone() const override
 	{
-		return basic::datacache::CacheableDataOP( new SS_Info( *this ) );
+		return utility::pointer::make_shared< SS_Info >( *this );
 	}
 
 	void

@@ -56,7 +56,7 @@ void
 RestrictToMoveMapChiOperation::init_for_equal_operator_and_copy_constructor(RestrictToMoveMapChiOperation & lhs, const RestrictToMoveMapChiOperation& rhs){
 	if ( rhs.movemap_ ) {
 
-		lhs.movemap_ = MoveMapOP( new MoveMap( *rhs.movemap_));
+		lhs.movemap_ = utility::pointer::make_shared< MoveMap >( *rhs.movemap_);
 	}
 
 	lhs.design_ = rhs.design_;
@@ -90,7 +90,7 @@ RestrictToMoveMapChiOperation::RestrictToMoveMapChiOperation(const RestrictToMov
 
 TaskOperationOP
 RestrictToMoveMapChiOperation::clone() const {
-	return TaskOperationOP( new RestrictToMoveMapChiOperation( *this ) );
+	return utility::pointer::make_shared< RestrictToMoveMapChiOperation >( *this );
 }
 
 RestrictToMoveMapChiOperation::~RestrictToMoveMapChiOperation()= default;

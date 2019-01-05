@@ -187,8 +187,8 @@ RelativePoseFilter::thread_seq( core::pose::Pose const & p ) const{
 		using namespace core::pack::task::operation;
 		TaskFactoryOP tf( new TaskFactory );
 		tf->push_back( dao );
-		tf->push_back( TaskOperationCOP( new IncludeCurrent ) );
-		tf->push_back( TaskOperationCOP( new InitializeFromCommandline ) );
+		tf->push_back( utility::pointer::make_shared< IncludeCurrent >() );
+		tf->push_back( utility::pointer::make_shared< InitializeFromCommandline >() );
 		core::pack::task::PackerTaskOP pack = tf->create_task_and_apply_taskoperations( *pose() );
 		TR<<"prevent repacking (p); restrict to repacking (r), design (d): ";
 		for ( core::Size i = 1; i<=pose()->size(); ++i ) {
@@ -216,10 +216,10 @@ RelativePoseFilter::thread_seq( core::pose::Pose const & p ) const{
 		using namespace protocols::minimization_packing;
 		PackRotamersMoverOP prm;
 		RotamerTrialsMinMoverOP rtmin;
-		prm = PackRotamersMoverOP( new PackRotamersMover( scorefxn(), pack ) );
+		prm = utility::pointer::make_shared< PackRotamersMover >( scorefxn(), pack );
 		prm->apply( *copy_pose );
 		if ( rtmin.get() ) {
-			rtmin = RotamerTrialsMinMoverOP( new RotamerTrialsMinMover( scorefxn(), *pack ) );
+			rtmin = utility::pointer::make_shared< RotamerTrialsMinMover >( scorefxn(), *pack );
 			rtmin->apply( *copy_pose );
 			TR<<"finished rtmin"<<std::endl;
 		}
@@ -291,7 +291,7 @@ RelativePoseFilter::parse_my_tag( utility::tag::TagCOP tag,
 		if ( core::pose::symmetry::is_symmetric(*pose_) ) {
 			core::pose::symmetry::extract_asymmetric_unit(*pose_,*pose_);
 		}
-		symmdata_ = core::conformation::symmetry::SymmDataOP( new core::conformation::symmetry::SymmData( pose_->size(), pose_->num_jump() ) );
+		symmdata_ = utility::pointer::make_shared< core::conformation::symmetry::SymmData >( pose_->size(), pose_->num_jump() );
 		symmdata_->read_symmetry_data_from_file(symmetry_definition_);
 		core::pose::symmetry::make_symmetric_pose(*pose_,*symmdata_);
 	}
@@ -375,18 +375,18 @@ RelativePoseFilter::get_alignment( core::pose::Pose const & p ) const {
 
 protocols::filters::FilterOP
 RelativePoseFilter::fresh_instance() const{
-	return protocols::filters::FilterOP( new RelativePoseFilter() );
+	return utility::pointer::make_shared< RelativePoseFilter >();
 }
 
 RelativePoseFilter::~RelativePoseFilter()= default;
 
 protocols::filters::FilterOP
 RelativePoseFilter::clone() const{
-	return protocols::filters::FilterOP( new RelativePoseFilter( *this ) );
+	return utility::pointer::make_shared< RelativePoseFilter >( *this );
 }
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP RelativePoseFilterCreator::create_filter() const { return protocols::filters::FilterOP( new RelativePoseFilter ); }
+// XRW TEMP RelativePoseFilterCreator::create_filter() const { return utility::pointer::make_shared< RelativePoseFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP RelativePoseFilterCreator::keyname() const { return "RelativePose"; }
@@ -503,7 +503,7 @@ std::string RelativePoseFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 RelativePoseFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new RelativePoseFilter );
+	return utility::pointer::make_shared< RelativePoseFilter >();
 }
 
 void RelativePoseFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -69,7 +69,7 @@ public:
 		using namespace core;
 		core_init_with_additional_options("-score:symmetric_gly_tables");
 
-		rama_energy = RamachandranEnergyOP( new RamachandranEnergy );
+		rama_energy = utility::pointer::make_shared< RamachandranEnergy >();
 		the_pose = core::pose::PoseOP(new core::pose::Pose);
 
 	}

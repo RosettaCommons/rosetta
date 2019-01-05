@@ -59,7 +59,7 @@ namespace simple_moves {
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP ShortBackrubMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new ShortBackrubMover );
+// XRW TEMP  return utility::pointer::make_shared< ShortBackrubMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -69,7 +69,7 @@ namespace simple_moves {
 
 // default constructor
 ShortBackrubMover::ShortBackrubMover() : protocols::moves::Mover(),
-	backrubmover_(protocols::backrub::BackrubMoverOP( new protocols::backrub::BackrubMover() ))
+	backrubmover_(utility::pointer::make_shared< protocols::backrub::BackrubMover >())
 {
 	protocols::moves::Mover::type( "ShortBackrub" );
 	backrubmover_->branchopt().read_database();
@@ -85,7 +85,7 @@ ShortBackrubMover::ShortBackrubMover() : protocols::moves::Mover(),
 
 // constructor that sets the input pose for the BackrubMover
 ShortBackrubMover::ShortBackrubMover( core::pose::PoseOP pose ) : protocols::moves::Mover(),
-	backrubmover_(protocols::backrub::BackrubMoverOP( new protocols::backrub::BackrubMover() ))
+	backrubmover_(utility::pointer::make_shared< protocols::backrub::BackrubMover >())
 {
 	protocols::moves::Mover::type( "ShortBackrub" );
 	backrubmover_->branchopt().read_database();
@@ -111,14 +111,14 @@ ShortBackrubMover::~ShortBackrubMover()= default;
 ShortBackrubMover::MoverOP
 ShortBackrubMover::clone() const
 {
-	return ShortBackrubMover::MoverOP( new protocols::simple_moves::ShortBackrubMover( *this ) );
+	return utility::pointer::make_shared< protocols::simple_moves::ShortBackrubMover >( *this );
 }
 
 // create this type of object
 ShortBackrubMover::MoverOP
 ShortBackrubMover::fresh_instance() const
 {
-	return ShortBackrubMover::MoverOP( new protocols::simple_moves::ShortBackrubMover() );
+	return utility::pointer::make_shared< protocols::simple_moves::ShortBackrubMover >();
 }
 
 void
@@ -286,7 +286,7 @@ std::string ShortBackrubMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 ShortBackrubMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ShortBackrubMover );
+	return utility::pointer::make_shared< ShortBackrubMover >();
 }
 
 void ShortBackrubMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

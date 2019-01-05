@@ -77,9 +77,9 @@ void score_rnp() {
 	// Now get the input poses and show their scores
 	PoseInputStreamOP input;
 	if ( option[ in::file::silent ].user() ) {
-		input = PoseInputStreamOP( new SilentFilePoseInputStream( option[ in::file::silent ]() ) );
+		input = utility::pointer::make_shared< SilentFilePoseInputStream >( option[ in::file::silent ]() );
 	} else {
-		input = PoseInputStreamOP( new PDBPoseInputStream( option[ in::file::s ]() ) );
+		input = utility::pointer::make_shared< PDBPoseInputStream >( option[ in::file::s ]() );
 	}
 
 	ResidueTypeSetCOP rsd_set;

@@ -77,7 +77,7 @@ setup_MCM_trial(
 	seq->add_mover( pack     );
 	seq->add_mover( minimize );
 
-	return protocols::moves::TrialMoverOP( new TrialMover( seq, mc ) );
+	return utility::pointer::make_shared< TrialMover >( seq, mc );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

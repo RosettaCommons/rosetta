@@ -45,9 +45,9 @@ namespace func {
 FuncOP
 FadeFunc::clone() const
 {
-	return FuncOP( new FadeFunc( cutoff_lower_, cutoff_upper_,
+	return utility::pointer::make_shared< FadeFunc >( cutoff_lower_, cutoff_upper_,
 		fade_zone_, well_depth_,
-		well_offset_ ) );
+		well_offset_ );
 }
 
 bool FadeFunc::operator == ( Func const & other ) const

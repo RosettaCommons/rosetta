@@ -119,7 +119,7 @@ StubScoreFilter::parse_my_tag( utility::tag::TagCOP tag,
 
 protocols::filters::FilterOP
 StubScoreFilter::fresh_instance() const{
-	return protocols::filters::FilterOP( new StubScoreFilter() );
+	return utility::pointer::make_shared< StubScoreFilter >();
 }
 
 StubScoreFilter::~StubScoreFilter()= default;
@@ -127,11 +127,11 @@ StubScoreFilter::~StubScoreFilter()= default;
 
 protocols::filters::FilterOP
 StubScoreFilter::clone() const{
-	return protocols::filters::FilterOP( new StubScoreFilter( *this ) );
+	return utility::pointer::make_shared< StubScoreFilter >( *this );
 }
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP StubScoreFilterCreator::create_filter() const { return protocols::filters::FilterOP( new StubScoreFilter ); }
+// XRW TEMP StubScoreFilterCreator::create_filter() const { return utility::pointer::make_shared< StubScoreFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP StubScoreFilterCreator::keyname() const { return "StubScore"; }
@@ -163,7 +163,7 @@ std::string StubScoreFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 StubScoreFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new StubScoreFilter );
+	return utility::pointer::make_shared< StubScoreFilter >();
 }
 
 void StubScoreFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

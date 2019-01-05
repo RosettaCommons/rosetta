@@ -137,7 +137,7 @@ read_metric_value_scalar(
 	MetricValueBaseOP & metric_value
 )
 {
-	metric_value = MetricValueBaseOP( new MetricValue<T> );
+	metric_value = utility::pointer::make_shared< MetricValue<T> >();
 
 	return read_metric_value_scalar<T>(is, *metric_value);
 }

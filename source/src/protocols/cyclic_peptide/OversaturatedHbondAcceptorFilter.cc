@@ -84,7 +84,7 @@ OversaturatedHbondAcceptorFilter::~OversaturatedHbondAcceptorFilter() = default;
 protocols::filters::FilterOP
 OversaturatedHbondAcceptorFilter::clone() const
 {
-	return protocols::filters::FilterOP( new OversaturatedHbondAcceptorFilter( *this ) );
+	return utility::pointer::make_shared< OversaturatedHbondAcceptorFilter >( *this );
 }
 
 /// @brief Required in the context of the parser/scripting scheme.
@@ -92,7 +92,7 @@ OversaturatedHbondAcceptorFilter::clone() const
 protocols::filters::FilterOP
 OversaturatedHbondAcceptorFilter::fresh_instance() const
 {
-	return protocols::filters::FilterOP( new OversaturatedHbondAcceptorFilter );
+	return utility::pointer::make_shared< OversaturatedHbondAcceptorFilter >();
 }
 
 // ---------- PUBLIC FUNCTIONS ------------------
@@ -387,7 +387,7 @@ OversaturatedHbondAcceptorFilter::compute(
 // XRW TEMP protocols::filters::FilterOP
 // XRW TEMP OversaturatedHbondAcceptorFilterCreator::create_filter() const
 // XRW TEMP {
-// XRW TEMP  return protocols::filters::FilterOP( new OversaturatedHbondAcceptorFilter );
+// XRW TEMP  return utility::pointer::make_shared< OversaturatedHbondAcceptorFilter >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -454,7 +454,7 @@ std::string OversaturatedHbondAcceptorFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 OversaturatedHbondAcceptorFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new OversaturatedHbondAcceptorFilter );
+	return utility::pointer::make_shared< OversaturatedHbondAcceptorFilter >();
 }
 
 void OversaturatedHbondAcceptorFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

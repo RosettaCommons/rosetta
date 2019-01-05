@@ -68,7 +68,7 @@ methods::EnergyMethodOP
 MPSpanAngleEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new MPSpanAngleEnergy );
+	return utility::pointer::make_shared< MPSpanAngleEnergy >();
 }
 
 ScoreTypes
@@ -83,7 +83,7 @@ MPSpanAngleEnergyCreator::score_types_for_method() const {
 //@brief
 //////////////////////////////////////////////////////
 MPSpanAngleEnergy::MPSpanAngleEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new MPSpanAngleEnergyCreator ) )
+	parent( utility::pointer::make_shared< MPSpanAngleEnergyCreator >() )
 {
 	core::scoring::membrane::MPSpanInsertionEnergy mp_span_ins = core::scoring::membrane::MPSpanInsertionEnergy();
 }
@@ -109,7 +109,7 @@ MPSpanAngleEnergy::finalize_total_energy(
 EnergyMethodOP
 MPSpanAngleEnergy::clone() const
 {
-	return EnergyMethodOP( new MPSpanAngleEnergy( *this ) );
+	return utility::pointer::make_shared< MPSpanAngleEnergy >( *this );
 }
 
 void

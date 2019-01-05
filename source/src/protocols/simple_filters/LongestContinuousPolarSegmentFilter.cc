@@ -82,14 +82,14 @@ LongestContinuousPolarSegmentFilter::parse_my_tag(
 protocols::filters::FilterOP
 LongestContinuousPolarSegmentFilter::clone() const
 {
-	return protocols::filters::FilterOP( new LongestContinuousPolarSegmentFilter( *this ) );
+	return utility::pointer::make_shared< LongestContinuousPolarSegmentFilter >( *this );
 }
 
 
 protocols::filters::FilterOP
 LongestContinuousPolarSegmentFilter::fresh_instance() const
 {
-	return protocols::filters::FilterOP( new LongestContinuousPolarSegmentFilter );
+	return utility::pointer::make_shared< LongestContinuousPolarSegmentFilter >();
 }
 
 /// @brief Returns true if the structure passes the filter, false otherwise.
@@ -295,7 +295,7 @@ LongestContinuousPolarSegmentFilter::counted_residue_description() const {
 protocols::filters::FilterOP
 LongestContinuousPolarSegmentFilterCreator::create_filter() const
 {
-	return protocols::filters::FilterOP( new LongestContinuousPolarSegmentFilter );
+	return utility::pointer::make_shared< LongestContinuousPolarSegmentFilter >();
 }
 
 std::string

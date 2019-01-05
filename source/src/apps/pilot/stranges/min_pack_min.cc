@@ -95,7 +95,7 @@ public:
 	void apply( core::pose::Pose& pose ) override;
 
 	MoverOP clone() const override {
-		return MoverOP( new MinPackMinMover( *this ) );
+		return utility::pointer::make_shared< MinPackMinMover >( *this );
 	}
 
 
@@ -105,7 +105,7 @@ public:
 	}
 
 	MoverOP fresh_instance() const override {
-		return MoverOP( new MinPackMinMover );
+		return utility::pointer::make_shared< MinPackMinMover >();
 	}
 
 private:
@@ -185,11 +185,11 @@ void MinPackMinMover::apply (pose::Pose& pose ) {
 
 	TaskFactoryOP tf( new TaskFactory() );
 	//set common taskfactory options
-	tf->push_back( TaskOperationCOP( new InitializeFromCommandline() ) );
-	tf->push_back( TaskOperationCOP( new operation::IncludeCurrent ) );
+	tf->push_back( utility::pointer::make_shared< InitializeFromCommandline >() );
+	tf->push_back( utility::pointer::make_shared< operation::IncludeCurrent >() );
 	// read a resfile. note that design is impossible
 	if ( basic::options::option[basic::options::OptionKeys::packing::resfile].user() ) {
-		tf->push_back( TaskOperationCOP( new operation::ReadResfile() ) );
+		tf->push_back( utility::pointer::make_shared< operation::ReadResfile >() );
 		TR << "Resfile read, note that this application DOES NOT DESIGN!" << std::endl;
 	}
 
@@ -323,7 +323,7 @@ main( int argc, char * argv [] )
 		// initialize core
 		devel::init(argc, argv);
 
-		protocols::jd2::JobDistributor::get_instance()->go( protocols::moves::MoverOP( new MinPackMinMover ) );
+		protocols::jd2::JobDistributor::get_instance()->go( utility::pointer::make_shared< MinPackMinMover >() );
 
 		std::cout << "Done! -------------------------------\n";
 

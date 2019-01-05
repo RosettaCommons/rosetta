@@ -156,7 +156,7 @@ void AtomicContactFilter::parse_my_tag( utility::tag::TagCOP tag,
 }
 
 // XRW TEMP filters::FilterOP
-// XRW TEMP AtomicContactFilterCreator::create_filter() const { return filters::FilterOP( new AtomicContactFilter ); }
+// XRW TEMP AtomicContactFilterCreator::create_filter() const { return utility::pointer::make_shared< AtomicContactFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP AtomicContactFilterCreator::keyname() const { return "AtomicContact"; }
@@ -190,7 +190,7 @@ std::string AtomicContactFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 AtomicContactFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new AtomicContactFilter );
+	return utility::pointer::make_shared< AtomicContactFilter >();
 }
 
 void AtomicContactFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

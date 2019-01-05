@@ -82,7 +82,7 @@ atomic_depth(
 	if ( pose.size() == 0 ) return final_depths;
 
 	if ( ! depth ) {
-		depth = AtomicDepthOP( new AtomicDepth( pose, probe_radius, poly_leu_depth, resolution ) );
+		depth = utility::pointer::make_shared< AtomicDepth >( pose, probe_radius, poly_leu_depth, resolution );
 	}
 	utility::vector1< conformation::Atom > atoms;
 

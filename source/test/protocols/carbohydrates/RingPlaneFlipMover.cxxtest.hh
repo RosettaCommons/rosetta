@@ -47,7 +47,7 @@ public:
 
 		core_init_with_additional_options( "-include_sugars" );
 
-		pose_ = PoseOP( new Pose );
+		pose_ = utility::pointer::make_shared< Pose >();
 		make_pose_from_saccharide_sequence( *pose_,
 			"b-D-Glcp-(1->4)-[b-D-Glcp-(1->6)]-b-D-Glcp-(1->4)-b-D-Manp-(1->4)-b-D-Glcp-(1->4)-"
 			"b-D-Galp-(1->4)-a-D-Glcp-(1->3)-b-D-Glcp-(1->4)-b-D-Glcp-(1->4)-b-D-Glcp" );

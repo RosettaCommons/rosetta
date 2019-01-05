@@ -92,7 +92,7 @@ public:
 
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override {
-		return protocols::moves::MoverOP( new PlaceStubMover );
+		return utility::pointer::make_shared< PlaceStubMover >();
 	}
 
 	void stub_minimize_movers( utility::vector1< DesignMoverRealPair > const & dmrp ) {

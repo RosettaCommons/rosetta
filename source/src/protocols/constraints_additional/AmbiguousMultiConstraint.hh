@@ -61,7 +61,7 @@ public:
 
 
 	core::scoring::constraints::ConstraintOP clone() const override {
-		return core::scoring::constraints::ConstraintOP( new AmbiguousMultiConstraint(*this) );
+		return utility::pointer::make_shared< AmbiguousMultiConstraint >(*this);
 	}
 
 	bool operator == ( core::scoring::constraints::Constraint const & other ) const override;

@@ -98,14 +98,14 @@ void ShapeComplementarityFilter::residues1( std::string const & res_string )
 {
 	using core::select::residue_selector::ResidueIndexSelector;
 	using core::select::residue_selector::ResidueIndexSelectorOP;
-	selector1_ = ResidueIndexSelectorOP( new ResidueIndexSelector( res_string ) );
+	selector1_ = utility::pointer::make_shared< ResidueIndexSelector >( res_string );
 }
 
 void ShapeComplementarityFilter::residues2( std::string const & res_string )
 {
 	using core::select::residue_selector::ResidueIndexSelector;
 	using core::select::residue_selector::ResidueIndexSelectorOP;
-	selector2_ = ResidueIndexSelectorOP( new ResidueIndexSelector( res_string ) );
+	selector2_ = utility::pointer::make_shared< ResidueIndexSelector >( res_string );
 }
 
 
@@ -507,7 +507,7 @@ ShapeComplementarityFilter::print_sc_results(
 }
 
 // XRW TEMP filters::FilterOP
-// XRW TEMP ShapeComplementarityFilterCreator::create_filter() const { return filters::FilterOP( new ShapeComplementarityFilter ); }
+// XRW TEMP ShapeComplementarityFilterCreator::create_filter() const { return utility::pointer::make_shared< ShapeComplementarityFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP ShapeComplementarityFilterCreator::keyname() const { return "ShapeComplementarity"; }
@@ -549,7 +549,7 @@ std::string ShapeComplementarityFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 ShapeComplementarityFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new ShapeComplementarityFilter );
+	return utility::pointer::make_shared< ShapeComplementarityFilter >();
 }
 
 void ShapeComplementarityFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

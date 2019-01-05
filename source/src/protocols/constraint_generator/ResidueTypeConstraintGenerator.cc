@@ -44,7 +44,7 @@ namespace constraint_generator {
 ///@brief Generates atom pair constraints for a set of residues from the current or reference pose
 ResidueTypeConstraintGenerator::ResidueTypeConstraintGenerator():
 	protocols::constraint_generator::ConstraintGenerator( ResidueTypeConstraintGenerator::class_name() ),
-	selector_( core::select::residue_selector::ResidueSelectorCOP( new core::select::residue_selector::TrueResidueSelector ) ),
+	selector_( utility::pointer::make_shared< core::select::residue_selector::TrueResidueSelector >() ),
 	rsd_type_name3_( "" )
 {}
 
@@ -52,7 +52,7 @@ ResidueTypeConstraintGenerator::~ResidueTypeConstraintGenerator() = default;
 
 ConstraintGeneratorOP
 ResidueTypeConstraintGenerator::clone() const{
-	return ConstraintGeneratorOP( new ResidueTypeConstraintGenerator );
+	return utility::pointer::make_shared< ResidueTypeConstraintGenerator >();
 }
 
 core::scoring::constraints::ConstraintCOPs
@@ -165,7 +165,7 @@ ResidueTypeConstraintGenerator::generate_residue_type_constraints(
 		core::scoring::constraints::ConstraintCOP new_cst;
 		if ( rsd_type_name3_ != "" ) { //In this case the native is actually not even used
 			TR << "WARNING: You specified both use_native and a specific residue identity to use for your constraint. Only the specified residue identity will be used; ignoring native." << std::endl;
-			new_cst = core::scoring::constraints::ConstraintCOP( new core::scoring::constraints::ResidueTypeConstraint( pose, i, rsd_type_name3_, favor_native_bonus_ ) );
+			new_cst = utility::pointer::make_shared< core::scoring::constraints::ResidueTypeConstraint >( pose, i, rsd_type_name3_, favor_native_bonus_ );
 		} else {
 			//TR << "Getting desired identity from reference pose" << std::endl;
 			core::Size j = seqmap.get_corresponding_residue_in_current( i );
@@ -174,7 +174,7 @@ ResidueTypeConstraintGenerator::generate_residue_type_constraints(
 				continue;
 			}
 			//TR << "Pose residue type: " << pose.residue_type( i ).name3() << " Refpose residue type: " << ref_pose.residue_type( j ).name3() << std::endl;
-			new_cst = core::scoring::constraints::ConstraintCOP( new core::scoring::constraints::ResidueTypeConstraint( pose, i, ref_pose.residue_type( j ).name3(), favor_native_bonus_ ) );
+			new_cst = utility::pointer::make_shared< core::scoring::constraints::ResidueTypeConstraint >( pose, i, ref_pose.residue_type( j ).name3(), favor_native_bonus_ );
 		}
 		csts.push_back( new_cst );
 	}//end for i <= nres
@@ -218,9 +218,9 @@ ResidueTypeConstraintGenerator::generate_residue_type_constraints(
 		//Otherwise add constraint to this residue
 		core::scoring::constraints::ConstraintCOP new_cst;
 		if ( rsd_type_name3_ != "" ) {
-			new_cst = core::scoring::constraints::ConstraintCOP( new core::scoring::constraints::ResidueTypeConstraint( pose, i, rsd_type_name3_, favor_native_bonus_ ) );
+			new_cst = utility::pointer::make_shared< core::scoring::constraints::ResidueTypeConstraint >( pose, i, rsd_type_name3_, favor_native_bonus_ );
 		} else {
-			new_cst = core::scoring::constraints::ConstraintCOP( new core::scoring::constraints::ResidueTypeConstraint( pose, i, favor_native_bonus_ ) );
+			new_cst = utility::pointer::make_shared< core::scoring::constraints::ResidueTypeConstraint >( pose, i, favor_native_bonus_ );
 		}
 		csts.push_back( new_cst );
 	}//end for i <= nres
@@ -233,7 +233,7 @@ ResidueTypeConstraintGenerator::generate_residue_type_constraints(
 protocols::constraint_generator::ConstraintGeneratorOP
 ResidueTypeConstraintGeneratorCreator::create_constraint_generator() const
 {
-	return protocols::constraint_generator::ConstraintGeneratorOP( new ResidueTypeConstraintGenerator );
+	return utility::pointer::make_shared< ResidueTypeConstraintGenerator >();
 }
 
 std::string

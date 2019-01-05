@@ -164,9 +164,9 @@ sequence_tolerance_main( void * )
 	rand->set_entity_template(entity_template);
 
 	TaskFactoryOP taskfactory( new TaskFactory );
-	taskfactory->push_back( TaskOperationCOP( new operation::InitializeFromCommandline ) );
+	taskfactory->push_back( utility::pointer::make_shared< operation::InitializeFromCommandline >() );
 	if ( option[ packing::resfile ].user() ) {
-		taskfactory->push_back( TaskOperationCOP( new operation::ReadResfile ) );
+		taskfactory->push_back( utility::pointer::make_shared< operation::ReadResfile >() );
 	}
 	PackerTaskOP ptask = taskfactory->create_task_and_apply_taskoperations( *pose );
 
@@ -189,7 +189,7 @@ sequence_tolerance_main( void * )
 				if ( aaset.find( aa ) != aaset.end() ) continue;
 				aaset.insert(aa);
 				TR(t_debug) << "adding choice " << aa << std::endl;
-				choices.push_back( protocols::genetic_algorithm::EntityElementOP( new PosType( i, aa ) ) );
+				choices.push_back( utility::pointer::make_shared< PosType >( i, aa ) );
 			}
 			rand->append_choices( choices );
 		}
@@ -200,7 +200,7 @@ sequence_tolerance_main( void * )
 
 	// set up the FitnessFunction
 	MultiStatePackerOP func( new MultiStatePacker(option[ ms::num_packs ]()) );
-	func->set_aggregate_function(MultiStateAggregateFunction::COP( MultiStateAggregateFunction::OP( new MultiStateAggregateFunction() ) ));
+	func->set_aggregate_function(utility::pointer::make_shared< MultiStateAggregateFunction >());
 	ScoreFunctionOP score_function( core::scoring::get_score_function() );
 	func->set_scorefxn( score_function );
 
@@ -228,26 +228,26 @@ sequence_tolerance_main( void * )
 	// tell the FitnessFunction to add the vector of components without master weighting to MultiStateEntity objects
 	func->add_metric_value_getter(
 		"fitness_comp",
-		MetricValueGetter("fitness", "weighted_total_no_master_vector", basic::MetricValueBaseCOP( basic::MetricValueBaseOP( new basic::MetricValue<utility::vector1<Real> > ) ))
+		MetricValueGetter("fitness", "weighted_total_no_master_vector", utility::pointer::make_shared< basic::MetricValue< utility::vector1<Real> > >() )
 	);
 
 	if ( option[ seq_tol::unsat_polars ] ) {
 		// tell the FitnessFunction to add buried unsatisfied polars to MultiStateEntity objects
-		calculator_factory.register_calculator("sasa", PoseMetricCalculatorOP( new core::pose::metrics::simple_calculators::SasaCalculatorLegacy() ));
-		calculator_factory.register_calculator("num_hbonds", PoseMetricCalculatorOP( new NumberHBondsCalculator() ));
-		calculator_factory.register_calculator("unsat_polars", PoseMetricCalculatorOP( new BuriedUnsatisfiedPolarsCalculator("sasa", "num_hbonds") ));
+		calculator_factory.register_calculator("sasa", utility::pointer::make_shared< core::pose::metrics::simple_calculators::SasaCalculatorLegacy >());
+		calculator_factory.register_calculator("num_hbonds", utility::pointer::make_shared< NumberHBondsCalculator >());
+		calculator_factory.register_calculator("unsat_polars", utility::pointer::make_shared< BuriedUnsatisfiedPolarsCalculator >("sasa", "num_hbonds"));
 		func->add_metric_value_getter(
 			"unsat_polars",
-			MetricValueGetter("unsat_polars", "all_bur_unsat_polars", basic::MetricValueBaseCOP( basic::MetricValueBaseOP( new basic::MetricValue<Size> ) ))
+			MetricValueGetter("unsat_polars", "all_bur_unsat_polars", utility::pointer::make_shared< basic::MetricValue<Size> >() )
 		);
 	}
 
 	if ( option[ seq_tol::surface ] ) {
 		// tell the FitnessFunction to add the surface score to MultiStateEntity objects
-		calculator_factory.register_calculator("surface", PoseMetricCalculatorOP( new SurfaceCalculator() ));
+		calculator_factory.register_calculator("surface", utility::pointer::make_shared< SurfaceCalculator >());
 		func->add_metric_value_getter(
 			"surface",
-			MetricValueGetter("surface", "total_surface", basic::MetricValueBaseCOP( basic::MetricValueBaseOP( new basic::MetricValue<Real> ) ))
+			MetricValueGetter("surface", "total_surface", utility::pointer::make_shared< basic::MetricValue<Real> >() )
 		);
 	}
 
@@ -276,7 +276,7 @@ sequence_tolerance_main( void * )
 			for ( utility::vector1<Size>::const_iterator i( design_positions.begin() ),
 					end( design_positions.end() ); i != end; ++i ) {
 				PosType pt( *i, (*s)->pose().residue_type(*i).aa() );
-				traits.push_back( protocols::genetic_algorithm::EntityElementOP( new PosType( pt ) ) );
+				traits.push_back( utility::pointer::make_shared< PosType >( pt ) );
 				TR(t_info) << pt.to_string() << " ";
 			}
 			ga.add_entity( traits );

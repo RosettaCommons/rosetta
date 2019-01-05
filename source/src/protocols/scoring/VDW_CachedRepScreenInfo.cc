@@ -56,7 +56,7 @@ namespace scoring {
 // @brief Constructor
 VDW_CachedRepScreenInfo::VDW_CachedRepScreenInfo() :
 	CacheableData(),
-	VDW_screen_bin_( core::pose::rna::VDW_GridCOP( new core::pose::rna::VDW_Grid() ) )
+	VDW_screen_bin_( utility::pointer::make_shared< core::pose::rna::VDW_Grid >() )
 {
 	read_in_VDW_rep_screen_pose_from_command_line();
 }
@@ -88,7 +88,7 @@ VDW_CachedRepScreenInfo::~VDW_CachedRepScreenInfo() = default;
 basic::datacache::CacheableDataOP
 VDW_CachedRepScreenInfo::clone() const
 {
-	return basic::datacache::CacheableDataOP( new VDW_CachedRepScreenInfo( *this ) );
+	return utility::pointer::make_shared< VDW_CachedRepScreenInfo >( *this );
 }
 
 
@@ -115,7 +115,7 @@ VDW_CachedRepScreenInfo::read_in_VDW_rep_screen_pose( core::pose::rna::VDW_RepSc
 	ResidueTypeSetCOP rsd_set( /*core::chemical::*/ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
 
 	if ( VDW_rep_screen_info.pose_name == "" ) utility_exit_with_message( VDW_rep_screen_info.pose_name == "" );
-	VDW_rep_screen_info.VDW_pose = core::pose::PoseOP( new core::pose::Pose );
+	VDW_rep_screen_info.VDW_pose = utility::pointer::make_shared< core::pose::Pose >();
 
 	core::import_pose::pose_from_file( *VDW_rep_screen_info.VDW_pose, *rsd_set, VDW_rep_screen_info.pose_name, core::import_pose::PDB_file );
 	core::pose::rna::make_phosphate_nomenclature_matches_mini( *VDW_rep_screen_info.VDW_pose );
@@ -187,7 +187,7 @@ VDW_CachedRepScreenInfo &
 nonconst_vdw_cached_rep_screen_info_from_pose( core::pose::Pose & pose )
 {
 	if ( !pose.data().has( core::pose::datacache::CacheableDataType::VDW_REP_SCREEN_INFO ) ) {
-		pose.data().set( core::pose::datacache::CacheableDataType::VDW_REP_SCREEN_INFO, VDW_CachedRepScreenInfoOP( new VDW_CachedRepScreenInfo() ) );
+		pose.data().set( core::pose::datacache::CacheableDataType::VDW_REP_SCREEN_INFO, utility::pointer::make_shared< VDW_CachedRepScreenInfo >() );
 	}
 	debug_assert( pose.data().has( core::pose::datacache::CacheableDataType::VDW_REP_SCREEN_INFO ) );
 	return *( utility::pointer::static_pointer_cast< VDW_CachedRepScreenInfo > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::VDW_REP_SCREEN_INFO ) ) );

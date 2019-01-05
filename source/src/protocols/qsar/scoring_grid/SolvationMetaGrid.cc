@@ -45,7 +45,7 @@ GridBaseOP SolvationMetaGridCreator::create_grid(utility::tag::TagCOP tag) const
 
 GridBaseOP SolvationMetaGridCreator::create_grid() const
 {
-	return GridBaseOP( new SolvationMetaGrid() );
+	return utility::pointer::make_shared< SolvationMetaGrid >();
 }
 
 void SolvationMetaGridCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -69,7 +69,7 @@ SolvationMetaGrid::~SolvationMetaGrid() = default;
 
 /// @brief Make a copy of the grid, respecting the subclassing.
 GridBaseOP SolvationMetaGrid::clone() const {
-	return GridBaseOP( new SolvationMetaGrid( *this ) );
+	return utility::pointer::make_shared< SolvationMetaGrid >( *this );
 }
 
 void SolvationMetaGrid::initialize(core::Vector const & center, core::Real width, core::Real resolution)

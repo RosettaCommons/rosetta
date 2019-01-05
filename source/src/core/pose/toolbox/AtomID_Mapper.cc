@@ -76,7 +76,7 @@ AtomID_Mapper::AtomID_Mapper( AtomID_Mapper const & src ) {
 //constructor
 AtomID_MapperOP
 AtomID_Mapper::clone() const {
-	return AtomID_MapperOP( new AtomID_Mapper( *this ) );
+	return utility::pointer::make_shared< AtomID_Mapper >( *this );
 }
 
 

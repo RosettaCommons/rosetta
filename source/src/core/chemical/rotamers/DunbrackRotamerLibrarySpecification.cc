@@ -34,12 +34,12 @@ namespace rotamers {
 
 RotamerLibrarySpecificationOP
 DunbrackRotamerLibrarySpecificationCreator::create() const {
-	return RotamerLibrarySpecificationOP( new DunbrackRotamerLibrarySpecification );
+	return utility::pointer::make_shared< DunbrackRotamerLibrarySpecification >();
 }
 
 RotamerLibrarySpecificationOP
 DunbrackRotamerLibrarySpecificationCreator::create( std::istream & input ) const {
-	return RotamerLibrarySpecificationOP( new DunbrackRotamerLibrarySpecification( input ) );
+	return utility::pointer::make_shared< DunbrackRotamerLibrarySpecification >( input );
 }
 
 std::string

@@ -51,7 +51,7 @@ CDRCluster::CDRCluster(const CDRCluster& /*src*/) = default;
 
 CDRClusterOP
 CDRCluster::clone() const {
-	return CDRClusterOP( new CDRCluster(*this) );
+	return utility::pointer::make_shared< CDRCluster >(*this);
 }
 
 CDRCluster::~CDRCluster()= default;

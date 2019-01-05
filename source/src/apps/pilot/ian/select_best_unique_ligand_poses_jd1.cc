@@ -70,7 +70,7 @@ main( int argc, char * argv [] )
 		// This used to be required but will be rarely used now.
 		core::pose::PoseOP native_pose;
 		if ( option[ in::file::native ].user() ) {
-			native_pose = core::pose::PoseOP( new core::pose::Pose() );
+			native_pose = utility::pointer::make_shared< core::pose::Pose >();
 			core::import_pose::pose_from_file( *native_pose, option[ in::file::native ]().name() , core::import_pose::PDB_file);
 		}
 
@@ -99,7 +99,7 @@ main( int argc, char * argv [] )
 		for ( core::Size i = 1; i <= scores_list2.size(); ++i ) {
 			if ( selected_poses.size() >= max_poses ) break;
 			std::string tag( scores_list2[i].first );
-			a_pose = core::pose::PoseOP( new core::pose::Pose() );
+			a_pose = utility::pointer::make_shared< core::pose::Pose >();
 			if ( native_pose == nullptr ) atdiff.read_pose(tag, *a_pose);
 			else atdiff.read_pose(tag, *a_pose, *native_pose);
 			core::Size const last_rsd = a_pose->size();

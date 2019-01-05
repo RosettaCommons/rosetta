@@ -55,7 +55,7 @@ get_sm_data( core::pose::Pose & pose ){
 	if ( !pose.data().has( core::pose::datacache::CacheableDataType::SIMPLE_METRIC_DATA ) ) {
 		pose.data().set(
 			core::pose::datacache::CacheableDataType::SIMPLE_METRIC_DATA,
-			DataCache_CacheableData::DataOP( new SimpleMetricData() )
+			utility::pointer::make_shared< SimpleMetricData >()
 		);
 	}
 

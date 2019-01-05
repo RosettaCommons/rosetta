@@ -566,7 +566,7 @@ void PairingLibrary::create_jump_fragments(
 	const int iStop ( 2 ); // in templates stop residue is number 2
 	frags.reserve( ntemplates );
 	for ( auto const & it : templates ) {
-		frags.push_back( core::fragment::FragDataOP( new FragData ) );
+		frags.push_back( utility::pointer::make_shared< FragData >() );
 		if ( bWithTorsion ) {
 			BBTorsionSRFDOP start( new BBTorsionSRFD( 3, 'E', 'X' ) );
 			start->set_torsion( 1, it.phi( iStart ) );
@@ -576,8 +576,8 @@ void PairingLibrary::create_jump_fragments(
 			frags.back()->add_residue( start );
 		}
 
-		frags.back()->add_residue( SingleResidueFragDataOP( new UpJumpSRFD() ) );
-		frags.back()->add_residue( SingleResidueFragDataOP( new DownJumpSRFD( it.rt_, it.atoms_downstream_, it.atoms_upstream_, 'X' ) ) );
+		frags.back()->add_residue( utility::pointer::make_shared< UpJumpSRFD >() );
+		frags.back()->add_residue( utility::pointer::make_shared< DownJumpSRFD >( it.rt_, it.atoms_downstream_, it.atoms_upstream_, 'X' ) );
 
 		if ( bWithTorsion ) {
 			BBTorsionSRFDOP stop( new BBTorsionSRFD( 3, 'E', 'X' ) );

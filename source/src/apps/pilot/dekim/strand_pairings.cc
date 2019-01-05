@@ -69,11 +69,11 @@ public:
 	std::string get_name() const override { return "StrandPairingsMover"; }
 
 	MoverOP clone() const override {
-		return MoverOP( new MyMover( *this ) );
+		return utility::pointer::make_shared< MyMover >( *this );
 	}
 
 	MoverOP fresh_instance() const override {
-		return MoverOP( new MyMover );
+		return utility::pointer::make_shared< MyMover >();
 	}
 
 };

@@ -66,7 +66,7 @@ static basic::Tracer compute_rdf_tracer( "protocols.ligand_docking.ComputeLigand
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP ComputeLigandRDFCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new ComputeLigandRDF );
+// XRW TEMP  return utility::pointer::make_shared< ComputeLigandRDF >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -86,11 +86,11 @@ ComputeLigandRDF::~ComputeLigandRDF() = default;
 ComputeLigandRDF::ComputeLigandRDF(ComputeLigandRDF const & ) = default;
 
 protocols::moves::MoverOP ComputeLigandRDF::clone() const {
-	return protocols::moves::MoverOP( new ComputeLigandRDF( *this ) );
+	return utility::pointer::make_shared< ComputeLigandRDF >( *this );
 }
 
 protocols::moves::MoverOP ComputeLigandRDF::fresh_instance() const {
-	return protocols::moves::MoverOP( new ComputeLigandRDF );
+	return utility::pointer::make_shared< ComputeLigandRDF >();
 }
 
 void ComputeLigandRDF::apply( core::pose::Pose & pose )
@@ -218,7 +218,7 @@ std::string ComputeLigandRDFCreator::keyname() const {
 
 protocols::moves::MoverOP
 ComputeLigandRDFCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ComputeLigandRDF );
+	return utility::pointer::make_shared< ComputeLigandRDF >();
 }
 
 void ComputeLigandRDFCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

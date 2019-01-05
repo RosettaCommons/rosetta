@@ -54,7 +54,7 @@ using namespace utility::tag;
 TaskOperationOP
 ConsensusLoopDesignOperationCreator::create_task_operation() const
 {
-	return TaskOperationOP( new ConsensusLoopDesignOperation );
+	return utility::pointer::make_shared< ConsensusLoopDesignOperation >();
 }
 
 void
@@ -87,7 +87,7 @@ ConsensusLoopDesignOperation::~ConsensusLoopDesignOperation() = default;
 core::pack::task::operation::TaskOperationOP
 ConsensusLoopDesignOperation::clone() const
 {
-	return core::pack::task::operation::TaskOperationOP( new ConsensusLoopDesignOperation( *this ) );
+	return utility::pointer::make_shared< ConsensusLoopDesignOperation >( *this );
 }
 
 std::string
@@ -711,7 +711,7 @@ ConsensusLoopDatabase::read_db()
 			abegostream.str(),
 			loop_resid,
 			aa,
-			AAFrequencyOP( new AAFrequency( frequency, score ) ) );
+			utility::pointer::make_shared< AAFrequency >( frequency, score ) );
 
 		if ( !infile.good() ) {
 			break;

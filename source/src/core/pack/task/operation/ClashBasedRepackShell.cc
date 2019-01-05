@@ -46,11 +46,11 @@ namespace operation {
 static basic::Tracer TR( "core.pack.task.operation.ClashBasedRepackShell" );
 
 ClashBasedRepackShell::ClashBasedRepackShell()
-: shell_selector_( ClashBasedShellSelectorOP( new ClashBasedShellSelector ) )
+: shell_selector_( utility::pointer::make_shared< ClashBasedShellSelector >() )
 {}
 
 TaskOperationOP ClashBasedRepackShell::clone() const {
-	return TaskOperationOP( new ClashBasedRepackShell( *this ) );
+	return utility::pointer::make_shared< ClashBasedRepackShell >( *this );
 }
 
 void ClashBasedRepackShell::apply( Pose const & pose, PackerTask & task ) const {
@@ -94,7 +94,7 @@ void ClashBasedRepackShell::selector(ClashBasedShellSelectorOP selector) {
 }
 
 TaskOperationOP ClashBasedRepackShellCreator::create_task_operation() const {
-	return TaskOperationOP( new ClashBasedRepackShell );
+	return utility::pointer::make_shared< ClashBasedRepackShell >();
 }
 
 std::string ClashBasedRepackShellCreator::keyname() const {

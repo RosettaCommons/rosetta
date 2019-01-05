@@ -50,7 +50,7 @@ OrJumpSelector::~OrJumpSelector() = default;
 
 /// @brief Clone operator.
 /// @details Copy this object and return an owning pointer to the new object.
-JumpSelectorOP OrJumpSelector::clone() const { return JumpSelectorOP( new OrJumpSelector(*this) ); }
+JumpSelectorOP OrJumpSelector::clone() const { return utility::pointer::make_shared< OrJumpSelector >(*this); }
 
 OrJumpSelector::OrJumpSelector( JumpSelectorCOP selector1, JumpSelectorCOP selector2 )
 {
@@ -162,7 +162,7 @@ OrJumpSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 
 JumpSelectorOP
 OrJumpSelectorCreator::create_jump_selector() const {
-	return JumpSelectorOP( new OrJumpSelector );
+	return utility::pointer::make_shared< OrJumpSelector >();
 }
 
 std::string

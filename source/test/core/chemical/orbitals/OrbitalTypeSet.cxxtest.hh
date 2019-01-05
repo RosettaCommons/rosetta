@@ -84,7 +84,7 @@ public:
 
 		// Want to read the properties file in only once for all the tests in this suite
 		// so do it in the constructor for the test suite.
-		orbitaltypeset = orbitals::OrbitalTypeSetOP( new orbitals::OrbitalTypeSet( "core/chemical/orbitals/") );
+		orbitaltypeset = utility::pointer::make_shared< orbitals::OrbitalTypeSet >( "core/chemical/orbitals/");
 		//atom_type_set = new atom_type_set( "core/chemical/");
 		//atom_type_set->read_file( "core/chemical/atom_properties.txt" );
 	}

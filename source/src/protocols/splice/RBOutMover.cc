@@ -57,7 +57,7 @@ using namespace::protocols;
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP RBOutMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new RBOutMover );
+// XRW TEMP  return utility::pointer::make_shared< RBOutMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -203,13 +203,13 @@ RBOutMover::apply( Pose & pose )
 moves::MoverOP
 RBOutMover::clone() const
 {
-	return moves::MoverOP( new RBOutMover( *this ) );
+	return utility::pointer::make_shared< RBOutMover >( *this );
 }
 
 moves::MoverOP
 RBOutMover::fresh_instance() const
 {
-	return moves::MoverOP( new RBOutMover );
+	return utility::pointer::make_shared< RBOutMover >();
 }
 
 void
@@ -253,7 +253,7 @@ std::string RBOutMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 RBOutMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new RBOutMover );
+	return utility::pointer::make_shared< RBOutMover >();
 }
 
 void RBOutMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

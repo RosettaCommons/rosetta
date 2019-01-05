@@ -120,13 +120,13 @@ VisualizeMembraneMover::~VisualizeMembraneMover() = default;
 /// @brief Create a Clone of this mover
 protocols::moves::MoverOP
 VisualizeMembraneMover::clone() const {
-	return ( protocols::moves::MoverOP( new VisualizeMembraneMover( *this ) ) );
+	return ( utility::pointer::make_shared< VisualizeMembraneMover >( *this ) );
 }
 
 /// @brief Create a Fresh Instance of this Mover
 protocols::moves::MoverOP
 VisualizeMembraneMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new VisualizeMembraneMover() );
+	return utility::pointer::make_shared< VisualizeMembraneMover >();
 }
 
 /// @brief Parse Rosetta Scripts Options for this Mover
@@ -161,7 +161,7 @@ VisualizeMembraneMover::parse_my_tag(
 /// @brief Create a new copy of this mover
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP VisualizeMembraneMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new VisualizeMembraneMover );
+// XRW TEMP  return utility::pointer::make_shared< VisualizeMembraneMover >();
 // XRW TEMP }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)
@@ -328,7 +328,7 @@ std::string VisualizeMembraneMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 VisualizeMembraneMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new VisualizeMembraneMover );
+	return utility::pointer::make_shared< VisualizeMembraneMover >();
 }
 
 void VisualizeMembraneMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

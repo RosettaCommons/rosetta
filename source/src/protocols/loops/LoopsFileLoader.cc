@@ -77,7 +77,7 @@ LoopsFileLoader::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 /// @details Return an owning pointer to a newly constructed default instance of LoopsFileLoader.
 basic::resource_manager::ResourceLoaderOP LoopsFileLoaderCreator::create_resource_loader() const
 {
-	return basic::resource_manager::ResourceLoaderOP( new LoopsFileLoader() );
+	return utility::pointer::make_shared< LoopsFileLoader >();
 }
 
 /// @details Return a string specifying the type of %ResourceLoader to create (LoopsFile).

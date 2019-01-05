@@ -159,7 +159,7 @@ void RepeatPropagationMover::apply(core::pose::Pose & pose) {
 			repeat_ligand_constraints(pose,*repeat_poseOP);
 		}
 		pose = *repeat_poseOP;
-		pose.pdb_info( core::pose::PDBInfoOP( new core::pose::PDBInfo( pose, true ) ) );
+		pose.pdb_info( utility::pointer::make_shared< core::pose::PDBInfo >( pose, true ) );
 		if ( deal_with_length_change_scar_ ) {
 			//std::cout << "dealing with repeat scar" << deal_with_length_change_scar_ << std::endl;
 			trim_back_repeat_to_repair_scar(pose);
@@ -475,7 +475,7 @@ void RepeatPropagationMover::repeat_ligand_constraints(Pose & pose, Pose & repea
 	Size n_csts_pose = pose_cst_cache->ncsts();
 	EnzConstraintIOCOP pose_cstio( pose_cst_cache->enzcst_io()); //should be able to use the pose_io but modify the cst_cache
 	if ( !repeat_cst_cache ) {
-		toolbox::match_enzdes_util::get_enzdes_observer( repeat_pose )->set_cst_cache( toolbox::match_enzdes_util::EnzdesCstCacheOP( new EnzdesCstCache( pose_cstio, n_csts_repeat_pose+1 ) ) ); //+1 is for the positions to hold fix
+		toolbox::match_enzdes_util::get_enzdes_observer( repeat_pose )->set_cst_cache( utility::pointer::make_shared< EnzdesCstCache >( pose_cstio, n_csts_repeat_pose+1 ) ); //+1 is for the positions to hold fix
 	}
 	repeat_cst_cache = get_enzdes_observer( repeat_pose )->cst_cache();
 	//fill repeat_cst_cache
@@ -496,7 +496,7 @@ void RepeatPropagationMover::repeat_ligand_constraints(Pose & pose, Pose & repea
 		for ( Size jj=1; jj<=n_csts_pose; ++jj ) {
 			Size cst_location_in_cst_cache = ((int)ii-1)*n_csts_pose+jj;
 			EnzdesCstParamCacheOP tmp_param_cache =pose_cst_cache->param_cache(jj);
-			EnzdesCstParamCacheOP copy_of_param_cache = EnzdesCstParamCacheOP( new EnzdesCstParamCache(*tmp_param_cache));
+			EnzdesCstParamCacheOP copy_of_param_cache = utility::pointer::make_shared< EnzdesCstParamCache >(*tmp_param_cache);
 			copy_of_param_cache->remap_resid(seqmap);
 			repeat_cst_cache->set_param_cache(cst_location_in_cst_cache,copy_of_param_cache);
 		}
@@ -519,7 +519,7 @@ void RepeatPropagationMover::repeat_ligand_constraints(Pose & pose, Pose & repea
 		}
 	}
 	//debug print out first and last residues to constrain
-	EnzdesCstParamCacheOP extra_res_param_cache = EnzdesCstParamCacheOP( new EnzdesCstParamCache());
+	EnzdesCstParamCacheOP extra_res_param_cache = utility::pointer::make_shared< EnzdesCstParamCache >();
 	for ( std::map<Size,std::string>::iterator itr =first_repeat_constrained_res.begin() ; itr != first_repeat_constrained_res.end(); ++itr ) {
 		extra_res_param_cache->template_res_cache( 1 )->add_position_in_pose( itr->first );
 		TR <<"Constraining additional residue" <<  itr->first << std::endl;
@@ -530,7 +530,7 @@ void RepeatPropagationMover::repeat_ligand_constraints(Pose & pose, Pose & repea
 		TR <<"Constraining additional residue" <<  itr->first << std::endl;
 	}
 	repeat_cst_cache->set_param_cache(n_csts_repeat_pose+1 , extra_res_param_cache);
-	// EnzdesCstParamCacheOP tmp_param_cache = EnzdesCstParamCacheOP( new EnzdesCstParamCache());
+	// EnzdesCstParamCacheOP tmp_param_cache = utility::pointer::make_shared< EnzdesCstParamCache >();
 	// std::cout << "hereA" << std::endl;
 	// tmp_param_cache->set_position_for_missing_res(10);
 	// std::cout << "hereB" << std::endl;
@@ -936,7 +936,7 @@ std::string RepeatPropagationMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 RepeatPropagationMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new RepeatPropagationMover );
+	return utility::pointer::make_shared< RepeatPropagationMover >();
 }
 
 void RepeatPropagationMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

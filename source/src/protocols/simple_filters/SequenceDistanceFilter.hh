@@ -31,10 +31,10 @@ public:
 	SequenceDistance();
 	~SequenceDistance() override;
 	filters::FilterOP clone() const override {
-		return filters::FilterOP( new SequenceDistance( *this ) );
+		return utility::pointer::make_shared< SequenceDistance >( *this );
 	}
 	filters::FilterOP fresh_instance() const override{
-		return filters::FilterOP( new SequenceDistance() );
+		return utility::pointer::make_shared< SequenceDistance >();
 	}
 
 	bool apply( core::pose::Pose const & pose ) const override;

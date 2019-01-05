@@ -191,11 +191,11 @@ public:
 	bool apply( core::pose::Pose const & ) const override;
 
 	filters::FilterOP clone() const override {
-		return filters::FilterOP( new ResidueDepthFilter( *this ) );
+		return utility::pointer::make_shared< ResidueDepthFilter >( *this );
 	}
 
 	filters::FilterOP fresh_instance() const override{
-		return filters::FilterOP( new ResidueDepthFilter() );
+		return utility::pointer::make_shared< ResidueDepthFilter >();
 	}
 
 	// this is the main

@@ -57,7 +57,7 @@ static basic::Tracer TR( "protocols.seeded_abinitio.CAcstGenerator" );
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP CAcstGeneratorCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new CAcstGenerator );
+// XRW TEMP  return utility::pointer::make_shared< CAcstGenerator >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -78,12 +78,12 @@ CAcstGenerator::CAcstGenerator() :
 
 protocols::moves::MoverOP
 CAcstGenerator::clone() const {
-	return( protocols::moves::MoverOP( new CAcstGenerator( *this ) ) );
+	return( utility::pointer::make_shared< CAcstGenerator >( *this ) );
 }
 
 protocols::moves::MoverOP
 CAcstGenerator::fresh_instance() const {
-	return protocols::moves::MoverOP( new CAcstGenerator );
+	return utility::pointer::make_shared< CAcstGenerator >();
 }
 
 bool
@@ -210,7 +210,7 @@ void add_dist_constraints(
 								core::conformation::Residue res_in_pose = pose.residue( pos + start_relevant_chain - 1 );
 								core::conformation::Residue res_in_pose2= pose.residue( pos_2 + start_relevant_chain - 1);
 
-								cst->add_constraint( ConstraintCOP( ConstraintOP( new AtomPairConstraint ( AtomID(res_in_pose.atom_index("CA"), pos + start_relevant_chain - 1), AtomID(res_in_pose2.atom_index("CA"),pos_2 + start_relevant_chain - 1), core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc( distance_ca, stddev ) ) ) ) ) );
+								cst->add_constraint( ConstraintCOP( utility::pointer::make_shared< AtomPairConstraint > ( AtomID(res_in_pose.atom_index("CA"), pos + start_relevant_chain - 1), AtomID(res_in_pose2.atom_index("CA"),pos_2 + start_relevant_chain - 1), utility::pointer::make_shared< core::scoring::func::HarmonicFunc >( distance_ca, stddev ) ) ) );
 							}
 						}
 					}
@@ -235,7 +235,7 @@ CAcstGenerator::apply( pose::Pose & pose ){
 
 	pose::PoseOP donor_poseOP;
 	Size start_recipient_chain = 0;
-	ca_cst_ = core::scoring::constraints::ConstraintSetOP( new core::scoring::constraints::ConstraintSet() );
+	ca_cst_ = utility::pointer::make_shared< core::scoring::constraints::ConstraintSet >();
 
 	//this all has to be checked during run time since parse time input will be inaccurate if the pose has been grown before
 	if ( from_chain_ == 0 ) {
@@ -317,7 +317,7 @@ CAcstGenerator::parse_my_tag( TagCOP const tag,
 
 	if ( tag->hasOption( "template_pdb" ) ) {
 		std::string const template_pdb_fname( tag->getOption< std::string >( "template_pdb" ));
-		template_pdb_ = core::pose::PoseOP( new core::pose::Pose ) ;
+		template_pdb_ = utility::pointer::make_shared< core::pose::Pose >() ;
 		core::import_pose::pose_from_file( *template_pdb_, template_pdb_fname , core::import_pose::PDB_file);
 		TR<<"read in a template pdb with " <<template_pdb_->size() <<"residues"<<std::endl;
 		template_presence_ = true;
@@ -434,7 +434,7 @@ std::string CAcstGeneratorCreator::keyname() const {
 
 protocols::moves::MoverOP
 CAcstGeneratorCreator::create_mover() const {
-	return protocols::moves::MoverOP( new CAcstGenerator );
+	return utility::pointer::make_shared< CAcstGenerator >();
 }
 
 void CAcstGeneratorCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

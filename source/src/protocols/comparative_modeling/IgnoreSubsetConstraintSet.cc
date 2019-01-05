@@ -91,7 +91,7 @@ IgnoreSubsetConstraintSet::operator = ( ConstraintSet const & rhs )
 
 ConstraintSetOP
 IgnoreSubsetConstraintSet::clone() const {
-	return ConstraintSetOP( new IgnoreSubsetConstraintSet( *this ) );
+	return utility::pointer::make_shared< IgnoreSubsetConstraintSet >( *this );
 }
 
 void IgnoreSubsetConstraintSet::detached_copy( ConstraintSet const & src ) {

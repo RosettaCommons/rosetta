@@ -49,7 +49,7 @@ StrandArchitect::~StrandArchitect() = default;
 StrandArchitect::DeNovoArchitectOP
 StrandArchitect::clone() const
 {
-	return DeNovoArchitectOP( new StrandArchitect( *this ) );
+	return utility::pointer::make_shared< StrandArchitect >( *this );
 }
 
 std::string
@@ -138,7 +138,7 @@ StrandArchitect::design( core::pose::Pose const &, core::Real & random ) const
 	}
 
 	core::Size const idx = extract_int( random, 1, motifs_.size() );
-	return StructureDataOP( new StructureData( *motifs_[ idx ] ) );
+	return utility::pointer::make_shared< StructureData >( *motifs_[ idx ] );
 }
 
 /// @brief Given a list of bulges, build a motif
@@ -376,7 +376,7 @@ StrandArchitectCreator::keyname() const
 DeNovoArchitectOP
 StrandArchitectCreator::create_architect( std::string const & architect_id ) const
 {
-	return DeNovoArchitectOP( new StrandArchitect( architect_id ) );
+	return utility::pointer::make_shared< StrandArchitect >( architect_id );
 }
 
 } //protocols

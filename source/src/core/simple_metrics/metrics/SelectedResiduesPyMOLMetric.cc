@@ -70,7 +70,7 @@ SelectedResiduesPyMOLMetric::SelectedResiduesPyMOLMetric( SelectedResiduesPyMOLM
 
 core::simple_metrics::SimpleMetricOP
 SelectedResiduesPyMOLMetric::clone() const {
-	return core::simple_metrics::SimpleMetricOP(new SelectedResiduesPyMOLMetric( *this ) );
+	return utility::pointer::make_shared< SelectedResiduesPyMOLMetric >( *this );
 
 }
 
@@ -197,7 +197,7 @@ SelectedResiduesPyMOLMetricCreator::keyname() const {
 
 core::simple_metrics::SimpleMetricOP
 SelectedResiduesPyMOLMetricCreator::create_simple_metric() const {
-	return core::simple_metrics::SimpleMetricOP( new SelectedResiduesPyMOLMetric );
+	return utility::pointer::make_shared< SelectedResiduesPyMOLMetric >();
 
 }
 

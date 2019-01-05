@@ -37,7 +37,7 @@ main( int argc, char * argv [] )
 		devel::init( argc, argv );
 		TR << "devel::init successful" << std::endl;
 		TR << "Created SewGraphGenerator" << std::endl;
-		protocols::sewing::hashing::EdgeMapGeneratorOP generator = protocols::sewing::hashing::EdgeMapGeneratorOP(new protocols::sewing::hashing::EdgeMapGenerator);
+		protocols::sewing::hashing::EdgeMapGeneratorOP generator = utility::pointer::make_shared< protocols::sewing::hashing::EdgeMapGenerator >();
 		generator->initialize_from_options();
 		generator->generate_edge_file();
 

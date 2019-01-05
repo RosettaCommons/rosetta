@@ -64,7 +64,7 @@ StepWiseMoveSelectorOptions::StepWiseMoveSelectorOptions( StepWiseMoveSelectorOp
 StepWiseMoveSelectorOptionsOP
 StepWiseMoveSelectorOptions::clone() const
 {
-	return StepWiseMoveSelectorOptionsOP( new StepWiseMoveSelectorOptions( *this ) );
+	return utility::pointer::make_shared< StepWiseMoveSelectorOptions >( *this );
 }
 
 ///////////////////////////////////////////////////////////////////

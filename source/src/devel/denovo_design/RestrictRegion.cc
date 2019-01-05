@@ -81,7 +81,7 @@ namespace denovo_design {
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP RestrictRegionCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new RestrictRegion() );
+// XRW TEMP  return utility::pointer::make_shared< RestrictRegion >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -145,7 +145,7 @@ RestrictRegion::~RestrictRegion() = default;
 /// Return a copy of ourselves
 protocols::moves::MoverOP
 RestrictRegion::clone() const {
-	return protocols::moves::MoverOP( new RestrictRegion(*this) );
+	return utility::pointer::make_shared< RestrictRegion >(*this);
 }
 
 void
@@ -276,7 +276,7 @@ RestrictRegion::apply( core::pose::Pose & pose )
 			++( metric_stats_[ last_type_ ].first );
 		}
 	}
-	previous_pose_ = core::pose::PoseOP( new core::pose::Pose( pose ) );
+	previous_pose_ = utility::pointer::make_shared< core::pose::Pose >( pose );
 	// set operation to find worst region
 	task_operations::HighestEnergyRegionOperationOP op = highestEnergyRegionOperation_ops_[numeric::random::random_range(1,highestEnergyRegionOperation_ops_.size())];
 	type_ = op->get_name();
@@ -625,7 +625,7 @@ std::string RestrictRegionCreator::keyname() const {
 
 protocols::moves::MoverOP
 RestrictRegionCreator::create_mover() const {
-	return protocols::moves::MoverOP( new RestrictRegion );
+	return utility::pointer::make_shared< RestrictRegion >();
 }
 
 void RestrictRegionCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

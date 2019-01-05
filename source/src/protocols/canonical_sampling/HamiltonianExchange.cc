@@ -95,7 +95,7 @@ using namespace core;
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP HamiltonianExchangeCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new HamiltonianExchange );
+// XRW TEMP  return utility::pointer::make_shared< HamiltonianExchange >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -154,13 +154,13 @@ HamiltonianExchange::~HamiltonianExchange() = default;
 protocols::moves::MoverOP
 HamiltonianExchange::clone() const
 {
-	return protocols::moves::MoverOP( new protocols::canonical_sampling::HamiltonianExchange(*this) );
+	return utility::pointer::make_shared< protocols::canonical_sampling::HamiltonianExchange >(*this);
 }
 
 protocols::moves::MoverOP
 HamiltonianExchange::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new HamiltonianExchange );
+	return utility::pointer::make_shared< HamiltonianExchange >();
 }
 
 void
@@ -734,7 +734,7 @@ std::string HamiltonianExchangeCreator::keyname() const {
 
 protocols::moves::MoverOP
 HamiltonianExchangeCreator::create_mover() const {
-	return protocols::moves::MoverOP( new HamiltonianExchange );
+	return utility::pointer::make_shared< HamiltonianExchange >();
 }
 
 void HamiltonianExchangeCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

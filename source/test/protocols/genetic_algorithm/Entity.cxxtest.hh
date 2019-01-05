@@ -64,8 +64,8 @@ public:
 
 	virtual ~DummyEntityElement() {}
 
-	virtual EntityElementOP clone() { return EntityElementOP( new DummyEntityElement(*this) );}
-	virtual EntityElementOP fresh_instance() { return EntityElementOP( new DummyEntityElement ); }
+	virtual EntityElementOP clone() { return utility::pointer::make_shared< DummyEntityElement >(*this);}
+	virtual EntityElementOP fresh_instance() { return utility::pointer::make_shared< DummyEntityElement >(); }
 
 	virtual Size hash() const { return dummy_; }
 
@@ -124,7 +124,7 @@ private:
 
 EntityElementOP DummyEntityElementCreator::new_entity( std::string const & word )
 {
-	return EntityElementOP( new DummyEntityElement( word ) );
+	return utility::pointer::make_shared< DummyEntityElement >( word );
 }
 
 EntityElementRegistrator< DummyEntityElementCreator > dummyEE_registrator;
@@ -159,7 +159,7 @@ public:
 		utility::vector1< EntityElementOP > traits;
 		traits.reserve(10);
 		for ( Size ii = 1; ii <= 10; ++ii ) {
-			traits.push_back( EntityElementOP( new DummyEntityElement( ii, 2 * ii ) ));
+			traits.push_back( utility::pointer::make_shared< DummyEntityElement >( ii, 2 * ii ));
 		}
 		e.set_traits( traits );
 		return e;

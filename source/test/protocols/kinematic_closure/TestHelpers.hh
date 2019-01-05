@@ -111,7 +111,7 @@ ClosureTest::ClosureTest( // {{{1
 	if ( loop.cut() == 0 ) loop.set_cut(loop.midpoint());
 	num_solutions = num_solutions_;
 	jacobians.resize(num_solutions);
-	pivot_picker = PivotPickerOP( new LoopPivots );
+	pivot_picker = utility::pointer::make_shared< LoopPivots >();
 	precision = 1e-3;
 }
 

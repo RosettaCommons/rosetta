@@ -740,7 +740,7 @@ void
 OTFFlexbbInteractionGraph::set_pose( Pose const & pose )
 {
 	debug_assert( get_num_edges() == 0 );
-	pose_ = PoseOP( new Pose( pose ) );
+	pose_ = utility::pointer::make_shared< Pose >( pose );
 
 #ifdef DEBUG_OTF_FLEXBB_ENERGIES
 	current_pose_ = new Pose( pose );

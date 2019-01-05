@@ -229,14 +229,14 @@ InterfaceDdGMover::unbind (
 protocols::moves::MoverOP
 InterfaceDdGMover::clone() const
 {
-	return protocols::moves::MoverOP( new InterfaceDdGMover( *this ) );
+	return utility::pointer::make_shared< InterfaceDdGMover >( *this );
 }
 
 
 protocols::moves::MoverOP
 InterfaceDdGMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new InterfaceDdGMover );
+	return utility::pointer::make_shared< InterfaceDdGMover >();
 }
 
 std::string

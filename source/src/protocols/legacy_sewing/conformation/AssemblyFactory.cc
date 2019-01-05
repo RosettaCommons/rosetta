@@ -32,9 +32,9 @@ AssemblyFactory::create_assembly(
 ) {
 
 	if ( assembly_name == "continuous" ) {
-		return AssemblyOP( new ContinuousAssembly() );
+		return utility::pointer::make_shared< ContinuousAssembly >();
 	} else if ( assembly_name == "discontinuous" ) {
-		return AssemblyOP( new DisembodiedAssembly() );
+		return utility::pointer::make_shared< DisembodiedAssembly >();
 	} else {
 		utility_exit_with_message("Invalid Assembly name given to AssemblyFactory!");
 	}

@@ -82,7 +82,7 @@ static basic::Tracer TR( "protocols.loophash.LoopHashMoverWrapper" );
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP LoopHashMoverWrapperCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new LoopHashMoverWrapper );
+// XRW TEMP  return utility::pointer::make_shared< LoopHashMoverWrapper >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -334,7 +334,7 @@ LoopHashMoverWrapper::parse_my_tag( TagCOP const tag,
 	}
 
 	// path to DB -- if not specified then command-line flag is used
-	library_ = LoopHashLibraryOP( new LoopHashLibrary( loop_sizes() , 1 , 0 ) );
+	library_ = utility::pointer::make_shared< LoopHashLibrary >( loop_sizes() , 1 , 0 );
 	if ( tag->hasOption( "db_path" ) ) {
 		std::string db_path = tag->getOption< string >( "db_path" );
 		library_->set_db_path( db_path );
@@ -533,7 +533,7 @@ std::string LoopHashMoverWrapperCreator::keyname() const {
 
 protocols::moves::MoverOP
 LoopHashMoverWrapperCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LoopHashMoverWrapper );
+	return utility::pointer::make_shared< LoopHashMoverWrapper >();
 }
 
 void LoopHashMoverWrapperCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -54,13 +54,13 @@ using core::Real;
 
 SasaCalculator2::SasaCalculator2(){
 
-	sasa_calc_ = core::scoring::sasa::SasaCalcOP( new core::scoring::sasa::SasaCalc() );
+	sasa_calc_ = utility::pointer::make_shared< core::scoring::sasa::SasaCalc >();
 }
 
 SasaCalculator2::SasaCalculator2(core::Real probe_r)
 
 {
-	sasa_calc_ = core::scoring::sasa::SasaCalcOP( new core::scoring::sasa::SasaCalc() );
+	sasa_calc_ = utility::pointer::make_shared< core::scoring::sasa::SasaCalc >();
 	sasa_calc_->set_probe_radius(probe_r);
 
 }

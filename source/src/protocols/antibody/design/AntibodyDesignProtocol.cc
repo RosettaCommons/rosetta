@@ -107,12 +107,12 @@ AntibodyDesignProtocol::AntibodyDesignProtocol( AntibodyDesignProtocol const & s
 {
 	using namespace constraints;
 
-	if ( src.ab_info_ ) ab_info_ = AntibodyInfoOP( new AntibodyInfo( *src.ab_info_ ));
+	if ( src.ab_info_ ) ab_info_ = utility::pointer::make_shared< AntibodyInfo >( *src.ab_info_ );
 	if ( src.scorefxn_ ) scorefxn_ = src.scorefxn_->clone();
 	if ( src.scorefxn_min_ ) scorefxn_min_ = src.scorefxn_min_->clone();
 
-	if ( src.graft_designer_ ) graft_designer_ = AntibodyDesignMoverOP( new AntibodyDesignMover( *src.graft_designer_ ));
-	if ( src.cdr_dihedral_cst_mover_ ) cdr_dihedral_cst_mover_ = CDRDihedralConstraintMoverOP( new CDRDihedralConstraintMover( *src.cdr_dihedral_cst_mover_ ));
+	if ( src.graft_designer_ ) graft_designer_ = utility::pointer::make_shared< AntibodyDesignMover >( *src.graft_designer_ );
+	if ( src.cdr_dihedral_cst_mover_ ) cdr_dihedral_cst_mover_ = utility::pointer::make_shared< CDRDihedralConstraintMover >( *src.cdr_dihedral_cst_mover_ );
 
 
 }
@@ -120,7 +120,7 @@ AntibodyDesignProtocol::AntibodyDesignProtocol( AntibodyDesignProtocol const & s
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP AntibodyDesignProtocolCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new AntibodyDesignProtocol );
+// XRW TEMP  return utility::pointer::make_shared< AntibodyDesignProtocol >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -140,7 +140,7 @@ AntibodyDesignProtocol::AntibodyDesignProtocol( AntibodyDesignProtocol const & s
 
 //protocols::moves::MoverOP
 //AntibodyDesignProtocol::clone() const {
-// return protocols::moves::MoverOP( new AntibodyDesignProtocol(*this) );
+// return utility::pointer::make_shared< AntibodyDesignProtocol >(*this);
 //}
 
 
@@ -162,12 +162,12 @@ AntibodyDesignProtocol::read_cmd_line_options(){
 
 protocols::moves::MoverOP
 AntibodyDesignProtocol::clone() const {
-	return protocols::moves::MoverOP( new AntibodyDesignProtocol(*this) );
+	return utility::pointer::make_shared< AntibodyDesignProtocol >(*this);
 }
 
 protocols::moves::MoverOP
 AntibodyDesignProtocol::fresh_instance() const {
-	return protocols::moves::MoverOP( new AntibodyDesignProtocol );
+	return utility::pointer::make_shared< AntibodyDesignProtocol >();
 }
 
 void
@@ -309,7 +309,7 @@ AntibodyDesignProtocol::model_post_design(core::pose::Pose & pose){
 void
 AntibodyDesignProtocol::setup_design_mover() {
 
-	graft_designer_ = AntibodyDesignMoverOP( new AntibodyDesignMover( ab_info_) );
+	graft_designer_ = utility::pointer::make_shared< AntibodyDesignMover >( ab_info_);
 	graft_designer_->set_scorefunction(scorefxn_);
 	graft_designer_->set_scorefunction_min(scorefxn_min_);
 	graft_designer_->set_instruction_file(instruction_file_);
@@ -390,7 +390,7 @@ AntibodyDesignProtocol::apply(core::pose::Pose& pose){
 
 	using namespace protocols::analysis;
 
-	ab_info_ = AntibodyInfoOP( new AntibodyInfo(pose, AHO_Scheme, North) );
+	ab_info_ = utility::pointer::make_shared< AntibodyInfo >(pose, AHO_Scheme, North);
 	ab_info_->show(std::cout);
 
 	if ( remove_antigen_ && ab_info_->antigen_present() ) {
@@ -403,7 +403,7 @@ AntibodyDesignProtocol::apply(core::pose::Pose& pose){
 		}
 
 		//Reinit AbInfo.  Will call reinit function once we actually have that.
-		ab_info_ = AntibodyInfoOP(new AntibodyInfo(pose, AHO_Scheme, North) );
+		ab_info_ = utility::pointer::make_shared< AntibodyInfo >(pose, AHO_Scheme, North);
 
 		TR << "Antigen chains deleted from pose.." << std::endl;
 	}
@@ -438,7 +438,7 @@ AntibodyDesignProtocol::apply(core::pose::Pose& pose){
 	} else {
 		//ab_info_->setup_CDR_clusters(pose);
 		//current_constraint_result = protocols::antibody::add_harmonic_cluster_constraints(ab_info_, pose);
-		final_pose_ensemble.push_back( core::pose::PoseOP( new Pose() ));
+		final_pose_ensemble.push_back( utility::pointer::make_shared< Pose >());
 		*(final_pose_ensemble[1]) = pose;
 	}
 
@@ -594,7 +594,7 @@ std::string AntibodyDesignProtocolCreator::keyname() const {
 
 protocols::moves::MoverOP
 AntibodyDesignProtocolCreator::create_mover() const {
-	return protocols::moves::MoverOP( new AntibodyDesignProtocol );
+	return utility::pointer::make_shared< AntibodyDesignProtocol >();
 }
 
 void AntibodyDesignProtocolCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

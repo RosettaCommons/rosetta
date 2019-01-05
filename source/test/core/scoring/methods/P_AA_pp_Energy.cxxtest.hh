@@ -67,7 +67,7 @@ public:
 		the_pose = create_test_in_pdb_poseop();
 		//core::import_pose::pose_from_file( *the_pose, "core/scoring/methods/test_in.pdb" , core::import_pose::PDB_file);
 
-		paapp_energy = P_AA_pp_EnergyOP( new P_AA_pp_Energy );
+		paapp_energy = utility::pointer::make_shared< P_AA_pp_Energy >();
 
 	}
 

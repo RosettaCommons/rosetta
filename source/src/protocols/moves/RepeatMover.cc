@@ -71,13 +71,13 @@ RepeatMover::get_name() const {
 protocols::moves::MoverOP
 RepeatMover::clone() const
 {
-	return protocols::moves::MoverOP( new RepeatMover(*this) );
+	return utility::pointer::make_shared< RepeatMover >(*this);
 }
 
 protocols::moves::MoverOP
 RepeatMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new RepeatMover() );
+	return utility::pointer::make_shared< RepeatMover >();
 }
 
 core::Size

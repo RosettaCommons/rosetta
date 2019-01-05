@@ -39,20 +39,20 @@ WaterPackingInfo::WaterPackingInfo( WaterPackingInfo const & src ):
 	data_( src.data_ )
 {
 	for ( Size i=1; i<= data_.size(); ++i ) {
-		if ( data_[ i ] ) data_[i] = WaterAnchorInfoOP( new WaterAnchorInfo( *data_[i] ) );
+		if ( data_[ i ] ) data_[i] = utility::pointer::make_shared< WaterAnchorInfo >( *data_[i] );
 	}
 }
 
 basic::datacache::CacheableDataOP
 WaterPackingInfo::clone() const {
-	return basic::datacache::CacheableDataOP( new WaterPackingInfo( *this ) );
+	return utility::pointer::make_shared< WaterPackingInfo >( *this );
 }
 
 WaterAnchorInfo &
 WaterPackingInfo::operator[] ( Size const seqpos ) {
 	if ( seqpos > data_.size() ) data_.resize( seqpos, nullptr );
 	if ( data_[seqpos] == nullptr ) {
-		data_[seqpos] = WaterAnchorInfoOP( new WaterAnchorInfo() );
+		data_[seqpos] = utility::pointer::make_shared< WaterAnchorInfo >();
 	}
 	return *( data_[ seqpos ] );
 }

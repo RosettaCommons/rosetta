@@ -42,11 +42,11 @@ void CyclicMover::apply(core::pose::Pose& pose) {
 }
 
 MoverOP CyclicMover::clone() const {
-	return MoverOP( new CyclicMover(*this) );
+	return utility::pointer::make_shared< CyclicMover >(*this);
 }
 
 MoverOP CyclicMover::fresh_instance() const {
-	return MoverOP( new CyclicMover() );
+	return utility::pointer::make_shared< CyclicMover >();
 }
 
 std::string CyclicMover::get_name() const {

@@ -105,7 +105,7 @@ AntibodyModeler::~AntibodyModeler() = default;
 
 //clone
 protocols::moves::MoverOP AntibodyModeler::clone() const {
-	return( protocols::moves::MoverOP( new AntibodyModeler() ) );
+	return( utility::pointer::make_shared< AntibodyModeler >() );
 }
 
 void AntibodyModeler::set_default() {
@@ -268,7 +268,7 @@ void AntibodyModeler::apply( pose::Pose & pose_in ) {
 	graft_move->enable_graft_h3( graft_h3_ );
 	graft_move->enable_benchmark_mode( benchmark_ );
 	graft_move->set_camelid( camelid_ );
-	graft_move->set_native_pose( core::pose::PoseCOP( core::pose::PoseOP( new pose::Pose ( native_pose_ ) ) ) );
+	graft_move->set_native_pose( core::pose::PoseCOP( utility::pointer::make_shared< pose::Pose > ( native_pose_ ) ) );
 	model_antibody->add_mover( graft_move );
 
 	if ( model_h3_ ) {
@@ -277,7 +277,7 @@ void AntibodyModeler::apply( pose::Pose & pose_in ) {
 		model_cdrh3->set_camelid( camelid_ );
 		model_cdrh3->model_h3( model_h3_ );
 		model_cdrh3->store_H3_cter_fragment( H3_base_library_ );
-		model_cdrh3->set_native_pose( core::pose::PoseCOP( core::pose::PoseOP( new pose::Pose ( native_pose_ ) ) ) );
+		model_cdrh3->set_native_pose( core::pose::PoseCOP( utility::pointer::make_shared< pose::Pose > ( native_pose_ ) ) );
 		model_cdrh3->set_centroid_loop_building( true );
 		model_cdrh3->set_fullatom_loop_building( true );
 		model_antibody->add_mover( model_cdrh3 );
@@ -352,7 +352,7 @@ void AntibodyModeler::apply( pose::Pose & pose_in ) {
 
 	//using pose::datacache::CacheableDataType::SCORE_MAP;
 	using namespace basic::datacache;
-	pose_in.data().set( core::pose::datacache::CacheableDataType::SCORE_MAP, DataCache_CacheableData::DataOP( new basic::datacache::DiagnosticData(score_map_) ));
+	pose_in.data().set( core::pose::datacache::CacheableDataType::SCORE_MAP, utility::pointer::make_shared< basic::datacache::DiagnosticData >(score_map_));
 }// end apply
 
 std::string
@@ -491,7 +491,7 @@ AntibodyModeler::relax_cdrs() {
 
 	//setting MoveMap
 	kinematics::MoveMapOP allcdr_map;
-	allcdr_map = kinematics::MoveMapOP( new kinematics::MoveMap() );
+	allcdr_map = utility::pointer::make_shared< kinematics::MoveMap >();
 	allcdr_map->clear();
 	allcdr_map->set_chi( false );
 	allcdr_map->set_bb( false );
@@ -527,7 +527,7 @@ AntibodyModeler::relax_cdrs() {
 		protocols::minimization_packing::PackRotamersMoverOP repack( new protocols::minimization_packing::PackRotamersMover( scorefxn ) );
 		setup_packer_task( antibody_in_.Fv );
 		( *scorefxn )( antibody_in_.Fv );
-		tf_->push_back( TaskOperationCOP( new RestrictToInterface( is_flexible ) ) );
+		tf_->push_back( utility::pointer::make_shared< RestrictToInterface >( is_flexible ) );
 		repack->task_factory( tf_ );
 		repack->apply( antibody_in_.Fv );
 
@@ -674,7 +674,7 @@ AntibodyModeler::repulsive_ramp(
 
 	//setting MoveMap
 	kinematics::MoveMapOP cdr_dock_map;
-	cdr_dock_map = kinematics::MoveMapOP( new kinematics::MoveMap() );
+	cdr_dock_map = utility::pointer::make_shared< kinematics::MoveMap >();
 	cdr_dock_map->clear();
 	cdr_dock_map->set_chi( false );
 	cdr_dock_map->set_bb( false );
@@ -774,7 +774,7 @@ AntibodyModeler::snugfit_MC_min (
 		loop_residues( i ) = is_flexible[ i ]; // check mapping
 	}
 	using namespace protocols::simple_task_operations;
-	tf_->push_back( TaskOperationCOP( new RestrictToInterface( rb_jump, loop_residues ) ) );
+	tf_->push_back( utility::pointer::make_shared< RestrictToInterface >( rb_jump, loop_residues ) );
 
 	protocols::minimization_packing::RotamerTrialsMoverOP pack_rottrial( new protocols::minimization_packing::RotamerTrialsMover(
 		pack_scorefxn, tf_ ) );
@@ -836,7 +836,7 @@ AntibodyModeler::snugfit_mcm_protocol(
 
 	//setting MoveMap
 	kinematics::MoveMapOP cdr_dock_map;
-	cdr_dock_map = kinematics::MoveMapOP( new kinematics::MoveMap() );
+	cdr_dock_map = utility::pointer::make_shared< kinematics::MoveMap >();
 	cdr_dock_map->clear();
 	cdr_dock_map->set_chi( false );
 	cdr_dock_map->set_bb( false );
@@ -874,7 +874,7 @@ AntibodyModeler::snugfit_mcm_protocol(
 		loop_residues( i ) = is_flexible[ i ]; // check mapping
 	}
 	using namespace protocols::simple_task_operations;
-	tf_->push_back( TaskOperationCOP( new RestrictToInterface( rb_jump, loop_residues ) ) );
+	tf_->push_back( utility::pointer::make_shared< RestrictToInterface >( rb_jump, loop_residues ) );
 
 
 	protocols::minimization_packing::RotamerTrialsMoverOP pack_rottrial( new protocols::minimization_packing::RotamerTrialsMover(
@@ -950,20 +950,20 @@ AntibodyModeler::setup_packer_task(
 	using namespace pack::task::operation;
 
 	if ( init_task_factory_ ) {
-		tf_ = core::pack::task::TaskFactoryOP( new TaskFactory( *init_task_factory_ ) );
+		tf_ = utility::pointer::make_shared< TaskFactory >( *init_task_factory_ );
 		TR << "AbModeler Reinitializing Packer Task" << std::endl;
 		return;
 	} else {
-		tf_ = core::pack::task::TaskFactoryOP( new TaskFactory );
+		tf_ = utility::pointer::make_shared< TaskFactory >();
 	}
 
 	TR << "AbModeler Setting Up Packer Task" << std::endl;
 
-	tf_->push_back( TaskOperationCOP( new OperateOnCertainResidues( ResLvlTaskOperationOP( new PreventRepackingRLT ), ResFilterOP( new ResidueLacksProperty("PROTEIN") ) ) ) );
-	tf_->push_back( TaskOperationCOP( new InitializeFromCommandline ) );
-	tf_->push_back( TaskOperationCOP( new IncludeCurrent ) );
-	tf_->push_back( TaskOperationCOP( new RestrictToRepacking ) );
-	tf_->push_back( TaskOperationCOP( new NoRepackDisulfides ) );
+	tf_->push_back( utility::pointer::make_shared< OperateOnCertainResidues >( utility::pointer::make_shared< PreventRepackingRLT >(), utility::pointer::make_shared< ResidueLacksProperty >("PROTEIN") ) );
+	tf_->push_back( utility::pointer::make_shared< InitializeFromCommandline >() );
+	tf_->push_back( utility::pointer::make_shared< IncludeCurrent >() );
+	tf_->push_back( utility::pointer::make_shared< RestrictToRepacking >() );
+	tf_->push_back( utility::pointer::make_shared< NoRepackDisulfides >() );
 
 	// incorporating Ian's UnboundRotamer operation.
 	// note that nothing happens if unboundrot option is inactive!

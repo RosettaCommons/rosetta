@@ -56,7 +56,7 @@ using namespace utility::tag;
 core::pack::task::operation::TaskOperationOP
 PreventResiduesFromRepackingOperationCreator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new PreventResiduesFromRepackingOperation );
+	return utility::pointer::make_shared< PreventResiduesFromRepackingOperation >();
 }
 
 void PreventResiduesFromRepackingOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -80,7 +80,7 @@ PreventResiduesFromRepackingOperation::~PreventResiduesFromRepackingOperation() 
 
 core::pack::task::operation::TaskOperationOP PreventResiduesFromRepackingOperation::clone() const
 {
-	return core::pack::task::operation::TaskOperationOP( new PreventResiduesFromRepackingOperation( *this ) );
+	return utility::pointer::make_shared< PreventResiduesFromRepackingOperation >( *this );
 }
 
 void

@@ -74,7 +74,7 @@ public:
 
 	/// @brief Cacheable Data base Mehtod - Clone Object
 	basic::datacache::CacheableDataOP clone() const override {
-		return basic::datacache::CacheableDataOP( new Membrane_FAEmbed( *this ) );
+		return utility::pointer::make_shared< Membrane_FAEmbed >( *this );
 	}
 
 	/// @brief Compute FA Proj to Z Axis

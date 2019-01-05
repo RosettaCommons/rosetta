@@ -58,7 +58,7 @@ public: // test functions
 		ResidueTypeSetCOP const & residue_set(
 			ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )
 		);
-		pose_ = PoseOP( new Pose() );
+		pose_ = utility::pointer::make_shared< Pose >();
 		make_pose_from_sequence( *pose_, sequence, *residue_set );
 
 		// Make pose into an ideal helix

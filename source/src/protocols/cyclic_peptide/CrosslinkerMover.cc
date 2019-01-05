@@ -116,28 +116,28 @@ CrosslinkerMover::apply( core::pose::Pose& pose){
 	protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelperOP helper;
 	switch( linker_ ) {
 	case TBMB :
-		helper = protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelperOP( protocols::cyclic_peptide::crosslinker::TBMB_HelperOP( new protocols::cyclic_peptide::crosslinker::TBMB_Helper ) );
+		helper = utility::pointer::make_shared< protocols::cyclic_peptide::crosslinker::TBMB_Helper >();
 		break;
 	case TMA :
-		helper = protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelperOP( protocols::cyclic_peptide::crosslinker::TMA_HelperOP( new protocols::cyclic_peptide::crosslinker::TMA_Helper ) );
+		helper = utility::pointer::make_shared< protocols::cyclic_peptide::crosslinker::TMA_Helper >();
 		break;
 	case tetrahedral_metal :
-		helper = protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelperOP( protocols::cyclic_peptide::crosslinker::TetrahedralMetal_HelperOP( new protocols::cyclic_peptide::crosslinker::TetrahedralMetal_Helper( metal_type() ) ) );
+		helper = utility::pointer::make_shared< protocols::cyclic_peptide::crosslinker::TetrahedralMetal_Helper >( metal_type() );
 		break;
 	case octahedral_metal :
-		helper = protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelperOP( protocols::cyclic_peptide::crosslinker::OctahedralMetal_HelperOP( new protocols::cyclic_peptide::crosslinker::OctahedralMetal_Helper( metal_type() ) ) );
+		helper = utility::pointer::make_shared< protocols::cyclic_peptide::crosslinker::OctahedralMetal_Helper >( metal_type() );
 		break;
 	case trigonal_planar_metal :
-		helper = protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelperOP( protocols::cyclic_peptide::crosslinker::TrigonalPlanarMetal_HelperOP( new protocols::cyclic_peptide::crosslinker::TrigonalPlanarMetal_Helper( metal_type() ) ) );
+		helper = utility::pointer::make_shared< protocols::cyclic_peptide::crosslinker::TrigonalPlanarMetal_Helper >( metal_type() );
 		break;
 	case trigonal_pyramidal_metal :
-		helper = protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelperOP( protocols::cyclic_peptide::crosslinker::TrigonalPyramidalMetal_HelperOP( new protocols::cyclic_peptide::crosslinker::TrigonalPyramidalMetal_Helper( metal_type() ) ) );
+		helper = utility::pointer::make_shared< protocols::cyclic_peptide::crosslinker::TrigonalPyramidalMetal_Helper >( metal_type() );
 		break;
 	case square_planar_metal :
-		helper = protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelperOP( protocols::cyclic_peptide::crosslinker::SquarePlanarMetal_HelperOP( new protocols::cyclic_peptide::crosslinker::SquarePlanarMetal_Helper(metal_type() ) ) );
+		helper = utility::pointer::make_shared< protocols::cyclic_peptide::crosslinker::SquarePlanarMetal_Helper >(metal_type() );
 		break;
 	case square_pyramidal_metal :
-		helper = protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelperOP( protocols::cyclic_peptide::crosslinker::SquarePyramidalMetal_HelperOP( new protocols::cyclic_peptide::crosslinker::SquarePyramidalMetal_Helper(metal_type() ) ) );
+		helper = utility::pointer::make_shared< protocols::cyclic_peptide::crosslinker::SquarePyramidalMetal_Helper >(metal_type() );
 		break;
 	default :
 		utility_exit_with_message( "Error in protocols::cyclic_peptide::CrosslinkerMover::apply(): Invalid crosslinker specified." );
@@ -300,14 +300,14 @@ CrosslinkerMover::provide_xml_schema(
 moves::MoverOP
 CrosslinkerMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new CrosslinkerMover );
+	return utility::pointer::make_shared< CrosslinkerMover >();
 }
 
 /// @brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
 CrosslinkerMover::clone() const
 {
-	return protocols::moves::MoverOP( new CrosslinkerMover( *this ) );
+	return utility::pointer::make_shared< CrosslinkerMover >( *this );
 }
 
 /// @brief Get the name of the Mover
@@ -491,7 +491,7 @@ operator<<( std::ostream & os, CrosslinkerMover const & mover )
 protocols::moves::MoverOP
 CrosslinkerMoverCreator::create_mover() const
 {
-	return protocols::moves::MoverOP( new CrosslinkerMover );
+	return utility::pointer::make_shared< CrosslinkerMover >();
 }
 
 std::string

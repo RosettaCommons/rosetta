@@ -53,7 +53,7 @@ methods::EnergyMethodOP
 RNA_VDW_EnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new RNA_VDW_Energy );
+	return utility::pointer::make_shared< RNA_VDW_Energy >();
 }
 
 ScoreTypes
@@ -66,7 +66,7 @@ RNA_VDW_EnergyCreator::score_types_for_method() const {
 
 
 RNA_VDW_Energy::RNA_VDW_Energy() :
-	parent( methods::EnergyMethodCreatorOP( new RNA_VDW_EnergyCreator ) ),
+	parent( utility::pointer::make_shared< RNA_VDW_EnergyCreator >() ),
 	rna_atom_vdw_( ScoringManager::get_instance()->get_RNA_AtomVDW() ), // need to make the table choice configurable
 	vdw_scale_factor_( 0.8 ) // hack from rosetta++
 {}
@@ -76,7 +76,7 @@ RNA_VDW_Energy::RNA_VDW_Energy() :
 methods::EnergyMethodOP
 RNA_VDW_Energy::clone() const
 {
-	return methods::EnergyMethodOP( new RNA_VDW_Energy );
+	return utility::pointer::make_shared< RNA_VDW_Energy >();
 }
 
 /////////////////////////////////////////////////////////////////////////////

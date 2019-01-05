@@ -138,7 +138,7 @@ core::pack::task::operation::TaskOperationOP
 ConstrainHBondNetworkCreator::create_task_operation() const
 {
 	//return new ConstrainHBondNetwork;
-	return core::pack::task::operation::TaskOperationOP( new ConstrainHBondNetwork );
+	return utility::pointer::make_shared< ConstrainHBondNetwork >();
 }
 
 void

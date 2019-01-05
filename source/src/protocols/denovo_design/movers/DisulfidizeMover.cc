@@ -93,7 +93,7 @@ DisulfidizeMover::DisulfidizeMover() :
 	set2_selector_(),
 	sfxn_()
 {
-	set_rosetta_scripts_tag( utility::tag::TagOP( new utility::tag::Tag() ) );
+	set_rosetta_scripts_tag( utility::pointer::make_shared< utility::tag::Tag >() );
 }
 
 /// @brief Copy constructor
@@ -130,7 +130,7 @@ DisulfidizeMover::~DisulfidizeMover() = default;
 protocols::moves::MoverOP
 DisulfidizeMover::clone() const
 {
-	return protocols::moves::MoverOP( new DisulfidizeMover(*this) );
+	return utility::pointer::make_shared< DisulfidizeMover >(*this);
 }
 
 /// @brief sets the selector for set 1 -- disulfides will connect residues in set 1 to residues in set 2
@@ -585,7 +585,7 @@ DisulfidizeMover::find_possible_disulfides(
 	all_residues.insert( set2.begin(), set2.end() );
 	construct_poly_ala_pose( pose_copy, keep_current_ds_, all_residues ); //Updated to work with D-residues.
 
-	core::scoring::ScoreFunctionOP sfxn_disulfide_only ( new core::scoring::ScoreFunction() );
+	core::scoring::ScoreFunctionOP sfxn_disulfide_only( utility::pointer::make_shared< core::scoring::ScoreFunction >() );
 	sfxn_disulfide_only->set_weight(core::scoring::dslf_fa13, 1.0);
 
 	for ( unsigned long itr : set1 ) {
@@ -661,7 +661,7 @@ DisulfidizeMover::tag_disulfide(
 	core::Size const res2 ) const
 {
 	if ( !pose.pdb_info() ) {
-		pose.pdb_info( core::pose::PDBInfoOP( new core::pose::PDBInfo( pose ) ) );
+		pose.pdb_info( utility::pointer::make_shared< core::pose::PDBInfo >( pose ) );
 	}
 	debug_assert( pose.pdb_info() );
 	pose.pdb_info()->add_reslabel( res1, "DISULFIDIZE" );
@@ -696,7 +696,7 @@ DisulfidizeMover::make_disulfide(
 {
 	if ( TR.Debug.visible() ) TR.Debug << "build_disulf between " << res1 << " and " << res2 << std::endl;
 	// create movemap which allows only chi to move
-	core::kinematics::MoveMapOP mm = core::kinematics::MoveMapOP( new core::kinematics::MoveMap());
+	core::kinematics::MoveMapOP mm = utility::pointer::make_shared< core::kinematics::MoveMap >();
 	mm->set_bb( res1, relax_bb );
 	mm->set_bb( res2, relax_bb );
 	mm->set_chi( res1, true );
@@ -993,7 +993,7 @@ std::string DisulfidizeMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 DisulfidizeMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new DisulfidizeMover );
+	return utility::pointer::make_shared< DisulfidizeMover >();
 }
 
 void DisulfidizeMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

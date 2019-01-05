@@ -92,13 +92,13 @@ RunSimpleMetricsMover::parse_my_tag(
 protocols::moves::MoverOP
 RunSimpleMetricsMover::clone() const
 {
-	return protocols::moves::MoverOP( new RunSimpleMetricsMover( *this ) );
+	return utility::pointer::make_shared< RunSimpleMetricsMover >( *this );
 }
 
 protocols::moves::MoverOP
 RunSimpleMetricsMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new RunSimpleMetricsMover );
+	return utility::pointer::make_shared< RunSimpleMetricsMover >();
 }
 
 // XRW TEMP std::string
@@ -181,7 +181,7 @@ std::string RunSimpleMetricsMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 RunSimpleMetricsMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new RunSimpleMetricsMover );
+	return utility::pointer::make_shared< RunSimpleMetricsMover >();
 }
 
 void RunSimpleMetricsMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

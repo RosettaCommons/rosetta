@@ -60,9 +60,9 @@ using namespace std;
 uniform_RG_OP
 createRG(string const & type )
 {
-	if ( type == "standard" ) return uniform_RG_OP( new standard_RG() );
+	if ( type == "standard" ) return utility::pointer::make_shared< standard_RG >();
 	//if( type == "ran3" ) return new ran3_RG();
-	if ( type == "mt19937" ) return uniform_RG_OP( new mt19937_RG() );
+	if ( type == "mt19937" ) return utility::pointer::make_shared< mt19937_RG >();
 
 	utility_exit_with_message("Unknown random number generator type: " + type);
 	return nullptr;

@@ -52,8 +52,8 @@ public:
 	void setUp() {
 		core_init();
 		//reuse for comparison with Interface class
-		pose = core::pose::PoseOP( new core::pose::Pose() );
-		scfxn = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() );
+		pose = utility::pointer::make_shared< core::pose::Pose >();
+		scfxn = utility::pointer::make_shared< core::scoring::ScoreFunction >();
 		core::import_pose::pose_from_file( *pose, "core/conformation/dock_in.pdb" , core::import_pose::PDB_file);
 
 		//need to score the pose to find the interface in this case
@@ -77,7 +77,7 @@ public:
 		using protocols::task_operations::ProteinInterfaceDesignOperation;
 		using core::pack::task::operation::TaskOperationCOP;
 		TaskFactory PID_factory;
-		PID_factory.push_back( TaskOperationCOP( new ProteinInterfaceDesignOperation() ) );
+		PID_factory.push_back( utility::pointer::make_shared< ProteinInterfaceDesignOperation >() );
 		TR << "Running test_ProteinInterfaceDesignOperation" << std::endl;
 		test::UTracer UT_PID("protocols/task_operations/ProteinInterfaceDesignOperation.u");
 		UT_PID << *(PID_factory.create_task_and_apply_taskoperations( *pose ) ) << std::endl;

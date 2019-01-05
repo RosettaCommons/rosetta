@@ -309,11 +309,11 @@ RTConstraint::remapped_clone( pose::Pose const& src, pose::Pose const& dest, id:
 	id::AtomID id6( core::pose::named_atom_id_to_atom_id( atom6, dest ));
 
 	if ( id1.valid() && id2.valid() && id3.valid() && id4.valid() ) {
-		return ConstraintOP( new RTConstraint( id::StubID( id1, id2, id3 ),
+		return utility::pointer::make_shared< RTConstraint >( id::StubID( id1, id2, id3 ),
 			id::StubID( id4, id5, id6 ),
 			rt_target_,
 			func_ ? func_->clone() : func_,
-			this->score_type() ) );
+			this->score_type() );
 	} else {
 		return nullptr;
 	}

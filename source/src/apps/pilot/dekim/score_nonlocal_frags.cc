@@ -91,11 +91,11 @@ public:
 	std::string get_name() const override { return "NonLocalFragsScoreMover"; }
 
 	MoverOP clone() const override {
-		return MoverOP( new MyScoreMover( *this ) );
+		return utility::pointer::make_shared< MyScoreMover >( *this );
 	}
 
 	MoverOP fresh_instance() const override {
-		return MoverOP( new MyScoreMover );
+		return utility::pointer::make_shared< MyScoreMover >();
 	}
 
 private:
@@ -124,7 +124,7 @@ MyScoreMover::MyScoreMover()
 	}
 
 	if ( option[ OptionKeys::in::file::rdc ].user() ) {
-		rdc_file_ = core::scoring::ResidualDipolarCouplingOP( new core::scoring::ResidualDipolarCoupling );
+		rdc_file_ = utility::pointer::make_shared< core::scoring::ResidualDipolarCoupling >();
 		rdc_raw_data_ = rdc_file_->get_RDC_data();
 		has_rdc_ = true;
 	}

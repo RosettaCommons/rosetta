@@ -49,7 +49,7 @@ static basic::Tracer slide_together_tracer( "protocols.ligand_docking.ligand_opt
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP SlideTogetherCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new SlideTogether );
+// XRW TEMP  return utility::pointer::make_shared< SlideTogether >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -67,11 +67,11 @@ SlideTogether::SlideTogether(SlideTogether const & /*that*/) = default;
 SlideTogether::~SlideTogether() = default;
 
 protocols::moves::MoverOP SlideTogether::clone() const {
-	return protocols::moves::MoverOP( new SlideTogether( *this ) );
+	return utility::pointer::make_shared< SlideTogether >( *this );
 }
 
 protocols::moves::MoverOP SlideTogether::fresh_instance() const {
-	return protocols::moves::MoverOP( new SlideTogether );
+	return utility::pointer::make_shared< SlideTogether >();
 }
 
 // XRW TEMP std::string SlideTogether::get_name() const{
@@ -144,7 +144,7 @@ std::string SlideTogetherCreator::keyname() const {
 
 protocols::moves::MoverOP
 SlideTogetherCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SlideTogether );
+	return utility::pointer::make_shared< SlideTogether >();
 }
 
 void SlideTogetherCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

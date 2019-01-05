@@ -271,7 +271,7 @@ int main( int argc, char * argv [] ) {
 			if ( option[ darc_score_only ]() ) {
 				utility::vector1< core::pose::PoseOP > rot_poses(small_mol_pose.size());
 				for ( Size ii = 1; ii <= small_mol_pose.size(); ++ii ) {
-					rot_poses[ii] = core::pose::PoseOP( new core::pose::Pose(small_mol_pose, ii, ii) );
+					rot_poses[ii] = utility::pointer::make_shared< core::pose::Pose >(small_mol_pose, ii, ii);
 					//change CoM_ to ligand_CoM for calculating darc_score_only ( without pso optimization)
 					pose::Pose tmppose = *rot_poses[ii];
 					core::Size lig_res_num = 0;
@@ -386,7 +386,7 @@ int main( int argc, char * argv [] ) {
 				start = std::clock();
 
 				for ( Size ii = 1; ii <= small_mol_pose.size(); ++ii ) {
-					rot_poses[ii] = core::pose::PoseOP( new core::pose::Pose(small_mol_pose, ii, ii) );
+					rot_poses[ii] = utility::pointer::make_shared< core::pose::Pose >(small_mol_pose, ii, ii);
 					protocols::pockets::PlaidFingerprint conf_pf( *rot_poses[ii], npf );
 #ifdef USEOPENCL
 				npf.gpu_setup_atomcoords(conf_pf, particle_size);
@@ -467,9 +467,9 @@ int main( int argc, char * argv [] ) {
 					Residue const & nat_i_rsd( bound_pose.residue(i) );
 					for ( Size ii = 1; ii<= nat_i_rsd.nheavyatoms(); ++ii ) {
 						AtomID CAi ( ii, i );
-						cst_set->add_constraint
-							(  ConstraintCOP( ConstraintOP( new CoordinateConstraint
-							( CAi, AtomID(1,my_anchor), conformation.xyz( CAi ), spring ) ) )
+						cst_set->add_constraint(
+							utility::pointer::make_shared< CoordinateConstraint >(
+							CAi, AtomID(1,my_anchor), conformation.xyz( CAi ), spring )
 						);
 					}
 				}

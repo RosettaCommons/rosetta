@@ -52,7 +52,7 @@ using namespace utility::tag;
 TaskOperationOP
 BuildingBlockInterfaceOperationCreator::create_task_operation() const
 {
-	return TaskOperationOP( new BuildingBlockInterfaceOperation );
+	return utility::pointer::make_shared< BuildingBlockInterfaceOperation >();
 }
 
 void BuildingBlockInterfaceOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -80,7 +80,7 @@ BuildingBlockInterfaceOperation::~BuildingBlockInterfaceOperation() = default;
 
 core::pack::task::operation::TaskOperationOP BuildingBlockInterfaceOperation::clone() const
 {
-	return core::pack::task::operation::TaskOperationOP( new BuildingBlockInterfaceOperation( *this ) );
+	return utility::pointer::make_shared< BuildingBlockInterfaceOperation >( *this );
 }
 
 void

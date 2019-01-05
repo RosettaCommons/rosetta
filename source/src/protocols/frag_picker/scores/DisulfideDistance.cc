@@ -216,8 +216,8 @@ FragmentScoringMethodOP MakeDisulfideDistance::make(core::Size priority,
 		runtime_assert( largest_fragment > 0 );
 
 		//disulfide_data_ = disulfide_data;
-		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new DisulfideDistance(priority, lowest_acceptable_value, use_lowest,
-			disulfide_data, largest_fragment) );
+		return (FragmentScoringMethodOP) utility::pointer::make_shared< DisulfideDistance >(priority, lowest_acceptable_value, use_lowest,
+			disulfide_data, largest_fragment);
 	}
 
 	utility_exit_with_message(

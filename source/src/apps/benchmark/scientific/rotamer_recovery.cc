@@ -107,11 +107,11 @@ main( int argc, char * argv [] )
 		string const & comparer( option[ rotamer_recovery::comparer ].value() );
 		ScoreFunctionOP scfxn( get_score_function() );
 		TaskFactoryOP task_factory( new TaskFactory );
-		task_factory->push_back( TaskOperationCOP( new InitializeFromCommandline ) );
+		task_factory->push_back( utility::pointer::make_shared< InitializeFromCommandline >() );
 		if ( option.has(OptionKeys::packing::resfile) && option[OptionKeys::packing::resfile].user() ) {
-			task_factory->push_back( TaskOperationCOP( new ReadResfile ) );
+			task_factory->push_back( utility::pointer::make_shared< ReadResfile >() );
 		}
-		task_factory->push_back( TaskOperationCOP( new RestrictToRepacking ) );
+		task_factory->push_back( utility::pointer::make_shared< RestrictToRepacking >() );
 
 		RotamerRecoveryOP rotamer_recovery(
 			RotamerRecoveryFactory::get_instance()->get_rotamer_recovery(

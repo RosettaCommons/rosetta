@@ -114,7 +114,7 @@ screen_phosphates()
 	// read starting pose(s) from disk
 	utility::vector1< std::string > const & input_files = option[ in::file::s ]();
 	utility::vector1< pose::PoseOP > input_poses;
-	if ( input_files.size() == 0 ) input_poses.push_back( core::pose::PoseOP( new Pose ) ); // just a blank pose for now.
+	if ( input_files.size() == 0 ) input_poses.push_back( utility::pointer::make_shared< Pose >() ); // just a blank pose for now.
 	for ( Size n = 1; n <= input_files.size(); n++ )  input_poses.push_back( get_pdb_and_cleanup( input_files[ n ], rsd_set ) );
 	if ( option[ full_model::other_poses ].user() ) get_other_poses( input_poses, option[ full_model::other_poses ](), rsd_set );
 

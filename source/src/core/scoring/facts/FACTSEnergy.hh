@@ -54,7 +54,7 @@ public:
 	virtual
 	EnergyMethodOP
 	clone() const {
-		return EnergyMethodOP( new FACTSEnergy(*this) );
+		return utility::pointer::make_shared< FACTSEnergy >(*this);
 	}
 
 	virtual

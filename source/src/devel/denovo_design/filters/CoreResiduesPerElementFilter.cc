@@ -61,7 +61,7 @@ namespace filters {
 
 // XRW TEMP protocols::filters::FilterOP
 // XRW TEMP CoreResiduesPerElementFilterCreator::create_filter() const {
-// XRW TEMP  return protocols::filters::FilterOP( new CoreResiduesPerElementFilter() );
+// XRW TEMP  return utility::pointer::make_shared< CoreResiduesPerElementFilter >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -89,13 +89,13 @@ CoreResiduesPerElementFilter::~CoreResiduesPerElementFilter() = default;
 protocols::filters::FilterOP
 CoreResiduesPerElementFilter::clone() const
 {
-	return protocols::filters::FilterOP( new CoreResiduesPerElementFilter(*this) );
+	return utility::pointer::make_shared< CoreResiduesPerElementFilter >(*this);
 }
 
 protocols::filters::FilterOP
 CoreResiduesPerElementFilter::fresh_instance() const
 {
-	return protocols::filters::FilterOP( new CoreResiduesPerElementFilter() );
+	return utility::pointer::make_shared< CoreResiduesPerElementFilter >();
 }
 
 void
@@ -297,7 +297,7 @@ std::string CoreResiduesPerElementFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 CoreResiduesPerElementFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new CoreResiduesPerElementFilter );
+	return utility::pointer::make_shared< CoreResiduesPerElementFilter >();
 }
 
 void CoreResiduesPerElementFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

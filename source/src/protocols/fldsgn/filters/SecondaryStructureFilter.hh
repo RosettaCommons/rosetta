@@ -72,10 +72,10 @@ public:// virtual constructor
 
 
 	// @brief make clone
-	FilterOP clone() const override { return FilterOP( new SecondaryStructureFilter( *this ) ); }
+	FilterOP clone() const override { return utility::pointer::make_shared< SecondaryStructureFilter >( *this ); }
 
 	// @brief make fresh instance
-	FilterOP fresh_instance() const override { return FilterOP( new SecondaryStructureFilter() ); }
+	FilterOP fresh_instance() const override { return utility::pointer::make_shared< SecondaryStructureFilter >(); }
 
 
 public:// mutator

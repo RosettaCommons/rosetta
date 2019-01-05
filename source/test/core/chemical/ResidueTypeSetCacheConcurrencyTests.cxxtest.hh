@@ -89,7 +89,7 @@ public:
 		core_init();
 #ifdef MULTI_THREADED
 		// only bother loading the RTS if we're actually going to use it
-		rts_ = DummyGRTSOP( new DummyGRTS( "fa_standard", basic::database::full_name( "chemical/residue_type_sets/fa_standard/" ) ));
+		rts_ = utility::pointer::make_shared< DummyGRTS >( "fa_standard", basic::database::full_name( "chemical/residue_type_sets/fa_standard/" ) );
 
 #endif
 

@@ -411,7 +411,7 @@ public:
 		frlx.apply(pose);
 
 		/*core::pack::task::TaskFactoryOP taskfact( new core::pack::task::TaskFactory );
-		taskfact->push_back( core::pack::task::operation::TaskOperationOP( new core::pack::task::operation::RestrictToRepacking ) );
+		taskfact->push_back( utility::pointer::make_shared< core::pack::task::operation::RestrictToRepacking >() );
 		protocols::simple_moves::PackRotamersMover pack(sfxn, taskfact->create_task_and_apply_taskoperations(pose));
 		pack.apply(pose);*/
 

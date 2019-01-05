@@ -28,7 +28,7 @@ namespace features {
 // XRW TEMP ScoreFunctionFeaturesCreator::ScoreFunctionFeaturesCreator() {}
 // XRW TEMP ScoreFunctionFeaturesCreator::~ScoreFunctionFeaturesCreator() = default;
 // XRW TEMP FeaturesReporterOP ScoreFunctionFeaturesCreator::create_features_reporter() const {
-// XRW TEMP  return FeaturesReporterOP( new ScoreFunctionFeatures );
+// XRW TEMP  return utility::pointer::make_shared< ScoreFunctionFeatures >();
 // XRW TEMP }
 
 // XRW TEMP std::string ScoreFunctionFeaturesCreator::type_name() const {

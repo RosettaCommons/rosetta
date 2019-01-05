@@ -58,7 +58,7 @@ RNA_KIC_Sampler::RNA_KIC_Sampler(
 	pucker_state_( ANY_PUCKER ), // ANY_PUCKER, NORTH, SOUTH, NO_PUCKER
 	base_state_( ANY_CHI ), // ANY_CHI, ANTI, SYN, NO_CHI
 	sample_nucleoside_( moving_suite + 1 ), // default, may be replaced.
-	screener_( screener::RNA_TorsionScreenerOP( new RNA_TorsionScreener ) ),
+	screener_( utility::pointer::make_shared< RNA_TorsionScreener >() ),
 	is_TNA_( is_TNA )
 {
 	StepWiseSampler::set_random( false );
@@ -71,7 +71,7 @@ void RNA_KIC_Sampler::init() {
 	using namespace core::id;
 
 	////////// Backbone StepWiseSampler //////////
-	bb_rotamer_ = StepWiseSamplerSizedCombOP( new StepWiseSamplerSizedComb );
+	bb_rotamer_ = utility::pointer::make_shared< StepWiseSamplerSizedComb >();
 
 	RNA_FittedTorsionInfo const torsion_info;
 
@@ -125,14 +125,14 @@ void RNA_KIC_Sampler::init() {
 	bb_rotamer_->init();
 
 	////////// Loop Closer //////////
-	loop_closer_ = RNA_KinematicCloserOP( new RNA_KinematicCloser(
-		*ref_pose_, moving_suite_, chainbreak_suite_, is_TNA_ ) );
+	loop_closer_ = utility::pointer::make_shared< RNA_KinematicCloser >(
+		*ref_pose_, moving_suite_, chainbreak_suite_, is_TNA_ );
 	loop_closer_->set_verbose( verbose_ );
 
 	////////// Chi StepWiseSampler //////////
 	if ( base_state_ != NO_CHI ) {
-		chi_rotamer_ = RNA_ChiStepWiseSamplerOP( new RNA_ChiStepWiseSampler(
-			sample_nucleoside_, NORTH/*arbitary*/, base_state_ ) );
+		chi_rotamer_ = utility::pointer::make_shared< RNA_ChiStepWiseSampler >(
+			sample_nucleoside_, NORTH/*arbitary*/, base_state_ );
 		chi_rotamer_->set_extra_chi( extra_chi_ );
 		chi_rotamer_->set_sample_all_chi( sample_all_chi_ );
 		chi_rotamer_->set_bin_size( bin_size_ );

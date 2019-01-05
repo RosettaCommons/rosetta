@@ -95,7 +95,7 @@ DihedralDistanceMetric::DihedralDistanceMetric( DihedralDistanceMetric const & s
 
 core::simple_metrics::SimpleMetricOP
 DihedralDistanceMetric::clone() const {
-	return core::simple_metrics::SimpleMetricOP(new DihedralDistanceMetric( *this ) );
+	return utility::pointer::make_shared< DihedralDistanceMetric >( *this );
 
 }
 
@@ -287,7 +287,7 @@ DihedralDistanceMetricCreator::keyname() const {
 
 core::simple_metrics::SimpleMetricOP
 DihedralDistanceMetricCreator::create_simple_metric() const {
-	return core::simple_metrics::SimpleMetricOP( new DihedralDistanceMetric );
+	return utility::pointer::make_shared< DihedralDistanceMetric >();
 
 }
 

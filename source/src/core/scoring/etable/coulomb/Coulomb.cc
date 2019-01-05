@@ -61,7 +61,7 @@ Coulomb::Coulomb( Coulomb const & src ): ReferenceCount(),
 CoulombOP
 Coulomb::clone() const
 {
-	CoulombOP coulomb_ptr = CoulombOP( new Coulomb( *this ) );
+	CoulombOP coulomb_ptr = utility::pointer::make_shared< Coulomb >( *this );
 	return coulomb_ptr;
 }
 

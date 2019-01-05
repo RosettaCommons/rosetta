@@ -46,7 +46,7 @@ using namespace core::select::residue_selector;
 PerResidueRealMetric::PerResidueRealMetric():
 	SimpleMetric("PerResidueRealMetric")
 {
-	selector_ = TrueResidueSelectorOP( new TrueResidueSelector());
+	selector_ = utility::pointer::make_shared< TrueResidueSelector >();
 }
 
 

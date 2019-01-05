@@ -61,7 +61,7 @@ using namespace utility::tag;
 core::pack::task::operation::TaskOperationOP
 SelectByDeltaScoreOperationCreator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new SelectByDeltaScoreOperation );
+	return utility::pointer::make_shared< SelectByDeltaScoreOperation >();
 }
 
 void SelectByDeltaScoreOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -88,7 +88,7 @@ SelectByDeltaScoreOperation::~SelectByDeltaScoreOperation()= default;
 /// @brief make clone
 core::pack::task::operation::TaskOperationOP
 SelectByDeltaScoreOperation::clone() const{
-	return core::pack::task::operation::TaskOperationOP( new SelectByDeltaScoreOperation( *this ) );
+	return utility::pointer::make_shared< SelectByDeltaScoreOperation >( *this );
 }
 
 core::scoring::ScoreFunctionOP SelectByDeltaScoreOperation::scorefxn() const{ return scorefxn_; }

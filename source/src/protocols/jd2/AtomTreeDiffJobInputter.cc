@@ -179,7 +179,7 @@ AtomTreeDiffJobInputterCreator::keyname() const
 
 protocols::jd2::JobInputterOP
 AtomTreeDiffJobInputterCreator::create_JobInputter() const {
-	return protocols::jd2::JobInputterOP( new AtomTreeDiffJobInputter );
+	return utility::pointer::make_shared< AtomTreeDiffJobInputter >();
 }
 
 } // jd2

@@ -40,7 +40,7 @@ namespace residue_selectors {
 core::select::residue_selector::ResidueSelectorOP
 TaskSelectorCreator::create_residue_selector() const
 {
-	return core::select::residue_selector::ResidueSelectorOP( new TaskSelector );
+	return utility::pointer::make_shared< TaskSelector >();
 }
 
 std::string
@@ -79,7 +79,7 @@ TaskSelector::TaskSelector(
 core::select::residue_selector::ResidueSelectorOP
 TaskSelector::clone() const
 {
-	return core::select::residue_selector::ResidueSelectorOP( new TaskSelector(*this) );
+	return utility::pointer::make_shared< TaskSelector >(*this);
 }
 
 TaskSelector::~TaskSelector() = default;

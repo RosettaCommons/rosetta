@@ -247,7 +247,7 @@ void CreateStartingStructureMover::apply( core::pose::Pose & pose ){
 			shear_mover->angle_max( 'L', 10.0 );
 
 
-			protocols::simple_moves::SmoothFragmentMoverOP smooth_frag_mover( new protocols::simple_moves::SmoothFragmentMover( fragset3mer, movemap, protocols::simple_moves::FragmentCostOP( new protocols::simple_moves::GunnCost ) ) );
+			protocols::simple_moves::SmoothFragmentMoverOP smooth_frag_mover( new protocols::simple_moves::SmoothFragmentMover( fragset3mer, movemap, utility::pointer::make_shared< protocols::simple_moves::GunnCost >() ) );
 
 
 			protocols::moves::RandomMoverOP Moveset( new protocols::moves::RandomMover() );
@@ -267,7 +267,7 @@ void CreateStartingStructureMover::apply( core::pose::Pose & pose ){
 
 			protocols::abinitio::ClassicAbinitio::register_options();
 			protocols::abinitio::ClassicAbinitioOP prot_ptr;
-			prot_ptr = protocols::abinitio::ClassicAbinitioOP( new protocols::abinitio::ClassicAbinitio( fragset3mer, fragset9mer, movemap ) );
+			prot_ptr = utility::pointer::make_shared< protocols::abinitio::ClassicAbinitio >( fragset3mer, fragset9mer, movemap );
 			protocols::abinitio::ClassicAbinitio& abinitio_protocol( *prot_ptr );
 
 			abinitio_protocol.init( nucleated_pose );

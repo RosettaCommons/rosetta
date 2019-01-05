@@ -77,7 +77,7 @@ BundleGridSamplerHelper::~BundleGridSamplerHelper() = default;
 BundleGridSamplerHelperOP
 BundleGridSamplerHelper::clone() const
 {
-	return BundleGridSamplerHelperOP( new BundleGridSamplerHelper( *this ) );
+	return utility::pointer::make_shared< BundleGridSamplerHelper >( *this );
 }
 
 /// @brief Reset this BundleGridSamplerHelper object.

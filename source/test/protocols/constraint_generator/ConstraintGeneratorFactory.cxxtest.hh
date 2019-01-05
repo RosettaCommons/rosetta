@@ -41,7 +41,7 @@ public:
 	DummyConstraintGenerator():
 		ConstraintGenerator( "DummyConstraintGenerator" ) {}
 
-	ConstraintGeneratorOP clone() const { return ConstraintGeneratorOP( new DummyConstraintGenerator(*this) ); }
+	ConstraintGeneratorOP clone() const { return utility::pointer::make_shared< DummyConstraintGenerator >(*this); }
 
 	virtual core::scoring::constraints::ConstraintCOPs
 	apply( core::pose::Pose const & ) const
@@ -63,7 +63,7 @@ class DummyConstraintGeneratorCreator : public ConstraintGeneratorCreator {
 public:
 	virtual ConstraintGeneratorOP
 	create_constraint_generator() const {
-		return ConstraintGeneratorOP( new DummyConstraintGenerator );
+		return utility::pointer::make_shared< DummyConstraintGenerator >();
 	}
 
 	virtual
@@ -88,7 +88,7 @@ public:
 		std::stringstream tag_ss( "<DummyConstraintGenerator name=dummy_unit1 />" );
 		utility::tag::TagCOP tag( utility::tag::Tag::create( tag_ss ) );
 		ConstraintGeneratorFactory * factory = ConstraintGeneratorFactory::get_instance();
-		factory->factory_register( ConstraintGeneratorCreatorOP( new DummyConstraintGeneratorCreator ) );
+		factory->factory_register( utility::pointer::make_shared< DummyConstraintGeneratorCreator >() );
 		basic::datacache::DataMap dm;
 		ConstraintGeneratorOP generator = factory->new_constraint_generator( "DummyConstraintGenerator", tag, dm );
 		TS_ASSERT( generator.get() ); // make sure we got back a non-null pointer
@@ -105,7 +105,7 @@ public:
 	void test_register_one_creator_twice_with_ConstraintGeneratorFactory() {
 		set_throw_on_next_assertion_failure();
 		TS_ASSERT_THROWS_ANYTHING(
-			ConstraintGeneratorFactory::get_instance()->factory_register( ConstraintGeneratorCreatorOP( new DummyConstraintGeneratorCreator )   )
+			ConstraintGeneratorFactory::get_instance()->factory_register( utility::pointer::make_shared< DummyConstraintGeneratorCreator >()   )
 		);
 	}
 

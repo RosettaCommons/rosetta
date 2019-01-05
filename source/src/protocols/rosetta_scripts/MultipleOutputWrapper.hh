@@ -48,11 +48,11 @@ public:
 	~MultipleOutputWrapper() override = default;
 
 	protocols::moves::MoverOP clone() const override {
-		return protocols::moves::MoverOP( new MultipleOutputWrapper(*this) );
+		return utility::pointer::make_shared< MultipleOutputWrapper >(*this);
 	}
 
 	protocols::moves::MoverOP fresh_instance() const override {
-		return protocols::moves::MoverOP( new MultipleOutputWrapper() );
+		return utility::pointer::make_shared< MultipleOutputWrapper >();
 	}
 
 	void apply(core::pose::Pose& pose) override;

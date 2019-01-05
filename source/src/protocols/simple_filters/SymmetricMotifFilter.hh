@@ -71,7 +71,7 @@ public:
 	void process_motifs();
 
 	protocols::filters::FilterOP clone() const override;
-	protocols::filters::FilterOP fresh_instance() const override { return protocols::filters::FilterOP( new SymmetricMotifFilter() ); }
+	protocols::filters::FilterOP fresh_instance() const override { return utility::pointer::make_shared< SymmetricMotifFilter >(); }
 
 	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
 

@@ -92,7 +92,7 @@ void RefineBetaBarrel::finalize_setup(pose::Pose & pose ) {
 	( *dock_scorefxn_ )( pose );
 
 	// ************ MoveMap *************
-	cdr_dock_map_ = kinematics::MoveMapOP( new kinematics::MoveMap() );
+	cdr_dock_map_ = utility::pointer::make_shared< kinematics::MoveMap >();
 	*cdr_dock_map_=ab_info_->get_MoveMap_for_LoopsandDock(pose, *ab_info_->get_AllCDRs_in_loopsop(), false, true, 10.0);
 
 
@@ -112,7 +112,7 @@ void RefineBetaBarrel::finalize_setup(pose::Pose & pose ) {
 	using namespace protocols::simple_task_operations;
 	if ( !tf_ ) {
 		tf_= setup_packer_task(pose);
-		tf_->push_back( TaskOperationCOP( new RestrictToInterface( LH_dock_jump_, loop_residues ) ) );
+		tf_->push_back( utility::pointer::make_shared< RestrictToInterface >( LH_dock_jump_, loop_residues ) );
 	}
 
 	core::pack::task::PackerTaskOP my_task2(tf_->create_task_and_apply_taskoperations(pose));
@@ -160,7 +160,7 @@ void RefineBetaBarrel::apply( pose::Pose & pose ) {
 	// it will be moved to DockingProtocol soon
 	// one must specify fold_tree and variants before using this mover
 	if ( repulsive_ramp_ ) {
-		lh_repulsive_ramp_ = LHRepulsiveRampOP( new LHRepulsiveRamp(LH_dock_jump_, dock_scorefxn_, pack_scorefxn_) );
+		lh_repulsive_ramp_ = utility::pointer::make_shared< LHRepulsiveRamp >(LH_dock_jump_, dock_scorefxn_, pack_scorefxn_);
 		lh_repulsive_ramp_ -> set_move_map(cdr_dock_map_);
 		lh_repulsive_ramp_ -> set_task_factory(tf_);
 		if ( sc_min_ ) lh_repulsive_ramp_ -> set_sc_min(true);
@@ -170,7 +170,7 @@ void RefineBetaBarrel::apply( pose::Pose & pose ) {
 	}
 
 
-	dock_mcm_protocol_ = docking::DockMCMProtocolOP( new docking::DockMCMProtocol( LH_dock_jump_, dock_scorefxn_, pack_scorefxn_ ) );
+	dock_mcm_protocol_ = utility::pointer::make_shared< docking::DockMCMProtocol >( LH_dock_jump_, dock_scorefxn_, pack_scorefxn_ );
 	dock_mcm_protocol_ -> set_task_factory(tf_);
 	dock_mcm_protocol_ -> set_move_map(cdr_dock_map_);
 	if ( sc_min_ ) dock_mcm_protocol_ -> set_sc_min(true);
@@ -187,7 +187,7 @@ std::string RefineBetaBarrel::get_name() const {
 }
 
 void RefineBetaBarrel::set_task_factory(core::pack::task::TaskFactoryCOP tf) {
-	tf_ = pack::task::TaskFactoryOP( new pack::task::TaskFactory(*tf) );
+	tf_ = utility::pointer::make_shared< pack::task::TaskFactory >(*tf);
 }
 
 void RefineBetaBarrel::set_dock_score_func(core::scoring::ScoreFunctionCOP dock_scorefxn ) {

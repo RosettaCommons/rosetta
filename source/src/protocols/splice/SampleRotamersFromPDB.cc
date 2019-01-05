@@ -124,7 +124,7 @@ is_identical_rotamer( ROT const existing_res,ROT const new_res )
 	return match;
 }
 core::pack::rotamer_set::RotamerSetOperationOP SampleRotamersFromPDB_RotamerSetOperation::clone() const {
-	return core::pack::rotamer_set::RotamerSetOperationOP(new SampleRotamersFromPDB_RotamerSetOperation(*this));
+	return utility::pointer::make_shared< SampleRotamersFromPDB_RotamerSetOperation >(*this);
 }
 
 
@@ -512,7 +512,7 @@ core::conformation::ResidueOP SampleRotamersFromPDB_RotamerSetOperation::ROT2res
 }
 ///////////////////////////////////////////////////////////////////////////////////////////
 core::pack::task::operation::TaskOperationOP SampleRotamersFromPDBCreator::create_task_operation() const {
-	return core::pack::task::operation::TaskOperationOP(new SampleRotamersFromPDB);
+	return utility::pointer::make_shared< SampleRotamersFromPDB >();
 }
 
 /// @brief default constructor
@@ -527,7 +527,7 @@ SampleRotamersFromPDB::~SampleRotamersFromPDB() {
 
 /// @brief clone
 core::pack::task::operation::TaskOperationOP SampleRotamersFromPDB::clone() const {
-	return core::pack::task::operation::TaskOperationOP(new SampleRotamersFromPDB(*this));
+	return utility::pointer::make_shared< SampleRotamersFromPDB >(*this);
 }
 
 void SampleRotamersFromPDBCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

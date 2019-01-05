@@ -91,7 +91,7 @@ RNA_AtrRepChecker::~RNA_AtrRepChecker() = default;
 void
 RNA_AtrRepChecker::initialize_scorefxn( scoring::methods::EnergyMethodOptionsCOP energy_method_options /* = 0 */ ){
 	// Bare minimum to check for contact (fa_atr) but not clash (fa_rep)
-	atr_rep_screening_scorefxn_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction );
+	atr_rep_screening_scorefxn_ = utility::pointer::make_shared< core::scoring::ScoreFunction >();
 	if ( energy_method_options != nullptr ) atr_rep_screening_scorefxn_->set_energy_method_options( *energy_method_options );
 	atr_rep_screening_scorefxn_->set_weight( core::scoring::fa_atr , 0.23 );
 	atr_rep_screening_scorefxn_->set_weight( core::scoring::fa_rep , 0.12 );

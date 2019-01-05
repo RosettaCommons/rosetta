@@ -57,7 +57,7 @@ SegmentSequenceProfileMover::pssm_output_order = {
 
 moves::MoverOP
 SegmentSequenceProfileMover::clone() const {
-	return moves::MoverOP( new SegmentSequenceProfileMover( *this ) );
+	return utility::pointer::make_shared< SegmentSequenceProfileMover >( *this );
 }
 
 void
@@ -241,7 +241,7 @@ SegmentSequenceProfileMover::init_structure_store() {
 	if ( !structure_store_ ) {
 		runtime_assert(!structure_database_);
 		structure_store_ = StructureStoreManager::get_instance()->load_structure_store(structure_store_path());
-		structure_database_ = search::StructureDatabaseOP(new search::StructureDatabase());
+		structure_database_ = utility::pointer::make_shared< search::StructureDatabase >();
 		structure_database_->initialize(structure_store_->residue_entries);
 	}
 }
@@ -307,7 +307,7 @@ SegmentSequenceProfileMover::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 
 protocols::moves::MoverOP
 SegmentSequenceProfileMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP(new SegmentSequenceProfileMover());
+	return utility::pointer::make_shared< SegmentSequenceProfileMover >();
 }
 
 std::string

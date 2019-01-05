@@ -62,14 +62,14 @@ public:
 		ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 		pose = initialize_pose_and_other_poses_from_command_line( rsd_set );
 
-		submotif_library = SubMotifLibraryOP( new SubMotifLibrary( rsd_set ) );
+		submotif_library = utility::pointer::make_shared< SubMotifLibrary >( rsd_set );
 
 		StepWiseMoveSelectorOptionsOP options( new StepWiseMoveSelectorOptions );
 		options->set_submotif_frequency( 0.2 );
 		options->set_from_scratch_frequency( 0.1 );
 		options->set_docking_frequency( 0.0 );
 
-		stepwise_move_selector = StepWiseMoveSelectorOP( new StepWiseMoveSelector( options ) );
+		stepwise_move_selector = utility::pointer::make_shared< StepWiseMoveSelector >( options );
 		stepwise_move_selector->set_submotif_library( submotif_library );
 	}
 

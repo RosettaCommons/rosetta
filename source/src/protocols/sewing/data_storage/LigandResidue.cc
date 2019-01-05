@@ -36,7 +36,7 @@ LigandResidue::LigandResidue(LigandResidue const & src):
 	current_contacts_.clear();
 	//current_contacts_ = src.get_current_contacts();
 	for ( LigandContactOP contact: src.get_current_contacts() ) {
-		current_contacts_.push_back( LigandContactOP( new LigandContact( contact->segment_id, contact->residue_number, contact->residue_atom, contact->ligand_atom ) ) );
+		current_contacts_.push_back( utility::pointer::make_shared< LigandContact >( contact->segment_id, contact->residue_number, contact->residue_atom, contact->ligand_atom ) );
 	}
 	owner_segment_ = src.get_owner_segment();
 	ligand_id_ = src.get_ligand_id();
@@ -50,7 +50,7 @@ LigandResidue::~LigandResidue()
 
 LigandResidueOP
 LigandResidue::clone() const{
-	return LigandResidueOP( new LigandResidue( *this ) );
+	return utility::pointer::make_shared< LigandResidue >( *this );
 }
 
 //Getters

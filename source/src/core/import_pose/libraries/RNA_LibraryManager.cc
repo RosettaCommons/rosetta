@@ -34,7 +34,7 @@ namespace libraries {
 RNA_Fragments const &
 RNA_LibraryManager::rna_fragment_library( std::string const & tag ) {
 	if ( rna_fragment_libraries_.find( tag ) == rna_fragment_libraries_.end() ) {
-		rna_fragment_libraries_[ tag ] = RNA_FragmentsCOP( new FullAtomRNA_Fragments( tag ) );
+		rna_fragment_libraries_[ tag ] = utility::pointer::make_shared< FullAtomRNA_Fragments >( tag );
 	}
 	return *rna_fragment_libraries_[ tag ];
 }
@@ -47,7 +47,7 @@ RNA_LibraryManager::rna_jump_library( std::string const & tag ) {
 RNA_JumpLibraryCOP const &
 RNA_LibraryManager::rna_jump_library_cop( std::string const & tag ) {
 	if ( rna_jump_libraries_.find( tag ) == rna_jump_libraries_.end() ) {
-		rna_jump_libraries_[ tag ] = RNA_JumpLibraryCOP( new RNA_JumpLibrary( tag ) );
+		rna_jump_libraries_[ tag ] = utility::pointer::make_shared< RNA_JumpLibrary >( tag );
 	}
 	return rna_jump_libraries_[ tag ];
 }
@@ -63,13 +63,13 @@ RNA_LibraryManager::rna_jump_library_cop() {
 
 BasePairStepLibrary const &
 RNA_LibraryManager::canonical_base_pair_step_library() {
-	if ( canonical_base_pair_step_library_ == nullptr )  canonical_base_pair_step_library_ = BasePairStepLibraryCOP( new BasePairStepLibrary( true ) );
+	if ( canonical_base_pair_step_library_ == nullptr )  canonical_base_pair_step_library_ = utility::pointer::make_shared< BasePairStepLibrary >( true );
 	return *canonical_base_pair_step_library_;
 }
 
 BasePairStepLibrary const &
 RNA_LibraryManager::general_base_pair_step_library() {
-	if ( general_base_pair_step_library_ == nullptr )  general_base_pair_step_library_ = BasePairStepLibraryCOP( new BasePairStepLibrary( false ) );
+	if ( general_base_pair_step_library_ == nullptr )  general_base_pair_step_library_ = utility::pointer::make_shared< BasePairStepLibrary >( false );
 	return *general_base_pair_step_library_;
 }
 

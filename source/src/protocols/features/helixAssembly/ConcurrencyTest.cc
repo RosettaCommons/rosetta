@@ -61,8 +61,8 @@ ConcurrencyTest::write_schema_to_db(utility::sql_database::sessionOP db_session)
 
 	using namespace basic::database::schema_generator;
 
-	PrimaryKey id(Column("id", DbDataTypeOP( new DbBigInt() ), false));
-	Column random_number(Column("description", DbDataTypeOP( new DbInteger() )));
+	PrimaryKey id(Column("id", utility::pointer::make_shared< DbBigInt >(), false));
+	Column random_number(Column("description", utility::pointer::make_shared< DbInteger >()));
 
 	Schema concurrency_test("concurrency_test", id);
 	concurrency_test.add_column(random_number);
@@ -112,7 +112,7 @@ std::string ConcurrencyTestCreator::type_name() const {
 
 protocols::features::FeaturesReporterOP
 ConcurrencyTestCreator::create_features_reporter() const {
-	return protocols::features::FeaturesReporterOP( new ConcurrencyTest );
+	return utility::pointer::make_shared< ConcurrencyTest >();
 }
 
 void ConcurrencyTestCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

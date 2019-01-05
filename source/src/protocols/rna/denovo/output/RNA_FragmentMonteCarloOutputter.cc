@@ -84,7 +84,7 @@ RNA_FragmentMonteCarloOutputter::initialize( core::pose::PoseCOP align_pose ) {
 			if ( options_->output_jump_o3p_to_o5p() ) output_stub_stub_type_ = O3P_TO_O5P;
 			if ( options_->output_jump_chainbreak() ) output_stub_stub_type_ = CHAINBREAK;
 			if ( options_->output_jump_reference_RT_string().size() > 0 ) {
-				reference_RT_ = kinematics::RTOP( new kinematics::RT );
+				reference_RT_ = utility::pointer::make_shared< kinematics::RT >();
 				std::stringstream rt_stream( options_->output_jump_reference_RT_string() );
 				kinematics::RT const align_RT = get_output_jump_RT( align_pose );
 				TR << TR.Green << "Trying to read in RT from -output_jump_reference_RT. If this fails, you may want to use the following string, based on -align_pdb or -native: \"" << align_RT << "\" " << std::endl;

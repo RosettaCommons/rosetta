@@ -52,7 +52,7 @@ public:
 	clone() const;
 	//clone() const override
 	//{
-	// return basic::datacache::CacheableDataOP( new WaterPackingInfo( *this ) );
+	// return utility::pointer::make_shared< WaterPackingInfo >( *this );
 	//}
 
 	WaterAnchorInfo &

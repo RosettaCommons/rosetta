@@ -48,7 +48,7 @@ public:
 	}
 
 	void test_load_edge_and_model_file(){
-		EdgeFileReaderOP edge_file_reader = EdgeFileReaderOP( new EdgeFileReader(test_edge_file_name) );
+		EdgeFileReaderOP edge_file_reader = utility::pointer::make_shared< EdgeFileReader >(test_edge_file_name);
 		try {
 			AlignmentFileGenerator alignment_file_generator = AlignmentFileGenerator(edge_file_reader, test_model_file_name);
 			TS_ASSERT_EQUALS( alignment_file_generator.version(), edge_file_reader->version() );
@@ -61,7 +61,7 @@ public:
 
 	void test_generating_alignments(){
 
-		EdgeFileReaderOP edge_file_reader = EdgeFileReaderOP( new EdgeFileReader(test_edge_file_name) );
+		EdgeFileReaderOP edge_file_reader = utility::pointer::make_shared< EdgeFileReader >(test_edge_file_name);
 		try {
 			AlignmentFileGenerator alignment_file_generator = AlignmentFileGenerator(edge_file_reader, test_model_file_name);
 			TS_ASSERT_EQUALS( alignment_file_generator.version(), edge_file_reader->version() );

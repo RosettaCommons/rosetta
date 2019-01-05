@@ -423,11 +423,11 @@ void MpiFileBuffer::close_file( Size channel_id ) {
 }
 
 SingleFileBufferOP WriteOut_MpiFileBuffer::generate_new_channel( std::string const& filename, Size channel, bool append, Size& status ) {
-	return SingleFileBufferOP( new WriteFileSFB( filename, channel, append, status ) );
+	return utility::pointer::make_shared< WriteFileSFB >( filename, channel, append, status );
 }
 
 SingleFileBufferOP DebugOut_MpiFileBuffer::generate_new_channel( std::string const& filename, Size channel, bool /*append*/, Size& status ) {
-	return SingleFileBufferOP( new SingleFileBuffer( filename, channel, status ) );
+	return utility::pointer::make_shared< SingleFileBuffer >( filename, channel, status );
 }
 
 }

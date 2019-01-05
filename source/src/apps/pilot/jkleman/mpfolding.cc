@@ -201,13 +201,13 @@ MPFoldingMover::~MPFoldingMover() = default;
 /// @brief Create a Clone of this mover
 protocols::moves::MoverOP
 MPFoldingMover::clone() const {
-	return ( protocols::moves::MoverOP( new MPFoldingMover( *this ) ) );
+	return ( utility::pointer::make_shared< MPFoldingMover >( *this ) );
 }
 
 /// @brief Create a Fresh Instance of this Mover
 protocols::moves::MoverOP
 MPFoldingMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new MPFoldingMover() );
+	return utility::pointer::make_shared< MPFoldingMover >();
 }
 
 /////////////////////

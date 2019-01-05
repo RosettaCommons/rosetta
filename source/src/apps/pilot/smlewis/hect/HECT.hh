@@ -312,7 +312,7 @@ public:
 		task_factory_->push_back( new RestrictToRepacking );
 
 		//prevent repacking at chemical linkage!
-		operation::PreventRepackingOP PROP(new operation::PreventRepacking);
+		operation::PreventRepackingOP utility::pointer::make_shared< operation::PreventRepacking >();
 		PROP->include_residue(e2_catalytic_res_);
 		task_factory_->push_back( PROP );
 

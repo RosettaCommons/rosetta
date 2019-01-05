@@ -40,7 +40,7 @@ using namespace std;
 static basic::Tracer TR( "protocols.splice.FoldUnitsFilter" );
 
 protocols::filters::FilterOP
-FoldUnitsFilterCreator::create_filter() const { return protocols::filters::FilterOP( new FoldUnitsFilter ); }
+FoldUnitsFilterCreator::create_filter() const { return utility::pointer::make_shared< FoldUnitsFilter >(); }
 
 std::string
 FoldUnitsFilterCreator::keyname() const { return "FoldUnits"; }

@@ -59,7 +59,7 @@ using namespace utility::tag;
 core::pack::task::operation::TaskOperationOP
 RestrictToAlignedSegmentsOperationCreator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new RestrictToAlignedSegmentsOperation );
+	return utility::pointer::make_shared< RestrictToAlignedSegmentsOperation >();
 }
 
 void RestrictToAlignedSegmentsOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -86,7 +86,7 @@ RestrictToAlignedSegmentsOperation::~RestrictToAlignedSegmentsOperation() = defa
 
 core::pack::task::operation::TaskOperationOP RestrictToAlignedSegmentsOperation::clone() const
 {
-	return core::pack::task::operation::TaskOperationOP( new RestrictToAlignedSegmentsOperation( *this ) );
+	return utility::pointer::make_shared< RestrictToAlignedSegmentsOperation >( *this );
 }
 
 void
@@ -136,8 +136,8 @@ RestrictToAlignedSegmentsOperation::apply( core::pose::Pose const & pose, core::
 	}
 	///for some unfathomable reason OperateOnCertainResidues defaults to applying to all residues if none are defined, so you have to be careful here...
 	OperateOnCertainResidues oocr_repackable, oocr_immutable;
-	oocr_immutable.op( ResLvlTaskOperationCOP( new PreventRepackingRLT ) );
-	oocr_repackable.op( ResLvlTaskOperationCOP( new RestrictToRepackingRLT ) );
+	oocr_immutable.op( utility::pointer::make_shared< PreventRepackingRLT >() );
+	oocr_repackable.op( utility::pointer::make_shared< RestrictToRepackingRLT >() );
 	if ( repackable.size() ) {
 		oocr_repackable.residue_indices( repackable );
 		oocr_repackable.apply( pose, task );
@@ -195,7 +195,7 @@ RestrictToAlignedSegmentsOperation::parse_tag( TagCOP tag , DataMap & )
 
 	for ( core::Size i = 1; i <= pdb_names.size(); ++i ) {
 		if ( i == 1 || pdb_names[ i ] != pdb_names[ i - 1 ] ) { // scrimp on reading from disk
-			source_pose_.push_back( core::pose::PoseOP( new core::pose::Pose ) );
+			source_pose_.push_back( utility::pointer::make_shared< core::pose::Pose >() );
 			core::import_pose::pose_from_file( *source_pose_[ i ], pdb_names[ i ] , core::import_pose::PDB_file);
 		} else {
 			source_pose_.push_back( source_pose_[ i - 1 ] );

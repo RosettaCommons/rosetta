@@ -58,7 +58,7 @@ using core::pose::Pose;
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP SchemePlaceMotifsMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new SchemePlaceMotifsMover );
+// XRW TEMP  return utility::pointer::make_shared< SchemePlaceMotifsMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -78,12 +78,12 @@ SchemePlaceMotifsMover::SchemePlaceMotifsMover() : halt_on_error_(false)
 
 protocols::moves::MoverOP
 SchemePlaceMotifsMover::clone() const {
-	return protocols::moves::MoverOP(new SchemePlaceMotifsMover( *this ));
+	return utility::pointer::make_shared< SchemePlaceMotifsMover >( *this );
 }
 
 protocols::moves::MoverOP
 SchemePlaceMotifsMover::fresh_instance() const {
-	return protocols::moves::MoverOP(new SchemePlaceMotifsMover());
+	return utility::pointer::make_shared< SchemePlaceMotifsMover >();
 }
 
 
@@ -153,7 +153,7 @@ SchemePlaceMotifsMover::apply(Pose & pose) {
 			}
 		}
 	}
-	core::pack::rotamer_set::RotamerSetOperationOP    mot_rot = core::pack::rotamer_set::RotamerSetOperationOP(new MotifHitsRotamersOperation(hits))  ;
+	core::pack::rotamer_set::RotamerSetOperationOP    mot_rot = utility::pointer::make_shared< MotifHitsRotamersOperation >(hits)  ;
 	//core::pack::task::PackerTaskOP ptask = task_factory_->create_task_and_apply_taskoperations(pose);
 	ptask->append_rotamerset_operation(mot_rot)           ;
 	TR << *ptask << std::endl;
@@ -270,7 +270,7 @@ std::string SchemePlaceMotifsMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 SchemePlaceMotifsMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SchemePlaceMotifsMover );
+	return utility::pointer::make_shared< SchemePlaceMotifsMover >();
 }
 
 void SchemePlaceMotifsMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

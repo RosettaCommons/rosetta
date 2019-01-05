@@ -80,11 +80,11 @@ main( int argc, char * argv [] ) {
 		SewGraphOP graph;
 		AssemblyOP two_model_assembly;
 		if ( option[ legacy_sewing::assembly_type ].value() == "discontinuous" ) {
-			graph = SewGraphOP(new SewGraph(models, 2));
-			two_model_assembly = AssemblyOP(new DisembodiedAssembly());
+			graph = utility::pointer::make_shared< SewGraph >(models, 2);
+			two_model_assembly = utility::pointer::make_shared< DisembodiedAssembly >();
 		} else if ( option[ legacy_sewing::assembly_type ].value() == "continuous" ) {
-			graph = SewGraphOP(new SewGraph(models, 1));
-			two_model_assembly = AssemblyOP(new ContinuousAssembly());
+			graph = utility::pointer::make_shared< SewGraph >(models, 1);
+			two_model_assembly = utility::pointer::make_shared< ContinuousAssembly >();
 		}
 
 		//pick a random node

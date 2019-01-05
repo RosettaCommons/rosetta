@@ -74,11 +74,11 @@ SecondaryStructureSegmentFeatures::write_schema_to_db(
 	using namespace basic::database::schema_generator;
 
 	//******secondary structure segments******//
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ), false);
-	Column segment_id("segment_id", DbDataTypeOP( new DbInteger() ), false);
-	Column residue_begin("residue_begin", DbDataTypeOP( new DbInteger() ), false);
-	Column residue_end("residue_end", DbDataTypeOP( new DbInteger() ), false);
-	Column dssp("dssp", DbDataTypeOP( new DbText(1) ), false);
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >(), false);
+	Column segment_id("segment_id", utility::pointer::make_shared< DbInteger >(), false);
+	Column residue_begin("residue_begin", utility::pointer::make_shared< DbInteger >(), false);
+	Column residue_end("residue_end", utility::pointer::make_shared< DbInteger >(), false);
+	Column dssp("dssp", utility::pointer::make_shared< DbText >(1), false);
 
 	utility::vector1<Column> pkey_cols;
 	pkey_cols.push_back(struct_id);
@@ -269,7 +269,7 @@ std::string SecondaryStructureSegmentFeaturesCreator::type_name() const {
 
 protocols::features::FeaturesReporterOP
 SecondaryStructureSegmentFeaturesCreator::create_features_reporter() const {
-	return protocols::features::FeaturesReporterOP( new SecondaryStructureSegmentFeatures );
+	return utility::pointer::make_shared< SecondaryStructureSegmentFeatures >();
 }
 
 void SecondaryStructureSegmentFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

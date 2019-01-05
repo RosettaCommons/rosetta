@@ -231,7 +231,7 @@ PDBFullModelInputter::list_options_read(
 
 FullModelInputterOP PDBFullModelInputterCreator::create_inputter() const
 {
-	return FullModelInputterOP( new PDBFullModelInputter );
+	return utility::pointer::make_shared< PDBFullModelInputter >();
 }
 
 std::string PDBFullModelInputterCreator::keyname() const

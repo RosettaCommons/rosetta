@@ -45,7 +45,7 @@ static basic::Tracer TR( "protocols.legacy_sewing.sampling.LegacyGreedyAssemblyM
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP LegacyGreedyAssemblyMoverCreator::create_mover() const
 // XRW TEMP {
-// XRW TEMP  return protocols::moves::MoverOP(new LegacyGreedyAssemblyMover);
+// XRW TEMP  return utility::pointer::make_shared< LegacyGreedyAssemblyMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -62,11 +62,11 @@ static basic::Tracer TR( "protocols.legacy_sewing.sampling.LegacyGreedyAssemblyM
 
 protocols::moves::MoverOP
 LegacyGreedyAssemblyMover::clone() const {
-	return( protocols::moves::MoverOP( new LegacyGreedyAssemblyMover( *this ) ) );
+	return( utility::pointer::make_shared< LegacyGreedyAssemblyMover >( *this ) );
 }
 protocols::moves::MoverOP
 LegacyGreedyAssemblyMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new LegacyGreedyAssemblyMover );
+	return utility::pointer::make_shared< LegacyGreedyAssemblyMover >();
 }
 
 // XRW TEMP std::string
@@ -225,7 +225,7 @@ std::string LegacyGreedyAssemblyMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 LegacyGreedyAssemblyMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LegacyGreedyAssemblyMover );
+	return utility::pointer::make_shared< LegacyGreedyAssemblyMover >();
 }
 
 void LegacyGreedyAssemblyMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

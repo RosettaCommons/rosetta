@@ -1296,7 +1296,7 @@ DoubleLazyInteractionGraph::prepare_for_simulated_annealing()
 	int const num_edges = get_num_edges();
 	int const n_submatrices =  num_edges * sqr_num_aa_types_;
 	dlazy_edge_vector_.resize( num_edges );
-	aa_submatrix_history_list_ = InPlaceIntListOP( new utility::in_place_list< int >( n_submatrices ) );
+	aa_submatrix_history_list_ = utility::pointer::make_shared< utility::in_place_list< int > >( n_submatrices );
 
 	int count = 0; // index nodes from 0 -- makes module arithmetic easier
 	for ( std::list< EdgeBase* >::const_iterator eiter = get_edge_list_begin(),

@@ -52,7 +52,7 @@ methods::EnergyMethodOP
 AbegoEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new Abego );
+	return utility::pointer::make_shared< Abego >();
 }
 
 ScoreTypes
@@ -65,8 +65,8 @@ AbegoEnergyCreator::score_types_for_method() const {
 
 /// ctor
 Abego::Abego() :
-	//parent( EnergyMethodCreatorOP( new AbegoEnergyCreator ) ),
-	WholeStructureEnergy( EnergyMethodCreatorOP( new AbegoEnergyCreator ) ),
+	//parent( utility::pointer::make_shared< AbegoEnergyCreator >() ),
+	WholeStructureEnergy( utility::pointer::make_shared< AbegoEnergyCreator >() ),
 	paa_abego3_( ScoringManager::get_instance()->get_P_AA_ABEGO3() )
 {}
 
@@ -74,7 +74,7 @@ Abego::Abego() :
 EnergyMethodOP
 Abego::clone() const
 {
-	return EnergyMethodOP( new Abego );
+	return utility::pointer::make_shared< Abego >();
 }
 
 void Abego::setup_for_scoring(

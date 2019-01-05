@@ -86,7 +86,7 @@ Parameters::~Parameters() = default;
 ParametersOP
 Parameters::clone() const
 {
-	return ParametersOP( new Parameters( *this ) );
+	return utility::pointer::make_shared< Parameters >( *this );
 }
 
 /// @brief Clears the sampling and perturbing information in the individual parameters.

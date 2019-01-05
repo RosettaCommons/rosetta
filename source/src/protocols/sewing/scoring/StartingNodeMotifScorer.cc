@@ -194,7 +194,7 @@ StartingNodeMotifScorerCreator::provide_xml_schema( utility::tag::XMLSchemaDefin
 
 AssemblyScorerOP
 StartingNodeMotifScorerCreator::create_assembly_scorer() const{
-	return AssemblyScorerOP( new StartingNodeMotifScorer() );
+	return utility::pointer::make_shared< StartingNodeMotifScorer >();
 }
 
 std::string

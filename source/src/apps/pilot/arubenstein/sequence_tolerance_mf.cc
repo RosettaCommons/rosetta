@@ -209,20 +209,20 @@ sequence_tolerance_mf_main( void * )
 
 	//create task to be used for identifying the residues which are part of the fitness function
 	TaskFactoryOP taskfactory( new TaskFactory );
-	taskfactory->push_back( core::pack::task::operation::TaskOperationCOP( new operation::InitializeFromCommandline ) );
+	taskfactory->push_back( utility::pointer::make_shared< operation::InitializeFromCommandline >() );
 
 	if ( option[ packing::resfile ].user() ) {
-		taskfactory->push_back( core::pack::task::operation::TaskOperationCOP( new operation::ReadResfile ) );
+		taskfactory->push_back( utility::pointer::make_shared< operation::ReadResfile >() );
 	}
 
 	PackerTaskOP res_decomp_task( taskfactory->create_task_and_apply_taskoperations( *pose ) );
 
 	//create task to be used for identifying which residues are to be designed/packed within the genetic algorithm
 	TaskFactoryOP ptaskfactory( new TaskFactory );
-	ptaskfactory->push_back( core::pack::task::operation::TaskOperationCOP( new operation::InitializeFromCommandline ) );
+	ptaskfactory->push_back( utility::pointer::make_shared< operation::InitializeFromCommandline >() );
 
 	if ( option[ mean_field::rf_peptide ].user() ) {
-		ptaskfactory->push_back( core::pack::task::operation::TaskOperationCOP( new operation::ReadResfile( option[ mean_field::rf_peptide ] ) ) );
+		ptaskfactory->push_back( utility::pointer::make_shared< operation::ReadResfile >( option[ mean_field::rf_peptide ] ) );
 	}
 	//automatically detect interface residues as basis for fitness function, if fitness_func_detect_interface is set to true
 	if ( option[ mean_field::ga_pack_detect_interface ] ) {
@@ -309,14 +309,14 @@ sequence_tolerance_mf_main( void * )
 
 				for ( core::Size freq = 1; freq <= max_num_choices; ++freq ) {
 					TR(t_debug) << "adding choice " << aa << " at position " << i << " for biased dist " << std::endl;
-					biased_choices.push_back( protocols::genetic_algorithm::EntityElementOP( new PosType( i, aa ) ) );
+					biased_choices.push_back( utility::pointer::make_shared< PosType >( i, aa ) );
 				}
 				//    for ( core::Size freq = 1; freq <= max_num_choices_bg; ++freq )
 				//    {
 				//     choices.push_back( new PosType( i, aa ) );
 				//    }
 				TR(t_debug) << "adding choice " << aa << " at position " << i << " for uniform dist " << std::endl;
-				choices.push_back( protocols::genetic_algorithm::EntityElementOP( new PosType( i, aa ) ) );
+				choices.push_back( utility::pointer::make_shared< PosType >( i, aa ) );
 			}
 			biasedrand->append_choices( biased_choices );
 			rand->append_choices( choices );
@@ -356,7 +356,7 @@ sequence_tolerance_mf_main( void * )
 	// protocols::mean_field::EmptyFitnessFunctionOP efunc( new devel::mean_field::EmptyFitnessFunction );
 	// set up the FitnessFunction
 	MultiStatePackerOP func( new MultiStatePacker(option[ ms::num_packs ]()) );
-	func->set_aggregate_function(MultiStateAggregateFunction::COP( MultiStateAggregateFunction::OP( new MultiStateAggregateFunction() ) ));
+	func->set_aggregate_function(utility::pointer::make_shared< MultiStateAggregateFunction >());
 	ScoreFunctionOP score_function( core::scoring::get_score_function() );
 	func->set_scorefxn( score_function );
 
@@ -413,10 +413,10 @@ sequence_tolerance_mf_main( void * )
 
 	if ( option[ seq_tol::surface ] ) {
 		// tell the FitnessFunction to add the surface score to MultiStateEntity objects
-		calculator_factory.register_calculator("surface", core::pose::metrics::PoseMetricCalculatorOP( new SurfaceCalculator() ));
+		calculator_factory.register_calculator("surface", utility::pointer::make_shared< SurfaceCalculator >());
 		func->add_metric_value_getter(
 			"surface",
-			MetricValueGetter("surface", "total_surface", basic::MetricValueBaseCOP( basic::MetricValueBaseOP( new basic::MetricValue<Real> ) ))
+			MetricValueGetter("surface", "total_surface", basic::MetricValueBaseCOP( utility::pointer::make_shared< basic::MetricValue<Real> >() ))
 		);
 	}
 
@@ -455,7 +455,7 @@ sequence_tolerance_mf_main( void * )
 			for ( utility::vector1<Size>::const_iterator i( design_positions.begin() ),
 					end( design_positions.end() ); i != end; ++i ) {
 				PosType pt( *i, (*s)->pose().residue_type(*i).aa() );
-				traits.push_back( protocols::genetic_algorithm::EntityElementOP( new PosType( pt ) ) );
+				traits.push_back( utility::pointer::make_shared< PosType >( pt ) );
 				TR(t_info) << pt.to_string() << " ";
 			}
 			ga.add_entity( traits );

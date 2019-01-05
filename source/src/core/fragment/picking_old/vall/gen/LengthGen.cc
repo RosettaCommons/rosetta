@@ -58,7 +58,7 @@ LengthGen & LengthGen::operator =( LengthGen const & rval ) {
 
 /// @brief clone this object
 VallFragmentGenOP LengthGen::clone() const {
-	return VallFragmentGenOP( new LengthGen( *this ) );
+	return utility::pointer::make_shared< LengthGen >( *this );
 }
 
 

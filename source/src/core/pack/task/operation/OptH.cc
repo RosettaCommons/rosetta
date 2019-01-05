@@ -48,7 +48,7 @@ OptH::~OptH() = default;
 
 /// @brief clone this object
 OptH::TaskOperationOP OptH::clone() const {
-	return OptH::TaskOperationOP( new OptH( *this ) );
+	return utility::pointer::make_shared< OptH >( *this );
 }
 
 
@@ -107,7 +107,7 @@ void OptH::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 
 TaskOperationOP OptHCreator::create_task_operation() const
 {
-	return TaskOperationOP( new OptH );
+	return utility::pointer::make_shared< OptH >();
 }
 
 std::string OptHCreator::keyname() const { return OptH::keyname(); }

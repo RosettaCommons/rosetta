@@ -44,13 +44,13 @@ public:
 
 
 	SingleResidueFragDataOP clone() const override {
-		return SingleResidueFragDataOP( new BBTorsionAndAnglesSRFD( *this ) );
+		return utility::pointer::make_shared< BBTorsionAndAnglesSRFD >( *this );
 	};
 
 	/// @brief create a new instance of this object
 
 	SingleResidueFragDataOP create() const override {
-		return SingleResidueFragDataOP( new BBTorsionAndAnglesSRFD() );
+		return utility::pointer::make_shared< BBTorsionAndAnglesSRFD >();
 	}
 
 	bool apply( pose::Pose&, Size seq_pos ) const override;

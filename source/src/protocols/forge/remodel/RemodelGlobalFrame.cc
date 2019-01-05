@@ -138,13 +138,13 @@ RemodelGlobalFrame::~RemodelGlobalFrame()= default;
 /// @brief clone this object
 protocols::moves::MoverOP
 RemodelGlobalFrame::clone() const {
-	return protocols::moves::MoverOP( new RemodelGlobalFrame( *this ) );
+	return utility::pointer::make_shared< RemodelGlobalFrame >( *this );
 }
 
 /// @brief create this type of object
 protocols::moves::MoverOP
 RemodelGlobalFrame::fresh_instance() const {
-	return protocols::moves::MoverOP( new RemodelGlobalFrame() );
+	return utility::pointer::make_shared< RemodelGlobalFrame >();
 }
 
 void RemodelGlobalFrame::apply( core::pose::Pose & pose )
@@ -552,7 +552,7 @@ RemodelGlobalFrame::setup_helical_constraint(Pose & pose){
 	//native_cst_set = new ConstraintSet(*input_pose_cst_set);
 
 	//duplicate the native_set and add the new ones to it.
-	input_pose_cst_set = ConstraintSetOP( new ConstraintSet(*native_cst_set) );
+	input_pose_cst_set = utility::pointer::make_shared< ConstraintSet >(*native_cst_set);
 
 	// Extract the first segment from pose for generating the ideal decoy
 
@@ -655,7 +655,7 @@ RemodelGlobalFrame::setup_helical_constraint(Pose & pose){
 	}
 
 	TR.Debug << "setup RGF cst 5" << std::endl;
-	input_pose_cst_set->add_constraint(ConstraintCOP( ConstraintOP( new protocols::constraints_additional::BindingSiteConstraint( atms, *double_pose) ) ));
+	input_pose_cst_set->add_constraint(utility::pointer::make_shared< protocols::constraints_additional::BindingSiteConstraint >( atms, *double_pose));
 
 	TR.Debug << "setup RGF cst 6" << std::endl;
 	pose.constraint_set(input_pose_cst_set);
@@ -689,7 +689,7 @@ RemodelGlobalFrame::setup_CM_helical_constraint(Pose & pose){
 	//native_cst_set = new ConstraintSet(*input_pose_cst_set);
 
 	//duplicate the native_set and add the new ones to it.
-	input_pose_cst_set = ConstraintSetOP( new ConstraintSet(*native_cst_set) );
+	input_pose_cst_set = utility::pointer::make_shared< ConstraintSet >(*native_cst_set);
 
 	Size repeat_number = option[OptionKeys::remodel::repeat_structure];
 
@@ -770,7 +770,7 @@ RemodelGlobalFrame::setup_CM_helical_constraint(Pose & pose){
 		Vector idealCM_1( COM_target(0,i), COM_target(1,i), COM_target(2,i));
 
 		//constraint
-		input_pose_cst_set->add_constraint( ConstraintCOP( ConstraintOP( new protocols::constraints_additional::COMCoordinateConstraint( ID_1s, idealCM_1, sd, tolerance ) ) ));
+		input_pose_cst_set->add_constraint( utility::pointer::make_shared< protocols::constraints_additional::COMCoordinateConstraint >( ID_1s, idealCM_1, sd, tolerance ));
 	}
 
 	pose.constraint_set(input_pose_cst_set);
@@ -924,12 +924,12 @@ RemodelGlobalFrame::restore_original_cst(Pose & pose){
 
 void
 RemodelGlobalFrame::set_native_cst_set( ConstraintSet const & cst_set){
-	native_cst_set = ConstraintSetOP( new ConstraintSet(cst_set) );
+	native_cst_set = utility::pointer::make_shared< ConstraintSet >(cst_set);
 }
 
 void
 RemodelGlobalFrame::set_native_cst_set( Pose const & pose ){
-	native_cst_set = ConstraintSetOP( new ConstraintSet( *pose.constraint_set() ) );
+	native_cst_set = utility::pointer::make_shared< ConstraintSet >( *pose.constraint_set() );
 }
 
 void

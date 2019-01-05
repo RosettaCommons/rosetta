@@ -398,7 +398,7 @@ BuriedUnsatHbondFilter::compute( core::pose::Pose const & pose ) const {
 			}
 		}
 		for ( const auto & j : jump_nums ) {
-			protocols::scoring::InterfaceOP interf = protocols::scoring::InterfaceOP( new protocols::scoring::Interface( j ) );
+			protocols::scoring::InterfaceOP interf = utility::pointer::make_shared< protocols::scoring::Interface >( j );
 			interf->distance( 8.0 );
 			interf->calculate( pose ); //selects residues: sq dist of nbr atoms < interf_dist_sq (8^2)
 
@@ -666,7 +666,7 @@ std::string BuriedUnsatHbondFilterCreator::keyname() const {
 
 filters::FilterOP
 BuriedUnsatHbondFilterCreator::create_filter() const {
-	return filters::FilterOP( new BuriedUnsatHbondFilter );
+	return utility::pointer::make_shared< BuriedUnsatHbondFilter >();
 }
 
 void BuriedUnsatHbondFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -293,7 +293,7 @@ B3AADihedralGrabber::apply( core::pose::Pose & pose ) {
 
 	// setup patcker task
 	core::pack::task::TaskFactoryOP tf( new core::pack::task::TaskFactory );
-	tf->push_back( pack::task::operation::TaskOperationCOP( new core::pack::task::operation::RestrictResidueToRepacking() ) );
+	tf->push_back( utility::pointer::make_shared< core::pack::task::operation::RestrictResidueToRepacking >() );
 	pack::task::PackerTaskOP pt( tf->create_task_and_apply_taskoperations( pose ) );
 	pt->set_bump_check( false );
 

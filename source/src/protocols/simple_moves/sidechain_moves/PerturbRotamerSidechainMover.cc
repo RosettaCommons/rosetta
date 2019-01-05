@@ -77,7 +77,7 @@ using namespace conformation;
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP PerturbRotamerSidechainMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new PerturbRotamerSidechainMover );
+// XRW TEMP  return utility::pointer::make_shared< PerturbRotamerSidechainMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -106,7 +106,7 @@ PerturbRotamerSidechainMover::PerturbRotamerSidechainMover(
 
 protocols::moves::MoverOP
 PerturbRotamerSidechainMover::clone() const {
-	return protocols::moves::MoverOP( new protocols::simple_moves::sidechain_moves::PerturbRotamerSidechainMover(*this) );
+	return utility::pointer::make_shared< protocols::simple_moves::sidechain_moves::PerturbRotamerSidechainMover >(*this);
 }
 
 void
@@ -290,7 +290,7 @@ std::string PerturbRotamerSidechainMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 PerturbRotamerSidechainMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new PerturbRotamerSidechainMover );
+	return utility::pointer::make_shared< PerturbRotamerSidechainMover >();
 }
 
 void PerturbRotamerSidechainMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

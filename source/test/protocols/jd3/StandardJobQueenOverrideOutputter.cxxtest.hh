@@ -128,7 +128,7 @@ class DerivedJobQueenOutOverride2 : public DerivedJobQueenOutOverride
 public:
 	DerivedJobQueenOutOverride2() {
 		do_not_accept_all_pose_outputters_from_factory();
-		allow_pose_outputter( PoseOutputterCreatorOP( new DummyOutputterCreator ));
+		allow_pose_outputter( utility::pointer::make_shared< DummyOutputterCreator >());
 	}
 	~DerivedJobQueenOutOverride2() {}
 };
@@ -139,7 +139,7 @@ class DerivedJobQueenOutOverride3 : public DerivedJobQueenOutOverride
 {
 public:
 	DerivedJobQueenOutOverride3() {
-		allow_pose_outputter( PoseOutputterCreatorOP( new DummyOutputterCreator ));
+		allow_pose_outputter( utility::pointer::make_shared< DummyOutputterCreator >());
 	}
 	~DerivedJobQueenOutOverride3() {}
 };

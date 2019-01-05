@@ -544,14 +544,14 @@ ThermalMinimizer::parse_my_tag(
 moves::MoverOP
 ThermalMinimizer::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new ThermalMinimizer );
+	return utility::pointer::make_shared< ThermalMinimizer >();
 }
 
 /// @brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
 ThermalMinimizer::clone() const
 {
-	return protocols::moves::MoverOP( new ThermalMinimizer( *this ) );
+	return utility::pointer::make_shared< ThermalMinimizer >( *this );
 }
 
 void
@@ -594,7 +594,7 @@ std::string ThermalMinimizerCreator::keyname() const {
 
 protocols::moves::MoverOP
 ThermalMinimizerCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ThermalMinimizer );
+	return utility::pointer::make_shared< ThermalMinimizer >();
 }
 
 void ThermalMinimizerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

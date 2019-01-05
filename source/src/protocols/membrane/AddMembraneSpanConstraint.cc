@@ -84,13 +84,13 @@ AddMembraneSpanConstraint::~AddMembraneSpanConstraint() = default;
 /// @brief Create a Clone of this mover
 protocols::moves::MoverOP
 AddMembraneSpanConstraint::clone() const {
-	return ( protocols::moves::MoverOP( new AddMembraneSpanConstraint( *this ) ) );
+	return ( utility::pointer::make_shared< AddMembraneSpanConstraint >( *this ) );
 }
 
 /// @brief Create a Fresh Instance of this Mover
 protocols::moves::MoverOP
 AddMembraneSpanConstraint::fresh_instance() const {
-	return protocols::moves::MoverOP( new AddMembraneSpanConstraint() );
+	return utility::pointer::make_shared< AddMembraneSpanConstraint >();
 }
 
 /// @brief Pase Rosetta Scripts Options for this Mover
@@ -107,7 +107,7 @@ AddMembraneSpanConstraint::parse_my_tag(
 /// @brief Create a new copy of this mover
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP AddMembraneSpanConstraintCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new AddMembraneSpanConstraint() );
+// XRW TEMP  return utility::pointer::make_shared< AddMembraneSpanConstraint >();
 // XRW TEMP }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)
@@ -160,7 +160,7 @@ std::string AddMembraneSpanConstraintCreator::keyname() const {
 
 protocols::moves::MoverOP
 AddMembraneSpanConstraintCreator::create_mover() const {
-	return protocols::moves::MoverOP( new AddMembraneSpanConstraint );
+	return utility::pointer::make_shared< AddMembraneSpanConstraint >();
 }
 
 void AddMembraneSpanConstraintCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

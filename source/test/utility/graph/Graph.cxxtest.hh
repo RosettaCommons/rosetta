@@ -52,7 +52,7 @@ public:
 	// Shared initialization goes here.
 	void setUp() {
 
-		g = GraphOP( new Graph(10) );
+		g = utility::pointer::make_shared< Graph >(10);
 		g->add_edge(1,2);
 		g->add_edge(2,3);
 		g->add_edge(3,4);

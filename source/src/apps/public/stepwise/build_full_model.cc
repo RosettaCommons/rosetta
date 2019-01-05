@@ -163,7 +163,7 @@ BuildFullModel::BuildFullModel() {
 		rna_denovo_opts->set_monte_carlo_cycles( 500 );
 		rna_denovo_opts->set_user_defined_cycles( true );
 	}
-	rna_de_novo_protocol_ = protocols::rna::denovo::RNA_DeNovoProtocolOP( new protocols::rna::denovo::RNA_DeNovoProtocol( rna_denovo_opts ) );
+	rna_de_novo_protocol_ = utility::pointer::make_shared< protocols::rna::denovo::RNA_DeNovoProtocol >( rna_denovo_opts );
 
 	// 2. Setup native pose
 	if ( option[ in::file::native ].user() ) {
@@ -199,9 +199,9 @@ BuildFullModel::make_built_residues_repulsive(
 			ResidueOP start_rsd = 0;
 			if ( other_idx ) {
 			FullModelInfo const & other_info = const_full_model_info( *other_ops[other_idx] );
-			start_rsd = ResidueOP( new Residue( other_ops[other_idx]->residue( other_info.full_to_sub( full_model_res ) ) ) );
+			start_rsd = utility::pointer::make_shared< Residue >( other_ops[other_idx]->residue( other_info.full_to_sub( full_model_res ) ) );
 			} else {
-			start_rsd = ResidueOP( new Residue( start_pose.residue( start_info.full_to_sub( full_model_res ) ) ) );
+			start_rsd = utility::pointer::make_shared< Residue >( start_pose.residue( start_info.full_to_sub( full_model_res ) ) );
 			}
 			utility::vector1< std::string > variant_types = start_rsd->type().properties().get_list_of_variants();
 
@@ -267,9 +267,9 @@ void BuildFullModel::make_built_residues_virtual(
 			/*ResidueOP start_rsd = nullptr;
 			if ( other_idx ) {
 			FullModelInfo const & other_info = const_full_model_info( *other_ops[other_idx] );
-			start_rsd = ResidueOP( new Residue( other_ops[other_idx]->residue( other_info.full_to_sub( full_model_res ) ) ) );
+			start_rsd = utility::pointer::make_shared< Residue >( other_ops[other_idx]->residue( other_info.full_to_sub( full_model_res ) ) );
 			} else {
-			start_rsd = ResidueOP( new Residue( start_pose.residue( start_info.full_to_sub( full_model_res ) ) ) );
+			start_rsd = utility::pointer::make_shared< Residue >( start_pose.residue( start_info.full_to_sub( full_model_res ) ) );
 			}
 			utility::vector1< std::string > variant_types = start_rsd->type().properties().get_list_of_variants();
 
@@ -454,14 +454,14 @@ build_full_model_test()
 	// setup input stream
 	PoseInputStreamOP input;
 	if ( option[ in::file::tags ].user() ) {
-		input = PoseInputStreamOP( new SilentFilePoseInputStream(
+		input = utility::pointer::make_shared< SilentFilePoseInputStream >(
 			option[ in::file::silent ](),
 			option[ in::file::tags ]()
-			));
+		);
 	} else {
-		input = PoseInputStreamOP( new SilentFilePoseInputStream(
+		input = utility::pointer::make_shared< SilentFilePoseInputStream >(
 			option[ in::file::silent ]()
-			));
+		);
 	}
 
 	BuildFullModel bfm;

@@ -175,7 +175,7 @@ public:
 public:
 	/// ctor
 	SASAPotential()
-	{ pd_ = power_diagram::PowerDiagramOP( new power_diagram::PowerDiagram ); }
+	{ pd_ = utility::pointer::make_shared< power_diagram::PowerDiagram >(); }
 
 	///
 	void

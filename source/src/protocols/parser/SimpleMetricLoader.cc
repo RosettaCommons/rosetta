@@ -114,7 +114,7 @@ void SimpleMetricLoader::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 
 
 DataLoaderOP
-SimpleMetricLoaderCreator::create_loader() const { return DataLoaderOP( new SimpleMetricLoader ); }
+SimpleMetricLoaderCreator::create_loader() const { return utility::pointer::make_shared< SimpleMetricLoader >(); }
 
 std::string
 SimpleMetricLoaderCreator::keyname() const { return SimpleMetricLoader::loader_name(); }

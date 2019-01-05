@@ -75,7 +75,7 @@ NetChargeConstraint::~NetChargeConstraint() = default;
 /// @brief Clone operator
 ///
 core::scoring::constraints::ConstraintOP
-NetChargeConstraint::clone() const { return core::scoring::constraints::ConstraintOP( new NetChargeConstraint( *this ) ); }
+NetChargeConstraint::clone() const { return utility::pointer::make_shared< NetChargeConstraint >( *this ); }
 
 bool NetChargeConstraint::operator == ( Constraint const & other ) const
 {

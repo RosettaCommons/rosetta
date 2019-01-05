@@ -63,7 +63,7 @@ namespace simple_filters {
 static basic::Tracer residues_in_interface_tracer( "protocols.simple_filters.ResiduesInInterfaceFilter" );
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP ResiduesInInterfaceFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ResiduesInInterfaceFilter ); }
+// XRW TEMP ResiduesInInterfaceFilterCreator::create_filter() const { return utility::pointer::make_shared< ResiduesInInterfaceFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP ResiduesInInterfaceFilterCreator::keyname() const { return "ResInInterface"; }
@@ -148,7 +148,7 @@ std::string ResiduesInInterfaceFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 ResiduesInInterfaceFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new ResiduesInInterfaceFilter );
+	return utility::pointer::make_shared< ResiduesInInterfaceFilter >();
 }
 
 void ResiduesInInterfaceFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

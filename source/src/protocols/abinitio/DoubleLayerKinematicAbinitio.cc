@@ -110,9 +110,9 @@ KinematicControlOP DoubleLayerKinematicAbinitio::new_kinematics( pose::Pose &pos
 
 	KinematicControlOP current_kinematics( nullptr );
 	if ( rigid_core.size() && coordinate_constraint_weight_ > 0.0 ) {
-		current_kinematics = KinematicControlOP( new CoordinateConstraintKC( false /*ramp*/, coordinate_constraint_weight_ ) );
+		current_kinematics = utility::pointer::make_shared< CoordinateConstraintKC >( false /*ramp*/, coordinate_constraint_weight_ );
 	} else {
-		current_kinematics = KinematicControlOP( new KinematicControl );
+		current_kinematics = utility::pointer::make_shared< KinematicControl >();
 	}
 	loops::Loops flexible_part( rigid_core.invert( pose.size() ) );
 

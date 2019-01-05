@@ -56,7 +56,7 @@ methods::EnergyMethodOP
 CenPairMotifEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new CenPairMotifEnergy );
+	return utility::pointer::make_shared< CenPairMotifEnergy >();
 }
 
 ScoreTypes
@@ -67,7 +67,7 @@ CenPairMotifEnergyCreator::score_types_for_method() const {
 }
 
 CenPairMotifEnergy::CenPairMotifEnergy():
-	parent(methods::EnergyMethodCreatorOP( new CenPairMotifEnergyCreator ) )
+	parent(utility::pointer::make_shared< CenPairMotifEnergyCreator >() )
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;

@@ -153,12 +153,12 @@ SequenceMover::SequenceMover( SequenceMover const & ) = default;
 
 MoverOP
 SequenceMover::clone() const {
-	return MoverOP( new SequenceMover( *this ) );
+	return utility::pointer::make_shared< SequenceMover >( *this );
 }
 
 MoverOP
 SequenceMover::fresh_instance() const {
-	return MoverOP( new SequenceMover() );
+	return utility::pointer::make_shared< SequenceMover >();
 }
 
 void SequenceMover::apply( core::pose::Pose & pose )
@@ -258,12 +258,12 @@ RandomMover::RandomMover( RandomMover const & ) = default;
 
 MoverOP
 RandomMover::clone() const {
-	return MoverOP( new RandomMover( *this ) );
+	return utility::pointer::make_shared< RandomMover >( *this );
 }
 
 MoverOP
 RandomMover::fresh_instance() const {
-	return MoverOP( new RandomMover() );
+	return utility::pointer::make_shared< RandomMover >();
 }
 
 void
@@ -332,7 +332,7 @@ std::string RandomMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 RandomMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new RandomMover );
+	return utility::pointer::make_shared< RandomMover >();
 }
 
 void RandomMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -351,12 +351,12 @@ CycleMover::CycleMover( CycleMover const & ) = default;
 
 MoverOP
 CycleMover::clone() const {
-	return MoverOP( new CycleMover( *this ) );
+	return utility::pointer::make_shared< CycleMover >( *this );
 }
 
 MoverOP
 CycleMover::fresh_instance() const {
-	return MoverOP( new CycleMover() );
+	return utility::pointer::make_shared< CycleMover >();
 }
 
 void CycleMover::apply( core::pose::Pose& pose )
@@ -427,12 +427,12 @@ SwitchMover::SwitchMover( SwitchMover const & ) = default;
 
 MoverOP
 SwitchMover::clone() const {
-	return MoverOP( new SwitchMover( *this ) );
+	return utility::pointer::make_shared< SwitchMover >( *this );
 }
 
 MoverOP
 SwitchMover::fresh_instance() const {
-	return MoverOP( new RandomMover() );
+	return utility::pointer::make_shared< RandomMover >();
 }
 
 void
@@ -492,7 +492,7 @@ std::string SwitchMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 SwitchMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SwitchMover );
+	return utility::pointer::make_shared< SwitchMover >();
 }
 
 void SwitchMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

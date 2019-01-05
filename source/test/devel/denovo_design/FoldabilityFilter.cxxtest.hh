@@ -100,7 +100,7 @@ public:
 		basic::options::option[basic::options::OptionKeys::run::preserve_header].value(true);
 
 		// initialize common filters/movers/scorefxns
-		scorefxn = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() );
+		scorefxn = utility::pointer::make_shared< core::scoring::ScoreFunction >();
 	}
 
 	// Shared finalization goes here.

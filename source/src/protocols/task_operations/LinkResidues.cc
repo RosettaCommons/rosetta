@@ -49,7 +49,7 @@ using namespace std;
 core::pack::task::operation::TaskOperationOP
 LinkResiduesCreator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new LinkResidues );
+	return utility::pointer::make_shared< LinkResidues >();
 }
 
 void LinkResiduesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -68,7 +68,7 @@ LinkResidues::~LinkResidues() = default;
 
 core::pack::task::operation::TaskOperationOP LinkResidues::clone() const
 {
-	return core::pack::task::operation::TaskOperationOP( new LinkResidues( *this ) );
+	return utility::pointer::make_shared< LinkResidues >( *this );
 }
 
 void LinkResidues::remap_allowed_residues_to_template(core::pose::Pose const & pose, core::pack::rotamer_set::RotamerLinksOP & links) const{

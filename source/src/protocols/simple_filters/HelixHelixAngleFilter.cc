@@ -70,7 +70,7 @@ namespace simple_filters {
 static basic::Tracer TR( "protocols.simple_filters.HelixHelixAngleFilter" );
 
 protocols::filters::FilterOP
-HelixHelixAngleFilterCreator::create_filter() const { return protocols::filters::FilterOP( new HelixHelixAngleFilter ); }
+HelixHelixAngleFilterCreator::create_filter() const { return utility::pointer::make_shared< HelixHelixAngleFilter >(); }
 
 std::string
 HelixHelixAngleFilterCreator::keyname() const { return "HelixHelixAngle"; }

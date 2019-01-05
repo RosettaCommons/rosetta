@@ -449,13 +449,13 @@ utility::vector1< bool > MPInterfaceStatistics::get_chains_from_cmd( Pose & pose
 ///// @brief Create a Clone of this mover
 //protocols::moves::MoverOP
 //MPInterfaceStatistics::clone() const {
-// return ( protocols::moves::MoverOP( new MPInterfaceStatistics( *this ) ) );
+// return ( utility::pointer::make_shared< MPInterfaceStatistics >( *this ) );
 //}
 //
 ///// @brief Create a Fresh Instance of this Mover
 //protocols::moves::MoverOP
 //MPInterfaceStatistics::fresh_instance() const {
-// return protocols::moves::MoverOP( new MPInterfaceStatistics() );
+// return utility::pointer::make_shared< MPInterfaceStatistics >();
 //}
 //
 ///// @brief Pase Rosetta Scripts Options for this Mover
@@ -474,7 +474,7 @@ utility::vector1< bool > MPInterfaceStatistics::get_chains_from_cmd( Pose & pose
 ///// @brief Create a new copy of this mover
 //protocols::moves::MoverOP
 //MPInterfaceStatisticsCreator::create_mover() const {
-// return protocols::moves::MoverOP( new MPInterfaceStatistics );
+// return utility::pointer::make_shared< MPInterfaceStatistics >();
 //}
 //
 ///// @brief Return the Name of this mover (as seen by Rscripts)

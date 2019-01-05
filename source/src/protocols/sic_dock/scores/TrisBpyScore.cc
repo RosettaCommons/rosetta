@@ -149,7 +149,7 @@ TrisBpyScore::TrisBpyScore(
 		if ( pose_.secstruct(ir)!='L' ) cb_.push_back(pose_.residue(ir).nbr_atom_xyz());
 		else                         cb_.push_back(Vec(9e9,9e9,9e9));
 	}
-	cc_ = core::pose::xyzStripeHashPoseCOP( core::pose::xyzStripeHashPoseOP( new core::pose::xyzStripeHashPose(pose_,core::pose::PoseCoordPickMode_BB,3.2) ) );
+	cc_ = utility::pointer::make_shared< core::pose::xyzStripeHashPose >(pose_,core::pose::PoseCoordPickMode_BB,3.2);
 
 }
 

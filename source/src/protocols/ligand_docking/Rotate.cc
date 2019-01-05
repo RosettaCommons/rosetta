@@ -62,7 +62,7 @@ static basic::Tracer TR( "protocols.ligand_docking.ligand_options.rotate" );
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP RotateCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new Rotate );
+// XRW TEMP  return utility::pointer::make_shared< Rotate >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -107,11 +107,11 @@ Rotate::Rotate(Rotate const & that):
 Rotate::~Rotate() = default;
 
 protocols::moves::MoverOP Rotate::clone() const {
-	return protocols::moves::MoverOP( new Rotate( *this ) );
+	return utility::pointer::make_shared< Rotate >( *this );
 }
 
 protocols::moves::MoverOP Rotate::fresh_instance() const {
-	return protocols::moves::MoverOP( new Rotate );
+	return utility::pointer::make_shared< Rotate >();
 }
 
 // XRW TEMP std::string Rotate::get_name() const{
@@ -204,9 +204,9 @@ void Rotate::rotate_ligand(
 
 	protocols::rigid::RigidBodyMoverOP mover;
 	if ( rotate_info_.distribution == Uniform ) {
-		mover = protocols::rigid::RigidBodyMoverOP( new protocols::rigid::RigidBodyRandomizeMover( pose, rotate_info_.jump_id, protocols::rigid::partner_downstream, rotate_info_.degrees, rotate_info_.degrees) );
+		mover = utility::pointer::make_shared< protocols::rigid::RigidBodyRandomizeMover >( pose, rotate_info_.jump_id, protocols::rigid::partner_downstream, rotate_info_.degrees, rotate_info_.degrees);
 	} else if ( rotate_info_.distribution == Gaussian ) {
-		mover = protocols::rigid::RigidBodyMoverOP( new protocols::rigid::RigidBodyPerturbMover ( rotate_info_.jump_id, rotate_info_.degrees, 0 /*translate*/) );
+		mover = utility::pointer::make_shared< protocols::rigid::RigidBodyPerturbMover > ( rotate_info_.jump_id, rotate_info_.degrees, 0 /*translate*/);
 	}
 
 	core::Size chain_begin = pose.conformation().chain_begin(rotate_info_.chain_id);
@@ -237,9 +237,9 @@ void Rotate::rotate_ligand(core::pose::Pose & pose)
 
 	protocols::rigid::RigidBodyMoverOP mover;
 	if ( rotate_info_.distribution == Uniform ) {
-		mover = protocols::rigid::RigidBodyMoverOP( new protocols::rigid::RigidBodyRandomizeMover( pose, rotate_info_.jump_id, protocols::rigid::partner_downstream, rotate_info_.degrees, rotate_info_.degrees) );
+		mover = utility::pointer::make_shared< protocols::rigid::RigidBodyRandomizeMover >( pose, rotate_info_.jump_id, protocols::rigid::partner_downstream, rotate_info_.degrees, rotate_info_.degrees);
 	} else if ( rotate_info_.distribution == Gaussian ) {
-		mover = protocols::rigid::RigidBodyMoverOP( new protocols::rigid::RigidBodyPerturbMover ( rotate_info_.jump_id, rotate_info_.degrees, 0 /*translate*/) );
+		mover = utility::pointer::make_shared< protocols::rigid::RigidBodyPerturbMover > ( rotate_info_.jump_id, rotate_info_.degrees, 0 /*translate*/);
 	}
 	//core::Size chain_begin = pose.conformation().chain_begin(rotate_info_.chain_id);
 
@@ -344,7 +344,7 @@ std::string RotateCreator::keyname() const {
 
 protocols::moves::MoverOP
 RotateCreator::create_mover() const {
-	return protocols::moves::MoverOP( new Rotate );
+	return utility::pointer::make_shared< Rotate >();
 }
 
 void RotateCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

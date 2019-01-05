@@ -75,7 +75,7 @@ static basic::Tracer TR( "protocols.dna.RestrictDesignToProteinDNAInterface", t_
 
 TaskOperationOP RestrictDesignToProteinDNAInterfaceCreator::create_task_operation() const
 {
-	return TaskOperationOP( new RestrictDesignToProteinDNAInterface );
+	return utility::pointer::make_shared< RestrictDesignToProteinDNAInterface >();
 }
 
 void RestrictDesignToProteinDNAInterfaceCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -104,13 +104,13 @@ RestrictDesignToProteinDNAInterface::~RestrictDesignToProteinDNAInterface() = de
 
 TaskOperationOP RestrictDesignToProteinDNAInterface::clone() const
 {
-	return TaskOperationOP( new RestrictDesignToProteinDNAInterface( *this ) );
+	return utility::pointer::make_shared< RestrictDesignToProteinDNAInterface >( *this );
 }
 
 void
 RestrictDesignToProteinDNAInterface::copy_dna_chains( DnaChainsCOP dna_chains )
 {
-	dna_chains_ = DnaChainsOP( new DnaChains( *dna_chains ) );
+	dna_chains_ = utility::pointer::make_shared< DnaChains >( *dna_chains );
 }
 
 DnaChainsCOP
@@ -128,7 +128,7 @@ RestrictDesignToProteinDNAInterface::targeted_dna() const { return targeted_dna_
 void
 RestrictDesignToProteinDNAInterface::copy_interface( DnaInterfaceFinderCOP interface )
 {
-	interface_ = DnaInterfaceFinderOP( new DnaInterfaceFinder( *interface ) );
+	interface_ = utility::pointer::make_shared< DnaInterfaceFinder >( *interface );
 }
 
 DnaInterfaceFinderCOP
@@ -248,7 +248,7 @@ RestrictDesignToProteinDNAInterface::apply(
 
 	// get basepairing info unless supplied by user
 	if ( !dna_chains_ ) {
-		dna_chains_ = DnaChainsOP( new DnaChains );
+		dna_chains_ = utility::pointer::make_shared< DnaChains >();
 		find_basepairs( pose, *dna_chains_ );
 	}
 
@@ -399,7 +399,7 @@ RestrictDesignToProteinDNAInterface::apply(
 			}
 		}
 
-		interface_ = DnaInterfaceFinderOP( new DnaInterfaceFinder( close_threshold_, contact_threshold_, z_cutoff_, base_only_ ) );
+		interface_ = utility::pointer::make_shared< DnaInterfaceFinder >( close_threshold_, contact_threshold_, z_cutoff_, base_only_ );
 		// perform arginine rotamer sweep to decide wether or not to pack/design protein residues
 		interface_->determine_protein_interface( pose, protein_positions, dna_design_positions );
 	}

@@ -36,12 +36,12 @@ namespace rotamers {
 
 RotamerLibrarySpecificationOP
 PDBRotamerLibrarySpecificationCreator::create() const {
-	return RotamerLibrarySpecificationOP( new PDBRotamerLibrarySpecification );
+	return utility::pointer::make_shared< PDBRotamerLibrarySpecification >();
 }
 
 RotamerLibrarySpecificationOP
 PDBRotamerLibrarySpecificationCreator::create( std::istream & input ) const {
-	return RotamerLibrarySpecificationOP( new PDBRotamerLibrarySpecification( input ) );
+	return utility::pointer::make_shared< PDBRotamerLibrarySpecification >( input );
 }
 
 std::string

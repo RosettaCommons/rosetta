@@ -51,10 +51,10 @@ public:
 	ResidueIEFilter( ResidueIEFilter const &init );
 	bool apply( core::pose::Pose const & pose ) const override;
 	filters::FilterOP clone() const override {
-		return filters::FilterOP( new ResidueIEFilter( *this ) );
+		return utility::pointer::make_shared< ResidueIEFilter >( *this );
 	}
 	filters::FilterOP fresh_instance() const override{
-		return filters::FilterOP( new ResidueIEFilter() );
+		return utility::pointer::make_shared< ResidueIEFilter >();
 	}
 
 	void report( std::ostream & out, core::pose::Pose const & pose ) const override;

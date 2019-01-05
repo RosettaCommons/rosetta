@@ -173,14 +173,14 @@ StrandHelixGeometryFilter::parse_my_tag(
 protocols::filters::FilterOP
 StrandHelixGeometryFilter::clone() const
 {
-	return protocols::filters::FilterOP( new StrandHelixGeometryFilter( *this ) );
+	return utility::pointer::make_shared< StrandHelixGeometryFilter >( *this );
 }
 
 
 protocols::filters::FilterOP
 StrandHelixGeometryFilter::fresh_instance() const
 {
-	return protocols::filters::FilterOP( new StrandHelixGeometryFilter );
+	return utility::pointer::make_shared< StrandHelixGeometryFilter >();
 }
 
 bool
@@ -301,7 +301,7 @@ void StrandHelixGeometryFilter::provide_xml_schema( utility::tag::XMLSchemaDefin
 protocols::filters::FilterOP
 StrandHelixGeometryFilterCreator::create_filter() const
 {
-	return protocols::filters::FilterOP( new StrandHelixGeometryFilter );
+	return utility::pointer::make_shared< StrandHelixGeometryFilter >();
 }
 
 std::string

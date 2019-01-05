@@ -52,7 +52,7 @@ public:
 	void apply( core::pose::Pose& pose ) override;
 
 	protocols::moves::MoverOP clone() const override {
-		return protocols::moves::MoverOP( new Mover_LoopHashRefine( *this ) );
+		return utility::pointer::make_shared< Mover_LoopHashRefine >( *this );
 	}
 
 
@@ -61,7 +61,7 @@ public:
 	}
 
 	protocols::moves::MoverOP fresh_instance() const override {
-		return protocols::moves::MoverOP( new Mover_LoopHashRefine( library_ ) );
+		return utility::pointer::make_shared< Mover_LoopHashRefine >( library_ );
 	}
 
 private:

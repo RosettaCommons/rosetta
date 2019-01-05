@@ -181,12 +181,12 @@ void PlaceProbeMover::check_and_initialize(core::pose::Pose const & target_pose)
 
 SearchPatternOP PlaceProbeMover::create_partitioned_search_pattern(core::pose::Pose const & target_pose)
 {
-	return SearchPatternOP( new PartitionedSearchPattern(create_search_pattern(target_pose), search_partition_, total_search_partition_) );
+	return utility::pointer::make_shared< PartitionedSearchPattern >(create_search_pattern(target_pose), search_partition_, total_search_partition_);
 }
 
 SearchPatternOP PlaceProbeMover::create_refinement_pattern(core::pose::Pose const & /*target_pose*/, core::Size /*target_residue*/)
 {
-	return SearchPatternOP( new ConstPattern() );
+	return utility::pointer::make_shared< ConstPattern >();
 }
 
 void PlaceProbeMover::perform_local_refinement(core::pose::Pose & target_pose, core::Size target_residue)
@@ -204,10 +204,10 @@ core::pack::task::PackerTaskOP PlaceProbeMover::create_refinement_packing_task(c
 	core::pack::task::TaskFactory taskfactory;
 	using core::pack::task::operation::TaskOperationCOP;
 
-	taskfactory.push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline() ) );
-	taskfactory.push_back( TaskOperationCOP( new AddSearchPatternRotSetOp(
+	taskfactory.push_back( utility::pointer::make_shared< core::pack::task::operation::InitializeFromCommandline >() );
+	taskfactory.push_back( utility::pointer::make_shared< AddSearchPatternRotSetOp >(
 		target_residue,
-		create_refinement_pattern(target_pose, target_residue)) ));
+		create_refinement_pattern(target_pose, target_residue)));
 
 	core::pack::task::PackerTaskOP task = taskfactory.create_task_and_apply_taskoperations( target_pose );
 

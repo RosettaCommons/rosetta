@@ -65,7 +65,7 @@ methods::EnergyMethodOP
 MPTMProjPenaltyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new MPTMProjPenalty );
+	return utility::pointer::make_shared< MPTMProjPenalty >();
 }
 
 /// @brief Return score type MPTMProj
@@ -79,7 +79,7 @@ MPTMProjPenaltyCreator::score_types_for_method() const {
 
 /// @brief Default Constructor
 MPTMProjPenalty::MPTMProjPenalty() :
-	parent( methods::EnergyMethodCreatorOP( new MPTMProjPenaltyCreator ) ),
+	parent( utility::pointer::make_shared< MPTMProjPenaltyCreator >() ),
 	mpdata_( ScoringManager::get_instance()->get_MembraneData() )
 {}
 
@@ -87,7 +87,7 @@ MPTMProjPenalty::MPTMProjPenalty() :
 methods::EnergyMethodOP
 MPTMProjPenalty::clone() const
 {
-	return methods::EnergyMethodOP( new MPTMProjPenalty() );
+	return utility::pointer::make_shared< MPTMProjPenalty >();
 }
 
 /// Scoring Methods /////////////////////////

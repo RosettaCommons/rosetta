@@ -38,7 +38,7 @@ CacheableAtomID_MapVector::~CacheableAtomID_MapVector()= default;
 
 basic::datacache::CacheableDataOP
 CacheableAtomID_MapVector::clone() const {
-	return basic::datacache::CacheableDataOP( new CacheableAtomID_MapVector(*this) );
+	return utility::pointer::make_shared< CacheableAtomID_MapVector >(*this);
 }
 
 }

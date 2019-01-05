@@ -37,7 +37,7 @@ static basic::Tracer TR("protocols.legacy_sewing.sampling.requirements.LegacyRes
 //////Creator methods/////
 LegacyGlobalRequirementOP
 LegacyResidueRetentionRequirementCreator::create_requirement() const{
-	return LegacyGlobalRequirementOP( new LegacyResidueRetentionRequirement() );
+	return utility::pointer::make_shared< LegacyResidueRetentionRequirement >();
 }
 
 std::string

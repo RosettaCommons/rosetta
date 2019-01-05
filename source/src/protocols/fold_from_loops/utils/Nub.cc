@@ -150,7 +150,7 @@ Nub::parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &data, core:
 		reference_pose_ = protocols::rosetta_scripts::saved_reference_pose(nubtag, data, "reference_name" );
 		TR.Trace << TR.Green << "Loaded reference pose: " << nubtag->getOption< std::string >( "reference_name" ) << " with " << reference_pose_->size() << " residues" << TR.Reset << std::endl;
 	} else {
-		reference_pose_ = core::pose::PoseOP( new core::pose::Pose( reference_pose ) );
+		reference_pose_ = utility::pointer::make_shared< core::pose::Pose >( reference_pose );
 		if ( nubtag->hasOption( "pose_file" ) ) {
 			core::import_pose::pose_from_file( *reference_pose_, nubtag->getOption< std::string >( "pose_file" ) , core::import_pose::PDB_file);
 		} else {
@@ -615,7 +615,7 @@ core::fragment::FragSetOP
 Nub::fix_fragment( core::fragment::FragSetOP fragset )
 {
 	using namespace core::fragment;
-	FragSetOP myFragSet = FragSetOP( new ConstantLengthFragSet( fragset->max_frag_length() ) );
+	FragSetOP myFragSet = utility::pointer::make_shared< ConstantLengthFragSet >( fragset->max_frag_length() );
 	core::Size i = 1;
 	for ( FrameIterator it=fragset->nonconst_begin(), eit=fragset->nonconst_end(); it!=eit; ++it, ++i ) {
 		TR << i << " " << seqmap_[ i ];  // Size of the map == Size of fset
@@ -625,7 +625,7 @@ Nub::fix_fragment( core::fragment::FragSetOP fragset )
 			for ( core::Size j = 1; j<= (*it)->nr_frags(); ++j ) {
 				FragData old_fragment = (*it)->fragment( j );
 				FragDataOP current_fragment( NULL );
-				current_fragment = FragDataOP( new AnnotatedFragData( old_fragment.pdbid(), seqmap_[ i ] ) );
+				current_fragment = utility::pointer::make_shared< AnnotatedFragData >( old_fragment.pdbid(), seqmap_[ i ] );
 				current_fragment->copy( (*it)->fragment( j ) );
 				frame->add_fragment( current_fragment );
 			}
@@ -785,7 +785,7 @@ core::select::movemap::MoveMapFactoryOP
 Nub::movemapfactory() const
 {
 	using namespace core::select::movemap;
-	return MoveMapFactoryOP( new MoveMapFactory( *movemap_ ) );
+	return utility::pointer::make_shared< MoveMapFactory >( *movemap_ );
 }
 
 std::string

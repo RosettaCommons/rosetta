@@ -164,7 +164,7 @@ RNA_VDW_BinChecker::RNA_VDW_BinChecker():
 	using namespace core::pose::rna;
 	optimize_memory_usage_ = option[ VDW_rep_optimize_memory_usage ]();
 
-	VDW_screen_bin_ = VDW_GridOP( new VDW_Grid() );
+	VDW_screen_bin_ = utility::pointer::make_shared< VDW_Grid >();
 
 	//March 23,2011:
 	//For VDW_rep_screen_with_physical_pose: use 1.2 Angstrom Cutoff (In constrast use 0.8 Angstrom in create_VDW_screen_bin). Reasoning is as follow:
@@ -620,7 +620,7 @@ RNA_VDW_BinChecker::read_in_VDW_rep_screen_pose( core::pose::rna::VDW_RepScreenI
 	if ( VDW_rep_screen_info.pose_name == "" ) utility_exit_with_message( VDW_rep_screen_info.pose_name == "" );
 
 	////////import VDW_rep_screen_pose.////////////////////////////////////////
-	VDW_rep_screen_info.VDW_pose = pose::PoseOP( new Pose );
+	VDW_rep_screen_info.VDW_pose = utility::pointer::make_shared< Pose >();
 	import_pose::pose_from_file( *VDW_rep_screen_info.VDW_pose, *rsd_set, VDW_rep_screen_info.pose_name, core::import_pose::PDB_file );
 	core::pose::rna::make_phosphate_nomenclature_matches_mini( *VDW_rep_screen_info.VDW_pose );
 	///////////////////////////////////////////////////////////////////////////

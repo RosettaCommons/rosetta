@@ -89,19 +89,19 @@ setup_pose_input_stream(
 
 	if ( option_s1.user() ) {
 		// pdb input(s).
-		input1 = PoseInputStreamOP( new PDBPoseInputStream( option_s1() ) );
+		input1 = utility::pointer::make_shared< PDBPoseInputStream >( option_s1() );
 
 	} else if ( option_silent1.size() > 0 ) {
 
 		if ( option_tags1.user() > 0 ) {
-			input1 = PoseInputStreamOP( new SilentFilePoseInputStream( option_silent1() ,
-				option_tags1() ) );
+			input1 = utility::pointer::make_shared< SilentFilePoseInputStream >( option_silent1() ,
+				option_tags1() );
 		} else {
-			input1 = PoseInputStreamOP( new SilentFilePoseInputStream( option_silent1() ) );
+			input1 = utility::pointer::make_shared< SilentFilePoseInputStream >( option_silent1() );
 		}
 	} else {
 		// create a pose stream with a single blank pose...
-		input1 = PoseInputStreamOP( new ExtendedPoseInputStream( "", 1 ) ); // hmm...
+		input1 = utility::pointer::make_shared< ExtendedPoseInputStream >( "", 1 ); // hmm...
 	}
 
 	return input1;
@@ -245,7 +245,7 @@ InputStreamWithResidueInfo::advance_to_next_pose_segment(){
 	// Read in pose.
 	core::chemical::ResidueTypeSetCOP rsd_set( rsd_set_ );
 	runtime_assert( rsd_set != nullptr );
-	import_pose_ = pose::PoseOP( new core::pose::Pose );
+	import_pose_ = utility::pointer::make_shared< core::pose::Pose >();
 	pose_input_stream_->fill_pose( *import_pose_, *rsd_set );
 }
 
@@ -401,7 +401,7 @@ initialize_input_streams_with_residue_info( utility::vector1< InputStreamWithRes
 		utility::vector1< std::string > silent_files1, pdb_tags1;
 		silent_files1.push_back( silent_files_in[ i ] );
 		pdb_tags1.push_back( pdb_tags[ i ] );
-		InputStreamWithResidueInfoOP input_stream( new InputStreamWithResidueInfo( import_pose::pose_stream::PoseInputStreamOP( new SilentFilePoseInputStream( silent_files1, pdb_tags1 ) ), input_res_vectors[ i ] ) );
+		InputStreamWithResidueInfoOP input_stream( new InputStreamWithResidueInfo( utility::pointer::make_shared< SilentFilePoseInputStream >( silent_files1, pdb_tags1 ), input_res_vectors[ i ] ) );
 		input_streams_with_residue_info.push_back( input_stream );
 	}
 	// Then PDBs.
@@ -413,7 +413,7 @@ initialize_input_streams_with_residue_info( utility::vector1< InputStreamWithRes
 		}
 		utility::vector1< std::string > pose_names;
 		pose_names.push_back( pose_name );
-		InputStreamWithResidueInfoOP input_stream( new InputStreamWithResidueInfo( import_pose::pose_stream::PoseInputStreamOP( new PDBPoseInputStream( pose_names ) ), input_res_vectors[ i ] ) );
+		InputStreamWithResidueInfoOP input_stream( new InputStreamWithResidueInfo( utility::pointer::make_shared< PDBPoseInputStream >( pose_names ), input_res_vectors[ i ] ) );
 		input_streams_with_residue_info.push_back( input_stream );
 	}
 }

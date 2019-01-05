@@ -172,7 +172,7 @@ std::string HBondParameterFeaturesCreator::type_name() const {
 
 protocols::features::FeaturesReporterOP
 HBondParameterFeaturesCreator::create_features_reporter() const {
-	return protocols::features::FeaturesReporterOP( new HBondParameterFeatures );
+	return utility::pointer::make_shared< HBondParameterFeatures >();
 }
 
 void HBondParameterFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

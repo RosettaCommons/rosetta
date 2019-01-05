@@ -43,10 +43,10 @@ public:
 	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
 	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	filters::FilterOP clone() const override {
-		return filters::FilterOP( new ChainCountFilter( *this ) );
+		return utility::pointer::make_shared< ChainCountFilter >( *this );
 	}
 	filters::FilterOP fresh_instance() const override{
-		return filters::FilterOP( new ChainCountFilter() );
+		return utility::pointer::make_shared< ChainCountFilter >();
 	}
 
 	void threshold( core::Size threshold ) { threshold_ = threshold; };

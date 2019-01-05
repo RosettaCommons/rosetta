@@ -497,9 +497,9 @@ EnzdesFlexBBProtocol::add_flexible_region(
 {
 	if ( clear_existing ) flex_regions_.clear();
 	core::Size length( end - start +1 );
-	flex_regions_.push_back( protocols::enzdes::EnzdesFlexibleRegionOP( new EnzdesFlexibleRegion( flex_regions_.size() + 1, start, end, length, pose,
+	flex_regions_.push_back( utility::pointer::make_shared< EnzdesFlexibleRegion >( flex_regions_.size() + 1, start, end, length, pose,
 		EnzdesFlexBBProtocolCAP( utility::pointer::dynamic_pointer_cast< EnzdesFlexBBProtocol >( get_self_ptr() ) )
-		) ) );
+		) );
 }
 
 
@@ -568,9 +568,9 @@ EnzdesFlexBBProtocol::determine_flexible_regions(
 
 			core::Size length( lstop - lstart +1 );
 
-			flex_regions_.push_back( protocols::enzdes::EnzdesFlexibleRegionOP( new EnzdesFlexibleRegion( i, lstart, lstop, length, pose,
+			flex_regions_.push_back( utility::pointer::make_shared< EnzdesFlexibleRegion >( i, lstart, lstop, length, pose,
 				EnzdesFlexBBProtocolCAP( utility::pointer::dynamic_pointer_cast< EnzdesFlexBBProtocol >( get_self_ptr() ) )
-				) ) );
+				) );
 			tr << " " << lstart << "-" << lstop;
 
 			core::Size min_length( enz_loops_file_->loop_info( i )->min_length() );
@@ -594,9 +594,9 @@ EnzdesFlexBBProtocol::determine_flexible_regions(
 		for ( utility::vector1< loops::Loop >::const_iterator lit = loops_helper.v_begin(); lit != loops_helper.v_end(); ++lit ) {
 			no_flex_regions++;
 			core::Size lstart( lit->start() ), lstop( lit->stop() );
-			flex_regions_.push_back( protocols::enzdes::EnzdesFlexibleRegionOP( new EnzdesFlexibleRegion( no_flex_regions, lstart, lstop, lstop - lstart + 1, pose,
+			flex_regions_.push_back( utility::pointer::make_shared< EnzdesFlexibleRegion >( no_flex_regions, lstart, lstop, lstop - lstart + 1, pose,
 				EnzdesFlexBBProtocolCAP( utility::pointer::dynamic_pointer_cast< EnzdesFlexBBProtocol >( get_self_ptr() ) )
-				) ) );
+				) );
 			tr << " " << lstart << "-" << lstop;
 
 			if ( lit->is_extended() ) {
@@ -642,9 +642,9 @@ EnzdesFlexBBProtocol::determine_flexible_regions(
 				while ( (j <= pose.size()) && flex_res[j] ) j++;
 
 				no_flex_regions++;
-				flex_regions_.push_back( protocols::enzdes::EnzdesFlexibleRegionOP( new EnzdesFlexibleRegion( no_flex_regions, i, j - 1, (j - i), pose,
+				flex_regions_.push_back( utility::pointer::make_shared< EnzdesFlexibleRegion >( no_flex_regions, i, j - 1, (j - i), pose,
 					EnzdesFlexBBProtocolCAP( utility::pointer::dynamic_pointer_cast< EnzdesFlexBBProtocol >( get_self_ptr() ) )
-					) ) );
+					) );
 				//fragment_counters_.push_back( 1 );
 				tr << "found " << i << "-" << j - 1 << ", ";
 				i = j;
@@ -670,10 +670,10 @@ EnzdesFlexBBProtocol::generate_ensemble_for_region(
 	tr.flush();
 
 	if ( ! basic::options::option[ basic::options::OptionKeys::enzdes::kic_loop_sampling ] ) {
-		brub_mover_ = protocols::backrub::BackrubMoverOP( new protocols::backrub::BackrubMover() );
+		brub_mover_ = utility::pointer::make_shared< protocols::backrub::BackrubMover >();
 		//brub_mover_->set_native_pose( & pose );
 	}
-	kinematic_mover_ = protocols::loops::loop_closure::kinematic_closure::KinematicMoverOP( new protocols::loops::loop_closure::kinematic_closure::KinematicMover() );
+	kinematic_mover_ = utility::pointer::make_shared< protocols::loops::loop_closure::kinematic_closure::KinematicMover >();
 
 	(*reduced_scorefxn())( pose );
 
@@ -1019,7 +1019,7 @@ EnzdesFlexBBProtocol::generate_backrub_ensemble_for_region(
 {
 	//ObjexxFCL::FArray1D_bool flex_res( pose.size(), false);
 	//for( core::Size i = flex_regions_[region]->start() - 1; i <= flex_regions_[region]->end(); ++i) flex_res(i) = true;
-	brub_mover_->set_native_pose( core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose( pose ) ) ) );
+	brub_mover_->set_native_pose( utility::pointer::make_shared< core::pose::Pose >( pose ) );
 	brub_mover_->set_input_pose( brub_mover_->get_native_pose() );
 	brub_mover_->clear_segments();
 	brub_mover_->add_mainchain_segments( flex_regions_[region]->positions(), brub_pivot_atoms_, brub_min_atoms_, brub_max_atoms_ );
@@ -1303,7 +1303,7 @@ EnzdesFlexBBProtocol::setup_catalytic_residue_minimization_for_region(
 	core::Size region )
 {
 
-	catmin_sfxn_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() );
+	catmin_sfxn_ = utility::pointer::make_shared< core::scoring::ScoreFunction >();
 	catmin_sfxn_->reset();
 	catmin_sfxn_->set_weight( core::scoring::fa_rep, reduced_scorefxn()->get_weight( core::scoring::fa_rep ) );
 	catmin_sfxn_->set_weight( core::scoring::fa_dun, reduced_scorefxn()->get_weight( core::scoring::fa_dun ) );
@@ -1315,7 +1315,7 @@ EnzdesFlexBBProtocol::setup_catalytic_residue_minimization_for_region(
 	//bool minimize_cats = !( basic::options::option[basic::options::OptionKeys::enzdes::no_catres_min_in_loopgen].user()) && flex_regions_[region]->contains_catalytic_res();
 
 	//if( minimize_cats )
-	catmin_movemap_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap() );
+	catmin_movemap_ = utility::pointer::make_shared< core::kinematics::MoveMap >();
 	catmin_movemap_->clear();
 
 	tr << "Allowing minimization of the following catalytic residues during ensemble generation for region " << region << ": ";
@@ -1326,7 +1326,7 @@ EnzdesFlexBBProtocol::setup_catalytic_residue_minimization_for_region(
 		}
 	}
 
-	catmin_mover_ = protocols::minimization_packing::MinMoverOP( new protocols::minimization_packing::MinMover( catmin_movemap_, catmin_sfxn_, "linmin", 0.02, true /*use_nblist*/ ) );
+	catmin_mover_ = utility::pointer::make_shared< protocols::minimization_packing::MinMover >( catmin_movemap_, catmin_sfxn_, "linmin", 0.02, true /*use_nblist*/ );
 	tr << std::endl;
 
 } //setup_catalytic_residue_minimization_for_region
@@ -1457,8 +1457,8 @@ EnzdesFlexibleRegion::assemble_enzdes_fragdata(
 		angles.push_back( newpair );
 
 		if ( enzdes_protocol->is_catalytic_position( pose, i ) ) {
-			srfd = SingleResidueFragDataOP( new BBTorsionAndAnglesSRFD( angles ) ); //temporary, we will do something different for the catalytic res
-		} else { srfd = SingleResidueFragDataOP( new BBTorsionAndAnglesSRFD( angles ) ); }
+			srfd = utility::pointer::make_shared< BBTorsionAndAnglesSRFD >( angles ); //temporary, we will do something different for the catalytic res
+		} else { srfd = utility::pointer::make_shared< BBTorsionAndAnglesSRFD >( angles ); }
 
 		new_fragdata->add_residue( srfd );
 	}
@@ -1888,7 +1888,7 @@ EnzdesFlexibleRegion::examine_new_loopconf(
 	if ( frag_close_to_native && frag_close_to_another_fragment ) {
 		this->add_fragment( newfrag );
 		rmsd_to_native.push_back( core::scoring::rmsd_no_super( *compare_poses[1], template_pose, core::scoring::is_protein_backbone ) );
-		compare_poses.push_back( core::pose::PoseOP( new core::pose::Pose( template_pose ) ) );
+		compare_poses.push_back( utility::pointer::make_shared< core::pose::Pose >( template_pose ) );
 
 		return true;
 

@@ -39,7 +39,7 @@ methods::EnergyMethodOP
 HydroxylTorsionEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new HydroxylTorsionEnergy );
+	return utility::pointer::make_shared< HydroxylTorsionEnergy >();
 }
 
 ScoreTypes
@@ -51,7 +51,7 @@ HydroxylTorsionEnergyCreator::score_types_for_method() const {
 
 /// ctor
 HydroxylTorsionEnergy::HydroxylTorsionEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new HydroxylTorsionEnergyCreator ) ),
+	parent( utility::pointer::make_shared< HydroxylTorsionEnergyCreator >() ),
 	potential_( ScoringManager::get_instance()->get_HydroxylTorsionPotential() )
 {
 	// hard-coded for now
@@ -61,7 +61,7 @@ HydroxylTorsionEnergy::HydroxylTorsionEnergy() :
 EnergyMethodOP
 HydroxylTorsionEnergy::clone() const
 {
-	return EnergyMethodOP( new HydroxylTorsionEnergy );
+	return utility::pointer::make_shared< HydroxylTorsionEnergy >();
 }
 
 void

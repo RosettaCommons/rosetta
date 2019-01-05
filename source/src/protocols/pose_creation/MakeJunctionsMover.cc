@@ -91,7 +91,7 @@ std::string MakeJunctionsMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 MakeJunctionsMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MakeJunctionsMover );
+	return utility::pointer::make_shared< MakeJunctionsMover >();
 }
 
 void MakeJunctionsMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -119,13 +119,13 @@ MakeJunctionsMover::get_name() const {
 moves::MoverOP
 MakeJunctionsMover::clone() const
 {
-	return moves::MoverOP( new MakeJunctionsMover( *this ) );
+	return utility::pointer::make_shared< MakeJunctionsMover >( *this );
 }
 
 moves::MoverOP
 MakeJunctionsMover::fresh_instance() const
 {
-	return moves::MoverOP( new MakeJunctionsMover );
+	return utility::pointer::make_shared< MakeJunctionsMover >();
 }
 
 MakeJunctionsMover::Design MakeJunctionsMover::line_to_design(std::string line){
@@ -215,7 +215,7 @@ void MakeJunctionsMover::generate_start_pose(core::pose::Pose & pose, core::pose
 	core::pose::PoseOP desired_chain = start_pose.split_by_chain(chain_id);
 	pose = *desired_chain;
 	if ( pose.size() == start_pose.size() ) {
-		background_pose=*(core::pose::PoseOP( new Pose()));
+		background_pose = Pose(); // Reset to empty pose
 	} else {  //delete chain from full_pose. Last step will be pasting the original chain back ina
 		start_pose.conformation().delete_residue_range_slow( start_pose.conformation().chain_begin( chain_id), start_pose.conformation().chain_end( chain_id ) );
 		background_pose = start_pose;
@@ -423,7 +423,7 @@ bool MakeJunctionsMover::make_pose_from_design(MakeJunctionsMover::Design design
 		append_pose_to_pose(pose,background_pose);
 	}
 	renumber_pdbinfo_based_on_conf_chains(pose);
-	return_pose = core::pose::PoseOP( new Pose( pose ) );
+	return_pose = utility::pointer::make_shared< Pose >( pose );
 	return(success);
 }
 

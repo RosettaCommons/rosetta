@@ -67,7 +67,7 @@ using core::Real;
 // XRW TEMP FilterOP
 // XRW TEMP RemoveLigandFilterCreator::create_filter() const
 // XRW TEMP {
-// XRW TEMP  return FilterOP( new RemoveLigandFilter );
+// XRW TEMP  return utility::pointer::make_shared< RemoveLigandFilter >();
 // XRW TEMP }
 
 
@@ -75,8 +75,8 @@ using core::Real;
 RemoveLigandFilter::RemoveLigandFilter( ):
 	Filter( "RemoveLigandFilter" ),
 	threshold_( 99.99 ),
-	mover_( MoverOP( new MinMover ) ),
-	filter_( FilterOP( new RmsdFilter ) )
+	mover_( utility::pointer::make_shared< MinMover >() ),
+	filter_( utility::pointer::make_shared< RmsdFilter >() )
 {
 	MoveMapOP movemap( new core::kinematics::MoveMap );
 	movemap->set_bb(true);
@@ -92,8 +92,8 @@ RemoveLigandFilter::RemoveLigandFilter( ):
 RemoveLigandFilter::RemoveLigandFilter( Real threshold ):
 	Filter( "RemoveLigandFilter" ),
 	threshold_( threshold ),
-	mover_( MoverOP( new MinMover ) ),
-	filter_( FilterOP( new RmsdFilter ) )
+	mover_( utility::pointer::make_shared< MinMover >() ),
+	filter_( utility::pointer::make_shared< RmsdFilter >() )
 { }
 
 RemoveLigandFilter::RemoveLigandFilter( RemoveLigandFilter const & rval ):
@@ -117,7 +117,7 @@ RemoveLigandFilter::report_sm( Pose const & pose ) const
 		rmsd_filter->reference_pose( init_pose );
 		rmsd_filter->superimpose( true );
 		using namespace core::select::residue_selector;
-		rmsd_filter->set_selection( ResidueSelectorOP( new TrueResidueSelector ) ); // All residues
+		rmsd_filter->set_selection( utility::pointer::make_shared< TrueResidueSelector >() ); // All residues
 
 		mover_->apply( no_lig_pose );
 		return rmsd_filter->report_sm( no_lig_pose );
@@ -200,7 +200,7 @@ std::string RemoveLigandFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 RemoveLigandFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new RemoveLigandFilter );
+	return utility::pointer::make_shared< RemoveLigandFilter >();
 }
 
 void RemoveLigandFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

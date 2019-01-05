@@ -61,7 +61,7 @@ parse_resnum(
 		core::Size refpose_number(0);
 		signed long refpose_offset(0); //Must be signed!
 		if ( is_referencepose_number(resnum, refpose_name, refpose_number, refpose_offset) ) {
-			return ResidueIndexDescriptionCOP( new ResidueIndexDescriptionRefPose(refpose_name, refpose_number, refpose_offset));
+			return utility::pointer::make_shared< ResidueIndexDescriptionRefPose >(refpose_name, refpose_number, refpose_offset);
 		}
 	}
 	// Otherwise, this is NOT of that form, and we should parse it as a Rosetta
@@ -99,7 +99,7 @@ parse_resnum(
 	ss >> n;
 	if ( chain.size() == 1 ) { // PDB Number
 		TR.Trace << "Interpreting " << n << chain << " as a pdb number." << std::endl;
-		return ResidueIndexDescriptionCOP( new ResidueIndexDescriptionPDB( chain[0], n ) );
+		return utility::pointer::make_shared< ResidueIndexDescriptionPDB >( chain[0], n );
 	} else { // Rosetta Number
 		TR.Trace << "Interpreting " << n << " as a Rosetta residue number." << std::endl;
 		return core::pose::make_rid_posenum( n );
@@ -354,7 +354,7 @@ get_resnum_string( utility::tag::TagCOP tag_ptr, std::string const & prefix, std
 core::select::residue_selector::ResidueSelectorOP
 get_resnum_selector(utility::tag::TagCOP tag_ptr, std::string const& tag) {
 	if ( tag_ptr->hasOption( tag ) ) {
-		return core::select::residue_selector::ResidueSelectorOP( new core::select::residue_selector::ResidueIndexSelector( tag_ptr->getOption< std::string >( tag ) ) );
+		return utility::pointer::make_shared< core::select::residue_selector::ResidueIndexSelector >( tag_ptr->getOption< std::string >( tag ) );
 	} else {
 		TR.Fatal <<"No "<<tag<<" option was found in tag "<<tag_ptr<<std::endl;
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Error when parsing a residue number list from "+tag+" attribute.");

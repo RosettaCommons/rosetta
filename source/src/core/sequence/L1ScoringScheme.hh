@@ -42,10 +42,10 @@ public:
 	}
 
 	ScoringSchemeOP clone() const override {
-		return ScoringSchemeOP( new L1ScoringScheme(
+		return utility::pointer::make_shared< L1ScoringScheme >(
 			gap_open(),
 			gap_extend()
-			) );
+		);
 	}
 
 	/// @brief dtor

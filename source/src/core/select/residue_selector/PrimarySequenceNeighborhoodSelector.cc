@@ -52,7 +52,7 @@ PrimarySequenceNeighborhoodSelector::PrimarySequenceNeighborhoodSelector() :
 
 /// @brief Clone operator.
 /// @details Copy this object and return an owning pointer to the new object.
-ResidueSelectorOP PrimarySequenceNeighborhoodSelector::clone() const { return ResidueSelectorOP( new PrimarySequenceNeighborhoodSelector(*this) ); }
+ResidueSelectorOP PrimarySequenceNeighborhoodSelector::clone() const { return utility::pointer::make_shared< PrimarySequenceNeighborhoodSelector >(*this); }
 
 PrimarySequenceNeighborhoodSelector::PrimarySequenceNeighborhoodSelector(
 	core::Size const lower_residues,
@@ -198,7 +198,7 @@ PrimarySequenceNeighborhoodSelector::provide_xml_schema( utility::tag::XMLSchema
 
 ResidueSelectorOP
 PrimarySequenceNeighborhoodSelectorCreator::create_residue_selector() const {
-	return ResidueSelectorOP( new PrimarySequenceNeighborhoodSelector );
+	return utility::pointer::make_shared< PrimarySequenceNeighborhoodSelector >();
 }
 
 std::string

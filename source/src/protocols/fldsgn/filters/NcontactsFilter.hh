@@ -83,10 +83,10 @@ public:// virtual constructor
 
 
 	/// @brief make clone
-	FilterOP clone() const override { return FilterOP( new NcontactsFilter( *this ) ); }
+	FilterOP clone() const override { return utility::pointer::make_shared< NcontactsFilter >( *this ); }
 
 	/// @brief make fresh instance
-	FilterOP fresh_instance() const override { return FilterOP( new NcontactsFilter() ); }
+	FilterOP fresh_instance() const override { return utility::pointer::make_shared< NcontactsFilter >(); }
 
 
 public:// accessor

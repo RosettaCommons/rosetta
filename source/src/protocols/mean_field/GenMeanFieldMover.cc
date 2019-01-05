@@ -314,7 +314,7 @@ GenMeanFieldMover::prepare_task_poses( pose::Pose const & pose )
 
 	poses_ = import_pose::poseOPs_from_files( pdb_list_ );
 
-	task_factory()->push_back( pack::task::operation::TaskOperationCOP( new pack::task::operation::InitializeFromCommandline ) );
+	task_factory()->push_back( utility::pointer::make_shared< pack::task::operation::InitializeFromCommandline >() );
 
 	//uses input pose (in -s option) to create task
 	task_ = task_factory()->create_task_and_apply_taskoperations( pose );
@@ -528,20 +528,20 @@ void GenMeanFieldMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefini
 
 protocols::moves::MoverOP
 GenMeanFieldMover::fresh_instance() const{
-	return protocols::moves::MoverOP( new GenMeanFieldMover );
+	return utility::pointer::make_shared< GenMeanFieldMover >();
 }
 
 GenMeanFieldMover::~GenMeanFieldMover()= default;
 
 protocols::moves::MoverOP
 GenMeanFieldMover::clone() const{
-	return protocols::moves::MoverOP( new GenMeanFieldMover( *this ) );
+	return utility::pointer::make_shared< GenMeanFieldMover >( *this );
 }
 
 protocols::moves::MoverOP
 GenMeanFieldMoverCreator::create_mover() const
 {
-	return protocols::moves::MoverOP( new GenMeanFieldMover );
+	return utility::pointer::make_shared< GenMeanFieldMover >();
 }
 
 std::string

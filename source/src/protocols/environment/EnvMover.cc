@@ -48,7 +48,7 @@ namespace environment {
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP EnvMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new EnvMover() );
+// XRW TEMP  return utility::pointer::make_shared< EnvMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -60,7 +60,7 @@ EnvMover::EnvMover():
 	Mover(),
 	movers_( new moves::SequenceMover )
 {
-	env_ = EnvironmentOP( new Environment( "env" ) );
+	env_ = utility::pointer::make_shared< Environment >( "env" );
 	movers_->use_mover_status( true );
 }
 
@@ -125,7 +125,7 @@ void EnvMover::parse_my_tag( utility::tag::TagCOP tag,
 	core::pose::Pose const& pose ) {
 	using TagCOPs = utility::vector0<TagCOP>;
 
-	env_ = EnvironmentOP( new Environment( tag->getOption<std::string>( "name" ) ) );
+	env_ = utility::pointer::make_shared< Environment >( tag->getOption<std::string>( "name" ) );
 
 	env_->auto_cut( tag->getOption< bool >( "auto_cut", env_->auto_cut() ) );
 	env_->inherit_cuts( tag->getOption< bool >( "inherit_cuts", env_->inherit_cuts() ) );
@@ -212,7 +212,7 @@ void EnvMover::add_registered_mover( protocols::moves::MoverOP mover_in ) {
 // XRW TEMP }
 
 moves::MoverOP EnvMover::clone() const {
-	return moves::MoverOP( new EnvMover( *this ) );
+	return utility::pointer::make_shared< EnvMover >( *this );
 }
 
 std::string EnvMover::get_name() const {
@@ -268,7 +268,7 @@ std::string EnvMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 EnvMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new EnvMover );
+	return utility::pointer::make_shared< EnvMover >();
 }
 
 void EnvMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

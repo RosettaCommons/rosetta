@@ -196,14 +196,14 @@ void LoopMover_Refine_Backrub::apply(
 	// the following TaskFactory usage allows user-defined PackerTask creation on-demand
 	using namespace pack::task;
 	if ( task_factory == nullptr ) {
-		task_factory = core::pack::task::TaskFactoryOP( new TaskFactory );
+		task_factory = utility::pointer::make_shared< TaskFactory >();
 		// TaskOperations replace the following kind of code:
 		// base_packer_task->initialize_from_command_line().or_include_current( true );
-		task_factory->push_back( operation::TaskOperationCOP( new operation::InitializeFromCommandline ) );
-		task_factory->push_back( operation::TaskOperationCOP( new operation::IncludeCurrent ) );
+		task_factory->push_back( utility::pointer::make_shared< operation::InitializeFromCommandline >() );
+		task_factory->push_back( utility::pointer::make_shared< operation::IncludeCurrent >() );
 		if ( option[ OptionKeys::packing::resfile ].user() ) {
 			// Note - resfile is obeyed, so use NATAA as default to maintain protocol behavior
-			task_factory->push_back( operation::TaskOperationCOP( new core::pack::task::operation::ReadResfile ) );
+			task_factory->push_back( utility::pointer::make_shared< core::pack::task::operation::ReadResfile >() );
 			tr() << "Activating design" << std::endl;
 		}
 	}
@@ -278,7 +278,7 @@ basic::Tracer & LoopMover_Refine_Backrub::tr() const
 // XRW TEMP LoopMover_Refine_BackrubCreator::~LoopMover_Refine_BackrubCreator() {}
 
 // XRW TEMP moves::MoverOP LoopMover_Refine_BackrubCreator::create_mover() const {
-// XRW TEMP  return moves::MoverOP( new LoopMover_Refine_Backrub() );
+// XRW TEMP  return utility::pointer::make_shared< LoopMover_Refine_Backrub >();
 // XRW TEMP }
 
 // XRW TEMP std::string LoopMover_Refine_BackrubCreator::keyname() const {
@@ -307,7 +307,7 @@ std::string LoopMover_Refine_BackrubCreator::keyname() const {
 
 protocols::moves::MoverOP
 LoopMover_Refine_BackrubCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LoopMover_Refine_Backrub );
+	return utility::pointer::make_shared< LoopMover_Refine_Backrub >();
 }
 
 void LoopMover_Refine_BackrubCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -82,7 +82,7 @@ OperateOnCertainResidues::~OperateOnCertainResidues() = default;
 
 TaskOperationOP OperateOnCertainResidues::clone() const
 {
-	return TaskOperationOP( new OperateOnCertainResidues( *this ) );
+	return utility::pointer::make_shared< OperateOnCertainResidues >( *this );
 }
 
 void
@@ -181,7 +181,7 @@ void OperateOnCertainResidues::provide_xml_schema( utility::tag::XMLSchemaDefini
 
 TaskOperationOP OperateOnCertainResiduesCreator::create_task_operation() const
 {
-	return TaskOperationOP( new OperateOnCertainResidues );
+	return utility::pointer::make_shared< OperateOnCertainResidues >();
 }
 
 std::string OperateOnCertainResiduesCreator::keyname() const { return OperateOnCertainResidues::keyname(); }

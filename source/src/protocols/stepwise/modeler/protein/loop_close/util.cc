@@ -119,7 +119,7 @@ enable_sampling_of_loop_takeoff( sampler::StepWiseSamplerSizedOP & sampler,
 	ProteinMainChainStepWiseSamplerOP sampler_for_takeoff_res( new ProteinMainChainStepWiseSampler( backbone_sampler.which_torsions( pose ),
 		backbone_sampler.main_chain_torsion_set_lists_real( pose ),
 		false /*choose_random*/ ) );
-	sampler = sampler::StepWiseSamplerSizedOP( new sampler::StepWiseSamplerSizedComb( sampler /*input pose sample generator from above*/, sampler_for_takeoff_res /*inner loop*/) );
+	sampler = utility::pointer::make_shared< sampler::StepWiseSamplerSizedComb >( sampler /*input pose sample generator from above*/, sampler_for_takeoff_res /*inner loop*/);
 }
 
 } //loop_close

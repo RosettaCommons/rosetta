@@ -78,12 +78,12 @@ public:
 		relevant_residues_3B83_ = utility::vector1< bool >(pose_3B83_OP->size(), true);
 		batch_id_ = 0;
 
-		structure_reporter_ = protocols::features::StructureFeaturesOP( new StructureFeatures() );
+		structure_reporter_ = utility::pointer::make_shared< StructureFeatures >();
 
-		features_reporters_.push_back(protocols::features::FeaturesReporterOP( new ResidueFeatures() ));
-		features_reporters_.push_back(protocols::features::FeaturesReporterOP( new ResidueSecondaryStructureFeatures() ));
-		features_reporters_.push_back(protocols::features::FeaturesReporterOP( new SecondaryStructureSegmentFeatures() )); // it is needed for sandwichfeatures
-		features_reporters_.push_back(protocols::features::FeaturesReporterOP( new strand_assembly::SandwichFeatures() ));
+		features_reporters_.push_back(utility::pointer::make_shared< ResidueFeatures >());
+		features_reporters_.push_back(utility::pointer::make_shared< ResidueSecondaryStructureFeatures >());
+		features_reporters_.push_back(utility::pointer::make_shared< SecondaryStructureSegmentFeatures >()); // it is needed for sandwichfeatures
+		features_reporters_.push_back(utility::pointer::make_shared< strand_assembly::SandwichFeatures >());
 
 		// Use arbitrary outputtag and inputtag, instead of being dependent on getting this from JD2
 		output_tag_ = "FeaturesReporterTests_outputtag";
@@ -115,7 +115,7 @@ public:
 	void report_ResidueSecondaryStructureFeatures() {
 		tr << "report_ResidueSecondaryStructureFeatures" << std::endl;
 
-		ResidueSecondaryStructureFeatures_reporters_OP = protocols::features::ResidueSecondaryStructureFeaturesOP( new protocols::features::ResidueSecondaryStructureFeatures() );
+		ResidueSecondaryStructureFeatures_reporters_OP = utility::pointer::make_shared< protocols::features::ResidueSecondaryStructureFeatures >();
 		ResidueSecondaryStructureFeatures_reporters_OP->report_features(
 			*pose_3B83_OP, // core::pose::Pose const & pose,
 			relevant_residues_3B83_, //  utility::vector1<bool> const & relevant_residues,
@@ -126,7 +126,7 @@ public:
 
 	void report_SecondaryStructureSegmentFeatures() {
 		tr << "report_SecondaryStructureSegmentFeatures" << std::endl;
-		SecondaryStructureSegmentFeatures_reporters_OP = protocols::features::SecondaryStructureSegmentFeaturesOP( new protocols::features::SecondaryStructureSegmentFeatures() );
+		SecondaryStructureSegmentFeatures_reporters_OP = utility::pointer::make_shared< protocols::features::SecondaryStructureSegmentFeatures >();
 		SecondaryStructureSegmentFeatures_reporters_OP->report_features(
 			*pose_3B83_OP, // core::pose::Pose const & pose,
 			relevant_residues_3B83_, //  utility::vector1<bool> const & relevant_residues,
@@ -141,7 +141,7 @@ public:
 		tr << "size of relevant_residues_3B83_ vector: " << relevant_residues_3B83_.size() << std::endl;
 		TS_ASSERT( relevant_residues_3B83_.size() == 94 );
 
-		SandwichFeatures_reporters_OP = protocols::features::strand_assembly::SandwichFeaturesOP( new protocols::features::strand_assembly::SandwichFeatures() );
+		SandwichFeatures_reporters_OP = utility::pointer::make_shared< protocols::features::strand_assembly::SandwichFeatures >();
 
 		std::string const string_1 = "protot/ubq_frag.pdb"; //bogus
 		std::string const string_2 = "sele";

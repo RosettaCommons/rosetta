@@ -42,8 +42,8 @@ main( int argc, char * argv [] )
 		DockingHighResOP dp;
 
 		if ( option[ OptionKeys::docking::ensemble1 ].user() || option[ OptionKeys::docking::ensemble2 ].user() ) {
-			dp = DockingHighResOP( new DockingEnsemblePrepackProtocol() );
-		} else dp = DockingHighResOP( new DockingPrepackProtocol() );
+			dp = utility::pointer::make_shared< DockingEnsemblePrepackProtocol >();
+		} else dp = utility::pointer::make_shared< DockingPrepackProtocol >();
 
 		JobDistributor::get_instance()->go(dp);
 	} catch (utility::excn::Exception const & e ) {

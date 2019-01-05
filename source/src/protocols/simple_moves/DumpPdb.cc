@@ -55,7 +55,7 @@ static basic::Tracer TR( "protocols.simple_moves.DumpPdb" );
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP DumpPdbCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new DumpPdb );
+// XRW TEMP  return utility::pointer::make_shared< DumpPdb >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -149,7 +149,7 @@ std::string DumpPdbCreator::keyname() const {
 
 protocols::moves::MoverOP
 DumpPdbCreator::create_mover() const {
-	return protocols::moves::MoverOP( new DumpPdb );
+	return utility::pointer::make_shared< DumpPdb >();
 }
 
 void DumpPdbCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

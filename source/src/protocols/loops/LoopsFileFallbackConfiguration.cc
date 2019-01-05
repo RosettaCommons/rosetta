@@ -111,7 +111,7 @@ LoopsFileFallbackConfiguration::get_loops_filename_from_options() const
 basic::resource_manager::FallbackConfigurationOP
 LoopsFileFallbackConfigurationCreator::create_fallback_configuration() const
 {
-	return basic::resource_manager::FallbackConfigurationOP( new LoopsFileFallbackConfiguration );
+	return utility::pointer::make_shared< LoopsFileFallbackConfiguration >();
 }
 
 /// @details Return a string specifying the type of %FallbackConfiguration to create (loops_file).

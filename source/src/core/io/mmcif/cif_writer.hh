@@ -35,13 +35,13 @@ namespace mmcif {
 bool
 dump_cif( core::pose::Pose const & pose,
 	std::string const & file_name,
-	StructFileRepOptionsCOP options =  StructFileRepOptionsCOP( new StructFileRepOptions ) );
+	StructFileRepOptionsCOP options =  utility::pointer::make_shared< StructFileRepOptions >() );
 
 ///@brief Dump cif to an outstream, optionally passing options and returning a StructFileRep for further processing
 StructFileRepOP
 dump_cif( core::pose::Pose const & pose,
 	std::ostream & out,
-	StructFileRepOptionsCOP options =  StructFileRepOptionsCOP( new StructFileRepOptions )
+	StructFileRepOptionsCOP options =  utility::pointer::make_shared< StructFileRepOptions >()
 );
 
 ///@brief Return an mmCIF-format string from a pose with defaults.

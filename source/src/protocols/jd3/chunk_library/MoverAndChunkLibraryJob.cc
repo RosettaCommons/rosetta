@@ -108,10 +108,10 @@ core::pose::PoseCOP MoverAndChunkLibraryJob::pose() const {
 }
 
 ChunkLibraryJobResultOP
-MoverAndChunkLibraryJob::create_job_result() { return ChunkLibraryJobResultOP( new ChunkLibraryJobResult ); }
+MoverAndChunkLibraryJob::create_job_result() { return utility::pointer::make_shared< ChunkLibraryJobResult >(); }
 
 EnergyJobSummaryOP
-MoverAndChunkLibraryJob::create_job_summary() { return EnergyJobSummaryOP( new EnergyJobSummary ); }
+MoverAndChunkLibraryJob::create_job_summary() { return utility::pointer::make_shared< EnergyJobSummary >(); }
 
 
 void MoverAndChunkLibraryJob::finalize_job_result( ChunkLibraryJobResultOP ) {//job_result ) {

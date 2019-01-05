@@ -89,7 +89,7 @@ LoopHashLibraryLoader::provide_xml_schema( utility::tag::XMLSchemaDefinition & x
 basic::resource_manager::ResourceLoaderOP
 LoopHashLibraryLoaderCreator::create_resource_loader() const
 {
-	return basic::resource_manager::ResourceLoaderOP( new LoopHashLibraryLoader() );
+	return utility::pointer::make_shared< LoopHashLibraryLoader >();
 }
 
 /// @details Return a string specifying the type of %ResourceLoader to create (LoopHashLibrary).

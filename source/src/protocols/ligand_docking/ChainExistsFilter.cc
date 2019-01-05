@@ -62,7 +62,7 @@ ChainExistsFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::Dat
 }
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP ChainExistsFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ChainExistsFilter ); }
+// XRW TEMP ChainExistsFilterCreator::create_filter() const { return utility::pointer::make_shared< ChainExistsFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP ChainExistsFilterCreator::keyname() const { return "ChainExists"; }
@@ -91,7 +91,7 @@ std::string ChainExistsFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 ChainExistsFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new ChainExistsFilter );
+	return utility::pointer::make_shared< ChainExistsFilter >();
 }
 
 void ChainExistsFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

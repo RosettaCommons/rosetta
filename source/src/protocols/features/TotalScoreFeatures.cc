@@ -58,7 +58,7 @@ using core::scoring::ScoreFunctionCOP;
 using utility::tools::make_vector;
 
 // XRW TEMP FeaturesReporterOP TotalScoreFeaturesCreator::create_features_reporter() const {
-// XRW TEMP  return FeaturesReporterOP( new TotalScoreFeatures );
+// XRW TEMP  return utility::pointer::make_shared< TotalScoreFeatures >();
 // XRW TEMP }
 
 // XRW TEMP std::string TotalScoreFeaturesCreator::type_name() const {
@@ -110,8 +110,8 @@ void TotalScoreFeatures::write_schema_to_db(
 
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt ), false);
-	Column score("score", DbDataTypeOP( new DbReal ), false);
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >(), false);
+	Column score("score", utility::pointer::make_shared< DbReal >(), false);
 
 	Schema total_scores("total_scores", PrimaryKey(struct_id));
 
@@ -140,8 +140,8 @@ Size TotalScoreFeatures::report_features(
 	insert_statement.add_column("struct_id");
 	insert_statement.add_column("score");
 	insert_statement.add_row(make_vector<RowDataBaseOP>(
-		RowDataBaseOP( new RowData<StructureID>("struct_id", struct_id) ),
-		RowDataBaseOP( new RowData<Real>("score", total_score) )));
+		utility::pointer::make_shared< RowData<StructureID> >("struct_id", struct_id),
+		utility::pointer::make_shared< RowData<Real> >("score", total_score)));
 
 	insert_statement.write_to_database(db_session);
 
@@ -171,7 +171,7 @@ std::string TotalScoreFeaturesCreator::type_name() const {
 
 protocols::features::FeaturesReporterOP
 TotalScoreFeaturesCreator::create_features_reporter() const {
-	return protocols::features::FeaturesReporterOP( new TotalScoreFeatures );
+	return utility::pointer::make_shared< TotalScoreFeatures >();
 }
 
 void TotalScoreFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

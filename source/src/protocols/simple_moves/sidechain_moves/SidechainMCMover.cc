@@ -76,7 +76,7 @@ namespace sidechain_moves {
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP SidechainMCMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new SidechainMCMover );
+// XRW TEMP  return utility::pointer::make_shared< SidechainMCMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -92,7 +92,7 @@ SidechainMCMover::SidechainMCMover():
 	temperature_(0),
 	ntrials_(0),
 	best_energy_(0),
-	sfxn_( core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction ) ),
+	sfxn_( utility::pointer::make_shared< core::scoring::ScoreFunction >() ),
 	inherit_scorefxn_temperature_(false),
 	ig_(/* 0 */),
 	accepts_(0),
@@ -112,7 +112,7 @@ SidechainMCMover::SidechainMCMover(
 	temperature_(0),
 	ntrials_(0),
 	best_energy_(0),
-	sfxn_( core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction ) ),
+	sfxn_( utility::pointer::make_shared< core::scoring::ScoreFunction >() ),
 	inherit_scorefxn_temperature_(false),
 	ig_(/* 0 */),
 	accepts_(0),
@@ -127,7 +127,7 @@ SidechainMCMover::~SidechainMCMover() = default;
 
 void
 SidechainMCMover::setup( core::scoring::ScoreFunctionCOP sfxn ){
-	ig_ = core::pack::interaction_graph::SimpleInteractionGraphOP( new core::pack::interaction_graph::SimpleInteractionGraph() ); //commented out debug
+	ig_ = utility::pointer::make_shared< core::pack::interaction_graph::SimpleInteractionGraph >(); //commented out debug
 	//(*sfxn)(pose); //gets called in apply
 	set_scorefunction( *sfxn );
 	ig_->set_scorefunction( *sfxn );
@@ -141,12 +141,12 @@ SidechainMCMover::show_counters( std::ostream & out){
 
 protocols::moves::MoverOP
 SidechainMCMover::clone() const {
-	return( protocols::moves::MoverOP( new protocols::simple_moves::sidechain_moves::SidechainMCMover( *this ) ) );
+	return( utility::pointer::make_shared< protocols::simple_moves::sidechain_moves::SidechainMCMover >( *this ) );
 }
 
 protocols::moves::MoverOP
 SidechainMCMover::fresh_instance() const {
-	return (protocols::moves::MoverOP( new SidechainMCMover ));
+	return (utility::pointer::make_shared< SidechainMCMover >());
 }
 
 /// @details
@@ -188,7 +188,7 @@ SidechainMCMover::apply(
 
 
 	for ( core::Size itr = 1; itr <= pose.size(); itr++ ) {
-		current_[ itr ] = core::conformation::ResidueOP( new core::conformation::Residue(pose.residue( itr )) );
+		current_[ itr ] = utility::pointer::make_shared< core::conformation::Residue >(pose.residue( itr ));
 	}
 
 	// PROF_START( SIMPLEINTGRAPH );
@@ -433,7 +433,7 @@ std::string SidechainMCMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 SidechainMCMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SidechainMCMover );
+	return utility::pointer::make_shared< SidechainMCMover >();
 }
 
 void SidechainMCMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

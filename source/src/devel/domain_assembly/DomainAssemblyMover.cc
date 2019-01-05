@@ -177,13 +177,13 @@ DomainAssemblyMover::evaluate_pose( core::pose::Pose const & pose) const {
 protocols::moves::MoverOP
 DomainAssemblyMover::clone() const
 {
-	return protocols::moves::MoverOP( new DomainAssemblyMover( *this ) );
+	return utility::pointer::make_shared< DomainAssemblyMover >( *this );
 }
 
 protocols::moves::MoverOP
 DomainAssemblyMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new DomainAssemblyMover );
+	return utility::pointer::make_shared< DomainAssemblyMover >();
 }
 
 std::string
@@ -218,7 +218,7 @@ DomainAssemblyMover::run_centroid_stage( core::pose::Pose & pose )
 	protocols::moves::TrialMoverOP centroid_trial_mover = nullptr;
 	if ( fragset3mer_ ) {
 		protocols::simple_moves::FragmentMoverOP frag_mover( new protocols::simple_moves::ClassicFragmentMover(fragset3mer_, movemap_ ) );
-		centroid_trial_mover = protocols::moves::TrialMoverOP( new protocols::moves::TrialMover( frag_mover, mc ) );
+		centroid_trial_mover = utility::pointer::make_shared< protocols::moves::TrialMover >( frag_mover, mc );
 	} else {
 		// if no fragments, use coarse small moves
 		Size nmoves ( 1 );
@@ -226,7 +226,7 @@ DomainAssemblyMover::run_centroid_stage( core::pose::Pose & pose )
 		coarse_small_mover->angle_max( 'H', 180.0 );  // max angle displacement 180 degrees
 		coarse_small_mover->angle_max( 'E', 180.0 );
 		coarse_small_mover->angle_max( 'L', 180.0 );
-		centroid_trial_mover = protocols::moves::TrialMoverOP( new protocols::moves::TrialMover( coarse_small_mover, mc ) );
+		centroid_trial_mover = utility::pointer::make_shared< protocols::moves::TrialMover >( coarse_small_mover, mc );
 	}
 
 	protocols::moves::RepeatMoverOP inner_centroid_loop( new protocols::moves::RepeatMover( centroid_trial_mover, inside_steps_stage1 ) );
@@ -349,9 +349,9 @@ DomainAssemblyMover::run_fullatom_stage( core::pose::Pose & pose )
 		}
 	}
 
-	or_rs->add_residue_selector( ResidueSelectorCOP( ResidueSelectorOP( new core::select::residue_selector::ResidueIndexSelector( get_linker_definition( pose ) ) ) ) );
+	or_rs->add_residue_selector( utility::pointer::make_shared< core::select::residue_selector::ResidueIndexSelector >( get_linker_definition( pose ) ) );
 	not_rs->set_residue_selector( or_rs );
-	operation::OperateOnResidueSubsetOP rsOperation( new operation::OperateOnResidueSubset( ResLvlTaskOperationCOP( new operation::PreventRepackingRLT() ), not_rs ) );
+	operation::OperateOnResidueSubsetOP rsOperation( new operation::OperateOnResidueSubset( utility::pointer::make_shared< operation::PreventRepackingRLT >(), not_rs ) );
 
 	// global repack of the side chains
 	core::pack::task::PackerTaskOP base_packer_task( core::pack::task::TaskFactory::create_packer_task( pose ));
@@ -452,10 +452,10 @@ void DomainAssemblyMover::run_fullatom_relax( core::pose::Pose & pose ) {
 		}
 	}
 
-	or_rs->add_residue_selector( ResidueSelectorCOP( ResidueSelectorOP( new core::select::residue_selector::ResidueIndexSelector( get_linker_definition( pose ) ) ) ) );
+	or_rs->add_residue_selector( utility::pointer::make_shared< core::select::residue_selector::ResidueIndexSelector >( get_linker_definition( pose ) ) );
 	not_rs->set_residue_selector( or_rs );
 
-	operation::OperateOnResidueSubsetOP repack_interface_operation( new operation::OperateOnResidueSubset( operation::ResLvlTaskOperationOP( new operation::PreventRepackingRLT() ), not_rs ) );
+	operation::OperateOnResidueSubsetOP repack_interface_operation( new operation::OperateOnResidueSubset( utility::pointer::make_shared< operation::PreventRepackingRLT >(), not_rs ) );
 
 	// global repack of the side chains
 	core::pack::task::PackerTaskOP base_packer_task( core::pack::task::TaskFactory::create_packer_task( pose ));
@@ -712,12 +712,12 @@ DomainAssemblyMover::initialize_fragments_from_commandline()
 	core::fragment::ConstantLengthFragSetOP fragset3mer = nullptr;
 	core::fragment::ConstantLengthFragSetOP fragset9mer = nullptr;
 	if ( basic::options::option[ basic::options::OptionKeys::in::file::frag3].user() ) {
-		fragset3mer = core::fragment::ConstantLengthFragSetOP( new core::fragment::ConstantLengthFragSet( 3 ) );
+		fragset3mer = utility::pointer::make_shared< core::fragment::ConstantLengthFragSet >( 3 );
 		fragset3mer->read_fragment_file( basic::options::option[ basic::options::OptionKeys::in::file::frag3 ]() );
 		fragset3mer_ = fragset3mer;
 	}
 	if ( basic::options::option[ basic::options::OptionKeys::in::file::frag9].user() ) {
-		fragset9mer = core::fragment::ConstantLengthFragSetOP( new core::fragment::ConstantLengthFragSet( 9 ) );
+		fragset9mer = utility::pointer::make_shared< core::fragment::ConstantLengthFragSet >( 9 );
 		fragset9mer->read_fragment_file( basic::options::option[ basic::options::OptionKeys::in::file::frag9 ]() );
 		fragset9mer_ = fragset9mer;
 	}

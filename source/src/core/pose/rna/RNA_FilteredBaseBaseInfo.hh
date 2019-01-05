@@ -60,7 +60,7 @@ public:
 	basic::datacache::CacheableDataOP
 	clone() const
 	{
-		return basic::datacache::CacheableDataOP( new RNA_FilteredBaseBaseInfo( *this ) );
+		return utility::pointer::make_shared< RNA_FilteredBaseBaseInfo >( *this );
 	}
 
 	Size

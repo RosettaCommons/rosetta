@@ -126,7 +126,7 @@ void TemperedDocking::init(
 /// @brief clone operator, calls the copy constructor
 protocols::moves::MoverOP
 TemperedDocking::clone() const {
-	return protocols::moves::MoverOP( new TemperedDocking(*this) );
+	return utility::pointer::make_shared< TemperedDocking >(*this);
 }
 
 /// @brief copy ctor
@@ -345,12 +345,12 @@ void TemperedDocking::setup_objects()
 	fold_tree_ = core::kinematics::FoldTree();
 
 	// Residue movers
-	to_centroid_ = protocols::moves::MoverOP( new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID ) );
+	to_centroid_ = utility::pointer::make_shared< protocols::simple_moves::SwitchResidueTypeSetMover >( core::chemical::CENTROID );
 
 	// correctly set up the score functions from either passed in values or defaults
 
-	sampler_ = protocols::canonical_sampling::MetropolisHastingsMoverOP( new protocols::canonical_sampling::MetropolisHastingsMover() );
-	rb_mover_ = protocols::rigid::RigidBodyPerturbNoCenterMoverOP( new rigid::RigidBodyPerturbNoCenterMover() );
+	sampler_ = utility::pointer::make_shared< protocols::canonical_sampling::MetropolisHastingsMover >();
+	rb_mover_ = utility::pointer::make_shared< rigid::RigidBodyPerturbNoCenterMover >();
 
 	rb_mover_->rot_magnitude( rigid_rot_mag_ );
 	rb_mover_->trans_magnitude( rigid_trans_mag_ );
@@ -363,7 +363,7 @@ void TemperedDocking::setup_objects()
 
 	sampler_->add_mover( rb_mover_, 1.0 );
 	sampler_->set_tempering( tempering_ );
-	sampler_->add_observer( protocols::canonical_sampling::ThermodynamicObserverOP( new protocols::canonical_sampling::SilentTrajectoryRecorder ) );
+	sampler_->add_observer( utility::pointer::make_shared< protocols::canonical_sampling::SilentTrajectoryRecorder >() );
 	sync_objects_with_flags();
 }
 
@@ -374,7 +374,7 @@ void TemperedDocking::sync_objects_with_flags()
 		docking_constraint_ = nullptr;
 	} else {
 		if ( !docking_constraint_ ) {
-			docking_constraint_ = protocols::moves::MoverOP( new protocols::constraint_movers::ConstraintSetMover() );
+			docking_constraint_ = utility::pointer::make_shared< protocols::constraint_movers::ConstraintSetMover >();
 		}
 	}
 
@@ -427,9 +427,9 @@ TemperedDocking::init_from_options()
 	rigid_trans_mag_ = option[ OptionKeys::rigid::translation ]();
 
 	if ( option[ OptionKeys::run::n_replica ]() > 1 ) {
-		tempering_ = protocols::canonical_sampling::TemperatureControllerOP( new protocols::canonical_sampling::ParallelTempering() );
+		tempering_ = utility::pointer::make_shared< protocols::canonical_sampling::ParallelTempering >();
 	} else {
-		tempering_ = protocols::canonical_sampling::TemperatureControllerOP( new protocols::canonical_sampling::SimulatedTempering() );
+		tempering_ = utility::pointer::make_shared< protocols::canonical_sampling::SimulatedTempering >();
 	}
 
 }
@@ -469,7 +469,7 @@ TemperedDockingCreator::keyname() const
 
 protocols::moves::MoverOP
 TemperedDockingCreator::create_mover() const {
-	return protocols::moves::MoverOP( new TemperedDocking() );
+	return utility::pointer::make_shared< TemperedDocking >();
 }
 
 std::string

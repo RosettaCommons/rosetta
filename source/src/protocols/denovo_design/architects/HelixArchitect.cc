@@ -43,7 +43,7 @@ HelixArchitect::~HelixArchitect() = default;
 DeNovoArchitectOP
 HelixArchitect::clone() const
 {
-	return DeNovoArchitectOP( new HelixArchitect( *this ) );
+	return utility::pointer::make_shared< HelixArchitect >( *this );
 }
 
 std::string
@@ -141,7 +141,7 @@ HelixArchitect::motifs_end() const
 DeNovoArchitectOP
 HelixArchitectCreator::create_architect( std::string const & architect_id ) const
 {
-	return DeNovoArchitectOP( new HelixArchitect( architect_id ) );
+	return utility::pointer::make_shared< HelixArchitect >( architect_id );
 }
 
 std::string

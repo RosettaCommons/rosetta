@@ -166,13 +166,13 @@ AsymFoldandDockMoveRbJumpMover::find_new_jump_residue( core::pose::Pose & pose )
 moves::MoverOP
 AsymFoldandDockMoveRbJumpMover::clone() const
 {
-	return moves::MoverOP( new AsymFoldandDockMoveRbJumpMover( *this ) );
+	return utility::pointer::make_shared< AsymFoldandDockMoveRbJumpMover >( *this );
 }
 
 moves::MoverOP
 AsymFoldandDockMoveRbJumpMover::fresh_instance() const
 {
-	return moves::MoverOP( new AsymFoldandDockMoveRbJumpMover  );
+	return utility::pointer::make_shared< AsymFoldandDockMoveRbJumpMover >();
 }
 
 void
@@ -217,7 +217,7 @@ std::string AsymFoldandDockMoveRbJumpMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 AsymFoldandDockMoveRbJumpMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new AsymFoldandDockMoveRbJumpMover );
+	return utility::pointer::make_shared< AsymFoldandDockMoveRbJumpMover >();
 }
 
 void AsymFoldandDockMoveRbJumpMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

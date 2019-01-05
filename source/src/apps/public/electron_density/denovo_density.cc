@@ -405,14 +405,14 @@ void DockFragmentsMover::process_fragfile() {
 
 	if ( nmer_target_big<nmer_ ) {
 		TR << "Chopping to " << nmer_target_big << " mers" << std::endl;
-		fragments_small = core::fragment::FragSetOP( new core::fragment::ConstantLengthFragSet( nmer_target_big ) );
+		fragments_small = utility::pointer::make_shared< core::fragment::ConstantLengthFragSet >( nmer_target_big );
 		core::fragment::chop_fragments( *fragments, *fragments_small );
 		fragments = fragments_small->clone();
 	}
 
 	if ( nmer_target_small<nmer_target_big ) {
 		TR << "Chopping to " << nmer_target_small << " mers" << std::endl;
-		fragments_small = core::fragment::FragSetOP( new core::fragment::ConstantLengthFragSet( nmer_target_small ) );
+		fragments_small = utility::pointer::make_shared< core::fragment::ConstantLengthFragSet >( nmer_target_small );
 		core::fragment::chop_fragments( *fragments, *fragments_small );
 	} else {
 		fragments_small = fragments->clone();
@@ -1537,7 +1537,7 @@ ConsensusFragmentMover::run() {
 		// repack
 		core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 		TaskFactoryOP tf( new TaskFactory() );
-		tf->push_back(TaskOperationCOP( new RestrictToRepacking() ));
+		tf->push_back(utility::pointer::make_shared< RestrictToRepacking >());
 		protocols::minimization_packing::PackRotamersMoverOP pack_full_repack( new protocols::minimization_packing::PackRotamersMover( scorefxn ) );
 		pack_full_repack->task_factory(tf);
 		pack_full_repack->apply( averaged_pose );

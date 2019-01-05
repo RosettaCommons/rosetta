@@ -48,7 +48,7 @@ methods::EnergyMethodOP
 ContactOrderEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new ContactOrderEnergy );
+	return utility::pointer::make_shared< ContactOrderEnergy >();
 }
 
 ScoreTypes
@@ -61,14 +61,14 @@ ContactOrderEnergyCreator::score_types_for_method() const {
 
 /// c-tor
 ContactOrderEnergy::ContactOrderEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new ContactOrderEnergyCreator ) )
+	parent( utility::pointer::make_shared< ContactOrderEnergyCreator >() )
 {}
 
 /// clone
 EnergyMethodOP
 ContactOrderEnergy::clone() const
 {
-	return EnergyMethodOP( new ContactOrderEnergy() );
+	return utility::pointer::make_shared< ContactOrderEnergy >();
 }
 
 /////////////////////////////////////////////////////////////////////////////

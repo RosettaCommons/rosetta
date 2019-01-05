@@ -51,13 +51,13 @@ public:
 	HierarchicalDataMapOP parent, child;
 
 	void setUp() {
-		parent = HierarchicalDataMapOP( new HierarchicalDataMap );
-		child = HierarchicalDataMapOP( new HierarchicalDataMap );
+		parent = utility::pointer::make_shared< HierarchicalDataMap >();
+		child = utility::pointer::make_shared< HierarchicalDataMap >();
 		child->set_parent(parent);
 
-		widgets[0] = WidgetOP( new Widget(0) );
-		widgets[1] = WidgetOP( new Widget(1) );
-		widgets[2] = WidgetOP( new Widget(2) );
+		widgets[0] = utility::pointer::make_shared< Widget >(0);
+		widgets[1] = utility::pointer::make_shared< Widget >(1);
+		widgets[2] = utility::pointer::make_shared< Widget >(2);
 	}
 
 	void teardown() {

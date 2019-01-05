@@ -76,7 +76,7 @@ using namespace protocols::moves;
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP InterfaceRecapitulationMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new InterfaceRecapitulationMover );
+// XRW TEMP  return utility::pointer::make_shared< InterfaceRecapitulationMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -95,11 +95,11 @@ InterfaceRecapitulationMover::InterfaceRecapitulationMover() :
 
 MoverOP
 InterfaceRecapitulationMover::clone() const
-{ return MoverOP( new InterfaceRecapitulationMover( *this ) ); }
+{ return utility::pointer::make_shared< InterfaceRecapitulationMover >( *this ); }
 
 MoverOP
 InterfaceRecapitulationMover::fresh_instance() const
-{ return protocols::moves::MoverOP( new InterfaceRecapitulationMover ); }
+{ return utility::pointer::make_shared< InterfaceRecapitulationMover >(); }
 
 core::pose::PoseCOP
 InterfaceRecapitulationMover::get_reference_pose() const
@@ -158,7 +158,7 @@ InterfaceRecapitulationMover::apply( core::pose::Pose & pose ){
 
 void
 InterfaceRecapitulationMover::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const & movers, core::pose::Pose const & pose ){
-	set_reference_pose( core::pose::PoseOP( new core::pose::Pose( pose ) ) );
+	set_reference_pose( utility::pointer::make_shared< core::pose::Pose >( pose ) );
 	std::string const mover_name( tag->getOption<std::string>( "mover_name" ) );
 	auto find_mover( movers.find( mover_name ));
 	bool const mover_found( find_mover != movers.end() );
@@ -198,7 +198,7 @@ std::string InterfaceRecapitulationMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 InterfaceRecapitulationMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new InterfaceRecapitulationMover );
+	return utility::pointer::make_shared< InterfaceRecapitulationMover >();
 }
 
 void InterfaceRecapitulationMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

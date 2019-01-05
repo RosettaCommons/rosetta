@@ -75,7 +75,7 @@ void PoolEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & eval 
 	if ( option[ OptionKeys::evaluation::pool ].user() ) {
 		using namespace protocols::canonical_sampling::mc_convergence_checks;
 		Pool_RMSD_OP pool_ptr( new Pool_RMSD( option[ OptionKeys::evaluation::pool ]() ) );
-		eval.add_evaluation( PoseEvaluatorOP( new Pool_Evaluator( pool_ptr ) ) );
+		eval.add_evaluation( utility::pointer::make_shared< Pool_Evaluator >( pool_ptr ) );
 	}
 
 

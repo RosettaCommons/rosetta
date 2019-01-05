@@ -136,7 +136,7 @@ std::string IfMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 IfMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new IfMover );
+	return utility::pointer::make_shared< IfMover >();
 }
 
 void IfMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

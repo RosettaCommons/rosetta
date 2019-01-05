@@ -607,7 +607,7 @@ void FACTSRotamerSetInfo::initialize( RotamerSet const & rotamer_set, FACTSRsdTy
 	for ( Size i=1; i<= nrot; ++i ) {
 		core::chemical::ResidueType const &rsdtype = rotamer_set.rotamer(i)->type();
 		FACTSRsdTypeInfoCOP type_info( rsdtypemap.get_type_info( rsdtype ) );
-		residue_info_[i] = FACTSResidueInfoOP( new FACTSResidueInfo( *rotamer_set.rotamer(i), type_info, true ) );
+		residue_info_[i] = utility::pointer::make_shared< FACTSResidueInfo >( *rotamer_set.rotamer(i), type_info, true );
 	}
 } // FACTSRotamerSetInfo
 

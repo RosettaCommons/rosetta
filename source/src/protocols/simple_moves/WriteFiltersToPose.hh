@@ -69,11 +69,11 @@ public:
 	void apply( core::pose::Pose & ) override;
 
 	protocols::moves::MoverOP clone() const override {
-		return protocols::moves::MoverOP( new WriteFiltersToPose( *this ));
+		return utility::pointer::make_shared< WriteFiltersToPose >( *this );
 	}
 
 	protocols::moves::MoverOP fresh_instance() const override{
-		return protocols::moves::MoverOP( new WriteFiltersToPose() );
+		return utility::pointer::make_shared< WriteFiltersToPose >();
 	}
 
 	void parse_my_tag(utility::tag::TagCOP,basic::datacache::DataMap &,protocols::filters::Filters_map const &f,protocols::moves::Movers_map const &,core::pose::Pose const &) override;

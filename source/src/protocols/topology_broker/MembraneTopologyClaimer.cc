@@ -80,7 +80,7 @@ MembraneTopologyClaimer::set_pose_from_broker(core::pose::Pose& pose)
 core::kinematics::FoldTreeOP
 MembraneTopologyClaimer::get_fold_tree(core::pose::Pose& pose)
 {
-	return core::kinematics::FoldTreeOP( new core::kinematics::FoldTree(pose.fold_tree()) );
+	return utility::pointer::make_shared< core::kinematics::FoldTree >(pose.fold_tree());
 }
 
 
@@ -150,14 +150,14 @@ MembraneTopologyClaimer::generate_claims( claims::DofClaims& dof_claims )
 	if ( TR.Trace.visible() ) { pose.fold_tree().show(TR.Trace);}
 	for ( core::Size i=1; i<=pose.fold_tree().nres(); ++i ) {
 		if ( i == pose.fold_tree().root() ) {
-			dof_claims.push_back(claims::DofClaimOP( new claims::LegacyRootClaim(get_self_weak_ptr(),i,claims::DofClaim::CAN_INIT) ));
-			dof_claims.push_back(claims::DofClaimOP( new claims::BBClaim(get_self_weak_ptr(),i,claims::DofClaim::CAN_INIT) ));
+			dof_claims.push_back(utility::pointer::make_shared< claims::LegacyRootClaim >(get_self_weak_ptr(),i,claims::DofClaim::CAN_INIT));
+			dof_claims.push_back(utility::pointer::make_shared< claims::BBClaim >(get_self_weak_ptr(),i,claims::DofClaim::CAN_INIT));
 		} else if ( pose.residue(i).is_virtual_residue() || pose.residue(i).name3() == "XXX" || pose.residue(i).name3() == "VRT" ) {
-			dof_claims.push_back(claims::DofClaimOP( new claims::BBClaim(get_self_weak_ptr(),i,claims::DofClaim::CAN_INIT) ));
+			dof_claims.push_back(utility::pointer::make_shared< claims::BBClaim >(get_self_weak_ptr(),i,claims::DofClaim::CAN_INIT));
 		}
 	}
 	for ( Size jump_num = 1; jump_num <= pose.fold_tree().num_jump(); ++jump_num ) {
-		dof_claims.push_back(claims::DofClaimOP( new claims::JumpClaim(get_self_weak_ptr(),jump_array(1,jump_num),jump_array(2,jump_num),claims::DofClaim::CAN_INIT) ));
+		dof_claims.push_back(utility::pointer::make_shared< claims::JumpClaim >(get_self_weak_ptr(),jump_array(1,jump_num),jump_array(2,jump_num),claims::DofClaim::CAN_INIT));
 	}
 }
 

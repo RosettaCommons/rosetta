@@ -50,7 +50,7 @@ methods::EnergyMethodOP
 RG_Energy_RNACreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new RG_Energy_RNA );
+	return utility::pointer::make_shared< RG_Energy_RNA >();
 }
 
 ScoreTypes
@@ -63,14 +63,14 @@ RG_Energy_RNACreator::score_types_for_method() const {
 
 /// c-tor
 RG_Energy_RNA::RG_Energy_RNA() :
-	parent( methods::EnergyMethodCreatorOP( new RG_Energy_RNACreator ) )
+	parent( utility::pointer::make_shared< RG_Energy_RNACreator >() )
 {}
 
 /// clone
 methods::EnergyMethodOP
 RG_Energy_RNA::clone() const
 {
-	return methods::EnergyMethodOP( new RG_Energy_RNA );
+	return utility::pointer::make_shared< RG_Energy_RNA >();
 }
 
 

@@ -119,7 +119,7 @@ numeric::xyzMatrix<core::Real> random_rotation(core::Real magnitude) {
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP PeriodicBoxMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new PeriodicBoxMover );
+// XRW TEMP  return utility::pointer::make_shared< PeriodicBoxMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -176,12 +176,12 @@ PeriodicBoxMover::PeriodicBoxMover()
 
 protocols::moves::MoverOP
 PeriodicBoxMover::clone() const {
-	return protocols::moves::MoverOP( new PeriodicBoxMover( *this ) );
+	return utility::pointer::make_shared< PeriodicBoxMover >( *this );
 }
 
 protocols::moves::MoverOP
 PeriodicBoxMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new PeriodicBoxMover );
+	return utility::pointer::make_shared< PeriodicBoxMover >();
 }
 
 void
@@ -447,7 +447,7 @@ PeriodicBoxMover::check_virial_pressure( Pose & pose, core::Real L ) const
 
 	//TR << "check virial" << std::endl;
 
-	core::kinematics::MoveMapOP movemap = core::kinematics::MoveMapOP( new core::kinematics::MoveMap );
+	core::kinematics::MoveMapOP movemap = utility::pointer::make_shared< core::kinematics::MoveMap >();
 	movemap->set_chi( true ); movemap->set_bb( true );  movemap->set_jump( true );
 	movemap->set( core::id::THETA, true ); movemap->set( core::id::D, true );
 
@@ -1034,7 +1034,7 @@ PeriodicBoxMover::apply( Pose & pose ) {
 	}
 
 	//if (water_reporter_) // reset water reporter for sim run after eq completes
-	// water_reporter_ = PeriodicBoxMoverWaterReporterOP( new PeriodicBoxMoverWaterReporter("sim") );
+	// water_reporter_ = utility::pointer::make_shared< PeriodicBoxMoverWaterReporter >("sim");
 
 	nvolume_change_accept = 0; nvolume_change = 0;
 	nperturb = 0; nperturb_accept = 0;
@@ -1183,7 +1183,7 @@ PeriodicBoxMover::parse_my_tag(
 	/*
 	if (tag->hasOption("report_water")) {
 	report_water_ = tag->getOption<core::Real>("report_water");
-	water_reporter_ = PeriodicBoxMoverWaterReporterOP( new PeriodicBoxMoverWaterReporter("eq") );
+	water_reporter_ = utility::pointer::make_shared< PeriodicBoxMoverWaterReporter >("eq");
 	}
 	*/
 }
@@ -1293,7 +1293,7 @@ std::string PeriodicBoxMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 PeriodicBoxMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new PeriodicBoxMover );
+	return utility::pointer::make_shared< PeriodicBoxMover >();
 }
 
 void PeriodicBoxMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

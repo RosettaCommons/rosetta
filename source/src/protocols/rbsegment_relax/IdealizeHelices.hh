@@ -35,12 +35,12 @@ namespace rbsegment_relax {
 class IdealizeHelicesMover : public moves::Mover {
 public:
 	IdealizeHelicesMover() : Mover(), cst_weight_(1.0), cst_width_(0.0) {
-		scorefxn_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() );
+		scorefxn_ = utility::pointer::make_shared< core::scoring::ScoreFunction >();
 		scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function("score4_smooth");
 		scorefxn_->set_weight( core::scoring::coordinate_constraint , cst_weight_ );
 	}
 
-	moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new IdealizeHelicesMover( *this ) ) ); }
+	moves::MoverOP clone() const override { return( utility::pointer::make_shared< IdealizeHelicesMover >( *this ) ); }
 
 	void apply( core::pose::Pose & pose ) override;
 

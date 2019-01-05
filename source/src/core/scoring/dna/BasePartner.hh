@@ -46,7 +46,7 @@ public:
 	basic::datacache::CacheableDataOP
 	clone() const
 	{
-		return basic::datacache::CacheableDataOP( new BasePartner( *this ) );
+		return utility::pointer::make_shared< BasePartner >( *this );
 	}
 
 	Size

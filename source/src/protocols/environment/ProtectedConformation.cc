@@ -102,7 +102,7 @@ EnvironmentCAP ProtectedConformation::environment() const {
 }
 
 core::conformation::ConformationOP ProtectedConformation::clone() const {
-	return core::conformation::ConformationOP( new ProtectedConformation( *this ) );
+	return utility::pointer::make_shared< ProtectedConformation >( *this );
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -359,7 +359,7 @@ ResidueOP ProtectedConformation::match_variants(
 
 	Residue const & old_rsd = residue( seqpos );
 	ResidueTypeSetCOP rsd_set( residue_type_set_for_conf( in_rsd.type().mode() ) );
-	ResidueOP new_rsd = ResidueOP( new Residue( in_rsd ) );
+	ResidueOP new_rsd = utility::pointer::make_shared< Residue >( in_rsd );
 
 	// add any variants in the old residue that aren't in the new residue
 	utility::vector1< std::string > old_variants = old_rsd.type().properties().get_list_of_variants();
@@ -393,7 +393,7 @@ ProtectedConformation::replace_residue_sandbox(
 	bool p
 ){
 	// TODO: accommodate design?
-	ResidueOP new_rsd = ResidueOP( new Residue( in_rsd ) );
+	ResidueOP new_rsd = utility::pointer::make_shared< Residue >( in_rsd );
 
 	if ( new_rsd->name3() != this->residue( seqpos ).name3() ) {
 		std::ostringstream ss;

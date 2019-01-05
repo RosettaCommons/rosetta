@@ -76,7 +76,7 @@ namespace mover {
 //////////////////////////////////////////////////////////////////////////
 //constructor!
 DeleteMover::DeleteMover( ):
-	options_( protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptionsCOP( new protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptions ) )
+	options_( utility::pointer::make_shared< protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptions >() )
 {}
 
 //////////////////////////////////////////////////////////////////////////
@@ -85,7 +85,7 @@ DeleteMover::~DeleteMover() = default;
 
 protocols::moves::MoverOP
 DeleteMover::clone() const {
-	return DeleteMoverOP( new DeleteMover( *this ) );
+	return utility::pointer::make_shared< DeleteMover >( *this );
 }
 
 void DeleteMover::parse_my_tag(
@@ -304,7 +304,7 @@ std::string DeleteMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 DeleteMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new DeleteMover );
+	return utility::pointer::make_shared< DeleteMover >();
 }
 
 void DeleteMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

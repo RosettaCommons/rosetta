@@ -48,7 +48,7 @@ using namespace utility::tag;
 core::pack::task::operation::TaskOperationOP
 PreventChainFromRepackingOperationCreator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new PreventChainFromRepackingOperation );
+	return utility::pointer::make_shared< PreventChainFromRepackingOperation >();
 }
 
 void PreventChainFromRepackingOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -72,7 +72,7 @@ PreventChainFromRepackingOperation::~PreventChainFromRepackingOperation() = defa
 
 core::pack::task::operation::TaskOperationOP PreventChainFromRepackingOperation::clone() const
 {
-	return core::pack::task::operation::TaskOperationOP( new PreventChainFromRepackingOperation( *this ) );
+	return utility::pointer::make_shared< PreventChainFromRepackingOperation >( *this );
 }
 
 void

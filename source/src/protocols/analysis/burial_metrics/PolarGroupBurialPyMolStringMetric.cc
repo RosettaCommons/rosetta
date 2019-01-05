@@ -87,7 +87,7 @@ PolarGroupBurialPyMolStringMetric::PolarGroupBurialPyMolStringMetric( PolarGroup
 
 core::simple_metrics::SimpleMetricOP
 PolarGroupBurialPyMolStringMetric::clone() const {
-	return core::simple_metrics::SimpleMetricOP(new PolarGroupBurialPyMolStringMetric( *this ) );
+	return utility::pointer::make_shared< PolarGroupBurialPyMolStringMetric >( *this );
 
 }
 
@@ -221,7 +221,7 @@ PolarGroupBurialPyMolStringMetricCreator::keyname() const {
 
 core::simple_metrics::SimpleMetricOP
 PolarGroupBurialPyMolStringMetricCreator::create_simple_metric() const {
-	return core::simple_metrics::SimpleMetricOP( new PolarGroupBurialPyMolStringMetric );
+	return utility::pointer::make_shared< PolarGroupBurialPyMolStringMetric >();
 
 }
 

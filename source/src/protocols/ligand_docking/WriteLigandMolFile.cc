@@ -48,7 +48,7 @@ static basic::Tracer write_ligand_tracer( "protocols.ligand_docking.WriteLigandM
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP WriteLigandMolFileCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new WriteLigandMolFile );
+// XRW TEMP  return utility::pointer::make_shared< WriteLigandMolFile >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -75,12 +75,12 @@ WriteLigandMolFile::WriteLigandMolFile(WriteLigandMolFile const & that) :
 
 protocols::moves::MoverOP WriteLigandMolFile::clone() const
 {
-	return protocols::moves::MoverOP( new WriteLigandMolFile(*this) );
+	return utility::pointer::make_shared< WriteLigandMolFile >(*this);
 }
 
 protocols::moves::MoverOP WriteLigandMolFile::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new WriteLigandMolFile );
+	return utility::pointer::make_shared< WriteLigandMolFile >();
 }
 
 // XRW TEMP std::string WriteLigandMolFile::get_name() const
@@ -192,7 +192,7 @@ std::string WriteLigandMolFileCreator::keyname() const {
 
 protocols::moves::MoverOP
 WriteLigandMolFileCreator::create_mover() const {
-	return protocols::moves::MoverOP( new WriteLigandMolFile );
+	return utility::pointer::make_shared< WriteLigandMolFile >();
 }
 
 void WriteLigandMolFileCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

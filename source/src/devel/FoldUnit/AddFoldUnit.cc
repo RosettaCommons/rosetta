@@ -320,7 +320,7 @@ AddFoldUnitMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 AddFoldUnitMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new AddFoldUnitMover );
+	return utility::pointer::make_shared< AddFoldUnitMover >();
 }
 
 std::string
@@ -415,13 +415,13 @@ AddFoldUnitMover::get_name() const {
 moves::MoverOP
 AddFoldUnitMover::clone() const
 {
-	return moves::MoverOP( new AddFoldUnitMover( *this ) );
+	return utility::pointer::make_shared< AddFoldUnitMover >( *this );
 }
 
 moves::MoverOP
 AddFoldUnitMover::fresh_instance() const
 {
-	return moves::MoverOP( new AddFoldUnitMover );
+	return utility::pointer::make_shared< AddFoldUnitMover >();
 }
 
 void
@@ -439,7 +439,7 @@ AddFoldUnitMover::parse_my_tag(
 	min_overlap( tag->getOption< Size >( "min_overlap", 5 ) );
 	max_rmsd( tag->getOption< Real > ( "max_rmsd", 10.0 ) );
 	if ( !fold_unit_utils_ ) {
-		fold_unit_utils_ = FoldUnitUtilsOP( new FoldUnitUtils );
+		fold_unit_utils_ = utility::pointer::make_shared< FoldUnitUtils >();
 	}
 
 	fold_unit_utils_->max_length( max_length() );
@@ -567,13 +567,13 @@ StartFreshMover::parse_my_tag(
 moves::MoverOP
 StartFreshMover::clone() const
 {
-	return moves::MoverOP( new StartFreshMover( *this ) );
+	return utility::pointer::make_shared< StartFreshMover >( *this );
 }
 
 moves::MoverOP
 StartFreshMover::fresh_instance() const
 {
-	return moves::MoverOP( new StartFreshMover );
+	return utility::pointer::make_shared< StartFreshMover >();
 }
 
 std::string
@@ -589,7 +589,7 @@ StartFreshMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 StartFreshMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new StartFreshMover );
+	return utility::pointer::make_shared< StartFreshMover >();
 }
 
 std::string

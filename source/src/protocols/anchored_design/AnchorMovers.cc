@@ -166,7 +166,7 @@ AnchoredDesignMover::AnchoredDesignMover( protocols::anchored_design::AnchorMove
 	Mover(),
 	interface_(std::move( interface_in )),
 	RMSD_only_this_pose_( /* 0 */ ),
-	IAM_( protocols::analysis::InterfaceAnalyzerMoverOP( new protocols::analysis::InterfaceAnalyzerMover(ANCHOR_TARGET) ) ),
+	IAM_( utility::pointer::make_shared< protocols::analysis::InterfaceAnalyzerMover >(ANCHOR_TARGET) ),
 	rmsd_(false),
 	RMSD_only_this_(EMPTY_STRING),
 	delete_interface_native_sidechains_(false),
@@ -189,7 +189,7 @@ AnchoredDesignMover::AnchoredDesignMover( protocols::anchored_design::AnchorMove
 AnchoredDesignMover::AnchoredDesignMover() :
 	interface_( /* 0 */ ), //NULL pointer
 	RMSD_only_this_pose_( /* 0 */ ),
-	IAM_( protocols::analysis::InterfaceAnalyzerMoverOP( new protocols::analysis::InterfaceAnalyzerMover(ANCHOR_TARGET) ) ),
+	IAM_( utility::pointer::make_shared< protocols::analysis::InterfaceAnalyzerMover >(ANCHOR_TARGET) ),
 	rmsd_(false),
 	RMSD_only_this_(EMPTY_STRING),
 	delete_interface_native_sidechains_(false),
@@ -252,7 +252,7 @@ void AnchoredDesignMover::init_on_new_input(core::pose::Pose const & pose) {
 	//If the interface_ object doesn't exist yet, we must create one, giving it a pose to help it initialize
 	//it will exist if this object was created via the AnchorMoversData-supplying constructor
 	if ( !interface_ ) {
-		interface_ = protocols::anchored_design::AnchorMoversDataOP( new protocols::anchored_design::AnchorMoversData(pose) );
+		interface_ = utility::pointer::make_shared< protocols::anchored_design::AnchorMoversData >(pose);
 	}
 
 	//If nobody told us not to autoinitialize, read the options system for our other data
@@ -262,7 +262,7 @@ void AnchoredDesignMover::init_on_new_input(core::pose::Pose const & pose) {
 	if ( RMSD_only_this_ != EMPTY_STRING ) {
 		core::pose::Pose dummy;
 		core::import_pose::pose_from_file(dummy, RMSD_only_this_, core::import_pose::PDB_file);
-		RMSD_only_this_pose_ = core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose(dummy) ) );
+		RMSD_only_this_pose_ = utility::pointer::make_shared< core::pose::Pose >(dummy);
 	}
 
 	return;
@@ -279,7 +279,7 @@ void AnchoredDesignMover::apply( core::pose::Pose & pose )
 
 	//pre-pre-processing
 	if ( rmsd_ ) {
-		start_pose = core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose(pose) ) );
+		start_pose = utility::pointer::make_shared< core::pose::Pose >(pose);
 	}
 
 	if ( RMSD_only_this_ != EMPTY_STRING ) {
@@ -545,13 +545,13 @@ void AnchoredDesignMover::delete_interface_native_sidechains(core::pose::Pose & 
 
 	//operations to allow ex flags to saturation
 	for ( core::Size i(1), end(pose.size()); i<=end; ++i ) {
-		tf->push_back(operation::RotamerExplosionOP( new core::pack::task::operation::RotamerExplosion(i, core::pack::task::EX_ONE_STDDEV, 4) ));
-		tf->push_back(operation::ExtraChiCutoffOP( new core::pack::task::operation::ExtraChiCutoff(i, 0) ));
-		//tf->push_back(operation::IncludeCurrentOP( new core::pack::task::operation::IncludeCurrent())); //this is exactly what we do not want - useful for testing that it worked right...
+		tf->push_back(utility::pointer::make_shared< core::pack::task::operation::RotamerExplosion >(i, core::pack::task::EX_ONE_STDDEV, 4));
+		tf->push_back(utility::pointer::make_shared< core::pack::task::operation::ExtraChiCutoff >(i, 0));
+		//tf->push_back(utility::pointer::make_shared< core::pack::task::operation::IncludeCurrent >()); //this is exactly what we do not want - useful for testing that it worked right...
 	}
 
 	//we DO NOT WANT design
-	tf->push_back(operation::TaskOperationCOP( new operation::RestrictToRepacking() ));
+	tf->push_back(utility::pointer::make_shared< operation::RestrictToRepacking >());
 
 	//print a copy of the task for double checking
 	//T_shared << *(tf->create_task_and_apply_taskoperations(pose)) << std::endl;
@@ -611,11 +611,11 @@ AnchoredDesignMover::get_name() const {
 }
 
 protocols::moves::MoverOP AnchoredDesignMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new AnchoredDesignMover );
+	return utility::pointer::make_shared< AnchoredDesignMover >();
 }
 
 protocols::moves::MoverOP AnchoredDesignMover::clone() const {
-	return protocols::moves::MoverOP( new AnchoredDesignMover(*this) );
+	return utility::pointer::make_shared< AnchoredDesignMover >(*this);
 }
 
 bool AnchoredDesignMover::reinitialize_for_each_job() const { return false; }
@@ -921,7 +921,7 @@ void AnchoredPerturbMover::apply( core::pose::Pose & pose )
 
 	protocols::simple_moves::SwitchResidueTypeSetMover typeset_swap(core::chemical::CENTROID);
 	typeset_swap.apply( pose );
-	if ( debug_ ) posecopy = core::pose::PoseOP( new core::pose::Pose( pose ) );
+	if ( debug_ ) posecopy = utility::pointer::make_shared< core::pose::Pose >( pose );
 
 	//centroid score
 	T_perturb << "centroid score of starting PDB: " << (*(interface_->get_centroid_scorefunction()))(pose) << std::endl;
@@ -1028,7 +1028,7 @@ void AnchoredPerturbMover::apply( core::pose::Pose & pose )
 			if ( internal && !perturb_CCD_off_ ) {
 				///////////////////////////generate CCD close mover///////////////////////////////
 				using protocols::loops::loop_closure::ccd::CCDLoopClosureMover;
-				oneloop_subsequence->add_mover(moves::MoverOP( new CCDLoopClosureMover(interface_->loop(i), interface_->movemap_cen_omegafixed(i)) ));
+				oneloop_subsequence->add_mover(utility::pointer::make_shared< CCDLoopClosureMover >(interface_->loop(i), interface_->movemap_cen_omegafixed(i)));
 				T_perturb << "creating CCD-closure after perturbation for loop " << loop_start << " " << loop_end << std::endl;
 
 				if ( debug_ ) {
@@ -1107,7 +1107,7 @@ void AnchoredPerturbMover::apply( core::pose::Pose & pose )
 	/////////////////////////////generate full repack&minimize mover//////////////////////////////
 	using core::pack::task::TaskFactoryOP; using core::pack::task::TaskFactory;
 	TaskFactoryOP task_factory( new TaskFactory(*(interface_->get_late_factory())) ); //late factory = more rotamers
-	task_factory->push_back(core::pack::task::operation::TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ));
+	task_factory->push_back(utility::pointer::make_shared< core::pack::task::operation::RestrictToRepacking >());
 
 	protocols::minimization_packing::PackRotamersMoverOP pack_mover( new protocols::minimization_packing::PackRotamersMover );
 	pack_mover->task_factory( task_factory );
@@ -1241,7 +1241,7 @@ void AnchoredRefineMover::apply( core::pose::Pose & pose )
 
 	//variables used for debugging output
 	core::pose::PoseOP posecopy( nullptr );
-	if ( debug_ ) posecopy = core::pose::PoseOP( new core::pose::Pose(pose) );
+	if ( debug_ ) posecopy = utility::pointer::make_shared< core::pose::Pose >(pose);
 	int counter(1);
 	//std::stringstream outputfilename;
 
@@ -1413,7 +1413,7 @@ void AnchoredRefineMover::apply( core::pose::Pose & pose )
 	using core::pack::task::TaskFactoryOP;
 	using core::pack::task::TaskFactory;
 	TaskFactoryOP rt_task_factory( new TaskFactory(*(interface_->get_task_factory())) ); //local copy so we can modify it
-	rt_task_factory->push_back( core::pack::task::operation::TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ) );
+	rt_task_factory->push_back( utility::pointer::make_shared< core::pack::task::operation::RestrictToRepacking >() );
 
 	using protocols::minimization_packing::RotamerTrialsMoverOP;
 	using protocols::minimization_packing::EnergyCutRotamerTrialsMover;
@@ -1462,7 +1462,7 @@ void AnchoredRefineMover::apply( core::pose::Pose & pose )
 			pack_mover->task_factory(interface_->get_late_factory());
 			//RT still needs restrict to repacking
 			TaskFactoryOP rt_late_factory( new TaskFactory(*(interface_->get_late_factory())) );
-			rt_late_factory->push_back( core::pack::task::operation::TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ) );
+			rt_late_factory->push_back( utility::pointer::make_shared< core::pack::task::operation::RestrictToRepacking >() );
 			rt_mover->task_factory(rt_late_factory);
 		}
 

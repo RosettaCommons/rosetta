@@ -73,7 +73,7 @@ ReturnResidueSubsetSelector::ReturnResidueSubsetSelector(ReturnResidueSubsetSele
 /// @details Copy this object and return owning pointer to the copy (created on the heap).
 ReturnResidueSubsetSelector::ResidueSelectorOP
 ReturnResidueSubsetSelector::clone() const {
-	return ResidueSelectorOP( new ReturnResidueSubsetSelector(*this) );
+	return utility::pointer::make_shared< ReturnResidueSubsetSelector >(*this);
 }
 
 std::string ReturnResidueSubsetSelector::get_name() const

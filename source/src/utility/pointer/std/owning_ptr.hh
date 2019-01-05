@@ -27,6 +27,7 @@ namespace pointer {
 using std::dynamic_pointer_cast;
 using std::static_pointer_cast;
 using std::const_pointer_cast;
+using std::make_shared;
 using std::enable_shared_from_this;
 
 }

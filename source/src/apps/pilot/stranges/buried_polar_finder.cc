@@ -123,7 +123,7 @@ public:
 	virtual core::Size satisfaction_cutoff( std::string atom_type );
 
 	MoverOP clone() const override {
-		return MoverOP( new CalcsTestMover( *this ) );
+		return utility::pointer::make_shared< CalcsTestMover >( *this );
 	}
 
 	MoverOP fresh_instance() const override {
@@ -358,9 +358,9 @@ void CalcsTestMover::register_calculators(){
 	} else {
 		if ( basic::options::option[ basic::options::OptionKeys::bpf::variable_sasa_radii ] ) {
 			using namespace protocols::vardist_solaccess;
-			CalculatorFactory::Instance().register_calculator( Sasa_, VarSolDistSasaCalculatorOP( new VarSolDistSasaCalculator ) );
+			CalculatorFactory::Instance().register_calculator( Sasa_, utility::pointer::make_shared< VarSolDistSasaCalculator >() );
 		} else {
-			CalculatorFactory::Instance().register_calculator( Sasa_, PoseMetricCalculatorOP( new simple_calculators::SasaCalculatorLegacy ) );
+			CalculatorFactory::Instance().register_calculator( Sasa_, utility::pointer::make_shared< simple_calculators::SasaCalculatorLegacy >() );
 		}
 
 	}
@@ -370,7 +370,7 @@ void CalcsTestMover::register_calculators(){
 		Warning() << "In InterfaceAnalyzerMover, calculator " << NumberHBonds_
 			<< " already exists, this is hopefully correct for your purposes" << std::endl;
 	} else {
-		CalculatorFactory::Instance().register_calculator( NumberHBonds_, PoseMetricCalculatorOP( new NumberHBondsCalculator ));
+		CalculatorFactory::Instance().register_calculator( NumberHBonds_, utility::pointer::make_shared< NumberHBondsCalculator >());
 	}
 
 	BuriedUnsatisfiedPolars_ = "BuriedUnsatisfiedPolars_" + name;
@@ -378,7 +378,7 @@ void CalcsTestMover::register_calculators(){
 		Warning() << "In InterfaceAnalyzerMover, calculator " << BuriedUnsatisfiedPolars_
 			<< " already exists, this is hopefully correct for your purposes" << std::endl;
 	} else {
-		CalculatorFactory::Instance().register_calculator(  BuriedUnsatisfiedPolars_, PoseMetricCalculatorOP( new BuriedUnsatisfiedPolarsCalculator(Sasa_, NumberHBonds_) ));
+		CalculatorFactory::Instance().register_calculator(  BuriedUnsatisfiedPolars_, utility::pointer::make_shared< BuriedUnsatisfiedPolarsCalculator >(Sasa_, NumberHBonds_));
 	}
 
 	return;
@@ -419,7 +419,7 @@ main( int argc, char * argv [] )
 		// init
 		devel::init(argc, argv);
 
-		protocols::jd2::JobDistributor::get_instance()->go( protocols::moves::MoverOP( new CalcsTestMover ) );
+		protocols::jd2::JobDistributor::get_instance()->go( utility::pointer::make_shared< CalcsTestMover >() );
 
 		std::cout << "Done! -------------------------------"<< std::endl;
 

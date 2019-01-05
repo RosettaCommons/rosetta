@@ -34,10 +34,10 @@ public:
 	~SAXSScoreFilter() override = default;
 
 	filters::FilterOP clone() const override {
-		return filters::FilterOP( new SAXSScoreFilter( *this ) ); }
+		return utility::pointer::make_shared< SAXSScoreFilter >( *this ); }
 
 	filters::FilterOP fresh_instance() const override{
-		return filters::FilterOP( new SAXSScoreFilter() );
+		return utility::pointer::make_shared< SAXSScoreFilter >();
 	}
 
 

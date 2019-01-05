@@ -158,8 +158,8 @@ double gapdist( int n ) {
 }
 
 
-protocols::moves::MoverOP LoopGrower::clone() const { return protocols::moves::MoverOP( new LoopGrower( *this ) ); }
-protocols::moves::MoverOP LoopGrower::fresh_instance() const { return protocols::moves::MoverOP( new LoopGrower ); }
+protocols::moves::MoverOP LoopGrower::clone() const { return utility::pointer::make_shared< LoopGrower >( *this ); }
+protocols::moves::MoverOP LoopGrower::fresh_instance() const { return utility::pointer::make_shared< LoopGrower >(); }
 
 void
 LoopGrower::apply( core::pose::Pose & pose ) {
@@ -194,7 +194,7 @@ LoopGrower::apply( core::pose::Pose & pose ) {
 	// chop fragments if short loop
 	unsigned loopsize = (loop_.stop() - loop_.start());
 	if ( (loopsize < maxfrag) && (maxfrag > 2) ) {
-		core::fragment::FragSetOP smallfrags = core::fragment::FragSetOP(new core::fragment::ConstantLengthFragSet( 2 ));
+		core::fragment::FragSetOP smallfrags = utility::pointer::make_shared< core::fragment::ConstantLengthFragSet >( 2 );
 		core::fragment::chop_fragments( *fragset, *smallfrags );
 		fragments_.erase (fragments_.begin(),fragments_.end());
 		fragments_.push_back(smallfrags);
@@ -359,8 +359,8 @@ LoopGrower::apply( core::pose::Pose & pose ) {
 	total_residues_ = pose.total_residue();
 
 	// centroid copy of the pose
-	protocols::simple_moves::SwitchResidueTypeSetMoverOP tocen = protocols::simple_moves::SwitchResidueTypeSetMoverOP( new protocols::simple_moves::SwitchResidueTypeSetMover("centroid")); // tocen("centroid_rot");
-	protocols::simple_moves::SwitchResidueTypeSetMoverOP tocenrot = protocols::simple_moves::SwitchResidueTypeSetMoverOP( new protocols::simple_moves::SwitchResidueTypeSetMover("centroid_rot")); // tocen("centroid_rot");
+	protocols::simple_moves::SwitchResidueTypeSetMoverOP tocen = utility::pointer::make_shared< protocols::simple_moves::SwitchResidueTypeSetMover >("centroid"); // tocen("centroid_rot");
+	protocols::simple_moves::SwitchResidueTypeSetMoverOP tocenrot = utility::pointer::make_shared< protocols::simple_moves::SwitchResidueTypeSetMover >("centroid_rot"); // tocen("centroid_rot");
 	// if you don't want to use cen and cenrot at the same time be sure to change this to only set the cen pose to cenrot
 
 	//Prep the template poses for constraints
@@ -817,7 +817,7 @@ LoopGrower::apply( core::pose::Pose & pose ) {
 	core::pose::Pose best_pose;
 	core::kinematics::FoldTree ft_final = pose.fold_tree();
 	int fctr=0;
-	restore_sc = protocols::simple_moves::ReturnSidechainMoverOP( new protocols::simple_moves::ReturnSidechainMover( pose ) );
+	restore_sc = utility::pointer::make_shared< protocols::simple_moves::ReturnSidechainMover >( pose );
 
 	//get the cutpoint for transfer
 	cutpoint_fasta = 0;
@@ -973,7 +973,7 @@ LoopGrower::apply( core::pose::Pose & pose ) {
 		}
 	}
 	if ( cenrot_ ) {
-		protocols::simple_moves::SwitchResidueTypeSetMoverOP tofullatom = protocols::simple_moves::SwitchResidueTypeSetMoverOP( new protocols::simple_moves::SwitchResidueTypeSetMover("fa_standard"));
+		protocols::simple_moves::SwitchResidueTypeSetMoverOP tofullatom = utility::pointer::make_shared< protocols::simple_moves::SwitchResidueTypeSetMover >("fa_standard");
 		tofullatom->apply(pose);
 	}
 
@@ -985,9 +985,9 @@ LoopGrower::addnativesolution(LoopPartialSolutionStore& solutionset, core::pose:
 	// centroid copy of the pose
 	protocols::simple_moves::SwitchResidueTypeSetMoverOP tocen;
 	if ( cenrot_ ) {
-		tocen = protocols::simple_moves::SwitchResidueTypeSetMoverOP( new protocols::simple_moves::SwitchResidueTypeSetMover("centroid_rot")); // tocen("centroid_rot");
+		tocen = utility::pointer::make_shared< protocols::simple_moves::SwitchResidueTypeSetMover >("centroid_rot"); // tocen("centroid_rot");
 	} else {
-		tocen = protocols::simple_moves::SwitchResidueTypeSetMoverOP( new protocols::simple_moves::SwitchResidueTypeSetMover("centroid")); // tocen("centroid_rot");
+		tocen = utility::pointer::make_shared< protocols::simple_moves::SwitchResidueTypeSetMover >("centroid"); // tocen("centroid_rot");
 	}
 	core::pose::Pose natpose_cen = *native_;
 	tocen->apply(natpose_cen);
@@ -1188,7 +1188,7 @@ LoopGrower::refine_cycle( core::pose::Pose & refinepose, core::pose::Pose & refi
 		core::optimization::AtomTreeMinimizerOP symm_min( new core::optimization::symmetry::SymAtomTreeMinimizer);
 		minimizer = utility::pointer::dynamic_pointer_cast< core::optimization::AtomTreeMinimizer >(symm_min);
 	} else {
-		minimizer = core::optimization::AtomTreeMinimizerOP( new core::optimization::AtomTreeMinimizer );
+		minimizer = utility::pointer::make_shared< core::optimization::AtomTreeMinimizer >();
 	}
 
 	core::optimization::MinimizerOptions options( "lbfgs_armijo_nonmonotone", 1e-4, true, false, false);
@@ -1242,11 +1242,11 @@ LoopGrower::refine_cycle( core::pose::Pose & refinepose, core::pose::Pose & refi
 		pack_core->add_loop( protocols::loops::Loop( lower_min, upper_min ) );
 
 		protocols::minimization_packing::PackRotamersMoverOP pack_mover;
-		pack_mover = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover );
+		pack_mover = utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >();
 		repackaround->set_loops(pack_core);
 		main_task_factory->push_back( repackaround );
-		main_task_factory->push_back( core::pack::task::operation::TaskOperationCOP( new core::pack::task::operation::IncludeCurrent) );
-		main_task_factory->push_back( core::pack::task::operation::TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
+		main_task_factory->push_back( utility::pointer::make_shared< core::pack::task::operation::IncludeCurrent >() );
+		main_task_factory->push_back( utility::pointer::make_shared< core::pack::task::operation::InitializeFromCommandline >() );
 		core::pack::task::PackerTaskOP ptask( main_task_factory->create_task_and_apply_taskoperations( refinepose ) );
 		if ( core::pose::symmetry::is_symmetric(refinepose) ) {
 			core::pack::make_new_symmetric_PackerTask_by_requested_method(refinepose, ptask); // NK 110621
@@ -3508,7 +3508,7 @@ Real LoopGrower::single_grow( core::pose::Pose& growpose, core::pose::Pose& grow
 	//store side chains.
 	protocols::moves::MoverOP restore_sc;
 	if ( pack_min_cycles_ != 0 || cenrot_ ) {
-		restore_sc = protocols::simple_moves::ReturnSidechainMoverOP( new protocols::simple_moves::ReturnSidechainMover( growpose ));
+		restore_sc = utility::pointer::make_shared< protocols::simple_moves::ReturnSidechainMover >( growpose );
 	}
 
 	core::Real beam_maximum = -99999;

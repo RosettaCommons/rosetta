@@ -74,7 +74,7 @@ static basic::Tracer TR( "protocols.generalized_kinematic_closure.GeneralizedKIC
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP GeneralizedKICCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new GeneralizedKIC );
+// XRW TEMP  return utility::pointer::make_shared< GeneralizedKIC >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -102,7 +102,7 @@ GeneralizedKIC::GeneralizedKIC():
 	pivot_3_atmname_(""),
 	perturberlist_(),
 	filterlist_(),
-	selector_( selector::GeneralizedKICselectorOP( new selector::GeneralizedKICselector ) ),
+	selector_( utility::pointer::make_shared< selector::GeneralizedKICselector >() ),
 	n_closure_attempts_(100),
 	min_solution_count_(0),
 	rosettascripts_filter_(),
@@ -184,14 +184,14 @@ GeneralizedKIC::~GeneralizedKIC() = default;
 /// @brief Clone operator to create a pointer to a fresh GeneralizedKIC object that copies this one.
 ///
 protocols::moves::MoverOP GeneralizedKIC::clone() const {
-	return protocols::moves::MoverOP( new GeneralizedKIC( *this ) );
+	return utility::pointer::make_shared< GeneralizedKIC >( *this );
 }
 
 
 /// @brief Fresh_instance operator to create a pointer to a fresh GeneralizedKIC object that does NOT copy this one.
 ///
 protocols::moves::MoverOP GeneralizedKIC::fresh_instance() const {
-	return protocols::moves::MoverOP( new GeneralizedKIC );
+	return utility::pointer::make_shared< GeneralizedKIC >();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -2434,7 +2434,7 @@ std::string GeneralizedKICCreator::keyname() const {
 
 protocols::moves::MoverOP
 GeneralizedKICCreator::create_mover() const {
-	return protocols::moves::MoverOP( new GeneralizedKIC );
+	return utility::pointer::make_shared< GeneralizedKIC >();
 }
 
 void GeneralizedKICCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -66,7 +66,7 @@ public:
 
 	evaluation::MetaPoseEvaluatorOP evaluator() {
 		if ( !evaluator_ ) {
-			evaluator_ = evaluation::MetaPoseEvaluatorOP( new evaluation::MetaPoseEvaluator );
+			evaluator_ = utility::pointer::make_shared< evaluation::MetaPoseEvaluator >();
 		}
 		return evaluator_;
 	}

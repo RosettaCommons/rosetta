@@ -165,14 +165,14 @@ public:  // Standard Rosetta methods
 	moves::MoverOP
 	clone() const override
 	{
-		return protocols::moves::MoverOP( new DockGlycansProtocol( *this ) );
+		return utility::pointer::make_shared< DockGlycansProtocol >( *this );
 	}
 
 
 	moves::MoverOP
 	fresh_instance() const override
 	{
-		return protocols::moves::MoverOP( new DockGlycansProtocol );
+		return utility::pointer::make_shared< DockGlycansProtocol >();
 	}
 
 	/// @brief  Apply the corresponding protocol to <pose>.
@@ -257,7 +257,7 @@ public:  // Standard Rosetta methods
 		sf_->set_weight( fa_atr, target_atr_ * STARTING_RAMP_DOWN_FACTOR );
 		sf_->set_weight( fa_rep, target_atr_ * STARTING_RAMP_UP_FACTOR );
 
-		mc_ = moves::MonteCarloOP( new moves::MonteCarlo( pose, *sf_, kt_ ) );
+		mc_ = utility::pointer::make_shared< moves::MonteCarlo >( pose, *sf_, kt_ );
 
 		for ( core::uint cycle( 1 ); cycle <= n_cycles_; ++cycle ) {
 			if ( cycle % ( n_cycles_ / 10 ) == 0 ) {  // Ramp every ~10% of n_cycles.
@@ -326,7 +326,7 @@ private:  // Private methods
 
 		// Note: I'm ignoring anything beyond the first .cst file provided.
 		if ( option[ OptionKeys::constraints::cst_fa_file ].active() ) {
-			constraint_setter_ = ConstraintSetMoverOP( new ConstraintSetMover );
+			constraint_setter_ = utility::pointer::make_shared< ConstraintSetMover >();
 			constraint_setter_->constraint_file( option[ OptionKeys::constraints::cst_fa_file ][ 1 ] );
 		}
 
@@ -365,25 +365,25 @@ private:  // Private methods
 		slider_ = docking::FaDockingSlideIntoContactOP ( new docking::FaDockingSlideIntoContact( JUMP_NUM ) );
 		perturber_ = rigid::RigidBodyPerturbMoverOP ( new rigid::RigidBodyPerturbMover( JUMP_NUM, rot_, trans_ ) );
 
-		jump_mm_ = kinematics::MoveMapOP( new kinematics::MoveMap );
-		ring_mm_ = kinematics::MoveMapOP( new kinematics::MoveMap );
-		torsion_mm_ = kinematics::MoveMapOP( new kinematics::MoveMap );
+		jump_mm_ = utility::pointer::make_shared< kinematics::MoveMap >();
+		ring_mm_ = utility::pointer::make_shared< kinematics::MoveMap >();
+		torsion_mm_ = utility::pointer::make_shared< kinematics::MoveMap >();
 
-		jump_minimizer_ = MinMoverOP( new MinMover( jump_mm_, sf_, "lbfgs_armijo_nonmonotone", 0.01, true ) );
+		jump_minimizer_ = utility::pointer::make_shared< MinMover >( jump_mm_, sf_, "lbfgs_armijo_nonmonotone", 0.01, true );
 
-		ring_mover_ = RingConformationMoverOP( new RingConformationMover( ring_mm_ ) );
-		small_mover_ = SmallMoverOP( new SmallMover( torsion_mm_, kt_, 3 ) );
-		shear_mover_ = ShearMoverOP( new ShearMover( torsion_mm_, kt_, 3 ) );
+		ring_mover_ = utility::pointer::make_shared< RingConformationMover >( ring_mm_ );
+		small_mover_ = utility::pointer::make_shared< SmallMover >( torsion_mm_, kt_, 3 );
+		shear_mover_ = utility::pointer::make_shared< ShearMover >( torsion_mm_, kt_, 3 );
 
 		TaskFactoryOP tf( new TaskFactory );
-		tf->push_back( operation::RestrictToRepackingOP( new operation::RestrictToRepacking ) );
-		tf->push_back( operation::IncludeCurrentOP( new operation::IncludeCurrent ) );
+		tf->push_back( utility::pointer::make_shared< operation::RestrictToRepacking >() );
+		tf->push_back( utility::pointer::make_shared< operation::IncludeCurrent >() );
 		tf->push_back( simple_task_operations::RestrictToInterfaceOP(
 			new simple_task_operations::RestrictToInterface( JUMP_NUM ) ) );
-		packer_ = PackRotamersMoverOP( new PackRotamersMover( sf_ ) );
+		packer_ = utility::pointer::make_shared< PackRotamersMover >( sf_ );
 		packer_->task_factory( tf );
 
-		torsion_minimizer_ = MinMoverOP( new MinMover( torsion_mm_, sf_, "lbfgs_armijo_nonmonotone", 0.01, true ) );
+		torsion_minimizer_ = utility::pointer::make_shared< MinMover >( torsion_mm_, sf_, "lbfgs_armijo_nonmonotone", 0.01, true );
 
 		n_cycles_ = 100;
 

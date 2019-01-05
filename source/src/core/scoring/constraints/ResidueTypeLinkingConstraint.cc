@@ -117,7 +117,7 @@ ResidueTypeLinkingConstraint::remap_resid( core::id::SequenceMapping const &seqm
 core::Size newseqpos = seqmap[ seqpos_ ];
 if ( newseqpos != 0 ) {
 
-return ConstraintOP( new ResidueTypeLinkingConstraint( newseqpos, AAname, rsd_type_name3_, favor_native_bonus_ ) );
+return utility::pointer::make_shared< ResidueTypeLinkingConstraint >( newseqpos, AAname, rsd_type_name3_, favor_native_bonus_ );
 } else {
 return NULL;
 }

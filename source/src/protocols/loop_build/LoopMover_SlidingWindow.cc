@@ -158,9 +158,9 @@ loops::loop_mover::LoopResult LoopMover_SlidingWindow::model_loop(
 	loops::loop_closure::ccd::SlidingWindowLoopClosureOP closure_protocol;
 
 	if ( option[ OptionKeys::loops::alternative_closure_protocol ]() ) {
-		closure_protocol = loops::loop_closure::ccd::SlidingWindowLoopClosureOP( new loops::loop_closure::ccd::WidthFirstSlidingWindowLoopClosure );
+		closure_protocol = utility::pointer::make_shared< loops::loop_closure::ccd::WidthFirstSlidingWindowLoopClosure >();
 	} else {
-		closure_protocol = loops::loop_closure::ccd::SlidingWindowLoopClosureOP( new loops::loop_closure::ccd::SlidingWindowLoopClosure );
+		closure_protocol = utility::pointer::make_shared< loops::loop_closure::ccd::SlidingWindowLoopClosure >();
 	}
 
 	closure_protocol->scored_frag_cycle_ratio( option[ OptionKeys::loops::scored_frag_cycles ]() );
@@ -228,7 +228,7 @@ std::string LoopMover_SlidingWindowCreator::keyname() const {
 
 protocols::moves::MoverOP
 LoopMover_SlidingWindowCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LoopMover_SlidingWindow );
+	return utility::pointer::make_shared< LoopMover_SlidingWindow >();
 }
 
 void LoopMover_SlidingWindowCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

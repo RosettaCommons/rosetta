@@ -58,7 +58,7 @@ SelectResiduesWithinChainOperation::~SelectResiduesWithinChainOperation() = defa
 core::pack::task::operation::TaskOperationOP
 SelectResiduesWithinChainOperationCreator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new SelectResiduesWithinChainOperation );
+	return utility::pointer::make_shared< SelectResiduesWithinChainOperation >();
 }
 
 void SelectResiduesWithinChainOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -73,7 +73,7 @@ std::string SelectResiduesWithinChainOperationCreator::keyname() const
 
 core::pack::task::operation::TaskOperationOP SelectResiduesWithinChainOperation::clone() const
 {
-	return core::pack::task::operation::TaskOperationOP( new SelectResiduesWithinChainOperation( *this ) );
+	return utility::pointer::make_shared< SelectResiduesWithinChainOperation >( *this );
 }
 
 /// @brief restricts to repacking all residues outside of design_shell_ around each residue
@@ -118,12 +118,12 @@ SelectResiduesWithinChainOperation::apply( core::pose::Pose const & pose, core::
 	TR<<std::endl;
 	OperateOnCertainResidues oocr_repacking, oocr_prevent_repacking;
 	if ( packing_residues.size() ) {
-		oocr_repacking.op( ResLvlTaskOperationCOP( new RestrictToRepackingRLT ) );
+		oocr_repacking.op( utility::pointer::make_shared< RestrictToRepackingRLT >() );
 		oocr_repacking.residue_indices( packing_residues );
 		oocr_repacking.apply( pose, task );
 	}
 	if ( prevent_repacking_residues.size() ) {
-		oocr_prevent_repacking.op( ResLvlTaskOperationCOP( new PreventRepackingRLT ) );
+		oocr_prevent_repacking.op( utility::pointer::make_shared< PreventRepackingRLT >() );
 		oocr_prevent_repacking.residue_indices( prevent_repacking_residues );
 		oocr_prevent_repacking.apply( pose, task );
 	}

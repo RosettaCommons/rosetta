@@ -94,11 +94,11 @@ LegacyNodeConstraintAssemblyMoverCreator::mover_name()
 
 protocols::moves::MoverOP
 LegacyNodeConstraintAssemblyMover::clone() const {
-	return( protocols::moves::MoverOP( new LegacyNodeConstraintAssemblyMover( *this ) ) );
+	return( utility::pointer::make_shared< LegacyNodeConstraintAssemblyMover >( *this ) );
 }
 protocols::moves::MoverOP
 LegacyNodeConstraintAssemblyMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new LegacyNodeConstraintAssemblyMover );
+	return utility::pointer::make_shared< LegacyNodeConstraintAssemblyMover >();
 }
 
 std::string

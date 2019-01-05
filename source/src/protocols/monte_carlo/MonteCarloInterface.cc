@@ -78,7 +78,7 @@ MonteCarloInterface::MonteCarloInterface( MonteCarloInterface const & src):
 
 void
 MonteCarloInterface::init_interface_analyzer() {
-	analyzer_ = analysis::InterfaceAnalyzerMoverOP( new analysis::InterfaceAnalyzerMover());
+	analyzer_ = utility::pointer::make_shared< analysis::InterfaceAnalyzerMover >();
 
 	//Turn most computations off here.
 	analyzer_->set_compute_interface_delta_hbond_unsat( false );
@@ -200,7 +200,7 @@ MonteCarloInterface::set_repack_separated( bool repack_separated ){
 
 MonteCarloOP
 MonteCarloInterface::clone() {
-	return MonteCarloOP( new MonteCarloInterface( *this ) );
+	return utility::pointer::make_shared< MonteCarloInterface >( *this );
 }
 
 

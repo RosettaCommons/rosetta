@@ -63,7 +63,7 @@ public:
 		core_init();
 
 		// Load in pose from pdb
-		pose_ = core::pose::PoseOP( new Pose() );
+		pose_ = utility::pointer::make_shared< Pose >();
 		core::import_pose::pose_from_file( *pose_, "protocols/membrane/1AFO_AB.pdb", core::import_pose::PDB_file);
 
 		// Initialize Spans from spanfile

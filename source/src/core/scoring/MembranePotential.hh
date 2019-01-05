@@ -69,7 +69,7 @@ public:
 
 	/// @brief Clone Cacheable Data
 	basic::datacache::CacheableDataOP clone() const override {
-		return basic::datacache::CacheableDataOP( new MembraneEmbed( *this ) );
+		return utility::pointer::make_shared< MembraneEmbed >( *this );
 	}
 
 	/// @brief Compute Size of MP (??)

@@ -36,10 +36,10 @@ public:
 	ReportFilter();
 	bool apply( core::pose::Pose const & pose ) const override;
 	filters::FilterOP clone() const override {
-		return filters::FilterOP( new ReportFilter( *this ) );
+		return utility::pointer::make_shared< ReportFilter >( *this );
 	}
 	filters::FilterOP fresh_instance() const override{
-		return filters::FilterOP( new ReportFilter() );
+		return utility::pointer::make_shared< ReportFilter >();
 	}
 
 	void report( std::ostream & out, core::pose::Pose const & pose ) const override;

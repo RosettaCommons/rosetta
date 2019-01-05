@@ -120,7 +120,7 @@ Segment::Segment(
 SegmentOP
 Segment::clone() const
 {
-	return SegmentOP( new Segment( *this ) );
+	return utility::pointer::make_shared< Segment >( *this );
 }
 
 std::string const &

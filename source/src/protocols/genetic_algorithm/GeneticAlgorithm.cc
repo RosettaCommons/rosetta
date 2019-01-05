@@ -647,7 +647,7 @@ GeneticAlgorithmBase::new_entity()
 	if ( entity_template_ ) {
 		return entity_template_->clone();
 	} else {
-		return Entity::OP( new Entity );
+		return utility::pointer::make_shared< Entity >();
 	}
 }
 

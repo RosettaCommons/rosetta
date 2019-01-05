@@ -85,7 +85,7 @@ using namespace ObjexxFCL::format;
 core::pack::task::TaskFactoryOP SequenceComparison::setup_tf( core::pack::task::TaskFactoryOP task_factory_ ) {
 	using namespace core::pack::task::operation;
 
-	task_factory_->push_back( TaskOperationCOP( new pack::task::operation::InitializeFromCommandline ) );
+	task_factory_->push_back( utility::pointer::make_shared< pack::task::operation::InitializeFromCommandline >() );
 
 
 	return task_factory_;

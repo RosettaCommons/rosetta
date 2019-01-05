@@ -699,14 +699,14 @@ void calculate_distances( ) {
 		// setup input stream
 		PoseInputStreamOP input;
 		if ( option[ in::file::tags ].user() ) {
-			input = PoseInputStreamOP( new SilentFilePoseInputStream(
+			input = utility::pointer::make_shared< SilentFilePoseInputStream >(
 				option[ in::file::silent ](),
 				option[ in::file::tags ]()
-				));
+			);
 		} else {
-			input = PoseInputStreamOP( new SilentFilePoseInputStream(
+			input = utility::pointer::make_shared< SilentFilePoseInputStream >(
 				option[ in::file::silent ]()
-				));
+			);
 		}
 
 		core::chemical::ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );

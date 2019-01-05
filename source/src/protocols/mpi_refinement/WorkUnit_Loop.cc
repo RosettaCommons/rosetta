@@ -167,9 +167,9 @@ WorkUnit_LoopHash::run()
 
 	LocalInserterOP inserter;
 	//if( global ){
-	inserter = LocalInserterOP( new LocalInserter_SimpleMin() );
+	inserter = utility::pointer::make_shared< LocalInserter_SimpleMin >();
 	//} else {
-	//inserter = LocalInserterOP( new LocalInserter_FixFrame() );
+	//inserter = utility::pointer::make_shared< LocalInserter_FixFrame >();
 	//}
 	LoopHashSampler  lsampler( library_, inserter );
 

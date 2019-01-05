@@ -93,7 +93,7 @@ FlexPepDockingAbInitio::FlexPepDockingAbInitio
 	// Loop modeling options
 	// NOTE: most LoopRelax options are initiated automatically from cmd-line
 	// TODO: LoopRelaxMover is a wrapper, perhaps user the LoopModel class explicitly
-	loop_relax_mover_ = protocols::comparative_modeling::LoopRelaxMoverOP( new protocols::comparative_modeling::LoopRelaxMover() );
+	loop_relax_mover_ = utility::pointer::make_shared< protocols::comparative_modeling::LoopRelaxMover >();
 	// loop_relax_mover_->centroid_scorefxn(scorefxn_); // TODO: we need a chain brteak score here, so let's leave it for modeller default?
 	loop_relax_mover_->refine("no"); // centroid modeling only
 	loop_relax_mover_->relax("no"); // centroid modeling only
@@ -107,19 +107,19 @@ FlexPepDockingAbInitio::FlexPepDockingAbInitio
 	// TODO: choose frag files through FlexPepDockingFlags
 	// 3mer fragments
 	if ( option[ basic::options::OptionKeys::in::file::frag3].user() ) {
-		fragset3mer_ = core::fragment::ConstantLengthFragSetOP( new core::fragment::ConstantLengthFragSet( 3 ) );
+		fragset3mer_ = utility::pointer::make_shared< core::fragment::ConstantLengthFragSet >( 3 );
 		fragset3mer_->read_fragment_file
 			( option[ basic::options::OptionKeys::in::file::frag3].value() );
 	}
 	// 9mer fragments
 	if ( option[ basic::options::OptionKeys::in::file::frag9].user() ) {
-		fragset9mer_ = core::fragment::ConstantLengthFragSetOP( new core::fragment::ConstantLengthFragSet( 9 ) );
+		fragset9mer_ = utility::pointer::make_shared< core::fragment::ConstantLengthFragSet >( 9 );
 		fragset9mer_->read_fragment_file
 			( option[ basic::options::OptionKeys::in::file::frag9].value() );
 	}
 	//5mer fragments
 	if ( option[ basic::options::OptionKeys::flexPepDocking::frag5].user() ) {
-		fragset5mer_ = core::fragment::ConstantLengthFragSetOP( new core::fragment::ConstantLengthFragSet( 5 ) );
+		fragset5mer_ = utility::pointer::make_shared< core::fragment::ConstantLengthFragSet >( 5 );
 		fragset5mer_->read_fragment_file
 			( option[ basic::options::OptionKeys::flexPepDocking::frag5].value() );
 	}
@@ -137,12 +137,12 @@ void
 FlexPepDockingAbInitio::setup_for_apply( core::pose::Pose& pose )
 {
 	double temperature = 0.8;
-	mc_ = moves::MonteCarloOP( new moves::MonteCarlo( pose, *scorefxn_, temperature ) );
+	mc_ = utility::pointer::make_shared< moves::MonteCarlo >( pose, *scorefxn_, temperature );
 	// setup minimizer
 	std::string min_type = "lbfgs_armijo_atol"; // armijo_nonmonotone? different tolerance?
 	double min_func_tol = 0.1;
-	minimizer_ = protocols::minimization_packing::MinMoverOP( new protocols::minimization_packing::MinMover(
-		movemap_, scorefxn_, min_type, min_func_tol, true /*nb_list accel.*/ ) );
+	minimizer_ = utility::pointer::make_shared< protocols::minimization_packing::MinMover >(
+		movemap_, scorefxn_, min_type, min_func_tol, true /*nb_list accel.*/ );
 }
 
 
@@ -202,15 +202,15 @@ FlexPepDockingAbInitio::torsions_monte_carlo
 		frag9_mover = nullptr,
 		frag5_mover = nullptr;
 	if ( fragset3mer_ ) { //if we have fragments
-		frag3_mover = ClassicFragmentMoverOP( new ClassicFragmentMover(fragset3mer_, movemap_) );
+		frag3_mover = utility::pointer::make_shared< ClassicFragmentMover >(fragset3mer_, movemap_);
 		frag3_mover->enable_end_bias_check(false);
 	}
 	if ( fragset9mer_ ) { //if we have fragments
-		frag9_mover = ClassicFragmentMoverOP( new ClassicFragmentMover(fragset9mer_, movemap_) );
+		frag9_mover = utility::pointer::make_shared< ClassicFragmentMover >(fragset9mer_, movemap_);
 		frag9_mover->enable_end_bias_check(false);
 	}
 	if ( fragset5mer_ ) { //if we have fragments
-		frag5_mover = ClassicFragmentMoverOP( new ClassicFragmentMover(fragset5mer_, movemap_) );
+		frag5_mover = utility::pointer::make_shared< ClassicFragmentMover >(fragset5mer_, movemap_);
 		frag5_mover->enable_end_bias_check(false);
 	}
 

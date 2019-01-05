@@ -96,13 +96,13 @@ MPDockingSetupMover::~MPDockingSetupMover() = default;
 /// @brief Create a Clone of this mover
 protocols::moves::MoverOP
 MPDockingSetupMover::clone() const {
-	return ( protocols::moves::MoverOP( new MPDockingSetupMover( *this ) ) );
+	return ( utility::pointer::make_shared< MPDockingSetupMover >( *this ) );
 }
 
 /// @brief Create a Fresh Instance of this Mover
 protocols::moves::MoverOP
 MPDockingSetupMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new MPDockingSetupMover() );
+	return utility::pointer::make_shared< MPDockingSetupMover >();
 }
 
 /// @brief Parse Rosetta Scripts Options for this Mover
@@ -176,7 +176,7 @@ utility::vector1< std::string > MPDockingSetupMover::get_spanfiles() const {
 /// @brief Create a new copy of this mover
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP MPDockingSetupMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new MPDockingSetupMover );
+// XRW TEMP  return utility::pointer::make_shared< MPDockingSetupMover >();
 // XRW TEMP }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)
@@ -426,7 +426,7 @@ std::string MPDockingSetupMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 MPDockingSetupMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MPDockingSetupMover );
+	return utility::pointer::make_shared< MPDockingSetupMover >();
 }
 
 void MPDockingSetupMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -46,7 +46,7 @@ static basic::Tracer TR( "protocols.legacy_sewing.sampling.LegacyMonteCarloAssem
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP LegacyMonteCarloAssemblyMoverCreator::create_mover() const
 // XRW TEMP {
-// XRW TEMP  return protocols::moves::MoverOP( new LegacyMonteCarloAssemblyMover );
+// XRW TEMP  return utility::pointer::make_shared< LegacyMonteCarloAssemblyMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -63,12 +63,12 @@ static basic::Tracer TR( "protocols.legacy_sewing.sampling.LegacyMonteCarloAssem
 
 protocols::moves::MoverOP
 LegacyMonteCarloAssemblyMover::clone() const {
-	return( protocols::moves::MoverOP( new LegacyMonteCarloAssemblyMover( *this ) ) );
+	return( utility::pointer::make_shared< LegacyMonteCarloAssemblyMover >( *this ) );
 }
 
 protocols::moves::MoverOP
 LegacyMonteCarloAssemblyMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new LegacyMonteCarloAssemblyMover );
+	return utility::pointer::make_shared< LegacyMonteCarloAssemblyMover >();
 }
 
 // XRW TEMP std::string
@@ -573,7 +573,7 @@ std::string LegacyMonteCarloAssemblyMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 LegacyMonteCarloAssemblyMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LegacyMonteCarloAssemblyMover );
+	return utility::pointer::make_shared< LegacyMonteCarloAssemblyMover >();
 }
 
 void LegacyMonteCarloAssemblyMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

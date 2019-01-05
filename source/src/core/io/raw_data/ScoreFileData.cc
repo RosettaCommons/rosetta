@@ -90,10 +90,10 @@ bool ScoreFileData::write_pose(
 
 	if ( format == "text" ) {
 		// Old plain-text format
-		outputter = RawStructOP( new ScoreStructText( pose, tag ) );
+		outputter = utility::pointer::make_shared< ScoreStructText >( pose, tag );
 	} else if ( format == "json" || format == "JSON" ) {
 		// JSON
-		outputter = RawStructOP( new ScoreStructJSON( pose, tag ) );
+		outputter = utility::pointer::make_shared< ScoreStructJSON >( pose, tag );
 	}
 
 	if ( !outputter ) {

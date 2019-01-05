@@ -78,7 +78,7 @@ HelixPairingFilter::HelixPairingFilter( HelixPairings const & hpairs ):
 	bend_angle_( 20.0 ),
 	cross_angle_( 45.0 ),
 	align_angle_( 25.0 ),
-	hpairset_( HelixPairingSetOP( new HelixPairingSet( hpairs ) ) ),
+	hpairset_( utility::pointer::make_shared< HelixPairingSet >( hpairs ) ),
 	output_id_( 1 ),
 	output_type_( "dist" ),
 	use_dssp_( true )
@@ -113,7 +113,7 @@ HelixPairingFilter::HelixPairingFilter( HelixPairingFilter const & rval ):
 {
 	// clone hpairset_ so there are no problems with sharing non-const data
 	if ( rval.hpairset_ ) {
-		hpairset_ = HelixPairingSetOP( new HelixPairingSet( *rval.hpairset_ ) );
+		hpairset_ = utility::pointer::make_shared< HelixPairingSet >( *rval.hpairset_ );
 	}
 }
 
@@ -121,13 +121,13 @@ HelixPairingFilter::HelixPairingFilter( HelixPairingFilter const & rval ):
 // @brief set filtered sheet_topology by HelixPairings
 void HelixPairingFilter::helix_pairings( HelixPairings const & hpairs )
 {
-	hpairset_ = HelixPairingSetOP( new HelixPairingSet( hpairs ) );
+	hpairset_ = utility::pointer::make_shared< HelixPairingSet >( hpairs );
 }
 
 // @brief set filtered sheet_topology by SrandPairingSetOP
 void HelixPairingFilter::helix_pairings( String const & hpairs )
 {
-	hpairset_ = HelixPairingSetOP( new HelixPairingSet( hpairs ) );
+	hpairset_ = utility::pointer::make_shared< HelixPairingSet >( hpairs );
 }
 
 /// @brief
@@ -409,7 +409,7 @@ HelixPairingFilter::find_missing_helices(
 }
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP HelixPairingFilterCreator::create_filter() const { return protocols::filters::FilterOP( new HelixPairingFilter ); }
+// XRW TEMP HelixPairingFilterCreator::create_filter() const { return utility::pointer::make_shared< HelixPairingFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP HelixPairingFilterCreator::keyname() const { return "HelixPairing"; }
@@ -453,7 +453,7 @@ std::string HelixPairingFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 HelixPairingFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new HelixPairingFilter );
+	return utility::pointer::make_shared< HelixPairingFilter >();
 }
 
 void HelixPairingFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

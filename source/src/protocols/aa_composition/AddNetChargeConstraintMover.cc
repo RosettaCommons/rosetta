@@ -67,11 +67,11 @@ AddNetChargeConstraintMover::~AddNetChargeConstraintMover()= default;
 
 /// @brief Copy this object and return a pointer to the copy.
 ///
-protocols::moves::MoverOP AddNetChargeConstraintMover::clone() const { return protocols::moves::MoverOP( new protocols::aa_composition::AddNetChargeConstraintMover( *this ) ); }
+protocols::moves::MoverOP AddNetChargeConstraintMover::clone() const { return utility::pointer::make_shared< protocols::aa_composition::AddNetChargeConstraintMover >( *this ); }
 
 /// @brief Create a new object of this type and return a pointer to it.
 ///
-protocols::moves::MoverOP AddNetChargeConstraintMover::fresh_instance() const { return protocols::moves::MoverOP( new AddNetChargeConstraintMover ); }
+protocols::moves::MoverOP AddNetChargeConstraintMover::fresh_instance() const { return utility::pointer::make_shared< AddNetChargeConstraintMover >(); }
 
 /// @brief Actually apply the mover to a pose.
 ///
@@ -122,7 +122,7 @@ AddNetChargeConstraintMover::parse_my_tag(
 void
 AddNetChargeConstraintMover::create_constraint_from_file( std::string const &filename ) {
 	runtime_assert_string_msg( !constraint_, "Error in protocols::aa_composition::AddNetChargeConstraintMover::create_constraint_from_file():  The constraint object already has been created!" );
-	constraint_ = core::scoring::netcharge_energy::NetChargeConstraintOP( new core::scoring::netcharge_energy::NetChargeConstraint() );
+	constraint_ = utility::pointer::make_shared< core::scoring::netcharge_energy::NetChargeConstraint >();
 	constraint_->initialize_from_file( filename );
 	if ( TR.visible() ) {
 		TR << "Initialized NetChargeConstraint object from file " << filename << "." << std::endl;
@@ -138,7 +138,7 @@ AddNetChargeConstraintMover::create_constraint_from_file_contents(
 	std::string const &filecontents
 ) {
 	runtime_assert_string_msg( !constraint_, "Error in protocols::aa_composition::AddNetChargeConstraintMover::create_constraint_from_filecontents():  The constraint object already has been created!" );
-	constraint_ = core::scoring::netcharge_energy::NetChargeConstraintOP( new core::scoring::netcharge_energy::NetChargeConstraint() );
+	constraint_ = utility::pointer::make_shared< core::scoring::netcharge_energy::NetChargeConstraint >();
 	constraint_->initialize_from_file_contents( filecontents );
 	if ( TR.visible() ) {
 		TR << "Initialized NetChargeConstraint object from file contents:\n" << filecontents << std::endl;
@@ -181,7 +181,7 @@ std::string AddNetChargeConstraintMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 AddNetChargeConstraintMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new AddNetChargeConstraintMover );
+	return utility::pointer::make_shared< AddNetChargeConstraintMover >();
 }
 
 void AddNetChargeConstraintMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -442,7 +442,7 @@ FullModelJobQueen::initial_job_dag()
 		preliminary_job_nodes_complete_[ ii ] = 0;
 	}
 	// create a DAG with as many nodes in it as there are preliminary larval jobs
-	job_graph_ = JobDigraphOP( new JobDigraph( preliminary_larval_jobs_.size() ) );
+	job_graph_ = utility::pointer::make_shared< JobDigraph >( preliminary_larval_jobs_.size() );
 	return job_graph_;
 }
 
@@ -952,7 +952,7 @@ FullModelJobQueen::expand_job_list( FullModelInnerLarvalJobOP inner_job, core::S
 FullModelInnerLarvalJobOP
 FullModelJobQueen::create_inner_larval_job( core::Size nstruct, core::Size prelim_job_node ) const
 {
-	return FullModelInnerLarvalJobOP( new FullModelInnerLarvalJob( nstruct, prelim_job_node ) );
+	return utility::pointer::make_shared< FullModelInnerLarvalJob >( nstruct, prelim_job_node );
 }
 
 /// @details Factory method instantiates the base-class LarvalJob to start.
@@ -965,13 +965,13 @@ FullModelJobQueen::create_larval_job(
 	core::Size larval_job_index
 )
 {
-	return LarvalJobOP( new LarvalJob( job, nstruct_index, larval_job_index ));
+	return utility::pointer::make_shared< LarvalJob >( job, nstruct_index, larval_job_index );
 }
 
 JobOP
 FullModelJobQueen::create_job( LarvalJobCOP ) const
 {
-	return JobOP( new MoverAndFullModelJob );
+	return utility::pointer::make_shared< MoverAndFullModelJob >();
 }
 
 LarvalJobs
@@ -1823,7 +1823,7 @@ FullModelJobQueen::get_outputter_from_job_tag( utility::tag::TagCOP tag ) const
 					outputter = default_outputter_creator_->create_outputter();
 				} else {
 					runtime_assert( outputter_creators_.count( pose_outputters::SilentFilePoseOutputter::keyname() ) );
-					outputter = pose_outputters::PoseOutputterOP( new pose_outputters::SilentFilePoseOutputter );
+					outputter = utility::pointer::make_shared< pose_outputters::SilentFilePoseOutputter >();
 				}
 			}
 		}

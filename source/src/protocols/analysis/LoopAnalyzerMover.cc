@@ -81,7 +81,7 @@ core::Real const REAL_FAKE_MIN = -1000000;
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 LoopAnalyzerMover::LoopAnalyzerMover( protocols::loops::Loops const & loops, bool const tracer ) :
 	Mover(),
-	loops_(protocols::loops::LoopsCOP( new protocols::loops::Loops(loops) )),
+	loops_(utility::pointer::make_shared< protocols::loops::Loops >(loops)),
 	tracer_(tracer),
 	sf_(/* NULL */),
 	chbreak_sf_(/* NULL */),
@@ -126,7 +126,7 @@ LoopAnalyzerMover::LoopAnalyzerMover( LoopAnalyzerMover const & rhs ) :
 LoopAnalyzerMover & LoopAnalyzerMover::operator=( LoopAnalyzerMover const & rhs ) {
 	if ( this == &rhs ) return *this;
 
-	loops_ = protocols::loops::LoopsCOP( new protocols::loops::Loops(*(rhs.loops_) ) );
+	loops_ = utility::pointer::make_shared< protocols::loops::Loops >(*(rhs.loops_) );
 	tracer_ = rhs.tracer_;
 	positions_ = rhs.positions_; //this is useless data
 	sf_ = rhs.sf_->clone();
@@ -145,7 +145,7 @@ LoopAnalyzerMover & LoopAnalyzerMover::operator=( LoopAnalyzerMover const & rhs 
 void LoopAnalyzerMover::set_sf(){
 	using namespace core::scoring;
 
-	sf_ = ScoreFunctionOP( new ScoreFunction );
+	sf_ = utility::pointer::make_shared< ScoreFunction >();
 	sf_->set_weight( rama, 1.0 );
 	sf_->set_weight( omega, 1.0 );
 	sf_->set_weight( fa_dun, 1.0 );
@@ -153,7 +153,7 @@ void LoopAnalyzerMover::set_sf(){
 	//sf_->set_weight( chainbreak, 1.0 );
 	sf_->set_weight( peptide_bond, 1.0 );
 
-	chbreak_sf_ = ScoreFunctionOP( new ScoreFunction );
+	chbreak_sf_ = utility::pointer::make_shared< ScoreFunction >();
 	chbreak_sf_->set_weight( chainbreak, 20.0 );
 
 	return;
@@ -264,14 +264,14 @@ LoopAnalyzerMover::parse_my_tag(
 protocols::moves::MoverOP
 LoopAnalyzerMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new LoopAnalyzerMover );
+	return utility::pointer::make_shared< LoopAnalyzerMover >();
 }
 
 /// @brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
 LoopAnalyzerMover::clone() const
 {
-	return protocols::moves::MoverOP( new LoopAnalyzerMover( *this ) );
+	return utility::pointer::make_shared< LoopAnalyzerMover >( *this );
 }
 
 // XRW TEMP std::string
@@ -403,7 +403,7 @@ void LoopAnalyzerMover::calculate_all_chainbreaks( core::pose::Pose & pose )
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP LoopAnalyzerMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new LoopAnalyzerMover() );
+// XRW TEMP  return utility::pointer::make_shared< LoopAnalyzerMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -453,7 +453,7 @@ std::string LoopAnalyzerMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 LoopAnalyzerMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LoopAnalyzerMover );
+	return utility::pointer::make_shared< LoopAnalyzerMover >();
 }
 
 void LoopAnalyzerMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -35,7 +35,7 @@
 #include <test/UTracer.hh>
 
 
-#define TEST_MOVER(mover, fileIn, fileOut) one_mover_test(__FILE__, __LINE__, protocols::moves::MoverOP( new mover() ), fileIn, fileOut);
+#define TEST_MOVER(mover, fileIn, fileOut) one_mover_test(__FILE__, __LINE__, utility::pointer::make_shared< mover >(), fileIn, fileOut);
 #define TEST_MOVER_OP(mover_op, fileIn, fileOut) one_mover_test(__FILE__, __LINE__, mover, fileIn, fileOut);
 
 namespace test {
@@ -72,7 +72,7 @@ public:
 	/// @brief: Helper function, that execute test on a given Mover object
 	///
 	void one_mover_test(const char * /*file*/, unsigned /*line*/, protocols::moves::MoverOP mover,
-						const char *fileIn, const char *fileOut, const char *nativeFileIn=0 ) {
+		const char *fileIn, const char *fileOut, const char *nativeFileIn=0 ) {
 		//TR_I << "MoversTest: Testing " << mover->type().c_str() << "...\n";
 
 		core::init::init_random_generators(1000, "mt19937");

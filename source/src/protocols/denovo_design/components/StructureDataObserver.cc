@@ -74,13 +74,13 @@ StructureDataObserver::~StructureDataObserver()
 core::pose::datacache::CacheableObserverOP
 StructureDataObserver::create()
 {
-	return core::pose::datacache::CacheableObserverOP( new StructureDataObserver() );
+	return utility::pointer::make_shared< StructureDataObserver >();
 }
 
 core::pose::datacache::CacheableObserverOP
 StructureDataObserver::clone()
 {
-	return core::pose::datacache::CacheableObserverOP( new StructureDataObserver( *this ) );
+	return utility::pointer::make_shared< StructureDataObserver >( *this );
 }
 
 

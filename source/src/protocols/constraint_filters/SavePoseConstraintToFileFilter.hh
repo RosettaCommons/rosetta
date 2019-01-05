@@ -37,10 +37,10 @@ public:
 	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
 	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	filters::FilterOP clone() const override {
-		return filters::FilterOP( new SavePoseConstraintToFileFilter( *this ) );
+		return utility::pointer::make_shared< SavePoseConstraintToFileFilter >( *this );
 	}
 	filters::FilterOP fresh_instance() const override{
-		return filters::FilterOP( new SavePoseConstraintToFileFilter() );
+		return utility::pointer::make_shared< SavePoseConstraintToFileFilter >();
 	}
 
 	~SavePoseConstraintToFileFilter() override= default;

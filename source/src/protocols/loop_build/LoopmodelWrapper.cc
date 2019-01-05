@@ -43,7 +43,7 @@ using core::Size;
 using core::Real;
 
 // XRW TEMP protocols::moves::MoverOP LoopmodelWrapperCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new LoopmodelWrapper );
+// XRW TEMP  return utility::pointer::make_shared< LoopmodelWrapper >();
 // XRW TEMP }
 
 // XRW TEMP std::string LoopmodelWrapperCreator::keyname() const {
@@ -51,7 +51,7 @@ using core::Real;
 // XRW TEMP }
 
 protocols::moves::MoverOP LoopmodelWrapper::clone() const {
-	return protocols::moves::MoverOP( new LoopmodelWrapper );
+	return utility::pointer::make_shared< LoopmodelWrapper >();
 }
 
 void LoopmodelWrapper::parse_my_tag(
@@ -154,7 +154,7 @@ std::string LoopmodelWrapperCreator::keyname() const {
 
 protocols::moves::MoverOP
 LoopmodelWrapperCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LoopmodelWrapper );
+	return utility::pointer::make_shared< LoopmodelWrapper >();
 }
 
 void LoopmodelWrapperCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

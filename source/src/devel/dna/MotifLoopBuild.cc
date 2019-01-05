@@ -125,7 +125,7 @@ void MotifLoopBuild::apply(core::pose::Pose & pose)
 	std::string secstruct;
 	core::Size num_attemps(0);
 	bool pass(false);
-	this->set_native_pose( core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose( pose ) ) ) );
+	this->set_native_pose( utility::pointer::make_shared< core::pose::Pose >( pose ) );
 	this->set_last_move_status( protocols::moves::FAIL_RETRY );
 
 	devel::enzdes::EnzdesRemodelMover::initialize(pose);
@@ -266,7 +266,7 @@ void MotifLoopBuild::place_motifs( core::pose::Pose & pose,
 
 protocols::moves::MoverOP
 MotifLoopBuildCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MotifLoopBuild() );
+	return utility::pointer::make_shared< MotifLoopBuild >();
 }
 
 std::string

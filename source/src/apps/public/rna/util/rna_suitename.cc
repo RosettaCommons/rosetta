@@ -64,7 +64,7 @@ rna_suitename()
 
 	// input stream
 	PoseInputStreamOP input;
-	input = PoseInputStreamOP( new PDBPoseInputStream( option[ in::file::s ]() ) );
+	input = utility::pointer::make_shared< PDBPoseInputStream >( option[ in::file::s ]() );
 
 
 	pose::Pose pose;

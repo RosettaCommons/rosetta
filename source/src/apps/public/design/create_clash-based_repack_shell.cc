@@ -53,12 +53,12 @@ main( int argc, char * argv [] )
 		core::pack::task::TaskFactoryOP main_task_factory( new TaskFactory );
 
 		// read resfile and other parameters from command line
-		main_task_factory->push_back( operation::TaskOperationCOP( new operation::InitializeFromCommandline ) );
+		main_task_factory->push_back( utility::pointer::make_shared< operation::InitializeFromCommandline >() );
 		if ( option[ packing::resfile ].user() ) {
-			main_task_factory->push_back( operation::TaskOperationCOP( new operation::ReadResfile ) );
+			main_task_factory->push_back( utility::pointer::make_shared< operation::ReadResfile >() );
 		} else {
 			std::cout << "WARNING: no resfile given in command line, restricting all residues to repacking" << std::endl;
-			main_task_factory->push_back( operation::TaskOperationCOP( new operation::RestrictToRepacking() ) );
+			main_task_factory->push_back( utility::pointer::make_shared< operation::RestrictToRepacking >() );
 		}
 
 		// setup pose and score function

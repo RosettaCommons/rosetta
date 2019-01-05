@@ -70,13 +70,13 @@ FragFactory::add_frame_type( std::string const& type_name, FrameOP new_frame ) {
 
 FragFactory::FragFactory(void) {
 	// initialization of fragtions which this factory knows how to instantiate
-	FragFactory::add_frag_type( BBTorsionSRFD::_static_type_name() , SingleResidueFragDataOP( new BBTorsionSRFD ) );
-	FragFactory::add_frag_type( DownJumpSRFD::_static_type_name(), SingleResidueFragDataOP( new DownJumpSRFD ) );
-	FragFactory::add_frag_type( UpJumpSRFD::_static_type_name(), SingleResidueFragDataOP( new UpJumpSRFD ) );
-	FragFactory::add_frag_type( SecstructSRFD::_static_type_name(), SingleResidueFragDataOP( new SecstructSRFD ) );
+	FragFactory::add_frag_type( BBTorsionSRFD::_static_type_name() , utility::pointer::make_shared< BBTorsionSRFD >() );
+	FragFactory::add_frag_type( DownJumpSRFD::_static_type_name(), utility::pointer::make_shared< DownJumpSRFD >() );
+	FragFactory::add_frag_type( UpJumpSRFD::_static_type_name(), utility::pointer::make_shared< UpJumpSRFD >() );
+	FragFactory::add_frag_type( SecstructSRFD::_static_type_name(), utility::pointer::make_shared< SecstructSRFD >() );
 
-	FragFactory::add_frame_type( Frame::_static_type_name(), FrameOP( new Frame ) );
-	FragFactory::add_frame_type( JumpingFrame::_static_type_name(), FrameOP( new JumpingFrame ) );
+	FragFactory::add_frame_type( Frame::_static_type_name(), utility::pointer::make_shared< Frame >() );
+	FragFactory::add_frame_type( JumpingFrame::_static_type_name(), utility::pointer::make_shared< JumpingFrame >() );
 }
 
 FrameOP FragFactory::frame( std::string const& type ) const {
@@ -145,8 +145,8 @@ void FragmentIO::read_frag_data( std::istream& data, std::string& next_line, Fra
 		if ( top_ && (*new_frames.begin())->nr_frags() >= top_ * ncopies_ ) continue;
 
 		if ( !current_fragment ) {
-			if ( pdb_pos && bAnnotate_ ) current_fragment = FragDataOP( new AnnotatedFragData( pdb_id, pdb_pos ) );
-			else current_fragment = FragDataOP( new FragData );
+			if ( pdb_pos && bAnnotate_ ) current_fragment = utility::pointer::make_shared< AnnotatedFragData >( pdb_id, pdb_pos );
+			else current_fragment = utility::pointer::make_shared< FragData >();
 		}
 
 		SingleResidueFragDataOP new_srfd = frag_factory_.frag_type( tag );

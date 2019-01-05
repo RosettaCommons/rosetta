@@ -105,7 +105,7 @@ LHSnugFitLegacy::~LHSnugFitLegacy() = default;
 
 //clone
 protocols::moves::MoverOP LHSnugFitLegacy::clone() const {
-	return( protocols::moves::MoverOP( new LHSnugFitLegacy() ) );
+	return( utility::pointer::make_shared< LHSnugFitLegacy >() );
 }
 
 
@@ -161,7 +161,7 @@ void LHSnugFitLegacy::apply( pose::Pose & pose ) {
 
 	//setting MoveMap
 	kinematics::MoveMapOP cdr_dock_map;
-	cdr_dock_map = kinematics::MoveMapOP( new kinematics::MoveMap() );
+	cdr_dock_map = utility::pointer::make_shared< kinematics::MoveMap >();
 
 	*cdr_dock_map=ab_info_->get_MoveMap_for_LoopsandDock(pose, *ab_info_->get_AllCDRs_in_loopsop(), false, true, 10.0);
 
@@ -188,7 +188,7 @@ void LHSnugFitLegacy::apply( pose::Pose & pose ) {
 		loop_residues( i ) = sc_is_flexible[ i ]; // check mapping
 	}
 	using namespace protocols::simple_task_operations;
-	tf_->push_back( TaskOperationCOP( new RestrictToInterface( rb_jump, loop_residues ) ) );
+	tf_->push_back( utility::pointer::make_shared< RestrictToInterface >( rb_jump, loop_residues ) );
 
 
 	minimization_packing::RotamerTrialsMoverOP pack_rottrial( new minimization_packing::RotamerTrialsMover( pack_scorefxn, tf_ ) );

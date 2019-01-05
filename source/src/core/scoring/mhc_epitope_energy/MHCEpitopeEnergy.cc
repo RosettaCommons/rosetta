@@ -91,7 +91,7 @@ ScoreCacheOP ScoreCache::clone() const
 core::scoring::methods::EnergyMethodOP
 MHCEpitopeEnergyCreator::create_energy_method( core::scoring::methods::EnergyMethodOptions const &options ) const
 {
-	return core::scoring::methods::EnergyMethodOP( new MHCEpitopeEnergy( options ) );
+	return utility::pointer::make_shared< MHCEpitopeEnergy >( options );
 }
 
 /// @brief Defines the score types that this energy method calculates.
@@ -107,7 +107,7 @@ MHCEpitopeEnergyCreator::score_types_for_method() const
 /// @brief Options constructor.
 ///
 MHCEpitopeEnergy::MHCEpitopeEnergy ( core::scoring::methods::EnergyMethodOptions const &options ) :
-	parent1( core::scoring::methods::EnergyMethodCreatorOP( new MHCEpitopeEnergyCreator ) ),
+	parent1( utility::pointer::make_shared< MHCEpitopeEnergyCreator >() ),
 	parent2( ),
 	disabled_(false),
 	setup_helpers_(),
@@ -124,7 +124,7 @@ MHCEpitopeEnergy::MHCEpitopeEnergy ( core::scoring::methods::EnergyMethodOptions
 /// @brief Copy constructor.
 ///
 MHCEpitopeEnergy::MHCEpitopeEnergy( MHCEpitopeEnergy const &src ) :
-	parent1( core::scoring::methods::EnergyMethodCreatorOP( new MHCEpitopeEnergyCreator ) ),
+	parent1( utility::pointer::make_shared< MHCEpitopeEnergyCreator >() ),
 	parent2( src ),
 	disabled_( src.disabled_ ),
 	setup_helpers_(), //CLONE the helper data below; don't copy them.
@@ -151,7 +151,7 @@ MHCEpitopeEnergy::~MHCEpitopeEnergy() = default;
 /// @brief Clone: create a copy of this object, and return an owning pointer
 /// to the copy.
 core::scoring::methods::EnergyMethodOP MHCEpitopeEnergy::clone() const {
-	return core::scoring::methods::EnergyMethodOP( new MHCEpitopeEnergy(*this) );
+	return utility::pointer::make_shared< MHCEpitopeEnergy >(*this);
 }
 
 /// @brief MHCEpitopeEnergy is context-independent and thus indicates that no context graphs need to be maintained by

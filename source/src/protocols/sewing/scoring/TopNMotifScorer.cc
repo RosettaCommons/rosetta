@@ -239,7 +239,7 @@ TopNMotifScorer::type_name(){
 //////Creator methods//////////
 AssemblyScorerOP
 TopNMotifScorerCreator::create_assembly_scorer() const{
-	return AssemblyScorerOP( new TopNMotifScorer );
+	return utility::pointer::make_shared< TopNMotifScorer >();
 }
 
 

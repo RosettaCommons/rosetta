@@ -139,7 +139,7 @@ WidthFirstSlidingWindowLoopClosure::sample_loops( Pose& more_cut, Pose& less_cut
 	best_score_ = REALLY_BAD_SCORE;
 
 	if ( bKeepFragments_ ) {
-		closure_fragments_ = core::fragment::OrderedFragSetOP( new fragment::OrderedFragSet );
+		closure_fragments_ = utility::pointer::make_shared< fragment::OrderedFragSet >();
 	}
 
 
@@ -187,7 +187,7 @@ WidthFirstSlidingWindowLoopClosure::sample_loops( Pose& more_cut, Pose& less_cut
 	{ //take initial loop-conformation as closing candidate
 		tr.Debug << "CAPTURE INITIAL POSE LOOPS" << std::endl;
 		using namespace fragment;
-		FrameOP closure_frame( new Frame( loop_.start(), FragDataCOP( FragDataOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), loop_.size() ) ) ) ) );
+		FrameOP closure_frame( new Frame( loop_.start(), utility::pointer::make_shared< FragData >( utility::pointer::make_shared< BBTorsionSRFD >(), loop_.size() ) ) );
 		FrameList closure_frames;
 		closure_frame->steal( more_cut );
 

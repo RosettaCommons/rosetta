@@ -87,7 +87,7 @@ TorsionClaim::TorsionClaim( ClientMoverOP owner,
 TorsionClaim::TorsionClaim( ClientMoverOP owner,
 	LocalPosition const & local_pos):
 	EnvClaim( owner ),
-	selector_( core::select::residue_selector::ResidueSelectorCOP( core::select::residue_selector::ResidueSelectorOP( new EnvLabelSelector( local_pos ) ) ) ),
+	selector_( utility::pointer::make_shared< EnvLabelSelector >( local_pos ) ),
 	c_str_( MUST_CONTROL ),
 	i_str_( DOES_NOT_CONTROL ),
 	claim_sidechain_( false ),
@@ -106,16 +106,16 @@ TorsionClaim::TorsionClaim( ClientMoverOP owner,
 	LocalPositions local_positions = LocalPositions();
 
 	for ( Size i = range.first; i <= range.second; ++i ) {
-		local_positions.push_back( core::environment::LocalPositionOP( new LocalPosition( label, i ) ) );
+		local_positions.push_back( utility::pointer::make_shared< LocalPosition >( label, i ) );
 	}
 
-	selector_ = core::select::residue_selector::ResidueSelectorCOP( core::select::residue_selector::ResidueSelectorOP( new EnvLabelSelector( local_positions ) ) );
+	selector_ = utility::pointer::make_shared< EnvLabelSelector >( local_positions );
 }
 
 TorsionClaim::TorsionClaim( ClientMoverOP owner,
 	LocalPositions const & positions ):
 	EnvClaim( owner ),
-	selector_( core::select::residue_selector::ResidueSelectorCOP( core::select::residue_selector::ResidueSelectorOP( new EnvLabelSelector( positions ) ) ) ),
+	selector_( utility::pointer::make_shared< EnvLabelSelector >( positions ) ),
 	c_str_( MUST_CONTROL ),
 	i_str_( DOES_NOT_CONTROL ),
 	claim_sidechain_( false ),
@@ -240,7 +240,7 @@ TorsionClaim::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ){
 }
 
 EnvClaimOP TorsionClaim::clone() const {
-	return EnvClaimOP( new TorsionClaim( *this ) );
+	return utility::pointer::make_shared< TorsionClaim >( *this );
 }
 
 std::string TorsionClaim::type() const{

@@ -71,7 +71,7 @@ SizeValuedParameter::~SizeValuedParameter() {}
 ParameterOP
 SizeValuedParameter::clone() const
 {
-	return ParameterOP( SizeValuedParameterOP( new SizeValuedParameter( *this ) ) );
+	return utility::pointer::make_shared< SizeValuedParameter >( *this );
 }
 
 /// @brief Set the value of this parameter.

@@ -82,7 +82,7 @@ RotamerBoltzmannWeightEvaluator::~RotamerBoltzmannWeightEvaluator() = default;
 EnergyLandscapeEvaluatorOP
 RotamerBoltzmannWeightEvaluator::clone() const
 {
-	return EnergyLandscapeEvaluatorOP( new RotamerBoltzmannWeightEvaluator( *this ) );
+	return utility::pointer::make_shared< RotamerBoltzmannWeightEvaluator >( *this );
 }
 
 core::Real
@@ -113,7 +113,7 @@ MulliganPNearEvaluator::~MulliganPNearEvaluator() = default;
 EnergyLandscapeEvaluatorOP
 MulliganPNearEvaluator::clone() const
 {
-	return EnergyLandscapeEvaluatorOP( new MulliganPNearEvaluator( *this ) );
+	return utility::pointer::make_shared< MulliganPNearEvaluator >( *this );
 }
 
 core::Real
@@ -146,7 +146,7 @@ ModifiedDdgEvaluator::~ModifiedDdgEvaluator()
 EnergyLandscapeEvaluatorOP
 ModifiedDdgEvaluator::clone() const
 {
-return EnergyLandscapeEvaluatorOP( new ModifiedDdgEvaluator( *this ) );
+return utility::pointer::make_shared< ModifiedDdgEvaluator >( *this );
 }
 
 core::Real

@@ -71,7 +71,7 @@ methods::EnergyMethodOP
 FullatomCustomPairDistanceEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new FullatomCustomPairDistanceEnergy );
+	return utility::pointer::make_shared< FullatomCustomPairDistanceEnergy >();
 }
 
 ScoreTypes
@@ -93,7 +93,7 @@ public:
 
 	RespairInteractions()= default;
 	~RespairInteractions() override= default;
-	basic::datacache::CacheableDataOP clone() const override { return basic::datacache::CacheableDataOP( new RespairInteractions( *this ) ); }
+	basic::datacache::CacheableDataOP clone() const override { return utility::pointer::make_shared< RespairInteractions >( *this ); }
 
 	void apfc_list( AtomPairFuncListCOP apfclist ) { apfc_list_ = apfclist; }
 	AtomPairFuncList const & apfc_list() const { return *apfc_list_; }
@@ -190,7 +190,7 @@ PairFuncMap::restype_destruction_observer( core::chemical::RestypeDestructionEve
 
 // constructor
 FullatomCustomPairDistanceEnergy::FullatomCustomPairDistanceEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new FullatomCustomPairDistanceEnergyCreator ) ),
+	parent( utility::pointer::make_shared< FullatomCustomPairDistanceEnergyCreator >() ),
 	pair_and_func_map_( new PairFuncMap )
 {
 	set_pair_and_func_map();
@@ -202,7 +202,7 @@ FullatomCustomPairDistanceEnergy::FullatomCustomPairDistanceEnergy( FullatomCust
 methods::EnergyMethodOP
 FullatomCustomPairDistanceEnergy::clone() const
 {
-	return methods::EnergyMethodOP( new FullatomCustomPairDistanceEnergy( *this ) );
+	return utility::pointer::make_shared< FullatomCustomPairDistanceEnergy >( *this );
 }
 
 
@@ -297,7 +297,7 @@ FullatomCustomPairDistanceEnergy::setup_for_minimizing_for_residue_pair(
 
 	// update the existing respair_intxns object if one is already present in the pair_data object
 	RespairInteractionsOP respair_intxns = utility::pointer::static_pointer_cast< core::scoring::custom_pair_distance::RespairInteractions > ( pair_data.get_data( fa_custom_pair_dist_data ) );
-	if ( ! respair_intxns ) respair_intxns = RespairInteractionsOP( new RespairInteractions );
+	if ( ! respair_intxns ) respair_intxns = utility::pointer::make_shared< RespairInteractions >();
 
 	AtomPairFuncListCOP apfclist = pair_and_func_map_->get_atom_pair_func_list( rsd1, rsd2 );
 	runtime_assert( apfclist );
@@ -420,7 +420,7 @@ FullatomCustomPairDistanceEnergy::set_pair_and_func_map()
 			l >> score_function_name;
 
 			atoms_and_func_struct pair_func;
-			pair_func.func_ = DistanceFuncCOP( DistanceFuncOP( new DistanceFunc( score_function_name ) ) );
+			pair_func.func_ = utility::pointer::make_shared< DistanceFunc >( score_function_name );
 			if ( pair_func.func_->max_dis() > max_dis_ ) {
 				max_dis_ = pair_func.func_->max_dis();
 			}
@@ -450,7 +450,7 @@ FullatomCustomPairDistanceEnergy::set_pair_and_func_map()
 						AtomPairFuncListOP atpairlist = pair_and_func_map_->get_atom_pair_func_list( *rsd_type_a, *rsd_type_b );
 						if ( ! atpairlist ) {
 							//std::cout << "Adding new residue-pair interaction for " << respair[1]->name() << " " << respair[2]->name() << std::endl;
-							atpairlist = AtomPairFuncListOP( new AtomPairFuncList );
+							atpairlist = utility::pointer::make_shared< AtomPairFuncList >();
 							pair_and_func_map_->set_atom_pair_func( *rsd_type_a, *rsd_type_b, atpairlist );
 						} else {
 							//std::cout << "Updating residue-pair interaction for " << respair[1]->name() << " " << respair[2]->name() << std::endl;
@@ -466,7 +466,7 @@ FullatomCustomPairDistanceEnergy::set_pair_and_func_map()
 							pair_func.resB_atom_index_ =  atom_index_a;
 							atpairlist = pair_and_func_map_->get_atom_pair_func_list( *rsd_type_b, *rsd_type_a );
 							if ( ! atpairlist ) {
-								atpairlist = AtomPairFuncListOP( new AtomPairFuncList );
+								atpairlist = utility::pointer::make_shared< AtomPairFuncList >();
 								pair_and_func_map_->set_atom_pair_func( *rsd_type_b, *rsd_type_a, atpairlist );
 							}
 							atpairlist->add_interaction( pair_func );
@@ -493,7 +493,7 @@ DistanceFunc::DistanceFunc( std::string const & name ) {
 	scores_stream.close();
 }
 
-func::FuncOP DistanceFunc::clone() const { return func::FuncOP( new DistanceFunc( *this ) ); }
+func::FuncOP DistanceFunc::clone() const { return utility::pointer::make_shared< DistanceFunc >( *this ); }
 
 bool
 DistanceFunc::operator == ( func::Func const & rhs ) const {

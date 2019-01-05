@@ -99,7 +99,7 @@ using namespace core;
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP CloseFoldCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new CloseFold() );
+// XRW TEMP  return utility::pointer::make_shared< CloseFold >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -132,12 +132,12 @@ CloseFold::CloseFold() :
 
 protocols::moves::MoverOP
 CloseFold::clone() const {
-	return( protocols::moves::MoverOP( new CloseFold( *this ) ) );
+	return( utility::pointer::make_shared< CloseFold >( *this ) );
 }
 
 protocols::moves::MoverOP
 CloseFold::fresh_instance() const {
-	return protocols::moves::MoverOP( new CloseFold );
+	return utility::pointer::make_shared< CloseFold >();
 }
 
 bool
@@ -459,7 +459,7 @@ CloseFold::parse_my_tag(
 	}
 
 	//adding the LoopOP to the data map
-	loops_ = protocols::loops::LoopsOP( new protocols::loops::Loops() );
+	loops_ = utility::pointer::make_shared< protocols::loops::Loops >();
 	data.add( "loops", "found_loops", loops_ );
 
 	chainbreakweights_ = tag->getOption< bool >("add_chainbreakterm" , true );
@@ -491,7 +491,7 @@ CloseFold::parse_my_tag(
 
 	if ( tag->hasOption( "template_pdb" ) ) {
 		std::string const template_pdb_fname( tag->getOption< std::string >( "template_pdb" ));
-		template_pdb_ = core::pose::PoseOP( new core::pose::Pose ) ;
+		template_pdb_ = utility::pointer::make_shared< core::pose::Pose >() ;
 		core::import_pose::pose_from_file( *template_pdb_, template_pdb_fname , core::import_pose::PDB_file);
 		TR<<"read in a template pdb with " <<template_pdb_->size() <<"residues"<<std::endl;
 		//template_presence_ = true;
@@ -577,7 +577,7 @@ std::string CloseFoldCreator::keyname() const {
 
 protocols::moves::MoverOP
 CloseFoldCreator::create_mover() const {
-	return protocols::moves::MoverOP( new CloseFold );
+	return utility::pointer::make_shared< CloseFold >();
 }
 
 void CloseFoldCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

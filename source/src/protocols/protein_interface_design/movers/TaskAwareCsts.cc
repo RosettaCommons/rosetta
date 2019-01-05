@@ -51,7 +51,7 @@ static basic::Tracer TR( "protocols.protein_interface_design.movers.TaskAwareCst
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP TaskAwareCstsCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new TaskAwareCsts );
+// XRW TEMP  return utility::pointer::make_shared< TaskAwareCsts >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -88,7 +88,7 @@ TaskAwareCsts::apply( core::pose::Pose & pose )
 	for ( core::Size const resid : designable ) {
 		core::conformation::Residue const rsd_i( pose.residue( resid ) );
 		if ( cst_type_ == "coordinate" ) {
-			cst.push_back( core::scoring::constraints::ConstraintOP( new CoordinateConstraint( AtomID( rsd_i.atom_index( "CA" ), resid ), anchor_atom, rsd_i.xyz( "CA" ), coord_cst_func ) ) );
+			cst.push_back( utility::pointer::make_shared< CoordinateConstraint >( AtomID( rsd_i.atom_index( "CA" ), resid ), anchor_atom, rsd_i.xyz( "CA" ), coord_cst_func ) );
 			TR<<resid<<',';
 		}
 	}
@@ -114,7 +114,7 @@ TaskAwareCsts::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, 
 
 protocols::moves::MoverOP
 TaskAwareCsts::clone() const {
-	return( protocols::moves::MoverOP( new TaskAwareCsts( *this ) ));
+	return( utility::pointer::make_shared< TaskAwareCsts >( *this ));
 }
 
 core::pack::task::TaskFactoryOP
@@ -148,7 +148,7 @@ std::string TaskAwareCstsCreator::keyname() const {
 
 protocols::moves::MoverOP
 TaskAwareCstsCreator::create_mover() const {
-	return protocols::moves::MoverOP( new TaskAwareCsts );
+	return utility::pointer::make_shared< TaskAwareCsts >();
 }
 
 void TaskAwareCstsCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

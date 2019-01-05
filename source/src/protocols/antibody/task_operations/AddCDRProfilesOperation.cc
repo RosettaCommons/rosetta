@@ -102,7 +102,7 @@ AddCDRProfilesOperation::set_defaults(){
 
 	for ( core::Size i = 1; i <=CDRNameEnum_proto_total; ++i ) {
 		auto cdr = static_cast<CDRNameEnum>(i);
-		CDRSeqDesignOptionsOP opt = CDRSeqDesignOptionsOP(new CDRSeqDesignOptions(cdr));
+		CDRSeqDesignOptionsOP opt = utility::pointer::make_shared< CDRSeqDesignOptions >(cdr);
 		if ( cdr == l4 || cdr == h4 ) {
 			opt->design(false);
 		}
@@ -110,7 +110,7 @@ AddCDRProfilesOperation::set_defaults(){
 		seq_design_options_.push_back(opt);
 	}
 
-	cons_task_ = ConservativeDesignOperationOP( new ConservativeDesignOperation());
+	cons_task_ = utility::pointer::make_shared< ConservativeDesignOperation >();
 
 }
 
@@ -139,14 +139,14 @@ AddCDRProfilesOperation::AddCDRProfilesOperation(AddCDRProfilesOperation const &
 {
 	using namespace task_operations;
 
-	if ( src.ab_info_ ) ab_info_ = AntibodyInfoOP( new AntibodyInfo( *src.ab_info_));
-	if ( src.cons_task_ )  cons_task_ = ConservativeDesignOperationOP( new ConservativeDesignOperation( *src.cons_task_ ));
-	if ( src.profile_sets_task_ ) profile_sets_task_ = AddCDRProfileSetsOperationOP( new AddCDRProfileSetsOperation( *src.profile_sets_task_ ));
+	if ( src.ab_info_ ) ab_info_ = utility::pointer::make_shared< AntibodyInfo >( *src.ab_info_);
+	if ( src.cons_task_ )  cons_task_ = utility::pointer::make_shared< ConservativeDesignOperation >( *src.cons_task_ );
+	if ( src.profile_sets_task_ ) profile_sets_task_ = utility::pointer::make_shared< AddCDRProfileSetsOperation >( *src.profile_sets_task_ );
 }
 
 TaskOperationOP
 AddCDRProfilesOperation::clone() const{
-	return TaskOperationOP( new AddCDRProfilesOperation( *this ));
+	return utility::pointer::make_shared< AddCDRProfilesOperation >( *this );
 }
 
 AddCDRProfilesOperation::~AddCDRProfilesOperation()= default;
@@ -382,12 +382,12 @@ AddCDRProfilesOperation::pre_load_data(const core::pose::Pose& pose){
 	core::Size n_profile_cdrs = count(profile_cdrs.begin(), profile_cdrs.end(), true);
 
 	if ( ! ab_info_ ) {
-		ab_info_ = AntibodyInfoOP(new AntibodyInfo(pose, numbering_scheme_, North));
+		ab_info_ = utility::pointer::make_shared< AntibodyInfo >(pose, numbering_scheme_, North);
 	}
 
 	if ( n_profile_set_cdrs > 0 ) {
 
-		profile_sets_task_ = AddCDRProfileSetsOperationOP( new AddCDRProfileSetsOperation(ab_info_));
+		profile_sets_task_ = utility::pointer::make_shared< AddCDRProfileSetsOperation >(ab_info_);
 		profile_sets_task_->set_ignore_light_chain( ignore_light_chain_ );
 		profile_sets_task_->set_cdrs(profile_set_cdrs);
 		profile_sets_task_->set_force_north_paper_db(force_north_paper_db_);
@@ -422,7 +422,7 @@ AddCDRProfilesOperation::apply(const core::pose::Pose& pose, core::pack::task::P
 	//This is due to const apply and no pose in parse_my_tag.
 	AntibodyInfoOP local_ab_info;
 	if ( ! ab_info_ ) {
-		local_ab_info = AntibodyInfoOP(new AntibodyInfo(pose, numbering_scheme_, North));
+		local_ab_info = utility::pointer::make_shared< AntibodyInfo >(pose, numbering_scheme_, North);
 	} else {
 		local_ab_info = ab_info_->clone();
 	}
@@ -443,9 +443,9 @@ AddCDRProfilesOperation::apply(const core::pose::Pose& pose, core::pack::task::P
 		AddCDRProfileSetsOperationOP profile_sets_task; //yay const apply
 		if ( pre_loaded_data_ ) {
 			no_profile_set_cdrs = no_profile_sets_data_cdrs_;
-			profile_sets_task = AddCDRProfileSetsOperationOP( new AddCDRProfileSetsOperation( *profile_sets_task_ ) );
+			profile_sets_task = utility::pointer::make_shared< AddCDRProfileSetsOperation >( *profile_sets_task_ );
 		} else {
-			profile_sets_task = AddCDRProfileSetsOperationOP( new AddCDRProfileSetsOperation( local_ab_info));
+			profile_sets_task = utility::pointer::make_shared< AddCDRProfileSetsOperation >( local_ab_info);
 
 			profile_sets_task->set_cdrs(profile_set_cdrs);
 			profile_sets_task->set_force_north_paper_db(force_north_paper_db_);
@@ -558,7 +558,7 @@ AddCDRProfilesOperation::apply(const core::pose::Pose& pose, core::pack::task::P
 core::pack::task::operation::TaskOperationOP
 AddCDRProfilesOperationCreator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new AddCDRProfilesOperation );
+	return utility::pointer::make_shared< AddCDRProfilesOperation >();
 }
 
 void AddCDRProfilesOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

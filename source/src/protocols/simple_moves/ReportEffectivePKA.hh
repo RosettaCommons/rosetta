@@ -80,8 +80,8 @@ public:
 	void apply( core::pose::Pose & ) override;
 
 
-	moves::MoverOP clone() const override { return moves::MoverOP( new ReportEffectivePKA( *this ) ); }
-	moves::MoverOP fresh_instance() const override { return moves::MoverOP( new ReportEffectivePKA ); }
+	moves::MoverOP clone() const override { return utility::pointer::make_shared< ReportEffectivePKA >( *this ); }
+	moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< ReportEffectivePKA >(); }
 
 	void task_factory( core::pack::task::TaskFactoryOP task_factory ) { task_factory_ = task_factory; }
 	core::pack::task::TaskFactoryOP task_factory() const { return task_factory_; }

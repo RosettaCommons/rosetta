@@ -58,7 +58,7 @@ public:
 
 	void setUp() {
 		core_init();
-		pose_ = core::pose::PoseOP( new core::pose::Pose );
+		pose_ = utility::pointer::make_shared< core::pose::Pose >();
 	}
 
 	void tearDown() {

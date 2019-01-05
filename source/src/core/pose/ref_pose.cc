@@ -76,7 +76,7 @@ saved_reference_pose( utility::tag::TagCOP const in_tag, basic::datacache::DataM
 		TR<<"Loading PDB: "<<refpose_name<<std::endl;
 
 		if ( !data_map.has("spm_ref_poses",refpose_name) ) {
-			refpose = core::pose::PoseOP( new core::pose::Pose() );
+			refpose = utility::pointer::make_shared< core::pose::Pose >();
 			data_map.add("spm_ref_poses",refpose_name,refpose );
 		} else refpose = data_map.get_ptr<core::pose::Pose>("spm_ref_poses",refpose_name );
 

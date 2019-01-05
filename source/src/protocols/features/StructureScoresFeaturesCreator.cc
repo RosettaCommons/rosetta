@@ -28,7 +28,7 @@ namespace features {
 // XRW TEMP StructureScoresFeaturesCreator::StructureScoresFeaturesCreator() {}
 // XRW TEMP StructureScoresFeaturesCreator::~StructureScoresFeaturesCreator() = default;
 // XRW TEMP FeaturesReporterOP StructureScoresFeaturesCreator::create_features_reporter() const {
-// XRW TEMP  return FeaturesReporterOP( new StructureScoresFeatures );
+// XRW TEMP  return utility::pointer::make_shared< StructureScoresFeatures >();
 // XRW TEMP }
 
 // XRW TEMP std::string StructureScoresFeaturesCreator::type_name() const {

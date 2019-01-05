@@ -71,7 +71,7 @@ methods::EnergyMethodOP
 ProQ_EnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new ProQ_Energy );
+	return utility::pointer::make_shared< ProQ_Energy >();
 }
 
 ScoreTypes
@@ -86,7 +86,7 @@ ProQ_EnergyCreator::score_types_for_method() const {
 
 /// c-tor
 ProQ_Energy::ProQ_Energy() :
-	parent( methods::EnergyMethodCreatorOP( new ProQ_EnergyCreator ) ),
+	parent( utility::pointer::make_shared< ProQ_EnergyCreator >() ),
 	potential_( ScoringManager::get_instance()->get_ProQPotential() )
 {
 	initialize();
@@ -116,7 +116,7 @@ EnergyMethodOP
 ProQ_Energy::clone() const
 {
 	//std::cout << "Cloning ProQ... " << nres_ << "\n";
-	return EnergyMethodOP( new ProQ_Energy ( *this ) );
+	return utility::pointer::make_shared< ProQ_Energy > ( *this );
 }
 
 /////////////////////////////////////////////////////////////////////////////

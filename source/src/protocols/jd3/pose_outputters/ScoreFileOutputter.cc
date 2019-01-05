@@ -262,7 +262,7 @@ ScoreFileOutputter::filename_for_job(
 
 
 SecondaryPoseOutputterOP ScoreFileOutputterCreator::create_outputter() const {
-	return SecondaryPoseOutputterOP( new ScoreFileOutputter );
+	return utility::pointer::make_shared< ScoreFileOutputter >();
 }
 
 std::string ScoreFileOutputterCreator::keyname() const

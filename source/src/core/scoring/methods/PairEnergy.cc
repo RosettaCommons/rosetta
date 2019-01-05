@@ -46,7 +46,7 @@ methods::EnergyMethodOP
 PairEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new PairEnergy );
+	return utility::pointer::make_shared< PairEnergy >();
 }
 
 ScoreTypes
@@ -61,7 +61,7 @@ PairEnergyCreator::score_types_for_method() const {
 
 
 PairEnergy::PairEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new PairEnergyCreator ) ),
+	parent( utility::pointer::make_shared< PairEnergyCreator >() ),
 	potential_( ScoringManager::get_instance()->get_PairEPotential() )
 {}
 
@@ -70,7 +70,7 @@ PairEnergy::PairEnergy() :
 EnergyMethodOP
 PairEnergy::clone() const
 {
-	return EnergyMethodOP( new PairEnergy() );
+	return utility::pointer::make_shared< PairEnergy >();
 }
 
 

@@ -244,7 +244,7 @@ InvrotTreeNode::generate_constraints(
 
 		//1c.
 		if ( constraints_this_invrot_node_pair.size() == 1 ) constraints_this_node.push_back( constraints_this_invrot_node_pair[1] );
-		else if ( constraints_this_invrot_node_pair.size() > 1 ) constraints_this_node.push_back( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::MultiConstraint( constraints_this_invrot_node_pair ) ) );
+		else if ( constraints_this_invrot_node_pair.size() > 1 ) constraints_this_node.push_back( utility::pointer::make_shared< core::scoring::constraints::MultiConstraint >( constraints_this_invrot_node_pair ) );
 
 	}//loop over node_pointer_pairs_
 
@@ -252,7 +252,7 @@ InvrotTreeNode::generate_constraints(
 
 	if ( constraints_this_node.size() == 1 ) return constraints_this_node[1];
 
-	return core::scoring::constraints::ConstraintCOP( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::AmbiguousConstraint( constraints_this_node ) ) );
+	return utility::pointer::make_shared< core::scoring::constraints::AmbiguousConstraint >( constraints_this_node );
 }
 
 

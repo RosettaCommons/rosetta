@@ -98,7 +98,7 @@ void
 RNA_DataReader::initialize( std::string const & rna_data_file )
 {
 
-	rna_data_info_with_conventional_numbering_ = core::pose::rna::RNA_DataInfoOP( new core::pose::rna::RNA_DataInfo );
+	rna_data_info_with_conventional_numbering_ = utility::pointer::make_shared< core::pose::rna::RNA_DataInfo >();
 	backbone_burial_res_.clear();
 	backbone_exposed_res_.clear();
 

@@ -470,7 +470,7 @@ public:
 	core::scoring::constraints::ConstraintOP
 	remap_resid( core::id::SequenceMapping const &/*seqmap*/ ) const override
 	{
-		return core::scoring::constraints::ConstraintOP( new ZnCoordinationConstraint( zn_score_ ) );
+		return utility::pointer::make_shared< ZnCoordinationConstraint >( zn_score_ );
 	}
 
 

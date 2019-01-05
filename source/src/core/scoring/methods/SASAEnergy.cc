@@ -65,7 +65,7 @@ methods::EnergyMethodOP
 SASAEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
-	return methods::EnergyMethodOP( new SASAEnergy( options ) );
+	return utility::pointer::make_shared< SASAEnergy >( options );
 }
 
 ScoreTypes
@@ -80,7 +80,7 @@ SASAEnergy::SASAEnergy( SASAEnergy const & /*src*/ ) = default;
 
 
 SASAEnergy::SASAEnergy( EnergyMethodOptions const & options ):
-	parent( methods::EnergyMethodCreatorOP( new SASAEnergyCreator ) ),
+	parent( utility::pointer::make_shared< SASAEnergyCreator >() ),
 	potential_( ScoringManager::get_instance()->get_SASAPotential() ),
 	exclude_DNA_DNA_( options.exclude_DNA_DNA() )
 {}
@@ -90,7 +90,7 @@ SASAEnergy::SASAEnergy( EnergyMethodOptions const & options ):
 EnergyMethodOP
 SASAEnergy::clone() const
 {
-	return EnergyMethodOP( new SASAEnergy( *this ) );
+	return utility::pointer::make_shared< SASAEnergy >( *this );
 }
 
 bool
@@ -166,7 +166,7 @@ SASAEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 	}
 
 	if ( create_new_lre_container ) {
-		LREnergyContainerOP new_dec = LREnergyContainerOP( new DenseEnergyContainer( pose.size(), fa_sasa ) );
+		LREnergyContainerOP new_dec = utility::pointer::make_shared< DenseEnergyContainer >( pose.size(), fa_sasa );
 		energies.set_long_range_container( lr_type, new_dec );
 	}
 
@@ -196,7 +196,7 @@ SASAEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) co
 	}
 
 	if ( create_new_lre_container ) {
-		LREnergyContainerOP new_dec = LREnergyContainerOP( new DenseEnergyContainer( pose.size(), fa_sasa ) );
+		LREnergyContainerOP new_dec = utility::pointer::make_shared< DenseEnergyContainer >( pose.size(), fa_sasa );
 		energies.set_long_range_container( lr_type, new_dec );
 	}
 

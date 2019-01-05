@@ -116,9 +116,9 @@ ScoreTypeFeatures::write_schema_to_db(
 	using namespace basic::database::schema_generator;
 
 	//******score_types******//
-	Column batch_id("batch_id", DbDataTypeOP( new DbInteger() ), false);
-	Column score_type_id("score_type_id", DbDataTypeOP( new DbInteger() ), false);
-	Column score_type_name("score_type_name", DbDataTypeOP( new DbText() ), false);
+	Column batch_id("batch_id", utility::pointer::make_shared< DbInteger >(), false);
+	Column score_type_id("score_type_id", utility::pointer::make_shared< DbInteger >(), false);
+	Column score_type_name("score_type_name", utility::pointer::make_shared< DbText >(), false);
 
 	utility::vector1<Column> pkey_cols;
 	pkey_cols.push_back(batch_id);
@@ -238,7 +238,7 @@ std::string ScoreTypeFeaturesCreator::type_name() const {
 
 protocols::features::FeaturesReporterOP
 ScoreTypeFeaturesCreator::create_features_reporter() const {
-	return protocols::features::FeaturesReporterOP( new ScoreTypeFeatures );
+	return utility::pointer::make_shared< ScoreTypeFeatures >();
 }
 
 void ScoreTypeFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

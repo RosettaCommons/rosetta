@@ -226,7 +226,7 @@ void BuildSet::set_residue_type(
 	restype_ = restype;
 	backbone_only_ = backbone_only;
 
-	restype_geom_ = UpstreamResTypeGeometryOP( new UpstreamResTypeGeometry( *restype_ ) );
+	restype_geom_ = utility::pointer::make_shared< UpstreamResTypeGeometry >( *restype_ );
 
 	sample_strategy_for_chi_.clear();
 	sample_strategy_for_chi_.resize( restype->nchi() );
@@ -672,7 +672,7 @@ ProteinUpstreamBuilder::~ProteinUpstreamBuilder() = default;
 
 UpstreamBuilderOP
 ProteinUpstreamBuilder::clone() const {
-	return UpstreamBuilderOP( new ProteinUpstreamBuilder( *this ) );
+	return utility::pointer::make_shared< ProteinUpstreamBuilder >( *this );
 }
 
 //Kui 110609 Native

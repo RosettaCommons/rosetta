@@ -86,7 +86,7 @@ public:
 	void setUp() {
 		core_init_with_additional_options( "-mute core.pose protocols.moves.RigidBodyMover core.chemical -out:level 300" );
 
-		scorefxn_ = ScoreFunctionOP( new ScoreFunction() );
+		scorefxn_ = utility::pointer::make_shared< ScoreFunction >();
 		scorefxn_->set_weight( base_pair_constraint, 1.0 );
 		core::chemical::ResidueTypeSetCOP rsd_set_op = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
@@ -151,17 +151,17 @@ public:
 							Pose & pose = *( poses_.at( tag )[ 1 ] );
 							// Maybe it needs to be ambiguous for the test.
 							/*
-							* auto bpc = BasePairConstraintOP( new BasePairConstraint( 1, 2, BaseEdge( e1 ), BaseEdge( e2 ),
-							* core::pose::rna::get_LW_orientation( BaseEdge( e1 ), BaseEdge( e2 ), BaseDoubletOrientation( o ) ) ) );
+							* auto bpc = utility::pointer::make_shared< BasePairConstraint >( 1, 2, BaseEdge( e1 ), BaseEdge( e2 ),
+							* core::pose::rna::get_LW_orientation( BaseEdge( e1 ), BaseEdge( e2 ), BaseDoubletOrientation( o ) ) );
 							*
 							* bpc->init_subsidiary_constraints( pose );
 							*/
-							auto bpc2 = BasePairConstraintOP( new BasePairConstraint( 1, 2, BaseEdge( e1 ), BaseEdge( e2 ),
-								core::pose::rna::get_LW_orientation( BaseEdge( e1 ), BaseEdge( e2 ), BaseDoubletOrientation( o ) ) ) );
-							auto bpc  = BasePairConstraintOP( new BasePairConstraint( 2, 1, BaseEdge( e2 ), BaseEdge( e1 ),
-								core::pose::rna::get_LW_orientation( BaseEdge( e2 ), BaseEdge( e1 ), BaseDoubletOrientation( o ) ) ) );
+							auto bpc2 = utility::pointer::make_shared< BasePairConstraint >( 1, 2, BaseEdge( e1 ), BaseEdge( e2 ),
+								core::pose::rna::get_LW_orientation( BaseEdge( e1 ), BaseEdge( e2 ), BaseDoubletOrientation( o ) ) );
+							auto bpc  = utility::pointer::make_shared< BasePairConstraint >( 2, 1, BaseEdge( e2 ), BaseEdge( e1 ),
+								core::pose::rna::get_LW_orientation( BaseEdge( e2 ), BaseEdge( e1 ), BaseDoubletOrientation( o ) ) );
 
-							auto ambig = AmbiguousConstraintOP( new AmbiguousConstraint() );
+							auto ambig = utility::pointer::make_shared< AmbiguousConstraint >();
 							bpc->init_subsidiary_constraints( pose );
 							bpc2->init_subsidiary_constraints( pose );
 
@@ -205,8 +205,8 @@ public:
 							if ( poses_.find( tag ) == poses_.end() ) continue;
 							Pose & pose = *( poses_.at( tag )[ 1 ] );
 							rbtm.apply( pose );
-							auto bpc = BasePairConstraintOP( new BasePairConstraint( 1, 2, BaseEdge( e1 ), BaseEdge( e2 ),
-								core::pose::rna::get_LW_orientation( BaseEdge( e1 ), BaseEdge( e2 ), BaseDoubletOrientation( o ) ) ) );
+							auto bpc = utility::pointer::make_shared< BasePairConstraint >( 1, 2, BaseEdge( e1 ), BaseEdge( e2 ),
+								core::pose::rna::get_LW_orientation( BaseEdge( e1 ), BaseEdge( e2 ), BaseDoubletOrientation( o ) ) );
 							bpc->init_subsidiary_constraints( pose );
 							pose.add_constraint( bpc );
 

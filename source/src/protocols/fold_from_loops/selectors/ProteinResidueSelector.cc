@@ -63,7 +63,7 @@ ProteinResidueSelector::ProteinResidueSelector( ProteinResidueSelector const &) 
 /// @brief Clone operator.
 /// @details Copy this object and return an owning pointer to the new object.
 core::select::residue_selector::ResidueSelectorOP ProteinResidueSelector::clone() const {
-	return core::select::residue_selector::ResidueSelectorOP( new ProteinResidueSelector(*this) );
+	return utility::pointer::make_shared< ProteinResidueSelector >(*this);
 }
 
 core::select::residue_selector::ResidueSubset
@@ -99,7 +99,7 @@ ProteinResidueSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 
 core::select::residue_selector::ResidueSelectorOP
 ProteinResidueSelectorCreator::create_residue_selector() const {
-	return core::select::residue_selector::ResidueSelectorOP( new ProteinResidueSelector );
+	return utility::pointer::make_shared< ProteinResidueSelector >();
 }
 
 std::string

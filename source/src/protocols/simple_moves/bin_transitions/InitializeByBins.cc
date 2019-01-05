@@ -61,7 +61,7 @@ static basic::Tracer TR( "protocols.simple_moves.bin_transitions.InitializeByBin
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP InitializeByBinsCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new InitializeByBins );
+// XRW TEMP  return utility::pointer::make_shared< InitializeByBins >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -233,7 +233,7 @@ std::string InitializeByBinsCreator::keyname() const {
 
 protocols::moves::MoverOP
 InitializeByBinsCreator::create_mover() const {
-	return protocols::moves::MoverOP( new InitializeByBins );
+	return utility::pointer::make_shared< InitializeByBins >();
 }
 
 void InitializeByBinsCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

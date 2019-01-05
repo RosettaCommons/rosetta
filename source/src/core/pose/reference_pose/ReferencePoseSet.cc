@@ -88,7 +88,7 @@ ReferencePoseSet::~ReferencePoseSet() = default;
 ReferencePoseSetOP
 ReferencePoseSet::clone() const
 {
-	return ReferencePoseSetOP( new ReferencePoseSet( *this ) );
+	return utility::pointer::make_shared< ReferencePoseSet >( *this );
 }
 
 /// @brief Given a reference pose, create a new ReferencePose object and initialize it
@@ -112,7 +112,7 @@ void ReferencePoseSet::add_and_initialize_reference_pose(
 		);
 	}
 
-	reference_pose_map_[key_string] = ReferencePoseOP( new ReferencePose() );
+	reference_pose_map_[key_string] = utility::pointer::make_shared< ReferencePose >();
 	reference_pose_map_[key_string]->initialize_residue_map_from_pose( pose );
 	return;
 }

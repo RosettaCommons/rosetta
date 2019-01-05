@@ -69,7 +69,7 @@ public:
 	}
 
 	virtual void setUp() {
-		pose_ = core::pose::PoseOP( new core::pose::Pose );
+		pose_ = utility::pointer::make_shared< core::pose::Pose >();
 		if ( centroid_ ) {
 			core::chemical::ResidueTypeSetCOP rts = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::CENTROID );
 			core::import_pose::pose_from_file(*pose_, *rts, in_file_, core::import_pose::PDB_file);
@@ -89,7 +89,7 @@ public:
 		}
 		enmethtype_ = enmeth_->method_type();
 
-		scorefxn_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction );
+		scorefxn_ = utility::pointer::make_shared< core::scoring::ScoreFunction >();
 		try{
 			// do this once in case there are one time setup requirements
 			scorefxn_->set_weight(score_type_, 1);

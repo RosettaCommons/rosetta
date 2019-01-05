@@ -135,13 +135,13 @@ MPFindInterfaceMover::~MPFindInterfaceMover() = default;
 /// @brief Create a Clone of this mover
 protocols::moves::MoverOP
 MPFindInterfaceMover::clone() const {
-	return ( protocols::moves::MoverOP( new MPFindInterfaceMover( *this ) ) );
+	return ( utility::pointer::make_shared< MPFindInterfaceMover >( *this ) );
 }
 
 /// @brief Create a Fresh Instance of this Mover
 protocols::moves::MoverOP
 MPFindInterfaceMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new MPFindInterfaceMover() );
+	return utility::pointer::make_shared< MPFindInterfaceMover >();
 }
 
 /// @brief Parse Rosetta Scripts Options for this Mover
@@ -166,7 +166,7 @@ MPFindInterfaceMover::parse_my_tag(
 /// @brief Create a new copy of this mover
 protocols::moves::MoverOP
 MPFindInterfaceMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MPFindInterfaceMover() );
+	return utility::pointer::make_shared< MPFindInterfaceMover >();
 }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)
@@ -309,10 +309,10 @@ MPFindInterfaceMover::apply( Pose & pose ) {
 	slide->set_starting_rep( fa_rep );
 
 	if ( mode_lowres_ == true ) {
-		mc = MonteCarloOP( new MonteCarlo( pose, *sfxn_lowres_, 1.0 ) );
+		mc = utility::pointer::make_shared< MonteCarlo >( pose, *sfxn_lowres_, 1.0 );
 		slide->scorefunction( "mpframework_docking_cen_2015.wts", "interchain_vdw" );
 	} else {
-		mc = MonteCarloOP( new MonteCarlo( pose, *sfxn_hires_, 1.0 ) );
+		mc = utility::pointer::make_shared< MonteCarlo >( pose, *sfxn_hires_, 1.0 );
 		slide->scorefunction( "mpframework_docking_fa_2015.wts", "fa_rep" );
 	}
 

@@ -59,7 +59,7 @@ TrueResidueSelector::TrueResidueSelector( TrueResidueSelector const &) :
 
 /// @brief Clone operator.
 /// @details Copy this object and return an owning pointer to the new object.
-ResidueSelectorOP TrueResidueSelector::clone() const { return ResidueSelectorOP( new TrueResidueSelector(*this) ); }
+ResidueSelectorOP TrueResidueSelector::clone() const { return utility::pointer::make_shared< TrueResidueSelector >(*this); }
 
 ResidueSubset
 TrueResidueSelector::apply( core::pose::Pose const & pose ) const
@@ -90,7 +90,7 @@ TrueResidueSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 
 ResidueSelectorOP
 TrueResidueSelectorCreator::create_residue_selector() const {
-	return ResidueSelectorOP( new TrueResidueSelector );
+	return utility::pointer::make_shared< TrueResidueSelector >();
 }
 
 std::string

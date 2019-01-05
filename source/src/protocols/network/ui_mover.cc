@@ -156,12 +156,12 @@ UIObserver & UIObserver::operator= (UIObserver const &other) {
 
 core::pose::datacache::CacheableObserverOP
 UIObserver::clone() {
-	return core::pose::datacache::CacheableObserverOP( new UIObserver( *this ) );
+	return utility::pointer::make_shared< UIObserver >( *this );
 }
 
 core::pose::datacache::CacheableObserverOP
 UIObserver::create() {
-	return core::pose::datacache::CacheableObserverOP( new UIObserver );
+	return utility::pointer::make_shared< UIObserver >();
 }
 
 void

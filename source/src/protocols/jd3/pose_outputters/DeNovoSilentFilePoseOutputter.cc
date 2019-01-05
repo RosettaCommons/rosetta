@@ -250,8 +250,8 @@ void DeNovoSilentFilePoseOutputter::write_output(
 	// Why do I need to supply the damn file name? That seems silly.
 	TR << "Making silent struct for " << out_file_tag << std::endl;
 
-	SilentStructOP s = ( options_->binary_rna_output() ) ? SilentStructOP( new BinarySilentStruct( opts, pose, out_file_tag ) ) :
-	SilentStructOP( new RNA_SilentStruct( opts, pose, out_file_tag ) );
+	SilentStructOP s = ( options_->binary_rna_output() ) ? utility::pointer::make_shared< BinarySilentStruct >( opts, pose, out_file_tag ) :
+	utility::pointer::make_shared< RNA_SilentStruct >( opts, pose, out_file_tag );
 
 	if ( options_->use_chem_shift_data() ) add_chem_shift_info( *s, pose);
 
@@ -272,7 +272,7 @@ void DeNovoSilentFilePoseOutputter::write_output(
 
 
 	TR << "Making silent struct for " << sf_spec.pose_tag() << std::endl;
-	// SilentStructOP( new RNA_SilentStruct( opts, pose, out_file_tag ) );
+	// utility::pointer::make_shared< RNA_SilentStruct >( opts, pose, out_file_tag );
 
 	core::io::silent::SilentStructOP ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( *pose, sf_spec.sf_opts() );
 	ss->fill_struct( *pose, sf_spec.pose_tag() );
@@ -430,7 +430,7 @@ DeNovoSilentFilePoseOutputter::initialize_sf_options(
 )
 {
 	using namespace core::io::silent;
-	opts_ = SilentFileOptionsOP( new SilentFileOptions( job_options ) );
+	opts_ = utility::pointer::make_shared< SilentFileOptions >( job_options );
 	using namespace basic::options::OptionKeys;
 	dump_ = job_options[ rna::denovo::out::dump ].value();
 	if ( tag ) {
@@ -455,7 +455,7 @@ DeNovoSilentFilePoseOutputter::initialize_sf_options(
 
 PoseOutputterOP DeNovoSilentFilePoseOutputterCreator::create_outputter() const
 {
-	return PoseOutputterOP( new DeNovoSilentFilePoseOutputter );
+	return utility::pointer::make_shared< DeNovoSilentFilePoseOutputter >();
 }
 
 std::string DeNovoSilentFilePoseOutputterCreator::keyname() const

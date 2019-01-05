@@ -76,10 +76,10 @@ public:// virtual constructor
 
 
 	// @brief make clone
-	filters::FilterOP clone() const override { return filters::FilterOP( new RangeFilter( *this ) ); }
+	filters::FilterOP clone() const override { return utility::pointer::make_shared< RangeFilter >( *this ); }
 
 	// @brief make fresh instance
-	filters::FilterOP fresh_instance() const override { return filters::FilterOP( new RangeFilter() ); }
+	filters::FilterOP fresh_instance() const override { return utility::pointer::make_shared< RangeFilter >(); }
 
 
 public:// mutator

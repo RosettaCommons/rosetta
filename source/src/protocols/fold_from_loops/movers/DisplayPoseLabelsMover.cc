@@ -327,13 +327,13 @@ DisplayPoseLabelsMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 protocols::moves::MoverOP
 DisplayPoseLabelsMover::clone() const
 {
-	return protocols::moves::MoverOP( new DisplayPoseLabelsMover( *this ) );
+	return utility::pointer::make_shared< DisplayPoseLabelsMover >( *this );
 }
 
 protocols::moves::MoverOP
 DisplayPoseLabelsMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new DisplayPoseLabelsMover );
+	return utility::pointer::make_shared< DisplayPoseLabelsMover >();
 }
 
 std::string DisplayPoseLabelsMover::get_name() const {
@@ -350,7 +350,7 @@ std::string DisplayPoseLabelsMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 DisplayPoseLabelsMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new DisplayPoseLabelsMover );
+	return utility::pointer::make_shared< DisplayPoseLabelsMover >();
 }
 
 void DisplayPoseLabelsMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

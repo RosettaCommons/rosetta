@@ -52,7 +52,7 @@ core::scoring::methods::EnergyMethodOP
 EnsembleEnergyCreator::create_energy_method(
 	core::scoring::methods::EnergyMethodOptions const &
 ) const {
-	return core::scoring::methods::EnergyMethodOP( new EnsembleEnergy );
+	return utility::pointer::make_shared< EnsembleEnergy >();
 }
 
 core::scoring::ScoreTypes
@@ -66,7 +66,7 @@ EnsembleEnergyCreator::score_types_for_method() const {
 
 /// c-tor
 EnsembleEnergy::EnsembleEnergy() :
-	parent( core::scoring::methods::EnergyMethodCreatorOP( new EnsembleEnergyCreator ) )
+	parent( utility::pointer::make_shared< EnsembleEnergyCreator >() )
 {}
 
 
@@ -74,7 +74,7 @@ EnsembleEnergy::EnsembleEnergy() :
 core::scoring::methods::EnergyMethodOP
 EnsembleEnergy::clone() const
 {
-	return core::scoring::methods::EnergyMethodOP( new EnsembleEnergy() );
+	return utility::pointer::make_shared< EnsembleEnergy >();
 }
 
 /////////////////////////////////////////////////////////////////////////////

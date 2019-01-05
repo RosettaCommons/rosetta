@@ -53,7 +53,7 @@ static basic::Tracer translate_tracer( "protocols.ligand_docking.CompoundTransla
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP CompoundTranslateCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new CompoundTranslate );
+// XRW TEMP  return utility::pointer::make_shared< CompoundTranslate >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -73,11 +73,11 @@ CompoundTranslate::CompoundTranslate(CompoundTranslate const & /*that*/) = defau
 CompoundTranslate::~CompoundTranslate() = default;
 
 protocols::moves::MoverOP CompoundTranslate::clone() const {
-	return protocols::moves::MoverOP( new CompoundTranslate( *this ) );
+	return utility::pointer::make_shared< CompoundTranslate >( *this );
 }
 
 protocols::moves::MoverOP CompoundTranslate::fresh_instance() const {
-	return protocols::moves::MoverOP( new CompoundTranslate );
+	return utility::pointer::make_shared< CompoundTranslate >();
 }
 
 // XRW TEMP std::string CompoundTranslate::get_name() const{
@@ -147,7 +147,7 @@ CompoundTranslate::parse_my_tag(
 						translate_info.force= true;
 					}
 				}
-				translates_.push_back(protocols::ligand_docking::TranslateOP( new Translate(translate_info) ));
+				translates_.push_back(utility::pointer::make_shared< Translate >(translate_info));
 			}
 		} else {
 			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "CompoundTranslate only takes Translate or Translates child tags");
@@ -233,7 +233,7 @@ std::string CompoundTranslateCreator::keyname() const {
 
 protocols::moves::MoverOP
 CompoundTranslateCreator::create_mover() const {
-	return protocols::moves::MoverOP( new CompoundTranslate );
+	return utility::pointer::make_shared< CompoundTranslate >();
 }
 
 void CompoundTranslateCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

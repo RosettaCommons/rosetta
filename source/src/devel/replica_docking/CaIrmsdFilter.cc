@@ -45,7 +45,7 @@ namespace devel {
 namespace replica_docking {
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP CaIrmsdFilterCreator::create_filter() const { return protocols::filters::FilterOP( new CaIrmsdFilter ); }
+// XRW TEMP CaIrmsdFilterCreator::create_filter() const { return utility::pointer::make_shared< CaIrmsdFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP CaIrmsdFilterCreator::keyname() const { return "Ca_Irms"; }
@@ -111,12 +111,12 @@ CaIrmsdFilter::~CaIrmsdFilter() = default;
 
 protocols::filters::FilterOP
 CaIrmsdFilter::clone() const{
-	return protocols::filters::FilterOP( new CaIrmsdFilter( *this ) );
+	return utility::pointer::make_shared< CaIrmsdFilter >( *this );
 }
 
 protocols::filters::FilterOP
 CaIrmsdFilter::fresh_instance() const{
-	return protocols::filters::FilterOP( new CaIrmsdFilter );
+	return utility::pointer::make_shared< CaIrmsdFilter >();
 }
 
 void
@@ -208,7 +208,7 @@ std::string CaIrmsdFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 CaIrmsdFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new CaIrmsdFilter );
+	return utility::pointer::make_shared< CaIrmsdFilter >();
 }
 
 void CaIrmsdFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

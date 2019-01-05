@@ -71,7 +71,7 @@ CartesianMinimizer::run(
 	}
 
 	if ( options.deriv_check() ) {
-		deriv_check_result_ = NumericalDerivCheckResultOP( new NumericalDerivCheckResult );
+		deriv_check_result_ = utility::pointer::make_shared< NumericalDerivCheckResult >();
 		deriv_check_result_->send_to_stdout( options.deriv_check_to_stdout() );
 	}
 

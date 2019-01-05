@@ -114,7 +114,7 @@ NamedDihedralConstraint::remapped_clone(
 	id::AtomID id3( core::pose::named_atom_id_to_atom_id( atom3, dest ) );
 	id::AtomID id4( core::pose::named_atom_id_to_atom_id( atom4, dest ) );
 	if ( id1.valid() && id2.valid() && id3.valid() && id4.valid() ) {
-		return ConstraintOP( new NamedDihedralConstraint( atom1, atom2, atom3, atom4, func()->clone(), score_type() ) );
+		return utility::pointer::make_shared< NamedDihedralConstraint >( atom1, atom2, atom3, atom4, func()->clone(), score_type() );
 	} else {
 		return nullptr;
 	}

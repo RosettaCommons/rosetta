@@ -43,7 +43,7 @@ namespace constraint_generator {
 protocols::constraint_generator::ConstraintGeneratorOP
 DistanceConstraintGeneratorCreator::create_constraint_generator() const
 {
-	return protocols::constraint_generator::ConstraintGeneratorOP( new DistanceConstraintGenerator );
+	return utility::pointer::make_shared< DistanceConstraintGenerator >();
 }
 
 std::string
@@ -67,7 +67,7 @@ DistanceConstraintGenerator::~DistanceConstraintGenerator() = default;
 protocols::constraint_generator::ConstraintGeneratorOP
 DistanceConstraintGenerator::clone() const
 {
-	return protocols::constraint_generator::ConstraintGeneratorOP( new DistanceConstraintGenerator( *this ) );
+	return utility::pointer::make_shared< DistanceConstraintGenerator >( *this );
 }
 
 std::string
@@ -150,7 +150,7 @@ DistanceConstraintGenerator::create_constraint(
 		a2.atomno() = pose.residue( resid2 ).type().atom_index( atom_name2_ );
 	}
 	TR.Debug << "Creating distance constraint between " << a1 << " and " << a2 << std::endl;
-	return core::scoring::constraints::ConstraintOP( new core::scoring::constraints::AtomPairConstraint( a1, a2, func_->clone() ) );
+	return utility::pointer::make_shared< core::scoring::constraints::AtomPairConstraint >( a1, a2, func_->clone() );
 }
 
 core::scoring::func::FuncOP

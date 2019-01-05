@@ -122,7 +122,7 @@ public:
 		minimum_width_ = minimum_width;
 	};
 #ifndef BOINC // gives windows build error
-	protocols::moves::MoverOP clone() const override { return protocols::moves::MoverOP( new EnsembleConstraints_Simple( *this ) ) ; }
+	protocols::moves::MoverOP clone() const override { return utility::pointer::make_shared< EnsembleConstraints_Simple >( *this ) ; }
 #endif
 	void createConstraints( std::ostream &out) override;
 	std::string get_name() const override;
@@ -255,7 +255,7 @@ class ClusterPhilStyle: public ClusterBase {
 public:
 	ClusterPhilStyle();
 	~ClusterPhilStyle() override = default;
-	protocols::moves::MoverOP clone() const override { return protocols::moves::MoverOP( new ClusterPhilStyle( *this ) ) ; }
+	protocols::moves::MoverOP clone() const override { return utility::pointer::make_shared< ClusterPhilStyle >( *this ) ; }
 	std::string get_name() const override;
 	virtual void do_clustering( core::Size max_total_cluster );
 
@@ -272,7 +272,7 @@ public:
 	~ClusterPhilStyle_Loop() override = default;
 	std::string get_name() const override;
 	protocols::moves::MoverOP clone() const override {
-		return protocols::moves::MoverOP( new ClusterPhilStyle_Loop( *this ) );
+		return utility::pointer::make_shared< ClusterPhilStyle_Loop >( *this );
 	}
 
 	core::Real
@@ -294,7 +294,7 @@ public:
 	~ClusterPhilStyle_PoseReporter() override = default;
 	std::string get_name() const override;
 	protocols::moves::MoverOP clone() const override {
-		return protocols::moves::MoverOP( new ClusterPhilStyle_PoseReporter( *this ) );
+		return utility::pointer::make_shared< ClusterPhilStyle_PoseReporter >( *this );
 	}
 
 	core::Real
@@ -316,7 +316,7 @@ public:
 	AssignToClustersMover( ClusterBaseOP cluster_base );
 #ifndef BOINC // gives windows build error
 	protocols::moves::MoverOP clone() const override {
-		return protocols::moves::MoverOP( new AssignToClustersMover( *this ) );
+		return utility::pointer::make_shared< AssignToClustersMover >( *this );
 	}
 #endif
 	void apply( core::pose::Pose & pose ) override;

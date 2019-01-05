@@ -121,7 +121,7 @@ main( int argc, char * argv [] )
 
 		SequenceMoverOP seqmov( new SequenceMover );
 		if ( option[ run::idealize_before_protocol ]() ) {
-			seqmov->add_mover( MoverOP( new protocols::idealize::IdealizeMover ) );
+			seqmov->add_mover( utility::pointer::make_shared< protocols::idealize::IdealizeMover >() );
 		}
 
 		seqmov->add_mover( capture3mers );

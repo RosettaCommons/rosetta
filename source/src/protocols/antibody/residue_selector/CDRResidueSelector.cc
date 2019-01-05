@@ -102,7 +102,7 @@ CDRResidueSelector::CDRResidueSelector(CDRResidueSelector const & src):
 	numbering_scheme_(src.numbering_scheme_),
 	cdr_definition_(src.cdr_definition_)
 {
-	if ( src.ab_info_ ) ab_info_ = AntibodyInfoOP( new AntibodyInfo( *src.ab_info_ ));
+	if ( src.ab_info_ ) ab_info_ = utility::pointer::make_shared< AntibodyInfo >( *src.ab_info_ );
 }
 
 
@@ -112,7 +112,7 @@ core::select::residue_selector::ResidueSelectorOP
 CDRResidueSelector::clone() const {
 	return core::select::residue_selector::ResidueSelectorOP(
 		utility::pointer::dynamic_pointer_cast<core::select::residue_selector::ResidueSelector>(
-		CDRResidueSelectorOP( new CDRResidueSelector(*this) )
+		utility::pointer::make_shared< CDRResidueSelector >(*this)
 		)
 	);
 }
@@ -217,7 +217,7 @@ ResidueSelectorOP
 CDRResidueSelectorCreator::create_residue_selector() const {
 	return core::select::residue_selector::ResidueSelectorOP(
 		utility::pointer::dynamic_pointer_cast< core::select::residue_selector::ResidueSelector > (
-		CDRResidueSelectorOP( new CDRResidueSelector )
+		utility::pointer::make_shared< CDRResidueSelector >()
 		)
 	);
 }
@@ -251,7 +251,7 @@ CDRResidueSelector::apply(
 	//This is due to const apply and no pose in parse_my_tag.
 	AntibodyInfoOP local_ab_info;
 	if ( ! ab_info_ ) {
-		local_ab_info = AntibodyInfoOP(new AntibodyInfo(pose, numbering_scheme_, cdr_definition_));
+		local_ab_info = utility::pointer::make_shared< AntibodyInfo >(pose, numbering_scheme_, cdr_definition_);
 	} else {
 		local_ab_info = ab_info_->clone();
 	}

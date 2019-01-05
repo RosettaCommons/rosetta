@@ -453,7 +453,7 @@ public:
 
 		ProteinUpstreamBuilder scbuilder;
 		scbuilder.add_build_set( build_set );
-		scbuilder.set_sampler( ProteinSCSamplerCOP( new DunbrackSCSampler ) );
+		scbuilder.set_sampler( utility::pointer::make_shared< DunbrackSCSampler >() );
 
 		BumpGridOP bbgrid( new BumpGrid );
 		scbuilder.set_bb_grid( bbgrid );
@@ -512,7 +512,7 @@ public:
 
 		ProteinUpstreamBuilder scbuilder;
 		scbuilder.add_build_set( build_set );
-		scbuilder.set_sampler( ProteinSCSamplerCOP( new DunbrackSCSampler ) );
+		scbuilder.set_sampler( utility::pointer::make_shared< DunbrackSCSampler >() );
 
 		BumpGridOP bbgrid( new BumpGrid );
 		scbuilder.set_bb_grid( bbgrid );
@@ -576,7 +576,7 @@ public:
 
 		ProteinUpstreamBuilder scbuilder;
 		scbuilder.add_build_set( build_set );
-		scbuilder.set_sampler( ProteinSCSamplerCOP( new DunbrackSCSampler ) );
+		scbuilder.set_sampler( utility::pointer::make_shared< DunbrackSCSampler >() );
 
 		BumpGridOP bbgrid( new BumpGrid );
 		scbuilder.set_bb_grid( bbgrid );
@@ -665,7 +665,7 @@ public:
 
 		ProteinUpstreamBuilder scbuilder;
 		scbuilder.add_build_set( build_set );
-		scbuilder.set_sampler( ProteinSCSamplerCOP( new DunbrackSCSampler ) );
+		scbuilder.set_sampler( utility::pointer::make_shared< DunbrackSCSampler >() );
 
 		BumpGridOP bbgrid( new BumpGrid );
 		scbuilder.set_bb_grid( bbgrid );
@@ -744,8 +744,8 @@ public:
 				build_set.set_sample_strategy_for_chi( 1, strat );
 				build_set.set_sample_strategy_for_chi( 2, strat );
 
-				sampset_dry_run = FullChiSampleSetOP( new FullChiSampleSet( build_set, rotamer_samples[ ii ], true ) );
-				sampset_regular = FullChiSampleSetOP( new FullChiSampleSet( build_set, rotamer_samples[ ii ], false ) );
+				sampset_dry_run = utility::pointer::make_shared< FullChiSampleSet >( build_set, rotamer_samples[ ii ], true );
+				sampset_regular = utility::pointer::make_shared< FullChiSampleSet >( build_set, rotamer_samples[ ii ], false );
 
 				TS_ASSERT( sampset_dry_run->num_chi_samples_total() == sampset_regular->num_chi_samples_total() );
 			}
@@ -801,8 +801,8 @@ public:
 			build_set.set_sample_strategy_for_chi( 1, strat1 );
 			build_set.set_sample_strategy_for_chi( 2, default_strat );
 
-			sampset_dry_run = FullChiSampleSetOP( new FullChiSampleSet( build_set, rotamer_samples[ ii ], true ) );
-			sampset_regular = FullChiSampleSetOP( new FullChiSampleSet( build_set, rotamer_samples[ ii ], false ) );
+			sampset_dry_run = utility::pointer::make_shared< FullChiSampleSet >( build_set, rotamer_samples[ ii ], true );
+			sampset_regular = utility::pointer::make_shared< FullChiSampleSet >( build_set, rotamer_samples[ ii ], false );
 
 			TS_ASSERT( sampset_dry_run->num_chi_samples_total() == sampset_regular->num_chi_samples_total() );
 
@@ -878,8 +878,8 @@ public:
 			strat1.set_sample_level( core::pack::task::ExtraRotSample( ii ) );
 			build_set.set_sample_strategy_for_chi( 1, strat1 );
 
-			sampset_dry_run = FullChiSampleSetOP( new FullChiSampleSet( build_set, nrchi_sample, true ) );
-			sampset_regular = FullChiSampleSetOP( new FullChiSampleSet( build_set, nrchi_sample, false ) );
+			sampset_dry_run = utility::pointer::make_shared< FullChiSampleSet >( build_set, nrchi_sample, true );
+			sampset_regular = utility::pointer::make_shared< FullChiSampleSet >( build_set, nrchi_sample, false );
 
 			TS_ASSERT( sampset_dry_run->num_chi_samples_total() == sampset_regular->num_chi_samples_total() );
 		}
@@ -893,8 +893,8 @@ public:
 			strat1.set_sample_level( core::pack::task::ExtraRotSample( ii ) );
 			build_set.set_sample_strategy_for_chi( 1, strat1 );
 
-			sampset_dry_run = FullChiSampleSetOP( new FullChiSampleSet( build_set, nrchi_sample, true ) );
-			sampset_regular = FullChiSampleSetOP( new FullChiSampleSet( build_set, nrchi_sample, false ) );
+			sampset_dry_run = utility::pointer::make_shared< FullChiSampleSet >( build_set, nrchi_sample, true );
+			sampset_regular = utility::pointer::make_shared< FullChiSampleSet >( build_set, nrchi_sample, false );
 
 			TS_ASSERT( sampset_dry_run->num_chi_samples_total() == sampset_regular->num_chi_samples_total() );
 		}

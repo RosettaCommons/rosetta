@@ -153,14 +153,14 @@ add_generic_hbs_constraint(
 	AtomID aidCY2(  pre.atom_index( cy2name ), pren  );
 	AtomID aidCY1(  pre.atom_index( cy1name ), pren  );
 
-	pose.add_constraint( ConstraintOP( new AtomPairConstraint( aidCYH, aidCZH, harm_func ) ) );
-	pose.add_constraint( ConstraintOP( new AtomPairConstraint( aidCYH, aidVYH, harm_func_0 ) ) );
-	pose.add_constraint( ConstraintOP( new AtomPairConstraint( aidCZH, aidVZH, harm_func_0 ) ) );
+	pose.add_constraint( utility::pointer::make_shared< AtomPairConstraint >( aidCYH, aidCZH, harm_func ) );
+	pose.add_constraint( utility::pointer::make_shared< AtomPairConstraint >( aidCYH, aidVYH, harm_func_0 ) );
+	pose.add_constraint( utility::pointer::make_shared< AtomPairConstraint >( aidCZH, aidVZH, harm_func_0 ) );
 
-	pose.add_constraint( ConstraintOP( new AngleConstraint( aidCZH, aidCYH, aidCY2, cfunc_120 ) ) );
-	pose.add_constraint( ConstraintOP( new AngleConstraint( aidN,   aidCZH, aidCYH, cfunc_109 ) ) );
+	pose.add_constraint( utility::pointer::make_shared< AngleConstraint >( aidCZH, aidCYH, aidCY2, cfunc_120 ) );
+	pose.add_constraint( utility::pointer::make_shared< AngleConstraint >( aidN,   aidCZH, aidCYH, cfunc_109 ) );
 
-	pose.add_constraint( ConstraintOP( new DihedralConstraint( aidCZH, aidCYH, aidCY2, aidCY1, cfunc_180 ) ) );
+	pose.add_constraint( utility::pointer::make_shared< DihedralConstraint >( aidCZH, aidCYH, aidCY2, aidCY1, cfunc_180 ) );
 }
 
 void add_a3b_hbs_constraint( core::pose::Pose & pose, core::Size a3b_hbs_pre_position )
@@ -202,16 +202,16 @@ constrain_ring_atoms( core::pose::Pose & pose, utility::vector1< core::id::AtomI
 	CircularHarmonicFuncOP chf( new CircularHarmonicFunc( 0, 0.01 ) );
 	CircularHarmonicFuncOP ahf( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi() * ( ids.size() - 2 ) / ids.size(), 0.01 ) );
 	for ( Size i = 1; i <= ids.size(); ++i ) {
-		pose.add_constraint( DihedralConstraintOP( new DihedralConstraint(
+		pose.add_constraint( utility::pointer::make_shared< DihedralConstraint >(
 			ids[ ( i ) % ids.size() + 1 ],
 			ids[ (i+1) % ids.size() + 1 ],
 			ids[ (i+2) % ids.size() + 1 ],
-			ids[ (i+3) % ids.size() + 1 ], chf ) ) );
+			ids[ (i+3) % ids.size() + 1 ], chf ) );
 
-		pose.add_constraint( AngleConstraintOP( new AngleConstraint(
+		pose.add_constraint( utility::pointer::make_shared< AngleConstraint >(
 			ids[ ( i ) % ids.size() + 1 ],
 			ids[ (i+1) % ids.size() + 1 ],
-			ids[ (i+2) % ids.size() + 1 ], ahf ) ) );
+			ids[ (i+2) % ids.size() + 1 ], ahf ) );
 	}
 }
 
@@ -234,56 +234,56 @@ void add_triazole_constraint( core::pose::Pose & pose, core::Size i /* triazole_
 	std::string cai   = pose.residue(  i  ).is_protein() ? "CA" : "CH3";
 	std::string caip1 = pose.residue( i+1 ).is_protein() ? "CA" : "CH3";
 
-	pose.add_constraint( AtomPairConstraintOP( new AtomPairConstraint(
+	pose.add_constraint( utility::pointer::make_shared< AtomPairConstraint >(
 		AtomID( pose.residue( i   ).atom_index( "CT1" ), i   ),
-		AtomID( pose.residue( i+1 ).atom_index( "NT3" ), i+1 ), hf ) ) );
+		AtomID( pose.residue( i+1 ).atom_index( "NT3" ), i+1 ), hf ) );
 
-	pose.add_constraint( AtomPairConstraintOP( new AtomPairConstraint(
+	pose.add_constraint( utility::pointer::make_shared< AtomPairConstraint >(
 		AtomID( pose.residue( i   ).atom_index( "CT2" ), i   ),
-		AtomID( pose.residue( i+1 ).atom_index( "NT1" ), i+1 ), hf ) ) );
+		AtomID( pose.residue( i+1 ).atom_index( "NT1" ), i+1 ), hf ) );
 
-	pose.add_constraint( AtomPairConstraintOP( new AtomPairConstraint(
+	pose.add_constraint( utility::pointer::make_shared< AtomPairConstraint >(
 		AtomID( pose.residue( i   ).atom_index(  "CT1" ), i   ),
-		AtomID( pose.residue( i+1 ).atom_index( "VCT1" ), i+1 ), zf ) ) );
+		AtomID( pose.residue( i+1 ).atom_index( "VCT1" ), i+1 ), zf ) );
 
-	pose.add_constraint( AtomPairConstraintOP( new AtomPairConstraint(
+	pose.add_constraint( utility::pointer::make_shared< AtomPairConstraint >(
 		AtomID( pose.residue( i   ).atom_index( "VNT3" ), i   ),
-		AtomID( pose.residue( i+1 ).atom_index(  "NT3" ), i+1 ), zf ) ) );
+		AtomID( pose.residue( i+1 ).atom_index(  "NT3" ), i+1 ), zf ) );
 
 	// exo bonds to triazolamers
-	pose.add_constraint( AngleConstraintOP( new AngleConstraint(
+	pose.add_constraint( utility::pointer::make_shared< AngleConstraint >(
 		AtomID( pose.residue( i   ).atom_index(  cai  ), i   ),
 		AtomID( pose.residue( i   ).atom_index( "CT1" ), i   ),
-		AtomID( pose.residue( i+1 ).atom_index( "NT3" ), i+1 ), ahf2 ) ) );
+		AtomID( pose.residue( i+1 ).atom_index( "NT3" ), i+1 ), ahf2 ) );
 
-	pose.add_constraint( AngleConstraintOP( new AngleConstraint(
+	pose.add_constraint( utility::pointer::make_shared< AngleConstraint >(
 		AtomID( pose.residue( i   ).atom_index( "CT2" ), i   ),
 		AtomID( pose.residue( i+1 ).atom_index( "NT1" ), i+1 ),
-		AtomID( pose.residue( i+1 ).atom_index( caip1 ), i+1 ), ahf1 ) ) );
+		AtomID( pose.residue( i+1 ).atom_index( caip1 ), i+1 ), ahf1 ) );
 
-	pose.add_constraint( DihedralConstraintOP( new DihedralConstraint(
+	pose.add_constraint( utility::pointer::make_shared< DihedralConstraint >(
 		AtomID( pose.residue( i+1 ).atom_index( caip1 ), i+1 ),
 		AtomID( pose.residue( i   ).atom_index( "CT2" ), i  ),
 		AtomID( pose.residue( i+1 ).atom_index( "NT2" ), i+1 ),
-		AtomID( pose.residue( i+1 ).atom_index( "NT1" ), i+1 ), chf ) ) );
+		AtomID( pose.residue( i+1 ).atom_index( "NT1" ), i+1 ), chf ) );
 
-	pose.add_constraint( DihedralConstraintOP( new DihedralConstraint(
+	pose.add_constraint( utility::pointer::make_shared< DihedralConstraint >(
 		AtomID( pose.residue( i   ).atom_index(  cai  ), i   ),
 		AtomID( pose.residue( i+1 ).atom_index( "NT3" ), i+1 ),
 		AtomID( pose.residue( i   ).atom_index( "CT2" ), i   ),
-		AtomID( pose.residue( i   ).atom_index( "CT1" ), i   ), chf ) ) );
+		AtomID( pose.residue( i   ).atom_index( "CT1" ), i   ), chf ) );
 
-	pose.add_constraint( DihedralConstraintOP( new DihedralConstraint(
+	pose.add_constraint( utility::pointer::make_shared< DihedralConstraint >(
 		AtomID( pose.residue( i+1 ).atom_index( caip1 ), i+1 ),
 		AtomID( pose.residue( i+1 ).atom_index( "NT1" ), i+1 ),
 		AtomID( pose.residue( i   ).atom_index( "CT2" ), i   ),
-		AtomID( pose.residue( i   ).atom_index( "CT1" ), i   ), chf180 ) ) );
+		AtomID( pose.residue( i   ).atom_index( "CT1" ), i   ), chf180 ) );
 
-	pose.add_constraint( DihedralConstraintOP( new DihedralConstraint(
+	pose.add_constraint( utility::pointer::make_shared< DihedralConstraint >(
 		AtomID( pose.residue( i   ).atom_index(  cai  ), i   ),
 		AtomID( pose.residue( i   ).atom_index( "CT1" ), i   ),
 		AtomID( pose.residue( i+1 ).atom_index( "NT3" ), i+1 ),
-		AtomID( pose.residue( i+1 ).atom_index( "NT2" ), i+1 ), chf180 ) ) );
+		AtomID( pose.residue( i+1 ).atom_index( "NT2" ), i+1 ), chf180 ) );
 
 	utility::vector1< AtomID > ids;
 	ids.push_back( AtomID( pose.residue( i+1 ).atom_index( "NT2" ), i+1 ) );
@@ -343,10 +343,10 @@ void add_oop_constraint( core::pose::Pose & pose, core::Size oop_seq_position, c
 	AtomID aidVYP( pose.residue( oop_seq_position+1 ).atom_index("VYP"), oop_seq_position+1 );
 	AtomID aidVZP( pose.residue( oop_seq_position ).atom_index("VZP"), oop_seq_position );
 
-	AtomPairConstraintCOP CYP_CZP_atompair( AtomPairConstraintOP( new AtomPairConstraint( aidCYP, aidCZP, harm_func ) ) );
+	AtomPairConstraintCOP CYP_CZP_atompair( utility::pointer::make_shared< AtomPairConstraint >( aidCYP, aidCZP, harm_func ) );
 	//kdrew: setup virtual atoms constraints
-	AtomPairConstraintCOP CYP_VYP_atompair( AtomPairConstraintOP( new AtomPairConstraint( aidCYP, aidVYP, virtual_atom_overlap_harm_func ) ) );
-	AtomPairConstraintCOP CZP_VZP_atompair( AtomPairConstraintOP( new AtomPairConstraint( aidCZP, aidVZP, virtual_atom_overlap_harm_func ) ) );
+	AtomPairConstraintCOP CYP_VYP_atompair( utility::pointer::make_shared< AtomPairConstraint >( aidCYP, aidVYP, virtual_atom_overlap_harm_func ) );
+	AtomPairConstraintCOP CZP_VZP_atompair( utility::pointer::make_shared< AtomPairConstraint >( aidCZP, aidVZP, virtual_atom_overlap_harm_func ) );
 
 	//kdrew: remove old constraints that are identical
 	core::scoring::constraints::ConstraintCOPs cs = pose.constraint_set()->get_all_constraints();

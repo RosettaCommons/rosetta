@@ -45,7 +45,7 @@ namespace devel {
 namespace replica_docking {
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP LrmsdFilterCreator::create_filter() const { return protocols::filters::FilterOP( new LrmsdFilter ); }
+// XRW TEMP LrmsdFilterCreator::create_filter() const { return utility::pointer::make_shared< LrmsdFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP LrmsdFilterCreator::keyname() const { return "Lrmsd"; }
@@ -83,12 +83,12 @@ LrmsdFilter::~LrmsdFilter() = default;
 
 protocols::filters::FilterOP
 LrmsdFilter::clone() const{
-	return protocols::filters::FilterOP( new LrmsdFilter( *this ) );
+	return utility::pointer::make_shared< LrmsdFilter >( *this );
 }
 
 protocols::filters::FilterOP
 LrmsdFilter::fresh_instance() const{
-	return protocols::filters::FilterOP( new LrmsdFilter );
+	return utility::pointer::make_shared< LrmsdFilter >();
 }
 
 void
@@ -177,7 +177,7 @@ std::string LrmsdFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 LrmsdFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new LrmsdFilter );
+	return utility::pointer::make_shared< LrmsdFilter >();
 }
 
 void LrmsdFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

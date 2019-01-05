@@ -58,7 +58,7 @@ public:
 	basic::datacache::CacheableDataOP
 	clone() const
 	{
-		return basic::datacache::CacheableDataOP( new RNA_RawBaseBaseInfo( *this ) );
+		return utility::pointer::make_shared< RNA_RawBaseBaseInfo >( *this );
 	}
 
 	Size

@@ -53,7 +53,7 @@ PeptideDeriverBasicStreamOutputter::PeptideDeriverBasicStreamOutputter( PeptideD
 
 PeptideDeriverBasicStreamOutputterOP
 PeptideDeriverBasicStreamOutputter::clone() const {
-	return PeptideDeriverBasicStreamOutputterOP( new PeptideDeriverBasicStreamOutputter( *this ) );
+	return utility::pointer::make_shared< PeptideDeriverBasicStreamOutputter >( *this );
 }
 
 void PeptideDeriverBasicStreamOutputter::begin_structure(core::pose::Pose const &, std::string const &name) {

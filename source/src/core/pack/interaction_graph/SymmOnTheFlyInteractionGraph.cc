@@ -809,7 +809,7 @@ SymmOnTheFlyInteractionGraph::set_score_function( ScoreFunction const & sfxn )
 void
 SymmOnTheFlyInteractionGraph::set_pose( pose::Pose const & pose )
 {
-	pose_ = pose::PoseOP( new pose::Pose( pose ) );
+	pose_ = utility::pointer::make_shared< pose::Pose >( pose );
 	if ( score_function_ ) {
 		( *score_function_)(*pose_);
 		sfs_energy_methods_.clear();

@@ -181,8 +181,8 @@ void A3BHbsCreatorMover::repack(
 ) {
 	// create a task factory and task operations
 	TaskFactoryOP tf( new TaskFactory );
-	tf->push_back( operation::TaskOperationCOP( new operation::InitializeFromCommandline ) );
-	tf->push_back( operation::TaskOperationCOP( new operation::IncludeCurrent ) );
+	tf->push_back( utility::pointer::make_shared< operation::InitializeFromCommandline >() );
+	tf->push_back( utility::pointer::make_shared< operation::IncludeCurrent >() );
 
 	using namespace basic::resource_manager;
 	if ( ResourceManager::get_instance()->has_option( packing::resfile ) ||  option[ packing::resfile ].user() ) {
@@ -262,7 +262,7 @@ void A3BHbsCreatorMover::do_mc(
 
 	// create a task factory and task operations
 	TaskFactoryOP pert_tf(new TaskFactory());
-	pert_tf->push_back( operation::TaskOperationCOP( new operation::InitializeFromCommandline ) );
+	pert_tf->push_back( utility::pointer::make_shared< operation::InitializeFromCommandline >() );
 
 	operation::ReadResfileOP pert_rrop( new operation::ReadResfile() );
 	pert_rrop->default_filename();
@@ -300,7 +300,7 @@ void A3BHbsCreatorMover::do_mc(
 
 	// create a task factory and task operations
 	TaskFactoryOP desn_tf( new TaskFactory() );
-	desn_tf->push_back( operation::TaskOperationCOP( new operation::InitializeFromCommandline ) );
+	desn_tf->push_back( utility::pointer::make_shared< operation::InitializeFromCommandline >() );
 
 	operation::ReadResfileOP desn_rrop( new operation::ReadResfile() );
 	desn_rrop->default_filename();
@@ -328,7 +328,7 @@ void A3BHbsCreatorMover::do_mc(
 	//definitely want sidechain minimization here
 	using protocols::simple_moves::TaskAwareMinMoverOP;
 	using protocols::simple_moves::TaskAwareMinMover;
-	TaskAwareMinMoverOP desn_ta_min = TaskAwareMinMoverOP( new TaskAwareMinMover( desn_min, desn_tf ) );
+	TaskAwareMinMoverOP desn_ta_min = utility::pointer::make_shared< TaskAwareMinMover >( desn_min, desn_tf );
 
 	/*********************************************************
 	Common Setup
@@ -545,7 +545,7 @@ void A3BHbsCreatorMover::add_hbond_and_omega_constraints_starting_at_seqpos(
 		new AtomPairConstraint(
 		AtomID( pose.residue( seqpos ).atom_index( "OY" ), seqpos ),
 		AtomID( pose.residue( seqpos+3 ).atom_index( "H"  ), seqpos+3 ),
-		core::scoring::func::HarmonicFuncOP( new core::scoring::func::HarmonicFunc( 1.9, 0.04 ) )
+		utility::pointer::make_shared< core::scoring::func::HarmonicFunc >( 1.9, 0.04 )
 		) ) );
 
 	for ( Size i = seqpos; i <= pose.size(); ++i ) {
@@ -560,7 +560,7 @@ void A3BHbsCreatorMover::add_hbond_and_omega_constraints_starting_at_seqpos(
 				new AtomPairConstraint(
 				AtomID( pose.residue( i   ).atom_index( "O" ), i ),
 				AtomID( pose.residue( i+4 ).atom_index( "H" ), i+4 ),
-				core::scoring::func::HarmonicFuncOP( new core::scoring::func::HarmonicFunc( 1.9, 0.04 ) )
+				utility::pointer::make_shared< core::scoring::func::HarmonicFunc >( 1.9, 0.04 )
 				) ) );
 		}
 
@@ -573,7 +573,7 @@ void A3BHbsCreatorMover::add_hbond_and_omega_constraints_starting_at_seqpos(
 				AtomID( pose.residue( i ).atom_index( "C"  ), i ),
 				AtomID( pose.residue( i+1 ).atom_index( "N"  ), i+1 ),
 				AtomID( pose.residue( i+1 ).atom_index( "CA"  ), i+1 ),
-				core::scoring::func::CircularHarmonicFuncOP( new core::scoring::func::CircularHarmonicFunc( 3.14159, 0.04 ) )
+				utility::pointer::make_shared< core::scoring::func::CircularHarmonicFunc >( 3.14159, 0.04 )
 				) ) );
 		}
 
@@ -588,7 +588,7 @@ void A3BHbsCreatorMover::add_hbond_and_omega_constraints_starting_at_seqpos(
 		AtomID( pose.residue( i ).atom_index( "CA" ), i ),
 		fixed_atom,
 		former_CAs_[ pose.pdb_info()->number(i) ],
-		core::scoring::func::HarmonicFuncOP( new core::scoring::func::HarmonicFunc( 0.0, 0.1 ) )
+		utility::pointer::make_shared< core::scoring::func::HarmonicFunc >( 0.0, 0.1 )
 		) ) );
 		}*/
 	}
@@ -597,7 +597,7 @@ void A3BHbsCreatorMover::add_hbond_and_omega_constraints_starting_at_seqpos(
 		new AtomPairConstraint(
 		AtomID( pose.residue( pose.size()-3   ).atom_index( "O" ), pose.size()-3 ),
 		AtomID( pose.residue( pose.size() ).atom_index( "HM" ), pose.size() ),
-		core::scoring::func::HarmonicFuncOP( new core::scoring::func::HarmonicFunc( 1.9, 0.04 ) )
+		utility::pointer::make_shared< core::scoring::func::HarmonicFunc >( 1.9, 0.04 )
 		) ) );
 
 	Size const nres = pose.size();
@@ -609,7 +609,7 @@ void A3BHbsCreatorMover::add_hbond_and_omega_constraints_starting_at_seqpos(
 		AtomID( pose.residue_type( nres ).atom_index( "C"   ), nres ),
 		AtomID( pose.residue_type( nres ).atom_index( "NM"  ), nres ),
 		AtomID( pose.residue_type( nres ).atom_index( "CN"  ), nres ),
-		core::scoring::func::CircularHarmonicFuncOP( new core::scoring::func::CircularHarmonicFunc( 3.14159, 0.04 ) )
+		utility::pointer::make_shared< core::scoring::func::CircularHarmonicFunc >( 3.14159, 0.04 )
 		) ) );
 }
 
@@ -689,7 +689,7 @@ A3BHbsCreatorMover::apply(
 			new AtomPairConstraint(
 			AtomID( a3bpose.residue( i   ).atom_index( "O" ), i ),
 			AtomID( a3bpose.residue( i+4 ).atom_index( "H" ), i+4 ),
-			core::scoring::func::HarmonicFuncOP( new core::scoring::func::HarmonicFunc( 1.9, 0.04 ) )
+			utility::pointer::make_shared< core::scoring::func::HarmonicFunc >( 1.9, 0.04 )
 			) ) );
 	}
 
@@ -704,7 +704,7 @@ A3BHbsCreatorMover::apply(
 		new AtomPairConstraint(
 		AtomID( a3bpose.residue( a3bpose.size()-3   ).atom_index( "O" ), a3bpose.size()-3 ),
 		AtomID( a3bpose.residue( a3bpose.size() ).atom_index( "HM" ), a3bpose.size() ),
-		core::scoring::func::HarmonicFuncOP( new core::scoring::func::HarmonicFunc( 1.9, 0.04 ) )
+		utility::pointer::make_shared< core::scoring::func::HarmonicFunc >( 1.9, 0.04 )
 		) ) );
 
 	// PATCH
@@ -735,7 +735,7 @@ A3BHbsCreatorMover::apply(
 		AtomID( a3bpose.residue( 1 ).atom_index( "CYH"  ), 1 ),
 		AtomID( a3bpose.residue( 3 ).atom_index( "CZH"  ), 3 ),
 		AtomID( a3bpose.residue( 3 ).atom_index( "N"  ), 3 ),
-		core::scoring::func::CircularHarmonicFuncOP( new core::scoring::func::CircularHarmonicFunc( 3.14159, 0.1 ) )
+		utility::pointer::make_shared< core::scoring::func::CircularHarmonicFunc >( 3.14159, 0.1 )
 		) ) );
 
 	a3bpose.add_constraint(
@@ -745,7 +745,7 @@ A3BHbsCreatorMover::apply(
 		AtomID( a3bpose.residue( 1 ).atom_index( "N"  ), 1 ),
 		AtomID( a3bpose.residue( 1 ).atom_index( "CY"  ), 1 ),
 		AtomID( a3bpose.residue( 1 ).atom_index( "OY"  ), 1 ),
-		core::scoring::func::CircularHarmonicFuncOP( new core::scoring::func::CircularHarmonicFunc( 3.14159, 0.1 ) )
+		utility::pointer::make_shared< core::scoring::func::CircularHarmonicFunc >( 3.14159, 0.1 )
 		) ) );
 
 	a3bpose.dump_pdb( "postpseudobonds.pdb");
@@ -793,7 +793,7 @@ A3BHbsCreatorMover::apply(
 		AtomID( pose.residue( last_of_first_chain + 1 ).atom_index( "CYH"  ), last_of_first_chain + 1 ),
 		AtomID( pose.residue( last_of_first_chain + 3 ).atom_index( "CZH"  ), last_of_first_chain + 3 ),
 		AtomID( pose.residue( last_of_first_chain + 3 ).atom_index( "N"  ), last_of_first_chain + 3 ),
-		core::scoring::func::CircularHarmonicFuncOP( new core::scoring::func::CircularHarmonicFunc( 3.14159, 0.1 ) )
+		utility::pointer::make_shared< core::scoring::func::CircularHarmonicFunc >( 3.14159, 0.1 )
 		) ) );
 
 	pose.add_constraint(
@@ -803,7 +803,7 @@ A3BHbsCreatorMover::apply(
 		AtomID( pose.residue( last_of_first_chain + 1 ).atom_index( "N"  ), last_of_first_chain + 1 ),
 		AtomID( pose.residue( last_of_first_chain + 1 ).atom_index( "CY"  ), last_of_first_chain + 1 ),
 		AtomID( pose.residue( last_of_first_chain + 1 ).atom_index( "OY"  ), last_of_first_chain + 1 ),
-		core::scoring::func::CircularHarmonicFuncOP( new core::scoring::func::CircularHarmonicFunc( 3.14159, 0.1 ) )
+		utility::pointer::make_shared< core::scoring::func::CircularHarmonicFunc >( 3.14159, 0.1 )
 		) ) );
 
 	// Add the same constraints to hbonds
@@ -820,7 +820,7 @@ A3BHbsCreatorMover::apply(
 			AtomID( pose.residue( i ).atom_index( "CA" ), i ),
 			fixed_atom,
 			former_CAs_[ pose.pdb_info()->number(i) ],
-			core::scoring::func::HarmonicFuncOP( new core::scoring::func::HarmonicFunc( 0.0, 0.25 ) )
+			utility::pointer::make_shared< core::scoring::func::HarmonicFunc >( 0.0, 0.25 )
 			) ) );
 	}
 	pose.dump_pdb( "postcombination.pdb");

@@ -73,13 +73,13 @@ ReleaseConstraintFromResidueMover::parse_my_tag(
 protocols::moves::MoverOP
 ReleaseConstraintFromResidueMover::clone() const
 {
-	return protocols::moves::MoverOP( new ReleaseConstraintFromResidueMover( *this ) );
+	return utility::pointer::make_shared< ReleaseConstraintFromResidueMover >( *this );
 }
 
 protocols::moves::MoverOP
 ReleaseConstraintFromResidueMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new ReleaseConstraintFromResidueMover );
+	return utility::pointer::make_shared< ReleaseConstraintFromResidueMover >();
 }
 
 void
@@ -135,7 +135,7 @@ std::string ReleaseConstraintFromResidueMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 ReleaseConstraintFromResidueMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ReleaseConstraintFromResidueMover );
+	return utility::pointer::make_shared< ReleaseConstraintFromResidueMover >();
 }
 
 void ReleaseConstraintFromResidueMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

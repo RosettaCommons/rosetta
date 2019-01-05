@@ -89,10 +89,10 @@ public:// virtual constructor
 
 
 	// @brief make clone
-	FilterOP clone() const override { return FilterOP( new SheetTopologyFilter( *this ) ); }
+	FilterOP clone() const override { return utility::pointer::make_shared< SheetTopologyFilter >( *this ); }
 
 	// @brief make fresh instance
-	FilterOP fresh_instance() const override { return FilterOP( new SheetTopologyFilter() ); }
+	FilterOP fresh_instance() const override { return utility::pointer::make_shared< SheetTopologyFilter >(); }
 
 
 public:// mutator

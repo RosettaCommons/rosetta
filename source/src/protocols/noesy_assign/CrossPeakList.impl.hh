@@ -110,7 +110,7 @@ void CrossPeakList::calibrate( DecoyIterator const& begin, DecoyIterator const& 
 
 	if ( structure_independent_calibration ) {
 		tr.Info << "structure independent calibration..."<<std::endl;
-		PeakCalibratorMap calibrators( *this, PeakCalibratorOP( new StructureIndependentPeakCalibrator ) );
+		PeakCalibratorMap calibrators( *this, utility::pointer::make_shared< StructureIndependentPeakCalibrator >() );
 		calibrators.set_target_and_tolerance( params.calibration_target_, 0.1 );
 		calibrators.do_calibration();
 	};
@@ -127,7 +127,7 @@ void CrossPeakList::calibrate( DecoyIterator const& begin, DecoyIterator const& 
 		}
 
 		for ( Size cycles( params.calibration_cycles_ ); cycles >= 1; --cycles ) {
-			PeakCalibratorMap calibrators( *this, PeakCalibratorOP( new StructureDependentPeakCalibrator( pose_cache, params.dcalibrate_ ) ) );
+			PeakCalibratorMap calibrators( *this, utility::pointer::make_shared< StructureDependentPeakCalibrator >( pose_cache, params.dcalibrate_ ) );
 			if ( !structure_independent_calibration ) {
 				tr.Info << "structure dependent calibration..."<<std::endl;
 				calibrators.set_target_and_tolerance( params.calibration_target_, 0.005 );

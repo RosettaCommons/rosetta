@@ -94,12 +94,12 @@ ShearMinCCDTrial::~ShearMinCCDTrial() = default;
 
 moves::MoverOP ShearMinCCDTrial::clone() const
 {
-	return moves::MoverOP( new ShearMinCCDTrial( *this ) );
+	return utility::pointer::make_shared< ShearMinCCDTrial >( *this );
 }
 
 moves::MoverOP ShearMinCCDTrial::fresh_instance() const
 {
-	return moves::MoverOP( new ShearMinCCDTrial() );
+	return utility::pointer::make_shared< ShearMinCCDTrial >();
 }
 
 /// @brief This mover retains state such that a fresh version is needed if the input Pose is about to change
@@ -171,7 +171,7 @@ void ShearMinCCDTrial::init()
 {
 	type( "ShearMinCCDTrial" );
 	nmoves_ = 1;
-	min_options_ = core::optimization::MinimizerOptionsOP( new core::optimization::MinimizerOptions("lbfgs_armijo_nonmonotone", 0.001, true /*use_nblist*/, false /*deriv_check*/ ) );
+	min_options_ = utility::pointer::make_shared< core::optimization::MinimizerOptions >("lbfgs_armijo_nonmonotone", 0.001, true /*use_nblist*/, false /*deriv_check*/ );
 	init_options();
 }
 
@@ -194,9 +194,9 @@ core::optimization::AtomTreeMinimizerOP ShearMinCCDTrial::minimizer( core::pose:
 	if ( ! minimizer_ ) {
 		if ( core::pose::symmetry::is_symmetric( pose ) ) {
 			// minimizer_ = dynamic_cast<core::optimization::AtomTreeMinimizer*>( new core::optimization::symmetry::SymAtomTreeMinimizer );
-			minimizer_ = core::optimization::AtomTreeMinimizerOP( new core::optimization::symmetry::SymAtomTreeMinimizer );
+			minimizer_ = utility::pointer::make_shared< core::optimization::symmetry::SymAtomTreeMinimizer >();
 		} else {
-			minimizer_ = core::optimization::AtomTreeMinimizerOP( new core::optimization::AtomTreeMinimizer );
+			minimizer_ = utility::pointer::make_shared< core::optimization::AtomTreeMinimizer >();
 		}
 	}
 	return minimizer_;
@@ -222,7 +222,7 @@ void ShearMinCCDTrial::setup_objects( Pose const & pose )
 // XRW TEMP ShearMinCCDTrialCreator::~ShearMinCCDTrialCreator() {}
 
 // XRW TEMP moves::MoverOP ShearMinCCDTrialCreator::create_mover() const {
-// XRW TEMP  return moves::MoverOP( new ShearMinCCDTrial() );
+// XRW TEMP  return utility::pointer::make_shared< ShearMinCCDTrial >();
 // XRW TEMP }
 
 // XRW TEMP std::string ShearMinCCDTrialCreator::keyname() const {
@@ -251,7 +251,7 @@ std::string ShearMinCCDTrialCreator::keyname() const {
 
 protocols::moves::MoverOP
 ShearMinCCDTrialCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ShearMinCCDTrial );
+	return utility::pointer::make_shared< ShearMinCCDTrial >();
 }
 
 void ShearMinCCDTrialCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -18,24 +18,24 @@ def add_hbond_constraints(pose):
 	CircularHarmonicFuncOP pi( new core.scoring.func.CircularHarmonicFunc( 3.14159, .05 ) )
 	CircularHarmonicFuncOP zero( new core.scoring.func.CircularHarmonicFunc( 0, .05 ) )
 
-	pose.add_constraint( AtomPairConstraintOP( new AtomPairConstraint(
+	pose.add_constraint( utility::pointer::make_shared< AtomPairConstraint >(
 		*new AtomID( pose.residue( 1 ).atom_index( "NL1" ), 1 ),
-		*new AtomID( pose.residue( 4 ).atom_index( "1HI2" ), 4 ), harm ) ) )
-	pose.add_constraint( AtomPairConstraintOP( new AtomPairConstraint(
+		*new AtomID( pose.residue( 4 ).atom_index( "1HI2" ), 4 ), harm ) )
+	pose.add_constraint( utility::pointer::make_shared< AtomPairConstraint >(
 		*new AtomID( pose.residue( 1 ).atom_index( "1HL2" ), 1 ),
-		*new AtomID( pose.residue( 4 ).atom_index( "OL" ), 4 ) , harm ) ) )
+		*new AtomID( pose.residue( 4 ).atom_index( "OL" ), 4 ) , harm ) )
 
-	pose.add_constraint( DihedralConstraintOP( new DihedralConstraint(
+	pose.add_constraint( utility::pointer::make_shared< DihedralConstraint >(
 		*new AtomID( pose.residue( 4 ).atom_index( "OL" ), 4 ),
 		*new AtomID( pose.residue( 1 ).atom_index( "1HL2" ), 1 ),
 		*new AtomID( pose.residue( 1 ).atom_index( "2HL2" ), 1 ),
-		*new AtomID( pose.residue( 1 ).atom_index( "CK2" ), 1 ), pi ) ) )
+		*new AtomID( pose.residue( 1 ).atom_index( "CK2" ), 1 ), pi ) )
 
-	pose.add_constraint( DihedralConstraintOP( new DihedralConstraint(
+	pose.add_constraint( utility::pointer::make_shared< DihedralConstraint >(
 		*new AtomID( pose.residue( 4 ).atom_index( "1HI2" ), 4 ),
 		*new AtomID( pose.residue( 1 ).atom_index( "NL1" ), 1 ),
 		*new AtomID( pose.residue( 1 ).atom_index( "CK1" ), 1 ),
-		*new AtomID( pose.residue( 1 ).atom_index( "CK2" ), 1 ), pi ) ) )
+		*new AtomID( pose.residue( 1 ).atom_index( "CK2" ), 1 ), pi ) )
 	
 if __name__ == '__main__':
 		

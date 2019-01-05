@@ -154,7 +154,7 @@ AmbiguousNMRConstraint::remap_resid( core::id::SequenceMapping const &seqmap ) c
 		if ( new_cst ) new_csts.push_back( new_cst );
 	}
 	if ( new_csts.size() > 0 ) {
-		return ConstraintOP( new AmbiguousNMRConstraint( new_csts, get_func().clone() ) );
+		return utility::pointer::make_shared< AmbiguousNMRConstraint >( new_csts, get_func().clone() );
 	} else {
 		return nullptr;
 	}

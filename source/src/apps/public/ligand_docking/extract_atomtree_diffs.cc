@@ -86,7 +86,7 @@ public:
 
 	protocols::moves::MoverOP
 	fresh_instance() const override {
-		return protocols::moves::MoverOP( new ExtractATD );
+		return utility::pointer::make_shared< ExtractATD >();
 	}
 
 
@@ -153,7 +153,7 @@ main( int argc, char * argv [] )
 			protocols::toolbox::match_enzdes_util::EnzConstraintIOOP constraints;
 			//we need the residue type set, assuming FA standard is used
 			core::chemical::ResidueTypeSetCOP restype_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
-			constraints = protocols::toolbox::match_enzdes_util::EnzConstraintIOOP( new protocols::toolbox::match_enzdes_util::EnzConstraintIO( restype_set ) );
+			constraints = utility::pointer::make_shared< protocols::toolbox::match_enzdes_util::EnzConstraintIO >( restype_set );
 			constraints->read_enzyme_cstfile(basic::options::option[basic::options::OptionKeys::enzdes::cstfile]);
 
 			utility::vector1< core::pose::PoseOP > const & ref_poses = atd_inputter->all_ref_poses();

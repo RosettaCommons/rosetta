@@ -217,9 +217,9 @@ main( int argc, char * argv [] ) {
 
 			SewGraphOP graph;
 			if ( option[ legacy_sewing::assembly_type ].value() == "discontinuous" ) {
-				graph = SewGraphOP( new SewGraph(models, 2) );
+				graph = utility::pointer::make_shared< SewGraph >(models, 2);
 			} else if ( option[ legacy_sewing::assembly_type ].value() == "continuous" ) {
-				graph = SewGraphOP( new SewGraph(models, 1) );
+				graph = utility::pointer::make_shared< SewGraph >(models, 1);
 			}
 			graph->generate_binary_score_file(option[legacy_sewing::score_file_name].value(), binary_filename);
 			std::exit(0);

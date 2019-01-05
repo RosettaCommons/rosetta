@@ -31,10 +31,10 @@ public:
 	ChainBreak();
 	~ChainBreak() override;
 	filters::FilterOP clone() const override {
-		return filters::FilterOP( new ChainBreak( *this ) );
+		return utility::pointer::make_shared< ChainBreak >( *this );
 	}
 	filters::FilterOP fresh_instance() const override{
-		return filters::FilterOP( new ChainBreak() );
+		return utility::pointer::make_shared< ChainBreak >();
 	}
 
 	bool apply( core::pose::Pose const & pose ) const override;

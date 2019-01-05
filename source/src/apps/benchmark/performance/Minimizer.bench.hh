@@ -40,7 +40,7 @@ public:
 	MinimizerBenchmark(std::string name) : PerformanceBenchmark(name) {};
 
 	virtual void setUp() {
-		start_pose = core::pose::PoseOP( new core::pose::Pose() );
+		start_pose = utility::pointer::make_shared< core::pose::Pose >();
 		// Use smaller PDB to test minimizer
 		core::import_pose::pose_from_file(*start_pose, "test_in2.pdb", core::import_pose::PDB_file);
 

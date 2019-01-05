@@ -1656,8 +1656,8 @@ int MotifHash::get_matching_motifs(ResPairMotifQuery const & opt, MotifHits & hi
 
 	xyzStripeHashPoseCOP ccheck1bb32=nullptr,ccheck2bb32=nullptr;
 	if ( opt.auto_clash_ ) {
-		ccheck1bb32 = xyzStripeHashPoseCOP( new xyzStripeHashPose(pose1,PoseCoordPickMode_BB,2.8) );
-		if ( !samepose ) ccheck2bb32 = xyzStripeHashPoseCOP( new xyzStripeHashPose(pose2,PoseCoordPickMode_BB,2.8) );
+		ccheck1bb32 = utility::pointer::make_shared< xyzStripeHashPose >(pose1,PoseCoordPickMode_BB,2.8);
+		if ( !samepose ) ccheck2bb32 = utility::pointer::make_shared< xyzStripeHashPose >(pose2,PoseCoordPickMode_BB,2.8);
 		else ccheck2bb32 = ccheck1bb32;
 	}
 
@@ -2018,7 +2018,7 @@ bool XformScore::read_binary(XformScoreOP & xs, std::istream & in, bool clearme,
 	in.read((char*)& cart_size,sizeof(numeric::Real));
 	in.read((char*)& cart_resl,sizeof(numeric::Real));
 	in.read((char*)&angle_resl,sizeof(numeric::Real));
-	if ( !xs ) xs = XformScoreOP(new XformScore(cart_resl,angle_resl));
+	if ( !xs ) xs = utility::pointer::make_shared< XformScore >(cart_resl,angle_resl);
 	else if ( clearme ) xs->clear();
 	if ( cart_size != xs->cart_size_ || cart_resl!= xs->cart_resl_ || angle_resl != xs->angle_resl_ ) {
 		cout << "from file " << cart_size  << " " << cart_resl  << " " << angle_resl  << endl;
@@ -2140,7 +2140,7 @@ void preload_motif_data(MotifHashManager & mman){
 		ResPairMotifs motifs;
 		load_motifs( option[basic::options::OptionKeys::mh::path::motifs_BB_PH](), motifs, &tmp_map );
 		MotifHashManager* mman = MotifHashManager::get_instance();
-		mman->motif_hash_BB_PH_ =  MotifHashOP(new MotifHash(motifs));
+		mman->motif_hash_BB_PH_ =  utility::pointer::make_shared< MotifHash >(motifs);
 		// /*kill me!*/mman->motif_hash_BB_PH_->hasher().tree_init(5);
 		for ( string const & fn : option[basic::options::OptionKeys::mh::path::motifs_BB_PH]() ) cout << "  ...loaded " << fn << endl;
 	}
@@ -2148,7 +2148,7 @@ void preload_motif_data(MotifHashManager & mman){
 		ResPairMotifs motifs;
 		load_motifs( option[basic::options::OptionKeys::mh::path::motifs_BB_PO](), motifs, &tmp_map );
 		MotifHashManager* mman = MotifHashManager::get_instance();
-		mman->motif_hash_BB_PO_ = MotifHashOP(new MotifHash(motifs));
+		mman->motif_hash_BB_PO_ = utility::pointer::make_shared< MotifHash >(motifs);
 		// /*kill me!*/mman->motif_hash_BB_PO_->hasher().tree_init(5);
 		for ( string const & fn : option[basic::options::OptionKeys::mh::path::motifs_BB_PO]() ) cout << "  ...loaded " << fn << endl;
 	}
@@ -2156,7 +2156,7 @@ void preload_motif_data(MotifHashManager & mman){
 		ResPairMotifs motifs;
 		load_motifs( option[basic::options::OptionKeys::mh::path::motifs_BB_BB](), motifs, &tmp_map );
 		MotifHashManager* mman = MotifHashManager::get_instance();
-		mman->motif_hash_BB_BB_ = MotifHashOP(new MotifHash(motifs));
+		mman->motif_hash_BB_BB_ = utility::pointer::make_shared< MotifHash >(motifs);
 		// /*kill me!*/mman->motif_hash_BB_BB_->hasher().tree_init(5);
 		for ( string const & fn : option[basic::options::OptionKeys::mh::path::motifs_BB_BB]() ) cout << "  ...loaded " << fn << endl;
 	}
@@ -2171,7 +2171,7 @@ void preload_motif_data(MotifHashManager & mman){
 		ResPairMotifs motifs;
 		load_motifs( option[basic::options::OptionKeys::mh::path::motifs_SC_BB](), motifs, &tmp_map );
 		MotifHashManager* mman = MotifHashManager::get_instance();
-		mman->motif_hash_SC_BB_ = MotifHashOP(new MotifHash(motifs));
+		mman->motif_hash_SC_BB_ = utility::pointer::make_shared< MotifHash >(motifs);
 		// /*kill me!*/mman->motif_hash_SC_BB_->hasher().tree_init(5);
 		for ( string const & fn : option[basic::options::OptionKeys::mh::path::motifs_SC_BB]() ) cout << "  ...loaded " << fn << endl;
 	}

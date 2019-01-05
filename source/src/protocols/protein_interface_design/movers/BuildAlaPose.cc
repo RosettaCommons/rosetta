@@ -58,7 +58,7 @@ static basic::Tracer TR( "protocols.protein_interface_design.movers.BuildAlaPose
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP BuildAlaPoseCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new BuildAlaPose );
+// XRW TEMP  return utility::pointer::make_shared< BuildAlaPose >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -136,7 +136,7 @@ BuildAlaPose::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, p
 
 protocols::moves::MoverOP
 BuildAlaPose::clone() const {
-	return( protocols::moves::MoverOP( new BuildAlaPose( *this ) ));
+	return( utility::pointer::make_shared< BuildAlaPose >( *this ));
 }
 
 std::string BuildAlaPose::get_name() const {
@@ -168,7 +168,7 @@ std::string BuildAlaPoseCreator::keyname() const {
 
 protocols::moves::MoverOP
 BuildAlaPoseCreator::create_mover() const {
-	return protocols::moves::MoverOP( new BuildAlaPose );
+	return utility::pointer::make_shared< BuildAlaPose >();
 }
 
 void BuildAlaPoseCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

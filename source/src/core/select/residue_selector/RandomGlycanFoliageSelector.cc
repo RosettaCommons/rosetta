@@ -95,14 +95,14 @@ RandomGlycanFoliageSelector::set_selector( ResidueSelectorCOP selector){
 /// @details Copy this object and return owning pointer to the copy (created on the heap).
 RandomGlycanFoliageSelector::ResidueSelectorOP
 RandomGlycanFoliageSelector::clone() const {
-	return ResidueSelectorOP( new RandomGlycanFoliageSelector(*this) );
+	return utility::pointer::make_shared< RandomGlycanFoliageSelector >(*this);
 }
 
 
 
 RandomGlycanFoliageSelector::ResidueSelectorOP
 RandomGlycanFoliageSelectorCreator::create_residue_selector() const {
-	return RandomGlycanFoliageSelector::ResidueSelectorOP( new RandomGlycanFoliageSelector );
+	return utility::pointer::make_shared< RandomGlycanFoliageSelector >();
 }
 
 std::string RandomGlycanFoliageSelector::get_name() const

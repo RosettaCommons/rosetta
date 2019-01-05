@@ -187,7 +187,7 @@ InteractionGraphFactory::create_interaction_graph(
 						return double_lazy_ig;
 					} else {
 						T << "Instantiating PDInteractionGraph" << std::endl;
-						return InteractionGraphBaseOP( new PDInteractionGraph( the_task.num_to_be_packed() ) );
+						return utility::pointer::make_shared< PDInteractionGraph >( the_task.num_to_be_packed() );
 					}
 				}
 			}
@@ -210,7 +210,7 @@ InteractionGraphFactory::create_interaction_graph(
 	//This will also trigger if there are no rotamers
 
 	T << "Instantiating DensePDInteractionGraph" << std::endl;
-	return InteractionGraphBaseOP( new DensePDInteractionGraph( the_task.num_to_be_packed() ) );
+	return utility::pointer::make_shared< DensePDInteractionGraph >( the_task.num_to_be_packed() );
 
 }
 
@@ -263,7 +263,7 @@ InteractionGraphFactory::create_and_initialize_annealing_graph(
 	if ( annealing_graphs.size() == 1 ) {
 		return annealing_graphs.front();
 	} else {
-		return AnnealableGraphBaseOP(new MultiplexedAnnealableGraph(annealing_graphs));
+		return utility::pointer::make_shared< MultiplexedAnnealableGraph >(annealing_graphs);
 	}
 }
 

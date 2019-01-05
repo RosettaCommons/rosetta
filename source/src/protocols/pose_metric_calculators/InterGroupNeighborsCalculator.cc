@@ -71,7 +71,7 @@ InterGroupNeighborsCalculator::InterGroupNeighborsCalculator( group_set const & 
 : parent()
 	//not doing anything to std::set<core::Size> - should initialize empty
 {
-	calc_inter_group_ = CalcInterNeighborGroupOP( new CalcInterNeighborGroup(groups, dist_cutoff) );
+	calc_inter_group_ = utility::pointer::make_shared< CalcInterNeighborGroup >(groups, dist_cutoff);
 }
 
 InterGroupNeighborsCalculator::InterGroupNeighborsCalculator( InterGroupNeighborsCalculator const & calculator )
@@ -81,7 +81,7 @@ InterGroupNeighborsCalculator::InterGroupNeighborsCalculator( InterGroupNeighbor
 InterGroupNeighborsCalculator::~InterGroupNeighborsCalculator() = default;
 
 core::pose::metrics::PoseMetricCalculatorOP InterGroupNeighborsCalculator::clone() const
-{ return core::pose::metrics::PoseMetricCalculatorOP( new InterGroupNeighborsCalculator(*this) ); }
+{ return utility::pointer::make_shared< InterGroupNeighborsCalculator >(*this); }
 
 core::Real InterGroupNeighborsCalculator::dist_cutoff() const {
 	return dist_cutoff_;

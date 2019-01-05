@@ -45,7 +45,7 @@ public:
 		Real const offset         ) : xC_( center_radians ), m_( slope_radians ),
 		o1_( -width_radians/2 ), o2_( width_radians/2 ), offset_( offset ) {}
 
-	FuncOP clone() const { return FuncOP( new CircularSigmoidalFunc( *this ) ); }
+	FuncOP clone() const { return utility::pointer::make_shared< CircularSigmoidalFunc >( *this ); }
 	virtual bool operator == ( Func const & other ) const;
 	virtual bool same_type_as_me( Func const & other ) const;
 

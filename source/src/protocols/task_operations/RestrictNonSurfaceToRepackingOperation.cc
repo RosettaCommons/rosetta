@@ -49,7 +49,7 @@ using namespace utility::tag;
 // Creator method
 core::pack::task::operation::TaskOperationOP
 RestrictNonSurfaceToRepackingOperationCreator::create_task_operation() const {
-	return core::pack::task::operation::TaskOperationOP( new RestrictNonSurfaceToRepackingOperation );
+	return utility::pointer::make_shared< RestrictNonSurfaceToRepackingOperation >();
 }
 
 void RestrictNonSurfaceToRepackingOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -77,7 +77,7 @@ RestrictNonSurfaceToRepackingOperation::~RestrictNonSurfaceToRepackingOperation(
 
 // clone method, required by TaskOperation interface
 TaskOperationOP RestrictNonSurfaceToRepackingOperation::clone() const {
-	return TaskOperationOP( new RestrictNonSurfaceToRepackingOperation( *this ) );
+	return utility::pointer::make_shared< RestrictNonSurfaceToRepackingOperation >( *this );
 }
 
 

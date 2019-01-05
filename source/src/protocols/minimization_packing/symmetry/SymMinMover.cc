@@ -32,8 +32,8 @@ namespace symmetry {
 
 SymMinMover::~SymMinMover() = default;
 
-protocols::moves::MoverOP SymMinMover::clone() const { return protocols::moves::MoverOP( new  SymMinMover( *this ) ); }
-protocols::moves::MoverOP SymMinMover::fresh_instance() const { return protocols::moves::MoverOP( new  SymMinMover ); }
+protocols::moves::MoverOP SymMinMover::clone() const { return utility::pointer::make_shared< SymMinMover >( *this ); }
+protocols::moves::MoverOP SymMinMover::fresh_instance() const { return utility::pointer::make_shared< SymMinMover >(); }
 
 std::string SymMinMover::get_name() const {
 	return mover_name();
@@ -60,7 +60,7 @@ std::string SymMinMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 SymMinMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SymMinMover );
+	return utility::pointer::make_shared< SymMinMover >();
 }
 
 void SymMinMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

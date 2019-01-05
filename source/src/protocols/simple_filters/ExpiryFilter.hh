@@ -35,10 +35,10 @@ public:
 	ExpiryFilter();
 	bool apply( core::pose::Pose const & pose ) const override;
 	filters::FilterOP clone() const override {
-		return filters::FilterOP( new ExpiryFilter( *this ) );
+		return utility::pointer::make_shared< ExpiryFilter >( *this );
 	}
 	filters::FilterOP fresh_instance() const override{
-		return filters::FilterOP( new ExpiryFilter() );
+		return utility::pointer::make_shared< ExpiryFilter >();
 	}
 
 	void report( std::ostream & out, core::pose::Pose const & pose ) const override;

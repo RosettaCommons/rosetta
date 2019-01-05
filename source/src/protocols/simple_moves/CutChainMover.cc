@@ -71,7 +71,7 @@ CutChainMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 CutChainMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new CutChainMover );
+	return utility::pointer::make_shared< CutChainMover >();
 }
 
 std::string
@@ -94,13 +94,13 @@ CutChainMover::~CutChainMover() = default;
 protocols::moves::MoverOP
 CutChainMover::clone() const
 {
-	return protocols::moves::MoverOP( new CutChainMover( *this ) );
+	return utility::pointer::make_shared< CutChainMover >( *this );
 }
 
 protocols::moves::MoverOP
 CutChainMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new CutChainMover() );
+	return utility::pointer::make_shared< CutChainMover >();
 }
 
 //getters

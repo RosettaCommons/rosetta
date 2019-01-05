@@ -148,13 +148,13 @@ basic::options::IntegerOptionKey const hbondres2("hbondres2");*/
 HemeBindingMover::HemeBindingMover() :
 	protocols::moves::Mover("HemeBindingMover"),
 	score_function_(core::scoring::get_score_function()),
-	backrub_mover_ (protocols::backrub::BackrubMoverOP(new protocols::backrub::BackrubMover) ),
-	pack_rotamers_mover_ (protocols::simple_moves::PackRotamersMoverOP(new protocols::simple_moves::PackRotamersMover) ),
+	backrub_mover_ (utility::pointer::make_shared< protocols::backrub::BackrubMover >() ),
+	pack_rotamers_mover_ (utility::pointer::make_shared< protocols::simple_moves::PackRotamersMover >() ),
 	num_iterations_(1000),
 	temperature_(0.6),
 	//Set up a TaskFactory
-	tf_ (core::pack::task::TaskFactoryOP(new core::pack::task::TaskFactory) ),
-	design_mover_ (protocols::simple_moves::PackRotamersMoverOP(new protocols::simple_moves::PackRotamersMover))
+	tf_ (utility::pointer::make_shared< core::pack::task::TaskFactory >() ),
+	design_mover_ (utility::pointer::make_shared< protocols::simple_moves::PackRotamersMover >())
 {
 	this->initialize_from_options();
 	TR << "HemeBindingMover initialization complete" << std::endl;
@@ -168,12 +168,12 @@ HemeBindingMover::HemeBindingMover(core::scoring::ScoreFunctionOP const & sfxn, 
 	protocols::moves::Mover("HemeBindingMover")
 {
 	score_function_ = sfxn->clone();
-	backrub_mover_ = protocols::backrub::BackrubMoverOP(new protocols::backrub::BackrubMover(*brm) );
-	pack_rotamers_mover_ = protocols::simple_moves::PackRotamersMoverOP(new protocols::simple_moves::PackRotamersMover(*prm) );
+	backrub_mover_ = utility::pointer::make_shared< protocols::backrub::BackrubMover >(*brm);
+	pack_rotamers_mover_ = utility::pointer::make_shared< protocols::simple_moves::PackRotamersMover >(*prm);
 	num_iterations_ = n_it;
 	temperature_ = temperature;
 	tf_ = prm->task_factory()->clone();
-	design_mover_ = protocols::simple_moves::PackRotamersMoverOP(new protocols::simple_moves::PackRotamersMover );
+	design_mover_ = utility::pointer::make_shared< protocols::simple_moves::PackRotamersMover >();
 	this->initialize_from_options();
 	design_score_function_ = score_function_->clone();
 	repack_score_function_ = score_function_->clone();
@@ -187,9 +187,9 @@ HemeBindingMover::HemeBindingMover(core::scoring::ScoreFunctionOP const & sfxn, 
 	tf_ = tf->clone();
 	temperature_ = temperature;
 	num_iterations_ = n_it;
-	backrub_mover_ = protocols::backrub::BackrubMoverOP(new protocols::backrub::BackrubMover );
-	pack_rotamers_mover_ = protocols::simple_moves::PackRotamersMoverOP(new protocols::simple_moves::PackRotamersMover);
-	design_mover_ = protocols::simple_moves::PackRotamersMoverOP(new protocols::simple_moves::PackRotamersMover);
+	backrub_mover_ = utility::pointer::make_shared< protocols::backrub::BackrubMover >();
+	pack_rotamers_mover_ = utility::pointer::make_shared< protocols::simple_moves::PackRotamersMover >();
+	design_mover_ = utility::pointer::make_shared< protocols::simple_moves::PackRotamersMover >();
 	this->initialize_from_options();
 	design_score_function_ = score_function_->clone();
 	repack_score_function_ = score_function_->clone();
@@ -201,12 +201,12 @@ HemeBindingMover::HemeBindingMover(HemeBindingMover const & other):
 	protocols::moves::Mover(other)
 {
 	score_function_ = other.score_function()->clone();
-	backrub_mover_ = protocols::backrub::BackrubMoverOP(new protocols::backrub::BackrubMover(*other.backrub_mover()) );
-	pack_rotamers_mover_ = protocols::simple_moves::PackRotamersMoverOP(new protocols::simple_moves::PackRotamersMover(*other.pack_rotamers_mover()));
+	backrub_mover_ = utility::pointer::make_shared< protocols::backrub::BackrubMover >(*other.backrub_mover());
+	pack_rotamers_mover_ = utility::pointer::make_shared< protocols::simple_moves::PackRotamersMover >(*other.pack_rotamers_mover());
 	num_iterations_ = other.num_iterations();
 	temperature_ = other.temperature();
 	tf_ = other.task_factory()->clone();
-	design_mover_ = protocols::simple_moves::PackRotamersMoverOP(new protocols::simple_moves::PackRotamersMover);
+	design_mover_ = utility::pointer::make_shared< protocols::simple_moves::PackRotamersMover >();
 	this->initialize_from_options();
 	design_score_function_ = score_function_->clone();
 	repack_score_function_ = score_function_->clone();
@@ -218,10 +218,10 @@ void HemeBindingMover::score_function(core::scoring::ScoreFunctionOP other_score
 	score_function_ = other_score_function->clone();
 }
 void HemeBindingMover::backrub_mover(protocols::backrub::BackrubMoverOP br_mover){
-	backrub_mover_ = protocols::backrub::BackrubMoverOP(new protocols::backrub::BackrubMover(*br_mover) );
+	backrub_mover_ = utility::pointer::make_shared< protocols::backrub::BackrubMover >(*br_mover);
 }
 void HemeBindingMover::pack_rotamers_mover(protocols::simple_moves::PackRotamersMoverOP pr_mover){
-	pack_rotamers_mover_ = protocols::simple_moves::PackRotamersMoverOP(new protocols::simple_moves::PackRotamersMover(*pr_mover) );
+	pack_rotamers_mover_ = utility::pointer::make_shared< protocols::simple_moves::PackRotamersMover >(*pr_mover);
 }
 void HemeBindingMover::num_iterations(core::Size n_it){
 	num_iterations_ = n_it;

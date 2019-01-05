@@ -56,7 +56,7 @@ public:
 
 
 	protocols::moves::MoverOP
-	clone() const override { return protocols::moves::MoverOP( new NormalModeRelaxMover(*this) ); }
+	clone() const override { return utility::pointer::make_shared< NormalModeRelaxMover >(*this); }
 
 
 	void apply( core::pose::Pose & pose ) override;

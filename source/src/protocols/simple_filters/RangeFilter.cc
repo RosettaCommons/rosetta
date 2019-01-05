@@ -103,7 +103,7 @@ RangeFilter::parse_my_tag(
 }
 
 // XRW TEMP filters::FilterOP
-// XRW TEMP RangeFilterCreator::create_filter() const { return filters::FilterOP( new RangeFilter ); }
+// XRW TEMP RangeFilterCreator::create_filter() const { return utility::pointer::make_shared< RangeFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP RangeFilterCreator::keyname() const { return "Range"; }
@@ -142,7 +142,7 @@ std::string RangeFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 RangeFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new RangeFilter );
+	return utility::pointer::make_shared< RangeFilter >();
 }
 
 void RangeFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

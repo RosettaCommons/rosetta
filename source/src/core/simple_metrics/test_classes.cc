@@ -49,7 +49,7 @@ TestStringMetric::name_static(){
 
 SimpleMetricOP
 TestStringMetric::clone() const {
-	return SimpleMetricOP(new TestStringMetric( *this ) );
+	return utility::pointer::make_shared< TestStringMetric >( *this );
 }
 
 void
@@ -82,7 +82,7 @@ TestStringMetricCreator::keyname() const {
 
 SimpleMetricOP
 TestStringMetricCreator::create_simple_metric() const {
-	return SimpleMetricOP( new TestStringMetric );
+	return utility::pointer::make_shared< TestStringMetric >();
 
 }
 
@@ -94,7 +94,7 @@ TestRealMetric::name_static(){
 
 SimpleMetricOP
 TestRealMetric::clone() const {
-	return SimpleMetricOP(new TestRealMetric( *this ) );
+	return utility::pointer::make_shared< TestRealMetric >( *this );
 }
 
 void
@@ -127,7 +127,7 @@ TestRealMetricCreator::keyname() const {
 
 SimpleMetricOP
 TestRealMetricCreator::create_simple_metric() const {
-	return SimpleMetricOP( new TestRealMetric );
+	return utility::pointer::make_shared< TestRealMetric >();
 
 }
 
@@ -139,7 +139,7 @@ TestCompositeStringMetric::name_static(){
 
 SimpleMetricOP
 TestCompositeStringMetric::clone() const {
-	return SimpleMetricOP(new TestCompositeStringMetric( *this ) );
+	return utility::pointer::make_shared< TestCompositeStringMetric >( *this );
 }
 
 void
@@ -172,7 +172,7 @@ TestCompositeStringMetricCreator::keyname() const {
 
 SimpleMetricOP
 TestCompositeStringMetricCreator::create_simple_metric() const {
-	return SimpleMetricOP( new TestCompositeStringMetric );
+	return utility::pointer::make_shared< TestCompositeStringMetric >();
 
 }
 
@@ -184,7 +184,7 @@ TestCompositeRealMetric::name_static(){
 
 SimpleMetricOP
 TestCompositeRealMetric::clone() const {
-	return SimpleMetricOP(new TestCompositeRealMetric( *this ) );
+	return utility::pointer::make_shared< TestCompositeRealMetric >( *this );
 }
 
 void
@@ -217,7 +217,7 @@ TestCompositeRealMetricCreator::keyname() const {
 
 SimpleMetricOP
 TestCompositeRealMetricCreator::create_simple_metric() const {
-	return SimpleMetricOP( new TestCompositeRealMetric );
+	return utility::pointer::make_shared< TestCompositeRealMetric >();
 
 }
 
@@ -229,7 +229,7 @@ TestPerResidueRealMetric::name_static(){
 
 SimpleMetricOP
 TestPerResidueRealMetric::clone() const {
-	return SimpleMetricOP(new TestPerResidueRealMetric( *this ) );
+	return utility::pointer::make_shared< TestPerResidueRealMetric >( *this );
 }
 
 void
@@ -262,7 +262,7 @@ TestPerResidueRealMetricCreator::keyname() const {
 
 SimpleMetricOP
 TestPerResidueRealMetricCreator::create_simple_metric() const {
-	return SimpleMetricOP( new TestPerResidueRealMetric );
+	return utility::pointer::make_shared< TestPerResidueRealMetric >();
 
 }
 
@@ -275,7 +275,7 @@ TestPerResidueStringMetric::name_static(){
 
 SimpleMetricOP
 TestPerResidueStringMetric::clone() const {
-	return SimpleMetricOP(new TestPerResidueStringMetric( *this ) );
+	return utility::pointer::make_shared< TestPerResidueStringMetric >( *this );
 }
 
 void
@@ -308,7 +308,7 @@ TestPerResidueStringMetricCreator::keyname() const {
 
 SimpleMetricOP
 TestPerResidueStringMetricCreator::create_simple_metric() const {
-	return SimpleMetricOP( new TestPerResidueStringMetric );
+	return utility::pointer::make_shared< TestPerResidueStringMetric >();
 
 }
 

@@ -62,7 +62,7 @@ public:
 	basic::datacache::CacheableDataOP
 	clone() const
 	{
-		return basic::datacache::CacheableDataOP( new RNA_ScoringInfo( *this ) );
+		return utility::pointer::make_shared< RNA_ScoringInfo >( *this );
 	}
 
 	Size

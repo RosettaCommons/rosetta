@@ -94,13 +94,13 @@ RemodelLigandHandler::~RemodelLigandHandler()= default;
 /// @brief clone this object
 protocols::moves::MoverOP
 RemodelLigandHandler::clone() const {
-	return RemodelLigandHandler::MoverOP( new RemodelLigandHandler( *this ) );
+	return utility::pointer::make_shared< RemodelLigandHandler >( *this );
 }
 
 /// @brief create this type of object
 protocols::moves::MoverOP
 RemodelLigandHandler::fresh_instance() const {
-	return RemodelLigandHandler::MoverOP( new RemodelLigandHandler() );
+	return utility::pointer::make_shared< RemodelLigandHandler >();
 }
 
 void RemodelLigandHandler::apply( core::pose::Pose & pose ){

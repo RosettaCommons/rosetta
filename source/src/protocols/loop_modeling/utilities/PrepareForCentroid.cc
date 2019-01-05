@@ -29,7 +29,7 @@ namespace loop_modeling {
 namespace utilities {
 
 // XRW TEMP moves::MoverOP PrepareForCentroidCreator::create_mover() const {
-// XRW TEMP  return moves::MoverOP( new PrepareForCentroid );
+// XRW TEMP  return utility::pointer::make_shared< PrepareForCentroid >();
 // XRW TEMP }
 
 // XRW TEMP string PrepareForCentroidCreator::keyname() const {
@@ -70,7 +70,7 @@ std::string PrepareForCentroidCreator::keyname() const {
 
 protocols::moves::MoverOP
 PrepareForCentroidCreator::create_mover() const {
-	return protocols::moves::MoverOP( new PrepareForCentroid );
+	return utility::pointer::make_shared< PrepareForCentroid >();
 }
 
 void PrepareForCentroidCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

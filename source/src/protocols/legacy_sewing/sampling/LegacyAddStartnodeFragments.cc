@@ -58,7 +58,7 @@ static basic::Tracer TR( "protocols.legacy_sewing.LegacyAddStartnodeFragments" )
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP LegacyAddStartnodeFragmentsCreator::create_mover() const
 // XRW TEMP {
-// XRW TEMP  return protocols::moves::MoverOP( new LegacyAddStartnodeFragments );
+// XRW TEMP  return utility::pointer::make_shared< LegacyAddStartnodeFragments >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -75,11 +75,11 @@ static basic::Tracer TR( "protocols.legacy_sewing.LegacyAddStartnodeFragments" )
 
 protocols::moves::MoverOP
 LegacyAddStartnodeFragments::clone() const {
-	return( protocols::moves::MoverOP( new LegacyAddStartnodeFragments( *this ) ) );
+	return( utility::pointer::make_shared< LegacyAddStartnodeFragments >( *this ) );
 }
 protocols::moves::MoverOP
 LegacyAddStartnodeFragments::fresh_instance() const {
-	return protocols::moves::MoverOP( new LegacyAddStartnodeFragments );
+	return utility::pointer::make_shared< LegacyAddStartnodeFragments >();
 }
 
 // XRW TEMP std::string
@@ -125,7 +125,7 @@ LegacyAddStartnodeFragments::apply(
 	core::fragment::FragSetOP fragset = frag_io.read_data( frag9_file );
 	TR << "Stealing native fragments for windows " << start_window << " to " << end_window << std::endl;
 	frag_io.write_data(frag9_file+".nonat", *fragset);
-	core::fragment::steal_frag_set_from_pose( *native_pose, start_window, end_window, *fragset, core::fragment::FragDataOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset->max_frag_length() ) ) );
+	core::fragment::steal_frag_set_from_pose( *native_pose, start_window, end_window, *fragset, utility::pointer::make_shared< FragData >( utility::pointer::make_shared< BBTorsionSRFD >(), fragset->max_frag_length() ) );
 	frag_io.write_data(frag9_file+".nat", *fragset);
 }
 
@@ -172,7 +172,7 @@ std::string LegacyAddStartnodeFragmentsCreator::keyname() const {
 
 protocols::moves::MoverOP
 LegacyAddStartnodeFragmentsCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LegacyAddStartnodeFragments );
+	return utility::pointer::make_shared< LegacyAddStartnodeFragments >();
 }
 
 void LegacyAddStartnodeFragmentsCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

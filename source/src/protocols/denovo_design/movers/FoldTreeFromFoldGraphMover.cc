@@ -73,13 +73,13 @@ FoldTreeFromFoldGraphMover::parse_my_tag(
 protocols::moves::MoverOP
 FoldTreeFromFoldGraphMover::clone() const
 {
-	return protocols::moves::MoverOP( new FoldTreeFromFoldGraphMover( *this ) );
+	return utility::pointer::make_shared< FoldTreeFromFoldGraphMover >( *this );
 }
 
 protocols::moves::MoverOP
 FoldTreeFromFoldGraphMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new FoldTreeFromFoldGraphMover );
+	return utility::pointer::make_shared< FoldTreeFromFoldGraphMover >();
 }
 
 std::string
@@ -240,7 +240,7 @@ FoldTreeFromFoldGraphMover::set_roots( SegmentNames const & roots )
 protocols::moves::MoverOP
 FoldTreeFromFoldGraphMoverCreator::create_mover() const
 {
-	return protocols::moves::MoverOP( new FoldTreeFromFoldGraphMover );
+	return utility::pointer::make_shared< FoldTreeFromFoldGraphMover >();
 }
 
 std::string

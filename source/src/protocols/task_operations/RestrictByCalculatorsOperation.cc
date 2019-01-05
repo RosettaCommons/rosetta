@@ -47,7 +47,7 @@ using namespace utility::tag;
 core::pack::task::operation::TaskOperationOP
 RestrictByCalculatorsOperationCreator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new RestrictByCalculatorsOperation );
+	return utility::pointer::make_shared< RestrictByCalculatorsOperation >();
 }
 
 void RestrictByCalculatorsOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -78,7 +78,7 @@ RestrictByCalculatorsOperation::~RestrictByCalculatorsOperation() = default;
 /// @details be warned if you use clone that you'll not get new calculators
 core::pack::task::operation::TaskOperationOP RestrictByCalculatorsOperation::clone() const
 {
-	return core::pack::task::operation::TaskOperationOP( new RestrictByCalculatorsOperation( *this ) );
+	return utility::pointer::make_shared< RestrictByCalculatorsOperation >( *this );
 }
 
 void

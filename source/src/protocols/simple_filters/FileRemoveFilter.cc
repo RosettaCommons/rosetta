@@ -36,7 +36,7 @@ using namespace core::scoring;
 static basic::Tracer TR( "protocols.simple_filters.FileRemoveFilter" );
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP FileRemoveFilterCreator::create_filter() const { return protocols::filters::FilterOP( new FileRemoveFilter ); }
+// XRW TEMP FileRemoveFilterCreator::create_filter() const { return utility::pointer::make_shared< FileRemoveFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP FileRemoveFilterCreator::keyname() const { return "FileRemove"; }
@@ -130,7 +130,7 @@ std::string FileRemoveFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 FileRemoveFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new FileRemoveFilter );
+	return utility::pointer::make_shared< FileRemoveFilter >();
 }
 
 void FileRemoveFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

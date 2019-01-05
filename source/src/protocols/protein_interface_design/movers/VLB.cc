@@ -74,7 +74,7 @@ static basic::Tracer TR( "protocols.protein_interface_design.movers.VLB" );
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP VLBCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new VLB );
+// XRW TEMP  return utility::pointer::make_shared< VLB >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -86,14 +86,14 @@ static basic::Tracer TR( "protocols.protein_interface_design.movers.VLB" );
 VLB::VLB() :
 	protocols::moves::Mover( VLB::mover_name() )
 {
-	manager_ = protocols::forge::build::BuildManagerOP( new BuildManager );
-	scorefxn_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction );
+	manager_ = utility::pointer::make_shared< BuildManager >();
+	scorefxn_ = utility::pointer::make_shared< core::scoring::ScoreFunction >();
 } // default ctor//design_ = true;
 
 VLB::VLB( BuildManagerCOP manager, ScoreFunctionCOP scorefxn ) :
 	protocols::moves::Mover( VLB::mover_name() )
 {
-	manager_ = protocols::forge::build::BuildManagerOP( new BuildManager( *manager ) );
+	manager_ = utility::pointer::make_shared< BuildManager >( *manager );
 	scorefxn_ = scorefxn->clone();
 }
 
@@ -128,22 +128,22 @@ VLB::apply( pose::Pose & pose ) {
 // XRW TEMP }
 
 protocols::moves::MoverOP VLB::clone() const {
-	return( protocols::moves::MoverOP( new VLB( *this ) ));
+	return( utility::pointer::make_shared< VLB >( *this ));
 }
 
 protocols::moves::MoverOP VLB::fresh_instance() const {
-	return protocols::moves::MoverOP( new VLB );
+	return utility::pointer::make_shared< VLB >();
 }
 
 VLB::VLB( VLB const & init ) :
 	//utility::pointer::ReferenceCount(),
 	protocols::moves::Mover( init ) {
-	manager_ = protocols::forge::build::BuildManagerOP( new BuildManager( *init.manager_ ) );
+	manager_ = utility::pointer::make_shared< BuildManager >( *init.manager_ );
 	scorefxn_ = init.scorefxn_->clone();
 }
 
 VLB & VLB::operator=( VLB const & init ) {
-	manager_ = protocols::forge::build::BuildManagerOP( new BuildManager( *init.manager_ ) );
+	manager_ = utility::pointer::make_shared< BuildManager >( *init.manager_ );
 	scorefxn_ = init.scorefxn_->clone();
 	return *this;
 }
@@ -180,7 +180,7 @@ VLB::parse_my_tag(
 			string const aa( tag->getOption< std::string >( "aa", "" ) );
 
 			Interval const ival( left, right);
-			instruction = BuildInstructionOP( new Bridge( ival, ss, aa ) );
+			instruction = utility::pointer::make_shared< Bridge >( ival, ss, aa );
 		}
 		if ( tag->getName() == "ConnectRight" ) {
 			//instruction to jump-connect one Pose onto the right side of another
@@ -193,7 +193,7 @@ VLB::parse_my_tag(
 			runtime_assert( pose_fname != "" );
 			pose::Pose connect_pose;
 			core::import_pose::pose_from_file( connect_pose, pose_fname , core::import_pose::PDB_file);
-			instruction = BuildInstructionOP( new ConnectRight( left, right, connect_pose ) );
+			instruction = utility::pointer::make_shared< ConnectRight >( left, right, connect_pose );
 		}
 		if ( tag->getName() == "GrowLeft" ) {
 			/// Use this for n-side insertions, but typically not n-terminal
@@ -209,7 +209,7 @@ VLB::parse_my_tag(
 			string const ss( tag->getOption< std::string >( "ss", "" ) );
 			string const aa( tag->getOption< std::string >( "aa", "" ) );
 
-			instruction = BuildInstructionOP( new GrowLeft( pos, ss, aa ) );
+			instruction = utility::pointer::make_shared< GrowLeft >( pos, ss, aa );
 		}
 		if ( tag->getName() == "GrowRight" ) {
 			/// instruction to create a c-side extension
@@ -219,7 +219,7 @@ VLB::parse_my_tag(
 			string const ss( tag->getOption< std::string >( "ss", "" ) );
 			string const aa( tag->getOption< std::string >( "aa", "" ) );
 
-			instruction = BuildInstructionOP( new GrowRight( pos, ss, aa ) );
+			instruction = utility::pointer::make_shared< GrowRight >( pos, ss, aa );
 		}
 
 
@@ -261,7 +261,7 @@ VLB::parse_my_tag(
 			else if ( side == "C" ) connect_side = SegmentInsertConnectionScheme::C;
 			else connect_side = SegmentInsertConnectionScheme::RANDOM_SIDE;
 
-			instruction = BuildInstructionOP( new SegmentInsert( ival, ss, insert_pose, keep_bb_torsions, connect_side ) );
+			instruction = utility::pointer::make_shared< SegmentInsert >( ival, ss, insert_pose, keep_bb_torsions, connect_side );
 		}
 
 
@@ -276,7 +276,7 @@ VLB::parse_my_tag(
 			string const ss( tag->getOption< std::string >( "ss", "" ) );
 			string const aa( tag->getOption< std::string >( "aa", "" ) );
 
-			instruction = BuildInstructionOP( new SegmentRebuild( ival, ss, aa ) );
+			instruction = utility::pointer::make_shared< SegmentRebuild >( ival, ss, aa );
 		}
 
 		if ( tag->getName() == "SegmentSwap" ) {
@@ -379,7 +379,7 @@ std::string VLBCreator::keyname() const {
 
 protocols::moves::MoverOP
 VLBCreator::create_mover() const {
-	return protocols::moves::MoverOP( new VLB );
+	return utility::pointer::make_shared< VLB >();
 }
 
 void VLBCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

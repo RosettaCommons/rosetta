@@ -61,7 +61,7 @@ using cppdb::result;
 
 DatabaseJobOutputter::DatabaseJobOutputter() :
 	protocols::jd2::FileJobOutputter(),
-	protein_silent_report_(protocols::features::ProteinSilentReportOP( new ProteinSilentReport() )),
+	protein_silent_report_(utility::pointer::make_shared< ProteinSilentReport >()),
 	database_name_(),
 	database_pq_schema_()
 {
@@ -256,7 +256,7 @@ DatabaseJobOutputterCreator::keyname() const
 
 protocols::jd2::JobOutputterOP
 DatabaseJobOutputterCreator::create_JobOutputter() const {
-	return protocols::jd2::JobOutputterOP( new DatabaseJobOutputter );
+	return utility::pointer::make_shared< DatabaseJobOutputter >();
 }
 
 } // namespace features

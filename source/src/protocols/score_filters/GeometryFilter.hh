@@ -43,10 +43,10 @@ public:
 	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	core::Size compute( core::pose::Pose const & pose ) const;
 	filters::FilterOP clone() const override {
-		return filters::FilterOP( new GeometryFilter( *this ) );
+		return utility::pointer::make_shared< GeometryFilter >( *this );
 	}
 	filters::FilterOP fresh_instance() const override{
-		return filters::FilterOP( new GeometryFilter() );
+		return utility::pointer::make_shared< GeometryFilter >();
 	}
 
 	~GeometryFilter() override;

@@ -77,7 +77,7 @@ void HelixNCapperMover::setup_svm() {
 		utility_exit_with_message("Error: missing svm model for ncap classification in database!");
 	}
 
-	ncap_model_ = Svm_rosettaOP( new Svm_rosetta( ncap_svm_filename.c_str() ) );
+	ncap_model_ = utility::pointer::make_shared< Svm_rosetta >( ncap_svm_filename.c_str() );
 
 	return;
 }
@@ -251,7 +251,7 @@ core::Real HelixNCapperMover::ncap_prob_from_svm( utility::vector1< core::Real >
 	// Make the svm nodes
 	utility::vector1< Svm_node_rosettaOP > ncap_feature_nodes;
 	for ( Size i = 1 ; i <= features.size() ; ++i ) {
-		Svm_node_rosettaOP new_node = Svm_node_rosettaOP( new Svm_node_rosetta( i, features[i] ) );
+		Svm_node_rosettaOP new_node = utility::pointer::make_shared< Svm_node_rosetta >( i, features[i] );
 		ncap_feature_nodes.push_back( new_node );
 	}
 

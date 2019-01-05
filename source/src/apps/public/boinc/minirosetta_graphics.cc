@@ -1373,11 +1373,11 @@ int main(int argc, char** argv) {
 		boinc_parse_init_data_file();
 		boinc_get_init_data(app_init_data);
 
-		nativeposeOP =  core::pose::PoseOP( new core::pose::Pose() );
-		currentposeOP = core::pose::PoseOP( new core::pose::Pose() );
-		currentposeghostOP = core::pose::PoseOP( new core::pose::Pose() );
-		lowenergyposeOP = core::pose::PoseOP( new core::pose::Pose() );
-		lastacceptedposeOP = core::pose::PoseOP( new core::pose::Pose() );
+		nativeposeOP =  utility::pointer::make_shared< core::pose::Pose >();
+		currentposeOP = utility::pointer::make_shared< core::pose::Pose >();
+		currentposeghostOP = utility::pointer::make_shared< core::pose::Pose >();
+		lowenergyposeOP = utility::pointer::make_shared< core::pose::Pose >();
+		lastacceptedposeOP = utility::pointer::make_shared< core::pose::Pose >();
 
 		boinc_graphics_loop(argc, argv);
 

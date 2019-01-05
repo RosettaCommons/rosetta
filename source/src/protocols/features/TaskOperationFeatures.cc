@@ -117,8 +117,8 @@ TaskOperationFeatures::write_task_operations_table_schema(
 	using namespace basic::database::schema_generator;
 
 	TR << "Writing task_operations schema" << std::endl;
-	Column taskop_id("taskop_id", DbDataTypeOP( new DbInteger() ));
-	Column taskop_name("taskop_name", DbDataTypeOP( new DbText() ));
+	Column taskop_id("taskop_id", utility::pointer::make_shared< DbInteger >());
+	Column taskop_name("taskop_name", utility::pointer::make_shared< DbText >());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(taskop_id);
@@ -138,11 +138,11 @@ TaskOperationFeatures::write_task_operation_residue_effects_table_schema(
 	using namespace basic::database::schema_generator;
 
 	TR << "Writing task_operation_residue_effects schema" << std::endl;
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
-	Column resNum("resNum", DbDataTypeOP( new DbInteger() ));
-	Column taskop_id("taskop_id", DbDataTypeOP( new DbInteger() ));
-	Column pack("pack", DbDataTypeOP( new DbInteger() ));
-	Column design("design", DbDataTypeOP( new DbInteger() ));
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >());
+	Column resNum("resNum", utility::pointer::make_shared< DbInteger >());
+	Column taskop_id("taskop_id", utility::pointer::make_shared< DbInteger >());
+	Column pack("pack", utility::pointer::make_shared< DbInteger >());
+	Column design("design", utility::pointer::make_shared< DbInteger >());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -359,7 +359,7 @@ std::string TaskOperationFeaturesCreator::type_name() const {
 
 protocols::features::FeaturesReporterOP
 TaskOperationFeaturesCreator::create_features_reporter() const {
-	return protocols::features::FeaturesReporterOP( new TaskOperationFeatures );
+	return utility::pointer::make_shared< TaskOperationFeatures >();
 }
 
 void TaskOperationFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

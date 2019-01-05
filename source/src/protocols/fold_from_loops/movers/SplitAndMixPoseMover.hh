@@ -116,8 +116,8 @@ public:
 
 	inline std::string get_name() const { return mover_name(); };
 	inline static std::string mover_name() { return "SplitAndMixPoseMover"; };
-	inline moves::MoverOP clone() const { return moves::MoverOP( new SplitAndMixPoseMover( *this ) ); };
-	inline moves::MoverOP fresh_instance() const{ return moves::MoverOP( new SplitAndMixPoseMover() ); };
+	inline moves::MoverOP clone() const { return utility::pointer::make_shared< SplitAndMixPoseMover >( *this ); };
+	inline moves::MoverOP fresh_instance() const{ return utility::pointer::make_shared< SplitAndMixPoseMover >(); };
 	void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &data,
 		protocols::filters::Filters_map const &,

@@ -107,24 +107,24 @@ RotamerFeatures::write_residue_rotamers_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ), false);
-	Column residue_number("residue_number", DbDataTypeOP( new DbInteger() ), false);
-	Column rotamer_bin("rotamer_bin", DbDataTypeOP( new DbInteger() ), false);
-	Column nchi("nchi", DbDataTypeOP( new DbInteger() ), false);
-	Column semi_rotameric("semi_rotameric", DbDataTypeOP( new DbInteger() ), false);
-	Column chi1_mean("chi1_mean", DbDataTypeOP( new DbReal() ), true);
-	Column chi2_mean("chi2_mean", DbDataTypeOP( new DbReal() ), true);
-	Column chi3_mean("chi3_mean", DbDataTypeOP( new DbReal() ), true);
-	Column chi4_mean("chi4_mean", DbDataTypeOP( new DbReal() ), true);
-	Column chi1_standard_deviation("chi1_standard_deviation", DbDataTypeOP( new DbReal() ), true);
-	Column chi2_standard_deviation("chi2_standard_deviation", DbDataTypeOP( new DbReal() ), true);
-	Column chi3_standard_deviation("chi3_standard_deviation", DbDataTypeOP( new DbReal() ), true);
-	Column chi4_standard_deviation("chi4_standard_deviation", DbDataTypeOP( new DbReal() ), true);
-	Column chi1_deviation("chi1_deviation", DbDataTypeOP( new DbReal() ), true);
-	Column chi2_deviation("chi2_deviation", DbDataTypeOP( new DbReal() ), true);
-	Column chi3_deviation("chi3_deviation", DbDataTypeOP( new DbReal() ), true);
-	Column chi4_deviation("chi4_deviation", DbDataTypeOP( new DbReal() ), true);
-	Column rotamer_bin_probability("rotamer_bin_probability", DbDataTypeOP( new DbReal() ), false);
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >(), false);
+	Column residue_number("residue_number", utility::pointer::make_shared< DbInteger >(), false);
+	Column rotamer_bin("rotamer_bin", utility::pointer::make_shared< DbInteger >(), false);
+	Column nchi("nchi", utility::pointer::make_shared< DbInteger >(), false);
+	Column semi_rotameric("semi_rotameric", utility::pointer::make_shared< DbInteger >(), false);
+	Column chi1_mean("chi1_mean", utility::pointer::make_shared< DbReal >(), true);
+	Column chi2_mean("chi2_mean", utility::pointer::make_shared< DbReal >(), true);
+	Column chi3_mean("chi3_mean", utility::pointer::make_shared< DbReal >(), true);
+	Column chi4_mean("chi4_mean", utility::pointer::make_shared< DbReal >(), true);
+	Column chi1_standard_deviation("chi1_standard_deviation", utility::pointer::make_shared< DbReal >(), true);
+	Column chi2_standard_deviation("chi2_standard_deviation", utility::pointer::make_shared< DbReal >(), true);
+	Column chi3_standard_deviation("chi3_standard_deviation", utility::pointer::make_shared< DbReal >(), true);
+	Column chi4_standard_deviation("chi4_standard_deviation", utility::pointer::make_shared< DbReal >(), true);
+	Column chi1_deviation("chi1_deviation", utility::pointer::make_shared< DbReal >(), true);
+	Column chi2_deviation("chi2_deviation", utility::pointer::make_shared< DbReal >(), true);
+	Column chi3_deviation("chi3_deviation", utility::pointer::make_shared< DbReal >(), true);
+	Column chi4_deviation("chi4_deviation", utility::pointer::make_shared< DbReal >(), true);
+	Column rotamer_bin_probability("rotamer_bin_probability", utility::pointer::make_shared< DbReal >(), false);
 
 	vector1<Column> primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -404,7 +404,7 @@ std::string RotamerFeaturesCreator::type_name() const {
 
 protocols::features::FeaturesReporterOP
 RotamerFeaturesCreator::create_features_reporter() const {
-	return protocols::features::FeaturesReporterOP( new RotamerFeatures );
+	return utility::pointer::make_shared< RotamerFeatures >();
 }
 
 void RotamerFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

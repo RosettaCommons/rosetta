@@ -48,7 +48,7 @@ ABEGO_SS_Pool::ABEGO_SS_Pool(core::Size total_size,std::string pool_name,
 	utility::vector1<core::Size> which_components,utility::vector1<core::Real> weights,core::Real fraction,core::Size n_scores,core::Size buffer_factor = 5) :
 	QuotaPool(pool_name,fraction) {
 
-	ss_abego_types_ = ABEGO_SS_MapOP( new ABEGO_SS_Map(ss_abego_types) );
+	ss_abego_types_ = utility::pointer::make_shared< ABEGO_SS_Map >(ss_abego_types);
 
 	buffer_factor_ = buffer_factor;
 	debug_assert ( which_components.size() == weights.size() );
@@ -63,7 +63,7 @@ ABEGO_SS_Pool::ABEGO_SS_Pool(core::Size total_size,std::string pool_name,
 	}
 
 	CompareByScoreCombination ordering(components_, weights_);
-	storage_ = BoundedQuotaContainerOP( new BoundedQuotaContainer(ordering,this_size_,this_size_*buffer_factor) );
+	storage_ = utility::pointer::make_shared< BoundedQuotaContainer >(ordering,this_size_,this_size_*buffer_factor);
 	FragmentCandidateOP worst_f( new FragmentCandidate(1,1,nullptr,1) );
 	scores::FragmentScoreMapOP worst_s( new scores::FragmentScoreMap(n_scores) );
 	storage_->set_worst(std::pair<FragmentCandidateOP, scores::FragmentScoreMapOP>(worst_f,worst_s));

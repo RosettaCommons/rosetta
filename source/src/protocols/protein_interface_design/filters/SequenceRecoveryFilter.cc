@@ -92,7 +92,7 @@ SequenceRecoveryFilter::reference_pose( core::pose::PoseCOP pose )
 void
 SequenceRecoveryFilter::reference_pose( core::pose::Pose const & pose )
 {
-	reference_pose_ = core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose( pose ) ) );
+	reference_pose_ = utility::pointer::make_shared< core::pose::Pose >( pose );
 }
 
 core::Size
@@ -314,7 +314,7 @@ SequenceRecoveryFilter::parse_my_tag( utility::tag::TagCOP tag,
 
 protocols::filters::FilterOP
 SequenceRecoveryFilter::fresh_instance() const{
-	return protocols::filters::FilterOP( new SequenceRecoveryFilter() );
+	return utility::pointer::make_shared< SequenceRecoveryFilter >();
 }
 
 SequenceRecoveryFilter::~SequenceRecoveryFilter()= default;
@@ -322,11 +322,11 @@ SequenceRecoveryFilter::~SequenceRecoveryFilter()= default;
 
 protocols::filters::FilterOP
 SequenceRecoveryFilter::clone() const{
-	return protocols::filters::FilterOP( new SequenceRecoveryFilter( *this ) );
+	return utility::pointer::make_shared< SequenceRecoveryFilter >( *this );
 }
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP SequenceRecoveryFilterCreator::create_filter() const { return protocols::filters::FilterOP( new SequenceRecoveryFilter ); }
+// XRW TEMP SequenceRecoveryFilterCreator::create_filter() const { return utility::pointer::make_shared< SequenceRecoveryFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP SequenceRecoveryFilterCreator::keyname() const { return "SequenceRecovery"; }
@@ -360,7 +360,7 @@ std::string SequenceRecoveryFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 SequenceRecoveryFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new SequenceRecoveryFilter );
+	return utility::pointer::make_shared< SequenceRecoveryFilter >();
 }
 
 void SequenceRecoveryFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

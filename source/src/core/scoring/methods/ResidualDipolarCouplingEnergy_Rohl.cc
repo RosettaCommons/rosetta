@@ -81,7 +81,7 @@ methods::EnergyMethodOP
 ResidualDipolarCouplingEnergy_RohlCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new ResidualDipolarCouplingEnergy_Rohl );
+	return utility::pointer::make_shared< ResidualDipolarCouplingEnergy_Rohl >();
 }
 
 ScoreTypes
@@ -96,7 +96,7 @@ ResidualDipolarCouplingEnergy_RohlCreator::score_types_for_method() const {
 //@brief
 //////////////////////////////////////////////////////
 ResidualDipolarCouplingEnergy_Rohl::ResidualDipolarCouplingEnergy_Rohl() :
-	parent( EnergyMethodCreatorOP( new ResidualDipolarCouplingEnergy_RohlCreator ) )
+	parent( utility::pointer::make_shared< ResidualDipolarCouplingEnergy_RohlCreator >() )
 {}
 
 
@@ -106,7 +106,7 @@ ResidualDipolarCouplingEnergy_Rohl::ResidualDipolarCouplingEnergy_Rohl() :
 EnergyMethodOP
 ResidualDipolarCouplingEnergy_Rohl::clone() const
 {
-	return EnergyMethodOP( new ResidualDipolarCouplingEnergy_Rohl() );
+	return utility::pointer::make_shared< ResidualDipolarCouplingEnergy_Rohl >();
 }
 
 //////////////////////////////////////////////////////
@@ -134,7 +134,7 @@ ResidualDipolarCouplingEnergy_Rohl::rdc_from_pose(
 {
 	ResidualDipolarCoupling_RohlOP rdc_info( retrieve_RDC_ROHL_from_pose( pose ) );
 	if ( !rdc_info ) {
-		rdc_info = ResidualDipolarCoupling_RohlOP( new ResidualDipolarCoupling_Rohl );
+		rdc_info = utility::pointer::make_shared< ResidualDipolarCoupling_Rohl >();
 		store_RDC_ROHL_in_pose( rdc_info, pose );
 	}
 	return *rdc_info;

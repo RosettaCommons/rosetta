@@ -148,7 +148,7 @@ void read_structures( RmsfMoverOP rmsf_tool ) {
 		io::silent::SilentFileData const& sfd( sfd_inputter->silent_file_data() );
 		rmsf_tool->eval_.push_back_CA_xyz_from_silent_file( sfd, false /*store energies*/ );
 	} else {
-		JobDistributor::get_instance()->go( rmsf_tool, JobOutputterOP( new jd2::NoOutputJobOutputter ) );
+		JobDistributor::get_instance()->go( rmsf_tool, utility::pointer::make_shared< jd2::NoOutputJobOutputter >() );
 	}
 }
 
@@ -249,7 +249,7 @@ void run() {
 		if ( icenter > 1 ) {
 			fit_tool->iref = icenter - 1; //ignores the first iref structures before it takes the pose as reference pose.
 			JobDistributor::get_instance()->restart();
-			JobDistributor::get_instance()->go( fit_tool, JobOutputterOP( new jd2::NoOutputJobOutputter ) );
+			JobDistributor::get_instance()->go( fit_tool, utility::pointer::make_shared< jd2::NoOutputJobOutputter >() );
 		}
 		JobDistributor::get_instance()->restart();
 		JobDistributor::get_instance()->go( fit_tool );

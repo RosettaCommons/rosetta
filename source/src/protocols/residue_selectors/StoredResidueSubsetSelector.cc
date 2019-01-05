@@ -43,7 +43,7 @@ namespace residue_selectors {
 core::select::residue_selector::ResidueSelectorOP
 StoredResidueSubsetSelectorCreator::create_residue_selector() const
 {
-	return core::select::residue_selector::ResidueSelectorOP( new StoredResidueSubsetSelector );
+	return utility::pointer::make_shared< StoredResidueSubsetSelector >();
 }
 
 std::string
@@ -75,7 +75,7 @@ StoredResidueSubsetSelector::~StoredResidueSubsetSelector() = default;
 core::select::residue_selector::ResidueSelectorOP
 StoredResidueSubsetSelector::clone() const
 {
-	return core::select::residue_selector::ResidueSelectorOP( new StoredResidueSubsetSelector(*this) );
+	return utility::pointer::make_shared< StoredResidueSubsetSelector >(*this);
 }
 
 void

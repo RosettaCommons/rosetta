@@ -107,7 +107,7 @@ static Tracer TR("protocols.features.RotamerRecoveryFeatures");
 
 RotamerRecoveryFeatures::RotamerRecoveryFeatures() :
 	scfxn_(get_score_function()),
-	reporter_(protocols::rotamer_recovery::RRReporterSQLiteOP( new RRReporterSQLite() ) ),
+	reporter_(utility::pointer::make_shared< RRReporterSQLite >() ),
 	protocol_(),
 	comparer_(),
 	task_factory_()
@@ -118,7 +118,7 @@ RotamerRecoveryFeatures::RotamerRecoveryFeatures() :
 RotamerRecoveryFeatures::RotamerRecoveryFeatures(
 	ScoreFunctionOP scfxn) :
 	scfxn_(std::move(scfxn)),
-	reporter_(protocols::rotamer_recovery::RRReporterSQLiteOP( new RRReporterSQLite() ) ),
+	reporter_(utility::pointer::make_shared< RRReporterSQLite >() ),
 	protocol_(),
 	comparer_(),
 	task_factory_()
@@ -179,7 +179,7 @@ RotamerRecoveryFeatures::parse_my_tag(
 		MoverOP mover = parse_mover(tag->hasOption("mover") ?
 			tag->getOption<string>("mover") :
 			tag->getOption<string>("mover_name"), movers);
-		protocol_ = protocols::rotamer_recovery::RRProtocolOP( new RRProtocolMover(mover) );
+		protocol_ = utility::pointer::make_shared< RRProtocolMover >(mover);
 	} else if ( tag->hasOption("reference_name") ) {
 		if ( tag->hasOption("mover") ) {
 			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,
@@ -212,7 +212,7 @@ RotamerRecoveryFeatures::parse_my_tag(
 			TR << "loaded reference pose has " << reference_pose->size() << " residues" << std::endl;
 		}
 
-		protocol_ = protocols::rotamer_recovery::RRProtocolOP( new RRProtocolReferenceStructure(reference_pose) );
+		protocol_ = utility::pointer::make_shared< RRProtocolReferenceStructure >(reference_pose);
 	} else {
 		string const & protocol_name(tag->getOption<string>(
 			"protocol", "RRProtocolMinPack"));
@@ -317,7 +317,7 @@ RotamerRecoveryFeatures::report_features(
 	(*scfxn_)(pose);
 
 	if ( task_factory_ == nullptr ) {
-		task_factory_ = core::pack::task::TaskFactoryOP( new TaskFactory() );
+		task_factory_ = utility::pointer::make_shared< TaskFactory >();
 	}
 
 	PackerTaskOP packer_task(task_factory_->create_task_and_apply_taskoperations(pose));
@@ -404,7 +404,7 @@ std::string RotamerRecoveryFeaturesCreator::type_name() const {
 
 protocols::features::FeaturesReporterOP
 RotamerRecoveryFeaturesCreator::create_features_reporter() const {
-	return protocols::features::FeaturesReporterOP( new RotamerRecoveryFeatures );
+	return utility::pointer::make_shared< RotamerRecoveryFeatures >();
 }
 
 void RotamerRecoveryFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

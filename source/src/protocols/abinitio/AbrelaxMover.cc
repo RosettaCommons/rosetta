@@ -107,7 +107,7 @@ void AbrelaxMover::set_defaults() {
 
 	b_return_unrelaxed_fullatom_ = false;
 
-	topology_broker_ = topology_broker::TopologyBrokerOP( new topology_broker::TopologyBroker() );
+	topology_broker_ = utility::pointer::make_shared< topology_broker::TopologyBroker >();
 	topology_broker::add_cmdline_claims( *topology_broker_ );
 
 
@@ -141,7 +141,7 @@ void AbrelaxMover::set_defaults() {
 		SlidingWindowLoopClosureOP closure_method( new SlidingWindowLoopClosure );
 
 		if ( option[ OptionKeys::loops::alternative_closure_protocol ]() ) {
-			closure_method = SlidingWindowLoopClosureOP( new WidthFirstSlidingWindowLoopClosure );
+			closure_method = utility::pointer::make_shared< WidthFirstSlidingWindowLoopClosure >();
 		}
 
 		bIdeal = !option[ OptionKeys::loops::non_ideal_loop_closing ]();

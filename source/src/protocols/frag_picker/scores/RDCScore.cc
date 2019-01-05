@@ -58,7 +58,7 @@ RDCScore::RDCScore(
 	use_lowest,
 	"RDCScore"
 	) {
-	rdc_file_ = core::scoring::ResidualDipolarCouplingOP( new core::scoring::ResidualDipolarCoupling );
+	rdc_file_ = utility::pointer::make_shared< core::scoring::ResidualDipolarCoupling >();
 	rdc_raw_data_ = rdc_file_->get_RDC_data();
 }
 
@@ -154,11 +154,11 @@ FragmentScoringMethodOP MakeRDCScore::make(
 	std::string
 ) {
 	return ( FragmentScoringMethodOP )
-		FragmentScoringMethodOP( new RDCScore(
+		utility::pointer::make_shared< RDCScore >(
 		priority,
 		lowest_acceptable_value,
 		use_lowest
-		) );
+	);
 }
 
 } // scores

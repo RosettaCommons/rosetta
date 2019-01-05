@@ -755,7 +755,7 @@ ConstraintOP AmbiguousNMRDistanceConstraint::remapped_clone( pose::Pose const& s
 		if ( !id2.valid() ) return nullptr;
 		ids2.push_back( id2 );
 	}
-	return ConstraintOP( new AmbiguousNMRDistanceConstraint( ids1, ids2, func_, score_type() ) );
+	return utility::pointer::make_shared< AmbiguousNMRDistanceConstraint >( ids1, ids2, func_, score_type() );
 }
 
 /// @details one line definition "AmbiguousNMRDistance atom1 res1 atom2 res2 function_type function_definition"
@@ -862,10 +862,10 @@ ConstraintOP AmbiguousNMRDistanceConstraint::map_to_CEN( pose::Pose const& fa_po
 	{ //scope for profile
 		basic::ProfileThis doit( basic::NOESY_ASSIGN_MAP2CB_NEW );
 		if ( still_ambiguous ) {
-			return ConstraintOP( new AmbiguousNMRDistanceConstraint( id::NamedAtomID( atom1, resid( 1 ) ), id::NamedAtomID( atom2, resid( 2 ) ), centroid, func_, score_type() ) );
+			return utility::pointer::make_shared< AmbiguousNMRDistanceConstraint >( id::NamedAtomID( atom1, resid( 1 ) ), id::NamedAtomID( atom2, resid( 2 ) ), centroid, func_, score_type() );
 		} else {
-			return ConstraintOP( new AtomPairConstraint( named_atom_id_to_atom_id( NamedAtomID( atom1, resid( 1 ) ), centroid ),
-				named_atom_id_to_atom_id( NamedAtomID( atom2, resid( 2 ) ), centroid ), func_, score_type() ) );
+			return utility::pointer::make_shared< AtomPairConstraint >( named_atom_id_to_atom_id( NamedAtomID( atom1, resid( 1 ) ), centroid ),
+				named_atom_id_to_atom_id( NamedAtomID( atom2, resid( 2 ) ), centroid ), func_, score_type() );
 		}
 	} //scope
 	return nullptr; // cannot be reached
@@ -978,7 +978,7 @@ AmbiguousNMRDistanceConstraint::remap_resid( core::id::SequenceMapping const &sm
 		if ( !atom.valid() ) return nullptr;
 		ids2.push_back( atom );
 	}
-	return ConstraintOP( new AmbiguousNMRDistanceConstraint( ids1, ids2, func_, score_type() ) );
+	return utility::pointer::make_shared< AmbiguousNMRDistanceConstraint >( ids1, ids2, func_, score_type() );
 }
 
 core::Size

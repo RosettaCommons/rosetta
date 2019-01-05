@@ -79,8 +79,8 @@ public:
 		score->score(pose_);
 		score->score(pose_chothia_);
 
-		ab_info_ = AntibodyInfoOP( new AntibodyInfo(pose_, AHO_Scheme, North) );
-		ab_info_chothia_ = AntibodyInfoOP( new AntibodyInfo(pose_chothia_));
+		ab_info_ = utility::pointer::make_shared< AntibodyInfo >(pose_, AHO_Scheme, North);
+		ab_info_chothia_ = utility::pointer::make_shared< AntibodyInfo >(pose_chothia_);
 	}
 
 	void tearDown(){

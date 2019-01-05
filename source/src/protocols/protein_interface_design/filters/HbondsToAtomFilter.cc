@@ -86,7 +86,7 @@ static basic::Tracer TR( "protocols.protein_interface_design.filters.HbondsToAto
 using core::pose::Pose;
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP HbondsToAtomFilterCreator::create_filter() const { return protocols::filters::FilterOP( new HbondsToAtomFilter ); }
+// XRW TEMP HbondsToAtomFilterCreator::create_filter() const { return utility::pointer::make_shared< HbondsToAtomFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP HbondsToAtomFilterCreator::keyname() const { return "HbondsToAtom"; }
@@ -193,7 +193,7 @@ std::string HbondsToAtomFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 HbondsToAtomFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new HbondsToAtomFilter );
+	return utility::pointer::make_shared< HbondsToAtomFilter >();
 }
 
 void HbondsToAtomFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

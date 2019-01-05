@@ -126,7 +126,7 @@ IdealAbegoGenerator::~IdealAbegoGenerator() = default;
 IdealAbegoGeneratorOP
 IdealAbegoGenerator::clone() const
 {
-	return IdealAbegoGeneratorOP( new IdealAbegoGenerator( *this ) );
+	return utility::pointer::make_shared< IdealAbegoGenerator >( *this );
 }
 
 /// @brief Given desired lengths, compute a set of idealized loop motifs via Nobu/Rie/YuRu rules
@@ -199,7 +199,7 @@ IdealAbegoGenerator::generate(
 		for ( unsigned long l : lenset ) {
 			std::string const secstruct( l, 'L' );
 			std::string const abego( l, 'X' );
-			retval.push_back( MotifOP( new Motif( segment_name_, secstruct, abego, false, false ) ) );
+			retval.push_back( utility::pointer::make_shared< Motif >( segment_name_, secstruct, abego, false, false ) );
 		}
 	}
 

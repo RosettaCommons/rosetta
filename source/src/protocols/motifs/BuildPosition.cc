@@ -71,7 +71,7 @@ BuildPosition::BuildPosition( BuildPosition const & src ) :
 BuildPositionOP
 BuildPosition::clone() const
 {
-	return BuildPositionOP( new BuildPosition(*this) );
+	return utility::pointer::make_shared< BuildPosition >(*this);
 }
 
 void

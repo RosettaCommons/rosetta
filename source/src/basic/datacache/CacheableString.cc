@@ -30,7 +30,7 @@ namespace datacache {
 
 CacheableString::CacheableString( std::string const & str ) : CacheableData(), str_(str) {}
 CacheableString::~CacheableString() = default;
-CacheableDataOP CacheableString::clone() const { return CacheableDataOP( new CacheableString(*this) ); }
+CacheableDataOP CacheableString::clone() const { return utility::pointer::make_shared< CacheableString >(*this); }
 std::string const & CacheableString::str() const { return str_; }
 
 CacheableStringOP CacheableString::shared_from_this() { return utility::pointer::static_pointer_cast<CacheableString>( CacheableData::shared_from_this() ); }

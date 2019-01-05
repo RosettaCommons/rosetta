@@ -62,7 +62,7 @@ namespace flxbb {
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP InterlockAromaCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new InterlockAroma );
+// XRW TEMP  return utility::pointer::make_shared< InterlockAroma >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -94,14 +94,14 @@ InterlockAroma::~InterlockAroma()= default;
 InterlockAroma::MoverOP
 InterlockAroma::clone() const
 {
-	return InterlockAroma::MoverOP( new InterlockAroma( *this ) );
+	return utility::pointer::make_shared< InterlockAroma >( *this );
 }
 
 /// @brief create this type of object
 InterlockAroma::MoverOP
 InterlockAroma::fresh_instance() const
 {
-	return InterlockAroma::MoverOP( new InterlockAroma() );
+	return utility::pointer::make_shared< InterlockAroma >();
 }
 
 
@@ -140,7 +140,7 @@ InterlockAroma::apply( Pose & pose )
 	// create packer task
 	TaskFactory taskf;
 	if ( limit_aroma_chi2_ ) {  // default is true
-		taskf.push_back( core::pack::task::operation::TaskOperationOP( new LimitAromaChi2Operation ) );
+		taskf.push_back( utility::pointer::make_shared< LimitAromaChi2Operation >() );
 	}
 	PackerTaskOP ptask( taskf.create_task_and_apply_taskoperations( pose ) );
 
@@ -176,7 +176,7 @@ InterlockAroma::apply( Pose & pose )
 		// create rotamer set
 		RotamerSetOP rotset = RotamerSetFactory::create_rotamer_set( polyala_pose );
 		rotset->set_resid( ii );
-		rotset->build_rotamers( polyala_pose, *scorefxn_, *ptask, utility::graph::GraphCOP( utility::graph::GraphOP( new utility::graph::Graph( polyala_pose.size() ) ) ), false );
+		rotset->build_rotamers( polyala_pose, *scorefxn_, *ptask, utility::pointer::make_shared< utility::graph::Graph >( polyala_pose.size() ), false );
 
 		Size rotnum( 0 );
 		for ( auto const & rotamer : *rotset ) {
@@ -288,7 +288,7 @@ std::string InterlockAromaCreator::keyname() const {
 
 protocols::moves::MoverOP
 InterlockAromaCreator::create_mover() const {
-	return protocols::moves::MoverOP( new InterlockAroma );
+	return utility::pointer::make_shared< InterlockAroma >();
 }
 
 void InterlockAromaCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

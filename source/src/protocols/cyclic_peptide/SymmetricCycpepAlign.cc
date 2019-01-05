@@ -150,14 +150,14 @@ SymmetricCycpepAlign::parse_my_tag(
 moves::MoverOP
 SymmetricCycpepAlign::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new SymmetricCycpepAlign );
+	return utility::pointer::make_shared< SymmetricCycpepAlign >();
 }
 
 /// @brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
 SymmetricCycpepAlign::clone() const
 {
-	return protocols::moves::MoverOP( new SymmetricCycpepAlign( *this ) );
+	return utility::pointer::make_shared< SymmetricCycpepAlign >( *this );
 }
 
 std::string
@@ -505,7 +505,7 @@ SymmetricCycpepAlign::do_trim_to_single_repeat(
 protocols::moves::MoverOP
 SymmetricCycpepAlignCreator::create_mover() const
 {
-	return protocols::moves::MoverOP( new SymmetricCycpepAlign );
+	return utility::pointer::make_shared< SymmetricCycpepAlign >();
 }
 
 std::string

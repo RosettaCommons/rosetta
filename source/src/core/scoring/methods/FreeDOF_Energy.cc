@@ -53,7 +53,7 @@ methods::EnergyMethodOP
 FreeDOF_EnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
-	return methods::EnergyMethodOP( new FreeDOF_Energy( options ) );
+	return utility::pointer::make_shared< FreeDOF_Energy >( options );
 }
 
 ScoreTypes
@@ -70,7 +70,7 @@ FreeDOF_EnergyCreator::score_types_for_method() const {
 
 /// ctor
 FreeDOF_Energy::FreeDOF_Energy( methods::EnergyMethodOptions const & energy_method_options ) :
-	parent( methods::EnergyMethodCreatorOP( new FreeDOF_EnergyCreator ) ),
+	parent( utility::pointer::make_shared< FreeDOF_EnergyCreator >() ),
 	energy_method_options_( energy_method_options ),
 	options_( energy_method_options.free_dof_options() ),
 	free_res_weights_( energy_method_options_.method_weights( free_res ) )
@@ -83,7 +83,7 @@ FreeDOF_Energy::~FreeDOF_Energy() = default;
 core::scoring::methods::EnergyMethodOP
 FreeDOF_Energy::clone() const
 {
-	return core::scoring::methods::EnergyMethodOP( new FreeDOF_Energy( energy_method_options_ ) );
+	return utility::pointer::make_shared< FreeDOF_Energy >( energy_method_options_ );
 }
 
 /////////////////////////////////////////////////////////////////////////////

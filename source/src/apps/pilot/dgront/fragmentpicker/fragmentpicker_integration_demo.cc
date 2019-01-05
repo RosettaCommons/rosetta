@@ -118,9 +118,9 @@ int main(int argc, char * argv[]) {
 		my_picker->set_candidates_collector(9, collector9);
 
 		if ( option[frags::cluster_by_rms].user() ) {
-			my_picker->selector_ = FragmentSelectingRuleOP( new DiversifyCrmsdByClustering(my_picker->n_frags_) );
+			my_picker->selector_ = utility::pointer::make_shared< DiversifyCrmsdByClustering >(my_picker->n_frags_);
 		} else {
-			my_picker->selector_ = FragmentSelectingRuleOP( new BestTotalScoreSelector(my_picker->n_frags_, scoring) );
+			my_picker->selector_ = utility::pointer::make_shared< BestTotalScoreSelector >(my_picker->n_frags_, scoring);
 		}
 
 		my_picker->prefix_ = "fragments";

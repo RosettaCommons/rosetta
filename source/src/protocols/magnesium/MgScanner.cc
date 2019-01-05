@@ -251,11 +251,11 @@ MgScanner::output_mg_to_silent_file( std::string const & silent_file ) {
 		BinarySilentStructOP s;
 		if ( hydrate_ ) {
 			// output the full pose -- will have Mg and HOH.
-			s = BinarySilentStructOP( new BinarySilentStruct( opts, *mg_poses_[ n ], out_file_tag ) );
+			s = utility::pointer::make_shared< BinarySilentStruct >( opts, *mg_poses_[ n ], out_file_tag );
 		} else {
 			// since no HOH, use a more compact format with just Mg(2+) outputted.
 			single_mg_pose->set_xyz( AtomID( 1, 1 ), mg_position );
-			s = BinarySilentStructOP( new BinarySilentStruct( opts, *single_mg_pose, out_file_tag ) );
+			s = utility::pointer::make_shared< BinarySilentStruct >( opts, *single_mg_pose, out_file_tag );
 			s->energies_from_pose( *mg_poses_[ n ] );
 		}
 		s->add_energy( "rms",      distance_to_closest_magnesium( mg_position, *get_native_pose() ) );

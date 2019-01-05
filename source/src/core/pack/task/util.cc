@@ -87,11 +87,11 @@ get_resfile_commands( std::string const & motif ){
 			commands = parse_res_agnostic_commands(final_cmd, command_map);
 			TR.Debug << "Parsing Resfile Command" << std::endl;
 		} else if ( raw_cmd == "-" ) {
-			ResfileCommandOP cmd = ResfileCommandOP( new NATAA );
+			ResfileCommandOP cmd = utility::pointer::make_shared< NATAA >();
 			commands.push_back(cmd);
 			TR.Debug << "Parsing - Command" << std::endl;
 		} else if ( raw_cmd == "X" ) {
-			ResfileCommandOP cmd = ResfileCommandOP( new ALLAA );
+			ResfileCommandOP cmd = utility::pointer::make_shared< ALLAA >();
 			commands.push_back(cmd);
 			TR.Debug << "Parsing X Command" << std::endl;
 		} else if ( startswith(raw_cmd, "^") ) {

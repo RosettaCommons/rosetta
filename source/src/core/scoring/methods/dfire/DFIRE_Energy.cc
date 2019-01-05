@@ -46,7 +46,7 @@ methods::EnergyMethodOP
 DFIRE_EnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new DFIRE_Energy );
+	return utility::pointer::make_shared< DFIRE_Energy >();
 }
 
 ScoreTypes
@@ -58,7 +58,7 @@ DFIRE_EnergyCreator::score_types_for_method() const {
 
 /// ctor
 DFIRE_Energy::DFIRE_Energy() :
-	parent( methods::EnergyMethodCreatorOP( new DFIRE_EnergyCreator ) )
+	parent( utility::pointer::make_shared< DFIRE_EnergyCreator >() )
 {
 	potential_is_loaded_ = core::scoring::methods::dfire::get_DFIRE_potential().is_loaded();
 }
@@ -106,7 +106,7 @@ DFIRE_Energy::setup_for_scoring(
 EnergyMethodOP
 DFIRE_Energy::clone() const
 {
-	return EnergyMethodOP( new DFIRE_Energy );
+	return utility::pointer::make_shared< DFIRE_Energy >();
 }
 
 /////////////////////////////////////////////////////////////////////////////

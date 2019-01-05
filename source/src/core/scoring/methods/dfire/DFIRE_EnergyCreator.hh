@@ -28,7 +28,7 @@ namespace dfire {
 class DFIRE_EnergyCreator : public EnergyMethodCreator
 {
 public:
-	/// @brief Instantiate a methods::EnergyMethodCreatorOP( new DFIRE_EnergyCreator )Energy
+	/// @brief Instantiate a utility::pointer::make_shared< DFIRE_EnergyCreator >()Energy
 	virtual
 	methods::EnergyMethodOP
 	create_energy_method(

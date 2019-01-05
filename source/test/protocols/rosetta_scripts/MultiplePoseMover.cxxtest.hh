@@ -56,7 +56,7 @@ public:
 	DummyMultipleOutputMover() : npose_(0), pos_(1), max_poses_(100) {};
 
 	protocols::moves::MoverOP clone() const {
-		return protocols::moves::MoverOP( new DummyMultipleOutputMover(*this) );
+		return utility::pointer::make_shared< DummyMultipleOutputMover >(*this);
 	}
 
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) {
@@ -108,7 +108,7 @@ private:
 
 class DummyMultipleOutputMoverCreator : public protocols::moves::MoverCreator {
 public:
-	protocols::moves::MoverOP create_mover() const override { return protocols::moves::MoverOP( new DummyMultipleOutputMover ); }
+	protocols::moves::MoverOP create_mover() const override { return utility::pointer::make_shared< DummyMultipleOutputMover >(); }
 	std::string keyname() const override { return mover_name(); }
 	void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const override {}
 	static std::string mover_name() { return "DummyMultipleOutputMover"; }
@@ -118,7 +118,7 @@ class DummyFilter : public protocols::filters::TrueFilter { };
 
 class DummyFilterCreator : public protocols::filters::FilterCreator {
 public:
-	protocols::filters::FilterOP create_filter() const override { return protocols::filters::FilterOP( new DummyFilter ); }
+	protocols::filters::FilterOP create_filter() const override { return utility::pointer::make_shared< DummyFilter >(); }
 	void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const override {}
 	std::string keyname() const override { return "DummyFilter"; }
 };
@@ -132,14 +132,14 @@ public:
 		TR << "DummyHalfFilter at " << i_ << ", returing: " << r << std::endl;
 		return r;
 	}
-	protocols::filters::FilterOP clone() const { return protocols::filters::FilterOP( new DummyHalfFilter ); }
-	protocols::filters::FilterOP fresh_instance() const { return protocols::filters::FilterOP( new DummyHalfFilter ); }
-	protocols::filters::FilterOP create_filter() const { return protocols::filters::FilterOP( new DummyHalfFilter ); }
+	protocols::filters::FilterOP clone() const { return utility::pointer::make_shared< DummyHalfFilter >(); }
+	protocols::filters::FilterOP fresh_instance() const { return utility::pointer::make_shared< DummyHalfFilter >(); }
+	protocols::filters::FilterOP create_filter() const { return utility::pointer::make_shared< DummyHalfFilter >(); }
 };
 
 class DummyHalfFilterCreator : public protocols::filters::FilterCreator {
 public:
-	protocols::filters::FilterOP create_filter() const override { return protocols::filters::FilterOP( new DummyHalfFilter ); }
+	protocols::filters::FilterOP create_filter() const override { return utility::pointer::make_shared< DummyHalfFilter >(); }
 	void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const override {}
 	std::string keyname() const override { return "DummyHalfFilter"; }
 };
@@ -164,9 +164,9 @@ public:
 		static bool first_run = true;
 		if ( first_run ) {
 			using protocols::filters::FilterCreatorOP;
-			protocols::moves::MoverFactory::get_instance()->factory_register( MoverCreatorOP( new DummyMultipleOutputMoverCreator ) );
-			protocols::filters::FilterFactory::get_instance()->factory_register( FilterCreatorOP( new DummyFilterCreator ) );
-			protocols::filters::FilterFactory::get_instance()->factory_register( FilterCreatorOP( new DummyHalfFilterCreator ) );
+			protocols::moves::MoverFactory::get_instance()->factory_register( utility::pointer::make_shared< DummyMultipleOutputMoverCreator >() );
+			protocols::filters::FilterFactory::get_instance()->factory_register( utility::pointer::make_shared< DummyFilterCreator >() );
+			protocols::filters::FilterFactory::get_instance()->factory_register( utility::pointer::make_shared< DummyHalfFilterCreator >() );
 			first_run = false;
 		}
 	}

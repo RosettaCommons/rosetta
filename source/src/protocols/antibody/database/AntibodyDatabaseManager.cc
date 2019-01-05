@@ -143,13 +143,13 @@ AntibodyDatabaseManager::AntibodyDatabaseManager( AntibodyDatabaseManager const 
 
 {
 	using namespace utility::sql_database;
-	if ( src.db_session_ ) db_session_ = sessionOP( new session( *src.db_session_));
-	if ( src.ab_info_ ) ab_info_ = AntibodyInfoOP( new AntibodyInfo( *src.ab_info_ ));
+	if ( src.db_session_ ) db_session_ = utility::pointer::make_shared< session >( *src.db_session_);
+	if ( src.ab_info_ ) ab_info_ = utility::pointer::make_shared< AntibodyInfo >( *src.ab_info_ );
 }
 
 AntibodyDatabaseManagerOP
 AntibodyDatabaseManager::clone() const {
-	return AntibodyDatabaseManagerOP( new AntibodyDatabaseManager( *this ) );
+	return utility::pointer::make_shared< AntibodyDatabaseManager >( *this );
 }
 
 void

@@ -77,7 +77,7 @@ core::scoring::methods::EnergyMethodOP
 PseudocontactShiftEnergyCreator_Ts3::create_energy_method(
 	core::scoring::methods::EnergyMethodOptions const &
 ) const {
-	return core::scoring::methods::EnergyMethodOP( new PCS_Energy_Ts3 );
+	return utility::pointer::make_shared< PCS_Energy_Ts3 >();
 }
 
 core::scoring::ScoreTypes
@@ -107,13 +107,13 @@ PCS_Energy_Ts3::~PCS_Energy_Ts3()= default;
 
 /// c-tor
 PCS_Energy_Ts3::PCS_Energy_Ts3() :
-	parent( core::scoring::methods::EnergyMethodCreatorOP( new PseudocontactShiftEnergyCreator_Ts3 ) )
+	parent( utility::pointer::make_shared< PseudocontactShiftEnergyCreator_Ts3 >() )
 {}
 
 /// clone
 core::scoring::methods::EnergyMethodOP
 PCS_Energy_Ts3::clone() const{
-	return core::scoring::methods::EnergyMethodOP( new PCS_Energy_Ts3 );
+	return utility::pointer::make_shared< PCS_Energy_Ts3 >();
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -165,9 +165,9 @@ PCS_Energy_Ts3::PCS_data_from_pose(core::pose::Pose & pose) const{
 	if ( has_exclude_residues ) {
 		utility::vector1< bool > exclude_residues;
 		exclude_residues = PCS_Energy_parameters_manager_Ts3::get_instance()->get_vector_exclude_residues();
-		pcs_d = PCS_data_Ts3OP( new PCS_data_Ts3(pcs_d_i, exclude_residues) );
+		pcs_d = utility::pointer::make_shared< PCS_data_Ts3 >(pcs_d_i, exclude_residues);
 	} else {
-		pcs_d = PCS_data_Ts3OP( new PCS_data_Ts3(pcs_d_i) );
+		pcs_d = utility::pointer::make_shared< PCS_data_Ts3 >(pcs_d_i);
 	}
 
 	if ( have_exclusions_changed ) {

@@ -65,17 +65,17 @@ public:
 	// Shared initialization goes here.
 	void setUp() {
 		core_init();
-		scorefxn = core::scoring::ScoreFunctionOP( new scoring::ScoreFunction );
+		scorefxn = utility::pointer::make_shared< scoring::ScoreFunction >();
 		scorefxn->reset();
 		scorefxn->set_weight( scoring::atom_pair_constraint, 1.0);
 		scorefxn->set_weight( scoring::angle_constraint, 1.0);
 		scorefxn->set_weight( scoring::dihedral_constraint, 1.0);
 
-		sheet_csts = protocols::fldsgn::SheetConstraintGeneratorOP( new protocols::fldsgn::SheetConstraintGenerator() );
+		sheet_csts = utility::pointer::make_shared< protocols::fldsgn::SheetConstraintGenerator >();
 		sheet_csts->set_id( "sheet_csts_unit1" );
 		sheet_csts->initialize_from_blueprint( "protocols/forge/remodel/test.blueprint" );
 
-		sheet_csts_badpair = protocols::fldsgn::SheetConstraintGeneratorOP( new protocols::fldsgn::SheetConstraintGenerator() );
+		sheet_csts_badpair = utility::pointer::make_shared< protocols::fldsgn::SheetConstraintGenerator >();
 		sheet_csts_badpair->initialize_from_blueprint( "protocols/forge/remodel/bad_pair.blueprint" );
 		sheet_csts_badpair->set_id( "sheet_csts_unit2" );
 
@@ -301,7 +301,7 @@ public:
 		core::id::AtomID atom1_2( testpose.residue_type( 18 ).atom_index( "CB" ), 18 );
 		core::id::AtomID atom2_2( testpose.residue_type( 93 ).atom_index( "CB" ), 93 );
 		core::scoring::constraints::ConstraintOPs csts2;
-		cst = core::scoring::constraints::AtomPairConstraintOP( new core::scoring::constraints::AtomPairConstraint( atom1_2, atom2_2, func ) );
+		cst = utility::pointer::make_shared< core::scoring::constraints::AtomPairConstraint >( atom1_2, atom2_2, func );
 		TS_ASSERT( cst );
 		csts2.push_back( cst );
 		testpose.add_constraints( csts2 );

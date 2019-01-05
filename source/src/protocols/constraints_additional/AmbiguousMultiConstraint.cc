@@ -149,7 +149,7 @@ AmbiguousMultiConstraint::remap_resid( core::id::SequenceMapping const &seqmap )
 	}
 
 	if ( new_csts.size() > 0 ) {
-		return ConstraintOP( new AmbiguousMultiConstraint( num_active_constraints_, new_csts ) );
+		return utility::pointer::make_shared< AmbiguousMultiConstraint >( num_active_constraints_, new_csts );
 	} else return nullptr;
 
 }

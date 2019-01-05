@@ -40,7 +40,7 @@ methods::EnergyMethodOP
 CenRotEnvEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new CenRotEnvEnergy );
+	return utility::pointer::make_shared< CenRotEnvEnergy >();
 }
 
 ScoreTypes
@@ -54,14 +54,14 @@ CenRotEnvEnergyCreator::score_types_for_method() const {
 
 /// c-tor
 CenRotEnvEnergy::CenRotEnvEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new CenRotEnvEnergyCreator ) ),
+	parent( utility::pointer::make_shared< CenRotEnvEnergyCreator >() ),
 	potential_( ScoringManager::get_instance()->get_CenRotEnvPairPotential() ) {}
 
 
 /// clone
 EnergyMethodOP
 CenRotEnvEnergy::clone() const {
-	return EnergyMethodOP( new CenRotEnvEnergy );
+	return utility::pointer::make_shared< CenRotEnvEnergy >();
 }
 
 

@@ -57,7 +57,7 @@ GridBaseOP VdwGridCreator::create_grid(utility::tag::TagCOP tag) const
 
 GridBaseOP VdwGridCreator::create_grid() const
 {
-	return GridBaseOP( new VdwGrid() );
+	return utility::pointer::make_shared< VdwGrid >();
 }
 
 void VdwGridCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -78,7 +78,7 @@ VdwGrid::VdwGrid() : SingleGrid("VdwGrid"), cutoff_(10.0)
 }
 
 GridBaseOP VdwGrid::clone() const {
-	return GridBaseOP( new VdwGrid( *this ) );
+	return utility::pointer::make_shared< VdwGrid >( *this );
 }
 
 void

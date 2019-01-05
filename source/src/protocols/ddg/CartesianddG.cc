@@ -749,7 +749,7 @@ extracted_score(
 		local_sfxn->set_weight(st,0);
 	}
 
-	core::scoring::ScoreFunctionOP binding_sfxn = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction );
+	core::scoring::ScoreFunctionOP binding_sfxn = utility::pointer::make_shared< core::scoring::ScoreFunction >();
 	for ( core::scoring::ScoreType st : binding_scoretypes ) {
 		binding_sfxn->set_weight(st,score_fxn->get_weight(st));
 	}

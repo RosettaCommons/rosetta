@@ -28,7 +28,7 @@ namespace features {
 // XRW TEMP PoseCommentsFeaturesCreator::PoseCommentsFeaturesCreator() {}
 // XRW TEMP PoseCommentsFeaturesCreator::~PoseCommentsFeaturesCreator() = default;
 // XRW TEMP FeaturesReporterOP PoseCommentsFeaturesCreator::create_features_reporter() const {
-// XRW TEMP  return FeaturesReporterOP( new PoseCommentsFeatures );
+// XRW TEMP  return utility::pointer::make_shared< PoseCommentsFeatures >();
 // XRW TEMP }
 
 // XRW TEMP std::string PoseCommentsFeaturesCreator::type_name() const {

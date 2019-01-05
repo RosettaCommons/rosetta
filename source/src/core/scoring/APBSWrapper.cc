@@ -47,11 +47,11 @@ APBSWrapper::APBSWrapper(core::pose::Pose const & pose,
 	bool calcenergy
 ) {
 	int natoms = count_atoms(pose);
-	pqr = PQROP( new PQR(pose, natoms, charged_residues) );
+	pqr = utility::pointer::make_shared< PQR >(pose, natoms, charged_residues);
 	TR << "PQR data is prepared." << std::endl;
-	config = APBSConfigOP( new APBSConfig(pose, natoms, dbg, calcenergy) );
+	config = utility::pointer::make_shared< APBSConfig >(pose, natoms, dbg, calcenergy);
 	TR << "APBS config is prepared." << std::endl;
-	result = APBSResultOP( new APBSResult(config->nsims, config->natoms, config->dime,
+	result = utility::pointer::make_shared< APBSResult >(config->nsims, config->natoms, config->dime,
 		config->i_param.calcforce,
 		config->i_param.calcenergy,
 		config->i_param.write_pot,
@@ -59,7 +59,7 @@ APBSWrapper::APBSWrapper(core::pose::Pose const & pose,
 		config->i_param.write_smol,
 		config->i_param.write_kappa,
 		config->i_param.write_diel,
-		config->i_param.write_atompot) );
+		config->i_param.write_atompot);
 	TR << "APBS result data structure is prepared." << std::endl;
 }
 

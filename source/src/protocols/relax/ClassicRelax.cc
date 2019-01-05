@@ -97,7 +97,7 @@ ClassicRelaxCreator::keyname() const
 
 protocols::moves::MoverOP
 ClassicRelaxCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ClassicRelax );
+	return utility::pointer::make_shared< ClassicRelax >();
 }
 
 std::string
@@ -150,7 +150,7 @@ ClassicRelax::ClassicRelax( ClassicRelax const & /*other*/ ) = default;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 protocols::moves::MoverOP ClassicRelax::clone() const {
-	return protocols::moves::MoverOP( new ClassicRelax(*this) );
+	return utility::pointer::make_shared< ClassicRelax >(*this);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -262,7 +262,7 @@ void ClassicRelax::set_tolerance( core::Real new_tolerance ){
 // sets up the default minimizer object with all the options
 void ClassicRelax::set_default_minimizer() {
 	// options for minimizer
-	min_mover_ = protocols::minimization_packing::MinMoverOP( new protocols::minimization_packing::MinMover( get_movemap(), get_scorefxn(), min_type, min_tolerance, nb_list ) );
+	min_mover_ = utility::pointer::make_shared< protocols::minimization_packing::MinMover >( get_movemap(), get_scorefxn(), min_type, min_tolerance, nb_list );
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @details At stage 1 we're only doing small and shear moves
@@ -315,7 +315,7 @@ void ClassicRelax::set_default_moveset_phase2()
 		std::string frag3_file  = basic::options::option[ basic::options::OptionKeys::in::file::frag3 ]();
 		core::fragment::ConstantLengthFragSetOP fragset3mer( new core::fragment::ConstantLengthFragSet( 3 ) );
 		fragset3mer->read_fragment_file( frag3_file );
-		protocols::simple_moves::WobbleMoverOP wobble_mover( new protocols::simple_moves::WobbleMover( fragset3mer, get_movemap(), protocols::simple_moves::FragmentCostOP( new protocols::simple_moves::GunnCost ) ) );
+		protocols::simple_moves::WobbleMoverOP wobble_mover( new protocols::simple_moves::WobbleMover( fragset3mer, get_movemap(), utility::pointer::make_shared< protocols::simple_moves::GunnCost >() ) );
 
 		moveset_phase2_temp ->add_mover( wobble_mover );
 		moveset_phase2_temp ->add_mover( wobble_mover );
@@ -353,7 +353,7 @@ void ClassicRelax::set_default_moveset_phase3()
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void ClassicRelax::check_default_mc( core::pose::Pose &pose) {
 	if ( use_default_mc_ ) {
-		mc_ = moves::MonteCarloOP( new moves::MonteCarlo( pose , *get_scorefxn() , 0.8 ) );
+		mc_ = utility::pointer::make_shared< moves::MonteCarlo >( pose , *get_scorefxn() , 0.8 );
 	}
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -386,15 +386,15 @@ void ClassicRelax::check_default_full_repacker( core::pose::Pose & pose, core::k
 		if ( get_task_factory() ) {
 			local_tf = get_task_factory()->clone();
 		} else {
-			local_tf->push_back(TaskOperationCOP( new InitializeFromCommandline() ));
+			local_tf->push_back(utility::pointer::make_shared< InitializeFromCommandline >());
 			if ( option[ OptionKeys::relax::respect_resfile]() && option[ OptionKeys::packing::resfile].user() ) {
-				local_tf->push_back(TaskOperationCOP( new ReadResfile() ));
+				local_tf->push_back(utility::pointer::make_shared< ReadResfile >());
 				TR << "Using Resfile for packing step. " <<std::endl;
 			} else {
 				//Keep the same behavior as before if no resfile given for design.
 				//Though, as mentioned in the doc, movemap now overrides chi_move as it should.
 
-				local_tf->push_back(TaskOperationCOP( new RestrictToRepacking() ));
+				local_tf->push_back(utility::pointer::make_shared< RestrictToRepacking >());
 				PreventRepackingOP turn_off_packing( new PreventRepacking() );
 				for ( Size pos = 1; pos <= pose.size(); ++pos ) {
 					if ( ! movemap.get_chi(pos) ) {
@@ -405,13 +405,13 @@ void ClassicRelax::check_default_full_repacker( core::pose::Pose & pose, core::k
 			}
 		}
 		//Include current rotamer by default - as before.
-		local_tf->push_back(TaskOperationCOP( new IncludeCurrent() ));
+		local_tf->push_back(utility::pointer::make_shared< IncludeCurrent >());
 
 		if ( limit_aroma_chi2() ) {
-			local_tf->push_back(TaskOperationCOP( new protocols::task_operations::LimitAromaChi2Operation() ));
+			local_tf->push_back(utility::pointer::make_shared< protocols::task_operations::LimitAromaChi2Operation >());
 		}
 
-		pack_full_repack_ = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover( get_scorefxn()) );
+		pack_full_repack_ = utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >( get_scorefxn());
 		pack_full_repack_->task_factory(local_tf);
 
 		(*get_scorefxn())( pose );
@@ -441,15 +441,15 @@ void ClassicRelax::check_default_rottrial( core::pose::Pose & pose, core::kinema
 		if ( get_task_factory() ) {
 			local_tf = get_task_factory()->clone();
 		} else {
-			local_tf->push_back(TaskOperationCOP( new InitializeFromCommandline() ));
+			local_tf->push_back(utility::pointer::make_shared< InitializeFromCommandline >());
 			if ( option[ OptionKeys::relax::respect_resfile]() && option[ OptionKeys::packing::resfile].user() ) {
-				local_tf->push_back(TaskOperationCOP( new ReadResfile() ));
+				local_tf->push_back(utility::pointer::make_shared< ReadResfile >());
 				TR << "Using Resfile for packing step. " <<std::endl;
 			} else {
 				//Keep the same behavior as before if no resfile given for design.
 				//Though, as mentioned in the doc, movemap now overrides chi_move as it should.
 
-				local_tf->push_back(TaskOperationCOP( new RestrictToRepacking() ));
+				local_tf->push_back(utility::pointer::make_shared< RestrictToRepacking >());
 				PreventRepackingOP turn_off_packing( new PreventRepacking() );
 				for ( Size pos = 1; pos <= pose.size(); ++pos ) {
 					if ( ! movemap.get_chi(pos) ) {
@@ -460,14 +460,14 @@ void ClassicRelax::check_default_rottrial( core::pose::Pose & pose, core::kinema
 			}
 		}
 		//Include current rotamer by default - as before.
-		local_tf->push_back(TaskOperationCOP( new IncludeCurrent() ));
+		local_tf->push_back(utility::pointer::make_shared< IncludeCurrent >());
 
 		if ( limit_aroma_chi2() ) {
-			local_tf->push_back(TaskOperationCOP( new protocols::task_operations::LimitAromaChi2Operation() ));
+			local_tf->push_back(utility::pointer::make_shared< protocols::task_operations::LimitAromaChi2Operation >());
 		}
 		(*get_scorefxn())( pose );
 		/// Now handled automatically.  scorefxn_->accumulate_residue_total_energies( pose ); // fix this
-		pack_rottrial_ = protocols::minimization_packing::RotamerTrialsMoverOP( new protocols::minimization_packing::EnergyCutRotamerTrialsMover( get_scorefxn(), local_tf, mc_, energycut ) );
+		pack_rottrial_ = utility::pointer::make_shared< protocols::minimization_packing::EnergyCutRotamerTrialsMover >( get_scorefxn(), local_tf, mc_, energycut );
 	}
 
 }
@@ -555,16 +555,16 @@ void ClassicRelax::apply( core::pose::Pose & pose ){
 			final_weights[ angle_constraint ] = 0;
 			final_weights[ dihedral_constraint ] = 0;
 
-			full_cycle_phase1_ = moves::RampingMoverOP( new moves::RampingMover(
+			full_cycle_phase1_ = utility::pointer::make_shared< moves::RampingMover >(
 				phase1_trial, get_scorefxn(),
 				starting_weights, final_weights,
-				lj_ramp_cycles, lj_ramp_inner_cycles, mc_ ) );
-			full_cycle_phase1_->set_func_for_weight( coordinate_constraint, RampingFuncOP( new moves::FastLinearFunc( 0, 0.6 ) ) );
-			full_cycle_phase1_->set_func_for_weight( atom_pair_constraint, RampingFuncOP( new moves::FastLinearFunc( 0, 0.6 ) ) );
+				lj_ramp_cycles, lj_ramp_inner_cycles, mc_ );
+			full_cycle_phase1_->set_func_for_weight( coordinate_constraint, utility::pointer::make_shared< moves::FastLinearFunc >( 0, 0.6 ) );
+			full_cycle_phase1_->set_func_for_weight( atom_pair_constraint, utility::pointer::make_shared< moves::FastLinearFunc >( 0, 0.6 ) );
 		} else {
-			full_cycle_phase1_ = moves::RampingMoverOP( new moves::RampingMover(
+			full_cycle_phase1_ = utility::pointer::make_shared< moves::RampingMover >(
 				phase1_trial, get_scorefxn(), scoring::fa_rep,
-				lj_ramp_cycles, lj_ramp_inner_cycles, mc_ ) );
+				lj_ramp_cycles, lj_ramp_inner_cycles, mc_ );
 			full_cycle_phase1_->start_weight( start_rep_weight * get_scorefxn()->weights()[ scoring::fa_rep ] );
 			full_cycle_phase1_->end_weight( end_rep_weight * get_scorefxn()->weights()[ scoring::fa_rep ]  );
 		}
@@ -649,7 +649,7 @@ void ClassicRelax::apply( core::pose::Pose & pose ){
 			moves::TrialMoverOP phase2_trial( new moves::TrialMover( phase2_min, mc_ ) );
 
 			moves::RepeatMoverOP full_cycle_phase2_;
-			full_cycle_phase2_ = moves::RepeatMoverOP( new moves::RepeatMover( phase2_trial, int( core::Real(stage2_cycles) * basic::options::option[ basic::options::OptionKeys::relax::cycle_ratio] / 4.0 ) ) );
+			full_cycle_phase2_ = utility::pointer::make_shared< moves::RepeatMover >( phase2_trial, int( core::Real(stage2_cycles) * basic::options::option[ basic::options::OptionKeys::relax::cycle_ratio] / 4.0 ) );
 
 			full_cycle_phase2_->apply( pose );
 
@@ -716,7 +716,7 @@ void ClassicRelax::apply( core::pose::Pose & pose ){
 			moves::TrialMoverOP phase3_trial( new moves::TrialMover( phase3_min, mc_ ) );
 
 			moves::RepeatMoverOP full_cycle_phase3_;
-			full_cycle_phase3_ = moves::RepeatMoverOP( new moves::RepeatMover( phase3_trial, int( core::Real(stage3_cycles) * basic::options::option[ basic::options::OptionKeys::relax::cycle_ratio])  ) );
+			full_cycle_phase3_ = utility::pointer::make_shared< moves::RepeatMover >( phase3_trial, int( core::Real(stage3_cycles) * basic::options::option[ basic::options::OptionKeys::relax::cycle_ratio])  );
 
 			full_cycle_phase3_->apply( pose );
 
@@ -741,7 +741,7 @@ void ClassicRelax::apply( core::pose::Pose & pose ){
 	// cache the score map to the pose
 	// why does this obliterate any scores that were already there?
 	using namespace basic::datacache;
-	pose.data().set(CacheableDataType::SCORE_MAP, DataCache_CacheableData::DataOP( new basic::datacache::DiagnosticData(score_map) ));
+	pose.data().set(CacheableDataType::SCORE_MAP, utility::pointer::make_shared< basic::datacache::DiagnosticData >(score_map));
 
 
 	(*get_scorefxn())(pose);

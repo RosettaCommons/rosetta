@@ -47,7 +47,7 @@ using core::Size;
 static basic::Tracer tr( "core.scoring.methods.LinearBranch", basic::t_info );
 
 LinearBranchEnergy::LinearBranchEnergy()
-: parent(methods::EnergyMethodCreatorOP( new LinearBranchEnergyCreator )) {
+: parent(utility::pointer::make_shared< LinearBranchEnergyCreator >()) {
 	initialize( std::numeric_limits<core::Size>::max() );
 }
 

@@ -38,7 +38,7 @@ CacheablePoseRawPtr::CacheablePoseRawPtr( core::pose::PoseOP pose )
 CacheablePoseRawPtr::~CacheablePoseRawPtr()= default;
 
 basic::datacache::CacheableDataOP
-CacheablePoseRawPtr::clone() const { return basic::datacache::CacheableDataOP( new CacheablePoseRawPtr(*this) ); }
+CacheablePoseRawPtr::clone() const { return utility::pointer::make_shared< CacheablePoseRawPtr >(*this); }
 
 core::pose::PoseOP CacheablePoseRawPtr::pose() { return pose_; }
 

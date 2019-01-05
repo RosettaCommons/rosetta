@@ -157,13 +157,13 @@ PeakAssignment::NmrConstraintOP PeakAssignment::create_constraint(
 
 	using namespace core::scoring::constraints;
 	if ( !func ) {
-		func = core::scoring::func::FuncOP( new BoundFunc( 1.5,
+		func = utility::pointer::make_shared< BoundFunc >( 1.5,
 			5.5,
 			1.0,
 			"VC "+ObjexxFCL::string_of( normalized_peak_volume(), 3 )
-			) );
+		);
 	}
-	return PeakAssignment::NmrConstraintOP( new NmrConstraint( atom1, atom2, pose, func ) ); //later figure out what the func should be...
+	return utility::pointer::make_shared< NmrConstraint >( atom1, atom2, pose, func ); //later figure out what the func should be...
 }
 
 core::scoring::constraints::ConstraintOP PeakAssignment::create_constraint(

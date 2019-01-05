@@ -54,7 +54,7 @@ methods::EnergyMethodOP
 EnvSmoothEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
-	return methods::EnergyMethodOP( new EnvSmoothEnergy( options ) );
+	return utility::pointer::make_shared< EnvSmoothEnergy >( options );
 }
 
 ScoreTypes
@@ -72,7 +72,7 @@ DistanceSquared const end_sig2   = end_sig*end_sig;
 
 /// c-tor
 EnvSmoothEnergy::EnvSmoothEnergy( EnergyMethodOptions const & options ) :
-	parent( methods::EnergyMethodCreatorOP( new EnvSmoothEnergyCreator ) )
+	parent( utility::pointer::make_shared< EnvSmoothEnergyCreator >() )
 {
 	initialize( options );
 }
@@ -87,7 +87,7 @@ EnvSmoothEnergy::EnvSmoothEnergy( EnvSmoothEnergy const & src ) :
 EnergyMethodOP
 EnvSmoothEnergy::clone() const
 {
-	return EnergyMethodOP( new EnvSmoothEnergy( *this ) );
+	return utility::pointer::make_shared< EnvSmoothEnergy >( *this );
 }
 
 

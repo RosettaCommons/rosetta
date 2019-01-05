@@ -92,14 +92,14 @@ RepackTrial::~RepackTrial() = default;
 protocols::moves::MoverOP
 RepackTrial::clone() const
 {
-	return protocols::moves::MoverOP( new RepackTrial( *this ) );
+	return utility::pointer::make_shared< RepackTrial >( *this );
 }
 
 /// @brief fresh_instance returns a default-constructed object for JD2
 protocols::moves::MoverOP
 RepackTrial::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new RepackTrial() );
+	return utility::pointer::make_shared< RepackTrial >();
 }
 
 /// @brief This mover retains state such that a fresh version is needed if the input Pose is about to change
@@ -198,7 +198,7 @@ std::ostream & operator<<(std::ostream& out, RepackTrial const & repack_trial )
 // XRW TEMP RepackTrialCreator::~RepackTrialCreator() {}
 
 // XRW TEMP moves::MoverOP RepackTrialCreator::create_mover() const {
-// XRW TEMP  return moves::MoverOP( new RepackTrial() );
+// XRW TEMP  return utility::pointer::make_shared< RepackTrial >();
 // XRW TEMP }
 
 // XRW TEMP std::string RepackTrialCreator::keyname() const {
@@ -227,7 +227,7 @@ std::string RepackTrialCreator::keyname() const {
 
 protocols::moves::MoverOP
 RepackTrialCreator::create_mover() const {
-	return protocols::moves::MoverOP( new RepackTrial );
+	return utility::pointer::make_shared< RepackTrial >();
 }
 
 void RepackTrialCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

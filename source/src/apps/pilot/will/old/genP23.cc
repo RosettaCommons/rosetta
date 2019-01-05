@@ -129,7 +129,7 @@ public:
 		core::Size newseqpos1 = seqmap[ seqpos1_ ];
 		core::Size newseqpos2 = seqmap[ seqpos2_ ];
 		if ( newseqpos1 != 0 && newseqpos2 != 0 ) {
-			return core::scoring::constraints::ConstraintOP( new SameResidueTypeConstraint( newseqpos1, newseqpos2, bonus_ ) );
+			return utility::pointer::make_shared< SameResidueTypeConstraint >( newseqpos1, newseqpos2, bonus_ );
 		} else {
 			return NULL;
 		}

@@ -718,7 +718,7 @@ load_dna_design_defs_from_strings(
 )
 {
 	for ( auto const & str_def : str_defs ) {
-		defs.push_back( DnaDesignDefOP( new DnaDesignDef( str_def ) ) );
+		defs.push_back( utility::pointer::make_shared< DnaDesignDef >( str_def ) );
 	}
 }
 
@@ -785,7 +785,7 @@ add_constraints_from_file(
 	} else return;
 
 	ConstraintSetOP cst_set =
-		ConstraintIO::get_instance()->read_constraints_new( cst_file, ConstraintSetOP( new ConstraintSet ), pose );
+		ConstraintIO::get_instance()->read_constraints_new( cst_file, utility::pointer::make_shared< ConstraintSet >(), pose );
 
 	pose.constraint_set( cst_set );
 }
@@ -1105,14 +1105,14 @@ set_base_segment_chainbreak_constraints(
 		AtomID const OP2_id( rsd2.atom_index( "OP2" ), start_base );
 
 		// distance from O3' to P
-		pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint( O3_id, P_id, distance_func ) ) ) );
+		pose.add_constraint( utility::pointer::make_shared< AtomPairConstraint >( O3_id, P_id, distance_func ) );
 		// angle at O3'
-		pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AngleConstraint( C3_id, O3_id, P_id, O3_angle_func ) ) ) );
+		pose.add_constraint( utility::pointer::make_shared< AngleConstraint >( C3_id, O3_id, P_id, O3_angle_func ) );
 		// angle at P
-		pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AngleConstraint( O3_id, P_id, O5_id,  P_angle_func ) ) ) );
+		pose.add_constraint( utility::pointer::make_shared< AngleConstraint >( O3_id, P_id, O5_id,  P_angle_func ) );
 		// another angle at P - try not to get goofy geometries
-		pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AngleConstraint( O3_id, P_id, O5_id,  P_angle_func ) ) ) );
-		pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AngleConstraint( O3_id, P_id, OP2_id,  OP2_angle_func ) ) ) );
+		pose.add_constraint( utility::pointer::make_shared< AngleConstraint >( O3_id, P_id, O5_id,  P_angle_func ) );
+		pose.add_constraint( utility::pointer::make_shared< AngleConstraint >( O3_id, P_id, OP2_id,  OP2_angle_func ) );
 	}
 
 	// Next the end base
@@ -1129,12 +1129,12 @@ set_base_segment_chainbreak_constraints(
 		AtomID const OP2_id( rsd2.atom_index( "OP2" ), end_base + 1 );
 
 		// distance from O3' to P
-		pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint( O3_id, P_id, distance_func ) ) ) );
-		pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AngleConstraint( O3_id, P_id, OP2_id,  OP2_angle_func ) ) ) );
+		pose.add_constraint( utility::pointer::make_shared< AtomPairConstraint >( O3_id, P_id, distance_func ) );
+		pose.add_constraint( utility::pointer::make_shared< AngleConstraint >( O3_id, P_id, OP2_id,  OP2_angle_func ) );
 		// angle at O3'
-		pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AngleConstraint( C3_id, O3_id, P_id, O3_angle_func ) ) ) );
+		pose.add_constraint( utility::pointer::make_shared< AngleConstraint >( C3_id, O3_id, P_id, O3_angle_func ) );
 		// angle at P
-		pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AngleConstraint( O3_id, P_id, O5_id,  P_angle_func ) ) ) );
+		pose.add_constraint( utility::pointer::make_shared< AngleConstraint >( O3_id, P_id, O5_id,  P_angle_func ) );
 	}
 
 }

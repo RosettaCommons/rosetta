@@ -125,14 +125,14 @@ SimpleHbondsToAtomFilter::parse_my_tag(
 protocols::filters::FilterOP
 SimpleHbondsToAtomFilter::clone() const
 {
-	return protocols::filters::FilterOP( new SimpleHbondsToAtomFilter( *this ) );
+	return utility::pointer::make_shared< SimpleHbondsToAtomFilter >( *this );
 }
 
 
 protocols::filters::FilterOP
 SimpleHbondsToAtomFilter::fresh_instance() const
 {
-	return protocols::filters::FilterOP( new SimpleHbondsToAtomFilter );
+	return utility::pointer::make_shared< SimpleHbondsToAtomFilter >();
 }
 
 bool
@@ -271,7 +271,7 @@ void SimpleHbondsToAtomFilter::provide_xml_schema( utility::tag::XMLSchemaDefini
 protocols::filters::FilterOP
 SimpleHbondsToAtomFilterCreator::create_filter() const
 {
-	return protocols::filters::FilterOP( new SimpleHbondsToAtomFilter );
+	return utility::pointer::make_shared< SimpleHbondsToAtomFilter >();
 }
 
 std::string

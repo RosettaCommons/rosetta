@@ -229,7 +229,7 @@ void ConstantLengthFragSet::read_fragment_stream( std::string const & filename, 
 				add( frame );
 				n_frags = std::max( n_frags, frame->nr_frags() );
 			}
-			frame = FrameOP( new Frame( insertion_pos ) );
+			frame = utility::pointer::make_shared< Frame >( insertion_pos );
 			continue;
 		}
 
@@ -264,9 +264,9 @@ void ConstantLengthFragSet::read_fragment_stream( std::string const & filename, 
 
 		if ( !current_fragment ) {
 			if ( bAnnotation ) {
-				current_fragment = FragDataOP( new AnnotatedFragData( pdbid, aa_index, chain ) );
+				current_fragment = utility::pointer::make_shared< AnnotatedFragData >( pdbid, aa_index, chain );
 			} else {
-				current_fragment = FragDataOP( new FragData );
+				current_fragment = utility::pointer::make_shared< FragData >();
 			}
 		}
 		current_fragment->add_residue(res);

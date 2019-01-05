@@ -55,7 +55,7 @@ void NonlocalFrags_main() {
 
 	NonlocalFragsOP mover;
 
-	mover = NonlocalFragsOP( new NonlocalFrags() );
+	mover = utility::pointer::make_shared< NonlocalFrags >();
 
 	try {
 		JobDistributor::get_instance()->go(mover);

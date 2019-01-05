@@ -68,7 +68,7 @@ using namespace utility::tag;
 core::pack::task::operation::TaskOperationOP
 SeqprofConsensusOperationCreator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new SeqprofConsensusOperation );
+	return utility::pointer::make_shared< SeqprofConsensusOperation >();
 }
 
 void SeqprofConsensusOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -118,7 +118,7 @@ SeqprofConsensusOperation::~SeqprofConsensusOperation() = default;
 /// @brief clone
 core::pack::task::operation::TaskOperationOP
 SeqprofConsensusOperation::clone() const {
-	return core::pack::task::operation::TaskOperationOP( new SeqprofConsensusOperation( *this ) );
+	return utility::pointer::make_shared< SeqprofConsensusOperation >( *this );
 }
 
 /// @brief all AA that have a higher probability in the seqprofile
@@ -140,7 +140,7 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 
 	SequenceProfileOP seqprof = seqprof_;
 	if ( !seqprof ) {
-		seqprof = SequenceProfileOP( new core::sequence::SequenceProfile );
+		seqprof = utility::pointer::make_shared< core::sequence::SequenceProfile >();
 		tr<<"Sequence profile was not set until now. Attempting to read sequence profile from the pose's sequenceprofile constraints..."<<std::endl;
 
 		core::pose::PoseOP chain;
@@ -366,13 +366,13 @@ SeqprofConsensusOperation::parse_tag( TagCOP tag , DataMap & datamap )
 	utility::vector1< TagCOP > const sub_tags( tag->getTags() );
 	for ( TagCOP sub_tag : sub_tags ) {
 		if ( sub_tag->getName() == "RestrictToAlignedSegments" ) {
-			restrict_to_aligned_segments_ = RestrictToAlignedSegmentsOperationOP( new RestrictToAlignedSegmentsOperation );
+			restrict_to_aligned_segments_ = utility::pointer::make_shared< RestrictToAlignedSegmentsOperation >();
 			tr<<"Within SeqprofConsensus I'm now reading a RestrictToAlignedSegments operation..."<<std::endl;
 			restrict_to_aligned_segments_->parse_tag( sub_tag, datamap );
 			conservation_cutoff_aligned_segments( tag->getOption< core::Real >( "conservation_cutoff_aligned_segments" ) );
 			tr<<"conservation cutoff for aligned segments: "<<conservation_cutoff_aligned_segments()<<std::endl;
 		} else if ( sub_tag->getName() == "ProteinInterfaceDesign" ) {
-			protein_interface_design_ = ProteinInterfaceDesignOperationOP( new ProteinInterfaceDesignOperation );
+			protein_interface_design_ = utility::pointer::make_shared< ProteinInterfaceDesignOperation >();
 			tr<<"Within SeqprofConsensus I'm now reading a ProteinInterfaceDesign operation..."<<std::endl;
 			protein_interface_design_->parse_tag( sub_tag, datamap );
 			conservation_cutoff_protein_interface_design( tag->getOption< core::Real >( "conservation_cutoff_protein_interface_design" ) );
@@ -474,7 +474,7 @@ SeqprofConsensusOperation::protein_interface_design( ProteinInterfaceDesignOpera
 core::pack::task::operation::TaskOperationOP
 RestrictConservedLowDdgOperationCreator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new RestrictConservedLowDdgOperation );
+	return utility::pointer::make_shared< RestrictConservedLowDdgOperation >();
 }
 
 void RestrictConservedLowDdgOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -505,7 +505,7 @@ RestrictConservedLowDdgOperation::~RestrictConservedLowDdgOperation() = default;
 core::pack::task::operation::TaskOperationOP
 RestrictConservedLowDdgOperation::clone() const
 {
-	return core::pack::task::operation::TaskOperationOP( new RestrictConservedLowDdgOperation( *this ) );
+	return utility::pointer::make_shared< RestrictConservedLowDdgOperation >( *this );
 }
 
 void

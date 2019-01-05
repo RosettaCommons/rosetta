@@ -37,7 +37,7 @@ public:
 
 	protocols::wum::WorkUnitBaseOP clone() const override {
 		runtime_assert( library_ != nullptr );
-		return protocols::wum::WorkUnitBaseOP( new WorkUnit_LoopHash( *this ) );
+		return utility::pointer::make_shared< WorkUnit_LoopHash >( *this );
 	}
 
 	void init_from_cmd( const core::Size mpi_rank );

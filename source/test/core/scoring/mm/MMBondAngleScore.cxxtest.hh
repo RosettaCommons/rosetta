@@ -60,14 +60,14 @@ public:
 		// Only want to read in copy of the library once not for each test so init here in ctor
 
 		// init the mmatomtypeset
-		mmatomtypeset = MMAtomTypeSetOP( new MMAtomTypeSet );
+		mmatomtypeset = utility::pointer::make_shared< MMAtomTypeSet >();
 		mmatomtypeset->read_file( "core/chemical/mm_atom_properties.txt" );
 
 		// init the mmbondanglelibrary
-		mmbondanglelibrary = MMBondAngleLibraryOP( new MMBondAngleLibrary( "core/scoring/mm/par_all27_prot_na.prm" , MMAtomTypeSetAP( mmatomtypeset ) ) );
+		mmbondanglelibrary = utility::pointer::make_shared< MMBondAngleLibrary >( "core/scoring/mm/par_all27_prot_na.prm" , MMAtomTypeSetAP( mmatomtypeset ) );
 
 		// init the mmbondanglescore
-		mmbondanglescore = MMBondAngleScoreOP( new MMBondAngleScore( *mmbondanglelibrary ) );
+		mmbondanglescore = utility::pointer::make_shared< MMBondAngleScore >( *mmbondanglelibrary );
 	}
 
 	virtual ~MMBondAngleScoreTests() {}

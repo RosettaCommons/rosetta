@@ -306,7 +306,7 @@ WaterBoxMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 WaterBoxMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new WaterBoxMover );
+	return utility::pointer::make_shared< WaterBoxMover >();
 }
 
 std::string
@@ -350,7 +350,7 @@ WaterBoxMover::init() {
 	gen_fixed_ = false;  // when enabled, generate water for fixed regions
 
 	if ( option[ in::file::native ].user() ) {
-		native_ = core::pose::PoseOP( new core::pose::Pose );
+		native_ = utility::pointer::make_shared< core::pose::Pose >();
 		core::import_pose::ImportPoseOptions options;
 		options.set_ignore_waters(false);
 		core::import_pose::pose_from_file( *native_, option[ in::file::native ](), options, false, core::import_pose::PDB_file);
@@ -364,12 +364,12 @@ WaterBoxMover::get_name() const {
 
 protocols::moves::MoverOP
 WaterBoxMover::clone() const {
-	return protocols::moves::MoverOP( new WaterBoxMover( *this ) );
+	return utility::pointer::make_shared< WaterBoxMover >( *this );
 }
 
 protocols::moves::MoverOP
 WaterBoxMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new WaterBoxMover );
+	return utility::pointer::make_shared< WaterBoxMover >();
 }
 
 // helper function to delete (all or virtualized) waters from a pose
@@ -419,9 +419,9 @@ WaterBoxMover::setup_pack( core::pose::Pose & pose ) {
 
 	// build initial rotset (no water)
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
-		rotamer_sets_ = core::pack::rotamer_set::RotamerSetsOP(new core::pack::rotamer_set::symmetry::SymmetricRotamerSets());
+		rotamer_sets_ = utility::pointer::make_shared< core::pack::rotamer_set::symmetry::SymmetricRotamerSets >();
 	} else {
-		rotamer_sets_ = core::pack::rotamer_set::RotamerSetsOP(new core::pack::rotamer_set::RotamerSets());
+		rotamer_sets_ = utility::pointer::make_shared< core::pack::rotamer_set::RotamerSets >();
 	}
 	sf_->setup_for_packing( pose, task_->repacking_residues(), task_->designing_residues() );
 	utility::graph::GraphOP packer_neighbor_graph = core::pack::create_packer_graph( pose, *sf_, task_ );
@@ -716,7 +716,7 @@ WaterBoxMover::attach_rotamer_clouds_to_pose_and_rotset(
 
 	// 1 update the pose
 	for ( core::Size i=1; i<=nposnew; ++i ) {
-		core::conformation::ResidueOP vrt_wat = core::conformation::ResidueOP( new core::conformation::Residue( *vwat ) );
+		core::conformation::ResidueOP vrt_wat = utility::pointer::make_shared< core::conformation::Residue >( *vwat );
 		vrt_wat->set_xyz("O",  watercloud[i][1]);
 		vrt_wat->set_xyz("V1", watercloud[i][1]+OH1);
 		vrt_wat->set_xyz("V2", watercloud[i][1]+OH2);
@@ -746,7 +746,7 @@ WaterBoxMover::attach_rotamer_clouds_to_pose_and_rotset(
 		rotset_i->set_resid( resid );
 
 		for ( core::Size j=1; j<=watercloud[i].size(); ++j ) {
-			core::conformation::ResidueOP pt_wat = core::conformation::ResidueOP( new core::conformation::Residue( *pwat ) );
+			core::conformation::ResidueOP pt_wat = utility::pointer::make_shared< core::conformation::Residue >( *pwat );
 			pt_wat->set_xyz("O",  watercloud[i][j]);
 			pt_wat->set_xyz("V1", watercloud[i][j]+OH1);
 			pt_wat->set_xyz("V2", watercloud[i][j]+OH2);
@@ -1106,7 +1106,7 @@ WaterBoxMover::apply( Pose & pose ) {
 		ResidueOP vrt_wat = ResidueFactory::create_residue( rsd_set->name_map("HOH_V") );
 		core::Vector const OH1( vrt_wat->xyz("H1") - vrt_wat->xyz("O") );
 		core::Vector const OH2( vrt_wat->xyz("H2") - vrt_wat->xyz("O") );
-		ResidueOP new_res = ResidueOP( new Residue( *vrt_wat ) );
+		ResidueOP new_res = utility::pointer::make_shared< Residue >( *vrt_wat );
 		new_res->set_xyz("O", kept_rots[x].xyz);
 		new_res->set_xyz("H1", kept_rots[x].xyz+OH1);
 		new_res->set_xyz("H2", kept_rots[x].xyz+OH2);
@@ -1173,7 +1173,7 @@ WaterBoxMover::parse_my_tag(
 	}
 
 	if ( tag->hasOption( "native" ) ) {
-		native_ = core::pose::PoseOP( new core::pose::Pose );
+		native_ = utility::pointer::make_shared< core::pose::Pose >();
 		std::string nativepdb = tag->getOption<std::string>("native");
 		core::import_pose::ImportPoseOptions options;
 		options.set_ignore_waters(false);

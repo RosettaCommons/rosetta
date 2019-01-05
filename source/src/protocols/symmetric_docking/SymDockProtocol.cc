@@ -186,7 +186,7 @@ SymDockProtocol::~SymDockProtocol() = default;
 //clone
 protocols::moves::MoverOP
 SymDockProtocol::clone() const {
-	return( protocols::moves::MoverOP( new SymDockProtocol(  fullatom_, local_refine_, view_, docking_score_low_, docking_score_high_ ) ) );
+	return( utility::pointer::make_shared< SymDockProtocol >(  fullatom_, local_refine_, view_, docking_score_low_, docking_score_high_ ) );
 }
 
 //set functions
@@ -329,8 +329,8 @@ SymDockProtocol::apply( pose::Pose & pose )
 	add_conformation_viewer( pose.conformation(), "start_pose", 450, 450 );
 
 	//initialize docking protocol movers
-	if ( !docking_low_ ) docking_low_ = protocols::symmetric_docking::SymDockingLowResOP( new SymDockingLowRes( docking_score_low_ ) );
-	if ( !docking_high_ ) docking_high_ = protocols::symmetric_docking::SymDockingHiResOP( new SymDockingHiRes( docking_score_high_min_, docking_score_pack_ ) );
+	if ( !docking_low_ ) docking_low_ = utility::pointer::make_shared< SymDockingLowRes >( docking_score_low_ );
+	if ( !docking_high_ ) docking_high_ = utility::pointer::make_shared< SymDockingHiRes >( docking_score_high_min_, docking_score_pack_ );
 
 	// make sure the input pose has the right size
 	core::pose::PoseOP input_pose( new core::pose::Pose() );
@@ -475,7 +475,7 @@ SymDockProtocol::apply( pose::Pose & pose )
 
 	// cache the score map to the pose
 	using namespace basic::datacache;
-	if ( !hurry_ ) pose.data().set(core::pose::datacache::CacheableDataType::SCORE_MAP, DataCache_CacheableData::DataOP( new basic::datacache::DiagnosticData(score_map_) ) );
+	if ( !hurry_ ) pose.data().set(core::pose::datacache::CacheableDataType::SCORE_MAP, utility::pointer::make_shared< basic::datacache::DiagnosticData >(score_map_) );
 
 }
 
@@ -577,14 +577,14 @@ SymDockProtocol::recover_sidechains( core::pose::Pose & pose, const core::pose::
 
 	// pack over each movable interface
 	TaskFactoryOP tf( new TaskFactory );
-	tf->push_back( TaskOperationCOP( new OperateOnCertainResidues( ResLvlTaskOperationOP( new PreventRepackingRLT ), ResFilterOP( new ResidueLacksProperty("PROTEIN") ) ) ) );
-	tf->push_back( TaskOperationCOP( new InitializeFromCommandline ) );
-	tf->push_back( TaskOperationCOP( new IncludeCurrent ) );
-	tf->push_back( TaskOperationCOP( new RestrictToRepacking ) );
-	tf->push_back( TaskOperationCOP( new NoRepackDisulfides ) );
-	if ( basic::options::option[basic::options::OptionKeys::packing::resfile].user() ) tf->push_back( TaskOperationCOP( new ReadResfile ) );
+	tf->push_back( utility::pointer::make_shared< OperateOnCertainResidues >( utility::pointer::make_shared< PreventRepackingRLT >(), utility::pointer::make_shared< ResidueLacksProperty >("PROTEIN") ) );
+	tf->push_back( utility::pointer::make_shared< InitializeFromCommandline >() );
+	tf->push_back( utility::pointer::make_shared< IncludeCurrent >() );
+	tf->push_back( utility::pointer::make_shared< RestrictToRepacking >() );
+	tf->push_back( utility::pointer::make_shared< NoRepackDisulfides >() );
+	if ( basic::options::option[basic::options::OptionKeys::packing::resfile].user() ) tf->push_back( utility::pointer::make_shared< ReadResfile >() );
 	//tf->push_back( new SymRestrictTaskForDocking( docking_score_pack_, true, 1000 ) );
-	tf->push_back( TaskOperationCOP( new RestrictToInterface( 1 ) ) );
+	tf->push_back( utility::pointer::make_shared< RestrictToInterface >( 1 ) );
 
 	protocols::minimization_packing::PackRotamersMoverOP dock_pack( new protocols::minimization_packing::PackRotamersMover(docking_score_pack_) );
 	dock_pack->task_factory( tf );
@@ -795,7 +795,7 @@ SymDockProtocol::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & dat
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP SymDockProtocolCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new SymDockProtocol() );
+// XRW TEMP  return utility::pointer::make_shared< SymDockProtocol >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -837,7 +837,7 @@ std::string SymDockProtocolCreator::keyname() const {
 
 protocols::moves::MoverOP
 SymDockProtocolCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SymDockProtocol );
+	return utility::pointer::make_shared< SymDockProtocol >();
 }
 
 void SymDockProtocolCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

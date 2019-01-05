@@ -67,13 +67,13 @@ ResetBaselineMover::apply( Pose & pose )
 moves::MoverOP
 ResetBaselineMover::clone() const
 {
-	return moves::MoverOP( new ResetBaselineMover( *this ) );
+	return utility::pointer::make_shared< ResetBaselineMover >( *this );
 }
 
 moves::MoverOP
 ResetBaselineMover::fresh_instance() const
 {
-	return moves::MoverOP( new ResetBaselineMover );
+	return utility::pointer::make_shared< ResetBaselineMover >();
 }
 
 void
@@ -127,7 +127,7 @@ std::string ResetBaselineMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 ResetBaselineMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ResetBaselineMover );
+	return utility::pointer::make_shared< ResetBaselineMover >();
 }
 
 void ResetBaselineMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

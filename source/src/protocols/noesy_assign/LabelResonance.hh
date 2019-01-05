@@ -63,7 +63,7 @@ public:
 	~LabelResonance() override;
 
 	ResonanceOP clone() override {
-		return ResonanceOP( new LabelResonance( *this ) );
+		return utility::pointer::make_shared< LabelResonance >( *this );
 	}
 
 	/// @brief match the proton and corresponding label atom at same time

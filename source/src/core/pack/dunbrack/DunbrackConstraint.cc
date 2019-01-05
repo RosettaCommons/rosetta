@@ -49,7 +49,7 @@ DunbrackConstraintCreator::~DunbrackConstraintCreator() = default;
 
 scoring::constraints::ConstraintOP
 DunbrackConstraintCreator::create_constraint() const {
-	return scoring::constraints::ConstraintOP( new DunbrackConstraint );
+	return utility::pointer::make_shared< DunbrackConstraint >();
 }
 
 std::string DunbrackConstraintCreator::keyname() const
@@ -84,7 +84,7 @@ DunbrackConstraint::atom( Size const index ) const {
 
 scoring::constraints::ConstraintOP
 DunbrackConstraint::clone() const {
-	return scoring::constraints::ConstraintOP( new DunbrackConstraint( *this ) );
+	return utility::pointer::make_shared< DunbrackConstraint >( *this );
 }
 
 bool

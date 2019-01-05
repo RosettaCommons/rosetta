@@ -160,24 +160,24 @@ def find_lactams(pose):
 				AtomID const CD( pose.residue( glu_id ).atom_index( "CD"  ), ii_resid )
 				AtomID const OE( pose.residue( glu_id ).atom_index( "OE1"  ), ii_resid )
 				AtomID const CG( pose.residue( glu_id ).atom_index( "CG"  ), ii_resid )
-				pose.add_constraint( DihedralConstraintOP( new DihedralConstraint( lysHZ, lysNZ, CD, OE, ang180 ) ) )
-				pose.add_constraint( DihedralConstraintOP( new DihedralConstraint( lysNZ, CD, OE, CG, ang180 ) ) )
-				pose.add_constraint( AngleConstraintOP( new AngleConstraint( lysNZ, CD, OE, ang120 ) ) )
-				pose.add_constraint( AngleConstraintOP( new AngleConstraint( lysHZ, lysNZ, CD, ang120 ) ) )
+				pose.add_constraint( utility::pointer::make_shared< DihedralConstraint >( lysHZ, lysNZ, CD, OE, ang180 ) )
+				pose.add_constraint( utility::pointer::make_shared< DihedralConstraint >( lysNZ, CD, OE, CG, ang180 ) )
+				pose.add_constraint( utility::pointer::make_shared< AngleConstraint >( lysNZ, CD, OE, ang120 ) )
+				pose.add_constraint( utility::pointer::make_shared< AngleConstraint >( lysHZ, lysNZ, CD, ang120 ) )
 
-				pose.add_constraint( AtomPairConstraintOP( new AtomPairConstraint( lysNZ, CD, harm ) ) )
+				pose.add_constraint( utility::pointer::make_shared< AtomPairConstraint >( lysNZ, CD, harm ) )
 				pose.conformation().declare_chemical_bond(  glu_id, "CD", lys_id, "NZ" )
 
 			} else {
 				AtomID const CG( pose.residue( glu_id ).atom_index( "CG"  ), ii_resid )
 				AtomID const OD( pose.residue( glu_id ).atom_index( "OD1"  ), ii_resid )
 				AtomID const CB( pose.residue( glu_id ).atom_index( "CB"  ), ii_resid )
-				pose.add_constraint( DihedralConstraintOP( new DihedralConstraint( lysHZ, lysNZ, CG, OD, ang180 ) ) )
-				pose.add_constraint( DihedralConstraintOP( new DihedralConstraint( lysNZ, CG, OD, CB, ang180 ) ) )
-				pose.add_constraint( AngleConstraintOP( new AngleConstraint( lysNZ, CG, OD, ang120 ) ) )
-				pose.add_constraint( AngleConstraintOP( new AngleConstraint( lysHZ, lysNZ, CG, ang120 ) ) )
+				pose.add_constraint( utility::pointer::make_shared< DihedralConstraint >( lysHZ, lysNZ, CG, OD, ang180 ) )
+				pose.add_constraint( utility::pointer::make_shared< DihedralConstraint >( lysNZ, CG, OD, CB, ang180 ) )
+				pose.add_constraint( utility::pointer::make_shared< AngleConstraint >( lysNZ, CG, OD, ang120 ) )
+				pose.add_constraint( utility::pointer::make_shared< AngleConstraint >( lysHZ, lysNZ, CG, ang120 ) )
 
-				pose.add_constraint( AtomPairConstraintOP( new AtomPairConstraint( lysNZ, CG, harm ) ) )
+				pose.add_constraint( utility::pointer::make_shared< AtomPairConstraint >( lysNZ, CG, harm ) )
 				pose.conformation().declare_chemical_bond(  glu_id, "CG", lys_id, "NZ" )
 
 			}

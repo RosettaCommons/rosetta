@@ -278,7 +278,7 @@ core::pose::PoseOP
 construct_dummy_pose( core::chemical::ResidueType const & restype, core::Size length )
 {
 	debug_assert( length );
-	core::pose::PoseOP newp = core::pose::PoseOP( new core::pose::Pose() );
+	core::pose::PoseOP newp = utility::pointer::make_shared< core::pose::Pose >();
 	core::conformation::ResidueOP newres = core::conformation::ResidueFactory::create_residue( restype );
 	newp->append_residue_by_jump( *newres, 1 );
 	for ( core::Size i=1; i<=length-1; ++i ) {
@@ -627,7 +627,7 @@ add_chain_from_pose( core::pose::PoseCOP to_add, core::pose::PoseOP combined )
 		for ( auto const & r : to_add->pdb_info()->remarks() ) {
 			TR.Debug << "Copying remark to new pose: " << r.value << std::endl;
 			if ( !combined->pdb_info() ) {
-				combined->pdb_info( core::pose::PDBInfoOP( new core::pose::PDBInfo( *combined, true ) ) );
+				combined->pdb_info( utility::pointer::make_shared< core::pose::PDBInfo >( *combined, true ) );
 			}
 			debug_assert( combined->pdb_info() );
 			combined->pdb_info()->remarks().push_back( r );

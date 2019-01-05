@@ -764,9 +764,9 @@ DockIntoDensityMover::do_refinement (
 
 	// packer
 	TaskFactoryOP tf( new TaskFactory() );
-	tf->push_back( TaskOperationCOP( new InitializeFromCommandline() )); // get extra rotamer flags from command line
-	tf->push_back( TaskOperationCOP( new operation::IncludeCurrent )); // include current rotamer by default
-	tf->push_back( TaskOperationCOP( new RestrictToRepacking() )); // do not design
+	tf->push_back( utility::pointer::make_shared< InitializeFromCommandline >()); // get extra rotamer flags from command line
+	tf->push_back( utility::pointer::make_shared< operation::IncludeCurrent >()); // include current rotamer by default
+	tf->push_back( utility::pointer::make_shared< RestrictToRepacking >()); // do not design
 	protocols::minimization_packing::PackRotamersMoverOP packer( new protocols::minimization_packing::PackRotamersMover() );
 	packer->task_factory( tf );
 	packer->score_function( scorefxn_refine );
@@ -784,7 +784,7 @@ DockIntoDensityMover::do_refinement (
 		core::pose::addVirtualResAsRoot( *posecopy );
 
 		// Setup rigid-body movemap now! (we need to know root jump number)
-		core::kinematics::MoveMapOP rbmm = core::kinematics::MoveMapOP( new core::kinematics::MoveMap );
+		core::kinematics::MoveMapOP rbmm = utility::pointer::make_shared< core::kinematics::MoveMap >();
 		rbmm->set_bb( false ); rbmm->set_chi( false ); rbmm->set_jump( false );
 		int root = posecopy->fold_tree().root();
 		utility::vector1< core::kinematics::Edge > root_edges = posecopy->fold_tree().get_outgoing_edges(root);
@@ -992,7 +992,7 @@ void
 DockIntoDensityMover::apply( core::pose::Pose & pose) {
 	// call multipose mover
 	utility::vector1< core::pose::PoseOP > temp;
-	temp.push_back( core::pose::PoseOP( new core::pose::Pose(pose) ) );
+	temp.push_back( utility::pointer::make_shared< core::pose::Pose >(pose) );
 	apply_multi( temp );
 	pose = *(temp[1]);
 }

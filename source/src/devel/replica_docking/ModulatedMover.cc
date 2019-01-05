@@ -41,7 +41,7 @@ namespace replica_docking {
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP ModulatedMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new ModulatedMover );
+// XRW TEMP  return utility::pointer::make_shared< ModulatedMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -73,13 +73,13 @@ ModulatedMover::~ModulatedMover() = default;
 protocols::moves::MoverOP
 ModulatedMover::clone() const
 {
-	return protocols::moves::MoverOP( new ModulatedMover(*this) );
+	return utility::pointer::make_shared< ModulatedMover >(*this);
 }
 
 protocols::moves::MoverOP
 ModulatedMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new ModulatedMover );
+	return utility::pointer::make_shared< ModulatedMover >();
 }
 
 void
@@ -153,11 +153,11 @@ ModulatedMover::parse_my_tag(
 		tr.Debug << "check if key " << key << " is provided" << std::endl;
 
 		if ( interps_1_.find( key ) == interps_1_.end() ) {
-			interps_1_[ key ] = devel::replica_docking::TempInterpolatorBaseOP( new devel::replica_docking::TempFixValue( 1 ) );
+			interps_1_[ key ] = utility::pointer::make_shared< devel::replica_docking::TempFixValue >( 1 );
 			tr.Debug << "parameter for " << key << " not provided for 1st dim, will use fix value 1" << std::endl;
 		}
 		if ( interps_2_.find( key ) == interps_2_.end() ) {
-			interps_2_[ key ] = devel::replica_docking::TempInterpolatorBaseOP( new devel::replica_docking::TempFixValue( 1 ) );
+			interps_2_[ key ] = utility::pointer::make_shared< devel::replica_docking::TempFixValue >( 1 );
 			tr.Debug << "parameter for " << key << " not provided for 2nd dim, will use fix value 1" << std::endl;
 		}
 	}
@@ -303,7 +303,7 @@ std::string ModulatedMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 ModulatedMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ModulatedMover );
+	return utility::pointer::make_shared< ModulatedMover >();
 }
 
 void ModulatedMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

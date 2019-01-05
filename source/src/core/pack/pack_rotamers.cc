@@ -80,10 +80,10 @@ pack_rotamers(
 	//replace this with RotSetsFactory
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		working_task = make_new_symmetric_PackerTask_by_requested_method(pose, task);
-		rotsets = RotamerSetsOP(new rotamer_set::symmetry::SymmetricRotamerSets());
+		rotsets = utility::pointer::make_shared< rotamer_set::symmetry::SymmetricRotamerSets >();
 	} else {
 		working_task = task;
-		rotsets = RotamerSetsOP(new rotamer_set::RotamerSets());
+		rotsets = utility::pointer::make_shared< rotamer_set::RotamerSets >();
 	}
 
 	PROF_START( basic::PACK_ROTAMERS );
@@ -169,7 +169,7 @@ pack_rotamers_loop(
 			" seq: " << final_seq << " simannealerE: " << bestenergy << " rescoreE: " << final_score << std::endl;
 
 		results.push_back( std::make_pair( final_score, pose.sequence() ) );
-		pose_list.push_back( core::pose::PoseOP( new pose::Pose( pose ) ) ); //saves a copy.
+		pose_list.push_back( utility::pointer::make_shared< pose::Pose >( pose ) ); //saves a copy.
 		if ( run == 1 || bestenergy < best_bestenergy ) {
 			best_pose = pose;
 			best_bestenergy = bestenergy;

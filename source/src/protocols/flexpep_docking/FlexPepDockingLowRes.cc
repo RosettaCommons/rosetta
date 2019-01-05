@@ -82,7 +82,7 @@ FlexPepDockingLowRes::FlexPepDockingLowRes
 	// Loop modeling options
 	// NOTE: most LoopRelax options are initiated automatically from cmd-line
 	// TODO: LoopRelaxMover is a wrapper, perhaps user the LoopModel class explicitly
-	loop_relax_mover_ = protocols::comparative_modeling::LoopRelaxMoverOP( new protocols::comparative_modeling::LoopRelaxMover() );
+	loop_relax_mover_ = utility::pointer::make_shared< protocols::comparative_modeling::LoopRelaxMover >();
 	// loop_relax_mover_->centroid_scorefxn(scorefxn_); // TODO: we need a chain brteak score here, so let's leave it for modeller default?
 	loop_relax_mover_->refine("no"); // centroid modeling only
 	loop_relax_mover_->relax("no"); // centroid modeling only
@@ -106,12 +106,12 @@ void
 FlexPepDockingLowRes::setup_for_apply( core::pose::Pose& pose )
 {
 	double temperature = 0.8;
-	mc_ = moves::MonteCarloOP( new moves::MonteCarlo( pose, *scorefxn_, temperature ) );
+	mc_ = utility::pointer::make_shared< moves::MonteCarlo >( pose, *scorefxn_, temperature );
 	// setup minimizer
 	std::string min_type = "lbfgs_armijo_atol"; // armijo_nonmonotone? different tolerance?
 	double min_func_tol = 0.1;
-	minimizer_ = protocols::minimization_packing::MinMoverOP( new protocols::minimization_packing::MinMover(
-		movemap_, scorefxn_, min_type, min_func_tol, true /*nb_list accel.*/ ) );
+	minimizer_ = utility::pointer::make_shared< protocols::minimization_packing::MinMover >(
+		movemap_, scorefxn_, min_type, min_func_tol, true /*nb_list accel.*/ );
 }
 
 

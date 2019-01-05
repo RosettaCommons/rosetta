@@ -50,7 +50,7 @@ static basic::Tracer TR( "protocols.legacy_sewing.sampling.LegacyEnumerateAssemb
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP LegacyEnumerateAssemblyMoverCreator::create_mover() const
 // XRW TEMP {
-// XRW TEMP  return protocols::moves::MoverOP( new LegacyEnumerateAssemblyMover );
+// XRW TEMP  return utility::pointer::make_shared< LegacyEnumerateAssemblyMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -68,12 +68,12 @@ static basic::Tracer TR( "protocols.legacy_sewing.sampling.LegacyEnumerateAssemb
 
 protocols::moves::MoverOP
 LegacyEnumerateAssemblyMover::clone() const {
-	return( protocols::moves::MoverOP( new LegacyEnumerateAssemblyMover( *this ) ) );
+	return( utility::pointer::make_shared< LegacyEnumerateAssemblyMover >( *this ) );
 }
 
 protocols::moves::MoverOP
 LegacyEnumerateAssemblyMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new LegacyEnumerateAssemblyMover );
+	return utility::pointer::make_shared< LegacyEnumerateAssemblyMover >();
 }
 
 
@@ -425,7 +425,7 @@ std::string LegacyEnumerateAssemblyMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 LegacyEnumerateAssemblyMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LegacyEnumerateAssemblyMover );
+	return utility::pointer::make_shared< LegacyEnumerateAssemblyMover >();
 }
 
 void LegacyEnumerateAssemblyMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

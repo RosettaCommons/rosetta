@@ -41,7 +41,7 @@ DnaChains::DnaChains( DnaChains const & other )
 
 DnaChainsOP DnaChains::clone() const
 {
-	return DnaChainsOP( new DnaChains( *this ) );
+	return utility::pointer::make_shared< DnaChains >( *this );
 }
 
 bool

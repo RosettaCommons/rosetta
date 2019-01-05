@@ -268,7 +268,7 @@ InterlockingAromaFilter::parse_my_tag(
 }
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP InterlockingAromaFilterCreator::create_filter() const { return protocols::filters::FilterOP( new InterlockingAromaFilter ); }
+// XRW TEMP InterlockingAromaFilterCreator::create_filter() const { return utility::pointer::make_shared< InterlockingAromaFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP InterlockingAromaFilterCreator::keyname() const { return "InterlockingAroma"; }
@@ -300,7 +300,7 @@ std::string InterlockingAromaFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 InterlockingAromaFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new InterlockingAromaFilter );
+	return utility::pointer::make_shared< InterlockingAromaFilter >();
 }
 
 void InterlockingAromaFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

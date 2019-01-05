@@ -321,7 +321,7 @@ setup_packer( core::pose::Pose const &pose,
 
 	// Setup TaskOperation from movemap
 	TaskFactoryOP local_tf( new TaskFactory() );
-	local_tf->push_back( TaskOperationCOP( new RestrictToRepacking() ) );
+	local_tf->push_back( utility::pointer::make_shared< RestrictToRepacking >() );
 	PreventRepackingOP turn_off_packing( new PreventRepacking() );
 
 	for ( core::Size ires = 1; ires <= pose.size(); ++ires ) {
@@ -332,7 +332,7 @@ setup_packer( core::pose::Pose const &pose,
 	local_tf->push_back( turn_off_packing );
 
 	//Include current rotamer by default
-	local_tf->push_back( TaskOperationCOP( new IncludeCurrent() ) );
+	local_tf->push_back( utility::pointer::make_shared< IncludeCurrent >() );
 
 	protocols::minimization_packing::PackRotamersMoverOP packer
 		( new protocols::minimization_packing::PackRotamersMover( sfxn ) );

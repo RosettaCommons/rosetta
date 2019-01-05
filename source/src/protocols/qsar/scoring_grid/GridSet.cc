@@ -56,7 +56,7 @@ GridSet::GridSet( GridSet const & other) :
 
 GridSetOP
 GridSet::clone() const {
-	return GridSetOP( new GridSet( *this ) );
+	return utility::pointer::make_shared< GridSet >( *this );
 }
 
 void GridSet::set_normalization_function(std::string norm_function_name)

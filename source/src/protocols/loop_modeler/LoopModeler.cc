@@ -122,11 +122,11 @@ namespace loop_modeler {
 static basic::Tracer TR("protocols.loop_modeler.LoopModeler");
 
 LoopModeler::LoopModeler() {
-	build_stage_ = add_child( loop_modeling::LoopBuilderOP( new loop_modeling::LoopBuilder ) );
-	centroid_stage_ = add_child( loop_modeling::LoopProtocolOP( new loop_modeling::LoopProtocol ) );
-	fullatom_stage_ = add_child( loop_modeling::LoopProtocolOP( new loop_modeling::LoopProtocol ) );
-	prepare_for_centroid_ = add_child( PrepareForCentroidOP( new PrepareForCentroid ) );
-	prepare_for_fullatom_ = add_child( PrepareForFullatomOP( new PrepareForFullatom ) );
+	build_stage_ = add_child( utility::pointer::make_shared< loop_modeling::LoopBuilder >() );
+	centroid_stage_ = add_child( utility::pointer::make_shared< loop_modeling::LoopProtocol >() );
+	fullatom_stage_ = add_child( utility::pointer::make_shared< loop_modeling::LoopProtocol >() );
+	prepare_for_centroid_ = add_child( utility::pointer::make_shared< PrepareForCentroid >() );
+	prepare_for_fullatom_ = add_child( utility::pointer::make_shared< PrepareForFullatom >() );
 
 	is_build_stage_enabled_ = true;
 	is_centroid_stage_enabled_ = true;
@@ -315,17 +315,17 @@ void LoopModeler::setup_kic_config() {
 
 	setup_empty_config();
 
-	centroid_stage_->add_mover(loop_modeling::LoopMoverOP( new KicMover ));
-	centroid_stage_->add_refiner(loop_modeling::LoopMoverOP( new MinimizationRefiner ));
+	centroid_stage_->add_mover(utility::pointer::make_shared< KicMover >());
+	centroid_stage_->add_refiner(utility::pointer::make_shared< MinimizationRefiner >());
 	centroid_stage_->mark_as_default();
 
 	fullatom_stage_->set_temperature_ramping(true);
 	fullatom_stage_->set_rama_term_ramping(true);
 	fullatom_stage_->set_repulsive_term_ramping(true);
-	fullatom_stage_->add_mover(loop_modeling::LoopMoverOP( new KicMover ));
-	fullatom_stage_->add_refiner(loop_modeling::LoopMoverOP( new RepackingRefiner(40) ));
-	fullatom_stage_->add_refiner(loop_modeling::LoopMoverOP( new RotamerTrialsRefiner ));
-	fullatom_stage_->add_refiner(loop_modeling::LoopMoverOP( new MinimizationRefiner ));
+	fullatom_stage_->add_mover(utility::pointer::make_shared< KicMover >());
+	fullatom_stage_->add_refiner(utility::pointer::make_shared< RepackingRefiner >(40));
+	fullatom_stage_->add_refiner(utility::pointer::make_shared< RotamerTrialsRefiner >());
+	fullatom_stage_->add_refiner(utility::pointer::make_shared< MinimizationRefiner >());
 	fullatom_stage_->mark_as_default();
 }
 
@@ -356,14 +356,14 @@ void LoopModeler::setup_kic_with_fragments_config() {
 	// Create a centroid "KIC with fragments" mover (see note).
 
 	KicMoverOP centroid_kic_mover( new KicMover );
-	centroid_kic_mover->add_perturber(kinematic_closure::perturbers::PerturberOP( new FragmentPerturber(frag_libs) ));
+	centroid_kic_mover->add_perturber(utility::pointer::make_shared< FragmentPerturber >(frag_libs));
 	centroid_stage_->add_mover(centroid_kic_mover);
 	centroid_stage_->mark_as_default();
 
 	// Create a fullatom "KIC with fragments" mover (see note).
 
 	KicMoverOP fullatom_kic_mover( new KicMover );
-	fullatom_kic_mover->add_perturber(kinematic_closure::perturbers::PerturberOP( new FragmentPerturber(frag_libs) ));
+	fullatom_kic_mover->add_perturber(utility::pointer::make_shared< FragmentPerturber >(frag_libs));
 	fullatom_stage_->add_mover(fullatom_kic_mover);
 	fullatom_stage_->mark_as_default();
 
@@ -410,7 +410,7 @@ void LoopModeler::setup_loophash_kic_config(bool perturb_sequence, std::string s
 	// Create a centroid "loophash KIC" mover (see note).
 
 	KicMoverOP centroid_kic_mover( new KicMover );
-	centroid_kic_mover->set_pivot_picker(pivot_pickers::PivotPickerOP( new FixedOffsetsPivots(pp_offsets) ));
+	centroid_kic_mover->set_pivot_picker(utility::pointer::make_shared< FixedOffsetsPivots >(pp_offsets));
 	perturbers::LoopHashPerturberOP centroid_loophash_perturber_(new LoopHashPerturber(lh_library) );
 	centroid_loophash_perturber_->perturb_sequence(perturb_sequence);
 	centroid_loophash_perturber_->seqposes_no_mutate_str(seqposes_no_mutate_str);
@@ -421,7 +421,7 @@ void LoopModeler::setup_loophash_kic_config(bool perturb_sequence, std::string s
 	// Create a fullatom "loophash KIC" mover (see note).
 
 	KicMoverOP fullatom_kic_mover( new KicMover );
-	fullatom_kic_mover->set_pivot_picker(pivot_pickers::PivotPickerOP( new FixedOffsetsPivots(pp_offsets) ));
+	fullatom_kic_mover->set_pivot_picker(utility::pointer::make_shared< FixedOffsetsPivots >(pp_offsets));
 	perturbers::LoopHashPerturberOP fullatom_loophash_perturber_(new LoopHashPerturber(lh_library) );
 	fullatom_loophash_perturber_->perturb_sequence(perturb_sequence);
 	fullatom_loophash_perturber_->seqposes_no_mutate_str(seqposes_no_mutate_str);
@@ -519,9 +519,9 @@ LoopModeler::get_default_task_factory(core::pose::Pose &pose){
 
 	// Set the task factory
 
-	TaskFactoryOP task_factory = TaskFactoryOP( new TaskFactory );
+	TaskFactoryOP task_factory = utility::pointer::make_shared< TaskFactory >();
 	task_factory->push_back(turn_off_packing);
-	task_factory->push_back(TaskOperationCOP( new RestrictToRepacking ));
+	task_factory->push_back(utility::pointer::make_shared< RestrictToRepacking >());
 	task_factory->push_back(extra_rotamers);
 
 	return task_factory;
@@ -613,7 +613,7 @@ std::string LoopModelerCreator::keyname() const {
 
 protocols::moves::MoverOP
 LoopModelerCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LoopModeler );
+	return utility::pointer::make_shared< LoopModeler >();
 }
 
 void LoopModelerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

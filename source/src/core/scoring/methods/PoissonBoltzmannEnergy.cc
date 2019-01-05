@@ -61,7 +61,7 @@ PBLifetimeCache::~PBLifetimeCache() = default;
 basic::datacache::CacheableDataOP
 PBLifetimeCache::clone() const
 {
-	return basic::datacache::CacheableDataOP( new PBLifetimeCache(*this) );
+	return utility::pointer::make_shared< PBLifetimeCache >(*this);
 }
 void
 PBLifetimeCache::set_charged_residues_map( const std::map<std::string, bool> & charged_residues_map )
@@ -78,7 +78,7 @@ PBLifetimeCache::set_conformational_data( const std::string& energy_state,
 	const core::pose::Pose & pose,
 	PoissonBoltzmannPotentialOP pbp )
 {
-	pose_by_state_[energy_state] = core::pose::PoseOP( new core::pose::Pose(pose) );
+	pose_by_state_[energy_state] = utility::pointer::make_shared< core::pose::Pose >(pose);
 	pb_by_state_[energy_state] = pbp;
 }
 std::map<std::string, bool> &
@@ -125,7 +125,7 @@ methods::EnergyMethodOP
 PoissonBoltzmannEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new PoissonBoltzmannEnergy );
+	return utility::pointer::make_shared< PoissonBoltzmannEnergy >();
 }
 
 ScoreTypes
@@ -142,7 +142,7 @@ PoissonBoltzmannEnergyCreator::score_types_for_method() const {
 //*****************************************************************
 /// ctor
 PoissonBoltzmannEnergy::PoissonBoltzmannEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new PoissonBoltzmannEnergyCreator ) ),
+	parent( utility::pointer::make_shared< PoissonBoltzmannEnergyCreator >() ),
 	fixed_residue_(1),
 	pose_deviation_tolerance_(1.0)
 	//,
@@ -158,7 +158,7 @@ PoissonBoltzmannEnergy::PoissonBoltzmannEnergy() :
 EnergyMethodOP
 PoissonBoltzmannEnergy::clone() const
 {
-	return EnergyMethodOP( new PoissonBoltzmannEnergy( *this ) );
+	return utility::pointer::make_shared< PoissonBoltzmannEnergy >( *this );
 }
 methods::LongRangeEnergyType
 PoissonBoltzmannEnergy::long_range_type() const { return methods::PB_elec_lr; }
@@ -235,7 +235,7 @@ PoissonBoltzmannEnergy::setup_for_scoring(
 		}
 	} else {
 		TR << "No cached pose for state: " << energy_state << std::endl;
-		poisson_boltzmann_potential_ = scoring::PoissonBoltzmannPotentialOP( new PoissonBoltzmannPotential() );
+		poisson_boltzmann_potential_ = utility::pointer::make_shared< PoissonBoltzmannPotential >();
 		poisson_boltzmann_potential_->solve_pb(pose, energy_state, charged_residues_);
 	}
 

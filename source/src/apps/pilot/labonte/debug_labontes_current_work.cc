@@ -91,7 +91,7 @@ main( int argc, char *argv[] )
 
 		cout << "Initial Score: " << ( *sf )( pose ) << endl;
 
-		MoveMapOP mm( MoveMapOP( new MoveMap() ) );
+		MoveMapOP mm( utility::pointer::make_shared< MoveMap >() );
 		mm->set_jump( 1, true );
 
 		MinMover jump_minimizer;

@@ -284,7 +284,7 @@ std::string FixAllLoopsMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 FixAllLoopsMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new FixAllLoopsMover );
+	return utility::pointer::make_shared< FixAllLoopsMover >();
 }
 
 void FixAllLoopsMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

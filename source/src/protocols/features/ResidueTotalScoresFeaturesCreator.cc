@@ -28,7 +28,7 @@ namespace features {
 // XRW TEMP ResidueTotalScoresFeaturesCreator::ResidueTotalScoresFeaturesCreator() {}
 // XRW TEMP ResidueTotalScoresFeaturesCreator::~ResidueTotalScoresFeaturesCreator() = default;
 // XRW TEMP FeaturesReporterOP ResidueTotalScoresFeaturesCreator::create_features_reporter() const {
-// XRW TEMP  return FeaturesReporterOP( new ResidueTotalScoresFeatures );
+// XRW TEMP  return utility::pointer::make_shared< ResidueTotalScoresFeatures >();
 // XRW TEMP }
 
 // XRW TEMP std::string ResidueTotalScoresFeaturesCreator::type_name() const {

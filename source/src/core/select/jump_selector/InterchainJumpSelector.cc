@@ -46,7 +46,7 @@ InterchainJumpSelector::~InterchainJumpSelector() = default;
 InterchainJumpSelector::InterchainJumpSelector( InterchainJumpSelector const & )
 {}
 
-JumpSelectorOP InterchainJumpSelector::clone() const { return JumpSelectorOP( new InterchainJumpSelector(*this) ); }
+JumpSelectorOP InterchainJumpSelector::clone() const { return utility::pointer::make_shared< InterchainJumpSelector >(*this); }
 
 JumpSubset
 InterchainJumpSelector::apply( core::pose::Pose const & pose ) const
@@ -94,7 +94,7 @@ InterchainJumpSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 
 JumpSelectorOP
 InterchainJumpSelectorCreator::create_jump_selector() const {
-	return JumpSelectorOP( new InterchainJumpSelector );
+	return utility::pointer::make_shared< InterchainJumpSelector >();
 }
 
 std::string

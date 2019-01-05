@@ -68,7 +68,7 @@ methods::EnergyMethodOP
 ElecDensEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new ElecDensEnergy );
+	return utility::pointer::make_shared< ElecDensEnergy >();
 }
 
 ScoreTypes
@@ -90,12 +90,12 @@ methods::LongRangeEnergyType
 ElecDensEnergy::long_range_type() const { return elec_dens_energy; }
 
 /// c-tor
-ElecDensEnergy::ElecDensEnergy() : parent( methods::EnergyMethodCreatorOP( new ElecDensEnergyCreator ) ) {}
+ElecDensEnergy::ElecDensEnergy() : parent( utility::pointer::make_shared< ElecDensEnergyCreator >() ) {}
 
 
 /// clone
 EnergyMethodOP ElecDensEnergy::clone() const {
-	return EnergyMethodOP( new ElecDensEnergy( *this ) );
+	return utility::pointer::make_shared< ElecDensEnergy >( *this );
 }
 
 /////////////////////////////////////////////////////////////////////////////

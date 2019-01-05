@@ -35,7 +35,7 @@ CopyDofStepWiseSampler::CopyDofStepWiseSampler(utility::vector1< core::pose::Pos
 		core::pose::PoseOP pose_copy = starting_pose.clone();
 		copy_dof_mover.apply( *pose_copy );
 		pose_list_.push_back( pose_copy );
-		copy_dof_movers_.push_back( simple_moves::CopyDofMoverOP( new simple_moves::CopyDofMover( *pose_copy, res_map ) ) );
+		copy_dof_movers_.push_back( utility::pointer::make_shared< simple_moves::CopyDofMover >( *pose_copy, res_map ) );
 	}
 }
 
@@ -44,7 +44,7 @@ CopyDofStepWiseSampler::CopyDofStepWiseSampler(utility::vector1< core::pose::Pos
 	std::map< Size, Size > const & res_map ):
 	pose_list_( pose_list )
 {
-	for ( auto const & poseop : pose_list ) copy_dof_movers_.push_back( simple_moves::CopyDofMoverOP( new simple_moves::CopyDofMover( *poseop, res_map ) ) );
+	for ( auto const & poseop : pose_list ) copy_dof_movers_.push_back( utility::pointer::make_shared< simple_moves::CopyDofMover >( *poseop, res_map ) );
 }
 
 ///////////////////////////////////////////////////

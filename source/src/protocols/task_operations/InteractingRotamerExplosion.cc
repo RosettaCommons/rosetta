@@ -64,7 +64,7 @@ InteractingRotamerExplosion::~InteractingRotamerExplosion() = default;
 
 core::pack::task::operation::TaskOperationOP InteractingRotamerExplosion::clone() const
 {
-	return core::pack::task::operation::TaskOperationOP( new InteractingRotamerExplosion( *this ) );
+	return utility::pointer::make_shared< InteractingRotamerExplosion >( *this );
 }
 
 /// @brief restricts to repacking all residues outside of design_shell_ around each residue
@@ -154,7 +154,7 @@ void InteractingRotamerExplosion::provide_xml_schema( utility::tag::XMLSchemaDef
 core::pack::task::operation::TaskOperationOP
 InteractingRotamerExplosionCreator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new InteractingRotamerExplosion );
+	return utility::pointer::make_shared< InteractingRotamerExplosion >();
 }
 
 void InteractingRotamerExplosionCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

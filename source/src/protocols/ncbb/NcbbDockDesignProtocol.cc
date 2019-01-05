@@ -306,7 +306,7 @@ NcbbDockDesignProtocol::apply(
 
 	// create a task factory and task operations
 	TaskFactoryOP pert_tf( new TaskFactory() );
-	pert_tf->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
+	pert_tf->push_back( utility::pointer::make_shared< core::pack::task::operation::InitializeFromCommandline >() );
 
 	operation::ReadResfileOP pert_rrop( new operation::ReadResfile() );
 	pert_rrop->default_filename();
@@ -345,7 +345,7 @@ NcbbDockDesignProtocol::apply(
 	**********************************************************/
 	// create a task factory and task operations
 	TaskFactoryOP desn_tf( new TaskFactory() );
-	desn_tf->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
+	desn_tf->push_back( utility::pointer::make_shared< core::pack::task::operation::InitializeFromCommandline >() );
 
 	operation::ReadResfileOP desn_rrop( new operation::ReadResfile() );
 	desn_rrop->default_filename();
@@ -455,7 +455,7 @@ NcbbDockDesignProtocol::apply(
 protocols::moves::MoverOP
 NcbbDockDesignProtocol::clone() const
 {
-	return protocols::moves::MoverOP( new NcbbDockDesignProtocol (
+	return utility::pointer::make_shared< NcbbDockDesignProtocol > (
 		score_fxn_,
 		mc_temp_,
 		pert_mc_temp_,
@@ -479,7 +479,7 @@ NcbbDockDesignProtocol::clone() const
 		ncbb_design_first_,
 		pymol_,
 		keep_history_
-		) );
+	);
 }
 
 void
@@ -506,7 +506,7 @@ NcbbDockDesignProtocol::parse_my_tag(
 
 // MoverCreator
 // XRW TEMP moves::MoverOP NcbbDockDesignProtocolCreator::create_mover() const {
-// XRW TEMP  return moves::MoverOP( new NcbbDockDesignProtocol() );
+// XRW TEMP  return utility::pointer::make_shared< NcbbDockDesignProtocol >();
 // XRW TEMP }
 
 // XRW TEMP std::string NcbbDockDesignProtocolCreator::keyname() const {
@@ -540,7 +540,7 @@ std::string NcbbDockDesignProtocolCreator::keyname() const {
 
 protocols::moves::MoverOP
 NcbbDockDesignProtocolCreator::create_mover() const {
-	return protocols::moves::MoverOP( new NcbbDockDesignProtocol );
+	return utility::pointer::make_shared< NcbbDockDesignProtocol >();
 }
 
 void NcbbDockDesignProtocolCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

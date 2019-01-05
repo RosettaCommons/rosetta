@@ -129,7 +129,7 @@ SquarePyramidalMetal_Helper::add_dihedral_constraints(
 	}
 	cststring << "END\n";
 	//std::cout << cststring.str(); //DELETE ME -- FOR DEBUGGING ONLY
-	pose.add_constraints( core::scoring::constraints::ConstraintIO::get_instance()->read_constraints_new( cststring, core::scoring::constraints::ConstraintSetOP( new core::scoring::constraints::ConstraintSet ), pose, false )->get_all_constraints() );
+	pose.add_constraints( core::scoring::constraints::ConstraintIO::get_instance()->read_constraints_new( cststring, utility::pointer::make_shared< core::scoring::constraints::ConstraintSet >(), pose, false )->get_all_constraints() );
 }
 
 /// @brief Check that the symmetry type is one of a few compatible types.

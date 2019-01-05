@@ -173,13 +173,13 @@ TransformIntoMembraneMover::~TransformIntoMembraneMover() = default;
 /// @brief Create a Clone of this mover
 protocols::moves::MoverOP
 TransformIntoMembraneMover::clone() const {
-	return ( protocols::moves::MoverOP( new TransformIntoMembraneMover( *this ) ) );
+	return ( utility::pointer::make_shared< TransformIntoMembraneMover >( *this ) );
 }
 
 /// @brief Create a Fresh Instance of this Mover
 protocols::moves::MoverOP
 TransformIntoMembraneMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new TransformIntoMembraneMover() );
+	return utility::pointer::make_shared< TransformIntoMembraneMover >();
 }
 
 /// @brief Pase Rosetta Scripts Options for this Mover
@@ -219,7 +219,7 @@ TransformIntoMembraneMover::parse_my_tag(
 /// @brief Create a new copy of this mover
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP TransformIntoMembraneMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new TransformIntoMembraneMover() );
+// XRW TEMP  return utility::pointer::make_shared< TransformIntoMembraneMover >();
 // XRW TEMP }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)
@@ -417,7 +417,7 @@ std::string TransformIntoMembraneMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 TransformIntoMembraneMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new TransformIntoMembraneMover );
+	return utility::pointer::make_shared< TransformIntoMembraneMover >();
 }
 
 void TransformIntoMembraneMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

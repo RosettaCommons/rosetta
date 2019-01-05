@@ -213,7 +213,7 @@ build_rotated_water_rotamers(
 				core::Vector newOH2 = R * OH2c;
 
 				// make new residue
-				ResidueOP new_res = ResidueOP( new Residue( *rsd_canonic ) );
+				ResidueOP new_res = utility::pointer::make_shared< Residue >( *rsd_canonic );
 
 				// add <x,y,z> to 'O'; compute H's from this
 				new_res->set_xyz("O", O);
@@ -257,7 +257,7 @@ build_rotated_water_rotamers(
 			core::Vector newOH2 = R * OH2c;
 
 			// make new residue
-			ResidueOP new_res = ResidueOP( new Residue( *rsd_canonic ) );
+			ResidueOP new_res = utility::pointer::make_shared< Residue >( *rsd_canonic );
 
 			// add <x,y,z> to 'O'; compute H's from this
 			new_res->set_xyz("O", O);

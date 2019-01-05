@@ -154,7 +154,7 @@ RMSDMetric::set_corresponding_atoms_robust(bool robust){
 
 core::simple_metrics::SimpleMetricOP
 RMSDMetric::clone() const {
-	return SimpleMetricOP(new RMSDMetric( *this ) );
+	return utility::pointer::make_shared< RMSDMetric >( *this );
 
 }
 
@@ -286,7 +286,7 @@ RMSDMetricCreator::keyname() const {
 
 core::simple_metrics::SimpleMetricOP
 RMSDMetricCreator::create_simple_metric() const {
-	return core::simple_metrics::SimpleMetricOP( new RMSDMetric );
+	return utility::pointer::make_shared< RMSDMetric >();
 
 }
 

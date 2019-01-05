@@ -192,11 +192,11 @@ public:
 		std::string name = dummy_spec.out_fname();
 		//std::cout << "Saving Pose with name: " << name << " " << std::endl;
 		//std::cout << output_index.secondary_output_index << " " << output_index.n_secondary_outputs << std::endl;
-		named_poses_[ name ] = PoseOP( new Pose( pose ) );
+		named_poses_[ name ] = utility::pointer::make_shared< Pose >( pose );
 
 		if ( results_ ) {
-			(*results_)[ spec.result_id() ] = JobResultOP( new PoseJobResult(
-				static_cast< PoseJobResult const & > (result) ));
+			(*results_)[ spec.result_id() ] = utility::pointer::make_shared< PoseJobResult >(
+				static_cast< PoseJobResult const & > (result) );
 		}
 
 	}
@@ -233,7 +233,7 @@ class DummyOutputterCreator : public PoseOutputterCreator
 {
 public:
 
-	PoseOutputterOP create_outputter() const override { return PoseOutputterOP( new DummyPoseOutputter ); }
+	PoseOutputterOP create_outputter() const override { return utility::pointer::make_shared< DummyPoseOutputter >(); }
 	std::string keyname() const override { return DummyPoseOutputter::keyname(); }
 	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override {
 		AttributeList attrs;

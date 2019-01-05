@@ -139,10 +139,10 @@ StructureScoresFeatures::write_schema_to_db(
 	using namespace basic::database::schema_generator;
 
 	//******structure_scores******//
-	Column batch_id("batch_id", DbDataTypeOP( new DbInteger() ), false);
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ), false);
-	Column score_type_id("score_type_id", DbDataTypeOP( new DbInteger() ), false);
-	Column score_value("score_value", DbDataTypeOP( new DbReal() ), false);
+	Column batch_id("batch_id", utility::pointer::make_shared< DbInteger >(), false);
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >(), false);
+	Column score_type_id("score_type_id", utility::pointer::make_shared< DbInteger >(), false);
+	Column score_value("score_value", utility::pointer::make_shared< DbReal >(), false);
 
 	utility::vector1<Column> pkey_cols;
 	pkey_cols.push_back(batch_id);
@@ -343,7 +343,7 @@ std::string StructureScoresFeaturesCreator::type_name() const {
 
 protocols::features::FeaturesReporterOP
 StructureScoresFeaturesCreator::create_features_reporter() const {
-	return protocols::features::FeaturesReporterOP( new StructureScoresFeatures );
+	return utility::pointer::make_shared< StructureScoresFeatures >();
 }
 
 void StructureScoresFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

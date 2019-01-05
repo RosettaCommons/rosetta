@@ -93,7 +93,7 @@ RealValuedParameter::~RealValuedParameter() {}
 ParameterOP
 RealValuedParameter::clone() const
 {
-	return ParameterOP( RealValuedParameterOP( new RealValuedParameter( *this ) ) );
+	return utility::pointer::make_shared< RealValuedParameter >( *this );
 }
 
 /// @brief Set whether this parameter expects that its input is an angle in degrees.

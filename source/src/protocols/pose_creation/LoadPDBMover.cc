@@ -40,7 +40,7 @@ namespace simple_moves {
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP LoadPDBMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new LoadPDBMover );
+// XRW TEMP  return utility::pointer::make_shared< LoadPDBMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -79,13 +79,13 @@ LoadPDBMover::apply( Pose & pose )
 moves::MoverOP
 LoadPDBMover::clone() const
 {
-	return moves::MoverOP( new LoadPDBMover( *this ) );
+	return utility::pointer::make_shared< LoadPDBMover >( *this );
 }
 
 moves::MoverOP
 LoadPDBMover::fresh_instance() const
 {
-	return moves::MoverOP( new LoadPDBMover );
+	return utility::pointer::make_shared< LoadPDBMover >();
 }
 
 void
@@ -147,7 +147,7 @@ std::string LoadPDBMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 LoadPDBMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LoadPDBMover );
+	return utility::pointer::make_shared< LoadPDBMover >();
 }
 
 void LoadPDBMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

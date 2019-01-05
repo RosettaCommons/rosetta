@@ -122,7 +122,7 @@ std::string AtomTypesFeaturesCreator::type_name() const {
 
 protocols::features::FeaturesReporterOP
 AtomTypesFeaturesCreator::create_features_reporter() const {
-	return protocols::features::FeaturesReporterOP( new AtomTypesFeatures );
+	return utility::pointer::make_shared< AtomTypesFeatures >();
 }
 
 void AtomTypesFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

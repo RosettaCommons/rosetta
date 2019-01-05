@@ -52,7 +52,7 @@ RemodelLoopMoverPoseFolder::~RemodelLoopMoverPoseFolder() = default;
 RemodelLoopMoverPoseFolder::PoseFolderOP
 RemodelLoopMoverPoseFolder::clone() const
 {
-	return RemodelLoopMoverPoseFolder::PoseFolderOP( new RemodelLoopMoverPoseFolder( *this ) );
+	return utility::pointer::make_shared< RemodelLoopMoverPoseFolder >( *this );
 }
 
 std::string
@@ -127,7 +127,7 @@ RemodelLoopMoverPoseFolder::create_remodel_loop_mover(
 	// setup remodel for folding loops
 	protocols::loops::LoopsOP loops_ptr( new protocols::loops::Loops( loops ) );
 	protocols::forge::remodel::RemodelLoopMoverOP remodel =
-		protocols::forge::remodel::RemodelLoopMoverOP( new protocols::forge::remodel::RemodelLoopMover( loops_ptr ) );
+		utility::pointer::make_shared< protocols::forge::remodel::RemodelLoopMover >( loops_ptr );
 	remodel->set_keep_input_foldtree( true );
 	remodel->set_seal_foldtree( false );
 	remodel->false_movemap( *create_false_movemap( pose, movable ) );

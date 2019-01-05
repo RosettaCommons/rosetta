@@ -51,7 +51,7 @@ public:
 	virtual
 	methods::EnergyMethodOP
 	clone() const {
-		return methods::EnergyMethodOP( new SurfVolEnergy() );
+		return utility::pointer::make_shared< SurfVolEnergy >();
 	}
 
 

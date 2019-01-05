@@ -55,7 +55,7 @@ namespace constraint_generator {
 protocols::constraint_generator::ConstraintGeneratorOP
 AutomaticSheetConstraintGeneratorCreator::create_constraint_generator() const
 {
-	return protocols::constraint_generator::ConstraintGeneratorOP( new AutomaticSheetConstraintGenerator );
+	return utility::pointer::make_shared< AutomaticSheetConstraintGenerator >();
 }
 
 std::string
@@ -78,7 +78,7 @@ AutomaticSheetConstraintGenerator::~AutomaticSheetConstraintGenerator() = defaul
 protocols::constraint_generator::ConstraintGeneratorOP
 AutomaticSheetConstraintGenerator::clone() const
 {
-	return AutomaticSheetConstraintGeneratorOP( new AutomaticSheetConstraintGenerator( *this ) );
+	return utility::pointer::make_shared< AutomaticSheetConstraintGenerator >( *this );
 }
 
 void
@@ -177,9 +177,9 @@ AutomaticSheetConstraintGenerator::create_bb_angle_func( core::Real const ideal_
 	using core::scoring::constraints::BoundFunc;
 	using namespace core::scoring::func;
 
-	return weighted_func( FuncOP( new BoundFunc(
+	return weighted_func( utility::pointer::make_shared< BoundFunc >(
 		ideal_angle-angle_tolerance_,
-		ideal_angle+angle_tolerance_, sqrt(1.0/42.0), "angle_bb") ) );
+		ideal_angle+angle_tolerance_, sqrt(1.0/42.0), "angle_bb") );
 }
 
 core::scoring::func::FuncOP
@@ -188,10 +188,10 @@ AutomaticSheetConstraintGenerator::create_bb_dihedral_func( core::Real const ide
 	using core::scoring::constraints::OffsetPeriodicBoundFunc;
 	using namespace core::scoring::func;
 	core::Real const periodicity = numeric::constants::f::pi;
-	return weighted_func( FuncOP( new OffsetPeriodicBoundFunc(
+	return weighted_func( utility::pointer::make_shared< OffsetPeriodicBoundFunc >(
 		ideal_dihedral-bb_dihedral_tolerance_,
 		ideal_dihedral+bb_dihedral_tolerance_,
-		std::sqrt(1.0/42.0), "dihed_bb", periodicity, 0.0 ) ) );
+		std::sqrt(1.0/42.0), "dihed_bb", periodicity, 0.0 ) );
 
 }
 

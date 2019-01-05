@@ -125,7 +125,7 @@ HelixPairing::~HelixPairing()= default;
 /// @brief clone this object
 HelixPairingOP HelixPairing::clone()
 {
-	return HelixPairingOP( new HelixPairing( *this ) );
+	return utility::pointer::make_shared< HelixPairing >( *this );
 }
 
 /// @brief return name
@@ -223,7 +223,7 @@ HelixPairingSet::HelixPairingSet( String const & helix_pairings ):
 
 	utility::vector1< String > hpairs( utility::string_split( helix_pairings, ';' ) );
 	for ( utility::vector1< String >::const_iterator iter = hpairs.begin(); iter != hpairs.end() ; ++iter ) {
-		helix_pairings_.push_back( protocols::fldsgn::topology::HelixPairingOP( new HelixPairing( *iter ) ) );
+		helix_pairings_.push_back( utility::pointer::make_shared< HelixPairing >( *iter ) );
 	}
 }
 
@@ -262,7 +262,7 @@ HelixPairingSet::~HelixPairingSet()= default;
 HelixPairingSetOP
 HelixPairingSet::clone() const
 {
-	return HelixPairingSetOP( new HelixPairingSet( *this ) );
+	return utility::pointer::make_shared< HelixPairingSet >( *this );
 }
 
 /// @brief return helix pairing

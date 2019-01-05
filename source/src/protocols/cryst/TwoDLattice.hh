@@ -139,8 +139,8 @@ public:
 	void apply( core::pose::Pose & pose ) override;
 
 
-	protocols::moves::MoverOP clone() const override { return protocols::moves::MoverOP(new MakeLayerMover(*this)); }
-	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP(new MakeLayerMover()); }
+	protocols::moves::MoverOP clone() const override { return utility::pointer::make_shared< MakeLayerMover >(*this); }
+	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< MakeLayerMover >(); }
 
 	void
 	wallpaper_group( WallpaperGroup const & wg_in ) {

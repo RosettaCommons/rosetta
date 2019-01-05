@@ -122,7 +122,7 @@ DumpSingleResidueRotamers::apply( core::pose::Pose & pose ){
 	runtime_assert( rsd_index_ >= 1 && rsd_index_ <= pose.total_residue() );
 
 	// Set up the single residue dunbrack library
-	ResidueTypeCOP concrete_residue( ResidueTypeOP( new ResidueType( pose.residue( rsd_index_ ).type() ) ) );
+	ResidueTypeCOP concrete_residue( utility::pointer::make_shared< ResidueType >( pose.residue( rsd_index_ ).type() ) );
 	SingleResidueRotamerLibraryCOP rsd_rl_temp1( SingleResidueRotamerLibraryFactory::get_instance()->get( *concrete_residue ) );
 	SingleResidueDunbrackLibraryCOP rsd_rl = utility::pointer::dynamic_pointer_cast< const SingleResidueDunbrackLibrary >( rsd_rl_temp1 );
 
@@ -191,14 +191,14 @@ DumpSingleResidueRotamers::parse_my_tag(
 moves::MoverOP
 DumpSingleResidueRotamers::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new DumpSingleResidueRotamers );
+	return utility::pointer::make_shared< DumpSingleResidueRotamers >();
 }
 
 /// @brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
 DumpSingleResidueRotamers::clone() const
 {
-	return protocols::moves::MoverOP( new DumpSingleResidueRotamers( *this ) );
+	return utility::pointer::make_shared< DumpSingleResidueRotamers >( *this );
 }
 
 std::string DumpSingleResidueRotamers::get_name() const {
@@ -227,7 +227,7 @@ void DumpSingleResidueRotamers::provide_xml_schema( utility::tag::XMLSchemaDefin
 protocols::moves::MoverOP
 DumpSingleResidueRotamersCreator::create_mover() const
 {
-	return protocols::moves::MoverOP( new DumpSingleResidueRotamers );
+	return utility::pointer::make_shared< DumpSingleResidueRotamers >();
 }
 
 std::string
@@ -270,7 +270,7 @@ DumpSingleResidueRotamers::enumerate_aa_rotamer(
 
 		// For each rotamer, store within one standard deviation of the mean
 		for ( core::Real isd = -1; isd <= 1; ++isd ) {
-			PoseOP pose_copy = PoseOP( new Pose( pose ) );
+			PoseOP pose_copy = utility::pointer::make_shared< Pose >( pose );
 			core::Size nchi_in_aa( pose.residue( rsd_index ).type().nchi() -  pose.residue( rsd_index ).type().n_proton_chi() );
 			core::Size nchi_tor( 4 ); // Max number of chi angles in canonical AAs
 			rotamer_info << nrot << " " << drsd[nrot].probability() << " " << isd;

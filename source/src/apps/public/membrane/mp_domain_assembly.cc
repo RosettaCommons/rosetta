@@ -919,13 +919,13 @@ void MPDomainAssembly::print_score( Pose & pose, core::scoring::ScoreFunctionOP 
 ///// @brief Create a Clone of this mover
 //protocols::moves::MoverOP
 //MPDomainAssembly::clone() const {
-// return ( protocols::moves::MoverOP( new MPDomainAssembly( *this ) ) );
+// return ( utility::pointer::make_shared< MPDomainAssembly >( *this ) );
 //}
 //
 ///// @brief Create a Fresh Instance of this Mover
 //protocols::moves::MoverOP
 //MPDomainAssembly::fresh_instance() const {
-// return protocols::moves::MoverOP( new MPDomainAssembly() );
+// return utility::pointer::make_shared< MPDomainAssembly >();
 //}
 //
 ///// @brief Pase Rosetta Scripts Options for this Mover
@@ -944,7 +944,7 @@ void MPDomainAssembly::print_score( Pose & pose, core::scoring::ScoreFunctionOP 
 ///// @brief Create a new copy of this mover
 //protocols::moves::MoverOP
 //MPDomainAssemblyCreator::create_mover() const {
-// return protocols::moves::MoverOP( new MPDomainAssembly );
+// return utility::pointer::make_shared< MPDomainAssembly >();
 //}
 //
 ///// @brief Return the Name of this mover (as seen by Rscripts)

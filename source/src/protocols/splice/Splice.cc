@@ -162,7 +162,7 @@ std::string SpliceCreator::keyname() const {
 }
 
 protocols::moves::MoverOP SpliceCreator::create_mover() const {
-	return protocols::moves::MoverOP( new Splice );
+	return utility::pointer::make_shared< Splice >();
 }
 
 std::string SpliceCreator::mover_name() {
@@ -188,7 +188,7 @@ Splice::Splice() :
 	dbase_subset_.clear();
 	splice_segments_.clear();
 	pdb_segments_.clear();
-	end_dbase_subset_ = DataccacheBoolDataOP( new basic::datacache::DataMapObj<bool> );
+	end_dbase_subset_ = utility::pointer::make_shared< basic::datacache::DataMapObj<bool> >();
 	end_dbase_subset_->obj = false;
 	basic::options::option[basic::options::OptionKeys::out::file::pdb_comments].value(true);
 	rb_sensitive_ = false;
@@ -1158,20 +1158,20 @@ void Splice::apply(core::pose::Pose & pose) {
 	TR << "Source segment sequence: " << threaded_seq << " starting from " << from_res() << std::endl;
 	TaskFactoryOP tf;
 	if ( design_task_factory() == NULL ) {
-		tf = TaskFactoryOP( new TaskFactory );
+		tf = utility::pointer::make_shared< TaskFactory >();
 	} else {
-		tf = TaskFactoryOP( new TaskFactory(*design_task_factory()) );
+		tf = utility::pointer::make_shared< TaskFactory >(*design_task_factory());
 	}
 
 	if ( restrict_to_repacking_chain2() ) {
 		for ( core::Size i = 2; i <= pose.conformation().num_chains(); ++i ) {
 			TR << "Restricting chain " << i << " to repacking only" << std::endl;
-			tf->push_back(TaskOperationCOP( new protocols::task_operations::RestrictChainToRepackingOperation(i) ));
+			tf->push_back(utility::pointer::make_shared< protocols::task_operations::RestrictChainToRepackingOperation >(i));
 		}
 	}
 
-	tf->push_back(TaskOperationCOP( new operation::InitializeFromCommandline ));
-	tf->push_back(TaskOperationCOP( new operation::NoRepackDisulfides ));
+	tf->push_back(utility::pointer::make_shared< operation::InitializeFromCommandline >());
+	tf->push_back(utility::pointer::make_shared< operation::NoRepackDisulfides >());
 	if ( thread_original_sequence() ) {
 		TR << "THREADING ORIGINAL SEGMENT" << std::endl;
 		tf->push_back(tso);
@@ -1277,7 +1277,7 @@ void Splice::apply(core::pose::Pose & pose) {
 		ccd_mover->temp_initial(1.5);
 		ccd_mover->temp_final(0.5);
 		core::kinematics::MoveMapOP mm;
-		mm = core::kinematics::MoveMapOP( new core::kinematics::MoveMap );
+		mm = utility::pointer::make_shared< core::kinematics::MoveMap >();
 		mm->set_chi(false);
 		mm->set_bb(false);
 		mm->set_jump(false);
@@ -1504,7 +1504,7 @@ void Splice::apply(core::pose::Pose & pose) {
 			} //for
 			//add dihedral constraints loop
 			//pose.dump_pdb("after_changedofs_tail_test.pdb");
-			mm = core::kinematics::MoveMapOP( new core::kinematics::MoveMap );
+			mm = utility::pointer::make_shared< core::kinematics::MoveMap >();
 			mm->set_chi(false);
 			mm->set_bb(false);
 			mm->set_jump(false);
@@ -1517,16 +1517,16 @@ void Splice::apply(core::pose::Pose & pose) {
 			//Add new dihedral and coordinate constraint to the tail segment
 			tsm.set_fa_scorefxn(scorefxn());
 			tsm.set_movemap(mm);
-			tf = TaskFactoryOP( new TaskFactory );
-			tf = TaskFactoryOP( new TaskFactory(*design_task_factory()) );
+			tf = utility::pointer::make_shared< TaskFactory >();
+			tf = utility::pointer::make_shared< TaskFactory >(*design_task_factory());
 			if ( restrict_to_repacking_chain2() ) {
 				for ( core::Size i = 2; i <= pose.conformation().num_chains(); ++i ) {
 					TR << "Restricting chain " << i << " to repacking only" << std::endl;
-					tf->push_back(TaskOperationCOP( new protocols::task_operations::RestrictChainToRepackingOperation(i) ));
+					tf->push_back(utility::pointer::make_shared< protocols::task_operations::RestrictChainToRepackingOperation >(i));
 				}
 			}
-			tf->push_back(TaskOperationCOP( new operation::InitializeFromCommandline ));
-			tf->push_back(TaskOperationCOP( new operation::NoRepackDisulfides ));
+			tf->push_back(utility::pointer::make_shared< operation::InitializeFromCommandline >());
+			tf->push_back(utility::pointer::make_shared< operation::NoRepackDisulfides >());
 			if ( thread_original_sequence() ) {
 				TR << "THREADING ALLOWED" << std::endl;
 				tf->push_back(tso);
@@ -1572,11 +1572,11 @@ void Splice::apply(core::pose::Pose & pose) {
 			TR<<"Score function before rtmin:"<<std::endl;
 			scorefxn()->show(pose);
 			TaskFactoryOP tf_in( new TaskFactory(*design_task_factory()) );
-			tf_in->push_back(TaskOperationCOP( new operation::NoRepackDisulfides ));
-			tf_in->push_back(TaskOperationCOP(new operation::InitializeFromCommandline));
-			tf_in->push_back(TaskOperationCOP(new core::pack::task::operation::RestrictToRepacking )); //Don't want to do design, Gideon Sep14
+			tf_in->push_back(utility::pointer::make_shared< operation::NoRepackDisulfides >());
+			tf_in->push_back(utility::pointer::make_shared< operation::InitializeFromCommandline >());
+			tf_in->push_back(utility::pointer::make_shared< core::pack::task::operation::RestrictToRepacking >()); //Don't want to do design, Gideon Sep14
 			if ( conf.num_chains()>1 ) { // Don't want to repack the ligand at this point, Gideon Sep14
-				tf_in->push_back(TaskOperationCOP( new PreventChainFromRepackingOperation(2) ));
+				tf_in->push_back(utility::pointer::make_shared< PreventChainFromRepackingOperation >(2));
 			}
 
 			PackerTaskOP ptask = tf_in->create_task_and_apply_taskoperations(pose);
@@ -1734,8 +1734,8 @@ void Splice::apply(core::pose::Pose & pose) {
 		}
 		*/
 		TaskFactoryOP tf_in( new TaskFactory(*design_task_factory()) );
-		tf_in->push_back(TaskOperationCOP( new operation::InitializeFromCommandline ));
-		tf_in->push_back(TaskOperationCOP( new operation::NoRepackDisulfides ));
+		tf_in->push_back(utility::pointer::make_shared< operation::InitializeFromCommandline >());
+		tf_in->push_back(utility::pointer::make_shared< operation::NoRepackDisulfides >());
 		tf_in->push_back(dao);
 
 		PackerTaskOP ptask = tf_in->create_task_and_apply_taskoperations(pose);
@@ -1764,7 +1764,7 @@ void Splice::apply(core::pose::Pose & pose) {
 		//After Re-packing we add RotamerTrialMover to resolve any left over clashes, gideonla Aug13
 		if ( rtmin() ) {  //To prevent rtmin when not needed - Assaf Alon
 			TaskFactoryOP tf_rtmin( new TaskFactory(*tf) );//this taskfactory (tf_rttmin) is only used here. I don't want to affect other places in splice, gideonla aug13
-			tf_rtmin->push_back(TaskOperationCOP( new operation::RestrictToRepacking() )); //W don't rtmin to do design
+			tf_rtmin->push_back(utility::pointer::make_shared< operation::RestrictToRepacking >()); //W don't rtmin to do design
 			ptask = tf_rtmin->create_task_and_apply_taskoperations(pose);
 			protocols::minimization_packing::RotamerTrialsMinMover rtmin(scorefxn(), *ptask);
 			rtmin.apply(pose);
@@ -1798,7 +1798,7 @@ void Splice::apply(core::pose::Pose & pose) {
 	chainbreak_check( pose , tolerance, fail_retry_if_found , crash_if_found );
 
 	remove_hairpin( pose );
-	saved_fold_tree_ = core::kinematics::FoldTreeOP( new core::kinematics::FoldTree(pose.fold_tree()) );
+	saved_fold_tree_ = utility::pointer::make_shared< core::kinematics::FoldTree >(pose.fold_tree());
 	retrieve_values();
 }
 
@@ -1861,7 +1861,7 @@ void Splice::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &data, pro
 
 	if ( tag->hasOption("source_pdb") ) {
 		source_pdb(tag->getOption<std::string>("source_pdb"));
-		source_pose_ = core::pose::PoseOP( new core::pose::Pose );
+		source_pose_ = utility::pointer::make_shared< core::pose::Pose >();
 		source_pose_=core::import_pose::pose_from_file(source_pdb_);
 	}
 
@@ -2050,19 +2050,19 @@ void Splice::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &data, pro
 			template_pose_ = data.get_ptr<core::pose::Pose>("poses", template_file_);
 			TR << "using template pdb from datamap" << std::endl;
 		} else if ( tag->hasOption("template_file") ) {
-			template_pose_ = core::pose::PoseOP( new core::pose::Pose );
+			template_pose_ = utility::pointer::make_shared< core::pose::Pose >();
 			template_pose_ = core::import_pose::pose_from_file(template_file_);
 			data.add("poses", template_file_, template_pose_);
 			TR << "loading template_pose from " << template_file_ << std::endl;
 		}
 	} else {
-		template_pose_ = core::pose::PoseOP( new core::pose::Pose(pose) );
+		template_pose_ = utility::pointer::make_shared< core::pose::Pose >(pose);
 	}
 	set_fold_tree_only_ = tag->getOption<bool>("set_fold_tree_only", false);
 	if ( set_fold_tree_only_ ) {
 		return; //other options are not relevant
 	}
-	start_pose_ = core::pose::PoseOP( new core::pose::Pose(pose) );
+	start_pose_ = utility::pointer::make_shared< core::pose::Pose >(pose);
 	runtime_assert(tag->hasOption("torsion_database") != tag->hasOption("source_pdb"));
 	task_factory(protocols::rosetta_scripts::parse_task_operations(tag, data));
 	if ( !tag->hasOption("task_operations") ) {
@@ -2188,7 +2188,7 @@ void Splice::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &data, pro
 }
 
 protocols::moves::MoverOP Splice::clone() const {
-	return (protocols::moves::MoverOP(new Splice(*this)));
+	return (utility::pointer::make_shared< Splice >(*this));
 }
 
 void Splice::scorefxn(core::scoring::ScoreFunctionOP sf) {
@@ -2974,7 +2974,7 @@ void Splice::add_coordinate_constraints(core::pose::Pose & pose, core::pose::Pos
 					core::scoring::func::FuncOP coor_cont_fun( new core::scoring::func::HarmonicFunc(0.0, 1) );
 					TR_constraints<<"Applying constraints to atom:"<<pose.residue(i).atom_name(atmnum)<<",of residue "<<pose.residue(i).name3()<<i;
 					TR_constraints<<"Taking xyz coordinates from atom:"<<source_pose.residue(i + res_diff).xyz(atmnum)[0]<<"(x),"<<source_pose.residue(i + res_diff).xyz(atmnum)[1]<<"(y),"<<source_pose.residue(i + res_diff).xyz(atmnum)[2]<<"(z), pose atom xyz: "<<pose.residue(i).xyz(atmnum)[0]<<std::endl;
-					cst.push_back(core::scoring::constraints::ConstraintOP( new core::scoring::constraints::CoordinateConstraint(core::id::AtomID(atmnum, i),anchor_atom, source_pose.residue(i + res_diff).xyz(atmnum), coor_cont_fun) ));
+					cst.push_back(utility::pointer::make_shared< core::scoring::constraints::CoordinateConstraint >(core::id::AtomID(atmnum, i),anchor_atom, source_pose.residue(i + res_diff).xyz(atmnum), coor_cont_fun));
 					//pose.add_constraints(cst);
 				}//for atom_it
 				//using namespace std;
@@ -2987,7 +2987,7 @@ void Splice::add_coordinate_constraints(core::pose::Pose & pose, core::pose::Pos
 					utility::vector1< core::Size > const chiAtoms=pose.residue(i).chi_atoms(chi);//get chi atoms from chi angle so we can apply coordiante constraints
 					for ( core::Size chiAtom=1; chiAtom<=4; chiAtom++ ) {
 						core::scoring::func::FuncOP coor_cont_fun( new core::scoring::func::HarmonicFunc(0.0, 1) );
-						cst.push_back(core::scoring::constraints::ConstraintOP( new core::scoring::constraints::CoordinateConstraint(core::id::AtomID(chiAtoms[chiAtom], i),anchor_atom, source_pose.residue(i + res_diff).xyz(chiAtoms[chiAtom]), coor_cont_fun) ));
+						cst.push_back(utility::pointer::make_shared< core::scoring::constraints::CoordinateConstraint >(core::id::AtomID(chiAtoms[chiAtom], i),anchor_atom, source_pose.residue(i + res_diff).xyz(chiAtoms[chiAtom]), coor_cont_fun));
 						TR<<"Applying constraints to chi_atom:"<<chiAtoms[chiAtom]<<pose.residue(i).atom_name(chiAtoms[chiAtom])<<",of residue "<<pose.residue(i).name3()<<i<<std::endl;
 						//pose.add_constraints(cst);
 					}//for chiAtom
@@ -2998,8 +2998,8 @@ void Splice::add_coordinate_constraints(core::pose::Pose & pose, core::pose::Pos
 			continue;
 		}//fi CG_atom
 		core::scoring::func::FuncOP coor_cont_fun( new core::scoring::func::HarmonicFunc(0.0, 1) );
-		cst.push_back(core::scoring::constraints::ConstraintOP( new core::scoring::constraints::CoordinateConstraint(core::id::AtomID(pose.residue(i).atom_index(atom_type), i),
-			anchor_atom, source_pose.residue(i + res_diff).atom(atom_type).xyz(), coor_cont_fun) ));
+		cst.push_back(utility::pointer::make_shared< core::scoring::constraints::CoordinateConstraint >(core::id::AtomID(pose.residue(i).atom_index(atom_type), i),
+			anchor_atom, source_pose.residue(i + res_diff).atom(atom_type).xyz(), coor_cont_fun));
 		//Print xyz coor of current pose CA atoms vs. source pose
 		TR_constraints << i << pose.aa(i) << " " << pose.residue(i).atom(atom_type).xyz()[0] << "," << pose.residue(i).atom(atom_type).xyz()[1]
 			<< "," << pose.residue(i).atom(atom_type).xyz()[2] << " / " << i + res_diff << source_pose.aa(i + res_diff) << " "
@@ -3051,8 +3051,8 @@ void Splice::add_dihedral_constraints(core::pose::Pose & pose, core::pose::Pose 
 		core::scoring::func::FuncOP di_const_func_phi( new core::scoring::func::CircularHarmonicFunc(
 			(source_pose.phi(i) * numeric::constants::d::pi_2) / 360, 1) );
 		csts.push_back(
-			core::scoring::constraints::ConstraintOP( new core::scoring::constraints::DihedralConstraint(pose_phi_resj_c, pose_phi_resi_n, pose_phi_resi_ca, pose_phi_resi_co,
-			di_const_func_phi) ));
+			utility::pointer::make_shared< core::scoring::constraints::DihedralConstraint >(pose_phi_resj_c, pose_phi_resi_n, pose_phi_resi_ca, pose_phi_resi_co,
+			di_const_func_phi));
 
 		//Set up constraints for the psi angle
 		core::id::AtomID psi_resi_n(source_pose.residue_type(i).atom_index("N"), i);
@@ -3075,8 +3075,8 @@ void Splice::add_dihedral_constraints(core::pose::Pose & pose, core::pose::Pose 
 		core::scoring::func::FuncOP di_const_func_psi( new core::scoring::func::CircularHarmonicFunc(
 			(source_pose.psi(i) * numeric::constants::d::pi_2) / 360, 1) );
 		csts.push_back(
-			core::scoring::constraints::ConstraintOP( new core::scoring::constraints::DihedralConstraint(pose_psi_resi_n, pose_psi_resi_ca, pose_psi_resi_co, pose_psi_resj_n,
-			di_const_func_psi) ));
+			utility::pointer::make_shared< core::scoring::constraints::DihedralConstraint >(pose_psi_resi_n, pose_psi_resi_ca, pose_psi_resi_co, pose_psi_resj_n,
+			di_const_func_psi));
 		TR_constraints << "Psi: " << i - residue_diff << pose.aa(i - residue_diff) << ":" << pose.psi(i - residue_diff)
 			<< " / " << i << source_pose.aa(i) << ":" << numeric::dihedral_degrees(xyz_Ni, xyz_Cai, xyz_Ci, xyz_Nj)
 			<< std::endl;
@@ -3103,8 +3103,8 @@ void Splice::add_dihedral_constraints(core::pose::Pose & pose, core::pose::Pose 
 		core::scoring::func::FuncOP di_const_func_omega( new core::scoring::func::CircularHarmonicFunc(
 			(source_pose.omega(i) * numeric::constants::d::pi_2) / 360, 1) );
 		csts.push_back(
-			core::scoring::constraints::ConstraintOP( new core::scoring::constraints::DihedralConstraint(pose_omega_resi_ca, pose_omega_resi_co, pose_omega_resj_n, pose_omega_resj_ca,
-			di_const_func_omega) ));
+			utility::pointer::make_shared< core::scoring::constraints::DihedralConstraint >(pose_omega_resi_ca, pose_omega_resi_co, pose_omega_resj_n, pose_omega_resj_ca,
+			di_const_func_omega));
 	}
 	core::Real const score_weight(scorefxn()->get_weight(core::scoring::dihedral_constraint));
 	TR_constraints << "dihedral_constraint weight is set to " << score_weight << std::endl;

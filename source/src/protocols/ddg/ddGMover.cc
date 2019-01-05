@@ -109,14 +109,14 @@ ddGMover::ddGMover() :
 	scorefxn_(/* 0 */),
 	min_cst_sfxn_(/* 0 */),
 	min_cst_sfxn_no_cst_weight_( /* 0 */ ),
-	cst_set_(core::scoring::constraints::ConstraintSetOP( new core::scoring::constraints::ConstraintSet() )),
-	min_cst_set_wt_(core::scoring::constraints::ConstraintSetOP( new core::scoring::constraints::ConstraintSet() )),
+	cst_set_(utility::pointer::make_shared< core::scoring::constraints::ConstraintSet >()),
+	min_cst_set_wt_(utility::pointer::make_shared< core::scoring::constraints::ConstraintSet >()),
 	min_cst_wt_types_(),
-	min_cst_set_mut_(core::scoring::constraints::ConstraintSetOP( new core::scoring::constraints::ConstraintSet() )),
+	min_cst_set_mut_(utility::pointer::make_shared< core::scoring::constraints::ConstraintSet >()),
 	min_cst_mut_types_(),
-	repack_cst_set_wt_(core::scoring::constraints::ConstraintSetOP( new core::scoring::constraints::ConstraintSet() )),
+	repack_cst_set_wt_(utility::pointer::make_shared< core::scoring::constraints::ConstraintSet >()),
 	repack_wt_types_(),
-	repack_cst_set_mut_(core::scoring::constraints::ConstraintSetOP( new core::scoring::constraints::ConstraintSet() )),
+	repack_cst_set_mut_(utility::pointer::make_shared< core::scoring::constraints::ConstraintSet >()),
 	repack_mut_types_(),
 	residues_to_mutate_(0,core::chemical::aa_unk),
 	num_iterations_(20),
@@ -146,14 +146,14 @@ ddGMover::ddGMover(
 	scorefxn_(std::move(s)),
 	min_cst_sfxn_( m->clone() ),
 	min_cst_sfxn_no_cst_weight_( m->clone() ),
-	cst_set_(core::scoring::constraints::ConstraintSetOP( new core::scoring::constraints::ConstraintSet() )),
-	min_cst_set_wt_(core::scoring::constraints::ConstraintSetOP( new core::scoring::constraints::ConstraintSet() )),
+	cst_set_(utility::pointer::make_shared< core::scoring::constraints::ConstraintSet >()),
+	min_cst_set_wt_(utility::pointer::make_shared< core::scoring::constraints::ConstraintSet >()),
 	min_cst_wt_types_(),
-	min_cst_set_mut_(core::scoring::constraints::ConstraintSetOP( new core::scoring::constraints::ConstraintSet() )),
+	min_cst_set_mut_(utility::pointer::make_shared< core::scoring::constraints::ConstraintSet >()),
 	min_cst_mut_types_(),
-	repack_cst_set_wt_(core::scoring::constraints::ConstraintSetOP( new core::scoring::constraints::ConstraintSet() )),
+	repack_cst_set_wt_(utility::pointer::make_shared< core::scoring::constraints::ConstraintSet >()),
 	repack_wt_types_(),
-	repack_cst_set_mut_(core::scoring::constraints::ConstraintSetOP( new core::scoring::constraints::ConstraintSet() )),
+	repack_cst_set_mut_(utility::pointer::make_shared< core::scoring::constraints::ConstraintSet >()),
 	repack_mut_types_(), //these arrays only because
 	//theres no easy way to get constraint info after the fact
 	residues_to_mutate_( res_to_mutate ),
@@ -440,10 +440,10 @@ ddGMover::setup_constraints(
 						Real const CA_dist = (CA_i - CA_j).length();
 						if ( CA_dist < CA_cutoff ) {
 							core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc(CA_dist, cst_tol) );
-							ConstraintCOP cst( ConstraintOP( new AtomPairConstraint(
+							ConstraintCOP cst( utility::pointer::make_shared< AtomPairConstraint >(
 								core::id::AtomID(pose.residue(i).atom_index(" CA "),i),
 								core::id::AtomID(pose.residue(j).atom_index(" CA "),j),
-								fx) ) );
+								fx) );
 							pose.add_constraint(cst);
 						}
 					}
@@ -992,26 +992,26 @@ ddGMover::relax_wildtype_structure(
 	//store constraints for later usage
 	if ( basic::options::option[OptionKeys::ddg::use_rotamer_constraints_to_native]() ) {
 		setup_repack_constraints(pose,scorefxn_,false,repack_wt_types_); //not going to use now, but later
-		repack_cst_set_wt_ = core::scoring::constraints::ConstraintSetOP( new core::scoring::constraints::ConstraintSet(*(pose.constraint_set())) );
+		repack_cst_set_wt_ = utility::pointer::make_shared< core::scoring::constraints::ConstraintSet >(*(pose.constraint_set()));
 		//
 		setup_repack_constraints(pose,scorefxn_,true,repack_mut_types_);
-		repack_cst_set_mut_ = core::scoring::constraints::ConstraintSetOP( new core::scoring::constraints::ConstraintSet(*(pose.constraint_set())) );
+		repack_cst_set_mut_ = utility::pointer::make_shared< core::scoring::constraints::ConstraintSet >(*(pose.constraint_set()));
 	}
 
 	if ( basic::options::option[OptionKeys::ddg::min_cst]() ) {
 		if ( basic::options::option[OptionKeys::ddg::harmonic_ca_tether].user() ) {
 			setup_constraints( pose, min_cst_sfxn_, basic::options::option[OptionKeys::ddg::harmonic_ca_tether](), false, min_cst_wt_types_);
-			min_cst_set_wt_ = core::scoring::constraints::ConstraintSetOP( new core::scoring::constraints::ConstraintSet(*(pose.constraint_set())) );
+			min_cst_set_wt_ = utility::pointer::make_shared< core::scoring::constraints::ConstraintSet >(*(pose.constraint_set()));
 			//
 			setup_constraints( pose, min_cst_sfxn_, basic::options::option[OptionKeys::ddg::harmonic_ca_tether](), true, min_cst_mut_types_);
-			min_cst_set_mut_ = core::scoring::constraints::ConstraintSetOP( new core::scoring::constraints::ConstraintSet(*(pose.constraint_set())) );
+			min_cst_set_mut_ = utility::pointer::make_shared< core::scoring::constraints::ConstraintSet >(*(pose.constraint_set()));
 
 		} else {
 			setup_constraints(pose,min_cst_sfxn_,0.5,false,min_cst_wt_types_);
-			min_cst_set_wt_ = core::scoring::constraints::ConstraintSetOP( new core::scoring::constraints::ConstraintSet(*(pose.constraint_set())) );
+			min_cst_set_wt_ = utility::pointer::make_shared< core::scoring::constraints::ConstraintSet >(*(pose.constraint_set()));
 			//
 			setup_constraints(pose,min_cst_sfxn_,0.5,true,min_cst_mut_types_);
-			min_cst_set_mut_ = core::scoring::constraints::ConstraintSetOP( new core::scoring::constraints::ConstraintSet(*(pose.constraint_set())) );
+			min_cst_set_mut_ = utility::pointer::make_shared< core::scoring::constraints::ConstraintSet >(*(pose.constraint_set()));
 		}
 	}
 	pose.remove_constraints(); //only reason we added constraints was to create a storage set of constraints

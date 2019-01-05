@@ -73,7 +73,7 @@ ConnectChainsMover::ConnectChainsMover():moves::Mover("ConnectChainsMover"){}
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP ConnectChainsMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new ConnectChainsMover );
+// XRW TEMP  return utility::pointer::make_shared< ConnectChainsMover >();
 // XRW TEMP }
 
 
@@ -328,7 +328,7 @@ std::string ConnectChainsMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 ConnectChainsMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ConnectChainsMover );
+	return utility::pointer::make_shared< ConnectChainsMover >();
 }
 
 void ConnectChainsMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -45,7 +45,7 @@ MultiStateEntity::MultiStateEntity( MultiStateEntity const & entity ) :
 MultiStateEntity::~MultiStateEntity() = default;
 
 MultiStateEntity::EntityOP
-MultiStateEntity::clone() const { return MultiStateEntity::EntityOP( new MultiStateEntity(*this) ); }
+MultiStateEntity::clone() const { return utility::pointer::make_shared< MultiStateEntity >(*this); }
 
 void MultiStateEntity::show( std::ostream & os ) const
 {

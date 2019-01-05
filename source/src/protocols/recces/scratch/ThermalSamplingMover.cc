@@ -637,14 +637,14 @@ ThermalSamplingMover::parse_my_tag(
 moves::MoverOP
 ThermalSamplingMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new ThermalSamplingMover );
+	return utility::pointer::make_shared< ThermalSamplingMover >();
 }
 
 /// @brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
 ThermalSamplingMover::clone() const
 {
-	return protocols::moves::MoverOP( new ThermalSamplingMover( *this ) );
+	return utility::pointer::make_shared< ThermalSamplingMover >( *this );
 }
 
 // XRW TEMP std::string
@@ -677,7 +677,7 @@ operator<<( std::ostream & os, ThermalSamplingMover const & mover )
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP ThermalSamplingMoverCreator::create_mover() const
 // XRW TEMP {
-// XRW TEMP  return protocols::moves::MoverOP( new ThermalSamplingMover );
+// XRW TEMP  return utility::pointer::make_shared< ThermalSamplingMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -708,7 +708,7 @@ std::string ThermalSamplingMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 ThermalSamplingMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ThermalSamplingMover );
+	return utility::pointer::make_shared< ThermalSamplingMover >();
 }
 
 void ThermalSamplingMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

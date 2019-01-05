@@ -192,7 +192,7 @@ PeriodicBoundFunc::PeriodicBoundFunc(
 {}
 
 func::FuncOP
-PeriodicBoundFunc::clone() const { return func::FuncOP( new PeriodicBoundFunc( *this ) ); }
+PeriodicBoundFunc::clone() const { return utility::pointer::make_shared< PeriodicBoundFunc >( *this ); }
 
 bool PeriodicBoundFunc::operator == ( Func const & rhs ) const {
 	if ( !     same_type_as_me(   rhs ) ) return false;
@@ -253,7 +253,7 @@ OffsetPeriodicBoundFunc::OffsetPeriodicBoundFunc(
 	offset_( offset_in )
 {}
 
-func::FuncOP OffsetPeriodicBoundFunc::clone() const { return func::FuncOP( new OffsetPeriodicBoundFunc( *this ) ); }
+func::FuncOP OffsetPeriodicBoundFunc::clone() const { return utility::pointer::make_shared< OffsetPeriodicBoundFunc >( *this ); }
 
 bool OffsetPeriodicBoundFunc::operator == ( Func const & rhs ) const {
 	if ( !     same_type_as_me(   rhs ) ) return false;

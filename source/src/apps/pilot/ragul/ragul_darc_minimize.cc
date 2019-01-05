@@ -345,9 +345,9 @@ int main( int argc, char * argv [] ){
 					Residue const & nat_i_rsd( bound_pose.residue(i) );
 					for ( Size ii = 1; ii<= nat_i_rsd.nheavyatoms(); ++ii ) {
 						AtomID CAi ( ii, i );
-						cst_set->add_constraint
-							(  ConstraintCOP( ConstraintOP( new CoordinateConstraint
-							( CAi, AtomID(1,my_anchor), conformation.xyz( CAi ), spring ) ) )
+						cst_set->add_constraint(
+							utility::pointer::make_shared< CoordinateConstraint >(
+							CAi, AtomID(1,my_anchor), conformation.xyz( CAi ), spring )
 						);
 					}
 				}

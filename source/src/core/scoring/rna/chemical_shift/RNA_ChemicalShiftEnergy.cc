@@ -47,7 +47,7 @@ methods::EnergyMethodOP
 RNA_ChemicalShiftEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new RNA_ChemicalShiftEnergy );
+	return utility::pointer::make_shared< RNA_ChemicalShiftEnergy >();
 }
 
 ScoreTypes
@@ -60,7 +60,7 @@ RNA_ChemicalShiftEnergyCreator::score_types_for_method() const {
 
 /// c-tor
 RNA_ChemicalShiftEnergy::RNA_ChemicalShiftEnergy():
-	parent( methods::EnergyMethodCreatorOP( methods::EnergyMethodCreatorOP( new RNA_ChemicalShiftEnergyCreator ) ) ),
+	parent( utility::pointer::make_shared< RNA_ChemicalShiftEnergyCreator >() ),
 	rna_chemical_shift_potential_( ScoringManager::get_instance()->get_RNA_ChemicalShiftPotential() )
 {}
 
@@ -68,7 +68,7 @@ RNA_ChemicalShiftEnergy::RNA_ChemicalShiftEnergy():
 methods::EnergyMethodOP
 RNA_ChemicalShiftEnergy::clone() const
 {
-	return methods::EnergyMethodOP( new RNA_ChemicalShiftEnergy );
+	return utility::pointer::make_shared< RNA_ChemicalShiftEnergy >();
 }
 
 

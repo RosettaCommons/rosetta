@@ -93,7 +93,7 @@ RmsdFilter::RmsdFilter(
 	core::Real const threshold,
 	core::pose::PoseOP reference_pose
 ) : protocols::filters::Filter( "Rmsd" ),
-	selection_( core::select::residue_selector::ResidueSelectorOP( new core::select::residue_selector::ResidueIndexSelector(selection) ) ),
+	selection_( utility::pointer::make_shared< core::select::residue_selector::ResidueIndexSelector >(selection) ),
 	superimpose_(superimpose),
 	threshold_(threshold),
 	reference_pose_(std::move(reference_pose)),
@@ -116,7 +116,7 @@ RmsdFilter::~RmsdFilter() = default;
 
 protocols::filters::FilterOP
 RmsdFilter::clone() const {
-	return protocols::filters::FilterOP( new RmsdFilter( *this ) );
+	return utility::pointer::make_shared< RmsdFilter >( *this );
 }
 
 static basic::Tracer TR( "protocols.protein_interface_design.filters.RmsdFilter" );
@@ -408,7 +408,7 @@ RmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & 
 		reference_pose_ = protocols::rosetta_scripts::saved_reference_pose(tag,data_map );
 		TR<<"Loaded reference pose: "<<tag->getOption< std::string >( "reference_name" )<<" with "<<reference_pose_->size()<<" residues"<<std::endl;
 	} else {
-		reference_pose_ = core::pose::PoseOP( new core::pose::Pose( reference_pose ) );
+		reference_pose_ = utility::pointer::make_shared< core::pose::Pose >( reference_pose );
 		if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
 			core::import_pose::pose_from_file( *reference_pose_, basic::options::option[ basic::options::OptionKeys::in::file::native ] , core::import_pose::PDB_file);
 		}
@@ -478,7 +478,7 @@ RmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & 
 	if ( selection_from_segment_cache_ ) TR << " that are in pose segment observer cache at apply time." << std::endl;
 	else if ( selection_ == nullptr ) {
 		TR << "ALL" << std::endl;
-		selection_ = ResidueSelectorOP( new TrueResidueSelector );
+		selection_ = utility::pointer::make_shared< TrueResidueSelector >();
 	} else {
 		TR << "selected residues" << std::endl;
 	}
@@ -518,7 +518,7 @@ utility::vector1< numeric::xyzVector< core::Real > >Ca_coords( core::pose::Pose 
 }
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP RmsdFilterCreator::create_filter() const { return protocols::filters::FilterOP( new RmsdFilter ); }
+// XRW TEMP RmsdFilterCreator::create_filter() const { return utility::pointer::make_shared< RmsdFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP RmsdFilterCreator::keyname() const { return "Rmsd"; }
@@ -577,7 +577,7 @@ std::string RmsdFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 RmsdFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new RmsdFilter );
+	return utility::pointer::make_shared< RmsdFilter >();
 }
 
 void RmsdFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

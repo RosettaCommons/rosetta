@@ -84,7 +84,7 @@ NetChargeEnergySetup::~NetChargeEnergySetup() = default;
 /// @brief Clone: create a copy of this object, and return an owning pointer
 /// to the copy.
 NetChargeEnergySetupOP NetChargeEnergySetup::clone() const {
-	return NetChargeEnergySetupOP( new NetChargeEnergySetup(*this) );
+	return utility::pointer::make_shared< NetChargeEnergySetup >(*this);
 }
 
 /// @brief Reset all data in this data storage object.

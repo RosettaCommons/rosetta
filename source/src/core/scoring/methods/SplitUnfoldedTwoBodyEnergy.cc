@@ -31,7 +31,7 @@ namespace scoring {
 namespace methods {
 
 SplitUnfoldedTwoBodyEnergy::SplitUnfoldedTwoBodyEnergy( std::string const & label_type, std::string const & value_type, std::string const & score_func_type ):
-	parent( methods::EnergyMethodCreatorOP( new SplitUnfoldedTwoBodyEnergyCreator ) ),
+	parent( utility::pointer::make_shared< SplitUnfoldedTwoBodyEnergyCreator >() ),
 	label_type_( label_type ),
 	value_type_( value_type ),
 	score_func_type_( score_func_type ),
@@ -41,7 +41,7 @@ SplitUnfoldedTwoBodyEnergy::SplitUnfoldedTwoBodyEnergy( std::string const & labe
 }
 
 SplitUnfoldedTwoBodyEnergy::SplitUnfoldedTwoBodyEnergy( std::string const & label_type, std::string const & value_type,  std::string const & score_func_type, const EnergyMap & emap_in ):
-	parent( methods::EnergyMethodCreatorOP( new SplitUnfoldedTwoBodyEnergyCreator ) ),
+	parent( utility::pointer::make_shared< SplitUnfoldedTwoBodyEnergyCreator >() ),
 	label_type_( label_type ),
 	value_type_( value_type ),
 	score_func_type_(score_func_type ),
@@ -54,7 +54,7 @@ SplitUnfoldedTwoBodyEnergy::~SplitUnfoldedTwoBodyEnergy() = default;
 
 EnergyMethodOP SplitUnfoldedTwoBodyEnergy::clone() const
 {
-	return SplitUnfoldedTwoBodyEnergyOP( new SplitUnfoldedTwoBodyEnergy( label_type_, value_type_, score_func_type_, score_type_weights_ ) );
+	return utility::pointer::make_shared< SplitUnfoldedTwoBodyEnergy >( label_type_, value_type_, score_func_type_, score_type_weights_ );
 }
 
 void SplitUnfoldedTwoBodyEnergy::residue_energy(conformation::Residue const & rsd,pose::Pose const &,EnergyMap & emap) const

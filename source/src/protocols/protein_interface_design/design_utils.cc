@@ -301,7 +301,7 @@ FavorNativeResidue::add_residue_constraints( core::pose::Pose & pose ) const {
 
 	core::Size const nres( pose.size() );
 	for ( core::Size i=1; i<= nres;  ++i ) {
-		pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new ResidueTypeConstraint( pose, i,  native_residue_bonus_[ i ]) ) ) );
+		pose.add_constraint( utility::pointer::make_shared< ResidueTypeConstraint >( pose, i,  native_residue_bonus_[ i ]) );
 	}
 
 }
@@ -336,7 +336,7 @@ FavorNonNativeResidue::add_residue_constraints( pose::Pose & pose ) const {
 
 	core::Size const nres( pose.size() );
 	for ( core::Size i=1; i<= nres;  ++i ) {
-		pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new NonResidueTypeConstraint( pose, i,  non_native_residue_bonus_[ i ]) ) ) );
+		pose.add_constraint( utility::pointer::make_shared< NonResidueTypeConstraint >( pose, i,  non_native_residue_bonus_[ i ]) );
 	}
 
 }

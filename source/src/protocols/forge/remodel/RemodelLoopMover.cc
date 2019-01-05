@@ -208,13 +208,13 @@ RemodelLoopMover::~RemodelLoopMover() = default;
 
 /// @brief clone this object
 RemodelLoopMover::MoverOP RemodelLoopMover::clone() const {
-	return RemodelLoopMover::MoverOP( new RemodelLoopMover( *this ) );
+	return utility::pointer::make_shared< RemodelLoopMover >( *this );
 }
 
 
 /// @brief create this type of object
 RemodelLoopMover::MoverOP RemodelLoopMover::fresh_instance() const {
-	return RemodelLoopMover::MoverOP( new RemodelLoopMover() );
+	return utility::pointer::make_shared< RemodelLoopMover >();
 }
 
 
@@ -2207,7 +2207,7 @@ void RemodelLoopMover::loophash_stage(
 						pose.set_omega( ires, omega[i]);
 					}
 
-					CCDLoopClosureMover ccd_mover( loop, core::kinematics::MoveMapCOP( core::kinematics::MoveMapOP( new MoveMap( movemap ) ) ) );
+					CCDLoopClosureMover ccd_mover( loop, utility::pointer::make_shared< MoveMap >( movemap ) );
 					ccd_mover.max_cycles( 50 );  // Used to be 10 moves, which would result in 50 "tries" in the old code. ~Labonte
 					if ( option[OptionKeys::remodel::repeat_structure].user() ) {
 						for ( Size i = 0; i < seg_length; i++ ) {
@@ -2326,7 +2326,7 @@ void RemodelLoopMover::abinitio_stage(
 	// if(sym_dock_moves && option[OptionKeys::remodel::staged_sampling::sym_move].user()){
 	//  core::scoring::ScoreFunctionOP  docking_score_low  = ScoreFunctionFactory::create_score_function(  "interchain_cen" );
 	//  core::scoring::ScoreFunctionOP  docking_score_high  = ScoreFunctionFactory::create_score_function( "docking" );
-	//  symdock =  protocols::symmetric_docking::SymDockProtocolOP(new protocols::symmetric_docking::SymDockProtocol( false, false, false, docking_score_low, docking_score_high ));
+	//  symdock =  utility::pointer::make_shared< protocols::symmetric_docking::SymDockProtocol >( false, false, false, docking_score_low, docking_score_high );
 	// }
 
 	FragmentMoverOPs frag_movers = create_fragment_movers_limit_size(movemap, fragmentSize,disallowedPos,smoothMoves,sfxOP,fragScoreThreshold);
@@ -2796,7 +2796,7 @@ void RemodelLoopMover::simultaneous_stage(
 				random_permutation( loops_to_model->v_begin(), loops_to_model->v_end(), numeric::random::rg() );
 				for ( const auto & l : *loops_to_model ) {
 					if ( !l.is_terminal( pose ) ) {
-						CCDLoopClosureMover ccd_mover( l, core::kinematics::MoveMapCOP( core::kinematics::MoveMapOP( new MoveMap( movemap ) ) ) );
+						CCDLoopClosureMover ccd_mover( l, utility::pointer::make_shared< MoveMap >( movemap ) );
 						ccd_mover.max_cycles( 50 );  // Used to be 10 moves, which would result in 50 "tries" in the old code. ~Labonte
 						if ( option[OptionKeys::remodel::repeat_structure].user() ) {
 							if ( !( option[ OptionKeys::remodel::RemodelLoopMover::bypass_closure ].user() || option[OptionKeys::remodel::no_jumps].user() ) ) {
@@ -3052,7 +3052,7 @@ void RemodelLoopMover::independent_stage(
 						}
 					}
 				} else { // ccd
-					CCDLoopClosureMover ccd_mover( loop, core::kinematics::MoveMapCOP( core::kinematics::MoveMapOP( new MoveMap( movemap ) ) ) );
+					CCDLoopClosureMover ccd_mover( loop, utility::pointer::make_shared< MoveMap >( movemap ) );
 					ccd_mover.max_cycles( 50 );  // Used to be 10 moves, which would result in 50 "tries" in the old code. ~Labonte
 					if ( option[ OptionKeys::remodel::repeat_structure ].user() ) {
 						if ( !( option[ OptionKeys::remodel::RemodelLoopMover::bypass_closure ] || option[OptionKeys::remodel::no_jumps] ) ) {
@@ -3299,7 +3299,7 @@ void RemodelLoopMover::boost_closure_stage(
 					}
 
 				} else { // ccd_move
-					CCDLoopClosureMover ccd_mover( loop, core::kinematics::MoveMapCOP( core::kinematics::MoveMapOP( new MoveMap( movemap ) ) ) );
+					CCDLoopClosureMover ccd_mover( loop, utility::pointer::make_shared< MoveMap >( movemap ) );
 					ccd_mover.max_cycles( 50 );  // Used to be 10 moves, which would result in 50 "tries" in the old code. ~Labonte
 					if ( option[OptionKeys::remodel::repeat_structure].user() ) {
 						if ( !( option[ OptionKeys::remodel::RemodelLoopMover::bypass_closure ] || option[OptionKeys::remodel::no_jumps] ) ) {
@@ -3519,9 +3519,9 @@ RemodelLoopMover::create_fragment_movers_limit_size(
 			}
 			ClassicFragmentMoverOP cfm;
 			if ( smoothMoves ) {
-				cfm = ClassicFragmentMoverOP( new SmoothFragmentMover( f, movemap.clone(), FragmentCostOP( new GunnCost ) ) );
+				cfm = utility::pointer::make_shared< SmoothFragmentMover >( f, movemap.clone(), utility::pointer::make_shared< GunnCost >() );
 			} else {
-				cfm = ClassicFragmentMoverOP( new ClassicFragmentMover( f, movemap.clone() ) );
+				cfm = utility::pointer::make_shared< ClassicFragmentMover >( f, movemap.clone() );
 			}
 			cfm->set_check_ss( false );
 			cfm->enable_end_bias_check( false );

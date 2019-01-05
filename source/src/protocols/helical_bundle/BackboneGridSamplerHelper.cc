@@ -82,7 +82,7 @@ BackboneGridSamplerHelper::~BackboneGridSamplerHelper() = default;
 BackboneGridSamplerHelperOP
 BackboneGridSamplerHelper::clone() const
 {
-	return BackboneGridSamplerHelperOP( new BackboneGridSamplerHelper( *this ) );
+	return utility::pointer::make_shared< BackboneGridSamplerHelper >( *this );
 }
 
 /// @brief Reset this BackboneGridSamplerHelper object.

@@ -65,7 +65,7 @@ GridBaseOP ShapeGridCreator::create_grid(utility::tag::TagCOP tag) const
 
 GridBaseOP ShapeGridCreator::create_grid() const
 {
-	return GridBaseOP( new ShapeGrid() );
+	return utility::pointer::make_shared< ShapeGrid >();
 }
 
 void ShapeGridCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -90,7 +90,7 @@ ShapeGrid::ShapeGrid() : SingleGrid("ShapeGrid")
 ShapeGrid::~ShapeGrid() = default;
 
 GridBaseOP ShapeGrid::clone() const {
-	return GridBaseOP( new ShapeGrid( *this ) );
+	return utility::pointer::make_shared< ShapeGrid >( *this );
 }
 
 

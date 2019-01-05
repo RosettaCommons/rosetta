@@ -68,7 +68,7 @@ ConstraintResidueSelector::ConstraintResidueSelector( ConstraintResidueSelector 
 /// @brief Clone operator.
 /// @details Copy this object and return an owning pointer to the new object.
 core::select::residue_selector::ResidueSelectorOP ConstraintResidueSelector::clone() const {
-	return core::select::residue_selector::ResidueSelectorOP( new ConstraintResidueSelector(*this) );
+	return utility::pointer::make_shared< ConstraintResidueSelector >(*this);
 }
 
 core::select::residue_selector::ResidueSubset
@@ -137,7 +137,7 @@ ConstraintResidueSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition
 
 core::select::residue_selector::ResidueSelectorOP
 ConstraintResidueSelectorCreator::create_residue_selector() const {
-	return core::select::residue_selector::ResidueSelectorOP( new ConstraintResidueSelector );
+	return utility::pointer::make_shared< ConstraintResidueSelector >();
 }
 
 std::string

@@ -131,7 +131,7 @@ InterRepeatContactFilter::parse_my_tag(
 }
 
 // XRW TEMP filters::FilterOP
-// XRW TEMP InterRepeatContactFilterCreator::create_filter() const { return protocols::filters::FilterOP(new InterRepeatContactFilter); }
+// XRW TEMP InterRepeatContactFilterCreator::create_filter() const { return utility::pointer::make_shared< InterRepeatContactFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP InterRepeatContactFilterCreator::keyname() const { return "InterRepeatContactsPerResidue"; }
@@ -162,7 +162,7 @@ std::string InterRepeatContactFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 InterRepeatContactFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new InterRepeatContactFilter );
+	return utility::pointer::make_shared< InterRepeatContactFilter >();
 }
 
 void InterRepeatContactFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

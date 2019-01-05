@@ -76,7 +76,7 @@ AlignByResidueSelectorMover::parse_my_tag(
 		reference_pose_ = rosetta_scripts::saved_reference_pose(tag, data_map );
 		TR<<"Loaded reference pose: "<<tag->getOption< std::string >( "reference_name" )<< " with " << reference_pose_->size() << " residues" << std::endl;
 	} else {
-		reference_pose_ = core::pose::PoseOP( new core::pose::Pose( reference_pose ) );
+		reference_pose_ = utility::pointer::make_shared< core::pose::Pose >( reference_pose );
 		if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
 			core::import_pose::pose_from_file( *reference_pose_, basic::options::option[ basic::options::OptionKeys::in::file::native ] , core::import_pose::PDB_file);
 		}
@@ -89,13 +89,13 @@ AlignByResidueSelectorMover::parse_my_tag(
 protocols::moves::MoverOP
 AlignByResidueSelectorMover::clone() const
 {
-	return protocols::moves::MoverOP( new AlignByResidueSelectorMover( *this ) );
+	return utility::pointer::make_shared< AlignByResidueSelectorMover >( *this );
 }
 
 protocols::moves::MoverOP
 AlignByResidueSelectorMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new AlignByResidueSelectorMover );
+	return utility::pointer::make_shared< AlignByResidueSelectorMover >();
 }
 
 utility::vector1< numeric::xyzVector< core::Real > >
@@ -169,7 +169,7 @@ std::string AlignByResidueSelectorMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 AlignByResidueSelectorMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new AlignByResidueSelectorMover );
+	return utility::pointer::make_shared< AlignByResidueSelectorMover >();
 }
 
 void AlignByResidueSelectorMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

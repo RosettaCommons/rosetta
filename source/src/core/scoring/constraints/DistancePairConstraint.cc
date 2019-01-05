@@ -63,10 +63,10 @@ DistancePairConstraint::remap_resid(
 			remap_a2( atomA2_.atomno(), seqmap[atomA2_.rsd()] );
 		AtomID remap_b1( atomB1_.atomno(), seqmap[atomB1_.rsd()] ),
 			remap_b2( atomB2_.atomno(), seqmap[atomB2_.rsd()] );
-		return ConstraintOP( new DistancePairConstraint(
+		return utility::pointer::make_shared< DistancePairConstraint >(
 			remap_a1, remap_a2,
 			remap_b1, remap_b2,
-			this->func_ ) );
+			this->func_ );
 	} else {
 		return nullptr;
 	}
@@ -95,7 +95,7 @@ ConstraintOP DistancePairConstraint::remapped_clone( pose::Pose const& src, pose
 	id::AtomID id3( core::pose::named_atom_id_to_atom_id(atomB1, dest ));
 	id::AtomID id4( core::pose::named_atom_id_to_atom_id(atomB2, dest ));
 	if (    id1.valid() && id2.valid() &&  id3.valid() && id4.valid() ) {
-		return ConstraintOP( new DistancePairConstraint( id1, id2, id3, id4, func_, score_type() ) );
+		return utility::pointer::make_shared< DistancePairConstraint >( id1, id2, id3, id4, func_, score_type() );
 	} else {
 		return nullptr;
 	}

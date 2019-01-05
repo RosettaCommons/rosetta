@@ -376,7 +376,7 @@ OR_combine( ResidueSelectorOP sele1, ResidueSelectorOP sele2 ) {
 		return or_select;
 	} else {
 		// If not, just combine with the Or selector
-		return ResidueSelectorOP( new OrResidueSelector( sele1, sele2 ) );
+		return utility::pointer::make_shared< OrResidueSelector >( sele1, sele2 );
 	}
 }
 
@@ -393,7 +393,7 @@ AND_combine( ResidueSelectorOP sele1, ResidueSelectorOP sele2 ) {
 		return and_select;
 	} else {
 		// If not, just combine with the Or selector
-		return ResidueSelectorOP( new AndResidueSelector( sele1, sele2 ) );
+		return utility::pointer::make_shared< AndResidueSelector >( sele1, sele2 );
 	}
 }
 

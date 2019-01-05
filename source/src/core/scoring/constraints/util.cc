@@ -200,7 +200,7 @@ void add_constraints_from_cmdline_to_pose( core::pose::Pose & pose ) {
 	using namespace basic::options;
 	using namespace core::scoring::constraints;
 	if ( option[ OptionKeys::constraints::cst_file ].user() ) {
-		ConstraintSetOP cstset_ = ConstraintIO::get_instance()->read_constraints( get_cst_file_option() ,ConstraintSetOP( new ConstraintSet ), pose );
+		ConstraintSetOP cstset_ = ConstraintIO::get_instance()->read_constraints( get_cst_file_option() ,utility::pointer::make_shared< ConstraintSet >(), pose );
 		pose.constraint_set( cstset_ );
 	}
 }
@@ -257,7 +257,7 @@ void add_fa_constraints_from_cmdline_to_pose( core::pose::Pose & pose ) {
 	using namespace core::scoring::constraints;
 	if ( option[ OptionKeys::constraints::cst_fa_file ].user() ) {
 		ConstraintSetOP cstset_ = ConstraintIO::get_instance()->read_constraints(
-			get_cst_fa_file_option(), ConstraintSetOP( new ConstraintSet ), pose
+			get_cst_fa_file_option(), utility::pointer::make_shared< ConstraintSet >(), pose
 		);
 		pose.constraint_set( cstset_ );
 	}
@@ -296,7 +296,7 @@ void merge_constraints_from_cmdline_to_pose( core::pose::Pose & pose ) {
 	using namespace basic::options;
 	using namespace core::scoring::constraints;
 	if ( option[ OptionKeys::constraints::cst_file ].user() ) {
-		ConstraintSetCOP const new_cstset = ConstraintIO::get_instance()->read_constraints( get_cst_file_option(), ConstraintSetOP( new ConstraintSet ), pose );
+		ConstraintSetCOP const new_cstset = ConstraintIO::get_instance()->read_constraints( get_cst_file_option(), utility::pointer::make_shared< ConstraintSet >(), pose );
 		pose.add_constraints( new_cstset->get_all_constraints() );
 	}
 }
@@ -368,7 +368,7 @@ void merge_fa_constraints_from_cmdline_to_pose( core::pose::Pose & pose ) {
 	using namespace basic::options;
 	using namespace core::scoring::constraints;
 	if ( option[ OptionKeys::constraints::cst_fa_file ].user() ) {
-		ConstraintSetCOP const new_cstset = ConstraintIO::get_instance()->read_constraints( get_cst_fa_file_option(), ConstraintSetOP( new ConstraintSet ), pose );
+		ConstraintSetCOP const new_cstset = ConstraintIO::get_instance()->read_constraints( get_cst_fa_file_option(), utility::pointer::make_shared< ConstraintSet >(), pose );
 		pose.add_constraints( new_cstset->get_all_constraints() );
 	}
 }
@@ -416,7 +416,7 @@ add_coordinate_constraints( pose::Pose & pose, Real const coord_sdev /* = 10.0 *
 		for ( Size ii = 1; ii <= last_atom; ++ii ) {
 
 			func::FuncOP f( new func::HarmonicFunc( 0.0, coord_sdev ) );
-			cst_set->add_constraint( ConstraintCOP( ConstraintOP( new CoordinateConstraint( AtomID(ii,i), AtomID(1,my_anchor), i_rsd.xyz(ii), f ) ) ) );
+			cst_set->add_constraint( ConstraintCOP( utility::pointer::make_shared< CoordinateConstraint >( AtomID(ii,i), AtomID(1,my_anchor), i_rsd.xyz(ii), f ) ) );
 		}
 	}
 
@@ -445,7 +445,7 @@ add_coordinate_constraints( pose::Pose & pose, core::Size const start_res, core:
 		for ( Size ii = 1; ii<= last_atom; ++ii ) {
 
 			func::FuncOP f( new func::HarmonicFunc( 0.0, coord_sdev ) );
-			cst_set->add_constraint( ConstraintCOP( ConstraintOP( new CoordinateConstraint( AtomID(ii,i), AtomID(1,my_anchor), i_rsd.xyz(ii), f ) ) ) );
+			cst_set->add_constraint( ConstraintCOP( utility::pointer::make_shared< CoordinateConstraint >( AtomID(ii,i), AtomID(1,my_anchor), i_rsd.xyz(ii), f ) ) );
 		}
 	}
 

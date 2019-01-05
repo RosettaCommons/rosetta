@@ -113,7 +113,7 @@ TaskFactoryOP parse_task_operations(
 			TR << "found helper task_factory: " << name <<" for mover: " << tag->getName() << std::endl;
 		} else {
 			string tf_string = "TaskFactory";
-			task_factory = core::pack::task::TaskFactoryOP( new TaskFactory );
+			task_factory = utility::pointer::make_shared< TaskFactory >();
 			data.add( tf_string , name , task_factory );
 			TR << "adding new TaskFactory to the datamap: " << name << std::endl;
 		}

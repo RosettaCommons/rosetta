@@ -107,7 +107,7 @@ SlidingWindowLoopClosure::SlidingWindowLoopClosure(
 ) : scorefxn_(std::move( scorefxn )),
 	movemap_(std::move( movemap )),
 	fragset_( fragset ),
-	ss_info_( core::fragment::SecondaryStructureOP( new core::fragment::SecondaryStructure( *fragset ) ) )
+	ss_info_( utility::pointer::make_shared< core::fragment::SecondaryStructure >( *fragset ) )
 {
 	set_defaults();
 }
@@ -248,7 +248,7 @@ SlidingWindowLoopClosure::setup_frag_scorefxn() {
 	}
 
 	if ( !scorefxn_ ) {
-		scorefxn_ = core::scoring::ScoreFunctionOP( new ScoreFunction );
+		scorefxn_ = utility::pointer::make_shared< ScoreFunction >();
 		scorefxn_->set_weight( linear_chainbreak, 1.0 );
 		scorefxn_->set_weight( overlap_chainbreak, 1.0 );
 	}
@@ -264,7 +264,7 @@ SlidingWindowLoopClosure::setup_frag_scorefxn() {
 	}
 	tr.Debug << " is there a filter_cst_ evaluator?.. " << std::endl;
 	if ( !filter_cst_ && option[ OptionKeys::fast_loops::filter_cst_file ].user() ) {
-		filter_cst_ = constraints_additional::ConstraintEvaluatorOP( new constraints_additional::ConstraintEvaluator( "filter_loops", option[ OptionKeys::fast_loops::filter_cst_file ]() ) );
+		filter_cst_ = utility::pointer::make_shared< constraints_additional::ConstraintEvaluator >( "filter_loops", option[ OptionKeys::fast_loops::filter_cst_file ]() );
 		filter_cst_weight_ = option[ OptionKeys::fast_loops::filter_cst_weight ]();
 	}
 
@@ -347,7 +347,7 @@ SlidingWindowLoopClosure::sample_loops( Pose& more_cut, Pose& less_cut ) {
 	best_score_ = REALLY_BAD_SCORE;
 
 	if ( bKeepFragments_ ) {
-		closure_fragments_ = core::fragment::OrderedFragSetOP( new fragment::OrderedFragSet );
+		closure_fragments_ = utility::pointer::make_shared< fragment::OrderedFragSet >();
 	}
 
 	Size attempt_count = 0;
@@ -367,7 +367,7 @@ SlidingWindowLoopClosure::sample_loops( Pose& more_cut, Pose& less_cut ) {
 
 	{ //take initial loop-conformation as closing candidate
 		using namespace fragment;
-		FrameOP closure_frame( new Frame( loop_.start(), FragDataCOP( FragDataOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), loop_.size() ) ) ) ) );
+		FrameOP closure_frame( new Frame( loop_.start(), utility::pointer::make_shared< FragData >( utility::pointer::make_shared< BBTorsionSRFD >(), loop_.size() ) ) );
 		FrameList closure_frames;
 		closure_frame->steal( more_cut );
 
@@ -623,7 +623,7 @@ SlidingWindowLoopClosure::generate_window_list( Size loop_size, WindowList& wind
 
 void
 SlidingWindowLoopClosure::fragments( core::fragment::FragSetCOP frags ) {
-	ss_info_ = core::fragment::SecondaryStructureOP( new core::fragment::SecondaryStructure( *frags ) );
+	ss_info_ = utility::pointer::make_shared< core::fragment::SecondaryStructure >( *frags );
 	fragset_ = frags;
 	debug_assert( loop_.start() == 0 || fragset_->max_pos() > (loop_.start() + std::min( loop_.size(), max_loop_size_ )) );
 }

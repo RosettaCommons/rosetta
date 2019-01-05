@@ -62,7 +62,7 @@ LimitAromaChi2_RotamerSetOperation::~LimitAromaChi2_RotamerSetOperation() = defa
 core::pack::rotamer_set::RotamerSetOperationOP
 LimitAromaChi2_RotamerSetOperation::clone() const
 {
-	return core::pack::rotamer_set::RotamerSetOperationOP( new LimitAromaChi2_RotamerSetOperation( *this ) );
+	return utility::pointer::make_shared< LimitAromaChi2_RotamerSetOperation >( *this );
 }
 
 void
@@ -117,7 +117,7 @@ LimitAromaChi2_RotamerSetOperation::alter_rotamer_set(
 core::pack::task::operation::TaskOperationOP
 LimitAromaChi2OperationCreator::create_task_operation() const
 {
-	return core::pack::task::operation::TaskOperationOP( new LimitAromaChi2Operation );
+	return utility::pointer::make_shared< LimitAromaChi2Operation >();
 }
 
 void LimitAromaChi2OperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -144,7 +144,7 @@ LimitAromaChi2Operation::~LimitAromaChi2Operation()= default;
 /// @brief clone
 core::pack::task::operation::TaskOperationOP
 LimitAromaChi2Operation::clone() const {
-	return core::pack::task::operation::TaskOperationOP( new LimitAromaChi2Operation( *this ) );
+	return utility::pointer::make_shared< LimitAromaChi2Operation >( *this );
 }
 
 //mjo commenting out 'pose' because it is unused and causes a warning

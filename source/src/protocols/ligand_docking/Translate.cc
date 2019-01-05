@@ -60,7 +60,7 @@ static basic::Tracer translate_tracer( "protocols.ligand_docking.ligand_options.
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP TranslateCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new Translate );
+// XRW TEMP  return utility::pointer::make_shared< Translate >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -97,11 +97,11 @@ Translate::Translate(Translate const & that):
 Translate::~Translate() = default;
 
 protocols::moves::MoverOP Translate::clone() const {
-	return protocols::moves::MoverOP( new Translate( *this ) );
+	return utility::pointer::make_shared< Translate >( *this );
 }
 
 protocols::moves::MoverOP Translate::fresh_instance() const {
-	return protocols::moves::MoverOP( new Translate );
+	return utility::pointer::make_shared< Translate >();
 }
 
 // XRW TEMP std::string Translate::get_name() const{
@@ -319,10 +319,10 @@ void Translate::translate_ligand(qsar::scoring_grid::GridSetCOP grid_set, core::
 	protocols::rigid::RigidBodyMoverOP translate_mover;
 	if ( translate_info_.distribution == Uniform ) {
 		translate_tracer.Debug<< "making a uniform translator of up to "<< translate_info_.angstroms<<" angstroms"<< std::endl;
-		translate_mover = protocols::rigid::RigidBodyMoverOP( new protocols::rigid::UniformSphereTransMover( jump_id, translate_info_.angstroms) );
+		translate_mover = utility::pointer::make_shared< protocols::rigid::UniformSphereTransMover >( jump_id, translate_info_.angstroms);
 	} else if ( translate_info_.distribution == Gaussian ) {
 		translate_tracer.Debug<< "making a Gaussian translator of up to "<< translate_info_.angstroms<<" angstroms";
-		translate_mover = protocols::rigid::RigidBodyMoverOP( new protocols::rigid::RigidBodyPerturbMover ( jump_id, 0 /*rotation*/, translate_info_.angstroms) );
+		translate_mover = utility::pointer::make_shared< protocols::rigid::RigidBodyPerturbMover > ( jump_id, 0 /*rotation*/, translate_info_.angstroms);
 	}
 
 	RandomConformerMoverOP conformer_mover( new RandomConformerMover(residue_id) );
@@ -409,7 +409,7 @@ std::string TranslateCreator::keyname() const {
 
 protocols::moves::MoverOP
 TranslateCreator::create_mover() const {
-	return protocols::moves::MoverOP( new Translate );
+	return utility::pointer::make_shared< Translate >();
 }
 
 void TranslateCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

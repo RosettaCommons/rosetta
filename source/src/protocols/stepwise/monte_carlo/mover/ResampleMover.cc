@@ -67,16 +67,16 @@ namespace mover {
 //Constructor
 ResampleMover::ResampleMover( protocols::stepwise::modeler::StepWiseModelerOP stepwise_modeler ):
 	stepwise_modeler_(std::move( stepwise_modeler )),
-	swa_move_selector_( StepWiseMoveSelectorOP( new StepWiseMoveSelector ) ),
-	options_( protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptionsCOP( new protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptions ) ),
+	swa_move_selector_( utility::pointer::make_shared< StepWiseMoveSelector >() ),
+	options_( utility::pointer::make_shared< protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptions >() ),
 	minimize_single_res_( false ),
 	slide_docking_jumps_( false )
 {}
 
 ResampleMover::ResampleMover() :
 	stepwise_modeler_( nullptr ),
-	swa_move_selector_( StepWiseMoveSelectorOP( new StepWiseMoveSelector ) ),
-	options_( protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptionsCOP( new protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptions ) ),
+	swa_move_selector_( utility::pointer::make_shared< StepWiseMoveSelector >() ),
+	options_( utility::pointer::make_shared< protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptions >() ),
 	minimize_single_res_( false ),
 	slide_docking_jumps_( false )
 {
@@ -88,7 +88,7 @@ ResampleMover::~ResampleMover() = default;
 
 protocols::moves::MoverOP
 ResampleMover::clone() const {
-	return ResampleMoverOP( new ResampleMover( *this ) );
+	return utility::pointer::make_shared< ResampleMover >( *this );
 }
 
 void
@@ -362,7 +362,7 @@ std::string ResampleMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 ResampleMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ResampleMover );
+	return utility::pointer::make_shared< ResampleMover >();
 }
 
 void ResampleMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

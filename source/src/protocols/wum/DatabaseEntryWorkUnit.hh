@@ -43,7 +43,7 @@ public:
 	~DatabaseEntryWorkUnit() override= default;
 
 	protocols::wum::WorkUnitBaseOP clone() const override {
-		return protocols::wum::WorkUnitBaseOP( new DatabaseEntryWorkUnit( *this ) );
+		return utility::pointer::make_shared< DatabaseEntryWorkUnit >( *this );
 	}
 
 	/// @brief Accessor for database query string

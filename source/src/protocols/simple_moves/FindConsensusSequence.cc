@@ -53,7 +53,7 @@ static basic::Tracer TR("protocols.simple_moves.FindConsensusSequence");
 
 // XRW TEMP moves::MoverOP
 // XRW TEMP FindConsensusSequenceCreator::create_mover() const {
-// XRW TEMP  return FindConsensusSequenceOP( new FindConsensusSequence );
+// XRW TEMP  return utility::pointer::make_shared< FindConsensusSequence >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -70,7 +70,7 @@ FindConsensusSequence::FindConsensusSequence() :
 FindConsensusSequence::~FindConsensusSequence() = default;
 
 moves::MoverOP FindConsensusSequence::clone() const {
-	return FindConsensusSequenceOP( new FindConsensusSequence( *this ) );
+	return utility::pointer::make_shared< FindConsensusSequence >( *this );
 }
 
 moves::MoverOP FindConsensusSequence::fresh_instance() const {
@@ -97,7 +97,7 @@ void FindConsensusSequence::parse_my_tag(
 	if ( tag->hasOption("task_operations") ) {
 		task_factory_ = protocols::rosetta_scripts::parse_task_operations( tag, datamap );
 	} else {
-		task_factory_ = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory );
+		task_factory_ = utility::pointer::make_shared< core::pack::task::TaskFactory >();
 	}
 
 	if ( tag->hasOption( "resfiles" ) ) {
@@ -179,7 +179,7 @@ void FindConsensusSequence::apply( core::pose::Pose & /*pose*/ ) {
 	packer->score_function( sfxn_ );
 	operation::RestrictToRepackingOP rtr ( new operation::RestrictToRepacking );
 	if ( !task_factory_ ) {
-		task_factory_ = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory );
+		task_factory_ = utility::pointer::make_shared< core::pack::task::TaskFactory >();
 	}
 	task_factory_->push_back( rtr );
 	packer->task_factory( task_factory_ );
@@ -305,7 +305,7 @@ std::string FindConsensusSequenceCreator::keyname() const {
 
 protocols::moves::MoverOP
 FindConsensusSequenceCreator::create_mover() const {
-	return protocols::moves::MoverOP( new FindConsensusSequence );
+	return utility::pointer::make_shared< FindConsensusSequence >();
 }
 
 void FindConsensusSequenceCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

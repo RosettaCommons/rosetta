@@ -179,7 +179,7 @@ SiteConstraint::setup_csts(
 				atom2 = id::AtomID( pose.residue( i ).nbr_atom(), i );
 			}
 			runtime_assert( target_atom.valid() && atom2.valid() );
-			add_individual_constraint( ConstraintCOP( ConstraintOP( new AtomPairConstraint( target_atom, atom2, func ) ) ) );
+			add_individual_constraint( utility::pointer::make_shared< AtomPairConstraint >( target_atom, atom2, func ) );
 		}
 	}
 

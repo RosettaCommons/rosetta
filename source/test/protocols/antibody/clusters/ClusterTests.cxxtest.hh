@@ -68,7 +68,7 @@ public:
 		core_init();
 		core::import_pose::pose_from_file(ab_pose, "protocols/antibody/2j88.pdb", core::import_pose::PDB_file);
 
-		ab_info = AntibodyInfoOP( new AntibodyInfo(ab_pose, AHO_Scheme, North) );
+		ab_info = utility::pointer::make_shared< AntibodyInfo >(ab_pose, AHO_Scheme, North);
 		ab_info->setup_CDR_clusters(ab_pose);
 
 

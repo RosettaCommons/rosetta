@@ -39,7 +39,7 @@ methods::EnergyMethodOP
 P_AA_EnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new P_AA_Energy );
+	return utility::pointer::make_shared< P_AA_Energy >();
 }
 
 ScoreTypes
@@ -55,14 +55,14 @@ P_AA_EnergyCreator::score_types_for_method() const {
 /// reads in the three database files: p_aa, p_aa_pp, and p_aa_n.  That object is returned and then stored as a private member
 /// variable here.
 P_AA_Energy::P_AA_Energy() :
-	parent( methods::EnergyMethodCreatorOP( new P_AA_EnergyCreator ) ),
+	parent( utility::pointer::make_shared< P_AA_EnergyCreator >() ),
 	p_aa_( ScoringManager::get_instance()->get_P_AA() )
 {}
 
 
 EnergyMethodOP
 P_AA_Energy::clone() const {
-	return EnergyMethodOP( new P_AA_Energy );
+	return utility::pointer::make_shared< P_AA_Energy >();
 }
 
 

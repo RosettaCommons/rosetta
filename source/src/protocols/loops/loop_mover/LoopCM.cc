@@ -63,7 +63,7 @@ static basic::Tracer tr( "protocols.loops.loop_mover.LoopCM", basic::t_info );
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP LoopCMCreator::create_mover() const {
-// XRW TEMP  return environment::ClientMoverOP( new LoopCM );
+// XRW TEMP  return utility::pointer::make_shared< LoopCM >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -128,13 +128,13 @@ void LoopCM::build_mover( LoopsOP loops ) {
 
 	if ( algorithm_ == KIC ) {
 		if ( style_ == PERTURB ) {
-			mover_ = LoopMoverOP( new perturb::LoopMover_Perturb_KIC( loops ) );
+			mover_ = utility::pointer::make_shared< perturb::LoopMover_Perturb_KIC >( loops );
 		} else if ( style_ == REFINE ) {
-			mover_ = LoopMoverOP( new refine::LoopMover_Refine_KIC( loops ) );
+			mover_ = utility::pointer::make_shared< refine::LoopMover_Refine_KIC >( loops );
 		}
 	} else if ( algorithm_ == CCD ) {
 		if ( style_ == PERTURB ) {
-			mover_ = LoopMoverOP( new perturb::LoopMover_Perturb_CCD( loops ) );
+			mover_ = utility::pointer::make_shared< perturb::LoopMover_Perturb_CCD >( loops );
 		} else if ( style_ == REFINE ) {
 			refine::LoopMover_Refine_CCDOP mover( new refine::LoopMover_Refine_CCD( loops ) );
 			mover->repack_neighbors( false );
@@ -153,7 +153,7 @@ bool ang_delta( core::Real const& a, core::Real const& b ){
 void LoopCM::apply( core::pose::Pose& in_pose ){
 
 	core::pose::Pose tmp_pose( in_pose );
-	tmp_pose.set_new_conformation( core::conformation::ConformationOP( new core::conformation::Conformation( tmp_pose.conformation() ) ) );
+	tmp_pose.set_new_conformation( utility::pointer::make_shared< core::conformation::Conformation >( tmp_pose.conformation() ) );
 	mover_->apply( tmp_pose );
 
 	// Copy result into protected conformation in in_pose
@@ -184,7 +184,7 @@ environment::claims::EnvClaims LoopCM::yield_claims( core::pose::Pose const& pos
 			<< "-" << std::min( pose.size(), loop.stop() + LOOP_EXTEND ) << "." << std::endl;
 		for ( Size i = std::max( (Size) 1, loop.start()-LOOP_EXTEND );
 				i <= std::min( pose.size(), loop.stop()+LOOP_EXTEND ); ++i ) {
-			pos_list.push_back( core::environment::LocalPositionOP( new core::environment::LocalPosition( "BASE", i ) ) );
+			pos_list.push_back( utility::pointer::make_shared< core::environment::LocalPosition >( "BASE", i ) );
 		}
 	}
 
@@ -271,7 +271,7 @@ std::string LoopCMCreator::keyname() const {
 
 protocols::moves::MoverOP
 LoopCMCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LoopCM );
+	return utility::pointer::make_shared< LoopCM >();
 }
 
 void LoopCMCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

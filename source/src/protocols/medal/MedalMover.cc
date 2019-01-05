@@ -150,7 +150,7 @@ void MedalMover::decompose_structure(const core::pose::Pose& pose,
 	}
 
 	// Override automatic chunk selection
-	chunks = protocols::loops::LoopsOP( new protocols::loops::Loops( option[OptionKeys::nonlocal::chunks]() ) );
+	chunks = utility::pointer::make_shared< protocols::loops::Loops >( option[OptionKeys::nonlocal::chunks]() );
 }
 
 MedalMover::MedalMover() {
@@ -324,11 +324,11 @@ std::string MedalMover::get_name() const {
 }
 
 protocols::moves::MoverOP MedalMover::clone() const {
-	return protocols::moves::MoverOP( new MedalMover(*this) );
+	return utility::pointer::make_shared< MedalMover >(*this);
 }
 
 protocols::moves::MoverOP MedalMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new MedalMover() );
+	return utility::pointer::make_shared< MedalMover >();
 }
 
 protocols::moves::MoverOP MedalMover::create_fragment_mover(
@@ -376,8 +376,8 @@ protocols::moves::MoverOP MedalMover::create_fragment_and_rigid_mover(
 	using namespace protocols::nonlocal;
 
 	CyclicMoverOP meta( new CyclicMover() );
-	meta->enqueue(MoverOP( new rigid::RigidBodyMotionMover(pose.fold_tree()) ));
-	meta->enqueue(MoverOP( new BiasedFragmentMover(PolicyFactory::get_policy(policy, fragments, library_size), probs) ));
+	meta->enqueue(utility::pointer::make_shared< rigid::RigidBodyMotionMover >(pose.fold_tree()));
+	meta->enqueue(utility::pointer::make_shared< BiasedFragmentMover >(PolicyFactory::get_policy(policy, fragments, library_size), probs));
 
 	RationalMonteCarloOP mover( new RationalMonteCarlo(meta,
 		score,
@@ -405,13 +405,13 @@ protocols::moves::MoverOP MedalMover::create_small_mover(core::pose::PoseOP, cor
 	movable->set_bb(true);
 
 	CyclicMoverOP meta( new CyclicMover() );
-	meta->enqueue(MoverOP( new protocols::simple_moves::SmallMover(movable,
+	meta->enqueue(utility::pointer::make_shared< protocols::simple_moves::SmallMover >(movable,
 		option[OptionKeys::rigid::temperature](),
-		option[OptionKeys::rigid::residues_backbone_move]()) ));
+		option[OptionKeys::rigid::residues_backbone_move]()));
 
-	meta->enqueue(MoverOP( new protocols::simple_moves::ShearMover(movable,
+	meta->enqueue(utility::pointer::make_shared< protocols::simple_moves::ShearMover >(movable,
 		option[OptionKeys::rigid::temperature](),
-		option[OptionKeys::rigid::residues_backbone_move]()) ));
+		option[OptionKeys::rigid::residues_backbone_move]()));
 
 	RationalMonteCarloOP mover( new RationalMonteCarlo(meta,
 		score,

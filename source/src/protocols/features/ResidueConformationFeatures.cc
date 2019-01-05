@@ -97,11 +97,11 @@ ResidueConformationFeatures::write_schema_to_db(utility::sql_database::sessionOP
 	using namespace basic::database::schema_generator;
 
 	//******nonprotein_residue_conformation******//
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ), false);
-	Column seqpos("seqpos", DbDataTypeOP( new DbInteger() ), false);
-	Column phi("phi", DbDataTypeOP( new DbDouble() ), false);
-	Column psi("psi", DbDataTypeOP( new DbDouble() ), false);
-	Column omega("omega", DbDataTypeOP( new DbDouble() ), false);
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >(), false);
+	Column seqpos("seqpos", utility::pointer::make_shared< DbInteger >(), false);
+	Column phi("phi", utility::pointer::make_shared< DbDouble >(), false);
+	Column psi("psi", utility::pointer::make_shared< DbDouble >(), false);
+	Column omega("omega", utility::pointer::make_shared< DbDouble >(), false);
 
 	utility::vector1<Column> non_prot_res_pkeys;
 	non_prot_res_pkeys.push_back(struct_id);
@@ -127,8 +127,8 @@ ResidueConformationFeatures::write_schema_to_db(utility::sql_database::sessionOP
 	nonprotein_residue_conformation.write(db_session);
 
 	//******nonprotein_residue_angles******//
-	Column chinum("chinum", DbDataTypeOP( new DbInteger() ), false);
-	Column chiangle("chiangle", DbDataTypeOP( new DbDouble() ), false);
+	Column chinum("chinum", utility::pointer::make_shared< DbInteger >(), false);
+	Column chiangle("chiangle", utility::pointer::make_shared< DbDouble >(), false);
 
 	utility::vector1<Column> non_prot_res_angle_keys;
 	non_prot_res_angle_keys.push_back(struct_id);
@@ -146,8 +146,8 @@ ResidueConformationFeatures::write_schema_to_db(utility::sql_database::sessionOP
 
 	if ( compact_residue_schema_ ) {
 		//******compact_residue_atom_coords*****//
-		Column coord_data("coord_data",DbDataTypeOP( new DbText() ));
-		Column atom_count("atom_count",DbDataTypeOP( new DbInteger() ),false);
+		Column coord_data("coord_data",utility::pointer::make_shared< DbText >());
+		Column atom_count("atom_count",utility::pointer::make_shared< DbInteger >(),false);
 		utility::vector1<Column> compact_res_atom_coords_pkeys;
 		compact_res_atom_coords_pkeys.push_back(struct_id);
 		compact_res_atom_coords_pkeys.push_back(seqpos);
@@ -162,10 +162,10 @@ ResidueConformationFeatures::write_schema_to_db(utility::sql_database::sessionOP
 
 	} else {
 		//******residue_atom_coords******//
-		Column atomno("atomno", DbDataTypeOP( new DbInteger() ), false);
-		Column x("x", DbDataTypeOP( new DbDouble() ), false);
-		Column y("y", DbDataTypeOP( new DbDouble() ), false);
-		Column z("z", DbDataTypeOP( new DbDouble() ), false);
+		Column atomno("atomno", utility::pointer::make_shared< DbInteger >(), false);
+		Column x("x", utility::pointer::make_shared< DbDouble >(), false);
+		Column y("y", utility::pointer::make_shared< DbDouble >(), false);
+		Column z("z", utility::pointer::make_shared< DbDouble >(), false);
 
 		utility::vector1<Column> res_atm_coords_pkeys;
 		res_atm_coords_pkeys.push_back(struct_id);
@@ -548,7 +548,7 @@ std::string ResidueConformationFeaturesCreator::type_name() const {
 
 protocols::features::FeaturesReporterOP
 ResidueConformationFeaturesCreator::create_features_reporter() const {
-	return protocols::features::FeaturesReporterOP( new ResidueConformationFeatures );
+	return utility::pointer::make_shared< ResidueConformationFeatures >();
 }
 
 void ResidueConformationFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

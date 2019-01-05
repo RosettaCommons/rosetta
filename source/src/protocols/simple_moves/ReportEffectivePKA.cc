@@ -238,7 +238,7 @@ ReportEffectivePKA::parse_my_tag(
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP ReportEffectivePKACreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new ReportEffectivePKA );
+// XRW TEMP  return utility::pointer::make_shared< ReportEffectivePKA >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -276,7 +276,7 @@ std::string ReportEffectivePKACreator::keyname() const {
 
 protocols::moves::MoverOP
 ReportEffectivePKACreator::create_mover() const {
-	return protocols::moves::MoverOP( new ReportEffectivePKA );
+	return utility::pointer::make_shared< ReportEffectivePKA >();
 }
 
 void ReportEffectivePKACreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -93,7 +93,7 @@ RotamerBoltzCalculator::RotamerBoltzCalculator(
 core::pose::metrics::PoseMetricCalculatorOP
 RotamerBoltzCalculator::clone() const
 {
-	return core::pose::metrics::PoseMetricCalculatorOP( new RotamerBoltzCalculator(*this) );
+	return utility::pointer::make_shared< RotamerBoltzCalculator >(*this);
 }
 
 void
@@ -294,7 +294,7 @@ RotamerBoltzCalculator::init_task( core::pose::Pose const & pose, core::Size con
 	rotset_->set_resid( resi );
 
 	TaskFactoryOP tf( new core::pack::task::TaskFactory() );
-	tf->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ));
+	tf->push_back( utility::pointer::make_shared< core::pack::task::operation::InitializeFromCommandline >());
 	PackerTaskOP ptask( tf->create_task_and_apply_taskoperations( pose ) );
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		core::pack::make_symmetric_PackerTask_by_truncation( pose, ptask );
@@ -340,8 +340,8 @@ protocols::minimization_packing::MinMoverOP RotamerBoltzCalculator::init_minmove
 	}
 
 	protocols::minimization_packing::MinMoverOP min_mover;
-	min_mover = protocols::minimization_packing::MinMoverOP( new protocols::minimization_packing::MinMover(
-		mm, scorefxn(), "lbfgs_armijo_nonmonotone", 0.01, true, false, false ) );
+	min_mover = utility::pointer::make_shared< protocols::minimization_packing::MinMover >(
+		mm, scorefxn(), "lbfgs_armijo_nonmonotone", 0.01, true, false, false );
 	return min_mover;
 }
 
@@ -352,7 +352,7 @@ RotamerBoltzCalculator::create_rotamer_set( core::pose::Pose const & pose, core:
 	rotset->set_resid( resi );
 
 	core::pack::task::TaskFactoryOP tf( new core::pack::task::TaskFactory() );
-	tf->push_back( core::pack::task::operation::TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
+	tf->push_back( utility::pointer::make_shared< core::pack::task::operation::InitializeFromCommandline >() );
 	core::pack::task::PackerTaskOP ptask( tf->create_task_and_apply_taskoperations( pose ) );
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		core::pack::make_symmetric_PackerTask_by_truncation( pose, ptask );

@@ -77,7 +77,7 @@ GlycanTreeSet::GlycanTreeSet( GlycanTreeSet const & src ):
 {
 	glycan_tree_set_.clear();
 	for ( auto const & kv: src.glycan_tree_set_ ) {
-		GlycanTreeOP GT = GlycanTreeOP( new GlycanTree( *kv.second));
+		GlycanTreeOP GT = utility::pointer::make_shared< GlycanTree >( *kv.second);
 		glycan_tree_set_[ kv.first] = GT;
 		//Populate res to tree map.
 		for ( core::Size res : GT->get_residues() ) {
@@ -88,7 +88,7 @@ GlycanTreeSet::GlycanTreeSet( GlycanTreeSet const & src ):
 
 GlycanTreeSetOP
 GlycanTreeSet::clone() const {
-	return GlycanTreeSetOP( new GlycanTreeSet( *this));
+	return utility::pointer::make_shared< GlycanTreeSet >( *this);
 }
 
 
@@ -297,7 +297,7 @@ GlycanTreeSet::setup_glycan_trees( conformation::Conformation const & conf )
 	for ( core::Size i = 1; i <= conf.size(); ++i ) {
 		if ( start_points[ i ] ) {
 			//TR << "Setting up " << start_points[i] << std::endl;
-			GlycanTreeOP GT = GlycanTreeOP( new GlycanTree( conf, i ) );
+			GlycanTreeOP GT = utility::pointer::make_shared< GlycanTree >( conf, i );
 			glycan_tree_set_[ i ] = GT;
 
 			//Populate res to tree map.
@@ -351,7 +351,7 @@ GlycanTreeSet::on_length_change( core::conformation::signals::LengthEvent const 
 			if ( children.size()  > 1 ) {
 
 				for ( core::Size child : children ) {
-					GlycanTreeOP new_tree = GlycanTreeOP( new GlycanTree( *event.conformation, child ) );
+					GlycanTreeOP new_tree = utility::pointer::make_shared< GlycanTree >( *event.conformation, child );
 					new_trees[ child] = new_tree ;
 
 				}
@@ -379,7 +379,7 @@ GlycanTreeSet::on_length_change( core::conformation::signals::LengthEvent const 
 
 				//Make new subtrees from the new children.
 				for ( Size child : children ) {
-					GlycanTreeOP new_child_tree = GlycanTreeOP( new GlycanTree( *event.conformation, child ));
+					GlycanTreeOP new_child_tree = utility::pointer::make_shared< GlycanTree >( *event.conformation, child );
 					new_trees[ child ] = new_child_tree;
 				}
 
@@ -399,10 +399,10 @@ GlycanTreeSet::on_length_change( core::conformation::signals::LengthEvent const 
 			Size parent = find_seqpos_of_saccharides_parent_residue( *event.residue );
 			if ( child == 0 &&  parent == 0 ) {
 				//Single-residue tree.
-				GlycanTreeOP new_tree = GlycanTreeOP( new GlycanTree( new_position ));
+				GlycanTreeOP new_tree = utility::pointer::make_shared< GlycanTree >( new_position );
 				new_trees[ new_position ] = new_tree;
 			} else if ( child == 0 && ! event.conformation->residue(parent).is_carbohydrate() ) {
-				GlycanTreeOP new_tree = GlycanTreeOP( new GlycanTree( new_position ));
+				GlycanTreeOP new_tree = utility::pointer::make_shared< GlycanTree >( new_position );
 				new_trees[ new_position ] = new_tree;
 			} else if ( parent == 0 ) {
 				///Beginning of tree, not connected to protein.

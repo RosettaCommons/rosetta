@@ -86,7 +86,7 @@ using namespace ObjexxFCL::format;
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP EvolutionaryDynamicsMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new EvolutionaryDynamicsMover );
+// XRW TEMP  return utility::pointer::make_shared< EvolutionaryDynamicsMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -114,14 +114,14 @@ EvolutionaryDynamicsMover::~EvolutionaryDynamicsMover()= default;
 EvolutionaryDynamicsMover::MoverOP
 EvolutionaryDynamicsMover::clone() const
 {
-	return EvolutionaryDynamicsMover::MoverOP( new EvolutionaryDynamicsMover( *this ) );
+	return utility::pointer::make_shared< EvolutionaryDynamicsMover >( *this );
 }
 
 /// @brief create this type of object
 EvolutionaryDynamicsMover::MoverOP
 EvolutionaryDynamicsMover::fresh_instance() const
 {
-	return EvolutionaryDynamicsMover::MoverOP( new EvolutionaryDynamicsMover() );
+	return utility::pointer::make_shared< EvolutionaryDynamicsMover >();
 }
 
 bool
@@ -357,7 +357,7 @@ std::string EvolutionaryDynamicsMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 EvolutionaryDynamicsMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new EvolutionaryDynamicsMover );
+	return utility::pointer::make_shared< EvolutionaryDynamicsMover >();
 }
 
 void EvolutionaryDynamicsMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

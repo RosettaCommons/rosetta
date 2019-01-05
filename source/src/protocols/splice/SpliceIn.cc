@@ -129,7 +129,7 @@ std::string SpliceInCreator::keyname() const {
 }
 
 protocols::moves::MoverOP SpliceInCreator::create_mover() const {
-	return protocols::moves::MoverOP(new SpliceIn);
+	return utility::pointer::make_shared< SpliceIn >();
 }
 
 std::string SpliceInCreator::mover_name() {
@@ -147,7 +147,7 @@ SpliceIn::SpliceIn() : Mover(SpliceInCreator::mover_name()), dbase_iterate_(fals
 	tolerance_ = 0.23;
 	allowed_cuts_ = 1;
 	dbase_subset_.clear();
-	end_dbase_subset_ = DataccacheBoolDataOP( new basic::datacache::DataMapObj<bool> );
+	end_dbase_subset_ = utility::pointer::make_shared< basic::datacache::DataMapObj<bool> >();
 
 }
 SpliceIn::~SpliceIn() = default;
@@ -180,7 +180,7 @@ void SpliceIn::apply(core::pose::Pose & pose) {
 		TR << "Did not find the request source conformation;Should we fail loudly if this happens??"<< std::endl;
 		return;
 	}
-	splicemanager.mm(core::kinematics::MoveMapOP(new core::kinematics::MoveMap));
+	splicemanager.mm(utility::pointer::make_shared< core::kinematics::MoveMap >());
 	runtime_assert(dbase_entry <= torsion_database_.size());
 	splicemanager.dofs(torsion_database_[dbase_entry]);
 	splicemanager.source_pdb_name(splicemanager.dofs().source_pdb());
@@ -237,9 +237,9 @@ void SpliceIn::apply(core::pose::Pose & pose) {
 	///Apply user defined design shell and repack shell around spliced segment
 	core::pack::task::TaskFactoryOP tf;
 	if ( splicemanager.task_factory() == nullptr ) {
-		tf = core::pack::task::TaskFactoryOP(new core::pack::task::TaskFactory());
+		tf = utility::pointer::make_shared< core::pack::task::TaskFactory >();
 	} else {
-		tf = core::pack::task::TaskFactoryOP(new core::pack::task::TaskFactory(*splicemanager.task_factory()));
+		tf = utility::pointer::make_shared< core::pack::task::TaskFactory >(*splicemanager.task_factory());
 	}
 
 	using namespace protocols::task_operations;
@@ -361,7 +361,7 @@ void SpliceIn::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &data,pr
 }
 
 protocols::moves::MoverOP SpliceIn::clone() const {
-	return (protocols::moves::MoverOP(new SpliceIn(*this)));
+	return (utility::pointer::make_shared< SpliceIn >(*this));
 }
 
 core::Size SpliceIn::find_dbase_entry(core::pose::Pose const & pose) {
@@ -728,7 +728,7 @@ void SpliceIn::build_ideal_segment(core::pose::Pose & pose){
 
 void SpliceIn::rtmin( core::pose::Pose & pose,core::pack::task::TaskFactoryOP tf){
 	using namespace protocols::rosetta_scripts;
-	//tf->push_back(core::pack::task::operation::TaskOperationCOP(new core::pack::task::operation::RestrictToRepacking ));
+	//tf->push_back(utility::pointer::make_shared< core::pack::task::operation::RestrictToRepacking >());
 	protocols::minimization_packing::RotamerTrialsMinMover rtmin(scorefxn(), tf);
 
 	utility::vector1<core::Size> packable_residues = residue_packer_states(pose, tf, false, true);

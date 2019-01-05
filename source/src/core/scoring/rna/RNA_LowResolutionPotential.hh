@@ -59,7 +59,7 @@ public:
 	/// clone
 	virtual
 	methods::EnergyMethodOP
-	clone() const { return methods::EnergyMethodOP( new RNA_LowResolutionPotential( rna_base_pair_xy_filename_ ) ); }
+	clone() const { return utility::pointer::make_shared< RNA_LowResolutionPotential >( rna_base_pair_xy_filename_ ); }
 
 	virtual
 	void indicate_required_context_graphs( utility::vector1< bool > & ) const {}

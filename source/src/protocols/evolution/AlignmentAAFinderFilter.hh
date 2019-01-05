@@ -37,10 +37,10 @@ public:
 	AlignmentAAFinder();
 	~AlignmentAAFinder() override;
 	filters::FilterOP clone() const override {
-		return filters::FilterOP( new AlignmentAAFinder( *this ) );
+		return utility::pointer::make_shared< AlignmentAAFinder >( *this );
 	}
 	filters::FilterOP fresh_instance() const override{
-		return filters::FilterOP( new AlignmentAAFinder() );
+		return utility::pointer::make_shared< AlignmentAAFinder >();
 	}
 
 	bool apply( core::pose::Pose const & p ) const override;

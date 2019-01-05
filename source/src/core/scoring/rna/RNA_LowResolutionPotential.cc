@@ -69,7 +69,7 @@ methods::EnergyMethodOP
 RNA_LowResolutionPotentialCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
-	return methods::EnergyMethodOP( new RNA_LowResolutionPotential( options.rna_options().rna_base_pair_xy_filename() ) );
+	return utility::pointer::make_shared< RNA_LowResolutionPotential >( options.rna_options().rna_base_pair_xy_filename() );
 }
 
 ScoreTypes
@@ -104,7 +104,7 @@ RNA_LowResolutionPotential::RNA_LowResolutionPotential():
 {}
 
 RNA_LowResolutionPotential::RNA_LowResolutionPotential( std::string const & rna_base_pair_xy_filename ):
-	parent( methods::EnergyMethodCreatorOP( new RNA_LowResolutionPotentialCreator ) )
+	parent( utility::pointer::make_shared< RNA_LowResolutionPotentialCreator >() )
 {
 	// These don't *have* to be hard-wired numbers.
 	// if we're more clever about the file read-in.

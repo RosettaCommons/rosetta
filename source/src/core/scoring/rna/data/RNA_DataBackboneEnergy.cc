@@ -59,7 +59,7 @@ methods::EnergyMethodOP
 RNA_DataBackboneEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new RNA_DataBackboneEnergy );
+	return utility::pointer::make_shared< RNA_DataBackboneEnergy >();
 }
 
 ScoreTypes
@@ -72,12 +72,12 @@ RNA_DataBackboneEnergyCreator::score_types_for_method() const {
 
 /// c-tor
 RNA_DataBackboneEnergy::RNA_DataBackboneEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new RNA_DataBackboneEnergyCreator ) ),
+	parent( utility::pointer::make_shared< RNA_DataBackboneEnergyCreator >() ),
 	dist_cutoff_( 9.0 ),
 	dist_fade_( 1.0  ),
 	well_depth_burial_( -0.05 ),
 	well_depth_exposed_( 0.01 ),
-	burial_function_( func::FuncOP( new func::FadeFunc( -10.0 /*cutoff_lower*/, dist_cutoff_, dist_fade_, 1.0 /*well_depth*/ ) ) )
+	burial_function_( utility::pointer::make_shared< func::FadeFunc >( -10.0 /*cutoff_lower*/, dist_cutoff_, dist_fade_, 1.0 /*well_depth*/ ) )
 {
 	initialize_atom_numbers_sugar();
 }
@@ -87,7 +87,7 @@ RNA_DataBackboneEnergy::RNA_DataBackboneEnergy() :
 methods::EnergyMethodOP
 RNA_DataBackboneEnergy::clone() const
 {
-	return methods::EnergyMethodOP( new RNA_DataBackboneEnergy );
+	return utility::pointer::make_shared< RNA_DataBackboneEnergy >();
 }
 
 ///////////////////////////////////////////////////////////

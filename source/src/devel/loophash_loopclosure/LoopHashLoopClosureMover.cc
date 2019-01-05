@@ -83,7 +83,7 @@ std::ostream& operator<< (std::ostream& out , const MyLoop & loop ) {
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP LoopHashLoopClosureMoverCreator::create_mover() const
 // XRW TEMP {
-// XRW TEMP  return protocols::moves::MoverOP( new LoopHashLoopClosureMover() );
+// XRW TEMP  return utility::pointer::make_shared< LoopHashLoopClosureMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -120,7 +120,7 @@ LoopHashLoopClosureMover::apply( core::pose::Pose & pose )
 		utility_exit();
 	}
 
-	remodel_ = protocols::forge::remodel::RemodelMover_OP( new protocols::forge::remodel::RemodelMover() );
+	remodel_ = utility::pointer::make_shared< protocols::forge::remodel::RemodelMover >();
 	remodel_->apply(pose);
 }
 // XRW TEMP std::string
@@ -130,12 +130,12 @@ LoopHashLoopClosureMover::apply( core::pose::Pose & pose )
 // XRW TEMP }
 protocols::moves::MoverOP
 LoopHashLoopClosureMover::clone() const {
-	return protocols::moves::MoverOP( new LoopHashLoopClosureMover( *this ) );
+	return utility::pointer::make_shared< LoopHashLoopClosureMover >( *this );
 }
 
 protocols::moves::MoverOP
 LoopHashLoopClosureMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new LoopHashLoopClosureMover() );
+	return utility::pointer::make_shared< LoopHashLoopClosureMover >();
 }
 const std::vector<std::string>
 LoopHashLoopClosureMover::tokenize( const std::string& in_str,
@@ -570,7 +570,7 @@ std::string LoopHashLoopClosureMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 LoopHashLoopClosureMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LoopHashLoopClosureMover );
+	return utility::pointer::make_shared< LoopHashLoopClosureMover >();
 }
 
 void LoopHashLoopClosureMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

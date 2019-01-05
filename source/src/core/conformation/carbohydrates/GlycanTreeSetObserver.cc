@@ -61,14 +61,14 @@ GlycanTreeSetObserver::GlycanTreeSetObserver():
 GlycanTreeSetObserver::GlycanTreeSetObserver( conformation::Conformation const & conf ):
 	utility::pointer::ReferenceCount()
 {
-	glycan_tree_set_ = GlycanTreeSetOP( new GlycanTreeSet( conf ) );
+	glycan_tree_set_ = utility::pointer::make_shared< GlycanTreeSet >( conf );
 }
 
 /*
 GlycanTreeSetObserver::GlycanTreeSetObserver( core::pose::Pose & pose ):
 CacheableObserver()
 {
-glycan_tree_set_ = GlycanTreeSetOP( new GlycanTreeSet( pose.conformation() ) );
+glycan_tree_set_ = utility::pointer::make_shared< GlycanTreeSet >( pose.conformation() );
 attach_impl( pose );
 }
 */
@@ -89,7 +89,7 @@ GlycanTreeSetObserver::GlycanTreeSetObserver( GlycanTreeSetObserver const & obse
 
 GlycanTreeSetObserverOP
 GlycanTreeSetObserver::clone() const {
-	return GlycanTreeSetObserverOP( new GlycanTreeSetObserver( *this ));
+	return utility::pointer::make_shared< GlycanTreeSetObserver >( *this );
 }
 
 GlycanTreeSetCOP

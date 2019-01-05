@@ -47,7 +47,7 @@ public:
 	type() const { return "Dummy"; }
 
 	virtual DeNovoArchitectOP
-	clone() const { return DeNovoArchitectOP( new DummyDeNovoArchitect( *this ) ); }
+	clone() const { return utility::pointer::make_shared< DummyDeNovoArchitect >( *this ); }
 
 	int number_;
 

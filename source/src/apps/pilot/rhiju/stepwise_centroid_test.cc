@@ -198,10 +198,10 @@ OPT_KEY( FileVector, s2 )
 ///////////////////////////////////////////////////////////////////////////////
 void
 output_centroid_silent_struct(
-															core::pose::Pose const & pose, core::pose::PoseCOP const & native_pose_op,
-															core::io::silent::SilentFileDataOP & sfd, std::string const & tag,
-															std::string const & parent_tag,
-															std::string const silent_file = "" ){
+	core::pose::Pose const & pose, core::pose::PoseCOP const & native_pose_op,
+	core::io::silent::SilentFileDataOP & sfd, std::string const & tag,
+	std::string const & parent_tag,
+	std::string const silent_file = "" ){
 
 	using namespace core::io::silent;
 	using namespace core::scoring;
@@ -209,7 +209,7 @@ output_centroid_silent_struct(
 	// Will this give the intuitive phi,psi,omega --basic non-fullatom silent struct?
 	ProteinSilentStruct s( pose, tag );
 
-	if ( native_pose_op != 0 ){
+	if ( native_pose_op != 0 ) {
 
 		core::pose::Pose pose_for_superpose = pose;
 		core::pose::Pose const & native_pose_for_superpose( *native_pose_op );
@@ -227,7 +227,7 @@ output_centroid_silent_struct(
 	s.add_comment( "PARENT_TAG", parent_tag );
 
 	sfd->add_structure( s );
-	if (silent_file.size() > 0 )	sfd->write_silent_struct( s, silent_file, false /*write score only*/ );
+	if ( silent_file.size() > 0 ) sfd->write_silent_struct( s, silent_file, false /*write score only*/ );
 
 }
 
@@ -235,14 +235,14 @@ output_centroid_silent_struct(
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 Size
 figure_out_nested_positions(
-														std::string const & inside_sequence,
-														std::string const & desired_sequence,
-														Size const min_start_res = 0)
+	std::string const & inside_sequence,
+	std::string const & desired_sequence,
+	Size const min_start_res = 0)
 {
 
 	Size const max_start_res = desired_sequence.size() - inside_sequence.size()+1;
 
-	for (Size potential_start_res = 1; potential_start_res <= max_start_res; potential_start_res++ ) {
+	for ( Size potential_start_res = 1; potential_start_res <= max_start_res; potential_start_res++ ) {
 
 		if ( potential_start_res < min_start_res ) continue;
 
@@ -266,8 +266,8 @@ figure_out_nested_positions(
 ///////////////////////////////////////////////////////////////////////////////
 void
 slice_pdb( core::pose::Pose & pose,
-					 Size const & start_res,
-					 Size const & end_res  )
+	Size const & start_res,
+	Size const & end_res  )
 {
 	using namespace core::pose;
 	using namespace core::chemical;
@@ -288,8 +288,8 @@ slice_pdb( core::pose::Pose & pose,
 ///////////////////////////////////////////////////////////////////////////////
 void
 slice_sequence( std::string & sequence,
-					 Size const & start_res,
-					 Size const & end_res  )
+	Size const & start_res,
+	Size const & end_res  )
 {
 	std::string const sequence_new = sequence.substr( start_res-1,   end_res - start_res + 1 );
 	sequence = sequence_new;
@@ -313,18 +313,18 @@ constraint_set_slice( core::scoring::constraints::ConstraintSetOP & cst_set, Siz
 
 		ConstraintCOP const & cst( csts[n] );
 
-		if ( cst->score_type() == atom_pair_constraint)  { // currently only defined for pairwise distance constraints.
+		if ( cst->score_type() == atom_pair_constraint )  { // currently only defined for pairwise distance constraints.
 			Size const i = cst->atom( 1 ).rsd();
 			Size const j = cst->atom( 2 ).rsd();
-			//			Size const dist( shortest_path_in_fold_tree.dist( i , j ) );
-			//			if ( dist  > separation_cutoff ) continue;
-			if (i < min_res || i > max_res ) continue;
-			if (j < min_res || j > max_res ) continue;
+			//   Size const dist( shortest_path_in_fold_tree.dist( i , j ) );
+			//   if ( dist  > separation_cutoff ) continue;
+			if ( i < min_res || i > max_res ) continue;
+			if ( j < min_res || j > max_res ) continue;
 
 			AtomID atom1_new( cst->atom(1).atomno(),  cst->atom(1).rsd() - min_res + 1);
 			AtomID atom2_new( cst->atom(2).atomno(),  cst->atom(2).rsd() - min_res + 1);
 			ConstraintOP cst_new = new AtomPairConstraint( atom1_new, atom2_new,
-																										 cst->get_func().clone() /*is this defined?*/, cst->score_type() );
+				cst->get_func().clone() /*is this defined?*/, cst->score_type() );
 
 			cst_set_new->add_constraint( cst_new );
 
@@ -342,16 +342,16 @@ constraint_set_slice( core::scoring::constraints::ConstraintSetOP & cst_set, Siz
 ///////////////////////////////////////////////////////////////////////////////
 void
 apply_all_frags(
-	 pose::Pose & pose,
-	 pose::PoseOP & native_pose,
-	 Size const & insert_pos,
-	 std::string const & parent_tag,
-	 Real const & score_cut,
-	 Real & score_min,
-	 Size & count,
-	 core::io::silent::SilentFileDataOP & sfd,
-	 core::fragment::ConstantLengthFragSetOP & fragset,
-	 core::scoring::ScoreFunctionOP & scorefxn )
+	pose::Pose & pose,
+	pose::PoseOP & native_pose,
+	Size const & insert_pos,
+	std::string const & parent_tag,
+	Real const & score_cut,
+	Real & score_min,
+	Size & count,
+	core::io::silent::SilentFileDataOP & sfd,
+	core::fragment::ConstantLengthFragSetOP & fragset,
+	core::scoring::ScoreFunctionOP & scorefxn )
 {
 
 	using namespace core::fragment;
@@ -387,16 +387,16 @@ apply_all_frags(
 			output_centroid_silent_struct( pose, native_pose, sfd, tag, parent_tag  /*, "junk.out"*/ );
 		}
 	}
-	//			pose.dump_pdb( tag+".pdb");
+	//   pose.dump_pdb( tag+".pdb");
 
 }
 
 ////////////////////////////////////////////////////////////////////////
 Size
 setup_pose( pose::Pose & pose,
-						pose::Pose const & start_pose,
-						std::string const & desired_sequence,
-						Size const min_start_res = 0 )
+	pose::Pose const & start_pose,
+	std::string const & desired_sequence,
+	Size const min_start_res = 0 )
 {
 	Size const start_res = figure_out_nested_positions( start_pose.sequence(), desired_sequence, min_start_res );
 	Size const end_res = start_res +  start_pose.sequence().size() - 1;
@@ -452,17 +452,17 @@ rebuild_centroid_test()
 	core::sequence::SequenceOP fasta_sequence = core::sequence::read_fasta_file( fasta_file )[1];
 	std::string desired_sequence = fasta_sequence->sequence();
 	std::string const desired_sequence_full( desired_sequence );
-	if ( min_res_ > 0 ) 	slice_sequence( desired_sequence, min_res_, max_res_ );
+	if ( min_res_ > 0 )  slice_sequence( desired_sequence, min_res_, max_res_ );
 
 	PoseOP native_pose;
 	bool native_exists( false );
-	if (option[ in::file::native ].user() ) {
-		native_pose = PoseOP( new Pose );
+	if ( option[ in::file::native ].user() ) {
+		native_pose = utility::pointer::make_shared< Pose >();
 		std::string native_pdb_file  = option[ in::file::native ];
 		io::pdb::pose_from_file( *native_pose, *rsd_set, native_pdb_file , core::import_pose::PDB_file);
 		native_exists = true;
 		if ( min_res_ > 0 ) slice_pdb( *native_pose, min_res_, max_res_ );
-		//		native_pose->dump_pdb( "NATIVE.pdb" );
+		//  native_pose->dump_pdb( "NATIVE.pdb" );
 	}
 
 	////////////////////////////////////////////////////
@@ -478,7 +478,7 @@ rebuild_centroid_test()
 
 		input1 = new PDBPoseInputStream( option[ in::file::s ]() );
 
-		if (option[ s2 ].user() ) {
+		if ( option[ s2 ].user() ) {
 			input2 = new PDBPoseInputStream( option[ s2 ]() );
 		}
 
@@ -498,9 +498,9 @@ rebuild_centroid_test()
 			input2 = new SilentFilePoseInputStream( silent_files_in2 );
 
 		} else {
-			if ( option[ in::file::tags].user() ){
+			if ( option[ in::file::tags].user() ) {
 				input1 = new SilentFilePoseInputStream( silent_files_in ,
-																							 option[ in::file::tags ]() );
+					option[ in::file::tags ]() );
 			} else {
 				input1 = new SilentFilePoseInputStream( option[ in::file::silent ]()[ 1 ] );
 			}
@@ -513,7 +513,7 @@ rebuild_centroid_test()
 	// Either 0 inputs ( start from scratch ), 1 input (typically fragment insertions at termini), or
 	//   2 inputs (internal fragment insertions between patches poses)
 	Size const num_inputs ( static_cast<Size>(input1 != 0) +
-													static_cast<Size>(input2 != 0)  );
+		static_cast<Size>(input2 != 0)  );
 
 	///////////////////////////////////
 	// pose initialize.
@@ -562,7 +562,7 @@ rebuild_centroid_test()
 	///////////////////////////////////
 	// main loop.
 	///////////////////////////////////
-	if ( num_inputs == 0 ){
+	if ( num_inputs == 0 ) {
 		///////////////////////
 		// start from scratch
 		assert(  pose.size() == fragset->max_frag_length() );
@@ -571,14 +571,14 @@ rebuild_centroid_test()
 		parent_tag = "START_FROM_SCRATCH";
 		apply_all_frags( pose, native_pose,  insert_pos, parent_tag, score_cut, score_min, count, sfd, fragset, scorefxn );
 
-	} else if  (num_inputs == 1 ){
+	} else if  ( num_inputs == 1 ) {
 
 		///////////////////////
 		// input pose.
 
 		Pose start_pose;
 
-		while( input1->has_another_pose() ) {
+		while ( input1->has_another_pose() ) {
 			input1->fill_pose( start_pose, *rsd_set );
 			setup_pose( pose, start_pose, desired_sequence );
 			parent_tag = tag_from_pose( start_pose );
@@ -592,7 +592,7 @@ rebuild_centroid_test()
 		pose::Pose start_pose1, start_pose2;
 
 		Size num_pose1( 0 );
-		while( input1->has_another_pose() ) {
+		while ( input1->has_another_pose() ) {
 
 			num_pose1++;
 			if ( max_input_poses > 0 && num_pose1 > max_input_poses ) break;
@@ -602,7 +602,7 @@ rebuild_centroid_test()
 			std::string const parent_tag1 = tag_from_pose( start_pose1 );
 
 			Size num_pose2( 0 );
-			while( input2->has_another_pose() ) {
+			while ( input2->has_another_pose() ) {
 
 				num_pose2++;
 				if ( max_input_poses > 0 && num_pose2 > max_input_poses ) break;
@@ -627,9 +627,9 @@ rebuild_centroid_test()
 
 	protocols::stepwise::StepWiseLegacyClusterer stepwise_clusterer( sfd );
 	Size max_decoys( 400 );
-	if ( option[ out::nstruct].user() )	 max_decoys =  option[ out::nstruct ];
+	if ( option[ out::nstruct].user() )  max_decoys =  option[ out::nstruct ];
 	stepwise_clusterer.set_max_decoys( max_decoys );
-	stepwise_clusterer.set_cluster_radius(	option[ OptionKeys::cluster::radius ]()	);
+	stepwise_clusterer.set_cluster_radius( option[ OptionKeys::cluster::radius ]() );
 	stepwise_clusterer.set_cluster_by_all_atom_rmsd( option[ cluster_by_all_atom_rmsd ] ); // false by default
 	stepwise_clusterer.set_rename_tags( true /*option[ rename_tags ]*/ );
 	stepwise_clusterer.cluster();
@@ -649,10 +649,10 @@ cluster_outfile_test(){
 	protocols::stepwise::StepWiseLegacyClusterer stepwise_clusterer( silent_files_in );
 
 	Size max_decoys( 2500 );
-	if ( option[ out::nstruct].user() )	 max_decoys =  option[ out::nstruct ];
+	if ( option[ out::nstruct].user() )  max_decoys =  option[ out::nstruct ];
 	stepwise_clusterer.set_max_decoys( max_decoys );
 
-	stepwise_clusterer.set_cluster_radius(	option[ OptionKeys::cluster::radius ]()	);
+	stepwise_clusterer.set_cluster_radius( option[ OptionKeys::cluster::radius ]() );
 	stepwise_clusterer.set_cluster_by_all_atom_rmsd( option[ cluster_by_all_atom_rmsd ] );
 	stepwise_clusterer.set_score_diff_cut( option[ score_diff_cut ] );
 	stepwise_clusterer.set_rename_tags( true /*option[ rename_tags ]*/ );
@@ -672,7 +672,7 @@ my_main( void* )
 
 	using namespace core::options;
 
-	if ( option[ cluster_test ] ){
+	if ( option[ cluster_test ] ) {
 		cluster_outfile_test();
 	} else {
 		rebuild_centroid_test();
@@ -688,40 +688,40 @@ main( int argc, char * argv [] )
 
 	try {
 
-	using namespace core::options;
+		using namespace core::options;
 
-	//Uh, options?
-	NEW_OPT( start_from_scratch, "start from scratch", false );
-	NEW_OPT( n_terminus, "build N terminus", false );
-	NEW_OPT( c_terminus, "build C terminus", false );
-	NEW_OPT( cluster_test, "cluster", false );
-	NEW_OPT( cluster_by_all_atom_rmsd, "cluster by all atom rmsd", false );
-	NEW_OPT( centroid_screen, "centroid screen", false );
-	NEW_OPT( cst_file, "Input file for constraints", "default.constraints" );
-	NEW_OPT( min_res, "min. residue for fragment library slicing", 0 );
-	NEW_OPT( max_res, "max. residue for fragment library slicing", 0 );
-	NEW_OPT( max_input, "max. number of input poses from, e.g., silent files", 0 );
-	NEW_OPT( insert_res, "where to insert fragment", 0 );
-	NEW_OPT( centroid_weights, "centroid score function", "score3.wts" );
-	NEW_OPT( score_diff_cut, "score difference cut for clustering", 10.0 );
+		//Uh, options?
+		NEW_OPT( start_from_scratch, "start from scratch", false );
+		NEW_OPT( n_terminus, "build N terminus", false );
+		NEW_OPT( c_terminus, "build C terminus", false );
+		NEW_OPT( cluster_test, "cluster", false );
+		NEW_OPT( cluster_by_all_atom_rmsd, "cluster by all atom rmsd", false );
+		NEW_OPT( centroid_screen, "centroid screen", false );
+		NEW_OPT( cst_file, "Input file for constraints", "default.constraints" );
+		NEW_OPT( min_res, "min. residue for fragment library slicing", 0 );
+		NEW_OPT( max_res, "max. residue for fragment library slicing", 0 );
+		NEW_OPT( max_input, "max. number of input poses from, e.g., silent files", 0 );
+		NEW_OPT( insert_res, "where to insert fragment", 0 );
+		NEW_OPT( centroid_weights, "centroid score function", "score3.wts" );
+		NEW_OPT( score_diff_cut, "score difference cut for clustering", 10.0 );
 
-	////////////////////////////////////////////////////////////////////////////
-	// setup
-	////////////////////////////////////////////////////////////////////////////
-	devel::init(argc, argv);
+		////////////////////////////////////////////////////////////////////////////
+		// setup
+		////////////////////////////////////////////////////////////////////////////
+		devel::init(argc, argv);
 
 
-	////////////////////////////////////////////////////////////////////////////
-	// end of setup
-	////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		////////////////////////////////////////////////////////////////////////////
 
-	protocols::viewer::viewer_main( my_main );
+		protocols::viewer::viewer_main( my_main );
 
-	exit( 0 );
+		exit( 0 );
 
-	////////////////////////////////////////////////////////////////////////////
-	// end of setup
-	////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		////////////////////////////////////////////////////////////////////////////
 
 	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

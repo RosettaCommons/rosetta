@@ -70,7 +70,7 @@ ClashWithTargetFilter::~ClashWithTargetFilter() = default;
 
 protocols::filters::FilterOP
 ClashWithTargetFilter::clone() const {
-	return protocols::filters::FilterOP( new ClashWithTargetFilter( *this ) );
+	return utility::pointer::make_shared< ClashWithTargetFilter >( *this );
 }
 
 static basic::Tracer TR( "protocols.protein_interface_design.filters.ClashWithTargetFilter" );
@@ -189,7 +189,7 @@ ClashWithTargetFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache:
 }
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP ClashWithTargetFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ClashWithTargetFilter() ); }
+// XRW TEMP ClashWithTargetFilterCreator::create_filter() const { return utility::pointer::make_shared< ClashWithTargetFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP ClashWithTargetFilterCreator::keyname() const { return "ClashWithTarget"; }
@@ -224,7 +224,7 @@ std::string ClashWithTargetFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 ClashWithTargetFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new ClashWithTargetFilter );
+	return utility::pointer::make_shared< ClashWithTargetFilter >();
 }
 
 void ClashWithTargetFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

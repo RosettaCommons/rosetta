@@ -1411,12 +1411,12 @@ std::string LoopRelaxMoverCreator::mover_name()
 
 // {{{1
 protocols::moves::MoverOP LoopRelaxMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new LoopRelaxMover() );
+	return utility::pointer::make_shared< LoopRelaxMover >();
 }
 
 // {{{1
 protocols::moves::MoverOP LoopRelaxMover::clone() const {
-	return protocols::moves::MoverOP( new LoopRelaxMover( *this ) );
+	return utility::pointer::make_shared< LoopRelaxMover >( *this );
 }
 // }}}1
 

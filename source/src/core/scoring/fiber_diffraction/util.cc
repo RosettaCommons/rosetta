@@ -347,7 +347,7 @@ utility::vector1< OneGaussianScattering > setup_centroid_scatter(
 			sig_centroid_[aa] = scatter;
 		}
 		pose.data().set(core::pose::datacache::CacheableDataType::FIBER_DIFFRACTION_CEN_SCATTERING,
-			basic::datacache::DataCache_CacheableData::DataOP( new CentroidScatter( sig_centroid_ ) ) );
+			utility::pointer::make_shared< CentroidScatter >( sig_centroid_ ) );
 	}
 	return sig_centroid_;
 }
@@ -394,7 +394,7 @@ utility::vector0< utility::vector1< utility::vector1< core::Real > > > setup_for
 			}
 		}
 		pose.data().set(core::pose::datacache::CacheableDataType::FIBER_DIFFRACTION_FA_SCATTERING,
-			basic::datacache::DataCache_CacheableData::DataOP( new FAScatter( form_factors_ ) ) );
+			utility::pointer::make_shared< FAScatter >( form_factors_ ) );
 	}
 	return form_factors_;
 }

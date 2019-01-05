@@ -70,7 +70,7 @@ methods::EnergyMethodOP
 VDW_EnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
-	return methods::EnergyMethodOP( new VDW_Energy( options ) );
+	return utility::pointer::make_shared< VDW_Energy >( options );
 }
 
 ScoreTypes
@@ -83,7 +83,7 @@ VDW_EnergyCreator::score_types_for_method() const {
 
 /// @details  C-TOR with method options object
 VDW_Energy::VDW_Energy( methods::EnergyMethodOptions const & options ):
-	parent( methods::EnergyMethodCreatorOP( new VDW_EnergyCreator ) ),
+	parent( utility::pointer::make_shared< VDW_EnergyCreator >() ),
 	atom_vdw_( ScoringManager::get_instance()->get_AtomVDW( options.atom_vdw_atom_type_set_name() ) ),
 	atom_type_set_name_( options.atom_vdw_atom_type_set_name() ),
 	vdw_scale_factor_( 0.8 ) // hack from rosetta++
@@ -96,7 +96,7 @@ VDW_Energy::VDW_Energy( methods::EnergyMethodOptions const & options ):
 methods::EnergyMethodOP
 VDW_Energy::clone() const
 {
-	return methods::EnergyMethodOP( new VDW_Energy( *this ) );
+	return utility::pointer::make_shared< VDW_Energy >( *this );
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -355,11 +355,11 @@ VDW_Energy::get_count_pair_function_trie(
 	Size conn1 = trie1->get_count_pair_data_for_residue( res2.seqpos() );
 	Size conn2 = trie2->get_count_pair_data_for_residue( res1.seqpos() );
 	if ( connection == CP_ONE_BOND ) {
-		return trie::TrieCountPairBaseOP( new VDWTrieCountPair1B( conn1, conn2 ) );
+		return utility::pointer::make_shared< VDWTrieCountPair1B >( conn1, conn2 );
 	} else if ( connection == CP_NO_BONDS ) {
-		return trie::TrieCountPairBaseOP( new TrieCountPairAll );
+		return utility::pointer::make_shared< TrieCountPairAll >();
 	} else {
-		return trie::TrieCountPairBaseOP( new TrieCountPairGeneric( res1, res2, conn1, conn2 ) );
+		return utility::pointer::make_shared< TrieCountPairGeneric >( res1, res2, conn1, conn2 );
 	}
 	return nullptr;
 }

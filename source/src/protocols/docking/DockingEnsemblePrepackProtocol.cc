@@ -78,7 +78,7 @@ DockingEnsemblePrepackProtocol::DockingEnsemblePrepackProtocol(): DockingHighRes
 void DockingEnsemblePrepackProtocol::setup_defaults()
 {
 	trans_magnitude_ = 1000.0;
-	pack_operations_ = SequenceMoverOP( new SequenceMover() );
+	pack_operations_ = utility::pointer::make_shared< SequenceMover >();
 
 	ensemble1_ = nullptr;
 	ensemble2_ = nullptr;
@@ -126,19 +126,19 @@ void DockingEnsemblePrepackProtocol::register_options()
 
 void DockingEnsemblePrepackProtocol::setup_pack_operation_movers()
 {
-	prepack_full_repack_ = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover() );
+	prepack_full_repack_ = utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >();
 	prepack_full_repack_->score_function( scorefxn_pack() );
 	prepack_full_repack_->task_factory( task_factory() );
 	pack_operations_->add_mover(prepack_full_repack_);
 
 	if ( rt_min() ) {
-		rtmin_mover_ = protocols::minimization_packing::RotamerTrialsMinMoverOP( new protocols::minimization_packing::RotamerTrialsMinMover( ) );
+		rtmin_mover_ = utility::pointer::make_shared< protocols::minimization_packing::RotamerTrialsMinMover >( );
 		rtmin_mover_->score_function( scorefxn_pack() );
 		rtmin_mover_->task_factory( task_factory() );
 		pack_operations_->add_mover( rtmin_mover_ );
 	}
 	if ( sc_min() ) {
-		scmin_mover_ = SidechainMinMoverOP( new SidechainMinMover() );
+		scmin_mover_ = utility::pointer::make_shared< SidechainMinMover >();
 		scmin_mover_->set_scorefxn( scorefxn_pack() );
 		scmin_mover_->set_task_factory( task_factory() );
 		pack_operations_->add_mover( scmin_mover_ );
@@ -165,13 +165,13 @@ void DockingEnsemblePrepackProtocol::finalize_setup( pose::Pose & pose ) {
 	start_res = 1;
 	end_res = cutpoint;
 
-	ensemble1_ = DockingEnsembleOP( new DockingEnsemble( start_res, end_res, rb_jump, ensemble1_filename_, "dock_ens_conf1", scorefxn_low, scorefxn() ) );
+	ensemble1_ = utility::pointer::make_shared< DockingEnsemble >( start_res, end_res, rb_jump, ensemble1_filename_, "dock_ens_conf1", scorefxn_low, scorefxn() );
 
 	TR << "Ensemble 2: " << ensemble2_filename_ << std::endl;
 	start_res = cutpoint + 1;
 	end_res = pose.size();
 
-	ensemble2_ = DockingEnsembleOP( new DockingEnsemble( start_res, end_res, rb_jump, ensemble2_filename_, "dock_ens_conf2", scorefxn_low, scorefxn() ) );
+	ensemble2_ = utility::pointer::make_shared< DockingEnsemble >( start_res, end_res, rb_jump, ensemble2_filename_, "dock_ens_conf2", scorefxn_low, scorefxn() );
 }
 
 utility::vector1< char > DockingEnsemblePrepackProtocol::get_pose_chains( core::pose::Pose & pose ) {
@@ -403,7 +403,7 @@ void DockingEnsemblePrepackProtocol::apply( core::pose::Pose & pose )
 
 	starting_pose = pose;
 
-	switch_mover = protocols::docking::ConformerSwitchMoverOP( new protocols::docking::ConformerSwitchMover( ensemble1_ ) );
+	switch_mover = utility::pointer::make_shared< protocols::docking::ConformerSwitchMover >( ensemble1_ );
 	for ( Size i=1; i<=ensemble1_->size(); ++i ) {
 
 		to_centroid.apply( pose );
@@ -423,7 +423,7 @@ void DockingEnsemblePrepackProtocol::apply( core::pose::Pose & pose )
 
 	// reset to starting pose
 	pose = starting_pose;
-	switch_mover = protocols::docking::ConformerSwitchMoverOP( new protocols::docking::ConformerSwitchMover( ensemble2_ ) );
+	switch_mover = utility::pointer::make_shared< protocols::docking::ConformerSwitchMover >( ensemble2_ );
 	for ( Size i=1; i<=ensemble2_->size(); ++i ) {
 
 		to_centroid.apply( pose );

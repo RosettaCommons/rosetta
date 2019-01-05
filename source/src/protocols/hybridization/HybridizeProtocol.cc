@@ -198,7 +198,7 @@ using namespace protocols::loops;
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP HybridizeProtocolCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new HybridizeProtocol );
+// XRW TEMP  return utility::pointer::make_shared< HybridizeProtocol >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -317,7 +317,7 @@ HybridizeProtocol::HybridizeProtocol(
 
 	// native
 	//    if ( option[ in::file::native ].user() ) {
-	//        native_ = core::pose::PoseOP( new core::pose::Pose );
+	//        native_ = utility::pointer::make_shared< core::pose::Pose >();
 	//        if ( option[in::file::fullatom]() ) {
 	//            core::import_pose::pose_from_pdb( *native_, option[ in::file::native ]() );
 	//        } else {
@@ -325,7 +325,7 @@ HybridizeProtocol::HybridizeProtocol(
 	//            core::import_pose::pose_from_pdb( *native_, *residue_set, option[ in::file::native ]()  );
 	//        }
 	//    } else if ( option[ evaluation::align_rmsd_target ].user() ) {
-	//        native_ = core::pose::PoseOP( new core::pose::Pose );
+	//        native_ = utility::pointer::make_shared< core::pose::Pose >();
 	//        utility::vector1< std::string > const & align_rmsd_target( option[ evaluation::align_rmsd_target ]() );
 	//        core::import_pose::pose_from_pdb( *native_, align_rmsd_target[1] ); // just use the first one for now
 	//    }
@@ -497,7 +497,7 @@ HybridizeProtocol::init() {
 
 	// native
 	if ( option[ in::file::native ].user() ) {
-		native_ = core::pose::PoseOP( new core::pose::Pose );
+		native_ = utility::pointer::make_shared< core::pose::Pose >();
 		if ( option[in::file::fullatom]() ) {
 			core::import_pose::pose_from_file( *native_, option[ in::file::native ]() , core::import_pose::PDB_file);
 		} else {
@@ -505,7 +505,7 @@ HybridizeProtocol::init() {
 			core::import_pose::pose_from_file( *native_, *residue_set, option[ in::file::native ]()  , core::import_pose::PDB_file);
 		}
 	} else if ( option[ evaluation::align_rmsd_target ].user() ) {
-		native_ = core::pose::PoseOP( new core::pose::Pose );
+		native_ = utility::pointer::make_shared< core::pose::Pose >();
 		utility::vector1< std::string > const & align_rmsd_target( option[ evaluation::align_rmsd_target ]() );
 		core::import_pose::pose_from_file( *native_, align_rmsd_target[1] , core::import_pose::PDB_file); // just use the first one for now
 	}
@@ -813,9 +813,9 @@ HybridizeProtocol::initialize_and_sample_loops(
 		core::fragment::FragSetOP frags_big = fragments_big_[numeric::random::rg().random_range(1,fragments_big_.size())];
 		TR.Info << "FRAGMENTS small max length: " << frags_small->max_frag_length() << std::endl;
 		TR.Info << "FRAGMENTS big max length: " << frags_big->max_frag_length() << std::endl;
-		frag3mover = protocols::simple_moves::ClassicFragmentMoverOP( new protocols::simple_moves::ClassicFragmentMover( frags_small, mm_loop ) );
+		frag3mover = utility::pointer::make_shared< protocols::simple_moves::ClassicFragmentMover >( frags_small, mm_loop );
 		frag3mover->set_check_ss( false ); frag3mover->enable_end_bias_check( false );
-		frag9mover = protocols::simple_moves::ClassicFragmentMoverOP( new protocols::simple_moves::ClassicFragmentMover( frags_big, mm_loop ) );
+		frag9mover = utility::pointer::make_shared< protocols::simple_moves::ClassicFragmentMover >( frags_big, mm_loop );
 		frag9mover->set_check_ss( false ); frag9mover->enable_end_bias_check( false );
 
 		// extend + idealize loops
@@ -1727,9 +1727,9 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 
 					// need to use a packer task factory to handle poses with different disulfide patterning
 					core::pack::task::TaskFactoryOP tf( new core::pack::task::TaskFactory );
-					tf->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
-					tf->push_back( TaskOperationCOP( new core::pack::task::operation::IncludeCurrent ) );
-					tf->push_back( TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ) );
+					tf->push_back( utility::pointer::make_shared< core::pack::task::operation::InitializeFromCommandline >() );
+					tf->push_back( utility::pointer::make_shared< core::pack::task::operation::IncludeCurrent >() );
+					tf->push_back( utility::pointer::make_shared< core::pack::task::operation::RestrictToRepacking >() );
 					relax_prot.set_task_factory( tf );
 
 					// notice! this assumes all poses in a set have the same constraints!
@@ -1762,7 +1762,7 @@ HybridizeProtocol::align_templates_by_domain(core::pose::PoseOP & ref_pose, util
 	// get domain parse if not specified
 	core::pose::PoseOP working_pose;
 	if ( core::pose::symmetry::is_symmetric(*ref_pose) ) {
-		working_pose = core::pose::PoseOP(new core::pose::Pose);
+		working_pose = utility::pointer::make_shared< core::pose::Pose >();
 		core::pose::symmetry::extract_asymmetric_unit(*ref_pose, *working_pose);
 	} else {
 		working_pose = ref_pose;
@@ -1777,7 +1777,7 @@ HybridizeProtocol::align_templates_by_domain(core::pose::PoseOP & ref_pose, util
 	templates_aln_.clear();
 	for ( Size i_pose=1; i_pose <= templates_.size(); ++i_pose ) {
 		templates_aln_.push_back(
-			core::pose::PoseOP( new core::pose::Pose( *templates_[i_pose] ) ) );
+			utility::pointer::make_shared< core::pose::Pose >( *templates_[i_pose] ) );
 	}
 
 	for ( Size i_pose=1; i_pose <= templates_aln_.size(); ++i_pose ) {
@@ -1912,8 +1912,8 @@ HybridizeProtocol::do_intrastage_docking(core::pose::Pose & pose) {
 	}
 }
 
-protocols::moves::MoverOP HybridizeProtocol::clone() const { return protocols::moves::MoverOP( new HybridizeProtocol( *this ) ); }
-protocols::moves::MoverOP HybridizeProtocol::fresh_instance() const { return protocols::moves::MoverOP( new HybridizeProtocol ); }
+protocols::moves::MoverOP HybridizeProtocol::clone() const { return utility::pointer::make_shared< HybridizeProtocol >( *this ); }
+protocols::moves::MoverOP HybridizeProtocol::fresh_instance() const { return utility::pointer::make_shared< HybridizeProtocol >(); }
 
 // XRW TEMP std::string
 // XRW TEMP HybridizeProtocol::get_name() const {
@@ -2331,7 +2331,7 @@ std::string HybridizeProtocolCreator::keyname() const {
 
 protocols::moves::MoverOP
 HybridizeProtocolCreator::create_mover() const {
-	return protocols::moves::MoverOP( new HybridizeProtocol );
+	return utility::pointer::make_shared< HybridizeProtocol >();
 }
 
 void HybridizeProtocolCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

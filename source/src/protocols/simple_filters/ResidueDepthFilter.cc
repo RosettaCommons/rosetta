@@ -79,7 +79,7 @@ mycomp( const std::pair< core::Real, core::Size >& lhs,
 { return lhs.first < rhs.first; }
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP ResidueDepthFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ResidueDepthFilter ); }
+// XRW TEMP ResidueDepthFilterCreator::create_filter() const { return utility::pointer::make_shared< ResidueDepthFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP ResidueDepthFilterCreator::keyname() const { return "ResidueDepth"; }
@@ -737,7 +737,7 @@ ResidueDepthFilter::read_db( std::string const infile )
 			pdbid_.push_back( pdbid );
 
 		}
-		ResidueDepthDataOP rdd = ResidueDepthDataOP( new ResidueDepthData );
+		ResidueDepthDataOP rdd = utility::pointer::make_shared< ResidueDepthData >();
 
 		rdd->CAcrd[0] = x; rdd->CAcrd[1] = y; rdd->CAcrd[2] = z;
 		rdd->CENcrd[0] = xcen; rdd->CENcrd[1] = ycen; rdd->CENcrd[2] = zcen;
@@ -1210,7 +1210,7 @@ ResidueDepthFilter::make_context( core::pose::Pose const &pose,
 		core::Real const d2( iCENcrd.distance_squared( jCENcrd ) );
 		//TR << "ires/jres/d2: " << ires << " " << jres << " " << d2 << std::endl;
 		if ( d2 < D2CUT ) {
-			ResidueDepthDataOP rdd = ResidueDepthDataOP( new ResidueDepthData );
+			ResidueDepthDataOP rdd = utility::pointer::make_shared< ResidueDepthData >();
 			// don't need others than below
 			rdd->CAcrd = pose.residue(jres).xyz( " CA " );
 			rdd->CENcrd = jCENcrd;
@@ -1311,7 +1311,7 @@ std::string ResidueDepthFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 ResidueDepthFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new ResidueDepthFilter );
+	return utility::pointer::make_shared< ResidueDepthFilter >();
 }
 
 void ResidueDepthFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -25,7 +25,7 @@ create_sasa_method(
 	core::Real probe_radius,
 	SasaRadii radii_set
 ) {
-	return SasaMethodOP( new LeGrandSasa(probe_radius, radii_set) );
+	return utility::pointer::make_shared< LeGrandSasa >(probe_radius, radii_set);
 }
 
 

@@ -116,7 +116,7 @@ HierarchicalLevel::HierarchicalLevel( core::Size maxlevels ):
 
 	if ( TR.visible() ) { TR.Debug << "new hierarchical-level created, level=" << level_ << " radius=" << radius_ << std::endl;}
 	if ( ( level_ + 1 ) <= max_levels_ ) {
-		next_level_ = HierarchicalLevelOP( new HierarchicalLevel( (core::Size)(level_ + 1), max_levels_ ) );
+		next_level_ = utility::pointer::make_shared< HierarchicalLevel >( (core::Size)(level_ + 1), max_levels_ );
 	} else {
 		next_level_.reset();
 	}
@@ -145,7 +145,7 @@ HierarchicalLevel::HierarchicalLevel( core::Size maxlevels, std::string const & 
 
 	if ( TR.visible() ) { TR.Debug << "new hierarchical-level created, level=" << level_ << " radius=" << radius_ << std::endl; }
 	if ( ( level_ + 1 ) <= max_levels_ ) {
-		next_level_ = HierarchicalLevelOP( new HierarchicalLevel( (core::Size)(level_ + 1), max_levels_ ) );
+		next_level_ = utility::pointer::make_shared< HierarchicalLevel >( (core::Size)(level_ + 1), max_levels_ );
 	} else {
 		next_level_.reset();
 	}
@@ -166,7 +166,7 @@ HierarchicalLevel::HierarchicalLevel( core::Size level, core::Size max_levels ):
 	radius_ = option[ cluster::K_radius ]()[ level_ ];
 	if ( TR.visible() ) { TR.Debug << "new hierarchical-level created level=" << level_ << " radius=" << radius_ << std::endl; }
 	if ( level_ < max_levels_ ) {
-		next_level_ = HierarchicalLevelOP( new HierarchicalLevel( level_ + 1, max_levels ) );
+		next_level_ = utility::pointer::make_shared< HierarchicalLevel >( level_ + 1, max_levels );
 	} else {
 		next_level_.reset();
 	}
@@ -876,7 +876,7 @@ void
 HierarchicalLevel::add_elem_to_cache( FArray2D_double & coords, std::string & tag, Address & input_addr ) {
 	PROF_START( basic::HIERARCHICAL_ADD_ELEM_TO_CACHE );
 	runtime_assert( find(input_addr) == pool_cache_.end() );
-	PoolData newpooldat = PoolData( Pool_RMSD_OP( new Pool_RMSD() ), input_addr );
+	PoolData newpooldat = PoolData( utility::pointer::make_shared< Pool_RMSD >(), input_addr );
 	newpooldat.pool_->add( coords, coords.u2(), tag );
 	while ( pool_cache_.size() >= max_cache_size_ ) {
 		pool_cache_.pop_back();
@@ -1068,7 +1068,7 @@ HierarchicalLevel::load_pool( utility::vector1< core::Size > & address ) {
 #else
 		sleep(5);
 #endif
-		pool_ptr = Pool_RMSD_OP( new Pool_RMSD( file ) );
+		pool_ptr = utility::pointer::make_shared< Pool_RMSD >( file );
 		ntries--;
 	}
 	runtime_assert( pool_ptr->size() > 0 );

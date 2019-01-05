@@ -55,14 +55,14 @@ ScoringSchemeFactory::get_scoring_scheme(
 ScoringSchemeFactory::ScoringSchemeFactory(void) {
 	// initialization of ScoringSchemes which this factory knows how to
 	// instantiate
-	add_type( ScoringSchemeOP( new SimpleScoringScheme() ) );
-	add_type( ScoringSchemeOP( new MatrixScoringScheme() ) );
-	add_type( ScoringSchemeOP( new L1ScoringScheme() ) );
-	add_type( ScoringSchemeOP( new DPScoringScheme() ) );
-	add_type( ScoringSchemeOP( new ProfSimScoringScheme() ) );
-	add_type( ScoringSchemeOP( new CompassScoringScheme() ) );
-	add_type( ScoringSchemeOP( new CompositeScoringScheme() ) );
-	add_type( ScoringSchemeOP( new ChemicalShiftScoringScheme() ) );
+	add_type( utility::pointer::make_shared< SimpleScoringScheme >() );
+	add_type( utility::pointer::make_shared< MatrixScoringScheme >() );
+	add_type( utility::pointer::make_shared< L1ScoringScheme >() );
+	add_type( utility::pointer::make_shared< DPScoringScheme >() );
+	add_type( utility::pointer::make_shared< ProfSimScoringScheme >() );
+	add_type( utility::pointer::make_shared< CompassScoringScheme >() );
+	add_type( utility::pointer::make_shared< CompositeScoringScheme >() );
+	add_type( utility::pointer::make_shared< ChemicalShiftScoringScheme >() );
 }
 
 } // namespace sequence

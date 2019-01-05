@@ -77,7 +77,7 @@ namespace sidechain_moves {
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP SidechainMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new SidechainMover );
+// XRW TEMP  return utility::pointer::make_shared< SidechainMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -98,7 +98,7 @@ SidechainMover::SidechainMover():
 	next_resnum_(0),
 	last_proposal_density_ratio_(1),
 	task_initialized_(false),
-	scratch_( core::pack::dunbrack::RotamerLibraryScratchSpaceOP( new core::pack::dunbrack::RotamerLibraryScratchSpace ) ),
+	scratch_( utility::pointer::make_shared< core::pack::dunbrack::RotamerLibraryScratchSpace >() ),
 	temperature0_(0.56),
 	sampling_temperature_(0.56)
 {}
@@ -118,7 +118,7 @@ SidechainMover::SidechainMover(
 	next_resnum_(0),
 	last_proposal_density_ratio_(1),
 	task_initialized_(false),
-	scratch_( core::pack::dunbrack::RotamerLibraryScratchSpaceOP( new core::pack::dunbrack::RotamerLibraryScratchSpace ) ),
+	scratch_( utility::pointer::make_shared< core::pack::dunbrack::RotamerLibraryScratchSpace >() ),
 	temperature0_(0.56),
 	sampling_temperature_(0.56)
 {}
@@ -150,10 +150,10 @@ SidechainMover::SidechainMover(
 	temperature0_(0.56),
 	sampling_temperature_(0.56)
 {
-	if ( mover.task_factory_ ) task_factory_ = core::pack::task::TaskFactoryCOP( core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory(*mover.task_factory_) ) );
+	if ( mover.task_factory_ ) task_factory_ = utility::pointer::make_shared< core::pack::task::TaskFactory >(*mover.task_factory_);
 	if ( mover.task_ ) task_ = mover.task_->clone();
-	if ( mover.pose_ ) pose_ = core::pose::PoseOP( new core::pose::Pose(*mover.pose_) );
-	if ( mover.scratch_ ) scratch_ = core::pack::dunbrack::RotamerLibraryScratchSpaceOP( new core::pack::dunbrack::RotamerLibraryScratchSpace(*mover.scratch_) );
+	if ( mover.pose_ ) pose_ = utility::pointer::make_shared< core::pose::Pose >(*mover.pose_);
+	if ( mover.scratch_ ) scratch_ = utility::pointer::make_shared< core::pack::dunbrack::RotamerLibraryScratchSpace >(*mover.scratch_);
 }
 
 SidechainMover::~SidechainMover() = default;
@@ -161,7 +161,7 @@ SidechainMover::~SidechainMover() = default;
 protocols::moves::MoverOP
 SidechainMover::clone() const
 {
-	return protocols::moves::MoverOP( new protocols::simple_moves::sidechain_moves::SidechainMover(*this) );
+	return utility::pointer::make_shared< protocols::simple_moves::sidechain_moves::SidechainMover >(*this);
 }
 
 void
@@ -190,7 +190,7 @@ SidechainMover::parse_my_tag(
 
 	} else {
 		using core::pack::task::operation::TaskOperationCOP;
-		new_task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ) );
+		new_task_factory->push_back( utility::pointer::make_shared< core::pack::task::operation::RestrictToRepacking >() );
 	}
 
 	task_factory_ = new_task_factory;
@@ -223,7 +223,7 @@ SidechainMover::init_task(
 	/// apl -- is it reasonable to first check the task to see if infact we are designing?
 	/// copying a pose is expensive -- try to avoid it if possible.
 	if ( !pose_ ) { //pose not initialized
-		pose_ = core::pose::PoseOP( new core::pose::Pose( pose ) ); //need this in case we're designing as well. ek 4/28/10
+		pose_ = utility::pointer::make_shared< core::pose::Pose >( pose ); //need this in case we're designing as well. ek 4/28/10
 	}
 
 
@@ -1094,7 +1094,7 @@ std::string SidechainMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 SidechainMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SidechainMover );
+	return utility::pointer::make_shared< SidechainMover >();
 }
 
 void SidechainMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

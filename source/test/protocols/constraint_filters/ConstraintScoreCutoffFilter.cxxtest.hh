@@ -58,7 +58,7 @@ public:
 		Pose pose;
 
 		ConstraintCOPs csts;
-		csts.emplace_back( new ConstantConstraint( FuncOP( new ConstantFunc( 5 ) ) ) );
+		csts.emplace_back( new ConstantConstraint( utility::pointer::make_shared< ConstantFunc >( 5 ) ) );
 		protocols::constraint_filters::ConstraintScoreCutoffFilter cim( 5 );
 		cim.set_constraints( csts );
 		cim.set_score_type( constant_constraint );

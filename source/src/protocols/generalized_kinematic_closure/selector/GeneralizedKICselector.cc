@@ -81,7 +81,7 @@ GeneralizedKICselector::~GeneralizedKICselector() = default;
 /// @details Returns an owning pointer to a copy of this selector.
 GeneralizedKICselectorOP GeneralizedKICselector::clone() const
 {
-	return GeneralizedKICselectorOP( new GeneralizedKICselector(*this) );
+	return utility::pointer::make_shared< GeneralizedKICselector >(*this);
 }
 
 /// @brief Returns the name of this class ("GeneralizedKICselector").

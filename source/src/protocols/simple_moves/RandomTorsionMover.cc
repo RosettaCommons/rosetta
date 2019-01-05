@@ -82,7 +82,7 @@ RandomTorsionMover::RandomTorsionMover( RandomTorsionMover const & other ) :
 	num_moves_( other.num_moves_ )
 {
 	if ( other.move_map_ ) { // Don't clone null ptr
-		move_map_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap( *other.move_map_ ) );
+		move_map_ = utility::pointer::make_shared< core::kinematics::MoveMap >( *other.move_map_ );
 	}
 }
 
@@ -173,13 +173,13 @@ RandomTorsionMover::setup_torsion_list( core::pose::Pose & pose )
 protocols::moves::MoverOP
 RandomTorsionMover::clone() const
 {
-	return protocols::moves::MoverOP( new protocols::simple_moves::RandomTorsionMover( *this ) );
+	return utility::pointer::make_shared< protocols::simple_moves::RandomTorsionMover >( *this );
 }
 
 protocols::moves::MoverOP
 RandomTorsionMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new protocols::simple_moves::RandomTorsionMover() );
+	return utility::pointer::make_shared< protocols::simple_moves::RandomTorsionMover >();
 }
 
 void
@@ -208,7 +208,7 @@ RandomTorsionMover::parse_my_tag(
 
 /// @brief RandomTorsionMoverCreator interface, return a new instance
 // XRW TEMP protocols::moves::MoverOP RandomTorsionMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new RandomTorsionMover() );
+// XRW TEMP  return utility::pointer::make_shared< RandomTorsionMover >();
 // XRW TEMP }
 
 std::string RandomTorsionMover::get_name() const {
@@ -251,7 +251,7 @@ std::string RandomTorsionMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 RandomTorsionMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new RandomTorsionMover );
+	return utility::pointer::make_shared< RandomTorsionMover >();
 }
 
 void RandomTorsionMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

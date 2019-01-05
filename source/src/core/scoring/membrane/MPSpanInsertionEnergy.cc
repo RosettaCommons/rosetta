@@ -67,7 +67,7 @@ methods::EnergyMethodOP
 MPSpanInsertionEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new MPSpanInsertionEnergy );
+	return utility::pointer::make_shared< MPSpanInsertionEnergy >();
 }
 
 ScoreTypes
@@ -82,7 +82,7 @@ MPSpanInsertionEnergyCreator::score_types_for_method() const {
 //@brief
 //////////////////////////////////////////////////////
 MPSpanInsertionEnergy::MPSpanInsertionEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new MPSpanInsertionEnergyCreator ) )
+	parent( utility::pointer::make_shared< MPSpanInsertionEnergyCreator >() )
 {
 	parse_elazar_spline_table();
 	// these values were calculted from the Rost dataset of PDBTM/OPM defiend topologies.
@@ -116,7 +116,7 @@ MPSpanInsertionEnergy::finalize_total_energy(
 EnergyMethodOP
 MPSpanInsertionEnergy::clone() const
 {
-	return EnergyMethodOP( new MPSpanInsertionEnergy( *this ) );
+	return utility::pointer::make_shared< MPSpanInsertionEnergy >( *this );
 }
 
 void

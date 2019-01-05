@@ -28,7 +28,7 @@ namespace features {
 // XRW TEMP ProteinBackboneTorsionAngleFeaturesCreator::ProteinBackboneTorsionAngleFeaturesCreator() {}
 // XRW TEMP ProteinBackboneTorsionAngleFeaturesCreator::~ProteinBackboneTorsionAngleFeaturesCreator() = default;
 // XRW TEMP FeaturesReporterOP ProteinBackboneTorsionAngleFeaturesCreator::create_features_reporter() const {
-// XRW TEMP  return FeaturesReporterOP( new ProteinBackboneTorsionAngleFeatures );
+// XRW TEMP  return utility::pointer::make_shared< ProteinBackboneTorsionAngleFeatures >();
 // XRW TEMP }
 
 // XRW TEMP std::string ProteinBackboneTorsionAngleFeaturesCreator::type_name() const {

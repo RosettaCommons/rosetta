@@ -106,16 +106,16 @@ ProteinResidueConformationFeatures::write_schema_to_db(utility::sql_database::se
 	using namespace basic::database::schema_generator;
 
 	//******protein_residue_conformation******//
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ), false);
-	Column seqpos("seqpos", DbDataTypeOP( new DbInteger() ), false);
-	Column secstruct("secstruct", DbDataTypeOP( new DbText() ), false);
-	Column phi("phi", DbDataTypeOP( new DbDouble() ), false);
-	Column psi("psi", DbDataTypeOP( new DbDouble() ), false);
-	Column omega("omega", DbDataTypeOP( new DbDouble() ), false);
-	Column chi1("chi1", DbDataTypeOP( new DbDouble() ), false);
-	Column chi2("chi2", DbDataTypeOP( new DbDouble() ), false);
-	Column chi3("chi3", DbDataTypeOP( new DbDouble() ), false);
-	Column chi4("chi4", DbDataTypeOP( new DbDouble() ), false);
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >(), false);
+	Column seqpos("seqpos", utility::pointer::make_shared< DbInteger >(), false);
+	Column secstruct("secstruct", utility::pointer::make_shared< DbText >(), false);
+	Column phi("phi", utility::pointer::make_shared< DbDouble >(), false);
+	Column psi("psi", utility::pointer::make_shared< DbDouble >(), false);
+	Column omega("omega", utility::pointer::make_shared< DbDouble >(), false);
+	Column chi1("chi1", utility::pointer::make_shared< DbDouble >(), false);
+	Column chi2("chi2", utility::pointer::make_shared< DbDouble >(), false);
+	Column chi3("chi3", utility::pointer::make_shared< DbDouble >(), false);
+	Column chi4("chi4", utility::pointer::make_shared< DbDouble >(), false);
 
 
 	utility::vector1<Column> prot_res_pkeys;
@@ -147,8 +147,8 @@ ProteinResidueConformationFeatures::write_schema_to_db(utility::sql_database::se
 
 	if ( compact_residue_schema_ ) {
 		//******compact_residue_atom_coords*****//
-		Column coord_data("coord_data",DbDataTypeOP( new DbText() ));
-		Column atom_count("atom_count",DbDataTypeOP( new DbInteger() ),false);
+		Column coord_data("coord_data",utility::pointer::make_shared< DbText >());
+		Column atom_count("atom_count",utility::pointer::make_shared< DbInteger >(),false);
 		utility::vector1<Column> compact_res_atom_coords_pkeys;
 		compact_res_atom_coords_pkeys.push_back(struct_id);
 		compact_res_atom_coords_pkeys.push_back(seqpos);
@@ -163,10 +163,10 @@ ProteinResidueConformationFeatures::write_schema_to_db(utility::sql_database::se
 
 	} else {
 		//******residue_atom_coords******//
-		Column atomno("atomno", DbDataTypeOP( new DbInteger() ), false);
-		Column x("x", DbDataTypeOP( new DbDouble() ), false);
-		Column y("y", DbDataTypeOP( new DbDouble() ), false);
-		Column z("z", DbDataTypeOP( new DbDouble() ), false);
+		Column atomno("atomno", utility::pointer::make_shared< DbInteger >(), false);
+		Column x("x", utility::pointer::make_shared< DbDouble >(), false);
+		Column y("y", utility::pointer::make_shared< DbDouble >(), false);
+		Column z("z", utility::pointer::make_shared< DbDouble >(), false);
 
 		utility::vector1<Column> res_atm_coords_pkeys;
 		res_atm_coords_pkeys.push_back(struct_id);
@@ -677,7 +677,7 @@ std::string ProteinResidueConformationFeaturesCreator::type_name() const {
 
 protocols::features::FeaturesReporterOP
 ProteinResidueConformationFeaturesCreator::create_features_reporter() const {
-	return protocols::features::FeaturesReporterOP( new ProteinResidueConformationFeatures );
+	return utility::pointer::make_shared< ProteinResidueConformationFeatures >();
 }
 
 void ProteinResidueConformationFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

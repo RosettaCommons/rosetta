@@ -81,11 +81,11 @@ void DomainInterfaceFilter::parse_my_tag(
 }
 
 filters::FilterOP DomainInterfaceFilter::clone() const {
-	return filters::FilterOP( new DomainInterfaceFilter( *this ) );
+	return utility::pointer::make_shared< DomainInterfaceFilter >( *this );
 }
 
 filters::FilterOP DomainInterfaceFilter::fresh_instance() const {
-	return filters::FilterOP( new DomainInterfaceFilter() );
+	return utility::pointer::make_shared< DomainInterfaceFilter >();
 }
 
 

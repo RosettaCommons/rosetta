@@ -98,7 +98,7 @@ PlaceSurfaceProbe::PlaceSurfaceProbe(
 
 protocols::moves::MoverOP PlaceSurfaceProbe::clone() const
 {
-	return protocols::moves::MoverOP( new PlaceSurfaceProbe(*this) );
+	return utility::pointer::make_shared< PlaceSurfaceProbe >(*this);
 }
 
 SearchPatternOP PlaceSurfaceProbe::create_search_pattern(core::pose::Pose const & target_pose)
@@ -203,7 +203,7 @@ SearchPatternOP PlaceSurfaceProbe::initialize_refinement_pattern()
 		-(coarse_sampling_ / 2),
 		coarse_sampling_ / 2) );
 
-	return SearchPatternOP( new ComposeSearchPatterns(spherical_rotation_pattern, cartesian_pattern) );
+	return utility::pointer::make_shared< ComposeSearchPatterns >(spherical_rotation_pattern, cartesian_pattern);
 }
 
 void
@@ -239,7 +239,7 @@ PlaceSurfaceProbe::parse_my_tag( utility::tag::TagCOP tag,
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP PlaceSurfaceProbeCreator::create_mover() const
 // XRW TEMP {
-// XRW TEMP  return protocols::moves::MoverOP( new PlaceSurfaceProbe );
+// XRW TEMP  return utility::pointer::make_shared< PlaceSurfaceProbe >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -296,7 +296,7 @@ std::string PlaceSurfaceProbeCreator::keyname() const {
 
 protocols::moves::MoverOP
 PlaceSurfaceProbeCreator::create_mover() const {
-	return protocols::moves::MoverOP( new PlaceSurfaceProbe );
+	return utility::pointer::make_shared< PlaceSurfaceProbe >();
 }
 
 void PlaceSurfaceProbeCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

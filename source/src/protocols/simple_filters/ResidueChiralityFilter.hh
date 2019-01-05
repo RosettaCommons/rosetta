@@ -44,10 +44,10 @@ public:
 	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	std::string compute( core::pose::Pose const & pose ) const;
 	filters::FilterOP clone() const  override {
-		return filters::FilterOP( new ResidueChiralityFilter( *this ) );
+		return utility::pointer::make_shared< ResidueChiralityFilter >( *this );
 	}
 	filters::FilterOP fresh_instance() const override {
-		return filters::FilterOP( new ResidueChiralityFilter() );
+		return utility::pointer::make_shared< ResidueChiralityFilter >();
 	}
 
 	virtual ~ResidueChiralityFilter();

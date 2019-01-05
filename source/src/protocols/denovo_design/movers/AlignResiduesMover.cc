@@ -106,13 +106,13 @@ AlignResiduesMover::parse_my_tag(
 protocols::moves::MoverOP
 AlignResiduesMover::clone() const
 {
-	return protocols::moves::MoverOP( new AlignResiduesMover( *this ) );
+	return utility::pointer::make_shared< AlignResiduesMover >( *this );
 }
 
 protocols::moves::MoverOP
 AlignResiduesMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new AlignResiduesMover );
+	return utility::pointer::make_shared< AlignResiduesMover >();
 }
 
 // XRW TEMP std::string
@@ -390,7 +390,7 @@ AlignResiduesMover::set_id( std::string const & idval )
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP AlignResiduesMoverCreator::create_mover() const
 // XRW TEMP {
-// XRW TEMP  return protocols::moves::MoverOP( new AlignResiduesMover );
+// XRW TEMP  return utility::pointer::make_shared< AlignResiduesMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -435,7 +435,7 @@ std::string AlignResiduesMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 AlignResiduesMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new AlignResiduesMover );
+	return utility::pointer::make_shared< AlignResiduesMover >();
 }
 
 void AlignResiduesMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

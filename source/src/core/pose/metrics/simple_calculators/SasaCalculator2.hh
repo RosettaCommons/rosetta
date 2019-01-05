@@ -50,7 +50,7 @@ public:
 	SasaCalculator2();
 	SasaCalculator2( core::Real probe_r);
 
-	core::pose::metrics::PoseMetricCalculatorOP clone() const { return core::pose::metrics::PoseMetricCalculatorOP( new core::pose::metrics::simple_calculators::SasaCalculator2() ); };
+	core::pose::metrics::PoseMetricCalculatorOP clone() const { return utility::pointer::make_shared< core::pose::metrics::simple_calculators::SasaCalculator2 >(); };
 
 protected:
 	virtual void lookup( std::string const & key, basic::MetricValueBase * valptr ) const;

@@ -80,7 +80,7 @@ protocols::abinitio::Protocol::evaluate_pose(
 void
 protocols::abinitio::Protocol::add_evaluation( evaluation::PoseEvaluatorOP ev ) {
 	if ( !evaluator_ ) {
-		evaluator_ = evaluation::MetaPoseEvaluatorOP( new evaluation::MetaPoseEvaluator );
+		evaluator_ = utility::pointer::make_shared< evaluation::MetaPoseEvaluator >();
 	}
 	evaluator_->add_evaluation( ev );
 }

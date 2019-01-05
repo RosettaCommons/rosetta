@@ -46,7 +46,7 @@ static basic::Tracer TR( "core.pack.task.operation.ResLvlTaskOperations", basic:
 RestrictToRepackingRLT::~RestrictToRepackingRLT() = default;
 
 ResLvlTaskOperationOP
-RestrictToRepackingRLT::clone() const { return ResLvlTaskOperationOP( new RestrictToRepackingRLT( *this ) ); }
+RestrictToRepackingRLT::clone() const { return utility::pointer::make_shared< RestrictToRepackingRLT >( *this ); }
 
 void RestrictToRepackingRLT::apply( ResidueLevelTask & rlt ) const
 {
@@ -63,7 +63,7 @@ void RestrictToRepackingRLT::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 
 ResLvlTaskOperationOP
 RestrictToRepackingRLTCreator::create_res_level_task_operation() const {
-	return ResLvlTaskOperationOP( new RestrictToRepackingRLT );
+	return utility::pointer::make_shared< RestrictToRepackingRLT >();
 }
 
 std::string RestrictToRepackingRLTCreator::keyname() const { return RestrictToRepackingRLT::keyname(); }
@@ -81,7 +81,7 @@ RestrictAbsentCanonicalAASRLT::~RestrictAbsentCanonicalAASRLT() = default;
 
 
 ResLvlTaskOperationOP
-RestrictAbsentCanonicalAASRLT::clone() const { return ResLvlTaskOperationOP( new RestrictAbsentCanonicalAASRLT( *this ) ); }
+RestrictAbsentCanonicalAASRLT::clone() const { return utility::pointer::make_shared< RestrictAbsentCanonicalAASRLT >( *this ); }
 
 void RestrictAbsentCanonicalAASRLT::apply( ResidueLevelTask & rlt ) const
 {
@@ -140,7 +140,7 @@ std::string RestrictAbsentCanonicalAASRLTCreator::keyname() const { return Restr
 
 ResLvlTaskOperationOP
 RestrictAbsentCanonicalAASRLTCreator::create_res_level_task_operation() const {
-	return ResLvlTaskOperationOP( new RestrictAbsentCanonicalAASRLT );
+	return utility::pointer::make_shared< RestrictAbsentCanonicalAASRLT >();
 }
 
 RestrictAbsentCanonicalAASExceptNativeRLT::RestrictAbsentCanonicalAASExceptNativeRLT()
@@ -151,7 +151,7 @@ RestrictAbsentCanonicalAASExceptNativeRLT::~RestrictAbsentCanonicalAASExceptNati
 
 
 ResLvlTaskOperationOP
-RestrictAbsentCanonicalAASExceptNativeRLT::clone() const { return ResLvlTaskOperationOP( new RestrictAbsentCanonicalAASExceptNativeRLT( *this ) ); }
+RestrictAbsentCanonicalAASExceptNativeRLT::clone() const { return utility::pointer::make_shared< RestrictAbsentCanonicalAASExceptNativeRLT >( *this ); }
 
 void RestrictAbsentCanonicalAASExceptNativeRLT::apply( ResidueLevelTask & rlt ) const
 {
@@ -210,7 +210,7 @@ std::string RestrictAbsentCanonicalAASExceptNativeRLTCreator::keyname() const { 
 
 ResLvlTaskOperationOP
 RestrictAbsentCanonicalAASExceptNativeRLTCreator::create_res_level_task_operation() const {
-	return ResLvlTaskOperationOP( new RestrictAbsentCanonicalAASExceptNativeRLT );
+	return utility::pointer::make_shared< RestrictAbsentCanonicalAASExceptNativeRLT >();
 }
 
 //BEGIN DisallowIfNonnativeRLTRLT
@@ -227,7 +227,7 @@ DisallowIfNonnativeRLT::~DisallowIfNonnativeRLT()= default;
 
 ResLvlTaskOperationOP DisallowIfNonnativeRLT::clone() const
 {
-	return ResLvlTaskOperationOP( new DisallowIfNonnativeRLT( *this ) );
+	return utility::pointer::make_shared< DisallowIfNonnativeRLT >( *this );
 }
 
 void DisallowIfNonnativeRLT::clear(){
@@ -299,7 +299,7 @@ void DisallowIfNonnativeRLT::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 
 ResLvlTaskOperationOP
 DisallowIfNonnativeRLTCreator::create_res_level_task_operation() const {
-	return ResLvlTaskOperationOP( new DisallowIfNonnativeRLT );
+	return utility::pointer::make_shared< DisallowIfNonnativeRLT >();
 }
 
 std::string DisallowIfNonnativeRLTCreator::keyname() const { return DisallowIfNonnativeRLT::keyname(); }
@@ -312,7 +312,7 @@ void DisallowIfNonnativeRLTCreator::provide_xml_schema( utility::tag::XMLSchemaD
 PreventRepackingRLT::~PreventRepackingRLT() = default;
 
 ResLvlTaskOperationOP
-PreventRepackingRLT::clone() const { return ResLvlTaskOperationOP( new PreventRepackingRLT( *this ) ); }
+PreventRepackingRLT::clone() const { return utility::pointer::make_shared< PreventRepackingRLT >( *this ); }
 
 void PreventRepackingRLT::apply( ResidueLevelTask & rlt ) const
 {
@@ -329,7 +329,7 @@ void PreventRepackingRLT::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 
 ResLvlTaskOperationOP
 PreventRepackingRLTCreator::create_res_level_task_operation() const {
-	return ResLvlTaskOperationOP( new PreventRepackingRLT );
+	return utility::pointer::make_shared< PreventRepackingRLT >();
 }
 
 std::string PreventRepackingRLTCreator::keyname() const { return PreventRepackingRLT::keyname(); }
@@ -348,7 +348,7 @@ AddBehaviorRLT::AddBehaviorRLT( std::string const & behavior )
 AddBehaviorRLT::~AddBehaviorRLT() = default;
 
 ResLvlTaskOperationOP
-AddBehaviorRLT::clone() const { return ResLvlTaskOperationOP( new AddBehaviorRLT( *this ) ); }
+AddBehaviorRLT::clone() const { return utility::pointer::make_shared< AddBehaviorRLT >( *this ); }
 
 void AddBehaviorRLT::apply( ResidueLevelTask & rlt ) const
 {
@@ -378,7 +378,7 @@ void AddBehaviorRLT::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 
 ResLvlTaskOperationOP
 AddBehaviorRLTCreator::create_res_level_task_operation() const {
-	return ResLvlTaskOperationOP( new AddBehaviorRLT );
+	return utility::pointer::make_shared< AddBehaviorRLT >();
 }
 
 std::string AddBehaviorRLTCreator::keyname() const { return AddBehaviorRLT::keyname(); }
@@ -391,7 +391,7 @@ IncludeCurrentRLT::IncludeCurrentRLT() = default;
 IncludeCurrentRLT::~IncludeCurrentRLT() = default;
 ResLvlTaskOperationOP IncludeCurrentRLT::clone() const
 {
-	return ResLvlTaskOperationOP( new IncludeCurrentRLT );
+	return utility::pointer::make_shared< IncludeCurrentRLT >();
 }
 
 void IncludeCurrentRLT::apply( ResidueLevelTask & rlt ) const
@@ -412,7 +412,7 @@ void IncludeCurrentRLT::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 
 ResLvlTaskOperationOP
 IncludeCurrentRLTCreator::create_res_level_task_operation() const {
-	return ResLvlTaskOperationOP( new IncludeCurrentRLT );
+	return utility::pointer::make_shared< IncludeCurrentRLT >();
 }
 
 std::string IncludeCurrentRLTCreator::keyname() const { return IncludeCurrentRLT::keyname(); }
@@ -425,7 +425,7 @@ PreserveCBetaRLT::PreserveCBetaRLT() = default;
 PreserveCBetaRLT::~PreserveCBetaRLT() = default;
 ResLvlTaskOperationOP PreserveCBetaRLT::clone() const
 {
-	return ResLvlTaskOperationOP( new PreserveCBetaRLT );
+	return utility::pointer::make_shared< PreserveCBetaRLT >();
 }
 void PreserveCBetaRLT::apply( ResidueLevelTask & rlt ) const
 {
@@ -443,7 +443,7 @@ void PreserveCBetaRLT::provide_xml_schema( utility::tag::XMLSchemaDefinition & x
 
 ResLvlTaskOperationOP
 PreserveCBetaRLTCreator::create_res_level_task_operation() const {
-	return ResLvlTaskOperationOP( new PreserveCBetaRLT );
+	return utility::pointer::make_shared< PreserveCBetaRLT >();
 }
 
 std::string PreserveCBetaRLTCreator::keyname() const { return PreserveCBetaRLT::keyname(); }
@@ -459,7 +459,7 @@ ExtraChiCutoffRLT::ExtraChiCutoffRLT() :
 ExtraChiCutoffRLT::~ExtraChiCutoffRLT() = default;
 ResLvlTaskOperationOP ExtraChiCutoffRLT::clone() const
 {
-	return ResLvlTaskOperationOP( new ExtraChiCutoffRLT( *this ));
+	return utility::pointer::make_shared< ExtraChiCutoffRLT >( *this );
 }
 void ExtraChiCutoffRLT::apply( ResidueLevelTask & rlt ) const
 {
@@ -488,7 +488,7 @@ void ExtraChiCutoffRLT::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 
 ResLvlTaskOperationOP
 ExtraChiCutoffRLTCreator::create_res_level_task_operation() const {
-	return ResLvlTaskOperationOP( new ExtraChiCutoffRLT );
+	return utility::pointer::make_shared< ExtraChiCutoffRLT >();
 }
 
 std::string ExtraChiCutoffRLTCreator::keyname() const { return ExtraChiCutoffRLT::keyname(); }
@@ -501,7 +501,7 @@ ExtraRotamersGenericRLT::ExtraRotamersGenericRLT() = default;
 ExtraRotamersGenericRLT::~ExtraRotamersGenericRLT() = default;
 ResLvlTaskOperationOP ExtraRotamersGenericRLT::clone() const
 {
-	return ResLvlTaskOperationOP( new ExtraRotamersGenericRLT( *this ));
+	return utility::pointer::make_shared< ExtraRotamersGenericRLT >( *this );
 }
 void ExtraRotamersGenericRLT::apply( ResidueLevelTask & rlt ) const
 {
@@ -588,7 +588,7 @@ void ExtraRotamersGenericRLT::provide_xml_schema( utility::tag::XMLSchemaDefinit
 
 ResLvlTaskOperationOP
 ExtraRotamersGenericRLTCreator::create_res_level_task_operation() const {
-	return ResLvlTaskOperationOP( new ExtraRotamersGenericRLT );
+	return utility::pointer::make_shared< ExtraRotamersGenericRLT >();
 }
 
 std::string ExtraRotamersGenericRLTCreator::keyname() const { return ExtraRotamersGenericRLT::keyname(); }

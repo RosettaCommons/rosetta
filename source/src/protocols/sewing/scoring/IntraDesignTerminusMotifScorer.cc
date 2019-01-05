@@ -176,7 +176,7 @@ IntraDesignTerminusMotifScorerCreator::provide_xml_schema( utility::tag::XMLSche
 
 AssemblyScorerOP
 IntraDesignTerminusMotifScorerCreator::create_assembly_scorer() const{
-	return AssemblyScorerOP( new IntraDesignTerminusMotifScorer() );
+	return utility::pointer::make_shared< IntraDesignTerminusMotifScorer >();
 }
 
 std::string

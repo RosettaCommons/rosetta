@@ -78,7 +78,7 @@ methods::EnergyMethodOP
 RNA_StubCoordinateEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new RNA_StubCoordinateEnergy );
+	return utility::pointer::make_shared< RNA_StubCoordinateEnergy >();
 }
 
 ScoreTypes
@@ -91,7 +91,7 @@ RNA_StubCoordinateEnergyCreator::score_types_for_method() const {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// c-tor
 RNA_StubCoordinateEnergy::RNA_StubCoordinateEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new RNA_StubCoordinateEnergyCreator ) )
+	parent( utility::pointer::make_shared< RNA_StubCoordinateEnergyCreator >() )
 {
 	using namespace core::pose::rna;
 	// meant for use with RNA_FragmentMonteCarlo in mode where it simuilates an RNA loop and
@@ -100,7 +100,7 @@ RNA_StubCoordinateEnergy::RNA_StubCoordinateEnergy() :
 	if ( option[ denovo::out::output_jump_o3p_to_o5p ]() ) stub_stub_type_ = O3P_TO_O5P;
 	if ( option[ denovo::out::output_jump_chainbreak ]() ) stub_stub_type_ = CHAINBREAK;
 	if ( option[ denovo::out::output_jump_reference_RT ].user() ) {
-		reference_RT_ = kinematics::RTOP( new kinematics::RT );
+		reference_RT_ = utility::pointer::make_shared< kinematics::RT >();
 		std::stringstream rt_stream( option[ denovo::out::output_jump_reference_RT ]() );
 		rt_stream >> *reference_RT_;
 	}
@@ -116,14 +116,14 @@ RNA_StubCoordinateEnergy::RNA_StubCoordinateEnergy() :
 
 	// Following defines: ( target_xyz - xyz )**2   [note: no 1/2]
 	using namespace core::scoring::func;
-	func_ = FuncOP( new HarmonicFunc( 0.0 /*target distance*/, 1.0 /*standard deviation*/ ) );
+	func_ = utility::pointer::make_shared< HarmonicFunc >( 0.0 /*target distance*/, 1.0 /*standard deviation*/ );
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 methods::EnergyMethodOP
 RNA_StubCoordinateEnergy::clone() const
 {
-	return methods::EnergyMethodOP( new RNA_StubCoordinateEnergy );
+	return utility::pointer::make_shared< RNA_StubCoordinateEnergy >();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -149,7 +149,7 @@ RNA_StubCoordinateEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction co
 	}
 
 	if ( create_new_lre_container ) {
-		LREnergyContainerOP new_dec = LREnergyContainerOP( new DenseEnergyContainer( pose.size(), rna_stub_coord_hack ) );
+		LREnergyContainerOP new_dec = utility::pointer::make_shared< DenseEnergyContainer >( pose.size(), rna_stub_coord_hack );
 		energies.set_long_range_container( lr_type, new_dec );
 	}
 

@@ -45,10 +45,10 @@ public:
 	~COFilter() override = default;
 
 	filters::FilterOP clone() const override {
-		return filters::FilterOP( new COFilter( *this ) ); }
+		return utility::pointer::make_shared< COFilter >( *this ); }
 
 	filters::FilterOP fresh_instance() const override{
-		return filters::FilterOP( new COFilter() ); }
+		return utility::pointer::make_shared< COFilter >(); }
 
 
 	/// @brief Returns true if the given pose passes the filter, false otherwise.

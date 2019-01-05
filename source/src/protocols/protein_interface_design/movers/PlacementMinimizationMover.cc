@@ -79,7 +79,7 @@ using namespace core;
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP PlacementMinimizationMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new PlacementMinimizationMover );
+// XRW TEMP  return utility::pointer::make_shared< PlacementMinimizationMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -90,7 +90,7 @@ using namespace core;
 
 protocols::moves::MoverOP
 PlacementMinimizationMover::clone() const {
-	return( protocols::moves::MoverOP( new PlacementMinimizationMover( *this ) ) );
+	return( utility::pointer::make_shared< PlacementMinimizationMover >( *this ) );
 }
 
 void
@@ -238,7 +238,7 @@ PlacementMinimizationMover::parse_my_tag( TagCOP const tag,
 
 protocols::moves::MoverOP
 PlacementMinimizationMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new PlacementMinimizationMover );
+	return utility::pointer::make_shared< PlacementMinimizationMover >();
 }
 
 PlacementMinimizationMover::~PlacementMinimizationMover()= default;
@@ -286,7 +286,7 @@ std::string PlacementMinimizationMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 PlacementMinimizationMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new PlacementMinimizationMover );
+	return utility::pointer::make_shared< PlacementMinimizationMover >();
 }
 
 void PlacementMinimizationMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

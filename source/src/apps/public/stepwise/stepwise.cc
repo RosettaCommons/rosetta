@@ -218,7 +218,7 @@ public:
 		std::string const silent_file = jo[ out::file::silent ]();
 		if ( jo[ out::overwrite ]() ) core::io::silent::remove_silent_file_if_it_exists( silent_file );
 		stepwise_monte_carlo->set_out_path( utility::file::FileName( silent_file ).path() );
-		stepwise_monte_carlo->set_submotif_library( SubMotifLibraryCOP( new SubMotifLibrary( rsd_set, options->lores() /*include_submotifs_from_jump_library*/, options->use_first_jump_for_submotif(), options->exclude_submotifs() ) ) );
+		stepwise_monte_carlo->set_submotif_library( utility::pointer::make_shared< SubMotifLibrary >( rsd_set, options->lores() /*include_submotifs_from_jump_library*/, options->use_first_jump_for_submotif(), options->exclude_submotifs() ) );
 
 		// used to just be the stepwise job distributor that got this.
 		// did we have behavior that relied on these two having a different
@@ -333,12 +333,12 @@ stepwise_monte_carlo_legacy()
 		core::io::silent::remove_silent_file_if_it_exists( silent_file );
 	}
 	stepwise_monte_carlo->set_out_path( FileName( silent_file ).path() );
-	stepwise_monte_carlo->set_submotif_library( SubMotifLibraryCOP( new SubMotifLibrary( rsd_set, options->lores() /*include_submotifs_from_jump_library*/, options->use_first_jump_for_submotif(), options->exclude_submotifs() ) ) );
+	stepwise_monte_carlo->set_submotif_library( utility::pointer::make_shared< SubMotifLibrary >( rsd_set, options->lores() /*include_submotifs_from_jump_library*/, options->use_first_jump_for_submotif(), options->exclude_submotifs() ) );
 
 	// main loop
 	RNA_JobDistributorOP stepwise_job_distributor( new RNA_MonteCarloJobDistributor( stepwise_monte_carlo, silent_file, option[ out::nstruct ]() ) );
 	if ( option[ csa::csa_bank_size ].user() ) {
-		stepwise_job_distributor = RNA_JobDistributorOP( new RNA_CSA_JobDistributor( stepwise_monte_carlo, silent_file, option[ out::nstruct ](), option[ csa::csa_bank_size ](), option[ csa::csa_rmsd ](), option[ csa::csa_output_rounds ](), option[ csa::annealing ]() ) );
+		stepwise_job_distributor = utility::pointer::make_shared< RNA_CSA_JobDistributor >( stepwise_monte_carlo, silent_file, option[ out::nstruct ](), option[ csa::csa_bank_size ](), option[ csa::csa_rmsd ](), option[ csa::csa_output_rounds ](), option[ csa::annealing ]() );
 	}
 	stepwise_job_distributor->set_native_pose( native_pose );
 	stepwise_job_distributor->set_superimpose_over_all( option[ OptionKeys::stepwise::superimpose_over_all ]() );

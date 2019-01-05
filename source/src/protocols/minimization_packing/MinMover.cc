@@ -78,7 +78,7 @@ MinMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 MinMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MinMover );
+	return utility::pointer::make_shared< MinMover >();
 }
 
 void MinMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
@@ -109,7 +109,7 @@ MinMover::MinMover() :
 	dof_tasks_()
 {
 	omega_ = true;
-	min_options_ = MinimizerOptionsOP( new MinimizerOptions( "linmin", 0.01, true, false, false ) );
+	min_options_ = utility::pointer::make_shared< MinimizerOptions >( "linmin", 0.01, true, false, false );
 }
 
 MinMover::MinMover( std::string const & name ) :
@@ -122,7 +122,7 @@ MinMover::MinMover( std::string const & name ) :
 	dof_tasks_()
 {
 	omega_ = true;
-	min_options_ = MinimizerOptionsOP( new MinimizerOptions( "linmin", 0.01, true, false, false ) );
+	min_options_ = utility::pointer::make_shared< MinimizerOptions >( "linmin", 0.01, true, false, false );
 }
 
 MinMover::~MinMover()= default;
@@ -146,8 +146,8 @@ MinMover::MinMover(
 	dof_tasks_()
 {
 	omega_ = true;
-	min_options_ = MinimizerOptionsOP( new MinimizerOptions(
-		min_type_in, tolerance_in, use_nb_list_in, deriv_check_in, deriv_check_verbose_in ) );
+	min_options_ = utility::pointer::make_shared< MinimizerOptions >(
+		min_type_in, tolerance_in, use_nb_list_in, deriv_check_in, deriv_check_verbose_in );
 }
 
 /// @brief allow non-const access to the internal minimizer options object
@@ -170,7 +170,7 @@ MinMover::min_options( MinimizerOptionsOP min_options) {
 void
 MinMover::movemap( MoveMapCOP movemap_in )
 {
-	movemap_ = core::kinematics::MoveMapOP( new MoveMap( *movemap_in ) );
+	movemap_ = utility::pointer::make_shared< MoveMap >( *movemap_in );
 }
 
 void MinMover::set_movemap( MoveMapCOP movemap_in ){
@@ -189,7 +189,7 @@ MinMover::movemap( core::pose::Pose const & pose ) const {
 	} else if ( movemap_factory_ ) {
 		return movemap_factory_->create_movemap_from_pose( pose );
 	} else {
-		return core::kinematics::MoveMapOP( new core::kinematics::MoveMap );
+		return utility::pointer::make_shared< core::kinematics::MoveMap >();
 	}
 }
 
@@ -313,9 +313,9 @@ MinMover::inner_run_minimizer( core::pose::Pose & pose, core::kinematics::MoveMa
 	if ( !cartesian( ) ) {
 		AtomTreeMinimizerOP minimizer;
 		if ( core::pose::symmetry::is_symmetric( pose ) ) {
-			minimizer = AtomTreeMinimizerOP( new core::optimization::symmetry::SymAtomTreeMinimizer() );
+			minimizer = utility::pointer::make_shared< core::optimization::symmetry::SymAtomTreeMinimizer >();
 		} else {
-			minimizer = AtomTreeMinimizerOP( new AtomTreeMinimizer() );
+			minimizer = utility::pointer::make_shared< AtomTreeMinimizer >();
 		}
 
 		score_before_minimization_ = (*scorefxn_)(pose);
@@ -360,8 +360,8 @@ MinMover::show(std::ostream & output) const
 	}
 }
 
-protocols::moves::MoverOP MinMover::clone() const { return protocols::moves::MoverOP( new protocols::minimization_packing::MinMover( *this ) ); }
-protocols::moves::MoverOP MinMover::fresh_instance() const { return protocols::moves::MoverOP( new MinMover ); }
+protocols::moves::MoverOP MinMover::clone() const { return utility::pointer::make_shared< protocols::minimization_packing::MinMover >( *this ); }
+protocols::moves::MoverOP MinMover::fresh_instance() const { return utility::pointer::make_shared< MinMover >(); }
 
 void MinMover::parse_my_tag(
 	TagCOP const tag,

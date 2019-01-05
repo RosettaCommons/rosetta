@@ -62,7 +62,7 @@ static basic::Tracer TR("protocols.cyclic_peptide.TryDisulfPermutations");
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP TryDisulfPermutationsCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new TryDisulfPermutations );
+// XRW TEMP  return utility::pointer::make_shared< TryDisulfPermutations >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -103,13 +103,13 @@ TryDisulfPermutations::~TryDisulfPermutations() = default;
 
 /// @brief Clone operator to create a pointer to a fresh TryDisulfPermutations object that copies this one.
 protocols::moves::MoverOP TryDisulfPermutations::clone() const {
-	return protocols::moves::MoverOP( new TryDisulfPermutations( *this ) );
+	return utility::pointer::make_shared< TryDisulfPermutations >( *this );
 }
 
 
 /// @brief Fresh_instance operator to create a pointer to a fresh TryDisulfPermutations object that does NOT copy this one.
 protocols::moves::MoverOP TryDisulfPermutations::fresh_instance() const {
-	return protocols::moves::MoverOP( new TryDisulfPermutations );
+	return utility::pointer::make_shared< TryDisulfPermutations >();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -408,7 +408,7 @@ core::Real TryDisulfPermutations::repack_minimize_disulfides(
 	protocols::minimization_packing::PackRotamersMoverOP packrot( new protocols::minimization_packing::PackRotamersMover( sfxn ) );
 	//Set up TaskOperations:
 	core::pack::task::TaskFactoryOP taskfact( new core::pack::task::TaskFactory() );
-	taskfact->push_back(core::pack::task::operation::TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking() )); //Prevent design
+	taskfact->push_back(utility::pointer::make_shared< core::pack::task::operation::RestrictToRepacking >()); //Prevent design
 	core::pack::task::operation::PreventRepackingOP turn_off_packing( new core::pack::task::operation::PreventRepacking() );
 	for ( core::Size i = 1; i <= pose->size(); ++i ) {
 		if ( !is_in_list(i, disulf_res) ) {
@@ -465,7 +465,7 @@ std::string TryDisulfPermutationsCreator::keyname() const {
 
 protocols::moves::MoverOP
 TryDisulfPermutationsCreator::create_mover() const {
-	return protocols::moves::MoverOP( new TryDisulfPermutations );
+	return utility::pointer::make_shared< TryDisulfPermutations >();
 }
 
 void TryDisulfPermutationsCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

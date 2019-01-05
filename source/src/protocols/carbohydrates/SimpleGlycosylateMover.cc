@@ -135,7 +135,7 @@ SimpleGlycosylateMover::parse_my_tag(
 
 protocols::moves::MoverOP
 SimpleGlycosylateMover::clone() const{
-	return protocols::moves::MoverOP( new SimpleGlycosylateMover( *this ) );
+	return utility::pointer::make_shared< SimpleGlycosylateMover >( *this );
 }
 
 /*
@@ -148,7 +148,7 @@ return SimpleGlycosylateMover( src );
 moves::MoverOP
 SimpleGlycosylateMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new SimpleGlycosylateMover );
+	return utility::pointer::make_shared< SimpleGlycosylateMover >();
 }
 
 // XRW TEMP std::string
@@ -386,7 +386,7 @@ SimpleGlycosylateMover::apply( core::pose::Pose& pose ){
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP SimpleGlycosylateMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new SimpleGlycosylateMover );
+// XRW TEMP  return utility::pointer::make_shared< SimpleGlycosylateMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -446,7 +446,7 @@ std::string SimpleGlycosylateMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 SimpleGlycosylateMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SimpleGlycosylateMover );
+	return utility::pointer::make_shared< SimpleGlycosylateMover >();
 }
 
 void SimpleGlycosylateMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

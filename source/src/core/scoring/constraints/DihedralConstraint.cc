@@ -332,7 +332,7 @@ DihedralConstraint::remap_resid(
 			remap_a2( atom2_.atomno(), seqmap[atom2_.rsd()] ),
 			remap_a3( atom3_.atomno(), seqmap[atom3_.rsd()] ),
 			remap_a4( atom4_.atomno(), seqmap[atom4_.rsd()] );
-		return ConstraintOP( new DihedralConstraint( remap_a1, remap_a2, remap_a3, remap_a4, this->func_ ) );
+		return utility::pointer::make_shared< DihedralConstraint >( remap_a1, remap_a2, remap_a3, remap_a4, this->func_ );
 	} else {
 		return nullptr;
 	}
@@ -362,7 +362,7 @@ ConstraintOP DihedralConstraint::remapped_clone( pose::Pose const& src, pose::Po
 	id::AtomID id3( core::pose::named_atom_id_to_atom_id(atom3, dest ));
 	id::AtomID id4( core::pose::named_atom_id_to_atom_id(atom4, dest ));
 	if ( id1.valid() && id2.valid() &&  id3.valid() && id4.valid()  ) {
-		return ConstraintOP( new DihedralConstraint( id1, id2, id3, id4, func_ ? func_->clone() : func_, score_type() ) );
+		return utility::pointer::make_shared< DihedralConstraint >( id1, id2, id3, id4, func_ ? func_->clone() : func_, score_type() );
 	} else {
 		return nullptr;
 	}

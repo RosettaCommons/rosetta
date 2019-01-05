@@ -79,7 +79,7 @@ int main( int argc, char * argv [] ) {
 		// optionally set pose for symmetry
 		if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
 			SequenceMoverOP seqmov( new SequenceMover() );
-			seqmov->add_mover( MoverOP( new SetupForSymmetryMover() ) );
+			seqmov->add_mover( utility::pointer::make_shared< SetupForSymmetryMover >() );
 			seqmov->add_mover( mover );
 			mover = seqmov;
 		}

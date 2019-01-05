@@ -85,7 +85,7 @@ core::select::residue_selector::ResidueSelectorOP
 BinSelector::clone() const {
 	return core::select::residue_selector::ResidueSelectorOP(
 		utility::pointer::dynamic_pointer_cast<core::select::residue_selector::ResidueSelector>(
-		BinSelectorOP( new BinSelector(*this) )
+		utility::pointer::make_shared< BinSelector >(*this)
 		)
 	);
 }
@@ -263,7 +263,7 @@ core::select::residue_selector::ResidueSelectorOP
 BinSelectorCreator::create_residue_selector() const {
 	return core::select::residue_selector::ResidueSelectorOP(
 		utility::pointer::dynamic_pointer_cast< core::select::residue_selector::ResidueSelector > (
-		BinSelectorOP( new BinSelector )
+		utility::pointer::make_shared< BinSelector >()
 		)
 	);
 }

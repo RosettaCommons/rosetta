@@ -51,14 +51,14 @@ public:
 	void setUp() {
 		core_init();
 
-		test_helpers.push_back(ClosureTestOP( new DebuggingHelper ));
-		test_helpers.push_back(ClosureTestOP( new BigLoopTest ));
-		test_helpers.push_back(ClosureTestOP( new NoSolutionsTest ));
-		test_helpers.push_back(ClosureTestOP( new PoseWithLigandTest ));
+		test_helpers.push_back(utility::pointer::make_shared< DebuggingHelper >());
+		test_helpers.push_back(utility::pointer::make_shared< BigLoopTest >());
+		test_helpers.push_back(utility::pointer::make_shared< NoSolutionsTest >());
+		test_helpers.push_back(utility::pointer::make_shared< PoseWithLigandTest >());
 	}
 
 	void test_with_simple_fold_tree() {
-		foreach(ClosureTestOP helper, test_helpers) {
+		foreach ( ClosureTestOP helper, test_helpers ) {
 			ClosureProblemOP problem( new ClosureProblem );
 			SolutionList solutions;
 
@@ -78,7 +78,7 @@ public:
 	void test_with_cut_fold_tree() {
 		using protocols::loops::set_single_loop_fold_tree;
 
-		foreach(ClosureTestOP helper, test_helpers) {
+		foreach ( ClosureTestOP helper, test_helpers ) {
 			ClosureProblemOP problem( new ClosureProblem );
 			SolutionList solutions;
 
@@ -90,13 +90,13 @@ public:
 
 			helper->test_closure(solutions);
 			helper->test_restore(problem, solutions);
-			// This test failed on the mac.clang build on the testing server, but it 
-			// succeeds on my linux.clang build.  I'm not sure what's going on, but 
-			// for now I'm just going to comment out the test.  Here's the mac.clang 
+			// This test failed on the mac.clang build on the testing server, but it
+			// succeeds on my linux.clang build.  I'm not sure what's going on, but
+			// for now I'm just going to comment out the test.  Here's the mac.clang
 			// error message:
 			//
 			//   Running protocols.test:KicClosureTests unit tests...Running one suite: KicClosureTests
-			//   Test suite: KicClosureTests (test/protocols/kinematic_closure/ClosureTests.cxxtest.hh) 
+			//   Test suite: KicClosureTests (test/protocols/kinematic_closure/ClosureTests.cxxtest.hh)
 			//   In KicClosureTests::test_with_cut_fold_tree:
 			//   ./test/protocols/kinematic_closure/TestHelpers.hh:212: Error: Expected (expected_jacobian == observed_jacobian) up to precision (0.0010), found (0.0000 != 0.1363)
 			//   ./test/protocols/kinematic_closure/TestHelpers.hh:212: Error: Expected (expected_jacobian == observed_jacobian) up to precision (0.0010), found (-66.6042 != 0.0172)
@@ -109,7 +109,7 @@ public:
 	}
 
 	void test_kic_mover() {
-		foreach(ClosureTestOP helper, test_helpers) {
+		foreach ( ClosureTestOP helper, test_helpers ) {
 			KicMoverOP mover( new KicMover );
 
 			mover->add_perturber(helper);

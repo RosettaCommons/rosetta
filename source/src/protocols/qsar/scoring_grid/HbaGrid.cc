@@ -54,7 +54,7 @@ GridBaseOP HbaGridCreator::create_grid(utility::tag::TagCOP tag) const
 
 GridBaseOP HbaGridCreator::create_grid() const
 {
-	return GridBaseOP( new HbaGrid() );
+	return utility::pointer::make_shared< HbaGrid >();
 }
 
 void HbaGridCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -77,7 +77,7 @@ HbaGrid::HbaGrid() : SingleGrid("HbaGrid")
 HbaGrid::~HbaGrid() = default;
 
 GridBaseOP HbaGrid::clone() const {
-	return GridBaseOP( new HbaGrid( *this ) );
+	return utility::pointer::make_shared< HbaGrid >( *this );
 }
 
 utility::json_spirit::Value HbaGrid::serialize() const

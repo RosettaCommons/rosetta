@@ -55,7 +55,7 @@ static basic::Tracer TR_cst( "protocols.protein_interface_design.movers.AddSidec
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP AddSidechainConstraintsToHotspotsCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new AddSidechainConstraintsToHotspots );
+// XRW TEMP  return utility::pointer::make_shared< AddSidechainConstraintsToHotspots >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -177,7 +177,7 @@ std::string AddSidechainConstraintsToHotspotsCreator::keyname() const {
 
 protocols::moves::MoverOP
 AddSidechainConstraintsToHotspotsCreator::create_mover() const {
-	return protocols::moves::MoverOP( new AddSidechainConstraintsToHotspots );
+	return utility::pointer::make_shared< AddSidechainConstraintsToHotspots >();
 }
 
 void AddSidechainConstraintsToHotspotsCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

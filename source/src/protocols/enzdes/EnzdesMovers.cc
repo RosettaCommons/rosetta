@@ -344,13 +344,13 @@ PredesignPerturbMover::parse_my_tag(
 protocols::moves::MoverOP
 PredesignPerturbMover::clone() const
 {
-	return protocols::moves::MoverOP( new PredesignPerturbMover( *this ) );
+	return utility::pointer::make_shared< PredesignPerturbMover >( *this );
 }
 
 protocols::moves::MoverOP
 PredesignPerturbMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new PredesignPerturbMover );
+	return utility::pointer::make_shared< PredesignPerturbMover >();
 }
 
 std::string PredesignPerturbMover::get_name() const {
@@ -398,7 +398,7 @@ std::string PredesignPerturbMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 PredesignPerturbMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new PredesignPerturbMover );
+	return utility::pointer::make_shared< PredesignPerturbMover >();
 }
 
 void PredesignPerturbMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -477,7 +477,7 @@ RepackLigandSiteWithoutLigandMover::apply(
 	}
 	core::pose::PoseOP startpose;
 	utility::vector1< core::Size > special_res;
-	if ( calculate_silent_Es_ ) startpose = core::pose::PoseOP( new core::pose::Pose( pose ) );
+	if ( calculate_silent_Es_ ) startpose = utility::pointer::make_shared< core::pose::Pose >( pose );
 
 	//1. if there are constraints between protein and ligand, we should take them out.
 	if ( enzcst_io_ ) {
@@ -493,7 +493,7 @@ RepackLigandSiteWithoutLigandMover::apply(
 	DetectProteinLigandInterfaceOP detect_enzdes_interface( new DetectProteinLigandInterface() );
 	detect_enzdes_interface->set_design(false);
 	core::pack::task::TaskFactory taskfactory;
-	taskfactory.push_back( core::pack::task::operation::TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline() ) );
+	taskfactory.push_back( utility::pointer::make_shared< core::pack::task::operation::InitializeFromCommandline >() );
 	taskfactory.push_back( detect_enzdes_interface);
 	ptask_ = taskfactory.create_task_and_apply_taskoperations( pose );
 
@@ -588,7 +588,7 @@ UpdateEnzdesHeaderMover::apply(
 protocols::moves::MoverOP
 UpdateEnzdesHeaderMover::clone() const
 {
-	return protocols::moves::MoverOP( new UpdateEnzdesHeaderMover( *this ) );
+	return utility::pointer::make_shared< UpdateEnzdesHeaderMover >( *this );
 }
 
 std::string UpdateEnzdesHeaderMover::get_name() const {
@@ -615,7 +615,7 @@ std::string UpdateEnzdesHeaderMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 UpdateEnzdesHeaderMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new UpdateEnzdesHeaderMover );
+	return utility::pointer::make_shared< UpdateEnzdesHeaderMover >();
 }
 
 void UpdateEnzdesHeaderMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

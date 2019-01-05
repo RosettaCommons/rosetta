@@ -86,13 +86,13 @@ RmsdSimpleFilter::~RmsdSimpleFilter() = default;
 
 protocols::filters::FilterOP
 RmsdSimpleFilter::clone() const {
-	return protocols::filters::FilterOP( new RmsdSimpleFilter( *this ) );
+	return utility::pointer::make_shared< RmsdSimpleFilter >( *this );
 }
 
 protocols::filters::FilterOP
 RmsdSimpleFilter::fresh_instance() const
 {
-	return protocols::filters::FilterOP( new RmsdSimpleFilter() );
+	return utility::pointer::make_shared< RmsdSimpleFilter >();
 }
 
 static basic::Tracer TR( "protocols.protein_interface_design.filters.RmsdSimpleFilter" );
@@ -327,7 +327,7 @@ void RmsdSimpleFilter::parse_my_tag( utility::tag::TagCOP tag,
 	core::pose::Pose const & pose )
 {
 	/// @brief
-	reference_pose_ = core::pose::PoseOP( new core::pose::Pose( pose ) );
+	reference_pose_ = utility::pointer::make_shared< core::pose::Pose >( pose );
 	target_chain_ = 0;
 	threshold_ = 0.0;
 
@@ -363,7 +363,7 @@ void RmsdSimpleFilter::parse_my_tag( utility::tag::TagCOP tag,
 }
 
 // XRW TEMP protocols::filters::FilterOP RmsdSimpleFilterCreator::create_filter() const {
-// XRW TEMP  return protocols::filters::FilterOP( new RmsdSimpleFilter );
+// XRW TEMP  return utility::pointer::make_shared< RmsdSimpleFilter >();
 // XRW TEMP }
 
 // XRW TEMP std::string RmsdSimpleFilterCreator::keyname() const {
@@ -396,7 +396,7 @@ std::string RmsdSimpleFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 RmsdSimpleFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new RmsdSimpleFilter );
+	return utility::pointer::make_shared< RmsdSimpleFilter >();
 }
 
 void RmsdSimpleFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

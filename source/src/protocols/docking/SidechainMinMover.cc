@@ -113,10 +113,10 @@ void SidechainMinMover::set_minmover( protocols::minimization_packing::MinMoverO
 void SidechainMinMover::set_default()
 {
 	if ( update_movemap_ ) {
-		movemap_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap() );
+		movemap_ = utility::pointer::make_shared< core::kinematics::MoveMap >();
 		movemap_->set_chi( true );
 	}
-	minmover_ = protocols::minimization_packing::MinMoverOP( new protocols::minimization_packing::MinMover(movemap_, scorefxn(), "lbfgs_armijo_nonmonotone", 0.01, true/*nblist*/, false/*deriv_check*/  ) );
+	minmover_ = utility::pointer::make_shared< protocols::minimization_packing::MinMover >(movemap_, scorefxn(), "lbfgs_armijo_nonmonotone", 0.01, true/*nblist*/, false/*deriv_check*/  );
 }
 
 std::string
@@ -176,7 +176,7 @@ void InterfaceSidechainMinMover::set_interface_dist( core::Real interface_dist)
 void
 InterfaceSidechainMinMover::set_default()
 {
-	interface_ = protocols::scoring::InterfaceOP( new protocols::scoring::Interface( movable_jumps()[1] ) );
+	interface_ = utility::pointer::make_shared< protocols::scoring::Interface >( movable_jumps()[1] );
 }
 
 //apply function for InterfaceSidechainMinMover

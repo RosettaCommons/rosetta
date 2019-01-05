@@ -95,7 +95,7 @@ protocols::jd2::LazySilentFileJobInputter::fill_jobs( JobsContainer & jobs ) {
 	tr.Debug << "fill job list with... " << std::endl;
 	for ( core::Size index = 1; index <= nstruct; ++index ) {
 		for ( utility::vector1< InnerJobOP >::const_iterator ijob = inner_jobs.begin(), end = inner_jobs.end(); ijob != end; ++ijob ) {
-			jobs.push_back( protocols::jd2::JobOP( new Job( *ijob, index ) ) );
+			jobs.push_back( utility::pointer::make_shared< Job >( *ijob, index ) );
 			tr.Trace << "pushing " << (*ijob)->input_tag() << " nstruct index " << index << std::endl;
 		} // loop over nstruct
 	} // loop over inputs
@@ -150,7 +150,7 @@ LazySilentFileJobInputterCreator::keyname() const
 
 protocols::jd2::JobInputterOP
 LazySilentFileJobInputterCreator::create_JobInputter() const {
-	return protocols::jd2::JobInputterOP( new LazySilentFileJobInputter );
+	return utility::pointer::make_shared< LazySilentFileJobInputter >();
 }
 
 } //jd2

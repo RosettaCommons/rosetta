@@ -354,7 +354,7 @@ Dssp::compute( pose::Pose const& pose ) {
 	}
 
 	// Record all strands (B and E)
-	pair_set_ = StrandPairingSetOP( new StrandPairingSet( hbond_bb_pair_score_, dssp_hbond_threshold, pose ) );
+	pair_set_ = utility::pointer::make_shared< StrandPairingSet >( hbond_bb_pair_score_, dssp_hbond_threshold, pose );
 
 	for ( Size i = 1; i <= total_residue; i++ ) {
 		char state = pair_set_->dssp_state(i);

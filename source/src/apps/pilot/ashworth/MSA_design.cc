@@ -104,23 +104,23 @@ MSA_design(
 		for ( Size seqpos(1), end( pose->size() ); seqpos <= end; ++seqpos ) {
 			// add individual profile constraint for each residue position
 			// because of the underlying constraint implementation, this enures that the constraint is a context-independent 1-body energy, or (intra)residue constraint
-			pose->add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new core::scoring::constraints::SequenceProfileConstraint( *pose, seqpos, profile ) ) ) );
+			pose->add_constraint( utility::pointer::make_shared< core::scoring::constraints::SequenceProfileConstraint >( *pose, seqpos, profile ) );
 		}
 	} else {
 		std::string cst_file( option[ OptionKeys::constraints::cst_file ]().front() );
 		ConstraintSetOP cst_set =
-			ConstraintIO::get_instance()->read_constraints_new( cst_file, ConstraintSetOP( new ConstraintSet ), *pose );
+			ConstraintIO::get_instance()->read_constraints_new( cst_file, utility::pointer::make_shared< ConstraintSet >(), *pose );
 		pose->constraint_set( cst_set );
 	}
 
 
 	// the PackerTask tells the Packer how to pack sidechains
 	TaskFactory tf;
-	tf.push_back( TaskOperationCOP( new InitializeFromCommandline ) );
+	tf.push_back( utility::pointer::make_shared< InitializeFromCommandline >() );
 	if ( option[ OptionKeys::packing::resfile ].user() ) {
-		tf.push_back( TaskOperationCOP( new ReadResfile ) );
+		tf.push_back( utility::pointer::make_shared< ReadResfile >() );
 	}
-	tf.push_back( TaskOperationCOP( new OperateOnCertainResidues( ResLvlTaskOperationOP( new PreventRepackingRLT ), ResFilterOP( new ResidueHasProperty("DNA") ) ) ) );
+	tf.push_back( utility::pointer::make_shared< OperateOnCertainResidues >( utility::pointer::make_shared< PreventRepackingRLT >(), utility::pointer::make_shared< ResidueHasProperty >("DNA") ) );
 	PackerTaskCOP ptask = tf.create_task_and_apply_taskoperations( *pose );
 
 	// run the "Packer" (design sidechains)

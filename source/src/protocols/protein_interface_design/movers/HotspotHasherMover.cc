@@ -60,7 +60,7 @@ static basic::Tracer TR( "protocols.protein_interface_design.movers.HotspotHashe
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP HotspotHasherMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new HotspotHasherMover );
+// XRW TEMP  return utility::pointer::make_shared< HotspotHasherMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -96,7 +96,7 @@ HotspotHasherMover::~HotspotHasherMover() = default;
 
 protocols::moves::MoverOP
 HotspotHasherMover::clone() const {
-	return( protocols::moves::MoverOP( new HotspotHasherMover( *this ) ) );
+	return( utility::pointer::make_shared< HotspotHasherMover >( *this ) );
 }
 
 void HotspotHasherMover::apply( core::pose::Pose & pose ) {
@@ -237,7 +237,7 @@ HotspotHasherMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & 
 			TR<<"***WARNING WARNING! Filter defined for HotspotHasher not found in filter_list!!!! Defaulting to truefilter***"<<std::endl;
 			runtime_assert( filter_found );
 		} else {
-			hotspot_filter_ = protocols::filters::FilterOP( new protocols::filters::TrueFilter );
+			hotspot_filter_ = utility::pointer::make_shared< protocols::filters::TrueFilter >();
 		}
 	}
 
@@ -312,7 +312,7 @@ std::string HotspotHasherMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 HotspotHasherMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new HotspotHasherMover );
+	return utility::pointer::make_shared< HotspotHasherMover >();
 }
 
 void HotspotHasherMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

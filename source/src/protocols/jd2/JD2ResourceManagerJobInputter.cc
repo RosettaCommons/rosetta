@@ -93,7 +93,7 @@ JD2ResourceManagerJobInputterCreator::keyname() const
 
 protocols::jd2::JobInputterOP
 JD2ResourceManagerJobInputterCreator::create_JobInputter() const {
-	return protocols::jd2::JobInputterOP( new JD2ResourceManagerJobInputter );
+	return utility::pointer::make_shared< JD2ResourceManagerJobInputter >();
 }
 
 
@@ -429,7 +429,7 @@ JD2ResourceManagerJobInputter::parse_jobs_table_tag(
 			// record job and reset the invariants
 			record_job(previous_job_name, resources_for_job, job_options, jobs);
 			resources_for_job = generic_resources_for_job;
-			job_options = JobOptionsOP( new JobOptions(generic_job_options) );
+			job_options = utility::pointer::make_shared< JobOptions >(generic_job_options);
 			previous_job_name = job_name;
 
 		}
@@ -509,7 +509,7 @@ JD2ResourceManagerJobInputter::record_job(
 
 		InnerJobOP inner_job( new InnerJob( job_name, nstruct ) );
 		for ( Size ii = 1; ii <= nstruct; ++ii ) {
-			jobs.push_back( protocols::jd2::JobOP( new Job( inner_job, ii ) ));
+			jobs.push_back( utility::pointer::make_shared< Job >( inner_job, ii ));
 		}
 	} else {
 		if ( job_options->has_option(OptionKeys::out::nstruct) ) {

@@ -49,10 +49,10 @@ public:
 	void identity_matrix( numeric::xyzMatrix< core::Real> & R ) const;
 	void calculate_helical_parameters_helper( core::pose::Pose const & pose, std::string & handedness, core::Real & rise_out, core::Real & radius_out, core::Real & omega_out) const;
 	filters::FilterOP clone() const override {
-		return filters::FilterOP( new RepeatParameterFilter( *this ) );
+		return utility::pointer::make_shared< RepeatParameterFilter >( *this );
 	}
 	filters::FilterOP fresh_instance() const override{
-		return filters::FilterOP( new RepeatParameterFilter() );
+		return utility::pointer::make_shared< RepeatParameterFilter >();
 	}
 
 	~RepeatParameterFilter() override;

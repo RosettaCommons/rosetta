@@ -58,7 +58,7 @@ public:
 	std::string get_name() const override;
 
 	void set_task_factory(core::pack::task::TaskFactoryCOP tf) {
-		tf_ = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory(*tf) );
+		tf_ = utility::pointer::make_shared< core::pack::task::TaskFactory >(*tf);
 	}
 
 private:

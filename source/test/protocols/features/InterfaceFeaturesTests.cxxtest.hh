@@ -68,7 +68,7 @@ public:
 		core_init();
 		core::import_pose::pose_from_file(multimer_, "protocols/features/2J88.pdb", core::import_pose::PDB_file);
 		db_name_ =  "InterfaceFeaturesTest.db3";
-		reporter_ = InterfaceFeaturesOP( new protocols::features::InterfaceFeatures() );
+		reporter_ = utility::pointer::make_shared< protocols::features::InterfaceFeatures >();
 		utility::file::file_delete(db_name_);
 		db_session_ = basic::database::get_db_session(db_name_);
 		TR <<"Setup"<<std::endl;

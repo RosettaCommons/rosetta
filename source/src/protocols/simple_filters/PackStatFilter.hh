@@ -75,10 +75,10 @@ public:// virtual constructor
 
 
 	/// @brief make clone
-	filters::FilterOP clone() const override { return filters::FilterOP( new PackStatFilter( *this ) ); }
+	filters::FilterOP clone() const override { return utility::pointer::make_shared< PackStatFilter >( *this ); }
 
 	/// @brief make fresh instance
-	filters::FilterOP fresh_instance() const override { return filters::FilterOP( new PackStatFilter() ); }
+	filters::FilterOP fresh_instance() const override { return utility::pointer::make_shared< PackStatFilter >(); }
 
 
 public:// mutator

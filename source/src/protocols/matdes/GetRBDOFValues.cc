@@ -94,12 +94,12 @@ GetRBDOFValues::~GetRBDOFValues() = default;
 
 protocols::filters::FilterOP
 GetRBDOFValues::fresh_instance() const{
-	return protocols::filters::FilterOP( new GetRBDOFValues() );
+	return utility::pointer::make_shared< GetRBDOFValues >();
 }
 
 protocols::filters::FilterOP
 GetRBDOFValues::clone() const{
-	return protocols::filters::FilterOP( new GetRBDOFValues( *this ) );
+	return utility::pointer::make_shared< GetRBDOFValues >( *this );
 }
 
 // @brief getters
@@ -246,7 +246,7 @@ GetRBDOFValues::report( std::ostream & out, Pose const & pose ) const
 }
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP GetRBDOFValuesCreator::create_filter() const { return protocols::filters::FilterOP( new GetRBDOFValues ); }
+// XRW TEMP GetRBDOFValuesCreator::create_filter() const { return utility::pointer::make_shared< GetRBDOFValues >(); }
 
 // XRW TEMP std::string
 // XRW TEMP GetRBDOFValuesCreator::keyname() const { return "GetRBDOFValues"; }
@@ -289,7 +289,7 @@ std::string GetRBDOFValuesCreator::keyname() const {
 
 protocols::filters::FilterOP
 GetRBDOFValuesCreator::create_filter() const {
-	return protocols::filters::FilterOP( new GetRBDOFValues );
+	return utility::pointer::make_shared< GetRBDOFValues >();
 }
 
 void GetRBDOFValuesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

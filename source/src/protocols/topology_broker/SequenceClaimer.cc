@@ -76,7 +76,7 @@ SequenceClaimer::SequenceClaimer( std::string const & sequence, std::string cons
 
 TopologyClaimerOP SequenceClaimer::clone() const
 {
-	return TopologyClaimerOP( new SequenceClaimer( *this ) );
+	return utility::pointer::make_shared< SequenceClaimer >( *this );
 }
 
 void SequenceClaimer::make_sequence_claim() {
@@ -88,12 +88,12 @@ void SequenceClaimer::make_sequence_claim() {
 		input_sequence_,
 		*( chemical::ChemicalManager::get_instance()->residue_type_set( rsd_type_set_ ))
 	);
-	sequence_claim_ = claims::SequenceClaimOP( new claims::SequenceClaim(
+	sequence_claim_ = utility::pointer::make_shared< claims::SequenceClaim >(
 		get_self_weak_ptr(),
 		my_pose.annotated_sequence(),
 		label(),
 		priority_
-		) );
+	);
 	runtime_assert( my_pose.size() == sequence_claim_->length() );
 }
 
@@ -166,13 +166,13 @@ void SequenceClaimer::init_after_reading() {
 void SequenceClaimer::generate_claims( claims::DofClaims& new_claims ) {
 	//Make a new cut at the end of this sequence.
 	//TODO: Make TopologyBroker get rid of cuts outside valid sequence.
-	new_claims.push_back( claims::DofClaimOP( new claims::CutClaim( get_self_weak_ptr(), std::make_pair( label(), sequence_claim_->length() ) ) ) );
+	new_claims.push_back( utility::pointer::make_shared< claims::CutClaim >( get_self_weak_ptr(), std::make_pair( label(), sequence_claim_->length() ) ) );
 
 	//special --- if only 1 residue chain... the torsion will be irrelvant and probably unclaimed
 	// ... make broker happy but don't do anything...
 	if ( sequence_claim_->length() == 1 ) {
 
-		new_claims.push_back( claims::DofClaimOP( new claims::BBClaim( get_self_weak_ptr(), std::make_pair( label(), 1 ) ) ) );
+		new_claims.push_back( utility::pointer::make_shared< claims::BBClaim >( get_self_weak_ptr(), std::make_pair( label(), 1 ) ) );
 	}
 }
 

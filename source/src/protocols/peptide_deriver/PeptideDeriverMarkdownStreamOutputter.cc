@@ -45,7 +45,7 @@ PeptideDeriverMarkdownStreamOutputter::PeptideDeriverMarkdownStreamOutputter(uti
 	out_p_ = &out;
 	prefix_ = prefix;
 	for ( auto & method : cyc_report_info_set_ ) {
-		method = CyclizedReportInfoOP( new CyclizedReportInfo() );
+		method = utility::pointer::make_shared< CyclizedReportInfo >();
 	}
 }
 
@@ -63,7 +63,7 @@ PeptideDeriverMarkdownStreamOutputter::~PeptideDeriverMarkdownStreamOutputter()=
 
 PeptideDeriverMarkdownStreamOutputterOP
 PeptideDeriverMarkdownStreamOutputter::clone() const {
-	return PeptideDeriverMarkdownStreamOutputterOP( new PeptideDeriverMarkdownStreamOutputter( *this ) );
+	return utility::pointer::make_shared< PeptideDeriverMarkdownStreamOutputter >( *this );
 }
 
 

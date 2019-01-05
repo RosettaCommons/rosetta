@@ -66,8 +66,8 @@ public:
 		core_init_with_additional_options("-script_vars test1=value1 test2=value2");
 
 		core::import_pose::pose_from_file(pose, "protocols/antibody/2r0l_1_1.pdb", core::import_pose::PDB_file);
-		//ab_info =  protocols::antibody::AntibodyInfoOP( new protocols::antibody::AntibodyInfo(ab_pose, AHO_Scheme, North));
-		//CDRResidueSelectorOP cdr_selector = CDRResidueSelectorOP( new CDRResidueSelector( ab_info));
+		//ab_info =  utility::pointer::make_shared< protocols::antibody::AntibodyInfo >(ab_pose, AHO_Scheme, North);
+		//CDRResidueSelectorOP cdr_selector = utility::pointer::make_shared< CDRResidueSelector >( ab_info);
 
 
 	}
@@ -147,7 +147,7 @@ public:
 
 	void test_string_metric(){
 		SimpleMetricFilter filter;
-		TestStringMetricOP tester = TestStringMetricOP( new TestStringMetric());
+		TestStringMetricOP tester = utility::pointer::make_shared< TestStringMetric >();
 
 		filter.set_simple_metric( tester );
 		filter.set_match_string( "TESTING");
@@ -167,7 +167,7 @@ public:
 
 	void test_real_metric() {
 		SimpleMetricFilter filter;
-		TestRealMetricOP tester = TestRealMetricOP( new TestRealMetric());
+		TestRealMetricOP tester = utility::pointer::make_shared< TestRealMetric >();
 
 		tester->apply(pose, "real_test_");
 
@@ -208,7 +208,7 @@ public:
 
 	void test_composite_string_metric() {
 		SimpleMetricFilter filter;
-		TestCompositeStringMetricOP tester = TestCompositeStringMetricOP( new TestCompositeStringMetric());
+		TestCompositeStringMetricOP tester = utility::pointer::make_shared< TestCompositeStringMetric >();
 
 		tester->apply(pose, "test_composite_string_");
 
@@ -246,7 +246,7 @@ public:
 
 	void test_composite_real_metric() {
 		SimpleMetricFilter filter;
-		TestCompositeRealMetricOP tester = TestCompositeRealMetricOP( new TestCompositeRealMetric());
+		TestCompositeRealMetricOP tester = utility::pointer::make_shared< TestCompositeRealMetric >();
 
 		tester->apply(pose, "test_composite_real_");
 		filter.set_simple_metric( tester );
@@ -312,8 +312,8 @@ public:
 
 	void test_rmsd_metric() {
 		core::pose::PoseOP trpcage = create_trpcage_ideal_poseop();
-		ResidueIndexSelectorOP selector1 = ResidueIndexSelectorOP( new ResidueIndexSelector( "1-10" ));
-		ResidueIndexSelectorOP selector2 = ResidueIndexSelectorOP( new ResidueIndexSelector( "11-20" ));
+		ResidueIndexSelectorOP selector1 = utility::pointer::make_shared< ResidueIndexSelector >( "1-10" );
+		ResidueIndexSelectorOP selector2 = utility::pointer::make_shared< ResidueIndexSelector >( "11-20" );
 
 		RMSDMetric rmsd_metric = RMSDMetric(trpcage);
 
@@ -328,8 +328,8 @@ public:
 
 	void test_dihedral_metric() {
 		core::pose::PoseOP trpcage = create_trpcage_ideal_poseop();
-		ResidueIndexSelectorOP selector1 = ResidueIndexSelectorOP( new ResidueIndexSelector( "1-10" ));
-		ResidueIndexSelectorOP selector2 = ResidueIndexSelectorOP( new ResidueIndexSelector( "11-20" ));
+		ResidueIndexSelectorOP selector1 = utility::pointer::make_shared< ResidueIndexSelector >( "1-10" );
+		ResidueIndexSelectorOP selector2 = utility::pointer::make_shared< ResidueIndexSelector >( "11-20" );
 
 		DihedralDistanceMetric dih_metric = DihedralDistanceMetric();
 		dih_metric.set_comparison_pose( trpcage );

@@ -100,7 +100,7 @@ dump_pdb(
 	core::pose::Pose const & pose,
 	std::string const & file_name
 ){
-	StructFileRepOptionsCOP options=StructFileRepOptionsCOP( new core::io::StructFileRepOptions );
+	StructFileRepOptionsCOP options=utility::pointer::make_shared< core::io::StructFileRepOptions >();
 	return dump_pdb(pose, file_name, options);
 }
 
@@ -131,7 +131,7 @@ dump_pdb(
 	std::ostream & out,
 	std::string const & out_fname
 ){
-	StructFileRepOptionsCOP options=StructFileRepOptionsCOP( new core::io::StructFileRepOptions );
+	StructFileRepOptionsCOP options=utility::pointer::make_shared< core::io::StructFileRepOptions >();
 	dump_pdb(pose, out, options, out_fname);
 }
 
@@ -196,7 +196,7 @@ dump_multimodel_pdb(
 	utility::vector1< core::pose::PoseCOP > const & poses,
 	std::string const & file_name
 ){
-	StructFileRepOptionsCOP options=StructFileRepOptionsCOP( new core::io::StructFileRepOptions );
+	StructFileRepOptionsCOP options=utility::pointer::make_shared< core::io::StructFileRepOptions >();
 	return dump_multimodel_pdb(poses, file_name, options);
 }
 
@@ -225,7 +225,7 @@ dump_multimodel_pdb(
 	utility::vector1< core::pose::PoseCOP > const & poses,
 	std::ostream & out
 ){
-	StructFileRepOptionsCOP options=StructFileRepOptionsCOP( new core::io::StructFileRepOptions );
+	StructFileRepOptionsCOP options=utility::pointer::make_shared< core::io::StructFileRepOptions >();
 	dump_multimodel_pdb(poses, out, options);
 }
 
@@ -256,7 +256,7 @@ add_to_multimodel_pdb(
 	std::string const & model_tag,
 	bool clear_existing_structures /* = false */
 ) {
-	StructFileRepOptionsCOP options=StructFileRepOptionsCOP( new core::io::StructFileRepOptions );
+	StructFileRepOptionsCOP options=utility::pointer::make_shared< core::io::StructFileRepOptions >();
 	return add_to_multimodel_pdb( pose, file_name, model_tag, options, clear_existing_structures );
 }
 
@@ -290,7 +290,7 @@ add_to_multimodel_pdb(
 	std::ostream & out,
 	std::string const & model_tag
 ) {
-	StructFileRepOptionsCOP options=StructFileRepOptionsCOP( new core::io::StructFileRepOptions );
+	StructFileRepOptionsCOP options=utility::pointer::make_shared< core::io::StructFileRepOptions >();
 	add_to_multimodel_pdb( pose, out, model_tag, options );
 }
 
@@ -782,7 +782,7 @@ dump_pdb(
 	std::string const &filename
 ) {
 
-	core::io::StructFileRepOptionsOP options=core::io::StructFileRepOptionsOP( new core::io::StructFileRepOptions );
+	core::io::StructFileRepOptionsOP options=utility::pointer::make_shared< core::io::StructFileRepOptions >();
 
 	// OK, what's here?
 	io::pose_to_sfr::PoseToStructFileRepConverter pose_to_sfr( *options );

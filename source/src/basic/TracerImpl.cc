@@ -139,7 +139,7 @@ void TracerImpl::set_tracer_options( TracerOptions const & to) {
 		std::cout << "[ WARNING ] Resetting the global tracer options, which have already been set." << std::endl;
 		std::cout << "[ WARNING ] This will not affect Tracers which are already initialized." << std::endl;
 	}
-	tracer_options_ = TracerOptionsOP( new TracerOptions( to ) );
+	tracer_options_ = utility::pointer::make_shared< TracerOptions >( to );
 }
 
 bool & TracerImpl::super_mute_()

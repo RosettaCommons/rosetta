@@ -349,7 +349,7 @@ A3BHbsDockDesignMinimizeMover::apply(
 
 	// create a task factory and task operations
 	TaskFactoryOP pert_tf(new TaskFactory());
-	pert_tf->push_back( operation::TaskOperationCOP( new operation::InitializeFromCommandline ) );
+	pert_tf->push_back( utility::pointer::make_shared< operation::InitializeFromCommandline >() );
 
 	operation::ReadResfileOP pert_rrop( new operation::ReadResfile() );
 	pert_rrop->default_filename();
@@ -391,7 +391,7 @@ A3BHbsDockDesignMinimizeMover::apply(
 
 	// create a task factory and task operations
 	TaskFactoryOP desn_tf( new TaskFactory() );
-	desn_tf->push_back( operation::TaskOperationCOP( new operation::InitializeFromCommandline ) );
+	desn_tf->push_back( utility::pointer::make_shared< operation::InitializeFromCommandline >() );
 
 	operation::ReadResfileOP desn_rrop( new operation::ReadResfile() );
 	desn_rrop->default_filename();
@@ -426,7 +426,7 @@ A3BHbsDockDesignMinimizeMover::apply(
 	//definitely want sidechain minimization here
 	using protocols::minimization_packing::TaskAwareMinMoverOP;
 	using protocols::minimization_packing::TaskAwareMinMover;
-	TaskAwareMinMoverOP desn_ta_min = TaskAwareMinMoverOP( new TaskAwareMinMover( desn_min, desn_tf ) );
+	TaskAwareMinMoverOP desn_ta_min = utility::pointer::make_shared< TaskAwareMinMover >( desn_min, desn_tf );
 
 	/*********************************************************
 	Common Setup
@@ -567,7 +567,7 @@ A3BHbsDockDesignMinimizeMover::apply(
 
 	//kdrew: probably should repack and minimize here after separation
 	TaskFactoryOP tf(new TaskFactory());
-	tf->push_back( operation::TaskOperationCOP( new operation::InitializeFromCommandline ) );
+	tf->push_back( utility::pointer::make_shared< operation::InitializeFromCommandline >() );
 	//kdrew: do not do design, makes NATAA if res file is not specified
 	operation::RestrictToRepackingOP rtrp( new operation::RestrictToRepacking() );
 	tf->push_back( rtrp );

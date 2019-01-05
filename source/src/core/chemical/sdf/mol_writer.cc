@@ -111,7 +111,7 @@ void MolWriter::output_residue(std::ostream & output_stream, core::conformation:
 void MolWriter::output_residue(std::ostream & output_stream, core::chemical::ResidueType const & residue_type)
 {
 	using namespace core::conformation;
-	ResidueCOP residue_ptr( ResidueOP( new Residue(residue_type,false) ) );
+	ResidueCOP residue_ptr( utility::pointer::make_shared< Residue >(residue_type,false) );
 	//core::conformation::ResidueCOP residue_ptr= &residue;
 	//std::cout <<residue_ptr->name3() <<std::endl;
 	output_residue(output_stream,residue_ptr);

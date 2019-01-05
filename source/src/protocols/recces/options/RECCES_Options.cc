@@ -87,7 +87,7 @@ RECCES_Options::RECCES_Options( RECCES_Options const & src ) :
 RECCES_OptionsOP
 RECCES_Options::clone() const
 {
-	return RECCES_OptionsOP( new RECCES_Options( *this ) );
+	return utility::pointer::make_shared< RECCES_Options >( *this );
 }
 
 ///////////////////////////////////////////////////////////////////

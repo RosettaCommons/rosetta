@@ -44,10 +44,10 @@ public:
 	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	core::Real compute( core::pose::Pose const & pose ) const;
 	filters::FilterOP clone() const override {
-		return filters::FilterOP( new NetChargeFilter( *this ) );
+		return utility::pointer::make_shared< NetChargeFilter >( *this );
 	}
 	filters::FilterOP fresh_instance() const override{
-		return filters::FilterOP( new NetChargeFilter() );
+		return utility::pointer::make_shared< NetChargeFilter >();
 	}
 
 	core::pack::task::TaskFactoryOP task_factory() const;

@@ -129,11 +129,11 @@ SetupMetalsMover::show(std::ostream & output) const{
 
 protocols::moves::MoverOP
 SetupMetalsMover::clone() const{
-	return protocols::moves::MoverOP( new SetupMetalsMover( *this ) );
+	return utility::pointer::make_shared< SetupMetalsMover >( *this );
 }
 protocols::moves::MoverOP
 SetupMetalsMover::fresh_instance() const{
-	return protocols::moves::MoverOP( new SetupMetalsMover );
+	return utility::pointer::make_shared< SetupMetalsMover >();
 }
 
 void
@@ -397,7 +397,7 @@ std::ostream &operator<< (std::ostream &os, SetupMetalsMover const &mover)
 //CREATOR METHODS
 protocols::moves::MoverOP
 SetupMetalsMoverCreator::create_mover() const{
-	return protocols::moves::MoverOP( new SetupMetalsMover );
+	return utility::pointer::make_shared< SetupMetalsMover >();
 }
 std::string
 SetupMetalsMoverCreator::keyname() const{

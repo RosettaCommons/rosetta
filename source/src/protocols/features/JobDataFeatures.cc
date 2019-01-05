@@ -70,8 +70,8 @@ void
 JobDataFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
 
 	using namespace basic::database::schema_generator;
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ), false /*not null*/, false /*don't autoincrement*/);
-	Column data_key("data_key", DbDataTypeOP( new DbText(255) ));
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >(), false /*not null*/, false /*don't autoincrement*/);
+	Column data_key("data_key", utility::pointer::make_shared< DbText >(255));
 
 	utility::vector1<Column> primary_columns;
 	primary_columns.push_back(struct_id);
@@ -85,13 +85,13 @@ JobDataFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session)
 
 	Schema job_string_string_data("job_string_string_data",primary_key);
 	job_string_string_data.add_foreign_key(ForeignKey(struct_id, "structures", "struct_id", true /*defer*/));
-	job_string_string_data.add_column(Column("data_value", DbDataTypeOP( new DbText() )));
+	job_string_string_data.add_column(Column("data_value", utility::pointer::make_shared< DbText >()));
 
 	job_string_string_data.write(db_session);
 
 	Schema job_string_real_data("job_string_real_data",primary_key);
 	job_string_real_data.add_foreign_key(ForeignKey(struct_id, "structures", "struct_id", true /*defer*/));
-	job_string_real_data.add_column(Column("data_value", DbDataTypeOP( new DbReal() )));
+	job_string_real_data.add_column(Column("data_value", utility::pointer::make_shared< DbReal >()));
 
 	job_string_real_data.write(db_session);
 
@@ -315,7 +315,7 @@ std::string JobDataFeaturesCreator::type_name() const {
 
 protocols::features::FeaturesReporterOP
 JobDataFeaturesCreator::create_features_reporter() const {
-	return protocols::features::FeaturesReporterOP( new JobDataFeatures );
+	return utility::pointer::make_shared< JobDataFeatures >();
 }
 
 void JobDataFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

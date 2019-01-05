@@ -57,8 +57,8 @@ pick_fragments_by_ss(
 	VallLibrary const & library = FragmentLibraryManager::get_instance()->get_Vall();
 
 	VallLibrarian librarian;
-	librarian.add_fragment_gen( VallFragmentGenCOP( VallFragmentGenOP( new LengthGen( ss.length() ) ) ) );
-	librarian.add_fragment_eval( VallFragmentEvalCOP( VallFragmentEvalOP( new IdentityEval( ss, 1.0, randomize ) ) ) );
+	librarian.add_fragment_gen( utility::pointer::make_shared< LengthGen >( ss.length() ) );
+	librarian.add_fragment_eval( utility::pointer::make_shared< IdentityEval >( ss, 1.0, randomize ) );
 
 	// catalog fragments
 	librarian.catalog( library );
@@ -94,8 +94,8 @@ pick_fragments_by_ss_plus_aa(
 	VallLibrary const & library = FragmentLibraryManager::get_instance()->get_Vall();
 
 	VallLibrarian librarian;
-	librarian.add_fragment_gen( VallFragmentGenCOP( VallFragmentGenOP( new LengthGen( ss.length() ) ) ) );
-	librarian.add_fragment_eval( VallFragmentEvalCOP( VallFragmentEvalOP( new IdentityEval( ss, aa, 1.0, 1.0, randomize ) ) ) );
+	librarian.add_fragment_gen( utility::pointer::make_shared< LengthGen >( ss.length() ) );
+	librarian.add_fragment_eval( utility::pointer::make_shared< IdentityEval >( ss, aa, 1.0, 1.0, randomize ) );
 
 	// catalog fragments
 	librarian.catalog( library );
@@ -134,16 +134,16 @@ pick_fragments(
 	VallLibrary const & library = FragmentLibraryManager::get_instance()->get_Vall();
 
 	VallLibrarian librarian;
-	librarian.add_fragment_gen( VallFragmentGenCOP( VallFragmentGenOP( new LengthGen( ss.length() ) ) ) );
+	librarian.add_fragment_gen( utility::pointer::make_shared< LengthGen >( ss.length() ) );
 
 	if ( !aa.empty() ) {
-		librarian.add_fragment_eval( VallFragmentEvalCOP( VallFragmentEvalOP( new IdentityEval( ss, aa, 1.0, 1.0, randomize ) ) ) );
+		librarian.add_fragment_eval( utility::pointer::make_shared< IdentityEval >( ss, aa, 1.0, 1.0, randomize ) );
 	} else {
-		librarian.add_fragment_eval( VallFragmentEvalCOP( VallFragmentEvalOP( new IdentityEval( ss, 1.0, randomize ) ) ) );
+		librarian.add_fragment_eval( utility::pointer::make_shared< IdentityEval >( ss, 1.0, randomize ) );
 	}
 
 	if ( abego.size() > 0 ) {
-		librarian.add_fragment_eval( VallFragmentEvalCOP( VallFragmentEvalOP( new ABEGOEval( abego, 1.0, randomize ) ) ) );
+		librarian.add_fragment_eval( utility::pointer::make_shared< ABEGOEval >( abego, 1.0, randomize ) );
 	}
 
 	// catalog fragments

@@ -108,7 +108,7 @@ TopologyBroker::TopologyBroker() :
 	use_fold_tree_from_claimer_(false),
 	current_pose_( /* NULL */ )
 {
-	sequence_number_resolver_ = SequenceNumberResolverOP( new SequenceNumberResolver() );
+	sequence_number_resolver_ = utility::pointer::make_shared< SequenceNumberResolver >();
 }
 
 TopologyBroker::~TopologyBroker() = default;
@@ -127,7 +127,7 @@ TopologyBroker::TopologyBroker( const TopologyBroker & tp ) :
 	start_pose_cuts_ = tp.start_pose_cuts_;
 	use_fold_tree_from_claimer_ = tp.use_fold_tree_from_claimer_;
 	current_pose_ = tp.current_pose_;
-	sequence_number_resolver_ = SequenceNumberResolverOP( new SequenceNumberResolver( *tp.sequence_number_resolver_ ) );
+	sequence_number_resolver_ = utility::pointer::make_shared< SequenceNumberResolver >( *tp.sequence_number_resolver_ );
 }
 
 TopologyBroker & TopologyBroker::operator = ( TopologyBroker const & src ) {
@@ -432,7 +432,7 @@ void TopologyBroker::build_fold_tree( claims::DofClaims & claims, Size nres ) {
 	}
 
 	while ( try_again && !bValidTree ) {
-		fold_tree_ = core::kinematics::FoldTreeOP( new kinematics::FoldTree );
+		fold_tree_ = utility::pointer::make_shared< kinematics::FoldTree >();
 		Size attempts( 10 );
 		while ( !bValidTree && attempts-- > 0 )  {
 			bValidTree = fold_tree_->random_tree_from_jump_points( nres, sorted_jumps.size(), jumps,
@@ -485,7 +485,7 @@ void TopologyBroker::build_fold_tree( claims::DofClaims & claims, Size nres ) {
 	for ( Size i=1; i <= must_cut.size(); i++ ) {
 		obligate_cut_points.push_back( must_cut.at(i).second );
 	}
-	final_fold_tree_ = core::kinematics::FoldTreeOP( new kinematics::FoldTree );
+	final_fold_tree_ = utility::pointer::make_shared< kinematics::FoldTree >();
 	bool bValidFinalTree =
 		final_fold_tree_->random_tree_from_jump_points( nres, n_non_removed, after_loops_jumps,
 		obligate_cut_points, cut_bias_farray, root );
@@ -790,14 +790,14 @@ void TopologyBroker::apply( core::pose::Pose & pose ) {
 	claims::DofClaims fresh_claims;
 
 	sequence_claims_.clear();
-	sequence_number_resolver_ = SequenceNumberResolverOP( new SequenceNumberResolver() );
+	sequence_number_resolver_ = utility::pointer::make_shared< SequenceNumberResolver >();
 
 	generate_sequence_claims( fresh_claims );
 
 	if ( ok ) ok = broking( fresh_claims, pre_accepted );
 	initialize_sequence( pre_accepted, pose );
 	if ( symm_claimer ) symm_claimer->symmetry_duplicate( pre_accepted, pose );
-	current_pose_ = core::pose::PoseOP( new core::pose::Pose( pose ) );
+	current_pose_ = utility::pointer::make_shared< core::pose::Pose >( pose );
 
 	if ( !pose.empty() && basic::options::option[basic::options::OptionKeys::abinitio::explicit_pdb_debug] &&
 			basic::options::option[basic::options::OptionKeys::run::protocol].value_string()=="broker" ) {
@@ -812,7 +812,7 @@ void TopologyBroker::apply( core::pose::Pose & pose ) {
 	}
 
 	//if(tr.Trace.visible()){tr.Trace << "pose.fold_tree() before generate_round1:  " << pose.fold_tree() << std::endl;}
-	current_pose_ = core::pose::PoseOP( new core::pose::Pose( pose ) );
+	current_pose_ = utility::pointer::make_shared< core::pose::Pose >( pose );
 
 	tr.Debug << "Start Round1-Broking..." << std::endl;
 	claims::DofClaims round1_claims;
@@ -827,7 +827,7 @@ void TopologyBroker::apply( core::pose::Pose & pose ) {
 
 	tr.Debug << "Broking finished" << std::endl;
 	// --> now we know nres
-	current_pose_ = core::pose::PoseOP( new core::pose::Pose( pose ) );
+	current_pose_ = utility::pointer::make_shared< core::pose::Pose >( pose );
 
 	core::kinematics::FoldTree fold_tree = pose.fold_tree();
 	//if(tr.Debug.visible())
@@ -880,7 +880,7 @@ void TopologyBroker::apply( core::pose::Pose & pose ) {
 	debug_assert(fold_tree_);
 
 	// if ( tr.Debug.visible() ) pose.dump_pdb( "init_dofs.pdb" );
-	current_pose_ = core::pose::PoseOP( new core::pose::Pose( pose ) );
+	current_pose_ = utility::pointer::make_shared< core::pose::Pose >( pose );
 
 	//we will need this one in switch_to_fullatom
 	if ( !repack_scorefxn_ ) repack_scorefxn_ = core::scoring::get_score_function();

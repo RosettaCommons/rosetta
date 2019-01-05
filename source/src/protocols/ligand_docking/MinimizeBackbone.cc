@@ -77,7 +77,7 @@ static basic::Tracer minimize_backbone_tracer( "protocols.ligand_docking.ligand_
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP MinimizeBackboneCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new MinimizeBackbone );
+// XRW TEMP  return utility::pointer::make_shared< MinimizeBackbone >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -101,11 +101,11 @@ MinimizeBackbone::MinimizeBackbone(MinimizeBackbone const & /*that*/) = default;
 MinimizeBackbone::~MinimizeBackbone() = default;
 
 protocols::moves::MoverOP MinimizeBackbone::clone() const {
-	return protocols::moves::MoverOP( new MinimizeBackbone( *this ) );
+	return utility::pointer::make_shared< MinimizeBackbone >( *this );
 }
 
 protocols::moves::MoverOP MinimizeBackbone::fresh_instance() const {
-	return protocols::moves::MoverOP( new MinimizeBackbone );
+	return utility::pointer::make_shared< MinimizeBackbone >();
 }
 
 // XRW TEMP std::string MinimizeBackbone::get_name() const{
@@ -194,7 +194,7 @@ core::kinematics::FoldTreeOP MinimizeBackbone::create_fold_tree_with_cutpoints(
 	core::kinematics::FoldTreeOP f_new( new core::kinematics::FoldTree() );// Deleting edges is bad so add them to a new foldtree
 
 	if ( pose.conformation().is_membrane() ) {
-		f_new = core::kinematics::FoldTreeOP( new core::kinematics::FoldTree( pose.fold_tree() ) );
+		f_new = utility::pointer::make_shared< core::kinematics::FoldTree >( pose.fold_tree() );
 		return f_new;
 	}
 
@@ -293,7 +293,7 @@ MinimizeBackbone::create_fold_tree_with_ligand_jumps_from_attach_pts(
 	core::kinematics::FoldTreeOP new_fold_tree( new core::kinematics::FoldTree() );
 
 	if ( pose.conformation().is_membrane() ) {
-		new_fold_tree = core::kinematics::FoldTreeOP( new core::kinematics::FoldTree( pose.fold_tree() ) );
+		new_fold_tree = utility::pointer::make_shared< core::kinematics::FoldTree >( pose.fold_tree() );
 	} else {
 
 		for ( auto const & e : f_const ) {
@@ -402,7 +402,7 @@ std::string MinimizeBackboneCreator::keyname() const {
 
 protocols::moves::MoverOP
 MinimizeBackboneCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MinimizeBackbone );
+	return utility::pointer::make_shared< MinimizeBackbone >();
 }
 
 void MinimizeBackboneCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

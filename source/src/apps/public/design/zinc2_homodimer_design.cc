@@ -192,9 +192,9 @@ public:
 
 		//TASKFACTORY --> resfile
 		TaskFactoryOP task_factory( new TaskFactory() );
-		task_factory->push_back(TaskOperationCOP( new operation::InitializeFromCommandline() ));
+		task_factory->push_back(utility::pointer::make_shared< operation::InitializeFromCommandline >());
 		if ( option[ OptionKeys::packing::resfile ].user() ) { // resfile enables one-sided interface design
-			task_factory->push_back( TaskOperationCOP( new operation::ReadResfile ) ); //NATAA resfile
+			task_factory->push_back( utility::pointer::make_shared< operation::ReadResfile >() ); //NATAA resfile
 		}
 		//TASKFACTORY --> prevent repack
 		operation::PreventRepackingOP prevent_repack( new operation::PreventRepacking() );
@@ -207,13 +207,13 @@ public:
 		task_factory->push_back(prevent_repack);
 
 		//TASKFACTORY --> restrict to interface
-		task_factory->push_back(TaskOperationCOP( new protocols::task_operations::RestrictToInterfaceOperation(1, 2) ));
+		task_factory->push_back(utility::pointer::make_shared< protocols::task_operations::RestrictToInterfaceOperation >(1, 2));
 		taskfactory_ = task_factory;
 
 
 		//SCOREFUNCTION --> Favor native residue
 		for ( Size i=1; i<= pose.size();  ++i ) {
-			pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new ResidueTypeConstraint( pose, i, basic::options::option[fav_nat_bonus].value()) ) ) );
+			pose.add_constraint( utility::pointer::make_shared< ResidueTypeConstraint >( pose, i, basic::options::option[fav_nat_bonus].value()) );
 		}
 		//SCOREFUNCTION --> add constraints
 		fa_metal_scorefxn_ = get_score_function();
@@ -229,30 +229,30 @@ public:
 
 		//MOVERS --> sym_pack_mover
 		TR << "Generating sym pack mover..." << std::endl;
-		sym_pack_mover_ = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover );
+		sym_pack_mover_ = utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >();
 		sym_pack_mover_->task_factory( taskfactory_ );
 		sym_pack_mover_->score_function( fa_metal_scorefxn_ );
 
 		//MOVERS --> minmover
-		movemap_sc_ = core::kinematics::MoveMapOP( new kinematics::MoveMap );
+		movemap_sc_ = utility::pointer::make_shared< kinematics::MoveMap >();
 		movemap_sc_->set_chi( true );
 		movemap_sc_->set_bb( false );
 		movemap_sc_->set_jump( false ); //first and second jumps are to zinc from chain A
 
-		movemap_bb_ = core::kinematics::MoveMapOP( new kinematics::MoveMap );
+		movemap_bb_ = utility::pointer::make_shared< kinematics::MoveMap >();
 		movemap_bb_->set_chi( false );
 		movemap_bb_->set_bb( true );
 		movemap_bb_->set_jump( true ); //first and second jumps are to zinc from chain A
 
-		movemap_ = core::kinematics::MoveMapOP( new kinematics::MoveMap );
+		movemap_ = utility::pointer::make_shared< kinematics::MoveMap >();
 		movemap_->set_chi( true );
 		movemap_->set_bb( true );
 		movemap_->set_jump( true ); //first and second jumps are to zinc from chain A
 
 
-		sym_minmover_sc_ = protocols::minimization_packing::MinMoverOP( new protocols::minimization_packing::MinMover( movemap_sc_, fa_metal_scorefxn_, "lbfgs_armijo", 0.01, true ) );
-		sym_minmover_bb_ = protocols::minimization_packing::MinMoverOP( new protocols::minimization_packing::MinMover( movemap_bb_, fa_metal_scorefxn_, "lbfgs_armijo", 0.01, true ) );
-		sym_minmover_ = protocols::minimization_packing::MinMoverOP( new protocols::minimization_packing::MinMover( movemap_, fa_metal_scorefxn_, "lbfgs_armijo", 0.01, true ) );
+		sym_minmover_sc_ = utility::pointer::make_shared< protocols::minimization_packing::MinMover >( movemap_sc_, fa_metal_scorefxn_, "lbfgs_armijo", 0.01, true );
+		sym_minmover_bb_ = utility::pointer::make_shared< protocols::minimization_packing::MinMover >( movemap_bb_, fa_metal_scorefxn_, "lbfgs_armijo", 0.01, true );
+		sym_minmover_ = utility::pointer::make_shared< protocols::minimization_packing::MinMover >( movemap_, fa_metal_scorefxn_, "lbfgs_armijo", 0.01, true );
 
 
 		return;
@@ -365,7 +365,7 @@ int main( int argc, char* argv[] )
 
 
 		devel::init(argc, argv);
-		protocols::jd2::JobDistributor::get_instance()->go(protocols::moves::MoverOP( new zinc2_homodimer_design ));
+		protocols::jd2::JobDistributor::get_instance()->go(utility::pointer::make_shared< zinc2_homodimer_design >());
 
 		TR << "************************d**o**n**e**************************************" << std::endl;
 

@@ -52,7 +52,7 @@ public:
 
 	protocols::moves::MoverOP fresh_instance() const override
 	{
-		return protocols::moves::MoverOP( new BackboneSampler );
+		return utility::pointer::make_shared< BackboneSampler >();
 	}
 
 	~BackboneSampler() override;

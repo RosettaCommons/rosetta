@@ -91,12 +91,12 @@ StoreTaskMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data
 
 protocols::moves::MoverOP
 StoreTaskMover::clone() const {
-	return protocols::moves::MoverOP( new StoreTaskMover( *this ) );
+	return utility::pointer::make_shared< StoreTaskMover >( *this );
 }
 
 protocols::moves::MoverOP
 StoreTaskMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new StoreTaskMover );
+	return utility::pointer::make_shared< StoreTaskMover >();
 }
 
 std::string StoreTaskMover::get_name() const {
@@ -126,7 +126,7 @@ std::string StoreTaskMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 StoreTaskMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new StoreTaskMover );
+	return utility::pointer::make_shared< StoreTaskMover >();
 }
 
 void StoreTaskMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

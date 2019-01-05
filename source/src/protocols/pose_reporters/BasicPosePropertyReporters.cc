@@ -56,7 +56,7 @@ namespace pose_reporters {
 
 // Creator
 protocols::rosetta_scripts::PosePropertyReporterOP EnergyReporterCreator::create_reporter() const {
-	return protocols::rosetta_scripts::PosePropertyReporterOP( new EnergyReporter() );
+	return utility::pointer::make_shared< EnergyReporter >();
 }
 void
 EnergyReporterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
@@ -123,7 +123,7 @@ void EnergyReporter::parse_my_tag(
 
 // Creator
 protocols::rosetta_scripts::PosePropertyReporterOP FilterReporterCreator::create_reporter() const {
-	return protocols::rosetta_scripts::PosePropertyReporterOP( new FilterReporter() );
+	return utility::pointer::make_shared< FilterReporter >();
 }
 
 void
@@ -230,7 +230,7 @@ void FilterReporter::parse_my_tag(
 
 // Creator
 protocols::rosetta_scripts::PosePropertyReporterOP RMSDReporterCreator::create_reporter() const {
-	return protocols::rosetta_scripts::PosePropertyReporterOP( new RMSDReporter() );
+	return utility::pointer::make_shared< RMSDReporter >();
 }
 
 void

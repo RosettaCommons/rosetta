@@ -182,7 +182,7 @@ FlexbbRotamerSets::set_frames(
 	for ( core::Size ii = 1; ii <= nmoltenres_; ++ii ) {
 
 		if ( conformations_for_flexible_segments_[ ii ].size() == 0 ) { //means this was not part of any fragment
-			conformations_for_flexible_segments_[ ii ].push_back( core::conformation::ResidueCOP( core::conformation::ResidueOP( new core::conformation::Residue( pose.residue( moltenres_2_resid_[ ii ] ) ) ) ) );
+			conformations_for_flexible_segments_[ ii ].push_back( utility::pointer::make_shared< core::conformation::Residue >( pose.residue( moltenres_2_resid_[ ii ] ) ) );
 		}
 	} //loop over moltenres
 
@@ -490,7 +490,7 @@ FlexbbRotamerSets::build_residue_vector_from_fragment(
 
 	for ( core::Size rescount = frame->start(); rescount <= frame->end(); ++rescount ) {
 
-		fragment_res.push_back( core::conformation::ResidueOP( new core::conformation::Residue ( pose.residue( rescount ) ) ) );
+		fragment_res.push_back( utility::pointer::make_shared< core::conformation::Residue > ( pose.residue( rescount ) ) );
 	}
 } //build residue vector from fragment
 

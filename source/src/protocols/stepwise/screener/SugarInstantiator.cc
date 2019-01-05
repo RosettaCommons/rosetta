@@ -64,8 +64,8 @@ void
 SugarInstantiator::add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover ){
 	if ( instantiate_sugar_ ) {
 		using protocols::moves::MoverOP;
-		update_mover->add_mover( MoverOP( new SugarInstantiateMover( moving_res_) ) );
-		restore_mover->add_mover( MoverOP( new SugarVirtualizeMover( moving_res_) ) );
+		update_mover->add_mover( utility::pointer::make_shared< SugarInstantiateMover >( moving_res_) );
+		restore_mover->add_mover( utility::pointer::make_shared< SugarVirtualizeMover >( moving_res_) );
 	} else {
 		update_mover->add_mover( nullptr );
 		restore_mover->add_mover( nullptr );

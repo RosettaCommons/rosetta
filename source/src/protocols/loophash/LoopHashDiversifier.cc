@@ -85,7 +85,7 @@ static basic::Tracer TR( "protocols.loophash.LoopHashDiversifier" );
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP LoopHashDiversifierCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new LoopHashDiversifier );
+// XRW TEMP  return utility::pointer::make_shared< LoopHashDiversifier >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -124,7 +124,7 @@ LoopHashDiversifier::LoopHashDiversifier() :
 	loop_sizes_.clear();
 	loop_sizes_.push_back(window_size_);
 
-	library_ = LoopHashLibraryOP( new LoopHashLibrary( loop_sizes() , 1 , 0 ) );
+	library_ = utility::pointer::make_shared< LoopHashLibrary >( loop_sizes() , 1 , 0 );
 	library_->load_mergeddb();
 	library_->mem_foot_print();
 }
@@ -178,7 +178,7 @@ LoopHashDiversifier::LoopHashDiversifier(
 	loop_sizes_.clear();
 	loop_sizes_.push_back(window_size_);
 
-	library_ = LoopHashLibraryOP( new LoopHashLibrary( loop_sizes() , 1 , 0 ) );
+	library_ = utility::pointer::make_shared< LoopHashLibrary >( loop_sizes() , 1 , 0 );
 	library_->load_mergeddb();
 	library_->mem_foot_print();
 }
@@ -401,7 +401,7 @@ LoopHashDiversifier::parse_my_tag(
 	add_loop_size( window_size_ ) ;
 
 	// path to DB -- if not specified then command-line flag is used
-	library_ = LoopHashLibraryOP( new LoopHashLibrary( loop_sizes() , 1 , 0 ) );
+	library_ = utility::pointer::make_shared< LoopHashLibrary >( loop_sizes() , 1 , 0 );
 	if ( tag->hasOption( "db_path" ) ) {
 		std::string db_path = tag->getOption< string >( "db_path" );
 		library_->set_db_path( db_path );
@@ -557,7 +557,7 @@ std::string LoopHashDiversifierCreator::keyname() const {
 
 protocols::moves::MoverOP
 LoopHashDiversifierCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LoopHashDiversifier );
+	return utility::pointer::make_shared< LoopHashDiversifier >();
 }
 
 void LoopHashDiversifierCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

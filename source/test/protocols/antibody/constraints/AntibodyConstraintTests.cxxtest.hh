@@ -63,10 +63,10 @@ public:
 	void setUp(){
 		core_init();
 		core::import_pose::pose_from_file(pose, "protocols/antibody/1bln_AB_aho.pdb", core::import_pose::PDB_file); //AHO renumbered pose
-		ab_info = AntibodyInfoOP( new AntibodyInfo(pose, AHO_Scheme, North) );
-		paratope_mover = ParatopeSiteConstraintMoverOP( new constraints::ParatopeSiteConstraintMover(ab_info) );
-		para_epitope_mover = ParatopeEpitopeSiteConstraintMoverOP( new constraints::ParatopeEpitopeSiteConstraintMover(ab_info) );
-		cdr_dihedral_cst_mover = CDRDihedralConstraintMoverOP( new CDRDihedralConstraintMover(ab_info));
+		ab_info = utility::pointer::make_shared< AntibodyInfo >(pose, AHO_Scheme, North);
+		paratope_mover = utility::pointer::make_shared< constraints::ParatopeSiteConstraintMover >(ab_info);
+		para_epitope_mover = utility::pointer::make_shared< constraints::ParatopeEpitopeSiteConstraintMover >(ab_info);
+		cdr_dihedral_cst_mover = utility::pointer::make_shared< CDRDihedralConstraintMover >(ab_info);
 
 	}
 

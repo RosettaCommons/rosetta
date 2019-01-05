@@ -35,7 +35,7 @@ public:
 	bool apply( core::pose::Pose const & pose ) const override;
 	protocols::filters::FilterOP clone() const override;
 	protocols::filters::FilterOP fresh_instance() const override {
-		return protocols::filters::FilterOP( new ClashWithTargetFilter() );
+		return utility::pointer::make_shared< ClashWithTargetFilter >();
 	}
 	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
 	core::Real report_sm( core::pose::Pose const & pose ) const override;

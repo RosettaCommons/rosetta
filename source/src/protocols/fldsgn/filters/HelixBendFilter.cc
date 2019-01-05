@@ -114,14 +114,14 @@ HelixBendFilter::parse_my_tag(
 protocols::filters::FilterOP
 HelixBendFilter::clone() const
 {
-	return protocols::filters::FilterOP( new HelixBendFilter( *this ) );
+	return utility::pointer::make_shared< HelixBendFilter >( *this );
 }
 
 
 protocols::filters::FilterOP
 HelixBendFilter::fresh_instance() const
 {
-	return protocols::filters::FilterOP( new HelixBendFilter );
+	return utility::pointer::make_shared< HelixBendFilter >();
 }
 
 bool
@@ -261,7 +261,7 @@ void HelixBendFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xs
 protocols::filters::FilterOP
 HelixBendFilterCreator::create_filter() const
 {
-	return protocols::filters::FilterOP( new HelixBendFilter );
+	return utility::pointer::make_shared< HelixBendFilter >();
 }
 
 std::string

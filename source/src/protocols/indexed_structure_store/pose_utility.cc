@@ -325,7 +325,7 @@ initial_pose_for_residues(
 		work_pose->append_pose_by_jump(chain_pose, 1);
 	}
 
-	work_pose->pdb_info(core::pose::PDBInfoOP(new core::pose::PDBInfo(*work_pose)));
+	work_pose->pdb_info(utility::pointer::make_shared< core::pose::PDBInfo >(*work_pose));
 
 	for ( size_t i = 0; i < work_pose->total_residue(); ++i ) {
 		work_pose->pdb_info()->number(i + 1, residue_entries[i].residue_id);

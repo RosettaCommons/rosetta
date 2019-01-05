@@ -48,7 +48,7 @@ methods::EnergyMethodOP
 DistanceChainbreakEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new DistanceChainbreakEnergy );
+	return utility::pointer::make_shared< DistanceChainbreakEnergy >();
 }
 
 ScoreTypes
@@ -60,7 +60,7 @@ DistanceChainbreakEnergyCreator::score_types_for_method() const {
 
 
 DistanceChainbreakEnergy::DistanceChainbreakEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new DistanceChainbreakEnergyCreator ) )
+	parent( utility::pointer::make_shared< DistanceChainbreakEnergyCreator >() )
 {}
 
 /// called at the end of energy evaluation

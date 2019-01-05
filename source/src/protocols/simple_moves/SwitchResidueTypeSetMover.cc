@@ -43,7 +43,7 @@ namespace simple_moves {
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP SwitchResidueTypeSetMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new SwitchResidueTypeSetMover );
+// XRW TEMP  return utility::pointer::make_shared< SwitchResidueTypeSetMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -92,13 +92,13 @@ SwitchResidueTypeSetMover::show(std::ostream & output) const
 moves::MoverOP
 SwitchResidueTypeSetMover::clone() const
 {
-	return moves::MoverOP( new SwitchResidueTypeSetMover( *this ) );
+	return utility::pointer::make_shared< SwitchResidueTypeSetMover >( *this );
 }
 
 moves::MoverOP
 SwitchResidueTypeSetMover::fresh_instance() const
 {
-	return moves::MoverOP( new SwitchResidueTypeSetMover );
+	return utility::pointer::make_shared< SwitchResidueTypeSetMover >();
 }
 
 void
@@ -136,7 +136,7 @@ std::string SwitchResidueTypeSetMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 SwitchResidueTypeSetMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SwitchResidueTypeSetMover );
+	return utility::pointer::make_shared< SwitchResidueTypeSetMover >();
 }
 
 void SwitchResidueTypeSetMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

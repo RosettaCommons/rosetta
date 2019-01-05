@@ -162,9 +162,9 @@ RTMin::rtmin(
 
 	SCMinMinimizerMapOP scminmap;
 	if ( cartesian_ ) {
-		scminmap = SCMinMinimizerMapOP( new CartSCMinMinimizerMap() );
+		scminmap = utility::pointer::make_shared< CartSCMinMinimizerMap >();
 	} else {
-		scminmap = SCMinMinimizerMapOP( new AtomTreeSCMinMinimizerMap() );
+		scminmap = utility::pointer::make_shared< AtomTreeSCMinMinimizerMap >();
 	}
 	scminmap->set_nonideal( nonideal_ );
 	scminmap->set_total_residue( pose.size() );
@@ -196,7 +196,7 @@ RTMin::rtmin(
 			if ( ! bgres[ jjres ] && ! input_task->being_packed( jjres ) ) {
 				inactive_neighbors.push_back( jjres );
 				residue_is_inactive_neighbor[ jjres ] = true;
-				non_const_bgres[ jjres ] = ResidueOP( new Residue( pose.residue( jjres ) ) );
+				non_const_bgres[ jjres ] = utility::pointer::make_shared< Residue >( pose.residue( jjres ) );
 				bgres[ jjres ] = non_const_bgres[ jjres ];
 				scminmap->set_natoms_for_residue( jjres, bgres[ jjres ]->natoms() );
 				/// Do setup_for_minimizing for background nodes once and leave them alone for
@@ -240,7 +240,7 @@ RTMin::rtmin(
 				if ( ! bgres[ jjres ] && ! input_task->being_packed( jjres ) ) {
 					inactive_neighbors.push_back( jjres );
 					residue_is_inactive_neighbor[ jjres ] = true;
-					non_const_bgres[ jjres ] = ResidueOP( new Residue( pose.residue( jjres ) ) );
+					non_const_bgres[ jjres ] = utility::pointer::make_shared< Residue >( pose.residue( jjres ) );
 					bgres[ jjres ] = non_const_bgres[ jjres ];
 					scminmap->set_natoms_for_residue( jjres, bgres[ jjres ]->natoms() );
 					// Do setup_for_minimizing for background nodes once and leave them alone for
@@ -317,7 +317,7 @@ RTMin::rtmin(
 				Size jjresid = (*eiter)->get_other_ind( iiresid );
 				if ( ! bgres[ jjresid ] ) {
 					// we have an active residue which we have not yet visited in the rtmin traversal
-					non_const_bgres[ jjresid ] = ResidueOP( new Residue( pose.residue( jjresid ) ) );
+					non_const_bgres[ jjresid ] = utility::pointer::make_shared< Residue >( pose.residue( jjresid ) );
 					bgres[ jjresid ] = non_const_bgres[ jjresid ];
 					scfxn.setup_for_minimizing_for_node(
 						* mingraph.get_minimization_node( jjresid ),
@@ -476,7 +476,7 @@ RTMin::rtmin(
 
 		}
 		ii_atc->residue_atomtree_collection( iiresid ).update_from_momento( momento );
-		non_const_bgres[ iiresid ] = ResidueOP( new Residue( ii_atc->residue_atomtree_collection( iiresid ).active_residue() ) );
+		non_const_bgres[ iiresid ] = utility::pointer::make_shared< Residue >( ii_atc->residue_atomtree_collection( iiresid ).active_residue() );
 		bgres[ iiresid ] = non_const_bgres[ iiresid ];
 
 		/// NOW, we must call setup_for_scoring_for_residue for this residue we've just replaced, and

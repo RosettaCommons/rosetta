@@ -1088,7 +1088,7 @@ read_topology_file(
 				tr.Error << "Found existing rotamer specification " << rsd->rotamer_library_specification()->keyname() << " when attempting to set PDB_ROTAMERS parameters." << std::endl;
 				utility_exit_with_message("Cannot have multiple rotamer specifications in params file, " + filename );
 			}
-			rsd->rotamer_library_specification( core::chemical::rotamers::PDBRotamerLibrarySpecificationOP( new core::chemical::rotamers::PDBRotamerLibrarySpecification( rot_file() ) ) );
+			rsd->rotamer_library_specification( utility::pointer::make_shared< core::chemical::rotamers::PDBRotamerLibrarySpecification >( rot_file() ) );
 
 			tr.Debug << "Setting up conformer library for " << rsd->name() << std::endl;
 		} else if ( tag == "NCAA_ROTLIB_PATH" || tag == "NCAA_SEMIROTAMERIC" || tag == "NCAA_ROTLIB_NUM_ROTAMER_BINS" ||
@@ -1103,9 +1103,9 @@ read_topology_file(
 					tr.Error << " when attempting to set " << tag << " parameter for NCAA rotamer libraries." << std::endl;
 					utility_exit_with_message("Cannot have multiple rotamer specifications in params file, " + filename );
 				}
-				ncaa_libspec = NCAARotamerLibrarySpecificationOP( new NCAARotamerLibrarySpecification( *old_libspec ) );
+				ncaa_libspec = utility::pointer::make_shared< NCAARotamerLibrarySpecification >( *old_libspec );
 			} else {
-				ncaa_libspec = NCAARotamerLibrarySpecificationOP( new core::chemical::rotamers::NCAARotamerLibrarySpecification );
+				ncaa_libspec = utility::pointer::make_shared< core::chemical::rotamers::NCAARotamerLibrarySpecification >();
 			}
 
 			if ( tag == "NCAA_ROTLIB_PATH" ) {

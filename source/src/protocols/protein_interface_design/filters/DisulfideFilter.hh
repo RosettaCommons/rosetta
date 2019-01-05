@@ -75,10 +75,10 @@ public:
 	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
 	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	protocols::filters::FilterOP clone() const override {
-		return protocols::filters::FilterOP( new DisulfideFilter( *this ) );
+		return utility::pointer::make_shared< DisulfideFilter >( *this );
 	}
 	protocols::filters::FilterOP fresh_instance() const override {
-		return protocols::filters::FilterOP( new DisulfideFilter() );
+		return utility::pointer::make_shared< DisulfideFilter >();
 	}
 
 	virtual ~DisulfideFilter();

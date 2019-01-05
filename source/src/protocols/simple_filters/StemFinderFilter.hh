@@ -34,10 +34,10 @@ public:
 	StemFinder();
 	~StemFinder() override;
 	filters::FilterOP clone() const override {
-		return filters::FilterOP( new StemFinder( *this ) );
+		return utility::pointer::make_shared< StemFinder >( *this );
 	}
 	filters::FilterOP fresh_instance() const override{
-		return filters::FilterOP( new StemFinder() );
+		return utility::pointer::make_shared< StemFinder >();
 	}
 
 	bool apply( core::pose::Pose const & pose ) const override;

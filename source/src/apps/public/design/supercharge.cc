@@ -408,15 +408,15 @@ public:
 		using namespace core::pack::task::operation;
 		using namespace basic::options;
 		TaskFactoryOP task_factory( new TaskFactory() );
-		task_factory->push_back(TaskOperationCOP( new operation::InitializeFromCommandline() )); //ex1, ex1, minimize sidechains, use_input_sc
+		task_factory->push_back(utility::pointer::make_shared< operation::InitializeFromCommandline >()); //ex1, ex1, minimize sidechains, use_input_sc
 
 		// first, read in user resfile.  Intended to only contain NATAA or NATRO to specify additional residues to not mutation  MUST have ALLAA as default!!
 		if ( option[ OptionKeys::packing::resfile ].user() ) {
-			task_factory->push_back( TaskOperationCOP( new operation::ReadResfile ) );
+			task_factory->push_back( utility::pointer::make_shared< operation::ReadResfile >() );
 			TR << "Reading resfile from user input... make sure ALLAA is set as the default in your resfile!!" << std::endl;
 		}
 
-		task_factory->push_back( TaskOperationCOP( new operation::ReadResfile( out_path_ + '/' + "resfile_output_Asc" ) ) ); // reads the resfile previously created, adds to the user resfile (if provided)
+		task_factory->push_back( utility::pointer::make_shared< operation::ReadResfile >( out_path_ + '/' + "resfile_output_Asc" ) ); // reads the resfile previously created, adds to the user resfile (if provided)
 
 		using namespace core::scoring;
 		ScoreFunctionOP scorefxn = get_score_function();
@@ -475,7 +475,7 @@ public:
 		using namespace core::pack::task::operation;
 		using namespace basic::options;
 		TaskFactoryOP task_factory( new TaskFactory() );
-		task_factory->push_back(TaskOperationCOP( new operation::InitializeFromCommandline() )); //use_input_sc
+		task_factory->push_back(utility::pointer::make_shared< operation::InitializeFromCommandline >()); //use_input_sc
 
 		using namespace core::scoring;
 		ScoreFunctionOP scorefxn = get_score_function();
@@ -547,7 +547,7 @@ public:
 						basic::Warning() << "Calculator " << calcname.str() << " already exists, this is hopefully correct for your purposes" << std::endl;
 					} else {
 						using pose::metrics::PoseMetricCalculatorOP;
-						pose::metrics::CalculatorFactory::Instance().register_calculator( calcname.str(), PoseMetricCalculatorOP( new protocols::pose_metric_calculators::NeighborsByDistanceCalculator(res) ) );
+						pose::metrics::CalculatorFactory::Instance().register_calculator( calcname.str(), utility::pointer::make_shared< protocols::pose_metric_calculators::NeighborsByDistanceCalculator >(res) );
 					}
 					calcname.str("");
 					++biggest_calc;
@@ -770,15 +770,15 @@ public:
 		using namespace core::pack::task::operation;
 		using namespace basic::options;
 		TaskFactoryOP task_factory( new TaskFactory() );
-		task_factory->push_back(TaskOperationCOP( new operation::InitializeFromCommandline() )); //ex1, ex1, minimize sidechains, use_input_sc
+		task_factory->push_back(utility::pointer::make_shared< operation::InitializeFromCommandline >()); //ex1, ex1, minimize sidechains, use_input_sc
 
 		// first, read in user resfile.  Intended to only contain NATAA or NATRO to specify additional residues to not mutation  MUST have ALLAA as default!!
 		if ( option[ OptionKeys::packing::resfile ].user() ) {
-			task_factory->push_back( TaskOperationCOP( new operation::ReadResfile ) );
+			task_factory->push_back( utility::pointer::make_shared< operation::ReadResfile >() );
 			TR << "Reading resfile from user input... make sure ALLAA is set as the default in your resfile!!" << std::endl;
 		}
 
-		task_factory->push_back( TaskOperationCOP( new operation::ReadResfile( out_path_ + '/' + "resfile_output_Rsc" ) ) ); // reads the resfile previously created, adds to the user resfile (if provided)
+		task_factory->push_back( utility::pointer::make_shared< operation::ReadResfile >( out_path_ + '/' + "resfile_output_Rsc" ) ); // reads the resfile previously created, adds to the user resfile (if provided)
 
 		using namespace core::scoring;
 		ScoreFunctionOP scorefxn = get_score_function();
@@ -1046,7 +1046,7 @@ public:
 		using namespace core::pack::task::operation;
 		using namespace basic::options;
 		TaskFactoryOP task_factory( new TaskFactory() );
-		task_factory->push_back(TaskOperationCOP( new operation::InitializeFromCommandline() )); //need for use_input_sc
+		task_factory->push_back(utility::pointer::make_shared< operation::InitializeFromCommandline >()); //need for use_input_sc
 		core::pack::task::operation::RestrictToRepackingOP restrict_to_repack( new core::pack::task::operation::RestrictToRepacking() );
 		task_factory->push_back( restrict_to_repack );
 
@@ -1400,7 +1400,7 @@ int main( int argc, char* argv[] )
 
 		devel::init(argc, argv);
 
-		protocols::jd2::JobDistributor::get_instance()->go(protocols::moves::MoverOP( new supercharge ));
+		protocols::jd2::JobDistributor::get_instance()->go(utility::pointer::make_shared< supercharge >());
 
 		TR << "************************d**o**n**e**************************************" << std::endl;
 

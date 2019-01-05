@@ -147,7 +147,7 @@ LoopMover_Perturb_QuickCCD::~LoopMover_Perturb_QuickCCD()= default;
 
 //clone
 protocols::moves::MoverOP LoopMover_Perturb_QuickCCD::clone() const {
-	return protocols::moves::MoverOP( new LoopMover_Perturb_QuickCCD( *this ) );
+	return utility::pointer::make_shared< LoopMover_Perturb_QuickCCD >( *this );
 }
 
 LoopResult LoopMover_Perturb_QuickCCD::model_loop(
@@ -252,9 +252,9 @@ LoopResult LoopMover_Perturb_QuickCCD::model_loop(
 	bool const use_nblist( true ), deriv_check( false ); // true ); // false );
 	MinimizerOptions options( "linmin", dummy_tol, use_nblist, deriv_check);
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
-		mzr = AtomTreeMinimizerOP( new core::optimization::symmetry::SymAtomTreeMinimizer );
+		mzr = utility::pointer::make_shared< core::optimization::symmetry::SymAtomTreeMinimizer >();
 	} else {
-		mzr = AtomTreeMinimizerOP( new core::optimization::AtomTreeMinimizer );
+		mzr = utility::pointer::make_shared< core::optimization::AtomTreeMinimizer >();
 	}
 
 
@@ -379,7 +379,7 @@ basic::Tracer & LoopMover_Perturb_QuickCCD::tr() const
 // XRW TEMP LoopMover_Perturb_QuickCCDCreator::~LoopMover_Perturb_QuickCCDCreator() {}
 
 // XRW TEMP moves::MoverOP LoopMover_Perturb_QuickCCDCreator::create_mover() const {
-// XRW TEMP  return moves::MoverOP( new LoopMover_Perturb_QuickCCD() );
+// XRW TEMP  return utility::pointer::make_shared< LoopMover_Perturb_QuickCCD >();
 // XRW TEMP }
 
 // XRW TEMP std::string LoopMover_Perturb_QuickCCDCreator::keyname() const {
@@ -408,7 +408,7 @@ std::string LoopMover_Perturb_QuickCCDCreator::keyname() const {
 
 protocols::moves::MoverOP
 LoopMover_Perturb_QuickCCDCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LoopMover_Perturb_QuickCCD );
+	return utility::pointer::make_shared< LoopMover_Perturb_QuickCCD >();
 }
 
 void LoopMover_Perturb_QuickCCDCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -430,7 +430,7 @@ void fast_ccd_close_loops(
 )
 {
 	loop_closure::ccd::CCDLoopClosureMover ccd_loop_closure_mover(
-		loop, kinematics::MoveMapCOP( kinematics::MoveMapOP( new kinematics::MoveMap( mm ) ) ) );
+		loop, utility::pointer::make_shared< kinematics::MoveMap >( mm ) );
 	ccd_loop_closure_mover.check_rama_scores( false );
 	ccd_loop_closure_mover.apply( pose );
 

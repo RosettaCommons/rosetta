@@ -68,7 +68,7 @@ namespace minimization_packing {
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP BoltzmannRotamerMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new BoltzmannRotamerMover );
+// XRW TEMP  return utility::pointer::make_shared< BoltzmannRotamerMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -133,14 +133,14 @@ BoltzmannRotamerMover::~BoltzmannRotamerMover()= default;
 BoltzmannRotamerMover::MoverOP
 BoltzmannRotamerMover::clone() const
 {
-	return BoltzmannRotamerMover::MoverOP( new protocols::minimization_packing::BoltzmannRotamerMover( *this ) );
+	return utility::pointer::make_shared< protocols::minimization_packing::BoltzmannRotamerMover >( *this );
 }
 
 // create this type of object
 BoltzmannRotamerMover::MoverOP
 BoltzmannRotamerMover::fresh_instance() const
 {
-	return BoltzmannRotamerMover::MoverOP( new protocols::minimization_packing::BoltzmannRotamerMover() );
+	return utility::pointer::make_shared< protocols::minimization_packing::BoltzmannRotamerMover >();
 }
 
 void
@@ -459,7 +459,7 @@ std::string BoltzmannRotamerMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 BoltzmannRotamerMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new BoltzmannRotamerMover );
+	return utility::pointer::make_shared< BoltzmannRotamerMover >();
 }
 
 void BoltzmannRotamerMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

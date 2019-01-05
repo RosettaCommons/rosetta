@@ -76,7 +76,7 @@ static basic::Tracer TR( "protocols.loophash.IterativeLoophashLoopInserter" );
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP IterativeLoophashLoopInserterCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new IterativeLoophashLoopInserter );
+// XRW TEMP  return utility::pointer::make_shared< IterativeLoophashLoopInserter >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -94,11 +94,11 @@ IterativeLoophashLoopInserter::IterativeLoophashLoopInserter():
 
 protocols::moves::MoverOP
 IterativeLoophashLoopInserter::clone() const {
-	return( protocols::moves::MoverOP( new IterativeLoophashLoopInserter( *this ) ) );
+	return( utility::pointer::make_shared< IterativeLoophashLoopInserter >( *this ) );
 }
 protocols::moves::MoverOP
 IterativeLoophashLoopInserter::fresh_instance() const {
-	return protocols::moves::MoverOP( new IterativeLoophashLoopInserter );
+	return utility::pointer::make_shared< IterativeLoophashLoopInserter >();
 }
 
 // XRW TEMP std::string
@@ -250,7 +250,7 @@ std::string IterativeLoophashLoopInserterCreator::keyname() const {
 
 protocols::moves::MoverOP
 IterativeLoophashLoopInserterCreator::create_mover() const {
-	return protocols::moves::MoverOP( new IterativeLoophashLoopInserter );
+	return utility::pointer::make_shared< IterativeLoophashLoopInserter >();
 }
 
 void IterativeLoophashLoopInserterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

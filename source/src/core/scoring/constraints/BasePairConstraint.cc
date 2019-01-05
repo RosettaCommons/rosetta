@@ -72,7 +72,7 @@ BasePairConstraint::BasePairConstraint( Size const res1, Size const res2,
 
 ConstraintOP
 BasePairConstraint::clone() const {
-	auto bpc = BasePairConstraintOP( new BasePairConstraint( res1_, res2_, edge1_, edge2_, orientation_ ) );
+	auto bpc = utility::pointer::make_shared< BasePairConstraint >( res1_, res2_, edge1_, edge2_, orientation_ );
 	core::scoring::constraints::ConstraintCOPs constraints;
 	for ( auto const & cst : constraints_ ) {
 		constraints.push_back( cst->clone() );
@@ -99,7 +99,7 @@ ConstraintOP BasePairConstraint::remapped_clone( pose::Pose const& /*src*/, pose
 	Size const res2 = (*smap)[ res2_ ];
 
 	if ( res1 == 0 || res2 == 0 ) return nullptr;
-	return ConstraintOP( new BasePairConstraint( res1, res2, edge1_, edge2_, orientation_ ) );
+	return utility::pointer::make_shared< BasePairConstraint >( res1, res2, edge1_, edge2_, orientation_ );
 }
 
 ConstraintOP
@@ -108,7 +108,7 @@ BasePairConstraint::remap_resid( core::id::SequenceMapping const &seqmap ) const
 	Size const res1 = seqmap[ res1_ ];
 	Size const res2 = seqmap[ res2_ ];
 	if ( seqmap[ res1_ ] != 0 && seqmap[ res2_ ] != 0 ) {
-		return ConstraintOP( new BasePairConstraint( res1, res2, edge1_, edge2_, orientation_ ) );
+		return utility::pointer::make_shared< BasePairConstraint >( res1, res2, edge1_, edge2_, orientation_ );
 	} else {
 		return nullptr;
 	}

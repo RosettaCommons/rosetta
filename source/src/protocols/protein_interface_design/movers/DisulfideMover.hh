@@ -61,10 +61,10 @@ public:
 
 	virtual void apply( core::pose::Pose & pose ) override;
 	virtual protocols::moves::MoverOP clone() const override {
-		return (protocols::moves::MoverOP( new DisulfideMover( *this ) ) );
+		return (utility::pointer::make_shared< DisulfideMover >( *this ) );
 	}
 	virtual protocols::moves::MoverOP fresh_instance() const override {
-		return protocols::moves::MoverOP( new DisulfideMover );
+		return utility::pointer::make_shared< DisulfideMover >();
 	}
 
 	void parse_my_tag( utility::tag::TagCOP tag,

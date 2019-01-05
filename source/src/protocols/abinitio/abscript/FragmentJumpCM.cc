@@ -88,7 +88,7 @@ using namespace protocols::environment;
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP FragmentJumpCMCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new FragmentJumpCM );
+// XRW TEMP  return utility::pointer::make_shared< FragmentJumpCM >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -285,9 +285,9 @@ void FragmentJumpCM::set_topology( std::string const& ss_info_file,
 	core::scoring::dssp::read_pairing_list( pairing_file, pairlist );
 
 	if ( bRandomSheets ) {
-		jump_def_ = jumping::BaseJumpSetupOP( new jumping::RandomSheetBuilder( ss_def, pairlist, sheets ) );
+		jump_def_ = utility::pointer::make_shared< jumping::RandomSheetBuilder >( ss_def, pairlist, sheets );
 	} else {
-		jump_def_ = jumping::BaseJumpSetupOP( new jumping::SheetBuilder( ss_def, pairlist, sheets ) );
+		jump_def_ = utility::pointer::make_shared< jumping::SheetBuilder >( ss_def, pairlist, sheets );
 	}
 
 	// Fail faster with better information on bad topology files.
@@ -325,7 +325,7 @@ void FragmentJumpCM::set_topology( std::string const& topol_filename ){
 	ss_def->extend( 10000 ); //Set number of residues to unreasonably large.
 	core::scoring::dssp::PairingList helix_pairings; // helix pairings not used, required by BaseJumpSetup.
 
-	jump_def_ = jumping::BaseJumpSetupOP( new abinitio::TemplateJumpSetup( nullptr, ss_def, ps, helix_pairings ) );
+	jump_def_ = utility::pointer::make_shared< abinitio::TemplateJumpSetup >( nullptr, ss_def, ps, helix_pairings );
 
 	// Fail faster with better information on bad topology files.
 	jumping::JumpSample jump_sample;
@@ -347,7 +347,7 @@ void FragmentJumpCM::setup_fragments( jumping::JumpSample const& jump_sample ) {
 	if ( jump_def_ ) {
 		jump_frags = jump_def_->generate_jump_frags( jump_sample, *dummy_mm );
 	} else {
-		jump_frags = core::fragment::FragSetOP( new core::fragment::OrderedFragSet );
+		jump_frags = utility::pointer::make_shared< core::fragment::OrderedFragSet >();
 		core::fragment::FrameList jump_frames;
 		jump_sample.generate_jump_frames( jump_frames, *dummy_mm );
 		jump_frags->add( jump_frames );
@@ -388,11 +388,11 @@ jumping::JumpSample FragmentJumpCM::calculate_jump_sample() const {
 }
 
 moves::MoverOP FragmentJumpCM::fresh_instance() const {
-	return moves::MoverOP( new FragmentJumpCM() );
+	return utility::pointer::make_shared< FragmentJumpCM >();
 }
 
 moves::MoverOP FragmentJumpCM::clone() const{
-	return moves::MoverOP( new FragmentJumpCM( *this ) );
+	return utility::pointer::make_shared< FragmentJumpCM >( *this );
 }
 
 std::string FragmentJumpCM::get_name() const {
@@ -447,7 +447,7 @@ std::string FragmentJumpCMCreator::keyname() const {
 
 protocols::moves::MoverOP
 FragmentJumpCMCreator::create_mover() const {
-	return protocols::moves::MoverOP( new FragmentJumpCM );
+	return utility::pointer::make_shared< FragmentJumpCM >();
 }
 
 void FragmentJumpCMCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

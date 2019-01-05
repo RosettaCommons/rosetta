@@ -177,13 +177,13 @@ ReturnSidechainMover::show(std::ostream & output) const
 protocols::moves::MoverOP
 ReturnSidechainMover::clone() const
 {
-	return protocols::moves::MoverOP( new ReturnSidechainMover(*this) );
+	return utility::pointer::make_shared< ReturnSidechainMover >(*this);
 }
 
 protocols::moves::MoverOP
 ReturnSidechainMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new ReturnSidechainMover() );
+	return utility::pointer::make_shared< ReturnSidechainMover >();
 }
 
 core::Size ReturnSidechainMover::get_start_res() const {

@@ -61,7 +61,7 @@ namespace relax {
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP AtomCoordinateCstMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new AtomCoordinateCstMover() );
+// XRW TEMP  return utility::pointer::make_shared< AtomCoordinateCstMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -92,10 +92,10 @@ AtomCoordinateCstMover::AtomCoordinateCstMover( AtomCoordinateCstMover const  & 
 AtomCoordinateCstMover::~AtomCoordinateCstMover() = default;
 
 protocols::moves::MoverOP AtomCoordinateCstMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new AtomCoordinateCstMover );
+	return utility::pointer::make_shared< AtomCoordinateCstMover >();
 }
 protocols::moves::MoverOP AtomCoordinateCstMover::clone() const {
-	return protocols::moves::MoverOP( new AtomCoordinateCstMover( *this ) );
+	return utility::pointer::make_shared< AtomCoordinateCstMover >( *this );
 }
 
 std::string
@@ -261,9 +261,9 @@ AtomCoordinateCstMover::generate_constraints( core::pose::Pose const & pose )
 			}
 			core::scoring::func::FuncOP function;
 			if ( bounded_ ) {
-				function = core::scoring::func::FuncOP( new BoundFunc( 0, cst_width_, cst_sd_, "xyz" ) );
+				function = utility::pointer::make_shared< BoundFunc >( 0, cst_width_, cst_sd_, "xyz" );
 			} else {
-				function = core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc( 0.0, cst_sd_ ) );
+				function = utility::pointer::make_shared< core::scoring::func::HarmonicFunc >( 0.0, cst_sd_ );
 			}
 
 			// Rely on shortcutting evaluation to speed things up - get to else clause as soon as possible.
@@ -294,10 +294,10 @@ AtomCoordinateCstMover::generate_constraints( core::pose::Pose const & pose )
 					utility_exit_with_message("Logic error in AtomCoordinateConstraints");
 				}
 				core::scoring::constraints::AmbiguousConstraintOP amb_constr( new core::scoring::constraints::AmbiguousConstraint );
-				amb_constr->add_individual_constraint( ConstraintCOP( ConstraintOP( new CoordinateConstraint(  core::id::AtomID(ii,i),
-					core::id::AtomID(1,pose.fold_tree().root()), targ_j_rsd.xyz( atom1 ), function ) ) ) );
-				amb_constr->add_individual_constraint( ConstraintCOP( ConstraintOP( new CoordinateConstraint(  core::id::AtomID(ii,i),
-					core::id::AtomID(1,pose.fold_tree().root()), targ_j_rsd.xyz( atom2 ), function ) ) ) );
+				amb_constr->add_individual_constraint( ConstraintCOP( utility::pointer::make_shared< CoordinateConstraint >(  core::id::AtomID(ii,i),
+					core::id::AtomID(1,pose.fold_tree().root()), targ_j_rsd.xyz( atom1 ), function ) ) );
+				amb_constr->add_individual_constraint( ConstraintCOP( utility::pointer::make_shared< CoordinateConstraint >(  core::id::AtomID(ii,i),
+					core::id::AtomID(1,pose.fold_tree().root()), targ_j_rsd.xyz( atom2 ), function ) ) );
 				csts.push_back( amb_constr );
 			} else {
 				TR.Debug << "Adding constraint " << core::id::AtomID(ii, i) << std::endl;
@@ -373,7 +373,7 @@ std::string AtomCoordinateCstMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 AtomCoordinateCstMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new AtomCoordinateCstMover );
+	return utility::pointer::make_shared< AtomCoordinateCstMover >();
 }
 
 void AtomCoordinateCstMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

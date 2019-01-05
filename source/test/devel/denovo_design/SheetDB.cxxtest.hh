@@ -68,7 +68,7 @@ public:
 		basic::options::option[basic::options::OptionKeys::run::preserve_header].value(true);
 
 		// initialize common filters/movers/scorefxns
-		scorefxn = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() );
+		scorefxn = utility::pointer::make_shared< core::scoring::ScoreFunction >();
 	}
 
 	// Shared finalization goes here.
@@ -87,7 +87,7 @@ public:
 		using namespace protocols::denovo_design::components;
 
 		// create a pose and add it
-		core::pose::PoseOP testpose = core::pose::PoseOP( new core::pose::Pose() );
+		core::pose::PoseOP testpose = utility::pointer::make_shared< core::pose::Pose >();
 		core::io::pdb::build_pose_from_pdb_as_is( *testpose, "devel/denovo_design/helix1.pdb" );
 		TS_ASSERT_EQUALS( testpose->total_residue(), 14 );
 
@@ -109,7 +109,7 @@ public:
 		TS_ASSERT( poses[1]->is_centroid() );
 
 		// now add a second
-		core::pose::PoseOP test2 = core::pose::PoseOP( new core::pose::Pose() );
+		core::pose::PoseOP test2 = utility::pointer::make_shared< core::pose::Pose >();
 		core::io::pdb::build_pose_from_pdb_as_is( *test2, "devel/denovo_design/helix15.pdb" );
 		TS_ASSERT_EQUALS( test2->total_residue(), 17 );
 		db.add_sheet( test2, nstrands, orientation_str, lengths_str, false );
@@ -144,11 +144,11 @@ public:
 			TR << "Converting pose " << i << std::endl;
 			protocols::moves::DsspMover dssp;
 			dssp.apply( *poses[i] );
-			SS_Info2_OP ssinfo = SS_Info2_OP( new SS_Info2( *poses[i] ) );
+			SS_Info2_OP ssinfo = utility::pointer::make_shared< SS_Info2 >( *poses[i] );
 			StrandPairingSet spairs = calc_strand_pairing_set( *poses[i], ssinfo );
 			TR << spairs << std::endl;
 			std::set< core::Size > strands_added;
-			core::pose::PoseOP newpose = core::pose::PoseOP( new core::pose::Pose() );
+			core::pose::PoseOP newpose = utility::pointer::make_shared< core::pose::Pose >();
 			for ( StrandPairings::const_iterator pair=spairs.begin(); pair != spairs.end(); ++pair ) {
 				if ( strands_added.find( (*pair)->s1() ) == strands_added.end() ) {
 					add_to_pose( newpose, *poses[i], (*pair)->begin1(), (*pair)->end1() );
@@ -174,7 +174,7 @@ public:
 		SheetDB db;
 		db.set_idealize( false );
 		protocols::fldsgn::topology::SS_Info2_OP ss_info =
-			protocols::fldsgn::topology::SS_Info2_OP( new protocols::fldsgn::topology::SS_Info2(rsmn) );
+			utility::pointer::make_shared< protocols::fldsgn::topology::SS_Info2 >(rsmn);
 		protocols::fldsgn::topology::StrandPairingSet spairset = protocols::fldsgn::topology::calc_strand_pairing_set( rsmn, ss_info );
 		utility::vector1< core::pose::PoseOP > sheets = extract_sheets_from_pose( rsmn, spairset.strand_pairings(), *ss_info, false );
 
@@ -198,7 +198,7 @@ public:
 		SheetDB db;
 		db.set_idealize( false );
 		protocols::fldsgn::topology::SS_Info2_OP ss_info =
-			protocols::fldsgn::topology::SS_Info2_OP( new protocols::fldsgn::topology::SS_Info2(pose) );
+			utility::pointer::make_shared< protocols::fldsgn::topology::SS_Info2 >(pose);
 		protocols::fldsgn::topology::StrandPairingSet spairset = protocols::fldsgn::topology::calc_strand_pairing_set( pose, ss_info );
 		utility::vector1< core::pose::PoseOP > sheets = extract_sheets_from_pose( pose, spairset.strand_pairings(), *ss_info, false );
 		TS_ASSERT_EQUALS( sheets.size(), 8 );
@@ -253,7 +253,7 @@ public:
 			dssp.apply( *sh );
 			// determine pairings
 			protocols::fldsgn::topology::SS_Info2_OP ss_info =
-				protocols::fldsgn::topology::SS_Info2_OP( new protocols::fldsgn::topology::SS_Info2(*sh) );
+				utility::pointer::make_shared< protocols::fldsgn::topology::SS_Info2 >(*sh);
 			protocols::fldsgn::topology::StrandPairingSet spairset = protocols::fldsgn::topology::calc_strand_pairing_set( *sh, ss_info );
 			for ( core::Size i=1; i<lengths.size(); ++i ) {
 				protocols::fldsgn::topology::StrandPairingOP pair = spairset.strand_pairing( i, i+1 );

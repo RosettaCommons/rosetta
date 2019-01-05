@@ -45,7 +45,7 @@ scoring::methods::EnergyMethodOP
 SurfaceEnergyCreator::create_energy_method(
 	scoring::methods::EnergyMethodOptions const &
 ) const {
-	return scoring::methods::EnergyMethodOP( new SurfaceEnergy );
+	return utility::pointer::make_shared< SurfaceEnergy >();
 }
 
 scoring::ScoreTypes
@@ -57,13 +57,13 @@ SurfaceEnergyCreator::score_types_for_method() const {
 
 
 SurfaceEnergy::SurfaceEnergy() :
-	parent( scoring::methods::EnergyMethodCreatorOP( new SurfaceEnergyCreator ) )
+	parent( utility::pointer::make_shared< SurfaceEnergyCreator >() )
 {}
 
 
 scoring::methods::EnergyMethodOP
 SurfaceEnergy::clone() const {
-	return scoring::methods::EnergyMethodOP( new SurfaceEnergy() );
+	return utility::pointer::make_shared< SurfaceEnergy >();
 }
 
 

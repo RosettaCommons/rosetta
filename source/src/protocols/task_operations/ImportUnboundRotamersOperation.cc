@@ -45,7 +45,7 @@ using namespace utility::tag;
 TaskOperationOP
 ImportUnboundRotamersOperationCreator::create_task_operation() const
 {
-	return TaskOperationOP( new ImportUnboundRotamersOperation );
+	return utility::pointer::make_shared< ImportUnboundRotamersOperation >();
 }
 
 void ImportUnboundRotamersOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -69,7 +69,7 @@ ImportUnboundRotamersOperation::~ImportUnboundRotamersOperation()= default;
 /// @brief clone
 TaskOperationOP
 ImportUnboundRotamersOperation::clone() const {
-	return TaskOperationOP( new ImportUnboundRotamersOperation( *this ) );
+	return utility::pointer::make_shared< ImportUnboundRotamersOperation >( *this );
 }
 
 //mjo commenting out 'pose' because it is unused and causes a warning

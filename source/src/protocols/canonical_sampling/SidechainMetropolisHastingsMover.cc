@@ -77,7 +77,7 @@ SidechainMetropolisHastingsMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 SidechainMetropolisHastingsMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SidechainMetropolisHastingsMover );
+	return utility::pointer::make_shared< SidechainMetropolisHastingsMover >();
 }
 
 std::string
@@ -121,7 +121,7 @@ SidechainMetropolisHastingsMover::apply( core::pose::Pose & pose )
 
 	scoring::ScoreFunction const& sfxn = monte_carlo()->score_function();
 	pack::interaction_graph::SimpleInteractionGraphOP ig;
-	ig = pack::interaction_graph::SimpleInteractionGraphOP( new pack::interaction_graph::SimpleInteractionGraph() ); //commented out debug
+	ig = utility::pointer::make_shared< pack::interaction_graph::SimpleInteractionGraph >(); //commented out debug
 	ig->set_scorefunction( sfxn );
 
 	utility::vector1< Real > new_chi;
@@ -144,7 +144,7 @@ SidechainMetropolisHastingsMover::apply( core::pose::Pose & pose )
 	// chi_vectors.resize( pose.size() );
 
 	for ( core::Size i = 1; i <= pose.size(); i++ ) {
-		current[ i ] = core::conformation::ResidueOP( new core::conformation::Residue( pose.residue( i ) ) );
+		current[ i ] = utility::pointer::make_shared< core::conformation::Residue >( pose.residue( i ) );
 	}
 
 
@@ -224,13 +224,13 @@ SidechainMetropolisHastingsMover::get_name() const
 protocols::moves::MoverOP
 SidechainMetropolisHastingsMover::clone() const
 {
-	return protocols::moves::MoverOP( new protocols::canonical_sampling::SidechainMetropolisHastingsMover(*this) );
+	return utility::pointer::make_shared< protocols::canonical_sampling::SidechainMetropolisHastingsMover >(*this);
 }
 
 protocols::moves::MoverOP
 SidechainMetropolisHastingsMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new SidechainMetropolisHastingsMover );
+	return utility::pointer::make_shared< SidechainMetropolisHastingsMover >();
 }
 
 void

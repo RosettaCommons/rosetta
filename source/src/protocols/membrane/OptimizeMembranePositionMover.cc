@@ -105,13 +105,13 @@ OptimizeMembranePositionMover::~OptimizeMembranePositionMover() = default;
 /// @brief Create a Clone of this mover
 protocols::moves::MoverOP
 OptimizeMembranePositionMover::clone() const {
-	return ( protocols::moves::MoverOP( new OptimizeMembranePositionMover( *this ) ) );
+	return ( utility::pointer::make_shared< OptimizeMembranePositionMover >( *this ) );
 }
 
 /// @brief Create a Fresh Instance of this Mover
 protocols::moves::MoverOP
 OptimizeMembranePositionMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new OptimizeMembranePositionMover() );
+	return utility::pointer::make_shared< OptimizeMembranePositionMover >();
 }
 
 /// @brief Parse Rosetta Scripts Options for this Mover
@@ -168,7 +168,7 @@ OptimizeMembranePositionMover::provide_xml_schema( utility::tag::XMLSchemaDefini
 /// @brief Create a new copy of this mover
 protocols::moves::MoverOP
 OptimizeMembranePositionMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new OptimizeMembranePositionMover() );
+	return utility::pointer::make_shared< OptimizeMembranePositionMover >();
 }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)

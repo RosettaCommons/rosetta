@@ -50,7 +50,7 @@ public:
 
 	/// @brief Clone this object
 	protocols::moves::MoverOP clone() const override {
-		return protocols::moves::MoverOP( new MultipleDomainMover(*this) );
+		return utility::pointer::make_shared< MultipleDomainMover >(*this);
 	}
 
 	/// @brief Apply the loop-rebuild protocol to the input pose

@@ -40,8 +40,8 @@ public:
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & ) override;
 
-	protocols::moves::MoverOP clone() const override { return protocols::moves::MoverOP( new ShoveResidueMover( *this ) ); }
-	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new ShoveResidueMover ); }
+	protocols::moves::MoverOP clone() const override { return utility::pointer::make_shared< ShoveResidueMover >( *this ); }
+	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< ShoveResidueMover >(); }
 
 	std::string
 	get_name() const override;

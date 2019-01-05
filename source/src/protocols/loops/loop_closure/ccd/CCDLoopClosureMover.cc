@@ -184,13 +184,13 @@ CCDLoopClosureMover::show( std::ostream & output ) const
 protocols::moves::MoverOP
 CCDLoopClosureMover::clone() const
 {
-	return protocols::moves::MoverOP( new CCDLoopClosureMover( *this ) );
+	return utility::pointer::make_shared< CCDLoopClosureMover >( *this );
 }
 
 protocols::moves::MoverOP
 CCDLoopClosureMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new CCDLoopClosureMover() );
+	return utility::pointer::make_shared< CCDLoopClosureMover >();
 }
 
 void
@@ -439,7 +439,7 @@ void
 CCDLoopClosureMover::copy_data( CCDLoopClosureMover & to, CCDLoopClosureMover const & from ) const
 {
 	to.loop_ = from.loop_;
-	to.movemap_ = core::kinematics::MoveMapCOP( core::kinematics::MoveMapOP( new kinematics::MoveMap( * from.movemap_ ) ) );  // deep copy pointer
+	to.movemap_ = utility::pointer::make_shared< kinematics::MoveMap >( * from.movemap_ );  // deep copy pointer
 
 	to.max_per_move_torsion_delta_ = from.max_per_move_torsion_delta_;
 	to.max_total_torsion_delta_ = from.max_total_torsion_delta_;
@@ -765,10 +765,10 @@ RamaCheckBaseOP CCDLoopClosureMover::rama() const
 	if ( rama_.get() == nullptr ) {
 		if ( ! use_rama_2B() ) {
 			// one-body Ramachandran score
-			rama_ = RamaCheckBaseOP( new RamaCheck1B );
+			rama_ = utility::pointer::make_shared< RamaCheck1B >();
 		} else {
 			// two-body Ramachandran score
-			rama_ = RamaCheckBaseOP( new RamaCheck2B );
+			rama_ = utility::pointer::make_shared< RamaCheck2B >();
 		}
 	}
 
@@ -810,7 +810,7 @@ operator<< ( std::ostream & os, CCDLoopClosureMover const & mover )
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP CCDLoopClosureMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new CCDLoopClosureMover );
+// XRW TEMP  return utility::pointer::make_shared< CCDLoopClosureMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -851,7 +851,7 @@ std::string CCDLoopClosureMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 CCDLoopClosureMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new CCDLoopClosureMover );
+	return utility::pointer::make_shared< CCDLoopClosureMover >();
 }
 
 void CCDLoopClosureMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

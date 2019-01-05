@@ -62,10 +62,10 @@ public:
 	{}
 
 	virtual void setUp() {
-		pose_ = core::pose::PoseOP( new core::pose::Pose );
+		pose_ = utility::pointer::make_shared< core::pose::Pose >();
 		// Use smaller pdb to test relax
 		core::import_pose::pose_from_file(*pose_, "test_in2.pdb", core::import_pose::PDB_file);
-		scorefxn_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction );
+		scorefxn_ = utility::pointer::make_shared< core::scoring::ScoreFunction >();
 		switch ( benchtype_ ) {
 		case fast_relax_perfbench_score12 :
 			setup_for_score12();
@@ -125,7 +125,7 @@ public:
 		scorefxn_->set_weight( omega, 0.5 );
 		scorefxn_->set_weight( rama, 0.2 );
 
-		fr_ = protocols::relax::FastRelaxOP( new FastRelax( scorefxn_ ) );
+		fr_ = utility::pointer::make_shared< FastRelax >( scorefxn_ );
 	}
 
 	void setup_for_sc12sp2() {
@@ -163,7 +163,7 @@ public:
 		scorefxn_->set_weight( omega, 0.5 );
 		scorefxn_->set_weight( rama, 0.2 );
 
-		fr_ = protocols::relax::FastRelaxOP( new FastRelax( scorefxn_ ) );
+		fr_ = utility::pointer::make_shared< FastRelax >( scorefxn_ );
 	}
 
 	void setup_for_sc12he() {
@@ -192,7 +192,7 @@ public:
 		scorefxn_->set_weight( rama, 0.2 );
 		scorefxn_->set_weight( fa_elec, 0.7 );
 
-		fr_ = protocols::relax::FastRelaxOP( new FastRelax( scorefxn_ ) );
+		fr_ = utility::pointer::make_shared< FastRelax >( scorefxn_ );
 
 	}
 
@@ -222,7 +222,7 @@ public:
 		scorefxn_->set_weight( dslf_ca_dih, 5 );
 		scorefxn_->set_weight( unfolded, -0.904283 );
 
-		fr_ = protocols::relax::FastRelaxOP( new FastRelax( scorefxn_ ) );
+		fr_ = utility::pointer::make_shared< FastRelax >( scorefxn_ );
 	}
 
 	void setup_for_sp2hecart() {
@@ -262,7 +262,7 @@ public:
 		scorefxn_->set_weight( fa_elec, 0.7 );
 		scorefxn_->set_weight( cart_bonded, 0.5 );
 
-		fr_ = protocols::relax::FastRelaxOP( new FastRelax( scorefxn_ ) );
+		fr_ = utility::pointer::make_shared< FastRelax >( scorefxn_ );
 		fr_->cartesian( true );
 
 	}

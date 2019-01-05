@@ -215,7 +215,7 @@ NPDHBondSet::NPDHBondSet(
 basic::datacache::CacheableDataOP
 NPDHBondSet::clone() const
 {
-	return basic::datacache::CacheableDataOP( new NPDHBondSet( *this ) );
+	return utility::pointer::make_shared< NPDHBondSet >( *this );
 }
 
 void

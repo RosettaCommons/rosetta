@@ -60,11 +60,11 @@ public:
 		// Only want to read in copy of the library once not for each test so init here in ctor
 
 		// init the mmatomtypeset
-		mmatomtypeset = MMAtomTypeSetOP( new MMAtomTypeSet );
+		mmatomtypeset = utility::pointer::make_shared< MMAtomTypeSet >();
 		mmatomtypeset->read_file( "core/chemical/mm_atom_properties.txt" );
 
 		// init the mmtorsionlibrary
-		mmtorsionlibrary = MMTorsionLibraryOP( new MMTorsionLibrary( "core/scoring/mm/mm_torsion_params.txt" , mmatomtypeset ) );
+		mmtorsionlibrary = utility::pointer::make_shared< MMTorsionLibrary >( "core/scoring/mm/mm_torsion_params.txt" , mmatomtypeset );
 	}
 
 	virtual ~MMTorsionLibraryTests() {}

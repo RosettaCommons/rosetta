@@ -89,7 +89,7 @@ void InterfaceBuilderLoader::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 
 
 parser::DataLoaderOP
-InterfaceBuilderLoaderCreator::create_loader() const { return parser::DataLoaderOP( new InterfaceBuilderLoader ); }
+InterfaceBuilderLoaderCreator::create_loader() const { return utility::pointer::make_shared< InterfaceBuilderLoader >(); }
 
 std::string
 InterfaceBuilderLoaderCreator::keyname() const { return InterfaceBuilderLoader::loader_name(); }
@@ -155,7 +155,7 @@ void MoveMapBuilderLoader::provide_xml_schema( utility::tag::XMLSchemaDefinition
 }
 
 parser::DataLoaderOP
-MoveMapBuilderLoaderCreator::create_loader() const { return parser::DataLoaderOP( new MoveMapBuilderLoader ); }
+MoveMapBuilderLoaderCreator::create_loader() const { return utility::pointer::make_shared< MoveMapBuilderLoader >(); }
 
 std::string
 MoveMapBuilderLoaderCreator::keyname() const { return MoveMapBuilderLoader::loader_name(); }
@@ -222,7 +222,7 @@ void LigandAreaLoader::provide_xml_schema( utility::tag::XMLSchemaDefinition & x
 
 
 parser::DataLoaderOP
-LigandAreaLoaderCreator::create_loader() const { return parser::DataLoaderOP( new LigandAreaLoader ); }
+LigandAreaLoaderCreator::create_loader() const { return utility::pointer::make_shared< LigandAreaLoader >(); }
 
 std::string
 LigandAreaLoaderCreator::keyname() const { return LigandAreaLoader::loader_name(); }

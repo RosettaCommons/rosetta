@@ -56,7 +56,7 @@ EnzdesJobInputter::EnzdesJobInputter()
 	TR << "Instantiate EnzdesJobInputter" << std::endl;
 	if ( basic::options::option[ basic::options::OptionKeys::enzdes::enz_loops_file ].user() ) {
 
-		enz_loops_file_ = protocols::toolbox::match_enzdes_util::EnzdesLoopsFileOP( new protocols::toolbox::match_enzdes_util::EnzdesLoopsFile() );
+		enz_loops_file_ = utility::pointer::make_shared< protocols::toolbox::match_enzdes_util::EnzdesLoopsFile >();
 		if ( !enz_loops_file_->read_loops_file( basic::options::option[ basic::options::OptionKeys::enzdes::enz_loops_file ] ) ) {
 			utility_exit_with_message("Reading enzdes loops file failed");
 		}
@@ -93,7 +93,7 @@ EnzdesJobInputterCreator::keyname() const
 
 protocols::jd2::JobInputterOP
 EnzdesJobInputterCreator::create_JobInputter() const {
-	return protocols::jd2::JobInputterOP( new EnzdesJobInputter );
+	return utility::pointer::make_shared< EnzdesJobInputter >();
 }
 
 }//enzdes

@@ -45,7 +45,7 @@ using std::string;
 RRProtocolOP
 RRProtocolReferenceStructureCreator::create_protocol(
 ) const {
-	return RRProtocolOP( new RRProtocolReferenceStructure );
+	return utility::pointer::make_shared< RRProtocolReferenceStructure >();
 }
 
 string
@@ -61,7 +61,7 @@ void RRProtocolReferenceStructureCreator::append_attributes( utility::tag::Attri
 RRProtocolOP
 RRProtocolRTMinCreator::create_protocol(
 ) const {
-	return RRProtocolOP( new RRProtocolRTMin );
+	return utility::pointer::make_shared< RRProtocolRTMin >();
 }
 
 string
@@ -75,7 +75,7 @@ void RRProtocolRTMinCreator::append_attributes( utility::tag::AttributeList & ) 
 RRProtocolOP
 RRProtocolRotamerTrialsCreator::create_protocol(
 ) const {
-	return RRProtocolOP( new RRProtocolRotamerTrials );
+	return utility::pointer::make_shared< RRProtocolRotamerTrials >();
 }
 
 string
@@ -89,7 +89,7 @@ void RRProtocolRotamerTrialsCreator::append_attributes( utility::tag::AttributeL
 RRProtocolOP
 RRProtocolMinPackCreator::create_protocol(
 ) const {
-	return RRProtocolOP( new RRProtocolMinPack );
+	return utility::pointer::make_shared< RRProtocolMinPack >();
 }
 
 string
@@ -103,7 +103,7 @@ void RRProtocolMinPackCreator::append_attributes( utility::tag::AttributeList & 
 RRProtocolOP
 RRProtocolPackRotamersCreator::create_protocol(
 ) const {
-	return RRProtocolOP( new RRProtocolPackRotamers );
+	return utility::pointer::make_shared< RRProtocolPackRotamers >();
 }
 
 string
@@ -117,7 +117,7 @@ void RRProtocolPackRotamersCreator::append_attributes( utility::tag::AttributeLi
 RRProtocolOP
 RRProtocolRelaxCreator::create_protocol(
 ) const {
-	return RRProtocolOP( new RRProtocolRelax );
+	return utility::pointer::make_shared< RRProtocolRelax >();
 }
 
 string
@@ -136,7 +136,7 @@ RRProtocolMoverCreator::type_name() const {
 RRProtocolOP
 RRProtocolMoverCreator::create_protocol(
 ) const {
-	return RRProtocolOP( new RRProtocolMover );
+	return utility::pointer::make_shared< RRProtocolMover >();
 }
 
 void RRProtocolMoverCreator::append_attributes( utility::tag::AttributeList & ) const {}
@@ -146,7 +146,7 @@ void RRProtocolMoverCreator::append_attributes( utility::tag::AttributeList & ) 
 RRComparerOP
 RRComparerAutomorphicRMSDCreator::create_comparer(
 ) const {
-	return RRComparerOP( new RRComparerAutomorphicRMSD );
+	return utility::pointer::make_shared< RRComparerAutomorphicRMSD >();
 }
 
 string
@@ -160,7 +160,7 @@ void RRComparerAutomorphicRMSDCreator::append_attributes( utility::tag::Attribut
 RRComparerOP
 RRComparerRotBinsCreator::create_comparer(
 ) const {
-	return RRComparerOP( new RRComparerRotBins );
+	return utility::pointer::make_shared< RRComparerRotBins >();
 }
 
 string
@@ -174,7 +174,7 @@ void RRComparerRotBinsCreator::append_attributes( utility::tag::AttributeList & 
 RRComparerOP
 RRComparerChiDiffCreator::create_comparer(
 ) const {
-	return RRComparerOP( new RRComparerChiDiff );
+	return utility::pointer::make_shared< RRComparerChiDiff >();
 }
 
 string
@@ -191,7 +191,7 @@ void RRComparerChiDiffCreator::append_attributes( utility::tag::AttributeList & 
 RRComparerOP
 RRComparerElecDensDiffCreator::create_comparer(
 ) const {
-	return RRComparerOP( new RRComparerElecDensDiff );
+	return utility::pointer::make_shared< RRComparerElecDensDiff >();
 }
 
 string
@@ -205,7 +205,7 @@ void RRComparerElecDensDiffCreator::append_attributes( utility::tag::AttributeLi
 RRReporterOP
 RRReporterSimpleCreator::create_reporter(
 ) const {
-	return RRReporterOP( new RRReporterSimple );
+	return utility::pointer::make_shared< RRReporterSimple >();
 }
 
 string
@@ -220,7 +220,7 @@ void RRReporterSimpleCreator::append_attributes( utility::tag::AttributeList & )
 RRReporterOP
 RRReporterHumanCreator::create_reporter(
 ) const {
-	return RRReporterOP( new RRReporterHuman );
+	return utility::pointer::make_shared< RRReporterHuman >();
 }
 
 string
@@ -234,7 +234,7 @@ void RRReporterHumanCreator::append_attributes( utility::tag::AttributeList & ) 
 RRReporterOP
 RRReporterSQLiteCreator::create_reporter(
 ) const {
-	return RRReporterOP( new RRReporterSQLite );
+	return utility::pointer::make_shared< RRReporterSQLite >();
 }
 
 string

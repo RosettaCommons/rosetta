@@ -26,7 +26,7 @@ namespace features {
 // XRW TEMP ChargeChargeFeaturesCreator::ChargeChargeFeaturesCreator() {}
 // XRW TEMP ChargeChargeFeaturesCreator::~ChargeChargeFeaturesCreator() = default;
 // XRW TEMP FeaturesReporterOP ChargeChargeFeaturesCreator::create_features_reporter() const {
-// XRW TEMP  return FeaturesReporterOP( new ChargeChargeFeatures );
+// XRW TEMP  return utility::pointer::make_shared< ChargeChargeFeatures >();
 // XRW TEMP }
 
 // XRW TEMP std::string ChargeChargeFeaturesCreator::type_name() const {

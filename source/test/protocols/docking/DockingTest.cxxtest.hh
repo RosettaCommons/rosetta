@@ -184,10 +184,10 @@ public:
 		using namespace protocols::simple_task_operations;
 
 		TaskFactoryOP tf( new TaskFactory );
-		tf->push_back( TaskOperationCOP( new InitializeFromCommandline ) );
-		tf->push_back( TaskOperationCOP( new IncludeCurrent ) );
-		tf->push_back( TaskOperationCOP( new RestrictToRepacking ) );
-		tf->push_back( TaskOperationCOP( new RestrictToInterface( rb_jump ) ) );
+		tf->push_back( utility::pointer::make_shared< InitializeFromCommandline >() );
+		tf->push_back( utility::pointer::make_shared< IncludeCurrent >() );
+		tf->push_back( utility::pointer::make_shared< RestrictToRepacking >() );
+		tf->push_back( utility::pointer::make_shared< RestrictToInterface >( rb_jump ) );
 
 		core::pack::task::PackerTaskOP task = tf->create_task_and_apply_taskoperations( fullatom_pose );
 

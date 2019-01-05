@@ -210,7 +210,7 @@ InterModelMotifScorerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinit
 
 AssemblyScorerOP
 InterModelMotifScorerCreator::create_assembly_scorer() const{
-	return AssemblyScorerOP( new InterModelMotifScorer() );
+	return utility::pointer::make_shared< InterModelMotifScorer >();
 }
 
 std::string

@@ -161,7 +161,7 @@ SelectResiduesByLayer::~SelectResiduesByLayer() = default;
 /// @details Construct a copy of this object and return an owning pointer to the copy.
 SelectResiduesByLayerOP
 SelectResiduesByLayer::clone() const {
-	return SelectResiduesByLayerOP( new SelectResiduesByLayer(*this) );
+	return utility::pointer::make_shared< SelectResiduesByLayer >(*this);
 }
 
 /// @brief accessible surface for evaluating residues are in surface or not

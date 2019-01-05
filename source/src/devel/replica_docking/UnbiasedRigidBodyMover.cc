@@ -58,7 +58,7 @@ UnbiasedRigidBodyPerturbNoCenterMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 UnbiasedRigidBodyPerturbNoCenterMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new UnbiasedRigidBodyPerturbNoCenterMover );
+	return utility::pointer::make_shared< UnbiasedRigidBodyPerturbNoCenterMover >();
 }
 
 std::string
@@ -96,13 +96,13 @@ UnbiasedRigidBodyPerturbNoCenterMover::get_name() const
 protocols::moves::MoverOP
 UnbiasedRigidBodyPerturbNoCenterMover::clone() const
 {
-	return protocols::moves::MoverOP( new UnbiasedRigidBodyPerturbNoCenterMover(*this) );
+	return utility::pointer::make_shared< UnbiasedRigidBodyPerturbNoCenterMover >(*this);
 }
 
 protocols::moves::MoverOP
 UnbiasedRigidBodyPerturbNoCenterMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new UnbiasedRigidBodyPerturbNoCenterMover );
+	return utility::pointer::make_shared< UnbiasedRigidBodyPerturbNoCenterMover >();
 }
 
 void
@@ -116,7 +116,7 @@ UnbiasedRigidBodyPerturbNoCenterMover::parse_my_tag(
 
 	if ( !data.has( "RigidBodyInfo", "docking_setup" ) ) {
 		tr << "RigidBodyInfo not found in basic::datacache::DataMap" << std::endl;
-		rigid_body_info_ = protocols::docking::RigidBodyInfoOP( new protocols::docking::RigidBodyInfo );
+		rigid_body_info_ = utility::pointer::make_shared< protocols::docking::RigidBodyInfo >();
 		data.add( "RigidBodyInfo", "docking_setup", rigid_body_info_ );
 	} else {
 		rigid_body_info_ = data.get_ptr<protocols::docking::RigidBodyInfo>( "RigidBodyInfo", "docking_setup" );

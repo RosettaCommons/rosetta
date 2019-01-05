@@ -49,7 +49,7 @@ using namespace protocols::simple_filters;
 static basic::Tracer TR( "protocols.simple_ddg.InterfaceBindingEnergyDensityFilter" );
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP InterfaceBindingEnergyDensityFilterCreator::create_filter() const { return protocols::filters::FilterOP( new InterfaceBindingEnergyDensityFilter ); }
+// XRW TEMP InterfaceBindingEnergyDensityFilterCreator::create_filter() const { return utility::pointer::make_shared< InterfaceBindingEnergyDensityFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP InterfaceBindingEnergyDensityFilterCreator::keyname() const { return "InterfaceBindingEnergyDensityFilter"; }
@@ -82,12 +82,12 @@ InterfaceBindingEnergyDensityFilter::~InterfaceBindingEnergyDensityFilter()= def
 
 filters::FilterOP
 InterfaceBindingEnergyDensityFilter::clone() const{
-	return filters::FilterOP( new InterfaceBindingEnergyDensityFilter( *this ) );
+	return utility::pointer::make_shared< InterfaceBindingEnergyDensityFilter >( *this );
 }
 
 filters::FilterOP
 InterfaceBindingEnergyDensityFilter::fresh_instance() const{
-	return filters::FilterOP( new InterfaceSasaFilter );
+	return utility::pointer::make_shared< InterfaceSasaFilter >();
 }
 
 void
@@ -201,7 +201,7 @@ std::string InterfaceBindingEnergyDensityFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 InterfaceBindingEnergyDensityFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new InterfaceBindingEnergyDensityFilter );
+	return utility::pointer::make_shared< InterfaceBindingEnergyDensityFilter >();
 }
 
 void InterfaceBindingEnergyDensityFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

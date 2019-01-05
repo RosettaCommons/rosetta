@@ -50,7 +50,7 @@ GridBaseOP RepGridCreator::create_grid(utility::tag::TagCOP tag) const
 
 GridBaseOP RepGridCreator::create_grid() const
 {
-	return GridBaseOP( new RepGrid() );
+	return utility::pointer::make_shared< RepGrid >();
 }
 
 void RepGridCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -68,7 +68,7 @@ RepGrid::RepGrid() : SingleGrid("RepGrid"), radius_(2.25), bb_(1), sc_(0), ligan
 {}
 
 GridBaseOP RepGrid::clone() const {
-	return GridBaseOP( new RepGrid( *this ) );
+	return utility::pointer::make_shared< RepGrid >( *this );
 }
 
 utility::json_spirit::Value RepGrid::serialize() const

@@ -50,8 +50,8 @@ public:
 		protocols::filters::CalculatorFilter cf(" t1 = exp(-E1/kT); t2 = exp(-E2/kT); t1/( t1 + t2 ) " );
 
 		cf.add_constant("kT", 0.6 );
-		cf.add_filter("E1", protocols::filters::FilterOP( new StubFilter( true, -2) ) );
-		cf.add_filter("E2", protocols::filters::FilterOP( new StubFilter( true, -1) ) );
+		cf.add_filter("E1", utility::pointer::make_shared< StubFilter >( true, -2) );
+		cf.add_filter("E2", utility::pointer::make_shared< StubFilter >( true, -1) );
 
 		//default 0 threshold
 		TS_ASSERT( ! cf.apply(*testpose_) );

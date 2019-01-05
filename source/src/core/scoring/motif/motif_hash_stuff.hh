@@ -328,7 +328,7 @@ public:
 	ResPairMotif motif;
 	MotifHit():residue1(0),residue2(0),score1(0),score2(0),rms(9e9),chi_rmsd_(9e9) {}
 	MotifHit(core::pose::PoseCOP _pose1, core::pose::PoseCOP _pose2, int res1, int res2, ResPairMotif const & sm)
-	: pose1_(_pose1),pose2_(_pose2),mpose_(core::pose::PoseOP( new core::pose::Pose )),residue1(res1),residue2(res2),score1(0),score2(0),rms(9e9),chi_rmsd_(9e9),motif(sm) {}
+	: pose1_(_pose1),pose2_(_pose2),mpose_(utility::pointer::make_shared< core::pose::Pose >()),residue1(res1),residue2(res2),score1(0),score2(0),rms(9e9),chi_rmsd_(9e9),motif(sm) {}
 	bool operator< (MotifHit const & other) const;
 	bool operator==(MotifHit const & other) const;
 	core::pose::Pose       & mpose()       { return *mpose_; }

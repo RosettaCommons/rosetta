@@ -49,7 +49,7 @@ static basic::Tracer TR( "protocols.protein_interface_design.movers.SetupHotspot
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP SetupHotspotConstraintsMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new SetupHotspotConstraintsMover );
+// XRW TEMP  return utility::pointer::make_shared< SetupHotspotConstraintsMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -72,12 +72,12 @@ SetupHotspotConstraintsMover::SetupHotspotConstraintsMover() :
 
 protocols::moves::MoverOP
 SetupHotspotConstraintsMover::clone() const{
-	return protocols::moves::MoverOP( new SetupHotspotConstraintsMover( *this ) );
+	return utility::pointer::make_shared< SetupHotspotConstraintsMover >( *this );
 }
 
 protocols::moves::MoverOP
 SetupHotspotConstraintsMover::fresh_instance() const{
-	return protocols::moves::MoverOP( new SetupHotspotConstraintsMover() );
+	return utility::pointer::make_shared< SetupHotspotConstraintsMover >();
 }
 
 SetupHotspotConstraintsMover::SetupHotspotConstraintsMover(
@@ -102,7 +102,7 @@ SetupHotspotConstraintsMover::SetupHotspotConstraintsMover(
 	stub_energy_fxn_(std::move( stub_energy_fxn))
 {
 	//  packer_task_ = packer_task->clone();
-	hotspot_stub_set_ = protocols::hotspot_hashing::HotspotStubSetOP( new protocols::hotspot_hashing::HotspotStubSet( *hotspot_stub_set ) );
+	hotspot_stub_set_ = utility::pointer::make_shared< protocols::hotspot_hashing::HotspotStubSet >( *hotspot_stub_set );
 }
 
 SetupHotspotConstraintsMover::SetupHotspotConstraintsMover( SetupHotspotConstraintsMover const & init ) :
@@ -117,7 +117,7 @@ SetupHotspotConstraintsMover::SetupHotspotConstraintsMover( SetupHotspotConstrai
 	colonyE_( init.colonyE_ ),
 	stub_energy_fxn_( init.stub_energy_fxn_ )
 {
-	hotspot_stub_set_ = protocols::hotspot_hashing::HotspotStubSetOP( new protocols::hotspot_hashing::HotspotStubSet( *init.hotspot_stub_set_ ) );
+	hotspot_stub_set_ = utility::pointer::make_shared< protocols::hotspot_hashing::HotspotStubSet >( *init.hotspot_stub_set_ );
 }
 
 void
@@ -162,7 +162,7 @@ SetupHotspotConstraintsMover::parse_my_tag( TagCOP const tag, basic::datacache::
 
 	colonyE_ = tag->getOption<bool>( "colonyE", false );
 
-	hotspot_stub_set_ = protocols::hotspot_hashing::HotspotStubSetOP( new hotspot_hashing::HotspotStubSet );
+	hotspot_stub_set_ = utility::pointer::make_shared< hotspot_hashing::HotspotStubSet >();
 	if ( tag->hasOption( "stubfile" ) ) {
 		std::string const hotspot_fname( tag->getOption<std::string>( "stubfile", "stubs.pdb" ) );
 		hotspot_stub_set_->read_data( hotspot_fname );
@@ -280,7 +280,7 @@ std::string SetupHotspotConstraintsMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 SetupHotspotConstraintsMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SetupHotspotConstraintsMover );
+	return utility::pointer::make_shared< SetupHotspotConstraintsMover >();
 }
 
 void SetupHotspotConstraintsMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -58,7 +58,7 @@ static basic::Tracer TR( "protocols.ligand_docking.ligand_options.FinalMinimizer
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP FinalMinimizerCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new FinalMinimizer );
+// XRW TEMP  return utility::pointer::make_shared< FinalMinimizer >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -88,11 +88,11 @@ FinalMinimizer::FinalMinimizer(FinalMinimizer const & /*that*/) = default;
 FinalMinimizer::~FinalMinimizer() = default;
 
 protocols::moves::MoverOP FinalMinimizer::clone() const {
-	return protocols::moves::MoverOP( new FinalMinimizer( *this ) );
+	return utility::pointer::make_shared< FinalMinimizer >( *this );
 }
 
 protocols::moves::MoverOP FinalMinimizer::fresh_instance() const {
-	return protocols::moves::MoverOP( new FinalMinimizer );
+	return utility::pointer::make_shared< FinalMinimizer >();
 }
 
 // XRW TEMP std::string FinalMinimizer::get_name() const{
@@ -158,7 +158,7 @@ FinalMinimizer::get_final_min_mover(core::pose::Pose const & pose) const{
 	core::kinematics::MoveMapOP movemap= movemap_builder_->build(pose);
 	movemap->show(TR.Debug, pose.size());
 	TR.Debug << std::endl;
-	return protocols::minimization_packing::MinMoverOP( new protocols::minimization_packing::MinMover(movemap, score_fxn_, min_type, tolerance, use_nb_list) );
+	return utility::pointer::make_shared< protocols::minimization_packing::MinMover >(movemap, score_fxn_, min_type, tolerance, use_nb_list);
 }
 
 std::string FinalMinimizer::get_name() const {
@@ -185,7 +185,7 @@ std::string FinalMinimizerCreator::keyname() const {
 
 protocols::moves::MoverOP
 FinalMinimizerCreator::create_mover() const {
-	return protocols::moves::MoverOP( new FinalMinimizer );
+	return utility::pointer::make_shared< FinalMinimizer >();
 }
 
 void FinalMinimizerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

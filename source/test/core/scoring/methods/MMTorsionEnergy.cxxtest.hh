@@ -74,7 +74,7 @@ public:
 		//core::import_pose::pose_from_file( *pose, "core/scoring/methods/test_in.pdb" , core::import_pose::PDB_file);
 
 		//init mmtorsionenergy
-		mmtorsionenergy = MMTorsionEnergyOP( new MMTorsionEnergy );
+		mmtorsionenergy = utility::pointer::make_shared< MMTorsionEnergy >();
 
 		// init delta
 		delta = 0.0001;

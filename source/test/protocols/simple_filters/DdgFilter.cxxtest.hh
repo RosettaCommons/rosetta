@@ -49,7 +49,7 @@ public:
 		core_init();
 
 		testpose_ = create_2res_1ten_2res_trp_cage_poseop(); //dimer structure
-		scorefxn_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction );
+		scorefxn_ = utility::pointer::make_shared< core::scoring::ScoreFunction >();
 	}
 
 	void tearDown() {

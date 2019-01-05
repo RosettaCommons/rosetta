@@ -76,7 +76,7 @@ public:// virtual constructor
 
 
 	/// @brief make clone
-	PoseMetricCalculatorOP clone() const override { return PoseMetricCalculatorOP( new NcontactsCalculator( *this ) ); }
+	PoseMetricCalculatorOP clone() const override { return utility::pointer::make_shared< NcontactsCalculator >( *this ); }
 
 
 public:// mutator

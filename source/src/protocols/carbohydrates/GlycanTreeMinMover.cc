@@ -133,7 +133,7 @@ GlycanTreeMinMover::set_min_bb( bool min_bb ){
 ///  Will OVERRIDE movemap settings.
 void
 GlycanTreeMinMover::set_minmover( protocols::minimization_packing::MinMoverCOP min_mover){
-	min_mover_ = protocols::minimization_packing::MinMoverOP( new protocols::minimization_packing::MinMover( *min_mover));
+	min_mover_ = utility::pointer::make_shared< protocols::minimization_packing::MinMover >( *min_mover);
 }
 
 
@@ -148,14 +148,14 @@ GlycanTreeMinMover::set_minmover( protocols::minimization_packing::MinMoverCOP m
 moves::MoverOP
 GlycanTreeMinMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new GlycanTreeMinMover );
+	return utility::pointer::make_shared< GlycanTreeMinMover >();
 }
 
 /// @brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
 GlycanTreeMinMover::clone() const
 {
-	return protocols::moves::MoverOP( new GlycanTreeMinMover( *this ) );
+	return utility::pointer::make_shared< GlycanTreeMinMover >( *this );
 }
 
 /// @brief Get the name of the Mover
@@ -177,7 +177,7 @@ GlycanTreeMinMover::class_name()
 protocols::moves::MoverOP
 GlycanTreeMinMoverCreator::create_mover() const
 {
-	return protocols::moves::MoverOP( new GlycanTreeMinMover );
+	return utility::pointer::make_shared< GlycanTreeMinMover >();
 }
 
 std::string
@@ -205,14 +205,14 @@ GlycanTreeMinMover::apply( core::pose::Pose& pose){
 	using namespace core::select::residue_selector;
 	using namespace core::scoring;
 
-	GlycanResidueSelectorOP branch_selector = GlycanResidueSelectorOP( new GlycanResidueSelector() );
-	AndResidueSelectorOP and_selector = AndResidueSelectorOP( new AndResidueSelector());
+	GlycanResidueSelectorOP branch_selector = utility::pointer::make_shared< GlycanResidueSelector >();
+	AndResidueSelectorOP and_selector = utility::pointer::make_shared< AndResidueSelector >();
 
 
 	branch_selector->set_include_root( true ); //Since we wont really have the ASN root, and we want the possibility to sample the whole glycan.
 
 	if ( ! selector_ ) {
-		selector_ = GlycanResidueSelectorOP( new GlycanResidueSelector());
+		selector_ = utility::pointer::make_shared< GlycanResidueSelector >();
 	}
 
 	utility::vector1< core::Size > mm_residues = selection_positions( selector_->apply(pose));
@@ -253,7 +253,7 @@ GlycanTreeMinMover::apply( core::pose::Pose& pose){
 		//Make Symmetric or Non-symmetric versions of the MinMover.
 		ScoreFunctionCOP scorefxn = core::scoring::get_score_function();
 
-		min_mover_ = MinMoverOP( new MinMover( mm->clone(), scorefxn, "dfpmin_armijo_nonmonotone", 0.01, true /* use_nblist*/ ) );
+		min_mover_ = utility::pointer::make_shared< MinMover >( mm->clone(), scorefxn, "dfpmin_armijo_nonmonotone", 0.01, true /* use_nblist*/ );
 	} else {
 
 		min_mover_->set_movemap( mm );

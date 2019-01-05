@@ -58,7 +58,7 @@ namespace protocols {
 namespace kinematic_closure {
 
 // XRW TEMP protocols::moves::MoverOP KicMoverCreator::create_mover() const { // {{{1
-// XRW TEMP  return protocols::moves::MoverOP( new KicMover );
+// XRW TEMP  return utility::pointer::make_shared< KicMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string KicMoverCreator::keyname() const { // {{{1
@@ -69,13 +69,13 @@ namespace kinematic_closure {
 KicMover::KicMover() { // {{{1
 	using perturbers::PerturberOP;
 
-	perturbers_ = perturbers::PerturberSetOP( new perturbers::PerturberSet );
-	perturbers_->add(PerturberOP( new perturbers::Rama2bPerturber ));
-	perturbers_->add(PerturberOP( new perturbers::OmegaPerturber ));
+	perturbers_ = utility::pointer::make_shared< perturbers::PerturberSet >();
+	perturbers_->add(utility::pointer::make_shared< perturbers::Rama2bPerturber >());
+	perturbers_->add(utility::pointer::make_shared< perturbers::OmegaPerturber >());
 	perturbers_->mark_as_default();
 
-	pivot_picker_ = pivot_pickers::PivotPickerOP( new pivot_pickers::StandardPivots );
-	solution_picker_ = solution_pickers::SolutionPickerOP( new solution_pickers::FilteredSolutions );
+	pivot_picker_ = utility::pointer::make_shared< pivot_pickers::StandardPivots >();
+	solution_picker_ = utility::pointer::make_shared< solution_pickers::FilteredSolutions >();
 }
 
 KicMover::~KicMover() = default; // {{{1
@@ -165,7 +165,7 @@ std::string KicMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 KicMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new KicMover );
+	return utility::pointer::make_shared< KicMover >();
 }
 
 void KicMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

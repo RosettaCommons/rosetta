@@ -99,7 +99,7 @@ CentroidRelax::~CentroidRelax()= default;
 
 protocols::moves::MoverOP
 CentroidRelax::clone() const {
-	return protocols::moves::MoverOP( new CentroidRelax(*this) );
+	return utility::pointer::make_shared< CentroidRelax >(*this);
 }
 
 string
@@ -283,7 +283,7 @@ CentroidRelax::apply(Pose& pose){
 
 		fa_scorefxn_->show(TR, pose);
 
-		recover_sc = ReturnSidechainMoverOP( new ReturnSidechainMover(pose) );
+		recover_sc = utility::pointer::make_shared< ReturnSidechainMover >(pose);
 
 		SwitchResidueTypeSetMoverOP to_cen( new SwitchResidueTypeSetMover("centroid") );
 
@@ -293,13 +293,13 @@ CentroidRelax::apply(Pose& pose){
 
 		TR << "Centroid Score::"<<std::endl;
 		//cen_scorefxn_->show(TR, pose);
-		cen_mc = MonteCarloOP( new MonteCarlo(pose, *cen_scorefxn_, 1.0) );
+		cen_mc = utility::pointer::make_shared< MonteCarlo >(pose, *cen_scorefxn_, 1.0);
 
 	} else {
 
 		passed_centroid = true;
 		cen_scorefxn_->show(TR, pose);
-		cen_mc = MonteCarloOP( new MonteCarlo(pose, *cen_scorefxn_, 1.0) );
+		cen_mc = utility::pointer::make_shared< MonteCarlo >(pose, *cen_scorefxn_, 1.0);
 
 	}
 
@@ -308,7 +308,7 @@ CentroidRelax::apply(Pose& pose){
 
 	//Initialize MinMover
 	MinMoverOP minmover;
-	minmover = MinMoverOP( new MinMover( movemap_, cen_scorefxn_, min_type(), def_parameters.min_params[1], true ) );
+	minmover = utility::pointer::make_shared< MinMover >( movemap_, cen_scorefxn_, min_type(), def_parameters.min_params[1], true );
 	if ( cartesian() ) {
 		minmover->cartesian( true );
 		minmover->min_type("lbfgs_armijo_nonmonotone");

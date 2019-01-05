@@ -138,7 +138,7 @@ std::string ResidueTypesFeaturesCreator::type_name() const {
 
 protocols::features::FeaturesReporterOP
 ResidueTypesFeaturesCreator::create_features_reporter() const {
-	return protocols::features::FeaturesReporterOP( new ResidueTypesFeatures );
+	return utility::pointer::make_shared< ResidueTypesFeatures >();
 }
 
 void ResidueTypesFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

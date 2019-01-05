@@ -232,9 +232,9 @@ public:
 			true, 2000) );
 
 		rr_features->add_features_reporter(
-			FeaturesReporterOP( new protocols::features::ResidueFeatures() ));
+			utility::pointer::make_shared< protocols::features::ResidueFeatures >());
 		rr_features->add_features_reporter(
-			FeaturesReporterOP( new protocols::features::HBondFeatures(scfxn) ));
+			utility::pointer::make_shared< protocols::features::HBondFeatures >(scfxn));
 
 		std::string results_db_fname(
 			"RRReporterSQLite__test_RRReporterSQLite_features_results.db3");

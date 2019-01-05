@@ -58,7 +58,7 @@ using namespace core::conformation::carbohydrates;
 // Standard methods ///////////////////////////////////////////////////////////
 // Default constructor
 SugarBackboneEnergy::SugarBackboneEnergy() :
-	ContextIndependentOneBodyEnergy( EnergyMethodCreatorOP( new SugarBackboneEnergyCreator ) ),
+	ContextIndependentOneBodyEnergy( utility::pointer::make_shared< SugarBackboneEnergyCreator >() ),
 	E_cef_( ScoringManager::get_instance()->get_CHIEnergyFunction() ),
 	E_opf_( ScoringManager::get_instance()->get_OmegaPreferencesFunction() )
 {}
@@ -68,7 +68,7 @@ SugarBackboneEnergy::SugarBackboneEnergy() :
 EnergyMethodOP
 SugarBackboneEnergy::clone() const
 {
-	return EnergyMethodOP( new SugarBackboneEnergy );
+	return utility::pointer::make_shared< SugarBackboneEnergy >();
 }
 
 
@@ -313,7 +313,7 @@ SugarBackboneEnergy::eval_residue_dof_derivative(
 EnergyMethodOP
 SugarBackboneEnergyCreator::create_energy_method( EnergyMethodOptions const & ) const
 {
-	return EnergyMethodOP( new SugarBackboneEnergy );
+	return utility::pointer::make_shared< SugarBackboneEnergy >();
 }
 
 // Return the set of ScoreTypes for which this EnergyMethod is responsible.

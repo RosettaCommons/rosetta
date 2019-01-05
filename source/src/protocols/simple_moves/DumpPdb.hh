@@ -39,9 +39,9 @@ public:
 	~DumpPdb() override;
 	void apply( core::pose::Pose & pose ) override;
 	protocols::moves::MoverOP clone() const override {
-		return( protocols::moves::MoverOP( new DumpPdb( *this ) ) );
+		return( utility::pointer::make_shared< DumpPdb >( *this ) );
 	}
-	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new DumpPdb ); }
+	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< DumpPdb >(); }
 	void set_scorefxn( core::scoring::ScoreFunctionOP scorefxn);
 	void tag_time(bool setting) { addtime_ = setting; }
 	bool tag_time() const { return addtime_; }

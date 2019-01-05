@@ -52,7 +52,7 @@ public:
 	~CountViolFunc() {};
 
 	FuncOP
-	clone() const { return FuncOP( new CountViolFunc( *this ) ); }
+	clone() const { return utility::pointer::make_shared< CountViolFunc >( *this ); }
 
 	virtual bool operator == ( Func const & other ) const;
 	virtual bool same_type_as_me( Func const & other ) const;

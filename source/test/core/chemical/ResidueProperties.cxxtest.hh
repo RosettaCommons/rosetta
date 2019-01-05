@@ -51,10 +51,10 @@ public:  // Standard methods //////////////////////////////////////////////////
 		ElementSetCOP element_types = manager->element_set( "default" );
 		MMAtomTypeSetCOP mm_atom_types = manager->mm_atom_type_set( FA_STANDARD );
 		orbitals::OrbitalTypeSetCOP orbital_types = manager->orbital_type_set( FA_STANDARD );
-		residue_type_ = ResidueTypeOP( new ResidueType( atom_types, element_types, mm_atom_types, orbital_types ) );
+		residue_type_ = utility::pointer::make_shared< ResidueType >( atom_types, element_types, mm_atom_types, orbital_types );
 		residue_type_->name( "test_residue" );
 
-		test_properties_ = core::chemical::ResiduePropertiesOP( new ResidueProperties( residue_type_.get() ) );
+		test_properties_ = utility::pointer::make_shared< ResidueProperties >( residue_type_.get() );
 	}
 
 	// Destruction

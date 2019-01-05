@@ -78,7 +78,7 @@ namespace loop_modeling {
 namespace utilities {
 
 // XRW TEMP moves::MoverOP PrepareForFullatomCreator::create_mover() const { // {{{1
-// XRW TEMP  return moves::MoverOP( new PrepareForFullatom );
+// XRW TEMP  return utility::pointer::make_shared< PrepareForFullatom >();
 // XRW TEMP }
 
 // XRW TEMP string PrepareForFullatomCreator::keyname() const { // {{{1
@@ -135,7 +135,7 @@ bool PrepareForFullatom::do_apply(Pose & pose) { // {{{1
 	PackRotamersMoverOP packer;
 	ScoreFunctionCOP fa_score_function = get_score_function();
 
-	packer = PackRotamersMoverOP( new PackRotamersMover(fa_score_function, task) );
+	packer = utility::pointer::make_shared< PackRotamersMover >(fa_score_function, task);
 
 	packer->apply(pose);
 
@@ -188,7 +188,7 @@ std::string PrepareForFullatomCreator::keyname() const {
 
 protocols::moves::MoverOP
 PrepareForFullatomCreator::create_mover() const {
-	return protocols::moves::MoverOP( new PrepareForFullatom );
+	return utility::pointer::make_shared< PrepareForFullatom >();
 }
 
 void PrepareForFullatomCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

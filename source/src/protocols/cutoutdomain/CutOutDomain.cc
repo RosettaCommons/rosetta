@@ -171,7 +171,7 @@ std::string CutOutDomainCreator::keyname() const {
 
 protocols::moves::MoverOP
 CutOutDomainCreator::create_mover() const {
-	return protocols::moves::MoverOP( new CutOutDomain );
+	return utility::pointer::make_shared< CutOutDomain >();
 }
 
 void CutOutDomainCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -95,7 +95,7 @@ StepWiseMinimizer::StepWiseMinimizer( utility::vector1< pose::PoseOP > const & p
 	working_fixed_res_( working_parameters->working_fixed_res() ),
 	working_calc_rms_res_( working_parameters->working_calc_rms_res() ), // only for output -- may deprecate.
 	allow_virtual_o2prime_hydrogens_( options->allow_virtual_o2prime_hydrogens() && !options->o2prime_legacy_mode() ),
-	protein_ccd_closer_( protein::loop_close::StepWiseProteinCCD_CloserOP( new protein::loop_close::StepWiseProteinCCD_Closer( working_parameters ) ) ),
+	protein_ccd_closer_( utility::pointer::make_shared< protein::loop_close::StepWiseProteinCCD_Closer >( working_parameters ) ),
 	working_parameters_( working_parameters ) // needed only for legacy SWA RNA main output.
 {
 	set_native_pose( working_parameters->working_native_pose() );
@@ -261,11 +261,11 @@ StepWiseMinimizer::do_full_minimizing( pose::Pose & pose ){
 void
 StepWiseMinimizer::setup_minimizers() {
 	using namespace core::optimization;
-	atom_tree_minimizer_ = core::optimization::AtomTreeMinimizerOP( new AtomTreeMinimizer );
-	cartesian_minimizer_ = core::optimization::CartesianMinimizerOP( new CartesianMinimizer );
+	atom_tree_minimizer_ = utility::pointer::make_shared< AtomTreeMinimizer >();
+	cartesian_minimizer_ = utility::pointer::make_shared< CartesianMinimizer >();
 
 	bool const use_nblist( true );
-	minimizer_options_ = core::optimization::MinimizerOptionsOP( new MinimizerOptions( options_->min_type() /*default */, options_->min_tolerance() /* default */, use_nblist, false, false ) );
+	minimizer_options_ = utility::pointer::make_shared< MinimizerOptions >( options_->min_type() /*default */, options_->min_tolerance() /* default */, use_nblist, false, false );
 	minimizer_options_->nblist_auto_update( true );
 }
 
@@ -352,7 +352,7 @@ void
 StepWiseMinimizer::get_move_map_and_atom_level_domain_map( core::kinematics::MoveMap & mm, pose::Pose const & pose ){
 	runtime_assert( working_minimize_res_ == figure_out_working_minimize_res( pose ) );
 	bool const move_takeoff_torsions = !options_->disable_sampling_of_loop_takeoff();
-	atom_level_domain_map_ = core::pose::toolbox::AtomLevelDomainMapOP( new core::pose::toolbox::AtomLevelDomainMap( pose ) ); // can come in handy later...
+	atom_level_domain_map_ = utility::pointer::make_shared< core::pose::toolbox::AtomLevelDomainMap >( pose ); // can come in handy later...
 	movemap::figure_out_stepwise_movemap( mm, atom_level_domain_map_, pose, working_minimize_res_, move_takeoff_torsions );
 	if ( !options_->minimize_waters() ) freeze_waters( pose, mm );
 	output_movemap( mm, pose, TR.Debug );

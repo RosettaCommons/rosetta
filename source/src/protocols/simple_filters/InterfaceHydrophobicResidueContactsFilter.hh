@@ -64,10 +64,10 @@ public:
 
 	bool apply( core::pose::Pose const & pose ) const override;
 	filters::FilterOP clone() const override {
-		return filters::FilterOP( new InterfaceHydrophobicResidueContactsFilter( *this ) );
+		return utility::pointer::make_shared< InterfaceHydrophobicResidueContactsFilter >( *this );
 	}
 	filters::FilterOP fresh_instance() const override{
-		return filters::FilterOP( new InterfaceHydrophobicResidueContactsFilter() );
+		return utility::pointer::make_shared< InterfaceHydrophobicResidueContactsFilter >();
 	}
 	InterfaceHydrophobicResidueContactsFilter &
 	operator=( InterfaceHydrophobicResidueContactsFilter const & ot ) {

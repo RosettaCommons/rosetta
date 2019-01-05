@@ -737,7 +737,7 @@ SimpleInteractionGraph::initialize(
 void
 SimpleInteractionGraph::set_pose_no_initialize( pose::Pose const & pose )
 {
-	pose_ = pose::PoseCOP( pose::PoseOP( new pose::Pose( pose ) ) );
+	pose_ = utility::pointer::make_shared< pose::Pose >( pose );
 	if ( sfxn_ ) {
 		for ( auto const & method : sfxn_->all_methods() ) {
 			if ( method->requires_a_setup_for_scoring_for_residue_opportunity_during_regular_scoring( *pose_ ) )  {

@@ -71,7 +71,7 @@ protocols::loops::LoopsOP parse_loops_from_tag( utility::tag::TagCOP tag ) {
 
 	if ( tag->hasOption("loops_file") ) {
 		string loops_file = tag->getOption<string>("loops_file");
-		parsed_loops = LoopsOP( new Loops(loops_file) );
+		parsed_loops = utility::pointer::make_shared< Loops >(loops_file);
 	}
 
 	for ( utility::tag::TagCOP subtag : tag->getTags("Loop") ) {
@@ -82,7 +82,7 @@ protocols::loops::LoopsOP parse_loops_from_tag( utility::tag::TagCOP tag ) {
 		bool extended = subtag->getOption<bool>("rebuild", false);
 
 		if ( ! parsed_loops ) {
-			parsed_loops = LoopsOP( new Loops() );
+			parsed_loops = utility::pointer::make_shared< Loops >();
 		}
 		parsed_loops->add_loop(start, stop, cut, skip_rate, extended);
 	}

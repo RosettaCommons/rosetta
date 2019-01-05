@@ -67,7 +67,7 @@ static basic::Tracer TR( "protocols.protein_interface_design.movers.TryRotamers"
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP TryRotamersCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new TryRotamers );
+// XRW TEMP  return utility::pointer::make_shared< TryRotamers >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -118,7 +118,7 @@ TryRotamers::TryRotamers( std::string const & resnum,
 	solo_res_(solo_res),
 	include_current_(include_current),
 	explosion_(explosion),
-	final_filter_(protocols::filters::FilterOP( new protocols::filters::TrueFilter ))
+	final_filter_(utility::pointer::make_shared< protocols::filters::TrueFilter >())
 {}
 
 TryRotamers::~TryRotamers() = default;
@@ -249,7 +249,7 @@ TryRotamers::parse_my_tag( TagCOP const tag,
 			TR<<"***WARNING WARNING! Filter defined for TryRotamers not found in filter_list!!!! Defaulting to truefilter***"<<std::endl;
 			runtime_assert( filter_found );
 		} else {
-			final_filter_ = protocols::filters::FilterOP( new protocols::filters::TrueFilter );
+			final_filter_ = utility::pointer::make_shared< protocols::filters::TrueFilter >();
 		}
 	}
 
@@ -299,7 +299,7 @@ std::string TryRotamersCreator::keyname() const {
 
 protocols::moves::MoverOP
 TryRotamersCreator::create_mover() const {
-	return protocols::moves::MoverOP( new TryRotamers );
+	return utility::pointer::make_shared< TryRotamers >();
 }
 
 void TryRotamersCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

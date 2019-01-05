@@ -69,7 +69,7 @@ using namespace core::scoring;
 static basic::Tracer TR( "protocols.evolution.AlignmentAAFinder" );
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP AlignmentAAFinderFilterCreator::create_filter() const { return protocols::filters::FilterOP( new AlignmentAAFinder ); }
+// XRW TEMP AlignmentAAFinderFilterCreator::create_filter() const { return utility::pointer::make_shared< AlignmentAAFinder >(); }
 
 // XRW TEMP std::string
 // XRW TEMP AlignmentAAFinderFilterCreator::keyname() const { return "AlignmentAAFinder"; }
@@ -356,7 +356,7 @@ std::string AlignmentAAFinderFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 AlignmentAAFinderFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new AlignmentAAFinder );
+	return utility::pointer::make_shared< AlignmentAAFinder >();
 }
 
 void AlignmentAAFinderFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

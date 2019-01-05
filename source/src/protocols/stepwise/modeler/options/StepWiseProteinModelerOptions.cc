@@ -86,7 +86,7 @@ StepWiseProteinModelerOptions::initialize_variables(){
 StepWiseProteinModelerOptionsOP
 StepWiseProteinModelerOptions::clone() const
 {
-	return StepWiseProteinModelerOptionsOP( new StepWiseProteinModelerOptions( *this ) );
+	return utility::pointer::make_shared< StepWiseProteinModelerOptions >( *this );
 }
 
 /////////////////////////////////////////////////////////////////////////////////////

@@ -77,7 +77,7 @@ ChangeAndResetFoldTreeMover::ChangeAndResetFoldTreeMover(ChangeAndResetFoldTreeM
 
 MoverOP
 ChangeAndResetFoldTreeMover::clone() const {
-	return MoverOP( new ChangeAndResetFoldTreeMover(*this) );
+	return utility::pointer::make_shared< ChangeAndResetFoldTreeMover >(*this);
 }
 
 //ChangeAndResetFoldTreeMover & operator=(ChangeAndResetFoldTreeMover const & src) {
@@ -86,7 +86,7 @@ ChangeAndResetFoldTreeMover::clone() const {
 
 MoverOP
 ChangeAndResetFoldTreeMover::fresh_instance() const {
-	return MoverOP( new ChangeAndResetFoldTreeMover );
+	return utility::pointer::make_shared< ChangeAndResetFoldTreeMover >();
 }
 
 // XRW TEMP std::string
@@ -96,7 +96,7 @@ ChangeAndResetFoldTreeMover::fresh_instance() const {
 
 // XRW TEMP MoverOP
 // XRW TEMP ChangeAndResetFoldTreeMoverCreator::create_mover() const {
-// XRW TEMP  return MoverOP( new ChangeAndResetFoldTreeMover );
+// XRW TEMP  return utility::pointer::make_shared< ChangeAndResetFoldTreeMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -202,7 +202,7 @@ std::string ChangeAndResetFoldTreeMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 ChangeAndResetFoldTreeMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ChangeAndResetFoldTreeMover );
+	return utility::pointer::make_shared< ChangeAndResetFoldTreeMover >();
 }
 
 void ChangeAndResetFoldTreeMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

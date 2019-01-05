@@ -62,7 +62,7 @@ namespace movers {
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP ExtendChainMoverCreator::create_mover() const
 // XRW TEMP {
-// XRW TEMP  return protocols::moves::MoverOP( new ExtendChainMover() );
+// XRW TEMP  return utility::pointer::make_shared< ExtendChainMover >();
 // XRW TEMP }
 
 ///  ---------------------------------------------------------------------------------
@@ -89,14 +89,14 @@ ExtendChainMover::~ExtendChainMover() = default;
 protocols::moves::MoverOP
 ExtendChainMover::clone() const
 {
-	return protocols::moves::MoverOP( new ExtendChainMover( *this ) );
+	return utility::pointer::make_shared< ExtendChainMover >( *this );
 }
 
 /// @brief return a fresh instance of ourselves
 protocols::moves::MoverOP
 ExtendChainMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new ExtendChainMover() );
+	return utility::pointer::make_shared< ExtendChainMover >();
 }
 
 /// @brief return a fresh instance of ourselves
@@ -245,7 +245,7 @@ std::string ExtendChainMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 ExtendChainMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ExtendChainMover );
+	return utility::pointer::make_shared< ExtendChainMover >();
 }
 
 void ExtendChainMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -48,10 +48,10 @@ VirtualRootMover::VirtualRootMover() :
 VirtualRootMover::~VirtualRootMover() = default;
 
 moves::MoverOP VirtualRootMover::clone() const {
-	return moves::MoverOP( new VirtualRootMover( *this ) );
+	return utility::pointer::make_shared< VirtualRootMover >( *this );
 }
 moves::MoverOP VirtualRootMover::fresh_instance() const {
-	return moves::MoverOP( new VirtualRootMover );
+	return utility::pointer::make_shared< VirtualRootMover >();
 }
 
 void
@@ -150,7 +150,7 @@ std::string VirtualRootMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 VirtualRootMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new VirtualRootMover );
+	return utility::pointer::make_shared< VirtualRootMover >();
 }
 
 void VirtualRootMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

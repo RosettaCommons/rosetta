@@ -82,7 +82,7 @@ static basic::Tracer TR( "protocols.simple_moves.SetTorsion" );
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP SetTorsionCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new SetTorsion );
+// XRW TEMP  return utility::pointer::make_shared< SetTorsion >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -398,7 +398,7 @@ std::string SetTorsionCreator::keyname() const {
 
 protocols::moves::MoverOP
 SetTorsionCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SetTorsion );
+	return utility::pointer::make_shared< SetTorsion >();
 }
 
 void SetTorsionCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

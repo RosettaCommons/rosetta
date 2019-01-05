@@ -76,13 +76,13 @@ SealFoldTreeMover::parse_my_tag(
 protocols::moves::MoverOP
 SealFoldTreeMover::clone() const
 {
-	return protocols::moves::MoverOP( new SealFoldTreeMover( *this ) );
+	return utility::pointer::make_shared< SealFoldTreeMover >( *this );
 }
 
 protocols::moves::MoverOP
 SealFoldTreeMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new SealFoldTreeMover );
+	return utility::pointer::make_shared< SealFoldTreeMover >();
 }
 
 std::string
@@ -182,7 +182,7 @@ SealFoldTreeMover::remove_cutpoints( core::pose::Pose & pose ) const
 protocols::moves::MoverOP
 SealFoldTreeMoverCreator::create_mover() const
 {
-	return protocols::moves::MoverOP( new SealFoldTreeMover );
+	return utility::pointer::make_shared< SealFoldTreeMover >();
 }
 
 std::string

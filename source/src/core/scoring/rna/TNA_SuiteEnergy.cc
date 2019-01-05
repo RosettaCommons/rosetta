@@ -70,7 +70,7 @@ using namespace core::chemical;
 methods::EnergyMethodOP
 TNA_SuiteEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
-) const { return methods::EnergyMethodOP( new TNA_SuiteEnergy( options.rna_options() ) ); }
+) const { return utility::pointer::make_shared< TNA_SuiteEnergy >( options.rna_options() ); }
 
 ScoreTypes
 TNA_SuiteEnergyCreator::score_types_for_method() const {
@@ -81,9 +81,9 @@ TNA_SuiteEnergyCreator::score_types_for_method() const {
 
 /// ctor
 TNA_SuiteEnergy::TNA_SuiteEnergy( RNA_EnergyMethodOptions const & options ) :
-	parent( methods::EnergyMethodCreatorOP( new TNA_SuiteEnergyCreator ) ),
+	parent( utility::pointer::make_shared< TNA_SuiteEnergyCreator >() ),
 	options_( options ),
-	tna_suite_potential_( TNA_SuitePotentialOP( new TNA_SuitePotential ) )
+	tna_suite_potential_( utility::pointer::make_shared< TNA_SuitePotential >() )
 {}
 ///////////////////////////////////////////////////////////////////////////////
 

@@ -48,7 +48,7 @@ static basic::Tracer TR( "protocols.simple_moves.MembraneTopology" );
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP MembraneTopologyCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new MembraneTopology );
+// XRW TEMP  return utility::pointer::make_shared< MembraneTopology >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -116,7 +116,7 @@ std::string MembraneTopologyCreator::keyname() const {
 
 protocols::moves::MoverOP
 MembraneTopologyCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MembraneTopology );
+	return utility::pointer::make_shared< MembraneTopology >();
 }
 
 void MembraneTopologyCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

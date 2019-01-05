@@ -50,7 +50,7 @@ NullResourceLocatorCreator::~NullResourceLocatorCreator() = default;
 
 ResourceLocatorOP
 NullResourceLocatorCreator::create_resource_locator() const {
-	return ResourceLocatorOP( new NullResourceLocator );
+	return utility::pointer::make_shared< NullResourceLocator >();
 }
 
 string
@@ -100,7 +100,7 @@ ResourceStreamOP
 NullResourceLocator::locate_resource_stream(
 	string const & /*input_id*/
 ) const {
-	return ResourceStreamOP( new NullStream() );
+	return utility::pointer::make_shared< NullStream >();
 }
 
 void

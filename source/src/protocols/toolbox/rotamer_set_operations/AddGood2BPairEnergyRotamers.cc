@@ -69,7 +69,7 @@ AddGood2BPairEnergyRotamers::~AddGood2BPairEnergyRotamers()= default;
 
 core::pack::rotamer_set::RotamerSetOperationOP
 AddGood2BPairEnergyRotamers::clone() const{
-	return core::pack::rotamer_set::RotamerSetOperationOP( new AddGood2BPairEnergyRotamers( *this ) );
+	return utility::pointer::make_shared< AddGood2BPairEnergyRotamers >( *this );
 }
 
 

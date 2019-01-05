@@ -139,9 +139,9 @@ KinematicMover::~KinematicMover() = default;
 KinematicPerturberOP KinematicMover::perturber() {
 
 	if ( !perturber_ ) {
-		perturber_ = KinematicPerturberOP( new kinematic_closure::TorsionSamplingKinematicPerturber(
+		perturber_ = utility::pointer::make_shared< kinematic_closure::TorsionSamplingKinematicPerturber >(
 			kinematic_closure::KinematicMoverCAP( utility::pointer::dynamic_pointer_cast< KinematicMover const >( get_self_ptr() ) )
-			) );
+		);
 	}
 	return perturber_;
 }

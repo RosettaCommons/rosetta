@@ -47,10 +47,10 @@ public:
 	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	std::vector< core::Size > compute( core::pose::Pose const & pose ) const;
 	filters::FilterOP clone() const override {
-		return filters::FilterOP( new NeighborTypeFilter( *this ) );
+		return utility::pointer::make_shared< NeighborTypeFilter >( *this );
 	}
 	filters::FilterOP fresh_instance() const override{
-		return filters::FilterOP( new NeighborTypeFilter() );
+		return utility::pointer::make_shared< NeighborTypeFilter >();
 	}
 	void clear() override { residue_types_.clear(); }
 	~NeighborTypeFilter() override;

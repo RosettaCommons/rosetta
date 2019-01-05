@@ -73,9 +73,9 @@ public:
 	void combine_exclude_file( std::string const& filename );
 
 
-	moves::MoverOP fresh_instance() const override { return moves::MoverOP( new ConstraintPreparer() ); }
+	moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< ConstraintPreparer >(); }
 
-	moves::MoverOP clone() const override { return moves::MoverOP( new ConstraintPreparer( *this ) ); }
+	moves::MoverOP clone() const override { return utility::pointer::make_shared< ConstraintPreparer >( *this ); }
 
 	//prepares use the prepare method instead of apply
 	void apply( core::pose::Pose& ) override { utility_exit_with_message("ConstraintPreparer::apply() should never be called!"); };

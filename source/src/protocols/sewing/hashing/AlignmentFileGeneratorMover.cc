@@ -65,7 +65,7 @@ AlignmentFileGeneratorMover::AlignmentFileGeneratorMover():
 	protocols::moves::Mover( "AlignmentFileGeneratorMover" )
 {
 	// initialize_from_options();
-	basis_map_generator_ = BasisMapGeneratorOP( new BasisMapGenerator );
+	basis_map_generator_ = utility::pointer::make_shared< BasisMapGenerator >();
 }
 
 
@@ -85,7 +85,7 @@ AlignmentFileGeneratorMover::AlignmentFileGeneratorMover(
 	core::Size recursive_depth )
 {
 
-	basis_map_generator_ = BasisMapGeneratorOP( new BasisMapGenerator( model_file_name, edge_file_name, match_segments, pose_segment_starts, pose_segment_ends, recursive_depth) );
+	basis_map_generator_ = utility::pointer::make_shared< BasisMapGenerator >( model_file_name, edge_file_name, match_segments, pose_segment_starts, pose_segment_ends, recursive_depth);
 
 }
 
@@ -94,14 +94,14 @@ AlignmentFileGeneratorMover::AlignmentFileGeneratorMover(
 	std::string model_file_name,
 	std::string alignment_file_name )
 {
-	basis_map_generator_ = BasisMapGeneratorOP(  new BasisMapGenerator( edge_file_reader, model_file_name, alignment_file_name ) );
+	basis_map_generator_ = utility::pointer::make_shared< BasisMapGenerator >( edge_file_reader, model_file_name, alignment_file_name );
 }
 
 AlignmentFileGeneratorMover::AlignmentFileGeneratorMover(
 	EdgeMapGeneratorOP edge_file_reader,
 	std::string model_file_name )
 {
-	basis_map_generator_= BasisMapGeneratorOP( new BasisMapGenerator( edge_file_reader, model_file_name ) );
+	basis_map_generator_= utility::pointer::make_shared< BasisMapGenerator >( edge_file_reader, model_file_name );
 }
 
 AlignmentFileGeneratorMover::~AlignmentFileGeneratorMover(){}
@@ -313,14 +313,14 @@ AlignmentFileGeneratorMover::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 
 protocols::moves::MoverOP
 AlignmentFileGeneratorMover::clone() const{
-	return protocols::moves::MoverOP( new AlignmentFileGeneratorMover( *this ) );
+	return utility::pointer::make_shared< AlignmentFileGeneratorMover >( *this );
 }
 
 
 protocols::moves::MoverOP
 AlignmentFileGeneratorMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new AlignmentFileGeneratorMover );
+	return utility::pointer::make_shared< AlignmentFileGeneratorMover >();
 }
 
 std::string
@@ -572,7 +572,7 @@ AlignmentFileGeneratorMover::add_pose_segments_to_segment_vector(
 		core::Size current_seg_id = starting_segvec_size + i;
 		data_storage::SmartSegmentOP seg ( new data_storage::SmartSegment( true ) );
 		if ( ligand_resnums_final.size() > 0 ) {
-			seg = data_storage::SmartSegmentOP(  new data_storage::LigandSegment( true )  );
+			seg = utility::pointer::make_shared< data_storage::LigandSegment >( true );
 		}
 		//The segment id will be the original segvec size + i
 		seg->set_segment_id( current_seg_id );
@@ -767,13 +767,13 @@ AlignmentFileGeneratorMover::add_pose_segments_to_segment_vector(
 				//Resnums match and partner status matches
 				if ( contact.contact_resnum == current_ligand.ligand_resnum && ((current_ligand.partner_ligand && contact.partner_contact ) || (!current_ligand.partner_ligand && !contact.partner_contact ) ) ) {
 					TR.Debug << "Adding internal contact for ligand " << ligand->get_ligand_id() << std::endl;
-					ligand->add_contact( data_storage::LigandContactOP( new data_storage::LigandContact( 0, 0, contact.contact_atom_num, contact.ligand_atom_num ) ) );
+					ligand->add_contact( utility::pointer::make_shared< data_storage::LigandContact >( 0, 0, contact.contact_atom_num, contact.ligand_atom_num ) );
 					continue; //No need to try to attach it to a segment based on internal contacts
 				}//End if internal contact
 				//Non-internal partner contacts
 				if ( contact.partner_contact ) {
 					TR.Debug << "Adding partner contact for ligand " << ligand->get_ligand_id() << std::endl;
-					ligand->add_contact( data_storage::LigandContactOP( new data_storage::LigandContact( 0, contact.contact_resnum, contact.contact_atom_num, contact.ligand_atom_num ) ) );
+					ligand->add_contact( utility::pointer::make_shared< data_storage::LigandContact >( 0, contact.contact_resnum, contact.contact_atom_num, contact.ligand_atom_num ) );
 					continue; //No need to try to attach it to a segment based on partner contacts
 				}
 				//Begin non-internal assembly contacts
@@ -809,7 +809,7 @@ AlignmentFileGeneratorMover::add_pose_segments_to_segment_vector(
 					}
 					TR.Debug << std::endl;
 					//Add the contact residue to the ligand
-					ligand->add_contact( data_storage::LigandContactOP( new data_storage::LigandContact( seg.first, (contact.contact_resnum - passed_residues ), contact.contact_atom_num, contact.ligand_atom_num ) ) );
+					ligand->add_contact( utility::pointer::make_shared< data_storage::LigandContact >( seg.first, (contact.contact_resnum - passed_residues ), contact.contact_atom_num, contact.ligand_atom_num ) );
 					//Now add to partner ligands
 					partner_ligands[ ligand->get_ligand_id() ] = ligand;
 					break; //We don't need to keep looking through additional segments
@@ -917,13 +917,13 @@ AlignmentFileGeneratorMover::add_pose_segments_to_segment_vector(
 				//Resnums match and partner status matches
 				if ( contact.contact_resnum == current_ligand.ligand_resnum && ((current_ligand.partner_ligand && contact.partner_contact ) || (!current_ligand.partner_ligand && !contact.partner_contact ) ) ) {
 					TR.Debug << "Adding internal contact for ligand " << ligand->get_ligand_id() << std::endl;
-					ligand->add_contact( data_storage::LigandContactOP( new data_storage::LigandContact( 0, 0, contact.contact_atom_num, contact.ligand_atom_num ) ) );
+					ligand->add_contact( utility::pointer::make_shared< data_storage::LigandContact >( 0, 0, contact.contact_atom_num, contact.ligand_atom_num ) );
 					continue; //No need to try to attach it to a segment based on internal contacts
 				}//End if internal contact
 				//Non-internal partner contacts
 				if ( contact.partner_contact ) {
 					TR.Debug << "Adding partner contact for ligand " << ligand->get_ligand_id() << std::endl;
-					ligand->add_contact( data_storage::LigandContactOP( new data_storage::LigandContact( 0, contact.contact_resnum, contact.contact_atom_num, contact.ligand_atom_num ) ) );
+					ligand->add_contact( utility::pointer::make_shared< data_storage::LigandContact >( 0, contact.contact_resnum, contact.contact_atom_num, contact.ligand_atom_num ) );
 					continue; //No need to try to attach it to a segment based on partner contacts
 				}
 				//Begin non-internal assembly contacts
@@ -962,7 +962,7 @@ AlignmentFileGeneratorMover::add_pose_segments_to_segment_vector(
 					}
 					TR.Debug << std::endl;
 					//Add the contact residue to the ligand
-					ligand->add_contact( data_storage::LigandContactOP( new data_storage::LigandContact( seg.first, (contact.contact_resnum - passed_residues ), contact.contact_atom_num, contact.ligand_atom_num ) ) );
+					ligand->add_contact( utility::pointer::make_shared< data_storage::LigandContact >( seg.first, (contact.contact_resnum - passed_residues ), contact.contact_atom_num, contact.ligand_atom_num ) );
 					break; //We don't need to keep looking through additional segments
 				}//End iterate over pdb_segments
 			}//end for current contacts
@@ -1257,7 +1257,7 @@ AlignmentFileGeneratorMover::add_pose_segments_to_segment_vector(
 	core::Size residues_in_previous_segments = 0;
 	core::Size last_added_seg_id;
 	for ( core::Size i=1; i<=segs.size(); ++i ) {
-		data_storage::SmartSegmentOP current_segment = data_storage::SmartSegmentOP(new data_storage::SmartSegment());
+		data_storage::SmartSegmentOP current_segment = utility::pointer::make_shared< data_storage::SmartSegment >();
 		if ( ligands.size() != 0 ) {
 			current_segment = data_storage::SmartSegmentOP ( new data_storage::LigandSegment( true ) );
 		}
@@ -1436,13 +1436,13 @@ AlignmentFileGeneratorMover::add_pose_segments_to_segment_vector(
 				//Resnums match and partner status matches
 				if ( contact.contact_resnum == current_ligand.ligand_resnum && ((current_ligand.partner_ligand && contact.partner_contact ) || (!current_ligand.partner_ligand && !contact.partner_contact ) ) ) {
 					TR.Debug << "Adding internal contact for ligand " << ligand->get_ligand_id() << std::endl;
-					ligand->add_contact( data_storage::LigandContactOP( new data_storage::LigandContact( 0, 0, contact.contact_atom_num, contact.ligand_atom_num ) ) );
+					ligand->add_contact( utility::pointer::make_shared< data_storage::LigandContact >( 0, 0, contact.contact_atom_num, contact.ligand_atom_num ) );
 					continue; //No need to try to attach it to a segment based on internal contacts
 				}//End if internal contact
 				//Non-internal partner contacts
 				if ( contact.partner_contact ) {
 					TR.Debug << "Adding partner contact for ligand " << ligand->get_ligand_id() << std::endl;
-					ligand->add_contact( data_storage::LigandContactOP( new data_storage::LigandContact( 0, contact.contact_resnum, contact.contact_atom_num, contact.ligand_atom_num ) ) );
+					ligand->add_contact( utility::pointer::make_shared< data_storage::LigandContact >( 0, contact.contact_resnum, contact.contact_atom_num, contact.ligand_atom_num ) );
 					continue; //No need to try to attach it to a segment based on partner contacts
 				}
 				//Begin non-internal assembly contacts
@@ -1478,7 +1478,7 @@ AlignmentFileGeneratorMover::add_pose_segments_to_segment_vector(
 					}
 					TR.Debug << std::endl;
 					//Add the contact residue to the ligand
-					ligand->add_contact( data_storage::LigandContactOP( new data_storage::LigandContact( seg.first, (contact.contact_resnum - passed_residues ), contact.contact_atom_num, contact.ligand_atom_num ) ) );
+					ligand->add_contact( utility::pointer::make_shared< data_storage::LigandContact >( seg.first, (contact.contact_resnum - passed_residues ), contact.contact_atom_num, contact.ligand_atom_num ) );
 					//Now add to partner ligands
 					partner_ligands[ ligand->get_ligand_id() ] = ligand;
 					break; //We don't need to keep looking through additional segments
@@ -1586,13 +1586,13 @@ AlignmentFileGeneratorMover::add_pose_segments_to_segment_vector(
 				//Resnums match and partner status matches
 				if ( contact.contact_resnum == current_ligand.ligand_resnum && ((current_ligand.partner_ligand && contact.partner_contact ) || (!current_ligand.partner_ligand && !contact.partner_contact ) ) ) {
 					TR.Debug << "Adding internal contact for ligand " << ligand->get_ligand_id() << std::endl;
-					ligand->add_contact( data_storage::LigandContactOP( new data_storage::LigandContact( 0, 0, contact.contact_atom_num, contact.ligand_atom_num ) ) );
+					ligand->add_contact( utility::pointer::make_shared< data_storage::LigandContact >( 0, 0, contact.contact_atom_num, contact.ligand_atom_num ) );
 					continue; //No need to try to attach it to a segment based on internal contacts
 				}//End if internal contact
 				//Non-internal partner contacts
 				if ( contact.partner_contact ) {
 					TR.Debug << "Adding partner contact for ligand " << ligand->get_ligand_id() << std::endl;
-					ligand->add_contact( data_storage::LigandContactOP( new data_storage::LigandContact( 0, contact.contact_resnum, contact.contact_atom_num, contact.ligand_atom_num ) ) );
+					ligand->add_contact( utility::pointer::make_shared< data_storage::LigandContact >( 0, contact.contact_resnum, contact.contact_atom_num, contact.ligand_atom_num ) );
 					continue; //No need to try to attach it to a segment based on partner contacts
 				}
 				//Begin non-internal assembly contacts
@@ -1631,7 +1631,7 @@ AlignmentFileGeneratorMover::add_pose_segments_to_segment_vector(
 					}
 					TR.Debug << std::endl;
 					//Add the contact residue to the ligand
-					ligand->add_contact( data_storage::LigandContactOP( new data_storage::LigandContact( seg.first, (contact.contact_resnum - passed_residues ), contact.contact_atom_num, contact.ligand_atom_num ) ) );
+					ligand->add_contact( utility::pointer::make_shared< data_storage::LigandContact >( seg.first, (contact.contact_resnum - passed_residues ), contact.contact_atom_num, contact.ligand_atom_num ) );
 					break; //We don't need to keep looking through additional segments
 				}//End iterate over pdb_segments
 			}//end for current contacts
@@ -1862,7 +1862,7 @@ return output;
 
 protocols::moves::MoverOP
 AlignmentFileGeneratorMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new AlignmentFileGeneratorMover );
+	return utility::pointer::make_shared< AlignmentFileGeneratorMover >();
 }
 
 std::string

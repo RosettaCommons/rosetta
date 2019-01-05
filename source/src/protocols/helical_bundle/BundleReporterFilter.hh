@@ -62,13 +62,13 @@ public:
 	/// @brief Returns an owning pointer to a new instance of this filter, with copied
 	/// variables (a copy of this filter).
 	filters::FilterOP clone() const override {
-		return filters::FilterOP( new BundleReporterFilter( *this ) );
+		return utility::pointer::make_shared< BundleReporterFilter >( *this );
 	}
 
 	/// @brief Returns an owning pointer to a new instance of this filter, with default
 	/// initialization (NOT a copy).
 	filters::FilterOP fresh_instance() const override{
-		return filters::FilterOP( new BundleReporterFilter() );
+		return utility::pointer::make_shared< BundleReporterFilter >();
 	}
 
 	/// @brief Set the score threshold.

@@ -86,7 +86,7 @@ ReferencePose::~ReferencePose() = default;
 ReferencePoseOP
 ReferencePose::clone() const
 {
-	return ReferencePoseOP( new ReferencePose( *this ) );
+	return utility::pointer::make_shared< ReferencePose >( *this );
 }
 
 /// @brief Initializes the residue_map_ based on an input reference pose.

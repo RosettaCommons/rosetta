@@ -55,10 +55,10 @@ public:
 		core_init_with_additional_options( "-include_sugars" );
 		residue_set = chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD );
 
-		the_pose = PoseOP( new Pose );
+		the_pose = utility::pointer::make_shared< Pose >();
 		core::import_pose::pose_from_file( *the_pose, "protocols/moves/test_in.pdb" , core::import_pose::PDB_file);
 
-		the_sugar_pose = PoseOP( new Pose );
+		the_sugar_pose = utility::pointer::make_shared< Pose >();
 		make_pose_from_saccharide_sequence( *the_sugar_pose,
 			"b-D-Glcp-(1->4)-b-D-Glcp-(1->4)-[b-D-Glcp-(1->4)-[b-D-Glcp-(1->6)]-b-D-Glcp-(1->6)]-"
 			"b-D-Glcp-(1->4)-b-D-Glcp-(1->4)-b-D-Glcp" );

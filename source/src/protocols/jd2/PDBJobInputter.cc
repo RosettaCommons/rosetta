@@ -109,7 +109,7 @@ void protocols::jd2::PDBJobInputter::fill_jobs( JobsContainer & jobs ){
 		InnerJobOP ijob( new InnerJob( inputs[i], nstruct ) );
 
 		for ( core::Size index(1); index <= nstruct; ++index ) {
-			jobs.push_back( JobOP( new Job( ijob, index ) ) );
+			jobs.push_back( utility::pointer::make_shared< Job >( ijob, index ) );
 			TR.Debug << "pushing " << inputs[i] << " nstruct index " << index << std::endl;
 		}//loop over nstruct
 		TR << "pushed " << inputs[i] << " nstruct "
@@ -134,7 +134,7 @@ PDBJobInputterCreator::keyname() const
 
 protocols::jd2::JobInputterOP
 PDBJobInputterCreator::create_JobInputter() const {
-	return protocols::jd2::JobInputterOP( new PDBJobInputter );
+	return utility::pointer::make_shared< PDBJobInputter >();
 }
 
 }//jd2

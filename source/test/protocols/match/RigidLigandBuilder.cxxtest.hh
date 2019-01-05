@@ -245,7 +245,7 @@ public:
 		ResidueTypeSetCOP restype_set(
 			ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ));
 
-		ResidueTypeCOP cys_restype( ResidueTypeOP( new ResidueType( restype_set->name_map( "CYS" ))));
+		ResidueTypeCOP cys_restype( utility::pointer::make_shared< ResidueType >( restype_set->name_map( "CYS" )));
 
 		Pose trpcage = create_trpcage_ideal_pose();
 		Pose carbaryl_pose;
@@ -323,7 +323,7 @@ public:
 
 		ProteinUpstreamBuilder scbuilder;
 		scbuilder.add_build_set( build_set );
-		scbuilder.set_sampler( ProteinSCSamplerCOP( new DunbrackSCSampler ) );
+		scbuilder.set_sampler( utility::pointer::make_shared< DunbrackSCSampler >() );
 
 		scbuilder.build( *res2bp );
 
@@ -354,7 +354,7 @@ public:
 		ResidueTypeSetCOP restype_set(
 			ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ));
 
-		ResidueTypeCOP cys_restype( ResidueTypeOP( new ResidueType( restype_set->name_map( "CYS" ))));
+		ResidueTypeCOP cys_restype( utility::pointer::make_shared< ResidueType >( restype_set->name_map( "CYS" )));
 
 		Pose trpcage = create_trpcage_ideal_pose();
 		Pose mbh_pose;
@@ -430,7 +430,7 @@ public:
 
 		ProteinUpstreamBuilder scbuilder;
 		scbuilder.add_build_set( build_set );
-		scbuilder.set_sampler( ProteinSCSamplerCOP( new DunbrackSCSampler ) );
+		scbuilder.set_sampler( utility::pointer::make_shared< DunbrackSCSampler >() );
 
 		OriginalBackboneBuildPointOP res2bp( new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 ) );
 		scbuilder.build( *res2bp );

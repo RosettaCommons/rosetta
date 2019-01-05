@@ -57,7 +57,7 @@ public:
 		core::import_pose::pose_from_file( pose, "protocols/task_operations/dssp_in.pdb" , core::import_pose::PDB_file);
 
 		TaskFactory Dssp_factory;
-		Dssp_factory.push_back( core::pack::task::operation::TaskOperationCOP( new DsspDesignOperation ) );
+		Dssp_factory.push_back( utility::pointer::make_shared< DsspDesignOperation >() );
 		core::pack::task::PackerTaskOP task( Dssp_factory.create_task_and_apply_taskoperations( pose ) );
 
 		test::UTracer UT( "protocols/task_operations/DsspDesignOperation.u" );
@@ -67,8 +67,8 @@ public:
 	void test_copy_constructor() {
 
 		protocols::parser::BluePrintOP blueprint;
-		blueprint = protocols::parser::BluePrintOP( new protocols::parser::BluePrint(
-			"protocols/task_operations/dssp_in.blueprint" ) );
+		blueprint = utility::pointer::make_shared< protocols::parser::BluePrint >(
+			"protocols/task_operations/dssp_in.blueprint" );
 
 		DsspDesignOperationOP dssp_design( new DsspDesignOperation );
 		dssp_design->set_blueprint( blueprint );

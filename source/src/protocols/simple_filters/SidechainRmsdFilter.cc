@@ -46,7 +46,7 @@ namespace simple_filters {
 static basic::Tracer sidechain_rmsd_filter_tracer( "protocols.simple_filters.SidechainRmsdFilter" );
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP SidechainRmsdFilterCreator::create_filter() const { return protocols::filters::FilterOP( new SidechainRmsdFilter ); }
+// XRW TEMP SidechainRmsdFilterCreator::create_filter() const { return utility::pointer::make_shared< SidechainRmsdFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP SidechainRmsdFilterCreator::keyname() const { return "SidechainRmsd"; }
@@ -69,7 +69,7 @@ SidechainRmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::D
 	if ( tag->hasOption("reference_name") ) {
 		reference_pose_ = protocols::rosetta_scripts::saved_reference_pose(tag,data_map);
 	} else {
-		reference_pose_ = core::pose::PoseOP( new core::pose::Pose( pose ) );
+		reference_pose_ = utility::pointer::make_shared< core::pose::Pose >( pose );
 		if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
 			core::import_pose::pose_from_file( *reference_pose_, basic::options::option[ basic::options::OptionKeys::in::file::native ] , core::import_pose::PDB_file);
 		}
@@ -137,11 +137,11 @@ SidechainRmsdFilter::compute( core::pose::Pose const & pose ) const {
 }
 
 filters::FilterOP SidechainRmsdFilter::clone() const {
-	return filters::FilterOP( new SidechainRmsdFilter( *this ) );
+	return utility::pointer::make_shared< SidechainRmsdFilter >( *this );
 }
 
 filters::FilterOP SidechainRmsdFilter::fresh_instance() const{
-	return filters::FilterOP( new SidechainRmsdFilter() );
+	return utility::pointer::make_shared< SidechainRmsdFilter >();
 }
 
 std::string SidechainRmsdFilter::name() const {
@@ -176,7 +176,7 @@ std::string SidechainRmsdFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 SidechainRmsdFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new SidechainRmsdFilter );
+	return utility::pointer::make_shared< SidechainRmsdFilter >();
 }
 
 void SidechainRmsdFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

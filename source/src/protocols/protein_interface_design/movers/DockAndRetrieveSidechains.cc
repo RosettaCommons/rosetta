@@ -58,7 +58,7 @@ static basic::Tracer TR( "protocols.protein_interface_design.movers.DockAndRetri
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP DockAndRetrieveSidechainsCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new DockAndRetrieveSidechains );
+// XRW TEMP  return utility::pointer::make_shared< DockAndRetrieveSidechains >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -75,7 +75,7 @@ DockAndRetrieveSidechains::~DockAndRetrieveSidechains() = default;
 
 protocols::moves::MoverOP
 DockAndRetrieveSidechains::clone() const{
-	return( protocols::moves::MoverOP( new DockAndRetrieveSidechains( *this ) ) );
+	return( utility::pointer::make_shared< DockAndRetrieveSidechains >( *this ) );
 }
 
 void
@@ -87,7 +87,7 @@ DockAndRetrieveSidechains::apply( core::pose::Pose & pose )
 		setup_mover->apply( pose );
 	}
 
-	core::pose::PoseCOP saved_pose( core::pose::PoseOP( new core::pose::Pose( pose ) ) );
+	core::pose::PoseCOP saved_pose( utility::pointer::make_shared< core::pose::Pose >( pose ) );
 	core::kinematics::FoldTree saved_ft( pose.fold_tree() );
 
 	if ( symmetry_ ) {
@@ -138,7 +138,7 @@ DockAndRetrieveSidechains::parse_my_tag( TagCOP const tag, basic::datacache::Dat
 		ScoreFunctionOP scorelo = data.get_ptr< ScoreFunction >( "scorefxns", score_low )->clone();
 		ScoreFunctionOP scorehi = data.get_ptr< ScoreFunction >( "scorefxns", score_high )->clone();
 
-		sym_docking_mover_ = protocols::symmetric_docking::SymDockProtocolOP( new protocols::symmetric_docking::SymDockProtocol( !low_res_protocol_only_, local_refine, view, scorelo, scorehi ) );
+		sym_docking_mover_ = utility::pointer::make_shared< protocols::symmetric_docking::SymDockProtocol >( !low_res_protocol_only_, local_refine, view, scorelo, scorehi );
 
 		sym_docking_mover_->task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 		sym_docking_mover_->design( design );
@@ -160,7 +160,7 @@ DockAndRetrieveSidechains::parse_my_tag( TagCOP const tag, basic::datacache::Dat
 	}
 	//core::Size const rb_jump( tag->getOption< core::Size >( "rb_jump", 1 ) );
 	bool const optimize_foldtree = tag->getOption<bool>( "optimize_fold_tree", true );
-	docking_mover_ = protocols::docking::DockingProtocolOP( new protocols::docking::DockingProtocol( movable_jumps, low_res_protocol_only_, local_refine, optimize_foldtree, scorelo, scorehi ) );
+	docking_mover_ = utility::pointer::make_shared< protocols::docking::DockingProtocol >( movable_jumps, low_res_protocol_only_, local_refine, optimize_foldtree, scorelo, scorehi );
 
 	docking_mover_->set_task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	docking_mover_->set_ignore_default_docking_task( ignore_default_docking_task );
@@ -216,7 +216,7 @@ std::string DockAndRetrieveSidechainsCreator::keyname() const {
 
 protocols::moves::MoverOP
 DockAndRetrieveSidechainsCreator::create_mover() const {
-	return protocols::moves::MoverOP( new DockAndRetrieveSidechains );
+	return utility::pointer::make_shared< DockAndRetrieveSidechains >();
 }
 
 void DockAndRetrieveSidechainsCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

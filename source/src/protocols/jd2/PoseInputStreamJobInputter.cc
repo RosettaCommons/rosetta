@@ -85,7 +85,7 @@ void PoseInputStreamJobInputter::fill_jobs( JobsContainer & jobs ) {
 
 	for ( core::Size index = 1; index <= shuffle_nstruct; ++index ) {
 		InnerJobOP ijob( new InnerJob( "job_" + ObjexxFCL::string_of(index), nstruct ) );
-		jobs.push_back( JobOP( new Job( ijob, index ) ) );
+		jobs.push_back( utility::pointer::make_shared< Job >( ijob, index ) );
 		tr.Trace << "pushing " << ijob->input_tag() << " nstruct index " << index << std::endl;
 	}
 
@@ -104,7 +104,7 @@ PoseInputStreamJobInputterCreator::keyname() const
 
 protocols::jd2::JobInputterOP
 PoseInputStreamJobInputterCreator::create_JobInputter() const {
-	return protocols::jd2::JobInputterOP( new PoseInputStreamJobInputter );
+	return utility::pointer::make_shared< PoseInputStreamJobInputter >();
 }
 
 } // jd2

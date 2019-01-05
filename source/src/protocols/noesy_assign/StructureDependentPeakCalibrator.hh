@@ -50,7 +50,7 @@ public:
 	{}
 
 	PeakCalibratorOP fresh_instance() override {
-		return PeakCalibratorOP( new StructureDependentPeakCalibrator( structures_, dcalibrate_ ) );
+		return utility::pointer::make_shared< StructureDependentPeakCalibrator >( structures_, dcalibrate_ );
 	}
 
 

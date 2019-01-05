@@ -61,7 +61,7 @@ static basic::Tracer TR( "protocols.protein_interface_design.movers.SaveAndRetri
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP SaveAndRetrieveSidechainsCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new SaveAndRetrieveSidechains );
+// XRW TEMP  return utility::pointer::make_shared< SaveAndRetrieveSidechains >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -78,9 +78,9 @@ SaveAndRetrieveSidechains::SaveAndRetrieveSidechains() :
 	ensure_variant_matching_ = false; //default
 	multi_use_ = false;
 	two_step_ = false;
-	first_apply_ = BoolDataCacheBoolOP( new basic::datacache::DataMapObj< bool > );
+	first_apply_ = utility::pointer::make_shared< basic::datacache::DataMapObj< bool > >();
 	first_apply_->obj = true;
-	init_pose_ = PoseOP( new core::pose::Pose );
+	init_pose_ = utility::pointer::make_shared< core::pose::Pose >();
 }
 
 SaveAndRetrieveSidechains::SaveAndRetrieveSidechains(
@@ -94,10 +94,10 @@ SaveAndRetrieveSidechains::SaveAndRetrieveSidechains(
 	ensure_variant_matching_(ensure_variant_matching),
 	jumpid_( jumpid )
 {
-	init_pose_ = PoseOP( new core::pose::Pose( pose ) );
+	init_pose_ = utility::pointer::make_shared< core::pose::Pose >( pose );
 	multi_use_ = false;
 	two_step_ = false;
-	first_apply_ = BoolDataCacheBoolOP( new basic::datacache::DataMapObj< bool > );
+	first_apply_ = utility::pointer::make_shared< basic::datacache::DataMapObj< bool > >();
 	first_apply_->obj = true;
 }
 
@@ -183,14 +183,14 @@ SaveAndRetrieveSidechains::parse_my_tag( TagCOP const tag, basic::datacache::Dat
 	multi_use( tag->getOption< bool >( "multi_use", false ) );
 	two_step( tag->getOption< bool >( "two_step", false ) );
 	if ( !two_step() ) {
-		init_pose_ = PoseOP( new core::pose::Pose( pose ) );
+		init_pose_ = utility::pointer::make_shared< core::pose::Pose >( pose );
 	}
 	jumpid_ = tag->getOption<core::Size>( "jumpid", 1 );
 }
 
 protocols::moves::MoverOP
 SaveAndRetrieveSidechains::clone() const {
-	return( protocols::moves::MoverOP( new SaveAndRetrieveSidechains( *this ) ));
+	return( utility::pointer::make_shared< SaveAndRetrieveSidechains >( *this ));
 }
 
 std::string SaveAndRetrieveSidechains::get_name() const {
@@ -220,7 +220,7 @@ std::string SaveAndRetrieveSidechainsCreator::keyname() const {
 
 protocols::moves::MoverOP
 SaveAndRetrieveSidechainsCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SaveAndRetrieveSidechains );
+	return utility::pointer::make_shared< SaveAndRetrieveSidechains >();
 }
 
 void SaveAndRetrieveSidechainsCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

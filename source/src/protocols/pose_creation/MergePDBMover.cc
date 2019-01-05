@@ -116,13 +116,13 @@ MergePDBMover::MergePDBMover()
 moves::MoverOP
 MergePDBMover::clone() const
 {
-	return moves::MoverOP( new MergePDBMover( *this ) );
+	return utility::pointer::make_shared< MergePDBMover >( *this );
 }
 
 moves::MoverOP
 MergePDBMover::fresh_instance() const
 {
-	return moves::MoverOP( new MergePDBMover );
+	return utility::pointer::make_shared< MergePDBMover >();
 }
 
 void MergePDBMover::determine_overlap(Pose const pose,Size chain_id){
@@ -814,15 +814,15 @@ void MergePDBMover::pack_and_minimize(Pose const pose, core::Real baseline_score
 			TR << std::endl;
 
 			//set up non-packing
-			OperateOnResidueSubsetOP operate_on_non_packing = OperateOnResidueSubsetOP( new OperateOnResidueSubset() );
-			PreventRepackingRLTOP prevent_repacking = PreventRepackingRLTOP( new PreventRepackingRLT() );
+			OperateOnResidueSubsetOP operate_on_non_packing = utility::pointer::make_shared< OperateOnResidueSubset >();
+			PreventRepackingRLTOP prevent_repacking = utility::pointer::make_shared< PreventRepackingRLT >();
 			operate_on_non_packing->subset( no_pack_res );
 			operate_on_non_packing->op( prevent_repacking );
 			taskfactoryOP->push_back(operate_on_non_packing);
 
 			//set up non-design
-			OperateOnResidueSubsetOP operate_on_packing = OperateOnResidueSubsetOP( new OperateOnResidueSubset() );
-			RestrictToRepackingRLTOP restrict_to_repacking = RestrictToRepackingRLTOP( new RestrictToRepackingRLT() );
+			OperateOnResidueSubsetOP operate_on_packing = utility::pointer::make_shared< OperateOnResidueSubset >();
+			RestrictToRepackingRLTOP restrict_to_repacking = utility::pointer::make_shared< RestrictToRepackingRLT >();
 			operate_on_packing->subset( pack_res );
 			operate_on_packing->op( restrict_to_repacking );
 			taskfactoryOP->push_back(operate_on_packing);
@@ -953,7 +953,7 @@ void MergePDBMover::parse_my_tag(
 	duplicate_rmsd_pose_threshold_ = tag->getOption<Real>("duplicate_rmsd_pose_threshold",1.0);
 	output_only_first_ = tag->getOption< bool >( "output_only_first" ,false );
 	output_overlap_positions_ = tag->getOption<bool>("output_overlap_positions",false);
-	xml_input_pose_ = core::pose::PoseOP( new pose::Pose );
+	xml_input_pose_ = utility::pointer::make_shared< pose::Pose >();
 	do_design_ = tag->getOption<bool>("do_design",true);
 	clash_threshold_ = tag->getOption<Real>("clash_threshold",10.0);
 	core::import_pose::pose_from_file(*xml_input_pose_, fname , core::import_pose::PDB_file);
@@ -968,7 +968,7 @@ void MergePDBMover::parse_my_tag(
 	if ( tag->hasOption("task_operations") ) {
 		task_factory_ = protocols::rosetta_scripts::parse_task_operations( tag, data );
 	} else {
-		task_factory_ = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory );
+		task_factory_ = utility::pointer::make_shared< core::pack::task::TaskFactory >();
 	}
 
 }
@@ -1030,7 +1030,7 @@ std::string MergePDBMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 MergePDBMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MergePDBMover );
+	return utility::pointer::make_shared< MergePDBMover >();
 }
 
 void MergePDBMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

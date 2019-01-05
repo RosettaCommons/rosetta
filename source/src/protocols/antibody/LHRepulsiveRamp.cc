@@ -59,7 +59,7 @@ LHRepulsiveRamp::~LHRepulsiveRamp() = default;
 
 //clone
 protocols::moves::MoverOP LHRepulsiveRamp::clone() const {
-	return( protocols::moves::MoverOP( new LHRepulsiveRamp() ) );
+	return( utility::pointer::make_shared< LHRepulsiveRamp >() );
 }
 
 
@@ -170,11 +170,11 @@ std::string LHRepulsiveRamp::get_name() const {
 }
 
 void LHRepulsiveRamp::set_task_factory(pack::task::TaskFactoryCOP tf) {
-	tf_ = pack::task::TaskFactoryOP( new pack::task::TaskFactory(*tf) );
+	tf_ = utility::pointer::make_shared< pack::task::TaskFactory >(*tf);
 }
 
 void LHRepulsiveRamp::set_move_map(kinematics::MoveMapCOP movemap) {
-	movemap_ = kinematics::MoveMapOP( new kinematics::MoveMap(*movemap) );
+	movemap_ = utility::pointer::make_shared< kinematics::MoveMap >(*movemap);
 }
 
 

@@ -197,7 +197,7 @@ CompositeEnergyMetric::calculate(const core::pose::Pose & ext_pose) const {
 	core::pose::Pose local_pose = ext_pose;
 	core::pose::PoseOP local_ref_pose;
 	if ( ref_pose_ ) {
-		local_ref_pose = core::pose::PoseOP( new core::pose::Pose( * ref_pose_));
+		local_ref_pose = utility::pointer::make_shared< core::pose::Pose >( * ref_pose_);
 	}
 	ScoreFunctionOP local_scorefxn;
 	if ( scorefxn_ == nullptr ) {
@@ -292,7 +292,7 @@ CompositeEnergyMetric::calculate(const core::pose::Pose & ext_pose) const {
 
 core::simple_metrics::SimpleMetricOP
 CompositeEnergyMetric::clone() const {
-	return core::simple_metrics::SimpleMetricOP(new CompositeEnergyMetric( *this ) );
+	return utility::pointer::make_shared< CompositeEnergyMetric >( *this );
 
 }
 
@@ -309,7 +309,7 @@ CompositeEnergyMetricCreator::keyname() const {
 
 core::simple_metrics::SimpleMetricOP
 CompositeEnergyMetricCreator::create_simple_metric() const {
-	return core::simple_metrics::SimpleMetricOP( new CompositeEnergyMetric );
+	return utility::pointer::make_shared< CompositeEnergyMetric >();
 
 }
 

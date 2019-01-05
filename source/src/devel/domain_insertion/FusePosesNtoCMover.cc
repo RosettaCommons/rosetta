@@ -86,7 +86,7 @@ FusePosesNtoCMover::~FusePosesNtoCMover()= default;
 
 protocols::moves::MoverOP
 FusePosesNtoCMover::clone() const{
-	return protocols::moves::MoverOP( new FusePosesNtoCMover( *this ) );
+	return utility::pointer::make_shared< FusePosesNtoCMover >( *this );
 }
 
 
@@ -193,7 +193,7 @@ FusePosesNtoCMover::parse_my_tag(
 )
 {
 	if ( tag->hasOption("fuse_pose") ) {
-		fuse_pose_ = core::pose::PoseOP( new core::pose::Pose() );
+		fuse_pose_ = utility::pointer::make_shared< core::pose::Pose >();
 		core::import_pose::pose_from_file( *fuse_pose_, tag->getOption<std::string>( "fuse_pose") , core::import_pose::PDB_file);
 	} else utility_exit_with_message("FusePosesNtoCMover needs to be supplied with a fuse_pose.");
 
@@ -347,8 +347,8 @@ FusePosesNtoCMover::generate_default_relax_mover(
 	frelax->set_movemap( mm );
 
 	core::pack::task::TaskFactoryOP taskf( new core::pack::task::TaskFactory() );
-	taskf->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline() ) );
-	taskf->push_back( TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking() ) );
+	taskf->push_back( utility::pointer::make_shared< core::pack::task::operation::InitializeFromCommandline >() );
+	taskf->push_back( utility::pointer::make_shared< core::pack::task::operation::RestrictToRepacking >() );
 
 	frelax->set_task_factory( taskf );
 
@@ -731,7 +731,7 @@ set_superpose_residues_in_atom_map(
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP FusePosesNtoCMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new FusePosesNtoCMover );
+// XRW TEMP  return utility::pointer::make_shared< FusePosesNtoCMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -781,7 +781,7 @@ std::string FusePosesNtoCMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 FusePosesNtoCMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new FusePosesNtoCMover );
+	return utility::pointer::make_shared< FusePosesNtoCMover >();
 }
 
 void FusePosesNtoCMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
@@ -803,7 +803,7 @@ SetupCoiledCoilFoldTreeMover::~SetupCoiledCoilFoldTreeMover() = default;
 
 protocols::moves::MoverOP
 SetupCoiledCoilFoldTreeMover::clone() const{
-	return protocols::moves::MoverOP( new SetupCoiledCoilFoldTreeMover( *this ) );
+	return utility::pointer::make_shared< SetupCoiledCoilFoldTreeMover >( *this );
 }
 
 
@@ -916,7 +916,7 @@ SetupCoiledCoilFoldTreeMover::parse_my_tag(
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP SetupCoiledCoilFoldTreeMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new SetupCoiledCoilFoldTreeMover() );
+// XRW TEMP  return utility::pointer::make_shared< SetupCoiledCoilFoldTreeMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -960,7 +960,7 @@ std::string SetupCoiledCoilFoldTreeMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 SetupCoiledCoilFoldTreeMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SetupCoiledCoilFoldTreeMover );
+	return utility::pointer::make_shared< SetupCoiledCoilFoldTreeMover >();
 }
 
 void SetupCoiledCoilFoldTreeMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

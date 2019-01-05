@@ -47,7 +47,7 @@ AndJumpSelector::AndJumpSelector( AndJumpSelector const &src) :
 
 /// @brief Clone operator.
 /// @details Copy this object and return an owning pointer to the new object.
-JumpSelectorOP AndJumpSelector::clone() const { return JumpSelectorOP( new AndJumpSelector(*this) ); }
+JumpSelectorOP AndJumpSelector::clone() const { return utility::pointer::make_shared< AndJumpSelector >(*this); }
 
 AndJumpSelector::~AndJumpSelector() = default;
 
@@ -175,7 +175,7 @@ AndJumpSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 
 JumpSelectorOP
 AndJumpSelectorCreator::create_jump_selector() const {
-	return JumpSelectorOP( new AndJumpSelector );
+	return utility::pointer::make_shared< AndJumpSelector >();
 }
 
 std::string

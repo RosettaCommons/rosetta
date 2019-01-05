@@ -85,7 +85,7 @@ public:
 
 	//this class lives in the PoseCache.... need to provide clone()
 	basic::datacache::CacheableDataOP clone() const override {
-		return basic::datacache::CacheableDataOP( new ResidualDipolarCouplingRigidSegments(*this) );
+		return utility::pointer::make_shared< ResidualDipolarCouplingRigidSegments >(*this);
 	}
 
 	/// @brief compute dipolar score for given segment definition

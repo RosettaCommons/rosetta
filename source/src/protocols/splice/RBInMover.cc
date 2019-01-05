@@ -57,7 +57,7 @@ using namespace::protocols;
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP RBInMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new RBInMover );
+// XRW TEMP  return utility::pointer::make_shared< RBInMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -239,13 +239,13 @@ RBInMover::apply( Pose & pose ){
 moves::MoverOP
 RBInMover::clone() const
 {
-	return moves::MoverOP( new RBInMover( *this ) );
+	return utility::pointer::make_shared< RBInMover >( *this );
 }
 
 moves::MoverOP
 RBInMover::fresh_instance() const
 {
-	return moves::MoverOP( new RBInMover );
+	return utility::pointer::make_shared< RBInMover >();
 }
 
 void
@@ -297,7 +297,7 @@ std::string RBInMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 RBInMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new RBInMover );
+	return utility::pointer::make_shared< RBInMover >();
 }
 
 void RBInMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

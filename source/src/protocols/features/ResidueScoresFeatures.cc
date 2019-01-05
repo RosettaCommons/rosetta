@@ -128,12 +128,12 @@ ResidueScoresFeatures::write_residue_scores_1b_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column batch_id("batch_id", DbDataTypeOP( new DbInteger() ));
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
-	Column resNum("resNum", DbDataTypeOP( new DbInteger() ));
-	Column score_type_id("score_type_id", DbDataTypeOP( new DbInteger() ));
-	Column score_value("score_value", DbDataTypeOP( new DbReal() ));
-	Column context_dependent("context_dependent", DbDataTypeOP( new DbInteger() ));
+	Column batch_id("batch_id", utility::pointer::make_shared< DbInteger >());
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >());
+	Column resNum("resNum", utility::pointer::make_shared< DbInteger >());
+	Column score_type_id("score_type_id", utility::pointer::make_shared< DbInteger >());
+	Column score_value("score_value", utility::pointer::make_shared< DbReal >());
+	Column context_dependent("context_dependent", utility::pointer::make_shared< DbInteger >());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(batch_id);
@@ -189,13 +189,13 @@ ResidueScoresFeatures::write_residue_scores_2b_table_schema_helper(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column batch_id("batch_id", DbDataTypeOP( new DbInteger() ));
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
-	Column resNum1("resNum1", DbDataTypeOP( new DbInteger() ));
-	Column resNum2("resNum2", DbDataTypeOP( new DbInteger() ));
-	Column score_type_id("score_type_id", DbDataTypeOP( new DbInteger() ));
-	Column score_value("score_value", DbDataTypeOP( new DbReal() ));
-	Column context_dependent("context_dependent", DbDataTypeOP( new DbInteger() ));
+	Column batch_id("batch_id", utility::pointer::make_shared< DbInteger >());
+	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >());
+	Column resNum1("resNum1", utility::pointer::make_shared< DbInteger >());
+	Column resNum2("resNum2", utility::pointer::make_shared< DbInteger >());
+	Column score_type_id("score_type_id", utility::pointer::make_shared< DbInteger >());
+	Column score_value("score_value", utility::pointer::make_shared< DbReal >());
+	Column context_dependent("context_dependent", utility::pointer::make_shared< DbInteger >());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(batch_id);
@@ -679,7 +679,7 @@ std::string ResidueScoresFeaturesCreator::type_name() const {
 
 protocols::features::FeaturesReporterOP
 ResidueScoresFeaturesCreator::create_features_reporter() const {
-	return protocols::features::FeaturesReporterOP( new ResidueScoresFeatures );
+	return utility::pointer::make_shared< ResidueScoresFeatures >();
 }
 
 void ResidueScoresFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

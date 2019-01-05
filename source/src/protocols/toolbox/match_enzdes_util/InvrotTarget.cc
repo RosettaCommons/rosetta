@@ -74,7 +74,7 @@ InvrotTarget::generate_constraints(
 	}
 	if ( node_constraints.size() == 0 ) return nullptr;
 
-	return core::scoring::constraints::ConstraintCOP( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::MultiConstraint( node_constraints ) ) );
+	return utility::pointer::make_shared< core::scoring::constraints::MultiConstraint >( node_constraints );
 }
 
 
@@ -96,7 +96,7 @@ InvrotTarget::initialize_tree_nodes_from_enzcst_io(
 		std::pair< Size, Size> const & target_res( enzcst_io->target_downstream_res()[i] );
 		if ( (target_res.first == 1 ) && (target_res.second == 1 ) ) {
 			mcfi_to_build.push_back( i );
-			next_nodes_.push_back( InvrotTreeNodeOP( new InvrotTreeNode( get_self_weak_ptr() ) ) );
+			next_nodes_.push_back( utility::pointer::make_shared< InvrotTreeNode >( get_self_weak_ptr() ) );
 		}
 	}
 
@@ -126,7 +126,7 @@ InvrotTarget::collect_all_inverse_rotamers(
 	//1. make space
 	Size num_residue_lists( representative_target_res_for_geom_cst_.size() + 1 ); //+1 bc we're also counting the ligand now
 	Size input_size( invrot_collectors.size() );
-	invrot_collectors.push_back(  protocols::toolbox::match_enzdes_util::InvrotCollectorOP( new InvrotCollector( num_residue_lists ) ) );
+	invrot_collectors.push_back(  utility::pointer::make_shared< InvrotCollector >( num_residue_lists ) );
 
 	//2. put target res into 0th element
 	invrot_collectors[ invrot_collectors.size() ]->set_invrots_for_listnum( 0, all_target_res_, get_self_ptr(), 1 );

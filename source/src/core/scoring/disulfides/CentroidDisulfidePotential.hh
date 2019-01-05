@@ -146,7 +146,7 @@ class Cb_Distance_Func : public func::Func
 public:
 	Cb_Distance_Func();
 	virtual ~Cb_Distance_Func();
-	func::FuncOP clone() const { return func::FuncOP( new Cb_Distance_Func( *this ) ); }
+	func::FuncOP clone() const { return utility::pointer::make_shared< Cb_Distance_Func >( *this ); }
 	virtual bool operator == ( Func const & other ) const;
 	virtual bool same_type_as_me( Func const & other ) const;
 	virtual core::Real func( core::Real const ) const;
@@ -176,7 +176,7 @@ class Cen_Distance_Func : public func::Func
 public:
 	Cen_Distance_Func();
 	virtual ~Cen_Distance_Func();
-	func::FuncOP clone() const { return func::FuncOP( new Cen_Distance_Func( *this ) ); }
+	func::FuncOP clone() const { return utility::pointer::make_shared< Cen_Distance_Func >( *this ); }
 	virtual bool operator == ( Func const & other ) const;
 	virtual bool same_type_as_me( Func const & other ) const;
 	virtual core::Real func( core::Real const ) const;
@@ -199,7 +199,7 @@ class CaCbCb_Angle_Func : public func::Func
 public:
 	CaCbCb_Angle_Func();
 	virtual ~CaCbCb_Angle_Func();
-	func::FuncOP clone() const { return func::FuncOP( new CaCbCb_Angle_Func( *this ) ); }
+	func::FuncOP clone() const { return utility::pointer::make_shared< CaCbCb_Angle_Func >( *this ); }
 	virtual bool operator == ( Func const & other ) const;
 	virtual bool same_type_as_me( Func const & other ) const;
 	virtual core::Real func( core::Real const ) const;
@@ -222,7 +222,7 @@ class NCaCaC_Dihedral_Func : public func::Func
 public:
 	NCaCaC_Dihedral_Func();
 	virtual ~NCaCaC_Dihedral_Func();
-	func::FuncOP clone() const { return func::FuncOP( new NCaCaC_Dihedral_Func( *this ) ); }
+	func::FuncOP clone() const { return utility::pointer::make_shared< NCaCaC_Dihedral_Func >( *this ); }
 	virtual bool operator == ( Func const & other ) const;
 	virtual bool same_type_as_me( Func const & other ) const;
 	virtual core::Real func( core::Real const ) const;
@@ -245,7 +245,7 @@ class CaCbCbCa_Dihedral_Func : public func::Func
 public:
 	CaCbCbCa_Dihedral_Func();
 	virtual ~CaCbCbCa_Dihedral_Func();
-	func::FuncOP clone() const { return func::FuncOP( new CaCbCbCa_Dihedral_Func( *this ) ); }
+	func::FuncOP clone() const { return utility::pointer::make_shared< CaCbCbCa_Dihedral_Func >( *this ); }
 	virtual bool operator == ( Func const & other ) const;
 	virtual bool same_type_as_me( Func const & other ) const;
 	virtual core::Real func( core::Real const ) const;

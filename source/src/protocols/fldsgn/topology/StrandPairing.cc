@@ -154,7 +154,7 @@ StrandPairing::~StrandPairing()= default;
 StrandPairingOP
 StrandPairing::clone()
 {
-	return StrandPairingOP( new StrandPairing( *this ) );
+	return utility::pointer::make_shared< StrandPairing >( *this );
 }
 
 
@@ -465,7 +465,7 @@ StrandPairingSet::StrandPairingSet():
 	spairset_name_( "" ),
 	num_strands_( 0 ),
 	finalized_( false ),
-	empty_( StrandPairingOP( new StrandPairing ) )
+	empty_( utility::pointer::make_shared< StrandPairing >() )
 {}
 
 
@@ -475,7 +475,7 @@ StrandPairingSet::StrandPairingSet( StrandPairings const & strand_pairings ):
 	spairset_name_( "" ),
 	num_strands_( 0 ),
 	finalized_( false ),
-	empty_( StrandPairingOP( new StrandPairing ) )
+	empty_( utility::pointer::make_shared< StrandPairing >() )
 {
 	finalize();
 }
@@ -486,7 +486,7 @@ StrandPairingSet::StrandPairingSet( String const & spairstring, SS_Info2_COP con
 	spairset_name_( "" ),
 	num_strands_( 0 ),
 	finalized_( false ),
-	empty_( StrandPairingOP( new StrandPairing ) )
+	empty_( utility::pointer::make_shared< StrandPairing >() )
 {
 	if ( spairstring == "" ) {
 		return;
@@ -501,7 +501,7 @@ StrandPairingSet::StrandPairingSet( String const & spairstring, SS_Info2_COP con
 	spairset_name_( "" ),
 	num_strands_( 0 ),
 	finalized_( false ),
-	empty_( StrandPairingOP( new StrandPairing ) )
+	empty_( utility::pointer::make_shared< StrandPairing >() )
 {
 	if ( spairstring == "" ) return;
 	initialize_by_sspair_string_and_abego( spairstring, ssinfo, abego );
@@ -513,7 +513,7 @@ StrandPairingSet::StrandPairingSet( SS_Info2 const & ssinfo, DimerPairings const
 	spairset_name_( "" ),
 	num_strands_( 0 ),
 	finalized_( false ),
-	empty_( StrandPairingOP( new StrandPairing ) )
+	empty_( utility::pointer::make_shared< StrandPairing >() )
 {
 	initialize_by_dimer_pairs( ssinfo, dimer_pairs );
 }
@@ -525,7 +525,7 @@ StrandPairingSet::~StrandPairingSet()= default;
 StrandPairingSetOP
 StrandPairingSet::clone() const
 {
-	return StrandPairingSetOP( new StrandPairingSet( *this ) );
+	return utility::pointer::make_shared< StrandPairingSet >( *this );
 }
 
 
@@ -844,7 +844,7 @@ StrandPairingSet::initialize_by_dimer_pairs( SS_Info2 const & ssinfo, DimerPairi
 
 		StrandPairingOP & spop = map_strand_pairings_[ istrand ][ jstrand ];
 		if ( spop == nullptr ) {
-			spop = StrandPairingOP( new StrandPairing( istrand, jstrand, 0, dp.orient() ) );
+			spop = utility::pointer::make_shared< StrandPairing >( istrand, jstrand, 0, dp.orient() );
 			strand_pairings_.push_back( spop );
 		}
 

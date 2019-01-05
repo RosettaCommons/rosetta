@@ -61,7 +61,7 @@ static basic::Tracer TR("protocols.simple_moves.MSDMover");
 
 // XRW TEMP moves::MoverOP
 // XRW TEMP MSDMoverCreator::create_mover() const {
-// XRW TEMP  return MSDMoverOP( new MSDMover );
+// XRW TEMP  return utility::pointer::make_shared< MSDMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -378,7 +378,7 @@ std::string MSDMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 MSDMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MSDMover );
+	return utility::pointer::make_shared< MSDMover >();
 }
 
 void MSDMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

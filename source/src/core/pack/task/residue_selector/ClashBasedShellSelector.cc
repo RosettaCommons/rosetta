@@ -337,7 +337,7 @@ PackerTaskOP task_from_bool_mask(
 
 	// Restrict every position to repacking (no design).
 	TaskFactory factory;
-	factory.push_back(TaskOperationOP(new RestrictToRepacking));
+	factory.push_back(utility::pointer::make_shared< RestrictToRepacking >());
 	PackerTaskOP task = factory.create_task_and_apply_taskoperations(pose);
 
 	// Prevent the positions that are outside the mask from moving at all.
@@ -394,7 +394,7 @@ ClashBasedShellSelector::ClashBasedShellSelector(
 /// @brief Clone operator.
 /// @details Copy this object and return an owning pointer to the new object.
 ResidueSelectorOP ClashBasedShellSelector::clone() const {
-	return ResidueSelectorOP( new ClashBasedShellSelector(*this) );
+	return utility::pointer::make_shared< ClashBasedShellSelector >(*this);
 }
 
 ResidueSubset
@@ -653,7 +653,7 @@ bool ClashBasedShellSelector::is_inverted() const {
 
 core::select::residue_selector::ResidueSelectorOP
 ClashBasedShellSelectorCreator::create_residue_selector() const {
-	return core::select::residue_selector::ResidueSelectorOP( new ClashBasedShellSelector );
+	return utility::pointer::make_shared< ClashBasedShellSelector >();
 }
 
 std::string

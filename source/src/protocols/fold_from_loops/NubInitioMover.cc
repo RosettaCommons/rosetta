@@ -612,7 +612,7 @@ NubInitioMover::apply_abinitio( core::pose::Pose & pose )
 
 	ClassicAbinitioOP abinitio( new ClassicAbinitio( nub_->small_fragments(), nub_->large_fragments(), nub_->movemap()->clone() ) );
 	if ( use_cst_ ) {
-		abinitio = ClassicAbinitioOP( new FoldConstraints( nub_->small_fragments(), nub_->large_fragments() , nub_->movemap()->clone() ) );
+		abinitio = utility::pointer::make_shared< FoldConstraints >( nub_->small_fragments(), nub_->large_fragments() , nub_->movemap()->clone() );
 	}
 	abinitio->init( pose );
 	if ( use_correction_weights_ and has_alphas_ ) {
@@ -729,7 +729,7 @@ NubInitioMover::dump_centroid( core::pose::Pose const & pose, core::scoring::Sco
 	if ( dump_centroid_ and jd2::jd2_used() ) {
 		TR << "Dump into silent file" << std::endl;
 		SilentFileOptionsOP silent_options( new SilentFileOptions );
-		silent_score_file_ = SilentFileDataOP( new SilentFileData( *silent_options ) );
+		silent_score_file_ = utility::pointer::make_shared< SilentFileData >( *silent_options );
 		silent_score_file_->set_filename( jd2::current_output_filename() + "_CENTROID" );
 		core::pose::Pose cpose = pose;
 		(*scorefxn)( cpose );
@@ -818,11 +818,11 @@ NubInitioMover::repack( core::pose::Pose & pose )
 
 	// Make task Factory
 	TaskFactoryOP postTaskFact( new TaskFactory );
-	TaskOperationOP fixMotifOperation( new OperateOnResidueSubset( ResLvlTaskOperationCOP( new PreventRepackingRLT() ), static_selector ) );
+	TaskOperationOP fixMotifOperation( new OperateOnResidueSubset( utility::pointer::make_shared< PreventRepackingRLT >(), static_selector ) );
 	postTaskFact->push_back( fixMotifOperation );
 	if ( not design_ ) {
 		TR.Trace << "No sequence design" << std::endl;
-		TaskOperationOP templateOperation( new OperateOnResidueSubset( ResLvlTaskOperationCOP( new RestrictToRepackingRLT() ), chi_movable_selector() ) );
+		TaskOperationOP templateOperation( new OperateOnResidueSubset( utility::pointer::make_shared< RestrictToRepackingRLT >(), chi_movable_selector() ) );
 		postTaskFact->push_back( templateOperation );
 	} else {
 		if ( residue_type_ == "" ) {
@@ -1304,12 +1304,12 @@ NubInitioMover::default_residue_type() {
 
 protocols::moves::MoverOP
 NubInitioMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new NubInitioMover );
+	return utility::pointer::make_shared< NubInitioMover >();
 }
 
 protocols::moves::MoverOP
 NubInitioMover::clone() const {
-	return protocols::moves::MoverOP( new NubInitioMover( *this ) );
+	return utility::pointer::make_shared< NubInitioMover >( *this );
 }
 
 std::string
@@ -1326,7 +1326,7 @@ NubInitioMover::mover_name() {
 
 moves::MoverOP
 NubInitioMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new NubInitioMover );
+	return utility::pointer::make_shared< NubInitioMover >();
 }
 
 std::string

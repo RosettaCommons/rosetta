@@ -59,7 +59,7 @@ GaussianChainQuadrupleFunc::GaussianChainQuadrupleFunc( Real const gaussian_vari
 FuncOP
 GaussianChainQuadrupleFunc::clone() const
 {
-	return FuncOP( new GaussianChainQuadrupleFunc( gaussian_variance_, loop_fixed_cost_, D2_, D3_, D4_ ) );
+	return utility::pointer::make_shared< GaussianChainQuadrupleFunc >( gaussian_variance_, loop_fixed_cost_, D2_, D3_, D4_ );
 }
 
 bool GaussianChainQuadrupleFunc::operator == ( Func const & other ) const

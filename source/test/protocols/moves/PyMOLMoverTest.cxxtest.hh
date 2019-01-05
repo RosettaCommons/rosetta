@@ -42,11 +42,11 @@ public:
 	core::pose::PoseOP original_pose;
 	void setUp(){
 		core_init();
-		original_pose = core::pose::PoseOP( new core::pose::Pose() );
+		original_pose = utility::pointer::make_shared< core::pose::Pose >();
 	}
 
 	void tearDown(){
-		original_pose = core::pose::PoseOP( new core::pose::Pose() );
+		original_pose = utility::pointer::make_shared< core::pose::Pose >();
 	}
 
 	void test_pose_clone_has_no_observer(){

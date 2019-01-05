@@ -74,11 +74,11 @@ public:
 
 		core_init();
 
-		pose = PoseOP( new Pose );
+		pose = utility::pointer::make_shared< Pose >();
 		core::chemical::ResidueTypeSetCOP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 		core::pose::make_pose_from_sequence( *pose, "DFGLK", *rsd_set );
 
-		tcre_potential = SplitUnfoldedTwoBodyPotentialOP( new SplitUnfoldedTwoBodyPotential( basic::database::full_name( "scoring/score_functions/split_unfolded/mm_database_mm_std_median" ) ) );
+		tcre_potential = utility::pointer::make_shared< SplitUnfoldedTwoBodyPotential >( basic::database::full_name( "scoring/score_functions/split_unfolded/mm_database_mm_std_median" ) );
 
 	}
 

@@ -28,7 +28,7 @@ namespace features {
 // XRW TEMP PairFeaturesCreator::PairFeaturesCreator() {}
 // XRW TEMP PairFeaturesCreator::~PairFeaturesCreator() = default;
 // XRW TEMP FeaturesReporterOP PairFeaturesCreator::create_features_reporter() const {
-// XRW TEMP  return FeaturesReporterOP( new PairFeatures );
+// XRW TEMP  return utility::pointer::make_shared< PairFeatures >();
 // XRW TEMP }
 
 // XRW TEMP std::string PairFeaturesCreator::type_name() const {

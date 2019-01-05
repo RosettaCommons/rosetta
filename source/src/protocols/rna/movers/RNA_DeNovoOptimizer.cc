@@ -46,7 +46,7 @@ RNA_DeNovoOptimizer::RNA_DeNovoOptimizer( utility::vector1< pose::PoseOP > const
 {
 	using namespace core::scoring;
 	options_->initialize_for_farna_optimizer( cycles_ );
-	rna_fragment_monte_carlo_ = RNA_FragmentMonteCarloOP( new RNA_FragmentMonteCarlo( options_ ) );
+	rna_fragment_monte_carlo_ = utility::pointer::make_shared< RNA_FragmentMonteCarlo >( options_ );
 
 	if ( options_->minimize_structure() ) {
 		static ScoreFunctionOP lores_scorefxn = ScoreFunctionFactory::create_score_function( "stepwise/rna/rna_lores_for_stepwise.wts" );

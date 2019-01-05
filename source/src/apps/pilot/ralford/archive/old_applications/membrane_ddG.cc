@@ -56,26 +56,26 @@ ompLA_task() {
 	mutations.resize(20);
 
 	// Append a list
-	mutations[1] = MutationOP( new Mutation( 181, core::chemical::aa_ala ) );
-	mutations[2] = MutationOP( new Mutation( 181, core::chemical::aa_cys ) );
-	mutations[3] = MutationOP( new Mutation( 181, core::chemical::aa_asp ) );
-	mutations[4] = MutationOP( new Mutation( 181, core::chemical::aa_glu ) );
-	mutations[5] = MutationOP( new Mutation( 181, core::chemical::aa_phe ) );
-	mutations[6] = MutationOP( new Mutation( 181, core::chemical::aa_gly ) );
-	mutations[7] = MutationOP( new Mutation( 181, core::chemical::aa_his ) );
-	mutations[8] = MutationOP( new Mutation( 181, core::chemical::aa_ile ) );
-	mutations[9] = MutationOP( new Mutation( 181, core::chemical::aa_lys ) );
-	mutations[10] = MutationOP( new Mutation( 181, core::chemical::aa_leu ) );
-	mutations[11] = MutationOP( new Mutation( 181, core::chemical::aa_met ) );
-	mutations[12] = MutationOP( new Mutation( 181, core::chemical::aa_asn ) );
-	mutations[13] = MutationOP( new Mutation( 181, core::chemical::aa_pro ) );
-	mutations[14] = MutationOP( new Mutation( 181, core::chemical::aa_gln ) );
-	mutations[15] = MutationOP( new Mutation( 181, core::chemical::aa_arg ) );
-	mutations[16] = MutationOP( new Mutation( 181, core::chemical::aa_ser ) );
-	mutations[17] = MutationOP( new Mutation( 181, core::chemical::aa_thr ) );
-	mutations[18] = MutationOP( new Mutation( 181, core::chemical::aa_val ) );
-	mutations[19] = MutationOP( new Mutation( 181, core::chemical::aa_trp ) );
-	mutations[20] = MutationOP( new Mutation( 181, core::chemical::aa_tyr ) );
+	mutations[1] = utility::pointer::make_shared< Mutation >( 181, core::chemical::aa_ala );
+	mutations[2] = utility::pointer::make_shared< Mutation >( 181, core::chemical::aa_cys );
+	mutations[3] = utility::pointer::make_shared< Mutation >( 181, core::chemical::aa_asp );
+	mutations[4] = utility::pointer::make_shared< Mutation >( 181, core::chemical::aa_glu );
+	mutations[5] = utility::pointer::make_shared< Mutation >( 181, core::chemical::aa_phe );
+	mutations[6] = utility::pointer::make_shared< Mutation >( 181, core::chemical::aa_gly );
+	mutations[7] = utility::pointer::make_shared< Mutation >( 181, core::chemical::aa_his );
+	mutations[8] = utility::pointer::make_shared< Mutation >( 181, core::chemical::aa_ile );
+	mutations[9] = utility::pointer::make_shared< Mutation >( 181, core::chemical::aa_lys );
+	mutations[10] = utility::pointer::make_shared< Mutation >( 181, core::chemical::aa_leu );
+	mutations[11] = utility::pointer::make_shared< Mutation >( 181, core::chemical::aa_met );
+	mutations[12] = utility::pointer::make_shared< Mutation >( 181, core::chemical::aa_asn );
+	mutations[13] = utility::pointer::make_shared< Mutation >( 181, core::chemical::aa_pro );
+	mutations[14] = utility::pointer::make_shared< Mutation >( 181, core::chemical::aa_gln );
+	mutations[15] = utility::pointer::make_shared< Mutation >( 181, core::chemical::aa_arg );
+	mutations[16] = utility::pointer::make_shared< Mutation >( 181, core::chemical::aa_ser );
+	mutations[17] = utility::pointer::make_shared< Mutation >( 181, core::chemical::aa_thr );
+	mutations[18] = utility::pointer::make_shared< Mutation >( 181, core::chemical::aa_val );
+	mutations[19] = utility::pointer::make_shared< Mutation >( 181, core::chemical::aa_trp );
+	mutations[20] = utility::pointer::make_shared< Mutation >( 181, core::chemical::aa_tyr );
 
 	return mutations;
 }
@@ -92,18 +92,18 @@ ompA_task() {
 	mutations.resize(12);
 
 	// Append a list
-	mutations[1] = MutationOP( new Mutation( 7, core::chemical::aa_ala ) );
-	mutations[2] = MutationOP( new Mutation( 15, core::chemical::aa_ala ) );
-	mutations[3] = MutationOP( new Mutation( 57, core::chemical::aa_ala ) );
-	mutations[4] = MutationOP( new Mutation( 143, core::chemical::aa_ala ) );
-	mutations[5] = MutationOP( new Mutation( 43, core::chemical::aa_ala ) );
-	mutations[6] = MutationOP( new Mutation( 55, core::chemical::aa_ala ) );
-	mutations[7] = MutationOP( new Mutation( 129, core::chemical::aa_ala ) );
-	mutations[8] = MutationOP( new Mutation( 141, core::chemical::aa_ala ) );
-	mutations[9] = MutationOP( new Mutation( 168, core::chemical::aa_ala ) );
-	mutations[10] = MutationOP( new Mutation( 51, core::chemical::aa_ala ) );
-	mutations[11] = MutationOP( new Mutation( 123, core::chemical::aa_ala ) );
-	mutations[12] = MutationOP( new Mutation( 170, core::chemical::aa_ala ) );
+	mutations[1] = utility::pointer::make_shared< Mutation >( 7, core::chemical::aa_ala );
+	mutations[2] = utility::pointer::make_shared< Mutation >( 15, core::chemical::aa_ala );
+	mutations[3] = utility::pointer::make_shared< Mutation >( 57, core::chemical::aa_ala );
+	mutations[4] = utility::pointer::make_shared< Mutation >( 143, core::chemical::aa_ala );
+	mutations[5] = utility::pointer::make_shared< Mutation >( 43, core::chemical::aa_ala );
+	mutations[6] = utility::pointer::make_shared< Mutation >( 55, core::chemical::aa_ala );
+	mutations[7] = utility::pointer::make_shared< Mutation >( 129, core::chemical::aa_ala );
+	mutations[8] = utility::pointer::make_shared< Mutation >( 141, core::chemical::aa_ala );
+	mutations[9] = utility::pointer::make_shared< Mutation >( 168, core::chemical::aa_ala );
+	mutations[10] = utility::pointer::make_shared< Mutation >( 51, core::chemical::aa_ala );
+	mutations[11] = utility::pointer::make_shared< Mutation >( 123, core::chemical::aa_ala );
+	mutations[12] = utility::pointer::make_shared< Mutation >( 170, core::chemical::aa_ala );
 
 	return mutations;
 }
@@ -120,30 +120,30 @@ bacteriorhodpsin_task() {
 	mutations.resize(12);
 
 	// Append a list
-	mutations[1] = MutationOP( new Mutation( 31, core::chemical::aa_ala ) );
-	mutations[2] = MutationOP( new Mutation( 32, core::chemical::aa_ala ) );
-	mutations[3] = MutationOP( new Mutation( 33, core::chemical::aa_ala ) );
-	mutations[4] = MutationOP( new Mutation( 34, core::chemical::aa_ala ) );
-	mutations[5] = MutationOP( new Mutation( 36, core::chemical::aa_ala ) );
-	mutations[6] = MutationOP( new Mutation( 37, core::chemical::aa_ala ) );
-	mutations[7] = MutationOP( new Mutation( 38, core::chemical::aa_ala ) );
-	mutations[8] = MutationOP( new Mutation( 39, core::chemical::aa_ala ) );
-	mutations[9] = MutationOP( new Mutation( 41, core::chemical::aa_ala ) );
-	mutations[10] = MutationOP( new Mutation( 42, core::chemical::aa_ala ) );
-	mutations[11] = MutationOP( new Mutation( 45, core::chemical::aa_ala ) );
-	mutations[12] = MutationOP( new Mutation( 44, core::chemical::aa_ala ) );
-	mutations[10] = MutationOP( new Mutation( 45, core::chemical::aa_ala ) );
-	mutations[11] = MutationOP( new Mutation( 46, core::chemical::aa_ala ) );
-	mutations[12] = MutationOP( new Mutation( 48, core::chemical::aa_ala ) );
-	mutations[11] = MutationOP( new Mutation( 50, core::chemical::aa_ala ) );
-	mutations[12] = MutationOP( new Mutation( 51, core::chemical::aa_ala ) );
-	mutations[10] = MutationOP( new Mutation( 52, core::chemical::aa_ala ) );
-	mutations[11] = MutationOP( new Mutation( 53, core::chemical::aa_ala ) );
-	mutations[12] = MutationOP( new Mutation( 54, core::chemical::aa_ala ) );
-	mutations[12] = MutationOP( new Mutation( 55, core::chemical::aa_ala ) );
-	mutations[10] = MutationOP( new Mutation( 56, core::chemical::aa_ala ) );
-	mutations[11] = MutationOP( new Mutation( 57, core::chemical::aa_ala ) );
-	mutations[12] = MutationOP( new Mutation( 58, core::chemical::aa_ala ) );
+	mutations[1] = utility::pointer::make_shared< Mutation >( 31, core::chemical::aa_ala );
+	mutations[2] = utility::pointer::make_shared< Mutation >( 32, core::chemical::aa_ala );
+	mutations[3] = utility::pointer::make_shared< Mutation >( 33, core::chemical::aa_ala );
+	mutations[4] = utility::pointer::make_shared< Mutation >( 34, core::chemical::aa_ala );
+	mutations[5] = utility::pointer::make_shared< Mutation >( 36, core::chemical::aa_ala );
+	mutations[6] = utility::pointer::make_shared< Mutation >( 37, core::chemical::aa_ala );
+	mutations[7] = utility::pointer::make_shared< Mutation >( 38, core::chemical::aa_ala );
+	mutations[8] = utility::pointer::make_shared< Mutation >( 39, core::chemical::aa_ala );
+	mutations[9] = utility::pointer::make_shared< Mutation >( 41, core::chemical::aa_ala );
+	mutations[10] = utility::pointer::make_shared< Mutation >( 42, core::chemical::aa_ala );
+	mutations[11] = utility::pointer::make_shared< Mutation >( 45, core::chemical::aa_ala );
+	mutations[12] = utility::pointer::make_shared< Mutation >( 44, core::chemical::aa_ala );
+	mutations[10] = utility::pointer::make_shared< Mutation >( 45, core::chemical::aa_ala );
+	mutations[11] = utility::pointer::make_shared< Mutation >( 46, core::chemical::aa_ala );
+	mutations[12] = utility::pointer::make_shared< Mutation >( 48, core::chemical::aa_ala );
+	mutations[11] = utility::pointer::make_shared< Mutation >( 50, core::chemical::aa_ala );
+	mutations[12] = utility::pointer::make_shared< Mutation >( 51, core::chemical::aa_ala );
+	mutations[10] = utility::pointer::make_shared< Mutation >( 52, core::chemical::aa_ala );
+	mutations[11] = utility::pointer::make_shared< Mutation >( 53, core::chemical::aa_ala );
+	mutations[12] = utility::pointer::make_shared< Mutation >( 54, core::chemical::aa_ala );
+	mutations[12] = utility::pointer::make_shared< Mutation >( 55, core::chemical::aa_ala );
+	mutations[10] = utility::pointer::make_shared< Mutation >( 56, core::chemical::aa_ala );
+	mutations[11] = utility::pointer::make_shared< Mutation >( 57, core::chemical::aa_ala );
+	mutations[12] = utility::pointer::make_shared< Mutation >( 58, core::chemical::aa_ala );
 
 	return mutations;
 }

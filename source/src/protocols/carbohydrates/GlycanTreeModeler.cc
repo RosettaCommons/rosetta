@@ -165,14 +165,14 @@ GlycanTreeModeler::parse_my_tag(
 moves::MoverOP
 GlycanTreeModeler::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new GlycanTreeModeler );
+	return utility::pointer::make_shared< GlycanTreeModeler >();
 }
 
 /// @brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
 GlycanTreeModeler::clone() const
 {
-	return protocols::moves::MoverOP( new GlycanTreeModeler( *this ) );
+	return utility::pointer::make_shared< GlycanTreeModeler >( *this );
 }
 
 std::string GlycanTreeModeler::get_name() const {
@@ -374,14 +374,14 @@ GlycanTreeModeler::apply( core::pose::Pose & pose){
 	//Setup everything we need.
 
 	// Setup Selectors
-	GlycanResidueSelectorOP glycan_selector = GlycanResidueSelectorOP( new GlycanResidueSelector() );
-	GlycanLayerSelectorOP modeling_layer_selector = GlycanLayerSelectorOP( new GlycanLayerSelector() );
-	GlycanLayerSelectorOP virtual_layer_selector =  GlycanLayerSelectorOP( new GlycanLayerSelector() );
-	ReturnResidueSubsetSelectorOP store_subset = ReturnResidueSubsetSelectorOP( new ReturnResidueSubsetSelector() );
-	ReturnResidueSubsetSelectorOP store_subset2 =ReturnResidueSubsetSelectorOP( new ReturnResidueSubsetSelector() );
-	ReturnResidueSubsetSelectorOP store_to_de_virt_subset =  ReturnResidueSubsetSelectorOP( new ReturnResidueSubsetSelector() );
-	AndResidueSelectorOP and_selector =      AndResidueSelectorOP( new AndResidueSelector() );
-	AndResidueSelectorOP and_selector_virt = AndResidueSelectorOP( new AndResidueSelector() );
+	GlycanResidueSelectorOP glycan_selector = utility::pointer::make_shared< GlycanResidueSelector >();
+	GlycanLayerSelectorOP modeling_layer_selector = utility::pointer::make_shared< GlycanLayerSelector >();
+	GlycanLayerSelectorOP virtual_layer_selector =  utility::pointer::make_shared< GlycanLayerSelector >();
+	ReturnResidueSubsetSelectorOP store_subset = utility::pointer::make_shared< ReturnResidueSubsetSelector >();
+	ReturnResidueSubsetSelectorOP store_subset2 =utility::pointer::make_shared< ReturnResidueSubsetSelector >();
+	ReturnResidueSubsetSelectorOP store_to_de_virt_subset =  utility::pointer::make_shared< ReturnResidueSubsetSelector >();
+	AndResidueSelectorOP and_selector =      utility::pointer::make_shared< AndResidueSelector >();
+	AndResidueSelectorOP and_selector_virt = utility::pointer::make_shared< AndResidueSelector >();
 
 
 	Pose starting_pose = pose;
@@ -502,7 +502,7 @@ GlycanTreeModeler::apply( core::pose::Pose & pose){
 
 	ResidueSubset mask = starting_subset; //All the glycan residues we will be modeling
 
-	MonteCarloOP mc = MonteCarloOP( new MonteCarlo(pose, *scorefxn_, 1.0) );
+	MonteCarloOP mc = utility::pointer::make_shared< MonteCarlo >(pose, *scorefxn_, 1.0);
 	mc->set_last_accepted_pose(pose);
 
 	completed_quenches_ = 0;
@@ -708,7 +708,7 @@ GlycanTreeModeler::apply( core::pose::Pose & pose){
 
 
 		//For now, we create a movemap from a selector manually.  Refactor this to Andrew's new code!
-		ReturnResidueSubsetSelectorOP return_subset_min = ReturnResidueSubsetSelectorOP( new ReturnResidueSubsetSelector(min_subset));
+		ReturnResidueSubsetSelectorOP return_subset_min = utility::pointer::make_shared< ReturnResidueSubsetSelector >(min_subset);
 
 		MoveMapOP mm = core::pose::carbohydrates::create_glycan_movemap_from_residue_selector(pose,return_subset_min,true /*chi*/,min_rings_,true /*bb*/, cartmin_);
 
@@ -759,7 +759,7 @@ GlycanTreeModeler::apply( core::pose::Pose & pose){
 protocols::moves::MoverOP
 GlycanTreeModelerCreator::create_mover() const
 {
-	return protocols::moves::MoverOP( new GlycanTreeModeler );
+	return utility::pointer::make_shared< GlycanTreeModeler >();
 }
 
 std::string

@@ -140,7 +140,7 @@ private:
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP AbscriptMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new AbscriptMover );
+// XRW TEMP  return utility::pointer::make_shared< AbscriptMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -181,32 +181,32 @@ AbscriptMover::AbscriptMover():
 	id_map_["IIIa"] = IIIa; id_map_["IIIb"] = IIIb;
 	id_map_["IVa"] = IVa; id_map_["IVb"] = IVb;
 
-	mc_ = moves::MonteCarloOP( new moves::MonteCarlo( *setup_score( "score3", OptionKeys::abinitio::stage4_patch ), DEFAULT_TEMP ) );
+	mc_ = utility::pointer::make_shared< moves::MonteCarlo >( *setup_score( "score3", OptionKeys::abinitio::stage4_patch ), DEFAULT_TEMP );
 	canonical_sampling::mc_convergence_checks::setup_convergence_checks_from_cmdline( *mc_ );
 
 	core::scoring::ScoreFunctionOP tmp_score = setup_score( "score0", OptionKeys::abinitio::stage1_patch );
 	tmp_score->set_weight( core::scoring::linear_chainbreak, option[ jumps::chainbreak_weight_stage1 ]() );
-	stage_movers_[ I ] = AbscriptStageMoverOP( new AbscriptStageMover( I, mc_, tmp_score, 2000 ) );
+	stage_movers_[ I ] = utility::pointer::make_shared< AbscriptStageMover >( I, mc_, tmp_score, 2000 );
 
 	tmp_score = setup_score( "score1", OptionKeys::abinitio::stage2_patch );
 	tmp_score->set_weight( core::scoring::linear_chainbreak, option[ jumps::chainbreak_weight_stage2 ]() );
-	stage_movers_[ II ] = AbscriptStageMoverOP( new AbscriptStageMover( II, mc_, tmp_score, 2000 ) );
+	stage_movers_[ II ] = utility::pointer::make_shared< AbscriptStageMover >( II, mc_, tmp_score, 2000 );
 
 	tmp_score = setup_score( "score2", OptionKeys::abinitio::stage3a_patch );
 	tmp_score->set_weight( core::scoring::linear_chainbreak, option[ jumps::chainbreak_weight_stage3 ]() );
-	stage_movers_[ IIIa ] = AbscriptStageMoverOP( new AbscriptStageMover( IIIa, mc_, tmp_score, 2000 ) );
+	stage_movers_[ IIIa ] = utility::pointer::make_shared< AbscriptStageMover >( IIIa, mc_, tmp_score, 2000 );
 
 	tmp_score = setup_score( "score5", OptionKeys::abinitio::stage3b_patch );
 	tmp_score->set_weight( core::scoring::linear_chainbreak, option[ jumps::chainbreak_weight_stage3 ]() );
-	stage_movers_[ IIIb ] = AbscriptStageMoverOP( new AbscriptStageMover( IIIb, mc_, tmp_score, 2000 ) );
+	stage_movers_[ IIIb ] = utility::pointer::make_shared< AbscriptStageMover >( IIIb, mc_, tmp_score, 2000 );
 
 	tmp_score = setup_score( "score3", OptionKeys::abinitio::stage4_patch );
 	tmp_score->set_weight( core::scoring::linear_chainbreak, option[ jumps::chainbreak_weight_stage4 ]() );
-	stage_movers_[ IVa ] = AbscriptStageMoverOP( new AbscriptStageMover( IVa, mc_, tmp_score, 4000 ) );
+	stage_movers_[ IVa ] = utility::pointer::make_shared< AbscriptStageMover >( IVa, mc_, tmp_score, 4000 );
 
 	tmp_score = setup_score( "score3", OptionKeys::abinitio::stage4_patch );
 	tmp_score->set_weight( core::scoring::linear_chainbreak, option[ jumps::chainbreak_weight_stage4 ]() );
-	stage_movers_[ IVb ] = AbscriptStageMoverOP( new AbscriptStageMover( IVb, mc_, tmp_score, 4000 ) );
+	stage_movers_[ IVb ] = utility::pointer::make_shared< AbscriptStageMover >( IVb, mc_, tmp_score, 4000 );
 
 	core::Real seqsep_stage1 = 0.15;
 	core::Real seqsep_stage3 = 1.0; //have basically all but the furthest chainbreaks active at end of stage3.
@@ -244,11 +244,11 @@ AbscriptMover::AbscriptMover( AbscriptMover const& src ):
 {}
 
 moves::MoverOP AbscriptMover::fresh_instance() const {
-	return moves::MoverOP( new AbscriptMover() );
+	return utility::pointer::make_shared< AbscriptMover >();
 }
 
 moves::MoverOP AbscriptMover::clone() const {
-	return moves::MoverOP( new AbscriptMover( *this ) );
+	return utility::pointer::make_shared< AbscriptMover >( *this );
 }
 
 void AbscriptMover::apply( core::pose::Pose& pose ){
@@ -493,11 +493,11 @@ void AbscriptMover::add_frags(
 
 	//embed standard movers in movers that will claim and unlock for them.
 	FragmentCMOP claim_large(
-		new FragmentCM( simple_moves::FragmentMoverOP( new ClassicFragmentMover( frags_large ) ) ) );
+		new FragmentCM( utility::pointer::make_shared< ClassicFragmentMover >( frags_large ) ) );
 	FragmentCMOP claim_small(
-		new FragmentCM( simple_moves::FragmentMoverOP( new ClassicFragmentMover( frags_small ) ) ) );
+		new FragmentCM( utility::pointer::make_shared< ClassicFragmentMover >( frags_small ) ) );
 	FragmentCMOP claim_smooth(
-		new FragmentCM( simple_moves::FragmentMoverOP( new SmoothFragmentMover( frags_small, simple_moves::FragmentCostOP( new GunnCost() ) ) ) ) );
+		new FragmentCM( utility::pointer::make_shared< SmoothFragmentMover >( frags_small, utility::pointer::make_shared< GunnCost >() ) ) );
 
 
 	// Initialize controls if fragments are inserted along the
@@ -720,7 +720,7 @@ std::string AbscriptMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 AbscriptMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new AbscriptMover );
+	return utility::pointer::make_shared< AbscriptMover >();
 }
 
 void AbscriptMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

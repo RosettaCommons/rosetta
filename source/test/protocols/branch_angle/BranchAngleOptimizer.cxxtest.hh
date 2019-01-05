@@ -115,7 +115,7 @@ public:
 		core_init_with_additional_options( "-no_optH" );
 		residue_set = chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD );
 
-		the_pose = pose::PoseOP( new Pose );
+		the_pose = utility::pointer::make_shared< Pose >();
 		//the_pose = create_test_in_pdb_poseop(); slightly different chain IDs
 		core::import_pose::pose_from_file( *the_pose, "protocols/moves/test_in.pdb" , core::import_pose::PDB_file);
 	}

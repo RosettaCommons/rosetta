@@ -57,11 +57,11 @@ EnvClaimOP EnvClaim::make_claim( std::string const& name,
 	ClientMoverOP owner,
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap& datamap ) {
-	if      ( name == "CutBiasClaim" ) return EnvClaimOP( new CutBiasClaim( owner, tag, datamap ) );
-	else if ( name == "JumpClaim" )    return EnvClaimOP( new JumpClaim( owner, tag, datamap ) );
-	else if ( name == "TorsionClaim" ) return EnvClaimOP( new TorsionClaim( owner, tag, datamap ) );
-	else if ( name == "VirtResClaim" )  return EnvClaimOP( new VirtResClaim( owner, tag, datamap ) );
-	else if ( name == "XYZClaim" )     return EnvClaimOP( new XYZClaim( owner, tag, datamap ) );
+	if      ( name == "CutBiasClaim" ) return utility::pointer::make_shared< CutBiasClaim >( owner, tag, datamap );
+	else if ( name == "JumpClaim" )    return utility::pointer::make_shared< JumpClaim >( owner, tag, datamap );
+	else if ( name == "TorsionClaim" ) return utility::pointer::make_shared< TorsionClaim >( owner, tag, datamap );
+	else if ( name == "VirtResClaim" )  return utility::pointer::make_shared< VirtResClaim >( owner, tag, datamap );
+	else if ( name == "XYZClaim" )     return utility::pointer::make_shared< XYZClaim >( owner, tag, datamap );
 	else {
 		tr << "NOTE: The VrtResClaim is now called VirtResClaim. Please alter your scripts accordingly." << std::endl;
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "'" + name + "' is not a known EnvClaim type." );

@@ -143,7 +143,7 @@ DeleteChainsMover::apply( Pose & pose )
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP DeleteChainsMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new DeleteChainsMover );
+// XRW TEMP  return utility::pointer::make_shared< DeleteChainsMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -161,13 +161,13 @@ DeleteChainsMover::apply( Pose & pose )
 moves::MoverOP
 DeleteChainsMover::clone() const
 {
-	return moves::MoverOP( new DeleteChainsMover( *this ) );
+	return utility::pointer::make_shared< DeleteChainsMover >( *this );
 }
 
 moves::MoverOP
 DeleteChainsMover::fresh_instance() const
 {
-	return moves::MoverOP( new DeleteChainsMover );
+	return utility::pointer::make_shared< DeleteChainsMover >();
 }
 
 std::string DeleteChainsMover::get_name() const {
@@ -198,7 +198,7 @@ std::string DeleteChainsMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 DeleteChainsMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new DeleteChainsMover );
+	return utility::pointer::make_shared< DeleteChainsMover >();
 }
 
 void DeleteChainsMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

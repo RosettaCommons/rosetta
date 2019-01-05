@@ -47,7 +47,7 @@ RestrictToCDRH3Loop::~RestrictToCDRH3Loop() = default;
 
 TaskOperationOP RestrictToCDRH3Loop::clone() const
 {
-	return TaskOperationOP( new RestrictToCDRH3Loop( *this ) );
+	return utility::pointer::make_shared< RestrictToCDRH3Loop >( *this );
 }
 
 void RestrictToCDRH3Loop::apply( Pose const & pose, PackerTask & task ) const
@@ -84,7 +84,7 @@ void RestrictToCDRH3Loop::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 
 TaskOperationOP RestrictToCDRH3LoopCreator::create_task_operation() const
 {
-	return TaskOperationOP( new RestrictToCDRH3Loop );
+	return utility::pointer::make_shared< RestrictToCDRH3Loop >();
 }
 
 void RestrictToCDRH3LoopCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

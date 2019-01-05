@@ -121,7 +121,7 @@ void
 DnaInterfaceMultiStateDesign::copy_dna_chains( DnaChainsOP dna_chains )
 {
 	runtime_assert( dna_chains != nullptr );
-	dna_chains_ = DnaChainsOP( new DnaChains( *dna_chains ) );
+	dna_chains_ = utility::pointer::make_shared< DnaChains >( *dna_chains );
 }
 
 void
@@ -137,7 +137,7 @@ DnaInterfaceMultiStateDesign::initialize( Pose & pose )
 	info().clear();
 
 	if ( ! dna_chains_ ) {
-		dna_chains_ = DnaChainsOP( new DnaChains );
+		dna_chains_ = utility::pointer::make_shared< DnaChains >();
 		find_basepairs( pose, *dna_chains_ );
 	}
 
@@ -151,7 +151,7 @@ DnaInterfaceMultiStateDesign::initialize( Pose & pose )
 
 	// always start with a fresh GeneticAlgorithm
 	// important when reusing DnaInterfaceMultistateDesign mover
-	gen_alg_ = GeneticAlgorithmOP( new GeneticAlgorithm ); /// APL does this require a PosType ctor?
+	gen_alg_ = utility::pointer::make_shared< GeneticAlgorithm >(); /// APL does this require a PosType ctor?
 
 	// set up genetic algorithm
 	gen_alg_->set_max_generations( generations_ );
@@ -167,20 +167,20 @@ DnaInterfaceMultiStateDesign::initialize( Pose & pose )
 	// if PackRotamerMover base class has no initialized TaskFactory, create default one here
 	if ( ! task_factory() ) {
 		// DNA-specific TaskFactory -> PackerTask -> figure out positions to design
-		my_tf = TaskFactoryOP( new TaskFactory );
-		my_tf->push_back( TaskOperationCOP( new InitializeFromCommandline ) );
-		if ( option[ OptionKeys::packing::resfile ].user() ) my_tf->push_back( TaskOperationCOP( new ReadResfile ) );
+		my_tf = utility::pointer::make_shared< TaskFactory >();
+		my_tf->push_back( utility::pointer::make_shared< InitializeFromCommandline >() );
+		if ( option[ OptionKeys::packing::resfile ].user() ) my_tf->push_back( utility::pointer::make_shared< ReadResfile >() );
 		RestrictDesignToProteinDNAInterfaceOP rest_to_dna_int( new RestrictDesignToProteinDNAInterface );
 		rest_to_dna_int->copy_dna_chains( dna_chains_ );
 		if ( ! targeted_dna_.empty() ) rest_to_dna_int->copy_targeted_dna( targeted_dna_ );
 		my_tf->push_back( rest_to_dna_int );
 	} else { // TaskFactory already exists, add to it
 		// (temporary? parser has no support for RotamerOperations yet)
-		my_tf = TaskFactoryOP( new TaskFactory( *task_factory() ) );
+		my_tf = utility::pointer::make_shared< TaskFactory >( *task_factory() );
 	}
 	// a protein-DNA hbonding filter for ex rotamers that the PackerTask makes available to the rotamer set during rotamer building (formerly known as 'rotamer explosion')
 	RotamerDNAHBondFilterOP rot_dna_hb_filter( new RotamerDNAHBondFilter );
-	my_tf->push_back( TaskOperationCOP( new AppendRotamer( rot_dna_hb_filter ) ) );
+	my_tf->push_back( utility::pointer::make_shared< AppendRotamer >( rot_dna_hb_filter ) );
 	task_factory( my_tf ); // PackRotamersMover base class setter
 
 	PackerTaskOP ptask = task_factory()->create_task_and_apply_taskoperations( pose );
@@ -204,7 +204,7 @@ DnaInterfaceMultiStateDesign::initialize( Pose & pose )
 				if ( aaset.find( aa ) != aaset.end() ) continue;
 				aaset.insert(aa);
 				TR(t_debug) << "adding choice " << aa << std::endl;
-				choices.push_back( protocols::genetic_algorithm::EntityElementOP( new PosType( i, aa ) ) );
+				choices.push_back( utility::pointer::make_shared< PosType >( i, aa ) );
 			}
 			rand->append_choices( choices );
 		}
@@ -214,10 +214,10 @@ DnaInterfaceMultiStateDesign::initialize( Pose & pose )
 	TR(t_info) << "There will be " << rand->library_size() << " possible sequences." << std::endl;
 
 	// set up fitness function
-	multistate_packer_ = multistate_design::MultiStatePackerOP( new MultiStatePacker( num_packs_ ) );
+	multistate_packer_ = utility::pointer::make_shared< MultiStatePacker >( num_packs_ );
 
 	multistate_packer_->set_aggregate_function(
-		MultiStateAggregateFunction::COP( MultiStateAggregateFunction::OP( new PartitionAggregateFunction( boltz_temp_, anchor_offset_ ) ) ) );
+		utility::pointer::make_shared< PartitionAggregateFunction >( boltz_temp_, anchor_offset_ ) );
 
 	multistate_packer_->set_scorefxn( score_function() );
 
@@ -383,14 +383,14 @@ void DnaInterfaceMultiStateDesign::parse_my_tag(
 moves::MoverOP
 DnaInterfaceMultiStateDesign::fresh_instance() const
 {
-	return moves::MoverOP( new DnaInterfaceMultiStateDesign );
+	return utility::pointer::make_shared< DnaInterfaceMultiStateDesign >();
 }
 
 /// @brief required in the context of the parser/scripting scheme
 moves::MoverOP
 DnaInterfaceMultiStateDesign::clone() const
 {
-	return moves::MoverOP( new DnaInterfaceMultiStateDesign( *this ) );
+	return utility::pointer::make_shared< DnaInterfaceMultiStateDesign >( *this );
 }
 
 void
@@ -577,7 +577,7 @@ std::string DnaInterfaceMultiStateDesignCreator::keyname() const {
 
 protocols::moves::MoverOP
 DnaInterfaceMultiStateDesignCreator::create_mover() const {
-	return protocols::moves::MoverOP( new DnaInterfaceMultiStateDesign );
+	return utility::pointer::make_shared< DnaInterfaceMultiStateDesign >();
 }
 
 void DnaInterfaceMultiStateDesignCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

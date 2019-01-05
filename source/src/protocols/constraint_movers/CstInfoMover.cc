@@ -66,7 +66,7 @@ CstInfoMover::parse_my_tag(
 
 protocols::moves::MoverOP
 CstInfoMover::clone() const{
-	return protocols::moves::MoverOP( new CstInfoMover( *this ) );
+	return utility::pointer::make_shared< CstInfoMover >( *this );
 }
 
 /*
@@ -79,7 +79,7 @@ return CstInfoMover( src );
 moves::MoverOP
 CstInfoMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new CstInfoMover );
+	return utility::pointer::make_shared< CstInfoMover >();
 }
 
 // XRW TEMP std::string
@@ -209,7 +209,7 @@ CstInfoMover::get_constraints_from_pose( core::pose::Pose const & pose ) const {
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP CstInfoMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new CstInfoMover );
+// XRW TEMP  return utility::pointer::make_shared< CstInfoMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -273,7 +273,7 @@ std::string CstInfoMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 CstInfoMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new CstInfoMover );
+	return utility::pointer::make_shared< CstInfoMover >();
 }
 
 void CstInfoMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

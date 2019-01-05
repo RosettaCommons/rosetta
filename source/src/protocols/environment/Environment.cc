@@ -115,12 +115,12 @@ core::pose::Pose Environment::start( core::pose::Pose const & in_pose ){
 		set_superenv( conf_ptr->environment() );
 
 		// Keep old annotations by copy-constructing a new annotations object.
-		ann_ = SequenceAnnotationOP( new SequenceAnnotation( *( conf_ptr->annotations() ) ) );
+		ann_ = utility::pointer::make_shared< SequenceAnnotation >( *( conf_ptr->annotations() ) );
 	} else {
 		set_superenv( core::environment::EnvCoreCAP() );
 
 		// Unprotected Conformation objects don't have annotations (yet?). We then build the annotation object.
-		ann_ = SequenceAnnotationOP( new SequenceAnnotation( in_conf->size() ) );
+		ann_ = utility::pointer::make_shared< SequenceAnnotation >( in_conf->size() );
 	}
 
 	tr.Debug << "Start environment: '" << name() << "'" << std::endl;
@@ -167,7 +167,7 @@ core::pose::Pose Environment::end( core::pose::Pose const & pose ){
 		tr.Trace << "  Applying old PDBInfo object with " << input_pose_.pdb_info()->nres() << " residues to pose with "
 			<< new_pose.size() << " residues." << std::endl;
 
-		new_pose.pdb_info( core::pose::PDBInfoOP( new core::pose::PDBInfo( *( input_pose_.pdb_info() ) ) ) );
+		new_pose.pdb_info( utility::pointer::make_shared< core::pose::PDBInfo >( *( input_pose_.pdb_info() ) ) );
 	} else {
 		tr.Trace << "  No PDBInfo object being built in to Environment's output pose, "
 			<< "as it appears the input pose didn't have one." << std::endl;
@@ -198,9 +198,9 @@ core::conformation::ConformationOP Environment::end( ProtectedConformationCOP co
 
 	// Reprotect Conformation if there's a superenvironment.
 	if ( ! superenv().expired() ) {
-		ret_conf = ConformationOP( new ProtectedConformation( superenv(), pose.conformation() ) );
+		ret_conf = utility::pointer::make_shared< ProtectedConformation >( superenv(), pose.conformation() );
 	} else {
-		ret_conf = ConformationOP( new Conformation( pose.conformation() ) );
+		ret_conf = utility::pointer::make_shared< Conformation >( pose.conformation() );
 	}
 
 	cancel_passports();
@@ -310,7 +310,7 @@ core::pose::Pose Environment::broker( core::pose::Pose const & in_pose ){
 
 	core::pose::Pose out_pose;
 	try{
-		broker_ = EnvClaimBrokerOP( new EnvClaimBroker( get_self_weak_ptr(), mover_passports, in_pose, ann_ ) );
+		broker_ = utility::pointer::make_shared< EnvClaimBroker >( get_self_weak_ptr(), mover_passports, in_pose, ann_ );
 		out_pose = broker_->result().pose;
 	} catch ( ... ){
 		// For exception safety. Revoke (possibly unfinished and/or now invalid) passports

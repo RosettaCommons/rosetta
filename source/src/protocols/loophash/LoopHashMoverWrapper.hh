@@ -54,8 +54,8 @@ public:
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & ) override;
-	protocols::moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new LoopHashMoverWrapper( *this ) ) ); }
-	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new LoopHashMoverWrapper ); }
+	protocols::moves::MoverOP clone() const override { return( utility::pointer::make_shared< LoopHashMoverWrapper >( *this ) ); }
+	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< LoopHashMoverWrapper >(); }
 	~LoopHashMoverWrapper() override;
 
 	core::Real min_bbrms() const;

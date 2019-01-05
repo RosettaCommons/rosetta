@@ -202,14 +202,14 @@ ReportFSC::parse_my_tag(
 		core::Real mapreso = option[ edensity::mapreso ]();
 		core::Real mapsampling = option[ edensity::grid_spacing ]();
 		std::cerr << "Loading alternate density map " << mapfile << std::endl;
-		testmap_ = core::scoring::electron_density::ElectronDensityOP( new core::scoring::electron_density::ElectronDensity() );
+		testmap_ = utility::pointer::make_shared< core::scoring::electron_density::ElectronDensity >();
 		testmap_->readMRCandResize( mapfile , mapreso , mapsampling );
 	}
 }
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP ReportFSCCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new ReportFSC );
+// XRW TEMP  return utility::pointer::make_shared< ReportFSC >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -253,7 +253,7 @@ std::string ReportFSCCreator::keyname() const {
 
 protocols::moves::MoverOP
 ReportFSCCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ReportFSC );
+	return utility::pointer::make_shared< ReportFSC >();
 }
 
 void ReportFSCCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {

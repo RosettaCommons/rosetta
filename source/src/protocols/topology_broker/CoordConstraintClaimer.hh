@@ -63,7 +63,7 @@ public:
 	CoordConstraintClaimer( std::string const & pdb_file );
 
 	TopologyClaimerOP clone() const override {
-		return TopologyClaimerOP( new CoordConstraintClaimer( *this ) );
+		return utility::pointer::make_shared< CoordConstraintClaimer >( *this );
 	}
 
 	void generate_claims( claims::DofClaims& ) override;

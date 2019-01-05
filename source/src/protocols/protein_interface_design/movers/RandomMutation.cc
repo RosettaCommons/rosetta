@@ -57,7 +57,7 @@ static basic::Tracer TR( "protocols.protein_interface_design.movers.RandomMutati
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP RandomMutationCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new RandomMutation );
+// XRW TEMP  return utility::pointer::make_shared< RandomMutation >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -138,7 +138,7 @@ RandomMutation::apply( core::pose::Pose & pose )
 	}
 	TR<<"Mutating residue "<<pose.residue( random_entry ).name3()<<random_entry<<" to ";
 	protocols::minimization_packing::PackRotamersMoverOP pack;
-	pack = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover( scorefxn(), mutate_residue ) );
+	pack = utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >( scorefxn(), mutate_residue );
 	pack->apply( pose );
 	TR<<pose.residue( random_entry ).name3()<<std::endl;
 	(*scorefxn())(pose);
@@ -159,7 +159,7 @@ RandomMutation::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data,
 
 protocols::moves::MoverOP
 RandomMutation::clone() const {
-	return( protocols::moves::MoverOP( new RandomMutation( *this ) ));
+	return( utility::pointer::make_shared< RandomMutation >( *this ));
 }
 
 core::scoring::ScoreFunctionOP
@@ -216,7 +216,7 @@ std::string RandomMutationCreator::keyname() const {
 
 protocols::moves::MoverOP
 RandomMutationCreator::create_mover() const {
-	return protocols::moves::MoverOP( new RandomMutation );
+	return utility::pointer::make_shared< RandomMutation >();
 }
 
 void RandomMutationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

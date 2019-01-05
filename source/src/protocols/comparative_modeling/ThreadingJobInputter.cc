@@ -299,7 +299,7 @@ void ThreadingJobInputter::fill_jobs( protocols::jd2::JobsContainer & jobs ) {
 
 				// make nstruct outer jobs
 				for ( Size index = 1; index <= nstruct; ++index ) {
-					jobs.push_back( protocols::jd2::JobOP( new protocols::jd2::Job( ijob, index ) ) );
+					jobs.push_back( utility::pointer::make_shared< protocols::jd2::Job >( ijob, index ) );
 					jobs.back()->add_string_string_pair( "aln_id", alignment_id );
 				} // loop over nstruct
 			}
@@ -334,7 +334,7 @@ ThreadingJobInputterCreator::keyname() const
 
 protocols::jd2::JobInputterOP
 ThreadingJobInputterCreator::create_JobInputter() const {
-	return protocols::jd2::JobInputterOP( new ThreadingJobInputter );
+	return utility::pointer::make_shared< ThreadingJobInputter >();
 }
 
 } // comparative_modeling

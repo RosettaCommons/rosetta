@@ -35,10 +35,10 @@ public:
 	FoldUnitsFilter();
 	bool apply( core::pose::Pose const & pose ) const override;
 	protocols::filters::FilterOP clone() const override {
-		return protocols::filters::FilterOP( new FoldUnitsFilter( *this ) );
+		return utility::pointer::make_shared< FoldUnitsFilter >( *this );
 	}
 	protocols::filters::FilterOP fresh_instance() const override{
-		return protocols::filters::FilterOP( new FoldUnitsFilter() );
+		return utility::pointer::make_shared< FoldUnitsFilter >();
 	}
 
 	core::Real compute( core::pose::Pose const & pose ) const;

@@ -70,7 +70,7 @@ public:
 
 		//Read in the enzdes constraint file into cst_io.
 		ResidueTypeSetCOP const_residue_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
-		cst_io = protocols::toolbox::match_enzdes_util::EnzConstraintIOOP( new protocols::toolbox::match_enzdes_util::EnzConstraintIO(const_residue_set) );
+		cst_io = utility::pointer::make_shared< protocols::toolbox::match_enzdes_util::EnzConstraintIO >(const_residue_set);
 		cst_io->read_enzyme_cstfile("protocols/enzdes/ligtest_it.cst");
 	}
 

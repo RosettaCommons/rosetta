@@ -278,8 +278,8 @@ repack_connection_and_residues_in_movemap(
 	mm_task_op->set_include_neighbors(false);
 
 	core::pack::task::TaskFactoryOP tf( new core::pack::task::TaskFactory() );
-	tf->push_back(TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline() ));
-	tf->push_back(TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking() ));
+	tf->push_back(utility::pointer::make_shared< core::pack::task::operation::InitializeFromCommandline >());
+	tf->push_back(utility::pointer::make_shared< core::pack::task::operation::RestrictToRepacking >());
 	tf->push_back(mm_task_op);
 
 	PackerTaskOP task = tf->create_task_and_apply_taskoperations(pose);
@@ -309,8 +309,8 @@ repack_connection_and_residues_in_movemap_and_piece(
 	mm_task_op->set_include_neighbors(false);
 
 	core::pack::task::TaskFactoryOP tf( new core::pack::task::TaskFactory() );
-	tf->push_back(TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline() ));
-	tf->push_back(TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking() ));
+	tf->push_back(utility::pointer::make_shared< core::pack::task::operation::InitializeFromCommandline >());
+	tf->push_back(utility::pointer::make_shared< core::pack::task::operation::RestrictToRepacking >());
 	tf->push_back(mm_task_op);
 
 	PackerTaskOP task = tf->create_task_and_apply_taskoperations(pose);
@@ -341,8 +341,8 @@ repack_connection_and_residues_in_movemap_and_piece_and_neighbors(
 	mm_task_op->set_cutoff_distance(neighbor_dis);
 
 	core::pack::task::TaskFactoryOP tf( new core::pack::task::TaskFactory() );
-	tf->push_back(TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline() ));
-	tf->push_back(TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking() ));
+	tf->push_back(utility::pointer::make_shared< core::pack::task::operation::InitializeFromCommandline >());
+	tf->push_back(utility::pointer::make_shared< core::pack::task::operation::RestrictToRepacking >());
 	tf->push_back(mm_task_op);
 
 	PackerTaskOP task = tf->create_task_and_apply_taskoperations(pose);

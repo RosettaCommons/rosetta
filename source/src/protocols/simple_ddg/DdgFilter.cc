@@ -45,7 +45,7 @@ namespace simple_ddg {
 static basic::Tracer TR( "protocols.simple_filters.DdgFilter" );
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP DdgFilterCreator::create_filter() const { return protocols::filters::FilterOP( new DdgFilter ); }
+// XRW TEMP DdgFilterCreator::create_filter() const { return utility::pointer::make_shared< DdgFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP DdgFilterCreator::keyname() const { return "Ddg"; }
@@ -105,10 +105,10 @@ DdgFilter::DdgFilter( core::Real const ddg_threshold,
 DdgFilter::~DdgFilter() = default;
 
 filters::FilterOP DdgFilter::clone() const {
-	return filters::FilterOP( new DdgFilter( *this ) );
+	return utility::pointer::make_shared< DdgFilter >( *this );
 }
 filters::FilterOP DdgFilter::fresh_instance() const{
-	return filters::FilterOP( new DdgFilter() );
+	return utility::pointer::make_shared< DdgFilter >();
 }
 
 void
@@ -385,7 +385,7 @@ std::string DdgFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 DdgFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new DdgFilter );
+	return utility::pointer::make_shared< DdgFilter >();
 }
 
 void DdgFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

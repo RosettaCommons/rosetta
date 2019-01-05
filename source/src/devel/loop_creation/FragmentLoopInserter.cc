@@ -78,7 +78,7 @@ static basic::Tracer TR( "protocols.loophash.FragmentLoopInserter" );
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP FragmentLoopInserterCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new FragmentLoopInserter );
+// XRW TEMP  return utility::pointer::make_shared< FragmentLoopInserter >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -119,11 +119,11 @@ FragmentLoopInserter::FragmentLoopInserter():
 
 protocols::moves::MoverOP
 FragmentLoopInserter::clone() const {
-	return( protocols::moves::MoverOP( new FragmentLoopInserter( *this ) ) );
+	return( utility::pointer::make_shared< FragmentLoopInserter >( *this ) );
 }
 protocols::moves::MoverOP
 FragmentLoopInserter::fresh_instance() const {
-	return protocols::moves::MoverOP( new FragmentLoopInserter );
+	return utility::pointer::make_shared< FragmentLoopInserter >();
 }
 
 // XRW TEMP std::string
@@ -450,7 +450,7 @@ std::string FragmentLoopInserterCreator::keyname() const {
 
 protocols::moves::MoverOP
 FragmentLoopInserterCreator::create_mover() const {
-	return protocols::moves::MoverOP( new FragmentLoopInserter );
+	return utility::pointer::make_shared< FragmentLoopInserter >();
 }
 
 void FragmentLoopInserterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

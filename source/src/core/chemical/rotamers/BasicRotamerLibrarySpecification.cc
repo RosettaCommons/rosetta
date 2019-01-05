@@ -33,13 +33,13 @@ namespace rotamers {
 
 RotamerLibrarySpecificationOP
 BasicRotamerLibrarySpecificationCreator::create() const {
-	return RotamerLibrarySpecificationOP( new BasicRotamerLibrarySpecification );
+	return utility::pointer::make_shared< BasicRotamerLibrarySpecification >();
 }
 
 RotamerLibrarySpecificationOP
 BasicRotamerLibrarySpecificationCreator::create( std::istream & ) const {
 	// We ignore any parameters
-	return RotamerLibrarySpecificationOP( new BasicRotamerLibrarySpecification() );
+	return utility::pointer::make_shared< BasicRotamerLibrarySpecification >();
 }
 
 std::string

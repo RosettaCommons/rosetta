@@ -68,7 +68,7 @@ static basic::Tracer TR( "protocols.moves.ContactMap" );
 // XRW TEMP }
 
 // XRW TEMP protocols::moves::MoverOP ContactMapCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new ContactMap );
+// XRW TEMP  return utility::pointer::make_shared< ContactMap >();
 // XRW TEMP }
 
 // XRW TEMP std::string ContactMap::mover_name() {
@@ -99,11 +99,11 @@ ContactMap::~ContactMap() = default;
 
 
 moves::MoverOP ContactMap::clone() const {
-	return moves::MoverOP( new ContactMap(*this) );
+	return utility::pointer::make_shared< ContactMap >(*this);
 }
 
 moves::MoverOP ContactMap::fresh_instance() const {
-	return moves::MoverOP( new ContactMap );
+	return utility::pointer::make_shared< ContactMap >();
 }
 
 // XRW TEMP std::string ContactMap::get_name() const {
@@ -489,7 +489,7 @@ std::string ContactMapCreator::keyname() const {
 
 protocols::moves::MoverOP
 ContactMapCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ContactMap );
+	return utility::pointer::make_shared< ContactMap >();
 }
 
 void ContactMapCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -56,19 +56,19 @@ public:
 		pose::Pose pose1 (start_pose);
 		scoring::ScoreFunctionOP scorefxn( new scoring::ScoreFunction );
 		scorefxn->set_weight( scoring::res_type_linking_constraint, 1.0);
-		pose1.add_constraint( ConstraintOP( new scoring::constraints::ResidueTypeLinkingConstraint(
+		pose1.add_constraint( utility::pointer::make_shared< scoring::constraints::ResidueTypeLinkingConstraint >(
 			pose1, 1, 10, 1.0
-			)));
+			));
 		( *scorefxn )( pose1 );
 		TS_ASSERT_EQUALS( pose1.energies().total_energies()[ scoring::res_type_linking_constraint ], 0 );
-		pose1.add_constraint( ConstraintOP( new scoring::constraints::ResidueTypeLinkingConstraint(
+		pose1.add_constraint( utility::pointer::make_shared< scoring::constraints::ResidueTypeLinkingConstraint >(
 			pose1, 1, 2, 1.0
-			)));
+			));
 		( *scorefxn )( pose1 );
 		TS_ASSERT_EQUALS( pose1.energies().total_energies()[ scoring::res_type_linking_constraint ], 1 );
-		pose1.add_constraint( ConstraintOP( new scoring::constraints::ResidueTypeLinkingConstraint(
+		pose1.add_constraint( utility::pointer::make_shared< scoring::constraints::ResidueTypeLinkingConstraint >(
 			pose1, 1, 3, 2.0
-			)));
+			));
 		( *scorefxn )( pose1 );
 		TS_ASSERT_EQUALS( pose1.energies().total_energies()[ scoring::res_type_linking_constraint ], 3 );
 	}

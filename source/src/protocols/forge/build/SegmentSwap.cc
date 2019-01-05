@@ -88,7 +88,7 @@ SegmentSwap & SegmentSwap::operator =( SegmentSwap const & rval ) {
 
 /// @brief clone this object
 BuildInstructionOP SegmentSwap::clone() const {
-	return BuildInstructionOP( new SegmentSwap( *this ) );
+	return utility::pointer::make_shared< SegmentSwap >( *this );
 }
 
 
@@ -328,7 +328,7 @@ void SegmentSwap::modify_impl( Pose & pose ) {
 	if ( swap_in_.pdb_info().get() != nullptr ) {
 
 		if ( pose.pdb_info().get() == nullptr ) {
-			pose.pdb_info( PDBInfoOP( new PDBInfo( pose ) ) );
+			pose.pdb_info( utility::pointer::make_shared< PDBInfo >( pose ) );
 		}
 
 		// force obsolete

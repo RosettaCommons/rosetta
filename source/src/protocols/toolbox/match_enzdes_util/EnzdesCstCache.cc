@@ -58,7 +58,7 @@ EnzdesCstCache::EnzdesCstCache(
 {
 	param_cache_.clear();
 	for ( core::Size i = 1; i <= num_cst_blocks; ++i ) {
-		param_cache_.push_back( EnzdesCstParamCacheOP( new EnzdesCstParamCache() ) );
+		param_cache_.push_back( utility::pointer::make_shared< EnzdesCstParamCache >() );
 	}
 }
 
@@ -67,7 +67,7 @@ EnzdesCstCache::EnzdesCstCache( EnzdesCstCache const & other )
 {
 	param_cache_.clear();
 	for ( auto const & param_it : other.param_cache_ ) {
-		param_cache_.push_back( EnzdesCstParamCacheOP( new EnzdesCstParamCache( *param_it ) ) );
+		param_cache_.push_back( utility::pointer::make_shared< EnzdesCstParamCache >( *param_it ) );
 	}
 }
 
@@ -167,8 +167,8 @@ EnzdesCstCache::remap_resid(
 /// thing using this at the moment
 EnzdesCstParamCache::EnzdesCstParamCache()
 {
-	template_res_cache_.push_back( EnzCstTemplateResCacheOP( new EnzCstTemplateResCache() ) );
-	template_res_cache_.push_back( EnzCstTemplateResCacheOP( new EnzCstTemplateResCache() ) );
+	template_res_cache_.push_back( utility::pointer::make_shared< EnzCstTemplateResCache >() );
+	template_res_cache_.push_back( utility::pointer::make_shared< EnzCstTemplateResCache >() );
 }
 
 EnzdesCstParamCache::EnzdesCstParamCache( EnzdesCstParamCache const & other )
@@ -178,7 +178,7 @@ EnzdesCstParamCache::EnzdesCstParamCache( EnzdesCstParamCache const & other )
 {
 	template_res_cache_.clear();
 	for ( core::Size i = 1; i <= other.template_res_cache_.size(); ++i ) {
-		template_res_cache_.push_back( EnzCstTemplateResCacheOP( new EnzCstTemplateResCache( *(other.template_res_cache_[i] ) ) ) );
+		template_res_cache_.push_back( utility::pointer::make_shared< EnzCstTemplateResCache >( *(other.template_res_cache_[i] ) ) );
 	}
 }
 
@@ -292,7 +292,7 @@ EnzCstTemplateResCache::EnzCstTemplateResCache( EnzCstTemplateResCache const & o
 {
 	seqpos_map_.clear();
 	for ( auto const & map_it : other.seqpos_map_ ) {
-		seqpos_map_.insert( std::pair< core::Size, EnzCstTemplateResAtomsOP >( map_it.first, EnzCstTemplateResAtomsOP( new EnzCstTemplateResAtoms( *(map_it.second) ) ) ) );
+		seqpos_map_.insert( std::pair< core::Size, EnzCstTemplateResAtomsOP >( map_it.first, utility::pointer::make_shared< EnzCstTemplateResAtoms >( *(map_it.second) ) ) );
 	}
 }
 
@@ -301,14 +301,14 @@ EnzCstTemplateResCache::~EnzCstTemplateResCache()= default;
 void
 EnzCstTemplateResCache::set_position_in_pose( core::Size seqpos ){
 	seqpos_map_.clear();
-	seqpos_map_.insert( std::pair<core::Size,EnzCstTemplateResAtomsOP>(seqpos, EnzCstTemplateResAtomsOP( new EnzCstTemplateResAtoms() ) ) );
+	seqpos_map_.insert( std::pair<core::Size,EnzCstTemplateResAtomsOP>(seqpos, utility::pointer::make_shared< EnzCstTemplateResAtoms >() ) );
 	not_in_pose_ = false;
 	pose_data_uptodate_ = false;
 }
 
 void
 EnzCstTemplateResCache::add_position_in_pose( core::Size seqpos ){
-	seqpos_map_.insert( std::pair<core::Size,EnzCstTemplateResAtomsOP>(seqpos, EnzCstTemplateResAtomsOP( new EnzCstTemplateResAtoms() ) ) );
+	seqpos_map_.insert( std::pair<core::Size,EnzCstTemplateResAtomsOP>(seqpos, utility::pointer::make_shared< EnzCstTemplateResAtoms >() ) );
 	not_in_pose_ = false;
 	pose_data_uptodate_ = false;
 }

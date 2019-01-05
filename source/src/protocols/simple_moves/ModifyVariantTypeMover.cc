@@ -111,13 +111,13 @@ ModifyVariantTypeMover::apply( core::pose::Pose & pose )
 moves::MoverOP
 ModifyVariantTypeMover::clone() const
 {
-	return moves::MoverOP( new ModifyVariantTypeMover( *this ) );
+	return utility::pointer::make_shared< ModifyVariantTypeMover >( *this );
 }
 
 moves::MoverOP
 ModifyVariantTypeMover::fresh_instance() const
 {
-	return moves::MoverOP( new ModifyVariantTypeMover );
+	return utility::pointer::make_shared< ModifyVariantTypeMover >();
 }
 
 void ModifyVariantTypeMover::parse_my_tag(
@@ -250,7 +250,7 @@ std::string ModifyVariantTypeMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 ModifyVariantTypeMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ModifyVariantTypeMover );
+	return utility::pointer::make_shared< ModifyVariantTypeMover >();
 }
 
 void ModifyVariantTypeMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

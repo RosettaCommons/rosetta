@@ -32,7 +32,7 @@ AddResiduesRotamerSetOperation::AddResiduesRotamerSetOperation(
 core::pack::rotamer_set::RotamerSetOperationOP
 AddResiduesRotamerSetOperation::clone() const
 {
-	return core::pack::rotamer_set::RotamerSetOperationOP( new AddResiduesRotamerSetOperation( *this ) );
+	return utility::pointer::make_shared< AddResiduesRotamerSetOperation >( *this );
 }
 
 void AddResiduesRotamerSetOperation::alter_rotamer_set(

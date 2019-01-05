@@ -85,7 +85,7 @@ ligand_dock_main_jd1()
 	if ( use_silent_in ) {
 		using core::import_pose::atom_tree_diffs::AtomTreeDiff;
 		int const nstruct = std::max( 1, option[ out::nstruct ]() );
-		atdiff = core::import_pose::atom_tree_diffs::AtomTreeDiffOP( new AtomTreeDiff( *(option[ in::file::silent ]().begin()) ) );
+		atdiff = utility::pointer::make_shared< AtomTreeDiff >( *(option[ in::file::silent ]().begin()) );
 		if ( (option [ in::file::silent ]()).size() > 1 ) utility_exit_with_message("ligand_dock.main can only handle one input silent file at a time!");
 		if ( option[ in::file::tags ].active() ) {
 			// Do only the ones specified in tags.  If it's a number, try it as an index too.
@@ -94,9 +94,9 @@ ligand_dock_main_jd1()
 				core::Size tag_as_int = 0;
 				if ( is_int(tags[i]) ) tag_as_int = int_of(tags[i]);
 				if ( atdiff->has_tag( tags[i] ) ) {
-					input_jobs.push_back( protocols::jobdist::BasicJobOP( new BasicJob( tags[i], tags[i], nstruct ) ) );
+					input_jobs.push_back( utility::pointer::make_shared< BasicJob >( tags[i], tags[i], nstruct ) );
 				} else if ( 0 < tag_as_int && tag_as_int <= atdiff->scores().size() ) {
-					input_jobs.push_back( protocols::jobdist::BasicJobOP( new BasicJob( atdiff->scores()[tag_as_int].first, atdiff->scores()[tag_as_int].first, nstruct ) ) );
+					input_jobs.push_back( utility::pointer::make_shared< BasicJob >( atdiff->scores()[tag_as_int].first, atdiff->scores()[tag_as_int].first, nstruct ) );
 				} else {
 					utility_exit_with_message("Can't find tag "+tags[i]);
 				}
@@ -104,7 +104,7 @@ ligand_dock_main_jd1()
 		} else {
 			// Just do them all!
 			for ( core::Size i = 1; i <= atdiff->scores().size(); ++i ) {
-				input_jobs.push_back( protocols::jobdist::BasicJobOP( new BasicJob( atdiff->scores()[i].first, atdiff->scores()[i].first, nstruct ) ) );
+				input_jobs.push_back( utility::pointer::make_shared< BasicJob >( atdiff->scores()[i].first, atdiff->scores()[i].first, nstruct ) );
 			}
 		}
 	} else {
@@ -121,7 +121,7 @@ ligand_dock_main_jd1()
 	// A "native" pose for calculating RMS (optional)
 	core::pose::PoseOP rms_native_pose;
 	if ( option[ in::file::native ].user() ) {
-		rms_native_pose = core::pose::PoseOP( new core::pose::Pose() );
+		rms_native_pose = utility::pointer::make_shared< core::pose::Pose >();
 		core::import_pose::pose_from_file( *rms_native_pose, option[ in::file::native ]().name() , core::import_pose::PDB_file);
 	}
 
@@ -130,7 +130,7 @@ ligand_dock_main_jd1()
 		//we need the residue type set, assuming FA standard is used
 		core::chemical::ResidueTypeSetCOP restype_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 		option[basic::options::OptionKeys::run::preserve_header ].value(true);
-		constraint_io = protocols::toolbox::match_enzdes_util::EnzConstraintIOOP( new protocols::toolbox::match_enzdes_util::EnzConstraintIO( restype_set ) );
+		constraint_io = utility::pointer::make_shared< protocols::toolbox::match_enzdes_util::EnzConstraintIO >( restype_set );
 		constraint_io->read_enzyme_cstfile(basic::options::option[basic::options::OptionKeys::enzdes::cstfile]);
 		core::scoring::ScoreFunctionOP scorefunc = dockingProtocol->get_scorefxn();
 		if ( scorefunc->has_zero_weight( core::scoring::coordinate_constraint ) ) scorefunc->set_weight(core::scoring::coordinate_constraint, 1.0 ) ;
@@ -149,7 +149,7 @@ ligand_dock_main_jd1()
 
 		// we read each PDB just once to save on disk I/O
 		if ( curr_job.get() != prev_job.get() || input_pose.get() == nullptr ) {
-			input_pose = core::pose::PoseOP( new core::pose::Pose() );
+			input_pose = utility::pointer::make_shared< core::pose::Pose >();
 			if ( use_silent_in ) atdiff->read_pose( curr_job->input_tag(), *input_pose );
 			else core::import_pose::pose_from_file( *input_pose, curr_job->input_tag() , core::import_pose::PDB_file);
 
@@ -162,7 +162,7 @@ ligand_dock_main_jd1()
 		// Make a modifiable copy of the pose read from disk
 		using namespace basic::datacache;
 		core::pose::PoseOP the_pose( new core::pose::Pose( *input_pose ) );
-		the_pose->data().set(core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG, DataCache_CacheableData::DataOP( new basic::datacache::CacheableString(curr_job->output_tag(curr_nstruct)) ));
+		the_pose->data().set(core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG, utility::pointer::make_shared< basic::datacache::CacheableString >(curr_job->output_tag(curr_nstruct)));
 		dockingProtocol->apply( *the_pose );
 
 		// Score new structure and add to silent file

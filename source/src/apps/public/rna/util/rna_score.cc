@@ -305,15 +305,15 @@ rna_score_test()
 	PoseInputStreamOP input;
 	if ( option[ in::file::silent ].user() ) {
 		if ( option[ in::file::tags ].user() ) {
-			input = PoseInputStreamOP( new SilentFilePoseInputStream(
+			input = utility::pointer::make_shared< SilentFilePoseInputStream >(
 				option[ in::file::silent ](),
 				option[ in::file::tags ]()
-				) );
+			);
 		} else {
-			input = PoseInputStreamOP( new SilentFilePoseInputStream( option[ in::file::silent ]() ) );
+			input = utility::pointer::make_shared< SilentFilePoseInputStream >( option[ in::file::silent ]() );
 		}
 	} else {
-		input = PoseInputStreamOP( new PDBPoseInputStream( option[ in::file::s ]() ) );
+		input = utility::pointer::make_shared< PDBPoseInputStream >( option[ in::file::s ]() );
 	}
 
 	// native pose setup
@@ -489,7 +489,7 @@ rna_score_test()
 
 		// for data_file, don't actually re-score, just compute rna_chem_map score for now.
 		if ( rna_data_reader.has_reactivities() ) {
-			if ( rna_chemical_mapping_energy == nullptr ) rna_chemical_mapping_energy = RNA_ChemicalMappingEnergyOP( new RNA_ChemicalMappingEnergy );
+			if ( rna_chemical_mapping_energy == nullptr ) rna_chemical_mapping_energy = utility::pointer::make_shared< RNA_ChemicalMappingEnergy >();
 			rna_data_reader.fill_rna_data_info( *pose );
 			pose->update_residue_neighbors();
 			s.add_energy(  "rna_chem_map",       rna_chemical_mapping_energy->calculate_energy( *pose, false /*use_low_res*/ ) );

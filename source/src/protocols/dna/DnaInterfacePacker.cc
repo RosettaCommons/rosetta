@@ -124,7 +124,7 @@ static basic::Tracer TR_spec( "protocols.dna.Specificity" );
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP DnaInterfacePackerCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new DnaInterfacePacker );
+// XRW TEMP  return utility::pointer::make_shared< DnaInterfacePacker >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -204,14 +204,14 @@ DnaInterfacePacker::~DnaInterfacePacker()= default;
 moves::MoverOP
 DnaInterfacePacker::fresh_instance() const
 {
-	return moves::MoverOP( new DnaInterfacePacker );
+	return utility::pointer::make_shared< DnaInterfacePacker >();
 }
 
 /// @brief required in the context of the parser/scripting scheme
 moves::MoverOP
 DnaInterfacePacker::clone() const
 {
-	return moves::MoverOP( new DnaInterfacePacker( *this ) );
+	return utility::pointer::make_shared< DnaInterfacePacker >( *this );
 }
 
 // XRW TEMP std::string
@@ -377,15 +377,15 @@ DnaInterfacePacker::init_standard( Pose & pose )
 		}
 	}
 
-	dna_chains_ = DnaChainsOP( new DnaChains );
+	dna_chains_ = utility::pointer::make_shared< DnaChains >();
 	find_basepairs( pose, *dna_chains_ );
 
 	TaskFactoryOP my_tf;
 	// if there is no initialized TaskFactory, create default one here
 	if ( ! task_factory() ) { // PackRotamersMover accessor
-		my_tf = TaskFactoryOP( new TaskFactory );
-		my_tf->push_back( TaskOperationCOP( new InitializeFromCommandline ) );
-		if ( option[ OptionKeys::packing::resfile ].user() ) my_tf->push_back( TaskOperationCOP( new ReadResfile ) );
+		my_tf = utility::pointer::make_shared< TaskFactory >();
+		my_tf->push_back( utility::pointer::make_shared< InitializeFromCommandline >() );
+		if ( option[ OptionKeys::packing::resfile ].user() ) my_tf->push_back( utility::pointer::make_shared< ReadResfile >() );
 		RestrictDesignToProteinDNAInterfaceOP rdtpdi( new RestrictDesignToProteinDNAInterface );
 		rdtpdi->set_reference_pose( reference_pose_ );
 		if ( ! targeted_dna_.empty() ) rdtpdi->copy_targeted_dna( targeted_dna_ );
@@ -393,11 +393,11 @@ DnaInterfacePacker::init_standard( Pose & pose )
 		rdtpdi->set_base_only( base_only_ );
 		my_tf->push_back( rdtpdi );
 	} else { // TaskFactory already exists, make copy to tamper with
-		my_tf = TaskFactoryOP( new TaskFactory( *task_factory() ) );
+		my_tf = utility::pointer::make_shared< TaskFactory >( *task_factory() );
 	}
 	// a protein-DNA hbonding filter for ex rotamers that the PackerTask makes available to the rotamer set during rotamer building (formerly known as 'rotamer explosion')
 	RotamerDNAHBondFilterOP rot_dna_hb_filter( new RotamerDNAHBondFilter( -0.5, base_only_ ) );
-	my_tf->push_back( TaskOperationCOP( new AppendRotamer( rot_dna_hb_filter ) ) );
+	my_tf->push_back( utility::pointer::make_shared< AppendRotamer >( rot_dna_hb_filter ) );
 
 	task_factory( my_tf ); // PackRotamersMover setter
 
@@ -427,8 +427,8 @@ DnaInterfacePacker::init_standard( Pose & pose )
 		// set up minimizer
 		std::string const min_type( option[ OptionKeys::run::min_type ]() );
 		Real const tolerance( option[ OptionKeys::run::min_tolerance ]() );
-		minimize_options_ = core::optimization::MinimizerOptionsOP( new MinimizerOptions( min_type, tolerance, true ) );
-		min_movemap_ = core::kinematics::MoveMapOP( new kinematics::MoveMap );
+		minimize_options_ = utility::pointer::make_shared< MinimizerOptions >( min_type, tolerance, true );
+		min_movemap_ = utility::pointer::make_shared< kinematics::MoveMap >();
 		TR << "Chi minimization will be allowed for the following residues:";
 		for ( Size index(1); index <= task()->total_residue(); ++index ) {
 			if ( !pose.residue_type(index).is_protein() ) continue;
@@ -493,7 +493,7 @@ void DnaInterfacePacker::parse_my_tag(
 	}
 	if ( tag->hasOption("pdb_output") ) {
 		if ( tag->getOption<bool>("pdb_output") ) {
-			if ( !pdboutput_ ) pdboutput_ = PDBOutputOP( new PDBOutput );
+			if ( !pdboutput_ ) pdboutput_ = utility::pointer::make_shared< PDBOutput >();
 		}
 	}
 	if ( tag->hasOption("protein_scan") ) protein_scan_ = tag->getOption<bool>("protein_scan");
@@ -588,7 +588,7 @@ DnaInterfacePacker::unbound_score(
 	if ( output_pdb ) {
 		PDBOutputOP unbound_outputter;
 		if ( pdboutput_ ) unbound_outputter = pdboutput_;
-		else unbound_outputter = PDBOutputOP( new PDBOutput );
+		else unbound_outputter = utility::pointer::make_shared< PDBOutput >();
 		unbound_outputter->score_function( *nonconst_scorefxn );
 		(*unbound_outputter)( unbound_pose, pdbname + "_unbound.pdb" );
 	}
@@ -1229,7 +1229,7 @@ DnaInterfacePacker::protein_scan( Pose & pose )
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief makes hard copy to guarantee that the reference pose isn't changed from elsewhere
-void DnaInterfacePacker::reference_pose( Pose const & pose ) { reference_pose_ = PoseCOP( PoseOP( new Pose( pose ) ) ); }
+void DnaInterfacePacker::reference_pose( Pose const & pose ) { reference_pose_ = utility::pointer::make_shared< Pose >( pose ); }
 PoseCOP DnaInterfacePacker::reference_pose() const { return reference_pose_; }
 
 void DnaInterfacePacker::targeted_dna( DnaDesignDefOPs const & defs ) { targeted_dna_ = defs; }
@@ -1382,7 +1382,7 @@ std::string DnaInterfacePackerCreator::keyname() const {
 
 protocols::moves::MoverOP
 DnaInterfacePackerCreator::create_mover() const {
-	return protocols::moves::MoverOP( new DnaInterfacePacker );
+	return utility::pointer::make_shared< DnaInterfacePacker >();
 }
 
 void DnaInterfacePackerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

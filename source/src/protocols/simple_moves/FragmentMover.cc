@@ -185,7 +185,7 @@ ClassicFragmentMover::ClassicFragmentMover(
 ClassicFragmentMover::ClassicFragmentMover(
 	core::fragment::ConstantLengthFragSet const & fragset,
 	core::kinematics::MoveMap const & movemap
-) : FragmentMover(fragset.clone(), core::kinematics::MoveMapCOP( core::kinematics::MoveMapOP( new core::kinematics::MoveMap(movemap) ) ), "ClassicFragmentMover" )
+) : FragmentMover(fragset.clone(), utility::pointer::make_shared< core::kinematics::MoveMap >(movemap), "ClassicFragmentMover" )
 {
 	set_defaults();
 }
@@ -237,13 +237,13 @@ ClassicFragmentMover::show(std::ostream & output) const
 protocols::moves::MoverOP
 ClassicFragmentMover::clone() const
 {
-	return protocols::moves::MoverOP( new ClassicFragmentMover(*this) );
+	return utility::pointer::make_shared< ClassicFragmentMover >(*this);
 }
 
 protocols::moves::MoverOP
 ClassicFragmentMover::fresh_instance() const
 {
-	return protocols::moves::MoverOP( new ClassicFragmentMover() );
+	return utility::pointer::make_shared< ClassicFragmentMover >();
 }
 
 //return a fragnum for given Frame, overload to make other choices

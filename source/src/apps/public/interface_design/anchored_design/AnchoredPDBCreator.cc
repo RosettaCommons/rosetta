@@ -194,7 +194,7 @@ int main( int argc, char* argv[] )
 
 		devel::init( argc, argv );
 
-		protocols::jd2::JobDistributor::get_instance()->go( protocols::moves::MoverOP( new APDBCMover ) );
+		protocols::jd2::JobDistributor::get_instance()->go( utility::pointer::make_shared< APDBCMover >() );
 
 		TR << "************************d**o**n**e**************************************" << std::endl;
 

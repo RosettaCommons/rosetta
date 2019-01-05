@@ -113,10 +113,10 @@ void DbTrajectoryWriter::write_schema_to_db() const { // {{{1
 
 	sessionOP db_session = basic::database::get_db_session();
 
-	Column job_id("job_id", DbDataTypeOP( new DbBigInt() ), false);
-	Column iteration("iteration", DbDataTypeOP( new DbBigInt() ), false);
-	Column score("score", DbDataTypeOP( new DbReal() ), false);
-	Column silent_pose("silent_pose", DbDataTypeOP( new DbText() ), false);
+	Column job_id("job_id", utility::pointer::make_shared< DbBigInt >(), false);
+	Column iteration("iteration", utility::pointer::make_shared< DbBigInt >(), false);
+	Column score("score", utility::pointer::make_shared< DbReal >(), false);
+	Column silent_pose("silent_pose", utility::pointer::make_shared< DbText >(), false);
 
 	PrimaryKey composite_key(make_vector1(job_id, iteration));
 	Schema trajectories("trajectories", composite_key);

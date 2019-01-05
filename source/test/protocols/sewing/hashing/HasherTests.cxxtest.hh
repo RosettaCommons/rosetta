@@ -50,7 +50,7 @@ public:
 		segment_vector_ = hashing::ModelFileReader::read_model_file( "protocols/sewing/inputs/test.segments" );
 		//Create hasher settings--no clashes, 4 atom( 1 residue) overlap, 3 boxes per dimension, hash between termini
 		hasher_settings_ = hashing::HasherSettings( 0, 4, 3, true );
-		hasher_ = hashing::HasherOP( new hashing::Hasher( hasher_settings_, segment_vector_ ) );
+		hasher_ = utility::pointer::make_shared< hashing::Hasher >( hasher_settings_, segment_vector_ );
 	}
 
 	void tearDown(){
@@ -113,7 +113,7 @@ public:
 		TS_ASSERT_THROWS_NOTHING( hasher_->hash_segments( segment_vector_->at( 31 )->clone(), data_storage::Basis( 31, 5 ) ) );
 		TS_ASSERT_EQUALS( hasher_->get_hash_map_size(),4*segment_vector_->at(31)->get_length() - 8 );
 		//Clear hashmap
-		hasher_ = hashing::HasherOP( new hashing::Hasher( hasher_settings_, segment_vector_ ) );
+		hasher_ = utility::pointer::make_shared< hashing::Hasher >( hasher_settings_, segment_vector_ );
 		//Then hash segments 4-6: seg4 length 9, seg6 length 13, seg5 length 13
 		TS_ASSERT_THROWS_NOTHING( hasher_->hash_segments( segment_vector_->at( 4 )->clone(), data_storage::Basis( 4, 5 ) ) );
 		TS_ASSERT_THROWS_NOTHING( hasher_->hash_segments( segment_vector_->at( 5 )->clone(), data_storage::Basis( 5, 5 ) ) );

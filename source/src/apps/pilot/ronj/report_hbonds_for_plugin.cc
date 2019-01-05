@@ -81,7 +81,7 @@ public:
 
 
 	HBondReporter() : relevant_chains_("*") {
-		scfxn = core::scoring::ScoreFunctionOP( new ScoreFunction );
+		scfxn = utility::pointer::make_shared< ScoreFunction >();
 		scfxn->set_weight( core::scoring::hbond_lr_bb, 1.17 );
 		scfxn->set_weight( core::scoring::hbond_sr_bb, 0.585 );
 		scfxn->set_weight( core::scoring::hbond_bb_sc, 1.17 );
@@ -397,7 +397,7 @@ int main( int argc, char* argv[] ) {
 		NEW_OPT( HBondReporter::relevant_chains, "relevant_chains", "*" );
 
 		devel::init(argc, argv);
-		protocols::jd2::JobDistributor::get_instance()->go( protocols::moves::MoverOP( new HBondReporter ) );
+		protocols::jd2::JobDistributor::get_instance()->go( utility::pointer::make_shared< HBondReporter >() );
 
 	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

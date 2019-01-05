@@ -51,7 +51,7 @@ methods::EnergyMethodOP
 MotifDockEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new MotifDockEnergy );
+	return utility::pointer::make_shared< MotifDockEnergy >();
 }
 
 /// @brief Return the set of score types claimed by the EnergyMethod
@@ -65,14 +65,14 @@ MotifDockEnergyCreator::score_types_for_method() const {
 
 /// c-tor
 MotifDockEnergy::MotifDockEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new MotifDockEnergyCreator ) )
+	parent( utility::pointer::make_shared< MotifDockEnergyCreator >() )
 { }
 
 
 /// clone
 EnergyMethodOP
 MotifDockEnergy::clone() const {
-	return EnergyMethodOP( new MotifDockEnergy() );
+	return utility::pointer::make_shared< MotifDockEnergy >();
 }
 
 

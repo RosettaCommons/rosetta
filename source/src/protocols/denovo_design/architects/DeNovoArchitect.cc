@@ -59,7 +59,7 @@ DeNovoMotifArchitect::~DeNovoMotifArchitect() = default;
 DeNovoArchitectOP
 DeNovoMotifArchitect::clone() const
 {
-	return DeNovoArchitectOP( new DeNovoMotifArchitect( *this ) );
+	return utility::pointer::make_shared< DeNovoMotifArchitect >( *this );
 }
 
 std::string

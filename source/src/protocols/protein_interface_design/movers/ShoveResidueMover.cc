@@ -68,7 +68,7 @@ static basic::Tracer TR( "protocols.protein_interface_design.movers.ShoveResidue
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP ShoveResidueMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new ShoveResidueMover );
+// XRW TEMP  return utility::pointer::make_shared< ShoveResidueMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -133,7 +133,7 @@ ShoveResidueMover::parse_my_tag( TagCOP const tag,
 	} else {
 		using namespace core::select::residue_selector;
 		std::string resnum = core::pose::get_resnum_string( tag );
-		shove_residues_ = ResidueSelectorOP( new ResidueIndexSelector( resnum ) );
+		shove_residues_ = utility::pointer::make_shared< ResidueIndexSelector >( resnum );
 	}
 }
 
@@ -162,7 +162,7 @@ std::string ShoveResidueMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 ShoveResidueMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ShoveResidueMover );
+	return utility::pointer::make_shared< ShoveResidueMover >();
 }
 
 void ShoveResidueMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

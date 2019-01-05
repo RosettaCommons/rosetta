@@ -53,7 +53,7 @@ public:
 	basic::datacache::CacheableDataOP
 	clone() const override
 	{
-		return basic::datacache::CacheableDataOP( new MembraneTopology( *this ) );
+		return utility::pointer::make_shared< MembraneTopology >( *this );
 	}
 	std::string
 	read_in_spanfile();

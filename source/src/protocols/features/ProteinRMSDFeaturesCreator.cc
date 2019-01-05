@@ -28,7 +28,7 @@ namespace features {
 // XRW TEMP ProteinRMSDFeaturesCreator::ProteinRMSDFeaturesCreator() {}
 // XRW TEMP ProteinRMSDFeaturesCreator::~ProteinRMSDFeaturesCreator() = default;
 // XRW TEMP FeaturesReporterOP ProteinRMSDFeaturesCreator::create_features_reporter() const {
-// XRW TEMP  return FeaturesReporterOP( new ProteinRMSDFeatures );
+// XRW TEMP  return utility::pointer::make_shared< ProteinRMSDFeatures >();
 // XRW TEMP }
 
 // XRW TEMP std::string ProteinRMSDFeaturesCreator::type_name() const {

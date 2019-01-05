@@ -31,7 +31,7 @@ using namespace core::scoring;
 static basic::Tracer TR( "protocols.simple_filters.ExpiryFilter" );
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP ExpiryFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ExpiryFilter ); }
+// XRW TEMP ExpiryFilterCreator::create_filter() const { return utility::pointer::make_shared< ExpiryFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP ExpiryFilterCreator::keyname() const { return "Expiry"; }
@@ -112,7 +112,7 @@ std::string ExpiryFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 ExpiryFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new ExpiryFilter );
+	return utility::pointer::make_shared< ExpiryFilter >();
 }
 
 void ExpiryFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

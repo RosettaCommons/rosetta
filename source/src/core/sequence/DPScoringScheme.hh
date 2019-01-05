@@ -43,10 +43,10 @@ public:
 	}
 
 	ScoringSchemeOP clone() const override {
-		return ScoringSchemeOP( new DPScoringScheme(
+		return utility::pointer::make_shared< DPScoringScheme >(
 			gap_open(),
 			gap_extend()
-			) );
+		);
 	}
 
 	/// @brief dtor

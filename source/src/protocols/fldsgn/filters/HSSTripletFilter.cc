@@ -64,7 +64,7 @@ HSSTripletFilter::HSSTripletFilter():
 /// @brief constructor with arguments
 HSSTripletFilter::HSSTripletFilter( HSSTriplets const & hss3s ):
 	Filter( "HSSTriplet" ),
-	hss3set_( HSSTripletSetOP( new HSSTripletSet( hss3s ) ) ),
+	hss3set_( utility::pointer::make_shared< HSSTripletSet >( hss3s ) ),
 	secstruct_( "" ),
 	filter_min_dist_(  7.5 ),
 	filter_max_dist_( 13.0 ),
@@ -79,7 +79,7 @@ HSSTripletFilter::HSSTripletFilter( HSSTriplets const & hss3s ):
 /// @brief constructor with arguments
 HSSTripletFilter::HSSTripletFilter( String const & hss3s ):
 	Filter( "HSSTriplet" ),
-	hss3set_( HSSTripletSetOP( new HSSTripletSet( hss3s ) ) ),
+	hss3set_( utility::pointer::make_shared< HSSTripletSet >( hss3s ) ),
 	secstruct_( "" ),
 	filter_min_dist_(  7.5 ),
 	filter_max_dist_( 13.0 ),
@@ -107,7 +107,7 @@ HSSTripletFilter::HSSTripletFilter( HSSTripletFilter const & rval ):
 	use_dssp_( rval.use_dssp_ )
 {
 	if ( rval.hss3set_ ) {
-		hss3set_ = HSSTripletSetOP( new HSSTripletSet( *rval.hss3set_ ) );
+		hss3set_ = utility::pointer::make_shared< HSSTripletSet >( *rval.hss3set_ );
 	}
 }
 
@@ -122,7 +122,7 @@ void HSSTripletFilter::add_hsstriplets( String const & hss3s )
 // @brief set filtered HSSTriplets
 void HSSTripletFilter::add_hsstriplets( HSSTriplets const & hss3s )
 {
-	if ( !hss3set_ ) hss3set_ = HSSTripletSetOP( new HSSTripletSet );
+	if ( !hss3set_ ) hss3set_ = utility::pointer::make_shared< HSSTripletSet >();
 	hss3set_->add_hsstriplets( hss3s );
 }
 
@@ -198,7 +198,7 @@ HSSTripletFilter::apply( Pose const & pose ) const
 	HSSTriplets const hss3s = get_hss3s( pose );
 
 	// set SS_Info
-	SS_Info2_COP const ss_info( SS_Info2_OP( new SS_Info2( pose, secstruct ) ) );
+	SS_Info2_COP const ss_info( utility::pointer::make_shared< SS_Info2 >( pose, secstruct ) );
 
 	// check conformation hsstriplets
 	bool filter( true );
@@ -270,7 +270,7 @@ HSSTripletFilter::compute( Pose const & pose ) const
 	}
 
 	// set SS_Info
-	SS_Info2_COP const ss_info( SS_Info2_OP( new SS_Info2( pose, secstruct ) ) );
+	SS_Info2_COP const ss_info( utility::pointer::make_shared< SS_Info2 >( pose, secstruct ) );
 
 	// check conformation hsstriplets
 	Size current_id( 0 );
@@ -461,7 +461,7 @@ HSSTripletFilter::get_hss3s( Pose const & pose ) const
 }
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP HSSTripletFilterCreator::create_filter() const { return protocols::filters::FilterOP( new HSSTripletFilter ); }
+// XRW TEMP HSSTripletFilterCreator::create_filter() const { return utility::pointer::make_shared< HSSTripletFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP HSSTripletFilterCreator::keyname() const { return "HSSTriplet"; }
@@ -507,7 +507,7 @@ std::string HSSTripletFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 HSSTripletFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new HSSTripletFilter );
+	return utility::pointer::make_shared< HSSTripletFilter >();
 }
 
 void HSSTripletFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

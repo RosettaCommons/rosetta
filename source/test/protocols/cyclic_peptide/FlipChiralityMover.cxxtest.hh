@@ -56,8 +56,8 @@ public:
 	void setUp(){
 		core_init();
 
-		init_pose_ = core::pose::PoseOP( new core::pose::Pose() );
-		test_pose_ = core::pose::PoseOP( new core::pose::Pose() );
+		init_pose_ = utility::pointer::make_shared< core::pose::Pose >();
+		test_pose_ = utility::pointer::make_shared< core::pose::Pose >();
 		core::import_pose::pose_from_file( *init_pose_, "protocols/cyclic_peptide/dVdPN_A.pdb" , core::import_pose::PDB_file);
 		core::import_pose::pose_from_file( *test_pose_, "protocols/cyclic_peptide/dVdPN_A.pdb" , core::import_pose::PDB_file);
 		flipper_=protocols::cyclic_peptide::FlipChiralityMoverOP (new protocols::cyclic_peptide::FlipChiralityMover ());

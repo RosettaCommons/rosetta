@@ -55,7 +55,7 @@ public:
 
 	/// @brief Clone this object
 	protocols::moves::MoverOP clone() const override {
-		return protocols::moves::MoverOP( new LoopMover_Perturb_QuickCCD_Moves(*this) );
+		return utility::pointer::make_shared< LoopMover_Perturb_QuickCCD_Moves >(*this);
 	}
 
 	std::string

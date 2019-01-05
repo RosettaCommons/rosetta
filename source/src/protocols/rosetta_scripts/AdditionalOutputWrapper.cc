@@ -66,7 +66,7 @@ std::string AdditionalOutputWrapperCreator::keyname() const
 
 MoverOP AdditionalOutputWrapperCreator::create_mover() const
 {
-	return MoverOP( new AdditionalOutputWrapper() );
+	return utility::pointer::make_shared< AdditionalOutputWrapper >();
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -89,7 +89,7 @@ std::string AdditionalOutputWrapper::get_name() const
 /// @brief Process all input poses (provided pose and from previous mover)
 void AdditionalOutputWrapper::apply(core::pose::Pose& pose)
 {
-	reference_pose_ = core::pose::PoseOP( new core::pose::Pose(pose) );
+	reference_pose_ = utility::pointer::make_shared< core::pose::Pose >(pose);
 	generate_pose(pose);
 	++n_poses_;
 }
@@ -138,7 +138,7 @@ void AdditionalOutputWrapper::generate_pose(core::pose::Pose & pose)
 		tag << name_ << "_" << (n_poses_+1);
 		pose.data().set(
 			core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG,
-			DataCache_CacheableData::DataOP( new basic::datacache::CacheableString( tag.str() ) )
+			utility::pointer::make_shared< basic::datacache::CacheableString >( tag.str() )
 		);
 	}
 

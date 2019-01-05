@@ -43,7 +43,7 @@ public:
 
 	CircularGeneral1D_Func( std::string const & filename );
 
-	FuncOP clone() const { return FuncOP( new CircularGeneral1D_Func( *this ) ); }
+	FuncOP clone() const { return utility::pointer::make_shared< CircularGeneral1D_Func >( *this ); }
 
 	virtual bool operator == ( Func const & other ) const;
 	virtual bool same_type_as_me( Func const & other ) const;

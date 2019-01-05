@@ -67,7 +67,7 @@ static basic::Tracer nma_tr( "protocols.normalmode", basic::t_debug );
 
 
 NormalModeMinimizer::NormalModeMinimizer() {
-	options_ = MinimizerOptionsOP( new MinimizerOptions( "lbfgs_armijo_nonmonotone", 0.01, true, false, false ) );
+	options_ = utility::pointer::make_shared< MinimizerOptions >( "lbfgs_armijo_nonmonotone", 0.01, true, false, false );
 	options_->max_iter(200);
 }
 
@@ -79,12 +79,12 @@ NormalModeMinimizer::apply( pose::Pose & pose ) {
 	if ( movemap_factory_ ) {
 		movemap = movemap_factory_->create_movemap_from_pose( pose );
 	} else {
-		movemap = core::kinematics::MoveMapOP( new MoveMap );
+		movemap = utility::pointer::make_shared< MoveMap >();
 	}
 	if ( ! scorefxn_ ) scorefxn_ = get_score_function(); // get a default (INITIALIZED!) ScoreFunction
 
 	if ( options_->deriv_check() ) {
-		deriv_check_result_ = NumericalDerivCheckResultOP( new NumericalDerivCheckResult );
+		deriv_check_result_ = utility::pointer::make_shared< NumericalDerivCheckResult >();
 		deriv_check_result_->send_to_stdout( options_->deriv_check_to_stdout() );
 	}
 
@@ -321,7 +321,7 @@ std::string NormalModeMinimizerCreator::keyname() const {
 
 protocols::moves::MoverOP
 NormalModeMinimizerCreator::create_mover() const {
-	return protocols::moves::MoverOP( new NormalModeMinimizer );
+	return utility::pointer::make_shared< NormalModeMinimizer >();
 }
 
 void NormalModeMinimizerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

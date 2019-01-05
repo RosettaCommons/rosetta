@@ -86,7 +86,7 @@ static basic::Tracer high_res_docker_tracer( "protocols.ligand_docking.ligand_op
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP HighResDockerCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new HighResDocker );
+// XRW TEMP  return utility::pointer::make_shared< HighResDocker >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -132,11 +132,11 @@ HighResDocker::HighResDocker(HighResDocker const & that):
 HighResDocker::~HighResDocker() = default;
 
 protocols::moves::MoverOP HighResDocker::clone() const {
-	return protocols::moves::MoverOP( new HighResDocker( *this ) );
+	return utility::pointer::make_shared< HighResDocker >( *this );
 }
 
 protocols::moves::MoverOP HighResDocker::fresh_instance() const {
-	return protocols::moves::MoverOP( new HighResDocker );
+	return utility::pointer::make_shared< HighResDocker >();
 }
 
 // XRW TEMP std::string HighResDocker::get_name() const{
@@ -276,14 +276,14 @@ HighResDocker::apply(core::pose::Pose & pose) {
 
 		if ( cycle % repack_every_Nth_ == 1 ) {
 			high_res_docker_tracer.Debug << "making PackRotamersMover" << std::endl;
-			pack_mover= moves::MoverOP( new protocols::minimization_packing::PackRotamersMover(score_fxn_, packer_task) );
+			pack_mover= utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >(score_fxn_, packer_task);
 		} else {
 			high_res_docker_tracer.Debug << "making RotamerTrialsMover" << std::endl;
-			pack_mover= moves::MoverOP( new protocols::minimization_packing::RotamerTrialsMover(score_fxn_, *packer_task) );
+			pack_mover= utility::pointer::make_shared< protocols::minimization_packing::RotamerTrialsMover >(score_fxn_, *packer_task);
 		}
 
 		// Wrap it in something to disable the torsion constraints before packing!
-		pack_mover = protocols::moves::MoverOP( new protocols::ligand_docking::UnconstrainedTorsionsMover( pack_mover, minimized_ligands ) );
+		pack_mover = utility::pointer::make_shared< protocols::ligand_docking::UnconstrainedTorsionsMover >( pack_mover, minimized_ligands );
 
 		protocols::minimization_packing::MinMoverOP min_mover( new protocols::minimization_packing::MinMover( movemap, score_fxn_, "lbfgs_armijo_nonmonotone_atol", 1.0, true /*use_nblist*/ ) );
 		min_mover->min_options()->nblist_auto_update(true); // does this cost us lots of time in practice?
@@ -334,14 +334,14 @@ HighResDocker::apply(utility::vector1<core::pose::Pose> & poses, utility::vector
 
 		if ( cycle % repack_every_Nth_ == 1 ) {
 			high_res_docker_tracer.Debug << "making PackRotamersMover" << std::endl;
-			pack_mover = protocols::moves::MoverOP( new protocols::minimization_packing::PackRotamersMover(score_fxn_, packer_task) );
+			pack_mover = utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >(score_fxn_, packer_task);
 		} else {
 			high_res_docker_tracer.Debug << "making RotamerTrialsMover" << std::endl;
-			pack_mover= protocols::moves::MoverOP( new protocols::minimization_packing::RotamerTrialsMover(score_fxn_, *packer_task));
+			pack_mover= utility::pointer::make_shared< protocols::minimization_packing::RotamerTrialsMover >(score_fxn_, *packer_task);
 		}
 
 		// Wrap it in something to disable the torsion constraints before packing!
-		pack_mover = protocols::moves::MoverOP( new protocols::ligand_docking::UnconstrainedTorsionsMover( pack_mover, minimized_ligands ) );
+		pack_mover = utility::pointer::make_shared< protocols::ligand_docking::UnconstrainedTorsionsMover >( pack_mover, minimized_ligands );
 
 		protocols::minimization_packing::MinMoverOP min_mover( new protocols::minimization_packing::MinMover( movemap, score_fxn_, "dfpmin_armijo_nonmonotone_atol", 1.0, true /*use_nblist*/ ) );
 		min_mover->min_options()->nblist_auto_update(true); // does this cost us lots of time in practice?
@@ -380,14 +380,14 @@ HighResDocker::apply(core::pose::Pose & pose, core::Real & current_score, char q
 
 	if ( cycle % repack_every_Nth_ == 1 ) {
 		high_res_docker_tracer.Debug << "making PackRotamersMover" << std::endl;
-		pack_mover = protocols::moves::MoverOP( new protocols::minimization_packing::PackRotamersMover(score_fxn_, packer_task) );
+		pack_mover = utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >(score_fxn_, packer_task);
 	} else {
 		high_res_docker_tracer.Debug << "making RotamerTrialsMover" << std::endl;
-		pack_mover = protocols::moves::MoverOP( new protocols::minimization_packing::RotamerTrialsMover(score_fxn_, *packer_task) );
+		pack_mover = utility::pointer::make_shared< protocols::minimization_packing::RotamerTrialsMover >(score_fxn_, *packer_task);
 	}
 
 	// Wrap it in something to disable the torsion constraints before packing!
-	pack_mover = protocols::moves::MoverOP( new protocols::ligand_docking::UnconstrainedTorsionsMover( pack_mover, minimized_ligands ) );
+	pack_mover = utility::pointer::make_shared< protocols::ligand_docking::UnconstrainedTorsionsMover >( pack_mover, minimized_ligands );
 
 	protocols::minimization_packing::MinMoverOP min_mover( new protocols::minimization_packing::MinMover( movemap, score_fxn_, "dfpmin_armijo_nonmonotone_atol", 1.0, true /*use_nblist*/ ) );
 	min_mover->min_options()->nblist_auto_update(true); // does this cost us lots of time in practice?
@@ -565,7 +565,7 @@ std::string HighResDockerCreator::keyname() const {
 
 protocols::moves::MoverOP
 HighResDockerCreator::create_mover() const {
-	return protocols::moves::MoverOP( new HighResDocker );
+	return utility::pointer::make_shared< HighResDocker >();
 }
 
 void HighResDockerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

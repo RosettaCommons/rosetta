@@ -44,7 +44,7 @@ public:
 	{}
 
 	/// @brief returns a clone of this ConstantFunc
-	FuncOP clone() const { return FuncOP( new ConstantFunc( *this ) ); }
+	FuncOP clone() const { return utility::pointer::make_shared< ConstantFunc >( *this ); }
 
 	virtual bool operator == ( Func const & other ) const;
 	virtual bool same_type_as_me( Func const & other ) const;

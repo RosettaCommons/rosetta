@@ -222,7 +222,7 @@ EnzdesRemodelProtocol::get_name() const {
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP EnzdesRemodelMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new EnzdesRemodelMover );
+// XRW TEMP  return utility::pointer::make_shared< EnzdesRemodelMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -247,8 +247,8 @@ EnzdesRemodelMover::EnzdesRemodelMover()
 	ss_similarity_probability_( 1.0 - basic::options::option[basic::options::OptionKeys::enzdes::remodel_aggressiveness] ),
 	max_allowed_score_increase_(0.0)
 {
-	predesign_filters_ = protocols::filters::FilterCollectionOP( new protocols::filters::FilterCollection() );
-	postdesign_filters_ = protocols::filters::FilterCollectionOP( new protocols::filters::FilterCollection() );
+	predesign_filters_ = utility::pointer::make_shared< protocols::filters::FilterCollection >();
+	postdesign_filters_ = utility::pointer::make_shared< protocols::filters::FilterCollection >();
 
 	vlb_sfxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "remodel_cen" );
 	//turn on the constraint weights in the remodel scorefunction for our purposes
@@ -290,8 +290,8 @@ EnzdesRemodelMover::EnzdesRemodelMover(
 
 	runtime_assert( flex_region == enz_prot->enz_flexible_region( flex_region->index() ) );
 
-	predesign_filters_ = protocols::filters::FilterCollectionOP( new protocols::filters::FilterCollection() );
-	postdesign_filters_ = protocols::filters::FilterCollectionOP( new protocols::filters::FilterCollection() );
+	predesign_filters_ = utility::pointer::make_shared< protocols::filters::FilterCollection >();
+	postdesign_filters_ = utility::pointer::make_shared< protocols::filters::FilterCollection >();
 
 	set_task( task );
 
@@ -318,7 +318,7 @@ EnzdesRemodelMover::~EnzdesRemodelMover()= default;
 
 protocols::moves::MoverOP
 EnzdesRemodelMover::clone() const{
-	return protocols::moves::MoverOP( new EnzdesRemodelMover( *this ) );
+	return utility::pointer::make_shared< EnzdesRemodelMover >( *this );
 }
 
 
@@ -364,7 +364,7 @@ EnzdesRemodelMover::apply(
 
 	this->set_last_move_status( protocols::moves::FAIL_RETRY );
 
-	this->set_native_pose( core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose( pose ) ) ) );
+	this->set_native_pose( utility::pointer::make_shared< core::pose::Pose >( pose ) );
 
 	//note: the pose gets reduced to poly-ala at all design positions here
 	examine_initial_conformation( pose );
@@ -455,7 +455,7 @@ EnzdesRemodelMover::initialize(
 {
 
 	if ( !enz_prot_ ) {
-		enz_prot_ = protocols::enzdes::EnzdesFlexBBProtocolOP( new protocols::enzdes::EnzdesFlexBBProtocol() );
+		enz_prot_ = utility::pointer::make_shared< protocols::enzdes::EnzdesFlexBBProtocol >();
 		if ( enz_prot_->reduced_scorefxn()->has_zero_weight( core::scoring::backbone_stub_constraint ) ) {
 			enz_prot_->reduced_scorefxn()->set_weight( core::scoring::backbone_stub_constraint, 1.0 );
 		}
@@ -695,7 +695,7 @@ EnzdesRemodelMover::examine_initial_conformation(
 	predesign_filters_->add_filter( score_filter );
 
 	//last but not least, we have to initialise the start_to_cur sequence mapping
-	start_to_current_smap_ = core::id::SequenceMappingOP( new core::id::SequenceMapping() );
+	start_to_current_smap_ = utility::pointer::make_shared< core::id::SequenceMapping >();
 	start_to_current_smap_->clear();
 
 	for ( core::Size i = 1; i <= pose.size(); ++i ) start_to_current_smap_->push_back( i );
@@ -962,8 +962,8 @@ EnzdesRemodelMover::translate_res_interactions_to_rvinfos(
 	core::Real min_dis = std::max(0.0, res_ints.dis()->ideal_val() - res_ints.dis()->tolerance() );
 	core::Real max_dis = res_ints.dis()->ideal_val() + res_ints.dis()->tolerance();
 	core::Real force_k_dis = res_ints.dis()->force_const();
-	to_return->set_dis( core::scoring::func::FuncOP( new core::scoring::constraints::BoundFunc(
-		min_dis, max_dis, sqrt(1/ force_k_dis), "dis") ) );
+	to_return->set_dis( utility::pointer::make_shared< core::scoring::constraints::BoundFunc >(
+		min_dis, max_dis, sqrt(1/ force_k_dis), "dis") );
 
 	if ( (loopres_base_atom_ids.size() != 0 ) && res_ints.loop_ang() ) {
 		runtime_assert( loopres_base_atom_ids.size() == loopres_atom_ids.size() );
@@ -1104,7 +1104,7 @@ EnzdesRemodelMover::secmatch_after_remodel(
 			}
 		}
 	}
-	if ( !ligres || !(ligres->type().is_ligand()) ) ligres = core::conformation::ResidueCOP( core::conformation::ResidueOP( new core::conformation::Residue( *(cstio->mcfi_list( 1 )->mcfi( 1 )->allowed_restypes( 1 )[1]), true ) ) );
+	if ( !ligres || !(ligres->type().is_ligand()) ) ligres = core::conformation::ResidueCOP( utility::pointer::make_shared< core::conformation::Residue >( *(cstio->mcfi_list( 1 )->mcfi( 1 )->allowed_restypes( 1 )[1]), true ) );
 
 	protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->set_cst_cache( nullptr ); //wipe this out for now, matcher will overwrite
 	protocols::match::MatcherMoverOP matcher_mover( new protocols::match::MatcherMover() );
@@ -1210,8 +1210,8 @@ EnzdesRemodelMover::setup_rcgs(
 
 	if ( cen_rv_infos.size() != 0 ) {
 		using namespace protocols::forge::remodel;
-		vlb.add_rcg( RemodelConstraintGeneratorOP( new ResidueVicinityRCG( flex_region_->start(), flex_region_->stop(), cen_rv_infos ) ) );
-		rcgs_.push_back( protocols::forge::remodel::RemodelConstraintGeneratorOP( new ResidueVicinityRCG( flex_region_->start(), flex_region_->stop(), fa_rv_infos ) ) );
+		vlb.add_rcg( utility::pointer::make_shared< ResidueVicinityRCG >( flex_region_->start(), flex_region_->stop(), cen_rv_infos ) );
+		rcgs_.push_back( utility::pointer::make_shared< ResidueVicinityRCG >( flex_region_->start(), flex_region_->stop(), fa_rv_infos ) );
 	}
 }
 
@@ -1228,7 +1228,7 @@ EnzdesRemodelMover::setup_rcgs_from_inverse_rotamers(
 		newrcg->set_id( "invrot1" );
 		vlb.add_rcg( newrcg );
 
-		newrcg = RemodelConstraintGeneratorOP( new InverseRotamersRCG( flex_region_->start(), flex_region_->stop(), target_inverse_rotamers_[i] ) );
+		newrcg = utility::pointer::make_shared< InverseRotamersRCG >( flex_region_->start(), flex_region_->stop(), target_inverse_rotamers_[i] );
 		newrcg->set_id( "invrot2" );
 		rcgs_.push_back( newrcg );
 	}
@@ -1293,7 +1293,7 @@ EnzdesRemodelMover::create_target_inverse_rotamers(
 						if ( (corresponding_res_block == 0 ) || ( corresponding_res_block > i ) ) {
 							tr << "Catalytic residue for MatchConstraint " << i << " at position " << seqpos << " is in remodeled region, building inverse rotamers... " << std::endl;
 							target_inverse_rotamers_.push_back( std::list<core::conformation::ResidueCOP> () );
-							if ( include_existing_conf_as_invrot_target_ ) target_inverse_rotamers_[ target_inverse_rotamers_.size() ].push_back( core::conformation::ResidueCOP( core::conformation::ResidueOP( new core::conformation::Residue( pose.residue( seqpos ) ) ) ) );
+							if ( include_existing_conf_as_invrot_target_ ) target_inverse_rotamers_[ target_inverse_rotamers_.size() ].push_back( utility::pointer::make_shared< core::conformation::Residue >( pose.residue( seqpos ) ) );
 							invrots_build = true;
 							std::list< core::conformation::ResidueCOP > cur_inv_rots( enzcst_io->mcfi_list( i )->inverse_rotamers_against_residue( other_res, pose.residue( other_seqpos ).get_self_ptr() ) );
 							if ( !cur_inv_rots.empty() /*size() != 0*/ ) target_inverse_rotamers_[ target_inverse_rotamers_.size() ].splice( target_inverse_rotamers_[ target_inverse_rotamers_.size() ].end(), cur_inv_rots );
@@ -1383,7 +1383,7 @@ std::string EnzdesRemodelMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 EnzdesRemodelMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new EnzdesRemodelMover );
+	return utility::pointer::make_shared< EnzdesRemodelMover >();
 }
 
 void EnzdesRemodelMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -208,7 +208,7 @@ RigidBodyMoveRSO::RigidBodyMoveRSO( RigidBodyMoveRSO const & /*other*/ ) = defau
 
 core::pack::rotamer_set::RotamerSetOperationOP
 RigidBodyMoveRSO::clone() const{
-	return core::pack::rotamer_set::RotamerSetOperationOP( new RigidBodyMoveRSO( *this ) );
+	return utility::pointer::make_shared< RigidBodyMoveRSO >( *this );
 }
 
 utility::vector1< core::conformation::ResidueCOP >

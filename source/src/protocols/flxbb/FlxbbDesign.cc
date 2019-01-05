@@ -85,7 +85,7 @@ namespace flxbb {
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP FlxbbDesignCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new FlxbbDesign );
+// XRW TEMP  return utility::pointer::make_shared< FlxbbDesign >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -204,20 +204,20 @@ FlxbbDesign::~FlxbbDesign()= default;
 /// @brief clone this object
 FlxbbDesign::MoverOP FlxbbDesign::clone() const
 {
-	return FlxbbDesign::MoverOP( new FlxbbDesign( *this ) );
+	return utility::pointer::make_shared< FlxbbDesign >( *this );
 }
 
 /// @brief create this type of object
 FlxbbDesign::MoverOP FlxbbDesign::fresh_instance() const
 {
-	return FlxbbDesign::MoverOP( new FlxbbDesign() );
+	return utility::pointer::make_shared< FlxbbDesign >();
 }
 
 /// @brief initialize setups
 void FlxbbDesign::read_options()
 {
 	if ( option[ OptionKeys::flxbb::ncycle ].user() ) nflxbb_cycles_ = option[ OptionKeys::flxbb::ncycle ]();
-	if ( option[ OptionKeys::flxbb::blueprint ].user() ) blueprint_ = BluePrintOP( new BluePrint( option[ OptionKeys::flxbb::blueprint ]().name() ) );
+	if ( option[ OptionKeys::flxbb::blueprint ].user() ) blueprint_ = utility::pointer::make_shared< BluePrint >( option[ OptionKeys::flxbb::blueprint ]().name() );
 	if ( option[ OptionKeys::flxbb::layer::layer ].user() ) layer_mode_ = option[ OptionKeys::flxbb::layer::layer ]();
 	if ( option[ OptionKeys::flxbb::constraints_sheet ].user() ) constraints_sheet_ =  option[ OptionKeys::flxbb::constraints_sheet ]();
 	if ( option[ OptionKeys::flxbb::constraints_NtoC ].user() ) constraints_NtoC_ = option[ OptionKeys::flxbb::constraints_NtoC ]();
@@ -236,7 +236,7 @@ void FlxbbDesign::read_options()
 void FlxbbDesign::initialize_filter( Size const filter_trial, String const & filter_type ){
 	if ( filter_type != "" ) {
 		if ( filter_type == "packstat" ) {
-			filter_during_design_ = FilterStructsOP( new FilterStructs_Packstat( filter_trial ) );
+			filter_during_design_ = utility::pointer::make_shared< FilterStructs_Packstat >( filter_trial );
 		} else {
 			TR.Error << filter_type << " does not exists as filter name " << std::endl;
 			utility_exit_with_message("Filter type can't be handled by FlxbbDesign.");
@@ -385,9 +385,9 @@ FlxbbDesign::build_design_taskset( Pose const & pose )
 	// create relax mover
 	RelaxProtocolBaseOP rlx_mover;
 	if ( use_fast_relax_ ) {
-		rlx_mover = RelaxProtocolBaseOP( new FastRelax( scorefxn_relax_ ) );
+		rlx_mover = utility::pointer::make_shared< FastRelax >( scorefxn_relax_ );
 	} else {
-		rlx_mover = RelaxProtocolBaseOP( new ClassicRelax( scorefxn_relax_ ) );
+		rlx_mover = utility::pointer::make_shared< ClassicRelax >( scorefxn_relax_ );
 	}
 	if ( movemap_ ) {
 		rlx_mover->set_movemap( movemap_ ); // movemap can be controled by blueprint
@@ -399,41 +399,41 @@ FlxbbDesign::build_design_taskset( Pose const & pose )
 		TaskFactoryOP tf( new TaskFactory );
 		//jadolfbr - FastRelax and ClassicRelax now completely respects the tf you give it.
 		//Nobu - Note that ClassicRelax ignored the set task factory before.
-		tf->push_back(TaskOperationCOP( new InitializeFromCommandline ));
-		tf->push_back(TaskOperationCOP( new RestrictToRepacking ) );
-		tf->push_back( TaskOperationCOP( new LimitAromaChi2Operation ) );
+		tf->push_back(utility::pointer::make_shared< InitializeFromCommandline >());
+		tf->push_back(utility::pointer::make_shared< RestrictToRepacking >() );
+		tf->push_back( utility::pointer::make_shared< LimitAromaChi2Operation >() );
 		if ( movemap_ ) {
-			tf->push_back( TaskOperationCOP( new RestrictToMoveMapChiOperation(movemap_) ) );
+			tf->push_back( utility::pointer::make_shared< RestrictToMoveMapChiOperation >(movemap_) );
 		} else if ( movemap_factory_ ) {
-			tf->push_back( TaskOperationCOP( new RestrictToMoveMapChiOperation( movemap_factory_->create_movemap_from_pose( pose ) ) ) );
+			tf->push_back( utility::pointer::make_shared< RestrictToMoveMapChiOperation >( movemap_factory_->create_movemap_from_pose( pose ) ) );
 		}
 		rlx_mover->set_task_factory( tf );
 	}
 
 	if ( layer_mode_ == "" ) {
-		dts.push_back( DesignTaskOP( new DesignTask_Normal( nflxbb_cycles_, scorefxn_design_, rlx_mover, filter_during_design_ ) ) );
+		dts.push_back( utility::pointer::make_shared< DesignTask_Normal >( nflxbb_cycles_, scorefxn_design_, rlx_mover, filter_during_design_ ) );
 	} else {
 
 		utility::vector1< String > layers( utility::string_split( layer_mode_, '_' ) );
 		if ( layers.size() == 1 && layer_mode_ == "normal" ) {
 
-			rlx_mover = RelaxProtocolBaseOP( new FastRelax( scorefxn_relax_ ) );
+			rlx_mover = utility::pointer::make_shared< FastRelax >( scorefxn_relax_ );
 			FilterStructs_PackstatOP filter1( new FilterStructs_Packstat( pose, 10 ) );
 			FilterStructs_TotalChargeOP filter2( new FilterStructs_TotalCharge( pose ) );
 
 			// 1st stage: 2 cycles of the fixbb designinig only core and boundary and relax
-			dts.push_back( DesignTaskOP( new DesignTask_Layer( true, true, false, false,
-				2, scorefxn_design_, rlx_mover, filter1 ) ));
+			dts.push_back( utility::pointer::make_shared< DesignTask_Layer >( true, true, false, false,
+				2, scorefxn_design_, rlx_mover, filter1 ));
 			// 2nd stage: 2 cycles of design all and relax
-			dts.push_back( DesignTaskOP( new DesignTask_Layer( true, true, true, false,
-				2, scorefxn_design_, rlx_mover, filter1 ) ));
+			dts.push_back( utility::pointer::make_shared< DesignTask_Layer >( true, true, true, false,
+				2, scorefxn_design_, rlx_mover, filter1 ));
 			// 3rd stage: design only surface without relax and filter sequence of which totalcharge is non-zero
-			dts.push_back( DesignTaskOP( new DesignTask_Layer( false, false, true, true,
-				1, scorefxn_design_, nullptr, filter2 ) ));
+			dts.push_back( utility::pointer::make_shared< DesignTask_Layer >( false, false, true, true,
+				1, scorefxn_design_, nullptr, filter2 ));
 
 		} else if ( layers.size() == 1 && layer_mode_ == "all" ) {
-			dts.push_back( DesignTaskOP( new DesignTask_Layer( true, true, true, false,
-				nflxbb_cycles_, scorefxn_design_, rlx_mover, filter_during_design_ ) ));
+			dts.push_back( utility::pointer::make_shared< DesignTask_Layer >( true, true, true, false,
+				nflxbb_cycles_, scorefxn_design_, rlx_mover, filter_during_design_ ));
 		} else if ( layers.size() >= 1 ) {
 			bool dcore( false );
 			bool boundary( false );
@@ -454,9 +454,9 @@ FlxbbDesign::build_design_taskset( Pose const & pose )
 					boundary = true;
 				}
 			} // utility::vector1
-			dts.push_back( DesignTaskOP( new DesignTask_Layer( dcore, boundary, surface,
+			dts.push_back( utility::pointer::make_shared< DesignTask_Layer >( dcore, boundary, surface,
 				use_origseq_for_not_dsgned_layer_,
-				nflxbb_cycles_, scorefxn_design_, rlx_mover, filter_during_design_ ) ));
+				nflxbb_cycles_, scorefxn_design_, rlx_mover, filter_during_design_ ));
 		}
 	} // if ( layer_mode_ == "" )
 
@@ -477,7 +477,7 @@ FlxbbDesign::build_design_taskset( Pose const & pose )
 	// Exclude aromatic chi2 rotamers, of which angles are around 0
 	if ( limit_aroma_chi2_ ) { // default true
 		for ( DesignTaskSet::const_iterator it=dts.begin(); it!=dts.end(); ++it ) {
-			(*it)->add_task_operation( TaskOperationOP( new LimitAromaChi2Operation ) );
+			(*it)->add_task_operation( utility::pointer::make_shared< LimitAromaChi2Operation >() );
 		}
 	}
 
@@ -512,7 +512,7 @@ void FlxbbDesign::apply( pose::Pose & pose )
 		}
 		runtime_assert( blueprint_ != nullptr );
 		runtime_assert( pose.size() == blueprint_->total_residue() );
-		movemap_ = MoveMapOP( new core::kinematics::MoveMap );
+		movemap_ = utility::pointer::make_shared< core::kinematics::MoveMap >();
 		blueprint_->set_movemap( movemap_ );
 	}
 
@@ -621,7 +621,7 @@ FlxbbDesign::parse_my_tag(
 
 	std::string const blueprint( tag->getOption<std::string>( "blueprint", "" ) );
 	if ( blueprint != "" ) {
-		blueprint_ = BluePrintOP( new BluePrint( blueprint ) );
+		blueprint_ = utility::pointer::make_shared< BluePrint >( blueprint );
 	}
 
 	// the number of cycles of fixbb and relax
@@ -730,7 +730,7 @@ std::string FlxbbDesignCreator::keyname() const {
 
 protocols::moves::MoverOP
 FlxbbDesignCreator::create_mover() const {
-	return protocols::moves::MoverOP( new FlxbbDesign );
+	return utility::pointer::make_shared< FlxbbDesign >();
 }
 
 void FlxbbDesignCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -44,7 +44,7 @@ namespace loop_close {
 //Constructor
 StepWiseProteinCCD_MultiPoseCloser::StepWiseProteinCCD_MultiPoseCloser( working_parameters::StepWiseWorkingParametersCOP working_parameters,
 	sampler::StepWiseSamplerSizedOP sampler ):
-	ccd_closer_( StepWiseProteinCCD_CloserOP( new StepWiseProteinCCD_Closer( working_parameters ) ) ),
+	ccd_closer_( utility::pointer::make_shared< StepWiseProteinCCD_Closer >( working_parameters ) ),
 	sampler_(std::move( sampler )),
 	choose_random_( false ),
 	num_random_samples_( 20 ),

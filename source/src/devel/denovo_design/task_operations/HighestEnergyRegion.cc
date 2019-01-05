@@ -97,7 +97,7 @@ HighestEnergyRegionOperation::~HighestEnergyRegionOperation() = default;
 /// @brief make clone
 core::pack::task::operation::TaskOperationOP
 HighestEnergyRegionOperation::clone() const {
-	return core::pack::task::operation::TaskOperationOP( new HighestEnergyRegionOperation( *this ) );
+	return utility::pointer::make_shared< HighestEnergyRegionOperation >( *this );
 }
 
 /// @brief apply
@@ -235,7 +235,7 @@ HighestEnergyRegionOperation::cache_result( core::pose::Pose const & pose )
 	for ( core::Size i=1; i<=res_list.size(); ++i ) {
 		residues_to_design_.push_back( res_list[i] );
 	}
-	cached_pose_ = core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose( pose ) ) );
+	cached_pose_ = utility::pointer::make_shared< core::pose::Pose >( pose );
 	TR << "Cached pose and a list of residues of size: " << residues_to_design_.size() << std::endl;
 }
 
@@ -331,7 +331,7 @@ HighestEnergyRegionOperation::repack_non_selected() const
 
 core::pack::task::operation::TaskOperationOP
 HighestEnergyRegionOperationCreator::create_task_operation() const {
-	return core::pack::task::operation::TaskOperationOP( new HighestEnergyRegionOperation );
+	return utility::pointer::make_shared< HighestEnergyRegionOperation >();
 }
 
 void
@@ -363,7 +363,7 @@ DesignByPackStatOperation::~DesignByPackStatOperation() = default;
 core::pack::task::operation::TaskOperationOP
 DesignByPackStatOperation::clone() const
 {
-	return core::pack::task::operation::TaskOperationOP( new DesignByPackStatOperation( *this ) );
+	return utility::pointer::make_shared< DesignByPackStatOperation >( *this );
 }
 
 /// @brief Gets a list of residues for design
@@ -412,7 +412,7 @@ DesignByPackStatOperation::get_residues_to_design( core::pose::Pose const & pose
 /// @brief creator functions
 core::pack::task::operation::TaskOperationOP
 DesignRandomRegionOperationCreator::create_task_operation() const {
-	return core::pack::task::operation::TaskOperationOP( new DesignRandomRegionOperation );
+	return utility::pointer::make_shared< DesignRandomRegionOperation >();
 }
 
 void DesignRandomRegionOperationCreator::provide_xml_schema(
@@ -445,7 +445,7 @@ DesignRandomRegionOperation::~DesignRandomRegionOperation() = default;
 core::pack::task::operation::TaskOperationOP
 DesignRandomRegionOperation::clone() const
 {
-	return core::pack::task::operation::TaskOperationOP( new DesignRandomRegionOperation( *this ) );
+	return utility::pointer::make_shared< DesignRandomRegionOperation >( *this );
 }
 
 /// @brief Gets a list of residues for design
@@ -482,7 +482,7 @@ DesignRandomRegionOperation::get_residues_to_design( core::pose::Pose const & po
 /// @brief creator functions
 core::pack::task::operation::TaskOperationOP
 DesignByResidueCentralityOperationCreator::create_task_operation() const {
-	return core::pack::task::operation::TaskOperationOP( new DesignByResidueCentralityOperation );
+	return utility::pointer::make_shared< DesignByResidueCentralityOperation >();
 }
 
 void DesignByResidueCentralityOperationCreator::provide_xml_schema(
@@ -514,7 +514,7 @@ DesignByResidueCentralityOperation::~DesignByResidueCentralityOperation() = defa
 core::pack::task::operation::TaskOperationOP
 DesignByResidueCentralityOperation::clone() const
 {
-	return core::pack::task::operation::TaskOperationOP( new DesignByResidueCentralityOperation( *this ) );
+	return utility::pointer::make_shared< DesignByResidueCentralityOperation >( *this );
 }
 
 /// @brief Gets a list of residues for design
@@ -558,7 +558,7 @@ DesignByResidueCentralityOperation::get_residues_to_design( core::pose::Pose con
 /// @brief creator functions
 core::pack::task::operation::TaskOperationOP
 DesignCatalyticResiduesOperationCreator::create_task_operation() const {
-	return core::pack::task::operation::TaskOperationOP( new DesignCatalyticResiduesOperation );
+	return utility::pointer::make_shared< DesignCatalyticResiduesOperation >();
 }
 
 void DesignCatalyticResiduesOperationCreator::provide_xml_schema(
@@ -590,7 +590,7 @@ DesignCatalyticResiduesOperation::~DesignCatalyticResiduesOperation() = default;
 core::pack::task::operation::TaskOperationOP
 DesignCatalyticResiduesOperation::clone() const
 {
-	return core::pack::task::operation::TaskOperationOP( new DesignCatalyticResiduesOperation( *this ) );
+	return utility::pointer::make_shared< DesignCatalyticResiduesOperation >( *this );
 }
 
 /// @brief Gets a list of residues for design
@@ -623,7 +623,7 @@ DesignCatalyticResiduesOperation::get_residues_to_design( core::pose::Pose const
 /// @brief creator functions
 core::pack::task::operation::TaskOperationOP
 DesignByCavityProximityOperationCreator::create_task_operation() const {
-	return core::pack::task::operation::TaskOperationOP( new DesignByCavityProximityOperation );
+	return utility::pointer::make_shared< DesignByCavityProximityOperation >();
 }
 
 void DesignByCavityProximityOperationCreator::provide_xml_schema(
@@ -654,7 +654,7 @@ DesignByCavityProximityOperation::~DesignByCavityProximityOperation() = default;
 core::pack::task::operation::TaskOperationOP
 DesignByCavityProximityOperation::clone() const
 {
-	return core::pack::task::operation::TaskOperationOP( new DesignByCavityProximityOperation( *this ) );
+	return utility::pointer::make_shared< DesignByCavityProximityOperation >( *this );
 }
 
 /// @brief Gets a list of residues for design

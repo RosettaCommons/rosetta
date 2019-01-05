@@ -49,7 +49,7 @@ methods::EnergyMethodOP
 pHEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new pHEnergy );
+	return utility::pointer::make_shared< pHEnergy >();
 }
 
 ScoreTypes
@@ -61,7 +61,7 @@ pHEnergyCreator::score_types_for_method() const {
 
 //ctor
 pHEnergy::pHEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new pHEnergyCreator ) )
+	parent( utility::pointer::make_shared< pHEnergyCreator >() )
 {
 	using namespace basic::options;
 	pH_ = option[ OptionKeys::pH::value_pH ]();
@@ -78,7 +78,7 @@ pHEnergy::set_pH ( core::Real new_pH_ )
 EnergyMethodOP
 pHEnergy::clone() const
 {
-	return EnergyMethodOP( new pHEnergy );
+	return utility::pointer::make_shared< pHEnergy >();
 }
 
 

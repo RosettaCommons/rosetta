@@ -48,7 +48,7 @@ ClashRequirement::ClashRequirement( ClashRequirement const & src ):
 
 ClashRequirementOP
 ClashRequirement::clone() const {
-	return ClashRequirementOP( new ClashRequirement( *this ) );
+	return utility::pointer::make_shared< ClashRequirement >( *this );
 }
 std::pair<bool,bool>
 ClashRequirement::test(data_storage::SmartAssemblyOP assembly) {
@@ -236,7 +236,7 @@ ClashRequirementCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 
 AssemblyRequirementOP
 ClashRequirementCreator::create_requirement() const{
-	return AssemblyRequirementOP( new ClashRequirement() );
+	return utility::pointer::make_shared< ClashRequirement >();
 }
 
 std::string

@@ -75,9 +75,9 @@ public:// virtual constructor
 
 
 	// @brief make clone
-	filters::FilterOP clone() const override { return filters::FilterOP(new SSElementBisectddGFilter(*this));}
+	filters::FilterOP clone() const override { return utility::pointer::make_shared< SSElementBisectddGFilter >(*this);}
 	// @brief make fresh instance
-	filters::FilterOP fresh_instance() const override { return filters::FilterOP(new SSElementBisectddGFilter());}
+	filters::FilterOP fresh_instance() const override { return utility::pointer::make_shared< SSElementBisectddGFilter >();}
 
 
 public:// mutator

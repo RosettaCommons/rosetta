@@ -83,9 +83,9 @@ public:
 		core::pose::make_pose_from_sequence(pose, "FRIENDLYFRIENDS", "fa_standard");
 
 		set_jump_ = &core::pose::Pose::set_jump;
-		standard_claim_ = protocols::environment::claims::JumpClaimOP( new claims::JumpClaim( NULL, "claimed_jump",
+		standard_claim_ = utility::pointer::make_shared< claims::JumpClaim >( nullptr, "claimed_jump",
 			LocalPosition( "BASE", JUMP_START ),
-			LocalPosition( "BASE", JUMP_END ) ) );
+			LocalPosition( "BASE", JUMP_END ) );
 		standard_claim_->strength( claims::MUST_CONTROL, claims::DOES_NOT_CONTROL );
 	}
 
@@ -101,15 +101,15 @@ public:
 		using namespace core::environment;
 
 		TesterOP allowed_mover( new Tester );
-		allowed_mover->init( protocols::environment::claims::EnvClaimOP( new JumpClaim( *standard_claim_ ) ) );
+		allowed_mover->init( utility::pointer::make_shared< JumpClaim >( *standard_claim_ ) );
 
 		TesterOP duplicate_claim_mover( new Tester );
-		duplicate_claim_mover->init( protocols::environment::claims::EnvClaimOP( new JumpClaim( *standard_claim_ ) ) );
+		duplicate_claim_mover->init( utility::pointer::make_shared< JumpClaim >( *standard_claim_ ) );
 
 		TesterOP no_claim_mover( new Tester );
 
 		TesterOP unreg_mover( new Tester );
-		unreg_mover->init( protocols::environment::claims::EnvClaimOP( new JumpClaim( *standard_claim_ ) ) );
+		unreg_mover->init( utility::pointer::make_shared< JumpClaim >( *standard_claim_ ) );
 
 		static_cast< JumpClaim* >( duplicate_claim_mover->claim().get() )->cut( core::environment::LocalPosition( "BASE", CUT_POS ) );
 
@@ -183,7 +183,7 @@ public:
 		using namespace core::environment;
 
 		TesterOP allowed_mover( new Tester );
-		allowed_mover->init( protocols::environment::claims::EnvClaimOP( new JumpClaim(*standard_claim_ ) ) );
+		allowed_mover->init( utility::pointer::make_shared< JumpClaim >(*standard_claim_ ) );
 
 		EnvironmentOP env_op( new Environment( "env" ) );
 		Environment & env = *env_op;
@@ -225,7 +225,7 @@ public:
 		pose.fold_tree( *new_fts.render() );
 
 		TesterOP allowed_mover( new Tester );
-		allowed_mover->init( protocols::environment::claims::EnvClaimOP( new JumpClaim( *standard_claim_ ) ) );
+		allowed_mover->init( utility::pointer::make_shared< JumpClaim >( *standard_claim_ ) );
 
 		EnvironmentOP env_op( new Environment( "env" ) );
 		Environment & env = *env_op;
@@ -268,7 +268,7 @@ public:
 		using namespace core::pose::datacache;
 		using namespace basic::datacache;
 
-		pose.data().set( CacheableDataType::WRITEABLE_DATA, DataCache_CacheableData::DataOP( new WriteableCacheableMap() ) );
+		pose.data().set( CacheableDataType::WRITEABLE_DATA, utility::pointer::make_shared< WriteableCacheableMap >() );
 		core::pose::Pose protected_pose;
 		core::pose::Pose final_pose;
 

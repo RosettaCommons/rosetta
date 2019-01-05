@@ -81,7 +81,7 @@ methods::EnergyMethodOP
 RamaPreProEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & /*options*/
 ) const {
-	return methods::EnergyMethodOP( new RamaPreProEnergy( ) );
+	return utility::pointer::make_shared< RamaPreProEnergy >( );
 }
 
 ScoreTypes
@@ -93,13 +93,13 @@ RamaPreProEnergyCreator::score_types_for_method() const {
 
 
 RamaPreProEnergy::RamaPreProEnergy( ) :
-	parent( methods::EnergyMethodCreatorOP( new RamaPreProEnergyCreator ) ),
+	parent( utility::pointer::make_shared< RamaPreProEnergyCreator >() ),
 	potential_( ScoringManager::get_instance()->get_RamaPrePro() )
 {}
 
 EnergyMethodOP
 RamaPreProEnergy::clone() const {
-	return EnergyMethodOP( new RamaPreProEnergy( *this ) );
+	return utility::pointer::make_shared< RamaPreProEnergy >( *this );
 }
 
 

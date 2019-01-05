@@ -41,10 +41,10 @@ public:
 	);
 	bool apply( core::pose::Pose const & pose ) const override;
 	filters::FilterOP clone() const override {
-		return filters::FilterOP( new NMerPSSMEnergyFilter( *this ) );
+		return utility::pointer::make_shared< NMerPSSMEnergyFilter >( *this );
 	}
 	filters::FilterOP fresh_instance() const override{
-		return filters::FilterOP( new NMerPSSMEnergyFilter() );
+		return utility::pointer::make_shared< NMerPSSMEnergyFilter >();
 	}
 
 	void report( std::ostream & out, core::pose::Pose const & pose ) const override;

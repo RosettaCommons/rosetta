@@ -103,7 +103,7 @@ public:
 	/// clone
 	virtual
 	EnergyMethodOP
-	clone() const { return EnergyMethodOP( new GoapEnergy(*this) ); }
+	clone() const { return utility::pointer::make_shared< GoapEnergy >(*this); }
 
 	virtual
 	void

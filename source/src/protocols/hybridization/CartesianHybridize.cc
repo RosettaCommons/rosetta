@@ -467,9 +467,9 @@ CartesianHybridize::apply( Pose & pose ) {
 	minimization_packing::PackRotamersMoverOP pack_rotamers;
 
 	if ( cenrot_ ) {
-		pack_rotamers = minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover() );
+		pack_rotamers = utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >();
 		TaskFactoryOP main_task_factory( new TaskFactory );
-		main_task_factory->push_back( TaskOperationCOP( new operation::RestrictToRepacking ) );
+		main_task_factory->push_back( utility::pointer::make_shared< operation::RestrictToRepacking >() );
 		pack_rotamers->task_factory( main_task_factory );
 		pack_rotamers->score_function( cenrot_repack_scorefxn_ );
 
@@ -679,7 +679,7 @@ CartesianHybridize::apply( Pose & pose ) {
 				//randomly pick frag
 				core::Size nfrags = template_contigs_[templ_id].num_loop();
 				core::Size frag_id = numeric::random::random_range( 1, nfrags );
-				protocols::loops::LoopOP frag =  protocols::loops::LoopOP( new protocols::loops::Loop ( template_contigs_[templ_id][frag_id] ) );
+				protocols::loops::LoopOP frag =  utility::pointer::make_shared< protocols::loops::Loop > ( template_contigs_[templ_id][frag_id] );
 
 				if ( frag->size() > 14 ) {
 					action_string = action_string+"_15+";
@@ -797,8 +797,8 @@ CartesianHybridize::apply( Pose & pose ) {
 	(*lowres_scorefxn_)(pose);
 }
 
-protocols::moves::MoverOP CartesianHybridize::clone() const { return protocols::moves::MoverOP( new CartesianHybridize( *this ) ); }
-protocols::moves::MoverOP CartesianHybridize::fresh_instance() const { return protocols::moves::MoverOP( new CartesianHybridize ); }
+protocols::moves::MoverOP CartesianHybridize::clone() const { return utility::pointer::make_shared< CartesianHybridize >( *this ); }
+protocols::moves::MoverOP CartesianHybridize::fresh_instance() const { return utility::pointer::make_shared< CartesianHybridize >(); }
 
 
 }

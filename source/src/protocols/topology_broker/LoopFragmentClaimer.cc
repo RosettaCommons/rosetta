@@ -52,15 +52,15 @@ namespace topology_broker {
 using namespace core;
 
 LoopFragmentClaimer::LoopFragmentClaimer( fragment::FragSetOP frags ) :
-	FragmentClaimer( simple_moves::FragmentMoverOP( new simple_moves::ClassicFragmentMover( frags, core::kinematics::MoveMapCOP( new kinematics::MoveMap ) ) ),
-	"Loops", weights::AbinitioMoverWeightOP( new weights::ConstAbinitioMoverWeight( 0.0 ) ) )
+	FragmentClaimer( utility::pointer::make_shared< simple_moves::ClassicFragmentMover >( frags, utility::pointer::make_shared< kinematics::MoveMap >() ),
+	"Loops", utility::pointer::make_shared< weights::ConstAbinitioMoverWeight >( 0.0 ) )
 {
 	runtime_assert( frags != nullptr );
 }
 
 LoopFragmentClaimer::LoopFragmentClaimer( fragment::FragSetOP frags, std::string label ) :
-	FragmentClaimer( simple_moves::FragmentMoverOP( new simple_moves::ClassicFragmentMover( frags, core::kinematics::MoveMapCOP( new kinematics::MoveMap ) ) ),
-	"Loops", weights::AbinitioMoverWeightOP( new weights::ConstAbinitioMoverWeight( 0.0 ) ) )
+	FragmentClaimer( utility::pointer::make_shared< simple_moves::ClassicFragmentMover >( frags, utility::pointer::make_shared< kinematics::MoveMap >() ),
+	"Loops", utility::pointer::make_shared< weights::ConstAbinitioMoverWeight >( 0.0 ) )
 {
 	runtime_assert( frags != nullptr );
 	set_label( label );

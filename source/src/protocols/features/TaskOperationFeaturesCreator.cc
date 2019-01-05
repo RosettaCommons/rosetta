@@ -28,7 +28,7 @@ namespace features {
 // XRW TEMP TaskOperationFeaturesCreator::TaskOperationFeaturesCreator() {}
 // XRW TEMP TaskOperationFeaturesCreator::~TaskOperationFeaturesCreator() = default;
 // XRW TEMP FeaturesReporterOP TaskOperationFeaturesCreator::create_features_reporter() const {
-// XRW TEMP  return FeaturesReporterOP( new TaskOperationFeatures );
+// XRW TEMP  return utility::pointer::make_shared< TaskOperationFeatures >();
 // XRW TEMP }
 
 // XRW TEMP std::string TaskOperationFeaturesCreator::type_name() const {

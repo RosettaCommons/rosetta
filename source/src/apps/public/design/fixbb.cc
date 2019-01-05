@@ -80,14 +80,14 @@ main( int argc, char * argv [] )
 		//create a task factory: this will create a new PackerTask for each input pose
 		using core::pack::task::operation::TaskOperationCOP;
 		core::pack::task::TaskFactoryOP main_task_factory( new core::pack::task::TaskFactory );
-		main_task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
+		main_task_factory->push_back( utility::pointer::make_shared< core::pack::task::operation::InitializeFromCommandline >() );
 
 		/// As of 2010/07/16, the ReadResfile operation is a no-op unless a resfile has been
 		/// supplied on the command line, through the ResourceManager, or programmatically.
 		/// Therefore, it is safe to add it without first checking to see if something has been
 		/// provided on the command line.  If that check were here, then a resfile provided
 		/// through the ResourceManager would not get read.
-		main_task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::ReadResfile ) );
+		main_task_factory->push_back( utility::pointer::make_shared< core::pack::task::operation::ReadResfile >() );
 
 		//create a ScoreFunction from commandline options
 		core::scoring::ScoreFunctionOP score_fxn = core::scoring::get_score_function();
@@ -115,7 +115,7 @@ main( int argc, char * argv [] )
 		// make symmetric pose if necessary
 		if ( option[ symmetry::symmetry_definition ].user() )  {
 			using protocols::moves::MoverOP;
-			seq_mover->add_mover( MoverOP( new protocols::symmetry::SetupForSymmetryMover ) );
+			seq_mover->add_mover( utility::pointer::make_shared< protocols::symmetry::SetupForSymmetryMover >() );
 		}
 
 		if ( option[ min_pack ] || option[ off_rotamer_pack ] ) {
@@ -132,13 +132,13 @@ main( int argc, char * argv [] )
 		if ( option[ minimize_sidechains ] ) {
 			core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
 			protocols::minimization_packing::MinMoverOP min_mover;
-			min_mover = protocols::minimization_packing::MinMoverOP( new protocols::minimization_packing::MinMover(
+			min_mover = utility::pointer::make_shared< protocols::minimization_packing::MinMover >(
 				movemap,
 				score_fxn,
 				basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
 				0.01,
 				true
-				));
+			);
 			protocols::minimization_packing::TaskAwareMinMoverOP TAmin_mover( new protocols::minimization_packing::TaskAwareMinMover(min_mover, main_task_factory) );
 			seq_mover->add_mover( TAmin_mover );
 		} // end optional side chain minimization

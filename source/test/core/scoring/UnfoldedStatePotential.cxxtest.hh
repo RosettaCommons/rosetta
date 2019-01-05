@@ -69,11 +69,11 @@ public:
 
 		core_init();
 
-		pose = PoseOP( new Pose );
+		pose = utility::pointer::make_shared< Pose >();
 		core::chemical::ResidueTypeSetCOP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 		core::pose::make_pose_from_sequence( *pose, "DFGLK", *rsd_set );
 
-		unfE_potential = UnfoldedStatePotentialOP( new UnfoldedStatePotential( basic::database::full_name( "scoring/score_functions/unfolded/unfolded_state_residue_energies_score12" ) ) );
+		unfE_potential = utility::pointer::make_shared< UnfoldedStatePotential >( basic::database::full_name( "scoring/score_functions/unfolded/unfolded_state_residue_energies_score12" ) );
 
 	}
 

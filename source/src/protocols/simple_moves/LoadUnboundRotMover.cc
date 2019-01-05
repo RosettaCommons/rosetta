@@ -42,7 +42,7 @@ namespace simple_moves {
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP LoadUnboundRotMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new LoadUnboundRotMover );
+// XRW TEMP  return utility::pointer::make_shared< LoadUnboundRotMover >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -68,8 +68,8 @@ void LoadUnboundRotMover::apply( core::pose::Pose & pose ){
 // XRW TEMP  return LoadUnboundRotMover::mover_name();
 // XRW TEMP }
 
-protocols::moves::MoverOP LoadUnboundRotMover::fresh_instance() const { return protocols::moves::MoverOP( new LoadUnboundRotMover ); }
-protocols::moves::MoverOP LoadUnboundRotMover::clone() const { return protocols::moves::MoverOP( new LoadUnboundRotMover( *this ) ); }
+protocols::moves::MoverOP LoadUnboundRotMover::fresh_instance() const { return utility::pointer::make_shared< LoadUnboundRotMover >(); }
+protocols::moves::MoverOP LoadUnboundRotMover::clone() const { return utility::pointer::make_shared< LoadUnboundRotMover >( *this ); }
 
 /// @brief parse XML (specifically in the context of the parser/scripting scheme); it's a no-op
 void
@@ -107,7 +107,7 @@ std::string LoadUnboundRotMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 LoadUnboundRotMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LoadUnboundRotMover );
+	return utility::pointer::make_shared< LoadUnboundRotMover >();
 }
 
 void LoadUnboundRotMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

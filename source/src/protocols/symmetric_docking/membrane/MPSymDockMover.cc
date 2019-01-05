@@ -98,13 +98,13 @@ MPSymDockMover::~MPSymDockMover() = default;
 /// @brief Create a Clone of this mover
 protocols::moves::MoverOP
 MPSymDockMover::clone() const {
-	return ( protocols::moves::MoverOP( new MPSymDockMover( *this ) ) );
+	return ( utility::pointer::make_shared< MPSymDockMover >( *this ) );
 }
 
 /// @brief Create a Fresh Instance of this Mover
 protocols::moves::MoverOP
 MPSymDockMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new MPSymDockMover );
+	return utility::pointer::make_shared< MPSymDockMover >();
 }
 
 /// @brief Pase Rosetta Scripts Options for this Mover
@@ -121,7 +121,7 @@ MPSymDockMover::parse_my_tag(
 /// @brief Create a new copy of this mover
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP MPSymDockMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new MPSymDockMover );
+// XRW TEMP  return utility::pointer::make_shared< MPSymDockMover >();
 // XRW TEMP }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)
@@ -166,10 +166,10 @@ MPSymDockMover::apply( Pose & pose ) {
 	}
 
 	// Setup the pose for symmetry based on inputs
-	SetupForSymmetryMoverOP setup_for_symm = SetupForSymmetryMoverOP( new SetupForSymmetryMover() );
+	SetupForSymmetryMoverOP setup_for_symm = utility::pointer::make_shared< SetupForSymmetryMover >();
 	setup_for_symm->apply( pose );
 
-	SymmetricAddMembraneMoverOP add_symm_memb = SymmetricAddMembraneMoverOP( new SymmetricAddMembraneMover() );
+	SymmetricAddMembraneMoverOP add_symm_memb = utility::pointer::make_shared< SymmetricAddMembraneMover >();
 	add_symm_memb->apply( pose );
 
 	// Position the membrane at the center of mass of transmembrane spans
@@ -243,7 +243,7 @@ std::string MPSymDockMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 MPSymDockMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MPSymDockMover );
+	return utility::pointer::make_shared< MPSymDockMover >();
 }
 
 void MPSymDockMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

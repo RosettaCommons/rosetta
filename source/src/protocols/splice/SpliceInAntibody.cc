@@ -128,7 +128,7 @@ std::string SpliceInAntibodyCreator::keyname() const {
 }
 
 protocols::moves::MoverOP SpliceInAntibodyCreator::create_mover() const {
-	return protocols::moves::MoverOP(new SpliceInAntibody);
+	return utility::pointer::make_shared< SpliceInAntibody >();
 }
 
 std::string SpliceInAntibodyCreator::mover_name() {
@@ -146,7 +146,7 @@ SpliceInAntibody::SpliceInAntibody() : Mover(SpliceInAntibodyCreator::mover_name
 	tolerance_ = 0.23;
 	allowed_cuts_ = 1;
 	dbase_subset_.clear();
-	end_dbase_subset_ = DataccacheBoolDataOP( new basic::datacache::DataMapObj<bool> );
+	end_dbase_subset_ = utility::pointer::make_shared< basic::datacache::DataMapObj<bool> >();
 	protein_family_to_database_["antibodies"] = "additional_protocol_data/splice/antibodies/";
 	//Hard coding the correct order of segments to be spliced
 	splicemanager.segment_names_ordered().push_back("L1_L2");
@@ -307,7 +307,7 @@ void SpliceInAntibody::parse_my_tag(TagCOP const tag, basic::datacache::DataMap 
 }
 
 protocols::moves::MoverOP SpliceInAntibody::clone() const {
-	return (protocols::moves::MoverOP(new SpliceInAntibody(*this)));
+	return (utility::pointer::make_shared< SpliceInAntibody >(*this));
 }
 
 

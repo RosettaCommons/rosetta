@@ -60,7 +60,7 @@ RotLibOutCreator::keyname() const
 
 protocols::moves::MoverOP
 RotLibOutCreator::create_mover() const {
-	return protocols::moves::MoverOP( new RotLibOut );
+	return utility::pointer::make_shared< RotLibOut >();
 }
 
 std::string
@@ -273,13 +273,13 @@ RotLibOut::mover_name()  {
 moves::MoverOP
 RotLibOut::clone() const
 {
-	return moves::MoverOP( new RotLibOut( *this ) );
+	return utility::pointer::make_shared< RotLibOut >( *this );
 }
 
 moves::MoverOP
 RotLibOut::fresh_instance() const
 {
-	return moves::MoverOP( new RotLibOut );
+	return utility::pointer::make_shared< RotLibOut >();
 }
 
 void

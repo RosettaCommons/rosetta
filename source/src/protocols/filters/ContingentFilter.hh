@@ -46,10 +46,10 @@ public:
 	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
 	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	protocols::filters::FilterOP clone() const override {
-		return protocols::filters::FilterOP( new ContingentFilter( *this ) );
+		return utility::pointer::make_shared< ContingentFilter >( *this );
 	}
 	protocols::filters::FilterOP fresh_instance() const override{
-		return protocols::filters::FilterOP( new ContingentFilter() );
+		return utility::pointer::make_shared< ContingentFilter >();
 	}
 
 	~ContingentFilter() override= default;

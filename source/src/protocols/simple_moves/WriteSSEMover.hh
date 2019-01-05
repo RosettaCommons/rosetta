@@ -43,11 +43,11 @@ public:
 	void cmd( std::string const & cmd );
 
 	protocols::moves::MoverOP clone() const override {
-		return protocols::moves::MoverOP( new WriteSSEMover( *this ));
+		return utility::pointer::make_shared< WriteSSEMover >( *this );
 	}
 
 	protocols::moves::MoverOP fresh_instance() const override{
-		return protocols::moves::MoverOP( new WriteSSEMover() );
+		return utility::pointer::make_shared< WriteSSEMover >();
 	}
 
 	void parse_my_tag(utility::tag::TagCOP,basic::datacache::DataMap &,protocols::filters::Filters_map const &f,protocols::moves::Movers_map const &,core::pose::Pose const &) override;

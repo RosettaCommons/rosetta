@@ -38,7 +38,7 @@ FileListResourceLocatorCreator::~FileListResourceLocatorCreator()= default;
 ResourceLocatorOP
 FileListResourceLocatorCreator::create_resource_locator() const
 {
-	return ResourceLocatorOP( new FileListResourceLocator );
+	return utility::pointer::make_shared< FileListResourceLocator >();
 }
 
 std::string

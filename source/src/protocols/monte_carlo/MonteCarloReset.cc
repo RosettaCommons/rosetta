@@ -61,14 +61,14 @@ MonteCarloReset::~MonteCarloReset()= default;
 MoverOP
 MonteCarloReset::clone() const
 {
-	return MoverOP( new MonteCarloReset( *this ) );
+	return utility::pointer::make_shared< MonteCarloReset >( *this );
 }
 
 /// @brief create this type of object
 MoverOP
 MonteCarloReset::fresh_instance() const
 {
-	return MoverOP( new MonteCarloReset() );
+	return utility::pointer::make_shared< MonteCarloReset >();
 }
 
 GenericMonteCarloMoverOP
@@ -129,7 +129,7 @@ std::string MonteCarloResetCreator::keyname() const {
 
 protocols::moves::MoverOP
 MonteCarloResetCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MonteCarloReset );
+	return utility::pointer::make_shared< MonteCarloReset >();
 }
 
 void MonteCarloResetCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

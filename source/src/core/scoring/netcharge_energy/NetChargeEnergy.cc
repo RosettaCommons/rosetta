@@ -60,7 +60,7 @@ static basic::Tracer TR("core.scoring.netcharge_energy.NetChargeEnergy");
 core::scoring::methods::EnergyMethodOP
 NetChargeEnergyCreator::create_energy_method( core::scoring::methods::EnergyMethodOptions const &options ) const
 {
-	return core::scoring::methods::EnergyMethodOP( new NetChargeEnergy( options ) );
+	return utility::pointer::make_shared< NetChargeEnergy >( options );
 }
 
 /// @brief Defines the score types that this energy method calculates.
@@ -76,7 +76,7 @@ NetChargeEnergyCreator::score_types_for_method() const
 /// @brief Options constructor.
 ///
 NetChargeEnergy::NetChargeEnergy ( core::scoring::methods::EnergyMethodOptions const &options ) :
-	parent1( core::scoring::methods::EnergyMethodCreatorOP( new NetChargeEnergyCreator ) ),
+	parent1( utility::pointer::make_shared< NetChargeEnergyCreator >() ),
 	parent2( ),
 	setup_helpers_(),
 	setup_helpers_for_packing_(),
@@ -90,7 +90,7 @@ NetChargeEnergy::NetChargeEnergy ( core::scoring::methods::EnergyMethodOptions c
 /// @brief Copy constructor.
 ///
 NetChargeEnergy::NetChargeEnergy( NetChargeEnergy const &src ) :
-	parent1( core::scoring::methods::EnergyMethodCreatorOP( new NetChargeEnergyCreator ) ),
+	parent1( utility::pointer::make_shared< NetChargeEnergyCreator >() ),
 	parent2( src ),
 	setup_helpers_(), //CLONE the helper data below; don't copy them.
 	setup_helpers_for_packing_(), //CLONE these below, too -- don't copy them.
@@ -111,7 +111,7 @@ NetChargeEnergy::~NetChargeEnergy() = default;
 /// @brief Clone: create a copy of this object, and return an owning pointer
 /// to the copy.
 core::scoring::methods::EnergyMethodOP NetChargeEnergy::clone() const {
-	return core::scoring::methods::EnergyMethodOP( new NetChargeEnergy(*this) );
+	return utility::pointer::make_shared< NetChargeEnergy >(*this);
 }
 
 /// @brief NetChargeEnergy is context-independent and thus indicates that no context graphs need to be maintained by

@@ -34,7 +34,7 @@ namespace environment {
 
 basic::datacache::WriteableCacheableDataOP
 AutoCutDataCreator::create_data( std::istream &in ) const {
-	return basic::datacache::WriteableCacheableDataOP( new AutoCutData( in ) );
+	return utility::pointer::make_shared< AutoCutData >( in );
 }
 
 std::string AutoCutDataCreator::keyname() const{
@@ -93,7 +93,7 @@ void AutoCutData::write( std::ostream &out ) const {
 
 basic::datacache::CacheableDataOP
 AutoCutData::clone() const {
-	return basic::datacache::CacheableDataOP( new AutoCutData( *this ) );
+	return utility::pointer::make_shared< AutoCutData >( *this );
 }
 
 std::string AutoCutData::datatype() const {

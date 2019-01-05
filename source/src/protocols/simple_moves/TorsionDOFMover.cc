@@ -135,7 +135,7 @@ void TorsionDOFMover::apply( core::pose::Pose & pose ){
 
 	//if we want this score, fill the pointer!
 	if ( check_MMT_ && !mmt_ ) {
-		mmt_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction );
+		mmt_ = utility::pointer::make_shared< core::scoring::ScoreFunction >();
 		mmt_->set_weight(core::scoring::mm_twist, 1.0);
 	}
 

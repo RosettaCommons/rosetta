@@ -89,7 +89,7 @@ void protocols::jd2::mmCIFJobOutputter::dump_pose(
 	//cif_extra_data_separate_file says, DO print the data, but NOT in the mmCIF
 	bool const cif_extra_data_separate_file( basic::options::option[ basic::options::OptionKeys::out::file::cif_extra_data_separate_file ] );
 
-	core::io::StructFileRepOptionsOP options =  core::io::StructFileRepOptionsOP( new core::io::StructFileRepOptions );
+	core::io::StructFileRepOptionsOP options =  utility::pointer::make_shared< core::io::StructFileRepOptions >();
 
 	//Turn off extra output if we put it in a separate file.
 	if ( cif_extra_data_separate_file ) {
@@ -161,7 +161,7 @@ mmCIFJobOutputterCreator::keyname() const
 
 protocols::jd2::JobOutputterOP
 mmCIFJobOutputterCreator::create_JobOutputter() const {
-	return protocols::jd2::JobOutputterOP( new mmCIFJobOutputter );
+	return utility::pointer::make_shared< mmCIFJobOutputter >();
 }
 
 }//jd2

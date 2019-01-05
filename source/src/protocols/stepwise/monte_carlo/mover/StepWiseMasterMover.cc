@@ -250,7 +250,7 @@ StepWiseMasterMover::initialize(){
 	//  [ will revisit this when testing detailed balance via
 	//    a 'sample' move that can choose whether to add or resample inside
 	//    the Modeler. ]
-	add_mover_ = AddMoverOP( new AddMover( scorefxn_ ) );
+	add_mover_ = utility::pointer::make_shared< AddMover >( scorefxn_ );
 	add_mover_->set_native_pose( get_native_pose() );
 	add_mover_->set_start_added_residue_in_aform( false );
 	add_mover_->set_presample_added_residue(  true );
@@ -259,26 +259,26 @@ StepWiseMasterMover::initialize(){
 	add_mover_->set_designing_with_noncanonicals( options_->designing_with_noncanonicals() );
 	add_mover_->set_sample_pH( options_->sample_pH() );
 
-	delete_mover_ = DeleteMoverOP( new DeleteMover );
+	delete_mover_ = utility::pointer::make_shared< DeleteMover >();
 	delete_mover_->set_native_pose( get_native_pose() );
 	delete_mover_->set_stepwise_modeler( stepwise_modeler_->clone_modeler() );
 	delete_mover_->set_options( options_ );
 
-	from_scratch_mover_ = FromScratchMoverOP( new FromScratchMover );
+	from_scratch_mover_ = utility::pointer::make_shared< FromScratchMover >();
 	from_scratch_mover_->set_native_pose( get_native_pose() );
 	from_scratch_mover_->set_stepwise_modeler( stepwise_modeler_->clone_modeler() );
 
-	add_or_delete_mover_ = AddOrDeleteMoverOP( new AddOrDeleteMover( add_mover_, delete_mover_, from_scratch_mover_ ) );
+	add_or_delete_mover_ = utility::pointer::make_shared< AddOrDeleteMover >( add_mover_, delete_mover_, from_scratch_mover_ );
 	add_or_delete_mover_->set_options( options_ );
 	add_or_delete_mover_->set_submotif_library( submotif_library_ );
 
-	resample_mover_ = ResampleMoverOP( new ResampleMover( stepwise_modeler_->clone_modeler() ) );
+	resample_mover_ = utility::pointer::make_shared< ResampleMover >( stepwise_modeler_->clone_modeler() );
 	resample_mover_->set_native_pose( get_native_pose() );
 	resample_mover_->set_options( options_ );
 
-	vary_loop_length_mover_ = VaryLoopLengthMoverOP( new VaryLoopLengthMover );
+	vary_loop_length_mover_ = utility::pointer::make_shared< VaryLoopLengthMover >();
 
-	stepwise_move_selector_ = StepWiseMoveSelectorOP( new StepWiseMoveSelector( options_ ) );
+	stepwise_move_selector_ = utility::pointer::make_shared< StepWiseMoveSelector >( options_ );
 	stepwise_move_selector_->set_choose_random( !options_->enumerate() );
 	if ( options_->new_move_selector() || options_->test_all_moves() ) stepwise_move_selector_->set_force_unique_moves( true );
 	stepwise_move_selector_->set_submotif_library( submotif_library_ );
@@ -662,7 +662,7 @@ StepWiseMasterMover::resample_full_model(
 		if ( start_idx != 1 ) {
 			// Load silent into output_pose
 			ResidueTypeSetCOP rsd_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
-			auto input = PoseInputStreamOP( new SilentFilePoseInputStream( residue_rebuild_checkpoint_namer( resample_round, nstruct ) ) );
+			auto input = utility::pointer::make_shared< SilentFilePoseInputStream >( residue_rebuild_checkpoint_namer( resample_round, nstruct ) );
 			input->fill_pose( output_pose, *rsd_set );
 		}
 

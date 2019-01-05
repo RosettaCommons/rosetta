@@ -74,7 +74,7 @@ methods::EnergyMethodOP
 FA_ElecEnergyAroAroCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
-	return methods::EnergyMethodOP( new FA_ElecEnergyAroAro( options ) );
+	return utility::pointer::make_shared< FA_ElecEnergyAroAro >( options );
 }
 
 ScoreTypes
@@ -90,7 +90,7 @@ FA_ElecEnergyAroAro::FA_ElecEnergyAroAro(
 ):
 	parent( options )
 {
-	set_score_types( methods::EnergyMethodCreatorOP( new FA_ElecEnergyAroAroCreator ) );
+	set_score_types( utility::pointer::make_shared< FA_ElecEnergyAroAroCreator >() );
 }
 
 
@@ -98,14 +98,14 @@ FA_ElecEnergyAroAro::FA_ElecEnergyAroAro(
 FA_ElecEnergyAroAro::FA_ElecEnergyAroAro( FA_ElecEnergyAroAro const & src ):
 	parent( src )
 {
-	set_score_types( methods::EnergyMethodCreatorOP( new FA_ElecEnergyAroAroCreator ) );
+	set_score_types( utility::pointer::make_shared< FA_ElecEnergyAroAroCreator >() );
 }
 
 /// clone
 methods::EnergyMethodOP
 FA_ElecEnergyAroAro::clone() const
 {
-	return methods::EnergyMethodOP( new FA_ElecEnergyAroAro( *this ) );
+	return utility::pointer::make_shared< FA_ElecEnergyAroAro >( *this );
 }
 
 

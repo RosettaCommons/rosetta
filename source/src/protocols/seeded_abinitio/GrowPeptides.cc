@@ -92,7 +92,7 @@ using namespace core;
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP GrowPeptidesCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new GrowPeptides() );
+// XRW TEMP  return utility::pointer::make_shared< GrowPeptides >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -108,12 +108,12 @@ GrowPeptides::~GrowPeptides() = default;
 
 protocols::moves::MoverOP
 GrowPeptides::clone() const {
-	return( protocols::moves::MoverOP( new GrowPeptides( *this ) ) );
+	return( utility::pointer::make_shared< GrowPeptides >( *this ) );
 }
 
 protocols::moves::MoverOP
 GrowPeptides::fresh_instance() const {
-	return protocols::moves::MoverOP( new GrowPeptides );
+	return utility::pointer::make_shared< GrowPeptides >();
 }
 
 bool
@@ -394,7 +394,7 @@ GrowPeptides::parse_my_tag(
 
 	if ( tag->hasOption( "template_pdb" ) ) {
 		std::string const template_pdb_fname( tag->getOption< std::string >( "template_pdb" ));
-		template_pdb_ = core::pose::PoseOP( new core::pose::Pose ) ;
+		template_pdb_ = utility::pointer::make_shared< core::pose::Pose >() ;
 		core::import_pose::pose_from_file( *template_pdb_, template_pdb_fname , core::import_pose::PDB_file);
 		TR<<"read in a template pdb with " <<template_pdb_->size() <<"residues"<<std::endl;
 		template_presence = true;
@@ -416,7 +416,7 @@ GrowPeptides::parse_my_tag(
 		if ( template_presence ) {
 			curr_pose_ = template_pdb_;
 		} else {
-			curr_pose_ = core::pose::PoseOP( new pose::Pose( pose ) );
+			curr_pose_ = utility::pointer::make_shared< pose::Pose >( pose );
 		}
 
 		anchor_specified_ = false;
@@ -507,7 +507,7 @@ std::string GrowPeptidesCreator::keyname() const {
 
 protocols::moves::MoverOP
 GrowPeptidesCreator::create_mover() const {
-	return protocols::moves::MoverOP( new GrowPeptides );
+	return utility::pointer::make_shared< GrowPeptides >();
 }
 
 void GrowPeptidesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -63,9 +63,9 @@ EtableEnergyCreator::create_energy_method(
 	/// TableLookupEtableEnergy class.
 	// NEEDS FIXING?: using reference of temporary locked weak_ptr
 	if ( basic::options::option[ basic::options::OptionKeys::score::analytic_etable_evaluation ] || options.analytic_etable_evaluation() ) {
-		return methods::EnergyMethodOP( new AnalyticEtableEnergy( *( ScoringManager::get_instance()->etable( options ).lock() ), options, false /*do_classic_intrares*/ ) );
+		return utility::pointer::make_shared< AnalyticEtableEnergy >( *( ScoringManager::get_instance()->etable( options ).lock() ), options, false /*do_classic_intrares*/ );
 	} else {
-		return methods::EnergyMethodOP( new TableLookupEtableEnergy( *( ScoringManager::get_instance()->etable( options ).lock() ), options, false /*do_classic_intrares*/ ) );
+		return utility::pointer::make_shared< TableLookupEtableEnergy >( *( ScoringManager::get_instance()->etable( options ).lock() ), options, false /*do_classic_intrares*/ );
 	}
 }
 
@@ -93,9 +93,9 @@ EtableClassicIntraEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
 	if ( basic::options::option[ basic::options::OptionKeys::score::analytic_etable_evaluation ] || options.analytic_etable_evaluation() ) {
-		return methods::EnergyMethodOP( new AnalyticEtableEnergy( *( ScoringManager::get_instance()->etable( options ).lock() ), options, true /*do_classic_intrares*/ ) );
+		return utility::pointer::make_shared< AnalyticEtableEnergy >( *( ScoringManager::get_instance()->etable( options ).lock() ), options, true /*do_classic_intrares*/ );
 	} else {
-		return methods::EnergyMethodOP( new TableLookupEtableEnergy( *( ScoringManager::get_instance()->etable( options ).lock() ), options, true /*do_classic_intrares*/ ) );
+		return utility::pointer::make_shared< TableLookupEtableEnergy >( *( ScoringManager::get_instance()->etable( options ).lock() ), options, true /*do_classic_intrares*/ );
 	}
 }
 
@@ -120,8 +120,8 @@ TableLookupEtableEnergy::TableLookupEtableEnergy(
 )
 :
 	BaseEtableEnergy< TableLookupEtableEnergy > ( do_classic_intrares ?
-	methods::EnergyMethodCreatorOP( new EtableClassicIntraEnergyCreator ) :
-	methods::EnergyMethodCreatorOP( new EtableEnergyCreator ),
+	methods::EnergyMethodCreatorOP(utility::pointer::make_shared< EtableClassicIntraEnergyCreator >()) :
+	methods::EnergyMethodCreatorOP(utility::pointer::make_shared< EtableEnergyCreator >()),
 	etable_in, options, do_classic_intrares ),
 	intrares_evaluator_( etable_in ),
 	interres_evaluator_( etable_in ),
@@ -146,7 +146,7 @@ TableLookupEtableEnergy::TableLookupEtableEnergy( TableLookupEtableEnergy const 
 
 methods::EnergyMethodOP
 TableLookupEtableEnergy::clone() const {
-	return methods::EnergyMethodOP( new TableLookupEtableEnergy( *this ) );
+	return utility::pointer::make_shared< TableLookupEtableEnergy >( *this );
 }
 
 void
@@ -239,8 +239,8 @@ AnalyticEtableEnergy::AnalyticEtableEnergy(
 	bool const do_classic_intrares
 ) :
 	BaseEtableEnergy< AnalyticEtableEnergy > ( do_classic_intrares ?
-	methods::EnergyMethodCreatorOP( new EtableClassicIntraEnergyCreator ) :
-	methods::EnergyMethodCreatorOP( new EtableEnergyCreator ),
+	methods::EnergyMethodCreatorOP(utility::pointer::make_shared< EtableClassicIntraEnergyCreator >()) :
+	methods::EnergyMethodCreatorOP(utility::pointer::make_shared< EtableEnergyCreator >()),
 	etable_in, options, do_classic_intrares ),
 	intrares_evaluator_( etable_in ),
 	interres_evaluator_( etable_in ),
@@ -264,7 +264,7 @@ AnalyticEtableEnergy::AnalyticEtableEnergy( AnalyticEtableEnergy const & /*src*/
 
 methods::EnergyMethodOP
 AnalyticEtableEnergy::clone() const {
-	return methods::EnergyMethodOP( new AnalyticEtableEnergy( *this ) );
+	return utility::pointer::make_shared< AnalyticEtableEnergy >( *this );
 }
 
 void

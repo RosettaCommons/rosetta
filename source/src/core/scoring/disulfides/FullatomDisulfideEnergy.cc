@@ -73,7 +73,7 @@ DisulfMinData::DisulfMinData(
 
 DisulfMinData::~DisulfMinData() = default;
 
-DisulfMinData::CacheableDataOP DisulfMinData::clone() const { return DisulfMinData::CacheableDataOP( new DisulfMinData( *this ) ); }
+DisulfMinData::CacheableDataOP DisulfMinData::clone() const { return utility::pointer::make_shared< DisulfMinData >( *this ); }
 
 /// @brief which_res should be 1 or 2
 void DisulfMinData::set_res_inds( Size which_res, DisulfideAtomIndices const & dais )
@@ -97,7 +97,7 @@ methods::EnergyMethodOP
 FullatomDisulfideEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new FullatomDisulfideEnergy( ScoringManager::get_instance()->get_FullatomDisulfidePotential() ) );
+	return utility::pointer::make_shared< FullatomDisulfideEnergy >( ScoringManager::get_instance()->get_FullatomDisulfidePotential() );
 }
 
 ScoreTypes
@@ -115,7 +115,7 @@ FullatomDisulfideEnergyCreator::score_types_for_method() const {
 
 FullatomDisulfideEnergy::FullatomDisulfideEnergy( FullatomDisulfidePotential const & potential )
 :
-	parent( methods::EnergyMethodCreatorOP( methods::EnergyMethodCreatorOP( new FullatomDisulfideEnergyCreator ) ) ),
+	parent( utility::pointer::make_shared< FullatomDisulfideEnergyCreator >() ),
 	potential_( potential )
 {}
 
@@ -126,7 +126,7 @@ FullatomDisulfideEnergy::~FullatomDisulfideEnergy() = default;
 methods:: EnergyMethodOP
 FullatomDisulfideEnergy::clone() const
 {
-	return methods::EnergyMethodOP( new FullatomDisulfideEnergy( potential_ ) );
+	return utility::pointer::make_shared< FullatomDisulfideEnergy >( potential_ );
 }
 
 void

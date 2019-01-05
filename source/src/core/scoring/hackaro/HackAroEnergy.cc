@@ -63,7 +63,7 @@ methods::EnergyMethodOP
 HackAroEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return methods::EnergyMethodOP( new HackAroEnergy );
+	return utility::pointer::make_shared< HackAroEnergy >();
 }
 
 ScoreTypes
@@ -75,14 +75,14 @@ HackAroEnergyCreator::score_types_for_method() const {
 
 /// c-tor
 HackAroEnergy::HackAroEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new HackAroEnergyCreator ) )
+	parent( utility::pointer::make_shared< HackAroEnergyCreator >() )
 {}
 
 //clone
 methods::EnergyMethodOP
 HackAroEnergy::clone() const
 {
-	return methods::EnergyMethodOP( new HackAroEnergy );
+	return utility::pointer::make_shared< HackAroEnergy >();
 }
 
 

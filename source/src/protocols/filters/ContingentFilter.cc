@@ -77,7 +77,7 @@ ContingentFilter::parse_my_tag( utility::tag::TagCOP const,
 }
 
 // XRW TEMP FilterOP
-// XRW TEMP ContingentFilterCreator::create_filter() const { return FilterOP( new ContingentFilter ); }
+// XRW TEMP ContingentFilterCreator::create_filter() const { return utility::pointer::make_shared< ContingentFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP ContingentFilterCreator::keyname() const { return "ContingentFilter"; }
@@ -109,7 +109,7 @@ std::string ContingentFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 ContingentFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new ContingentFilter );
+	return utility::pointer::make_shared< ContingentFilter >();
 }
 
 void ContingentFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

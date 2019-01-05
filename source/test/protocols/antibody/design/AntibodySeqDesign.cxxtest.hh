@@ -90,7 +90,7 @@ public:
 
 
 		core::import_pose::pose_from_file(pose, "protocols/antibody/2r0l_1_1.pdb", core::import_pose::PDB_file); //AHO renumbered pose
-		ab_info = AntibodyInfoOP( new AntibodyInfo(pose, AHO_Scheme, North) );
+		ab_info = utility::pointer::make_shared< AntibodyInfo >(pose, AHO_Scheme, North);
 		score = core::scoring::get_score_function();
 		score->score(pose); //Segfault prevention from tenA neighbor graph.  Should be a better way then this...
 

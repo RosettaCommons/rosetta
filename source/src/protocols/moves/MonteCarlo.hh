@@ -109,7 +109,7 @@ public:
 
 	virtual
 	MonteCarloOP clone() {
-		return MonteCarloOP( new MonteCarlo( *this ) );
+		return utility::pointer::make_shared< MonteCarlo >( *this );
 	}
 
 	/// @brief Resets the ScoreFunction

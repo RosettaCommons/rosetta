@@ -52,7 +52,7 @@ methods::EnergyMethodOP
 DNA_ReferenceEnergyCreator::create_energy_method(
 	EnergyMethodOptions const & options
 ) const {
-	return EnergyMethodOP( new DNA_ReferenceEnergy( options ) );
+	return utility::pointer::make_shared< DNA_ReferenceEnergy >( options );
 }
 
 ScoreTypes
@@ -63,7 +63,7 @@ DNA_ReferenceEnergyCreator::score_types_for_method() const {
 }
 
 DNA_ReferenceEnergy::DNA_ReferenceEnergy( EnergyMethodOptions const & options ):
-	parent( EnergyMethodCreatorOP( new DNA_ReferenceEnergyCreator ) )
+	parent( utility::pointer::make_shared< DNA_ReferenceEnergyCreator >() )
 {
 	if ( !options.has_method_weights( dna_ref ) ) utility_exit_with_message( "dna_ref requires method weights!" );
 	// order is aa,ac,ag,at,ca,cc,cg,ct,...
@@ -82,7 +82,7 @@ DNA_ReferenceEnergy::DNA_ReferenceEnergy( EnergyMethodOptions const & options ):
 
 /// copy c-tor
 DNA_ReferenceEnergy::DNA_ReferenceEnergy( DNA_ReferenceEnergy const & src ):
-	parent( EnergyMethodCreatorOP( new DNA_ReferenceEnergyCreator ) ),
+	parent( utility::pointer::make_shared< DNA_ReferenceEnergyCreator >() ),
 	base_step_reference_energies_( src.base_step_reference_energies_ )
 {
 }
@@ -92,7 +92,7 @@ DNA_ReferenceEnergy::DNA_ReferenceEnergy( DNA_ReferenceEnergy const & src ):
 EnergyMethodOP
 DNA_ReferenceEnergy::clone() const
 {
-	return EnergyMethodOP( new DNA_ReferenceEnergy( *this ) );
+	return utility::pointer::make_shared< DNA_ReferenceEnergy >( *this );
 }
 
 

@@ -31,7 +31,7 @@ namespace sequence {
 SimpleSequenceCreator::SimpleSequenceCreator() = default;
 SimpleSequenceCreator::~SimpleSequenceCreator() = default;
 SequenceOP SimpleSequenceCreator::create_sequence() const {
-	return SequenceOP( new Sequence );
+	return utility::pointer::make_shared< Sequence >();
 }
 
 std::string SimpleSequenceCreator::keyname() const {
@@ -41,7 +41,7 @@ std::string SimpleSequenceCreator::keyname() const {
 SequenceCouplingCreator::SequenceCouplingCreator() = default;
 SequenceCouplingCreator::~SequenceCouplingCreator() = default;
 SequenceOP SequenceCouplingCreator::create_sequence() const {
-	return SequenceOP( new SequenceCoupling );
+	return utility::pointer::make_shared< SequenceCoupling >();
 }
 
 std::string SequenceCouplingCreator::keyname() const {
@@ -50,7 +50,7 @@ std::string SequenceCouplingCreator::keyname() const {
 SequenceProfileCreator::SequenceProfileCreator() = default;
 SequenceProfileCreator::~SequenceProfileCreator() = default;
 SequenceOP SequenceProfileCreator::create_sequence() const {
-	return SequenceOP( new SequenceProfile );
+	return utility::pointer::make_shared< SequenceProfile >();
 }
 
 std::string SequenceProfileCreator::keyname() const {
@@ -60,7 +60,7 @@ std::string SequenceProfileCreator::keyname() const {
 CompositeSequenceCreator::CompositeSequenceCreator() = default;
 CompositeSequenceCreator::~CompositeSequenceCreator() = default;
 SequenceOP CompositeSequenceCreator::create_sequence() const {
-	return SequenceOP( new CompositeSequence );
+	return utility::pointer::make_shared< CompositeSequence >();
 }
 
 std::string CompositeSequenceCreator::keyname() const {
@@ -70,7 +70,7 @@ std::string CompositeSequenceCreator::keyname() const {
 ChemicalShiftSequenceCreator::ChemicalShiftSequenceCreator() = default;
 ChemicalShiftSequenceCreator::~ChemicalShiftSequenceCreator() = default;
 SequenceOP ChemicalShiftSequenceCreator::create_sequence() const {
-	return SequenceOP( new ChemicalShiftSequence );
+	return utility::pointer::make_shared< ChemicalShiftSequence >();
 }
 
 std::string ChemicalShiftSequenceCreator::keyname() const {

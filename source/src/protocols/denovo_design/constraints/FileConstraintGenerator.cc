@@ -50,7 +50,7 @@ FileConstraintGeneratorCreator::keyname() const
 protocols::constraint_generator::ConstraintGeneratorOP
 FileConstraintGeneratorCreator::create_constraint_generator() const
 {
-	return protocols::constraint_generator::ConstraintGeneratorOP( new FileConstraintGenerator() );
+	return utility::pointer::make_shared< FileConstraintGenerator >();
 }
 
 std::string
@@ -79,7 +79,7 @@ FileConstraintGenerator::~FileConstraintGenerator() = default;
 protocols::constraint_generator::ConstraintGeneratorOP
 FileConstraintGenerator::clone() const
 {
-	return protocols::constraint_generator::ConstraintGeneratorOP( new FileConstraintGenerator( *this ) );
+	return utility::pointer::make_shared< FileConstraintGenerator >( *this );
 }
 
 void

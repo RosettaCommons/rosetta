@@ -141,7 +141,7 @@ FragQualFilter::parse_my_tag(
 }
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP FragQualFilterCreator::create_filter() const { return protocols::filters::FilterOP( new FragQualFilter ); }
+// XRW TEMP FragQualFilterCreator::create_filter() const { return utility::pointer::make_shared< FragQualFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP FragQualFilterCreator::keyname() const { return "FragQual"; }
@@ -184,7 +184,7 @@ std::string FragQualFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 FragQualFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new FragQualFilter );
+	return utility::pointer::make_shared< FragQualFilter >();
 }
 
 void FragQualFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

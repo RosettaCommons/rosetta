@@ -62,7 +62,7 @@ PeptideDeriverPoseOutputter::PeptideDeriverPoseOutputter( PeptideDeriverPoseOutp
 
 PeptideDeriverPoseOutputterOP
 PeptideDeriverPoseOutputter::clone() const {
-	return PeptideDeriverPoseOutputterOP( new PeptideDeriverPoseOutputter( *this ) );
+	return utility::pointer::make_shared< PeptideDeriverPoseOutputter >( *this );
 }
 
 void PeptideDeriverPoseOutputter::output_pose( core::pose::Pose & pose, std::string const & pose_name ) {
@@ -85,7 +85,7 @@ void PeptideDeriverPoseOutputter::chain_pair_pose_prepared(core::pose::Pose cons
 
 	// save a copy of the prepared pose aside, but we output only on begin_receptor_partner_pair()
 	// since we want to include chain letter in output, and we don't get them from here
-	current_chain_pair_pose_ = core::pose::PoseOP( new core::pose::Pose( pose ) );
+	current_chain_pair_pose_ = utility::pointer::make_shared< core::pose::Pose >( pose );
 	is_chain_pair_new_ = true;
 }
 

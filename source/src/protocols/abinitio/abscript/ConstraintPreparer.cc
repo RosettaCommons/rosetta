@@ -67,7 +67,7 @@ using namespace protocols::environment;
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP ConstraintPreparerCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new ConstraintPreparer );
+// XRW TEMP  return utility::pointer::make_shared< ConstraintPreparer >();
 // XRW TEMP }
 
 // XRW TEMP std::string
@@ -104,7 +104,7 @@ void ConstraintPreparer::prepare( core::pose::Pose& pose, core::Real ){
 
 	try{
 		// it's not great that this is re-loaded each time, but it's safe and doesn't get called that often.
-		constraints_ = ConstraintIO::get_instance()->read_constraints( cst_file(), ConstraintSetOP( new ConstraintSet ), pose );
+		constraints_ = ConstraintIO::get_instance()->read_constraints( cst_file(), utility::pointer::make_shared< ConstraintSet >(), pose );
 	} catch ( utility::excn::Exception & e ) {
 		throw CREATE_EXCEPTION(utility::excn::BadInput,  get_name() + " encountered problem loading constraint file '"
 			+ cst_file() + "' : " + e.msg() );
@@ -258,7 +258,7 @@ std::string ConstraintPreparerCreator::keyname() const {
 
 protocols::moves::MoverOP
 ConstraintPreparerCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ConstraintPreparer );
+	return utility::pointer::make_shared< ConstraintPreparer >();
 }
 
 void ConstraintPreparerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

@@ -93,12 +93,12 @@ ClashCheckFilter::~ClashCheckFilter() = default;
 
 protocols::filters::FilterOP
 ClashCheckFilter::fresh_instance() const{
-	return protocols::filters::FilterOP( new ClashCheckFilter() );
+	return utility::pointer::make_shared< ClashCheckFilter >();
 }
 
 protocols::filters::FilterOP
 ClashCheckFilter::clone() const{
-	return protocols::filters::FilterOP( new ClashCheckFilter( *this ) );
+	return utility::pointer::make_shared< ClashCheckFilter >( *this );
 }
 
 // @brief getters
@@ -281,7 +281,7 @@ ClashCheckFilter::report( std::ostream & out, core::pose::Pose const & pose ) co
 }
 
 // XRW TEMP protocols::filters::FilterOP
-// XRW TEMP ClashCheckFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ClashCheckFilter ); }
+// XRW TEMP ClashCheckFilterCreator::create_filter() const { return utility::pointer::make_shared< ClashCheckFilter >(); }
 
 // XRW TEMP std::string
 // XRW TEMP ClashCheckFilterCreator::keyname() const { return "ClashCheck"; }
@@ -316,7 +316,7 @@ std::string ClashCheckFilterCreator::keyname() const {
 
 protocols::filters::FilterOP
 ClashCheckFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new ClashCheckFilter );
+	return utility::pointer::make_shared< ClashCheckFilter >();
 }
 
 void ClashCheckFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
