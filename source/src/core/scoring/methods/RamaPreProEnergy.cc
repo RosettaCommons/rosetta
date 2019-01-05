@@ -137,7 +137,7 @@ RamaPreProEnergy::residue_pair_energy(
 ) const {
 	using namespace numeric;
 
-	if ( !rsd1.is_protein() || !rsd2.is_protein() ) return;
+	if ( !is_allowed_type( rsd1.type() ) || !is_allowed_type( rsd2.type() ) ) return;
 	if ( !rsd1.is_bonded(rsd2) ) return;
 
 	bool res1_is_lo(false), res2_is_lo(false);
@@ -207,6 +207,13 @@ RamaPreProEnergy::eval_intraresidue_dof_derivative(
 core::Size
 RamaPreProEnergy::version() const {
 	return 1; // Initial versioning
+}
+
+bool RamaPreProEnergy::is_allowed_type( core::chemical::ResidueType const & rt ) const {
+	if ( rt.is_protein() ) return true;
+	if ( rt.is_aramid() ) return true;
+
+	return false;
 }
 
 } // namespace methods

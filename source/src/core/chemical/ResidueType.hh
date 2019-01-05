@@ -1675,6 +1675,33 @@ public:
 	/// @brief Is this an aramid?
 	bool is_aramid() const;
 
+	/// @brief Is this an ortho-aramid?
+	bool is_ortho_aramid() const;
+
+	/// @brief Is this a meta-aramid?
+	bool is_meta_aramid() const;
+
+	/// @brief Is this a para-aramid?
+	bool is_para_aramid() const;
+
+	/// @brief Is this an ortho-aramid?
+	bool is_pre_methylene_ortho_aramid() const;
+
+	/// @brief Is this a meta-aramid?
+	bool is_pre_methylene_meta_aramid() const;
+
+	/// @brief Is this a para-aramid?
+	bool is_pre_methylene_para_aramid() const;
+
+	/// @brief Is this an ortho-aramid?
+	bool is_post_methylene_ortho_aramid() const;
+
+	/// @brief Is this a meta-aramid?
+	bool is_post_methylene_meta_aramid() const;
+
+	/// @brief Is this a para-aramid?
+	bool is_post_methylene_para_aramid() const;
+
 	/// @brief Does this type have groups (not just single atoms) that are polymer-bond dependent?
 	bool has_polymer_dependent_groups() const;
 

@@ -204,29 +204,212 @@ RotamericSingleResidueDunbrackLibrary< T, N >::RotamericSingleResidueDunbrackLib
 	} else if ( rt.is_aramid() ) {
 		// This logic sets your IVs by default.
 		Real pnph = parent::PEPTIDE_NEUTRAL_PHI, pnps = parent::PEPTIDE_NEUTRAL_PSI;
+		if ( rt.is_ortho_aramid() ) {
+			// There are only two flexible angles and they are first and last. So N must be two,
+			for ( Size ii = 1; ii <= N; ++ii ) {
+				IVs[ ii ] = [ii, pnph, pnps] ( conformation::Residue const & rsd, pose::Pose const & /*pose*/ ) {
 
-		// There are only two flexible angles and they are first and last. So N must be two,
-		for ( Size ii = 1; ii <= N; ++ii ) {
-			IVs[ ii ] = [ii, pnph, pnps] ( conformation::Residue const & rsd, pose::Pose const & /*pose*/ ) {
+					Size bb_torsion_index = 1;
 
-				Size bb_torsion_index = 1;
+					if ( ii == 1 ) { //If no rotlibspec, assume all mainchain torsions in this residue are relevant.
+						bb_torsion_index = 1;
+					} else { // ii == 2
+						bb_torsion_index = 3;
+					}
 
-				if ( ii == 1 ) { //If no rotlibspec, assume all mainchain torsions in this residue are relevant.
-					bb_torsion_index = 1;
-				} else { // ii == 2
-					bb_torsion_index = 4;
-				}
+					debug_assert( rsd.type().is_aramid() );
 
-				debug_assert( rsd.type().is_aramid() );
+					Real const d_multiplier = rsd.type().is_d_aa() ? -1.0 : 1.0;
+					if      ( ( rsd.is_lower_terminus() || !rsd.has_lower_connect() ) && bb_torsion_index == 1 ) return d_multiplier * pnph;
+					else if ( ( rsd.is_upper_terminus() || !rsd.has_upper_connect() ) && bb_torsion_index == 3 ) return d_multiplier * pnps;
+					if ( bb_torsion_index != 0 ) return rsd.mainchain_torsion( bb_torsion_index );
+					return 0.0;
+				};
+			}
+		} else if ( rt.is_pre_methylene_ortho_aramid() ) {
+			for ( Size ii = 1; ii <= N; ++ii ) {
+				IVs[ ii ] = [ii, pnph, pnps] ( conformation::Residue const & rsd, pose::Pose const & /*pose*/ ) {
 
-				Real const d_multiplier = rsd.type().is_d_aa() ? -1.0 : 1.0;
-				if      ( ( rsd.is_lower_terminus() || !rsd.has_lower_connect() ) && bb_torsion_index == 1 ) return d_multiplier * pnph;
-				else if ( ( rsd.is_upper_terminus() || !rsd.has_upper_connect() ) && bb_torsion_index == 4 ) return d_multiplier * pnps;
-				if ( bb_torsion_index != 0 ) return rsd.mainchain_torsion( bb_torsion_index );
-				return 0.0;
-			};
+					Size bb_torsion_index = 1;
+
+					if ( ii == 1 ) { //If no rotlibspec, assume all mainchain torsions in this residue are relevant.
+						bb_torsion_index = 1;
+					} else if ( ii == 2 ) {
+						bb_torsion_index = 2;
+					} else { // ii == 3
+						bb_torsion_index = 4;
+					}
+
+					debug_assert( rsd.type().is_aramid() );
+
+					Real const d_multiplier = rsd.type().is_d_aa() ? -1.0 : 1.0;
+					if      ( ( rsd.is_lower_terminus() || !rsd.has_lower_connect() ) && bb_torsion_index == 1 ) return d_multiplier * pnph;
+					else if ( ( rsd.is_upper_terminus() || !rsd.has_upper_connect() ) && bb_torsion_index == 4 ) return d_multiplier * pnps;
+					if ( bb_torsion_index != 0 ) return rsd.mainchain_torsion( bb_torsion_index );
+					return 0.0;
+				};
+			}
+		} else if ( rt.is_post_methylene_ortho_aramid() ) {
+			for ( Size ii = 1; ii <= N; ++ii ) {
+				IVs[ ii ] = [ii, pnph, pnps] ( conformation::Residue const & rsd, pose::Pose const & /*pose*/ ) {
+
+					Size bb_torsion_index = 1;
+
+					if ( ii == 1 ) { //If no rotlibspec, assume all mainchain torsions in this residue are relevant.
+						bb_torsion_index = 1;
+					} else if ( ii == 2 ) {
+						bb_torsion_index = 3;
+					} else { // ii == 3
+						bb_torsion_index = 4;
+					}
+
+					debug_assert( rsd.type().is_aramid() );
+
+					Real const d_multiplier = rsd.type().is_d_aa() ? -1.0 : 1.0;
+					if      ( ( rsd.is_lower_terminus() || !rsd.has_lower_connect() ) && bb_torsion_index == 1 ) return d_multiplier * pnph;
+					else if ( ( rsd.is_upper_terminus() || !rsd.has_upper_connect() ) && bb_torsion_index == 4 ) return d_multiplier * pnps;
+					if ( bb_torsion_index != 0 ) return rsd.mainchain_torsion( bb_torsion_index );
+					return 0.0;
+				};
+			}
+		} else if ( rt.is_meta_aramid() ) {
+			// There are only two flexible angles and they are first and last. So N must be two,
+			for ( Size ii = 1; ii <= N; ++ii ) {
+				IVs[ ii ] = [ii, pnph, pnps] ( conformation::Residue const & rsd, pose::Pose const & /*pose*/ ) {
+
+					Size bb_torsion_index = 1;
+
+					if ( ii == 1 ) { //If no rotlibspec, assume all mainchain torsions in this residue are relevant.
+						bb_torsion_index = 1;
+					} else { // ii == 2
+						bb_torsion_index = 4;
+					}
+
+					debug_assert( rsd.type().is_aramid() );
+
+					Real const d_multiplier = rsd.type().is_d_aa() ? -1.0 : 1.0;
+					if      ( ( rsd.is_lower_terminus() || !rsd.has_lower_connect() ) && bb_torsion_index == 1 ) return d_multiplier * pnph;
+					else if ( ( rsd.is_upper_terminus() || !rsd.has_upper_connect() ) && bb_torsion_index == 4 ) return d_multiplier * pnps;
+					if ( bb_torsion_index != 0 ) return rsd.mainchain_torsion( bb_torsion_index );
+					return 0.0;
+				};
+			}
+		} else if ( rt.is_pre_methylene_meta_aramid() ) {
+			for ( Size ii = 1; ii <= N; ++ii ) {
+				IVs[ ii ] = [ii, pnph, pnps] ( conformation::Residue const & rsd, pose::Pose const & /*pose*/ ) {
+
+					Size bb_torsion_index = 1;
+
+					if ( ii == 1 ) { //If no rotlibspec, assume all mainchain torsions in this residue are relevant.
+						bb_torsion_index = 1;
+					} else if ( ii == 2 ) {
+						bb_torsion_index = 2;
+					} else { // ii == 3
+						bb_torsion_index = 5;
+					}
+
+					debug_assert( rsd.type().is_aramid() );
+
+					Real const d_multiplier = rsd.type().is_d_aa() ? -1.0 : 1.0;
+					if      ( ( rsd.is_lower_terminus() || !rsd.has_lower_connect() ) && bb_torsion_index == 1 ) return d_multiplier * pnph;
+					else if ( ( rsd.is_upper_terminus() || !rsd.has_upper_connect() ) && bb_torsion_index == 5 ) return d_multiplier * pnps;
+					if ( bb_torsion_index != 0 ) return rsd.mainchain_torsion( bb_torsion_index );
+					return 0.0;
+				};
+			}
+		} else if ( rt.is_post_methylene_meta_aramid() ) {
+			for ( Size ii = 1; ii <= N; ++ii ) {
+				IVs[ ii ] = [ii, pnph, pnps] ( conformation::Residue const & rsd, pose::Pose const & /*pose*/ ) {
+
+					Size bb_torsion_index = 1;
+
+					if ( ii == 1 ) { //If no rotlibspec, assume all mainchain torsions in this residue are relevant.
+						bb_torsion_index = 1;
+					} else if ( ii == 2 ) {
+						bb_torsion_index = 4;
+					} else { // ii == 3
+						bb_torsion_index = 5;
+					}
+
+					debug_assert( rsd.type().is_aramid() );
+
+					Real const d_multiplier = rsd.type().is_d_aa() ? -1.0 : 1.0;
+					if      ( ( rsd.is_lower_terminus() || !rsd.has_lower_connect() ) && bb_torsion_index == 1 ) return d_multiplier * pnph;
+					else if ( ( rsd.is_upper_terminus() || !rsd.has_upper_connect() ) && bb_torsion_index == 5 ) return d_multiplier * pnps;
+					if ( bb_torsion_index != 0 ) return rsd.mainchain_torsion( bb_torsion_index );
+					return 0.0;
+				};
+			}
+		} else if ( rt.is_para_aramid() ) {
+			// There are only two flexible angles and they are first and last. So N must be two,
+			for ( Size ii = 1; ii <= N; ++ii ) {
+				IVs[ ii ] = [ii, pnph, pnps] ( conformation::Residue const & rsd, pose::Pose const & /*pose*/ ) {
+
+					Size bb_torsion_index = 1;
+
+					if ( ii == 1 ) { //If no rotlibspec, assume all mainchain torsions in this residue are relevant.
+						bb_torsion_index = 1;
+					} else { // ii == 2
+						bb_torsion_index = 5;
+					}
+
+					debug_assert( rsd.type().is_aramid() );
+
+					Real const d_multiplier = rsd.type().is_d_aa() ? -1.0 : 1.0;
+					if      ( ( rsd.is_lower_terminus() || !rsd.has_lower_connect() ) && bb_torsion_index == 1 ) return d_multiplier * pnph;
+					else if ( ( rsd.is_upper_terminus() || !rsd.has_upper_connect() ) && bb_torsion_index == 5 ) return d_multiplier * pnps;
+					if ( bb_torsion_index != 0 ) return rsd.mainchain_torsion( bb_torsion_index );
+					return 0.0;
+				};
+			}
+		} else if ( rt.is_pre_methylene_para_aramid() ) {
+			for ( Size ii = 1; ii <= N; ++ii ) {
+				IVs[ ii ] = [ii, pnph, pnps] ( conformation::Residue const & rsd, pose::Pose const & /*pose*/ ) {
+
+					Size bb_torsion_index = 1;
+
+					if ( ii == 1 ) { //If no rotlibspec, assume all mainchain torsions in this residue are relevant.
+						bb_torsion_index = 1;
+					} else if ( ii == 2 ) {
+						bb_torsion_index = 2;
+					} else { // ii == 3
+						bb_torsion_index = 6;
+					}
+
+					debug_assert( rsd.type().is_aramid() );
+
+					Real const d_multiplier = rsd.type().is_d_aa() ? -1.0 : 1.0;
+					if      ( ( rsd.is_lower_terminus() || !rsd.has_lower_connect() ) && bb_torsion_index == 1 ) return d_multiplier * pnph;
+					else if ( ( rsd.is_upper_terminus() || !rsd.has_upper_connect() ) && bb_torsion_index == 6 ) return d_multiplier * pnps;
+					if ( bb_torsion_index != 0 ) return rsd.mainchain_torsion( bb_torsion_index );
+					return 0.0;
+				};
+			}
+		} else if ( rt.is_post_methylene_para_aramid() ) {
+			for ( Size ii = 1; ii <= N; ++ii ) {
+				IVs[ ii ] = [ii, pnph, pnps] ( conformation::Residue const & rsd, pose::Pose const & /*pose*/ ) {
+
+					Size bb_torsion_index = 1;
+
+					if ( ii == 1 ) { //If no rotlibspec, assume all mainchain torsions in this residue are relevant.
+						bb_torsion_index = 1;
+					} else if ( ii == 2 ) {
+						bb_torsion_index = 5;
+					} else { // ii == 3
+						bb_torsion_index = 6;
+					}
+
+					debug_assert( rsd.type().is_aramid() );
+
+					Real const d_multiplier = rsd.type().is_d_aa() ? -1.0 : 1.0;
+					if      ( ( rsd.is_lower_terminus() || !rsd.has_lower_connect() ) && bb_torsion_index == 1 ) return d_multiplier * pnph;
+					else if ( ( rsd.is_upper_terminus() || !rsd.has_upper_connect() ) && bb_torsion_index == 6 ) return d_multiplier * pnps;
+					if ( bb_torsion_index != 0 ) return rsd.mainchain_torsion( bb_torsion_index );
+					return 0.0;
+				};
+			}
 		}
-	} else {
+	} else if ( rt.is_protein() ) {
 		// This logic sets your IVs by default.
 		Real pnph = parent::PEPTIDE_NEUTRAL_PHI, pnps = parent::PEPTIDE_NEUTRAL_PSI;
 
@@ -250,7 +433,9 @@ RotamericSingleResidueDunbrackLibrary< T, N >::RotamericSingleResidueDunbrackLib
 					bb_torsion_index = ii;
 				}
 
-				debug_assert( rsd.is_protein() || rsd.is_peptoid() );
+				// Note that through ROTAMER_AA, a protein rotamer library could be applied to an aramid residue.
+				// This might not be desired!
+				debug_assert( rsd.is_protein() || rsd.is_peptoid() || rsd.is_aramid() );
 
 				Real const d_multiplier = rsd.type().is_d_aa() ? -1.0 : 1.0;
 				if      ( ( rsd.is_lower_terminus() || !rsd.has_lower_connect() ) && bb_torsion_index == 1 ) return d_multiplier * pnph;

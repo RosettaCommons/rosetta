@@ -110,29 +110,30 @@ int main ( int argc, char* argv[] )
 		Pose pose;  //master pose of whatever residue we are working on now.
 		pose.clear();
 
-		//ResidueType const & restype_first = residue_set_cap->name_map( "POLYARAMID_ALA" );
-		ResidueType const & internal_POLYARAMID_ALA = residue_set_cap->name_map( "POLYARAMID_ALA" );
-		ResidueType const & internal_POLYARAMID_CYS = residue_set_cap->name_map( "POLYARAMID_CYS" );
-		ResidueType const & internal_POLYARAMID_GLY = residue_set_cap->name_map( "POLYARAMID_GLY" );
-		ResidueType const & internal_POLYARAMID_GLU = residue_set_cap->name_map( "POLYARAMID_GLU" );
-		ResidueType const & internal_POLYARAMID_MET = residue_set_cap->name_map( "POLYARAMID_MET" );
+		//ResidueType const & restype_first = residue_set_cap->name_map( "META_POLYARAMID_ALA" );
+		ResidueType const & internal_META_POLYARAMID_ALA = residue_set_cap->name_map( "META_POLYARAMID_ALA" );
+		ResidueType const & internal_META_POLYARAMID_CYS = residue_set_cap->name_map( "META_POLYARAMID_CYS" );
+		ResidueType const & internal_META_POLYARAMID_GLY = residue_set_cap->name_map( "META_POLYARAMID_GLY" );
+		ResidueType const & internal_META_POLYARAMID_GLU = residue_set_cap->name_map( "META_POLYARAMID_GLU" );
+		ResidueType const & internal_META_POLYARAMID_MET = residue_set_cap->name_map( "META_POLYARAMID_MET" );
 		//ResidueType const & restype_last = residue_set_cap->name_map( "ALA:MethylatedCtermProteinFull" );
 		//Residue res_first( restype_first, true );
-		Residue res_int_POLYARAMID_ALA( internal_POLYARAMID_ALA, true );
-		Residue res_int_POLYARAMID_CYS( internal_POLYARAMID_CYS, true );
-		Residue res_int_POLYARAMID_GLY( internal_POLYARAMID_GLY, true );
-		Residue res_int_POLYARAMID_GLU( internal_POLYARAMID_GLU, true );
-		Residue res_int_POLYARAMID_MET( internal_POLYARAMID_MET, true );
+		Residue res_int_META_POLYARAMID_ALA( internal_META_POLYARAMID_ALA, true );
+		Residue res_int_META_POLYARAMID_CYS( internal_META_POLYARAMID_CYS, true );
+		Residue res_int_META_POLYARAMID_GLY( internal_META_POLYARAMID_GLY, true );
+		Residue res_int_META_POLYARAMID_GLU( internal_META_POLYARAMID_GLU, true );
+		Residue res_int_META_POLYARAMID_MET( internal_META_POLYARAMID_MET, true );
 		//Residue res_int_ALA( internal_ALA, true );
 		//Residue res_last( restype_last, true );
-		pose.append_residue_by_jump( res_int_POLYARAMID_ALA, 1 );
+		pose.append_residue_by_jump( res_int_META_POLYARAMID_ALA, 1 );
 		for ( Size ii = 1; ii <= pose_len - 1; ++ii ) {
-			//pose.append_residue_by_bond( res_int_POLYARAMID_ALA, true );
-			pose.append_residue_by_bond( res_int_POLYARAMID_CYS, true );
-			pose.append_residue_by_bond( res_int_POLYARAMID_GLY, true );
-			pose.append_residue_by_bond( res_int_POLYARAMID_GLU, true );
-			pose.append_residue_by_bond( res_int_POLYARAMID_MET, true );
+			//pose.append_residue_by_bond( res_int_META_POLYARAMID_ALA, true );
+			pose.append_residue_by_bond( res_int_META_POLYARAMID_CYS, true );
+			pose.append_residue_by_bond( res_int_META_POLYARAMID_GLY, true );
+			pose.append_residue_by_bond( res_int_META_POLYARAMID_GLU, true );
+			pose.append_residue_by_bond( res_int_META_POLYARAMID_MET, true );
 		}
+
 		//pose.append_residue_by_bond( res_last, true );
 		using namespace core::id;
 

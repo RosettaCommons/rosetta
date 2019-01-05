@@ -1796,6 +1796,76 @@ public:
 		return rsd_type_.is_peptoid();
 	}
 
+	/// @brief Returns if this residue is an aramid
+	bool
+	is_aramid() const
+	{
+		return rsd_type_.is_aramid();
+	}
+
+	/// @brief Returns if this residue is an ortho aramid
+	bool
+	is_ortho_aramid() const
+	{
+		return rsd_type_.is_ortho_aramid();
+	}
+
+	/// @brief Returns if this residue is a pre methylene ortho aramid
+	bool
+	is_pre_methylene_ortho_aramid() const
+	{
+		return rsd_type_.is_pre_methylene_ortho_aramid();
+	}
+
+	/// @brief Returns if this residue is a post methylene ortho aramid
+	bool
+	is_post_methylene_ortho_aramid() const
+	{
+		return rsd_type_.is_post_methylene_ortho_aramid();
+	}
+
+	/// @brief Returns if this residue is a meta aramid
+	bool
+	is_meta_aramid() const
+	{
+		return rsd_type_.is_meta_aramid();
+	}
+
+	/// @brief Returns if this residue is a pre methylene meta aramid
+	bool
+	is_pre_methylene_meta_aramid() const
+	{
+		return rsd_type_.is_pre_methylene_meta_aramid();
+	}
+
+	/// @brief Returns if this residue is a post methylene meta aramid
+	bool
+	is_post_methylene_meta_aramid() const
+	{
+		return rsd_type_.is_post_methylene_meta_aramid();
+	}
+
+	/// @brief Returns if this residue is a para aramid
+	bool
+	is_para_aramid() const
+	{
+		return rsd_type_.is_para_aramid();
+	}
+
+	/// @brief Returns if this residue is a pre methylene para aramid
+	bool
+	is_pre_methylene_para_aramid() const
+	{
+		return rsd_type_.is_pre_methylene_para_aramid();
+	}
+
+	/// @brief Returns if this residue is a post methylene para aramid
+	bool
+	is_post_methylene_para_aramid() const
+	{
+		return rsd_type_.is_post_methylene_para_aramid();
+	}
+
 	/// @brief Is this one of SRI's special heteropolymer building blocks?
 	bool is_sri() const
 	{

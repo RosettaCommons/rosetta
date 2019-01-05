@@ -149,19 +149,99 @@ RandomTorsionMover::setup_torsion_list( core::pose::Pose & pose )
 			if ( move_map->get( psi_tor_id ) ) { torsion_id_list_.push_back( psi_tor_id ); }
 			if ( move_map->get( omg_tor_id ) ) { torsion_id_list_.push_back( omg_tor_id ); }
 		} else if ( pose.residue_type( i ).is_aramid() ) {
-			// AMW TODO: once more aramids are added...
+			if ( pose.residue_type( i ).is_ortho_aramid() ) {
+				// get three backbone torsions
+				TorsionID phi_tor_id( i, BB, phi_torsion_ortho_aramid );
+				TorsionID psi_tor_id( i, BB, psi_torsion_ortho_aramid );
+				TorsionID omg_tor_id( i, BB, omega_torsion_ortho_aramid );
 
-			// get three backbone torsions
-			TorsionID phi_tor_id( i, BB, phi_torsion_aramid );
-			TorsionID psi_tor_id( i, BB, psi_torsion_aramid );
-			TorsionID omg_tor_id( i, BB, omega_torsion_aramid );
+				// add moveable torsions to torsion id list
+				if ( move_map->get( phi_tor_id ) ) { torsion_id_list_.push_back( phi_tor_id ); }
+				if ( move_map->get( psi_tor_id ) ) { torsion_id_list_.push_back( psi_tor_id ); }
+				if ( move_map->get( omg_tor_id ) ) { torsion_id_list_.push_back( omg_tor_id ); }
+			} else if ( pose.residue_type( i ).is_meta_aramid() ) {
+				// get three backbone torsions
+				TorsionID phi_tor_id( i, BB, phi_torsion_meta_aramid );
+				TorsionID psi_tor_id( i, BB, psi_torsion_meta_aramid );
+				TorsionID omg_tor_id( i, BB, omega_torsion_meta_aramid );
 
-			// add moveable torsions to torsion id list
-			if ( move_map->get( phi_tor_id ) ) { torsion_id_list_.push_back( phi_tor_id ); }
-			if ( move_map->get( psi_tor_id ) ) { torsion_id_list_.push_back( psi_tor_id ); }
-			if ( move_map->get( omg_tor_id ) ) { torsion_id_list_.push_back( omg_tor_id ); }
+				// add moveable torsions to torsion id list
+				if ( move_map->get( phi_tor_id ) ) { torsion_id_list_.push_back( phi_tor_id ); }
+				if ( move_map->get( psi_tor_id ) ) { torsion_id_list_.push_back( psi_tor_id ); }
+				if ( move_map->get( omg_tor_id ) ) { torsion_id_list_.push_back( omg_tor_id ); }
+			} else if ( pose.residue_type( i ).is_para_aramid() ) {
+				// get three backbone torsions
+				TorsionID phi_tor_id( i, BB, phi_torsion_para_aramid );
+				TorsionID psi_tor_id( i, BB, psi_torsion_para_aramid );
+				TorsionID omg_tor_id( i, BB, omega_torsion_para_aramid );
+
+				// add moveable torsions to torsion id list
+				if ( move_map->get( phi_tor_id ) ) { torsion_id_list_.push_back( phi_tor_id ); }
+				if ( move_map->get( psi_tor_id ) ) { torsion_id_list_.push_back( psi_tor_id ); }
+				if ( move_map->get( omg_tor_id ) ) { torsion_id_list_.push_back( omg_tor_id ); }
+			} else if ( pose.residue_type( i ).is_pre_methylene_ortho_aramid() ) {
+				// get three backbone torsions
+				TorsionID phi_tor_id( i, BB, phi_torsion_pre_methylene_ortho_aramid );
+				TorsionID psi_tor_id( i, BB, psi_torsion_pre_methylene_ortho_aramid );
+				TorsionID omg_tor_id( i, BB, omega_torsion_pre_methylene_ortho_aramid );
+
+				// add moveable torsions to torsion id list
+				if ( move_map->get( phi_tor_id ) ) { torsion_id_list_.push_back( phi_tor_id ); }
+				if ( move_map->get( psi_tor_id ) ) { torsion_id_list_.push_back( psi_tor_id ); }
+				if ( move_map->get( omg_tor_id ) ) { torsion_id_list_.push_back( omg_tor_id ); }
+			} else if ( pose.residue_type( i ).is_pre_methylene_meta_aramid() ) {
+				// get three backbone torsions
+				TorsionID phi_tor_id( i, BB, phi_torsion_pre_methylene_meta_aramid );
+				TorsionID psi_tor_id( i, BB, psi_torsion_pre_methylene_meta_aramid );
+				TorsionID omg_tor_id( i, BB, omega_torsion_pre_methylene_meta_aramid );
+
+				// add moveable torsions to torsion id list
+				if ( move_map->get( phi_tor_id ) ) { torsion_id_list_.push_back( phi_tor_id ); }
+				if ( move_map->get( psi_tor_id ) ) { torsion_id_list_.push_back( psi_tor_id ); }
+				if ( move_map->get( omg_tor_id ) ) { torsion_id_list_.push_back( omg_tor_id ); }
+			} else if ( pose.residue_type( i ).is_pre_methylene_para_aramid() ) {
+				// get three backbone torsions
+				TorsionID phi_tor_id( i, BB, phi_torsion_pre_methylene_para_aramid );
+				TorsionID psi_tor_id( i, BB, psi_torsion_pre_methylene_para_aramid );
+				TorsionID omg_tor_id( i, BB, omega_torsion_pre_methylene_para_aramid );
+
+				// add moveable torsions to torsion id list
+				if ( move_map->get( phi_tor_id ) ) { torsion_id_list_.push_back( phi_tor_id ); }
+				if ( move_map->get( psi_tor_id ) ) { torsion_id_list_.push_back( psi_tor_id ); }
+				if ( move_map->get( omg_tor_id ) ) { torsion_id_list_.push_back( omg_tor_id ); }
+			} else if ( pose.residue_type( i ).is_post_methylene_ortho_aramid() ) {
+				// get three backbone torsions
+				TorsionID phi_tor_id( i, BB, phi_torsion_post_methylene_ortho_aramid );
+				TorsionID psi_tor_id( i, BB, psi_torsion_post_methylene_ortho_aramid );
+				TorsionID omg_tor_id( i, BB, omega_torsion_post_methylene_ortho_aramid );
+
+				// add moveable torsions to torsion id list
+				if ( move_map->get( phi_tor_id ) ) { torsion_id_list_.push_back( phi_tor_id ); }
+				if ( move_map->get( psi_tor_id ) ) { torsion_id_list_.push_back( psi_tor_id ); }
+				if ( move_map->get( omg_tor_id ) ) { torsion_id_list_.push_back( omg_tor_id ); }
+			} else if ( pose.residue_type( i ).is_post_methylene_meta_aramid() ) {
+				// get three backbone torsions
+				TorsionID phi_tor_id( i, BB, phi_torsion_post_methylene_meta_aramid );
+				TorsionID psi_tor_id( i, BB, psi_torsion_post_methylene_meta_aramid );
+				TorsionID omg_tor_id( i, BB, omega_torsion_post_methylene_meta_aramid );
+
+				// add moveable torsions to torsion id list
+				if ( move_map->get( phi_tor_id ) ) { torsion_id_list_.push_back( phi_tor_id ); }
+				if ( move_map->get( psi_tor_id ) ) { torsion_id_list_.push_back( psi_tor_id ); }
+				if ( move_map->get( omg_tor_id ) ) { torsion_id_list_.push_back( omg_tor_id ); }
+			} else if ( pose.residue_type( i ).is_post_methylene_para_aramid() ) {
+				// get three backbone torsions
+				TorsionID phi_tor_id( i, BB, phi_torsion_post_methylene_para_aramid );
+				TorsionID psi_tor_id( i, BB, psi_torsion_post_methylene_para_aramid );
+				TorsionID omg_tor_id( i, BB, omega_torsion_post_methylene_para_aramid );
+
+				// add moveable torsions to torsion id list
+				if ( move_map->get( phi_tor_id ) ) { torsion_id_list_.push_back( phi_tor_id ); }
+				if ( move_map->get( psi_tor_id ) ) { torsion_id_list_.push_back( psi_tor_id ); }
+				if ( move_map->get( omg_tor_id ) ) { torsion_id_list_.push_back( omg_tor_id ); }
+			}
+
 		}
-
 	}
 
 	// DEBUG

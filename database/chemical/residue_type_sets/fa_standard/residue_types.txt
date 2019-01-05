@@ -1058,10 +1058,26 @@ residue_types/coenzymes/flavin_reduced.params
 residue_types/coenzymes/UDP.params
 
 ## Polyaramids
-residue_types/polyaramids/ARA.params
-residue_types/polyaramids/ARC.params
-residue_types/polyaramids/ARE.params
-residue_types/polyaramids/ARF.params
-residue_types/polyaramids/ARG.params
-residue_types/polyaramids/ARM.params
-residue_types/polyaramids/ARS.params
+
+### meta-polyaramids
+residue_types/polyaramids/MAA.params
+residue_types/polyaramids/MAC.params
+residue_types/polyaramids/MAE.params
+residue_types/polyaramids/MAF.params
+residue_types/polyaramids/MAG.params
+residue_types/polyaramids/MAM.params
+residue_types/polyaramids/MAS.params
+
+residue_types/polyaramids/KAA.params
+residue_types/polyaramids/KAB.params
+residue_types/polyaramids/LAA.params
+
+### ortho-polyaramids
+residue_types/polyaramids/OAA.params
+residue_types/polyaramids/SAA.params
+residue_types/polyaramids/TAA.params
+
+### para-polyaramids
+residue_types/polyaramids/PAA.params
+residue_types/polyaramids/QAA.params
+residue_types/polyaramids/RAA.params

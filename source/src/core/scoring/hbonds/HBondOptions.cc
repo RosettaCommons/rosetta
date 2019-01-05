@@ -181,6 +181,7 @@ HBondOptions::list_options_read( utility::options::OptionKeyList & option_list )
 		+ OptionKeys::score::ldsrbb_maxlength
 		+ OptionKeys::score::ldsrbb_minlength
 		+ OptionKeys::score::length_dep_srbb
+		+ OptionKeys::score::put_intra_into_total
 		+ OptionKeys::score::water_hybrid_sf; // hydrate/SPaDES protocol
 }
 

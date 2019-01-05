@@ -1543,7 +1543,29 @@ private:
 	/// @brief Get four backbone atoms which define this backbone torsion, if this residue is an aramid.
 	/// @author Andy Watkins (amw579@stanford.edu)
 	bool
-	backbone_torsion_angle_atoms_aramid(
+	backbone_torsion_angle_atoms_ortho_aramid(
+		TorsionID const & id,
+		AtomID & id1,
+		AtomID & id2,
+		AtomID & id3,
+		AtomID & id4
+	) const;
+
+	/// @brief Get four backbone atoms which define this backbone torsion, if this residue is an aramid.
+	/// @author Andy Watkins (amw579@stanford.edu)
+	bool
+	backbone_torsion_angle_atoms_meta_aramid(
+		TorsionID const & id,
+		AtomID & id1,
+		AtomID & id2,
+		AtomID & id3,
+		AtomID & id4
+	) const;
+
+	/// @brief Get four backbone atoms which define this backbone torsion, if this residue is an aramid.
+	/// @author Andy Watkins (amw579@stanford.edu)
+	bool
+	backbone_torsion_angle_atoms_para_aramid(
 		TorsionID const & id,
 		AtomID & id1,
 		AtomID & id2,

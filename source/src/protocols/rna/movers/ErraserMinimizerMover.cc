@@ -1126,6 +1126,8 @@ ErraserMinimizerMover::apply(
 		outname << "full_minimize_temp_" << chunk_i << ".out";
 		utility::file::file_delete( outname.str() );
 	}
+	utility::file::file_delete( min_checkpoint_namer( nstruct_ ) );
+	utility::file::file_delete( min_log_namer( nstruct_ ) );
 
 	++ii;
 }

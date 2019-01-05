@@ -12,7 +12,7 @@
 /// @details  This potential constrains the inter-residue torsion (omega) to be 0 or 180 degrees.
 /// It works for alpha-amino acids, beta-amino acids, and oligoureas.  In the case of oligoureas,
 /// it constrains both omega and mu (the preceding torsion) to be 180. In the case of polyaramids,
-/// it constrains omega (which is torsion 5) to be 180.
+/// it constrains omega (which is torsion 4-6 depending) to be 180.
 /// @author Andrew Leaver-Fay (leaverfa@email.unc.edu)
 /// @author Vikram K. Mulligan (vmullig@uw.edu) -- updated for oligoureas and beta-amino acids.
 /// @author Andy Watkins (amw579@stanford.edu) -- updated for polyaramids
@@ -72,7 +72,15 @@ core::Size OmegaTether::phi_index( core::conformation::Residue const &rsd ) cons
 {
 	if ( rsd.type().is_beta_aa() ) return core::id::theta_torsion_beta_aa; //Special case.
 	else if ( rsd.type().is_oligourea() ) return core::id::theta_torsion_oligourea; //Another special case
-	else if ( rsd.type().is_aramid() ) return core::id::theta_torsion_aramid; // two before peptide bond
+	else if ( rsd.type().is_pre_methylene_ortho_aramid() ) return core::id::theta_torsion_pre_methylene_ortho_aramid; // two before peptide bond
+	else if ( rsd.type().is_post_methylene_ortho_aramid() ) return core::id::theta_torsion_post_methylene_ortho_aramid; // two before peptide bond
+	else if ( rsd.type().is_ortho_aramid() ) return core::id::theta_torsion_ortho_aramid; // two before peptide bond
+	else if ( rsd.type().is_pre_methylene_meta_aramid() ) return core::id::theta_torsion_pre_methylene_meta_aramid; // two before peptide bond
+	else if ( rsd.type().is_post_methylene_meta_aramid() ) return core::id::theta_torsion_post_methylene_meta_aramid; // two before peptide bond
+	else if ( rsd.type().is_meta_aramid() ) return core::id::theta_torsion_meta_aramid; // two before peptide bond
+	else if ( rsd.type().is_pre_methylene_para_aramid() ) return core::id::theta_torsion_pre_methylene_para_aramid; // two before peptide bond
+	else if ( rsd.type().is_post_methylene_para_aramid() ) return core::id::theta_torsion_post_methylene_para_aramid; // two before peptide bond
+	else if ( rsd.type().is_para_aramid() ) return core::id::theta_torsion_para_aramid; // two before peptide bond
 	return core::id::phi_torsion; //Default for alpha-amino acids.
 }
 
@@ -83,7 +91,15 @@ core::Size OmegaTether::psi_index( core::conformation::Residue const &rsd ) cons
 {
 	if ( rsd.type().is_beta_aa() ) return core::id::psi_torsion_beta_aa; //Special case.
 	else if ( rsd.type().is_oligourea() ) return core::id::psi_torsion_oligourea; //Another special case.
-	else if ( rsd.type().is_aramid() ) return core::id::psi_torsion_aramid;
+	else if ( rsd.type().is_pre_methylene_ortho_aramid() ) return core::id::psi_torsion_pre_methylene_ortho_aramid; // two before peptide bond
+	else if ( rsd.type().is_post_methylene_ortho_aramid() ) return core::id::psi_torsion_post_methylene_ortho_aramid; // two before peptide bond
+	else if ( rsd.type().is_ortho_aramid() ) return core::id::psi_torsion_ortho_aramid; // two before peptide bond
+	else if ( rsd.type().is_pre_methylene_meta_aramid() ) return core::id::psi_torsion_pre_methylene_meta_aramid; // two before peptide bond
+	else if ( rsd.type().is_post_methylene_meta_aramid() ) return core::id::psi_torsion_post_methylene_meta_aramid; // two before peptide bond
+	else if ( rsd.type().is_meta_aramid() ) return core::id::psi_torsion_meta_aramid; // two before peptide bond
+	else if ( rsd.type().is_pre_methylene_para_aramid() ) return core::id::psi_torsion_pre_methylene_para_aramid; // two before peptide bond
+	else if ( rsd.type().is_post_methylene_para_aramid() ) return core::id::psi_torsion_post_methylene_para_aramid; // two before peptide bond
+	else if ( rsd.type().is_para_aramid() ) return core::id::psi_torsion_para_aramid; // two before peptide bond
 	return core::id::psi_torsion; //Default for alpha-amino acids.
 }
 
@@ -94,7 +110,15 @@ core::Size OmegaTether::omega_index( core::conformation::Residue const &rsd ) co
 {
 	if ( rsd.type().is_beta_aa() ) return core::id::omega_torsion_beta_aa; //Special case.
 	else if ( rsd.type().is_oligourea() ) return core::id::mu_torsion_oligourea; //Another special case.
-	else if ( rsd.type().is_aramid() ) return core::id::omega_torsion_aramid;
+	else if ( rsd.type().is_pre_methylene_ortho_aramid() ) return core::id::omega_torsion_pre_methylene_ortho_aramid; // two before peptide bond
+	else if ( rsd.type().is_post_methylene_ortho_aramid() ) return core::id::omega_torsion_post_methylene_ortho_aramid; // two before peptide bond
+	else if ( rsd.type().is_ortho_aramid() ) return core::id::omega_torsion_ortho_aramid; // two before peptide bond
+	else if ( rsd.type().is_pre_methylene_meta_aramid() ) return core::id::omega_torsion_pre_methylene_meta_aramid; // two before peptide bond
+	else if ( rsd.type().is_post_methylene_meta_aramid() ) return core::id::omega_torsion_post_methylene_meta_aramid; // two before peptide bond
+	else if ( rsd.type().is_meta_aramid() ) return core::id::omega_torsion_meta_aramid; // two before peptide bond
+	else if ( rsd.type().is_pre_methylene_para_aramid() ) return core::id::omega_torsion_pre_methylene_para_aramid; // two before peptide bond
+	else if ( rsd.type().is_post_methylene_para_aramid() ) return core::id::omega_torsion_post_methylene_para_aramid; // two before peptide bond
+	else if ( rsd.type().is_para_aramid() ) return core::id::omega_torsion_para_aramid; // two before peptide bond
 	return core::id::omega_torsion; //Default for alpha-amino acids.
 }
 

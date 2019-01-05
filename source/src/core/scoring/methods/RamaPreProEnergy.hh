@@ -121,11 +121,14 @@ public:
 	methods::LongRangeEnergyType
 	long_range_type() const;
 
+	bool is_allowed_type( core::chemical::ResidueType const & rt ) const;
+
 private:
 	RamaPrePro const & potential_;
 
 	virtual
 	core::Size version() const;
+
 };
 
 

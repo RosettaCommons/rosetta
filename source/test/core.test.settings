@@ -164,6 +164,7 @@ sources = {
 	],
 	"optimization" : [
 		"Minimizer",
+		"PolyaramidBackboneMinimize",
 		"ParticleSwarmMinimizer",
 	],
 	"optimization/symmetry" : [

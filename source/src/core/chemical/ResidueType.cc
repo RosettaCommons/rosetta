@@ -2351,6 +2351,60 @@ ResidueType::is_aramid() const {
 	return properties_->has_property( ARAMID );
 }
 
+/// @brief Is this an ortho aramid?
+bool
+ResidueType::is_ortho_aramid() const {
+	return properties_->has_property( ORTHO_ARAMID );
+}
+
+/// @brief Is this a meta aramid?
+bool
+ResidueType::is_meta_aramid() const {
+	return properties_->has_property( META_ARAMID );
+}
+
+/// @brief Is this a para aramid?
+bool
+ResidueType::is_para_aramid() const {
+	return properties_->has_property( PARA_ARAMID );
+}
+
+/// @brief Is this an ortho aramid?
+bool
+ResidueType::is_pre_methylene_ortho_aramid() const {
+	return properties_->has_property( PRE_METHYLENE_ORTHO_ARAMID );
+}
+
+/// @brief Is this a meta aramid?
+bool
+ResidueType::is_pre_methylene_meta_aramid() const {
+	return properties_->has_property( PRE_METHYLENE_META_ARAMID );
+}
+
+/// @brief Is this a para aramid?
+bool
+ResidueType::is_pre_methylene_para_aramid() const {
+	return properties_->has_property( PRE_METHYLENE_PARA_ARAMID );
+}
+
+/// @brief Is this an ortho aramid?
+bool
+ResidueType::is_post_methylene_ortho_aramid() const {
+	return properties_->has_property( POST_METHYLENE_ORTHO_ARAMID );
+}
+
+/// @brief Is this a meta aramid?
+bool
+ResidueType::is_post_methylene_meta_aramid() const {
+	return properties_->has_property( POST_METHYLENE_META_ARAMID );
+}
+
+/// @brief Is this a para aramid?
+bool
+ResidueType::is_post_methylene_para_aramid() const {
+	return properties_->has_property( POST_METHYLENE_PARA_ARAMID );
+}
+
 /// @brief Is this an oligourea?
 bool
 ResidueType::is_oligourea() const {
@@ -2630,7 +2684,7 @@ ResidueType::is_cyclic() const
 bool
 ResidueType::is_terminus() const
 {
-	return is_upper_terminus() || is_lower_terminus();
+	return is_upper_terminus() || is_lower_terminus() || properties_->has_property( TERMINUS );
 }
 
 bool

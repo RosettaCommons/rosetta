@@ -1,8 +1,8 @@
 # Rosetta residue topology file for an alanine-like meta-aramid.
 # For now, we assume this means sidechain comes off the mutually meta position as well.
 # Note: the dihedrals are arbitrarily named phi, eta, theta, psi, and omega (from lower to upper terminus).
-NAME POLYARAMID_PHE
-IO_STRING ARF X
+NAME META_POLYARAMID_PHE
+IO_STRING MAF X
 TYPE POLYMER #residue type
 AA UNP
 ROTAMER_AA PHE

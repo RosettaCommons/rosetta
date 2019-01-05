@@ -947,19 +947,35 @@ Pose::phi( Size const seqpos ) const
 	using namespace id;
 
 	debug_assert( residue_type( seqpos ).is_protein() || residue_type( seqpos ).is_peptoid() ||
-		residue_type( seqpos ).is_carbohydrate() );
+		residue_type( seqpos ).is_carbohydrate() || residue_type(seqpos).is_aramid() );
 	PyAssert( (seqpos <= size() && seqpos != 0 ), "Pose::phi( Size const seqpos ): variable seqpos is out of range!" );
 	PyAssert( (residue_type( seqpos ).is_protein() || residue_type( seqpos ).is_peptoid() ||
-		residue_type( seqpos ).is_carbohydrate() ),
+		residue_type( seqpos ).is_carbohydrate() || residue_type(seqpos).is_aramid() ),
 		"Pose::phi( Size const seqpos ): residue seqpos is not part of a protein, peptoid, or carbohydrate!" );
 
-	if ( residue_type( seqpos ).is_protein() || residue_type( seqpos ).is_peptoid() ) {
+	if ( residue_type( seqpos ).is_protein() || residue_type( seqpos ).is_peptoid() || residue_type(seqpos).is_aramid() ) {
 		if ( residue_type( seqpos ).is_beta_aa() ) {
 			return residue( seqpos ).mainchain_torsion(phi_torsion_beta_aa );
 		} else if ( residue_type( seqpos ).is_oligourea() ) {
 			return residue( seqpos ).mainchain_torsion(phi_torsion_oligourea );
-		} else if ( residue_type( seqpos ).is_aramid() ) {
-			return residue( seqpos ).mainchain_torsion(phi_torsion_aramid );
+		} else if ( residue_type( seqpos ).is_ortho_aramid() ) {
+			return residue( seqpos ).mainchain_torsion(phi_torsion_ortho_aramid );
+		} else if ( residue_type( seqpos ).is_pre_methylene_ortho_aramid() ) {
+			return residue( seqpos ).mainchain_torsion(phi_torsion_pre_methylene_ortho_aramid );
+		} else if ( residue_type( seqpos ).is_post_methylene_ortho_aramid() ) {
+			return residue( seqpos ).mainchain_torsion(phi_torsion_post_methylene_ortho_aramid );
+		} else if ( residue_type( seqpos ).is_meta_aramid() ) {
+			return residue( seqpos ).mainchain_torsion(phi_torsion_meta_aramid );
+		} else if ( residue_type( seqpos ).is_pre_methylene_meta_aramid() ) {
+			return residue( seqpos ).mainchain_torsion(phi_torsion_pre_methylene_meta_aramid );
+		} else if ( residue_type( seqpos ).is_post_methylene_meta_aramid() ) {
+			return residue( seqpos ).mainchain_torsion(phi_torsion_post_methylene_meta_aramid );
+		} else if ( residue_type( seqpos ).is_para_aramid() ) {
+			return residue( seqpos ).mainchain_torsion(phi_torsion_para_aramid );
+		} else if ( residue_type( seqpos ).is_pre_methylene_para_aramid() ) {
+			return residue( seqpos ).mainchain_torsion(phi_torsion_pre_methylene_para_aramid );
+		} else if ( residue_type( seqpos ).is_post_methylene_para_aramid() ) {
+			return residue( seqpos ).mainchain_torsion(phi_torsion_post_methylene_para_aramid );
 		} else { //Default case, including peptoids and alpha-amino acids:
 			return residue( seqpos ).mainchain_torsion( phi_torsion );
 		}
@@ -982,18 +998,34 @@ Pose::set_phi( Size const seqpos, Real const setting )
 {
 	using namespace id;
 
-	debug_assert( residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_carbohydrate() );
+	debug_assert( residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_carbohydrate() || residue_type(seqpos).is_aramid() );
 	PyAssert( (seqpos<=size()&&seqpos!=0), "Pose::set_phi( Size const seqpos, Real const setting ): variable seqpos is out of range!" );
-	PyAssert( (residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_carbohydrate()),
+	PyAssert( (residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_carbohydrate() || residue_type(seqpos).is_aramid() ),
 		"Pose::set_phi( Size const seqpos , Real const setting ): residue seqpos is not part of a protein, peptoid, or carbohydrate!" );
 
-	if ( residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() ) {
+	if ( residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_aramid() ) {
 		if ( residue_type(seqpos).is_beta_aa() ) {
 			conformation_->set_torsion( TorsionID( seqpos, BB, phi_torsion_beta_aa ), setting );
 		} else if ( residue_type(seqpos).is_oligourea() ) {
 			conformation_->set_torsion( TorsionID( seqpos, BB, phi_torsion_oligourea ), setting );
-		} else if ( residue_type(seqpos).is_aramid() ) {
-			conformation_->set_torsion( TorsionID( seqpos, BB, phi_torsion_aramid ), setting );
+		} else if ( residue_type(seqpos).is_ortho_aramid() ) {
+			conformation_->set_torsion( TorsionID( seqpos, BB, phi_torsion_ortho_aramid ), setting );
+		} else if ( residue_type(seqpos).is_pre_methylene_ortho_aramid() ) {
+			conformation_->set_torsion( TorsionID( seqpos, BB, phi_torsion_pre_methylene_ortho_aramid ), setting );
+		} else if ( residue_type(seqpos).is_post_methylene_ortho_aramid() ) {
+			conformation_->set_torsion( TorsionID( seqpos, BB, phi_torsion_post_methylene_ortho_aramid ), setting );
+		} else if ( residue_type(seqpos).is_meta_aramid() ) {
+			conformation_->set_torsion( TorsionID( seqpos, BB, phi_torsion_meta_aramid ), setting );
+		} else if ( residue_type(seqpos).is_pre_methylene_meta_aramid() ) {
+			conformation_->set_torsion( TorsionID( seqpos, BB, phi_torsion_pre_methylene_meta_aramid ), setting );
+		} else if ( residue_type(seqpos).is_post_methylene_meta_aramid() ) {
+			conformation_->set_torsion( TorsionID( seqpos, BB, phi_torsion_post_methylene_meta_aramid ), setting );
+		} else if ( residue_type(seqpos).is_para_aramid() ) {
+			conformation_->set_torsion( TorsionID( seqpos, BB, phi_torsion_para_aramid ), setting );
+		} else if ( residue_type(seqpos).is_pre_methylene_para_aramid() ) {
+			conformation_->set_torsion( TorsionID( seqpos, BB, phi_torsion_pre_methylene_para_aramid ), setting );
+		} else if ( residue_type(seqpos).is_post_methylene_para_aramid() ) {
+			conformation_->set_torsion( TorsionID( seqpos, BB, phi_torsion_post_methylene_para_aramid ), setting );
 		} else { //Default case, including peptoids and alpha-amino acids:
 			conformation_->set_torsion( TorsionID( seqpos, BB, phi_torsion ), setting );
 		}
@@ -1012,18 +1044,34 @@ Pose::psi( Size const seqpos ) const
 {
 	using namespace id;
 
-	debug_assert( residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_carbohydrate() );
+	debug_assert( residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_carbohydrate() || residue_type(seqpos).is_aramid() );
 	PyAssert( (seqpos<=size()&&seqpos!=0), "Pose::psi( Size const seqpos ): variable seqpos is out of range!" );
-	PyAssert( (residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_carbohydrate()),
+	PyAssert( (residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_carbohydrate() || residue_type(seqpos).is_aramid() ),
 		"Pose::psi( Size const seqpos ): residue seqpos is not part of a protein, peptoid, or carbohydrate!" );
 
-	if ( residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() ) {
+	if ( residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_aramid() ) {
 		if ( residue_type(seqpos).is_beta_aa() ) {
 			return residue(seqpos).mainchain_torsion(psi_torsion_beta_aa);
 		} else if ( residue_type(seqpos).is_oligourea() ) {
 			return residue(seqpos).mainchain_torsion(psi_torsion_oligourea);
-		} else if ( residue_type(seqpos).is_aramid() ) {
-			return residue(seqpos).mainchain_torsion(psi_torsion_aramid);
+		} else if ( residue_type(seqpos).is_ortho_aramid() ) {
+			return residue(seqpos).mainchain_torsion(psi_torsion_ortho_aramid);
+		} else if ( residue_type(seqpos).is_pre_methylene_ortho_aramid() ) {
+			return residue(seqpos).mainchain_torsion(psi_torsion_pre_methylene_ortho_aramid);
+		} else if ( residue_type(seqpos).is_post_methylene_ortho_aramid() ) {
+			return residue(seqpos).mainchain_torsion(psi_torsion_post_methylene_ortho_aramid);
+		} else if ( residue_type(seqpos).is_meta_aramid() ) {
+			return residue(seqpos).mainchain_torsion(psi_torsion_meta_aramid);
+		} else if ( residue_type(seqpos).is_pre_methylene_meta_aramid() ) {
+			return residue(seqpos).mainchain_torsion(psi_torsion_pre_methylene_meta_aramid);
+		} else if ( residue_type(seqpos).is_post_methylene_meta_aramid() ) {
+			return residue(seqpos).mainchain_torsion(psi_torsion_post_methylene_meta_aramid);
+		} else if ( residue_type(seqpos).is_para_aramid() ) {
+			return residue(seqpos).mainchain_torsion(psi_torsion_para_aramid);
+		} else if ( residue_type(seqpos).is_pre_methylene_para_aramid() ) {
+			return residue(seqpos).mainchain_torsion(psi_torsion_pre_methylene_para_aramid);
+		} else if ( residue_type(seqpos).is_post_methylene_para_aramid() ) {
+			return residue(seqpos).mainchain_torsion(psi_torsion_post_methylene_para_aramid);
 		} else { //Default case, including peptoids and alpha-amino acids:
 			return residue(seqpos).mainchain_torsion(psi_torsion);
 		}
@@ -1043,18 +1091,34 @@ Pose::set_psi( Size const seqpos, Real const setting )
 
 	using namespace id;
 
-	debug_assert( residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_carbohydrate() );
+	debug_assert( residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_carbohydrate() || residue_type(seqpos).is_aramid() );
 	PyAssert( (seqpos<=size()&&seqpos!=0), "Pose::set_psi( Size const seqpos, Real const setting ): variable seqpos is out of range!" );
-	PyAssert( (residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_carbohydrate()),
+	PyAssert( (residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_carbohydrate() || residue_type(seqpos).is_aramid() ),
 		"Pose::set_psi( Size const seqpos , Real const setting ): residue seqpos is not part of a protein, peptoid, or carbohydrate!" );
 
-	if ( residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() ) {
+	if ( residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_aramid() ) {
 		if ( residue_type(seqpos).is_beta_aa() ) {
 			conformation_->set_torsion( TorsionID( seqpos, BB, psi_torsion_beta_aa ), setting);
 		} else if  ( residue_type(seqpos).is_oligourea() ) {
 			conformation_->set_torsion( TorsionID( seqpos, BB, psi_torsion_oligourea ), setting);
-		} else if  ( residue_type(seqpos).is_aramid() ) {
-			conformation_->set_torsion( TorsionID( seqpos, BB, psi_torsion_aramid ), setting);
+		} else if  ( residue_type(seqpos).is_ortho_aramid() ) {
+			conformation_->set_torsion( TorsionID( seqpos, BB, psi_torsion_ortho_aramid ), setting);
+		} else if  ( residue_type(seqpos).is_pre_methylene_ortho_aramid() ) {
+			conformation_->set_torsion( TorsionID( seqpos, BB, psi_torsion_pre_methylene_ortho_aramid ), setting);
+		} else if  ( residue_type(seqpos).is_post_methylene_ortho_aramid() ) {
+			conformation_->set_torsion( TorsionID( seqpos, BB, psi_torsion_post_methylene_ortho_aramid ), setting);
+		} else if  ( residue_type(seqpos).is_meta_aramid() ) {
+			conformation_->set_torsion( TorsionID( seqpos, BB, psi_torsion_meta_aramid ), setting);
+		} else if  ( residue_type(seqpos).is_pre_methylene_meta_aramid() ) {
+			conformation_->set_torsion( TorsionID( seqpos, BB, psi_torsion_pre_methylene_meta_aramid ), setting);
+		} else if  ( residue_type(seqpos).is_post_methylene_meta_aramid() ) {
+			conformation_->set_torsion( TorsionID( seqpos, BB, psi_torsion_post_methylene_meta_aramid ), setting);
+		} else if  ( residue_type(seqpos).is_para_aramid() ) {
+			conformation_->set_torsion( TorsionID( seqpos, BB, psi_torsion_para_aramid ), setting);
+		} else if  ( residue_type(seqpos).is_pre_methylene_para_aramid() ) {
+			conformation_->set_torsion( TorsionID( seqpos, BB, psi_torsion_pre_methylene_para_aramid ), setting);
+		} else if  ( residue_type(seqpos).is_post_methylene_para_aramid() ) {
+			conformation_->set_torsion( TorsionID( seqpos, BB, psi_torsion_post_methylene_para_aramid ), setting);
 		} else { //Default case, including peptoids and alpha-amino acids:
 			conformation_->set_torsion( TorsionID( seqpos, BB, psi_torsion ), setting );
 		}
@@ -1074,18 +1138,34 @@ Real Pose::omega( Size const seqpos ) const
 {
 	using namespace id;
 
-	debug_assert( residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_carbohydrate() );
+	debug_assert( residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_carbohydrate() || residue_type(seqpos).is_aramid() );
 	PyAssert( (seqpos<=size()&&seqpos!=0), "Pose::omega( Size const seqpos ): variable seqpos is out of range!" );
-	PyAssert( (residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_carbohydrate() ),
+	PyAssert( (residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_carbohydrate() || residue_type(seqpos).is_aramid() ),
 		"Pose::omega( Size const seqpos ): residue seqpos is not part of a protein,peptoid, or carbohydrate!" );
 
-	if ( residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() ) {
+	if ( residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_aramid() ) {
 		if ( residue_type(seqpos).is_beta_aa() ) {
 			return residue(seqpos).mainchain_torsion(omega_torsion_beta_aa);
 		} else if ( residue_type(seqpos).is_oligourea() ) {
 			return residue(seqpos).mainchain_torsion(omega_torsion_oligourea);
-		} else if ( residue_type(seqpos).is_aramid() ) {
-			return residue(seqpos).mainchain_torsion(omega_torsion_aramid);
+		} else if ( residue_type(seqpos).is_ortho_aramid() ) {
+			return residue(seqpos).mainchain_torsion(omega_torsion_ortho_aramid);
+		} else if ( residue_type(seqpos).is_pre_methylene_ortho_aramid() ) {
+			return residue(seqpos).mainchain_torsion(omega_torsion_pre_methylene_ortho_aramid);
+		} else if ( residue_type(seqpos).is_post_methylene_ortho_aramid() ) {
+			return residue(seqpos).mainchain_torsion(omega_torsion_post_methylene_ortho_aramid);
+		} else if ( residue_type(seqpos).is_meta_aramid() ) {
+			return residue(seqpos).mainchain_torsion(omega_torsion_meta_aramid);
+		} else if ( residue_type(seqpos).is_pre_methylene_meta_aramid() ) {
+			return residue(seqpos).mainchain_torsion(omega_torsion_pre_methylene_meta_aramid);
+		} else if ( residue_type(seqpos).is_post_methylene_meta_aramid() ) {
+			return residue(seqpos).mainchain_torsion(omega_torsion_post_methylene_meta_aramid);
+		} else if ( residue_type(seqpos).is_para_aramid() ) {
+			return residue(seqpos).mainchain_torsion(omega_torsion_para_aramid);
+		} else if ( residue_type(seqpos).is_pre_methylene_para_aramid() ) {
+			return residue(seqpos).mainchain_torsion(omega_torsion_pre_methylene_para_aramid);
+		} else if ( residue_type(seqpos).is_post_methylene_para_aramid() ) {
+			return residue(seqpos).mainchain_torsion(omega_torsion_post_methylene_para_aramid);
 		} else { //Default case, including peptoids and alpha-amino acids:
 			return residue(seqpos).mainchain_torsion(omega_torsion);
 		}
@@ -1106,21 +1186,39 @@ Pose::set_omega( Size const seqpos, Real const setting )
 {
 	using namespace id;
 
-	debug_assert( residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_carbohydrate() );
+	debug_assert( residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_carbohydrate() || residue_type(seqpos).is_aramid() );
 	PyAssert( (seqpos<=size()&&seqpos!=0), "Pose::set_omega( Size const seqpos, Real const setting ): variable seqpos is out of range!" );
-	PyAssert( (residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_carbohydrate() ),
+	PyAssert( (residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_carbohydrate() || residue_type(seqpos).is_aramid() ),
 		"Pose::set_omega( Size const seqpos , Real const setting ): residue seqpos is not part of a protein, peptoid, or carbohydrate!" );
 
-	if ( residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() ) {
+	if ( residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() || residue_type(seqpos).is_aramid() ) {
 		if ( residue_type(seqpos).is_beta_aa() ) {
 			conformation_->set_torsion( TorsionID( seqpos, BB, omega_torsion_beta_aa ),  setting);
 		} else if ( residue_type(seqpos).is_oligourea() ) {
 			conformation_->set_torsion( TorsionID( seqpos, BB, omega_torsion_oligourea ),  setting);
-		} else if ( residue_type(seqpos).is_aramid() ) {
-			conformation_->set_torsion( TorsionID( seqpos, BB, omega_torsion_aramid ),  setting);
+		} else if ( residue_type(seqpos).is_ortho_aramid() ) {
+			conformation_->set_torsion( TorsionID( seqpos, BB, omega_torsion_ortho_aramid ),  setting);
+		} else if ( residue_type(seqpos).is_pre_methylene_ortho_aramid() ) {
+			conformation_->set_torsion( TorsionID( seqpos, BB, omega_torsion_pre_methylene_ortho_aramid ),  setting);
+		} else if ( residue_type(seqpos).is_post_methylene_ortho_aramid() ) {
+			conformation_->set_torsion( TorsionID( seqpos, BB, omega_torsion_post_methylene_ortho_aramid ),  setting);
+		} else if ( residue_type(seqpos).is_meta_aramid() ) {
+			conformation_->set_torsion( TorsionID( seqpos, BB, omega_torsion_meta_aramid ),  setting);
+		} else if ( residue_type(seqpos).is_pre_methylene_meta_aramid() ) {
+			conformation_->set_torsion( TorsionID( seqpos, BB, omega_torsion_pre_methylene_meta_aramid ),  setting);
+		} else if ( residue_type(seqpos).is_post_methylene_meta_aramid() ) {
+			conformation_->set_torsion( TorsionID( seqpos, BB, omega_torsion_post_methylene_meta_aramid ),  setting);
+		} else if ( residue_type(seqpos).is_para_aramid() ) {
+			conformation_->set_torsion( TorsionID( seqpos, BB, omega_torsion_para_aramid ),  setting);
+		} else if ( residue_type(seqpos).is_pre_methylene_para_aramid() ) {
+			conformation_->set_torsion( TorsionID( seqpos, BB, omega_torsion_pre_methylene_para_aramid ),  setting);
+		} else if ( residue_type(seqpos).is_post_methylene_para_aramid() ) {
+			conformation_->set_torsion( TorsionID( seqpos, BB, omega_torsion_post_methylene_para_aramid ),  setting);
 		} else { //Default case, including peptoids and alpha-amino acids:
 			conformation_->set_torsion( TorsionID( seqpos, BB, omega_torsion ),  setting );
 		}
+	} else if ( residue_type( seqpos ).is_terminus() ) {
+		conformation_->set_torsion( TorsionID( seqpos, BB, 1 ),  setting ); // Only one for ACE.
 	} else /*is carbohydrate*/ {
 		carbohydrates::set_glycosidic_torsion(omega_torsion, *this, seqpos, setting);
 	}
@@ -1134,15 +1232,19 @@ Pose::theta( Size const seqpos ) const
 {
 	using namespace id;
 
-	debug_assert( residue_type(seqpos).is_beta_aa() || residue_type(seqpos).is_oligourea() );
+	debug_assert( residue_type(seqpos).is_beta_aa() || residue_type(seqpos).is_oligourea() || residue_type(seqpos).is_aramid() );
 	PyAssert( (seqpos<=size()&&seqpos!=0), "Pose::theta( Size const seqpos ): variable seqpos is out of range!" );
-	PyAssert( residue_type(seqpos).is_beta_aa() || residue_type(seqpos).is_oligourea(), "Pose::theta( Size const seqpos ): residue seqpos is not a beta-amino acid or oligourea residue!" );
+	PyAssert( residue_type(seqpos).is_beta_aa() || residue_type(seqpos).is_oligourea() || residue_type(seqpos).is_aramid(), "Pose::theta( Size const seqpos ): residue seqpos is not a beta-amino acid or oligourea residue!" );
 	if ( residue_type(seqpos).is_beta_aa() ) {
 		return residue(seqpos).mainchain_torsion(theta_torsion_beta_aa);
 	} else if ( residue_type(seqpos).is_oligourea() ) {
 		return residue(seqpos).mainchain_torsion(theta_torsion_oligourea);
-	} else if ( residue_type(seqpos).is_aramid() ) {
-		return residue(seqpos).mainchain_torsion(theta_torsion_aramid);
+	} else if ( residue_type(seqpos).is_ortho_aramid() ) {
+		return residue(seqpos).mainchain_torsion(theta_torsion_ortho_aramid);
+	} else if ( residue_type(seqpos).is_meta_aramid() ) {
+		return residue(seqpos).mainchain_torsion(theta_torsion_meta_aramid);
+	} else if ( residue_type(seqpos).is_para_aramid() ) {
+		return residue(seqpos).mainchain_torsion(theta_torsion_para_aramid);
 	} else {
 		// Undefined.
 		return 0.0;
@@ -1158,12 +1260,14 @@ Pose::set_theta( Size const seqpos, Real const setting)
 {
 	using namespace id;
 
-	debug_assert( residue_type(seqpos).is_beta_aa() || residue_type(seqpos).is_oligourea() );
+	debug_assert( residue_type(seqpos).is_beta_aa() || residue_type(seqpos).is_oligourea() || residue_type(seqpos).is_aramid() );
 	PyAssert( (seqpos<=size()&&seqpos!=0), "Pose::set_theta( Size const seqpos, Real const setting ): variable seqpos is out of range!" );
-	PyAssert( residue_type(seqpos).is_beta_aa() || residue_type(seqpos).is_oligourea(), "Pose::set_theta( Size const seqpos, Real const setting ): residue seqpos is not a beta-amino acid or oligourea residue!" );
+	PyAssert( residue_type(seqpos).is_beta_aa() || residue_type(seqpos).is_oligourea() || residue_type(seqpos).is_aramid(), "Pose::set_theta( Size const seqpos, Real const setting ): residue seqpos is not a beta-amino acid or oligourea residue!" );
 	if ( residue_type(seqpos).is_beta_aa() ) conformation_->set_torsion( TorsionID( seqpos, BB, theta_torsion_beta_aa ), setting );
 	else if ( residue_type(seqpos).is_oligourea() ) conformation_->set_torsion( TorsionID(seqpos, BB, theta_torsion_oligourea), setting);
-	else if ( residue_type(seqpos).is_aramid() ) conformation_->set_torsion( TorsionID(seqpos, BB, theta_torsion_aramid), setting);
+	else if ( residue_type(seqpos).is_ortho_aramid() ) conformation_->set_torsion( TorsionID(seqpos, BB, theta_torsion_ortho_aramid), setting);
+	else if ( residue_type(seqpos).is_meta_aramid() ) conformation_->set_torsion( TorsionID(seqpos, BB, theta_torsion_meta_aramid), setting);
+	else if ( residue_type(seqpos).is_para_aramid() ) conformation_->set_torsion( TorsionID(seqpos, BB, theta_torsion_para_aramid), setting);
 }
 
 // AMW TODO: getter and setter for eta (precedes theta for aramids) (not important, shouldn't move)
