@@ -399,7 +399,7 @@ dump_cif(
 	atom_site->AddColumn( "Cartn_y" );
 	atom_site->AddColumn( "Cartn_z" );
 	atom_site->AddColumn( "occupancy" );
-	atom_site->AddColumn( "B_iso_or_equiv_esd" );
+	atom_site->AddColumn( "B_iso_or_equiv" );
 	atom_site->AddColumn( "type_symbol" );
 	atom_site->AddColumn( "pdbx_PDB_model_num" );
 
