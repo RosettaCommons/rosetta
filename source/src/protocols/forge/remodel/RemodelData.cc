@@ -277,7 +277,7 @@ void RemodelData::getLoopsToBuildFromBlueprint( std::string text_blueprint ) {
 			bool pickaa = false;
 			for ( int i = 3; i< (int)split_info.size();  i++ ) {
 
-				if ( split_info[i].substr(0,3) != "CST" && split_info[i].substr(0,3) != "DM_" && split_info[i].substr(0,3) != "DS_" && split_info[i].substr(0,3) != "EMP" ) {
+				if ( split_info[i].substr(0,3) != "CST" && split_info[i].substr(0,3) != "DM_" && split_info[i].substr(0,3) != "DS_" ) {
 					oss << split_info[i] << " " ;
 					oss_switch << split_info[i];
 				}
