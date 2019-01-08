@@ -58,6 +58,8 @@ public:
 
 	std::string get_name() const override;
 
+	static void register_options();
+
 	void show(std::ostream & output=std::cout) const override;
 
 	void

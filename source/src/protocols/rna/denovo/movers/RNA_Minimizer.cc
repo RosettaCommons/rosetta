@@ -46,6 +46,7 @@
 //Minimizer stuff
 #include <core/kinematics/MoveMap.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
+#include <core/optimization/CartesianMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 
 //Packer stuff
@@ -133,10 +134,10 @@ void RNA_Minimizer::apply( core::pose::Pose & pose )
 		if ( !scorefxn_->has_nonzero_weight( coordinate_constraint ) ) scorefxn_->set_weight( coordinate_constraint, 1.0 );
 	}
 	if ( options_ == nullptr ) options_ = utility::pointer::make_shared< options::RNA_MinimizerOptions >();
-	if ( options_->vary_bond_geometry() ) scorefxn_->set_weight( rna_bond_geometry, 1.0 );
+	//if ( options_->vary_bond_geometry() ) scorefxn_->set_weight( rna_bond_geometry, 1.0 );
+	if ( options_->vary_bond_geometry() ) scorefxn_->set_weight( cart_bonded, 1.0 );
 	if ( include_default_linear_chainbreak_ && !scorefxn_->has_nonzero_weight( linear_chainbreak ) ) scorefxn_->set_weight( linear_chainbreak, 5.0 );
 
-	AtomTreeMinimizer minimizer;
 	float dummy_tol = min_tol_;
 	bool const use_nblist( options_->use_nblist() );
 	MinimizerOptions minimizer_options( options_->min_type(), dummy_tol, use_nblist, options_->deriv_check(), options_->deriv_check() );
@@ -234,8 +235,19 @@ void RNA_Minimizer::apply( core::pose::Pose & pose )
 		}
 		TR << "Minimizing...round= " << r << std::endl;
 
-		if ( perform_minimizer_run_ ) minimizer.run( pose, mm, *minimize_scorefxn_, minimizer_options );
-
+		// The difference here in where the minimizer gets made is between one creation and two unless
+		// we do tons of rounds. Code MUCH simpler.
+		if ( options_->vary_bond_geometry() ) {
+			CartesianMinimizer minimizer;
+			if ( perform_minimizer_run_ ) {
+				minimize_scorefxn_->show( pose );
+				minimizer.run( pose, mm, *minimize_scorefxn_, minimizer_options );
+				minimize_scorefxn_->show( pose );
+			}
+		} else {
+			AtomTreeMinimizer minimizer;
+			if ( perform_minimizer_run_ ) minimizer.run( pose, mm, *minimize_scorefxn_, minimizer_options );
+		}
 		if ( close_loops_ )  rna_loop_closer.apply( pose, moving_chainbreaks );
 
 	}
@@ -359,6 +371,11 @@ RNA_Minimizer::setup_movemap( kinematics::MoveMap & mm, pose::Pose & pose ) {
 	mm.set_bb( false );
 	mm.set_chi( false );
 	mm.set_jump( false );
+	if ( options_->vary_bond_geometry() ) {
+		mm.set_bb( true );
+		mm.set_chi( true );
+		mm.set_jump( true );
+	}
 
 	// torsions
 	for ( Size i = 1; i <= nres; i++ )  {
@@ -449,7 +466,8 @@ RNA_Minimizer::setup_movemap( kinematics::MoveMap & mm, pose::Pose & pose ) {
 	for ( Size n = 1; n <= options_->extra_minimize_chi_res().size(); n++ ) mm.set( id::TorsionID( options_->extra_minimize_chi_res()[n], id::CHI, 1 ), true );
 
 	// vary bond geometry
-	if ( options_->vary_bond_geometry() ) simple_moves::setup_vary_rna_bond_geometry( mm, pose, atom_level_domain_map_ );
+	//if ( options_->vary_bond_geometry() ) simple_moves::setup_vary_rna_bond_geometry( mm, pose, atom_level_domain_map_ );
+	if ( options_->vary_bond_geometry() ) { mm.set( id::D, true ); mm.set( id::THETA, true ); mm.set( id::PHI, true ); }
 
 }
 

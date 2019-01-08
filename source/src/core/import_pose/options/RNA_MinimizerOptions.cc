@@ -18,6 +18,7 @@
 // option key includes
 #include <basic/options/option.hh>
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
+#include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <utility/options/OptionCollection.hh>
 #include <utility/options/keys/OptionKeyList.hh>
 
@@ -82,7 +83,7 @@ RNA_MinimizerOptions::initialize_from_options( utility::options::OptionCollectio
 	RNA_BasicOptions::initialize_from_options( opts );
 
 	set_minimize_rounds( opts[ OptionKeys::rna::denovo::minimize::minimize_rounds ]() );
-	set_vary_bond_geometry( opts[ OptionKeys::rna::vary_geometry ]() );
+	set_vary_bond_geometry( opts[ OptionKeys::rna::vary_geometry ]() || opts[ OptionKeys::relax::cartesian ]() );
 	set_deriv_check( opts[ OptionKeys::rna::denovo::minimize::deriv_check ]() );
 	set_skip_o2prime_trials( opts[ OptionKeys::rna::denovo::minimize::skip_o2prime_trials]() );
 
@@ -112,6 +113,7 @@ RNA_MinimizerOptions::list_options_read( utility::options::OptionKeyList & opts 
 	RNA_BasicOptions::list_options_read( opts );
 	opts + OptionKeys::rna::denovo::minimize::minimize_rounds
 		+ OptionKeys::rna::vary_geometry
+		+ OptionKeys::relax::cartesian
 		+ OptionKeys::rna::denovo::minimize::deriv_check
 		+ OptionKeys::rna::denovo::minimize::skip_o2prime_trials
 		+ OptionKeys::rna::denovo::minimize::extra_minimize_res

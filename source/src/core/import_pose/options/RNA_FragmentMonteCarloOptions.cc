@@ -94,7 +94,9 @@ RNA_FragmentMonteCarloOptions::initialize_from_options( utility::options::Option
 	set_filter_chain_closure( opts[ OptionKeys::rna::denovo::filter_chain_closure ]() );
 	set_filter_chain_closure_distance( opts[ OptionKeys::rna::denovo::filter_chain_closure_distance ]() );
 	set_filter_chain_closure_halfway( opts[ OptionKeys::rna::denovo::filter_chain_closure_halfway ]() );
-	set_vary_bond_geometry( opts[ OptionKeys::rna::vary_geometry ] );
+	// Shouldn't set something from RNA_MinimizerOptions here -- then you have to keep
+	// both definitions coordinated!!
+	//set_vary_bond_geometry( opts[ OptionKeys::rna::vary_geometry ] );
 	set_root_at_first_rigid_body( opts[ OptionKeys::rna::denovo::root_at_first_rigid_body ] );
 	set_dock_each_chunk( opts[ OptionKeys::rna::denovo::dock_each_chunk ]() );
 	set_dock_each_chunk_per_chain( opts[ OptionKeys::rna::denovo::dock_each_chunk_per_chain ]() );
