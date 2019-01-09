@@ -28,7 +28,9 @@ def failures(results):
     return fails
 
 # read readme
-readme = subprocess.getoutput( "cat readme.md" ).splitlines()
+readme = []
+with open("readme.md") as f:
+    readme = f.readlines()
 
 # build up html from readme, start with the starting tag
 _index_html_template_ = "<html>\n<body>"
