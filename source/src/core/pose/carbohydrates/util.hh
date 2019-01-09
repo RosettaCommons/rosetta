@@ -142,11 +142,16 @@ void glycosylate_pose_by_file(
 
 
 /// @brief  Set the dihedral angles involved in a glycosidic linkage based on statistical data.
+///
+///@details
+///  Default behavior is to
+///  idealize will set the torsions based on the mean values of each torsion in the conformer
+///
 void set_dihedrals_from_linkage_conformer_data( Pose & pose,
 	uint const upper_residue,
 	core::chemical::carbohydrates::LinkageConformerData const & conformer,
 	bool idealize = true,
-	bool use_prob_for_sd = false );
+	bool use_gaussian_sampling = false );
 
 
 ///////////////////////////   On-The-Fly Helper Functions    /////////////////////////////////////

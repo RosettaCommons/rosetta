@@ -95,14 +95,10 @@ public:
 	void
 	set_use_sugar_bb_data_if_needed( bool use_sugar_bb);
 
-	///@brief Sample within X standard_deviations of the means when building [non-idealized] conformers
-	void
-	set_x_standard_deviations(core::Real standard_deviations);
-
-	///@brief Set whether if we are sampling uniform within the set number of standard deviations or by uniform within the SD.
+	///@brief Set whether if we are sampling uniformly within 1 SD or by sampling on the full gaussian directly.
 	/// Default FALSE
 	void
-	set_prob_sd_sampling(bool prob_sd_sample);
+	set_use_gaussian_sampling(bool prob_sd_sample);
 
 	///@brief Idealize the torsion angles instead of sampling from SD.
 	/// Default FALSE
@@ -125,8 +121,6 @@ public:
 	///@brief Boolean for if the restype-dependant conformer was found at apply. Resets at successive applies.
 	bool
 	conformer_found() const;
-
-
 
 public:
 	void
@@ -175,11 +169,10 @@ public:
 private:
 	//std::pair< core::Size, core::Size > linkage_pair_; Can't check if this exists.
 
-	core::Real sample_sd_;
 	bool use_sugar_bb_data_if_needed_;
 	bool idealize_torsions_;
 	bool conformer_found_;
-	bool use_sd_as_prob_;
+	bool use_gaussian_sampling_;
 	bool sample_protein_linkage_;
 	bool use_conformer_population_stats_;
 	bool random_sampler_ = false;

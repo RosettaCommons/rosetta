@@ -863,7 +863,7 @@ void set_dihedrals_from_linkage_conformer_data( Pose & pose,
 	uint const upper_residue,
 	core::chemical::carbohydrates::LinkageConformerData const & conformer,
 	bool idealize /* true */,
-	bool use_prob_for_sd /* false */ )
+	bool use_gaussian_sampling /* false */ )
 {
 	using namespace core::id;
 
@@ -885,8 +885,6 @@ void set_dihedrals_from_linkage_conformer_data( Pose & pose,
 				" to " << torsion_mean << std::endl;  // TEMP
 			set_glycosidic_torsion( i, pose, upper_residue, torsion_mean );
 		}
-	} else if ( use_prob_for_sd ) {
-		utility_exit_with_message( " UseProbForSD in LinkageConformer sampling is not yet implemented." );
 
 	} else {
 		Real mean;
@@ -900,10 +898,17 @@ void set_dihedrals_from_linkage_conformer_data( Pose & pose,
 				auto torsion_type = static_cast< MainchainTorsionType >( i );
 				mean = conformer.get_torsion_mean( torsion_type );
 				sd = conformer.get_torsion_sd( torsion_type );
-				conformer_angle = basic::periodic_range( mean - sd + numeric::random::rg().uniform() * sd * 2, 360.0 );
+
 			} else {
 				mean = conformer.get_torsion_mean( omega_dihedral, i - 2 );
 				sd = conformer.get_torsion_sd( omega_dihedral, i - 2);
+			}
+
+			//Sample Uniformly (1 SD) OR Sample on the Gaussian
+			if ( use_gaussian_sampling ) {
+				conformer_angle = basic::periodic_range( mean + numeric::random::rg().gaussian() * sd, 360.0);
+			} else {
+				//Uses .5 as the median for uniform.  0 is equivalent to -1 SD, while 1 is equivalent to +1 SD
 				conformer_angle = basic::periodic_range( mean - sd + numeric::random::rg().uniform() * sd * 2, 360.0 );
 			}
 

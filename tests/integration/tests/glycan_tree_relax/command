@@ -11,3 +11,15 @@ cd %(workdir)s
     2>&1 | egrep -vf ../../ignore_list > info.log
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true
 
+#Test Refinement Script
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s @flags -database %(database)s \
+    -parser:protocol tree_relax_refine.xml -s two_glycans.pdb -out:prefix default_ -testing:INTEGRATION_TEST \
+    2>&1 | egrep -vf ../../ignore_list > info.log
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true
+
+#Test Hybrid Sampler/Build Script
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s @flags -database %(database)s \
+    -parser:protocol tree_relax_hybrid.xml -s two_glycans.pdb -out:prefix default_ -testing:INTEGRATION_TEST \
+    2>&1 | egrep -vf ../../ignore_list > info.log
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true
+

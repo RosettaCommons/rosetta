@@ -112,7 +112,7 @@ public:
 	set_rounds( core::Size const rounds );
 
 	///@brief Set the layer size we will be using.  A layer is a set of glycan residues that we will be optimizing.
-	///  We work our way through the layers, while the rest of the residues are virtual (not scored).
+	///  We work our way through the layers, while the rest of the (downstream) residues are virtual (not scored).
 	///
 	///@details
 	///
@@ -139,9 +139,13 @@ public:
 	set_quench_mode( bool quench_mode );
 
 public:
-	//GlcyanRelax options
+	//GlycanRelax options
 
 	///@brief Set a boolean that we will be refining instead of de-novo modeling.
+	///  This also makes it so that modeling is done in the context of the full glycan tree and no virtual residues are used.
+	///
+	///@details If you would like to change this behavior, use the function set_force_virts_for_refinement.
+	///
 	void
 	set_refine( bool const refine );
 
@@ -153,6 +157,28 @@ public:
 	///@brief Override Glycan Relax rounds.
 	void
 	set_glycan_sampler_rounds( core::Size glycan_sampler_rounds);
+
+	///@brief Set the LinkageConformer to use probabilites.
+	// By default, this is false and we sample uniformly.
+	void
+	set_use_conformer_probabilities( bool conformer_probs );
+
+	///@brief Set whether if we are sampling torsions uniformly within an SD for the LinkageConformerMover (false)
+	///  or sampling the gaussian (true).
+	///  Default false
+	void
+	set_use_gaussian_sampling( bool gaussian_sampling );
+
+	///@brief Refinement now models layers in the context of the full glycan tree.
+	/// Turn this option on to use non-scored residues (virtuals) at the ends of the tree that are not being modeled.
+	///  This is how the de-novo protocol works.
+	void
+	set_force_virts_for_refinement( bool force_virts );
+
+	///@brief Set to use an experimental protocol where we build out the glycans, but re-model the full tree during the building process
+	/// Default false
+	void
+	set_hybrid_protocol( bool hybrid_protocol );
 
 public:
 
@@ -242,6 +268,10 @@ private: // data
 	core::scoring::ScoreFunctionOP scorefxn_ = nullptr;
 	core::select::residue_selector::ResidueSelectorCOP selector_ = nullptr;
 
+	bool use_conformer_populations_ = false;
+	bool force_virts_for_refine_ = false;
+	bool hybrid_protocol_ = false;
+	bool use_gaussian_sampling_ = false;
 };
 
 std::ostream &

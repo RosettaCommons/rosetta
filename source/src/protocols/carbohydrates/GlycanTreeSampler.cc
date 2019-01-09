@@ -159,8 +159,7 @@ GlycanTreeSampler::parse_my_tag(
 
 	tree_based_min_pack_ = tag->getOption< bool >("tree_based_min_pack", tree_based_min_pack_);
 	population_based_conformer_sampling_ = tag->getOption< bool >("population_based_conformer_sampling", population_based_conformer_sampling_);
-	uniform_conformer_sd_sampling_ = tag->getOption< bool >("uniform_sd_sampling", uniform_conformer_sd_sampling_);
-	conformer_sd_ = tag->getOption< core::Real >("conformer_sampling_sd", conformer_sd_);
+	use_gaussian_sampling_ = tag->getOption< bool >("use_gaussian_sampling", use_gaussian_sampling_);
 	min_rings_ = tag->getOption< core::Real >("min_rings", min_rings_);
 
 }
@@ -181,8 +180,7 @@ void GlycanTreeSampler::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 		+ XMLSchemaAttribute::attribute_w_default("cartmin", xsct_rosetta_bool, "Use Cartesian Minimization instead of Dihedral Minimization during packing steps.", "false")
 		+ XMLSchemaAttribute::attribute_w_default("tree_based_min_pack", xsct_rosetta_bool, "Use Tree-based minimization and packing instead of minimizing and packing ALL residues each time we min.  Significantly impacts runtime.  If you are seeing crappy structures for a few sugars, turn this off.  This is default-on to decrease runtime for a large number of glycans.", "true")
 		+ XMLSchemaAttribute::attribute_w_default("population_based_conformer_sampling", xsct_rosetta_bool, "Use the populations of the conformers as probabilities during our linkage conformer sampling.  This makes it harder to overcome energy barriers with more-rare conformers!", "false")
-		+ XMLSchemaAttribute::attribute_w_default("conformer_sampling_sd", xsct_real, "Number of SDs to sample within during conformer sampling.", "2.0")
-		+ XMLSchemaAttribute::attribute_w_default("uniform_sd_sampling", xsct_rosetta_bool, "Set whether if we are sampling uniform within the set number of standard deviations or by uniform within the SD.", "true")
+		+ XMLSchemaAttribute::attribute_w_default("use_gaussian_sampling", xsct_rosetta_bool, "Set whether to build conformer torsions using a gaussian of the angle or through uniform sampling up to 1 SD (default)", "false")
 		+ XMLSchemaAttribute::attribute_w_default("min_rings", xsct_rosetta_bool, "Minimize Carbohydrate Rings during minimization. ", "false");
 
 	//Append for MoveMap, scorefxn, and task_operation tags.
@@ -228,8 +226,7 @@ GlycanTreeSampler::set_cmd_line_defaults(){
 	refine_ = option[ OptionKeys::carbohydrates::glycan_sampler::glycan_sampler_refine]();
 	tree_based_min_pack_ = option[ OptionKeys::carbohydrates::glycan_sampler::tree_based_min_pack]();
 	population_based_conformer_sampling_ = option[ OptionKeys::carbohydrates::glycan_sampler::population_based_conformer_sampling]();
-	conformer_sd_ = option[ OptionKeys::carbohydrates::glycan_sampler::conformer_sampling_sd]();
-	uniform_conformer_sd_sampling_ = option[ OptionKeys::carbohydrates::glycan_sampler::uniform_sd_sampling]();
+	use_gaussian_sampling_ = option[ OptionKeys::carbohydrates::glycan_sampler::use_gaussian_sampling]();
 	min_rings_ = option[ OptionKeys::carbohydrates::glycan_sampler::min_rings]();
 
 }
@@ -249,9 +246,9 @@ GlycanTreeSampler::GlycanTreeSampler( GlycanTreeSampler const & src ):
 	cartmin_( src.cartmin_ ),
 	tree_based_min_pack_( src.tree_based_min_pack_ ),
 	population_based_conformer_sampling_(src.population_based_conformer_sampling_),
-	conformer_sd_(src.conformer_sd_),
-	uniform_conformer_sd_sampling_(src.uniform_conformer_sd_sampling_),
-	min_rings_(src.min_rings_)
+	use_gaussian_sampling_(src.use_gaussian_sampling_),
+	min_rings_(src.min_rings_),
+	forced_total_rounds_(src.forced_total_rounds_)
 {
 	if ( src.selector_ ) selector_ = src.selector_->clone();
 	if ( src.scorefxn_ ) scorefxn_ = src.scorefxn_->clone();
@@ -371,8 +368,15 @@ GlycanTreeSampler::setup_default_task_factory(utility::vector1< bool > const & g
 }
 
 
+core::Size
+GlycanTreeSampler::get_glycan_sampler_rounds(){
+	return rounds_;
+}
 
-
+void
+GlycanTreeSampler::force_total_rounds(core::Size total_rounds){
+	forced_total_rounds_ = total_rounds;
+}
 
 void
 GlycanTreeSampler::set_scorefunction(core::scoring::ScoreFunctionCOP scorefxn){
@@ -411,13 +415,8 @@ GlycanTreeSampler::set_population_based_conformer_sampling(bool pop_based_sampli
 }
 
 void
-GlycanTreeSampler::set_conformer_sampling_sd(core::Real const conformer_sampling_sd){
-	conformer_sd_ = conformer_sampling_sd;
-}
-
-void
-GlycanTreeSampler::set_uniform_sd_sampling(bool uniform_sd_sampling){
-	uniform_conformer_sd_sampling_ = uniform_sd_sampling;
+GlycanTreeSampler::set_use_gaussian_sampling(bool gaussian_sampling){
+	use_gaussian_sampling_ = gaussian_sampling;
 }
 
 void
@@ -521,8 +520,7 @@ GlycanTreeSampler::setup_movers(
 	//////        //////
 	linkage_mover_ = utility::pointer::make_shared< LinkageConformerMover >( return_subset_dihedral );
 	linkage_mover_->set_use_conformer_population_stats(population_based_conformer_sampling_); //Uniform sampling of conformers.
-	linkage_mover_->set_x_standard_deviations( conformer_sd_ );
-	linkage_mover_->set_prob_sd_sampling(! uniform_conformer_sd_sampling_);
+	linkage_mover_->set_use_gaussian_sampling(use_gaussian_sampling_);
 
 	weighted_random_mover_->add_mover(linkage_mover_, .20);
 
@@ -747,8 +745,16 @@ GlycanTreeSampler::apply( core::pose::Pose& pose ){
 	core::Real energy = scorefxn_->score( pose );
 	TR << "starting energy: "<< energy << std::endl;
 
-	core::Size total_rounds = total_glycan_residues_ * rounds_;
-	TR << "Total Rounds = "<< total_rounds << " ( " << total_glycan_residues_ << " glycans * " << rounds_ << " )"<<std::endl;
+	core::Size total_rounds = 0;
+	if ( forced_total_rounds_ == 0 ) {
+		total_rounds = total_glycan_residues_ * rounds_;
+		TR << "Total Rounds = "<< total_rounds << " ( " << total_glycan_residues_ << " glycans * " << rounds_ << " )"<<std::endl;
+	} else {
+		total_rounds = forced_total_rounds_;
+		TR << "Custom total rounds: " << total_rounds << std::endl;
+	}
+
+
 
 	bool accepted = false;
 	mc_ = utility::pointer::make_shared< MonteCarlo >(pose, *scorefxn_, kt_);

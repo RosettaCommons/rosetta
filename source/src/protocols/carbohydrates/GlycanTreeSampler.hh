@@ -103,15 +103,11 @@ public:
 	void
 	set_population_based_conformer_sampling(bool pop_based_sampling);
 
-	///@brief Number of SDs to sample within during conformer sampling. Default is 2.0 SDs
-	///@details Sample within X standard_deviations of the means when building [non-idealized] conformers
+	///@brief Set whether if we are sampling torsions uniformly within an SD for the LinkageConformerMover (false)
+	///  or sampling the gaussian (true).
+	///  Default false
 	void
-	set_conformer_sampling_sd(core::Real conformer_sampling_sd);
-
-	///@brief Set whether if we are sampling uniform within the set number of standard deviations or by uniform within the SD.
-	/// Default True
-	void
-	set_uniform_sd_sampling(bool uniform_sd_sampling);
+	set_use_gaussian_sampling(bool use_gaussian_sampling);
 
 	void
 	set_kt( core::Real kt);
@@ -180,6 +176,16 @@ public:
 	///@brief Attempt to idealize all residues in of a set of trees. Experimental!
 	void
 	idealize_glycan_residues( core::pose::Pose & pose, utility::vector1< core::Size > const & tree_subset ) const;
+
+public:
+
+	///@brief Get the number of glycan sampler rounds this class is set to run.
+	core::Size
+	get_glycan_sampler_rounds();
+
+	///@brief This allows us to force a number of rounds instead of doing rounds*glycan residues
+	void
+	force_total_rounds( core::Size total_rounds );
 
 private:
 
@@ -252,9 +258,10 @@ private:
 
 	core::select::residue_selector::ResidueSelectorCOP selector_;
 	bool population_based_conformer_sampling_ = false;
-	core::Real conformer_sd_ = 2.0;
-	bool uniform_conformer_sd_sampling_ = true;
+	bool use_gaussian_sampling_ = false;
 	bool min_rings_ = false;
+
+	core::Size forced_total_rounds_ = 0;
 
 };
 

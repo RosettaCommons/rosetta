@@ -101,7 +101,11 @@ GlycanTreeModeler::GlycanTreeModeler( GlycanTreeModeler const & src ):
 	final_min_pack_min_(src.final_min_pack_min_),
 	cartmin_(src.cartmin_),
 	min_rings_(src.min_rings_),
-	idealize_(src.idealize_)
+	idealize_(src.idealize_),
+	use_conformer_populations_(src.use_conformer_populations_),
+	force_virts_for_refine_(src.force_virts_for_refine_),
+	hybrid_protocol_(src.hybrid_protocol_),
+	use_gaussian_sampling_( src.use_gaussian_sampling_)
 
 {
 	if ( src.scorefxn_ ) scorefxn_ = src.scorefxn_->clone();
@@ -158,6 +162,11 @@ GlycanTreeModeler::parse_my_tag(
 	min_rings_ = tag->getOption< core::Real >("min_rings", min_rings_);
 	cartmin_ = tag->getOption< bool >("cartmin", cartmin_);
 	idealize_ = tag->getOption< bool >("idealize", idealize_);
+
+	set_force_virts_for_refinement(tag->getOption< bool >("force_virts_for_refinement", force_virts_for_refine_));
+	set_use_conformer_probabilities( tag->getOption< bool >( "use_conformer_probs", use_conformer_populations_));
+	set_hybrid_protocol( tag->getOption< bool >("hybrid_protocol", hybrid_protocol_));
+	set_use_gaussian_sampling( tag->getOption< bool >( "use_gaussian_sampling", use_gaussian_sampling_));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -165,14 +174,14 @@ GlycanTreeModeler::parse_my_tag(
 moves::MoverOP
 GlycanTreeModeler::fresh_instance() const
 {
-	return utility::pointer::make_shared< GlycanTreeModeler >();
+	return protocols::moves::MoverOP( new GlycanTreeModeler );
 }
 
 /// @brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
 GlycanTreeModeler::clone() const
 {
-	return utility::pointer::make_shared< GlycanTreeModeler >( *this );
+	return protocols::moves::MoverOP( new GlycanTreeModeler( *this ) );
 }
 
 std::string GlycanTreeModeler::get_name() const {
@@ -199,7 +208,6 @@ void GlycanTreeModeler::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 		"  we first model all glycans that are equal to or less than 2 residue distance to the root.\n"
 		"  We then slide this layer up.  So we take all residues that have a distance between 3 and 1, and so on.\n")
 
-
 		+ XMLSchemaAttribute("window_size", xsct_non_negative_integer,
 		"Brief: Set the window size.  This is the overlap of the layers during modeling. \n"
 		"  \n"
@@ -209,19 +217,28 @@ void GlycanTreeModeler::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 		"  part of the next layer.  A window size of 0, means that no residues will be re-modeled. \n"
 		"  Typically, we would want at least a window size of 1.\n")
 
+		+ XMLSchemaAttribute::attribute_w_default("refine", xsct_rosetta_bool, "Do a refinement instead of a denovo model.  This means NO randomization at the start of the protocol and modeling is done in the context of the full glycan tree instead of using virtual (non-scored) residues during tree growth", "false")
+
 		+ XMLSchemaAttribute("rounds", xsct_non_negative_integer, "Set the number of rounds.  We start with the forward direction, from the "
 		"root/start out to the glycan tips.  Next round we go backward, then forward.  The number of rounds corresponds to how many back "
 		"and forth directions we go")
 
+		+ XMLSchemaAttribute::attribute_w_default("glycan_sampler_rounds", xsct_non_negative_integer, "Round Number for the internal the GlycanTreeSampler.  Default is the default of the GlycanTreeSampler.", "25")
+
+		+ XMLSchemaAttribute::attribute_w_default("use_conformer_probs", xsct_rosetta_bool, "Use conformer probabilities instead of doing uniform sampling", "false")
+		+ XMLSchemaAttribute::attribute_w_default("use_gaussian_sampling", xsct_rosetta_bool, "Set whether to build conformer torsions using a gaussian of the angle or through uniform sampling up to 1 SD (default)", "false")
+
+		+ XMLSchemaAttribute::attribute_w_default("force_virts_for_refinement", xsct_rosetta_bool, "Refinement now models layers in the context of the full glycan tree.\n Turn this option on to use non-scored residues (virtuals) at the ends of the tree that are not being modeled.\n  This is how the de-novo protocol works.", "false")
+
 		+ XMLSchemaAttribute::attribute_w_default("idealize", xsct_rosetta_bool, "Attempt to idealize the bond lengths/angles of glycan residues being modeled", "false")
 
-		+ XMLSchemaAttribute::attribute_w_default("refine", xsct_rosetta_bool, "Do a refinement instead of a denovo model", "false")
 		+ XMLSchemaAttribute::attribute_w_default("quench_mode", xsct_rosetta_bool, "Do quench mode for each glycan tree?", "false")
 		+ XMLSchemaAttribute::attribute_w_default("final_min_pack_min", xsct_rosetta_bool, "Do a final set of cycles of min/pack", "true")
 		+ XMLSchemaAttribute::attribute_w_default("min_rings", xsct_rosetta_bool, "Minimize Carbohydrate Rings during minimization. ", "false")
 		+ XMLSchemaAttribute::attribute_w_default("cartmin", xsct_rosetta_bool, "Use Cartesian Minimization instead of Dihedral Minimization during packing steps.", "false")
-		+ XMLSchemaAttribute::attribute_w_default("glycan_sampler_rounds", xsct_non_negative_integer, "Round Number for the internal the GlycanTreeSampler.  Default is the default of the GlycanTreeSampler.", "25");
 
+
+		+ XMLSchemaAttribute::attribute_w_default("hybrid_protocol", xsct_rosetta_bool ,"Set to use an experimental protocol where we build out the glycans, but re-model the full tree during the building process" , "false");
 
 	std::string documentation =
 		"Brief: A protocol for optimizing glycan trees using the GlycanTreeSampler from the base of the tree out to the leaves.\n"
@@ -316,6 +333,11 @@ GlycanTreeModeler::set_rounds(const core::Size rounds){
 	rounds_ = rounds;
 }
 
+void
+GlycanTreeModeler::set_use_gaussian_sampling(bool gaussian_sampling){
+	use_gaussian_sampling_ = gaussian_sampling;
+}
+
 ///@brief Override Glycan Relax rounds.
 void
 GlycanTreeModeler::set_glycan_sampler_rounds( core::Size glycan_sampler_rounds){
@@ -360,6 +382,21 @@ GlycanTreeModeler::setup_cartmin(core::scoring::ScoreFunctionOP scorefxn) const 
 
 }
 
+void
+GlycanTreeModeler::set_use_conformer_probabilities( bool use_conformer_stats ){
+	use_conformer_populations_ = use_conformer_stats;
+}
+
+void
+GlycanTreeModeler::set_force_virts_for_refinement(bool force_virts) {
+	force_virts_for_refine_ = force_virts;
+}
+
+void
+GlycanTreeModeler::set_hybrid_protocol(bool hybrid_protocol){
+	hybrid_protocol_ = hybrid_protocol;
+}
+
 /// @brief Apply the mover
 void
 GlycanTreeModeler::apply( core::pose::Pose & pose){
@@ -374,14 +411,15 @@ GlycanTreeModeler::apply( core::pose::Pose & pose){
 	//Setup everything we need.
 
 	// Setup Selectors
-	GlycanResidueSelectorOP glycan_selector = utility::pointer::make_shared< GlycanResidueSelector >();
-	GlycanLayerSelectorOP modeling_layer_selector = utility::pointer::make_shared< GlycanLayerSelector >();
-	GlycanLayerSelectorOP virtual_layer_selector =  utility::pointer::make_shared< GlycanLayerSelector >();
-	ReturnResidueSubsetSelectorOP store_subset = utility::pointer::make_shared< ReturnResidueSubsetSelector >();
-	ReturnResidueSubsetSelectorOP store_subset2 =utility::pointer::make_shared< ReturnResidueSubsetSelector >();
-	ReturnResidueSubsetSelectorOP store_to_de_virt_subset =  utility::pointer::make_shared< ReturnResidueSubsetSelector >();
-	AndResidueSelectorOP and_selector =      utility::pointer::make_shared< AndResidueSelector >();
-	AndResidueSelectorOP and_selector_virt = utility::pointer::make_shared< AndResidueSelector >();
+	GlycanResidueSelectorOP glycan_selector = GlycanResidueSelectorOP( new GlycanResidueSelector() );
+	GlycanLayerSelectorOP modeling_layer_selector = GlycanLayerSelectorOP( new GlycanLayerSelector() );
+	GlycanLayerSelectorOP full_window_selector = GlycanLayerSelectorOP( new GlycanLayerSelector());
+	GlycanLayerSelectorOP virtual_layer_selector =  GlycanLayerSelectorOP( new GlycanLayerSelector() );
+	ReturnResidueSubsetSelectorOP store_subset = ReturnResidueSubsetSelectorOP( new ReturnResidueSubsetSelector() );
+	ReturnResidueSubsetSelectorOP store_subset2 =ReturnResidueSubsetSelectorOP( new ReturnResidueSubsetSelector() );
+	ReturnResidueSubsetSelectorOP store_to_de_virt_subset =  ReturnResidueSubsetSelectorOP( new ReturnResidueSubsetSelector() );
+	AndResidueSelectorOP and_selector =      AndResidueSelectorOP( new AndResidueSelector() );
+	AndResidueSelectorOP and_selector_virt = AndResidueSelectorOP( new AndResidueSelector() );
 
 
 	Pose starting_pose = pose;
@@ -426,8 +464,10 @@ GlycanTreeModeler::apply( core::pose::Pose & pose){
 	if ( scorefxn_ ) {
 		glycan_sampler.set_scorefunction( scorefxn_ );
 	}
-	glycan_sampler.set_refine( true );
 
+	//Control our own refinement here as we may have multiple apply calls to Glycan Sampler.
+	// Without this, we would randomize EVERY time GlycaSampler's apply function is called.
+	glycan_sampler.set_refine( true );
 	if ( ! refine_ ) {
 		glycan_sampler.randomize_glycan_torsions(pose, starting_subset);
 
@@ -438,8 +478,11 @@ GlycanTreeModeler::apply( core::pose::Pose & pose){
 		glycan_sampler.set_rounds(glycan_sampler_rounds_);
 	}
 
+	//Setup Glycan Sampler Options
 	glycan_sampler.use_cartmin( cartmin_ );
 	glycan_sampler.set_min_rings( min_rings_ );
+	glycan_sampler.set_population_based_conformer_sampling(use_conformer_populations_);
+	glycan_sampler.set_use_gaussian_sampling( use_gaussian_sampling_);
 
 	ConvertRealToVirtualMover real_to_virt = ConvertRealToVirtualMover();
 	ConvertVirtualToRealMover virt_to_real = ConvertVirtualToRealMover();
@@ -502,8 +545,10 @@ GlycanTreeModeler::apply( core::pose::Pose & pose){
 
 	ResidueSubset mask = starting_subset; //All the glycan residues we will be modeling
 
-	MonteCarloOP mc = utility::pointer::make_shared< MonteCarlo >(pose, *scorefxn_, 1.0);
+	MonteCarloOP mc = MonteCarloOP( new MonteCarlo(pose, *scorefxn_, 1.0) );
 	mc->set_last_accepted_pose(pose);
+
+	core::Size default_sampler_rounds = glycan_sampler.get_glycan_sampler_rounds();
 
 	completed_quenches_ = 0;
 	while ( ! is_quenched() ) {
@@ -606,25 +651,62 @@ GlycanTreeModeler::apply( core::pose::Pose & pose){
 							}
 						}
 						store_to_de_virt_subset->set_residue_subset( to_de_virtualize );
-						virt_to_real.set_residue_selector( store_to_de_virt_subset );
-						virt_to_real.apply( pose );
+
+						if ( (! refine_)  && (! force_virts_for_refine_) ) {
+							virt_to_real.set_residue_selector( store_to_de_virt_subset );
+							virt_to_real.apply( pose );
+						}
 					}
 
-					TR << "Virtualizing new foliage layer" << std::endl;
-					pre_virtualized = and_selector_virt->apply( pose );
-					real_to_virt.set_residue_selector( and_selector_virt );
-					real_to_virt.apply( pose );
+					if ( (! refine_)  && (! force_virts_for_refine_) ) {
+						TR << "Virtualizing new foliage layer" << std::endl;
+						pre_virtualized = and_selector_virt->apply( pose );
+						real_to_virt.set_residue_selector( and_selector_virt );
+						real_to_virt.apply( pose );
+					}
 
 					TR << "Running the GlycanTreeSampler on layer [ start -> end (including) ]: " << current_start << " " << current_end << std::endl;
 
 					core::Size n_in_layer = count_selected( and_selector->apply( pose ) );
 
 					if ( n_in_layer > 0 ) {
-						glycan_sampler.set_selector( and_selector );
-						glycan_sampler.apply( pose );
+
+						if ( hybrid_protocol_ && ! first_modeling ) {
+							glycan_sampler.set_rounds(default_sampler_rounds/2);
+							glycan_sampler.set_selector( and_selector );
+							glycan_sampler.apply( pose );
+
+							TR << "Running full window protocol sampling" << std::endl;
+
+							//Second, we do the layer plus everything else
+
+							full_window_selector->set_layer( 0, current_end);
+							and_selector->clear();
+							and_selector->add_residue_selector(store_subset);
+
+							//This is so we get exactly equivalent amount of random sampling from both normal and the full window
+							// protocol - so that we may actually benchmark it properly.
+							core::Size total_rounds = n_in_layer * (default_sampler_rounds/2);
+							glycan_sampler.force_total_rounds(total_rounds);
+
+							store_subset->set_residue_subset( starting_subset );
+							and_selector->clear();
+							and_selector->add_residue_selector(store_subset);
+							and_selector->add_residue_selector( full_window_selector );
+							glycan_sampler.set_selector( and_selector );
+							glycan_sampler.apply(pose);
+						} else {
+							TR << "Applying normal protocol" << std::endl;
+							glycan_sampler.set_selector( and_selector );
+							glycan_sampler.apply( pose );
+						}
+
+
+
 					} else {
 						TR << "No residues in layer, continueing." << std::endl;
 					}
+
 
 					// Set the next layer.
 					current_start = current_start + layer_size_ - window_size_;
@@ -640,9 +722,11 @@ GlycanTreeModeler::apply( core::pose::Pose & pose){
 				}
 
 				//Make sure everything is de-virtualized.
-				store_subset->set_residue_subset( starting_subset );
-				virt_to_real.set_residue_selector( store_subset );
-				virt_to_real.apply( pose );
+				if ( (! refine_)  && (! force_virts_for_refine_) )  {
+					store_subset->set_residue_subset( starting_subset );
+					virt_to_real.set_residue_selector( store_subset );
+					virt_to_real.apply( pose );
+				}
 				break;
 
 			}
@@ -708,7 +792,7 @@ GlycanTreeModeler::apply( core::pose::Pose & pose){
 
 
 		//For now, we create a movemap from a selector manually.  Refactor this to Andrew's new code!
-		ReturnResidueSubsetSelectorOP return_subset_min = utility::pointer::make_shared< ReturnResidueSubsetSelector >(min_subset);
+		ReturnResidueSubsetSelectorOP return_subset_min = ReturnResidueSubsetSelectorOP( new ReturnResidueSubsetSelector(min_subset));
 
 		MoveMapOP mm = core::pose::carbohydrates::create_glycan_movemap_from_residue_selector(pose,return_subset_min,true /*chi*/,min_rings_,true /*bb*/, cartmin_);
 
@@ -759,7 +843,7 @@ GlycanTreeModeler::apply( core::pose::Pose & pose){
 protocols::moves::MoverOP
 GlycanTreeModelerCreator::create_mover() const
 {
-	return utility::pointer::make_shared< GlycanTreeModeler >();
+	return protocols::moves::MoverOP( new GlycanTreeModeler );
 }
 
 std::string

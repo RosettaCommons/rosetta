@@ -86,11 +86,10 @@ LinkageConformerMover::LinkageConformerMover( core::select::residue_selector::Re
 void
 LinkageConformerMover::set_defaults(){
 
-	sample_sd_ = 1.0;
 	use_sugar_bb_data_if_needed_ = true;
 	idealize_torsions_ = false;
 	conformer_found_ = false;
-	use_sd_as_prob_ = false;
+	use_gaussian_sampling_ = false;
 	sample_protein_linkage_ = true;
 	use_conformer_population_stats_ = true;
 
@@ -109,11 +108,10 @@ LinkageConformerMover::~LinkageConformerMover()= default;
 
 LinkageConformerMover::LinkageConformerMover( LinkageConformerMover const & src ):
 	protocols::moves::Mover(src),
-	sample_sd_(src.sample_sd_),
 	use_sugar_bb_data_if_needed_(src.use_sugar_bb_data_if_needed_),
 	idealize_torsions_(src.idealize_torsions_),
 	conformer_found_(src.conformer_found_),
-	use_sd_as_prob_(src.use_sd_as_prob_),
+	use_gaussian_sampling_(src.use_gaussian_sampling_),
 	sample_protein_linkage_(src.sample_protein_linkage_),
 	use_conformer_population_stats_(src.use_conformer_population_stats_),
 	random_sampler_(src.random_sampler_)
@@ -153,10 +151,9 @@ LinkageConformerMover::parse_my_tag(
 		selector_ = protocols::rosetta_scripts::parse_residue_selector( tag, datamap );
 	}
 
-	sample_sd_ = tag->getOption< core::Real >("x_sds", sample_sd_);
 	use_sugar_bb_data_if_needed_ = tag->getOption< bool >( "use_sugar_bb_if_needed", use_sugar_bb_data_if_needed_);
 	idealize_torsions_ = tag->getOption< bool >("idealize_torsions", idealize_torsions_);
-	use_sd_as_prob_ = tag->getOption< bool >("prob_sd_sampling", use_sd_as_prob_);
+	use_gaussian_sampling_ = tag->getOption< bool >("gaussian_sampling", use_gaussian_sampling_);
 	sample_protein_linkage_ = tag->getOption< bool >("sample_protein_linkage", sample_protein_linkage_);
 	use_conformer_population_stats_ =
 		tag->getOption< bool >( "use_conformer_population_stats", use_conformer_population_stats_ );
@@ -195,11 +192,6 @@ LinkageConformerMover::set_idealize_torsions(bool idealize_torsions) {
 }
 
 void
-LinkageConformerMover::set_x_standard_deviations(core::Real standard_deviation){
-	sample_sd_ = standard_deviation;
-}
-
-void
 LinkageConformerMover::set_use_sugar_bb_data_if_needed(bool use_sugar_bb){
 	use_sugar_bb_data_if_needed_ = use_sugar_bb;
 }
@@ -210,8 +202,8 @@ LinkageConformerMover::conformer_found() const {
 }
 
 void
-LinkageConformerMover::set_prob_sd_sampling( bool prob_sampling ){
-	use_sd_as_prob_ = prob_sampling;
+LinkageConformerMover::set_use_gaussian_sampling( bool prob_sampling ){
+	use_gaussian_sampling_ = prob_sampling;
 }
 
 void
@@ -303,7 +295,7 @@ LinkageConformerMover::apply( core::pose::Pose & pose )
 		TR << "Sampling conformer " << conformer_num << " which has a population of " << conformers[conformer_num].population << std::endl;
 
 		set_dihedrals_from_linkage_conformer_data(
-			pose, upper_resnum, conformers[ conformer_num ], idealize_torsions_, use_sd_as_prob_ );
+			pose, upper_resnum, conformers[ conformer_num ], idealize_torsions_, use_gaussian_sampling_ );
 
 		TR.Info << "Complete" << std::endl;
 		conformer_found_ = true;
@@ -343,12 +335,11 @@ void LinkageConformerMover::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 	using namespace utility::tag;
 	AttributeList attlist;
 	attlist + XMLSchemaAttribute::required_attribute("upper_resnum", xsct_non_negative_integer, "XRW TO DO")
-		+ XMLSchemaAttribute("x_sds", xsct_real, "Standard deviation for sampling")
-		+ XMLSchemaAttribute("use_sugar_bb_if_needed", xsct_rosetta_bool, "Use sugar backbone data if needed?")
-		+ XMLSchemaAttribute("idealize_torsions", xsct_rosetta_bool, "Idealize torsion angles before run?")
-		+ XMLSchemaAttribute("prob_sd_sampling", xsct_rosetta_bool, "Use standard deviation as probability")
-		+ XMLSchemaAttribute("sample_protein_linkage", xsct_rosetta_bool, "Also sample linkage between glycan and protein")
-		+ XMLSchemaAttribute("use_conformer_population_stats", xsct_rosetta_bool, "Use statistics about conformer populations for sampling");
+		+ XMLSchemaAttribute::attribute_w_default("use_sugar_bb_if_needed", xsct_rosetta_bool, "Use sugar backbone data if needed?", "true")
+		+ XMLSchemaAttribute::attribute_w_default("idealize_torsions", xsct_rosetta_bool, "Use the Mean values of each torsion angle making up a conformer instead of sampling using the SD either uniformly or through a gaussian.", "false")
+		+ XMLSchemaAttribute::attribute_w_default("gaussian_sampling", xsct_rosetta_bool, "Use standard deviation and means to sample on the gaussian of each torsion angle that make up a conformer", "false")
+		+ XMLSchemaAttribute::attribute_w_default("sample_protein_linkage", xsct_rosetta_bool, "Also sample linkage between glycan and protein", "true")
+		+ XMLSchemaAttribute::attribute_w_default("use_conformer_population_stats", xsct_rosetta_bool, "Use statistics about conformer populations for sampling", "true");
 
 	rosetta_scripts::attributes_for_parse_residue_selector( attlist );
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Mover to sample glycan linkages", attlist );
