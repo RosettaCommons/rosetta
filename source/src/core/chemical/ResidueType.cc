@@ -20,7 +20,6 @@
 #include <core/chemical/ResidueConnection.hh>
 
 // Package Headers
-#include <core/chemical/ResidueProperties.hh>
 #include <core/conformation/Residue.hh>
 
 // Project Headers
@@ -2261,7 +2260,7 @@ ResidueType::delete_property( std::string const & property )
 /// @details Checks the base_type_cop_ pointer.  If it's null, this is assumed to be a base type.
 bool
 ResidueType::is_base_type() const {
-	return bool( !base_type_cop_ );
+	return base_type_cop_ == nullptr;
 }
 
 /// @brief Get a pointer to this ResidueType's base ResidueType.
@@ -2289,135 +2288,6 @@ ResidueType::set_base_type_cop(
 ) {
 	runtime_assert_string_msg( new_base_type, "Error in core::chemical::ResidueType::set_base_type_cop(): A null pointer was passed to this function." );
 	base_type_cop_ = new_base_type;
-}
-
-bool
-ResidueType::is_polymer() const
-{
-	return properties_->has_property( POLYMER );
-}
-
-bool
-ResidueType::is_sidechain_thiol() const
-{
-	return properties_->has_property( SIDECHAIN_THIOL );
-}
-
-bool
-ResidueType::is_disulfide_bonded() const
-{
-	return properties_->has_property( DISULFIDE_BONDED );
-}
-
-bool
-ResidueType::is_sidechain_amine() const
-{
-	return properties_->has_property( SIDECHAIN_AMINE );
-}
-
-bool
-ResidueType::is_protein() const
-{
-	return properties_->has_property( PROTEIN );
-}
-
-/// @brief Is this an alpha-amino acid?
-///
-bool
-ResidueType::is_alpha_aa() const {
-	return properties_->has_property( ALPHA_AA );
-}
-
-/// @brief Is this a beta-amino acid?
-///
-bool
-ResidueType::is_beta_aa() const {
-	return properties_->has_property( BETA_AA );
-}
-
-/// @brief Is this a gamma-amino acid?
-///
-bool
-ResidueType::is_gamma_aa() const {
-	return properties_->has_property( GAMMA_AA );
-}
-
-bool
-ResidueType::is_water() const {
-	return properties_->has_property( WATER );
-}
-
-/// @brief Is this an aramid?
-bool
-ResidueType::is_aramid() const {
-	return properties_->has_property( ARAMID );
-}
-
-/// @brief Is this an ortho aramid?
-bool
-ResidueType::is_ortho_aramid() const {
-	return properties_->has_property( ORTHO_ARAMID );
-}
-
-/// @brief Is this a meta aramid?
-bool
-ResidueType::is_meta_aramid() const {
-	return properties_->has_property( META_ARAMID );
-}
-
-/// @brief Is this a para aramid?
-bool
-ResidueType::is_para_aramid() const {
-	return properties_->has_property( PARA_ARAMID );
-}
-
-/// @brief Is this an ortho aramid?
-bool
-ResidueType::is_pre_methylene_ortho_aramid() const {
-	return properties_->has_property( PRE_METHYLENE_ORTHO_ARAMID );
-}
-
-/// @brief Is this a meta aramid?
-bool
-ResidueType::is_pre_methylene_meta_aramid() const {
-	return properties_->has_property( PRE_METHYLENE_META_ARAMID );
-}
-
-/// @brief Is this a para aramid?
-bool
-ResidueType::is_pre_methylene_para_aramid() const {
-	return properties_->has_property( PRE_METHYLENE_PARA_ARAMID );
-}
-
-/// @brief Is this an ortho aramid?
-bool
-ResidueType::is_post_methylene_ortho_aramid() const {
-	return properties_->has_property( POST_METHYLENE_ORTHO_ARAMID );
-}
-
-/// @brief Is this a meta aramid?
-bool
-ResidueType::is_post_methylene_meta_aramid() const {
-	return properties_->has_property( POST_METHYLENE_META_ARAMID );
-}
-
-/// @brief Is this a para aramid?
-bool
-ResidueType::is_post_methylene_para_aramid() const {
-	return properties_->has_property( POST_METHYLENE_PARA_ARAMID );
-}
-
-/// @brief Is this an oligourea?
-bool
-ResidueType::is_oligourea() const {
-	return properties_->has_property( OLIGOUREA );
-}
-
-/// @brief Does this type have groups (not just single atoms) that are polymer-bond dependent?
-/// @details Always returns false for non-polymeric residue types.
-bool
-ResidueType::has_polymer_dependent_groups() const {
-	return is_polymer() && has_polymer_dependent_groups_;
 }
 
 /// @brief Does an atom with a given index have an icoor that depends, directly or indirectly, on the lower polymeric connection?
@@ -2552,18 +2422,6 @@ ResidueType::is_achiral_backbone() const
 bool
 ResidueType::is_achiral_sidechain() const {
 	return properties_->has_property( ACHIRAL_SIDECHAIN );
-}
-
-bool
-ResidueType::is_DNA() const
-{
-	return properties_->has_property( DNA );
-}
-
-bool
-ResidueType::is_RNA() const
-{
-	return properties_->has_property( RNA );
 }
 
 bool

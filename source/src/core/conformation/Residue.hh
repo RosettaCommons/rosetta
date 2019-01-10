@@ -24,7 +24,8 @@
 #include <core/conformation/Atom.hh>
 #include <core/conformation/orbitals/OrbitalXYZCoords.hh>
 #include <core/conformation/PseudoBond.fwd.hh>
-#include <basic/datacache/BasicDataCache.fwd.hh>
+#include <core/conformation/residue_datacache.hh>
+#include <basic/datacache/BasicDataCache.hh>
 #include <core/chemical/AtomType.fwd.hh>
 #include <core/chemical/Atom.fwd.hh>
 #include <core/chemical/Orbital.hh>
@@ -46,6 +47,7 @@ namespace core { namespace chemical { namespace rings { struct RingConformer; } 
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/pointer/memory.hh>
 #include <utility/vector1.fwd.hh>
 
 // Numeric headers
@@ -213,7 +215,9 @@ public:
 	///     AtomType
 	///     Pose
 	Size
-	atom_type_index( Size const atomno ) const;
+	atom_type_index( Size const atomno ) const {
+		return atoms_[ atomno ].type();
+	}
 
 	/// @brief Returns the atom charge of this residue's atom with index number  <atomno>
 	///
@@ -224,15 +228,24 @@ public:
 	///     Residue.atom_index
 	///     Pose
 	Real
-	atomic_charge( Size const atomno ) const;
+	atomic_charge( Size const atomno ) const {
+		return rsd_type_.atom( atomno ).charge();
+	}
 
 	/// @brief  Check if atom is virtual.
+	/// AMW TODO: somehow SWA spends literally 3.7% of its time calling this function.
+	/// @note A misnomer; this should really be called "is_virtual_atom()". ~Labonte
 	bool
-	is_virtual( Size const atomno ) const;
+	is_virtual( Size const atomno ) const {
+		return rsd_type_.atom_type( atomno ).is_virtual();
+	}
 
 	/// @brief  Check if atom is repulsive.
+	/// @note A misnomer; this should really be called "is_repulsive_atom()". ~Labonte
 	bool
-	is_repulsive( Size const atomno ) const;
+	is_repulsive( Size const atomno ) const {
+		return rsd_type_.atom_type( atomno ).is_repulsive();
+	}
 
 	/// @brief  Check if residue is virtual.
 	bool
@@ -588,7 +601,9 @@ public:
 	///     Residue.set_xyz
 	///     Pose
 	Vector const &
-	xyz( Size const atm_index ) const;
+	xyz( Size const atm_index ) const {
+		return atoms_[ atm_index ].xyz();
+	}
 
 	/// @brief Returns the position of this residue's atom with name  <atm_name>
 	/// @note: position is a Vector
@@ -602,7 +617,9 @@ public:
 	///     Residue.set_xyz
 	///     Pose
 	Vector const &
-	xyz( std::string const & atm_name ) const;
+	xyz( std::string const & atm_name ) const {
+		return atom( atm_name ).xyz();
+	}
 
 
 	/// @brief Sets the position of this residue's atom with index number  <atm_index>
@@ -1363,8 +1380,15 @@ public:
 	///  See Also:
 	///    For atom-atom bonding, see conformation.is_bonded(AtomID, AtomID)
 	///
+	/// @details first check if it is polymer upper or lower connected to the other residue.
+	/// then check if it is boned to the other residue through non-polymer connection.
 	bool
-	is_bonded( Residue const & other ) const;
+	is_bonded( Residue const & other ) const {
+		// trying this simpler strategy -- does not require that we keep chain id's in sync with chemical
+		// connectivity
+		// APL says shouldn't be much slower
+		return connections_to_residues_.find( other.seqpos() ) != connections_to_residues_.end();
+	}
 
 	/// @brief Do I have any pseudobonds to other?
 	bool
@@ -1380,7 +1404,10 @@ public:
 	///  For atom-atom bonding, see conformation.is_bonded(AtomID, AtomID)
 	///
 	bool
-	is_bonded( Size const other_residue_index ) const;
+	is_bonded( Size const other_residue_index ) const {
+		return connections_to_residues_.find( other_residue_index )
+			!= connections_to_residues_.end();
+	}
 
 	/// @brief Do I have any pseudobonds to other?
 	bool
@@ -1391,11 +1418,22 @@ public:
 
 	/// @brief Am I polymer bonded to other?
 	bool
-	is_polymer_bonded( Residue const & other ) const;
+	is_polymer_bonded( Residue const & other ) const {
+		return is_polymer_bonded( other.seqpos() );
+	}
 
 	/// @brief Am I polymer-bonded to other? checks lower and upper connections
 	bool
-	is_polymer_bonded( Size const other_index ) const;
+	is_polymer_bonded( Size const other_index ) const {
+		if ( rsd_type_.is_polymer() ) {
+			Size const lower_id = rsd_type_.lower_connect_id();
+			Size const upper_id = rsd_type_.upper_connect_id();
+			bool const condition1 = lower_id != 0 && residue_connection_partner( lower_id ) == other_index;
+			bool const condition2 = upper_id != 0 && residue_connection_partner( upper_id ) == other_index;
+			return condition1 || condition2;
+		}
+		return false;
+	}
 
 
 	/// @brief Returns the vector1 of resconn ids that connect this residue to other
@@ -2304,12 +2342,23 @@ public:
 
 
 	/// @brief BasicDataCache indexed by enum in residue_datacache.hh
+	/// @details Return a COP to the data cache
+	/// @note Might be a null pointer if the cache has not been initialized
 	basic::datacache::BasicDataCacheCOP
-	data_ptr() const;
+	data_ptr() const {
+		return data_cache_;
+	}
 
 	/// @brief BasicDataCache indexed by enum in residue_datacache.hh
+	/// @details Return an OP to the datacache
+	/// @note Will create new one if not already initialized
 	basic::datacache::BasicDataCacheOP
-	nonconst_data_ptr();
+	nonconst_data_ptr() {
+		if ( data_cache_ == nullptr ) {
+			data_cache_ = utility::pointer::make_shared< basic::datacache::BasicDataCache >( residue_datacache::n_cacheable_types );
+		}
+		return data_cache_;
+	}
 
 	/// @brief BasicDataCache indexed by enum in residue_datacache.hh. Beware, this
 	/// will crash if a call to nonconst_data_ptr() or data_ptr() has not previously
@@ -2462,35 +2511,6 @@ private:
 };
 
 std::ostream & operator << ( std::ostream & os, Residue const & res );
-
-inline
-Size
-Residue::atom_type_index( Size const atomno ) const
-{
-	return atoms_[ atomno ].type();
-}
-
-inline
-Real
-Residue::atomic_charge( Size const atomno ) const
-{
-	return rsd_type_.atom( atomno ).charge();
-}
-
-inline
-Vector const &
-Residue::xyz( Size const atm_index ) const
-{
-	return atoms_[ atm_index ].xyz();
-}
-
-inline
-Vector const &
-Residue::xyz( std::string const & atm_name ) const
-{
-	return atom( atm_name ).xyz();
-}
-
 
 } // conformation
 } // core

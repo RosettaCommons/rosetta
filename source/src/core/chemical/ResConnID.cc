@@ -45,39 +45,6 @@ bool operator != ( ResConnID const & lhs, ResConnID const & rhs )
 	return !( lhs == rhs );
 }
 
-
-Size
-ResConnID::resid() const
-{
-	return res_id_;
-}
-
-void
-ResConnID::resid( Size setting )
-{
-	res_id_ = setting;
-}
-
-Size ResConnID::connid() const
-{
-	return conn_id_;
-}
-
-void ResConnID::connid( Size setting )
-{
-	conn_id_ = setting;
-}
-
-bool ResConnID::incomplete() const
-{
-	return res_id_ == 0 || conn_id_ == 0;
-}
-
-void ResConnID::mark_incomplete()
-{
-	res_id_ = conn_id_ = 0;
-}
-
 #ifdef SERIALIZATION
 template < class Archive >
 void

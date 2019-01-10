@@ -35,7 +35,7 @@
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/MMAtomType.fwd.hh>
 #include <core/chemical/MMAtomTypeSet.fwd.hh>
-#include <core/chemical/ResidueProperties.fwd.hh>
+#include <core/chemical/ResidueProperties.hh>
 #include <core/chemical/ResidueProperty.hh>
 #include <core/chemical/gasteiger/GasteigerAtomTypeData.fwd.hh>
 #include <core/chemical/gasteiger/GasteigerAtomTypeSet.fwd.hh>
@@ -1643,67 +1643,70 @@ public:
 	void set_base_type_cop( ResidueTypeCOP new_base_type );
 
 	/// @brief is polymer?
-	bool is_polymer() const;
+	bool is_polymer() const { return properties_->has_property( POLYMER ); }
 
 	/// @brief is thiol?
-	bool is_sidechain_thiol() const;
+	bool is_sidechain_thiol() const { return properties_->has_property( SIDECHAIN_THIOL ); }
 
 	/// @brief is disulfide?
-	bool is_disulfide_bonded() const;
+	bool is_disulfide_bonded() const { return properties_->has_property( DISULFIDE_BONDED ); }
 
 	/// @brief is sidechain amine?
-	bool is_sidechain_amine() const;
+	bool is_sidechain_amine() const { return properties_->has_property( SIDECHAIN_AMINE ); }
 
 	/// @brief is protein?
-	bool is_protein() const;
+	bool is_protein() const { return properties_->has_property( PROTEIN ); }
 
 	/// @brief Is this an alpha-amino acid?
-	bool is_alpha_aa() const;
+	bool is_alpha_aa() const { return properties_->has_property( ALPHA_AA ); }
 
 	/// @brief Is this a beta-amino acid?
-	bool is_beta_aa() const;
+	bool is_beta_aa() const { return properties_->has_property( BETA_AA ); }
 
 	/// @brief Is this a gamma-amino acid?
-	bool is_gamma_aa() const;
+	bool is_gamma_aa() const { return properties_->has_property( GAMMA_AA ); }
 
 	/// @brief is this a water residue type?
-	bool is_water() const;
+	bool is_water() const { return properties_->has_property( WATER ); }
 
 	/// @brief Is this an oligourea?
-	bool is_oligourea() const;
+	bool is_oligourea() const { return properties_->has_property( OLIGOUREA ); }
 
 	/// @brief Is this an aramid?
-	bool is_aramid() const;
+	bool is_aramid() const { return properties_->has_property( ARAMID ); }
 
 	/// @brief Is this an ortho-aramid?
-	bool is_ortho_aramid() const;
+	bool is_ortho_aramid() const { return properties_->has_property( ORTHO_ARAMID ); }
 
 	/// @brief Is this a meta-aramid?
-	bool is_meta_aramid() const;
+	bool is_meta_aramid() const { return properties_->has_property( META_ARAMID ); }
 
 	/// @brief Is this a para-aramid?
-	bool is_para_aramid() const;
+	bool is_para_aramid() const { return properties_->has_property( PARA_ARAMID ); }
 
 	/// @brief Is this an ortho-aramid?
-	bool is_pre_methylene_ortho_aramid() const;
+	bool is_pre_methylene_ortho_aramid() const { return properties_->has_property( PRE_METHYLENE_ORTHO_ARAMID ); }
 
 	/// @brief Is this a meta-aramid?
-	bool is_pre_methylene_meta_aramid() const;
+	bool is_pre_methylene_meta_aramid() const { return properties_->has_property( PRE_METHYLENE_META_ARAMID ); }
 
 	/// @brief Is this a para-aramid?
-	bool is_pre_methylene_para_aramid() const;
+	bool is_pre_methylene_para_aramid() const { return properties_->has_property( PRE_METHYLENE_PARA_ARAMID ); }
 
 	/// @brief Is this an ortho-aramid?
-	bool is_post_methylene_ortho_aramid() const;
+	bool is_post_methylene_ortho_aramid() const { return properties_->has_property( POST_METHYLENE_ORTHO_ARAMID ); }
 
 	/// @brief Is this a meta-aramid?
-	bool is_post_methylene_meta_aramid() const;
+	bool is_post_methylene_meta_aramid() const { return properties_->has_property( POST_METHYLENE_META_ARAMID ); }
 
 	/// @brief Is this a para-aramid?
-	bool is_post_methylene_para_aramid() const;
+	bool is_post_methylene_para_aramid() const { return properties_->has_property( POST_METHYLENE_PARA_ARAMID ); }
 
 	/// @brief Does this type have groups (not just single atoms) that are polymer-bond dependent?
-	bool has_polymer_dependent_groups() const;
+	/// @details Always returns false for non-polymeric residue types.
+	bool has_polymer_dependent_groups() const {
+		return is_polymer() && has_polymer_dependent_groups_;
+	}
 
 	/// @brief Does an atom with a given index have an icoor that depends, directly or indirectly, on the lower polymeric connection?
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -1773,10 +1776,10 @@ public:
 	bool is_achiral_sidechain() const;
 
 	/// @brief is DNA?
-	bool is_DNA() const;
+	bool is_DNA() const { return properties_->has_property( DNA ); }
 
 	/// @brief is RNA?
-	bool is_RNA() const;
+	bool is_RNA() const { return properties_->has_property( RNA ); }
 
 	/// @brief is TNA?
 	bool is_TNA() const;
@@ -3067,6 +3070,7 @@ ResidueType::atom( VD const atom_vd ) const{
 	debug_assert( has(atom_vd) );
 	return graph_[ atom_vd ];
 }
+
 
 
 } // chemical

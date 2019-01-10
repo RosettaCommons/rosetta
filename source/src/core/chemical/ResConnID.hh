@@ -42,14 +42,16 @@ public:
 	friend bool operator == ( ResConnID const & lhs, ResConnID const & rhs );
 	friend bool operator != ( ResConnID const & lhs, ResConnID const & rhs );
 
-	Size resid() const;
-	void resid( Size );
+	Size resid() const { return res_id_; }
+	void resid( Size res_id ) { res_id_ = res_id; }
 
-	Size connid() const;
-	void connid( Size );
+	Size connid() const { return conn_id_; }
+	void connid( Size conn_id ) { conn_id_ = conn_id; }
 
-	bool incomplete() const;
-	void mark_incomplete();
+	bool incomplete() const {
+		return res_id_ == 0 || conn_id_ == 0;
+	}
+	void mark_incomplete() { res_id_ = conn_id_ = 0; }
 
 #ifdef    SERIALIZATION
 	template < class Archive >

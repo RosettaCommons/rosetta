@@ -17,7 +17,6 @@
 // Package headers
 #include <core/conformation/PseudoBond.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/conformation/residue_datacache.hh>
 #include <core/conformation/orbitals/OrbitalXYZCoords.hh>
 #include <core/conformation/util.hh>
 
@@ -1532,42 +1531,6 @@ Residue::connection_distance(
 	return ipos.distance( matchpoint );
 }
 
-
-/// @details first check if it is polymer upper or lower connected to the other residue.
-/// then check if it is boned to the other residue through non-polymer connection.
-bool
-Residue::is_bonded( Residue const & other ) const
-{
-	// trying this simpler strategy -- does not require that we keep chain id's in sync with chemical
-	// connectivity
-	// APL says shouldn't be much slower
-	return ( connections_to_residues_.find( other.seqpos() ) != connections_to_residues_.end() );
-}
-
-bool
-Residue::is_bonded( Size const other_index ) const
-{
-	return ( connections_to_residues_.find( other_index ) != connections_to_residues_.end() );
-}
-
-/// @details  Am I polymer bonded to other.seqpos()?
-bool
-Residue::is_polymer_bonded( Residue const & other ) const
-{
-	return is_polymer_bonded( other.seqpos() );
-}
-
-/// @details  Am I polymer bonded to other_index?
-bool
-Residue::is_polymer_bonded( Size const other_index ) const
-{
-	if ( rsd_type_.is_polymer() ) {
-		Size const lower_id( rsd_type_.lower_connect_id() ), upper_id( rsd_type_.upper_connect_id() );
-		return ( ( lower_id && residue_connection_partner( lower_id ) == other_index ) ||
-			( upper_id && residue_connection_partner( upper_id ) == other_index ) );
-	} else return false;
-}
-
 /// @brief  Returns the atom-index of my atom which is connected to the other residue
 /// @details so long as there is only a single connection to other... if there are multiple
 /// connections this will fail.  If there are no connections this will fail.
@@ -2043,41 +2006,6 @@ Residue::determine_nonstandard_polymer_status()
 		}
 	}
 	nonstandard_polymer_ = false;
-}
-
-/// AMW TODO: somehow SWA spends literally 3.7% of its time calling this function.
-/// @note A misnomer; this should really be called "is_virtual_atom()". ~Labonte
-bool
-Residue::is_virtual( Size const atomno ) const
-{
-	return rsd_type_.atom_type( atomno ).is_virtual();
-}
-
-/// @note A misnomer; this should really be called "is_repulsive_atom()". ~Labonte
-bool
-Residue::is_repulsive( Size const atomno ) const
-{
-	return rsd_type_.atom_type( atomno ).is_repulsive();
-}
-
-
-/// @details Return a COP to the data cache
-/// @note Might be a null pointer if the cache has not been initialized
-basic::datacache::BasicDataCacheCOP
-Residue::data_ptr() const
-{
-	return data_cache_;
-}
-
-/// @details Return an OP to the datacache
-/// @note Will create new one if not already initialized
-basic::datacache::BasicDataCacheOP
-Residue::nonconst_data_ptr()
-{
-	if ( data_cache_ == nullptr ) {
-		data_cache_ = utility::pointer::make_shared< basic::datacache::BasicDataCache >( residue_datacache::n_cacheable_types );
-	}
-	return data_cache_;
 }
 
 #ifdef    SERIALIZATION
