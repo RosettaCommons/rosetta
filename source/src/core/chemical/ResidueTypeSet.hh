@@ -216,6 +216,7 @@ public:
 	/// Preserves variant types.
 	/// Note for derived classes: this method will obtain a read lock, and possibly
 	/// a write lock on the ResidueTypeSetCache.
+	/// @note Works for L-amino acids and L-peptoids (peptoids with chiral "L" sidechains").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	virtual
 	ResidueTypeCOP get_d_equivalent( ResidueTypeCOP l_rsd ) const;
@@ -225,6 +226,7 @@ public:
 	/// a write lock on the ResidueTypeSetCache.
 	/// @details Returns NULL if there is no equivalent, true otherwise.  Throws an error if this is not an L-residue.
 	/// Preserves variant types.
+	/// @note Works for D-amino acids and D-peptoids (peptoids with chiral "D" sidechains").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	virtual
 	ResidueTypeCOP get_l_equivalent( ResidueTypeCOP d_rsd ) const;

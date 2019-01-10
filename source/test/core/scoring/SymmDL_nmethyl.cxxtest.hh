@@ -101,7 +101,7 @@ public:
 
 		//Mutate residue 4 to proline.  Since residue 3 is a gly, this makes a nice gly-pro.
 		protocols::simple_moves::MutateResidue mutres;
-		mutres.set_res_name("PRO");
+		mutres.set_res_name("ALA:N_Methylation");
 		mutres.set_target(4);
 		mutres.apply(pose);
 

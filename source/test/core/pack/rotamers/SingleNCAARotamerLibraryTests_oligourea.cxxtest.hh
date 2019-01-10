@@ -128,6 +128,21 @@ public:
 		}
 
 		TR << std::endl;
+
+		pose.set_phi( 2, -62 );
+		pose.set_theta( 2, -52 );
+		pose.set_psi( 2, -32 );
+		pose.set_chi(1, 2, 173);
+		core::Real const comparison1( sfxn(pose) );
+		dpose.set_phi( 2, 62 );
+		dpose.set_theta( 2, 52 );
+		dpose.set_psi( 2, 32 );
+		dpose.set_chi(1, 2, -173);
+		core::Real const comparison2( sfxn(pose) );
+
+		TR << "Just off well centres, energy1=" << comparison1 << " and energy2=" << comparison2 << std::endl;
+
+		TS_ASSERT_DELTA( comparison1, comparison2, 1e-6 );
 	}
 
 	/// @brief Confirm that the rotamer wells in the oligourea-proline rotamer library really do have

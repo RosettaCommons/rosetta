@@ -153,8 +153,8 @@ public:
 		TS_ASSERT_EQUALS( dna_pose->residue_type( 86 ).aa(),  na_thy );
 		stepwise_pose_aligner.apply( other_pose );
 
-		other_pose.dump_pdb( "OTHER_POSE.pdb" );
-		dna_pose->dump_pdb( "DNA_POSE.pdb" );
+		//other_pose.dump_pdb( "OTHER_POSE.pdb" );
+		//dna_pose->dump_pdb( "DNA_POSE.pdb" );
 
 		TS_ASSERT_LESS_THAN( stepwise_pose_aligner.rmsd(), 1.0e-4);
 

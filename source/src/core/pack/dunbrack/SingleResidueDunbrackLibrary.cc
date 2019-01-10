@@ -732,7 +732,7 @@ SingleResidueDunbrackLibrary::hokey_template_workaround()
 
 	#define INIT( CHI, BB ) \
 RotamericSingleResidueDunbrackLibrary< CHI, BB > rsrdl_ ## CHI ## _ ## BB( rsd.type(), false, true, true, 1.0, 1.0 ); \
-RotamericSingleResidueDunbrackLibraryParser parser_ ## CHI ## _ ## BB( BB, DUNBRACK_MAX_SCTOR, rsrdl_ ## CHI ## _ ## BB.n_possible_rots(), false ); \
+RotamericSingleResidueDunbrackLibraryParser parser_ ## CHI ## _ ## BB( BB, DUNBRACK_MAX_SCTOR, rsrdl_ ## CHI ## _ ## BB.n_possible_rots(), false, false ); \
 parser_ ## CHI ## _ ## BB.configure_rotameric_single_residue_dunbrack_library< CHI, BB >( rsrdl_ ## CHI ## _ ## BB , utility::fixedsizearray1< core::Size, BB >( 0 ) ); \
 SemiRotamericSingleResidueDunbrackLibrary< CHI, BB > srsrdl_ ## CHI ## _ ## BB( rsd.type(), true, true, false, true, true, 1.0, 1.0 ); \
 PackedDunbrackRotamer< CHI, BB, Real > prot_ ## CHI ## _ ## BB; \
@@ -783,7 +783,7 @@ srsrdl_ ## CHI ## _ ## BB.get_probability_for_rotamer( bb_ ## BB, 1 ); \
 rsrdl_ ## CHI ## _ ## BB.get_rotamer( bb_ ## BB, 1 ); \
 srsrdl_ ## CHI ## _ ## BB.get_rotamer( bb_ ## BB, 1 ); \
 srsrdl_ ## CHI ## _ ## BB.interpolate_nrchi_values( sizevec_ ## BB, sizevec_ ## BB, realvec_ ## BB, 1, realvec ); \
-rsrdl_ ## CHI ## _ ## BB.get_rotamer_from_chi_static_voronoi( chi, rotwell, rsd, pose );
+rsrdl_ ## CHI ## _ ## BB.get_rotamer_from_chi_static_voronoi( chi, rotindex, rsd, pose );
 
 	// If you are adding support for rotamers with more than four chis or five
 	// backbone dihedrals, good for you. Have you created const Sizes for the
@@ -842,6 +842,7 @@ INIT(  FIVE,  FIVE )
 	conformation::Residue rsd( rt, true );
 	RotamerLibraryScratchSpace scratch;
 	Size4 rotwell;
+	Size rotindex;
 	Size i(0);
 
 	pose::Pose pose;

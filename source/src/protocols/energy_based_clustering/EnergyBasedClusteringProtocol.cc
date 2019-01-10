@@ -835,7 +835,9 @@ EnergyBasedClusteringProtocol::use_in_rmsd(
 
 	//The name of the atom:
 	std::string atname1( utility::strip( pose1.residue(resno).atom_name(atomno), " " ) );
+	if ( atname1 == "CN" && pose1.residue_type(resno).is_alpha_aa() && pose1.residue_type(resno).is_n_methylated() ) atname1 = "CA1"; //Allow N-methyl amino acids to be aligned to peptoids.
 	if ( !pose2.residue_type(resno).has(atname1) ) {
+		if ( atname1 == "CA1" && pose2.residue_type(resno).is_alpha_aa() && pose2.residue_type(resno).is_n_methylated() && pose2.residue_type(resno).has("CN") ) return true;
 		return false;
 	}
 
@@ -1174,6 +1176,8 @@ EnergyBasedClusteringProtocol::mutate_to_alanine(
 			} else {
 				aaname="B3A";
 			}
+		} else if ( mypose.residue_type(ir).is_peptoid() ) { //If it's a peptoid, mutate to sarcosine.
+			aaname="GLY:N_Methylation"; //Sarcosine is "GLY:N_Methylation" in Rosetta.
 		} else if ( mypose.residue_type(ir).is_oligourea() ) { //If it's an oligourea, mutate to OU3_ALA.
 			aaname="OU3_ALA"; //An alanine-like oligourea.
 		}
@@ -1338,6 +1342,8 @@ EnergyBasedClusteringProtocol::do_initial_import_and_scoring(
 		core::pose::Pose pose; //Create the pose
 		input.fill_pose( pose ); //Import it
 
+		remove_extraneous_virtuals( pose );
+
 		if ( options_.cyclic_ ) {
 			add_cyclic_constraints(pose); //If this is a cyclic peptide, add constraints for the terminal peptide bond:
 			if ( options_.cluster_cyclic_permutations_ && options_.cluster_by_ == EBC_bb_cartesian && options_.use_CB_ ) {
@@ -1416,6 +1422,22 @@ EnergyBasedClusteringProtocol::do_initial_import_and_scoring(
 	} //Loop over all input structures.
 } //do_initial_import_and_scoring()
 
+/// @brief Remove cutpoint variants that add extraneous virtual atoms that mess up
+/// atom indexing.
+void
+EnergyBasedClusteringProtocol::remove_extraneous_virtuals(
+	core::pose::Pose &pose
+) const {
+	for ( core::Size i(1), imax(pose.total_residue()); i<=imax; ++i ) { //Loop through all residues in pose.
+		if ( pose.residue_type(i).has_variant_type( core::chemical::CUTPOINT_LOWER ) ) {
+			core::pose::remove_variant_type_from_pose_residue( pose, core::chemical::CUTPOINT_LOWER, i );
+		}
+		if ( pose.residue_type(i).has_variant_type( core::chemical::CUTPOINT_UPPER ) ) {
+			core::pose::remove_variant_type_from_pose_residue( pose, core::chemical::CUTPOINT_UPPER, i );
+		}
+	}
+	pose.update_residue_neighbors();
+}
 
 /// @brief Function to add cyclic constraints to a pose.
 void

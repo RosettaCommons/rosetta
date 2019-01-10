@@ -493,7 +493,7 @@ is_lower_terminus( pose::Pose const & pose, Size const resid )
 {
 	return ( ( resid == 1 ) || //loop starts at first residue
 		( ! pose.residue(resid).is_polymer() ) || // this residue isn't a polymer
-		( ! pose.residue( resid-1 ).is_protein() ) || //residue before start is not protein
+		( !pose.residue( resid-1 ).is_protein() && !pose.residue( resid-1 ).is_peptoid() ) || //residue before start is not protein
 		( pose.chain( resid-1 ) != pose.chain( resid ) ) || // residues before start are on another chain
 		( pose.residue( resid ).is_lower_terminus() ) ); // start of residue is lower terminus
 }
@@ -504,7 +504,7 @@ is_upper_terminus( pose::Pose const & pose, Size const resid )
 {
 	return ( ( resid == pose.size() ) || // loop end at last residue
 		( !pose.residue( resid ).is_polymer() ) || // this residue isn't a polymer
-		( !pose.residue( resid+1 ).is_protein() ) || // residue after end is not protein
+		( !pose.residue( resid+1 ).is_protein() && !pose.residue(resid+1).is_peptoid() ) || // residue after end is not protein
 		( pose.chain( resid+1 ) != pose.chain( resid ) ) || // residues before start is other chain
 		( pose.residue( resid ).is_upper_terminus() ) ); // explicit terminus variant @ end of loop
 }

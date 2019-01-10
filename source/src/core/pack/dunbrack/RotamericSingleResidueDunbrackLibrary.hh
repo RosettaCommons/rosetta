@@ -207,6 +207,17 @@ protected:
 	void
 	initialize_bicubic_splines();
 
+	/// @brief Given a RotamericSingleResidueDunbrackLibrary of type T (probably core::Real) and with N backbone dihedrals,
+	/// a vector of coordinates in the backbone bins tensor, and a vector of sizes for the dimensions of the backbone bins
+	/// tensor, increment the coordinate in a manner that ensures that all bins can be iterated over.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void
+	increment_tensor_index_recursively(
+		utility::fixedsizearray1< Size, (N+1) > & bb_bin,
+		utility::fixedsizearray1< Size, (N+1) > const & bb_bin_maxes,
+		core::Size const recursion_level
+	) const;
+
 	/// @brief Given chi values and a pose residue, return indices specifying the nearest rotamer well centre.
 	/// @details This version uses a Voronoi-inspired algorithm: the nearest rotamer well to the input chi values, in wraparound
 	/// angle space, is returned.  This is compatible with non-canonicals.  Might be slightly slower.
@@ -214,7 +225,7 @@ protected:
 	void
 	get_rotamer_from_chi_static_voronoi(
 		ChiVector const & chi,
-		Size4 & rot,
+		core::Size &rot,
 		core::conformation::Residue const &rsd,
 		core::pose::Pose const &pose
 	) const;
@@ -334,7 +345,21 @@ protected:
 		utility::fixedsizearray1< Size, N > const & bb_bin,
 		utility::fixedsizearray1< Size, N > const & bb_bin_next,
 		utility::fixedsizearray1< Real, N > const & bb_alpha,
-		PackedDunbrackRotamer< T, N, Real > & interpolated_rotamer
+		PackedDunbrackRotamer< T, N, Real > & interpolated_rotamer,
+		ChiVector const & chi=ChiVector(T, 0.0),
+		bool const use_chi=false
+	) const;
+
+	/// @brief Given the index of a rotamer in the current backbone bin, find the closest rotamer index in another
+	/// backbone bin.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	Size
+	make_conditional_packed_rotno_index(
+		Size const original_bb_index,
+		Size const bb_index,
+		Size const packed_rotno,
+		ChiVector const & chi,
+		bool const use_chi
 	) const;
 
 	/// @brief Assigns random chi angles and returns the packed_rotno for the chosen random rotamer.
@@ -528,8 +553,13 @@ private:
 	// Entropy correction
 	utility::fixedsizearray1< ObjexxFCL::FArray1D< Real >, ( 1 << N ) > ShannonEntropy_n_derivs_;
 
-	// AMW: one peptoid flag needed
+	/// @brief AMW: one peptoid flag needed
 	bool peptoid_ = false;
+
+	/// @brief VKM: no, two, dammit!
+	/// @details True if the petoid is entirely achiral (i.e. the sidechain is achiral, since the backbone always is).  False for
+	/// peptoids with chiral sidechains.
+	bool peptoid_is_achiral_ = true;
 
 	/// @brief Is this a canonical amino acid?
 	bool canonical_aa_;

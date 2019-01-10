@@ -38,17 +38,20 @@ namespace dunbrack {
 #define MIN_CHI_STD_DEV 0 //Below this, the chi standard deviation is replaced with the bogus value.
 #define BOGUS_CHI_STD_DEV 5 //The bogus value used if chi_std_dev is too small.
 #define MIN_PROBABILITY 1e-6 //The minimum rotamer probability.  Below this value, the value is set to this value.
+#define MIN_DELTA 1e-6 //For float-float comparisons to determine whether torsion values are identical when symmetrizing Dunbrack libraries for peptoids.  Needed since there's no guarantee that the floats will have integral values.
 
 /// @brief Default constructor.
 /// @param[in] num_mainchain_torsions The number of mainchain torsions on which this rotamer library depends.
 /// @param[in] max_possible_chis The maximum number of chis allowed in this rotamer library.  This is the number of chi columns in the file (usually 4).
 /// @param[in] max_possible_rotamers The maximum number of rotamers that this rotamer library can define.
 /// @param[in] correct_rotamer_well_order_on_read Should rotamer wells be auto-sorted so that they're in order form least to greatest in the interval [0,360)?  Note that this should not be necessary, so this defaults to false.
+/// @param[in] symmetrize_rotamer_library If true, the rotamer library is symmetrized by averaging.  Useful for peptoids with achiral sidechains.
 RotamericSingleResidueDunbrackLibraryParser::RotamericSingleResidueDunbrackLibraryParser(
 	core::Size const num_mainchain_torsions,
 	core::Size const max_possible_chis,
 	core::Size const max_possible_rotamers,
-	bool const correct_rotamer_well_order_on_read
+	bool const correct_rotamer_well_order_on_read,
+	bool const symmetrize_rotamer_library
 ):
 	utility::pointer::ReferenceCount(),
 	read_file_was_called_(false),
@@ -62,7 +65,8 @@ RotamericSingleResidueDunbrackLibraryParser::RotamericSingleResidueDunbrackLibra
 	chimeans_(),
 	chi_std_devs_(),
 	is_canonical_dun02_library_(false),
-	correct_rotamer_well_order_on_read_(correct_rotamer_well_order_on_read)
+	correct_rotamer_well_order_on_read_(correct_rotamer_well_order_on_read),
+	symmetrize_rotamer_library_( symmetrize_rotamer_library )
 {
 	debug_assert( num_mainchain_torsions_ > 0 );
 	debug_assert( max_possible_chis_ > 0);
@@ -84,7 +88,8 @@ RotamericSingleResidueDunbrackLibraryParser::RotamericSingleResidueDunbrackLibra
 	chimeans_(src.chimeans_),
 	chi_std_devs_(src.chi_std_devs_),
 	is_canonical_dun02_library_(src.is_canonical_dun02_library_),
-	correct_rotamer_well_order_on_read_(src.correct_rotamer_well_order_on_read_)
+	correct_rotamer_well_order_on_read_(src.correct_rotamer_well_order_on_read_),
+	symmetrize_rotamer_library_(src.symmetrize_rotamer_library_)
 {
 	debug_assert( num_mainchain_torsions_ > 0 );
 	debug_assert( max_possible_chis_ > 0);
@@ -510,9 +515,135 @@ RotamericSingleResidueDunbrackLibraryParser::update_rotamer_well_order(
 	}
 }
 
+/// @brief Given a rotamer library, symmetrize it.
+/// @details Called for peptoids with achiral side-chains.
+/// @param[in] filename The filename of this library, used for logging and error messages.
+void
+RotamericSingleResidueDunbrackLibraryParser::symmetrize_library( std::string const & filename ) {
+	TR << "Symmetrizing rotamer library " << filename << std::endl;
+
+	debug_assert( symmetrize_rotamer_library_ );
+	core::Size const n_entries( backbone_torsions_.size() );
+	debug_assert( n_entries == chimeans_.size() );
+	debug_assert( n_entries == chi_std_devs_.size() );
+	debug_assert( n_entries == probabilities_.size() );
+
+	utility::vector1< bool > corrected( n_entries, false );
+
+	for ( core::Size i(1); i<=n_entries; ++i ) { //Loop through all rotamer wells.
+		if ( corrected[i] ) continue;
+
+		core::Size closest(0);
+		bool first(true);
+		core::Real closest_dist_sq( 0.0 );
+		for ( core::Size j(1); j<=n_entries; ++j ) { //Find all entries that are mirror-image rotamer wells.
+			if ( corrected[j] ) continue; //Skip entries that are already corrected.
+			//if( i == j ) continue;
+			bool match(true);
+			for ( core::Size k(1), kmax(backbone_torsions_[i].size()); k<=kmax; ++k ) { //
+				if ( std::abs( numeric::principal_angle_degrees( basic::subtract_degree_angles( backbone_torsions_[i][k], -1.0*backbone_torsions_[j][k] ) ) ) > MIN_DELTA ) {
+					match = false;
+					break;
+				}
+			}
+			if ( !match ) continue;
+
+			core::Real dist_sq(0.0);
+			for ( core::Size k(1), kmax(chimeans_[j].size()); k<=kmax; ++k ) {
+				dist_sq += pow( numeric::principal_angle_degrees( basic::subtract_degree_angles( chimeans_[i][k], -1.0*chimeans_[j][k] ) ), 2 );
+			}
+			if ( first || dist_sq < closest_dist_sq ) {
+				closest_dist_sq = dist_sq;
+				first = false;
+				closest = j;
+			}
+		}
+
+		runtime_assert_string_msg( closest != 0, "Error in RotamericSingleResidueDunbrackLibraryParser::symmetrize_library(): Unable to symmetrize file " + filename + "!" );
+
+		//At this point, we've got the closest match to the current rotamer well.
+		//We can do the symmetrization
+		// 1. PROBABILITIES and COUNTS
+		core::Real const avg_prob( (probabilities_[i] + probabilities_[closest]) / 2.0 );
+		core::Size const avg_count( static_cast< core::Size >( std::round( (static_cast<core::Real>(counts_[i]) + static_cast<core::Real>(counts_[closest])) / 2.0 ) ) );
+		probabilities_[i] = avg_prob;
+		probabilities_[closest] = avg_prob;
+		counts_[i] = avg_count;
+		counts_[closest] = avg_count;
+		// 2. CHIMEANS
+		for ( core::Size j(1), jmax(chimeans_[i].size()); j<=jmax; ++j ) {
+			core::Real const chimeans1( numeric::principal_angle_degrees( chimeans_[i][j] ) );
+			core::Real const chimeans2( numeric::principal_angle_degrees( -1.0*chimeans_[closest][j] ) );
+			core::Real const & larger( chimeans1 > chimeans2 ? chimeans1 : chimeans2 );
+			core::Real const & smaller( chimeans1 > chimeans2 ? chimeans2 : chimeans1 );
+
+			core::Real const avg_chi_mean (
+				larger - smaller < 180.0
+				?
+				numeric::principal_angle_degrees( (larger + smaller ) / 2.0 )
+				:
+				numeric::principal_angle_degrees( ( larger - 360.0 + smaller ) / 2.0 )
+			);
+
+			chimeans_[i][j] = avg_chi_mean;
+			chimeans_[closest][j] = -1.0*avg_chi_mean;
+		}
+
+		// 3. STDEVS
+		for ( core::Size j(1), jmax(chi_std_devs_[i].size()); j<=jmax; ++j ) {
+			core::Real const avg_stddev( (chi_std_devs_[i][j] + chi_std_devs_[closest][j])/2 );
+			chi_std_devs_[i][j] = avg_stddev;
+			chi_std_devs_[closest][j] = avg_stddev;
+		}
+
+		//Now we mark both of these as updated.
+		corrected[i] = true;
+		corrected[closest] = true;
+	} //next i
+
+	//Finally, we re-normalize each well.
+	utility::vector1< bool > renormalized( n_entries, false );
+	for ( core::Size i(1); i<=n_entries; ++i ) {
+		//Check that all wells are updated:
+		//(Might switch this to a debug check later):
+		runtime_assert_string_msg( corrected[i], "Program error in RotamericSingleResidueDunbrackLibraryParser::symmetrize_library(): Unable to symmetrize file " + filename +".  This should not happen.  Please consult a developer." );
+		if ( !renormalized[i] ) {
+			core::Real probsum( probabilities_[i] );
+			utility::vector1< core::Size > this_bb_bin_entries(1, i);
+			for ( core::Size j(1); j<=n_entries; ++j ) {
+				if ( renormalized[j] ) continue;
+				if ( i == j ) continue;
+				bool match(true);
+				for ( core::Size k(1), kmax(backbone_torsions_[i].size()); k<=kmax; ++k ) {
+					if ( std::abs( backbone_torsions_[i][k] - backbone_torsions_[j][k] ) > MIN_DELTA ) {
+						match = false;
+						break;
+					}
+				}
+				if ( !match ) continue;
+
+				this_bb_bin_entries.push_back(j);
+				probsum += probabilities_[j];
+			}
+			for ( core::Size j(1), jmax(this_bb_bin_entries.size()); j<=jmax; ++j ) {
+				renormalized[ this_bb_bin_entries[j] ] = true;
+				probabilities_[ this_bb_bin_entries[j] ] /= probsum;
+			}
+		}
+	} //Finished re-normalizing.
+
+	//Check that we renormalized everything.  (Can be a debug check later):
+	for ( core::Size i(1); i<=n_entries; ++i ) {
+		runtime_assert_string_msg( renormalized[i], "Program error in RotamericSingleResidueDunbrackLibraryParser::symmetrize_library(): Unable to renormalize after symmetrizing file " + filename +".  This should not happen.  Please consult a developer." );
+	}
+
+	TR << "Successfully symmetrized rotamer library " << filename << std::endl;
+}
+
+
 /// @brief Performs a number of checks and corrections.
-/// @details Calls check_correct_vector_lengths(), determine_rotamer_well_order(), check_rotamer_well_order(), and update_rotamer_well_order(), and , currently.  Additional checks
-/// and corrections may be added in the future.
+/// @details Calls check_correct_vector_lengths(), determine_rotamer_well_order(), check_rotamer_well_order(), update_rotamer_well_order(), and symmetrize_library() (for
+/// peptoids).  Additional checks and corrections may be added in the future.
 /// @param[in] filename The name of the rotamer file currently being read.  This is only used for error messages.
 void
 RotamericSingleResidueDunbrackLibraryParser::do_all_checks_and_corrections( std::string const & filename ) {
@@ -530,7 +661,7 @@ RotamericSingleResidueDunbrackLibraryParser::do_all_checks_and_corrections( std:
 					TR.Warning << TR.Red << "Rotamer file " << filename << " has inconsistent rotamer well assignments even after reordering.  This may or may not indicate a badly formatted file." << TR.Reset << std::endl;
 				}
 			}
-		} else {
+		} else { //if correct_rotamer_well_order_on_read_
 			bool const old_dun02_library( is_old_canonical_dun02_library( filename ) );
 			bool const beta_nov16_library( is_canonical_beta_nov16_library(filename) );
 			bool const talaris_library( is_canonical_talaris_library(filename) );
@@ -551,7 +682,12 @@ RotamericSingleResidueDunbrackLibraryParser::do_all_checks_and_corrections( std:
 				TR.Debug << "Rotamer file " << filename << " is a canonical rotamer file for the old Dunbrack2002 libraries.  Skipping rotamer well order corrections -- but please note that these libraries will soon be deprecated.  Please consider switching to the current default scoring function." << std::endl;
 			}
 		}
-	} //if correct_rotamer_well_order_on_read_
+	} //if !correct_rotamer_well_order_on_read_
+
+	//Symmetry correction for peptoid libraries:
+	if ( symmetrize_rotamer_library_ ) {
+		symmetrize_library( filename );
+	}
 }
 
 /// @brief Given a filename, return true if this is a talaris library for a canonical amino acid, false otherwise.
@@ -653,31 +789,31 @@ RotamericSingleResidueDunbrackLibraryParser::hacky_parser_init_workaround() {
 	RotamericSingleResidueDunbrackLibrary< 5, 4 > lib_5_4( rt, false, false, false, 0.1, 0.1, false );
 	RotamericSingleResidueDunbrackLibrary< 5, 5 > lib_5_5( rt, false, false, false, 0.1, 0.1, false );
 
-	RotamericSingleResidueDunbrackLibraryParser parser_1_1( 1, 1, 1, false );
-	RotamericSingleResidueDunbrackLibraryParser parser_1_2( 1, 2, 1, false );
-	RotamericSingleResidueDunbrackLibraryParser parser_1_3( 1, 3, 1, false );
-	RotamericSingleResidueDunbrackLibraryParser parser_1_4( 1, 4, 1, false );
-	RotamericSingleResidueDunbrackLibraryParser parser_1_5( 1, 5, 1, false );
-	RotamericSingleResidueDunbrackLibraryParser parser_2_1( 2, 1, 1, false );
-	RotamericSingleResidueDunbrackLibraryParser parser_2_2( 2, 2, 1, false );
-	RotamericSingleResidueDunbrackLibraryParser parser_2_3( 2, 3, 1, false );
-	RotamericSingleResidueDunbrackLibraryParser parser_2_4( 2, 4, 1, false );
-	RotamericSingleResidueDunbrackLibraryParser parser_2_5( 2, 5, 1, false );
-	RotamericSingleResidueDunbrackLibraryParser parser_3_1( 3, 1, 1, false );
-	RotamericSingleResidueDunbrackLibraryParser parser_3_2( 3, 2, 1, false );
-	RotamericSingleResidueDunbrackLibraryParser parser_3_3( 3, 3, 1, false );
-	RotamericSingleResidueDunbrackLibraryParser parser_3_4( 3, 4, 1, false );
-	RotamericSingleResidueDunbrackLibraryParser parser_3_5( 3, 5, 1, false );
-	RotamericSingleResidueDunbrackLibraryParser parser_4_1( 4, 1, 1, false );
-	RotamericSingleResidueDunbrackLibraryParser parser_4_2( 4, 2, 1, false );
-	RotamericSingleResidueDunbrackLibraryParser parser_4_3( 4, 3, 1, false );
-	RotamericSingleResidueDunbrackLibraryParser parser_4_4( 4, 4, 1, false );
-	RotamericSingleResidueDunbrackLibraryParser parser_4_5( 4, 5, 1, false );
-	RotamericSingleResidueDunbrackLibraryParser parser_5_1( 5, 1, 1, false );
-	RotamericSingleResidueDunbrackLibraryParser parser_5_2( 5, 2, 1, false );
-	RotamericSingleResidueDunbrackLibraryParser parser_5_3( 5, 3, 1, false );
-	RotamericSingleResidueDunbrackLibraryParser parser_5_4( 5, 4, 1, false );
-	RotamericSingleResidueDunbrackLibraryParser parser_5_5( 5, 5, 1, false );
+	RotamericSingleResidueDunbrackLibraryParser parser_1_1( 1, 1, 1, false, false );
+	RotamericSingleResidueDunbrackLibraryParser parser_1_2( 1, 2, 1, false, false );
+	RotamericSingleResidueDunbrackLibraryParser parser_1_3( 1, 3, 1, false, false );
+	RotamericSingleResidueDunbrackLibraryParser parser_1_4( 1, 4, 1, false, false );
+	RotamericSingleResidueDunbrackLibraryParser parser_1_5( 1, 5, 1, false, false );
+	RotamericSingleResidueDunbrackLibraryParser parser_2_1( 2, 1, 1, false, false );
+	RotamericSingleResidueDunbrackLibraryParser parser_2_2( 2, 2, 1, false, false );
+	RotamericSingleResidueDunbrackLibraryParser parser_2_3( 2, 3, 1, false, false );
+	RotamericSingleResidueDunbrackLibraryParser parser_2_4( 2, 4, 1, false, false );
+	RotamericSingleResidueDunbrackLibraryParser parser_2_5( 2, 5, 1, false, false );
+	RotamericSingleResidueDunbrackLibraryParser parser_3_1( 3, 1, 1, false, false );
+	RotamericSingleResidueDunbrackLibraryParser parser_3_2( 3, 2, 1, false, false );
+	RotamericSingleResidueDunbrackLibraryParser parser_3_3( 3, 3, 1, false, false );
+	RotamericSingleResidueDunbrackLibraryParser parser_3_4( 3, 4, 1, false, false );
+	RotamericSingleResidueDunbrackLibraryParser parser_3_5( 3, 5, 1, false, false );
+	RotamericSingleResidueDunbrackLibraryParser parser_4_1( 4, 1, 1, false, false );
+	RotamericSingleResidueDunbrackLibraryParser parser_4_2( 4, 2, 1, false, false );
+	RotamericSingleResidueDunbrackLibraryParser parser_4_3( 4, 3, 1, false, false );
+	RotamericSingleResidueDunbrackLibraryParser parser_4_4( 4, 4, 1, false, false );
+	RotamericSingleResidueDunbrackLibraryParser parser_4_5( 4, 5, 1, false, false );
+	RotamericSingleResidueDunbrackLibraryParser parser_5_1( 5, 1, 1, false, false );
+	RotamericSingleResidueDunbrackLibraryParser parser_5_2( 5, 2, 1, false, false );
+	RotamericSingleResidueDunbrackLibraryParser parser_5_3( 5, 3, 1, false, false );
+	RotamericSingleResidueDunbrackLibraryParser parser_5_4( 5, 4, 1, false, false );
+	RotamericSingleResidueDunbrackLibraryParser parser_5_5( 5, 5, 1, false, false );
 
 	parser_1_1.configure_rotameric_single_residue_dunbrack_library< 1, 1 >( lib_1_1, utility::fixedsizearray1< core::Size, 1 >(0) );
 	parser_1_2.configure_rotameric_single_residue_dunbrack_library< 1, 2 >( lib_1_2, utility::fixedsizearray1< core::Size, 2 >(0) );

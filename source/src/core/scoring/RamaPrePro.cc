@@ -97,7 +97,7 @@ RamaPrePro::eval_rpp_rama_score(
 	}
 
 	//Otherwise, we need to do slower scoring table lookups:
-	bool const is_d( res1->is_d_aa() ); //Score tables are loaded for L-amino acids; D-versions are mirrored.
+	bool const is_d( res1->is_mirrored_type() ); //Score tables are loaded for L-amino acids; D-versions are mirrored.
 
 	//Flip torsions for D-amino acids.
 	if ( is_d ) {
@@ -242,7 +242,7 @@ RamaPrePro::random_mainchain_torsions(
 
 	//Otherwise, this is a noncanonical, and the logic becomes more complicated.
 	//First, we must determine whether this is a D-amino acid.  (Score tables are for L-versions.)
-	bool const is_d( res1->is_d_aa() );
+	bool const is_d( res1->is_mirrored_type() );
 
 	//Get the L-equivalent type:
 	core::chemical::ResidueTypeCOP ltype( is_d ? conf.residue_type_set_for_conf( res1->mode() )->get_mirrored_type( res1 )  : res1 );
@@ -279,7 +279,7 @@ RamaPrePro::get_mainchain_torsions_covered(
 ) const {
 	//Otherwise, this is a noncanonical, and the logic becomes more complicated.
 	//First, we must determine whether this is a D-amino acid.  (Score tables are for L-versions.)
-	bool const is_d( res1->is_d_aa() );
+	bool const is_d( res1->is_mirrored_type() );
 
 	//Get the L-equivalent type:
 	core::chemical::ResidueTypeCOP ltype( is_d ? conf.residue_type_set_for_conf( res1->mode() )->get_mirrored_type( res1 )  : res1 );
@@ -349,7 +349,7 @@ RamaPrePro::is_N_substituted(
 	core::chemical::ResidueTypeCOP restype
 ) const {
 	core::chemical::AA const aa( restype->aa() );
-	return ( aa == core::chemical::aa_pro || aa == core::chemical::aa_dpr || aa == core::chemical::ou3_pro || restype->is_peptoid() );
+	return ( aa == core::chemical::aa_pro || aa == core::chemical::aa_dpr || aa == core::chemical::ou3_pro || restype->is_n_methylated() || restype->is_peptoid() );
 }
 
 /// @brief Ensure that the RamaPrePro scoring tables for the 20 canonical amino acids are set up, and that we are storing

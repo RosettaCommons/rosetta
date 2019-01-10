@@ -63,6 +63,9 @@ void form_disulfides( core::pose::PoseOP pose) {
 ///
 inline
 core::chemical::ResidueType const & get_mirror_type( core::chemical::ResidueType const &master_type, core::chemical::ResidueTypeSet const & residue_type_set ) {
+	if ( master_type.is_peptoid() ) {
+		return *( residue_type_set.get_mirrored_type( master_type.get_self_ptr() ) );
+	}
 	if ( !master_type.is_l_aa() && !master_type.is_d_aa() ) return master_type;
 	if ( master_type.is_l_aa() ) {
 		return residue_type_set.name_map( "D"+master_type.name() );

@@ -875,7 +875,7 @@ void GeneralizedKICperturber::apply_randomize_alpha_backbone_by_rama(
 		runtime_assert_string_msg( residues[ir] <= nres, "Unable to apply randomize_alpha_backbone_by_rama perturbation.  Residue list includes residues that are not in the original pose." );
 
 		//Check for alpha amino acids:
-		if ( !original_pose.residue(residues[ir]).type().is_alpha_aa() ) {
+		if ( !original_pose.residue_type(residues[ir]).is_alpha_aa() ) {
 			if ( TR.Warning.visible() ) {
 				TR.Warning << "Residue " << residues[ir] << " was passed to GeneralizedKICperturber::apply_randomize_alpha_backbone_by_rama, but this residue is not an alpha-amino acid.  Skipping." << std::endl;
 				TR.Warning.flush();
@@ -1427,7 +1427,7 @@ void GeneralizedKICperturber::apply_sample_cis_peptide_bond(
 
 	for ( core::Size ir=1; ir<=nres; ++ir ) { //Loop through all specified residues.
 		core::Size const curres = get_loop_index(residues[ir], residue_map);
-		if ( loop_pose.residue_type(curres).is_alpha_aa() || loop_pose.residue_type(curres).is_beta_aa() || loop_pose.residue_type(curres).is_gamma_aa() || loop_pose.residue_type(curres).is_oligourea() ) { //If this is either an oligourea, an alpha-amino acid, a beta-amino acid, or a gamma-amino acid.
+		if ( loop_pose.residue_type(curres).is_alpha_aa() || loop_pose.residue_type(curres).is_beta_aa() || loop_pose.residue_type(curres).is_gamma_aa() || loop_pose.residue_type(curres).is_oligourea() || loop_pose.residue_type(curres).is_peptoid() ) { //If this is either an oligourea, an alpha-amino acid, a beta-amino acid, a gamma-amino acid, or a peptoid.
 			core::Size omegaindex=0;
 			for ( core::Size ia=4, iamax=atomlist.size()-3; ia<=iamax; ++ia ) { //Loop through the atom list and find the appropriate omega value
 				if ( atomlist[ia].first.rsd()!=curres ) continue; //First find an atom with the current residue number.
@@ -1453,7 +1453,7 @@ void GeneralizedKICperturber::apply_sample_cis_peptide_bond(
 			}
 
 		} else { //If this is neither an oligourea, nor an alpha-amino acid, nor a beta-amino acid, nor a gamma-amino acid.
-			if ( TR.Warning.visible() ) TR.Warning << "Residue " << residues[ir] << " was passed to a sample_cis_peptide_bond perturber, but this residue is neither an alpha-amino acid, nor a beta-amino acid, nor a gamma-amino acid, nor an oligourea.  Skipping." << std::endl;
+			if ( TR.Warning.visible() ) TR.Warning << "Residue " << residues[ir] << " was passed to a sample_cis_peptide_bond perturber, but this residue is neither an alpha-amino acid, nor a beta-amino acid, nor a gamma-amino acid, nor a peptoid, nor an oligourea.  Skipping." << std::endl;
 		}
 	}
 

@@ -1735,11 +1735,24 @@ public:
 	/// @brief Is this a triazolemer?
 	bool is_triazolemer() const;
 
+	/// @brief Is this a D_AA, R_PEPTOID, or L_RNA?
+	/// @details Convenience function to avoid quering is_d_aa(), is_r_peptoid(), and is_l_rna() repeatedly.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	bool is_mirrored_type() const;
+
 	/// @brief is this a d-amino acid?
 	bool is_d_aa() const;
 
 	/// @brief is this an l-amino acid?
 	bool is_l_aa() const;
+
+	/// @brief Is this a peptoid with a chiral side-chain with "R" chirality?
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	bool is_r_peptoid() const;
+
+	/// @brief Is this a peptoid with a chiral side-chain with "S" chirality?
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	bool is_s_peptoid() const;
 
 	/// @brief is this a d-RNA?
 	bool is_d_rna() const;
@@ -1747,8 +1760,17 @@ public:
 	/// @brief is this an l-RNA?
 	bool is_l_rna() const;
 
+	/// @brief Is this residue N-methylated?
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	bool is_n_methylated() const;
+
 	/// @brief is this an achiral backbone?
 	bool is_achiral_backbone() const;
+
+	/// @brief Does this have an achiral sidechain?
+	/// @details Includes gly and aib, and most (but not all) peptoids.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	bool is_achiral_sidechain() const;
 
 	/// @brief is DNA?
 	bool is_DNA() const;

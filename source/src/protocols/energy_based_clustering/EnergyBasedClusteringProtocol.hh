@@ -235,6 +235,10 @@ private: //Functions
 		utility::vector1 < core::id::NamedAtomID > const &extra_atom_list
 	) const;
 
+	/// @brief Remove cutpoint variants that add extraneous virtual atoms that mess up
+	/// atom indexing.
+	void remove_extraneous_virtuals( core::pose::Pose &pose ) const;
+
 	/// @brief Function to add cyclic constraints to a pose.
 	void add_cyclic_constraints ( core::pose::Pose &mypose ) const;
 

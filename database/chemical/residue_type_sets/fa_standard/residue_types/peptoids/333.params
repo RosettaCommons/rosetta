@@ -1,0 +1,83 @@
+# A peptoid with an ornithine-like sidechain.
+# Params file added by Vikram K. Mulligan, Flatiron Institute (vmulligan@flatironinstitute.org) on 26 Nov. 2018.
+# Geometry generated in Avogadro, and optimized first with MM (MMFF94s force field) and second with QM methods
+# using GAMESS (STO-6G approximation).  Partial charges were recomputed with the 6-311G approximation.  there
+# was no change in the values.
+# Note: I'll use the convention of 33x = lysine-like sidechain with x methylene groups.
+NAME 333
+IO_STRING 333 X
+TYPE POLYMER
+AA UNK
+ATOM  N   Nbb  NH1  -0.24
+ATOM  CA  CAbb CT2  0.14
+ATOM  C   CObb C    0.28
+ATOM  O   OCbb O    -0.22
+ATOM  CA1 CH2  CT2   0.06
+ATOM  CB  CH2  CT2   0.01
+ATOM  CG  CH2  CT2  -0.04
+ATOM  ND  Nlys NH3  0.43
+ATOM 1HA  Hapo HB   0.11
+ATOM 2HA  Hapo HB   0.11
+ATOM 3HA  Hapo HA   0.10
+ATOM 4HA  Hapo HA   0.10
+ATOM 1HB  Hapo HA   0.08
+ATOM 2HB  Hapo HA   0.08
+ATOM 1HG  Hapo HA   0.06
+ATOM 2HG  Hapo HA   0.06
+ATOM 1HD  Hpol HC   -0.04
+ATOM 2HD  Hpol HC   -0.04
+ATOM 3HD  Hpol HC   -0.04
+LOWER_CONNECT N
+UPPER_CONNECT C
+BOND_TYPE 2HA   CA  1   
+BOND_TYPE 3HA   CA1 1   
+BOND_TYPE 1HA   CA  1   
+BOND_TYPE  CA   N   1   
+BOND_TYPE  CA   C   1   
+BOND_TYPE 1HG   CG  1   
+BOND_TYPE 2HB   CB  1   
+BOND_TYPE  CA1  N   1   
+BOND_TYPE  CA1 4HA  1   
+BOND_TYPE  CA1  CB  1   
+BOND_TYPE  C    O   2   
+BOND_TYPE  CB   CG  1   
+BOND_TYPE  CB  1HB  1   
+BOND_TYPE  CG  2HG  1   
+BOND_TYPE  CG   ND  1   
+BOND_TYPE 1HD   ND  1   
+BOND_TYPE 2HD   ND  1   
+BOND_TYPE  ND  3HD  1   
+CHI 1  CA   N    CA1  CB  
+CHI 2  N    CA1  CB   CG
+CHI 3  CA1  CB   CG   ND
+CHI 4  CB   CG   ND   1HD
+PROTON_CHI 4 SAMPLES 3 30 60 90 EXTRA 1 15
+NBR_ATOM  CA1
+NBR_RADIUS 6.716525
+FIRST_SIDECHAIN_ATOM CA1
+PROPERTIES PEPTOID ACHIRAL_BACKBONE ACHIRAL_SIDECHAIN POLAR CHARGED POSITIVE_CHARGE
+RAMA_PREPRO_FILENAME scoring/score_functions/rama/n_methyl/sarcosine_ramatable_MM.txt scoring/score_functions/rama/n_methyl/sarcosine_ramatable_prepro_MM.txt
+RAMA_PREPRO_RESNAME GENERIC_NMETHYLGLYCINE_AA
+ICOOR_INTERNAL    N      0.000000    0.000000    0.000000   N     CA    C  
+ICOOR_INTERNAL    CA     0.000000  180.000000    1.458001   N     CA    C  
+ICOOR_INTERNAL    C      0.000000   68.799995    1.523259   CA    N     C  
+ICOOR_INTERNAL  UPPER  180.000000   63.800018    1.328685   C     CA    N  
+ICOOR_INTERNAL    O   -180.000000   59.200005    1.231015   C     CA  UPPER
+ICOOR_INTERNAL   1HA   120.000000   70.500000    1.089761   CA    N     C  
+ICOOR_INTERNAL   2HA   120.000000   70.500000    1.089761   CA    N    1HA 
+ICOOR_INTERNAL  LOWER -180.000000   58.300003    1.328685   N     CA    C
+ICOOR_INTERNAL    CA1 -180.000000   61.749220    1.469102   N     CA  LOWER
+ICOOR_INTERNAL    CB    64.603533   67.981643    1.550288   CA1   N     CA 
+ICOOR_INTERNAL    CG   170.031866   67.927905    1.542774   CB    CA1   N  
+ICOOR_INTERNAL    ND  -167.113816   71.137041    1.536615   CG    CB    CA1
+ICOOR_INTERNAL   1HD   -56.076022   68.919617    1.045729   ND    CG    CB 
+ICOOR_INTERNAL   2HD  -117.693424   68.033978    1.040045   ND    CG   1HD 
+ICOOR_INTERNAL   3HD  -123.939599   67.478538    1.032078   ND    CG   2HD 
+ICOOR_INTERNAL   1HG  -120.650606   65.739283    1.074255   CG    CB    ND 
+ICOOR_INTERNAL   2HG  -124.868003   68.337282    1.082374   CG    CB   1HG 
+ICOOR_INTERNAL   2HB   120.976755   70.246895    1.084877   CB    CA1   CG 
+ICOOR_INTERNAL   1HB   117.613147   71.678512    1.082503   CB    CA1  2HB 
+ICOOR_INTERNAL   3HA  -121.184647   71.415378    1.089969   CA1   N     CB 
+ICOOR_INTERNAL   4HA  -116.870041   70.527029    1.083478   CA1   N    3HA
+NCAA_ROTLIB_PATH ../ncaa_rotlibs/ncaa_rotamer_libraries/peptoid/333.rotlib
+NCAA_ROTLIB_NUM_ROTAMER_BINS 3 3 3 3

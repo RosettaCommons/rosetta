@@ -90,6 +90,7 @@ SIDECHAIN_THIOL # This residue type is capable of forming a disulfide bond
 DISULFIDE_BONDED  # This residue type contains a disulfide bond/noncanonical connection
 ELECTROPHILE # This residue type has a side-chain that can be conjugated to a nucleophile (for example, it contains an alpha-beta unsaturated carbonyl)
 SIDECHAIN_AMINE
+N_METHYLATED # A methyl group replaces the amide proton in residues in the MIDDLE of a sequence (not at the N-terminus)
 
 ## Membranes
 MEMBRANE
@@ -109,6 +110,9 @@ GAMMA_AA
 L_AA #Chirality.  This is defined as the chirality of the first chiral mainchain atom closest to the LOWER_CONNECT -- so a trisubstituted 2D,3D,4L-gamma-amino acid would be considered an L_AA.
 D_AA #Chirality.  This is defined as the chirality of the first chiral mainchain atom closest to the LOWER_CONNECT -- so a trisubstituted 2L,3L,4D-gamma-amino acid would be considered a D_AA.
 ACHIRAL_BACKBONE
+ACHIRAL_SIDECHAIN
+R_PEPTOID #Chirality of peptoid sidechain.  R-chirality peptoids are auto-generaetd from their S-chirality counterparts. 
+S_PEPTOID #Chirality of peptoid sidechain.  Only S-chirality peptoids are allowed in the Rosetta database.
 TAUTOMER
 
 # NUCLEIC SPECIFIC PROPERTIES

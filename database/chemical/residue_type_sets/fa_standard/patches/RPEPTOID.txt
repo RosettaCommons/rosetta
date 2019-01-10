@@ -1,0 +1,25 @@
+## Chiral_flip patch for peptoids.
+## Added by Vikram K. Mulligan (vmullig@uw.edu), Baker laboratory, on 14 November 2017.
+
+NAME RPEPTOID
+
+#############################################################################################
+## general requirements
+##   Peptoids with chiral S side-chains.
+#############################################################################################
+BEGIN_SELECTOR
+PROPERTY S_PEPTOID
+END_SELECTOR
+
+
+BEGIN_CASE 
+
+CHIRAL_FLIP_NAMING
+CHIRAL_FLIP_ATOMS
+
+DELETE_PROPERTY S_PEPTOID
+DELETE_PROPERTY CANONICAL_AA
+DELETE_PROPERTY CANONICAL_NUCLEIC
+ADD_PROPERTY R_PEPTOID
+
+END_CASE

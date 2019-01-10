@@ -8,6 +8,7 @@
 -fast_relax_rounds 1
 -min_genkic_hbonds 1
 -min_final_hbonds 1
+-cyclic_peptide:use_chainbreak_energy false
 -sample_cis_pro_frequency 0.5
 -cyclic_peptide:rama_cutoff 3.0
 -cyclic_peptide:total_energy_cutoff 100.0

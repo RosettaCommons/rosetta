@@ -89,7 +89,7 @@ OmegaTetherEnergy::residue_energy(
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
 	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ) return;
 
-	if ( rsd.is_protein() || rsd.type().is_aramid() ) {
+	if ( rsd.is_protein() || rsd.is_peptoid() || rsd.type().is_aramid() ) {
 		Real omega_score, dscore_domega, dscore_dphi, dscore_dpsi;
 		potential_.eval_omega_score_residue( rsd, omega_score, dscore_domega, dscore_dphi, dscore_dpsi );
 		emap[ omega ] += omega_score;
@@ -126,7 +126,7 @@ OmegaTetherEnergy::eval_residue_dof_derivative(
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( rsd.has_variant_type( core::chemical::REPLONLY ) || !rsd.is_protein() ) {
+	if ( rsd.has_variant_type( core::chemical::REPLONLY ) || !( rsd.is_protein() || rsd.is_peptoid() || rsd.type().is_aramid() ) ) {
 		return 0.0;
 	}
 
@@ -138,7 +138,7 @@ OmegaTetherEnergy::eval_residue_dof_derivative(
 	if ( tor_id.valid() &&
 			tor_id.type() == id::BB &&
 			(tor_id.torsion() == index_phi || tor_id.torsion() == index_psi || tor_id.torsion() == index_omega) &&
-			rsd.is_protein()
+			( rsd.is_protein() || rsd.is_peptoid() || rsd.type().is_aramid() )
 			) {
 		Real omega_score, dscore_domega, dscore_dphi, dscore_dpsi;
 		potential_.eval_omega_score_residue( rsd, omega_score, dscore_domega, dscore_dphi, dscore_dpsi );

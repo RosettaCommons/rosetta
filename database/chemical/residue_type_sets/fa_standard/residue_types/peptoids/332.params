@@ -1,0 +1,72 @@
+# A peptoid with a side-chain like DAB (2,4-diaminobutyric acid).
+# Params file added by Vikram K. Mulligan, Flatiron Institute (vmulligan@flatironinstitute.org)
+# on 26 November 2018.  The geometry was created in Avogadro, and optimized first with molecular
+# mechanics (MMFF94s force field), and then with QM methods (STO-6G approximation) using GAMESS.
+# Note: I'll use the convention of 33x = lysine-like sidechain with x methylene groups.
+NAME 332
+IO_STRING 332 X
+TYPE POLYMER
+AA UNK
+ATOM  N   Npro  X   -0.29
+ATOM  CA  CH2   X   0.09
+ATOM  C   CNH2  X   0.23
+ATOM  O   ONH2  X   -0.27
+ATOM 2HA  Hapo  X   0.06
+ATOM 1HA  Hapo  X   0.06
+ATOM CA1  CH2   X   -0.00
+ATOM  CB  CH2   X   -0.08
+ATOM  NG  Nlys  X   0.38
+ATOM 3HG  Hpol  X   -0.09
+ATOM 2HG  Hpol  X   -0.09
+ATOM 1HG  Hpol  X   -0.09
+ATOM 1HB  Hapo  X   0.01
+ATOM 2HB  Hapo  X   0.01
+ATOM 3HA  Hapo  X   0.04
+ATOM 4HA  Hapo  X   0.04
+LOWER_CONNECT N
+UPPER_CONNECT C
+BOND_TYPE 2HA   CA  1   
+BOND_TYPE 3HA  CA1  1   
+BOND_TYPE 1HA   CA  1   
+BOND_TYPE  CA   N   1   
+BOND_TYPE  CA   C   1   
+BOND_TYPE 3HG   NG  1   
+BOND_TYPE CA1  4HA  1   
+BOND_TYPE CA1   N   1   
+BOND_TYPE CA1   CB  1   
+BOND_TYPE  C    O   2   
+BOND_TYPE 2HG   NG  1   
+BOND_TYPE  NG   CB  1   
+BOND_TYPE  NG  1HG  1   
+BOND_TYPE 1HB   CB  1   
+BOND_TYPE  CB  2HB  1   
+CHI 1  CA    N    CA1  CB  
+CHI 2  N     CA1  CB   NG
+CHI 3  CA1   CB   NG   1HG
+PROTON_CHI 3 SAMPLES 3 30 60 90 EXTRA 1 15
+NBR_ATOM  CA1
+NBR_RADIUS 6.477477
+FIRST_SIDECHAIN_ATOM CA1
+PROPERTIES PEPTOID ACHIRAL_BACKBONE ACHIRAL_SIDECHAIN POLAR CHARGED POSITIVE_CHARGE
+RAMA_PREPRO_FILENAME scoring/score_functions/rama/n_methyl/sarcosine_ramatable_MM.txt scoring/score_functions/rama/n_methyl/sarcosine_ramatable_prepro_MM.txt
+RAMA_PREPRO_RESNAME GENERIC_NMETHYLGLYCINE_AA
+ICOOR_INTERNAL    N      0.000000    0.000000    0.000000   N     CA    C
+ICOOR_INTERNAL    CA     0.000000  180.000000    1.458001   N     CA    C
+ICOOR_INTERNAL    C      0.000000   68.799995    1.523259   CA    N     C
+ICOOR_INTERNAL  UPPER  180.000000   63.800018    1.328685   C     CA    N
+ICOOR_INTERNAL    O   -180.000000   59.200005    1.231015   C     CA  UPPER
+ICOOR_INTERNAL   1HA   120.000000   70.500000    1.089761   CA    N     C
+ICOOR_INTERNAL   2HA   120.000000   70.500000    1.089761   CA    N    1HA
+ICOOR_INTERNAL  LOWER -180.000000   58.300003    1.328685   N     CA    C
+ICOOR_INTERNAL    CA1 -180.000000   61.258547    1.474833   N     CA   LOWER 
+ICOOR_INTERNAL    CB    95.865196   68.156386    1.542750   CA1   N     CA 
+ICOOR_INTERNAL    NG   -68.848404   69.653758    1.506252   CB   CA1    N  
+ICOOR_INTERNAL   3HG   -75.846166   64.693836    1.018890   NG    CB   CA1 
+ICOOR_INTERNAL   2HG   126.887675   68.173377    1.174691   NG    CB   3HG 
+ICOOR_INTERNAL   1HG   112.162058   70.877866    1.058884   NG    CB   2HG 
+ICOOR_INTERNAL   1HB  -114.304590   72.197398    1.106970   CB   CA1    NG 
+ICOOR_INTERNAL   2HB  -118.836935   66.883784    1.090203   CB   CA1   1HB 
+ICOOR_INTERNAL   3HA  -123.147272   71.295687    1.091061  CA1    N     CB 
+ICOOR_INTERNAL   4HA  -116.479734   71.334969    1.091749  CA1    N    3HA
+NCAA_ROTLIB_PATH ../ncaa_rotlibs/ncaa_rotamer_libraries/peptoid/332.rotlib
+NCAA_ROTLIB_NUM_ROTAMER_BINS 2 3 3

@@ -1,5 +1,5 @@
 -in:file:native inputs/tetrahedral_test.pdb
--nstruct 3
+-nstruct 1
 -output_virtual true
 -write_all_connect_info
 -cyclic_peptide:sequence_file inputs/seq.txt

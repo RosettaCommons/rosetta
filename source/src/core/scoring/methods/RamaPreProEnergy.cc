@@ -210,10 +210,7 @@ RamaPreProEnergy::version() const {
 }
 
 bool RamaPreProEnergy::is_allowed_type( core::chemical::ResidueType const & rt ) const {
-	if ( rt.is_protein() ) return true;
-	if ( rt.is_aramid() ) return true;
-
-	return false;
+	return ( rt.is_protein() || rt.is_aramid() || rt.is_peptoid() );
 }
 
 } // namespace methods

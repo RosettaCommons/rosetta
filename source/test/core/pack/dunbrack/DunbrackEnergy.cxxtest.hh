@@ -33,6 +33,7 @@
 
 #include <basic/Tracer.hh>
 #include <basic/basic.hh>
+#include <basic/Tracer.hh>
 
 //Auto Headers
 #include <utility/vector1.hh>
@@ -96,7 +97,7 @@ public:
 		//debug_assert( std::abs( nbins * angle_step - angle_range ) < 1e-15 );
 
 		Real real_bin_lower = ( ang - angle_start ) / angle_step;
-		TR << "rea_bin_lower " << real_bin_lower << std::endl;
+		TR << "real_bin_lower " << real_bin_lower << std::endl;
 		Size bin_prev = static_cast< Size > ( real_bin_lower );
 		TR << "bin_prev      " << bin_prev << std::endl;
 		bin_lower = 1 + numeric::mod( bin_prev, nbins );

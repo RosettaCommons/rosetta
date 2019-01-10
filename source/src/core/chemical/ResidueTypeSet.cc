@@ -642,16 +642,17 @@ ResidueTypeSet::get_base_types_name3( std::string const & name3 ) const {
 	return ResidueTypeFinder( *this ).name3( name3 ).get_possible_base_residue_types();
 }
 
-/// @brief Given a D-residue, get its L-equivalent.
+/// @brief Given an L-residue, get its D-equivalent.
 /// @details Returns NULL if there is no equivalent, true otherwise.  Throws an error if this is not a D-residue.
 /// Preserves variant types.
+/// @note Works for L-amino acids and L-peptoids (peptoids with chiral "L" sidechains").
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
 ResidueTypeCOP
 ResidueTypeSet::get_d_equivalent(
 	ResidueTypeCOP l_rsd
 ) const {
 	runtime_assert_string_msg( l_rsd, "Error in core::chemical::ResidueTypeSet::get_d_equivalent(): A null pointer was passed to this function!" );
-	runtime_assert_string_msg( l_rsd->is_l_aa(), "Error in core::chemical::ResidueTypeSet::get_d_equivalent(): The residue passed to this function is not an L_AA!" );
+	runtime_assert_string_msg( l_rsd->is_l_aa() || l_rsd->is_s_peptoid(), "Error in core::chemical::ResidueTypeSet::get_d_equivalent(): The residue passed to this function is not an L_AA or S_PEPTOID!" );
 
 	ResidueTypeCOP l_basetype( l_rsd->get_base_type_cop() );
 	if ( !l_to_d_mapping_.count(l_basetype) ) return ResidueTypeCOP(); //Returns NULL pointer if there's no D-equivalent.
@@ -667,16 +668,17 @@ ResidueTypeSet::get_d_equivalent(
 	return d_rsd;
 }
 
-/// @brief Given an L-residue, get its D-equivalent.
+/// @brief Given an D-residue, get its L-equivalent.
 /// @details Returns NULL if there is no equivalent, true otherwise.  Throws an error if this is not an L-residue.
 /// Preserves variant types.
+/// @note Works for D-amino acids and D-peptoids (peptoids with chiral "D" sidechains").
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
 ResidueTypeCOP
 ResidueTypeSet::get_l_equivalent(
 	ResidueTypeCOP d_rsd
 ) const {
 	runtime_assert_string_msg( d_rsd, "Error in core::chemical::ResidueTypeSet::get_l_equivalent(): A null pointer was passed to this function!" );
-	runtime_assert_string_msg( d_rsd->is_d_aa(), "Error in core::chemical::ResidueTypeSet::get_l_equivalent(): The residue passed to this function is not a D_AA!" );
+	runtime_assert_string_msg( d_rsd->is_d_aa() || d_rsd->is_r_peptoid(), "Error in core::chemical::ResidueTypeSet::get_l_equivalent(): The residue passed to this function is not a D_AA or R_PEPTOID!" );
 
 	ResidueTypeCOP d_basetype( d_rsd->get_base_type_cop() );
 	if ( !d_to_l_mapping_.count(d_basetype) ) return ResidueTypeCOP(); //Returns NULL pointer if there's no D-equivalent.
@@ -699,15 +701,16 @@ ResidueTypeCOP
 ResidueTypeSet::get_mirrored_type(
 	ResidueTypeCOP original_rsd
 ) const {
-	if ( original_rsd->is_achiral_backbone() ) return original_rsd;
+	if ( original_rsd->is_achiral_backbone() && original_rsd->is_achiral_sidechain() ) return original_rsd;
 
 	if ( original_rsd->is_ligand() ) return original_rsd; // fd
 
-	runtime_assert_string_msg( original_rsd->is_d_aa() || original_rsd->is_l_aa(), "Error in core::chemical::ResidueTypeSet::get_mirror_type(): The residue type must be achiral, or must have the D_AA or L_AA property." );
+	runtime_assert_string_msg( original_rsd->is_d_aa() || original_rsd->is_l_aa() || original_rsd->is_r_peptoid() || original_rsd->is_s_peptoid(), "Error in core::chemical::ResidueTypeSet::get_mirror_type(): The residue type must be achiral, or must have one of the D_AA, L_AA, R_PEPTOID, or S_PEPTOID properties." );
 
-	if ( original_rsd->is_d_aa() ) return get_l_equivalent(original_rsd);
-	if ( original_rsd->is_l_aa() ) return get_d_equivalent(original_rsd);
+	if ( original_rsd->is_d_aa() || original_rsd->is_r_peptoid() ) return get_l_equivalent(original_rsd);
+	if ( original_rsd->is_l_aa() || original_rsd->is_s_peptoid() ) return get_d_equivalent(original_rsd);
 
+	utility_exit_with_message( "Error in core::chemical::ResidueTypeSet::get_mirrored_type(): Couldn't get mirrored type for " + original_rsd->name() + "!" );
 	return ResidueTypeCOP();
 }
 

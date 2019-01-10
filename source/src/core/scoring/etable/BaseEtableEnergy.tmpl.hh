@@ -332,7 +332,7 @@ BaseEtableEnergy< Derived >::finalize_total_energy(
 
 					conformation::Atom const & jatom( ires.atom(jj) );
 					static_cast< Derived const & > (*this).intrares_evaluator().atom_pair_energy( iatom, jatom, cp_weight, tbenergy_map, dsq );
-					if ( !ires.is_protein() ) {
+					if ( !ires.is_protein() && !ires.is_peptoid() ) {
 						static_cast< Derived const & > (*this).nonprot_intrares_evaluator().atom_pair_energy( iatom, jatom, cp_weight, tbenergy_map, dsq );
 					}
 				}
@@ -712,7 +712,7 @@ BaseEtableEnergy< Derived >::determine_crossover_behavior(
 			res1.type().is_polymer() && res2.type().is_polymer() && res1.is_polymer_bonded(res2)
 			) {
 		if ( ( !sfxn.has_zero_weight( mm_twist ) && sfxn.has_zero_weight( rama )) ||
-				( ( !res1.is_protein() || !res2.is_protein()) &&
+				( ( ( !res1.is_protein() && !res1.is_peptoid() ) || ( !res2.is_protein() && !res2.is_peptoid() ) ) &&
 				( !res1.is_RNA() || !res2.is_RNA())
 				) ) {
 			return CP_CROSSOVER_3;
@@ -1290,7 +1290,7 @@ BaseEtableEnergy< Derived >::eval_intrares_energy_ext(
 		conformation::Atom const & atom1( rsd.atom( neighbs[ ii ].atomno1() ) );
 		conformation::Atom const & atom2( rsd.atom( neighbs[ ii ].atomno2() ) );
 		static_cast< Derived const & > (*this).intrares_evaluator().atom_pair_energy( atom1, atom2, neighbs[ ii ].weight(), emap, dsq );
-		if ( !rsd.is_protein() ) {
+		if ( !rsd.is_protein() && !rsd.is_peptoid() ) {
 			static_cast< Derived const & > (*this).nonprot_intrares_evaluator().atom_pair_energy( atom1, atom2, neighbs[ ii ].weight(), emap, dsq );
 		}
 
@@ -1361,7 +1361,7 @@ BaseEtableEnergy< Derived >::eval_intrares_derivatives(
 		conformation::Atom const & atom1( rsd.atom( neighbs[ ii ].atomno1() ) );
 		conformation::Atom const & atom2( rsd.atom( neighbs[ ii ].atomno2() ) );
 		Real dE_dR_over_r( evaluator.eval_dE_dR_over_r( atom1, atom2, weights, f1, f2 ) );
-		if ( !rsd.is_protein() ) {
+		if ( !rsd.is_protein() && !rsd.is_peptoid() ) {
 			dE_dR_over_r += nonprot_evaluator.eval_dE_dR_over_r( atom1, atom2, weights, f1, f2 );
 		}
 		if ( dE_dR_over_r != 0.0 ) {
@@ -1543,7 +1543,7 @@ BaseEtableEnergy< Derived >::eval_atom_derivative(
 				Real const cp_weight( nbr.weight() );  // do not use nbr->weight_func() here
 				conformation::Atom const & atom2( pose.residue( nbr.rsd() ).atom( nbr.atomno() ) );
 				Real dE_dR_over_r( intrares_evaluator.eval_dE_dR_over_r( atom1, atom2, weights, f1, f2 ) );
-				if ( !pose.residue( idresid ).is_protein() ) {
+				if ( !pose.residue( idresid ).is_protein() && !pose.residue( idresid ).is_peptoid() ) {
 					dE_dR_over_r += nonprot_intrares_evaluator.eval_dE_dR_over_r( atom1, atom2, weights, f1, f2 );
 				}
 				//std::cout << "  gold atom deriv: " << idresid << " " << id.atomno() << " with " << nbr.rsd() << " " << nbr.atomno() << ". w= " << nbr.weight() << " dE_dR_over_r: " << dE_dR_over_r << std::endl ;

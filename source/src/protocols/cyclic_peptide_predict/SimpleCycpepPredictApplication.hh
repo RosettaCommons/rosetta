@@ -29,6 +29,7 @@
 #include <protocols/cyclic_peptide/DeclareBond.fwd.hh>
 #include <protocols/denovo_design/movers/FastDesign.fwd.hh>
 #include <protocols/filters/BasicFilters.fwd.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/Ramachandran.hh>
 #include <core/io/silent/SilentStruct.fwd.hh>
@@ -103,6 +104,10 @@ public:
 	/// @brief Set the cyclization type.
 	///
 	void set_cyclization_type( SCPA_cyclization_type const type_in );
+
+	/// @brief Set whether we should use the chainbreak energy (true) or constraints (false) to enforce
+	/// terminal amide bond geometry.
+	void set_use_chainbreak_energy( bool const setting );
 
 	/// @brief Sets the default scorefunction to use.
 	/// @details The scorefunction is cloned.  The high-hbond version is constructed
@@ -267,6 +272,11 @@ public:
 private:
 	/// ------------- Methods ----------------------------
 
+	/// @brief Is a residue type supported for macrocycle structure prediction?
+	/// @details Currently returns true for alpha-, beta-, or gamma-amino acids and for peptoids,
+	/// false otherwise.  This will be expanded in the future.
+	bool is_supported_restype( core::chemical::ResidueType const & restype ) const;
+
 	/// @brief Is this residue to be ignored in calculating RMSDs?
 	bool is_residue_ignored_in_rms( core::Size const res_index ) const;
 
@@ -309,6 +319,13 @@ private:
 	void build_polymer(
 		core::pose::PoseOP pose,
 		utility::vector1<std::string> const &restypes
+	) const;
+
+	/// @brief Add N-methylation.
+	///
+	void add_n_methylation(
+		core::pose::PoseOP pose,
+		core::Size const cyclic_offset
 	) const;
 
 	/// @brief Given the name of a Rama_Table_Type, set the default Rama_Table_Type.
@@ -398,6 +415,10 @@ private:
 		core::pose::PoseOP native_pose,
 		core::Size const expected_residue_count
 	) const;
+
+	/// @brief Add cutpoint variants to the terminal residues of an N-to-C cyclic peptide.
+	///
+	void add_cutpoint_variants_at_termini( core::pose::PoseOP pose ) const;
 
 	/// @brief Function to add cyclic constraints to a pose.
 	/// @details This version does this for N-to-C amide bonds and isopeptide bonds.
@@ -664,6 +685,10 @@ private:
 	/// @details Const-access only.
 	inline SCPA_cyclization_type cyclization_type() const { return cyclization_type_; }
 
+	/// @brief Should we use the chainbreak energy (true) or constraints (false) to enforce terminal amide bond geometry?
+	inline bool use_chainbreak_energy() const { return use_chainbreak_energy_; }
+
+
 	/// @brief Given a pose, return the index of the first residue that can form a disulfide.
 	/// @details Throws an error if no residue is found.
 	core::Size find_first_disulf_res( core::pose::PoseCOP pose ) const;
@@ -704,6 +729,10 @@ private:
 	/// @brief The type of cyclization.
 	///
 	SCPA_cyclization_type cyclization_type_;
+
+	/// @brief Should we use the chainbreak energy (true) or constraints (false) to enforce terminal amide bond geometry?
+	/// @details True by default (use chainbreak energy).
+	bool use_chainbreak_energy_;
 
 	/// @brief The default ScoreFunction to use.  The high h-bond version is constructed from this.
 	///
@@ -972,6 +1001,10 @@ private:
 	/// @brief Should we use rama_prepro tables for sampling?
 	/// @details Default true.
 	bool use_rama_prepro_for_sampling_;
+
+	/// @brief List of positions (in original sequence indexing -- not permuted) that are N-methylated.
+	/// @details Defaults to empty list.
+	utility::vector1< core::Size > n_methyl_positions_;
 
 	/// @brief List of positions linked by 1,3,5-tris(bromomethyl)benzene.
 	/// @details This is a vector of lists of three residues.

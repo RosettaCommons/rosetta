@@ -67,8 +67,8 @@ bit_is_set(
 // AMW: WHY IS n_bb SEPARATE???
 template< Size N >
 inline Size make_index(
-	utility::fixedsizearray1< Size, N > num_bins,
-	utility::fixedsizearray1< Size, N > bb_bin
+	utility::fixedsizearray1< Size, N > const & num_bins,
+	utility::fixedsizearray1< Size, N > const & bb_bin
 ) {
 	Size index = 1;
 	for ( Size bbi = 1; bbi <= N; ++bbi ) {
@@ -88,8 +88,8 @@ inline Size make_index(
 // AMW: this makes ZERO SENSE.
 template< Size N >
 inline Size make_index(
-	utility::fixedsizearray1< Size, N > num_bins,
-	utility::fixedsizearray1< Size, N+1 > bb_bin
+	utility::fixedsizearray1< Size, N > const & num_bins,
+	utility::fixedsizearray1< Size, N+1 > const & bb_bin
 ) {
 	Size index = 1;
 	for ( Size bbi = 1; bbi <= N; ++bbi ) {
@@ -101,7 +101,7 @@ inline Size make_index(
 /// @brief Variant of above make_index function for bb_bin as a vector.
 template< Size N >
 inline Size make_index(
-	utility::fixedsizearray1< Size, N > num_bins,
+	utility::fixedsizearray1< Size, N > const & num_bins,
 	utility::vector1< Size > const & bb_bin
 ) {
 	debug_assert( bb_bin.size() == N );
@@ -706,6 +706,13 @@ interpolate_polylinear_by_value(
 	utility::fixedsizearray1< double, N > & dval_dbb
 ) {
 	debug_assert( N != 0 );
+
+#ifndef NDEBUG
+	for ( core::Size i(1); i<=N; ++i ) {
+		debug_assert( bbd[i] >= -1e-5 && bbd[i] <= 1.0 + 1e-5 );
+		debug_assert( binrange[i] > 1e-12 );
+	}
+#endif
 
 	if ( angles ) {
 		interpolate_polylinear_by_value_angles_degrees( vals, bbd, binrange, val, dval_dbb );

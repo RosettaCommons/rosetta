@@ -39,6 +39,7 @@
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/util.hh>
 #include <core/chemical/AA.hh>
+#include <core/kinematics/FoldTree.hh>
 
 using namespace std;
 
@@ -96,12 +97,42 @@ public:
 				core::pose::PoseOP mirr_cutpoint_i( mirror_poses[i]->clone() );
 				core::pose::correctly_add_cutpoint_variants( *cutpoint_i, nposes, false, 1 );
 				core::pose::correctly_add_cutpoint_variants( *mirr_cutpoint_i,nposes, false, 1 );
+
+				core::Size const maxres( cutpoint_i->total_residue() );
+				std::stringstream new_fold_tree;
+				new_fold_tree << "FOLD_TREE EDGE 2 1 -1 EDGE 2 " << maxres << " -1";
+				core::kinematics::FoldTree foldtree;
+				new_fold_tree >> foldtree;
+				cutpoint_i->fold_tree(foldtree);
+				mirr_cutpoint_i->fold_tree(foldtree);
+
 				cutpoint_i->set_phi(1, poses[i]->phi(1));
 				cutpoint_i->set_psi(nposes, poses[i]->psi(nposes));
 				cutpoint_i->set_omega(nposes, poses[i]->omega(nposes) );
 				mirr_cutpoint_i->set_phi(1, mirror_poses[i]->phi(1));
 				mirr_cutpoint_i->set_psi(nposes, mirror_poses[i]->psi(nposes));
 				mirr_cutpoint_i->set_omega(nposes, mirror_poses[i]->omega(nposes) );
+
+				//Need to update atomic coordinates:
+				{
+					core::pose::PoseOP curpose( poses[i] );
+					core::pose::PoseOP curmirrorpose( mirror_poses[i] );
+					for ( core::Size ir(1); ir<=maxres; ++ir ) {
+						for ( core::Size ia(1), iamax( cutpoint_i->residue(ir).natoms() ); ia<=iamax; ++ia ) {
+							std::string const curat( cutpoint_i->residue(ir).atom_name( ia ) );
+							if ( curpose->residue(ir).has( curat ) ) {
+								cutpoint_i->set_xyz( core::id::AtomID(ia, ir), curpose->xyz( core::id::NamedAtomID( curat, ir ) ) );
+							}
+							if ( curmirrorpose->residue(ir).has( curat ) ) {
+								mirr_cutpoint_i->set_xyz( core::id::AtomID(ia, ir), curmirrorpose->xyz( core::id::NamedAtomID( curat, ir ) ) );
+							}
+						}
+					}
+				}
+
+				cutpoint_i->update_residue_neighbors();
+				mirr_cutpoint_i->update_residue_neighbors();
+
 				(*sfxn)(*cutpoint_i);
 				(*sfxn)(*mirr_cutpoint_i);
 				if ( i==1 ) {

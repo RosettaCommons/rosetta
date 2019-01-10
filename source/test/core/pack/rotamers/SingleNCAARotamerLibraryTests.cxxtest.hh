@@ -245,6 +245,377 @@ public:
 		TR << std::endl;
 	}
 
+	/// @brief Check the behaviour of the Dunbrack potential just off the rotamer wells for the 001 peptoid.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void test_peptoid_001_off_rotamer_scoring() {
+		core::pose::Pose pose1, pose2;
+		core::pose::make_pose_from_sequence(pose1, "GX[001]G", "fa_standard");
+		core::pose::make_pose_from_sequence(pose2, "GX[001]G", "fa_standard");
+
+		static core::Real const omega_ctr( 20 );
+		static core::Real const phi_ctr( 20 );
+		static core::Real const psi_ctr( 20 );
+		utility::fixedsizearray1< core::Real, 2 > const chivals({85.5, 85.2});
+
+		pose1.set_phi(2, phi_ctr);
+		pose2.set_phi(2, -phi_ctr);
+		pose1.set_psi(2, psi_ctr);
+		pose2.set_psi(2, -psi_ctr);
+		pose1.set_omega(1, omega_ctr);
+		pose2.set_omega(1, -omega_ctr);
+		pose1.set_omega(2, 180);
+		pose2.set_omega(2, 180);
+		pose1.set_chi(1,2,chivals[1]);
+		pose2.set_chi(1,2,-chivals[1]);
+
+		for ( core::Size ii(1); ii<=chivals.size(); ++ii ) {
+
+			pose1.set_chi(1, 2, chivals[ii]);
+			pose2.set_chi(1, 2, -chivals[ii]);
+
+			core::scoring::ScoreFunction sfxn;
+			sfxn.set_weight( core::scoring::fa_dun, 1.0 );
+
+			TR << "\nPHI\tSCORE1\tSCORE2\n";
+
+			for ( short signed int i(-100), imax(100); i<=imax; ++i ) {
+				core::Real const trial_phi( phi_ctr + 0.1*i );
+				pose1.set_phi( 2, trial_phi );
+				pose2.set_phi( 2, -1.0*trial_phi );
+				pose1.update_residue_neighbors();
+				pose2.update_residue_neighbors();
+				core::Real const score1( (sfxn)(pose1) );
+				core::Real const score2( (sfxn)(pose2) );
+				TR << trial_phi << "\t" << score1 << "\t" << score2 << "\n";
+				TS_ASSERT_DELTA( score1, score2, 1e-6 );
+			}
+			TR << std::endl;
+
+			pose1.set_phi( 2, phi_ctr );
+			pose2.set_phi( 2, -phi_ctr );
+
+			TR << "\nPSI\tSCORE1\tSCORE2\n";
+
+			for ( short signed int i(-100), imax(100); i<=imax; ++i ) {
+				core::Real const trial_psi( psi_ctr + 0.1*i );
+				pose1.set_psi( 2, trial_psi );
+				pose2.set_psi( 2, -1.0*trial_psi );
+				pose1.update_residue_neighbors();
+				pose2.update_residue_neighbors();
+				core::Real const score1( (sfxn)(pose1) );
+				core::Real const score2( (sfxn)(pose2) );
+				TR << trial_psi << "\t" << score1 << "\t" << score2 << "\n";
+				TS_ASSERT_DELTA( score1, score2, 1e-6 );
+			}
+			TR << std::endl;
+
+			pose1.set_psi( 2, psi_ctr );
+			pose2.set_psi( 2, -psi_ctr );
+
+			TR << "\nOMEGA\tSCORE1\tSCORE2\n";
+
+			for ( short signed int i(-100), imax(100); i<=imax; ++i ) {
+				core::Real const trial_omega( omega_ctr + 0.1*i );
+				pose1.set_omega( 1, trial_omega );
+				pose2.set_omega( 1, -1.0*trial_omega );
+				pose1.update_residue_neighbors();
+				pose2.update_residue_neighbors();
+				core::Real const score1( (sfxn)(pose1) );
+				core::Real const score2( (sfxn)(pose2) );
+				TR << trial_omega << "\t" << score1 << "\t" << score2 << "\n";
+				TS_ASSERT_DELTA( score1, score2, 1e-6 );
+			}
+			TR << std::endl;
+
+			pose1.set_omega( 1, omega_ctr );
+			pose2.set_omega( 1, -omega_ctr );
+
+		}
+
+	}
+
+	/// @brief Check the behaviour of the Dunbrack potential just off the rotamer wells for the 001 peptoid.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void test_peptoid_001_off_rotamer_scoring_2() {
+		core::pose::Pose pose1, pose2;
+		core::pose::make_pose_from_sequence(pose1, "GX[001]G", "fa_standard");
+		core::pose::make_pose_from_sequence(pose2, "GX[001]G", "fa_standard");
+
+		static core::Real const omega_ctr( 170 );
+		static core::Real const phi_ctr( 60 );
+		static core::Real const psi_ctr( 40 );
+		utility::fixedsizearray1< core::Real, 2 > const chivals({119.45, 118.38});
+
+		pose1.set_phi(2, phi_ctr);
+		pose2.set_phi(2, -phi_ctr);
+		pose1.set_psi(2, psi_ctr);
+		pose2.set_psi(2, -psi_ctr);
+		pose1.set_omega(1, omega_ctr);
+		pose2.set_omega(1, -omega_ctr);
+		pose1.set_omega(2, 180);
+		pose2.set_omega(2, 180);
+		pose1.set_chi(1,2,chivals[1]);
+		pose2.set_chi(1,2,-chivals[1]);
+
+		static core::Real const increment(0.2);
+
+		for ( core::Size ii(1); ii<=chivals.size(); ++ii ) {
+
+			pose1.set_chi(1, 2, chivals[ii]);
+			pose2.set_chi(1, 2, -chivals[ii]);
+
+			core::scoring::ScoreFunction sfxn;
+			sfxn.set_weight( core::scoring::fa_dun, 1.0 );
+
+			TR << "\nPHI\tSCORE1\tSCORE2\n";
+
+			for ( short signed int i(-100), imax(100); i<=imax; ++i ) {
+				core::Real const trial_phi( phi_ctr + increment*i );
+				pose1.set_phi( 2, trial_phi );
+				pose2.set_phi( 2, -1.0*trial_phi );
+				pose1.update_residue_neighbors();
+				pose2.update_residue_neighbors();
+				core::Real const score1( (sfxn)(pose1) );
+				core::Real const score2( (sfxn)(pose2) );
+				TR << trial_phi << "\t" << score1 << "\t" << score2 << "\n";
+				TS_ASSERT_DELTA( score1, score2, 1e-6 );
+			}
+			TR << std::endl;
+
+			pose1.set_phi( 2, phi_ctr );
+			pose2.set_phi( 2, -phi_ctr );
+
+			TR << "\nPSI\tSCORE1\tSCORE2\n";
+
+			for ( short signed int i(-100), imax(100); i<=imax; ++i ) {
+				core::Real const trial_psi( psi_ctr + increment*i );
+				pose1.set_psi( 2, trial_psi );
+				pose2.set_psi( 2, -1.0*trial_psi );
+				pose1.update_residue_neighbors();
+				pose2.update_residue_neighbors();
+				core::Real const score1( (sfxn)(pose1) );
+				core::Real const score2( (sfxn)(pose2) );
+				TR << trial_psi << "\t" << score1 << "\t" << score2 << "\n";
+				TS_ASSERT_DELTA( score1, score2, 1e-6 );
+			}
+			TR << std::endl;
+
+			pose1.set_psi( 2, psi_ctr );
+			pose2.set_psi( 2, -psi_ctr );
+
+			TR << "\nOMEGA\tSCORE1\tSCORE2\n";
+
+			for ( short signed int i(-100), imax(100); i<=imax; ++i ) {
+				core::Real const trial_omega( omega_ctr + increment*i );
+				pose1.set_omega( 1, trial_omega );
+				pose2.set_omega( 1, -1.0*trial_omega );
+				pose1.update_residue_neighbors();
+				pose2.update_residue_neighbors();
+				core::Real const score1( (sfxn)(pose1) );
+				core::Real const score2( (sfxn)(pose2) );
+				TR << trial_omega << "\t" << score1 << "\t" << score2 << "\n";
+				TS_ASSERT_DELTA( score1, score2, 1e-6 );
+			}
+			TR << std::endl;
+
+			pose1.set_omega( 1, omega_ctr );
+			pose2.set_omega( 1, -omega_ctr );
+
+		}
+
+	}
+
+	/// @brief The 001 peptoid library revealed a weird issue with spikiness.
+	/// This test aims to zero in on one of the spikes.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void test_peptoid_001_spikes_in_dunbrack_landscape() {
+		core::pose::Pose pose1, pose2;
+		core::pose::make_pose_from_sequence(pose1, "GX[001]G", "fa_standard");
+		core::pose::make_pose_from_sequence(pose2, "GX[001]G", "fa_standard");
+
+		static core::Real const omega_ctr( 170 );
+		static core::Real const phi_ctr( 60 );
+		static core::Real const psi_ctr( 40 );
+		utility::fixedsizearray1< core::Real, 2 > const chivals({119.45, 118.38});
+
+		for ( core::Size i(1), imax(chivals.size()); i<=imax; ++i ) {
+			pose1.set_phi(2, phi_ctr - 0.1);
+			pose2.set_phi(2, -phi_ctr + 0.1);
+			pose1.set_psi(2, psi_ctr);
+			pose2.set_psi(2, -psi_ctr);
+			pose1.set_omega(1, omega_ctr);
+			pose2.set_omega(1, -omega_ctr);
+			pose1.set_omega(2, 180);
+			pose2.set_omega(2, 180);
+			pose1.set_chi(1,2,chivals[i]);
+			pose2.set_chi(1,2,-chivals[i]);
+
+			pose1.update_residue_neighbors();
+			pose2.update_residue_neighbors();
+
+			core::scoring::ScoreFunction sfxn, sfxn_rot, sfxn_dev;
+			sfxn.set_weight( core::scoring::fa_dun, 1.0 );
+			sfxn_rot.set_weight( core::scoring::fa_dun_rot, 1.0 );
+			sfxn_dev.set_weight( core::scoring::fa_dun_dev, 1.0 );
+			core::Real const score1( (sfxn)(pose1) );
+			core::Real const score2( (sfxn)(pose2) );
+			TS_ASSERT_DELTA( score1, score2, 1e-6 );
+			TS_ASSERT_LESS_THAN( score1, 10.0 );
+			TS_ASSERT_LESS_THAN( score2, 10.0 );
+
+			core::Real const score1_rot( (sfxn_rot)(pose1) );
+			core::Real const score2_rot( (sfxn_rot)(pose2) );
+			TS_ASSERT_DELTA( score1_rot, score2_rot, 1e-6 );
+			TS_ASSERT_LESS_THAN( score1_rot, 10.0 );
+			TS_ASSERT_LESS_THAN( score2_rot, 10.0 );
+
+			core::Real const score1_dev( (sfxn_dev)(pose1) );
+			core::Real const score2_dev( (sfxn_dev)(pose2) );
+			TS_ASSERT_DELTA( score1_dev, score2_dev, 1e-6 );
+			TS_ASSERT_LESS_THAN( score1_dev, 10.0 );
+			TS_ASSERT_LESS_THAN( score2_dev, 10.0 );
+		}
+	}
+
+	/// @brief The 001 peptoid library revealed a weird issue with spikiness.
+	/// This test aims to zero in on another one of the spikes.
+	/// @details This was a backbone bin that the Voronoi boundary passes through.  Initially,
+	/// the interpolation was not handling this correctly.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void test_peptoid_001_spikes_in_dunbrack_landscape_2() {
+		core::pose::Pose pose1, pose2;
+		core::pose::make_pose_from_sequence(pose1, "GX[001]G", "fa_standard");
+		core::pose::make_pose_from_sequence(pose2, "GX[001]G", "fa_standard");
+
+		static core::Real const omega_ctr( 170 );
+		static core::Real const phi_ctr( -57 );
+		static core::Real const psi_ctr( 2 );
+		utility::fixedsizearray1< core::Real, 2 > const chivals({119.45, 118.38});
+
+		for ( core::Size i(1), imax(chivals.size()); i<=imax; ++i ) {
+			pose1.set_phi(2, phi_ctr);
+			pose2.set_phi(2, -phi_ctr);
+			pose1.set_psi(2, psi_ctr);
+			pose2.set_psi(2, -psi_ctr);
+			pose1.set_omega(1, omega_ctr);
+			pose2.set_omega(1, -omega_ctr);
+			pose1.set_omega(2, 180);
+			pose2.set_omega(2, 180);
+			pose1.set_chi(1,2,chivals[i]);
+			pose2.set_chi(1,2,-chivals[i]);
+
+			pose1.update_residue_neighbors();
+			pose2.update_residue_neighbors();
+
+			core::scoring::ScoreFunction sfxn, sfxn_rot, sfxn_dev;
+			sfxn.set_weight( core::scoring::fa_dun, 1.0 );
+			sfxn_rot.set_weight( core::scoring::fa_dun_rot, 1.0 );
+			sfxn_dev.set_weight( core::scoring::fa_dun_dev, 1.0 );
+			core::Real const score1( (sfxn)(pose1) );
+			core::Real const score2( (sfxn)(pose2) );
+			TS_ASSERT_DELTA( score1, score2, 1e-6 );
+			TS_ASSERT_LESS_THAN( score1, 150.0 );
+			TS_ASSERT_LESS_THAN( score2, 150.0 );
+
+			core::Real const score1_rot( (sfxn_rot)(pose1) );
+			core::Real const score2_rot( (sfxn_rot)(pose2) );
+			TS_ASSERT_DELTA( score1_rot, score2_rot, 1e-6 );
+			TS_ASSERT_LESS_THAN( score1_rot, 150.0 );
+			TS_ASSERT_LESS_THAN( score2_rot, 150.0 );
+
+			core::Real const score1_dev( (sfxn_dev)(pose1) );
+			core::Real const score2_dev( (sfxn_dev)(pose2) );
+			TS_ASSERT_DELTA( score1_dev, score2_dev, 1e-6 );
+			TS_ASSERT_LESS_THAN( score1_dev, 150.0 );
+			TS_ASSERT_LESS_THAN( score2_dev, 150.0 );
+		}
+	}
+
+	/// @brief Confirm that the rotamer wells in the peptoid 001 rotamer library really do have
+	/// the appropriate score values.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void test_peptoid_001_rotamer_well_scoring() {
+		core::pose::Pose pose;
+		core::pose::make_pose_from_sequence(pose, "GX[001]G", "fa_standard");
+
+		utility::vector1< utility::fixedsizearray1< core::Real, 4 > > trial_conformations(5); //1=omega(n-1), 2=phi, 3=psi, 4=chi1
+		for ( core::Size i(1); i<=2; ++i ) {
+			trial_conformations[i][1] = -170;
+			trial_conformations[i][2] =  -60;
+			trial_conformations[i][3] =  -40;
+		}
+		for ( core::Size i(3); i<=4; ++i ) {
+			trial_conformations[i][1] =  170;
+			trial_conformations[i][2] =   60;
+			trial_conformations[i][3] =   40;
+		}
+		for ( core::Size j(1); j<=3; ++j ) {
+			trial_conformations[5][j] = 20;
+		}
+
+		trial_conformations[ 1][4] = -119.45;
+		trial_conformations[ 2][4] =   60.5;
+		trial_conformations[ 3][4] =  119.45;
+		trial_conformations[ 4][4] =  -60.5;
+		trial_conformations[ 5][4] = 85.5; //Actual well centre when averaged.
+
+		utility::vector1< core::Real > expected_energies( 5 );
+		expected_energies[ 1] = -std::log(0.6119685);
+		expected_energies[ 2] = -std::log(0.3880315);
+		expected_energies[ 3] = -std::log(0.6119685);
+		expected_energies[ 4] = -std::log(0.3880315);
+		expected_energies[ 5] = -std::log(0.523423);
+
+		core::scoring::ScoreFunction sfxn;
+		sfxn.set_weight( core::scoring::fa_dun, 1.0 );
+
+		TR << "OMEGA\tPHI\tPSI\tCHI1\tCHI2\tEXPECT\tACTUAL" << std::endl;
+
+		for ( core::Size i(1), imax(trial_conformations.size()); i<=imax; ++i ) {
+			pose.set_omega( 1, trial_conformations[i][1] );
+			pose.set_phi( 2, trial_conformations[i][2] );
+			pose.set_psi( 2, trial_conformations[i][3] );
+			pose.set_chi( 1, 2, trial_conformations[i][4] );
+
+			core::Real const actual_energy( sfxn(pose) );
+
+			TR << trial_conformations[i][1] << "\t" << trial_conformations[i][2] << "\t" << trial_conformations[i][3] << "\t" << trial_conformations[i][4] << "\t" << expected_energies[i] << "\t" << actual_energy << std::endl;
+			TS_ASSERT_DELTA( expected_energies[i], actual_energy, 1e-6 );
+		}
+		\
+			TR << std::endl;
+
+		pose.set_omega( 1, -172 );
+		pose.set_phi( 2, -62 );
+		pose.set_psi( 2, -42 );
+		pose.set_chi(1, 2, -121);
+		core::Real const comparison1( sfxn(pose) );
+		pose.set_omega( 1, 172 );
+		pose.set_phi( 2, 62 );
+		pose.set_psi( 2, 42 );
+		pose.set_chi(1, 2, 121);
+		core::Real const comparison2( sfxn(pose) );
+
+		TR << "Just off well centres A, energy1=" << comparison1 << " and energy2=" << comparison2 << std::endl;
+
+		TS_ASSERT_DELTA( comparison1, comparison2, 1e-6 );
+
+		pose.set_omega( 1, 20.65 );
+		pose.set_phi( 2, 21.03 );
+		pose.set_psi( 2, 19.99 );
+		pose.set_chi(1, 2, -86.74);
+		core::Real const comparison3( sfxn(pose) );
+		pose.set_omega( 1, -20.65 );
+		pose.set_phi( 2, -21.03 );
+		pose.set_psi( 2, -19.99 );
+		pose.set_chi(1, 2, 86.74);
+		core::Real const comparison4( sfxn(pose) );
+		TR << "Just off well centres B, energy3=" << comparison3 << " and energy4=" << comparison4 << std::endl;
+
+		TS_ASSERT_DELTA( comparison3, comparison4, 1e-6 );
+
+	}
+
 	/// @brief Confirm that the rotamer wells in the peptoid 601 rotamer library really do have
 	/// the appropriate score values.
 	void test_peptoid_601_rotamer_well_scoring() {
@@ -271,6 +642,63 @@ public:
 		trial_conformations[ 4][5] =   49.9;
 		trial_conformations[ 5][5] =   41.7;
 		trial_conformations[ 6][5] =  -44.0;
+
+		utility::vector1< core::Real > expected_energies( 6 );
+		expected_energies[ 1] = -std::log(0.993782);
+		expected_energies[ 2] = -std::log(0.006120);
+		expected_energies[ 3] = -std::log(0.000098);
+		expected_energies[ 4] = -std::log(1e-6);
+		expected_energies[ 5] = -std::log(1e-6);
+		expected_energies[ 6] = -std::log(1e-6);
+
+		core::scoring::ScoreFunction sfxn;
+		sfxn.set_weight( core::scoring::fa_dun, 1.0 );
+
+		TR << "OMEGA\tPHI\tPSI\tCHI1\tCHI2\tEXPECT\tACTUAL" << std::endl;
+
+		for ( core::Size i(1), imax(trial_conformations.size()); i<=imax; ++i ) {
+			pose.set_omega( 1, trial_conformations[i][1] );
+			pose.set_phi( 2, trial_conformations[i][2] );
+			pose.set_psi( 2, trial_conformations[i][3] );
+			pose.set_chi( 1, 2, trial_conformations[i][4] );
+			pose.set_chi( 2, 2, trial_conformations[i][5] );
+
+			core::Real const actual_energy( sfxn(pose) );
+
+			TR << trial_conformations[i][1] << "\t" << trial_conformations[i][2] << "\t" << trial_conformations[i][3] << "\t" << trial_conformations[i][4] << "\t" << trial_conformations[i][5] << "\t" << expected_energies[i] << "\t" << actual_energy << std::endl;
+			TS_ASSERT_DELTA( expected_energies[i], actual_energy, 1e-6 );
+		}
+
+		TR << std::endl;
+	}
+
+	/// @brief Confirm that the rotamer wells in the peptoid 602 rotamer library really do have
+	/// the appropriate score values.
+	/// @details This is the mirror image of the 601 peptoid.
+	void test_peptoid_602_rotamer_well_scoring() {
+		core::pose::Pose pose;
+		core::pose::make_pose_from_sequence(pose, "GX[602]G", "fa_standard");
+
+		utility::vector1< utility::fixedsizearray1< core::Real, 5 > > trial_conformations(6); //1=omega(n-1), 2=phi, 3=psi, 4=chi1, 5=chi2
+		for ( core::Size i(1); i<=6; ++i ) {
+			trial_conformations[i][1] = 170;
+			trial_conformations[i][2] =  60;
+			trial_conformations[i][3] =  40;
+		}
+
+		trial_conformations[ 1][4] =  -27.7;
+		trial_conformations[ 2][4] =  -79.4;
+		trial_conformations[ 3][4] =  -70.7;
+		trial_conformations[ 4][4] =  139.4;
+		trial_conformations[ 5][4] =  136.7;
+		trial_conformations[ 6][4] =    1.9;
+
+		trial_conformations[ 1][5] =  -74.0;
+		trial_conformations[ 2][5] = -102.0;
+		trial_conformations[ 3][5] =  -28.8;
+		trial_conformations[ 4][5] =  -49.9;
+		trial_conformations[ 5][5] =  -41.7;
+		trial_conformations[ 6][5] =   44.0;
 
 		utility::vector1< core::Real > expected_energies( 6 );
 		expected_energies[ 1] = -std::log(0.993782);
@@ -432,6 +860,106 @@ public:
 		TR << std::endl;
 	}
 
+
+	/// @brief Confirm that the rotamer wells in the N-methyl trp rotamer library really do have
+	/// the appropriate score values.
+	void test_nme_trp_rotamer_well_scoring() {
+		core::pose::Pose pose;
+		core::pose::make_pose_from_sequence(pose, "GX[TRP:N_Methylation]G", "fa_standard");
+
+		utility::vector1< utility::fixedsizearray1< core::Real, 4 > > trial_conformations(10); //1 = phi, 2=psi, 3=chi1, 4=chi2
+		trial_conformations[1][1] = -60.0; trial_conformations[1][2] = -40.0; trial_conformations[1][3] =  -179.3; trial_conformations[1][4] =    85.5;
+		trial_conformations[2][1] = -60.0; trial_conformations[2][2] = -40.0; trial_conformations[2][3] =   179.7; trial_conformations[2][4] =  -107.7;
+		trial_conformations[3][1] = -60.0; trial_conformations[3][2] = -40.0; trial_conformations[3][3] =   -73.6; trial_conformations[3][4] =   109.2;
+		trial_conformations[4][1] = -60.0; trial_conformations[4][2] = -40.0; trial_conformations[4][3] =   -70.5; trial_conformations[4][4] =   -11.5;
+		trial_conformations[5][1] = -60.0; trial_conformations[5][2] = -40.0; trial_conformations[5][3] =   -89.8; trial_conformations[5][4] =  -119.8;
+		trial_conformations[6][1] = -60.0; trial_conformations[6][2] = -40.0; trial_conformations[6][3] =    67.4; trial_conformations[6][4] =    -6.8;
+		trial_conformations[7][1] = -60.0; trial_conformations[7][2] = -40.0; trial_conformations[7][3] =    68.8; trial_conformations[7][4] =   -89.6;
+		trial_conformations[8][1] = -60.0; trial_conformations[8][2] = -40.0; trial_conformations[8][3] =  -173.7; trial_conformations[8][4] =    16.7;
+		trial_conformations[9][1] = -60.0; trial_conformations[9][2] = -40.0; trial_conformations[9][3] =    73.0; trial_conformations[9][4] =    91.3;
+		trial_conformations[10][1] = 69.5; trial_conformations[10][2] = 36.1; trial_conformations[10][3] = 69.653; trial_conformations[10][4] = 62.478;
+
+		utility::vector1< core::Real > expected_energies( 10 );
+		expected_energies[1] = -std::log(0.457354);
+		expected_energies[2] = -std::log(0.402953);
+		expected_energies[3] = -std::log(0.072650);
+		expected_energies[4] = -std::log(0.067044);
+		expected_energies[5] = -std::log(1e-6);
+		expected_energies[6] = -std::log(1e-6);
+		expected_energies[7] = -std::log(1e-6);
+		expected_energies[8] = -std::log(1e-6);
+		expected_energies[9] = -std::log(1e-6);
+		expected_energies[10] = 35477.0118;
+
+		core::scoring::ScoreFunction sfxn;
+		sfxn.set_weight( core::scoring::fa_dun, 1.0 );
+
+		TR << "PHI\tPSI\tCHI1\tCHI2\tEXPECT\tACTUAL" << std::endl;
+
+		for ( core::Size i(1), imax(trial_conformations.size()); i<=imax; ++i ) {
+			pose.set_phi( 2, trial_conformations[i][1] );
+			pose.set_psi( 2, trial_conformations[i][2] );
+			pose.set_chi( 1, 2, trial_conformations[i][3] );
+			pose.set_chi( 2, 2, trial_conformations[i][4] );
+
+			core::Real const actual_energy( sfxn(pose) );
+
+			TR << trial_conformations[i][1] << "\t" << trial_conformations[i][2] << "\t" << trial_conformations[i][3] << "\t" << trial_conformations[i][4] << "\t" << expected_energies[i] << "\t" << actual_energy << std::endl;
+			TS_ASSERT_DELTA( expected_energies[i], actual_energy, i==10 ? 1e-3 : 1e-6 );
+		}
+
+		TR << std::endl;
+	}
+
+	/// @brief Confirm that the rotamer wells in the N-methyl trp rotamer library really do have
+	/// the appropriate score values, when applied to the D-version of the residue.
+	void test_d_nme_trp_rotamer_well_scoring() {
+		core::pose::Pose pose;
+		core::pose::make_pose_from_sequence(pose, "GX[DTRP:N_Methylation]G", "fa_standard");
+
+		utility::vector1< utility::fixedsizearray1< core::Real, 4 > > trial_conformations(10); //1 = phi, 2=psi, 3=chi1, 4=chi2
+		trial_conformations[1][1] =   60.0; trial_conformations[1][2] =   40.0; trial_conformations[1][3] =    179.3; trial_conformations[1][4] =    -85.5;
+		trial_conformations[2][1] =   60.0; trial_conformations[2][2] =   40.0; trial_conformations[2][3] =   -179.7; trial_conformations[2][4] =    107.7;
+		trial_conformations[3][1] =   60.0; trial_conformations[3][2] =   40.0; trial_conformations[3][3] =     73.6; trial_conformations[3][4] =   -109.2;
+		trial_conformations[4][1] =   60.0; trial_conformations[4][2] =   40.0; trial_conformations[4][3] =     70.5; trial_conformations[4][4] =     11.5;
+		trial_conformations[5][1] =   60.0; trial_conformations[5][2] =   40.0; trial_conformations[5][3] =     89.8; trial_conformations[5][4] =    119.8;
+		trial_conformations[6][1] =   60.0; trial_conformations[6][2] =   40.0; trial_conformations[6][3] =    -67.4; trial_conformations[6][4] =      6.8;
+		trial_conformations[7][1] =   60.0; trial_conformations[7][2] =   40.0; trial_conformations[7][3] =    -68.8; trial_conformations[7][4] =     89.6;
+		trial_conformations[8][1] =   60.0; trial_conformations[8][2] =   40.0; trial_conformations[8][3] =    173.7; trial_conformations[8][4] =    -16.7;
+		trial_conformations[9][1] =   60.0; trial_conformations[9][2] =   40.0; trial_conformations[9][3] =    -73.0; trial_conformations[9][4] =    -91.3;
+		trial_conformations[10][1] = -69.5; trial_conformations[10][2] = -36.1; trial_conformations[10][3] = -69.653; trial_conformations[10][4] = -62.478;
+
+		utility::vector1< core::Real > expected_energies( 10 );
+		expected_energies[1] = -std::log(0.457354);
+		expected_energies[2] = -std::log(0.402953);
+		expected_energies[3] = -std::log(0.072650);
+		expected_energies[4] = -std::log(0.067044);
+		expected_energies[5] = -std::log(1e-6);
+		expected_energies[6] = -std::log(1e-6);
+		expected_energies[7] = -std::log(1e-6);
+		expected_energies[8] = -std::log(1e-6);
+		expected_energies[9] = -std::log(1e-6);
+		expected_energies[10] = 35477.0118;
+
+		core::scoring::ScoreFunction sfxn;
+		sfxn.set_weight( core::scoring::fa_dun, 1.0 );
+
+		TR << "PHI\tPSI\tCHI1\tCHI2\tEXPECT\tACTUAL" << std::endl;
+
+		for ( core::Size i(1), imax(trial_conformations.size()); i<=imax; ++i ) {
+			pose.set_phi( 2, trial_conformations[i][1] );
+			pose.set_psi( 2, trial_conformations[i][2] );
+			pose.set_chi( 1, 2, trial_conformations[i][3] );
+			pose.set_chi( 2, 2, trial_conformations[i][4] );
+
+			core::Real const actual_energy( sfxn(pose) );
+
+			TR << trial_conformations[i][1] << "\t" << trial_conformations[i][2] << "\t" << trial_conformations[i][3] << "\t" << trial_conformations[i][4] << "\t" << expected_energies[i] << "\t" << actual_energy << std::endl;
+			TS_ASSERT_DELTA( expected_energies[i], actual_energy, i==10 ? 1e-3 : 1e-6 );
+		}
+
+		TR << std::endl;
+	}
 
 	/// @brief Ensure that rotamer order doesn't matter in a rotamer library.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)

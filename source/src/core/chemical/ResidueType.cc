@@ -52,6 +52,7 @@
 #include <utility/py/PyAssert.hh>
 #include <utility/vector1.hh>
 #include <utility/graph/ring_detection.hh>
+#include <utility/pointer/memory.hh>
 
 // External headers
 #include <ObjexxFCL/FArray2D.hh>
@@ -524,7 +525,7 @@ ResidueType::operator=( ResidueType const & residue_type )
 ResidueTypeOP
 ResidueType::clone() const
 {
-	ResidueTypeOP rsd_ptr( new ResidueType( *this ) );
+	ResidueTypeOP rsd_ptr( utility::pointer::make_shared< ResidueType >( *this ) );
 	return rsd_ptr;
 }
 
@@ -533,13 +534,14 @@ ResidueType::clone() const
 ResidueTypeOP
 ResidueType::placeholder_clone() const
 {
-	ResidueTypeOP rsd( new ResidueType( atom_type_set_ptr(), element_set_ptr(), mm_atom_types_ptr(), orbital_types_ptr() ) );
+	ResidueTypeOP rsd( utility::pointer::make_shared< ResidueType>( atom_type_set_ptr(), element_set_ptr(), mm_atom_types_ptr(), orbital_types_ptr() ) );
 	rsd->name ( name() );
 	rsd->name1( name1() );
 	rsd->name3( name3() );
+	rsd->base_name( base_name() );
 	rsd->aa( aa() );
 	rsd->interchangeability_group( interchangeability_group() );
-	ResiduePropertiesOP properties( new ResidueProperties( *properties_, &( *rsd ) ) );
+	ResiduePropertiesOP properties( utility::pointer::make_shared< ResidueProperties >( *properties_, &( *rsd ) ) );
 	rsd->set_properties( properties );
 	// following would totally work, but needs atom_names -- might be a way to refactor?
 	// if ( properties->has_property( CARBOHYDRATE ) ) {
@@ -2485,6 +2487,14 @@ ResidueType::is_triazolemer() const
 	return properties_->has_property( TRIAZOLE_LINKER );
 }
 
+/// @brief Is this a D_AA, R_PEPTOID, or L_RNA?
+/// @details Convenience function to avoid quering is_d_aa(), is_r_peptoid(), and is_l_rna() repeatedly.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+bool
+ResidueType::is_mirrored_type() const {
+	return ( is_d_aa() || is_r_peptoid() || is_l_rna() );
+}
+
 bool
 ResidueType::is_d_aa() const
 {
@@ -2495,6 +2505,20 @@ bool
 ResidueType::is_l_aa() const
 {
 	return properties_->has_property( L_AA );
+}
+
+/// @brief Is this a peptoid with a chiral side-chain with "R" chirality?
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+bool
+ResidueType::is_r_peptoid() const {
+	return properties_->has_property( R_PEPTOID );
+}
+
+/// @brief Is this a peptoid with a chiral side-chain with "S" chirality?
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+bool
+ResidueType::is_s_peptoid() const  {
+	return properties_->has_property( S_PEPTOID );
 }
 
 bool
@@ -2509,10 +2533,25 @@ ResidueType::is_l_rna() const
 	return properties_->has_property( L_RNA );
 }
 
+/// @brief Is this residue N-methylated?
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+bool
+ResidueType::is_n_methylated() const {
+	return properties_->has_property( N_METHYLATED );
+}
+
 bool
 ResidueType::is_achiral_backbone() const
 {
 	return properties_->has_property( ACHIRAL_BACKBONE );
+}
+
+/// @brief Does this have an achiral sidechain?
+/// @details Includes gly and aib, and most (but not all) peptoids.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+bool
+ResidueType::is_achiral_sidechain() const {
+	return properties_->has_property( ACHIRAL_SIDECHAIN );
 }
 
 bool

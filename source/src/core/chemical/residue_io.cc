@@ -1335,6 +1335,18 @@ read_topology_file(
 			debug_assert( !( rsd->is_l_aa() && rsd->is_achiral_backbone() ) && !( rsd->is_d_aa() && rsd->is_achiral_backbone() ) ); //Double-check that a residue isn't both chiral and achiral.
 		}
 
+		// Add a similar check for chiral peptoids.  In this case, I'm not going to do any fancy detection; I'm just going to throw an error if Rosetta conventions aren't met.
+		// VKM 14 February 2018.
+		if ( rsd->is_peptoid() ) {
+			runtime_assert_string_msg( rsd->is_achiral_sidechain() || rsd->is_s_peptoid() || rsd->is_r_peptoid(), "Error in core::chemical::read_topology_file(): Residue type " + rsd->name() + " is a peptoid, but the params file specifies neither the ACHIRAL_SIDECHAIN property, nor the S_PEPTOID property, nor the R_PEPTOID property." );
+			runtime_assert_string_msg( !rsd->is_r_peptoid(), "Error in core::chemical::read_topology_file(): The Rosetta convention for peptoids with chiral sidechains is for only the S-chirality peptoid to be provided (as an odd-numbered three-digit params file starting with 6).  R-chirality peptoids are automatically generated from their S-chirality counterparts.  An R-chirality peptoid was wrongly provided for residue type " + rsd->name() + "." );
+			if ( rsd->is_s_peptoid() ) {
+				int peptoid_number( std::atoi( rsd->base_name().c_str() ) );
+				runtime_assert_string_msg( peptoid_number > 600 && peptoid_number < 700, "Error in core::chemical::read_topology_file(): The Rosetta convention for peptoids with chiral side-chains is for these residue types to have names consisting of three-digit numbers starting with 6.  S-peptoid residue type " + rsd->name() + " violates this convention." );
+				runtime_assert_string_msg( peptoid_number % 2 == 1, "Error in core::chemical::read_topology_file(): The Rosetta convention for peptoids with S-chirality side-chains is for these residue types to have names consisting of three-digit numbers starting with 6 that are odd.  S-peptoid residue type " + rsd->name() + " violates this convention." );
+			}
+		}
+
 		// RNA cannot have an achiral backbone at the sugar. MUST be L or D.
 		if ( rsd->is_RNA() && !rsd->is_d_rna() && !rsd->is_l_rna() ) {
 			bool is_d_na = false;

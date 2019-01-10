@@ -585,11 +585,8 @@ residue_types/peptoids/305.params
 ##residue_types/peptoids/509.params	# MAJOR: No MM atom type for ring nitrogen (but try toppar_all22_prot_pyridines.str), DBCHK: rosetta atom types to use histidine types
 #
 residue_types/peptoids/601.params
-#residue_types/peptoids/602.params
 #residue_types/peptoids/621.params
-#residue_types/peptoids/622.params
 #residue_types/peptoids/623.params
-#residue_types/peptoids/624.params
 #
 #residue_types/peptoids/701.params
 #residue_types/peptoids/702.params

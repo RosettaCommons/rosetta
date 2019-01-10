@@ -146,7 +146,7 @@ public:
 
 public:
 
-	/// @brief Make a new RotamerLibrary based on the option collection
+	/// @brief a new RotamerLibrary based on the option collection
 	/// @details The addtion of this constructor means that RotamerLibrary
 	/// is no longer a true singleton. That said, the anticipated usage of
 	/// RotamerLibrary is to use the single version initialized from the

@@ -1,9 +1,10 @@
 ## protein standard
 patches/D_AA.txt
+patches/RPEPTOID.txt
 patches/CtermProteinFull.txt
 patches/NtermProteinFull.txt
+patches/N_methylation.txt #Methyl group replacing amide proton in residues in the middle of a sequence (NOT N-termini).  Must precede protein_cutpoint_upper, unfortunately.
 patches/protein_cutpoint_upper.txt
-patches/peptoid_cutpoint_upper.txt #Note that there is no peptoid_cutpoint_lower.txt because the protein patch works for peptoids.
 patches/protein_cutpoint_lower.txt
 
 

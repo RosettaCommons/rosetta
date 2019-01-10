@@ -617,6 +617,15 @@ Patch::patched_name( ResidueType const & rsd ) const {
 		return "D" + rsd.name();
 	} else if ( name_ == "L" ) {
 		return "L" + rsd.name();
+	} else if ( name_ == "RPEPTOID" ) {
+		// Added by VKM, 14 February 2018: When patching an S-peptoid to an R-peptoid, increment the peptoid number by 1 and return the name with the increment.
+#ifndef NDEBUG
+		int peptoid_number( std::atoi( rsd.base_name().c_str() ) );
+#endif
+		debug_assert( peptoid_number > 600 && peptoid_number < 700 );
+		debug_assert( peptoid_number % 2 == 0 );
+		size_t const colon_pos( rsd.name().find( PATCH_LINKER ) );
+		return rsd.base_name() /*Note that the RPEPTOID patch has already incremented the base name number*/ + ( colon_pos == std::string::npos ? "" : rsd.name().substr( colon_pos ) );
 	} else {
 		return rsd.name() + PATCH_LINKER + name_;
 	}

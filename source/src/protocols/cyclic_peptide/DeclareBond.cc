@@ -89,16 +89,16 @@ void DeclareBond::apply( core::pose::Pose & pose )
 	using namespace core::chemical;
 
 	//printf("Stripping termini.\n"); fflush(stdout); //DELETE ME
-	if ( atom1_=="N" && (pose.residue(res1_).type().is_alpha_aa() || pose.residue(res1_).type().is_beta_aa()) && pose.residue(res1_).has_variant_type(LOWER_TERMINUS_VARIANT) ) {
+	if ( atom1_=="N" && ( pose.residue_type(res1_).is_alpha_aa() || pose.residue_type(res1_).is_beta_aa() || pose.residue_type(res1_).is_peptoid() ) && pose.residue(res1_).has_variant_type(LOWER_TERMINUS_VARIANT) ) {
 		core::pose::remove_variant_type_from_pose_residue(pose, LOWER_TERMINUS_VARIANT, res1_);
 	}
-	if ( atom2_=="N" && (pose.residue(res2_).type().is_alpha_aa() || pose.residue(res2_).type().is_beta_aa()) && pose.residue(res2_).has_variant_type(LOWER_TERMINUS_VARIANT) ) {
+	if ( atom2_=="N" && ( pose.residue_type(res2_).is_alpha_aa() || pose.residue_type(res2_).is_beta_aa() || pose.residue_type(res2_).is_peptoid() ) && pose.residue(res2_).has_variant_type(LOWER_TERMINUS_VARIANT) ) {
 		core::pose::remove_variant_type_from_pose_residue(pose, LOWER_TERMINUS_VARIANT, res2_);
 	}
-	if ( atom1_=="C" && (pose.residue(res1_).type().is_alpha_aa() || pose.residue(res1_).type().is_beta_aa()) && pose.residue(res1_).has_variant_type(UPPER_TERMINUS_VARIANT) ) {
+	if ( atom1_=="C" && ( pose.residue_type(res1_).is_alpha_aa() || pose.residue_type(res1_).is_beta_aa() || pose.residue_type(res1_).is_peptoid() ) && pose.residue(res1_).has_variant_type(UPPER_TERMINUS_VARIANT) ) {
 		core::pose::remove_variant_type_from_pose_residue(pose, UPPER_TERMINUS_VARIANT, res1_);
 	}
-	if ( atom2_=="C" && (pose.residue(res2_).type().is_alpha_aa() || pose.residue(res2_).type().is_beta_aa()) && pose.residue(res2_).has_variant_type(UPPER_TERMINUS_VARIANT) ) {
+	if ( atom2_=="C" && ( pose.residue_type(res2_).is_alpha_aa() || pose.residue_type(res2_).is_beta_aa() || pose.residue_type(res1_).is_peptoid() ) && pose.residue(res2_).has_variant_type(UPPER_TERMINUS_VARIANT) ) {
 		core::pose::remove_variant_type_from_pose_residue(pose, UPPER_TERMINUS_VARIANT, res2_);
 	}
 

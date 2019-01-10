@@ -94,6 +94,7 @@
 #include <protocols/cyclic_peptide/TryDisulfPermutations.hh>
 #include <protocols/score_filters/ScoreTypeFilter.hh>
 
+//N-methylation
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
 #include <protocols/simple_moves/ModifyVariantTypeMover.hh>
 
@@ -144,6 +145,7 @@ protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::register_opti
 
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::sequence_file                        );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::cyclization_type                     );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::use_chainbreak_energy                  );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::genkic_closure_attempts              );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::genkic_min_solution_count            );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::cyclic_permutations                  );
@@ -184,6 +186,7 @@ protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::register_opti
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::angle_length_relax_rounds            );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::cartesian_relax_rounds               );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::use_classic_rama_for_sampling        );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::n_methyl_positions                   );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::lariat_sidechain_index               );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::sidechain_isopeptide_indices         );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::TBMB_positions                       );
@@ -292,6 +295,7 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication(
 	my_rank_(0),
 	already_completed_job_count_(0),
 	cyclization_type_( SCPA_n_to_c_amide_bond ),
+	use_chainbreak_energy_(true),
 	scorefxn_(),
 	suppress_checkpoints_(false),
 	silent_out_(false),
@@ -356,6 +360,7 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication(
 	angle_length_relax_rounds_(0),
 	cartesian_relax_rounds_(0),
 	use_rama_prepro_for_sampling_(true),
+	n_methyl_positions_(),
 	tbmb_positions_(),
 	link_all_cys_with_tbmb_(false),
 	use_tbmb_filters_(true),
@@ -413,6 +418,7 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication( SimpleCycpepPred
 	my_rank_(src.my_rank_),
 	already_completed_job_count_( src.already_completed_job_count_ ),
 	cyclization_type_( src.cyclization_type_ ),
+	use_chainbreak_energy_( src.use_chainbreak_energy_ ),
 	scorefxn_(), //Cloned below
 	suppress_checkpoints_(src.suppress_checkpoints_),
 	silent_out_(src.silent_out_),
@@ -477,6 +483,7 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication( SimpleCycpepPred
 	angle_length_relax_rounds_(src.angle_length_relax_rounds_),
 	cartesian_relax_rounds_(src.cartesian_relax_rounds_),
 	use_rama_prepro_for_sampling_(src.use_rama_prepro_for_sampling_),
+	n_methyl_positions_(src.n_methyl_positions_),
 	tbmb_positions_(src.tbmb_positions_),
 	link_all_cys_with_tbmb_(src.link_all_cys_with_tbmb_),
 	use_tbmb_filters_(src.use_tbmb_filters_),
@@ -552,6 +559,9 @@ SimpleCycpepPredictApplication::initialize_from_options(
 		!( option[basic::options::OptionKeys::cyclic_peptide::require_symmetry_repeats]() > 2 && (cyclization_type() == SCPA_terminal_disulfide || cyclization_type() == SCPA_nterm_isopeptide_lariat || cyclization_type() == SCPA_cterm_isopeptide_lariat || cyclization_type() == SCPA_sidechain_isopeptide) ),
 		"Error in simple-cycpep_predict_app: quasi-symmetric sampling (\"-cyclic_peptide:require_symmetry_repeats\" flag) is incompatible with teriminal disulfide cyclization or with isopeptide bond cyclization (\"-cyclic_peptide:cyclization_type\" flag)."
 	);
+
+	//Set whether to use chainbreak energy:
+	set_use_chainbreak_energy( option[basic::options::OptionKeys::cyclic_peptide::use_chainbreak_energy]() );
 
 	//Copy options to private member variables:
 	sequence_file_ = option[basic::options::OptionKeys::cyclic_peptide::sequence_file]();
@@ -717,6 +727,16 @@ SimpleCycpepPredictApplication::initialize_from_options(
 		set_use_rama_prepro_for_sampling( !option[basic::options::OptionKeys::cyclic_peptide::use_classic_rama_for_sampling]() );
 	}
 
+	//Store the N-methylated positions.
+	if ( option[basic::options::OptionKeys::cyclic_peptide::n_methyl_positions].user() ) {
+		core::Size const npos( option[basic::options::OptionKeys::cyclic_peptide::n_methyl_positions]().size() );
+		n_methyl_positions_.resize( npos );
+		for ( core::Size i=1; i<=npos; ++i ) {
+			runtime_assert_string_msg( option[basic::options::OptionKeys::cyclic_peptide::n_methyl_positions]()[i] > 0, "Error in simple_cycpep_predict app: The N-methylated positions must all have indices greater than zero." );
+			n_methyl_positions_[i] = static_cast< core::Size >( option[basic::options::OptionKeys::cyclic_peptide::n_methyl_positions]()[i] );
+		}
+	}
+
 	//Store the TBMB positions.
 	if ( option[basic::options::OptionKeys::cyclic_peptide::TBMB_positions].user() ) {
 		runtime_assert_string_msg( !option[basic::options::OptionKeys::cyclic_peptide::link_all_cys_with_TBMB].user(), "Error in simple_cycpep_predict application: The \"-TBMB_positions\" flag and the \"-link_all_cys_with_TBMB\" flag cannot be used together." );
@@ -859,6 +879,15 @@ SimpleCycpepPredictApplication::set_cyclization_type(
 ) {
 	runtime_assert_string_msg( type_in != SCPA_invalid_type, "Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::set_cyclization_type(): The type provided is invalid!" );
 	cyclization_type_ = type_in;
+}
+
+/// @brief Set whether we should use the chainbreak energy (true) or constraints (false) to enforce
+/// terminal amide bond geometry.
+void
+SimpleCycpepPredictApplication::set_use_chainbreak_energy(
+	bool const setting
+) {
+	use_chainbreak_energy_ = setting;
 }
 
 
@@ -1448,9 +1477,11 @@ SimpleCycpepPredictApplication::run() const {
 	if ( sfxn_default->get_weight( core::scoring::atom_pair_constraint ) == 0.0 ) { sfxn_default_cst->set_weight( core::scoring::atom_pair_constraint, 1.0); }
 	if ( sfxn_default->get_weight( core::scoring::angle_constraint ) == 0.0 ) { sfxn_default_cst->set_weight( core::scoring::angle_constraint, 1.0); }
 	if ( sfxn_default->get_weight( core::scoring::dihedral_constraint ) == 0.0 ) { sfxn_default_cst->set_weight( core::scoring::dihedral_constraint, 1.0); }
+	if ( use_chainbreak_energy() && sfxn_default->get_weight( core::scoring::chainbreak ) == 0.0 ) { sfxn_default_cst->set_weight( core::scoring::chainbreak, 1.0 ); }
 	if ( sfxn_highhbond->get_weight( core::scoring::atom_pair_constraint ) == 0.0 ) { sfxn_highhbond_cst->set_weight( core::scoring::atom_pair_constraint, 1.0); }
 	if ( sfxn_highhbond->get_weight( core::scoring::angle_constraint ) == 0.0 ) { sfxn_highhbond_cst->set_weight( core::scoring::angle_constraint, 1.0); }
 	if ( sfxn_highhbond->get_weight( core::scoring::dihedral_constraint ) == 0.0 ) { sfxn_highhbond_cst->set_weight( core::scoring::dihedral_constraint, 1.0); }
+	if ( use_chainbreak_energy() && sfxn_highhbond->get_weight( core::scoring::chainbreak ) == 0.0 ) { sfxn_highhbond_cst->set_weight( core::scoring::chainbreak, 1.0 ); }
 	core::scoring::ScoreFunctionOP sfxn_highhbond_cst_cart, sfxn_default_cst_cart;
 	if ( angle_relax_rounds() > 0 || angle_length_relax_rounds() > 0 || cartesian_relax_rounds() > 0 ) {
 		sfxn_highhbond_cst_cart = sfxn_highhbond_cst->clone();
@@ -1567,11 +1598,19 @@ SimpleCycpepPredictApplication::run() const {
 		set_up_cyclization_mover( termini, pose ); //Handles the cyclization appropriately, contingent on the cyclization type.
 		termini->apply(*pose);
 
+		//Add cyclic constraints:
+		if ( cyclization_type() == SCPA_n_to_c_amide_bond  && use_chainbreak_energy() ) {
+			add_cutpoint_variants_at_termini(pose);
+		}
+
 		//Add cyclic constraints for appropriate cyclization type:
 		add_cyclic_constraints(pose);
 
 		//Set all omega values to 180 and randomize mainchain torsions:
 		set_mainchain_torsions(pose, cyclic_offset);
+
+		//Add N-methylation:
+		add_n_methylation( pose, cyclic_offset );
 
 #ifdef BOINC_GRAPHICS
 		// attach boinc graphics pose observer
@@ -1749,6 +1788,16 @@ SimpleCycpepPredictApplication::run() const {
 
 	end_checkpointing(); //Delete the checkpoint file at this point, since all jobs have completed.
 	return;
+}
+
+/// @brief Is a residue type supported for macrocycle structure prediction?
+/// @details Currently returns true for alpha-, beta-, or gamma-amino acids and for peptoids,
+/// false otherwise.  This will be expanded in the future.
+bool
+SimpleCycpepPredictApplication::is_supported_restype(
+	core::chemical::ResidueType const & restype
+) const {
+	return ( restype.is_alpha_aa() || restype.is_beta_aa() || restype.is_gamma_aa() || restype.is_peptoid() || restype.is_oligourea() );
 }
 
 /// @brief Is this residue to be ignored in calculating RMSDs?
@@ -1997,6 +2046,32 @@ SimpleCycpepPredictApplication::build_polymer(
 
 	return;
 } //build_polymer()
+
+/// @brief Add N-methylation.
+/// @details Must be called after pose is cyclized.
+void
+SimpleCycpepPredictApplication::add_n_methylation(
+	core::pose::PoseOP pose,
+	core::Size const cyclic_offset
+) const {
+	if ( n_methyl_positions_.size() == 0 ) { return; } //Do nothing if there's no N-methylation.
+
+	core::Size const nres(sequence_length());
+
+	TR << "Adding N-methylation" << std::endl;
+	protocols::simple_moves::ModifyVariantTypeMover add_nmethyl;
+	add_nmethyl.set_additional_type_to_add("N_METHYLATION");
+	core::select::residue_selector::ResidueIndexSelectorOP selector( new core::select::residue_selector::ResidueIndexSelector );
+	for ( core::Size i=1, imax=n_methyl_positions_.size(); i<=imax; ++i ) {
+		runtime_assert_string_msg( n_methyl_positions_[i] > 0  && n_methyl_positions_[i] <= nres, "Error in simple_cycpep_predict app: The N-methylation position indices must be within the pose!" );
+		int permuted_position( static_cast<int>(n_methyl_positions_[i]) - static_cast<int>(cyclic_offset) );
+		if ( permuted_position < 1 ) permuted_position += static_cast<int>(nres);
+		selector->append_index( static_cast<core::Size>(permuted_position) );
+	}
+	add_nmethyl.set_residue_selector(selector);
+	add_nmethyl.apply(*pose);
+
+}
 
 /// @brief Given the name of a Rama_Table_Type, set the default Rama_Table_Type.
 /// @details Error if unknown type.
@@ -2363,7 +2438,7 @@ SimpleCycpepPredictApplication::set_up_native (
 	// Count residues and find the last residue.
 	core::Size last_res(0), res_count(0);
 	for ( core::Size ir=1, irmax=native_pose->total_residue(); ir<=irmax; ++ir ) {
-		if ( native_pose->residue_type(ir).is_alpha_aa() || native_pose->residue_type(ir).is_oligourea() || native_pose->residue_type(ir).is_beta_aa() || native_pose->residue_type(ir).is_gamma_aa() ) {
+		if ( is_supported_restype( native_pose->residue_type(ir) ) ) {
 			++res_count;
 			last_res = ir;
 		}
@@ -2405,6 +2480,18 @@ SimpleCycpepPredictApplication::set_up_native (
 	termini->apply(*native_pose);
 }
 
+/// @brief Add cutpoint variants to the terminal residues of an N-to-C cyclic peptide.
+///
+void
+SimpleCycpepPredictApplication::add_cutpoint_variants_at_termini(
+	core::pose::PoseOP pose
+) const {
+	TR << "Setting up cutpoint variants." << std::endl;
+
+	core::pose::correctly_remove_variants_incompatible_with_lower_cutpoint_variant( *pose, pose->total_residue() );
+	core::pose::correctly_remove_variants_incompatible_with_upper_cutpoint_variant( *pose, 1 );
+	core::pose::correctly_add_cutpoint_variants( *pose, pose->total_residue(), false, 1 );
+}
 
 /// @brief Function to add cyclic constraints to a pose.
 ///
@@ -2549,12 +2636,12 @@ SimpleCycpepPredictApplication::set_mainchain_torsions (
 ) const {
 	TR << "Randomizing mainchain torsions." << std::endl;
 	core::Size const nres(sequence_length());
+	core::scoring::Ramachandran const & rama(core::scoring::ScoringManager::get_instance()->get_Ramachandran() ); //Get the Rama scoring function
+	core::scoring::RamaPrePro const & ramaprepro( core::scoring::ScoringManager::get_instance()->get_RamaPrePro() );
+
 	for ( core::Size i=1; i<=nres; ++i ) { //Loop through all residues
-		if ( pose->residue_type(i).is_alpha_aa() || pose->residue_type(i).is_oligourea() ) {
-			core::scoring::Ramachandran const & rama(core::scoring::ScoringManager::get_instance()->get_Ramachandran() ); //Get the Rama scoring function
-			core::scoring::RamaPrePro const & ramaprepro( core::scoring::ScoringManager::get_instance()->get_RamaPrePro() );
+		if ( is_supported_restype( pose->residue_type(i) ) ) {
 			utility::vector1< core::Real > rand_torsions( pose->residue(i).mainchain_torsions().size() - 1, 0.0 );
-			//TR << "aa" << i << "=" << pose->residue_type(i).aa() << std::endl; //DELETE ME
 			core::Size const cur_abs_pos( original_position( i, cyclic_offset, pose->size() ) );
 			if ( custom_rama_table_defined( cur_abs_pos ) ) {
 				if ( pose->residue_type(i).is_alpha_aa() ) {
@@ -3348,19 +3435,19 @@ SimpleCycpepPredictApplication::genkic_close(
 
 	//Set pivots:
 	std::string at1(""), at2(""), at3("");
-	if ( pose->residue(first_loop_res).type().is_alpha_aa() ) { at1="CA"; }
+	if ( pose->residue(first_loop_res).type().is_alpha_aa() || pose->residue(first_loop_res).is_peptoid() ) { at1="CA"; }
 	else if ( pose->residue_type(first_loop_res).is_beta_aa() || pose->residue_type(first_loop_res).is_oligourea() ) { at1="CM"; }
 	else if ( pose->residue(first_loop_res).type().is_gamma_aa() ) { at1="C3"; }
-	else { utility_exit_with_message( "Unrecognized residue type at loop start.  Currently, this app only works with alpha, beta, and gamma amino acids." ); }
+	else { utility_exit_with_message( "Unrecognized residue type at loop start.  Currently, this app only works with alpha, beta, and gamma amino acids, peptoids, and oligoureas." ); }
 	if ( cyclization_type() == SCPA_terminal_disulfide && (middle_loop_res == cyclization_point_start || middle_loop_res == cyclization_point_end )  ) { at2 = pose->residue_type(middle_loop_res).get_disulfide_atom_name(); }
-	else if ( pose->residue(middle_loop_res).type().is_alpha_aa() ) { at2="CA"; }
+	else if ( pose->residue(middle_loop_res).type().is_alpha_aa() || pose->residue(middle_loop_res).is_peptoid() ) { at2="CA"; }
 	else if ( pose->residue_type(middle_loop_res).is_beta_aa() || pose->residue_type(middle_loop_res).is_oligourea() ) { at2="CM"; }
 	else if ( pose->residue(middle_loop_res).type().is_gamma_aa() ) { at2="C3"; }
-	else { utility_exit_with_message( "Unrecognized residue type at loop midpoint.  Currently, this app only works with alpha, beta, and gamma amino acids." ); }
-	if ( pose->residue(last_loop_res).type().is_alpha_aa() ) { at3="CA"; }
+	else { utility_exit_with_message( "Unrecognized residue type at loop midpoint.  Currently, this app only works with alpha, beta, and gamma amino acids, peptoids, and oligoureas." ); }
+	if ( pose->residue(last_loop_res).type().is_alpha_aa() || pose->residue(last_loop_res).is_peptoid() ) { at3="CA"; }
 	else if ( pose->residue_type(last_loop_res).is_beta_aa() || pose->residue_type(last_loop_res).is_oligourea() ) { at3="CM"; }
 	else if ( pose->residue(last_loop_res).type().is_gamma_aa() ) { at3="C3"; }
-	else { utility_exit_with_message( "Unrecognized residue type at loop midpoint.  Currently, this app only works with alpha, beta, and gamma amino acids." ); }
+	else { utility_exit_with_message( "Unrecognized residue type at loop midpoint.  Currently, this app only works with alpha, beta, and gamma amino acids, peptoids, and oligoureas." ); }
 	genkic->set_pivot_atoms( first_loop_res, at1, middle_loop_res, at2, last_loop_res, at3 );
 
 	//Close the bond:
@@ -3378,8 +3465,7 @@ SimpleCycpepPredictApplication::genkic_close(
 		} else if ( cyclization_type() == SCPA_nterm_isopeptide_lariat && i == cyclization_point_end ) { continue; }
 		else if ( cyclization_type() == SCPA_cterm_isopeptide_lariat && i == cyclization_point_start ) { continue; }
 
-
-		if ( pose->residue_type(i).is_alpha_aa() || pose->residue_type(i).is_oligourea() ) {
+		if ( pose->residue_type(i).is_alpha_aa() || pose->residue_type(i).is_oligourea() || pose->residue_type(i).is_peptoid() ) {
 			core::Size const res_in_original( original_position(i, cyclic_offset, pose->size() ) ); //Get the index of this position in the original pose (prior to any circular permutation).
 			if ( user_set_alpha_dihedrals_.count(res_in_original) ) { //If this position is being set to a particular value...
 				runtime_assert_string_msg( pose->residue_type(i).is_alpha_aa(), "Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication: dihedral setting currently only works for alpha-amino acids." );
@@ -3443,7 +3529,7 @@ SimpleCycpepPredictApplication::genkic_close(
 			if ( i == cyclization_point_end && ( cyclization_type() == SCPA_nterm_isopeptide_lariat || cyclization_type() == SCPA_cterm_isopeptide_lariat || cyclization_type() == SCPA_terminal_disulfide || cyclization_type() == SCPA_sidechain_isopeptide ) ) {
 				continue; //Can't perturb preceding bond if it's not in the loop.
 			}
-			if ( pose->residue_type(i).aa() == core::chemical::aa_pro || pose->residue_type(i).aa() == core::chemical::aa_dpr || pose->residue_type(i).is_peptoid() ) {
+			if ( pose->residue_type(i).aa() == core::chemical::aa_pro || pose->residue_type(i).aa() == core::chemical::aa_dpr || pose->residue_type(i).is_peptoid() || pose->residue_type(i).is_n_methylated() ) {
 				genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::sample_cis_peptide_bond );
 				genkic->add_value_to_perturber_value_list( sample_cis_pro_frequency() );
 				genkic->add_residue_to_perturber_residue_list( i==1 ? nres : i-1 ); //The residue PRECEDING the proline is perturbed
@@ -3851,8 +3937,8 @@ SimpleCycpepPredictApplication::align_and_calculate_rmsd(
 	core::id::AtomID_Map< core::id::AtomID > amap;
 	core::pose::initialize_atomid_map(amap, *pose, core::id::AtomID::BOGUS_ATOM_ID());
 	for ( core::Size ir=1, irmax=native_pose->total_residue(); ir<=irmax; ++ir ) {
+		if ( !is_supported_restype( native_pose->residue_type(ir) ) ) continue;
 		if ( is_residue_ignored_in_rms(ir) ) continue;
-		if ( !native_pose->residue_type(ir).is_alpha_aa() && !native_pose->residue_type(ir).is_oligourea() ) continue;
 		++res_counter;
 		runtime_assert_string_msg( res_counter <= nres, "Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::align_and_calculate_rmsd(): The native pose has more residues than the input sequence." );
 		for ( core::Size ia=1, iamax=native_pose->residue(ir).type().first_sidechain_atom(); ia<iamax; ++ia ) { //Loop through all mainchain heavyatoms (including atoms coming off mainchain that are not sidechain atoms, like peptide "O").

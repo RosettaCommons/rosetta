@@ -1,4 +1,6 @@
 # Amine submonomer: beta-methyl benzyl amine/ S phenylethyl-1-amine (Nspe )
+# This resembles a phenylalanine side-chain (coming off of the nitrogen, of course), but with an extra
+# methyl group on what would be the methylene (CB) atom.  This makes this peptoid chiral (only in the side-chain).
 NAME 601
 IO_STRING 601 X
 TYPE POLYMER
@@ -56,13 +58,15 @@ CHI 2  N    CA1  CB2  CG1
 NBR_ATOM  CB1
 NBR_RADIUS 9.867392
 FIRST_SIDECHAIN_ATOM  CA1
-PROPERTIES PEPTOID
+PROPERTIES PEPTOID S_PEPTOID
+RAMA_PREPRO_FILENAME scoring/score_functions/rama/n_methyl/sarcosine_ramatable_MM.txt scoring/score_functions/rama/n_methyl/sarcosine_ramatable_prepro_MM.txt
+RAMA_PREPRO_RESNAME GENERIC_NMETHYLGLYCINE_AA
 ICOOR_INTERNAL    N      0.000000    0.000000    0.000000   N     CA    C  
 ICOOR_INTERNAL    CA     0.000000  180.000000    1.443416   N     CA    C  
 ICOOR_INTERNAL    C      0.000000   67.581165    1.532179   CA    N     C  
 ICOOR_INTERNAL   LOWER  -70.737646   64.906725    1.363204   N     CA    C  
 ICOOR_INTERNAL   UPPER  167.337683   63.440671    1.359313   C     CA    N  
-ICOOR_INTERNAL    O    -15.607595   59.171826    1.201009   C     CA    N  
+ICOOR_INTERNAL    O   -180.000000   59.200005    1.231015   C     CA  UPPER
 ICOOR_INTERNAL   1HA2 -120.292481   71.047970    1.082759   CA    N     C  
 ICOOR_INTERNAL   2HA2 -117.198118   71.035483    1.078238   CA    N    1HA2
 ICOOR_INTERNAL    CA1 -173.250791   54.947153    1.464413   N    LOWER   CA 
@@ -82,5 +86,5 @@ ICOOR_INTERNAL    CD2  178.469743   58.808059    1.380748   CG2   CB2   CA1
 ICOOR_INTERNAL   1HD2 -179.877277   60.209858    1.075513   CD2   CG2   CB2
 ICOOR_INTERNAL   1HG2  179.537937   60.550057    1.075609   CG2   CB2   CD2
 ICOOR_INTERNAL   1HA1 -116.245872   73.700044    1.079104   CA1   N     CB1
-NCAA_ROTLIB_PATH 601.rotlib
+NCAA_ROTLIB_PATH ../peptoid_rotlibs/601.rotlib
 NCAA_ROTLIB_NUM_ROTAMER_BINS 2 3 2

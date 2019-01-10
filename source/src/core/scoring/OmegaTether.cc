@@ -149,9 +149,9 @@ OmegaTether::eval_omega_score_residue(
 ) const {
 	using namespace numeric;
 
-	debug_assert( rsd.is_protein() || rsd.type().is_aramid() );
+	debug_assert( rsd.is_protein() || rsd.is_peptoid() || rsd.type().is_aramid() );
 
-	bool const is_d( rsd.type().is_d_aa() );
+	bool const is_d( rsd.type().is_mirrored_type() );
 	core::Real const d_multiplier( is_d ? -1.0 : 1.0 );
 	core::chemical::AA the_aa( rsd.aa() );
 	if ( !core::chemical::is_canonical_L_aa_or_gly( the_aa ) /*includes gly*/ && !core::chemical::is_canonical_D_aa( the_aa ) ) {

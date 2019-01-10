@@ -61,7 +61,7 @@ public:
 
 	void setUp() {
 		//core_init();
-		core_init_with_additional_options( "-score:weights beta_nov15.wts -symmetric_gly_tables true -write_all_connect_info -connect_info_cutoff 0.0" );
+		core_init_with_additional_options( "-beta -score:weights beta.wts -symmetric_gly_tables true -write_all_connect_info -connect_info_cutoff 0.0" );
 	}
 
 	void tearDown() {
@@ -314,13 +314,13 @@ public:
 		return;
 	}
 
-	/// @brief Tests symmetric scoring with the full beta_nov15 scorefunction.
+	/// @brief Tests symmetric scoring with the full beta scorefunction.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	void test_symm_DL_beta_nov15() {
+	void test_symm_DL_beta() {
 		//Set up the scorefunction
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
-		scorefxn->add_weights_from_file("beta_nov15.wts");
-		TR << "Testing full beta_nov15 score function." << std::endl;
+		scorefxn->add_weights_from_file("beta.wts");
+		TR << "Testing full beta score function." << std::endl;
 		mirror_pose_test(scorefxn);
 		return;
 	}

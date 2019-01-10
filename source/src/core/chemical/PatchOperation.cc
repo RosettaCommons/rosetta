@@ -1450,6 +1450,22 @@ ConnectSulfurAndMakeVirtualProton::name() const {
 bool
 ChiralFlipNaming::apply( ResidueType & rsd ) const {
 
+	//Special-case logic for peptoids (VKM 15 Nov 2017):
+	if ( rsd.is_peptoid() ) {
+		runtime_assert_string_msg( rsd.is_s_peptoid(), "Error in ChiralFlipNaming patch operation: this operation can only be applied to peptoids with side-chains with S chirality." );
+		int peptoid_number( std::atoi( rsd.base_name().c_str() ) );
+		runtime_assert_string_msg( peptoid_number > 600 && peptoid_number < 700, "Error in ChiralFlipNaming patch operation: S-chirality peptoids must have 3-letter codes between 600 and 699" );
+		runtime_assert_string_msg( peptoid_number % 2 == 1, "Error in ChiralFlipNaming patch operation: S-chirality peptoids must have odd-numbered 3-letter codes starting with 6." );
+		++peptoid_number;
+		std::stringstream new_num;
+		new_num << peptoid_number;
+		rsd.name3( new_num.str() );
+		rsd.interchangeability_group( new_num.str() );
+		rsd.name( new_num.str() ); //VariantTypes will be added to this in the Patch::apply() function.
+		rsd.base_name( new_num.str() );
+		return false;
+	}
+
 	if ( rsd.aa() <= aa_tyr ) {
 		rsd.aa( get_D_equivalent( rsd.aa() ) );
 
@@ -1576,7 +1592,7 @@ ChiralFlipAtoms::apply( ResidueType & rsd ) const {
 
 	std::string base_atom_name;
 	// The rest of the Patch takes care of props, and it's really out of theme.
-	if ( rsd.is_l_aa() ) {
+	if ( rsd.is_l_aa() || rsd.is_s_peptoid() ) {
 		//rsd.delete_property( "L_AA" );
 		//rsd.add_property( "D_AA" );
 		base_atom_name = "N";
@@ -1585,7 +1601,7 @@ ChiralFlipAtoms::apply( ResidueType & rsd ) const {
 		//rsd.add_property( "L_RNA" );
 		base_atom_name = "P";
 	} else {
-		utility_exit_with_message( "For some reason, calling ChiralFlipAtoms on a non-AA, non-NA" );
+		utility_exit_with_message( "For some reason, calling ChiralFlipAtoms on a residue type that's not an L-amino acid, not a D-nucleic acid, and not a peptoid with a chiral sidechain." );
 	}
 
 	for ( core::Size ii = 2; ii <= rsd.natoms(); ++ii ) {

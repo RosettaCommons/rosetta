@@ -589,7 +589,7 @@ GlobalResidueTypeSet::deal_with_patch_special_cases()
 	// this would allow addition of patches and/or base_residue_types at stages after initialization.
 	for ( PatchCOP p : patches() ) {
 		for ( ResidueTypeCOP rsd_type : base_residue_types() ) {
-			if ( p->applies_to( *rsd_type ) && p->adds_properties( *rsd_type ).has_value( "D_AA" ) ) {
+			if ( p->applies_to( *rsd_type ) && ( p->adds_properties( *rsd_type ).has_value( "D_AA" ) || p->adds_properties(*rsd_type).has_value( "R_PEPTOID" ) ) ) {
 				ResidueTypeOP new_rsd_type = p->apply( *rsd_type );
 				new_rsd_type->base_name( new_rsd_type->name() ); //D-residues have their own base names.
 				new_rsd_type->reset_base_type_cop(); //This is now a base type, so its base type pointer must be NULL.

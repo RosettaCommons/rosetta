@@ -1,0 +1,4 @@
+The side-chains of these peptoids are described in detail in the supplementary material of Renfew et al. (2014). J. Am. Chem. Soc. 136(24): 8772–8782.  Note that the 600-series peptoids have chiral side-chains.  The convention here is:
+1.  600-series peptoids have S-chirality for odd-numbers, and R-chirality for even numbers.
+2.  Only S-chirality sidechains (odd-numbered 600 series peptoids) are to be added to the Rosetta database.
+3.  The mirror-image R-chirality peptoids (which have number N+1) are generated automatically on the fly.

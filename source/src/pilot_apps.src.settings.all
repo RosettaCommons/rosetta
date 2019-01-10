@@ -1088,6 +1088,8 @@ sources = {
 	"pilot/vmullig" : [
 		"cycpep_analysis",
 		"fit_helixparams",
+		"plot_scoreterm",
+		#"simple_cycpep_predict",
 		"make_mainchain_potential",
 		"symmetrize_old_ramamap",
 	],

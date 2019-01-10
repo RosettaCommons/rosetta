@@ -724,7 +724,7 @@ protected:
 	inline
 	bool
 	calculate_intra_xover4( core::conformation::Residue const & rsd ) const {
-		if ( rsd.is_protein() /*&& options_.exclude_intra_res_protein()*/ ) return false;
+		if ( ( rsd.is_protein() || rsd.is_peptoid() ) /*&& options_.exclude_intra_res_protein()*/ ) return false;
 		if ( rsd.is_DNA() && exclude_DNA_DNA_ /* default true */ ) return false;
 		return true;
 	}

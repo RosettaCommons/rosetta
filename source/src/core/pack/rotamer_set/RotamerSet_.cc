@@ -370,7 +370,7 @@ RotamerSet_::build_rotamers_for_concrete(
 			//std::cout << std::endl;
 
 			rotlib->fill_rotamer_vector( pose, scorefxn, task, packer_neighbor_graph, concrete_residue, existing_residue, extra_chi_steps, buried, suggested_rotamers);
-			if ( core::chemical::is_canonical_D_aa( existing_residue.aa() ) && suggested_rotamers.size() > 0 ) { //If this is a D-amino acid, flip all the chi values in the suggested_rotamers vector
+			if ( existing_residue.type().is_mirrored_type() && suggested_rotamers.size() > 0 ) { //If this is a D-amino acid, flip all the chi values in the suggested_rotamers vector
 				for ( core::Size i=1; i<=suggested_rotamers.size(); i++ ) {
 					if ( suggested_rotamers[i]->nchi() > 0 ) {
 						for ( core::Size j=1; j<=suggested_rotamers[i]->nchi(); j++ ) {

@@ -146,8 +146,6 @@ CyclizationMover::setup_connections( core::pose::Pose & pose )
 
 	// get types name for N-terminus and C-terminus (manipulating strings like this is a little hacky)
 	std::string nterm_connect_type_name(
-		pose.residue_type( nterm_rsd_num_ ).is_peptoid() ?
-		pose.residue( nterm_rsd_num_ ).type().name3() + ":peptoid_cutpoint_upper" :
 		pose.residue( nterm_rsd_num_ ).type().name3() + ":protein_cutpoint_upper"
 	);
 	std::string cterm_connect_type_name(

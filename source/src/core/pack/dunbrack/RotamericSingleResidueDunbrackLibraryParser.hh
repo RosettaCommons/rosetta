@@ -45,7 +45,8 @@ public:
 	/// @param[in] max_possible_chis The maximum number of chis allowed in this rotamer library.  This is the number of chi columns in the file (usually 4).
 	/// @param[in] max_possible_rotamers The maximum number of rotamers that this rotamer library can define.
 	/// @param[in] correct_rotamer_well_order_on_read Should rotamer wells be auto-sorted so that they're in order form least to greatest in the interval [0,360)?  Note that this should not be necessary, so this defaults to false.
-	RotamericSingleResidueDunbrackLibraryParser( core::Size const num_mainchain_torsions, core::Size const max_possible_chis, core::Size const max_possible_rotamers, bool const correct_rotamer_well_order_on_read );
+	/// @param[in] symmetrize_rotamer_library If true, the rotamer library is symmetrized by averaging.  Useful for peptoids with achiral sidechains.
+	RotamericSingleResidueDunbrackLibraryParser( core::Size const num_mainchain_torsions, core::Size const max_possible_chis, core::Size const max_possible_rotamers, bool const correct_rotamer_well_order_on_read, bool const symmetrize_rotamer_library );
 
 	RotamericSingleResidueDunbrackLibraryParser(RotamericSingleResidueDunbrackLibraryParser const & src);
 
@@ -124,9 +125,15 @@ private:
 	/// @brief Given a map defining a reordering of rotamer wells, reorder rotamer wells.
 	void update_rotamer_well_order( utility::vector1< std::map< core::Size, core::Size > > const & rotamer_well_reordering );
 
+	/// @brief Given a rotamer library, symmetrize it.
+	/// @details Called for peptoids with achiral side-chains.
+	/// @param[in] filename The filename of this library, used for logging and error messages.
+	void
+	symmetrize_library( std::string const & filename );
+
 	/// @brief Performs a number of checks and corrections.
-	/// @details Calls check_correct_vector_lengths(), determine_rotamer_well_order(), check_rotamer_well_order(), and update_rotamer_well_order(), and , currently.  Additional checks
-	/// and corrections may be added in the future.
+	/// @details Calls check_correct_vector_lengths(), determine_rotamer_well_order(), check_rotamer_well_order(), update_rotamer_well_order(), and symmetrize_library() (for
+	/// peptoids).  Additional checks and corrections may be added in the future.
 	/// @param[in] filename The name of the rotamer file currently being read.  This is only used for error messages.
 	void do_all_checks_and_corrections( std::string const & filename );
 
@@ -193,6 +200,9 @@ private:
 	/// @brief Should the rotamer wells be auto-corrected?
 	/// @details Probably no longer necessary if Voronoi-based interpolation is used.
 	bool correct_rotamer_well_order_on_read_;
+
+	/// @brief Should this rotamer library be symmetrized?
+	bool symmetrize_rotamer_library_;
 
 };
 

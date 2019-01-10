@@ -425,7 +425,7 @@ bool GeneralizedKICfilter::apply_loop_bump_check(
 	for ( core::Size ia=1, iamax=atomlist_prime.size(); ia<=iamax; ++ia ) {
 		core::Size const ia_res = atomlist_prime[ia].first.rsd();
 		core::Size const ia_atomno = atomlist_prime[ia].first.atomno();
-		if ( pose.residue(ia_res).type().is_alpha_aa() || pose.residue(ia_res).type().is_beta_aa() ) { //if alpha or beta amino acid
+		if ( pose.residue_type(ia_res).is_alpha_aa() || pose.residue_type(ia_res).is_beta_aa() || pose.residue_type(ia_res).is_peptoid() || pose.residue_type(ia_res).is_oligourea() ) { //if alpha or beta amino acid or peptoid or oligourea
 			if ( pose.residue(ia_res).atom_name(ia_atomno)=="C" && pose.residue(ia_res).has("O") ) {
 				atomlist_prime.push_back( std::pair<AtomID, numeric::xyzVector<core::Real> > (AtomID( pose.residue(ia_res).atom_index("O"), ia_res), loop_pose.residue(ia_res).xyz("O")  ) );
 			} else if ( pose.residue(ia_res).atom_name(ia_atomno)=="CA" ) { //Adding whatever's missing from the (N, CM/C, CB) atoms surrounding a CA.
@@ -433,7 +433,7 @@ bool GeneralizedKICfilter::apply_loop_bump_check(
 				atsfound.resize(3,false);
 				utility::vector1 <std::string> ats;
 				ats.resize(3, "");
-				ats[1]="N"; ats[2]=(pose.residue(ia_res).type().is_beta_aa()?"CM":"C"); ats[3]="C";
+				ats[1]="N"; ats[2]=( pose.residue_type(ia_res).is_beta_aa() || pose.residue_type(ia_res).is_oligourea() ? "CM" : "C" ); ats[3]="C";
 				for ( core::Size i=1; i<=3; ++i ) {
 					if ( ia>1 && atomlist_prime[ia-1].first.rsd()==ia_res && pose.residue(ia_res).atom_name(atomlist_prime[ia-1].first.atomno()) == ats[i] ) atsfound[i]=true;
 					if ( ia<iamax && atomlist_prime[ia+1].first.rsd()==ia_res && pose.residue(ia_res).atom_name(atomlist_prime[ia+1].first.atomno()) == ats[i] ) atsfound[i]=true;
@@ -492,8 +492,10 @@ bool GeneralizedKICfilter::apply_loop_bump_check(
 			if ( is_connected_to_loop_rsd ) continue;
 
 			utility::vector1<core::Size> atoms_to_consider = original_pose.residue(jr).mainchain_atoms();
-			if ( (original_pose.residue(jr).type().is_alpha_aa() || original_pose.residue(jr).type().is_beta_aa()) && original_pose.residue(jr).has("CB") ) {
+			if ( (original_pose.residue_type(jr).is_alpha_aa() || original_pose.residue_type(jr).is_beta_aa() || original_pose.residue_type(jr).is_oligourea() ) && original_pose.residue(jr).has("CB") ) {
 				atoms_to_consider.push_back( original_pose.residue(jr).atom_index("CB") ); //Also consider clashes with the beta carbon, if present.
+			} else if ( original_pose.residue_type(jr).is_peptoid() && original_pose.residue(jr).has("CA1") ) {
+				atoms_to_consider.push_back( original_pose.residue(jr).atom_index("CA1") );
 			}
 			for ( core::Size ja=1, jamax=atoms_to_consider.size(); ja<=jamax; ++ja ) { //Loop through the mainchain atoms.
 				core::Real const ja_radius = original_pose.residue(jr).type().atom_type( atoms_to_consider[ja] ).lj_radius();
