@@ -19,15 +19,13 @@ import os, re, subprocess, time
 from os import path
 from optparse import OptionParser
 
-#import yaml
 import json
 
 #The factor by which to multiply the single test timeout value for a suite
 SUITE_FACTOR = 3
 
 UnitTestExecutable = ["protocols.test", "core.test", "basic.test", "ObjexxFCL.test", "numeric.test", "utility.test", "apps.test", "devel.test"]
-#UnitTestExecutable = ["numeric.test", "utility.test"]
-
+#UnitTestExecutable = ["apps.test", "numeric.test"]
 
 def execute(message, command_line, return_='status', until_successes=False, terminate_on_failure=True, silent=False, silence_output=False, silence_output_on_errors=False, add_message_and_command_line_to_output=False):
     if not silent: print(message);  print(command_line); sys.stdout.flush();
@@ -174,7 +172,7 @@ class Tester:
         return oi
 
 
-    def runOneLibUnitTests(self, lib, yaml_file, log_file):
+    def runOneLibUnitTests(self, lib, yjson_file, log_file):
         if Options.one  and  ( (lib, Options.one.split(':')[0]) not in self.all_test_suites_by_lib[lib] ): return
 
         #self.unitTestLog += self.log("-------- %s --------\n" % E)
@@ -182,7 +180,7 @@ class Tester:
         exe = self.buildCommandLine(lib, Options.one)
         print("Command line:: %s%s" % (path, exe))
 
-        if os.path.isfile(yaml_file): os.remove(yaml_file)
+        if os.path.isfile(yjson_file): os.remove(yjson_file)
 
         output = [ "Running %s unit tests...\n" % lib ]
 
@@ -197,7 +195,7 @@ class Tester:
 
         f = subprocess.Popen(command_line, bufsize=0, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).stderr
         if Options.valgrind:
-            self.parseOneLibValgrind(f, output, yaml_file)
+            self.parseOneLibValgrind(f, output, yjson_file)
         else:
             self.parseOneLib(f, output)
 
@@ -215,7 +213,7 @@ class Tester:
             output.append(l)
             sys.stdout.flush()
 
-    def parseOneLibValgrind(self, f, output, yaml_file):
+    def parseOneLibValgrind(self, f, output, yjson_file):
         valgrind_errors = 0
         for line in f:
             if line.startswith("=="):
@@ -225,26 +223,26 @@ class Tester:
                 output.append(line)
                 sys.stdout.flush()
 
-        #The yaml file might not be the same name - e.g. if we're running a single suite
-        if valgrind_errors > 0 and os.path.isfile(yaml_file):
-            data = json.loads(open(yaml_file).read())
+        #The yjson file might not be the same name - e.g. if we're running a single suite
+        if valgrind_errors > 0 and os.path.isfile(yjson_file):
+            data = json.loads(open(yjson_file).read())
             failures = []
             for test in data["ALL_TESTS"]:
                 if test.startswith( Options.one ):
                     failures.append( test )
             data["FAILED_TESTS"] = failures
-            yaml = open( yaml_file, "w" )
-            yaml.write( json.dumps(data) )
-            yaml.close()
+            yjson = open( yjson_file, "w" )
+            yjson.write( json.dumps(data) )
+            yjson.close()
 
     def runOneSuite(self, lib, suite):
         path = "cd " + self.testpath + " && "
         exe = self.buildCommandLine(lib, suite)
 
         log_file = self.testpath + '/' + lib + '.' + suite + '.log'
-        yaml_file = self.testpath + '/' + lib + '.'+ suite + '.yaml'
+        yjson_file = self.testpath + '/' + lib + '.'+ suite + '.json'
 
-        if os.path.isfile(yaml_file): os.remove(yaml_file)
+        if os.path.isfile(yjson_file): os.remove(yjson_file)
         if os.path.isfile(log_file): os.remove(log_file)
 
         #output = [ ]
@@ -261,7 +259,7 @@ class Tester:
         #print 'Executing:', command_line
         f = subprocess.Popen(command_line, bufsize=0, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).stderr
         if Options.valgrind:
-            self.parseOneSuiteValgrind(f, output, lib, suite, yaml_file)
+            self.parseOneSuiteValgrind(f, output, lib, suite, yjson_file)
         else:
             self.parseOneSuite(f, output)
         f.close()
@@ -269,6 +267,7 @@ class Tester:
         # saving log to a file...
         with open(log_file, 'w') as f:
             f.write(''.join(output))
+
 
     def parseOneSuite(self, f, output):
         for line in f:
@@ -278,7 +277,7 @@ class Tester:
                 output.append(l)
                 sys.stdout.flush()
 
-    def parseOneSuiteValgrind(self, f, output, lib, suite, yaml_file):
+    def parseOneSuiteValgrind(self, f, output, lib, suite, yjson_file):
         valgrind_errors = 0
         for line in f:
             if line != 'All tests passed!\n':
@@ -291,15 +290,15 @@ class Tester:
 
         # Running suites, we really can't determine which of the sub-tests caused the Valgrind error - so mark them all failed.
         if valgrind_errors > 0:
-            data = json.loads(open(yaml_file).read())
+            data = json.loads(open(yjson_file).read())
             failures = []
             for test in data["ALL_TESTS"]:
                 if test.startswith( suite ):
                     failures.append( test )
             data["FAILED_TESTS"] = failures
-            yaml = open( yaml_file, "w" )
-            yaml.write( json.dumps(data) )
-            yaml.close()
+            yjson = open( yjson_file, "w" )
+            yjson.write( json.dumps(data) )
+            yjson.close()
 
     # Run unit test.
     def runUnitTests(self):
@@ -307,7 +306,7 @@ class Tester:
         #self.log( "Run unit tests...\n")
         self.unitTestLog = "================================ UnitTest Results ================================\n"
 
-        logs_yamls = {}
+        logs_yjsons = {}
 
         # Getting list of test suites
         self.all_test_suites = []
@@ -345,40 +344,40 @@ class Tester:
 
             for lib in UnitTestExecutable:
                 log_file = self.testpath + '/' + lib + '.log'
-                yaml_file = self.testpath + '/' + lib + '.yaml'
+                yjson_file = self.testpath + '/' + lib + '.json'
 
-                logs_yamls[lib] = (log_file, yaml_file)
+                logs_yjsons[lib] = (log_file, yjson_file)
 
                 if Options.jobs > 1:
                     pid = self.mfork()
                     if not pid:  # we are child process
-                        self.runOneLibUnitTests(lib, yaml_file, log_file)
+                        self.runOneLibUnitTests(lib, yjson_file, log_file)
                         sys.exit(0)
 
                 else:
-                    self.runOneLibUnitTests(lib, yaml_file, log_file)
+                    self.runOneLibUnitTests(lib, yjson_file, log_file)
 
             for p in self.jobs: os.waitpid(p, 0)  # waiting for all child process to termintate...
 
             # extracting and aggregation results, but only if running all tests
             if not Options.one:
-                all_results_yaml_file = '.unit_test_results.yaml'
-                with open(all_results_yaml_file, 'w') as uf:
-                    for lib in logs_yamls:
-                        (log_file, yaml_file) = logs_yamls[lib]
+                all_results_yjson_file = '.unit_test_results.json'
+                with open(all_results_yjson_file, 'w') as uf:
+                    for lib in logs_yjsons:
+                        (log_file, yjson_file) = logs_yjsons[lib]
                         with open(log_file, 'r') as f:
                             info = self.extractInfo( f.read() )
                         info.name = lib
                         self.results[lib] = info
 
-                        if not os.path.isfile(yaml_file):
-                            print("Unable to read yaml file with test results %s - unit test run aborted!" % yaml_file)
-                            os.remove(all_results_yaml_file)
+                        if not os.path.isfile(yjson_file):
+                            print("Unable to read json file with test results %s - unit test run aborted!" % yjson_file)
+                            os.remove(all_results_yjson_file)
                             sys.exit(1)
 
-                        # generating summary yaml file for all tests
+                        # generating summary yjson file for all tests
                         uf.write(lib + ':\n')
-                        with open(yaml_file, 'w') as f:
+                        with open(yjson_file, 'w') as f:
                             for line in f: uf.write("    "+line)
                         uf.write('\n')
 
@@ -394,30 +393,35 @@ class Tester:
 
             for p in self.jobs: os.waitpid(p, 0)  # waiting for all child process to termintate...
 
-            # Now all tests should be finished, all we have to do is to create a log file and aggegated yaml file to emulate single CPU out run
-            all_yaml = {}
-            all_json = dict(tests={}, summary=dict(total=0, failed=0), config=dict(test_path=self.testpath))
+            # Now all tests should be finished, all we have to do is to create a log file and aggegated JSON file to emulate single CPU out run
+            all_yjson = {}
+            all_json = dict(tests={}, summary=dict(total=0, failed=0), config=dict(test_path=self.testpath), runtime={})
             _failed_ = 'failed'
             _finished_ = 'passed'
+
             for lib in UnitTestExecutable:
                 log_file = self.testpath + '/' + lib + '.log'
-                yaml_file = self.testpath + '/' + lib + '.yaml'
+                yjson_file = self.testpath + '/' + lib + '.json'
 
-                logs_yamls[lib] = (log_file, yaml_file)
+                logs_yjsons[lib] = (log_file, yjson_file)
 
-                yaml_data = {}
+                yjson_data = {}
                 with open(log_file, 'w') as log_file_h:
                     for l, suite in self.all_test_suites_by_lib[lib]:
                         suite_log = open(self.testpath + '/' + lib + '.' + suite + '.log').read()
                         log_file_h.write( suite_log )
 
-                        print('trying: ', self.testpath + '/' + lib + '.' + suite + '.yaml')
-                        with open(self.testpath + '/' + lib + '.' + suite + '.yaml') as f:
+                        print('trying: ', self.testpath + '/' + lib + '.' + suite + '.json')
+                        with open(self.testpath + '/' + lib + '.' + suite + '.json') as f:
                             data = json.loads( f.read() )
-                        for k in data:
-                            if k in yaml_data: yaml_data[k] = list( set(yaml_data[k] + data[k]) )
-                            else: yaml_data[k] = data[k]
 
+                        for k in data:
+                            if k in yjson_data:
+                                if type(data[k]) == list:
+                                    yjson_data[k] = list( set(yjson_data[k] + data[k]) )
+                                else: yjson_data[k].update(data[k])
+
+                            else: yjson_data[k] = data[k]
 
                         def json_key_from_test(test): return lib[:-len('.test')] + ':' + test.replace(':', ':')  # we might want different separator then ':' in the future
 
@@ -429,19 +433,23 @@ class Tester:
                             json_key = json_key_from_test(test)
                             all_json['tests'][json_key] = dict(state=_failed_, log=suite_log)
 
-                with open(yaml_file, 'w') as yaml_file_h:
-                    yaml_file_h.write( json.dumps(yaml_data) )
+                if 'runtime' in yjson_data: all_json['runtime'].update( yjson_data['runtime'] )
 
-                #if 'ALL_TESTS' in yaml_data:
-                if yaml_data:
-                    self.results[lib] = OI(testCount=len(yaml_data['ALL_TESTS']), testFailed=len(yaml_data['FAILED_TESTS']), failedTestsList=yaml_data['FAILED_TESTS'], name=lib)
-                    all_yaml[lib] = yaml_data
+                with open(yjson_file, 'w') as yjson_file_h:
+                    yjson_file_h.write( json.dumps(yjson_data) )
 
-                logs_yamls[lib] = (log_file, yaml_file)
+                #if 'ALL_TESTS' in yjson_data:
+                if yjson_data:
+                    self.results[lib] = OI(testCount=len(yjson_data['ALL_TESTS']), testFailed=len(yjson_data['FAILED_TESTS']), failedTestsList=yjson_data['FAILED_TESTS'], name=lib)
+                    all_yjson[lib] = yjson_data
 
-            #print 'All_yaml:', all_yaml
-            with open('.unit_test_results.yaml', 'w') as f:
-                f.write( json.dumps(all_yaml) )
+                logs_yjsons[lib] = (log_file, yjson_file)
+
+            #print 'All_yjson:', all_yjson
+            # with open('.unit_test_results.json', 'w') as f:
+            #     f.write( json.dumps(all_yjson) )
+
+            for k in list( all_json['runtime'].keys() ): all_json['runtime'][ k.replace('./', '').replace('.test', '') ] = all_json['runtime'].pop(k)
 
             for t in self.results:
                 all_json['summary']['total']   += self.results[t].testCount
@@ -626,7 +634,7 @@ def main(args):
 
     parser.add_option("--debug",
       action="store_true", default=False,
-      help="Enable debug mode: skip test running, only generate summary from previously created yaml and log files.",
+      help="Enable debug mode: skip test running, only generate summary from previously created JSON and log files.",
     )
 
     parser.add_option("--timeout",

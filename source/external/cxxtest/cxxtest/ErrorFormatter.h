@@ -15,6 +15,7 @@
 #include <cxxtest/ValueTraits.h>
 
 #include <fstream>
+#include <chrono>
 
 extern int real_command_line_argc;  extern char ** real_command_line_argv;
 extern int command_line_argc;       extern char ** command_line_argv;
@@ -49,19 +50,24 @@ namespace CxxTest
 
         int run()
         {
-	    // Initially we write json report and mark tests as failed and later owerwrite it with real results. This is needed for cases when test terminate with hard exceptions
-	    std::string file_name;
-	    if( run_type == _OneSuite_ ) {
-		file_name = std::string(real_command_line_argv[0]) + '.' + std::string(real_command_line_argv[1]) + ".yaml";
-		write_json(file_name, getAllTestsNames(), getAllSuiteNames( std::string(real_command_line_argv[1]) ));
-	    }
-	    else {
-		file_name = std::string(real_command_line_argv[0]) + ".yaml";
-		write_json(file_name, getAllTestsNames(), getAllTestsNames());
-	    }
+			// Initially we write json report and mark tests as failed and later owerwrite it with real results. This is needed for cases when test terminate with hard exceptions
+			std::string file_name;
+			if( run_type == _OneSuite_ ) {
+				file_name = std::string(real_command_line_argv[0]) + '.' + std::string(real_command_line_argv[1]) + ".json";
+				write_json(file_name, getAllTestsNames(), getAllSuiteNames( std::string(real_command_line_argv[1]) ));
+			}
+			else {
+				file_name = std::string(real_command_line_argv[0]) + ".json";
+				write_json(file_name, getAllTestsNames(), getAllTestsNames());
+			}
 
-	    TestRunner::runAllTests( *this );
-	    write_json(file_name, getAllTestsNames(), failed_tests_);
+			auto t_start = std::chrono::steady_clock::now();
+			TestRunner::runAllTests( *this );
+			auto t_end = std::chrono::steady_clock::now();
+
+			runtime_ = std::chrono::duration<double>(t_end-t_start).count();
+
+			write_json(file_name, getAllTestsNames(), failed_tests_);
 
             return tracker().failedTests();
         }
@@ -87,8 +93,17 @@ namespace CxxTest
 			    f << delim;  delim = ", ";
 			    f << failed_tests[i];
 			}
-			f << "]" << std::endl;
-			f << "}" << std::endl;
+			f << "]";
+
+			if( run_type == _OneSuite_ ) {
+				f << ",\n  \"runtime\" : { \"" << std::string(real_command_line_argv[0]) + '.' + std::string(real_command_line_argv[1]) << "\" : " << runtime_ << " }"<< std::endl;
+
+				f << "}" << std::endl;
+			}
+			else {
+				f << std::endl;
+			}
+
 			f.close();
 		}
 
@@ -298,6 +313,7 @@ namespace CxxTest
 
 	public:
 		std::vector< std::string > failed_tests_;
+		double runtime_ = 0; // test runtime in seconds
 
     protected:
         OutputStream *outputStream() const

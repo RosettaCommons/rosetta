@@ -88,6 +88,17 @@ def run_test_suite(rosetta_dir, working_dir, platform, config, hpc_driver=None, 
 
     with open(json_results_file) as f: json_results = json.load(f)  # JSON handles unicode internally
 
+    if 'runtime' in json_results:
+        rts = []
+        for k,v in json_results['runtime'].items(): rts.append( (v, k) )
+
+        rts.sort(reverse=True)
+
+        with open(working_dir+'/runtime.txt', 'w') as f:
+            f.write(f'{ "library.test-suite".ljust(64) } runtime(s)\n{"-"*80}\n')
+            for v, k in rts: f.write(f'{ k.ljust(64) } {v}\n')
+
+
     #r = {}
     # for lib in json_results:
     #     key = lib[:-5]  # core.test → core
