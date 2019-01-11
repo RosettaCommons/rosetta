@@ -62,6 +62,8 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/pose/Pose.hh>
+#include <core/scoring/EnvPairPotential.hh> // for CenListInfo
+#include <core/pose/datacache/CacheableDataType.hh>
 
 /// Basic headers
 #include <basic/prof.hh>

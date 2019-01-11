@@ -19,8 +19,11 @@
 #include <basic/options/option_macros.hh>
 #include <protocols/viewer/viewers.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
+#include <core/conformation/Residue.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/init/init.hh>
+#include <core/id/AtomID.hh>
 #include <core/import_pose/pose_stream/PoseInputStream.hh>
 #include <core/import_pose/pose_stream/PDBPoseInputStream.hh>
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
@@ -30,6 +33,7 @@
 #include <iostream>
 #include <string>
 
+#include <basic/Tracer.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <utility/excn/Exceptions.hh>

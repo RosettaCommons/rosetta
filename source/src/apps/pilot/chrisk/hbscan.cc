@@ -38,6 +38,7 @@
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 #include <core/kinematics/FoldTree.hh>
+#include <core/kinematics/Jump.hh>
 
 #include <core/scoring/types.hh>
 #include <core/scoring/ScoringManager.hh>
@@ -66,6 +67,7 @@
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/scoring/electron_density/util.hh>
 #include <core/scoring/sasa.hh>
+#include <core/pose/util.hh>
 
 #include <core/id/SequenceMapping.hh>
 #include <core/sequence/Sequence.hh>

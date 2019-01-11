@@ -18,7 +18,7 @@
 
 // Unit headers
 #include <core/conformation/Conformation.fwd.hh>
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 
 // Package headers
 #include <core/conformation/signals/ConnectionEvent.fwd.hh>

@@ -30,6 +30,7 @@
 #include <core/import_pose/import_pose.hh>
 
 #include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ResidueType.hh>
 
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>

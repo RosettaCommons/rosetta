@@ -22,6 +22,8 @@
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/moves/mover_schemas.hh>
 #include <core/io/external/PsiPredInterface.hh>
+#include <core/pose/Pose.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/scoring/dssp/Dssp.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

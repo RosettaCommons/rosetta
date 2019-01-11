@@ -14,6 +14,8 @@
 #ifndef INCLUDED_core_conformation_orbitals_OrbitalXYZCoords_HH
 #define INCLUDED_core_conformation_orbitals_OrbitalXYZCoords_HH
 
+#include <core/conformation/orbitals/OrbitalXYZCoords.fwd.hh>
+
 // Project headers
 #include <core/types.hh>
 

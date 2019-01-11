@@ -41,6 +41,7 @@
 
 // Platform Headers
 #include <core/pose/Pose.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/scoring/Energies.hh>
 #include <core/pose/extra_pose_info_util.hh>
 

@@ -56,9 +56,9 @@ public:
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )override;
 	virtual ~SpliceOutAntibody();
 	void find_disulfide_postions(core::pose::Pose const & pose, utility::vector1<core::Size> & cys_pos);
-	void antibody_DB(std::string const s){antibody_DB_=s;}
+	void antibody_DB(std::string const & s){ antibody_DB_ = s; }
 	std::string antibody_DB(){return antibody_DB_;}
-	void assign_from_res_to_res(core::pose::Pose const pose);
+	void assign_from_res_to_res(core::pose::Pose const & pose);
 	void update_vl_vh_cut();
 	void set_fold_tree_nodes(core::pose::Pose const & pose) override;
 	void vl_vh_cut(core::Size i){vl_vh_cut_=i;}

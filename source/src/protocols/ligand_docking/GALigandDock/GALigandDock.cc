@@ -25,28 +25,28 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/selection.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/pack/optimizeH.hh>
+//#include <core/pack/optimizeH.hh>
 #include <core/pack/rtmin.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-#include <protocols/minimization_packing/PackRotamersMover.hh>
+//#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>
-#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
+//#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 
 #include <core/scoring/constraints/Constraint.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
+//#include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/func/ScalarWeightedFunc.hh>
 #include <core/scoring/func/TopOutFunc.hh>
-#include <core/scoring/constraints/util.hh>
+//#include <core/scoring/constraints/util.hh>
 
 #include <core/pack/pack_rotamers.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 
-#include <core/io/silent/BinarySilentStruct.hh>
+//#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 

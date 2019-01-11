@@ -81,7 +81,7 @@
 
 #include <core/scoring/interface_/DDPlookup.fwd.hh>
 
-#include <core/scoring/membrane/MembraneData.hh>
+#include <core/scoring/membrane/MembraneData.fwd.hh>
 
 #include <core/scoring/mm/MMLJLibrary.fwd.hh>
 #include <core/scoring/mm/MMLJEnergyTable.fwd.hh>
@@ -138,7 +138,7 @@
 
 // Utility headers
 #include <utility/SingletonBase.hh>
-#include <utility/vector1.hh>
+#include <utility/vector1.fwd.hh>
 
 namespace core {
 namespace scoring {

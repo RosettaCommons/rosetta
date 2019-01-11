@@ -339,7 +339,7 @@ void SpliceOutAntibody::update_vl_vh_cut() {
 	}
 }
 
-void SpliceOutAntibody::assign_from_res_to_res(core::pose::Pose const pose){
+void SpliceOutAntibody::assign_from_res_to_res(core::pose::Pose const & pose){
 	core::conformation::Conformation const & conf(pose.conformation());
 	if ( splicemanager.segment_type()=="L1_L2" ) {
 		splicemanager.template_from_res(template_cys_pos_[1]+1);

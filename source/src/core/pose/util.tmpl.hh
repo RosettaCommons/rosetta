@@ -29,7 +29,7 @@
 // Project headers
 #include <core/types.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
 #include <core/id/AtomID_Map.hh>

@@ -15,6 +15,8 @@
 
 #include <protocols/stepwise/screener/TagDefinition.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
+#include <core/pose/Pose.hh>
+#include <core/conformation/Residue.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <basic/Tracer.hh>
 #include <utility>

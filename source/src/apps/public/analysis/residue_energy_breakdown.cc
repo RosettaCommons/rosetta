@@ -19,6 +19,7 @@
 #include <core/pose/extra_pose_info_util.hh>
 #include <basic/options/option.hh>
 #include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ResidueType.hh>
 
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>

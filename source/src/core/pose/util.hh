@@ -22,7 +22,9 @@
 
 // Project headers
 #include <core/types.hh>
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Conformation.fwd.hh>
+#include <core/conformation/Residue.fwd.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/rings/AxEqDesignation.hh>
 #include <core/id/AtomID.fwd.hh>
