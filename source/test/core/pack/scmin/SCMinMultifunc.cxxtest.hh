@@ -111,8 +111,11 @@ public:
 
 		scminmap.setup( collection );
 
-		utility::vector1< ResidueCOP > bgres( 20 );
-		for ( Size ii = 1; ii <= 20; ++ii ) bgres[ ii ] = utility::pointer::make_shared< Residue >( pose.residue( ii ) );
+		utility::vector1< ResidueOP > non_const_bgres( 20 );
+		for ( Size ii = 1; ii <= 20; ++ii ) {
+			non_const_bgres[ ii ] = std::make_shared< core::conformation::Residue >( pose.residue( ii ));
+		}
+		utility::vector1< ResidueCOP > bgres( non_const_bgres );
 
 		MinimizationGraph g( 20 );
 		g.copy_connectivity( * packer_neighbor_graph );
@@ -135,7 +138,7 @@ public:
 			Size other_ind = (*eiter)->get_other_ind( 7 );
 			scorefxn->setup_for_minimizing_for_node(
 				* g.get_minimization_node( other_ind ), * bgres[ other_ind ],
-				pose.residue_data( other_ind ),
+				* non_const_bgres[ other_ind ]->nonconst_data_ptr(),
 				scminmap, pose, false, emap );
 			MinimizationEdge & minedge = static_cast< MinimizationEdge & > ( **eiter );
 			if ( other_ind < 7 ) {

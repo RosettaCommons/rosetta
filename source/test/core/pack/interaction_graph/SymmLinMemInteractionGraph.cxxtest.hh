@@ -974,18 +974,22 @@ public:
 
 					utility::vector1< Size > const & kk_pose_n_waters( kk_pose_lkb_info.n_attached_waters() );
 					utility::vector1< Size > const & kk_sotf_n_waters( kk_sotf_lkb_info.n_attached_waters() );
-					utility::vector1< WaterCoords > const & kk_pose_waters( kk_pose_lkb_info.waters() );
-					utility::vector1< WaterCoords > const & kk_sotf_waters( kk_sotf_lkb_info.waters() );
+
+					utility::vector1< Size > const & kk_pose_water_offsets( kk_pose_lkb_info.water_offset_for_atom() );
+					utility::vector1< Size > const & kk_sotf_water_offsets( kk_sotf_lkb_info.water_offset_for_atom() );
+					WaterCoords const & kk_pose_waters( kk_pose_lkb_info.waters() );
+					WaterCoords const & kk_sotf_waters( kk_sotf_lkb_info.waters() );
 					TS_ASSERT_EQUALS( kk_pose_waters.size(), kk_sotf_waters.size() );
 					//std::cout << "#Waters: " << kk_pose_waters.size() << std::endl;
 					if ( kk_pose_waters.size() != kk_sotf_waters.size() ) continue;
 
-					for ( Size ll = 1; ll <= kk_pose_waters.size(); ++ll ) {
+					for ( Size ll = 1; ll <= kk_pose_n_waters.size(); ++ll ) {
 						TS_ASSERT_EQUALS( kk_pose_n_waters[ ll ], kk_sotf_n_waters[ ll ] );
-						if ( kk_pose_waters[ ll ].size() != kk_sotf_waters[ ll ].size() ) continue;
-						for ( Size mm = 1; mm <= kk_pose_n_waters[ ll ]; ++mm ) {
-							TS_ASSERT_DELTA( kk_pose_waters[ ll ][ mm ].distance_squared( kk_sotf_waters[ ll ][ mm ] ), 0, 1e-6 );
-						}
+						TS_ASSERT_EQUALS( kk_pose_water_offsets[ ll ], kk_sotf_water_offsets[ ll ] );
+					}
+
+					for ( Size ll = 1; ll <= kk_pose_waters.size(); ++ll ) {
+						TS_ASSERT_DELTA( kk_pose_waters[ ll ].distance_squared( kk_sotf_waters[ ll ] ), 0, 1e-6 );
 					}
 
 					//if ( false ) {

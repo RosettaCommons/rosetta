@@ -51,10 +51,10 @@ namespace lkball {
 
 int const MAX_N_WATERS_PER_ATOM = 4;
 
-typedef utility::fixedsizearray1< Vector, MAX_N_WATERS_PER_ATOM > WaterCoords;
+typedef utility::vector1< Vector > WaterCoords;
 typedef utility::fixedsizearray1< Vector, MAX_N_WATERS_PER_ATOM > WaterDerivVectors;
 typedef utility::fixedsizearray1< Real, MAX_N_WATERS_PER_ATOM > WaterDerivContributions;
-typedef utility::fixedsizearray1< numeric::xyzMatrix< Real >, MAX_N_WATERS_PER_ATOM > WaterDerivMatrices;
+typedef numeric::xyzMatrix< Real > WaterDerivMatrix;
 typedef utility::fixedsizearray1< Real, 2 > AtomWeights;
 
 /// @details  Stores the internal coordinates of an ideal water position
@@ -103,6 +103,31 @@ typedef utility::pointer::shared_ptr< WaterBuildersList const > WaterBuildersLis
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+class WaterBuilderForRestype : public utility::pointer::ReferenceCount
+{
+public:
+	WaterBuilderForRestype(
+		WaterBuildersList const & builders,
+		utility::vector1< AtomWeights > const & atom_weights
+	);
+
+	Size n_waters() const { return n_waters_; }
+	utility::vector1< Size > const & n_waters_for_atom() const { return n_waters_for_atom_; }
+	utility::vector1< Size > const & water_offset_for_atom() const { return water_offset_for_atom_; }
+	WaterBuildersList const & builders() const { return builders_; }
+	utility::vector1< AtomWeights > const & atom_weights() const { return atom_weights_; }
+
+private:
+	Size n_waters_;
+	utility::vector1< Size > n_waters_for_atom_;
+	utility::vector1< Size > water_offset_for_atom_;
+	WaterBuildersList builders_;
+	utility::vector1< AtomWeights > atom_weights_;
+};
+
+typedef utility::pointer::shared_ptr< WaterBuilderForRestype > WaterBuilderForRestypeOP;
+typedef utility::pointer::shared_ptr< WaterBuilderForRestype const > WaterBuilderForRestypeCOP;
+
 /// @brief A singleton class which stores data for LKBall terms.
 /// This is a separate singleton class, rather than static data on the LKB_ResidueInfo class
 /// so that the ResidueType destruction observer has a stable object to call back to.
@@ -120,19 +145,8 @@ public:
 	void
 	initialize_residue_type( chemical::ResidueType const & rsd_type );
 
-	/// @brief Get the water builders for the ResidueType
-	/// A vector of one per heavy atom.
-	/// @details IMPORTANT LIFETIME NOTE: The return value is only valid so long as the passed residue type is
-	WaterBuildersList const &
-	get_water_builders( chemical::ResidueType const & rsd_type ) const;
-
-	WaterBuildersListCOP
-	get_water_builders_cop( chemical::ResidueType const & rsd_type ) const;
-
-	/// @brief Get the atom_weights for the ResidueType
-	/// @details IMPORTANT LIFETIME NOTE: The return value is only valid so long as the passed residue type is
-	utility::vector1< AtomWeights > const &
-	get_atom_weights( chemical::ResidueType const & rsd_type ) const;
+	WaterBuilderForRestypeCOP
+	get_water_builder_for_restype( chemical::ResidueType const & rsd_type ) const;
 
 	/// danger
 	void
@@ -159,11 +173,9 @@ private:
 private:
 
 	// The raw pointers here are registered in the destruction observer for their respective ResidueType
-	typedef std::map< chemical::ResidueType const *, WaterBuildersListCOP > WaterBuilderMap;
-	typedef std::map< chemical::ResidueType const *, utility::vector1< AtomWeights > > AtomWeightsMap;
+	typedef std::map< chemical::ResidueType const *, WaterBuilderForRestypeCOP > WaterBuildersForRestypeMap;
 
-	WaterBuilderMap water_builder_map_;
-	AtomWeightsMap atom_weights_map_;
+	WaterBuildersForRestypeMap water_builders_map_;
 
 #ifdef MULTI_THREADED
 	static utility::thread::ReadWriteMutex lkball_db_mutex_;
@@ -174,17 +186,19 @@ private:
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @details  Holds the locations of ideal waters attached to the atoms of a Residue
+
+
 class LKB_ResidueInfo; // fwd
 typedef utility::pointer::shared_ptr< LKB_ResidueInfo > LKB_ResidueInfoOP;
 
+/// @brief %LKB_ResidueInfo holds the coordinates of the waters attached to a Residue
 class LKB_ResidueInfo : public basic::datacache::CacheableData {
 public:
 	virtual ~LKB_ResidueInfo();
 
 public:
 
-	LKB_ResidueInfo( conformation::Residue const & rsd );
+	LKB_ResidueInfo( conformation::Residue const & rsd, bool compute_derivs = false );
 
 	LKB_ResidueInfo( LKB_ResidueInfo const & src );
 
@@ -205,36 +219,54 @@ public:
 	get_water_builder( conformation::Residue const & rsd , Size heavyatom ) const;
 
 	utility::vector1< Size > const &
-	n_attached_waters() const { return n_attached_waters_; }
+	n_attached_waters() const { return water_builders_->n_waters_for_atom(); }
 
-	utility::vector1< WaterCoords > const &
+	Size
+	n_attached_waters( Size atom_index ) const {
+		return water_builders_->n_waters_for_atom()[ atom_index ];
+	}
+
+	utility::vector1< Size > const &
+	water_offset_for_atom() const {
+		return water_builders_->water_offset_for_atom();
+	}
+
+	Size
+	water_offset_for_atom( Size atom_index ) const {
+		return water_builders_->water_offset_for_atom()[ atom_index ];
+	}
+
+	WaterCoords const &
 	waters() const { return waters_; }
 
 	//fpd deriv of water position w.r.t. atom 1
-	utility::vector1< WaterDerivMatrices > const &
-	atom1_derivs() const { return dwater_datom1_; }
+	utility::vector1< WaterDerivMatrix > const &
+	atom1_derivs() const {
+		debug_assert( dwater_datom_ready_ );
+		return dwater_datom1_;
+	}
 
 	//fpd deriv of water position w.r.t. atom 2
-	utility::vector1< WaterDerivMatrices > const &
-	atom2_derivs() const { return dwater_datom2_; }
+	utility::vector1< WaterDerivMatrix > const &
+	atom2_derivs() const {
+		debug_assert( dwater_datom_ready_ );
+		return dwater_datom2_;
+	}
 
 	//fpd deriv of water position w.r.t. atom 3
-	utility::vector1< WaterDerivMatrices > const &
-	atom3_derivs() const { return dwater_datom3_; }
+	utility::vector1< WaterDerivMatrix > const &
+	atom3_derivs() const {
+		debug_assert( dwater_datom_ready_ );
+		return dwater_datom3_;
+	}
 
 	bool
 	has_waters() const { return has_waters_; }
 
 	utility::vector1< AtomWeights > const &
-	atom_weights() const { return atom_weights_; }
-
-	//void
-	//remove_irrelevant_waters(
-	// Size const atom,
-	// chemical::ResidueType const & rsd_type,
-	// utility::vector1< Vector > & waters
-	//) const;
-
+	atom_weights() const {
+		return water_builders_->atom_weights();
+	}
 
 	bool
 	matches_residue_type( chemical::ResidueType const & rsd_type ) const;
@@ -244,14 +276,13 @@ public:
 
 private:
 	chemical::ResidueTypeCOP rsd_type_;
-	WaterBuildersListCOP water_builders_list_; // Pointer to the singleton-managed water builders list
-	utility::vector1< Size > n_attached_waters_;
-	utility::vector1< WaterCoords > waters_;
-	utility::vector1< WaterDerivMatrices > dwater_datom1_;
-	utility::vector1< WaterDerivMatrices > dwater_datom2_;
-	utility::vector1< WaterDerivMatrices > dwater_datom3_;
-	utility::vector1< AtomWeights > atom_weights_;
-	bool has_waters_;
+	WaterBuilderForRestypeCOP water_builders_;
+	WaterCoords waters_;
+	bool dwater_datom_ready_ = false;
+	utility::vector1< WaterDerivMatrix > dwater_datom1_;
+	utility::vector1< WaterDerivMatrix > dwater_datom2_;
+	utility::vector1< WaterDerivMatrix > dwater_datom3_;
+	bool has_waters_ = false;
 
 #ifdef    SERIALIZATION
 public:

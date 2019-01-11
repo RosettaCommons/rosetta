@@ -147,9 +147,11 @@ RTMin::rtmin(
 		utility_exit_with_message( "Incompatible scoring terms requested in invocation of RTMin" );
 	}
 
-	utility::vector1< Size > inactive_neighbors;
-	inactive_neighbors.reserve( pose.size() );
 	utility::vector1< bool > residue_is_inactive_neighbor( pose.size(), false );
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+		residue_is_inactive_neighbor[ii] = !input_task->being_packed(ii);
+	}
+
 	utility::vector1< bool > active_residue_has_been_visited( pose.size(), false );
 
 	utility::vector1< Size > active_residues = pack::repackable_residues_dup( *input_task );
@@ -193,20 +195,18 @@ RTMin::rtmin(
 				eiter_end = packer_neighbor_graph->get_node( iires )->const_edge_list_end();
 				eiter != eiter_end; ++eiter ) {
 			Size jjres = (*eiter)->get_other_ind( iires );
-			if ( ! bgres[ jjres ] && ! input_task->being_packed( jjres ) ) {
-				inactive_neighbors.push_back( jjres );
-				residue_is_inactive_neighbor[ jjres ] = true;
+			if ( ! bgres[jjres] ) {
 				non_const_bgres[ jjres ] = utility::pointer::make_shared< Residue >( pose.residue( jjres ) );
 				bgres[ jjres ] = non_const_bgres[ jjres ];
 				scminmap->set_natoms_for_residue( jjres, bgres[ jjres ]->natoms() );
-				/// Do setup_for_minimizing for background nodes once and leave them alone for
-				/// the rest of the trajectory
+				// Do setup_for_minimizing for background nodes once and leave them alone for
+				// the rest of the trajectory
 				scfxn.setup_for_minimizing_for_node(
 					* mingraph.get_minimization_node( jjres ), *bgres[ jjres ],
 					*non_const_bgres[ jjres ]->nonconst_data_ptr(),
 					*scminmap, pose, false, emap_dummy );
 			}
-			if ( ! input_task->being_packed( jjres ) || iires < jjres ) {
+			if ( residue_is_inactive_neighbor[ jjres ] || iires < jjres ) {
 				mingraph.add_edge( iires, jjres ); // add edges, but don't bother calling setup_for_minimization yet
 			}
 		}
@@ -237,9 +237,7 @@ RTMin::rtmin(
 				Size const jjres = ( r1 == iires ? r2 : r1 );
 				//bool const res_moving_wrt_eachother( true );
 
-				if ( ! bgres[ jjres ] && ! input_task->being_packed( jjres ) ) {
-					inactive_neighbors.push_back( jjres );
-					residue_is_inactive_neighbor[ jjres ] = true;
+				if ( ! bgres[ jjres ] ) {
 					non_const_bgres[ jjres ] = utility::pointer::make_shared< Residue >( pose.residue( jjres ) );
 					bgres[ jjres ] = non_const_bgres[ jjres ];
 					scminmap->set_natoms_for_residue( jjres, bgres[ jjres ]->natoms() );
@@ -250,7 +248,7 @@ RTMin::rtmin(
 						*non_const_bgres[ jjres ]->nonconst_data_ptr(),
 						*scminmap, pose, false, emap_dummy );
 				}
-				if ( ! input_task->being_packed( jjres ) || iires < jjres ) {
+				if ( residue_is_inactive_neighbor[ jjres ] || iires < jjres ) {
 					if ( !mingraph.get_edge_exists(iires, jjres) ) {
 						mingraph.add_edge( iires, jjres ); // add edges, but don't bother calling setup_for_minimization yet
 					}
@@ -328,7 +326,6 @@ RTMin::rtmin(
 				}
 				Residue const & jjrsd( * bgres[ jjresid ] );
 				auto & min_edge( static_cast< MinimizationEdge & > ( **eiter ));
-				//std::cout << "Minedge " << iiresid << " " << jjresid << std::endl;
 				if ( jjresid < iiresid ) {
 					if ( residue_is_inactive_neighbor[ jjresid ] || ! active_residue_has_been_visited[ jjresid ] ) {
 						scfxn.setup_for_minimizing_sr2b_enmeths_for_minedge(

@@ -52,9 +52,12 @@ public:
 	Size n_attached_waters() const { return n_attached_waters_; }
 
 	WaterCoords const & waters() const { return waters_; }
-	void waters( Size n_attached, WaterCoords const & waters) {
+	void waters( Size n_attached, Size offset, WaterCoords const & waters) {
 		n_attached_waters_ = n_attached;
-		waters_ = waters;
+		waters_.resize( n_attached );
+		for ( Size ii = 1; ii <= n_attached; ++ii ) {
+			waters_[ ii ] = waters[ ii + offset ];
+		}
 	}
 
 	AtomWeights const & atom_weights() const { return atom_weights_; }

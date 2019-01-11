@@ -85,8 +85,8 @@ public:
 	void dont_test_rotamer_trials_with_minimization()
 	{
 		// UTracer log file
-		test::UTracer  UT("core/pack/RTMIN.u");
-		//do_rotamer_trials(true, UT);
+		test::UTracer UT("core/pack/rtmin.fake.u");
+		do_rotamer_trials(true, UT);
 	}
 
 	void do_rotamer_trials(bool with_minimization, test::UTracer & UT)

@@ -288,8 +288,8 @@ evaluate_lk_ball_energy_for_atom_ranges(
 	EnergyMap & emap
 )
 {
-	utility::vector1< WaterCoords > const & rsd1_waters( rsd1_info.waters() );
-	utility::vector1< WaterCoords > const & rsd2_waters( rsd2_info.waters() );
+	WaterCoords const & rsd1_waters( rsd1_info.waters() );
+	WaterCoords const & rsd2_waters( rsd2_info.waters() );
 
 	utility::vector1< AtomWeights > const & rsd1_atom_wts( rsd1_info.atom_weights() );
 	utility::vector1< AtomWeights > const & rsd2_atom_wts( rsd2_info.atom_weights() );
@@ -300,15 +300,17 @@ evaluate_lk_ball_energy_for_atom_ranges(
 
 	// setup residue information
 	for ( Size atom1 = res1_start_atom; atom1 <= res1_end_atom; ++atom1 ) {
-		Size const n_atom1_waters = rsd1_info.n_attached_waters()[ atom1 ];
-		WaterCoords const & atom1_waters( rsd1_waters[ atom1 ] );
+		Size const n_atom1_waters = rsd1_info.n_attached_waters( atom1 );
+		Size const atom1_water_offset = rsd1_info.water_offset_for_atom( atom1 );
+		// WaterCoords const & atom1_waters( rsd1_waters[ atom1 ] );
 		Vector const & atom1_xyz( rsd1.xyz( atom1 ) );
 		Size const atom1_type_index( rsd1.atom( atom1 ).type() );
 		AtomWeights const & atom1_weights( rsd1_atom_wts[atom1] );
 
 		for ( Size atom2 = res2_start_atom; atom2 <= res2_end_atom; ++atom2 ) {
-			Size const n_atom2_waters = rsd2_info.n_attached_waters()[ atom2 ];
-			WaterCoords const & atom2_waters( rsd2_waters[ atom2 ] );
+			Size const n_atom2_waters = rsd2_info.n_attached_waters( atom2 );
+			Size const atom2_water_offset = rsd2_info.water_offset_for_atom( atom2 );
+			// WaterCoords const & atom2_waters( rsd2_waters[ atom2 ] );
 			Vector const & atom2_xyz( rsd2.xyz( atom2 ) );
 
 			if ( n_atom1_waters == 0 && n_atom2_waters == 0 ) continue;
@@ -347,10 +349,12 @@ evaluate_lk_ball_energy_for_atom_ranges(
 					lk_desolvation_of_atom2_by_atom1 = cp_weight * ( ( 1. - frac ) * lk_ball.solv2()[ l1 ] + frac * lk_ball.solv2()[ l1+1 ] );
 				}
 
-				lk_ball.accumulate_single_atom_contributions( atom1, atom1_type_index, n_atom1_waters, atom1_waters, atom1_weights,
+				lk_ball.accumulate_single_atom_contributions(
+					n_atom1_waters, atom1_water_offset, rsd1_waters, atom1_weights,
 					rsd1, atom2_type_index, atom2_xyz,
 					lk_desolvation_of_atom1_by_atom2, emap );
-				lk_ball.accumulate_single_atom_contributions( atom2, atom2_type_index, n_atom2_waters, atom2_waters, atom2_weights,
+				lk_ball.accumulate_single_atom_contributions(
+					n_atom2_waters, atom2_water_offset, rsd2_waters, atom2_weights,
 					rsd2, atom1_type_index, atom1_xyz,
 					lk_desolvation_of_atom2_by_atom1, emap );
 			}
@@ -363,7 +367,8 @@ evaluate_lk_ball_energy_for_atom_ranges(
 				core::Real lkbridge_frac = lk_ball.get_lkbr_fractional_contribution(
 					atom1_xyz, atom2_xyz,
 					n_atom1_waters, n_atom2_waters,
-					atom1_waters, atom2_waters );
+					atom1_water_offset, atom2_water_offset,
+					rsd1_waters, rsd2_waters );
 
 				emap[ lk_ball_bridge ] += lk_desolvation_sum * lkbridge_frac;
 				emap[ lk_ball_bridge_uncpl ] += cp_weight * lkbridge_frac;
@@ -492,7 +497,7 @@ update_cached_lkb_resinfo(
 		auto & info( static_cast< LKB_ResidueInfo & > ( residue_data_cache.get( LK_BALL_INFO )));
 		info.build_waters( rsd, compute_derivs ); // update the coordinates for the existing lkb-resinfo object
 	} else {
-		LKB_ResidueInfoOP info( new LKB_ResidueInfo( rsd ) );
+		LKB_ResidueInfoOP info( new LKB_ResidueInfo( rsd, compute_derivs ) );
 		residue_data_cache.set( LK_BALL_INFO, info );
 	}
 }
@@ -673,10 +678,10 @@ LK_BallEnergy::setup_for_minimizing_for_residue(
 	ScoreFunction const & scorefxn,
 	kinematics::MinimizerMapBase const &,
 	basic::datacache::BasicDataCache & res_data_cache,
-	ResSingleMinimizationData &
+	ResSingleMinimizationData & res_min_dat
 ) const
 {
-	setup_for_scoring_for_residue( rsd, pose, scorefxn, res_data_cache );
+	setup_for_derivatives_for_residue( rsd, pose, scorefxn, res_min_dat, res_data_cache );
 }
 
 void
@@ -828,7 +833,7 @@ LK_BallEnergy::prepare_rotamers_for_packing(
 
 	for ( Size n=1; n<= rotamer_set.num_rotamers(); ++n ) {
 		conformation::ResidueOP rot( rotamer_set.nonconst_rotamer(n) );
-		LKB_ResidueInfoOP rotinfo( new LKB_ResidueInfo( *rot ) );
+		LKB_ResidueInfoOP rotinfo( new LKB_ResidueInfo( *rot, false ) );
 		rot->nonconst_data_ptr()->set( conformation::residue_datacache::LK_BALL_INFO, rotinfo->clone() ); // DataCache::set() does not clone
 		info->append( rotinfo );
 	}
@@ -932,13 +937,17 @@ LK_BallEnergy::get_lkbr_fractional_contribution(
 	Vector const & atom2_base,
 	Size atom1_n_attached_waters,
 	Size atom2_n_attached_waters,
-	WaterCoords const & atom1_waters,
-	WaterCoords const & atom2_waters
+	Size atom1_water_offset,
+	Size atom2_water_offset,
+	WaterCoords const & rsd1_waters,
+	WaterCoords const & rsd2_waters
 ) const {
 	WaterDerivVectors dweighted_water_ddi;
 	Real weighted_water_d2_delta(0.0), angleterm_lkbr(0.0), pointterm_lkbr(0.0), d_angleterm_lkbr_dr(0.0);
 	return get_lkbr_fractional_contribution(
-		atom1_base, atom2_base, atom1_n_attached_waters, atom2_n_attached_waters, atom1_waters, atom2_waters,
+		atom1_base, atom2_base, atom1_n_attached_waters, atom2_n_attached_waters,
+		atom1_water_offset, atom2_water_offset,
+		rsd1_waters, rsd2_waters,
 		dweighted_water_ddi, weighted_water_d2_delta, pointterm_lkbr, angleterm_lkbr, d_angleterm_lkbr_dr, false);
 }
 
@@ -948,16 +957,20 @@ Real
 LK_BallEnergy::get_lkbr_fractional_contribution_noangle(
 	Size atom1_n_attached_waters,
 	Size atom2_n_attached_waters,
-	WaterCoords const & atom1_waters,
-	WaterCoords const & atom2_waters
+	Size atom1_water_offset,
+	Size atom2_water_offset,
+	WaterCoords const & rsd1_waters,
+	WaterCoords const & rsd2_waters
 ) const {
 	if ( atom1_n_attached_waters == 0 || atom2_n_attached_waters == 0 ) return 0.0;
 
 	// softmax of all water combinations
 	Real d2_delta, d2_delta_wt, weighted_d2_water_delta(0.0);
 	for ( Size idx1 = 1; idx1 <= atom1_n_attached_waters; ++idx1 ) {
+		Size const wat1_ind = idx1 + atom1_water_offset;
 		for ( Size idx2 = 1; idx2 <= atom2_n_attached_waters; ++idx2 ) {
-			numeric::xyzVector< core::Real > delta_ij = atom1_waters[idx1] - atom2_waters[idx2];
+			Size const wat2_ind = idx2 + atom2_water_offset;
+			numeric::xyzVector< core::Real > delta_ij = rsd1_waters[wat1_ind] - rsd2_waters[wat2_ind];
 			d2_delta = delta_ij.length_squared() - overlap_gap2_;
 			d2_delta_wt = exp( -d2_delta/multi_water_fade_ );
 			weighted_d2_water_delta += d2_delta_wt;
@@ -982,8 +995,10 @@ LK_BallEnergy::get_lkbr_fractional_contribution(
 	Vector const & atom2_base,
 	Size atom1_n_attached_waters,
 	Size atom2_n_attached_waters,
-	WaterCoords const & atom1_waters,
-	WaterCoords const & atom2_waters,
+	Size atom1_water_offset,
+	Size atom2_water_offset,
+	WaterCoords const & rsd1_waters,
+	WaterCoords const & rsd2_waters,
 	WaterDerivVectors & d_weighted_d2_d_di,  // derivative of weighted distance w.r.t. water 1 movement
 	Real & weighted_d2_water_delta,
 	Real & pointterm_lkbr,
@@ -1001,8 +1016,10 @@ LK_BallEnergy::get_lkbr_fractional_contribution(
 	// softmax of all water combinations
 	Real d2_delta, d2_delta_wt;
 	for ( Size idx1 = 1; idx1 <= atom1_n_attached_waters; ++idx1 ) {
+		Size const idx1_wat = idx1 + atom1_water_offset;
 		for ( Size idx2 = 1; idx2 <= atom2_n_attached_waters; ++idx2 ) {
-			numeric::xyzVector< core::Real > delta_ij = atom1_waters[idx1] - atom2_waters[idx2];
+			Size const idx2_wat = idx2 + atom2_water_offset;
+			numeric::xyzVector< core::Real > delta_ij = rsd1_waters[idx1_wat] - rsd2_waters[idx2_wat];
 			d2_delta = delta_ij.length_squared() - overlap_gap2_;
 			d2_delta_wt = exp( -d2_delta/multi_water_fade_ );
 			weighted_d2_water_delta += d2_delta_wt;
@@ -1063,7 +1080,8 @@ LK_BallEnergy::get_lk_fractional_contribution(
 	Vector const & atom2_xyz,
 	Size const atom2_type,
 	Size atom1_n_attached_waters,
-	WaterCoords const & atom1_waters,
+	Size atom1_water_offset,
+	WaterCoords const & rsd1_waters,
 	WaterDerivContributions & d_weighted_d2_d_di,  // per water contribution
 	Real & weighted_d2_water_delta
 ) const
@@ -1078,7 +1096,8 @@ LK_BallEnergy::get_lk_fractional_contribution(
 	weighted_d2_water_delta = 0.0;
 	Real d2_delta;
 	for ( Size idx = 1; idx <= atom1_n_attached_waters; ++idx ) {
-		d2_delta = atom2_xyz.distance_squared( atom1_waters[idx] ) - d2_low;
+		Size const idx_wat = idx + atom1_water_offset;
+		d2_delta = atom2_xyz.distance_squared( rsd1_waters[idx_wat] ) - d2_low;
 		d_weighted_d2_d_di[idx] = exp( -d2_delta/multi_water_fade_ );
 		weighted_d2_water_delta += d_weighted_d2_d_di[idx];
 		//TR << "d2_delta = " << d2_delta << std::endl;
@@ -1110,7 +1129,8 @@ LK_BallEnergy::get_lk_fractional_contribution(
 	Vector const & atom2_xyz,
 	Size const atom2_type,
 	Size const atom1_n_attached_waters,
-	WaterCoords const & atom1_waters
+	Size const atom1_water_offset,
+	WaterCoords const & rsd1_waters
 ) const
 {
 	Real const d2_low( d2_low_[ atom2_type ] );
@@ -1119,7 +1139,8 @@ LK_BallEnergy::get_lk_fractional_contribution(
 	Real weighted_d2_water_delta = 0.0;
 	Real d2_delta;
 	for ( Size idx = 1; idx <= atom1_n_attached_waters; ++idx ) {
-		d2_delta = atom2_xyz.distance_squared( atom1_waters[idx] ) - d2_low;
+		Size const idx_wat = idx + atom1_water_offset;
+		d2_delta = atom2_xyz.distance_squared( rsd1_waters[idx_wat] ) - d2_low;
 		weighted_d2_water_delta += exp( -d2_delta/multi_water_fade_ );
 	}
 
@@ -1323,7 +1344,8 @@ LK_BallEnergy::calculate_lk_ball_atom_energies(
 	Size const atom1,
 	conformation::Residue const & rsd1,
 	Size atom1_n_attached_waters,
-	WaterCoords const & atom1_waters,
+	Size atom1_water_offset,
+	WaterCoords const & rsd1_waters,
 	Size const atom2,
 	conformation::Residue const & rsd2,
 	Real & lk_desolvation_of_atom1_by_atom2,
@@ -1368,7 +1390,8 @@ LK_BallEnergy::calculate_lk_ball_atom_energies(
 		lk_desolvation_of_atom1_by_atom2 = ( cp_weight * ( ( 1. - frac ) * solv1_[ l1 ] + frac * solv1_[ l1+1 ] ) );
 	}
 	lk_ball_desolvation_of_atom1_by_atom2 = lk_desolvation_of_atom1_by_atom2 *
-		get_lk_fractional_contribution( atom2_xyz, atom2_type_index, atom1_n_attached_waters, atom1_waters );
+		get_lk_fractional_contribution( atom2_xyz, atom2_type_index, atom1_n_attached_waters,
+		atom1_water_offset, rsd1_waters );
 }
 
 
@@ -1377,7 +1400,8 @@ LK_BallEnergy::calculate_lk_ball_atom_energies_cp(
 	Size const atom1,
 	conformation::Residue const & rsd1,
 	Size atom1_n_attached_waters,
-	WaterCoords const & atom1_waters,
+	Size atom1_water_offset,
+	WaterCoords const & rsd1_waters,
 	Size const atom2,
 	conformation::Residue const & rsd2,
 	etable::count_pair::CPCrossoverBehavior const & cp_crossover,
@@ -1428,7 +1452,7 @@ LK_BallEnergy::calculate_lk_ball_atom_energies_cp(
 	}
 
 	lk_ball_desolvation_of_atom1_by_atom2 = lk_desolvation_of_atom1_by_atom2 *
-		get_lk_fractional_contribution( atom2_xyz, atom2_type_index, atom1_n_attached_waters, atom1_waters );
+		get_lk_fractional_contribution( atom2_xyz, atom2_type_index, atom1_n_attached_waters, atom1_water_offset, rsd1_waters );
 }
 
 
@@ -1512,10 +1536,9 @@ LK_BallEnergy::eval_desolvation_derivs_no_count_pair(
 
 void
 LK_BallEnergy::accumulate_single_atom_contributions(
-	Size const,
-	Size const,
 	Size atom1_n_attached_waters,
-	WaterCoords const & atom1_waters,
+	Size atom1_water_offset,
+	WaterCoords const & rsd1_waters,
 	AtomWeights const & atom1_wts,
 	conformation::Residue const &,
 	Size const atom2_type_index,
@@ -1531,7 +1554,7 @@ LK_BallEnergy::accumulate_single_atom_contributions(
 	emap[ lk_ball_iso ] += lk_desolvation_of_atom1_by_atom2;
 	Real const lk_desolvation_of_atom1_by_atom2_lkb
 		( lk_desolvation_of_atom1_by_atom2 *
-		get_lk_fractional_contribution( atom2_xyz, atom2_type_index, atom1_n_attached_waters, atom1_waters ) );
+		get_lk_fractional_contribution( atom2_xyz, atom2_type_index, atom1_n_attached_waters, atom1_water_offset, rsd1_waters ) );
 	emap[ lk_ball ] += lk_desolvation_of_atom1_by_atom2_lkb;
 	emap[ lk_ball_wtd ] += ( atom1_wts[1] * lk_desolvation_of_atom1_by_atom2 +
 		atom1_wts[2] * lk_desolvation_of_atom1_by_atom2_lkb );
@@ -1601,14 +1624,15 @@ LK_BallEnergy::sum_deriv_contributions_for_heavyatom_pair_one_way(
 	utility::vector1< DerivVectorPair > & r2_at_derivs
 ) const
 {
-	Size atom1_n_waters = rsd1_info.n_attached_waters()[ heavyatom1 ];
+	Size atom1_n_waters = rsd1_info.n_attached_waters( heavyatom1 );
 	if ( atom1_n_waters == 0 ) return;
+	Size atom1_water_offset = rsd1_info.water_offset_for_atom( heavyatom1 );
 
-	WaterCoords const & atom1_waters = rsd1_info.waters()[heavyatom1];
+	WaterCoords const & rsd1_waters = rsd1_info.waters();
 	AtomWeights const & atom1_wts = rsd1_info.atom_weights()[heavyatom1];
-	Size atom2_n_waters = rsd2_info.n_attached_waters()[ heavyatom2 ];
-	WaterCoords const & atom2_waters = rsd2_info.waters()[heavyatom2];
-
+	Size atom2_n_waters = rsd2_info.n_attached_waters( heavyatom2 );
+	Size atom2_water_offset = rsd2_info.water_offset_for_atom( heavyatom2 );
+	WaterCoords const & rsd2_waters = rsd2_info.waters();
 
 	Real lk_deriv(0.0), lk_score(0.0), other_lk_score(0.0);  // other_lk score needed for bridging water
 
@@ -1654,7 +1678,7 @@ LK_BallEnergy::sum_deriv_contributions_for_heavyatom_pair_one_way(
 	if ( !skip_heavyatom ) {
 		Real weighted_water_d2(0);
 		Real const lk_fraction(
-			get_lk_fractional_contribution( atom2_xyz, rsd2.atom( heavyatom2 ).type(), atom1_n_waters, atom1_waters, dwwd2_ddi, weighted_water_d2 ) );
+			get_lk_fractional_contribution( atom2_xyz, rsd2.atom( heavyatom2 ).type(), atom1_n_waters, atom1_water_offset, rsd1_waters, dwwd2_ddi, weighted_water_d2 ) );
 
 		// (1) the derivs for the parts that don't involve waters:
 		{
@@ -1672,7 +1696,8 @@ LK_BallEnergy::sum_deriv_contributions_for_heavyatom_pair_one_way(
 		// we assume that for heavyatoms with dependent polar hydrogens, every water belongs to one of the hydrogens
 		if ( weighted_water_d2 < ramp_width_A2_ && weighted_water_d2 > 0.0 ) {
 			for ( Size i=1; i <= atom1_n_waters; ++i ) {
-				Vector const & atom1_water_xyz( atom1_waters[ i ] );
+				Size const i_water_ind = i + atom1_water_offset;
+				Vector const & atom1_water_xyz( rsd1_waters[ i_water_ind ] );
 
 				// update f1 and f2 to reflect water-atom2 as the interaction
 				Vector f1w = atom1_water_xyz.cross( atom2_xyz );
@@ -1695,7 +1720,7 @@ LK_BallEnergy::sum_deriv_contributions_for_heavyatom_pair_one_way(
 					Size atom1 = rsd1_wb[i].atom1();
 					Vector const & r1_atom1_xyz( rsd1.xyz( atom1 ) );
 
-					numeric::xyzMatrix< Real >const & dwater_datom1 = rsd1_info.atom1_derivs()[heavyatom1][i];
+					numeric::xyzMatrix< Real >const & dwater_datom1 = rsd1_info.atom1_derivs()[i_water_ind];
 					Vector dwater_datom1x ( dwater_datom1(1,1), dwater_datom1(2,1), dwater_datom1(3,1) );
 					Vector dwater_datom1y ( dwater_datom1(1,2), dwater_datom1(2,2), dwater_datom1(3,2) );
 					Vector dwater_datom1z ( dwater_datom1(1,3), dwater_datom1(2,3), dwater_datom1(3,3) );
@@ -1711,7 +1736,7 @@ LK_BallEnergy::sum_deriv_contributions_for_heavyatom_pair_one_way(
 					Size atom2 = rsd1_wb[i].atom2();
 					Vector const & r1_atom2_xyz( rsd1.xyz( atom2 ) );
 
-					numeric::xyzMatrix< Real >const & dwater_datom2 = rsd1_info.atom2_derivs()[heavyatom1][i];
+					numeric::xyzMatrix< Real >const & dwater_datom2 = rsd1_info.atom2_derivs()[i_water_ind];
 					Vector dwater_datom2x ( dwater_datom2(1,1), dwater_datom2(2,1), dwater_datom2(3,1) );
 					Vector dwater_datom2y ( dwater_datom2(1,2), dwater_datom2(2,2), dwater_datom2(3,2) );
 					Vector dwater_datom2z ( dwater_datom2(1,3), dwater_datom2(2,3), dwater_datom2(3,3) );
@@ -1727,7 +1752,7 @@ LK_BallEnergy::sum_deriv_contributions_for_heavyatom_pair_one_way(
 					Size atom3 = rsd1_wb[i].atom3();
 					Vector const & r1_atom3_xyz( rsd1.xyz( atom3 ) );
 
-					numeric::xyzMatrix< Real >const & dwater_datom3 = rsd1_info.atom3_derivs()[heavyatom1][i];
+					numeric::xyzMatrix< Real >const & dwater_datom3 = rsd1_info.atom3_derivs()[i_water_ind];
 					Vector dwater_datom3x ( dwater_datom3(1,1), dwater_datom3(2,1), dwater_datom3(3,1) );
 					Vector dwater_datom3y ( dwater_datom3(1,2), dwater_datom3(2,2), dwater_datom3(3,2) );
 					Vector dwater_datom3z ( dwater_datom3(1,3), dwater_datom3(2,3), dwater_datom3(3,3) );
@@ -1757,7 +1782,9 @@ LK_BallEnergy::sum_deriv_contributions_for_heavyatom_pair_one_way(
 	WaterDerivVectors d_weighted_d2_d_di;
 
 	Real const lkbr_fraction( get_lkbr_fractional_contribution(
-		heavyatom1_xyz, atom2_xyz, atom1_n_waters, atom2_n_waters, atom1_waters, atom2_waters,
+		heavyatom1_xyz, atom2_xyz, atom1_n_waters, atom2_n_waters,
+		atom1_water_offset, atom2_water_offset,
+		rsd1_waters, rsd2_waters,
 		d_weighted_d2_d_di, weighted_d2_water_delta, pointterm_lkbr, angleterm_lkbr, d_angleterm_lkbr_dr
 		) );
 
@@ -1781,7 +1808,8 @@ LK_BallEnergy::sum_deriv_contributions_for_heavyatom_pair_one_way(
 
 	// B: change in water positions
 	if ( weighted_d2_water_delta < overlap_width_A2_ && weighted_d2_water_delta > 0.0 ) {
-		for ( Size i=1; i<=atom1_n_waters; ++i ) {
+		for ( Size i=1; i <= atom1_n_waters; ++i ) {
+			Size const i_water_ind = i + atom1_water_offset;
 			// what is the derivative of the lkbr_fraction term wrt r?
 			numeric::xyzVector<core::Real> const dE_dwi
 				( weight_factor * bridging_lk_factor * d_weighted_d2_d_di[i] * angleterm_lkbr * eval_d_lk_fraction_dr_over_r( weighted_d2_water_delta, overlap_width_A2_ ) );
@@ -1793,7 +1821,7 @@ LK_BallEnergy::sum_deriv_contributions_for_heavyatom_pair_one_way(
 				Size atom1 = rsd1_wb[i].atom1();
 				Vector const & r1_atom1_xyz( rsd1.xyz( atom1 ) );
 
-				numeric::xyzMatrix< Real >const & dwater_datom1 = rsd1_info.atom1_derivs()[heavyatom1][i];
+				numeric::xyzMatrix< Real > const & dwater_datom1 = rsd1_info.atom1_derivs()[i_water_ind];
 				Vector dwater_datom1x ( dwater_datom1(1,1), dwater_datom1(2,1), dwater_datom1(3,1) );
 				Vector dwater_datom1y ( dwater_datom1(1,2), dwater_datom1(2,2), dwater_datom1(3,2) );
 				Vector dwater_datom1z ( dwater_datom1(1,3), dwater_datom1(2,3), dwater_datom1(3,3) );
@@ -1809,7 +1837,7 @@ LK_BallEnergy::sum_deriv_contributions_for_heavyatom_pair_one_way(
 				Size atom2 = rsd1_wb[i].atom2();
 				Vector const & r1_atom2_xyz( rsd1.xyz( atom2 ) );
 
-				numeric::xyzMatrix< Real >const & dwater_datom2 = rsd1_info.atom2_derivs()[heavyatom1][i];
+				numeric::xyzMatrix< Real > const & dwater_datom2 = rsd1_info.atom2_derivs()[i_water_ind];
 				Vector dwater_datom2x ( dwater_datom2(1,1), dwater_datom2(2,1), dwater_datom2(3,1) );
 				Vector dwater_datom2y ( dwater_datom2(1,2), dwater_datom2(2,2), dwater_datom2(3,2) );
 				Vector dwater_datom2z ( dwater_datom2(1,3), dwater_datom2(2,3), dwater_datom2(3,3) );
@@ -1825,7 +1853,7 @@ LK_BallEnergy::sum_deriv_contributions_for_heavyatom_pair_one_way(
 				Size atom3 = rsd1_wb[i].atom3();
 				Vector const & r1_atom3_xyz( rsd1.xyz( atom3 ) );
 
-				numeric::xyzMatrix< Real >const & dwater_datom3 = rsd1_info.atom3_derivs()[heavyatom1][i];
+				numeric::xyzMatrix< Real > const & dwater_datom3 = rsd1_info.atom3_derivs()[i_water_ind];
 				Vector dwater_datom3x ( dwater_datom3(1,1), dwater_datom3(2,1), dwater_datom3(3,1) );
 				Vector dwater_datom3y ( dwater_datom3(1,2), dwater_datom3(2,2), dwater_datom3(3,2) );
 				Vector dwater_datom3z ( dwater_datom3(1,3), dwater_datom3(2,3), dwater_datom3(3,3) );
@@ -1917,6 +1945,8 @@ LK_BallEnergy::evaluate_rotamer_pair_energies(
 
 	// There should be a way to turn this on without recompiling...
 	// debug
+	// TO DO:
+	// Turn this into a unit test
 	/*
 	ObjexxFCL::FArray2D< core::PackerEnergy > temp_table3( energy_table );
 	temp_table3 = 0;
@@ -1982,6 +2012,7 @@ LK_BallEnergy::evaluate_rotamer_background_energies(
 	}
 
 	//debug
+	// TO DO: Turn this into a unit test
 	/*
 	utility::vector1< Energy > temp_vector3( energy_vector.size(), 0.0f );
 	EnergyMap emap;
@@ -2100,7 +2131,10 @@ create_rotamer_descriptor(
 		initialize_cpdata_for_atom( cpdata, jj, res, cpdata_map );
 
 		newatom.atom( res.atom(jj) );
-		newatom.waters( lkb_resinfo.n_attached_waters()[jj], lkb_resinfo.waters()[jj] );
+		newatom.waters(
+			lkb_resinfo.n_attached_waters()[jj],
+			lkb_resinfo.water_offset_for_atom()[jj],
+			lkb_resinfo.waters() );
 		newatom.atom_weights( lkb_resinfo.atom_weights()[jj] );
 
 		RotamerDescriptorAtom< LKBAtom, CPDAT > rdatom( newatom, cpdata );

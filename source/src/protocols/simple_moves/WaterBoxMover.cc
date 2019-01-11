@@ -652,14 +652,16 @@ WaterBoxMover::build_lkboverlap_rotamer_clouds(
 				core::conformation::Residue res_rot = *res_rotset->rotamer( ii );
 				core::scoring::lkball::LKB_ResidueInfoOP lkb_resinfo( new core::scoring::lkball::LKB_ResidueInfo( res_rot ) );
 
-				utility::vector1< core::Size > rsdin_waters = lkb_resinfo->n_attached_waters();
-				utility::vector1< core::scoring::lkball::WaterCoords > rsdiwaters = lkb_resinfo->waters();
+				utility::vector1< core::Size > const & rsdin_waters = lkb_resinfo->n_attached_waters();
+				utility::vector1< core::Size > const & rsdiwater_offset = lkb_resinfo->water_offset_for_atom();
+				core::scoring::lkball::WaterCoords const & rsdiwaters = lkb_resinfo->waters();
 
 				for ( Size j=1; j <= rsdin_waters.size(); ++j ) {
 					for ( Size k=1; k <= rsdin_waters[j]; ++k ) {
+						Size k_wat_ind = k + rsdiwater_offset[j];
 						// "exposure" check
 						//if ( allprotein.get_neighborcount( rsdiwaters[j][k], neighbrad ) > neighbcountcut) {
-						allwaters.add_point( i, rsdiwaters[j][k] );
+						allwaters.add_point( i, rsdiwaters[k_wat_ind] );
 						//}
 					}
 				}
@@ -668,14 +670,16 @@ WaterBoxMover::build_lkboverlap_rotamer_clouds(
 			// get lkball positions for fixed residues
 			core::scoring::lkball::LKB_ResidueInfoOP lkb_resinfo( new core::scoring::lkball::LKB_ResidueInfo( pose.residue(i) ) );
 
-			utility::vector1< core::Size > rsdin_waters = lkb_resinfo->n_attached_waters();
-			utility::vector1< utility::fixedsizearray1< core::Vector, 4 > > rsdiwaters = lkb_resinfo->waters();
+			utility::vector1< core::Size > const & rsdin_waters = lkb_resinfo->n_attached_waters();
+			utility::vector1< core::Size > const & rsdiwater_offset = lkb_resinfo->water_offset_for_atom();
+			core::scoring::lkball::WaterCoords const & rsdiwaters = lkb_resinfo->waters();
 
-			for ( Size j=1; j <= rsdiwaters.size(); ++j ) {
+			for ( Size j=1; j <= rsdin_waters.size(); ++j ) {
 				for ( Size k=1; k <= rsdin_waters[j]; ++k ) {
+					Size k_wat_ind = k + rsdiwater_offset[j];
 					// "exposure" check
 					//if ( allprotein.get_neighborcount( rsdiwaters[j][k], neighbrad ) > neighbcountcut) {
-					allwaters.add_point( i, rsdiwaters[j][k] );
+					allwaters.add_point( i, rsdiwaters[k_wat_ind] );
 					//}
 				}
 			}

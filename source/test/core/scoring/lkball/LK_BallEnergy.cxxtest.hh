@@ -22,13 +22,16 @@
 
 // Unit headers
 #include <core/scoring/lkball/LK_BallEnergy.hh>
+#include <core/scoring/lkball/LK_BallInfo.hh>
 
 // Package headers
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/trie/RotamerTrie.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
+#include <core/scoring/MinimizationData.hh>
 
 // Project headers
+#include <core/conformation/residue_datacache.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 
@@ -45,6 +48,7 @@
 
 // Utility headers
 #include <utility/vector1.hh>
+#include <utility/backtrace.hh>
 
 #ifdef SERIALIZATION
 // Cereal headers
@@ -64,6 +68,7 @@ using namespace std;
 using namespace core;
 using namespace scoring;
 using namespace etable;
+using namespace lkball;
 
 
 ///////////////////////////////////////////////////////////////////////////
@@ -79,6 +84,70 @@ public:
 	}
 
 	void tearDown() {}
+
+	LKB_ResidueInfo const &
+	retrieve_lkb_resdata(
+		conformation::Residue const & res
+	)
+	{
+		using namespace core::conformation::residue_datacache;
+		debug_assert( utility::pointer::dynamic_pointer_cast< LKB_ResidueInfo const > ( res.data().get_const_ptr( LK_BALL_INFO )));
+		return ( static_cast< LKB_ResidueInfo const & > ( res.data().get( LK_BALL_INFO ) ) );
+	}
+
+	void test_lk_ball_setup_for_scoring() {
+		core::pose::Pose pose = create_trpcage_ideal_pose();
+		core::scoring::ScoreFunction sfxn;
+		sfxn.set_weight( core::scoring::lk_ball, 1.0 );
+		sfxn( pose );
+
+		core::conformation::Residue const & res1 = pose.residue(1);
+		LKB_ResidueInfo const & r1_lkbinfo = retrieve_lkb_resdata(res1);
+
+		TS_ASSERT_EQUALS( res1.natoms(), r1_lkbinfo.n_attached_waters().size() );
+		TS_ASSERT_EQUALS( res1.natoms(), r1_lkbinfo.water_offset_for_atom().size() );
+
+		utility::vector1< Size > actual_offsets( res1.natoms(), 0 );
+		for ( Size ii = 1; ii < res1.natoms(); ++ii ) {
+			actual_offsets[ ii+1 ] = actual_offsets[ ii ] + r1_lkbinfo.n_attached_waters(ii);
+		}
+		Size n_waters_actual = actual_offsets[ res1.natoms() ] + r1_lkbinfo.n_attached_waters(res1.natoms());
+		TS_ASSERT_EQUALS( r1_lkbinfo.waters().size(), n_waters_actual );
+		for ( Size ii = 1; ii <= res1.nheavyatoms(); ++ii ) {
+			TS_ASSERT_EQUALS( actual_offsets[ ii ], r1_lkbinfo.water_offset_for_atom(ii) );
+			TS_ASSERT_EQUALS( actual_offsets[ ii ], r1_lkbinfo.water_offset_for_atom()[ii] );
+		}
+
+		// The derivative matrices are not allocated until setup_for_derivatives is called
+		// so we should get an assertion failure here
+		try {
+			set_throw_on_next_assertion_failure();
+			r1_lkbinfo.atom1_derivs();
+			TS_ASSERT( false ); // this line should never execute
+		} catch ( utility::excn::Exception & e ) {
+		}
+
+		// Now let's try again, but where we've run setup_for_derivatives, and
+		// so the water derivative matrices have been allocated & computed.
+
+		ResSingleMinimizationData mindat;
+		core::scoring::methods::EnergyMethodOptions options;
+		core::scoring::lkball::LK_BallEnergy lkbE( options );
+
+		basic::datacache::BasicDataCache & r1_cache( pose.residue_data(1) );
+		lkbE.setup_for_derivatives_for_residue( res1, pose, sfxn, mindat, r1_cache );
+
+		// residue 1's data cache should now include derivative info
+		try {
+			set_throw_on_next_assertion_failure();
+			utility::vector1< WaterDerivMatrix > at2_derivs = r1_lkbinfo.atom2_derivs();
+			TS_ASSERT_EQUALS( at2_derivs.size(), n_waters_actual );
+		} catch ( utility::excn::Exception & e ) {
+			TS_ASSERT( false ); // this line should never execute
+		}
+
+	}
+
 
 	void test_lk_ball_rpe_matches_bbbb_bbsc_scscE()
 	{

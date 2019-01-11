@@ -152,9 +152,10 @@ public:
 			if ( !rsd1.is_protein() ) continue;
 			if ( rsd_sasa[ires] != 0 ) continue;
 
-			utility::vector1< WaterCoords > rsd1_waters, rsd2_waters;
+			WaterCoords rsd1_waters, rsd2_waters;
 			utility::vector1< AtomWeights > rsd1_atom_wts;
 			utility::vector1< Size > rsd1_n_attached_waters, rsd2_n_attached_waters;
+			utility::vector1< Size > rsd1_water_offsets, rsd2_water_offsets;
 
 			if ( weightLKbw != 0 || weightLKb != 0 || weightLKbi != 0 || weightLKbr != 0 || weightLKbru != 0 ) {
 				lkball::LKB_ResidueInfo const &lkbinfo1 = static_cast< lkball::LKB_ResidueInfo const & > (
@@ -162,6 +163,7 @@ public:
 				rsd1_n_attached_waters = lkbinfo1.n_attached_waters();
 				rsd1_waters = ( lkbinfo1.waters() );
 				rsd1_atom_wts = ( lkbinfo1.atom_weights() );
+				rsd1_water_offsets = lkbinfo1.water_offset_for_atom();
 			}
 
 			core::Real fa_sol_i = 0.0, lk_ball_i = 0.0, fa_atr_i=0, fa_rep_i=0;
@@ -174,14 +176,16 @@ public:
 				a_i.type(bur_type);
 
 				Size n_atom1_waters( 0 );
-				WaterCoords atom1_waters;
+				Size atom1_offset( 0 );
+				//WaterCoords atom1_waters;
 				AtomWeights atom1_wts;
 				numeric::xyzVector< core::Real > atom1_xyz( rsd1.xyz( iatm ) );
 
 				if ( iatm <= rsd1.nheavyatoms() && rsd1_waters.size() > 0 ) {
 					n_atom1_waters = rsd1_n_attached_waters[ iatm ];
-					atom1_waters = rsd1_waters[ iatm ];
+					//atom1_waters = rsd1_waters[ iatm ];
 					atom1_wts = rsd1_atom_wts[iatm];
+					atom1_offset = rsd1_water_offsets[iatm];
 				}
 
 				Real const sasa_this_atom( atom_sasa[ core::id::AtomID( iatm, ires ) ] );
@@ -201,6 +205,7 @@ public:
 							rsd2.data_ptr()->get( conformation::residue_datacache::LK_BALL_INFO ));
 						rsd2_n_attached_waters = lkbinfo2.n_attached_waters();
 						rsd2_waters = ( lkbinfo2.waters() );
+						rsd2_water_offsets = lkbinfo2.water_offset_for_atom();
 					}
 
 					// count pair
@@ -209,11 +214,12 @@ public:
 					for ( Size jatm=1; jatm<= rsd2.natoms(); ++jatm ) {
 						numeric::xyzVector< core::Real > const & atom2_xyz( rsd2.xyz( jatm ) );
 
-						WaterCoords atom2_waters;
+						//WaterCoords atom2_waters;
 						Size n_atom2_waters = rsd2_n_attached_waters[ jatm ];
-						if ( jatm <= rsd2.nheavyatoms()  && n_atom2_waters > 0 ) {
-							atom2_waters = rsd2_waters[ jatm ];
-						}
+						Size atom2_offset = rsd2_water_offsets[ jatm ];
+						//if ( jatm <= rsd2.nheavyatoms()  && n_atom2_waters > 0 ) {
+						// atom2_waters = rsd2_waters[ jatm ];
+						//}
 
 						core::Size path_dist;
 						core::Real weight = 1;
@@ -231,7 +237,7 @@ public:
 
 							if ( n_atom1_waters != 0 ) {
 								Real const fasol1_lkball =
-									fasol1 * lkb.get_lk_fractional_contribution( atom2_xyz, rsd2.atom(jatm).type(), n_atom1_waters, atom1_waters );
+									fasol1 * lkb.get_lk_fractional_contribution( atom2_xyz, rsd2.atom(jatm).type(), n_atom1_waters, atom1_offset, rsd1_waters );
 								lk_ball_i += weight*weightLKbw * ( atom1_wts[1] * fasol1 + atom1_wts[2] * fasol1_lkball );
 								lk_ball_i += weight*weightLKb * ( fasol1_lkball );
 								lk_ball_i += weight*weightLKbi * ( fasol1);
@@ -240,7 +246,8 @@ public:
 									core::Real fasol1_lkbridge = lkb.get_lkbr_fractional_contribution(
 										atom1_xyz, atom2_xyz,
 										n_atom1_waters, n_atom2_waters,
-										atom1_waters, atom2_waters );
+										atom1_offset, atom2_offset,
+										rsd1_waters, rsd2_waters );
 									lk_ball_i += 0.5 * weight * weightLKbr * (fasol1+fasol2) * fasol1_lkbridge;
 									lk_ball_i += 0.5 * weight * weightLKbru * fasol1_lkbridge;
 								}

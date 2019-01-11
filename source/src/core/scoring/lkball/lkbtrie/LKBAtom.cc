@@ -26,6 +26,7 @@
 #ifdef    SERIALIZATION
 // Utility serialization headers
 #include <utility/fixedsizearray1.srlz.hh>
+#include <utility/vector1.srlz.hh>
 #include <utility/serialization/serialization.hh>
 
 // Numeric serialization headers

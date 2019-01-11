@@ -128,7 +128,8 @@ public:
 		Size const atom1,
 		conformation::Residue const & rsd1,
 		Size atom1_n_attached_waters,
-		WaterCoords const & atom1_waters,
+		Size atom1_water_offset,
+		WaterCoords const & rsd1_waters,
 		Size const atom2,
 		conformation::Residue const & rsd2,
 		Real & lk_desolvation_of_atom1_by_atom2,
@@ -140,6 +141,7 @@ public:
 		Size const atom1,
 		conformation::Residue const & rsd1,
 		Size atom1_n_attached_waters,
+		Size atom1_water_offset,
 		WaterCoords const & atom1_waters,
 		Size const atom2,
 		conformation::Residue const & rsd2,
@@ -243,10 +245,9 @@ public:
 
 	void
 	accumulate_single_atom_contributions(
-		Size const atom1,
-		Size const atom1_type_index,
 		Size atom1_n_attached_waters,
-		WaterCoords const & atom1_waters,
+		Size atom1_water_offset,
+		WaterCoords const & rsd1_waters,
 		AtomWeights const & atom1_wts,
 		conformation::Residue const & rsd1,
 		Size const atom2_type_index,
@@ -277,19 +278,6 @@ public:
 		ResSingleMinimizationData const & res2data,
 		ResPairMinimizationData & pairdata
 	) const override;
-	//
-	//bool
-	//use_extended_residue_pair_energy_interface() const override;
-	//
-	//void
-	//residue_pair_energy_ext(
-	// conformation::Residue const & rsd1,
-	// conformation::Residue const & rsd2,
-	// ResPairMinimizationData const & pairdata,
-	// pose::Pose const &,// pose,
-	// ScoreFunction const &,
-	// EnergyMap & emap
-	//) const override;
 
 	bool
 	minimize_in_whole_structure_context( pose::Pose const & ) const override;
@@ -367,7 +355,8 @@ public:
 		Vector const & atom2_xyz,
 		Size const atom2_type_index,
 		Size atom1_n_attached_waters,
-		WaterCoords const & atom1_waters,
+		Size atom1_water_offset,
+		WaterCoords const & rsd1_waters,
 		WaterDerivContributions & d_weighted_d2_d_di,  // per water contribution
 		Real & weighted_water_dis2
 	) const;
@@ -378,7 +367,8 @@ public:
 		Vector const & atom2_xyz,
 		Size const atom2_type_index,
 		Size const atom1_n_attached_waters,
-		WaterCoords const & atom1_waters
+		Size const atom1_water_offset,
+		WaterCoords const & rsd1_waters
 	) const;
 
 	Real
@@ -387,16 +377,20 @@ public:
 		Vector const & atom2_base,
 		Size atom1_n_attached_waters,
 		Size atom2_n_attached_waters,
-		WaterCoords const & atom1_waters,
-		WaterCoords const & atom2_waters
+		Size atom1_water_offset,
+		Size atom2_water_offset,
+		WaterCoords const & rsd1_waters,
+		WaterCoords const & rsd2_waters
 	) const;
 
 	Real
 	get_lkbr_fractional_contribution_noangle(
 		Size atom1_n_attached_waters,
 		Size atom2_n_attached_waters,
-		WaterCoords const & atom1_waters,
-		WaterCoords const & atom2_waters
+		Size atom1_water_offset,
+		Size atom2_water_offset,
+		WaterCoords const & rsd1_waters,
+		WaterCoords const & rsd2_waters
 	) const;
 
 	Real
@@ -405,8 +399,10 @@ public:
 		Vector const & atom2_base,
 		Size atom1_n_attached_waters,
 		Size atom2_n_attached_waters,
-		WaterCoords const & atom1_waters,
-		WaterCoords const & atom2_waters,
+		Size atom1_water_offset,
+		Size atom2_water_offset,
+		WaterCoords const & rsd1_waters,
+		WaterCoords const & rsd2_waters,
 		WaterDerivVectors & d_weighted_d2_d_di1,  // per water1 contribution
 		Real & weighted_d2_water_delta,
 		Real & pointterm_lkbr,

@@ -378,7 +378,8 @@ GridScorer::calculate_grid(
 
 		// 0.2 : grid interactions
 		utility::vector1< core::Size > rsdBn_waters;
-		utility::vector1< core::scoring::lkball::WaterCoords > rsdBwaters;
+		utility::vector1< core::Size > rsdBwater_offsets;
+		core::scoring::lkball::WaterCoords rsdBwaters;
 
 		if ( useLKB ) {
 			core::scoring::lkball::LKB_ResidueInfo const &lkbinfo =
@@ -386,6 +387,7 @@ GridScorer::calculate_grid(
 				resB.data_ptr()->get( core::conformation::residue_datacache::LK_BALL_INFO ));
 			rsdBn_waters = lkbinfo.n_attached_waters();
 			rsdBwaters = lkbinfo.waters();
+			rsdBwater_offsets = lkbinfo.water_offset_for_atom();
 		}
 
 		for ( core::Size b_atm=1; b_atm<=resB.natoms(); ++b_atm ) {
@@ -393,8 +395,11 @@ GridScorer::calculate_grid(
 			info_b.atom = resB.atom(b_atm);
 			info_b.atomicCharge = resB.atomic_charge(b_atm);
 
-			if ( b_atm <= rsdBwaters.size() && rsdBwaters[b_atm].size() > 0 ) {
-				info_b.atomWaters = rsdBwaters[b_atm];
+			if ( b_atm <= rsdBn_waters.size() && rsdBn_waters[b_atm] > 0 ) {
+				info_b.atomWaters.resize(rsdBn_waters[b_atm]);
+				for ( core::Size ii = 1; ii <= rsdBn_waters[b_atm]; ++ii ) {
+					info_b.atomWaters[ii] = rsdBwaters[ii+rsdBwater_offsets[b_atm]];
+				}
 				info_b.nAtomWaters = rsdBn_waters[b_atm];
 			} else {
 				info_b.nAtomWaters = 0;
@@ -518,7 +523,7 @@ GridScorer::calculate_grid(
 								bool calc_virt_sites;
 								calc_virt_sites = (raw_lkball_.find( -it->first ) != raw_lkball_.end());
 
-								core::scoring::lkball::WaterCoords water_xyz;
+								core::scoring::lkball::WaterCoords water_xyz(1);
 								water_xyz[1] = cart_xyz;
 
 								core::Real faatrSum=0, farepSum=0, fasolSum=0;
@@ -1008,10 +1013,12 @@ GridScorer::get_1b_energy(
 		score_grid.lk_ball_wtd_ += lkb;
 
 		if ( j > lkbrinfo->n_attached_waters().size() || lkbrinfo->n_attached_waters()[j] == 0 ) continue;
+		core::Size const j_water_offset = lkbrinfo->water_offset_for_atom(j);
 
 		core::Real lk0=0, lkbr0=0, lk=0, lkbr=0;
 		for ( core::Size k=1; k<=lkbrinfo->n_attached_waters()[j]; ++k ) {
-			numeric::xyzVector< core::Real > idxXj = (lkbrinfo->waters()[j][k] - origin_) / voxel_spacing_;
+			core::Size const k_wat_ind = k + j_water_offset;
+			numeric::xyzVector< core::Real > idxXj = (lkbrinfo->waters()[k_wat_ind] - origin_) / voxel_spacing_;
 			move_to_boundary(idxXj);
 
 			core::Real lk_ijk = core::scoring::electron_density::interp_spline(coeffs_lkball_[ -atmtype_ij ], idxXj, true);
@@ -1156,7 +1163,10 @@ GridScorer::get_2b_energy(
 			// ii polar, jj occlusion
 			if ( ii<=lkbrinfo_i->n_attached_waters().size() && lkbrinfo_i->n_attached_waters()[ii]>0 ) {
 				core::Real fasol1_lkball = fasol1 * LKBe_->get_lk_fractional_contribution(
-					res_j.xyz(jj), res_j.atom(jj).type(), lkbrinfo_i->n_attached_waters()[ii], lkbrinfo_i->waters()[ii] );
+					res_j.xyz(jj), res_j.atom(jj).type(),
+					lkbrinfo_i->n_attached_waters()[ii],
+					lkbrinfo_i->water_offset_for_atom()[ii],
+					lkbrinfo_i->waters() );
 				//score_grid.energy_ += weightLKb*fasol1_lkball + weightLKbi*fasol1;
 				score_grid.lk_ball_wtd_ += weightLKb*fasol1_lkball + weightLKbi*fasol1;
 			}
@@ -1164,7 +1174,10 @@ GridScorer::get_2b_energy(
 			// jj polar, ii collusion
 			if ( jj<=lkbrinfo_j->n_attached_waters().size() && lkbrinfo_j->n_attached_waters()[jj]>0 ) {
 				core::Real fasol2_lkball = fasol2 * LKBe_->get_lk_fractional_contribution(
-					res_i.xyz(ii), res_i.atom(ii).type(), lkbrinfo_j->n_attached_waters()[jj], lkbrinfo_j->waters()[jj] );
+					res_i.xyz(ii), res_i.atom(ii).type(),
+					lkbrinfo_j->n_attached_waters()[jj],
+					lkbrinfo_j->water_offset_for_atom()[jj],
+					lkbrinfo_j->waters() );
 				//score_grid.energy_ += weightLKb*fasol2_lkball + weightLKbi*fasol2;
 				score_grid.lk_ball_wtd_ += weightLKb*fasol2_lkball + weightLKbi*fasol2;
 			}
@@ -1175,7 +1188,8 @@ GridScorer::get_2b_energy(
 				core::Real fasol1_lkbridge = LKBe_->get_lkbr_fractional_contribution(
 					res_i.xyz(ii), res_j.xyz(jj),
 					lkbrinfo_i->n_attached_waters()[ii], lkbrinfo_j->n_attached_waters()[jj],
-					lkbrinfo_i->waters()[ii], lkbrinfo_j->waters()[jj] );
+					lkbrinfo_i->water_offset_for_atom(ii), lkbrinfo_j->water_offset_for_atom(jj),
+					lkbrinfo_i->waters(), lkbrinfo_j->waters() );
 				//score_grid.energy_ += weightLKbr * (fasol1+fasol2) * fasol1_lkbridge + weightLKbru * fasol1_lkbridge;
 				score_grid.lk_ball_wtd_ += weightLKbr * (fasol1+fasol2) * fasol1_lkbridge + weightLKbru * fasol1_lkbridge;
 			}
@@ -1298,7 +1312,8 @@ GridScorer::derivatives(
 	// 0 build ligand virtual sites
 	core::Size nSCs = lig.moving_scs().size();
 	utility::vector1< utility::vector1< core::Size > > allNwaters(nSCs+1);
-	utility::vector1< utility::vector1< core::scoring::lkball::WaterCoords > > allwaters(nSCs+1);
+	utility::vector1< utility::vector1< core::Size > > allwater_offsets(nSCs+1);
+	utility::vector1< core::scoring::lkball::WaterCoords > allwaters(nSCs+1);
 	utility::vector1< core::scoring::lkball::LKB_ResidueInfoOP > alllkbrinfo(nSCs+1);
 	if ( useLKB ) {
 		for ( core::Size i=0; i<=nSCs; ++i ) {
@@ -1307,6 +1322,7 @@ GridScorer::derivatives(
 			alllkbrinfo[i+1] = utility::pointer::make_shared< core::scoring::lkball::LKB_ResidueInfo > (res_i);
 			alllkbrinfo[i+1]->build_waters( res_i, true );
 			allNwaters[i+1] = alllkbrinfo[i+1]->n_attached_waters();
+			allwater_offsets[i+1] = alllkbrinfo[i+1]->water_offset_for_atom();
 			allwaters[i+1] = alllkbrinfo[i+1]->waters();
 		}
 	}
@@ -1369,7 +1385,8 @@ GridScorer::derivatives(
 			core::Real denom_lk=0.0, denom_lkbr=0.0;
 
 			for ( core::Size k=1; k<=allNwaters[i+1][j]; ++k ) {
-				numeric::xyzVector< core::Real > idxXj = (allwaters[i+1][j][k] - origin_) / voxel_spacing_;
+				core::Size k_wat_ind = k + allwater_offsets[i+1][j];
+				numeric::xyzVector< core::Real > idxXj = (allwaters[i+1][k_wat_ind] - origin_) / voxel_spacing_;
 				numeric::xyzVector<core::Real> dpenalty;
 				move_to_boundary(idxXj,dpenalty);
 
@@ -1396,6 +1413,7 @@ GridScorer::derivatives(
 
 			core::scoring::lkball::WaterBuilders const & res_i_wb( alllkbrinfo[i+1]->get_water_builder( res_i , j ) );
 			for ( core::Size k=1; k<=allNwaters[i+1][j]; ++k ) {
+				core::Size k_wat_ind = k + allwater_offsets[i+1][j];
 				numeric::xyzVector< core::Real > dall_dj(0.,0.,0.);
 
 				if ( denom_lk!=0 ) dall_dj += nums_lk[k]/denom_lk;
@@ -1403,7 +1421,7 @@ GridScorer::derivatives(
 				if ( dall_dj.length_squared() < 1e-9 ) continue;
 
 				core::Size atom1 = res_i_wb[k].atom1();
-				numeric::xyzMatrix< core::Real >const & dwater_datom1 = alllkbrinfo[i+1]->atom1_derivs()[j][k];
+				numeric::xyzMatrix< core::Real >const & dwater_datom1 = alllkbrinfo[i+1]->atom1_derivs()[k_wat_ind];
 				numeric::xyzVector< core::Real > dwater_datom1x ( dwater_datom1(1,1), dwater_datom1(2,1), dwater_datom1(3,1) );
 				numeric::xyzVector< core::Real > dwater_datom1y ( dwater_datom1(1,2), dwater_datom1(2,2), dwater_datom1(3,2) );
 				numeric::xyzVector< core::Real > dwater_datom1z ( dwater_datom1(1,3), dwater_datom1(2,3), dwater_datom1(3,3) );
@@ -1411,7 +1429,7 @@ GridScorer::derivatives(
 				min_map.atom_derivatives( resid )[atom1].f2() +=  (1/voxel_spacing_) * dRdatom1;
 
 				core::Size atom2 = res_i_wb[k].atom2();
-				numeric::xyzMatrix< core::Real >const & dwater_datom2 = alllkbrinfo[i+1]->atom2_derivs()[j][k];
+				numeric::xyzMatrix< core::Real >const & dwater_datom2 = alllkbrinfo[i+1]->atom2_derivs()[k_wat_ind];
 				numeric::xyzVector< core::Real > dwater_datom2x ( dwater_datom2(1,1), dwater_datom2(2,1), dwater_datom2(3,1) );
 				numeric::xyzVector< core::Real > dwater_datom2y ( dwater_datom2(1,2), dwater_datom2(2,2), dwater_datom2(3,2) );
 				numeric::xyzVector< core::Real > dwater_datom2z ( dwater_datom2(1,3), dwater_datom2(2,3), dwater_datom2(3,3) );
@@ -1419,7 +1437,7 @@ GridScorer::derivatives(
 				min_map.atom_derivatives( resid )[atom2].f2() +=  (1/voxel_spacing_) * dRdatom2;
 
 				core::Size atom3 = res_i_wb[k].atom3();
-				numeric::xyzMatrix< core::Real >const & dwater_datom3 = alllkbrinfo[i+1]->atom3_derivs()[j][k];
+				numeric::xyzMatrix< core::Real >const & dwater_datom3 = alllkbrinfo[i+1]->atom3_derivs()[k_wat_ind];
 				numeric::xyzVector< core::Real > dwater_datom3x ( dwater_datom3(1,1), dwater_datom3(2,1), dwater_datom3(3,1) );
 				numeric::xyzVector< core::Real > dwater_datom3y ( dwater_datom3(1,2), dwater_datom3(2,2), dwater_datom3(3,2) );
 				numeric::xyzVector< core::Real > dwater_datom3z ( dwater_datom3(1,3), dwater_datom3(2,3), dwater_datom3(3,3) );
