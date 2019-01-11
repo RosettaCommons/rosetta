@@ -1,0 +1,11 @@
+<ROSETTASCRIPTS>
+  <TASKOPERATIONS>
+    <InitializeFromCommandline name="ifc"/>
+  </TASKOPERATIONS>
+  <MOVERS>
+    <BenchmarkBuildRotamersMover name="build_rots" task_operations="ifc" scorefxn="commandline"/>
+  </MOVERS>
+  <PROTOCOLS>
+    <Add mover="build_rots"/>
+  </PROTOCOLS>
+</ROSETTASCRIPTS>

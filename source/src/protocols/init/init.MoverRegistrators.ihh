@@ -631,5 +631,8 @@ static protocols::moves::MoverRegistrator< cutoutdomain::CutOutDomainCreator > r
 static MoverRegistrator< task_operations::StoreCombinedStoredTasksMoverCreator > reg_StoreCombinedStoredTasksMoverCreator;
 static MoverRegistrator< task_operations::StoreCompoundTaskMoverCreator > reg_StoreCompoundTaskMoverCreator;
 static MoverRegistrator< task_operations::StoreTaskMoverCreator > reg_StoreTaskMoverCreator;
+
+static MoverRegistrator< testing::BenchmarkBuildRotamersMoverCreator > reg_BenchmarkBuildRotamersMoverCreator;
+
 static MoverRegistrator< vardist_solaccess::LoadVarSolDistSasaCalculatorMoverCreator > reg_LoadVarSolDistSasaCalculatorMoverCreator;
 } //namespace protocols

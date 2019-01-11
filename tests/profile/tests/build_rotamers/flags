@@ -1,0 +1,10 @@
+-s 1l2y.pdb
+-ex1
+-ex2
+-ex3
+-ex4
+-extrachi_cutoff 0
+-linmem_ig 10
+-nstruct 1
+-nooutput
+-parser:protocol protocol.xml

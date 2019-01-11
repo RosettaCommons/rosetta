@@ -607,4 +607,7 @@
 #include <protocols/task_operations/StoreCombinedStoredTasksMoverCreator.hh>
 #include <protocols/task_operations/StoreCompoundTaskMoverCreator.hh>
 #include <protocols/task_operations/StoreTaskMoverCreator.hh>
+
+#include <protocols/testing/BenchmarkBuildRotamersMoverCreator.hh>
+
 #include <protocols/vardist_solaccess/LoadVarSolDistSasaCalculatorMover.hh>

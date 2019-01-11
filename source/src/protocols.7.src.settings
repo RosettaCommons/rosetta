@@ -397,6 +397,10 @@ sources = {
 	"protocols/residue_optimization": [
 		"MetapatchEnumeration",
 	],
+
+	"protocols/testing": [
+		"BenchmarkBuildRotamersMover",
+	],
 }
 include_path = [
 ]
