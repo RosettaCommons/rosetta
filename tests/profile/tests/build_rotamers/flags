@@ -5,6 +5,6 @@
 -ex4
 -extrachi_cutoff 0
 -linmem_ig 10
--nstruct 1
+-nstruct 10
 -nooutput
 -parser:protocol protocol.xml
