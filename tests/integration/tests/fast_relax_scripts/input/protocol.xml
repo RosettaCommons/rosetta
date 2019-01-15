@@ -1,0 +1,15 @@
+<ROSETTASCRIPTS>
+
+  <TASKOPERATIONS>
+    <InitializeFromCommandline name="ifc"/>
+  </TASKOPERATIONS>
+
+  <MOVERS>
+    <FastRelax name="relax" scorefxn="commandline" task_operations="ifc" repeats="1" relaxscript="%%script%%" dualspace="%%dualspace%%"/>
+  </MOVERS>
+
+  <PROTOCOLS>
+    <Add mover="relax"/>
+  </PROTOCOLS>
+
+</ROSETTASCRIPTS>

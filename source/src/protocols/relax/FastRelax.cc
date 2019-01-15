@@ -162,6 +162,7 @@ endrepeat
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreTypeManager.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
@@ -210,7 +211,7 @@ endrepeat
 #include <protocols/moves/mover_schemas.hh>
 
 //Boost Headers
-#include <boost/algorithm/string/case_conv.hpp>
+//#include <boost/algorithm/string/case_conv.hpp>
 
 #ifdef GL_GRAPHICS
 #include <protocols/viewer/viewers.hh>
@@ -274,7 +275,7 @@ FastRelax::FastRelax(
 	if ( explicit_ramp_constraints() && ! ramp_down_constraints() ) {
 		read_script_file( "NO CST RAMPING", standard_repeats );
 	} else {
-		read_script_file( "", standard_repeats );
+		read_script_file( "default", standard_repeats );
 	}
 }
 
@@ -291,7 +292,7 @@ FastRelax::FastRelax(
 	if ( explicit_ramp_constraints() && ! ramp_down_constraints() ) {
 		read_script_file( "NO CST RAMPING", standard_repeats );
 	} else {
-		read_script_file( "", standard_repeats );
+		read_script_file( "default", standard_repeats );
 	}
 }
 
@@ -848,11 +849,17 @@ void FastRelax::apply( core::pose::Pose & pose ){
 		}   else if ( cmd.command == "batch_shave" ) {  // grab the score and remember the pose if the score is better then ever before.
 		} else if ( cmd.command == "show_weights" ) {
 			local_scorefxn->show(TR, pose);
+		} else if ( cmd.command == "coord_cst_weight" ) {
+			if ( cmd.nparams < 1 ) {
+				utility_exit_with_message( "More parameters expected after : " + cmd.command  );
+			} else if ( constrain_coords() || ramp_down_constraints() ) {
+				set_constraint_weight( local_scorefxn, full_weights, cmd.param1, pose );
+			}
 		}   else if ( cmd.command == "ramp_repack_min" ) {
 			if ( cmd.nparams < 2 ) { utility_exit_with_message( "More parameters expected after : " + cmd.command  ); }
 
 			// The first parameter is the relative repulsive weight
-			core::Real const relative_repulsive_weight = cmd.param1;//unnecessary duplication, but easier to read that "param1"
+			core::Real const relative_repulsive_weight = cmd.param1;//unnecessary duplication, but easier to read than "param1"
 			local_scorefxn->set_weight( scoring::fa_rep, full_weights[ scoring::fa_rep ] * relative_repulsive_weight );
 
 			// The third paramter is the coordinate constraint weight
@@ -1107,97 +1114,142 @@ bool string_has_suffix( std::string const & target, std::string const & suffix )
 	return target.compare( position_of_suffix, suffix.length(), suffix ) == 0;
 }
 
-void FastRelax::add_extension_to_script_file_prefix( std::string & prefix ) const {
+utility::vector1< std::string >
+FastRelax::get_possible_relax_script_names( std::string const & prefix ) const {
 	using namespace basic::options;
 
+	std::string sfxn_name = core::scoring::get_score_functionName( true );
+	std::string sfxn_basename = core::scoring::basename_for_score_function( sfxn_name );
+
+	//First, look for a script specific to this score function
+	//Second, look for a general script
+	utility::vector1< std::string > possible_names( 2 );
+	possible_names[ 1 ] = prefix + "." + sfxn_basename;
+	possible_names[ 2 ] = prefix;
+
 	utility::vector1< std::string > extension_tags;
-	if ( option[ OptionKeys::corrections::beta_nov16 ]() || option[ OptionKeys::corrections::beta_nov16_cart ]() ) {
-		extension_tags.emplace_back( "beta_nov16" );
-	}
 	if ( dualspace_ ) {
 		extension_tags.emplace_back( "dualspace" );
 	}
+	//Add extra extensions here if needed
+	/*
+	if ( future_option_ ) {
+	extension_tags.emplace_back( "future_option" );
+	}
+	*/
 
 	//sort extensions by convention
 	std::sort( extension_tags.begin(), extension_tags.end() );
+	extension_tags.emplace_back( "txt" );//suffix
 
 	for ( std::string const & ext : extension_tags ) {
-		prefix += "." + ext;
+		for ( std::string & name : possible_names ) {
+			name += "." + ext;
+		}
 	}
-	prefix += ".txt";
+
+	return possible_names;
 }
 
-void FastRelax::read_script_file( std::string const & script_file, core::Size standard_repeats ){
+void handle_script_file_with_period(
+	std::string const & script_file,
+	std::string::size_type position_of_first_period
+){
+	//In order to make a more helpful error message, check to see if basename exists in the database
+	std::string const basename = script_file.substr( 0, position_of_first_period );
+	std::string const basename_with_default_extension = basename + ".txt";
+
+	bool const file_exists_with_default_extension =
+		utility::file::file_exists( basic::database::full_name( "sampling/relax_scripts/" ) + basename_with_default_extension );
+	if ( file_exists_with_default_extension ) {
+		utility_exit_with_message(
+			"[ERROR] relaxscript argument should not have extensions. "
+			"Did you mean " + basename + " instead of " + script_file + "?" );
+	} else {
+		utility_exit_with_message(
+			"[ERROR] relaxscript argument " + script_file +
+			" should not have extensions. Additionally, " +
+			basename + " does not appear to be a valid script name. "
+			"Please look at main/database/sampling/relax_scripts/ or the wiki for valid names." );
+	}
+
+}
+
+void FastRelax::read_script_file( std::string script_file, core::Size standard_repeats ){
 	using namespace ObjexxFCL;
 	using namespace basic::database;
 	using namespace basic::options;
 
+	runtime_assert( standard_repeats > 0 );
 	script_.clear();
 
-	std::string script_file_path;
-	runtime_assert( standard_repeats > 0 );
+	std::string script_file_path = "";
 
 	if ( script_file == "" ) {
-		//Special Case #1: No value given, just use default
-		std::string filename = "default";
-		add_extension_to_script_file_prefix( filename );
-		script_file_path = find_database_path( "sampling/relax_scripts/", filename );
+		script_file = "default";
 	} else if ( script_file == "NO CST RAMPING" ) {
-		//Special Case #2: NO CST RAMPING -> no_cst_ramping
-		std::string filename = "no_cst_ramping";
-		add_extension_to_script_file_prefix( filename );
-		script_file_path = find_database_path( "sampling/relax_scripts/", filename );
-	} else {
-		//General Case: First check if file exists locally, then check database. Add dualspace extension if necessary
-		if ( utility::file::file_exists( script_file ) ) {
-			//the user is providing their own script
-			script_file_path = script_file;
-		} else { //let's look in the database
-
-			//1. Make sure the name has no extension (because we will provide the correct extension here)
-			auto const position_of_first_period = script_file.find( '.' );
-			if ( script_file.find( '.' ) != std::string::npos ) {
-				//In order to make a more helpful error message, check to see if basename exists in the database
-				std::string const basename = script_file.substr( 0, position_of_first_period );
-				std::string const basename_with_default_extension = basename + ".txt";
-
-				bool const file_exists = utility::file::file_exists( basic::database::full_name( "sampling/relax_scripts/" ) + basename_with_default_extension );
-				if ( file_exists ) {
-					utility_exit_with_message( "[ERROR] relaxscript argument should not have extensions. Did you mean " + basename + " instead of " + script_file + "?" );
-				} else {
-					utility_exit_with_message( "[ERROR] relaxscript argument " + script_file + " should not have extensions. Additionally, " + basename + " does not appear to be a valid script name. Please look at main/database/sampling/relax_scripts/ or the wiki for valid names." );
-				}
-			}
-
-			//2. Process the string name to be all lowercase and have correct extension
-			std::string filename = script_file;
-			boost::algorithm::to_lower( filename );
-			add_extension_to_script_file_prefix( filename );
-
-			//Now let's look for the filename in the database
-			script_file_path = find_database_path( "sampling/relax_scripts/", filename );
-		}
+		script_file = "no_cst_ramping";
 	}
 
-	auto const num_repeats_for_substitution = ( dualspace_ ? standard_repeats - 1 : standard_repeats );
+	//General Case: First check if file exists locally, then check database. Add dualspace extension if necessary
+	if ( utility::file::file_exists( script_file ) ) {
+		//the user is providing their own script
+		script_file_path = script_file;
+	} else { //let's look in the database
+
+		//1. Make sure the name has no extension (because we will provide the correct extension here)
+		std::string::size_type const position_of_first_period = script_file.find( '.' );
+		if ( position_of_first_period != std::string::npos ) {
+			handle_script_file_with_period( script_file, position_of_first_period );
+		}
+
+		//2. Process the string name to be all lowercase and have correct extension
+		//boost::algorithm::to_lower( script_file );
+		utility::vector1< std::string > possible_names_in_order =
+			get_possible_relax_script_names( script_file );
+
+		for ( std::string const & candidate : possible_names_in_order ) {
+			//Now let's look for the filename in the database
+			TR << "Looking for relax script: " << candidate << std::endl;
+			std::string path = find_database_path( "sampling/relax_scripts/", candidate, true );
+			if ( ! path.empty() ) {
+				script_file_path = std::move( path );
+				break;
+			}
+		}
+
+		if ( script_file_path.empty() ) {
+			std::string error_message = "Error! Could not find any of the following relax scripts in the database:\n";
+			for ( std::string const & name : possible_names_in_order ) {
+				error_message += name + "\n";
+			}
+			utility_exit_with_message( error_message );
+		}
+
+	}
+
+	//Okay, script_file_path is populated if we have made it this far
+
+	core::Size const num_repeats_for_substitution = ( dualspace_ ? standard_repeats - 1 : standard_repeats );
 	VariableSubstitutionPair const repeat_subst = { "%%nrepeats%%", string_of( num_repeats_for_substitution ) };
 
-	protocols::relax::RelaxScriptFileContents const & relax_script( protocols::relax::RelaxScriptManager::get_instance()->get_relax_script(script_file_path) );
+	protocols::relax::RelaxScriptFileContents const & relax_script =
+		protocols::relax::RelaxScriptManager::get_instance()->get_relax_script( script_file_path );
 	utility::vector1< std::string > const & reflines( relax_script.get_file_lines() );
 	std::vector< std::string > filelines;
-	filelines.reserve(reflines.size());
+	filelines.reserve( reflines.size() );
 
 	//perform variable substitution
 	//Taken from https://stackoverflow.com/questions/1494399/how-do-i-search-find-and-replace-in-a-standard-string
-	for ( core::Size i(1), imax(reflines.size()); i<=imax; ++i ) {
-		std::string line( reflines[i] );
+	for ( core::Size i = 1, imax = reflines.size(); i <= imax; ++i ) {
+		std::string line( reflines[ i ] );
 		std::string::size_type position = line.find( repeat_subst.string_being_replaced );
 		while ( position != std::string::npos ) {
 			line.replace( position, repeat_subst.string_being_replaced.length(), repeat_subst.string_being_added );
 			position += repeat_subst.string_being_added.length();
 			position = line.find( repeat_subst.string_being_replaced, position );
 		}
-		filelines.push_back(line);
+		filelines.push_back( line );
 	}
 
 	set_script_from_lines( filelines );
@@ -1637,7 +1689,8 @@ void
 FastRelax::set_constraint_weight( core::scoring::ScoreFunctionOP local_scorefxn,
 	core::scoring::EnergyMap const & full_weights,
 	core::Real const weight,
-	core::pose::Pose & ) const {
+	core::pose::Pose &
+) const {
 	local_scorefxn->set_weight( scoring::coordinate_constraint,  full_weights[ scoring::coordinate_constraint ] * weight );
 }
 
@@ -1682,10 +1735,11 @@ FastRelax::complex_type_generator_for_fast_relax( utility::tag::XMLSchemaDefinit
 		"name", xs_string,
 		"Name of the mover");
 
-	attlist + XMLSchemaAttribute(
+	attlist + XMLSchemaAttribute::attribute_w_default(
 		"relaxscript", xs_string,
 		"a filename for a relax script, as described in the documentation for the Relax application; "
-		"the default relax script is used if not specified");
+		"the default relax script is used if not specified",
+		"default");
 
 	attlist + XMLSchemaAttribute(
 		"cst_file", xs_string,

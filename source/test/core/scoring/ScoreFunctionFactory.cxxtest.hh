@@ -83,7 +83,6 @@ public:
 		TS_ASSERT_EQUALS( find_weights_file("score12.wts_patch",".wts_patch"), basic::database::full_name( "scoring/weights/score12.wts_patch" ) );
 	}
 
-
 }; //ScoreFunctionUtilityTest
 
 
@@ -186,6 +185,19 @@ public:
 		TS_ASSERT(ScoreFunctionFactory::validate_beta("beta", basic::options::option));
 
 		return;
+	}
+
+	void test_get_score_function_name(){
+		TS_ASSERT_EQUALS(
+			core::scoring::get_score_functionName( true ),
+			core::scoring::get_current_default_score_function_name()
+		);
+
+		core_init_with_additional_options("-beta_nov16");
+		TS_ASSERT_EQUALS(
+			core::scoring::get_score_functionName( true ),
+			core::scoring::BETA_NOV16
+		);
 	}
 
 	void test__list_read_options_in_get_score_function__in_sync_w__get_score_function() {

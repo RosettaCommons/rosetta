@@ -193,14 +193,6 @@ public:
 
 		std::vector< core::Real > expected_weights = { 0.02, 0.25, 0.55, 1.0, 0.02, 0.25, 0.55, 1.0 };
 		check_fa_rep_weights_in_script( mover.script_, expected_weights );
-
-		core::Size reference_line_count = 0;
-		for ( protocols::relax::RelaxScriptCommand const & cmd : mover.script_ ) {
-			if ( cmd.command.substr(0,9) == "reference" ) {
-				++reference_line_count;
-			}
-		}
-		TS_ASSERT_EQUALS( reference_line_count, 8 );
 	}
 
 
@@ -239,14 +231,6 @@ public:
 
 		std::vector< core::Real > expected_weights = { 0.079, 0.295, 0.577, 1 };
 		check_fa_rep_weights_in_script( mover.script_, expected_weights );
-
-		core::Size reference_line_count = 0;
-		for ( protocols::relax::RelaxScriptCommand const & cmd : mover.script_ ) {
-			if ( cmd.command.substr(0,9) == "reference" ) {
-				++reference_line_count;
-			}
-		}
-		TS_ASSERT_EQUALS( reference_line_count, 4 );
 	}
 
 

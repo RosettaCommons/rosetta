@@ -1,0 +1,47 @@
+switch:torsion
+repeat %%nrepeats%%
+coord_cst_weight 1.0
+scale:fa_rep 0.040
+repack
+scale:fa_rep 0.051
+min 0.01
+coord_cst_weight 0.5
+scale:fa_rep 0.265
+repack
+scale:fa_rep 0.280
+min 0.01
+coord_cst_weight 0.0
+scale:fa_rep 0.559
+repack
+scale:fa_rep 0.581
+min 0.01
+coord_cst_weight 0.0
+scale:fa_rep 1
+repack
+min 0.00001
+accept_to_best
+endrepeat
+ 
+switch:cartesian
+repeat 1
+coord_cst_weight 1.0
+scale:fa_rep 0.040
+repack
+scale:fa_rep 0.051
+min 0.01
+coord_cst_weight 0.5
+scale:fa_rep 0.265
+repack
+scale:fa_rep 0.280
+min 0.01
+coord_cst_weight 0.0
+scale:fa_rep 0.559
+repack
+scale:fa_rep 0.581
+min 0.01
+coord_cst_weight 0.0
+scale:fa_rep 1
+repack
+min 0.00001
+accept_to_best
+endrepeat

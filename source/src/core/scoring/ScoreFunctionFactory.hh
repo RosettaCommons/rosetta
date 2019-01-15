@@ -197,6 +197,17 @@ std::string
 get_score_functionName(
 	bool const is_fullatom = true );
 
+inline
+std::string
+get_current_default_score_function_name(){
+	return REF_2015;
+}
+
+/// @brief returns family name for a specific score function.
+/// For example, ref2015_cart returns ref2015 and beta_nov16_cst returns beta_nov16
+std::string
+basename_for_score_function( std::string const & sfxn_name );
+
 void
 apply_set_weights( ScoreFunctionOP scorefxn, utility::vector1< std::string > const & settings );
 

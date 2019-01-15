@@ -14,6 +14,7 @@
 
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/DockingScoreFunction.hh>
 #include <core/scoring/MinScoreScoreFunction.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
@@ -38,6 +39,8 @@
 #include <basic/options/keys/abinitio.OptionKeys.gen.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <sstream>
+
+#include <utility/string_util.hh>
 
 static basic::Tracer TR( "core.scoring.ScoreFunctionFactory" );
 
@@ -597,8 +600,50 @@ get_score_functionName(
 		if ( patch_tags[ii] == "NOPATCH" ) continue;
 		patch_string << "_" << patch_tags[ii];
 	}
+	std::string result = weight_set + patch_string.str();
 
-	return weight_set + patch_string.str();
+	//result sometimes includes extensions. For consistency, let's remove them
+	auto index_of_first_period = result.find_first_of(".");
+	if ( index_of_first_period != std::string::npos ) {
+		return result.substr( 0, index_of_first_period );
+	}
+
+	//result also sometimes ends with a _. Let's remove that too
+	if ( result[ result.size() - 1 ] == '_' ) {
+		result.pop_back();
+	}
+
+	return result;
+}
+
+std::string
+basename_for_score_function( std::string const & sfxn_name ){
+	using namespace utility;
+	if ( startswith( sfxn_name, REF_2015 ) ) return REF_2015;
+	if ( startswith( sfxn_name, BETA_GENPOT ) ) return BETA_GENPOT;
+	if ( startswith( sfxn_name, BETA_JULY15 ) ) return BETA_JULY15;
+	if ( startswith( sfxn_name, BETA_NOV15 ) ) return BETA_NOV15;
+	if ( startswith( sfxn_name, BETA_NOV16 ) ) return BETA_NOV16;
+	if ( startswith( sfxn_name, CENTROID_WTS ) ) return CENTROID_WTS;
+	if ( startswith( sfxn_name, DNA_INT_WTS ) ) return DNA_INT_WTS;
+	if ( startswith( sfxn_name, DNA_INT_WTS_GB ) ) return DNA_INT_WTS_GB;
+	if ( startswith( sfxn_name, DOCK_LOW_PATCH ) ) return DOCK_LOW_PATCH;
+	if ( startswith( sfxn_name, DOCK_PATCH ) ) return DOCK_PATCH;
+	if ( startswith( sfxn_name, MEMB_HIGHRES_WTS ) ) return MEMB_HIGHRES_WTS;
+	if ( startswith( sfxn_name, MM_STD_WTS ) ) return MM_STD_WTS;
+	if ( startswith( sfxn_name, PRE_TALARIS_2013_STANDARD_WTS ) ) return PRE_TALARIS_2013_STANDARD_WTS;
+	if ( startswith( sfxn_name, RNA_HIRES_WTS ) ) return RNA_HIRES_WTS;
+	if ( startswith( sfxn_name, RNA_LORES_PLUS_HIRES_WTS ) ) return RNA_LORES_PLUS_HIRES_WTS;
+	if ( startswith( sfxn_name, RNA_LORES_WTS ) ) return RNA_LORES_WTS;
+	if ( startswith( sfxn_name, SCORE12_PATCH ) ) return SCORE12_PATCH;
+	if ( startswith( sfxn_name, SCORE13 ) ) return SCORE13;
+	if ( startswith( sfxn_name, SCORE4_SMOOTH_CART ) ) return SCORE4_SMOOTH_CART;
+	if ( startswith( sfxn_name, SOFT_REP_DESIGN_WTS ) ) return SOFT_REP_DESIGN_WTS;
+	if ( startswith( sfxn_name, SOFT_REP_WTS ) ) return SOFT_REP_WTS;
+	if ( startswith( sfxn_name, TALARIS_2013 ) ) return TALARIS_2013;
+	if ( startswith( sfxn_name, TALARIS_2014 ) ) return TALARIS_2014;
+
+	utility_exit_with_message( "core::scoring::basename_for_score_function found no match for " + sfxn_name );
 }
 
 void

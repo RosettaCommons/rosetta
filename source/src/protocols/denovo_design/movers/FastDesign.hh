@@ -123,9 +123,6 @@ protected:
 		core::pose::Pose & pose ) const override;
 
 private:
-	void
-	modify_scripts_for_alternative_scorefunctions();
-
 	core::pack::task::TaskFactoryOP
 	create_default_task_factory() const;
 

@@ -56,9 +56,16 @@ full_name(
 /// Try various combinations to locate the specific file being requested by the user.
 /// (inspired by core::scoring::ScoreFunction::find_weights_file())
 ///
+/// mute_error_if_failure returns "" if the file does not exist
+/// instead of throwing a loud exception
+///
 /// dir like chemical/carbohydrates/linkage_conformers/
 std::string
-find_database_path( std::string const & dir, std::string const & filename );
+find_database_path(
+	std::string const & dir,
+	std::string const & filename,
+	bool mute_error_if_failure = false
+);
 
 /// @brief Find a path to a file.
 ///

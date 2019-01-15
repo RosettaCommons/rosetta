@@ -1,0 +1,22 @@
+repeat %%nrepeats%%
+coord_cst_weight 1.0
+scale:fa_rep 0.079
+repack
+scale:fa_rep 0.100
+min 0.01
+coord_cst_weight 0.5
+scale:fa_rep 0.295
+repack
+scale:fa_rep 0.323
+min 0.01
+coord_cst_weight 0.0
+scale:fa_rep 0.577
+repack
+scale:fa_rep 0.619
+min 0.01
+coord_cst_weight 0.0
+scale:fa_rep 1
+repack
+min 0.00001
+accept_to_best
+endrepeat

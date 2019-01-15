@@ -113,7 +113,11 @@ full_name(
 ///
 /// @athor Labonte <JWLabonte@jhu.edu>
 std::string
-find_database_path( std::string const & dir, std::string const & filename)
+find_database_path(
+	std::string const & dir,
+	std::string const & filename,
+	bool const mute_error_if_failure
+)
 {
 	using namespace utility::io;
 
@@ -127,9 +131,13 @@ find_database_path( std::string const & dir, std::string const & filename)
 		if ( potential_file.good() ) {
 			return path + filename;
 		} else {
-			utility_exit_with_message( "Unable to open file. Neither ./" + filename +
-				" nor " + "./" + filename +
-				" nor " + path + filename + " exists." );
+			if ( mute_error_if_failure ) {
+				return "";
+			} else {
+				utility_exit_with_message( "Unable to open file. Neither ./" + filename +
+					" nor " + "./" + filename +
+					" nor " + path + filename + " exists." );
+			}
 		}
 	}
 	return "WHAT THE @#$%!";  // Code can never reach here.

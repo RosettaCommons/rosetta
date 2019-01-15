@@ -190,10 +190,12 @@ protected:
 	/// @brief Use for constraint scaling -- sets the coordinate constraint weight given a scorefxn, energy map, and weight.
 	/// TL - Derived classes which may want to scale more than coordinate constraints can override this without forking apply()
 	virtual void
-	set_constraint_weight( core::scoring::ScoreFunctionOP local_scorefxn,
+	set_constraint_weight(
+		core::scoring::ScoreFunctionOP local_scorefxn,
 		core::scoring::EnergyMap const & full_weights,
 		core::Real const weight,
-		core::pose::Pose & pose ) const;
+		core::pose::Pose & pose
+	) const;
 
 	void do_md(
 		core::pose::Pose &pose,
@@ -214,9 +216,11 @@ protected: //getters and setters
 
 private:
 
-	void add_extension_to_script_file_prefix( std::string & prefix ) const;
+	utility::vector1< std::string >
+	get_possible_relax_script_names( std::string const & prefix ) const;
 
-	void read_script_file( const std::string &script_file, core::Size standard_repeats = 5  );
+	//passing script_file by-value on purpose!
+	void read_script_file( std::string script_file, core::Size standard_repeats = 5  );
 
 	void check_nonideal_mintype();
 

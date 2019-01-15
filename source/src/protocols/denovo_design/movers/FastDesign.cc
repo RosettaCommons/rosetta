@@ -43,6 +43,7 @@
 
 //Utility Headers
 #include <utility/tag/Tag.hh>
+#include <utility/pointer/memory.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/string.functions.hh>
@@ -142,7 +143,7 @@ FastDesign::fresh_instance() const
 protocols::moves::MoverOP
 FastDesign::clone() const
 {
-	return utility::pointer::make_shared< FastDesign >(*this);
+	return utility::pointer::make_shared< FastDesign >( *this );
 }
 
 /// @brief Create the default task factory.  Must be called before design can occur.
@@ -239,9 +240,6 @@ FastDesign::apply( core::pose::Pose & pose )
 		TR << std::endl;
 	}
 
-	// support for ramping reference weights
-	modify_scripts_for_alternative_scorefunctions();
-
 	FastRelax::apply( pose );
 
 	// show final scores
@@ -333,14 +331,6 @@ FastDesign::create_default_task_factory() const
 	}
 
 	return local_tf;
-}
-
-void
-FastDesign::modify_scripts_for_alternative_scorefunctions()
-{
-	//This function used to add "reference" lines between ramp_repack_min lines.
-	//Unfortunately, this appears to force the use of the default relaxscript.
-	//This feature still exists but in the form of relaxscript files in the main/database/sampling/relax_scripts/ directory.
 }
 
 std::string FastDesign::get_name() const {

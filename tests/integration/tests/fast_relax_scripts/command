@@ -1,0 +1,131 @@
+#
+# This is a command file.
+#
+# To make a new test, all you have to do is:
+#   1.  Make a new directory under tests/
+#   2.  Put a file like this (named "command") into that directory.
+#
+# The contents of this file will be passed to the shell (Bash or SSH),
+# so any legal shell commands can go in this file.
+# Or comments like this one, for that matter.
+#
+# Variable substiution is done using Python's printf format,
+# meaning you need a percent sign, the variable name in parentheses,
+# and the letter 's' (for 'string').
+#
+# Available variables include:
+#   workdir     the directory where test input files have been copied,
+#               and where test output files should end up.
+#   minidir     the base directory where Mini lives
+#   database    where the Mini database lives
+#   bin         where the Mini binaries live
+#   binext      the extension on binary files, like ".linuxgccrelease"
+#
+# The most important thing is that the test execute in the right directory.
+# This is especially true when we're using SSH to execute on other hosts.
+# All command files should start with this line:
+#
+
+cd %(workdir)s
+
+# make sure executable exists
+if [ ! -x %(bin)s/rosetta_scripts.%(binext)s ]; then
+   exit 1
+fi
+
+#header
+ 
+echo -e "script\tdualspace\texpected_result\tresult" > log
+
+
+###########
+# DEFAULT #
+###########
+
+script="default"
+dualspace="0"
+expected_filename="default.txt"
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST @flags -script_vars script="$script" dualspace="$dualspace" > temp1
+filename=`cat temp1 | grep "Reading script file" | awk '{print $6}' | awk -F/ '{print $NF}' | tail -n1`
+echo -e "$script\t$dualspace\t$expected_filename\t$filename" >> log
+if [ "$filename" != "$expected_filename" ]; then
+    echo "FAIL " `date` >> log
+fi
+
+script="default"
+dualspace="1"
+expected_filename="default.dualspace.txt"
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST @flags -script_vars script="$script" dualspace="$dualspace" -score::set_weights cart_bonded 1.0 > temp2
+filename=`cat temp2 | grep "Reading script file" | awk '{print $6}' | awk -F/ '{print $NF}' | tail -n1`
+echo -e "$script\t$dualspace\t$expected_filename\t$filename" >> log
+if [ "$filename" != "$expected_filename" ]; then
+    echo "FAIL " `date` >> log
+fi
+
+script="default"
+dualspace="0"
+expected_filename="default.beta_nov16.txt"
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST @flags -script_vars script="$script" dualspace="$dualspace" -beta_nov16 > temp3
+filename=`cat temp3 | grep "Reading script file" | awk '{print $6}' | awk -F/ '{print $NF}' | tail -n1`
+echo -e "$script\t$dualspace\t$expected_filename\t$filename" >> log
+if [ "$filename" != "$expected_filename" ]; then
+    echo "FAIL " `date` >> log
+fi
+
+script="default"
+dualspace="1"
+expected_filename="default.beta_nov16.dualspace.txt"
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST @flags -script_vars script="$script" dualspace="$dualspace" -beta_nov16_cart > temp4
+filename=`cat temp4 | grep "Reading script file" | awk '{print $6}' | awk -F/ '{print $NF}' | tail -n1`
+echo -e "$script\t$dualspace\t$expected_filename\t$filename" >> log
+if [ "$filename" != "$expected_filename" ]; then
+    echo "FAIL " `date` >> log
+fi
+
+#############
+# KillA2019 #
+#############
+
+script="KillA2019"
+dualspace="0"
+expected_filename="KillA2019.ref2015.txt"
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST @flags -script_vars script="$script" dualspace="$dualspace" > temp5
+filename=`cat temp5 | grep "Reading script file" | awk '{print $6}' | awk -F/ '{print $NF}' | tail -n1`
+echo -e "$script\t$dualspace\t$expected_filename\t$filename" >> log
+if [ "$filename" != "$expected_filename" ]; then
+    echo "FAIL " `date` >> log
+fi
+
+script="KillA2019"
+dualspace="1"
+expected_filename="KillA2019.ref2015.dualspace.txt"
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST @flags -script_vars script="$script" dualspace="$dualspace" -score::set_weights cart_bonded 1.0 > temp6
+filename=`cat temp6 | grep "Reading script file" | awk '{print $6}' | awk -F/ '{print $NF}' | tail -n1`
+echo -e "$script\t$dualspace\t$expected_filename\t$filename" >> log
+if [ "$filename" != "$expected_filename" ]; then
+    echo "FAIL " `date` >> log
+fi
+
+script="KillA2019"
+dualspace="0"
+expected_filename="KillA2019.beta_nov16.txt"
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST @flags -script_vars script="$script" dualspace="$dualspace" -beta_nov16 > temp7
+filename=`cat temp7 | grep "Reading script file" | awk '{print $6}' | awk -F/ '{print $NF}' | tail -n1`
+echo -e "$script\t$dualspace\t$expected_filename\t$filename" >> log
+if [ "$filename" != "$expected_filename" ]; then
+    echo "FAIL " `date` >> log
+fi
+
+script="KillA2019"
+dualspace="1"
+expected_filename="KillA2019.beta_nov16.dualspace.txt"
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST @flags -script_vars script="$script" dualspace="$dualspace" -beta_nov16_cart > temp8
+filename=`cat temp8 | grep "Reading script file" | awk '{print $6}' | awk -F/ '{print $NF}' | tail -n1`
+echo -e "$script\t$dualspace\t$expected_filename\t$filename" >> log
+if [ "$filename" != "$expected_filename" ]; then
+    echo "FAIL " `date` >> log
+fi
+
+
+#cleanup
+rm temp*
