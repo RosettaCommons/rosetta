@@ -120,20 +120,20 @@ MutationSet::get_mutation_pairs(){
 
 nlohmann::json
 MutationSet::to_json(core::pose::Pose & pose){
-    add_wildtypes(pose);
-    nlohmann::json mutationset;
-    utility::vector1<nlohmann::json> mutations;
-    for( core::Size i=1; i<=resnums_.size(); i++){
-        nlohmann::json mutdata;
-        char mut = core::chemical::oneletter_code_from_aa(mutations_[i]);
-        char wt = wild_types_[i];
-        core::Size pos = resnums_[i];
-        mutdata["mut"] = utility::to_string(mut);
-        mutdata["wt"] = utility::to_string(wt);
-        mutdata["pos"] = pos;
-        mutations.push_back(mutdata);
-    }
-    return mutations;
+	add_wildtypes(pose);
+	nlohmann::json mutationset;
+	utility::vector1<nlohmann::json> mutations;
+	for ( core::Size i=1; i<=resnums_.size(); i++ ) {
+		nlohmann::json mutdata;
+		char mut = core::chemical::oneletter_code_from_aa(mutations_[i]);
+		char wt = wild_types_[i];
+		core::Size pos = resnums_[i];
+		mutdata["mut"] = utility::to_string(mut);
+		mutdata["wt"] = utility::to_string(wt);
+		mutdata["pos"] = pos;
+		mutations.push_back(mutdata);
+	}
+	return mutations;
 }
 
 //bool
@@ -323,32 +323,32 @@ read_in_mutations(
 
 void
 read_existing_json(utility::vector1<MutationSet> & existing_mutsets, const std::string filename, nlohmann::json & results_json, const core::Size iters){
-    if( !utility::file::file_exists(filename) ) return;
-    std::ifstream i(filename);
-    i >> results_json;
-    for( nlohmann::json mutationset : results_json ){
-       utility::vector1<core::Size> resnums;
-       utility::vector1<core::chemical::AA> mutations;
-       for( nlohmann::json mutation : mutationset["mutations"] ){
-            if( mutation["mut"] == "WT" ){
-                continue;
-            }
-            core::Size pos = mutation["pos"];
-            resnums.push_back(pos);
-            std::string mutc = mutation["mut"].get<std::string>();
-            //mutation["mut"].get<std::string>().c_str()(1,mutc);
-		    core::chemical::AA mut = core::chemical::aa_from_oneletter_code( mutc[0] );
-            mutations.push_back(mut);
-       }
-       MutationSet mutset(resnums,mutations,iters);
-       for( MutationSet & existing_mutset : existing_mutsets ){
-           if( existing_mutset.is_same(mutset) ){
-               existing_mutset.subtract_iterations(1);
-               core::Real score = mutationset["scores"]["total"];
-               existing_mutset.add_score(score);
-           }
-       }
-    }
+	if ( !utility::file::file_exists(filename) ) return;
+	std::ifstream i(filename);
+	i >> results_json;
+	for ( nlohmann::json mutationset : results_json ) {
+		utility::vector1<core::Size> resnums;
+		utility::vector1<core::chemical::AA> mutations;
+		for ( nlohmann::json mutation : mutationset["mutations"] ) {
+			if ( mutation["mut"] == "WT" ) {
+				continue;
+			}
+			core::Size pos = mutation["pos"];
+			resnums.push_back(pos);
+			std::string mutc = mutation["mut"].get<std::string>();
+			//mutation["mut"].get<std::string>().c_str()(1,mutc);
+			core::chemical::AA mut = core::chemical::aa_from_oneletter_code( mutc[0] );
+			mutations.push_back(mut);
+		}
+		MutationSet mutset(resnums,mutations,iters);
+		for ( MutationSet & existing_mutset : existing_mutsets ) {
+			if ( existing_mutset.is_same(mutset) ) {
+				existing_mutset.subtract_iterations(1);
+				core::Real score = mutationset["scores"]["total"];
+				existing_mutset.add_score(score);
+			}
+		}
+	}
 }
 
 void
@@ -583,15 +583,15 @@ involves_prolines(
 }
 
 void
-break_disulfides_to_residue(core::pose::Pose & pose, const core::Size res){
+break_any_disulfide(core::pose::Pose & pose, const core::Size res){
 
-		//Don't try and break any disulfides if they don't exist
-		if( ! pose.conformation().residue( res ).type().is_disulfide_bonded() ){
-				return;
-		}
-		const core::Size partner_index = core::conformation::get_disulf_partner(pose.conformation(), res);
-		core::conformation::break_disulfide(pose.conformation(), res, partner_index);
+	//Don't try and break any disulfides if they don't exist
+	if ( ! pose.conformation().residue( res ).type().is_disulfide_bonded() ) {
 		return;
+	}
+	core::Size partner_index = core::conformation::get_disulf_partner(pose.conformation(), res);
+	core::conformation::break_disulfide(pose.conformation(), res, partner_index);
+	return;
 }
 
 void
@@ -604,7 +604,7 @@ mutate_pose(
 	//Break the disulfide bonds of the mutations before making the packer task.
 	for ( core::Size i=1; i<=mutations.get_resnums().size(); i++ ) {
 		core::Size resnum = mutations.get_resnum(i);
-		break_disulfides_to_residue(pose,resnum);
+		break_any_disulfide(pose,resnum);
 	}
 	pack::task::PackerTaskOP packer_task(pack::task::TaskFactory::create_packer_task(pose));
 	for ( core::Size i=1; i<=mutations.get_resnums().size(); i++ ) {
@@ -630,19 +630,62 @@ void
 pick_fragments(
 	core::pose::Pose & pose,
 	utility::vector1<MutationSet> & mutationsets,
-	const core::Size frag_nbrs)
+	const int frag_nbrs)
 {
 	if ( pose.size() < 4 ) return;//We cannot do fragment insertion for poses smaller than 4 residues.
 
 	for ( MutationSet& mutations : mutationsets ) {
 		utility::vector1<core::Size> prolines = involves_prolines(pose,mutations);
 		if ( prolines.size() > 0 ) {
+			const int expected_fragsize = frag_nbrs*2+2; //We need +2 due to the way in which the cartesian sampler handles fragments.
 			std::string sequence = pose.sequence();
 			mutate_sequence(sequence,mutations);
+
+			//We need to select the range of residues the fragment should span. If this range of residues crosses a break
+			//in the structure we want to reassign the range of residues so that it goes up to this break but doesn't cross it.
+			//If the number of residues between the termini is too small to support the fragment then exit with an error message.
 			for ( int proline : prolines ) {
-				core::Size lower = core::Size(std::max(int(proline-frag_nbrs),int(1)));
-				core::Size upper = std::min(proline+frag_nbrs,pose.size());
-				core::Size fragsize = std::max(upper-lower+1,core::Size(4)); //Fragments of at least length 4 are required
+				int lower=proline-frag_nbrs;
+				int upper=proline+frag_nbrs;
+				bool set = false;
+
+				//Check that there are no terminal residues between the mutation and the lower bound.
+				//If so change the start of the fragment.
+				for( int i=proline; i>=proline-frag_nbrs; i--){
+						if( pose.residue_type(i).is_lower_terminus() or !pose.residue(i).is_protein() ){
+								lower=i;
+								for( int j=lower; j<=lower+expected_fragsize; j++){
+										upper = j;
+										set = true;
+										if(pose.residue_type(j).is_upper_terminus() or !pose.residue(i).is_protein()){
+												break;
+										}
+								}
+								break;
+						}else{
+								lower = i;
+						}
+				}
+				//Check that no residues in the upper region of the fragment cross a terminus.
+				//If so reset the lower and upper to contain the mutated residue.
+				if (!set){
+					for( int i=proline; i<=proline+frag_nbrs; i++){
+							if( pose.residue_type(i).is_upper_terminus() or !pose.residue(i).is_protein()){
+									upper=i;
+									for( int j=upper; j>=upper-expected_fragsize; j-- ){
+											lower = j;
+											if( pose.residue_type(j).is_lower_terminus() or !pose.residue(i).is_protein()) break;
+									}
+									break;
+							}else{
+									upper=i;
+							}
+					}
+				}
+				const core::Size fragsize = upper-lower+1;
+				std::string error_message = "Fragment based sampling is not possible for the mutation on residue " + utility::to_string(proline)+
+					" because there are too few connected residues to form at least a 4 residue fragment.";
+				runtime_assert_string_msg(fragsize>=4, error_message);
 				if ( lower+fragsize > pose.size() ) lower = pose.size()-fragsize+1;
 				std::string subseq = sequence.substr(lower-1,fragsize);
 				core::fragment::FragSetOP frags = protocols::hybridization::create_fragment_set_no_ssbias(subseq,
@@ -672,8 +715,8 @@ void subtract_iterations(
 
 void
 read_existing(
- const std::string filename,
- utility::vector1<MutationSet> & mutationsets)
+	const std::string filename,
+	utility::vector1<MutationSet> & mutationsets)
 {
 
 	//output file, mark if rerun
@@ -773,36 +816,36 @@ extracted_score(
 void
 write_json(const std::string filename, nlohmann::json results_json){
 	utility::io::ozstream ofp;
-    ofp.open(filename);
-    ofp << std::setw(4) << results_json << std::endl;
-    ofp.close();
+	ofp.open(filename);
+	ofp << std::setw(4) << results_json << std::endl;
+	ofp.close();
 
 }
 
 nlohmann::json
 get_scores_as_json(
-    core::pose::Pose & pose,
-    core::scoring::ScoreFunctionOP score_fxn,
-    core::Real total_score)
+	core::pose::Pose & pose,
+	core::scoring::ScoreFunctionOP score_fxn,
+	core::Real total_score)
 {
 
-    nlohmann::json scores;
-    for( core::scoring::ScoreType st : score_fxn->get_nonzero_weighted_scoretypes() ){
-        std::string st_name = core::scoring::name_from_score_type(st);
-        core::Real score = pose.energies().total_energies()[st];
-        scores[st_name] = score;
-    }
-    scores["total"] = total_score;
-    return scores;
+	nlohmann::json scores;
+	for ( core::scoring::ScoreType st : score_fxn->get_nonzero_weighted_scoretypes() ) {
+		std::string st_name = core::scoring::name_from_score_type(st);
+		core::Real score = pose.energies().total_energies()[st];
+		scores[st_name] = score;
+	}
+	scores["total"] = total_score;
+	return scores;
 }
 
 void
 run(core::pose::Pose & pose){
 
 	//Json is required to use this protocol.
-    nlohmann::json results_json;
-    utility::vector1<nlohmann::json> mutset;
-    results_json = mutset;
+	nlohmann::json results_json;
+	utility::vector1<nlohmann::json> mutset;
+	results_json = mutset;
 
 	bool fd_mode = basic::options::option[ basic::options::OptionKeys::ddg::fd_mode ].value();
 	const core::Real restricted_neighbors_k = 6.0;
@@ -821,16 +864,16 @@ run(core::pose::Pose & pose){
 
 	core::Size extract_nbrs = basic::options::option[ basic::options::OptionKeys::ddg::extract_element_nbrs].value();
 
-	if( basic::options::option[basic::options::OptionKeys::ddg::optimize_proline].value() == true ){
-	TR << " -frag_nbrs must be assigned in order to optimize proline using fragments. 4 is a good value." << std::endl;
-	runtime_assert( basic::options::option[basic::options::OptionKeys::ddg::frag_nbrs].value() != 0 );
+	if ( basic::options::option[basic::options::OptionKeys::ddg::optimize_proline].value() == true ) {
+		TR << " -frag_nbrs must be assigned in order to optimize proline using fragments. 4 is a good value." << std::endl;
+		runtime_assert( basic::options::option[basic::options::OptionKeys::ddg::frag_nbrs].value() != 0 );
 	}
 
 	core::scoring::ScoreFunctionOP score_fxn;
 	score_fxn = core::scoring::get_score_function();
 
 	core::Size interface_ddg = find_interface_jump(pose, basic::options::option[basic::options::OptionKeys::ddg::interface_ddg].value());
-    TR << " interface ddg is " << interface_ddg << std::endl;
+	TR << " interface ddg is " << interface_ddg << std::endl;
 
 	if ( !basic::options::option[ basic::options::OptionKeys::ddg::mut_file ].user() ) {
 		utility_exit_with_message("Option -ddg::mut_file must be set.");
@@ -844,7 +887,7 @@ run(core::pose::Pose & pose){
 	utility::io::ozstream ofp;
 	utility::file::FileName parsefn(filename);
 	std::string ofn = parsefn.base()+".ddg";
-    const std::string jsonout = parsefn.base()+".json";
+	const std::string jsonout = parsefn.base()+".json";
 	if ( utility::file::file_exists(ofn) ) {
 		//append in previous file
 		ofp.open_append(ofn);
@@ -852,12 +895,12 @@ run(core::pose::Pose & pose){
 		//create new file
 		ofp.open(ofn);
 	}
-    if( basic::options::option[ basic::options::OptionKeys::ddg::json ].value() ){
-	    core::Size const n_iters = basic::options::option[ basic::options::OptionKeys::ddg::iterations ].value();
-	    read_existing_json( mutationsets, jsonout, results_json, n_iters);
-    }else{
-        read_existing( filename, mutationsets );
-    }
+	if ( basic::options::option[ basic::options::OptionKeys::ddg::json ].value() ) {
+		core::Size const n_iters = basic::options::option[ basic::options::OptionKeys::ddg::iterations ].value();
+		read_existing_json( mutationsets, jsonout, results_json, n_iters);
+	} else {
+		read_existing( filename, mutationsets );
+	}
 
 
 	//Pick Fragments if they are being used to to optimize proline.
@@ -868,26 +911,26 @@ run(core::pose::Pose & pose){
 	//optimize_native(mutationsets,pose,score_fxn,bbnbrs,cartesian);
 	core::Real native_score = (*score_fxn)(pose);
 	std::string tag  = "WT";
-    nlohmann::json wt_results;
-    utility::vector1<nlohmann::json> mutations_json;
-    nlohmann::json mutation;
-    mutation["mut"] = "WT";
-    mutations_json.push_back(mutation);
-    wt_results["mutations"] = mutations_json;
-    wt_results["scores"] = get_scores_as_json(pose,score_fxn,native_score);
+	nlohmann::json wt_results;
+	utility::vector1<nlohmann::json> mutations_json;
+	nlohmann::json mutation;
+	mutation["mut"] = "WT";
+	mutations_json.push_back(mutation);
+	wt_results["mutations"] = mutations_json;
+	wt_results["scores"] = get_scores_as_json(pose,score_fxn,native_score);
 	ofp << "COMPLEX:   Round1: " << tag << ": " << ObjexxFCL::format::F(9,3,native_score) << " "
 		<< pose.energies().total_energies().weighted_string_of( score_fxn->weights() ) << std::endl;
-    results_json.push_back(wt_results);
-    if( basic::options::option[ basic::options::OptionKeys::ddg::json ].value() ){
-        write_json(jsonout,results_json);
-    }
+	results_json.push_back(wt_results);
+	if ( basic::options::option[ basic::options::OptionKeys::ddg::json ].value() ) {
+		write_json(jsonout,results_json);
+	}
 
 
 	for ( MutationSet mutations : mutationsets ) {
 		if ( mutations.iterations() == 0 ) continue;
-        nlohmann::json mutationset_results;
-        nlohmann::json mutations_json = mutations.to_json(pose);
-        mutationset_results["mutations"] = mutations_json;
+		nlohmann::json mutationset_results;
+		nlohmann::json mutations_json = mutations.to_json(pose);
+		mutationset_results["mutations"] = mutations_json;
 		core::pose::Pose work_pose(pose);
 		mutate_pose(work_pose,mutations,score_fxn);
 		utility::vector1<core::Size> neighbors;
@@ -900,8 +943,8 @@ run(core::pose::Pose & pose){
 		//This is where the real work gets done
 		for ( core::Size i=1; i<= mutations.iterations(); i++ ) {
 			if ( !force_iterations ) {
-			    core::Size n_converged = basic::options::option[ basic::options::OptionKeys::ddg::n_converged ].value();
-			    core::Real score_cutoff = basic::options::option[ basic::options::OptionKeys::ddg::score_cutoff ].value();
+				core::Size n_converged = basic::options::option[ basic::options::OptionKeys::ddg::n_converged ].value();
+				core::Real score_cutoff = basic::options::option[ basic::options::OptionKeys::ddg::score_cutoff ].value();
 				if ( mutations.is_converged(n_converged,score_cutoff) ) {
 					TR << " is converged!" << std::endl;
 					break;
@@ -924,11 +967,11 @@ run(core::pose::Pose & pose){
 			//Write Results
 			ofp << "COMPLEX:   Round" << utility::to_string(round) << ": " << mutations.generate_tag() << ": " << ObjexxFCL::format::F(9,3,score) << " "
 				<< local_pose.energies().total_energies().weighted_string_of( score_fxn->weights() ) << std::endl;
-            mutationset_results["scores"] = get_scores_as_json(local_pose,score_fxn,score);
-            results_json.push_back(mutationset_results);
-            if( basic::options::option[ basic::options::OptionKeys::ddg::json ].value() ){
-                write_json(jsonout,results_json);
-            }
+			mutationset_results["scores"] = get_scores_as_json(local_pose,score_fxn,score);
+			results_json.push_back(mutationset_results);
+			if ( basic::options::option[ basic::options::OptionKeys::ddg::json ].value() ) {
+				write_json(jsonout,results_json);
+			}
 
 			//dump pdbs
 			if ( basic::options::option[basic::options::OptionKeys::ddg::dump_pdbs].value() ) {
@@ -941,7 +984,7 @@ run(core::pose::Pose & pose){
 				protocols::rigid::RigidBodyTransMoverOP separate_partners( new protocols::rigid::RigidBodyTransMover( local_pose, rb_jump ) );
 				separate_partners->step_size(1000.0);
 				separate_partners->apply(local_pose);
-                core::Real final_score = (*score_fxn)( local_pose );
+				core::Real final_score = (*score_fxn)( local_pose );
 				ofp << "APART:     Round" << utility::to_string(round) << ": " << mutations.generate_tag() << ": " << ObjexxFCL::format::F(9,3,final_score) << " "
 					<< local_pose.energies().total_energies().weighted_string_of( score_fxn->weights() ) << std::endl;
 			}
@@ -955,10 +998,10 @@ run(core::pose::Pose & pose){
 
 			//repack or not?
 			//seperate partners energy
-		    for ( core::Size i=1; i<= mutations.iterations(); i++ ) {
-                core::pose::Pose local_pose(work_pose);
-			    optimize_structure(mutations,score_fxn,local_pose,neighbors,flex_bb,bbnbrs,cartesian);
-			    core::Size round = basic::options::option[ basic::options::OptionKeys::ddg::iterations ].value()-mutations.iterations()+i;
+			for ( core::Size i=1; i<= mutations.iterations(); i++ ) {
+				core::pose::Pose local_pose(work_pose);
+				optimize_structure(mutations,score_fxn,local_pose,neighbors,flex_bb,bbnbrs,cartesian);
+				core::Size round = basic::options::option[ basic::options::OptionKeys::ddg::iterations ].value()-mutations.iterations()+i;
 
 				//output
 				Real const final_score( (*score_fxn)( local_pose ) );

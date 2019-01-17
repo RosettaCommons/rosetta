@@ -209,7 +209,7 @@ utility::vector1<core::Size>
 involves_prolines( core::pose::Pose & pose, MutationSet mutations);
 
 /// @brief if the residue is part of a disulfide bond break it.
-void break_disulfides_to_residue( core::pose::Pose & pose, const core::Size res);
+void break_any_disulfide( core::pose::Pose & pose, const core::Size res);
 
 /// @brief Mutate the pose to the residues specified in the mutation set.
 void
@@ -217,7 +217,7 @@ mutate_pose(core::pose::Pose & pose, MutationSet mutations, core::scoring::Score
 
 /// @brief Pick fragments for mutationsets involving prolines and store them in the mutation set.
 void
-pick_fragments(core::pose::Pose & pose, utility::vector1<MutationSet> & mutationsets, const core::Size frag_nbrs);
+pick_fragments(core::pose::Pose & pose, utility::vector1<MutationSet> & mutationsets, const int frag_nbrs);
 
 /// @brief Subtract an iteration from the mutationset that has been completed based on the resnum and aa pair
 void
