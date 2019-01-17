@@ -134,6 +134,7 @@ public:
 	void set_stage1_increase_cycles( core::Real newval ) { stage1_increase_cycles_ = newval; }
 	void set_stage2_increase_cycles( core::Real newval ) { stage2_increase_cycles_ = newval; }
 	void set_fullatom_scorefxn( core::scoring::ScoreFunctionOP newval ) { fa_scorefxn_ = newval; }
+	void set_add_hetatm( bool add_hetatm ) { add_hetatm_ = add_hetatm; }
 
 	std::string
 	get_name() const override;
