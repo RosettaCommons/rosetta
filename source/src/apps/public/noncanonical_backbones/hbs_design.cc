@@ -284,7 +284,7 @@ HbsDesignMover::apply(
 		mc
 	);
 
-
+	mc->recover_low( pose );
 
 	TR << "Ending main loop..." << std::endl;
 
@@ -295,5 +295,3 @@ HbsDesignMover::apply(
 	calculate_statistics( pose, score_fxn );
 
 }
-
-

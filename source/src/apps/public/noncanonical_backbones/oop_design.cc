@@ -306,6 +306,8 @@ OopDesignMover::apply(
 		mc
 	);
 
+	mc->recover_low( pose );
+
 	protocols::jd2::add_string_real_pair_to_current_job( "ENERGY_FINAL ", (*score_fxn)(pose) );
 
 	TR << "Ending main loop..." << std::endl;
