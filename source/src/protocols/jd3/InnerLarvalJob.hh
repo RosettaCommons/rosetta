@@ -64,10 +64,12 @@ class InnerLarvalJob : public utility::pointer::ReferenceCount {
 public:
 
 	InnerLarvalJob();
-	InnerLarvalJob( core::Size nstruct );
+	InnerLarvalJob( core::Size nstruct, core::Size job_node );
 	InnerLarvalJob( InnerLarvalJob const & src );
 
 	~InnerLarvalJob() override;
+
+public:
 
 	/// @brief Determine if two jobs are defined with the same set of InputSources
 	bool sources_same( InnerLarvalJob const & other ) const;
@@ -100,64 +102,115 @@ public:
 	std::ostream &
 	operator<< ( std::ostream & out, const InnerLarvalJob & inner_job );
 
+public:
+
+	/// @brief Read access to the ConstDataMap that the %InnerLarvalJob holds.
+	basic::datacache::ConstDataMap const &
+	const_data_map() const;
+
+	/// @brief Write access to the ConstDataMap that the %InnerLarvalJob holds.  The objects pointed
+	/// to by the const data map can be shared between two %InnerLarvalJobs, but the data maps
+	/// themselves should not be shared.
+	basic::datacache::ConstDataMap &
+	const_data_map();
+
+public:
+
+	///@brief Return the job node this InnerLarvalJob belongs to
+	/// If the Job Node has not been set, we return 0.
+	core::Size
+	job_node() const;
+
+	/// @brief Return the number of pose input sources for this job.
+	core::Size
+	n_input_sources() const;
+
+	/// @brief The number of job replicates to be performed for this %InnerLarvalJob.
+	core::Size
+	nstruct_max() const;
+
+public:
+
 	/// @brief Set the single InputSource for this job
-	void input_source( InputSourceCOP setting );
+	void
+	input_source( InputSourceCOP setting );
 
 	/// @brief Clear the vector of InputSources
-	void clear_input_sources();
+	void
+	clear_input_sources();
 
 	/// @brief Append a InputSource to the vector of them
-	void append_input_source( InputSourceCOP setting );
+	void
+	append_input_source( InputSourceCOP setting );
+
+public:
 
 	/// @brief Return the input tag -- a string that describes the input structure, but that
 	/// is in no way a complete description of the job.  The job_tag instead should be looked
 	/// to as the name to use to identify information about this job: a single input structure
 	/// may be used for multiple jobs.
-	std::string input_tag() const;
+	std::string
+	input_tag() const;
 
 	/// @brief Set the input tag -- if it is not set, then the InputSources will be used,
 	/// the file names / tags being concatenated together, separated by underscores.
-	void input_tag( std::string const & setting );
+	void
+	input_tag( std::string const & setting );
+
 
 	/// @brief Return the job tag -- a string that describes what task is being performed and
 	/// and (usually) what input structure that job is being performed upon.  This is the tag
 	/// can be defined by the user in the job-definition XML file.
 	/// @details Can be overridden by child classes that require distinct logic.
-	virtual std::string job_tag() const;
+	virtual std::string
+	job_tag() const;
 
 	/// @brief Set the job tag.  If not set, then the input tag will be returned.
-	void job_tag( std::string const & setting );
+	void
+	job_tag( std::string const & setting );
+
 
 	/// @brief Return the outputter class; i.e. the key used by the PoseOutputterFactory
-	std::string outputter() const;
+	std::string
+	outputter() const;
 
 	/// @brief Set the outputter class for this job; i.e. the key used by the PoseOutputterFactory
-	void outputter( std::string const & setting );
+	void
+	outputter( std::string const & setting );
 
-	/// @brief The number of job replicates to be performed for this %InnerLarvalJob.
-	core::Size nstruct_max() const;
 
-	/// @brief Read access to the ConstDataMap that the %InnerLarvalJob holds.
-	basic::datacache::ConstDataMap const & const_data_map() const;
+	utility::tag::TagCOP
+	jobdef_tag() const;
 
-	utility::tag::TagCOP jobdef_tag() const;
+	void
+	jobdef_tag( utility::tag::TagCOP setting );
 
-	void nstruct_max( core::Size setting );
 
-	void jobdef_tag( utility::tag::TagCOP setting );
+	///@brief Set the total number of Nstruct for this InnerLarvelJob (IE - how many LarvalJobs will we need?)
+	void
+	nstruct_max( core::Size setting );
 
-	/// @brief Return the number of pose input sources for this job.
-	core::Size n_input_sources() const;
+	///@brief Set the Job Node for this ILJ
+	void
+	job_node( core::Size setting);
+
+public:
 
 	/// @brief Read access to the InputSource object that describes how the Pose for
 	/// this job should be constructed.  Requires that there is only a single InputSource
 	/// for this job.
-	InputSource const & input_source() const;
-	InputSourceCOP const & input_source_cop() const;
+	InputSource const &
+	input_source() const;
+
+	InputSourceCOP const &
+	input_source_cop() const;
 
 	/// @brief Retrieve a particular InputSource
-	InputSource const & input_source( Size index ) const;
-	InputSourceCOP const & input_source_cop( Size index ) const;
+	InputSource const &
+	input_source( Size index ) const;
+
+	InputSourceCOP const &
+	input_source_cop( Size index ) const;
 
 	/// @brief The list of the JobResults required to mature this %LarvalJob, by global index of the
 	/// already-executed (Lavral)Jobs
@@ -167,19 +220,17 @@ public:
 	/// @brief Add a required input by the pair representing 1) the global index of the job
 	/// that produced the JobResult, and 2) the index of that JobResult among all the results
 	/// produced by that job.
-	void add_input_job_result_index( JobResultID job_result_id );
+	void
+	add_input_job_result_index( JobResultID job_result_id );
 
 	/// @brief Store the fact that this job is bad, for some reason or another, e.g. it has
 	/// malformed inputs.
-	void set_bad( bool setting = true );
+	void
+	set_bad( bool setting = true );
 
 	/// @brief Has this job been labeled as bad?
-	bool bad() const;
-
-	/// @brief Write access to the ConstDataMap that the %InnerLarvalJob holds.  The objects pointed
-	/// to by the const data map can be shared between two %InnerLarvalJobs, but the data maps
-	/// themselves should not be shared.
-	basic::datacache::ConstDataMap & const_data_map();
+	bool
+	bad() const;
 
 private:
 
@@ -195,6 +246,7 @@ private:
 	utility::vector1< InputSourceCOP > input_sources_;
 
 	core::Size nstruct_;
+	core::Size job_node_ = 0;
 
 	/// @brief What set of JobResults are required as inputs for the JobQueen to mature larval jobs that point at
 	/// this %InnerLarvalJob into a full job?

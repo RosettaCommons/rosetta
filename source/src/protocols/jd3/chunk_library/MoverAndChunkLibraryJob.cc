@@ -18,6 +18,7 @@
 #include <protocols/moves/Mover.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
+#include <protocols/jd3/job_summaries/EnergyJobSummary.hh>
 
 //utility headers
 #include <utility/pointer/ReferenceCount.hh>
@@ -34,6 +35,9 @@
 namespace protocols {
 namespace jd3 {
 namespace chunk_library {
+
+using protocols::jd3::job_summaries::EnergyJobSummary;
+using protocols::jd3::job_summaries::EnergyJobSummaryOP;
 
 MoverAndChunkLibraryJob::MoverAndChunkLibraryJob() {}
 MoverAndChunkLibraryJob::~MoverAndChunkLibraryJob() = default;
@@ -74,8 +78,8 @@ MoverAndChunkLibraryJob::run()
 	*/
 
 	// AMW: do we have to do anything for the energies here for lores? don't think so.
-	EnergyJobSummaryOP summary = create_job_summary();
-	summary->energy( pose_->energies().total_energy() );
+	job_summaries::EnergyJobSummaryOP summary = create_job_summary();
+	summary->extract_energy( *pose_ );
 
 	finalize_job_result( job_result );
 	finalize_job_summary( summary );
@@ -134,21 +138,6 @@ void ChunkLibraryJobResult::pose( core::pose::PoseOP setting ) { pose_ = setting
 core::pose::PoseOP ChunkLibraryJobResult::lores_pose() const { return lores_pose_; }
 void ChunkLibraryJobResult::lores_pose( core::pose::PoseOP setting ) { lores_pose_ = setting; }
 
-EnergyJobSummary::EnergyJobSummary() : energy_( 0.0 ) {}
-EnergyJobSummary::~EnergyJobSummary() {}
-
-core::Real
-EnergyJobSummary::energy() const
-{
-	return energy_;
-}
-
-void
-EnergyJobSummary::energy( core::Real setting )
-{
-	energy_ = setting;
-}
-
 } // namespace chunk_library
 } // namespace jd3
 } // namespace protocols
@@ -180,26 +169,6 @@ protocols::jd3::chunk_library::ChunkLibraryJobResult::load( Archive & arc ) {
 
 SAVE_AND_LOAD_SERIALIZABLE( protocols::jd3::chunk_library::ChunkLibraryJobResult );
 CEREAL_REGISTER_TYPE( protocols::jd3::chunk_library::ChunkLibraryJobResult )
-
-
-/// @brief Automatically generated serialization method
-template< class Archive >
-void
-protocols::jd3::chunk_library::EnergyJobSummary::save( Archive & arc ) const {
-	arc( cereal::base_class< protocols::jd3::JobSummary >( this ) );
-	arc( CEREAL_NVP( energy_ ) ); // core::Real
-}
-
-/// @brief Automatically generated deserialization method
-template< class Archive >
-void
-protocols::jd3::chunk_library::EnergyJobSummary::load( Archive & arc ) {
-	arc( cereal::base_class< protocols::jd3::JobSummary >( this ) );
-	arc( energy_ ); // core::Real
-}
-
-SAVE_AND_LOAD_SERIALIZABLE( protocols::jd3::chunk_library::EnergyJobSummary );
-CEREAL_REGISTER_TYPE( protocols::jd3::chunk_library::EnergyJobSummary )
 
 CEREAL_REGISTER_DYNAMIC_INIT( protocols_jd3_chunk_library_MoverAndChunkLibraryJob )
 #endif // SERIALIZATION

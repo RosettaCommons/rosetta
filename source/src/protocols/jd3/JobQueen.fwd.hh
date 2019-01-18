@@ -26,6 +26,19 @@ class JobQueen;
 typedef utility::pointer::shared_ptr< JobQueen > JobQueenOP;
 typedef utility::pointer::shared_ptr< JobQueen const > JobQueenCOP;
 
+
+///@brief This key can be used by to delineate other classes to store/maintain data used by the JQ
+class JQKey{
+
+private:
+
+	JQKey(){}
+
+	//Key Holders:
+	friend JobQueen;
+};
+
+
 } // namespace jd3
 } // namespace protocols
 

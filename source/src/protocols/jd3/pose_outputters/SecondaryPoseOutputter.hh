@@ -61,11 +61,6 @@ public:
 	/// PoseOutputter base class and will not / should not be asked of the SecondaryPoseOutputter.
 	bool job_has_already_completed( LarvalJob const & job, utility::options::OptionCollection const & options ) const override final;
 
-	/// @brief This responsibility does not belong in the SecondaryPoseOutputter, so it receives
-	/// a no-op implementation in the base class -- it is primarily the responsibility of the
-	/// PoseOutputter base class and will not / should not be asked of the SecondaryPoseOutputter.
-	void mark_job_as_having_started( LarvalJob const & job, utility::options::OptionCollection const & options ) const override final;
-
 };
 
 } // namespace pose_outputters

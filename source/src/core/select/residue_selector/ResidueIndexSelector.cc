@@ -40,6 +40,7 @@
 #ifdef    SERIALIZATION
 // Utility serialization headers
 #include <utility/serialization/serialization.hh>
+#include <utility/string_util.hh>
 
 // Cereal headers
 #include <cereal/types/polymorphic.hpp>
@@ -156,6 +157,17 @@ void
 ResidueIndexSelector::set_index( std::string const &index_str )
 {
 	index_str_ = index_str;
+}
+
+void
+ResidueIndexSelector::set_index( core::Size index ){
+	set_index( utility::to_string(index));
+}
+
+void
+ResidueIndexSelector::set_index_range(core::Size start, core::Size end){
+	std::string range = utility::to_string(start)+"-"+utility::to_string(end);
+	set_index(range);
 }
 
 std::string ResidueIndexSelector::get_name() const {

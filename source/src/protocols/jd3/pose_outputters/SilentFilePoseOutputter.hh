@@ -69,8 +69,6 @@ public:
 
 	bool job_has_already_completed( LarvalJob const & job, utility::options::OptionCollection const & options ) const override;
 
-	void mark_job_as_having_started( LarvalJob const & job, utility::options::OptionCollection const & options ) const override;
-
 	std::string
 	filename_for_output_job(
 		utility::tag::TagCOP outputter_tag,

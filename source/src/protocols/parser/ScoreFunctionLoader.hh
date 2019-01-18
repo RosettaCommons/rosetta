@@ -19,6 +19,7 @@
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
@@ -45,6 +46,11 @@ public:
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data
 	) const;
+
+	/// @brief Load THE single ScoreFunction from a tag.
+	static
+	core::scoring::ScoreFunctionOP
+	create_scorefxn_from_tag( utility::tag::TagCOP tag );
 
 	static std::string loader_name();
 	static std::string score_function_loader_ct_namer( std::string const & element_name );

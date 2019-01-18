@@ -14,6 +14,7 @@
 // Unit headers
 #include <protocols/multistage_rosetta_scripts/MRSJobSummary.hh>
 #include <protocols/multistage_rosetta_scripts/cluster/ClusterMetric.hh>
+#include <protocols/jd3/job_summaries/EnergyJobSummary.hh>
 
 #ifdef    SERIALIZATION
 // Utility serialization headers
@@ -27,12 +28,12 @@ namespace protocols {
 namespace multistage_rosetta_scripts {
 
 MRSJobSummary::MRSJobSummary() :
-	jd3::standard::EnergyJobSummary(),
+	jd3::job_summaries::EnergyJobSummary(),
 	cluster_metric_( 0 )
 {}
 
 MRSJobSummary::MRSJobSummary( core::Real energy ) :
-	jd3::standard::EnergyJobSummary( energy ),
+	jd3::job_summaries::EnergyJobSummary( energy ),
 	cluster_metric_( 0 )
 {}
 
@@ -40,7 +41,7 @@ MRSJobSummary::MRSJobSummary(
 	core::Real energy,
 	cluster::ClusterMetricOP cluster_metric
 ) :
-	jd3::standard::EnergyJobSummary( energy ),
+	jd3::job_summaries::EnergyJobSummary( energy ),
 	cluster_metric_( cluster_metric )
 {}
 
@@ -55,7 +56,7 @@ MRSJobSummary::~MRSJobSummary(){}
 template< class Archive >
 void
 protocols::multistage_rosetta_scripts::MRSJobSummary::save( Archive & arc ) const {
-	arc( cereal::base_class< protocols::jd3::standard::EnergyJobSummary >( this ) );
+	arc( cereal::base_class< protocols::jd3::job_summaries::EnergyJobSummary >( this ) );
 	arc( CEREAL_NVP( cluster_metric_ ) ); // cluster::ClusterMetricOP
 }
 
@@ -63,7 +64,7 @@ protocols::multistage_rosetta_scripts::MRSJobSummary::save( Archive & arc ) cons
 template< class Archive >
 void
 protocols::multistage_rosetta_scripts::MRSJobSummary::load( Archive & arc ) {
-	arc( cereal::base_class< protocols::jd3::standard::EnergyJobSummary >( this ) );
+	arc( cereal::base_class< protocols::jd3::job_summaries::EnergyJobSummary >( this ) );
 	arc( cluster_metric_ ); // cluster::ClusterMetricOP
 }
 

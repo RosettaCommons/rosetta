@@ -44,7 +44,7 @@ bool ChunkLibraryInputSource::operator == ( ChunkLibraryInputSource const & rhs 
 		origin_ == rhs.origin_ &&
 		input_tag_ == rhs.input_tag_ &&
 		string_string_map_ == rhs.string_string_map_ &&
-		pose_id_ == rhs.pose_id_;
+		source_id_ == rhs.source_id_;
 }
 
 bool ChunkLibraryInputSource::operator != ( ChunkLibraryInputSource const & rhs ) const
@@ -60,8 +60,8 @@ bool ChunkLibraryInputSource::operator < ( ChunkLibraryInputSource const & rhs )
 	if ( input_tag_ != rhs.input_tag_ ) return false;
 	if ( string_string_map_ < rhs.string_string_map_ ) return true;
 	if ( string_string_map_ != rhs.string_string_map_ ) return false;
-	if ( pose_id_ < rhs.pose_id_ ) return true;
-	if ( pose_id_ != rhs.pose_id_ ) return false;
+	if ( source_id_ < rhs.source_id_ ) return true;
+	if ( source_id_ != rhs.source_id_ ) return false;
 	return false;
 }
 
@@ -82,7 +82,7 @@ protocols::jd3::chunk_library_inputters::ChunkLibraryInputSource::save( Archive 
 	arc( CEREAL_NVP( origin_ ) ); // std::string
 	arc( CEREAL_NVP( input_tag_ ) ); // std::string
 	arc( CEREAL_NVP( string_string_map_ ) ); // StringStringMap
-	arc( CEREAL_NVP( pose_id_ ) ); // core::Size
+	arc( CEREAL_NVP( source_id_ ) ); // core::Size
 }
 
 /// @brief Automatically generated deserialization method
@@ -92,7 +92,7 @@ protocols::jd3::chunk_library_inputters::ChunkLibraryInputSource::load( Archive 
 	arc( origin_ ); // std::string
 	arc( input_tag_ ); // std::string
 	arc( string_string_map_ ); // StringStringMap
-	arc( pose_id_ ); // core::Size
+	arc( source_id_ ); // core::Size
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( protocols::jd3::chunk_library_inputters::ChunkLibraryInputSource );

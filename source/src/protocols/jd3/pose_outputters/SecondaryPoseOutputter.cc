@@ -34,10 +34,6 @@ bool SecondaryPoseOutputter::job_has_already_completed( LarvalJob const &, utili
 	return false;
 }
 
-void SecondaryPoseOutputter::mark_job_as_having_started( LarvalJob const &, utility::options::OptionCollection const & ) const
-{
-}
-
 
 } // namespace pose_outputters
 } // namespace jd3

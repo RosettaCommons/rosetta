@@ -28,8 +28,8 @@ CEREAL_REGISTER_DYNAMIC_INIT( DummyOutputSpecification )
 
 
 // Package headers
-#include <protocols/jd3/standard/MoverAndPoseJob.hh>
-#include <protocols/jd3/standard/StandardInnerLarvalJob.hh>
+#include <protocols/jd3/jobs/MoverJob.hh>
+#include <protocols/jd3/InnerLarvalJob.hh>
 #include <protocols/jd3/JobDigraph.hh>
 #include <protocols/jd3/JobOutputIndex.hh>
 #include <protocols/jd3/LarvalJob.hh>
@@ -82,6 +82,9 @@ using namespace protocols::jd3::output;
 using namespace protocols::jd3::pose_inputters;
 using namespace protocols::jd3::pose_outputters;
 using namespace protocols::jd3::standard;
+using namespace protocols::jd3::job_results;
+using namespace protocols::jd3::jobs;
+
 
 //local options
 namespace basic { namespace options { namespace OptionKeys {
@@ -107,15 +110,15 @@ public:
 		core::pose::PoseOP pose( new core::pose::Pose );
 		core::pose::make_pose_from_sequence( *pose, "ACDEFGH", core::chemical::FA_STANDARD );
 		moves::MoverOP null_mover( new moves::NullMover );
-		MoverAndPoseJobOP job( new MoverAndPoseJob );
-		job->mover( null_mover );
+		MoverJobOP job( new MoverJob );
+		job->set_mover( null_mover );
 		job->pose( pose );
 		return job;
 	}
 
 	pose_outputters::PoseOutputterOP
 	outputter( LarvalJobOP job ) {
-		return pose_outputter_for_job( dynamic_cast< StandardInnerLarvalJob const & > ( *job->inner_job() ) );
+		return pose_outputter_for_job( dynamic_cast< InnerLarvalJob const & > ( *job->inner_job() ) );
 	}
 };
 
@@ -166,7 +169,7 @@ public:
 		// should have been removed.
 		core_init_with_additional_options( "-s 1ubq.pdb" );
 		DerivedJobQueenOutOverride2 djq2;
-		JobDigraphOP job_dag = djq2.initial_job_dag();
+		JobDigraphOP job_dag = djq2.create_and_set_initial_job_dag();
 		TS_ASSERT_EQUALS( job_dag->num_nodes(), 1 );
 		LarvalJobs jobs = djq2.determine_job_list( 1, 100 );
 		LarvalJobOP larval_job1 = jobs.front();
@@ -175,7 +178,7 @@ public:
 		JobOP job1 = djq2.mature_larval_job( larval_job1, results );
 		CompletedJobOutput output1 = job1->run();
 		TS_ASSERT_EQUALS( output1.job_results.size(), 1 );
-		djq2.note_job_completed( larval_job1, output1.status, 1 );
+		djq2.note_job_completed_and_track( larval_job1, output1.status, 1 );
 		std::list< OutputSpecificationOP > results_to_output = djq2.jobs_that_should_be_output();
 		MultipleOutputSpecificationOP mos = utility::pointer::dynamic_pointer_cast< MultipleOutputSpecification > ( results_to_output.front() );
 		TS_ASSERT( mos );
@@ -209,7 +212,7 @@ public:
 
 		DerivedJobQueenOutOverride2 djq2;
 		djq2.determine_preliminary_job_list_from_xml_file( jobdef_file );
-		JobDigraphOP job_dag = djq2.initial_job_dag();
+		JobDigraphOP job_dag = djq2.create_and_set_initial_job_dag();
 		TS_ASSERT_EQUALS( job_dag->num_nodes(), 1 );
 		LarvalJobs jobs = djq2.determine_job_list( 1, 100 );
 		TS_ASSERT_EQUALS( jobs.size(), 5 );
@@ -220,7 +223,7 @@ public:
 			JobOP job = djq2.mature_larval_job( larval_job, results );
 			CompletedJobOutput output = job->run();
 			TS_ASSERT_EQUALS( output.job_results.size(), 1 );
-			djq2.note_job_completed( larval_job, output.status, 1 );
+			djq2.note_job_completed_and_track( larval_job, output.status, 1 );
 			std::list< OutputSpecificationOP > results_to_output = djq2.jobs_that_should_be_output();
 			MultipleOutputSpecificationOP mos = utility::pointer::dynamic_pointer_cast< MultipleOutputSpecification > ( results_to_output.front() );
 			TS_ASSERT( mos );
@@ -276,7 +279,7 @@ public:
 		// to load the DummyOutputter.
 		core_init_with_additional_options( "-s 1ubq.pdb" );
 		DerivedJobQueenOutOverride3 djq3;
-		JobDigraphOP job_dag = djq3.initial_job_dag();
+		JobDigraphOP job_dag = djq3.create_and_set_initial_job_dag();
 		TS_ASSERT_EQUALS( job_dag->num_nodes(), 1 );
 
 		LarvalJobs jobs = djq3.determine_job_list( 1, 100 );
@@ -295,7 +298,7 @@ public:
 		// to load the DummyOutputter.
 		core_init_with_additional_options( "-s 1ubq.pdb -dummy_outputter" );
 		DerivedJobQueenOutOverride3 djq3;
-		JobDigraphOP job_dag = djq3.initial_job_dag();
+		JobDigraphOP job_dag = djq3.create_and_set_initial_job_dag();
 		TS_ASSERT_EQUALS( job_dag->num_nodes(), 1 );
 
 		LarvalJobs jobs = djq3.determine_job_list( 1, 100 );
@@ -325,7 +328,7 @@ public:
 
 		DerivedJobQueenOutOverride3 djq3;
 		djq3.determine_preliminary_job_list_from_xml_file( jobdef_file );
-		JobDigraphOP job_dag = djq3.initial_job_dag();
+		JobDigraphOP job_dag = djq3.create_and_set_initial_job_dag();
 		TS_ASSERT_EQUALS( job_dag->num_nodes(), 1 );
 		LarvalJobs jobs = djq3.determine_job_list( 1, 100 );
 		TS_ASSERT_EQUALS( jobs.size(), 5 );
@@ -356,7 +359,7 @@ public:
 
 		DerivedJobQueenOutOverride3 djq3;
 		djq3.determine_preliminary_job_list_from_xml_file( jobdef_file );
-		JobDigraphOP job_dag = djq3.initial_job_dag();
+		JobDigraphOP job_dag = djq3.create_and_set_initial_job_dag();
 		TS_ASSERT_EQUALS( job_dag->num_nodes(), 2 );
 		LarvalJobs jobs1 = djq3.determine_job_list( 1, 100 );
 		TS_ASSERT_EQUALS( jobs1.size(), 5 );

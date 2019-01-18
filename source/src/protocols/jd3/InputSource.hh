@@ -62,17 +62,17 @@ public:
 	std::string const & input_tag() const;
 	//StringStringMap const & string_string_map() const = 0;
 	std::string const & origin() const;
-	core::Size pose_id() const;
+	core::Size source_id() const;
 
 	void input_tag( std::string const & setting );
 	//virtual void store_string_pair( std::string const & key, std::string const & value ) = 0;
 	void origin( std::string const & setting );
-	void pose_id( core::Size setting );
+	void source_id( core::Size setting );
 
 private:
 	std::string origin_;
 	std::string input_tag_;
-	core::Size pose_id_;
+	core::Size source_id_ = 0;
 
 #ifdef    SERIALIZATION
 public:

@@ -62,6 +62,7 @@ InnerLarvalJob::InnerLarvalJob( InnerLarvalJob const & src ) :
 	outputter_                ( src.outputter_                ),
 	input_sources_            ( src.input_sources_            ),
 	nstruct_                  ( src.nstruct_                  ),
+	job_node_                 ( src.job_node_                 ),
 	input_job_result_indices_ ( src.input_job_result_indices_ ),
 	bad_                      ( src.bad_                      ),
 	const_data_cache_         ( src.const_data_cache_         ),
@@ -69,9 +70,10 @@ InnerLarvalJob::InnerLarvalJob( InnerLarvalJob const & src ) :
 {}
 
 
-InnerLarvalJob::InnerLarvalJob( core::Size nstruct ) :
+InnerLarvalJob::InnerLarvalJob(core::Size nstruct, core::Size job_node) :
 	input_sources_(),
 	nstruct_( nstruct ),
+	job_node_(job_node),
 	bad_( false ),
 	const_data_cache_( new basic::datacache::ConstDataMap )
 {}
@@ -110,6 +112,7 @@ InnerLarvalJob::operator == ( InnerLarvalJob const & other ) const
 		job_tag_ == other.job_tag_ &&
 		outputter_ == other.outputter_ &&
 		nstruct_ == other.nstruct_ &&
+		job_node_ == other.job_node_ &&
 		// bad_ == other.bad_ ? No. Two jobs can be equal even if one has been marked bad and the other not yet marked
 		sources_same( other ) &&
 		*const_data_cache_ == *other.const_data_cache_ &&
@@ -180,6 +183,15 @@ void InnerLarvalJob::input_tag( std::string const & setting )
 	input_tag_ = setting;
 }
 
+core::Size InnerLarvalJob::job_node() const
+{
+	return job_node_;
+}
+
+void InnerLarvalJob::job_node( core::Size job_node )
+{
+	job_node_ = job_node;
+}
 
 std::string InnerLarvalJob::job_tag() const
 {
@@ -344,6 +356,7 @@ protocols::jd3::InnerLarvalJob::save( Archive & arc ) const {
 	arc( CEREAL_NVP( outputter_ ) ); // std::string
 	arc( CEREAL_NVP( input_sources_ ) ); // utility::vector1<InputSourceCOP>
 	arc( CEREAL_NVP( nstruct_ ) ); // core::Size
+	arc( CEREAL_NVP( job_node_) ); // core::Size
 	arc( CEREAL_NVP( input_job_result_indices_ ) ); // utility::vector1<core::Size>
 	arc( CEREAL_NVP( bad_ ) ); // _Bool
 	arc( CEREAL_NVP( const_data_cache_ ) ); // basic::datacache::ConstDataMapOP
@@ -362,6 +375,7 @@ protocols::jd3::InnerLarvalJob::load( Archive & arc ) {
 	arc( local_input_sources ); // utility::vector1<InputSourceCOP>
 	input_sources_ = local_input_sources; // copy the non-const pointer(s) into the const pointer(s)
 	arc( nstruct_ ); // core::Size
+	arc( job_node_ ); //core::Size
 	arc( input_job_result_indices_ ); // utility::vector1<core::Size>
 	arc( bad_ ); // _Bool
 	arc( const_data_cache_ ); // basic::datacache::ConstDataMapOP

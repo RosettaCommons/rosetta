@@ -21,6 +21,7 @@
 #include <protocols/jd3/LarvalJob.hh>
 #include <protocols/jd3/JobDigraph.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
+#include <protocols/jd3/standard/PreliminaryLarvalJob.hh>
 
 #ifdef SERIALIZATION
 #include <cereal/archives/binary.hpp>
@@ -56,7 +57,7 @@ MRSJobQueenChecker::estimate_number_of_bytes_needed_for_archiving(){
 
 	core::Size max_fa_pose_size = 0;
 
-	utility::vector1< jd3::standard::PreliminaryLarvalJob > const & input_jobs = preliminary_larval_jobs();
+	utility::vector1< jd3::standard::PreliminaryLarvalJob > const & input_jobs = get_preliminary_larval_jobs();
 
 	for ( core::Size ii = 1; ii <= num_input_structs(); ++ii ) {
 		jd3::standard::PreliminaryLarvalJob ljob_ii = input_jobs[ ii ];
@@ -114,8 +115,8 @@ MRSJobQueenChecker::fa_and_cen_sizes_for_archives( core::pose::PoseOP pose ){
 }
 
 jd3::JobDigraphOP
-MRSJobQueenChecker::initial_job_dag() {
-	MRSJobQueen::initial_job_dag();
+MRSJobQueenChecker::create_initial_job_dag() {
+	MRSJobQueen::create_initial_job_dag();
 	determine_validity_of_stage_tags();
 	jd3::JobDigraphOP const dag ( new jd3::JobDigraph( 0 ) );
 	return dag;

@@ -66,7 +66,7 @@ VanillaJobDistributor::go( JobQueenOP queen ) {
 	}
 
 	job_queen_ = queen;
-	job_dag_ = job_queen_->initial_job_dag();
+	job_dag_ = job_queen_->create_and_set_initial_job_dag();
 
 	while ( true ) {
 		std::pair< SizeList, bool > job_total_order_pair = topological_sort( *job_dag_ );
@@ -97,7 +97,7 @@ void
 VanillaJobDistributor::run_jobs_for_dag_node( core::Size job_node )
 {
 	while ( true ) {
-		LarvalJobs jobs_for_node = job_queen_->determine_job_list( job_node, 1000 );
+		LarvalJobs jobs_for_node = job_queen_->determine_job_list_and_track( job_node, 1000 );
 		if ( jobs_for_node.empty() ) break;
 
 		for ( LarvalJobOP larval_job : jobs_for_node ) {
@@ -105,8 +105,8 @@ VanillaJobDistributor::run_jobs_for_dag_node( core::Size job_node )
 			// with a temporary file having been written to the file system -- so that this
 			// job can be skipped.  Not all JobQueens will want to allow already-performed jobs
 			// to be skipped, in which case, they can just categorically return false to this query.
-			if ( job_queen_->has_job_completed( larval_job ) ) {
-				job_queen_->note_job_completed( larval_job, jd3_job_previously_executed, 0 );
+			if ( job_queen_->has_job_previously_been_output( larval_job ) ) {
+				job_queen_->note_job_completed_and_track( larval_job, jd3_job_previously_executed, 0 );
 				continue;
 			}
 			utility::vector1< JobResultCOP > input_job_results =
@@ -117,7 +117,7 @@ VanillaJobDistributor::run_jobs_for_dag_node( core::Size job_node )
 			CompletedJobOutput job_output = run_mature_job( larval_job, mature_job );
 
 			// Inform the JobQueen that the job has run and give her the JobStatus
-			job_queen_->note_job_completed( larval_job, job_output.status, job_output.job_results.size() );
+			job_queen_->note_job_completed_and_track( larval_job, job_output.status, job_output.job_results.size() );
 			// deliver the job summaries one at a time
 			for ( Size ii = 1; ii <= job_output.job_results.size(); ++ii ) {
 				job_queen_->completed_job_summary( larval_job, ii, job_output.job_results[ ii ].first );
@@ -165,10 +165,10 @@ VanillaJobDistributor::run_mature_job(
 		// An exception thrown by this job.  Inform the JobQueen that it's a badie.
 		TR.Error << "Job " << larval_job->job_index() << " named " << larval_job->job_tag() << " threw an exception:\n" <<
 			e.msg() << std::endl;
-		job_queen_->note_job_completed( larval_job, jd3_job_status_failed_w_exception, 0 );
+		job_queen_->note_job_completed_and_track( larval_job, jd3_job_status_failed_w_exception, 0 );
 	} catch ( ... ) {
 		// An exception thrown by this job.  Inform the JobQueen that it's a badie.
-		job_queen_->note_job_completed( larval_job, jd3_job_status_failed_w_exception, 0 );
+		job_queen_->note_job_completed_and_track( larval_job, jd3_job_status_failed_w_exception, 0 );
 		TR.Error << "Job " << larval_job->job_index() << " named " << larval_job->job_tag() << " threw an unrecognized exception."
 			<< std::endl;
 	}

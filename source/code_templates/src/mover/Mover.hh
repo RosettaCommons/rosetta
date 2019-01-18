@@ -48,17 +48,23 @@ public:
 	/// @brief Destructor (important for properly forward-declaring smart-pointer members)
 	~--class--() override;
 
+
+public:
+
 	/////////////////////
 	/// Mover Methods ///
 	/////////////////////
 
-public:
+
 	/// @brief Apply the mover
 	void
 	apply( core::pose::Pose & pose ) override;
 
 	void
 	show( std::ostream & output = std::cout ) const override;
+
+
+public:
 
 	///////////////////////////////
 	/// Rosetta Scripts Support ///

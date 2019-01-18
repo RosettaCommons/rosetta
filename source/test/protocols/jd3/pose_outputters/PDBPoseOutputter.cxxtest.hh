@@ -66,7 +66,7 @@ public:
 
 		auto dummy_input_source = utility::pointer::make_shared< PoseInputSource >( "PDB" );
 		dummy_input_source->input_tag( "dummy" );
-		auto inner_job = utility::pointer::make_shared< InnerLarvalJob >( 1 );
+		auto inner_job = utility::pointer::make_shared< InnerLarvalJob >( 1, 1 );
 		inner_job->input_source( dummy_input_source );
 		LarvalJob job( inner_job, 1, 1 );
 
@@ -91,7 +91,7 @@ public:
 
 		auto dummy_input_source = utility::pointer::make_shared< PoseInputSource >( "PDB" );
 		dummy_input_source->input_tag( "dummy" );
-		auto inner_job = utility::pointer::make_shared< InnerLarvalJob >( 1 );
+		auto inner_job = utility::pointer::make_shared< InnerLarvalJob >( 1,1 );
 		inner_job->input_source( dummy_input_source );
 		LarvalJob job( inner_job, 1, 1 );
 
@@ -116,7 +116,7 @@ public:
 
 		auto dummy_input_source = utility::pointer::make_shared< PoseInputSource >( "PDB" );
 		dummy_input_source->input_tag( "dummy" );
-		auto inner_job = utility::pointer::make_shared< InnerLarvalJob >( 1 );
+		auto inner_job = utility::pointer::make_shared< InnerLarvalJob >( 1,1 );
 		inner_job->input_source( dummy_input_source );
 		LarvalJob job( inner_job, 1, 1 );
 
@@ -141,7 +141,7 @@ public:
 
 		auto dummy_input_source = utility::pointer::make_shared< PoseInputSource >( "PDB" );
 		dummy_input_source->input_tag( "dummy" );
-		auto inner_job = utility::pointer::make_shared< InnerLarvalJob >( 1 );
+		auto inner_job = utility::pointer::make_shared< InnerLarvalJob >( 1, 1 );
 		inner_job->input_source( dummy_input_source );
 		LarvalJob job( inner_job, 1, 1 );
 
@@ -157,6 +157,95 @@ public:
 
 	}
 
+	void test_output_path_handling_prefix_suffix() {
+		core_init_with_additional_options( "-out::path some_dir3 -out:prefix pre_ -out:suffix _end" );
+
+		PDBPoseOutputter outputter;
+		utility::options::OptionKeyList pdb_outputter_options;
+		PDBPoseOutputter::list_options_read( pdb_outputter_options );
+
+		auto dummy_input_source = utility::pointer::make_shared< PoseInputSource >( "PDB" );
+		dummy_input_source->input_tag( "dummy" );
+		auto inner_job = utility::pointer::make_shared< InnerLarvalJob >( 1, 1 );
+		inner_job->input_source( dummy_input_source );
+		LarvalJob job( inner_job, 1, 1 );
+
+		utility::options::OptionCollectionOP job_options = basic::options::read_subset_of_global_option_collection( pdb_outputter_options );
+
+		utility::tag::TagCOP null_tag;
+
+		JobOutputIndex output_index;
+		// initialize the output index
+
+		outputter.determine_job_tag(null_tag, *job_options, *inner_job);
+		std::string output_pdb_name = outputter.output_pdb_name( job, output_index, *job_options, null_tag );
+		TS_ASSERT_EQUALS( output_pdb_name, "some_dir3/pre_dummy_end_0001.pdb" );
+
+	}
+
+	void test_output_path_tag_prefix_suffix(){
+		core_init_with_additional_options( "-out::path some_dir3" );
+
+		PDBPoseOutputter outputter;
+		utility::options::OptionKeyList pdb_outputter_options;
+		PDBPoseOutputter::list_options_read( pdb_outputter_options );
+
+		auto dummy_input_source = utility::pointer::make_shared< PoseInputSource >( "PDB" );
+		dummy_input_source->input_tag( "dummy" );
+		auto inner_job = utility::pointer::make_shared< InnerLarvalJob >( 1, 1 );
+		inner_job->input_source( dummy_input_source );
+		LarvalJob job( inner_job, 1, 1 );
+
+		utility::options::OptionCollectionOP job_options = basic::options::read_subset_of_global_option_collection( pdb_outputter_options );
+
+		std::string tag_str =
+			"<Output>"
+			"\t<PDB prefix=\"pre_\" suffix=\"_end\"/>"
+			"</Output>";
+
+		utility::tag::TagOP out_tag = utility::tag::Tag::create(tag_str);
+		utility::tag::TagCOP null_tag;
+		JobOutputIndex output_index;
+		// initialize the output index
+
+		outputter.determine_job_tag(out_tag, *job_options, *inner_job);
+
+		std::string output_pdb_name = outputter.output_pdb_name( job, output_index, *job_options, null_tag );
+		TS_ASSERT_EQUALS( output_pdb_name, "some_dir3/pre_dummy_end_0001.pdb" );
+
+	}
+
+	void test_output_path_tag_dir(){
+		core_init_with_additional_options( "" );
+
+		PDBPoseOutputter outputter;
+		utility::options::OptionKeyList pdb_outputter_options;
+		PDBPoseOutputter::list_options_read( pdb_outputter_options );
+
+		auto dummy_input_source = utility::pointer::make_shared< PoseInputSource >( "PDB" );
+		dummy_input_source->input_tag( "dummy" );
+		auto inner_job = utility::pointer::make_shared< InnerLarvalJob >( 1, 1 );
+		inner_job->input_source( dummy_input_source );
+		LarvalJob job( inner_job, 1, 1 );
+
+		utility::options::OptionCollectionOP job_options = basic::options::read_subset_of_global_option_collection( pdb_outputter_options );
+
+
+		std::string tag_str =
+			"<Output>"
+			"\t<PDB prefix=\"pre_\" suffix=\"_end\" filename_pattern=\"some_dir3/additional_$\"/>"
+			"</Output>";
+
+		utility::tag::TagOP out_tag = utility::tag::Tag::create(tag_str);
+		utility::tag::TagCOP null_tag;
+
+		JobOutputIndex output_index;
+		// initialize the output index
+
+		outputter.determine_job_tag(out_tag, *job_options, *inner_job);
+		std::string output_pdb_name = outputter.output_pdb_name( job, output_index, *job_options, null_tag );
+		TS_ASSERT_EQUALS( output_pdb_name, "some_dir3/pre_additional_dummy_end_0001.pdb" );
+	}
 
 	void test_output_path_handling_priority_1() {
 		core_init_with_additional_options( "-out::path some_dir3 -out::path::pdb some_dir4" );
@@ -167,7 +256,7 @@ public:
 
 		auto dummy_input_source = utility::pointer::make_shared< PoseInputSource >( "PDB" );
 		dummy_input_source->input_tag( "dummy" );
-		auto inner_job = utility::pointer::make_shared< InnerLarvalJob >( 1 );
+		auto inner_job = utility::pointer::make_shared< InnerLarvalJob >( 1,1 );
 		inner_job->input_source( dummy_input_source );
 		LarvalJob job( inner_job, 1, 1 );
 

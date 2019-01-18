@@ -49,8 +49,8 @@
 #include <protocols/jd3/JobDistributorFactory.hh>
 #include <protocols/jd3/LarvalJob.hh>
 #include <protocols/jd3/pose_outputters/PoseOutputter.hh>
-#include <protocols/jd3/standard/StandardInnerLarvalJob.hh>
-#include <protocols/jd3/standard/MoverAndPoseJob.hh>
+#include <protocols/jd3/InnerLarvalJob.hh>
+#include <protocols/jd3/jobs/MoverJob.hh>
 #include <protocols/jd3/standard/StandardJobQueen.hh>
 
 #include <devel/init.hh>
@@ -179,7 +179,7 @@ public:
 		using namespace basic::datacache;
 		using namespace core::pack::task::operation;
 
-		MoverAndPoseJobOP mature_job( new MoverAndPoseJob );
+		jobs::MoverJobOP mature_job( new jobs::MoverJob );
 		core::pose::PoseOP pose = pose_for_job( larval_job, *job_options );
 		mature_job->pose( pose );
 
@@ -283,12 +283,11 @@ public:
 
 		}
 
-		mature_job->mover( seq );
+		mature_job->set_mover( seq );
 		return mature_job;
 	}
 
 	//virtual bool has_job_completed( protocols::jd3::LarvalJobCOP job ) { return pose_outputter_for_job( *job->inner_job() )->job_has_already_completed( *job ); }
-	void mark_job_as_having_begun( protocols::jd3::LarvalJobCOP /*job*/ ) override {/*TEMP*/}
 
 	//virtual void note_job_completed( protocols::jd3::LarvalJobCOP /*job*/, protocols::jd3::JobStatus /*status*/ ) {}
 

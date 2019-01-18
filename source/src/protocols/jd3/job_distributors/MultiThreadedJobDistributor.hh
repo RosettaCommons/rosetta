@@ -92,7 +92,7 @@ protected:
 private:
 
 	JobQueenOP job_queen_;
-	JobDigraphOP job_dag_;
+	JobDigraphCOP job_dag_;
 	JobExtractorOP job_extractor_;
 
 	// The big old map that stores all the JobResults that are generated

@@ -68,9 +68,18 @@ JobDirectedNode::JobDirectedNode( utility::graph::Digraph * owner, platform::Siz
 	n_predecessors_w_outstanding_jobs_( 0 )
 {}
 
-bool JobDirectedNode::all_jobs_completed() const { return all_jobs_completed_; }
-bool JobDirectedNode::all_jobs_started() const { return all_jobs_started_; }
-core::Size JobDirectedNode::n_predecessors_w_outstanding_jobs() const
+bool
+JobDirectedNode::all_jobs_completed() const {
+	return all_jobs_completed_;
+}
+
+bool
+JobDirectedNode::all_jobs_started() const {
+	return all_jobs_started_;
+}
+
+core::Size
+JobDirectedNode::n_predecessors_w_outstanding_jobs() const
 {
 	return n_predecessors_w_outstanding_jobs_;
 }
@@ -79,7 +88,8 @@ core::Size JobDirectedNode::n_predecessors_w_outstanding_jobs() const
 /// downstream neighbors (i.e. all neighbors connected by a directed edge
 /// originating on this node), decrementing their n_predecessors_w_outstanding_jobs
 /// counters.
-void JobDirectedNode::all_jobs_completed( bool setting )
+void
+JobDirectedNode::all_jobs_completed( bool setting )
 {
 	all_jobs_completed_ = setting;
 	if ( all_jobs_completed_ ) {
@@ -93,13 +103,15 @@ void JobDirectedNode::all_jobs_completed( bool setting )
 	}
 }
 
-void JobDirectedNode::all_jobs_started( bool setting ) { all_jobs_started_ = setting; }
+void
+JobDirectedNode::all_jobs_started( bool setting ) { all_jobs_started_ = setting; }
 
 
 /// @brief copy-from for use in JobDigraph::operator= and copy ctors;
 /// derived classes must define their own version of this function
 //  to copy any data stored on nodes
-void JobDirectedNode::copy_from( DirectedNode const * source )
+void
+JobDirectedNode::copy_from( DirectedNode const * source )
 {
 	debug_assert( dynamic_cast< JobDirectedNode const * > ( source ) );
 	parent::copy_from( source );
@@ -127,9 +139,20 @@ JobDirectedNode::add_incoming_edge(
 	}
 }
 
+void
+JobDirectedNode::set_node_label(std::string const & node_label){
+	node_label_ = node_label;
+}
+
+std::string
+JobDirectedNode::get_node_label() const {
+	return node_label_;
+}
+
 /// @details called on most-derived class.  The most-derived class should NOT recursively call this method
 /// on its parent class.  The sizeof function will handle the whole JobDirectedNode (or DerivedJobDirectedNode).
-platform::Size JobDirectedNode::count_static_memory() const
+platform::Size
+JobDirectedNode::count_static_memory() const
 {
 	return sizeof( JobDirectedNode );
 }
@@ -138,7 +161,8 @@ platform::Size JobDirectedNode::count_static_memory() const
 /// @details recursively descend through heirarchy accounting for heap memory usage.  Each derived
 /// class in the heirarchy should recursively add the amount of dynamic memory its parent
 /// allocates by calling parent::count_dynamic_memory
-platform::Size JobDirectedNode::count_dynamic_memory() const
+platform::Size
+JobDirectedNode::count_dynamic_memory() const
 {
 	return parent::count_dynamic_memory();
 }
@@ -169,7 +193,8 @@ JobDirectedEdge::JobDirectedEdge
 /// @details derived classes should recursively call the copy_from method to ensure all parent class
 /// data is copied.  It just so happens that this method does nothing, but that could change
 /// and the derived class should include a call to this function for that reason.
-void JobDirectedEdge::copy_from( utility::graph::DirectedEdge const * source )
+void
+JobDirectedEdge::copy_from( utility::graph::DirectedEdge const * source )
 {
 	parent::copy_from( source );
 }
@@ -177,7 +202,8 @@ void JobDirectedEdge::copy_from( utility::graph::DirectedEdge const * source )
 /// @brief memory accouting scheme
 ///
 /// @details This is called non-recursively on the most-derived class
-platform::Size JobDirectedEdge::count_static_memory() const
+platform::Size
+JobDirectedEdge::count_static_memory() const
 {
 	return sizeof( JobDirectedEdge );
 }
@@ -186,7 +212,8 @@ platform::Size JobDirectedEdge::count_static_memory() const
 ///
 /// @details This method should be called recursively by derived classes -- that is, each class should
 /// recurse to its parent.
-platform::Size JobDirectedEdge::count_dynamic_memory() const
+platform::Size
+JobDirectedEdge::count_dynamic_memory() const
 {
 	return parent::count_dynamic_memory();
 }
@@ -270,25 +297,29 @@ JobDigraph::find_job_edge(platform::Size tail_node, platform::Size head_node) co
 /// tail_node - [in] - index of the first node
 /// @param
 /// head_node - [in] - index of the second node
-JobDirectedEdge * JobDigraph::find_job_edge(platform::Size tail_node, platform::Size head_node)
+JobDirectedEdge *
+JobDigraph::find_job_edge(platform::Size tail_node, platform::Size head_node)
 {
 	utility::graph::DirectedEdge * edge = find_edge( tail_node, head_node );
 	return static_cast< JobDirectedEdge * > ( edge );
 }
 
 
-void JobDigraph::delete_edge( utility::graph::DirectedEdge * edge )
+void
+JobDigraph::delete_edge( utility::graph::DirectedEdge * edge )
 {
 	auto * job_edge = static_cast< JobDirectedEdge * > ( edge );
 	job_edge_pool_->destroy( job_edge );
 }
 
-platform::Size JobDigraph::count_static_memory() const
+platform::Size
+JobDigraph::count_static_memory() const
 {
 	return sizeof( JobDigraph );
 }
 
-platform::Size JobDigraph::count_dynamic_memory() const
+platform::Size
+JobDigraph::count_dynamic_memory() const
 {
 	return parent::count_dynamic_memory();
 }
@@ -384,6 +415,12 @@ JobDigraphUpdater::job_dag() const
 void JobDigraphUpdater::add_node()
 {
 	job_digraph_->add_node();
+}
+
+void JobDigraphUpdater::add_node( std::string node_label )
+{
+	job_digraph_->add_node();
+	job_digraph_->get_job_node( job_digraph_->num_nodes() )->set_node_label( node_label );
 }
 
 void JobDigraphUpdater::add_edge_to_new_node( core::Size tail_node, core::Size head_node )

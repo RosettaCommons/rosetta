@@ -62,8 +62,6 @@ public:
 
 	bool job_has_already_completed( LarvalJob const & job, utility::options::OptionCollection const & options ) const override;
 
-	void mark_job_as_having_started( LarvalJob const & job, utility::options::OptionCollection const & options ) const override;
-
 	/// @brief Create the PoseOutputSpecification for a particular job
 	PoseOutputSpecificationOP
 	create_output_specification(

@@ -27,7 +27,9 @@
 #include <protocols/moves/MoverFactory.hh>
 #include <protocols/filters/Filter.hh>
 #include <protocols/filters/FilterFactory.hh>
-#include <protocols/jd3/standard/MoverAndPoseJob.hh>
+#include <protocols/jd3/job_summaries/EnergyJobSummary.hh>
+#include <protocols/jd3/job_results/PoseJobResult.hh>
+
 
 #include <utility/tag/Tag.hh>
 #include <utility/pointer/memory.hh>
@@ -126,10 +128,10 @@ jd3::CompletedJobOutput MRSJob::run_inner() {
 							if ( tag_for_cluster_metric_ ) {
 								summary = pointer::make_shared< MRSJobSummary >( score, get_cluster_metric( * pose_ ) );
 							} else {
-								summary = pointer::make_shared< jd3::standard::EnergyJobSummary >( score );
+								summary = pointer::make_shared< jd3::job_summaries::EnergyJobSummary >( score );
 							}
 
-							jd3::JobResultOP result( pointer::make_shared< jd3::standard::PoseJobResult >( pose_ ) );
+							jd3::JobResultOP result( pointer::make_shared< jd3::job_results::PoseJobResult >( pose_ ) );
 							output.job_results.push_back( std::make_pair( summary, result ) );
 							output.status = jd3::jd3_job_status_success;
 						}
@@ -154,10 +156,10 @@ jd3::CompletedJobOutput MRSJob::run_inner() {
 				if ( tag_for_cluster_metric_ ) {
 					summary = pointer::make_shared< MRSJobSummary >( score, get_cluster_metric( * pose_ ) );
 				} else {
-					summary = pointer::make_shared< jd3::standard::EnergyJobSummary >( score );
+					summary = pointer::make_shared< jd3::job_summaries::EnergyJobSummary >( score );
 				}
 
-				jd3::JobResultOP result( pointer::make_shared< jd3::standard::PoseJobResult >( pose_ ) );
+				jd3::JobResultOP result( pointer::make_shared< jd3::job_results::PoseJobResult >( pose_ ) );
 				output.job_results.push_back( std::make_pair( summary, result ) );
 				output.status = jd3::jd3_job_status_success;
 			}

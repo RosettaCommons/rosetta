@@ -205,17 +205,29 @@ class GenerateRosettaTemplates(object):
                 print("\nConstraint Generator Creator should be registered in (protocols.7) \n" \
                       "   "+self.get_base_outdir()+"/"+"protocols/init/init.ConstraintGeneratorRegistrators.ihh and \n" \
                       "   "+self.get_base_outdir()+"/"+"protocols/init/init.ConstraintGeneratorCreators.ihh\n")
-            elif re.search("jd3", self.options.type):
-                print("\n Help for creating a JD3 application can be found at https://wiki.rosettacommons.org/index.php/JD3FAQ \n" \
-                     "   "+"See src/apps/pilot/andrew/fixbb_jd3.cc for a current standard JD3 example. \n")
 
-                if self.options.type == "jd3_standard":
+            elif self.options.type == "jd3_standard":
                      print("\n   "+"This template is for a standard JD3 app, however, much more complex apps can be created.  See the docs for more.\n")
 
             elif re.search("metric_", self.options.type):
                 print("\nSimple Metric Creator should be registered in (protocols.7) \n" \
                       "   "+self.get_base_outdir()+"/"+"protocols/init/init.SimpleMetricRegistrators.ihh and \n" \
                       "   "+self.get_base_outdir()+"/"+"protocols/init/init.SimpleMetricCreators.ihh\n")
+
+            elif re.search("jd3", self.options.type):
+                print("\nDocs can be found out https://wiki.rosettacommons.org/index.php/JD3FAQ\n")
+
+                if self.options.type == "jd3_standard_job_queen":
+                    print("A tutorial can be found here: \n"
+                          "https://www.rosettacommons.org/docs/wiki/development_documentation/tutorials/jd3_derived_jq/jd3_derived_jq_home\n")
+
+                elif self.options.type == "jd3_job":
+                    print("A tutorial can be found here: \n"
+                          "https://www.rosettacommons.org/docs/latest/development_documentation/tutorials/jd3_derived_jq/tutorial_job\n")
+
+                elif self.options.type == "jd3_job_summary":
+                    print("A tutorial can be found here: \n "
+                          "https://www.rosettacommons.org/docs/latest/development_documentation/tutorials/jd3_derived_jq/completed_job_summary\n")
 
     ######## Replacement Functions#############
     def get_option(self, option_name, fail_on_none = True):

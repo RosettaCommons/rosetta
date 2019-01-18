@@ -62,13 +62,13 @@ namespace protocols {
 namespace jd3 {
 namespace full_model {
 
-class PreliminaryLarvalJob
+class FullModelPreliminaryLarvalJob
 {
 public:
-	PreliminaryLarvalJob();
-	~PreliminaryLarvalJob();
-	PreliminaryLarvalJob( PreliminaryLarvalJob const & src );
-	PreliminaryLarvalJob & operator = ( PreliminaryLarvalJob const & rhs );
+	FullModelPreliminaryLarvalJob();
+	~FullModelPreliminaryLarvalJob();
+	FullModelPreliminaryLarvalJob( FullModelPreliminaryLarvalJob const & src );
+	FullModelPreliminaryLarvalJob & operator = ( FullModelPreliminaryLarvalJob const & rhs );
 
 	FullModelInnerLarvalJobOP inner_job;
 	utility::tag::TagCOP job_tag;
@@ -76,7 +76,7 @@ public:
 	full_model_inputters::FullModelInputterOP full_model_inputter;
 };
 
-typedef std::list< PreliminaryLarvalJob > PreliminaryLarvalJobs;
+typedef std::list< FullModelPreliminaryLarvalJob > FullModelPreliminaryLarvalJobs;
 
 /// @brief The %FullModelJobQueen is meant to handle the most common form of Rosetta jobs where
 /// a protocol is applied to a single input structure to generate a single output structure.
@@ -103,7 +103,7 @@ public:
 	/// @brief The %FullModelJobQueen provides an implementation of this function which returns
 	/// the most straight-forward DAG representing a set of jobs that have no interdependencies:
 	/// a DAG with a single node and no edges.
-	JobDigraphOP initial_job_dag() override;
+	JobDigraphOP create_initial_job_dag() override;
 
 	/// @brief The %FullModelJobQueen's implementation is to not update the JobDAG at all: the
 	/// most basic protocol defines a job DAG with only a single node.
@@ -115,9 +115,7 @@ public:
 	/// will invoke during this process.
 	LarvalJobs determine_job_list( Size job_dag_node_index, Size max_njobs ) override;
 
-	bool has_job_completed( protocols::jd3::LarvalJobCOP job ) override;
-
-	void mark_job_as_having_begun( protocols::jd3::LarvalJobCOP job ) override;
+	bool has_job_previously_been_output( protocols::jd3::LarvalJobCOP job ) override;
 
 	protocols::jd3::JobOP
 	mature_larval_job(
@@ -125,24 +123,11 @@ public:
 		utility::vector1< JobResultCOP > const & input_job_results
 	) override;
 
-	bool larval_job_needed_for_note_job_completed() const override;
 	void note_job_completed( LarvalJobCOP job, JobStatus status, Size nresults ) override;
-	void note_job_completed( core::Size job_id, JobStatus status, Size nresults ) override;
-
-	/// @brief The FMJQ needs the larval job in order to create the OutputSpecification for jobs
-	/// that should be output. Derived JobQueens should only override this method if they are not
-	/// using the PoseOutputters that the FMJQ is using or if are themselves tracking the LarvalJobOPs
-	/// for currently-running jobs (a potentially memory-hogging operation, depending on the number
-	/// of jobs run at once?)
-	bool larval_job_needed_for_completed_job_summary() const override;
 
 	/// @brief If the job result that is summarized here should be output, then the SJQ needs to
 	/// have access to the LarvalJob in order to do that.
 	void completed_job_summary( LarvalJobCOP job, Size result_index, JobSummaryOP summary ) override;
-
-	/// @brief This method should not be called, as the SJQ needs the LarvalJob pointer when creating
-	/// OutputSpecifications.
-	void completed_job_summary( core::Size job_id, Size result_index, JobSummaryOP summary ) override;
 
 	std::list< output::OutputSpecificationOP > jobs_that_should_be_output() override;
 	std::list< JobResultID > job_results_that_should_be_discarded() override;
@@ -289,11 +274,6 @@ protected:
 	void
 	determine_preliminary_job_list();
 
-	/// @brief Allow the derived job queen the opportunity to update the FullModelJobQueen's
-	/// job_graph_ data member by adding nodes as well as edges that land on the new nodes.
-	JobDigraphUpdater
-	updater_for_sjq_job_graph();
-
 	/// @brief Read access for the subset of nodes in the job DAG which the %FullModelJobQueen
 	/// is responsible for producing the larval_jobs. They are called "preliminary" jobs because
 	/// they do not depend on outputs from any previous node in the graph. (The set of job nodes
@@ -309,20 +289,11 @@ protected:
 	bool
 	all_jobs_assigned_for_preliminary_job_node( core::Size node_id ) const;
 
-
-	/// @brief The index of the first job for a particular preliminary-job node; this function
-	/// returns zero if no jobs for this node have yet been created
-	core::Size preliminary_job_node_begin_job_index( core::Size node_id ) const;
-
-	/// @brief The index of the last job for a particular preliminary-job node; this function
-	/// returns zero if there are some jobs for this node that have not yet been created.
-	core::Size preliminary_job_node_end_job_index( core::Size node_id ) const;
-
 	/// @brief Read access to derived JobQueens to the preliminary job list.
 	/// This will return an empty list if  determine_preliminary_jobs has not yet
 	/// been called.
-	utility::vector1< PreliminaryLarvalJob > const &
-	preliminary_larval_jobs() const;
+	utility::vector1< FullModelPreliminaryLarvalJob > const &
+	get_preliminary_larval_jobs() const;
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////////////////////////
@@ -356,28 +327,12 @@ protected:
 	/// This funciton is non-const so that the derived class can even track which WT sequences it
 	/// has seen so that after the first WT sequence for a particular input structure, it only expands
 	/// out the mutant sequences if many mutants on that input.
-	virtual FullModelInnerLarvalJobs refine_preliminary_job( PreliminaryLarvalJob const & prelim_job );
+	virtual FullModelInnerLarvalJobs refine_preliminary_job( FullModelPreliminaryLarvalJob const & prelim_job );
 
 	/// @brief Expand a FullModelInnerLarvalJob into a full set of LarvalJobs, creating nstruct LarvalJob objects
 	/// The base class implementation of this function invokes the create_larval_job factory method so
 	/// that dervied JobQueens can ensure the instantiation of derived LarvalJobs.
 	virtual LarvalJobs expand_job_list( FullModelInnerLarvalJobOP inner_job, core::Size max_larval_jobs_to_create );
-
-	/// @brief Factory method for derived classes if they wish to rely on classes derived
-	/// from FullModelInnerLarvalJob.  This is invoked by the FullModelJobQueen in her determine_job_list
-	/// method just as jobs are prepared. If the base FullModelInnerLarvalJob class is desired, then do
-	/// not override this method.
-	virtual FullModelInnerLarvalJobOP create_inner_larval_job( core::Size nstruct, core::Size prelim_job_node ) const;
-
-	/// @brief Factory method for derived classes if they wish to rely on classes derived
-	/// from LarvalJob.  This is invoked by the FullModelJobQueen in the expand_job_list method.
-	/// If the base LarvalJob class is desired, then do not override this method.
-	virtual LarvalJobOP create_larval_job( FullModelInnerLarvalJobOP job, core::Size nstruct_index, core::Size larval_job_index );
-
-	/// @brief Factory method for derived classes if they wish to rely on a class besides the
-	/// MoverAndFullModelJob, which is returned by the %FullModelJobQueen's implementation of this
-	/// function.
-	virtual JobOP create_job( LarvalJobCOP job ) const;
 
 	/// @brief The derived JobQueen must define the method that takes a larval job and the job-specific options
 	/// and matures the larval job into a full job.
@@ -388,22 +343,6 @@ protected:
 		utility::options::OptionCollectionCOP job_options,
 		utility::vector1< JobResultCOP > const & input_job_results
 	) = 0;
-
-	/// @brief The FullModelJobQueen cannot readily manage the complexity of organizing
-	/// larval jobs for JobDAG nodes beyond the preliminary nodes. All job-creation logic beyond
-	/// the first set of nodes is the responsibility of the derived JobQueen. The %FullModelJobQueen
-	/// provides a noop implementation of this function.
-	///
-	/// @details For the sake of outputting structures with the properties you want at the
-	/// completion of a multi-stage trajectory, derived job queens with a tree-like job-progression
-	/// (i.e. only one parent job for each child job) should copy the jobdef_tag into
-	/// new InnerLarvalJobs from the parent job. The FullModelJobQueen does not track parentage
-	/// so it cannot know that job 873 originated from job 4 when trying to figure out how to output
-	/// the structure for job 873. The derived job queen should also ensure that the "outputter"
-	/// data from the parent job is copied into child job.
-	virtual
-	LarvalJobs
-	next_batch_of_larval_jobs_for_job_node( core::Size job_dag_node_index, core::Size max_njobs );
 
 	/// @brief Create an output specification for a given job + result index and store it in the
 	/// recent_successes_ list, which will be given to the JobDistributor upon request. This
@@ -563,7 +502,7 @@ private:
 		std::string const & job_def_schema
 	);
 
-	/// @brief Instead of reading a JobDefinition file, construct the set of PreliminaryLarvalJobs
+	/// @brief Instead of reading a JobDefinition file, construct the set of FullModelPreliminaryLarvalJobs
 	/// reading from the command line. Invoked by determine_preliminary_job_list.
 	void
 	determine_preliminary_job_list_from_command_line();
@@ -581,11 +520,6 @@ private:
 	secondary_outputter_for_job(
 		pose_outputters::PoseOutputSpecification const &
 	);
-
-	/// @brief The FMJQ will keep track of all jobs in the processed_jobs_ diet, but requires
-	/// that derived classes who are not calling the FMJQ's version of completed_job_result call
-	/// this function.
-	void note_job_result_output_or_discarded( LarvalJobCOP job, Size result_index );
 
 	/// @brief The FMJQ will keep track of all discarded jobs in the discarded_jobs_ diet
 	//void note_job_result_discarded( LarvalJobCOP job, Size result_index );
@@ -636,7 +570,7 @@ private:
 	// the JobDistributor is ready for them. For this reason, it keeps what is effectively
 	// a set of indices into a while loop for LarvalJob construction.
 	bool preliminary_larval_jobs_determined_;
-	utility::vector1< PreliminaryLarvalJob > preliminary_larval_jobs_;
+	utility::vector1< FullModelPreliminaryLarvalJob > preliminary_larval_jobs_;
 	FullModelInnerLarvalJobs inner_larval_jobs_for_curr_prelim_job_;
 	Size curr_inner_larval_job_index_;
 	Size njobs_made_for_curr_inner_larval_job_;
@@ -645,20 +579,6 @@ private:
 	utility::vector1< core::Size > pjn_job_ind_end_;
 	utility::vector1< char > preliminary_job_nodes_complete_; // complete == all jobs assigned
 
-	typedef numeric::DiscreteIntervalEncodingTree< core::Size > SizeDIET;
-
-	SizeDIET completed_jobs_;
-	SizeDIET successful_jobs_;
-	SizeDIET failed_jobs_;
-	SizeDIET processed_jobs_;
-
-	struct PartialOutputStatus {
-		core::Size n_results;
-		core::Size n_output_or_discarded;
-		SizeDIET results_output_or_discarded;
-	};
-
-	std::map< core::Size, PartialOutputStatus > results_processed_for_job_;
 
 	// The jobs that have completed, but have not yet been output, and the instructions for how
 	// to output them.

@@ -79,11 +79,14 @@ public:
 	static std::string class_name();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
-	//unit-specific
-	/**
-	* @brief sets the string by which residues are selected
-	*/
+	///@brief sets the string by which residues are selected
 	void set_index( std::string const & index_str );
+
+	///@brief Set an index using a size
+	void set_index( core::Size index );
+
+	///@brief Set a range of indexes. Includes start and end.
+	void set_index_range( core::Size start, core::Size end);
 
 	/// @brief Append an additional index (in Rosetta numbering) to the list of indices.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)

@@ -22,11 +22,12 @@
 //#include <protocols/jd3/JobDistributorFactory.hh>
 #include <protocols/jd3/JobOutputIndex.hh>
 #include <protocols/jd3/LarvalJob.hh>
+#include <protocols/jd3/InnerLarvalJob.hh>
 #include <protocols/jd3/deallocation/ResourceDeallocationMessage.hh>
 #include <protocols/jd3/pose_outputters/PoseOutputter.hh>
-#include <protocols/jd3/standard/StandardInnerLarvalJob.hh>
-#include <protocols/jd3/standard/MoverAndPoseJob.hh>
+#include <protocols/jd3/jobs/MoverJob.hh>
 #include <protocols/jd3/standard/StandardJobQueen.hh>
+#include <protocols/jd3/standard/PreliminaryLarvalJob.hh>
 
 #include <protocols/rosetta_scripts/ParsedProtocol.hh>
 #include <protocols/rosetta_scripts/RosettaScriptsParser.hh>
@@ -106,12 +107,12 @@ RosettaScriptsJobQueen::RosettaScriptsJobQueen()
 RosettaScriptsJobQueen::~RosettaScriptsJobQueen() {}
 
 protocols::jd3::JobDigraphOP
-RosettaScriptsJobQueen::initial_job_dag()
+RosettaScriptsJobQueen::create_initial_job_dag()
 {
 	// Ask the base class to read the job-definition file or the command line;
 	// next, we'll construct the Tags for each of the preliminary job nodes
 	// and write down which Resources depend on which preliminary job nodes
-	JobDigraphOP sjq_digraph = parent::initial_job_dag();
+	JobDigraphOP sjq_digraph = parent::create_initial_job_dag();
 	initialize_resources_for_preliminary_job_nodes();
 	return sjq_digraph;
 }
@@ -130,7 +131,7 @@ RosettaScriptsJobQueen::complete_larval_job_maturation(
 	protocols::jd3::JobOutputIndex index;
 	index.primary_output_index = larval_job->nstruct_index();
 
-	protocols::jd3::standard::MoverAndPoseJobOP mature_job( new protocols::jd3::standard::MoverAndPoseJob );
+	protocols::jd3::jobs::MoverJobOP mature_job( new protocols::jd3::jobs::MoverJob );
 	core::pose::PoseOP pose = pose_for_job( larval_job, *job_options );
 	using basic::datacache::CacheableString;
 	pose->data().set(
@@ -147,7 +148,7 @@ RosettaScriptsJobQueen::complete_larval_job_maturation(
 		larval_job->job_tag_with_index_suffix( index ),
 		resource_manager_ );
 
-	mature_job->mover( mover_protocol );
+	mature_job->set_mover( mover_protocol );
 	return mature_job;
 }
 
@@ -158,7 +159,10 @@ RosettaScriptsJobQueen::deallocation_messages()
 	// TO DO: figure out whether any resources need to be deallocated
 	std::list< deallocation::DeallocationMessageOP > messages = parent::deallocation_messages();
 	messages.splice( messages.end(), deallocation_messages_to_send_ );
+
 	return messages;
+
+
 }
 
 /// @brief A deallocation message first sent to the JobDistributor on this host originating from
@@ -195,7 +199,7 @@ RosettaScriptsJobQueen::initialize_resources_for_preliminary_job_nodes()
 	using utility::tag::TagCOP;
 	using namespace protocols::jd3::standard;
 
-	utility::vector1< PreliminaryLarvalJob > const & pjns( parent::preliminary_larval_jobs() );
+	utility::vector1< PreliminaryLarvalJob > const & pjns( parent::get_preliminary_larval_jobs() );
 	resources_for_pjn_.resize( pjns.size() );
 	for ( Size ii = 1; ii <= pjns.size(); ++ii ) {
 		utility::options::OptionCollectionCOP iiopts = pjns[ ii ].job_options;

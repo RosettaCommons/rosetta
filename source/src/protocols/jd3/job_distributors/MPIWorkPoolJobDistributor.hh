@@ -392,7 +392,7 @@ private:
 	std::string archive_dir_name_;
 
 	JobQueenOP job_queen_;
-	JobDigraphOP job_dag_;
+	JobDigraphCOP job_dag_;
 	JobExtractorOP job_extractor_;
 
 	SizeList worker_nodes_waiting_for_jobs_;

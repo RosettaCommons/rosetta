@@ -65,9 +65,9 @@ void JobExtractor::set_maximum_jobs_to_hold_in_memory( core::Size max_njobs_at_o
 }
 
 JobDigraphOP
-JobExtractor::create_initial_job_dag()
+JobExtractor::get_initial_job_dag_and_queue()
 {
-	job_dag_ = job_queen_->initial_job_dag();
+	job_dag_ = job_queen_->create_and_set_initial_job_dag();
 	queue_initial_digraph_nodes_and_jobs();
 	return job_dag_;
 }
@@ -249,7 +249,7 @@ JobExtractor::query_job_queen_for_more_jobs_for_current_node()
 
 	first_call_to_determine_job_list_ = false;
 
-	LarvalJobs jobs_for_current_node = job_queen_->determine_job_list(
+	LarvalJobs jobs_for_current_node = job_queen_->determine_job_list_and_track(
 		current_digraph_node_, maximum_jobs_to_hold_in_memory_ );
 
 	// Make sure that we haven't encountered any previous jobs that have the same job index as this job.

@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/simple_metrics/AbstractMetric.hh
+/// @file   core/simple_metrics/SimpleMetric.hh
 /// @brief The base class for Metrics in the Metric/Filter/Reporter system
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 /// @note   This is interface: it has no fields, and only
@@ -46,7 +46,10 @@ namespace simple_metrics {
 
 /// @brief The base class for Metrics in the Metric/Filter/Reporter system
 /// @details The non-templated base class allows us to build one from a factory and interact with it
-/// through RosettaScripts
+/// through RosettaScripts.
+///
+///You should derive from RealMetric, StringMetric, etc. when making a new SimpleMetric.  NOT this class!
+///
 class SimpleMetric : public utility::pointer::ReferenceCount {
 
 public:
@@ -141,6 +144,15 @@ public:
 
 }; // SimpleMetric
 
+///@brief Apply a set of SimpleMetrics
+void
+run_metrics(
+	core::pose::Pose & pose,
+	utility::vector1< SimpleMetricCOP > const & metrics,
+	std::string prefix = "",
+	std::string suffix = ""
+);
+
 
 } //core
 } //simple_metrics
@@ -150,7 +162,7 @@ CEREAL_FORCE_DYNAMIC_INIT( core_simple_metrics_SimpleMetric )
 #endif // SERIALIZATION
 
 
-#endif //INCLUDED_core_metrics_AbstractMetric_hh
+#endif //INCLUDED_core_metrics_SimpleMetric_hh
 
 
 

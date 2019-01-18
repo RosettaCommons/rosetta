@@ -82,7 +82,7 @@ MultiThreadedJobDistributor::go( JobQueenOP queen )
 {
 	job_queen_ = queen;
 	job_extractor_->set_job_queen( queen );
-	job_dag_ = job_extractor_->create_initial_job_dag();
+	job_dag_ = job_extractor_->get_initial_job_dag_and_queue();
 
 	// extract the first nthreads_ jobs from the JobQueen, and start them running.
 	core::Size n_queued( 0 );
@@ -90,8 +90,8 @@ MultiThreadedJobDistributor::go( JobQueenOP queen )
 		if ( job_extractor_->job_queue_empty() ) break;
 		LarvalJobOP larval_job = job_extractor_->pop_job_from_queue();
 		//TR << "Popping job " << larval_job->job_index() << std::endl;
-		if ( job_queen_->has_job_completed( larval_job ) ) {
-			job_queen_->note_job_completed( larval_job, jd3_job_previously_executed, 0 );
+		if ( job_queen_->has_job_previously_been_output( larval_job ) ) {
+			job_queen_->note_job_completed_and_track( larval_job, jd3_job_previously_executed, 0 );
 			job_extractor_->note_job_no_longer_running( larval_job->job_index() );
 			continue;
 		}
@@ -110,9 +110,9 @@ MultiThreadedJobDistributor::go( JobQueenOP queen )
 			while ( ! job_extractor_->job_queue_empty() ) {
 				larval_job = job_extractor_->pop_job_from_queue();
 				//TR << "Popping job " << larval_job->job_index() << std::endl;
-				if ( job_queen_->has_job_completed( larval_job ) ) {
+				if ( job_queen_->has_job_previously_been_output( larval_job ) ) {
 					//TR << "Job " << larval_job->job_index() << " has already completed" << std::endl;
-					job_queen_->note_job_completed( larval_job, jd3_job_previously_executed, 0 );
+					job_queen_->note_job_completed_and_track( larval_job, jd3_job_previously_executed, 0 );
 					job_extractor_->note_job_no_longer_running( larval_job->job_index() );
 					larval_job = nullptr;
 					continue;
@@ -168,7 +168,7 @@ MultiThreadedJobDistributor::prepare_next_job( LarvalJobOP larval_job, core::Siz
 	try {
 		mature_job = job_queen_->mature_larval_job( larval_job, input_job_results );
 	} catch ( ... ) {
-		job_queen_->note_job_completed( larval_job, jd3_job_status_inputs_were_bad, 0 );
+		job_queen_->note_job_completed_and_track( larval_job, jd3_job_status_inputs_were_bad, 0 );
 		job_extractor_->note_job_no_longer_running( larval_job->job_index() );
 		return false;
 	}
@@ -190,11 +190,11 @@ MultiThreadedJobDistributor::process_completed_job( JobRunnerOP job_runner )
 	// now we process the job
 	if ( job_runner->exited_w_exception() ) {
 		TR.Error << "Job exited with exception\n" << job_runner->exception_message() << std::endl;
-		job_queen_->note_job_completed( larval_job, jd3_job_status_failed_w_exception, 0 );
+		job_queen_->note_job_completed_and_track( larval_job, jd3_job_status_failed_w_exception, 0 );
 	} else if ( output.status == jd3_job_status_failed_retry ) {
 		Size num_retries = larval_job->defines_retry_limit() ? larval_job->retry_limit() : default_retry_limit_;
 		if ( job_runner->attempt_count() >= num_retries ) {
-			job_queen_->note_job_completed( larval_job, jd3_job_status_failed_max_retries, 0 );
+			job_queen_->note_job_completed_and_track( larval_job, jd3_job_status_failed_max_retries, 0 );
 		} else {
 			// put the job back into the queue to try again
 			prepare_next_job( larval_job, job_runner->attempt_count() + 1 );
@@ -202,7 +202,7 @@ MultiThreadedJobDistributor::process_completed_job( JobRunnerOP job_runner )
 		}
 	} else {
 		Size job_index = larval_job->job_index();
-		job_queen_->note_job_completed( larval_job, output.status, output.job_results.size() );
+		job_queen_->note_job_completed_and_track( larval_job, output.status, output.job_results.size() );
 		for ( Size ii = 1; ii <= output.job_results.size(); ++ii ) {
 			job_queen_->completed_job_summary( larval_job, ii, output.job_results[ ii ].first );
 			job_results_[ { job_index, ii } ] = std::make_pair( larval_job, output.job_results[ ii ].second );

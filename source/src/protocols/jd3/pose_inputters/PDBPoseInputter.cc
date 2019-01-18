@@ -136,7 +136,7 @@ PDBPoseInputter::pose_from_input_source(
 )
 {
 	debug_assert( input_source.string_string_map().find( "filename" ) != input_source.string_string_map().end() );
-	TR << "Loading " << input_source.string_string_map().find( "filename" )->second << " for input soure with pose_id() " << input_source.pose_id() << std::endl;
+	TR << "Loading " << input_source.string_string_map().find( "filename" )->second << " for input source with pose_id() " << input_source.source_id() << std::endl;
 	core::import_pose::ImportPoseOptions import_opts( options );
 	return core::import_pose::pose_from_file(
 		input_source.string_string_map().find( "filename" )->second,

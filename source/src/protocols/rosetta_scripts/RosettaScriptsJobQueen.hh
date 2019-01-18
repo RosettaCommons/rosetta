@@ -49,8 +49,7 @@ public:
 	RosettaScriptsJobQueen();
 	~RosettaScriptsJobQueen();
 
-	jd3::JobDigraphOP
-	initial_job_dag() override;
+
 
 	jd3::JobOP
 	complete_larval_job_maturation(
@@ -76,6 +75,11 @@ public:
 
 	/// @brief Accessor to the JQs resource_manager -- only really needed for testing purposes.
 	basic::resource_manager::ResourceManagerOP resource_manager();
+
+private:
+
+	jd3::JobDigraphOP
+	create_initial_job_dag() override;
 
 private:
 	protocols::rosetta_scripts::RosettaScriptsParserOP parser_;

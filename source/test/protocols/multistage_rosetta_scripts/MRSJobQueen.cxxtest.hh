@@ -23,12 +23,14 @@
 
 // Package headers
 #include <protocols/jd3/standard/StandardJobQueen.hh>
-#include <protocols/jd3/standard/StandardInnerLarvalJob.hh>
-#include <protocols/jd3/standard/MoverAndPoseJob.hh>
+#include <protocols/jd3/InnerLarvalJob.hh>
+#include <protocols/jd3/jobs/MoverJob.hh>
 #include <protocols/jd3/JobDigraph.hh>
 #include <protocols/jd3/JobResult.hh>
 #include <protocols/jd3/LarvalJob.hh>
 #include <protocols/jd3/InnerLarvalJob.hh>
+#include <protocols/jd3/job_results/PoseJobResult.hh>
+#include <protocols/jd3/job_summaries/EnergyJobSummary.hh>
 
 // Movers and Filters
 #include <protocols/relax/FastRelax.hh>
@@ -116,7 +118,7 @@ public:
 		core::import_pose::pose_from_file( *result_for_every_job_, pose1_filename_, core::import_pose::PDB_file);
 
 		result_vec_.resize( 1 );
-		result_vec_[ 1 ].reset( new protocols::jd3::standard::PoseJobResult( result_for_every_job_ ) );
+		result_vec_[ 1 ].reset( new protocols::jd3::job_results::PoseJobResult( result_for_every_job_ ) );
 	}
 
 	void test_MRSJobQueen_with_good_input() {
@@ -126,7 +128,7 @@ public:
 		MRSJobQueen zero_queen;
 		MRSJobQueen worker_queen;
 
-		JobDigraphOP job_dag = zero_queen.initial_job_dag();
+		JobDigraphOP job_dag = zero_queen.create_and_set_initial_job_dag();
 		check_job_dag( job_dag );
 
 		inner_test_node1( zero_queen, worker_queen );
@@ -175,8 +177,8 @@ public:
 			TS_ASSERT_EQUALS( all_ljobs[ 1 ]->inner_job(), all_ljobs[ i ]->inner_job() );
 			TS_ASSERT_EQUALS( all_ljobs[ 6 ]->inner_job(), all_ljobs[ 5 + i ]->inner_job() );
 
-			TS_ASSERT_EQUALS( static_cast< StandardInnerLarvalJob const & > ( * all_ljobs[ i ]->inner_job() ).prelim_job_node(), 1 );
-			TS_ASSERT_EQUALS( static_cast< StandardInnerLarvalJob const & > ( * all_ljobs[ 5 + i ]->inner_job() ).prelim_job_node(), 2 );
+			TS_ASSERT_EQUALS( static_cast< InnerLarvalJob const & > ( * all_ljobs[ i ]->inner_job() ).job_node(), 1 );
+			TS_ASSERT_EQUALS( static_cast< InnerLarvalJob const & > ( * all_ljobs[ 5 + i ]->inner_job() ).job_node(), 2 );
 		}
 
 		utility::vector1< JobResultCOP > dummy;
@@ -229,7 +231,7 @@ public:
 			zero_queen.note_job_completed( global_job_id, jd3_job_status_success, num_results, true );
 
 			for ( core::Size job_result_id = 1; job_result_id <= num_results; ++job_result_id ) {
-				JobSummaryOP summary( new protocols::jd3::standard::EnergyJobSummary( *it ) );
+				JobSummaryOP summary( new protocols::jd3::job_summaries::EnergyJobSummary( *it ) );
 				++it;
 				zero_queen.completed_job_summary( global_job_id, job_result_id, summary );
 			}
@@ -280,8 +282,8 @@ public:
 		TS_ASSERT_EQUALS( all_ljobs.size(), 8 );
 
 		for ( int i = 1; i <= 4; ++i ) {
-			TS_ASSERT_EQUALS( static_cast< StandardInnerLarvalJob const & > ( * all_ljobs[ i ]->inner_job() ).prelim_job_node(), 1 );
-			TS_ASSERT_EQUALS( static_cast< StandardInnerLarvalJob const & > ( * all_ljobs[ 4 + i ]->inner_job() ).prelim_job_node(), 2 );
+			TS_ASSERT_EQUALS( static_cast< InnerLarvalJob const & > ( * all_ljobs[ i ]->inner_job() ).job_node(), 1 );
+			TS_ASSERT_EQUALS( static_cast< InnerLarvalJob const & > ( * all_ljobs[ 4 + i ]->inner_job() ).job_node(), 2 );
 		}
 
 		core::Size local_job_id = 0;
@@ -341,7 +343,7 @@ public:
 			zero_queen.note_job_completed( global_job_id, jd3_job_status_success, num_results, true );
 
 			for ( core::Size job_result_id = 1; job_result_id <= num_results; ++job_result_id ) {
-				JobSummaryOP summary( new protocols::jd3::standard::EnergyJobSummary( *it ) );
+				JobSummaryOP summary( new protocols::jd3::job_summaries::EnergyJobSummary( *it ) );
 				++it;
 				zero_queen.completed_job_summary( global_job_id, job_result_id, summary );
 			}
@@ -461,7 +463,7 @@ public:
 			zero_queen.note_job_completed( global_job_id, jd3_job_status_success, num_results, true );
 
 			for ( core::Size job_result_id = 1; job_result_id <= num_results; ++job_result_id ) {
-				JobSummaryOP summary( new protocols::jd3::standard::EnergyJobSummary( *it ) );
+				JobSummaryOP summary( new protocols::jd3::job_summaries::EnergyJobSummary( *it ) );
 				++it;
 				zero_queen.completed_job_summary( global_job_id, job_result_id, summary );
 			}
@@ -608,7 +610,7 @@ public:
 		MRSJobQueen zero_queen;
 		//MRSJobQueen worker_queen;
 
-		JobDigraphOP job_dag = zero_queen.initial_job_dag();
+		JobDigraphOP job_dag = zero_queen.create_and_set_initial_job_dag();
 		check_job_dag( job_dag );
 
 		std::list< LarvalJobOP > all_ljobs = zero_queen.determine_job_list( 1, 100 );
@@ -616,8 +618,8 @@ public:
 
 		//Node 2 needs 4 job results from node 1, only supply 2
 		zero_queen.note_job_completed( 1, jd3_job_status_success, 2, true );
-		JobSummaryOP summary1( new protocols::jd3::standard::EnergyJobSummary( 1 ) );
-		JobSummaryOP summary2( new protocols::jd3::standard::EnergyJobSummary( 2 ) );
+		JobSummaryOP summary1( new protocols::jd3::job_summaries::EnergyJobSummary( 1 ) );
+		JobSummaryOP summary2( new protocols::jd3::job_summaries::EnergyJobSummary( 2 ) );
 		zero_queen.completed_job_summary( 1, 1, summary1 );
 		zero_queen.completed_job_summary( 1, 2, summary2 );
 
@@ -636,8 +638,8 @@ public:
 		//Give enough node 2 results. Node 3 expects 4
 		for ( int i=11; i<=14; ++i ) {
 			zero_queen.note_job_completed( i, jd3_job_status_success, 2, true );
-			JobSummaryOP summary1( new protocols::jd3::standard::EnergyJobSummary( 1 ) );
-			JobSummaryOP summary2( new protocols::jd3::standard::EnergyJobSummary( 2 ) );
+			JobSummaryOP summary1( new protocols::jd3::job_summaries::EnergyJobSummary( 1 ) );
+			JobSummaryOP summary2( new protocols::jd3::job_summaries::EnergyJobSummary( 2 ) );
 			zero_queen.completed_job_summary( i, 1, summary1 );
 			zero_queen.completed_job_summary( i, 2, summary2 );
 		}
@@ -654,7 +656,7 @@ public:
 
 		try{
 			MRSJobQueen queen;
-			JobDigraphOP job_dag = queen.initial_job_dag();
+			JobDigraphOP job_dag = queen.create_and_set_initial_job_dag();
 		} catch( ... ){
 			exception_thrown = true;
 		}
@@ -668,7 +670,7 @@ public:
 
 		try{
 			MRSJobQueen queen;
-			JobDigraphOP job_dag = queen.initial_job_dag();
+			JobDigraphOP job_dag = queen.create_and_set_initial_job_dag();
 			queen.determine_validity_of_stage_tags();
 
 			//std::vector< TagListOP > const & tags = queen.tag_manager().tag_list_for_input_pose_id();
@@ -688,7 +690,7 @@ public:
 
 		try{
 			MRSJobQueen queen;
-			JobDigraphOP job_dag = queen.initial_job_dag();
+			JobDigraphOP job_dag = queen.create_and_set_initial_job_dag();
 		} catch( ... ){
 			exception_thrown = true;
 		}
@@ -701,7 +703,7 @@ public:
 
 		try{
 			MRSJobQueen queen;
-			JobDigraphOP job_dag = queen.initial_job_dag();
+			JobDigraphOP job_dag = queen.create_and_set_initial_job_dag();
 			TS_ASSERT_EQUALS( queen.num_input_structs(), 3 );
 
 			TagManager const & tag_manager = queen.tag_manager();
@@ -747,8 +749,8 @@ private:
 	core::pose::PoseOP result_for_every_job_;
 	utility::vector1< JobResultCOP > result_vec_;
 
-	protocols::jd3::standard::PoseJobResultOP pose_result_;
-	protocols::jd3::standard::EnergyJobSummaryOP energy_job_summary_;
+	protocols::jd3::job_results::PoseJobResultOP pose_result_;
+	//protocols::jd3::standard::EnergyJobSummaryOP energy_job_summary_; JAB - Unused
 };
 
 void MRSJobQueenTests::print_list( std::list< std::pair< core::Size, core::Size > > & l ){

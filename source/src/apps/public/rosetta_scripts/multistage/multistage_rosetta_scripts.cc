@@ -34,7 +34,8 @@
 
 #ifdef SERIALIZATION
 #include <protocols/jd3/job_distributors/MPIWorkPoolJobDistributor.hh>
-#include <protocols/jd3/standard/MoverAndPoseJob.hh>
+#include <protocols/jd3/jobs/MoverJob.hh>
+#include <protocols/jd3/job_results/PoseJobResult.hh>
 #include <core/pose/Pose.hh>
 #endif
 
@@ -57,7 +58,7 @@ public:
 	core::pose::PoseOP deserialize( std::string const & filename ){
 		std::string const serilized_result = utility::file_contents( filename );
 		std::pair< protocols::jd3::LarvalJobOP, protocols::jd3::JobResultOP > result = deserialize_larval_job_and_result( serilized_result );
-		protocols::jd3::standard::PoseJobResult & pose_result = static_cast< protocols::jd3::standard::PoseJobResult & >( * result.second );
+		protocols::jd3::job_results::PoseJobResult & pose_result = static_cast< protocols::jd3::job_results::PoseJobResult & >( * result.second );
 		return pose_result.pose();
 	}
 };
@@ -271,7 +272,7 @@ int main( int argc, char* argv[] ){
 		if ( option[ mrs::estimate_memory ] ) {
 			TR.Debug << "Estimating Memory" << std::endl;
 			protocols::multistage_rosetta_scripts::MRSJobQueenCheckerOP queen ( new protocols::multistage_rosetta_scripts::MRSJobQueenChecker );
-			queen->initial_job_dag();
+			queen->create_initial_job_dag();
 			queen->estimate_number_of_bytes_needed_for_archiving();
 			return 0;
 		}

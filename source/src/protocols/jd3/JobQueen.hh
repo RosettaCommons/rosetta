@@ -25,6 +25,7 @@
 #include <protocols/jd3/JobResult.fwd.hh>
 #include <protocols/jd3/JobSummary.fwd.hh>
 #include <protocols/jd3/LarvalJob.fwd.hh>
+#include <protocols/jd3/JobTracker.fwd.hh>
 #include <protocols/jd3/deallocation/DeallocationMessage.fwd.hh>
 #include <protocols/jd3/output/OutputSpecification.fwd.hh>
 #include <protocols/jd3/output/ResultOutputter.fwd.hh>
@@ -66,6 +67,31 @@ public:
 	JobQueen();
 	~JobQueen() override;
 
+public:
+
+	///@brief Creates the initial job dag using create_initial_job_dag function and sets it to the JQ.
+	///
+	///@details Decorator to create_initial_job_dag
+	///
+	///
+	JobDigraphOP
+	create_and_set_initial_job_dag();
+
+	///@brief Call note_job_completed in derived classes and track the job using the JobTracker.
+	///
+	///@details Decorator to note_job_completed
+	///
+	void
+	note_job_completed_and_track( LarvalJobCOP job, JobStatus status, Size nresults);
+
+	///@brief Call determine_job_list in derived classes and track the jobs using the JobTracker.
+	///
+	///@details Decorator to determine_job_list
+	///
+	LarvalJobs
+	determine_job_list_and_track( Size job_dag_node_index, Size max_njobs );
+
+public:
 	/// @brief All JobQueens must describe their job input XML format in the form of an XSD
 	/// (XML Schema Definition), and they must validate their job input files against their XSDs.
 	/// If the JobDistributor is awakened with the flag "jd3::output_job_xsd <output file>" on the
@@ -81,11 +107,6 @@ public:
 	/// definable for the resource manager.
 	virtual std::string resource_definition_xsd() const = 0;
 
-	/// @brief The JobQueen creates a directed acyclic graph (DAG) describing the sets of all
-	/// jobs and the interdependencies between them to the JobDistributor.  The JobDistributor
-	/// will allow the JobQueen to update the DAG by adding new nodes and adding edges to new
-	/// nodes if the JobQueen does not know up front how many nodes will be in the graph.
-	virtual JobDigraphOP initial_job_dag() = 0;
 
 	/// @brief The JobQueen is allowed to update the JobDigraph over the course of execution
 	/// but only in a particular way: by adding new nodes, and then by adding edges that land
@@ -103,34 +124,24 @@ public:
 	virtual LarvalJobs determine_job_list( Size job_dag_node_index, Size max_njobs ) = 0;
 
 	/// @biref The JobQueen must be able to determine if a particular job has already
-	/// completed (or alternatively, has already been started by another process), and
-	/// if so, the JobDistributor will not re-run the job.  The JobQueen returns "true"
-	/// if the job has completed (or started elsewhere), and "false" otherwise.
-	virtual bool has_job_completed( LarvalJobCOP job ) = 0;
-
-	/// @brief Some (but not all) JobDistributors mark which jobs are in the process of
-	/// being run by asking the JobQueen to create a temporary file marking that
-	/// fact on the file system.
-	virtual void mark_job_as_having_begun( LarvalJobCOP job ) = 0;
+	/// been output. The JobQueen returns "true"
+	/// if the job has already been written, and "false" otherwise.
+	/// Used for overwrite behavior.
+	virtual bool has_job_previously_been_output( LarvalJobCOP job ) = 0;
 
 	/// @brief Mature the input larval job into a full fledged job that will be run
 	/// within this process (i.e. on this CPU), and thus can hold pointers to
 	/// data that may persist inside the ResourceManager or may even be used by
 	/// another process running in this thread. To pull that off, the Job object
 	/// must share no non-bitwise-const data with any other Job object.  That means
-	/// if the Job were to contain a Pose and a Mover (as the MoverAndPoseJob does), then
+	/// if the Job were to contain a Pose and a Mover (as the MoverJob does), then
 	/// so each Mover should be freshly constructed, and if the Pose had been copied
-	/// from an existing Pose, must use the Pose's "deep_copy" method (since Pose's
+	/// from an existing Pose, must use the Poses "deep_copy" method (since Pose's
 	/// sometimes share non-constant data between them, e.g. the AtomTree observer
 	/// system, and sometimes Constraints ). The JobResults vector, which is supplied
 	/// by the Jobdistributor, has entries corresponding to the JobResults from
 	/// JobIDs in its input_job_result_indices vector.
 	virtual JobOP mature_larval_job( LarvalJobCOP job, utility::vector1< JobResultCOP > const & input_job_results ) = 0;
-
-	/// @brief There are two interfaces to note_job_completed: one in which the
-	/// job index alone is passed in, a second in which the entire LarvalJob is
-	/// provided.
-	virtual bool larval_job_needed_for_note_job_completed() const = 0;
 
 	/// @brief The JobDistributor will call this function to inform the JobQueen that
 	/// a job has "completed" -- in the sense that it will not be run in the future.
@@ -140,30 +151,11 @@ public:
 	/// were produced by the completed job.
 	virtual void note_job_completed( LarvalJobCOP job, JobStatus status, Size nresults ) = 0;
 
-	/// @brief The JobDistributor will call this function to inform the JobQueen that
-	/// a job has "completed" -- in the sense that it will not be run in the future.
-	/// It does not guarantee that the job was run on this CPU or that it successfully
-	/// completed anywhere.  The JobStatus indicates whether the job completed or
-	/// whether it failed. The nresults count lists how many JobSummary/JobResult pairs
-	/// were produced by the completed job.
-	virtual void note_job_completed( core::Size job_id, JobStatus status, Size nresults ) = 0;
-
-	/// @brief There are two interfaces to completed_job_summary: one in which the
-	/// job index alone is passed in, a second in which the entire LarvalJob is
-	/// provided.
-	virtual bool larval_job_needed_for_completed_job_summary() const = 0;
-
 	/// @brief The JobDistributor guarnatees that exactly one JobQueen will see every
 	/// JobSummary generated within a Job batch. This guarantee allows the JobQueen to
 	/// aggregate data across all of the Jobs so that Rosetta is able to compute data
 	/// from structures instead of forcing that computation into accessory scripts.
 	virtual void completed_job_summary( LarvalJobCOP job, Size result_index, JobSummaryOP summary ) = 0;
-
-	/// @brief The JobDistributor guarnatees that exactly one JobQueen will see every
-	/// JobSummary generated within a Job batch. This guarantee allows the JobQueen to
-	/// aggregate data across all of the Jobs so that Rosetta is able to compute data
-	/// from structures instead of forcing that computation into accessory scripts.
-	virtual void completed_job_summary( core::Size job_id, Size result_index, JobSummaryOP summary ) = 0;
 
 	/// @brief The JobDistributor asks the JobQueen which JobResults should be queued for output.
 	/// The JobQueen should reply by returning a list of OutputSpecification objects. Each
@@ -216,6 +208,36 @@ public:
 	virtual
 	void
 	process_deallocation_message( deallocation::DeallocationMessageOP message ) = 0;
+
+
+protected:
+
+	/// @brief The JobQueen creates a directed acyclic graph (DAG) describing the sets of all
+	/// jobs and the interdependencies between them to the JobDistributor.  The JobDistributor
+	/// will allow the JobQueen to update the DAG by adding new nodes and adding edges to new
+	/// nodes if the JobQueen does not know up front how many nodes will be in the graph.
+	virtual JobDigraphOP
+	create_initial_job_dag() = 0;
+
+	///@brief Get read access to the current job graph
+	JobDigraph const &
+	get_job_graph() const;
+
+	///@brief Get write access to the current job tracker
+	JobTracker &
+	get_job_tracker();
+
+	///@brief Get read access to the current job tracker
+	JobTracker const &
+	get_job_tracker() const;
+
+
+
+
+private:
+
+	JobDigraphCOP job_graph_ = nullptr;
+	JobTrackerOP job_tracker_ = nullptr;
 
 }; // JobQueen
 

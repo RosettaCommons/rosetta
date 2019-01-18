@@ -48,6 +48,9 @@ public:
 	/// @brief Destructor (important for properly forward-declaring smart-pointer members)
 	~--class--() override;
 
+
+public:
+
 	/////////////////////
 	/// Metric Methods ///
 	/////////////////////

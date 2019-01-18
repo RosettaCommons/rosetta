@@ -52,7 +52,6 @@ class ChunkLibraryInnerLarvalJob : public InnerLarvalJob {
 public:
 
 	ChunkLibraryInnerLarvalJob();
-	ChunkLibraryInnerLarvalJob( core::Size nstruct );
 	ChunkLibraryInnerLarvalJob( core::Size nstruct, core::Size prelim_job_node );
 	ChunkLibraryInnerLarvalJob( ChunkLibraryInnerLarvalJob const & src );
 
@@ -73,16 +72,8 @@ public:
 	std::ostream &
 	operator<< ( std::ostream & out, const InnerLarvalJob & inner_job );
 
-	core::Size
-	prelim_job_node() const;
-
-	void prelim_job_node( core::Size setting );
 
 	std::string job_tag() const override { return "S"; }
-
-private:
-
-	core::Size prelim_job_node_;
 
 #ifdef    SERIALIZATION
 public:

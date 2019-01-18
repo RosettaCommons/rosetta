@@ -10,6 +10,7 @@
 /// @file   test/protocols/jd3/StandardJobQueen.cxxtest.hh
 /// @brief  test suite for the StandardJobQueen
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
+/// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com); Refactoring
 
 // Test headers
 #include <cxxtest/TestSuite.h>
@@ -19,6 +20,7 @@
 #include <protocols/jd3/standard/StandardJobQueen.hh>
 
 // Package headers
+#include <protocols/jd3/JobQueen.hh>
 #include <protocols/jd3/JobDigraph.hh>
 #include <protocols/jd3/LarvalJob.hh>
 #include <protocols/jd3/InnerLarvalJob.hh>
@@ -26,6 +28,9 @@
 #include <protocols/jd3/deallocation/InputPoseDeallocationMessage.hh>
 #include <protocols/jd3/pose_inputters/PDBPoseInputter.hh>
 #include <protocols/jd3/pose_outputters/PDBPoseOutputter.hh>
+#include <protocols/jd3/standard/PreliminaryLarvalJobTracker.hh>
+#include <protocols/jd3/standard/PreliminaryLarvalJob.hh>
+#include <protocols/jd3/JobTracker.hh>
 
 // basic headers
 #include <basic/options/option.hh>
@@ -39,6 +44,7 @@
 #include <utility/excn/Exceptions.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/string_util.hh>
 
 // Boost headers
 #include <boost/bind.hpp>
@@ -129,41 +135,27 @@ public:
 	}
 
 	//virtual bool has_job_completed( protocols::jd3::LarvalJobCOP job ) { return pose_outputter_for_job( *job->inner_job() )->job_has_already_completed( *job ); }
-	void mark_job_as_having_begun( protocols::jd3::LarvalJobCOP /*job*/ ) override {/*TEMP*/}
 
 	void note_job_completed( protocols::jd3::LarvalJobCOP job, protocols::jd3::JobStatus status, core::Size nresults ) override {
 		StandardJobQueen::note_job_completed( job, status, nresults );
 	}
 
-	//void completed_job_result( protocols::jd3::LarvalJobCOP /*job*/, core::Size, protocols::jd3::JobResultOP /*result*/ ) override {}
+	//void completed_job_result( protocols::jd3::LarvalJobCOP /*job*/, core::Size, protocols::jd3::JobResultOP /*result*/ ) override {}s
 
-	utility::vector1< core::Size > const &
-	preliminary_job_nodes() const {
-		return parent::preliminary_job_nodes();
-	}
-
-	bool
-	all_jobs_assigned_for_preliminary_job_node( core::Size node_id ) const
-	{
-		return parent::all_jobs_assigned_for_preliminary_job_node( node_id );
-	}
-
-	core::Size preliminary_job_node_begin_job_index( core::Size node_id ) const
-	{
-		return parent::preliminary_job_node_begin_job_index( node_id );
-	}
-
-	core::Size preliminary_job_node_end_job_index( core::Size node_id ) const
-	{
-		return parent::preliminary_job_node_end_job_index( node_id );
-	}
-
-	numeric::DiscreteIntervalEncodingTree< core::Size > const & completed_jobs() const { return parent::completed_jobs();}
-	numeric::DiscreteIntervalEncodingTree< core::Size > const & successful_jobs() const { return parent::successful_jobs();}
-	numeric::DiscreteIntervalEncodingTree< core::Size > const & failed_jobs() const { return parent::failed_jobs();}
-	numeric::DiscreteIntervalEncodingTree< core::Size > const & output_jobs() const { return parent::processed_jobs();}
+	//numeric::DiscreteIntervalEncodingTree< core::Size > const & completed_jobs() const { return parent::completed_jobs();}
+	//numeric::DiscreteIntervalEncodingTree< core::Size > const & successful_jobs() const { return parent::successful_jobs();}
+	//numeric::DiscreteIntervalEncodingTree< core::Size > const & failed_jobs() const { return parent::failed_jobs();}
+	//numeric::DiscreteIntervalEncodingTree< core::Size > const & output_jobs() const { return parent::processed_jobs();}
 
 
+public:
+	//Public wrappers for protected functions to aid in testing
+
+	using parent::get_preliminary_larval_jobs_determined;
+	using parent::get_prelim_larval_job_tracker;
+	using parent::get_job_graph;
+	using parent::get_preliminary_larval_jobs;
+	using parent::get_job_tracker;
 
 public:
 
@@ -205,9 +197,15 @@ public:
 	void test_job_options_initialization() {
 		core_init_with_additional_options( "-bool_arg1 -bool_arg_sjq_does_not_track -string_arg1 wakka_wakka_wakka -string_arg_sjq_does_not_track yippie -s 1ubq.pdb -intvect_arg1 1 2 3 4 5" );
 		DummyJobQueen djq;
-		djq.initial_job_dag(); // no need to hold the DAG returned by this func, but it must be called
+		djq.create_and_set_initial_job_dag(); // no need to hold the DAG returned by this func, but it must be called
+
+		//TS_ASSERT( );
 		LarvalJobs jobs = djq.determine_job_list( 1, 1000 );
 		TS_ASSERT( ! jobs.empty() );
+		TS_ASSERT( djq.get_preliminary_larval_jobs_determined());
+
+
+
 		if ( jobs.empty() ) return;
 
 		djq.complete_job_maturation_ = boost::bind( StandardJobQueenTests::callback_complete_larval_job_maturation1, _1, _2 );
@@ -391,7 +389,7 @@ public:
 			std::cout << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
-		djq.initial_job_dag(); // no need to hold the DAG returned by this func, but it must be called
+		djq.create_and_set_initial_job_dag(); // no need to hold the DAG returned by this func, but it must be called
 
 		LarvalJobs jobs = djq.determine_job_list( 1, 1000 );
 
@@ -427,8 +425,10 @@ public:
 			std::cout << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
-		djq.initial_job_dag(); // no need to hold the DAG returned by this func, but it must be called
+		djq.create_and_set_initial_job_dag(); // no need to hold the DAG returned by this func, but it must be called
 
+		JobDigraph const & job_graph = djq.get_job_graph();
+		TS_ASSERT_EQUALS( job_graph.num_nodes(), 1);
 		LarvalJobs jobs = djq.determine_job_list( 1, 1000 );
 
 		utility::vector1< JobResultOP > empty_vector;
@@ -468,95 +468,174 @@ public:
 			std::cout << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
-		JobDigraphOP dag = djq.initial_job_dag();
+		JobDigraphOP dag = djq.create_and_set_initial_job_dag();
 		TS_ASSERT_EQUALS( dag->num_nodes(), 3 );
 		TS_ASSERT_EQUALS( dag->num_edges(), 0 );
 
+		std::string node_label ="T1";
+		for ( core::Size i = 1; i <= 3; ++i ) {
+			dag->get_job_node(i)->set_node_label(node_label);
+		}
+
+		TS_ASSERT_EQUALS( dag->get_job_node(1)->get_node_label(), "T1");
+		TS_ASSERT_EQUALS( dag->get_job_node(2)->get_node_label(), "T1");
+		TS_ASSERT_EQUALS( dag->get_job_node(3)->get_node_label(), "T1");
+
+		JobDigraph const & job_graph = djq.get_job_graph();
+		TS_ASSERT_EQUALS( job_graph.num_nodes(), 3);
+		TS_ASSERT_EQUALS( job_graph.num_edges(), 0);
+
+		PreliminaryLarvalJobTracker &  prelim_tracker = djq.get_prelim_larval_job_tracker();
 		utility::vector1< core::Size > prelim_nodes( 3 );
 		for ( core::Size ii = 1; ii <= 3; ++ii ) prelim_nodes[ ii ] = ii;
-		TS_ASSERT_EQUALS( djq.preliminary_job_nodes(), prelim_nodes );
+		TS_ASSERT_EQUALS( prelim_tracker.get_preliminary_job_node_indices(), prelim_nodes );
 
-		LarvalJobs jobs = djq.determine_job_list( 1, 4 );
+		LarvalJobs jobs = djq.determine_job_list_and_track( 1, 4 );
+		prelim_tracker = djq.get_prelim_larval_job_tracker();
 		TS_ASSERT_EQUALS( jobs.size(), 4 );
-		TS_ASSERT_EQUALS( djq.all_jobs_assigned_for_preliminary_job_node( 1 ), false );
-		TS_ASSERT_EQUALS( djq.all_jobs_assigned_for_preliminary_job_node( 2 ), false );
-		TS_ASSERT_EQUALS( djq.all_jobs_assigned_for_preliminary_job_node( 3 ), false );
-		TS_ASSERT_EQUALS( djq.preliminary_job_node_begin_job_index( 1 ), 1 );
-		TS_ASSERT_EQUALS( djq.preliminary_job_node_end_job_index( 1 ),   4 );
-		TS_ASSERT_EQUALS( djq.preliminary_job_node_begin_job_index( 2 ), 0 );
-		TS_ASSERT_EQUALS( djq.preliminary_job_node_end_job_index( 2 ),   0 );
-		TS_ASSERT_EQUALS( djq.preliminary_job_node_begin_job_index( 3 ), 0 );
-		TS_ASSERT_EQUALS( djq.preliminary_job_node_end_job_index( 3 ),   0 );
+		TS_ASSERT_EQUALS( prelim_tracker.get_job_node_assigned( 1 ), false );
+		TS_ASSERT_EQUALS( prelim_tracker.get_job_node_assigned( 2 ), false );
+		TS_ASSERT_EQUALS( prelim_tracker.get_job_node_assigned( 3 ), false );
+		TS_ASSERT_EQUALS( prelim_tracker.get_job_index_starting_job_node( 1 ), 1 );
+		TS_ASSERT_EQUALS( prelim_tracker.get_job_index_ending_job_node( 1 ),   4 );
+		TS_ASSERT_EQUALS( prelim_tracker.get_job_index_starting_job_node( 2 ), 0 );
+		TS_ASSERT_EQUALS( prelim_tracker.get_job_index_ending_job_node( 2 ),   0 );
+		TS_ASSERT_EQUALS( prelim_tracker.get_job_index_starting_job_node( 3 ), 0 );
+		TS_ASSERT_EQUALS( prelim_tracker.get_job_index_ending_job_node( 3 ),   0 );
+
+		JobTracker & tracker = djq.get_job_tracker();
+		TS_ASSERT_EQUALS( tracker.last_job_for_input_source_id(1), 4);
+		TS_ASSERT( tracker.started_jobs_for_node(1).member(1));
+		TS_ASSERT( tracker.started_jobs_for_node(1).member(2));
+		TS_ASSERT( tracker.started_jobs_for_node(1).member(3));
+		TS_ASSERT( tracker.started_jobs_for_node(1).member(4));
+		TS_ASSERT( tracker.started_jobs().member(1));
+		TS_ASSERT( tracker.started_jobs().member(2));
+		TS_ASSERT( tracker.started_jobs().member(3));
+		TS_ASSERT( tracker.started_jobs().member(4));
 
 		utility::vector1< LarvalJobOP > jobs_vector( jobs.size() );
 		std::copy( jobs.begin(), jobs.end(), jobs_vector.begin() );
-		djq.note_job_completed( jobs_vector[ 1 ], jd3_job_status_success, 1 );
-		djq.note_job_completed( jobs_vector[ 2 ], jd3_job_status_success, 1 );
-		djq.note_job_completed( jobs_vector[ 3 ], jd3_job_status_success, 1 );
-		djq.note_job_completed( jobs_vector[ 4 ], jd3_job_status_failed_max_retries, 0 );
+		djq.note_job_completed_and_track( jobs_vector[ 1 ], jd3_job_status_success, 1 );
+		djq.note_job_completed_and_track( jobs_vector[ 2 ], jd3_job_status_success, 1 );
+		djq.note_job_completed_and_track( jobs_vector[ 3 ], jd3_job_status_success, 1 );
+		djq.note_job_completed_and_track( jobs_vector[ 4 ], jd3_job_status_failed_max_retries, 0 );
 
-		TS_ASSERT( djq.completed_jobs().member( 1 ) );
-		TS_ASSERT( djq.completed_jobs().member( 2 ) );
-		TS_ASSERT( djq.completed_jobs().member( 3 ) );
-		TS_ASSERT( djq.completed_jobs().member( 4 ) );
+		tracker = djq.get_job_tracker();
 
-		TS_ASSERT(   djq.successful_jobs().member( 1 ) );
-		TS_ASSERT(   djq.successful_jobs().member( 2 ) );
-		TS_ASSERT(   djq.successful_jobs().member( 3 ) );
-		TS_ASSERT( ! djq.successful_jobs().member( 4 ) );
+		TS_ASSERT( tracker.completed_jobs().member( 1 ) );
+		TS_ASSERT( tracker.completed_jobs().member( 2 ) );
+		TS_ASSERT( tracker.completed_jobs().member( 3 ) );
+		TS_ASSERT( tracker.completed_jobs().member( 4 ) );
 
-		TS_ASSERT( ! djq.failed_jobs().member( 1 ) );
-		TS_ASSERT( ! djq.failed_jobs().member( 2 ) );
-		TS_ASSERT( ! djq.failed_jobs().member( 3 ) );
-		TS_ASSERT(   djq.failed_jobs().member( 4 ) );
+		TS_ASSERT(   tracker.successful_jobs().member( 1 ) );
+		TS_ASSERT(   tracker.successful_jobs().member( 2 ) );
+		TS_ASSERT(   tracker.successful_jobs().member( 3 ) );
+		TS_ASSERT( ! tracker.successful_jobs().member( 4 ) );
 
-		jobs = djq.determine_job_list( 1, 4 );
+		TS_ASSERT( ! tracker.failed_jobs().member( 1 ) );
+		TS_ASSERT( ! tracker.failed_jobs().member( 2 ) );
+		TS_ASSERT( ! tracker.failed_jobs().member( 3 ) );
+		TS_ASSERT(   tracker.failed_jobs().member( 4 ) );
+
+		TS_ASSERT( tracker.completed_jobs_for_node(1).member(1));
+		TS_ASSERT( tracker.completed_jobs_for_node(1).member(2));
+		TS_ASSERT( tracker.completed_jobs_for_node(1).member(3));
+		TS_ASSERT( tracker.completed_jobs_for_node(1).member(4));
+
+		jobs = djq.determine_job_list_and_track( 1, 4 );
+		prelim_tracker = djq.get_prelim_larval_job_tracker();
 		TS_ASSERT_EQUALS( jobs.size(), 1 );
-		TS_ASSERT_EQUALS( djq.all_jobs_assigned_for_preliminary_job_node( 1 ), true );
-		TS_ASSERT_EQUALS( djq.all_jobs_assigned_for_preliminary_job_node( 2 ), false );
-		TS_ASSERT_EQUALS( djq.all_jobs_assigned_for_preliminary_job_node( 3 ), false );
-		TS_ASSERT_EQUALS( djq.preliminary_job_node_begin_job_index( 1 ), 1 );
-		TS_ASSERT_EQUALS( djq.preliminary_job_node_end_job_index( 1 ),   5 );
-		TS_ASSERT_EQUALS( djq.preliminary_job_node_begin_job_index( 2 ), 0 );
-		TS_ASSERT_EQUALS( djq.preliminary_job_node_end_job_index( 2 ),   0 );
-		TS_ASSERT_EQUALS( djq.preliminary_job_node_begin_job_index( 3 ), 0 );
-		TS_ASSERT_EQUALS( djq.preliminary_job_node_end_job_index( 3 ),   0 );
+		TS_ASSERT_EQUALS( prelim_tracker.get_job_node_assigned( 1 ), true );
+		TS_ASSERT_EQUALS( prelim_tracker.get_job_node_assigned( 2 ), false );
+		TS_ASSERT_EQUALS( prelim_tracker.get_job_node_assigned( 3 ), false );
+		TS_ASSERT_EQUALS( prelim_tracker.get_job_index_starting_job_node( 1 ), 1 );
+		TS_ASSERT_EQUALS( prelim_tracker.get_job_index_ending_job_node(1 ),   5 );
+		TS_ASSERT_EQUALS( prelim_tracker.get_job_index_starting_job_node( 2 ), 0 );
+		TS_ASSERT_EQUALS( prelim_tracker.get_job_index_ending_job_node( 2 ),   0 );
+		TS_ASSERT_EQUALS( prelim_tracker.get_job_index_starting_job_node( 3 ), 0 );
+		TS_ASSERT_EQUALS( prelim_tracker.get_job_index_ending_job_node( 3 ),   0 );
 
-		jobs = djq.determine_job_list( 2, 6 );
+		TS_ASSERT_EQUALS( tracker.last_job_for_input_source_id(1), 5);
+		TS_ASSERT( tracker.started_jobs_for_node(1).member(1));
+		TS_ASSERT( tracker.started_jobs_for_node(1).member(2));
+		TS_ASSERT( tracker.started_jobs_for_node(1).member(3));
+		TS_ASSERT( tracker.started_jobs_for_node(1).member(4));
+		TS_ASSERT( tracker.started_jobs_for_node(1).member(5));
+		TS_ASSERT( tracker.started_jobs().member(1));
+		TS_ASSERT( tracker.started_jobs().member(2));
+		TS_ASSERT( tracker.started_jobs().member(3));
+		TS_ASSERT( tracker.started_jobs().member(4));
+		TS_ASSERT( tracker.started_jobs().member(5));
+
+		TS_ASSERT( ! tracker.completed_jobs_for_node(1).member(5));
+		TS_ASSERT( ! tracker.completed_jobs_for_node(1).member(6));
+		TS_ASSERT( ! tracker.completed_jobs_for_node(1).member(7));
+		TS_ASSERT( ! tracker.completed_jobs_for_node(1).member(8));
+
+		jobs = djq.determine_job_list_and_track( 2, 6 );
+		prelim_tracker = djq.get_prelim_larval_job_tracker();
 		TS_ASSERT_EQUALS( jobs.size(), 6 );
-		TS_ASSERT_EQUALS( djq.all_jobs_assigned_for_preliminary_job_node( 1 ), true );
-		TS_ASSERT_EQUALS( djq.all_jobs_assigned_for_preliminary_job_node( 2 ), false );
-		TS_ASSERT_EQUALS( djq.all_jobs_assigned_for_preliminary_job_node( 3 ), false );
-		TS_ASSERT_EQUALS( djq.preliminary_job_node_begin_job_index( 1 ), 1 );
-		TS_ASSERT_EQUALS( djq.preliminary_job_node_end_job_index( 1 ),   5 );
-		TS_ASSERT_EQUALS( djq.preliminary_job_node_begin_job_index( 2 ), 6 );
-		TS_ASSERT_EQUALS( djq.preliminary_job_node_end_job_index( 2 ),   11 );
-		TS_ASSERT_EQUALS( djq.preliminary_job_node_begin_job_index( 3 ), 0 );
-		TS_ASSERT_EQUALS( djq.preliminary_job_node_end_job_index( 3 ),   0 );
+		TS_ASSERT_EQUALS( prelim_tracker.get_job_node_assigned( 1 ), true );
+		TS_ASSERT_EQUALS( prelim_tracker.get_job_node_assigned( 2 ), false );
+		TS_ASSERT_EQUALS( prelim_tracker.get_job_node_assigned( 3 ), false );
+		TS_ASSERT_EQUALS( prelim_tracker.get_job_index_starting_job_node( 1 ), 1 );
+		TS_ASSERT_EQUALS( prelim_tracker.get_job_index_ending_job_node( 1 ),   5 );
+		TS_ASSERT_EQUALS( prelim_tracker.get_job_index_starting_job_node( 2 ), 6 );
+		TS_ASSERT_EQUALS( prelim_tracker.get_job_index_ending_job_node( 2 ),   11 );
+		TS_ASSERT_EQUALS( prelim_tracker.get_job_index_starting_job_node( 3 ), 0 );
+		TS_ASSERT_EQUALS( prelim_tracker.get_job_index_ending_job_node( 3 ),   0 );
 
-		jobs = djq.determine_job_list( 2, 6 );
+		//Although they are the same input pose, since they are defined in Job, they are counted as separate poses.
+		TS_ASSERT_EQUALS( tracker.last_job_for_input_source_id(2), 11);
+
+		TS_ASSERT( tracker.started_jobs_for_node(2).member(6));
+		TS_ASSERT( tracker.started_jobs_for_node(2).member(7));
+		TS_ASSERT( tracker.started_jobs_for_node(2).member(8));
+		TS_ASSERT( tracker.started_jobs_for_node(2).member(9));
+		TS_ASSERT( tracker.started_jobs_for_node(2).member(10));
+		TS_ASSERT( tracker.started_jobs_for_node(2).member(11));
+		TS_ASSERT( tracker.started_jobs().member(6));
+		TS_ASSERT( tracker.started_jobs().member(7));
+		TS_ASSERT( tracker.started_jobs().member(8));
+		TS_ASSERT( tracker.started_jobs().member(9));
+		TS_ASSERT( tracker.started_jobs().member(10));
+		TS_ASSERT( tracker.started_jobs().member(11));
+		TS_ASSERT( tracker.started_jobs().member(6));
+		TS_ASSERT( tracker.started_jobs().member(7));
+		TS_ASSERT( tracker.started_jobs().member(8));
+		TS_ASSERT( tracker.started_jobs().member(9));
+		TS_ASSERT( tracker.started_jobs().member(10));
+		TS_ASSERT( tracker.started_jobs().member(11));
+
+		jobs = djq.determine_job_list_and_track( 2, 6 );
+		prelim_tracker = djq.get_prelim_larval_job_tracker();
+
 		TS_ASSERT_EQUALS( jobs.size(), 5 );
-		TS_ASSERT_EQUALS( djq.all_jobs_assigned_for_preliminary_job_node( 1 ), true );
-		TS_ASSERT_EQUALS( djq.all_jobs_assigned_for_preliminary_job_node( 2 ), true );
-		TS_ASSERT_EQUALS( djq.all_jobs_assigned_for_preliminary_job_node( 3 ), false );
-		TS_ASSERT_EQUALS( djq.preliminary_job_node_begin_job_index( 1 ), 1 );
-		TS_ASSERT_EQUALS( djq.preliminary_job_node_end_job_index( 1 ),   5 );
-		TS_ASSERT_EQUALS( djq.preliminary_job_node_begin_job_index( 2 ), 6 );
-		TS_ASSERT_EQUALS( djq.preliminary_job_node_end_job_index( 2 ),  16 );
-		TS_ASSERT_EQUALS( djq.preliminary_job_node_begin_job_index( 3 ), 0 );
-		TS_ASSERT_EQUALS( djq.preliminary_job_node_end_job_index( 3 ),   0 );
+		TS_ASSERT_EQUALS( prelim_tracker.get_job_node_assigned( 1 ), true );
+		TS_ASSERT_EQUALS( prelim_tracker.get_job_node_assigned( 2 ), true );
+		TS_ASSERT_EQUALS( prelim_tracker.get_job_node_assigned( 3 ), false );
+		TS_ASSERT_EQUALS( prelim_tracker.get_job_index_starting_job_node( 1 ), 1 );
+		TS_ASSERT_EQUALS( prelim_tracker.get_job_index_ending_job_node( 1 ),   5 );
+		TS_ASSERT_EQUALS( prelim_tracker.get_job_index_starting_job_node( 2 ), 6 );
+		TS_ASSERT_EQUALS( prelim_tracker.get_job_index_ending_job_node( 2 ),  16 );
+		TS_ASSERT_EQUALS( prelim_tracker.get_job_index_starting_job_node( 3 ), 0 );
+		TS_ASSERT_EQUALS( prelim_tracker.get_job_index_ending_job_node( 3 ),   0 );
+		TS_ASSERT_EQUALS( tracker.last_job_for_input_source_id(2), 16);
 
-		jobs = djq.determine_job_list( 3, 6 );
+		jobs = djq.determine_job_list_and_track( 3, 6 );
+		prelim_tracker = djq.get_prelim_larval_job_tracker();
 		TS_ASSERT_EQUALS( jobs.size(), 3 );
-		TS_ASSERT_EQUALS( djq.all_jobs_assigned_for_preliminary_job_node( 1 ), true );
-		TS_ASSERT_EQUALS( djq.all_jobs_assigned_for_preliminary_job_node( 2 ), true );
-		TS_ASSERT_EQUALS( djq.all_jobs_assigned_for_preliminary_job_node( 3 ), true );
-		TS_ASSERT_EQUALS( djq.preliminary_job_node_begin_job_index( 1 ),  1 );
-		TS_ASSERT_EQUALS( djq.preliminary_job_node_end_job_index( 1 ),    5 );
-		TS_ASSERT_EQUALS( djq.preliminary_job_node_begin_job_index( 2 ),  6 );
-		TS_ASSERT_EQUALS( djq.preliminary_job_node_end_job_index( 2 ),   16 );
-		TS_ASSERT_EQUALS( djq.preliminary_job_node_begin_job_index( 3 ), 17 );
-		TS_ASSERT_EQUALS( djq.preliminary_job_node_end_job_index( 3 ),   19 );
+		TS_ASSERT_EQUALS( prelim_tracker.get_job_node_assigned( 1 ), true );
+		TS_ASSERT_EQUALS( prelim_tracker.get_job_node_assigned( 2 ), true );
+		TS_ASSERT_EQUALS( prelim_tracker.get_job_node_assigned( 3 ), true );
+		TS_ASSERT_EQUALS( prelim_tracker.get_job_index_starting_job_node( 1 ),  1 );
+		TS_ASSERT_EQUALS( prelim_tracker.get_job_index_ending_job_node( 1 ),    5 );
+		TS_ASSERT_EQUALS( prelim_tracker.get_job_index_starting_job_node( 2 ),  6 );
+		TS_ASSERT_EQUALS( prelim_tracker.get_job_index_ending_job_node( 2 ),   16 );
+		TS_ASSERT_EQUALS( prelim_tracker.get_job_index_starting_job_node( 3 ), 17 );
+		TS_ASSERT_EQUALS( prelim_tracker.get_job_index_ending_job_node( 3 ),   19 );
+		TS_ASSERT_EQUALS( tracker.last_job_for_input_source_id(3), 19);
 
 	}
 
@@ -591,34 +670,35 @@ public:
 			std::cout << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
-		JobDigraphOP dag = djq.initial_job_dag();
+		JobDigraphOP dag = djq.create_and_set_initial_job_dag();
 		TS_ASSERT_EQUALS( dag->num_nodes(), 3 );
 		TS_ASSERT_EQUALS( dag->num_edges(), 0 );
 
+		PreliminaryLarvalJobTracker  const & prelim_tracker = djq.get_prelim_larval_job_tracker();
 		utility::vector1< core::Size > prelim_nodes( 3 );
 		for ( core::Size ii = 1; ii <= 3; ++ii ) prelim_nodes[ ii ] = ii;
-		TS_ASSERT_EQUALS( djq.preliminary_job_nodes(), prelim_nodes );
+		TS_ASSERT_EQUALS( prelim_tracker.get_preliminary_job_node_indices(), prelim_nodes );
 
 		LarvalJobs jobs = djq.determine_job_list( 1, 4 );
 		for ( LarvalJobOP node1_job : jobs ) {
-			TS_ASSERT_EQUALS( node1_job->inner_job()->input_source().pose_id(), 1 );
+			TS_ASSERT_EQUALS( node1_job->inner_job()->input_source().source_id(), 1 );
 		}
 		std::list< deallocation::DeallocationMessageOP > msgs1 = djq.deallocation_messages();
 		TS_ASSERT( msgs1.empty() );
 
 		for ( LarvalJobOP node1_job : jobs ) {
-			djq.note_job_completed( node1_job, jd3_job_status_success, 1 );
+			djq.note_job_completed_and_track( node1_job, jd3_job_status_success, 1 );
 		}
 
 		LarvalJobs jobs2 = djq.determine_job_list( 1, 2 );
 		for ( LarvalJobOP node1_job : jobs2 ) {
-			TS_ASSERT_EQUALS( node1_job->inner_job()->input_source().pose_id(), 1 );
+			TS_ASSERT_EQUALS( node1_job->inner_job()->input_source().source_id(), 1 );
 		}
 		std::list< deallocation::DeallocationMessageOP > msgs2 = djq.deallocation_messages();
 		TS_ASSERT( msgs2.empty() );
 
 		for ( LarvalJobOP node1_job : jobs2 ) {
-			djq.note_job_completed( node1_job, jd3_job_status_success, 1 );
+			djq.note_job_completed_and_track( node1_job, jd3_job_status_success, 1 );
 		}
 
 		LarvalJobs jobs3 = djq.determine_job_list( 2, 10 );
@@ -638,7 +718,7 @@ public:
 		TS_ASSERT( msgs4.empty() );
 
 		for ( LarvalJobOP node2_job : jobs3 ) {
-			djq.note_job_completed( node2_job, jd3_job_status_success, 1 );
+			djq.note_job_completed_and_track( node2_job, jd3_job_status_success, 1 );
 		}
 
 		LarvalJobs jobs4 = djq.determine_job_list( 2, 10 );
@@ -653,7 +733,7 @@ public:
 
 		// ok, let's mark all of the jobs from node 2 complete
 		for ( LarvalJobOP node2_job : jobs4 ) {
-			djq.note_job_completed( node2_job, jd3_job_status_success, 1 );
+			djq.note_job_completed_and_track( node2_job, jd3_job_status_success, 1 );
 		}
 
 		LarvalJobs jobs6 = djq.determine_job_list( 3, 10 );
@@ -686,34 +766,35 @@ public:
 			std::cout << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
-		JobDigraphOP dag = djq.initial_job_dag();
+		JobDigraphOP dag = djq.create_and_set_initial_job_dag();
 		TS_ASSERT_EQUALS( dag->num_nodes(), 3 );
 		TS_ASSERT_EQUALS( dag->num_edges(), 0 );
 
+		PreliminaryLarvalJobTracker const & prelim_tracker = djq.get_prelim_larval_job_tracker();
 		utility::vector1< core::Size > prelim_nodes( 3 );
 		for ( core::Size ii = 1; ii <= 3; ++ii ) prelim_nodes[ ii ] = ii;
-		TS_ASSERT_EQUALS( djq.preliminary_job_nodes(), prelim_nodes );
+		TS_ASSERT_EQUALS( prelim_tracker.get_preliminary_job_node_indices(), prelim_nodes );
 
 		LarvalJobs jobs = djq.determine_job_list( 1, 4 );
 		for ( LarvalJobOP node1_job : jobs ) {
-			TS_ASSERT_EQUALS( node1_job->inner_job()->input_source().pose_id(), 1 );
+			TS_ASSERT_EQUALS( node1_job->inner_job()->input_source().source_id(), 1 );
 		}
 		std::list< deallocation::DeallocationMessageOP > msgs1 = djq.deallocation_messages();
 		TS_ASSERT( msgs1.empty() );
 
 		for ( LarvalJobOP node1_job : jobs ) {
-			djq.note_job_completed( node1_job, jd3_job_status_success, 1 );
+			djq.note_job_completed_and_track( node1_job, jd3_job_status_success, 1 );
 		}
 
 		LarvalJobs jobs2 = djq.determine_job_list( 1, 2 );
 		for ( LarvalJobOP node1_job : jobs2 ) {
-			TS_ASSERT_EQUALS( node1_job->inner_job()->input_source().pose_id(), 1 );
+			TS_ASSERT_EQUALS( node1_job->inner_job()->input_source().source_id(), 1 );
 		}
 		std::list< deallocation::DeallocationMessageOP > msgs2 = djq.deallocation_messages();
 		TS_ASSERT( msgs2.empty() );
 
 		for ( LarvalJobOP node1_job : jobs2 ) {
-			djq.note_job_completed( node1_job, jd3_job_status_success, 1 );
+			djq.note_job_completed_and_track( node1_job, jd3_job_status_success, 1 );
 		}
 
 		LarvalJobs jobs3 = djq.determine_job_list( 2, 10 );
@@ -733,7 +814,7 @@ public:
 		TS_ASSERT( msgs4.empty() );
 
 		for ( LarvalJobOP node2_job : jobs3 ) {
-			djq.note_job_completed( node2_job, jd3_job_status_success, 1 );
+			djq.note_job_completed_and_track( node2_job, jd3_job_status_success, 1 );
 		}
 
 		LarvalJobs jobs4 = djq.determine_job_list( 2, 10 );
@@ -748,7 +829,7 @@ public:
 
 		// ok, let's mark all of the jobs from node 2 complete
 		for ( LarvalJobOP node2_job : jobs4 ) {
-			djq.note_job_completed( node2_job, jd3_job_status_success, 1 );
+			djq.note_job_completed_and_track( node2_job, jd3_job_status_success, 1 );
 		}
 
 		LarvalJobs jobs6 = djq.determine_job_list( 3, 10 );
@@ -789,34 +870,35 @@ public:
 			std::cout << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
-		JobDigraphOP dag = djq.initial_job_dag();
+		JobDigraphOP dag = djq.create_and_set_initial_job_dag();
 		TS_ASSERT_EQUALS( dag->num_nodes(), 3 );
 		TS_ASSERT_EQUALS( dag->num_edges(), 0 );
 
+		PreliminaryLarvalJobTracker const & prelim_tracker = djq.get_prelim_larval_job_tracker();
 		utility::vector1< core::Size > prelim_nodes( 3 );
 		for ( core::Size ii = 1; ii <= 3; ++ii ) prelim_nodes[ ii ] = ii;
-		TS_ASSERT_EQUALS( djq.preliminary_job_nodes(), prelim_nodes );
+		TS_ASSERT_EQUALS( prelim_tracker.get_preliminary_job_node_indices(), prelim_nodes );
 
 		LarvalJobs jobs = djq.determine_job_list( 1, 4 );
 		for ( LarvalJobOP node1_job : jobs ) {
-			TS_ASSERT_EQUALS( node1_job->inner_job()->input_source().pose_id(), 1 );
+			TS_ASSERT_EQUALS( node1_job->inner_job()->input_source().source_id(), 1 );
 		}
 		std::list< deallocation::DeallocationMessageOP > msgs1 = djq.deallocation_messages();
 		TS_ASSERT( msgs1.empty() );
 
 		for ( LarvalJobOP node1_job : jobs ) {
-			djq.note_job_completed( node1_job, jd3_job_status_success, 1 );
+			djq.note_job_completed_and_track( node1_job, jd3_job_status_success, 1 );
 		}
 
 		LarvalJobs jobs2 = djq.determine_job_list( 1, 2 );
 		for ( LarvalJobOP node1_job : jobs2 ) {
-			TS_ASSERT_EQUALS( node1_job->inner_job()->input_source().pose_id(), 1 );
+			TS_ASSERT_EQUALS( node1_job->inner_job()->input_source().source_id(), 1 );
 		}
 		std::list< deallocation::DeallocationMessageOP > msgs2 = djq.deallocation_messages();
 		TS_ASSERT( msgs2.empty() );
 
 		for ( LarvalJobOP node1_job : jobs2 ) {
-			djq.note_job_completed( node1_job, jd3_job_status_success, 1 );
+			djq.note_job_completed_and_track( node1_job, jd3_job_status_success, 1 );
 		}
 
 		LarvalJobs jobs3 = djq.determine_job_list( 2, 10 );
@@ -830,7 +912,7 @@ public:
 		TS_ASSERT( msgs3.empty() );
 
 		for ( LarvalJobOP node2_job : jobs3 ) {
-			djq.note_job_completed( node2_job, jd3_job_status_success, 1 );
+			djq.note_job_completed_and_track( node2_job, jd3_job_status_success, 1 );
 		}
 
 		LarvalJobs jobs4 = djq.determine_job_list( 2, 10 );
@@ -845,7 +927,7 @@ public:
 
 		// ok, let's mark all of the jobs from node 2 complete
 		for ( LarvalJobOP node2_job : jobs4 ) {
-			djq.note_job_completed( node2_job, jd3_job_status_success, 1 );
+			djq.note_job_completed_and_track( node2_job, jd3_job_status_success, 1 );
 		}
 
 		LarvalJobs jobs6 = djq.determine_job_list( 3, 10 );

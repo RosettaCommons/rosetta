@@ -9,7 +9,7 @@
 
 /// @file   protocols/multistage_rosetta_scripts/MRSJobSummary.hh
 /// @brief  The definition for class protocols::multistage_rosetta_scripts::MRSJobSummary
-/// @details This summary build off of the EnergyJobSummary.
+/// @details This summary build off of the StandardPoseJobSummary.
 /// So far, it just includes an optional ClusterMetricOP.
 /// @author Jack Maguire, jackmaguire1444@gmail.com
 
@@ -21,7 +21,7 @@
 #include <protocols/multistage_rosetta_scripts/cluster/ClusterMetric.fwd.hh>
 
 // Package headers
-#include <protocols/jd3/standard/MoverAndPoseJob.hh>
+#include <protocols/jd3/job_summaries/EnergyJobSummary.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers
@@ -31,7 +31,7 @@
 namespace protocols {
 namespace multistage_rosetta_scripts {
 
-class MRSJobSummary : public jd3::standard::EnergyJobSummary
+class MRSJobSummary : public jd3::job_summaries::EnergyJobSummary
 {
 public:
 	MRSJobSummary();

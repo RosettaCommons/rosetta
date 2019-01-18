@@ -69,7 +69,7 @@ public:
 
 	void set_maximum_jobs_to_hold_in_memory( core::Size max_njobs_at_once );
 
-	JobDigraphOP create_initial_job_dag();
+	JobDigraphOP get_initial_job_dag_and_queue();
 
 	bool job_queue_empty() const;
 	LarvalJobOP pop_job_from_queue();

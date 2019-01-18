@@ -186,12 +186,6 @@ bool DeNovoSilentFilePoseOutputter::job_has_already_completed( LarvalJob const &
 	return false;
 }
 
-
-void DeNovoSilentFilePoseOutputter::mark_job_as_having_started( LarvalJob const & /*job*/, utility::options::OptionCollection const & ) const
-{
-	// This is not a behavior supported by the DeNovoSilentFilePoseOutputter
-}
-
 std::string
 DeNovoSilentFilePoseOutputter::class_key() const
 {

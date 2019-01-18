@@ -22,7 +22,7 @@
 #include <protocols/jd3/InnerLarvalJob.hh>
 #include <protocols/jd3/pose_outputters/PoseOutputterFactory.hh>
 #include <protocols/jd3/pose_outputters/pose_outputter_schemas.hh>
-#include <protocols/jd3/standard/MoverAndPoseJob.hh>
+#include <protocols/jd3/job_results/PoseJobResult.hh>
 
 //project headers
 #include <core/pose/Pose.hh>
@@ -92,20 +92,27 @@ PDBPoseOutputter::determine_job_tag(
 		job.job_tag( job.input_tag() );
 	}
 
-	//Deal with prefix and suffix options.
+	//Deal with prefix and suffix options. JAB - note that filename_pattern can contain directories.
 
+	std::string prefix,suffix,fpath = "";
 	if ( pdb_tag and pdb_tag->hasOption( "prefix" ) ) {
-		job.job_tag( pdb_tag->getOption< std::string >( "prefix" ) + job.job_tag() );
+		prefix = pdb_tag->getOption< std::string >( "prefix" );
 	} else if ( job_options[ OptionKeys::out::prefix].user() ) {
-		job.job_tag( job_options[ OptionKeys::out::prefix]() + job.job_tag() );
+		prefix = job_options[ OptionKeys::out::prefix]();
 	}
 
-	if ( pdb_tag and pdb_tag->hasOption( "suffix ") ) {
-		job.job_tag(  job.job_tag() + pdb_tag->getOption< std::string >( "suffix" ) );
+	if ( pdb_tag and pdb_tag->hasOption( "suffix") ) {
+		suffix = pdb_tag->getOption< std::string >( "suffix" );
 	} else if ( job_options[ OptionKeys::out::suffix].user() ) {
-		job.job_tag( job.job_tag() + job_options[ OptionKeys::out::suffix]());
+		suffix = job_options[ OptionKeys::out::suffix]();
 	}
 
+	//Add prefix/suffix to the base name.
+	utility::file::FileName full_fname( job.job_tag());
+	if ( ! full_fname.path().empty() ) {
+		fpath = full_fname.path();
+	}
+	job.job_tag( fpath + prefix + full_fname.base() + suffix );
 }
 
 /// @details In returning the empty string, we signal to the JobQueen (or any other
@@ -163,12 +170,6 @@ bool PDBPoseOutputter::job_has_already_completed( LarvalJob const & job, utility
 	return exists;
 }
 
-
-void PDBPoseOutputter::mark_job_as_having_started( LarvalJob const & /*job*/, utility::options::OptionCollection const & ) const
-{
-	// STUBBED OUT!
-}
-
 std::string
 PDBPoseOutputter::class_key() const
 {
@@ -196,7 +197,7 @@ void PDBPoseOutputter::write_output(
 	JobResult const & result
 )
 {
-	using standard::PoseJobResult;
+	using job_results::PoseJobResult;
 	debug_assert( dynamic_cast< PoseJobResult const * > ( &result ));
 	auto const & pose_result( static_cast< PoseJobResult const & > ( result ));
 	core::pose::Pose const & pose( *pose_result.pose() );
@@ -283,6 +284,7 @@ PDBPoseOutputter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) 
 		" structures would pile up on top of each other (the input tags distinguishing them are ignored.)."
 		" Should not include any directory names; use the 'path' attribute instead for that."
 		" Cannot be combined with the 'filename_pattern' attribute, which is typically preferrable to this one." )
+
 		+ XMLSchemaAttribute( "filename_pattern", "string_w_one_dollarsign",
 		"If you want to name the output pdb files for a job with some permutation on the input tag"
 		" (i.e. the input pdb name) and then something that identifies something particular about"
@@ -290,19 +292,27 @@ PDBPoseOutputter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) 
 		" expects a string that has a single dolar sign; the original job tag will be substituted for"
 		" the dolar sign. E.g. '$_steal_native_frags' would produce pdbs named"
 		" '1abc_steal_native_frags_0001.pdb', '1abc_steal_native_frags_0002.pdb', ...,"
-		" '2def_steal_native_frags_0001.pdb', etc. if it were used with input tags '1abc' and '2def'. Cannot be"
-		" combined with the 'filename' attribute. Cannot be combined with either the 'prefix' or 'suffix' attributes."
-		"  Cannot be combined with either the out:prefix or out:suffix flags that might be provided on the command line" )
+		" '2def_steal_native_frags_0001.pdb', etc. if it were used with input tags '1abc' and '2def'."
+		" prefix and suffix options either on the cmd line or here will be combined appropriately with this option - "
+		" added to the beginning or end of the final name respectively.  If our prefix was `prefix_` and our suffix was "
+		" `suffix_`, then our final PDB name would be: prefix_2def_steal_native_frags_suffix_0001`  ")
+
 		+ XMLSchemaAttribute( "path", xs_string , "Give the directory to which the output .pdb file should be written."
 		" Note that the output path does not become part of the job name, so if you have two jobs with the same job"
 		" name written to different directories, then your log file and your score file (and any other secondary pose"
 		" outputter) will not distinguish between which of the two jobs it is writing output for" )
+
 		+ XMLSchemaAttribute( "overwrite", xsct_rosetta_bool , "If this is set to 'true', then the job(s) will run"
 		" even if an output file with the name that this job would produce exists, and that previously-existing"
 		" output file will be overwritten with the new output file." )
+
 		+ XMLSchemaAttribute::attribute_w_default( "pdb_gz", xsct_rosetta_bool, "Should the output PDB file be written as a .gz?", "false" )
-		+ XMLSchemaAttribute( "prefix", xs_string, "Set output PDB Prefix. Cannot be combined with the 'filename_pattern' attribute")
-		+ XMLSchemaAttribute( "suffix", xs_string, "Set output PDB Suffix. Cannot be combined with the 'filename_pattern' attribute");
+
+		+ XMLSchemaAttribute( "prefix", xs_string, "Set output PDB Prefix. Can be combined with the 'filename_pattern' attribute. "
+		"Overrides any cmd-line prefix option set.")
+
+		+ XMLSchemaAttribute( "suffix", xs_string, "Set output PDB Suffix. Can be combined with the 'filename_pattern' attribute. "
+		"Overrides any cmd-line prefix option set.");
 
 	pose_outputter_xsd_type_definition_w_attributes( xsd, keyname(),
 		"The (typically) default PoseOutputter that writes the structure out as a PDB-formatted file", output_pdb_attributes );

@@ -77,8 +77,6 @@ public:
 
 	bool job_has_already_completed( LarvalJob const & job, utility::options::OptionCollection const & options ) const override;
 
-	void mark_job_as_having_started( LarvalJob const & job, utility::options::OptionCollection const & options ) const override;
-
 	void write_output( output::OutputSpecification const & spec, JobResult const & result ) override;
 
 	/// @brief Write out all cached silent files -- may happen after an exception is caught by

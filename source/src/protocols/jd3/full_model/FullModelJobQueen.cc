@@ -20,7 +20,7 @@
 #include <protocols/jd3/LarvalJob.hh>
 #include <protocols/jd3/JobDigraph.hh>
 #include <protocols/jd3/JobOutputIndex.hh>
-#include <protocols/jd3/full_model/MoverAndFullModelJob.hh>
+#include <protocols/jd3/jobs/MoverJob.hh>
 #include <protocols/jd3/InputSource.hh>
 #include <protocols/jd3/full_model_inputters/FullModelInputSource.hh>
 #include <protocols/jd3/full_model_inputters/FullModelInputter.hh>
@@ -79,12 +79,12 @@ namespace protocols {
 namespace jd3 {
 namespace full_model {
 
-PreliminaryLarvalJob::PreliminaryLarvalJob() = default;
-PreliminaryLarvalJob::~PreliminaryLarvalJob() = default;
-PreliminaryLarvalJob::PreliminaryLarvalJob( PreliminaryLarvalJob const & /*src*/ ) = default;
+FullModelPreliminaryLarvalJob::FullModelPreliminaryLarvalJob() = default;
+FullModelPreliminaryLarvalJob::~FullModelPreliminaryLarvalJob() = default;
+FullModelPreliminaryLarvalJob::FullModelPreliminaryLarvalJob( FullModelPreliminaryLarvalJob const & /*src*/ ) = default;
 
-PreliminaryLarvalJob &
-PreliminaryLarvalJob::operator = ( PreliminaryLarvalJob const & rhs )
+FullModelPreliminaryLarvalJob &
+FullModelPreliminaryLarvalJob::operator = ( FullModelPreliminaryLarvalJob const & rhs )
 {
 	if ( this != &rhs ) {
 		inner_job = rhs.inner_job;
@@ -426,7 +426,7 @@ FullModelJobQueen::resource_definition_xsd() const
 /// are independent of each other.  This is equivalent to the kind of jobs that could be
 /// run in JD2.
 JobDigraphOP
-FullModelJobQueen::initial_job_dag()
+FullModelJobQueen::create_initial_job_dag()
 {
 	determine_preliminary_job_list();
 
@@ -442,7 +442,7 @@ FullModelJobQueen::initial_job_dag()
 		preliminary_job_nodes_complete_[ ii ] = 0;
 	}
 	// create a DAG with as many nodes in it as there are preliminary larval jobs
-	job_graph_ = utility::pointer::make_shared< JobDigraph >( preliminary_larval_jobs_.size() );
+	job_graph_ = JobDigraphOP( new JobDigraph( preliminary_larval_jobs_.size() ) );
 	return job_graph_;
 }
 
@@ -470,16 +470,17 @@ FullModelJobQueen::determine_job_list( Size job_dag_node_index, Size max_njobs )
 	LarvalJobs larval_jobs;
 	if ( job_dag_node_index <= preliminary_larval_jobs_.size() ) {
 
-		// now that the PreliminaryLarvalJobs have been constructed, go ahead
+		// now that the FullModelPreliminaryLarvalJobs have been constructed, go ahead
 		// and start delivering LarvalJobs to the JobDistributor.
 		larval_jobs = next_batch_of_larval_jobs_from_prelim( job_dag_node_index, max_njobs );
 	} else {
-		larval_jobs = next_batch_of_larval_jobs_for_job_node( job_dag_node_index, max_njobs );
+		//JAB - you will want your SJQ to use much more than two sizes to determine LarvalJobs.  Let SJQ developers not have an extra function to possibly override.
+		utility_exit_with_message("Please override determine_job_list from the SJQ if you have more linear Job nodes from the preliminary nodes");
 	}
 
 	for ( auto job : larval_jobs ) {
 		runtime_assert( job );
-		core::Size pose_id = job->inner_job()->input_source().pose_id();
+		core::Size pose_id = job->inner_job()->input_source().source_id();
 		if ( !last_job_for_input_pose_.count( pose_id ) ) {
 			last_job_for_input_pose_[ pose_id ] = job->job_index();
 		} else if ( last_job_for_input_pose_[ pose_id ] < job->job_index() ) {
@@ -491,7 +492,7 @@ FullModelJobQueen::determine_job_list( Size job_dag_node_index, Size max_njobs )
 }
 
 bool
-FullModelJobQueen::has_job_completed( protocols::jd3::LarvalJobCOP job )
+FullModelJobQueen::has_job_previously_been_output( protocols::jd3::LarvalJobCOP job )
 {
 	FullModelInnerLarvalJobCOP inner_job = utility::pointer::dynamic_pointer_cast< FullModelInnerLarvalJob const > ( job->inner_job() );
 	if ( ! inner_job ) { throw bad_inner_job_exception(); }
@@ -499,15 +500,6 @@ FullModelJobQueen::has_job_completed( protocols::jd3::LarvalJobCOP job )
 	utility::options::OptionCollectionOP job_options = options_for_job( *inner_job );
 	runtime_assert( job_options );
 	return pose_outputter_for_job( *inner_job )->job_has_already_completed( *job, *job_options );
-}
-
-void
-FullModelJobQueen::mark_job_as_having_begun( protocols::jd3::LarvalJobCOP job )
-{
-	FullModelInnerLarvalJobCOP inner_job = utility::pointer::dynamic_pointer_cast< FullModelInnerLarvalJob const > ( job->inner_job() );
-	if ( ! inner_job ) { throw bad_inner_job_exception(); }
-	utility::options::OptionCollectionOP job_options = options_for_job( *inner_job );
-	return pose_outputter_for_job( *inner_job )->mark_job_as_having_started( *job, *job_options );
 }
 
 JobOP
@@ -537,12 +529,9 @@ FullModelJobQueen::mature_larval_job(
 	return complete_larval_job_maturation( larval_job, job_options, input_results );
 }
 
-bool FullModelJobQueen::larval_job_needed_for_note_job_completed() const { return true; }
-
 void FullModelJobQueen::note_job_completed( LarvalJobCOP job, JobStatus status, Size nresults)
 {
-	Size const job_id( job->job_index() );
-	completed_jobs_.insert( job_id );
+	//Size const job_id( job->job_index() );
 	if ( status == jd3_job_status_success ) {
 		FullModelInnerLarvalJobCOP inner_job = utility::pointer::dynamic_pointer_cast< FullModelInnerLarvalJob const > ( job->inner_job() );
 		if ( ! inner_job ) { throw bad_inner_job_exception(); }
@@ -551,27 +540,11 @@ void FullModelJobQueen::note_job_completed( LarvalJobCOP job, JobStatus status, 
 		for ( Size ii = 1; ii <= nresults; ++ii ) {
 			create_and_store_output_specification_for_job_result( job, *job_options, ii, nresults );
 		}
-		successful_jobs_.insert( job_id );
-		PartialOutputStatus output_status;
-		output_status.n_results = nresults;
-		output_status.n_output_or_discarded  = 0;
-		results_processed_for_job_[ job_id ] = output_status;
-	} else {
-		failed_jobs_.insert( job_id );
 	}
 }
 
-void FullModelJobQueen::note_job_completed( core::Size , JobStatus , Size )
-{
-	throw CREATE_EXCEPTION(utility::excn::Exception,  "FullModelJobQueen requires a LarvalJob when noting job completion" );
-}
-
-
-bool FullModelJobQueen::larval_job_needed_for_completed_job_summary() const { return false; }
-
 void FullModelJobQueen::completed_job_summary( LarvalJobCOP, Size, JobSummaryOP ) {}
 
-void FullModelJobQueen::completed_job_summary( core::Size, Size, JobSummaryOP ) {}
 
 std::list< output::OutputSpecificationOP >
 FullModelJobQueen::jobs_that_should_be_output()
@@ -619,7 +592,7 @@ FullModelJobQueen::result_outputter(
 // FullModelInnerLarvalJobCOP inner_job = utility::pointer::dynamic_pointer_cast< FullModelInnerLarvalJob const > ( job->inner_job() );
 // if ( ! inner_job ) { throw bad_inner_job_exception(); }
 // pose_outputters::PoseOutputterOP outputter = pose_outputter_for_job( *inner_job );
-// FullModelJobResultOP pose_result = utility::pointer::dynamic_pointer_cast< FullModelJobResult >( job_result );
+// PoseResultOP pose_result = utility::pointer::dynamic_pointer_cast< PoseJobResult >( job_result );
 // if ( ! pose_result ) {
 //  utility::excn::EXCN_Msg_Exception( "JobResult handed to StandardJobQueen::completed_job_result is not a PoseJobResult or derived from PoseJobResult" );
 // }
@@ -881,56 +854,20 @@ FullModelJobQueen::all_jobs_assigned_for_preliminary_job_node( core::Size node_i
 }
 
 
-/// returns zero if no jobs for this node have yet been created
-core::Size FullModelJobQueen::preliminary_job_node_begin_job_index( core::Size node_id ) const
-{
-	return pjn_job_ind_begin_[ node_id ];
-}
-
-/// @brief The index of the last job for a particular preliminary-job node; this function
-/// returns zero if there are some jobs for this node that have not yet been created.
-core::Size FullModelJobQueen::preliminary_job_node_end_job_index( core::Size node_id ) const
-{
-	return pjn_job_ind_end_[ node_id ];
-}
-
 /// @brief Read access to derived JobQueens to the preliminary job list.
 /// This will return an empty list if  determine_preliminary_jobs has not yet
 /// been called.
-utility::vector1< PreliminaryLarvalJob > const &
-FullModelJobQueen::preliminary_larval_jobs() const
+utility::vector1< FullModelPreliminaryLarvalJob > const &
+FullModelJobQueen::get_preliminary_larval_jobs() const
 {
 	return preliminary_larval_jobs_;
-}
-
-numeric::DiscreteIntervalEncodingTree< core::Size > const &
-FullModelJobQueen::completed_jobs() const
-{
-	return completed_jobs_;
-}
-
-numeric::DiscreteIntervalEncodingTree< core::Size > const &
-FullModelJobQueen::successful_jobs() const
-{
-	return successful_jobs_;
-}
-
-numeric::DiscreteIntervalEncodingTree< core::Size > const &
-FullModelJobQueen::failed_jobs() const
-{
-	return failed_jobs_;
-}
-
-numeric::DiscreteIntervalEncodingTree< core::Size > const &
-FullModelJobQueen::processed_jobs() const {
-	return processed_jobs_;
 }
 
 /// @details This base class implementation merely returns a one-element list containing the
 /// input inner_job.  Derived classes have the flexibility to create several preliminary
 /// jobs from this input job
 FullModelInnerLarvalJobs
-FullModelJobQueen::refine_preliminary_job( PreliminaryLarvalJob const & prelim_job )
+FullModelJobQueen::refine_preliminary_job( FullModelPreliminaryLarvalJob const & prelim_job )
 {
 	FullModelInnerLarvalJobs one_job( 1, prelim_job.inner_job );
 	return one_job;
@@ -943,41 +880,10 @@ FullModelJobQueen::expand_job_list( FullModelInnerLarvalJobOP inner_job, core::S
 	LarvalJobs jobs;
 	core::Size n_to_make = std::min( nstruct, max_larval_jobs_to_create );
 	for ( core::Size jj = 1; jj <= n_to_make; ++jj ) {
-		LarvalJobOP job = create_larval_job( inner_job, njobs_made_for_curr_inner_larval_job_ + jj, ++larval_job_counter_ );
+		LarvalJobOP job = LarvalJobOP( new LarvalJob( inner_job, njobs_made_for_curr_inner_larval_job_ + jj, ++larval_job_counter_ ));
 		jobs.push_back( job );
 	}
 	return jobs;
-}
-
-FullModelInnerLarvalJobOP
-FullModelJobQueen::create_inner_larval_job( core::Size nstruct, core::Size prelim_job_node ) const
-{
-	return utility::pointer::make_shared< FullModelInnerLarvalJob >( nstruct, prelim_job_node );
-}
-
-/// @details Factory method instantiates the base-class LarvalJob to start.
-/// Non-const so that derived classes may do thing like keep track of each of the
-/// larval jobs they instantiate.
-LarvalJobOP
-FullModelJobQueen::create_larval_job(
-	FullModelInnerLarvalJobOP job,
-	core::Size nstruct_index,
-	core::Size larval_job_index
-)
-{
-	return utility::pointer::make_shared< LarvalJob >( job, nstruct_index, larval_job_index );
-}
-
-JobOP
-FullModelJobQueen::create_job( LarvalJobCOP ) const
-{
-	return utility::pointer::make_shared< MoverAndFullModelJob >();
-}
-
-LarvalJobs
-FullModelJobQueen::next_batch_of_larval_jobs_for_job_node( core::Size, core::Size )
-{
-	return LarvalJobs(); // default ctor to give an empty list
 }
 
 void
@@ -1150,14 +1056,14 @@ FullModelJobQueen::pose_for_job(
 
 	auto const & input_source = dynamic_cast< FullModelInputSource const & >( inner_job->input_source() );
 
-	if ( input_pose_index_map_.count( input_source.pose_id() ) ) {
+	if ( input_pose_index_map_.count( input_source.source_id() ) ) {
 		core::pose::PoseOP pose( new core::pose::Pose );
 		// Why does the full_model job queen use detached_copy? Because it is important in multithreaded
 		// contexts that no two Poses pointing to that same data end up in two separate threads,
 		// and then try to modify that data at the same time.  It turns out there are places
 		// in Pose where it covertly modifies data in some other Pose and this could lead to
 		// race conditions.
-		pose->detached_copy( *input_pose_index_map_[ input_source.pose_id() ] );
+		pose->detached_copy( *input_pose_index_map_[ input_source.source_id() ] );
 		return pose;
 	}
 
@@ -1170,7 +1076,7 @@ FullModelJobQueen::pose_for_job(
 	}
 
 	core::pose::PoseOP input_pose = full_model_inputter_for_job( *inner_job )->full_model_from_input_source( input_source, options, inputter_tag );
-	input_pose_index_map_[ input_source.pose_id() ] = input_pose;
+	input_pose_index_map_[ input_source.source_id() ] = input_pose;
 
 	core::pose::PoseOP pose( new core::pose::Pose );
 	pose->detached_copy( *input_pose );
@@ -1186,7 +1092,7 @@ FullModelJobQueen::full_model_inputter_for_job( FullModelInnerLarvalJob const & 
 {
 	// find the preliminary job node for this job, if available
 	// and return the already-created pose inputter
-	if ( inner_job.prelim_job_node() == 0 ) {
+	if ( inner_job.job_node() == 0 ) {
 		if ( use_factory_provided_full_model_inputters_ ) {
 			return full_model_inputters::FullModelInputterFactory::get_instance()->new_full_model_inputter( inner_job.input_source().origin() );
 		} else {
@@ -1195,8 +1101,8 @@ FullModelJobQueen::full_model_inputter_for_job( FullModelInnerLarvalJob const & 
 			return iter->second->create_inputter();
 		}
 	} else {
-		debug_assert( preliminary_larval_jobs_[ inner_job.prelim_job_node() ].full_model_inputter );
-		return preliminary_larval_jobs_[ inner_job.prelim_job_node() ].full_model_inputter;
+		debug_assert( preliminary_larval_jobs_[ inner_job.job_node() ].full_model_inputter );
+		return preliminary_larval_jobs_[ inner_job.job_node() ].full_model_inputter;
 	}
 }
 
@@ -1432,7 +1338,7 @@ FullModelJobQueen::determine_preliminary_job_list_from_xml_file(
 
 	load_job_definition_file( job_def_string, job_def_schema );
 
-	// now iterate across all tags, and for each Job subtag, create a PreliminaryLarvalJob and load it
+	// now iterate across all tags, and for each Job subtag, create a FullModelPreliminaryLarvalJob and load it
 	// with all of the options that are within the <Option> subtag, if present -- and reading any options
 	// not present in the tag from the (global) options system.
 	Tag::tags_t const & subtags = job_definition_file_tags_->getTags();
@@ -1462,7 +1368,7 @@ FullModelJobQueen::determine_preliminary_job_list_from_xml_file(
 		}
 
 		FullModelInputSources input_poses = inputter->full_model_input_sources_from_tag( *job_options, input_tag_child );
-		for ( auto input_source : input_poses ) { input_source->pose_id( ++input_pose_counter_ ); }
+		for ( auto input_source : input_poses ) { input_source->source_id( ++input_pose_counter_ ); }
 
 		// Get the right outputter for this job.
 		pose_outputters::PoseOutputterOP outputter = get_outputter_from_job_tag( subtag );
@@ -1475,8 +1381,8 @@ FullModelJobQueen::determine_preliminary_job_list_from_xml_file(
 		// a preliminary job for each
 		core::Size nstruct = nstruct_for_job( subtag );
 		for ( auto const & input_pose : input_poses ) {
-			PreliminaryLarvalJob prelim_job;
-			FullModelInnerLarvalJobOP inner_job( create_inner_larval_job( nstruct, ++count_prelim_nodes ) );
+			FullModelPreliminaryLarvalJob prelim_job;
+			FullModelInnerLarvalJobOP inner_job = FullModelInnerLarvalJobOP( new FullModelInnerLarvalJob( nstruct, ++count_prelim_nodes ) );
 			inner_job->input_source( input_pose );
 			inner_job->jobdef_tag( subtag );
 			inner_job->outputter( outputter->class_key() );
@@ -1571,7 +1477,7 @@ FullModelJobQueen::determine_preliminary_job_list_from_command_line()
 			}
 		}
 	}
-	for ( auto input_source : input_poses ) { input_source.first->pose_id( ++input_pose_counter_ ); }
+	for ( auto input_source : input_poses ) { input_source.first->source_id( ++input_pose_counter_ ); }
 
 	pose_outputters::PoseOutputterOP outputter = get_outputter_from_job_tag( utility::tag::TagCOP() );
 
@@ -1587,9 +1493,9 @@ FullModelJobQueen::determine_preliminary_job_list_from_command_line()
 	preliminary_larval_jobs_.reserve( input_poses.size() );
 	core::Size count_prelim_nodes( 0 );
 	for ( auto const & input_pose : input_poses ) {
-		PreliminaryLarvalJob prelim_job;
+		FullModelPreliminaryLarvalJob prelim_job;
 		Size nstruct = nstruct_for_job( nullptr );
-		FullModelInnerLarvalJobOP inner_job( create_inner_larval_job( nstruct, ++count_prelim_nodes ) );
+		FullModelInnerLarvalJobOP inner_job = FullModelInnerLarvalJobOP( new FullModelInnerLarvalJob( nstruct, ++count_prelim_nodes ) );
 		inner_job->input_source( input_pose.first );
 		inner_job->outputter( outputter->class_key() );
 
@@ -1614,7 +1520,7 @@ FullModelJobQueen::next_batch_of_larval_jobs_from_prelim( core::Size job_node_in
 
 		if ( curr_inner_larval_job_index_ == 0 ) {
 
-			PreliminaryLarvalJob curr_prelim_job = preliminary_larval_jobs_[ job_node_index ];
+			FullModelPreliminaryLarvalJob curr_prelim_job = preliminary_larval_jobs_[ job_node_index ];
 			inner_larval_jobs_for_curr_prelim_job_ = refine_preliminary_job( curr_prelim_job );
 			curr_inner_larval_job_index_ = 1;
 			njobs_made_for_curr_inner_larval_job_ = 0;
@@ -1744,37 +1650,6 @@ FullModelJobQueen::secondary_outputter_for_job( pose_outputters::PoseOutputSpeci
 	return outputter;
 }
 
-void
-FullModelJobQueen::note_job_result_output_or_discarded( LarvalJobCOP job, Size result_index )
-{
-	auto result_pos_iter = results_processed_for_job_.find( job->job_index() );
-	if ( result_pos_iter == results_processed_for_job_.end() ) {
-		std::ostringstream oss;
-		oss << "From FullModelJobQueen::note_job_result_output_or_discarded:\n";
-		oss << "Tried to note that job " << job->job_index() << " result # " << result_index <<
-			" was output; this job has already had all of its results output or the" <<
-			" FullModelJobQueen was unaware of its existence\n";
-		throw CREATE_EXCEPTION(utility::excn::Exception,  oss.str() );
-	}
-
-	if ( result_pos_iter->second.results_output_or_discarded.member( result_index ) ) {
-		// we've already output this job; the derived class has messed up here
-		std::ostringstream oss;
-		oss << "From FullModelJobQueen::note_job_result_output_or_discarded:\n";
-		oss << "Tried to note that job " << job->job_index() << " result # " << result_index <<
-			" was output; this result index for this job has already been output or discarded.\n";
-		throw CREATE_EXCEPTION(utility::excn::Exception,  oss.str() );
-	}
-
-
-	if ( result_pos_iter->second.n_results == ++result_pos_iter->second.n_output_or_discarded ) {
-		results_processed_for_job_.erase( result_pos_iter );
-		processed_jobs_.insert( job->job_index() );
-	} else {
-		result_pos_iter->second.results_output_or_discarded.insert( result_index );
-	}
-}
-
 /*void
 FullModelJobQueen::note_job_result_output( LarvalJobCOP job )
 {
@@ -1823,7 +1698,7 @@ FullModelJobQueen::get_outputter_from_job_tag( utility::tag::TagCOP tag ) const
 					outputter = default_outputter_creator_->create_outputter();
 				} else {
 					runtime_assert( outputter_creators_.count( pose_outputters::SilentFilePoseOutputter::keyname() ) );
-					outputter = utility::pointer::make_shared< pose_outputters::SilentFilePoseOutputter >();
+					outputter = pose_outputters::PoseOutputterOP( new pose_outputters::SilentFilePoseOutputter );
 				}
 			}
 		}

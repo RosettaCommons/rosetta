@@ -22,6 +22,7 @@
 #include <protocols/jd3/Job.hh>
 #include <protocols/jd3/JobResult.hh>
 #include <protocols/jd3/JobSummary.hh>
+#include <protocols/jd3/job_summaries/EnergyJobSummary.hh>
 
 // Project headers
 #include <protocols/moves/Mover.fwd.hh>
@@ -66,7 +67,8 @@ protected:
 	/// which themselves should derive from ChunkLibraryJobResult.
 	virtual ChunkLibraryJobResultOP create_job_result();
 
-	virtual EnergyJobSummaryOP create_job_summary();
+	virtual job_summaries::EnergyJobSummaryOP
+	create_job_summary();
 
 	/// @brief Method that allows derived classes to tuck data into the result object
 	/// as they see fit. Noop in the base class.
@@ -74,7 +76,7 @@ protected:
 
 	/// @brief Method that allows derived classes to tuck data into the job summary
 	/// object as they see fit. Noop in the base class.
-	virtual void finalize_job_summary( EnergyJobSummaryOP summary );
+	virtual void finalize_job_summary( job_summaries::EnergyJobSummaryOP summary );
 
 private:
 	moves::MoverOP mover_;
@@ -104,24 +106,6 @@ private:
 	core::pose::PoseOP pose_;
 	core::pose::PoseOP lores_pose_;
 	core::pose::PoseCOP native_pose_;
-#ifdef    SERIALIZATION
-public:
-	template< class Archive > void save( Archive & arc ) const;
-	template< class Archive > void load( Archive & arc );
-#endif // SERIALIZATION
-
-};
-
-class EnergyJobSummary : public JobSummary
-{
-public:
-	EnergyJobSummary();
-	virtual ~EnergyJobSummary();
-
-	core::Real energy() const;
-	void energy( core::Real setting );
-private:
-	core::Real energy_;
 #ifdef    SERIALIZATION
 public:
 	template< class Archive > void save( Archive & arc ) const;

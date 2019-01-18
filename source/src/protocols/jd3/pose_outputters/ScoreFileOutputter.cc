@@ -20,7 +20,7 @@
 #include <protocols/jd3/pose_outputters/PoseOutputterFactory.hh>
 #include <protocols/jd3/InnerLarvalJob.hh>
 #include <protocols/jd3/LarvalJob.hh>
-#include <protocols/jd3/standard/MoverAndPoseJob.hh>
+#include <protocols/jd3/job_results/PoseJobResult.hh>
 
 #include <core/types.hh>
 #include <core/io/raw_data/ScoreFileData.hh>
@@ -100,7 +100,7 @@ ScoreFileOutputter::write_output(
 	JobResult const & result
 )
 {
-	using standard::PoseJobResult;
+	using job_results::PoseJobResult;
 	debug_assert( dynamic_cast< PoseJobResult const * > ( &result ));
 	auto const & pose_result( static_cast< PoseJobResult const &  > ( result ));
 	core::pose::Pose const & pose( *pose_result.pose() );

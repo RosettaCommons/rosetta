@@ -49,8 +49,8 @@
 #include <protocols/viewer/viewers.hh>
 
 #include <protocols/jd3/full_model/FullModelJobQueen.hh>
-#include <protocols/jd3/full_model/MoverAndFullModelJob.hh>
 #include <protocols/jd3/full_model_inputters/PDBFullModelInputter.hh>
+#include <protocols/jd3/jobs/MoverJob.hh>
 #include <protocols/jd3/JobDistributor.hh>
 #include <protocols/jd3/JobDistributorFactory.hh>
 #include <protocols/jd3/Job.fwd.hh>
@@ -169,7 +169,7 @@ public:
 		using namespace protocols::stepwise::monte_carlo::mover;
 		using namespace protocols::stepwise::monte_carlo::options;
 
-		MoverAndFullModelJobOP mature_job( new MoverAndFullModelJob );
+		jobs::MoverJobOP mature_job( new jobs::MoverJob );
 
 		core::pose::PoseOP pose = pose_for_job( larval_job, *job_options );
 		mature_job->pose( pose );
@@ -230,7 +230,7 @@ public:
 
 		// It takes a mover and pose, but the pose must have a FullModelInfo.
 		// Don't worry about the latter check for now.
-		mature_job->mover( stepwise_monte_carlo );
+		mature_job->set_mover( stepwise_monte_carlo );
 
 		return mature_job;
 	}

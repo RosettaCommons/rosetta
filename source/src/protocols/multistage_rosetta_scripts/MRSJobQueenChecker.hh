@@ -46,7 +46,7 @@ public:
 public://overrides
 
 	jd3::JobDigraphOP
-	initial_job_dag()
+	create_initial_job_dag()
 	override;
 
 	std::list< jd3::LarvalJobOP > determine_job_list( core::Size job_dag_node_index, core::Size max_njobs ) override;

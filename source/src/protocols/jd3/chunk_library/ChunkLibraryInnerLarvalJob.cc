@@ -35,23 +35,16 @@ namespace jd3 {
 namespace chunk_library {
 
 ChunkLibraryInnerLarvalJob::ChunkLibraryInnerLarvalJob() :
-	InnerLarvalJob(),
-	prelim_job_node_( 0 )
+	InnerLarvalJob()
 {}
 
-ChunkLibraryInnerLarvalJob::ChunkLibraryInnerLarvalJob( core::Size nstruct ) :
-	InnerLarvalJob( nstruct ),
-	prelim_job_node_( 0 )
-{}
 
 ChunkLibraryInnerLarvalJob::ChunkLibraryInnerLarvalJob( core::Size nstruct, core::Size prelim_job_node ) :
-	InnerLarvalJob( nstruct ),
-	prelim_job_node_( prelim_job_node )
+	InnerLarvalJob( nstruct, prelim_job_node )
 {}
 
 ChunkLibraryInnerLarvalJob::ChunkLibraryInnerLarvalJob( ChunkLibraryInnerLarvalJob const & src ) :
-	InnerLarvalJob( src ),
-	prelim_job_node_( src.prelim_job_node_ )
+	InnerLarvalJob( src )
 {}
 
 
@@ -64,8 +57,8 @@ bool
 ChunkLibraryInnerLarvalJob::operator == ( InnerLarvalJob const & other ) const
 {
 	if ( InnerLarvalJob::operator == ( other ) ) {
-		ChunkLibraryInnerLarvalJob const & other_std = static_cast< ChunkLibraryInnerLarvalJob const & > ( other );
-		return prelim_job_node_ == other_std.prelim_job_node_;
+		//ChunkLibraryInnerLarvalJob const & other_std = static_cast< ChunkLibraryInnerLarvalJob const & > ( other );
+		return true;
 	}
 	return false;
 }
@@ -93,17 +86,6 @@ operator<< ( std::ostream & out, const ChunkLibraryInnerLarvalJob & inner_job )
 	return out;
 }
 
-core::Size ChunkLibraryInnerLarvalJob::prelim_job_node() const
-{
-	return prelim_job_node_;
-}
-
-void
-ChunkLibraryInnerLarvalJob::prelim_job_node( core::Size setting )
-{
-	prelim_job_node_ = setting;
-}
-
 } // namespace chunk_library
 } // namespace jd3
 } // namespace protocols
@@ -114,14 +96,12 @@ template< class Archive >
 void
 protocols::jd3::chunk_library::ChunkLibraryInnerLarvalJob::save( Archive & arc ) const {
 	arc( cereal::base_class< protocols::jd3::InnerLarvalJob > ( this ) );
-	arc( prelim_job_node_ );
 }
 
 template< class Archive >
 void
 protocols::jd3::chunk_library::ChunkLibraryInnerLarvalJob::load( Archive & arc ) {
 	arc( cereal::base_class< protocols::jd3::InnerLarvalJob > ( this ) );
-	arc( prelim_job_node_ );
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( protocols::jd3::chunk_library::ChunkLibraryInnerLarvalJob );

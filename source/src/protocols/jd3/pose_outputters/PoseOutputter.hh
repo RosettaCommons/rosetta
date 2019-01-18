@@ -89,9 +89,6 @@ public:
 	virtual
 	bool job_has_already_completed( LarvalJob const & job, utility::options::OptionCollection const & options ) const = 0;
 
-	virtual
-	void mark_job_as_having_started( LarvalJob const & job, utility::options::OptionCollection const & options ) const = 0;
-
 	/// @brief Create the PoseOutputSpecification for a particular job
 	virtual
 	PoseOutputSpecificationOP

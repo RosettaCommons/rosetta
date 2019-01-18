@@ -23,6 +23,7 @@
 //JD3
 #include <protocols/jd3/JobQueen.hh>
 #include <protocols/jd3/standard/StandardJobQueen.hh>
+#include <protocols/jd3/standard/PreliminaryLarvalJob.fwd.hh>
 #include <protocols/jd3/JobGenealogist.hh>
 #include <protocols/jd3/Job.fwd.hh>
 #include <protocols/jd3/JobDigraph.fwd.hh>
@@ -31,7 +32,7 @@
 #include <protocols/jd3/JobSummary.fwd.hh>
 #include <protocols/jd3/LarvalJob.hh>
 #include <protocols/jd3/dag_node_managers/NodeManager.hh>
-#include <protocols/jd3/standard/MoverAndPoseJob.hh>
+#include <protocols/jd3/job_summaries/StandardPoseJobSummary.hh>
 #include <protocols/jd3/output/OutputSpecification.fwd.hh>
 
 #include <protocols/moves/Mover.fwd.hh>
@@ -48,6 +49,7 @@
 
 namespace protocols {
 namespace multistage_rosetta_scripts {
+
 
 struct JobResultID_hash {
 	std::size_t operator () ( jd3::JobResultID const & id ) const {
@@ -72,13 +74,14 @@ struct PoseForPoseID
 struct SortByLowEnergy
 {
 	bool operator() (
-		const std::pair< core::Size, jd3::standard::EnergyJobSummaryOP > & left,
-		const std::pair< core::Size, jd3::standard::EnergyJobSummaryOP > & right
+		const std::pair< core::Size, jd3::job_summaries::StandardPoseJobSummaryOP > & left,
+		const std::pair< core::Size, jd3::job_summaries::StandardPoseJobSummaryOP > & right
 	) const {
 		return left.second->energy() < right.second->energy();
 	}
 };
 
+///@brief Job Queen for MultiStage Rosetta Scripts (MRS)
 class MRSJobQueen: public jd3::standard::StandardJobQueen {
 
 public:
@@ -92,7 +95,7 @@ public:
 public:
 
 	jd3::JobDigraphOP
-	initial_job_dag()
+	create_initial_job_dag()
 	override;
 
 	std::list< jd3::LarvalJobOP > determine_job_list(
@@ -119,7 +122,7 @@ public:
 		core::Size,
 		jd3::JobStatus,
 		core::Size
-	) override {
+	)  {
 		runtime_assert( false );
 	}
 
@@ -133,7 +136,7 @@ public:
 		core::Size job_id,
 		core::Size result_index,
 		jd3::JobSummaryOP summary
-	) override;
+	) ;
 
 	void completed_job_summary(
 		jd3::LarvalJobCOP job,
@@ -170,7 +173,7 @@ protected:
 
 
 	core::pose::PoseOP pose_for_inner_job_derived(
-		jd3::standard::StandardInnerLarvalJobCOP inner_job,
+		jd3::InnerLarvalJobCOP inner_job,
 		utility::options::OptionCollection const & options
 	);
 

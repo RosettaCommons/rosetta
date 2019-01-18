@@ -302,7 +302,7 @@ public: // Properties
 	}
 
 
-	/// @brief Path
+	/// @brief Path.  Does not include final /
 	inline
 	std::string const &
 	path() const

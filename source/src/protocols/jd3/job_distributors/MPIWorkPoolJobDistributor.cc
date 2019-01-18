@@ -132,7 +132,6 @@ void
 MPIWorkPoolJobDistributor::go_master()
 {
 	master_setup();
-
 	while ( not_done() ) {
 		int worker_node = utility::receive_integer_from_anyone();
 		int message = utility::receive_integer_from_node( worker_node );
@@ -189,8 +188,6 @@ MPIWorkPoolJobDistributor::go_master()
 				+ ": " + utility::to_string( message ) );
 		}
 	}
-
-	TR << "Completed go_master main listening loop!" << std::endl;
 
 	// spin-down-signal sending
 	for ( SizeList::const_iterator iter = worker_nodes_waiting_for_jobs_.begin();
@@ -325,7 +322,7 @@ MPIWorkPoolJobDistributor::go_worker()
 void
 MPIWorkPoolJobDistributor::master_setup()
 {
-	job_dag_ = job_extractor_->create_initial_job_dag();
+	job_dag_ = job_extractor_->get_initial_job_dag_and_queue();
 
 	// initialize the n_results_per_archive_ heap
 	bool err( false );
@@ -380,7 +377,7 @@ MPIWorkPoolJobDistributor::process_job_failed_w_message_from_node( int worker_no
 	TR.Error << "Job " << job_id << " named " << failed_job <<
 		" has exited with the message:\n" << error_message << std::endl;
 
-	job_queen_->note_job_completed( failed_job, jd3_job_status_failed_w_exception, 1 /*dummy*/ );
+	job_queen_->note_job_completed_and_track( failed_job, jd3_job_status_failed_w_exception, 1 /*dummy*/ );
 	note_job_no_longer_running( job_id );
 }
 
@@ -389,7 +386,7 @@ MPIWorkPoolJobDistributor::process_job_failed_do_not_retry( int worker_node )
 {
 	Size job_id = utility::receive_size_from_node( worker_node );
 	LarvalJobOP failed_job = job_extractor_->running_job( job_id );
-	job_queen_->note_job_completed( failed_job, jd3_job_status_failed_do_not_retry, 1 /*dummy*/ );
+	job_queen_->note_job_completed_and_track( failed_job, jd3_job_status_failed_do_not_retry, 1 /*dummy*/ );
 	note_job_no_longer_running( job_id );
 }
 
@@ -398,7 +395,7 @@ MPIWorkPoolJobDistributor::process_job_failed_bad_input( int worker_node )
 {
 	Size job_id = utility::receive_size_from_node( worker_node );
 	LarvalJobOP failed_job = job_extractor_->running_job( job_id );
-	job_queen_->note_job_completed( failed_job, jd3_job_status_inputs_were_bad, 1 /*dummy*/ );
+	job_queen_->note_job_completed_and_track( failed_job, jd3_job_status_inputs_were_bad, 1 /*dummy*/ );
 
 	// TO DO: add code that purges all other jobs with the same inner job as this one
 	note_job_no_longer_running( job_id );
@@ -409,7 +406,7 @@ MPIWorkPoolJobDistributor::process_job_failed_retry_limit_exceeded( int worker_n
 {
 	Size job_id = utility::receive_size_from_node( worker_node );
 	LarvalJobOP failed_job = job_extractor_->running_job( job_id );
-	job_queen_->note_job_completed( failed_job, jd3_job_status_failed_max_retries, 1 /*dummy*/ );
+	job_queen_->note_job_completed_and_track( failed_job, jd3_job_status_failed_max_retries, 1 /*dummy*/ );
 
 	// TO DO: add code that purges all other jobs with the same inner job as this one
 	note_job_no_longer_running( job_id );
@@ -522,17 +519,9 @@ MPIWorkPoolJobDistributor::process_archival_complete_message( int worker_node )
 	// would produce a race condition by asking for JobResults as inputs that
 	// either had or had not yet completed the archival process.
 	Size const nsummaries = job_summaries.size();
-	if ( job_queen_->larval_job_needed_for_note_job_completed() ||
-			job_queen_->larval_job_needed_for_completed_job_summary() ) {
-		job_queen_->note_job_completed( larval_job, status, nsummaries );
-		for ( Size ii = 1; ii <= nsummaries; ++ii ) {
-			job_queen_->completed_job_summary( larval_job, ii, job_summaries[ ii ] );
-		}
-	} else {
-		job_queen_->note_job_completed( job_id, status, nsummaries );
-		for ( Size ii = 1; ii <= nsummaries; ++ii ) {
-			job_queen_->completed_job_summary( job_id, ii, job_summaries[ ii ] );
-		}
+	job_queen_->note_job_completed_and_track( larval_job, status, nsummaries );
+	for ( Size ii = 1; ii <= nsummaries; ++ii ) {
+		job_queen_->completed_job_summary( larval_job, ii, job_summaries[ ii ] );
 	}
 
 	note_job_no_longer_running( job_id );
@@ -1001,10 +990,9 @@ MPIWorkPoolJobDistributor::send_next_job_to_node( int worker_node )
 	// digraph_nodes_ready_to_be_run_ queue.  Address that below
 	LarvalJobOP larval_job;
 	while ( ! job_extractor_->job_queue_empty() ) {
-
 		larval_job = job_extractor_->pop_job_from_queue();
-		if ( job_queen_->has_job_completed( larval_job ) ) {
-			job_queen_->note_job_completed( larval_job, jd3_job_previously_executed, 0 );
+		if ( job_queen_->has_job_previously_been_output( larval_job ) ) {
+			job_queen_->note_job_completed_and_track( larval_job, jd3_job_previously_executed, 0 );
 			job_extractor_->note_job_no_longer_running( larval_job->job_index() );
 			larval_job = nullptr;
 			continue;

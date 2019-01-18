@@ -23,16 +23,12 @@ namespace chunk_library {
 
 class MoverAndChunkLibraryJob;
 class ChunkLibraryJobResult;
-class EnergyJobSummary;
 
 typedef utility::pointer::shared_ptr< MoverAndChunkLibraryJob > MoverAndChunkLibraryJobOP;
 typedef utility::pointer::shared_ptr< MoverAndChunkLibraryJob const > MoverAndChunkLibraryJobCOP;
 
 typedef utility::pointer::shared_ptr< ChunkLibraryJobResult > ChunkLibraryJobResultOP;
 typedef utility::pointer::shared_ptr< ChunkLibraryJobResult const > ChunkLibraryJobResultCOP;
-
-typedef utility::pointer::shared_ptr< EnergyJobSummary > EnergyJobSummaryOP;
-typedef utility::pointer::shared_ptr< EnergyJobSummary const > EnergyJobSummaryCOP;
 
 } // namespace standard
 } // namespace jd3

@@ -127,6 +127,10 @@ core::Size LarvalJob::nstruct_index() const {
 	return nstruct_index_;
 }
 
+core::Size LarvalJob::job_node() const {
+	return inner_job_->job_node();
+}
+
 /// @brief The total number of jobs with the same inputs, but different random number seeds.
 core::Size LarvalJob::nstruct_max() const {
 	return inner_job_->nstruct_max();

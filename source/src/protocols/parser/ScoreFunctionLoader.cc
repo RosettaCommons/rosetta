@@ -61,254 +61,10 @@ void ScoreFunctionLoader::load_data(
 	for ( TagCOP scorefxn_tag : scorefxn_tags ) {
 		using namespace core::scoring;
 
-		ScoreFunctionOP in_scorefxn;
+		ScoreFunctionOP in_scorefxn = create_scorefxn_from_tag(scorefxn_tag);
 		std::string scorefxn_name( scorefxn_tag->getName() );
 		if ( scorefxn_name == "ScoreFunction" ) {
 			scorefxn_name = scorefxn_tag->getOption< std::string >( "name" );
-		}
-
-		if (  scorefxn_tag->hasOption( "weights" ) ) {
-			std::string const scorefxn_weights( scorefxn_tag->getOption<std::string>( "weights" ) );
-			if ( ! core::scoring::check_score_function_sanity( basic::options::option, scorefxn_weights ) ) {
-				// The check should only really trigger on database files (explicit path will result in the heuristic not matching.)
-				TR.Error << "Incompatible weights and options detected for " << scorefxn_weights << " - either fix your options, or rename the weights file." << std::endl;
-				throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Weights " + scorefxn_weights + " was requested with incompatible options.");
-			}
-
-			if (  scorefxn_tag->hasOption( "patch" ) ) {
-				std::string const scorefxn_patch( scorefxn_tag->getOption<std::string>( "patch" ) );
-				in_scorefxn = ScoreFunctionFactory::create_score_function( scorefxn_weights, scorefxn_patch);
-				TR << "defined score function \"" << scorefxn_name << "\" with weights \""
-					<< scorefxn_weights << "\" and patch \"" << scorefxn_patch << "\"" << std::endl;
-			} else {
-				in_scorefxn = ScoreFunctionFactory::create_score_function( scorefxn_weights );
-				TR << "defined score function \"" << scorefxn_name << "\" with weights \""
-					<< scorefxn_weights << "\"" << std::endl;
-			}
-		} else {
-			in_scorefxn = utility::pointer::make_shared< ScoreFunction >();
-			in_scorefxn->reset();
-			TR << "***WARNING***: No weights/patch defined. Defining " << scorefxn_name << " with all-zero weights." << std::endl;
-		}
-		for ( TagCOP mod_tag : scorefxn_tag->getTags() ) {
-			std::string const tagname( mod_tag->getName() ); //Get the name of the tag
-			if ( tagname == "Reweight" ) {
-				std::string const scoretype_name( mod_tag->getOption<std::string>( "scoretype" ) );
-				auto const weight( mod_tag->getOption<core::Real>( "weight" ) );
-				TR<<" setting "<<scorefxn_name<<" weight " << scoretype_name << " to " << weight << std::endl;
-				core::scoring::ScoreType const type = score_type_from_name( scoretype_name );
-				in_scorefxn->set_weight( type, weight );
-			} else if ( tagname == "Set" ) { // Set energy method options:
-				core::scoring::methods::EnergyMethodOptions emoptions( in_scorefxn->energy_method_options() );
-				emoptions.hbond_options().parse_my_tag(mod_tag);
-				emoptions.etable_options().parse_my_tag(mod_tag);
-
-				// Set up the list of aa_composition score term setup files:
-				if ( mod_tag->hasOption("aa_composition_setup_file") ) {
-					std::stringstream filelist( mod_tag->getOption<std::string>("aa_composition_setup_file") );
-					utility::vector1 < std::string > filevect;
-					while ( !filelist.eof() ) {
-						std::string tempstring("");
-						filelist >> tempstring;
-						if ( !filelist.fail() ) filevect.push_back( tempstring );
-					}
-					emoptions.append_aa_composition_setup_files( filevect );
-				}
-
-				if ( mod_tag->hasOption("mhc_epitope_setup_file") ) {
-					std::stringstream filelist( mod_tag->getOption<std::string>("mhc_epitope_setup_file") );
-					utility::vector1 < std::string > filevect;
-					while ( !filelist.eof() ) {
-						std::string tempstring("");
-						filelist >> tempstring;
-						if ( !filelist.fail() ) filevect.push_back( tempstring );
-					}
-					emoptions.append_mhc_epitope_setup_files( filevect );
-				}
-
-				// Set up the list of netcharge score term setup files:
-				if ( mod_tag->hasOption("netcharge_setup_file") ) {
-					std::stringstream filelist( mod_tag->getOption<std::string>("netcharge_setup_file") );
-					utility::vector1 < std::string > filevect;
-					while ( !filelist.eof() ) {
-						std::string tempstring("");
-						filelist >> tempstring;
-						if ( !filelist.fail() ) filevect.push_back( tempstring );
-					}
-					emoptions.append_netcharge_setup_files( filevect );
-				}
-				if ( mod_tag->hasOption( "softrep_etable" ) ) {
-					if ( mod_tag->getOption<bool>( "softrep_etable" ) ) {
-						emoptions.etable_type( core::scoring::FA_STANDARD_SOFT );
-
-					}
-				}
-
-				if ( mod_tag->hasOption( "approximate_buried_unsat_penalty_hbond_energy_threshold" ) ) {
-					emoptions.approximate_buried_unsat_penalty_hbond_energy_threshold( mod_tag->getOption<core::Real>("approximate_buried_unsat_penalty_hbond_energy_threshold") );
-				}
-				if ( mod_tag->hasOption( "approximate_buried_unsat_penalty_burial_atomic_depth" ) ) {
-					emoptions.approximate_buried_unsat_penalty_burial_atomic_depth( mod_tag->getOption<core::Real>("approximate_buried_unsat_penalty_burial_atomic_depth") );
-				}
-				if ( mod_tag->hasOption( "approximate_buried_unsat_penalty_burial_probe_radius" ) ) {
-					emoptions.approximate_buried_unsat_penalty_burial_probe_radius( mod_tag->getOption<core::Real>("approximate_buried_unsat_penalty_burial_probe_radius") );
-				}
-				if ( mod_tag->hasOption( "approximate_buried_unsat_penalty_burial_resolution" ) ) {
-					emoptions.approximate_buried_unsat_penalty_burial_resolution( mod_tag->getOption<core::Real>("approximate_buried_unsat_penalty_burial_resolution") );
-				}
-				if ( mod_tag->hasOption( "approximate_buried_unsat_penalty_oversat_penalty" ) ) {
-					emoptions.approximate_buried_unsat_penalty_oversat_penalty( mod_tag->getOption<core::Real>("approximate_buried_unsat_penalty_oversat_penalty") );
-				}
-				if ( mod_tag->hasOption( "approximate_buried_unsat_penalty_assume_const_backbone" ) ) {
-					emoptions.approximate_buried_unsat_penalty_assume_const_backbone( mod_tag->getOption<bool>("approximate_buried_unsat_penalty_assume_const_backbone") );
-				}
-
-				//Options for buried_unsatisfied_penalty energy:
-				if ( mod_tag->hasOption( "buried_unsatisfied_penalty_cone_angle_exponent" ) ) {
-					emoptions.buried_unsatisfied_penalty_cone_angle_exponent( mod_tag->getOption<core::Real>("buried_unsatisfied_penalty_cone_angle_exponent") );
-				}
-				if ( mod_tag->hasOption( "buried_unsatisfied_penalty_cone_angle_shift_factor" ) ) {
-					emoptions.buried_unsatisfied_penalty_cone_angle_shift_factor( mod_tag->getOption<core::Real>("buried_unsatisfied_penalty_cone_angle_shift_factor") );
-				}
-				if ( mod_tag->hasOption( "buried_unsatisfied_penalty_cone_dist_exponent" ) ) {
-					emoptions.buried_unsatisfied_penalty_cone_dist_exponent( mod_tag->getOption<core::Real>("buried_unsatisfied_penalty_cone_dist_exponent") );
-				}
-				if ( mod_tag->hasOption( "buried_unsatisfied_penalty_cone_dist_midpoint" ) ) {
-					emoptions.buried_unsatisfied_penalty_cone_dist_midpoint( mod_tag->getOption<core::Real>("buried_unsatisfied_penalty_cone_dist_midpoint") );
-				}
-				if ( mod_tag->hasOption( "buried_unsatisfied_penalty_burial_threshold" ) ) {
-					emoptions.buried_unsatisfied_penalty_burial_threshold( mod_tag->getOption<core::Real>("buried_unsatisfied_penalty_burial_threshold") );
-				}
-				if ( mod_tag->hasOption( "buried_unsatisfied_penalty_hbond_energy_threshold" ) ) {
-					emoptions.buried_unsatisfied_penalty_hbond_energy_threshold( mod_tag->getOption<core::Real>("buried_unsatisfied_penalty_hbond_energy_threshold") );
-				}
-
-				//Options for voids_penalty energy:
-				if ( mod_tag->hasOption("voids_penalty_energy_containing_cones_cutoff") ) {
-					emoptions.voids_penalty_energy_containing_cones_cutoff( mod_tag->getOption<core::Size>("voids_penalty_energy_containing_cones_cutoff") );
-				}
-				if ( mod_tag->hasOption("voids_penalty_energy_voxel_size") ) {
-					emoptions.voids_penalty_energy_voxel_size( mod_tag->getOption<core::Real>("voids_penalty_energy_voxel_size") );
-				}
-				if ( mod_tag->hasOption("voids_penalty_energy_voxel_grid_padding") ) {
-					emoptions.voids_penalty_energy_voxel_grid_padding( mod_tag->getOption<core::Real>("voids_penalty_energy_voxel_grid_padding") );
-				}
-				if ( mod_tag->hasOption("voids_penalty_energy_cone_dotproduct_cutoff") ) {
-					emoptions.voids_penalty_energy_cone_dotproduct_cutoff( mod_tag->getOption<core::Real>("voids_penalty_energy_cone_dotproduct_cutoff") );
-				}
-				if ( mod_tag->hasOption("voids_penalty_energy_cone_distance_cutoff") ) {
-					emoptions.voids_penalty_energy_cone_distance_cutoff( mod_tag->getOption<core::Real>("voids_penalty_energy_cone_distance_cutoff") );
-				}
-				if ( mod_tag->hasOption("voids_penalty_energy_disabled_except_during_packing") ) {
-					emoptions.voids_penalty_energy_disabled_except_during_packing( mod_tag->getOption<bool>("voids_penalty_energy_disabled_except_during_packing") );
-				}
-
-				if ( mod_tag->hasOption("hbnet_bonus_function_ramping") ) {
-					emoptions.hbnet_bonus_function_ramping( mod_tag->getOption<std::string>("hbnet_bonus_function_ramping") );
-				}
-				if ( mod_tag->hasOption("hbnet_max_network_size") ) {
-					emoptions.hbnet_max_network_size( mod_tag->getOption< core::Size >("hbnet_max_network_size") );
-				}
-
-				if ( mod_tag->hasOption( "fa_elec_min_dis" ) ) {
-					emoptions.elec_min_dis( mod_tag->getOption<core::Real>( "fa_elec_min_dis" ) );
-				}
-				if ( mod_tag->hasOption( "fa_elec_max_dis" ) ) {
-					emoptions.elec_max_dis( mod_tag->getOption<core::Real>( "fa_elec_max_dis" ) );
-				}
-				if ( mod_tag->hasOption( "fa_elec_dielectric" ) ) {
-					emoptions.elec_die( mod_tag->getOption<core::Real>( "fa_elec_dielectric" ) );
-				}
-				if ( mod_tag->hasOption( "fa_elec_no_dis_dep_die" ) ) {
-					emoptions.elec_no_dis_dep_die( mod_tag->getOption<bool>( "fa_elec_no_dis_dep_die" ) );
-				}
-				if ( mod_tag->hasOption( "exclude_protein_protein_fa_elec" ) ) {
-					emoptions.exclude_protein_protein_fa_elec( mod_tag->getOption<bool>( "exclude_protein_protein_fa_elec" ) );
-				}
-				if ( mod_tag->hasOption( "exclude_DNA_DNA" ) ) {
-					emoptions.exclude_DNA_DNA( mod_tag->getOption<bool>( "exclude_DNA_DNA" ) );
-				}
-
-				if ( mod_tag->hasOption( "pb_bound_tag" ) ) {
-					emoptions.pb_bound_tag( mod_tag->getOption<std::string>("pb_bound_tag" ) );
-					TR << "User defined bound tag: " << emoptions.pb_bound_tag() << std::endl;
-				}
-				if ( mod_tag->hasOption( "pb_unbound_tag" ) ) {
-					emoptions.pb_unbound_tag( mod_tag->getOption<std::string>("pb_unbound_tag" ) );
-					TR << "User defined unbound tag: " << emoptions.pb_unbound_tag() << std::endl;
-				}
-				if ( mod_tag->hasOption( "scale_sc_dens" ) ) {
-					auto scale_sc_dens = mod_tag->getOption<core::Real>("scale_sc_dens" );
-					emoptions.set_density_sc_scale_byres( scale_sc_dens );
-					TR << "User defined sidechain density reweighing: " << scale_sc_dens << std::endl;
-				}
-				if ( mod_tag->hasOption( "scale_sc_dens_byres" ) ) {
-					utility::vector1< std::string > scale_sc_dens_byres
-						= utility::string_split_multi_delim( mod_tag->getOption<std::string>("scale_sc_dens_byres" ), " ,");
-
-					for ( int i=1; i<=(int)scale_sc_dens_byres.size(); ++i ) {
-						if ( scale_sc_dens_byres[i].empty() ) continue; // Ignore empty entries (e.g. if user has two consecutive delimiters.)
-						utility::vector1< std::string > tag = utility::string_split( scale_sc_dens_byres[i] , ':');
-						if ( tag.size() != 2 ) {
-							TR.Error << "cannot parse '" << scale_sc_dens_byres[i] << "' as scale_sc_dens_byres entry. ";
-							TR.Error << "Format of scale_sc_dens_byres is a comma or space separated list of one letter codes each followed by a number." << std::endl;
-							utility_exit_with_message("Error interpreting scale_sc_dens_byres setting.");
-						}
-						if ( tag[1].size() != 1 ) {
-							TR.Error << " entry '" << tag[1] << "' in scale_sc_dens_byres is not a proper one-letter aa code." << std::endl;
-							TR.Error << "Format of scale_sc_dens_byres is a comma or space separated list of one letter codes each followed by a number." << std::endl;
-							utility_exit_with_message("Error interpreting scale_sc_dens_byres setting.");
-						}
-						core::chemical::AA aa_i = core::chemical::aa_from_oneletter_code( tag[1][0] ); // aa_unk on error
-						core::Real value = utility::string2Real( tag[2] );
-						if ( utility::is_undefined( value ) ) {
-							TR.Error << "Unable to interpret '" << tag[2] << "' as a real number value." << std::endl;
-							utility_exit_with_message("Error interpreting scale_sc_dens_byres setting.");
-						}
-						if ( aa_i<=core::chemical::num_canonical_aas ) {
-							emoptions.set_density_sc_scale_byres( aa_i, value );
-						} else {
-							TR.Warning << "skipping scale_sc_dens_byres entry '" << tag[1] << "' (" << aa_i <<") as it's not a canonical amino acid." << std::endl;
-						}
-					}
-					TR << "User defined per-residue sidechain density reweighing: " << std::endl;
-					for ( int i=1; i<=(int)core::chemical::num_canonical_aas; ++i ) {
-						TR << "   " << (core::chemical::AA)i << " " << emoptions.get_density_sc_scale_byres()[i] << std::endl;
-					}
-				}
-				in_scorefxn->set_energy_method_options( emoptions );
-			} // tagname == ?
-		} // Mod tags
-
-		// weights for arbitrary ScoreFunctions should be tampered with only as a consequence of user input--NEVER by default
-
-		// hotspot hash constraint
-		if ( scorefxn_tag->hasOption("hs_hash") ) {
-			core::Real hotspot_hash( 0.0 ); // APL FIX THIS!  This used to be initialized when the HotspotHashingConstraints were read in.
-			auto const hs_hash( scorefxn_tag->getOption<core::Real>( "hs_hash", hotspot_hash ) );
-			TR<<"setting "<<scorefxn_name<<" backbone_stub_constraint to " << hs_hash << std::endl;
-			in_scorefxn->set_weight( backbone_stub_constraint, hs_hash );
-		}
-
-		if (  scorefxn_tag->hasOption( "symmetric" ) ) { // To avoid errors and be compatible, we still need to check this option
-			scorefxn_tag->setAccessed( "symmetric" );
-			TR << "Scorefunction tag contains 'symmetric' option. This is no longer needed." << std::endl;
-		}
-
-		// auto-generate and set cache-tags for bound and unbound energy states, if PB term is used.
-		if ( !in_scorefxn->has_zero_weight(PB_elec) ) {
-
-			core::scoring::methods::EnergyMethodOptions emoptions( in_scorefxn->energy_method_options() );
-			// Don't overwrite if it's already set, by "Set" modifier.
-			if ( emoptions.pb_bound_tag() == "" ) {
-				//std::string bound_tag = scorefxn_name + "_" + "bound";
-				emoptions.pb_bound_tag( "bound" );
-			}
-			if ( emoptions.pb_unbound_tag() == "" ) {
-				//std::string unbound_tag = scorefxn_name + "_" + "unbound";
-				emoptions.pb_unbound_tag( "unbound" );
-			}
-			in_scorefxn->set_energy_method_options( emoptions );
 		}
 
 		bool const data_add_status = data.add( "scorefxns" , scorefxn_name, in_scorefxn );
@@ -319,6 +75,265 @@ void ScoreFunctionLoader::load_data(
 
 	}//end user-defined scorefxns
 }
+
+
+/// @brief Load a single ScoreFunction from a tag.
+core::scoring::ScoreFunctionOP
+ScoreFunctionLoader::create_scorefxn_from_tag(
+	utility::tag::TagCOP scorefxn_tag)
+{
+	using namespace core::scoring;
+	using namespace utility::tag;
+
+	ScoreFunctionOP in_scorefxn;
+	std::string scorefxn_name( scorefxn_tag->getName() );
+	if ( scorefxn_name == "ScoreFunction" ) {
+		scorefxn_name = scorefxn_tag->getOption< std::string >( "name" );
+	}
+
+	if (  scorefxn_tag->hasOption( "weights" ) ) {
+		std::string const scorefxn_weights( scorefxn_tag->getOption<std::string>( "weights" ) );
+		if ( ! core::scoring::check_score_function_sanity( basic::options::option, scorefxn_weights ) ) {
+			// The check should only really trigger on database files (explicit path will result in the heuristic not matching.)
+			TR.Error << "Incompatible weights and options detected for " << scorefxn_weights << " - either fix your options, or rename the weights file." << std::endl;
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Weights " + scorefxn_weights + " was requested with incompatible options.");
+		}
+
+		if (  scorefxn_tag->hasOption( "patch" ) ) {
+			std::string const scorefxn_patch( scorefxn_tag->getOption<std::string>( "patch" ) );
+			in_scorefxn = ScoreFunctionFactory::create_score_function( scorefxn_weights, scorefxn_patch);
+			TR << "defined score function \"" << scorefxn_name << "\" with weights \""
+				<< scorefxn_weights << "\" and patch \"" << scorefxn_patch << "\"" << std::endl;
+		} else {
+			in_scorefxn = ScoreFunctionFactory::create_score_function( scorefxn_weights );
+			TR << "defined score function \"" << scorefxn_name << "\" with weights \""
+				<< scorefxn_weights << "\"" << std::endl;
+		}
+	} else {
+		in_scorefxn = ScoreFunctionOP( new ScoreFunction );
+		in_scorefxn->reset();
+		TR << "***WARNING***: No weights/patch defined. Defining " << scorefxn_name << " with all-zero weights." << std::endl;
+	}
+	for ( TagCOP mod_tag : scorefxn_tag->getTags() ) {
+		std::string const tagname( mod_tag->getName() ); //Get the name of the tag
+		if ( tagname == "Reweight" ) {
+			std::string const scoretype_name( mod_tag->getOption<std::string>( "scoretype" ) );
+			auto const weight( mod_tag->getOption<core::Real>( "weight" ) );
+			TR<<" setting "<<scorefxn_name<<" weight " << scoretype_name << " to " << weight << std::endl;
+			core::scoring::ScoreType const type = score_type_from_name( scoretype_name );
+			in_scorefxn->set_weight( type, weight );
+		} else if ( tagname == "Set" ) { // Set energy method options:
+			core::scoring::methods::EnergyMethodOptions emoptions( in_scorefxn->energy_method_options() );
+			emoptions.hbond_options().parse_my_tag(mod_tag);
+			emoptions.etable_options().parse_my_tag(mod_tag);
+
+			// Set up the list of aa_composition score term setup files:
+			if ( mod_tag->hasOption("aa_composition_setup_file") ) {
+				std::stringstream filelist( mod_tag->getOption<std::string>("aa_composition_setup_file") );
+				utility::vector1 < std::string > filevect;
+				while ( !filelist.eof() ) {
+					std::string tempstring("");
+					filelist >> tempstring;
+					if ( !filelist.fail() ) filevect.push_back( tempstring );
+				}
+				emoptions.append_aa_composition_setup_files( filevect );
+			}
+			if ( mod_tag->hasOption("mhc_epitope_setup_file") ) {
+				std::stringstream filelist( mod_tag->getOption<std::string>("mhc_epitope_setup_file") );
+				utility::vector1 < std::string > filevect;
+				while ( !filelist.eof() ) {
+					std::string tempstring("");
+					filelist >> tempstring;
+					if ( !filelist.fail() ) filevect.push_back( tempstring );
+				}
+				emoptions.append_mhc_epitope_setup_files( filevect );
+			}
+
+			// Set up the list of netcharge score term setup files:
+			if ( mod_tag->hasOption("netcharge_setup_file") ) {
+				std::stringstream filelist( mod_tag->getOption<std::string>("netcharge_setup_file") );
+				utility::vector1 < std::string > filevect;
+				while ( !filelist.eof() ) {
+					std::string tempstring("");
+					filelist >> tempstring;
+					if ( !filelist.fail() ) filevect.push_back( tempstring );
+				}
+				emoptions.append_netcharge_setup_files( filevect );
+			}
+			if ( mod_tag->hasOption( "softrep_etable" ) ) {
+				if ( mod_tag->getOption<bool>( "softrep_etable" ) ) {
+					emoptions.etable_type( core::scoring::FA_STANDARD_SOFT );
+				}
+			}
+
+			if ( mod_tag->hasOption( "approximate_buried_unsat_penalty_hbond_energy_threshold" ) ) {
+				emoptions.approximate_buried_unsat_penalty_hbond_energy_threshold( mod_tag->getOption<core::Real>("approximate_buried_unsat_penalty_hbond_energy_threshold") );
+			}
+			if ( mod_tag->hasOption( "approximate_buried_unsat_penalty_burial_atomic_depth" ) ) {
+				emoptions.approximate_buried_unsat_penalty_burial_atomic_depth( mod_tag->getOption<core::Real>("approximate_buried_unsat_penalty_burial_atomic_depth") );
+			}
+			if ( mod_tag->hasOption( "approximate_buried_unsat_penalty_burial_probe_radius" ) ) {
+				emoptions.approximate_buried_unsat_penalty_burial_probe_radius( mod_tag->getOption<core::Real>("approximate_buried_unsat_penalty_burial_probe_radius") );
+			}
+			if ( mod_tag->hasOption( "approximate_buried_unsat_penalty_burial_resolution" ) ) {
+				emoptions.approximate_buried_unsat_penalty_burial_resolution( mod_tag->getOption<core::Real>("approximate_buried_unsat_penalty_burial_resolution") );
+			}
+			if ( mod_tag->hasOption( "approximate_buried_unsat_penalty_oversat_penalty" ) ) {
+				emoptions.approximate_buried_unsat_penalty_oversat_penalty( mod_tag->getOption<core::Real>("approximate_buried_unsat_penalty_oversat_penalty") );
+			}
+			if ( mod_tag->hasOption( "approximate_buried_unsat_penalty_assume_const_backbone" ) ) {
+				emoptions.approximate_buried_unsat_penalty_assume_const_backbone( mod_tag->getOption<bool>("approximate_buried_unsat_penalty_assume_const_backbone") );
+			}
+
+			//Options for buried_unsatisfied_penalty energy:
+			if ( mod_tag->hasOption( "buried_unsatisfied_penalty_cone_angle_exponent" ) ) {
+				emoptions.buried_unsatisfied_penalty_cone_angle_exponent( mod_tag->getOption<core::Real>("buried_unsatisfied_penalty_cone_angle_exponent") );
+			}
+			if ( mod_tag->hasOption( "buried_unsatisfied_penalty_cone_angle_shift_factor" ) ) {
+				emoptions.buried_unsatisfied_penalty_cone_angle_shift_factor( mod_tag->getOption<core::Real>("buried_unsatisfied_penalty_cone_angle_shift_factor") );
+			}
+			if ( mod_tag->hasOption( "buried_unsatisfied_penalty_cone_dist_exponent" ) ) {
+				emoptions.buried_unsatisfied_penalty_cone_dist_exponent( mod_tag->getOption<core::Real>("buried_unsatisfied_penalty_cone_dist_exponent") );
+			}
+			if ( mod_tag->hasOption( "buried_unsatisfied_penalty_cone_dist_midpoint" ) ) {
+				emoptions.buried_unsatisfied_penalty_cone_dist_midpoint( mod_tag->getOption<core::Real>("buried_unsatisfied_penalty_cone_dist_midpoint") );
+			}
+			if ( mod_tag->hasOption( "buried_unsatisfied_penalty_burial_threshold" ) ) {
+				emoptions.buried_unsatisfied_penalty_burial_threshold( mod_tag->getOption<core::Real>("buried_unsatisfied_penalty_burial_threshold") );
+			}
+			if ( mod_tag->hasOption( "buried_unsatisfied_penalty_hbond_energy_threshold" ) ) {
+				emoptions.buried_unsatisfied_penalty_hbond_energy_threshold( mod_tag->getOption<core::Real>("buried_unsatisfied_penalty_hbond_energy_threshold") );
+			}
+
+			//Options for voids_penalty energy:
+			if ( mod_tag->hasOption("voids_penalty_energy_containing_cones_cutoff") ) {
+				emoptions.voids_penalty_energy_containing_cones_cutoff( mod_tag->getOption<core::Size>("voids_penalty_energy_containing_cones_cutoff") );
+			}
+			if ( mod_tag->hasOption("voids_penalty_energy_voxel_size") ) {
+				emoptions.voids_penalty_energy_voxel_size( mod_tag->getOption<core::Real>("voids_penalty_energy_voxel_size") );
+			}
+			if ( mod_tag->hasOption("voids_penalty_energy_voxel_grid_padding") ) {
+				emoptions.voids_penalty_energy_voxel_grid_padding( mod_tag->getOption<core::Real>("voids_penalty_energy_voxel_grid_padding") );
+			}
+			if ( mod_tag->hasOption("voids_penalty_energy_cone_dotproduct_cutoff") ) {
+				emoptions.voids_penalty_energy_cone_dotproduct_cutoff( mod_tag->getOption<core::Real>("voids_penalty_energy_cone_dotproduct_cutoff") );
+			}
+			if ( mod_tag->hasOption("voids_penalty_energy_cone_distance_cutoff") ) {
+				emoptions.voids_penalty_energy_cone_distance_cutoff( mod_tag->getOption<core::Real>("voids_penalty_energy_cone_distance_cutoff") );
+			}
+			if ( mod_tag->hasOption("voids_penalty_energy_disabled_except_during_packing") ) {
+				emoptions.voids_penalty_energy_disabled_except_during_packing( mod_tag->getOption<bool>("voids_penalty_energy_disabled_except_during_packing") );
+			}
+
+			if ( mod_tag->hasOption("hbnet_bonus_function_ramping") ) {
+				emoptions.hbnet_bonus_function_ramping( mod_tag->getOption<std::string>("hbnet_bonus_function_ramping") );
+			}
+			if ( mod_tag->hasOption("hbnet_max_network_size") ) {
+				emoptions.hbnet_max_network_size( mod_tag->getOption< core::Size >("hbnet_max_network_size") );
+			}
+
+			if ( mod_tag->hasOption( "fa_elec_min_dis" ) ) {
+				emoptions.elec_min_dis( mod_tag->getOption<core::Real>( "fa_elec_min_dis" ) );
+			}
+			if ( mod_tag->hasOption( "fa_elec_max_dis" ) ) {
+				emoptions.elec_max_dis( mod_tag->getOption<core::Real>( "fa_elec_max_dis" ) );
+			}
+			if ( mod_tag->hasOption( "fa_elec_dielectric" ) ) {
+				emoptions.elec_die( mod_tag->getOption<core::Real>( "fa_elec_dielectric" ) );
+			}
+			if ( mod_tag->hasOption( "fa_elec_no_dis_dep_die" ) ) {
+				emoptions.elec_no_dis_dep_die( mod_tag->getOption<bool>( "fa_elec_no_dis_dep_die" ) );
+			}
+			if ( mod_tag->hasOption( "exclude_protein_protein_fa_elec" ) ) {
+				emoptions.exclude_protein_protein_fa_elec( mod_tag->getOption<bool>( "exclude_protein_protein_fa_elec" ) );
+			}
+			if ( mod_tag->hasOption( "exclude_DNA_DNA" ) ) {
+				emoptions.exclude_DNA_DNA( mod_tag->getOption<bool>( "exclude_DNA_DNA" ) );
+			}
+
+			if ( mod_tag->hasOption( "pb_bound_tag" ) ) {
+				emoptions.pb_bound_tag( mod_tag->getOption<std::string>("pb_bound_tag" ) );
+				TR << "User defined bound tag: " << emoptions.pb_bound_tag() << std::endl;
+			}
+			if ( mod_tag->hasOption( "pb_unbound_tag" ) ) {
+				emoptions.pb_unbound_tag( mod_tag->getOption<std::string>("pb_unbound_tag" ) );
+				TR << "User defined unbound tag: " << emoptions.pb_unbound_tag() << std::endl;
+			}
+			if ( mod_tag->hasOption( "scale_sc_dens" ) ) {
+				auto scale_sc_dens = mod_tag->getOption<core::Real>("scale_sc_dens" );
+				emoptions.set_density_sc_scale_byres( scale_sc_dens );
+				TR << "User defined sidechain density reweighing: " << scale_sc_dens << std::endl;
+			}
+			if ( mod_tag->hasOption( "scale_sc_dens_byres" ) ) {
+				utility::vector1< std::string > scale_sc_dens_byres
+					= utility::string_split_multi_delim( mod_tag->getOption<std::string>("scale_sc_dens_byres" ), " ,");
+
+				for ( int i=1; i<=(int)scale_sc_dens_byres.size(); ++i ) {
+					if ( scale_sc_dens_byres[i].empty() ) continue; // Ignore empty entries (e.g. if user has two consecutive delimiters.)
+					utility::vector1< std::string > tag = utility::string_split( scale_sc_dens_byres[i] , ':');
+					if ( tag.size() != 2 ) {
+						TR.Error << "cannot parse '" << scale_sc_dens_byres[i] << "' as scale_sc_dens_byres entry. ";
+						TR.Error << "Format of scale_sc_dens_byres is a comma or space separated list of one letter codes each followed by a number." << std::endl;
+						utility_exit_with_message("Error interpreting scale_sc_dens_byres setting.");
+					}
+					if ( tag[1].size() != 1 ) {
+						TR.Error << " entry '" << tag[1] << "' in scale_sc_dens_byres is not a proper one-letter aa code." << std::endl;
+						TR.Error << "Format of scale_sc_dens_byres is a comma or space separated list of one letter codes each followed by a number." << std::endl;
+						utility_exit_with_message("Error interpreting scale_sc_dens_byres setting.");
+					}
+					core::chemical::AA aa_i = core::chemical::aa_from_oneletter_code( tag[1][0] ); // aa_unk on error
+					core::Real value = utility::string2Real( tag[2] );
+					if ( utility::is_undefined( value ) ) {
+						TR.Error << "Unable to interpret '" << tag[2] << "' as a real number value." << std::endl;
+						utility_exit_with_message("Error interpreting scale_sc_dens_byres setting.");
+					}
+					if ( aa_i<=core::chemical::num_canonical_aas ) {
+						emoptions.set_density_sc_scale_byres( aa_i, value );
+					} else {
+						TR.Warning << "skipping scale_sc_dens_byres entry '" << tag[1] << "' (" << aa_i <<") as it's not a canonical amino acid." << std::endl;
+					}
+				}
+				TR << "User defined per-residue sidechain density reweighing: " << std::endl;
+				for ( int i=1; i<=(int)core::chemical::num_canonical_aas; ++i ) {
+					TR << "   " << (core::chemical::AA)i << " " << emoptions.get_density_sc_scale_byres()[i] << std::endl;
+				}
+			}
+			in_scorefxn->set_energy_method_options( emoptions );
+		} // tagname == ?
+	} // Mod tags
+
+	// weights for arbitrary ScoreFunctions should be tampered with only as a consequence of user input--NEVER by default
+
+	// hotspot hash constraint
+	if ( scorefxn_tag->hasOption("hs_hash") ) {
+		core::Real hotspot_hash( 0.0 ); // APL FIX THIS!  This used to be initialized when the HotspotHashingConstraints were read in.
+		auto const hs_hash( scorefxn_tag->getOption<core::Real>( "hs_hash", hotspot_hash ) );
+		TR<<"setting "<<scorefxn_name<<" backbone_stub_constraint to " << hs_hash << std::endl;
+		in_scorefxn->set_weight( backbone_stub_constraint, hs_hash );
+	}
+	if (  scorefxn_tag->hasOption( "symmetric" ) ) { // To avoid errors and be compatible, we still need to check this option
+		scorefxn_tag->setAccessed( "symmetric" );
+		TR << "Scorefunction tag contains 'symmetric' option. This is no longer needed." << std::endl;
+	}
+
+	// auto-generate and set cache-tags for bound and unbound energy states, if PB term is used.
+	if ( !in_scorefxn->has_zero_weight(PB_elec) ) {
+
+		core::scoring::methods::EnergyMethodOptions emoptions( in_scorefxn->energy_method_options() );
+		// Don't overwrite if it's already set, by "Set" modifier.
+		if ( emoptions.pb_bound_tag() == "" ) {
+			//std::string bound_tag = scorefxn_name + "_" + "bound";
+			emoptions.pb_bound_tag( "bound" );
+		}
+		if ( emoptions.pb_unbound_tag() == "" ) {
+			//std::string unbound_tag = scorefxn_name + "_" + "unbound";
+			emoptions.pb_unbound_tag( "unbound" );
+		}
+		in_scorefxn->set_energy_method_options( emoptions );
+	}
+	return in_scorefxn;
+}
+
 
 std::string score_function_subtag_complex_type_namer( std::string const & element_name ) { return "sfxn_" + element_name + "_type"; }
 std::string score_function_subtag_group() { return "sfxn_subtag"; }

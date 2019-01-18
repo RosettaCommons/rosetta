@@ -244,7 +244,7 @@ public:
 		// should have been removed.
 		core_init_with_additional_options( "-s 1ubq.pdb" );
 		DerivedJobQueen2 djq2;
-		JobDigraphOP job_dag = djq2.initial_job_dag();
+		JobDigraphOP job_dag = djq2.create_and_set_initial_job_dag();
 		TS_ASSERT_EQUALS( job_dag->num_nodes(), 1 );
 		LarvalJobs jobs = djq2.determine_job_list( 1, 100 );
 		TS_ASSERT_EQUALS( jobs.size(), 1 );
@@ -292,7 +292,7 @@ public:
 
 		DerivedJobQueen2 djq2;
 		djq2.determine_preliminary_job_list_from_xml_file( jobdef_file );
-		JobDigraphOP job_dag = djq2.initial_job_dag();
+		JobDigraphOP job_dag = djq2.create_and_set_initial_job_dag();
 		TS_ASSERT_EQUALS( job_dag->num_nodes(), 1 );
 		LarvalJobs jobs = djq2.determine_job_list( 1, 100 );
 		TS_ASSERT_EQUALS( jobs.size(), 5 );
@@ -335,7 +335,7 @@ public:
 		// The DJQ3 should not ignore the -s on the command line
 		core_init_with_additional_options( "-s 1ubq.pdb" );
 		DerivedJobQueen3 djq3;
-		JobDigraphOP job_dag = djq3.initial_job_dag();
+		JobDigraphOP job_dag = djq3.create_and_set_initial_job_dag();
 		TS_ASSERT_EQUALS( job_dag->num_nodes(), 2 );
 
 		LarvalJobs jobs1 = djq3.determine_job_list( 1, 100 );
@@ -390,7 +390,7 @@ public:
 
 		DerivedJobQueen3 djq3;
 		djq3.determine_preliminary_job_list_from_xml_file( jobdef_file );
-		JobDigraphOP job_dag = djq3.initial_job_dag();
+		JobDigraphOP job_dag = djq3.create_and_set_initial_job_dag();
 		TS_ASSERT_EQUALS( job_dag->num_nodes(), 1 );
 		LarvalJobs jobs = djq3.determine_job_list( 1, 100 );
 		TS_ASSERT_EQUALS( jobs.size(), 5 );
@@ -421,7 +421,7 @@ public:
 
 		DerivedJobQueen3 djq3;
 		djq3.determine_preliminary_job_list_from_xml_file( jobdef_file );
-		JobDigraphOP job_dag = djq3.initial_job_dag();
+		JobDigraphOP job_dag = djq3.create_and_set_initial_job_dag();
 		TS_ASSERT_EQUALS( job_dag->num_nodes(), 2 );
 		LarvalJobs jobs1 = djq3.determine_job_list( 1, 100 );
 		TS_ASSERT_EQUALS( jobs1.size(), 5 );

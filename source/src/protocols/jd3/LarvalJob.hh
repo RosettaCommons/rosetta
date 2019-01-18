@@ -110,6 +110,10 @@ public:
 	/// @brief The "global" index for this job among all jobs created by the JobQueen
 	core::Size job_index() const;
 
+	///@brief What is the Job Node for this LarvalJob?
+	/// Returned from the InnerLarvalJob
+	core::Size job_node() const;
+
 	/// @brief The list of the JobResults required to mature this %LarvalJob, by global index of the
 	/// already-executed (Lavral)Jobs and the result_index for that job.
 	utility::vector1< JobResultID > const &

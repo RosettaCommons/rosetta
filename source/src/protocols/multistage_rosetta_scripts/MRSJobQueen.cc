@@ -37,7 +37,9 @@
 #include <protocols/jd3/JobOutputIndex.hh>
 #include <protocols/jd3/JobResult.hh>
 #include <protocols/jd3/JobSummary.hh>
+#include <protocols/jd3/JobTracker.hh>
 #include <protocols/jd3/CompletedJobOutput.fwd.hh>
+#include <protocols/jd3/standard/PreliminaryLarvalJob.hh>
 
 #include <protocols/jd3/dag_node_managers/NodeManager.hh>
 #include <protocols/jd3/dag_node_managers/EvenlyPartitionedNodeManager.hh>
@@ -46,7 +48,8 @@
 #include <protocols/jd3/pose_inputters/PoseInputSource.hh>
 #include <protocols/jd3/pose_inputters/PoseInputter.hh>
 #include <protocols/jd3/pose_outputters/PoseOutputSpecification.hh>
-#include <protocols/jd3/standard/StandardInnerLarvalJob.hh>
+#include <protocols/jd3/job_summaries/StandardPoseJobSummary.hh>
+#include <protocols/jd3/job_results/PoseJobResult.hh>
 
 #include <protocols/filters/BasicFilters.hh>
 #include <protocols/filters/filter_schemas.hh>
@@ -77,6 +80,7 @@ static basic::Tracer TR( "protocols.multistage_rosetta_scripts.MRSJobQueen" );
 using namespace utility;
 using namespace protocols::jd3;
 using namespace protocols::jd3::dag_node_managers;
+using namespace protocols::jd3::job_results;
 
 namespace protocols {
 namespace multistage_rosetta_scripts {
@@ -98,7 +102,7 @@ MRSJobQueen::~MRSJobQueen()
 {}
 
 JobDigraphOP
-MRSJobQueen::initial_job_dag() {
+MRSJobQueen::create_initial_job_dag() {
 	has_been_initialized_ = true;
 	determine_preliminary_job_list();
 
@@ -205,6 +209,7 @@ MRSJobQueen::determine_job_list(
 		}
 		if ( larval_job ) {
 			jobs.push_back( larval_job );
+			get_job_tracker().increment_current_job_index();
 		} else {
 			node_managers_[ job_dag_node_index ]->note_job_completed( job_offset + local_job_id, 0 );
 		}
@@ -221,29 +226,26 @@ MRSJobQueen::complete_larval_job_maturation(
 	utility::vector1< JobResultCOP > const & input_job_results
 )
 {
-	if ( ! has_been_initialized_ ) initial_job_dag();
-
-	standard::StandardInnerLarvalJob const & standard_inner_larval_job =
-		static_cast< standard::StandardInnerLarvalJob const & >( * job->inner_job() );
+	if ( ! has_been_initialized_ ) create_and_set_initial_job_dag();
 
 	if ( !job_options ) {
-		job_options = options_for_job( standard_inner_larval_job );
+		job_options = options_for_job( * job->inner_job() );
 	}
 
-	core::Size const input_pose_id = standard_inner_larval_job.prelim_job_node();
+	core::Size const input_pose_id = job->inner_job()->job_node();
 	unsigned int const global_job_id = job->job_index();
 	unsigned int const stage = stage_for_global_job_id( global_job_id );
 
 	core::pose::PoseOP pose = 0;
 	if ( stage == 1 ) {
-		core::Size const input_pose_id = static_cast< standard::StandardInnerLarvalJob const & >( * job->inner_job() ).prelim_job_node();
-		utility::vector1< standard::PreliminaryLarvalJob > const & all_preliminary_larval_jobs = preliminary_larval_jobs();
-		standard::StandardInnerLarvalJobCOP inner_job = all_preliminary_larval_jobs[ input_pose_id ].inner_job;
+		core::Size const input_pose_id = job->job_node();
+		utility::vector1< standard::PreliminaryLarvalJob > const & all_preliminary_larval_jobs = get_preliminary_larval_jobs();
+		InnerLarvalJobCOP inner_job = all_preliminary_larval_jobs[ input_pose_id ].inner_job;
 		pose = pose_for_inner_job_derived( inner_job, * job_options );
 		runtime_assert( pose );
 	} else {
 		debug_assert( input_job_results.size() == 1 );
-		standard::PoseJobResult const & result1 = static_cast< standard::PoseJobResult const & >( * input_job_results[ 1 ] );
+		PoseJobResult const & result1 = static_cast< PoseJobResult const & >( * input_job_results[ 1 ] );
 		pose = result1.pose()->clone();
 		runtime_assert( pose );
 	}
@@ -298,8 +300,7 @@ MRSJobQueen::note_job_completed( LarvalJobCOP job, JobStatus status, core::Size 
 	}
 
 	if ( stage == num_stages_ ) {
-		standard::StandardInnerLarvalJobCOP inner_job =
-			pointer::dynamic_pointer_cast< standard::StandardInnerLarvalJob const > ( job->inner_job() );
+		InnerLarvalJobCOP inner_job = job->inner_job();
 		utility::options::OptionCollectionOP job_options = options_for_job( *inner_job );
 		for ( core::Size ii = 1; ii <= nresults; ++ii ) {
 			output::OutputSpecificationOP out_spec = create_output_specification_for_job_result( job, *job_options, ii, nresults );
@@ -316,8 +317,8 @@ MRSJobQueen::completed_job_summary( core::Size job_id, core::Size result_index, 
 
 	//TR << "completed_job_summary() for stage=" << stage << " and job_id=" << job_id << " and result_index=" << result_index << std::endl;
 
-	standard::EnergyJobSummary const & energy_summary =
-		static_cast< standard::EnergyJobSummary const & >( * summary );
+	job_summaries::EnergyJobSummary const & energy_summary =
+		static_cast< job_summaries::EnergyJobSummary const & >( * summary );
 
 	if ( cluster_metric_tag_for_stage_[ stage ] ) {
 		//TR << "\tculster_metric_tag found" << std::endl;
@@ -446,8 +447,7 @@ MRSJobQueen::pose_for_job_derived (
 )
 {
 	runtime_assert( job );
-	standard::StandardInnerLarvalJobCOP inner_job =
-		pointer::dynamic_pointer_cast< standard::StandardInnerLarvalJob const > ( job->inner_job() );
+	InnerLarvalJobCOP inner_job =  job->inner_job();
 	runtime_assert( inner_job );
 
 	return pose_for_inner_job_derived( inner_job, options );
@@ -456,15 +456,15 @@ MRSJobQueen::pose_for_job_derived (
 
 core::pose::PoseOP
 MRSJobQueen::pose_for_inner_job_derived(
-	standard::StandardInnerLarvalJobCOP inner_job,
+	InnerLarvalJobCOP inner_job,
 	utility::options::OptionCollection const & options
 )
 {
 	pose_inputters::PoseInputSource const & input_source =
 		dynamic_cast< pose_inputters::PoseInputSource const & >( inner_job->input_source() );
-	TR << "Looking for input source " << input_source.input_tag() << " with pose_id " << input_source.pose_id() << std::endl;
+	TR << "Looking for input source " << input_source.input_tag() << " with pose_id " << input_source.source_id() << std::endl;
 
-	if ( most_recent_pose_id_.pose_id == input_source.pose_id() ) {
+	if ( most_recent_pose_id_.pose_id == input_source.source_id() ) {
 		core::pose::PoseOP pose( pointer::make_shared< core::pose::Pose >() );
 		pose->detached_copy( * most_recent_pose_id_.pose );
 		return pose;
@@ -480,10 +480,10 @@ MRSJobQueen::pose_for_inner_job_derived(
 
 	core::pose::PoseOP input_pose =
 		pose_inputter_for_job( *inner_job )->pose_from_input_source( input_source, options, inputter_tag );
-	TR << "Storing Pose for input source " << input_source.input_tag() << " with pose_id " << input_source.pose_id() << std::endl;
+	TR << "Storing Pose for input source " << input_source.input_tag() << " with pose_id " << input_source.source_id() << std::endl;
 
 	most_recent_pose_id_.pose = input_pose;
-	most_recent_pose_id_.pose_id = input_source.pose_id();
+	most_recent_pose_id_.pose_id = input_source.source_id();
 
 	core::pose::PoseOP pose( pointer::make_shared< core::pose::Pose >() );
 	pose->detached_copy( *input_pose );
@@ -502,7 +502,7 @@ MRSJobQueen::get_nth_job_for_initial_stage( core::Size local_job_id ){
 
 	if ( ++current_inner_larval_job_for_stage_[ 1 ].second > num_jobs_per_input_for_stage_[ 1 ] ) {
 		current_inner_larval_job_for_stage_[ 1 ].first =
-			standard::StandardJobQueen::create_and_init_inner_larval_job( num_jobs_per_input_for_stage_[ 1 ], pose_input_source_id );
+			standard::StandardJobQueen::create_and_init_inner_larval_job_from_preliminary( num_jobs_per_input_for_stage_[ 1 ], pose_input_source_id );
 		current_inner_larval_job_for_stage_[ 1 ].second = 1;
 	}
 
@@ -543,7 +543,7 @@ MRSJobQueen::get_nth_job_for_noninitial_stage( core::Size stage, core::Size loca
 
 	if ( ++current_inner_larval_job_for_stage_[ stage ].second > num_jobs_per_input_for_stage_[ stage ] ) {
 		current_inner_larval_job_for_stage_[ stage ].first =
-			standard::StandardJobQueen::create_and_init_inner_larval_job( num_jobs_per_input_for_stage_[ stage ], pose_input_source_id );
+			standard::StandardJobQueen::create_and_init_inner_larval_job_from_preliminary( num_jobs_per_input_for_stage_[ stage ], pose_input_source_id );
 		current_inner_larval_job_for_stage_[ stage ].second = 1;
 
 		current_inner_larval_job_for_stage_[ stage ].first->add_input_job_result_index( input_job_result );
@@ -758,7 +758,7 @@ MRSJobQueen::parse_job_definition_tags(
 	for ( core::Size ii = 1; ii <= prelim_larval_jobs.size(); ++ii ) {
 		parse_single_job_tag( prelim_larval_jobs[ ii ], ii );
 
-		standard::StandardInnerLarvalJobOP inner_larval_job_ii = prelim_larval_jobs[ ii ].inner_job;
+		InnerLarvalJobOP inner_larval_job_ii = prelim_larval_jobs[ ii ].inner_job;
 		outputters_.push_back( inner_larval_job_ii->outputter() );
 		input_job_tags_.push_back( inner_larval_job_ii->job_tag() );
 	}
@@ -956,7 +956,7 @@ void MRSJobQueen::print_job_lineage() const {
 
 void MRSJobQueen::determine_validity_of_stage_tags(){//TODO only do this for node 0
 
-	utility::vector1< standard::PreliminaryLarvalJob > const & prelim_larval_jobs = preliminary_larval_jobs();
+	utility::vector1< standard::PreliminaryLarvalJob > const & prelim_larval_jobs = get_preliminary_larval_jobs();
 	runtime_assert( num_input_structs_ > 0 );
 
 	moves::MoverFactory const * mover_factory = moves::MoverFactory::get_instance();

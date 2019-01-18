@@ -17,7 +17,6 @@
 
 #include <basic/Tracer.hh>
 
-#include <protocols/jd3/standard/MoverAndPoseJob.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/Pose.hh>
 

@@ -22,8 +22,8 @@
 #include <protocols/jd3/pose_outputters/PoseOutputterFactory.hh>
 #include <protocols/jd3/pose_outputters/pose_outputter_schemas.hh>
 #include <protocols/jd3/full_model_inputters/FullModelInputSource.hh>
-#include <protocols/jd3/full_model/MoverAndFullModelJob.hh>
-#include <protocols/jd3/standard/MoverAndPoseJob.hh>
+#include <protocols/jd3/jobs/MoverJob.hh>
+#include <protocols/jd3/job_results/PoseJobResult.hh>
 
 //project headers
 #include <core/pose/Pose.hh>
@@ -120,12 +120,6 @@ bool SilentFilePoseOutputter::job_has_already_completed( LarvalJob const & /*job
 {
 	// There is no "don't overwrite already generated structures" behavior for silent-file output.
 	return false;
-}
-
-
-void SilentFilePoseOutputter::mark_job_as_having_started( LarvalJob const & /*job*/, utility::options::OptionCollection const & ) const
-{
-	// This is not a behavior supported by the SilentFilePoseOutputter
 }
 
 std::string
@@ -229,10 +223,9 @@ SilentFilePoseOutputter::write_output(
 	JobResult const & result
 )
 {
-	using namespace protocols::jd3::full_model;
 
-	using standard::PoseJobResult;
-	debug_assert( dynamic_cast< PoseJobResult const * > ( &result ) || dynamic_cast< FullModelJobResult const * > ( &result ) );
+	using job_results::PoseJobResult;
+	debug_assert( dynamic_cast< PoseJobResult const * > ( &result ) );
 	auto const & pose_result( static_cast< PoseJobResult const & > ( result ));
 	core::pose::Pose const & pose( *pose_result.pose() );
 
@@ -250,7 +243,7 @@ SilentFilePoseOutputter::write_output(
 	core::io::silent::SilentStructOP ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( pose, sf_spec.sf_opts() );
 	ss->fill_struct( pose, sf_spec.pose_tag() );
 
-	if ( dynamic_cast< FullModelJobResult const * >( &result ) && core::pose::full_model_info::full_model_info_defined( pose ) ) {
+	if ( dynamic_cast< PoseJobResult const * >( &result ) && core::pose::full_model_info::full_model_info_defined( pose ) ) {
 		ss->add_string_value( "missing", ObjexxFCL::string_of( core::pose::full_model_info::get_number_missing_residues_and_connections( pose ) ), -3 );
 	}
 

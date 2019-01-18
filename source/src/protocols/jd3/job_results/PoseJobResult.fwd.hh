@@ -7,35 +7,29 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/jd3/standard/MoverAndPoseJob.fwd.hh
-/// @brief  The declaration of classes MoverAndPoseJob and PoseJobResult
+/// @file   protocols/jd3/job_results/PoseJobResult.fwd.hh
+/// @brief  The declaration of class PoseJobResult
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_protocols_jd3_standard_MoverAndPoseJob_FWD_HH
-#define INCLUDED_protocols_jd3_standard_MoverAndPoseJob_FWD_HH
+#ifndef INCLUDED_protocols_jd3_job_results_PoseJobResult_FWD_HH
+#define INCLUDED_protocols_jd3_job_results_PoseJobResult_FWD_HH
 
 //utility headers
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace jd3 {
-namespace standard {
+namespace job_results {
 
-class MoverAndPoseJob;
 class PoseJobResult;
-class EnergyJobSummary;
 
-typedef utility::pointer::shared_ptr< MoverAndPoseJob > MoverAndPoseJobOP;
-typedef utility::pointer::shared_ptr< MoverAndPoseJob const > MoverAndPoseJobCOP;
 
 typedef utility::pointer::shared_ptr< PoseJobResult > PoseJobResultOP;
 typedef utility::pointer::shared_ptr< PoseJobResult const > PoseJobResultCOP;
 
-typedef utility::pointer::shared_ptr< EnergyJobSummary > EnergyJobSummaryOP;
-typedef utility::pointer::shared_ptr< EnergyJobSummary const > EnergyJobSummaryCOP;
 
-} // namespace standard
+} // namespace job_results
 } // namespace jd3
 } // namespace protocols
 
-#endif //INCLUDED_protocols_jd3_standard_MoverAndPoseJob_FWD_HH
+#endif //INCLUDED_protocols_jd3_job_results_PoseJobResult_FWD_HH

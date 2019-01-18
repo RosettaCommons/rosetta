@@ -145,6 +145,7 @@ sources = {
 		"JobQueen",
 		"JobResult",
 		"JobSummary",
+		"JobTracker",
 		"LarvalJob",
 		"util",
 	],
@@ -171,6 +172,16 @@ sources = {
 		"MPIWorkPoolJobDistributor",
 		"MultiThreadedJobDistributor",
 		"VanillaJobDistributor",
+	],
+	"protocols/jd3/job_summaries": [
+		"EnergyJobSummary",
+		"StandardPoseJobSummary",
+	],
+	"protocols/jd3/job_results": [
+		"PoseJobResult",
+	],
+	"protocols/jd3/jobs": [
+		"MoverJob",
 	],
 	"protocols/jd3/output": [
 		"MultipleOutputSpecification",
@@ -221,13 +232,12 @@ sources = {
 		"ChunkLibraryJobQueen",
 	],
 	"protocols/jd3/full_model": [
-		"MoverAndFullModelJob",
 		"FullModelInnerLarvalJob",
 		"FullModelJobQueen",
 	],
 	"protocols/jd3/standard": [
-		"MoverAndPoseJob",
-		"StandardInnerLarvalJob",
+		"PreliminaryLarvalJob",
+		"PreliminaryLarvalJobTracker",
 		"StandardJobQueen",
 	],
 	"protocols/jobdist": [

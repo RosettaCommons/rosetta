@@ -21,11 +21,11 @@
 #include <protocols/jd3/job_distributors/MPIWorkPoolJobDistributor.hh>
 
 // Package headers
-#include <protocols/jd3/standard/MoverAndPoseJob.hh>
+#include <protocols/jd3/jobs/MoverJob.hh>
 #include <protocols/jd3/Job.hh>
 #include <protocols/jd3/JobDigraph.hh>
 #include <protocols/jd3/LarvalJob.hh>
-#include <protocols/jd3/standard/StandardInnerLarvalJob.hh>
+#include <protocols/jd3/InnerLarvalJob.hh>
 #include <protocols/jd3/JobResult.hh>
 #include <protocols/jd3/JobSummary.hh>
 #include <protocols/jd3/standard/StandardJobQueen.hh>
@@ -33,6 +33,9 @@
 #include <protocols/jd3/deallocation/InputPoseDeallocationMessage.hh>
 #include <protocols/jd3/output/OutputSpecification.hh>
 #include <protocols/jd3/output/ResultOutputter.hh>
+#include <protocols/jd3/jobs/MoverJob.hh>
+#include <protocols/jd3/job_summaries/EnergyJobSummary.hh>
+#include <protocols/jd3/job_summaries/StandardPoseJobSummary.hh>
 #include <test/protocols/jd3/DummyOutputter.hh>
 
 /// Project headers
@@ -86,20 +89,22 @@ using namespace protocols::jd3::job_distributors;
 using namespace protocols::jd3::output;
 using namespace protocols::jd3::pose_outputters;
 using namespace protocols::jd3::standard;
+using namespace protocols::jd3::jobs;
+using namespace protocols::jd3::job_summaries;
 
 // shorthand functions, sp and sp1
 std::pair< Size, Size > sp( Size first_in, Size second_in ) { return std::make_pair( first_in, second_in ); }
 std::pair< Size, Size > sp1( Size first_in ) { return std::make_pair( first_in, Size(1) ); }
 
-class PoolMnPJob : public MoverAndPoseJob
+class PoolMnPJob : public MoverJob
 {
 public:
 
 	CompletedJobOutput
 	run() override {
-		CompletedJobOutput output = MoverAndPoseJob::run();
-		EnergyJobSummaryOP sum = utility::pointer::dynamic_pointer_cast< EnergyJobSummary > ( output.job_results[1].first );
-		sum->energy( 1234 );
+		CompletedJobOutput output = MoverJob::run();
+		StandardPoseJobSummaryOP sum = utility::pointer::dynamic_pointer_cast< StandardPoseJobSummary > ( output.job_results[1].first );
+		sum->set_energy( 1234 );
 		return output;
 	}
 };
@@ -119,23 +124,19 @@ public:
 		dummy_outputter_( new DummyPoseOutputter( results_ ) )
 	{
 		do_not_accept_all_pose_outputters_from_factory();
-		allow_pose_outputter( utility::pointer::make_shared< DummyOutputterCreator >());
+		allow_pose_outputter( PoseOutputterCreatorOP( new DummyOutputterCreator ));
 	}
 
 	~PoolJQ1() {}
 
-	// create a job graph with a single node; skip the SJQ's implementation of this function
-	JobDigraphOP initial_job_dag() override {
-		JobDigraphOP job_graph( new JobDigraph( 1 ) );
-		return job_graph;
-	}
 
 	LarvalJobs determine_job_list( Size job_node_index, Size max_njobs ) override
 	{
+		//determine_preliminary_job_list(); //Needed for outputter init
 		LarvalJobs jobs;
 		if ( job_list_determined_ ) return jobs;
 
-		StandardInnerLarvalJobOP inner_job( new StandardInnerLarvalJob( njobs_, job_node_index ) );
+		InnerLarvalJobOP inner_job( new InnerLarvalJob( njobs_, job_node_index ) );
 		inner_job->outputter( DummyPoseOutputter::keyname() );
 		jobs = expand_job_list( inner_job, max_njobs );
 		n_jobs_created_so_far_ += jobs.size();
@@ -157,14 +158,16 @@ public:
 
 		core::pose::PoseOP pose = create_trpcage_ideal_poseop();
 		mature_job->pose( pose );
-		mature_job->mover( utility::pointer::make_shared< protocols::moves::NullMover >() );
+		mature_job->set_mover( protocols::moves::NullMoverOP( new protocols::moves::NullMover ) );
 
 		jobs_matured_.push_back( job->job_index() );
 
 		return mature_job;
 	}
 
-	void note_job_completed( core::Size job_id, JobStatus status, core::Size nresults  ) override { status_[ job_id ] = status; StandardJobQueen::note_job_completed( job_id, status, nresults ); }
+	///@brief Allows this derived SJQ to not need full output initialized through determine_preliminary_job_list
+	bool has_job_previously_been_output( protocols::jd3::LarvalJobCOP ) override { return false; }
+
 	void note_job_completed( LarvalJobCOP larval_job, JobStatus status, core::Size nresults  ) override
 	{
 		status_[ larval_job->job_index() ] = status;
@@ -198,9 +201,6 @@ public:
 
 	// void completed_job_result( LarvalJobCOP job, core::Size result_index, JobResultOP job_result ) override { results_[ sp(job->job_index(),result_index) ] = job_result; }
 
-	bool has_job_completed( protocols::jd3::LarvalJobCOP ) override { return false; }
-	void mark_job_as_having_begun( protocols::jd3::LarvalJobCOP /*job*/ ) override {/*TEMP*/}
-
 public:
 	core::Size njobs_;
 
@@ -213,16 +213,22 @@ public:
 	std::shared_ptr< std::map< JobResultID, JobResultOP > > results_;
 	DummyPoseOutputterOP dummy_outputter_;
 
+protected:
+	// create a job graph with a single node; skip the SJQ's implementation of this function
+	JobDigraphOP create_initial_job_dag() override {
+		JobDigraphOP job_graph( new JobDigraph( 1 ) );
+		return job_graph;
+	}
 };
 
-class PoolMnPJob2 : public MoverAndPoseJob
+class PoolMnPJob2 : public MoverJob
 {
 public:
 	PoolMnPJob2() : throw_( false ), throw_bad_inputs_( false ), status_( jd3_job_status_success ) {}
 
 	CompletedJobOutput
 	run() override {
-		CompletedJobOutput output = MoverAndPoseJob::run();
+		CompletedJobOutput output = MoverJob::run();
 		if ( throw_ ) {
 			throw CREATE_EXCEPTION(utility::excn::Exception,  "PoolMnPJob2 exception" );
 		} else if ( throw_bad_inputs_ ) {
@@ -261,7 +267,7 @@ public:
 
 		core::pose::PoseOP pose = create_trpcage_ideal_poseop();
 		mature_job->pose( pose );
-		mature_job->mover( utility::pointer::make_shared< protocols::moves::NullMover >() );
+		mature_job->set_mover( protocols::moves::NullMoverOP( new protocols::moves::NullMover ) );
 
 		jobs_matured_.push_back( job->job_index() );
 
@@ -287,31 +293,25 @@ public:
 		output_round_2_results_( false )
 	{}
 
-	JobDigraphOP initial_job_dag() override {
-		JobDigraphOP job_dag( new JobDigraph( 2 ) );
-		job_dag->add_edge( 1, 2 );
-		return job_dag;
-	}
 
 	LarvalJobs determine_job_list( Size job_node_index, Size max_njobs ) override
 	{
+		determine_preliminary_job_list(); //Needed for outputter init
 		LarvalJobs job_list;
 		if ( job_node_index == 1 ) {
 			if ( node_1_jobs_given_out_ ) return job_list;
 			node_1_jobs_given_out_ = true;
-			StandardInnerLarvalJobOP inner_job( new StandardInnerLarvalJob( node_1_njobs_, job_node_index ));
+			InnerLarvalJobOP inner_job( new InnerLarvalJob( node_1_njobs_, job_node_index ));
 			inner_job->outputter( DummyPoseOutputter::keyname() );
 			job_list = expand_job_list( inner_job, max_njobs );
-			//std::cout << "PoolJQ3 delivering round 1 jobs" << std::endl;
 		} else if ( job_node_index == 2 ) {
 			if ( node_2_jobs_given_out_ ) return job_list;
 			node_2_jobs_given_out_ = true;
-			StandardInnerLarvalJobOP inner_job( new StandardInnerLarvalJob( node_2_njobs_ ));
+			InnerLarvalJobOP inner_job( new InnerLarvalJob( node_2_njobs_, job_node_index ));
 			inner_job->outputter( DummyPoseOutputter::keyname() );
 			inner_job->add_input_job_result_index( sp1(1) );
 			job_list = expand_job_list( inner_job, max_njobs );
 
-			//std::cout << "PoolJQ3 delivering round 2 jobs" << std::endl;
 		}
 		return job_list;
 	}
@@ -328,7 +328,7 @@ public:
 				return output_list;
 			}
 			for ( Size ii = node_1_njobs_+1; ii <= node_1_njobs_ + node_2_njobs_; ++ii ) {
-				output_list.push_back( utility::pointer::make_shared< DummyOutputSpecification >( sp(ii, 1), JobOutputIndex() ));
+				output_list.push_back( OutputSpecificationOP( new DummyOutputSpecification( sp(ii, 1), JobOutputIndex() ) ));
 			}
 			output_round_2_results_ = true;
 		}
@@ -368,6 +368,13 @@ public:
 	bool discarded_round_1_results_;
 	bool output_round_2_results_;
 
+protected:
+
+	JobDigraphOP create_initial_job_dag() override {
+		JobDigraphOP job_dag( new JobDigraph( 2 ) );
+		job_dag->add_edge( 1, 2 );
+		return job_dag;
+	}
 };
 
 // The idea for this class is to test the various error messages delivered by the JD on node 0
@@ -399,7 +406,7 @@ public:
 		if ( ! discard_job1_result_ && node_2_first_job_finished_ && ! discarded_job1_results_ ) {
 			discarded_job1_results_ = true; // that is: job1 will not be stored after it is output
 			std::list< OutputSpecificationOP > job1_to_output;
-			job1_to_output.push_back( utility::pointer::make_shared< DummyOutputSpecification >( sp(1, 1), JobOutputIndex() ));
+			job1_to_output.push_back( OutputSpecificationOP( new DummyOutputSpecification( sp(1, 1), JobOutputIndex() ) ));
 			return job1_to_output;
 		} else {
 			return PoolJQ3::jobs_that_should_be_output();
@@ -429,9 +436,6 @@ public:
 	using PoolJQ1::note_job_completed;
 	using PoolJQ1::completed_job_summary;
 
-	bool larval_job_needed_for_note_job_completed() const override { return true; }
-	bool larval_job_needed_for_completed_job_summary() const override { return true; }
-
 	void note_job_completed( LarvalJobCOP job, JobStatus status, Size nresults ) override {
 		jobs_completed_through_larval_job_interface_.push_back( job->job_index() );
 		PoolJQ1::note_job_completed( job, status, nresults );
@@ -454,10 +458,6 @@ class PoolJQ5 : public PoolJQ3
 public:
 	PoolJQ5() : node_3_njobs_( 1 ), node_3_jobs_given_out_( false ) { node_1_njobs_ = 1; node_2_njobs_ = 0; }
 
-	JobDigraphOP initial_job_dag() override {
-		JobDigraphOP job_dag( new JobDigraph( 1 ) );
-		return job_dag;
-	}
 
 	void update_job_dag( JobDigraphUpdater & updater ) override {
 		if ( updater.orig_num_nodes() == 1 && updater.job_dag()->get_job_node(1)->all_jobs_completed() ) {
@@ -475,7 +475,7 @@ public:
 		LarvalJobs job_list;
 		if ( ! node_3_jobs_given_out_ ) {
 			node_3_jobs_given_out_ = true;
-			StandardInnerLarvalJobOP inner_job( new StandardInnerLarvalJob( node_3_njobs_ ));
+			InnerLarvalJobOP inner_job( new InnerLarvalJob( node_3_njobs_, job_node_index ));
 			inner_job->outputter( DummyPoseOutputter::keyname() );
 			job_list = expand_job_list( inner_job, max_njobs );
 		}
@@ -484,6 +484,12 @@ public:
 
 	Size node_3_njobs_;
 	bool node_3_jobs_given_out_;
+
+protected:
+	JobDigraphOP create_initial_job_dag() override {
+		JobDigraphOP job_dag( new JobDigraph( 1 ) );
+		return job_dag;
+	}
 };
 
 // ok -- this class should be put into a larval job or
@@ -546,12 +552,13 @@ class PoolJQ6 : public PoolJQ1
 	// send it to another node.
 	LarvalJobs determine_job_list( Size job_node_index, Size max_njobs ) override
 	{
+		determine_preliminary_job_list(); //Needed for outputter init
 		LarvalJobs jobs;
 		if ( job_list_determined_ ) return jobs;
 
-		StandardInnerLarvalJobOP inner_job( new StandardInnerLarvalJob( njobs_, job_node_index ) );
+		InnerLarvalJobOP inner_job( new InnerLarvalJob( njobs_, job_node_index ) );
 		inner_job->outputter( DummyPoseOutputter::keyname() );
-		inner_job->const_data_map().add( "testing", "testing", utility::pointer::make_shared< Unserializable >());
+		inner_job->const_data_map().add( "testing", "testing", UnserializableOP( new Unserializable ));
 
 		jobs = expand_job_list( inner_job, max_njobs );
 		n_jobs_created_so_far_ += jobs.size();
@@ -571,12 +578,13 @@ class PoolJQ7 : public PoolJQ1
 	// send it to another node.
 	LarvalJobs determine_job_list( Size, Size max_njobs ) override
 	{
+		determine_preliminary_job_list(); //Needed for outputter init
 		LarvalJobs jobs;
 		if ( job_list_determined_ ) return jobs;
 
-		StandardInnerLarvalJobOP inner_job( new StandardInnerLarvalJob( njobs_ ) );
+		InnerLarvalJobOP inner_job( new InnerLarvalJob( njobs_, 1 ) );
 		inner_job->outputter( DummyPoseOutputter::keyname() );
-		inner_job->const_data_map().add( "testing", "testing", utility::pointer::make_shared< Undeserializable >());
+		inner_job->const_data_map().add( "testing", "testing", UndeserializableOP( new Undeserializable ));
 
 		jobs = expand_job_list( inner_job, max_njobs );
 		n_jobs_created_so_far_ += jobs.size();
@@ -629,14 +637,14 @@ CEREAL_REGISTER_TYPE( PoolJobSummary2 )
 
 #endif
 
-class PoolMnPJob3 : public MoverAndPoseJob
+class PoolMnPJob3 : public MoverJob
 {
 public:
-	PoolMnPJob3() : MoverAndPoseJob() {}
+	PoolMnPJob3() : MoverJob() {}
 
 	protocols::jd3::CompletedJobOutput
 	run() override {
-		CompletedJobOutput output = MoverAndPoseJob::run();
+		CompletedJobOutput output = MoverJob::run();
 		PoseJobResultOP pose_result = utility::pointer::dynamic_pointer_cast< PoseJobResult > ( output.job_results[1].second );
 		pose_result->pose()->set_const_data( "testing", "testing", Unserializable() );
 		return output;
@@ -645,30 +653,30 @@ public:
 
 typedef utility::pointer::shared_ptr< PoolMnPJob3 > PoolMnPJob3OP;
 
-class PoolMnPJob4 : public MoverAndPoseJob
+class PoolMnPJob4 : public MoverJob
 {
 public:
-	PoolMnPJob4() : MoverAndPoseJob() {}
+	PoolMnPJob4() : MoverJob() {}
 
 	protocols::jd3::CompletedJobOutput
 	run() override {
-		CompletedJobOutput output = MoverAndPoseJob::run();
-		output.job_results[1].first = utility::pointer::make_shared< PoolJobSummary1 >();
+		CompletedJobOutput output = MoverJob::run();
+		output.job_results[1].first = JobSummaryOP( new PoolJobSummary1 );
 		return output;
 	}
 };
 
 typedef utility::pointer::shared_ptr< PoolMnPJob4 > PoolMnPJob4OP;
 
-class PoolMnPJob5 : public MoverAndPoseJob
+class PoolMnPJob5 : public MoverJob
 {
 public:
-	PoolMnPJob5() : MoverAndPoseJob() {}
+	PoolMnPJob5() : MoverJob() {}
 
 	CompletedJobOutput
 	run() override {
-		CompletedJobOutput output = MoverAndPoseJob::run();
-		output.job_results[1].first = utility::pointer::make_shared< PoolJobSummary2 >();
+		CompletedJobOutput output = MoverJob::run();
+		output.job_results[1].first = JobSummaryOP( new PoolJobSummary2 );
 		return output;
 	}
 };
@@ -690,7 +698,7 @@ class PoolJQ8 : public PoolJQ1
 
 		core::pose::PoseOP pose = create_trpcage_ideal_poseop();
 		mature_job->pose( pose );
-		mature_job->mover( utility::pointer::make_shared< protocols::moves::NullMover >() );
+		mature_job->set_mover( protocols::moves::NullMoverOP( new protocols::moves::NullMover ) );
 
 		jobs_matured_.push_back( job->job_index() );
 
@@ -714,7 +722,7 @@ class PoolJQ9 : public PoolJQ1
 
 		core::pose::PoseOP pose = create_trpcage_ideal_poseop();
 		mature_job->pose( pose );
-		mature_job->mover( utility::pointer::make_shared< protocols::moves::NullMover >() );
+		mature_job->set_mover( protocols::moves::NullMoverOP( new protocols::moves::NullMover ) );
 
 		jobs_matured_.push_back( job->job_index() );
 
@@ -738,7 +746,7 @@ class PoolJQ10 : public PoolJQ1
 
 		core::pose::PoseOP pose = create_trpcage_ideal_poseop();
 		mature_job->pose( pose );
-		mature_job->mover( utility::pointer::make_shared< protocols::moves::NullMover >() );
+		mature_job->set_mover( protocols::moves::NullMoverOP( new protocols::moves::NullMover ) );
 
 		jobs_matured_.push_back( job->job_index() );
 
@@ -761,8 +769,9 @@ public:
 		distributed_deallocation_messages_ = true;
 
 		typedef protocols::jd3::deallocation::InputPoseDeallocationMessage   PoseDeallocMsg;
-		messages.push_back( utility::pointer::make_shared< PoseDeallocMsg >( 1 ));
-		messages.push_back( utility::pointer::make_shared< PoseDeallocMsg >( 2 ));
+		typedef protocols::jd3::deallocation::InputPoseDeallocationMessageOP PoseDeallocMsgOP;
+		messages.push_back( PoseDeallocMsgOP( new PoseDeallocMsg( 1 ) ));
+		messages.push_back( PoseDeallocMsgOP( new PoseDeallocMsg( 2 ) ));
 		return messages;
 	}
 
@@ -865,9 +874,9 @@ public:
 		core::Size job_index
 	)
 	{
-		StandardInnerLarvalJobOP inner_job( new StandardInnerLarvalJob( njobs ) );
+		InnerLarvalJobOP inner_job( new InnerLarvalJob( njobs, 1 ) );
 		inner_job->outputter( DummyPoseOutputter::keyname() );
-		return utility::pointer::make_shared< LarvalJob >( inner_job, nstruct_id, job_index );
+		return LarvalJobOP( new LarvalJob( inner_job, nstruct_id, job_index ) );
 	}
 
 	// create a larval job that lists job 1 as a required input to this job
@@ -878,7 +887,7 @@ public:
 		core::Size job_index
 	)
 	{
-		StandardInnerLarvalJobOP inner_job( new StandardInnerLarvalJob( njobs ) );
+		InnerLarvalJobOP inner_job( new InnerLarvalJob( njobs, 1 ) );
 		inner_job->outputter( DummyPoseOutputter::keyname() );
 		inner_job->add_input_job_result_index( sp1(1) );
 		LarvalJobOP larval_job( new LarvalJob( inner_job, nstruct_id, job_index ) );
@@ -955,7 +964,7 @@ public:
 		typedef deallocation::InputPoseDeallocationMessage InputPoseMsg;
 		std::list< MsgOP > msg_list;
 		for ( auto pose_id : poses_to_deallocate ) {
-			msg_list.push_back( utility::pointer::make_shared< InputPoseMsg >( pose_id ) );
+			msg_list.push_back( MsgOP( new InputPoseMsg( pose_id ) ) );
 		}
 		return serialized_T( msg_list );
 	}
@@ -990,7 +999,6 @@ public:
 		TS_ASSERT( true ); // appease non-serialization builds
 
 #ifdef SERIALIZATION
-
 
 		EnergyJobSummaryOP trpcage_job_summary( new EnergyJobSummary );
 		trpcage_job_summary->energy( 1234 );
@@ -1125,10 +1133,13 @@ public:
 		// and then create a job distributor for node 0 and tell it to go go go!
 
 		SimulateMPI::set_mpi_rank( 0 );
+
 		PoolJQ1OP jq( new PoolJQ1 );
+
 		jq->njobs_ = 3;
 
 		MPIWorkPoolJobDistributor jd;
+
 		try {
 			jd.go( jq );
 		} catch ( ... ) {
@@ -1170,7 +1181,6 @@ public:
 			TS_ASSERT_EQUALS( utility::pointer::dynamic_pointer_cast< PoseJobResult > ( job_res2.second )->pose()->total_residue(), 20 );
 		}
 
-
 		{ // scope
 			ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 1 to output job 1", mpi_work_pool_jd_accept_and_output_job_result );
 			std::string output_spec1_string = ts_assert_mpi_buffer_has_string( 0, "node 0 sends the serialized output spec #1" );
@@ -1211,7 +1221,6 @@ public:
 			TS_ASSERT_EQUALS( utility::pointer::dynamic_pointer_cast< PoseJobResult > ( job_res3.second )->pose()->total_residue(), 20 );
 		}
 
-
 		ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 1 that there are no jobs left to run", mpi_work_pool_jd_spin_down );
 
 		SimulateMPI::set_mpi_rank( 2 );
@@ -1241,6 +1250,7 @@ public:
 		ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 3 that archival completed", mpi_work_pool_jd_archival_completed );
 
 		ts_assert_mpi_buffer_has_integer( 0, "node 0 tells node 3 that there are no jobs left to run", mpi_work_pool_jd_spin_down );
+
 
 		TS_ASSERT_EQUALS( jq->status_.count( 1 ), 1 );
 		TS_ASSERT_EQUALS( jq->status_.count( 2 ), 1 );
@@ -1366,7 +1376,7 @@ public:
 		TS_ASSERT_EQUALS( summaries1.size(), 1 );
 		if ( summaries1.size() != 1 ) return;
 		TS_ASSERT( summaries1[1] );
-		EnergyJobSummaryOP energy_summary1 = utility::pointer::dynamic_pointer_cast< EnergyJobSummary > ( summaries1[1] );
+		StandardPoseJobSummaryOP energy_summary1 = utility::pointer::dynamic_pointer_cast< StandardPoseJobSummary > ( summaries1[1] );
 		TS_ASSERT( energy_summary1 );
 		if ( energy_summary1 ) {
 			TS_ASSERT_EQUALS( energy_summary1->energy(), 1234 );
@@ -1410,7 +1420,7 @@ public:
 		TS_ASSERT_EQUALS( summaries2.size(), 1 );
 		if ( summaries2.size() != 1 ) return;
 		TS_ASSERT( summaries2[1] );
-		EnergyJobSummaryOP energy_summary2 = utility::pointer::dynamic_pointer_cast< EnergyJobSummary > ( summaries2[1] );
+		StandardPoseJobSummaryOP energy_summary2 = utility::pointer::dynamic_pointer_cast< StandardPoseJobSummary > ( summaries2[1] );
 		TS_ASSERT( energy_summary2 );
 		if ( energy_summary2 ) {
 			TS_ASSERT_EQUALS( energy_summary2->energy(), 1234 );
@@ -3511,7 +3521,7 @@ public:
 		TS_ASSERT_EQUALS( summaries1.size(), 1 );
 		if ( summaries1.size() != 1 ) return;
 		TS_ASSERT( summaries1[1] );
-		EnergyJobSummaryOP energy_summary1 = utility::pointer::dynamic_pointer_cast< EnergyJobSummary > ( summaries1[1] );
+		StandardPoseJobSummaryOP energy_summary1 = utility::pointer::dynamic_pointer_cast< StandardPoseJobSummary > ( summaries1[1] );
 		TS_ASSERT( energy_summary1 );
 		if ( energy_summary1 ) {
 			TS_ASSERT_EQUALS( energy_summary1->energy(), 1234 );
@@ -3536,7 +3546,7 @@ public:
 		TS_ASSERT_EQUALS( summaries2.size(), 1 );
 		if ( summaries2.size() != 1 ) return;
 		TS_ASSERT( summaries2[ 1 ] );
-		EnergyJobSummaryOP energy_summary2 = utility::pointer::dynamic_pointer_cast< EnergyJobSummary > ( summaries2[1] );
+		StandardPoseJobSummaryOP energy_summary2 = utility::pointer::dynamic_pointer_cast< StandardPoseJobSummary > ( summaries2[1] );
 		TS_ASSERT( energy_summary2 );
 		if ( energy_summary2 ) {
 			TS_ASSERT_EQUALS( energy_summary2->energy(), 1234 );
@@ -4398,9 +4408,9 @@ public:
 		PoseJobResultOP trpcage_pose_result( new PoseJobResult );
 		trpcage_pose_result->pose(  create_trpcage_ideal_poseop() );
 
-		StandardInnerLarvalJobOP inner_job( new StandardInnerLarvalJob( 2 ) );
+		InnerLarvalJobOP inner_job( new InnerLarvalJob( 2, 1 ) );
 		inner_job->outputter( DummyPoseOutputter::keyname() );
-		inner_job->const_data_map().add( "testing", "testing", utility::pointer::make_shared< Undeserializable >());
+		inner_job->const_data_map().add( "testing", "testing", UndeserializableOP( new Undeserializable ));
 		LarvalJobOP larval_job( new LarvalJob( inner_job, 1, 1 ));
 
 		std::string undeserializable_larval_job;
@@ -5321,7 +5331,7 @@ public:
 		TS_ASSERT_EQUALS( summaries1.size(), 1 );
 		if ( summaries1.size() != 1 ) return;
 		TS_ASSERT( summaries1[ 1 ] );
-		EnergyJobSummaryOP energy_summary1 = utility::pointer::dynamic_pointer_cast< EnergyJobSummary > ( summaries1[ 1 ] );
+		StandardPoseJobSummaryOP energy_summary1 = utility::pointer::dynamic_pointer_cast< StandardPoseJobSummary > ( summaries1[ 1 ] );
 		TS_ASSERT( energy_summary1 );
 		if ( energy_summary1 ) {
 			TS_ASSERT_EQUALS( energy_summary1->energy(), 1234 );
@@ -5346,7 +5356,7 @@ public:
 		TS_ASSERT_EQUALS( summaries2.size(), 1 );
 		if ( summaries2.size() != 1 ) return;
 		TS_ASSERT( summaries2[1] );
-		EnergyJobSummaryOP energy_summary2 = utility::pointer::dynamic_pointer_cast< EnergyJobSummary > ( summaries2[1] );
+		StandardPoseJobSummaryOP energy_summary2 = utility::pointer::dynamic_pointer_cast< StandardPoseJobSummary > ( summaries2[1] );
 		TS_ASSERT( energy_summary2 );
 		if ( energy_summary2 ) {
 			TS_ASSERT_EQUALS( energy_summary2->energy(), 1234 );

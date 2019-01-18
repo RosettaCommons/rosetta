@@ -40,12 +40,12 @@ static basic::Tracer TR( "protocols.jd3.InputSource" );
 
 InputSource::InputSource() :
 	origin_( "unknown" ),
-	pose_id_( 0 )
+	source_id_( 0 )
 {}
 
 InputSource::InputSource( std::string origin ) :
 	origin_(std::move( origin )),
-	pose_id_( 0 )
+	source_id_( 0 )
 {}
 
 InputSource::~InputSource() = default;
@@ -56,7 +56,7 @@ bool InputSource::operator == ( InputSource const & rhs ) const
 		origin_ == rhs.origin_ &&
 		input_tag_ == rhs.input_tag_ &&
 		//string_string_map_ == rhs.string_string_map_ &&
-		pose_id_ == rhs.pose_id_;
+		source_id_ == rhs.source_id_;
 }
 
 bool InputSource::operator != ( InputSource const & rhs ) const
@@ -72,18 +72,18 @@ bool InputSource::operator < ( InputSource const & rhs ) const
 	if ( input_tag_ != rhs.input_tag_ ) return false;
 	//if ( string_string_map_ < rhs.string_string_map_ ) return true;
 	//if ( string_string_map_ != rhs.string_string_map_ ) return false;
-	if ( pose_id_ < rhs.pose_id_ ) return true;
-	if ( pose_id_ != rhs.pose_id_ ) return false;
+	if ( source_id_ < rhs.source_id_ ) return true;
+	if ( source_id_ != rhs.source_id_ ) return false;
 	return false;
 }
 
 std::string const & InputSource::input_tag() const { return input_tag_; }
 std::string const & InputSource::origin() const { return origin_; }
-core::Size InputSource::pose_id() const { return pose_id_; }
+core::Size InputSource::source_id() const { return source_id_; }
 
 void InputSource::input_tag( std::string const & setting ) { input_tag_ = setting; }
 void InputSource::origin( std::string const & setting ) { origin_ = setting; }
-void InputSource::pose_id( core::Size setting ) { pose_id_ = setting; }
+void InputSource::source_id( core::Size setting ) { source_id_ = setting; }
 
 } // namespace jd3
 } // namespace protocols
@@ -97,7 +97,7 @@ protocols::jd3::InputSource::save( Archive & arc ) const {
 	//TR << "Serializing InputSource: " << input_tag_ << " " << pose_id_ << std::endl;
 	arc( CEREAL_NVP( origin_ ) ); // std::string
 	arc( CEREAL_NVP( input_tag_ ) ); // std::string
-	arc( CEREAL_NVP( pose_id_ ) ); // core::Size
+	arc( CEREAL_NVP( source_id_ ) ); // core::Size
 }
 
 /// @brief Automatically generated deserialization method
@@ -106,7 +106,7 @@ void
 protocols::jd3::InputSource::load( Archive & arc ) {
 	arc( origin_ ); // std::string
 	arc( input_tag_ ); // std::string
-	arc( pose_id_ ); // core::Size
+	arc( source_id_ ); // core::Size
 	//TR << "Deserializing InputSource: " << input_tag_ << " " << pose_id_ << std::endl;
 }
 

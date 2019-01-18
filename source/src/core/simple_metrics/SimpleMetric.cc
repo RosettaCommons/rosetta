@@ -100,7 +100,12 @@ SimpleMetric::complex_type_generator_for_simple_metric( utility::tag::XMLSchemaD
 
 }
 
-
+void
+run_metrics( core::pose::Pose & pose, utility::vector1< SimpleMetricCOP > const & metrics, std::string prefix, std::string suffix){
+	for ( SimpleMetricCOP const & metric : metrics ) {
+		metric->apply( pose, prefix, suffix );
+	}
+}
 
 
 } //core

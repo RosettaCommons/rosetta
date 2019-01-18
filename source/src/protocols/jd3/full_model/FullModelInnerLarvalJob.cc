@@ -35,18 +35,12 @@ namespace jd3 {
 namespace full_model {
 
 FullModelInnerLarvalJob::FullModelInnerLarvalJob() :
-	InnerLarvalJob(),
-	prelim_job_node_( 0 )
+	InnerLarvalJob()
 {}
 
-FullModelInnerLarvalJob::FullModelInnerLarvalJob( core::Size nstruct ) :
-	InnerLarvalJob( nstruct ),
-	prelim_job_node_( 0 )
-{}
 
 FullModelInnerLarvalJob::FullModelInnerLarvalJob( core::Size nstruct, core::Size prelim_job_node ) :
-	InnerLarvalJob( nstruct ),
-	prelim_job_node_( prelim_job_node )
+	InnerLarvalJob( nstruct, prelim_job_node )
 {}
 
 FullModelInnerLarvalJob::FullModelInnerLarvalJob( FullModelInnerLarvalJob const & /*src*/ ) = default;
@@ -61,8 +55,8 @@ bool
 FullModelInnerLarvalJob::operator == ( InnerLarvalJob const & other ) const
 {
 	if ( InnerLarvalJob::operator == ( other ) ) {
-		auto const & other_std = static_cast< FullModelInnerLarvalJob const & > ( other );
-		return prelim_job_node_ == other_std.prelim_job_node_;
+		//auto const & other_std = static_cast< FullModelInnerLarvalJob const & > ( other );
+		return true;
 	}
 	return false;
 }
@@ -90,17 +84,6 @@ operator<< ( std::ostream & out, const FullModelInnerLarvalJob & inner_job )
 	return out;
 }
 
-core::Size FullModelInnerLarvalJob::prelim_job_node() const
-{
-	return prelim_job_node_;
-}
-
-void
-FullModelInnerLarvalJob::prelim_job_node( core::Size setting )
-{
-	prelim_job_node_ = setting;
-}
-
 } // namespace full_model
 } // namespace jd3
 } // namespace protocols
@@ -111,14 +94,12 @@ template< class Archive >
 void
 protocols::jd3::full_model::FullModelInnerLarvalJob::save( Archive & arc ) const {
 	arc( cereal::base_class< protocols::jd3::InnerLarvalJob > ( this ) );
-	arc( prelim_job_node_ );
 }
 
 template< class Archive >
 void
 protocols::jd3::full_model::FullModelInnerLarvalJob::load( Archive & arc ) {
 	arc( cereal::base_class< protocols::jd3::InnerLarvalJob > ( this ) );
-	arc( prelim_job_node_ );
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( protocols::jd3::full_model::FullModelInnerLarvalJob );

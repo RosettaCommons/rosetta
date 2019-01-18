@@ -16,8 +16,8 @@
 #include <protocols/jd3/standard/StandardJobQueen.hh>
 
 // Package headers
-#include <protocols/jd3/standard/MoverAndPoseJob.hh>
-#include <protocols/jd3/standard/StandardInnerLarvalJob.hh>
+#include <protocols/jd3/jobs/MoverJob.hh>
+#include <protocols/jd3/InnerLarvalJob.hh>
 #include <protocols/jd3/JobDigraph.hh>
 #include <protocols/jd3/JobOutputIndex.hh>
 #include <protocols/jd3/LarvalJob.hh>
@@ -34,6 +34,7 @@
 #include <protocols/jd3/pose_outputters/PoseOutputterCreator.hh>
 #include <protocols/jd3/pose_outputters/PoseOutputterFactory.hh>
 #include <protocols/jd3/pose_outputters/PDBPoseOutputter.hh>
+#include <protocols/jd3/job_results/PoseJobResult.hh>
 
 #include <core/pose/Pose.hh>
 
@@ -66,6 +67,7 @@
 using namespace protocols::jd3;
 using namespace protocols::jd3::output;
 using namespace protocols::jd3::pose_outputters;
+using namespace protocols::jd3::job_results;
 using namespace utility::tag;
 
 namespace basic { namespace options { namespace OptionKeys {
@@ -156,12 +158,12 @@ public:
 		PoseOutputSpecification const &
 	) const override
 	{
+		std::cout << "Returning dummy!" << std::endl;
 		return "dummy";
 	}
 
 	bool job_has_already_completed( LarvalJob const &, utility::options::OptionCollection const & ) const override { return false; }
 
-	void mark_job_as_having_started( LarvalJob const &, utility::options::OptionCollection const & ) const override {}
 
 	PoseOutputSpecificationOP
 	create_output_specification(
@@ -183,7 +185,6 @@ public:
 		JobResult const & result
 	) override {
 		using namespace core::pose;
-		using standard::PoseJobResult;
 		debug_assert( dynamic_cast< PoseJobResult const * > ( &result ));
 		PoseJobResult const & pose_result( static_cast< PoseJobResult const & > ( result ));
 		core::pose::Pose const & pose( *pose_result.pose() );

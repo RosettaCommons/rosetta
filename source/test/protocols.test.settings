@@ -357,6 +357,13 @@ sources = {
 		"NodeManagers",
 	#	"validate_w_xsd",
 	],
+	"jd3/job_summaries" : [
+		"EnergyJobSummaryTests",
+		"StandardPoseJobSummaryTests",
+	],
+	"jd3/jobs" : [
+		"MoverJobTests",
+	],
 	"jd3/pose_inputters" : [
 		"PDBPoseInputter",
 		"SilentFilePoseInputter",

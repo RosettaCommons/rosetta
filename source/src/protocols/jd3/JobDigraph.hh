@@ -47,32 +47,76 @@ namespace jd3 {
 class JobDirectedNode : public utility::graph::DirectedNode
 {
 public:
+
 	typedef utility::graph::DirectedNode parent;
+
 public:
+
 	virtual ~JobDirectedNode();
+
 	JobDirectedNode( utility::graph::Digraph*, platform::Size node_id );
 
-	bool all_jobs_completed() const;
-	bool all_jobs_started() const;
-	core::Size n_predecessors_w_outstanding_jobs() const;
-
-	void all_jobs_completed( bool setting );
-	void all_jobs_started( bool setting );
 	/// @brief decrement the n-incomplete-predecessors count by one
 	//void note_predecessor_completed();
 
 	/// @brief invoked during graph assignment operators to copy any
 	/// node data from one graph to another graph.  The source node must
 	/// be the same type as this node.
-	virtual void copy_from( DirectedNode const * source );
+	virtual void
+	copy_from( DirectedNode const * source );
 
-	virtual
-	void add_incoming_edge( utility::graph::DirectedEdge* edge_ptr, DirectedEdgeListIter & );
 
-	/// @brief memory accounting scheme
-	virtual platform::Size count_static_memory() const;
-	/// @brief memory accounting scheme
-	virtual platform::Size count_dynamic_memory() const;
+public:
+
+	//////////////
+	//  Setters
+	//////////////
+
+	virtual void
+	add_incoming_edge( utility::graph::DirectedEdge* edge_ptr, DirectedEdgeListIter & );
+
+	///@brief Set the primary node type label.
+	///@details
+	///  Can be used to create the Job for this Job Node.
+	///  Ex.  Linear set of 2 stages per input structure, we would use 2 node labels to construct Jobs for each input based on a common job.
+	void
+	set_node_label( std::string const & node_label );
+
+	void
+	all_jobs_completed( bool setting );
+
+	void
+	all_jobs_started( bool setting );
+
+
+	////////////////
+	//  Accessors
+	////////////////
+
+	///@brief Get this Node's primary type
+	///@details
+	///  Can be used to create the Job for this Job Node.
+	///  Ex.  Linear set of 2 stages per input structure, we would use 2 node labels to construct Jobs for each input based on a common job.
+	///
+	std::string
+	get_node_label() const;
+
+	bool
+	all_jobs_completed() const;
+
+	bool
+	all_jobs_started() const;
+
+	core::Size
+	n_predecessors_w_outstanding_jobs() const;
+
+	///@brief memory accounting scheme
+	virtual platform::Size
+	count_static_memory() const;
+
+	///@brief memory accounting scheme
+	virtual platform::Size
+	count_dynamic_memory() const;
 
 #ifdef SERIALIZATION
 	/// @brief Serialization function, but one that is called by the graph so that
@@ -100,6 +144,7 @@ private:
 	bool all_jobs_completed_;
 	bool all_jobs_started_;
 
+	std::string node_label_;
 	core::Size n_predecessors_w_outstanding_jobs_;
 
 	//no default constructor, uncopyable
@@ -126,13 +171,17 @@ public:
 
 	/// @brief copy-from for use in Digraph::operator= and copy ctors.  The source node
 	/// must be a JobDirectedEdge
-	virtual void copy_from( utility::graph::DirectedEdge const * source );
+	virtual void
+	copy_from( utility::graph::DirectedEdge const * source );
 
 	/// @brief how much memory is statically allocated by this edge
-	virtual platform::Size count_static_memory() const;
+	virtual platform::Size
+	count_static_memory() const;
+
 	/// @brief how much memory is dynamically allocated by this edge -- must be recursively invoked
 	/// by a derived class.
-	virtual platform::Size count_dynamic_memory() const;
+	virtual platform::Size
+	count_dynamic_memory() const;
 
 protected:
 
@@ -205,30 +254,34 @@ public:
 	JobDigraph & operator = ( JobDigraph const & source );
 
 public:
-	inline
-	JobDirectedNode const * get_job_node( platform::Size index ) const
+
+	inline JobDirectedNode const *
+	get_job_node( platform::Size index ) const
 	{
 		return static_cast< JobDirectedNode const * > (get_node( index ));
 	}
 
-	inline
-	JobDirectedNode* get_job_node( platform::Size index )
+	inline JobDirectedNode*
+	get_job_node( platform::Size index )
 	{
 		return static_cast< JobDirectedNode * > (get_node( index ));
 	}
 
 	/// @brief returns a pointer to the directed edge connecting nodes tail_node and head_node, if that edge exists
 	/// in the graph, o.w. returns 0.  Focuses the graph on this edge for fast subsequent retrieval.
-	JobDirectedEdge * find_job_edge( platform::Size tail_node, platform::Size head_node );
+	JobDirectedEdge *
+	find_job_edge( platform::Size tail_node, platform::Size head_node );
 
 	/// @brief returns a const pointer to the directed edge connecting nodes tail_node and head_node, if that edge exists
 	/// in the graph, o.w. returns 0.  Focuses the graph on this edge for fast subsequent retrieval.
-	JobDirectedEdge const * find_job_edge( platform::Size tail_node, platform::Size head_node ) const;
+	JobDirectedEdge const *
+	find_job_edge( platform::Size tail_node, platform::Size head_node ) const;
 
 	/// @brief remove an edge from the graph. (NEW AS OF 12/9/07) Never call C++'s
 	/// "delete" function on an edge pointer directly.  Derived classes must implement this function.
 	/// If they wish to use unordered_object_pools to manage their memory
-	virtual void delete_edge( utility::graph::DirectedEdge * edge );
+	virtual void
+	delete_edge( utility::graph::DirectedEdge * edge );
 
 #ifdef    SERIALIZATION
 	template < class Archive >
@@ -277,6 +330,9 @@ public:
 
 	/// @brief Add a new node to the JobDigraph that this class holds.
 	void add_node();
+
+	/// @brief Add a new node to the JobDigraph that this class holds, setting the node type
+	void add_node(std::string node_type_label);
 
 	/// @brief Add an edge to the graph where the head_node for this edge has to be one of the nodes added
 	/// to the graph since the creation of this updater

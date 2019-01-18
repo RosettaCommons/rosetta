@@ -238,7 +238,7 @@ public:
 			std::cout << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
-		JobDigraphOP dag = jq1.initial_job_dag(); // no need to hold the DAG returned by this func, but it must be called
+		JobDigraphOP dag = jq1.create_and_set_initial_job_dag(); // no need to hold the DAG returned by this func, but it must be called
 		TS_ASSERT_EQUALS( dag->num_nodes(), 2 );
 
 		LarvalJobs jobs1 = jq1.determine_job_list( 1, 1000 );
@@ -254,7 +254,7 @@ public:
 		TS_ASSERT_EQUALS( jq1.resource_manager()->n_resources_in_memory(), 1 );
 
 		for ( auto const & larval_job : jobs1 ) {
-			jq1.note_job_completed( larval_job, jd3_job_status_success, 1 );
+			jq1.note_job_completed_and_track( larval_job, jd3_job_status_success, 1 );
 		}
 
 		// OK - now, if we ask the JQ1 for her deallocation messages, she should say
@@ -262,6 +262,7 @@ public:
 		bool deallocated_1abc_pose( false ), deallocated_1abc_resource( false );
 		std::list< DeallocationMessageOP > msgs = jq1.deallocation_messages();
 		DeallocationMessageOP deallocate_1abc_resource_message;
+
 		TS_ASSERT_EQUALS( msgs.size(), 2 );
 		for ( auto const & msg : msgs ) {
 			if ( msg->deallocation_type() == input_pose_deallocation_msg ) {
@@ -287,7 +288,7 @@ public:
 		TS_ASSERT_EQUALS( jq1.resource_manager()->n_resources_in_memory(), 1 );
 
 		for ( auto const & larval_job : jobs2 ) {
-			jq1.note_job_completed( larval_job, jd3_job_status_success, 1 );
+			jq1.note_job_completed_and_track( larval_job, jd3_job_status_success, 1 );
 		}
 
 		// OK - now, if we ask the JQ for her deallocation messages, she should say
@@ -301,10 +302,15 @@ public:
 		bool deallocated_2def_pose( false ), deallocated_2def_resource( false );
 		std::list< DeallocationMessageOP > msgs2 = jq1.deallocation_messages();
 		DeallocationMessageOP deallocate_2def_resource_message;
-		TS_ASSERT_EQUALS( msgs2.size(), 1 );
+
+		//We have an input_pose_deallocation_msg coming from the SJQ and a resource deallocation message
+		// coming from the ResourceManager.  We make sure this is for the same input pdb.
+		TS_ASSERT_EQUALS( msgs2.size(), 2 );
 		for ( auto const & msg : msgs2 ) {
 			if ( msg->deallocation_type() == input_pose_deallocation_msg ) {
-				//deallocated_1abc_pose = true;
+				auto rdm = utility::pointer::dynamic_pointer_cast< InputPoseDeallocationMessage >( msg );
+				TS_ASSERT_EQUALS( rdm->pose_id(), 2);
+
 			} else if ( msg->deallocation_type() == resource_deallocation_msg ) {
 				auto rdm = utility::pointer::dynamic_pointer_cast< ResourceDeallocationMessage >( msg );
 				TS_ASSERT_EQUALS( rdm->resource_name(), "2def" );

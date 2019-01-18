@@ -64,7 +64,7 @@ public:
 
 		auto dummy_input_source = utility::pointer::make_shared< PoseInputSource >( "PDB" );
 		dummy_input_source->input_tag( "dummy" );
-		auto inner_job = utility::pointer::make_shared< InnerLarvalJob >( 1 );
+		auto inner_job = utility::pointer::make_shared< InnerLarvalJob >( 1, 1 );
 		inner_job->input_source( dummy_input_source );
 
 		utility::options::OptionCollectionOP job_options = basic::options::read_subset_of_global_option_collection( pdb_outputter_options );
@@ -87,7 +87,7 @@ public:
 
 		auto dummy_input_source = utility::pointer::make_shared< PoseInputSource >( "PDB" );
 		dummy_input_source->input_tag( "1abc" );
-		auto inner_job = utility::pointer::make_shared< InnerLarvalJob >( 1 );
+		auto inner_job = utility::pointer::make_shared< InnerLarvalJob >( 1, 1 );
 		inner_job->input_source( dummy_input_source );
 
 		utility::options::OptionCollectionOP job_options = basic::options::read_subset_of_global_option_collection( pdb_outputter_options );
@@ -110,7 +110,7 @@ public:
 
 		auto dummy_input_source = utility::pointer::make_shared< PoseInputSource >( "PDB" );
 		dummy_input_source->input_tag( "1abc" );
-		auto inner_job = utility::pointer::make_shared< InnerLarvalJob >( 1 );
+		auto inner_job = utility::pointer::make_shared< InnerLarvalJob >( 1, 1 );
 		inner_job->input_source( dummy_input_source );
 
 		utility::options::OptionCollectionOP job_options = basic::options::read_subset_of_global_option_collection( pdb_outputter_options );
@@ -133,7 +133,7 @@ public:
 
 		auto dummy_input_source = utility::pointer::make_shared< PoseInputSource >( "PDB" );
 		dummy_input_source->input_tag( "1abc" );
-		auto inner_job = utility::pointer::make_shared< InnerLarvalJob >( 1 );
+		auto inner_job = utility::pointer::make_shared< InnerLarvalJob >( 1, 1 );
 		inner_job->input_source( dummy_input_source );
 
 		utility::options::OptionCollectionOP job_options = basic::options::read_subset_of_global_option_collection( pdb_outputter_options );
@@ -156,7 +156,7 @@ public:
 
 		auto dummy_input_source = utility::pointer::make_shared< PoseInputSource >( "PDB" );
 		dummy_input_source->input_tag( "1abc" );
-		auto inner_job = utility::pointer::make_shared< InnerLarvalJob >( 1 );
+		auto inner_job = utility::pointer::make_shared< InnerLarvalJob >( 1, 1 );
 		inner_job->input_source( dummy_input_source );
 
 		utility::options::OptionCollectionOP job_options = basic::options::read_subset_of_global_option_collection( pdb_outputter_options );
@@ -180,7 +180,7 @@ public:
 
 		auto dummy_input_source = utility::pointer::make_shared< PoseInputSource >( "PDB" );
 		dummy_input_source->input_tag( "1abc" );
-		auto inner_job = utility::pointer::make_shared< InnerLarvalJob >( 1 );
+		auto inner_job = utility::pointer::make_shared< InnerLarvalJob >( 1, 1 );
 		inner_job->input_source( dummy_input_source );
 
 		utility::options::OptionCollectionOP job_options = basic::options::read_subset_of_global_option_collection( pdb_outputter_options );
@@ -203,7 +203,7 @@ public:
 
 		auto dummy_input_source = utility::pointer::make_shared< PoseInputSource >( "PDB" );
 		dummy_input_source->input_tag( "1abc" );
-		auto inner_job = utility::pointer::make_shared< InnerLarvalJob >( 1 );
+		auto inner_job = utility::pointer::make_shared< InnerLarvalJob >( 1, 1 );
 		inner_job->input_source( dummy_input_source );
 
 		utility::options::OptionCollectionOP job_options = basic::options::read_subset_of_global_option_collection( pdb_outputter_options );
@@ -226,7 +226,7 @@ public:
 
 		auto dummy_input_source = utility::pointer::make_shared< PoseInputSource >( "PDB" );
 		dummy_input_source->input_tag( "1abc" );
-		auto inner_job = utility::pointer::make_shared< InnerLarvalJob >( 1 );
+		auto inner_job = utility::pointer::make_shared< InnerLarvalJob >( 1, 1 );
 		inner_job->input_source( dummy_input_source );
 
 		utility::options::OptionCollectionOP job_options = basic::options::read_subset_of_global_option_collection( pdb_outputter_options );
@@ -249,7 +249,7 @@ public:
 
 		auto dummy_input_source = utility::pointer::make_shared< PoseInputSource >( "PDB" );
 		dummy_input_source->input_tag( "1abc" );
-		auto inner_job = utility::pointer::make_shared< InnerLarvalJob >( 1 );
+		auto inner_job = utility::pointer::make_shared< InnerLarvalJob >( 1, 1 );
 		inner_job->input_source( dummy_input_source );
 
 		utility::options::OptionCollectionOP job_options = basic::options::read_subset_of_global_option_collection( pdb_outputter_options );
@@ -273,7 +273,7 @@ public:
 
 		auto dummy_input_source = utility::pointer::make_shared< PoseInputSource >( "PDB" );
 		dummy_input_source->input_tag( "1abc" );
-		auto inner_job = utility::pointer::make_shared< InnerLarvalJob >( 1 );
+		auto inner_job = utility::pointer::make_shared< InnerLarvalJob >( 1, 1 );
 		inner_job->input_source( dummy_input_source );
 
 		utility::options::OptionCollectionOP job_options = basic::options::read_subset_of_global_option_collection( pdb_outputter_options );
@@ -296,7 +296,7 @@ public:
 
 		auto dummy_input_source = utility::pointer::make_shared< PoseInputSource >( "PDB" );
 		dummy_input_source->input_tag( "1abc" );
-		auto inner_job = utility::pointer::make_shared< InnerLarvalJob >( 1 );
+		auto inner_job = utility::pointer::make_shared< InnerLarvalJob >( 1, 1 );
 		inner_job->input_source( dummy_input_source );
 
 		utility::options::OptionCollectionOP job_options = basic::options::read_subset_of_global_option_collection( pdb_outputter_options );
@@ -322,7 +322,7 @@ public:
 
 		auto dummy_input_source = utility::pointer::make_shared< PoseInputSource >( "PDB" );
 		dummy_input_source->input_tag( "1abc" );
-		auto inner_job = utility::pointer::make_shared< InnerLarvalJob >( 1 );
+		auto inner_job = utility::pointer::make_shared< InnerLarvalJob >( 1, 1 );
 		inner_job->input_source( dummy_input_source );
 
 		utility::options::OptionCollectionOP job_options = basic::options::read_subset_of_global_option_collection( pdb_outputter_options );
@@ -347,7 +347,7 @@ public:
 
 		auto dummy_input_source = utility::pointer::make_shared< PoseInputSource >( "PDB" );
 		dummy_input_source->input_tag( "1abc" );
-		auto inner_job = utility::pointer::make_shared< InnerLarvalJob >( 1 );
+		auto inner_job = utility::pointer::make_shared< InnerLarvalJob >( 1, 1 );
 		inner_job->input_source( dummy_input_source );
 
 		utility::options::OptionCollectionOP job_options = basic::options::read_subset_of_global_option_collection( pdb_outputter_options );
@@ -372,7 +372,7 @@ public:
 
 		auto dummy_input_source = utility::pointer::make_shared< PoseInputSource >( "PDB" );
 		dummy_input_source->input_tag( "1abc" );
-		auto inner_job = utility::pointer::make_shared< InnerLarvalJob >( 1 );
+		auto inner_job = utility::pointer::make_shared< InnerLarvalJob >( 1, 1 );
 		inner_job->input_source( dummy_input_source );
 
 		utility::options::OptionCollectionOP job_options = basic::options::read_subset_of_global_option_collection( pdb_outputter_options );

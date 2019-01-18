@@ -74,7 +74,7 @@ private:
 	std::string origin_;
 	std::string input_tag_;
 	StringStringMap string_string_map_;
-	core::Size pose_id_;
+	core::Size source_id_;
 
 #ifdef    SERIALIZATION
 public:
