@@ -205,6 +205,7 @@ get_current_default_score_function_name(){
 
 /// @brief returns family name for a specific score function.
 /// For example, ref2015_cart returns ref2015 and beta_nov16_cst returns beta_nov16
+/// Returns an empty string if no match is found
 std::string
 basename_for_score_function( std::string const & sfxn_name );
 

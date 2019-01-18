@@ -643,7 +643,8 @@ basename_for_score_function( std::string const & sfxn_name ){
 	if ( startswith( sfxn_name, TALARIS_2013 ) ) return TALARIS_2013;
 	if ( startswith( sfxn_name, TALARIS_2014 ) ) return TALARIS_2014;
 
-	utility_exit_with_message( "core::scoring::basename_for_score_function found no match for " + sfxn_name );
+	TR << "core::scoring::basename_for_score_function found no match for " << sfxn_name << std::endl;
+	return "";
 }
 
 void

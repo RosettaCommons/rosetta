@@ -1123,9 +1123,11 @@ FastRelax::get_possible_relax_script_names( std::string const & prefix ) const {
 
 	//First, look for a script specific to this score function
 	//Second, look for a general script
-	utility::vector1< std::string > possible_names( 2 );
-	possible_names[ 1 ] = prefix + "." + sfxn_basename;
-	possible_names[ 2 ] = prefix;
+	utility::vector1< std::string > possible_names;
+	if ( sfxn_basename.size() > 0 ) {
+		possible_names.push_back( prefix + "." + sfxn_basename );
+	}
+	possible_names.push_back( prefix );
 
 	utility::vector1< std::string > extension_tags;
 	if ( dualspace_ ) {
