@@ -53,7 +53,7 @@ JobTracker::clone() const {
 
 void
 JobTracker::track_starting_job_list( JQKey , LarvalJobs const & larval_jobs){
-	for ( auto const larval_job : larval_jobs ) {
+	for ( auto const & larval_job : larval_jobs ) {
 		core::Size job_dag_node = larval_job->job_node();
 		core::Size job_id = larval_job->job_index();
 
