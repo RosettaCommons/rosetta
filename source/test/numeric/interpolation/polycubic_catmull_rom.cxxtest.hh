@@ -17,6 +17,7 @@
 
 // Package Headers
 //#include <utility/tools/make_vector1.hh>
+#include <test/core/init_util.hh>
 #include <numeric/interpolation/polycubic_catmull_rom.hh>
 #include <numeric/constants.hh>
 #include <numeric/types.hh>
@@ -37,6 +38,7 @@ public:
 
 	// Shared initialization goes here.
 	void setUp() {
+		core_init();
 		initialize_tensors();
 	}
 

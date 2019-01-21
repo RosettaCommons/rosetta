@@ -16,6 +16,7 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
+#include <test/core/init_util.hh>
 
 // Unit headers
 #include <numeric/constants.hh>
@@ -55,6 +56,7 @@ public:
 	// Shared initialization goes here.
 	void setUp()
 	{
+		core_init();
 	}
 
 

@@ -42,7 +42,7 @@ public:
 
 	void setUp() {
 		// core_init_with_additional_options("-extra_res_fa protocols/ligand_docking/ZNx.params protocols/ligand_docking/7cpa.params");
-
+		core_init(); //Needed for tracer.
 	}
 
 	void tearDown() {}
