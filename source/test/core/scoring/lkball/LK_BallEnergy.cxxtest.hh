@@ -118,14 +118,18 @@ public:
 			TS_ASSERT_EQUALS( actual_offsets[ ii ], r1_lkbinfo.water_offset_for_atom()[ii] );
 		}
 
+#ifndef NDEBUG
 		// The derivative matrices are not allocated until setup_for_derivatives is called
 		// so we should get an assertion failure here
+		// Assertion failures will only happen in the debug mode tests;
+		// release mode tests won't trip this exception.
 		try {
 			set_throw_on_next_assertion_failure();
 			r1_lkbinfo.atom1_derivs();
 			TS_ASSERT( false ); // this line should never execute
 		} catch ( utility::excn::Exception & e ) {
 		}
+#endif
 
 		// Now let's try again, but where we've run setup_for_derivatives, and
 		// so the water derivative matrices have been allocated & computed.
