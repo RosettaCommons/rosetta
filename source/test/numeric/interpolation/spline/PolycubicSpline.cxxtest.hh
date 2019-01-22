@@ -661,12 +661,12 @@ public:
 		for ( Size ii(0); ii<=50; ii+=2 ) {
 			for ( Size jj(0); jj<=50; jj+=2 ) {
 				MathVector< Real > coord1( 2 );
-				coord1(1) = static_cast<Real>(ii);
-				coord1(2) = static_cast<Real>(jj);
+				coord1(0) = static_cast<Real>(ii);
+				coord1(1) = static_cast<Real>(jj);
 				MathVector< Real > coord2( 2 );
-				coord2(1) = static_cast<Real>(50-ii);
-				coord2(2) = static_cast<Real>(50-jj);
-				TR << "COORD1=[" << coord1(1) << "," << coord1(2) << "]\tCOORD2=[" << coord2(1) << "," << coord2(2) << "]\tFIRST=" << ps.F(coord1) << "\tSECOND=" << ps.F(coord2) << std::endl;
+				coord2(0) = static_cast<Real>(50-ii);
+				coord2(1) = static_cast<Real>(50-jj);
+				TR << "COORD1=[" << coord1(0) << "," << coord1(1) << "]\tCOORD2=[" << coord2(0) << "," << coord2(1) << "]\tFIRST=" << ps.F(coord1) << "\tSECOND=" << ps.F(coord2) << std::endl;
 				TS_ASSERT_DELTA( ps.F(coord1), ps.F(coord2), 1e-6 );
 			}
 		}

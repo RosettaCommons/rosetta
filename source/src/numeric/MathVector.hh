@@ -241,14 +241,18 @@ public:
 	/// return reference to changeable element ( POS)
 	T &operator()( const Size POS)
 	{
+#ifndef NDEBUG
 		assert_valid_position( POS);
+#endif
 		return data_[ POS];
 	}
 
 	/// return copy of element ( POS)
 	const T &operator()( const Size POS) const
 	{
+#ifndef NDEBUG
 		assert_valid_position( POS);
+#endif
 		return data_[ POS];
 	}
 
@@ -381,7 +385,7 @@ protected:
 	/// check whether position is valid
 	bool assert_valid_position( const Size POS) const
 	{
-		if ( POS > size_ ) {
+		if ( POS >= size_ ) {
 			utility_exit_with_message("cannot access element outside of range!");
 			return false;
 		} else return true;
