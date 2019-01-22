@@ -85,7 +85,7 @@ void
 MoverJob::add_metrics(utility::vector1< core::simple_metrics::SimpleMetricCOP > metrics, std::string const & data_prefix  ) {
 
 	if ( metrics_.count(data_prefix) ) {
-		for ( auto const metric : metrics ) {
+		for ( auto const & metric : metrics ) {
 			metrics_[data_prefix].push_back(metric);
 		}
 	} else {
@@ -128,7 +128,7 @@ MoverJob::run() {
 	while ( pose_ ) {
 
 		//Run any set metrics in preparation for the JobSummary
-		for ( auto const metric_pair : metrics_ ) {
+		for ( auto const & metric_pair : metrics_ ) {
 			run_metrics( *pose_, metric_pair.second, metric_pair.first);
 		}
 
