@@ -13,7 +13,7 @@ END_SELECTOR
 BEGIN_CASE  # ->1)-Sugar
 
 BEGIN_SELECTOR
-UPPER_POSITION 1
+UPPER_ATOM O1
 END_SELECTOR
 
 ADD_ATOM OVL1 VIRT VIRT 0.0  # virtual atom to overlap with the next mainchain atom across the cutpoint (used by name within the chainbreak scoring method code)
@@ -31,7 +31,7 @@ END_CASE
 BEGIN_CASE  # ->2)-Sugar
 
 BEGIN_SELECTOR
-UPPER_POSITION 2
+UPPER_ATOM O2
 END_SELECTOR
 
 ADD_ATOM OVL1 VIRT VIRT 0.0  # virtual atom to overlap with the next mainchain atom across the cutpoint (used by name within the chainbreak scoring method code)
@@ -49,7 +49,7 @@ END_CASE
 BEGIN_CASE  # ->3)-Sugar
 
 BEGIN_SELECTOR
-UPPER_POSITION 3
+UPPER_ATOM O3
 END_SELECTOR
 
 ADD_ATOM OVL1 VIRT VIRT 0.0  # virtual atom to overlap with the next mainchain atom across the cutpoint (used by name within the chainbreak scoring method code)
@@ -67,7 +67,7 @@ END_CASE
 BEGIN_CASE  # ->4)-Sugar
 
 BEGIN_SELECTOR
-UPPER_POSITION 4
+UPPER_ATOM O4
 END_SELECTOR
 
 ADD_ATOM OVL1 VIRT VIRT 0.0  # virtual atom to overlap with the next mainchain atom across the cutpoint (used by name within the chainbreak scoring method code)
@@ -85,7 +85,7 @@ END_CASE
 BEGIN_CASE  # ->5)-Sugar
 
 BEGIN_SELECTOR
-UPPER_POSITION 5
+UPPER_ATOM O5
 END_SELECTOR
 
 ADD_ATOM OVL1 VIRT VIRT 0.0  # virtual atom to overlap with the next mainchain atom across the cutpoint (used by name within the chainbreak scoring method code)
@@ -103,7 +103,7 @@ END_CASE
 BEGIN_CASE  # ->6)-Sugar
 
 BEGIN_SELECTOR
-UPPER_POSITION 6
+UPPER_ATOM O6
 END_SELECTOR
 
 ADD_ATOM OVL1 VIRT VIRT 0.0  # virtual atom to overlap with the next mainchain atom across the cutpoint (used by name within the chainbreak scoring method code)
@@ -121,7 +121,7 @@ END_CASE
 BEGIN_CASE  # ->7)-Sugar
 
 BEGIN_SELECTOR
-UPPER_POSITION 7
+UPPER_ATOM O7
 END_SELECTOR
 
 ADD_ATOM OVL1 VIRT VIRT 0.0  # virtual atom to overlap with the next mainchain atom across the cutpoint (used by name within the chainbreak scoring method code)
@@ -139,7 +139,7 @@ END_CASE
 BEGIN_CASE  # ->8)-Sugar
 
 BEGIN_SELECTOR
-UPPER_POSITION 8
+UPPER_ATOM O8
 END_SELECTOR
 
 ADD_ATOM OVL1 VIRT VIRT 0.0  # virtual atom to overlap with the next mainchain atom across the cutpoint (used by name within the chainbreak scoring method code)
@@ -157,7 +157,7 @@ END_CASE
 BEGIN_CASE  # ->9)-Sugar
 
 BEGIN_SELECTOR
-UPPER_POSITION 9
+UPPER_ATOM O9
 END_SELECTOR
 
 ADD_ATOM OVL1 VIRT VIRT 0.0  # virtual atom to overlap with the next mainchain atom across the cutpoint (used by name within the chainbreak scoring method code)

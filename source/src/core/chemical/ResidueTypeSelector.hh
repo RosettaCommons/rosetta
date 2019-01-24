@@ -330,29 +330,25 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////////////
 /// @brief   Does the main chain of this residue follow from the given position label?
-/// @details By position, it is meant the single digit integer by which atoms are labeled to indicate their position.
-/// For example, if an upper connection is from C8 of a generic residue, the position is 8.
+/// @details By position, it is meant the atom to which the UPPER connection is attached.
 /// @remarks This selector was added primarily for use with carbohydrate residues, which have a wide assortment of main-
 /// chain designations.  To properly patch upper terminus variants, it is necessary to know which atoms need to be added
-/// and, particularly, at which position to add them.  However, this selector could be adapted for any residue subclass
-/// that contains variability in the main chain, provided the nomenclature is consistent and numerical.
+/// and, particularly, at which position to add them.  However, this selector can be used for any residue subclass that
+/// contains variability in the main chain.
 /// See patches/carbohydrates/upper_terminus.txt for an example of use.
 /// @author  Labonte
-class Selector_UPPER_POSITION : public ResidueTypeSelectorSingle {
+class Selector_UPPER_ATOM : public ResidueTypeSelectorSingle {
 public:
-	Selector_UPPER_POSITION(uint const position, bool const result) :
+	Selector_UPPER_ATOM(std::string const & position, bool const result) :
 		ResidueTypeSelectorSingle(result),
 		position_(position)
 	{}
 
 	/// @brief Select by the position at which the upper connection is attached.
-	/// @note  This is currently written to work only with carbohydrates, since only carbohydrates store their main-
-	/// chain position.  If needed for another residue subclass, one would need to modify this method.  OR, it would be
-	/// better to create a datum for storing the main-chain position in ResidueType.
 	bool
 	operator[](ResidueType const & rsd) const override {
-		if ( rsd.is_carbohydrate() ) {  // only option for now
-			if ( rsd.carbohydrate_info()->mainchain_glycosidic_bond_acceptor() == position_ ) {
+		if ( rsd.upper_connect_id() != 0 && rsd.has( position_ ) ) {
+			if ( rsd.atom_index( position_ ) == rsd.upper_connect_atom() ) {
 				return desired_result();
 			}
 		}
@@ -360,11 +356,11 @@ public:
 	}
 
 private:
-	uint position_;  // This is the position label at which the upper connection is attached.
+	std::string position_;  // This is the position label at which the upper connection is attached.
 #ifdef    SERIALIZATION
 protected:
 	friend class cereal::access;
-	Selector_UPPER_POSITION();
+	Selector_UPPER_ATOM();
 
 public:
 	template< class Archive > void save( Archive & arc ) const;

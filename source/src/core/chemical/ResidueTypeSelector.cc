@@ -122,10 +122,12 @@ residue_selector_single_from_line( std::string const & line )
 		if ( !variant_types.empty() ) return utility::pointer::make_shared< Selector_VARIANT_TYPE >( variant_types, desired_result );
 
 	} else if ( tag == "UPPER_POSITION" ) {  // This is the position label at which the upper connection is attached.
-		uint position;
+		utility_exit_with_message("The UPPER_POSITION selector has been removed. Use UPPER_ATOM (specifying the atom name attached to the UPPER connection) instead.");
+	} else if ( tag == "UPPER_ATOM" ) {
+		std::string position;
 		l >> position;
-		if ( position ) {
-			return utility::pointer::make_shared< Selector_UPPER_POSITION >(position, desired_result);
+		if ( !position.empty() ) {
+			return utility::pointer::make_shared< Selector_UPPER_ATOM >(position, desired_result);
 		}
 
 	} else if ( tag == "CMDLINE_SELECTOR" ) {
@@ -335,26 +337,26 @@ CEREAL_REGISTER_TYPE( core::chemical::Selector_NO_VARIANTS )
 
 
 /// @brief Default constructor required by cereal to deserialize this class
-core::chemical::Selector_UPPER_POSITION::Selector_UPPER_POSITION() {}
+core::chemical::Selector_UPPER_ATOM::Selector_UPPER_ATOM() {}
 
 /// @brief Automatically generated serialization method
 template< class Archive >
 void
-core::chemical::Selector_UPPER_POSITION::save( Archive & arc ) const {
+core::chemical::Selector_UPPER_ATOM::save( Archive & arc ) const {
 	arc( cereal::base_class< core::chemical::ResidueTypeSelectorSingle >( this ) );
-	arc( CEREAL_NVP( position_ ) ); // uint
+	arc( CEREAL_NVP( position_ ) ); // std::string
 }
 
 /// @brief Automatically generated deserialization method
 template< class Archive >
 void
-core::chemical::Selector_UPPER_POSITION::load( Archive & arc ) {
+core::chemical::Selector_UPPER_ATOM::load( Archive & arc ) {
 	arc( cereal::base_class< core::chemical::ResidueTypeSelectorSingle >( this ) );
-	arc( position_ ); // uint
+	arc( position_ ); // std::string
 }
 
-SAVE_AND_LOAD_SERIALIZABLE( core::chemical::Selector_UPPER_POSITION );
-CEREAL_REGISTER_TYPE( core::chemical::Selector_UPPER_POSITION )
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::Selector_UPPER_ATOM );
+CEREAL_REGISTER_TYPE( core::chemical::Selector_UPPER_ATOM )
 
 
 /// @brief Automatically generated serialization method
