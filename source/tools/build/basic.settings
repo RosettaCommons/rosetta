@@ -311,6 +311,8 @@ settings = {
                     # "fstack-check"
                 ],
             },
+	    # enable STL debug mode, see https://gcc.gnu.org/onlinedocs/libstdc++/manual/debug_mode_using.html
+            "defines" : [ "_GLIBCXX_DEBUG" ],
         },
     },
 
@@ -417,8 +419,24 @@ settings = {
                 ],
             },
             #"defines" : [ "NDEBUG" ],
+
+	    # enable STL debug mode, see https://gcc.gnu.org/onlinedocs/libstdc++/manual/debug_mode_using.html
+            "defines" : [ "_GLIBCXX_DEBUG" ],
         },
     },
+
+	"gcc, 8.1" : {
+		"appends" : {
+			"flags" : {
+				"link" : [
+					"--no-as-needed",
+				],
+				"compile" : [
+					"--no-as-needed",
+				],
+			},
+		},
+	},
 
     "gcc, 4.9, release_debug" : {
         "appends" : {
@@ -450,6 +468,9 @@ settings = {
                 ],
             },
             #"defines" : [ "NDEBUG" ],
+
+	    # enable STL debug mode, see https://gcc.gnu.org/onlinedocs/libstdc++/manual/debug_mode_using.html
+            "defines" : [ "_GLIBCXX_DEBUG" ],
         },
     },
 
@@ -2049,6 +2070,13 @@ settings = {
                 "compile" : [ "O0" ],
                 "mode" : [ "g" ],
             },
+
+	    # looks like debug mode is broken in Xcode 9.0, disbaling this for now
+	    # enable STL debug mode, see https://libcxx.llvm.org/docs/DesignDocs/DebugMode.html and https://gcc.gnu.org/onlinedocs/libstdc++/manual/debug_mode_using.html
+        # I had played around with keeping _GLIBCXX_DEBUG for mac, but it's not strictly necessary 
+        # as long as SOME tests are running with the stricter settings, and it was hell on a few
+        # tests for some reason
+            #"defines" : [ "_LIBCPP_DEBUG", "_GLIBCXX_DEBUG" ],
         },
     },
 
@@ -2117,6 +2145,10 @@ settings = {
                 ],
             },
             #"defines" : [ "NDEBUG" ],
+
+	    # looks like debug mode is broken in Xcode 9.0, disbaling this for now
+	    # enable STL debug mode, see https://libcxx.llvm.org/docs/DesignDocs/DebugMode.html and https://gcc.gnu.org/onlinedocs/libstdc++/manual/debug_mode_using.html
+            #"defines" : [ "_LIBCPP_DEBUG", "_GLIBCXX_DEBUG" ],
         },
     },
 
@@ -2135,6 +2167,10 @@ settings = {
                 ],
             },
             #"defines" : [ "NDEBUG" ],
+
+	    # looks like debug mode is broken in Xcode 9.0, disbaling this for now
+	    # enable STL debug mode, see https://libcxx.llvm.org/docs/DesignDocs/DebugMode.html and https://gcc.gnu.org/onlinedocs/libstdc++/manual/debug_mode_using.html
+            #"defines" : [ "_LIBCPP_DEBUG", "_GLIBCXX_DEBUG" ],
         },
     },
 

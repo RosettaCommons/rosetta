@@ -144,13 +144,17 @@ public:
 		mm_torsion_atom_quad C = make_quad( "X", "CP2", "CP3", "X" );
 		mtlcp =  mmtorsionlibrary->lookup( "X", "CP2", "CP3", "X" );
 		mtlc = mtlcp.first;
-		TS_ASSERT_EQUALS(  mtlc->first, C ); TS_ASSERT_EQUALS( mtlc->second, *params1 ); mtlc++;
-		TS_ASSERT_DIFFERS( mtlc->first, C );
+		TS_ASSERT_EQUALS(  mtlc->first, C ); TS_ASSERT_EQUALS( mtlc->second, *params1 );
+		// CANNOT DO THIS AMW WILL BREAK STDLIB DEBUG
+		//mtlc++;
+		//TS_ASSERT_DIFFERS( mtlc->first, C );
 		// backward
 		mtlcp =  mmtorsionlibrary->lookup( "X", "CP3", "CP2", "X" );
 		mtlc = mtlcp.first;
-		TS_ASSERT_EQUALS(  mtlc->first, C ); TS_ASSERT_EQUALS( mtlc->second, *params1 ); mtlc++;
-		TS_ASSERT_DIFFERS( mtlc->first, C );
+		TS_ASSERT_EQUALS(  mtlc->first, C ); TS_ASSERT_EQUALS( mtlc->second, *params1 );
+		// CANNOT DO THIS
+		//mtlc++;
+		//TS_ASSERT_DIFFERS( mtlc->first, C );
 
 		// test lookup explicite wildcard by string multiparam
 		// forward
@@ -174,13 +178,17 @@ public:
 		mm_torsion_atom_quad E = make_quad( "X", "CP2", "CP3", "X" );
 		mtlcp =  mmtorsionlibrary->lookup( "CC", "CP2", "CP3", "CC" );
 		mtlc = mtlcp.first;
-		TS_ASSERT_EQUALS(  mtlc->first, E ); TS_ASSERT_EQUALS( mtlc->second, *params1 ); mtlc++;
-		TS_ASSERT_DIFFERS( mtlc->first, E );
+		TS_ASSERT_EQUALS(  mtlc->first, E ); TS_ASSERT_EQUALS( mtlc->second, *params1 );
+		// CANNOT DO
+		//mtlc++;
+		//TS_ASSERT_DIFFERS( mtlc->first, E );
 		// backward
 		mtlcp =  mmtorsionlibrary->lookup( "CC", "CP3", "CP2", "CC" );
 		mtlc = mtlcp.first;
-		TS_ASSERT_EQUALS(  mtlc->first, E ); TS_ASSERT_EQUALS( mtlc->second, *params1 ); mtlc++;
-		TS_ASSERT_DIFFERS( mtlc->first, E );
+		TS_ASSERT_EQUALS(  mtlc->first, E ); TS_ASSERT_EQUALS( mtlc->second, *params1 );
+		// CANNOT DO
+		//mtlc++;
+		//TS_ASSERT_DIFFERS( mtlc->first, E );
 
 		// test lookup wildcard by string multiparam
 		// forward

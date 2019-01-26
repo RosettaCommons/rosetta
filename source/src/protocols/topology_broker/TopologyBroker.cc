@@ -360,8 +360,9 @@ void TopologyBroker::build_fold_tree( claims::DofClaims & claims, Size nres ) {
 					<< cut_ptr->owner().lock()->label() << "' being ignored/erased because it is outside the valid sequence region "
 					<< "[1, " << nres << "]. This is expected behavior from one (and only one) sequence claimer." << std::endl;
 
-				claims.erase( claim );
-				//Modifying removing an element from the list apparently requires us to go back one in the iterator.
+				// We must capture the next valid value so that we can then decrement
+				claim = claims.erase( claim );
+				// Here we decrement... because after the loop turns, we will have incremented...
 				--claim;
 			} else {
 				must_cut.push_back( std::make_pair(cut_ptr, global_position) );

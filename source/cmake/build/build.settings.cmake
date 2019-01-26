@@ -57,6 +57,15 @@ if( ${COMPILER} STREQUAL "gcc" )
 			-Wno-strict-aliasing
 	)
 
+	if( ${CMAKE_CXX_COMPILER_VERSION} VERSION_GREATER "8.1" )
+		list( APPEND compile
+			-Wl,--no-as-needed
+		)
+		list( APPEND link
+			-Wl,--no-as-needed
+		)
+	endif()
+
 endif()
 
 # modes ###################################################################
@@ -74,6 +83,7 @@ if( ${COMPILER} STREQUAL "gcc" AND ${MODE} STREQUAL "debug" )
 	)
 	list( APPEND defines
 			-D_DEBUG
+			-D_GLIBCXX_DEBUG
 	)
 endif()
 
@@ -313,6 +323,11 @@ if( ${COMPILER} STREQUAL "clang" AND ${MODE} STREQUAL "debug" )
 	)
 	list( APPEND mode
 			-g
+	)
+	list( APPEND defines
+
+			# disbaling due to linking problem with Xcode 9.0 -D_LIBCPP_DEBUG
+			-D_GLIBCXX_DEBUG
 	)
 endif()
 

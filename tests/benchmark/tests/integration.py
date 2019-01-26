@@ -66,17 +66,21 @@ def run_general(mode, rosetta_dir, platform, jobs, TR, debug, full_log, build_co
     """
 
     if re.search("--demos", additional_flags) or re.search("--tutorials", additional_flags):
-        ref_files_location = os.path.realpath(rosetta_dir+'/../demos/ref')
+        new_ref_files_location = os.path.realpath(rosetta_dir+'/../demos')
     else:
-        ref_files_location = rosetta_dir+'/tests/integration/ref/'
+        new_ref_files_location = rosetta_dir+'/tests/integration'
+
+    for suffix in ['new', 'ref']:
+        res_dir = new_ref_files_location + '/' + suffix
+
+        if os.path.isdir(res_dir): TR(f'Removing old dir {res_dir}...');  shutil.rmtree(res_dir)
+        TR(f'Creating an empty dir {res_dir}...')
+        os.mkdir(res_dir)
+
 
     # Make a dummy ref directory and skip comparison if we're not in valgrind mode.
     if not re.search("--valgrind", additional_flags):
         additional_flags = "--skip-comparison " + additional_flags
-
-        if os.path.isdir(ref_files_location): TR( 'Removing old ref dir {}...'.format(ref_files_location) );  shutil.rmtree(ref_files_location)
-        TR('Creating a dummy ref dir {}...'.format(ref_files_location))
-        os.mkdir(ref_files_location)
 
     compiler = platform['compiler']
     extras   = ','.join(platform['extras'])
@@ -140,13 +144,15 @@ def run_integration_tests(mode, rosetta_dir, working_dir, platform, config, hpc_
 
     with open(working_dir + '/full-log.txt', 'wb') as f: f.write( to_bytes(full_log) )
 
-    if mode in ['ubsan','addsan']:
-        # Don't queue for comparison - sanitizers are hard pass/fail.
-        results =  gather_pass_fail_results(files_location)
-    else:
-        results[_StateKey_]  = _S_queued_for_comparison_ #This queues the comparison for the test server, which will run compare function in this file.
-    results[_LogKey_]    =  'Compiling: {}\nRunning: {}\n'.format(build_command_line, command_line) + output  # omitting compilation log and only including integration.py output
-    results[_IgnoreKey_] = ignore
+    if _StateKey_ not in results: # it possible that failure was already reported by setting state to _S_failed_ or even _S_script_failed_
+        if mode in ['ubsan','addsan']:
+            # Don't queue for comparison - sanitizers are hard pass/fail.
+            results =  gather_pass_fail_results(files_location)
+        else:
+            results[_StateKey_]  = _S_queued_for_comparison_ #This queues the comparison for the test server, which will run compare function in this file.
+
+        results[_LogKey_]    =  'Compiling: {}\nRunning: {}\n'.format(build_command_line, command_line) + output  # omitting compilation log and only including integration.py output
+        results[_IgnoreKey_] = ignore
     return results
 
 

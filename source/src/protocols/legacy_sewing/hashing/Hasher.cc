@@ -638,7 +638,9 @@ Hasher::transform_model(
 	ModelIterator<SewSegment> model_it = model.model_begin();
 	ModelIterator<SewSegment> erase_it;
 	for ( ; model_it != model.model_end(); ++model_it ) {
-		if ( model_it.residue()->resnum_ != basis_residue.resnum_ && model_it.segment()->hash_ ) {
+		if ( model_it.segment_valid()
+				&& model_it.residue() != model_it.segment()->residues_.end()
+				&& model_it.residue()->resnum_ != basis_residue.resnum_ && model_it.segment()->hash_ ) {
 			model_it.atom()->coords_ = ht.to_local_coordinate(model_it.atom()->coords_);
 		} else {
 			erase_it = model_it;

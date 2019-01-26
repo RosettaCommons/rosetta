@@ -171,7 +171,7 @@ get_branching_residues(
 	utility::vector1< Size > const & children_residues,
 	utility::vector1< Size > & list_of_residues,
 	utility::vector1< Size > & tips,
-	std::set< Size > const & ancestors = {} );
+	std::set< Size > const & ancestors = std::set< Size >() );
 
 
 /// @brief  Find all children residues, list of residues, and any found tips from a given residue not including parent

@@ -111,13 +111,17 @@ public:
 		mm_bondangle_atom_tri A = make_tri( "C", "CA", "CP1" );
 		mbalcp = mmbondanglelibrary->lookup( "C", "CA", "CP1" );
 		mbalc = mbalcp.first;
-		TS_ASSERT_EQUALS(  mbalc->first, A ); TS_ASSERT_EQUALS( mbalc->second, *params1 ); mbalc++;
-		TS_ASSERT_DIFFERS( mbalc->first, A );
+		TS_ASSERT_EQUALS(  mbalc->first, A ); TS_ASSERT_EQUALS( mbalc->second, *params1 );
+		// YOU CANNOT DO THIS
+		//mbalc++;
+		//TS_ASSERT_DIFFERS( mbalc->first, A );
 		// backward
 		mbalcp =  mmbondanglelibrary->lookup( "CP1", "CA", "C" );
 		mbalc = mbalcp.first;
-		TS_ASSERT_EQUALS(  mbalc->first, A ); TS_ASSERT_EQUALS( mbalc->second, *params1 ); mbalc++;
-		TS_ASSERT_DIFFERS( mbalc->first, A );
+		TS_ASSERT_EQUALS(  mbalc->first, A ); TS_ASSERT_EQUALS( mbalc->second, *params1 );
+		// YOU CANNOT DO THIS
+		//mbalc++;
+		//TS_ASSERT_DIFFERS( mbalc->first, A );
 
 
 		// test lookup fully assigned by string multiparam
@@ -144,12 +148,12 @@ public:
 		mbalcp =  mmbondanglelibrary->lookup( "X", "CP2", "X" );
 		mbalc = mbalcp.first;
 		TS_ASSERT_EQUALS(  mbalc->first, C ); TS_ASSERT_EQUALS( mbalc->second, *params1 ); mbalc++;
-		TS_ASSERT_DIFFERS( mbalc->first, C );
-		// backward
+		//TS_ASSERT_DIFFERS( mbalc->first, C );
+		// backward -- HOW? this is exactly like the above. Oh, a palindrome...
 		mbalcp =  mmbondanglelibrary->lookup( "X", "CP2", "X" );
 		mbalc = mbalcp.first;
 		TS_ASSERT_EQUALS(  mbalc->first, C ); TS_ASSERT_EQUALS( mbalc->second, *params1 ); mbalc++;
-		TS_ASSERT_DIFFERS( mbalc->first, C );
+		//TS_ASSERT_DIFFERS( mbalc->first, C );
 
 		// test lookup explicite wildcard by string multiparam
 		// forward
@@ -173,13 +177,17 @@ public:
 		mm_bondangle_atom_tri E = make_tri( "X", "CP2", "X" );
 		mbalcp =  mmbondanglelibrary->lookup( "CC", "CP2", "CA" );
 		mbalc = mbalcp.first;
-		TS_ASSERT_EQUALS(  mbalc->first, E ); TS_ASSERT_EQUALS( mbalc->second, *params1 ); mbalc++;
-		TS_ASSERT_DIFFERS( mbalc->first, E );
+		TS_ASSERT_EQUALS(  mbalc->first, E ); TS_ASSERT_EQUALS( mbalc->second, *params1 );
+		// CANNOT DO THIS AMW FAILS STDLIB DEBUG
+		//mbalc++;
+		//TS_ASSERT_DIFFERS( mbalc->first, E );
 		// backward
 		mbalcp =  mmbondanglelibrary->lookup( "CA", "CP2", "CC" );
 		mbalc = mbalcp.first;
-		TS_ASSERT_EQUALS(  mbalc->first, E ); TS_ASSERT_EQUALS( mbalc->second, *params1 ); mbalc++;
-		TS_ASSERT_DIFFERS( mbalc->first, E );
+		TS_ASSERT_EQUALS(  mbalc->first, E ); TS_ASSERT_EQUALS( mbalc->second, *params1 );
+		// CANNOT DO THIS
+		//mbalc++;
+		//TS_ASSERT_DIFFERS( mbalc->first, E );
 
 		// test lookup wildcard by string multiparam
 		// forward

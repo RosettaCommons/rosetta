@@ -1649,19 +1649,19 @@ GeneralizedKIC::doKIC(
 		core::Size solcount(0);
 		for ( auto it=t_ang[iattempt].begin(); it!=t_ang[iattempt].end(); ) {
 			++solcount;
-			if ( solutions_to_delete[solcount] ) { t_ang[iattempt].erase( it ); }
+			if ( solutions_to_delete[solcount] ) { it = t_ang[iattempt].erase( it ); }
 			else { ++it; }
 		}
 		solcount=0;
 		for ( auto it=b_ang[iattempt].begin(); it!=b_ang[iattempt].end(); ) {
 			++solcount;
-			if ( solutions_to_delete[solcount] ) { b_ang[iattempt].erase( it ); }
+			if ( solutions_to_delete[solcount] ) { it = b_ang[iattempt].erase( it ); }
 			else { ++it; }
 		}
 		solcount=0;
 		for ( auto it=b_len[iattempt].begin(); it!=b_len[iattempt].end(); ) {
 			++solcount;
-			if ( solutions_to_delete[solcount] ) { b_len[iattempt].erase( it ); }
+			if ( solutions_to_delete[solcount] ) { it = b_len[iattempt].erase( it ); }
 			else { ++it; }
 		}
 

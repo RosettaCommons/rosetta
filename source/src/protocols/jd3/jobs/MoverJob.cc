@@ -74,7 +74,7 @@ MoverJob::set_mover( moves::MoverOP mover){
 void
 MoverJob::add_mover( moves::MoverOP mover){
 
-	if ( mover_->name() != "SequenceMover" ) {
+	if ( !mover_ || mover_->name() != "SequenceMover" ) {
 		mover_ = moves::SequenceMoverOP( new moves::SequenceMover());
 	}
 	moves::SequenceMover & seq_mover = dynamic_cast<moves::SequenceMover & >( *mover_ );

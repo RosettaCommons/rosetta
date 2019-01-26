@@ -1051,7 +1051,7 @@ VoxelGrid<T>::GetNeighbors1D
 	for ( auto itr_zvec( Assignments_.begin() ), itr_zvec_end( Assignments_.end() );
 			itr_zvec != itr_zvec_end; ++itr_zvec, ++index_z_end ) {
 
-		auto itr_zvec_b_end( std::min( Assignments_.begin() + index_z_end, itr_zvec_end));
+		auto itr_zvec_b_end( index_z_end <= Assignments_.size() ? Assignments_.begin() + index_z_end : itr_zvec_end );
 		for ( auto itr_zobj( itr_zvec->begin() ), itr_zobj_end( itr_zvec->end() );
 				itr_zobj != itr_zobj_end; ++itr_zobj ) {
 
@@ -1116,7 +1116,8 @@ VoxelGrid<T>::GetNeighbors1D
 	const Size n_bins_1d( std::ceil(neighborhood / MinResolution_) );
 	const Size pos( GetIndex(coord) - 1 );
 	auto itr_zvec_b( Assignments_.begin() + pos ), itr_zvec_b_base( Assignments_.begin() + pos );
-	auto itr_zvec_b_end( std::min( Assignments_.begin() + pos + n_bins_1d + 1, Assignments_.end() ) );
+	// We can't use  std::min( Assignments_.begin() + pos + n_bins_1d + 1, Assignments_.end() )
+	auto itr_zvec_b_end( pos + n_bins_1d >= Assignments_.size() ? Assignments_.end() : Assignments_.begin() + pos + n_bins_1d + 1 );
 
 	for ( auto itr_zvec_a( itr_zvec_b->begin() ), itr_zvec_a_end( itr_zvec_b->end() );
 			itr_zvec_a != itr_zvec_a_end; ++itr_zvec_a ) {
@@ -1128,7 +1129,10 @@ VoxelGrid<T>::GetNeighbors1D
 		}
 	}
 
-	for ( itr_zvec_b = std::max( Assignments_.begin() - n_bins_1d + pos, Assignments_.begin() );
+	// We can't use this former construction here because if Assignments_.beign() - n_bins_1d + pos
+	// is less than Assignments_.begin(), it is nonsense.
+	//  std::max( Assignments_.begin() - n_bins_1d + pos, Assignments_.begin() )
+	for ( itr_zvec_b = ( ( pos < n_bins_1d ) ? Assignments_.begin() : Assignments_.begin() + ( pos - n_bins_1d ) );
 			itr_zvec_b != itr_zvec_b_end; ++itr_zvec_b ) {
 		if ( itr_zvec_b == itr_zvec_b_base ) {
 			continue;
@@ -1185,7 +1189,8 @@ VoxelGrid<T>::GetNeighbors1D
 				t_DataType const * obj_a( itr_obj_a->first );
 				const Size pos( GetIndex(coord) - 1 );
 				auto itr_zvec_b( Assignments_.begin() + pos ), itr_zvec_b_base( Assignments_.begin() + pos );
-				auto itr_zvec_b_end( std::min( Assignments_.begin() + pos + n_bins_1d + 1, Assignments_.end() ) );
+				// can't do std::min( Assignments_.begin() + pos + n_bins_1d + 1, Assignments_.end() )
+				auto itr_zvec_b_end( pos + n_bins_1d >= Assignments_.size() ? Assignments_.end() : Assignments_.begin() + pos + n_bins_1d + 1 );
 
 				for ( auto itr_zvec_a( itr_zvec_b->begin() ), itr_zvec_a_end( itr_zvec_b->end() );
 						itr_zvec_a != itr_zvec_a_end; ++itr_zvec_a ) {
@@ -1197,7 +1202,8 @@ VoxelGrid<T>::GetNeighbors1D
 					}
 				}
 
-				for ( itr_zvec_b = std::max( Assignments_.begin() - n_bins_1d + pos, Assignments_.begin() );
+				// can't do std::max( Assignments_.begin() - n_bins_1d + pos, Assignments_.begin()
+				for ( itr_zvec_b = ( ( pos >= n_bins_1d ) ? Assignments_.begin() + ( pos - n_bins_1d ) : Assignments_.begin() );
 						itr_zvec_b != itr_zvec_b_end; ++itr_zvec_b ) {
 					if ( itr_zvec_b == itr_zvec_b_base ) {
 						continue;
@@ -1249,7 +1255,7 @@ VoxelGrid<T>::HasNeighbors1D
 	const Size n_bins_1d( std::ceil(neighborhood / MinResolution_) );
 	const Size pos( GetIndex(coord) - 1 );
 	auto itr_zvec_b( Assignments_.begin() + pos ), itr_zvec_b_base( Assignments_.begin() + pos );
-	auto itr_zvec_b_end( std::min( Assignments_.begin() + pos + n_bins_1d + 1, Assignments_.end() ) );
+	auto itr_zvec_b_end( pos + n_bins_1d >= Assignments_.size() ? Assignments_.end() : Assignments_.begin() + pos + n_bins_1d + 1 );
 
 	// Loop through the object's own voxel
 	for ( auto itr_zvec_a( itr_zvec_b->begin() ), itr_zvec_a_end( itr_zvec_b->end() );
@@ -1263,7 +1269,7 @@ VoxelGrid<T>::HasNeighbors1D
 	}
 
 	// Look through neighboring voxels
-	for ( itr_zvec_b = std::max( Assignments_.begin() - n_bins_1d + pos, Assignments_.begin() );
+	for ( itr_zvec_b = ( ( pos >= n_bins_1d ) ? Assignments_.begin() - n_bins_1d + pos : Assignments_.begin() );
 			itr_zvec_b != itr_zvec_b_end; ++itr_zvec_b ) {
 		if ( itr_zvec_b == itr_zvec_b_base ) {
 			continue;

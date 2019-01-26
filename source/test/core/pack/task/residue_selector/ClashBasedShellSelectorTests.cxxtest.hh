@@ -209,15 +209,16 @@ public:
 		// Empty pose:
 		// This should cause any errors.
 		TS_ASSERT_EQUALS(
-			bool_mask_from_resnums(pose, {}),
+			bool_mask_from_resnums(pose, std::set<core::Size>()),
 			vector1<bool>({}) );
 
 		// Make a pose with two residues.
 		make_pose_from_sequence(pose, "AA", core::chemical::FA_STANDARD);
 
 		// No residues:
+		// AMW: apparently with STL debug you can't construct an empty set this way?
 		TS_ASSERT_EQUALS(
-			bool_mask_from_resnums(pose, {}),
+			bool_mask_from_resnums(pose, std::set<core::Size>()),
 			vector1<bool>({0, 0}) );
 
 		// One residue:
@@ -274,14 +275,16 @@ public:
 
 		// Empty pose:
 		// This shouldn't cause any errors.
-		task = task_from_resnums(pose, {});
+		// AMW: apparently with STL debug you can't construct an empty set this way?
+		task = task_from_resnums(pose, std::set<core::Size>());
 		TS_ASSERT_EQUALS( task->total_residue(), 0 );
 
 		// Make a pose with two residues.
 		make_pose_from_sequence(pose, "AA", core::chemical::FA_STANDARD);
 
 		// No residues:
-		task = task_from_resnums(pose, {});
+		// AMW: apparently with STL debug you can't construct an empty set this way?
+		task = task_from_resnums(pose, std::set<core::Size>());
 		TS_ASSERT_EQUALS( task->being_packed(1), false );
 		TS_ASSERT_EQUALS( task->being_packed(2), false );
 

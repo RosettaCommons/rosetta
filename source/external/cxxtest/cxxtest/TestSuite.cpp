@@ -140,10 +140,11 @@ namespace CxxTest
 			}
 		}
 
-		for(std::vector< std::string >::iterator it=r.end(); it!=r.begin(); ) {  /// removing empty lines
-			it--;
-			if( it->size() == 0 ) r.erase( it );
+		for(auto i = r.size(); i != 0; ) {
+			--i;
+			if( r[i].size() == 0 ) r.erase( r.begin() + i );
 		}
+
 		return r;
 	}
 

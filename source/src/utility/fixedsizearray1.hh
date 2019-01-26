@@ -220,12 +220,12 @@ public:
 		return fixedsizearray1iterator< T, S >( array_ptr_, position_ - d );
 	}
 
-	friend
-	distance
-	operator - ( fixedsizearray1const_iterator< T, S > const & a,
-		fixedsizearray1const_iterator< T, S > const & b ) {
-		return a.position_ - b.position_;
-	}
+	// friend
+	// distance
+	// operator - ( fixedsizearray1const_iterator< T, S > const & a,
+	//  fixedsizearray1const_iterator< T, S > const & b ) {
+	//  return a.position_ - b.position_;
+	// }
 
 	friend
 	inline

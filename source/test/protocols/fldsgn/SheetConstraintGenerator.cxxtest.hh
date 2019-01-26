@@ -86,6 +86,9 @@ structuredata_from_motifs( Motifs const & motifs )
 		newsegment.set_upper_segment( upper );
 		perm->add_segment( newsegment );
 		prev = m;
+
+		// If next is now motifs.end() we will try to increment, but we must not.
+		if ( next == motifs.end() ) break;
 	}
 	return perm;
 }

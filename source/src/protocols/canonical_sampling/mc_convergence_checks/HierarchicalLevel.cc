@@ -862,6 +862,8 @@ HierarchicalLevel::pool_size( Address & addr, core::Size level ) {
 		return 0;
 	}
 	PROF_STOP( basic::HIERARCHICAL_POOL_SIZE );
+
+	return 0;
 }
 
 

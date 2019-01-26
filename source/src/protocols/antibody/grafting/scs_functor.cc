@@ -148,7 +148,9 @@ void SCS_BlastFilter_by_sequence_length::apply(AntibodySequence const &A, SCS_Re
 
 			if( region.query_sequence.size() != (br->*region.result_sequence).size() ) {
 				TR.Trace << CSI_Red() << "SCS_BlastFilter_by_sequence_length: Filtering " << br->pdb << ": " << region.query_sequence.size() << "!=" << (br->*region.result_sequence).size() << "..." << CSI_Reset() << std::endl;
-				region.r.erase( std::next(p++).base() );
+				//region.r.erase( std::next(p++).base() );
+				region.r.erase( std::next(p).base() );
+				p = region.r.rbegin();
 			}
 			else {
 				// TR.Debug << "SCS_BlastFilter_by_sequence_length:" << br->pdb << ' ' << region.query_sequence << ' ' << br->*region.result_sequence << std::endl;
@@ -165,7 +167,9 @@ void SCS_BlastFilter_by_sequence_length::apply(AntibodySequence const &A, SCS_Re
 
 		if( br->frh.size() != template_length ) {
 			TR.Trace << CSI_Red() << "SCS_BlastFilter_by_sequence_length: Filtering " << br->pdb << "..." << CSI_Reset() << std::endl;
-			results->frh.erase( std::next(p++).base() );
+			//results->frh.erase( std::next(p++).base() );
+			results->frh.erase( std::next(p).base() );
+			p = results->frh.rbegin();
 		}
 		else ++p;
 	}
@@ -178,7 +182,9 @@ void SCS_BlastFilter_by_sequence_length::apply(AntibodySequence const &A, SCS_Re
 
 		if( br->frl.size() != template_length ) {
 			TR.Trace << CSI_Red() << "SCS_BlastFilter_by_sequence_length: Filtering " << br->pdb << "..." << CSI_Reset() << std::endl;
-			results->frl.erase( std::next(p++).base() );
+			//results->frl.erase( std::next(p++).base() );
+			results->frl.erase( std::next(p).base() );
+			p = results->frl.rbegin();
 		}
 		else ++p;
 	}
@@ -224,7 +230,9 @@ void SCS_BlastFilter_by_alignment_length::apply(AntibodySequence const &/*antibo
 
 			if( br->alignment_length < region.v * (br->*region.sequence).size() ) {
 				TR.Trace << CSI_Red() << "SCS_BlastFilter_by_alignment_length: Filtering " << br->pdb << "..." << CSI_Reset() << std::endl;
-				region.r.erase( std::next(p++).base() );
+				//region.r.erase( std::next(p++).base() );
+				region.r.erase( std::next(p).base() );
+				p = region.r.rbegin();
 			}
 			else ++p;
 		}
@@ -276,7 +284,10 @@ void SCS_BlastFilter_by_template_resolution::apply(AntibodySequence const &/*ant
 
 			if( br->resolution > get_resolution_cutoff() ) {
 				TR.Trace << CSI_Red() << "SCS_BlastFilter_by_template_resolution: Filtering " << br->pdb << "..." << CSI_Reset() << std::endl;
-				region.r.erase( std::next(p++).base() );
+				// We can't do this: erasure invalidates two iterators I guess?
+				//region.r.erase( std::next(p++).base() );
+				region.r.erase( std::next(p).base() );
+				p = region.r.rbegin();
 			}
 			else ++p;
 		}
@@ -289,7 +300,10 @@ void SCS_BlastFilter_by_template_resolution::apply(AntibodySequence const &/*ant
 
 		if( br->resolution > get_resolution_cutoff() ) {
 			TR.Trace << CSI_Red() << "SCS_BlastFilter_by_template_resolution: Filtering " << br->pdb << "..." << CSI_Reset() << std::endl;
-			results->frh.erase( std::next(p++).base() );
+			// Ditto
+			//results->frh.erase( std::next(p++).base() );
+			results->frh.erase( std::next(p).base() );
+			p = results->frh.rbegin();
 		}
 		else ++p;
 	}
@@ -301,7 +315,9 @@ void SCS_BlastFilter_by_template_resolution::apply(AntibodySequence const &/*ant
 
 		if( br->resolution > get_resolution_cutoff() ) {
 			TR.Trace << CSI_Red() << "SCS_BlastFilter_by_template_resolution: Filtering " << br->pdb << "..," << CSI_Reset() << std::endl;
-			results->frl.erase( std::next(p++).base() );
+			//results->frl.erase( std::next(p++).base() );
+			results->frl.erase( std::next(p).base() );
+			p = results->frl.rbegin();
 		}
 		else ++p;
 	}
@@ -313,7 +329,9 @@ void SCS_BlastFilter_by_template_resolution::apply(AntibodySequence const &/*ant
 
 		if( br->resolution > get_resolution_cutoff() ) {
 			TR.Trace << CSI_Red() << "SCS_BlastFilter_by_template_resolution: Filtering " << br->pdb << "..," << CSI_Reset() << std::endl;
-			results->orientation.erase( std::next(p++).base() );
+			//results->orientation.erase( std::next(p++).base() );
+			results->orientation.erase( std::next(p).base() );
+			p = results->orientation.rbegin();
 		}
 		else ++p;
 	}
@@ -429,7 +447,9 @@ void SCS_BlastFilter_by_sequence_identity::apply(AntibodySequence const& A,
 			sid_ratio = sid_checker( region.query_sequence, br->*region.result_sequence );
       if( sid_ratio > get_sid_cutoff_cdr() ) {
         TR.Trace << CSI_Red() << "SCS_BlastFilter_by_sequence_identity: Filtering " << br->pdb << "... with SID ratio of " << sid_ratio << CSI_Reset() << std::endl;
-        region.r.erase( std::next(p++).base() );
+        //region.r.erase( std::next(p++).base() );
+        region.r.erase( std::next(p).base() );
+		p = region.r.rbegin();
       }
 	  else ++p;
 
@@ -453,7 +473,9 @@ void SCS_BlastFilter_by_sequence_identity::apply(AntibodySequence const& A,
 		sid_ratio = sid_checker( query_frh, br->frh);
     if( sid_ratio > get_sid_cutoff_fr() ) {
         TR.Trace << CSI_Red() << "SCS_BlastFilter_by_sequence_identity: Filtering FRH " << br->pdb << "... with SID ratio of " << sid_ratio << CSI_Reset() << std::endl;
-      results->frh.erase( std::next(p++).base() );
+      //results->frh.erase( std::next(p++).base() );
+      results->frh.erase( std::next(p).base() );
+      p = results->frh.rbegin();
     }
 	else ++p;
   }
@@ -466,7 +488,9 @@ void SCS_BlastFilter_by_sequence_identity::apply(AntibodySequence const& A,
 		sid_ratio = sid_checker( query_frl, br->frl);
     if( sid_ratio > get_sid_cutoff_fr() ) {
         TR.Trace << CSI_Red() << "SCS_BlastFilter_by_sequence_identity: Filtering FRL " << br->pdb << "... with SID ratio of " << sid_ratio << CSI_Reset() << std::endl;
-      results->frl.erase( std::next(p++).base() );
+      //results->frl.erase( std::next(p++).base() );
+      results->frl.erase( std::next(p).base() );
+      p = results->frl.rbegin();
     }
 	else ++p;
   }
@@ -479,7 +503,9 @@ void SCS_BlastFilter_by_sequence_identity::apply(AntibodySequence const& A,
     // -5 is inherited from antibody.py
     if ( br->identity > get_sid_cutoff_fr() - 5 ) {
       TR.Trace << CSI_Red() << "SCS_BlastFilter_by_sequence_identity: Filtering orientation " << br->pdb << "... with identity of " << br->identity << CSI_Reset() << std::endl;
-      results->orientation.erase( std::next(p++).base() );
+      //results->orientation.erase( std::next(p++).base() );
+      results->orientation.erase( std::next(p).base() );
+      p = results->orientation.rbegin();
     }
     else ++p;
   }
@@ -548,7 +574,9 @@ void SCS_BlastFilter_by_outlier::apply(AntibodySequence const& /* A */,
 			}
 			else if( outlier_map.at(br->pdb).at(region.ab_region) ) {
 				TR.Trace << CSI_Red() << "SCS_BlastFilter_by_outlier: Filtering " << br->pdb << CSI_Reset() << std::endl;
-				region.r.erase( std::next(p++).base() );
+				//region.r.erase( std::next(p++).base() );
+				region.r.erase( std::next(p).base() );
+				p = region.r.rbegin();
 			}
 			else ++p;
     }
@@ -611,7 +639,9 @@ void SCS_BlastFilter_by_pdbid::apply(AntibodySequence const& /* A */,
             // check if pdb has been flagged for exclusion
             if( pdb_name_ == br->pdb ) {
                 TR.Trace << CSI_Red() << "SCS_BlastFilter_by_pdbid: Filtering " << br->pdb << CSI_Reset() << std::endl;
-                region.r.erase( std::next(p++).base() );
+                //region.r.erase( std::next(p++).base() );
+                region.r.erase( std::next(p).base() );
+				p = region.r.rbegin();
             }
             else ++p;
         }
@@ -672,7 +702,9 @@ void SCS_BlastFilter_by_template_bfactor::apply(AntibodySequence const& /* A */,
 			}
 			else if( bfactor_map.at(br->pdb).at(region.ab_region) ) {
 				TR.Trace << CSI_Red() << "SCS_BlastFilter_by_template_bfactor: Filtering " << br->pdb << CSI_Reset() << std::endl;
-				region.r.erase( std::next(p++).base() );
+				//region.r.erase( std::next(p++).base() );
+				region.r.erase( std::next(p).base() );
+				p = region.r.rbegin();
 			}
 			else ++p;
 			// else {

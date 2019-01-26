@@ -45,6 +45,10 @@ root_main_dir =  os.path.realpath(os.path.join(root_rosetta_dir, "main"))
 root_demos_dir = os.path.realpath(os.path.join(root_rosetta_dir, "demos"))
 root_tools_dir = os.path.realpath(os.path.join(root_rosetta_dir, "tools"))
 
+timeout_factors = {}
+with open("timeout_factors.json") as f:
+    timeout_factors = json.loads(f.read())
+
 pwd = os.getcwd()
 
 def write_runtimes(runtimes, dir):
@@ -793,7 +797,15 @@ def order_tests(tests):
             f.close()
     #Decorate, sort, undecorate (A side effect is we'll alphabetize any missing tests)
     ordered = []
+    # Anything extremely long in debug mode should not be run on the test server.
+    tabooed = ["tests/remodel", "tests/remodel_disulfides", "tests/inverse_rotamer_remodel", "tests/pepspec", "tests/bridge_chains",
+              "tests/mp_relax_w_ligand", "tests/membrane_relax", "tests/membrane_relax_hbond", "tests/continuous_sewing_hasher", 
+              "tests/discontinuous_sewing_hasher"]
+                                
     for test in tests:
+        # skip tabooed-for-debug tests
+        if test in tabooed and Options.mode != "release": continue
+        
         testbase = os.path.basename(test)
         if test in times:
             ordered.append( (times[test], test) )
@@ -802,6 +814,7 @@ def order_tests(tests):
         else:
             ordered.append( (9999, test) )
     ordered.sort(reverse=True)
+    print([ test for (time, test) in ordered ])
     return [ test for (time, test) in ordered ]
 
 # -------------------------------------
@@ -879,7 +892,8 @@ def mFork(times, tag=None, overhead=0, **args):
             else:
                 #pass
                 if j.timeout:
-                    if time.time() - j.start_time > j.timeout :
+                    # Temporarily don't time out on particular tests.
+                    if time.time() - j.start_time > j.timeout:
                         #print '~~~~~~~~~~~ pids:', j.pid, os.getpid(), os.getppid()
                         #print '~~~~~~~~~~~ groups:', os.getpgid(j.pid), os.getpgrp()
                         os.kill(j.pid, signal.SIGKILL)  #
@@ -920,7 +934,7 @@ def mWait(tag=None, all_=False, timeout=0):
                 Jobs.remove(j)
 
             elif j.timeout:
-                if time.time() - j.start_time > j.timeout :
+                if time.time() - j.start_time > j.timeout:
                     os.kill(j.pid, signal.SIGKILL)  #os.killpg(os.getpgid(j.pid), signal.SIGKILL)
                     timeout_finish = getattr(j, 'timeout_finish', lambda x: None)
                     timeout_finish(j, times)
@@ -1256,7 +1270,12 @@ def simple_job_running( GenerateJob, queue, outdir, runtimes, options ):
 
         def run(nt, times):
             #execute('Running Test %s' % test, 'bash ' + cmd_line_sh)
-            extra = 'ulimit -t %s && ' % Options.timeout  if Options.timeout else ''
+            test_timeout = Options.timeout
+            if nt.test in timeout_factors:
+                test_timeout *= timeout_factors[nt.test]
+                test_timeout = int(test_timeout)
+
+            extra = 'ulimit -t %s && ' % test_timeout if test_timeout else ''
             res = execute('Running Test %s' % nt.test, '%sbash %s' % (extra, cmd_line_sh), return_=True)
             if res:
                 error_string = "*** Test %s did not run!  Check your --mode flag and paths. [%s]\n" % (test, datetime.datetime.now())
@@ -1287,7 +1306,10 @@ def simple_job_running( GenerateJob, queue, outdir, runtimes, options ):
             normal_finish(nt, times)
 
         def timeout_finish(nt, times):
-            error_string = "*** Test %s exceeded the timeout=%s  and will be killed! [%s]\n" % (nt.test, Options.timeout, datetime.datetime.now())
+            test_timeout = Options.timeout
+            if nt.test in timeout_factors:
+                test_timeout *= timeout_factors[nt.test]
+            error_string = "*** Test %s exceeded the timeout=%s  and will be killed! [%s]\n" % (nt.test, test_timeout, datetime.datetime.now())
             with open(path.join(nt.workdir, ".test_got_timeout_kill.log"), 'w') as f:
                 f.write(error_string)
             print(error_string, end='')
@@ -1295,13 +1317,19 @@ def simple_job_running( GenerateJob, queue, outdir, runtimes, options ):
             normal_finish(nt, times)
 
         if options.jobs > 1:
-            pid, nt = mFork(times=runtimes, test=test, workdir=workdir, queue=queue, timeout=Options.timeout, normal_finish=normal_finish, error_finish=error_finish, timeout_finish=timeout_finish)
+            test_timeout = Options.timeout
+            if test in timeout_factors:
+                test_timeout *= timeout_factors[test]
+            pid, nt = mFork(times=runtimes, test=test, workdir=workdir, queue=queue, timeout=test_timeout, normal_finish=normal_finish, error_finish=error_finish, timeout_finish=timeout_finish)
             if not pid:  # we are child process
                 signal.signal(signal.SIGINT, signal.SIG_DFL)
                 run(nt,runtimes)
                 sys.exit(0)
         else:
-            nt = NT(times=runtimes, test=test, workdir=workdir, queue=queue, start_time=time.time(), timeout=Options.timeout, normal_finish=normal_finish, error_finish=error_finish, timeout_finish=timeout_finish)
+            test_timeout = Options.timeout
+            if test in timeout_factors:
+                test_timeout *= timeout_factors[test]
+            nt = NT(times=runtimes, test=test, workdir=workdir, queue=queue, start_time=time.time(), timeout=test_timeout, normal_finish=normal_finish, error_finish=error_finish, timeout_finish=timeout_finish)
             run(nt,runtimes)
             if nt.timeout and (time.time() - nt.start_time > nt.timeout): nt.timeout_finish(nt,runtimes)
             else: normal_finish(nt,runtimes)

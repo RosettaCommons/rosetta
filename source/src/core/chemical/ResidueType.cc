@@ -493,6 +493,7 @@ ResidueType::operator=( ResidueType const & residue_type )
 		AtomICoor new_icoor = residue_connection.icoor();
 		for ( Size j = 1; j <= 3; ++j ) {
 			VD old_vd = new_icoor.stub_atom( j ).vertex();
+			if ( new_icoor.stub_atom( j ).type() != ICoorAtomID::INTERNAL )  continue;
 			new_icoor.stub_atom( j ).vertex( old_to_new[old_vd] );
 			new_icoor.stub_atom( j ).atomno( vd_to_index_.find(new_icoor.stub_atom(j).vertex())->second );
 		}
@@ -1517,7 +1518,7 @@ ResidueType::change_bond_type(
 			"change_bond_type: atom " + atom_name1 + " does not have the requested bond type!" );
 	}
 	it2 = std::find( bonded_neighbor_type_[ atom2 ].begin(), bonded_neighbor_type_[ atom2 ].end(), old_bond_label );
-	if ( it1 == bonded_neighbor_type_[ atom2 ].end() ) {
+	if ( it2 == bonded_neighbor_type_[ atom2 ].end() ) {
 		utility_exit_with_message(
 			"change_bond_type: atom " + atom_name2 + " does not have the requested bond type!" );
 	}
@@ -3257,6 +3258,7 @@ ResidueType::generate_atom_indices()
 
 	mainchain_atoms_indices_.clear();
 	for ( Size i=1; i<= mainchain_atoms_.size(); ++i ) {
+		debug_assert( vd_to_index_.find(mainchain_atoms_[i]) != vd_to_index_.end() );
 		mainchain_atoms_indices_.push_back(vd_to_index_.find(mainchain_atoms_[i])->second);
 	}
 
@@ -3281,15 +3283,18 @@ ResidueType::generate_atom_indices()
 	for ( Size index=1; index<= natoms(); ++index ) {
 		for ( Size i=1; i<= 3; ++i ) {
 			ICoorAtomID & stub_atom( icoor_[ ordered_atoms_[index] ].stub_atom( i )   );
-			if ( stub_atom.type() == ICoorAtomID::INTERNAL ) {
-				stub_atom.atomno(   vd_to_index_.find(stub_atom.vertex())->second ); //somewhat of a problem. if vertex doesnt exist the map constructor will create a value
-				if ( stub_atom.atomno() == 0 ) { // this will trigger if we deleted a stub atom for some other atom
-					tr.Error << "===============================================" << std::endl;
-					tr.Error << "Internal coordinates for " << name() << std::endl;
-					pretty_print_atomicoor(tr.Error, *this);
-					tr.Error << "===============================================" << std::endl;
-					utility_exit_with_message("ERROR: The internal coordinates of ResidueType '" + name() + "' depend on a missing atom!");
-				}
+			if ( stub_atom.type() != ICoorAtomID::INTERNAL )  continue;
+			Size atomno = 0;
+			if ( vd_to_index_.find(stub_atom.vertex()) != vd_to_index_.end() ) {
+				atomno = vd_to_index_.find(stub_atom.vertex())->second;
+			}
+			stub_atom.atomno( atomno ); //   vd_to_index_.find(stub_atom.vertex())->second ); //somewhat of a problem. if vertex doesnt exist the map constructor will create a value
+			if ( stub_atom.atomno() == 0 ) { // this will trigger if we deleted a stub atom for some other atom
+				tr.Error << "===============================================" << std::endl;
+				tr.Error << "Internal coordinates for " << name() << std::endl;
+				pretty_print_atomicoor(tr.Error, *this);
+				tr.Error << "===============================================" << std::endl;
+				utility_exit_with_message("ERROR: The internal coordinates of ResidueType '" + name() + "' depend on a missing atom!");
 			}
 		}
 	}
@@ -3299,7 +3304,19 @@ ResidueType::generate_atom_indices()
 		residue_connections_[i].atomno( vd_to_index_[residue_connections_[i].vertex()]  );
 		AtomICoor new_icoor = residue_connections_[i].icoor();
 		for ( Size j = 1; j <= 3; ++j ) {
-			new_icoor.stub_atom( j ).atomno( vd_to_index_.find(new_icoor.stub_atom(j).vertex())->second );
+			if ( new_icoor.stub_atom( j ).type() != ICoorAtomID::INTERNAL )  continue;
+
+			Size atomno = 0;
+			if ( vd_to_index_.find( new_icoor.stub_atom(j).vertex() ) != vd_to_index_.end() ) {
+				atomno = vd_to_index_.find( new_icoor.stub_atom(j).vertex() )->second;
+			} else {
+				tr.Error << "===============================================" << std::endl;
+				tr.Error << "Internal coordinates for " << name() << std::endl;
+				pretty_print_atomicoor(tr.Error, *this);
+				tr.Error << "===============================================" << std::endl;
+				tr.Error << "Residue connection " << i << " has stub atom " << j << " which was not found in vd_to_index_." << std::endl;
+			}
+			new_icoor.stub_atom( j ).atomno( atomno );
 		}
 		residue_connections_[ i ].icoor( new_icoor );
 		debug_assert( residue_connections_[i].atomno() ); //this will fail if we deleted an atom involved in an inter-rsd connection

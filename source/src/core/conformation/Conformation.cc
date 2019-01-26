@@ -2505,7 +2505,7 @@ Conformation::insert_conformation_by_jump(
 			ResidueOP new_rsd( conf.residue(i).clone() );
 			new_rsd->update_sequence_numbering( old2new );
 			Size const new_seqpos( old2new[i] );
-			residues_.insert( residues_.begin() + new_seqpos-1, new_rsd );
+			residues_.insert( residues_.begin() + ( new_seqpos - 1 ), new_rsd );
 			xyz_moved_[ new_seqpos ].clear(); xyz_moved_[ new_seqpos ].resize( new_rsd->natoms(), true );
 			dof_moved_[ new_seqpos ].clear(); dof_moved_[ new_seqpos ].resize( new_rsd->natoms(), true );
 			secstruct_.insert( secstruct_.begin() + ( new_seqpos - 1 ),  secstruct_[i] );

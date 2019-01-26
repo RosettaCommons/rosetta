@@ -277,7 +277,7 @@ SequenceMapping::insert_source_residue( Size const pos1 )
 void
 SequenceMapping::insert_aligned_residue( Size const pos1, Size const pos2 )
 {
-	mapping_.insert( mapping_.begin() + pos1-1, pos2 );
+	mapping_.insert( mapping_.begin() + (pos1-1), pos2 );
 }
 
 // same as insert_aligned_residue, but a couple of extra checks on size1 and size2.

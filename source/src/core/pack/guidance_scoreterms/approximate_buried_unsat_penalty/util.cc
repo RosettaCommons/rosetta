@@ -19,6 +19,7 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pack/rotamer_set/RotamerSet_.hh>
 #include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/PackerTask_.hh>
 #include <core/pack/hbonds/HBondGraph_util.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/atomic_depth/AtomicDepth.hh>
@@ -833,7 +834,12 @@ add_to_twobody(
 	float reweight = 1.0f;
 	if ( reweight_data.edge_reweights ) {
 		if ( reweight_data.stored_edge_reweights.count( key ) == 0 ) {
-			reweight = reweight_data.edge_reweights->res_res_weight( reweight_data.pose, *reweight_data.task, r1, r2 );
+			if ( reweight_data.task ) {
+				reweight = reweight_data.edge_reweights->res_res_weight( reweight_data.pose, *reweight_data.task, r1, r2 );
+			} else {
+				reweight = reweight_data.edge_reweights->res_res_weight( reweight_data.pose, core::pack::task::PackerTask_(), r1, r2 );
+			}
+
 			reweight_data.stored_edge_reweights[ key ] = reweight;
 		} else {
 			reweight = reweight_data.stored_edge_reweights.at( key );

@@ -281,24 +281,26 @@ set_reasonable_fold_tree( pose::Pose & pose )
 
 			// RM: Assuming that it's the *next* edge which is the associated polymeric edge is slightly off,
 			// But the current way we're skipping adding the polymeric edge means it's hard to do it otherwise.
-			Edge const next_e( *(i + 1) );
-			if ( next_e.is_polymer() && jump_stop == uint( next_e.start() ) ) {
-				if ( TR.Trace.visible() ) {
-					TR.Trace << e << " was initially set as a Jump to end of a polymeric connection." << endl;
-				}
-
-				uint const polymer_stop( next_e.stop() );  // the residue position at the end of the next Edge
-
-				if ( pose.residue( polymer_stop ).has_upper_connect() && newft.residue_is_in_fold_tree( pose.residue( polymer_stop ).connected_residue_at_upper() ) ) {
+			if ( i + 1 != origft.end() ) {
+				Edge const next_e( *(i + 1) );
+				if ( next_e.is_polymer() && jump_stop == uint( next_e.start() ) ) {
 					if ( TR.Trace.visible() ) {
-						TR.Trace << "Adding chemical edge from " << jump_start << " to " << polymer_stop << " to the new FoldTree, along with reverse polymeric edge from " << polymer_stop << " to " << jump_stop << endl;
+						TR.Trace << e << " was initially set as a Jump to end of a polymeric connection." << endl;
 					}
-					create_chemical_edge(  pose.residue( polymer_stop ).connected_residue_at_upper(), polymer_stop, pose, newft );
-					// The CHEMICAL Edge has already been added to newft by the function above.
-					// Now, we must add a reverse-direction Edge and skip making the usual forward-direction Edge.
-					newft.add_edge( polymer_stop, jump_stop, Edge::PEPTIDE);
-					prevent_forward_edge = true;
-					continue;  // Skip the add_edge() method below; we are done here.
+
+					uint const polymer_stop( next_e.stop() );  // the residue position at the end of the next Edge
+
+					if ( pose.residue( polymer_stop ).has_upper_connect() && newft.residue_is_in_fold_tree( pose.residue( polymer_stop ).connected_residue_at_upper() ) ) {
+						if ( TR.Trace.visible() ) {
+							TR.Trace << "Adding chemical edge from " << jump_start << " to " << polymer_stop << " to the new FoldTree, along with reverse polymeric edge from " << polymer_stop << " to " << jump_stop << endl;
+						}
+						create_chemical_edge(  pose.residue( polymer_stop ).connected_residue_at_upper(), polymer_stop, pose, newft );
+						// The CHEMICAL Edge has already been added to newft by the function above.
+						// Now, we must add a reverse-direction Edge and skip making the usual forward-direction Edge.
+						newft.add_edge( polymer_stop, jump_stop, Edge::PEPTIDE);
+						prevent_forward_edge = true;
+						continue;  // Skip the add_edge() method below; we are done here.
+					}
 				}
 			}
 

@@ -144,11 +144,19 @@ public:
 
 	void
 	operator ++(){
-		++atom_it_;
+		// Gonna add checks that each increment is legal
+		// before making it. Weird that they would ever fail.
+		if ( seg_it_ != seg_end_it_
+				&& res_it_ == seg_it_->residues_.end()
+				&& atom_it_ != res_it_->basis_atoms_.end() ) ++atom_it_;
+
 		if ( atom_it_ == res_it_->basis_atoms_.end() ) {
-			++res_it_;
+			if ( seg_it_ != seg_end_it_
+					&& res_it_ != seg_it_->residues_.end() ) ++res_it_;
+
 			if ( res_it_ == seg_it_->residues_.end() ) {
-				++seg_it_;
+				if ( seg_it_ != seg_end_it_ ) ++seg_it_;
+
 				if ( seg_it_ == seg_end_it_ ) {
 					return;//we are done
 				}
@@ -161,13 +169,13 @@ public:
 	friend
 	bool
 	operator ==(ModelIterator const & a, ModelIterator const & b){
-		return a.atom_it_ == b.atom_it_;
+		return a.seg_it_ == b.seg_it_ && a.res_it_ == b.res_it_ && a.atom_it_ == b.atom_it_;
 	}
 
 	friend
 	bool
 	operator !=(ModelIterator const & a, ModelIterator const & b){
-		return a.atom_it_ != b.atom_it_;
+		return a.seg_it_ != b.seg_it_ || a.res_it_ != b.res_it_ || a.atom_it_ != b.atom_it_;
 	}
 
 	// ModelIterator &
@@ -182,6 +190,8 @@ public:
 	//  atom_it_ = rhs.atom_it_;
 	//  return *this;
 	// }
+
+	bool segment_valid() const { return seg_it_ != seg_end_it_; }
 
 	typename utility::vector1<T>::iterator
 	segment(){

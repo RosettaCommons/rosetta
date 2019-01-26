@@ -110,7 +110,12 @@ public:
 		platform::Size const newsize_32(oldsize_32 + num_var*(sizeof(platform::Size)-4));
 
 		//std::cout << mem << " " << newsize_64 << " " << newsize_32 << std::endl;
+#ifdef _GLIBCXX_DEBUG
+		// On linux clang, the +32 will be satisfied.
+		TS_ASSERT((mem == newsize_32) || (mem == newsize_32 + 32) || (mem == newsize_64) || (mem == newsize_64+32));
+#else
 		TS_ASSERT((mem == newsize_32) || (mem == newsize_64));
+#endif
 		//TS_ASSERT((mem == 1292) || (mem == 2288)); //32 and 64 bits, respectively //old
 		//TS_ASSERT((mem == 1292) || (mem == 2584)); //32 and 64 bits, respectively //new
 
@@ -141,12 +146,17 @@ public:
 		platform::Size const num_var(30);
 		platform::Size const oldsize_64(656);
 		platform::Size const oldsize_32(388);
-		platform::Size const newsize_64(oldsize_64 + num_var*(sizeof(platform::Size)-4));
 
+		platform::Size const newsize_64(oldsize_64 + num_var*(sizeof(platform::Size)-4));
 		platform::Size const newsize_32(oldsize_32 + num_var*(sizeof(platform::Size)-4));
 
 		//std::cout << mem << " " << newsize_64 << " " << newsize_32 << std::endl;
+#ifdef _GLIBCXX_DEBUG
+		// On linux clang, the +32 will be satisfied.
+		TS_ASSERT((mem == newsize_32) || (mem == newsize_32 + 32) || (mem == newsize_64) || (mem == newsize_64+32));
+#else
 		TS_ASSERT((mem == newsize_32) || (mem == newsize_64));
+#endif
 		//TS_ASSERT((mem == 384) || (mem == 648)); //32 and 64 bits, respectively //old
 		//TS_ASSERT((mem == 384) || (mem == 768)); //32 and 64 bits, respectively //new
 	}

@@ -427,18 +427,19 @@ void CClusterSet::join(std::list<CCluster>::iterator c1, std::list<CCluster>::it
 }
 
 void CClusterSet::findClusters(){
+	std::vector< std::list<CCluster>::iterator > to_remove;
 	for ( auto i = clusters_.begin(); i!=clusters_.end(); ++i ) {
 		for ( auto j = i; j!=clusters_.end(); ++j ) {
 			if ( i==j ) continue;
 			//    if (j->isClose(*i)) {
 			if ( j->testNeighbor(*i) ) {
-				auto oldI = i;
-				--i;
-				clusters_.erase(oldI);
+				to_remove.push_back( i );
 				break;
 			}
-			//    }
 		}
+	}
+	for ( auto i: to_remove ) {
+		clusters_.erase(i); // clusters_ is a std::list, so erasure doesn't invalidate any other iterators
 	}
 }
 

@@ -133,7 +133,11 @@ public:
 	}
 
 
-	void test_static_instantiation() {
+	// Originally this function had multiple semi-redundant tests
+	// that just checked that it would work if you were missing
+	// the name attribute. We need this test to be faster.
+
+	void test_static_instantiation_score_function() {
 
 		TR << "Starting static instantiation test" << std::endl;
 
@@ -145,6 +149,11 @@ public:
 			TR << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
+		TR << "End static instantiation score function test" << std::endl;
+	}
+
+	void dont_test_static_instantiation_residue_empty_sfxn() {
+
 		try {
 			core::scoring::ScoreFunctionOP scorefxn = XmlObjects::static_get_score_function(
 				"<ScoreFunction />\n");
@@ -152,6 +161,11 @@ public:
 			TR << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
+		TR << "End static instantiation empty sfxn test" << std::endl;
+	}
+
+	void test_static_instantiation_filter() {
+
 
 		TR << "Getting Filter" << std::endl;
 		try {
@@ -163,6 +177,11 @@ public:
 			TR << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
+		TR << "End static instantiation filter test" << std::endl;
+	}
+
+	void dont_test_static_instantiation_empty_filter() {
+
 		try {
 			protocols::filters::FilterOP filter = XmlObjects::static_get_filter(
 				"<PoseComment />\n");
@@ -172,6 +191,10 @@ public:
 			TR << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
+		TR << "End static instantiation empty filter test" << std::endl;
+	}
+
+	void test_static_instantiation_mover() {
 
 		TR << "Getting Mover" << std::endl;
 		try {
@@ -183,6 +206,11 @@ public:
 			TR << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
+		TR << "End static instantiation mover test" << std::endl;
+	}
+
+	void dont_test_static_instantiation_mover_noname() {
+
 		try {
 			protocols::moves::MoverOP mover = XmlObjects::static_get_mover(
 				"<MinMover bb=\"true\" chi=\"true\"/>\n");
@@ -192,6 +220,11 @@ public:
 			TR << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
+		TR << "End static instantiation mover noname test" << std::endl;
+	}
+
+	void test_static_instantiation_taskop() {
+
 
 		TR << "Getting TaskOperation" << std::endl;
 		try {
@@ -203,6 +236,11 @@ public:
 			TR << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
+		TR << "End static instantiation taskop test" << std::endl;
+	}
+
+	void dont_test_static_instantiation_taskop_noname() {
+
 		try {
 			core::pack::task::operation::TaskOperationOP taskop = XmlObjects::static_get_task_operation(
 				"<PreventRepacking />\n");
@@ -212,6 +250,11 @@ public:
 			TR << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
+		TR << "End static instantiation taskop noname test" << std::endl;
+	}
+
+	void test_static_instantiation_residue_selector() {
+
 
 		TR << "Getting ResidueSelector" << std::endl;
 		try {
@@ -223,6 +266,11 @@ public:
 			TR << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
+		TR << "End static instantiation residue selector test" << std::endl;
+	}
+
+	void dont_test_static_instantiation_residue_selector_noname() {
+
 		try {
 			core::select::residue_selector::ResidueSelectorOP selector = XmlObjects::static_get_residue_selector(
 				"<True />\n");
@@ -234,7 +282,7 @@ public:
 		}
 
 
-		TR << "End parsed protocol test" << std::endl;
+		TR << "End static instantiation residue selector noname test" << std::endl;
 	}
 
 	void test_file_instantiation() {

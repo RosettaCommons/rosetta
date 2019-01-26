@@ -189,6 +189,15 @@ public:
 class Loop_lt : public std::binary_function<double, double, bool> {
 public:
 	bool operator()(Loop x, Loop y) {
+		// This operator is a massive problem because it violates the
+		// irreflexive requirement !( a < a ). So how do we retain its
+		// idiosyncratic behavior while also maintaining that guarantee?
+		// The issue is that x.start() < x.stop() as well. It seems that
+		// this may only be meant to apply to x != y, so maybe we can
+		// just return false if x.start() == y.start().
+		if ( x.start() == y.start() && x.stop() == y.stop() ) {
+			return false; // loops are equal
+		}
 		return (x.start() < y.stop());  // so wrong...
 	}
 };

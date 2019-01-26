@@ -53,7 +53,8 @@ public:
 	inline const T& top() {
 
 		if ( !sorted_ ) {
-			std::sort(data_.begin(), data_.begin() + last_ - 1, comp);
+			debug_assert( last_ >= 1 );
+			std::sort(data_.begin(), data_.begin() + (last_ - 1), comp);
 		}
 		return data_[1];
 	}
@@ -66,7 +67,8 @@ public:
 		}
 
 		if ( last_ > max_capacity_ ) {
-			std::sort(data_.begin(), data_.begin() + last_ - 1, comp);
+			debug_assert( last_ >= 1 );
+			std::sort(data_.begin(), data_.begin() + (last_ - 1), comp);
 			last_ = sorted_capacity_ + 1;
 			worst_ = data_[sorted_capacity_];
 
@@ -92,14 +94,16 @@ public:
 
 	inline T& at(core::Size index) {
 		if ( !sorted_ ) {
-			std::sort(data_.begin(), data_.begin() + last_ - 1, comp);
+			debug_assert( last_ >= 1 );
+			std::sort(data_.begin(), data_.begin() + (last_ - 1), comp);
 		}
 		return data_.at(index);
 	}
 
 	inline T& operator[](core::Size index) {
 		if ( !sorted_ ) {
-			std::sort(data_.begin(), data_.begin() + last_ - 1, comp);
+			debug_assert( last_ >= 1 );
+			std::sort(data_.begin(), data_.begin() + (last_ - 1), comp);
 		}
 		return data_[index];
 	}
@@ -116,10 +120,11 @@ public:
 		}
 		good_data_.reserve(size());
 		if ( !sorted_ ) {
-			std::sort(data_.begin(), data_.begin() + last_ - 1, comp);
+			debug_assert( last_ >= 1 );
+			std::sort(data_.begin(), data_.begin() + (last_ - 1), comp);
 		}
 
-		//  std::copy(data_.begin(), data_.begin() + size() - 1, good_data_.begin() );
+		//  std::copy(data_.begin(), data_.begin() + (size() - 1), good_data_.begin() );
 		for ( core::Size i=1; i<=size(); i++ ) {
 			good_data_.push_back(data_[i]);
 		}

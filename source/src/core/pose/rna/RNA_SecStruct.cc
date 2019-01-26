@@ -186,7 +186,7 @@ RNA_SecStruct::set_secstruct( std::string const & secstruct )
 	// I'm not sure how this state is obtained now but couldn't have been earlier,
 	// but there you go.
 	secstruct_ = secstruct;
-	if ( secstruct_[ secstruct.size() - 1 ] == ' ' ) {
+	if ( secstruct.size() > 0 && secstruct_[ secstruct.size() - 1 ] == ' ' ) {
 		secstruct_ = secstruct_.substr( 0, secstruct.size() - 1 );
 	}
 	spacer_positions_ = core::sequence::strip_spacers( secstruct_, false /*annotations_in_brackets*/ );

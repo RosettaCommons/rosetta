@@ -230,7 +230,7 @@ std::list< std::string > get_strings_from_current_job() {
 	if ( jd && jd->current_job() ) {
 		return jd->current_job()->get_strings();
 	} else {
-		return {}; // return empty object
+		return std::list< std::string >(); // return empty object
 	}
 }
 
@@ -241,7 +241,7 @@ std::map< std::string, std::string > get_string_string_pairs_from_current_job() 
 	if ( jd && jd->current_job() ) {
 		return jd->current_job()->get_string_string_pairs();
 	} else {
-		return {}; // return empty object
+		return std::map< std::string, std::string >(); // return empty object
 	}
 }
 
@@ -251,7 +251,7 @@ std::map< std::string, core::Real > get_string_real_pairs_from_current_job() {
 	if ( jd && jd->current_job() ) {
 		return jd->current_job()->get_string_real_pairs();
 	} else {
-		return {}; // return empty object
+		return std::map< std::string, core::Real >(); // return empty object
 	}
 }
 

@@ -241,6 +241,9 @@ public:
 		PoseArchitect pose_arch( "pose" );
 		StructureDataOP perm = pose_arch.apply( input_pose );
 		BridgeChainsMover conn;
+		// is this necessary for us not to fall asleep
+		conn.set_dry_run( true );
+		//
 		conn.set_id( "test" );
 		conn.set_segment1_ids( "sheet1.s2" );
 		conn.set_segment2_ids( "rot_comp.rot_comp2.catalytic.2" );

@@ -1,3 +1,8 @@
+# AMW: we are moving to a 'virtualization' rather than 'deletion' model here
+# because we would then have to redefine the mainchain atoms, and if we do that
+# the torsional potential wouldn't work for these residues. That MAY be appropriate,
+# but it seems like an unnecessary check for now.
+
 NAME 3PrimeDeoxy
 TYPES THREE_PRIME_DEOXY 
 
@@ -23,7 +28,10 @@ BEGIN_SELECTOR
 AA THY
 END_SELECTOR
 
-DELETE_ATOM O3'
+SET_ATOM_TYPE   O3'  VIRT
+SET_MM_ATOM_TYPE  O3'  VIRT 
+SET_ATOMIC_CHARGE O3' 0.00 
+
 ADD_ATOM H3'' Hapo HN8   0.09
 
 ADD_BOND C3' H3''
@@ -44,7 +52,10 @@ BEGIN_SELECTOR
 AA CYT
 END_SELECTOR
 
-DELETE_ATOM O3'
+SET_ATOM_TYPE   O3'  VIRT
+SET_MM_ATOM_TYPE  O3'  VIRT 
+SET_ATOMIC_CHARGE O3' 0.00 
+
 ADD_ATOM H3'' Hapo HN8   0.09
 
 ADD_BOND C3' H3''
@@ -65,7 +76,10 @@ BEGIN_SELECTOR
 AA ADE
 END_SELECTOR
 
-DELETE_ATOM O3'
+SET_ATOM_TYPE   O3'  VIRT
+SET_MM_ATOM_TYPE  O3'  VIRT 
+SET_ATOMIC_CHARGE O3' 0.00 
+
 ADD_ATOM H3'' Hapo HN8   0.09
 
 ADD_BOND C3' H3''
@@ -86,7 +100,10 @@ BEGIN_SELECTOR
 AA GUA
 END_SELECTOR
 
-DELETE_ATOM O3'
+SET_ATOM_TYPE   O3'  VIRT
+SET_MM_ATOM_TYPE  O3'  VIRT 
+SET_ATOMIC_CHARGE O3' 0.00 
+
 ADD_ATOM H3'' Hapo HN8   0.09
 
 ADD_BOND C3' H3''
@@ -107,7 +124,10 @@ BEGIN_SELECTOR
 NAME3 YRR
 END_SELECTOR
 
-DELETE_ATOM O3'
+SET_ATOM_TYPE   O3'  VIRT
+SET_MM_ATOM_TYPE  O3'  VIRT 
+SET_ATOMIC_CHARGE O3' 0.00 
+
 ADD_ATOM H3'' Hapo HN7  0.09
 
 ADD_BOND C3' H3''
@@ -124,7 +144,10 @@ END_CASE
 
 BEGIN_CASE ### general case ###
 
-DELETE_ATOM O3'
+SET_ATOM_TYPE   O3'  VIRT
+SET_MM_ATOM_TYPE  O3'  VIRT 
+SET_ATOMIC_CHARGE O3' 0.00 
+
 ADD_ATOM H3'' Hapo HN7  0.09
 
 ADD_BOND C3' H3''

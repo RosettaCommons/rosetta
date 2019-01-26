@@ -19,7 +19,7 @@ if not hasattr(sys, "version_info") or sys.version_info < (2,4):
 import subprocess, signal, time, sys, os
 
 def main(argv):
-    #print argv
+    #print( 'Timeout: {}'.format(argv) )
     if len(argv) < 3:
         print('Usage: "timelimit <number of minutes to wait> <command line> <args...>"')
         return 1

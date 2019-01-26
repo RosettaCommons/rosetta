@@ -85,8 +85,8 @@ public:
 
 
 		// Are we getting the same rotamer samples, in the same order?
-		for ( Real phi = -180; phi <= 180; phi += 1 ) {
-			for ( Real psi = -180; psi <= 180; psi += 1 ) {
+		for ( Real phi = -180; phi <= 180; phi += 7 ) {
+			for ( Real psi = -180; psi <= 180; psi += 7 ) {
 				utility::vector1< DunbrackRotamerSampleData > nleu_samples = rl_nleu->get_all_rotamer_samples( utility::fixedsizearray1< Real, 5 >({phi, psi,0,0,0}) );
 				utility::vector1< DunbrackRotamerSampleData > cleu_samples = rl_cleu->get_all_rotamer_samples( utility::fixedsizearray1< Real, 5 >({phi, psi,0,0,0}) );
 				TS_ASSERT( nleu_samples.size() == cleu_samples.size() );
@@ -96,6 +96,7 @@ public:
 					TS_ASSERT( nleu_samples[ii].rot_well() == cleu_samples[ii].rot_well() );
 					TS_ASSERT( nleu_samples[ii].chi_mean() == cleu_samples[ii].chi_mean() );
 					TS_ASSERT( nleu_samples[ii].chi_sd() == cleu_samples[ii].chi_sd() );
+					std::cout << "nleu prob " << nleu_samples[ii].probability() << " and cleu prob " <<  cleu_samples[ii].probability() << std::endl;
 					TS_ASSERT( nleu_samples[ii].probability() == cleu_samples[ii].probability() );
 				}
 			}

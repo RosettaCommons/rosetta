@@ -343,7 +343,7 @@ AlignmentGapInserter::apply( core::pose::Pose const & p ) const {
 			// sequence identity
 			// (One optimization here, could be that we only filter
 			// based on the loop residues...)
-			bool const is_aln_resi_loop = ( pose_ss[aln_resi] == 'L' );
+			bool const is_aln_resi_loop = ( pose_ss_aln[aln_resi] == 'L' );
 			if ( is_aln_resi_loop ) {
 				core::Real seqid_of_loop = AlignmentCleanerTools::indel_motif_seq_id(aa_indel_motif_target, aa_indel_motif_aln_seq);
 				core::Size gap_insert_counter = 0;
@@ -433,7 +433,7 @@ AlignmentGapInserter::apply( core::pose::Pose const & p ) const {
 						utility_exit_with_message( "This should be impossible, I think... If not we need to fix the code a bit" );
 					}
 
-					bool const is_other_res_loop = ( pose_ss[other_res_aln] == 'L' );
+					bool const is_other_res_loop = ( pose_ss_aln[other_res_aln] == 'L' );
 					core::Size gap_insert_counter = 0;
 					core::Real const seqid = AlignmentCleanerTools::indel_motif_seq_id(aa_indel_motif_target, aa_indel_motif_aln_seq);
 					for ( core::Real &s: loop_seqid_thresholds() ) {

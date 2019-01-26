@@ -43,6 +43,12 @@ std::vector<T> v_copy_if(Collection src, unop op) {
 template<typename T>
 ndarray::Array<T, 1, 1>
 v_to_a(std::vector<T> vec) {
+	if ( vec.empty() ) {
+		return ndarray::external(
+			(T*)( nullptr ),
+			ndarray::makeVector(vec.size()), ndarray::makeVector(0)
+		);
+	}
 	return ndarray::external(
 		&vec.front(),
 		ndarray::makeVector(vec.size()), ndarray::makeVector(1)

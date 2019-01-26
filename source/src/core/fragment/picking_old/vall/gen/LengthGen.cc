@@ -70,8 +70,15 @@ VallFragmentGenOP LengthGen::clone() const {
 LengthGen::Extent LengthGen::operator ()( VallResidueIterator extent_begin, VallResidueIterator section_end ) const {
 	Extent extent;
 	extent.begin = extent_begin;
-	extent.end = extent_begin + frag_size_;
-	extent.valid = ( extent.end <= section_end );
+
+	// OK, we can't even REFER to this iterator if it goes beyond section_end
+	if ( frag_size_ > static_cast< core::Size >( section_end - extent_begin ) ) {
+		extent.valid = false;
+		extent.end = section_end;
+	} else {
+		extent.end = extent_begin + frag_size_;
+		extent.valid = ( extent.end <= section_end );
+	}
 
 	return extent;
 }

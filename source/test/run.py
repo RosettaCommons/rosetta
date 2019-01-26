@@ -25,7 +25,23 @@ import json
 SUITE_FACTOR = 3
 
 UnitTestExecutable = ["protocols.test", "core.test", "basic.test", "ObjexxFCL.test", "numeric.test", "utility.test", "apps.test", "devel.test"]
-#UnitTestExecutable = ["apps.test", "numeric.test"]
+#UnitTestExecutable = ["numeric.test", "utility.test"]
+
+# white list of unit tests for which we allow longer timeouts due to historical reasons
+# map lib:suite -> timeout-factor
+_timeout_factors_ = {
+    "core:SingleNCAARotamerLibraryTests_equivalency_no_voronoi" : 8,
+    "core:SingleNCAARotamerLibraryTests_equivalency_voronoi" : 8,
+    "protocols:InterfaceFeaturesTests" : 4,
+    "protocols:BridgeChainsMoverTests" : 20,
+    "core:AtomTypeDatabaseIOTests" : 20,
+    "protocols:PCSEnergyTests" : 20,
+    "core:ValidateBetaBinariesTests" : 20,
+    "core:ValidateDefaultBinariesTests": 20,
+    "core:ValidateTalarisBinariesTests": 20,
+    "core:CyclicGeometry_beta_peptoid_TwoChainTests" : 5,
+    "core:CyclicGeometry_peptoid_TwoChainTests" : 5,
+}
 
 def execute(message, command_line, return_='status', until_successes=False, terminate_on_failure=True, silent=False, silence_output=False, silence_output_on_errors=False, add_message_and_command_line_to_output=False):
     if not silent: print(message);  print(command_line); sys.stdout.flush();
@@ -178,17 +194,18 @@ class Tester:
         #self.unitTestLog += self.log("-------- %s --------\n" % E)
         path = "cd " + self.testpath + " && "
         exe = self.buildCommandLine(lib, Options.one)
-        print("Command line:: %s%s" % (path, exe))
+        print("Command line: %s%s" % (path, exe))
 
         if os.path.isfile(yjson_file): os.remove(yjson_file)
 
         output = [ "Running %s unit tests...\n" % lib ]
 
         if( Options.timeout > 0 ):
-            timelimit = sys.executable + ' ' +os.path.abspath('test/timelimit.py') + ' ' + str(Options.timeout) + ' '
+            timelimit = sys.executable + ' ' +os.path.abspath('test/timelimit.py') + ' ' + str(Options.timeout * _timeout_factors_.get(lib[:-len('.test')]+':'+Options.one, 1)) + ' '
         else:
             timelimit = ""
-        #print "timelimit:", timelimit
+
+        #print( "timelimit:", timelimit )
 
         command_line = path + ' ' + timelimit + exe + " 1>&2"
         #print 'Executing:', command_line
@@ -250,7 +267,7 @@ class Tester:
         #print output
 
         if Options.timeout > 0:
-            timelimit = sys.executable + ' ' + os.path.abspath('test/timelimit.py') + ' ' + str(Options.timeout*SUITE_FACTOR) + ' '
+            timelimit = sys.executable + ' ' + os.path.abspath('test/timelimit.py') + ' ' + str( Options.timeout * SUITE_FACTOR * _timeout_factors_.get(lib[:-len('.test')] + ':' + suite, 1) ) + ' '
         else:
             timelimit = ""
         #print "timelimit:", timelimit
@@ -638,8 +655,8 @@ def main(args):
     )
 
     parser.add_option("--timeout",
-      action="store",type="int",default=10,metavar="MINUTES",
-      help="Automatically cancel test runs if they are taking longer than the given number of minutes. (Default 10) A value of zero turns off the timeout."
+      action="store",type="int", default=6,
+      help="Automatically cancel test runs if they are taking longer than the given number of minutes. (Default 6). A value of zero turns off the timeout. Note that some tests might have custom (longer) timeout value for historical reasons."
     )
 
     parser.add_option("--valgrind",

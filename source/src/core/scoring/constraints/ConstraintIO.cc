@@ -639,13 +639,12 @@ ConstraintIO::parse_residue( pose::Pose const& pose, int const resnum, char cons
 	// Presence of FullModelInfo overrides... in which case, this might indicate a residue that's not yet in the pose.
 	if ( /*chain != 0 &&*/ full_model_info_defined( pose ) ) {
 		// AMW TODO: presence of segid in constraints here.
-		if ( const_full_model_info( pose ).full_to_sub().find(
-				const_full_model_info( pose ).full_model_parameters()->conventional_to_full( resnum, chain, "    " ) )
-				!= const_full_model_info( pose ).full_to_sub().end() ) {
+		auto const & foo = const_full_model_info( pose ).full_to_sub();
+		if ( foo.find( const_full_model_info( pose ).full_model_parameters()->conventional_to_full( resnum, chain, "    " ) ) != foo.end() ) {
 			//tr << "I am mapping apparent resnum " << resnum << " chain \'" << chain << "\' to "
 			// << const_full_model_info( pose ).full_to_sub()[ const_full_model_info( pose ).full_model_parameters()->conventional_to_full( resnum, chain, "    " ) ] << std::endl;
 			//tr << const_full_model_info( pose ).full_to_sub() << std::endl;
-			return const_full_model_info( pose ).full_to_sub()[ const_full_model_info( pose ).full_model_parameters()->conventional_to_full( resnum, chain, "    " ) ];
+			return foo.at( const_full_model_info( pose ).full_model_parameters()->conventional_to_full( resnum, chain, "    " ) );
 		}
 	}
 	if ( chain != 0 && pose.pdb_info() ) {

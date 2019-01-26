@@ -520,7 +520,7 @@ public:
 	/// @brief should be safe, given the atom ordering rules?
 	Atoms::const_iterator sidechainAtoms_begin() const
 	{
-		return atoms_.begin() + first_sidechain_atom() - 1;
+		return atoms_.begin() + ( first_sidechain_atom() - 1 );
 	}
 	Atoms::const_iterator heavyAtoms_end() const
 	{

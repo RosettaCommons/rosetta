@@ -134,6 +134,8 @@ BridgeChainsMover::apply( core::pose::Pose & pose )
 	assemble.set_build_overlap( overlap() );
 	assemble.set_iterations_per_phase( iterations_ );
 	if ( dry_run() ) {
+		// Try to prevent unit test timeout
+		assemble.set_iterations_per_phase( 1 );
 		assemble.set_folder( components::RandomTorsionPoseFolder() );
 	} else {
 		components::RemodelLoopMoverPoseFolder folder;

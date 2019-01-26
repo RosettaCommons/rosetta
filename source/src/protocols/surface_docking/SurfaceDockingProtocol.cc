@@ -226,6 +226,10 @@ void SurfaceDockingProtocol::set_secondary_structure(core::pose::Pose & pose)
 {
 	Size index=0;
 	for ( Size ii = pose.num_jump()+1; ii <= pose.size(); ++ii ) {
+		if ( index >= sec_struct_.size() ) {
+			TR.Warning << "Attempted to set the secondary structure for " << pose.size()-pose.num_jump() << " residues from a secondary structure string of length " << sec_struct_.size() << " -- skipping missing residues." << std::endl;
+			break; // Should this get converted to a hard error?
+		}
 		pose.set_secstruct(ii,sec_struct_[index]);
 		index=index+1;
 	}

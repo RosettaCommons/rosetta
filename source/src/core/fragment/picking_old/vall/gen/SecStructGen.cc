@@ -73,8 +73,16 @@ VallFragmentGenOP SecStructGen::clone() const {
 SecStructGen::Extent SecStructGen::operator ()( VallResidueIterator extent_begin, VallResidueIterator section_end ) const {
 	Extent extent;
 	extent.begin = extent_begin;
-	extent.end = extent_begin + ss_.length();
-	extent.valid = ( extent.end <= section_end );
+	// We can't do the below unconditionally because of the new stdlib debug
+	//extent.end = extent_begin + ss_.length();
+	if ( ss_.length() > static_cast< Size >( section_end - extent_begin ) ) {
+		extent.valid = false;
+		extent.end = section_end;
+	} else {
+		extent.valid = true;
+		//extent.valid = ( extent.end <= section_end );
+		extent.end = extent_begin + ss_.length();
+	}
 
 	if ( extent.valid ) {
 
