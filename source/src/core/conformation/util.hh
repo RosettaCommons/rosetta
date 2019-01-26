@@ -436,6 +436,12 @@ core::id::TorsionID find_bond_torsion_with_nearest_orientation(
 // Ring-related Functions /////////////////////////////////////////////////////
 
 /// @brief  What is the attachment position of the query atom on the given ring?
+/// @param   <residue>:    The Residue containing the atoms in question.
+/// @param   <query_atom>: The index of the atom in question.
+/// @return  The position on the ring as an integer.  0 means that the query atom is not attached to the ring.
+/// @note    If a member of the ring is selected as a query atom, this function returns 0.
+///          If a non-ring atom is connected to two ring atoms, the (numerically) lower ring position is returned.
+/// @author  Labonte <JWLabonte@jhu.edu>
 core::uint position_of_atom_on_ring(
 	Residue const & residue,
 	core::uint query_atom,

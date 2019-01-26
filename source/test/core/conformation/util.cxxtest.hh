@@ -202,13 +202,15 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		uint const O4_index( glucose.atom_index( " O4 " ) );
 		uint const O5_index( glucose.atom_index( " O5 " ) );
 		uint const O6_index( glucose.atom_index( " O6 " ) );
+		uint const C6_index( glucose.atom_index( " C6 " ) );
 
 		TS_ASSERT_EQUALS( position_of_atom_on_ring( glucose, O1_index, ring_atoms ), 1 );
 		TS_ASSERT_EQUALS( position_of_atom_on_ring( glucose, O2_index, ring_atoms ), 2 );
 		TS_ASSERT_EQUALS( position_of_atom_on_ring( glucose, O3_index, ring_atoms ), 3 );
 		TS_ASSERT_EQUALS( position_of_atom_on_ring( glucose, O4_index, ring_atoms ), 4 );
-		TS_ASSERT_EQUALS( position_of_atom_on_ring( glucose, O5_index, ring_atoms ), 5 );  // O5 is in the ring itself.
-		TS_ASSERT_EQUALS( position_of_atom_on_ring( glucose, O6_index, ring_atoms ), 0 );  // O6 is exocyclic.
+		TS_ASSERT_EQUALS( position_of_atom_on_ring( glucose, O5_index, ring_atoms ), 0 );  // O5 is in the ring itself
+		TS_ASSERT_EQUALS( position_of_atom_on_ring( glucose, O6_index, ring_atoms ), 0 );  // O6 is not attached to the ring
+		TS_ASSERT_EQUALS( position_of_atom_on_ring( glucose, C6_index, ring_atoms ), 5 );
 	}
 
 

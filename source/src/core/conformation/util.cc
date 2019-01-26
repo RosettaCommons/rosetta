@@ -2421,22 +2421,19 @@ find_bond_torsion_with_nearest_orientation(
 // Ring-related Functions /////////////////////////////////////////////////////
 
 // What is the attachment position of the query atom on the given ring?
-/// @param   <residue>:    The Residue containing the atoms in question.
-/// @param   <query_atom>: The index of the atom in question.
-/// @return  The position on the ring as an integer.  0 means that the query atom is not attached to the ring.
-/// @note    If a member of the ring is selected as a query atom, its lower numbered neighbor in the ring will be
-/// returned as its "attachment position".
-/// @author  Labonte <JWLabonte@jhu.edu>
 core::uint
 position_of_atom_on_ring(
 	Residue const & residue,
 	core::uint query_atom,
 	utility::vector1< core::uint > const & ring_atoms )
 {
+	if ( ring_atoms.contains( query_atom ) ) {
+		return 0;
+	}
 	utility::vector1< uint > const bonded_heavy_atoms( residue.get_adjacent_heavy_atoms( query_atom ) );
 	Size const n_ring_atoms( ring_atoms.size() );
-	for ( uint bonded_heavy_atom : bonded_heavy_atoms ) {
-		for ( uint position( 1 ); position <= n_ring_atoms; ++position ) {
+	for ( uint position( 1 ); position <= n_ring_atoms; ++position ) {
+		for ( uint bonded_heavy_atom : bonded_heavy_atoms ) {
 			if ( ring_atoms[ position ] == bonded_heavy_atom ) {
 				return position;
 			}
