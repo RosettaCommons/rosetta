@@ -123,7 +123,8 @@ public:
 class IGInterfaceEdgeUpweighter : public core::pack::task::IGEdgeReweighter{
 
 public:
-	IGInterfaceEdgeUpweighter( core::Real weight_factor ){ weight_factor_ = weight_factor; }
+	IGInterfaceEdgeUpweighter( core::Real weight_factor );
+	IGInterfaceEdgeUpweighter( core::Real weight_factor, std::string const & skip_loop_in_chain, std::string const & sec_str_in );
 
 	core::Real get_edge_reweight(
 		core::pose::Pose const & pose,
@@ -131,9 +132,13 @@ public:
 		Size res1,
 		Size res2
 	) const override;
+	void set_skip_loop_chains( std::string const & chain_string );
+	void set_sec_str( std::string const & sec_str_in ) { sec_str_ = sec_str_in; }
 
 private:
 	core::Real weight_factor_;
+	std::set<char> chains_to_ignore_loops_;
+	std::string sec_str_;
 
 #ifdef    SERIALIZATION
 protected:

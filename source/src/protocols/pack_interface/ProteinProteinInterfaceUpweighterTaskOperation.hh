@@ -44,6 +44,7 @@ public:
 
 	ProteinProteinInterfaceUpweighter();
 	ProteinProteinInterfaceUpweighter(core::Real weight_in);
+	ProteinProteinInterfaceUpweighter(core::Real weight_in, std::string const & skip_loop_in_chain);
 	~ProteinProteinInterfaceUpweighter() override;
 
 	TaskOperationOP clone() const override;
@@ -60,10 +61,12 @@ public:
 
 	/// @brief set the weight of the interaction across the interface
 	void set_weight(core::Real const weight_in) {ppi_packer_weight_ = weight_in;}
+	void set_skip_loop_chains(std::string const & chains) { chains_to_ignore_loops_ = chains; }
 
 private:
 	/// Reweight protein-protein interaction by a factor of ppi_packer_weight_.
 	core::Real ppi_packer_weight_;
+	std::string chains_to_ignore_loops_;
 };
 
 

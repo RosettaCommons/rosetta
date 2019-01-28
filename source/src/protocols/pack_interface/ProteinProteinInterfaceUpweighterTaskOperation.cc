@@ -20,6 +20,7 @@
 #include <core/pack/task/IGEdgeReweightContainer.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pose/Pose.hh>
+#include <core/scoring/dssp/Dssp.hh>
 #include <basic/options/option.hh>
 #include <core/types.hh>
 #include <basic/Tracer.hh>
@@ -59,14 +60,22 @@ std::string ProteinProteinInterfaceUpweighterTaskOperationCreator::keyname() con
 }
 
 
-ProteinProteinInterfaceUpweighter::ProteinProteinInterfaceUpweighter()
+ProteinProteinInterfaceUpweighter::ProteinProteinInterfaceUpweighter() :
+	ppi_packer_weight_(1.0),
+	chains_to_ignore_loops_("")
 {
-	ppi_packer_weight_=1.0;
 }
 
-ProteinProteinInterfaceUpweighter::ProteinProteinInterfaceUpweighter(core::Real weight_in)
+ProteinProteinInterfaceUpweighter::ProteinProteinInterfaceUpweighter(core::Real weight_in) :
+	ppi_packer_weight_(weight_in),
+	chains_to_ignore_loops_("")
 {
-	ppi_packer_weight_= weight_in;
+}
+
+ProteinProteinInterfaceUpweighter::ProteinProteinInterfaceUpweighter(core::Real weight_in, std::string const & skip_loop_in_chain) :
+	ppi_packer_weight_(weight_in),
+	chains_to_ignore_loops_(skip_loop_in_chain)
+{
 }
 
 ProteinProteinInterfaceUpweighter::~ProteinProteinInterfaceUpweighter() = default;
@@ -81,6 +90,7 @@ void
 ProteinProteinInterfaceUpweighter::parse_tag( TagCOP tag , DataMap & )
 {
 	if ( tag->hasOption("interface_weight") ) ppi_packer_weight_ = tag->getOption< core::Real >( "interface_weight", 1.0 );
+	if ( tag->hasOption("skip_loop_in_chain") ) chains_to_ignore_loops_ = tag->getOption< std::string >( "skip_loop_in_chain", "");
 }
 
 void ProteinProteinInterfaceUpweighter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
@@ -88,6 +98,7 @@ void ProteinProteinInterfaceUpweighter::provide_xml_schema( utility::tag::XMLSch
 	AttributeList attributes;
 
 	attributes.push_back( XMLSchemaAttribute::attribute_w_default(  "interface_weight", xsct_real, "scaling factor for the interaction energy of the residue pairs across the interface",  "1.0"  ) );
+	attributes.push_back( XMLSchemaAttribute::attribute_w_default( "skip_loop_in_chain", xs_string, "comma seperated chain idenfitiers for chains that the weight related to its loops are retained to 1.0", "" ) );
 
 	task_op_schema_w_attributes( xsd, keyname(), attributes, "scaling factor for the interaction energy of the residue pairs across the interface." );
 }
@@ -95,11 +106,16 @@ void ProteinProteinInterfaceUpweighter::provide_xml_schema( utility::tag::XMLSch
 /// @brief Change a packer task in some way.  The input pose is the one to which the input
 /// task will be later applied.
 void ProteinProteinInterfaceUpweighter::apply(
-	Pose const &,
+	Pose const & pose,
 	PackerTask & task) const
 {
 	if ( ppi_packer_weight_ != 1.0 ) {
-		core::pack::task::IGEdgeReweighterOP ppi_up( new protocols::toolbox::IGInterfaceEdgeUpweighter( ppi_packer_weight_ ) );
+		std::string sec_str = "";
+		if ( chains_to_ignore_loops_.size() != 0 ) {
+			core::scoring::dssp::Dssp dssp( pose );
+			sec_str = dssp.get_dssp_secstruct();
+		}
+		core::pack::task::IGEdgeReweighterOP ppi_up( utility::pointer::make_shared<protocols::toolbox::IGInterfaceEdgeUpweighter>( ppi_packer_weight_, chains_to_ignore_loops_, sec_str ) );
 		core::pack::task::IGEdgeReweightContainerOP IGreweight = task.set_IGEdgeReweights();
 		IGreweight->add_reweighter( ppi_up );
 

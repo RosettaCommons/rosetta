@@ -16,10 +16,12 @@
 
 // Package headers
 #include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pack/task/PackerTask.hh>
 
 #include <utility/vector1.hh>
+#include <utility/string_util.hh>
 
 
 #ifdef    SERIALIZATION
@@ -53,6 +55,34 @@ IGLigandDesignEdgeUpweighter::get_edge_reweight(
 
 }
 
+IGInterfaceEdgeUpweighter::IGInterfaceEdgeUpweighter( core::Real weight_factor ) :
+	weight_factor_ ( weight_factor )
+{
+	set_skip_loop_chains( "" );
+	set_sec_str("");
+}
+
+IGInterfaceEdgeUpweighter::IGInterfaceEdgeUpweighter( core::Real weight_factor, std::string const & skip_loop_in_chain, std::string const & sec_str_in ) :
+	weight_factor_ ( weight_factor )
+{
+	set_skip_loop_chains( skip_loop_in_chain );
+	set_sec_str( sec_str_in );
+}
+
+void
+IGInterfaceEdgeUpweighter::set_skip_loop_chains( std::string const & chain_string )
+{
+	chains_to_ignore_loops_.clear();
+	utility::vector1<std::string> chains_vec = utility::string_split( chain_string, ',' );
+	for ( std::string const & iichain_string : chains_vec ) {
+		if ( iichain_string.size() == 0 ) continue;
+		if ( iichain_string.size() != 1 ) {
+			utility_exit_with_message("Chain identifier should not be more than one character!!!");
+		}
+		chains_to_ignore_loops_.insert( iichain_string[0] );
+	}
+}
+
 core::Real
 IGInterfaceEdgeUpweighter::get_edge_reweight(
 	pose::Pose const & pose,
@@ -63,7 +93,23 @@ IGInterfaceEdgeUpweighter::get_edge_reweight(
 {
 
 	if ( pose.chain(res1) != pose.chain(res2) ) {
-		return weight_factor_;
+		if ( chains_to_ignore_loops_.size() != 0 ) {
+			if ( !pose.pdb_info() ) {
+				utility_exit_with_message("InterfaceUpweightor received a pose without a valid PDBInfo--chains cannot be selected.");
+			}
+			if ( sec_str_.size() != pose.size() ) {
+				utility_exit_with_message("Secondary struture string doesn't match with the length of the pose!!!! So the pose was changed?");
+			}
+
+			if ( ( chains_to_ignore_loops_.count( pose.pdb_info()->chain( res1 ) ) && (sec_str_[res1-1] == 'L') ) ||
+					( chains_to_ignore_loops_.count( pose.pdb_info()->chain( res2 ) ) && (sec_str_[res2-1] == 'L') ) ) {
+				return default_weight_;
+			} else {
+				return weight_factor_;
+			}
+		} else {
+			return weight_factor_;
+		}
 	} else return default_weight_;
 
 }
@@ -152,6 +198,8 @@ void
 protocols::toolbox::IGInterfaceEdgeUpweighter::save( Archive & arc ) const {
 	arc( cereal::base_class< core::pack::task::IGEdgeReweighter >( this ) );
 	arc( CEREAL_NVP( weight_factor_ ) ); // core::Real
+	arc( CEREAL_NVP( chains_to_ignore_loops_ ) );
+	arc( CEREAL_NVP( sec_str_ ) );
 }
 
 /// @brief Automatically generated deserialization method
@@ -160,6 +208,8 @@ void
 protocols::toolbox::IGInterfaceEdgeUpweighter::load( Archive & arc ) {
 	arc( cereal::base_class< core::pack::task::IGEdgeReweighter >( this ) );
 	arc( weight_factor_ ); // core::Real
+	arc( chains_to_ignore_loops_ );
+	arc( sec_str_ );
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( protocols::toolbox::IGInterfaceEdgeUpweighter );
